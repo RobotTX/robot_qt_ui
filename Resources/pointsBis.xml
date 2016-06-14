@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<points>
+    <group>
+        <name>first group</name>
+        <point>
+            <name>Joans point</name>
+            <x>1.2</x>
+            <y>1.2</y>
+        </point>
+        <point>
+            <name>MAs point</name>
+            <x>0.4</x>
+            <y>0.4</y>
+        </point>
+        <point>
+            <name>AnewPoint</name>
+            <x>5.2</x>
+            <y>5.2</y>
+        </point>
+    </group>
+    <group>
+        <name>Second group</name>
+        <point>
+            <name>fannys point</name>
+            <x>6</x>
+            <y>6</y>
+        </point>
+        <point>
+            <name>michels point</name>
+            <x>8.3</x>
+            <y>8.3</y>
+        </point>
+    </group>
+</points>

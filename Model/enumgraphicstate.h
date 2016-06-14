@@ -1,0 +1,6 @@
+#ifndef ENUMGRAPHICSTATE_H
+#define ENUMGRAPHICSTATE_H
+
+enum GraphicItemState { NO_STATE, CREATING_PATH };
+
+#endif // ENUMGRAPHICSTATE_H

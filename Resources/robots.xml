@@ -1,0 +1,18 @@
+<robots>
+  <robot>
+    <name>fannyBBB</name>
+    <IP>192.168.4.176</IP>
+    <time>1464315304.73</time>
+  </robot>
+  <robot>
+  	<name>joanBBB</name>
+  	<IP>192.168.4.184</IP>
+  	<time>1464315303.91</time>
+  </robot>
+  <robot>
+  	<name>maBBB</name>
+  	<IP>192.168.4.181</IP>
+  	<time>1464315347.91</time>
+  </robot>
+</robots>
+

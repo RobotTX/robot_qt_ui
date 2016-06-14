@@ -1,0 +1,46 @@
+<RCC>
+    <qresource prefix="/maps">
+	<file>map.pgm</file>
+	<file>map-s.pgm</file>
+    </qresource>
+    <qresource prefix="/icons">
+	<file alias="close.png">007__close.png</file>
+	<file alias="plus.png">005__plus.png</file>
+	<file alias="minus.png">006__minus.png</file>
+	<file alias="refresh.png">019__refresh.png</file>
+	<file alias="list.png">031__list.png</file>
+	<file alias="list_item.png">032__list_item.png</file>
+	<file alias="wifi.png">062__wifi.png</file>
+	<file alias="pin.png">076__pin.png</file>
+	<file alias="zoom_in.png">096__zoom_in.png</file>
+	<file alias="zoom_out.png">097__zoom_out.png</file>
+	<file alias="home.png">101__home.png</file>
+	<file alias="tag.png">115__tag.png</file>
+	<file alias="empty.png">086__empty.png</file>
+	<file alias="coordinates.png">074__coordinates.png</file>
+        <file>cropped_coordinates.png</file>
+	<file alias="download.png">027__download.png</file>
+	<file alias="arrowLeft.png">021__arrow2_left.png</file>
+	<file alias="arrowRight.png">022__arrow2_right.png</file>
+	<file alias="edit.png">083__setting_edit.png</file>
+	<file alias="upload.png">028__upload.png</file>
+	<file>map.png</file>
+	<file>robot.png</file>
+        <file>better_coords.png</file>
+	<file alias="caution.png">042__caution.png</file>
+	<file alias="no.png">044__no.png</file>
+	<file alias="play.png">131__play.png</file>
+	<file alias="pause.png">132__pause.png</file>
+	<file alias="eye.png">128__eye.png</file>
+	<file alias="blue_coord.png">blue_coordinates.png</file>
+	<file alias="red_coord.png">red_coordinates.png</file>
+	<file alias="green_coord.png">green_coordinates.png</file>
+	<file alias="orange_coord.png">green_coordinates.png</file>
+    </qresource>
+    <qresource prefix="/xml">
+	<file>points.xml</file>
+	<file>robots.xml</file>
+	<file>oldRobots.xml</file>
+        <file>pointsBis.xml</file>
+    </qresource>
+</RCC>

@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<points>
+    <group>
+        <name>first group</name>
+        <point>
+            <name>Joans point</name>
+            <x>50</x>
+            <y>50</y>
+            <displayed>1</displayed>
+        </point>
+        <point>
+            <name>MAs point</name>
+            <x>75</x>
+            <y>75</y>
+            <displayed>1</displayed>
+        </point>
+        <point>
+            <name>AnewPoint</name>
+            <x>100</x>
+            <y>100</y>
+            <displayed>1</displayed>
+        </point>
+    </group>
+    <group>
+        <name>Second group</name>
+        <point>
+            <name>fannys point</name>
+            <x>125</x>
+            <y>125</y>
+            <displayed>1</displayed>
+        </point>
+        <point>
+            <name>michels point</name>
+            <x>150</x>
+            <y>150</y>
+            <displayed>1</displayed>
+        </point>
+    </group>
+    <group>
+	<name>No group</name>
+	<point>
+		<name>un point</name>
+		<x>150</x>
+		<y>175</y>
+		<displayed>1</displayed>
+	</point>
+	<point>
+		<name>ANOTHER POINT</name>
+		<x>150</x>
+		<y>200</y>
+		<displayed>1</displayed>
+	</point>
+	<point>
+		<name>A FINAL POINT</name>
+		<x>150</x>
+		<y>225</y>
+		<displayed>1</displayed>
+	</point>
+    </group>
+</points>
