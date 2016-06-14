@@ -35,6 +35,7 @@ public:
     void setAddedToPath(const bool _addedToPath) { addedToPath = _addedToPath; }
     void setLastPixmap(const QPixmap& _lastPixmap) { lastPixmap = _lastPixmap; }
     void setPixmap(const QPixmap& pixmap);
+
     void setMovable(const bool _movable) { movable = _movable; }
 
 protected:

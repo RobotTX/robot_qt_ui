@@ -19,10 +19,9 @@ XMLParser::~XMLParser(){
 
 void XMLParser::save(const Points& points) const {
     try {
-        QString errMsg;
+
         file->open(QIODevice::WriteOnly);
-        errMsg = file->errorString();
-        qDebug() << errMsg;
+
         QXmlStreamWriter xmlWriter(file);
         xmlWriter.setAutoFormatting(true);
         xmlWriter.writeStartDocument();

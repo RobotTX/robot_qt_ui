@@ -4,3 +4,4 @@ PathPoint::PathPoint(const Point &_point, const Action &_action, const int _wait
     point = _point;
     waitTime = _waitTime;
 }
+

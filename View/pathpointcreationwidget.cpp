@@ -8,11 +8,11 @@
 #include <QMenu>
 #include <QLineEdit>
 
-PathPointCreationWidget::PathPointCreationWidget(const int id, const Points points, QString name){
+PathPointCreationWidget::PathPointCreationWidget(const int id, const Points& points, QString name){
     initialisation(id, points, name);
 }
 
-PathPointCreationWidget::PathPointCreationWidget(int id, Points points, Point _point){
+PathPointCreationWidget::PathPointCreationWidget(const int id, const Points& points, const Point& _point){
     point = _point;
     initialisation(id, points, _point.getName());
 }
@@ -110,6 +110,7 @@ PathPointCreationWidget::~PathPointCreationWidget(){
 
 void PathPointCreationWidget::setName(const QString _name){
     name = _name;
+
     if(name.compare("tmpPoint") == 0){
         posX = point.getPosition().getX();
         posY = point.getPosition().getY();
@@ -134,12 +135,14 @@ void PathPointCreationWidget::clicked(void){
 void PathPointCreationWidget::pointClicked(QAction *action){
     qDebug() << "pointClicked called " << action->text();
     setName(action->text());
+
     for(int i = 0; i < pointInfos.size(); i++){
         if(pointInfos.at(i).name.compare(action->text()) == 0){
             posX = pointInfos.at(i).posX;
             posY = pointInfos.at(i).posY;
         }
     }
+
     emit pointSelected(id, name);
 }
 

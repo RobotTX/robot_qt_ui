@@ -46,6 +46,7 @@ public:
     DisplaySelectedGroup* getDisplaySelectedGroup(void) const { return displaySelectedGroup; }
     PathCreationWidget* getPathCreationWidget(void) const { return pathCreationWidget; }
 
+public:
     void updateGroupDisplayed(const Points& _points, const int groupIndex);
 
 private:

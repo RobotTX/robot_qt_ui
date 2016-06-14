@@ -18,6 +18,9 @@ public:
 
     Points getPoints(void) const { return points; }
     std::vector<GroupView> getGroups(void) const { return groupViews; }
+
+public:
+    std::shared_ptr<PointView> getPointViewFromName(const QString);
     std::shared_ptr<PointView> getPointViewFromPoint(const Point& point);
 
 private:

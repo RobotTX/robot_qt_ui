@@ -45,6 +45,7 @@ signals:
 
 private slots:
     void addPathPointMapViewSlot(PointView*);
+    void updateHover(QString, QString);
 
 protected:
     void mousePressEvent(QGraphicsSceneMouseEvent *event);

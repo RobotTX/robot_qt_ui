@@ -29,6 +29,12 @@
             <y>125</y>
             <displayed>1</displayed>
         </point>
+        <point>
+            <name>michels point</name>
+            <x>150</x>
+            <y>150</y>
+            <displayed>1</displayed>
+        </point>
     </group>
     <group>
         <name>No group</name>

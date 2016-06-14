@@ -31,7 +31,8 @@ public:
      * @param points
      * The construcor of the widget when we havn't selected a point yet
      */
-    PathPointCreationWidget(const int id, const Points points, QString name = "Select a point");
+
+    PathPointCreationWidget(const int id, const Points& points, QString name = "Select a point");
 
     /**
      * @brief PathPointCreationWidget
@@ -40,8 +41,9 @@ public:
      * @param point
      * The construcor of the widget when we clicked on the map and selected a point
      */
-    PathPointCreationWidget(int id, Points points, Point point);
+    PathPointCreationWidget(const int id, const Points& points, const Point& point);
     ~PathPointCreationWidget();
+
     void initialisation(const int _id, const Points _points, QString _name);
 
     /**
