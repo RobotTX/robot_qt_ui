@@ -1241,7 +1241,8 @@ void MainWindow::editTmpPathPointSlot(int id, Point* point, int nbWidget){
         qDebug() << "Pointview found";
         if(nbWidget == 1){
             pointView->setFlag(QGraphicsItem::ItemIsMovable);
-            pointView->setMovable(true);
+            /*setGraphicItemsState(GraphicItemState::NO_EVENT);
+            pointView->setState(GraphicItemState::EDITING);*/
         } else if(nbWidget > 1){
             //
         } else {
