@@ -56,10 +56,10 @@ DisplaySelectedPoint::DisplaySelectedPoint(QMainWindow *_parent, Points const& _
     layout->addLayout(grid);
     layout->addLayout(eyeMapLayout);
 
-    nameLabel = new QLabel("Name : ");
-    nameLabel->setAlignment(Qt::AlignCenter);
-    //nameLabel->setWordWrap(true);
-    nameLayout->addWidget(nameLabel);
+    //nameLabell = new QLabel("Name : ");
+    //nameLabell->setAlignment(Qt::AlignCenter);
+    ////nameLabell->setWordWrap(true);
+    //nameLayout->addWidget(nameLabell);
 
     nameEdit = new QLineEdit();
     nameEdit->setReadOnly(true);
@@ -70,8 +70,8 @@ DisplaySelectedPoint::DisplaySelectedPoint(QMainWindow *_parent, Points const& _
 
     layout->addLayout(nameLayout);
 
-    nameLabel->setWordWrap(true);
-    layout->addWidget(nameLabel);
+    //nameLabell->setWordWrap(true);
+    //layout->addWidget(nameLabel);
 
     posXLabel = new QLabel("X : ");
     posXLabel->setWordWrap(true);
@@ -84,7 +84,7 @@ DisplaySelectedPoint::DisplaySelectedPoint(QMainWindow *_parent, Points const& _
 }
 
 DisplaySelectedPoint::~DisplaySelectedPoint(){
-    delete nameLabel;
+    //delete nameLabell;
     delete posXLabel;
     delete posYLabel;
     delete layout;
@@ -102,7 +102,7 @@ DisplaySelectedPoint::~DisplaySelectedPoint(){
 }
 
 void DisplaySelectedPoint::displayPointInfo(void){
-    nameLabel->setText("Name : ");
+    ////nameLabell->setText("Name : ");
     posXLabel->setText("X : " + QString::number(point->getPosition().getX()));
     posYLabel->setText("Y : " + QString::number(point->getPosition().getY()));
     nameEdit->setText(point->getName());
@@ -129,7 +129,7 @@ void DisplaySelectedPoint::keyPressEvent(QKeyEvent* event){
 }
 
 void DisplaySelectedPoint::displayPointInfo(const std::shared_ptr<Point> _point){
-    nameLabel->setText("Name : " + _point->getName());
+    //nameLabell->setText("Name : " + _point->getName());
     posXLabel->setText("X : " + QString::number(_point->getPosition().getX()));
     posYLabel->setText("Y : " + QString::number(_point->getPosition().getY()));
 }

@@ -6,13 +6,13 @@ class QMainWindow;
 class QVBoxLayout;
 class QHBoxLayout;
 class QPushButton;
-class QLineEdit;
 class Point;
 class QEvent;
 class QKeyEvent;
+class QLabel;
 
 #include "Model/points.h"
-#include <QLabel>
+#include <QLineEdit>
 #include <memory>
 #include <QWidget>
 #include <QObject>
@@ -28,8 +28,8 @@ public:
     QPushButton* getMinusButton(void) const { return minusButton; }
     QPushButton* getMapButton(void) const { return mapButton; }
     QPushButton* getEditButton(void) const { return editButton; }
-    QLabel* getNameLabel(void) const { return nameLabel; }
-    QString getPointName(void) const { return nameLabel->text().right(nameLabel->text().length()-7); }
+    //QLabel* getNameLabel(void) const { return nameLabel; }
+    QString getPointName(void) const { return nameEdit->text(); }
     QLineEdit* getNameEdit(void) const { return nameEdit; }
     std::shared_ptr<Point> getPoint(void) const { return point; }
     void setPoint(std::shared_ptr<Point> const& _point) { point = _point; }
@@ -53,7 +53,7 @@ signals:
 private:
     QLineEdit* nameEdit;
     QHBoxLayout* nameLayout;
-    QLabel* nameLabel;
+    //QLabel* nameLabel;
     QLabel* posXLabel;
     QLabel* posYLabel;
     QVBoxLayout* layout;

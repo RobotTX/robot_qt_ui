@@ -918,7 +918,7 @@ void MainWindow::askForDeleteGroupConfirmation(int index){
     qDebug() << "group " << index;
     std::cout << *(points.getGroups().at(index)) << std::endl;
     QMessageBox messageBox;
-    messageBox.setText("Do you really want to remove this group ?");
+    messageBox.setText("Do you really want to remove this group ? All the points in this group would also be removed.");
     messageBox.setInformativeText("Be careful, the changes would be permanent");
     messageBox.setStandardButtons(QMessageBox::No | QMessageBox::Yes);
     messageBox.setDefaultButton(QMessageBox::Yes);
@@ -1113,6 +1113,7 @@ void MainWindow::displayPointsInGroup(void){
         //leftMenu->getDisplaySelectedPoint()->displayPointInfo(
         //            points.getGroups().at(points.getGroups().size()-1)->getPoints().at(groupIndex-points.getGroups().size()+1));
 
+        leftMenu->getDisplaySelectedPoint()->setPoint(points.getGroups().at(points.getGroups().size()-1)->getPoints().at(groupIndex+1-points.getGroups().size()));
         leftMenu->getDisplaySelectedPoint()->displayPointInfo();
 
         leftMenu->getDisplaySelectedPoint()->show();
