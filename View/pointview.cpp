@@ -22,29 +22,10 @@ PointView::PointView(std::shared_ptr<Point> _point) :
     setShapeMode(QGraphicsPixmapItem::BoundingRectShape);
 
     addedToPath = false;
-    movable = false;
     lastPixmap = QPixmap(PIXMAP_NORMAL);
 }
 
 void PointView::mousePressEvent(QGraphicsSceneMouseEvent *event){
-
-    if(state == GraphicItemState::NO_STATE){
-        if(event->button() == Qt::RightButton){
-            qDebug() << "right click on point" ;
-            emit pointRightClicked(this);
-        }
-        if(event->button() == Qt::LeftButton){
-            qDebug() << "left click on point" ;
-            emit pointLeftClicked(this);
-        }
-    } else if(state == GraphicItemState::CREATING_PATH){
-        qDebug() << "Clicked on a point while creating a path";
-        addedToPath = true;
-        emit addPointPath(this);
-    } else {
-        qDebug() << "Clicked on a point while in an unknown state";
-    }
-    if(!movable){
         if(state == GraphicItemState::NO_STATE){
             if(event->button() == Qt::RightButton){
                 qDebug() << "right click on point" ;
@@ -58,16 +39,15 @@ void PointView::mousePressEvent(QGraphicsSceneMouseEvent *event){
             qDebug() << "Clicked on a point while creating a path";
             addedToPath = true;
             emit addPointPath(this);
+        } else if(state == GraphicItemState::EDITING){
+            qDebug() << "PointView moving from" << pos().x() << pos().y();
         } else {
-            qDebug() << "Clicked on a point while in an unknown state";
+            qDebug() << "(PointView " << point->getName() << ") NO EVENT";
         }
-    } else {
-        qDebug() << "PointView moving from" << pos().x() << pos().y();
-    }
 }
 
 void PointView::mouseMoveEvent(QGraphicsSceneMouseEvent *event){
-    if(movable){
+    if(state == GraphicItemState::EDITING){
         /*bool outOfMap = false;
         if(pos().x() < 0){
 
@@ -80,7 +60,7 @@ void PointView::mouseMoveEvent(QGraphicsSceneMouseEvent *event){
 }
 
 void PointView::mouseReleaseEvent(QGraphicsSceneMouseEvent *event){
-    if(movable){
+    if(state == GraphicItemState::EDITING){
         qDebug() << "to" << pos().x() << pos().y();
         QGraphicsPixmapItem::mouseReleaseEvent(event);
     }

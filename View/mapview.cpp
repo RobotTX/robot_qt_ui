@@ -78,7 +78,7 @@ void MapView::mouseReleaseEvent(QGraphicsSceneMouseEvent *event){
             pathCreationPoints.push_back(newPointView);
             emit addPathPointMapView(&(*(newPointView->getPoint())));
         } else {
-            qDebug() << "Clicked on the map while in an unknown state";
+            qDebug() << "(MapView) NO EVENT";
         }
     }
     /// else drag

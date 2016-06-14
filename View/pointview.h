@@ -36,8 +36,6 @@ public:
     void setLastPixmap(const QPixmap& _lastPixmap) { lastPixmap = _lastPixmap; }
     void setPixmap(const QPixmap& pixmap);
 
-    void setMovable(const bool _movable) { movable = _movable; }
-
 protected:
     void mousePressEvent(QGraphicsSceneMouseEvent *event);
     void hoverEnterEvent(QGraphicsSceneHoverEvent *event);
@@ -55,7 +53,6 @@ private:
     std::shared_ptr<Point> point;
     GraphicItemState state;
     bool addedToPath;
-    bool movable;
     QPixmap lastPixmap;
 };
 

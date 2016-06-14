@@ -171,9 +171,6 @@ void PathCreationWidget::itemClicked(QListWidgetItem* item){
 
     } else if(state == CheckState::EDIT){
         qDebug() << "Ready to edit";
-
-        ((PathPointCreationWidget*) pathPointsList->itemWidget(item))->clicked();
-
         editItem(item);
 
         previousItem = item;
@@ -211,8 +208,6 @@ void PathCreationWidget::editPathPoint(){
             state = CheckState::NO_STATE;
         }
     } else {
-
-        ((PathPointCreationWidget*) pathPointsList->itemWidget(pathPointsList->currentItem()))->clicked();
         editBtn->setChecked(false);
         state = CheckState::NO_STATE;
 
@@ -368,7 +363,7 @@ void PathCreationWidget::supprItem(QListWidgetItem* item){
 void PathCreationWidget::editItem(QListWidgetItem* item){
     PathPointCreationWidget* pathPointWidget = (PathPointCreationWidget*) pathPointsList->itemWidget(item);
     if(pathPointWidget->isTemporary()){
-        qDebug() << "Trying to edit a temp point";
+        qDebug() << "Trying to edit a temporary point";
         int nbWidget = 0;
         for(int i = 0; i < pathPointsList->count(); i++){
             PathPointCreationWidget* pathPointWidget2 = (PathPointCreationWidget*) pathPointsList->itemWidget(pathPointsList->item(i));
@@ -378,6 +373,7 @@ void PathCreationWidget::editItem(QListWidgetItem* item){
         }
         emit editTmpPathPoint(pathPointsList->row(item), new Point(pathPointWidget->getName(), pathPointWidget->getPosX(), pathPointWidget->getPosY()), nbWidget);
     } else {
+        qDebug() << "Trying to edit a permanent point";
         pathPointWidget->clicked();
     }
     editBtn->setChecked(false);
