@@ -45,23 +45,26 @@ void PointView::mousePressEvent(QGraphicsSceneMouseEvent *event){
     } else {
         qDebug() << "PointView moving from" << pos().x() << pos().y();
     }
-    QGraphicsPixmapItem::mousePressEvent(event);
 }
 
 void PointView::mouseMoveEvent(QGraphicsSceneMouseEvent *event){
-    /*bool outOfMap = false;
-    if(pos().x() < 0){
+    if(movable){
+        /*bool outOfMap = false;
+        if(pos().x() < 0){
 
+        }
+        pos().x() > parentItem()->boundingRect().width()
+        qDebug() << parentItem()->boundingRect().width() << parentItem()->boundingRect().height();
+        qDebug() << "still moving2" << pos().x() << pos().y();*/
+        QGraphicsPixmapItem::mouseMoveEvent(event);
     }
-    pos().x() > parentItem()->boundingRect().width()
-    qDebug() << parentItem()->boundingRect().width() << parentItem()->boundingRect().height();
-    qDebug() << "still moving2" << pos().x() << pos().y();*/
-    QGraphicsPixmapItem::mouseMoveEvent(event);
 }
 
 void PointView::mouseReleaseEvent(QGraphicsSceneMouseEvent *event){
-    qDebug() << "to" << pos().x() << pos().y();
-    QGraphicsPixmapItem::mouseReleaseEvent(event);
+    if(movable){
+        qDebug() << "to" << pos().x() << pos().y();
+        QGraphicsPixmapItem::mouseReleaseEvent(event);
+    }
 }
 
 void PointView::hoverEnterEvent(QGraphicsSceneHoverEvent *event){

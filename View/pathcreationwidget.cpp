@@ -356,6 +356,7 @@ void PathCreationWidget::pointSelected(int id, QString name){
 void PathCreationWidget::updatePointPainter(){
     emit updatePathPointToPainter(&pointList);
 
+
 }
 
 void PathCreationWidget::hideEvent(QHideEvent *event){
