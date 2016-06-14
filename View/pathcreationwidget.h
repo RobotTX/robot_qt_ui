@@ -29,7 +29,9 @@ public:
     void setSelectedRobot(Robot* const _selectedRobot){ selectedRobot = _selectedRobot; }
     void resetWidget(void);
     void supprItem(QListWidgetItem* item);
+
     void editItem(QListWidgetItem* item);
+
     /**
      * @brief addPathPoint
      * add a path point to the list from a given point
@@ -61,12 +63,14 @@ private slots:
      * Function which emit the updatePathPointToPainter signal to update the painter
      */
     void updatePointPainter(void);
+
     void itemMovedSlot(const int from, const int to);
 
 signals:
     void pathSaved();
     void updatePathPointToPainter(QVector<Point>* pointVector);
     void hidePathCreationWidget();
+
     void editTmpPathPoint(int id, Point* point, int nbWidget);
 
 

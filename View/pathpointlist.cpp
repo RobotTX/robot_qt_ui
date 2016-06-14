@@ -13,6 +13,7 @@ PathPointList::PathPointList(){
 
 void PathPointList::itemMoved(QModelIndex parent, int first, int last,
                                  QModelIndex destination, int row){
+
     qDebug() << "itemMoved from" << first << "to" << row;
     if(row >= 0){
         int itemNb = row;
@@ -29,6 +30,7 @@ void PathPointList::itemMoved(QModelIndex parent, int first, int last,
             }
         }
     }
+
     emit itemMovedSignal(first, row);
 }
 

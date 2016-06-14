@@ -49,6 +49,10 @@ class MainWindow : public QMainWindow{
 public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
+
+
+    Points getPoints(void) const { return points; }
+
     void initializeMenu();
     void initializeRobots();
     void initializePoints();
@@ -124,6 +128,7 @@ private slots:
     void displayPointMapEvent(void);
     void hidePathCreationWidget(void);
     void pointInfoEvent(void);
+    void editPointButtonEvent(void);
     void editTmpPathPointSlot(int id, Point* point, int nbWidget);
 
 private:

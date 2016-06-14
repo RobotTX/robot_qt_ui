@@ -112,3 +112,8 @@ void MapView::setState(const GraphicItemState _state){
     pathCreationPoints.clear();
 }
 
+ void MapView::updateHover(QString oldName, QString newName){
+     std::shared_ptr<PointView> pointView = permanentPoints->getPointViewFromName(oldName);
+     pointView->setToolTip(newName);
+ }
+

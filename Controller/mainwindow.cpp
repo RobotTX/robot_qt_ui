@@ -93,6 +93,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
     graphicsView->show();
 
+    /// to update the names of the points displayed when a user changes the name of a point via the edit button
+    connect(leftMenu->getDisplaySelectedPoint(), SIGNAL(nameChanged(QString, QString)), mapPixmapItem, SLOT(updateHover(QString, QString)));
+
 }
 
 
@@ -239,6 +242,7 @@ void MainWindow::initializeMenu(){
     ///set some shortcut
     quitAction->setShortcut(tr("CTRL+Q"));
     connectAction->setShortcut(tr("CTRL+N"));
+
 }
 
 void MainWindow::initializeLeftMenu(){
@@ -530,8 +534,17 @@ void MainWindow::minusGroupBtnEvent(){
     }
 }
 
+void MainWindow::editPointButtonEvent(){
+    qDebug() << "editPointBtnEvent called";
+    if(leftMenu->getDisplaySelectedPoint()->getEditButton()->isChecked())
+        leftMenu->getDisplaySelectedPoint()->getNameEdit()->setReadOnly(false);
+    else
+        leftMenu->getDisplaySelectedPoint()->getNameEdit()->setReadOnly(true);
+}
+
 void MainWindow::editGroupBtnEvent(){
     qDebug() << "editPointBtnEvent called";
+
 }
 
 void MainWindow::selectPointBtnEvent(){
@@ -937,7 +950,11 @@ void MainWindow::askForDeleteGroupConfirmation(int index){
 void MainWindow::displayPointEvent(PointView* _pointView){
     qDebug() << "ok";
     qDebug() << _pointView->getPoint()->getName();
-    leftMenu->getDisplaySelectedPoint()->displayPointInfo(_pointView->getPoint());
+
+    //leftMenu->getDisplaySelectedPoint()->displayPointInfo(_pointView->getPoint());
+    leftMenu->getDisplaySelectedPoint()->setPoint(_pointView->getPoint());
+    leftMenu->getDisplaySelectedPoint()->displayPointInfo();
+
     leftMenu->show();
     hideAllWidgets();
     leftMenu->getDisplaySelectedPoint()->show();
@@ -1008,7 +1025,9 @@ void MainWindow::displayGroupMapEvent(){
 }
 
 void MainWindow::displayPointMapEvent(){
-    std::shared_ptr<Point> point = points.findPoint(leftMenu->getDisplaySelectedPoint()->getPointName());
+
+    std::shared_ptr<Point> point = leftMenu->getDisplaySelectedPoint()->getPoint();
+
     if(point != NULL && point->isDisplayed()){
         qDebug() << " I was displayed, but it's over";
         point->setDisplayed(false);
@@ -1090,9 +1109,14 @@ void MainWindow::displayPointsInGroup(void){
     }
     /// it's an isolated point
     else if(groupIndex >= points.getGroups().size()-1){
-        leftMenu->getDisplaySelectedPoint()->displayPointInfo(
-                    points.getGroups().at(points.getGroups().size()-1)->getPoints().at(groupIndex-points.getGroups().size()+1));
+
+        //leftMenu->getDisplaySelectedPoint()->displayPointInfo(
+        //            points.getGroups().at(points.getGroups().size()-1)->getPoints().at(groupIndex-points.getGroups().size()+1));
+
+        leftMenu->getDisplaySelectedPoint()->displayPointInfo();
+
         leftMenu->getDisplaySelectedPoint()->show();
+
         pointsLeftWidget->getEyeButton()->setChecked(false);
         pointsLeftWidget->hide();
     }
@@ -1186,8 +1210,12 @@ void MainWindow::pointInfoEvent(void){
         }
         /// it's an isolated point
         else if(groupIndex >= points.getGroups().size()-1){
-            leftMenu->getDisplaySelectedPoint()->displayPointInfo(
-                        points.getGroups().at(points.getGroups().size()-1)->getPoints().at(groupIndex-points.getGroups().size()+1));
+
+            //leftMenu->getDisplaySelectedPoint()->displayPointInfo(
+             //           points.getGroups().at(points.getGroups().size()-1)->getPoints().at(groupIndex-points.getGroups().size()+1));
+            leftMenu->getDisplaySelectedPoint()->displayPointInfo();
+
+
             leftMenu->getDisplaySelectedPoint()->show();
             pointsLeftWidget->getEyeButton()->setChecked(false);
             pointsLeftWidget->hide();

@@ -5,10 +5,20 @@
 #include <QLabel>
 #include <QPushButton>
 #include <QMainWindow>
+#include <QLineEdit>
+#include <QDebug>
+#include <QKeyEvent>
+#include "Model/xmlparser.h"
 
-DisplaySelectedPoint::DisplaySelectedPoint(QMainWindow *_parent)
+DisplaySelectedPoint::DisplaySelectedPoint(QMainWindow *_parent, Points const& _points, std::shared_ptr<Point> const& _point)
 {
+    parent = _parent;
+    points = _points;
+    point = _point;
+
     layout = new QVBoxLayout();
+
+    nameLayout = new QHBoxLayout();
 
     backButton = new QPushButton(QIcon(":/icons/arrowLeft.png"), "Groups");
     backButton->setIconSize(_parent->size()/10);
@@ -47,6 +57,19 @@ DisplaySelectedPoint::DisplaySelectedPoint(QMainWindow *_parent)
     layout->addLayout(eyeMapLayout);
 
     nameLabel = new QLabel("Name : ");
+    nameLabel->setAlignment(Qt::AlignCenter);
+    //nameLabel->setWordWrap(true);
+    nameLayout->addWidget(nameLabel);
+
+    nameEdit = new QLineEdit();
+    nameEdit->setReadOnly(true);
+    nameEdit->setStyleSheet("* { background-color: rgba(255, 0, 0, 0); }");
+    connect(this->getNameEdit(), SIGNAL(textChanged(QString)), this, SLOT(updateName(QString)));
+
+    nameLayout->addWidget(nameEdit);
+
+    layout->addLayout(nameLayout);
+
     nameLabel->setWordWrap(true);
     layout->addWidget(nameLabel);
 
@@ -73,6 +96,36 @@ DisplaySelectedPoint::~DisplaySelectedPoint(){
     delete eyeButton;
     delete grid;
     delete eyeMapLayout;
+    delete nameEdit;
+    delete nameLayout;
+    delete parent;
+}
+
+void DisplaySelectedPoint::displayPointInfo(void){
+    nameLabel->setText("Name : ");
+    posXLabel->setText("X : " + QString::number(point->getPosition().getX()));
+    posYLabel->setText("Y : " + QString::number(point->getPosition().getY()));
+    nameEdit->setText(point->getName());
+}
+
+void DisplaySelectedPoint::updateName(QString newName){
+    emit nameChanged(point->getName(), newName);
+    point->setName(newName);
+    XMLParser parserPoints("/home/joan/Qt/QtProjects/gobot-software/gobot-software/points.xml");
+    parserPoints.save(points);
+}
+
+void DisplaySelectedPoint::mousePressEvent(QEvent* event){
+    qDebug() << "mouse pressed";
+    nameEdit->setReadOnly(true);
+}
+
+void DisplaySelectedPoint::keyPressEvent(QKeyEvent* event){
+    if(!event->text().compare("\r")){
+        qDebug() << "enter pressed";
+        editButton->setChecked(false);
+        nameEdit->setReadOnly(true);
+    }
 }
 
 void DisplaySelectedPoint::displayPointInfo(const std::shared_ptr<Point> _point){

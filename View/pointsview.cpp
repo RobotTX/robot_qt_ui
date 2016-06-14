@@ -18,6 +18,7 @@ PointsView::PointsView(const Points &_points): points(_points)
                 PointView* pointView = new PointView(curr_point);
 
                 std::shared_ptr<PointView> pointViewPtr = static_cast<std::shared_ptr<PointView>>(pointView);
+                pointViewPtr->setShapeMode(QGraphicsPixmapItem::BoundingRectShape);
 
                 groupView->addPointView(pointViewPtr);
             }
@@ -39,4 +40,18 @@ std::shared_ptr<PointView> PointsView::getPointViewFromPoint(const Point& newPoi
         }
     }
     return NULL;
+}
+
+std::shared_ptr<PointView> PointsView::getPointViewFromName(const QString _name){
+    for(size_t i = 0; i < groupViews.size(); i++){
+        GroupView groupView = groupViews.at(i);
+        std::vector<std::shared_ptr<PointView>> pointViews = groupView.getPointViews();
+        for(size_t j = 0; j < pointViews.size(); j++){
+            std::shared_ptr<PointView> pointView = pointViews.at(j);
+            std::shared_ptr<Point> point = pointView->getPoint();
+            if(!point->getName().compare(_name))
+                return pointView;
+        }
+    }
+    return 0;
 }

@@ -17,6 +17,8 @@ PointView::PointView(std::shared_ptr<Point> _point) :
     setPos(point->getPosition().getX(),
            point->getPosition().getY());
     setToolTip(point->getName());
+
+    addedToPath = false;
     setShapeMode(QGraphicsPixmapItem::BoundingRectShape);
 
     addedToPath = false;
@@ -25,6 +27,23 @@ PointView::PointView(std::shared_ptr<Point> _point) :
 }
 
 void PointView::mousePressEvent(QGraphicsSceneMouseEvent *event){
+
+    if(state == GraphicItemState::NO_STATE){
+        if(event->button() == Qt::RightButton){
+            qDebug() << "right click on point" ;
+            emit pointRightClicked(this);
+        }
+        if(event->button() == Qt::LeftButton){
+            qDebug() << "left click on point" ;
+            emit pointLeftClicked(this);
+        }
+    } else if(state == GraphicItemState::CREATING_PATH){
+        qDebug() << "Clicked on a point while creating a path";
+        addedToPath = true;
+        emit addPointPath(this);
+    } else {
+        qDebug() << "Clicked on a point while in an unknown state";
+    }
     if(!movable){
         if(state == GraphicItemState::NO_STATE){
             if(event->button() == Qt::RightButton){

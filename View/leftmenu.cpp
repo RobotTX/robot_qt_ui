@@ -25,7 +25,9 @@ LeftMenu::LeftMenu(QMainWindow* parent, Points const& points, Robots * const &ro
     leftLayout = new QVBoxLayout();
 
     /// to display the information relative to a point
-    displaySelectedPoint = new DisplaySelectedPoint(parent);
+
+    displaySelectedPoint = new DisplaySelectedPoint(parent, points);
+
     leftLayout->addWidget(displaySelectedPoint);
 qDebug() << "ok";
     /// to display the information relative to a group of points
@@ -77,13 +79,17 @@ qDebug() << "ok";
     leftLayout->addWidget(pathCreationWidget);
     connect(pathCreationWidget, SIGNAL(updatePathPointToPainter(QVector<Point>*)), parent, SLOT(updatePathPointToPainter(QVector<Point>*)));
     connect(pathCreationWidget, SIGNAL(hidePathCreationWidget()), parent, SLOT(hidePathCreationWidget()));
+
     connect(pathCreationWidget, SIGNAL(editTmpPathPoint(int, Point*, int)), parent, SLOT(editTmpPathPointSlot(int, Point*, int)));
 
     connect(displaySelectedPoint->getBackButton(), SIGNAL(clicked()), parent, SLOT(pointBtnEvent()));
     /// Last widget visited, used to know where to go back when pressing the return button
     lastWidget = NULL;
+
+
     connect(displaySelectedPoint->getMinusButton(), SIGNAL(clicked(bool)), parent, SLOT(removePointFromInformationMenu()));
     connect(displaySelectedPoint->getMapButton(), SIGNAL(clicked(bool)), parent, SLOT(displayPointMapEvent()));
+    connect(displaySelectedPoint->getEditButton(), SIGNAL(clicked(bool)), parent, SLOT(editPointButtonEvent()));
 
 
     connect(displaySelectedGroup->getBackButton(), SIGNAL(clicked(bool)), parent, SLOT(pointBtnEvent()));
@@ -119,3 +125,5 @@ LeftMenu::~LeftMenu(){
 void LeftMenu::updateGroupDisplayed(const Points& _points, const int groupIndex){
     displaySelectedGroup->getPointButtonGroup()->setGroup(_points, groupIndex);
 }
+
+

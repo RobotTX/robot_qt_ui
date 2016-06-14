@@ -72,7 +72,10 @@ PathCreationWidget::PathCreationWidget(QMainWindow* parent, const Points &_point
     /// the list that displays the path points
     pathPointsList = new PathPointList();
     connect(pathPointsList, SIGNAL(itemClicked(QListWidgetItem*)), this, SLOT(itemClicked(QListWidgetItem*)));
+
+
     connect(pathPointsList, SIGNAL(itemMovedSignal(int, int)), this, SLOT(itemMovedSlot(int, int)));
+
     layout->addWidget(pathPointsList);
 
 
@@ -168,7 +171,11 @@ void PathCreationWidget::itemClicked(QListWidgetItem* item){
 
     } else if(state == CheckState::EDIT){
         qDebug() << "Ready to edit";
+
+        ((PathPointCreationWidget*) pathPointsList->itemWidget(item))->clicked();
+
         editItem(item);
+
         previousItem = item;
     }
 }
@@ -204,7 +211,13 @@ void PathCreationWidget::editPathPoint(){
             state = CheckState::NO_STATE;
         }
     } else {
+
+        ((PathPointCreationWidget*) pathPointsList->itemWidget(pathPointsList->currentItem()))->clicked();
+        editBtn->setChecked(false);
+        state = CheckState::NO_STATE;
+
         editItem(pathPointsList->currentItem());
+
     }
 }
 
@@ -246,6 +259,7 @@ void PathCreationWidget::savePath(){
     if(error){
         qDebug() << "Please make sure all the error(s) above has been fixed";
     } else {
+
         qDebug() << "No error, ready to save" << pointList.size() << pathPointsList->count();
         QVector<PathPoint*> path;
         for(int i = 0; i < pathPointsList->count(); i++){
@@ -253,8 +267,13 @@ void PathCreationWidget::savePath(){
             /// we try to get the point associated with the path point
             PathPointCreationWidget* pathPointWidget2 = ((PathPointCreationWidget*) pathPointsList->itemWidget(pathPointsList->item(i)));
 
+            std::shared_ptr<Point> pointPtr = points.findPoint(pathPointWidget2->getName());
+
+            if(pointPtr != NULL){
+                Point point = *pointPtr;
                 PathPoint::Action action;
                 int waitTime = 0;
+                //qDebug() << pathPoint->getId() << pathPoint->getName();
 
                 if(pathPointWidget2->getActionBtn()->text().compare("Human Action") == 0){
                     action = PathPoint::HUMAN_ACTION;
@@ -263,9 +282,32 @@ void PathCreationWidget::savePath(){
                     if(i != (pathPointsList->count() - 1))
                         waitTime = pathPointWidget2->getTimeEdit()->text().toInt();
                 }
-                path.push_back(new PathPoint(pointList.at(i), action, waitTime));
+
+                path.push_back(new PathPoint(point, action, waitTime));
+
+            } else {
+
+                /// if there is no known point, it means we created a temporary one so we can
+                /// create a pathpoint from the information of the path point
+                /// ( and not from an existing point)
+                qDebug() << "Temporary point : " << pathPointWidget2->getName() << pathPointWidget2->getPosX() << pathPointWidget2->getPosY();
+
+                Point point(pathPointWidget2->getName(), pathPointWidget2->getPosX(), pathPointWidget2->getPosY());
+                PathPoint::Action action;
+                int waitTime = 0;
+                qDebug() << pathPointWidget2->getName() << pathPointWidget2->getPosX() << pathPointWidget2->getPosY();
+
+                if(pathPointWidget2->getActionBtn()->text().compare("Human Action") == 0){
+                    action = PathPoint::HUMAN_ACTION;
+                } else {
+                    action = PathPoint::WAIT;
+                    if(i != (pathPointsList->count() - 1))
+                        waitTime = pathPointWidget2->getTimeEdit()->text().toInt();
+                }
+                path.push_back(new PathPoint(point, action, waitTime));
+            }
         }
-        qDebug() << "\nPath created for robot :" << selectedRobot->getName();
+        qDebug() << "Path created for robot" << selectedRobot->getName();
 
         for(int i = 0; i < path.size(); i++){
             qDebug() << i << " : " << path.at(i)->getPoint().getName()
@@ -274,6 +316,7 @@ void PathCreationWidget::savePath(){
                      << path.at(i)->getWaitTime();
         }
         qDebug() << "\n";
+
         selectedRobot->setPath(path);
         emit pathSaved();
     }
@@ -354,8 +397,11 @@ void PathCreationWidget::pointSelected(int id, QString name){
 }
 
 void PathCreationWidget::updatePointPainter(){
+    qDebug() << "\n";
+    for(int i = 0; i < pointList.size(); i++){
+        qDebug() << i << " : " << pointList.at(i).getName() << pointList.at(i).getPosition().getX() << pointList.at(i).getPosition().getY();
+    }
     emit updatePathPointToPainter(&pointList);
-
 }
 
 void PathCreationWidget::hideEvent(QHideEvent *event){

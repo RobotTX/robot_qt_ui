@@ -95,7 +95,11 @@ PointsLeftWidget::PointsLeftWidget(QMainWindow* _parent, Points const& points, b
     connect(backButton, SIGNAL(clicked()), parent, SLOT(backGroupBtnEvent()));
     connect(plusButton, SIGNAL(clicked()), parent, SLOT(plusGroupBtnEvent()));
     connect(minusButton, SIGNAL(clicked()), parent, SLOT(minusGroupBtnEvent()));
+
+    //connect(editButton, SIGNAL(clicked()), parent, SLOT(editGroupBtnEvent()));
+
     connect(editButton, SIGNAL(clicked()), parent, SLOT(editGroupBtnEvent()));
+
     connect(mapButton, SIGNAL(clicked()), parent, SLOT(displayGroupMapEvent()));
     connect(backToGroupsButton, SIGNAL(clicked()), parent, SLOT(backToGroupsButtonEvent()));
     connect(eyeButton, SIGNAL(clicked()), parent, SLOT(displayPointsInGroup()));
