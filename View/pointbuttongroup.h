@@ -15,11 +15,12 @@ public:
 
     QButtonGroup* getButtonGroup(void) const { return buttonGroup; }
 
-
 public:
     void deleteButtons(void);
     void setGroup(const Points &_points, const int groupIndex);
     void update(const Points &_points);
+    void setCheckable(const bool checkable);
+
 private:
     QVBoxLayout* layout;
     QButtonGroup* buttonGroup;

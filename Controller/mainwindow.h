@@ -130,8 +130,11 @@ private slots:
     void pointInfoEvent(void);
     void editPointButtonEvent(void);
     void editTmpPathPointSlot(int id, Point* point, int nbWidget);
-    void saveTmpEditPathPointSlot();
-    void moveTmpEditPathPointSlot();
+    void editPointFromGroupMenu(void);
+       // prob need a different event
+    void saveTmpEditPathPointSlot(void);
+    void moveTmpEditPathPointSlot(void);
+    void displayPointInfoFromGroupMenu(void);
 
 private:
     Ui::MainWindow* ui;
