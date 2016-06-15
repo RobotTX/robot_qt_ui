@@ -491,12 +491,21 @@ void MainWindow::robotBtnEvent(){
 
 void MainWindow::pointBtnEvent(){
     qDebug() << "pointBtnEvent called";
-    hideAllWidgets();
-    pointsLeftWidget->show();
-    pointsLeftWidget->getGroupButtonGroup()->show();
-    qDebug() << pointsLeftWidget->getGroupNameEdit()->pos().x() << " " << pointsLeftWidget->getGroupNameEdit()->pos().y();
-    qDebug() << pointsLeftWidget->getGroupNameLabel()->pos().x() << " " << pointsLeftWidget->getGroupNameLabel()->pos().y();
-    lastWidget = pointsLeftWidget;
+    /// called when the back button is clicked and we came from the group menu
+    if(leftMenu->getDisplaySelectedPoint()->getOrigin() == DisplaySelectedPoint::GROUP_MENU){
+        hideAllWidgets();
+        qDebug() << "dans pointBtn event with origin group menu";
+        leftMenu->getDisplaySelectedGroup()->show();
+    }
+    /// otherwise we know that we can display the points menu because the case where we displayed the point information
+    /// from the map has already been taken care of at the source
+    else {
+        hideAllWidgets();
+        leftMenu->getDisplaySelectedPoint()->setOrigin(DisplaySelectedPoint::POINTS_MENU);
+        pointsLeftWidget->show();
+        pointsLeftWidget->getGroupButtonGroup()->show();
+        lastWidget = pointsLeftWidget;
+    }
 }
 
 void MainWindow::mapBtnEvent(){
@@ -555,6 +564,8 @@ void MainWindow::selectPointBtnEvent(){
 //TODO add all the menu
 void MainWindow::openLeftMenu(){
     qDebug() << "openLeftMenu called";
+    /// we reset the origin of the point information menu in order to display the buttons to go back in the further menus
+    leftMenu->getDisplaySelectedPoint()->setOrigin(DisplaySelectedPoint::POINTS_MENU);
     leftMenu->getDisplaySelectedPoint()->hide();
     if(leftMenuWidget->isHidden()){
         robotsLeftWidget->setEditBtnStatus(false);
@@ -955,8 +966,7 @@ void MainWindow::displayPointEvent(PointView* _pointView){
     //leftMenu->getDisplaySelectedPoint()->displayPointInfo(_pointView->getPoint());
     leftMenu->getDisplaySelectedPoint()->setPoint(_pointView->getPoint());
     leftMenu->getDisplaySelectedPoint()->displayPointInfo();
-
-    leftMenu->show();
+    leftMenu->getDisplaySelectedPoint()->setOrigin(DisplaySelectedPoint::MAP);
     hideAllWidgets();
     leftMenu->getDisplaySelectedPoint()->show();
 }
@@ -1296,6 +1306,7 @@ void MainWindow::displayPointInfoFromGroupMenu(void){
     if(group){
         int point = leftMenu->getDisplaySelectedGroup()->getPointButtonGroup()->getButtonGroup()->checkedId();
         if(point != -1 and point < group->getPoints().size()){
+            leftMenu->getDisplaySelectedPoint()->setOrigin(DisplaySelectedPoint::GROUP_MENU);
             leftMenu->getDisplaySelectedPoint()->setPoint(group->getPoints().at(point));
             leftMenu->getDisplaySelectedPoint()->displayPointInfo();
             leftMenu->getDisplaySelectedPoint()->show();

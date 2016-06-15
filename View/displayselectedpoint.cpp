@@ -10,7 +10,7 @@
 #include <QKeyEvent>
 #include "Model/xmlparser.h"
 
-DisplaySelectedPoint::DisplaySelectedPoint(QMainWindow *_parent, Points const& _points, std::shared_ptr<Point> const& _point, const bool _goBackToGroup)
+DisplaySelectedPoint::DisplaySelectedPoint(QMainWindow *_parent, Points const& _points, std::shared_ptr<Point> const& _point, const Origin origin)
 {
     parent = _parent;
     points = _points;
@@ -152,5 +152,18 @@ void DisplaySelectedPoint::displayPointInfo(const std::shared_ptr<Point> _point)
     //nameLabell->setText("Name : " + _point->getName());
     posXLabel->setText("X : " + QString::number(_point->getPosition().getX()));
     posYLabel->setText("Y : " + QString::number(_point->getPosition().getY()));
+}
+
+void DisplaySelectedPoint::setOrigin(const Origin _origin){
+    origin = _origin;
+    qDebug() << origin;
+    /// if we come from the map there is simply no where
+    /// to return so we hide the button
+    /// the distinction between when we come from the group menu
+    /// and when we come from the points menu is made in the pointBtnEvent
+    if(origin == MAP)
+        backButton->hide();
+    else
+        backButton->show();
 }
 

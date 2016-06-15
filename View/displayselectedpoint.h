@@ -21,7 +21,9 @@ class DisplaySelectedPoint: public QWidget
 {
         Q_OBJECT
 public:
-    DisplaySelectedPoint(QMainWindow* _parent, Points const& _points, const std::shared_ptr<Point> &_point = 0, const bool _goBackToGroup = false);
+    enum Origin { MAP, GROUP_MENU, POINTS_MENU };
+
+    DisplaySelectedPoint(QMainWindow* _parent, Points const& _points, const std::shared_ptr<Point> &_point = 0, const Origin origin = MAP);
     ~DisplaySelectedPoint();
 
     QPushButton* getBackButton(void) const { return backButton; }
@@ -33,14 +35,14 @@ public:
     QLineEdit* getNameEdit(void) const { return nameEdit; }
     std::shared_ptr<Point> getPoint(void) const { return point; }
     void setPoint(std::shared_ptr<Point> const& _point) { point = _point; }
-
+    Origin getOrigin(void) const { return origin; }
 
 public:
     void displayPointInfo(void);
     void mousePressEvent(QEvent* event);
     void keyPressEvent(QKeyEvent* event);
     void displayPointInfo(const std::shared_ptr<Point> _point);
-
+    void setOrigin(const Origin _origin);
 
 private slots:
     void updateNameUsingKey(QString newName);
@@ -49,7 +51,6 @@ private slots:
 signals:
     /// to notify the mapview that one of its points have been updated (in order to update the name that's displayed when the mouse is hovering over a point)
     void nameChanged(QString, QString);
-
 
 private:
     QLineEdit* nameEdit;
@@ -72,7 +73,7 @@ private:
 
     /// to determine whether we come from the group menu and have to go back to it if we click on the back button
     /// or if we got here by clicking on the map
-    bool goBackToGroup;
+    Origin origin;
 };
 
 #endif // DISPLAYSELECTEDPOINT_H
