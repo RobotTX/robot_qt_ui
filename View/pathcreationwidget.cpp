@@ -291,10 +291,11 @@ void PathCreationWidget::savePath(){
                 /// ( and not from an existing point)
                 qDebug() << "Temporary point : " << pathPointWidget2->getName() << pathPointWidget2->getPosX() << pathPointWidget2->getPosY();
 
-                Point point(pathPointWidget2->getName(), pathPointWidget2->getPosX(), pathPointWidget2->getPosY());
+                QString name = QString::number(pathPointWidget2->getPosX(),'f', 1) + "; " + QString::number(pathPointWidget2->getPosY(),'f', 1);
+                Point point(name, pathPointWidget2->getPosX(), pathPointWidget2->getPosY());
                 PathPoint::Action action;
                 int waitTime = 0;
-                qDebug() << pathPointWidget2->getName() << pathPointWidget2->getPosX() << pathPointWidget2->getPosY();
+                qDebug() << name << pathPointWidget2->getPosX() << pathPointWidget2->getPosY();
 
                 if(pathPointWidget2->getActionBtn()->text().compare("Human Action") == 0){
                     action = PathPoint::HUMAN_ACTION;
@@ -327,6 +328,11 @@ void PathCreationWidget::resetWidget(){
     idPoint = 1;
     supprBtn->setChecked(false);
     editBtn->setChecked(false);
+
+    newBtn->setEnabled(true);
+    supprBtn->setEnabled(true);
+    editBtn->setEnabled(true);
+
     pointList.clear();
 }
 
@@ -376,20 +382,20 @@ void PathCreationWidget::editItem(QListWidgetItem* item){
                 nbWidget++;
         }
         emit editTmpPathPoint(pathPointsList->row(item), new Point(pathPointWidget->getName(), pathPointWidget->getPosX(), pathPointWidget->getPosY()), nbWidget);
+        state = CheckState::NO_STATE;
+        pathPointWidget->displaySaveEditBtn(true, pathPointsList->count());
+        pathPointsList->setDragDropMode(QAbstractItemView::NoDragDrop);
+        editedPathPointCreationWidget = pathPointWidget;
+
+        newBtn->setEnabled(false);
+        supprBtn->setEnabled(false);
+        editBtn->setEnabled(false);
     } else {
         qDebug() << "Trying to edit a permanent point";
         pathPointWidget->clicked();
     }
 
     editBtn->setChecked(false);
-    state = CheckState::NO_STATE;
-    pathPointWidget->displaySaveEditBtn(true, pathPointsList->count());
-    pathPointsList->setDragDropMode(QAbstractItemView::NoDragDrop);
-    editedPathPointCreationWidget = pathPointWidget;
-
-    newBtn->setEnabled(false);
-    supprBtn->setEnabled(false);
-    editBtn->setEnabled(false);
 }
 
 void PathCreationWidget::pointSelected(PathPointCreationWidget* pathPointCreationWidget){
@@ -414,10 +420,8 @@ void PathCreationWidget::updatePointPainter(){
 }
 
 void PathCreationWidget::hideEvent(QHideEvent *event){
+    resetWidget();
     emit hidePathCreationWidget();
-    newBtn->setEnabled(true);
-    supprBtn->setEnabled(true);
-    editBtn->setEnabled(true);
 }
 
 void PathCreationWidget::itemMovedSlot(const int from, const int to){

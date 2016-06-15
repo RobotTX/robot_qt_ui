@@ -135,7 +135,7 @@ void BottomLayout::updateRobot(const int id, RobotView * const robotView){
         QString pathStr = QString("");
         for(int j = 0; j < robotView->getRobot()->getPath().size(); j++){
             if(j != 0){
-                pathStr += "; ";
+                pathStr += " - ";
             }
             pathStr += robotView->getRobot()->getPath().at(j)->getPoint().getName();
         }

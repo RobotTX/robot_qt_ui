@@ -120,7 +120,7 @@ void PathPointCreationWidget::setName(const QString _name){
     if(name.compare("tmpPoint") == 0){
         posX = point.getPosition().getX();
         posY = point.getPosition().getY();
-        pointLabel->setText(QString::number(id)+". "+QString::number(point.getPosition().getX(),'f', 1) + ", " + QString::number(point.getPosition().getY(),'f', 1));
+        setPointLabel(point.getPosition().getX(), point.getPosition().getY());
     } else {
         pointLabel->setText(QString::number(id)+". "+name);
     }
@@ -200,10 +200,14 @@ void PathPointCreationWidget::setPos(const float _posX, const float _posY){
     posX = _posX;
     posY = _posY;
     point.setPosition(posX, posY);
-    pointLabel->setText(QString::number(id)+". "+QString::number(posX,'f', 1) + ", " + QString::number(posY,'f', 1));
+    setPointLabel(posX, posY);
 }
-
 
 void PathPointCreationWidget::updatePointLabel(const float _posX, const float _posY){
-    pointLabel->setText(QString::number(id)+". "+QString::number(_posX,'f', 1) + ", " + QString::number(_posY,'f', 1));
+    setPointLabel(_posX, _posY);
 }
+
+void PathPointCreationWidget::setPointLabel(const float _posX, const float _posY){
+    pointLabel->setText(QString::number(id)+". "+QString::number(_posX,'f', 1) + "; " + QString::number(_posY,'f', 1));
+}
+

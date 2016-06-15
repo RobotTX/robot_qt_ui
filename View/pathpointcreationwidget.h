@@ -70,6 +70,7 @@ public:
     int getPosY(void) const { return posY; }
     bool isTemporary(void) const { return (name.compare("tmpPoint") == 0); }
     Point getPoint(void) const { return point; }
+    void setPointLabel(const float _posX, const float _posY);
 
 private:
     QVBoxLayout* layout;
