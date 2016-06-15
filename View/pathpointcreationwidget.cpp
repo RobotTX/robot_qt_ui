@@ -1,11 +1,9 @@
 #include "pathpointcreationwidget.h"
-#include "Model/group.h"
 #include <QIntValidator>
 #include <QVBoxLayout>
 #include <QLabel>
 #include <QPushButton>
 #include <QDebug>
-#include <QMenu>
 #include <QLineEdit>
 
 PathPointCreationWidget::PathPointCreationWidget(const int id, const Points& points, QString name){
@@ -31,37 +29,6 @@ void PathPointCreationWidget::initialisation(const int _id, const Points _points
     pointLabel = new QLabel();
     setName(name);
     layout->addWidget(pointLabel);
-
-    /// The menu which display the list of point to select
-    pointsMenu = new QMenu();
-    connect(pointsMenu, SIGNAL(triggered(QAction*)), this, SLOT(pointClicked(QAction*)));
-
-    for(int i = 0; i < points.getGroups().size(); i++){
-        if(points.getGroups().at(i)->getName().compare("No group") == 0){
-            for(int j = 0; j < points.getGroups().at(i)->getPoints().size(); j++){
-                QString pointName = points.getGroups().at(i)->getPoints().at(j)->getName();
-                QAction *point = pointsMenu->addAction(pointName);
-
-                PointInfo pointInfo;
-                pointInfo.name = pointName;
-                pointInfo.posX = points.getGroups().at(i)->getPoints().at(j)->getPosition().getX();
-                pointInfo.posY = points.getGroups().at(i)->getPoints().at(j)->getPosition().getY();
-                pointInfos.push_back(pointInfo);
-            }
-        } else {
-            QMenu *group = pointsMenu->addMenu("&" + points.getGroups().at(i)->getName());
-            for(int j = 0; j < points.getGroups().at(i)->getPoints().size(); j++){
-                QString pointName = points.getGroups().at(i)->getPoints().at(j)->getName();
-                QAction *point = group->addAction(pointName);
-
-                PointInfo pointInfo;
-                pointInfo.name = pointName;
-                pointInfo.posX = points.getGroups().at(i)->getPoints().at(j)->getPosition().getX();
-                pointInfo.posY = points.getGroups().at(i)->getPoints().at(j)->getPosition().getY();
-                pointInfos.push_back(pointInfo);
-            }
-        }
-    }
 
     /// The widget that contain the layout for the button to select the
     /// action the robot need to do (wait for X sec or wait for human action)
@@ -106,7 +73,6 @@ void PathPointCreationWidget::initialisation(const int _id, const Points _points
 PathPointCreationWidget::~PathPointCreationWidget(){
     delete layout;
     delete pointLabel;
-    delete pointsMenu;
     delete actionBtn;
     delete saveEditBtn;
     delete timeEdit;
@@ -128,28 +94,12 @@ void PathPointCreationWidget::setName(const QString _name){
 
 void PathPointCreationWidget::setId(const int _id){
     id = _id;
-    pointLabel->setText(QString::number(id)+". "+name);
-}
 
-void PathPointCreationWidget::clicked(void){
-    qDebug() << "I have been clicked" << name;
-    if(pointsMenu != NULL){
-        pointsMenu->exec(QCursor::pos());
+    if(name.compare("tmpPoint") == 0){
+        setPointLabel(point.getPosition().getX(), point.getPosition().getY());
+    } else {
+        pointLabel->setText(QString::number(id)+". "+name);
     }
-}
-
-void PathPointCreationWidget::pointClicked(QAction *action){
-    qDebug() << "pointClicked called " << action->text();
-    setName(action->text());
-
-    for(int i = 0; i < pointInfos.size(); i++){
-        if(pointInfos.at(i).name.compare(action->text()) == 0){
-            posX = pointInfos.at(i).posX;
-            posY = pointInfos.at(i).posY;
-        }
-    }
-
-    emit pointSelected(this);
 }
 
 void PathPointCreationWidget::actionClicked(){

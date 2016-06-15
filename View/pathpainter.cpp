@@ -24,58 +24,60 @@ void PathPainter::reset(void){
 
 void PathPainter::refresh(void){
     clearPointViews();
-    PointView* startPointView = NULL;
-    PointView* endPointView = NULL;
-    for(int i = 0; i < pathVector.size(); i++){
-        if(pathVector.at(i).getName().size() > 0){
-            QPointF pointCoord = QPointF(pathVector.at(i).getPosition().getX(),
-                                                        pathVector.at(i).getPosition().getY());
-            PointView* pointView = &(*(pointViews->getPointViewFromPoint(pathVector.at(i))));
+    if(pathVector.size() > 0){
+        PointView* startPointView = NULL;
+        PointView* endPointView = NULL;
+        for(int i = 0; i < pathVector.size(); i++){
+            if(pathVector.at(i).getName().size() > 0){
+                QPointF pointCoord = QPointF(pathVector.at(i).getPosition().getX(),
+                                                            pathVector.at(i).getPosition().getY());
+                PointView* pointView = &(*(pointViews->getPointViewFromPoint(pathVector.at(i))));
 
-            if(pointView != NULL){
-                //qDebug() << "Found permanent pointView";
-            } else {
-                //qDebug() << "No permanent pointView";
+                if(pointView != NULL){
+                    //qDebug() << "Found permanent pointView";
+                } else {
+                    //qDebug() << "No permanent pointView";
 
-                MapView* mapView = (MapView*) parentItem();
-                QVector<PointView*> pointViewVector = mapView->getPathCreationPoints();
-                for(int j = 0; j < pointViewVector.size(); j++){
-                    if(pathVector.at(i).comparePos(pointViewVector.at(j)->getPoint()->getPosition().getX(),
-                                                   pointViewVector.at(j)->getPoint()->getPosition().getY())){
-                        //qDebug() << "But found temporary pointView";
+                    MapView* mapView = (MapView*) parentItem();
+                    QVector<PointView*> pointViewVector = mapView->getPathCreationPoints();
+                    for(int j = 0; j < pointViewVector.size(); j++){
+                        if(pathVector.at(i).comparePos(pointViewVector.at(j)->getPoint()->getPosition().getX(),
+                                                       pointViewVector.at(j)->getPoint()->getPosition().getY())){
+                            //qDebug() << "But found temporary pointView";
 
-                        pointView = pointViewVector.at(j);
+                            pointView = pointViewVector.at(j);
+                            pointView->setAddedToPath(true);
+                        }
+                    }
+                    if(pathVector.at(i).comparePos(mapView->getTmpPointView()->getPoint()->getPosition().getX(),
+                                                   mapView->getTmpPointView()->getPoint()->getPosition().getY())){
+
+                        //qDebug() << "But found the unique temporary pointView";
+                        pointView = mapView->getTmpPointView();
                         pointView->setAddedToPath(true);
                     }
                 }
-                if(pathVector.at(i).comparePos(mapView->getTmpPointView()->getPoint()->getPosition().getX(),
-                                               mapView->getTmpPointView()->getPoint()->getPosition().getY())){
 
-                    //qDebug() << "But found the unique temporary pointView";
-                    pointView = mapView->getTmpPointView();
-                    pointView->setAddedToPath(true);
+                if(i == 0){
+                    path = QPainterPath(pointCoord);
+                    startPointView = pointView;
+                } else {
+                    path.lineTo(pointCoord);
                 }
-            }
+                if(i == pathVector.size()-1)
+                    endPointView = pointView;
 
-            if(i == 0){
-                path = QPainterPath(pointCoord);
-                startPointView = pointView;
-            } else {
-                path.lineTo(pointCoord);
+                setPointViewPixmap(i, pointView);
             }
-            if(i == pathVector.size()-1)
-                endPointView = pointView;
-
-            setPointViewPixmap(i, pointView);
         }
-    }
-    setPath(path);
+        setPath(path);
 
-    if(*(startPointView->getPoint()) == *(endPointView->getPoint())){
-        startPointView->setPixmap(QPixmap(PIXMAP_START_STOP));
-    } else {
-        startPointView->setPixmap(QPixmap(PIXMAP_START));
-        endPointView->setPixmap(QPixmap(PIXMAP_STOP));
+        if(*(startPointView->getPoint()) == *(endPointView->getPoint())){
+            startPointView->setPixmap(QPixmap(PIXMAP_START_STOP));
+        } else {
+            startPointView->setPixmap(QPixmap(PIXMAP_START));
+            endPointView->setPixmap(QPixmap(PIXMAP_STOP));
+        }
     }
 }
 

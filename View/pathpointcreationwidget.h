@@ -4,7 +4,6 @@
 class QVBoxLayout;
 class QLabel;
 class QPushButton;
-class QMenu;
 class QLineEdit;
 
 #include "Model/points.h"
@@ -19,11 +18,6 @@ class QLineEdit;
 class PathPointCreationWidget: public QWidget{
     Q_OBJECT
 public:
-    struct PointInfo{
-        QString name;
-        float posX;
-        float posY;
-    };
 
     /**
      * @brief PathPointCreationWidget
@@ -78,7 +72,6 @@ private:
     float posX;
     float posY;
     QString name;
-    QMenu* pointsMenu;
     int id;
     Points points;
     Point point;
@@ -88,25 +81,11 @@ private:
     QLineEdit* timeEdit;
     QWidget* timeWidget;
     QWidget* actionWidget;
-    QVector<PointInfo> pointInfos;
 
 signals:
-    /**
-     * @brief pointSelected
-     * @param i
-     * @param name
-     * Signal emitted when a point is selected in the menu that display the list of points
-     */
-    void pointSelected(PathPointCreationWidget*);
     void saveEditSignal(PathPointCreationWidget*);
 
 private slots:
-    /**
-     * @brief PathPointCreationWidget::pointClicked
-     * @param action
-     * when we clicked on a point in the list
-     */
-    void pointClicked(QAction *action);
     void actionClicked();
     void saveEdit();
 };
