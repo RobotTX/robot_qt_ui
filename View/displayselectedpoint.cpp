@@ -10,7 +10,7 @@
 #include <QKeyEvent>
 #include "Model/xmlparser.h"
 
-DisplaySelectedPoint::DisplaySelectedPoint(QMainWindow *_parent, Points const& _points, std::shared_ptr<Point> const& _point)
+DisplaySelectedPoint::DisplaySelectedPoint(QMainWindow *_parent, Points const& _points, std::shared_ptr<Point> const& _point, const bool _goBackToGroup)
 {
     parent = _parent;
     points = _points;

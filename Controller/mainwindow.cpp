@@ -1265,12 +1265,8 @@ void MainWindow::editTmpPathPointSlot(int id, Point* point, int nbWidget){
 void MainWindow::editPointFromGroupMenu(void){
     std::shared_ptr<Group> group = points.findGroup(leftMenu->getDisplaySelectedGroup()->getNameLabel()->text());
     if(group){
-        qDebug() << "yo " << group->getName();
-        std::cout << group;
         int point = leftMenu->getDisplaySelectedGroup()->getPointButtonGroup()->getButtonGroup()->checkedId();
-        qDebug() << point;
         if(point != -1 and point < group->getPoints().size()){
-            qDebug() << point;
             leftMenu->getDisplaySelectedPoint()->setPoint(group->getPoints().at(point));
             leftMenu->getDisplaySelectedPoint()->displayPointInfo();
             leftMenu->getDisplaySelectedPoint()->getEditButton()->setChecked(true);
@@ -1281,7 +1277,7 @@ void MainWindow::editPointFromGroupMenu(void){
     } else qDebug() << "no group " << leftMenu->getDisplaySelectedGroup()->getNameLabel()->text() ;
 }
 
-void MainWindow::saveTmpEditPathPointSlot(){
+void MainWindow::saveTmpEditPathPointSlot(void){
     qDebug() << "saveTmpEditPathPointSlot called";
     pathCreationWidget->applySavePathPoint(editedPointView->getPoint()->getPosition().getX(), editedPointView->getPoint()->getPosition().getY());
     editedPointView->setFlag(QGraphicsItem::ItemIsMovable, false);
@@ -1291,6 +1287,19 @@ void MainWindow::saveTmpEditPathPointSlot(){
 }
 
 
-void MainWindow::moveTmpEditPathPointSlot(){
+void MainWindow::moveTmpEditPathPointSlot(void){
     pathCreationWidget->moveEditPathPoint(editedPointView->getPoint()->getPosition().getX(), editedPointView->getPoint()->getPosition().getY());
+}
+
+void MainWindow::displayPointInfoFromGroupMenu(void){
+    std::shared_ptr<Group> group = points.findGroup(leftMenu->getDisplaySelectedGroup()->getNameLabel()->text());
+    if(group){
+        int point = leftMenu->getDisplaySelectedGroup()->getPointButtonGroup()->getButtonGroup()->checkedId();
+        if(point != -1 and point < group->getPoints().size()){
+            leftMenu->getDisplaySelectedPoint()->setPoint(group->getPoints().at(point));
+            leftMenu->getDisplaySelectedPoint()->displayPointInfo();
+            leftMenu->getDisplaySelectedPoint()->show();
+            leftMenu->getDisplaySelectedGroup()->hide();
+        }
+    } else qDebug() << "no group " << leftMenu->getDisplaySelectedGroup()->getNameLabel()->text() ;
 }

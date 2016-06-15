@@ -21,7 +21,7 @@ class DisplaySelectedPoint: public QWidget
 {
         Q_OBJECT
 public:
-    DisplaySelectedPoint(QMainWindow* _parent, Points const& _points, const std::shared_ptr<Point> &_point = 0);
+    DisplaySelectedPoint(QMainWindow* _parent, Points const& _points, const std::shared_ptr<Point> &_point = 0, const bool _goBackToGroup = false);
     ~DisplaySelectedPoint();
 
     QPushButton* getBackButton(void) const { return backButton; }
@@ -69,6 +69,10 @@ private:
     std::shared_ptr<Point> point;
     QMainWindow* parent;
     Points points;
+
+    /// to determine whether we come from the group menu and have to go back to it if we click on the back button
+    /// or if we got here by clicking on the map
+    bool goBackToGroup;
 };
 
 #endif // DISPLAYSELECTEDPOINT_H

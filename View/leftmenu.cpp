@@ -83,20 +83,17 @@ qDebug() << "ok";
     connect(pathCreationWidget, SIGNAL(saveEditPathPoint()), parent, SLOT(saveTmpEditPathPointSlot()));
 
 
-    connect(displaySelectedPoint->getBackButton(), SIGNAL(clicked()), parent, SLOT(pointBtnEvent()));
+    connect(displaySelectedPoint->getBackButton(), SIGNAL(clicked(bool)), parent, SLOT(pointBtnEvent()));
     /// Last widget visited, used to know where to go back when pressing the return button
     lastWidget = NULL;
-
 
     connect(displaySelectedPoint->getMinusButton(), SIGNAL(clicked(bool)), parent, SLOT(removePointFromInformationMenu()));
     connect(displaySelectedPoint->getMapButton(), SIGNAL(clicked(bool)), parent, SLOT(displayPointMapEvent()));
     connect(displaySelectedPoint->getEditButton(), SIGNAL(clicked(bool)), parent, SLOT(editPointButtonEvent()));
 
-
     connect(displaySelectedGroup->getBackButton(), SIGNAL(clicked(bool)), parent, SLOT(pointBtnEvent()));
     connect(displaySelectedGroup->getEditButton(), SIGNAL(clicked(bool)), parent, SLOT(editPointFromGroupMenu()));
     connect(displaySelectedGroup->getEyeButton(), SIGNAL(clicked(bool)), parent, SLOT(displayPointInfoFromGroupMenu()));
-
 
     hide();
     leftLayout->setContentsMargins(0,0,0,0);
