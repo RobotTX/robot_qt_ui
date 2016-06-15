@@ -448,20 +448,48 @@ void MainWindow::mapBtnEvent(){
 
 void MainWindow::backGroupBtnEvent(){
     qDebug() << "backPointBtnEvent called";
+    /// uncheck the other buttons
+    pointsLeftWidget->getPlusButton()->setChecked(false);
+    pointsLeftWidget->getMinusButton()->setChecked(false);
+    pointsLeftWidget->getEditButton()->setChecked(false);
+    pointsLeftWidget->getEyeButton()->setChecked(false);
+    pointsLeftWidget->getMapButton()->setChecked(false);
+
+    /// we hide those in case the previous button clicked was the plus button
+    pointsLeftWidget->getGroupNameEdit()->hide();
+    pointsLeftWidget->getGroupNameLabel()->hide();
+
     pointsLeftWidget->hide();
     leftMenuWidget->show();
 }
 
 void MainWindow::plusGroupBtnEvent(){
     qDebug() << "plusGroupBtnEvent called";
+    /// uncheck the other buttons
+    pointsLeftWidget->getPlusButton()->setChecked(false);
+    pointsLeftWidget->getMinusButton()->setChecked(false);
+    pointsLeftWidget->getEditButton()->setChecked(false);
+    pointsLeftWidget->getEyeButton()->setChecked(false);
+    pointsLeftWidget->getMapButton()->setChecked(false);
+
     /// here we allow a user to create a new group
     pointsLeftWidget->getGroupNameEdit()->show();
     pointsLeftWidget->getGroupNameLabel()->show();
-
 }
 
 void MainWindow::minusGroupBtnEvent(){
     qDebug() << "minusPointBtnEvent called";
+
+    /// uncheck the other buttons
+    pointsLeftWidget->getPlusButton()->setChecked(false);
+    pointsLeftWidget->getEditButton()->setChecked(false);
+    pointsLeftWidget->getEyeButton()->setChecked(false);
+    pointsLeftWidget->getMapButton()->setChecked(false);
+
+    /// we hide those in case the previous button clicked was the plus button
+    pointsLeftWidget->getGroupNameEdit()->hide();
+    pointsLeftWidget->getGroupNameLabel()->hide();
+
     int checkedId = pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->checkedId();
     qDebug() << checkedId;
     /// we have to delete a group
@@ -476,6 +504,12 @@ void MainWindow::minusGroupBtnEvent(){
 }
 
 void MainWindow::editPointButtonEvent(){
+    /// uncheck the other buttons
+    pointsLeftWidget->getPlusButton()->setChecked(false);
+    pointsLeftWidget->getMinusButton()->setChecked(false);
+    pointsLeftWidget->getEyeButton()->setChecked(false);
+    pointsLeftWidget->getMapButton()->setChecked(false);
+
     qDebug() << "editPointBtnEvent called";
     if(leftMenu->getDisplaySelectedPoint()->getEditButton()->isChecked())
         leftMenu->getDisplaySelectedPoint()->getNameEdit()->setReadOnly(false);
@@ -485,6 +519,15 @@ void MainWindow::editPointButtonEvent(){
 
 void MainWindow::editGroupBtnEvent(){
     qDebug() << "editPointBtnEvent called";
+    /// uncheck the other buttons
+    pointsLeftWidget->getPlusButton()->setChecked(false);
+    pointsLeftWidget->getMinusButton()->setChecked(false);
+    pointsLeftWidget->getEyeButton()->setChecked(false);
+    pointsLeftWidget->getMapButton()->setChecked(false);
+
+    /// we hide those in case the previous button clicked was the plus button
+    pointsLeftWidget->getGroupNameEdit()->hide();
+    pointsLeftWidget->getGroupNameLabel()->hide();
 
 }
 
@@ -893,11 +936,9 @@ void MainWindow::askForDeleteGroupConfirmation(int index){
 void MainWindow::displayPointEvent(PointView* _pointView){
     qDebug() << "ok";
     qDebug() << _pointView->getPoint()->getName();
-
-    //leftMenu->getDisplaySelectedPoint()->displayPointInfo(_pointView->getPoint());
+    leftMenu->getDisplaySelectedPoint()->setOrigin(DisplaySelectedPoint::MAP);
     leftMenu->getDisplaySelectedPoint()->setPoint(_pointView->getPoint());
     leftMenu->getDisplaySelectedPoint()->displayPointInfo();
-    leftMenu->getDisplaySelectedPoint()->setOrigin(DisplaySelectedPoint::MAP);
     hideAllWidgets();
     leftMenu->getDisplaySelectedPoint()->show();
 }
@@ -908,11 +949,24 @@ void MainWindow::modifyGroupEvent(int groupIndex){
     if(groupIndex < points.getGroups().size()-1)
         qDebug() << "modifyGroupEvent";
         */
+    /// uncheck the other buttons
+    pointsLeftWidget->getPlusButton()->setChecked(false);
+    pointsLeftWidget->getMinusButton()->setChecked(false);
+    pointsLeftWidget->getEditButton()->setChecked(false);
+    pointsLeftWidget->getEyeButton()->setChecked(false);
+    pointsLeftWidget->getMapButton()->setChecked(false);
 }
 
 void MainWindow::displayGroupEvent(int index, bool display){
     qDebug() << display;
     qDebug() << index << " " << points.getGroups().size()-1;
+    /// uncheck the other buttons
+    pointsLeftWidget->getPlusButton()->setChecked(false);
+    pointsLeftWidget->getMinusButton()->setChecked(false);
+    pointsLeftWidget->getEditButton()->setChecked(false);
+    pointsLeftWidget->getEyeButton()->setChecked(false);
+    pointsLeftWidget->getMapButton()->setChecked(false);
+
     if(pointsLeftWidget->getMapButton()->isChecked()){
         if(display){
             if(index < points.getGroups().size()-1){
@@ -956,6 +1010,16 @@ void MainWindow::displayGroupEvent(int index, bool display){
 
 void MainWindow::displayGroupMapEvent(){
     pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->setExclusive(false);
+
+    /// uncheck the other buttons
+    pointsLeftWidget->getPlusButton()->setChecked(false);
+    pointsLeftWidget->getMinusButton()->setChecked(false);
+    pointsLeftWidget->getEditButton()->setChecked(false);
+    pointsLeftWidget->getEyeButton()->setChecked(false);
+
+    /// we hide those in case the previous button clicked was the plus button
+    pointsLeftWidget->getGroupNameEdit()->hide();
+    pointsLeftWidget->getGroupNameLabel()->hide();
 
     qDebug() << "displaying groups by clicking on the map button";
     if(pointsLeftWidget->getMapButton()->isChecked())
@@ -1040,6 +1104,16 @@ void MainWindow::addPathPoint(PointView* pointView){
 
 
 void MainWindow::displayPointsInGroup(void){
+    /// uncheck the other buttons
+    pointsLeftWidget->getPlusButton()->setChecked(false);
+    pointsLeftWidget->getMinusButton()->setChecked(false);
+    pointsLeftWidget->getEditButton()->setChecked(false);
+    pointsLeftWidget->getMapButton()->setChecked(false);
+
+    /// we hide those in case the previous button clicked was the plus button
+    pointsLeftWidget->getGroupNameEdit()->hide();
+    pointsLeftWidget->getGroupNameLabel()->hide();
+
     int groupIndex = pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->checkedId();
     /// it's a group
     if(groupIndex != -1 && groupIndex < points.getGroups().size()-1){
@@ -1053,9 +1127,6 @@ void MainWindow::displayPointsInGroup(void){
     }
     /// it's an isolated point
     else if(groupIndex >= points.getGroups().size()-1){
-
-        //leftMenu->getDisplaySelectedPoint()->displayPointInfo(
-        //            points.getGroups().at(points.getGroups().size()-1)->getPoints().at(groupIndex-points.getGroups().size()+1));
 
         leftMenu->getDisplaySelectedPoint()->setPoint(points.getGroups().at(points.getGroups().size()-1)->getPoints().at(groupIndex+1-points.getGroups().size()));
         leftMenu->getDisplaySelectedPoint()->displayPointInfo();
@@ -1140,6 +1211,13 @@ void MainWindow::removePointFromInformationMenu(void){
 }
 
 void MainWindow::pointInfoEvent(void){
+    qDebug() << "eye event in points menu";
+    /// uncheck the other buttons
+    pointsLeftWidget->getPlusButton()->setChecked(false);
+    pointsLeftWidget->getMinusButton()->setChecked(false);
+    pointsLeftWidget->getEditButton()->setChecked(false);
+    pointsLeftWidget->getMapButton()->setChecked(false);
+
     if(pointsLeftWidget->getEyeButton()->isChecked()){
         pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->setExclusive(true);
         int groupIndex = pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->checkedId();

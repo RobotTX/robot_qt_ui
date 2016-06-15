@@ -56,12 +56,6 @@ DisplaySelectedPoint::DisplaySelectedPoint(QMainWindow *_parent, Points const& _
     layout->addLayout(grid);
     layout->addLayout(eyeMapLayout);
 
-
-    //nameLabell = new QLabel("Name : ");
-    //nameLabell->setAlignment(Qt::AlignCenter);
-    ////nameLabell->setWordWrap(true);
-    //nameLayout->addWidget(nameLabell);
-
     nameEdit = new QLineEdit();
     nameEdit->setReadOnly(true);
     nameEdit->setStyleSheet("* { background-color: rgba(255, 0, 0, 0); }");
@@ -71,9 +65,6 @@ DisplaySelectedPoint::DisplaySelectedPoint(QMainWindow *_parent, Points const& _
 
     layout->addLayout(nameLayout);
 
-    //nameLabell->setWordWrap(true);
-    //layout->addWidget(nameLabel);
-
     posXLabel = new QLabel("X : ");
     posXLabel->setWordWrap(true);
     layout->addWidget(posXLabel);
@@ -82,8 +73,6 @@ DisplaySelectedPoint::DisplaySelectedPoint(QMainWindow *_parent, Points const& _
     posYLabel->setWordWrap(true);
     layout->addWidget(posYLabel);
 
-
-
     saveButton = new QPushButton("Save");
     layout->addWidget(saveButton);
     connect(this->getSaveButton(), SIGNAL(clicked(bool)), this, SLOT(updateNameUsingButton()));
@@ -91,7 +80,6 @@ DisplaySelectedPoint::DisplaySelectedPoint(QMainWindow *_parent, Points const& _
 }
 
 DisplaySelectedPoint::~DisplaySelectedPoint(){
-    //delete nameLabell;
     delete posXLabel;
     delete posYLabel;
     delete layout;
@@ -110,12 +98,10 @@ DisplaySelectedPoint::~DisplaySelectedPoint(){
 }
 
 void DisplaySelectedPoint::displayPointInfo(void){
-    ////nameLabell->setText("Name : ");
     posXLabel->setText("X : " + QString::number(point->getPosition().getX()));
     posYLabel->setText("Y : " + QString::number(point->getPosition().getY()));
     nameEdit->setText(point->getName());
 }
-
 
 void DisplaySelectedPoint::updateNameUsingKey(QString newName){
     emit nameChanged(point->getName(), newName);
@@ -129,7 +115,7 @@ void DisplaySelectedPoint::updateNameUsingButton(){
     point->setName(nameEdit->text());
     XMLParser parserPoints("/home/joan/Qt/QtProjects/gobot-software/gobot-software/points.xml");
     parserPoints.save(points);
-    /// so that the name cannot be changed anymore unless you click on the edit button again
+    /// so that the name cannot be changed anymore unless you click the edit button again
     nameEdit->setReadOnly(true);
     /// so that you cannot edit a new name unless you click the edit button again
     editButton->setChecked(false);
@@ -148,11 +134,6 @@ void DisplaySelectedPoint::keyPressEvent(QKeyEvent* event){
     }
 }
 
-void DisplaySelectedPoint::displayPointInfo(const std::shared_ptr<Point> _point){
-    //nameLabell->setText("Name : " + _point->getName());
-    posXLabel->setText("X : " + QString::number(_point->getPosition().getX()));
-    posYLabel->setText("Y : " + QString::number(_point->getPosition().getY()));
-}
 
 void DisplaySelectedPoint::setOrigin(const Origin _origin){
     origin = _origin;

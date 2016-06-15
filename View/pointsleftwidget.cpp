@@ -83,6 +83,7 @@ PointsLeftWidget::PointsLeftWidget(QMainWindow* _parent, Points const& points, b
     scrollArea->setWidget(groupButtonGroup);
 
     layout->addWidget(scrollArea);
+
     /// for the minus button
     connect(groupButtonGroup->getButtonGroup(), SIGNAL(buttonClicked(int)), parent, SLOT(removeGroupEvent(int)));
     /// for the edit button
@@ -91,18 +92,15 @@ PointsLeftWidget::PointsLeftWidget(QMainWindow* _parent, Points const& points, b
     connect(groupButtonGroup->getButtonGroup(), SIGNAL(buttonToggled(int, bool)), parent, SLOT(displayGroupEvent(int, bool)));
     /// for the eye button
     connect(groupButtonGroup->getButtonGroup(), SIGNAL(buttonClicked(int)), parent, SLOT(pointInfoEvent()));
-
-    connect(backButton, SIGNAL(clicked()), parent, SLOT(backGroupBtnEvent()));
-    connect(plusButton, SIGNAL(clicked()), parent, SLOT(plusGroupBtnEvent()));
-    connect(minusButton, SIGNAL(clicked()), parent, SLOT(minusGroupBtnEvent()));
-
-    //connect(editButton, SIGNAL(clicked()), parent, SLOT(editGroupBtnEvent()));
-
-    connect(editButton, SIGNAL(clicked()), parent, SLOT(editGroupBtnEvent()));
-
-    connect(mapButton, SIGNAL(clicked()), parent, SLOT(displayGroupMapEvent()));
+    /// for the back button
     connect(backToGroupsButton, SIGNAL(clicked()), parent, SLOT(backToGroupsButtonEvent()));
+
+    connect(backButton, SIGNAL(clicked(bool)), parent, SLOT(backGroupBtnEvent()));
+    connect(plusButton, SIGNAL(clicked(bool)), parent, SLOT(plusGroupBtnEvent()));
+    connect(minusButton, SIGNAL(clicked(bool)), parent, SLOT(minusGroupBtnEvent()));
+    connect(editButton, SIGNAL(clicked()), parent, SLOT(editGroupBtnEvent()));
     connect(eyeButton, SIGNAL(clicked()), parent, SLOT(displayPointsInGroup()));
+    connect(mapButton, SIGNAL(clicked()), parent, SLOT(displayGroupMapEvent()));
 
     setMaximumWidth(_parent->width()*4/10);
     setMinimumWidth(_parent->width()*4/10);

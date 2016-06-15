@@ -41,7 +41,6 @@ public:
     void displayPointInfo(void);
     void mousePressEvent(QEvent* event);
     void keyPressEvent(QKeyEvent* event);
-    void displayPointInfo(const std::shared_ptr<Point> _point);
     void setOrigin(const Origin _origin);
 
 private slots:
