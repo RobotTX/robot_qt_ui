@@ -21,7 +21,7 @@
 #include <QDebug>
 #include "View/pointbuttongroup.h"
 
-LeftMenu::LeftMenu(QMainWindow* parent, Points const& points, Robots * const &robots, PointsView * const &pointViews){
+LeftMenu::LeftMenu(QMainWindow* parent, Points const& points, const std::shared_ptr<Robots> &robots, PointsView * const &pointViews){
     leftLayout = new QVBoxLayout();
 
     /// to display the information relative to a point

@@ -35,6 +35,8 @@
 #include "View/pointbuttongroup.h"
 #include "View/verticalscrollarea.h"
 
+#define XML_PATH /home/joan/Qt/QtProjects/gobot-software/gobot-software/points.xml
+
 //TODO  stop threads/connections when scanning the map is finished/the user stop it
 
 /**
@@ -45,10 +47,10 @@
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow) {
     ui->setupUi(this);
 
-    map = new Map();
+    map = std::shared_ptr<Map>(new Map());
 
     map->setMapFromFile(":/maps/map.pgm");
-    robots = new Robots();
+    robots = std::shared_ptr<Robots>(new Robots());
     scene = new QGraphicsScene(this);
     graphicsView = new CustomQGraphicsView(scene, this);
     selectedRobot = NULL;
@@ -117,8 +119,6 @@ MainWindow::~MainWindow(){
     delete rightLayout;
     delete toolbar;
     delete graphicsView;
-    delete map;
-    delete robots;
     delete scene;
     delete mapPixmapItem;
     delete menuBar;
@@ -261,7 +261,7 @@ void MainWindow::initializeLeftMenu(){
 
 void MainWindow::initializeRobots(){
     //TODO For dev, need to come from XML
-    Robot* robot1 = new Robot("Roboty", "localhost", PORT_CMD, this);
+    std::shared_ptr<Robot> robot1(new Robot("Roboty", "localhost", PORT_CMD, this));
     robot1->setWifi("Swaghetti Yolognaise");
     RobotView* robotView1 = new RobotView(robot1);
     connect(robotView1, SIGNAL(setSelectedSignal(RobotView*)), this, SLOT(setSelectedRobot(RobotView*)));
@@ -269,7 +269,7 @@ void MainWindow::initializeRobots(){
     robotView1->setParentItem(mapPixmapItem);
     robots->add(robotView1);
 
-    Robot* robot2 = new Robot("Roboto", "192.168.4.176", PORT_CMD, this);
+    std::shared_ptr<Robot> robot2(new Robot("Roboto", "192.168.4.176", PORT_CMD, this));
     robot2->setWifi("Swaghetti Yolognaise");
     RobotView* robotView2 = new RobotView(robot2);
     connect(robotView2, SIGNAL(setSelectedSignal(RobotView*)), this, SLOT(setSelectedRobot(RobotView*)));
@@ -277,7 +277,7 @@ void MainWindow::initializeRobots(){
     robotView2->setParentItem(mapPixmapItem);
     robots->add(robotView2);
 
-    Robot* robot3 = new Robot("Robota", "192.168.4.155", PORT_CMD, this);
+    std::shared_ptr<Robot> robot3(new Robot("Robota", "192.168.4.155", PORT_CMD, this));
     robot3->setWifi("Swaghetti Yolognaise");
     RobotView* robotView3 = new RobotView(robot3);
     connect(robotView3, SIGNAL(setSelectedSignal(RobotView*)), this, SLOT(setSelectedRobot(RobotView*)));
@@ -348,7 +348,7 @@ void MainWindow::stopSelectedRobot(int robotNb){
                         bottomLayout->getPlayRobotBtnGroup()->button(robotNb)->setIcon(QIcon(":/icons/play.png"));
                     }
                     robots->getRobotsVector().at(robotNb)->getRobot()->getPath().clear();
-                    robots->getRobotsVector().at(robotNb)->getRobot()->setPath(QVector<PathPoint*>());
+                    robots->getRobotsVector().at(robotNb)->getRobot()->setPath(std::vector<std::shared_ptr<PathPoint>>());
                     qDebug() << "Path suppr, new path size : " << robots->getRobotsVector().at(robotNb)->getRobot()->getPath().size();
                     qDebug() << "Points size after : " << points.getGroups().at(0)->getPoints().size();
                     if(robots->getRobotsVector().at(robotNb)->getRobot()->getName().compare(selectedRobot->getRobot()->getName()) == 0){
@@ -891,6 +891,7 @@ void MainWindow::askForDeletePointConfirmation(int index){
             points.getGroups().at(pointsLeftWidget->getIndexLastGroupClicked())->removePoint(index);
             XMLParser parserPoints("/home/joan/Qt/QtProjects/gobot-software/gobot-software/points.xml");
             parserPoints.save(points);
+            leftMenu->getDisplaySelectedPoint()->getMinusButton()->setChecked(false);
         }
         break;
         default:

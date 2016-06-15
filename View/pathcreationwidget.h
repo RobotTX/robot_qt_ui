@@ -36,7 +36,7 @@ public:
     ~PathCreationWidget();
     void initialisationPathPoint(PathPointCreationWidget* pathPoint);
 
-    void setSelectedRobot(Robot* const _selectedRobot){ selectedRobot = _selectedRobot; }
+    void setSelectedRobot(std::shared_ptr<Robot> const& _selectedRobot){ selectedRobot = _selectedRobot; }
     void resetWidget(void);
     void supprItem(QListWidgetItem* item);
 
@@ -95,7 +95,7 @@ private:
     int idPoint;
     PathPointList* pathPointsList;
     Points points;
-    Robot* selectedRobot;
+    std::shared_ptr<Robot> selectedRobot;
     CheckState state;
     QPushButton* newBtn;
     QPushButton* supprBtn;

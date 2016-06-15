@@ -4,7 +4,7 @@
 #include <QThread>
 #include <QString>
 #include <QtNetwork/QTcpSocket>
-
+#include <memory>
 /**
  * @brief The ScanMapThread class
  * The thread connect to the robot at the given ipAddress & port to receive the map the robot
@@ -18,8 +18,7 @@ public:
      * @param newipAddress
      * @param newPort
      */
-    ScanMapThread(QString ipAddress, int port);
-    ~ScanMapThread();
+    ScanMapThread(const QString ipAddress, const int port);
 
     /**
      * @brief run
@@ -69,7 +68,7 @@ signals:
     void valueChangedMap(QByteArray);
 
 private :
-    QTcpSocket* socketMap;
+    std::shared_ptr<QTcpSocket>socketMap;
     QString ipAddress;
     int port;
     /**

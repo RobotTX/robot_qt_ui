@@ -7,7 +7,7 @@ class QTcpSocket;
 #include <QThread>
 #include <QString>
 #include <QtNetwork/QTcpSocket>
-
+#include <memory>
 
 /**
  * @brief The CmdRobotThread class
@@ -22,8 +22,7 @@ public:
      * @param ipAddress
      * @param port
      */
-    CmdRobotThread(QString ipAddress, int port, QString _robotName);
-    ~CmdRobotThread();
+    CmdRobotThread(const QString ipAddress, const int port, const QString _robotName);
 
     /**
      * @brief run
@@ -66,7 +65,7 @@ private slots:
     void disconnectedSlot();
 
 private :
-    QTcpSocket* socketCmd;
+    std::shared_ptr<QTcpSocket> socketCmd;
     QString ipAddress;
     int port;
     QString robotName;

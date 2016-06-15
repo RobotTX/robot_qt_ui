@@ -129,7 +129,6 @@ PathCreationWidget::~PathCreationWidget(){
     delete newBtn;
     delete supprBtn;
     delete editBtn;
-    delete selectedRobot;
     delete previousItem;
 }
 
@@ -325,7 +324,7 @@ void PathCreationWidget::savePath(){
     } else {
 
         qDebug() << "No error, ready to save" << pointList.size() << pathPointsList->count();
-        QVector<PathPoint*> path;
+        std::vector<std::shared_ptr<PathPoint>> path;
         for(int i = 0; i < pathPointsList->count(); i++){
 
             /// we try to get the point associated with the path point
@@ -347,7 +346,7 @@ void PathCreationWidget::savePath(){
                         waitTime = pathPointWidget2->getTimeEdit()->text().toInt();
                 }
 
-                path.push_back(new PathPoint(point, action, waitTime));
+                path.push_back(std::shared_ptr<PathPoint>(new PathPoint(point, action, waitTime)));
 
             } else {
 
@@ -369,12 +368,12 @@ void PathCreationWidget::savePath(){
                     if(i != (pathPointsList->count() - 1))
                         waitTime = pathPointWidget2->getTimeEdit()->text().toInt();
                 }
-                path.push_back(new PathPoint(point, action, waitTime));
+                path.push_back(std::shared_ptr<PathPoint>(new PathPoint(point, action, waitTime)));
             }
         }
         qDebug() << "Path created for robot" << selectedRobot->getName();
 
-        for(int i = 0; i < path.size(); i++){
+        for(size_t i = 0; i < path.size(); i++){
             qDebug() << i << " : " << path.at(i)->getPoint().getName()
                      << path.at(i)->getPoint().getPosition().getX()
                      << path.at(i)->getPoint().getPosition().getY()

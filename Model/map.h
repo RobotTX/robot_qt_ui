@@ -14,11 +14,11 @@ public:
     Map();
 
     /// Getters
-    QImage getMapImage() const { return mapImage; }
-    float getResolution() const { return resolution; }
-    int getWidth() const { return width; }
-    int getHeight() const { return height; }
-    Position getOrigin() const { return origin; }
+    QImage getMapImage(void) const { return mapImage; }
+    float getResolution(void) const { return resolution; }
+    int getWidth(void) const { return width; }
+    int getHeight(void) const { return height; }
+    Position getOrigin(void) const { return origin; }
 
     /// Setters
     void setResolution(const float _resolution) { resolution = _resolution; }
@@ -31,7 +31,7 @@ public:
      * @param mapArrays
      * Create the QImage mapImage from an array of byte
      */
-    void setMapFromArray(const QByteArray mapArrays);
+    void setMapFromArray(const QByteArray& mapArrays);
 
     /**
      * @brief setMapFromFile

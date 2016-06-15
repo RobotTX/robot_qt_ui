@@ -11,7 +11,7 @@ class QLineEdit;
 class QProgressBar;
 
 #include <QWidget>
-
+#include <memory>
 /**
  * @brief The EditSelectedRobotWidget class
  * The class which display the menu to edit a robot
@@ -19,11 +19,11 @@ class QProgressBar;
 class EditSelectedRobotWidget: public QWidget{
     Q_OBJECT
 public:
-    EditSelectedRobotWidget(QMainWindow* parent, Robots * const robots);
+    EditSelectedRobotWidget(QMainWindow* parent, std::shared_ptr<Robots> const robots);
     ~EditSelectedRobotWidget();
 
     void setSelectedRobot(RobotView * const robotView);
-    void setRobots(Robots* const _robots){robots = _robots;}
+    void setRobots(std::shared_ptr<Robots> const _robots){robots = _robots;}
     void editName(void);
     QLineEdit* getNameEdit(void){ return nameEdit; }
 
@@ -39,7 +39,7 @@ private:
     QLabel* wifiNameLabel;
     QPushButton* addPathBtn;
     QLabel* ipAddressLabel;
-    Robots* robots;
+    std::shared_ptr<Robots> robots;
     QPushButton* saveBtn;
 
 private slots:

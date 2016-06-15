@@ -1,29 +1,25 @@
 #include "scanrobotthread.h"
 
 
-ScanRobotThread::ScanRobotThread(QString newipAddress, int newPort){
+ScanRobotThread::ScanRobotThread(const QString newipAddress, const int newPort){
     ipAddress = newipAddress;
     port = newPort;
-}
-
-ScanRobotThread::~ScanRobotThread(){
-    delete socketRobot;
 }
 
 void ScanRobotThread::run(){
     qDebug() << "Robot Thread";
 
-    socketRobot = new QTcpSocket( );
+    socketRobot = std::shared_ptr<QTcpSocket>(new QTcpSocket());
 
     /// Connect the signal readyRead which tell us when data arrived to the function that treat them
-    connect( socketRobot, SIGNAL(readyRead()), SLOT(readTcpData()) );
+    connect(&(*socketRobot), SIGNAL(readyRead()), SLOT(readTcpData()) );
     /// Connect the signal hostFound which trigger when we find the host
     //connect( socketRobot, SIGNAL(hostFound()), SLOT(hostFoundSlot()) );
     /// Connect the signal connected which trigger when we are connected to the host
-    connect( socketRobot, SIGNAL(connected()), SLOT(connectedSlot()) );
+    connect(&(*socketRobot), SIGNAL(connected()), SLOT(connectedSlot()) );
     //connect( socketRobot, SIGNAL(error(QAbstractSocket::SocketError)), SLOT(errorSlot(QAbstractSocket::SocketError)) );
     /// Connect the signal disconnected which trigger when we are disconnected from the host
-    connect( socketRobot, SIGNAL(disconnected()),this, SLOT(disconnectedSlot()));
+    connect(&(*socketRobot), SIGNAL(disconnected()),this, SLOT(disconnectedSlot()));
 
     /// Connect to the host
     socketRobot->connectToHost(ipAddress, port);

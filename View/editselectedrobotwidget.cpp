@@ -11,7 +11,7 @@
 #include <QLineEdit>
 #include <QDebug>
 
-EditSelectedRobotWidget::EditSelectedRobotWidget(QMainWindow* parent, Robots * const _robots){
+EditSelectedRobotWidget::EditSelectedRobotWidget(QMainWindow* parent, const std::shared_ptr<Robots> _robots){
     robots = _robots;
     layout = new QVBoxLayout();
 

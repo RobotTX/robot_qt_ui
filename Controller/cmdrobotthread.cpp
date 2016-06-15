@@ -1,28 +1,24 @@
 #include "cmdrobotthread.h"
 
-CmdRobotThread::CmdRobotThread(QString newipAddress, int newPort, QString _robotName){
+CmdRobotThread::CmdRobotThread(const QString newipAddress, const int newPort, const QString _robotName){
     ipAddress = newipAddress;
     port = newPort;
     robotName = _robotName;
     connected = false;
 }
 
-CmdRobotThread::~CmdRobotThread(){
-    delete socketCmd;
-}
-
 void CmdRobotThread::run(){
     qDebug() << "Command Thread";
 
-    socketCmd = new QTcpSocket();
+    socketCmd = std::shared_ptr<QTcpSocket>(new QTcpSocket());
 
     /// Connect the signal hostFound which trigger when we find the host
     //connect( socketCmd, SIGNAL(hostFound()), SLOT(hostFoundSlot()) );
     /// Connect the signal connected which trigger when we are connected to the host
-    connect( socketCmd, SIGNAL(connected()), SLOT(connectedSlot()) );
+    connect(&(*socketCmd), SIGNAL(connected()), SLOT(connectedSlot()) );
     //connect( socketCmd, SIGNAL(error(QAbstractSocket::SocketError)), SLOT(errorSlot(QAbstractSocket::SocketError)) );
     /// Connect the signal disconnected which trigger when we are disconnected from the host
-    connect( socketCmd, SIGNAL(disconnected()), SLOT(disconnectedSlot()));
+    connect(&(*socketCmd), SIGNAL(disconnected()), SLOT(disconnectedSlot()));
 
     /// Connect to the host
     socketCmd->connectToHost(ipAddress, port);

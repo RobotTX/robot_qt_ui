@@ -1,28 +1,24 @@
 #include "scanmapthread.h"
-ScanMapThread::ScanMapThread(QString newipAddress, int newPort){
+ScanMapThread::ScanMapThread(const QString newipAddress, const int newPort){
     ipAddress = newipAddress;
     port = newPort;
     data = QByteArray();
 }
 
-ScanMapThread::~ScanMapThread(){
-    delete socketMap;
-}
-
 void ScanMapThread::run(){
     qDebug() << "Map Thread";
 
-    socketMap = new QTcpSocket( );
+    socketMap = std::shared_ptr<QTcpSocket>(new QTcpSocket());
 
     /// Connect the signal readyRead which tell us when data arrived to the function that treat them
-    connect( socketMap, SIGNAL(readyRead()), SLOT(readTcpData()) );
+    connect(&(*socketMap), SIGNAL(readyRead()), SLOT(readTcpData()) );
     /// Connect the signal hostFound which trigger when we find the host
     //connect( socketMap, SIGNAL(hostFound()), SLOT(hostFoundSlot()) );
     /// Connect the signal connected which trigger when we are connected to the host
-    connect( socketMap, SIGNAL(connected()), SLOT(connectedSlot()) );
+    connect(&(*socketMap), SIGNAL(connected()), SLOT(connectedSlot()) );
     //connect( socketMap, SIGNAL(error(QAbstractSocket::SocketError)), SLOT(errorSlot(QAbstractSocket::SocketError)) );   
     /// Connect the signal disconnected which trigger when we are disconnected from the host
-    connect( socketMap, SIGNAL(disconnected()),this, SLOT(disconnectedSlot()));
+    connect(&(*socketMap), SIGNAL(disconnected()),this, SLOT(disconnectedSlot()));
 
     /// Connect to the host
     socketMap->connectToHost(ipAddress, port);

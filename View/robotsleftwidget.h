@@ -10,6 +10,7 @@ class QMainWindow;
 
 #include <QPushButton>
 #include <QWidget>
+#include <memory>
 
 /**
  * @brief The RobotsLeftWidget class
@@ -28,7 +29,7 @@ public:
     RobotBtnGroup* getBtnCheckGroup(void) const { return btnCheckGroup; }
 
     ///Setters
-    void setRobots(Robots* const& robots);
+    void setRobots(std::shared_ptr<Robots> const& robots);
     void setCheckBtnStatus(const bool status) { checkBtn->setChecked(status); }
     void setEditBtnStatus(const bool status) { editBtn->setChecked(status); }
 
@@ -37,13 +38,13 @@ public:
      * @param robots
      * Update the list of robots when needed (e.g. : when a robot's name is edited)
      */
-    void updateRobots(Robots* const& robots);
+    void updateRobots(std::shared_ptr<Robots> const& robots);
 
 
 private:
     QMainWindow* parent;
     QVBoxLayout* layout;
-    Robots* robots;
+    std::shared_ptr<Robots> robots;
     QVBoxLayout* robotsLayout;
     RobotBtnGroup* btnGroup;
     RobotBtnGroup* btnCheckGroup;

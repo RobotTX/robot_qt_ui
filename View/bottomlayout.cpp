@@ -10,7 +10,7 @@
 #include <QMainWindow>
 #include <QButtonGroup>
 
-BottomLayout::BottomLayout(QMainWindow* parent, Robots* const& robots){
+BottomLayout::BottomLayout(QMainWindow* parent, const std::shared_ptr<Robots> &robots){
     layout = new QHBoxLayout();
 
     /// We create a widget and a scroll area
@@ -49,7 +49,7 @@ BottomLayout::BottomLayout(QMainWindow* parent, Robots* const& robots){
 
     /// Creation of the second collumn, with the labels containing the path of the robot
     for(int i = 0; i < robotsVector.size(); i++){
-        QVector<PathPoint*> path = robotsVector.at(i)->getRobot()->getPath();
+        std::vector<std::shared_ptr<PathPoint>> path = robotsVector.at(i)->getRobot()->getPath();
         QString pathStr = QString("");
         for(int j = 0; j < path.size(); j++){
             if(j != 0){

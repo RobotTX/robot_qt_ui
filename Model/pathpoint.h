@@ -30,19 +30,19 @@ public:
 private:
     /**
      * @brief point
-     * The point where the robot go
+     * The point where the robot goes
      */
     Point point;
 
     /**
      * @brief action
-     * The action the robot need to do after ariving to the point
+     * The action the robot needs to do after arriving to the point
      */
     Action action;
 
     /**
      * @brief waitTime
-     * How long the robot need to wait if its action is to wait
+     * How long the robot needs to wait if its action is to wait
      */
     int waitTime;
 };

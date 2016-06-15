@@ -144,8 +144,8 @@ private:
     QVBoxLayout* rightLayout;
     QToolBar* toolbar;
     CustomQGraphicsView* graphicsView;
-    Map* map;
-    Robots* robots;
+    std::shared_ptr<Map> map;
+    std::shared_ptr<Robots> robots;
     QGraphicsScene* scene;
     MapView* mapPixmapItem;
     QMenuBar* menuBar;

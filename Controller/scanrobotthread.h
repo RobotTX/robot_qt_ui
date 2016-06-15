@@ -4,6 +4,7 @@
 #include <QThread>
 #include <QString>
 #include <QtNetwork/QTcpSocket>
+#include <memory>
 
 /**
  * @brief The RobotThread class
@@ -18,8 +19,7 @@ public:
      * @param ipAddress
      * @param port
      */
-    ScanRobotThread(QString ipAddress, int port);
-    ~ScanRobotThread();
+    ScanRobotThread(const QString ipAddress, const int port);
 
     /**
      * @brief run
@@ -70,7 +70,7 @@ signals:
     void valueChangedRobot(float posX, float posY, float ori);
 
 private :
-    QTcpSocket* socketRobot;
+    std::shared_ptr<QTcpSocket> socketRobot;
     QString ipAddress;
     int port;
 

@@ -4,6 +4,7 @@
 class Robot;
 class QGraphicsSceneMouseEvent;
 
+#include <memory>
 #include "Model/position.h"
 #include <QObject>
 #include <QGraphicsPolygonItem>
@@ -20,14 +21,14 @@ class QGraphicsSceneMouseEvent;
 class RobotView: public QObject, public QGraphicsPolygonItem {
     Q_OBJECT
 public:
-    RobotView (Robot* const& _robot);
+    RobotView (const std::shared_ptr<Robot> &_robot);
     RobotView ();
-    ~RobotView();
+
     /// Getter
-    Robot* getRobot(void) { return robot; }
+    std::shared_ptr<Robot> getRobot(void) { return robot; }
 
     /// Setters
-    void setRobot(Robot* const& _robot) { robot = _robot; }
+    void setRobot(std::shared_ptr<Robot> const& _robot) { robot = _robot; }
     void setPosition(const Position _position);
     void setPosition(const float x, const float y);
     void setOrientation(const float ori);
@@ -48,7 +49,7 @@ protected:
     void hoverLeaveEvent(QGraphicsSceneHoverEvent *event);
 
 private:
-    Robot* robot;
+    std::shared_ptr<Robot> robot;
     bool selected;
     bool shown;
     GraphicItemState state;

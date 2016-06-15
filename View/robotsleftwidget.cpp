@@ -57,7 +57,7 @@ RobotsLeftWidget::~RobotsLeftWidget(){
 }
 
 
-void RobotsLeftWidget::setRobots(Robots * const &_robots){
+void RobotsLeftWidget::setRobots(std::shared_ptr<Robots> const &_robots){
     robots = _robots;
 
     /// Clickable buttons group to select/edit a robot
@@ -82,7 +82,7 @@ void RobotsLeftWidget::setRobots(Robots * const &_robots){
 }
 
 
-void RobotsLeftWidget::updateRobots(Robots* const& _robots){
+void RobotsLeftWidget::updateRobots(std::shared_ptr<Robots> const& _robots){
     scrollLayout->removeWidget(btnGroup);
     delete btnGroup;
     scrollLayout->removeWidget(btnCheckGroup);

@@ -21,6 +21,7 @@ class QVBoxLayout;
 class QMainWindow;
 
 #include <QWidget>
+#include <memory>
 
 /**
  * @brief The LeftMenu class
@@ -29,7 +30,7 @@ class QMainWindow;
 class LeftMenu: public QWidget{
     Q_OBJECT
 public:
-    LeftMenu(QMainWindow* parent, Points const& points, Robots* const& robots, PointsView* const& pointViews);
+    LeftMenu(QMainWindow* parent, Points const& points, std::shared_ptr<Robots> const& robots, PointsView* const& pointViews);
     ~LeftMenu();
     QWidget* getLastWidget() const {return lastWidget;}
 

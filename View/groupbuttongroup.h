@@ -23,7 +23,6 @@ public:
 private:
     QVBoxLayout* layout;
     QButtonGroup* buttonGroup;
-
 };
 
 #endif // GROUPBUTTONGROUP_H

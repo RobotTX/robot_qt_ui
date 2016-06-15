@@ -16,7 +16,7 @@ void Map::setMapFromFile(const QString fileName){
     height = mapImage.height();
 }
 
-void Map::setMapFromArray(const QByteArray mapArrays){
+void Map::setMapFromArray(const QByteArray& mapArrays){
     mapImage = QImage(width, height, QImage::Format_Grayscale8);
     int index = 0;
     /// We set each pixel of the image, the data received being

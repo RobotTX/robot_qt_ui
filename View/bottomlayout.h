@@ -9,6 +9,7 @@ class QLabel;
 class QButtonGroup;
 class QMainWindow;
 
+#include <memory>
 #include <QWidget>
 #include <QVector>
 
@@ -22,7 +23,7 @@ class QMainWindow;
 class BottomLayout: public QWidget
 {
 public:
-    BottomLayout(QMainWindow* parent, Robots* const& robots);
+    BottomLayout(QMainWindow* parent, std::shared_ptr<Robots> const& robots);
     ~BottomLayout();
 
     /// Getters

@@ -23,7 +23,7 @@ PathWidget::~PathWidget(){
 void PathWidget::setSelectedRobot(RobotView *const robotView){
 
     /// Get the path of the robot
-    QVector<PathPoint*> path = robotView->getRobot()->getPath();
+    std::vector<std::shared_ptr<PathPoint>> path = robotView->getRobot()->getPath();
 
     clearLayout(layout);
     for(int i = 0; i < path.size(); i++){

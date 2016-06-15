@@ -1,28 +1,24 @@
 #include "scanmetadatathread.h"
 
-ScanMetadataThread::ScanMetadataThread(QString newipAddress, int newPort){
+ScanMetadataThread::ScanMetadataThread(const QString newipAddress, const int newPort){
     ipAddress = newipAddress;
     port = newPort;
-}
-
-ScanMetadataThread::~ScanMetadataThread(){
-    delete socketMetadata;
 }
 
 void ScanMetadataThread::run(){
     qDebug() << "Metadata Thread";
 
-    socketMetadata = new QTcpSocket( );
+    socketMetadata = std::shared_ptr<QTcpSocket>(new QTcpSocket());
 
     /// Connect the signal readyRead which tell us when data arrived to the function that treat them
-    connect( socketMetadata, SIGNAL(readyRead()), SLOT(readTcpData()) );
+    connect(&(*socketMetadata), SIGNAL(readyRead()), SLOT(readTcpData()) );
     /// Connect the signal hostFound which trigger when we find the host
     //connect( socketMetadata, SIGNAL(hostFound()), SLOT(hostFoundSlot()) );
     /// Connect the signal connected which trigger when we are connected to the host
-    connect( socketMetadata, SIGNAL(connected()), SLOT(connectedSlot()) );
+    connect(&(*socketMetadata), SIGNAL(connected()), SLOT(connectedSlot()) );
     //connect( socketMetadata, SIGNAL(error(QAbstractSocket::SocketError)), SLOT(errorSlots(QAbstractSocket::SocketError)) );
     /// Connect the signal disconnected which trigger when we are disconnected from the host
-    connect( socketMetadata, SIGNAL(disconnected()),this, SLOT(disconnectedSlot()));
+    connect(&(*socketMetadata), SIGNAL(disconnected()),this, SLOT(disconnectedSlot()));
     /// Connect to the host
     socketMetadata->connectToHost(ipAddress, port);
 
