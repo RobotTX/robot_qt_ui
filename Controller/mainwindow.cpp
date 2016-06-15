@@ -537,10 +537,13 @@ void MainWindow::minusGroupBtnEvent(){
 
 void MainWindow::editPointButtonEvent(){
     qDebug() << "editPointBtnEvent called";
+    /*
     if(leftMenu->getDisplaySelectedPoint()->getEditButton()->isChecked())
         leftMenu->getDisplaySelectedPoint()->getNameEdit()->setReadOnly(false);
     else
         leftMenu->getDisplaySelectedPoint()->getNameEdit()->setReadOnly(true);
+        */
+    leftMenu->getDisplaySelectedPoint()->getNameEdit()->setReadOnly(false);
 }
 
 void MainWindow::editGroupBtnEvent(){

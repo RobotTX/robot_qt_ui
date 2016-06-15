@@ -21,6 +21,7 @@ DisplaySelectedGroup::DisplaySelectedGroup(QMainWindow *_parent, const Points& _
 
     plusButton = new QPushButton(QIcon(":/icons/plus.png"),"");
     plusButton->setIconSize(_parent->size()/10);
+    plusButton->setToolTip("To add a point click on the map");
     plusButton->setEnabled(false);
 
     minusButton = new QPushButton(QIcon(":/icons/minus.png"),"");
@@ -80,6 +81,6 @@ DisplaySelectedGroup::~DisplaySelectedGroup(){
 }
 
 void DisplaySelectedGroup::setName(const QString _name){
-    name->setText("Name : " + _name);
+    name->setText(_name);
     name->setWordWrap(true);
 }
