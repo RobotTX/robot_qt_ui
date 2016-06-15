@@ -56,6 +56,7 @@ DisplaySelectedPoint::DisplaySelectedPoint(QMainWindow *_parent, Points const& _
     layout->addLayout(grid);
     layout->addLayout(eyeMapLayout);
 
+
     //nameLabell = new QLabel("Name : ");
     //nameLabell->setAlignment(Qt::AlignCenter);
     ////nameLabell->setWordWrap(true);
@@ -64,7 +65,7 @@ DisplaySelectedPoint::DisplaySelectedPoint(QMainWindow *_parent, Points const& _
     nameEdit = new QLineEdit();
     nameEdit->setReadOnly(true);
     nameEdit->setStyleSheet("* { background-color: rgba(255, 0, 0, 0); }");
-    connect(this->getNameEdit(), SIGNAL(textChanged(QString)), this, SLOT(updateName(QString)));
+    connect(this->getNameEdit(), SIGNAL(textChanged(QString)), this, SLOT(updateNameUsingKey(QString)));
 
     nameLayout->addWidget(nameEdit);
 
@@ -80,6 +81,12 @@ DisplaySelectedPoint::DisplaySelectedPoint(QMainWindow *_parent, Points const& _
     posYLabel = new QLabel("Y : ");
     posYLabel->setWordWrap(true);
     layout->addWidget(posYLabel);
+
+
+
+    saveButton = new QPushButton("Save");
+    layout->addWidget(saveButton);
+    connect(this->getSaveButton(), SIGNAL(clicked(bool)), this, SLOT(updateNameUsingButton()));
     setLayout(layout);
 }
 
@@ -99,6 +106,7 @@ DisplaySelectedPoint::~DisplaySelectedPoint(){
     delete nameEdit;
     delete nameLayout;
     delete parent;
+    delete saveButton;
 }
 
 void DisplaySelectedPoint::displayPointInfo(void){
@@ -108,11 +116,23 @@ void DisplaySelectedPoint::displayPointInfo(void){
     nameEdit->setText(point->getName());
 }
 
-void DisplaySelectedPoint::updateName(QString newName){
+
+void DisplaySelectedPoint::updateNameUsingKey(QString newName){
     emit nameChanged(point->getName(), newName);
     point->setName(newName);
     XMLParser parserPoints("/home/joan/Qt/QtProjects/gobot-software/gobot-software/points.xml");
     parserPoints.save(points);
+}
+
+void DisplaySelectedPoint::updateNameUsingButton(){
+    emit nameChanged(point->getName(), nameEdit->text());
+    point->setName(nameEdit->text());
+    XMLParser parserPoints("/home/joan/Qt/QtProjects/gobot-software/gobot-software/points.xml");
+    parserPoints.save(points);
+    /// so that the name cannot be changed anymore unless you click on the edit button again
+    nameEdit->setReadOnly(true);
+    /// so that you cannot edit a new name unless you click the edit button again
+    editButton->setChecked(false);
 }
 
 void DisplaySelectedPoint::mousePressEvent(QEvent* event){
