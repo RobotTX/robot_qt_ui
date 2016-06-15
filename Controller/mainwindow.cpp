@@ -424,6 +424,7 @@ void MainWindow::pointBtnEvent(){
     /// called when the back button is clicked and we came from the group menu
     if(leftMenu->getDisplaySelectedPoint()->getOrigin() == DisplaySelectedPoint::GROUP_MENU){
         hideAllWidgets();
+        leftMenu->getDisplaySelectedPoint()->setOrigin(DisplaySelectedPoint::POINTS_MENU);
         qDebug() << "dans pointBtn event with origin group menu";
         leftMenu->getDisplaySelectedGroup()->show();
     }
