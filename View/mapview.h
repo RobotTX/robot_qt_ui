@@ -34,7 +34,7 @@ public:
 
     /// Setter
     void setPoint(const QSharedPointer<PointView> _point) { point = _point; }
-    void setState(const GraphicItemState _state);
+    void setState(const GraphicItemState _state, const bool clear);
 
 public:
     void updatePoints(const Points& points);

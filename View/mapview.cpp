@@ -70,6 +70,7 @@ void MapView::mouseReleaseEvent(QGraphicsSceneMouseEvent *event){
             PointView* newPointView = new PointView(std::make_shared<Point>(tmpPoint));
 
             connect(newPointView, SIGNAL(addPointPath(PointView*)), mainWindow, SLOT(addPathPoint(PointView*)));
+            connect(newPointView, SIGNAL(moveTmpEditPathPoint()), mainWindow, SLOT(moveTmpEditPathPointSlot()));
 
             newPointView->setState(GraphicItemState::CREATING_PATH);
             newPointView->getPoint()->setPosition(event->pos().x(), event->pos().y());
@@ -105,11 +106,17 @@ void MapView::addPathPointMapViewSlot(PointView* _pointView){
     emit addPathPointMapView(&(*(_pointView->getPoint())));
 }
 
-void MapView::setState(const GraphicItemState _state){
+void MapView::setState(const GraphicItemState _state, const bool clear){
     state = _state;
     tmpPointView->setState(state);
-    qDeleteAll(pathCreationPoints.begin(), pathCreationPoints.end());
-    pathCreationPoints.clear();
+    if(clear){
+        qDeleteAll(pathCreationPoints.begin(), pathCreationPoints.end());
+        pathCreationPoints.clear();
+    } else {
+        for(int i = 0; i < pathCreationPoints.size(); i++){
+            pathCreationPoints.at(i)->setState(state);
+        }
+    }
 }
 
  void MapView::updateHover(QString oldName, QString newName){

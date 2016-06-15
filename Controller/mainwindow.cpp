@@ -54,6 +54,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     selectedRobot = NULL;
     scanningRobot = NULL;
     selectedPoint = NULL;
+    editedPointView = NULL;
 
     //create the toolbar
     initializeMenu();
@@ -594,7 +595,7 @@ void MainWindow::addPathSelecRobotBtnEvent(){
     pathCreationWidget->show();
     pathCreationWidget->resetWidget();
     pathCreationWidget->setSelectedRobot(selectedRobot->getRobot());
-    setGraphicItemsState(GraphicItemState::CREATING_PATH);
+    setGraphicItemsState(GraphicItemState::CREATING_PATH, true);
 }
 
 void MainWindow::setSelectedRobot(QAbstractButton *button){
@@ -1066,16 +1067,17 @@ void MainWindow::backPathCreation(void){
     selectedRobotWidget->show();
 }
 
-void MainWindow::setGraphicItemsState(GraphicItemState state){
-    mapPixmapItem->setState(state);
+void MainWindow::setGraphicItemsState(const GraphicItemState state, const bool clear){
+    mapPixmapItem->setState(state, clear);
 
     for(int i = 0; i < robots->getRobotsVector().size(); i++){
         robots->getRobotsVector().at(i)->setState(state);
     }
 
     for(size_t j = 0; j < pointViews->getGroups().size(); j++){
-        for(size_t k = 0; k < pointViews->getGroups().at(j).getPointViews().size(); k++){
-            pointViews->getGroups().at(j).getPointViews().at(k)->setState(state);
+        GroupView groupView = pointViews->getGroups().at(j);
+        for(size_t k = 0; k < groupView.getPointViews().size(); k++){
+            groupView.getPointViews().at(k)->setState(state);
         }
     }
 }
@@ -1128,7 +1130,6 @@ void MainWindow::displayPointsInGroup(void){
 }
 
 void MainWindow::updatePathPointToPainter(QVector<Point>* pointVector){
-    qDebug() << "updatePathPointToPainter called";
     pathPainter->updatePath(*pointVector);
 }
 
@@ -1144,7 +1145,7 @@ void MainWindow::stopPathCreation(){
 
 void MainWindow::hidePathCreationWidget(){
     qDebug() << "hidePathCreationWidget called";
-    setGraphicItemsState(GraphicItemState::NO_STATE);
+    setGraphicItemsState(GraphicItemState::NO_STATE, true);
     for(size_t i = 0; i < pointViews->getGroups().size(); i++){
         GroupView groupView = pointViews->getGroups().at(i);
         std::vector<std::shared_ptr<PointView>> pointViews = groupView.getPointViews();
@@ -1230,29 +1231,34 @@ void MainWindow::pointInfoEvent(void){
 
 void MainWindow::editTmpPathPointSlot(int id, Point* point, int nbWidget){
     qDebug() << "editTmpPathPointSlot called : " << id << point->getName() << nbWidget;
-    PointView* pointView = NULL;
-    QVector<PointView*> pointViewVector = mapPixmapItem->getPathCreationPoints();
-    for(int i = 0; i < pointViewVector.size(); i++){
-        if(pointViewVector.at(i)->getPoint()->comparePos(point->getPosition().getX(), point->getPosition().getY())){
-            pointView = pointViewVector.at(i);
+    if(nbWidget == 1){
+        editedPointView = NULL;
+
+        QVector<PointView*> pointViewVector = mapPixmapItem->getPathCreationPoints();
+        for(int i = 0; i < pointViewVector.size(); i++){
+            if(pointViewVector.at(i)->getPoint()->comparePos(point->getPosition().getX(), point->getPosition().getY())){
+                editedPointView = pointViewVector.at(i);
+            }
         }
-    }
-    if(mapPixmapItem->getTmpPointView()->getPoint()->comparePos(point->getPosition().getX(), point->getPosition().getY())){
-        pointView = mapPixmapItem->getTmpPointView();
-    }
-    if(pointView == NULL){
-        qDebug() << "(Error editTmpPathPointSlot) No pointview found to edit";
-    } else {
-        qDebug() << "Pointview found";
-        if(nbWidget == 1){
-            pointView->setFlag(QGraphicsItem::ItemIsMovable);
-            /*setGraphicItemsState(GraphicItemState::NO_EVENT);
-            pointView->setState(GraphicItemState::EDITING);*/
-        } else if(nbWidget > 1){
-            //
+
+        if(mapPixmapItem->getTmpPointView()->getPoint()->comparePos(point->getPosition().getX(), point->getPosition().getY())){
+            editedPointView = mapPixmapItem->getTmpPointView();
+        }
+
+        if(editedPointView == NULL){
+            qDebug() << "(Error editTmpPathPointSlot) No pointview found to edit";
         } else {
-            qDebug() << "(Error editTmpPathPointSlot) Not supposed to be here";
+            qDebug() << "Pointview found";
+                editedPointView->setFlag(QGraphicsItem::ItemIsMovable);
+                setGraphicItemsState(GraphicItemState::NO_EVENT, false);
+                editedPointView->setState(GraphicItemState::EDITING);
         }
+
+    } else if(nbWidget > 1){
+        // TODO
+
+    } else {
+        qDebug() << "(Error editTmpPathPointSlot) Not supposed to be here";
     }
 }
 
@@ -1273,4 +1279,18 @@ void MainWindow::editPointFromGroupMenu(void){
             leftMenu->getDisplaySelectedGroup()->hide();
         }
     } else qDebug() << "no group " << leftMenu->getDisplaySelectedGroup()->getNameLabel()->text() ;
+}
+
+void MainWindow::saveTmpEditPathPointSlot(){
+    qDebug() << "saveTmpEditPathPointSlot called";
+    pathCreationWidget->applySavePathPoint(editedPointView->getPoint()->getPosition().getX(), editedPointView->getPoint()->getPosition().getY());
+    editedPointView->setFlag(QGraphicsItem::ItemIsMovable, false);
+    setGraphicItemsState(GraphicItemState::CREATING_PATH, false);
+
+    editedPointView = NULL;
+}
+
+
+void MainWindow::moveTmpEditPathPointSlot(){
+    pathCreationWidget->moveEditPathPoint(editedPointView->getPoint()->getPosition().getX(), editedPointView->getPoint()->getPosition().getY());
 }

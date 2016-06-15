@@ -52,11 +52,14 @@ public:
      */
     void clicked(void);
     void displayActionWidget(const bool show);
+    void displaySaveEditBtn(const bool show, const int count);
     void resetAction(void);
+    void updatePointLabel(const float _posX, const float _posY);
 
     /// Setters
     void setName(const QString name);
     void setId(const int id);
+    void setPos(const float _posX, const float _posY);
 
     /// Getters
     QString getName(void) const { return name; }
@@ -66,6 +69,7 @@ public:
     int getPosX(void) const { return posX; }
     int getPosY(void) const { return posY; }
     bool isTemporary(void) const { return (name.compare("tmpPoint") == 0); }
+    Point getPoint(void) const { return point; }
 
 private:
     QVBoxLayout* layout;
@@ -79,6 +83,7 @@ private:
     Point point;
     bool waitHuman;
     QPushButton* actionBtn;
+    QPushButton* saveEditBtn;
     QLineEdit* timeEdit;
     QWidget* timeWidget;
     QWidget* actionWidget;
@@ -91,7 +96,8 @@ signals:
      * @param name
      * Signal emitted when a point is selected in the menu that display the list of points
      */
-    void pointSelected(int i, QString name);
+    void pointSelected(PathPointCreationWidget*);
+    void saveEditSignal(PathPointCreationWidget*);
 
 private slots:
     /**
@@ -101,6 +107,7 @@ private slots:
      */
     void pointClicked(QAction *action);
     void actionClicked();
+    void saveEdit();
 };
 
 #endif // PATHPOINTCREATIONWIDGET_H

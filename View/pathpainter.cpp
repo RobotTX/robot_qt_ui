@@ -31,17 +31,17 @@ void PathPainter::refresh(void){
             PointView* pointView = &(*(pointViews->getPointViewFromPoint(pathVector.at(i))));
 
             if(pointView != NULL){
-                qDebug() << "Found permanent pointView";
+                //qDebug() << "Found permanent pointView";
                 setPointViewPixmap(i, pointView);
             } else {
-                qDebug() << "No permanent pointView";
+                //qDebug() << "No permanent pointView";
 
                 MapView* mapView = (MapView*) parentItem();
                 QVector<PointView*> pointViewVector = mapView->getPathCreationPoints();
                 for(int j = 0; j < pointViewVector.size(); j++){
                     if(pathVector.at(i).comparePos(pointViewVector.at(j)->getPoint()->getPosition().getX(),
                                                    pointViewVector.at(j)->getPoint()->getPosition().getY())){
-                        qDebug() << "But found temporary pointView";
+                        //qDebug() << "But found temporary pointView";
 
                         pointView = pointViewVector.at(j);
                         pointView->setAddedToPath(true);
@@ -51,7 +51,7 @@ void PathPainter::refresh(void){
                 if(pathVector.at(i).comparePos(mapView->getTmpPointView()->getPoint()->getPosition().getX(),
                                                mapView->getTmpPointView()->getPoint()->getPosition().getY())){
 
-                    qDebug() << "But found the unique temporary pointView";
+                    //qDebug() << "But found the unique temporary pointView";
                     pointView = mapView->getTmpPointView();
                     pointView->setAddedToPath(true);
                     setPointViewPixmap(i, pointView);
