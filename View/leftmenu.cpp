@@ -93,8 +93,9 @@ qDebug() << "ok";
 
 
     connect(displaySelectedGroup->getBackButton(), SIGNAL(clicked(bool)), parent, SLOT(pointBtnEvent()));
-    // prob need a different event
-    //connect(displaySelectedGroup->getMapButton(), SIGNAL(clicked(bool)), parent, SLOT(displayGroupMapEvent()));
+    connect(displaySelectedGroup->getEditButton(), SIGNAL(clicked(bool)), parent, SLOT(editPointFromGroupMenu()));
+    connect(displaySelectedGroup->getEyeButton(), SIGNAL(clicked(bool)), parent, SLOT(displayPointInfoFromGroupMenu));
+
 
     hide();
     leftLayout->setContentsMargins(0,0,0,0);

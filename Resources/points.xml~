@@ -45,13 +45,13 @@
 		<displayed>1</displayed>
 	</point>
 	<point>
-		<name>ANOTHER POINT</name>
+		<name>another point</name>
 		<x>150</x>
 		<y>200</y>
 		<displayed>1</displayed>
 	</point>
 	<point>
-		<name>A FINAL POINT</name>
+		<name>a final point</name>
 		<x>150</x>
 		<y>225</y>
 		<displayed>1</displayed>

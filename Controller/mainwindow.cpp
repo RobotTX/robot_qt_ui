@@ -1107,6 +1107,7 @@ void MainWindow::displayPointsInGroup(void){
        pointsLeftWidget->hide();
        /// before we display the group of points, we make sure that the graphical object is consistent with the model
        leftMenu->updateGroupDisplayed(points, groupIndex);
+       leftMenu->getDisplaySelectedGroup()->getPointButtonGroup()->setCheckable(true);
        leftMenu->getDisplaySelectedGroup()->show();
        leftMenu->getDisplaySelectedGroup()->setName(points.getGroups().at(groupIndex)->getName());
     }
@@ -1253,4 +1254,23 @@ void MainWindow::editTmpPathPointSlot(int id, Point* point, int nbWidget){
             qDebug() << "(Error editTmpPathPointSlot) Not supposed to be here";
         }
     }
+}
+
+void MainWindow::editPointFromGroupMenu(void){
+    std::shared_ptr<Group> group = points.findGroup(leftMenu->getDisplaySelectedGroup()->getNameLabel()->text());
+    if(group){
+        qDebug() << "yo " << group->getName();
+        std::cout << group;
+        int point = leftMenu->getDisplaySelectedGroup()->getPointButtonGroup()->getButtonGroup()->checkedId();
+        qDebug() << point;
+        if(point != -1 and point < group->getPoints().size()){
+            qDebug() << point;
+            leftMenu->getDisplaySelectedPoint()->setPoint(group->getPoints().at(point));
+            leftMenu->getDisplaySelectedPoint()->displayPointInfo();
+            leftMenu->getDisplaySelectedPoint()->getEditButton()->setChecked(true);
+            leftMenu->getDisplaySelectedPoint()->getNameEdit()->setReadOnly(false);
+            leftMenu->getDisplaySelectedPoint()->show();
+            leftMenu->getDisplaySelectedGroup()->hide();
+        }
+    } else qDebug() << "no group " << leftMenu->getDisplaySelectedGroup()->getNameLabel()->text() ;
 }

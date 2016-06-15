@@ -28,8 +28,11 @@ public:
     QPushButton* getBackButton(void) const { return backButton; }
     QPushButton* getMapButton(void) const { return mapButton; }
     QPushButton* getEyeButton(void) const { return eyeButton; }
+    QPushButton* getEditButton(void) const { return editButton; }
+    QLabel* getNameLabel(void) const { return name; }
 
     void setName(const QString _name);
+
 private:
 
     PointButtonGroup* pointButtonGroup;
