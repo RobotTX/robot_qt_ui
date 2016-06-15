@@ -537,13 +537,10 @@ void MainWindow::minusGroupBtnEvent(){
 
 void MainWindow::editPointButtonEvent(){
     qDebug() << "editPointBtnEvent called";
-    /*
     if(leftMenu->getDisplaySelectedPoint()->getEditButton()->isChecked())
         leftMenu->getDisplaySelectedPoint()->getNameEdit()->setReadOnly(false);
     else
         leftMenu->getDisplaySelectedPoint()->getNameEdit()->setReadOnly(true);
-        */
-    leftMenu->getDisplaySelectedPoint()->getNameEdit()->setReadOnly(false);
 }
 
 void MainWindow::editGroupBtnEvent(){
@@ -1230,34 +1227,37 @@ void MainWindow::pointInfoEvent(void){
 
 void MainWindow::editTmpPathPointSlot(int id, Point* point, int nbWidget){
     qDebug() << "editTmpPathPointSlot called : " << id << point->getName() << nbWidget;
-    if(nbWidget == 1){
-        editedPointView = NULL;
+    editedPointView = NULL;
 
-        QVector<PointView*> pointViewVector = mapPixmapItem->getPathCreationPoints();
-        for(int i = 0; i < pointViewVector.size(); i++){
-            if(pointViewVector.at(i)->getPoint()->comparePos(point->getPosition().getX(), point->getPosition().getY())){
-                editedPointView = pointViewVector.at(i);
-            }
+    QVector<PointView*> pointViewVector = mapPixmapItem->getPathCreationPoints();
+    for(int i = 0; i < pointViewVector.size(); i++){
+        if(pointViewVector.at(i)->getPoint()->comparePos(point->getPosition().getX(), point->getPosition().getY())){
+            editedPointView = pointViewVector.at(i);
         }
+    }
 
-        if(mapPixmapItem->getTmpPointView()->getPoint()->comparePos(point->getPosition().getX(), point->getPosition().getY())){
-            editedPointView = mapPixmapItem->getTmpPointView();
-        }
+    if(mapPixmapItem->getTmpPointView()->getPoint()->comparePos(point->getPosition().getX(), point->getPosition().getY())){
+        editedPointView = mapPixmapItem->getTmpPointView();
+    }
 
-        if(editedPointView == NULL){
-            qDebug() << "(Error editTmpPathPointSlot) No pointview found to edit";
-        } else {
-            qDebug() << "Pointview found";
-                editedPointView->setFlag(QGraphicsItem::ItemIsMovable);
-                setGraphicItemsState(GraphicItemState::NO_EVENT, false);
-                editedPointView->setState(GraphicItemState::EDITING);
-        }
-
-    } else if(nbWidget > 1){
-        // TODO
-
+    if(editedPointView == NULL){
+        qDebug() << "(Error editTmpPathPointSlot) No pointview found to edit";
     } else {
-        qDebug() << "(Error editTmpPathPointSlot) Not supposed to be here";
+        qDebug() << "Pointview found";
+        if(nbWidget == 1){
+            editedPointView->setFlag(QGraphicsItem::ItemIsMovable);
+            setGraphicItemsState(GraphicItemState::NO_EVENT, false);
+            editedPointView->setState(GraphicItemState::EDITING);
+        } else if(nbWidget > 1){
+            // TODO
+            mapPixmapItem->addPathPoint(editedPointView);
+            editedPointView = mapPixmapItem->getPathCreationPoints().last();
+            editedPointView->setFlag(QGraphicsItem::ItemIsMovable);
+            setGraphicItemsState(GraphicItemState::NO_EVENT, false);
+            editedPointView->setState(GraphicItemState::EDITING);
+        } else {
+            qDebug() << "(Error editTmpPathPointSlot) Not supposed to be here";
+        }
     }
 }
 

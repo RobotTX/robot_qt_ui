@@ -124,3 +124,15 @@ void MapView::setState(const GraphicItemState _state, const bool clear){
      pointView->setToolTip(newName);
  }
 
+ void MapView::addPathPoint(PointView* pointView){
+     PointView* newPointView = new PointView(std::make_shared<Point>(*(pointView->getPoint())));
+
+     connect(newPointView, SIGNAL(addPointPath(PointView*)), mainWindow, SLOT(addPathPoint(PointView*)));
+     connect(newPointView, SIGNAL(moveTmpEditPathPoint()), mainWindow, SLOT(moveTmpEditPathPointSlot()));
+
+     newPointView->setState(GraphicItemState::CREATING_PATH);
+     //newPointView->setPos(pointView->pos().x()+tmpPointPixmap.width()/2, pointView->pos().y()+tmpPointPixmap.height());
+     //newPointView->setPos(pointView->pos().x(), pointView->pos().y());
+     newPointView->setParentItem(this);
+     pathCreationPoints.push_back(newPointView);
+ }

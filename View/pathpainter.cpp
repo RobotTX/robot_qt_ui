@@ -24,6 +24,8 @@ void PathPainter::reset(void){
 
 void PathPainter::refresh(void){
     clearPointViews();
+    PointView* startPointView = NULL;
+    PointView* endPointView = NULL;
     for(int i = 0; i < pathVector.size(); i++){
         if(pathVector.at(i).getName().size() > 0){
             QPointF pointCoord = QPointF(pathVector.at(i).getPosition().getX(),
@@ -32,7 +34,6 @@ void PathPainter::refresh(void){
 
             if(pointView != NULL){
                 //qDebug() << "Found permanent pointView";
-                setPointViewPixmap(i, pointView);
             } else {
                 //qDebug() << "No permanent pointView";
 
@@ -45,7 +46,6 @@ void PathPainter::refresh(void){
 
                         pointView = pointViewVector.at(j);
                         pointView->setAddedToPath(true);
-                        setPointViewPixmap(i, pointView);
                     }
                 }
                 if(pathVector.at(i).comparePos(mapView->getTmpPointView()->getPoint()->getPosition().getX(),
@@ -54,18 +54,29 @@ void PathPainter::refresh(void){
                     //qDebug() << "But found the unique temporary pointView";
                     pointView = mapView->getTmpPointView();
                     pointView->setAddedToPath(true);
-                    setPointViewPixmap(i, pointView);
                 }
             }
 
             if(i == 0){
                 path = QPainterPath(pointCoord);
+                startPointView = pointView;
             } else {
                 path.lineTo(pointCoord);
             }
+            if(i == pathVector.size()-1)
+                endPointView = pointView;
+
+            setPointViewPixmap(i, pointView);
         }
     }
     setPath(path);
+
+    if(*(startPointView->getPoint()) == *(endPointView->getPoint())){
+        startPointView->setPixmap(QPixmap(PIXMAP_START_STOP));
+    } else {
+        startPointView->setPixmap(QPixmap(PIXMAP_START));
+        endPointView->setPixmap(QPixmap(PIXMAP_STOP));
+    }
 }
 
 void PathPainter::updatePath(QVector<Point> pointVector){

@@ -17,6 +17,7 @@ class QDropEvent;
 #define PIXMAP_START ":/icons/green_coord"
 #define PIXMAP_STOP ":/icons/red_coord"
 #define PIXMAP_HOVER ":/icons/orange_coord"
+#define PIXMAP_START_STOP ":/icons/green_red_coord"
 
 /**
  * @brief The PointView class
