@@ -5,6 +5,7 @@ class PathPointList;
 class QMainWindow;
 class QVBoxLayout;
 class QListWidgetItem;
+class PathPointCreationWidget;
 class Robot;
 
 #include "Model/points.h"
@@ -38,6 +39,9 @@ public:
      */
     void addPathPoint(Point* const point);
     void hideEvent(QHideEvent *event);
+    void applySavePathPoint(float posX, float posY);
+    void moveEditPathPoint(float posX, float posY);
+
 
 private slots:
     /**
@@ -50,7 +54,7 @@ private slots:
     void supprPathPoint(void);
     void editPathPoint(void);
     void savePath(void);
-    void pointSelected(const int id, const QString name);
+    void pointSelected(PathPointCreationWidget* pathPointCreationWidget);
 
     /**
      * @brief addPathPoint
@@ -65,6 +69,7 @@ private slots:
     void updatePointPainter(void);
 
     void itemMovedSlot(const int from, const int to);
+    void saveEditSlot(PathPointCreationWidget* pathPointCreationWidget);
 
 signals:
     void pathSaved();
@@ -72,6 +77,7 @@ signals:
     void hidePathCreationWidget();
 
     void editTmpPathPoint(int id, Point* point, int nbWidget);
+    void saveEditPathPoint();
 
 
 private:
@@ -81,10 +87,12 @@ private:
     Points points;
     Robot* selectedRobot;
     CheckState state;
+    QPushButton* newBtn;
     QPushButton* supprBtn;
     QPushButton* editBtn;
     QListWidgetItem* previousItem;
     QVector<Point> pointList;
+    PathPointCreationWidget* editedPathPointCreationWidget;
 };
 
 #endif // PATHCREATIONWIDGET_H

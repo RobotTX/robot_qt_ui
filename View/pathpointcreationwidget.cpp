@@ -92,6 +92,11 @@ void PathPointCreationWidget::initialisation(const int _id, const Points _points
     layout->addWidget(actionWidget);
     actionWidget->hide();
 
+    saveEditBtn = new QPushButton("Save changes");
+    connect(saveEditBtn, SIGNAL(clicked()), this, SLOT(saveEdit()));
+    layout->addWidget(saveEditBtn);
+    saveEditBtn->hide();
+
 
     //setAutoFillBackground( false );
     layout->setAlignment(Qt::AlignTop);
@@ -103,6 +108,7 @@ PathPointCreationWidget::~PathPointCreationWidget(){
     delete pointLabel;
     delete pointsMenu;
     delete actionBtn;
+    delete saveEditBtn;
     delete timeEdit;
     delete timeWidget;
     delete actionWidget;
@@ -143,7 +149,7 @@ void PathPointCreationWidget::pointClicked(QAction *action){
         }
     }
 
-    emit pointSelected(id, name);
+    emit pointSelected(this);
 }
 
 void PathPointCreationWidget::actionClicked(){
@@ -174,4 +180,30 @@ void PathPointCreationWidget::resetAction(){
     timeWidget->show();
 }
 
+void PathPointCreationWidget::displaySaveEditBtn(const bool show, const int count){
+    if(show)
+        saveEditBtn->show();
+    else
+        saveEditBtn->hide();
 
+    if(id < count)
+        displayActionWidget(!show);
+}
+
+void PathPointCreationWidget::saveEdit(){
+    qDebug() << "saveEdit called ";
+
+    emit saveEditSignal(this);
+}
+
+void PathPointCreationWidget::setPos(const float _posX, const float _posY){
+    posX = _posX;
+    posY = _posY;
+    point.setPosition(posX, posY);
+    pointLabel->setText(QString::number(id)+". "+QString::number(posX,'f', 1) + ", " + QString::number(posY,'f', 1));
+}
+
+
+void PathPointCreationWidget::updatePointLabel(const float _posX, const float _posY){
+    pointLabel->setText(QString::number(id)+". "+QString::number(_posX,'f', 1) + ", " + QString::number(_posY,'f', 1));
+}

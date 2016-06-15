@@ -59,7 +59,7 @@ public:
     void initializeBottomPanel();
     void initializeLeftMenu();
     void hideAllWidgets();
-    void setGraphicItemsState(GraphicItemState state);
+    void setGraphicItemsState(const GraphicItemState state, const bool clear);
     void stopPathCreation();
 
 signals:
@@ -130,6 +130,8 @@ private slots:
     void pointInfoEvent(void);
     void editPointButtonEvent(void);
     void editTmpPathPointSlot(int id, Point* point, int nbWidget);
+    void saveTmpEditPathPointSlot();
+    void moveTmpEditPathPointSlot();
 
 private:
     Ui::MainWindow* ui;
@@ -151,6 +153,7 @@ private:
     PointView* selectedPoint;
     Points points;
     PathPainter* pathPainter;
+    PointView* editedPointView;
 
     QWidget* lastWidget;
     LeftMenuWidget* leftMenuWidget;

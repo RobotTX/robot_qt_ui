@@ -54,14 +54,22 @@ void PointView::mouseMoveEvent(QGraphicsSceneMouseEvent *event){
         }
         pos().x() > parentItem()->boundingRect().width()
         qDebug() << parentItem()->boundingRect().width() << parentItem()->boundingRect().height();
-        qDebug() << "still moving2" << pos().x() << pos().y();*/
+        qDebug() << "still moving" << pos().x() << pos().y();*/
+
+        float x = pos().x() + pixmap().width()*SCALE/2;
+        float y = pos().y() + pixmap().height()*SCALE;
+        point->setPosition(x, y);
+        emit moveTmpEditPathPoint();
         QGraphicsPixmapItem::mouseMoveEvent(event);
     }
 }
 
 void PointView::mouseReleaseEvent(QGraphicsSceneMouseEvent *event){
     if(state == GraphicItemState::EDITING){
-        qDebug() << "to" << pos().x() << pos().y();
+        float x = pos().x() + pixmap().width()*SCALE/2;
+        float y = pos().y() + pixmap().height()*SCALE;
+        qDebug() << "to" << x << y;
+        point->setPosition(x, y);
         QGraphicsPixmapItem::mouseReleaseEvent(event);
     }
 }

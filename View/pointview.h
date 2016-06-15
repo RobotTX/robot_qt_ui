@@ -48,6 +48,7 @@ signals:
     void pointRightClicked(PointView*);
     void pointLeftClicked(PointView*);
     void addPointPath(PointView*);
+    void moveTmpEditPathPoint();
 
 private:
     std::shared_ptr<Point> point;
