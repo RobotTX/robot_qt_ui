@@ -51,7 +51,7 @@ public:
     void applySavePathPoint(float posX, float posY);
     void moveEditPathPoint(float posX, float posY);
     void clicked(void);
-    void savePath(void);
+    bool savePath(void);
 
 
 private slots:

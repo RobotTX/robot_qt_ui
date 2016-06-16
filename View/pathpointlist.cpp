@@ -7,7 +7,10 @@ PathPointList::PathPointList(){
     setDragDropMode(QAbstractItemView::InternalMove);
     setFrameShape(QFrame::NoFrame);
     viewport()->setAutoFillBackground( false );
-    setStyleSheet("QListWidget::item:hover {background-color:grey;}");
+    //setStyleSheet("QListWidget::item:hover {background-color:grey;}");
+    setStyleSheet(" QListWidget {color: red;};\
+                    QListWidget::item:hover {background-color:grey;}");
+
     connect(model(), SIGNAL(rowsMoved(QModelIndex,int,int,QModelIndex,int)), this, SLOT(itemMoved(QModelIndex,int,int,QModelIndex,int)));
 }
 

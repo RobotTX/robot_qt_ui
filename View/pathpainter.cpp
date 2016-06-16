@@ -107,6 +107,9 @@ void PathPainter::clearPointViews(void){
     }
 
     MapView* mapView = (MapView*) parentItem();
+
+    mapView->getTmpPointView()->setPixmap(QPixmap(PIXMAP_NORMAL));
+
     QVector<PointView*> pointViewVector = mapView->getPathCreationPoints();
     for(int k = 0; k < pointViewVector.size(); k++){
         pointViewVector.at(k)->setPixmap(QPixmap(PIXMAP_NORMAL));

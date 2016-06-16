@@ -104,18 +104,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
 MainWindow::~MainWindow(){
     delete ui;
-    if(robotThread->isRunning()){
-        robotThread->exit();
-    }
-    if(metadataThread->isRunning()){
-        metadataThread->exit();
-    }
-    if(mapThread->isRunning()){
-        mapThread->exit();
-    }
-    delete metadataThread;
-    delete robotThread;
-    delete mapThread;
     delete rightLayout;
     delete toolbar;
     delete graphicsView;
@@ -1292,7 +1280,6 @@ void MainWindow::editTmpPathPointSlot(int id, Point* point, int nbWidget){
             setGraphicItemsState(GraphicItemState::NO_EVENT, false);
             editedPointView->setState(GraphicItemState::EDITING);
         } else if(nbWidget > 1){
-            // TODO
             mapPixmapItem->addPathPoint(editedPointView);
             editedPointView = mapPixmapItem->getPathCreationPoints().last();
             editedPointView->setFlag(QGraphicsItem::ItemIsMovable);

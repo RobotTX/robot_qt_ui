@@ -5,6 +5,7 @@ class QVBoxLayout;
 class QLabel;
 class QPushButton;
 class QLineEdit;
+class QComboBox;
 
 #include "Model/points.h"
 #include "Model/point.h"
@@ -58,7 +59,7 @@ public:
     /// Getters
     QString getName(void) const { return name; }
     int getId(void) const { return id; }
-    QPushButton* getActionBtn(void) const { return actionBtn; }
+    QComboBox* getAction(void) const { return actionBtn; }
     QLineEdit* getTimeEdit(void) const { return timeEdit; }
     int getPosX(void) const { return posX; }
     int getPosY(void) const { return posY; }
@@ -75,8 +76,7 @@ private:
     int id;
     Points points;
     Point point;
-    bool waitHuman;
-    QPushButton* actionBtn;
+    QComboBox* actionBtn;
     QPushButton* saveEditBtn;
     QLineEdit* timeEdit;
     QWidget* timeWidget;
@@ -86,7 +86,7 @@ signals:
     void saveEditSignal(PathPointCreationWidget*);
 
 private slots:
-    void actionClicked();
+    void actionClicked(QString action);
     void saveEdit();
 };
 

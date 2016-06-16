@@ -33,6 +33,7 @@ MapView::MapView (const QPixmap& pixmap, const QSize _size, PointsView* const& p
 
     tmpPointView = new PointView(std::make_shared<Point>(tmpPoint));
     connect(this, SIGNAL(pointLeftClicked(PointView*, bool)), _mainWindow, SLOT(setSelectedPoint(PointView*, bool)));
+    connect(tmpPointView, SIGNAL(moveTmpEditPathPoint()), mainWindow, SLOT(moveTmpEditPathPointSlot()));
 
     connect(tmpPointView, SIGNAL(addPointPath(PointView*)), this, SLOT(addPathPointMapViewSlot(PointView*)));
     point = static_cast<QSharedPointer<PointView>>(tmpPointView);

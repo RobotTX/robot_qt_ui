@@ -5,6 +5,7 @@
 #include <QPushButton>
 #include <QDebug>
 #include <QLineEdit>
+#include <QComboBox>
 
 PathPointCreationWidget::PathPointCreationWidget(const int id, const Points& points, QString name){
     initialisation(id, points, name);
@@ -21,7 +22,6 @@ void PathPointCreationWidget::initialisation(const int _id, const Points _points
     points = _points;
     id = _id;
     name = _name;
-    waitHuman = false;
     posX = 0;
     posY = 0;
 
@@ -35,9 +35,11 @@ void PathPointCreationWidget::initialisation(const int _id, const Points _points
     actionWidget = new QWidget();
     QVBoxLayout* actionLayout = new QVBoxLayout();
 
-    actionBtn = new QPushButton("Wait for");
+    actionBtn = new QComboBox();
+    actionBtn->addItem("Wait for");
+    actionBtn->addItem("Human Action");
     actionLayout->addWidget(actionBtn);
-    connect(actionBtn, SIGNAL(clicked()), this, SLOT(actionClicked()));
+    connect(actionBtn, SIGNAL(activated(QString)), this, SLOT(actionClicked(QString)));
 
     timeWidget = new QWidget();
     QHBoxLayout* timeLayout = new QHBoxLayout();
@@ -65,7 +67,6 @@ void PathPointCreationWidget::initialisation(const int _id, const Points _points
     saveEditBtn->hide();
 
 
-    //setAutoFillBackground( false );
     layout->setAlignment(Qt::AlignTop);
     setLayout(layout);
 }
@@ -82,6 +83,8 @@ PathPointCreationWidget::~PathPointCreationWidget(){
 
 void PathPointCreationWidget::setName(const QString _name){
     name = _name;
+    point.setName(name);
+    qDebug() << "New Name :" << name;
 
     if(name.compare("tmpPoint") == 0){
         posX = point.getPosition().getX();
@@ -102,15 +105,11 @@ void PathPointCreationWidget::setId(const int _id){
     }
 }
 
-void PathPointCreationWidget::actionClicked(){
+void PathPointCreationWidget::actionClicked(QString action){
     qDebug() << "actionClicked called ";
-    if(waitHuman){
-        actionBtn->setText("Wait for");
-        waitHuman = false;
+    if(action.compare("Wait for") == 0){
         timeWidget->show();
     } else {
-        actionBtn->setText("Human Action");
-        waitHuman = true;
         timeWidget->hide();
     }
 }
@@ -125,8 +124,7 @@ void PathPointCreationWidget::displayActionWidget(const bool show){
 void PathPointCreationWidget::resetAction(){
     qDebug() << "resetAction called";
     timeEdit->clear();
-    actionBtn->setText("Wait for");
-    waitHuman = false;
+    actionBtn->setCurrentIndex(0);
     timeWidget->show();
 }
 
@@ -158,6 +156,8 @@ void PathPointCreationWidget::updatePointLabel(const float _posX, const float _p
 }
 
 void PathPointCreationWidget::setPointLabel(const float _posX, const float _posY){
-    pointLabel->setText(QString::number(id)+". "+QString::number(_posX,'f', 1) + "; " + QString::number(_posY,'f', 1));
+    if(name.compare("tmpPoint") == 0){
+        pointLabel->setText(QString::number(id)+". "+QString::number(_posX,'f', 1) + "; " + QString::number(_posY,'f', 1));
+    }
 }
 

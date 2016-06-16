@@ -14,6 +14,7 @@
 #include <QButtonGroup>
 #include <QMessageBox>
 #include <QMenu>
+#include <QComboBox>
 
 PathCreationWidget::PathCreationWidget(QMainWindow* parent, const Points &_points){
     layout = new QVBoxLayout();
@@ -155,7 +156,7 @@ void PathCreationWidget::addPathPoint(void){
 }
 
 void PathCreationWidget::clicked(void){
-    qDebug() << "I have been clicked" ;//<< name;
+    qDebug() << "I have been clicked";
     if(pointsMenu != NULL){
         pointsMenu->exec(QCursor::pos());
     }
@@ -164,31 +165,34 @@ void PathCreationWidget::clicked(void){
 void PathCreationWidget::pointClicked(QAction *action){
     qDebug() << "pointClicked called " << action->text();
 
-    if(creatingNewPoint){
-        float posX = 0;
-        float posY = 0;
+    float posX = 0;
+    float posY = 0;
 
-        for(int i = 0; i < pointInfos.size(); i++){
-            if(pointInfos.at(i).name.compare(action->text()) == 0){
-                posX = pointInfos.at(i).posX;
-                posY = pointInfos.at(i).posY;
-            }
+    for(int i = 0; i < pointInfos.size(); i++){
+        if(pointInfos.at(i).name.compare(action->text()) == 0){
+            posX = pointInfos.at(i).posX;
+            posY = pointInfos.at(i).posY;
         }
+    }
+
+    if(creatingNewPoint){
         creatingNewPoint = false;
         addPathPoint(new Point(action->text(), posX, posY));
 
     } else {
-        qDebug() << "Editing" << ((PathPointCreationWidget*) pathPointsList->currentItem())->getName();
-        /*std::shared_ptr<Point> pointPtr = points.findPoint(pathPointCreationWidget->getName());
+        PathPointCreationWidget* pathPointCreationWidget = (PathPointCreationWidget*) pathPointsList->itemWidget(pathPointsList->currentItem());
+
+        qDebug() << "Editing" << pathPointCreationWidget->getName() << "to" << action->text();
+        qDebug() << pathPointCreationWidget->getName() << pathPointCreationWidget->getPoint().getPosition().getX() << pathPointCreationWidget->getPoint().getPosition().getY();
+        pathPointCreationWidget->setName(action->text());
+        pathPointCreationWidget->setPos(posX, posY);
         int id = pathPointCreationWidget->getId();
-        if(pointPtr != NULL){
-            qDebug() << id << idPoint;
-            if(id-1 >= pointList.size())
-                pointList.push_back(*pointPtr);
-            else
-                pointList.replace(id-1, *pointPtr);
-            updatePointPainter();
-        } */
+        Point point = pathPointCreationWidget->getPoint();
+        qDebug() << id << point.getName() << point.getPosition().getX() << point.getPosition().getY();
+        pointList.replace(id-1, pathPointCreationWidget->getPoint());
+        previousItem = NULL;
+        pathPointsList->setCurrentItem(pathPointsList->currentItem(), QItemSelectionModel::Deselect);
+        updatePointPainter();
     }
 }
 
@@ -213,9 +217,9 @@ void PathCreationWidget::initialisationPathPoint(PathPointCreationWidget* pathPo
     QListWidgetItem* listWidgetItem = new QListWidgetItem();
     listWidgetItem->setSizeHint(QSize(listWidgetItem->sizeHint().width(), WIDGET_HEIGHT));
     listWidgetItem->setBackgroundColor(QColor(255, 255, 255, 10));
+
     pathPointsList->addItem(listWidgetItem);
     pathPointsList->setItemWidget(listWidgetItem, pathPoint);
-
 
     if(pathPointsList->count() > 1){
         qDebug() << ((PathPointCreationWidget*) pathPointsList->itemWidget(pathPointsList->item(pathPointsList->count() - 2)))->getName();
@@ -244,9 +248,9 @@ void PathCreationWidget::itemClicked(QListWidgetItem* item){
 
     } else if(state == CheckState::EDIT){
         qDebug() << "Ready to edit";
-        editItem(item);
 
         previousItem = item;
+        editItem(item);
     }
 }
 
@@ -281,26 +285,31 @@ void PathCreationWidget::editPathPoint(){
             state = CheckState::NO_STATE;
         }
     } else {
-        editBtn->setChecked(false);
-        state = CheckState::NO_STATE;
-
-        editItem(pathPointsList->currentItem());
+        if(editBtn->isChecked()){
+            editItem(pathPointsList->currentItem());
+        }
 
     }
 }
 
 void PathCreationWidget::saveNoExecPath(void){
-    savePath();
-    emit pathSaved(false);
+    if(savePath()){
+        emit pathSaved(false);
+    } else {
+        qDebug() << "Empty path";
+    }
 }
 
 void PathCreationWidget::saveExecPath(void){
-    savePath();
-    emit pathSaved(true);
+    if(savePath()){
+        emit pathSaved(true);
+    } else {
+        qDebug() << "Empty path";
+    }
 }
 
 
-void PathCreationWidget::savePath(){
+bool PathCreationWidget::savePath(){
     qDebug() << "savePath called" << pathPointsList->count();
     bool error = false;
 
@@ -317,7 +326,7 @@ void PathCreationWidget::savePath(){
             if(pathPointWidget->getName().compare("Select a point") != 0){
 
                 /// check the action and if a number of time to wait has been set if needed
-                if(pathPointWidget->getActionBtn()->text().compare("Human Action") == 0){
+                if(pathPointWidget->getAction()->currentText().compare("Human Action") == 0){
 
                 } else if(pathPointWidget->getTimeEdit()->text().size() > 0
                           || i == (pathPointsList->count() - 1)){
@@ -339,8 +348,8 @@ void PathCreationWidget::savePath(){
     ///if there is no error, we can save the path
     if(error){
         qDebug() << "Please make sure all the error(s) above has been fixed";
+        return false;
     } else {
-
         qDebug() << "No error, ready to save" << pointList.size() << pathPointsList->count();
         std::vector<std::shared_ptr<PathPoint>> path;
         for(int i = 0; i < pointList.size(); i++){
@@ -351,7 +360,7 @@ void PathCreationWidget::savePath(){
             PathPoint::Action action;
             int waitTime = 0;
 
-            if(pathPointWidget2->getActionBtn()->text().compare("Human Action") == 0){
+            if(pathPointWidget2->getAction()->currentText().compare("Human Action") == 0){
                 action = PathPoint::HUMAN_ACTION;
             } else {
                 action = PathPoint::WAIT;
@@ -378,6 +387,7 @@ void PathCreationWidget::savePath(){
         qDebug() << "\n";
 
         selectedRobot->setPath(path);
+        return true;
     }
 }
 
@@ -431,6 +441,7 @@ void PathCreationWidget::supprItem(QListWidgetItem* item){
     }
     supprBtn->setChecked(false);
     state = CheckState::NO_STATE;
+    previousItem = NULL;
 }
 
 void PathCreationWidget::editItem(QListWidgetItem* item){
@@ -459,6 +470,8 @@ void PathCreationWidget::editItem(QListWidgetItem* item){
     }
 
     editBtn->setChecked(false);
+    state = CheckState::NO_STATE;
+    previousItem = NULL;
 }
 
 
