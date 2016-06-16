@@ -9,6 +9,7 @@
 #include "Model/robot.h"
 #include "Model/group.h"
 #include "Model/xmlparser.h"
+#include "Model/pathpoint.h"
 #include "View/customqgraphicsview.h"
 #include "View/mapview.h"
 #include "View/leftmenu.h"
@@ -371,8 +372,22 @@ void MainWindow::playSelectedRobot(int robotNb){
     } else {
         qDebug() << "play path on robot " << robotNb << " : " << robot->getName();
 
+        std::shared_ptr<PathPoint> pathPoint = robot->getPath().at(0);
+
+        float oldPosX = pathPoint->getPoint().getPosition().getX();
+        float oldPosY = pathPoint->getPoint().getPosition().getY();
+        qDebug() << "Go to next point :" << oldPosX << oldPosY;
+        qDebug() << "ok1" << (float) oldPosX;
+        qDebug() << "ok2" << (float) (oldPosX - ROBOT_WIDTH);
+        qDebug() << "ok3" << (float) ((oldPosX - ROBOT_WIDTH) * map->getResolution());
+        qDebug() << "ok4" << (float) ((oldPosX - ROBOT_WIDTH) * map->getResolution() + map->getOrigin().getX());
+
+        float newPosX = (oldPosX - ROBOT_WIDTH) * map->getResolution() + map->getOrigin().getX();
+        float newPosY = (-oldPosY + map->getHeight() - ROBOT_WIDTH/2) * map->getResolution() + map->getOrigin().getY();
+        qDebug() << "Go to next point :" << newPosX << newPosY;
+
         /// if the command is succesfully sent to the robot, we apply the change
-        if(robot->sendCommand(QString("p"))){
+        if(robot->sendCommand(QString("p") + " " + QString::number(newPosX) + " "  + QString::number(newPosY))){
             robot->setPlayingPath(1);
             bottomLayout->getPlayRobotBtnGroup()->button(robotNb)->setIcon(QIcon(":/icons/pause.png"));
         }
