@@ -115,8 +115,13 @@ PathCreationWidget::PathCreationWidget(QMainWindow* parent, const Points &_point
 
     QPushButton* saveBtn = new QPushButton("Save Path");
     layout->addWidget(saveBtn);
-    connect(saveBtn, SIGNAL(clicked()), this, SLOT(savePath()));
-    connect(this, SIGNAL(pathSaved()), parent, SLOT(pathSaved()));
+    connect(saveBtn, SIGNAL(clicked()), this, SLOT(saveNoExecPath()));
+    connect(this, SIGNAL(pathSaved(bool)), parent, SLOT(pathSaved(bool)));
+
+
+    QPushButton* saveExecBtn = new QPushButton("Save and play Path");
+    layout->addWidget(saveExecBtn);
+    connect(saveExecBtn, SIGNAL(clicked()), this, SLOT(saveExecPath()));
 
     hide();
     layout->setAlignment(Qt::AlignTop);
@@ -284,6 +289,17 @@ void PathCreationWidget::editPathPoint(){
     }
 }
 
+void PathCreationWidget::saveNoExecPath(void){
+    savePath();
+    emit pathSaved(false);
+}
+
+void PathCreationWidget::saveExecPath(void){
+    savePath();
+    emit pathSaved(true);
+}
+
+
 void PathCreationWidget::savePath(){
     qDebug() << "savePath called" << pathPointsList->count();
     bool error = false;
@@ -293,7 +309,9 @@ void PathCreationWidget::savePath(){
         for(int i = 0; i < pathPointsList->count(); i++){
             PathPointCreationWidget* pathPointWidget = ((PathPointCreationWidget*) pathPointsList->itemWidget(pathPointsList->item(i)));
 
-            //qDebug() << pathPoint->getId() << pathPoint->getName();
+            qDebug() << pathPointWidget->getId() << pathPointWidget->getName()
+                     << pathPointWidget->getPoint().getPosition().getX()
+                     << pathPointWidget->getPoint().getPosition().getY();
 
             /// check if the path point has a name ( and not the default one)
             if(pathPointWidget->getName().compare("Select a point") != 0){
@@ -325,55 +343,33 @@ void PathCreationWidget::savePath(){
 
         qDebug() << "No error, ready to save" << pointList.size() << pathPointsList->count();
         std::vector<std::shared_ptr<PathPoint>> path;
-        for(int i = 0; i < pathPointsList->count(); i++){
+        for(int i = 0; i < pointList.size(); i++){
 
             /// we try to get the point associated with the path point
             PathPointCreationWidget* pathPointWidget2 = ((PathPointCreationWidget*) pathPointsList->itemWidget(pathPointsList->item(i)));
 
-            std::shared_ptr<Point> pointPtr = points.findPoint(pathPointWidget2->getName());
+            PathPoint::Action action;
+            int waitTime = 0;
 
-            if(pointPtr != NULL){
-                Point point = *pointPtr;
-                PathPoint::Action action;
-                int waitTime = 0;
-                //qDebug() << pathPoint->getId() << pathPoint->getName();
-
-                if(pathPointWidget2->getActionBtn()->text().compare("Human Action") == 0){
-                    action = PathPoint::HUMAN_ACTION;
-                } else {
-                    action = PathPoint::WAIT;
-                    if(i != (pathPointsList->count() - 1))
-                        waitTime = pathPointWidget2->getTimeEdit()->text().toInt();
-                }
-
-                path.push_back(std::shared_ptr<PathPoint>(new PathPoint(point, action, waitTime)));
-
+            if(pathPointWidget2->getActionBtn()->text().compare("Human Action") == 0){
+                action = PathPoint::HUMAN_ACTION;
             } else {
-
-                /// if there is no known point, it means we created a temporary one so we can
-                /// create a pathpoint from the information of the path point
-                /// ( and not from an existing point)
-                qDebug() << "Temporary point : " << pathPointWidget2->getName() << pathPointWidget2->getPosX() << pathPointWidget2->getPosY();
-
-                QString name = QString::number(pathPointWidget2->getPosX(),'f', 1) + "; " + QString::number(pathPointWidget2->getPosY(),'f', 1);
-                Point point(name, pathPointWidget2->getPosX(), pathPointWidget2->getPosY());
-                PathPoint::Action action;
-                int waitTime = 0;
-                qDebug() << name << pathPointWidget2->getPosX() << pathPointWidget2->getPosY();
-
-                if(pathPointWidget2->getActionBtn()->text().compare("Human Action") == 0){
-                    action = PathPoint::HUMAN_ACTION;
-                } else {
-                    action = PathPoint::WAIT;
-                    if(i != (pathPointsList->count() - 1))
-                        waitTime = pathPointWidget2->getTimeEdit()->text().toInt();
-                }
-                path.push_back(std::shared_ptr<PathPoint>(new PathPoint(point, action, waitTime)));
+                action = PathPoint::WAIT;
+                if(i != (pathPointsList->count() - 1))
+                    waitTime = pathPointWidget2->getTimeEdit()->text().toInt();
             }
+
+            QString name = pointList.at(i).getName();
+            if(pointList.at(i).getName().compare("tmpPoint") == 0){
+                name = QString::number(pointList.at(i).getPosition().getX(),'f', 1) + "; " +
+                        QString::number(pointList.at(i).getPosition().getY(),'f', 1);
+            }
+            Point point(name, pointList.at(i).getPosition().getX(), pointList.at(i).getPosition().getY());
+            path.push_back(std::shared_ptr<PathPoint>(new PathPoint(point, action, waitTime)));
         }
         qDebug() << "Path created for robot" << selectedRobot->getName();
 
-        for(size_t i = 0; i < path.size(); i++){
+        for(int i = 0; i < path.size(); i++){
             qDebug() << i << " : " << path.at(i)->getPoint().getName()
                      << path.at(i)->getPoint().getPosition().getX()
                      << path.at(i)->getPoint().getPosition().getY()
@@ -382,12 +378,15 @@ void PathCreationWidget::savePath(){
         qDebug() << "\n";
 
         selectedRobot->setPath(path);
-        emit pathSaved();
     }
 }
 
 void PathCreationWidget::resetWidget(){
     qDebug() << "resetWidget called";
+    previousItem = NULL;
+    editedPathPointCreationWidget = NULL;
+    pathPointsList->setCurrentItem(pathPointsList->currentItem(), QItemSelectionModel::Deselect);
+
     pathPointsList->clear();
     idPoint = 1;
     supprBtn->setChecked(false);

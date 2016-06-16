@@ -372,19 +372,20 @@ void MainWindow::stopSelectedRobot(int robotNb){
 }
 
 void MainWindow::playSelectedRobot(int robotNb){
-    if(robots->getRobotsVector().at(robotNb)->getRobot()->isPlayingPath()){
-        qDebug() << "pause path on robot " << robotNb << " : " << robots->getRobotsVector().at(robotNb)->getRobot()->getName();
+    std::shared_ptr<Robot> robot = robots->getRobotsVector().at(robotNb)->getRobot();
+    if(robot->isPlayingPath()){
+        qDebug() << "pause path on robot " << robotNb << " : " << robot->getName();
         /// if the command is succesfully sent to the robot, we apply the change
-        if(robots->getRobotsVector().at(robotNb)->getRobot()->sendCommand(QString("s"))){
-            robots->getRobotsVector().at(robotNb)->getRobot()->setPlayingPath(0);
+        if(robot->sendCommand(QString("s"))){
+            robot->setPlayingPath(0);
             bottomLayout->getPlayRobotBtnGroup()->button(robotNb)->setIcon(QIcon(":/icons/play.png"));
         }
     } else {
-        qDebug() << "play path on robot " << robotNb << " : " << robots->getRobotsVector().at(robotNb)->getRobot()->getName();
+        qDebug() << "play path on robot " << robotNb << " : " << robot->getName();
 
         /// if the command is succesfully sent to the robot, we apply the change
-        if(robots->getRobotsVector().at(robotNb)->getRobot()->sendCommand(QString("p"))){
-            robots->getRobotsVector().at(robotNb)->getRobot()->setPlayingPath(1);
+        if(robot->sendCommand(QString("p"))){
+            robot->setPlayingPath(1);
             bottomLayout->getPlayRobotBtnGroup()->button(robotNb)->setIcon(QIcon(":/icons/pause.png"));
         }
     }
@@ -1085,12 +1086,27 @@ void MainWindow::setGraphicItemsState(const GraphicItemState state, const bool c
     }
 }
 
-void MainWindow::pathSaved(void){
-    qDebug() << "pathSaved called";
+void MainWindow::pathSaved(bool execPath){
+    qDebug() << "pathSaved called" << execPath;
+
     hideAllWidgets();
     selectedRobotWidget->setSelectedRobot(selectedRobot);
     selectedRobotWidget->show();
     bottomLayout->updateRobot(robots->getRobotId(selectedRobot->getRobot()->getName()), selectedRobot);
+
+    if(execPath){
+        int robotNb = -1;
+        for(int i = 0; i < bottomLayout->getPlayRobotBtnGroup()->buttons().size(); i++){
+            if(bottomLayout->getRobotBtnGroup()->button(i)->text().compare(selectedRobot->getRobot()->getName()) == 0){
+                robotNb = i;
+                qDebug() << "robotNb :" << robotNb;
+            }
+        }
+        if(robotNb >= 0)
+            playSelectedRobot(robotNb);
+        else
+            qDebug() << "No robot to play this path";
+    }
 }
 
 void MainWindow::addPathPoint(Point* point){

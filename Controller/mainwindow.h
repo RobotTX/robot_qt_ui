@@ -119,7 +119,7 @@ private slots:
     void removeGroupEvent(const int groupIndex);
     void backPathCreation(void);
     void displayGroupMapEvent(void);
-    void pathSaved(void);
+    void pathSaved(bool execPath);
     void addPathPoint(Point* point);
     void addPathPoint(PointView* pointView);
     void displayPointsInGroup(void);
