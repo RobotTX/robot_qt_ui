@@ -29,6 +29,7 @@ public:
     /// Getters
     QButtonGroup* getPlayRobotBtnGroup(void) const{return playRobotBtnGroup;}
     QButtonGroup* getStopRobotBtnGroup(void) const{return stopRobotBtnGroup;}
+    QButtonGroup* getRobotBtnGroup(void) const{return robotBtnGroup;}
     QVector<QLabel*> getVectorPathLabel(void) const{return vectorPathLabel;}
 
     /**
@@ -60,6 +61,11 @@ private:
      * Group of the stop buttons to delete a path
      */
     QButtonGroup* stopRobotBtnGroup;
+
+    /**
+     * @brief stopRobotBtnGroup
+     * Group of buttons with the name of the robots
+     */
     QButtonGroup* robotBtnGroup;
 
     /**

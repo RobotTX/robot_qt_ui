@@ -51,6 +51,7 @@ public:
     void applySavePathPoint(float posX, float posY);
     void moveEditPathPoint(float posX, float posY);
     void clicked(void);
+    void savePath(void);
 
 
 private slots:
@@ -63,7 +64,8 @@ private slots:
 
     void supprPathPoint(void);
     void editPathPoint(void);
-    void savePath(void);
+    void saveNoExecPath(void);
+    void saveExecPath(void);
 
     /**
      * @brief addPathPoint
@@ -82,7 +84,7 @@ private slots:
     void pointClicked(QAction *action);
 
 signals:
-    void pathSaved();
+    void pathSaved(bool);
     void updatePathPointToPainter(QVector<Point>* pointVector);
     void hidePathCreationWidget();
 
