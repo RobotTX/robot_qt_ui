@@ -103,9 +103,9 @@ HEADERS  += Model/map.h \
     View/pathpointlist.h \
     View/groupbuttongroup.h \
     View/groupeditwindow.h \
-    Model/enumgraphicstate.h \
     View/pathpainter.h \
-    View/displayselectedgroup.h
+    View/displayselectedgroup.h \
+    Model/graphicitemstate.h
 
 FORMS    += Controller/mainwindow.ui
 

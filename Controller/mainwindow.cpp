@@ -105,18 +105,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
 MainWindow::~MainWindow(){
     delete ui;
-    if(robotThread->isRunning()){
-        robotThread->exit();
-    }
-    if(metadataThread->isRunning()){
-        metadataThread->exit();
-    }
-    if(mapThread->isRunning()){
-        mapThread->exit();
-    }
-    delete metadataThread;
-    delete robotThread;
-    delete mapThread;
     delete rightLayout;
     delete toolbar;
     delete graphicsView;
@@ -529,10 +517,10 @@ void MainWindow::editPointButtonEvent(bool checked){
 
     qDebug() << "editPointButtonEvent called";
     if(checked){
-        /// we set the temporary point to the currently edited point so that if the user only wants to change the point's name
-        /// he doesn't also change its position
         leftMenu->getDisplaySelectedPoint()->getNameEdit()->setReadOnly(false);
-        mapPixmapItem->getTmpPointView()->setPos(leftMenu->getDisplaySelectedPoint()->getPoint()->getPosition().getX(), leftMenu->getDisplaySelectedPoint()->getPoint()->getPosition().getX());
+        setGraphicItemsState(GraphicItemState::NO_EVENT, false);
+        mapPixmapItem->setState(GraphicItemState::EDITING_PERM);
+        pointViews->getPointViewFromPoint(leftMenu->getDisplaySelectedPoint()->getPoint())->setState(GraphicItemState::EDITING_PERM);
     } else {
         /// we hide everything that's related to modifying a point
         leftMenu->getDisplaySelectedPoint()->getNameEdit()->setReadOnly(true);
@@ -1310,7 +1298,6 @@ void MainWindow::editTmpPathPointSlot(int id, Point* point, int nbWidget){
             setGraphicItemsState(GraphicItemState::NO_EVENT, false);
             editedPointView->setState(GraphicItemState::EDITING);
         } else if(nbWidget > 1){
-            // TODO
             mapPixmapItem->addPathPoint(editedPointView);
             editedPointView = mapPixmapItem->getPathCreationPoints().last();
             editedPointView->setFlag(QGraphicsItem::ItemIsMovable);
@@ -1376,8 +1363,6 @@ void MainWindow::updatePointUsingButton(void){
     leftMenu->getDisplaySelectedPoint()->getPoint()->setPosition(mapPixmapItem->getTmpPointView()->getPoint()->getPosition());
     XMLParser parserPoints(XML_PATH);
     parserPoints.save(points);
-    /// update the map view so that our edited point is also our temporary point
-    mapPixmapItem->updatePoints(points);
     /// so that the name cannot be changed anymore unless you click the edit button again
     leftMenu->getDisplaySelectedPoint()->getNameEdit()->setReadOnly(true);
     /// so that you cannot edit a new name unless you click the edit button again
@@ -1385,7 +1370,6 @@ void MainWindow::updatePointUsingButton(void){
     /// we hide the save button and the cancel button
     leftMenu->getDisplaySelectedPoint()->getCancelButton()->hide();
     leftMenu->getDisplaySelectedPoint()->getSaveButton()->hide();
-    mapPixmapItem->getTmpPointView()->setPos(leftMenu->getDisplaySelectedPoint()->getPoint()->getPosition().getX(), leftMenu->getDisplaySelectedPoint()->getPoint()->getPosition().getY());
 }
 
 void MainWindow::updatePointUsingKey(void){
@@ -1395,8 +1379,6 @@ void MainWindow::updatePointUsingKey(void){
     leftMenu->getDisplaySelectedPoint()->getPoint()->setPosition(mapPixmapItem->getTmpPointView()->getPoint()->getPosition());
     XMLParser parserPoints(XML_PATH);
     parserPoints.save(points);
-    /// update the map view so that our edited point is also our temporary point
-    mapPixmapItem->updatePoints(points);
     /// so that the name cannot be changed anymore unless you click the edit button again
     leftMenu->getDisplaySelectedPoint()->getNameEdit()->setReadOnly(true);
     /// so that you cannot edit a new name unless you click the edit button again
@@ -1404,15 +1386,4 @@ void MainWindow::updatePointUsingKey(void){
     /// we hide the save button and the cancel button
     leftMenu->getDisplaySelectedPoint()->getSaveButton()->hide();
     leftMenu->getDisplaySelectedPoint()->getCancelButton()->hide();
-    mapPixmapItem->getTmpPointView()->setPos(leftMenu->getDisplaySelectedPoint()->getPoint()->getPosition().getX(), leftMenu->getDisplaySelectedPoint()->getPoint()->getPosition().getY());
-}
-
-void MainWindow::superimposeTmpPointView(PointView* pointView){
-    qDebug() << " trying to superimpose the edited point and the tmp one" << pointView->getPoint()->getName();
-    if(leftMenu->getDisplaySelectedPoint()->getEditButton()->isChecked())
-        mapPixmapItem->getTmpPointView()->setPos(leftMenu->getDisplaySelectedPoint()->getPoint()->getPosition().getX(), leftMenu->getDisplaySelectedPoint()->getPoint()->getPosition().getX());
-    selectedPoint = pointView;
-    hideAllWidgets();
-    leftMenu->getDisplaySelectedPoint()->show();
-    editSelectedPointWidget->setSelectedPoint(selectedPoint, true);
 }

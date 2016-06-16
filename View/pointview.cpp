@@ -34,7 +34,6 @@ void PointView::mousePressEvent(QGraphicsSceneMouseEvent *event){
             if(event->button() == Qt::LeftButton){
                 qDebug() << "left click on point" ;
                 emit pointLeftClicked(this);
-                emit superimposePointView();
             }
         } else if(state == GraphicItemState::CREATING_PATH){
             qDebug() << "Clicked on a point while creating a path";
@@ -42,7 +41,10 @@ void PointView::mousePressEvent(QGraphicsSceneMouseEvent *event){
             emit addPointPath(this);
         } else if(state == GraphicItemState::EDITING){
             qDebug() << "PointView moving from" << pos().x() << pos().y();
-        } else {
+        }  else if(state == GraphicItemState::EDITING_PERM){
+            qDebug() << "editing permanently";
+        }
+        else {
             qDebug() << "(PointView " << point->getName() << ") NO EVENT";
         }
 }

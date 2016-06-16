@@ -30,7 +30,7 @@ class PathPainter;
 #include "View/robotview.h"
 #include <QMainWindow>
 #include <QModelIndex>
-#include "Model/enumgraphicstate.h"
+#include "Model/graphicitemstate.h"
 
 #define PI 3.14159265
 #define PORT_MAP_METADATA 4000
@@ -59,7 +59,7 @@ public:
     void initializeBottomPanel();
     void initializeLeftMenu();
     void hideAllWidgets();
-    void setGraphicItemsState(const GraphicItemState state, const bool clear);
+    void setGraphicItemsState(const GraphicItemState state, const bool clear = false);
     void stopPathCreation();
 
 signals:
@@ -138,7 +138,6 @@ private slots:
     void displayPointInfoFromGroupMenu(void);
     void updatePointUsingButton(void);
     void updatePointUsingKey(void);
-    void superimposeTmpPointView(PointView *pointView);
 
 private:
     Ui::MainWindow* ui;
