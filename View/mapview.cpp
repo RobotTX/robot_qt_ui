@@ -120,6 +120,7 @@ void MapView::setState(const GraphicItemState _state, const bool clear){
 }
 
  void MapView::updateHover(QString oldName, QString newName){
+     qDebug() << "gotta update the hover of a point";
      std::shared_ptr<PointView> pointView = permanentPoints->getPointViewFromName(oldName);
      pointView->setToolTip(newName);
  }

@@ -26,7 +26,7 @@ void PathWidget::setSelectedRobot(RobotView *const robotView){
     std::vector<std::shared_ptr<PathPoint>> path = robotView->getRobot()->getPath();
 
     clearLayout(layout);
-    for(int i = 0; i < path.size(); i++){
+    for(size_t i = 0; i < path.size(); i++){
         /// Index & name of the point
         QLabel* nameLabel = new QLabel(QString::number(i+1) + " : " + path.at(i)->getPoint().getName());
         nameLabel->setWordWrap(true);

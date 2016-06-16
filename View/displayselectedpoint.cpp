@@ -59,7 +59,7 @@ DisplaySelectedPoint::DisplaySelectedPoint(QMainWindow *_parent, Points const& _
     nameEdit = new QLineEdit();
     nameEdit->setReadOnly(true);
     nameEdit->setStyleSheet("* { background-color: rgba(255, 0, 0, 0); }");
-    connect(this->getNameEdit(), SIGNAL(textChanged(QString)), this, SLOT(updateNameUsingKey(QString)));
+    connect(this->getNameEdit(), SIGNAL(textChanged(QString)), this, SLOT(updatePointUsingKey(QString)));
 
     nameLayout->addWidget(nameEdit);
 
@@ -75,7 +75,7 @@ DisplaySelectedPoint::DisplaySelectedPoint(QMainWindow *_parent, Points const& _
 
     saveButton = new QPushButton("Save");
     layout->addWidget(saveButton);
-    connect(this->getSaveButton(), SIGNAL(clicked(bool)), this, SLOT(updateNameUsingButton()));
+    connect(this->getSaveButton(), SIGNAL(clicked(bool)), _parent, SLOT(updatePointUsingButton()));
     setLayout(layout);
 }
 
@@ -101,24 +101,6 @@ void DisplaySelectedPoint::displayPointInfo(void){
     posXLabel->setText("X : " + QString::number(point->getPosition().getX()));
     posYLabel->setText("Y : " + QString::number(point->getPosition().getY()));
     nameEdit->setText(point->getName());
-}
-
-void DisplaySelectedPoint::updateNameUsingKey(QString newName){
-    emit nameChanged(point->getName(), newName);
-    point->setName(newName);
-    XMLParser parserPoints("/home/joan/Qt/QtProjects/gobot-software/gobot-software/points.xml");
-    parserPoints.save(points);
-}
-
-void DisplaySelectedPoint::updateNameUsingButton(){
-    emit nameChanged(point->getName(), nameEdit->text());
-    point->setName(nameEdit->text());
-    XMLParser parserPoints("/home/joan/Qt/QtProjects/gobot-software/gobot-software/points.xml");
-    parserPoints.save(points);
-    /// so that the name cannot be changed anymore unless you click the edit button again
-    nameEdit->setReadOnly(true);
-    /// so that you cannot edit a new name unless you click the edit button again
-    editButton->setChecked(false);
 }
 
 void DisplaySelectedPoint::mousePressEvent(QEvent* event){

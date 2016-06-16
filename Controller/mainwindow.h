@@ -64,6 +64,7 @@ public:
 
 signals:
     void sendCommand(QString);
+    void nameChanged(QString, QString);
 
 private slots:
     void updateRobot(const float posX, const float posY, const float ori);
@@ -135,6 +136,8 @@ private slots:
     void saveTmpEditPathPointSlot(void);
     void moveTmpEditPathPointSlot(void);
     void displayPointInfoFromGroupMenu(void);
+    void updatePointUsingButton(void);
+    void updatePointUsingKey(QString newName);
 
 private:
     Ui::MainWindow* ui;

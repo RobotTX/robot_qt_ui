@@ -43,10 +43,6 @@ public:
     void keyPressEvent(QKeyEvent* event);
     void setOrigin(const Origin _origin);
 
-private slots:
-    void updateNameUsingKey(QString newName);
-    void updateNameUsingButton(void);
-
 signals:
     /// to notify the mapview that one of its points have been updated (in order to update the name that's displayed when the mouse is hovering over a point)
     void nameChanged(QString, QString);

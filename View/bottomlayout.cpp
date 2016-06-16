@@ -51,7 +51,7 @@ BottomLayout::BottomLayout(QMainWindow* parent, const std::shared_ptr<Robots> &r
     for(int i = 0; i < robotsVector.size(); i++){
         std::vector<std::shared_ptr<PathPoint>> path = robotsVector.at(i)->getRobot()->getPath();
         QString pathStr = QString("");
-        for(int j = 0; j < path.size(); j++){
+        for(size_t j = 0; j < path.size(); j++){
             if(j != 0){
                 pathStr += "; ";
             }
@@ -133,7 +133,7 @@ void BottomLayout::updateRobot(const int id, RobotView * const robotView){
         stopRobotBtnGroup->button(id)->setEnabled(true);
         playRobotBtnGroup->button(id)->setEnabled(true);
         QString pathStr = QString("");
-        for(int j = 0; j < robotView->getRobot()->getPath().size(); j++){
+        for(size_t j = 0; j < robotView->getRobot()->getPath().size(); j++){
             if(j != 0){
                 pathStr += " - ";
             }

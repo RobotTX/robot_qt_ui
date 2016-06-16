@@ -97,7 +97,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     graphicsView->show();
 
     /// to update the names of the points displayed when a user changes the name of a point via the edit button
-    connect(leftMenu->getDisplaySelectedPoint(), SIGNAL(nameChanged(QString, QString)), mapPixmapItem, SLOT(updateHover(QString, QString)));
+    connect(this, SIGNAL(nameChanged(QString, QString)), mapPixmapItem, SLOT(updateHover(QString, QString)));
 
 }
 
@@ -403,13 +403,18 @@ void MainWindow::editSelectedRobot(RobotView* robotView){
 }
 
 void MainWindow::setSelectedPoint(PointView* pointView, bool isTemporary){
-    leftMenu->show();
-    selectedPoint = pointView;
+    if(!leftMenu->getDisplaySelectedPoint()->getEditButton()->isChecked()){
+        leftMenu->show();
+        selectedPoint = pointView;
 
-    hideAllWidgets();
-    editSelectedPointWidget->setSelectedPoint(selectedPoint, isTemporary);
-    editSelectedPointWidget->show();
-    leftMenu->getDisplaySelectedPoint()->hide();
+        hideAllWidgets();
+        editSelectedPointWidget->setSelectedPoint(selectedPoint, isTemporary);
+        editSelectedPointWidget->show();
+        leftMenu->getDisplaySelectedPoint()->hide();
+    } else {
+        qDebug() << "ready to move a point on the map";
+        std::cout << *mapPixmapItem->getTmpPointView()->getPoint() << std::endl;
+    }
 }
 
 void MainWindow::robotBtnEvent(){
@@ -937,6 +942,7 @@ void MainWindow::askForDeleteGroupConfirmation(int index){
 void MainWindow::displayPointEvent(PointView* _pointView){
     qDebug() << "ok";
     qDebug() << _pointView->getPoint()->getName();
+    leftMenu->getDisplaySelectedPoint()->getMapButton()->setChecked(true);
     leftMenu->getDisplaySelectedPoint()->setOrigin(DisplaySelectedPoint::MAP);
     leftMenu->getDisplaySelectedPoint()->setPoint(_pointView->getPoint());
     leftMenu->getDisplaySelectedPoint()->displayPointInfo();
@@ -1169,9 +1175,9 @@ void MainWindow::hidePathCreationWidget(){
 }
 
 void MainWindow::removePointFromInformationMenu(void){
-    QMessageBox messageBox;
-    messageBox.setText("Do you really want to remove this point ?");
-    messageBox.setInformativeText("Be careful, the changes would be permanent");
+    QMessageBox messageBox(this);
+    messageBox.setText("Are you sure you want to remove this point ?");
+    //messageBox.setInformativeText("Be careful, the changes would be permanent");
     messageBox.setStandardButtons(QMessageBox::No | QMessageBox::Yes);
     messageBox.setDefaultButton(QMessageBox::Yes);
     messageBox.setIcon(QMessageBox::Question);
@@ -1323,4 +1329,26 @@ void MainWindow::displayPointInfoFromGroupMenu(void){
             leftMenu->getDisplaySelectedGroup()->hide();
         }
     } else qDebug() << "no group " << leftMenu->getDisplaySelectedGroup()->getNameLabel()->text() ;
+}
+
+void MainWindow::updatePointUsingButton(void){
+    emit nameChanged(leftMenu->getDisplaySelectedPoint()->getPoint()->getName(), leftMenu->getDisplaySelectedPoint()->getNameEdit()->text());
+    leftMenu->getDisplaySelectedPoint()->getPoint()->setName(leftMenu->getDisplaySelectedPoint()->getNameEdit()->text());
+    XMLParser parserPoints("/home/joan/Qt/QtProjects/gobot-software/gobot-software/points.xml");
+    parserPoints.save(points);
+    /// so that the name cannot be changed anymore unless you click the edit button again
+    leftMenu->getDisplaySelectedPoint()->getNameEdit()->setReadOnly(true);
+    /// so that you cannot edit a new name unless you click the edit button again
+    leftMenu->getDisplaySelectedPoint()->getEditButton()->setChecked(false);
+}
+
+void MainWindow::updatePointUsingKey(QString newName){
+    emit nameChanged(leftMenu->getDisplaySelectedPoint()->getPoint()->getName(), leftMenu->getDisplaySelectedPoint()->getNameEdit()->text());
+    leftMenu->getDisplaySelectedPoint()->getPoint()->setName(leftMenu->getDisplaySelectedPoint()->getNameEdit()->text());
+    XMLParser parserPoints("/home/joan/Qt/QtProjects/gobot-software/gobot-software/points.xml");
+    parserPoints.save(points);
+    /// so that the name cannot be changed anymore unless you click the edit button again
+    leftMenu->getDisplaySelectedPoint()->getNameEdit()->setReadOnly(true);
+    /// so that you cannot edit a new name unless you click the edit button again
+    leftMenu->getDisplaySelectedPoint()->getEditButton()->setChecked(false);
 }
