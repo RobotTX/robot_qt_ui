@@ -50,6 +50,7 @@ signals:
     void pointLeftClicked(PointView*);
     void addPointPath(PointView*);
     void moveTmpEditPathPoint();
+    void superimposePointView();
 
 private:
     std::shared_ptr<Point> point;

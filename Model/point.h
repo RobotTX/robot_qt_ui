@@ -52,6 +52,7 @@ public:
 
     void setName(const QString _name) { name = _name; }
     void setPosition(const float x, const float y) { position.setX(x); position.setY(y); }
+    void setPosition(const Position _position) { position = _position; }
 
     /// a helper function to overload the << operator
     void display(std::ostream& stream) const;

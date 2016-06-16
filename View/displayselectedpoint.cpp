@@ -34,6 +34,7 @@ DisplaySelectedPoint::DisplaySelectedPoint(QMainWindow *_parent, Points const& _
 
     editButton = new QPushButton(QIcon(":/icons/edit.png"),"");
     editButton->setIconSize(_parent->size()/10);
+    editButton->setToolTip("You can click on this button and then on the map to change the position of your point");
     editButton->setCheckable(true);
 
     grid = new QHBoxLayout();
@@ -59,7 +60,6 @@ DisplaySelectedPoint::DisplaySelectedPoint(QMainWindow *_parent, Points const& _
     nameEdit = new QLineEdit();
     nameEdit->setReadOnly(true);
     nameEdit->setStyleSheet("* { background-color: rgba(255, 0, 0, 0); }");
-    connect(this->getNameEdit(), SIGNAL(textChanged(QString)), this, SLOT(updatePointUsingKey(QString)));
 
     nameLayout->addWidget(nameEdit);
 
@@ -73,9 +73,20 @@ DisplaySelectedPoint::DisplaySelectedPoint(QMainWindow *_parent, Points const& _
     posYLabel->setWordWrap(true);
     layout->addWidget(posYLabel);
 
+    cancelButton = new QPushButton("Cancel");
+    cancelButton->hide();
+
     saveButton = new QPushButton("Save");
-    layout->addWidget(saveButton);
-    connect(this->getSaveButton(), SIGNAL(clicked(bool)), _parent, SLOT(updatePointUsingButton()));
+    saveButton->hide();
+
+    editLayout = new QHBoxLayout();
+    editLayout->addWidget(cancelButton);
+    editLayout->addWidget(saveButton);
+
+    layout->addLayout(editLayout);
+
+    connect(cancelButton, SIGNAL(clicked(bool)), this, SLOT(cancelEvent()));
+
     setLayout(layout);
 }
 
@@ -83,6 +94,7 @@ DisplaySelectedPoint::~DisplaySelectedPoint(){
     delete posXLabel;
     delete posYLabel;
     delete layout;
+    delete editLayout;
     delete backButton;
     delete plusButton;
     delete minusButton;
@@ -95,6 +107,7 @@ DisplaySelectedPoint::~DisplaySelectedPoint(){
     delete nameLayout;
     delete parent;
     delete saveButton;
+    delete cancelButton;
 }
 
 void DisplaySelectedPoint::displayPointInfo(void){
@@ -110,12 +123,10 @@ void DisplaySelectedPoint::mousePressEvent(QEvent* event){
 
 void DisplaySelectedPoint::keyPressEvent(QKeyEvent* event){
     if(!event->text().compare("\r")){
+        emit nameChanged(point->getName(), nameEdit->text());
         qDebug() << "enter pressed";
-        editButton->setChecked(false);
-        nameEdit->setReadOnly(true);
     }
 }
-
 
 void DisplaySelectedPoint::setOrigin(const Origin _origin){
     origin = _origin;
@@ -130,3 +141,11 @@ void DisplaySelectedPoint::setOrigin(const Origin _origin){
         backButton->show();
 }
 
+void DisplaySelectedPoint::cancelEvent(void){
+    nameEdit->setReadOnly(true);
+    editButton->setChecked(false);
+    cancelButton->hide();
+    saveButton->hide();
+    posXLabel->setText(QString::number(point->getPosition().getX()));
+    posYLabel->setText(QString::number(point->getPosition().getY()));
+}

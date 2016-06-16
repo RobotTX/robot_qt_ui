@@ -66,7 +66,6 @@ void EditSelectedPointWidget::setSelectedPoint(PointView* const _pointView, cons
     nameEdit->setText(pointView->getPoint()->getName());
     posXLabel->setText("X : " + QString::number(pointView->getPoint()->getPosition().getX()));
     posYLabel->setText("Y : " + QString::number(pointView->getPoint()->getPosition().getY()));
-
 }
 
 void EditSelectedPointWidget::saveEditSelecPointBtnEvent(){

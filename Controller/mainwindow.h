@@ -129,7 +129,7 @@ private slots:
     void displayPointMapEvent(void);
     void hidePathCreationWidget(void);
     void pointInfoEvent(void);
-    void editPointButtonEvent(void);
+    void editPointButtonEvent(bool checked);
     void editTmpPathPointSlot(int id, Point* point, int nbWidget);
     void editPointFromGroupMenu(void);
        // prob need a different event
@@ -137,7 +137,8 @@ private slots:
     void moveTmpEditPathPointSlot(void);
     void displayPointInfoFromGroupMenu(void);
     void updatePointUsingButton(void);
-    void updatePointUsingKey(QString newName);
+    void updatePointUsingKey(void);
+    void superimposeTmpPointView(PointView *pointView);
 
 private:
     Ui::MainWindow* ui;

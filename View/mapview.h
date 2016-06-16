@@ -43,10 +43,13 @@ public:
 signals:
     void pointLeftClicked(PointView*, bool);
     void addPathPointMapView(Point*);
+    void superimposeTmpPointViewSignal(PointView*);
 
 private slots:
     void addPathPointMapViewSlot(PointView*);
     void updateHover(QString, QString);
+    void superimposeTmpPointView(void);
+
 
 protected:
     void mousePressEvent(QGraphicsSceneMouseEvent *event);

@@ -35,7 +35,7 @@
 #include "View/pointbuttongroup.h"
 #include "View/verticalscrollarea.h"
 
-#define XML_PATH /home/joan/Qt/QtProjects/gobot-software/gobot-software/points.xml
+#define XML_PATH "/home/joan/Qt/QtProjects/gobot-software/points.xml"
 
 //TODO  stop threads/connections when scanning the map is finished/the user stop it
 
@@ -96,11 +96,12 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
     graphicsView->show();
 
+    connect(leftMenu->getDisplaySelectedPoint()->getSaveButton(), SIGNAL(clicked(bool)), this, SLOT(updatePointUsingButton()));
+    /// the purpose of this connection is just to propagate the signal to the map view through the main window
+    connect(leftMenu->getDisplaySelectedPoint(), SIGNAL(nameChanged(QString, QString)), this, SLOT(updatePointUsingKey()));
     /// to update the names of the points displayed when a user changes the name of a point via the edit button
     connect(this, SIGNAL(nameChanged(QString, QString)), mapPixmapItem, SLOT(updateHover(QString, QString)));
-
 }
-
 
 MainWindow::~MainWindow(){
     delete ui;
@@ -404,32 +405,35 @@ void MainWindow::editSelectedRobot(RobotView* robotView){
 }
 
 void MainWindow::setSelectedPoint(PointView* pointView, bool isTemporary){
+    /// we are not modifying an existing point
     if(!leftMenu->getDisplaySelectedPoint()->getEditButton()->isChecked()){
         leftMenu->show();
         selectedPoint = pointView;
-
         hideAllWidgets();
         editSelectedPointWidget->setSelectedPoint(selectedPoint, isTemporary);
         editSelectedPointWidget->show();
         leftMenu->getDisplaySelectedPoint()->hide();
     } else {
-        qDebug() << "ready to move a point on the map";
         std::cout << *mapPixmapItem->getTmpPointView()->getPoint() << std::endl;
+        /// on the left we display the position of the temporary point as the user moves it around but we don't make any modifications on the model yet
+        leftMenu->getDisplaySelectedPoint()->getXLabel()->setText(QString::number(mapPixmapItem->getTmpPointView()->getPoint()->getPosition().getX()));
+        leftMenu->getDisplaySelectedPoint()->getYLabel()->setText(QString::number(mapPixmapItem->getTmpPointView()->getPoint()->getPosition().getY()));
     }
 }
 
-void MainWindow::robotBtnEvent(){
+void MainWindow::robotBtnEvent(void){
     qDebug() << "robotBtnEvent called";
     leftMenuWidget->hide();
     robotsLeftWidget->show();
     lastWidget = robotsLeftWidget;
 }
 
-void MainWindow::pointBtnEvent(){
+void MainWindow::pointBtnEvent(void){
     qDebug() << "pointBtnEvent called";
     /// called when the back button is clicked and we came from the group menu
     if(leftMenu->getDisplaySelectedPoint()->getOrigin() == DisplaySelectedPoint::GROUP_MENU){
         hideAllWidgets();
+        leftMenu->getDisplaySelectedGroup()->getEditButton()->setChecked(false);
         leftMenu->getDisplaySelectedPoint()->setOrigin(DisplaySelectedPoint::POINTS_MENU);
         qDebug() << "dans pointBtn event with origin group menu";
         leftMenu->getDisplaySelectedGroup()->show();
@@ -509,18 +513,32 @@ void MainWindow::minusGroupBtnEvent(){
     }
 }
 
-void MainWindow::editPointButtonEvent(){
+void MainWindow::editPointButtonEvent(bool checked){
     /// uncheck the other buttons
     pointsLeftWidget->getPlusButton()->setChecked(false);
     pointsLeftWidget->getMinusButton()->setChecked(false);
     pointsLeftWidget->getEyeButton()->setChecked(false);
     pointsLeftWidget->getMapButton()->setChecked(false);
 
-    qDebug() << "editPointBtnEvent called";
-    if(leftMenu->getDisplaySelectedPoint()->getEditButton()->isChecked())
+    /// we show the save button and the cancel button
+    leftMenu->getDisplaySelectedPoint()->getCancelButton()->show();
+    leftMenu->getDisplaySelectedPoint()->getSaveButton()->show();
+
+    /// we set the temporary point to the currently edited point so that if the user only wants to change the point's name
+    /// he doesn't also change its position
+
+    qDebug() << "editPointButtonEvent called";
+    if(checked){
+        /// we set the temporary point to the currently edited point so that if the user only wants to change the point's name
+        /// he doesn't also change its position
         leftMenu->getDisplaySelectedPoint()->getNameEdit()->setReadOnly(false);
-    else
+        mapPixmapItem->getTmpPointView()->setPos(leftMenu->getDisplaySelectedPoint()->getPoint()->getPosition().getX(), leftMenu->getDisplaySelectedPoint()->getPoint()->getPosition().getX());
+    } else {
+        /// we hide everything that's related to modifying a point
         leftMenu->getDisplaySelectedPoint()->getNameEdit()->setReadOnly(true);
+        leftMenu->getDisplaySelectedPoint()->getCancelButton()->hide();
+        leftMenu->getDisplaySelectedPoint()->getSaveButton()->hide();
+    }
 }
 
 void MainWindow::editGroupBtnEvent(){
@@ -861,7 +879,7 @@ void MainWindow::askForDeleteDefaultGroupPointConfirmation(int index){
             pointsLeftWidget->getMinusButton()->setChecked(false);
             qDebug() << " called yes event ";
             points.getGroups().at(points.getGroups().size()-1)->removePoint(index);
-            XMLParser parserPoints("/home/joan/Qt/QtProjects/gobot-software/gobot-software/points.xml");
+            XMLParser parserPoints(XML_PATH);
             parserPoints.save(points);
             std::cout << pointViews->getGroups().at(pointViews->getGroups().size()-1).getPointViews().size() << std::endl;
             //pointViews->deleteDefaultPointView(index);
@@ -895,7 +913,7 @@ void MainWindow::askForDeletePointConfirmation(int index){
         case QMessageBox::Yes : {
             qDebug() << " called yes event ";
             points.getGroups().at(pointsLeftWidget->getIndexLastGroupClicked())->removePoint(index);
-            XMLParser parserPoints("/home/joan/Qt/QtProjects/gobot-software/gobot-software/points.xml");
+            XMLParser parserPoints(XML_PATH);
             parserPoints.save(points);
             leftMenu->getDisplaySelectedPoint()->getMinusButton()->setChecked(false);
         }
@@ -926,7 +944,7 @@ void MainWindow::askForDeleteGroupConfirmation(int index){
         case QMessageBox::Yes : {
             points.removeGroup(index);
             qDebug() << points.getGroups().size();
-            XMLParser parserPoints("/home/joan/Qt/QtProjects/gobot-software/gobot-software/points.xml");
+            XMLParser parserPoints(XML_PATH);
             parserPoints.save(points);
             std::cout << std::endl;
             mapPixmapItem->updatePoints(points);
@@ -983,14 +1001,14 @@ void MainWindow::displayGroupEvent(int index, bool display){
                     std::shared_ptr<Point> currentPoint = points.getGroups().at(index)->getPoints().at(i);
                     currentPoint->setDisplayed(true);
                     mapPixmapItem->updatePoints(points);
-                    XMLParser parserPoints("/home/joan/Qt/QtProjects/gobot-software/gobot-software/points.xml");
+                    XMLParser parserPoints(XML_PATH);
                     parserPoints.save(points);
                 }
             } else {
                 qDebug() << " i have to display a single point";
                 points.getGroups().at(points.getGroups().size()-1)->getPoints().at(index-points.getGroups().size()+1)->setDisplayed(true);
                 mapPixmapItem->updatePoints(points);
-                XMLParser parserPoints("/home/joan/Qt/QtProjects/gobot-software/gobot-software/points.xml");
+                XMLParser parserPoints(XML_PATH);
                 parserPoints.save(points);
 
             }
@@ -1001,7 +1019,7 @@ void MainWindow::displayGroupEvent(int index, bool display){
                     std::shared_ptr<Point> currentPoint = points.getGroups().at(index)->getPoints().at(i);
                     currentPoint->setDisplayed(false);
                     mapPixmapItem->updatePoints(points);
-                    XMLParser parserPoints("/home/joan/Qt/QtProjects/gobot-software/gobot-software/points.xml");
+                    XMLParser parserPoints(XML_PATH);
                     parserPoints.save(points);
                 }
 
@@ -1009,7 +1027,7 @@ void MainWindow::displayGroupEvent(int index, bool display){
                 qDebug() << " i have to stop displaying a single point which index is " << index-points.getGroups().size()+1;
                 points.getGroups().at(points.getGroups().size()-1)->getPoints().at(index-points.getGroups().size()+1)->setDisplayed(false);
                 mapPixmapItem->updatePoints(points);
-                XMLParser parserPoints("/home/joan/Qt/QtProjects/gobot-software/gobot-software/points.xml");
+                XMLParser parserPoints(XML_PATH);
                 parserPoints.save(points);
             }
         }
@@ -1039,7 +1057,7 @@ void MainWindow::displayGroupMapEvent(){
 }
 
 void MainWindow::displayPointMapEvent(){
-
+    qDebug() << "displaypoint map event";
     std::shared_ptr<Point> point = leftMenu->getDisplaySelectedPoint()->getPoint();
 
     if(point != NULL && point->isDisplayed()){
@@ -1212,7 +1230,7 @@ void MainWindow::removePointFromInformationMenu(void){
             if(pointIndexes.first != -1){
                 points.getGroups().at(pointIndexes.first)->removePoint(pointIndexes.second);
                 /// updates the file containing containing points info
-                XMLParser parserPoints("/home/joan/Qt/QtProjects/gobot-software/gobot-software/points.xml");
+                XMLParser parserPoints(XML_PATH);
                 parserPoints.save(points);
                 /// need to remove the point from the map
                 mapPixmapItem->updatePoints(points);
@@ -1305,14 +1323,18 @@ void MainWindow::editTmpPathPointSlot(int id, Point* point, int nbWidget){
 }
 
 void MainWindow::editPointFromGroupMenu(void){
+    qDebug() << "editgroupfrommenuevent";
     std::shared_ptr<Group> group = points.findGroup(leftMenu->getDisplaySelectedGroup()->getNameLabel()->text());
     if(group){
         int point = leftMenu->getDisplaySelectedGroup()->getPointButtonGroup()->getButtonGroup()->checkedId();
         if(point != -1 and point < group->getPoints().size()){
+            leftMenu->getDisplaySelectedPoint()->setOrigin(DisplaySelectedPoint::GROUP_MENU);
             leftMenu->getDisplaySelectedPoint()->setPoint(group->getPoints().at(point));
             leftMenu->getDisplaySelectedPoint()->displayPointInfo();
             leftMenu->getDisplaySelectedPoint()->getEditButton()->setChecked(true);
             leftMenu->getDisplaySelectedPoint()->getNameEdit()->setReadOnly(false);
+            leftMenu->getDisplaySelectedPoint()->getCancelButton()->show();
+            leftMenu->getDisplaySelectedPoint()->getSaveButton()->show();
             leftMenu->getDisplaySelectedPoint()->show();
             leftMenu->getDisplaySelectedGroup()->hide();
         }
@@ -1350,21 +1372,47 @@ void MainWindow::displayPointInfoFromGroupMenu(void){
 void MainWindow::updatePointUsingButton(void){
     emit nameChanged(leftMenu->getDisplaySelectedPoint()->getPoint()->getName(), leftMenu->getDisplaySelectedPoint()->getNameEdit()->text());
     leftMenu->getDisplaySelectedPoint()->getPoint()->setName(leftMenu->getDisplaySelectedPoint()->getNameEdit()->text());
-    XMLParser parserPoints("/home/joan/Qt/QtProjects/gobot-software/gobot-software/points.xml");
+    /// update the position of the point
+    leftMenu->getDisplaySelectedPoint()->getPoint()->setPosition(mapPixmapItem->getTmpPointView()->getPoint()->getPosition());
+    XMLParser parserPoints(XML_PATH);
     parserPoints.save(points);
+    /// update the map view so that our edited point is also our temporary point
+    mapPixmapItem->updatePoints(points);
     /// so that the name cannot be changed anymore unless you click the edit button again
     leftMenu->getDisplaySelectedPoint()->getNameEdit()->setReadOnly(true);
     /// so that you cannot edit a new name unless you click the edit button again
     leftMenu->getDisplaySelectedPoint()->getEditButton()->setChecked(false);
+    /// we hide the save button and the cancel button
+    leftMenu->getDisplaySelectedPoint()->getCancelButton()->hide();
+    leftMenu->getDisplaySelectedPoint()->getSaveButton()->hide();
+    mapPixmapItem->getTmpPointView()->setPos(leftMenu->getDisplaySelectedPoint()->getPoint()->getPosition().getX(), leftMenu->getDisplaySelectedPoint()->getPoint()->getPosition().getY());
 }
 
-void MainWindow::updatePointUsingKey(QString newName){
+void MainWindow::updatePointUsingKey(void){
     emit nameChanged(leftMenu->getDisplaySelectedPoint()->getPoint()->getName(), leftMenu->getDisplaySelectedPoint()->getNameEdit()->text());
     leftMenu->getDisplaySelectedPoint()->getPoint()->setName(leftMenu->getDisplaySelectedPoint()->getNameEdit()->text());
-    XMLParser parserPoints("/home/joan/Qt/QtProjects/gobot-software/gobot-software/points.xml");
+    /// update the position of the point
+    leftMenu->getDisplaySelectedPoint()->getPoint()->setPosition(mapPixmapItem->getTmpPointView()->getPoint()->getPosition());
+    XMLParser parserPoints(XML_PATH);
     parserPoints.save(points);
+    /// update the map view so that our edited point is also our temporary point
+    mapPixmapItem->updatePoints(points);
     /// so that the name cannot be changed anymore unless you click the edit button again
     leftMenu->getDisplaySelectedPoint()->getNameEdit()->setReadOnly(true);
     /// so that you cannot edit a new name unless you click the edit button again
     leftMenu->getDisplaySelectedPoint()->getEditButton()->setChecked(false);
+    /// we hide the save button and the cancel button
+    leftMenu->getDisplaySelectedPoint()->getSaveButton()->hide();
+    leftMenu->getDisplaySelectedPoint()->getCancelButton()->hide();
+    mapPixmapItem->getTmpPointView()->setPos(leftMenu->getDisplaySelectedPoint()->getPoint()->getPosition().getX(), leftMenu->getDisplaySelectedPoint()->getPoint()->getPosition().getY());
+}
+
+void MainWindow::superimposeTmpPointView(PointView* pointView){
+    qDebug() << " trying to superimpose the edited point and the tmp one" << pointView->getPoint()->getName();
+    if(leftMenu->getDisplaySelectedPoint()->getEditButton()->isChecked())
+        mapPixmapItem->getTmpPointView()->setPos(leftMenu->getDisplaySelectedPoint()->getPoint()->getPosition().getX(), leftMenu->getDisplaySelectedPoint()->getPoint()->getPosition().getX());
+    selectedPoint = pointView;
+    hideAllWidgets();
+    leftMenu->getDisplaySelectedPoint()->show();
+    editSelectedPointWidget->setSelectedPoint(selectedPoint, true);
 }

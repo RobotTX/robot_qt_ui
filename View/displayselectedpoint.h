@@ -31,11 +31,14 @@ public:
     QPushButton* getMapButton(void) const { return mapButton; }
     QPushButton* getEditButton(void) const { return editButton; }
     QPushButton* getSaveButton(void) const { return saveButton; }
+    QPushButton* getCancelButton(void) const { return cancelButton; }
     QString getPointName(void) const { return nameEdit->text(); }
     QLineEdit* getNameEdit(void) const { return nameEdit; }
     std::shared_ptr<Point> getPoint(void) const { return point; }
     void setPoint(std::shared_ptr<Point> const& _point) { point = _point; }
     Origin getOrigin(void) const { return origin; }
+    QLabel* getXLabel(void) const { return posXLabel; }
+    QLabel* getYLabel(void) const { return posYLabel; }
 
 public:
     void displayPointInfo(void);
@@ -47,9 +50,13 @@ signals:
     /// to notify the mapview that one of its points have been updated (in order to update the name that's displayed when the mouse is hovering over a point)
     void nameChanged(QString, QString);
 
+private slots:
+    void cancelEvent(void);
+
 private:
     QLineEdit* nameEdit;
     QHBoxLayout* nameLayout;
+    QHBoxLayout* editLayout;
     QLabel* posXLabel;
     QLabel* posYLabel;
     QVBoxLayout* layout;
@@ -62,6 +69,7 @@ private:
     QHBoxLayout* eyeMapLayout;
     QHBoxLayout* grid;
     QPushButton* saveButton;
+    QPushButton* cancelButton;
     std::shared_ptr<Point> point;
     QMainWindow* parent;
     Points points;

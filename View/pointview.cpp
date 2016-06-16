@@ -34,6 +34,7 @@ void PointView::mousePressEvent(QGraphicsSceneMouseEvent *event){
             if(event->button() == Qt::LeftButton){
                 qDebug() << "left click on point" ;
                 emit pointLeftClicked(this);
+                emit superimposePointView();
             }
         } else if(state == GraphicItemState::CREATING_PATH){
             qDebug() << "Clicked on a point while creating a path";

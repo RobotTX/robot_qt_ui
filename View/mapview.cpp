@@ -25,6 +25,10 @@ MapView::MapView (const QPixmap& pixmap, const QSize _size, PointsView* const& p
         for(size_t j = 0; j < permanentPoints->getGroups().at(i).getPointViews().size(); j++){
             permanentPoints->getGroups().at(i).getPointViews().at(j)->setParentItem(this);
             connect(&(*permanentPoints->getGroups().at(i).getPointViews().at(j)), SIGNAL(pointLeftClicked(PointView*)), _mainWindow, SLOT(displayPointEvent(PointView*)));
+            /// we relay the click on a permanent point to the map view so that it sends a signal containing the tmp view to the main window
+            /// this way when we try to change the position of an existing point the first thing that is done is to superimpose the tmp point and the edited one
+            /// this way if a user wants to change the name of a point only and not its location he will not do by accident in case a temporary point would have been created in prior
+            connect(&(*permanentPoints->getGroups().at(i).getPointViews().at(j)), SIGNAL(superimposePointView()), this, SLOT(superimposeTmpPointView()));
         }
     }
 
@@ -36,6 +40,8 @@ MapView::MapView (const QPixmap& pixmap, const QSize _size, PointsView* const& p
 
     connect(tmpPointView, SIGNAL(addPointPath(PointView*)), this, SLOT(addPathPointMapViewSlot(PointView*)));
     point = static_cast<QSharedPointer<PointView>>(tmpPointView);
+
+    connect(this, SIGNAL(superimposeTmpPointViewSignal(PointView*)), _mainWindow, SLOT(superimposeTmpPointView(PointView*)));
 }
 
 MapView::~MapView(){
@@ -136,4 +142,9 @@ void MapView::setState(const GraphicItemState _state, const bool clear){
      //newPointView->setPos(pointView->pos().x(), pointView->pos().y());
      newPointView->setParentItem(this);
      pathCreationPoints.push_back(newPointView);
+ }
+
+ void MapView::superimposeTmpPointView(void){
+    qDebug() << " got a signal from one of my point view, time to relay to the main window";
+    emit superimposeTmpPointViewSignal(tmpPointView);
  }

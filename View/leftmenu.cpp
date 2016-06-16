@@ -89,7 +89,7 @@ qDebug() << "ok";
 
     connect(displaySelectedPoint->getMinusButton(), SIGNAL(clicked(bool)), parent, SLOT(removePointFromInformationMenu()));
     connect(displaySelectedPoint->getMapButton(), SIGNAL(clicked(bool)), parent, SLOT(displayPointMapEvent()));
-    connect(displaySelectedPoint->getEditButton(), SIGNAL(clicked(bool)), parent, SLOT(editPointButtonEvent()));
+    connect(displaySelectedPoint->getEditButton(), SIGNAL(clicked(bool)), parent, SLOT(editPointButtonEvent(bool)));
 
     connect(displaySelectedGroup->getBackButton(), SIGNAL(clicked(bool)), parent, SLOT(pointBtnEvent()));
     connect(displaySelectedGroup->getEditButton(), SIGNAL(clicked(bool)), parent, SLOT(editPointFromGroupMenu()));
