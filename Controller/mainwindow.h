@@ -30,7 +30,7 @@ class PathPainter;
 #include "View/robotview.h"
 #include <QMainWindow>
 #include <QModelIndex>
-#include "Model/enumgraphicstate.h"
+#include "Model/graphicitemstate.h"
 
 #define PI 3.14159265
 #define PORT_MAP_METADATA 4000
@@ -59,7 +59,7 @@ public:
     void initializeBottomPanel();
     void initializeLeftMenu();
     void hideAllWidgets();
-    void setGraphicItemsState(const GraphicItemState state, const bool clear);
+    void setGraphicItemsState(const GraphicItemState state, const bool clear = false);
     void stopPathCreation();
 
 signals:
@@ -129,7 +129,7 @@ private slots:
     void displayPointMapEvent(void);
     void hidePathCreationWidget(void);
     void pointInfoEvent(void);
-    void editPointButtonEvent(void);
+    void editPointButtonEvent(bool checked);
     void editTmpPathPointSlot(int id, Point* point, int nbWidget);
     void editPointFromGroupMenu(void);
        // prob need a different event
@@ -137,7 +137,7 @@ private slots:
     void moveTmpEditPathPointSlot(void);
     void displayPointInfoFromGroupMenu(void);
     void updatePointUsingButton(void);
-    void updatePointUsingKey(QString newName);
+    void updatePointUsingKey(void);
 
 private:
     Ui::MainWindow* ui;

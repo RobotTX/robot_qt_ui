@@ -8,7 +8,7 @@ class QGraphicsSceneMouseEvent;
 #include "Model/position.h"
 #include <QObject>
 #include <QGraphicsPolygonItem>
-#include "Model/enumgraphicstate.h"
+#include "Model/graphicitemstate.h"
 
 #define ROBOT_HEIGHT_LOW 9
 #define ROBOT_HEIGHT_HIGH 12

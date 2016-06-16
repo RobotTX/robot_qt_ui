@@ -41,7 +41,10 @@ void PointView::mousePressEvent(QGraphicsSceneMouseEvent *event){
             emit addPointPath(this);
         } else if(state == GraphicItemState::EDITING){
             qDebug() << "PointView moving from" << pos().x() << pos().y();
-        } else {
+        }  else if(state == GraphicItemState::EDITING_PERM){
+            qDebug() << "editing permanently";
+        }
+        else {
             qDebug() << "(PointView " << point->getName() << ") NO EVENT";
         }
 }

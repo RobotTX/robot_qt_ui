@@ -37,6 +37,7 @@ MapView::MapView (const QPixmap& pixmap, const QSize _size, PointsView* const& p
 
     connect(tmpPointView, SIGNAL(addPointPath(PointView*)), this, SLOT(addPathPointMapViewSlot(PointView*)));
     point = static_cast<QSharedPointer<PointView>>(tmpPointView);
+
 }
 
 MapView::~MapView(){
@@ -79,6 +80,8 @@ void MapView::mouseReleaseEvent(QGraphicsSceneMouseEvent *event){
             newPointView->setParentItem(this);
             pathCreationPoints.push_back(newPointView);
             emit addPathPointMapView(&(*(newPointView->getPoint())));
+        } else if(state == GraphicItemState::EDITING_PERM){
+
         } else {
             qDebug() << "(MapView) NO EVENT";
         }

@@ -11,7 +11,7 @@ class QGraphicsSceneMouseEvent;
 #include <QObject>
 #include <QGraphicsPixmapItem>
 #include <QSharedPointer>
-#include "Model/enumgraphicstate.h"
+#include "Model/graphicitemstate.h"
 #include "Model/points.h"
 
 /**
@@ -34,7 +34,7 @@ public:
 
     /// Setter
     void setPoint(const QSharedPointer<PointView> _point) { point = _point; }
-    void setState(const GraphicItemState _state, const bool clear);
+    void setState(const GraphicItemState _state, const bool clear = false);
 
     void addPathPoint(PointView* pointView);
 public:
