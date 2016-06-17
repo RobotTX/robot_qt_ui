@@ -3,9 +3,9 @@
     <group>
         <name>first group</name>
         <point>
-            <name>Ab</name>
-            <x>46</x>
-            <y>94</y>
+            <name>A</name>
+            <x>50</x>
+            <y>50</y>
             <displayed>1</displayed>
         </point>
         <point>
@@ -45,15 +45,15 @@
             <displayed>1</displayed>
         </point>
         <point>
-            <name>Another </name>
-            <x>58</x>
-            <y>130</y>
+            <name>Another point</name>
+            <x>150</x>
+            <y>200</y>
             <displayed>1</displayed>
         </point>
         <point>
-            <name>A final point</name>
-            <x>150</x>
-            <y>225</y>
+            <name>A final </name>
+            <x>255</x>
+            <y>134</y>
             <displayed>1</displayed>
         </point>
     </group>

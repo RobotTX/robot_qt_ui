@@ -86,8 +86,6 @@ DisplaySelectedPoint::DisplaySelectedPoint(QMainWindow *_parent, Points const& _
 
     layout->addLayout(editLayout);
 
-    connect(cancelButton, SIGNAL(clicked(bool)), this, SLOT(cancelEvent()));
-
     setLayout(layout);
 }
 
@@ -132,7 +130,6 @@ void DisplaySelectedPoint::keyPressEvent(QKeyEvent* event){
 
 void DisplaySelectedPoint::setOrigin(const Origin _origin){
     origin = _origin;
-    qDebug() << origin;
     /// if we come from the map there is simply no where
     /// to return so we hide the button
     /// the distinction between when we come from the group menu
@@ -143,18 +140,6 @@ void DisplaySelectedPoint::setOrigin(const Origin _origin){
         backButton->show();
 }
 
-void DisplaySelectedPoint::cancelEvent(void){
-    /// we hide the buttons relative to the edit option and make sure the points properties are not longer modifiable
-    nameEdit->setReadOnly(true);
-    editButton->setChecked(false);
-    cancelButton->hide();
-    saveButton->hide();
-    /// in case the user had dragged the point around the map or clicked it, this resets the coordinates displayed to the original ones
-    posXLabel->setText(QString::number(pointView->getPoint()->getPosition().getX()));
-    posYLabel->setText(QString::number(pointView->getPoint()->getPosition().getY()));
-}
 
-void DisplaySelectedPoint::updateCoordinates(float x, float y){
-    posXLabel->setText("X : " + QString::number(x));
-    posYLabel->setText("Y : " + QString::number(y));
-}
+
+

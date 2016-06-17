@@ -27,6 +27,13 @@ public:
 public:
     QVector<std::shared_ptr<Group>> getGroups(void) const { return groups; }
 
+    /**
+     * @brief count
+     * @return int
+     * returns the number of groups of the list of points
+     */
+    int count(void) const { return groups.size(); }
+
     bool addGroup(const Group& group);
 
     /**

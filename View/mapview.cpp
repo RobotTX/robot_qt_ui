@@ -25,6 +25,8 @@ MapView::MapView (const QPixmap& pixmap, const QSize _size, PointsView* const& p
         for(size_t j = 0; j < permanentPoints->getGroups().at(i).getPointViews().size(); j++){
             permanentPoints->getGroups().at(i).getPointViews().at(j)->setParentItem(this);
             connect(&(*permanentPoints->getGroups().at(i).getPointViews().at(j)), SIGNAL(pointLeftClicked(PointView*)), _mainWindow, SLOT(displayPointEvent(PointView*)));
+            /// to update the coordinates of the point displayed on the left when a user drags a point to change its position
+            connect(&(*permanentPoints->getGroups().at(i).getPointViews().at(j)), SIGNAL(editedPointPositionChanged(float, float)), _mainWindow, SLOT(updateCoordinates(float, float)));
         }
     }
 

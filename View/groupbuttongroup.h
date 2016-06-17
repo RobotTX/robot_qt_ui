@@ -7,11 +7,12 @@ class QVBoxLayout;
 
 #include <QButtonGroup>
 #include <QWidget>
+#include <memory>
 
 class GroupButtonGroup: public QWidget
 {
 public:
-    GroupButtonGroup(const Points& _points);
+    GroupButtonGroup(Points const& _points);
     ~GroupButtonGroup();
 
     QButtonGroup* getButtonGroup(void) const { return buttonGroup; }
@@ -19,6 +20,7 @@ public:
 public:
     void deleteButtons(void);
     void update(const Points& _points);
+    void uncheck(void);
 
 private:
     QVBoxLayout* layout;
