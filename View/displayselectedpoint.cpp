@@ -1,5 +1,6 @@
 #include "displayselectedpoint.h"
 #include "Model/point.h"
+#include "View/pointview.h"
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QLabel>
@@ -10,11 +11,11 @@
 #include <QKeyEvent>
 #include "Model/xmlparser.h"
 
-DisplaySelectedPoint::DisplaySelectedPoint(QMainWindow *_parent, Points const& _points, std::shared_ptr<Point> const& _point, const Origin origin)
+DisplaySelectedPoint::DisplaySelectedPoint(QMainWindow *_parent, Points const& _points, const std::shared_ptr<PointView> &_pointView, const Origin origin)
 {
     parent = _parent;
     points = _points;
-    point = _point;
+    pointView = _pointView;
 
     layout = new QVBoxLayout();
 
@@ -111,9 +112,9 @@ DisplaySelectedPoint::~DisplaySelectedPoint(){
 }
 
 void DisplaySelectedPoint::displayPointInfo(void){
-    posXLabel->setText("X : " + QString::number(point->getPosition().getX()));
-    posYLabel->setText("Y : " + QString::number(point->getPosition().getY()));
-    nameEdit->setText(point->getName());
+    posXLabel->setText("X : " + QString::number(pointView->getPoint()->getPosition().getX()));
+    posYLabel->setText("Y : " + QString::number(pointView->getPoint()->getPosition().getY()));
+    nameEdit->setText(pointView->getPoint()->getName());
 }
 
 void DisplaySelectedPoint::mousePressEvent(QEvent* event){
@@ -124,7 +125,7 @@ void DisplaySelectedPoint::mousePressEvent(QEvent* event){
 void DisplaySelectedPoint::keyPressEvent(QKeyEvent* event){
     /// this is the enter key
     if(!event->text().compare("\r")){
-        emit nameChanged(point->getName(), nameEdit->text());
+        emit nameChanged(pointView->getPoint()->getName(), nameEdit->text());
         qDebug() << "enter pressed";
     }
 }
@@ -149,6 +150,11 @@ void DisplaySelectedPoint::cancelEvent(void){
     cancelButton->hide();
     saveButton->hide();
     /// in case the user had dragged the point around the map or clicked it, this resets the coordinates displayed to the original ones
-    posXLabel->setText(QString::number(point->getPosition().getX()));
-    posYLabel->setText(QString::number(point->getPosition().getY()));
+    posXLabel->setText(QString::number(pointView->getPoint()->getPosition().getX()));
+    posYLabel->setText(QString::number(pointView->getPoint()->getPosition().getY()));
+}
+
+void DisplaySelectedPoint::updateCoordinates(float x, float y){
+    posXLabel->setText("X : " + QString::number(x));
+    posYLabel->setText("Y : " + QString::number(y));
 }

@@ -3,9 +3,9 @@
     <group>
         <name>first group</name>
         <point>
-            <name>A</name>
-            <x>50</x>
-            <y>50</y>
+            <name>Ab</name>
+            <x>46</x>
+            <y>94</y>
             <displayed>1</displayed>
         </point>
         <point>
@@ -25,8 +25,8 @@
         <name>Second group</name>
         <point>
             <name>Fanny</name>
-            <x>214</x>
-            <y>133</y>
+            <x>125</x>
+            <y>125</y>
             <displayed>1</displayed>
         </point>
         <point>
@@ -45,9 +45,9 @@
             <displayed>1</displayed>
         </point>
         <point>
-            <name>Another point</name>
-            <x>150</x>
-            <y>200</y>
+            <name>Another </name>
+            <x>58</x>
+            <y>130</y>
             <displayed>1</displayed>
         </point>
         <point>

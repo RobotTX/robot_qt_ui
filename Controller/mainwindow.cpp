@@ -102,6 +102,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     connect(leftMenu->getDisplaySelectedPoint(), SIGNAL(nameChanged(QString, QString)), this, SLOT(updatePoint()));
     /// to update the names of the points displayed when a user changes the name of a point via the edit button
     connect(this, SIGNAL(nameChanged(QString, QString)), mapPixmapItem, SLOT(updateHover(QString, QString)));
+    /// to update the coordinates of the point displayed on the left when a user drags a point to change its position
+    //connect(&(*leftMenu->getDisplaySelectedPoint()->getPointView(), SIGNAL(editedPointPositionChanged(float, float)), leftMenu->getDisplaySelectedPoint(), SLOT(updateCoordinates(float, float)));
 }
 
 MainWindow::~MainWindow(){
@@ -1315,6 +1317,8 @@ void MainWindow::updatePoint(void){
     /// we hide the save button and the cancel button
     selectedPoint->getCancelButton()->hide();
     selectedPoint->getSaveButton()->hide();
+    /// reset the state of the map so we can click it again
+    setGraphicItemsState(GraphicItemState::NO_STATE);
 }
 
 void MainWindow::quit(){

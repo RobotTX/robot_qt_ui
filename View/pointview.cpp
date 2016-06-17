@@ -66,7 +66,9 @@ void PointView::mouseMoveEvent(QGraphicsSceneMouseEvent *event){
         emit moveTmpEditPathPoint();
         QGraphicsPixmapItem::mouseMoveEvent(event);
     } else if(state == GraphicItemState::EDITING_PERM){
-        emit editedPointPositionChanged();
+        float x = pos().x() + pixmap().width()*SCALE/2;
+        float y = pos().y() + pixmap().height()*SCALE;
+        emit editedPointPositionChanged(x, y);
         QGraphicsPixmapItem::mouseMoveEvent(event);
     }
 }
