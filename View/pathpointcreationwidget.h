@@ -41,11 +41,6 @@ public:
 
     void initialisation(const int _id, const Points _points, QString _name);
 
-    /**
-     * @brief PathPointCreationWidget::clicked
-     * called when we want to show the menu displaying the list of points
-     */
-    void clicked(void);
     void displayActionWidget(const bool show);
     void displaySaveEditBtn(const bool show, const int count);
     void resetAction(void);

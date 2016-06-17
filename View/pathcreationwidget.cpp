@@ -107,19 +107,19 @@ PathCreationWidget::PathCreationWidget(QMainWindow* parent, const Points &_point
     /// the list that displays the path points
     pathPointsList = new PathPointList();
     connect(pathPointsList, SIGNAL(itemClicked(QListWidgetItem*)), this, SLOT(itemClicked(QListWidgetItem*)));
-
-
     connect(pathPointsList, SIGNAL(itemMovedSignal(int, int)), this, SLOT(itemMovedSlot(int, int)));
 
     layout->addWidget(pathPointsList);
 
 
+    /// The save button
     QPushButton* saveBtn = new QPushButton("Save Path");
     layout->addWidget(saveBtn);
     connect(saveBtn, SIGNAL(clicked()), this, SLOT(saveNoExecPath()));
     connect(this, SIGNAL(pathSaved(bool)), parent, SLOT(pathSaved(bool)));
 
 
+    /// The save button and play the path
     QPushButton* saveExecBtn = new QPushButton("Save and play Path");
     layout->addWidget(saveExecBtn);
     connect(saveExecBtn, SIGNAL(clicked()), this, SLOT(saveExecPath()));
@@ -136,27 +136,17 @@ PathCreationWidget::~PathCreationWidget(){
     delete supprBtn;
     delete editBtn;
     delete previousItem;
+    delete editedPathPointCreationWidget;
+    delete pointsMenu;
 }
 
 void PathCreationWidget::addPathPoint(void){
     qDebug() << "Add pathPoint" << idPoint;
     creatingNewPoint = true;
     clicked();
-
-
-    /*/// We create a new widget to add to the list of path point widgets
-    PathPointCreationWidget* pathPoint = new PathPointCreationWidget(idPoint, points);
-    newPathPointCreationWidget = pathPoint;
-    initialisationPathPoint(pathPoint);
-
-    pointList.push_back(Point());
-
-    pathPoint->clicked();
-    idPoint++;*/
 }
 
 void PathCreationWidget::clicked(void){
-    qDebug() << "I have been clicked";
     if(pointsMenu != NULL){
         pointsMenu->exec(QCursor::pos());
     }
@@ -168,6 +158,7 @@ void PathCreationWidget::pointClicked(QAction *action){
     float posX = 0;
     float posY = 0;
 
+    /// Get the pos of the point we selected in the menu
     for(int i = 0; i < pointInfos.size(); i++){
         if(pointInfos.at(i).name.compare(action->text()) == 0){
             posX = pointInfos.at(i).posX;
@@ -175,6 +166,7 @@ void PathCreationWidget::pointClicked(QAction *action){
         }
     }
 
+    /// Add the selected point to the path or edit the selected point
     if(creatingNewPoint){
         creatingNewPoint = false;
         addPathPoint(new Point(action->text(), posX, posY));
@@ -183,12 +175,12 @@ void PathCreationWidget::pointClicked(QAction *action){
         PathPointCreationWidget* pathPointCreationWidget = (PathPointCreationWidget*) pathPointsList->itemWidget(pathPointsList->currentItem());
 
         qDebug() << "Editing" << pathPointCreationWidget->getName() << "to" << action->text();
-        qDebug() << pathPointCreationWidget->getName() << pathPointCreationWidget->getPoint().getPosition().getX() << pathPointCreationWidget->getPoint().getPosition().getY();
         pathPointCreationWidget->setName(action->text());
         pathPointCreationWidget->setPos(posX, posY);
+
         int id = pathPointCreationWidget->getId();
         Point point = pathPointCreationWidget->getPoint();
-        qDebug() << id << point.getName() << point.getPosition().getX() << point.getPosition().getY();
+
         pointList.replace(id-1, pathPointCreationWidget->getPoint());
         previousItem = NULL;
         pathPointsList->setCurrentItem(pathPointsList->currentItem(), QItemSelectionModel::Deselect);
@@ -445,10 +437,16 @@ void PathCreationWidget::supprItem(QListWidgetItem* item){
 }
 
 void PathCreationWidget::editItem(QListWidgetItem* item){
+    /// Get the item to edit
     PathPointCreationWidget* pathPointWidget = (PathPointCreationWidget*) pathPointsList->itemWidget(item);
+
+    /// if it's a temporary point we can move it
     if(pathPointWidget->isTemporary()){
         qDebug() << "Trying to edit a temporary point";
         int nbWidget = 0;
+        /// Get the number of path point using the same point, because if there is only one,
+        /// we move the point but if there is multiples, we create a new PointView to move
+        /// and not edt the other path point using this point
         for(int i = 0; i < pathPointsList->count(); i++){
             PathPointCreationWidget* pathPointWidget2 = (PathPointCreationWidget*) pathPointsList->itemWidget(pathPointsList->item(i));
             if(abs(pathPointWidget2->getPosX() - pathPointWidget->getPosX()) < 0.01 &&
