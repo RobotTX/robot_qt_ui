@@ -216,7 +216,7 @@ void MainWindow::stopSelectedRobot(int robotNb){
                 qDebug() << "Points size before : " << points.getGroups().at(0)->getPoints().size();
                 qDebug() << "Ok was clicked";
                 /// if the command is succesfully sent to the robot, we apply the change
-                if(robots->getRobotsVector().at(robotNb)->getRobot()->sendCommand(QString("s"))){
+                if(robots->getRobotsVector().at(robotNb)->getRobot()->sendCommand(QString("d"))){
                     if(robots->getRobotsVector().at(robotNb)->getRobot()->isPlayingPath()){
                         qDebug() << "pause path on robot before supp " << robotNb << " : " << robots->getRobotsVector().at(robotNb)->getRobot()->getName();
                         robots->getRobotsVector().at(robotNb)->getRobot()->setPlayingPath(0);
@@ -251,7 +251,7 @@ void MainWindow::playSelectedRobot(int robotNb){
     if(robot->isPlayingPath()){
         qDebug() << "pause path on robot " << robotNb << " : " << robot->getName();
         /// if the command is succesfully sent to the robot, we apply the change
-        if(robot->sendCommand(QString("s"))){
+        if(robot->sendCommand(QString("d"))){
             robot->setPlayingPath(0);
             bottomLayout->getPlayRobotBtnGroup()->button(robotNb)->setIcon(QIcon(":/icons/play.png"));
         }
@@ -275,7 +275,7 @@ void MainWindow::playSelectedRobot(int robotNb){
         }
 
         /// if the command is succesfully sent to the robot, we apply the change
-        if(robot->sendCommand(QString("p") + " " + QString::number(newPosX) + " "  + QString::number(newPosY) + " "  + QString::number(waitTime))){
+        if(robot->sendCommand(QString("c ") + QString::number(newPosX) + " "  + QString::number(newPosY) + " "  + QString::number(waitTime))){
             robot->setPlayingPath(1);
             bottomLayout->getPlayRobotBtnGroup()->button(robotNb)->setIcon(QIcon(":/icons/pause.png"));
         }
@@ -390,7 +390,7 @@ void MainWindow::cancelEditSelecRobotBtnEvent(){
 void MainWindow::robotSavedEvent(){
     qDebug() << "robotSavedEvent called";
     /// if the command is succesfully sent to the robot, we apply the change
-    if(selectedRobot->getRobot()->sendCommand(QString(" n ") + editSelectedRobotWidget->getNameEdit()->text())){
+    if(selectedRobot->getRobot()->sendCommand(QString("a ") + editSelectedRobotWidget->getNameEdit()->text())){
         editSelectedRobotWidget->editName();
         robotsLeftWidget->setEditBtnStatus(false);
         robotsLeftWidget->setCheckBtnStatus(false);
