@@ -152,30 +152,33 @@ void MainWindow::connectToRobot(void){
     if(selectedRobot != NULL){
         QString ip = selectedRobot->getRobot()->getIp();
         qDebug() << "Trying to connect to : " << ip;
-        metadataThread = new ScanMetadataThread(ip, PORT_MAP_METADATA);
-        robotThread = new ScanRobotThread(ip, PORT_ROBOT_POS);
-        mapThread = new ScanMapThread(ip, PORT_MAP);
 
-        connect(robotThread, SIGNAL(valueChangedRobot(float, float, float))
-                ,this ,SLOT(updateRobot(float, float, float)));
+        if(selectedRobot->getRobot()->sendCommand(QString("e ") + QString::number(PORT_MAP_METADATA) + " " + QString::number(PORT_ROBOT_POS) + " " +QString::number(PORT_MAP))){
 
-        connect(metadataThread, SIGNAL(valueChangedMetadata(int, int, float, float, float))
-                , this , SLOT(updateMetadata(int, int, float, float, float)));
+            metadataThread = new ScanMetadataThread(ip, PORT_MAP_METADATA);
+            robotThread = new ScanRobotThread(ip, PORT_ROBOT_POS);
+            mapThread = new ScanMapThread(ip, PORT_MAP);
 
-        connect(mapThread, SIGNAL(valueChangedMap(QByteArray))
-                , this , SLOT(updateMap(QByteArray)));
+            connect(robotThread, SIGNAL(valueChangedRobot(float, float, float))
+                    ,this ,SLOT(updateRobot(float, float, float)));
 
-        metadataThread->start();
-        metadataThread->moveToThread(metadataThread);
+            connect(metadataThread, SIGNAL(valueChangedMetadata(int, int, float, float, float))
+                    , this , SLOT(updateMetadata(int, int, float, float, float)));
 
-        robotThread->start();
-        robotThread->moveToThread(robotThread);
+            connect(mapThread, SIGNAL(valueChangedMap(QByteArray))
+                    , this , SLOT(updateMap(QByteArray)));
 
-        mapThread->start();
-        mapThread->moveToThread(mapThread);
+            metadataThread->start();
+            metadataThread->moveToThread(metadataThread);
 
-        scanningRobot = selectedRobot;
+            robotThread->start();
+            robotThread->moveToThread(robotThread);
 
+            mapThread->start();
+            mapThread->moveToThread(mapThread);
+
+            scanningRobot = selectedRobot;
+        }
     } else {
         qDebug() << "Select a robot first";
     }
