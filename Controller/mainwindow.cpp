@@ -154,30 +154,33 @@ void MainWindow::connectToRobot(void){
     if(selectedRobot != NULL){
         QString ip = selectedRobot->getRobot()->getIp();
         qDebug() << "Trying to connect to : " << ip;
-        metadataThread = new ScanMetadataThread(ip, PORT_MAP_METADATA);
-        robotThread = new ScanRobotThread(ip, PORT_ROBOT_POS);
-        mapThread = new ScanMapThread(ip, PORT_MAP);
 
-        connect(robotThread, SIGNAL(valueChangedRobot(float, float, float))
-                ,this ,SLOT(updateRobot(float, float, float)));
+        if(selectedRobot->getRobot()->sendCommand(QString("e ") + QString::number(PORT_MAP_METADATA) + " " + QString::number(PORT_ROBOT_POS) + " " +QString::number(PORT_MAP))){
 
-        connect(metadataThread, SIGNAL(valueChangedMetadata(int, int, float, float, float))
-                , this , SLOT(updateMetadata(int, int, float, float, float)));
+            metadataThread = new ScanMetadataThread(ip, PORT_MAP_METADATA);
+            robotThread = new ScanRobotThread(ip, PORT_ROBOT_POS);
+            mapThread = new ScanMapThread(ip, PORT_MAP);
 
-        connect(mapThread, SIGNAL(valueChangedMap(QByteArray))
-                , this , SLOT(updateMap(QByteArray)));
+            connect(robotThread, SIGNAL(valueChangedRobot(float, float, float))
+                    ,this ,SLOT(updateRobot(float, float, float)));
 
-        metadataThread->start();
-        metadataThread->moveToThread(metadataThread);
+            connect(metadataThread, SIGNAL(valueChangedMetadata(int, int, float, float, float))
+                    , this , SLOT(updateMetadata(int, int, float, float, float)));
 
-        robotThread->start();
-        robotThread->moveToThread(robotThread);
+            connect(mapThread, SIGNAL(valueChangedMap(QByteArray))
+                    , this , SLOT(updateMap(QByteArray)));
 
-        mapThread->start();
-        mapThread->moveToThread(mapThread);
+            metadataThread->start();
+            metadataThread->moveToThread(metadataThread);
 
-        scanningRobot = selectedRobot;
+            robotThread->start();
+            robotThread->moveToThread(robotThread);
 
+            mapThread->start();
+            mapThread->moveToThread(mapThread);
+
+            scanningRobot = selectedRobot;
+        }
     } else {
         qDebug() << "Select a robot first";
     }
@@ -220,7 +223,7 @@ void MainWindow::stopSelectedRobot(int robotNb){
                 qDebug() << "Points size before : " << points.getGroups().at(0)->getPoints().size();
                 qDebug() << "Ok was clicked";
                 /// if the command is succesfully sent to the robot, we apply the change
-                if(robots->getRobotsVector().at(robotNb)->getRobot()->sendCommand(QString("s"))){
+                if(robots->getRobotsVector().at(robotNb)->getRobot()->sendCommand(QString("d"))){
                     if(robots->getRobotsVector().at(robotNb)->getRobot()->isPlayingPath()){
                         qDebug() << "pause path on robot before supp " << robotNb << " : " << robots->getRobotsVector().at(robotNb)->getRobot()->getName();
                         robots->getRobotsVector().at(robotNb)->getRobot()->setPlayingPath(0);
@@ -255,7 +258,7 @@ void MainWindow::playSelectedRobot(int robotNb){
     if(robot->isPlayingPath()){
         qDebug() << "pause path on robot " << robotNb << " : " << robot->getName();
         /// if the command is succesfully sent to the robot, we apply the change
-        if(robot->sendCommand(QString("s"))){
+        if(robot->sendCommand(QString("d"))){
             robot->setPlayingPath(0);
             bottomLayout->getPlayRobotBtnGroup()->button(robotNb)->setIcon(QIcon(":/icons/play.png"));
         }
@@ -279,7 +282,7 @@ void MainWindow::playSelectedRobot(int robotNb){
         }
 
         /// if the command is succesfully sent to the robot, we apply the change
-        if(robot->sendCommand(QString("p") + " " + QString::number(newPosX) + " "  + QString::number(newPosY) + " "  + QString::number(waitTime))){
+        if(robot->sendCommand(QString("c ") + QString::number(newPosX) + " "  + QString::number(newPosY) + " "  + QString::number(waitTime))){
             robot->setPlayingPath(1);
             bottomLayout->getPlayRobotBtnGroup()->button(robotNb)->setIcon(QIcon(":/icons/pause.png"));
         }
@@ -394,7 +397,7 @@ void MainWindow::cancelEditSelecRobotBtnEvent(){
 void MainWindow::robotSavedEvent(){
     qDebug() << "robotSavedEvent called";
     /// if the command is succesfully sent to the robot, we apply the change
-    if(selectedRobot->getRobot()->sendCommand(QString(" n ") + editSelectedRobotWidget->getNameEdit()->text())){
+    if(selectedRobot->getRobot()->sendCommand(QString("a ") + editSelectedRobotWidget->getNameEdit()->text())){
         editSelectedRobotWidget->editName();
         robotsLeftWidget->setEditBtnStatus(false);
         robotsLeftWidget->setCheckBtnStatus(false);
