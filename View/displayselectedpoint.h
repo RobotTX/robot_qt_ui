@@ -12,6 +12,7 @@ class QKeyEvent;
 class QLabel;
 
 #include "Model/points.h"
+#include "View/pointview.h"
 #include <QLineEdit>
 #include <memory>
 #include <QWidget>
@@ -24,7 +25,7 @@ public:
     /// used to determine which menu or object (could be the map) cause the information of this point to be displayed
     enum Origin { MAP, GROUP_MENU, POINTS_MENU };
 
-    DisplaySelectedPoint(QMainWindow* _parent, Points const& _points, const std::shared_ptr<Point> &_point = 0, const Origin origin = MAP);
+    DisplaySelectedPoint(QMainWindow* _parent, Points const& _points, const std::shared_ptr<PointView> &_pointView = 0, const Origin origin = MAP);
     ~DisplaySelectedPoint();
 
     QPushButton* getBackButton(void) const { return backButton; }
@@ -35,8 +36,10 @@ public:
     QPushButton* getCancelButton(void) const { return cancelButton; }
     QString getPointName(void) const { return nameEdit->text(); }
     QLineEdit* getNameEdit(void) const { return nameEdit; }
-    std::shared_ptr<Point> getPoint(void) const { return point; }
-    void setPoint(std::shared_ptr<Point> const& _point) { point = _point; }
+    std::shared_ptr<Point> getPoint(void) const { return pointView->getPoint(); }
+    void setPoint(std::shared_ptr<Point> const& _point) { pointView->setPoint(_point); }
+    std::shared_ptr<PointView> getPointView(void) const { return pointView; }
+    void setPointView(std::shared_ptr<PointView> const& _pointView) { pointView = _pointView; }
     Origin getOrigin(void) const { return origin; }
     QLabel* getXLabel(void) const { return posXLabel; }
     QLabel* getYLabel(void) const { return posYLabel; }
@@ -57,6 +60,7 @@ private slots:
      * Called when a user doesn't to keep the modifications he's made on a point
      */
     void cancelEvent(void);
+    void updateCoordinates(float x, float y);
 
 private:
     QLineEdit* nameEdit;
@@ -77,7 +81,7 @@ private:
     QPushButton* editButton;
     QPushButton* saveButton;
     QPushButton* cancelButton;
-    std::shared_ptr<Point> point;
+    std::shared_ptr<PointView> pointView;
     QMainWindow* parent;
     Points points;
 

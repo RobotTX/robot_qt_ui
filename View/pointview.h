@@ -29,13 +29,13 @@ class PointView : public QObject, public QGraphicsPixmapItem {
 public:
     PointView(std::shared_ptr<Point> point);
 
-    std::shared_ptr<Point> getPoint(void) const { return point; }
-
     void setState(const GraphicItemState _state) { state = _state; }
     void setPos(const qreal x, const qreal y);
     void setAddedToPath(const bool _addedToPath) { addedToPath = _addedToPath; }
     void setLastPixmap(const QPixmap& _lastPixmap) { lastPixmap = _lastPixmap; }
     void setPixmap(const QPixmap& pixmap);
+    void setPoint(std::shared_ptr<Point> const& _point) { point = _point; }
+    std::shared_ptr<Point> getPoint(void) const { return point; }
 
 protected:
     void mousePressEvent(QGraphicsSceneMouseEvent *event);
@@ -50,7 +50,7 @@ signals:
     void pointLeftClicked(PointView*);
     void addPointPath(PointView*);
     void moveTmpEditPathPoint();
-    void editedPointPositionChanged();
+    void editedPointPositionChanged(float, float);
 
 private:
     std::shared_ptr<Point> point;
