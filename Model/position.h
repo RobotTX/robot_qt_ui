@@ -3,7 +3,7 @@
 
 /**
  * @brief The Position class
- * Represent a position (x,y)
+ * Represents a position (x,y)
  */
 class Position
 {

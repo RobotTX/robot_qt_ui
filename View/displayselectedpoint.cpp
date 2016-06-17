@@ -91,23 +91,23 @@ DisplaySelectedPoint::DisplaySelectedPoint(QMainWindow *_parent, Points const& _
 }
 
 DisplaySelectedPoint::~DisplaySelectedPoint(){
+    delete nameEdit;
+    delete nameLayout;
+    delete editLayout;
     delete posXLabel;
     delete posYLabel;
     delete layout;
-    delete editLayout;
+    delete eyeMapLayout;
+    delete grid;
     delete backButton;
     delete plusButton;
     delete minusButton;
-    delete editButton;
     delete mapButton;
     delete eyeButton;
-    delete grid;
-    delete eyeMapLayout;
-    delete nameEdit;
-    delete nameLayout;
-    delete parent;
+    delete editButton;
     delete saveButton;
     delete cancelButton;
+    delete parent;
 }
 
 void DisplaySelectedPoint::displayPointInfo(void){
@@ -122,6 +122,7 @@ void DisplaySelectedPoint::mousePressEvent(QEvent* event){
 }
 
 void DisplaySelectedPoint::keyPressEvent(QKeyEvent* event){
+    /// this is the enter key
     if(!event->text().compare("\r")){
         emit nameChanged(point->getName(), nameEdit->text());
         qDebug() << "enter pressed";
@@ -142,10 +143,12 @@ void DisplaySelectedPoint::setOrigin(const Origin _origin){
 }
 
 void DisplaySelectedPoint::cancelEvent(void){
+    /// we hide the buttons relative to the edit option and make sure the points properties are not longer modifiable
     nameEdit->setReadOnly(true);
     editButton->setChecked(false);
     cancelButton->hide();
     saveButton->hide();
+    /// in case the user had dragged the point around the map or clicked it, this resets the coordinates displayed to the original ones
     posXLabel->setText(QString::number(point->getPosition().getX()));
     posYLabel->setText(QString::number(point->getPosition().getY()));
 }

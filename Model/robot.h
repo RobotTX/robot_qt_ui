@@ -48,7 +48,7 @@ public:
     /**
      * @brief display
      * @param stream
-     * Display the robot informations
+     * Displays the robot information
      */
     void display(std::ostream& stream) const;
 

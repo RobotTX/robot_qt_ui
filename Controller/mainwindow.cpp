@@ -1156,7 +1156,6 @@ void MainWindow::addPathPoint(PointView* pointView){
     pathCreationWidget->addPathPoint(&(*(pointView->getPoint())));
 }
 
-
 void MainWindow::displayPointsInGroup(void){
     /// uncheck the other buttons
     pointsLeftWidget->getPlusButton()->setChecked(false);

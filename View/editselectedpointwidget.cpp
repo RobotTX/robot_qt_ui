@@ -28,7 +28,7 @@ EditSelectedPointWidget::EditSelectedPointWidget(QMainWindow* _parent, PointsVie
     layout->addWidget(posYLabel);
 
     QHBoxLayout* grid = new QHBoxLayout();
-    //QPushButton* cancelBtn = new QPushButton("Cancel");
+
     saveBtn = new QPushButton("Save");
 
     //grid->addWidget(cancelBtn);
@@ -37,7 +37,6 @@ EditSelectedPointWidget::EditSelectedPointWidget(QMainWindow* _parent, PointsVie
     layout->addWidget(groupMenu);
     layout->addLayout(grid);
 
-    //connect(cancelBtn, SIGNAL(clicked()), parent, SLOT(cancelEditSelecPointBtnEvent()));
     connect(saveBtn, SIGNAL(clicked()), this, SLOT(saveEditSelecPointBtnEvent()));
     connect(nameEdit, SIGNAL(textEdited(QString)), this, SLOT(checkPointName()));
 
@@ -60,7 +59,7 @@ EditSelectedPointWidget::~EditSelectedPointWidget(){
     delete groupMenu;
 }
 
-void EditSelectedPointWidget::setSelectedPoint(PointView* const _pointView, const bool isTemporary){
+void EditSelectedPointWidget::setSelectedPoint(PointView * const &_pointView, const bool isTemporary){
     _isTemporary = isTemporary;
     pointView = _pointView;
     nameEdit->setText(pointView->getPoint()->getName());
@@ -74,13 +73,10 @@ void EditSelectedPointWidget::saveEditSelecPointBtnEvent(){
         pointView->getPoint()->setName(nameEdit->text());
 
     }
-    /*pointView->getPoint()->setName(nameEdit->text());
-    group->getPointViewByName(pointView->getPoint()->name())->getPoint()->setName(nameEdit->text());
-    */
     emit pointSaved();
 }
 
-void EditSelectedPointWidget::checkPointName(){
+void EditSelectedPointWidget::checkPointName(void){
     qDebug() << "checkPointName called";
     /*if((group->existPointName(nameEdit->text()) || nameEdit->text() == "") && nameEdit->text() != pointView->getPoint()->name()){
         saveBtn->setEnabled(false);

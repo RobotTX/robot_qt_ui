@@ -68,14 +68,14 @@ public:
      * @param name
      * @return
      * Same as above but with the ip
-     * Get a robotView from the ip of its robot
+     * Gets a robotView from the ip of its robot
      */
     RobotView* getRobotViewByIp(const QString ip);
 
     /**
      * @brief setSelected
      * @param robotView
-     * Set which robot is currently selected, to highlight it and know
+     * Setz which robot is currently selected, to highlight it and know
      * on which robot some functions need to be applied
      */
     void setSelected(RobotView* const robotView);
@@ -84,7 +84,7 @@ public:
      * @brief existRobotName
      * @param name
      * @return
-     * Check if a robot with the given name already exist
+     * Checks if a robot with the given name already exists
      */
     bool existRobotName(const QString name);
 

@@ -41,7 +41,7 @@ public:
      * @param index
      * Checks whether or not the index is within the range (0, #_of_groups-1)
      * if so, removes the index-th group of the current Points object
-     * Otherwize does not do anything
+     * Otherwise does not do anything
      */
     void removeGroup(const int index);
 
@@ -50,7 +50,7 @@ public:
      * @param groupName
      * @return std::shared_ptr<Group>
      * returns a pointer on the group whose name is the one passed as argument if such group exists
-     * otherwize returns a NULL pointer
+     * otherwise returns a NULL pointer
      */
     std::shared_ptr<Group> findGroup(const QString groupName) const;
 

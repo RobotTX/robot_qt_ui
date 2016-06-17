@@ -21,6 +21,7 @@ class DisplaySelectedPoint: public QWidget
 {
         Q_OBJECT
 public:
+    /// used to determine which menu or object (could be the map) cause the information of this point to be displayed
     enum Origin { MAP, GROUP_MENU, POINTS_MENU };
 
     DisplaySelectedPoint(QMainWindow* _parent, Points const& _points, const std::shared_ptr<Point> &_point = 0, const Origin origin = MAP);
@@ -51,23 +52,29 @@ signals:
     void nameChanged(QString, QString);
 
 private slots:
+    /**
+     * @brief cancelEvent
+     * Called when a user doesn't to keep the modifications he's made on a point
+     */
     void cancelEvent(void);
 
 private:
     QLineEdit* nameEdit;
     QHBoxLayout* nameLayout;
+    QVBoxLayout* layout;
     QHBoxLayout* editLayout;
+    QHBoxLayout* eyeMapLayout;
+    QHBoxLayout* grid;
+
     QLabel* posXLabel;
     QLabel* posYLabel;
-    QVBoxLayout* layout;
+
     QPushButton* backButton;
     QPushButton* plusButton;
     QPushButton* minusButton;
     QPushButton* mapButton;
     QPushButton* eyeButton;
     QPushButton* editButton;
-    QHBoxLayout* eyeMapLayout;
-    QHBoxLayout* grid;
     QPushButton* saveButton;
     QPushButton* cancelButton;
     std::shared_ptr<Point> point;

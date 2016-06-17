@@ -8,7 +8,7 @@ class QEvent;
 
 /**
  * @brief The VerticalScrollArea class
- * Custom QScrollArea which only display the vertical scrollBar
+ * Custom QScrollArea which only displays the vertical scrollBar
  */
 class VerticalScrollArea : public QScrollArea {
     Q_OBJECT

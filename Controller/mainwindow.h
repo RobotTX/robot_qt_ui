@@ -101,7 +101,6 @@ private slots:
     void minusSelecPointBtnEvent();
     void editSelecPointBtnEvent();
     void setSelectedPoint(PointView* pointView, bool isTemporary);
-    //void cancelEditSelecPointBtnEvent();
     void pointSavedEvent();
     void selectHomeEvent();
     void showHomeEvent();

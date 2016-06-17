@@ -23,7 +23,7 @@ public:
     EditSelectedPointWidget(QMainWindow* parent, PointsView *points);
     ~EditSelectedPointWidget();
 
-    void setSelectedPoint(PointView* _pointView, const bool isTemporary);
+    void setSelectedPoint(PointView* const& _pointView, const bool isTemporary);
 
     bool isTemporary(void) const { return _isTemporary; }
     void setPoints(PointsView* const _points){ points = _points;}
@@ -50,7 +50,7 @@ private:
 
 private slots:
     void saveEditSelecPointBtnEvent();
-    void checkPointName();
+    void checkPointName(void);
 };
 
 #endif // EDITSELECTEDPOINTWIDGET_H

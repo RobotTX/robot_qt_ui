@@ -22,7 +22,7 @@ public:
     /**
      * @brief setSelectedPoint
      * @param _pointView
-     * Update the widget with the selected point
+     * Updates the widget with the selected point
      */
     void setSelectedPoint(PointView* const& _pointView);
 
