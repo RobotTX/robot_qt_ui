@@ -378,7 +378,7 @@ bool PathCreationWidget::savePath(){
         }
         qDebug() << "Path created for robot" << selectedRobot->getName();
 
-        for(int i = 0; i < path.size(); i++){
+        for(size_t i = 0; i < path.size(); i++){
             qDebug() << i << " : " << path.at(i)->getPoint().getName()
                      << path.at(i)->getPoint().getPosition().getX()
                      << path.at(i)->getPoint().getPosition().getY()

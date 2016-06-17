@@ -11,7 +11,7 @@ class QTcpSocket;
 
 /**
  * @brief The CmdRobotThread class
- * The thread connect to the robot at the given ipAddress & port to receive the map the robot
+ * The thread connects to the robot at the given ipAddress & port to receive the map the robot
  * is scanning
  */
 class CmdRobotThread : public QThread {

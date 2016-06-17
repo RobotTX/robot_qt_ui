@@ -43,6 +43,7 @@ void PointView::mousePressEvent(QGraphicsSceneMouseEvent *event){
             qDebug() << "PointView moving from" << pos().x() << pos().y();
         }  else if(state == GraphicItemState::EDITING_PERM){
             qDebug() << "editing permanently";
+
         }
         else {
             qDebug() << "(PointView " << point->getName() << ") NO EVENT";
@@ -64,6 +65,9 @@ void PointView::mouseMoveEvent(QGraphicsSceneMouseEvent *event){
         point->setPosition(x, y);
         emit moveTmpEditPathPoint();
         QGraphicsPixmapItem::mouseMoveEvent(event);
+    } else if(state == GraphicItemState::EDITING_PERM){
+        emit editedPointPositionChanged();
+        QGraphicsPixmapItem::mouseMoveEvent(event);
     }
 }
 
@@ -73,6 +77,8 @@ void PointView::mouseReleaseEvent(QGraphicsSceneMouseEvent *event){
         float y = pos().y() + pixmap().height()*SCALE;
         qDebug() << "to" << x << y;
         point->setPosition(x, y);
+        QGraphicsPixmapItem::mouseReleaseEvent(event);
+    }else if(state == GraphicItemState::EDITING_PERM){
         QGraphicsPixmapItem::mouseReleaseEvent(event);
     }
 }

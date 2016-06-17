@@ -539,12 +539,18 @@ void MainWindow::editPointButtonEvent(bool checked){
         leftMenu->getDisplaySelectedPoint()->getNameEdit()->setReadOnly(false);
         setGraphicItemsState(GraphicItemState::NO_EVENT, false);
         mapPixmapItem->setState(GraphicItemState::EDITING_PERM);
-        pointViews->getPointViewFromPoint(leftMenu->getDisplaySelectedPoint()->getPoint())->setState(GraphicItemState::EDITING_PERM);
+        pointViews->getPointViewFromPoint(*(leftMenu->getDisplaySelectedPoint()->getPoint()))->setState(GraphicItemState::EDITING_PERM);
+        qDebug() << "editing perm" ;
+        pointViews->getPointViewFromPoint(*(leftMenu->getDisplaySelectedPoint()->getPoint()))->setFlag(QGraphicsItem::ItemIsMovable, true);
     } else {
         /// we hide everything that's related to modifying a point
         leftMenu->getDisplaySelectedPoint()->getNameEdit()->setReadOnly(true);
         leftMenu->getDisplaySelectedPoint()->getCancelButton()->hide();
         leftMenu->getDisplaySelectedPoint()->getSaveButton()->hide();
+        setGraphicItemsState(GraphicItemState::NO_STATE);
+        qDebug() << "back to normal";
+        pointViews->getPointViewFromPoint(*(leftMenu->getDisplaySelectedPoint()->getPoint()))->setFlag(QGraphicsItem::ItemIsMovable, false);
+
     }
 }
 
