@@ -9,7 +9,7 @@ class QDropEvent;
 #include <QObject>
 #include <QGraphicsPixmapItem>
 #include <memory>
-#include "Model/enumgraphicstate.h"
+#include "Model/graphicitemstate.h"
 
 #define SCALE 0.3
 #define PIXMAP_NORMAL ":/icons/cropped_coordinates"
@@ -50,6 +50,7 @@ signals:
     void pointLeftClicked(PointView*);
     void addPointPath(PointView*);
     void moveTmpEditPathPoint();
+    void editedPointPositionChanged();
 
 private:
     std::shared_ptr<Point> point;

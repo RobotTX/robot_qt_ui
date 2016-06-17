@@ -81,7 +81,7 @@ void MapView::mouseReleaseEvent(QGraphicsSceneMouseEvent *event){
             pathCreationPoints.push_back(newPointView);
             emit addPathPointMapView(&(*(newPointView->getPoint())));
         } else if(state == GraphicItemState::EDITING_PERM){
-
+            qDebug() << "(mapView) EDITING_PERM";
         } else {
             qDebug() << "(MapView) NO EVENT";
         }
