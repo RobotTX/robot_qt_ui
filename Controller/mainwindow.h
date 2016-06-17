@@ -61,6 +61,7 @@ public:
     void hideAllWidgets();
     void setGraphicItemsState(const GraphicItemState state, const bool clear = false);
     void stopPathCreation();
+    int openConfirmMessage(const QString);
 
 signals:
     void sendCommand(QString);
@@ -71,7 +72,7 @@ private slots:
     void updateMetadata(const int width, const int height, const float resolution
                         , const float originX, const float originY);
     void updateMap(const QByteArray mapArray);
-    void connectToRobot();
+    void connectToRobot(void);
     void quit();
     void setSelectedRobot(RobotView* robotView);
     void editSelectedRobot(RobotView* robotView);
@@ -135,8 +136,7 @@ private slots:
     void saveTmpEditPathPointSlot(void);
     void moveTmpEditPathPointSlot(void);
     void displayPointInfoFromGroupMenu(void);
-    void updatePointUsingButton(void);
-    void updatePointUsingKey(void);
+    void updatePoint(void);
 
 private:
     Ui::MainWindow* ui;
