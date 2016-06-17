@@ -386,9 +386,13 @@ void MainWindow::playSelectedRobot(int robotNb){
         float newPosX = (oldPosX - ROBOT_WIDTH) * map->getResolution() + map->getOrigin().getX();
         float newPosY = (-oldPosY + map->getHeight() - ROBOT_WIDTH/2) * map->getResolution() + map->getOrigin().getY();
         qDebug() << "Go to next point :" << newPosX << newPosY;
+        int waitTime = -1;
+        if(pathPoint->getAction() == PathPoint::WAIT){
+            waitTime = pathPoint->getWaitTime();
+        }
 
         /// if the command is succesfully sent to the robot, we apply the change
-        if(robot->sendCommand(QString("p") + " " + QString::number(newPosX) + " "  + QString::number(newPosY))){
+        if(robot->sendCommand(QString("p") + " " + QString::number(newPosX) + " "  + QString::number(newPosY) + " "  + QString::number(waitTime))){
             robot->setPlayingPath(1);
             bottomLayout->getPlayRobotBtnGroup()->button(robotNb)->setIcon(QIcon(":/icons/pause.png"));
         }

@@ -34,12 +34,32 @@ public:
 
     PathCreationWidget(QMainWindow* parent, const Points& point);
     ~PathCreationWidget();
+
+    /**
+     * @brief initialisationPathPoint
+     * @param pathPoint
+     * Initialise a given PathPointCreationWidget
+     */
     void initialisationPathPoint(PathPointCreationWidget* pathPoint);
 
-    void setSelectedRobot(std::shared_ptr<Robot> const& _selectedRobot){ selectedRobot = _selectedRobot; }
+    /**
+     * @brief resetWidget
+     * Reset the widget (when you stop or start creating a path)
+     */
     void resetWidget(void);
+
+    /**
+     * @brief supprItem
+     * @param item
+     * Delete the given pathPoint from the list
+     */
     void supprItem(QListWidgetItem* item);
 
+    /**
+     * @brief editItem
+     * @param item
+     * Edit the given pathPoint from the list
+     */
     void editItem(QListWidgetItem* item);
 
     /**
@@ -47,11 +67,28 @@ public:
      * add a path point to the list from a given point
      */
     void addPathPoint(Point* const point);
+
+    /**
+     * @brief hideEvent
+     * @param event
+     * When the menu is hidden we clean its content
+     */
     void hideEvent(QHideEvent *event);
+
+    /**
+     * @brief applySavePathPoint
+     * @param posX
+     * @param posY
+     * Called when we click to save a pathPoint
+     */
     void applySavePathPoint(float posX, float posY);
     void moveEditPathPoint(float posX, float posY);
     void clicked(void);
     bool savePath(void);
+
+    /// Setters
+    void setSelectedRobot(std::shared_ptr<Robot> const& _selectedRobot){ selectedRobot = _selectedRobot; }
+
 
 
 private slots:

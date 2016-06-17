@@ -9,7 +9,7 @@ class QDropEvent;
 #include <QObject>
 #include <QGraphicsPixmapItem>
 #include <memory>
-#include "Model/enumgraphicstate.h"
+#include "Model/graphicitemstate.h"
 
 #define SCALE 0.3
 #define PIXMAP_NORMAL ":/icons/cropped_coordinates"
