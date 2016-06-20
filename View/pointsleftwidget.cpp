@@ -36,8 +36,6 @@ PointsLeftWidget::PointsLeftWidget(QMainWindow* _parent, Points const& points, b
     layout->addWidget(backToGroupsButton);
     backToGroupsButton->hide();
 
-
-
     plusButton = new QPushButton(QIcon(":/icons/plus.png"),"");
     plusButton->setIconSize(_parent->size()/10);
     plusButton->setCheckable(true);
@@ -57,7 +55,6 @@ PointsLeftWidget::PointsLeftWidget(QMainWindow* _parent, Points const& points, b
 
 
     mapButton = new QPushButton(QIcon(":/icons/map.png"),"");
-    mapButton->setCheckable(true);
     mapButton->setIconSize(_parent->size()/10);
 
     eyeButton = new QPushButton(QIcon(":/icons/eye.png"), "");
@@ -80,6 +77,7 @@ PointsLeftWidget::PointsLeftWidget(QMainWindow* _parent, Points const& points, b
     layout->addWidget(groupNameEdit);
 
     groupButtonGroup = new GroupButtonGroup(points);
+
     scrollArea->setWidget(groupButtonGroup);
 
     layout->addWidget(scrollArea);

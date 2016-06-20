@@ -295,3 +295,26 @@ bool XMLParser::readDisplayedElement(QXmlStreamReader &xmlReader){
     return displayed;
 }
 
+void XMLParser::clear(void){
+    try {
+        qDebug() << "ok";
+        file->open(QIODevice::WriteOnly);
+
+        QXmlStreamWriter xmlWriter(file);
+        xmlWriter.setAutoFormatting(true);
+        xmlWriter.writeStartDocument();
+
+        xmlWriter.writeStartElement("points");
+
+        xmlWriter.writeStartElement("group");
+        xmlWriter.writeTextElement("name", "no group");
+
+        xmlWriter.writeEndElement();
+        xmlWriter.writeEndElement();
+
+        file->close();
+
+    } catch(std::exception e) {
+        std::cout << e.what() << std::endl;
+    }
+}

@@ -78,6 +78,13 @@ public:
      */
     bool readDisplayedElement(QXmlStreamReader &xmlReader);
 
+    /**
+     * @brief clear
+     * clears the file, only leaving the default group empty
+     * careful this function assumes that you are absolutely sure it is applied to a points xml file
+     */
+    void clear(void);
+
 private:
     /// a pointer to the file that will be opened in order to retrieve or save the model
     QFile* file;

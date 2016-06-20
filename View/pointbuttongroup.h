@@ -20,6 +20,7 @@ public:
     void setGroup(const Points &_points, const int groupIndex);
     void update(const Points &_points);
     void setCheckable(const bool checkable);
+    void uncheck(void);
 
 private:
     QVBoxLayout* layout;

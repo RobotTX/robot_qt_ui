@@ -9,6 +9,7 @@
 GroupButtonGroup::GroupButtonGroup(const Points &_points)
 {
     buttonGroup = new QButtonGroup();
+    buttonGroup->setExclusive(true);
 
     layout = new QVBoxLayout();
     layout->setAlignment(Qt::AlignTop);
@@ -87,11 +88,9 @@ void GroupButtonGroup::update(const Points& _points){
 }
 
 void GroupButtonGroup::uncheck(void){
-    foreach(QAbstractButton* button, buttonGroup->buttons()){
-        qDebug() << "called";
-        if(button->isChecked()){
-            button->click();
-            //button->setChecked(false);
-        }
-    }
+    /// little trick to uncheck all buttons because the class doesn't provide a function to do it
+    buttonGroup->setExclusive(false);
+    if(buttonGroup->checkedButton())
+        buttonGroup->checkedButton()->setChecked(false);
+    buttonGroup->setExclusive(true);
 }

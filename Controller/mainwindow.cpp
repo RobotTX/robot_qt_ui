@@ -762,7 +762,9 @@ void MainWindow::setSelectedPoint(PointView* pointView, bool isTemporary){
 
 void MainWindow::pointBtnEvent(void){
     qDebug() << "pointBtnEvent called la";
+    /// we uncheck all buttons from all menus
     pointsLeftWidget->getGroupButtonGroup()->uncheck();
+    leftMenu->getDisplaySelectedGroup()->uncheck();
     pointsLeftWidget->getEyeButton()->setChecked(false);
     /// called when the back button is clicked and we came from the group menu
     if(leftMenu->getDisplaySelectedPoint()->getOrigin() == DisplaySelectedPoint::GROUP_MENU){
@@ -1208,7 +1210,7 @@ void MainWindow::displayGroupEvent(int index, bool display){
     }
 }
 
-void MainWindow::displayGroupMapEvent(){
+void MainWindow::displayGroupMapEvent(void){
     /// uncheck the other buttons
     pointsLeftWidget->getPlusButton()->setChecked(false);
     pointsLeftWidget->getMinusButton()->setChecked(false);
@@ -1220,26 +1222,100 @@ void MainWindow::displayGroupMapEvent(){
     pointsLeftWidget->getGroupNameLabel()->hide();
 
     qDebug() << "displaying groups by clicking on the map button";
-    if(pointsLeftWidget->getMapButton()->isChecked())
-        pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->setExclusive(false);
-    else
-        pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->setExclusive(true);
-    qDebug() << " heere ";
-
+    int checkedId = pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->checkedId();
+    /// we display groups
+    if(checkedId > -1 && checkedId < points.count()-1){
+        /// the group was displayed, we now have to hide it (all its points)
+        if(points.getGroups().at(checkedId)->isDisplayed()){
+            pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(checkedId)->setIcon(QIcon());
+            for(int i = 0; i < points.getGroups().at(checkedId)->count(); i++){
+                std::shared_ptr<Point> point = points.getGroups().at(checkedId)->getPoints()[i];
+                PointView* pointView = pointViews->getPointViewFromPoint(*point);
+                point->setDisplayed(false);
+                pointView->hide();
+                /// update the file
+                XMLParser parserPoints(XML_PATH);
+                parserPoints.save(points);
+            }
+        } else {
+            /// the group must now be displayed
+            pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(checkedId)->setIcon(QIcon(":/icons/tick.png"));
+            for(int i = 0; i < points.getGroups().at(checkedId)->count(); i++){
+                std::shared_ptr<Point> point = points.getGroups().at(checkedId)->getPoints()[i];
+                PointView* pointView = pointViews->getPointViewFromPoint(*point);
+                point->setDisplayed(true);
+                pointView->show();
+                /// update the file
+                XMLParser parserPoints(XML_PATH);
+                parserPoints.save(points);
+            }
+        }
+    }
+    /// we display isolated points
+    else if(checkedId >= points.count()-1){
+        std::shared_ptr<Point> point = points.getGroups().at(points.count()-1)->getPoints().at(checkedId-points.count()+1);
+        /// if the point is displayed we hide it
+        if(point->isDisplayed()){
+            pointViews->getPointViewFromPoint(*point)->hide();
+            point->setDisplayed(false);
+            /// update the file
+            XMLParser parserPoints(XML_PATH);
+            parserPoints.save(points);
+            /// we remove the tick icon
+            pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(checkedId)->setIcon(QIcon());
+        } else {
+            /// the point was not displayed, we display it
+            pointViews->getPointViewFromPoint(*point)->show();
+            point->setDisplayed(true);
+            XMLParser parserPoints(XML_PATH);
+            parserPoints.save(points);
+            /// we add the tick icon
+            pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(checkedId)->setIcon(QIcon(":/icons/tick.png"));
+        }
+    }
 }
 
 void MainWindow::displayPointMapEvent(){
     qDebug() << "displaypoint map event";
     PointView* pointView = leftMenu->getDisplaySelectedPoint()->getPointView();
+    std::pair<int, int> pointIndexes = points.findPointIndexes(pointView->getPoint()->getName());
+    qDebug() << "indexes are " << pointIndexes.first << pointIndexes.second;
 
     if(pointView->getPoint() != NULL && pointView->getPoint()->isDisplayed()){
         qDebug() << " I was displayed, but it's over";
         pointView->getPoint()->setDisplayed(false);
         pointView->hide();
+        /// update the file
+        XMLParser parserPoints(XML_PATH);
+        parserPoints.save(points);
+        /// we update the group menu
+        /// it's a point that belongs to a group
+        if(pointIndexes.first < points.count()-1)
+            pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(pointIndexes.first)->setIcon(QIcon());
+        /// it's an isolated point
+        else
+            pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(points.count()+pointIndexes.second-1)->setIcon(QIcon());
+
     } else if (pointView->getPoint() != NULL && !pointView->getPoint()->isDisplayed()){
         qDebug() << " Now I have returned to be displayed";
         pointView->getPoint()->setDisplayed(true);
         pointView->show();
+        /// update the file
+        XMLParser parserPoints(XML_PATH);
+        parserPoints.save(points);
+        /// we update the group menu
+        pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(pointIndexes.first)->setIcon(QIcon(":/icons/tick.png"));
+        /*
+        for(int i = 0; i < points.getGroups().at(pointsLeftWidget->getIndexLastGroupClicked())->count(); i++){
+            if(! points.getGroups().at(pointsLeftWidget->getIndexLastGroupClicked())->getPoints()[i]->getName().compare(pointView->getPoint()->getName())){
+                leftMenu->getDisplaySelectedGroup()->getPointButtonGroup()->getButtonGroup()->button(i)->setIcon(QIcon(":/icons/tick.png"));
+                if(points.getGroups().at(pointsLeftWidget->getIndexLastGroupClicked())->isDisplayed())
+                    pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(pointsLeftWidget->getIndexLastGroupClicked())->setIcon(QIcon(":/icons/tick.png"));
+            }
+        }
+        /// we update the points menu
+        pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(points.findPointIndexes(pointView->getPoint()->getName()).first)->setIcon(QIcon(":/icons/tick.png"));
+        */
     } else {
         qDebug() << "wtf am I manipulating a NULL pointer ?";
     }
@@ -1484,11 +1560,14 @@ void MainWindow::removePointFromGroupMenu(void){
 
 void MainWindow::displayPointFromGroupMenu(){
     int checkedId = leftMenu->getDisplaySelectedGroup()->getPointButtonGroup()->getButtonGroup()->checkedId();
-    qDebug() << "displaypointfrom menu event on point " << points.getGroups().at(pointsLeftWidget->getIndexLastGroupClicked())->getPoints().at(checkedId)->getName();
-    qDebug() << "checked Id" << checkedId <<  points.getGroups().at(pointsLeftWidget->getIndexLastGroupClicked())->count();
-    if(checkedId > -1 && checkedId < points.getGroups().at(pointsLeftWidget->getIndexLastGroupClicked())->count()){
+    if(checkedId != -1){
+        qDebug() << "displaypointfrom menu event on point " << points.getGroups().at(pointsLeftWidget->getIndexLastGroupClicked())->getPoints().at(checkedId)->getName();
+        qDebug() << "checked Id" << checkedId <<  points.getGroups().at(pointsLeftWidget->getIndexLastGroupClicked())->count();
+    }
+    if(checkedId != -1 && checkedId < points.getGroups().at(pointsLeftWidget->getIndexLastGroupClicked())->count()){
         std::shared_ptr<Point> currentPoint = points.getGroups().at(pointsLeftWidget->getIndexLastGroupClicked())->getPoints().at(checkedId);
         /// if the point is displayed we stop displaying it
+        qDebug() << "current point displayed : " << currentPoint->isDisplayed();
         if(currentPoint->isDisplayed()){
             pointViews->getPointViewFromPoint(*(points.getGroups().at(pointsLeftWidget->getIndexLastGroupClicked())->getPoints().at(checkedId)))->hide();
             points.getGroups().at(pointsLeftWidget->getIndexLastGroupClicked())->getPoints().at(checkedId)->setDisplayed(false);
