@@ -1027,9 +1027,13 @@ void MainWindow::askForDeletePointConfirmation(int index){
             qDebug() << "clicked no";
         break;
         case QMessageBox::Ok : {
-            qDebug() << " called yes event on group " << pointsLeftWidget->getIndexLastGroupClicked();
+            qDebug() << " called yes event on group " << pointsLeftWidget->getIndexLastGroupClicked() << " with index "  << index;
             pointViews->getPointViewFromPoint(*(points.getGroups().at(pointsLeftWidget->getIndexLastGroupClicked())->getPoints().at(index)))->hide();
             points.getGroups().at(pointsLeftWidget->getIndexLastGroupClicked())->removePoint(index);
+            PointButtonGroup* pointButtonGroup = leftMenu->getDisplaySelectedGroup()->getPointButtonGroup();
+            //foreach(QAbstractButton* button, buttonGroup->buttons())
+            //    buttonGroup->setId(button, buttonGroup->id(button)-1);
+            pointButtonGroup->setGroup(points, pointsLeftWidget->getIndexLastGroupClicked());
             XMLParser parserPoints(XML_PATH);
             parserPoints.save(points);
             leftMenu->getDisplaySelectedPoint()->getMinusButton()->setChecked(false);
@@ -1187,7 +1191,7 @@ void MainWindow::displayPointMapEvent(){
 void MainWindow::removeGroupEvent(const int groupIndex){
     if(pointsLeftWidget->getMinusButton()->isChecked()){
         int checkedId = pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->checkedId();
-        qDebug() << checkedId;
+
         /// we have to delete a group
         if(checkedId > -1 && checkedId < points.count()-1)
             askForDeleteGroupConfirmation(checkedId);
@@ -1313,6 +1317,7 @@ void MainWindow::editPointFromGroupMenu(void){
     qDebug() << "editgroupfrommenuevent";
     std::shared_ptr<Group> group = points.findGroup(leftMenu->getDisplaySelectedGroup()->getNameLabel()->text());
     if(group){
+        qDebug() << "working on group " << group->getName();
         int point = leftMenu->getDisplaySelectedGroup()->getPointButtonGroup()->getButtonGroup()->checkedId();
         if(point != -1 and point < group->getPoints().size()){
             DisplaySelectedPoint* selectedPoint = leftMenu->getDisplaySelectedPoint();
@@ -1413,7 +1418,39 @@ void MainWindow::updateCoordinates(double x, double y){
 
 void MainWindow::removePointFromGroupMenu(void){
     int checkedId = leftMenu->getDisplaySelectedGroup()->getPointButtonGroup()->getButtonGroup()->checkedId();
-    askForDeletePointConfirmation(checkedId);
+    if(checkedId > -1)
+        askForDeletePointConfirmation(checkedId);
+    else
+        qDebug() << "can't remove point with index -1";
+    leftMenu->getDisplaySelectedGroup()->getMinusButton()->setChecked(false);
+}
+
+void MainWindow::displayPointFromGroupMenu(){
+    int checkedId = leftMenu->getDisplaySelectedGroup()->getPointButtonGroup()->getButtonGroup()->checkedId();
+    qDebug() << "displaypointfrom menu event on point " << points.getGroups().at(pointsLeftWidget->getIndexLastGroupClicked())->getPoints().at(checkedId)->getName();
+    qDebug() << "checked Id" << checkedId <<  points.getGroups().at(pointsLeftWidget->getIndexLastGroupClicked())->count();
+    if(checkedId > -1 && checkedId < points.getGroups().at(pointsLeftWidget->getIndexLastGroupClicked())->count()){
+        std::shared_ptr<Point> currentPoint = points.getGroups().at(pointsLeftWidget->getIndexLastGroupClicked())->getPoints().at(checkedId);
+        /// if the point is displayed we stop displaying it
+        if(currentPoint->isDisplayed()){
+            pointViews->getPointViewFromPoint(*(points.getGroups().at(pointsLeftWidget->getIndexLastGroupClicked())->getPoints().at(checkedId)))->hide();
+            points.getGroups().at(pointsLeftWidget->getIndexLastGroupClicked())->getPoints().at(checkedId)->setDisplayed(false);
+            /// we remove the tick icon to show that the point is not displayed on the map
+            leftMenu->getDisplaySelectedGroup()->getPointButtonGroup()->getButtonGroup()->button(checkedId)->setIcon(QIcon());
+            XMLParser parserPoints(XML_PATH);
+            parserPoints.save(points);
+        } else {
+            pointViews->getPointViewFromPoint(*(points.getGroups().at(pointsLeftWidget->getIndexLastGroupClicked())->getPoints().at(checkedId)))->show();
+            points.getGroups().at(pointsLeftWidget->getIndexLastGroupClicked())->getPoints().at(checkedId)->setDisplayed(true);
+            /// we add a tick icon next to the name of the point to show that it is displayed on the map
+            leftMenu->getDisplaySelectedGroup()->getPointButtonGroup()->getButtonGroup()->button(checkedId)->setIcon(QIcon(":/icons/tick.png"));
+            XMLParser parserPoints(XML_PATH);
+            parserPoints.save(points);
+        }
+    } else {
+        std::cerr << "Oops" << std::endl;
+        qDebug() << "can't handle a point with index -1";
+    }
 }
 
 /**********************************************************************************************************************************/

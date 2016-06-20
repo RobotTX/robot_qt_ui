@@ -139,6 +139,7 @@ private slots:
     void updatePoint(void);
     void updateCoordinates(double x, double y);
     void removePointFromGroupMenu(void);
+    void displayPointFromGroupMenu();
     /**
      * @brief cancelEvent
      * Called when a user doesn't to keep the modifications he's made on a point
