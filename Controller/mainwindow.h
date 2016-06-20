@@ -72,7 +72,7 @@ private slots:
     void updateMetadata(const int width, const int height, const float resolution
                         , const float originX, const float originY);
     void updateMap(const QByteArray mapArray);
-    void connectToRobot(void);
+    void connectToRobot(bool checked);
     void quit();
     void setSelectedRobot(RobotView* robotView);
     void editSelectedRobot(RobotView* robotView);

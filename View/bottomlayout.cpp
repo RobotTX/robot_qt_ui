@@ -40,6 +40,7 @@ BottomLayout::BottomLayout(QMainWindow* parent, const std::shared_ptr<Robots> &r
     /// Creation of the first collumn, with the button containing the name of the robots
     for(int i = 0; i < robotsVector.size(); i++){
         QPushButton* robotBtn = new QPushButton(robotsVector.at(i)->getRobot()->getName());
+        robotBtn->setMinimumHeight(parent->height()/10);
         robotBtn->setMaximumWidth(parent->width()*3/10);
         robotBtn->setMinimumWidth(parent->width()*3/10);
         robotBtnGroup->addButton(robotBtn, i);
@@ -142,3 +143,4 @@ void BottomLayout::updateRobot(const int id, RobotView * const robotView){
         vectorPathLabel.at(id)->setText(pathStr);
     }
 }
+

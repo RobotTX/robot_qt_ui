@@ -21,11 +21,12 @@ SelectedRobotWidget::SelectedRobotWidget(QMainWindow* parent){
     layout->addWidget(backBtn);
 
     /// Button which allow the user to scan the map from a robot
-    QPushButton* newBtn = new QPushButton(QIcon(":/icons/map.png"),"Scan a map");
-    newBtn->setStyleSheet ("text-align: left");
-    newBtn->setIconSize(parent->size()/10);
-    layout->addWidget(newBtn);
-    connect(newBtn, SIGNAL(clicked()), parent, SLOT(connectToRobot()));
+    scanBtn = new QPushButton(QIcon(":/icons/map.png"),"Scan a map");
+    scanBtn->setCheckable(true);
+    scanBtn->setStyleSheet ("text-align: left");
+    scanBtn->setIconSize(parent->size()/10);
+    layout->addWidget(scanBtn);
+    connect(scanBtn, SIGNAL(toggled(bool)), parent, SLOT(connectToRobot(bool)));
 
     /// Button which allow the user to edit the info of the robot
     QPushButton* editBtn = new QPushButton(QIcon(":/icons/edit.png"),"Edit");
@@ -103,6 +104,7 @@ SelectedRobotWidget::~SelectedRobotWidget(){
     delete pathWidget;
     delete scrollArea;
     delete robotView;
+    delete scanBtn;
 }
 
 void SelectedRobotWidget::setSelectedRobot(RobotView* const& _robotView){
