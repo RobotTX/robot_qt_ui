@@ -91,3 +91,10 @@ QDataStream& operator>>(QDataStream& in, Group& group){
     }
     return in;
 }
+
+ bool Group::isDisplayed(void) const {
+    foreach(std::shared_ptr<Point> point, points)
+        if(!point->isDisplayed())
+            return false;
+    return true;
+ }

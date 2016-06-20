@@ -6,7 +6,7 @@
             <name>A</name>
             <x>50</x>
             <y>50</y>
-            <displayed>1</displayed>
+            <displayed>0</displayed>
         </point>
         <point>
             <name>Ma point</name>
@@ -18,7 +18,7 @@
             <name>A new point</name>
             <x>100</x>
             <y>100</y>
-            <displayed>1</displayed>
+            <displayed>0</displayed>
         </point>
     </group>
     <group>
@@ -48,7 +48,7 @@
             <name>Another point</name>
             <x>150</x>
             <y>200</y>
-            <displayed>1</displayed>
+            <displayed>0</displayed>
         </point>
         <point>
             <name>A final point</name>

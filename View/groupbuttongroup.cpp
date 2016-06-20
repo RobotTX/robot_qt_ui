@@ -21,6 +21,8 @@ GroupButtonGroup::GroupButtonGroup(const Points &_points)
         groupButton->setCheckable(true);
         buttonGroup->addButton(groupButton, i);
         layout->addWidget(groupButton);
+        if(currentGroup->isDisplayed())
+            groupButton->setIcon(QIcon(":/icons/tick.png"));
     }
 
     /// for the last group we just want to show the points and not "no group"
@@ -34,6 +36,8 @@ GroupButtonGroup::GroupButtonGroup(const Points &_points)
         pointButton->setCheckable(true);
         buttonGroup->addButton(pointButton, i+_points.getGroups().size()-1);
         layout->addWidget(pointButton);
+        if(currentPoint->isDisplayed())
+            pointButton->setIcon(QIcon(":/icons/tick.png"));
     }
 
     setLayout(layout);
@@ -77,6 +81,8 @@ void GroupButtonGroup::update(const Points& _points){
         pointButton->setCheckable(true);
         buttonGroup->addButton(pointButton, i+_points.getGroups().size()-1);
         layout->addWidget(pointButton);
+        if(currentPoint->isDisplayed())
+            pointButton->setIcon(QIcon(":/icons/tick.png"));
     }
 }
 
