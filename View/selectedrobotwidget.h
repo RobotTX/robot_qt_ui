@@ -29,6 +29,7 @@ public:
      * Update the widget with the selected robot
      */
     void setSelectedRobot(RobotView* const& _robotView);
+    QPushButton* getScanBtn(void) const {return scanBtn;}
 
 private:
     QVBoxLayout* layout;
@@ -41,6 +42,7 @@ private:
     QPushButton* homeBtn;
     PathWidget* pathWidget;
     VerticalScrollArea* scrollArea;
+    QPushButton* scanBtn;
 
 signals:
     /**

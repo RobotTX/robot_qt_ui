@@ -148,38 +148,50 @@ void MainWindow::updateRobot(const float posX, const float posY, const float ori
              << " " << scanningRobot->getRobot()->getOrientation();
 }
 
-void MainWindow::connectToRobot(void){
-    qDebug() << "\n\nConnection";
-
+void MainWindow::connectToRobot(bool checked){
     if(selectedRobot != NULL){
-        QString ip = selectedRobot->getRobot()->getIp();
-        qDebug() << "Trying to connect to : " << ip;
+        if(checked){
+            QString ip = selectedRobot->getRobot()->getIp();
+            qDebug() << "Trying to connect to : " << ip;
 
-        if(selectedRobot->getRobot()->sendCommand(QString("e ") + QString::number(PORT_MAP_METADATA) + " " + QString::number(PORT_ROBOT_POS) + " " +QString::number(PORT_MAP))){
+            if(selectedRobot->getRobot()->sendCommand(QString("e ") + QString::number(PORT_MAP_METADATA) + " " + QString::number(PORT_ROBOT_POS) + " " +QString::number(PORT_MAP))){
+                //selectedRobotWidget
+                metadataThread = new ScanMetadataThread(ip, PORT_MAP_METADATA);
+                robotThread = new ScanRobotThread(ip, PORT_ROBOT_POS);
+                mapThread = new ScanMapThread(ip, PORT_MAP);
 
-            metadataThread = new ScanMetadataThread(ip, PORT_MAP_METADATA);
-            robotThread = new ScanRobotThread(ip, PORT_ROBOT_POS);
-            mapThread = new ScanMapThread(ip, PORT_MAP);
+                connect(robotThread, SIGNAL(valueChangedRobot(float, float, float))
+                        ,this ,SLOT(updateRobot(float, float, float)));
 
-            connect(robotThread, SIGNAL(valueChangedRobot(float, float, float))
-                    ,this ,SLOT(updateRobot(float, float, float)));
+                connect(metadataThread, SIGNAL(valueChangedMetadata(int, int, float, float, float))
+                        , this , SLOT(updateMetadata(int, int, float, float, float)));
 
-            connect(metadataThread, SIGNAL(valueChangedMetadata(int, int, float, float, float))
-                    , this , SLOT(updateMetadata(int, int, float, float, float)));
+                connect(mapThread, SIGNAL(valueChangedMap(QByteArray))
+                        , this , SLOT(updateMap(QByteArray)));
 
-            connect(mapThread, SIGNAL(valueChangedMap(QByteArray))
-                    , this , SLOT(updateMap(QByteArray)));
+                metadataThread->start();
+                metadataThread->moveToThread(metadataThread);
 
-            metadataThread->start();
-            metadataThread->moveToThread(metadataThread);
+                robotThread->start();
+                robotThread->moveToThread(robotThread);
 
-            robotThread->start();
-            robotThread->moveToThread(robotThread);
+                mapThread->start();
+                mapThread->moveToThread(mapThread);
 
-            mapThread->start();
-            mapThread->moveToThread(mapThread);
-
-            scanningRobot = selectedRobot;
+                scanningRobot = selectedRobot;
+                selectedRobotWidget->getScanBtn()->setText("Stop to scan");
+            } else {
+                selectedRobotWidget->getScanBtn()->toggle();
+            }
+        } else {
+            if(selectedRobot->getRobot()->sendCommand("f")){
+                qDebug() << "Disconnected";
+                selectedRobotWidget->getScanBtn()->setText("Scan a map");
+            } else {
+                qDebug() << "Could not disconnect";
+                // TODO fermer/stop les threads
+                selectedRobotWidget->getScanBtn()->toggle();
+            }
         }
     } else {
         qDebug() << "Select a robot first";

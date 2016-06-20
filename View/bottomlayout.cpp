@@ -143,3 +143,4 @@ void BottomLayout::updateRobot(const int id, RobotView * const robotView){
         vectorPathLabel.at(id)->setText(pathStr);
     }
 }
+
