@@ -42,7 +42,6 @@ DisplaySelectedGroup::DisplaySelectedGroup(QMainWindow *_parent, const Points& _
     eyeButton->setIconSize(_parent->size()/10);
 
     mapButton = new QPushButton(QIcon(":/icons/map.png"),"");
-    mapButton->setCheckable(true);
     mapButton->setIconSize(_parent->size()/10);
 
     eyeMapLayout = new QHBoxLayout();

@@ -1428,6 +1428,8 @@ void MainWindow::displayPointFromGroupMenu(){
             leftMenu->getDisplaySelectedGroup()->getPointButtonGroup()->getButtonGroup()->button(checkedId)->setIcon(QIcon());
             XMLParser parserPoints(XML_PATH);
             parserPoints.save(points);
+            /// if the entire group was displayed it is not the case anymore
+            pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(pointsLeftWidget->getIndexLastGroupClicked())->setIcon(QIcon());
         } else {
             pointViews->getPointViewFromPoint(*(points.getGroups().at(pointsLeftWidget->getIndexLastGroupClicked())->getPoints().at(checkedId)))->show();
             points.getGroups().at(pointsLeftWidget->getIndexLastGroupClicked())->getPoints().at(checkedId)->setDisplayed(true);
@@ -1435,6 +1437,9 @@ void MainWindow::displayPointFromGroupMenu(){
             leftMenu->getDisplaySelectedGroup()->getPointButtonGroup()->getButtonGroup()->button(checkedId)->setIcon(QIcon(":/icons/tick.png"));
             XMLParser parserPoints(XML_PATH);
             parserPoints.save(points);
+            /// we check whether or not the entire group is displayed and update the points left widget accordingly by adding a tick Icon or not
+            if(points.getGroups().at(pointsLeftWidget->getIndexLastGroupClicked())->isDisplayed())
+                pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(pointsLeftWidget->getIndexLastGroupClicked())->setIcon(QIcon(":/icons/tick.png"));
         }
     } else {
         std::cerr << "Oops" << std::endl;

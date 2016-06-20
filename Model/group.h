@@ -29,6 +29,8 @@ public:
 
     /// a simple helper function to overload the << operator
     void display(std::ostream&) const;
+    /// returns true if all the points in the group are displayed
+    bool isDisplayed(void) const;
 
 public:
     /**
