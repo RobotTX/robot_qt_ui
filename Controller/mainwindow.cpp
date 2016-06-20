@@ -189,7 +189,6 @@ void MainWindow::connectToRobot(bool checked){
                 selectedRobotWidget->getScanBtn()->setText("Scan a map");
             } else {
                 qDebug() << "Could not disconnect";
-                // TODO fermer/stop les threads
                 selectedRobotWidget->getScanBtn()->toggle();
             }
         }

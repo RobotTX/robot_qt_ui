@@ -110,9 +110,7 @@ HEADERS  += Model/map.h \
 FORMS    += Controller/mainwindow.ui
 
 DISTFILES += \
-    README \
-    Resources/map_ori.png \
-    Resources/robot_ori.png
+    README
 
 RESOURCES += \
     Resources/resources.qrc \
