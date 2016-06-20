@@ -1151,7 +1151,7 @@ void MainWindow::displayGroupEvent(int index, bool display){
     }
 }
 
-void MainWindow::displayGroupMapEvent(){
+void MainWindow::displayGroupMapEvent(void){
     /// uncheck the other buttons
     pointsLeftWidget->getPlusButton()->setChecked(false);
     pointsLeftWidget->getMinusButton()->setChecked(false);
@@ -1163,12 +1163,57 @@ void MainWindow::displayGroupMapEvent(){
     pointsLeftWidget->getGroupNameLabel()->hide();
 
     qDebug() << "displaying groups by clicking on the map button";
-    if(pointsLeftWidget->getMapButton()->isChecked())
-        pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->setExclusive(false);
-    else
-        pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->setExclusive(true);
-    qDebug() << " heere ";
-
+    int checkedId = pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->checkedId();
+    /// we display groups
+    if(checkedId > -1 && checkedId < points.count()-1){
+        /// the group was displayed, we now have to hide it (all its points)
+        if(points.getGroups().at(checkedId)->isDisplayed()){
+            pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(checkedId)->setIcon(QIcon());
+            for(int i = 0; i < points.getGroups().at(checkedId)->count(); i++){
+                std::shared_ptr<Point> point = points.getGroups().at(checkedId)->getPoints()[i];
+                std::shared_ptr<PointView> pointView = pointViews->getPointViewFromPoint(*point);
+                point->setDisplayed(false);
+                pointView->hide();
+                /// update the file
+                XMLParser parserPoints(XML_PATH);
+                parserPoints.save(points);
+            }
+        } else {
+            /// the group must now be displayed
+            pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(checkedId)->setIcon(QIcon(":/icons/tick.png"));
+            for(int i = 0; i < points.getGroups().at(checkedId)->count(); i++){
+                std::shared_ptr<Point> point = points.getGroups().at(checkedId)->getPoints()[i];
+                std::shared_ptr<PointView> pointView = pointViews->getPointViewFromPoint(*point);
+                point->setDisplayed(true);
+                pointView->show();
+                /// update the file
+                XMLParser parserPoints(XML_PATH);
+                parserPoints.save(points);
+            }
+        }
+    }
+    /// we display isolated points
+    else if(checkedId >= points.count()-1){
+        std::shared_ptr<Point> point = points.getGroups().at(points.count()-1)->getPoints().at(checkedId-points.count()+1);
+        /// if the point is displayed we hide it
+        if(point->isDisplayed()){
+            pointViews->getPointViewFromPoint(*point)->hide();
+            point->setDisplayed(false);
+            /// update the file
+            XMLParser parserPoints(XML_PATH);
+            parserPoints.save(points);
+            /// we remove the tick icon
+            pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(checkedId)->setIcon(QIcon());
+        } else {
+            /// the point was not displayed, we display it
+            pointViews->getPointViewFromPoint(*point)->show();
+            point->setDisplayed(true);
+            XMLParser parserPoints(XML_PATH);
+            parserPoints.save(points);
+            /// we add the tick icon
+            pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(checkedId)->setIcon(QIcon(":/icons/tick.png"));
+        }
+    }
 }
 
 void MainWindow::displayPointMapEvent(){

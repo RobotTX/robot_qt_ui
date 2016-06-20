@@ -9,6 +9,7 @@
 GroupButtonGroup::GroupButtonGroup(const Points &_points)
 {
     buttonGroup = new QButtonGroup();
+    buttonGroup->setExclusive(true);
 
     layout = new QVBoxLayout();
     layout->setAlignment(Qt::AlignTop);
