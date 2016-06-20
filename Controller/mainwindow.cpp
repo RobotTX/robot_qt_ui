@@ -391,7 +391,6 @@ void MainWindow::cancelEditSelecRobotBtnEvent(){
     }
 }
 
-//TODO connect to robot
 void MainWindow::robotSavedEvent(){
     qDebug() << "robotSavedEvent called";
     /// if the command is succesfully sent to the robot, we apply the change
