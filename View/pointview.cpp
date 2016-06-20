@@ -28,11 +28,11 @@ PointView::PointView(std::shared_ptr<Point> _point) :
 void PointView::mousePressEvent(QGraphicsSceneMouseEvent *event){
         if(state == GraphicItemState::NO_STATE){
             if(event->button() == Qt::RightButton){
-                qDebug() << "right click on point" ;
+                qDebug() << "right click on point NO STATE" ;
                 emit pointRightClicked(this);
             }
             if(event->button() == Qt::LeftButton){
-                qDebug() << "left click on point" ;
+                qDebug() << "left click on point NO STATE" ;
                 emit pointLeftClicked(this);
             }
         } else if(state == GraphicItemState::CREATING_PATH){
@@ -40,9 +40,9 @@ void PointView::mousePressEvent(QGraphicsSceneMouseEvent *event){
             addedToPath = true;
             emit addPointPath(this);
         } else if(state == GraphicItemState::EDITING){
-            qDebug() << "PointView moving from" << pos().x() << pos().y();
+            qDebug() << "(EDITING) PointView moving from" << pos().x() << pos().y();
         }  else if(state == GraphicItemState::EDITING_PERM){
-            qDebug() << "editing permanently";
+            qDebug() << "Editing permanently";
 
         }
         else {

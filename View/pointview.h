@@ -50,7 +50,7 @@ signals:
     void pointLeftClicked(PointView*);
     void addPointPath(PointView*);
     void moveTmpEditPathPoint();
-    void editedPointPositionChanged(float, float);
+    void editedPointPositionChanged(double, double);
 
 private:
     std::shared_ptr<Point> point;
