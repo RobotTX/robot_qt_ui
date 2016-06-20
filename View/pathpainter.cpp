@@ -87,7 +87,7 @@ void PathPainter::updatePath(QVector<Point> pointVector){
     refresh();
 }
 
-void PathPainter::setPointViewPixmap(const int id, PointView * const pointView){
+void PathPainter::setPointViewPixmap(const int id, PointView* const pointView){
     if(id == 0){
         pointView->setPixmap(QPixmap(PIXMAP_START));
     } else if (id == pathVector.size()-1){
@@ -99,8 +99,8 @@ void PathPainter::setPointViewPixmap(const int id, PointView * const pointView){
 
 void PathPainter::clearPointViews(void){
     for(size_t i = 0; i < pointViews->getGroups().size(); i++){
-        GroupView groupView = pointViews->getGroups().at(i);
-        std::vector<std::shared_ptr<PointView>> pointViews = groupView.getPointViews();
+        GroupView* groupView = pointViews->getGroups().at(i);
+        std::vector<PointView*> pointViews = groupView->getPointViews();
         for(size_t j = 0; j < pointViews.size(); j++){
             pointViews.at(j)->setPixmap(QPixmap(PIXMAP_NORMAL));
         }

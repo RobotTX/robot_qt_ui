@@ -26,10 +26,10 @@ SelectedRobotWidget::SelectedRobotWidget(QMainWindow* parent){
     scanBtn->setStyleSheet ("text-align: left");
     scanBtn->setIconSize(parent->size()/10);
     layout->addWidget(scanBtn);
-    connect(scanBtn, SIGNAL(toggled(bool)), parent, SLOT(connectToRobot(bool)));
+    connect(scanBtn, SIGNAL(clicked()), parent, SLOT(connectToRobot()));
 
     /// Button which allow the user to edit the info of the robot
-    QPushButton* editBtn = new QPushButton(QIcon(":/icons/edit.png"),"Edit");
+    editBtn = new QPushButton(QIcon(":/icons/edit.png"),"Edit");
     editBtn->setStyleSheet ("text-align: left");
     editBtn->setIconSize(parent->size()/10);
     layout->addWidget(editBtn);
@@ -105,6 +105,7 @@ SelectedRobotWidget::~SelectedRobotWidget(){
     delete scrollArea;
     delete robotView;
     delete scanBtn;
+    delete editBtn;
 }
 
 void SelectedRobotWidget::setSelectedRobot(RobotView* const& _robotView){
@@ -144,4 +145,18 @@ void SelectedRobotWidget::homeBtnEvent(){
     } else {
         emit selectHome(robotView);
     }
+}
+
+void SelectedRobotWidget::disable(){
+    backBtn->setEnabled(false);
+    editBtn->setEnabled(false);
+    homeBtn->setEnabled(false);
+    addPathBtn->setEnabled(false);
+}
+
+void SelectedRobotWidget::enable(){
+    backBtn->setEnabled(true);
+    editBtn->setEnabled(true);
+    homeBtn->setEnabled(true);
+    addPathBtn->setEnabled(true);
 }

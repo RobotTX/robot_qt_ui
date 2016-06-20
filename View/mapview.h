@@ -38,8 +38,8 @@ public:
     void setState(const GraphicItemState _state, const bool clear = false);
 
     void addPathPoint(PointView* pointView);
-public:
     void updatePoints(const Points& points);
+    void clearPointViews();
 
 signals:
     void pointLeftClicked(PointView*, bool);

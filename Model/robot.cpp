@@ -41,5 +41,3 @@ bool Robot::sendCommand(QString cmd) {
     return cmdThread->sendCommand(cmd);
     //return true;
 }
-
-

@@ -13,21 +13,24 @@ PointsView::PointsView(const Points &_points): points(_points)
         GroupView* groupView = new GroupView();
         for(int j = 0; j < points.getGroups().at(i)->getPoints().size(); j++){
             std::shared_ptr<Point> curr_point = points.getGroups().at(i)->getPoints().at(j);
-            PointView* pointView = new PointView(curr_point);
-            std::shared_ptr<PointView> pointViewPtr = static_cast<std::shared_ptr<PointView>>(pointView);
+            PointView* pointViewPtr = new PointView(curr_point);
             pointViewPtr->setShapeMode(QGraphicsPixmapItem::BoundingRectShape);
             groupView->addPointView(pointViewPtr);
          }
-        groupViews.push_back(*groupView);
+        groupViews.push_back(groupView);
     }
 }
 
-std::shared_ptr<PointView> PointsView::getPointViewFromPoint(const Point& newPoint){
+PointsView::~PointsView(){
+    qDeleteAll(groupViews.begin(), groupViews.end());
+}
+
+PointView* PointsView::getPointViewFromPoint(const Point& newPoint){
     for(size_t i = 0; i < groupViews.size(); i++){
-        GroupView groupView = groupViews.at(i);
-        std::vector<std::shared_ptr<PointView>> pointViews = groupView.getPointViews();
+        GroupView* groupView = groupViews.at(i);
+        std::vector<PointView*> pointViews = groupView->getPointViews();
         for(size_t j = 0; j < pointViews.size(); j++){
-            std::shared_ptr<PointView> pointView = pointViews.at(j);
+            PointView* pointView = pointViews.at(j);
             std::shared_ptr<Point> point = pointView->getPoint();
             if(*point == newPoint){
                 return pointView;
@@ -37,12 +40,12 @@ std::shared_ptr<PointView> PointsView::getPointViewFromPoint(const Point& newPoi
     return NULL;
 }
 
-std::shared_ptr<PointView> PointsView::getPointViewFromName(const QString _name){
+PointView* PointsView::getPointViewFromName(const QString _name){
     for(size_t i = 0; i < groupViews.size(); i++){
-        GroupView groupView = groupViews.at(i);
-        std::vector<std::shared_ptr<PointView>> pointViews = groupView.getPointViews();
+        GroupView* groupView = groupViews.at(i);
+        std::vector<PointView*> pointViews = groupView->getPointViews();
         for(size_t j = 0; j < pointViews.size(); j++){
-            std::shared_ptr<PointView> pointView = pointViews.at(j);
+            PointView* pointView = pointViews.at(j);
             std::shared_ptr<Point> point = pointView->getPoint();
             if(!point->getName().compare(_name))
                 return pointView;

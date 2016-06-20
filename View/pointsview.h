@@ -15,18 +15,20 @@ class PointView;
 class PointsView {
 public:
     PointsView(const Points& _points);
+    ~PointsView();
 
     Points getPoints(void) const { return points; }
-    std::vector<GroupView> getGroups(void) const { return groupViews; }
+    void setPoints(Points _points) { points = _points; }
+    std::vector<GroupView*> getGroups(void) const { return groupViews; }
 
     size_t count(void) const { return groupViews.size(); }
 
 public:
-    std::shared_ptr<PointView> getPointViewFromName(const QString);
-    std::shared_ptr<PointView> getPointViewFromPoint(const Point& point);
+    PointView* getPointViewFromName(const QString);
+    PointView* getPointViewFromPoint(const Point& point);
 
 private:
-    std::vector<GroupView> groupViews;
+    std::vector<GroupView*> groupViews;
     Points points;
 };
 

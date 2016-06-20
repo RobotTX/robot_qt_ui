@@ -1,10 +1,14 @@
 #include "groupview.h"
 #include "View/pointview.h"
 
-GroupView::GroupView()
-{
+GroupView::GroupView(){
 }
 
-void GroupView::addPointView(const std::shared_ptr<PointView> &pointView){
+GroupView::~GroupView(){
+    qDeleteAll(pointViews.begin(), pointViews.end());
+}
+
+
+void GroupView::addPointView(PointView* pointView){
     pointViews.push_back(pointView);
 }

@@ -22,8 +22,8 @@ MapView::MapView (const QPixmap& pixmap, const QSize _size, PointsView* const& p
     setFlag(QGraphicsItem::ItemIsMovable);
 
     for(size_t i = 0; i < permanentPoints->getGroups().size(); i++){
-        for(size_t j = 0; j < permanentPoints->getGroups().at(i).getPointViews().size(); j++){
-            std::shared_ptr<PointView> currentPointView = permanentPoints->getGroups().at(i).getPointViews().at(j);
+        for(size_t j = 0; j < permanentPoints->getGroups().at(i)->getPointViews().size(); j++){
+            PointView* currentPointView = permanentPoints->getGroups().at(i)->getPointViews().at(j);
             currentPointView->setParentItem(this);
             /// in case the point is not displayed we hide the point view
             if(!currentPointView->getPoint()->isDisplayed())
@@ -99,15 +99,15 @@ void MapView::mouseReleaseEvent(QGraphicsSceneMouseEvent *event){
 
 void MapView::updatePoints(const Points& points){
     for(size_t i = 0; i < permanentPoints->getGroups().size(); i++){
-        for(size_t j = 0; j < permanentPoints->getGroups().at(i).getPointViews().size(); j++){
-            permanentPoints->getGroups().at(i).getPointViews().at(j)->hide();
+        for(size_t j = 0; j < permanentPoints->getGroups().at(i)->getPointViews().size(); j++){
+            permanentPoints->getGroups().at(i)->getPointViews().at(j)->hide();
         }
     }
     permanentPoints = new PointsView(points);
     for(size_t i = 0; i < permanentPoints->getGroups().size(); i++){
-        for(size_t j = 0; j < permanentPoints->getGroups().at(i).getPointViews().size(); j++){
-            permanentPoints->getGroups().at(i).getPointViews().at(j)->setParentItem(this);
-            connect(&(*permanentPoints->getGroups().at(i).getPointViews().at(j)), SIGNAL(pointLeftClicked(PointView*)), mainWindow, SLOT(displayPointEvent(PointView*)));
+        for(size_t j = 0; j < permanentPoints->getGroups().at(i)->getPointViews().size(); j++){
+            permanentPoints->getGroups().at(i)->getPointViews().at(j)->setParentItem(this);
+            connect(&(*permanentPoints->getGroups().at(i)->getPointViews().at(j)), SIGNAL(pointLeftClicked(PointView*)), mainWindow, SLOT(displayPointEvent(PointView*)));
         }
     }
 }
@@ -132,7 +132,7 @@ void MapView::setState(const GraphicItemState _state, const bool clear){
 
  void MapView::updateHover(QString oldName, QString newName){
      qDebug() << "gotta update the hover of a point";
-     std::shared_ptr<PointView> pointView = permanentPoints->getPointViewFromName(oldName);
+     PointView* pointView = permanentPoints->getPointViewFromName(oldName);
      pointView->setToolTip(newName);
  }
 
@@ -147,4 +147,10 @@ void MapView::setState(const GraphicItemState _state, const bool clear){
      //newPointView->setPos(pointView->pos().x(), pointView->pos().y());
      newPointView->setParentItem(this);
      pathCreationPoints.push_back(newPointView);
+ }
+
+ void MapView::clearPointViews(){
+    point = static_cast<QSharedPointer<PointView>>(tmpPointView);
+    permanentPoints->getGroups().clear();
+    permanentPoints->setPoints(Points());
  }

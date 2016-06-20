@@ -36,7 +36,8 @@
 #include "View/pointbuttongroup.h"
 #include "View/verticalscrollarea.h"
 
-#define XML_PATH "/home/joan/Qt/QtProjects/gobot-software/points.xml"
+#define XML_PATH "/home/m-a/Documents/QtProject/gobot-software/points.xml"
+//#define XML_PATH "/home/joan/Qt/QtProjects/gobot-software/points.xml"
 
 //TODO  stop threads/connections when scanning the map is finished/the user stop it
 
@@ -64,9 +65,10 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
     initializePoints();
 
-    qDebug() << pointViews->getGroups().at(0).getPointViews().size();
-    qDebug() << pointViews->getGroups().at(1).getPointViews().size();
-    qDebug() << pointViews->getGroups().at(2).getPointViews().size();
+
+    qDebug() << pointViews->getGroups().at(0)->getPointViews().size();
+    qDebug() << pointViews->getGroups().at(1)->getPointViews().size();
+    qDebug() << pointViews->getGroups().at(2)->getPointViews().size();
 
     //create the graphic item of the map
     QPixmap pixmap = QPixmap::fromImage(map->getMapImage());
@@ -74,7 +76,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     connect(mapPixmapItem, SIGNAL(addPathPointMapView(Point*)), this, SLOT(addPathPoint(Point*)));
 
     pathPainter = new PathPainter(mapPixmapItem, pointViews);
-
     initializeRobots();
 
     scene->addItem(mapPixmapItem);
@@ -124,6 +125,8 @@ MainWindow::~MainWindow(){
     delete leftMenu;
     delete bottomLayout;
     delete pathPainter;
+    delete leftMenuAction;
+    delete connectAction;
 }
 
 /**********************************************************************************************************************************/
@@ -148,48 +151,73 @@ void MainWindow::updateRobot(const float posX, const float posY, const float ori
              << " " << scanningRobot->getRobot()->getOrientation();
 }
 
-void MainWindow::connectToRobot(bool checked){
+void MainWindow::connectToRobot(){
+    bool checked = selectedRobotWidget->getScanBtn()->isChecked();
+    qDebug() << "connectToRobot called" << checked;
     if(selectedRobot != NULL){
         if(checked){
-            QString ip = selectedRobot->getRobot()->getIp();
-            qDebug() << "Trying to connect to : " << ip;
+            int ret = openConfirmMessage("Warning, scanning a new map will erase all previously created points, paths and selected home of robots");
+            switch(ret){
+                case QMessageBox::Cancel :
+                    qDebug() << "clicked no";
+                    selectedRobotWidget->getScanBtn()->setChecked(false);
+                break;
+                case QMessageBox::Ok :{
+                    QString ip = selectedRobot->getRobot()->getIp();
+                    qDebug() << "Trying to connect to : " << ip;
 
-            if(selectedRobot->getRobot()->sendCommand(QString("e ") + QString::number(PORT_MAP_METADATA) + " " + QString::number(PORT_ROBOT_POS) + " " +QString::number(PORT_MAP))){
-                //selectedRobotWidget
-                metadataThread = new ScanMetadataThread(ip, PORT_MAP_METADATA);
-                robotThread = new ScanRobotThread(ip, PORT_ROBOT_POS);
-                mapThread = new ScanMapThread(ip, PORT_MAP);
+                    if(selectedRobot->getRobot()->sendCommand(QString("e ") + QString::number(PORT_MAP_METADATA) + " " + QString::number(PORT_ROBOT_POS) + " " +QString::number(PORT_MAP))){
+                        selectedRobotWidget->getScanBtn()->setText("Stop to scan");
+                        clearNewMap();
+                        selectedRobotWidget->disable();
+                        bottomLayout->disable();
+                        setGraphicItemsState(GraphicItemState::NO_EVENT);
+                        disableMenu();
 
-                connect(robotThread, SIGNAL(valueChangedRobot(float, float, float))
-                        ,this ,SLOT(updateRobot(float, float, float)));
+                        metadataThread = new ScanMetadataThread(ip, PORT_MAP_METADATA);
+                        robotThread = new ScanRobotThread(ip, PORT_ROBOT_POS);
+                        mapThread = new ScanMapThread(ip, PORT_MAP);
 
-                connect(metadataThread, SIGNAL(valueChangedMetadata(int, int, float, float, float))
-                        , this , SLOT(updateMetadata(int, int, float, float, float)));
+                        connect(robotThread, SIGNAL(valueChangedRobot(float, float, float))
+                                ,this ,SLOT(updateRobot(float, float, float)));
 
-                connect(mapThread, SIGNAL(valueChangedMap(QByteArray))
-                        , this , SLOT(updateMap(QByteArray)));
+                        connect(metadataThread, SIGNAL(valueChangedMetadata(int, int, float, float, float))
+                                , this , SLOT(updateMetadata(int, int, float, float, float)));
 
-                metadataThread->start();
-                metadataThread->moveToThread(metadataThread);
+                        connect(mapThread, SIGNAL(valueChangedMap(QByteArray))
+                                , this , SLOT(updateMap(QByteArray)));
 
-                robotThread->start();
-                robotThread->moveToThread(robotThread);
+                        metadataThread->start();
+                        metadataThread->moveToThread(metadataThread);
 
-                mapThread->start();
-                mapThread->moveToThread(mapThread);
+                        robotThread->start();
+                        robotThread->moveToThread(robotThread);
 
-                scanningRobot = selectedRobot;
-                selectedRobotWidget->getScanBtn()->setText("Stop to scan");
-            } else {
-                selectedRobotWidget->getScanBtn()->toggle();
+                        mapThread->start();
+                        mapThread->moveToThread(mapThread);
+
+                        scanningRobot = selectedRobot;
+                    } else {
+                        selectedRobotWidget->getScanBtn()->setChecked(false);
+                    }
+                }
+                break;
+                default:
+                // should never be here
+                    qDebug() << " dafuk ?";
+                break;
             }
         } else {
             if(selectedRobot->getRobot()->sendCommand("f")){
                 qDebug() << "Disconnected";
                 selectedRobotWidget->getScanBtn()->setText("Scan a map");
+                selectedRobotWidget->enable();
+                bottomLayout->enable();
+                setGraphicItemsState(GraphicItemState::NO_STATE);
+                enableMenu();
             } else {
                 qDebug() << "Could not disconnect";
-                selectedRobotWidget->getScanBtn()->toggle();
+                selectedRobotWidget->getScanBtn()->setChecked(true);
             }
         }
     } else {
@@ -235,13 +263,7 @@ void MainWindow::stopSelectedRobot(int robotNb){
                 qDebug() << "Ok was clicked";
                 /// if the command is succesfully sent to the robot, we apply the change
                 if(robots->getRobotsVector().at(robotNb)->getRobot()->sendCommand(QString("d"))){
-                    if(robots->getRobotsVector().at(robotNb)->getRobot()->isPlayingPath()){
-                        qDebug() << "pause path on robot before supp " << robotNb << " : " << robots->getRobotsVector().at(robotNb)->getRobot()->getName();
-                        robots->getRobotsVector().at(robotNb)->getRobot()->setPlayingPath(0);
-                        bottomLayout->getPlayRobotBtnGroup()->button(robotNb)->setIcon(QIcon(":/icons/play.png"));
-                    }
-                    robots->getRobotsVector().at(robotNb)->getRobot()->getPath().clear();
-                    robots->getRobotsVector().at(robotNb)->getRobot()->setPath(std::vector<std::shared_ptr<PathPoint>>());
+                    clearPath(robotNb);
                     qDebug() << "Path suppr, new path size : " << robots->getRobotsVector().at(robotNb)->getRobot()->getPath().size();
                     qDebug() << "Points size after : " << points.getGroups().at(0)->getPoints().size();
                     if(!robots->getRobotsVector().at(robotNb)->getRobot()->getName().compare(selectedRobot->getRobot()->getName())){
@@ -249,7 +271,6 @@ void MainWindow::stopSelectedRobot(int robotNb){
                         selectedRobotWidget->setSelectedRobot(selectedRobot);
                         selectedRobotWidget->show();
                     }
-                    bottomLayout->deletePath(robotNb);
                 }
             break;
             case QMessageBox::Cancel:
@@ -511,8 +532,8 @@ void MainWindow::updatePathPointToPainter(QVector<Point>* pointVector){
 
 void MainWindow::stopPathCreation(){
     for(size_t i = 0; i < pointViews->count(); i++){
-        GroupView groupView = pointViews->getGroups().at(i);
-        std::vector<std::shared_ptr<PointView>> pointViews = groupView.getPointViews();
+        GroupView* groupView = pointViews->getGroups().at(i);
+        std::vector<PointView*> pointViews = groupView->getPointViews();
         for(size_t j = 0; j < pointViews.size(); j++){
             pointViews.at(j)->setPixmap(QPixmap(":/icons/cropped_coordinates"));
         }
@@ -523,8 +544,8 @@ void MainWindow::hidePathCreationWidget(){
     qDebug() << "hidePathCreationWidget called";
     setGraphicItemsState(GraphicItemState::NO_STATE, true);
     for(size_t i = 0; i < pointViews->count(); i++){
-        GroupView groupView = pointViews->getGroups().at(i);
-        std::vector<std::shared_ptr<PointView>> pointViews = groupView.getPointViews();
+        GroupView* groupView = pointViews->getGroups().at(i);
+        std::vector<PointView*> pointViews = groupView->getPointViews();
         for(size_t j = 0; j < pointViews.size(); j++){
             pointViews.at(j)->setPixmap(QPixmap(PIXMAP_NORMAL));
             pointViews.at(j)->setAddedToPath(false);
@@ -546,6 +567,18 @@ void MainWindow::saveTmpEditPathPointSlot(void){
 
 void MainWindow::moveTmpEditPathPointSlot(void){
     pathCreationWidget->moveEditPathPoint(editedPointView->getPoint()->getPosition().getX(), editedPointView->getPoint()->getPosition().getY());
+}
+
+void MainWindow::clearPath(int robotNb){
+    if(robots->getRobotsVector().at(robotNb)->getRobot()->isPlayingPath()){
+        qDebug() << "pause path on robot before supp " << robotNb << " : " << robots->getRobotsVector().at(robotNb)->getRobot()->getName();
+        robots->getRobotsVector().at(robotNb)->getRobot()->setPlayingPath(0);
+        bottomLayout->getPlayRobotBtnGroup()->button(robotNb)->setIcon(QIcon(":/icons/play.png"));
+    }
+    robots->getRobotsVector().at(robotNb)->getRobot()->getPath().clear();
+    robots->getRobotsVector().at(robotNb)->getRobot()->setPath(std::vector<std::shared_ptr<PathPoint>>());
+
+    bottomLayout->deletePath(robotNb);
 }
 
 /**********************************************************************************************************************************/
@@ -586,14 +619,28 @@ void MainWindow::saveMapBtnEvent(){
 
 void MainWindow::loadMapBtnEvent(){
     qDebug() << "loadMapBtnEvent called";
-    QString fileName = QFileDialog::getOpenFileName(this,
-        tr("Open Image"), "", tr("Image Files (*.pgm)"));
-    qDebug() << "File name :" << fileName;
-    if(fileName != ""){
-        map->setMapFromFile(fileName);
-        QPixmap pixmap = QPixmap::fromImage(map->getMapImage());
-        mapPixmapItem->setPixmap(pixmap);
-        scene->update();
+    int ret = openConfirmMessage("Warning, loading a new map will erase all previously created points, paths and selected home of robots");
+    switch(ret){
+        case QMessageBox::Cancel :
+            qDebug() << "clicked no";
+        break;
+        case QMessageBox::Ok :{
+            QString fileName = QFileDialog::getOpenFileName(this,
+                tr("Open Image"), "", tr("Image Files (*.pgm)"));
+            qDebug() << "File name :" << fileName;
+            if(fileName != ""){
+                clearNewMap();
+                map->setMapFromFile(fileName);
+                QPixmap pixmap = QPixmap::fromImage(map->getMapImage());
+                mapPixmapItem->setPixmap(pixmap);
+                scene->update();
+            }
+        }
+        break;
+        default:
+        // should never be here
+            qDebug() << " dafuk ?";
+        break;
     }
 }
 
@@ -605,7 +652,7 @@ void MainWindow::backMapBtnEvent(){
 
 /**********************************************************************************************************************************/
 
-//                                          INITIALIZATIONS OF MENUS
+//                                          MENUS
 
 /**********************************************************************************************************************************/
 
@@ -617,8 +664,8 @@ void MainWindow::initializeMenu(){
 
     toolbar = addToolBar("main");
 
-    QAction *leftMenuAction = toolbar->addAction(QIcon(leftMenuPix), "Open menu");
-    QAction *connectAction = toolbar->addAction(QIcon(connectPix), "Connect");
+    leftMenuAction = toolbar->addAction(QIcon(leftMenuPix), "Open menu");
+    connectAction = toolbar->addAction(QIcon(connectPix), "Connect");
 
     // a separator for esthetic purpose
     toolbar->addSeparator();
@@ -665,6 +712,16 @@ void MainWindow::initializeBottomPanel(){
     rightLayout->addWidget(bottomLayout);
 }
 
+void MainWindow::disableMenu(){
+    leftMenuAction->setEnabled(false);
+    connectAction->setEnabled(false);
+}
+
+void MainWindow::enableMenu(){
+    leftMenuAction->setEnabled(true);
+    connectAction->setEnabled(true);
+}
+
 /**********************************************************************************************************************************/
 
 //                                          POINTS
@@ -676,8 +733,9 @@ void MainWindow::initializePoints(){
     pParser.readPoints(points);
     pointViews = new PointsView(points);
     for(size_t j = 0; j < pointViews->count(); j++){
-        for(size_t k = 0; k < pointViews->getGroups().at(j).getPointViews().size(); k++){
-            connect(&(*(pointViews->getGroups().at(j).getPointViews().at(k))),
+        //GroupView* groupView = pointViews->getGroups().at(j);
+        for(size_t k = 0; k < pointViews->getGroups().at(j)->getPointViews().size(); k++){
+            connect(pointViews->getGroups().at(j)->getPointViews().at(k),
                     SIGNAL(addPointPath(PointView*)), this,
                     SLOT(addPathPoint(PointView*)));
         }
@@ -1074,7 +1132,7 @@ void MainWindow::askForDeleteGroupConfirmation(int index){
 void MainWindow::displayPointEvent(PointView* _pointView){
     /// simply casting _pointView to a std::shared_ptr<PointView> would not work so I did it this way
     std::shared_ptr<Point> point = _pointView->getPoint();
-    std::shared_ptr<PointView> pointView = pointViews->getPointViewFromPoint(*point);
+    PointView* pointView = pointViews->getPointViewFromPoint(*point);
     leftMenu->getDisplaySelectedPoint()->getMapButton()->setChecked(true);
     leftMenu->getDisplaySelectedPoint()->setOrigin(DisplaySelectedPoint::MAP);
     leftMenu->getDisplaySelectedPoint()->setPointView(pointView);
@@ -1172,7 +1230,7 @@ void MainWindow::displayGroupMapEvent(){
 
 void MainWindow::displayPointMapEvent(){
     qDebug() << "displaypoint map event";
-    std::shared_ptr<PointView> pointView = leftMenu->getDisplaySelectedPoint()->getPointView();
+    PointView* pointView = leftMenu->getDisplaySelectedPoint()->getPointView();
 
     if(pointView->getPoint() != NULL && pointView->getPoint()->isDisplayed()){
         qDebug() << " I was displayed, but it's over";
@@ -1228,7 +1286,7 @@ void MainWindow::displayPointsInGroup(void){
     /// it's an isolated point
     else if(groupIndex >= points.count()-1){
         DisplaySelectedPoint* selectedPoint = leftMenu->getDisplaySelectedPoint();
-        std::shared_ptr<PointView> pointView = pointViews->getPointViewFromPoint(*(points.getGroups().at(points.count()-1)->getPoints().at(groupIndex+1-points.count())));
+        PointView* pointView = pointViews->getPointViewFromPoint(*(points.getGroups().at(points.count()-1)->getPoints().at(groupIndex+1-points.count())));
         selectedPoint->setPointView(pointView);
         selectedPoint->displayPointInfo();
         selectedPoint->show();
@@ -1301,7 +1359,7 @@ void MainWindow::pointInfoEvent(void){
         /// it's an isolated point
         else if(groupIndex >= points.count()-1){
             qDebug() << "im an isolated point whose info is to be displayed";
-            std::shared_ptr<PointView> pointView = pointViews->getPointViewFromPoint(*(points.getGroups().at(points.count()-1)->getPoints().at(groupIndex+1-points.count())));
+            PointView* pointView = pointViews->getPointViewFromPoint(*(points.getGroups().at(points.count()-1)->getPoints().at(groupIndex+1-points.count())));
             DisplaySelectedPoint* selectedPoint = leftMenu->getDisplaySelectedPoint();
             selectedPoint->setPointView(pointView);
             selectedPoint->displayPointInfo();
@@ -1483,9 +1541,9 @@ void MainWindow::setGraphicItemsState(const GraphicItemState state, const bool c
     }
 
     for(size_t j = 0; j < pointViews->count(); j++){
-        GroupView groupView = pointViews->getGroups().at(j);
-        for(size_t k = 0; k < groupView.getPointViews().size(); k++){
-            groupView.getPointViews().at(k)->setState(state);
+        GroupView* groupView = pointViews->getGroups().at(j);
+        for(size_t k = 0; k < groupView->getPointViews().size(); k++){
+            groupView->getPointViews().at(k)->setState(state);
         }
     }
 }
@@ -1502,4 +1560,34 @@ void MainWindow::hideAllWidgets(){
     leftMenu->getDisplaySelectedPoint()->hide();
     pathCreationWidget->hide();
     leftMenu->getDisplaySelectedGroup()->hide();
+}
+
+void MainWindow::clearNewMap(){
+    qDebug() << "clearNewMap called";
+
+    /// Clear all the paths
+    for(int i = 0; i < robots->getRobotsVector().size(); i++){
+        clearPath(i);
+        robots->getRobotsVector().at(i)->getRobot()->setHome(NULL);
+    }
+
+    selectedPoint = NULL;
+    editedPointView = NULL;
+
+    //pointViews->getGroups().clear();
+    /*for(int i = points.getGroups().size() - 1; i >= 0 ; i--){
+        points.removeGroup(i);
+    }*/
+
+    points.clearGroups();
+
+
+    XMLParser parserPoints(XML_PATH);
+    parserPoints.save(points);
+    //pointsLeftWidget->getGroupButtonGroup()->update(points);
+
+    QPixmap pixmap = QPixmap::fromImage(map->getMapImage());
+    mapPixmapItem = new MapView(pixmap, QSize(geometry().width(), geometry().height()), pointViews, this);
+
+
 }

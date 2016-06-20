@@ -12,6 +12,8 @@ class QMainWindow;
 #include <memory>
 #include <QWidget>
 #include <QVector>
+#include <QList>
+#include <QAbstractButton>
 
 /**
  * @brief The BottomLayout class
@@ -39,6 +41,8 @@ public:
      */
     void deletePath(const int index);
     void updateRobot(const int id, RobotView* const robotView);
+    void disable();
+    void enable();
 
 private:
     /**
@@ -75,6 +79,7 @@ private:
      * changed/delete
      */
     QVector<QLabel*> vectorPathLabel;
+    QList<QAbstractButton*> listEnabled;
 };
 
 #endif // BOTTOMLAYOUT_H

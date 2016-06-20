@@ -62,6 +62,10 @@ public:
     void setGraphicItemsState(const GraphicItemState state, const bool clear = false);
     void stopPathCreation();
     int openConfirmMessage(const QString);
+    void clearNewMap();
+    void disableMenu();
+    void enableMenu();
+    void clearPath(int robotNb);
 
 signals:
     void sendCommand(QString);
@@ -72,7 +76,7 @@ private slots:
     void updateMetadata(const int width, const int height, const float resolution
                         , const float originX, const float originY);
     void updateMap(const QByteArray mapArray);
-    void connectToRobot(bool checked);
+    void connectToRobot();
     void quit();
     void setSelectedRobot(RobotView* robotView);
     void editSelectedRobot(RobotView* robotView);
@@ -168,6 +172,8 @@ private:
     Points points;
     PathPainter* pathPainter;
     PointView* editedPointView;
+    QAction *leftMenuAction;
+    QAction *connectAction;
 
     QWidget* lastWidget;
     LeftMenuWidget* leftMenuWidget;

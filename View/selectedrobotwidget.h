@@ -30,6 +30,8 @@ public:
      */
     void setSelectedRobot(RobotView* const& _robotView);
     QPushButton* getScanBtn(void) const {return scanBtn;}
+    void disable();
+    void enable();
 
 private:
     QVBoxLayout* layout;
@@ -43,6 +45,7 @@ private:
     PathWidget* pathWidget;
     VerticalScrollArea* scrollArea;
     QPushButton* scanBtn;
+    QPushButton* editBtn;
 
 signals:
     /**

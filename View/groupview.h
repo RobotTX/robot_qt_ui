@@ -14,11 +14,12 @@ class GroupView
 {
 public:
     GroupView();
-    std::vector<std::shared_ptr<PointView>> getPointViews(void) const { return pointViews; }
-    void addPointView(const std::shared_ptr<PointView> &pointView);
+    ~GroupView();
+    std::vector<PointView*> getPointViews(void) const { return pointViews; }
+    void addPointView(PointView* pointView);
 
 private:
-    std::vector<std::shared_ptr<PointView>> pointViews;
+    std::vector<PointView*> pointViews;
 };
 
 #endif // GROUPVIEW_H

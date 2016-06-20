@@ -144,3 +144,35 @@ void BottomLayout::updateRobot(const int id, RobotView * const robotView){
     }
 }
 
+void BottomLayout::disable(){
+    QList<QAbstractButton*> list = playRobotBtnGroup->buttons();
+    for(int i =0; i < list.size(); i++){
+        if(list.at(i)->isEnabled()){
+            list.at(i)->setEnabled(false);
+            listEnabled.push_back(list.at(i));
+        }
+    }
+
+    list = stopRobotBtnGroup->buttons();
+    for(int i =0; i < list.size(); i++){
+        if(list.at(i)->isEnabled()){
+            list.at(i)->setEnabled(false);
+            listEnabled.push_back(list.at(i));
+        }
+    }
+
+    list = robotBtnGroup->buttons();
+    for(int i =0; i < list.size(); i++){
+        if(list.at(i)->isEnabled()){
+            list.at(i)->setEnabled(false);
+            listEnabled.push_back(list.at(i));
+        }
+    }
+}
+
+void BottomLayout::enable(){
+    for(int i =0; i < listEnabled.size(); i++){
+        listEnabled.at(i)->setEnabled(true);
+    }
+    listEnabled.clear();
+}
