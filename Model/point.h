@@ -2,6 +2,7 @@
 #define POINT_H
 
 class QDataStream;
+
 #include <QString>
 
 /**
@@ -60,6 +61,7 @@ public:
     bool operator==(const Point& point1) const;
 
     bool comparePos(const double x, const double y) const;
+
 
 private:
     QString name;

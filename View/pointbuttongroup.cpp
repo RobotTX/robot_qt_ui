@@ -63,4 +63,11 @@ void PointButtonGroup::setCheckable(const bool checkable){
         button->setCheckable(checkable);
 }
 
+void PointButtonGroup::uncheck(void){
+    /// little trick to uncheck all buttons because the class doesn't provide a function to do it
+    buttonGroup->setExclusive(false);
+    if(buttonGroup->checkedButton())
+        buttonGroup->checkedButton()->setChecked(false);
+    buttonGroup->setExclusive(true);
+}
 

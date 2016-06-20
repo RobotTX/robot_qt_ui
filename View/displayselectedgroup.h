@@ -2,7 +2,6 @@
 #define DISPLAYSELECTEDGROUP_H
 
 class VerticalScrollArea;
-class PointButtonGroup;
 class QVBoxLayout;
 class QPushButton;
 class QHBoxLayout;
@@ -11,6 +10,7 @@ class QLabel;
 
 #include "Model/points.h"
 #include <QWidget>
+#include "View/pointbuttongroup.h"
 
 /**
  * @brief The DisplaySelectedGroup class
@@ -33,6 +33,9 @@ public:
     QLabel* getNameLabel(void) const { return name; }
 
     void setName(const QString _name);
+
+public:
+    void uncheck(void) { pointButtonGroup->uncheck(); }
 
 private:
 

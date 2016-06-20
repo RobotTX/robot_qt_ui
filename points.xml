@@ -12,7 +12,7 @@
             <name>Ma point</name>
             <x>75</x>
             <y>75</y>
-            <displayed>1</displayed>
+            <displayed>0</displayed>
         </point>
         <point>
             <name>A new point</name>
@@ -27,7 +27,7 @@
             <name>Fanny</name>
             <x>125</x>
             <y>125</y>
-            <displayed>0</displayed>
+            <displayed>1</displayed>
         </point>
         <point>
             <name>Michel</name>
@@ -42,7 +42,7 @@
             <name>Un point</name>
             <x>150</x>
             <y>175</y>
-            <displayed>0</displayed>
+            <displayed>1</displayed>
         </point>
         <point>
             <name>Another point</name>
@@ -54,7 +54,7 @@
             <name>A final point</name>
             <x>150</x>
             <y>225</y>
-            <displayed>0</displayed>
+            <displayed>1</displayed>
         </point>
     </group>
 </points>
