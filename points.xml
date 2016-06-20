@@ -12,7 +12,7 @@
             <name>Ma point</name>
             <x>75</x>
             <y>75</y>
-            <displayed>0</displayed>
+            <displayed>1</displayed>
         </point>
         <point>
             <name>A new point</name>
@@ -33,7 +33,7 @@
             <name>Michel</name>
             <x>150</x>
             <y>150</y>
-            <displayed>0</displayed>
+            <displayed>1</displayed>
         </point>
     </group>
     <group>

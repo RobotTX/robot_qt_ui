@@ -35,7 +35,7 @@ DisplaySelectedPoint::DisplaySelectedPoint(QMainWindow *_parent, Points const& _
 
     editButton = new QPushButton(QIcon(":/icons/edit.png"),"");
     editButton->setIconSize(_parent->size()/10);
-    editButton->setToolTip("You can click on this button and then on the map to change the position of your point");
+    editButton->setToolTip("You can click on this button and then choose between clicking on the map or drag the point to change its position");
     editButton->setCheckable(true);
 
     grid = new QHBoxLayout();
