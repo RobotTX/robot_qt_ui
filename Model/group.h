@@ -24,6 +24,8 @@ public:
     QString getName(void) const { return name; }
     void setName(const QString _name) { name = _name; }
     QVector<std::shared_ptr<Point>> getPoints(void) const { return points; }
+    /// to count the number of points in the group
+    int count(void) const { return points.size(); }
 
     /// a simple helper function to overload the << operator
     void display(std::ostream&) const;

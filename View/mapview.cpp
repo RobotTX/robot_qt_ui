@@ -23,10 +23,14 @@ MapView::MapView (const QPixmap& pixmap, const QSize _size, PointsView* const& p
 
     for(size_t i = 0; i < permanentPoints->getGroups().size(); i++){
         for(size_t j = 0; j < permanentPoints->getGroups().at(i).getPointViews().size(); j++){
-            permanentPoints->getGroups().at(i).getPointViews().at(j)->setParentItem(this);
-            connect(&(*permanentPoints->getGroups().at(i).getPointViews().at(j)), SIGNAL(pointLeftClicked(PointView*)), _mainWindow, SLOT(displayPointEvent(PointView*)));
+            std::shared_ptr<PointView> currentPointView = permanentPoints->getGroups().at(i).getPointViews().at(j);
+            currentPointView->setParentItem(this);
+            /// in case the point is not displayed we hide the point view
+            if(!currentPointView->getPoint()->isDisplayed())
+                currentPointView->hide();
+            connect(&(*currentPointView), SIGNAL(pointLeftClicked(PointView*)), _mainWindow, SLOT(displayPointEvent(PointView*)));
             /// to update the coordinates of the point displayed on the left when a user drags a point to change its position
-            connect(&(*permanentPoints->getGroups().at(i).getPointViews().at(j)), SIGNAL(editedPointPositionChanged(double, double)), _mainWindow, SLOT(updateCoordinates(double, double)));
+            connect(&(*currentPointView), SIGNAL(editedPointPositionChanged(double, double)), _mainWindow, SLOT(updateCoordinates(double, double)));
         }
     }
 

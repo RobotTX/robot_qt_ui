@@ -37,6 +37,7 @@
 	<file alias="green_coord.png">green_coordinates.png</file>
 	<file alias="green_red_coord.png">green_red_coordinates.png</file>
 	<file alias="orange_coord.png">orange_coordinates.png</file>
+        <file>tick.png</file>
     </qresource>
     <qresource prefix="/xml">
 	<file>points.xml</file>

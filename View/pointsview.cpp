@@ -13,16 +13,11 @@ PointsView::PointsView(const Points &_points): points(_points)
         GroupView* groupView = new GroupView();
         for(int j = 0; j < points.getGroups().at(i)->getPoints().size(); j++){
             std::shared_ptr<Point> curr_point = points.getGroups().at(i)->getPoints().at(j);
-            if(curr_point->isDisplayed()){
-
-                PointView* pointView = new PointView(curr_point);
-
-                std::shared_ptr<PointView> pointViewPtr = static_cast<std::shared_ptr<PointView>>(pointView);
-                pointViewPtr->setShapeMode(QGraphicsPixmapItem::BoundingRectShape);
-
-                groupView->addPointView(pointViewPtr);
-            }
-        }
+            PointView* pointView = new PointView(curr_point);
+            std::shared_ptr<PointView> pointViewPtr = static_cast<std::shared_ptr<PointView>>(pointView);
+            pointViewPtr->setShapeMode(QGraphicsPixmapItem::BoundingRectShape);
+            groupView->addPointView(pointViewPtr);
+         }
         groupViews.push_back(*groupView);
     }
 }

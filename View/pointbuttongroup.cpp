@@ -46,6 +46,10 @@ void PointButtonGroup::setGroup(const Points &_points, const int groupIndex){
         pointButton->setStyleSheet("text-align:left");
         buttonGroup->addButton(pointButton, j);
         layout->addWidget(pointButton);
+        if(currentPoint->isDisplayed())
+            pointButton->setIcon(QIcon(":/icons/tick.png"));
+        else
+            pointButton->setIcon(QIcon());
     }
 }
 
