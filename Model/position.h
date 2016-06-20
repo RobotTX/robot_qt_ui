@@ -9,19 +9,19 @@ class Position
 {
 public:
     Position();
-    Position(float x, float y);
+    Position(double x, double y);
 
     /// Getters
-    float getX(void) const { return x; }
-    float getY(void) const { return y; }
+    double getX(void) const { return x; }
+    double getY(void) const { return y; }
 
     ///Setters
-    void setX(const float _x) { x = _x; }
-    void setY(const float _y) { y = _y; }
+    void setX(const double _x) { x = _x; }
+    void setY(const double _y) { y = _y; }
 
 private:
-    float x;
-    float y;
+    double x;
+    double y;
 };
 
 #endif // POSITION_H

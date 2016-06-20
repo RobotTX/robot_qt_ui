@@ -16,28 +16,28 @@ class Point
     /**
      * @brief The Position class
      * This class provides a model for a position, it is meant to be used by a point and therefore known to it only
-     * A point is identified by two coordinates represented as floats numbers
+     * A point is identified by two coordinates represented as doubles numbers
      */
     class Position {
     public:
         Position(void): _x(0.0), _y(0.0) {}
-        Position(const float x, const float y): _x(x), _y(y) {}
+        Position(const double x, const double y): _x(x), _y(y) {}
 
-        float getX(void) const { return _x; }
-        float getY(void) const { return _y; }
+        double getX(void) const { return _x; }
+        double getY(void) const { return _y; }
 
-        void setX(const float x) { _x = x; }
-        void setY(const float y) { _y = y; }
+        void setX(const double x) { _x = x; }
+        void setY(const double y) { _y = y; }
 
     private:
-        float _x;
-        float _y;
+        double _x;
+        double _y;
     };
 
 public:
     Point(void);
     /// by default a point it set to be permanent
-    Point(const QString name, const float x, const float y, const bool permanent = true);
+    Point(const QString name, const double x, const double y, const bool permanent = true);
     Point(const QString name, const Position position, const bool _displayed = false, const bool permanent = true);
 
     Position getPosition(void) const { return position; }
@@ -51,7 +51,7 @@ public:
     void setPermanent(const bool _permanent) { permanent = _permanent; }
 
     void setName(const QString _name) { name = _name; }
-    void setPosition(const float x, const float y) { position.setX(x); position.setY(y); }
+    void setPosition(const double x, const double y) { position.setX(x); position.setY(y); }
     void setPosition(const Position _position) { position = _position; }
 
     /// a helper function to overload the << operator
@@ -59,7 +59,7 @@ public:
 
     bool operator==(const Point& point1) const;
 
-    bool comparePos(const float x, const float y) const;
+    bool comparePos(const double x, const double y) const;
 
 private:
     QString name;

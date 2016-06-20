@@ -4,6 +4,7 @@
 #include "Model/point.h"
 #include <QVBoxLayout>
 #include <QPushButton>
+#include <QDebug>
 
 GroupButtonGroup::GroupButtonGroup(const Points &_points)
 {
@@ -76,5 +77,15 @@ void GroupButtonGroup::update(const Points& _points){
         pointButton->setCheckable(true);
         buttonGroup->addButton(pointButton, i+_points.getGroups().size()-1);
         layout->addWidget(pointButton);
+    }
+}
+
+void GroupButtonGroup::uncheck(void){
+    foreach(QAbstractButton* button, buttonGroup->buttons()){
+        qDebug() << "called";
+        if(button->isChecked()){
+            button->click();
+            //button->setChecked(false);
+        }
     }
 }

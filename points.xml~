@@ -32,5 +32,17 @@
             <y>175</y>
             <displayed>1</displayed>
         </point>
+        <point>
+            <name>Another point</name>
+            <x>150</x>
+            <y>200</y>
+            <displayed>1</displayed>
+        </point>
+        <point>
+            <name>A final point</name>
+            <x>150</x>
+            <y>225</y>
+            <displayed>1</displayed>
+        </point>
     </group>
 </points>

@@ -9,9 +9,9 @@ Robot::Robot(const QString _name, const QString _ip, const int port, QMainWindow
 {
     qDebug() << "Robot : " << name << " ip : " << ip << " launching its cmd thread";
 
-    cmdThread = new CmdRobotThread(ip, port, name);
+    /*cmdThread = new CmdRobotThread(ip, port, name);
     //QObject::connect(parent, SIGNAL(sendCommand(QString)), cmdThread, SLOT(sendCommandSlot(QString)));
-    cmdThread->start();
+    cmdThread->start();*/
 
 }
 
@@ -39,7 +39,8 @@ void Robot::display(std::ostream& stream) const {
 }
 
 bool Robot::sendCommand(QString cmd) {
-    return cmdThread->sendCommand(cmd);
+    //return cmdThread->sendCommand(cmd);
+    return true;
 }
 
 

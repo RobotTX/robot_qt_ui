@@ -31,6 +31,7 @@ public:
     int getHeight(void) const { return size.height(); }
     QVector<PointView*> getPathCreationPoints(void) const { return pathCreationPoints; }
     PointView* getTmpPointView(void) const { return tmpPointView; }
+    GraphicItemState getState(void) const { return state; }
 
     /// Setter
     void setPoint(const QSharedPointer<PointView> _point) { point = _point; }

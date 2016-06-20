@@ -29,6 +29,7 @@ public:
     QPushButton* getMapButton(void) const { return mapButton; }
     QPushButton* getEyeButton(void) const { return eyeButton; }
     QPushButton* getEditButton(void) const { return editButton; }
+    QPushButton* getMinusButton(void) const { return minusButton; }
     QLabel* getNameLabel(void) const { return name; }
 
     void setName(const QString _name);

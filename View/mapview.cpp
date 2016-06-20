@@ -25,6 +25,8 @@ MapView::MapView (const QPixmap& pixmap, const QSize _size, PointsView* const& p
         for(size_t j = 0; j < permanentPoints->getGroups().at(i).getPointViews().size(); j++){
             permanentPoints->getGroups().at(i).getPointViews().at(j)->setParentItem(this);
             connect(&(*permanentPoints->getGroups().at(i).getPointViews().at(j)), SIGNAL(pointLeftClicked(PointView*)), _mainWindow, SLOT(displayPointEvent(PointView*)));
+            /// to update the coordinates of the point displayed on the left when a user drags a point to change its position
+            connect(&(*permanentPoints->getGroups().at(i).getPointViews().at(j)), SIGNAL(editedPointPositionChanged(double, double)), _mainWindow, SLOT(updateCoordinates(double, double)));
         }
     }
 
@@ -32,6 +34,7 @@ MapView::MapView (const QPixmap& pixmap, const QSize _size, PointsView* const& p
     Point tmpPoint("tmpPoint", 0.0, 0.0, false);
 
     tmpPointView = new PointView(std::make_shared<Point>(tmpPoint));
+    tmpPointView->setPixmap(QPixmap(":/icons/blue_coord.png"));
     connect(this, SIGNAL(pointLeftClicked(PointView*, bool)), _mainWindow, SLOT(setSelectedPoint(PointView*, bool)));
     connect(tmpPointView, SIGNAL(moveTmpEditPathPoint()), mainWindow, SLOT(moveTmpEditPathPointSlot()));
 
@@ -59,7 +62,7 @@ void MapView::mouseReleaseEvent(QGraphicsSceneMouseEvent *event){
     /// we compare the start position of the drag event & the drop position
     /// if we have moved for more than 10 pixels, it's a drag, else it's a click
     /// and we create a temporary point
-    if (abs(x)<=10 && abs(y)<=10){
+    if (abs(x) <= 10 && abs(y) <= 10){
         /// click
         if(state == GraphicItemState::NO_STATE){
             point->getPoint()->setPosition(event->pos().x(), event->pos().y());

@@ -137,6 +137,14 @@ private slots:
     void moveTmpEditPathPointSlot(void);
     void displayPointInfoFromGroupMenu(void);
     void updatePoint(void);
+    void updateCoordinates(double x, double y);
+    void removePointFromGroupMenu(void);
+    /**
+     * @brief cancelEvent
+     * Called when a user doesn't to keep the modifications he's made on a point
+     */
+    void cancelEvent(void);
+
 
 private:
     Ui::MainWindow* ui;

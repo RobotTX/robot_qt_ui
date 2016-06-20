@@ -25,7 +25,7 @@ public:
     /// used to determine which menu or object (could be the map) cause the information of this point to be displayed
     enum Origin { MAP, GROUP_MENU, POINTS_MENU };
 
-    DisplaySelectedPoint(QMainWindow* _parent, Points const& _points, const std::shared_ptr<PointView> &_pointView = 0, const Origin origin = MAP);
+    DisplaySelectedPoint(QMainWindow* _parent, Points const& _points, std::shared_ptr<PointView> const &_pointView = 0, const Origin origin = MAP);
     ~DisplaySelectedPoint();
 
     QPushButton* getBackButton(void) const { return backButton; }
@@ -55,12 +55,6 @@ signals:
     void nameChanged(QString, QString);
 
 private slots:
-    /**
-     * @brief cancelEvent
-     * Called when a user doesn't to keep the modifications he's made on a point
-     */
-    void cancelEvent(void);
-    void updateCoordinates(float x, float y);
 
 private:
     QLineEdit* nameEdit;

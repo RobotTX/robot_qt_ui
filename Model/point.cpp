@@ -5,7 +5,7 @@
 Point::Point(void): name(""), position(Position(0.0, 0.0)), permanent(true)
 {}
 
-Point::Point(const QString name, const float x, const float y, const bool permanent):
+Point::Point(const QString name, const double x, const double y, const bool permanent):
     name(name), position(Position(x, y)), permanent(permanent) {}
 
 Point::Point(const QString name, const Position position, const bool _displayed, const bool _permanent) : name(name), position(position), displayed(_displayed), permanent(_permanent)
@@ -27,8 +27,8 @@ QDataStream& operator<<(QDataStream& out, const Point& point){
 
 QDataStream& operator>>(QDataStream& in, Point& point){
     QString name;
-    float x;
-    float y;
+    double x;
+    double y;
     bool permanent;
     in >> name >> x >> y >> permanent;
     point = Point(name, x, y, permanent);
@@ -37,7 +37,7 @@ QDataStream& operator>>(QDataStream& in, Point& point){
 
 bool Point::operator==(const Point& point) const {
     if(!point.getName().compare(this->getName()) &&
-            /// because it's a bad practice to directly compare float values we just decide of a range of coordinates that are close enough from each other to be considered the same
+            /// because it's a bad practice to directly compare double values we just decide of a range of coordinates that are close enough from each other to be considered the same
             abs(point.getPosition().getX() - this->getPosition().getX()) < 0.01 &&
             abs(point.getPosition().getY() - this->getPosition().getY()) < 0.01)
         return true;
@@ -45,7 +45,7 @@ bool Point::operator==(const Point& point) const {
         return false;
 }
 
- bool Point::comparePos(float x, float y) const {
+ bool Point::comparePos(double x, double y) const {
      if(abs(x - this->getPosition().getX()) < 0.01 &&
              abs(y - this->getPosition().getY()) < 0.01)
          return true;
