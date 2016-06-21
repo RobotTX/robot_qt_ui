@@ -131,3 +131,6 @@ PointsLeftWidget::~PointsLeftWidget(){
 }
 
 
+void PointsLeftWidget::updateGroupButtonGroup(Points const& points){
+    groupButtonGroup->update(points);
+}

@@ -98,6 +98,7 @@ std::pair<int, int> Points::findPointIndexes(const QString name) const {
 }
 
 
-void Points::clearGroups(){
+void Points::clear(){
     groups.clear();
+    addGroup(Group("No Name"));
 }

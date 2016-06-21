@@ -6,6 +6,9 @@
 
 Group::Group(void){}
 
+Group::Group(const QString _name) :  name(_name) {
+}
+
 Group::Group(const std::shared_ptr<Points>& _groupPoints, const QString _name) :  name(_name) {
     groupPoints = _groupPoints;
 }

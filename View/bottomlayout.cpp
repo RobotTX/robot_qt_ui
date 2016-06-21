@@ -105,6 +105,7 @@ BottomLayout::BottomLayout(QMainWindow* parent, const std::shared_ptr<Robots> &r
     scrollArea->setWidget(widget);
 
     layout->addWidget(scrollArea);
+    //layout->setContentsMargins(0, 0, 0, 0);
 
     setLayout(layout);
 }

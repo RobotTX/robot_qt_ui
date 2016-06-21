@@ -87,3 +87,7 @@ void EditSelectedPointWidget::checkPointName(void){
     }*/
 }
 
+void EditSelectedPointWidget::updateGroupMenu(const Points& points){
+    groupMenu->updateList(points);
+}
+

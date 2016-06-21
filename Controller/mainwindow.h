@@ -25,6 +25,8 @@ class PathCreationWidget;
 class QAbstractButton;
 class QVBoxLayout;
 class PathPainter;
+class TopLayout;
+
 
 #include "Model/points.h"
 #include "View/robotview.h"
@@ -149,6 +151,7 @@ private slots:
      * Called when a user doesn't to keep the modifications he's made on a point
      */
     void cancelEvent(void);
+    void setMessageTop(QString msgType, QString msg);
 
 
 private:
@@ -174,6 +177,7 @@ private:
     PointView* editedPointView;
     QAction *leftMenuAction;
     QAction *connectAction;
+    TopLayout* topLayout;
 
     QWidget* lastWidget;
     LeftMenuWidget* leftMenuWidget;

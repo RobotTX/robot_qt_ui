@@ -78,7 +78,7 @@ public:
      */
     std::pair<int, int> findPointIndexes(const QString name) const;
 
-    void clearGroups();
+    void clear();
 
 private:
     QVector<std::shared_ptr<Group>> groups;

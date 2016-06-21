@@ -58,7 +58,8 @@ SOURCES += main.cpp\
     View/groupbuttongroup.cpp \
     View/groupeditwindow.cpp \
     View/pathpainter.cpp \
-    View/displayselectedgroup.cpp
+    View/displayselectedgroup.cpp \
+    View/toplayout.cpp
 
 HEADERS  += Model/map.h \
     Model/position.h \
@@ -105,7 +106,8 @@ HEADERS  += Model/map.h \
     View/groupeditwindow.h \
     View/pathpainter.h \
     View/displayselectedgroup.h \
-    Model/graphicitemstate.h
+    Model/graphicitemstate.h \
+    View/toplayout.h
 
 FORMS    += Controller/mainwindow.ui
 

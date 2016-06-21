@@ -22,6 +22,7 @@ public:
     std::vector<GroupView*> getGroups(void) const { return groupViews; }
 
     size_t count(void) const { return groupViews.size(); }
+    void clear();
 
 public:
     PointView* getPointViewFromName(const QString);

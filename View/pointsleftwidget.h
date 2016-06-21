@@ -51,6 +51,8 @@ public:
 
     VerticalScrollArea* getScrollArea(void) const { return scrollArea; }
 
+    void updateGroupButtonGroup(Points const& points);
+
 
 private:
     QMainWindow* parent;

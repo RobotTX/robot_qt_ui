@@ -32,6 +32,7 @@ public:
     QLabel* getPosXLabel(void) const { return posXLabel; }
     QLabel* getPosYLabel(void) const { return posYLabel; }
     QLineEdit* getNameEdit(void) const { return nameEdit; }
+    void updateGroupMenu(const Points& points);
 
 signals:
     void pointSaved(void);

@@ -35,6 +35,7 @@
 #include <QAbstractButton>
 #include "View/pointbuttongroup.h"
 #include "View/verticalscrollarea.h"
+#include "View/toplayout.h"
 
 #define XML_PATH "/home/m-a/Documents/QtProject/gobot-software/points.xml"
 //#define XML_PATH "/home/joan/Qt/QtProjects/gobot-software/points.xml"
@@ -49,9 +50,15 @@
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow) {
     ui->setupUi(this);
 
+    QWidget* mainWidget = new QWidget();
+
+    QVBoxLayout* mainLayout = new QVBoxLayout();
     map = std::shared_ptr<Map>(new Map());
 
-    map->setMapFromFile(":/maps/map.pgm");
+    QSettings settings;
+
+    map->setMapFromFile(settings.value("mapFile", ":/maps/map.pgm").toString());
+
     robots = std::shared_ptr<Robots>(new Robots());
     scene = new QGraphicsScene(this);
     graphicsView = new CustomQGraphicsView(scene, this);
@@ -61,14 +68,13 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     editedPointView = NULL;
 
     //create the toolbar
-    initializeMenu();
+    //initializeMenu();
+    topLayout = new TopLayout(this);
+    mainLayout->addWidget(topLayout);
+
+    QHBoxLayout* bottom = new QHBoxLayout();
 
     initializePoints();
-
-
-    qDebug() << pointViews->getGroups().at(0)->getPointViews().size();
-    qDebug() << pointViews->getGroups().at(1)->getPointViews().size();
-    qDebug() << pointViews->getGroups().at(2)->getPointViews().size();
 
     //create the graphic item of the map
     QPixmap pixmap = QPixmap::fromImage(map->getMapImage());
@@ -87,11 +93,11 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
     leftMenu = new LeftMenu(this, points, robots, pointViews);
     initializeLeftMenu();
-    ui->horizontalLayout->addWidget(leftMenu);
+    bottom->addWidget(leftMenu);
 
 
     rightLayout = new QVBoxLayout();
-    ui->horizontalLayout->addLayout(rightLayout);
+    bottom->addLayout(rightLayout);
     rightLayout->addWidget(graphicsView);
 
     initializeBottomPanel();
@@ -107,6 +113,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     /// to update the names of the points displayed when a user changes the name of a point via the edit button
     connect(this, SIGNAL(nameChanged(QString, QString)), mapPixmapItem, SLOT(updateHover(QString, QString)));
 
+    mainLayout->addLayout(bottom);
+    mainWidget->setLayout(mainLayout);
+    setCentralWidget(mainWidget);
 }
 
 MainWindow::~MainWindow(){
@@ -127,6 +136,7 @@ MainWindow::~MainWindow(){
     delete pathPainter;
     delete leftMenuAction;
     delete connectAction;
+    delete topLayout;
 }
 
 /**********************************************************************************************************************************/
@@ -497,6 +507,7 @@ void MainWindow::pathSaved(bool execPath){
     qDebug() << "pathSaved called" << execPath;
 
     hideAllWidgets();
+    setMessageTop(TEXT_COLOR_SUCCESS, "Path saved");
     selectedRobotWidget->setSelectedRobot(selectedRobot);
     selectedRobotWidget->show();
     bottomLayout->updateRobot(robots->getRobotId(selectedRobot->getRobot()->getName()), selectedRobot);
@@ -607,13 +618,19 @@ void MainWindow::updateMap(const QByteArray mapArray){
 
 void MainWindow::saveMapBtnEvent(){
     qDebug() << "saveMapBtnEvent called";
-    QString dir = QFileDialog::getExistingDirectory(this, tr("Open Directory"),
-        "", QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
-    qDebug() << "Dir name :" <<  dir;
-    if(dir != ""){
-        map->saveToFile(QString("map_saved.pgm"));
+
+    QString fileName = QFileDialog::getSaveFileName(this, tr("Save File"),
+            "", tr("Images (*.pgm)"));
+    qDebug() << "FileName :" <<  fileName;
+
+    if(fileName != ""){
+        fileName += ".pgm";
+        QSettings settings;
+        settings.setValue("mapFile", fileName);
+
+        map->saveToFile(fileName);
     } else {
-        qDebug() << "Please select a directory";
+        qDebug() << "Please select a file";
     }
 }
 
@@ -628,7 +645,11 @@ void MainWindow::loadMapBtnEvent(){
             QString fileName = QFileDialog::getOpenFileName(this,
                 tr("Open Image"), "", tr("Image Files (*.pgm)"));
             qDebug() << "File name :" << fileName;
+
             if(fileName != ""){
+                QSettings settings;
+                settings.setValue("mapFile", fileName);
+
                 clearNewMap();
                 map->setMapFromFile(fileName);
                 QPixmap pixmap = QPixmap::fromImage(map->getMapImage());
@@ -662,7 +683,10 @@ void MainWindow::initializeMenu(){
     QPixmap quitPix(":/icons/close.png");
     QPixmap leftMenuPix(":/icons/list.png");
 
+
     toolbar = addToolBar("main");
+    toolbar->setFloatable(false);
+    toolbar->setMovable(false);
 
     leftMenuAction = toolbar->addAction(QIcon(leftMenuPix), "Open menu");
     connectAction = toolbar->addAction(QIcon(connectPix), "Connect");
@@ -671,6 +695,7 @@ void MainWindow::initializeMenu(){
     toolbar->addSeparator();
 
     QAction *quitAction = toolbar->addAction(QIcon(quitPix), "Quit Application");
+
 
     connect(quitAction, SIGNAL(triggered()), this, SLOT(quit()));
     connect(connectAction, SIGNAL(triggered()), this, SLOT(connectToRobot()));
@@ -720,6 +745,10 @@ void MainWindow::disableMenu(){
 void MainWindow::enableMenu(){
     leftMenuAction->setEnabled(true);
     connectAction->setEnabled(true);
+}
+
+void MainWindow::setMessageTop(QString msgType, QString msg){
+    topLayout->setLabel(msgType, msg);
 }
 
 /**********************************************************************************************************************************/
@@ -1131,10 +1160,7 @@ void MainWindow::askForDeleteGroupConfirmation(int index){
     }
 }
 
-void MainWindow::displayPointEvent(PointView* _pointView){
-    /// simply casting _pointView to a std::shared_ptr<PointView> would not work so I did it this way
-    std::shared_ptr<Point> point = _pointView->getPoint();
-    PointView* pointView = pointViews->getPointViewFromPoint(*point);
+void MainWindow::displayPointEvent(PointView* pointView){
     leftMenu->getDisplaySelectedPoint()->getMapButton()->setChecked(true);
     leftMenu->getDisplaySelectedPoint()->setOrigin(DisplaySelectedPoint::MAP);
     leftMenu->getDisplaySelectedPoint()->setPointView(pointView);
@@ -1653,20 +1679,24 @@ void MainWindow::clearNewMap(){
     selectedPoint = NULL;
     editedPointView = NULL;
 
-    //pointViews->getGroups().clear();
-    /*for(int i = points.getGroups().size() - 1; i >= 0 ; i--){
-        points.removeGroup(i);
-    }*/
+    /// Clear the list of points
+    points.clear();
 
-    points.clearGroups();
-
-
+    /// Save the new list in the XML
     XMLParser parserPoints(XML_PATH);
     parserPoints.save(points);
-    //pointsLeftWidget->getGroupButtonGroup()->update(points);
 
-    QPixmap pixmap = QPixmap::fromImage(map->getMapImage());
-    mapPixmapItem = new MapView(pixmap, QSize(geometry().width(), geometry().height()), pointViews, this);
+    /// Delete the pointView list
+    delete pointViews;
+    pointViews = new PointsView(points);
 
+    /// Update the left menu displaying the list of groups and buttons
+    pointsLeftWidget->updateGroupButtonGroup(points);
+
+    /// Update the list of group when creating a temporary point
+    editSelectedPointWidget->updateGroupMenu(points);
+
+    /// Update the map
+    mapPixmapItem->setPermanentPoints(points);
 
 }

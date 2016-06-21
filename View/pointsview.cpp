@@ -22,6 +22,7 @@ PointsView::PointsView(const Points &_points): points(_points)
 }
 
 PointsView::~PointsView(){
+    points.clear();
     qDeleteAll(groupViews.begin(), groupViews.end());
 }
 
@@ -53,3 +54,4 @@ PointView* PointsView::getPointViewFromName(const QString _name){
     }
     return 0;
 }
+

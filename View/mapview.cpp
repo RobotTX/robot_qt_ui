@@ -28,9 +28,9 @@ MapView::MapView (const QPixmap& pixmap, const QSize _size, PointsView* const& p
             /// in case the point is not displayed we hide the point view
             if(!currentPointView->getPoint()->isDisplayed())
                 currentPointView->hide();
-            connect(&(*currentPointView), SIGNAL(pointLeftClicked(PointView*)), _mainWindow, SLOT(displayPointEvent(PointView*)));
+            connect(&(*currentPointView), SIGNAL(pointLeftClicked(PointView*)), mainWindow, SLOT(displayPointEvent(PointView*)));
             /// to update the coordinates of the point displayed on the left when a user drags a point to change its position
-            connect(&(*currentPointView), SIGNAL(editedPointPositionChanged(double, double)), _mainWindow, SLOT(updateCoordinates(double, double)));
+            connect(&(*currentPointView), SIGNAL(editedPointPositionChanged(double, double)), mainWindow, SLOT(updateCoordinates(double, double)));
         }
     }
 
@@ -39,7 +39,7 @@ MapView::MapView (const QPixmap& pixmap, const QSize _size, PointsView* const& p
 
     tmpPointView = new PointView(std::make_shared<Point>(tmpPoint));
     tmpPointView->setPixmap(QPixmap(":/icons/blue_coord.png"));
-    connect(this, SIGNAL(pointLeftClicked(PointView*, bool)), _mainWindow, SLOT(setSelectedPoint(PointView*, bool)));
+    connect(this, SIGNAL(pointLeftClicked(PointView*, bool)), mainWindow, SLOT(setSelectedPoint(PointView*, bool)));
     connect(tmpPointView, SIGNAL(moveTmpEditPathPoint()), mainWindow, SLOT(moveTmpEditPathPointSlot()));
 
     connect(tmpPointView, SIGNAL(addPointPath(PointView*)), this, SLOT(addPathPointMapViewSlot(PointView*)));
@@ -69,6 +69,7 @@ void MapView::mouseReleaseEvent(QGraphicsSceneMouseEvent *event){
     if (abs(x) <= 10 && abs(y) <= 10){
         /// click
         if(state == GraphicItemState::NO_STATE){
+            tmpPointView->show();
             point->getPoint()->setPosition(event->pos().x(), event->pos().y());
             point->setPos(event->pos().x()-tmpPointPixmap.width()/2, event->pos().y()-tmpPointPixmap.height());
             point->setParentItem(this);
@@ -88,7 +89,7 @@ void MapView::mouseReleaseEvent(QGraphicsSceneMouseEvent *event){
             pathCreationPoints.push_back(newPointView);
             emit addPathPointMapView(&(*(newPointView->getPoint())));
         } else if(state == GraphicItemState::EDITING_PERM){
-            qDebug() << "(mapView) EDITING_PERM";
+            qDebug() << "(MapView) EDITING_PERM";
         } else {
             qDebug() << "(MapView) NO EVENT";
         }
@@ -153,4 +154,25 @@ void MapView::setState(const GraphicItemState _state, const bool clear){
     point = static_cast<QSharedPointer<PointView>>(tmpPointView);
     permanentPoints->getGroups().clear();
     permanentPoints->setPoints(Points());
+ }
+
+ void MapView::setPermanentPoints(Points const& points){
+    qDebug() << "setPermanentPoints" << permanentPoints->getGroups().size()
+             << permanentPoints->getPoints().getGroups().size();
+    tmpPointView->hide();
+    delete permanentPoints;
+    permanentPoints = new PointsView(points);
+
+    for(size_t i = 0; i < permanentPoints->getGroups().size(); i++){
+        for(size_t j = 0; j < permanentPoints->getGroups().at(i)->getPointViews().size(); j++){
+            PointView* currentPointView = permanentPoints->getGroups().at(i)->getPointViews().at(j);
+            currentPointView->setParentItem(this);
+            /// in case the point is not displayed we hide the point view
+            if(!currentPointView->getPoint()->isDisplayed())
+                currentPointView->hide();
+            connect(&(*currentPointView), SIGNAL(pointLeftClicked(PointView*)), mainWindow, SLOT(displayPointEvent(PointView*)));
+            /// to update the coordinates of the point displayed on the left when a user drags a point to change its position
+            connect(&(*currentPointView), SIGNAL(editedPointPositionChanged(double, double)), mainWindow, SLOT(updateCoordinates(double, double)));
+        }
+    }
  }

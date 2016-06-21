@@ -72,18 +72,20 @@ void GroupButtonGroup::update(const Points& _points){
     }
 
     /// for the last group we just want to show the points and not "no group"
-    for(int i = 0; i < _points.getGroups().at(_points.getGroups().size()-1)->getPoints().size(); i++){
-        std::shared_ptr<Point> currentPoint = _points.getGroups().at(_points.getGroups().size()-1)->getPoints().at(i);
-        QPushButton* pointButton = new QPushButton(currentPoint->getName()
-                                                   + " (" + QString::number(currentPoint->getPosition().getX())
-                                                   + ", " + QString::number(currentPoint->getPosition().getY()) + ")");
-        pointButton->setFlat(true);
-        pointButton->setStyleSheet("text-align:left");
-        pointButton->setCheckable(true);
-        buttonGroup->addButton(pointButton, i+_points.getGroups().size()-1);
-        layout->addWidget(pointButton);
-        if(currentPoint->isDisplayed())
-            pointButton->setIcon(QIcon(":/icons/tick.png"));
+    if(_points.getGroups().size() > 0){
+        for(int i = 0; i < _points.getGroups().at(_points.getGroups().size()-1)->getPoints().size(); i++){
+            std::shared_ptr<Point> currentPoint = _points.getGroups().at(_points.getGroups().size()-1)->getPoints().at(i);
+            QPushButton* pointButton = new QPushButton(currentPoint->getName()
+                                                       + " (" + QString::number(currentPoint->getPosition().getX())
+                                                       + ", " + QString::number(currentPoint->getPosition().getY()) + ")");
+            pointButton->setFlat(true);
+            pointButton->setStyleSheet("text-align:left");
+            pointButton->setCheckable(true);
+            buttonGroup->addButton(pointButton, i+_points.getGroups().size()-1);
+            layout->addWidget(pointButton);
+            if(currentPoint->isDisplayed())
+                pointButton->setIcon(QIcon(":/icons/tick.png"));
+        }
     }
 }
 

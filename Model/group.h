@@ -19,6 +19,7 @@ class Group
 {
 public:
     Group(void);
+    Group(const QString _name);
     Group(const std::shared_ptr<Points>& _groupPoints, const QString _name);
 
     QString getName(void) const { return name; }
