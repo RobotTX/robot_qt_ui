@@ -699,6 +699,27 @@ void MainWindow::hideSelectedRobotWidgetSlot(void){
     }
 }
 
+void MainWindow::goHomeBtnEvent(){
+    qDebug() << "go home robot " << selectedRobot->getRobot()->getName() << (selectedRobot->getRobot()->getHome() == NULL);
+    float oldPosX = selectedRobot->getRobot()->getHome()->getPosition().getX();
+    float oldPosY = selectedRobot->getRobot()->getHome()->getPosition().getY();
+    qDebug() << "Go to next point :" << oldPosX << oldPosY;
+    qDebug() << "ok1" << (float) oldPosX;
+    qDebug() << "ok2" << (float) (oldPosX - ROBOT_WIDTH);
+    qDebug() << "ok3" << (float) ((oldPosX - ROBOT_WIDTH) * map->getResolution());
+    qDebug() << "ok4" << (float) ((oldPosX - ROBOT_WIDTH) * map->getResolution() + map->getOrigin().getX());
+
+    float newPosX = (oldPosX - ROBOT_WIDTH) * map->getResolution() + map->getOrigin().getX();
+    float newPosY = (-oldPosY + map->getHeight() - ROBOT_WIDTH/2) * map->getResolution() + map->getOrigin().getY();
+    qDebug() << "Go to next point :" << newPosX << newPosY;
+    int waitTime = -1;
+
+    /// if the command is succesfully sent to the robot, we apply the change
+    if(selectedRobot->getRobot()->sendCommand(QString("c ") + QString::number(newPosX) + " "  + QString::number(newPosY) + " "  + QString::number(waitTime))){
+        qDebug() << "Going to home";
+    }
+}
+
 /**********************************************************************************************************************************/
 
 //                                          MAPS

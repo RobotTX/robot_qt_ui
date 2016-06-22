@@ -63,6 +63,12 @@ SelectedRobotWidget::SelectedRobotWidget(QMainWindow* parent){
     layout->addWidget(homeLabel);
     layout->addWidget(homeBtn);
 
+    goHome = new QPushButton("Go Home");
+    goHome->setMinimumHeight(30);
+    goHome->setMaximumHeight(30);
+    goHome->hide();
+
+    layout->addWidget(goHome);
 
     /// Path label
     QLabel* pathLabel = new QLabel("Path : ");
@@ -85,6 +91,7 @@ SelectedRobotWidget::SelectedRobotWidget(QMainWindow* parent){
 
     connect(backBtn, SIGNAL(clicked()), parent, SLOT(backSelecRobotBtnEvent()));
     connect(homeBtn, SIGNAL(clicked()), this, SLOT(homeBtnEvent()));
+    connect(goHome, SIGNAL(clicked()), parent, SLOT(goHomeBtnEvent()));
 
     hide();
     setMaximumWidth(parent->width()*4/10);
@@ -129,8 +136,10 @@ void SelectedRobotWidget::setSelectedRobot(RobotView* const& _robotView){
     /// If the robot has a home, we display the name of the point, otherwise a default text
     if(robotView->getRobot()->getHome() != NULL){
         homeBtn->setText(robotView->getRobot()->getHome()->getName());
+        goHome->show();
     } else {
         homeBtn->setText("Add home");
+        goHome->hide();
     }
 
 

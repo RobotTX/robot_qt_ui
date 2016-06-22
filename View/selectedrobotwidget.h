@@ -41,6 +41,7 @@ private:
     QPushButton* backBtn;
     QLabel* wifiNameLabel;
     QPushButton* addPathBtn;
+    QPushButton* goHome;
     QLabel* ipAddressLabel;
     QPushButton* homeBtn;
     PathWidget* pathWidget;

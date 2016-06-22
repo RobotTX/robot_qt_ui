@@ -154,6 +154,7 @@ private slots:
     void homeSelected(PointView* pointView, bool temporary);
     void showSelectedRobotWidgetSlot(void);
     void hideSelectedRobotWidgetSlot(void);
+    void goHomeBtnEvent();
 
 
 private:
