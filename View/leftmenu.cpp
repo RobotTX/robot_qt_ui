@@ -29,13 +29,10 @@ LeftMenu::LeftMenu(QMainWindow* parent, Points const& points, const std::shared_
     displaySelectedPoint = new DisplaySelectedPoint(parent, points);
 
     leftLayout->addWidget(displaySelectedPoint);
-qDebug() << "ok";
     /// to display the information relative to a group of points
     displaySelectedGroup = new DisplaySelectedGroup(parent, points);
-    qDebug() << "ok";
     leftLayout->addWidget(displaySelectedGroup);
 
-    qDebug() << "ok";
 
     /// The first menu with 3 buttons : Robots, Points, Map
     leftMenuWidget = new LeftMenuWidget(parent);
@@ -48,7 +45,8 @@ qDebug() << "ok";
     /// Menu which display the selected robot infos
     selectedRobotWidget = new SelectedRobotWidget(parent);
     connect(selectedRobotWidget, SIGNAL(selectHome(RobotView*)), parent, SLOT(selectHomeEvent()));
-    connect(selectedRobotWidget, SIGNAL(showHome(RobotView*)), parent, SLOT(showHomeEvent()));
+    connect(selectedRobotWidget, SIGNAL(showSelectedRobotWidget()), parent, SLOT(showSelectedRobotWidgetSlot()));
+    connect(selectedRobotWidget, SIGNAL(hideSelectedRobotWidget()), parent, SLOT(hideSelectedRobotWidgetSlot()));
     leftLayout->addWidget(selectedRobotWidget);
 
     /// Menu which display the list of robots
@@ -81,6 +79,7 @@ qDebug() << "ok";
     connect(pathCreationWidget, SIGNAL(hidePathCreationWidget()), parent, SLOT(hidePathCreationWidget()));
     connect(pathCreationWidget, SIGNAL(editTmpPathPoint(int, Point*, int)), parent, SLOT(editTmpPathPointSlot(int, Point*, int)));
     connect(pathCreationWidget, SIGNAL(saveEditPathPoint()), parent, SLOT(saveTmpEditPathPointSlot()));
+    connect(pathCreationWidget, SIGNAL(setMessage(QString, QString)), parent, SLOT(setMessageTop(QString, QString)));
 
 
     connect(displaySelectedPoint->getBackButton(), SIGNAL(clicked(bool)), parent, SLOT(pointBtnEvent()));

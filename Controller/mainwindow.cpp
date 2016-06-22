@@ -31,11 +31,11 @@
 #include "View/robotbtngroup.h"
 #include "View/groupview.h"
 #include "View/pathpainter.h"
-#include <QVBoxLayout>
-#include <QAbstractButton>
 #include "View/pointbuttongroup.h"
 #include "View/verticalscrollarea.h"
 #include "View/toplayout.h"
+#include <QVBoxLayout>
+#include <QAbstractButton>
 
 #define XML_PATH "/home/m-a/Documents/QtProject/gobot-software/points.xml"
 //#define XML_PATH "/home/joan/Qt/QtProjects/gobot-software/points.xml"
@@ -68,7 +68,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     editedPointView = NULL;
 
     //create the toolbar
-    //initializeMenu();
     topLayout = new TopLayout(this);
     mainLayout->addWidget(topLayout);
 
@@ -80,6 +79,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     QPixmap pixmap = QPixmap::fromImage(map->getMapImage());
     mapPixmapItem = new MapView(pixmap, QSize(geometry().width(), geometry().height()), pointViews, this);
     connect(mapPixmapItem, SIGNAL(addPathPointMapView(Point*)), this, SLOT(addPathPoint(Point*)));
+    connect(mapPixmapItem, SIGNAL(homeSelected(PointView*, bool)), this, SLOT(homeSelected(PointView*, bool)));
 
     pathPainter = new PathPainter(mapPixmapItem, pointViews);
     initializeRobots();
@@ -121,12 +121,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 MainWindow::~MainWindow(){
     delete ui;
     delete rightLayout;
-    delete toolbar;
     delete graphicsView;
     delete scene;
     delete mapPixmapItem;
-    delete menuBar;
-    delete addPointAction;
     delete selectedRobot;
     delete scanningRobot;
     delete pointViews;
@@ -134,8 +131,6 @@ MainWindow::~MainWindow(){
     delete leftMenu;
     delete bottomLayout;
     delete pathPainter;
-    delete leftMenuAction;
-    delete connectAction;
     delete topLayout;
 }
 
@@ -180,6 +175,7 @@ void MainWindow::connectToRobot(){
                         selectedRobotWidget->getScanBtn()->setText("Stop to scan");
                         clearNewMap();
                         selectedRobotWidget->disable();
+                        selectedRobotWidget->getScanBtn()->setEnabled(true);
                         bottomLayout->disable();
                         setGraphicItemsState(GraphicItemState::NO_EVENT);
                         disableMenu();
@@ -546,7 +542,7 @@ void MainWindow::stopPathCreation(){
         GroupView* groupView = pointViews->getGroups().at(i);
         std::vector<PointView*> pointViews = groupView->getPointViews();
         for(size_t j = 0; j < pointViews.size(); j++){
-            pointViews.at(j)->setPixmap(QPixmap(":/icons/cropped_coordinates"));
+            pointViews.at(j)->setPixmap(PointView::PixmapType::NORMAL);
         }
     }
 }
@@ -558,12 +554,13 @@ void MainWindow::hidePathCreationWidget(){
         GroupView* groupView = pointViews->getGroups().at(i);
         std::vector<PointView*> pointViews = groupView->getPointViews();
         for(size_t j = 0; j < pointViews.size(); j++){
-            pointViews.at(j)->setPixmap(QPixmap(PIXMAP_NORMAL));
+            pointViews.at(j)->setPixmap(PointView::PixmapType::NORMAL);
             pointViews.at(j)->setAddedToPath(false);
         }
     }
     pathCreationWidget->resetWidget();
     pathPainter->reset();
+    setMessageTop(TEXT_COLOR_NORMAL, "");
 }
 
 void MainWindow::saveTmpEditPathPointSlot(void){
@@ -590,6 +587,116 @@ void MainWindow::clearPath(int robotNb){
     robots->getRobotsVector().at(robotNb)->getRobot()->setPath(std::vector<std::shared_ptr<PathPoint>>());
 
     bottomLayout->deletePath(robotNb);
+}
+
+void MainWindow::selectHomeEvent(){
+    qDebug() << "selectHomeEvent called";
+    if(selectedRobotWidget->getScanBtn()->isEnabled()){
+        setMessageTop(TEXT_COLOR_INFO, "Click on the map or on a point to select a home for the robot " + selectedRobot->getRobot()->getName());
+        selectedRobotWidget->getHomeBtn()->setText("Cancel");
+        selectedRobotWidget->disable();
+        selectedRobotWidget->getHomeBtn()->setEnabled(true);
+        bottomLayout->disable();
+        setGraphicItemsState(GraphicItemState::SELECTING_HOME);
+        disableMenu();
+    } else {
+        setMessageTop(TEXT_COLOR_NORMAL,"");
+        selectedRobotWidget->getHomeBtn()->setText("Add home");
+        selectedRobotWidget->enable();
+        bottomLayout->enable();
+        setGraphicItemsState(GraphicItemState::NO_STATE);
+        enableMenu();
+    }
+}
+
+void MainWindow::homeSelected(PointView* pointView, bool temporary){
+    qDebug() << "homeSelected called" << pointView->getPoint()->getName();
+
+    int ret = openConfirmMessage("Do you really want to set the point " + pointView->getPoint()->getName() +
+                                 + " (" + QString::number(pointView->getPoint()->getPosition().getX(),'f', 1) + ","
+                                 + QString::number(pointView->getPoint()->getPosition().getY(),'f', 1) + ") as the home for "
+                                 + selectedRobot->getRobot()->getName() +" ?");
+    switch(ret){
+        case QMessageBox::Cancel :
+            pointsLeftWidget->getMinusButton()->setChecked(false);
+            if(temporary){
+                delete pointView;
+            }
+        break;
+        case QMessageBox::Ok : {
+
+            bool done = false;
+            if(temporary){
+                qDebug() << "Tmp point";
+                if(points.count() > 0 && pointViews->getGroups().size() > 0){
+                    pointView->getPoint()->setHome(true, selectedRobot->getRobot()->getName());
+                    points.getGroups().at(points.count()-1)->addPoint(pointView->getPoint());
+                    XMLParser parserPoints(XML_PATH);
+                    parserPoints.save(points);
+
+                    pointViews->setPoints(points);
+                    pointViews->getGroups().at(pointViews->getGroups().size()-1)->addPointView(pointView);
+                    done = true;
+                }
+            } else {
+                qDebug() << "Permanent point";
+                if(pointView->getPoint()->setHome(true, selectedRobot->getRobot()->getName())){
+                    done = true;
+                } else {
+                    setMessageTop(TEXT_COLOR_DANGER, "Sorry, this point is already a home\nPlease select another");
+                }
+            }
+
+            pointsLeftWidget->updateGroupButtonGroup(points);
+
+            if(done){
+                setMessageTop(TEXT_COLOR_SUCCESS, selectedRobot->getRobot()->getName() + " now has a new home");
+
+                if(selectedRobot->getRobot()->getHome() != NULL)
+                    selectedRobot->getRobot()->getHome()->setHome(false, "");
+
+                selectedRobot->getRobot()->setHome(pointView->getPoint());
+
+                selectedRobotWidget->getHomeBtn()->setText("Select a home");
+                selectedRobotWidget->enable();
+                bottomLayout->enable();
+                setGraphicItemsState(GraphicItemState::NO_STATE);
+                enableMenu();
+                selectedRobotWidget->setSelectedRobot(selectedRobot);
+                selectedRobotWidget->hide();
+                selectedRobotWidget->show();
+            }
+        }
+        break;
+        default:
+        // should never be here
+            qDebug() << " dafuk ?";
+        break;
+    }
+}
+
+void MainWindow::showSelectedRobotWidgetSlot(void){
+    qDebug() << "showSelectedRobotWidgetSlot called" << (selectedRobot->getRobot()->getHome()==NULL);
+    for(int i = 0; i < pointViews->getGroups().size(); i++){
+        GroupView* groupView = pointViews->getGroups().at(i);
+        for(int j = 0; j < groupView->getPointViews().size(); j++){
+            groupView->getPointViews().at(j)->QGraphicsPixmapItem::setPixmap(QPixmap(PIXMAP_NORMAL));
+        }
+    }
+    if(selectedRobot->getRobot()->getHome() != NULL){
+        PointView* pointView = pointViews->getPointViewFromPoint(*(selectedRobot->getRobot()->getHome()));
+        pointView->setPixmap(PointView::PixmapType::NORMAL);
+    }
+}
+
+void MainWindow::hideSelectedRobotWidgetSlot(void){
+    qDebug() << "hideSelectedRobotWidgetSlot called";
+    for(int i = 0; i < pointViews->getGroups().size(); i++){
+        GroupView* groupView = pointViews->getGroups().at(i);
+        for(int j = 0; j < groupView->getPointViews().size(); j++){
+            groupView->getPointViews().at(j)->QGraphicsPixmapItem::setPixmap(QPixmap(PIXMAP_NORMAL));
+        }
+    }
 }
 
 /**********************************************************************************************************************************/
@@ -677,47 +784,6 @@ void MainWindow::backMapBtnEvent(){
 
 /**********************************************************************************************************************************/
 
-void MainWindow::initializeMenu(){
-    /// to create the toolbar
-    QPixmap connectPix(":/icons/wifi.png");
-    QPixmap quitPix(":/icons/close.png");
-    QPixmap leftMenuPix(":/icons/list.png");
-
-
-    toolbar = addToolBar("main");
-    toolbar->setFloatable(false);
-    toolbar->setMovable(false);
-
-    leftMenuAction = toolbar->addAction(QIcon(leftMenuPix), "Open menu");
-    connectAction = toolbar->addAction(QIcon(connectPix), "Connect");
-
-    // a separator for esthetic purpose
-    toolbar->addSeparator();
-
-    QAction *quitAction = toolbar->addAction(QIcon(quitPix), "Quit Application");
-
-
-    connect(quitAction, SIGNAL(triggered()), this, SLOT(quit()));
-    connect(connectAction, SIGNAL(triggered()), this, SLOT(connectToRobot()));
-    connect(leftMenuAction, SIGNAL(triggered()), this, SLOT(openLeftMenu()));
-
-    toolbar->setIconSize(this->size()/10);
-
-    /// to create the menu
-    menuBar = new QMenuBar();
-
-    QMenu *file = new QMenu();
-    file = menuBar->addMenu("&File");
-    file->addAction(connectAction);
-    file->addSeparator();
-    file->addAction(quitAction);
-
-    setMenuBar(menuBar);
-
-    /// sets some shortcuts
-    quitAction->setShortcut(tr("CTRL+Q"));
-    connectAction->setShortcut(tr("CTRL+N"));
-}
 
 void MainWindow::initializeLeftMenu(){
     lastWidget = leftMenu->getLastWidget();
@@ -738,13 +804,11 @@ void MainWindow::initializeBottomPanel(){
 }
 
 void MainWindow::disableMenu(){
-    leftMenuAction->setEnabled(false);
-    connectAction->setEnabled(false);
+    topLayout->disable();
 }
 
 void MainWindow::enableMenu(){
-    leftMenuAction->setEnabled(true);
-    connectAction->setEnabled(true);
+    topLayout->enable();
 }
 
 void MainWindow::setMessageTop(QString msgType, QString msg){
@@ -767,6 +831,8 @@ void MainWindow::initializePoints(){
             connect(pointViews->getGroups().at(j)->getPointViews().at(k),
                     SIGNAL(addPointPath(PointView*)), this,
                     SLOT(addPathPoint(PointView*)));
+            connect(pointViews->getGroups().at(j)->getPointViews().at(k), SIGNAL(homeSelected(PointView*, bool)), this, SLOT(homeSelected(PointView*, bool)));
+
         }
     }
 }
@@ -895,7 +961,8 @@ void MainWindow::editPointButtonEvent(bool checked){
     qDebug() << "editPointButtonEvent called";
     if(checked){
         qDebug() << "checked";
-        leftMenu->getDisplaySelectedPoint()->getNameEdit()->setReadOnly(false);
+        if(!leftMenu->getDisplaySelectedPoint()->getPoint()->isHome())
+            leftMenu->getDisplaySelectedPoint()->getNameEdit()->setReadOnly(false);
         setGraphicItemsState(GraphicItemState::NO_EVENT, false);
         mapPixmapItem->setState(GraphicItemState::EDITING_PERM);
         pointViews->getPointViewFromPoint(*(leftMenu->getDisplaySelectedPoint()->getPoint()))->setState(GraphicItemState::EDITING_PERM);
@@ -1031,14 +1098,6 @@ void MainWindow::pointSavedEvent(){
     }
     qDebug() << editSelectedPointWidget->getCurrentGroupIndex();
     */
-}
-
-void MainWindow::selectHomeEvent(){
-    qDebug() << "selectHomeEvent called";
-}
-
-void MainWindow::showHomeEvent(){
-    qDebug() << "showHomeEvent called";
 }
 
 void MainWindow::displayDeleteEvent(QModelIndex index){

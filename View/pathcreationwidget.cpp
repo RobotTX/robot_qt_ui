@@ -1,6 +1,7 @@
 #include "pathcreationwidget.h"
 #include "View/pathpointcreationwidget.h"
 #include "View/pathpointlist.h"
+#include "View/toplayout.h"
 #include "Model/pathpoint.h"
 #include "Model/point.h"
 #include "Model/robot.h"
@@ -304,6 +305,7 @@ void PathCreationWidget::saveExecPath(void){
 bool PathCreationWidget::savePath(){
     qDebug() << "savePath called" << pathPointsList->count();
     bool error = false;
+    QString errorMsg = "";
 
     /// we check if we have path points
     if(pathPointsList->count() > 0){
@@ -324,22 +326,24 @@ bool PathCreationWidget::savePath(){
                           || i == (pathPointsList->count() - 1)){
 
                 } else {
-                    qDebug() << "Error point"<< i+1 <<" : Please select a time to wait";
+                    errorMsg += "\tError point" + QString::number(i+1) + " : Please select a time to wait\n";
                     error = true;
                 }
             } else {
-                qDebug() << "Error point"<< i+1 <<" : No point selected";
+                //TODO continuer error msg
+                errorMsg += "\tError point" + QString::number(i+1) + " : No point selected\n";
                 error = true;
             }
         }
     } else {
-        qDebug() << "Error : No point selected for the path";
+        errorMsg += "\tError : No point selected for the path\n";
         error = true;
     }
 
     ///if there is no error, we can save the path
     if(error){
-        qDebug() << "Please make sure all the error(s) above has been fixed";
+        QString msg = "Please make sure all the following error(s) have been fixed :\n" + errorMsg;
+        emit setMessage(TEXT_COLOR_DANGER, msg);
         return false;
     } else {
         qDebug() << "No error, ready to save" << pointList.size() << pathPointsList->count();
@@ -484,6 +488,7 @@ void PathCreationWidget::updatePointPainter(){
 void PathCreationWidget::hideEvent(QHideEvent *event){
     resetWidget();
     emit hidePathCreationWidget();
+    QWidget::hideEvent(event);
 }
 
 void PathCreationWidget::itemMovedSlot(const int from, const int to){

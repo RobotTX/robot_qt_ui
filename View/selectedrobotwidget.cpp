@@ -55,14 +55,14 @@ SelectedRobotWidget::SelectedRobotWidget(QMainWindow* parent){
     layout->addWidget(batteryLevel);
 
     /// Home layout with the button to select/show the home
-    QHBoxLayout* grid = new QHBoxLayout();
     QLabel* homeLabel = new QLabel("Home : ");
-    homeBtn = new QPushButton("");
+    homeBtn = new QPushButton(QIcon(":/icons/home.png"), "");
+    homeBtn->setIconSize(parent->size()/10);
+    homeBtn->setStyleSheet ("text-align: left");
 
-    grid->addWidget(homeLabel);
-    grid->addWidget(homeBtn);
+    layout->addWidget(homeLabel);
+    layout->addWidget(homeBtn);
 
-    layout->addLayout(grid);
 
     /// Path label
     QLabel* pathLabel = new QLabel("Path : ");
@@ -130,7 +130,7 @@ void SelectedRobotWidget::setSelectedRobot(RobotView* const& _robotView){
     if(robotView->getRobot()->getHome() != NULL){
         homeBtn->setText(robotView->getRobot()->getHome()->getName());
     } else {
-        homeBtn->setText("Select a home");
+        homeBtn->setText("Add home");
     }
 
 
@@ -140,9 +140,7 @@ void SelectedRobotWidget::setSelectedRobot(RobotView* const& _robotView){
 }
 
 void SelectedRobotWidget::homeBtnEvent(){
-    if(robotView->getRobot()->getHome() != NULL){
-        emit showHome(robotView);
-    } else {
+    if(robotView->getRobot()->getHome() == NULL){
         emit selectHome(robotView);
     }
 }
@@ -152,6 +150,7 @@ void SelectedRobotWidget::disable(){
     editBtn->setEnabled(false);
     homeBtn->setEnabled(false);
     addPathBtn->setEnabled(false);
+    scanBtn->setEnabled(false);
 }
 
 void SelectedRobotWidget::enable(){
@@ -159,4 +158,16 @@ void SelectedRobotWidget::enable(){
     editBtn->setEnabled(true);
     homeBtn->setEnabled(true);
     addPathBtn->setEnabled(true);
+    scanBtn->setEnabled(true);
+}
+
+void SelectedRobotWidget::showEvent(QShowEvent *event){
+    emit showSelectedRobotWidget();
+    QWidget::showEvent(event);
+}
+
+void SelectedRobotWidget::hideEvent(QHideEvent *event){
+    emit hideSelectedRobotWidget();
+    QWidget::hideEvent(event);
+
 }

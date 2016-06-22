@@ -38,11 +38,12 @@ MapView::MapView (const QPixmap& pixmap, const QSize _size, PointsView* const& p
     Point tmpPoint("tmpPoint", 0.0, 0.0, false);
 
     tmpPointView = new PointView(std::make_shared<Point>(tmpPoint));
-    tmpPointView->setPixmap(QPixmap(":/icons/blue_coord.png"));
+    tmpPointView->setPixmap(PointView::PixmapType::MID);
     connect(this, SIGNAL(pointLeftClicked(PointView*, bool)), mainWindow, SLOT(setSelectedPoint(PointView*, bool)));
     connect(tmpPointView, SIGNAL(moveTmpEditPathPoint()), mainWindow, SLOT(moveTmpEditPathPointSlot()));
 
     connect(tmpPointView, SIGNAL(addPointPath(PointView*)), this, SLOT(addPathPointMapViewSlot(PointView*)));
+    connect(tmpPointView, SIGNAL(homeSelected(PointView*, bool)), mainWindow, SLOT(homeSelected(PointView*, bool)));
     point = static_cast<QSharedPointer<PointView>>(tmpPointView);
 
 }
@@ -90,6 +91,20 @@ void MapView::mouseReleaseEvent(QGraphicsSceneMouseEvent *event){
             emit addPathPointMapView(&(*(newPointView->getPoint())));
         } else if(state == GraphicItemState::EDITING_PERM){
             qDebug() << "(MapView) EDITING_PERM";
+        } else if(state == GraphicItemState::SELECTING_HOME){
+            qDebug() << "(MapView) SELECTING_HOME";
+            Point tmpPoint("tmpPoint", 0.0, 0.0, false);
+            PointView* newPointView = new PointView(std::make_shared<Point>(tmpPoint));
+
+            connect(newPointView, SIGNAL(addPointPath(PointView*)), mainWindow, SLOT(addPathPoint(PointView*)));
+            connect(newPointView, SIGNAL(moveTmpEditPathPoint()), mainWindow, SLOT(moveTmpEditPathPointSlot()));
+            connect(newPointView, SIGNAL(homeSelected(PointView*, bool)), mainWindow, SLOT(homeSelected(PointView*, bool)));
+
+            newPointView->setState(GraphicItemState::SELECTING_HOME);
+            newPointView->getPoint()->setPosition(event->pos().x(), event->pos().y());
+            newPointView->setPos(event->pos().x()-tmpPointPixmap.width()/2, event->pos().y()-tmpPointPixmap.height());
+            newPointView->setParentItem(this);
+            emit homeSelected(newPointView, true);
         } else {
             qDebug() << "(MapView) NO EVENT";
         }

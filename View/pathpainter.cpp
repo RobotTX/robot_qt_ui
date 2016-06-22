@@ -73,10 +73,10 @@ void PathPainter::refresh(void){
         setPath(path);
 
         if(*(startPointView->getPoint()) == *(endPointView->getPoint())){
-            startPointView->setPixmap(QPixmap(PIXMAP_START_STOP));
+            startPointView->setPixmap(PointView::PixmapType::START_STOP);
         } else {
-            startPointView->setPixmap(QPixmap(PIXMAP_START));
-            endPointView->setPixmap(QPixmap(PIXMAP_STOP));
+            startPointView->setPixmap(PointView::PixmapType::START);
+            endPointView->setPixmap(PointView::PixmapType::STOP);
         }
     }
 }
@@ -89,11 +89,11 @@ void PathPainter::updatePath(QVector<Point> pointVector){
 
 void PathPainter::setPointViewPixmap(const int id, PointView* const pointView){
     if(id == 0){
-        pointView->setPixmap(QPixmap(PIXMAP_START));
+        pointView->setPixmap(PointView::PixmapType::START);
     } else if (id == pathVector.size()-1){
-        pointView->setPixmap(QPixmap(PIXMAP_STOP));
+        pointView->setPixmap(PointView::PixmapType::STOP);
     } else {
-        pointView->setPixmap(QPixmap(PIXMAP_MID));
+        pointView->setPixmap(PointView::PixmapType::MID);
     }
 }
 
@@ -102,16 +102,16 @@ void PathPainter::clearPointViews(void){
         GroupView* groupView = pointViews->getGroups().at(i);
         std::vector<PointView*> pointViews = groupView->getPointViews();
         for(size_t j = 0; j < pointViews.size(); j++){
-            pointViews.at(j)->setPixmap(QPixmap(PIXMAP_NORMAL));
+            pointViews.at(j)->setPixmap(PointView::PixmapType::NORMAL);
         }
     }
 
     MapView* mapView = (MapView*) parentItem();
 
-    mapView->getTmpPointView()->setPixmap(QPixmap(PIXMAP_NORMAL));
+    mapView->getTmpPointView()->setPixmap(PointView::PixmapType::NORMAL);
 
     QVector<PointView*> pointViewVector = mapView->getPathCreationPoints();
     for(int k = 0; k < pointViewVector.size(); k++){
-        pointViewVector.at(k)->setPixmap(QPixmap(PIXMAP_NORMAL));
+        pointViewVector.at(k)->setPixmap(PointView::PixmapType::NORMAL);
     }
 }

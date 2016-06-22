@@ -45,6 +45,7 @@ public:
 signals:
     void pointLeftClicked(PointView*, bool);
     void addPathPointMapView(Point*);
+    void homeSelected(PointView* pointView, bool temporary);
 
 private slots:
     void addPathPointMapViewSlot(PointView*);

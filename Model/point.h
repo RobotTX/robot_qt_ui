@@ -54,6 +54,8 @@ public:
     void setName(const QString _name) { name = _name; }
     void setPosition(const double x, const double y) { position.setX(x); position.setY(y); }
     void setPosition(const Position _position) { position = _position; }
+    bool setHome(bool _home, QString robotName);
+    bool isHome() const { return home; }
 
     /// a helper function to overload the << operator
     void display(std::ostream& stream) const;
@@ -69,7 +71,7 @@ private:
     /// a point can be displayed or not on the map
     bool displayed;
     bool permanent;
-
+    bool home;
 };
 
 /**
