@@ -24,6 +24,7 @@ PointsView::PointsView(const Points &_points): points(_points)
 PointsView::~PointsView(){
     points.clear();
     qDeleteAll(groupViews.begin(), groupViews.end());
+    groupViews.clear();
 }
 
 PointView* PointsView::getPointViewFromPoint(const Point& newPoint){

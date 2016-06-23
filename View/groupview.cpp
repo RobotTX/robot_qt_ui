@@ -6,6 +6,7 @@ GroupView::GroupView(){
 
 GroupView::~GroupView(){
     qDeleteAll(pointViews.begin(), pointViews.end());
+    pointViews.clear();
 }
 
 

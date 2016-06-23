@@ -37,8 +37,8 @@
 #include <QVBoxLayout>
 #include <QAbstractButton>
 
-#define XML_PATH "/home/m-a/Documents/QtProject/gobot-software/points.xml"
-//#define XML_PATH "/home/joan/Qt/QtProjects/gobot-software/points.xml"
+//#define XML_PATH "/home/m-a/Documents/QtProject/gobot-software/points.xml"
+#define XML_PATH "/home/joan/Qt/QtProjects/gobot-software/points.xml"
 
 //TODO  stop threads/connections when scanning the map is finished/the user stop it
 
@@ -1093,8 +1093,6 @@ void MainWindow::editSelecPointBtnEvent(){
     qDebug() << "editSelecPointBtnEvent called";
 }
 
-
-
 /*
 void MainWindow::cancelEditSelecPointBtnEvent(){
     qDebug() << "cancelEditSelecPointBtnEvent called";
@@ -1207,13 +1205,20 @@ void MainWindow::askForDeleteDefaultGroupPointConfirmation(int index){
             pointsLeftWidget->getMinusButton()->setChecked(false);
         break;
         case QMessageBox::Ok : {
-            pointsLeftWidget->getMinusButton()->setChecked(false);
-            points.getGroups().at(points.count()-1)->removePoint(index);
-            XMLParser parserPoints(XML_PATH);
-            parserPoints.save(points);
-            pointsLeftWidget->getGroupButtonGroup()->update(points);
-            /// need to remove the point from the map
-            mapPixmapItem->updatePoints(points);
+        /// we first check that our point is not the home of a robot
+            std::shared_ptr<Point> point = points.getGroups().at(points.count()-1)->getPoints().at(index);
+            if(!point->isHome()){
+                qDebug() << "it s ok this point is safe to delete" << point->getName();
+                pointsLeftWidget->getMinusButton()->setChecked(false);
+                points.getGroups().at(points.count()-1)->removePoint(index);
+                XMLParser parserPoints(XML_PATH);
+                parserPoints.save(points);
+                pointsLeftWidget->getGroupButtonGroup()->update(points);
+                /// need to remove the point from the map
+                pointViews->getPointViewFromPoint(*point)->hide();
+            } else {
+                qDebug() << "Sorry this point is the home of a robot and therefore cannot be removed";
+            }
         }
         break;
         default:
@@ -1230,16 +1235,21 @@ void MainWindow::askForDeletePointConfirmation(int index){
             qDebug() << "clicked no";
         break;
         case QMessageBox::Ok : {
-            qDebug() << " called yes event on group " << pointsLeftWidget->getIndexLastGroupClicked() << " with index "  << index;
-            pointViews->getPointViewFromPoint(*(points.getGroups().at(pointsLeftWidget->getIndexLastGroupClicked())->getPoints().at(index)))->hide();
-            points.getGroups().at(pointsLeftWidget->getIndexLastGroupClicked())->removePoint(index);
-            PointButtonGroup* pointButtonGroup = leftMenu->getDisplaySelectedGroup()->getPointButtonGroup();
-            //foreach(QAbstractButton* button, buttonGroup->buttons())
-            //    buttonGroup->setId(button, buttonGroup->id(button)-1);
-            pointButtonGroup->setGroup(points, pointsLeftWidget->getIndexLastGroupClicked());
-            XMLParser parserPoints(XML_PATH);
-            parserPoints.save(points);
-            leftMenu->getDisplaySelectedPoint()->getMinusButton()->setChecked(false);
+        /// we first check that our point is not the home of a robot
+            if(!points.getGroups().at(pointsLeftWidget->getIndexLastGroupClicked())->getPoints().at(index)->isHome()){
+                qDebug() << " called yes event on group " << pointsLeftWidget->getIndexLastGroupClicked() << " with index "  << index;
+                pointViews->getPointViewFromPoint(*(points.getGroups().at(pointsLeftWidget->getIndexLastGroupClicked())->getPoints().at(index)))->hide();
+                points.getGroups().at(pointsLeftWidget->getIndexLastGroupClicked())->removePoint(index);
+                PointButtonGroup* pointButtonGroup = leftMenu->getDisplaySelectedGroup()->getPointButtonGroup();
+                //foreach(QAbstractButton* button, buttonGroup->buttons())
+                //    buttonGroup->setId(button, buttonGroup->id(button)-1);
+                pointButtonGroup->setGroup(points, pointsLeftWidget->getIndexLastGroupClicked());
+                XMLParser parserPoints(XML_PATH);
+                parserPoints.save(points);
+                leftMenu->getDisplaySelectedPoint()->getMinusButton()->setChecked(false);
+            } else {
+                qDebug() << "Sorry this point is the home of a robot and therefore cannot be removed";
+            }
         }
         break;
         default:
@@ -1254,19 +1264,26 @@ void MainWindow::askForDeleteGroupConfirmation(int index){
     std::cout << *(points.getGroups().at(index)) << std::endl;
     int ret = openConfirmMessage("Do you really want to remove this group ? All the points in this group would also be removed.");
     switch(ret){
-        case QMessageBox::No :
+        case QMessageBox::Cancel :
             qDebug() << "clicked no";
             pointsLeftWidget->getMinusButton()->setChecked(false);
         break;
         case QMessageBox::Ok : {
-            points.removeGroup(index);
-            qDebug() << points.count();
-            XMLParser parserPoints(XML_PATH);
-            parserPoints.save(points);
-            std::cout << std::endl;
-            mapPixmapItem->updatePoints(points);
-            pointsLeftWidget->getGroupButtonGroup()->update(points);
-            pointsLeftWidget->getMinusButton()->setChecked(false);
+        /// we have to check that none of the points is the home of a robot
+            if(!points.getGroups().at(index)->containsHomePoint()){
+                for(int i = 0; i < points.getGroups().at(index)->count(); i++){
+                    pointViews->getPointViewFromPoint(*points.getGroups().at(index)->getPoints().at(i))->hide();
+                }
+                points.removeGroup(index);
+                qDebug() << points.count();
+                XMLParser parserPoints(XML_PATH);
+                parserPoints.save(points);
+                std::cout << std::endl;
+                pointsLeftWidget->getGroupButtonGroup()->update(points);
+                pointsLeftWidget->getMinusButton()->setChecked(false);
+            } else {
+                qDebug() << "this group contains a home point";
+            }
         }
         break;
         default:
