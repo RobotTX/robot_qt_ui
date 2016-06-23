@@ -327,6 +327,33 @@ void MainWindow::playSelectedRobot(int robotNb){
     }
 }
 
+void MainWindow::viewPathSelectedRobot(int robotNb){
+    bool checked = bottomLayout->getViewPathRobotBtnGroup()->button(robotNb)->isChecked();
+    if(checked){
+        std::shared_ptr<Robot> robot = robots->getRobotsVector().at(robotNb)->getRobot();
+        qDebug() << "viewPathSelectedRobot called on" << robot->getName() << checked;
+        bottomLayout->uncheckViewPathSelectedRobot(robotNb);
+        if(pathPointViews.size() > 0){
+            qDeleteAll(pathPointViews.begin(), pathPointViews.end());
+            pathPointViews.clear();
+        }
+
+        for(int i = 0; i < robot->getPath().size(); i++){
+            std::shared_ptr<PathPoint> pathPoint = robot->getPath().at(i);
+            PointView * pointView = new PointView(std::make_shared<Point>(pathPoint->getPoint()));
+            pointView->setParentItem(mapPixmapItem);
+            pathPointViews.push_back(pointView);
+        }
+        pathPainter->updatePath(pathPointViews);
+    } else {
+        if(pathPointViews.size() > 0){
+            qDeleteAll(pathPointViews.begin(), pathPointViews.end());
+            pathPointViews.clear();
+        }
+        pathPainter->reset();
+    }
+}
+
 void MainWindow::editSelectedRobot(RobotView* robotView){
     selectedRobot = robotView;
     robots->setSelected(robotView);
@@ -1023,20 +1050,28 @@ void MainWindow::selectPointBtnEvent(){
 //TODO add all the menu
 void MainWindow::openLeftMenu(){
     qDebug() << "openLeftMenu called";
-    /// we reset the origin of the point information menu in order to display the buttons to go back in the further menus
-    leftMenu->getDisplaySelectedPoint()->setOrigin(DisplaySelectedPoint::POINTS_MENU);
-    leftMenu->getDisplaySelectedPoint()->hide();
-    if(leftMenuWidget->isHidden()){
-        robotsLeftWidget->setEditBtnStatus(false);
-        robotsLeftWidget->setCheckBtnStatus(false);
+    if(leftMenu->isHidden()){
 
         hideAllWidgets();
         leftMenuWidget->show();
         leftMenu->show();
         lastWidget = leftMenuWidget;
     } else {
-        leftMenuWidget->hide();
-        leftMenu->hide();
+        /// we reset the origin of the point information menu in order to display the buttons to go back in the further menus
+        leftMenu->getDisplaySelectedPoint()->setOrigin(DisplaySelectedPoint::POINTS_MENU);
+        leftMenu->getDisplaySelectedPoint()->hide();
+        if(leftMenuWidget->isHidden()){
+            robotsLeftWidget->setEditBtnStatus(false);
+            robotsLeftWidget->setCheckBtnStatus(false);
+
+            hideAllWidgets();
+            leftMenuWidget->show();
+            leftMenu->show();
+            lastWidget = leftMenuWidget;
+        } else {
+            leftMenuWidget->hide();
+            leftMenu->hide();
+        }
     }
 }
 
@@ -1250,6 +1285,9 @@ void MainWindow::displayPointEvent(PointView* pointView){
                                                                                   QString::number(leftMenu->getDisplaySelectedPoint()->getPointView()->getPoint()->getPosition().getY());
     leftMenu->getDisplaySelectedPoint()->displayPointInfo();
     hideAllWidgets();
+    if(leftMenu->isHidden()){
+        leftMenu->show();
+    }
     leftMenu->getDisplaySelectedPoint()->show();
 }
 

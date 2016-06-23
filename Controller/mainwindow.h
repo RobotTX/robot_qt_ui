@@ -155,6 +155,8 @@ private slots:
     void showSelectedRobotWidgetSlot(void);
     void hideSelectedRobotWidgetSlot(void);
     void goHomeBtnEvent();
+    void viewPathSelectedRobot(int robotNb);
+
 
 
 private:
@@ -176,6 +178,7 @@ private:
     PathPainter* pathPainter;
     PointView* editedPointView;
     TopLayout* topLayout;
+    QVector<PointView*> pathPointViews;
 
     QWidget* lastWidget;
     LeftMenuWidget* leftMenuWidget;

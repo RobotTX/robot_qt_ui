@@ -64,6 +64,9 @@ private:
     DisplaySelectedPoint* displaySelectedPoint;
     DisplaySelectedGroup* displaySelectedGroup;
     PathCreationWidget* pathCreationWidget;
+
+private slots:
+    void closeSlot();
 };
 
 #endif // LEFTMENU_H

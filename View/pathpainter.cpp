@@ -115,3 +115,33 @@ void PathPainter::clearPointViews(void){
         pointViewVector.at(k)->setPixmap(PointView::PixmapType::NORMAL);
     }
 }
+
+void PathPainter::updatePath(QVector<PointView*> pointViewsVector){
+    reset();
+    if(pointViewsVector.size() > 0){
+        PointView* startPointView = NULL;
+        PointView* endPointView = NULL;
+        for(int i = 0; i < pointViewsVector.size(); i++){
+            QPointF pointCoord = QPointF(pointViewsVector.at(i)->getPoint()->getPosition().getX(),
+                                                        pointViewsVector.at(i)->getPoint()->getPosition().getY());
+            if(i == 0){
+                path = QPainterPath(pointCoord);
+                startPointView = pointViewsVector.at(i);
+            } else {
+                path.lineTo(pointCoord);
+            }
+            if(i == pointViewsVector.size()-1)
+                endPointView = pointViewsVector.at(i);
+
+            setPointViewPixmap(i, pointViewsVector.at(i));
+        }
+        setPath(path);
+
+        if(*(startPointView->getPoint()) == *(endPointView->getPoint())){
+            startPointView->setPixmap(PointView::PixmapType::START_STOP);
+        } else {
+            startPointView->setPixmap(PointView::PixmapType::START);
+            endPointView->setPixmap(PointView::PixmapType::STOP);
+        }
+    }
+}

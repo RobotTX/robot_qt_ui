@@ -32,6 +32,7 @@ public:
     QButtonGroup* getPlayRobotBtnGroup(void) const{return playRobotBtnGroup;}
     QButtonGroup* getStopRobotBtnGroup(void) const{return stopRobotBtnGroup;}
     QButtonGroup* getRobotBtnGroup(void) const{return robotBtnGroup;}
+    QButtonGroup* getViewPathRobotBtnGroup(void) const{return viewPathRobotBtnGroup;}
     QVector<QLabel*> getVectorPathLabel(void) const{return vectorPathLabel;}
 
     /**
@@ -43,6 +44,7 @@ public:
     void updateRobot(const int id, RobotView* const robotView);
     void disable();
     void enable();
+    void uncheckViewPathSelectedRobot(int robotNb);
 
 private:
     /**
@@ -67,10 +69,16 @@ private:
     QButtonGroup* stopRobotBtnGroup;
 
     /**
-     * @brief stopRobotBtnGroup
+     * @brief robotBtnGroup
      * Group of buttons with the name of the robots
      */
     QButtonGroup* robotBtnGroup;
+
+    /**
+     * @brief pathRobotBtnGroup
+     * Group of buttons with to view the path
+     */
+    QButtonGroup* viewPathRobotBtnGroup;
 
     /**
      * @brief vectorPathLabel
