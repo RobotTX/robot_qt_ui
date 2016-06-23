@@ -51,7 +51,8 @@ private:
 
 private slots:
     void saveEditSelecPointBtnEvent();
-    void checkPointName(void);
+    /// check whether or not a point with the same name already exists
+    void checkPointName(void) const;
 };
 
 #endif // EDITSELECTEDPOINTWIDGET_H

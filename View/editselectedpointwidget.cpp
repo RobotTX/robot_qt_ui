@@ -8,6 +8,7 @@
 #include <QMainWindow>
 #include <QLineEdit>
 #include <QDebug>
+#include "Model/group.h"
 
 EditSelectedPointWidget::EditSelectedPointWidget(QMainWindow* _parent, PointsView* _points){
     parent = _parent;
@@ -76,15 +77,18 @@ void EditSelectedPointWidget::saveEditSelecPointBtnEvent(){
     emit pointSaved();
 }
 
-void EditSelectedPointWidget::checkPointName(void){
+void EditSelectedPointWidget::checkPointName(void) const {
     qDebug() << "checkPointName called";
-    /*if((group->existPointName(nameEdit->text()) || nameEdit->text() == "") && nameEdit->text() != pointView->getPoint()->name()){
-        saveBtn->setEnabled(false);
-        qDebug() << "Save btn not enabled : " << nameEdit->text() << "already exist";
-    } else {
-        saveBtn->setEnabled(true);
-        qDebug() << "Save btn enabled";
-    }*/
+    for(int i = 0; i < points->getPoints().count(); i++){
+        std::shared_ptr<Group> group = points->getPoints().getGroups().at(i);
+        for(int j = 0; j < group->count(); j++){
+            if(!nameEdit->text().compare(group->getPoints().at(j)->getName())){
+                qDebug() << nameEdit->text() << " already exists";
+                saveBtn->setEnabled(false);
+            }
+        }
+    }
+    saveBtn->setEnabled(true);
 }
 
 void EditSelectedPointWidget::updateGroupMenu(const Points& points){

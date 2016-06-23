@@ -26,7 +26,7 @@ public:
     /// used to determine which menu or object (could be the map) cause the information of this point to be displayed
     enum Origin { MAP, GROUP_MENU, POINTS_MENU };
 
-    DisplaySelectedPoint(QMainWindow* _parent, Points const& _points, PointView* _pointView = 0, const Origin origin = MAP);
+    DisplaySelectedPoint(QMainWindow* _parent, Points const& _points, PointView* _pointView = 0, const Origin _origin = MAP);
     ~DisplaySelectedPoint();
 
     QPushButton* getBackButton(void) const { return backButton; }

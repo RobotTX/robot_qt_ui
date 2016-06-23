@@ -12,7 +12,7 @@
 #include "Model/xmlparser.h"
 #include "View/spacewidget.h"
 
-DisplaySelectedPoint::DisplaySelectedPoint(QMainWindow *_parent, Points const& _points, PointView* _pointView, const Origin origin): parent(_parent)
+DisplaySelectedPoint::DisplaySelectedPoint(QMainWindow *_parent, Points const& _points, PointView* _pointView, const Origin _origin): parent(_parent), origin(_origin)
 {
     parent = _parent;
     points = _points;
