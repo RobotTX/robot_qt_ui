@@ -36,7 +36,7 @@ private:
     RobotView* robotView;
     QProgressBar* batteryLevel;
     QLineEdit* nameEdit;
-    QLabel* wifiNameLabel;
+    QLineEdit* wifiNameEdit;
     QPushButton* addPathBtn;
     QLabel* ipAddressLabel;
     std::shared_ptr<Robots> robots;

@@ -438,7 +438,7 @@ void MainWindow::cancelEditSelecRobotBtnEvent(){
 void MainWindow::robotSavedEvent(){
     qDebug() << "robotSavedEvent called";
     /// if the command is succesfully sent to the robot, we apply the change
-    if(selectedRobot->getRobot()->sendCommand(QString("a ") + editSelectedRobotWidget->getNameEdit()->text())){
+    if(selectedRobot->getRobot()->sendCommand(QString("a ") + editSelectedRobotWidget->getNameEdit()->text()) && selectedRobot->getRobot()->sendCommand(QString("b ") + editSelectedRobotWidget->getWifiEdit()->text()+ editSelectedRobotWidget->getPswEdit()->text())){
         editSelectedRobotWidget->editName();
         robotsLeftWidget->setEditBtnStatus(false);
         robotsLeftWidget->setCheckBtnStatus(false);

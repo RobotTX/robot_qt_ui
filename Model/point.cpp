@@ -1,7 +1,7 @@
 #include "point.h"
 #include <QDebug>
 #include <QDataStream>
-
+#include <iostream>
 Point::Point(void): name(""), position(Position(0.0, 0.0)), permanent(true)
 {}
 

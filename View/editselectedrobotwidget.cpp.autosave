@@ -28,9 +28,6 @@ EditSelectedRobotWidget::EditSelectedRobotWidget(QMainWindow* parent, const std:
     /// Wifi name label
     wifiNameEdit = new QLineEdit(parent);
     wifiNameEdit->setStyleSheet ("text-align: left");
-
-    //wifiNameLabel = new QLabel("Wifi : ");
-    //wifiNameLabel->setWordWrap(true);
     layout->addWidget(wifiNameEdit);
 
     /// Battery level widget
