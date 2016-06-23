@@ -113,6 +113,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     /// to update the names of the points displayed when a user changes the name of a point via the edit button
     connect(this, SIGNAL(nameChanged(QString, QString)), mapPixmapItem, SLOT(updateHover(QString, QString)));
 
+    /// to reset the state of everybody when a user click on a random button while he was editing a point
+    connect(leftMenu->getDisplaySelectedPoint(), SIGNAL(resetState(GraphicItemState, bool)),  this, SLOT(setGraphicItemsState(GraphicItemState, bool)));
+
     mainLayout->addLayout(bottom);
     mainWidget->setLayout(mainLayout);
     setCentralWidget(mainWidget);
@@ -668,6 +671,8 @@ void MainWindow::homeSelected(PointView* pointView, bool temporary){
             } else {
                 qDebug() << "Permanent point";
                 if(pointView->getPoint()->setHome(true, selectedRobot->getRobot()->getName())){
+                    XMLParser parserPoints(XML_PATH);
+                    parserPoints.save(points);
                     done = true;
                 } else {
                     setMessageTop(TEXT_COLOR_DANGER, "Sorry, this point is already a home\nPlease select another");
@@ -679,8 +684,9 @@ void MainWindow::homeSelected(PointView* pointView, bool temporary){
             if(done){
                 setMessageTop(TEXT_COLOR_SUCCESS, selectedRobot->getRobot()->getName() + " now has a new home");
 
-                if(selectedRobot->getRobot()->getHome() != NULL)
+                if(selectedRobot->getRobot()->getHome() != NULL){
                     selectedRobot->getRobot()->getHome()->setHome(false, "");
+                }
 
                 selectedRobot->getRobot()->setHome(pointView->getPoint());
 
@@ -1008,6 +1014,8 @@ void MainWindow::editPointButtonEvent(bool checked){
 
     qDebug() << "editPointButtonEvent called";
     if(checked){
+        leftMenu->getDisplaySelectedPoint()->getNameEdit()->setAutoFillBackground(false);
+        leftMenu->getDisplaySelectedPoint()->getNameEdit()->setFrame(true);
         qDebug() << "checked";
         if(!leftMenu->getDisplaySelectedPoint()->getPoint()->isHome())
             leftMenu->getDisplaySelectedPoint()->getNameEdit()->setReadOnly(false);
@@ -1018,6 +1026,8 @@ void MainWindow::editPointButtonEvent(bool checked){
         std::cout << *pointViews->getPointViewFromPoint(*(leftMenu->getDisplaySelectedPoint()->getPoint()))->getPoint() ;
         pointViews->getPointViewFromPoint(*(leftMenu->getDisplaySelectedPoint()->getPoint()))->setFlag(QGraphicsItem::ItemIsMovable, true);
     } else {
+        leftMenu->getDisplaySelectedPoint()->getNameEdit()->setAutoFillBackground(true);
+        leftMenu->getDisplaySelectedPoint()->getNameEdit()->setFrame(false);
         /// we hide everything that's related to modifying a point
         leftMenu->getDisplaySelectedPoint()->getNameEdit()->setReadOnly(true);
         leftMenu->getDisplaySelectedPoint()->getCancelButton()->hide();
@@ -1219,14 +1229,8 @@ void MainWindow::askForDeleteDefaultGroupPointConfirmation(int index){
                 pointViews->getPointViewFromPoint(*point)->hide();
             } else {
                 qDebug() << "careful Im a robot's home";
-                QMessageBox msgBox;
                 RobotView* robot = robots->findRobotUsingHome(point->getName());
-                msgBox.setText("The point : " + point->getName() + " that you are trying to remove is the home point of the robot " + robot->getRobot()->getName() +
-                               ". If you want to remove it you first have to indicate a new home point for this robot.");
-                msgBox.setIcon(QMessageBox::Critical);
-                msgBox.setStandardButtons(QMessageBox::Ok);
-                msgBox.setInformativeText("To modify the home point of a robot you can either click on the menu > Robots, choose a robot and Add home or simply click a robot on the map and Add home");
-                msgBox.exec();
+                openInterdictionOfPointRemovalMessage(point->getName(), robot->getRobot()->getName());
                 qDebug() << "Sorry this point is the home of a robot and therefore cannot be removed";
             }
         }
@@ -1261,15 +1265,9 @@ void MainWindow::askForDeletePointConfirmation(int index){
                 leftMenu->getDisplaySelectedPoint()->getMinusButton()->setChecked(false);
             } else {
                 qDebug() << "careful Im a robot's home";
-                QMessageBox msgBox;
                 RobotView* robot = robots->findRobotUsingHome(point->getName());
                 qDebug() << robot->getRobot()->getName();
-                msgBox.setText("The point : " + point->getName() + " that you are trying to remove is the home point of the robot " + robot->getRobot()->getName() +
-                               ". If you want to remove it you first have to indicate a new home point for this robot.");
-                msgBox.setIcon(QMessageBox::Critical);
-                msgBox.setStandardButtons(QMessageBox::Ok);
-                msgBox.setInformativeText("To modify the home point of a robot you can either click on the menu > Robots, choose a robot and Add home or simply click a robot on the map and Add home");
-                msgBox.exec();
+                openInterdictionOfPointRemovalMessage(point->getName(), robot->getRobot()->getName());
                 qDebug() << "Sorry this point is the home of a robot and therefore cannot be removed";
             }
         }
@@ -1567,11 +1565,12 @@ void MainWindow::displayPointsInGroup(void){
 }
 
 void MainWindow::removePointFromInformationMenu(void){
+    /// uncheck the minus button
+    leftMenu->getDisplaySelectedPoint()->getMinusButton()->setChecked(false);
     int ret = openConfirmMessage("Are you sure you want to remove this point ?");
     switch(ret){
         case QMessageBox::Cancel :
             qDebug() << "clicked no";
-            pointsLeftWidget->getMinusButton()->setChecked(false);
         break;
         case QMessageBox::Ok : {
         /// first we check that this point is not a home
@@ -1597,14 +1596,8 @@ void MainWindow::removePointFromInformationMenu(void){
                     qDebug() << "could not find this point";
                 }
             } else {
-                QMessageBox msgBox;
                 RobotView* robot = robots->findRobotUsingHome(point->getName());
-                msgBox.setText("The point : " + point->getName() + " that you are trying to remove is the home point of the robot " + robot->getRobot()->getName() +
-                               ". If you want to remove it you first have to indicate a new home point for this robot.");
-                msgBox.setIcon(QMessageBox::Critical);
-                msgBox.setStandardButtons(QMessageBox::Ok);
-                msgBox.setInformativeText("To modify the home point of a robot you can either click on the menu > Robots, choose a robot and Add home or simply click a robot on the map and Add home");
-                msgBox.exec();
+                openInterdictionOfPointRemovalMessage(point->getName(), robot->getRobot()->getName());
                 qDebug() << "Sorry this point is the home of a robot and therefore cannot be removed";
             }
         }
@@ -1700,6 +1693,10 @@ void MainWindow::updatePoint(void){
                                            leftMenu->getDisplaySelectedPoint()->getYLabel()->text().right(4).toFloat());
     XMLParser parserPoints(XML_PATH);
     parserPoints.save(points);
+
+    /// to change the aspect of the point name
+    leftMenu->getDisplaySelectedPoint()->getNameEdit()->setAutoFillBackground(true);
+    leftMenu->getDisplaySelectedPoint()->getNameEdit()->setFrame(false);
     /// so that the name cannot be changed anymore unless you click the edit button again
     selectedPoint->getNameEdit()->setReadOnly(true);
     /// so that you cannot edit a new name unless you click the edit button again
@@ -1731,6 +1728,9 @@ void MainWindow::updatePoint(void){
 }
 
 void MainWindow::cancelEvent(void){
+    /// to change the aspect of the point name
+    leftMenu->getDisplaySelectedPoint()->getNameEdit()->setAutoFillBackground(true);
+    leftMenu->getDisplaySelectedPoint()->getNameEdit()->setFrame(false);
     /// we hide the buttons relative to the edit option and make sure the points properties are not longer modifiable
     leftMenu->getDisplaySelectedPoint()->getNameEdit()->setReadOnly(true);
     leftMenu->getDisplaySelectedPoint()->getEditButton()->setChecked(false);
@@ -1800,6 +1800,16 @@ void MainWindow::displayPointFromGroupMenu(){
         std::cerr << "Oops" << std::endl;
         qDebug() << "can't handle a point with index -1";
     }
+}
+
+void MainWindow::openInterdictionOfPointRemovalMessage(const QString pointName, const QString robotName){
+    QMessageBox msgBox;
+    msgBox.setText("The point : " + pointName + " that you are trying to remove is the home point of the robot " + robotName +
+                   ". If you want to remove it you first have to indicate a new home point for this robot.");
+    msgBox.setIcon(QMessageBox::Critical);
+    msgBox.setStandardButtons(QMessageBox::Ok);
+    msgBox.setInformativeText("To modify the home point of a robot you can either click on the menu > Robots, choose a robot and Add home or simply click a robot on the map and Add home");
+    msgBox.exec();
 }
 
 /**********************************************************************************************************************************/

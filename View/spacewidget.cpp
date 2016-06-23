@@ -3,7 +3,7 @@
 #include <QFrame>
 #include <QVBoxLayout>
 
-SpaceWidget::SpaceWidget(SpaceOrientation orientation){
+SpaceWidget::SpaceWidget(const SpaceOrientation orientation){
     QVBoxLayout* layout = new QVBoxLayout();
     spaceFrame = new QFrame();
 
@@ -23,6 +23,6 @@ SpaceWidget::~SpaceWidget(){
     delete spaceFrame;
 }
 
-void SpaceWidget::setColor(QString color){
+void SpaceWidget::setColor(const QString color){
     spaceFrame->setStyleSheet("QFrame {color: " + color + "}");
 }

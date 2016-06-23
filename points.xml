@@ -14,6 +14,12 @@
             <y>75</y>
             <displayed>1</displayed>
         </point>
+        <point>
+            <name>A new point</name>
+            <x>100</x>
+            <y>100</y>
+            <displayed>0</displayed>
+        </point>
     </group>
     <group>
         <name>Second group</name>
@@ -24,9 +30,9 @@
             <displayed>1</displayed>
         </point>
         <point>
-            <name>Home_Roboty</name>
-            <x>98.1</x>
-            <y>73.5</y>
+            <name>Michel</name>
+            <x>150</x>
+            <y>150</y>
             <displayed>1</displayed>
         </point>
     </group>
