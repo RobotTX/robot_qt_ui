@@ -209,6 +209,7 @@ signals:
      * Signal emitted when we save the pathPoint we were editing
      */
     void saveEditPathPoint();
+    void setMessage(QString msgType, QString msg);
 
 
 private:

@@ -2,14 +2,16 @@
 #include <QDebug>
 #include <QDataStream>
 #include <iostream>
-Point::Point(void): name(""), position(Position(0.0, 0.0)), permanent(true)
-{}
+
+Point::Point(void): name(""), position(Position(0.0, 0.0)), permanent(true), home(false){
+}
 
 Point::Point(const QString name, const double x, const double y, const bool permanent):
-    name(name), position(Position(x, y)), permanent(permanent) {}
+    name(name), position(Position(x, y)), permanent(permanent), home(false) {
+}
 
-Point::Point(const QString name, const Position position, const bool _displayed, const bool _permanent) : name(name), position(position), displayed(_displayed), permanent(_permanent)
-{}
+Point::Point(const QString name, const Position position, const bool _displayed, const bool _permanent) : name(name), position(position), displayed(_displayed), permanent(_permanent), home(false){
+}
 
 void Point::display(std::ostream& stream) const {
     stream << name.toStdString() << " (" << position.getX() << ", " << position.getY() << ")";
@@ -51,4 +53,17 @@ bool Point::operator==(const Point& point) const {
          return true;
      else
          return false;
+ }
+
+ bool Point::setHome(bool _home, QString robotName){
+    if(!_home){
+        home = _home;
+        name = QString::number(position.getX(),'f', 1) + "; " + QString::number(position.getY(),'f', 1);
+        return true;
+    } else if(_home && !home){
+        home = _home;
+        name = "Home_" + robotName;
+        return true;
+    }
+    return false;
  }

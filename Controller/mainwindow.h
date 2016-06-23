@@ -110,7 +110,6 @@ private slots:
     void setSelectedPoint(PointView* pointView, bool isTemporary);
     void pointSavedEvent();
     void selectHomeEvent();
-    void showHomeEvent();
     void displayDeleteEvent(QModelIndex index);
     void backToGroupsButtonEvent(void);
     void stopSelectedRobot(int robotNb);
@@ -148,10 +147,16 @@ private slots:
     void displayPointFromGroupMenu();
     /**
      * @brief cancelEvent
-     * Called when a user doesn't to keep the modifications he's made on a point
+     * Called when a user doesn't want to keep the modifications he's made on a point
      */
     void cancelEvent(void);
     void setMessageTop(QString msgType, QString msg);
+    void homeSelected(PointView* pointView, bool temporary);
+    void showSelectedRobotWidgetSlot(void);
+    void hideSelectedRobotWidgetSlot(void);
+    void goHomeBtnEvent();
+    void viewPathSelectedRobot(int robotNb);
+
 
 
 private:
@@ -160,14 +165,11 @@ private:
     ScanRobotThread* robotThread;
     ScanMapThread* mapThread;
     QVBoxLayout* rightLayout;
-    QToolBar* toolbar;
     CustomQGraphicsView* graphicsView;
     std::shared_ptr<Map> map;
     std::shared_ptr<Robots> robots;
     QGraphicsScene* scene;
     MapView* mapPixmapItem;
-    QMenuBar* menuBar;
-    QAction* addPointAction;
     RobotView* selectedRobot;
     RobotView* scanningRobot;
     PointsView* pointViews;
@@ -175,9 +177,8 @@ private:
     Points points;
     PathPainter* pathPainter;
     PointView* editedPointView;
-    QAction *leftMenuAction;
-    QAction *connectAction;
     TopLayout* topLayout;
+    QVector<PointView*> pathPointViews;
 
     QWidget* lastWidget;
     LeftMenuWidget* leftMenuWidget;

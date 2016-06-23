@@ -19,6 +19,14 @@ class QDropEvent;
 #define PIXMAP_HOVER ":/icons/orange_coord"
 #define PIXMAP_START_STOP ":/icons/green_red_coord"
 
+#define PIXMAP_HOME_NORMAL ":/icons/cropped_home"
+#define PIXMAP_HOME_MID ":/icons/blue_home"
+#define PIXMAP_HOME_START ":/icons/green_home"
+#define PIXMAP_HOME_STOP ":/icons/red_home"
+#define PIXMAP_HOME_HOVER ":/icons/orange_home"
+#define PIXMAP_HOME_START_STOP ":/icons/green_red_home"
+
+
 /**
  * @brief The PointView class
  * This class provides a graphic object to display that's associated with a Point object
@@ -29,11 +37,14 @@ class PointView : public QObject, public QGraphicsPixmapItem {
 public:
     PointView(std::shared_ptr<Point> point);
 
+    enum PixmapType{NORMAL, MID, START, STOP, HOVER, START_STOP};
+
     void setState(const GraphicItemState _state) { state = _state; }
     void setPos(const qreal x, const qreal y);
     void setAddedToPath(const bool _addedToPath) { addedToPath = _addedToPath; }
     void setLastPixmap(const QPixmap& _lastPixmap) { lastPixmap = _lastPixmap; }
-    void setPixmap(const QPixmap& pixmap);
+    void setPixmap(const PixmapType pixType);
+    //void setPixmap(const QPixmap &pixmap);
     void setPoint(std::shared_ptr<Point> const& _point) { point = _point; }
     std::shared_ptr<Point> getPoint(void) const { return point; }
 
@@ -49,6 +60,7 @@ signals:
     void pointRightClicked(PointView*);
     void pointLeftClicked(PointView*);
     void addPointPath(PointView*);
+    void homeSelected(PointView* pointView, bool temporary);
     void moveTmpEditPathPoint();
     void editedPointPositionChanged(double, double);
 

@@ -4,6 +4,7 @@
 class Robots;
 class RobotView;
 class QVBoxLayout;
+class QGridLayout;
 class QPushButton;
 class QLabel;
 class QMainWindow;
@@ -26,6 +27,8 @@ public:
     void setRobots(std::shared_ptr<Robots> const _robots){robots = _robots;}
     void editName(void);
     QLineEdit* getNameEdit(void){ return nameEdit; }
+    QLineEdit* getWifiNameEdit(void){ return wifiNameEdit; }
+    QLineEdit* getWifiPwdEdit(void){ return wifiPwdEdit; }
 
 signals:
     /// Signal emitted when a robot has been edited & saved
@@ -33,10 +36,15 @@ signals:
 
 private:
     QVBoxLayout* layout;
+    QGridLayout* wifiLayout;
     RobotView* robotView;
     QProgressBar* batteryLevel;
     QLineEdit* nameEdit;
+    QLabel* wifiTitle;
+    QLabel* wifiName;
     QLineEdit* wifiNameEdit;
+    QLabel* wifiPwd;
+    QLineEdit* wifiPwdEdit;
     QPushButton* addPathBtn;
     QLabel* ipAddressLabel;
     std::shared_ptr<Robots> robots;

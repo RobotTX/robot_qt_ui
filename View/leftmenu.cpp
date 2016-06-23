@@ -24,18 +24,24 @@
 LeftMenu::LeftMenu(QMainWindow* parent, Points const& points, const std::shared_ptr<Robots> &robots, PointsView * const &pointViews){
     leftLayout = new QVBoxLayout();
 
-    /// to display the information relative to a point
 
+    QPushButton* closeBtn = new QPushButton(QIcon(":/icons/close.png"), "");
+    closeBtn->setIconSize(parent->size()/10);
+    closeBtn->setMaximumWidth(parent->width()/10);
+    closeBtn->setFlat(true);
+    //closeBtn->setStyleSheet("QPushButton { margin-bottom: -20px;}");
+    //closeBtn->setFocusPolicy(Qt::FocusPolicy::NoFocus);
+    leftLayout->addWidget(closeBtn);
+    connect(closeBtn, SIGNAL(clicked()), this, SLOT(closeSlot()));
+
+    /// to display the information relative to a point
     displaySelectedPoint = new DisplaySelectedPoint(parent, points);
 
     leftLayout->addWidget(displaySelectedPoint);
-qDebug() << "ok";
     /// to display the information relative to a group of points
     displaySelectedGroup = new DisplaySelectedGroup(parent, points);
-    qDebug() << "ok";
     leftLayout->addWidget(displaySelectedGroup);
 
-    qDebug() << "ok";
 
     /// The first menu with 3 buttons : Robots, Points, Map
     leftMenuWidget = new LeftMenuWidget(parent);
@@ -48,7 +54,8 @@ qDebug() << "ok";
     /// Menu which display the selected robot infos
     selectedRobotWidget = new SelectedRobotWidget(parent);
     connect(selectedRobotWidget, SIGNAL(selectHome(RobotView*)), parent, SLOT(selectHomeEvent()));
-    connect(selectedRobotWidget, SIGNAL(showHome(RobotView*)), parent, SLOT(showHomeEvent()));
+    connect(selectedRobotWidget, SIGNAL(showSelectedRobotWidget()), parent, SLOT(showSelectedRobotWidgetSlot()));
+    connect(selectedRobotWidget, SIGNAL(hideSelectedRobotWidget()), parent, SLOT(hideSelectedRobotWidgetSlot()));
     leftLayout->addWidget(selectedRobotWidget);
 
     /// Menu which display the list of robots
@@ -81,6 +88,7 @@ qDebug() << "ok";
     connect(pathCreationWidget, SIGNAL(hidePathCreationWidget()), parent, SLOT(hidePathCreationWidget()));
     connect(pathCreationWidget, SIGNAL(editTmpPathPoint(int, Point*, int)), parent, SLOT(editTmpPathPointSlot(int, Point*, int)));
     connect(pathCreationWidget, SIGNAL(saveEditPathPoint()), parent, SLOT(saveTmpEditPathPointSlot()));
+    connect(pathCreationWidget, SIGNAL(setMessage(QString, QString)), parent, SLOT(setMessageTop(QString, QString)));
 
 
     connect(displaySelectedPoint->getBackButton(), SIGNAL(clicked(bool)), parent, SLOT(pointBtnEvent()));
@@ -102,6 +110,7 @@ qDebug() << "ok";
     setMaximumWidth(parent->width()*4/10);
     setMinimumWidth(parent->width()*4/10);
     leftLayout->setAlignment(Qt::AlignTop);
+    leftLayout->setAlignment(closeBtn, Qt::AlignTop | Qt::AlignRight);
 
     setLayout(leftLayout);
 }
@@ -127,4 +136,6 @@ void LeftMenu::updateGroupDisplayed(const Points& _points, const int groupIndex)
     displaySelectedGroup->getPointButtonGroup()->setGroup(_points, groupIndex);
 }
 
-
+void LeftMenu::closeSlot(){
+    hide();
+}

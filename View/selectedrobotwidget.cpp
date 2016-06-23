@@ -55,14 +55,20 @@ SelectedRobotWidget::SelectedRobotWidget(QMainWindow* parent){
     layout->addWidget(batteryLevel);
 
     /// Home layout with the button to select/show the home
-    QHBoxLayout* grid = new QHBoxLayout();
     QLabel* homeLabel = new QLabel("Home : ");
-    homeBtn = new QPushButton("");
+    homeBtn = new QPushButton(QIcon(":/icons/home.png"), "");
+    homeBtn->setIconSize(parent->size()/10);
+    homeBtn->setStyleSheet ("text-align: left");
 
-    grid->addWidget(homeLabel);
-    grid->addWidget(homeBtn);
+    layout->addWidget(homeLabel);
+    layout->addWidget(homeBtn);
 
-    layout->addLayout(grid);
+    goHome = new QPushButton("Go Home");
+    goHome->setMinimumHeight(30);
+    goHome->setMaximumHeight(30);
+    goHome->hide();
+
+    layout->addWidget(goHome);
 
     /// Path label
     QLabel* pathLabel = new QLabel("Path : ");
@@ -85,6 +91,7 @@ SelectedRobotWidget::SelectedRobotWidget(QMainWindow* parent){
 
     connect(backBtn, SIGNAL(clicked()), parent, SLOT(backSelecRobotBtnEvent()));
     connect(homeBtn, SIGNAL(clicked()), this, SLOT(homeBtnEvent()));
+    connect(goHome, SIGNAL(clicked()), parent, SLOT(goHomeBtnEvent()));
 
     hide();
     setMaximumWidth(parent->width()*4/10);
@@ -129,8 +136,10 @@ void SelectedRobotWidget::setSelectedRobot(RobotView* const& _robotView){
     /// If the robot has a home, we display the name of the point, otherwise a default text
     if(robotView->getRobot()->getHome() != NULL){
         homeBtn->setText(robotView->getRobot()->getHome()->getName());
+        goHome->show();
     } else {
-        homeBtn->setText("Select a home");
+        homeBtn->setText("Add home");
+        goHome->hide();
     }
 
 
@@ -140,9 +149,7 @@ void SelectedRobotWidget::setSelectedRobot(RobotView* const& _robotView){
 }
 
 void SelectedRobotWidget::homeBtnEvent(){
-    if(robotView->getRobot()->getHome() != NULL){
-        emit showHome(robotView);
-    } else {
+    if(robotView->getRobot()->getHome() == NULL){
         emit selectHome(robotView);
     }
 }
@@ -152,6 +159,7 @@ void SelectedRobotWidget::disable(){
     editBtn->setEnabled(false);
     homeBtn->setEnabled(false);
     addPathBtn->setEnabled(false);
+    scanBtn->setEnabled(false);
 }
 
 void SelectedRobotWidget::enable(){
@@ -159,4 +167,16 @@ void SelectedRobotWidget::enable(){
     editBtn->setEnabled(true);
     homeBtn->setEnabled(true);
     addPathBtn->setEnabled(true);
+    scanBtn->setEnabled(true);
+}
+
+void SelectedRobotWidget::showEvent(QShowEvent *event){
+    emit showSelectedRobotWidget();
+    QWidget::showEvent(event);
+}
+
+void SelectedRobotWidget::hideEvent(QHideEvent *event){
+    emit hideSelectedRobotWidget();
+    QWidget::hideEvent(event);
+
 }

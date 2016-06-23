@@ -44,8 +44,9 @@ void PointView::mousePressEvent(QGraphicsSceneMouseEvent *event){
         }  else if(state == GraphicItemState::EDITING_PERM){
             qDebug() << "Editing permanently";
 
-        }
-        else {
+        } else if(state == GraphicItemState::SELECTING_HOME){
+            emit homeSelected(this, false);
+        } else {
             qDebug() << "(PointView " << point->getName() << ") NO EVENT";
         }
 }
@@ -86,11 +87,12 @@ void PointView::mouseReleaseEvent(QGraphicsSceneMouseEvent *event){
 }
 
 void PointView::hoverEnterEvent(QGraphicsSceneHoverEvent *event){
-    QGraphicsPixmapItem::setPixmap(QPixmap(PIXMAP_HOVER));
+    setToolTip(point->getName());
+    setPixmap(PointView::PixmapType::MID);
 }
 
 void PointView::hoverLeaveEvent(QGraphicsSceneHoverEvent *event){
-    setPixmap(lastPixmap);
+    QGraphicsPixmapItem::setPixmap(lastPixmap);
 }
 
 void PointView::setPos(const qreal x, const qreal y){
@@ -98,7 +100,63 @@ void PointView::setPos(const qreal x, const qreal y){
            y - pixmap().height()*SCALE);
 }
 
-void PointView::setPixmap(const QPixmap &pixmap){
+/*void PointView::setPixmap(const QPixmap &pixmap){
     lastPixmap = pixmap;
+    QGraphicsPixmapItem::setPixmap(pixmap);
+}*/
+
+void PointView::setPixmap(const PixmapType pixType){
+    lastPixmap = this->pixmap();
+
+    QPixmap pixmap;
+    if(point->isHome()){
+        switch(pixType){
+            case NORMAL:
+                pixmap = QPixmap(PIXMAP_HOME_NORMAL);
+            break;
+            case MID:
+                pixmap = QPixmap(PIXMAP_HOME_MID);
+            break;
+            case START:
+                pixmap = QPixmap(PIXMAP_HOME_START);
+            break;
+            case STOP:
+                pixmap = QPixmap(PIXMAP_HOME_STOP);
+            break;
+            case HOVER:
+                pixmap = QPixmap(PIXMAP_HOME_HOVER);
+            break;
+            case START_STOP:
+                pixmap = QPixmap(PIXMAP_HOME_START_STOP);
+            break;
+            default:
+                pixmap = QPixmap(PIXMAP_HOME_NORMAL);
+            break;
+        }
+    } else {
+        switch(pixType){
+            case NORMAL:
+                pixmap = QPixmap(PIXMAP_NORMAL);
+            break;
+            case MID:
+                pixmap = QPixmap(PIXMAP_MID);
+            break;
+            case START:
+                pixmap = QPixmap(PIXMAP_START);
+            break;
+            case STOP:
+                pixmap = QPixmap(PIXMAP_STOP);
+            break;
+            case HOVER:
+                pixmap = QPixmap(PIXMAP_HOVER);
+            break;
+            case START_STOP:
+                pixmap = QPixmap(PIXMAP_START_STOP);
+            break;
+            default:
+                pixmap = QPixmap(PIXMAP_NORMAL);
+            break;
+        }
+    }
     QGraphicsPixmapItem::setPixmap(pixmap);
 }

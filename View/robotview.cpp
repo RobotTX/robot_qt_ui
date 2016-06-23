@@ -42,14 +42,13 @@ void RobotView::mousePressEvent(QGraphicsSceneMouseEvent *event){
         emit setSelectedSignal(this);
     } else if(state == GraphicItemState::CREATING_PATH){
         qDebug() << "Clicked on a robot while creating a path";
-    } else if(state == GraphicItemState::NO_EVENT){
-        qDebug() << "(RobotView) NO EVENT";
     } else {
-        qDebug() << "Clicked on a robot while in an unknown state";
+        qDebug() << "(RobotView) NO EVENT";
     }
 }
 
 void RobotView::hoverEnterEvent(QGraphicsSceneHoverEvent *event){
+    setToolTip(robot->getName());
     setPen(QPen(Qt::yellow));
 }
 

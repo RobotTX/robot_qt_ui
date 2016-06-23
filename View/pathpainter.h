@@ -9,7 +9,9 @@ class PointView;
 #include <QPainterPath>
 #include <QPen>
 #include <QVector>
+#include <memory>
 #include "Model/point.h"
+#include "Model/pathpoint.h"
 
 /**
  * @brief The PathPainter class
@@ -22,6 +24,7 @@ public:
     ~PathPainter();
 
     void updatePath(QVector<Point> pointVector);
+    void updatePath(QVector<PointView*> pointViewsVector);
     void reset(void);
     void refresh(void);
     QVector<Point> getPathVector(void) const {return pathVector;}

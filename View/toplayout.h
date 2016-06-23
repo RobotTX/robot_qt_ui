@@ -4,6 +4,7 @@
 class QHBoxLayout;
 class QMainWindow;
 class QLabel;
+class QPushButton;
 
 #include <QWidget>
 
@@ -18,10 +19,15 @@ public:
     TopLayout(QMainWindow* parent);
     ~TopLayout();
     void setLabel(QString msgType, QString msg);
+    void disable();
+    void enable();
 
 private:
     QHBoxLayout* layout;
     QLabel* label;
+    QPushButton* menuBtn;
+    QPushButton* connectBtn;
+    QPushButton* closeBtn;
 };
 
 #endif // TOPLAYOUT_H

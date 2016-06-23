@@ -30,6 +30,7 @@ public:
      */
     void setSelectedRobot(RobotView* const& _robotView);
     QPushButton* getScanBtn(void) const {return scanBtn;}
+    QPushButton* getHomeBtn(void) const {return homeBtn;}
     void disable();
     void enable();
 
@@ -40,12 +41,17 @@ private:
     QPushButton* backBtn;
     QLabel* wifiNameLabel;
     QPushButton* addPathBtn;
+    QPushButton* goHome;
     QLabel* ipAddressLabel;
     QPushButton* homeBtn;
     PathWidget* pathWidget;
     VerticalScrollArea* scrollArea;
     QPushButton* scanBtn;
     QPushButton* editBtn;
+
+protected:
+    void showEvent(QShowEvent *event);
+    void hideEvent(QHideEvent *event);
 
 signals:
     /**
@@ -54,13 +60,8 @@ signals:
      * no home so he can choose one
      */
     void selectHome(RobotView*);
-
-    /**
-     * @brief showHome
-     * Signal emitted when the user click on the button of the home point and the robot has
-     * a home point so we show the point details
-     */
-    void showHome(RobotView*);
+    void showSelectedRobotWidget();
+    void hideSelectedRobotWidget();
 
 private slots:
     void homeBtnEvent();
