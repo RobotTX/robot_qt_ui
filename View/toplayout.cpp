@@ -6,6 +6,7 @@
 #include <QIcon>
 #include <QDebug>
 #include "View/verticalscrollarea.h"
+#include "View/spacewidget.h"
 
 TopLayout::TopLayout(QMainWindow* parent){
     layout = new QHBoxLayout();
@@ -26,6 +27,10 @@ TopLayout::TopLayout(QMainWindow* parent){
     layout->addWidget(connectBtn);
     connect(connectBtn, SIGNAL(clicked()), parent, SLOT(connectToRobot()));
 
+    SpaceWidget* spaceWidget = new SpaceWidget(SpaceWidget::SpaceOrientation::VERTICAL);
+    spaceWidget->setColor("lightgrey");
+    layout->addWidget(spaceWidget);
+
     label = new QLabel();
     label->setWordWrap(true);
     label->setStyleSheet("QLabel { color: " + QString(TEXT_COLOR_INFO) + "}");
@@ -34,23 +39,28 @@ TopLayout::TopLayout(QMainWindow* parent){
 
     VerticalScrollArea* scrollArea = new VerticalScrollArea();
     scrollArea->setWidget(label);
-    scrollArea->setMaximumHeight(50);
     layout->addWidget(scrollArea);
+
+    SpaceWidget* spaceWidget2 = new SpaceWidget(SpaceWidget::SpaceOrientation::VERTICAL);
+    spaceWidget2->setColor("lightgrey");
+    layout->addWidget(spaceWidget2);
 
     closeBtn = new QPushButton(QIcon(":/icons/close.png"), "");
     closeBtn->setIconSize(parent->size()/8);
     closeBtn->setMaximumWidth(40);
     closeBtn->setFlat(true);
     closeBtn->setFocusPolicy(Qt::FocusPolicy::NoFocus);
-    closeBtn->hide();
+    //closeBtn->hide();
     layout->addWidget(closeBtn);
     connect(closeBtn, SIGNAL(clicked()), parent, SLOT(quit()));
+
 
     layout->setContentsMargins(0, 0, 0, 0);
 
     setStyleSheet("QPushButton:hover { background-color: #efefef;"
                            "border: 1px solid #aaaaaa;"
                            "border-radius: 5px }");
+    setMaximumHeight(parent->height()/5);
     setLayout(layout);
 }
 

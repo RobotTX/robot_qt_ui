@@ -16,6 +16,7 @@
 #include <QMessageBox>
 #include <QMenu>
 #include <QComboBox>
+#include "View/spacewidget.h"
 
 PathCreationWidget::PathCreationWidget(QMainWindow* parent, const Points &_points){
     layout = new QVBoxLayout();
@@ -72,6 +73,9 @@ PathCreationWidget::PathCreationWidget(QMainWindow* parent, const Points &_point
     //connect(mapBtn, SIGNAL(clicked()), this, SLOT(mapPathPoint()));
 
     layout->addLayout(layoutRow2);*/
+
+    SpaceWidget* spaceWidget = new SpaceWidget(SpaceWidget::SpaceOrientation::HORIZONTAL);
+    layout->addWidget(spaceWidget);
 
     /// The menu which display the list of point to select
     pointsMenu = new QMenu();

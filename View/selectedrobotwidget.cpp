@@ -2,6 +2,7 @@
 #include "View/robotview.h"
 #include "View/pathwidget.h"
 #include "View/verticalscrollarea.h"
+#include "View/spacewidget.h"
 #include "Model/robot.h"
 #include "Model/point.h"
 #include <QVBoxLayout>
@@ -35,6 +36,10 @@ SelectedRobotWidget::SelectedRobotWidget(QMainWindow* parent){
     layout->addWidget(editBtn);
     connect(editBtn, SIGNAL(clicked()), parent, SLOT(editSelecRobotBtnEvent()));
 
+
+    SpaceWidget* spaceWidget = new SpaceWidget(SpaceWidget::SpaceOrientation::HORIZONTAL);
+    layout->addWidget(spaceWidget);
+
     /// Label which display the Ip of the robot
     ipAddressLabel = new QLabel("Ip : ");
     ipAddressLabel->setWordWrap(true);
@@ -53,6 +58,10 @@ SelectedRobotWidget::SelectedRobotWidget(QMainWindow* parent){
     batteryLevel = new QProgressBar(this);
     batteryLevel->setValue(50);
     layout->addWidget(batteryLevel);
+
+
+    SpaceWidget* spaceWidget2 = new SpaceWidget(SpaceWidget::SpaceOrientation::HORIZONTAL);
+    layout->addWidget(spaceWidget2);
 
     /// Home layout with the button to select/show the home
     QLabel* homeLabel = new QLabel("Home : ");
