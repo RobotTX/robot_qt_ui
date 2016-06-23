@@ -1182,6 +1182,11 @@ void MainWindow::askForDeleteDefaultGroupPointConfirmation(int index){
                 /// need to remove the point from the map
                 pointViews->getPointViewFromPoint(*point)->hide();
             } else {
+                QMessageBox messageBox;
+                msgBox.setText("The point that you are trying to remove is a robot's home');
+                //msgBox.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
+                msgBox.setDefaultButton(QMessageBox::Cancel);
+                return msgBox.exec();
                 qDebug() << "Sorry this point is the home of a robot and therefore cannot be removed";
             }
         }
