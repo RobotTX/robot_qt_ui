@@ -1,6 +1,54 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <points>
     <group>
+        <name>first group</name>
+        <point>
+            <name>A</name>
+            <x>50</x>
+            <y>50</y>
+            <displayed>0</displayed>
+        </point>
+        <point>
+            <name>Home_Roboto</name>
+            <x>75</x>
+            <y>75</y>
+            <displayed>1</displayed>
+        </point>
+    </group>
+    <group>
+        <name>Second group</name>
+        <point>
+            <name>Fanny</name>
+            <x>125</x>
+            <y>125</y>
+            <displayed>1</displayed>
+        </point>
+        <point>
+            <name>Home_Roboty</name>
+            <x>98.1</x>
+            <y>73.5</y>
+            <displayed>1</displayed>
+        </point>
+    </group>
+    <group>
         <name>No group</name>
+        <point>
+            <name>Un point</name>
+            <x>150</x>
+            <y>175</y>
+            <displayed>1</displayed>
+        </point>
+        <point>
+            <name>Another point</name>
+            <x>150</x>
+            <y>200</y>
+            <displayed>0</displayed>
+        </point>
+        <point>
+            <name>A final point</name>
+            <x>150</x>
+            <y>225</y>
+            <displayed>1</displayed>
+        </point>
     </group>
 </points>

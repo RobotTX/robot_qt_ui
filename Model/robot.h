@@ -36,7 +36,7 @@ public:
     /// Setters
     void setPlayingPath( bool playPath) { playingPath = playPath; }
     void setPath(std::vector<std::shared_ptr<PathPoint>> _path) { path = _path; }
-    void setHome(std::shared_ptr<Point> _home) { home = _home; }
+    void setHome(const std::shared_ptr<Point>& _home) { home = _home; }
     void setWifi(const QString _wifi) { wifi = _wifi; }
     void setIp(const QString _ip) { ip = _ip; }
     void setBatteryLevel(const unsigned int _batteryLevel) { batteryLevel = _batteryLevel; }

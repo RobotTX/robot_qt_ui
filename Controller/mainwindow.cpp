@@ -704,9 +704,9 @@ void MainWindow::homeSelected(PointView* pointView, bool temporary){
 
 void MainWindow::showSelectedRobotWidgetSlot(void){
     qDebug() << "showSelectedRobotWidgetSlot called" << (selectedRobot->getRobot()->getHome()==NULL);
-    for(int i = 0; i < pointViews->getGroups().size(); i++){
+    for(size_t i = 0; i < pointViews->getGroups().size(); i++){
         GroupView* groupView = pointViews->getGroups().at(i);
-        for(int j = 0; j < groupView->getPointViews().size(); j++){
+        for(size_t j = 0; j < groupView->getPointViews().size(); j++){
             groupView->getPointViews().at(j)->QGraphicsPixmapItem::setPixmap(QPixmap(PIXMAP_NORMAL));
         }
     }
@@ -718,9 +718,9 @@ void MainWindow::showSelectedRobotWidgetSlot(void){
 
 void MainWindow::hideSelectedRobotWidgetSlot(void){
     qDebug() << "hideSelectedRobotWidgetSlot called";
-    for(int i = 0; i < pointViews->getGroups().size(); i++){
+    for(size_t i = 0; i < pointViews->getGroups().size(); i++){
         GroupView* groupView = pointViews->getGroups().at(i);
-        for(int j = 0; j < groupView->getPointViews().size(); j++){
+        for(size_t j = 0; j < groupView->getPointViews().size(); j++){
             groupView->getPointViews().at(j)->QGraphicsPixmapItem::setPixmap(QPixmap(PIXMAP_NORMAL));
         }
     }
@@ -1208,6 +1208,7 @@ void MainWindow::askForDeleteDefaultGroupPointConfirmation(int index){
         /// we first check that our point is not the home of a robot
             std::shared_ptr<Point> point = points.getGroups().at(points.count()-1)->getPoints().at(index);
             if(!point->isHome()){
+                qDebug() << "Go ahead and remove me I am not a home point anyway";
                 qDebug() << "it s ok this point is safe to delete" << point->getName();
                 pointsLeftWidget->getMinusButton()->setChecked(false);
                 points.getGroups().at(points.count()-1)->removePoint(index);
@@ -1217,11 +1218,15 @@ void MainWindow::askForDeleteDefaultGroupPointConfirmation(int index){
                 /// need to remove the point from the map
                 pointViews->getPointViewFromPoint(*point)->hide();
             } else {
-                QMessageBox messageBox;
-                msgBox.setText("The point that you are trying to remove is a robot's home');
-                //msgBox.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
-                msgBox.setDefaultButton(QMessageBox::Cancel);
-                return msgBox.exec();
+                qDebug() << "careful Im a robot's home";
+                QMessageBox msgBox;
+                RobotView* robot = robots->findRobotUsingHome(point->getName());
+                msgBox.setText("The point : " + point->getName() + " that you are trying to remove is the home point of the robot " + robot->getRobot()->getName() +
+                               ". If you want to remove it you first have to indicate a new home point for this robot.");
+                msgBox.setIcon(QMessageBox::Critical);
+                msgBox.setStandardButtons(QMessageBox::Ok);
+                msgBox.setInformativeText("To modify the home point of a robot you can either click on the menu > Robots, choose a robot and Add home or simply click a robot on the map and Add home");
+                msgBox.exec();
                 qDebug() << "Sorry this point is the home of a robot and therefore cannot be removed";
             }
         }
@@ -1241,9 +1246,11 @@ void MainWindow::askForDeletePointConfirmation(int index){
         break;
         case QMessageBox::Ok : {
         /// we first check that our point is not the home of a robot
-            if(!points.getGroups().at(pointsLeftWidget->getIndexLastGroupClicked())->getPoints().at(index)->isHome()){
+            std::shared_ptr<Point> point = points.getGroups().at(pointsLeftWidget->getIndexLastGroupClicked())->getPoints().at(index);
+            if(!point->isHome()){
+                qDebug() << "Go ahead and remove me I am not a home point anyway";
                 qDebug() << " called yes event on group " << pointsLeftWidget->getIndexLastGroupClicked() << " with index "  << index;
-                pointViews->getPointViewFromPoint(*(points.getGroups().at(pointsLeftWidget->getIndexLastGroupClicked())->getPoints().at(index)))->hide();
+                pointViews->getPointViewFromPoint(*point)->hide();
                 points.getGroups().at(pointsLeftWidget->getIndexLastGroupClicked())->removePoint(index);
                 PointButtonGroup* pointButtonGroup = leftMenu->getDisplaySelectedGroup()->getPointButtonGroup();
                 //foreach(QAbstractButton* button, buttonGroup->buttons())
@@ -1253,6 +1260,16 @@ void MainWindow::askForDeletePointConfirmation(int index){
                 parserPoints.save(points);
                 leftMenu->getDisplaySelectedPoint()->getMinusButton()->setChecked(false);
             } else {
+                qDebug() << "careful Im a robot's home";
+                QMessageBox msgBox;
+                RobotView* robot = robots->findRobotUsingHome(point->getName());
+                qDebug() << robot->getRobot()->getName();
+                msgBox.setText("The point : " + point->getName() + " that you are trying to remove is the home point of the robot " + robot->getRobot()->getName() +
+                               ". If you want to remove it you first have to indicate a new home point for this robot.");
+                msgBox.setIcon(QMessageBox::Critical);
+                msgBox.setStandardButtons(QMessageBox::Ok);
+                msgBox.setInformativeText("To modify the home point of a robot you can either click on the menu > Robots, choose a robot and Add home or simply click a robot on the map and Add home");
+                msgBox.exec();
                 qDebug() << "Sorry this point is the home of a robot and therefore cannot be removed";
             }
         }
@@ -1275,7 +1292,8 @@ void MainWindow::askForDeleteGroupConfirmation(int index){
         break;
         case QMessageBox::Ok : {
         /// we have to check that none of the points is the home of a robot
-            if(!points.getGroups().at(index)->containsHomePoint()){
+            std::shared_ptr<Point> homePoint = points.getGroups().at(index)->containsHomePoint();
+            if(!homePoint){
                 for(int i = 0; i < points.getGroups().at(index)->count(); i++){
                     pointViews->getPointViewFromPoint(*points.getGroups().at(index)->getPoints().at(i))->hide();
                 }
@@ -1288,6 +1306,16 @@ void MainWindow::askForDeleteGroupConfirmation(int index){
                 pointsLeftWidget->getMinusButton()->setChecked(false);
             } else {
                 qDebug() << "this group contains a home point";
+                RobotView* robot = robots->findRobotUsingHome(homePoint->getName());
+                qDebug() << robot->getRobot()->getName();
+                QMessageBox msgBox;
+                msgBox.setText("This group contains the point : " + homePoint->getName() + " which is the home point of the robot " + robot->getRobot()->getName() +
+                               ". If you want to remove it you first have to indicate a new home point for this robot.");
+                msgBox.setIcon(QMessageBox::Critical);
+                msgBox.setStandardButtons(QMessageBox::Ok);
+                msgBox.setInformativeText("To modify the home point of a robot you can either click on the menu > Robots, choose a robot and Add home or simply click a robot on the map and Add home");
+                msgBox.exec();
+                qDebug() << "Sorry this point is the home of a robot and therefore cannot be removed";
             }
         }
         break;
@@ -1546,24 +1574,38 @@ void MainWindow::removePointFromInformationMenu(void){
             pointsLeftWidget->getMinusButton()->setChecked(false);
         break;
         case QMessageBox::Ok : {
-            /// to get the name of the point we just retrieve the label text property without the first 7 chars "Name : "
-            QString pointName = leftMenu->getDisplaySelectedPoint()->getPointName();
-            /// holds the index of the group and the index of a particular point in this group within <points>
-            std::pair<int, int> pointIndexes = points.findPointIndexes(pointName);
-            if(pointIndexes.first != -1){
-                std::shared_ptr<Point> currentPoint = points.getGroups().at(pointIndexes.first)->getPoints().at(pointIndexes.second);
-                /// need to remove the point from the map
-                pointViews->getPointViewFromPoint(*currentPoint)->hide();
-                points.getGroups().at(pointIndexes.first)->removePoint(pointIndexes.second);
-                /// updates the file containing containing points info
-                XMLParser parserPoints(XML_PATH);
-                parserPoints.save(points);
-                /// updates the group menu and the list of points
-                pointsLeftWidget->getGroupButtonGroup()->update(points);
-                /// closes the window
-                leftMenu->getDisplaySelectedPoint()->hide();
+        /// first we check that this point is not a home
+            std::shared_ptr<Point> point = leftMenu->getDisplaySelectedPoint()->getPoint();
+            if(!point->isHome()){
+                /// to get the name of the point we just retrieve the label text property without the first 7 chars "Name : "
+                QString pointName = leftMenu->getDisplaySelectedPoint()->getPointName();
+                /// holds the index of the group and the index of a particular point in this group within <points>
+                std::pair<int, int> pointIndexes = points.findPointIndexes(pointName);
+                if(pointIndexes.first != -1){
+                    std::shared_ptr<Point> currentPoint = points.getGroups().at(pointIndexes.first)->getPoints().at(pointIndexes.second);
+                    /// need to remove the point from the map
+                    pointViews->getPointViewFromPoint(*currentPoint)->hide();
+                    points.getGroups().at(pointIndexes.first)->removePoint(pointIndexes.second);
+                    /// updates the file containing containing points info
+                    XMLParser parserPoints(XML_PATH);
+                    parserPoints.save(points);
+                    /// updates the group menu and the list of points
+                    pointsLeftWidget->getGroupButtonGroup()->update(points);
+                    /// closes the window
+                    leftMenu->getDisplaySelectedPoint()->hide();
+                } else {
+                    qDebug() << "could not find this point";
+                }
             } else {
-                qDebug() << "could not find this point";
+                QMessageBox msgBox;
+                RobotView* robot = robots->findRobotUsingHome(point->getName());
+                msgBox.setText("The point : " + point->getName() + " that you are trying to remove is the home point of the robot " + robot->getRobot()->getName() +
+                               ". If you want to remove it you first have to indicate a new home point for this robot.");
+                msgBox.setIcon(QMessageBox::Critical);
+                msgBox.setStandardButtons(QMessageBox::Ok);
+                msgBox.setInformativeText("To modify the home point of a robot you can either click on the menu > Robots, choose a robot and Add home or simply click a robot on the map and Add home");
+                msgBox.exec();
+                qDebug() << "Sorry this point is the home of a robot and therefore cannot be removed";
             }
         }
         break;

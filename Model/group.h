@@ -35,7 +35,7 @@ public:
 
 public:
     /// returns true if one of the group's points is a home for a robot
-    bool containsHomePoint(void) const;
+    std::shared_ptr<Point> containsHomePoint(void) const;
 
 public:
     /**
