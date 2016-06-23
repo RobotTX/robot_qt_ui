@@ -4,6 +4,7 @@
 class Robots;
 class RobotView;
 class QVBoxLayout;
+class QGridLayout;
 class QPushButton;
 class QLabel;
 class QMainWindow;
@@ -37,6 +38,8 @@ public:
     bool isTemporaryHome()const {return temporary;}
     void setOldHome(std::shared_ptr<Point> const _oldHome){oldHome = _oldHome;}
     std::shared_ptr<Point> getOldHome() const {return oldHome;}
+    QLineEdit* getWifiNameEdit(void){ return wifiNameEdit; }
+    QLineEdit* getWifiPwdEdit(void){ return wifiPwdEdit; }
 
 signals:
     /// Signal emitted when a robot has been edited & saved
@@ -44,10 +47,15 @@ signals:
 
 private:
     QVBoxLayout* layout;
+    QGridLayout* wifiLayout;
     RobotView* robotView;
     QProgressBar* batteryLevel;
     QLineEdit* nameEdit;
-    QLabel* wifiNameLabel;
+    QLabel* wifiTitle;
+    QLabel* wifiName;
+    QLineEdit* wifiNameEdit;
+    QLabel* wifiPwd;
+    QLineEdit* wifiPwdEdit;
     QPushButton* addPathBtn;
     QLabel* ipAddressLabel;
     std::shared_ptr<Robots> robots;

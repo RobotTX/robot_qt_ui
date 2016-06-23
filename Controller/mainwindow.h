@@ -61,9 +61,9 @@ public:
     void initializeBottomPanel();
     void initializeLeftMenu();
     void hideAllWidgets();
-    void setGraphicItemsState(const GraphicItemState state, const bool clear = false);
     void stopPathCreation();
     int openConfirmMessage(const QString);
+    void openInterdictionOfPointRemovalMessage(const QString pointName, const QString robotName);
     void clearNewMap();
     void disableMenu();
     void enableMenu();
@@ -159,6 +159,8 @@ private slots:
     void viewPathSelectedRobot(int robotNb);
     void editHomeEvent();
     void closeSlot();
+    void setGraphicItemsState(const GraphicItemState state, const bool clear = false);
+
 
 
 private:

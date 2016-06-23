@@ -3,6 +3,7 @@
 #include "Model/pathpoint.h"
 #include "Controller/cmdrobotthread.h"
 #include <QMainWindow>
+#include <iostream>
 
 Robot::Robot(const QString _name, const QString _ip, const int port, QMainWindow* parent) : name(_name), ip(_ip), position(Position()),
     orientation(0), batteryLevel(100), wifi(""), home(NULL), playingPath(0){

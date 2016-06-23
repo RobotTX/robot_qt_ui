@@ -17,6 +17,7 @@ class QLabel;
 #include <memory>
 #include <QWidget>
 #include <QObject>
+#include "Model/graphicitemstate.h"
 
 class DisplaySelectedPoint: public QWidget
 {
@@ -48,11 +49,15 @@ public:
     void displayPointInfo(void);
     void mousePressEvent(QEvent* event);
     void keyPressEvent(QKeyEvent* event);
+    void hideEvent(QHideEvent *event);
     void setOrigin(const Origin _origin);
+    void resetWidget(void);
 
 signals:
     /// to notify the mapview that one of its points have been updated (in order to update the name that's displayed when the mouse is hovering over a point)
     void nameChanged(QString, QString);
+    /// to reset the state of the map if a user clicks a random button while he was editting a point
+    void resetState(GraphicItemState, bool);
 
 private slots:
 

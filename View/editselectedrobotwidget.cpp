@@ -12,10 +12,13 @@
 #include <QLineEdit>
 #include <QDebug>
 #include "View/spacewidget.h"
+#include <QGridLayout>
 
 EditSelectedRobotWidget::EditSelectedRobotWidget(QMainWindow* parent, const std::shared_ptr<Robots> _robots){
     robots = _robots;
     layout = new QVBoxLayout();
+   wifiLayout = new QGridLayout;
+//   QFormLayout *wifiLayout = new QFormLayout;
 
     /// Nale editable label
     nameEdit = new QLineEdit(parent);
@@ -28,9 +31,37 @@ EditSelectedRobotWidget::EditSelectedRobotWidget(QMainWindow* parent, const std:
     layout->addWidget(ipAddressLabel);
 
     /// Wifi name label
-    wifiNameLabel = new QLabel("Wifi : ");
-    wifiNameLabel->setWordWrap(true);
-    layout->addWidget(wifiNameLabel);
+
+    wifiTitle = new QLabel("Wifi : ");
+    wifiTitle->setWordWrap(true);
+    wifiTitle->setAlignment(Qt::AlignLeft);
+    layout->addWidget(wifiTitle);
+
+    wifiName = new QLabel("name : ");
+    wifiName->setWordWrap(true);
+    wifiName->setAlignment(Qt::AlignLeft);
+
+    wifiNameEdit = new QLineEdit(parent);
+    wifiNameEdit->setStyleSheet ("text-align: left");
+    wifiNameEdit->setAlignment(Qt::AlignRight);
+    wifiLayout->addWidget( wifiName, 0,0);
+    wifiLayout->addWidget( wifiNameEdit, 0,1);
+
+
+    wifiPwd = new QLabel("Pwd : ");
+    wifiPwd->setWordWrap(true);
+    wifiPwd->setAlignment(Qt::AlignLeft);
+
+    /// Wifi password label
+    wifiPwdEdit = new QLineEdit(parent);
+    wifiPwdEdit->setStyleSheet ("text-align: left");
+    wifiPwdEdit->setText("......");
+    wifiPwdEdit->setEchoMode(QLineEdit::Password);
+
+    wifiLayout->addWidget( wifiPwd, 1,0);
+    wifiLayout->addWidget( wifiPwdEdit, 1,1);
+    layout->addLayout(wifiLayout);
+
 
     /// Battery level widget
     QLabel* batteryLabel = new QLabel("Battery Level : ");
@@ -74,19 +105,23 @@ EditSelectedRobotWidget::EditSelectedRobotWidget(QMainWindow* parent, const std:
     hide();
     setMaximumWidth(parent->width()*4/10);
     setMinimumWidth(parent->width()*4/10);
-    layout->setAlignment(Qt::AlignTop);
+    layout->setAlignment(Qt::AlignTop );
+
     setLayout(layout);
 }
 
 EditSelectedRobotWidget::~EditSelectedRobotWidget(){
     delete layout;
-    delete robotView;
+    delete wifiLayout;
     delete batteryLevel;
     delete nameEdit;
-    delete wifiNameLabel;
+    delete wifiTitle;
+    delete wifiName;
+    delete wifiNameEdit;
+    delete wifiPwd;
+    delete wifiPwdEdit;
     delete addPathBtn;
     delete ipAddressLabel;
-    delete wifiNameLabel;
     delete saveBtn;
     delete homeBtn;
 }
@@ -97,7 +132,7 @@ void EditSelectedRobotWidget::setSelectedRobot(RobotView* const _robotView){
     nameEdit->setText(robotView->getRobot()->getName());
     batteryLevel->setValue(robotView->getRobot()->getBatteryLevel());
     ipAddressLabel->setText("Ip : "+robotView->getRobot()->getIp());
-    wifiNameLabel->setText("Wifi : "+robotView->getRobot()->getWifi());
+    wifiNameEdit->setText(robotView->getRobot()->getWifi());
     home = NULL;
 
     /// If the robot has a home, we display the name of the point, otherwise a default text
@@ -129,7 +164,11 @@ void EditSelectedRobotWidget::checkRobotName(void){
 
 void EditSelectedRobotWidget::editName(void){
     robotView->getRobot()->setName(nameEdit->text());
+    robotView->getRobot()->setWifi(wifiNameEdit->text());
+
     robots->getRobotViewByName(robotView->getRobot()->getName())->getRobot()->setName(nameEdit->text());
+    robots->getRobotViewByName(robotView->getRobot()->getName())->getRobot()->setWifi(wifiNameEdit->text());
+
 }
 
 void EditSelectedRobotWidget::disableAll(void){
