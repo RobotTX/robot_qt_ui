@@ -19,6 +19,10 @@ SpaceWidget::SpaceWidget(SpaceOrientation orientation){
     setLayout(layout);
 }
 
+SpaceWidget::SpaceWidget(){
+    delete spaceFrame;
+}
+
 void SpaceWidget::setColor(QString color){
     spaceFrame->setStyleSheet("QFrame {color: " + color + "}");
 }
