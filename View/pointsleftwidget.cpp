@@ -12,6 +12,7 @@
 #include <QLineEdit>
 #include <QHBoxLayout>
 #include "groupeditwindow.h"
+#include "View/spacewidget.h"
 
 PointsLeftWidget::PointsLeftWidget(QMainWindow* _parent, Points const& points, bool _groupDisplayed): groupDisplayed(_groupDisplayed)
 {
@@ -67,6 +68,10 @@ PointsLeftWidget::PointsLeftWidget(QMainWindow* _parent, Points const& points, b
 
     layout->addLayout(grid);
     layout->addLayout(eyeMapLayout);
+
+
+    SpaceWidget* spaceWidget = new SpaceWidget(SpaceWidget::SpaceOrientation::HORIZONTAL);
+    layout->addWidget(spaceWidget);
 
     groupNameLabel = new QLabel("New group's name : ");
     groupNameLabel->hide();

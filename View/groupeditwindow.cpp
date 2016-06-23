@@ -4,6 +4,7 @@
 #include "pointsleftwidget.h"
 #include <QDebug>
 #include <QVBoxLayout>
+#include "View/spacewidget.h"
 
 GroupEditWindow::GroupEditWindow(QWidget *parent): QWidget(parent){
     layout = new QVBoxLayout();
@@ -13,6 +14,10 @@ GroupEditWindow::GroupEditWindow(QWidget *parent): QWidget(parent){
     //nameEdit->show();
     layout->addWidget(nameLabel);
     layout->addWidget(nameEdit);
+
+    SpaceWidget* spaceWidget = new SpaceWidget(SpaceWidget::SpaceOrientation::HORIZONTAL);
+    layout->addWidget(spaceWidget);
+
     setLayout(layout);
 
 }

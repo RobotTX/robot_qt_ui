@@ -59,7 +59,8 @@ SOURCES += main.cpp\
     View/groupeditwindow.cpp \
     View/pathpainter.cpp \
     View/displayselectedgroup.cpp \
-    View/toplayout.cpp
+    View/toplayout.cpp \
+    View/spacewidget.cpp
 
 HEADERS  += Model/map.h \
     Model/position.h \
@@ -107,7 +108,8 @@ HEADERS  += Model/map.h \
     View/pathpainter.h \
     View/displayselectedgroup.h \
     Model/graphicitemstate.h \
-    View/toplayout.h
+    View/toplayout.h \
+    View/spacewidget.h
 
 FORMS    += Controller/mainwindow.ui
 

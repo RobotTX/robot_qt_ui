@@ -10,6 +10,7 @@
 #include <QDebug>
 #include <QKeyEvent>
 #include "Model/xmlparser.h"
+#include "View/spacewidget.h"
 
 DisplaySelectedPoint::DisplaySelectedPoint(QMainWindow *_parent, Points const& _points, PointView* _pointView, const Origin origin)
 {
@@ -57,6 +58,10 @@ DisplaySelectedPoint::DisplaySelectedPoint(QMainWindow *_parent, Points const& _
 
     layout->addLayout(grid);
     layout->addLayout(eyeMapLayout);
+
+
+    SpaceWidget* spaceWidget = new SpaceWidget(SpaceWidget::SpaceOrientation::HORIZONTAL);
+    layout->addWidget(spaceWidget);
 
     nameEdit = new QLineEdit();
     nameEdit->setReadOnly(true);

@@ -2,6 +2,7 @@
 #include "Model/robots.h"
 #include "View/robotbtngroup.h"
 #include "View/verticalscrollarea.h"
+#include "View/spacewidget.h"
 #include <QVBoxLayout>
 #include <QPushButton>
 #include <QMainWindow>
@@ -36,6 +37,9 @@ RobotsLeftWidget::RobotsLeftWidget(QMainWindow* _parent){
     connect(backBtn, SIGNAL(clicked()), parent, SLOT(backRobotBtnEvent()));
     connect(editBtn, SIGNAL(clicked()), parent, SLOT(editRobotBtnEvent()));
     connect(checkBtn, SIGNAL(clicked()), parent, SLOT(checkRobotBtnEvent()));
+
+    SpaceWidget* spaceWidget = new SpaceWidget(SpaceWidget::SpaceOrientation::HORIZONTAL);
+    layout->addWidget(spaceWidget);
 
     layout->addWidget(scrollArea);
 

@@ -25,11 +25,10 @@ LeftMenu::LeftMenu(QMainWindow* parent, Points const& points, const std::shared_
     leftLayout = new QVBoxLayout();
 
 
-    QPushButton* closeBtn = new QPushButton(QIcon(":/icons/close.png"), "");
-    closeBtn->setIconSize(parent->size()/10);
-    closeBtn->setMaximumWidth(parent->width()/10);
+    QPushButton* closeBtn = new QPushButton(QIcon(":/icons/cropped_close.png"), "");
+    closeBtn->setIconSize(parent->size()/30);
     closeBtn->setFlat(true);
-    //closeBtn->setStyleSheet("QPushButton { margin-bottom: -20px;}");
+    //closeBtn->setStyleSheet("QPushButton { padding: 5px;}");
     //closeBtn->setFocusPolicy(Qt::FocusPolicy::NoFocus);
     leftLayout->addWidget(closeBtn);
     connect(closeBtn, SIGNAL(clicked()), this, SLOT(closeSlot()));
