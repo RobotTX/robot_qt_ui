@@ -19,7 +19,7 @@ SpaceWidget::SpaceWidget(SpaceOrientation orientation){
     setLayout(layout);
 }
 
-SpaceWidget::SpaceWidget(){
+SpaceWidget::~SpaceWidget(){
     delete spaceFrame;
 }
 
