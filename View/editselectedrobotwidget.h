@@ -12,6 +12,9 @@ class QProgressBar;
 
 #include <QWidget>
 #include <memory>
+#include "Model/point.h"
+#include "View/pointview.h"
+
 /**
  * @brief The EditSelectedRobotWidget class
  * The class which display the menu to edit a robot
@@ -26,6 +29,14 @@ public:
     void setRobots(std::shared_ptr<Robots> const _robots){robots = _robots;}
     void editName(void);
     QLineEdit* getNameEdit(void){ return nameEdit; }
+    QPushButton* getHomeBtn(void){ return homeBtn; }
+    void disableAll(void);
+    void enableAll(void);
+    void setHome(PointView* const _home, bool const _temporary){home = _home; temporary = _temporary;}
+    PointView* getHome() const {return home;}
+    bool isTemporaryHome()const {return temporary;}
+    void setOldHome(std::shared_ptr<Point> const _oldHome){oldHome = _oldHome;}
+    std::shared_ptr<Point> getOldHome() const {return oldHome;}
 
 signals:
     /// Signal emitted when a robot has been edited & saved
@@ -41,6 +52,10 @@ private:
     QLabel* ipAddressLabel;
     std::shared_ptr<Robots> robots;
     QPushButton* saveBtn;
+    QPushButton* homeBtn;
+    PointView* home;
+    bool temporary;
+    std::shared_ptr<Point> oldHome;
 
 private slots:
     /**

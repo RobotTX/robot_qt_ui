@@ -61,6 +61,7 @@ signals:
     void pointLeftClicked(PointView*);
     void addPointPath(PointView*);
     void homeSelected(PointView* pointView, bool temporary);
+    void homeEdited(PointView* pointView, bool temporary);
     void moveTmpEditPathPoint();
     void editedPointPositionChanged(double, double);
 
