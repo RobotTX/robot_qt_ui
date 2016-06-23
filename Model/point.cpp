@@ -55,11 +55,10 @@ bool Point::operator==(const Point& point) const {
          return false;
  }
 
- bool Point::setHome(bool _home, QString robotName){
+ bool Point::setHome(const bool _home, const QString robotName){
     if(!_home){
         home = _home;
         name = QString::number(position.getX(),'f', 1) + "; " + QString::number(position.getY(),'f', 1);
-        return true;
     } else if(_home && !home){
         home = _home;
         name = "Home_" + robotName;

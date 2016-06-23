@@ -4,7 +4,7 @@
 	<file>map-s.pgm</file>
     </qresource>
     <qresource prefix="/icons">
-	<file alias="close.png">007__close.png</file>
+	<file alias="close.png">cropped_close.png</file>
 	<file alias="plus.png">005__plus.png</file>
 	<file alias="minus.png">006__minus.png</file>
 	<file alias="refresh.png">019__refresh.png</file>

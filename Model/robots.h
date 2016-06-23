@@ -91,6 +91,8 @@ public:
 
     int getRobotId(const QString name);
 
+    RobotView* findRobotUsingHome(const QString name) const;
+
 private:
     /**
      * @brief robotsVector

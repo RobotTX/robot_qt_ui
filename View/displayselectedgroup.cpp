@@ -1,6 +1,7 @@
 #include "displayselectedgroup.h"
 #include <View/verticalscrollarea.h>
 #include <View/pointbuttongroup.h>
+#include "View/spacewidget.h"
 #include <QVBoxLayout>
 #include <QDebug>
 #include <QIcon>
@@ -51,6 +52,10 @@ DisplaySelectedGroup::DisplaySelectedGroup(QMainWindow *_parent, const Points& _
 
     layout->addLayout(grid);
     layout->addLayout(eyeMapLayout);
+
+
+    SpaceWidget* spaceWidget = new SpaceWidget(SpaceWidget::SpaceOrientation::HORIZONTAL);
+    layout->addWidget(spaceWidget);
 
     layout->addWidget(name);
 

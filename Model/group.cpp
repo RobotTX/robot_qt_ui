@@ -102,10 +102,10 @@ QDataStream& operator>>(QDataStream& in, Group& group){
     return true;
  }
 
- bool Group::containsHomePoint(void) const {
+std::shared_ptr<Point> Group::containsHomePoint(void) const {
      for(int i = 0; i < points.size(); i++){
          if(points[i]->isHome())
-             return true;
+             return points[i];
      }
-     return false;
+     return 0;
  }

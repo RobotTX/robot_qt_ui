@@ -10,8 +10,9 @@
 #include <QDebug>
 #include <QKeyEvent>
 #include "Model/xmlparser.h"
+#include "View/spacewidget.h"
 
-DisplaySelectedPoint::DisplaySelectedPoint(QMainWindow *_parent, Points const& _points, PointView* _pointView, const Origin origin)
+DisplaySelectedPoint::DisplaySelectedPoint(QMainWindow *_parent, Points const& _points, PointView* _pointView, const Origin origin): parent(_parent)
 {
     parent = _parent;
     points = _points;
@@ -58,9 +59,15 @@ DisplaySelectedPoint::DisplaySelectedPoint(QMainWindow *_parent, Points const& _
     layout->addLayout(grid);
     layout->addLayout(eyeMapLayout);
 
+
+    SpaceWidget* spaceWidget = new SpaceWidget(SpaceWidget::SpaceOrientation::HORIZONTAL);
+    layout->addWidget(spaceWidget);
+
     nameEdit = new QLineEdit();
     nameEdit->setReadOnly(true);
     nameEdit->setStyleSheet("* { background-color: rgba(255, 0, 0, 0); }");
+    nameEdit->setAutoFillBackground(true);
+    nameEdit->setFrame(false);
 
     nameLayout->addWidget(nameEdit);
 
@@ -140,6 +147,37 @@ void DisplaySelectedPoint::setOrigin(const Origin _origin){
         backButton->show();
 }
 
+void DisplaySelectedPoint::resetWidget(){
+
+    /// to change the aspect of the point name
+    nameEdit->setAutoFillBackground(true);
+    nameEdit->setFrame(false);
+    /// we hide the buttons relative to the edit option and make sure the points properties are not longer modifiable
+    nameEdit->setReadOnly(true);
+    editButton->setChecked(false);
+    cancelButton->hide();
+    saveButton->hide();
+    /// enable the edit button again and hide the tooltip
+    editButton->setEnabled(true);
+    editButton->setToolTip("");
+
+    if(pointView){
+        /// in case the user had dragged the point around the map or clicked it, this resets the coordinates displayed to the original ones, otherwise this has no effect
+        /// reset the position
+        posXLabel->setText(QString::number(pointView->getPoint()->getPosition().getX()));
+        posYLabel->setText(QString::number(pointView->getPoint()->getPosition().getY()));
+        pointView->setPos(static_cast<qreal>(pointView->getPoint()->getPosition().getX()), static_cast<qreal>(pointView->getPoint()->getPosition().getY()));
+        /// reset its name in the hover on the map
+        nameEdit->setText(pointView->getPoint()->getName());
+    }
+    emit resetState(GraphicItemState::NO_STATE, true);
+
+}
+
+void DisplaySelectedPoint::hideEvent(QHideEvent *event){
+    resetWidget();
+    QWidget::hideEvent(event);
+}
 
 
 

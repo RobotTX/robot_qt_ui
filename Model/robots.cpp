@@ -2,6 +2,7 @@
 #include "View/robotview.h"
 #include "robot.h"
 #include <QDebug>
+#include "Model/point.h"
 
 Robots::Robots(){
     robotsVector = QVector<RobotView*>();
@@ -98,4 +99,15 @@ int Robots::getRobotId(const QString name){
         }
     }
     return -1;
+}
+
+RobotView* Robots::findRobotUsingHome(const QString name) const {
+    RobotView* robot(0);
+    for(int i = 0; i < robotsVector.size(); i++){
+        std::shared_ptr<Point> home = robotsVector.at(i)->getRobot()->getHome();
+        /// we first check that this robot has a home point, if it does then we compare the names
+        if(home && !home->getName().compare(name))
+            return robotsVector[i];
+    }
+    return robot;
 }

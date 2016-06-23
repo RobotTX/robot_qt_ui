@@ -54,7 +54,7 @@ public:
     void setName(const QString _name) { name = _name; }
     void setPosition(const double x, const double y) { position.setX(x); position.setY(y); }
     void setPosition(const Position _position) { position = _position; }
-    bool setHome(bool _home, QString robotName);
+    bool setHome(const bool _home, const QString robotName);
     bool isHome(void) const { return home; }
 
     /// a helper function to overload the << operator
