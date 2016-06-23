@@ -9,6 +9,7 @@
 #include <QLabel>
 #include <QMainWindow>
 #include <QButtonGroup>
+#include <QDebug>
 
 BottomLayout::BottomLayout(QMainWindow* parent, const std::shared_ptr<Robots> &robots){
     layout = new QHBoxLayout();
@@ -24,6 +25,10 @@ BottomLayout::BottomLayout(QMainWindow* parent, const std::shared_ptr<Robots> &r
     robotBtnGroup = new QButtonGroup();
 
     /// The button group for the collumn with the stop/delete path buttons
+    viewPathRobotBtnGroup = new QButtonGroup();
+    viewPathRobotBtnGroup->setExclusive(false);
+
+    /// The button group for the collumn with the stop/delete path buttons
     stopRobotBtnGroup = new QButtonGroup();
 
     /// The button group for the collumn with the play/pause path buttons
@@ -34,6 +39,7 @@ BottomLayout::BottomLayout(QMainWindow* parent, const std::shared_ptr<Robots> &r
     QVBoxLayout* columnName = new QVBoxLayout();
     QVBoxLayout* columnPath = new QVBoxLayout();
     QVBoxLayout* columnPlay = new QVBoxLayout();
+    QVBoxLayout* columnViewPath = new QVBoxLayout();
     QVBoxLayout* columnStop = new QVBoxLayout();
 
 
@@ -66,10 +72,22 @@ BottomLayout::BottomLayout(QMainWindow* parent, const std::shared_ptr<Robots> &r
     scrollLayout->addLayout(columnPath);
 
     /// Creation of the third collumn, with the button to play/pause the robot
-    QIcon icon = QIcon(":/icons/play.png");
-    icon.setThemeName("play");
     for(int i = 0; i < robotsVector.size(); i++){
-        QPushButton* playRobotBtn = new QPushButton(icon,"");
+        QPushButton* viewPathRobotBtn = new QPushButton(QIcon(":/icons/eye.png"),"");
+        viewPathRobotBtn->setMaximumWidth(parent->width()/10);
+        viewPathRobotBtn->setMinimumWidth(parent->width()/10);
+        viewPathRobotBtn->setIconSize(parent->size()/10);
+        viewPathRobotBtn->setCheckable(true);
+        if(robots->getRobotsVector().at(i)->getRobot()->getPath().size() < 1)
+            viewPathRobotBtn->setEnabled(false);
+        viewPathRobotBtnGroup->addButton(viewPathRobotBtn, i);
+        columnViewPath->addWidget(viewPathRobotBtn);
+    }
+    scrollLayout->addLayout(columnViewPath);
+
+    /// Creation of the third collumn, with the button to play/pause the robot
+    for(int i = 0; i < robotsVector.size(); i++){
+        QPushButton* playRobotBtn = new QPushButton(QIcon(":/icons/play.png"),"");
         playRobotBtn->setMaximumWidth(parent->width()/10);
         playRobotBtn->setMinimumWidth(parent->width()/10);
         playRobotBtn->setIconSize(parent->size()/10);
@@ -97,6 +115,7 @@ BottomLayout::BottomLayout(QMainWindow* parent, const std::shared_ptr<Robots> &r
     connect(robotBtnGroup, SIGNAL(buttonClicked(QAbstractButton*)), parent, SLOT(setSelectedRobot(QAbstractButton*)));
     connect(stopRobotBtnGroup, SIGNAL(buttonClicked(int)), parent, SLOT(stopSelectedRobot(int)));
     connect(playRobotBtnGroup, SIGNAL(buttonClicked(int)), parent, SLOT(playSelectedRobot(int)));
+    connect(viewPathRobotBtnGroup, SIGNAL(buttonClicked(int)), parent, SLOT(viewPathSelectedRobot(int)));
 
     setMaximumHeight(parent->height()*4/10);
     setMinimumHeight(parent->height()*4/10);
@@ -115,6 +134,9 @@ BottomLayout::~BottomLayout(){
     delete playRobotBtnGroup;
     delete stopRobotBtnGroup;
     delete robotBtnGroup;
+    delete viewPathRobotBtnGroup;
+    qDeleteAll(vectorPathLabel.begin(), vectorPathLabel.end());
+    qDeleteAll(listEnabled.begin(), listEnabled.end());
 }
 
 void BottomLayout::deletePath(const int index){
@@ -122,18 +144,22 @@ void BottomLayout::deletePath(const int index){
     /// and the path disappear from the list
     playRobotBtnGroup->button(index)->setEnabled(false);
     stopRobotBtnGroup->button(index)->setEnabled(false);
+    viewPathRobotBtnGroup->button(index)->setEnabled(false);
     vectorPathLabel.at(index)->setText("");
 }
 
 void BottomLayout::updateRobot(const int id, RobotView * const robotView){
+    qDebug() << "(BottomLayout) updateRobot called";
     robotBtnGroup->button(id)->setText(robotView->getRobot()->getName());
     if(robotView->getRobot()->getPath().size() < 1){
         stopRobotBtnGroup->button(id)->setEnabled(false);
         playRobotBtnGroup->button(id)->setEnabled(false);
+        viewPathRobotBtnGroup->button(id)->setEnabled(false);
         vectorPathLabel.at(id)->setText("");
      } else {
         stopRobotBtnGroup->button(id)->setEnabled(true);
         playRobotBtnGroup->button(id)->setEnabled(true);
+        viewPathRobotBtnGroup->button(id)->setEnabled(true);
         QString pathStr = QString("");
         for(size_t j = 0; j < robotView->getRobot()->getPath().size(); j++){
             if(j != 0){
@@ -169,6 +195,14 @@ void BottomLayout::disable(){
             listEnabled.push_back(list.at(i));
         }
     }
+
+    list = viewPathRobotBtnGroup->buttons();
+    for(int i =0; i < list.size(); i++){
+        if(list.at(i)->isEnabled()){
+            list.at(i)->setEnabled(false);
+            listEnabled.push_back(list.at(i));
+        }
+    }
 }
 
 void BottomLayout::enable(){
@@ -176,4 +210,13 @@ void BottomLayout::enable(){
         listEnabled.at(i)->setEnabled(true);
     }
     listEnabled.clear();
+}
+
+void BottomLayout::uncheckViewPathSelectedRobot(int robotNb = -1){
+    QList<QAbstractButton*> list = viewPathRobotBtnGroup->buttons();
+    for(int i =0; i < list.size(); i++){
+        if(list.at(i)->isChecked() && i != robotNb){
+            list.at(i)->setChecked(false);
+        }
+    }
 }

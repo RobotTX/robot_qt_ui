@@ -24,8 +24,17 @@
 LeftMenu::LeftMenu(QMainWindow* parent, Points const& points, const std::shared_ptr<Robots> &robots, PointsView * const &pointViews){
     leftLayout = new QVBoxLayout();
 
-    /// to display the information relative to a point
 
+    QPushButton* closeBtn = new QPushButton(QIcon(":/icons/close.png"), "");
+    closeBtn->setIconSize(parent->size()/10);
+    closeBtn->setMaximumWidth(parent->width()/10);
+    closeBtn->setFlat(true);
+    //closeBtn->setStyleSheet("QPushButton { margin-bottom: -20px;}");
+    //closeBtn->setFocusPolicy(Qt::FocusPolicy::NoFocus);
+    leftLayout->addWidget(closeBtn);
+    connect(closeBtn, SIGNAL(clicked()), this, SLOT(closeSlot()));
+
+    /// to display the information relative to a point
     displaySelectedPoint = new DisplaySelectedPoint(parent, points);
 
     leftLayout->addWidget(displaySelectedPoint);
@@ -101,6 +110,7 @@ LeftMenu::LeftMenu(QMainWindow* parent, Points const& points, const std::shared_
     setMaximumWidth(parent->width()*4/10);
     setMinimumWidth(parent->width()*4/10);
     leftLayout->setAlignment(Qt::AlignTop);
+    leftLayout->setAlignment(closeBtn, Qt::AlignTop | Qt::AlignRight);
 
     setLayout(leftLayout);
 }
@@ -126,4 +136,6 @@ void LeftMenu::updateGroupDisplayed(const Points& _points, const int groupIndex)
     displaySelectedGroup->getPointButtonGroup()->setGroup(_points, groupIndex);
 }
 
-
+void LeftMenu::closeSlot(){
+    hide();
+}

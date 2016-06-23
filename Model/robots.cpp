@@ -81,7 +81,7 @@ void Robots::setSelected(RobotView * const robotView){
 }
 
 bool Robots::existRobotName(const QString name){
-    qDebug() << "Checking robot name : " << name;
+    qDebug() << "(existRobotName) Checking robot name : " << name;
     for(int i = 0; i < robotsVector.length(); i++){
         if(robotsVector[i]->getRobot()->getName() == name){
             return true;
@@ -91,11 +91,11 @@ bool Robots::existRobotName(const QString name){
 }
 
 int Robots::getRobotId(const QString name){
-    qDebug() << "Checking robot name : " << name;
+    qDebug() << "(getRobotId) Checking robot name : " << name;
     for(int i = 0; i < robotsVector.length(); i++){
         if(robotsVector[i]->getRobot()->getName() == name){
             return i;
         }
     }
-    return false;
+    return -1;
 }

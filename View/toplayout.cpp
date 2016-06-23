@@ -26,14 +26,6 @@ TopLayout::TopLayout(QMainWindow* parent){
     layout->addWidget(connectBtn);
     connect(connectBtn, SIGNAL(clicked()), parent, SLOT(connectToRobot()));
 
-    closeBtn = new QPushButton(QIcon(":/icons/close.png"), "");
-    closeBtn->setIconSize(parent->size()/8);
-    closeBtn->setMaximumWidth(40);
-    closeBtn->setFlat(true);
-    closeBtn->setFocusPolicy(Qt::FocusPolicy::NoFocus);
-    layout->addWidget(closeBtn);
-    connect(closeBtn, SIGNAL(clicked()), parent, SLOT(quit()));
-
     label = new QLabel();
     label->setWordWrap(true);
     label->setStyleSheet("QLabel { color: " + QString(TEXT_COLOR_INFO) + "}");
@@ -44,6 +36,15 @@ TopLayout::TopLayout(QMainWindow* parent){
     scrollArea->setWidget(label);
     scrollArea->setMaximumHeight(50);
     layout->addWidget(scrollArea);
+
+    closeBtn = new QPushButton(QIcon(":/icons/close.png"), "");
+    closeBtn->setIconSize(parent->size()/8);
+    closeBtn->setMaximumWidth(40);
+    closeBtn->setFlat(true);
+    closeBtn->setFocusPolicy(Qt::FocusPolicy::NoFocus);
+    closeBtn->hide();
+    layout->addWidget(closeBtn);
+    connect(closeBtn, SIGNAL(clicked()), parent, SLOT(quit()));
 
     layout->setContentsMargins(0, 0, 0, 0);
 
