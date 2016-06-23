@@ -34,6 +34,10 @@ public:
     bool isDisplayed(void) const;
 
 public:
+    /// returns true if one of the group's points is a home for a robot
+    bool containsHomePoint(void) const;
+
+public:
     /**
      * @brief addPoint
      * @param pointPtr

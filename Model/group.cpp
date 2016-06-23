@@ -101,3 +101,11 @@ QDataStream& operator>>(QDataStream& in, Group& group){
             return false;
     return true;
  }
+
+ bool Group::containsHomePoint(void) const {
+     for(int i = 0; i < points.size(); i++){
+         if(points[i]->isHome())
+             return true;
+     }
+     return false;
+ }
