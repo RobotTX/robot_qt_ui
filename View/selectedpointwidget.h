@@ -17,7 +17,6 @@ class QMainWindow;
 class SelectedPointWidget: public QWidget{
 public:
     SelectedPointWidget(QMainWindow* parent);
-    ~SelectedPointWidget();
 
     /**
      * @brief setSelectedPoint

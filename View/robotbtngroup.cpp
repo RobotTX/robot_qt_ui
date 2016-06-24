@@ -28,8 +28,3 @@ RobotBtnGroup::RobotBtnGroup(const QVector<RobotView*>& vector, const bool check
     hide();
     layout->setAlignment(Qt::AlignTop);
 }
-
-RobotBtnGroup::~RobotBtnGroup(){
-    delete btnGroup;
-    delete layout;
-}

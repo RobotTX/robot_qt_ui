@@ -14,11 +14,6 @@ PathWidget::PathWidget(QWidget* _parent):QWidget(_parent){
     layout->setAlignment(Qt::AlignTop);
 }
 
-PathWidget::~PathWidget(){
-    delete layout;
-    delete parent;
-}
-
 void PathWidget::setSelectedRobot(RobotView *const robotView){
 
     /// Get the path of the robot

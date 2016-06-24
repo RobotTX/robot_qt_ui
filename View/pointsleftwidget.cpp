@@ -15,7 +15,7 @@
 #include "View/spacewidget.h"
 
 PointsLeftWidget::PointsLeftWidget(QMainWindow* _parent, Points const& points, bool _groupDisplayed)
-    : groupDisplayed(_groupDisplayed), QWidget(_parent){
+    : QWidget(_parent), groupDisplayed(_groupDisplayed){
     parent = _parent;
     scrollArea = new VerticalScrollArea(this);
 
@@ -109,31 +109,6 @@ PointsLeftWidget::PointsLeftWidget(QMainWindow* _parent, Points const& points, b
     setMinimumWidth(_parent->width()*4/10);
     layout->setAlignment(Qt::AlignBottom);
 }
-
-PointsLeftWidget::~PointsLeftWidget(){
-    delete layout;
-    delete parent;
-    delete eyeMapLayout;
-    delete grid;
-
-    delete backButton;
-    delete backToGroupsButton;
-    delete minusButton;
-    delete mapButton;
-    delete plusButton;
-    delete editButton;
-    delete eyeButton;
-
-    delete groupButtonGroup;
-
-    delete groupNameEdit;
-    delete groupNameLabel;
-
-    delete eyeButton;
-    delete groupWindow;
-    delete scrollArea;
-}
-
 
 void PointsLeftWidget::updateGroupButtonGroup(Points const& points){
     groupButtonGroup->update(points);

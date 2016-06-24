@@ -4,6 +4,7 @@
 class Group;
 class GroupView;
 class PointView;
+class QGraphicsItem;
 
 #include "View/groupview.h"
 #include "Model/points.h"
@@ -14,7 +15,7 @@ class PointView;
  */
 class PointsView {
 public:
-    PointsView(const Points& _points);
+    PointsView(const Points& _points, QGraphicsItem *parent);
     ~PointsView();
 
     Points getPoints(void) const { return points; }

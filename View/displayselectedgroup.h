@@ -22,7 +22,6 @@ class DisplaySelectedGroup: public QWidget
 {
 public:
     DisplaySelectedGroup(QMainWindow *_parent, const Points& _points);
-    ~DisplaySelectedGroup();
 
     PointButtonGroup* getPointButtonGroup(void) const { return pointButtonGroup; }
     QPushButton* getBackButton(void) const { return backButton; }

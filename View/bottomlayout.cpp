@@ -127,16 +127,6 @@ BottomLayout::BottomLayout(QMainWindow* parent, const std::shared_ptr<Robots> &r
     //layout->setContentsMargins(0, 0, 0, 0);
 }
 
-BottomLayout::~BottomLayout(){
-    delete layout;
-    delete playRobotBtnGroup;
-    delete stopRobotBtnGroup;
-    delete robotBtnGroup;
-    delete viewPathRobotBtnGroup;
-    qDeleteAll(vectorPathLabel.begin(), vectorPathLabel.end());
-    qDeleteAll(listEnabled.begin(), listEnabled.end());
-}
-
 void BottomLayout::deletePath(const int index){
     /// When a path is deleted, the button to play/pause & stop the path are disabled
     /// and the path disappear from the list

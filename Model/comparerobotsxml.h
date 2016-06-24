@@ -3,6 +3,7 @@
 
 
 #include <QVector>
+#include <QGraphicsItem>
 
 /**
  * @brief The CompareRobotsXml class
@@ -24,13 +25,14 @@ public:
      * It returns a vector containing the name of the robots that either went disconnected since the last update and the robots
      * that just connected since the last update along with their state (DISCONNECTED or CONNECTED)
      */
-    CompareRobotsXml(const QString _oldFile, const QString _newFile);
+    CompareRobotsXml(const QString _oldFile, const QString _newFile, QGraphicsItem *_parent);
 
     QVector<std::pair<QString, State> > compare(void) const ;
 
 private:
     QString oldFile;
     QString newFile;
+    QGraphicsItem* parent;
 };
 
 #endif // COMPAREROBOTSXML_H

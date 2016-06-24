@@ -108,21 +108,6 @@ EditSelectedRobotWidget::EditSelectedRobotWidget(QMainWindow* parent, const std:
     layout->setAlignment(Qt::AlignTop);
 }
 
-EditSelectedRobotWidget::~EditSelectedRobotWidget(){
-    delete layout;
-    delete wifiLayout;
-    delete batteryLevel;
-    delete nameEdit;
-    delete wifiTitle;
-    delete wifiName;
-    delete wifiNameEdit;
-    delete wifiPwd;
-    delete wifiPwdEdit;
-    delete ipAddressLabel;
-    delete saveBtn;
-    delete homeBtn;
-}
-
 void EditSelectedRobotWidget::setSelectedRobot(RobotView* const _robotView){
     robotView = _robotView;
     /// When a robot is selected, the informations are updated

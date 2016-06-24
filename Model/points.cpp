@@ -3,8 +3,7 @@
 #include "point.h"
 #include <QDataStream>
 
-Points::Points(void)
-{
+Points::Points(void){
 }
 
 bool Points::addGroup(const Group& group){

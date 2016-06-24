@@ -13,7 +13,6 @@ class GroupButtonGroup: public QWidget
 {
 public:
     GroupButtonGroup(Points const& _points, QWidget *parent);
-    ~GroupButtonGroup();
 
     QButtonGroup* getButtonGroup(void) const { return buttonGroup; }
 

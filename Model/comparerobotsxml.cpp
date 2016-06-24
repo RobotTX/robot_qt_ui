@@ -2,15 +2,18 @@
 #include "robots.h"
 #include "xmlparser.h"
 
-CompareRobotsXml::CompareRobotsXml(const QString _oldFile, const QString _newFile): oldFile(_oldFile), newFile(_newFile) {}
+CompareRobotsXml::CompareRobotsXml(const QString _oldFile, const QString _newFile, QGraphicsItem* _parent)
+    : oldFile(_oldFile), newFile(_newFile) {
+    parent = _parent;
+}
 
 QVector<std::pair<QString, CompareRobotsXml::State>> CompareRobotsXml::compare(void) const {
 
     /// the vector that contains the differences between the two files which describe the list of robots which
     /// where connected at two different times
     QVector<std::pair<QString, State>> differences;
-    XMLParser oldFileParser(oldFile);
-    XMLParser newFileParser(newFile);
+    XMLParser oldFileParser(oldFile, parent);
+    XMLParser newFileParser(newFile, parent);
 
     Robots oldRobots, newRobots;
     /// we start by storing the names of our robots, as names are unique this is enough to identify them

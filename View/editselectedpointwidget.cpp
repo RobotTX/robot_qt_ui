@@ -58,19 +58,6 @@ EditSelectedPointWidget::EditSelectedPointWidget(QMainWindow* _parent, PointsVie
     layout->setAlignment(Qt::AlignTop);
 }
 
-EditSelectedPointWidget::~EditSelectedPointWidget(){
-    delete layout;
-    delete pointView;
-    delete nameEdit;
-    delete posXLabel;
-    delete posYLabel;
-    delete points;
-    delete saveBtn;
-    delete parent;
-    delete groupBox;
-    //delete groupMenu;
-}
-
 void EditSelectedPointWidget::setSelectedPoint(PointView * const &_pointView, const bool isTemporary){
     _isTemporary = isTemporary;
     pointView = _pointView;

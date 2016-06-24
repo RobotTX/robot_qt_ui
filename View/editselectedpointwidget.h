@@ -22,7 +22,6 @@ class EditSelectedPointWidget: public QWidget{
     Q_OBJECT
 public:
     EditSelectedPointWidget(QMainWindow* parent, PointsView *points);
-    ~EditSelectedPointWidget();
 
     void setSelectedPoint(PointView* const& _pointView, const bool isTemporary);
 

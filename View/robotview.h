@@ -22,8 +22,8 @@ class MapView;
 class RobotView: public QObject, public QGraphicsPolygonItem {
     Q_OBJECT
 public:
-    RobotView (const std::shared_ptr<Robot> &_robot);
-    RobotView ();
+    RobotView(const std::shared_ptr<Robot> &_robot, QGraphicsItem *parent);
+    RobotView(QGraphicsItem* parent);
 
     /// Getter
     std::shared_ptr<Robot> getRobot(void) { return robot; }
@@ -50,10 +50,10 @@ protected:
     void hoverLeaveEvent(QGraphicsSceneHoverEvent *event);
 
 private:
+    GraphicItemState state;
     std::shared_ptr<Robot> robot;
     bool selected;
     bool shown;
-    GraphicItemState state;
 };
 
 #endif // ROBOTVIEW_H

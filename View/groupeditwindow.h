@@ -13,7 +13,6 @@ class GroupEditWindow: public QWidget
 {
 public:
     GroupEditWindow(QWidget* parent = 0);
-    ~GroupEditWindow();
 
     QLabel* getLabel(void) const { return nameLabel; }
     QLineEdit* getEdit(void) const { return nameEdit; }

@@ -1,4 +1,4 @@
-#ifndef SCANMETADATATHREAD_H
+﻿#ifndef SCANMETADATATHREAD_H
 #define SCANMETADATATHREAD_H
 
 #include <QThread>

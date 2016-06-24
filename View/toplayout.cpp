@@ -1,6 +1,5 @@
 #include "toplayout.h"
 #include <QHBoxLayout>
-#include <QMainWindow>
 #include <QPushButton>
 #include <QLabel>
 #include <QIcon>
@@ -61,13 +60,6 @@ TopLayout::TopLayout(QMainWindow* parent):QWidget(parent){
                            "border: 1px solid #aaaaaa;"
                            "border-radius: 5px }");
     setMaximumHeight(parent->height()/5);
-}
-
-TopLayout::~TopLayout(){
-    delete layout;
-    delete menuBtn;
-    delete connectBtn;
-    delete closeBtn;
 }
 
 void TopLayout::setLabel(QString msgType, QString msg){

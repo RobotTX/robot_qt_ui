@@ -15,7 +15,6 @@ class GroupMenu: public QWidget
 {
 public:
     GroupMenu(const Points& points, bool _editPoint, QWidget *parent);
-    ~GroupMenu();
 
     QListWidget* getWidgetsList(void) const { return widgetsList; }
 

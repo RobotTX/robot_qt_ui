@@ -19,10 +19,10 @@ Robot::Robot(): name("Default name"), ip("no Ip"), position(Position()),
 }
 
 Robot::~Robot(){
-    if(cmdThread->isRunning()){
+    /*if(cmdThread->isRunning()){
         cmdThread->exit();
     }
-    delete cmdThread;
+    delete cmdThread;*/
 }
 
 std::ostream& operator <<(std::ostream& stream, Robot const& robot){

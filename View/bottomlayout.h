@@ -26,7 +26,6 @@ class BottomLayout: public QWidget
 {
 public:
     BottomLayout(QMainWindow* parent, std::shared_ptr<Robots> const& robots);
-    ~BottomLayout();
 
     /// Getters
     QButtonGroup* getPlayRobotBtnGroup(void) const{return playRobotBtnGroup;}

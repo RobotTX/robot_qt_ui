@@ -9,35 +9,21 @@
 #include <QDebug>
 #include <QGraphicsSceneMouseEvent>
 
-MapView::MapView (const QPixmap& pixmap, const QSize _size, PointsView* const& points, QMainWindow* _mainWindow) :
+MapView::MapView (const QPixmap& pixmap, const QSize _size, QMainWindow* _mainWindow) :
     QGraphicsPixmapItem(pixmap), size(_size), state(GraphicItemState::NO_STATE){
 
     mainWindow = _mainWindow;
     /// Tell the class which mouse button to accept
     setAcceptedMouseButtons(Qt::LeftButton);
 
-    permanentPoints = points;
-
     /// To drag & drop the map
     setFlag(QGraphicsItem::ItemIsMovable);
 
-    for(size_t i = 0; i < permanentPoints->getGroups().size(); i++){
-        for(size_t j = 0; j < permanentPoints->getGroups().at(i)->getPointViews().size(); j++){
-            PointView* currentPointView = permanentPoints->getGroups().at(i)->getPointViews().at(j);
-            currentPointView->setParentItem(this);
-            /// in case the point is not displayed we hide the point view
-            if(!currentPointView->getPoint()->isDisplayed())
-                currentPointView->hide();
-            connect(&(*currentPointView), SIGNAL(pointLeftClicked(PointView*)), mainWindow, SLOT(displayPointEvent(PointView*)));
-            /// to update the coordinates of the point displayed on the left when a user drags a point to change its position
-            connect(&(*currentPointView), SIGNAL(editedPointPositionChanged(double, double)), mainWindow, SLOT(updateCoordinates(double, double)));
-        }
-    }
 
     /// Temporary point icon
     Point tmpPoint("tmpPoint", 0.0, 0.0, false);
 
-    tmpPointView = new PointView(std::make_shared<Point>(tmpPoint));
+    tmpPointView = new PointView(std::make_shared<Point>(tmpPoint), this);
     tmpPointView->setPixmap(PointView::PixmapType::MID);
     connect(this, SIGNAL(pointLeftClicked(PointView*, bool)), mainWindow, SLOT(setSelectedPoint(PointView*, bool)));
     connect(tmpPointView, SIGNAL(moveTmpEditPathPoint()), mainWindow, SLOT(moveTmpEditPathPointSlot()));
@@ -52,7 +38,6 @@ MapView::MapView (const QPixmap& pixmap, const QSize _size, PointsView* const& p
 MapView::~MapView(){
     delete permanentPoints;
     qDeleteAll(pathCreationPoints.begin(), pathCreationPoints.end());
-    delete tmpPointView;
 }
 
 void MapView::mousePressEvent(QGraphicsSceneMouseEvent *event){
@@ -79,7 +64,7 @@ void MapView::mouseReleaseEvent(QGraphicsSceneMouseEvent *event){
         } else if(state == GraphicItemState::CREATING_PATH){
             qDebug() << "Clicked on the map while creating a path";
             Point tmpPoint("tmpPoint", 0.0, 0.0, false);
-            PointView* newPointView = new PointView(std::make_shared<Point>(tmpPoint));
+            PointView* newPointView = new PointView(std::make_shared<Point>(tmpPoint), this);
 
             connect(newPointView, SIGNAL(addPointPath(PointView*)), mainWindow, SLOT(addPathPoint(PointView*)));
             connect(newPointView, SIGNAL(moveTmpEditPathPoint()), mainWindow, SLOT(moveTmpEditPathPointSlot()));
@@ -95,7 +80,7 @@ void MapView::mouseReleaseEvent(QGraphicsSceneMouseEvent *event){
         } else if(state == GraphicItemState::SELECTING_HOME){
             qDebug() << "(MapView) SELECTING_HOME";
             Point tmpPoint("tmpPoint", 0.0, 0.0, false);
-            PointView* newPointView = new PointView(std::make_shared<Point>(tmpPoint));
+            PointView* newPointView = new PointView(std::make_shared<Point>(tmpPoint), this);
 
             connect(newPointView, SIGNAL(addPointPath(PointView*)), mainWindow, SLOT(addPathPoint(PointView*)));
             connect(newPointView, SIGNAL(moveTmpEditPathPoint()), mainWindow, SLOT(moveTmpEditPathPointSlot()));
@@ -110,7 +95,7 @@ void MapView::mouseReleaseEvent(QGraphicsSceneMouseEvent *event){
         } else if(state == GraphicItemState::EDITING_HOME){
             qDebug() << "(MapView) EDITING_HOME";
             Point tmpPoint("tmpPoint", 0.0, 0.0, false);
-            PointView* newPointView = new PointView(std::make_shared<Point>(tmpPoint));
+            PointView* newPointView = new PointView(std::make_shared<Point>(tmpPoint), this);
 
             connect(newPointView, SIGNAL(addPointPath(PointView*)), mainWindow, SLOT(addPathPoint(PointView*)));
             connect(newPointView, SIGNAL(moveTmpEditPathPoint()), mainWindow, SLOT(moveTmpEditPathPointSlot()));
@@ -136,7 +121,7 @@ void MapView::updatePoints(const Points& points){
             permanentPoints->getGroups().at(i)->getPointViews().at(j)->hide();
         }
     }
-    permanentPoints = new PointsView(points);
+    permanentPoints = new PointsView(points, this);
     for(size_t i = 0; i < permanentPoints->getGroups().size(); i++){
         for(size_t j = 0; j < permanentPoints->getGroups().at(i)->getPointViews().size(); j++){
             permanentPoints->getGroups().at(i)->getPointViews().at(j)->setParentItem(this);
@@ -170,7 +155,7 @@ void MapView::setState(const GraphicItemState _state, const bool clear){
  }
 
  void MapView::addPathPoint(PointView* pointView){
-     PointView* newPointView = new PointView(std::make_shared<Point>(*(pointView->getPoint())));
+     PointView* newPointView = new PointView(std::make_shared<Point>(*(pointView->getPoint())), this);
 
      connect(newPointView, SIGNAL(addPointPath(PointView*)), mainWindow, SLOT(addPathPoint(PointView*)));
      connect(newPointView, SIGNAL(moveTmpEditPathPoint()), mainWindow, SLOT(moveTmpEditPathPointSlot()));
@@ -193,7 +178,7 @@ void MapView::setState(const GraphicItemState _state, const bool clear){
              << permanentPoints->getPoints().getGroups().size();
     tmpPointView->hide();
     delete permanentPoints;
-    permanentPoints = new PointsView(points);
+    permanentPoints = new PointsView(points, this);
 
     for(size_t i = 0; i < permanentPoints->getGroups().size(); i++){
         for(size_t j = 0; j < permanentPoints->getGroups().at(i)->getPointViews().size(); j++){
@@ -207,4 +192,20 @@ void MapView::setState(const GraphicItemState _state, const bool clear){
             connect(&(*currentPointView), SIGNAL(editedPointPositionChanged(double, double)), mainWindow, SLOT(updateCoordinates(double, double)));
         }
     }
+ }
+
+ void MapView::setPermanentPoints(PointsView* pointsView){
+     permanentPoints = pointsView;
+     for(size_t i = 0; i < permanentPoints->getGroups().size(); i++){
+         for(size_t j = 0; j < permanentPoints->getGroups().at(i)->getPointViews().size(); j++){
+             PointView* currentPointView = permanentPoints->getGroups().at(i)->getPointViews().at(j);
+             currentPointView->setParentItem(this);
+             /// in case the point is not displayed we hide the point view
+             if(!currentPointView->getPoint()->isDisplayed())
+                 currentPointView->hide();
+             connect(&(*currentPointView), SIGNAL(pointLeftClicked(PointView*)), mainWindow, SLOT(displayPointEvent(PointView*)));
+             /// to update the coordinates of the point displayed on the left when a user drags a point to change its position
+             connect(&(*currentPointView), SIGNAL(editedPointPositionChanged(double, double)), mainWindow, SLOT(updateCoordinates(double, double)));
+         }
+     }
  }

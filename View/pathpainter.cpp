@@ -11,10 +11,6 @@ PathPainter::PathPainter(MapView * const &mapPixmapItem, PointsView * const &_po
     pointViews = _pointViews;
 }
 
-PathPainter::~PathPainter(){
-    delete pointViews;
-}
-
 void PathPainter::reset(void){
     clearPointViews();
     path = QPainterPath();

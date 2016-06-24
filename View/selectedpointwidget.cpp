@@ -45,13 +45,6 @@ SelectedPointWidget::SelectedPointWidget(QMainWindow* parent):QWidget(parent){
     layout->setAlignment(Qt::AlignTop);
 }
 
-SelectedPointWidget::~SelectedPointWidget(){
-    delete layout;
-    delete backBtn;
-    delete posXLabel;
-    delete posYLabel;
-}
-
 void SelectedPointWidget::setSelectedPoint(PointView * const &pointView){
     /// Update the name and the position labels of the point
     backBtn->setText(pointView->getPoint()->getName());

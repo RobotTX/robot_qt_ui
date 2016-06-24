@@ -15,7 +15,6 @@ class QMainWindow;
 class MapLeftWidget: public QWidget{
 public:
     MapLeftWidget(QMainWindow* parent);
-    ~MapLeftWidget();
 
 private:
     QVBoxLayout* layout;

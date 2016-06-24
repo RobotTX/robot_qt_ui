@@ -39,7 +39,3 @@ MapLeftWidget::MapLeftWidget(QMainWindow* parent):QWidget(parent){
     setMinimumWidth(parent->width()*4/10);
     layout->setAlignment(Qt::AlignTop);
 }
-
-MapLeftWidget::~MapLeftWidget(){
-    delete layout;
-}

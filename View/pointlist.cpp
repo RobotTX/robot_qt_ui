@@ -15,11 +15,6 @@ PointList::PointList(Points& _points, QWidget* parent):QWidget(parent){
     layout->addWidget(widgetsList);
 }
 
-PointList::~PointList(){
-    delete layout;
-    delete widgetsList;
-}
-
 void PointList::display(void) const {
     std::cout << *points;
 }

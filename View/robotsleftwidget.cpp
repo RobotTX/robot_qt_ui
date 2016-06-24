@@ -48,17 +48,6 @@ RobotsLeftWidget::RobotsLeftWidget(QMainWindow* _parent):QWidget(_parent){
     layout->setAlignment(Qt::AlignTop);
 }
 
-RobotsLeftWidget::~RobotsLeftWidget(){
-    delete layout;
-    delete robotsLayout;
-    delete btnGroup;
-    delete btnCheckGroup;
-    delete checkBtn;
-    delete editBtn;
-    delete scrollLayout;
-    delete scrollArea;
-}
-
 
 void RobotsLeftWidget::setRobots(std::shared_ptr<Robots> const &_robots){
     robots = _robots;

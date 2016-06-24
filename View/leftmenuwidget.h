@@ -13,7 +13,6 @@ class QVBoxLayout;
 class LeftMenuWidget: public QWidget{
 public:
     LeftMenuWidget(QMainWindow* parent);
-    ~LeftMenuWidget();
 
 private:
     QVBoxLayout* layout;

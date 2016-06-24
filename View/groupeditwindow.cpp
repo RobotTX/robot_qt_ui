@@ -19,9 +19,4 @@ GroupEditWindow::GroupEditWindow(QWidget *parent): QWidget(parent){
     layout->addWidget(spaceWidget);
 }
 
-GroupEditWindow::~GroupEditWindow(){
-    delete nameEdit;
-    delete nameLabel;
-    delete layout;
-}
 

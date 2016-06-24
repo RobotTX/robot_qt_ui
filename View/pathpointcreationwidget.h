@@ -28,7 +28,6 @@ public:
      * The construcor of the widget when we clicked on the map and selected a point
      */
     PathPointCreationWidget(const int id, const Points& points, const Point& point, QWidget *parent);
-    ~PathPointCreationWidget();
 
 
     void displayActionWidget(const bool show);

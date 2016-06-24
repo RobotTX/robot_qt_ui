@@ -114,23 +114,6 @@ LeftMenu::LeftMenu(QMainWindow* parent, Points const& points, const std::shared_
     leftLayout->setAlignment(closeBtn, Qt::AlignTop | Qt::AlignRight);
 }
 
-
-LeftMenu::~LeftMenu(){
-    delete leftLayout;
-    delete lastWidget;
-    delete leftMenuWidget;
-    delete pointsLeftWidget;
-    delete selectedRobotWidget;
-    delete robotsLeftWidget;
-    delete mapLeftWidget;
-    delete editSelectedRobotWidget;
-    delete selectedPointWidget;
-    delete editSelectedPointWidget;
-    delete displaySelectedPoint;
-    delete displaySelectedGroup;
-    delete pathCreationWidget;
-}
-
 void LeftMenu::updateGroupDisplayed(const Points& _points, const int groupIndex){
     displaySelectedGroup->getPointButtonGroup()->setGroup(_points, groupIndex);
 }

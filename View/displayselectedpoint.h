@@ -27,7 +27,6 @@ public:
     enum Origin { MAP, GROUP_MENU, POINTS_MENU };
 
     DisplaySelectedPoint(QMainWindow* _parent, Points const& _points, PointView* _pointView = 0, const Origin _origin = MAP);
-    ~DisplaySelectedPoint();
 
     QPushButton* getBackButton(void) const { return backButton; }
     QPushButton* getMinusButton(void) const { return minusButton; }

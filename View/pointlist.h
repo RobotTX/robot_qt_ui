@@ -15,7 +15,6 @@ class Points;
 class PointList: public QWidget{
 public:
     PointList(Points& _points, QWidget *parent);
-    ~PointList();
 
     QListWidget* getPointList(void) const { return widgetsList; }
 
