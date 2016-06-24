@@ -4,9 +4,9 @@
 #include <QVBoxLayout>
 #include <QPushButton>
 
-RobotBtnGroup::RobotBtnGroup(const QVector<RobotView*>& vector, const bool checkable){
-    btnGroup = new QButtonGroup();
-    layout = new QVBoxLayout();
+RobotBtnGroup::RobotBtnGroup(const QVector<RobotView*>& vector, const bool checkable, QWidget* parent):QWidget(parent){
+    btnGroup = new QButtonGroup(this);
+    layout = new QVBoxLayout(this);
     layout->setAlignment(Qt::AlignTop);
 
     /// If the buttons are checkable, we can select multiple buttons
@@ -15,7 +15,7 @@ RobotBtnGroup::RobotBtnGroup(const QVector<RobotView*>& vector, const bool check
     }
 
     for(int i = 0; i < vector.length(); i++){
-        QPushButton* robotBtn = new QPushButton(vector[i]->getRobot()->getName());
+        QPushButton* robotBtn = new QPushButton(vector[i]->getRobot()->getName(), this);
         robotBtn->setFlat(true);
         robotBtn->setStyleSheet("text-align:left");
         if(checkable){
@@ -27,7 +27,6 @@ RobotBtnGroup::RobotBtnGroup(const QVector<RobotView*>& vector, const bool check
     }
     hide();
     layout->setAlignment(Qt::AlignTop);
-    setLayout(layout);
 }
 
 RobotBtnGroup::~RobotBtnGroup(){

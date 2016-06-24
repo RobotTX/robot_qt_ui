@@ -11,18 +11,18 @@
 #include <QMainWindow>
 #include <QProgressBar>
 
-SelectedRobotWidget::SelectedRobotWidget(QMainWindow* parent){
-    layout = new QVBoxLayout();
+SelectedRobotWidget::SelectedRobotWidget(QMainWindow* parent):QWidget(parent){
+    layout = new QVBoxLayout(this);
 
     /// Button with the name of the robot and which allow the user to return back
     /// to the last menu
-    backBtn = new QPushButton(QIcon(":/icons/arrowLeft.png"),"Name");
+    backBtn = new QPushButton(QIcon(":/icons/arrowLeft.png"),"Name", this);
     backBtn->setStyleSheet ("text-align: left");
     backBtn->setIconSize(parent->size()/10);
     layout->addWidget(backBtn);
 
     /// Button which allow the user to scan the map from a robot
-    scanBtn = new QPushButton(QIcon(":/icons/map.png"),"Scan a map");
+    scanBtn = new QPushButton(QIcon(":/icons/map.png"),"Scan a map", this);
     scanBtn->setCheckable(true);
     scanBtn->setStyleSheet ("text-align: left");
     scanBtn->setIconSize(parent->size()/10);
@@ -30,7 +30,7 @@ SelectedRobotWidget::SelectedRobotWidget(QMainWindow* parent){
     connect(scanBtn, SIGNAL(clicked()), parent, SLOT(connectToRobot()));
 
     /// Button which allow the user to edit the info of the robot
-    editBtn = new QPushButton(QIcon(":/icons/edit.png"),"Edit");
+    editBtn = new QPushButton(QIcon(":/icons/edit.png"),"Edit", this);
     editBtn->setStyleSheet ("text-align: left");
     editBtn->setIconSize(parent->size()/10);
     layout->addWidget(editBtn);
@@ -41,17 +41,17 @@ SelectedRobotWidget::SelectedRobotWidget(QMainWindow* parent){
     layout->addWidget(spaceWidget);
 
     /// Label which display the Ip of the robot
-    ipAddressLabel = new QLabel("Ip : ");
+    ipAddressLabel = new QLabel("Ip : ", this);
     ipAddressLabel->setWordWrap(true);
     layout->addWidget(ipAddressLabel);
 
     /// Label which display the Wifi name of the robot
-    wifiNameLabel = new QLabel("Wifi : ");
+    wifiNameLabel = new QLabel("Wifi : ", this);
     wifiNameLabel->setWordWrap(true);
     layout->addWidget(wifiNameLabel);
 
     /// Label just for aesthetic purpose
-    QLabel* batteryLabel = new QLabel("Battery Level : ");
+    QLabel* batteryLabel = new QLabel("Battery Level : ", this);
     layout->addWidget(batteryLabel);
 
     /// ProgressBar which display the level of battery
@@ -64,15 +64,15 @@ SelectedRobotWidget::SelectedRobotWidget(QMainWindow* parent){
     layout->addWidget(spaceWidget2);
 
     /// Home layout with the button to select/show the home
-    QLabel* homeLabel = new QLabel("Home : ");
-    homeBtn = new QPushButton(QIcon(":/icons/home.png"), "");
+    QLabel* homeLabel = new QLabel("Home : ", this);
+    homeBtn = new QPushButton(QIcon(":/icons/home.png"), "", this);
     homeBtn->setIconSize(parent->size()/10);
     homeBtn->setStyleSheet ("text-align: left");
 
     layout->addWidget(homeLabel);
     layout->addWidget(homeBtn);
 
-    goHome = new QPushButton("Go Home");
+    goHome = new QPushButton("Go Home", this);
     goHome->setMinimumHeight(30);
     goHome->setMaximumHeight(30);
     goHome->hide();
@@ -80,11 +80,11 @@ SelectedRobotWidget::SelectedRobotWidget(QMainWindow* parent){
     layout->addWidget(goHome);
 
     /// Path label
-    QLabel* pathLabel = new QLabel("Path : ");
+    QLabel* pathLabel = new QLabel("Path : ", this);
     layout->addWidget(pathLabel);
 
     /// Button to add a path
-    addPathBtn = new QPushButton(QIcon(":/icons/plus.png"),"Add path");
+    addPathBtn = new QPushButton(QIcon(":/icons/plus.png"),"Add path", this);
     addPathBtn->setStyleSheet ("text-align: left");
     addPathBtn->hide();
     addPathBtn->setIconSize(parent->size()/10);
@@ -106,7 +106,6 @@ SelectedRobotWidget::SelectedRobotWidget(QMainWindow* parent){
     setMaximumWidth(parent->width()*4/10);
     setMinimumWidth(parent->width()*4/10);
     layout->setAlignment(Qt::AlignTop);
-    setLayout(layout);
 }
 
 SelectedRobotWidget::~SelectedRobotWidget(){

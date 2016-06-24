@@ -6,13 +6,12 @@
 #include <QPushButton>
 #include <QLabel>
 
-PathWidget::PathWidget(QWidget* _parent){
+PathWidget::PathWidget(QWidget* _parent):QWidget(_parent){
     parent = _parent;
 
-    layout = new QVBoxLayout(parent);
+    layout = new QVBoxLayout(this);
 
     layout->setAlignment(Qt::AlignTop);
-    setLayout(layout);
 }
 
 PathWidget::~PathWidget(){
@@ -28,14 +27,14 @@ void PathWidget::setSelectedRobot(RobotView *const robotView){
     clearLayout(layout);
     for(size_t i = 0; i < path.size(); i++){
         /// Index & name of the point
-        QLabel* nameLabel = new QLabel(QString::number(i+1) + " : " + path.at(i)->getPoint().getName());
+        QLabel* nameLabel = new QLabel(QString::number(i+1) + " : " + path.at(i)->getPoint().getName(), this);
         nameLabel->setWordWrap(true);
         nameLabel->setMinimumWidth(1);
         layout->addWidget(nameLabel);
 
 
         /// Action to do (wait for human or a ertain amount of time)
-        QLabel* actionLabel = new QLabel();
+        QLabel* actionLabel = new QLabel(this);
         if(path.at(i)->getAction() == PathPoint::HUMAN_ACTION){
             actionLabel->setText("Wait for Human Action");
         } else {

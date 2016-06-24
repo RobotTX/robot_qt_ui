@@ -7,9 +7,9 @@
 #include "View/spacewidget.h"
 
 GroupEditWindow::GroupEditWindow(QWidget *parent): QWidget(parent){
-    layout = new QVBoxLayout();
-    nameLabel = new QLabel("New group's name : ");
-    nameEdit = new QLineEdit();
+    layout = new QVBoxLayout(this);
+    nameLabel = new QLabel("New group's name : ", this);
+    nameEdit = new QLineEdit(this);
     //nameLabel->show();
     //nameEdit->show();
     layout->addWidget(nameLabel);
@@ -17,9 +17,6 @@ GroupEditWindow::GroupEditWindow(QWidget *parent): QWidget(parent){
 
     SpaceWidget* spaceWidget = new SpaceWidget(SpaceWidget::SpaceOrientation::HORIZONTAL, this);
     layout->addWidget(spaceWidget);
-
-    setLayout(layout);
-
 }
 
 GroupEditWindow::~GroupEditWindow(){

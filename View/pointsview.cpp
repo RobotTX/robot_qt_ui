@@ -5,8 +5,7 @@
 #include "Model/point.h"
 #include <QDebug>
 
-PointsView::PointsView(const Points &_points): points(_points)
-{
+PointsView::PointsView(const Points &_points): points(_points){
     // for each group
     for(int i = 0; i < points.getGroups().size(); i++){
         //for each point of each group
