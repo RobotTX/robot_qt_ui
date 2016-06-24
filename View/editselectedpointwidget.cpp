@@ -8,13 +8,22 @@
 #include <QMainWindow>
 #include <QLineEdit>
 #include <QDebug>
+#include "Model/group.h"
+#include <QComboBox>
 
 EditSelectedPointWidget::EditSelectedPointWidget(QMainWindow* _parent, PointsView* _points){
     parent = _parent;
     points = _points;
 
-    groupMenu = new GroupMenu(points->getPoints(), true);
-    groupMenu->displayReverse();
+    //groupMenu = new GroupMenu(points->getPoints(), true);
+    //groupMenu->displayReverse();
+    groupBox = new QComboBox(this);
+    /// to insert the groups in the box
+    for(int i = 0; i < points->getPoints().count(); i++){
+        groupBox->insertItem(points->getPoints().count()-1-i, points->getPoints().getGroups().at(i)->getName());
+    }
+    /// to set the default group as default
+    groupBox->setCurrentIndex(0);
 
     layout = new QVBoxLayout();
     nameEdit = new QLineEdit(_parent);
@@ -31,14 +40,17 @@ EditSelectedPointWidget::EditSelectedPointWidget(QMainWindow* _parent, PointsVie
 
     saveBtn = new QPushButton("Save");
 
-    //grid->addWidget(cancelBtn);
     grid->addWidget(saveBtn);
 
-    layout->addWidget(groupMenu);
+    //layout->addWidget(groupMenu);
+    layout->addWidget(groupBox);
     layout->addLayout(grid);
 
     connect(saveBtn, SIGNAL(clicked()), this, SLOT(saveEditSelecPointBtnEvent()));
     connect(nameEdit, SIGNAL(textEdited(QString)), this, SLOT(checkPointName()));
+
+    connect(groupBox, SIGNAL(activated(int)), this, SLOT(print(int)));
+    qDebug() << groupBox->currentIndex();
 
     hide();
     setMaximumWidth(_parent->width()*4/10);
@@ -56,7 +68,8 @@ EditSelectedPointWidget::~EditSelectedPointWidget(){
     delete points;
     delete saveBtn;
     delete parent;
-    delete groupMenu;
+    delete groupBox;
+    //delete groupMenu;
 }
 
 void EditSelectedPointWidget::setSelectedPoint(PointView * const &_pointView, const bool isTemporary){
@@ -76,18 +89,26 @@ void EditSelectedPointWidget::saveEditSelecPointBtnEvent(){
     emit pointSaved();
 }
 
-void EditSelectedPointWidget::checkPointName(void){
+void EditSelectedPointWidget::checkPointName(void) const {
     qDebug() << "checkPointName called";
-    /*if((group->existPointName(nameEdit->text()) || nameEdit->text() == "") && nameEdit->text() != pointView->getPoint()->name()){
-        saveBtn->setEnabled(false);
-        qDebug() << "Save btn not enabled : " << nameEdit->text() << "already exist";
-    } else {
-        saveBtn->setEnabled(true);
-        qDebug() << "Save btn enabled";
-    }*/
+    for(int i = 0; i < points->getPoints().count(); i++){
+        std::shared_ptr<Group> group = points->getPoints().getGroups().at(i);
+        for(int j = 0; j < group->count(); j++){
+            if(!nameEdit->text().compare(group->getPoints().at(j)->getName())){
+                qDebug() << nameEdit->text() << " already exists";
+                saveBtn->setEnabled(false);
+                saveBtn->setToolTip("A point with this name already exists, please choose another name for your point.");
+                return;
+            }
+        }
+    }
+    saveBtn->setEnabled(true);
 }
 
 void EditSelectedPointWidget::updateGroupMenu(const Points& points){
-    groupMenu->updateList(points);
+    //groupMenu->updateList(points);
 }
 
+void EditSelectedPointWidget::print(int id) const {
+    qDebug() << "id " << id;
+}

@@ -31,7 +31,7 @@ LeftMenu::LeftMenu(QMainWindow* parent, Points const& points, const std::shared_
     //closeBtn->setStyleSheet("QPushButton { padding: 5px;}");
     //closeBtn->setFocusPolicy(Qt::FocusPolicy::NoFocus);
     leftLayout->addWidget(closeBtn);
-    connect(closeBtn, SIGNAL(clicked()), this, SLOT(closeSlot()));
+    connect(closeBtn, SIGNAL(clicked()), parent, SLOT(closeSlot()));
 
     /// to display the information relative to a point
     displaySelectedPoint = new DisplaySelectedPoint(parent, points);
@@ -133,8 +133,4 @@ LeftMenu::~LeftMenu(){
 
 void LeftMenu::updateGroupDisplayed(const Points& _points, const int groupIndex){
     displaySelectedGroup->getPointButtonGroup()->setGroup(_points, groupIndex);
-}
-
-void LeftMenu::closeSlot(){
-    hide();
 }

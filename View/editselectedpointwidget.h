@@ -9,6 +9,7 @@ class QLabel;
 class QMainWindow;
 class QHBoxLayout;
 class QLineEdit;
+class QComboBox;
 
 #include <QListWidget>
 #include "View/groupmenu.h"
@@ -27,8 +28,8 @@ public:
 
     bool isTemporary(void) const { return _isTemporary; }
     void setPoints(PointsView* const _points){ points = _points;}
-    GroupMenu* getGroupMenu(void) const { return groupMenu; }
-    int getCurrentGroupIndex(void) const { return groupMenu->getWidgetsList()->currentIndex().row(); }
+    //GroupMenu* getGroupMenu(void) const { return groupMenu; }
+    //int getCurrentGroupIndex(void) const { return groupMenu->getWidgetsList()->currentIndex().row(); }
     QLabel* getPosXLabel(void) const { return posXLabel; }
     QLabel* getPosYLabel(void) const { return posYLabel; }
     QLineEdit* getNameEdit(void) const { return nameEdit; }
@@ -46,12 +47,15 @@ private:
     QLabel* posYLabel;
     PointsView* points;
     QPushButton* saveBtn;
-    GroupMenu* groupMenu;
+    //GroupMenu* groupMenu;
+    QComboBox* groupBox;
     bool _isTemporary;
 
 private slots:
     void saveEditSelecPointBtnEvent();
-    void checkPointName(void);
+    /// check whether or not a point with the same name already exists
+    void checkPointName(void) const;
+    void print(int id) const;
 };
 
 #endif // EDITSELECTEDPOINTWIDGET_H

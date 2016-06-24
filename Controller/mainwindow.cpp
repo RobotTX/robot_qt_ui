@@ -80,6 +80,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     mapPixmapItem = new MapView(pixmap, QSize(geometry().width(), geometry().height()), pointViews, this);
     connect(mapPixmapItem, SIGNAL(addPathPointMapView(Point*)), this, SLOT(addPathPoint(Point*)));
     connect(mapPixmapItem, SIGNAL(homeSelected(PointView*, bool)), this, SLOT(homeSelected(PointView*, bool)));
+    connect(mapPixmapItem, SIGNAL(homeEdited(PointView*, bool)), this, SLOT(homeEdited(PointView*, bool)));
 
     pathPainter = new PathPainter(mapPixmapItem, pointViews);
     initializeRobots();
@@ -341,7 +342,7 @@ void MainWindow::viewPathSelectedRobot(int robotNb){
             pathPointViews.clear();
         }
 
-        for(int i = 0; i < robot->getPath().size(); i++){
+        for(size_t i = 0; i < robot->getPath().size(); i++){
             std::shared_ptr<PathPoint> pathPoint = robot->getPath().at(i);
             PointView * pointView = new PointView(std::make_shared<Point>(pathPoint->getPoint()));
             pointView->setParentItem(mapPixmapItem);
@@ -453,6 +454,8 @@ void MainWindow::checkRobotBtnEvent(){
 
 void MainWindow::cancelEditSelecRobotBtnEvent(){
     qDebug() << "cancelEditSelecRobotBtnEvent called";
+    // TODO enlever home des anciennes pv
+
     robotsLeftWidget->setEditBtnStatus(false);
     robotsLeftWidget->setCheckBtnStatus(false);
     editSelectedRobotWidget->hide();
@@ -463,20 +466,14 @@ void MainWindow::cancelEditSelecRobotBtnEvent(){
 
 void MainWindow::robotSavedEvent(){
     qDebug() << "robotSavedEvent called";
+
+    bool isOK = false;
+
     /// if the command is succesfully sent to the robot, we apply the change
     if (editSelectedRobotWidget->getWifiPwdEdit()->text() == "......")
     {
         if(selectedRobot->getRobot()->sendCommand(QString("a ") + editSelectedRobotWidget->getNameEdit()->text())){
-
-            editSelectedRobotWidget->editName();
-            robotsLeftWidget->setEditBtnStatus(false);
-            robotsLeftWidget->setCheckBtnStatus(false);
-            editSelectedRobotWidget->hide();
-            if(lastWidget != NULL){
-                lastWidget->show();
-            }
-            robotsLeftWidget->updateRobots(robots);
-            bottomLayout->updateRobot(robots->getRobotId(selectedRobot->getRobot()->getName()), selectedRobot);
+            isOK = true;
         }
     }
     else
@@ -486,20 +483,89 @@ void MainWindow::robotSavedEvent(){
               + editSelectedRobotWidget->getWifiNameEdit()->text()
               + editSelectedRobotWidget->getWifiPwdEdit()->text())){
 
-            editSelectedRobotWidget->editName();
-            robotsLeftWidget->setEditBtnStatus(false);
-            robotsLeftWidget->setCheckBtnStatus(false);
-            editSelectedRobotWidget->hide();
-            if(lastWidget != NULL){
-                lastWidget->show();
+            isOK=true;
+        }
+    }
+
+    if (isOK){
+/*
+        editSelectedRobotWidget->editName();
+
+        // TODO only if home has changed
+        PointView* pointView = editSelectedRobotWidget->getHome();
+
+        int ret = openConfirmMessage("Do you really want to set the point " + pointView->getPoint()->getName() +
+                                     + " (" + QString::number(pointView->getPoint()->getPosition().getX(),'f', 1) + ","
+                                     + QString::number(pointView->getPoint()->getPosition().getY(),'f', 1) + ") as the home for "
+                                     + selectedRobot->getRobot()->getName() +" ?");
+
+        switch(ret){
+            case QMessageBox::Cancel :
+                pointsLeftWidget->getMinusButton()->setChecked(false);
+                if(editSelectedRobotWidget->isTemporaryHome()){
+                    delete pointView;
+                }
+            break;
+            case QMessageBox::Ok : {
+
+                bool done = false;
+                if(editSelectedRobotWidget->isTemporaryHome()){
+                    qDebug() << "Tmp point";
+                    if(points.count() > 0 && pointViews->getGroups().size() > 0){
+                        pointView->getPoint()->setHome(true, selectedRobot->getRobot()->getName());
+                        points.getGroups().at(points.count()-1)->addPoint(pointView->getPoint());
+                        XMLParser parserPoints(XML_PATH);
+                        parserPoints.save(points);
+
+                        pointViews->setPoints(points);
+                        pointViews->getGroups().at(pointViews->getGroups().size()-1)->addPointView(pointView);
+                        done = true;
+                    }
+                } else {
+                    qDebug() << "Permanent point";
+                    if(pointView->getPoint()->setHome(true, selectedRobot->getRobot()->getName())){
+                        done = true;
+                    } else {
+                        setMessageTop(TEXT_COLOR_DANGER, "Sorry, this point is already a home\nPlease select another");
+                    }
+                }
+
+                pointsLeftWidget->updateGroupButtonGroup(points);
+
+                if(done){
+                    setMessageTop(TEXT_COLOR_SUCCESS, selectedRobot->getRobot()->getName() + " now has a new home");
+
+                    if(selectedRobot->getRobot()->getHome() != NULL)
+                        selectedRobot->getRobot()->getHome()->setHome(false, "");
+
+                    selectedRobot->getRobot()->setHome(editSelectedRobotWidget->getHome()->getPoint());
+                }
             }
-            robotsLeftWidget->updateRobots(robots);
-            bottomLayout->updateRobot(robots->getRobotId(selectedRobot->getRobot()->getName()), selectedRobot);
+            break;
+            default:
+            // should never be here
+                qDebug() << " dafuk ?";
+            break;
+        }
+        */
+        robotsLeftWidget->setEditBtnStatus(false);
+        robotsLeftWidget->setCheckBtnStatus(false);
+        editSelectedRobotWidget->hide();
+
+        robotsLeftWidget->updateRobots(robots);
+        bottomLayout->updateRobot(robots->getRobotId(selectedRobot->getRobot()->getName()), selectedRobot);
+
+        if(lastWidget != NULL){
+            lastWidget->show();
         }
     }
 
 
+
 }
+
+
+
 
 void MainWindow::setCheckedRobot(QAbstractButton* button, bool checked){
     qDebug() << "setCheckedRobot called" << button->text();
@@ -663,6 +729,33 @@ void MainWindow::selectHomeEvent(){
     }
 }
 
+void MainWindow::editHomeEvent(){
+    qDebug() << "editHomeEvent called";
+    if(editSelectedRobotWidget->getNameEdit()->isEnabled()){
+        qDebug() << "ok called";
+        setMessageTop(TEXT_COLOR_INFO, "Click on the map or on a point to select a home for the robot " + selectedRobot->getRobot()->getName());
+        editSelectedRobotWidget->getHomeBtn()->setText("Cancel");
+        editSelectedRobotWidget->disableAll();
+        editSelectedRobotWidget->getHomeBtn()->setEnabled(true);
+        bottomLayout->disable();
+        setGraphicItemsState(GraphicItemState::EDITING_HOME);
+        disableMenu();
+    } else {
+        qDebug() << "pas ok called";
+        setMessageTop(TEXT_COLOR_NORMAL,"");
+        if(selectedRobot->getRobot()->getHome() != NULL){
+            editSelectedRobotWidget->getHomeBtn()->setText(selectedRobot->getRobot()->getHome()->getName());
+        } else {
+            editSelectedRobotWidget->getHomeBtn()->setText("Add home");
+        }
+        editSelectedRobotWidget->enableAll();
+        bottomLayout->enable();
+        setGraphicItemsState(GraphicItemState::NO_STATE);
+        enableMenu();
+    }
+
+}
+
 void MainWindow::homeSelected(PointView* pointView, bool temporary){
     qDebug() << "homeSelected called" << pointView->getPoint()->getName();
 
@@ -719,8 +812,8 @@ void MainWindow::homeSelected(PointView* pointView, bool temporary){
                 bottomLayout->enable();
                 setGraphicItemsState(GraphicItemState::NO_STATE);
                 enableMenu();
+                hideAllWidgets();
                 selectedRobotWidget->setSelectedRobot(selectedRobot);
-                selectedRobotWidget->hide();
                 selectedRobotWidget->show();
             }
         }
@@ -730,6 +823,18 @@ void MainWindow::homeSelected(PointView* pointView, bool temporary){
             qDebug() << " dafuk ?";
         break;
     }
+}
+
+void MainWindow::homeEdited(PointView* pointView, bool temporary){
+    qDebug() << "homeEdited called" << pointView->getPoint()->getName();
+
+    editSelectedRobotWidget->setHome(pointView, temporary);
+
+    editSelectedRobotWidget->getHomeBtn()->setText(pointView->getPoint()->getName());
+    editSelectedRobotWidget->enableAll();
+    bottomLayout->enable();
+    setGraphicItemsState(GraphicItemState::NO_STATE);
+    enableMenu();
 }
 
 void MainWindow::showSelectedRobotWidgetSlot(void){
@@ -893,6 +998,11 @@ void MainWindow::setMessageTop(QString msgType, QString msg){
     topLayout->setLabel(msgType, msg);
 }
 
+void MainWindow::closeSlot(){
+    lastWidget = NULL;
+    leftMenu->hide();
+}
+
 /**********************************************************************************************************************************/
 
 //                                          POINTS
@@ -910,6 +1020,7 @@ void MainWindow::initializePoints(){
                     SIGNAL(addPointPath(PointView*)), this,
                     SLOT(addPathPoint(PointView*)));
             connect(pointViews->getGroups().at(j)->getPointViews().at(k), SIGNAL(homeSelected(PointView*, bool)), this, SLOT(homeSelected(PointView*, bool)));
+            connect(pointViews->getGroups().at(j)->getPointViews().at(k), SIGNAL(homeEdited(PointView*, bool)), this, SLOT(homeEdited(PointView*, bool)));
 
         }
     }
@@ -1140,9 +1251,9 @@ void MainWindow::cancelEditSelecPointBtnEvent(){
 */
 
 void MainWindow::pointSavedEvent(){
-    /*
-    qDebug() << "pointSavedEvent called";
 
+    qDebug() << "pointSavedEvent called";
+/*
     editSelectedPointWidget->hide();
     if(lastWidget != NULL){
         lastWidget->show();
@@ -1185,7 +1296,7 @@ void MainWindow::pointSavedEvent(){
         }
     }
     qDebug() << editSelectedPointWidget->getCurrentGroupIndex();
-    */
+*/
 }
 
 void MainWindow::displayDeleteEvent(QModelIndex index){

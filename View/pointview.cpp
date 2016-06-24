@@ -46,6 +46,8 @@ void PointView::mousePressEvent(QGraphicsSceneMouseEvent *event){
 
         } else if(state == GraphicItemState::SELECTING_HOME){
             emit homeSelected(this, false);
+        } else if(state == GraphicItemState::EDITING_HOME){
+            emit homeEdited(this, false);
         } else {
             qDebug() << "(PointView " << point->getName() << ") NO EVENT";
         }
