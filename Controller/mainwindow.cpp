@@ -472,6 +472,8 @@ void MainWindow::robotSavedEvent(){
     /// if the command is succesfully sent to the robot, we apply the change
     if (editSelectedRobotWidget->getWifiPwdEdit()->text() == "......")
     {
+        qDebug() << "edit name only";
+
         if(selectedRobot->getRobot()->sendCommand(QString("a ") + editSelectedRobotWidget->getNameEdit()->text())){
             isOK = true;
         }
