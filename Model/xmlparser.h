@@ -21,7 +21,7 @@ class XMLParser
 {
 
 public:
-    XMLParser(const QString filename, QGraphicsItem *mapPixmapItem);
+    XMLParser(const QString filename, QGraphicsItem * const &mapPixmapItem);
     ~XMLParser();
 
 public:

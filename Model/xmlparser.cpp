@@ -9,9 +9,9 @@
 #include <QXmlStreamWriter>
 #include <QDebug>
 
-XMLParser::XMLParser(const QString filename, QGraphicsItem* _parent){
+XMLParser::XMLParser(const QString filename, QGraphicsItem* const& _parent): parent(_parent)
+{
     file = new QFile(filename);
-    parent = _parent;
 }
 
 XMLParser::~XMLParser(){

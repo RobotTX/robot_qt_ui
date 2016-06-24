@@ -9,9 +9,9 @@
             <displayed>0</displayed>
         </point>
         <point>
-            <name>Ma point </name>
-            <x>201</x>
-            <y>87</y>
+            <name>Ma point</name>
+            <x>75</x>
+            <y>75</y>
             <displayed>1</displayed>
         </point>
         <point>
@@ -19,6 +19,18 @@
             <x>100</x>
             <y>100</y>
             <displayed>0</displayed>
+        </point>
+        <point>
+            <name>Home_Roboto</name>
+            <x>57</x>
+            <y>141</y>
+            <displayed>1</displayed>
+        </point>
+        <point>
+            <name>tmpPoint1</name>
+            <x>262</x>
+            <y>43</y>
+            <displayed>1</displayed>
         </point>
     </group>
     <group>
