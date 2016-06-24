@@ -16,7 +16,8 @@ GroupButtonGroup::GroupButtonGroup(const Points &_points, QWidget* parent):QWidg
 
     for(int i = 0; i < _points.getGroups().size()-1; i++){
         std::shared_ptr<Group> currentGroup = _points.getGroups().at(i);
-        QPushButton* groupButton = new QPushButton(currentGroup->getName(), this);
+        QPushButton* groupButton = new QPushButton(QIcon(":/icons/folder.png"), currentGroup->getName(), this);
+        //groupButton->setIconSize(parent->size()/50);
         groupButton->setFlat(true);
         groupButton->setStyleSheet("text-align:left");
         groupButton->setCheckable(true);

@@ -20,18 +20,6 @@
             <y>100</y>
             <displayed>0</displayed>
         </point>
-        <point>
-            <name>Home_Roboto</name>
-            <x>57</x>
-            <y>141</y>
-            <displayed>1</displayed>
-        </point>
-        <point>
-            <name>tmpPoint1</name>
-            <x>262</x>
-            <y>43</y>
-            <displayed>1</displayed>
-        </point>
     </group>
     <group>
         <name>Second group</name>
