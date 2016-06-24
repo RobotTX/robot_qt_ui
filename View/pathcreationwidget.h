@@ -10,6 +10,7 @@ class Robot;
 class QMenu;
 
 #include "Model/points.h"
+#include "Model/point.h"
 #include <QWidget>
 #include <QPushButton>
 
@@ -33,7 +34,6 @@ public:
     };
 
     PathCreationWidget(QMainWindow* parent, const Points& point);
-    ~PathCreationWidget();
 
     /**
      * @brief initialisationPathPoint

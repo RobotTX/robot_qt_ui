@@ -39,6 +39,3 @@ LeftMenuWidget::LeftMenuWidget(QMainWindow* parent):QWidget(parent){
     layout->setAlignment(Qt::AlignTop);
 }
 
-LeftMenuWidget::~LeftMenuWidget(){
-    delete layout;
-}

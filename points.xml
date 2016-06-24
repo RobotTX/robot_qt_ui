@@ -1,12 +1,60 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <points>
     <group>
-        <name>No Name</name>
+        <name>first group</name>
         <point>
-            <name>Home_Roboty</name>
-            <x>312</x>
-            <y>237</y>
-            <displayed>72</displayed>
+            <name>A</name>
+            <x>50</x>
+            <y>50</y>
+            <displayed>0</displayed>
+        </point>
+        <point>
+            <name>Ma point </name>
+            <x>201</x>
+            <y>87</y>
+            <displayed>1</displayed>
+        </point>
+        <point>
+            <name>A new point</name>
+            <x>100</x>
+            <y>100</y>
+            <displayed>0</displayed>
+        </point>
+    </group>
+    <group>
+        <name>Second group</name>
+        <point>
+            <name>Fanny</name>
+            <x>125</x>
+            <y>125</y>
+            <displayed>1</displayed>
+        </point>
+        <point>
+            <name>Michel</name>
+            <x>150</x>
+            <y>150</y>
+            <displayed>1</displayed>
+        </point>
+    </group>
+    <group>
+        <name>No group</name>
+        <point>
+            <name>Un point</name>
+            <x>150</x>
+            <y>175</y>
+            <displayed>1</displayed>
+        </point>
+        <point>
+            <name>Another point</name>
+            <x>150</x>
+            <y>200</y>
+            <displayed>0</displayed>
+        </point>
+        <point>
+            <name>A final point</name>
+            <x>150</x>
+            <y>225</y>
+            <displayed>1</displayed>
         </point>
     </group>
 </points>

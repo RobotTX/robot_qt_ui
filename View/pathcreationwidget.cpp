@@ -85,7 +85,7 @@ PathCreationWidget::PathCreationWidget(QMainWindow* parent, const Points &_point
         if(points.getGroups().at(i)->getName().compare("No group") == 0){
             for(int j = 0; j < points.getGroups().at(i)->getPoints().size(); j++){
                 QString pointName = points.getGroups().at(i)->getPoints().at(j)->getName();
-                QAction *point = pointsMenu->addAction(pointName);
+                pointsMenu->addAction(pointName);
 
                 PointInfo pointInfo;
                 pointInfo.name = pointName;
@@ -97,7 +97,7 @@ PathCreationWidget::PathCreationWidget(QMainWindow* parent, const Points &_point
             QMenu *group = pointsMenu->addMenu("&" + points.getGroups().at(i)->getName());
             for(int j = 0; j < points.getGroups().at(i)->getPoints().size(); j++){
                 QString pointName = points.getGroups().at(i)->getPoints().at(j)->getName();
-                QAction *point = group->addAction(pointName);
+                group->addAction(pointName);
 
                 PointInfo pointInfo;
                 pointInfo.name = pointName;
@@ -131,17 +131,6 @@ PathCreationWidget::PathCreationWidget(QMainWindow* parent, const Points &_point
 
     hide();
     layout->setAlignment(Qt::AlignTop);
-}
-
-PathCreationWidget::~PathCreationWidget(){
-    delete layout;
-    delete pathPointsList;
-    delete newBtn;
-    delete supprBtn;
-    delete editBtn;
-    delete previousItem;
-    delete editedPathPointCreationWidget;
-    delete pointsMenu;
 }
 
 void PathCreationWidget::addPathPoint(void){

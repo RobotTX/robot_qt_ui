@@ -24,7 +24,6 @@ class PointsLeftWidget: public QWidget{
 
 public:
     PointsLeftWidget(QMainWindow* parent, Points const& points, bool _groupDisplayed = true);
-    ~PointsLeftWidget();
 
     bool getGroupDisplayed(void) const { return groupDisplayed; }
     void setGroupDisplayed(const bool _groupDisplayed) { groupDisplayed = _groupDisplayed; }

@@ -26,12 +26,6 @@ PointButtonGroup::PointButtonGroup(const Points &_points, const unsigned int gro
     }
 }
 
-PointButtonGroup::~PointButtonGroup(){
-    deleteButtons();
-    delete layout;
-    delete buttonGroup;
-}
-
 void PointButtonGroup::setGroup(const Points &_points, const int groupIndex){
     deleteButtons();
     std::shared_ptr<Group> currentGroup = _points.getGroups().at(groupIndex);

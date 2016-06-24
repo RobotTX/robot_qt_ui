@@ -12,7 +12,6 @@ class SpaceWidget : public QWidget{
 public:
     enum SpaceOrientation {VERTICAL, HORIZONTAL};
     SpaceWidget(const SpaceOrientation orientation, QWidget *parent);
-    ~SpaceWidget();
 
     /**
      * @brief setColor

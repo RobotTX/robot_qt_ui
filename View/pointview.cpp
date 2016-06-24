@@ -6,8 +6,8 @@
 #include <QMouseEvent>
 
 
-PointView::PointView(std::shared_ptr<Point> _point) :
-  QGraphicsPixmapItem(QPixmap(PIXMAP_NORMAL)),
+PointView::PointView(std::shared_ptr<Point> _point, QGraphicsItem* parent) :
+  QGraphicsPixmapItem(QPixmap(PIXMAP_NORMAL), parent),
   state(GraphicItemState::NO_STATE){
     setScale(SCALE);
     point = _point;

@@ -15,7 +15,6 @@ class QLabel;
 class PathWidget: public QWidget{
 public:
     PathWidget(QWidget* parent);
-    ~PathWidget();
 
     void setSelectedRobot(RobotView * const robotView);
 

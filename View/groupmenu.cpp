@@ -41,11 +41,6 @@ GroupMenu::GroupMenu(const Points& points, bool _editPoint, QWidget* parent): QW
     layout->addWidget(widgetsList);
 }
 
-GroupMenu::~GroupMenu(){
-    delete layout;
-    delete widgetsList;
-}
-
 void GroupMenu::updateList(const Points& points){
     widgetsList->clear();
 

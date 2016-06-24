@@ -108,21 +108,6 @@ SelectedRobotWidget::SelectedRobotWidget(QMainWindow* parent):QWidget(parent){
     layout->setAlignment(Qt::AlignTop);
 }
 
-SelectedRobotWidget::~SelectedRobotWidget(){
-    delete layout;
-    delete batteryLevel;
-    delete backBtn;
-    delete wifiNameLabel;
-    delete addPathBtn;
-    delete ipAddressLabel;
-    delete homeBtn;
-    delete pathWidget;
-    delete scrollArea;
-    delete robotView;
-    delete scanBtn;
-    delete editBtn;
-}
-
 void SelectedRobotWidget::setSelectedRobot(RobotView* const& _robotView){
     /// We update all the informations
     robotView = _robotView;

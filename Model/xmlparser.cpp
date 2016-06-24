@@ -9,8 +9,9 @@
 #include <QXmlStreamWriter>
 #include <QDebug>
 
-XMLParser::XMLParser(const QString filename){
+XMLParser::XMLParser(const QString filename, QGraphicsItem* _parent){
     file = new QFile(filename);
+    parent = _parent;
 }
 
 XMLParser::~XMLParser(){
@@ -89,7 +90,7 @@ QVector<QString> XMLParser::readRobots(Robots& robots){
                             }
                             else if(xmlReader.name() == "IP"){
                                 robot->setIp(readIPElement(xmlReader));
-                                robots.add(new RobotView(robot));
+                                robots.add(new RobotView(robot, parent));
                             }
 
                             xmlReader.readNext();

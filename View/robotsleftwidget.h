@@ -20,7 +20,6 @@ class QMainWindow;
 class RobotsLeftWidget: public QWidget{
 public:
     RobotsLeftWidget(QMainWindow* parent);
-    ~RobotsLeftWidget();
 
     /// Getters
     bool getEditBtnStatus(void) const { return editBtn->isChecked(); }

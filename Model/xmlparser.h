@@ -7,6 +7,7 @@ class QFile;
 class QXmlStreamReader;
 
 #include <QVector>
+#include <QGraphicsItem>
 
 
 /**
@@ -20,7 +21,7 @@ class XMLParser
 {
 
 public:
-    XMLParser(const QString filename);
+    XMLParser(const QString filename, QGraphicsItem *mapPixmapItem);
     ~XMLParser();
 
 public:
@@ -88,6 +89,7 @@ public:
 private:
     /// a pointer to the file that will be opened in order to retrieve or save the model
     QFile* file;
+    QGraphicsItem* parent;
 };
 
 #endif // XMLPARSER_H

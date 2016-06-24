@@ -67,21 +67,6 @@ DisplaySelectedGroup::DisplaySelectedGroup(QMainWindow *parent, const Points& _p
     scrollArea->setWidget(pointButtonGroup);
 }
 
-DisplaySelectedGroup::~DisplaySelectedGroup(){
-    delete scrollArea;
-    delete pointButtonGroup;
-    delete backButton;
-    delete plusButton;
-    delete minusButton;
-    delete editButton;
-    delete mapButton;
-    delete eyeButton;
-    delete layout;
-    delete eyeMapLayout;
-    delete grid;
-    delete name;
-}
-
 void DisplaySelectedGroup::setName(const QString _name){
     name->setText(_name);
     name->setWordWrap(true);

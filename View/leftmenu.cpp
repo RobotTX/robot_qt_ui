@@ -80,7 +80,7 @@ LeftMenu::LeftMenu(QMainWindow* parent, Points const& points, const std::shared_
     /// Menu to edit the selected point
     editSelectedPointWidget = new EditSelectedPointWidget(parent, pointViews);
     leftLayout->addWidget(editSelectedPointWidget);
-    connect(editSelectedPointWidget, SIGNAL(pointSaved()), parent, SLOT(pointSavedEvent()));
+    connect(editSelectedPointWidget, SIGNAL(pointSaved(int, double, double, QString)), parent, SLOT(pointSavedEvent(int, double, double, QString)));
 
     /// Menu which display the widget for the creation of a path
     pathCreationWidget = new PathCreationWidget(parent, points);
@@ -112,23 +112,6 @@ LeftMenu::LeftMenu(QMainWindow* parent, Points const& points, const std::shared_
     setMinimumWidth(parent->width()*4/10);
     leftLayout->setAlignment(Qt::AlignTop);
     leftLayout->setAlignment(closeBtn, Qt::AlignTop | Qt::AlignRight);
-}
-
-
-LeftMenu::~LeftMenu(){
-    delete leftLayout;
-    delete lastWidget;
-    delete leftMenuWidget;
-    delete pointsLeftWidget;
-    delete selectedRobotWidget;
-    delete robotsLeftWidget;
-    delete mapLeftWidget;
-    delete editSelectedRobotWidget;
-    delete selectedPointWidget;
-    delete editSelectedPointWidget;
-    delete displaySelectedPoint;
-    delete displaySelectedGroup;
-    delete pathCreationWidget;
 }
 
 void LeftMenu::updateGroupDisplayed(const Points& _points, const int groupIndex){

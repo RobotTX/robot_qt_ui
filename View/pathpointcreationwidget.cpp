@@ -59,16 +59,6 @@ PathPointCreationWidget::PathPointCreationWidget(const int _id, const Points& _p
     layout->setAlignment(Qt::AlignTop);
 }
 
-PathPointCreationWidget::~PathPointCreationWidget(){
-    delete layout;
-    delete pointLabel;
-    delete actionBtn;
-    delete saveEditBtn;
-    delete timeEdit;
-    delete timeWidget;
-    delete actionWidget;
-}
-
 void PathPointCreationWidget::setName(const QString _name){
     name = _name;
     point.setName(name);

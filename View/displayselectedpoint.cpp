@@ -98,29 +98,9 @@ DisplaySelectedPoint::DisplaySelectedPoint(QMainWindow *_parent, Points const& _
     connect(nameEdit, SIGNAL(textEdited(QString)), this, SLOT(checkPointName()));
 }
 
-DisplaySelectedPoint::~DisplaySelectedPoint(){
-    delete nameEdit;
-    delete nameLayout;
-    delete editLayout;
-    delete posXLabel;
-    delete posYLabel;
-    delete layout;
-    delete eyeMapLayout;
-    delete grid;
-    delete backButton;
-    delete plusButton;
-    delete minusButton;
-    delete mapButton;
-    delete eyeButton;
-    delete editButton;
-    delete saveButton;
-    delete cancelButton;
-    delete parent;
-}
-
 void DisplaySelectedPoint::displayPointInfo(void){
-    posXLabel->setText("X : " + QString::number(pointView->getPoint()->getPosition().getX()));
-    posYLabel->setText("Y : " + QString::number(pointView->getPoint()->getPosition().getY()));
+    posXLabel->setText("X : " + QString::number(pointView->getPoint()->getPosition().getX(), 'f', 1));
+    posYLabel->setText("Y : " + QString::number(pointView->getPoint()->getPosition().getY(), 'f', 1));
     nameEdit->setText(pointView->getPoint()->getName());
 }
 

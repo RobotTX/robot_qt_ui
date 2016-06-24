@@ -2,11 +2,11 @@
 #define TOPLAYOUT_H
 
 class QHBoxLayout;
-class QMainWindow;
 class QLabel;
 class QPushButton;
 
 #include <QWidget>
+#include <QMainWindow>
 
 #define TEXT_COLOR_NORMAL "#333333"
 #define TEXT_COLOR_INFO "#31708f"
@@ -15,9 +15,9 @@ class QPushButton;
 #define TEXT_COLOR_DANGER "#a94442"
 
 class TopLayout : public QWidget{
+    Q_OBJECT
 public:
     TopLayout(QMainWindow* parent);
-    ~TopLayout();
     void setLabel(QString msgType, QString msg);
     void disable();
     void enable();

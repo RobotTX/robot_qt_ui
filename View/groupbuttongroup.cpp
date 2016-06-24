@@ -42,12 +42,6 @@ GroupButtonGroup::GroupButtonGroup(const Points &_points, QWidget* parent):QWidg
     }
 }
 
-GroupButtonGroup::~GroupButtonGroup(){
-    deleteButtons();
-    delete layout;
-    delete buttonGroup;
-}
-
 void GroupButtonGroup::deleteButtons(void){
     while(QLayoutItem* item = layout->takeAt(0)){
         if(QWidget* button = item->widget())

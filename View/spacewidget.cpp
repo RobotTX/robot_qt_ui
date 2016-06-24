@@ -17,10 +17,6 @@ SpaceWidget::SpaceWidget(const SpaceOrientation orientation, QWidget* parent) : 
     layout->addWidget(spaceFrame);
 }
 
-SpaceWidget::~SpaceWidget(){
-    delete spaceFrame;
-}
-
 void SpaceWidget::setColor(const QString color){
     spaceFrame->setStyleSheet("QFrame {color: " + color + "}");
 }
