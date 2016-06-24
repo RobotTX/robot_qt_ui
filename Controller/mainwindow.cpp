@@ -1120,7 +1120,8 @@ void MainWindow::minusGroupBtnEvent(){
 }
 
 void MainWindow::editPointButtonEvent(bool checked){
-
+    /// change the color of the pointview that's selected on the map
+    leftMenu->getDisplaySelectedPoint()->getPointView()->setPixmap(PointView::PixmapType::HOVER);
     /// uncheck the other buttons
     pointsLeftWidget->getPlusButton()->setChecked(false);
     pointsLeftWidget->getMinusButton()->setChecked(false);
@@ -1794,6 +1795,8 @@ void MainWindow::displayPointInfoFromGroupMenu(void){
 }
 
 void MainWindow::updatePoint(void){
+    /// reset the color of the pointView
+    leftMenu->getDisplaySelectedPoint()->getPointView()->setPixmap(PointView::PixmapType::NORMAL);
     emit nameChanged(leftMenu->getDisplaySelectedPoint()->getPoint()->getName(), leftMenu->getDisplaySelectedPoint()->getNameEdit()->text());
     DisplaySelectedPoint* selectedPoint = leftMenu->getDisplaySelectedPoint();
     selectedPoint->getPoint()->setName(leftMenu->getDisplaySelectedPoint()->getNameEdit()->text());
@@ -1837,6 +1840,8 @@ void MainWindow::updatePoint(void){
 }
 
 void MainWindow::cancelEvent(void){
+    /// reset the color of the pointView
+    leftMenu->getDisplaySelectedPoint()->getPointView()->setPixmap(PointView::PixmapType::NORMAL);
     /// to change the aspect of the point name
     leftMenu->getDisplaySelectedPoint()->getNameEdit()->setAutoFillBackground(true);
     leftMenu->getDisplaySelectedPoint()->getNameEdit()->setFrame(false);

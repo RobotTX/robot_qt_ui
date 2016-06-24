@@ -133,8 +133,8 @@ void EditSelectedPointWidget::setSelectedPoint(PointView * const &_pointView, co
     _isTemporary = isTemporary;
     pointView = _pointView;
     nameEdit->setText(pointView->getPoint()->getName());
-    posXLabel->setText("X : " + QString::number(pointView->getPoint()->getPosition().getX()));
-    posYLabel->setText("Y : " + QString::number(pointView->getPoint()->getPosition().getY()));
+    posXLabel->setText("X : " + QString::number(pointView->getPoint()->getPosition().getX(), 'f', 1));
+    posYLabel->setText("Y : " + QString::number(pointView->getPoint()->getPosition().getY(), 'f', 1));
 }
 
 void EditSelectedPointWidget::saveEditSelecPointBtnEvent(){

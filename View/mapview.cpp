@@ -32,6 +32,8 @@ MapView::MapView (const QPixmap& pixmap, const QSize _size, QMainWindow* _mainWi
     connect(tmpPointView, SIGNAL(homeEdited(PointView*, bool)), mainWindow, SLOT(homeEdited(PointView*, bool)));
     point = static_cast<QSharedPointer<PointView>>(tmpPointView);
 
+    tmpPointView->hide();
+
 }
 
 MapView::~MapView(){
