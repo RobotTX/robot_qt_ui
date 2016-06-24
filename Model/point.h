@@ -40,6 +40,7 @@ public:
     /// by default a point it set to be permanent
     Point(const QString name, const double x, const double y, const bool permanent = true);
     Point(const QString name, const Position position, const bool _displayed = false, const bool permanent = true);
+    Point(const QString _name, const double x, const double y, const bool _displayed, const bool _permanent);
 
     Position getPosition(void) const { return position; }
 

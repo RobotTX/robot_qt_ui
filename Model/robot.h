@@ -20,7 +20,6 @@ class Robot{
 public:
     Robot(const QString name, const QString addressIp, const int port, QMainWindow* parent);
     Robot();
-    ~Robot();
 
     /// Getters
     Position getPosition(void) const { return position; }

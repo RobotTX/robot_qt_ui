@@ -32,6 +32,7 @@ public:
     QVector<PointView*> getPathCreationPoints(void) const { return pathCreationPoints; }
     PointView* getTmpPointView(void) const { return tmpPointView; }
     GraphicItemState getState(void) const { return state; }
+    PointsView* getPermanentPoints(void) const { return permanentPoints; }
 
     /// Setter
     void setPoint(const QSharedPointer<PointView> _point) { point = _point; }
@@ -40,8 +41,9 @@ public:
     void setPermanentPoints(PointsView* pointsView);
 
     void addPathPoint(PointView* pointView);
-    void updatePoints(const Points& points);
     void clearPointViews();
+    void addPointView(PointView * const &_pointView);
+    void updatePoints(const Points& points);
 
 signals:
     void pointLeftClicked(PointView*, bool);

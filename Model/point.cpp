@@ -6,9 +6,13 @@
 Point::Point(void): name(""), position(Position(0.0, 0.0)), permanent(true), home(false){
 }
 
-Point::Point(const QString name, const double x, const double y, const bool permanent):
-    name(name), position(Position(x, y)), permanent(permanent), home(false) {
+Point::Point(const QString name, const double x, const double y, const bool _permanent):
+    name(name), position(Position(x, y)), permanent(_permanent), home(false) {
 }
+
+Point::Point(const QString _name, const double x, const double y, const bool _displayed, const bool _permanent):
+    name(_name), position(Position(x, y)), displayed(_displayed), permanent(_permanent)
+{}
 
 Point::Point(const QString name, const Position position, const bool _displayed, const bool _permanent) : name(name), position(position), displayed(_displayed), permanent(_permanent), home(false){
 }

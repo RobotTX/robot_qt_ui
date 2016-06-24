@@ -19,7 +19,6 @@ MapView::MapView (const QPixmap& pixmap, const QSize _size, QMainWindow* _mainWi
     /// To drag & drop the map
     setFlag(QGraphicsItem::ItemIsMovable);
 
-
     /// Temporary point icon
     Point tmpPoint("tmpPoint", 0.0, 0.0, false);
 
@@ -208,4 +207,12 @@ void MapView::setState(const GraphicItemState _state, const bool clear){
              connect(&(*currentPointView), SIGNAL(editedPointPositionChanged(double, double)), mainWindow, SLOT(updateCoordinates(double, double)));
          }
      }
+ }
+
+ void MapView::addPointView(PointView* const& _pointView){
+     _pointView->setParentItem(this);
+     connect(_pointView, SIGNAL(pointLeftClicked(PointView*)), mainWindow, SLOT(displayPointEvent(PointView*)));
+     /// to update the coordinates of the point displayed on the left when a user drags a point to change its position
+     connect(_pointView, SIGNAL(editedPointPositionChanged(double, double)), mainWindow, SLOT(updateCoordinates(double, double)));
+     permanentPoints->addPointView(_pointView);
  }

@@ -108,7 +108,7 @@ private slots:
     void minusSelecPointBtnEvent();
     void editSelecPointBtnEvent();
     void setSelectedPoint(PointView* pointView, bool isTemporary);
-    void pointSavedEvent();
+    void pointSavedEvent(int index, double x, double y, QString name);
     void selectHomeEvent();
     void displayDeleteEvent(QModelIndex index);
     void backToGroupsButtonEvent(void);
