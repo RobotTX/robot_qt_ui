@@ -64,7 +64,10 @@ EditSelectedPointWidget::EditSelectedPointWidget(QMainWindow* _parent, PointsVie
 
     nameEdit = new QLineEdit(this);
     nameEdit->setStyleSheet ("text-align: left");
-    nameEdit->setEnabled(false);
+    nameEdit->setReadOnly(true);
+    nameEdit->setStyleSheet("* { background-color: rgba(255, 0, 0, 0); }");
+    nameEdit->setAutoFillBackground(true);
+    nameEdit->setFrame(false);
     layout->addWidget(nameEdit);
 
     posXLabel = new QLabel("X : ", this);
@@ -193,7 +196,9 @@ void EditSelectedPointWidget::showGroupLayout() const {
     cancelBtn->show();
     plusButton->setEnabled(false);
     plusButton->setToolTip("");
-    nameEdit->setEnabled(true);
+    nameEdit->setReadOnly(false);
+    nameEdit->setAutoFillBackground(false);
+    nameEdit->setFrame(true);
 }
 
 void EditSelectedPointWidget::hideGroupLayout() const {
@@ -203,5 +208,7 @@ void EditSelectedPointWidget::hideGroupLayout() const {
     cancelBtn->hide();
     plusButton->setEnabled(true);
     plusButton->setToolTip("Click this button if you want to save this point permanently");
-    nameEdit->setEnabled(false);
+    nameEdit->setReadOnly(true);
+    nameEdit->setAutoFillBackground(true);
+    nameEdit->setFrame(false);
 }

@@ -20,6 +20,12 @@
             <y>100</y>
             <displayed>0</displayed>
         </point>
+        <point>
+            <name>tmp</name>
+            <x>73</x>
+            <y>130</y>
+            <displayed>1</displayed>
+        </point>
     </group>
     <group>
         <name>Second group</name>
@@ -33,12 +39,6 @@
             <name>Michel</name>
             <x>150</x>
             <y>150</y>
-            <displayed>1</displayed>
-        </point>
-        <point>
-            <name>tmpPoint1</name>
-            <x>38</x>
-            <y>112</y>
             <displayed>1</displayed>
         </point>
     </group>
