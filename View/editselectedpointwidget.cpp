@@ -85,6 +85,8 @@ void EditSelectedPointWidget::checkPointName(void) const {
             if(!nameEdit->text().compare(group->getPoints().at(j)->getName())){
                 qDebug() << nameEdit->text() << " already exists";
                 saveBtn->setEnabled(false);
+                saveBtn->setToolTip("A point with this name already exists, please choose another name for your point.");
+                return;
             }
         }
     }

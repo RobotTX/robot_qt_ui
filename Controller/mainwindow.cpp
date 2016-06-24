@@ -37,8 +37,8 @@
 #include <QVBoxLayout>
 #include <QAbstractButton>
 
-#define XML_PATH "/home/m-a/Documents/QtProject/gobot-software/points.xml"
-//#define XML_PATH "/home/joan/Qt/QtProjects/gobot-software/points.xml"
+//#define XML_PATH "/home/m-a/Documents/QtProject/gobot-software/points.xml"
+#define XML_PATH "/home/joan/Qt/QtProjects/gobot-software/points.xml"
 
 //TODO  stop threads/connections when scanning the map is finished/the user stop it
 
@@ -342,7 +342,7 @@ void MainWindow::viewPathSelectedRobot(int robotNb){
             pathPointViews.clear();
         }
 
-        for(int i = 0; i < robot->getPath().size(); i++){
+        for(size_t i = 0; i < robot->getPath().size(); i++){
             std::shared_ptr<PathPoint> pathPoint = robot->getPath().at(i);
             PointView * pointView = new PointView(std::make_shared<Point>(pathPoint->getPoint()));
             pointView->setParentItem(mapPixmapItem);
@@ -1226,9 +1226,9 @@ void MainWindow::cancelEditSelecPointBtnEvent(){
 */
 
 void MainWindow::pointSavedEvent(){
-    /*
-    qDebug() << "pointSavedEvent called";
 
+    qDebug() << "pointSavedEvent called";
+/*
     editSelectedPointWidget->hide();
     if(lastWidget != NULL){
         lastWidget->show();
@@ -1271,7 +1271,7 @@ void MainWindow::pointSavedEvent(){
         }
     }
     qDebug() << editSelectedPointWidget->getCurrentGroupIndex();
-    */
+*/
 }
 
 void MainWindow::displayDeleteEvent(QModelIndex index){
