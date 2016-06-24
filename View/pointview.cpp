@@ -4,7 +4,6 @@
 #include <QDebug>
 #include <QPixmap>
 #include <QMouseEvent>
-#include "View/mapview.h"
 
 
 PointView::PointView(std::shared_ptr<Point> _point) :

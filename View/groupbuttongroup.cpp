@@ -6,17 +6,17 @@
 #include <QPushButton>
 #include <QDebug>
 
-GroupButtonGroup::GroupButtonGroup(const Points &_points)
+GroupButtonGroup::GroupButtonGroup(const Points &_points, QWidget* parent):QWidget(parent)
 {
-    buttonGroup = new QButtonGroup();
+    buttonGroup = new QButtonGroup(this);
     buttonGroup->setExclusive(true);
 
-    layout = new QVBoxLayout();
+    layout = new QVBoxLayout(this);
     layout->setAlignment(Qt::AlignTop);
 
     for(int i = 0; i < _points.getGroups().size()-1; i++){
         std::shared_ptr<Group> currentGroup = _points.getGroups().at(i);
-        QPushButton* groupButton = new QPushButton(currentGroup->getName());
+        QPushButton* groupButton = new QPushButton(currentGroup->getName(), this);
         groupButton->setFlat(true);
         groupButton->setStyleSheet("text-align:left");
         groupButton->setCheckable(true);
@@ -31,7 +31,7 @@ GroupButtonGroup::GroupButtonGroup(const Points &_points)
         std::shared_ptr<Point> currentPoint = _points.getGroups().at(_points.getGroups().size()-1)->getPoints().at(i);
         QPushButton* pointButton = new QPushButton(currentPoint->getName()
                                                    + " (" + QString::number(currentPoint->getPosition().getX())
-                                                   + ", " + QString::number(currentPoint->getPosition().getY()) + ")");
+                                                   + ", " + QString::number(currentPoint->getPosition().getY()) + ")", this);
         pointButton->setFlat(true);
         pointButton->setStyleSheet("text-align:left");
         pointButton->setCheckable(true);
@@ -40,8 +40,6 @@ GroupButtonGroup::GroupButtonGroup(const Points &_points)
         if(currentPoint->isDisplayed())
             pointButton->setIcon(QIcon(":/icons/tick.png"));
     }
-
-    setLayout(layout);
 }
 
 GroupButtonGroup::~GroupButtonGroup(){
@@ -49,8 +47,6 @@ GroupButtonGroup::~GroupButtonGroup(){
     delete layout;
     delete buttonGroup;
 }
-
-
 
 void GroupButtonGroup::deleteButtons(void){
     while(QLayoutItem* item = layout->takeAt(0)){
@@ -63,7 +59,7 @@ void GroupButtonGroup::update(const Points& _points){
     deleteButtons();
     for(int i = 0; i < _points.getGroups().size()-1; i++){
         std::shared_ptr<Group> currentGroup = _points.getGroups().at(i);
-        QPushButton* groupButton = new QPushButton(currentGroup->getName());
+        QPushButton* groupButton = new QPushButton(currentGroup->getName(), this);
         groupButton->setFlat(true);
         groupButton->setStyleSheet("text-align:left");
         groupButton->setCheckable(true);
@@ -77,7 +73,7 @@ void GroupButtonGroup::update(const Points& _points){
             std::shared_ptr<Point> currentPoint = _points.getGroups().at(_points.getGroups().size()-1)->getPoints().at(i);
             QPushButton* pointButton = new QPushButton(currentPoint->getName()
                                                        + " (" + QString::number(currentPoint->getPosition().getX())
-                                                       + ", " + QString::number(currentPoint->getPosition().getY()) + ")");
+                                                       + ", " + QString::number(currentPoint->getPosition().getY()) + ")", this);
             pointButton->setFlat(true);
             pointButton->setStyleSheet("text-align:left");
             pointButton->setCheckable(true);

@@ -3,6 +3,7 @@
 
 class Robot;
 class QGraphicsSceneMouseEvent;
+class MapView;
 
 #include <memory>
 #include "Model/position.h"

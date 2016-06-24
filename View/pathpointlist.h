@@ -12,7 +12,7 @@ class PathPointList : public QListWidget{
     Q_OBJECT
 
 public:
-    PathPointList();
+    PathPointList(QWidget *parent);
 
     void refresh(void);
 

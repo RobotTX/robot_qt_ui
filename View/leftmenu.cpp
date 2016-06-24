@@ -21,11 +21,11 @@
 #include <QDebug>
 #include "View/pointbuttongroup.h"
 
-LeftMenu::LeftMenu(QMainWindow* parent, Points const& points, const std::shared_ptr<Robots> &robots, PointsView * const &pointViews){
-    leftLayout = new QVBoxLayout();
+LeftMenu::LeftMenu(QMainWindow* parent, Points const& points, const std::shared_ptr<Robots> &robots, PointsView * const &pointViews):QWidget(parent){
+    leftLayout = new QVBoxLayout(this);
 
 
-    QPushButton* closeBtn = new QPushButton(QIcon(":/icons/cropped_close.png"), "");
+    QPushButton* closeBtn = new QPushButton(QIcon(":/icons/cropped_close.png"), "", this);
     closeBtn->setIconSize(parent->size()/30);
     closeBtn->setFlat(true);
     //closeBtn->setStyleSheet("QPushButton { padding: 5px;}");
@@ -112,8 +112,6 @@ LeftMenu::LeftMenu(QMainWindow* parent, Points const& points, const std::shared_
     setMinimumWidth(parent->width()*4/10);
     leftLayout->setAlignment(Qt::AlignTop);
     leftLayout->setAlignment(closeBtn, Qt::AlignTop | Qt::AlignRight);
-
-    setLayout(leftLayout);
 }
 
 

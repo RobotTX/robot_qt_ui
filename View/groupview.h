@@ -10,8 +10,7 @@ class PointView;
  * @brief The GroupView class
  * The purpose of this class is to create a View object that contains the points to display on the map
  */
-class GroupView
-{
+class GroupView{
 public:
     GroupView();
     ~GroupView();

@@ -57,7 +57,7 @@ RobotView* Robots::getRobotViewByName(const QString name){
             return robotsVector[i];
         }
     }
-    return new RobotView();
+    return new RobotView(NULL);
 }
 
 RobotView* Robots::getRobotViewByIp(const QString ip){
@@ -66,7 +66,7 @@ RobotView* Robots::getRobotViewByIp(const QString ip){
             return robotsVector[i];
         }
     }
-    return new RobotView();
+    return new RobotView(NULL);
 }
 
 void Robots::setSelected(RobotView * const robotView){

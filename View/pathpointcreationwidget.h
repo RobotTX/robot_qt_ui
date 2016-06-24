@@ -24,22 +24,12 @@ public:
      * @brief PathPointCreationWidget
      * @param id
      * @param points
-     * The construcor of the widget when we havn't selected a point yet
-     */
-
-    PathPointCreationWidget(const int id, const Points& points, QString name = "Select a point");
-
-    /**
-     * @brief PathPointCreationWidget
-     * @param id
-     * @param points
      * @param point
      * The construcor of the widget when we clicked on the map and selected a point
      */
-    PathPointCreationWidget(const int id, const Points& points, const Point& point);
+    PathPointCreationWidget(const int id, const Points& points, const Point& point, QWidget *parent);
     ~PathPointCreationWidget();
 
-    void initialisation(const int _id, const Points _points, QString _name);
 
     void displayActionWidget(const bool show);
     void displaySaveEditBtn(const bool show, const int count);

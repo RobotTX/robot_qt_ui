@@ -6,6 +6,7 @@ class QGraphicsSceneMouseEvent;
 class QMouseEvent;
 class QDropEvent;
 
+
 #include <QObject>
 #include <QGraphicsPixmapItem>
 #include <memory>

@@ -14,46 +14,46 @@
 #include "View/spacewidget.h"
 #include <QGridLayout>
 
-EditSelectedRobotWidget::EditSelectedRobotWidget(QMainWindow* parent, const std::shared_ptr<Robots> _robots){
+EditSelectedRobotWidget::EditSelectedRobotWidget(QMainWindow* parent, const std::shared_ptr<Robots> _robots):QWidget(parent){
     robots = _robots;
-    layout = new QVBoxLayout();
-   wifiLayout = new QGridLayout;
+    layout = new QVBoxLayout(this);
+    wifiLayout = new QGridLayout();
 //   QFormLayout *wifiLayout = new QFormLayout;
 
-    /// Nale editable label
-    nameEdit = new QLineEdit(parent);
+    /// Name editable label
+    nameEdit = new QLineEdit(this);
     nameEdit->setStyleSheet ("text-align: left");
     layout->addWidget(nameEdit);
 
     /// Ip address label
-    ipAddressLabel = new QLabel("Ip : ");
+    ipAddressLabel = new QLabel("Ip : ", this);
     ipAddressLabel->setWordWrap(true);
     layout->addWidget(ipAddressLabel);
 
     /// Wifi name label
 
-    wifiTitle = new QLabel("Wifi : ");
+    wifiTitle = new QLabel("Wifi : ", this);
     wifiTitle->setWordWrap(true);
     wifiTitle->setAlignment(Qt::AlignLeft);
     layout->addWidget(wifiTitle);
 
-    wifiName = new QLabel("name : ");
+    wifiName = new QLabel("name : ", this);
     wifiName->setWordWrap(true);
     wifiName->setAlignment(Qt::AlignLeft);
 
-    wifiNameEdit = new QLineEdit(parent);
+    wifiNameEdit = new QLineEdit(this);
     wifiNameEdit->setStyleSheet ("text-align: left");
     wifiNameEdit->setAlignment(Qt::AlignRight);
     wifiLayout->addWidget( wifiName, 0,0);
     wifiLayout->addWidget( wifiNameEdit, 0,1);
 
 
-    wifiPwd = new QLabel("Pwd : ");
+    wifiPwd = new QLabel("Pwd : ", this);
     wifiPwd->setWordWrap(true);
     wifiPwd->setAlignment(Qt::AlignLeft);
 
     /// Wifi password label
-    wifiPwdEdit = new QLineEdit(parent);
+    wifiPwdEdit = new QLineEdit(this);
     wifiPwdEdit->setStyleSheet ("text-align: left");
     wifiPwdEdit->setText("......");
     wifiPwdEdit->setEchoMode(QLineEdit::Password);
@@ -64,7 +64,7 @@ EditSelectedRobotWidget::EditSelectedRobotWidget(QMainWindow* parent, const std:
 
 
     /// Battery level widget
-    QLabel* batteryLabel = new QLabel("Battery Level : ");
+    QLabel* batteryLabel = new QLabel("Battery Level : ", this);
     layout->addWidget(batteryLabel);
 
     batteryLevel = new QProgressBar(this);
@@ -73,8 +73,8 @@ EditSelectedRobotWidget::EditSelectedRobotWidget(QMainWindow* parent, const std:
 
 
     /// Home layout with the button to select the home
-    QLabel* homeLabel = new QLabel("Home : ");
-    homeBtn = new QPushButton(QIcon(":/icons/home.png"), "");
+    QLabel* homeLabel = new QLabel("Home : ", this);
+    homeBtn = new QPushButton(QIcon(":/icons/home.png"), "", this);
     homeBtn->setIconSize(parent->size()/10);
     homeBtn->setStyleSheet ("text-align: left");
     connect(homeBtn, SIGNAL(clicked()), parent, SLOT(editHomeEvent()));
@@ -87,8 +87,8 @@ EditSelectedRobotWidget::EditSelectedRobotWidget(QMainWindow* parent, const std:
 
     QHBoxLayout* grid = new QHBoxLayout();
     /// Cancel & save buttons
-    QPushButton* cancelBtn = new QPushButton("Cancel");
-    saveBtn = new QPushButton("Save");
+    QPushButton* cancelBtn = new QPushButton("Cancel", this);
+    saveBtn = new QPushButton("Save", this);
 
     grid->addWidget(cancelBtn);
     grid->addWidget(saveBtn);
@@ -105,9 +105,7 @@ EditSelectedRobotWidget::EditSelectedRobotWidget(QMainWindow* parent, const std:
     hide();
     setMaximumWidth(parent->width()*4/10);
     setMinimumWidth(parent->width()*4/10);
-    layout->setAlignment(Qt::AlignTop );
-
-    setLayout(layout);
+    layout->setAlignment(Qt::AlignTop);
 }
 
 EditSelectedRobotWidget::~EditSelectedRobotWidget(){
