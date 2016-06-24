@@ -46,7 +46,7 @@
 	<file alias="green_home.png">green_home.png</file>
 	<file alias="green_red_home.png">green_red_home.png</file>
 	<file alias="orange_home.png">orange_home.png</file>
-
+        <file>folder.png</file>
         <file>tick.png</file>
     </qresource>
     <qresource prefix="/xml">

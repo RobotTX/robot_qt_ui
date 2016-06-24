@@ -192,4 +192,5 @@ void EditSelectedPointWidget::hideGroupLayout() const {
     nameEdit->setReadOnly(true);
     nameEdit->setAutoFillBackground(true);
     nameEdit->setFrame(false);
+    nameEdit->setFocusPolicy(Qt::FocusPolicy::NoFocus);
 }
