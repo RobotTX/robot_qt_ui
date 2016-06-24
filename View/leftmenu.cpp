@@ -78,7 +78,7 @@ LeftMenu::LeftMenu(QMainWindow* parent, Points const& points, const std::shared_
     /// Menu to edit the selected point
     editSelectedPointWidget = new EditSelectedPointWidget(parent, pointViews);
     leftLayout->addWidget(editSelectedPointWidget);
-    connect(editSelectedPointWidget, SIGNAL(pointSaved()), parent, SLOT(pointSavedEvent()));
+    connect(editSelectedPointWidget, SIGNAL(pointSaved(int, double, double, QString)), parent, SLOT(pointSavedEvent(int, double, double, QString)));
 
     /// Menu which display the widget for the creation of a path
     pathCreationWidget = new PathCreationWidget(parent, points);

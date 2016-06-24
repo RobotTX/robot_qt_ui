@@ -9,7 +9,7 @@
             <displayed>0</displayed>
         </point>
         <point>
-            <name>A final poin</name>
+            <name>Ma point</name>
             <x>75</x>
             <y>75</y>
             <displayed>1</displayed>
@@ -54,6 +54,12 @@
             <name>A final point</name>
             <x>150</x>
             <y>225</y>
+            <displayed>1</displayed>
+        </point>
+        <point>
+            <name>tmpPoint</name>
+            <x>77</x>
+            <y>164</y>
             <displayed>1</displayed>
         </point>
     </group>

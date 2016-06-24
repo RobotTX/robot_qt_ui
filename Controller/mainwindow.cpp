@@ -1225,53 +1225,21 @@ void MainWindow::cancelEditSelecPointBtnEvent(){
 }
 */
 
-void MainWindow::pointSavedEvent(){
+void MainWindow::pointSavedEvent(int index, double x, double y, QString name){
 
     qDebug() << "pointSavedEvent called";
-/*
-    editSelectedPointWidget->hide();
-    if(lastWidget != NULL){
-        lastWidget->show();
-    }
-    // inform the user that a group must be chosen
-    if(editSelectedPointWidget->getCurrentGroupIndex() == -1){
-        QMessageBox messageBox;
-        messageBox.setText("You have to choose a group for the point that you want to create");
-        messageBox.setInformativeText("To do so, simply click on one of the groups of the list");
-        messageBox.setStandardButtons(QMessageBox::Ok);
-        messageBox.setIcon(QMessageBox::Information);
-        messageBox.exec();
-    } else {
-        qDebug() << editSelectedPointWidget->getCurrentGroupIndex();
-        qDebug() << points.count();
-        if(points.getGroups().at(points.count()-editSelectedPointWidget->getCurrentGroupIndex()-1)->
-                addPoint(Point(editSelectedPointWidget->getNameEdit()->text(), selectedPoint->getPoint()->getPosition().getX(), selectedPoint->getPoint()->getPosition().getY())) == 1){
-            XMLParser pParser("/home//Documents/QtProject/gobot-software/points.xml");
-            pParser.save(points);
-            QMessageBox messageBox;
-            leftMenu->getPointsLeftWidget()->getGroupMenu()->updateList(points);
-            messageBox.setText("A new point has been added");
-            messageBox.setStandardButtons(QMessageBox::Ok);
-            messageBox.setIcon(QMessageBox::Information);
-            messageBox.exec();
-        } else if(points.getGroups().at(points.count()-editSelectedPointWidget->getCurrentGroupIndex()-1)->
-                   addPoint(Point(editSelectedPointWidget->getNameEdit()->text(), selectedPoint->getPoint()->getPosition().getX(), selectedPoint->getPoint()->getPosition().getY())) == 0){
-            QMessageBox warningBox;
-            warningBox.setText("This point could not be added because there is already a point with this name in the group");
-            warningBox.setInformativeText("Please choose a new name for your point or place it in a different group");
-            warningBox.setStandardButtons(QMessageBox::Ok);
-            warningBox.setIcon(QMessageBox::Critical);
-            warningBox.exec();
-        } else {
-            QMessageBox noNameBox;
-            noNameBox.setText("You need to give a name to your point in order to add it permanently");
-            noNameBox.setStandardButtons(QMessageBox::Ok);
-            noNameBox.setIcon(QMessageBox::Critical);
-            noNameBox.exec();
-        }
-    }
-    qDebug() << editSelectedPointWidget->getCurrentGroupIndex();
-*/
+
+    qDebug() << "index " << index;
+
+    std::shared_ptr<Point> newPoint = std::shared_ptr<Point> (new Point(name, x, y, true, true));
+
+    points.getGroups().at(points.count()-index-1)->addPoint(newPoint);
+
+    //PointView* newPointView = new PointView(newPoint);
+
+    XMLParser parser(XML_PATH);
+    parser.save(points);
+
 }
 
 void MainWindow::displayDeleteEvent(QModelIndex index){
@@ -1994,9 +1962,6 @@ void MainWindow::clearNewMap(){
 
     /// Update the left menu displaying the list of groups and buttons
     pointsLeftWidget->updateGroupButtonGroup(points);
-
-    /// Update the list of group when creating a temporary point
-    editSelectedPointWidget->updateGroupMenu(points);
 
     /// Update the map
     mapPixmapItem->setPermanentPoints(points);
