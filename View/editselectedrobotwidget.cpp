@@ -86,6 +86,9 @@ EditSelectedRobotWidget::EditSelectedRobotWidget(QMainWindow* parent, const std:
     connect(cancelBtn, SIGNAL(clicked()), parent, SLOT(cancelEditSelecRobotBtnEvent()));
     connect(saveBtn, SIGNAL(clicked()), this, SLOT(saveEditSelecRobotBtnEvent()));
     connect(nameEdit, SIGNAL(textEdited(QString)), this, SLOT(checkRobotName()));
+    connect(wifiNameEdit, SIGNAL(textEdited(QString)), this, SLOT(deletePwd()));
+
+
 
     hide();
     setMaximumWidth(parent->width()*4/10);
@@ -134,6 +137,12 @@ void EditSelectedRobotWidget::checkRobotName(void){
         saveBtn->setEnabled(true);
         qDebug() << "Save btn enabled";
     }
+}
+
+void EditSelectedRobotWidget::deletePwd(void){
+    qDebug() << "deletePwd";
+
+    wifiPwdEdit->setText("");
 }
 
 void EditSelectedRobotWidget::editName(void){

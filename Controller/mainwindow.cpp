@@ -38,8 +38,8 @@
 #include <QAbstractButton>
 
 //#define XML_PATH "/home/m-a/Documents/QtProject/gobot-software/points.xml"
-#define XML_PATH "/home/joan/Qt/QtProjects/gobot-software/points.xml"
-
+//#define XML_PATH "/home/joan/Qt/QtProjects/gobot-software/points.xml"
+#define XML_PATH "/Users/fannylarradet/Desktop/GTRobots/gobot-software/points.xml"
 //TODO  stop threads/connections when scanning the map is finished/the user stop it
 
 /**
@@ -252,7 +252,7 @@ void MainWindow::initializeRobots(){
     robotView2->setParentItem(mapPixmapItem);
     robots->add(robotView2);
 
-    std::shared_ptr<Robot> robot3(new Robot("Robota", "192.168.4.155", PORT_CMD, this));
+    std::shared_ptr<Robot> robot3(new Robot("Robota", "192.168.4.226", PORT_CMD, this));
     robot3->setWifi("Swaghetti Yolognaise");
     RobotView* robotView3 = new RobotView(robot3);
     connect(robotView3, SIGNAL(setSelectedSignal(RobotView*)), this, SLOT(setSelectedRobot(RobotView*)));
@@ -464,21 +464,41 @@ void MainWindow::cancelEditSelecRobotBtnEvent(){
 void MainWindow::robotSavedEvent(){
     qDebug() << "robotSavedEvent called";
     /// if the command is succesfully sent to the robot, we apply the change
-    if(selectedRobot->getRobot()->sendCommand(QString("a ") + editSelectedRobotWidget->getNameEdit()->text())
-            && selectedRobot->getRobot()->sendCommand(QString("b ")
-          + editSelectedRobotWidget->getWifiNameEdit()->text()
-          + editSelectedRobotWidget->getWifiPwdEdit()->text())){
+    if (editSelectedRobotWidget->getWifiPwdEdit()->text() == "......")
+    {
+        if(selectedRobot->getRobot()->sendCommand(QString("a ") + editSelectedRobotWidget->getNameEdit()->text())){
 
-        editSelectedRobotWidget->editName();
-        robotsLeftWidget->setEditBtnStatus(false);
-        robotsLeftWidget->setCheckBtnStatus(false);
-        editSelectedRobotWidget->hide();
-        if(lastWidget != NULL){
-            lastWidget->show();
+            editSelectedRobotWidget->editName();
+            robotsLeftWidget->setEditBtnStatus(false);
+            robotsLeftWidget->setCheckBtnStatus(false);
+            editSelectedRobotWidget->hide();
+            if(lastWidget != NULL){
+                lastWidget->show();
+            }
+            robotsLeftWidget->updateRobots(robots);
+            bottomLayout->updateRobot(robots->getRobotId(selectedRobot->getRobot()->getName()), selectedRobot);
         }
-        robotsLeftWidget->updateRobots(robots);
-        bottomLayout->updateRobot(robots->getRobotId(selectedRobot->getRobot()->getName()), selectedRobot);
     }
+    else
+    {
+        if(selectedRobot->getRobot()->sendCommand(QString("a ") + editSelectedRobotWidget->getNameEdit()->text())
+                && selectedRobot->getRobot()->sendCommand(QString("b ")
+              + editSelectedRobotWidget->getWifiNameEdit()->text()
+              + editSelectedRobotWidget->getWifiPwdEdit()->text())){
+
+            editSelectedRobotWidget->editName();
+            robotsLeftWidget->setEditBtnStatus(false);
+            robotsLeftWidget->setCheckBtnStatus(false);
+            editSelectedRobotWidget->hide();
+            if(lastWidget != NULL){
+                lastWidget->show();
+            }
+            robotsLeftWidget->updateRobots(robots);
+            bottomLayout->updateRobot(robots->getRobotId(selectedRobot->getRobot()->getName()), selectedRobot);
+        }
+    }
+
+
 }
 
 void MainWindow::setCheckedRobot(QAbstractButton* button, bool checked){

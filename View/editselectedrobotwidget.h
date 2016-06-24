@@ -26,6 +26,7 @@ public:
     void setSelectedRobot(RobotView * const robotView);
     void setRobots(std::shared_ptr<Robots> const _robots){robots = _robots;}
     void editName(void);
+
     QLineEdit* getNameEdit(void){ return nameEdit; }
     QLineEdit* getWifiNameEdit(void){ return wifiNameEdit; }
     QLineEdit* getWifiPwdEdit(void){ return wifiPwdEdit; }
@@ -62,6 +63,9 @@ private slots:
     * Check if the robot name is already taken
     */
     void checkRobotName(void);
+
+    void deletePwd(void);
+
 };
 
 #endif // EDITSELECTEDROBOTWIDGET_H
