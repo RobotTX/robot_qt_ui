@@ -15,7 +15,7 @@ GroupEditWindow::GroupEditWindow(QWidget *parent): QWidget(parent){
     layout->addWidget(nameLabel);
     layout->addWidget(nameEdit);
 
-    SpaceWidget* spaceWidget = new SpaceWidget(SpaceWidget::SpaceOrientation::HORIZONTAL);
+    SpaceWidget* spaceWidget = new SpaceWidget(SpaceWidget::SpaceOrientation::HORIZONTAL, this);
     layout->addWidget(spaceWidget);
 
     setLayout(layout);

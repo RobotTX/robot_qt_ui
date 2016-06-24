@@ -44,7 +44,8 @@ public:
 signals:
     /// Signal emitted when a robot has been edited & saved
     void robotSaved(void);
-
+    void showEditSelectedRobotWidget(void);
+    void hideEditSelectedRobotWidget(void);
 private:
     QVBoxLayout* layout;
     QGridLayout* wifiLayout;
@@ -56,7 +57,6 @@ private:
     QLineEdit* wifiNameEdit;
     QLabel* wifiPwd;
     QLineEdit* wifiPwdEdit;
-    QPushButton* addPathBtn;
     QLabel* ipAddressLabel;
     std::shared_ptr<Robots> robots;
     QPushButton* saveBtn;
@@ -64,6 +64,10 @@ private:
     PointView* home;
     bool temporary;
     std::shared_ptr<Point> oldHome;
+
+protected:
+    void showEvent(QShowEvent *event);
+    void hideEvent(QHideEvent *event);
 
 private slots:
     /**

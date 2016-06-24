@@ -6,7 +6,7 @@
 #include <QVBoxLayout>
 #include <QPushButton>
 
-PointButtonGroup::PointButtonGroup(const Points &_points, const unsigned int groupIndex)
+PointButtonGroup::PointButtonGroup(const Points &_points, const unsigned int groupIndex, QWidget* parent) : QWidget(parent)
 {
     buttonGroup = new QButtonGroup();
 

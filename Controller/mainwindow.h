@@ -153,14 +153,13 @@ private slots:
     void setMessageTop(QString msgType, QString msg);
     void homeSelected(PointView* pointView, bool temporary);
     void homeEdited(PointView* pointView, bool temporary);
-    void showSelectedRobotWidgetSlot(void);
-    void hideSelectedRobotWidgetSlot(void);
     void goHomeBtnEvent();
     void viewPathSelectedRobot(int robotNb);
     void editHomeEvent();
     void closeSlot();
     void setGraphicItemsState(const GraphicItemState state, const bool clear = false);
-
+    void showHome();
+    void hideHome(void);
 
 
 private:

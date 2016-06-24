@@ -38,7 +38,7 @@ RobotsLeftWidget::RobotsLeftWidget(QMainWindow* _parent){
     connect(editBtn, SIGNAL(clicked()), parent, SLOT(editRobotBtnEvent()));
     connect(checkBtn, SIGNAL(clicked()), parent, SLOT(checkRobotBtnEvent()));
 
-    SpaceWidget* spaceWidget = new SpaceWidget(SpaceWidget::SpaceOrientation::HORIZONTAL);
+    SpaceWidget* spaceWidget = new SpaceWidget(SpaceWidget::SpaceOrientation::HORIZONTAL, this);
     layout->addWidget(spaceWidget);
 
     layout->addWidget(scrollArea);

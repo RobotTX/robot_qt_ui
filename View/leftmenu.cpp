@@ -53,8 +53,8 @@ LeftMenu::LeftMenu(QMainWindow* parent, Points const& points, const std::shared_
     /// Menu which display the selected robot infos
     selectedRobotWidget = new SelectedRobotWidget(parent);
     connect(selectedRobotWidget, SIGNAL(selectHome(RobotView*)), parent, SLOT(selectHomeEvent()));
-    connect(selectedRobotWidget, SIGNAL(showSelectedRobotWidget()), parent, SLOT(showSelectedRobotWidgetSlot()));
-    connect(selectedRobotWidget, SIGNAL(hideSelectedRobotWidget()), parent, SLOT(hideSelectedRobotWidgetSlot()));
+    connect(selectedRobotWidget, SIGNAL(showSelectedRobotWidget()), parent, SLOT(showHome()));
+    connect(selectedRobotWidget, SIGNAL(hideSelectedRobotWidget()), parent, SLOT(hideHome()));
     leftLayout->addWidget(selectedRobotWidget);
 
     /// Menu which display the list of robots
@@ -70,6 +70,8 @@ LeftMenu::LeftMenu(QMainWindow* parent, Points const& points, const std::shared_
     editSelectedRobotWidget = new EditSelectedRobotWidget(parent, robots);
     leftLayout->addWidget(editSelectedRobotWidget);
     connect(editSelectedRobotWidget, SIGNAL(robotSaved()), parent, SLOT(robotSavedEvent()));
+    connect(editSelectedRobotWidget, SIGNAL(showEditSelectedRobotWidget()), parent, SLOT(showHome()));
+    connect(editSelectedRobotWidget, SIGNAL(hideEditSelectedRobotWidget()), parent, SLOT(hideHome()));
 
     /// Menu which display the selected point infos
     selectedPointWidget = new SelectedPointWidget(parent);

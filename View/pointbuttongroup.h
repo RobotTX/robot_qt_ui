@@ -10,7 +10,7 @@ class QVBoxLayout;
 class PointButtonGroup: public QWidget
 {
 public:
-    PointButtonGroup(const Points& _points, const unsigned int groupIndex);
+    PointButtonGroup(const Points& _points, const unsigned int groupIndex, QWidget *parent);
     ~PointButtonGroup();
 
     QButtonGroup* getButtonGroup(void) const { return buttonGroup; }

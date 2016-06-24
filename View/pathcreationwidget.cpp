@@ -74,7 +74,7 @@ PathCreationWidget::PathCreationWidget(QMainWindow* parent, const Points &_point
 
     layout->addLayout(layoutRow2);*/
 
-    SpaceWidget* spaceWidget = new SpaceWidget(SpaceWidget::SpaceOrientation::HORIZONTAL);
+    SpaceWidget* spaceWidget = new SpaceWidget(SpaceWidget::SpaceOrientation::HORIZONTAL, this);
     layout->addWidget(spaceWidget);
 
     /// The menu which display the list of point to select
@@ -334,7 +334,6 @@ bool PathCreationWidget::savePath(){
                     error = true;
                 }
             } else {
-                //TODO continuer error msg
                 errorMsg += "\tError point" + QString::number(i+1) + " : No point selected\n";
                 error = true;
             }

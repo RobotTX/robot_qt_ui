@@ -5,13 +5,13 @@
 #include <QVBoxLayout>
 #include <QListWidget>
 
-GroupMenu::GroupMenu(const Points& points, bool _editPoint): editPoint(_editPoint)
+GroupMenu::GroupMenu(const Points& points, bool _editPoint, QWidget* parent): QWidget(parent), editPoint(_editPoint)
 {
     //setStyleSheet("background-color: transparent;");
-    layout = new QVBoxLayout();
+    layout = new QVBoxLayout(this);
 
 
-    widgetsList = new QListWidget();
+    widgetsList = new QListWidget(this);
 
     /// to remove the border (very ugly atm)
     ///widgetsList->setFrameShape(QFrame::NoFrame);
@@ -39,7 +39,6 @@ GroupMenu::GroupMenu(const Points& points, bool _editPoint): editPoint(_editPoin
 
     layout->setAlignment(Qt::AlignTop);
     layout->addWidget(widgetsList);
-    setLayout(layout);
 }
 
 GroupMenu::~GroupMenu(){

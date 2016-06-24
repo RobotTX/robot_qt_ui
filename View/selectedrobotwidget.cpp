@@ -37,7 +37,7 @@ SelectedRobotWidget::SelectedRobotWidget(QMainWindow* parent){
     connect(editBtn, SIGNAL(clicked()), parent, SLOT(editSelecRobotBtnEvent()));
 
 
-    SpaceWidget* spaceWidget = new SpaceWidget(SpaceWidget::SpaceOrientation::HORIZONTAL);
+    SpaceWidget* spaceWidget = new SpaceWidget(SpaceWidget::SpaceOrientation::HORIZONTAL, this);
     layout->addWidget(spaceWidget);
 
     /// Label which display the Ip of the robot
@@ -60,7 +60,7 @@ SelectedRobotWidget::SelectedRobotWidget(QMainWindow* parent){
     layout->addWidget(batteryLevel);
 
 
-    SpaceWidget* spaceWidget2 = new SpaceWidget(SpaceWidget::SpaceOrientation::HORIZONTAL);
+    SpaceWidget* spaceWidget2 = new SpaceWidget(SpaceWidget::SpaceOrientation::HORIZONTAL, this);
     layout->addWidget(spaceWidget2);
 
     /// Home layout with the button to select/show the home
@@ -187,5 +187,4 @@ void SelectedRobotWidget::showEvent(QShowEvent *event){
 void SelectedRobotWidget::hideEvent(QHideEvent *event){
     emit hideSelectedRobotWidget();
     QWidget::hideEvent(event);
-
 }
