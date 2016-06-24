@@ -29,6 +29,7 @@ public:
     void setSelectedRobot(RobotView * const robotView);
     void setRobots(std::shared_ptr<Robots> const _robots){robots = _robots;}
     void editName(void);
+
     QLineEdit* getNameEdit(void){ return nameEdit; }
     QPushButton* getHomeBtn(void){ return homeBtn; }
     void disableAll(void);
@@ -44,7 +45,8 @@ public:
 signals:
     /// Signal emitted when a robot has been edited & saved
     void robotSaved(void);
-
+    void showEditSelectedRobotWidget(void);
+    void hideEditSelectedRobotWidget(void);
 private:
     QVBoxLayout* layout;
     QGridLayout* wifiLayout;
@@ -56,7 +58,6 @@ private:
     QLineEdit* wifiNameEdit;
     QLabel* wifiPwd;
     QLineEdit* wifiPwdEdit;
-    QPushButton* addPathBtn;
     QLabel* ipAddressLabel;
     std::shared_ptr<Robots> robots;
     QPushButton* saveBtn;
@@ -64,6 +65,10 @@ private:
     PointView* home;
     bool temporary;
     std::shared_ptr<Point> oldHome;
+
+protected:
+    void showEvent(QShowEvent *event);
+    void hideEvent(QHideEvent *event);
 
 private slots:
     /**
@@ -77,6 +82,9 @@ private slots:
     * Check if the robot name is already taken
     */
     void checkRobotName(void);
+
+    void deletePwd(void);
+
 };
 
 #endif // EDITSELECTEDROBOTWIDGET_H

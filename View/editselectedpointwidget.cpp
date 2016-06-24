@@ -13,25 +13,25 @@
 #include <QComboBox>
 #include "View/spacewidget.h"
 
-EditSelectedPointWidget::EditSelectedPointWidget(QMainWindow* _parent, PointsView* _points){
+EditSelectedPointWidget::EditSelectedPointWidget(QMainWindow* _parent, PointsView* _points):QWidget(_parent){
     parent = _parent;
     points = _points;
 
-    separator = new SpaceWidget(SpaceWidget::HORIZONTAL);
+    separator = new SpaceWidget(SpaceWidget::HORIZONTAL, this);
 
     ///                     PLUS MINUS AND EDIT BUTTONS
 
     topButtonsLayout = new QHBoxLayout();
 
-    plusButton = new QPushButton(QIcon(":/icons/plus.png"),"");
+    plusButton = new QPushButton(QIcon(":/icons/plus.png"),"", this);
     plusButton->setIconSize(_parent->size()/10);
     plusButton->setToolTip("Click this button if you want to save this point permanently");
 
-    minusButton = new QPushButton(QIcon(":/icons/minus.png"),"");
+    minusButton = new QPushButton(QIcon(":/icons/minus.png"),"", this);
     minusButton->setIconSize(_parent->size()/10);
     minusButton->setEnabled(false);
 
-    editButton = new QPushButton(QIcon(":/icons/edit.png"),"");
+    editButton = new QPushButton(QIcon(":/icons/edit.png"),"", this);
     editButton->setIconSize(_parent->size()/10);
     editButton->setEnabled(false);
 
@@ -43,11 +43,11 @@ EditSelectedPointWidget::EditSelectedPointWidget(QMainWindow* _parent, PointsVie
 
     eyeMapLayout = new QHBoxLayout();
 
-    eyeButton = new QPushButton(QIcon(":/icons/eye.png"), "");
+    eyeButton = new QPushButton(QIcon(":/icons/eye.png"), "", this);
     eyeButton->setIconSize(_parent->size()/10);
     eyeButton->setEnabled(false);
 
-    mapButton = new QPushButton(QIcon(":/icons/map.png"),"");
+    mapButton = new QPushButton(QIcon(":/icons/map.png"),"", this);
     mapButton->setIconSize(_parent->size()/10);
     mapButton->setEnabled(false);
 
@@ -56,29 +56,29 @@ EditSelectedPointWidget::EditSelectedPointWidget(QMainWindow* _parent, PointsVie
 
     ///                  add buttons to the main layout
 
-    layout = new QVBoxLayout();
+    layout = new QVBoxLayout(this);
     layout->addLayout(topButtonsLayout);
     layout->addLayout(eyeMapLayout);
 
     layout->addWidget(separator);
 
-    nameEdit = new QLineEdit(_parent);
+    nameEdit = new QLineEdit(this);
     nameEdit->setStyleSheet ("text-align: left");
     layout->addWidget(nameEdit);
 
-    posXLabel = new QLabel("X : ");
+    posXLabel = new QLabel("X : ", this);
     layout->addWidget(posXLabel);
 
-    posYLabel = new QLabel("Y : ");
+    posYLabel = new QLabel("Y : ", this);
     layout->addWidget(posYLabel);
 
     ///                                  ADD GROUP LABEL AND QComboBox
 
     groupLayout = new QHBoxLayout();
 
-    groupLabel = new QLabel("Group : ");
+    groupLabel = new QLabel("Group : ", this);
     groupLabel->hide();
-    groupBox = new QComboBox();
+    groupBox = new QComboBox(this);
     /// to insert the groups in the box
 
     for(int i = 0; i < points->getPoints().count(); i++){
@@ -95,8 +95,9 @@ EditSelectedPointWidget::EditSelectedPointWidget(QMainWindow* _parent, PointsVie
 
     cancelSaveLayout = new QHBoxLayout();
 
-    saveBtn = new QPushButton("Save");
-    cancelBtn = new QPushButton("Cancel");
+
+    saveBtn = new QPushButton("Save", this);
+    cancelBtn = new QPushButton("Cancel", this);
     cancelSaveLayout->addWidget(cancelBtn);
     cancelSaveLayout->addWidget(saveBtn);
     saveBtn->hide();
@@ -104,6 +105,7 @@ EditSelectedPointWidget::EditSelectedPointWidget(QMainWindow* _parent, PointsVie
 
     layout->addLayout(groupLayout);
     layout->addLayout(cancelSaveLayout);
+
 
     ///                                  CONNECTIONS
 
@@ -121,7 +123,6 @@ EditSelectedPointWidget::EditSelectedPointWidget(QMainWindow* _parent, PointsVie
     setMaximumWidth(_parent->width()*4/10);
     setMinimumWidth(_parent->width()*4/10);
     layout->setAlignment(Qt::AlignTop);
-    setLayout(layout);
 }
 
 EditSelectedPointWidget::~EditSelectedPointWidget(){

@@ -6,11 +6,11 @@
 #include <QVBoxLayout>
 #include <QPushButton>
 
-PointButtonGroup::PointButtonGroup(const Points &_points, const unsigned int groupIndex)
-{
-    buttonGroup = new QButtonGroup();
+PointButtonGroup::PointButtonGroup(const Points &_points, const unsigned int groupIndex
+                                   , QWidget* parent): QWidget(parent){
+    buttonGroup = new QButtonGroup(this);
 
-    layout = new QVBoxLayout();
+    layout = new QVBoxLayout(this);
     layout->setAlignment(Qt::AlignTop);
 
     std::shared_ptr<Group> currentGroup = _points.getGroups().at(groupIndex);
@@ -18,14 +18,12 @@ PointButtonGroup::PointButtonGroup(const Points &_points, const unsigned int gro
         std::shared_ptr<Point> currentPoint = currentGroup->getPoints().at(j);
         QPushButton* pointButton = new QPushButton(currentPoint->getName()
                                                    + " (" + QString::number(currentPoint->getPosition().getX())
-                                                   + ", " + QString::number(currentPoint->getPosition().getY()) + ")");
+                                                   + ", " + QString::number(currentPoint->getPosition().getY()) + ")", this);
         pointButton->setFlat(true);
         pointButton->setStyleSheet("text-align:left");
         buttonGroup->addButton(pointButton, j);
         layout->addWidget(pointButton);
     }
-
-    setLayout(layout);
 }
 
 PointButtonGroup::~PointButtonGroup(){
@@ -41,7 +39,7 @@ void PointButtonGroup::setGroup(const Points &_points, const int groupIndex){
         std::shared_ptr<Point> currentPoint = currentGroup->getPoints().at(j);
         QPushButton* pointButton = new QPushButton(currentPoint->getName()
                                                    + " (" + QString::number(currentPoint->getPosition().getX())
-                                                   + ", " + QString::number(currentPoint->getPosition().getY()) + ")");
+                                                   + ", " + QString::number(currentPoint->getPosition().getY()) + ")", this);
         pointButton->setFlat(true);
         pointButton->setStyleSheet("text-align:left");
         buttonGroup->addButton(pointButton, j);

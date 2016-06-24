@@ -13,29 +13,29 @@
 #include "View/spacewidget.h"
 #include "Model/group.h"
 
-DisplaySelectedPoint::DisplaySelectedPoint(QMainWindow *_parent, Points const& _points, PointView* _pointView, const Origin _origin): parent(_parent), origin(_origin)
+DisplaySelectedPoint::DisplaySelectedPoint(QMainWindow *_parent, Points const& _points, PointView* _pointView, const Origin _origin): QWidget(_parent), parent(_parent), origin(_origin)
 {
     parent = _parent;
     points = _points;
     pointView = _pointView;
 
-    layout = new QVBoxLayout();
+    layout = new QVBoxLayout(this);
 
     nameLayout = new QHBoxLayout();
 
-    backButton = new QPushButton(QIcon(":/icons/arrowLeft.png"), "Groups");
+    backButton = new QPushButton(QIcon(":/icons/arrowLeft.png"), "Groups", this);
     backButton->setIconSize(_parent->size()/10);
     layout->addWidget(backButton);
 
-    plusButton = new QPushButton(QIcon(":/icons/plus.png"),"");
+    plusButton = new QPushButton(QIcon(":/icons/plus.png"),"", this);
     plusButton->setIconSize(_parent->size()/10);
     plusButton->setEnabled(false);
 
-    minusButton = new QPushButton(QIcon(":/icons/minus.png"),"");
+    minusButton = new QPushButton(QIcon(":/icons/minus.png"),"", this);
     minusButton->setIconSize(_parent->size()/10);
     minusButton->setCheckable(true);
 
-    editButton = new QPushButton(QIcon(":/icons/edit.png"),"");
+    editButton = new QPushButton(QIcon(":/icons/edit.png"),"", this);
     editButton->setIconSize(_parent->size()/10);
     editButton->setToolTip("You can click on this button and then choose between clicking on the map or drag the point to change its position");
     editButton->setCheckable(true);
@@ -45,11 +45,11 @@ DisplaySelectedPoint::DisplaySelectedPoint(QMainWindow *_parent, Points const& _
     grid->addWidget(minusButton);
     grid->addWidget(editButton);
 
-    eyeButton = new QPushButton(QIcon(":/icons/eye.png"), "");
+    eyeButton = new QPushButton(QIcon(":/icons/eye.png"), "", this);
     eyeButton->setIconSize(_parent->size()/10);
     eyeButton->setEnabled(false);
 
-    mapButton = new QPushButton(QIcon(":/icons/map.png"),"");
+    mapButton = new QPushButton(QIcon(":/icons/map.png"),"", this);
     mapButton->setCheckable(true);
     mapButton->setIconSize(_parent->size()/10);
 
@@ -61,10 +61,10 @@ DisplaySelectedPoint::DisplaySelectedPoint(QMainWindow *_parent, Points const& _
     layout->addLayout(eyeMapLayout);
 
 
-    SpaceWidget* spaceWidget = new SpaceWidget(SpaceWidget::SpaceOrientation::HORIZONTAL);
+    SpaceWidget* spaceWidget = new SpaceWidget(SpaceWidget::SpaceOrientation::HORIZONTAL, this);
     layout->addWidget(spaceWidget);
 
-    nameEdit = new QLineEdit();
+    nameEdit = new QLineEdit(this);
     nameEdit->setReadOnly(true);
     nameEdit->setStyleSheet("* { background-color: rgba(255, 0, 0, 0); }");
     nameEdit->setAutoFillBackground(true);
@@ -74,18 +74,18 @@ DisplaySelectedPoint::DisplaySelectedPoint(QMainWindow *_parent, Points const& _
 
     layout->addLayout(nameLayout);
 
-    posXLabel = new QLabel("X : ");
+    posXLabel = new QLabel("X : ", this);
     posXLabel->setWordWrap(true);
     layout->addWidget(posXLabel);
 
-    posYLabel = new QLabel("Y : ");
+    posYLabel = new QLabel("Y : ", this);
     posYLabel->setWordWrap(true);
     layout->addWidget(posYLabel);
 
-    cancelButton = new QPushButton("Cancel");
+    cancelButton = new QPushButton("Cancel", this);
     cancelButton->hide();
 
-    saveButton = new QPushButton("Save");
+    saveButton = new QPushButton("Save", this);
     saveButton->hide();
 
     editLayout = new QHBoxLayout();
@@ -93,8 +93,6 @@ DisplaySelectedPoint::DisplaySelectedPoint(QMainWindow *_parent, Points const& _
     editLayout->addWidget(saveButton);
 
     layout->addLayout(editLayout);
-
-    setLayout(layout);
 
     /// to check that a point that's being edited does not get a new name that's already used in the database
     connect(nameEdit, SIGNAL(textEdited(QString)), this, SLOT(checkPointName()));

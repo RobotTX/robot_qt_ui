@@ -3,18 +3,16 @@
 #include "Model/group.h"
 #include "Model/point.h"
 
-PointList::PointList(Points& _points)
-{
+PointList::PointList(Points& _points, QWidget* parent):QWidget(parent){
     points = std::shared_ptr<Points> (&_points);
-    layout = new QVBoxLayout();
+    layout = new QVBoxLayout(this);
 
-    widgetsList = new QListWidget();
+    widgetsList = new QListWidget(this);
     //widgetsList->setDragDropMode(QAbstractItemView::InternalMove);
 
 
     layout->setAlignment(Qt::AlignTop);
     layout->addWidget(widgetsList);
-    setLayout(layout);
 }
 
 PointList::~PointList(){

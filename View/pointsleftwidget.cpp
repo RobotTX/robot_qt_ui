@@ -14,9 +14,10 @@
 #include "groupeditwindow.h"
 #include "View/spacewidget.h"
 
-PointsLeftWidget::PointsLeftWidget(QMainWindow* _parent, Points const& points, bool _groupDisplayed): groupDisplayed(_groupDisplayed)
-{
-    scrollArea = new VerticalScrollArea();
+PointsLeftWidget::PointsLeftWidget(QMainWindow* _parent, Points const& points, bool _groupDisplayed)
+    : groupDisplayed(_groupDisplayed), QWidget(_parent){
+    parent = _parent;
+    scrollArea = new VerticalScrollArea(this);
 
     groupWindow = new GroupEditWindow(this);
     groupWindow->getEdit()->move(200, 200);
@@ -24,28 +25,27 @@ PointsLeftWidget::PointsLeftWidget(QMainWindow* _parent, Points const& points, b
     groupWindow->hide();
 
     indexLastGroupClicked = 0;
-    parent = _parent;
 
-    layout = new QVBoxLayout();
+    layout = new QVBoxLayout(this);
 
-    backButton = new QPushButton(QIcon(":/icons/arrowLeft.png"),"Points");
+    backButton = new QPushButton(QIcon(":/icons/arrowLeft.png"),"Points", this);
     backButton->setIconSize(_parent->size()/10);
     backButton->setStyleSheet ("text-align: left");
     layout->addWidget(backButton);
 
-    backToGroupsButton = new QPushButton(QIcon(":/icons/arrowLeft.png"),"Groups");
+    backToGroupsButton = new QPushButton(QIcon(":/icons/arrowLeft.png"),"Groups", this);
     layout->addWidget(backToGroupsButton);
     backToGroupsButton->hide();
 
-    plusButton = new QPushButton(QIcon(":/icons/plus.png"),"");
+    plusButton = new QPushButton(QIcon(":/icons/plus.png"),"", this);
     plusButton->setIconSize(_parent->size()/10);
     plusButton->setCheckable(true);
 
-    minusButton = new QPushButton(QIcon(":/icons/minus.png"),"");
+    minusButton = new QPushButton(QIcon(":/icons/minus.png"),"", this);
     minusButton->setIconSize(_parent->size()/10);
     minusButton->setCheckable(true);
 
-    editButton = new QPushButton(QIcon(":/icons/edit.png"),"");
+    editButton = new QPushButton(QIcon(":/icons/edit.png"),"", this);
     editButton->setIconSize(_parent->size()/10);
     editButton->setCheckable(true);
 
@@ -55,10 +55,10 @@ PointsLeftWidget::PointsLeftWidget(QMainWindow* _parent, Points const& points, b
     grid->addWidget(editButton);
 
 
-    mapButton = new QPushButton(QIcon(":/icons/map.png"),"");
+    mapButton = new QPushButton(QIcon(":/icons/map.png"),"", this);
     mapButton->setIconSize(_parent->size()/10);
 
-    eyeButton = new QPushButton(QIcon(":/icons/eye.png"), "");
+    eyeButton = new QPushButton(QIcon(":/icons/eye.png"), "", this);
     eyeButton->setIconSize(_parent->size()/10);
     eyeButton->setCheckable(true);
 
@@ -70,18 +70,18 @@ PointsLeftWidget::PointsLeftWidget(QMainWindow* _parent, Points const& points, b
     layout->addLayout(eyeMapLayout);
 
 
-    SpaceWidget* spaceWidget = new SpaceWidget(SpaceWidget::SpaceOrientation::HORIZONTAL);
+    SpaceWidget* spaceWidget = new SpaceWidget(SpaceWidget::SpaceOrientation::HORIZONTAL, this);
     layout->addWidget(spaceWidget);
 
-    groupNameLabel = new QLabel("New group's name : ");
+    groupNameLabel = new QLabel("New group's name : ", this);
     groupNameLabel->hide();
-    groupNameEdit = new QLineEdit();
+    groupNameEdit = new QLineEdit(this);
     groupNameEdit->hide();
 
     layout->addWidget(groupNameLabel);
     layout->addWidget(groupNameEdit);
 
-    groupButtonGroup = new GroupButtonGroup(points);
+    groupButtonGroup = new GroupButtonGroup(points, this);
 
     scrollArea->setWidget(groupButtonGroup);
 
@@ -108,7 +108,6 @@ PointsLeftWidget::PointsLeftWidget(QMainWindow* _parent, Points const& points, b
     setMaximumWidth(_parent->width()*4/10);
     setMinimumWidth(_parent->width()*4/10);
     layout->setAlignment(Qt::AlignBottom);
-    setLayout(layout);
 }
 
 PointsLeftWidget::~PointsLeftWidget(){

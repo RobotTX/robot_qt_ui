@@ -7,68 +7,56 @@
 #include <QLineEdit>
 #include <QComboBox>
 
-PathPointCreationWidget::PathPointCreationWidget(const int id, const Points& points, QString name){
-    initialisation(id, points, name);
-}
-
-PathPointCreationWidget::PathPointCreationWidget(const int id, const Points& points, const Point& _point){
+PathPointCreationWidget::PathPointCreationWidget(const int _id, const Points& _points, const Point& _point, QWidget* parent):QWidget(parent){
     point = _point;
-    initialisation(id, points, _point.getName());
-}
-
-
-void PathPointCreationWidget::initialisation(const int _id, const Points _points, QString _name){
-    layout = new QVBoxLayout();
+    layout = new QVBoxLayout(this);
     points = _points;
     id = _id;
-    name = _name;
+    name = _point.getName();
     posX = 0;
     posY = 0;
 
     /// Label for the name of the point
-    pointLabel = new QLabel();
+    pointLabel = new QLabel(this);
     setName(name);
     layout->addWidget(pointLabel);
 
     /// The widget that contain the layout for the button to select the
     /// action the robot need to do (wait for X sec or wait for human action)
-    actionWidget = new QWidget();
-    QVBoxLayout* actionLayout = new QVBoxLayout();
+    actionWidget = new QWidget(this);
+    QVBoxLayout* actionLayout = new QVBoxLayout(actionWidget);
 
-    actionBtn = new QComboBox();
+    actionBtn = new QComboBox(this);
     actionBtn->addItem("Wait for");
     actionBtn->addItem("Human Action");
     actionLayout->addWidget(actionBtn);
     connect(actionBtn, SIGNAL(activated(QString)), this, SLOT(actionClicked(QString)));
 
-    timeWidget = new QWidget();
-    QHBoxLayout* timeLayout = new QHBoxLayout();
-    timeEdit = new QLineEdit();
+    timeWidget = new QWidget(this);
+    QHBoxLayout* timeLayout = new QHBoxLayout(timeWidget);
+    timeEdit = new QLineEdit(this);
     timeEdit->setAlignment(Qt::AlignCenter);
     timeEdit->setValidator(new QIntValidator(0, 99999, this));
     timeLayout->addWidget(timeEdit);
 
-    QLabel* sLabel = new QLabel("sec");
+    QLabel* sLabel = new QLabel("sec", this);
     sLabel->setMaximumWidth(30);
     timeLayout->addWidget(sLabel);
 
     timeLayout->setContentsMargins(0, 0, 0, 0);
-    timeWidget->setLayout(timeLayout);
     actionLayout->setContentsMargins(0, 0, 0, 0);
     actionLayout->addWidget(timeWidget);
 
-    actionWidget->setLayout(actionLayout);
     layout->addWidget(actionWidget);
     actionWidget->hide();
 
-    saveEditBtn = new QPushButton("Save changes");
+    saveEditBtn = new QPushButton("Save changes", this);
     connect(saveEditBtn, SIGNAL(clicked()), this, SLOT(saveEdit()));
     layout->addWidget(saveEditBtn);
     saveEditBtn->hide();
 
 
     layout->setAlignment(Qt::AlignTop);
-    setLayout(layout);
 }
 
 PathPointCreationWidget::~PathPointCreationWidget(){

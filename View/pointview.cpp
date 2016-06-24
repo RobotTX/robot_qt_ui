@@ -4,7 +4,6 @@
 #include <QDebug>
 #include <QPixmap>
 #include <QMouseEvent>
-#include "View/mapview.h"
 
 
 PointView::PointView(std::shared_ptr<Point> _point) :
@@ -55,6 +54,8 @@ void PointView::mousePressEvent(QGraphicsSceneMouseEvent *event){
 
 void PointView::mouseMoveEvent(QGraphicsSceneMouseEvent *event){
     if(state == GraphicItemState::EDITING){
+        // TODO Not be able to go above the map limit
+
         /*bool outOfMap = false;
         if(pos().x() < 0){
 

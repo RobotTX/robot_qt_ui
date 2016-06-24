@@ -6,7 +6,8 @@
 #include <QGraphicsSceneMouseEvent>
 #include <QDebug>
 
-RobotView::RobotView (std::shared_ptr<Robot> const &_robot): selected(false), state(GraphicItemState::NO_STATE){
+RobotView::RobotView (std::shared_ptr<Robot> const &_robot):
+    selected(false), state(GraphicItemState::NO_STATE){
     robot = _robot;
     setAcceptHoverEvents(true);
     setAcceptedMouseButtons(Qt::LeftButton);
@@ -34,7 +35,8 @@ RobotView::RobotView (std::shared_ptr<Robot> const &_robot): selected(false), st
     shown = true;
 }
 
-RobotView::RobotView ():selected(false), state(GraphicItemState::NO_STATE){
+RobotView::RobotView ():selected(false), state(GraphicItemState::NO_STATE),
+    QGraphicsPolygonItem(){
 }
 
 void RobotView::mousePressEvent(QGraphicsSceneMouseEvent *event){

@@ -10,28 +10,27 @@
 #include <QMainWindow>
 #include <QLabel>
 
-DisplaySelectedGroup::DisplaySelectedGroup(QMainWindow *_parent, const Points& _points)
-{
-    layout = new QVBoxLayout();
+DisplaySelectedGroup::DisplaySelectedGroup(QMainWindow *parent, const Points& _points) : QWidget(parent){
+    layout = new QVBoxLayout(this);
 
-    name = new QLabel("\nName : ");
+    name = new QLabel("\nName : ", this);
 
-    backButton = new QPushButton(QIcon(":/icons/arrowLeft.png"), "Groups");
-    backButton->setIconSize(_parent->size()/10);
+    backButton = new QPushButton(QIcon(":/icons/arrowLeft.png"), "Groups", this);
+    backButton->setIconSize(parent->size()/10);
     layout->addWidget(backButton);
 
-    plusButton = new QPushButton(QIcon(":/icons/plus.png"),"");
-    plusButton->setIconSize(_parent->size()/10);
+    plusButton = new QPushButton(QIcon(":/icons/plus.png"),"", this);
+    plusButton->setIconSize(parent->size()/10);
     /// a tool tip is a text displayed when the user moves his mouse over the button without clicking it
     plusButton->setToolTip("To add a point click on the map");
     plusButton->setEnabled(false);
 
-    minusButton = new QPushButton(QIcon(":/icons/minus.png"),"");
-    minusButton->setIconSize(_parent->size()/10);
+    minusButton = new QPushButton(QIcon(":/icons/minus.png"),"", this);
+    minusButton->setIconSize(parent->size()/10);
     minusButton->setCheckable(true);
 
-    editButton = new QPushButton(QIcon(":/icons/edit.png"),"");
-    editButton->setIconSize(_parent->size()/10);
+    editButton = new QPushButton(QIcon(":/icons/edit.png"),"", this);
+    editButton->setIconSize(parent->size()/10);
     editButton->setCheckable(true);
 
     grid = new QHBoxLayout();
@@ -39,11 +38,11 @@ DisplaySelectedGroup::DisplaySelectedGroup(QMainWindow *_parent, const Points& _
     grid->addWidget(minusButton);
     grid->addWidget(editButton);
 
-    eyeButton = new QPushButton(QIcon(":/icons/eye.png"), "");
-    eyeButton->setIconSize(_parent->size()/10);
+    eyeButton = new QPushButton(QIcon(":/icons/eye.png"), "", this);
+    eyeButton->setIconSize(parent->size()/10);
 
-    mapButton = new QPushButton(QIcon(":/icons/map.png"),"");
-    mapButton->setIconSize(_parent->size()/10);
+    mapButton = new QPushButton(QIcon(":/icons/map.png"),"", this);
+    mapButton->setIconSize(parent->size()/10);
 
     eyeMapLayout = new QHBoxLayout();
     eyeMapLayout->addWidget(eyeButton);
@@ -54,20 +53,18 @@ DisplaySelectedGroup::DisplaySelectedGroup(QMainWindow *_parent, const Points& _
     layout->addLayout(eyeMapLayout);
 
 
-    SpaceWidget* spaceWidget = new SpaceWidget(SpaceWidget::SpaceOrientation::HORIZONTAL);
+    SpaceWidget* spaceWidget = new SpaceWidget(SpaceWidget::SpaceOrientation::HORIZONTAL, this);
     layout->addWidget(spaceWidget);
 
     layout->addWidget(name);
 
-    scrollArea = new VerticalScrollArea();
+    scrollArea = new VerticalScrollArea(this);
 
-    pointButtonGroup = new PointButtonGroup(_points, 0);
+    pointButtonGroup = new PointButtonGroup(_points, 0, this);
 
     layout->addWidget(scrollArea);
 
     scrollArea->setWidget(pointButtonGroup);
-
-    setLayout(layout);
 }
 
 DisplaySelectedGroup::~DisplaySelectedGroup(){

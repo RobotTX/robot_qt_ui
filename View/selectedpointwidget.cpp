@@ -6,20 +6,20 @@
 #include <QLabel>
 #include <QMainWindow>
 
-SelectedPointWidget::SelectedPointWidget(QMainWindow* parent){
+SelectedPointWidget::SelectedPointWidget(QMainWindow* parent):QWidget(parent){
 
     /// Button with the name of the robot and which allow the user to return back
     /// to the last menu
-    layout = new QVBoxLayout();
-    backBtn = new QPushButton(QIcon(":/icons/arrowLeft.png"),"");
+    layout = new QVBoxLayout(this);
+    backBtn = new QPushButton(QIcon(":/icons/arrowLeft.png"),"", this);
     backBtn->setStyleSheet ("text-align: left");
     backBtn->setIconSize(parent->size()/10);
     layout->addWidget(backBtn);
 
     /// Layout for suppression and edition buttons
     QHBoxLayout* grid = new QHBoxLayout();
-    QPushButton* minusBtn = new QPushButton(QIcon(":/icons/minus.png"),"");
-    QPushButton* editBtn = new QPushButton(QIcon(":/icons/edit.png"),"");
+    QPushButton* minusBtn = new QPushButton(QIcon(":/icons/minus.png"),"", this);
+    QPushButton* editBtn = new QPushButton(QIcon(":/icons/edit.png"),"", this);
     editBtn->setIconSize(parent->size()/10);
     minusBtn->setIconSize(parent->size()/10);
 
@@ -29,10 +29,10 @@ SelectedPointWidget::SelectedPointWidget(QMainWindow* parent){
     layout->addLayout(grid);
 
     /// Labels with the position of the point
-    posXLabel = new QLabel("X : ");
+    posXLabel = new QLabel("X : ", this);
     layout->addWidget(posXLabel);
 
-    posYLabel = new QLabel("Y : ");
+    posYLabel = new QLabel("Y : ", this);
     layout->addWidget(posYLabel);
 
     connect(backBtn, SIGNAL(clicked()), parent, SLOT(backSelecPointBtnEvent()));
@@ -43,7 +43,6 @@ SelectedPointWidget::SelectedPointWidget(QMainWindow* parent){
     setMaximumWidth(parent->width()*4/10);
     setMinimumWidth(parent->width()*4/10);
     layout->setAlignment(Qt::AlignTop);
-    setLayout(layout);
 }
 
 SelectedPointWidget::~SelectedPointWidget(){

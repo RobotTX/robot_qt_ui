@@ -7,22 +7,22 @@
 #include <QPushButton>
 #include <QMainWindow>
 
-RobotsLeftWidget::RobotsLeftWidget(QMainWindow* _parent){
+RobotsLeftWidget::RobotsLeftWidget(QMainWindow* _parent):QWidget(_parent){
     parent = _parent;
-    layout = new QVBoxLayout();
+    layout = new QVBoxLayout(this);
     scrollLayout = new QVBoxLayout();
     scrollArea = new VerticalScrollArea(this);
 
     /// Button to go back in the previous menu
-    QPushButton* backBtn = new QPushButton(QIcon(":/icons/arrowLeft.png"),"Robots");
+    QPushButton* backBtn = new QPushButton(QIcon(":/icons/arrowLeft.png"),"Robots", this);
     backBtn->setStyleSheet ("text-align: left");
     backBtn->setIconSize(_parent->size()/10);
     layout->addWidget(backBtn);
 
     /// Buttons to edit or show/hide a robot
     QHBoxLayout* grid = new QHBoxLayout();
-    editBtn = new QPushButton(QIcon(":/icons/edit.png"),"");
-    checkBtn = new QPushButton(QIcon(":/icons/map.png"),"");
+    editBtn = new QPushButton(QIcon(":/icons/edit.png"),"", this);
+    checkBtn = new QPushButton(QIcon(":/icons/map.png"),"", this);
 
     editBtn->setCheckable(true);
     checkBtn->setCheckable(true);
@@ -38,7 +38,7 @@ RobotsLeftWidget::RobotsLeftWidget(QMainWindow* _parent){
     connect(editBtn, SIGNAL(clicked()), parent, SLOT(editRobotBtnEvent()));
     connect(checkBtn, SIGNAL(clicked()), parent, SLOT(checkRobotBtnEvent()));
 
-    SpaceWidget* spaceWidget = new SpaceWidget(SpaceWidget::SpaceOrientation::HORIZONTAL);
+    SpaceWidget* spaceWidget = new SpaceWidget(SpaceWidget::SpaceOrientation::HORIZONTAL, this);
     layout->addWidget(spaceWidget);
 
     layout->addWidget(scrollArea);
@@ -46,7 +46,6 @@ RobotsLeftWidget::RobotsLeftWidget(QMainWindow* _parent){
     setMaximumWidth(parent->width()*4/10);
     setMinimumWidth(parent->width()*4/10);
     layout->setAlignment(Qt::AlignTop);
-    setLayout(layout);
 }
 
 RobotsLeftWidget::~RobotsLeftWidget(){
@@ -65,10 +64,10 @@ void RobotsLeftWidget::setRobots(std::shared_ptr<Robots> const &_robots){
     robots = _robots;
 
     /// Clickable buttons group to select/edit a robot
-    btnGroup = new RobotBtnGroup(robots->getRobotsVector(), false);
+    btnGroup = new RobotBtnGroup(robots->getRobotsVector(), false, this);
 
     /// Checkable buttons group to show/hide a robot
-    btnCheckGroup = new RobotBtnGroup(robots->getRobotsVector(), true);
+    btnCheckGroup = new RobotBtnGroup(robots->getRobotsVector(), true, this);
     btnGroup->show();
 
     connect(btnGroup->getBtnGroup(), SIGNAL(buttonClicked(QAbstractButton*)), parent, SLOT(setSelectedRobot(QAbstractButton*)));
@@ -77,7 +76,7 @@ void RobotsLeftWidget::setRobots(std::shared_ptr<Robots> const &_robots){
     scrollLayout->addWidget(btnGroup);
     scrollLayout->addWidget(btnCheckGroup);
 
-    QWidget* widget = new QWidget();
+    QWidget* widget = new QWidget(this);
 
     widget->setLayout(scrollLayout);
     scrollArea->setWidget(widget);

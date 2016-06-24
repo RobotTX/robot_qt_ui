@@ -1,6 +1,7 @@
 #ifndef COMPAREROBOTSXML_H
 #define COMPAREROBOTSXML_H
 
+
 #include <QVector>
 
 /**

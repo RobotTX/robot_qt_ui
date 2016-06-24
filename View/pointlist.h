@@ -12,10 +12,9 @@ class Points;
  * @brief The PointList class
  * This class purpose is to display a group of knwow points to the Model of our application
  */
-class PointList: public QWidget
-{
+class PointList: public QWidget{
 public:
-    PointList(Points& _points);
+    PointList(Points& _points, QWidget *parent);
     ~PointList();
 
     QListWidget* getPointList(void) const { return widgetsList; }
