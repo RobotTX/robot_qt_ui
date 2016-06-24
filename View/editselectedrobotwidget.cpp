@@ -71,9 +71,6 @@ EditSelectedRobotWidget::EditSelectedRobotWidget(QMainWindow* parent, const std:
     batteryLevel->setValue(50);
     layout->addWidget(batteryLevel);
 
-    /// Path label
-    QLabel* pathLabel = new QLabel("Path : ");
-    layout->addWidget(pathLabel);
 
     /// Home layout with the button to select the home
     QLabel* homeLabel = new QLabel("Home : ");
@@ -85,7 +82,7 @@ EditSelectedRobotWidget::EditSelectedRobotWidget(QMainWindow* parent, const std:
     layout->addWidget(homeLabel);
     layout->addWidget(homeBtn);
 
-    SpaceWidget* spaceWidget = new SpaceWidget(SpaceWidget::SpaceOrientation::HORIZONTAL);
+    SpaceWidget* spaceWidget = new SpaceWidget(SpaceWidget::SpaceOrientation::HORIZONTAL, this);
     layout->addWidget(spaceWidget);
 
     QHBoxLayout* grid = new QHBoxLayout();
@@ -123,7 +120,6 @@ EditSelectedRobotWidget::~EditSelectedRobotWidget(){
     delete wifiNameEdit;
     delete wifiPwd;
     delete wifiPwdEdit;
-    delete addPathBtn;
     delete ipAddressLabel;
     delete saveBtn;
     delete homeBtn;
@@ -183,13 +179,21 @@ void EditSelectedRobotWidget::editName(void){
 void EditSelectedRobotWidget::disableAll(void){
     nameEdit->setEnabled(false);
     homeBtn->setEnabled(false);
-    //addPathBtn->setEnabled(false);
     saveBtn->setEnabled(false);
 }
 
 void EditSelectedRobotWidget::enableAll(void){
     nameEdit->setEnabled(true);
     homeBtn->setEnabled(true);
-    //addPathBtn->setEnabled(true);
     saveBtn->setEnabled(true);
+}
+
+void EditSelectedRobotWidget::showEvent(QShowEvent *event){
+    emit showEditSelectedRobotWidget();
+    QWidget::showEvent(event);
+}
+
+void EditSelectedRobotWidget::hideEvent(QHideEvent *event){
+    emit hideEditSelectedRobotWidget();
+    QWidget::hideEvent(event);
 }

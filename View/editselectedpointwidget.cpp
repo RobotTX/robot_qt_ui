@@ -11,7 +11,7 @@
 #include "Model/group.h"
 #include <QComboBox>
 
-EditSelectedPointWidget::EditSelectedPointWidget(QMainWindow* _parent, PointsView* _points){
+EditSelectedPointWidget::EditSelectedPointWidget(QMainWindow* _parent, PointsView* _points):QWidget(_parent){
     parent = _parent;
     points = _points;
 
@@ -25,20 +25,20 @@ EditSelectedPointWidget::EditSelectedPointWidget(QMainWindow* _parent, PointsVie
     /// to set the default group as default
     groupBox->setCurrentIndex(0);
 
-    layout = new QVBoxLayout();
-    nameEdit = new QLineEdit(_parent);
+    layout = new QVBoxLayout(this);
+    nameEdit = new QLineEdit(this);
     nameEdit->setStyleSheet ("text-align: left");
     layout->addWidget(nameEdit);
 
-    posXLabel = new QLabel("X : ");
+    posXLabel = new QLabel("X : ", this);
     layout->addWidget(posXLabel);
 
-    posYLabel = new QLabel("Y : ");
+    posYLabel = new QLabel("Y : ", this);
     layout->addWidget(posYLabel);
 
     QHBoxLayout* grid = new QHBoxLayout();
 
-    saveBtn = new QPushButton("Save");
+    saveBtn = new QPushButton("Save", this);
 
     grid->addWidget(saveBtn);
 
@@ -56,7 +56,6 @@ EditSelectedPointWidget::EditSelectedPointWidget(QMainWindow* _parent, PointsVie
     setMaximumWidth(_parent->width()*4/10);
     setMinimumWidth(_parent->width()*4/10);
     layout->setAlignment(Qt::AlignTop);
-    setLayout(layout);
 }
 
 EditSelectedPointWidget::~EditSelectedPointWidget(){

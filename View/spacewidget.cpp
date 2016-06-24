@@ -3,9 +3,9 @@
 #include <QFrame>
 #include <QVBoxLayout>
 
-SpaceWidget::SpaceWidget(const SpaceOrientation orientation){
-    QVBoxLayout* layout = new QVBoxLayout();
-    spaceFrame = new QFrame();
+SpaceWidget::SpaceWidget(const SpaceOrientation orientation, QWidget* parent) : QWidget(parent){
+    QVBoxLayout* layout = new QVBoxLayout(this);
+    spaceFrame = new QFrame(this);
 
     spaceFrame->setStyleSheet("QFrame {color: grey}");
 
@@ -15,8 +15,6 @@ SpaceWidget::SpaceWidget(const SpaceOrientation orientation){
         spaceFrame->setFrameShape(QFrame::VLine);
 
     layout->addWidget(spaceFrame);
-
-    setLayout(layout);
 }
 
 SpaceWidget::~SpaceWidget(){

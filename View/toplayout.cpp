@@ -27,7 +27,7 @@ TopLayout::TopLayout(QMainWindow* parent){
     layout->addWidget(connectBtn);
     connect(connectBtn, SIGNAL(clicked()), parent, SLOT(connectToRobot()));
 
-    SpaceWidget* spaceWidget = new SpaceWidget(SpaceWidget::SpaceOrientation::VERTICAL);
+    SpaceWidget* spaceWidget = new SpaceWidget(SpaceWidget::SpaceOrientation::VERTICAL, this);
     spaceWidget->setColor("lightgrey");
     layout->addWidget(spaceWidget);
 
@@ -37,11 +37,11 @@ TopLayout::TopLayout(QMainWindow* parent){
     label->setContentsMargins(30,0,0,0);
     //layout->addWidget(label);
 
-    VerticalScrollArea* scrollArea = new VerticalScrollArea();
+    VerticalScrollArea* scrollArea = new VerticalScrollArea(this);
     scrollArea->setWidget(label);
     layout->addWidget(scrollArea);
 
-    SpaceWidget* spaceWidget2 = new SpaceWidget(SpaceWidget::SpaceOrientation::VERTICAL);
+    SpaceWidget* spaceWidget2 = new SpaceWidget(SpaceWidget::SpaceOrientation::VERTICAL, this);
     spaceWidget2->setColor("lightgrey");
     layout->addWidget(spaceWidget2);
 

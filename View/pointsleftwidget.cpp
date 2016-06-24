@@ -16,7 +16,8 @@
 
 PointsLeftWidget::PointsLeftWidget(QMainWindow* _parent, Points const& points, bool _groupDisplayed): groupDisplayed(_groupDisplayed)
 {
-    scrollArea = new VerticalScrollArea();
+    parent = _parent;
+    scrollArea = new VerticalScrollArea(this);
 
     groupWindow = new GroupEditWindow(this);
     groupWindow->getEdit()->move(200, 200);
@@ -24,7 +25,6 @@ PointsLeftWidget::PointsLeftWidget(QMainWindow* _parent, Points const& points, b
     groupWindow->hide();
 
     indexLastGroupClicked = 0;
-    parent = _parent;
 
     layout = new QVBoxLayout();
 
@@ -70,7 +70,7 @@ PointsLeftWidget::PointsLeftWidget(QMainWindow* _parent, Points const& points, b
     layout->addLayout(eyeMapLayout);
 
 
-    SpaceWidget* spaceWidget = new SpaceWidget(SpaceWidget::SpaceOrientation::HORIZONTAL);
+    SpaceWidget* spaceWidget = new SpaceWidget(SpaceWidget::SpaceOrientation::HORIZONTAL, this);
     layout->addWidget(spaceWidget);
 
     groupNameLabel = new QLabel("New group's name : ");
