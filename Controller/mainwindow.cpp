@@ -37,9 +37,9 @@
 #include <QVBoxLayout>
 #include <QAbstractButton>
 
-#define XML_PATH "/home/m-a/Documents/QtProject/gobot-software/points.xml"
+//#define XML_PATH "/home/m-a/Documents/QtProject/gobot-software/points.xml"
 //#define XML_PATH "/home/joan/Qt/QtProjects/gobot-software/points.xml"
-
+#define XML_PATH "/Users/fannylarradet/Desktop/GTRobots/gobot-software/points.xml"
 
 /**
  * @brief MainWindow::MainWindow
@@ -251,7 +251,7 @@ void MainWindow::initializeRobots(){
     robotView2->setParentItem(mapPixmapItem);
     robots->add(robotView2);
 
-    std::shared_ptr<Robot> robot3(new Robot("Robota", "192.168.4.155", PORT_CMD, this));
+    std::shared_ptr<Robot> robot3(new Robot("Robota", "192.168.4.226", PORT_CMD, this));
     robot3->setWifi("Swaghetti Yolognaise");
     RobotView* robotView3 = new RobotView(robot3);
     connect(robotView3, SIGNAL(setSelectedSignal(RobotView*)), this, SLOT(setSelectedRobot(RobotView*)));
@@ -340,7 +340,7 @@ void MainWindow::viewPathSelectedRobot(int robotNb){
             pathPointViews.clear();
         }
 
-        for(int i = 0; i < robot->getPath().size(); i++){
+        for(size_t i = 0; i < robot->getPath().size(); i++){
             std::shared_ptr<PathPoint> pathPoint = robot->getPath().at(i);
             PointView * pointView = new PointView(std::make_shared<Point>(pathPoint->getPoint()));
             pointView->setParentItem(mapPixmapItem);
@@ -463,11 +463,28 @@ void MainWindow::cancelEditSelecRobotBtnEvent(){
 
 void MainWindow::robotSavedEvent(){
     qDebug() << "robotSavedEvent called";
+
+    bool isOK = false;
+
     /// if the command is succesfully sent to the robot, we apply the change
-    if(selectedRobot->getRobot()->sendCommand(QString("a ") + editSelectedRobotWidget->getNameEdit()->text())
-            && selectedRobot->getRobot()->sendCommand(QString("b ")
-          + editSelectedRobotWidget->getWifiNameEdit()->text()
-          + editSelectedRobotWidget->getWifiPwdEdit()->text())){
+    if (editSelectedRobotWidget->getWifiPwdEdit()->text() == "......")
+    {
+        if(selectedRobot->getRobot()->sendCommand(QString("a ") + editSelectedRobotWidget->getNameEdit()->text())){
+            isOK = true;
+        }
+    }
+    else
+    {
+        if(selectedRobot->getRobot()->sendCommand(QString("a ") + editSelectedRobotWidget->getNameEdit()->text())
+                && selectedRobot->getRobot()->sendCommand(QString("b ")
+              + editSelectedRobotWidget->getWifiNameEdit()->text()
+              + editSelectedRobotWidget->getWifiPwdEdit()->text())){
+
+            isOK=true;
+        }
+    }
+
+    if (isOK){
 
         editSelectedRobotWidget->editName();
 
@@ -485,7 +502,6 @@ void MainWindow::robotSavedEvent(){
                     }
                 break;
                 case QMessageBox::Ok : {
-
                     bool done = false;
                     if(editSelectedRobotWidget->isTemporaryHome()){
                         qDebug() << "Tmp point";
@@ -526,7 +542,6 @@ void MainWindow::robotSavedEvent(){
                 break;
             }
         }
-
         robotsLeftWidget->setEditBtnStatus(false);
         robotsLeftWidget->setCheckBtnStatus(false);
         editSelectedRobotWidget->hide();
@@ -1219,9 +1234,9 @@ void MainWindow::cancelEditSelecPointBtnEvent(){
 */
 
 void MainWindow::pointSavedEvent(){
-    /*
-    qDebug() << "pointSavedEvent called";
 
+    qDebug() << "pointSavedEvent called";
+/*
     editSelectedPointWidget->hide();
     if(lastWidget != NULL){
         lastWidget->show();
@@ -1264,7 +1279,7 @@ void MainWindow::pointSavedEvent(){
         }
     }
     qDebug() << editSelectedPointWidget->getCurrentGroupIndex();
-    */
+*/
 }
 
 void MainWindow::displayDeleteEvent(QModelIndex index){

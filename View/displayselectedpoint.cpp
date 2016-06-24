@@ -11,6 +11,7 @@
 #include <QKeyEvent>
 #include "Model/xmlparser.h"
 #include "View/spacewidget.h"
+#include "Model/group.h"
 
 DisplaySelectedPoint::DisplaySelectedPoint(QMainWindow *_parent, Points const& _points, PointView* _pointView, const Origin _origin): QWidget(_parent), parent(_parent), origin(_origin)
 {
@@ -92,6 +93,9 @@ DisplaySelectedPoint::DisplaySelectedPoint(QMainWindow *_parent, Points const& _
     editLayout->addWidget(saveButton);
 
     layout->addLayout(editLayout);
+
+    /// to check that a point that's being edited does not get a new name that's already used in the database
+    connect(nameEdit, SIGNAL(textEdited(QString)), this, SLOT(checkPointName()));
 }
 
 DisplaySelectedPoint::~DisplaySelectedPoint(){
@@ -175,6 +179,22 @@ void DisplaySelectedPoint::resetWidget(){
 void DisplaySelectedPoint::hideEvent(QHideEvent *event){
     resetWidget();
     QWidget::hideEvent(event);
+}
+
+void DisplaySelectedPoint::checkPointName() const {
+    qDebug() << "checkPointName called";
+    for(int i = 0; i < points.count(); i++){
+        std::shared_ptr<Group> group = points.getGroups().at(i);
+        for(int j = 0; j < group->count(); j++){
+            if(!nameEdit->text().compare(group->getPoints().at(j)->getName())){
+                qDebug() << nameEdit->text() << " already exists";
+                saveButton->setEnabled(false);
+                saveButton->setToolTip("A point with this name already exists, please choose another name for your point.");
+                return;
+            }
+        }
+    }
+    saveButton->setEnabled(true);
 }
 
 

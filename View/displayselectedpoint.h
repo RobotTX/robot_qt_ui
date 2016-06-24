@@ -59,7 +59,10 @@ signals:
     /// to reset the state of the map if a user clicks a random button while he was editting a point
     void resetState(GraphicItemState, bool);
 
+
 private slots:
+    /// to check that a name is available before we proceed to the update
+    void checkPointName() const;
 
 private:
     QLineEdit* nameEdit;
