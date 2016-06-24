@@ -27,6 +27,7 @@ public:
 public:
     PointView* getPointViewFromName(const QString);
     PointView* getPointViewFromPoint(const Point& point);
+    void addPointView( PointView* const&_pointView);
 
 private:
     std::vector<GroupView*> groupViews;

@@ -37,8 +37,8 @@
 #include <QVBoxLayout>
 #include <QAbstractButton>
 
-#define XML_PATH "/home/m-a/Documents/QtProject/gobot-software/points.xml"
-//#define XML_PATH "/home/joan/Qt/QtProjects/gobot-software/points.xml"
+//#define XML_PATH "/home/m-a/Documents/QtProject/gobot-software/points.xml"
+#define XML_PATH "/home/joan/Qt/QtProjects/gobot-software/points.xml"
 //#define XML_PATH "/Users/fannylarradet/Desktop/GTRobots/gobot-software/points.xml"
 
 /**
@@ -1117,6 +1117,7 @@ void MainWindow::minusGroupBtnEvent(){
 }
 
 void MainWindow::editPointButtonEvent(bool checked){
+
     /// uncheck the other buttons
     pointsLeftWidget->getPlusButton()->setChecked(false);
     pointsLeftWidget->getMinusButton()->setChecked(false);
@@ -1239,15 +1240,29 @@ void MainWindow::pointSavedEvent(int index, double x, double y, QString name){
 
     qDebug() << "index " << index;
 
+    editSelectedPointWidget->getPlusButton()->setEnabled(true);
+    editSelectedPointWidget->hideGroupLayout();
+
     std::shared_ptr<Point> newPoint = std::shared_ptr<Point> (new Point(name, x, y, true, true));
-
-    points.getGroups().at(points.count()-index-1)->addPoint(newPoint);
-
-    //PointView* newPointView = new PointView(newPoint);
-
+    if(index != 0)
+        qDebug() << points.getGroups().at(index-1)->getName();
+    /// default group
+    if(index == 0)
+        points.getGroups().at(points.count()-1)->addPoint(newPoint);
+    else
+        points.getGroups().at(index-1)->addPoint(newPoint);
+    if(index != 0){
+        qDebug() << "mainwindow av" << pointViews->getGroups().at(index-1)->getPointViews().size();
+        qDebug() << "map av " << mapPixmapItem->getPermanentPoints()->getGroups().at(index-1)->getPointViews().size();
+    }
+    PointView* newPointView = new PointView(newPoint);
+    mapPixmapItem->addPointView(newPointView);
+    if(index != 0){
+        qDebug() << "mainwi ap " << pointViews->getGroups().at(index-1)->getPointViews().size();
+        qDebug() << "map ap " << mapPixmapItem->getPermanentPoints()->getGroups().at(index-1)->getPointViews().size();
+    }
     XMLParser parser(XML_PATH);
     parser.save(points);
-
 }
 
 void MainWindow::displayDeleteEvent(QModelIndex index){
@@ -1661,27 +1676,32 @@ void MainWindow::removePointFromInformationMenu(void){
         case QMessageBox::Ok : {
         /// first we check that this point is not a home
             std::shared_ptr<Point> point = leftMenu->getDisplaySelectedPoint()->getPoint();
+            qDebug() << " got the point u want to delete " << point->getName();
             if(!point->isHome()){
                 /// to get the name of the point we just retrieve the label text property without the first 7 chars "Name : "
                 QString pointName = leftMenu->getDisplaySelectedPoint()->getPointName();
                 /// holds the index of the group and the index of a particular point in this group within <points>
                 std::pair<int, int> pointIndexes = points.findPointIndexes(pointName);
+                qDebug() << "i got your indexes " << pointIndexes.first << pointIndexes.second;
                 if(pointIndexes.first != -1){
-                    std::shared_ptr<Point> currentPoint = points.getGroups().at(pointIndexes.first)->getPoints().at(pointIndexes.second);
                     /// need to remove the point from the map
-                    pointViews->getPointViewFromPoint(*currentPoint)->hide();
+                    pointViews->getPointViewFromPoint(*point)->hide();
+                    qDebug() << "was able to hide it";
                     points.getGroups().at(pointIndexes.first)->removePoint(pointIndexes.second);
+                    qDebug() << "was able to remove it";
                     /// updates the file containing containing points info
                     XMLParser parserPoints(XML_PATH);
                     parserPoints.save(points);
                     /// updates the group menu and the list of points
                     pointsLeftWidget->getGroupButtonGroup()->update(points);
+                    qDebug() << "i updated the points";
                     /// closes the window
                     leftMenu->getDisplaySelectedPoint()->hide();
                 } else {
                     qDebug() << "could not find this point";
                 }
             } else {
+                qDebug() << " you want to delete a hone point";
                 RobotView* robot = robots->findRobotUsingHome(point->getName());
                 openInterdictionOfPointRemovalMessage(point->getName(), robot->getRobot()->getName());
                 qDebug() << "Sorry this point is the home of a robot and therefore cannot be removed";

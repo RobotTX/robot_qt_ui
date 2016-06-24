@@ -28,9 +28,9 @@ MapView::MapView (const QPixmap& pixmap, const QSize _size, PointsView* const& p
             /// in case the point is not displayed we hide the point view
             if(!currentPointView->getPoint()->isDisplayed())
                 currentPointView->hide();
-            connect(&(*currentPointView), SIGNAL(pointLeftClicked(PointView*)), mainWindow, SLOT(displayPointEvent(PointView*)));
+            connect(currentPointView, SIGNAL(pointLeftClicked(PointView*)), mainWindow, SLOT(displayPointEvent(PointView*)));
             /// to update the coordinates of the point displayed on the left when a user drags a point to change its position
-            connect(&(*currentPointView), SIGNAL(editedPointPositionChanged(double, double)), mainWindow, SLOT(updateCoordinates(double, double)));
+            connect(currentPointView, SIGNAL(editedPointPositionChanged(double, double)), mainWindow, SLOT(updateCoordinates(double, double)));
         }
     }
 
@@ -130,20 +130,6 @@ void MapView::mouseReleaseEvent(QGraphicsSceneMouseEvent *event){
     QGraphicsPixmapItem::mouseReleaseEvent(event);
 }
 
-void MapView::updatePoints(const Points& points){
-    for(size_t i = 0; i < permanentPoints->getGroups().size(); i++){
-        for(size_t j = 0; j < permanentPoints->getGroups().at(i)->getPointViews().size(); j++){
-            permanentPoints->getGroups().at(i)->getPointViews().at(j)->hide();
-        }
-    }
-    permanentPoints = new PointsView(points);
-    for(size_t i = 0; i < permanentPoints->getGroups().size(); i++){
-        for(size_t j = 0; j < permanentPoints->getGroups().at(i)->getPointViews().size(); j++){
-            permanentPoints->getGroups().at(i)->getPointViews().at(j)->setParentItem(this);
-            connect(&(*permanentPoints->getGroups().at(i)->getPointViews().at(j)), SIGNAL(pointLeftClicked(PointView*)), mainWindow, SLOT(displayPointEvent(PointView*)));
-        }
-    }
-}
 
 void MapView::addPathPointMapViewSlot(PointView* _pointView){
     qDebug() << "addPathPointMapViewSlot called";
@@ -207,4 +193,12 @@ void MapView::setState(const GraphicItemState _state, const bool clear){
             connect(&(*currentPointView), SIGNAL(editedPointPositionChanged(double, double)), mainWindow, SLOT(updateCoordinates(double, double)));
         }
     }
+ }
+
+ void MapView::addPointView(PointView* const& _pointView){
+     _pointView->setParentItem(this);
+     connect(_pointView, SIGNAL(pointLeftClicked(PointView*)), mainWindow, SLOT(displayPointEvent(PointView*)));
+     /// to update the coordinates of the point displayed on the left when a user drags a point to change its position
+     connect(_pointView, SIGNAL(editedPointPositionChanged(double, double)), mainWindow, SLOT(updateCoordinates(double, double)));
+     permanentPoints->addPointView(_pointView);
  }

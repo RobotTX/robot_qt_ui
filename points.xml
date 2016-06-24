@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <points>
     <group>
-        <name>No Name</name>
+        <name>first group</name>
         <point>
-<<<<<<< HEAD
             <name>A</name>
             <x>50</x>
             <y>50</y>
@@ -36,6 +35,12 @@
             <y>150</y>
             <displayed>1</displayed>
         </point>
+        <point>
+            <name>tmpPoint1</name>
+            <x>38</x>
+            <y>112</y>
+            <displayed>1</displayed>
+        </point>
     </group>
     <group>
         <name>No group</name>
@@ -55,18 +60,6 @@
             <name>A final point</name>
             <x>150</x>
             <y>225</y>
-            <displayed>1</displayed>
-=======
-            <name>Home_Roboty</name>
-            <x>312</x>
-            <y>237</y>
-            <displayed>72</displayed>
->>>>>>> 3c6f9d7fa9d4841a0985bad366ca6bf1a99ff79f
-        </point>
-        <point>
-            <name>tmpPoint</name>
-            <x>77</x>
-            <y>164</y>
             <displayed>1</displayed>
         </point>
     </group>

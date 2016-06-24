@@ -64,6 +64,7 @@ EditSelectedPointWidget::EditSelectedPointWidget(QMainWindow* _parent, PointsVie
 
     nameEdit = new QLineEdit(this);
     nameEdit->setStyleSheet ("text-align: left");
+    nameEdit->setEnabled(false);
     layout->addWidget(nameEdit);
 
     posXLabel = new QLabel("X : ", this);
@@ -158,10 +159,6 @@ void EditSelectedPointWidget::setSelectedPoint(PointView * const &_pointView, co
 
 void EditSelectedPointWidget::saveEditSelecPointBtnEvent(){
     qDebug() << "saveEditSelecPointBtnEvent called";
-    if(isTemporary()){
-        pointView->getPoint()->setName(nameEdit->text());
-
-    }
     emit pointSaved(groupBox->currentIndex(), posXLabel->text().right(posXLabel->text().length()-4).toDouble(), posYLabel->text().right(posYLabel->text().length()-4).toDouble(), nameEdit->text());
 }
 
@@ -188,12 +185,15 @@ void EditSelectedPointWidget::print(int id) const {
 }
 
 void EditSelectedPointWidget::showGroupLayout() const {
+    /// we disable so that two points cannot be named tmpPoint
+    saveBtn->setEnabled(false);
     groupLabel->show();
     groupBox->show();
     saveBtn->show();
     cancelBtn->show();
     plusButton->setEnabled(false);
     plusButton->setToolTip("");
+    nameEdit->setEnabled(true);
 }
 
 void EditSelectedPointWidget::hideGroupLayout() const {
@@ -203,4 +203,5 @@ void EditSelectedPointWidget::hideGroupLayout() const {
     cancelBtn->hide();
     plusButton->setEnabled(true);
     plusButton->setToolTip("Click this button if you want to save this point permanently");
+    nameEdit->setEnabled(false);
 }

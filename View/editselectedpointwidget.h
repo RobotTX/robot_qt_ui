@@ -35,6 +35,7 @@ public:
     QLabel* getPosXLabel(void) const { return posXLabel; }
     QLabel* getPosYLabel(void) const { return posYLabel; }
     QLineEdit* getNameEdit(void) const { return nameEdit; }
+    QPushButton* getPlusButton(void) const { return plusButton; }
 
 signals:
     void pointSaved(int, double, double, QString);
@@ -45,6 +46,8 @@ private slots:
     void checkPointName(void) const;
     void print(int id) const;
     void showGroupLayout() const;
+
+public slots:
     void hideGroupLayout() const;
 
 private:
