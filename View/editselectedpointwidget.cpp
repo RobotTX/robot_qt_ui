@@ -90,6 +90,7 @@ EditSelectedPointWidget::EditSelectedPointWidget(QMainWindow* _parent, PointsVie
     }
     /// to set the default group as default
     groupBox->setCurrentIndex(0);
+    groupBox->setItemIcon(0, QIcon(":/icons/tick.png"));
     groupBox->hide();
 
     groupLayout->addWidget(groupLabel);
@@ -162,6 +163,9 @@ void EditSelectedPointWidget::checkPointName(void) const {
 
 void EditSelectedPointWidget::print(int id) const {
     qDebug() << "id " << id;
+    for(int i = 0; i < groupBox->count(); i++)
+        groupBox->setItemIcon(i, QIcon(""));
+    groupBox->setItemIcon(groupBox->currentIndex(), QIcon(":/icons/tick.png"));
 }
 
 void EditSelectedPointWidget::showGroupLayout() const {
