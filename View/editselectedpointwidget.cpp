@@ -90,6 +90,7 @@ EditSelectedPointWidget::EditSelectedPointWidget(QMainWindow* _parent, PointsVie
     }
     /// to set the default group as default
     groupBox->setCurrentIndex(0);
+    groupBox->setItemIcon(0, QIcon(":/icons/tick.png"));
     groupBox->hide();
 
     groupLayout->addWidget(groupLabel);
@@ -133,8 +134,8 @@ void EditSelectedPointWidget::setSelectedPoint(PointView * const &_pointView, co
     _isTemporary = isTemporary;
     pointView = _pointView;
     nameEdit->setText(pointView->getPoint()->getName());
-    posXLabel->setText("X : " + QString::number(pointView->getPoint()->getPosition().getX()));
-    posYLabel->setText("Y : " + QString::number(pointView->getPoint()->getPosition().getY()));
+    posXLabel->setText("X : " + QString::number(pointView->getPoint()->getPosition().getX(), 'f', 1));
+    posYLabel->setText("Y : " + QString::number(pointView->getPoint()->getPosition().getY(), 'f', 1));
 }
 
 void EditSelectedPointWidget::saveEditSelecPointBtnEvent(){
@@ -162,6 +163,9 @@ void EditSelectedPointWidget::checkPointName(void) const {
 
 void EditSelectedPointWidget::print(int id) const {
     qDebug() << "id " << id;
+    for(int i = 0; i < groupBox->count(); i++)
+        groupBox->setItemIcon(i, QIcon(""));
+    groupBox->setItemIcon(groupBox->currentIndex(), QIcon(":/icons/tick.png"));
 }
 
 void EditSelectedPointWidget::showGroupLayout() const {
@@ -176,6 +180,7 @@ void EditSelectedPointWidget::showGroupLayout() const {
     nameEdit->setReadOnly(false);
     nameEdit->setAutoFillBackground(false);
     nameEdit->setFrame(true);
+    nameEdit->setFocusPolicy(Qt::FocusPolicy::StrongFocus);
 }
 
 void EditSelectedPointWidget::hideGroupLayout() const {
@@ -188,4 +193,5 @@ void EditSelectedPointWidget::hideGroupLayout() const {
     nameEdit->setReadOnly(true);
     nameEdit->setAutoFillBackground(true);
     nameEdit->setFrame(false);
+    nameEdit->setFocusPolicy(Qt::FocusPolicy::NoFocus);
 }

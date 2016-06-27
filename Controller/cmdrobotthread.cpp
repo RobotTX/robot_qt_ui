@@ -38,7 +38,9 @@ void CmdRobotThread::run(){
 }
 
 bool CmdRobotThread::sendCommand(QString cmd){
-    qDebug() << "(Robot" << robotName << ") Command to send : " << cmd << "to " << ipAddress << "at port " << port;
+    qDebug() << "fin";
+
+    qDebug() << "(Robot" << robotName ;//<< ") Command to send : " << cmd << "to " << ipAddress << "at port " << port;
 
     if(connected){
         int nbDataSend = socketCmd->write(QString(cmd + " } ").toUtf8());

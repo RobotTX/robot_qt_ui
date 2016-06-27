@@ -99,8 +99,8 @@ DisplaySelectedPoint::DisplaySelectedPoint(QMainWindow *_parent, Points const& _
 }
 
 void DisplaySelectedPoint::displayPointInfo(void){
-    posXLabel->setText("X : " + QString::number(pointView->getPoint()->getPosition().getX()));
-    posYLabel->setText("Y : " + QString::number(pointView->getPoint()->getPosition().getY()));
+    posXLabel->setText("X : " + QString::number(pointView->getPoint()->getPosition().getX(), 'f', 1));
+    posYLabel->setText("Y : " + QString::number(pointView->getPoint()->getPosition().getY(), 'f', 1));
     nameEdit->setText(pointView->getPoint()->getName());
 }
 

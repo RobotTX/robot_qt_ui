@@ -65,6 +65,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     scanningRobot = NULL;
     selectedPoint = NULL;
     editedPointView = NULL;
+    lastWidget = NULL;
 
 
     //create the graphic item of the map
@@ -73,7 +74,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     connect(mapPixmapItem, SIGNAL(addPathPointMapView(Point*)), this, SLOT(addPathPoint(Point*)));
     connect(mapPixmapItem, SIGNAL(homeSelected(PointView*, bool)), this, SLOT(homeSelected(PointView*, bool)));
     connect(mapPixmapItem, SIGNAL(homeEdited(PointView*, bool)), this, SLOT(homeEdited(PointView*, bool)));
-
 
     //create the toolbar
     topLayout = new TopLayout(this);
@@ -129,6 +129,8 @@ MainWindow::~MainWindow(){
     qDeleteAll(pathPointViews.begin(), pathPointViews.end());
     pathPointViews.clear();
 }
+
+
 
 /**********************************************************************************************************************************/
 
@@ -270,7 +272,7 @@ void MainWindow::stopSelectedRobot(int robotNb){
                     qDebug() << "Points size after : " << points.getGroups().at(0)->getPoints().size();
                     if(!robots->getRobotsVector().at(robotNb)->getRobot()->getName().compare(selectedRobot->getRobot()->getName())){
                         hideAllWidgets();
-                        selectedRobotWidget->setSelectedRobot(selectedRobot);
+                        selectedRobotWidget->setSelectedRobot(selectedRobot, lastWidget);
                         selectedRobotWidget->show();
                     }
                 }
@@ -368,7 +370,7 @@ void MainWindow::setSelectedRobot(RobotView* robotView){
         selectedRobot = robotView;
         robots->setSelected(robotView);
         hideAllWidgets();
-        selectedRobotWidget->setSelectedRobot(selectedRobot);
+        selectedRobotWidget->setSelectedRobot(selectedRobot, lastWidget);
         selectedRobotWidget->show();
     }
 }
@@ -378,6 +380,7 @@ void MainWindow::robotBtnEvent(void){
     leftMenuWidget->hide();
     robotsLeftWidget->show();
     lastWidget = robotsLeftWidget;
+
 }
 
 void MainWindow::backSelecRobotBtnEvent(){
@@ -389,6 +392,8 @@ void MainWindow::backSelecRobotBtnEvent(){
         leftMenu->hide();
     }
 }
+
+
 
 void MainWindow::editSelecRobotBtnEvent(){
     qDebug() << "editSelecRobotBtnEvent called";
@@ -405,10 +410,15 @@ void MainWindow::addPathSelecRobotBtnEvent(){
     setGraphicItemsState(GraphicItemState::CREATING_PATH, true);
 }
 
+
+void MainWindow::setSelectedRobotNoParent(QAbstractButton *button){
+lastWidget = NULL;
+ setSelectedRobot(button);
+}
 void MainWindow::setSelectedRobot(QAbstractButton *button){
     qDebug() << "Edit : " << robotsLeftWidget->getEditBtnStatus() << "\nsetSelectedRobot with QAbstractButton called : " << button->text();
     if(robotsLeftWidget->getEditBtnStatus())
-        editSelectedRobot(robots->getRobotViewByName(button->text()));
+        (robots->getRobotViewByName(button->text()));
     else
         setSelectedRobot(robots->getRobotViewByName(button->text()));
 }
@@ -463,6 +473,8 @@ void MainWindow::robotSavedEvent(){
     /// if the command is succesfully sent to the robot, we apply the change
     if (editSelectedRobotWidget->getWifiPwdEdit()->text() == "......")
     {
+        qDebug() << "edit name only";
+
         if(selectedRobot->getRobot()->sendCommand(QString("a ") + editSelectedRobotWidget->getNameEdit()->text())){
             isOK = true;
         }
@@ -543,7 +555,7 @@ void MainWindow::robotSavedEvent(){
         robotsLeftWidget->updateRobots(robots);
         bottomLayout->updateRobot(robots->getRobotId(selectedRobot->getRobot()->getName()), selectedRobot);
 
-        selectedRobotWidget->setSelectedRobot(selectedRobot);
+        selectedRobotWidget->setSelectedRobot(selectedRobot, lastWidget );
         selectedRobotWidget->show();
     }
 }
@@ -605,7 +617,7 @@ void MainWindow::pathSaved(bool execPath){
 
     hideAllWidgets();
     setMessageTop(TEXT_COLOR_SUCCESS, "Path saved");
-    selectedRobotWidget->setSelectedRobot(selectedRobot);
+    selectedRobotWidget->setSelectedRobot(selectedRobot, lastWidget);
     selectedRobotWidget->show();
     bottomLayout->updateRobot(robots->getRobotId(selectedRobot->getRobot()->getName()), selectedRobot);
 
@@ -792,7 +804,7 @@ void MainWindow::homeSelected(PointView* pointView, bool temporary){
                 setGraphicItemsState(GraphicItemState::NO_STATE);
                 enableMenu();
                 hideAllWidgets();
-                selectedRobotWidget->setSelectedRobot(selectedRobot);
+                selectedRobotWidget->setSelectedRobot(selectedRobot, lastWidget);
                 selectedRobotWidget->show();
             }
         }
@@ -1111,7 +1123,10 @@ void MainWindow::minusGroupBtnEvent(){
 }
 
 void MainWindow::editPointButtonEvent(bool checked){
-
+    /// hide the temporary point on the map
+    mapPixmapItem->getTmpPointView()->hide();
+    /// change the color of the pointview that's selected on the map
+    leftMenu->getDisplaySelectedPoint()->getPointView()->setPixmap(PointView::PixmapType::HOVER);
     /// uncheck the other buttons
     pointsLeftWidget->getPlusButton()->setChecked(false);
     pointsLeftWidget->getMinusButton()->setChecked(false);
@@ -1153,7 +1168,7 @@ void MainWindow::editPointButtonEvent(bool checked){
     }
 }
 
-void MainWindow::editGroupBtnEvent(){
+void MainWindow::editGroupBtnEvent(bool checked){
     qDebug() << "editPointBtnEvent called";
     /// uncheck the other buttons
     pointsLeftWidget->getPlusButton()->setChecked(false);
@@ -1165,6 +1180,28 @@ void MainWindow::editGroupBtnEvent(){
     pointsLeftWidget->getGroupNameEdit()->hide();
     pointsLeftWidget->getGroupNameLabel()->hide();
 
+    int checkedId = pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->checkedId();
+    /// it's an isolated point
+    if(checkedId != -1 && checkedId >= points.count()-1){
+        /// must display the tick icon in the pointsLeftWidget
+        pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(checkedId)->setIcon(QIcon(":/icons/tick.png"));
+        qDebug() << "ok "  << checkedId-points.count()+1;
+        std::shared_ptr<Point> point = points.findPoint(points.count()-1, checkedId-points.count()+1);
+        PointView* pointView = pointViews->getPointViewFromPoint(*point);
+        pointView->show();
+
+        if(pointView)
+            leftMenu->getDisplaySelectedPoint()->setPointView(pointView);
+        else
+            qDebug() << "THere is no point view associated with those indexes";
+        //pointViews->setNormalPixmaps();
+        leftMenu->getDisplaySelectedPoint()->displayPointInfo();
+        editPointButtonEvent(checked);
+        pointsLeftWidget->hide();
+        leftMenu->getDisplaySelectedPoint()->getBackButton()->setEnabled(false);
+        leftMenu->getDisplaySelectedPoint()->getBackButton()->setToolTip("Please save or discard your modifications before navigating the menu again.");
+        leftMenu->getDisplaySelectedPoint()->show();
+    }
 }
 
 void MainWindow::selectPointBtnEvent(){
@@ -1257,6 +1294,8 @@ void MainWindow::pointSavedEvent(int index, double x, double y, QString name){
     }
     XMLParser parser(XML_PATH, mapPixmapItem);
     parser.save(points);
+    pointsLeftWidget->updateGroupButtonGroup(points);
+    mapPixmapItem->getTmpPointView()->hide();
 }
 
 void MainWindow::displayDeleteEvent(QModelIndex index){
@@ -1778,6 +1817,10 @@ void MainWindow::displayPointInfoFromGroupMenu(void){
             selectedPoint->setOrigin(DisplaySelectedPoint::GROUP_MENU);
             selectedPoint->setPointView(pointViews->getPointViewFromPoint(*point));
             selectedPoint->displayPointInfo();
+            if(point->isDisplayed())
+                selectedPoint->getMapButton()->setChecked(true);
+            else
+                selectedPoint->getMapButton()->setChecked(false);
             selectedPoint->show();
             leftMenu->getDisplaySelectedGroup()->hide();
         }
@@ -1785,6 +1828,8 @@ void MainWindow::displayPointInfoFromGroupMenu(void){
 }
 
 void MainWindow::updatePoint(void){
+    /// reset the color of the pointView
+    leftMenu->getDisplaySelectedPoint()->getPointView()->setPixmap(PointView::PixmapType::NORMAL);
     emit nameChanged(leftMenu->getDisplaySelectedPoint()->getPoint()->getName(), leftMenu->getDisplaySelectedPoint()->getNameEdit()->text());
     DisplaySelectedPoint* selectedPoint = leftMenu->getDisplaySelectedPoint();
     selectedPoint->getPoint()->setName(leftMenu->getDisplaySelectedPoint()->getNameEdit()->text());
@@ -1825,9 +1870,13 @@ void MainWindow::updatePoint(void){
     leftMenu->getDisplaySelectedPoint()->getPointView()->getPoint()->setPosition(
                 leftMenu->getDisplaySelectedPoint()->getXLabel()->text().right(xLength-4).toFloat(),
                 leftMenu->getDisplaySelectedPoint()->getYLabel()->text().right(yLength-4).toFloat());
+    leftMenu->getDisplaySelectedPoint()->getBackButton()->setEnabled(true);
+    leftMenu->getDisplaySelectedPoint()->getBackButton()->setToolTip("");
 }
 
 void MainWindow::cancelEvent(void){
+    /// reset the color of the pointView
+    leftMenu->getDisplaySelectedPoint()->getPointView()->setPixmap(PointView::PixmapType::NORMAL);
     /// to change the aspect of the point name
     leftMenu->getDisplaySelectedPoint()->getNameEdit()->setAutoFillBackground(true);
     leftMenu->getDisplaySelectedPoint()->getNameEdit()->setFrame(false);
@@ -1850,6 +1899,9 @@ void MainWindow::cancelEvent(void){
                                                                 static_cast<qreal>(leftMenu->getDisplaySelectedPoint()->getPoint()->getPosition().getY()));
     /// reset its name in the hover on the map
     leftMenu->getDisplaySelectedPoint()->getNameEdit()->setText(leftMenu->getDisplaySelectedPoint()->getPoint()->getName());
+    /// enable the back button in case we were editing coming from the left menu
+    leftMenu->getDisplaySelectedPoint()->getBackButton()->setEnabled(true);
+    leftMenu->getDisplaySelectedPoint()->getBackButton()->setToolTip("");
 }
 
 void MainWindow::updateCoordinates(double x, double y){
@@ -1921,6 +1973,18 @@ void MainWindow::openInterdictionOfPointRemovalMessage(const QString pointName, 
 void MainWindow::quit(){
     close();
 }
+
+QWidget* MainWindow::getLastWidget(void)
+{
+    return lastWidget;
+}
+void MainWindow::setLastWidget(QWidget* lw)
+{
+
+     lastWidget = lw;
+
+}
+
 
 int MainWindow::openConfirmMessage(const QString text){
     QMessageBox msgBox;

@@ -54,6 +54,7 @@ private:
     bool selected;
     std::shared_ptr<Robot> robot;
     bool shown;
+    MapView* mapView;
 };
 
 #endif // ROBOTVIEW_H

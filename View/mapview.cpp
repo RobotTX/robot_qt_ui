@@ -8,6 +8,7 @@
 #include <QMouseEvent>
 #include <QDebug>
 #include <QGraphicsSceneMouseEvent>
+#include "mainwindow.h"
 
 MapView::MapView (const QPixmap& pixmap, const QSize _size, QMainWindow* _mainWindow) :
     QGraphicsPixmapItem(pixmap), size(_size), state(GraphicItemState::NO_STATE){
@@ -32,7 +33,14 @@ MapView::MapView (const QPixmap& pixmap, const QSize _size, QMainWindow* _mainWi
     connect(tmpPointView, SIGNAL(homeEdited(PointView*, bool)), mainWindow, SLOT(homeEdited(PointView*, bool)));
     point = static_cast<QSharedPointer<PointView>>(tmpPointView);
 
+    tmpPointView->hide();
+
 }
+
+ QMainWindow* MapView::getMainWindow(void)
+ {
+     return mainWindow;
+ }
 
 MapView::~MapView(){
     delete permanentPoints;
@@ -214,5 +222,10 @@ void MapView::setState(const GraphicItemState _state, const bool clear){
      connect(_pointView, SIGNAL(pointLeftClicked(PointView*)), mainWindow, SLOT(displayPointEvent(PointView*)));
      /// to update the coordinates of the point displayed on the left when a user drags a point to change its position
      connect(_pointView, SIGNAL(editedPointPositionChanged(double, double)), mainWindow, SLOT(updateCoordinates(double, double)));
+     connect(_pointView, SIGNAL(moveTmpEditPathPoint()), mainWindow, SLOT(moveTmpEditPathPointSlot()));
+
+     connect(_pointView, SIGNAL(addPointPath(PointView*)), this, SLOT(addPathPointMapViewSlot(PointView*)));
+     connect(_pointView, SIGNAL(homeSelected(PointView*, bool)), mainWindow, SLOT(homeSelected(PointView*, bool)));
+     connect(_pointView, SIGNAL(homeEdited(PointView*, bool)), mainWindow, SLOT(homeEdited(PointView*, bool)));
      permanentPoints->addPointView(_pointView);
  }

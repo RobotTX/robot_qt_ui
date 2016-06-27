@@ -20,10 +20,15 @@
 #include <QLineEdit>
 #include <QDebug>
 #include "View/pointbuttongroup.h"
-
+#include <QScrollArea>
+#include "verticalscrollarea.h"
 LeftMenu::LeftMenu(QMainWindow* parent, Points const& points, const std::shared_ptr<Robots> &robots, PointsView * const &pointViews):QWidget(parent){
-    leftLayout = new QVBoxLayout(this);
+   // leftLayout = new QVBoxLayout(this);
 
+    QScrollArea * scroll = new VerticalScrollArea(parent);
+    QVBoxLayout * leftLayout  = new QVBoxLayout();
+    QWidget * inWidget  = new QWidget();
+    QVBoxLayout * globalLayout  = new QVBoxLayout(this);
 
     QPushButton* closeBtn = new QPushButton(QIcon(":/icons/cropped_close.png"), "", this);
     closeBtn->setIconSize(parent->size()/30);
@@ -40,7 +45,6 @@ LeftMenu::LeftMenu(QMainWindow* parent, Points const& points, const std::shared_
     /// to display the information relative to a group of points
     displaySelectedGroup = new DisplaySelectedGroup(parent, points);
     leftLayout->addWidget(displaySelectedGroup);
-
 
     /// The first menu with 3 buttons : Robots, Points, Map
     leftMenuWidget = new LeftMenuWidget(parent);
@@ -112,6 +116,11 @@ LeftMenu::LeftMenu(QMainWindow* parent, Points const& points, const std::shared_
     setMinimumWidth(parent->width()*4/10);
     leftLayout->setAlignment(Qt::AlignTop);
     leftLayout->setAlignment(closeBtn, Qt::AlignTop | Qt::AlignRight);
+
+    inWidget->setLayout(leftLayout);
+    scroll->setWidget(inWidget);
+    globalLayout->addWidget(scroll);
+    this->setLayout(globalLayout);
 }
 
 void LeftMenu::updateGroupDisplayed(const Points& _points, const int groupIndex){

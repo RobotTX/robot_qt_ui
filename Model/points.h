@@ -56,7 +56,7 @@ public:
      * @brief findGroup
      * @param groupName
      * @return std::shared_ptr<Group>
-     * returns a pointer on the group whose name is the one passed as argument if such group exists
+     * returns a pointer to the group whose name is the one passed as argument if such group exists
      * otherwise returns a NULL pointer
      */
     std::shared_ptr<Group> findGroup(const QString groupName) const;
@@ -65,9 +65,18 @@ public:
      * @brief findPoint
      * @param name
      * @return std::shared_ptr<Point>
-     * returns a pointer on the Point whose name is passed as an argument
+     * returns a pointer to the Point whose name is passed as an argument
      */
     std::shared_ptr<Point> findPoint(const QString name) const;
+
+    /**
+     * @brief findPoint
+     * @param indexGroup
+     * @param indexPoint
+     * @returns a pointer to the Point object whose group index and index within this group
+     * are the ones passed as arguments
+     */
+    std::shared_ptr<Point> findPoint(const int indexGroup, const int indexPoint) const;
 
     /**
      * @brief findPointIndexes

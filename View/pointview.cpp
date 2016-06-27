@@ -54,16 +54,16 @@ void PointView::mousePressEvent(QGraphicsSceneMouseEvent *event){
 
 void PointView::mouseMoveEvent(QGraphicsSceneMouseEvent *event){
     if(state == GraphicItemState::EDITING){
-        // TODO Not be able to go above the map limit
-
-        /*bool outOfMap = false;
+        // TODO Not be able to go beyond the map limits
+/*
+        bool outOfMap = false;
         if(pos().x() < 0){
-
+            return
         }
-        pos().x() > parentItem()->boundingRect().width()
+        pos().x() > parentItem()->boundingRect().width();
         qDebug() << parentItem()->boundingRect().width() << parentItem()->boundingRect().height();
-        qDebug() << "still moving" << pos().x() << pos().y();*/
-
+        qDebug() << "still moving" << pos().x() << pos().y();
+*/
         float x = pos().x() + pixmap().width()*SCALE/2;
         float y = pos().y() + pixmap().height()*SCALE;
         point->setPosition(x, y);
