@@ -30,7 +30,7 @@ class QMainWindow;
 class LeftMenu: public QWidget{
     Q_OBJECT
 public:
-    LeftMenu(QMainWindow* parent, Points const& points, std::shared_ptr<Robots> const& robots, PointsView* const& pointViews);
+    LeftMenu(QMainWindow* _parent, Points const& points, std::shared_ptr<Robots> const& robots, PointsView* const& pointViews);
     QWidget* getLastWidget() const {return lastWidget;}
 
     /// Getters
@@ -63,6 +63,7 @@ private:
     DisplaySelectedPoint* displaySelectedPoint;
     DisplaySelectedGroup* displaySelectedGroup;
     PathCreationWidget* pathCreationWidget;
+    QMainWindow* parent;
 
 };
 

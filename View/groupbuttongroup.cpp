@@ -5,6 +5,7 @@
 #include <QVBoxLayout>
 #include <QPushButton>
 #include <QDebug>
+#include <QMouseEvent>
 
 GroupButtonGroup::GroupButtonGroup(const Points &_points, QWidget* parent):QWidget(parent)
 {
@@ -87,4 +88,8 @@ void GroupButtonGroup::uncheck(void){
     if(buttonGroup->checkedButton())
         buttonGroup->checkedButton()->setChecked(false);
     buttonGroup->setExclusive(true);
+}
+
+void GroupButtonGroup::mouseDoubleClickEvent(QMouseEvent *event){
+        emit doubleClick(buttonGroup->checkedId());
 }

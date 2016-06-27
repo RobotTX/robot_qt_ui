@@ -4,19 +4,21 @@
 #include "Model/point.h"
 #include <QButtonGroup>
 #include <QVBoxLayout>
-#include <QPushButton>
+#include "View/doubleclickablebutton.h"
+#include <QMouseEvent>
+#include <QDebug>
 
 PointButtonGroup::PointButtonGroup(const Points &_points, const unsigned int groupIndex
                                    , QWidget* parent): QWidget(parent){
-    buttonGroup = new QButtonGroup(this);
 
+    buttonGroup = new QButtonGroup(this);
     layout = new QVBoxLayout(this);
     layout->setAlignment(Qt::AlignTop);
 
     std::shared_ptr<Group> currentGroup = _points.getGroups().at(groupIndex);
     for(int j = 0; j < currentGroup->getPoints().size(); j++){
         std::shared_ptr<Point> currentPoint = currentGroup->getPoints().at(j);
-        QPushButton* pointButton = new QPushButton(currentPoint->getName()
+        DoubleClickableButton* pointButton = new DoubleClickableButton(j, currentPoint->getName()
                                                    + " (" + QString::number(currentPoint->getPosition().getX())
                                                    + ", " + QString::number(currentPoint->getPosition().getY()) + ")", this);
         pointButton->setFlat(true);
@@ -31,7 +33,7 @@ void PointButtonGroup::setGroup(const Points &_points, const int groupIndex){
     std::shared_ptr<Group> currentGroup = _points.getGroups().at(groupIndex);
     for(int j = 0; j < currentGroup->getPoints().size(); j++){
         std::shared_ptr<Point> currentPoint = currentGroup->getPoints().at(j);
-        QPushButton* pointButton = new QPushButton(currentPoint->getName()
+        DoubleClickableButton* pointButton = new DoubleClickableButton(j, currentPoint->getName()
                                                    + " (" + QString::number(currentPoint->getPosition().getX())
                                                    + ", " + QString::number(currentPoint->getPosition().getY()) + ")", this);
         pointButton->setFlat(true);
@@ -62,4 +64,3 @@ void PointButtonGroup::uncheck(void){
         buttonGroup->checkedButton()->setChecked(false);
     buttonGroup->setExclusive(true);
 }
-

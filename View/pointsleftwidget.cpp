@@ -105,6 +105,9 @@ PointsLeftWidget::PointsLeftWidget(QMainWindow* _parent, Points const& points, b
     connect(eyeButton, SIGNAL(clicked()), parent, SLOT(displayPointsInGroup()));
     connect(mapButton, SIGNAL(clicked()), parent, SLOT(displayGroupMapEvent()));
 
+    /// to handle double clicks
+    //connect(groupButtonGroup, SIGNAL(doubleClick(int)), parent, SLOT(doubleClickOnPoint(int)));
+
     setMaximumWidth(_parent->width()*4/10);
     setMinimumWidth(_parent->width()*4/10);
     layout->setAlignment(Qt::AlignBottom);

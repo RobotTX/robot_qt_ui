@@ -1962,6 +1962,26 @@ void MainWindow::openInterdictionOfPointRemovalMessage(const QString pointName, 
     msgBox.exec();
 }
 
+void MainWindow::doubleClickOnPoint(int checkedId){
+    qDebug() << "yo double click";
+    std::shared_ptr<Group> group = points.findGroup(leftMenu->getDisplaySelectedGroup()->getNameLabel()->text());
+    if(group){
+        std::shared_ptr<Point> point = group->getPoints().at(checkedId);
+        if(checkedId != -1 and checkedId < group->getPoints().size()){
+            DisplaySelectedPoint* selectedPoint = leftMenu->getDisplaySelectedPoint();
+            selectedPoint->setOrigin(DisplaySelectedPoint::GROUP_MENU);
+            selectedPoint->setPointView(pointViews->getPointViewFromPoint(*point));
+            selectedPoint->displayPointInfo();
+            if(point->isDisplayed())
+                selectedPoint->getMapButton()->setChecked(true);
+            else
+                selectedPoint->getMapButton()->setChecked(false);
+            selectedPoint->show();
+            leftMenu->getDisplaySelectedGroup()->hide();
+        }
+    } else qDebug() << "no group " << leftMenu->getDisplaySelectedGroup()->getNameLabel()->text() ;
+}
+
 /**********************************************************************************************************************************/
 
 //                                          ODDS AND ENDS
