@@ -30,8 +30,6 @@ LeftMenu::LeftMenu(QMainWindow* parent, Points const& points, const std::shared_
     QWidget * inWidget  = new QWidget();
     QVBoxLayout * globalLayout  = new QVBoxLayout(this);
 
-
-
     QPushButton* closeBtn = new QPushButton(QIcon(":/icons/cropped_close.png"), "", this);
     closeBtn->setIconSize(parent->size()/30);
     closeBtn->setFlat(true);
@@ -47,7 +45,6 @@ LeftMenu::LeftMenu(QMainWindow* parent, Points const& points, const std::shared_
     /// to display the information relative to a group of points
     displaySelectedGroup = new DisplaySelectedGroup(parent, points);
     leftLayout->addWidget(displaySelectedGroup);
-
 
     /// The first menu with 3 buttons : Robots, Points, Map
     leftMenuWidget = new LeftMenuWidget(parent);
@@ -122,8 +119,8 @@ LeftMenu::LeftMenu(QMainWindow* parent, Points const& points, const std::shared_
 
     inWidget->setLayout(leftLayout);
     scroll->setWidget(inWidget);
-     globalLayout->addWidget(scroll);
-     this->setLayout(globalLayout);
+    globalLayout->addWidget(scroll);
+    this->setLayout(globalLayout);
 }
 
 void LeftMenu::updateGroupDisplayed(const Points& _points, const int groupIndex){

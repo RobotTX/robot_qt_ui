@@ -92,7 +92,7 @@ private slots:
     void backGroupBtnEvent();
     void plusGroupBtnEvent();
     void minusGroupBtnEvent();
-    void editGroupBtnEvent();
+    void editGroupBtnEvent(bool checked);
     void selectPointBtnEvent();
     void openLeftMenu();
     void backSelecRobotBtnEvent();

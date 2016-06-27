@@ -75,7 +75,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     connect(mapPixmapItem, SIGNAL(homeSelected(PointView*, bool)), this, SLOT(homeSelected(PointView*, bool)));
     connect(mapPixmapItem, SIGNAL(homeEdited(PointView*, bool)), this, SLOT(homeEdited(PointView*, bool)));
 
-
     //create the toolbar
     topLayout = new TopLayout(this);
     mainLayout->addWidget(topLayout);
@@ -1128,6 +1127,8 @@ void MainWindow::minusGroupBtnEvent(){
 }
 
 void MainWindow::editPointButtonEvent(bool checked){
+    /// hide the temporary point on the map
+    mapPixmapItem->getTmpPointView()->hide();
     /// change the color of the pointview that's selected on the map
     leftMenu->getDisplaySelectedPoint()->getPointView()->setPixmap(PointView::PixmapType::HOVER);
     /// uncheck the other buttons
@@ -1171,7 +1172,7 @@ void MainWindow::editPointButtonEvent(bool checked){
     }
 }
 
-void MainWindow::editGroupBtnEvent(){
+void MainWindow::editGroupBtnEvent(bool checked){
     qDebug() << "editPointBtnEvent called";
     /// uncheck the other buttons
     pointsLeftWidget->getPlusButton()->setChecked(false);
@@ -1183,6 +1184,28 @@ void MainWindow::editGroupBtnEvent(){
     pointsLeftWidget->getGroupNameEdit()->hide();
     pointsLeftWidget->getGroupNameLabel()->hide();
 
+    int checkedId = pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->checkedId();
+    /// it's an isolated point
+    if(checkedId != -1 && checkedId >= points.count()-1){
+        /// must display the tick icon in the pointsLeftWidget
+        pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(checkedId)->setIcon(QIcon(":/icons/tick.png"));
+        qDebug() << "ok "  << checkedId-points.count()+1;
+        std::shared_ptr<Point> point = points.findPoint(points.count()-1, checkedId-points.count()+1);
+        PointView* pointView = pointViews->getPointViewFromPoint(*point);
+        pointView->show();
+
+        if(pointView)
+            leftMenu->getDisplaySelectedPoint()->setPointView(pointView);
+        else
+            qDebug() << "THere is no point view associated with those indexes";
+        //pointViews->setNormalPixmaps();
+        leftMenu->getDisplaySelectedPoint()->displayPointInfo();
+        editPointButtonEvent(checked);
+        pointsLeftWidget->hide();
+        leftMenu->getDisplaySelectedPoint()->getBackButton()->setEnabled(false);
+        leftMenu->getDisplaySelectedPoint()->getBackButton()->setToolTip("Please save or discard your modifications before navigating the menu again.");
+        leftMenu->getDisplaySelectedPoint()->show();
+    }
 }
 
 void MainWindow::selectPointBtnEvent(){
@@ -1275,6 +1298,8 @@ void MainWindow::pointSavedEvent(int index, double x, double y, QString name){
     }
     XMLParser parser(XML_PATH, mapPixmapItem);
     parser.save(points);
+    pointsLeftWidget->updateGroupButtonGroup(points);
+    mapPixmapItem->getTmpPointView()->hide();
 }
 
 void MainWindow::displayDeleteEvent(QModelIndex index){
@@ -1796,6 +1821,10 @@ void MainWindow::displayPointInfoFromGroupMenu(void){
             selectedPoint->setOrigin(DisplaySelectedPoint::GROUP_MENU);
             selectedPoint->setPointView(pointViews->getPointViewFromPoint(*point));
             selectedPoint->displayPointInfo();
+            if(point->isDisplayed())
+                selectedPoint->getMapButton()->setChecked(true);
+            else
+                selectedPoint->getMapButton()->setChecked(false);
             selectedPoint->show();
             leftMenu->getDisplaySelectedGroup()->hide();
         }
@@ -1845,6 +1874,8 @@ void MainWindow::updatePoint(void){
     leftMenu->getDisplaySelectedPoint()->getPointView()->getPoint()->setPosition(
                 leftMenu->getDisplaySelectedPoint()->getXLabel()->text().right(xLength-4).toFloat(),
                 leftMenu->getDisplaySelectedPoint()->getYLabel()->text().right(yLength-4).toFloat());
+    leftMenu->getDisplaySelectedPoint()->getBackButton()->setEnabled(true);
+    leftMenu->getDisplaySelectedPoint()->getBackButton()->setToolTip("");
 }
 
 void MainWindow::cancelEvent(void){
@@ -1872,6 +1903,9 @@ void MainWindow::cancelEvent(void){
                                                                 static_cast<qreal>(leftMenu->getDisplaySelectedPoint()->getPoint()->getPosition().getY()));
     /// reset its name in the hover on the map
     leftMenu->getDisplaySelectedPoint()->getNameEdit()->setText(leftMenu->getDisplaySelectedPoint()->getPoint()->getName());
+    /// enable the back button in case we were editing coming from the left menu
+    leftMenu->getDisplaySelectedPoint()->getBackButton()->setEnabled(true);
+    leftMenu->getDisplaySelectedPoint()->getBackButton()->setToolTip("");
 }
 
 void MainWindow::updateCoordinates(double x, double y){

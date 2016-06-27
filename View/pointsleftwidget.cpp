@@ -28,7 +28,7 @@ PointsLeftWidget::PointsLeftWidget(QMainWindow* _parent, Points const& points, b
 
     layout = new QVBoxLayout(this);
 
-    backButton = new QPushButton(QIcon(":/icons/arrowLeft.png"),"Points", this);
+    backButton = new QPushButton(QIcon(":/icons/arrowLeft.png"),"Menu", this);
     backButton->setIconSize(_parent->size()/10);
     backButton->setStyleSheet ("text-align: left");
     layout->addWidget(backButton);
@@ -101,7 +101,7 @@ PointsLeftWidget::PointsLeftWidget(QMainWindow* _parent, Points const& points, b
     connect(backButton, SIGNAL(clicked(bool)), parent, SLOT(backGroupBtnEvent()));
     connect(plusButton, SIGNAL(clicked(bool)), parent, SLOT(plusGroupBtnEvent()));
     connect(minusButton, SIGNAL(clicked(bool)), parent, SLOT(minusGroupBtnEvent()));
-    connect(editButton, SIGNAL(clicked()), parent, SLOT(editGroupBtnEvent()));
+    connect(editButton, SIGNAL(clicked(bool)), parent, SLOT(editGroupBtnEvent(bool)));
     connect(eyeButton, SIGNAL(clicked()), parent, SLOT(displayPointsInGroup()));
     connect(mapButton, SIGNAL(clicked()), parent, SLOT(displayGroupMapEvent()));
 

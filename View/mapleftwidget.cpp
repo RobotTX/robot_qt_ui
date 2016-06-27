@@ -8,7 +8,7 @@ MapLeftWidget::MapLeftWidget(QMainWindow* parent):QWidget(parent){
     layout = new QVBoxLayout(this);
 
     /// Back button
-    QPushButton* backBtn = new QPushButton(QIcon(":/icons/arrowLeft.png"),"Maps", this);
+    QPushButton* backBtn = new QPushButton(QIcon(":/icons/arrowLeft.png"),"Menu", this);
     backBtn->setStyleSheet ("text-align: left");
     backBtn->setIconSize(parent->size()/10);
     layout->addWidget(backBtn);

@@ -17,7 +17,6 @@ GroupButtonGroup::GroupButtonGroup(const Points &_points, QWidget* parent):QWidg
     for(int i = 0; i < _points.getGroups().size()-1; i++){
         std::shared_ptr<Group> currentGroup = _points.getGroups().at(i);
         QPushButton* groupButton = new QPushButton(QIcon(":/icons/folder.png"), currentGroup->getName(), this);
-        //groupButton->setIconSize(parent->size()/50);
         groupButton->setFlat(true);
         groupButton->setStyleSheet("text-align:left");
         groupButton->setCheckable(true);
@@ -60,6 +59,8 @@ void GroupButtonGroup::update(const Points& _points){
         groupButton->setCheckable(true);
         buttonGroup->addButton(groupButton, i);
         layout->addWidget(groupButton);
+        if(currentGroup->isDisplayed())
+            groupButton->setIcon(QIcon(":/icons/tick.png"));
     }
 
     /// for the last group we just want to show the points and not "no group"

@@ -50,11 +50,5 @@
             <y>200</y>
             <displayed>0</displayed>
         </point>
-        <point>
-            <name>A final point</name>
-            <x>150</x>
-            <y>225</y>
-            <displayed>1</displayed>
-        </point>
     </group>
 </points>
