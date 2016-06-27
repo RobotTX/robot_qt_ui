@@ -44,7 +44,6 @@ private:
     QLabel* ipAddressLabel;
     QPushButton* homeBtn;
     PathWidget* pathWidget;
-    VerticalScrollArea* scrollArea;
     QPushButton* scanBtn;
     QPushButton* editBtn;
 
