@@ -2,6 +2,7 @@
 #include "group.h"
 #include "point.h"
 #include <QDataStream>
+#include <QDebug>
 
 Points::Points(void){
 }
@@ -79,6 +80,14 @@ std::shared_ptr<Point> Points::findPoint(const QString name) const {
         }
     }
     return NULL;
+}
+
+std::shared_ptr<Point> Points::findPoint(const int indexGroup, const int indexPoint) const {
+    if(groups.at(indexGroup)->getPoints().at(indexPoint))
+        qDebug() << "hey i got " << groups.at(indexGroup)->getPoints().at(indexPoint)->getName();
+    else
+        qDebug() << "oh no, no point";
+    return groups.at(indexGroup)->getPoints().at(indexPoint);
 }
 
 std::pair<int, int> Points::findPointIndexes(const QString name) const {

@@ -180,6 +180,7 @@ void EditSelectedPointWidget::showGroupLayout() const {
     nameEdit->setReadOnly(false);
     nameEdit->setAutoFillBackground(false);
     nameEdit->setFrame(true);
+    nameEdit->setFocusPolicy(Qt::FocusPolicy::StrongFocus);
 }
 
 void EditSelectedPointWidget::hideGroupLayout() const {
