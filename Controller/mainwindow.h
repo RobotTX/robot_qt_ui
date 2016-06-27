@@ -68,6 +68,9 @@ public:
     void disableMenu();
     void enableMenu();
     void clearPath(int robotNb);
+    QWidget* getLastWidget(void);
+    void setLastWidget(QWidget*);
+
 
 signals:
     void sendCommand(QString);

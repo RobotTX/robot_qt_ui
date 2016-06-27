@@ -10,9 +10,15 @@
 #include <QLabel>
 #include <QMainWindow>
 #include <QProgressBar>
+#include "mainwindow.h"
+#include <QDebug>
+
 
 SelectedRobotWidget::SelectedRobotWidget(QMainWindow* parent):QWidget(parent){
     layout = new QVBoxLayout(this);
+
+    MainWindow* mw =   (MainWindow*) parent;
+
 
     /// Button with the name of the robot and which allow the user to return back
     /// to the last menu
@@ -20,6 +26,7 @@ SelectedRobotWidget::SelectedRobotWidget(QMainWindow* parent):QWidget(parent){
     backBtn->setStyleSheet ("text-align: left");
     backBtn->setIconSize(parent->size()/10);
     layout->addWidget(backBtn);
+
 
     /// Button which allow the user to scan the map from a robot
     scanBtn = new QPushButton(QIcon(":/icons/map.png"),"Scan a map", this);
@@ -108,10 +115,21 @@ SelectedRobotWidget::SelectedRobotWidget(QMainWindow* parent):QWidget(parent){
     layout->setAlignment(Qt::AlignTop);
 }
 
-void SelectedRobotWidget::setSelectedRobot(RobotView* const& _robotView){
+void SelectedRobotWidget::setSelectedRobot(RobotView* const& _robotView, QWidget* lastWidget){
     /// We update all the informations
+
     robotView = _robotView;
     backBtn->setText(robotView->getRobot()->getName());
+
+    if(lastWidget == NULL)
+    {
+        backBtn->hide();
+    }
+    else
+    {
+        backBtn->show();
+    }
+
     batteryLevel->setValue(robotView->getRobot()->getBatteryLevel());
     ipAddressLabel->setText("Ip : "+robotView->getRobot()->getIp());
     wifiNameLabel->setText("Wifi : "+robotView->getRobot()->getWifi());

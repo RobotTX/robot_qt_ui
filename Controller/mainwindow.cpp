@@ -38,8 +38,8 @@
 #include <QAbstractButton>
 
 //#define XML_PATH "/home/m-a/Documents/QtProject/gobot-software/points.xml"
-#define XML_PATH "/home/joan/Qt/QtProjects/gobot-software/points.xml"
-//#define XML_PATH "/Users/fannylarradet/Desktop/GTRobots/gobot-software/points.xml"
+//#define XML_PATH "/home/joan/Qt/QtProjects/gobot-software/points.xml"
+#define XML_PATH "/Users/fannylarradet/Desktop/GTRobots/gobot-software/points.xml"
 
 /**
  * @brief MainWindow::MainWindow
@@ -65,6 +65,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     scanningRobot = NULL;
     selectedPoint = NULL;
     editedPointView = NULL;
+    lastWidget = NULL;
 
 
     //create the graphic item of the map
@@ -138,6 +139,8 @@ MainWindow::~MainWindow(){
     qDebug() << "ok3";*/
     qDebug() << "okf";
 }
+
+
 
 /**********************************************************************************************************************************/
 
@@ -279,7 +282,7 @@ void MainWindow::stopSelectedRobot(int robotNb){
                     qDebug() << "Points size after : " << points.getGroups().at(0)->getPoints().size();
                     if(!robots->getRobotsVector().at(robotNb)->getRobot()->getName().compare(selectedRobot->getRobot()->getName())){
                         hideAllWidgets();
-                        selectedRobotWidget->setSelectedRobot(selectedRobot);
+                        selectedRobotWidget->setSelectedRobot(selectedRobot, lastWidget);
                         selectedRobotWidget->show();
                     }
                 }
@@ -377,7 +380,7 @@ void MainWindow::setSelectedRobot(RobotView* robotView){
         selectedRobot = robotView;
         robots->setSelected(robotView);
         hideAllWidgets();
-        selectedRobotWidget->setSelectedRobot(selectedRobot);
+        selectedRobotWidget->setSelectedRobot(selectedRobot, lastWidget);
         selectedRobotWidget->show();
     }
 }
@@ -387,6 +390,7 @@ void MainWindow::robotBtnEvent(void){
     leftMenuWidget->hide();
     robotsLeftWidget->show();
     lastWidget = robotsLeftWidget;
+
 }
 
 void MainWindow::backSelecRobotBtnEvent(){
@@ -398,6 +402,8 @@ void MainWindow::backSelecRobotBtnEvent(){
         leftMenu->hide();
     }
 }
+
+
 
 void MainWindow::editSelecRobotBtnEvent(){
     qDebug() << "editSelecRobotBtnEvent called";
@@ -417,7 +423,7 @@ void MainWindow::addPathSelecRobotBtnEvent(){
 void MainWindow::setSelectedRobot(QAbstractButton *button){
     qDebug() << "Edit : " << robotsLeftWidget->getEditBtnStatus() << "\nsetSelectedRobot with QAbstractButton called : " << button->text();
     if(robotsLeftWidget->getEditBtnStatus())
-        editSelectedRobot(robots->getRobotViewByName(button->text()));
+        (robots->getRobotViewByName(button->text()));
     else
         setSelectedRobot(robots->getRobotViewByName(button->text()));
 }
@@ -554,7 +560,7 @@ void MainWindow::robotSavedEvent(){
         robotsLeftWidget->updateRobots(robots);
         bottomLayout->updateRobot(robots->getRobotId(selectedRobot->getRobot()->getName()), selectedRobot);
 
-        selectedRobotWidget->setSelectedRobot(selectedRobot);
+        selectedRobotWidget->setSelectedRobot(selectedRobot, lastWidget );
         selectedRobotWidget->show();
     }
 }
@@ -616,7 +622,7 @@ void MainWindow::pathSaved(bool execPath){
 
     hideAllWidgets();
     setMessageTop(TEXT_COLOR_SUCCESS, "Path saved");
-    selectedRobotWidget->setSelectedRobot(selectedRobot);
+    selectedRobotWidget->setSelectedRobot(selectedRobot, lastWidget);
     selectedRobotWidget->show();
     bottomLayout->updateRobot(robots->getRobotId(selectedRobot->getRobot()->getName()), selectedRobot);
 
@@ -803,7 +809,7 @@ void MainWindow::homeSelected(PointView* pointView, bool temporary){
                 setGraphicItemsState(GraphicItemState::NO_STATE);
                 enableMenu();
                 hideAllWidgets();
-                selectedRobotWidget->setSelectedRobot(selectedRobot);
+                selectedRobotWidget->setSelectedRobot(selectedRobot, lastWidget);
                 selectedRobotWidget->show();
             }
         }
@@ -1937,6 +1943,18 @@ void MainWindow::openInterdictionOfPointRemovalMessage(const QString pointName, 
 void MainWindow::quit(){
     close();
 }
+
+QWidget* MainWindow::getLastWidget(void)
+{
+    return lastWidget;
+}
+void MainWindow::setLastWidget(QWidget* lw)
+{
+
+     lastWidget = lw;
+
+}
+
 
 int MainWindow::openConfirmMessage(const QString text){
     QMessageBox msgBox;

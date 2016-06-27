@@ -5,7 +5,9 @@
 #include <QGraphicsPolygonItem>
 #include <QGraphicsSceneMouseEvent>
 #include <QDebug>
-
+#include "mainWindow.h"
+#include <QGraphicsWidget>
+#include "MapView.h"
 RobotView::RobotView (std::shared_ptr<Robot> const &_robot, QGraphicsItem* parent):
     QGraphicsPolygonItem(parent), selected(false), state(GraphicItemState::NO_STATE){
     robot = _robot;
@@ -33,6 +35,7 @@ RobotView::RobotView (std::shared_ptr<Robot> const &_robot, QGraphicsItem* paren
         setPen(QPen(Qt::red));
     }
     shown = true;
+    mapView =(MapView*) parent;
 }
 
 RobotView::RobotView (QGraphicsItem* parent):selected(false), state(GraphicItemState::NO_STATE),
@@ -40,7 +43,16 @@ RobotView::RobotView (QGraphicsItem* parent):selected(false), state(GraphicItemS
 }
 
 void RobotView::mousePressEvent(QGraphicsSceneMouseEvent *event){
+
     if(state == GraphicItemState::NO_STATE){
+       qDebug() << "map robot clicked";
+       // MainWindow* mw = (MainWindow*)(((MapView*)(this ->parentWidget()))->getMainWindow());
+        MainWindow* mw = (MainWindow*)(mapView->getMainWindow());
+
+        qDebug() << "here";
+
+       mw->setLastWidget(NULL);
+
         emit setSelectedSignal(this);
     } else if(state == GraphicItemState::CREATING_PATH){
         qDebug() << "Clicked on a robot while creating a path";

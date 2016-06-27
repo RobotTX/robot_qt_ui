@@ -8,6 +8,7 @@ Robots::Robots(){
     robotsVector = QVector<RobotView*>();
 }
 
+
 Robots::~Robots(){
     qDeleteAll(robotsVector.begin(), robotsVector.end());
     robotsVector.clear();
@@ -110,4 +111,6 @@ RobotView* Robots::findRobotUsingHome(const QString name) const {
             return robotsVector[i];
     }
     return robot;
+
+
 }

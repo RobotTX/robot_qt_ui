@@ -27,7 +27,7 @@ public:
      * @param _robotView
      * Update the widget with the selected robot
      */
-    void setSelectedRobot(RobotView* const& _robotView);
+    void setSelectedRobot(RobotView* const& _robotView, QWidget* lastWidget);
     QPushButton* getScanBtn(void) const {return scanBtn;}
     QPushButton* getHomeBtn(void) const {return homeBtn;}
     void disable();
