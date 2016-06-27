@@ -419,6 +419,11 @@ void MainWindow::addPathSelecRobotBtnEvent(){
     setGraphicItemsState(GraphicItemState::CREATING_PATH, true);
 }
 
+
+void MainWindow::setSelectedRobotNoParent(QAbstractButton *button){
+lastWidget = NULL;
+ setSelectedRobot(button);
+}
 void MainWindow::setSelectedRobot(QAbstractButton *button){
     qDebug() << "Edit : " << robotsLeftWidget->getEditBtnStatus() << "\nsetSelectedRobot with QAbstractButton called : " << button->text();
     if(robotsLeftWidget->getEditBtnStatus())

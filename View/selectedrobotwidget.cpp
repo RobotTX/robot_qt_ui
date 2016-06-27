@@ -119,7 +119,7 @@ void SelectedRobotWidget::setSelectedRobot(RobotView* const& _robotView, QWidget
     /// We update all the informations
 
     robotView = _robotView;
-    backBtn->setText(robotView->getRobot()->getName());
+  //  backBtn->setText(robotView->getRobot()->getName());
 
     if(lastWidget == NULL)
     {
@@ -128,6 +128,7 @@ void SelectedRobotWidget::setSelectedRobot(RobotView* const& _robotView, QWidget
     else
     {
         backBtn->show();
+        backBtn->setText("Robots");
     }
 
     batteryLevel->setValue(robotView->getRobot()->getBatteryLevel());
