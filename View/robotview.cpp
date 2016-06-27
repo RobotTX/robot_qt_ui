@@ -7,7 +7,7 @@
 #include <QDebug>
 
 RobotView::RobotView (std::shared_ptr<Robot> const &_robot, QGraphicsItem* parent):
-    QGraphicsPolygonItem(parent), selected(false), state(GraphicItemState::NO_STATE){
+    state(GraphicItemState::NO_STATE), selected(false), QGraphicsPolygonItem(parent) {
     robot = _robot;
     setAcceptHoverEvents(true);
     setAcceptedMouseButtons(Qt::LeftButton);

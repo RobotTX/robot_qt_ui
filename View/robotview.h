@@ -51,8 +51,8 @@ protected:
 
 private:
     GraphicItemState state;
-    std::shared_ptr<Robot> robot;
     bool selected;
+    std::shared_ptr<Robot> robot;
     bool shown;
 };
 
