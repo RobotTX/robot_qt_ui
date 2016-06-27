@@ -1,72 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <points>
     <group>
-        <name>first group</name>
+        <name>No Name</name>
+    </group>
 <<<<<<< HEAD
-        <point>
-            <name>A</name>
-            <x>50</x>
-            <y>50</y>
-            <displayed>0</displayed>
-        </point>
-        <point>
-            <name>Ma point</name>
-            <x>75</x>
-            <y>75</y>
-            <displayed>1</displayed>
-        </point>
-        <point>
-            <name>A new point</name>
-            <x>100</x>
-            <y>100</y>
-            <displayed>0</displayed>
-        </point>
-    </group>
-    <group>
-        <name>Second group</name>
-        <point>
-            <name>Fanny</name>
-            <x>125</x>
-            <y>125</y>
-            <displayed>1</displayed>
-        </point>
-        <point>
-            <name>Michel</name>
-            <x>150</x>
-            <y>150</y>
-            <displayed>1</displayed>
-        </point>
-    </group>
-    <group>
-        <name>No group</name>
-        <point>
-            <name>Home_Roboty</name>
 =======
-        <point>
-            <name>A</name>
-            <x>50</x>
-            <y>50</y>
-            <displayed>0</displayed>
-        </point>
-        <point>
-            <name>Ma point</name>
-            <x>75</x>
-            <y>75</y>
-            <displayed>1</displayed>
-        </point>
-        <point>
-            <name>A new point</name>
-            <x>100</x>
-            <y>100</y>
-            <displayed>0</displayed>
-        </point>
-        <point>
-            <name>tmp</name>
-            <x>73</x>
-            <y>130</y>
-            <displayed>1</displayed>
-        </point>
-    </group>
     <group>
         <name>Second group</name>
         <point>
@@ -86,7 +24,6 @@
         <name>No group</name>
         <point>
             <name>Un point</name>
->>>>>>> c2e14b5b3bed9f66ddf85fc901d7ea74660b2155
             <x>150</x>
             <y>175</y>
             <displayed>1</displayed>
@@ -97,11 +34,6 @@
             <y>200</y>
             <displayed>0</displayed>
         </point>
-        <point>
-            <name>A final point</name>
-            <x>150</x>
-            <y>225</y>
-            <displayed>1</displayed>
-        </point>
     </group>
+>>>>>>> f1f4a41a3eda208e4722ee2c2484c9d9bb9b0010
 </points>

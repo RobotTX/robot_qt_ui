@@ -50,9 +50,9 @@ protected:
     void hoverLeaveEvent(QGraphicsSceneHoverEvent *event);
 
 private:
+    bool selected;
     GraphicItemState state;
     std::shared_ptr<Robot> robot;
-    bool selected;
     bool shown;
     MapView* mapView;
 };

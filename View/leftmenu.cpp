@@ -28,6 +28,7 @@ LeftMenu::LeftMenu(QMainWindow* _parent, Points const& points, const std::shared
    // leftLayout = new QVBoxLayout(this);
 
     QScrollArea * scroll = new VerticalScrollArea(_parent);
+
     QVBoxLayout * leftLayout  = new QVBoxLayout();
     QWidget * inWidget  = new QWidget();
     QVBoxLayout * globalLayout  = new QVBoxLayout(this);
@@ -125,9 +126,17 @@ LeftMenu::LeftMenu(QMainWindow* _parent, Points const& points, const std::shared
     leftLayout->setAlignment(Qt::AlignTop);
     leftLayout->setAlignment(closeBtn, Qt::AlignTop | Qt::AlignRight);
 
+    for (int i = 0; i < leftLayout->count(); ++i) {
+        QWidget *widget = leftLayout->itemAt(i)->widget();
+        if (widget != NULL) {
+            widget->setMinimumWidth(1);
+        }
+    }
+
     inWidget->setLayout(leftLayout);
     scroll->setWidget(inWidget);
     globalLayout->addWidget(scroll);
+    globalLayout->setContentsMargins(0, 0, 0, 0);
     this->setLayout(globalLayout);
 }
 
