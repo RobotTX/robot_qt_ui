@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <points>
     <group>
-<<<<<<< HEAD
         <name>first group</name>
         <point>
             <name>A</name>
             <x>50</x>
             <y>50</y>
-            <displayed>1</displayed>
+            <displayed>0</displayed>
         </point>
         <point>
             <name>Ma point</name>
@@ -21,9 +20,6 @@
             <y>100</y>
             <displayed>0</displayed>
         </point>
-=======
-        <name>No Name</name>
->>>>>>> 5ca7461fe63f3345dea62b097505abbc21ecf1f5
     </group>
     <group>
         <name>Second group</name>

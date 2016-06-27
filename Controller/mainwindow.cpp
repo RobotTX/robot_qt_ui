@@ -37,8 +37,8 @@
 #include <QVBoxLayout>
 #include <QAbstractButton>
 
-#define XML_PATH "/home/m-a/Documents/QtProject/gobot-software/points.xml"
-//#define XML_PATH "/home/joan/Qt/QtProjects/gobot-software/points.xml"
+//#define XML_PATH "/home/m-a/Documents/QtProject/gobot-software/points.xml"
+#define XML_PATH "/home/joan/Qt/QtProjects/gobot-software/points.xml"
 //#define XML_PATH "/Users/fannylarradet/Desktop/GTRobots/gobot-software/points.xml"
 
 /**
@@ -1692,7 +1692,10 @@ void MainWindow::displayPointsInGroup(void){
         selectedPoint->setPointView(pointView);
         selectedPoint->displayPointInfo();
         selectedPoint->show();
-
+        if(pointView->getPoint()->isDisplayed())
+            selectedPoint->getMapButton()->setChecked(true);
+        else
+            selectedPoint->getMapButton()->setChecked(false);
         pointsLeftWidget->getEyeButton()->setChecked(false);
         pointsLeftWidget->hide();
     }
@@ -1779,6 +1782,10 @@ void MainWindow::pointInfoEvent(void){
             DisplaySelectedPoint* selectedPoint = leftMenu->getDisplaySelectedPoint();
             selectedPoint->setPointView(pointView);
             selectedPoint->displayPointInfo();
+            if(pointView->getPoint()->isDisplayed())
+                selectedPoint->getMapButton()->setChecked(true);
+            else
+                selectedPoint->getMapButton()->setChecked(false);
             selectedPoint->show();
             pointsLeftWidget->hide();
             leftMenu->getDisplaySelectedGroup()->hide();
@@ -1808,6 +1815,7 @@ void MainWindow::editPointFromGroupMenu(void){
 }
 
 void MainWindow::displayPointInfoFromGroupMenu(void){
+    qDebug() << "display point info from group menu event called";
     std::shared_ptr<Group> group = points.findGroup(leftMenu->getDisplaySelectedGroup()->getNameLabel()->text());
     if(group){
         int pointIndex = leftMenu->getDisplaySelectedGroup()->getPointButtonGroup()->getButtonGroup()->checkedId();
@@ -2015,8 +2023,11 @@ void MainWindow::doubleClickOnGroup(int checkedId){
         selectedPoint->setPointView(pointView);
         selectedPoint->displayPointInfo();
         selectedPoint->show();
-
         pointsLeftWidget->getEyeButton()->setChecked(false);
+        if(pointView->getPoint()->isDisplayed())
+            selectedPoint->getMapButton()->setChecked(true);
+        else
+            selectedPoint->getMapButton()->setChecked(false);
         pointsLeftWidget->hide();
     }
 }
