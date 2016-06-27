@@ -68,6 +68,9 @@ public:
     void disableMenu();
     void enableMenu();
     void clearPath(int robotNb);
+    QWidget* getLastWidget(void);
+    void setLastWidget(QWidget*);
+
 
 signals:
     void sendCommand(QString);
@@ -83,6 +86,7 @@ private slots:
     void setSelectedRobot(RobotView* robotView);
     void editSelectedRobot(RobotView* robotView);
     void setSelectedRobot(QAbstractButton* button);
+    void setSelectedRobotNoParent(QAbstractButton *button);
     void robotBtnEvent();
     void pointBtnEvent();
     void mapBtnEvent();

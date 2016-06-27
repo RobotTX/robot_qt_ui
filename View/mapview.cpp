@@ -8,6 +8,7 @@
 #include <QMouseEvent>
 #include <QDebug>
 #include <QGraphicsSceneMouseEvent>
+#include "mainwindow.h"
 
 MapView::MapView (const QPixmap& pixmap, const QSize _size, QMainWindow* _mainWindow) :
     QGraphicsPixmapItem(pixmap), size(_size), state(GraphicItemState::NO_STATE){
@@ -35,6 +36,11 @@ MapView::MapView (const QPixmap& pixmap, const QSize _size, QMainWindow* _mainWi
     tmpPointView->hide();
 
 }
+
+ QMainWindow* MapView::getMainWindow(void)
+ {
+     return mainWindow;
+ }
 
 MapView::~MapView(){
     delete permanentPoints;

@@ -13,6 +13,8 @@ class QGraphicsSceneMouseEvent;
 #include <QSharedPointer>
 #include "Model/graphicitemstate.h"
 #include "Model/points.h"
+#include "mainwindow.h"
+
 
 /**
  * @brief The MapView class
@@ -44,7 +46,7 @@ public:
     void clearPointViews();
     void addPointView(PointView * const &_pointView);
     void updatePoints(const Points& points);
-
+    QMainWindow* getMainWindow(void);
 signals:
     void pointLeftClicked(PointView*, bool);
     void addPathPointMapView(Point*);
