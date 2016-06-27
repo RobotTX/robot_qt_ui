@@ -28,7 +28,7 @@ PointsLeftWidget::PointsLeftWidget(QMainWindow* _parent, Points const& points, b
 
     layout = new QVBoxLayout(this);
 
-    backButton = new QPushButton(QIcon(":/icons/arrowLeft.png"),"Points", this);
+    backButton = new QPushButton(QIcon(":/icons/arrowLeft.png"),"Menu", this);
     backButton->setIconSize(_parent->size()/10);
     backButton->setStyleSheet ("text-align: left");
     layout->addWidget(backButton);

@@ -14,7 +14,7 @@ RobotsLeftWidget::RobotsLeftWidget(QMainWindow* _parent):QWidget(_parent){
     scrollArea = new VerticalScrollArea(this);
 
     /// Button to go back in the previous menu
-    QPushButton* backBtn = new QPushButton(QIcon(":/icons/arrowLeft.png"),"Robots", this);
+    QPushButton* backBtn = new QPushButton(QIcon(":/icons/arrowLeft.png"),"Menu", this);
     backBtn->setStyleSheet ("text-align: left");
     backBtn->setIconSize(_parent->size()/10);
     layout->addWidget(backBtn);
