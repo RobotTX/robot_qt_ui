@@ -1681,23 +1681,23 @@ void MainWindow::displayPointsInGroup(void){
     pointsLeftWidget->getGroupNameEdit()->hide();
     pointsLeftWidget->getGroupNameLabel()->hide();
 
-    int groupIndex = pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->checkedId();
+    int checkedId = pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->checkedId();
     /// it's a group
-    if(groupIndex != -1 && groupIndex < points.count()-1){
-       pointsLeftWidget->setIndexLastGroupClicked(groupIndex);
+    if(checkedId != -1 && checkedId < points.count()-1){
+       pointsLeftWidget->setIndexLastGroupClicked(checkedId);
        pointsLeftWidget->getEyeButton()->setChecked(false);
        pointsLeftWidget->hide();
        /// before we display the group of points, we make sure that the graphical object is consistent with the model
        DisplaySelectedGroup* selectedGroup = leftMenu->getDisplaySelectedGroup();
-       leftMenu->updateGroupDisplayed(points, groupIndex);
+       leftMenu->updateGroupDisplayed(points, checkedId);
        selectedGroup->getPointButtonGroup()->setCheckable(true);
        selectedGroup->show();
-       selectedGroup->setName(points.getGroups().at(groupIndex)->getName());
+       selectedGroup->setName(points.getGroups().at(checkedId)->getName());
     }
     /// it's an isolated point
-    else if(groupIndex >= points.count()-1){
+    else if(checkedId >= points.count()-1){
         DisplaySelectedPoint* selectedPoint = leftMenu->getDisplaySelectedPoint();
-        PointView* pointView = pointViews->getPointViewFromPoint(*(points.getGroups().at(points.count()-1)->getPoints().at(groupIndex+1-points.count())));
+        PointView* pointView = pointViews->getPointViewFromPoint(*(points.getGroups().at(points.count()-1)->getPoints().at(checkedId+1-points.count())));
         selectedPoint->setPointView(pointView);
         selectedPoint->displayPointInfo();
         selectedPoint->show();
@@ -1991,6 +1991,43 @@ void MainWindow::doubleClickOnPoint(int checkedId){
             leftMenu->getDisplaySelectedGroup()->hide();
         }
     } else qDebug() << "no group " << leftMenu->getDisplaySelectedGroup()->getNameLabel()->text() ;
+}
+
+void MainWindow::doubleClickOnGroup(int checkedId){
+    qDebug() << " double click on group or defaul point ";
+    /// uncheck the other buttons
+    pointsLeftWidget->getPlusButton()->setChecked(false);
+    pointsLeftWidget->getMinusButton()->setChecked(false);
+    pointsLeftWidget->getEditButton()->setChecked(false);
+    pointsLeftWidget->getMapButton()->setChecked(false);
+
+    /// we hide those in case the previous button clicked was the plus button
+    pointsLeftWidget->getGroupNameEdit()->hide();
+    pointsLeftWidget->getGroupNameLabel()->hide();
+
+    /// it's a group
+    if(checkedId != -1 && checkedId < points.count()-1){
+       pointsLeftWidget->setIndexLastGroupClicked(checkedId);
+       pointsLeftWidget->getEyeButton()->setChecked(false);
+       pointsLeftWidget->hide();
+       /// before we display the group of points, we make sure that the graphical object is consistent with the model
+       DisplaySelectedGroup* selectedGroup = leftMenu->getDisplaySelectedGroup();
+       leftMenu->updateGroupDisplayed(points, checkedId);
+       selectedGroup->getPointButtonGroup()->setCheckable(true);
+       selectedGroup->show();
+       selectedGroup->setName(points.getGroups().at(checkedId)->getName());
+    }
+    /// it's an isolated point
+    else if(checkedId >= points.count()-1){
+        DisplaySelectedPoint* selectedPoint = leftMenu->getDisplaySelectedPoint();
+        PointView* pointView = pointViews->getPointViewFromPoint(*(points.getGroups().at(points.count()-1)->getPoints().at(checkedId+1-points.count())));
+        selectedPoint->setPointView(pointView);
+        selectedPoint->displayPointInfo();
+        selectedPoint->show();
+
+        pointsLeftWidget->getEyeButton()->setChecked(false);
+        pointsLeftWidget->hide();
+    }
 }
 
 /**********************************************************************************************************************************/

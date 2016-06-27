@@ -14,7 +14,7 @@
 #include <QDebug>
 
 
-SelectedRobotWidget::SelectedRobotWidget(QMainWindow* parent):QWidget(parent){
+SelectedRobotWidget::SelectedRobotWidget(QMainWindow* parent): QWidget(parent){
     layout = new QVBoxLayout(this);
 
     MainWindow* mw =   (MainWindow*) parent;

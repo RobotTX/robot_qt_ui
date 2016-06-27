@@ -150,6 +150,7 @@ private slots:
     void removePointFromGroupMenu(void);
     void displayPointFromGroupMenu();
     void doubleClickOnPoint(int checkedId);
+    void doubleClickOnGroup(int checkedId);
     /**
      * @brief cancelEvent
      * Called when a user doesn't want to keep the modifications he's made on a point
