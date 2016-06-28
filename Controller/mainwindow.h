@@ -69,9 +69,7 @@ public:
     void enableMenu();
     void clearPath(int robotNb);
 
-    LeftMenu* getLeftMenu(){return leftMenu;}
-    void showBackButton(QString* name);
-    void hideBackButton();
+
 
     QList<QWidget*> getLastWidget();
     void setLastWidget(QList<QWidget*>);

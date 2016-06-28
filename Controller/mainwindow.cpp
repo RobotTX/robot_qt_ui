@@ -1079,7 +1079,8 @@ void MainWindow::setSelectedPoint(PointView* pointView, bool isTemporary){
  * called when the back button is clicked
  */
 void MainWindow::pointBtnEvent(void){
-    qDebug() << "pointBtnEvent called la";
+    switchFocus("Points",pointsLeftWidget);
+    qDebug() << "pointBtnEvent called ";
     /// we uncheck all buttons from all menus
     pointsLeftWidget->getGroupButtonGroup()->uncheck();
     leftMenu->getDisplaySelectedGroup()->uncheck();
@@ -1815,6 +1816,7 @@ void MainWindow::removeGroupEvent(const int groupIndex){
  * called when a user clicks the "eye" button in the Points menu
  */
 void MainWindow::displayPointsInGroup(void){
+    qDebug() << "display points in group";
     /// uncheck the other buttons
     pointsLeftWidget->getPlusButton()->setChecked(false);
     pointsLeftWidget->getMinusButton()->setChecked(false);
@@ -1839,6 +1841,7 @@ void MainWindow::displayPointsInGroup(void){
        selectedGroup->getPointButtonGroup()->setCheckable(true);
        selectedGroup->show();
        selectedGroup->setName(points.getGroups().at(checkedId)->getName());
+       switchFocus(points.getGroups().at(checkedId)->getName(),selectedGroup);
     }
     /// it's an isolated point
     else if(checkedId >= points.count()-1){
@@ -1851,6 +1854,7 @@ void MainWindow::displayPointsInGroup(void){
             selectedPoint->getMapButton()->setChecked(true);
         else
             selectedPoint->getMapButton()->setChecked(false);
+        switchFocus("Point",selectedPoint);
         pointsLeftWidget->getEyeButton()->setChecked(false);
         pointsLeftWidget->hide();
     }
@@ -2320,15 +2324,6 @@ QString MainWindow::getCurrentName(void)
 void MainWindow::setCurrentName(QString cn)
 {
      currentName = cn;
-}
-
-void MainWindow::showBackButton(QString* name)
-{
-    leftMenu->showBackButton(name);
-}
-void MainWindow::hideBackButton()
-{
-    leftMenu->hideBackButton();
 }
 
 void MainWindow::backEvent()
