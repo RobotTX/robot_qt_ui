@@ -48,6 +48,7 @@
 	<file alias="orange_home.png">orange_home.png</file>
         <file>folder.png</file>
         <file>tick.png</file>
+        <file>folder_tick.png</file>
     </qresource>
     <qresource prefix="/xml">
 	<file>points.xml</file>
