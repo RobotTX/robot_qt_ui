@@ -62,7 +62,7 @@ signals:
 private slots:
     /// to check that a name is available before we proceed to the update
     void checkPointName() const;
-    /// when a point is edited and the user clicks on the map this slot is called to update the coordinates in the labels and the pointview on the map
+    /// when a point is edited and the user clicks on the map this slot is called to update the coordinates
     void updateCoordinates(double x, double y);
 
 private:

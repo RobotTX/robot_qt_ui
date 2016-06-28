@@ -3,15 +3,9 @@
     <group>
         <name>first group</name>
         <point>
-            <name>A</name>
-            <x>50</x>
-            <y>50</y>
-            <displayed>1</displayed>
-        </point>
-        <point>
             <name>Ma point</name>
-            <x>51</x>
-            <y>133</y>
+            <x>75</x>
+            <y>75</y>
             <displayed>1</displayed>
         </point>
         <point>
@@ -19,21 +13,6 @@
             <x>100</x>
             <y>100</y>
             <displayed>0</displayed>
-        </point>
-    </group>
-    <group>
-        <name>Second group</name>
-        <point>
-            <name>Fanny</name>
-            <x>125</x>
-            <y>125</y>
-            <displayed>1</displayed>
-        </point>
-        <point>
-            <name>Michel</name>
-            <x>150</x>
-            <y>150</y>
-            <displayed>1</displayed>
         </point>
     </group>
     <group>
@@ -49,12 +28,6 @@
             <x>150</x>
             <y>200</y>
             <displayed>0</displayed>
-        </point>
-        <point>
-            <name>A final point</name>
-            <x>150</x>
-            <y>225</y>
-            <displayed>1</displayed>
         </point>
     </group>
 </points>
