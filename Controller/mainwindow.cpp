@@ -107,9 +107,13 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
     graphicsView->show();
 
-    /// to cancel modifications on a edited point
+    /// to link the map and the point information menu when a point is being edited
+    connect(mapPixmapItem, SIGNAL(newCoordinates(double, double)), leftMenu->getDisplaySelectedPoint(), SLOT(updateCoordinates(double, double)));
+
+    /// to cancel the modifications on an edited point
     connect(leftMenu->getDisplaySelectedPoint()->getCancelButton(), SIGNAL(clicked(bool)), this, SLOT(cancelEvent()));
 
+    /// to save the modifications on an edited point
     connect(leftMenu->getDisplaySelectedPoint()->getSaveButton(), SIGNAL(clicked(bool)), this, SLOT(updatePoint()));
 
     /// the purpose of this connection is just to propagate the signal to the map view through the main window
@@ -1941,6 +1945,9 @@ void MainWindow::displayPointInfoFromGroupMenu(void){
  */
 void MainWindow::updatePoint(void){
     qDebug() << "update point event called";
+    ///resets the tooltip of the edit button
+    leftMenu->getDisplaySelectedPoint()->setToolTip("You can click on this button and then choose between clicking on the map or drag the point to change its position");
+
     /// resets the color of the pointView
     leftMenu->getDisplaySelectedPoint()->getPointView()->setPixmap(PointView::PixmapType::NORMAL);
 

@@ -6,19 +6,19 @@
             <name>A</name>
             <x>50</x>
             <y>50</y>
-            <displayed>1</displayed>
+            <displayed>0</displayed>
         </point>
         <point>
             <name>Ma point</name>
-            <x>75</x>
-            <y>75</y>
+            <x>173</x>
+            <y>0</y>
             <displayed>1</displayed>
         </point>
         <point>
             <name>A new point</name>
             <x>100</x>
             <y>100</y>
-            <displayed>1</displayed>
+            <displayed>0</displayed>
         </point>
     </group>
     <group>
@@ -27,7 +27,7 @@
             <name>Fanny</name>
             <x>125</x>
             <y>125</y>
-            <displayed>1</displayed>
+            <displayed>0</displayed>
         </point>
         <point>
             <name>Michel</name>

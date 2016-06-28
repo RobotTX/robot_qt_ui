@@ -41,8 +41,7 @@ void PointView::mousePressEvent(QGraphicsSceneMouseEvent *event){
         } else if(state == GraphicItemState::EDITING){
             qDebug() << "(EDITING) PointView moving from" << pos().x() << pos().y();
         }  else if(state == GraphicItemState::EDITING_PERM){
-            qDebug() << "Editing permanently";
-
+            qDebug() << "Editing permanently PointView moving from" << pos().x() << pos().y();;
         } else if(state == GraphicItemState::SELECTING_HOME){
             emit homeSelected(this, false);
         } else if(state == GraphicItemState::EDITING_HOME){

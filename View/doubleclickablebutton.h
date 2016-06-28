@@ -5,6 +5,10 @@ class QMouseEvent;
 
 #include <QPushButton>
 
+/**
+ * @brief The DoubleClickableButton class
+ * this class provides a customized button that handles double clicks
+ */
 class DoubleClickableButton: public QPushButton
 {
     Q_OBJECT
@@ -19,7 +23,6 @@ signals:
 
 private:
     int id;
-
 };
 
 #endif // DOUBLECLICKABLEBUTTON_H

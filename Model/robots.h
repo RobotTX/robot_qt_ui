@@ -88,9 +88,20 @@ public:
      */
     bool existRobotName(const QString name);
 
-
+    /**
+     * @brief getRobotId
+     * @param name
+     * @return int
+     * returns the index of the robot whose name is passed as a parameter within the vector of robots
+     */
     int getRobotId(const QString name);
 
+    /**
+     * @brief findRobotUsingHome
+     * @param name
+     * @return RobotView*
+     * returns a pointer to the robot whose home point's name is passed as an argument
+     */
     RobotView* findRobotUsingHome(const QString name) const;
 
 private:

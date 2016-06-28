@@ -52,6 +52,7 @@ signals:
     void addPathPointMapView(Point*);
     void homeSelected(PointView* pointView, bool temporary);
     void homeEdited(PointView* pointView, bool temporary);
+    void newCoordinates(double x, double y);
 
 private slots:
     void addPathPointMapViewSlot(PointView*);

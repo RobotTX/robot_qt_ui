@@ -83,7 +83,9 @@ void MapView::mouseReleaseEvent(QGraphicsSceneMouseEvent *event){
             pathCreationPoints.push_back(newPointView);
             emit addPathPointMapView(&(*(newPointView->getPoint())));
         } else if(state == GraphicItemState::EDITING_PERM){
-            qDebug() << "(MapView) EDITING_PERM";
+            qDebug() << "(MapView) EDITING_PERM " << event->pos().x() << event->pos().y();;
+            /// to notify the point information menu that the position has changed and so the point can be displayed at its new position
+            emit newCoordinates(event->pos().x(), event->pos().y());
         } else if(state == GraphicItemState::SELECTING_HOME){
             qDebug() << "(MapView) SELECTING_HOME";
             Point tmpPoint("tmpPoint", 0.0, 0.0, false);
