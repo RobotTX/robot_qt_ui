@@ -5,11 +5,12 @@
 #include <QGraphicsPolygonItem>
 #include <QGraphicsSceneMouseEvent>
 #include <QDebug>
-#include "mainWindow.h"
+#include "mainwindow.h"
 #include <QGraphicsWidget>
-#include "MapView.h"
-RobotView::RobotView (std::shared_ptr<Robot> const &_robot, QGraphicsItem* parent):
-    QGraphicsPolygonItem(parent), selected(false), state(GraphicItemState::NO_STATE){
+#include "mapview.h"
+
+RobotView::RobotView (std::shared_ptr<Robot> const &_robot, QGraphicsItem* parent):state(GraphicItemState::NO_STATE), selected(false), QGraphicsPolygonItem(parent)
+{
     robot = _robot;
     setAcceptHoverEvents(true);
     setAcceptedMouseButtons(Qt::LeftButton);

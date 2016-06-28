@@ -49,6 +49,7 @@
         <file>folder.png</file>
         <file>tick.png</file>
         <file>back.png</file>
+        <file>folder_tick.png</file>
     </qresource>
     <qresource prefix="/xml">
 	<file>points.xml</file>

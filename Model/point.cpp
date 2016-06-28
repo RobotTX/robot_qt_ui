@@ -51,7 +51,7 @@ bool Point::operator==(const Point& point) const {
         return false;
 }
 
- bool Point::comparePos(double x, double y) const {
+ bool Point::comparePos(const double x, const double y) const {
      if(abs(x - this->getPosition().getX()) < 0.01 &&
              abs(y - this->getPosition().getY()) < 0.01)
          return true;

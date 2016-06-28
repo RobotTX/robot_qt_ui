@@ -160,6 +160,10 @@ private slots:
     void updateCoordinates(double x, double y);
     void removePointFromGroupMenu(void);
     void displayPointFromGroupMenu();
+    void doubleClickOnPoint(int checkedId);
+    void doubleClickOnGroup(int checkedId);
+    void reestablishConnectionsGroups();
+    void reestablishConnectionsPoints();
     /**
      * @brief cancelEvent
      * Called when a user doesn't want to keep the modifications he's made on a point

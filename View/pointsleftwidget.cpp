@@ -14,6 +14,7 @@
 #include "groupeditwindow.h"
 #include "View/spacewidget.h"
 
+
 PointsLeftWidget::PointsLeftWidget(QMainWindow* _parent, Points const& points, bool _groupDisplayed)
     : QWidget(_parent), groupDisplayed(_groupDisplayed){
     parent = _parent;
@@ -104,6 +105,10 @@ PointsLeftWidget::PointsLeftWidget(QMainWindow* _parent, Points const& points, b
     connect(editButton, SIGNAL(clicked(bool)), parent, SLOT(editGroupBtnEvent(bool)));
     connect(eyeButton, SIGNAL(clicked()), parent, SLOT(displayPointsInGroup()));
     connect(mapButton, SIGNAL(clicked()), parent, SLOT(displayGroupMapEvent()));
+
+    /// to handle double clicks
+    foreach(QAbstractButton *button, groupButtonGroup->getButtonGroup()->buttons())
+        connect(button, SIGNAL(doubleClick(int)), parent, SLOT(doubleClickOnGroup(int)));
 
     setMaximumWidth(_parent->width()*4/10);
     setMinimumWidth(_parent->width()*4/10);

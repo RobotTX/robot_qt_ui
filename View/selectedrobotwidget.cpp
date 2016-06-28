@@ -14,7 +14,7 @@
 #include <QDebug>
 
 
-SelectedRobotWidget::SelectedRobotWidget(QMainWindow* parent):QWidget(parent){
+SelectedRobotWidget::SelectedRobotWidget(QMainWindow* parent): QWidget(parent){
     layout = new QVBoxLayout(this);
     qDebug() << "before assig";
 
@@ -93,10 +93,7 @@ SelectedRobotWidget::SelectedRobotWidget(QMainWindow* parent):QWidget(parent){
 
 
     pathWidget = new PathWidget(this);
-
-    scrollArea = new VerticalScrollArea(this);
-    layout->addWidget(scrollArea);
-
+    layout->addWidget(pathWidget);
 
     connect(homeBtn, SIGNAL(clicked()), this, SLOT(homeBtnEvent()));
     connect(goHome, SIGNAL(clicked()), parent, SLOT(goHomeBtnEvent()));
@@ -121,10 +118,10 @@ void SelectedRobotWidget::setSelectedRobot(RobotView* const& _robotView){
     if(robotView->getRobot()->getPath().size() > 0){
         addPathBtn->hide();
         pathWidget->setSelectedRobot(robotView);
-        scrollArea->show();
+        pathWidget->show();
     } else {
         addPathBtn->show();
-        scrollArea->hide();
+        pathWidget->hide();
     }
 
     /// If the robot has a home, we display the name of the point, otherwise a default text
@@ -136,8 +133,6 @@ void SelectedRobotWidget::setSelectedRobot(RobotView* const& _robotView){
         goHome->hide();
     }
 
-
-    scrollArea->setWidget(pathWidget);
 
     update();
 }

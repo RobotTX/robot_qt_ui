@@ -11,7 +11,6 @@ Robot::Robot(const QString _name, const QString _ip, const int port, QMainWindow
 
     //cmdThread = new CmdRobotThread(ip, port, name);
     //cmdThread->start();
-
 }
 
 Robot::Robot(): name("Default name"), ip("no Ip"), position(Position()),
@@ -30,6 +29,6 @@ void Robot::display(std::ostream& stream) const {
 }
 
 bool Robot::sendCommand(QString cmd) {
-   // return cmdThread->sendCommand(cmd);
+    //return cmdThread->sendCommand(cmd);
     return true;
 }
