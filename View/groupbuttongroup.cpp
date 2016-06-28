@@ -8,8 +8,9 @@
 #include <QMouseEvent>
 #include "View/doubleclickablebutton.h"
 
-GroupButtonGroup::GroupButtonGroup(const Points &_points, QWidget* parent):QWidget(parent)
+GroupButtonGroup::GroupButtonGroup(const Points &_points, QWidget* _parent):QWidget(_parent)
 {
+    parent = _parent;
     buttonGroup = new QButtonGroup(this);
     buttonGroup->setExclusive(true);
 
@@ -56,7 +57,7 @@ void GroupButtonGroup::update(const Points& _points){
     deleteButtons();
     for(int i = 0; i < _points.getGroups().size()-1; i++){
         std::shared_ptr<Group> currentGroup = _points.getGroups().at(i);
-        QPushButton* groupButton = new QPushButton(currentGroup->getName(), this);
+        DoubleClickableButton* groupButton = new DoubleClickableButton(i, currentGroup->getName(), this);
         groupButton->setFlat(true);
         groupButton->setStyleSheet("text-align:left");
         groupButton->setCheckable(true);
@@ -70,7 +71,7 @@ void GroupButtonGroup::update(const Points& _points){
     if(_points.getGroups().size() > 0){
         for(int i = 0; i < _points.getGroups().at(_points.getGroups().size()-1)->getPoints().size(); i++){
             std::shared_ptr<Point> currentPoint = _points.getGroups().at(_points.getGroups().size()-1)->getPoints().at(i);
-            QPushButton* pointButton = new QPushButton(currentPoint->getName()
+            DoubleClickableButton* pointButton = new DoubleClickableButton(i+_points.getGroups().size()-1, currentPoint->getName()
                                                        + " (" + QString::number(currentPoint->getPosition().getX())
                                                        + ", " + QString::number(currentPoint->getPosition().getY()) + ")", this);
             pointButton->setFlat(true);
@@ -82,6 +83,7 @@ void GroupButtonGroup::update(const Points& _points){
                 pointButton->setIcon(QIcon(":/icons/tick.png"));
         }
     }
+    emit updateConnectionsRequest();
 }
 
 void GroupButtonGroup::uncheck(void){
@@ -93,5 +95,5 @@ void GroupButtonGroup::uncheck(void){
 }
 
 void GroupButtonGroup::mouseDoubleClickEvent(QMouseEvent *event){
-        emit doubleClick(buttonGroup->checkedId());
+    emit doubleClick(buttonGroup->checkedId());
 }

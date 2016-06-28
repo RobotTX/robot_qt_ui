@@ -15,7 +15,7 @@ class GroupButtonGroup: public QWidget
 {
     Q_OBJECT
 public:
-    GroupButtonGroup(Points const& _points, QWidget *parent);
+    GroupButtonGroup(Points const& _points, QWidget *_parent);
     ~GroupButtonGroup(){}
 
     QButtonGroup* getButtonGroup(void) const { return buttonGroup; }
@@ -31,9 +31,12 @@ protected:
 private:
     QVBoxLayout* layout;
     QButtonGroup* buttonGroup;
+    QWidget* parent;
 
 signals:
     void doubleClick(int);
+    void updateConnectionsRequest();
+
 };
 
 #endif // GROUPBUTTONGROUP_H

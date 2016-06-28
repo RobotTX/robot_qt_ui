@@ -65,9 +65,9 @@ void PointsView::addPointView(PointView* const& _pointView){
 }
 
 void PointsView::setNormalPixmaps(void){
-    for(int i = 0; i < groupViews.size(); i++){
+    for(size_t i = 0; i < groupViews.size(); i++){
         GroupView* groupView = groupViews.at(i);
-        for(int j = 0; j < groupView->getPointViews().size(); j++){
+        for(size_t j = 0; j < groupView->getPointViews().size(); j++){
             groupView->getPointViews().at(j)->setPixmap(PointView::PixmapType::NORMAL);
         }
     }

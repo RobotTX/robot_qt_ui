@@ -125,6 +125,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     /// to reset the state of everybody when a user click on a random button while he was editing a point
     connect(leftMenu->getDisplaySelectedPoint(), SIGNAL(resetState(GraphicItemState, bool)),  this, SLOT(setGraphicItemsState(GraphicItemState, bool)));
 
+    /// to connect the buttons in the left menu so they can be double clicked after they were updated
+    connect(pointsLeftWidget->getGroupButtonGroup(), SIGNAL(updateConnectionsRequest()), this, SLOT(reestablishConnectionsGroups()));
+
     mainLayout->addLayout(bottom);
     setCentralWidget(mainWidget);
 }
@@ -1203,6 +1206,7 @@ void MainWindow::editPointButtonEvent(bool checked){
         /// forbids the dragging of the point that was being modified
         pointViews->getPointViewFromPoint(*(leftMenu->getDisplaySelectedPoint()->getPoint()))->setFlag(QGraphicsItem::ItemIsMovable, false);
     }
+
 }
 
 /**
@@ -2191,6 +2195,20 @@ void MainWindow::doubleClickOnGroup(int checkedId){
             selectedPoint->getMapButton()->setChecked(false);
         pointsLeftWidget->hide();
     }
+}
+
+/**
+ * @brief MainWindow::reestablishConnections
+ * to reestablish the double clicks after points are updated (because buttons in the menu are recreated)
+ */
+void MainWindow::reestablishConnectionsGroups(){
+    foreach(QAbstractButton* button, pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->buttons())
+        connect(button, SIGNAL(doubleClick(int)), this, SLOT(doubleClickOnGroup(int)));
+}
+
+void MainWindow::reestablishConnectionsPoints(){
+    foreach(QAbstractButton* button, leftMenu->getDisplaySelectedGroup()->getPointButtonGroup()->getButtonGroup()->buttons())
+        connect(button, SIGNAL(doubleClick(int)), this, SLOT(doubleClickOnPoint(int)));
 }
 
 /**********************************************************************************************************************************/

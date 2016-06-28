@@ -31,6 +31,7 @@ private:
 
 signals:
     void doubleClick(int);
+    void updateConnectionsRequest();
 };
 
 #endif // POINTBUTTONGROUP_H

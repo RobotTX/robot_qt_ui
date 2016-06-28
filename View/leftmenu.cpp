@@ -14,7 +14,7 @@
 #include "View/displayselectedgroup.h"
 #include "View/pathcreationwidget.h"
 #include "View/groupeditwindow.h"
-#include <QMainWindow>
+#include "Controller/mainwindow.h"
 #include <QVBoxLayout>
 #include <QLabel>
 #include <QLineEdit>
@@ -24,7 +24,7 @@
 #include "verticalscrollarea.h"
 #include <QButtonGroup>
 
-LeftMenu::LeftMenu(QMainWindow* _parent, Points const& points, const std::shared_ptr<Robots> &robots, PointsView * const &pointViews): QWidget(_parent), parent(_parent){
+LeftMenu::LeftMenu(MainWindow* _parent, Points const& points, const std::shared_ptr<Robots> &robots, PointsView * const &pointViews): QWidget(_parent), parent(_parent){
    // leftLayout = new QVBoxLayout(this);
 
     QScrollArea * scroll = new VerticalScrollArea(_parent);
@@ -115,7 +115,7 @@ LeftMenu::LeftMenu(QMainWindow* _parent, Points const& points, const std::shared
     connect(displaySelectedGroup->getEyeButton(), SIGNAL(clicked(bool)), _parent, SLOT(displayPointInfoFromGroupMenu()));
     connect(displaySelectedGroup->getMapButton(), SIGNAL(clicked(bool)), _parent, SLOT(displayPointFromGroupMenu()));
 
-    /// to handle double clicks in the groups menu
+    /// to handle double clicks in the groups menu at initialization
     foreach(QAbstractButton* button, displaySelectedGroup->getPointButtonGroup()->getButtonGroup()->buttons())
         connect(button, SIGNAL(doubleClick(int)), _parent, SLOT(doubleClickOnPoint(int)));
 

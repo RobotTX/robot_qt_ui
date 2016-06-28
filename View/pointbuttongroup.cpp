@@ -43,6 +43,7 @@ void PointButtonGroup::setGroup(const Points &_points, const int groupIndex){
         if(currentPoint->isDisplayed())
             pointButton->setIcon(QIcon(":/icons/tick.png"));
     }
+    emit updateConnectionsRequest();
 }
 
 void PointButtonGroup::deleteButtons(void){

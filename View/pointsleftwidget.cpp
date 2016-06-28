@@ -14,6 +14,7 @@
 #include "groupeditwindow.h"
 #include "View/spacewidget.h"
 
+
 PointsLeftWidget::PointsLeftWidget(QMainWindow* _parent, Points const& points, bool _groupDisplayed)
     : QWidget(_parent), groupDisplayed(_groupDisplayed){
     parent = _parent;

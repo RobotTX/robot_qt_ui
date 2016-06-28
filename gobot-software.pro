@@ -12,6 +12,7 @@ TEMPLATE = app
 DEPENDPATH += . Controller Model Resources View
 INCLUDEPATH += . Controller Model View
 
+QMAKE_CXXFLAGS += -std=c++11 -Wall
 
 # Input
 HEADERS += Controller/cmdrobotthread.h \
