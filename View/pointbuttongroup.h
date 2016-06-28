@@ -4,13 +4,17 @@
 class Points;
 class QButtonGroup;
 class QVBoxLayout;
+class QMouseEvent;
 
+#include <QObject>
 #include <QWidget>
 
 class PointButtonGroup: public QWidget
 {
+    Q_OBJECT
 public:
     PointButtonGroup(const Points& _points, const unsigned int groupIndex, QWidget *parent);
+    ~PointButtonGroup(){}
 
     QButtonGroup* getButtonGroup(void) const { return buttonGroup; }
 
@@ -24,6 +28,9 @@ public:
 private:
     QVBoxLayout* layout;
     QButtonGroup* buttonGroup;
+
+signals:
+    void doubleClick(int);
 };
 
 #endif // POINTBUTTONGROUP_H

@@ -37,8 +37,8 @@
 #include <QVBoxLayout>
 #include <QAbstractButton>
 
-#define XML_PATH "/home/m-a/Documents/QtProject/gobot-software/points.xml"
-//#define XML_PATH "/home/joan/Qt/QtProjects/gobot-software/points.xml"
+//#define XML_PATH "/home/m-a/Documents/QtProject/gobot-software/points.xml"
+#define XML_PATH "/home/joan/Qt/QtProjects/gobot-software/points.xml"
 //#define XML_PATH "/Users/fannylarradet/Desktop/GTRobots/gobot-software/points.xml"
 
 /**
@@ -1672,27 +1672,30 @@ void MainWindow::displayPointsInGroup(void){
     pointsLeftWidget->getGroupNameEdit()->hide();
     pointsLeftWidget->getGroupNameLabel()->hide();
 
-    int groupIndex = pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->checkedId();
+    int checkedId = pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->checkedId();
     /// it's a group
-    if(groupIndex != -1 && groupIndex < points.count()-1){
-       pointsLeftWidget->setIndexLastGroupClicked(groupIndex);
+    if(checkedId != -1 && checkedId < points.count()-1){
+       pointsLeftWidget->setIndexLastGroupClicked(checkedId);
        pointsLeftWidget->getEyeButton()->setChecked(false);
        pointsLeftWidget->hide();
        /// before we display the group of points, we make sure that the graphical object is consistent with the model
        DisplaySelectedGroup* selectedGroup = leftMenu->getDisplaySelectedGroup();
-       leftMenu->updateGroupDisplayed(points, groupIndex);
+       leftMenu->updateGroupDisplayed(points, checkedId);
        selectedGroup->getPointButtonGroup()->setCheckable(true);
        selectedGroup->show();
-       selectedGroup->setName(points.getGroups().at(groupIndex)->getName());
+       selectedGroup->setName(points.getGroups().at(checkedId)->getName());
     }
     /// it's an isolated point
-    else if(groupIndex >= points.count()-1){
+    else if(checkedId >= points.count()-1){
         DisplaySelectedPoint* selectedPoint = leftMenu->getDisplaySelectedPoint();
-        PointView* pointView = pointViews->getPointViewFromPoint(*(points.getGroups().at(points.count()-1)->getPoints().at(groupIndex+1-points.count())));
+        PointView* pointView = pointViews->getPointViewFromPoint(*(points.getGroups().at(points.count()-1)->getPoints().at(checkedId+1-points.count())));
         selectedPoint->setPointView(pointView);
         selectedPoint->displayPointInfo();
         selectedPoint->show();
-
+        if(pointView->getPoint()->isDisplayed())
+            selectedPoint->getMapButton()->setChecked(true);
+        else
+            selectedPoint->getMapButton()->setChecked(false);
         pointsLeftWidget->getEyeButton()->setChecked(false);
         pointsLeftWidget->hide();
     }
@@ -1779,6 +1782,10 @@ void MainWindow::pointInfoEvent(void){
             DisplaySelectedPoint* selectedPoint = leftMenu->getDisplaySelectedPoint();
             selectedPoint->setPointView(pointView);
             selectedPoint->displayPointInfo();
+            if(pointView->getPoint()->isDisplayed())
+                selectedPoint->getMapButton()->setChecked(true);
+            else
+                selectedPoint->getMapButton()->setChecked(false);
             selectedPoint->show();
             pointsLeftWidget->hide();
             leftMenu->getDisplaySelectedGroup()->hide();
@@ -1808,6 +1815,7 @@ void MainWindow::editPointFromGroupMenu(void){
 }
 
 void MainWindow::displayPointInfoFromGroupMenu(void){
+    qDebug() << "display point info from group menu event called";
     std::shared_ptr<Group> group = points.findGroup(leftMenu->getDisplaySelectedGroup()->getNameLabel()->text());
     if(group){
         int pointIndex = leftMenu->getDisplaySelectedGroup()->getPointButtonGroup()->getButtonGroup()->checkedId();
@@ -1962,6 +1970,66 @@ void MainWindow::openInterdictionOfPointRemovalMessage(const QString pointName, 
     msgBox.setStandardButtons(QMessageBox::Ok);
     msgBox.setInformativeText("To modify the home point of a robot you can either click on the menu > Robots, choose a robot and Add home or simply click a robot on the map and Add home");
     msgBox.exec();
+}
+
+void MainWindow::doubleClickOnPoint(int checkedId){
+    qDebug() << "yo double click";
+    std::shared_ptr<Group> group = points.findGroup(leftMenu->getDisplaySelectedGroup()->getNameLabel()->text());
+    if(group){
+        std::shared_ptr<Point> point = group->getPoints().at(checkedId);
+        if(checkedId != -1 and checkedId < group->getPoints().size()){
+            DisplaySelectedPoint* selectedPoint = leftMenu->getDisplaySelectedPoint();
+            selectedPoint->setOrigin(DisplaySelectedPoint::GROUP_MENU);
+            selectedPoint->setPointView(pointViews->getPointViewFromPoint(*point));
+            selectedPoint->displayPointInfo();
+            if(point->isDisplayed())
+                selectedPoint->getMapButton()->setChecked(true);
+            else
+                selectedPoint->getMapButton()->setChecked(false);
+            selectedPoint->show();
+            leftMenu->getDisplaySelectedGroup()->hide();
+        }
+    } else qDebug() << "no group " << leftMenu->getDisplaySelectedGroup()->getNameLabel()->text() ;
+}
+
+void MainWindow::doubleClickOnGroup(int checkedId){
+    qDebug() << " double click on group or defaul point ";
+    /// uncheck the other buttons
+    pointsLeftWidget->getPlusButton()->setChecked(false);
+    pointsLeftWidget->getMinusButton()->setChecked(false);
+    pointsLeftWidget->getEditButton()->setChecked(false);
+    pointsLeftWidget->getMapButton()->setChecked(false);
+
+    /// we hide those in case the previous button clicked was the plus button
+    pointsLeftWidget->getGroupNameEdit()->hide();
+    pointsLeftWidget->getGroupNameLabel()->hide();
+
+    /// it's a group
+    if(checkedId != -1 && checkedId < points.count()-1){
+       pointsLeftWidget->setIndexLastGroupClicked(checkedId);
+       pointsLeftWidget->getEyeButton()->setChecked(false);
+       pointsLeftWidget->hide();
+       /// before we display the group of points, we make sure that the graphical object is consistent with the model
+       DisplaySelectedGroup* selectedGroup = leftMenu->getDisplaySelectedGroup();
+       leftMenu->updateGroupDisplayed(points, checkedId);
+       selectedGroup->getPointButtonGroup()->setCheckable(true);
+       selectedGroup->show();
+       selectedGroup->setName(points.getGroups().at(checkedId)->getName());
+    }
+    /// it's an isolated point
+    else if(checkedId >= points.count()-1){
+        DisplaySelectedPoint* selectedPoint = leftMenu->getDisplaySelectedPoint();
+        PointView* pointView = pointViews->getPointViewFromPoint(*(points.getGroups().at(points.count()-1)->getPoints().at(checkedId+1-points.count())));
+        selectedPoint->setPointView(pointView);
+        selectedPoint->displayPointInfo();
+        selectedPoint->show();
+        pointsLeftWidget->getEyeButton()->setChecked(false);
+        if(pointView->getPoint()->isDisplayed())
+            selectedPoint->getMapButton()->setChecked(true);
+        else
+            selectedPoint->getMapButton()->setChecked(false);
+        pointsLeftWidget->hide();
+    }
 }
 
 /**********************************************************************************************************************************/

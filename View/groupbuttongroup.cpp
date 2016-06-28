@@ -5,6 +5,8 @@
 #include <QVBoxLayout>
 #include <QPushButton>
 #include <QDebug>
+#include <QMouseEvent>
+#include "View/doubleclickablebutton.h"
 
 GroupButtonGroup::GroupButtonGroup(const Points &_points, QWidget* parent):QWidget(parent)
 {
@@ -16,7 +18,8 @@ GroupButtonGroup::GroupButtonGroup(const Points &_points, QWidget* parent):QWidg
 
     for(int i = 0; i < _points.getGroups().size()-1; i++){
         std::shared_ptr<Group> currentGroup = _points.getGroups().at(i);
-        QPushButton* groupButton = new QPushButton(QIcon(":/icons/folder.png"), currentGroup->getName(), this);
+        DoubleClickableButton* groupButton = new DoubleClickableButton(i, currentGroup->getName(), this);
+        groupButton->setIcon(QIcon(":/icons/folder.png"));
         groupButton->setFlat(true);
         groupButton->setStyleSheet("text-align:left");
         groupButton->setCheckable(true);
@@ -29,7 +32,7 @@ GroupButtonGroup::GroupButtonGroup(const Points &_points, QWidget* parent):QWidg
     /// for the last group we just want to show the points and not "no group"
     for(int i = 0; i < _points.getGroups().at(_points.getGroups().size()-1)->getPoints().size(); i++){
         std::shared_ptr<Point> currentPoint = _points.getGroups().at(_points.getGroups().size()-1)->getPoints().at(i);
-        QPushButton* pointButton = new QPushButton(currentPoint->getName()
+        DoubleClickableButton* pointButton = new DoubleClickableButton(i+_points.getGroups().size()-1, currentPoint->getName()
                                                    + " (" + QString::number(currentPoint->getPosition().getX())
                                                    + ", " + QString::number(currentPoint->getPosition().getY()) + ")", this);
         pointButton->setFlat(true);
@@ -87,4 +90,8 @@ void GroupButtonGroup::uncheck(void){
     if(buttonGroup->checkedButton())
         buttonGroup->checkedButton()->setChecked(false);
     buttonGroup->setExclusive(true);
+}
+
+void GroupButtonGroup::mouseDoubleClickEvent(QMouseEvent *event){
+        emit doubleClick(buttonGroup->checkedId());
 }

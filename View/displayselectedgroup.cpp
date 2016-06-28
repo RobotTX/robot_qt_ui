@@ -71,3 +71,5 @@ void DisplaySelectedGroup::setName(const QString _name){
     name->setText(_name);
     name->setWordWrap(true);
 }
+
+

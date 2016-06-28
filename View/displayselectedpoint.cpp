@@ -24,6 +24,7 @@ DisplaySelectedPoint::DisplaySelectedPoint(QMainWindow *_parent, Points const& _
     nameLayout = new QHBoxLayout();
 
     backButton = new QPushButton(QIcon(":/icons/arrowLeft.png"), "Groups", this);
+
     backButton->setIconSize(_parent->size()/10);
     layout->addWidget(backButton);
 
