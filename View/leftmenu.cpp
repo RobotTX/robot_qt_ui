@@ -29,13 +29,22 @@ LeftMenu::LeftMenu(QMainWindow* parent, Points const& points, const std::shared_
     QVBoxLayout * leftLayout  = new QVBoxLayout();
     QWidget * inWidget  = new QWidget();
     QVBoxLayout * globalLayout  = new QVBoxLayout(this);
+    QHBoxLayout * topLayout  = new QHBoxLayout(this);
+
+     returnButton = new QPushButton(QIcon(":/icons/back.png"), " Return", this);
+     connect(returnButton, SIGNAL(clicked()), parent, SLOT(backEvent()));
 
     QPushButton* closeBtn = new QPushButton(QIcon(":/icons/cropped_close.png"), "", this);
     closeBtn->setIconSize(parent->size()/30);
     closeBtn->setFlat(true);
     //closeBtn->setStyleSheet("QPushButton { padding: 5px;}");
     //closeBtn->setFocusPolicy(Qt::FocusPolicy::NoFocus);
-    leftLayout->addWidget(closeBtn);
+    returnButton->setText("return");
+    returnButton->hide();
+    topLayout->addWidget(returnButton);
+    topLayout->addWidget(closeBtn);
+
+    leftLayout->addLayout(topLayout);
     connect(closeBtn, SIGNAL(clicked()), parent, SLOT(closeSlot()));
 
     /// to display the information relative to a point
@@ -125,4 +134,15 @@ LeftMenu::LeftMenu(QMainWindow* parent, Points const& points, const std::shared_
 
 void LeftMenu::updateGroupDisplayed(const Points& _points, const int groupIndex){
     displaySelectedGroup->getPointButtonGroup()->setGroup(_points, groupIndex);
+}
+
+void LeftMenu::hideBackButton(void)
+{
+    returnButton->hide();
+}
+
+void LeftMenu::showBackButton(QString* name)
+{
+    returnButton->setText(*name);
+    returnButton->show();
 }

@@ -65,8 +65,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     scanningRobot = NULL;
     selectedPoint = NULL;
     editedPointView = NULL;
-    lastWidget = NULL;
-
+    resetFocus();
 
     //create the graphic item of the map
     QPixmap pixmap = QPixmap::fromImage(map->getMapImage());
@@ -281,7 +280,7 @@ void MainWindow::stopSelectedRobot(int robotNb){
                     qDebug() << "Points size after : " << points.getGroups().at(0)->getPoints().size();
                     if(!robots->getRobotsVector().at(robotNb)->getRobot()->getName().compare(selectedRobot->getRobot()->getName())){
                         hideAllWidgets();
-                        selectedRobotWidget->setSelectedRobot(selectedRobot, lastWidget);
+                        selectedRobotWidget->setSelectedRobot(selectedRobot);
                         selectedRobotWidget->show();
                     }
                 }
@@ -372,6 +371,9 @@ void MainWindow::editSelectedRobot(RobotView* robotView){
 }
 
 void MainWindow::setSelectedRobot(RobotView* robotView){
+
+    qDebug() << "setSelectedRobot(RobotView* robotView)";
+    updateView();
     leftMenu->show();
     if(leftMenu->getRobotsLeftWidget()->getEditBtnStatus()){
         editSelectedRobot(robotView);
@@ -379,8 +381,10 @@ void MainWindow::setSelectedRobot(RobotView* robotView){
         selectedRobot = robotView;
         robots->setSelected(robotView);
         hideAllWidgets();
-        selectedRobotWidget->setSelectedRobot(selectedRobot, lastWidget);
+        selectedRobotWidget->setSelectedRobot(selectedRobot);
         selectedRobotWidget->show();
+
+
     }
 }
 
@@ -388,15 +392,16 @@ void MainWindow::robotBtnEvent(void){
     qDebug() << "robotBtnEvent called";
     leftMenuWidget->hide();
     robotsLeftWidget->show();
-    lastWidget = robotsLeftWidget;
-
+    switchFocus("Robots", robotsLeftWidget);
 }
+
+
 
 void MainWindow::backSelecRobotBtnEvent(){
     qDebug() << "backSelecRobotBtnEvent called";
     selectedRobotWidget->hide();
-    if(lastWidget != NULL){
-        lastWidget->show();
+    if(lastWidget.last() != NULL){
+        lastWidget.last()->show();
     } else {
         leftMenu->hide();
     }
@@ -421,15 +426,21 @@ void MainWindow::addPathSelecRobotBtnEvent(){
 
 
 void MainWindow::setSelectedRobotNoParent(QAbstractButton *button){
-lastWidget = NULL;
- setSelectedRobot(button);
+
+   // switchFocus("Robot", selectedRobotWidget);
+    resetFocus();
+    setSelectedRobot(button);
 }
+
+
 void MainWindow::setSelectedRobot(QAbstractButton *button){
     qDebug() << "Edit : " << robotsLeftWidget->getEditBtnStatus() << "\nsetSelectedRobot with QAbstractButton called : " << button->text();
     if(robotsLeftWidget->getEditBtnStatus())
         (robots->getRobotViewByName(button->text()));
     else
         setSelectedRobot(robots->getRobotViewByName(button->text()));
+    switchFocus("Robot", selectedRobotWidget);
+
 }
 
 void MainWindow::backRobotBtnEvent(){
@@ -469,8 +480,8 @@ void MainWindow::cancelEditSelecRobotBtnEvent(){
     robotsLeftWidget->setEditBtnStatus(false);
     robotsLeftWidget->setCheckBtnStatus(false);
     editSelectedRobotWidget->hide();
-    if(lastWidget != NULL){
-        lastWidget->show();
+    if(lastWidget.last() != NULL){
+        lastWidget.last()->show();
     }
 }
 
@@ -564,7 +575,7 @@ void MainWindow::robotSavedEvent(){
         robotsLeftWidget->updateRobots(robots);
         bottomLayout->updateRobot(robots->getRobotId(selectedRobot->getRobot()->getName()), selectedRobot);
 
-        selectedRobotWidget->setSelectedRobot(selectedRobot, lastWidget );
+        selectedRobotWidget->setSelectedRobot(selectedRobot );
         selectedRobotWidget->show();
     }
 }
@@ -626,7 +637,7 @@ void MainWindow::pathSaved(bool execPath){
 
     hideAllWidgets();
     setMessageTop(TEXT_COLOR_SUCCESS, "Path saved");
-    selectedRobotWidget->setSelectedRobot(selectedRobot, lastWidget);
+    selectedRobotWidget->setSelectedRobot(selectedRobot);
     selectedRobotWidget->show();
     bottomLayout->updateRobot(robots->getRobotId(selectedRobot->getRobot()->getName()), selectedRobot);
 
@@ -813,7 +824,7 @@ void MainWindow::homeSelected(PointView* pointView, bool temporary){
                 setGraphicItemsState(GraphicItemState::NO_STATE);
                 enableMenu();
                 hideAllWidgets();
-                selectedRobotWidget->setSelectedRobot(selectedRobot, lastWidget);
+                selectedRobotWidget->setSelectedRobot(selectedRobot);
                 selectedRobotWidget->show();
             }
         }
@@ -968,7 +979,8 @@ void MainWindow::backMapBtnEvent(){
 
 
 void MainWindow::initializeLeftMenu(){
-    lastWidget = leftMenu->getLastWidget();
+    //lastWidget = leftMenu->getLastWidget();
+    lastWidget =  QList<QWidget*>();
     leftMenuWidget = leftMenu->getLeftMenuWidget();
     pointsLeftWidget = leftMenu->getPointsLeftWidget();
     selectedRobotWidget = leftMenu->getSelectedRobotWidget();
@@ -998,8 +1010,10 @@ void MainWindow::setMessageTop(QString msgType, QString msg){
 }
 
 void MainWindow::closeSlot(){
-    lastWidget = NULL;
+    resetFocus();
     leftMenu->hide();
+   // leftMenu->hideBackButton();
+
 }
 
 /**********************************************************************************************************************************/
@@ -1064,7 +1078,7 @@ void MainWindow::pointBtnEvent(void){
         leftMenu->getDisplaySelectedPoint()->setOrigin(DisplaySelectedPoint::POINTS_MENU);
         pointsLeftWidget->show();
         pointsLeftWidget->getGroupButtonGroup()->show();
-        lastWidget = pointsLeftWidget;
+        //lastWidget = pointsLeftWidget;
     }
 }
 
@@ -1072,7 +1086,7 @@ void MainWindow::mapBtnEvent(){
     qDebug() << "mapBtnEvent called";
     leftMenuWidget->hide();
     mapLeftWidget->show();
-    lastWidget = mapLeftWidget;
+  //  lastWidget = mapLeftWidget;
 }
 
 void MainWindow::backGroupBtnEvent(){
@@ -1217,14 +1231,60 @@ void MainWindow::selectPointBtnEvent(){
     qDebug() << "selectPointBtnEvent called";
 }
 
+void MainWindow::switchFocus(QString name, QWidget* widget)
+{
+    if(currentWidget != NULL)
+    {
+        qDebug() << "currentWidgetNOTNULL";
+        lastWidget.append(currentWidget);
+        lastName.append(currentName);
+    }
+
+
+    qDebug() << "__________________";
+
+
+    currentWidget=widget;
+    currentName=name;
+    if(lastWidget.size()!=0)
+    {
+     leftMenu->showBackButton(&lastName.last());
+    }
+    else
+    {
+        leftMenu->hideBackButton();
+    }
+    for(int i=0;i<lastName.size();i++)
+    {
+        qDebug() << lastName.at(i);
+    }
+}
+void MainWindow::resetFocus()
+{
+    currentName = "";
+    currentWidget = NULL;
+    lastName = QList<QString>();
+    lastWidget = QList<QWidget*>();
+}
+
+void MainWindow::updateView()
+{
+    if(currentWidget == NULL)
+         leftMenu->hideBackButton();
+    else
+        leftMenu->showBackButton(&currentName);
+}
+
 void MainWindow::openLeftMenu(){
     qDebug() << "openLeftMenu called";
+    resetFocus();
     if(leftMenu->isHidden()){
 
         hideAllWidgets();
         leftMenuWidget->show();
         leftMenu->show();
-        lastWidget = leftMenuWidget;
+        switchFocus("Menu",leftMenuWidget);
+
     } else {
         /// we reset the origin of the point information menu in order to display the buttons to go back in the further menus
         leftMenu->getDisplaySelectedPoint()->setOrigin(DisplaySelectedPoint::POINTS_MENU);
@@ -1236,10 +1296,10 @@ void MainWindow::openLeftMenu(){
             hideAllWidgets();
             leftMenuWidget->show();
             leftMenu->show();
-            lastWidget = leftMenuWidget;
+            switchFocus("Menu",leftMenuWidget);
+
         } else {
-            leftMenuWidget->hide();
-            leftMenu->hide();
+                closeSlot();
         }
     }
 }
@@ -1247,8 +1307,8 @@ void MainWindow::openLeftMenu(){
 void MainWindow::backSelecPointBtnEvent(){
     qDebug() << "backSelecPointBtnEvent called";
     selectedPointWidget->hide();
-    if(lastWidget != NULL){
-        lastWidget->show();
+    if(lastWidget.last() != NULL){
+        lastWidget.last()->show();
     } else {
         leftMenu->hide();
     }
@@ -1983,17 +2043,77 @@ void MainWindow::quit(){
     close();
 }
 
-QWidget* MainWindow::getLastWidget(void)
+QList<QWidget*> MainWindow::getLastWidget(void)
 {
     return lastWidget;
 }
-void MainWindow::setLastWidget(QWidget* lw)
+void MainWindow::setLastWidget(QList<QWidget*> lw)
 {
-
      lastWidget = lw;
-
+}
+QWidget* MainWindow::getCurrentWidget(void)
+{
+    return currentWidget;
+}
+void MainWindow::setCurrentWidget(QWidget* cw)
+{
+     currentWidget = cw;
 }
 
+
+
+QList<QString> MainWindow::getLastName(void)
+{
+    return lastName;
+}
+void MainWindow::setLastName(QList<QString> ln)
+{
+     lastName = ln;
+}
+QString MainWindow::getCurrentName(void)
+{
+    return currentName;
+}
+void MainWindow::setCurrentName(QString cn)
+{
+     currentName = cn;
+}
+
+void MainWindow::showBackButton(QString* name)
+{
+    leftMenu->showBackButton(name);
+}
+void MainWindow::hideBackButton()
+{
+    leftMenu->hideBackButton();
+}
+
+void MainWindow::backEvent()
+{
+    qDebug() << "back event called";
+
+    currentWidget->hide();
+    if (lastWidget.size() != 0)
+    {
+        currentWidget = lastWidget.takeLast();
+        currentWidget->show();
+        currentName = lastName.takeLast();
+    }
+    else
+    {
+        currentWidget = NULL;
+        leftMenu->hide();
+    }
+    if (lastWidget.size() != 0)
+    {
+        leftMenu->showBackButton(&lastName.last());
+    }
+    else
+    {
+        leftMenu->hideBackButton();
+    }
+
+}
 
 int MainWindow::openConfirmMessage(const QString text){
     QMessageBox msgBox;
