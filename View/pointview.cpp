@@ -53,27 +53,33 @@ void PointView::mousePressEvent(QGraphicsSceneMouseEvent *event){
 }
 
 void PointView::mouseMoveEvent(QGraphicsSceneMouseEvent *event){
-    if(state == GraphicItemState::EDITING){
-        // TODO Not be able to go beyond the map limits
-/*
-        bool outOfMap = false;
-        if(pos().x() < 0){
-            return
+
+    if(state == GraphicItemState::EDITING || state == GraphicItemState::EDITING_PERM){
+        QGraphicsItem::mouseMoveEvent(event);
+
+        float x = pos().x() + pixmap().width()*SCALE/2;
+        float y = pos().y() + pixmap().height()*SCALE;
+
+        if(x < 0){
+            x = 0;
         }
-        pos().x() > parentItem()->boundingRect().width();
-        qDebug() << parentItem()->boundingRect().width() << parentItem()->boundingRect().height();
-        qDebug() << "still moving" << pos().x() << pos().y();
-*/
-        float x = pos().x() + pixmap().width()*SCALE/2;
-        float y = pos().y() + pixmap().height()*SCALE;
-        point->setPosition(x, y);
-        emit moveTmpEditPathPoint();
-        QGraphicsPixmapItem::mouseMoveEvent(event);
-    } else if(state == GraphicItemState::EDITING_PERM){
-        float x = pos().x() + pixmap().width()*SCALE/2;
-        float y = pos().y() + pixmap().height()*SCALE;
-        emit editedPointPositionChanged(x, y);
-        QGraphicsPixmapItem::mouseMoveEvent(event);
+        if(x > parentItem()->boundingRect().width()){
+            x = parentItem()->boundingRect().width();
+        }
+        if(y < 0){
+            y = 0;
+        }
+        if(y > parentItem()->boundingRect().height()){
+            y = parentItem()->boundingRect().height();
+        }
+        setPos(x, y);
+
+        if(state == GraphicItemState::EDITING){
+            point->setPosition(x, y);
+            emit moveTmpEditPathPoint();
+        } else if(state == GraphicItemState::EDITING_PERM){
+            emit editedPointPositionChanged(x, y);
+        }
     }
 }
 

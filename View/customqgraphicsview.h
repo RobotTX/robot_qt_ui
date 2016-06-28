@@ -25,7 +25,7 @@ protected:
     void wheelEvent(QWheelEvent *event);
 
 private:
-    int numScheduledScalings;
+    float zoomCoeff;
 };
 
 #endif // CUSTOMQGRAPHICSVIEW_H
