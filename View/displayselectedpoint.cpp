@@ -34,6 +34,7 @@ DisplaySelectedPoint::DisplaySelectedPoint(QMainWindow *_parent, Points const& _
 
     minusButton = new QPushButton(QIcon(":/icons/minus.png"),"", this);
     minusButton->setIconSize(_parent->size()/10);
+    minusButton->setToolTip("You can click this button to remove the point");
     minusButton->setCheckable(true);
 
     editButton = new QPushButton(QIcon(":/icons/edit.png"),"", this);
@@ -100,6 +101,10 @@ DisplaySelectedPoint::DisplaySelectedPoint(QMainWindow *_parent, Points const& _
 }
 
 void DisplaySelectedPoint::displayPointInfo(void){
+    if(pointView->getPoint()->isDisplayed())
+        mapButton->setToolTip("Click to hide this point");
+    else
+        mapButton->setToolTip("Click to display this point");
     posXLabel->setText("X : " + QString::number(pointView->getPoint()->getPosition().getX(), 'f', 1));
     posYLabel->setText("Y : " + QString::number(pointView->getPoint()->getPosition().getY(), 'f', 1));
     nameEdit->setText(pointView->getPoint()->getName());
@@ -142,7 +147,7 @@ void DisplaySelectedPoint::resetWidget(){
     saveButton->hide();
     /// enable the edit button again and hide the tooltip
     editButton->setEnabled(true);
-    editButton->setToolTip("");
+    editButton->setToolTip("You can click on this button and then choose between clicking on the map or drag the point to change its position");
 
     if(pointView){
         /// in case the user had dragged the point around the map or clicked it, this resets the coordinates displayed to the original ones, otherwise this has no effect
