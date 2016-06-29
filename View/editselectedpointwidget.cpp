@@ -184,6 +184,9 @@ void EditSelectedPointWidget::showGroupLayout() const {
 }
 
 void EditSelectedPointWidget::hideGroupLayout() const {
+    /// resets the name to tmpPoint if we cancel the creation of the point
+    nameEdit->setText(pointView->getPoint()->getName());
+    /// hides everything that's related to creating a point
     groupLabel->hide();
     groupBox->hide();
     saveBtn->hide();
