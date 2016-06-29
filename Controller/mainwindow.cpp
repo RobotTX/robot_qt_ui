@@ -400,12 +400,14 @@ void MainWindow::robotBtnEvent(void){
 
 void MainWindow::backSelecRobotBtnEvent(){
     qDebug() << "backSelecRobotBtnEvent called";
+    /*
     selectedRobotWidget->hide();
     if(lastWidget.last() != NULL){
         lastWidget.last()->show();
     } else {
         leftMenu->hide();
     }
+    */
 }
 
 
@@ -482,9 +484,8 @@ void MainWindow::cancelEditSelecRobotBtnEvent(){
     robotsLeftWidget->setEditBtnStatus(false);
     robotsLeftWidget->setCheckBtnStatus(false);
     editSelectedRobotWidget->hide();
-    if(lastWidget.last() != NULL){
-        lastWidget.last()->show();
-    }
+    backEvent();
+
 }
 
 void MainWindow::robotSavedEvent(){
@@ -989,7 +990,7 @@ void MainWindow::mapBtnEvent(){
 
 void MainWindow::initializeLeftMenu(){
     //lastWidget = leftMenu->getLastWidget();
-    lastWidget =  QList<QWidget*>();
+    lastWidgets =  QList<QPair<QWidget*,QString>>();
     leftMenuWidget = leftMenu->getLeftMenuWidget();
     pointsLeftWidget = leftMenu->getPointsLeftWidget();
     selectedRobotWidget = leftMenu->getSelectedRobotWidget();
@@ -1293,27 +1294,25 @@ void MainWindow::switchFocus(QString name, QWidget* widget)
 
     qDebug() << "__________________";
 
-    lastWidgets.push(QPair<QWidget*,QString>(widget,name));
+    lastWidgets.append(QPair<QWidget*,QString>(widget,name));
 
-    if(lastWidget.size()!=0)
+    if(lastWidgets.size()>1)
     {
-     leftMenu->showBackButton(&lastName.last());
+     leftMenu->showBackButton(lastWidgets.at(lastWidgets.size()-2).second);
     }
     else
     {
         leftMenu->hideBackButton();
     }
-    for(int i=0;i<lastName.size();i++)
+    //debug
+    for(int i=0;i<lastWidgets.size();i++)
     {
-        qDebug() << lastName.at(i);
+        qDebug() << lastWidgets.at(i).second;
     }
 }
 void MainWindow::resetFocus()
 {
-    currentName = "";
-    currentWidget = NULL;
-    lastName = QList<QString>();
-    lastWidget = QList<QWidget*>();
+    lastWidgets = QList<QPair<QWidget*,QString>>();
     updateView();
 }
 
@@ -1321,10 +1320,10 @@ void MainWindow::updateView()
 {
     if (leftMenu != NULL)
     {
-        if(currentWidget == NULL)
+        if(lastWidgets.size() <= 1)
              leftMenu->hideBackButton();
         else
-            leftMenu->showBackButton(&currentName);
+            leftMenu->showBackButton(lastWidgets.last().second);
     }
 }
 
@@ -1365,15 +1364,7 @@ void MainWindow::backSelecPointBtnEvent(){
     qDebug() << "backSelecPointBtnEvent called";
     selectedPointWidget->hide();
     /// if we come from a menu we display it again
-
-    if(lastWidget.last() != NULL){
-        lastWidget.last()->show();
-
-
-    } else {
-        /// we come from the map we don't display anything
-        leftMenu->hide();
-    }
+    backEvent();
 }
 
 void MainWindow::minusSelecPointBtnEvent(){
@@ -2413,67 +2404,42 @@ void MainWindow::quit(){
     close();
 }
 
-QList<QWidget*> MainWindow::getLastWidget(void)
+QList<QPair<QWidget*,QString>> MainWindow::getLastWidgets(void)
 {
-    return lastWidget;
+    return lastWidgets;
 }
 
-void MainWindow::setLastWidget(QList<QWidget*> lw)
+void MainWindow::setLastWidgets(QList<QPair<QWidget*,QString>> lw)
 {
-     lastWidget = lw;
-}
-QWidget* MainWindow::getCurrentWidget(void)
-{
-    return currentWidget;
-}
-void MainWindow::setCurrentWidget(QWidget* cw)
-{
-     currentWidget = cw;
+     lastWidgets = lw;
 }
 
 
 
-QList<QString> MainWindow::getLastName(void)
-{
-    return lastName;
-}
-void MainWindow::setLastName(QList<QString> ln)
-{
-     lastName = ln;
-}
-QString MainWindow::getCurrentName(void)
-{
-    return currentName;
-}
-void MainWindow::setCurrentName(QString cn)
-{
-     currentName = cn;
-}
 
 void MainWindow::backEvent()
 {
     qDebug() << "back event called";
-
-    currentWidget->hide();
-    if (lastWidget.size() != 0)
+    lastWidgets.last().first->hide();
+    if (lastWidgets.size() > 1)
     {
-        currentWidget = lastWidget.takeLast();
-        currentWidget->show();
-        currentName = lastName.takeLast();
+        lastWidgets.removeLast();
+        lastWidgets.last().first->show();
+        if (lastWidgets.size() >1)
+        {
+            leftMenu->showBackButton(lastWidgets.at(lastWidgets.size()-2).second);
+        }
+        else
+        {
+            leftMenu->hideBackButton();
+        }
     }
     else
     {
-        currentWidget = NULL;
+           resetFocus();
         leftMenu->hide();
     }
-    if (lastWidget.size() != 0)
-    {
-        leftMenu->showBackButton(&lastName.last());
-    }
-    else
-    {
-        leftMenu->hideBackButton();
-    }
+
 
 }
 

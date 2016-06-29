@@ -162,8 +162,8 @@ void LeftMenu::hideBackButton(void)
     returnButton->hide();
 }
 
-void LeftMenu::showBackButton(QString* name)
+void LeftMenu::showBackButton(QString name)
 {
-    returnButton->setText(*name);
+    returnButton->setText(name);
     returnButton->show();
 }

@@ -45,7 +45,7 @@ public:
     DisplaySelectedPoint* getDisplaySelectedPoint(void) const { return displaySelectedPoint; }
     DisplaySelectedGroup* getDisplaySelectedGroup(void) const { return displaySelectedGroup; }
     PathCreationWidget* getPathCreationWidget(void) const { return pathCreationWidget; }
-    void showBackButton(QString* name);
+    void showBackButton(QString name);
     void hideBackButton();
 
 
