@@ -6,6 +6,5 @@ DoubleClickableButton::DoubleClickableButton(const int _id, const QString string
 }
 
 void DoubleClickableButton::mouseDoubleClickEvent(QMouseEvent *event){
-    qDebug() << "double click on button " << this;
     emit doubleClick(id);
 }
