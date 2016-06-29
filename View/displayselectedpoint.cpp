@@ -29,6 +29,7 @@ DisplaySelectedPoint::DisplaySelectedPoint(QMainWindow *_parent, Points const& _
     //backButton->setIconSize(_parent->size()/10);
     //layout->addWidget(backButton);
 
+
     plusButton = new QPushButton(QIcon(":/icons/plus.png"),"", this);
     plusButton->setIconSize(_parent->size()/10);
     plusButton->setEnabled(false);
@@ -130,9 +131,12 @@ void DisplaySelectedPoint::setOrigin(const Origin _origin){
     /// to return so we hide the button
     /// the distinction between when we come from the group menu
     /// and when we come from the points menu is made in the pointBtnEvent
-    ///
+
     /*
     if(origin == MAP)
+
+ /*   if(origin == MAP)
+>>>>>>> bf15946b3a0b45b447000c69a42472e619fce00d
         backButton->hide();
     else
         backButton->show();

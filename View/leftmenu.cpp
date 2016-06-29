@@ -158,11 +158,16 @@ void LeftMenu::updateGroupDisplayed(const Points& _points, const int groupIndex)
 
 void LeftMenu::hideBackButton(void)
 {
-    returnButton->hide();
+    if(returnButton != NULL){
+        qDebug()<<"here";
+        returnButton->hide();
+    }
 }
 
-void LeftMenu::showBackButton(QString* name)
+void LeftMenu::showBackButton(QString name)
 {
-    returnButton->setText(*name);
-    returnButton->show();
+    if(returnButton){
+        returnButton->setText(name);
+        returnButton->show();
+    }
 }

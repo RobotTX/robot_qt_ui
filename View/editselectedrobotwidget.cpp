@@ -110,7 +110,7 @@ EditSelectedRobotWidget::EditSelectedRobotWidget(QMainWindow* parent, const std:
 }
 
 void EditSelectedRobotWidget::setSelectedRobot(RobotView* const _robotView){
-     mw->setCurrentWidget(this);
+     mw->switchFocus(robotView->getRobot()->getName(),this);
     robotView = _robotView;
     /// When a robot is selected, the informations are updated
     nameEdit->setText(robotView->getRobot()->getName());
