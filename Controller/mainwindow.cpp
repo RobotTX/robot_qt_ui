@@ -1439,12 +1439,13 @@ void MainWindow::askForDeletePointConfirmation(int index){
         case QMessageBox::Ok : {
         /// we first check that our point is not the home of a robot
             std::shared_ptr<Point> point = points.getGroups().at(pointsLeftWidget->getIndexLastGroupClicked())->getPoints().at(index);
+            std::shared_ptr<Group> group = points.getGroups().at(pointsLeftWidget->getIndexLastGroupClicked());
             if(!point->isHome()){
                 qDebug() << "Go ahead and remove me I am not a home point anyway";
                 /// need to remove the point from the map
                 pointViews->getPointViewFromPoint(*point)->hide();
                 /// updates the model
-                points.getGroups().at(pointsLeftWidget->getIndexLastGroupClicked())->removePoint(index);
+                group->removePoint(index);
                 /// updates the group menu
                 qDebug() << "group set is " << pointsLeftWidget->getIndexLastGroupClicked();
                 leftMenu->getDisplaySelectedGroup()->getPointButtonGroup()->setGroup(points, pointsLeftWidget->getIndexLastGroupClicked());
@@ -1454,6 +1455,24 @@ void MainWindow::askForDeletePointConfirmation(int index){
                 leftMenu->getDisplaySelectedPoint()->getMinusButton()->setChecked(false);
                 /// makes the buttons checkable again
                 leftMenu->getDisplaySelectedGroup()->getPointButtonGroup()->setCheckable(true);
+                /// prompts the user to ask him if he wants to delete the group in case it would be empty
+                if(group->isEmpty()){
+                    int res = openEmptyGroupMessage(group->getName());
+                    if(res == QMessageBox::Yes){
+                        /// updates model
+                        points.removeGroup(pointsLeftWidget->getIndexLastGroupClicked());
+                        /// updates file
+                        XMLParser parser(XML_PATH, mapPixmapItem);
+                        parser.save(points);
+                        /// updates menu
+                        pointsLeftWidget->getGroupButtonGroup()->update(points);
+                        /// hides group menu and shows list of groups menu
+                        leftMenu->getDisplaySelectedGroup()->hide();
+                        pointsLeftWidget->show();
+                        editSelectedPointWidget->updateGroupBox();
+                    }
+                }
+
             } else {
                 /// this is in fact the home point of a robot, we prompt a customized message to the end user
                 RobotView* robot = robots->findRobotUsingHome(point->getName());
@@ -1801,24 +1820,55 @@ void MainWindow::removePointFromInformationMenu(void){
                 /// holds the index of the group and the index of a particular point in this group within <points>
                 std::pair<int, int> pointIndexes = points.findPointIndexes(pointName);
                 if(pointIndexes.first != -1){
-                    /// need to remove the point from the map
-                    pointViews->getPointViewFromPoint(*point)->hide();
-                    /// updates the model
-                    points.getGroups().at(pointIndexes.first)->removePoint(pointIndexes.second);
-                    /// updates the file containing containing points info
-                    XMLParser parserPoints(XML_PATH, mapPixmapItem);
-                    parserPoints.save(points);
-                    /// updates the group menu and the list of points
-                    pointsLeftWidget->getGroupButtonGroup()->update(points);
-                    /// closes the window
-                    leftMenu->hide();
-                    /// depending on how we got there we display a menu or not
-                    if(leftMenu->getDisplaySelectedPoint()->getOrigin() == DisplaySelectedPoint::GROUP_MENU)
-                        leftMenu->getDisplaySelectedGroup()->show();
-                    else if(leftMenu->getDisplaySelectedPoint()->getOrigin() == DisplaySelectedPoint::POINTS_MENU)
-                        pointsLeftWidget->show();
-
-                    leftMenu->getDisplaySelectedGroup()->getPointButtonGroup()->setGroup(points, pointsLeftWidget->getIndexLastGroupClicked());
+                    int groupIndex = pointIndexes.first;
+                    qDebug() << "groupindex " << groupIndex;
+                    /// it's an isolated point
+                    if(groupIndex == points.count()-1){
+                        /// need to remove the point from the map
+                        pointViews->getPointViewFromPoint(*point)->hide();
+                        /// updates the model
+                        points.getGroups().at(groupIndex)->removePoint(pointIndexes.second);
+                        /// updates the file containing containing points info
+                        XMLParser parserPoints(XML_PATH, mapPixmapItem);
+                        parserPoints.save(points);
+                        /// updates the list of points
+                        pointsLeftWidget->getGroupButtonGroup()->update(points);
+                        /// closes the window
+                        leftMenu->hide();
+                        /// depending on how we got there we display a menu or not
+                        if(leftMenu->getDisplaySelectedPoint()->getOrigin() == DisplaySelectedPoint::POINTS_MENU)
+                            pointsLeftWidget->show();
+                    } else {
+                        /// need to remove the point from the map
+                        pointViews->getPointViewFromPoint(*point)->hide();
+                        /// updates the model
+                        points.getGroups().at(groupIndex)->removePoint(pointIndexes.second);
+                        /// updates the file containing containing points info
+                        XMLParser parserPoints(XML_PATH, mapPixmapItem);
+                        parserPoints.save(points);
+                        /// updates the group menu
+                        leftMenu->getDisplaySelectedGroup()->getPointButtonGroup()->setGroup(points, pointsLeftWidget->getIndexLastGroupClicked());
+                        /// closes the window
+                        leftMenu->hide();
+                        /// depending on how we got there we display a menu or not
+                        if(leftMenu->getDisplaySelectedPoint()->getOrigin() == DisplaySelectedPoint::GROUP_MENU)
+                            leftMenu->getDisplaySelectedGroup()->show();
+                        /// if the group is empty the user is asked whether or not he wants to delete it
+                        if(points.getGroups().at(pointIndexes.first)->isEmpty()){
+                            int res = openEmptyGroupMessage(points.getGroups().at(pointIndexes.first)->getName());
+                            /// the group must be deleted
+                            if(res == QMessageBox::Yes){
+                                /// updates model
+                                points.removeGroup(groupIndex);
+                                /// updates file
+                                XMLParser parser(XML_PATH, mapPixmapItem);
+                                parser.save(points);
+                                /// updates menu
+                                pointsLeftWidget->getGroupButtonGroup()->update(points);
+                                editSelectedPointWidget->updateGroupBox();
+                            }
+                        }
+                    }
                 } else {
                     qDebug() << "could not find this point";
                 }
@@ -2174,6 +2224,7 @@ void MainWindow::openInterdictionOfPointRemovalMessage(const QString pointName, 
  * does the same as clicking on a point and then on the eye button
  */
 void MainWindow::doubleClickOnPoint(int checkedId){
+    qDebug() << "double click on point";
     std::shared_ptr<Group> group = points.findGroup(leftMenu->getDisplaySelectedGroup()->getNameLabel()->text());
     if(group){
         std::shared_ptr<Point> point = group->getPoints().at(checkedId);
@@ -2199,7 +2250,7 @@ void MainWindow::doubleClickOnPoint(int checkedId){
  * and then on the eye button
  */
 void MainWindow::doubleClickOnGroup(int checkedId){
-    qDebug() << " double click on group or defaul point ";
+    qDebug() << " double click on group or default point ";
     /// uncheck the other buttons
     pointsLeftWidget->getPlusButton()->setChecked(false);
     pointsLeftWidget->getMinusButton()->setChecked(false);
@@ -2250,8 +2301,18 @@ void MainWindow::reestablishConnectionsGroups(){
 
 void MainWindow::reestablishConnectionsPoints(){
     qDebug() << "connections for points requested";
-    foreach(QAbstractButton* button, leftMenu->getDisplaySelectedGroup()->getPointButtonGroup()->getButtonGroup()->buttons())
+    foreach(QAbstractButton* button, leftMenu->getDisplaySelectedGroup()->getPointButtonGroup()->getButtonGroup()->buttons()){
+        std::cerr << button;
         connect(button, SIGNAL(doubleClick(int)), this, SLOT(doubleClickOnPoint(int)));
+    }
+}
+
+int MainWindow::openEmptyGroupMessage(const QString groupName){
+    QMessageBox msgBox;
+    msgBox.setText("The group " + groupName + " is empty. Do you want to delete this group permanently ?");
+    msgBox.setStandardButtons(QMessageBox::No | QMessageBox::Yes);
+    msgBox.setDefaultButton(QMessageBox::No);
+    return msgBox.exec();
 }
 
 /**********************************************************************************************************************************/

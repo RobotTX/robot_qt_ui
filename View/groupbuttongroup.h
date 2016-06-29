@@ -32,6 +32,8 @@ private:
     QVBoxLayout* layout;
     QButtonGroup* buttonGroup;
     QWidget* parent;
+    /// to avoid resizing of the icons after deletions of points and groups
+    const QSize BUTTON_SIZE = parentWidget()->size()/2;
 
 signals:
     void doubleClick(int);

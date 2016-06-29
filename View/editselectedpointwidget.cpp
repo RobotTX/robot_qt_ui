@@ -83,11 +83,12 @@ EditSelectedPointWidget::EditSelectedPointWidget(QMainWindow* _parent, PointsVie
     groupLabel = new QLabel("Group : ", this);
     groupLabel->hide();
     groupBox = new QComboBox(this);
-    /// to insert the groups in the box
 
+    /// to insert the groups in the box
     for(int i = 0; i < points->getPoints().count(); i++){
         groupBox->insertItem(points->getPoints().count()-1-i, points->getPoints().getGroups().at(i)->getName());
     }
+
     /// to set the default group as default
     groupBox->setCurrentIndex(0);
     groupBox->setItemIcon(0, QIcon(":/icons/tick.png"));
@@ -168,7 +169,7 @@ void EditSelectedPointWidget::print(int id) const {
     groupBox->setItemIcon(groupBox->currentIndex(), QIcon(":/icons/tick.png"));
 }
 
-void EditSelectedPointWidget::showGroupLayout() const {
+void EditSelectedPointWidget::showGroupLayout(void) const {
     /// we disable so that two points cannot be named tmpPoint
     saveBtn->setEnabled(false);
     groupLabel->show();
@@ -183,7 +184,7 @@ void EditSelectedPointWidget::showGroupLayout() const {
     nameEdit->setFocusPolicy(Qt::FocusPolicy::StrongFocus);
 }
 
-void EditSelectedPointWidget::hideGroupLayout() const {
+void EditSelectedPointWidget::hideGroupLayout(void) const {
     /// resets the name to tmpPoint if we cancel the creation of the point
     nameEdit->setText(pointView->getPoint()->getName());
     /// hides everything that's related to creating a point
@@ -197,4 +198,14 @@ void EditSelectedPointWidget::hideGroupLayout() const {
     nameEdit->setAutoFillBackground(true);
     nameEdit->setFrame(false);
     nameEdit->setFocusPolicy(Qt::FocusPolicy::NoFocus);
+}
+
+void EditSelectedPointWidget::updateGroupBox(void){
+    groupBox->clear();
+    for(int i = 0; i < points->getPoints().count(); i++){
+        groupBox->insertItem(points->getPoints().count()-1-i, points->getPoints().getGroups().at(i)->getName());
+    }
+    /// to set the default group as default
+    groupBox->setCurrentIndex(0);
+    groupBox->setItemIcon(0, QIcon(":/icons/tick.png"));
 }

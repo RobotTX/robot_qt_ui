@@ -64,6 +64,7 @@ public:
     void stopPathCreation();
     int openConfirmMessage(const QString);
     void openInterdictionOfPointRemovalMessage(const QString pointName, const QString robotName);
+    int openEmptyGroupMessage(const QString groupName);
     void clearNewMap();
     void disableMenu();
     void enableMenu();
