@@ -381,6 +381,7 @@ void MainWindow::setSelectedRobot(RobotView* robotView){
     qDebug() << "setSelectedRobot(RobotView* robotView)";
    // updateView();
     leftMenu->show();
+
     if(leftMenu->getRobotsLeftWidget()->getEditBtnStatus()){
         editSelectedRobot(robotView);
     } else {
@@ -389,6 +390,8 @@ void MainWindow::setSelectedRobot(RobotView* robotView){
         hideAllWidgets();
         selectedRobotWidget->setSelectedRobot(selectedRobot);
         selectedRobotWidget->show();
+        switchFocus(robotView->getRobot()->getName(),selectedRobotWidget);
+
     }
 }
 
@@ -446,7 +449,6 @@ void MainWindow::setSelectedRobot(QAbstractButton *button){
         (robots->getRobotViewByName(button->text()));
     else
         setSelectedRobot(robots->getRobotViewByName(button->text()));
-    switchFocus("Robot", selectedRobotWidget);
 
 }
 
@@ -487,6 +489,7 @@ void MainWindow::cancelEditSelecRobotBtnEvent(){
     robotsLeftWidget->setEditBtnStatus(false);
     robotsLeftWidget->setCheckBtnStatus(false);
     editSelectedRobotWidget->hide();
+
     backEvent();
 
 }
