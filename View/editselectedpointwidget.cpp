@@ -200,12 +200,15 @@ void EditSelectedPointWidget::hideGroupLayout(void) const {
     nameEdit->setFocusPolicy(Qt::FocusPolicy::NoFocus);
 }
 
-void EditSelectedPointWidget::updateGroupBox(void){
+void EditSelectedPointWidget::updateGroupBox(const Points& _points){
+    qDebug() << groupBox->count();
     groupBox->clear();
-    for(int i = 0; i < points->getPoints().count(); i++){
-        groupBox->insertItem(points->getPoints().count()-1-i, points->getPoints().getGroups().at(i)->getName());
+    qDebug() << "after" << groupBox->count();
+    for(int i = 0; i < _points.count(); i++){
+        groupBox->insertItem(_points.count()-1-i, _points.getGroups().at(i)->getName());
     }
     /// to set the default group as default
     groupBox->setCurrentIndex(0);
     groupBox->setItemIcon(0, QIcon(":/icons/tick.png"));
+
 }

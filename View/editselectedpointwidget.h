@@ -35,7 +35,7 @@ public:
     QLabel* getPosYLabel(void) const { return posYLabel; }
     QLineEdit* getNameEdit(void) const { return nameEdit; }
     QPushButton* getPlusButton(void) const { return plusButton; }
-    void updateGroupBox(void);
+    void updateGroupBox(const Points &_points);
 
 signals:
     void pointSaved(int, double, double, QString);

@@ -1,21 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <points>
     <group>
-        <name>first group</name>
-        <point>
-            <name>Ma point</name>
-            <x>75</x>
-            <y>75</y>
-            <displayed>1</displayed>
-        </point>
-        <point>
-            <name>A new point</name>
-            <x>100</x>
-            <y>100</y>
-            <displayed>0</displayed>
-        </point>
-    </group>
-    <group>
         <name>Second group</name>
         <point>
             <name>Fanny</name>
@@ -28,6 +13,12 @@
             <x>150</x>
             <y>150</y>
             <displayed>1</displayed>
+        </point>
+        <point>
+            <name>yeah</name>
+            <x>292</x>
+            <y>295</y>
+            <displayed>0</displayed>
         </point>
     </group>
     <group>

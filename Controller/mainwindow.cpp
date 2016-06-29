@@ -1540,7 +1540,7 @@ void MainWindow::askForDeletePointConfirmation(int index){
                         /// hides group menu and shows list of groups menu
                         leftMenu->getDisplaySelectedGroup()->hide();
                         pointsLeftWidget->show();
-                        editSelectedPointWidget->updateGroupBox();
+                        editSelectedPointWidget->updateGroupBox(points);
                     }
                 }
 
@@ -1589,6 +1589,8 @@ void MainWindow::askForDeleteGroupConfirmation(int index){
                 /// updates the menu
                 pointsLeftWidget->getGroupButtonGroup()->update(points);
                 pointsLeftWidget->getMinusButton()->setChecked(false);
+                /// updates the group box so that the user cannot create a point in this group anymore
+                editSelectedPointWidget->updateGroupBox(points);
             } else {
                 /// this group contains the home point of a robot and cannot be removed, we prompt the end user with a customized message to explain which robot has its home point in the group
                 RobotView* robot = robots->findRobotUsingHome(homePoint->getName());
@@ -1936,13 +1938,15 @@ void MainWindow::removePointFromInformationMenu(void){
                             /// the group must be deleted
                             if(res == QMessageBox::Yes){
                                 /// updates model
+                                qDebug() << "nb gr" << points.count();
                                 points.removeGroup(groupIndex);
+                                qDebug() << "nb gr" << points.count();
                                 /// updates file
                                 XMLParser parser(XML_PATH, mapPixmapItem);
                                 parser.save(points);
                                 /// updates menu
                                 pointsLeftWidget->getGroupButtonGroup()->update(points);
-                                editSelectedPointWidget->updateGroupBox();
+                                editSelectedPointWidget->updateGroupBox(points);
                             }
                         }
                     }
@@ -2330,7 +2334,7 @@ void MainWindow::doubleClickOnPoint(int checkedId){
  * and then on the eye button
  */
 void MainWindow::doubleClickOnGroup(int checkedId){
-    qDebug() << " double click on group or default point ";
+    qDebug() << "double click on group or default point ";
     /// uncheck the other buttons
     pointsLeftWidget->getPlusButton()->setChecked(false);
     pointsLeftWidget->getMinusButton()->setChecked(false);
@@ -2384,10 +2388,8 @@ void MainWindow::reestablishConnectionsGroups(){
 
 void MainWindow::reestablishConnectionsPoints(){
     qDebug() << "connections for points requested";
-    foreach(QAbstractButton* button, leftMenu->getDisplaySelectedGroup()->getPointButtonGroup()->getButtonGroup()->buttons()){
-        std::cerr << button;
+    foreach(QAbstractButton* button, leftMenu->getDisplaySelectedGroup()->getPointButtonGroup()->getButtonGroup()->buttons())
         connect(button, SIGNAL(doubleClick(int)), this, SLOT(doubleClickOnPoint(int)));
-    }
 }
 
 int MainWindow::openEmptyGroupMessage(const QString groupName){
