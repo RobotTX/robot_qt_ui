@@ -110,8 +110,10 @@ EditSelectedRobotWidget::EditSelectedRobotWidget(QMainWindow* parent, const std:
 }
 
 void EditSelectedRobotWidget::setSelectedRobot(RobotView* const _robotView){
-     mw->switchFocus(robotView->getRobot()->getName(),this);
+
     robotView = _robotView;
+    mw->switchFocus(robotView->getRobot()->getName(),this);
+
     /// When a robot is selected, the informations are updated
     nameEdit->setText(robotView->getRobot()->getName());
     batteryLevel->setValue(robotView->getRobot()->getBatteryLevel());

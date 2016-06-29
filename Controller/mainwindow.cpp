@@ -364,12 +364,15 @@ void MainWindow::viewPathSelectedRobot(int robotNb){
 }
 
 void MainWindow::editSelectedRobot(RobotView* robotView){
+    qDebug() << "editSelectedRobot robotview ";
     selectedRobot = robotView;
     robots->setSelected(robotView);
     robotsLeftWidget->setEditBtnStatus(false);
     robotsLeftWidget->setCheckBtnStatus(false);
     hideAllWidgets();
+
     editSelectedRobotWidget->setSelectedRobot(selectedRobot);
+
     editSelectedRobotWidget->show();
 }
 
