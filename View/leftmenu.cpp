@@ -25,18 +25,17 @@
 #include <QButtonGroup>
 
 LeftMenu::LeftMenu(MainWindow* _parent, Points const& points, const std::shared_ptr<Robots> &robots, PointsView * const &pointViews): QWidget(_parent), parent(_parent){
-   // leftLayout = new QVBoxLayout(this);
 
     QScrollArea * scroll = new VerticalScrollArea(_parent);
 
-    QVBoxLayout * leftLayout  = new QVBoxLayout();
+    QVBoxLayout * leftLayout  = new QVBoxLayout(this);
     QWidget* inWidget  = new QWidget();
     QVBoxLayout * globalLayout  = new QVBoxLayout(this);
     QHBoxLayout * topLayout  = new QHBoxLayout(this);
 
-     returnButton = new QPushButton(QIcon(":/icons/arrowLeft.png"), " Return", this);
-     returnButton->setIconSize(_parent->size()/10);
-     connect(returnButton, SIGNAL(clicked()), parent, SLOT(backEvent()));
+    returnButton = new QPushButton(QIcon(":/icons/arrowLeft.png"), " Return", this);
+    returnButton->setIconSize(_parent->size()/10);
+    connect(returnButton, SIGNAL(clicked()), parent, SLOT(backEvent()));
 
     QPushButton* closeBtn = new QPushButton(QIcon(":/icons/cropped_close.png"), "", this);
     closeBtn->setIconSize(_parent->size()/30);
@@ -150,7 +149,7 @@ LeftMenu::LeftMenu(MainWindow* _parent, Points const& points, const std::shared_
     scroll->setWidget(inWidget);
     globalLayout->addWidget(scroll);
     globalLayout->setContentsMargins(0, 0, 0, 0);
-    this->setLayout(globalLayout);
+    setLayout(globalLayout);
 }
 
 void LeftMenu::updateGroupDisplayed(const Points& _points, const int groupIndex){
