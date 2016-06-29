@@ -1363,6 +1363,9 @@ void MainWindow::pointSavedEvent(int index, double x, double y, QString name){
 
     /// hides the temporary point so that they don't superimpose which is confusing when hiding / showing the newly created point
     mapPixmapItem->getTmpPointView()->hide();
+
+    /// hide the creation widget
+    editSelectedPointWidget->hide();
 }
 
 void MainWindow::backToGroupsButtonEvent(void){

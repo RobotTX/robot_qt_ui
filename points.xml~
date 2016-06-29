@@ -1,24 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <points>
     <group>
-        <name>No Name</name>
-    </group>
-<<<<<<< HEAD
-=======
-    <group>
-        <name>Second group</name>
+        <name>first group</name>
         <point>
-            <name>Fanny</name>
-            <x>125</x>
-            <y>125</y>
-            <displayed>1</displayed>
-        </point>
-        <point>
-            <name>Michel</name>
-            <x>150</x>
-            <y>150</y>
-            <displayed>1</displayed>
-        </point>
+            <name>A</name>
+            <x>50</x>
+            <y>50</y>
+            <displayed>0</displayed>
+	</point>
     </group>
     <group>
         <name>No group</name>
@@ -34,6 +23,11 @@
             <y>200</y>
             <displayed>0</displayed>
         </point>
+        <point>
+            <name>A final point</name>
+            <x>150</x>
+            <y>225</y>
+            <displayed>1</displayed>
+        </point>
     </group>
->>>>>>> f1f4a41a3eda208e4722ee2c2484c9d9bb9b0010
 </points>
