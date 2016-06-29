@@ -13,12 +13,6 @@ RobotsLeftWidget::RobotsLeftWidget(QMainWindow* _parent):QWidget(_parent){
     scrollLayout = new QVBoxLayout();
     scrollArea = new VerticalScrollArea(this);
 
-    /// Button to go back in the previous menu
-    QPushButton* backBtn = new QPushButton(QIcon(":/icons/arrowLeft.png"),"Menu", this);
-    backBtn->setStyleSheet ("text-align: left");
-    backBtn->setIconSize(_parent->size()/10);
-    layout->addWidget(backBtn);
-
     /// Buttons to edit or show/hide a robot
     QHBoxLayout* grid = new QHBoxLayout();
     editBtn = new QPushButton(QIcon(":/icons/edit.png"),"", this);
@@ -34,7 +28,6 @@ RobotsLeftWidget::RobotsLeftWidget(QMainWindow* _parent):QWidget(_parent){
 
     layout->addLayout(grid);
 
-    connect(backBtn, SIGNAL(clicked()), parent, SLOT(backRobotBtnEvent()));
     connect(editBtn, SIGNAL(clicked()), parent, SLOT(editRobotBtnEvent()));
     connect(checkBtn, SIGNAL(clicked()), parent, SLOT(checkRobotBtnEvent()));
 

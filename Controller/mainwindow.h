@@ -69,9 +69,18 @@ public:
     void disableMenu();
     void enableMenu();
     void clearPath(int robotNb);
-    QWidget* getLastWidget(void);
-    void setLastWidget(QWidget*);
 
+
+
+    QList<QWidget*> getLastWidget();
+    void setLastWidget(QList<QWidget*>);
+    QWidget* getCurrentWidget(void);
+    void setCurrentWidget(QWidget*);
+    QList<QString> getLastName();
+    void setLastName(QList<QString>);
+    QString getCurrentName(void);
+    void setCurrentName(QString);
+    void resetFocus();
 
 signals:
     void sendCommand(QString);
@@ -168,7 +177,9 @@ private slots:
     void setGraphicItemsState(const GraphicItemState state, const bool clear = false);
     void showHome();
     void hideHome(void);
-
+    void backEvent();
+    void switchFocus(QString name, QWidget* widget);
+    void updateView();
 
 private:
     Ui::MainWindow* ui;
@@ -191,7 +202,10 @@ private:
     TopLayout* topLayout;
     QVector<PointView*> pathPointViews;
 
-    QWidget* lastWidget;
+    QList<QWidget*> lastWidget;
+    QList<QString> lastName ;
+    QWidget * currentWidget;
+    QString currentName;
     LeftMenuWidget* leftMenuWidget;
     PointsLeftWidget* pointsLeftWidget;
     SelectedRobotWidget* selectedRobotWidget;

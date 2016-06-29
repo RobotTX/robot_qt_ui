@@ -22,7 +22,7 @@ class MainWindow;
 
 #include <QWidget>
 #include <memory>
-
+#include <QPushButton>
 /**
  * @brief The LeftMenu class
  * The main menu class that initialize all the other menu
@@ -45,8 +45,12 @@ public:
     DisplaySelectedPoint* getDisplaySelectedPoint(void) const { return displaySelectedPoint; }
     DisplaySelectedGroup* getDisplaySelectedGroup(void) const { return displaySelectedGroup; }
     PathCreationWidget* getPathCreationWidget(void) const { return pathCreationWidget; }
+    void showBackButton(QString* name);
+    void hideBackButton();
+
 
 public:
+
     void updateGroupDisplayed(const Points& _points, const int groupIndex);
 
 private:
@@ -63,6 +67,7 @@ private:
     DisplaySelectedPoint* displaySelectedPoint;
     DisplaySelectedGroup* displaySelectedGroup;
     PathCreationWidget* pathCreationWidget;
+    QPushButton * returnButton;
     MainWindow* parent;
 
 };

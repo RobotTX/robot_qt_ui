@@ -15,9 +15,6 @@ DisplaySelectedGroup::DisplaySelectedGroup(QMainWindow *parent, const Points& _p
 
     name = new QLabel("\nName : ", this);
 
-    backButton = new QPushButton(QIcon(":/icons/arrowLeft.png"), "Groups", this);
-    backButton->setIconSize(parent->size()/10);
-    layout->addWidget(backButton);
 
     plusButton = new QPushButton(QIcon(":/icons/plus.png"),"", this);
     plusButton->setIconSize(parent->size()/10);

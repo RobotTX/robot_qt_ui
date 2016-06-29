@@ -15,7 +15,7 @@ class QProgressBar;
 #include <memory>
 #include "Model/point.h"
 #include "View/pointview.h"
-
+#include "mainwindow.h"
 /**
  * @brief The EditSelectedRobotWidget class
  * The class which display the menu to edit a robot
@@ -64,6 +64,7 @@ private:
     PointView* home;
     bool temporary;
     std::shared_ptr<Point> oldHome;
+    MainWindow* mw ;
 
 protected:
     void showEvent(QShowEvent *event);

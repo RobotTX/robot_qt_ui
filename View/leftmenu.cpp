@@ -30,16 +30,27 @@ LeftMenu::LeftMenu(MainWindow* _parent, Points const& points, const std::shared_
     QScrollArea * scroll = new VerticalScrollArea(_parent);
 
     QVBoxLayout * leftLayout  = new QVBoxLayout();
-    QWidget * inWidget  = new QWidget();
+    QWidget* inWidget  = new QWidget();
     QVBoxLayout * globalLayout  = new QVBoxLayout(this);
+    QHBoxLayout * topLayout  = new QHBoxLayout(this);
+
+     returnButton = new QPushButton(QIcon(":/icons/arrowLeft.png"), " Return", this);
+     returnButton->setIconSize(_parent->size()/10);
+     connect(returnButton, SIGNAL(clicked()), parent, SLOT(backEvent()));
 
     QPushButton* closeBtn = new QPushButton(QIcon(":/icons/cropped_close.png"), "", this);
     closeBtn->setIconSize(_parent->size()/30);
     closeBtn->setFlat(true);
     //closeBtn->setStyleSheet("QPushButton { padding: 5px;}");
     //closeBtn->setFocusPolicy(Qt::FocusPolicy::NoFocus);
-    leftLayout->addWidget(closeBtn);
+    returnButton->setText("return");
+    returnButton->hide();
+    topLayout->addWidget(returnButton);
+    topLayout->addWidget(closeBtn);
+
+    leftLayout->addLayout(topLayout);
     connect(closeBtn, SIGNAL(clicked()), _parent, SLOT(closeSlot()));
+
 
     /// to display the information relative to a point
     displaySelectedPoint = new DisplaySelectedPoint(_parent, points);
@@ -101,15 +112,15 @@ LeftMenu::LeftMenu(MainWindow* _parent, Points const& points, const std::shared_
     connect(pathCreationWidget, SIGNAL(setMessage(QString, QString)), _parent, SLOT(setMessageTop(QString, QString)));
 
 
-    connect(displaySelectedPoint->getBackButton(), SIGNAL(clicked(bool)), _parent, SLOT(pointBtnEvent()));
+    //connect(displaySelectedPoint->getBackButton(), SIGNAL(clicked(bool)), _parent, SLOT(pointBtnEvent()));
     /// Last widget visited, used to know where to go back when pressing the return button
-    lastWidget = NULL;
-
+    //lastWidget = NULL;
     connect(displaySelectedPoint->getMinusButton(), SIGNAL(clicked(bool)), _parent, SLOT(removePointFromInformationMenu()));
     connect(displaySelectedPoint->getMapButton(), SIGNAL(clicked(bool)), _parent, SLOT(displayPointMapEvent()));
     connect(displaySelectedPoint->getEditButton(), SIGNAL(clicked(bool)), _parent, SLOT(editPointButtonEvent(bool)));
 
-    connect(displaySelectedGroup->getBackButton(), SIGNAL(clicked(bool)), _parent, SLOT(pointBtnEvent()));
+
+    //connect(displaySelectedGroup->getBackButton(), SIGNAL(clicked(bool)), _parent, SLOT(pointBtnEvent()));
     connect(displaySelectedGroup->getMinusButton(), SIGNAL(clicked(bool)), _parent, SLOT(removePointFromGroupMenu()));
     connect(displaySelectedGroup->getEditButton(), SIGNAL(clicked(bool)), _parent, SLOT(editPointFromGroupMenu()));
     connect(displaySelectedGroup->getEyeButton(), SIGNAL(clicked(bool)), _parent, SLOT(displayPointInfoFromGroupMenu()));
@@ -120,6 +131,7 @@ LeftMenu::LeftMenu(MainWindow* _parent, Points const& points, const std::shared_
     foreach(QAbstractButton* button, displaySelectedGroup->getPointButtonGroup()->getButtonGroup()->buttons())
         connect(button, SIGNAL(doubleClick(int)), _parent, SLOT(doubleClickOnPoint(int)));
 */
+
     hide();
     leftLayout->setContentsMargins(0,0,0,0);
     setMaximumWidth(_parent->width()*4/10);
@@ -127,7 +139,7 @@ LeftMenu::LeftMenu(MainWindow* _parent, Points const& points, const std::shared_
     leftLayout->setAlignment(Qt::AlignTop);
     leftLayout->setAlignment(closeBtn, Qt::AlignTop | Qt::AlignRight);
 
-    for (int i = 0; i < leftLayout->count(); ++i) {
+   for (int i = 0; i < leftLayout->count(); ++i) {
         QWidget *widget = leftLayout->itemAt(i)->widget();
         if (widget != NULL) {
             widget->setMinimumWidth(1);
@@ -143,4 +155,15 @@ LeftMenu::LeftMenu(MainWindow* _parent, Points const& points, const std::shared_
 
 void LeftMenu::updateGroupDisplayed(const Points& _points, const int groupIndex){
     displaySelectedGroup->getPointButtonGroup()->setGroup(_points, groupIndex);
+}
+
+void LeftMenu::hideBackButton(void)
+{
+    returnButton->hide();
+}
+
+void LeftMenu::showBackButton(QString* name)
+{
+    returnButton->setText(*name);
+    returnButton->show();
 }
