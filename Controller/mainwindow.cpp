@@ -413,7 +413,8 @@ void MainWindow::backSelecRobotBtnEvent(){
 
 
 void MainWindow::editSelecRobotBtnEvent(){
-    qDebug() << "editSelecRobotBtnEvent called";
+    qDebug() << "editSelecRobotBtnEv"
+                "ent called";
     editSelectedRobot(selectedRobot);
 }
 
@@ -2036,6 +2037,7 @@ void MainWindow::displayPointInfoFromGroupMenu(void){
                 selectedPoint->getMapButton()->setChecked(false);
             selectedPoint->show();
             leftMenu->getDisplaySelectedGroup()->hide();
+            switchFocus(leftMenu->getDisplaySelectedGroup()->getNameLabel()->text(),selectedPoint);
         }
     } else qDebug() << "no group " << leftMenu->getDisplaySelectedGroup()->getNameLabel()->text() ;
 }
@@ -2242,6 +2244,7 @@ void MainWindow::openInterdictionOfPointRemovalMessage(const QString pointName, 
  * does the same as clicking on a point and then on the eye button
  */
 void MainWindow::doubleClickOnPoint(int checkedId){
+    qDebug() << "doubleclick on point";
     std::shared_ptr<Group> group = points.findGroup(leftMenu->getDisplaySelectedGroup()->getNameLabel()->text());
     if(group){
         std::shared_ptr<Point> point = group->getPoints().at(checkedId);
@@ -2256,6 +2259,7 @@ void MainWindow::doubleClickOnPoint(int checkedId){
                 selectedPoint->getMapButton()->setChecked(false);
             selectedPoint->show();
             leftMenu->getDisplaySelectedGroup()->hide();
+            switchFocus(leftMenu->getDisplaySelectedGroup()->getNameLabel()->text(),selectedPoint);
         }
     } else qDebug() << "no group " << leftMenu->getDisplaySelectedGroup()->getNameLabel()->text() ;
 }
@@ -2289,6 +2293,8 @@ void MainWindow::doubleClickOnGroup(int checkedId){
        selectedGroup->getPointButtonGroup()->setCheckable(true);
        selectedGroup->show();
        selectedGroup->setName(points.getGroups().at(checkedId)->getName());
+       switchFocus(points.getGroups().at(checkedId)->getName(), selectedGroup);
+
     }
     /// it's an isolated point
     else if(checkedId >= points.count()-1){
@@ -2303,6 +2309,7 @@ void MainWindow::doubleClickOnGroup(int checkedId){
         else
             selectedPoint->getMapButton()->setChecked(false);
         pointsLeftWidget->hide();
+        switchFocus(selectedPoint->getPointName(), selectedPoint);
     }
 }
 
