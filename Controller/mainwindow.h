@@ -123,7 +123,6 @@ private slots:
     void setSelectedPoint(PointView* pointView, bool isTemporary);
     void pointSavedEvent(int index, double x, double y, QString name);
     void selectHomeEvent();
-    void displayDeleteEvent(QModelIndex index);
     void backToGroupsButtonEvent(void);
     void stopSelectedRobot(int robotNb);
     void playSelectedRobot(int robotNb);

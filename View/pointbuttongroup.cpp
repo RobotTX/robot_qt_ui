@@ -25,6 +25,8 @@ PointButtonGroup::PointButtonGroup(const Points &_points, const unsigned int gro
         pointButton->setStyleSheet("text-align:left");
         buttonGroup->addButton(pointButton, j);
         layout->addWidget(pointButton);
+        if(currentPoint->isDisplayed())
+            pointButton->setIcon(QIcon(":/icons/tick.png"));
     }
 }
 
