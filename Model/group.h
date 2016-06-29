@@ -36,6 +36,8 @@ public:
 public:
     /// returns true if one of the group's points is a home for a robot
     std::shared_ptr<Point> containsHomePoint(void) const;
+    /// returns true if there is no points in the group
+    bool isEmpty(void) const { return points.size() == 0; }
 
 public:
     /**

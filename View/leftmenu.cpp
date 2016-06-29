@@ -126,9 +126,10 @@ LeftMenu::LeftMenu(MainWindow* _parent, Points const& points, const std::shared_
     connect(displaySelectedGroup->getMapButton(), SIGNAL(clicked(bool)), _parent, SLOT(displayPointFromGroupMenu()));
 
     /// to handle double clicks in the groups menu at initialization
+    /*
     foreach(QAbstractButton* button, displaySelectedGroup->getPointButtonGroup()->getButtonGroup()->buttons())
         connect(button, SIGNAL(doubleClick(int)), _parent, SLOT(doubleClickOnPoint(int)));
-
+*/
     hide();
     leftLayout->setContentsMargins(0,0,0,0);
     setMaximumWidth(_parent->width()*4/10);
@@ -152,9 +153,6 @@ LeftMenu::LeftMenu(MainWindow* _parent, Points const& points, const std::shared_
 
 void LeftMenu::updateGroupDisplayed(const Points& _points, const int groupIndex){
     displaySelectedGroup->getPointButtonGroup()->setGroup(_points, groupIndex);
-    /// to handle double clicks in the groups menu
-    foreach(QAbstractButton* button, displaySelectedGroup->getPointButtonGroup()->getButtonGroup()->buttons())
-        connect(button, SIGNAL(doubleClick(int)), parent, SLOT(doubleClickOnPoint(int)));
 }
 
 void LeftMenu::hideBackButton(void)

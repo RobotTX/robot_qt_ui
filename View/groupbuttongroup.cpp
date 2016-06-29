@@ -25,7 +25,7 @@ GroupButtonGroup::GroupButtonGroup(const Points &_points, QWidget* _parent):QWid
         groupButton->setCheckable(true);
         buttonGroup->addButton(groupButton, i);
         layout->addWidget(groupButton);
-        groupButton->setIconSize(_parent->size()/2);
+        groupButton->setIconSize(BUTTON_SIZE);
         if(currentGroup->isDisplayed())
             groupButton->setIcon(QIcon(":/icons/folder_tick.png"));
         else
@@ -63,7 +63,8 @@ void GroupButtonGroup::update(const Points& _points){
         groupButton->setFlat(true);
         groupButton->setStyleSheet("text-align:left");
         groupButton->setCheckable(true);
-        groupButton->setIconSize(parentWidget()->size()/2);
+        groupButton->setIconSize(BUTTON_SIZE);
+        //groupButton->setIconSize(parentWidget()->size()/2);
         buttonGroup->addButton(groupButton, i);
         layout->addWidget(groupButton);
         if(currentGroup->isDisplayed())
