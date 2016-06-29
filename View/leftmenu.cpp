@@ -167,3 +167,4 @@ void LeftMenu::showBackButton(QString name)
     returnButton->setText(name);
     returnButton->show();
 }
+

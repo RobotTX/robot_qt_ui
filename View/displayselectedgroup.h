@@ -24,7 +24,7 @@ public:
     DisplaySelectedGroup(QMainWindow *_parent, const Points& _points);
 
     PointButtonGroup* getPointButtonGroup(void) const { return pointButtonGroup; }
-    QPushButton* getBackButton(void) const { return backButton; }
+   // QPushButton* getBackButton(void) const { return backButton; }
     QPushButton* getMapButton(void) const { return mapButton; }
     QPushButton* getEyeButton(void) const { return eyeButton; }
     QPushButton* getEditButton(void) const { return editButton; }
@@ -43,7 +43,7 @@ private:
     VerticalScrollArea* scrollArea;
 
     QVBoxLayout* layout;
-    QPushButton* backButton;
+   // QPushButton* backButton;
     QPushButton* plusButton;
     QPushButton* minusButton;
     QPushButton* mapButton;
