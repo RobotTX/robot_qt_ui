@@ -1282,19 +1282,19 @@ void MainWindow::selectPointBtnEvent(){
 
 void MainWindow::switchFocus(QString name, QWidget* widget)
 {
-    if(currentWidget != NULL)
+    /*if(currentWidget != NULL)
+    if(lastWidgets.isEmpty())
     {
         qDebug() << "currentWidgetNOTNULL";
         lastWidget.append(currentWidget);
         lastName.append(currentName);
     }
-
+*/
 
     qDebug() << "__________________";
 
+    lastWidgets.push(QPair<QWidget*,QString>(widget,name));
 
-    currentWidget=widget;
-    currentName=name;
     if(lastWidget.size()!=0)
     {
      leftMenu->showBackButton(&lastName.last());

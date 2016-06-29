@@ -33,6 +33,8 @@ class TopLayout;
 #include <QMainWindow>
 #include <QModelIndex>
 #include "Model/graphicitemstate.h"
+#include <QStack>
+#include <QPair>
 
 #define PI 3.14159265
 #define PORT_MAP_METADATA 4000
@@ -202,10 +204,14 @@ private:
     TopLayout* topLayout;
     QVector<PointView*> pathPointViews;
 
+
     QList<QWidget*> lastWidget;
     QList<QString> lastName ;
     QWidget * currentWidget;
     QString currentName;
+
+    QStack<QPair<QWidget*, QString>> lastWidgets;
+
     LeftMenuWidget* leftMenuWidget;
     PointsLeftWidget* pointsLeftWidget;
     SelectedRobotWidget* selectedRobotWidget;
