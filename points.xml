@@ -39,7 +39,7 @@
     <group>
         <name>No group</name>
         <point>
-            <name>Un point</name>
+            <name>Un pointS</name>
             <x>150</x>
             <y>175</y>
             <displayed>1</displayed>
@@ -55,12 +55,6 @@
             <x>150</x>
             <y>225</y>
             <displayed>1</displayed>
-        </point>
-        <point>
-            <name>Ma po</name>
-            <x>250</x>
-            <y>36</y>
-            <displayed>0</displayed>
         </point>
     </group>
 </points>

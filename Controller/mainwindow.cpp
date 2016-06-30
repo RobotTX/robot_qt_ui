@@ -38,8 +38,8 @@
 #include <QAbstractButton>
 
 //#define XML_PATH "/home/m-a/Documents/QtProject/gobot-software/points.xml"
-#define XML_PATH "/home/joan/Qt/QtProjects/gobot-software/points.xml"
-//#define XML_PATH "/Users/fannylarradet/Desktop/GTRobots/gobot-software/points.xml"
+//#define XML_PATH "/home/joan/Qt/QtProjects/gobot-software/points.xml"
+#define XML_PATH "/Users/fannylarradet/Desktop/GTRobots/gobot-software/points.xml"
 
 /**
  * @brief MainWindow::MainWindow
@@ -1190,6 +1190,8 @@ void MainWindow::minusGroupBtnEvent(){
 void MainWindow::editPointButtonEvent(bool checked){
 
     qDebug() << "editPointButtonEvent called";
+    leftMenu->getReturnButton()->setEnabled(false);
+    leftMenu->getReturnButton()->setToolTip("Please save or discard your modifications before navigating the menu again.");
 
     /// update buttons enable attribute and tool tips
     leftMenu->getDisplaySelectedPoint()->getMapButton()->setChecked(true);
@@ -1247,6 +1249,7 @@ void MainWindow::editPointButtonEvent(bool checked){
  */
 void MainWindow::editGroupBtnEvent(bool checked){
     qDebug() << "editPointBtnEvent called";
+
     /// uncheck the other buttons
     pointsLeftWidget->getPlusButton()->setChecked(false);
     pointsLeftWidget->getMinusButton()->setChecked(false);
@@ -1275,9 +1278,8 @@ void MainWindow::editGroupBtnEvent(bool checked){
         editPointButtonEvent(checked);
         pointsLeftWidget->hide();
         /// disables the back button to prevent problems, a user has to discard or save his modifications before he can start navigatin the menu again, also prevents false manipulations
-        leftMenu->getReturnButton()->setEnabled(false);
-        leftMenu->getReturnButton()->setToolTip("Please save or discard your modifications before navigating the menu again.");
-        leftMenu->getDisplaySelectedPoint()->show();
+       leftMenu->getDisplaySelectedPoint()->show();
+        switchFocus("point",leftMenu->getDisplaySelectedPoint());
     }
 }
 
