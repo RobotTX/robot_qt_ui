@@ -144,7 +144,6 @@ void SelectedRobotWidget::homeBtnEvent(){
 }
 
 void SelectedRobotWidget::disable(){
-    backBtn->setEnabled(false);
     editBtn->setEnabled(false);
     homeBtn->setEnabled(false);
     addPathBtn->setEnabled(false);
@@ -152,7 +151,6 @@ void SelectedRobotWidget::disable(){
 }
 
 void SelectedRobotWidget::enable(){
-    backBtn->setEnabled(true);
     editBtn->setEnabled(true);
     homeBtn->setEnabled(true);
     addPathBtn->setEnabled(true);
