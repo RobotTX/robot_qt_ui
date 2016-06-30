@@ -1541,6 +1541,7 @@ void MainWindow::askForDeletePointConfirmation(int index){
                         leftMenu->getDisplaySelectedGroup()->hide();
                         pointsLeftWidget->show();
                         editSelectedPointWidget->updateGroupBox(points);
+                        backEvent();
                     }
                 }
 
@@ -1913,10 +1914,12 @@ void MainWindow::removePointFromInformationMenu(void){
                         /// updates the list of points
                         pointsLeftWidget->getGroupButtonGroup()->update(points);
                         /// closes the window
-                        leftMenu->hide();
+                        //leftMenu->hide();
                         /// depending on how we got there we display a menu or not
-                        if(leftMenu->getDisplaySelectedPoint()->getOrigin() == DisplaySelectedPoint::POINTS_MENU)
-                            pointsLeftWidget->show();
+                        //if(leftMenu->getDisplaySelectedPoint()->getOrigin() == DisplaySelectedPoint::POINTS_MENU)
+                        //    pointsLeftWidget->show();
+                        backEvent();
+
                     } else {
                         /// need to remove the point from the map
                         pointViews->getPointViewFromPoint(*point)->hide();
@@ -1928,10 +1931,12 @@ void MainWindow::removePointFromInformationMenu(void){
                         /// updates the group menu
                         leftMenu->getDisplaySelectedGroup()->getPointButtonGroup()->setGroup(points, pointsLeftWidget->getIndexLastGroupClicked());
                         /// closes the window
-                        leftMenu->hide();
+                        /*leftMenu->hide();
                         /// depending on how we got there we display a menu or not
                         if(leftMenu->getDisplaySelectedPoint()->getOrigin() == DisplaySelectedPoint::GROUP_MENU)
                             leftMenu->getDisplaySelectedGroup()->show();
+                            */
+                        backEvent();
                         /// if the group is empty the user is asked whether or not he wants to delete it
                         if(points.getGroups().at(pointIndexes.first)->isEmpty()){
                             int res = openEmptyGroupMessage(points.getGroups().at(pointIndexes.first)->getName());
@@ -1947,8 +1952,10 @@ void MainWindow::removePointFromInformationMenu(void){
                                 /// updates menu
                                 pointsLeftWidget->getGroupButtonGroup()->update(points);
                                 editSelectedPointWidget->updateGroupBox(points);
+                                backEvent();
                             }
                         }
+
                     }
                 } else {
                     qDebug() << "could not find this point";
@@ -2099,7 +2106,7 @@ void MainWindow::displayPointInfoFromGroupMenu(void){
                 selectedPoint->getMapButton()->setChecked(false);
             selectedPoint->show();
             leftMenu->getDisplaySelectedGroup()->hide();
-            switchFocus(leftMenu->getDisplaySelectedGroup()->getNameLabel()->text(),selectedPoint);
+            switchFocus(selectedPoint->getPointName(),selectedPoint);
         }
     } else qDebug() << "no group " << leftMenu->getDisplaySelectedGroup()->getNameLabel()->text() ;
 }
@@ -2322,7 +2329,7 @@ void MainWindow::doubleClickOnPoint(int checkedId){
                 selectedPoint->getMapButton()->setChecked(false);
             selectedPoint->show();
             leftMenu->getDisplaySelectedGroup()->hide();
-            switchFocus(leftMenu->getDisplaySelectedGroup()->getNameLabel()->text(),selectedPoint);
+            switchFocus(selectedPoint->getPointName(),selectedPoint);
         }
     } else qDebug()  << "no group " << leftMenu->getDisplaySelectedGroup()->getNameLabel()->text() ;
 }
@@ -2446,6 +2453,13 @@ void MainWindow::backEvent()
         leftMenu->hide();
     }
 
+    //debug
+    qDebug() << "_________________";
+
+    for(int i=0;i<lastWidgets.size();i++)
+    {
+        qDebug() << lastWidgets.at(i).second;
+    }
 
 }
 
