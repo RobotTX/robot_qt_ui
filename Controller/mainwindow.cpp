@@ -242,6 +242,76 @@ void MainWindow::initializeRobots(){
     //TODO Need to come from XML
     std::shared_ptr<Robot> robot1(new Robot("Roboty", "localhost", PORT_CMD, this));
     robot1->setWifi("Swaghetti Yolognaise");
+
+    /*std::vector<std::shared_ptr<PathPoint>> path1;
+    qDebug() << "Nb groups : " << points.getGroups().size();
+
+    if(!points.getGroups().isEmpty()){
+        qDebug() << "Nb points first group : " << points.getGroups().at(0)->getPoints().size();
+        if(!points.getGroups().at(0)->getPoints().isEmpty()){
+            if(points.getGroups().at(0)->getPoints().size() == 1){
+                std::shared_ptr<PathPoint> pathPoint1 = std::shared_ptr<PathPoint>(new PathPoint(*(points.getGroups().at(0)->getPoints().at(0)),
+                                                      PathPoint::HUMAN_ACTION));
+                path1.push_back(pathPoint1);
+                path1.push_back(pathPoint1);
+                path1.push_back(pathPoint1);
+                path1.push_back(pathPoint1);
+                path1.push_back(pathPoint1);
+                path1.push_back(pathPoint1);
+                path1.push_back(pathPoint1);
+                path1.push_back(pathPoint1);
+                path1.push_back(pathPoint1);
+                path1.push_back(pathPoint1);
+            }
+
+            if(points.getGroups().at(0)->getPoints().size() == 2){
+
+                std::shared_ptr<PathPoint> pathPoint1 = std::shared_ptr<PathPoint>(new PathPoint(*(points.getGroups().at(0)->getPoints().at(0)),
+                                                      PathPoint::HUMAN_ACTION));
+                std::shared_ptr<PathPoint> pathPoint2 = std::shared_ptr<PathPoint>(new PathPoint(*(points.getGroups().at(0)->getPoints().at(1)),
+                                                      PathPoint::WAIT, 200));
+                path1.push_back(pathPoint1);
+                path1.push_back(pathPoint2);
+
+                path1.push_back(pathPoint1);
+                path1.push_back(pathPoint2);
+
+                path1.push_back(pathPoint1);
+                path1.push_back(pathPoint2);
+
+                path1.push_back(pathPoint1);
+                path1.push_back(pathPoint2);
+
+                path1.push_back(pathPoint1);
+                path1.push_back(pathPoint2);
+            }
+
+            if(points.getGroups().at(0)->getPoints().size() > 2){
+                std::shared_ptr<PathPoint> pathPoint1 = std::shared_ptr<PathPoint>(new PathPoint(*(points.getGroups().at(0)->getPoints().at(0)),
+                                                      PathPoint::HUMAN_ACTION));
+                std::shared_ptr<PathPoint> pathPoint2 = std::shared_ptr<PathPoint>(new PathPoint(*(points.getGroups().at(0)->getPoints().at(1)),
+                                                      PathPoint::WAIT, 200));
+                std::shared_ptr<PathPoint> pathPoint3 = std::shared_ptr<PathPoint>(new PathPoint(*(points.getGroups().at(0)->getPoints().at(2)),
+                                                      PathPoint::WAIT, 500));
+
+                path1.push_back(pathPoint1);
+                path1.push_back(pathPoint2);
+                path1.push_back(pathPoint3);
+
+                path1.push_back(pathPoint1);
+                path1.push_back(pathPoint2);
+                path1.push_back(pathPoint3);
+
+                path1.push_back(pathPoint1);
+                path1.push_back(pathPoint2);
+                path1.push_back(pathPoint3);
+            }
+        }
+    }
+
+
+    robot1->setPath(path1);*/
+
     RobotView* robotView1 = new RobotView(robot1, mapPixmapItem);
     connect(robotView1, SIGNAL(setSelectedSignal(RobotView*)), this, SLOT(setSelectedRobot(RobotView*)));
     robotView1->setPosition(200, 200);
@@ -256,7 +326,7 @@ void MainWindow::initializeRobots(){
     robotView2->setParentItem(mapPixmapItem);
     robots->add(robotView2);
 
-    std::shared_ptr<Robot> robot3(new Robot("Robota", "192.168.4.175", PORT_CMD, this));
+    std::shared_ptr<Robot> robot3(new Robot("Robota", "192.168.4.236", PORT_CMD, this));
     robot3->setWifi("Swaghetti Yolognaise");
     RobotView* robotView3 = new RobotView(robot3, mapPixmapItem);
     connect(robotView3, SIGNAL(setSelectedSignal(RobotView*)), this, SLOT(setSelectedRobot(RobotView*)));

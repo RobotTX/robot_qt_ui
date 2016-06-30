@@ -8,6 +8,7 @@ class QPushButton;
 class QLabel;
 class QButtonGroup;
 class QMainWindow;
+class QScrollArea;
 
 #include <memory>
 #include <QWidget>
@@ -87,6 +88,7 @@ private:
      */
     QVector<QLabel*> vectorPathLabel;
     QList<QAbstractButton*> listEnabled;
+    QScrollArea* pathScroll;
 };
 
 #endif // BOTTOMLAYOUT_H
