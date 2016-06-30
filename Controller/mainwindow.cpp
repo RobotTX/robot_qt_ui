@@ -2447,7 +2447,7 @@ void MainWindow::setLastWidgets(QList<QPair<QWidget*,QString>> lw)
 }
 
 void MainWindow::backEvent()
-{/*
+{
     qDebug() << "back event called";
     lastWidgets.last().first->hide();
     if (lastWidgets.size() > 1)
@@ -2476,7 +2476,6 @@ void MainWindow::backEvent()
     {
         qDebug() << lastWidgets.at(i).second;
     }
-*/
 
 }
 
