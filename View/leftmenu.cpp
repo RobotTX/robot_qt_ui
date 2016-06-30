@@ -114,6 +114,7 @@ LeftMenu::LeftMenu(MainWindow* _parent, std::shared_ptr<Points> const& points, c
     connect(displaySelectedPoint->getMapButton(), SIGNAL(clicked(bool)), _parent, SLOT(displayPointMapEvent()));
     connect(displaySelectedPoint->getEditButton(), SIGNAL(clicked(bool)), _parent, SLOT(editPointButtonEvent(bool)));
 
+    //to try maybe later connect(displaySelectedGroup->getMinusButton(), SIGNAL(clicked(bool)), this, SLOT(removePoint()));
     connect(displaySelectedGroup->getMinusButton(), SIGNAL(clicked(bool)), _parent, SLOT(removePointFromGroupMenu()));
     connect(displaySelectedGroup->getEditButton(), SIGNAL(clicked(bool)), _parent, SLOT(editPointFromGroupMenu()));
     connect(displaySelectedGroup->getEyeButton(), SIGNAL(clicked(bool)), _parent, SLOT(displayPointInfoFromGroupMenu()));
@@ -162,6 +163,7 @@ void LeftMenu::showBackButton(QString name)
 }
 
 void LeftMenu::enableButtons(int index){
+    displaySelectedGroup->getMapButton()->setCheckable(true);
     /// enables the minus button
     displaySelectedGroup->getMinusButton()->setEnabled(true);
     displaySelectedGroup->getMinusButton()->setToolTip("Click to remove the selected point");
@@ -170,15 +172,20 @@ void LeftMenu::enableButtons(int index){
     displaySelectedGroup->getEyeButton()->setToolTip("Click to see the information of the selected point");
     /// enables the map button
     displaySelectedGroup->getMapButton()->setEnabled(true);
-    if(displaySelectedGroup->getPoints()->getGroups().at(displaySelectedGroup->getPointButtonGroup()->getGroupIndex())->getPoints().at(index)->isDisplayed())
+    if(displaySelectedGroup->getPoints()->getGroups().at(displaySelectedGroup->getPointButtonGroup()->getGroupIndex())->getPoints().at(index)->isDisplayed()){
+        displaySelectedGroup->getMapButton()->setChecked(true);
         displaySelectedGroup->getMapButton()->setToolTip("Click to hide the selected point on the map");
-    else
+    } else {
+        displaySelectedGroup->getMapButton()->setChecked(false);
         displaySelectedGroup->getMapButton()->setToolTip("Click to display the selected point on the map");
+    }
     /// enables the edit button
     displaySelectedGroup->getEditButton()->setEnabled(true);
 }
 
 void LeftMenu::disableButtons(){
+    displaySelectedGroup->getMapButton()->setCheckable(false);
+    displaySelectedGroup->uncheck();
     /// resets the minus button
     displaySelectedGroup->getMinusButton()->setEnabled(false);
     displaySelectedGroup->getMinusButton()->setToolTip("Select a point and click here to remove it");
@@ -192,3 +199,4 @@ void LeftMenu::disableButtons(){
     displaySelectedGroup->getEditButton()->setEnabled(false);
 }
 
+void LeftMenu::removePoint(){}

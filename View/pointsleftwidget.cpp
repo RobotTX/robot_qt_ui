@@ -37,6 +37,7 @@ PointsLeftWidget::PointsLeftWidget(QMainWindow* _parent, std::shared_ptr<Points>
     plusButton = new QPushButton(QIcon(":/icons/plus.png"),"", this);
     plusButton->setIconSize(_parent->size()/10);
     plusButton->setCheckable(true);
+    plusButton->setToolTip("Click here to add a new group");
 
     minusButton = new QPushButton(QIcon(":/icons/minus.png"),"", this);
     minusButton->setIconSize(_parent->size()/10);

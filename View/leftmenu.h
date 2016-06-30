@@ -50,12 +50,12 @@ public:
     QPushButton* getReturnButton(){ return returnButton;}
 
 public:
-
     void updateGroupDisplayed(const std::shared_ptr<Points> &_points, const int groupIndex);
     void disableButtons();
 
 private slots:
     void enableButtons(int index);
+    void removePoint();
 
 private:
     QVBoxLayout* leftLayout;

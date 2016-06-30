@@ -27,7 +27,7 @@ class QVBoxLayout;
 class PathPainter;
 class TopLayout;
 
-
+#include "Model/origin.h"
 #include "Model/points.h"
 #include "View/robotview.h"
 #include <QMainWindow>
@@ -146,6 +146,7 @@ private slots:
     void doubleClickOnGroup(int checkedId);
     void reestablishConnectionsGroups();
     void reestablishConnectionsPoints();
+    void removePoint(std::shared_ptr<Point>& point, const Origin origin);
     /**
      * @brief cancelEvent
      * Called when a user doesn't want to keep the modifications he's made on a point

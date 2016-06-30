@@ -14,6 +14,12 @@
             <y>150</y>
             <displayed>1</displayed>
         </point>
+        <point>
+            <name>fannypoint</name>
+            <x>11</x>
+            <y>93</y>
+            <displayed>0</displayed>
+        </point>
     </group>
     <group>
         <name>No group</name>

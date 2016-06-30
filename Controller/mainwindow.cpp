@@ -37,6 +37,7 @@
 #include <QVBoxLayout>
 #include <QAbstractButton>
 
+
 //#define XML_PATH "/home/m-a/Documents/QtProject/gobot-software/points.xml"
 #define XML_PATH "/home/joan/Qt/QtProjects/gobot-software/points.xml"
 //#define XML_PATH "/Users/fannylarradet/Desktop/GTRobots/gobot-software/points.xml"
@@ -1443,14 +1444,13 @@ void MainWindow::askForDeleteDefaultGroupPointConfirmation(int index){
     int ret = openConfirmMessage("Do you really want to remove this point ?");
     switch(ret){
         case QMessageBox::Cancel :
-            pointsLeftWidget->getMinusButton()->setChecked(false);
+            //pointsLeftWidget->getMinusButton()->setChecked(false);
         break;
         case QMessageBox::Ok : {
         /// we first check that our point is not the home of a robot
             std::shared_ptr<Point> point = points->getGroups().at(points->count()-1)->getPoints().at(index);
             if(!point->isHome()){
                 qDebug() << "Go ahead and remove me I am not a home point anyway";
-                pointsLeftWidget->getMinusButton()->setChecked(false);
                 /// updates the model
                 points->getGroups().at(points->count()-1)->removePoint(index);
                 /// save changes in the file
@@ -1486,11 +1486,12 @@ void MainWindow::askForDeletePointConfirmation(int index){
     qDebug() << "askfordeletepointconfirmation event called";
     int ret = openConfirmMessage("Do you really want to remove this point ?");
     switch(ret){
-        case QMessageBox::No :
+        case QMessageBox::Cancel :
             qDebug() << "clicked no";
             leftMenu->disableButtons();
         break;
         case QMessageBox::Ok : {
+            leftMenu->getDisplaySelectedGroup()->getPointButtonGroup()->setCheckable(true);
         /// we first check that our point is not the home of a robot
             std::shared_ptr<Point> point = points->getGroups().at(pointsLeftWidget->getIndexLastGroupClicked())->getPoints().at(index);
             std::shared_ptr<Group> group = points->getGroups().at(pointsLeftWidget->getIndexLastGroupClicked());
@@ -1501,12 +1502,10 @@ void MainWindow::askForDeletePointConfirmation(int index){
                 /// updates the model
                 group->removePoint(index);
                 /// updates the group menu
-                qDebug() << "group set is " << pointsLeftWidget->getIndexLastGroupClicked();
                 leftMenu->getDisplaySelectedGroup()->getPointButtonGroup()->setGroup(points, pointsLeftWidget->getIndexLastGroupClicked());
                 /// save the changes to the file
                 XMLParser parserPoints(XML_PATH, mapPixmapItem);
                 parserPoints.save(*points);
-                leftMenu->getDisplaySelectedPoint()->getMinusButton()->setChecked(false);
                 /// makes the buttons checkable again
                 leftMenu->getDisplaySelectedGroup()->getPointButtonGroup()->setCheckable(true);
                 /// prompts the user to ask him if he wants to delete the group in case it would be empty
@@ -1793,15 +1792,75 @@ void MainWindow::displayPointsInGroup(void){
     }
 }
 
+void MainWindow::removePoint(std::shared_ptr<Point>& point, const Origin origin){
+    qDebug() << "removepoint event called";
+    int answer = openConfirmMessage("Do you really want to remove this point");
+    switch(answer){
+    case QMessageBox::No:
+        if(origin == Origin::POINTS)
+            leftMenu->disableButtons();
+        break;
+    case QMessageBox::Ok:
+        if(!point->isHome()){
+            std::pair<int, int> pointIndexes = points->findPointIndexes(point->getName());
+            std::shared_ptr<Group> group = points->getGroups().at(pointIndexes.first);
+            qDebug() << "Go ahead and remove me I am not a home point anyway";
+            /// need to remove the point from the map
+            pointViews->getPointViewFromPoint(*point)->hide();
+            /// updates the model
+            group->removePoint(pointIndexes.second);
+            if(origin == Origin::POINTS){
+                /// updates the group
+                leftMenu->getDisplaySelectedGroup()->getPointButtonGroup()->setGroup(points, pointIndexes.first);
+                /// makes the buttons checkable again
+                leftMenu->getDisplaySelectedGroup()->getPointButtonGroup()->setCheckable(true);
+            }
+            if(origin == Origin::GROUPS)
+                pointsLeftWidget->disableButtons();
+
+            /// save the changes to the file
+            XMLParser parserPoints(XML_PATH, mapPixmapItem);
+            parserPoints.save(*points);
+            /// prompts the user to ask him if he wants to delete the group in case it would be empty and not the default group
+            if(pointIndexes.first != points->count()-1 && group->isEmpty()){
+                int confirmation = openEmptyGroupMessage(group->getName());
+                if(confirmation == QMessageBox::Yes){
+                    /// updates model
+                    points->removeGroup(pointIndexes.first);
+                    /// updates file
+                    XMLParser parser(XML_PATH, mapPixmapItem);
+                    parser.save(*points);
+                    /// updates menu
+                    pointsLeftWidget->getGroupButtonGroup()->update(*points);
+                    /// hides group menu and shows list of groups menu (if we come from there)
+                    leftMenu->getDisplaySelectedGroup()->hide();
+                    if(origin == Origin::GROUPS)
+                        pointsLeftWidget->show();
+                    /// updates the list of available groups when a user creates a point
+                    editSelectedPointWidget->updateGroupBox(*points);
+                    backEvent();
+                }
+            }
+        } else {
+            /// this is in fact the home point of a robot, we prompt a customized message to the end user
+            RobotView* robot = robots->findRobotUsingHome(point->getName());
+            openInterdictionOfPointRemovalMessage(point->getName(), robot->getRobot()->getName());
+            qDebug() << "Sorry this point is the home of a robot and therefore cannot be removed";
+        }
+        break;
+    default:
+        break;
+    }
+}
+
 /**
  * @brief MainWindow::removePointFromInformationMenu
  * called when a user clicks a point on the map and then tries to remove it clicking the "minus" button
  */
 void MainWindow::removePointFromInformationMenu(void){
     qDebug() << "removepointfrominformationmenu event called";
-    /// uncheck the minus button
-    leftMenu->getDisplaySelectedPoint()->getMinusButton()->setChecked(false);
     int ret = openConfirmMessage("Are you sure you want to remove this point ?");
+    leftMenu->getDisplaySelectedPoint()->getMinusButton()->setChecked(false);
     switch(ret){
         case QMessageBox::Cancel :
             qDebug() << "clicked no";
