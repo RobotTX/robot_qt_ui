@@ -1091,31 +1091,14 @@ void MainWindow::setSelectedPoint(PointView* pointView, bool isTemporary){
  * called when the back button is clicked
  */
 void MainWindow::pointBtnEvent(void){
-    switchFocus("Groups",pointsLeftWidget);
+    switchFocus("Groups", pointsLeftWidget);
     qDebug() << "pointBtnEvent called ";
     /// we uncheck all buttons from all menus
     pointsLeftWidget->getGroupButtonGroup()->uncheck();
     leftMenu->getDisplaySelectedGroup()->uncheck();
-    pointsLeftWidget->getEyeButton()->setChecked(false);
-    /// called when the back button is clicked and we came from the group menu
-    if(leftMenu->getDisplaySelectedPoint()->getOrigin() == DisplaySelectedPoint::GROUP_MENU){
-        hideAllWidgets();
-        leftMenu->getDisplaySelectedGroup()->getEditButton()->setChecked(false);
-        leftMenu->getDisplaySelectedPoint()->setOrigin(DisplaySelectedPoint::POINTS_MENU);
-        qDebug() << "dans pointBtn event with origin group menu";
-        leftMenu->getDisplaySelectedGroup()->show();
-    }
-    /// otherwise we know that we can display the points menu because the case where we displayed the point information
-    /// from the map has already been taken care of at the source
-    else {
-        hideAllWidgets();
-        leftMenu->getDisplaySelectedPoint()->setOrigin(DisplaySelectedPoint::POINTS_MENU);
-        pointsLeftWidget->show();
-        pointsLeftWidget->getGroupButtonGroup()->show();
-        //lastWidget = pointsLeftWidget;
-    }
+    hideAllWidgets();
+    pointsLeftWidget->show();
 }
-
 
 /**
  * @brief MainWindow::backGroupBtnEvent
