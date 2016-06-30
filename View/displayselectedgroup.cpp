@@ -32,6 +32,9 @@ DisplaySelectedGroup::DisplaySelectedGroup(QMainWindow *parent, const Points& _p
     editButton = new QPushButton(QIcon(":/icons/edit.png"),"", this);
     editButton->setIconSize(parent->size()/10);
     editButton->setCheckable(true);
+    /// to force the user to choose a point first
+    editButton->setEnabled(false);
+    editButton->setToolTip("Select a point and click here to modify it");
 
     grid = new QHBoxLayout();
     grid->addWidget(plusButton);

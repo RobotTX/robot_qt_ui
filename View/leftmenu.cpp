@@ -176,7 +176,8 @@ void LeftMenu::enableButtons(int index){
         displaySelectedGroup->getMapButton()->setToolTip("Click to hide the selected point on the map");
     else
         displaySelectedGroup->getMapButton()->setToolTip("Click to display the selected point on the map");
-
+    /// enables the edit button
+    displaySelectedGroup->getEditButton()->setEnabled(true);
 }
 
 void LeftMenu::disableButtons(){
@@ -189,5 +190,7 @@ void LeftMenu::disableButtons(){
     /// resets the map button
     displaySelectedGroup->getMapButton()->setEnabled(false);
     displaySelectedGroup->getMapButton()->setToolTip("Select a point and click here to display or hide it on the map");
+    /// resets the edit button
+    displaySelectedGroup->getEditButton()->setEnabled(false);
 }
 

@@ -38,8 +38,8 @@
 #include <QAbstractButton>
 
 //#define XML_PATH "/home/m-a/Documents/QtProject/gobot-software/points.xml"
-//#define XML_PATH "/home/joan/Qt/QtProjects/gobot-software/points.xml"
-#define XML_PATH "/Users/fannylarradet/Desktop/GTRobots/gobot-software/points.xml"
+#define XML_PATH "/home/joan/Qt/QtProjects/gobot-software/points.xml"
+//#define XML_PATH "/Users/fannylarradet/Desktop/GTRobots/gobot-software/points.xml"
 
 /**
  * @brief MainWindow::MainWindow
@@ -1983,8 +1983,9 @@ void MainWindow::pointInfoEvent(void){
     pointsLeftWidget->getMinusButton()->setChecked(false);
     pointsLeftWidget->getEditButton()->setChecked(false);
     pointsLeftWidget->getMapButton()->setChecked(false);
-
-    if(pointsLeftWidget->getEyeButton()->isChecked()){
+    /// resets the group menu
+    leftMenu->disableButtons();
+    if(pointsLeftWidget->getEyeButton()->isChecked()){ 
         pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->setExclusive(true);
         int groupIndex = pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->checkedId();
         qDebug() << " my group index guys " << groupIndex;
@@ -2267,6 +2268,8 @@ void MainWindow::displayPointFromGroupMenu(){
             parserPoints.save(points);
             /// if the entire group was displayed it is not the case anymore
             pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(pointsLeftWidget->getIndexLastGroupClicked())->setIcon(QIcon(":/icons/folder.png"));
+            /// changes the map button message
+            leftMenu->getDisplaySelectedGroup()->getMapButton()->setToolTip("Click to display the selected point on the map");
         } else {
             /// shows the point on the map
             pointViews->getPointViewFromPoint(*(points.getGroups().at(pointsLeftWidget->getIndexLastGroupClicked())->getPoints().at(checkedId)))->show();
@@ -2280,6 +2283,9 @@ void MainWindow::displayPointFromGroupMenu(){
             /// we check whether or not the entire group is displayed and update the points left widget accordingly by adding a tick Icon or not
             if(points.getGroups().at(pointsLeftWidget->getIndexLastGroupClicked())->isDisplayed())
                 pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(pointsLeftWidget->getIndexLastGroupClicked())->setIcon(QIcon(":/icons/folder_tick.png"));
+            /// changes the map button message
+            leftMenu->getDisplaySelectedGroup()->getMapButton()->setToolTip("Click to hide the selected point on the map");
+
         }
     } else {
         /// should never be here
