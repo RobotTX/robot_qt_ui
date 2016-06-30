@@ -68,7 +68,6 @@ void GroupButtonGroup::update(const Points& _points){
         groupButton->setStyleSheet("text-align:left");
         groupButton->setCheckable(true);
         groupButton->setIconSize(BUTTON_SIZE);
-        //groupButton->setIconSize(parentWidget()->size()/2);
         buttonGroup->addButton(groupButton, i);
         layout->addWidget(groupButton);
         if(currentGroup->isDisplayed())
