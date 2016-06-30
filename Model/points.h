@@ -87,6 +87,8 @@ public:
      */
     std::pair<int, int> findPointIndexes(const QString name) const;
 
+    std::shared_ptr<Group> getDefaultGroup(void) const { return groups.at(groups.size()-1); }
+
     void clear();
 
 private:

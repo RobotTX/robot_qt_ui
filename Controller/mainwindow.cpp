@@ -1099,6 +1099,9 @@ void MainWindow::setSelectedPoint(PointView* pointView, bool isTemporary){
  * called when the back button is clicked
  */
 void MainWindow::pointBtnEvent(void){
+    /// resets the list of groups menu
+    pointsLeftWidget->disableButtons();
+
     switchFocus("Groups", pointsLeftWidget);
     qDebug() << "pointBtnEvent called ";
     /// we uncheck all buttons from all menus
@@ -1430,22 +1433,6 @@ void MainWindow::pointSavedEvent(int index, double x, double y, QString name){
     editSelectedPointWidget->hide();
 }
 
-void MainWindow::backToGroupsButtonEvent(void){
-    /*
-    qDebug() << "back to groups event called";
-    //pointsLeftWidget->getPointList()->hide();
-    pointsLeftWidget->getPointButtonGroup()->hide();
-    pointsLeftWidget->getGroupMenu()->show();
-    pointsLeftWidget->getBackToGroupsBtn()->hide();
-    pointsLeftWidget->getBackButton()->show();
-    pointsLeftWidget->getMinusBtn()->setChecked(false);
-    // we display the groups again -> to make sure that the
-    // minus button exhibits the right behavior
-    pointsLeftWidget->setGroupDisplayed(true);
-    */
-
-}
-
 /**
  * @brief MainWindow::askForDeleteDefaultGroupPointConfirmation
  * @param index
@@ -1696,6 +1683,7 @@ void MainWindow::displayGroupEvent(int index, bool display){
 }
 
 void MainWindow::displayGroupMapEvent(void){
+    qDebug() << "displaygroupmapevent called";
     /// uncheck the other buttons
     pointsLeftWidget->getPlusButton()->setChecked(false);
     pointsLeftWidget->getMinusButton()->setChecked(false);
@@ -1706,12 +1694,13 @@ void MainWindow::displayGroupMapEvent(void){
     pointsLeftWidget->getGroupNameEdit()->hide();
     pointsLeftWidget->getGroupNameLabel()->hide();
 
-    qDebug() << "displaying groups by clicking on the map button";
     int checkedId = pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->checkedId();
     /// we display groups
     if(checkedId > -1 && checkedId < points->count()-1){
         /// the group was displayed, we now have to hide it (all its points)
         if(points->getGroups().at(checkedId)->isDisplayed()){
+            /// updates the tooltip of the map button
+            pointsLeftWidget->getMapButton()->setToolTip("Click here to display the selected group on the map");
             pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(checkedId)->setIcon(QIcon(":/icons/folder.png"));
             for(int i = 0; i < points->getGroups().at(checkedId)->count(); i++){
                 std::shared_ptr<Point> point = points->getGroups().at(checkedId)->getPoints()[i];
@@ -1723,6 +1712,8 @@ void MainWindow::displayGroupMapEvent(void){
                 parserPoints.save(*points);
             }
         } else {
+            /// updates the tooltip of the map button
+            pointsLeftWidget->getMapButton()->setToolTip("Click here to hide the selected group on the map");
             /// the group must now be displayed
             pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(checkedId)->setIcon(QIcon(":/icons/folder_tick.png"));
             for(int i = 0; i < points->getGroups().at(checkedId)->count(); i++){
@@ -1741,6 +1732,8 @@ void MainWindow::displayGroupMapEvent(void){
         std::shared_ptr<Point> point = points->getGroups().at(points->count()-1)->getPoints().at(checkedId-points->count()+1);
         /// if the point is displayed we hide it
         if(point->isDisplayed()){
+            /// updates the tooltip of the map button
+            pointsLeftWidget->getMapButton()->setToolTip("Click here to display the selected point on the map");
             pointViews->getPointViewFromPoint(*point)->hide();
             point->setDisplayed(false);
             /// update the file
@@ -1749,6 +1742,8 @@ void MainWindow::displayGroupMapEvent(void){
             /// we remove the tick icon
             pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(checkedId)->setIcon(QIcon());
         } else {
+            /// updates the tooltip of the map button
+            pointsLeftWidget->getMapButton()->setToolTip("Click here to hide the selected point on the map");
             /// the point was not displayed, we display it
             pointViews->getPointViewFromPoint(*point)->show();
             point->setDisplayed(true);
@@ -1983,6 +1978,7 @@ void MainWindow::removePointFromInformationMenu(void){
  *
  */
 void MainWindow::pointInfoEvent(void){
+    /*
     qDebug() << "pointinfoevent called";
     /// uncheck the other buttons
     pointsLeftWidget->getPlusButton()->setChecked(false);
@@ -2019,7 +2015,7 @@ void MainWindow::pointInfoEvent(void){
             pointsLeftWidget->hide();
             leftMenu->getDisplaySelectedGroup()->hide();
         }
-    }
+    }*/
 }
 
 /**
@@ -2449,6 +2445,12 @@ void MainWindow::setLastWidgets(QList<QPair<QWidget*,QString>> lw)
 void MainWindow::backEvent()
 {
     qDebug() << "back event called";
+    /// resets the menus
+    pointsLeftWidget->disableButtons();
+    pointsLeftWidget->getGroupButtonGroup()->uncheck();
+    leftMenu->disableButtons();
+    leftMenu->getDisplaySelectedGroup()->uncheck();
+
     lastWidgets.last().first->hide();
     if (lastWidgets.size() > 1)
     {

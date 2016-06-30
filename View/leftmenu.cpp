@@ -43,14 +43,12 @@ LeftMenu::LeftMenu(MainWindow* _parent, std::shared_ptr<Points> const& points, c
     closeBtn->setFlat(true);
     //closeBtn->setStyleSheet("QPushButton { padding: 5px;}");
     //closeBtn->setFocusPolicy(Qt::FocusPolicy::NoFocus);
-    returnButton->setText("return");
     returnButton->hide();
     topLayout->addWidget(returnButton);
     topLayout->addWidget(closeBtn);
 
     leftLayout->addLayout(topLayout);
     connect(closeBtn, SIGNAL(clicked()), _parent, SLOT(closeSlot()));
-
 
     /// to display the information relative to a point
     displaySelectedPoint = new DisplaySelectedPoint(_parent, points);
