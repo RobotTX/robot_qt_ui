@@ -1075,7 +1075,9 @@ void MainWindow::initializePoints(){
  * set the selected point, could be a temporary point or a point that already exists and that might be edited
  */
 void MainWindow::setSelectedPoint(PointView* pointView, bool isTemporary){
+    qDebug() << "setSelectedPoint";
     resetFocus();
+
     /// we are not modifying an existing point
     if(!leftMenu->getDisplaySelectedPoint()->getEditButton()->isChecked()){
 
@@ -1086,7 +1088,7 @@ void MainWindow::setSelectedPoint(PointView* pointView, bool isTemporary){
         editSelectedPointWidget->setSelectedPoint(selectedPoint, isTemporary);
         editSelectedPointWidget->show();
         leftMenu->getDisplaySelectedPoint()->hide();
-       // switchFocus("",);
+        switchFocus(selectedPoint->getPoint()->getName(),editSelectedPointWidget);
     } else {
         /// on the left we display the position of the temporary point as the user moves it around but we don't make any modifications on the model yet
         leftMenu->getDisplaySelectedPoint()->getXLabel()->setText(QString::number(mapPixmapItem->getTmpPointView()->getPoint()->getPosition().getX()));
@@ -1618,12 +1620,14 @@ void MainWindow::displayPointEvent(PointView* pointView){
                                                                                   QString::number(leftMenu->getDisplaySelectedPoint()->getPointView()->getPoint()->getPosition().getX()) <<
                                                                                   QString::number(leftMenu->getDisplaySelectedPoint()->getPointView()->getPoint()->getPosition().getY());
     leftMenu->getDisplaySelectedPoint()->displayPointInfo();
+
     hideAllWidgets();
     if(leftMenu->isHidden()){
         leftMenu->show();
     }
     leftMenu->getDisplaySelectedPoint()->show();
     resetFocus();
+    switchFocus(leftMenu->getDisplaySelectedPoint()->getPointView()->getPoint()->getName(), leftMenu->getDisplaySelectedPoint());
 
 }
 
