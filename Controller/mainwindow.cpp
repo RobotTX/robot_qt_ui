@@ -374,6 +374,10 @@ void MainWindow::editSelectedRobot(RobotView* robotView){
     editSelectedRobotWidget->setSelectedRobot(selectedRobot);
 
     editSelectedRobotWidget->show();
+    switchFocus(selectedRobot->getRobot()->getName(),editSelectedRobotWidget);
+
+    leftMenu->getReturnButton()->setEnabled(false);
+    leftMenu->getReturnButton()->setToolTip("Please save or discard your modifications before navigating the menu again.");
 }
 
 void MainWindow::setSelectedRobot(RobotView* robotView){
@@ -491,6 +495,8 @@ void MainWindow::cancelEditSelecRobotBtnEvent(){
     editSelectedRobotWidget->hide();
 
     backEvent();
+    leftMenu->getReturnButton()->setEnabled(true);
+    leftMenu->getReturnButton()->setToolTip("");
 
 }
 
@@ -520,6 +526,8 @@ void MainWindow::robotSavedEvent(){
     }
 
     if (isOK){
+        leftMenu->getReturnButton()->setEnabled(true);
+        leftMenu->getReturnButton()->setToolTip("");
 
         editSelectedRobotWidget->editName();
 
