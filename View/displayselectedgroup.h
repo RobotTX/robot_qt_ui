@@ -23,10 +23,9 @@ class Points;
 class DisplaySelectedGroup: public QWidget
 {
 public:
-    DisplaySelectedGroup(QMainWindow *_parent, const Points& _points);
+    DisplaySelectedGroup(QMainWindow *_parent, const std::shared_ptr<Points> &_points);
 
     PointButtonGroup* getPointButtonGroup(void) const { return pointButtonGroup; }
-   // QPushButton* getBackButton(void) const { return backButton; }
     QPushButton* getMapButton(void) const { return mapButton; }
     QPushButton* getEyeButton(void) const { return eyeButton; }
     QPushButton* getEditButton(void) const { return editButton; }

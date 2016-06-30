@@ -10,11 +10,11 @@
 #include <QMainWindow>
 #include <QLabel>
 
-DisplaySelectedGroup::DisplaySelectedGroup(QMainWindow *parent, const Points& _points) : QWidget(parent){
+DisplaySelectedGroup::DisplaySelectedGroup(QMainWindow *parent, std::shared_ptr<Points> const& _points) : QWidget(parent){
     layout = new QVBoxLayout(this);
 
     name = new QLabel("\nName : ", this);
-    points = std::make_shared<Points>(_points);
+    points = _points;
 
     plusButton = new QPushButton(QIcon(":/icons/plus.png"),"", this);
     plusButton->setIconSize(parent->size()/10);

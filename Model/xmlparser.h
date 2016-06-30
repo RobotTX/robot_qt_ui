@@ -8,6 +8,7 @@ class QXmlStreamReader;
 
 #include <QVector>
 #include <QGraphicsItem>
+#include <memory>
 
 
 /**
@@ -37,7 +38,7 @@ public:
      * @param points
      * Imports a list of points from an xml file to the model
      */
-    void readPoints(Points& points);
+    void readPoints(std::shared_ptr<Points>& points);
 
     /**
      * @brief readRobots

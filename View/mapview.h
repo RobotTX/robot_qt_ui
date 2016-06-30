@@ -39,7 +39,7 @@ public:
     /// Setter
     void setPoint(const QSharedPointer<PointView> _point) { point = _point; }
     void setState(const GraphicItemState _state, const bool clear = false);
-    void setPermanentPoints(const Points &points);
+    void setPermanentPoints(const std::shared_ptr<Points> &points);
     void setPermanentPoints(PointsView* pointsView);
 
     void addPathPoint(PointView* pointView);

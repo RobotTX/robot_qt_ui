@@ -13,7 +13,7 @@
 #include "View/spacewidget.h"
 #include "Model/group.h"
 
-DisplaySelectedPoint::DisplaySelectedPoint(QMainWindow *_parent, Points const& _points, PointView* _pointView, const Origin _origin): QWidget(_parent), parent(_parent), origin(_origin)
+DisplaySelectedPoint::DisplaySelectedPoint(QMainWindow *_parent, std::shared_ptr<Points> const& _points, PointView* _pointView, const Origin _origin): QWidget(_parent), parent(_parent), origin(_origin)
 {
     parent = _parent;
     points = _points;
@@ -176,8 +176,8 @@ void DisplaySelectedPoint::hideEvent(QHideEvent *event){
 
 void DisplaySelectedPoint::checkPointName() const {
     qDebug() << "checkPointName called";
-    for(int i = 0; i < points.count(); i++){
-        std::shared_ptr<Group> group = points.getGroups().at(i);
+    for(int i = 0; i < points->count(); i++){
+        std::shared_ptr<Group> group = points->getGroups().at(i);
         for(int j = 0; j < group->count(); j++){
             if(!nameEdit->text().compare(group->getPoints().at(j)->getName())){
                 qDebug() << nameEdit->text() << " already exists";

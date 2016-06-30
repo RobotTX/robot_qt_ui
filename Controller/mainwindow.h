@@ -54,7 +54,7 @@ public:
     ~MainWindow();
 
 
-    Points getPoints(void) const { return points; }
+    std::shared_ptr<Points> getPoints(void) const { return points; }
 
     void initializeMenu();
     void initializeRobots();
@@ -188,7 +188,7 @@ private:
     RobotView* scanningRobot;
     PointsView* pointViews;
     PointView* selectedPoint;
-    Points points;
+    std::shared_ptr<Points> points;
     PathPainter* pathPainter;
     PointView* editedPointView;
     TopLayout* topLayout;

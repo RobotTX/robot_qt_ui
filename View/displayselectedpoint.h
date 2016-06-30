@@ -26,7 +26,7 @@ public:
     /// used to determine which menu or object (could be the map) cause the information of this point to be displayed
     enum Origin { MAP, GROUP_MENU, POINTS_MENU };
 
-    DisplaySelectedPoint(QMainWindow* _parent, Points const& _points, PointView* _pointView = 0, const Origin _origin = MAP);
+    DisplaySelectedPoint(QMainWindow* _parent, const std::shared_ptr<Points> &_points, PointView* _pointView = 0, const Origin _origin = MAP);
 
    // QPushButton* getBackButton(void) const { return backButton; }
     QPushButton* getMinusButton(void) const { return minusButton; }
@@ -76,7 +76,6 @@ private:
     QLabel* posXLabel;
     QLabel* posYLabel;
 
-  //  QPushButton* backButton;
     QPushButton* plusButton;
     QPushButton* minusButton;
     QPushButton* mapButton;
@@ -86,7 +85,7 @@ private:
     QPushButton* cancelButton;
     PointView* pointView;
     QMainWindow* parent;
-    Points points;
+    std::shared_ptr<Points> points;
 
     /// to determine whether we come from the group menu and have to go back to it if we click on the back button
     /// or if we got here by clicking on the map

@@ -8,14 +8,15 @@
 #include <QMouseEvent>
 #include <QDebug>
 
-PointButtonGroup::PointButtonGroup(const Points &_points, const int _groupIndex
-                                   , QWidget* parent): QWidget(parent){
+PointButtonGroup::PointButtonGroup(std::shared_ptr<Points> const&_points, const int _groupIndex
+                                   , QWidget* parent): QWidget(parent)
+{
     groupIndex = _groupIndex;
     buttonGroup = new QButtonGroup(this);
     layout = new QVBoxLayout(this);
     layout->setAlignment(Qt::AlignTop);
 
-    std::shared_ptr<Group> currentGroup = _points.getGroups().at(groupIndex);
+    std::shared_ptr<Group> currentGroup = _points->getGroups().at(groupIndex);
     for(int j = 0; j < currentGroup->getPoints().size(); j++){
         std::shared_ptr<Point> currentPoint = currentGroup->getPoints().at(j);
         DoubleClickableButton* pointButton = new DoubleClickableButton(j, currentPoint->getName()
@@ -30,10 +31,10 @@ PointButtonGroup::PointButtonGroup(const Points &_points, const int _groupIndex
     }
 }
 
-void PointButtonGroup::setGroup(const Points &_points, const int _groupIndex){
+void PointButtonGroup::setGroup(std::shared_ptr<Points> const&_points, const int _groupIndex){
     deleteButtons();
     groupIndex = _groupIndex;
-    std::shared_ptr<Group> currentGroup = _points.getGroups().at(groupIndex);
+    std::shared_ptr<Group> currentGroup = _points->getGroups().at(groupIndex);
     for(int j = 0; j < currentGroup->getPoints().size(); j++){
         std::shared_ptr<Point> currentPoint = currentGroup->getPoints().at(j);
         DoubleClickableButton* pointButton = new DoubleClickableButton(j, currentPoint->getName()

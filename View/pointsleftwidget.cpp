@@ -13,10 +13,13 @@
 #include <QHBoxLayout>
 #include "groupeditwindow.h"
 #include "View/spacewidget.h"
+#include "Model/points.h"
 
 
-PointsLeftWidget::PointsLeftWidget(QMainWindow* _parent, Points const& points, bool _groupDisplayed)
-    : QWidget(_parent), groupDisplayed(_groupDisplayed){
+PointsLeftWidget::PointsLeftWidget(QMainWindow* _parent, std::shared_ptr<Points> const& _points, bool _groupDisplayed)
+    : QWidget(_parent), groupDisplayed(_groupDisplayed)
+{
+    points = _points;
     parent = _parent;
     scrollArea = new VerticalScrollArea(this);
 
@@ -42,6 +45,9 @@ PointsLeftWidget::PointsLeftWidget(QMainWindow* _parent, Points const& points, b
     minusButton = new QPushButton(QIcon(":/icons/minus.png"),"", this);
     minusButton->setIconSize(_parent->size()/10);
     minusButton->setCheckable(true);
+    /// to force the user to choose a group or point first
+    minusButton->setEnabled(false);
+    minusButton->setToolTip("Select a group or a point and click here to remove it");
 
     editButton = new QPushButton(QIcon(":/icons/edit.png"),"", this);
     editButton->setIconSize(_parent->size()/10);
@@ -79,7 +85,7 @@ PointsLeftWidget::PointsLeftWidget(QMainWindow* _parent, Points const& points, b
     layout->addWidget(groupNameLabel);
     layout->addWidget(groupNameEdit);
 
-    groupButtonGroup = new GroupButtonGroup(points, this);
+    groupButtonGroup = new GroupButtonGroup(*_points, this);
 
     scrollArea->setWidget(groupButtonGroup);
 
@@ -106,6 +112,9 @@ PointsLeftWidget::PointsLeftWidget(QMainWindow* _parent, Points const& points, b
     foreach(QAbstractButton *button, groupButtonGroup->getButtonGroup()->buttons())
         connect(button, SIGNAL(doubleClick(int)), parent, SLOT(doubleClickOnGroup(int)));
 
+    /// to enable the buttons
+    connect(groupButtonGroup->getButtonGroup(), SIGNAL(buttonClicked(int)), this, SLOT(enableButtons(int)));
+
     setMaximumWidth(_parent->width()*4/10);
     setMinimumWidth(_parent->width()*4/10);
     layout->setAlignment(Qt::AlignBottom);
@@ -113,4 +122,20 @@ PointsLeftWidget::PointsLeftWidget(QMainWindow* _parent, Points const& points, b
 
 void PointsLeftWidget::updateGroupButtonGroup(Points const& points){
     groupButtonGroup->update(points);
+}
+
+void PointsLeftWidget::enableButtons(int index){
+    /// enables the minus button
+    minusButton->setEnabled(true);
+    qDebug() << points->count();
+    if(index < points->count()-1)
+        minusButton->setToolTip("Click to remove the selected group");
+    else
+        minusButton->setToolTip("Click to remove the selected point");
+}
+
+void PointsLeftWidget::disableButtons(void){
+    /// resets the minus button
+    minusButton->setEnabled(false);
+    minusButton->setToolTip("Select a group or a point and click here to remove it");
 }

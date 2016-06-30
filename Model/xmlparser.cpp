@@ -178,7 +178,7 @@ float XMLParser::readCoordinateElement(QXmlStreamReader &xmlReader){
     return coordinate;
 }
 
-void XMLParser::readPoints(Points& points){
+void XMLParser::readPoints(std::shared_ptr<Points>& points){
     QXmlStreamReader xmlReader;
 
     try {
@@ -256,7 +256,7 @@ void XMLParser::readPoints(Points& points){
                             xmlReader.readNext();
                         }
                     }
-                    points.addGroup(*group);
+                    points->addGroup(*group);
                 }
 
 

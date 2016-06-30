@@ -25,7 +25,7 @@
 #include <QButtonGroup>
 #include "Model/group.h"
 
-LeftMenu::LeftMenu(MainWindow* _parent, Points const& points, const std::shared_ptr<Robots> &robots, PointsView * const &pointViews): QWidget(_parent), parent(_parent){
+LeftMenu::LeftMenu(MainWindow* _parent, std::shared_ptr<Points> const& points, const std::shared_ptr<Robots> &robots, PointsView * const &pointViews): QWidget(_parent), parent(_parent){
 
     QScrollArea * scroll = new VerticalScrollArea(_parent);
 
@@ -103,7 +103,7 @@ LeftMenu::LeftMenu(MainWindow* _parent, Points const& points, const std::shared_
     connect(editSelectedPointWidget, SIGNAL(pointSaved(int, double, double, QString)), _parent, SLOT(pointSavedEvent(int, double, double, QString)));
 
     /// Menu which display the widget for the creation of a path
-    pathCreationWidget = new PathCreationWidget(_parent, points);
+    pathCreationWidget = new PathCreationWidget(_parent, *points);
     leftLayout->addWidget(pathCreationWidget);
 
     connect(pathCreationWidget, SIGNAL(updatePathPointToPainter(QVector<Point>*)), _parent, SLOT(updatePathPointToPainter(QVector<Point>*)));
@@ -145,7 +145,7 @@ LeftMenu::LeftMenu(MainWindow* _parent, Points const& points, const std::shared_
     setLayout(globalLayout);
 }
 
-void LeftMenu::updateGroupDisplayed(const Points& _points, const int groupIndex){
+void LeftMenu::updateGroupDisplayed(std::shared_ptr<Points> const& _points, const int groupIndex){
     displaySelectedGroup->getPointButtonGroup()->setGroup(_points, groupIndex);
 }
 
