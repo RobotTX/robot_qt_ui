@@ -38,8 +38,8 @@
 #include <QAbstractButton>
 
 //#define XML_PATH "/home/m-a/Documents/QtProject/gobot-software/points.xml"
-#define XML_PATH "/home/joan/Qt/QtProjects/gobot-software/points.xml"
-//#define XML_PATH "/Users/fannylarradet/Desktop/GTRobots/gobot-software/points.xml"
+//#define XML_PATH "/home/joan/Qt/QtProjects/gobot-software/points.xml"
+#define XML_PATH "/Users/fannylarradet/Desktop/GTRobots/gobot-software/points.xml"
 
 /**
  * @brief MainWindow::MainWindow

@@ -46,7 +46,6 @@ private:
     PathWidget* pathWidget;
     QPushButton* scanBtn;
     QPushButton* editBtn;
-    MainWindow* mw;
 protected:
     void showEvent(QShowEvent *event);
     void hideEvent(QHideEvent *event);

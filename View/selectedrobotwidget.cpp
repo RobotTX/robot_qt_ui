@@ -16,10 +16,8 @@
 
 SelectedRobotWidget::SelectedRobotWidget(QMainWindow* parent): QWidget(parent){
     layout = new QVBoxLayout(this);
-    qDebug() << "before assig";
 
-     mw =   (MainWindow*) parent;
-
+    name = new QLabel();
 
     /// Button which allow the user to scan the map from a robot
     scanBtn = new QPushButton(QIcon(":/icons/map.png"),"Scan a map", this);
