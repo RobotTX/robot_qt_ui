@@ -53,7 +53,6 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
-
     std::shared_ptr<Points> getPoints(void) const { return points; }
 
     void initializeMenu();
@@ -70,7 +69,7 @@ public:
     void disableMenu();
     void enableMenu();
     void clearPath(int robotNb);
-    QList<QPair<QWidget*,QString>> getLastWidgets();
+    QList<QPair<QWidget*, QString>> getLastWidgets();
     void setLastWidgets(QList<QPair<QWidget*,QString>>);
     void resetFocus();
     void switchFocus(QString name, QWidget* widget);
@@ -122,12 +121,7 @@ private slots:
     void askForDeleteGroupConfirmation(const int group);
     void askForDeletePointConfirmation(const int index);
     void displayPointEvent(PointView* _pointView);
-    void modifyGroupEvent(const int groupIndex);
-    /// executed when an item of the list is clicked
-    void displayGroupEvent(int groupIndex, bool display);
-    /// executed when the map button is clicked
     void askForDeleteDefaultGroupPointConfirmation(const int groupIndex);
-    void removeGroupEvent(const int groupIndex);
     void backPathCreation(void);
     void displayGroupMapEvent(void);
     void pathSaved(bool execPath);
@@ -138,11 +132,9 @@ private slots:
     void removePointFromInformationMenu(void);
     void displayPointMapEvent(void);
     void hidePathCreationWidget(void);
-    void pointInfoEvent(void);
     void editPointButtonEvent(bool checked);
     void editTmpPathPointSlot(int id, Point* point, int nbWidget);
     void editPointFromGroupMenu(void);
-       // prob need a different event
     void saveTmpEditPathPointSlot(void);
     void moveTmpEditPathPointSlot(void);
     void displayPointInfoFromGroupMenu(void);
