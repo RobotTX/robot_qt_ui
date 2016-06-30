@@ -49,9 +49,8 @@ void RobotView::mousePressEvent(QGraphicsSceneMouseEvent *event){
        qDebug() << "map robot clicked";
        // MainWindow* mw = (MainWindow*)(((MapView*)(this ->parentWidget()))->getMainWindow());
         MainWindow* mw = (MainWindow*)(mapView->getMainWindow());
-
-        qDebug() << "robot map pressed";
         mw->resetFocus();
+        qDebug() << "robot map pressed";
         emit setSelectedSignal(this);
 
 

@@ -190,3 +190,4 @@ void LeftMenu::disableButtons(){
     displaySelectedGroup->getMapButton()->setEnabled(false);
     displaySelectedGroup->getMapButton()->setToolTip("Select a point and click here to display or hide it on the map");
 }
+

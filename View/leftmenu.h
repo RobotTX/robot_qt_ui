@@ -47,7 +47,7 @@ public:
     PathCreationWidget* getPathCreationWidget(void) const { return pathCreationWidget; }
     void showBackButton(QString name);
     void hideBackButton();
-
+    QPushButton* getReturnButton(){ return returnButton;}
 
 public:
 

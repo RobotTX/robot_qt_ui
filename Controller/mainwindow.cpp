@@ -38,8 +38,8 @@
 #include <QAbstractButton>
 
 //#define XML_PATH "/home/m-a/Documents/QtProject/gobot-software/points.xml"
-#define XML_PATH "/home/joan/Qt/QtProjects/gobot-software/points.xml"
-//#define XML_PATH "/Users/fannylarradet/Desktop/GTRobots/gobot-software/points.xml"
+//#define XML_PATH "/home/joan/Qt/QtProjects/gobot-software/points.xml"
+#define XML_PATH "/Users/fannylarradet/Desktop/GTRobots/gobot-software/points.xml"
 
 /**
  * @brief MainWindow::MainWindow
@@ -381,6 +381,7 @@ void MainWindow::setSelectedRobot(RobotView* robotView){
     qDebug() << "setSelectedRobot(RobotView* robotView)";
    // updateView();
     leftMenu->show();
+
     if(leftMenu->getRobotsLeftWidget()->getEditBtnStatus()){
         editSelectedRobot(robotView);
     } else {
@@ -389,6 +390,8 @@ void MainWindow::setSelectedRobot(RobotView* robotView){
         hideAllWidgets();
         selectedRobotWidget->setSelectedRobot(selectedRobot);
         selectedRobotWidget->show();
+        switchFocus(robotView->getRobot()->getName(),selectedRobotWidget);
+
     }
 }
 
@@ -446,7 +449,6 @@ void MainWindow::setSelectedRobot(QAbstractButton *button){
         (robots->getRobotViewByName(button->text()));
     else
         setSelectedRobot(robots->getRobotViewByName(button->text()));
-    switchFocus("Robot", selectedRobotWidget);
 
 }
 
@@ -487,6 +489,7 @@ void MainWindow::cancelEditSelecRobotBtnEvent(){
     robotsLeftWidget->setEditBtnStatus(false);
     robotsLeftWidget->setCheckBtnStatus(false);
     editSelectedRobotWidget->hide();
+
     backEvent();
 
 }
@@ -1187,6 +1190,8 @@ void MainWindow::minusGroupBtnEvent(){
 void MainWindow::editPointButtonEvent(bool checked){
 
     qDebug() << "editPointButtonEvent called";
+    leftMenu->getReturnButton()->setEnabled(false);
+    leftMenu->getReturnButton()->setToolTip("Please save or discard your modifications before navigating the menu again.");
 
     /// update buttons enable attribute and tool tips
     leftMenu->getDisplaySelectedPoint()->getMapButton()->setChecked(true);
@@ -1194,7 +1199,6 @@ void MainWindow::editPointButtonEvent(bool checked){
     leftMenu->getDisplaySelectedPoint()->getMinusButton()->setToolTip("");
     leftMenu->getDisplaySelectedPoint()->getMapButton()->setEnabled(false);
     leftMenu->getDisplaySelectedPoint()->getMapButton()->setToolTip("");
-    leftMenu->getDisplaySelectedPoint()->getBackButton()->setEnabled(false);
 
     /// hide the temporary point on the map
     mapPixmapItem->getTmpPointView()->hide();
@@ -1207,7 +1211,6 @@ void MainWindow::editPointButtonEvent(bool checked){
     /// updates the file
     XMLParser parser(XML_PATH, mapPixmapItem);
     parser.save(points);
-
     /// uncheck the other buttons
     pointsLeftWidget->getPlusButton()->setChecked(false);
     pointsLeftWidget->getMinusButton()->setChecked(false);
@@ -1246,6 +1249,7 @@ void MainWindow::editPointButtonEvent(bool checked){
  */
 void MainWindow::editGroupBtnEvent(bool checked){
     qDebug() << "editPointBtnEvent called";
+
     /// uncheck the other buttons
     pointsLeftWidget->getPlusButton()->setChecked(false);
     pointsLeftWidget->getMinusButton()->setChecked(false);
@@ -1274,9 +1278,8 @@ void MainWindow::editGroupBtnEvent(bool checked){
         editPointButtonEvent(checked);
         pointsLeftWidget->hide();
         /// disables the back button to prevent problems, a user has to discard or save his modifications before he can start navigatin the menu again, also prevents false manipulations
-        leftMenu->getDisplaySelectedPoint()->getBackButton()->setEnabled(false);
-        leftMenu->getDisplaySelectedPoint()->getBackButton()->setToolTip("Please save or discard your modifications before navigating the menu again.");
-        leftMenu->getDisplaySelectedPoint()->show();
+       leftMenu->getDisplaySelectedPoint()->show();
+        switchFocus("point",leftMenu->getDisplaySelectedPoint());
     }
 }
 
@@ -2053,7 +2056,7 @@ void MainWindow::editPointFromGroupMenu(void){
             leftMenu->getDisplaySelectedPoint()->getMapButton()->setEnabled(false);
             leftMenu->getDisplaySelectedPoint()->getMapButton()->setToolTip("");
             leftMenu->getDisplaySelectedPoint()->getMapButton()->setChecked(true);
-            leftMenu->getDisplaySelectedPoint()->getBackButton()->setEnabled(false);
+            //leftMenu->getDisplaySelectedPoint()->getBackButton()->setEnabled(false);
 
             /// to force the user to click either the save or the cancel button
             leftMenu->getDisplaySelectedPoint()->getEditButton()->setEnabled(false);
@@ -2167,8 +2170,8 @@ void MainWindow::updatePoint(void){
                 leftMenu->getDisplaySelectedPoint()->getXLabel()->text().right(xLength-4).toFloat(),
                 leftMenu->getDisplaySelectedPoint()->getYLabel()->text().right(yLength-4).toFloat());
     /// we enable the "back" button again
-    leftMenu->getDisplaySelectedPoint()->getBackButton()->setEnabled(true);
-    leftMenu->getDisplaySelectedPoint()->getBackButton()->setToolTip("");
+    leftMenu->getReturnButton()->setEnabled(true);
+    leftMenu->getReturnButton()->setToolTip("");
 }
 
 /**
@@ -2212,8 +2215,8 @@ void MainWindow::cancelEvent(void){
     leftMenu->getDisplaySelectedPoint()->getNameEdit()->setText(leftMenu->getDisplaySelectedPoint()->getPoint()->getName());
 
     /// enable the back button in case we were editing coming from the left menu
-    leftMenu->getDisplaySelectedPoint()->getBackButton()->setEnabled(true);
-    leftMenu->getDisplaySelectedPoint()->getBackButton()->setToolTip("");
+    leftMenu->getReturnButton()->setEnabled(true);
+    leftMenu->getReturnButton()->setToolTip("");
 
 
 }

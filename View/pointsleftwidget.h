@@ -35,7 +35,7 @@ public:
      */
     void setIndexLastGroupClicked(const int index) { indexLastGroupClicked = index; }
 
-    QPushButton* getBackButton(void) const { return backButton; }
+   // QPushButton* getBackButton(void) const { return backButton; }
     QPushButton* getBackToGroupsBtn(void) const { return backToGroupsButton; }
     QPushButton* getMinusButton(void) const { return minusButton; }
     QPushButton* getMapButton(void) const { return mapButton; }
@@ -61,7 +61,7 @@ private:
 
     GroupButtonGroup* groupButtonGroup;
 
-    QPushButton* backButton;
+   // QPushButton* backButton;
     QPushButton* backToGroupsButton;
     QPushButton* minusButton;
     QPushButton* mapButton;
