@@ -59,6 +59,12 @@ public:
 
 private slots:
     void enableButtons(int index);
+    void checkGroupName(QString name);
+    void cancelCreationGroup();
+    void emitNewGroupSignal();
+
+signals:
+    void newGroup(QString name);
 
 private:
     QMainWindow* parent;

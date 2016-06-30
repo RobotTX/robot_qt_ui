@@ -146,6 +146,13 @@ void EditSelectedPointWidget::saveEditSelecPointBtnEvent(){
 
 void EditSelectedPointWidget::checkPointName(void) const {
     qDebug() << "checkPointName called";
+    if(!nameEdit->text().compare("")){
+        /// cannot add a point with no name
+        saveBtn->setToolTip("The name of your point cannot be empty");
+        saveBtn->setEnabled(false);
+        return;
+    }
+
     for(int i = 0; i < points->getPoints()->count(); i++){
         std::shared_ptr<Group> group = points->getPoints()->getGroups().at(i);
         for(int j = 0; j < group->count(); j++){
@@ -153,7 +160,7 @@ void EditSelectedPointWidget::checkPointName(void) const {
                 qDebug() << nameEdit->text() << " already exists";
                 saveBtn->setEnabled(false);
                 /// to explain the user why he cannot add its point as it is
-                saveBtn->setToolTip("A point with this name already exists, please choose another name for your point.");
+                saveBtn->setToolTip("A point with this name already exists, please choose another name for your point");
                 return;
             }
         }

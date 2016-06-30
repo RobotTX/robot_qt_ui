@@ -38,7 +38,7 @@ LeftMenu::LeftMenu(MainWindow* _parent, std::shared_ptr<Points> const& points, c
     returnButton->setIconSize(_parent->size()/10);
     connect(returnButton, SIGNAL(clicked()), parent, SLOT(backEvent()));
 
-    QPushButton* closeBtn = new QPushButton(QIcon(":/icons/cropped_close.png"), "", this);
+    closeBtn = new QPushButton(QIcon(":/icons/cropped_close.png"), "", this);
     closeBtn->setIconSize(_parent->size()/30);
     closeBtn->setFlat(true);
     //closeBtn->setStyleSheet("QPushButton { padding: 5px;}");

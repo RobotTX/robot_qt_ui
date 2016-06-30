@@ -1152,6 +1152,11 @@ void MainWindow::plusGroupBtnEvent(){
 
     pointsLeftWidget->getPlusButton()->setToolTip("Enter a name for your group and click \"save\" or click \"cancel\" to cancel");
 
+    /// to prevent the user from clicking on the buttons
+    pointsLeftWidget->getGroupButtonGroup()->setEnabled(false);
+    leftMenu->getReturnButton()->setEnabled(false);
+    leftMenu->getCloseButton()->setEnabled(false);
+
     /// here we allow a user to create a new group
     pointsLeftWidget->getGroupNameEdit()->show();
     pointsLeftWidget->getGroupNameLabel()->show();

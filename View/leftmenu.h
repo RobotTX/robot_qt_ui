@@ -47,7 +47,8 @@ public:
     PathCreationWidget* getPathCreationWidget(void) const { return pathCreationWidget; }
     void showBackButton(QString name);
     void hideBackButton();
-    QPushButton* getReturnButton(){ return returnButton;}
+    QPushButton* getReturnButton(void) const { return returnButton; }
+    QPushButton* getCloseButton(void) const { return closeBtn; }
 
 public:
     void updateGroupDisplayed(const std::shared_ptr<Points> &_points, const int groupIndex);
@@ -58,6 +59,7 @@ private slots:
     void removePoint();
 
 private:
+    QPushButton* closeBtn;
     QVBoxLayout* leftLayout;
     QWidget* lastWidget;
     LeftMenuWidget* leftMenuWidget;
