@@ -1137,16 +1137,26 @@ void MainWindow::backGroupBtnEvent(){
 
 void MainWindow::plusGroupBtnEvent(){
     qDebug() << "plusGroupBtnEvent called";
-    /// uncheck the other buttons
+    /// uncheck and disable the buttons
     pointsLeftWidget->getPlusButton()->setChecked(false);
     pointsLeftWidget->getMinusButton()->setChecked(false);
     pointsLeftWidget->getEditButton()->setChecked(false);
     pointsLeftWidget->getEyeButton()->setChecked(false);
     pointsLeftWidget->getMapButton()->setChecked(false);
 
+    pointsLeftWidget->getPlusButton()->setEnabled(false);
+    pointsLeftWidget->getMinusButton()->setEnabled(false);
+    pointsLeftWidget->getEditButton()->setEnabled(false);
+    pointsLeftWidget->getEyeButton()->setEnabled(false);
+    pointsLeftWidget->getMapButton()->setEnabled(false);
+
+    pointsLeftWidget->getPlusButton()->setToolTip("Enter a name for your group and click \"save\" or click \"cancel\" to cancel");
+
     /// here we allow a user to create a new group
     pointsLeftWidget->getGroupNameEdit()->show();
     pointsLeftWidget->getGroupNameLabel()->show();
+    pointsLeftWidget->getCancelButton()->show();
+    pointsLeftWidget->getSaveButton()->show();
 }
 
 /**

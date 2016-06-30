@@ -97,6 +97,16 @@ PointsLeftWidget::PointsLeftWidget(QMainWindow* _parent, std::shared_ptr<Points>
 
     layout->addWidget(scrollArea);
 
+    creationLayout = new QHBoxLayout();
+    saveButton = new QPushButton("Save", this);
+    saveButton->hide();
+    cancelButton = new QPushButton("Cancel", this);
+    cancelButton->hide();
+    creationLayout->addWidget(cancelButton);
+    creationLayout->addWidget(saveButton);
+
+    layout->addLayout(creationLayout);
+
     connect(plusButton, SIGNAL(clicked(bool)), parent, SLOT(plusGroupBtnEvent()));
     connect(minusButton, SIGNAL(clicked(bool)), parent, SLOT(minusGroupBtnEvent()));
     connect(editButton, SIGNAL(clicked(bool)), parent, SLOT(editGroupBtnEvent(bool)));
