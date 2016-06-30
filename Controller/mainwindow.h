@@ -27,7 +27,7 @@ class QVBoxLayout;
 class PathPainter;
 class TopLayout;
 
-
+#include "Model/origin.h"
 #include "Model/points.h"
 #include "View/robotview.h"
 #include <QMainWindow>
@@ -53,8 +53,7 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
-
-    Points getPoints(void) const { return points; }
+    std::shared_ptr<Points> getPoints(void) const { return points; }
 
     void initializeMenu();
     void initializeRobots();
@@ -70,7 +69,7 @@ public:
     void disableMenu();
     void enableMenu();
     void clearPath(int robotNb);
-    QList<QPair<QWidget*,QString>> getLastWidgets();
+    QList<QPair<QWidget*, QString>> getLastWidgets();
     void setLastWidgets(QList<QPair<QWidget*,QString>>);
     void resetFocus();
     void switchFocus(QString name, QWidget* widget);
@@ -117,19 +116,13 @@ private slots:
     void setSelectedPoint(PointView* pointView, bool isTemporary);
     void pointSavedEvent(int index, double x, double y, QString name);
     void selectHomeEvent();
-    void backToGroupsButtonEvent(void);
     void stopSelectedRobot(int robotNb);
     void playSelectedRobot(int robotNb);
     void askForDeleteGroupConfirmation(const int group);
     void askForDeletePointConfirmation(const int index);
     void displayPointEvent(PointView* _pointView);
-    void modifyGroupEvent(const int groupIndex);
-    /// executed when an item of the list is clicked
-    void displayGroupEvent(int groupIndex, bool display);
-    /// executed when the map button is clicked
     void askForDeleteDefaultGroupPointConfirmation(const int groupIndex);
-    void removeGroupEvent(const int groupIndex);
-    void backPathCreation(void);
+    //void backPathCreation(void);
     void displayGroupMapEvent(void);
     void pathSaved(bool execPath);
     void addPathPoint(Point* point);
@@ -139,11 +132,9 @@ private slots:
     void removePointFromInformationMenu(void);
     void displayPointMapEvent(void);
     void hidePathCreationWidget(void);
-    void pointInfoEvent(void);
     void editPointButtonEvent(bool checked);
     void editTmpPathPointSlot(int id, Point* point, int nbWidget);
     void editPointFromGroupMenu(void);
-       // prob need a different event
     void saveTmpEditPathPointSlot(void);
     void moveTmpEditPathPointSlot(void);
     void displayPointInfoFromGroupMenu(void);
@@ -155,6 +146,7 @@ private slots:
     void doubleClickOnGroup(int checkedId);
     void reestablishConnectionsGroups();
     void reestablishConnectionsPoints();
+    void removePoint(std::shared_ptr<Point>& point, const Origin origin);
     /**
      * @brief cancelEvent
      * Called when a user doesn't want to keep the modifications he's made on a point
@@ -188,7 +180,7 @@ private:
     RobotView* scanningRobot;
     PointsView* pointViews;
     PointView* selectedPoint;
-    Points points;
+    std::shared_ptr<Points> points;
     PathPainter* pathPainter;
     PointView* editedPointView;
     TopLayout* topLayout;

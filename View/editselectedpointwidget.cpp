@@ -85,8 +85,8 @@ EditSelectedPointWidget::EditSelectedPointWidget(QMainWindow* _parent, PointsVie
     groupBox = new QComboBox(this);
 
     /// to insert the groups in the box
-    for(int i = 0; i < points->getPoints().count(); i++){
-        groupBox->insertItem(points->getPoints().count()-1-i, points->getPoints().getGroups().at(i)->getName());
+    for(int i = 0; i < points->getPoints()->count(); i++){
+        groupBox->insertItem(points->getPoints()->count()-1-i, points->getPoints()->getGroups().at(i)->getName());
     }
 
     /// to set the default group as default
@@ -146,8 +146,8 @@ void EditSelectedPointWidget::saveEditSelecPointBtnEvent(){
 
 void EditSelectedPointWidget::checkPointName(void) const {
     qDebug() << "checkPointName called";
-    for(int i = 0; i < points->getPoints().count(); i++){
-        std::shared_ptr<Group> group = points->getPoints().getGroups().at(i);
+    for(int i = 0; i < points->getPoints()->count(); i++){
+        std::shared_ptr<Group> group = points->getPoints()->getGroups().at(i);
         for(int j = 0; j < group->count(); j++){
             if(!nameEdit->text().compare(group->getPoints().at(j)->getName())){
                 qDebug() << nameEdit->text() << " already exists";

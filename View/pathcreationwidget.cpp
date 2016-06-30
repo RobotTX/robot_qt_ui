@@ -26,14 +26,14 @@ PathCreationWidget::PathCreationWidget(QMainWindow* parent, const Points &_point
     previousItem = NULL;
     editedPathPointCreationWidget = NULL;
     creatingNewPoint = false;
-
+/*
     /// back button
     QPushButton* backBtn = new QPushButton(QIcon(":/icons/arrowLeft.png"),"Path", this);
     backBtn->setStyleSheet ("text-align: left");
     backBtn->setIconSize(parent->size()/10);
     layout->addWidget(backBtn);
     connect(backBtn, SIGNAL(clicked()), parent, SLOT(backPathCreation()));
-
+*/
 
     QHBoxLayout* layoutRow1 = new QHBoxLayout();
 

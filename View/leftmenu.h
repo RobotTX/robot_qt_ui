@@ -30,7 +30,7 @@ class MainWindow;
 class LeftMenu: public QWidget{
     Q_OBJECT
 public:
-    LeftMenu(MainWindow* _parent, Points const& points, std::shared_ptr<Robots> const& robots, PointsView* const& pointViews);
+    LeftMenu(MainWindow* _parent, const std::shared_ptr<Points> &points, std::shared_ptr<Robots> const& robots, PointsView* const& pointViews);
     QWidget* getLastWidget() const {return lastWidget;}
 
     /// Getters
@@ -50,12 +50,12 @@ public:
     QPushButton* getReturnButton(){ return returnButton;}
 
 public:
-
-    void updateGroupDisplayed(const Points& _points, const int groupIndex);
+    void updateGroupDisplayed(const std::shared_ptr<Points> &_points, const int groupIndex);
     void disableButtons();
 
 private slots:
     void enableButtons(int index);
+    void removePoint();
 
 private:
     QVBoxLayout* leftLayout;

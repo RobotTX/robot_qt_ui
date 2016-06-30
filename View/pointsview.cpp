@@ -6,13 +6,13 @@
 #include <QDebug>
 #include <QGraphicsItem>
 
-PointsView::PointsView(const Points &_points, QGraphicsItem* parent): points(_points){
+PointsView::PointsView(std::shared_ptr<Points> const& _points, QGraphicsItem* parent): points(_points){
     // for each group
-    for(int i = 0; i < points.getGroups().size(); i++){
+    for(int i = 0; i < points->getGroups().size(); i++){
         //for each point of each group
         GroupView* groupView = new GroupView();
-        for(int j = 0; j < points.getGroups().at(i)->getPoints().size(); j++){
-            std::shared_ptr<Point> curr_point = points.getGroups().at(i)->getPoints().at(j);
+        for(int j = 0; j < points->getGroups().at(i)->getPoints().size(); j++){
+            std::shared_ptr<Point> curr_point = points->getGroups().at(i)->getPoints().at(j);
             PointView* pointViewPtr = new PointView(curr_point, parent);
             pointViewPtr->setShapeMode(QGraphicsPixmapItem::BoundingRectShape);
             groupView->addPointView(pointViewPtr);
@@ -56,10 +56,10 @@ PointView* PointsView::getPointViewFromName(const QString _name){
 }
 
 void PointsView::addPointView(PointView* const& _pointView){
-    std::pair<int, int> pointIndexes = points.findPointIndexes(_pointView->getPoint()->getName());
+    std::pair<int, int> pointIndexes = points->findPointIndexes(_pointView->getPoint()->getName());
 
     GroupView* groupView = groupViews.at(pointIndexes.first);
-    qDebug() << "trying to add a pointview to group " << points.getGroups()[pointIndexes.first]->getName() << groupView->getPointViews().size();
+    qDebug() << "trying to add a pointview to group " << points->getGroups()[pointIndexes.first]->getName() << groupView->getPointViews().size();
     groupView->addPointView(_pointView);
     qDebug() << "trying to add a pointview " << groupView->getPointViews().size();
 }

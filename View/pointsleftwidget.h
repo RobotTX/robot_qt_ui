@@ -12,8 +12,10 @@ class QLabel;
 class QLineEdit;
 class QHBoxLayout;
 class GroupEditWindow;
+class Points;
 
 #include <QWidget>
+#include <memory>
 
 /**
  * @brief The PointsLeftWidget class
@@ -21,13 +23,14 @@ class GroupEditWindow;
  */
 
 class PointsLeftWidget: public QWidget{
-
+    Q_OBJECT
 public:
-    PointsLeftWidget(QMainWindow* parent, Points const& points, bool _groupDisplayed = true);
+    PointsLeftWidget(QMainWindow* parent, std::shared_ptr<Points> const& _points, bool _groupDisplayed = true);
 
     bool getGroupDisplayed(void) const { return groupDisplayed; }
     void setGroupDisplayed(const bool _groupDisplayed) { groupDisplayed = _groupDisplayed; }
     int getIndexLastGroupClicked(void) const { return indexLastGroupClicked; }
+    std::shared_ptr<Points> getPoints(void) const { return points; }
     /**
      * @brief setIndexLastGroupClicked
      * @param index
@@ -35,13 +38,13 @@ public:
      */
     void setIndexLastGroupClicked(const int index) { indexLastGroupClicked = index; }
 
-   // QPushButton* getBackButton(void) const { return backButton; }
-    QPushButton* getBackToGroupsBtn(void) const { return backToGroupsButton; }
     QPushButton* getMinusButton(void) const { return minusButton; }
     QPushButton* getMapButton(void) const { return mapButton; }
     QPushButton* getEditButton(void) const { return editButton; }
     QPushButton* getPlusButton(void) const { return plusButton; }
     QPushButton* getEyeButton(void) const { return eyeButton; }
+    QPushButton* getSaveButton(void) const { return saveButton; }
+    QPushButton* getCancelButton(void) const { return cancelButton; }
 
     GroupButtonGroup* getGroupButtonGroup(void) const { return groupButtonGroup; }
 
@@ -50,24 +53,30 @@ public:
 
     VerticalScrollArea* getScrollArea(void) const { return scrollArea; }
 
+public:
+    void disableButtons(void);
     void updateGroupButtonGroup(Points const& points);
 
+private slots:
+    void enableButtons(int index);
 
 private:
     QMainWindow* parent;
     QVBoxLayout* layout;
     QHBoxLayout* eyeMapLayout;
     QHBoxLayout* grid;
+    QHBoxLayout* creationLayout;
 
     GroupButtonGroup* groupButtonGroup;
 
-   // QPushButton* backButton;
-    QPushButton* backToGroupsButton;
     QPushButton* minusButton;
     QPushButton* mapButton;
     QPushButton* plusButton;
     QPushButton* editButton;
     QPushButton* eyeButton;
+    QPushButton* saveButton;
+    QPushButton* cancelButton;
+
 
     QLabel* groupNameLabel;
     QLineEdit* groupNameEdit;
@@ -80,6 +89,7 @@ private:
     /// this way we can implement two different behavior for the same button minus
     bool groupDisplayed;
     int indexLastGroupClicked;
+    std::shared_ptr<Points> points;
 };
 
 #endif // POINTSLEFTWIDGET_H

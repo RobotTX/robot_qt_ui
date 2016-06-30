@@ -10,11 +10,11 @@
 #include <QMainWindow>
 #include <QLabel>
 
-DisplaySelectedGroup::DisplaySelectedGroup(QMainWindow *parent, const Points& _points) : QWidget(parent){
+DisplaySelectedGroup::DisplaySelectedGroup(QMainWindow *parent, std::shared_ptr<Points> const& _points) : QWidget(parent){
     layout = new QVBoxLayout(this);
 
     name = new QLabel("\nName : ", this);
-    points = std::make_shared<Points>(_points);
+    points = _points;
 
     plusButton = new QPushButton(QIcon(":/icons/plus.png"),"", this);
     plusButton->setIconSize(parent->size()/10);
@@ -49,6 +49,7 @@ DisplaySelectedGroup::DisplaySelectedGroup(QMainWindow *parent, const Points& _p
 
     mapButton = new QPushButton(QIcon(":/icons/map.png"),"", this);
     mapButton->setIconSize(parent->size()/10);
+    mapButton->setCheckable(true);
     /// to force the user to choose a point first
     mapButton->setEnabled(false);
     mapButton->setToolTip("Select a point and click here to display or hide it on the map");

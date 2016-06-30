@@ -35,11 +35,10 @@ bool Robot::sendCommand(QString cmd) {
 
 QString Robot::waitAnswer() {
     //return cmdThread->waitAnswer();
-    return true;
+    return "1 1";
 }
 
 void Robot::resetCommandAnswer() {
-    //return cmdThread->resetCommandAnswer();
-    return true;
+    //cmdThread->resetCommandAnswer();
 }
 
