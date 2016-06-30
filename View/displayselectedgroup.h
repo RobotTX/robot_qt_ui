@@ -7,10 +7,12 @@ class QPushButton;
 class QHBoxLayout;
 class QMainWindow;
 class QLabel;
+class Points;
 
 #include "Model/points.h"
 #include <QWidget>
 #include "View/pointbuttongroup.h"
+#include <memory>
 
 /**
  * @brief The DisplaySelectedGroup class
@@ -24,12 +26,13 @@ public:
     DisplaySelectedGroup(QMainWindow *_parent, const Points& _points);
 
     PointButtonGroup* getPointButtonGroup(void) const { return pointButtonGroup; }
-    QPushButton* getBackButton(void) const { return backButton; }
+   // QPushButton* getBackButton(void) const { return backButton; }
     QPushButton* getMapButton(void) const { return mapButton; }
     QPushButton* getEyeButton(void) const { return eyeButton; }
     QPushButton* getEditButton(void) const { return editButton; }
     QPushButton* getMinusButton(void) const { return minusButton; }
     QLabel* getNameLabel(void) const { return name; }
+    std::shared_ptr<Points> getPoints(void) const { return points; }
 
     void setName(const QString _name);
 
@@ -43,7 +46,7 @@ private:
     VerticalScrollArea* scrollArea;
 
     QVBoxLayout* layout;
-    QPushButton* backButton;
+   // QPushButton* backButton;
     QPushButton* plusButton;
     QPushButton* minusButton;
     QPushButton* mapButton;
@@ -53,6 +56,7 @@ private:
     QHBoxLayout* grid;
 
     QLabel* name;
+    std::shared_ptr<Points> points;
 };
 
 #endif // DISPLAYSELECTEDGROUP_H

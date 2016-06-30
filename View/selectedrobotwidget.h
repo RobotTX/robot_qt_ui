@@ -11,7 +11,7 @@ class QMainWindow;
 class QProgressBar;
 
 #include <QWidget>
-
+#include "mainwindow.h"
 /**
  * @brief The SelectedRobotWidget class
  * Widget of the left menu which is displayed when a robot is selected
@@ -27,7 +27,7 @@ public:
      * @param _robotView
      * Update the widget with the selected robot
      */
-    void setSelectedRobot(RobotView* const& _robotView, QWidget* lastWidget);
+    void setSelectedRobot(RobotView* const& _robotView);
     QPushButton* getScanBtn(void) const {return scanBtn;}
     QPushButton* getHomeBtn(void) const {return homeBtn;}
     void disable();
@@ -46,7 +46,7 @@ private:
     PathWidget* pathWidget;
     QPushButton* scanBtn;
     QPushButton* editBtn;
-
+    MainWindow* mw;
 protected:
     void showEvent(QShowEvent *event);
     void hideEvent(QHideEvent *event);

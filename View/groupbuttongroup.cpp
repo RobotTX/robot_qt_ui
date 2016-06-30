@@ -20,14 +20,20 @@ GroupButtonGroup::GroupButtonGroup(const Points &_points, QWidget* _parent):QWid
     for(int i = 0; i < _points.getGroups().size()-1; i++){
         std::shared_ptr<Group> currentGroup = _points.getGroups().at(i);
         DoubleClickableButton* groupButton = new DoubleClickableButton(i, currentGroup->getName(), this);
-        groupButton->setIcon(QIcon(":/icons/folder.png"));
         groupButton->setFlat(true);
         groupButton->setStyleSheet("text-align:left");
         groupButton->setCheckable(true);
         buttonGroup->addButton(groupButton, i);
         layout->addWidget(groupButton);
-        if(currentGroup->isDisplayed())
+        groupButton->setIconSize(BUTTON_SIZE);
+        if(currentGroup->isDisplayed()){
+
             groupButton->setIcon(QIcon(":/icons/folder_tick.png"));
+        }
+        else{
+
+            groupButton->setIcon(QIcon(":/icons/folder.png"));
+        }
     }
 
     /// for the last group we just want to show the points and not "no group"
@@ -61,10 +67,14 @@ void GroupButtonGroup::update(const Points& _points){
         groupButton->setFlat(true);
         groupButton->setStyleSheet("text-align:left");
         groupButton->setCheckable(true);
+        groupButton->setIconSize(BUTTON_SIZE);
+        //groupButton->setIconSize(parentWidget()->size()/2);
         buttonGroup->addButton(groupButton, i);
         layout->addWidget(groupButton);
         if(currentGroup->isDisplayed())
             groupButton->setIcon(QIcon(":/icons/folder_tick.png"));
+        else
+            groupButton->setIcon(QIcon(":/icons/folder.png"));
     }
 
     /// for the last group we just want to show the points and not "no group"

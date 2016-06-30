@@ -49,12 +49,11 @@ void RobotView::mousePressEvent(QGraphicsSceneMouseEvent *event){
        qDebug() << "map robot clicked";
        // MainWindow* mw = (MainWindow*)(((MapView*)(this ->parentWidget()))->getMainWindow());
         MainWindow* mw = (MainWindow*)(mapView->getMainWindow());
-
-        qDebug() << "here";
-
-       mw->setLastWidget(NULL);
-
+        mw->resetFocus();
+        qDebug() << "robot map pressed";
         emit setSelectedSignal(this);
+
+
     } else if(state == GraphicItemState::CREATING_PATH){
         qDebug() << "Clicked on a robot while creating a path";
     } else {

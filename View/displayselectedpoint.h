@@ -28,7 +28,7 @@ public:
 
     DisplaySelectedPoint(QMainWindow* _parent, Points const& _points, PointView* _pointView = 0, const Origin _origin = MAP);
 
-    QPushButton* getBackButton(void) const { return backButton; }
+   // QPushButton* getBackButton(void) const { return backButton; }
     QPushButton* getMinusButton(void) const { return minusButton; }
     QPushButton* getMapButton(void) const { return mapButton; }
     QPushButton* getEditButton(void) const { return editButton; }
@@ -76,7 +76,7 @@ private:
     QLabel* posXLabel;
     QLabel* posYLabel;
 
-    QPushButton* backButton;
+  //  QPushButton* backButton;
     QPushButton* plusButton;
     QPushButton* minusButton;
     QPushButton* mapButton;

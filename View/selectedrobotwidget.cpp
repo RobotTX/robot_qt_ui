@@ -16,16 +16,9 @@
 
 SelectedRobotWidget::SelectedRobotWidget(QMainWindow* parent): QWidget(parent){
     layout = new QVBoxLayout(this);
+    qDebug() << "before assig";
 
-    MainWindow* mw =   (MainWindow*) parent;
-
-
-    /// Button with the name of the robot and which allow the user to return back
-    /// to the last menu
-    backBtn = new QPushButton(QIcon(":/icons/arrowLeft.png"),"Name", this);
-    backBtn->setStyleSheet ("text-align: left");
-    backBtn->setIconSize(parent->size()/10);
-    layout->addWidget(backBtn);
+     mw =   (MainWindow*) parent;
 
 
     /// Button which allow the user to scan the map from a robot
@@ -102,7 +95,6 @@ SelectedRobotWidget::SelectedRobotWidget(QMainWindow* parent): QWidget(parent){
     pathWidget = new PathWidget(this);
     layout->addWidget(pathWidget);
 
-    connect(backBtn, SIGNAL(clicked()), parent, SLOT(backSelecRobotBtnEvent()));
     connect(homeBtn, SIGNAL(clicked()), this, SLOT(homeBtnEvent()));
     connect(goHome, SIGNAL(clicked()), parent, SLOT(goHomeBtnEvent()));
 
@@ -110,23 +102,13 @@ SelectedRobotWidget::SelectedRobotWidget(QMainWindow* parent): QWidget(parent){
     setMaximumWidth(parent->width()*4/10);
     setMinimumWidth(parent->width()*4/10);
     layout->setAlignment(Qt::AlignTop);
+
 }
 
-void SelectedRobotWidget::setSelectedRobot(RobotView* const& _robotView, QWidget* lastWidget){
+void SelectedRobotWidget::setSelectedRobot(RobotView* const& _robotView){
     /// We update all the informations
-
+    qDebug() << "select this robot";
     robotView = _robotView;
-  //  backBtn->setText(robotView->getRobot()->getName());
-
-    if(lastWidget == NULL)
-    {
-        backBtn->hide();
-    }
-    else
-    {
-        backBtn->show();
-        backBtn->setText("Robots");
-    }
 
     batteryLevel->setValue(robotView->getRobot()->getBatteryLevel());
     ipAddressLabel->setText("Ip : "+robotView->getRobot()->getIp());

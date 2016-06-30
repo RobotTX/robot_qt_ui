@@ -23,23 +23,34 @@
 #include <QScrollArea>
 #include "verticalscrollarea.h"
 #include <QButtonGroup>
+#include "Model/group.h"
 
 LeftMenu::LeftMenu(MainWindow* _parent, Points const& points, const std::shared_ptr<Robots> &robots, PointsView * const &pointViews): QWidget(_parent), parent(_parent){
-   // leftLayout = new QVBoxLayout(this);
 
     QScrollArea * scroll = new VerticalScrollArea(_parent);
 
-    QVBoxLayout * leftLayout  = new QVBoxLayout();
-    QWidget * inWidget  = new QWidget();
+    QVBoxLayout * leftLayout  = new QVBoxLayout(this);
+    QWidget* inWidget  = new QWidget();
     QVBoxLayout * globalLayout  = new QVBoxLayout(this);
+    QHBoxLayout * topLayout  = new QHBoxLayout(this);
+
+    returnButton = new QPushButton(QIcon(":/icons/arrowLeft.png"), " Return", this);
+    returnButton->setIconSize(_parent->size()/10);
+    connect(returnButton, SIGNAL(clicked()), parent, SLOT(backEvent()));
 
     QPushButton* closeBtn = new QPushButton(QIcon(":/icons/cropped_close.png"), "", this);
     closeBtn->setIconSize(_parent->size()/30);
     closeBtn->setFlat(true);
     //closeBtn->setStyleSheet("QPushButton { padding: 5px;}");
     //closeBtn->setFocusPolicy(Qt::FocusPolicy::NoFocus);
-    leftLayout->addWidget(closeBtn);
+    returnButton->setText("return");
+    returnButton->hide();
+    topLayout->addWidget(returnButton);
+    topLayout->addWidget(closeBtn);
+
+    leftLayout->addLayout(topLayout);
     connect(closeBtn, SIGNAL(clicked()), _parent, SLOT(closeSlot()));
+
 
     /// to display the information relative to a point
     displaySelectedPoint = new DisplaySelectedPoint(_parent, points);
@@ -94,30 +105,24 @@ LeftMenu::LeftMenu(MainWindow* _parent, Points const& points, const std::shared_
     /// Menu which display the widget for the creation of a path
     pathCreationWidget = new PathCreationWidget(_parent, points);
     leftLayout->addWidget(pathCreationWidget);
+
     connect(pathCreationWidget, SIGNAL(updatePathPointToPainter(QVector<Point>*)), _parent, SLOT(updatePathPointToPainter(QVector<Point>*)));
     connect(pathCreationWidget, SIGNAL(hidePathCreationWidget()), _parent, SLOT(hidePathCreationWidget()));
     connect(pathCreationWidget, SIGNAL(editTmpPathPoint(int, Point*, int)), _parent, SLOT(editTmpPathPointSlot(int, Point*, int)));
     connect(pathCreationWidget, SIGNAL(saveEditPathPoint()), _parent, SLOT(saveTmpEditPathPointSlot()));
     connect(pathCreationWidget, SIGNAL(setMessage(QString, QString)), _parent, SLOT(setMessageTop(QString, QString)));
 
-
-    connect(displaySelectedPoint->getBackButton(), SIGNAL(clicked(bool)), _parent, SLOT(pointBtnEvent()));
-    /// Last widget visited, used to know where to go back when pressing the return button
-    lastWidget = NULL;
-
     connect(displaySelectedPoint->getMinusButton(), SIGNAL(clicked(bool)), _parent, SLOT(removePointFromInformationMenu()));
     connect(displaySelectedPoint->getMapButton(), SIGNAL(clicked(bool)), _parent, SLOT(displayPointMapEvent()));
     connect(displaySelectedPoint->getEditButton(), SIGNAL(clicked(bool)), _parent, SLOT(editPointButtonEvent(bool)));
 
-    connect(displaySelectedGroup->getBackButton(), SIGNAL(clicked(bool)), _parent, SLOT(pointBtnEvent()));
     connect(displaySelectedGroup->getMinusButton(), SIGNAL(clicked(bool)), _parent, SLOT(removePointFromGroupMenu()));
     connect(displaySelectedGroup->getEditButton(), SIGNAL(clicked(bool)), _parent, SLOT(editPointFromGroupMenu()));
     connect(displaySelectedGroup->getEyeButton(), SIGNAL(clicked(bool)), _parent, SLOT(displayPointInfoFromGroupMenu()));
     connect(displaySelectedGroup->getMapButton(), SIGNAL(clicked(bool)), _parent, SLOT(displayPointFromGroupMenu()));
 
-    /// to handle double clicks in the groups menu at initialization
-    foreach(QAbstractButton* button, displaySelectedGroup->getPointButtonGroup()->getButtonGroup()->buttons())
-        connect(button, SIGNAL(doubleClick(int)), _parent, SLOT(doubleClickOnPoint(int)));
+    /// to enable the buttons
+    connect(displaySelectedGroup->getPointButtonGroup()->getButtonGroup(), SIGNAL(buttonClicked(int)), this, SLOT(enableButtons(int)));
 
     hide();
     leftLayout->setContentsMargins(0,0,0,0);
@@ -126,7 +131,7 @@ LeftMenu::LeftMenu(MainWindow* _parent, Points const& points, const std::shared_
     leftLayout->setAlignment(Qt::AlignTop);
     leftLayout->setAlignment(closeBtn, Qt::AlignTop | Qt::AlignRight);
 
-    for (int i = 0; i < leftLayout->count(); ++i) {
+   for (int i = 0; i < leftLayout->count(); ++i) {
         QWidget *widget = leftLayout->itemAt(i)->widget();
         if (widget != NULL) {
             widget->setMinimumWidth(1);
@@ -137,12 +142,55 @@ LeftMenu::LeftMenu(MainWindow* _parent, Points const& points, const std::shared_
     scroll->setWidget(inWidget);
     globalLayout->addWidget(scroll);
     globalLayout->setContentsMargins(0, 0, 0, 0);
-    this->setLayout(globalLayout);
+    setLayout(globalLayout);
 }
 
 void LeftMenu::updateGroupDisplayed(const Points& _points, const int groupIndex){
     displaySelectedGroup->getPointButtonGroup()->setGroup(_points, groupIndex);
-    /// to handle double clicks in the groups menu
-    foreach(QAbstractButton* button, displaySelectedGroup->getPointButtonGroup()->getButtonGroup()->buttons())
-        connect(button, SIGNAL(doubleClick(int)), parent, SLOT(doubleClickOnPoint(int)));
 }
+
+void LeftMenu::hideBackButton(void)
+{
+    if(returnButton != NULL)
+        returnButton->hide();
+}
+
+void LeftMenu::showBackButton(QString name)
+{
+    if(returnButton){
+        returnButton->setText(name);
+        returnButton->show();
+    }
+}
+
+void LeftMenu::enableButtons(int index){
+    /// enables the minus button
+    displaySelectedGroup->getMinusButton()->setEnabled(true);
+    displaySelectedGroup->getMinusButton()->setToolTip("Click to remove the selected point");
+    /// enables the eye button
+    displaySelectedGroup->getEyeButton()->setEnabled(true);
+    displaySelectedGroup->getEyeButton()->setToolTip("Click to see the information of the selected point");
+    /// enables the map button
+    displaySelectedGroup->getMapButton()->setEnabled(true);
+    if(displaySelectedGroup->getPoints()->getGroups().at(displaySelectedGroup->getPointButtonGroup()->getGroupIndex())->getPoints().at(index)->isDisplayed())
+        displaySelectedGroup->getMapButton()->setToolTip("Click to hide the selected point on the map");
+    else
+        displaySelectedGroup->getMapButton()->setToolTip("Click to display the selected point on the map");
+    /// enables the edit button
+    displaySelectedGroup->getEditButton()->setEnabled(true);
+}
+
+void LeftMenu::disableButtons(){
+    /// resets the minus button
+    displaySelectedGroup->getMinusButton()->setEnabled(false);
+    displaySelectedGroup->getMinusButton()->setToolTip("Select a point and click here to remove it");
+    /// resets the eye button
+    displaySelectedGroup->getEyeButton()->setEnabled(false);
+    displaySelectedGroup->getEyeButton()->setToolTip("Select a point and click here to access its information");
+    /// resets the map button
+    displaySelectedGroup->getMapButton()->setEnabled(false);
+    displaySelectedGroup->getMapButton()->setToolTip("Select a point and click here to display or hide it on the map");
+    /// resets the edit button
+    displaySelectedGroup->getEditButton()->setEnabled(false);
+}
+

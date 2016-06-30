@@ -15,6 +15,7 @@
 #include <QGridLayout>
 
 EditSelectedRobotWidget::EditSelectedRobotWidget(QMainWindow* parent, const std::shared_ptr<Robots> _robots):QWidget(parent){
+     mw =   (MainWindow*) parent;
     robots = _robots;
     layout = new QVBoxLayout(this);
     wifiLayout = new QGridLayout();
@@ -109,7 +110,10 @@ EditSelectedRobotWidget::EditSelectedRobotWidget(QMainWindow* parent, const std:
 }
 
 void EditSelectedRobotWidget::setSelectedRobot(RobotView* const _robotView){
+
     robotView = _robotView;
+    mw->switchFocus(robotView->getRobot()->getName(),this);
+
     /// When a robot is selected, the informations are updated
     nameEdit->setText(robotView->getRobot()->getName());
     batteryLevel->setValue(robotView->getRobot()->getBatteryLevel());

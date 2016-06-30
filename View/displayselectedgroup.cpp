@@ -14,10 +14,7 @@ DisplaySelectedGroup::DisplaySelectedGroup(QMainWindow *parent, const Points& _p
     layout = new QVBoxLayout(this);
 
     name = new QLabel("\nName : ", this);
-
-    backButton = new QPushButton(QIcon(":/icons/arrowLeft.png"), "Groups", this);
-    backButton->setIconSize(parent->size()/10);
-    layout->addWidget(backButton);
+    points = std::make_shared<Points>(_points);
 
     plusButton = new QPushButton(QIcon(":/icons/plus.png"),"", this);
     plusButton->setIconSize(parent->size()/10);
@@ -28,10 +25,16 @@ DisplaySelectedGroup::DisplaySelectedGroup(QMainWindow *parent, const Points& _p
     minusButton = new QPushButton(QIcon(":/icons/minus.png"),"", this);
     minusButton->setIconSize(parent->size()/10);
     minusButton->setCheckable(true);
+    /// to force the user to choose a point first
+    minusButton->setEnabled(false);
+    minusButton->setToolTip("Select a point and click here to remove it");
 
     editButton = new QPushButton(QIcon(":/icons/edit.png"),"", this);
     editButton->setIconSize(parent->size()/10);
     editButton->setCheckable(true);
+    /// to force the user to choose a point first
+    editButton->setEnabled(false);
+    editButton->setToolTip("Select a point and click here to modify it");
 
     grid = new QHBoxLayout();
     grid->addWidget(plusButton);
@@ -40,9 +43,15 @@ DisplaySelectedGroup::DisplaySelectedGroup(QMainWindow *parent, const Points& _p
 
     eyeButton = new QPushButton(QIcon(":/icons/eye.png"), "", this);
     eyeButton->setIconSize(parent->size()/10);
+    /// to force the user to choose a point first
+    eyeButton->setEnabled(false);
+    eyeButton->setToolTip("Select a point and click here to access its information");
 
     mapButton = new QPushButton(QIcon(":/icons/map.png"),"", this);
     mapButton->setIconSize(parent->size()/10);
+    /// to force the user to choose a point first
+    mapButton->setEnabled(false);
+    mapButton->setToolTip("Select a point and click here to display or hide it on the map");
 
     eyeMapLayout = new QHBoxLayout();
     eyeMapLayout->addWidget(eyeButton);

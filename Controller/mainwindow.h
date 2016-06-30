@@ -33,6 +33,7 @@ class TopLayout;
 #include <QMainWindow>
 #include <QModelIndex>
 #include "Model/graphicitemstate.h"
+#include <QPair>
 
 #define PI 3.14159265
 #define PORT_MAP_METADATA 4000
@@ -64,13 +65,15 @@ public:
     void stopPathCreation();
     int openConfirmMessage(const QString);
     void openInterdictionOfPointRemovalMessage(const QString pointName, const QString robotName);
+    int openEmptyGroupMessage(const QString groupName);
     void clearNewMap();
     void disableMenu();
     void enableMenu();
     void clearPath(int robotNb);
-    QWidget* getLastWidget(void);
-    void setLastWidget(QWidget*);
-
+    QList<QPair<QWidget*,QString>> getLastWidgets();
+    void setLastWidgets(QList<QPair<QWidget*,QString>>);
+    void resetFocus();
+    void switchFocus(QString name, QWidget* widget);
 
 signals:
     void sendCommand(QString);
@@ -114,7 +117,6 @@ private slots:
     void setSelectedPoint(PointView* pointView, bool isTemporary);
     void pointSavedEvent(int index, double x, double y, QString name);
     void selectHomeEvent();
-    void displayDeleteEvent(QModelIndex index);
     void backToGroupsButtonEvent(void);
     void stopSelectedRobot(int robotNb);
     void playSelectedRobot(int robotNb);
@@ -168,7 +170,8 @@ private slots:
     void setGraphicItemsState(const GraphicItemState state, const bool clear = false);
     void showHome();
     void hideHome(void);
-
+    void backEvent();
+    void updateView();
 
 private:
     Ui::MainWindow* ui;
@@ -190,8 +193,7 @@ private:
     PointView* editedPointView;
     TopLayout* topLayout;
     QVector<PointView*> pathPointViews;
-
-    QWidget* lastWidget;
+    QList<QPair<QWidget*, QString>> lastWidgets;
     LeftMenuWidget* leftMenuWidget;
     PointsLeftWidget* pointsLeftWidget;
     SelectedRobotWidget* selectedRobotWidget;
