@@ -1,9 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <points>
     <group>
-        <name>Second group</name>
-    </group>
-    <group>
         <name>No group</name>
         <point>
             <name>Un point</name>
