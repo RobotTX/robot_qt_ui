@@ -64,7 +64,6 @@ private:
     PointView* home;
     bool temporary;
     std::shared_ptr<Point> oldHome;
-    MainWindow* mw ;
 
 protected:
     void showEvent(QShowEvent *event);

@@ -5,6 +5,7 @@ CmdRobotThread::CmdRobotThread(const QString newipAddress, const int newPort, co
     port = newPort;
     robotName = _robotName;
     connected = false;
+    commandAnswer = "";
 }
 
 void CmdRobotThread::run(){
@@ -12,8 +13,10 @@ void CmdRobotThread::run(){
 
     socketCmd = std::shared_ptr<QTcpSocket>(new QTcpSocket());
 
+    /// Connect the signal readyRead which tell us when data arrived to the function that treat them
+    connect(&(*socketCmd), SIGNAL(readyRead()), SLOT(readTcpData()) );
     /// Connect the signal hostFound which trigger when we find the host
-    //connect( socketCmd, SIGNAL(hostFound()), SLOT(hostFoundSlot()) );
+    //connect(&(*socketCmd), SIGNAL(hostFound()), SLOT(hostFoundSlot()) );
     /// Connect the signal connected which trigger when we are connected to the host
     connect(&(*socketCmd), SIGNAL(connected()), SLOT(connectedSlot()) );
     //connect( socketCmd, SIGNAL(error(QAbstractSocket::SocketError)), SLOT(errorSlot(QAbstractSocket::SocketError)) );
@@ -35,12 +38,20 @@ void CmdRobotThread::run(){
             return;
         }
     }
+
+    /// Throw an error if bytes are available but we can't read them
+    while (socketCmd->bytesAvailable() < (int)sizeof(quint16)) {
+        if (!socketCmd->waitForReadyRead()) {
+            qDebug() << "(Robot" << robotName << ") Ready read error : " << socketCmd->errorString();
+            socketCmd -> close();
+            exit();
+            return;
+        }
+    }
 }
 
 bool CmdRobotThread::sendCommand(QString cmd){
-    qDebug() << "fin";
-
-    qDebug() << "(Robot" << robotName ;//<< ") Command to send : " << cmd << "to " << ipAddress << "at port " << port;
+    qDebug() << "(Robot" << robotName << ") Command to send : " << cmd << "to " << ipAddress << "at port " << port;
 
 
     if(connected){
@@ -52,12 +63,30 @@ bool CmdRobotThread::sendCommand(QString cmd){
             qDebug() << "(Robot" << robotName << ") An error occured while sending data";
         } else {
             qDebug() << "(Robot" << robotName << ") " << nbDataSend << " bytes sent";
+
+            socketCmd->waitForReadyRead();
         }
         return true;
     } else {
         qDebug() << "(Robot" << robotName << ") Error : Robot at ip" << ipAddress << ": " << port << "not connected";
         return false;
     }
+}
+
+void CmdRobotThread::readTcpData(){
+    commandAnswer = socketCmd->readAll();
+    qDebug() << "(Robot" << robotName << ") readTcpData :" << commandAnswer;
+}
+
+QString CmdRobotThread::waitAnswer(){
+    qDebug() << "waiting for an answer";
+    int waitTime = 0;
+    while(!commandAnswer.compare("") && waitTime < 5){
+        sleep(1);
+        waitTime++;
+    }
+    qDebug() << "Got answer and waited for" << waitTime << "seconds";
+    return commandAnswer;
 }
 
 void CmdRobotThread::hostFoundSlot(){

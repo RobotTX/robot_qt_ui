@@ -1,24 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <points>
     <group>
-        <name>No group</name>
-        <point>
-            <name>Un point</name>
-            <x>150</x>
-            <y>175</y>
-            <displayed>1</displayed>
-        </point>
-        <point>
-            <name>Another point</name>
-            <x>150</x>
-            <y>200</y>
-            <displayed>0</displayed>
-        </point>
-        <point>
-            <name>A final point</name>
-            <x>150</x>
-            <y>225</y>
-            <displayed>1</displayed>
-        </point>
+        <name>No Name</name>
     </group>
 </points>
