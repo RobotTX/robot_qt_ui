@@ -18,7 +18,9 @@ SelectedRobotWidget::SelectedRobotWidget(QMainWindow* parent): QWidget(parent){
     layout = new QVBoxLayout(this);
 
     name = new QLabel();
-
+    name->setAlignment(Qt::AlignCenter);
+    name->setStyleSheet("font-weight: bold; text-decoration:underline");
+    layout->addWidget(name);
     /// Button which allow the user to scan the map from a robot
     scanBtn = new QPushButton(QIcon(":/icons/map.png"),"Scan a map", this);
     scanBtn->setCheckable(true);
@@ -107,6 +109,8 @@ void SelectedRobotWidget::setSelectedRobot(RobotView* const& _robotView){
     /// We update all the informations
     qDebug() << "select this robot";
     robotView = _robotView;
+
+    name->setText(robotView->getRobot()->getName());
 
     batteryLevel->setValue(robotView->getRobot()->getBatteryLevel());
     ipAddressLabel->setText("Ip : "+robotView->getRobot()->getIp());

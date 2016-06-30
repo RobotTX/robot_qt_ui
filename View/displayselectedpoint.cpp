@@ -23,6 +23,7 @@ DisplaySelectedPoint::DisplaySelectedPoint(QMainWindow *_parent, std::shared_ptr
 
     nameLayout = new QHBoxLayout();
 
+
     //backButton = new QPushButton(QIcon(":/icons/arrowLeft.png"), "Groups", this);
     //backButton->hide();
 
@@ -70,9 +71,11 @@ DisplaySelectedPoint::DisplaySelectedPoint(QMainWindow *_parent, std::shared_ptr
 
     nameEdit = new QLineEdit(this);
     nameEdit->setReadOnly(true);
-    nameEdit->setStyleSheet("* { background-color: rgba(255, 0, 0, 0); }");
+    nameEdit->setStyleSheet("* { background-color: rgba(255, 0, 0, 0); font-weight: bold; text-decoration:underline}");
     nameEdit->setAutoFillBackground(true);
     nameEdit->setFrame(false);
+    nameEdit->setAlignment(Qt::AlignCenter);
+   // nameEdit->setStyleSheet("");
 
     nameLayout->addWidget(nameEdit);
 

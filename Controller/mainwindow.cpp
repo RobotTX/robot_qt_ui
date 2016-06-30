@@ -434,6 +434,7 @@ void MainWindow::addPathSelecRobotBtnEvent(){
     pathCreationWidget->resetWidget();
     pathCreationWidget->setSelectedRobot(selectedRobot->getRobot());
     setGraphicItemsState(GraphicItemState::CREATING_PATH, true);
+    switchFocus(selectedRobot->getRobot()->getName(),pathCreationWidget);
 }
 
 
@@ -605,12 +606,13 @@ void MainWindow::setCheckedRobot(QAbstractButton* button, bool checked){
         robots->getRobotViewByName(button->text())->display(false);
     }
 }
-
+/*
 void MainWindow::backPathCreation(void){
     qDebug() << "backPathCreation called";
     hideAllWidgets();
     selectedRobotWidget->show();
 }
+*/
 
 void MainWindow::editTmpPathPointSlot(int id, Point* point, int nbWidget){
     qDebug() << "editTmpPathPointSlot called : " << id << point->getName() << nbWidget;
@@ -652,8 +654,7 @@ void MainWindow::pathSaved(bool execPath){
 
     hideAllWidgets();
     setMessageTop(TEXT_COLOR_SUCCESS, "Path saved");
-    selectedRobotWidget->setSelectedRobot(selectedRobot);
-    selectedRobotWidget->show();
+
     bottomLayout->updateRobot(robots->getRobotId(selectedRobot->getRobot()->getName()), selectedRobot);
 
     if(execPath){
@@ -669,6 +670,7 @@ void MainWindow::pathSaved(bool execPath){
         else
             qDebug() << "No robot to play this path";
     }
+    backEvent();
 }
 
 void MainWindow::addPathPoint(Point* point){
