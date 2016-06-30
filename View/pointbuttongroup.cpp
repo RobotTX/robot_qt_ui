@@ -8,9 +8,9 @@
 #include <QMouseEvent>
 #include <QDebug>
 
-PointButtonGroup::PointButtonGroup(const Points &_points, const unsigned int groupIndex
+PointButtonGroup::PointButtonGroup(const Points &_points, const int _groupIndex
                                    , QWidget* parent): QWidget(parent){
-
+    groupIndex = _groupIndex;
     buttonGroup = new QButtonGroup(this);
     layout = new QVBoxLayout(this);
     layout->setAlignment(Qt::AlignTop);
@@ -30,8 +30,9 @@ PointButtonGroup::PointButtonGroup(const Points &_points, const unsigned int gro
     }
 }
 
-void PointButtonGroup::setGroup(const Points &_points, const int groupIndex){
+void PointButtonGroup::setGroup(const Points &_points, const int _groupIndex){
     deleteButtons();
+    groupIndex = _groupIndex;
     std::shared_ptr<Group> currentGroup = _points.getGroups().at(groupIndex);
     for(int j = 0; j < currentGroup->getPoints().size(); j++){
         std::shared_ptr<Point> currentPoint = currentGroup->getPoints().at(j);

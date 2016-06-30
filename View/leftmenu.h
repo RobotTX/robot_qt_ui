@@ -52,6 +52,10 @@ public:
 public:
 
     void updateGroupDisplayed(const Points& _points, const int groupIndex);
+    void disableButtons();
+
+private slots:
+    void enableButtons(int index);
 
 private:
     QVBoxLayout* leftLayout;

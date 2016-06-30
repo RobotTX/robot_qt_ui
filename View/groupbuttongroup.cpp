@@ -26,10 +26,14 @@ GroupButtonGroup::GroupButtonGroup(const Points &_points, QWidget* _parent):QWid
         buttonGroup->addButton(groupButton, i);
         layout->addWidget(groupButton);
         groupButton->setIconSize(BUTTON_SIZE);
-        if(currentGroup->isDisplayed())
+        if(currentGroup->isDisplayed()){
+
             groupButton->setIcon(QIcon(":/icons/folder_tick.png"));
-        else
+        }
+        else{
+
             groupButton->setIcon(QIcon(":/icons/folder.png"));
+        }
     }
 
     /// for the last group we just want to show the points and not "no group"

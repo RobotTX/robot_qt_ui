@@ -38,8 +38,8 @@
 #include <QAbstractButton>
 
 //#define XML_PATH "/home/m-a/Documents/QtProject/gobot-software/points.xml"
-//#define XML_PATH "/home/joan/Qt/QtProjects/gobot-software/points.xml"
-#define XML_PATH "/Users/fannylarradet/Desktop/GTRobots/gobot-software/points.xml"
+#define XML_PATH "/home/joan/Qt/QtProjects/gobot-software/points.xml"
+//#define XML_PATH "/Users/fannylarradet/Desktop/GTRobots/gobot-software/points.xml"
 
 /**
  * @brief MainWindow::MainWindow
@@ -65,7 +65,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     scanningRobot = NULL;
     selectedPoint = NULL;
     editedPointView = NULL;
-    resetFocus();
 
     //create the graphic item of the map
     QPixmap pixmap = QPixmap::fromImage(map->getMapImage());
@@ -94,6 +93,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     graphicsView->setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding));
 
     leftMenu = new LeftMenu(this, points, robots, pointViews);
+    resetFocus();
     initializeLeftMenu();
     bottom->addWidget(leftMenu);
 
@@ -1326,10 +1326,12 @@ void MainWindow::updateView()
 {
     if (leftMenu != NULL)
     {
-        if(lastWidgets.size() <= 1)
-             leftMenu->hideBackButton();
-        else
+        if(lastWidgets.size() <= 1){
+            leftMenu->hideBackButton();
+        }
+        else {
             leftMenu->showBackButton(lastWidgets.last().second);
+        }
     }
 }
 
@@ -1506,6 +1508,7 @@ void MainWindow::askForDeletePointConfirmation(int index){
     switch(ret){
         case QMessageBox::No :
             qDebug() << "clicked no";
+            leftMenu->disableButtons();
         break;
         case QMessageBox::Ok : {
         /// we first check that our point is not the home of a robot
@@ -1553,6 +1556,7 @@ void MainWindow::askForDeletePointConfirmation(int index){
                 qDebug() << "Sorry this point is the home of a robot and therefore cannot be removed";
             }
         }
+        leftMenu->disableButtons();
         break;
         default:
         /// should never be here
@@ -1986,8 +1990,9 @@ void MainWindow::pointInfoEvent(void){
     pointsLeftWidget->getMinusButton()->setChecked(false);
     pointsLeftWidget->getEditButton()->setChecked(false);
     pointsLeftWidget->getMapButton()->setChecked(false);
-
-    if(pointsLeftWidget->getEyeButton()->isChecked()){
+    /// resets the group menu
+    leftMenu->disableButtons();
+    if(pointsLeftWidget->getEyeButton()->isChecked()){ 
         pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->setExclusive(true);
         int groupIndex = pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->checkedId();
         qDebug() << " my group index guys " << groupIndex;
@@ -2270,6 +2275,8 @@ void MainWindow::displayPointFromGroupMenu(){
             parserPoints.save(points);
             /// if the entire group was displayed it is not the case anymore
             pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(pointsLeftWidget->getIndexLastGroupClicked())->setIcon(QIcon(":/icons/folder.png"));
+            /// changes the map button message
+            leftMenu->getDisplaySelectedGroup()->getMapButton()->setToolTip("Click to display the selected point on the map");
         } else {
             /// shows the point on the map
             pointViews->getPointViewFromPoint(*(points.getGroups().at(pointsLeftWidget->getIndexLastGroupClicked())->getPoints().at(checkedId)))->show();
@@ -2283,6 +2290,9 @@ void MainWindow::displayPointFromGroupMenu(){
             /// we check whether or not the entire group is displayed and update the points left widget accordingly by adding a tick Icon or not
             if(points.getGroups().at(pointsLeftWidget->getIndexLastGroupClicked())->isDisplayed())
                 pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(pointsLeftWidget->getIndexLastGroupClicked())->setIcon(QIcon(":/icons/folder_tick.png"));
+            /// changes the map button message
+            leftMenu->getDisplaySelectedGroup()->getMapButton()->setToolTip("Click to hide the selected point on the map");
+
         }
     } else {
         /// should never be here
@@ -2393,12 +2403,22 @@ void MainWindow::reestablishConnectionsGroups(){
         connect(button, SIGNAL(doubleClick(int)), this, SLOT(doubleClickOnGroup(int)));
 }
 
+/**
+ * @brief MainWindow::reestablishConnections
+ * to reestablish the double clicks after groups are updated
+ */
 void MainWindow::reestablishConnectionsPoints(){
     qDebug() << "connections for points requested";
     foreach(QAbstractButton* button, leftMenu->getDisplaySelectedGroup()->getPointButtonGroup()->getButtonGroup()->buttons())
         connect(button, SIGNAL(doubleClick(int)), this, SLOT(doubleClickOnPoint(int)));
 }
 
+/**
+ * @brief MainWindow::openEmptyGroupMessage
+ * @param groupName
+ * @return int
+ * To ask a user if he wants to delete a group after deleting its last point
+ */
 int MainWindow::openEmptyGroupMessage(const QString groupName){
     QMessageBox msgBox;
     msgBox.setText("The group " + groupName + " is empty. Do you want to delete this group permanently ?");
@@ -2426,9 +2446,6 @@ void MainWindow::setLastWidgets(QList<QPair<QWidget*,QString>> lw)
 {
      lastWidgets = lw;
 }
-
-
-
 
 void MainWindow::backEvent()
 {
@@ -2460,6 +2477,7 @@ void MainWindow::backEvent()
     {
         qDebug() << lastWidgets.at(i).second;
     }
+
 
 }
 
