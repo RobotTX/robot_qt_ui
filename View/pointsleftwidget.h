@@ -43,6 +43,8 @@ public:
     QPushButton* getEditButton(void) const { return editButton; }
     QPushButton* getPlusButton(void) const { return plusButton; }
     QPushButton* getEyeButton(void) const { return eyeButton; }
+    QPushButton* getSaveButton(void) const { return saveButton; }
+    QPushButton* getCancelButton(void) const { return cancelButton; }
 
     GroupButtonGroup* getGroupButtonGroup(void) const { return groupButtonGroup; }
 
@@ -63,6 +65,7 @@ private:
     QVBoxLayout* layout;
     QHBoxLayout* eyeMapLayout;
     QHBoxLayout* grid;
+    QHBoxLayout* creationLayout;
 
     GroupButtonGroup* groupButtonGroup;
 
@@ -71,6 +74,9 @@ private:
     QPushButton* plusButton;
     QPushButton* editButton;
     QPushButton* eyeButton;
+    QPushButton* saveButton;
+    QPushButton* cancelButton;
+
 
     QLabel* groupNameLabel;
     QLineEdit* groupNameEdit;

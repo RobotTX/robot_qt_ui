@@ -37,6 +37,7 @@ PointsLeftWidget::PointsLeftWidget(QMainWindow* _parent, std::shared_ptr<Points>
     plusButton = new QPushButton(QIcon(":/icons/plus.png"),"", this);
     plusButton->setIconSize(_parent->size()/10);
     plusButton->setCheckable(true);
+    plusButton->setToolTip("Click here to add a new group");
 
     minusButton = new QPushButton(QIcon(":/icons/minus.png"),"", this);
     minusButton->setIconSize(_parent->size()/10);
@@ -48,6 +49,9 @@ PointsLeftWidget::PointsLeftWidget(QMainWindow* _parent, std::shared_ptr<Points>
     editButton = new QPushButton(QIcon(":/icons/edit.png"),"", this);
     editButton->setIconSize(_parent->size()/10);
     editButton->setCheckable(true);
+    /// to force the user to choose a group or point first
+    editButton->setEnabled(false);
+    editButton->setToolTip("Select a group or a point and click here to modify it");
 
     grid = new QHBoxLayout();
     grid->addWidget(plusButton);
@@ -93,18 +97,15 @@ PointsLeftWidget::PointsLeftWidget(QMainWindow* _parent, std::shared_ptr<Points>
 
     layout->addWidget(scrollArea);
 
-    /*
-    /// for the minus button
-    connect(groupButtonGroup->getButtonGroup(), SIGNAL(buttonClicked(int)), parent, SLOT(removeGroupEvent(int)));
-    /// for the edit button
-    connect(groupButtonGroup->getButtonGroup(), SIGNAL(buttonClicked(int)), parent, SLOT(modifyGroupEvent(int)));
-    /// for the map button
-    connect(groupButtonGroup->getButtonGroup(), SIGNAL(buttonToggled(int, bool)), parent, SLOT(displayGroupEvent(int, bool)));
-    /// for the eye button
-    connect(groupButtonGroup->getButtonGroup(), SIGNAL(buttonClicked(int)), parent, SLOT(pointInfoEvent()));
-    /// for the back button
-    connect(backToGroupsButton, SIGNAL(clicked()), parent, SLOT(backToGroupsButtonEvent()));
-    */
+    creationLayout = new QHBoxLayout();
+    saveButton = new QPushButton("Save", this);
+    saveButton->hide();
+    cancelButton = new QPushButton("Cancel", this);
+    cancelButton->hide();
+    creationLayout->addWidget(cancelButton);
+    creationLayout->addWidget(saveButton);
+
+    layout->addLayout(creationLayout);
 
     connect(plusButton, SIGNAL(clicked(bool)), parent, SLOT(plusGroupBtnEvent()));
     connect(minusButton, SIGNAL(clicked(bool)), parent, SLOT(minusGroupBtnEvent()));
@@ -148,32 +149,45 @@ void PointsLeftWidget::enableButtons(int index){
     if(index < points->count()-1){
         if(points->getGroups().at(index)->isDisplayed()){
             mapButton->setChecked(true);
-            mapButton->setToolTip("Click here to hide the selected group on the map");
+            mapButton->setToolTip("Click to hide the selected group on the map");
         } else {
             mapButton->setChecked(false);
-            mapButton->setToolTip("Click here to display the selected group on the map");
+            mapButton->setToolTip("Click to display the selected group on the map");
         }
     } else {
         if(points->getDefaultGroup()->getPoints().at(index-points->count()+1)->isDisplayed()){
             mapButton->setChecked(true);
-            mapButton->setToolTip("Click here to hide the selected point on the map");
+            mapButton->setToolTip("Click to hide the selected point on the map");
         } else {
             mapButton->setChecked(false);
-            mapButton->setToolTip("Click here to display the selected point on the map");
+            mapButton->setToolTip("Click to display the selected point on the map");
         }
     }
+    /// enables the edit button
+    editButton->setEnabled(true);
+    if(index < points->count()-1)
+        editButton->setToolTip("Click to modify the selected group");
+    else
+        editButton->setToolTip("click to modify the selected point");
 }
 
 void PointsLeftWidget::disableButtons(void){
     /// resets the minus button
     minusButton->setEnabled(false);
     minusButton->setToolTip("Select a group or a point and click here to remove it");
+
     /// resets the eye button
     eyeButton->setEnabled(false);
     eyeButton->setToolTip("Select a group or a point and click here to display its information");
+
     /// resets the map button
     mapButton->setEnabled(false);
     mapButton->setToolTip("Select a group or a point and click here to display or hide it on the map");
-    /// to reset it when we go back to the previous menu and come back to this one
+    /// resets when we go back to the previous menu and come back to this one
     mapButton->setCheckable(false);
+
+    /// resets the edit button
+    editButton->setEnabled(false);
+    editButton->setToolTip("Select a group or a point and click here to modify it");
+    editButton->setChecked(false);
 }

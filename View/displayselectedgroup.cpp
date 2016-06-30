@@ -49,6 +49,7 @@ DisplaySelectedGroup::DisplaySelectedGroup(QMainWindow *parent, std::shared_ptr<
 
     mapButton = new QPushButton(QIcon(":/icons/map.png"),"", this);
     mapButton->setIconSize(parent->size()/10);
+    mapButton->setCheckable(true);
     /// to force the user to choose a point first
     mapButton->setEnabled(false);
     mapButton->setToolTip("Select a point and click here to display or hide it on the map");

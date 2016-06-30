@@ -63,7 +63,8 @@ HEADERS += Controller/cmdrobotthread.h \
            View/spacewidget.h \
            View/toplayout.h \
            View/verticalscrollarea.h \
-    View/doubleclickablebutton.h
+    View/doubleclickablebutton.h \
+    Model/origin.h
 
 FORMS += Controller/mainwindow.ui
 
