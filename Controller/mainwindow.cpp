@@ -65,7 +65,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     scanningRobot = NULL;
     selectedPoint = NULL;
     editedPointView = NULL;
-    resetFocus();
 
     //create the graphic item of the map
     QPixmap pixmap = QPixmap::fromImage(map->getMapImage());
@@ -94,6 +93,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     graphicsView->setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding));
 
     leftMenu = new LeftMenu(this, points, robots, pointViews);
+    resetFocus();
     initializeLeftMenu();
     bottom->addWidget(leftMenu);
 
@@ -1324,11 +1324,9 @@ void MainWindow::updateView()
     if (leftMenu != NULL)
     {
         if(lastWidgets.size() <= 1){
-            qDebug() << "hiding back button in updateview";
             leftMenu->hideBackButton();
         }
         else {
-            qDebug() << "showing back button in updateview";
             leftMenu->showBackButton(lastWidgets.last().second);
         }
     }
@@ -1507,6 +1505,7 @@ void MainWindow::askForDeletePointConfirmation(int index){
     switch(ret){
         case QMessageBox::No :
             qDebug() << "clicked no";
+            leftMenu->disableButtons();
         break;
         case QMessageBox::Ok : {
         /// we first check that our point is not the home of a robot
@@ -1553,6 +1552,7 @@ void MainWindow::askForDeletePointConfirmation(int index){
                 qDebug() << "Sorry this point is the home of a robot and therefore cannot be removed";
             }
         }
+        leftMenu->disableButtons();
         break;
         default:
         /// should never be here
@@ -2387,12 +2387,22 @@ void MainWindow::reestablishConnectionsGroups(){
         connect(button, SIGNAL(doubleClick(int)), this, SLOT(doubleClickOnGroup(int)));
 }
 
+/**
+ * @brief MainWindow::reestablishConnections
+ * to reestablish the double clicks after groups are updated
+ */
 void MainWindow::reestablishConnectionsPoints(){
     qDebug() << "connections for points requested";
     foreach(QAbstractButton* button, leftMenu->getDisplaySelectedGroup()->getPointButtonGroup()->getButtonGroup()->buttons())
         connect(button, SIGNAL(doubleClick(int)), this, SLOT(doubleClickOnPoint(int)));
 }
 
+/**
+ * @brief MainWindow::openEmptyGroupMessage
+ * @param groupName
+ * @return int
+ * To ask a user if he wants to delete a group after deleting its last point
+ */
 int MainWindow::openEmptyGroupMessage(const QString groupName){
     QMessageBox msgBox;
     msgBox.setText("The group " + groupName + " is empty. Do you want to delete this group permanently ?");
@@ -2421,9 +2431,6 @@ void MainWindow::setLastWidgets(QList<QPair<QWidget*,QString>> lw)
      lastWidgets = lw;
 }
 
-
-
-
 void MainWindow::backEvent()
 {
     qDebug() << "back event called";
@@ -2446,8 +2453,6 @@ void MainWindow::backEvent()
            resetFocus();
         leftMenu->hide();
     }
-
-
 }
 
 
