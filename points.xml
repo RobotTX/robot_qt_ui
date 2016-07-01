@@ -1,10 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <points>
     <group>
-        <name></name>
-    </group>
-    <group>
         <name>first group</name>
+        <point>
+            <name>A</name>
+            <x>63</x>
+            <y>66</y>
+            <displayed>1</displayed>
+        </point>
         <point>
             <name>Ma point</name>
             <x>75</x>
