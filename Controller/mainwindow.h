@@ -77,7 +77,7 @@ public:
     void setLastWidgets(QList<QPair<QWidget*,QString>>);
     void resetFocus();
     void switchFocus(QString name, QWidget* widget);
-    void delay() const;
+    void delay(const int ms) const;
 
 signals:
     void sendCommand(QString);

@@ -2317,7 +2317,7 @@ void MainWindow::displayPointInfoFromGroupMenu(void){
  */
 void MainWindow::updatePoint(void){
     setMessageTop(TEXT_COLOR_SUCCESS, "Your point has been modified");
-    delay();
+    delay(1500);
     setMessageTop(TEXT_COLOR_NORMAL, "");
 
     qDebug() << "update point event called";
@@ -2792,9 +2792,9 @@ void MainWindow::clearNewMap(){
     mapPixmapItem->setPermanentPoints(points);
 }
 
-void MainWindow::delay() const
+void MainWindow::delay(const int ms) const
 {
-    QTime dieTime= QTime::currentTime().addSecs(1);
+    QTime dieTime= QTime::currentTime().addMSecs(ms);
     while (QTime::currentTime() < dieTime)
         QCoreApplication::processEvents(QEventLoop::AllEvents, 100);
 }

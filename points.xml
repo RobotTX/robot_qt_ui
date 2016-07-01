@@ -4,14 +4,14 @@
         <name>first group</name>
         <point>
             <name>A</name>
-            <x>35</x>
-            <y>70</y>
-            <displayed>1</displayed>
+            <x>50</x>
+            <y>50</y>
+            <displayed>0</displayed>
         </point>
         <point>
             <name>Ma point</name>
-            <x>56</x>
-            <y>141</y>
+            <x>18</x>
+            <y>8</y>
             <displayed>1</displayed>
         </point>
         <point>
@@ -52,8 +52,8 @@
         </point>
         <point>
             <name>A final point</name>
-            <x>198</x>
-            <y>67</y>
+            <x>150</x>
+            <y>225</y>
             <displayed>1</displayed>
         </point>
     </group>
