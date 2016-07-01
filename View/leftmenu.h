@@ -30,7 +30,7 @@ class MainWindow;
 class LeftMenu: public QWidget{
     Q_OBJECT
 public:
-    LeftMenu(MainWindow* _parent, const std::shared_ptr<Points> &points, std::shared_ptr<Robots> const& robots, PointsView* const& pointViews);
+    LeftMenu(MainWindow* _parent, const std::shared_ptr<Points> &_points, std::shared_ptr<Robots> const& robots, PointsView* const& pointViews);
     QWidget* getLastWidget() const {return lastWidget;}
 
     /// Getters
@@ -47,7 +47,8 @@ public:
     PathCreationWidget* getPathCreationWidget(void) const { return pathCreationWidget; }
     void showBackButton(QString name);
     void hideBackButton();
-    QPushButton* getReturnButton(){ return returnButton;}
+    QPushButton* getReturnButton(void) const { return returnButton; }
+    QPushButton* getCloseButton(void) const { return closeBtn; }
 
 public:
     void updateGroupDisplayed(const std::shared_ptr<Points> &_points, const int groupIndex);
@@ -58,6 +59,7 @@ private slots:
     void removePoint();
 
 private:
+    QPushButton* closeBtn;
     QVBoxLayout* leftLayout;
     QWidget* lastWidget;
     LeftMenuWidget* leftMenuWidget;
@@ -73,6 +75,7 @@ private:
     PathCreationWidget* pathCreationWidget;
     QPushButton * returnButton;
     MainWindow* parent;
+    std::shared_ptr<Points> points;
 
 };
 

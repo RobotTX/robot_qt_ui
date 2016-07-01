@@ -37,6 +37,9 @@ public:
     QPushButton* getPlusButton(void) const { return plusButton; }
     void updateGroupBox(const Points &_points);
 
+protected:
+    void keyPressEvent(QKeyEvent* event);
+
 signals:
     void pointSaved(int, double, double, QString);
 

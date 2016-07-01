@@ -106,3 +106,8 @@ void GroupButtonGroup::uncheck(void){
 void GroupButtonGroup::mouseDoubleClickEvent(QMouseEvent *event){
     emit doubleClick(buttonGroup->checkedId());
 }
+
+void GroupButtonGroup::setEnabled(const bool enable){
+    foreach(QAbstractButton* button, buttonGroup->buttons())
+        button->setEnabled(enable);
+}

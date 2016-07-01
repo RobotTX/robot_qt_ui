@@ -24,6 +24,7 @@ public:
     void deleteButtons(void);
     void update(const Points& _points);
     void uncheck(void);
+    void setEnabled(const bool enable);
 
 protected:
     void mouseDoubleClickEvent(QMouseEvent *event);

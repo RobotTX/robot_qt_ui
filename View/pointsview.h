@@ -30,6 +30,7 @@ public:
     PointView* getPointViewFromPoint(const Point& point);
     void addPointView( PointView* const&_pointView);
     void setNormalPixmaps(void);
+    void addGroupViewFront(void);
 
 private:
     std::vector<GroupView*> groupViews;

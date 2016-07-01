@@ -1,7 +1,6 @@
 #ifndef POINTS_H
 #define POINTS_H
 
-class Group;
 class Point;
 class QDataStream;
 
@@ -9,6 +8,7 @@ class QDataStream;
 #include <QString>
 #include <memory>
 #include <iostream>
+#include "Model/group.h"
 
 /**
  * @brief The Points class
@@ -88,6 +88,8 @@ public:
     std::pair<int, int> findPointIndexes(const QString name) const;
 
     std::shared_ptr<Group> getDefaultGroup(void) const { return groups.at(groups.size()-1); }
+
+    void addGroupFront(const QString name) { groups.push_front(std::shared_ptr<Group>(new Group(name))); }
 
     void clear();
 

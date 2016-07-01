@@ -40,11 +40,6 @@
 #include <QStringList>
 
 
-#define XML_PATH "/home/m-a/Documents/QtProject/gobot-software/points.xml"
-//#define XML_PATH "/home/joan/Qt/QtProjects/gobot-software/points.xml"
-//#define XML_PATH "/Users/fannylarradet/Desktop/GTRobots/gobot-software/points.xml"
-
-
 /**
  * @brief MainWindow::MainWindow
  * @param parent
@@ -144,6 +139,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
     /// to connect the buttons in the group menu so they can be double clicked after they were updated
     connect(leftMenu->getDisplaySelectedGroup()->getPointButtonGroup(), SIGNAL(updateConnectionsRequest()), this, SLOT(reestablishConnectionsPoints()));
+
+    /// to create a new group, the signal is sent by pointsLeftWidget
+    connect(pointsLeftWidget, SIGNAL(newGroup(QString)), this, SLOT(createGroup(QString)));
 
     mainLayout->addLayout(bottom);
     setCentralWidget(mainWidget);
@@ -1315,6 +1313,11 @@ void MainWindow::backGroupBtnEvent(){
 
 void MainWindow::plusGroupBtnEvent(){
     qDebug() << "plusGroupBtnEvent called";
+    pointsLeftWidget->getGroupButtonGroup()->uncheck();
+    /// resets the name edit field
+    pointsLeftWidget->getGroupNameEdit()->setText("");
+    /// stops a user from creating a new group with no name
+    pointsLeftWidget->getSaveButton()->setEnabled(false);
     /// uncheck and disable the buttons
     pointsLeftWidget->getPlusButton()->setChecked(false);
     pointsLeftWidget->getMinusButton()->setChecked(false);
@@ -1329,6 +1332,11 @@ void MainWindow::plusGroupBtnEvent(){
     pointsLeftWidget->getMapButton()->setEnabled(false);
 
     pointsLeftWidget->getPlusButton()->setToolTip("Enter a name for your group and click \"save\" or click \"cancel\" to cancel");
+
+    /// to prevent the user from clicking on the buttons
+    pointsLeftWidget->getGroupButtonGroup()->setEnabled(false);
+    leftMenu->getReturnButton()->setEnabled(false);
+    leftMenu->getCloseButton()->setEnabled(false);
 
     /// here we allow a user to create a new group
     pointsLeftWidget->getGroupNameEdit()->show();
@@ -1372,7 +1380,6 @@ void MainWindow::minusGroupBtnEvent(){
  * called to edit an existing point
  */
 void MainWindow::editPointButtonEvent(bool checked){
-
     qDebug() << "editPointButtonEvent called";
     leftMenu->getReturnButton()->setEnabled(false);
     leftMenu->getReturnButton()->setToolTip("Please save or discard your modifications before navigating the menu again.");
@@ -1589,7 +1596,7 @@ void MainWindow::cancelEditSelecPointBtnEvent(){
  */
 void MainWindow::pointSavedEvent(int index, double x, double y, QString name){
 
-    qDebug() << "pointSavedEvent called";
+    qDebug() << "pointSavedEvent called" << index;
 
     /// resets the status of the plus button
     editSelectedPointWidget->getPlusButton()->setEnabled(true);
@@ -1601,11 +1608,13 @@ void MainWindow::pointSavedEvent(int index, double x, double y, QString name){
     /// default group
     if(index == 0)
         points->getGroups().at(points->count()-1)->addPoint(newPoint);
+
     else
         points->getGroups().at(index-1)->addPoint(newPoint);
 
     /// creates a new point on the map
     PointView* newPointView = new PointView(newPoint, mapPixmapItem);
+
     mapPixmapItem->addPointView(newPointView);
 
     /// saves it to the file
@@ -2540,6 +2549,32 @@ int MainWindow::openEmptyGroupMessage(const QString groupName){
     msgBox.setDefaultButton(QMessageBox::No);
     return msgBox.exec();
 }
+
+void MainWindow::createGroup(QString name){
+    qDebug() << "createGroup called" << name;
+    /// updates the model
+    points->addGroupFront(name);
+    mapPixmapItem->getPermanentPoints()->addGroupViewFront();
+    /// updates the file
+    XMLParser parser(XML_PATH, mapPixmapItem);
+    parser.save(*points);
+    /// updates list of groups in menu
+    pointsLeftWidget->updateGroupButtonGroup(*points);
+    /// updates the comboBox to make this new group available when a user creates a point
+    editSelectedPointWidget->updateGroupBox(*points);
+    /// enables the return button again
+    leftMenu->getReturnButton()->setEnabled(true);
+    /// hides everything that's related to the creation of a group
+    pointsLeftWidget->getCancelButton()->hide();
+    pointsLeftWidget->getSaveButton()->hide();
+    pointsLeftWidget->getGroupNameEdit()->hide();
+    pointsLeftWidget->getGroupNameLabel()->hide();
+    /// enables the plus button again
+    pointsLeftWidget->disableButtons();
+    pointsLeftWidget->getPlusButton()->setEnabled(true);
+    pointsLeftWidget->getPlusButton()->setToolTip("Click here to add a new group");
+}
+
 
 /**********************************************************************************************************************************/
 
