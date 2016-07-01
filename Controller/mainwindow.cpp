@@ -1863,6 +1863,10 @@ void MainWindow::askForDeleteGroupConfirmation(int index){
 
 void MainWindow::displayPointEvent(PointView* pointView){
     qDebug() << "displayPointEvent";
+    /// resets the color of the previous selected point
+    if(leftMenu->getDisplaySelectedPoint()->getPointView())
+        leftMenu->getDisplaySelectedPoint()->getPointView()->setPixmap(PointView::PixmapType::NORMAL);
+
     leftMenu->getDisplaySelectedPoint()->getActionButtons()->getMapButton()->setChecked(true);
     leftMenu->getDisplaySelectedPoint()->setOrigin(DisplaySelectedPoint::MAP);
     leftMenu->getDisplaySelectedPoint()->setPointView(pointView);
@@ -2388,6 +2392,7 @@ void MainWindow::updatePoint(void){
  * called when a user discard the changes made about a point
  */
 void MainWindow::cancelEvent(void){
+
     /// reset the color of the pointView
     leftMenu->getDisplaySelectedPoint()->getPointView()->setPixmap(PointView::PixmapType::NORMAL);
 
@@ -2427,7 +2432,9 @@ void MainWindow::cancelEvent(void){
     leftMenu->getReturnButton()->setEnabled(true);
     leftMenu->getReturnButton()->setToolTip("");
 
-
+    setMessageTop(TEXT_COLOR_WARNING, "Your point has not been modified");
+    delay(1500);
+    setMessageTop(TEXT_COLOR_NORMAL, "");
 }
 
 /**
