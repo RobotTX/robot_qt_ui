@@ -1352,7 +1352,7 @@ void MainWindow::plusGroupBtnEvent(){
     /// uncheck and disable the buttons
     pointsLeftWidget->getActionButtons()->uncheckAll();
 
-    pointsLeftWidget->getActionButtons()->EnableAll();
+    pointsLeftWidget->getActionButtons()->enableAll();
 
     pointsLeftWidget->getActionButtons()->getPlusButton()->setToolTip("Enter a name for your group and click \"save\" or click \"cancel\" to cancel");
 
@@ -1521,6 +1521,7 @@ void MainWindow::editGroupBtnEvent(bool checked){
                                                 posButton.y()-pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(checkedId)->height()/2);
                                                 */
         pointsLeftWidget->getModifyEdit()->setFixedWidth(pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(checkedId)->width()*0.85);
+
         qDebug() << pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(checkedId)->mapTo(
                         pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(checkedId)->window(), pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(checkedId)->pos());
         qDebug() << pointsLeftWidget->getModifyEdit()->pos().x() << pointsLeftWidget->getModifyEdit()->pos().y();
@@ -2275,6 +2276,7 @@ void MainWindow::editPointFromGroupMenu(void){
             leftMenu->getDisplaySelectedPoint()->getSaveButton()->show();
             leftMenu->getDisplaySelectedPoint()->show();
             leftMenu->getDisplaySelectedGroup()->hide();
+            switchFocus(leftMenu->getDisplaySelectedPoint()->getPoint()->getName(),leftMenu->getDisplaySelectedPoint());
         }
     } else qDebug() << "no group " << leftMenu->getDisplaySelectedGroup()->getNameLabel()->text() ;
 }

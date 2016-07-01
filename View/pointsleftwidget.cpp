@@ -31,7 +31,7 @@ PointsLeftWidget::PointsLeftWidget(QMainWindow* _parent, std::shared_ptr<Points>
     modifyEdit = new QLineEdit(_parent);
     modifyEdit->hide();
 
-   // scrollArea = new VerticalScrollArea(this);
+    scrollArea = new VerticalScrollArea(this);
 
     groupWindow = new GroupEditWindow(this);
     groupWindow->getEdit()->move(200, 200);
@@ -43,7 +43,7 @@ PointsLeftWidget::PointsLeftWidget(QMainWindow* _parent, std::shared_ptr<Points>
     layout = new QVBoxLayout(this);
 
     actionButtons = new TopLeftMenu(this);
-    actionButtons->allCheckable();
+    actionButtons->setAllCheckable();
 
     actionButtons->getMapButton()->setEnabled(false);
     actionButtons->getEditButton()->setEnabled(false);
@@ -63,9 +63,8 @@ PointsLeftWidget::PointsLeftWidget(QMainWindow* _parent, std::shared_ptr<Points>
 
     groupButtonGroup = new GroupButtonGroup(*_points, this);
 
-   // scrollArea->setWidget(groupButtonGroup);
-
-    layout->addWidget(groupButtonGroup);
+    scrollArea->setWidget(groupButtonGroup);
+    layout->addWidget(scrollArea);
 
     creationLayout = new QHBoxLayout();
     saveButton = new QPushButton("Save", this);

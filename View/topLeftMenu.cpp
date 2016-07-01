@@ -81,7 +81,7 @@ void TopLeftMenu::disableAll()
      eyeButton->setEnabled(false);
      mapButton->setEnabled(false);
 }
-void TopLeftMenu::EnableAll()
+void TopLeftMenu::enableAll()
 {
      plusButton->setEnabled(true);
      minusButton->setEnabled(true);
@@ -109,7 +109,7 @@ void TopLeftMenu::checkAll()
 }
 
 
-void TopLeftMenu::allCheckable()
+void TopLeftMenu::setAllCheckable()
 {
     plusButton->setCheckable(true);
     minusButton->setCheckable(true);
@@ -119,7 +119,7 @@ void TopLeftMenu::allCheckable()
 }
 
 
-void TopLeftMenu::allNonCheckable()
+void TopLeftMenu::setAllNonCheckable()
 {
     plusButton->setCheckable(false);
     minusButton->setCheckable(false);

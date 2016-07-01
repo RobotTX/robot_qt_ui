@@ -30,10 +30,10 @@
 LeftMenu::LeftMenu(MainWindow* _parent, std::shared_ptr<Points> const& _points, const std::shared_ptr<Robots> &robots, PointsView * const &pointViews):
     QWidget(_parent), parent(_parent), points(_points)
 {
-    QScrollArea * scroll = new VerticalScrollArea(_parent);
+   // QScrollArea * scroll = new VerticalScrollArea(_parent);
 
     QVBoxLayout * leftLayout  = new QVBoxLayout(this);
-    QWidget* inWidget  = new QWidget();
+  //  QWidget* inWidget  = new QWidget();
     QVBoxLayout * globalLayout  = new QVBoxLayout(this);
     QHBoxLayout * topLayout  = new QHBoxLayout(this);
 
@@ -141,9 +141,9 @@ LeftMenu::LeftMenu(MainWindow* _parent, std::shared_ptr<Points> const& _points, 
         }
     }
 
-    inWidget->setLayout(leftLayout);
-    scroll->setWidget(inWidget);
-    globalLayout->addWidget(scroll);
+   // inWidget->setLayout(leftLayout);
+   // scroll->setWidget(inWidget);
+    globalLayout->addLayout(leftLayout);
     globalLayout->setContentsMargins(0, 0, 0, 0);
     setLayout(globalLayout);
 }
