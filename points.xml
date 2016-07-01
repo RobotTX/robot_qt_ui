@@ -24,7 +24,7 @@
     <group>
         <name>Second group</name>
         <point>
-            <name>Fanny</name>
+            <name>Home_Roboto</name>
             <x>125</x>
             <y>125</y>
             <displayed>1</displayed>
@@ -39,7 +39,7 @@
     <group>
         <name>No group</name>
         <point>
-            <name>Un point</name>
+            <name>Home_Roboty</name>
             <x>150</x>
             <y>175</y>
             <displayed>1</displayed>

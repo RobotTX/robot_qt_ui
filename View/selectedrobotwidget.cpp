@@ -136,7 +136,7 @@ void SelectedRobotWidget::setSelectedRobot(RobotView* const& _robotView){
     } else {
         homeBtn->setText("Add home");
         homeBtn->setFlat(false);
-        homeBtn->setStyleSheet ("QPushButton[enabled=\"false\"] {color: lightgrey;}");
+        //homeBtn->setStyleSheet ("QPushButton[enabled=\"false\"] {color: lightgrey;}");
         homeBtn->setEnabled(true);
         goHome->hide();
     }

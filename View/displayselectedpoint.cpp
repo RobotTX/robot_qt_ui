@@ -65,6 +65,25 @@ DisplaySelectedPoint::DisplaySelectedPoint(QMainWindow *_parent, std::shared_ptr
 
     layout->addLayout(editLayout);
 
+
+    homeWidget = new QWidget(this);
+    QVBoxLayout* homeLayout = new QVBoxLayout(homeWidget);
+
+    SpaceWidget* spaceWidget2 = new SpaceWidget(SpaceWidget::SpaceOrientation::HORIZONTAL, this);
+    homeLayout->addWidget(spaceWidget2);
+
+    QLabel* homeLabel = new QLabel("This point is the home for the robot :", this);
+    homeLabel->setWordWrap(true);
+    homeLayout->addWidget(homeLabel);
+
+    robotBtn = new QPushButton("", this);
+    homeLayout->addWidget(robotBtn);
+
+    homeLayout->setContentsMargins(0, 0, 0, 0);
+    homeWidget->hide();
+
+    layout->addWidget(homeWidget);
+
     /// to check that a point that's being edited does not get a new name that's already used in the database
 
     connect(nameEdit, SIGNAL(textEdited(QString)), this, SLOT(checkPointName(QString)));
@@ -126,6 +145,11 @@ void DisplaySelectedPoint::resetWidget(){
         pointView->setPos(static_cast<qreal>(pointView->getPoint()->getPosition().getX()), static_cast<qreal>(pointView->getPoint()->getPosition().getY()));
         /// reset its name in the hover on the map
         nameEdit->setText(pointView->getPoint()->getName());
+        if(pointView->getPoint()->isHome()){
+            homeWidget->show();
+        } else {
+            homeWidget->hide();
+        }
     }
     emit resetState(GraphicItemState::NO_STATE, true);
 }
@@ -166,5 +190,16 @@ void DisplaySelectedPoint::updateCoordinates(double x, double y){
     pointView->setPos(x, y);
     posXLabel->setText("X : " + QString::number(x, 'f', 1));
     posYLabel->setText("Y : " + QString::number(y, 'f', 1));
+}
+
+void DisplaySelectedPoint::setPointView(PointView* const& _pointView, QString robotName) {
+    pointView = _pointView;
+    if(pointView->getPoint()->isHome()){
+        homeWidget->show();
+        robotBtn->setText(robotName);
+    } else {
+        homeWidget->hide();
+        robotBtn->setText("");
+    }
 }
 
