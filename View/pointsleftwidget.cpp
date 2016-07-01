@@ -18,6 +18,7 @@
 #include "Model/point.h"
 #include "Controller/mainwindow.h"
 #include "View/leftmenu.h"
+#include <QKeyEvent>
 
 
 PointsLeftWidget::PointsLeftWidget(QMainWindow* _parent, std::shared_ptr<Points> const& _points, bool _groupDisplayed)
@@ -210,7 +211,7 @@ void PointsLeftWidget::checkGroupName(QString name){
         return;
     }
     for(int i = 0; i < points->count(); i++){
-        if(!name.compare(points->getGroups().at(i)->getName())){
+        if(!name.compare(points->getGroups().at(i)->getName(), Qt::CaseInsensitive)){
             saveButton->setToolTip("A group with the same name already exists, please choose another name for your group");
             saveButton->setEnabled(false);
             return;
@@ -227,7 +228,7 @@ void PointsLeftWidget::cancelCreationGroup(){
     saveButton->hide();
     cancelButton->hide();
 
-    // emit un signal a la main window to do it
+    // emit un signal a la main window or to the left menu to do it
 
     //((LeftMenu*) parentWidget())->getReturnButton()->setEnabled(true);
     /// resets the buttons so we can click them
@@ -235,5 +236,14 @@ void PointsLeftWidget::cancelCreationGroup(){
 }
 
 void PointsLeftWidget::emitNewGroupSignal(){
+    qDebug() << "emitnewgroupsignal called" << groupNameEdit->text();
     emit newGroup(groupNameEdit->text());
+}
+
+void PointsLeftWidget::keyPressEvent(QKeyEvent* event){
+    /// this is the enter key
+    if(!event->text().compare("\r")){
+        emit newGroup(groupNameEdit->text());
+        qDebug() << "enter pressed";
+    }
 }

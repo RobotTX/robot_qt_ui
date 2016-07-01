@@ -223,12 +223,16 @@ void MapView::setState(const GraphicItemState _state, const bool clear){
  void MapView::addPointView(PointView* const& _pointView){
      _pointView->setParentItem(this);
      connect(_pointView, SIGNAL(pointLeftClicked(PointView*)), mainWindow, SLOT(displayPointEvent(PointView*)));
+
      /// to update the coordinates of the point displayed on the left when a user drags a point to change its position
      connect(_pointView, SIGNAL(editedPointPositionChanged(double, double)), mainWindow, SLOT(updateCoordinates(double, double)));
+
      connect(_pointView, SIGNAL(moveTmpEditPathPoint()), mainWindow, SLOT(moveTmpEditPathPointSlot()));
 
      connect(_pointView, SIGNAL(addPointPath(PointView*)), this, SLOT(addPathPointMapViewSlot(PointView*)));
+
      connect(_pointView, SIGNAL(homeSelected(PointView*, bool)), mainWindow, SLOT(homeSelected(PointView*, bool)));
      connect(_pointView, SIGNAL(homeEdited(PointView*, bool)), mainWindow, SLOT(homeEdited(PointView*, bool)));
+
      permanentPoints->addPointView(_pointView);
  }

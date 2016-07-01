@@ -1,7 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <points>
     <group>
-<<<<<<< HEAD
+        <name>new group</name>
+        <point>
+            <name>new point</name>
+            <x>61</x>
+            <y>165</y>
+            <displayed>1</displayed>
+        </point>
+    </group>
+    <group>
         <name>first group</name>
         <point>
             <name>A</name>
@@ -57,8 +65,5 @@
             <y>225</y>
             <displayed>1</displayed>
         </point>
-=======
-        <name>No Name</name>
->>>>>>> ba3720c65cd197dcc2b6f40c4c2ce4db35f79a88
     </group>
 </points>

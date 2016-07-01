@@ -57,6 +57,9 @@ public:
     void disableButtons(void);
     void updateGroupButtonGroup(Points const& points);
 
+protected:
+    void keyPressEvent(QKeyEvent* event);
+
 private slots:
     void enableButtons(int index);
     void checkGroupName(QString name);

@@ -12,6 +12,7 @@
 #include "Model/group.h"
 #include <QComboBox>
 #include "View/spacewidget.h"
+#include <QKeyEvent>
 
 EditSelectedPointWidget::EditSelectedPointWidget(QMainWindow* _parent, PointsView* _points):QWidget(_parent){
     parent = _parent;
@@ -145,7 +146,7 @@ void EditSelectedPointWidget::saveEditSelecPointBtnEvent(){
 }
 
 void EditSelectedPointWidget::checkPointName(void) const {
-    qDebug() << "checkPointName called";
+    qDebug() << "checkPointName called" << nameEdit->text();
     if(!nameEdit->text().compare("")){
         /// cannot add a point with no name
         saveBtn->setToolTip("The name of your point cannot be empty");
@@ -156,7 +157,7 @@ void EditSelectedPointWidget::checkPointName(void) const {
     for(int i = 0; i < points->getPoints()->count(); i++){
         std::shared_ptr<Group> group = points->getPoints()->getGroups().at(i);
         for(int j = 0; j < group->count(); j++){
-            if(!nameEdit->text().compare(group->getPoints().at(j)->getName())){
+            if(!nameEdit->text().compare(group->getPoints().at(j)->getName(), Qt::CaseInsensitive)){
                 qDebug() << nameEdit->text() << " already exists";
                 saveBtn->setEnabled(false);
                 /// to explain the user why he cannot add its point as it is
@@ -208,14 +209,21 @@ void EditSelectedPointWidget::hideGroupLayout(void) const {
 }
 
 void EditSelectedPointWidget::updateGroupBox(const Points& _points){
-    qDebug() << groupBox->count();
     groupBox->clear();
-    qDebug() << "after" << groupBox->count();
-    for(int i = 0; i < _points.count(); i++){
-        groupBox->insertItem(_points.count()-1-i, _points.getGroups().at(i)->getName());
+    /// we place the default group first
+    groupBox->insertItem(0, _points.getDefaultGroup()->getName());
+    for(int i = 0; i < _points.count()-1; i++){
+        groupBox->insertItem(i+1, _points.getGroups().at(i)->getName());
     }
     /// to set the default group as default
     groupBox->setCurrentIndex(0);
     groupBox->setItemIcon(0, QIcon(":/icons/tick.png"));
+}
 
+void EditSelectedPointWidget::keyPressEvent(QKeyEvent* event){
+    /// this is the enter key
+    if(!event->text().compare("\r")){
+        emit pointSaved(groupBox->currentIndex(), posXLabel->text().right(posXLabel->text().length()-4).toDouble(), posYLabel->text().right(posYLabel->text().length()-4).toDouble(), nameEdit->text());
+        qDebug() << "enter pressed";
+    }
 }
