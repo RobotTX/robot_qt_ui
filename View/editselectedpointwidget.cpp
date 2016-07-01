@@ -153,7 +153,6 @@ void EditSelectedPointWidget::checkPointName(void) const {
         saveBtn->setEnabled(false);
         return;
     }
-
     for(int i = 0; i < points->getPoints()->count(); i++){
         std::shared_ptr<Group> group = points->getPoints()->getGroups().at(i);
         for(int j = 0; j < group->count(); j++){

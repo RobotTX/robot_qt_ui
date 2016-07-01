@@ -1,15 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <points>
     <group>
-        <name>new group</name>
-        <point>
-            <name>new point</name>
-            <x>61</x>
-            <y>165</y>
-            <displayed>1</displayed>
-        </point>
-    </group>
-    <group>
         <name>first group</name>
         <point>
             <name>A</name>

@@ -1384,7 +1384,6 @@ void MainWindow::minusGroupBtnEvent(){
  * called to edit an existing point
  */
 void MainWindow::editPointButtonEvent(bool checked){
-
     qDebug() << "editPointButtonEvent called";
     leftMenu->getReturnButton()->setEnabled(false);
     leftMenu->getReturnButton()->setToolTip("Please save or discard your modifications before navigating the menu again.");
