@@ -42,7 +42,7 @@ LeftMenu::LeftMenu(MainWindow* _parent, std::shared_ptr<Points> const& _points, 
 
     returnButton = new QPushButton(QIcon(":/icons/arrowLeft.png"), " Return", this);
     returnButton->setIconSize(_parent->size()/10);
-    connect(returnButton, SIGNAL(clicked()), parent, SLOT(backEvent()));
+    connect(returnButton, SIGNAL(clicked()), _parent, SLOT(backEvent()));
 
     closeBtn = new QPushButton(QIcon(":/icons/cropped_close.png"), "", this);
     closeBtn->setIconSize(_parent->size()/30);
@@ -119,6 +119,7 @@ LeftMenu::LeftMenu(MainWindow* _parent, std::shared_ptr<Points> const& _points, 
     connect(displaySelectedPoint->getMinusButton(), SIGNAL(clicked(bool)), _parent, SLOT(removePointFromInformationMenu()));
     connect(displaySelectedPoint->getMapButton(), SIGNAL(clicked(bool)), _parent, SLOT(displayPointMapEvent()));
     connect(displaySelectedPoint->getEditButton(), SIGNAL(clicked(bool)), _parent, SLOT(editPointButtonEvent(bool)));
+    connect(displaySelectedPoint->getRobotButton(), SIGNAL(clicked()), _parent, SLOT(setSelectedRobotFromPoint()));
 
     //to try maybe later connect(displaySelectedGroup->getMinusButton(), SIGNAL(clicked(bool)), this, SLOT(removePoint()));
     connect(displaySelectedGroup->getMinusButton(), SIGNAL(clicked(bool)), _parent, SLOT(removePointFromGroupMenu()));

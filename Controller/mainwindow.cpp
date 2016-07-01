@@ -505,6 +505,7 @@ void MainWindow::editSelectedRobot(RobotView* robotView){
     robotsLeftWidget->setEditBtnStatus(false);
     robotsLeftWidget->setCheckBtnStatus(false);
     hideAllWidgets();
+    setGraphicItemsState(GraphicItemState::NO_EVENT);
 
     editSelectedRobotWidget->setSelectedRobot(selectedRobot);
 
@@ -574,14 +575,12 @@ void MainWindow::addPathSelecRobotBtnEvent(){
     switchFocus(selectedRobot->getRobot()->getName(),pathCreationWidget);
 }
 
-
 void MainWindow::setSelectedRobotNoParent(QAbstractButton *button){
 
    // switchFocus("Robot", selectedRobotWidget);
     resetFocus();
     setSelectedRobot(button);
 }
-
 
 void MainWindow::setSelectedRobot(QAbstractButton *button){
     qDebug() << "Edit : " << robotsLeftWidget->getEditBtnStatus() << "\nsetSelectedRobot with QAbstractButton called : " << button->text();
@@ -590,6 +589,11 @@ void MainWindow::setSelectedRobot(QAbstractButton *button){
     else
         setSelectedRobot(robots->getRobotViewByName(button->text()));
 
+}
+
+void MainWindow::setSelectedRobotFromPoint(){
+    qDebug() << "setSelectedRobotFromPoint called : " << leftMenu->getDisplaySelectedPoint()->getRobotButton()->text();
+    setSelectedRobot(robots->getRobotViewByName(leftMenu->getDisplaySelectedPoint()->getRobotButton()->text()));
 }
 
 void MainWindow::backRobotBtnEvent(){
@@ -628,8 +632,9 @@ void MainWindow::cancelEditSelecRobotBtnEvent(){
 
     robotsLeftWidget->setEditBtnStatus(false);
     robotsLeftWidget->setCheckBtnStatus(false);
-    editSelectedRobotWidget->hide();
-    selectedRobotWidget->show();
+    hideAllWidgets();
+
+    setGraphicItemsState(GraphicItemState::NO_STATE);
     backEvent();
     leftMenu->getReturnButton()->setEnabled(true);
     leftMenu->getReturnButton()->setToolTip("");
@@ -755,6 +760,8 @@ void MainWindow::robotSavedEvent(){
         robotsLeftWidget->setCheckBtnStatus(false);
         editSelectedRobotWidget->hide();
 
+        setGraphicItemsState(GraphicItemState::NO_STATE);
+
         robotsLeftWidget->updateRobots(robots);
         bottomLayout->updateRobot(robots->getRobotId(selectedRobot->getRobot()->getName()), selectedRobot);
 
@@ -824,6 +831,7 @@ void MainWindow::pathSaved(bool execPath){
 
     bottomLayout->updateRobot(robots->getRobotId(selectedRobot->getRobot()->getName()), selectedRobot);
 
+    selectedRobotWidget->setSelectedRobot(selectedRobot);
     if(execPath){
         int robotNb = -1;
         for(int i = 0; i < bottomLayout->getPlayRobotBtnGroup()->buttons().size(); i++){
@@ -1033,7 +1041,7 @@ void MainWindow::homeEdited(PointView* pointView, bool temporary){
     editSelectedRobotWidget->getHomeBtn()->setText(pointView->getPoint()->getName());
     editSelectedRobotWidget->enableAll();
     bottomLayout->enable();
-    setGraphicItemsState(GraphicItemState::NO_STATE);
+    setGraphicItemsState(GraphicItemState::NO_EVENT);
     enableMenu();
 }
 
@@ -1297,6 +1305,11 @@ void MainWindow::setSelectedPoint(PointView* pointView, bool isTemporary){
         /// on the left we display the position of the temporary point as the user moves it around but we don't make any modifications on the model yet
         leftMenu->getDisplaySelectedPoint()->getXLabel()->setText(QString::number(mapPixmapItem->getTmpPointView()->getPoint()->getPosition().getX()));
         leftMenu->getDisplaySelectedPoint()->getYLabel()->setText(QString::number(mapPixmapItem->getTmpPointView()->getPoint()->getPosition().getY()));
+        if(leftMenu->getDisplaySelectedPoint()->getPointView()->getPoint()->isHome()){
+            leftMenu->getDisplaySelectedPoint()->getHomeWidget()->show();
+        } else {
+            leftMenu->getDisplaySelectedPoint()->getHomeWidget()->hide();
+        }
     }
 }
 
@@ -1489,10 +1502,15 @@ void MainWindow::editGroupBtnEvent(bool checked){
         pointView->show();
         /// must display the tick icon in the pointsLeftWidget
         pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(checkedId)->setIcon(QIcon(":/icons/tick.png"));
-        if(pointView)
-            leftMenu->getDisplaySelectedPoint()->setPointView(pointView);
-        else
+        if(pointView){
+            QString robotName = "";
+            if(pointView->getPoint()->isHome()){
+                robotName = robots->findRobotUsingHome(pointView->getPoint()->getName())->getRobot()->getName();
+            }
+            leftMenu->getDisplaySelectedPoint()->setPointView(pointView, robotName);
+        } else {
             qDebug() << "THere is no point view associated with those indexes";
+        }
         /// displays the information relative the the point
         leftMenu->getDisplaySelectedPoint()->displayPointInfo();
         editPointButtonEvent(checked);
@@ -1827,7 +1845,11 @@ void MainWindow::displayPointEvent(PointView* pointView){
     qDebug() << "displayPointEvent";
     leftMenu->getDisplaySelectedPoint()->getMapButton()->setChecked(true);
     leftMenu->getDisplaySelectedPoint()->setOrigin(DisplaySelectedPoint::MAP);
-    leftMenu->getDisplaySelectedPoint()->setPointView(pointView);
+    QString robotName = "";
+    if(pointView->getPoint()->isHome()){
+        robotName = robots->findRobotUsingHome(pointView->getPoint()->getName())->getRobot()->getName();
+    }
+    leftMenu->getDisplaySelectedPoint()->setPointView(pointView, robotName);
     pointView->setState(GraphicItemState::NO_STATE);
     qDebug() << leftMenu->getDisplaySelectedPoint()->getPointView()->getPoint()->getName() <<
                                                                                   QString::number(leftMenu->getDisplaySelectedPoint()->getPointView()->getPoint()->getPosition().getX()) <<
@@ -2005,7 +2027,11 @@ void MainWindow::displayPointsInGroup(void){
     else if(checkedId >= points->count()-1){
         DisplaySelectedPoint* selectedPoint = leftMenu->getDisplaySelectedPoint();
         PointView* pointView = pointViews->getPointViewFromPoint(*(points->getGroups().at(points->count()-1)->getPoints().at(checkedId+1-points->count())));
-        selectedPoint->setPointView(pointView);
+        QString robotName = "";
+        if(pointView->getPoint()->isHome()){
+            robotName = robots->findRobotUsingHome(pointView->getPoint()->getName())->getRobot()->getName();
+        }
+        selectedPoint->setPointView(pointView, robotName);
         selectedPoint->displayPointInfo();
         selectedPoint->show();
         if(pointView->getPoint()->isDisplayed())
@@ -2187,7 +2213,11 @@ void MainWindow::editPointFromGroupMenu(void){
         int point = leftMenu->getDisplaySelectedGroup()->getPointButtonGroup()->getButtonGroup()->checkedId();
         if(point != -1 and point < group->getPoints().size()){
             /// update the pointview et show the point on the map with hover color
-            leftMenu->getDisplaySelectedPoint()->setPointView(pointViews->getPointViewFromPoint(*(group->getPoints().at(point))));
+            QString robotName = "";
+            if(pointViews->getPointViewFromPoint(*(group->getPoints().at(point)))->getPoint()->isHome()){
+                robotName = robots->findRobotUsingHome(pointViews->getPointViewFromPoint(*(group->getPoints().at(point)))->getPoint()->getName())->getRobot()->getName();
+            }
+            leftMenu->getDisplaySelectedPoint()->setPointView(pointViews->getPointViewFromPoint(*(group->getPoints().at(point))), robotName);
             leftMenu->getDisplaySelectedPoint()->getPointView()->setPixmap(PointView::PixmapType::HOVER);
             leftMenu->getDisplaySelectedPoint()->getPointView()->show();
             /// update the model
@@ -2254,7 +2284,11 @@ void MainWindow::displayPointInfoFromGroupMenu(void){
             DisplaySelectedPoint* selectedPoint = leftMenu->getDisplaySelectedPoint();
             /// we set the origin of the page displayed, this is useful to implement a "return to the last page" button
             selectedPoint->setOrigin(DisplaySelectedPoint::GROUP_MENU);
-            selectedPoint->setPointView(pointViews->getPointViewFromPoint(*point));
+            QString robotName = "";
+            if(pointViews->getPointViewFromPoint(*point)->getPoint()->isHome()){
+                robotName = robots->findRobotUsingHome(pointViews->getPointViewFromPoint(*point)->getPoint()->getName())->getRobot()->getName();
+            }
+            selectedPoint->setPointView(pointViews->getPointViewFromPoint(*point), robotName);
             selectedPoint->displayPointInfo();
             /// map is checked if the point is displayed
             if(point->isDisplayed())
@@ -2483,7 +2517,11 @@ void MainWindow::doubleClickOnPoint(int checkedId){
         if(checkedId != -1 and checkedId < group->getPoints().size()){
             DisplaySelectedPoint* selectedPoint = leftMenu->getDisplaySelectedPoint();
             selectedPoint->setOrigin(DisplaySelectedPoint::GROUP_MENU);
-            selectedPoint->setPointView(pointViews->getPointViewFromPoint(*point));
+            QString robotName = "";
+            if(pointViews->getPointViewFromPoint(*point)->getPoint()->isHome()){
+                robotName = robots->findRobotUsingHome(pointViews->getPointViewFromPoint(*point)->getPoint()->getName())->getRobot()->getName();
+            }
+            selectedPoint->setPointView(pointViews->getPointViewFromPoint(*point), robotName);
             selectedPoint->displayPointInfo();
             if(point->isDisplayed())
                 selectedPoint->getMapButton()->setChecked(true);
@@ -2532,7 +2570,11 @@ void MainWindow::doubleClickOnGroup(int checkedId){
     else if(checkedId >= points->count()-1){
         DisplaySelectedPoint* selectedPoint = leftMenu->getDisplaySelectedPoint();
         PointView* pointView = pointViews->getPointViewFromPoint(*(points->getGroups().at(points->count()-1)->getPoints().at(checkedId+1-points->count())));
-        selectedPoint->setPointView(pointView);
+        QString robotName = "";
+        if(pointView->getPoint()->isHome()){
+            robotName = robots->findRobotUsingHome(pointView->getPoint()->getName())->getRobot()->getName();
+        }
+        selectedPoint->setPointView(pointView, robotName);
         selectedPoint->displayPointInfo();
         selectedPoint->show();
         pointsLeftWidget->getEyeButton()->setChecked(false);

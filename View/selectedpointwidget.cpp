@@ -1,5 +1,6 @@
 #include "selectedpointwidget.h"
 #include "View/pointview.h"
+#include "View/spacewidget.h"
 #include "Model/point.h"
 #include <QVBoxLayout>
 #include <QPushButton>
@@ -35,6 +36,7 @@ SelectedPointWidget::SelectedPointWidget(QMainWindow* parent):QWidget(parent){
     posYLabel = new QLabel("Y : ", this);
     layout->addWidget(posYLabel);
 
+
     connect(backBtn, SIGNAL(clicked()), parent, SLOT(backSelecPointBtnEvent()));
     connect(minusBtn, SIGNAL(clicked()), parent, SLOT(minusSelecPointBtnEvent()));
     connect(editBtn, SIGNAL(clicked()), parent, SLOT(editSelecPointBtnEvent()));
@@ -51,6 +53,7 @@ void SelectedPointWidget::setSelectedPoint(PointView * const &pointView){
 
     posXLabel->setText("X : " + QString::number(pointView->getPoint()->getPosition().getX()));
     posYLabel->setText("Y : " + QString::number(pointView->getPoint()->getPosition().getY()));
+
 
     update();
 }
