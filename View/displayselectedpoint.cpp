@@ -23,42 +23,15 @@ DisplaySelectedPoint::DisplaySelectedPoint(QMainWindow *_parent, std::shared_ptr
 
     nameLayout = new QHBoxLayout();
 
-    plusButton = new QPushButton(QIcon(":/icons/plus.png"),"", this);
-    plusButton->setIconSize(_parent->size()/10);
-    plusButton->setEnabled(false);
 
-    minusButton = new QPushButton(QIcon(":/icons/minus.png"),"", this);
-    minusButton->setIconSize(_parent->size()/10);
-    minusButton->setToolTip("You can click this button to remove the point");
-    minusButton->setCheckable(true);
+    actionButtons = new TopLeftMenu(this);
+    actionButtons->getPlusButton()->setEnabled(false);
+    actionButtons->getMinusButton()->setCheckable(true);
+    actionButtons->getEditButton()->setCheckable(true);
+    actionButtons->getEyeButton()->setEnabled(false);
+    actionButtons->getMapButton()->setCheckable(true);
 
-    editButton = new QPushButton(QIcon(":/icons/edit.png"),"", this);
-    editButton->setIconSize(_parent->size()/10);
-    editButton->setToolTip("You can click on this button and then choose between clicking on the map or drag the point to change its position");
-    editButton->setCheckable(true);
-
-    grid = new QHBoxLayout();
-    grid->addWidget(plusButton);
-    grid->addWidget(minusButton);
-    grid->addWidget(editButton);
-
-    eyeButton = new QPushButton(QIcon(":/icons/eye.png"), "", this);
-    eyeButton->setIconSize(_parent->size()/10);
-    eyeButton->setEnabled(false);
-
-    mapButton = new QPushButton(QIcon(":/icons/map.png"),"", this);
-    mapButton->setCheckable(true);
-    mapButton->setIconSize(_parent->size()/10);
-
-    eyeMapLayout = new QHBoxLayout();
-    eyeMapLayout->addWidget(eyeButton);
-    eyeMapLayout->addWidget(mapButton);
-
-    layout->addLayout(grid);
-    layout->addLayout(eyeMapLayout);
-
-    SpaceWidget* spaceWidget = new SpaceWidget(SpaceWidget::SpaceOrientation::HORIZONTAL, this);
-    layout->addWidget(spaceWidget);
+    layout->addWidget(actionButtons);
 
     nameEdit = new QLineEdit(this);
     nameEdit->setReadOnly(true);
@@ -93,14 +66,18 @@ DisplaySelectedPoint::DisplaySelectedPoint(QMainWindow *_parent, std::shared_ptr
     layout->addLayout(editLayout);
 
     /// to check that a point that's being edited does not get a new name that's already used in the database
+
     connect(nameEdit, SIGNAL(textEdited(QString)), this, SLOT(checkPointName(QString)));
+
+    setMaximumWidth(_parent->width()*4/10);
+    setMinimumWidth(_parent->width()*4/10);
 }
 
 void DisplaySelectedPoint::displayPointInfo(void){
     if(pointView->getPoint()->isDisplayed())
-        mapButton->setToolTip("Click to hide this point");
+        actionButtons->getMapButton()->setToolTip("Click to hide this point");
     else
-        mapButton->setToolTip("Click to display this point");
+        actionButtons->getMapButton()->setToolTip("Click to display this point");
     posXLabel->setText("X : " + QString::number(pointView->getPoint()->getPosition().getX(), 'f', 1));
     posYLabel->setText("Y : " + QString::number(pointView->getPoint()->getPosition().getY(), 'f', 1));
     nameEdit->setText(pointView->getPoint()->getName());
@@ -125,16 +102,6 @@ void DisplaySelectedPoint::setOrigin(const Origin _origin){
     /// to return so we hide the button
     /// the distinction between when we come from the group menu
     /// and when we come from the points menu is made in the pointBtnEvent
-
-    /*
-    if(origin == MAP)
-
-  if(origin == MAP)
->>>>>>> bf15946b3a0b45b447000c69a42472e619fce00d
-        backButton->hide();
-    else
-        backButton->show();
-        */
 }
 
 void DisplaySelectedPoint::resetWidget(){
@@ -144,12 +111,12 @@ void DisplaySelectedPoint::resetWidget(){
     nameEdit->setFrame(false);
     /// we hide the buttons relative to the edit option and make sure the points properties are not longer modifiable
     nameEdit->setReadOnly(true);
-    editButton->setChecked(false);
+    actionButtons->getEditButton()->setChecked(false);
     cancelButton->hide();
     saveButton->hide();
-    /// enable the edit button again and hide the tooltip
-    editButton->setEnabled(true);
-    editButton->setToolTip("You can click this button and then choose between clicking the map or drag the point to change its position");
+
+    actionButtons->getEditButton()->setEnabled(true);
+    actionButtons->getEditButton()->setToolTip("You can click on this button and then choose between clicking on the map or drag the point to change its position");
 
     if(pointView){
         /// in case the user had dragged the point around the map or clicked it, this resets the coordinates displayed to the original ones, otherwise this has no effect
@@ -192,6 +159,7 @@ void DisplaySelectedPoint::checkPointName(QString name) const {
     }
     saveButton->setToolTip("");
     saveButton->setEnabled(true);
+
 }
 
 void DisplaySelectedPoint::updateCoordinates(double x, double y){

@@ -64,7 +64,8 @@ HEADERS += Controller/cmdrobotthread.h \
            View/toplayout.h \
            View/verticalscrollarea.h \
     View/doubleclickablebutton.h \
-    Model/origin.h
+    Model/origin.h \
+    View/topleftmenu.h
 
 FORMS += Controller/mainwindow.ui
 
@@ -116,7 +117,8 @@ SOURCES += main.cpp \
            View/spacewidget.cpp \
            View/toplayout.cpp \
            View/verticalscrollarea.cpp \
-    View/doubleclickablebutton.cpp
+    View/doubleclickablebutton.cpp \
+    View/topLeftMenu.cpp
 
 RESOURCES += Resources/resources.qrc
 

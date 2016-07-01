@@ -2,8 +2,6 @@
 <points>
     <group>
 <<<<<<< HEAD
-        <name>No Name</name>
-=======
         <name>first group</name>
         <point>
             <name>A</name>
@@ -59,42 +57,8 @@
             <y>225</y>
             <displayed>1</displayed>
         </point>
-        <point>
-            <name>tmpPoi</name>
-            <x>77</x>
-            <y>148</y>
-            <displayed>1</displayed>
-        </point>
-        <point>
-            <name>tmpPo</name>
-            <x>90</x>
-            <y>197</y>
-            <displayed>1</displayed>
-        </point>
-        <point>
-            <name>tmp</name>
-            <x>28</x>
-            <y>170</y>
-            <displayed>1</displayed>
-        </point>
-        <point>
-            <name>tmpP</name>
-            <x>36</x>
-            <y>86</y>
-            <displayed>1</displayed>
-        </point>
-        <point>
-            <name>tm</name>
-            <x>269</x>
-            <y>95</y>
-            <displayed>1</displayed>
-        </point>
-        <point>
-            <name>h</name>
-            <x>232</x>
-            <y>150</y>
-            <displayed>1</displayed>
-        </point>
->>>>>>> a9c6c0ab641795fcf9a68f3b1b9a969e35d6006d
+=======
+        <name>No Name</name>
+>>>>>>> ba3720c65cd197dcc2b6f40c4c2ce4db35f79a88
     </group>
 </points>

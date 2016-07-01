@@ -64,8 +64,15 @@ bool CmdRobotThread::sendCommand(QString cmd){
         } else {
             qDebug() << "(Robot" << robotName << ") " << nbDataSend << " bytes sent";
 
-            socketCmd->waitForReadyRead();
+            qDebug() << cmd.at(0) << QString(cmd.at(0)).compare("e");
+            if(QString(cmd.at(0)).compare("e")){
+                socketCmd->waitForReadyRead();
+            } else {
+                qDebug() << "No wait";
+                sleep(2);
+            }
         }
+        qDebug() << "(Robot" << robotName << ") Returning";
         return true;
     } else {
         qDebug() << "(Robot" << robotName << ") Error : Robot at ip" << ipAddress << ": " << port << "not connected";

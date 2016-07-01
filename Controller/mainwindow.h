@@ -96,7 +96,7 @@ private slots:
     void robotBtnEvent();
     void pointBtnEvent();
     void mapBtnEvent();
-    void backGroupBtnEvent();
+   // void backGroupBtnEvent();
     void plusGroupBtnEvent();
     void minusGroupBtnEvent();
     void editGroupBtnEvent(bool checked);

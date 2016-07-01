@@ -18,7 +18,7 @@ class QLabel;
 #include <QWidget>
 #include <QObject>
 #include "Model/graphicitemstate.h"
-
+#include "topleftmenu.h"
 class DisplaySelectedPoint: public QWidget
 {
         Q_OBJECT
@@ -28,10 +28,7 @@ public:
 
     DisplaySelectedPoint(QMainWindow* _parent, const std::shared_ptr<Points> &_points, PointView* _pointView = 0, const Origin _origin = MAP);
 
-   // QPushButton* getBackButton(void) const { return backButton; }
-    QPushButton* getMinusButton(void) const { return minusButton; }
-    QPushButton* getMapButton(void) const { return mapButton; }
-    QPushButton* getEditButton(void) const { return editButton; }
+    TopLeftMenu* getActionButtons(void) const { return actionButtons; }
     QPushButton* getSaveButton(void) const { return saveButton; }
     QPushButton* getCancelButton(void) const { return cancelButton; }
     QString getPointName(void) const { return nameEdit->text(); }
@@ -85,6 +82,7 @@ private:
     PointView* pointView;
     QMainWindow* parent;
     std::shared_ptr<Points> points;
+    TopLeftMenu* actionButtons;
 
     /// to determine whether we come from the group menu and have to go back to it if we click on the back button
     /// or if we got here by clicking on the map

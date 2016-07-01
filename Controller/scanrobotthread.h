@@ -73,6 +73,7 @@ private :
     std::shared_ptr<QTcpSocket> socketRobot;
     QString ipAddress;
     int port;
+    bool ok;
 
 };
 

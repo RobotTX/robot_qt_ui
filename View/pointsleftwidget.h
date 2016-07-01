@@ -16,7 +16,7 @@ class Points;
 
 #include <QWidget>
 #include <memory>
-
+#include "topleftmenu.h"
 /**
  * @brief The PointsLeftWidget class
  * The purpose of this class is to display a menu on the left of the application relative to the Point objects of the Model
@@ -37,14 +37,17 @@ public:
      * the index of the last group is important to determine which points should be removed and displayed
      */
     void setIndexLastGroupClicked(const int index) { indexLastGroupClicked = index; }
-
+    /*
     QPushButton* getMinusButton(void) const { return minusButton; }
     QPushButton* getMapButton(void) const { return mapButton; }
     QPushButton* getEditButton(void) const { return editButton; }
     QPushButton* getPlusButton(void) const { return plusButton; }
     QPushButton* getEyeButton(void) const { return eyeButton; }
+    */
     QPushButton* getSaveButton(void) const { return saveButton; }
     QPushButton* getCancelButton(void) const { return cancelButton; }
+
+    TopLeftMenu* getActionButtons(void) {return actionButtons;}
 
     GroupButtonGroup* getGroupButtonGroup(void) const { return groupButtonGroup; }
 
@@ -97,6 +100,7 @@ private:
     VerticalScrollArea* scrollArea;
 
     GroupEditWindow* groupWindow;
+    TopLeftMenu* actionButtons;
 
     /// true if the groups are displayed, false if the points are displayed
     /// this way we can implement two different behavior for the same button minus
