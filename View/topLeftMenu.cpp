@@ -1,5 +1,9 @@
 #include "View/topleftmenu.h"
 #include "spacewidget.h"
+#include <QVBoxLayout>;
+#include <QPushButton>;
+#include <QHBoxLayout>;
+
 TopLeftMenu::TopLeftMenu(QWidget * parent): QWidget(parent){
 
 /*
@@ -50,7 +54,7 @@ layout->addLayout(eyeMapLayout);
 
 // bar to separate with rest of class
 
-SpaceWidget* spaceWidget = new SpaceWidget(SpaceWidget::SpaceOrientation::HORIZONTAL, this);
+ spaceWidget = new SpaceWidget(SpaceWidget::SpaceOrientation::HORIZONTAL, this);
 layout->addWidget(spaceWidget);
 
 /*
