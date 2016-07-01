@@ -1,14 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <points>
     <group>
-        <name></name>
-    </group>
-    <group>
         <name>first group</name>
         <point>
+            <name>A</name>
+            <x>35</x>
+            <y>70</y>
+            <displayed>1</displayed>
+        </point>
+        <point>
             <name>Ma point</name>
-            <x>75</x>
-            <y>75</y>
+            <x>56</x>
+            <y>141</y>
             <displayed>1</displayed>
         </point>
         <point>
@@ -49,8 +52,8 @@
         </point>
         <point>
             <name>A final point</name>
-            <x>150</x>
-            <y>225</y>
+            <x>198</x>
+            <y>67</y>
             <displayed>1</displayed>
         </point>
     </group>

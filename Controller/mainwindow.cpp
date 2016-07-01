@@ -41,8 +41,8 @@
 
 
 //#define XML_PATH "/home/m-a/Documents/QtProject/gobot-software/points.xml"
-//#define XML_PATH "/home/joan/Qt/QtProjects/gobot-software/points.xml"
-#define XML_PATH "/Users/fannylarradet/Desktop/GTRobots/gobot-software/points.xml"
+#define XML_PATH "/home/joan/Qt/QtProjects/gobot-software/points.xml"
+//#define XML_PATH "/Users/fannylarradet/Desktop/GTRobots/gobot-software/points.xml"
 
 /**
  * @brief MainWindow::MainWindow
@@ -1237,15 +1237,14 @@ void MainWindow::enableMenu(){
     topLayout->enable();
 }
 
-void MainWindow::setMessageTop(QString msgType, QString msg){
+void MainWindow::setMessageTop(const QString msgType, const QString msg){
     topLayout->setLabel(msgType, msg);
 }
 
 void MainWindow::closeSlot(){
     resetFocus();
     leftMenu->hide();
-   // leftMenu->hideBackButton();
-
+    leftMenu->getDisplaySelectedPoint()->getPointView()->setPixmap(PointView::PixmapType::NORMAL);
 }
 
 /**********************************************************************************************************************************/
@@ -1285,6 +1284,8 @@ void MainWindow::initializePoints(){
 void MainWindow::setSelectedPoint(PointView* pointView, bool isTemporary){
     qDebug() << "setSelectedPoint";
     resetFocus();
+    if(leftMenu->getDisplaySelectedPoint()->getPointView())
+        leftMenu->getDisplaySelectedPoint()->getPointView()->setPixmap(PointView::PixmapType::NORMAL);
 
     /// we are not modifying an existing point
     if(!leftMenu->getDisplaySelectedPoint()->getActionButtons()->getEditButton()->isChecked()){
@@ -1403,6 +1404,7 @@ void MainWindow::minusGroupBtnEvent(){
  * called to edit an existing point
  */
 void MainWindow::editPointButtonEvent(bool checked){
+    setMessageTop(TEXT_COLOR_INFO, "Click the map or drag the point to change its position");
     qDebug() << "editPointButtonEvent called";
     leftMenu->getReturnButton()->setEnabled(false);
     leftMenu->getReturnButton()->setToolTip("Please save or discard your modifications before navigating the menu again.");
@@ -1512,8 +1514,12 @@ void MainWindow::editGroupBtnEvent(bool checked){
                     pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(checkedId)->pos().x(),
                     pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(checkedId)->pos().y());
                     */
+        pointsLeftWidget->getModifyEdit()->move(posButton.x(),//-pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(checkedId)->width()/14.5,
+                                                posButton.y());//-pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(checkedId)->height()/2);
+       /*
         pointsLeftWidget->getModifyEdit()->move(posButton.x()-pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(checkedId)->width()/14.5,
                                                 posButton.y()-pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(checkedId)->height()/2);
+                                                */
         pointsLeftWidget->getModifyEdit()->setFixedWidth(pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(checkedId)->width()*0.85);
         qDebug() << pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(checkedId)->mapTo(
                         pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(checkedId)->window(), pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(checkedId)->pos());
@@ -1580,7 +1586,14 @@ void MainWindow::updateView()
 
 void MainWindow::openLeftMenu(){
     qDebug() << "openLeftMenu called";
+    /// resets the color of the selected point on the map and hides the temporary point`
+    if(leftMenu->getDisplaySelectedPoint()->getPointView())
+        leftMenu->getDisplaySelectedPoint()->getPointView()->setPixmap(PointView::PixmapType::NORMAL);
+    if(mapPixmapItem->getTmpPointView())
+        mapPixmapItem->getTmpPointView()->hide();
+
     resetFocus();
+
     if(leftMenu->isHidden()){
 
         hideAllWidgets();
@@ -1852,6 +1865,7 @@ void MainWindow::displayPointEvent(PointView* pointView){
     leftMenu->getDisplaySelectedPoint()->getActionButtons()->getMapButton()->setChecked(true);
     leftMenu->getDisplaySelectedPoint()->setOrigin(DisplaySelectedPoint::MAP);
     leftMenu->getDisplaySelectedPoint()->setPointView(pointView);
+    leftMenu->getDisplaySelectedPoint()->getPointView()->setPixmap(PointView::PixmapType::MID);
     pointView->setState(GraphicItemState::NO_STATE);
     qDebug() << leftMenu->getDisplaySelectedPoint()->getPointView()->getPoint()->getName() <<
                                                                                   QString::number(leftMenu->getDisplaySelectedPoint()->getPointView()->getPoint()->getPosition().getX()) <<
@@ -2209,6 +2223,7 @@ void MainWindow::removePointFromInformationMenu(void){
  */
 void MainWindow::editPointFromGroupMenu(void){
     qDebug() << "editgroupfrommenuevent";
+    setMessageTop(TEXT_COLOR_INFO, "Click the map or drag the point to change its position");
     std::shared_ptr<Group> group = points->findGroup(leftMenu->getDisplaySelectedGroup()->getNameLabel()->text());
     if(group){
         qDebug() << "working on group " << group->getName() << " and id " << leftMenu->getDisplaySelectedGroup()->getPointButtonGroup()->getButtonGroup()->checkedId();
@@ -2301,6 +2316,10 @@ void MainWindow::displayPointInfoFromGroupMenu(void){
  * called when a user edits a point and save the changes either by pressing the enter key or clicking the save button
  */
 void MainWindow::updatePoint(void){
+    setMessageTop(TEXT_COLOR_SUCCESS, "Your point has been modified");
+    delay();
+    setMessageTop(TEXT_COLOR_NORMAL, "");
+
     qDebug() << "update point event called";
     ///resets the tooltip of the edit button and the minus button
     leftMenu->getDisplaySelectedPoint()->getActionButtons()->getEditButton()->setToolTip("You can click on this button and then choose between clicking on the map or drag the point to change its position");
@@ -2771,5 +2790,11 @@ void MainWindow::clearNewMap(){
 
     /// Update the map
     mapPixmapItem->setPermanentPoints(points);
+}
 
+void MainWindow::delay() const
+{
+    QTime dieTime= QTime::currentTime().addSecs(1);
+    while (QTime::currentTime() < dieTime)
+        QCoreApplication::processEvents(QEventLoop::AllEvents, 100);
 }
