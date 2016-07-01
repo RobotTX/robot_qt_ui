@@ -27,7 +27,6 @@
 #include "Model/points.h"
 #include "Model/xmlparser.h"
 #include "Controller/mainwindow.h"
-
 LeftMenu::LeftMenu(MainWindow* _parent, std::shared_ptr<Points> const& _points, const std::shared_ptr<Robots> &robots, PointsView * const &pointViews):
     QWidget(_parent), parent(_parent), points(_points)
 {
