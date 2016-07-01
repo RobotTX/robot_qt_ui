@@ -17,17 +17,10 @@ DisplaySelectedGroup::DisplaySelectedGroup(QMainWindow *parent, std::shared_ptr<
     points = _points;
     actionButtons = new TopLeftMenu(this);
 
-
-
     actionButtons->disableAll();
     actionButtons->getMinusButton()->setCheckable(false);
     actionButtons->getEditButton()->setCheckable(false);
     actionButtons->getMapButton()->setCheckable(false);
-
-
-
-
-
 
 
     layout->addWidget(actionButtons);

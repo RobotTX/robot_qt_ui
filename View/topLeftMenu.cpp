@@ -1,5 +1,5 @@
-#include "topLeftMenu.h"
-# include "spacewidget.h"
+#include "View/topleftmenu.h"
+#include "spacewidget.h"
 TopLeftMenu::TopLeftMenu(QWidget * parent): QWidget(parent){
 
 /*

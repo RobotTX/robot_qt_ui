@@ -185,6 +185,7 @@ void LeftMenu::enableButtons(int index){
     }
     /// enables the edit button
     displaySelectedGroup->getActionButtons()->getEditButton()->setEnabled(true);
+    displaySelectedGroup->getActionButtons()->getEditButton()->setToolTip("Click to modify the selected point");
 }
 
 void LeftMenu::disableButtons(){
@@ -201,6 +202,7 @@ void LeftMenu::disableButtons(){
     displaySelectedGroup->getActionButtons()->getMapButton()->setToolTip("Select a point and click here to display or hide it on the map");
     /// resets the edit button
     displaySelectedGroup->getActionButtons()->getEditButton()->setEnabled(false);
+    displaySelectedGroup->getActionButtons()->getEditButton()->setToolTip("Select a point and click here to modify it");
 }
 
 /// to factorize the remove point events

@@ -102,8 +102,6 @@ void DisplaySelectedPoint::setOrigin(const Origin _origin){
     /// to return so we hide the button
     /// the distinction between when we come from the group menu
     /// and when we come from the points menu is made in the pointBtnEvent
-
-
 }
 
 void DisplaySelectedPoint::resetWidget(){
@@ -116,7 +114,7 @@ void DisplaySelectedPoint::resetWidget(){
     actionButtons->getEditButton()->setChecked(false);
     cancelButton->hide();
     saveButton->hide();
-    /// enable the edit button again and hide the tooltip
+
     actionButtons->getEditButton()->setEnabled(true);
     actionButtons->getEditButton()->setToolTip("You can click on this button and then choose between clicking on the map or drag the point to change its position");
 
