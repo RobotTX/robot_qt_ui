@@ -92,7 +92,7 @@ private slots:
     void robotBtnEvent();
     void pointBtnEvent();
     void mapBtnEvent();
-    void backGroupBtnEvent();
+   // void backGroupBtnEvent();
     void plusGroupBtnEvent();
     void minusGroupBtnEvent();
     void editGroupBtnEvent(bool checked);
@@ -122,7 +122,6 @@ private slots:
     void askForDeletePointConfirmation(const int index);
     void displayPointEvent(PointView* _pointView);
     void askForDeleteDefaultGroupPointConfirmation(const int groupIndex);
-    void removeGroupEvent(const int groupIndex);
     //void backPathCreation(void);
     void displayGroupMapEvent(void);
     void pathSaved(bool execPath);

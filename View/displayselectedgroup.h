@@ -13,7 +13,7 @@ class Points;
 #include <QWidget>
 #include "View/pointbuttongroup.h"
 #include <memory>
-
+#include "topleftmenu.h"
 /**
  * @brief The DisplaySelectedGroup class
  * The purpose of this class is to provide a QWidget that displays the name and the points
@@ -26,10 +26,9 @@ public:
     DisplaySelectedGroup(QMainWindow *_parent, const std::shared_ptr<Points> &_points);
 
     PointButtonGroup* getPointButtonGroup(void) const { return pointButtonGroup; }
-    QPushButton* getMapButton(void) const { return mapButton; }
-    QPushButton* getEyeButton(void) const { return eyeButton; }
-    QPushButton* getEditButton(void) const { return editButton; }
-    QPushButton* getMinusButton(void) const { return minusButton; }
+
+    TopLeftMenu* getActionButtons(void) const { return actionButtons; }
+
     QLabel* getNameLabel(void) const { return name; }
     std::shared_ptr<Points> getPoints(void) const { return points; }
 
@@ -45,14 +44,15 @@ private:
     VerticalScrollArea* scrollArea;
 
     QVBoxLayout* layout;
-   // QPushButton* backButton;
+   /* QPushButton* backButton;
     QPushButton* plusButton;
     QPushButton* minusButton;
     QPushButton* mapButton;
     QPushButton* eyeButton;
     QPushButton* editButton;
     QHBoxLayout* eyeMapLayout;
-    QHBoxLayout* grid;
+    QHBoxLayout* grid;*/
+    TopLeftMenu* actionButtons;
 
     QLabel* name;
     std::shared_ptr<Points> points;
