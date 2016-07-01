@@ -77,6 +77,7 @@ public:
     void setLastWidgets(QList<QPair<QWidget*,QString>>);
     void resetFocus();
     void switchFocus(QString name, QWidget* widget);
+    void delay() const;
 
 signals:
     void sendCommand(QString);
@@ -157,7 +158,7 @@ private slots:
      * Called when a user doesn't want to keep the modifications he's made on a point
      */
     void cancelEvent(void);
-    void setMessageTop(QString msgType, QString msg);
+    void setMessageTop(const QString msgType, const QString msg);
     void homeSelected(PointView* pointView, bool temporary);
     void homeEdited(PointView* pointView, bool temporary);
     void goHomeBtnEvent();

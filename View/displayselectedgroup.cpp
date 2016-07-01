@@ -9,8 +9,11 @@
 #include <QHBoxLayout>
 #include <QMainWindow>
 #include <QLabel>
-
+#include "verticalscrollarea.h"
 DisplaySelectedGroup::DisplaySelectedGroup(QMainWindow *parent, std::shared_ptr<Points> const& _points) : QWidget(parent){
+
+   VerticalScrollArea* scrollArea = new VerticalScrollArea(this);
+
     layout = new QVBoxLayout(this);
 
     name = new QLabel("\nName : ", this);
@@ -31,10 +34,9 @@ DisplaySelectedGroup::DisplaySelectedGroup(QMainWindow *parent, std::shared_ptr<
    // scrollArea = new VerticalScrollArea(this);
 
     pointButtonGroup = new PointButtonGroup(_points, 0, this);
+    scrollArea->setWidget(pointButtonGroup);
 
-  //  layout->addWidget(scrollArea);
-
-    layout->addWidget(pointButtonGroup);
+    layout->addWidget(scrollArea);
     setMaximumWidth(parent->width()*4/10);
     setMinimumWidth(parent->width()*4/10);
 }

@@ -11,8 +11,6 @@ groupWindow->hide();
 
 layout = new QVBoxLayout(this);
 
-
-
 // GRID = + , -  , edit  buttons
 plusButton = new QPushButton(QIcon(":/icons/plus.png"),"", this);
 plusButton->setIconSize(parent->size());
