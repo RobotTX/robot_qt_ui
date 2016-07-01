@@ -26,6 +26,11 @@ PointsLeftWidget::PointsLeftWidget(QMainWindow* _parent, std::shared_ptr<Points>
 {
     points = _points;
     parent = _parent;
+
+    /// to modify the name of a group
+    modifyEdit = new QLineEdit(_parent);
+    modifyEdit->hide();
+
     scrollArea = new VerticalScrollArea(this);
 
     groupWindow = new GroupEditWindow(this);
@@ -127,6 +132,9 @@ PointsLeftWidget::PointsLeftWidget(QMainWindow* _parent, std::shared_ptr<Points>
     /// to make sure the name chosen for a new group is valid
     connect(groupNameEdit, SIGNAL(textEdited(QString)), this, SLOT(checkGroupName(QString)));
 
+    /// to make sure the new name chosen for a group is valid
+    connect(modifyEdit, SIGNAL(textEdited(QString)), this, SLOT(checkGroupName(QString)));
+
     connect(cancelButton, SIGNAL(clicked(bool)), this, SLOT(cancelCreationGroup()));
 
     connect(saveButton, SIGNAL(clicked(bool)), this, SLOT(emitNewGroupSignal()));
@@ -205,6 +213,13 @@ void PointsLeftWidget::disableButtons(void){
 
 void PointsLeftWidget::checkGroupName(QString name){
     qDebug() << name;
+    int checkedId = groupButtonGroup->getButtonGroup()->checkedId();
+    if(checkedId != -1){
+        if(!name.compare(points->getGroups().at(checkedId)->getName(), Qt::CaseInsensitive)){
+            saveButton->setToolTip("");
+            return;
+        }
+    }
     if(!name.compare("")){
         saveButton->setToolTip("The name of your group cannot be empty");
         saveButton->setEnabled(false);

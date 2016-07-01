@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <points>
     <group>
+        <name></name>
+    </group>
+    <group>
         <name>first group</name>
         <point>
             <name>A</name>

@@ -23,14 +23,6 @@ DisplaySelectedPoint::DisplaySelectedPoint(QMainWindow *_parent, std::shared_ptr
 
     nameLayout = new QHBoxLayout();
 
-
-    //backButton = new QPushButton(QIcon(":/icons/arrowLeft.png"), "Groups", this);
-    //backButton->hide();
-
-    //backButton->setIconSize(_parent->size()/10);
-    //layout->addWidget(backButton);
-
-
     plusButton = new QPushButton(QIcon(":/icons/plus.png"),"", this);
     plusButton->setIconSize(_parent->size()/10);
     plusButton->setEnabled(false);
@@ -64,7 +56,6 @@ DisplaySelectedPoint::DisplaySelectedPoint(QMainWindow *_parent, std::shared_ptr
 
     layout->addLayout(grid);
     layout->addLayout(eyeMapLayout);
-
 
     SpaceWidget* spaceWidget = new SpaceWidget(SpaceWidget::SpaceOrientation::HORIZONTAL, this);
     layout->addWidget(spaceWidget);
@@ -138,7 +129,7 @@ void DisplaySelectedPoint::setOrigin(const Origin _origin){
     /*
     if(origin == MAP)
 
- /*   if(origin == MAP)
+  if(origin == MAP)
 >>>>>>> bf15946b3a0b45b447000c69a42472e619fce00d
         backButton->hide();
     else
@@ -158,7 +149,7 @@ void DisplaySelectedPoint::resetWidget(){
     saveButton->hide();
     /// enable the edit button again and hide the tooltip
     editButton->setEnabled(true);
-    editButton->setToolTip("You can click on this button and then choose between clicking on the map or drag the point to change its position");
+    editButton->setToolTip("You can click this button and then choose between clicking the map or drag the point to change its position");
 
     if(pointView){
         /// in case the user had dragged the point around the map or clicked it, this resets the coordinates displayed to the original ones, otherwise this has no effect

@@ -1476,6 +1476,34 @@ void MainWindow::editGroupBtnEvent(bool checked){
        leftMenu->getDisplaySelectedPoint()->show();
         switchFocus("point",leftMenu->getDisplaySelectedPoint());
     }
+    else if(checkedId != -1 && checkedId < points->count()-1){
+        qDebug() << "gotta update a group";
+        pointsLeftWidget->getGroupButtonGroup()->uncheck();
+        pointsLeftWidget->getGroupButtonGroup()->setEnabled(false);
+        pointsLeftWidget->getModifyEdit()->setText(points->getGroups().at(checkedId)->getName());
+        pointsLeftWidget->getModifyEdit()->selectAll();
+        pointsLeftWidget->getModifyEdit()->setFocus();
+        pointsLeftWidget->getModifyEdit()->show();
+        QPoint posButton = pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(checkedId)->mapTo(
+                    pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(checkedId)->window(), pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(checkedId)->pos());
+        //pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(checkedId)->setStyleSheet("background-color: rgba(255, 255, 255, 0);");
+        qDebug() << pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(checkedId)->pos().x() << pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(checkedId)->pos().y();
+        /*pointsLeftWidget->getModifyEdit()->move(
+                    pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(checkedId)->pos().x(),
+                    pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(checkedId)->pos().y());
+                    */
+        pointsLeftWidget->getModifyEdit()->move(posButton.x()-pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(checkedId)->width()/14.5,
+                                                posButton.y()-pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(checkedId)->height()/2);
+        pointsLeftWidget->getModifyEdit()->setFixedWidth(pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(checkedId)->width()*0.85);
+        qDebug() << pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(checkedId)->mapTo(
+                        pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(checkedId)->window(), pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(checkedId)->pos());
+        qDebug() << pointsLeftWidget->getModifyEdit()->pos().x() << pointsLeftWidget->getModifyEdit()->pos().y();
+        //pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(checkedId)->hide();
+        //pointsLeftWidget->getSaveButton()->show();
+        //pointsLeftWidget->getSaveButton()->setEnabled(true);
+        //pointsLeftWidget->getCancelButton()->show();
+        //qDebug() << (focusWidget() == pointsLeftWidget->getModifyEdit());
+    }
 }
 
 void MainWindow::selectPointBtnEvent(){

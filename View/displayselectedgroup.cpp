@@ -19,7 +19,7 @@ DisplaySelectedGroup::DisplaySelectedGroup(QMainWindow *parent, std::shared_ptr<
     plusButton = new QPushButton(QIcon(":/icons/plus.png"),"", this);
     plusButton->setIconSize(parent->size()/10);
     /// a tool tip is a text displayed when the user moves his mouse over the button without clicking it
-    plusButton->setToolTip("To add a point click on the map");
+    plusButton->setToolTip("To add a point click the map");
     plusButton->setEnabled(false);
 
     minusButton = new QPushButton(QIcon(":/icons/minus.png"),"", this);
