@@ -1351,7 +1351,7 @@ void MainWindow::plusGroupBtnEvent(){
     /// uncheck and disable the buttons
     pointsLeftWidget->getActionButtons()->uncheckAll();
 
-    pointsLeftWidget->getActionButtons()->EnableAll();
+    pointsLeftWidget->getActionButtons()->enableAll();
 
     pointsLeftWidget->getActionButtons()->getPlusButton()->setToolTip("Enter a name for your group and click \"save\" or click \"cancel\" to cancel");
 

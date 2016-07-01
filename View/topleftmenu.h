@@ -10,25 +10,19 @@ class TopLeftMenu : public QWidget{
 public:
     TopLeftMenu(QWidget* parent);
     //getters
-    QPushButton* getPlusButton() {return plusButton;}
-    QPushButton* getMinusButton() {return minusButton;}
-    QPushButton* getEditButton() {return editButton;}
-    QPushButton* getMapButton() {return mapButton;}
-    QPushButton* getEyeButton() {return eyeButton;}
+    QPushButton* getPlusButton(void) const {return plusButton;}
+    QPushButton* getMinusButton(void) const {return minusButton;}
+    QPushButton* getEditButton(void) const {return editButton;}
+    QPushButton* getMapButton(void) const {return mapButton;}
+    QPushButton* getEyeButton(void) const {return eyeButton;}
 
-    //setters
-    void setPlusButton(QPushButton* plus) { plusButton = plus;}
-    void setMinusButton(QPushButton* minus) { minusButton = minus;}
-    void setEditButton(QPushButton* edit) { editButton = edit;}
-    void setMapButton(QPushButton* map) { mapButton = map;}
-    void setEyeButton(QPushButton* eye) { eyeButton = eye;}
 
     void disableAll();
-    void EnableAll();
+    void enableAll();
     void uncheckAll();
     void checkAll();
-    void allCheckable();
-    void allNonCheckable();
+    void setAllCheckable();
+    void setAllNonCheckable();
 
 
 private:

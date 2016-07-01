@@ -38,7 +38,7 @@ PointsLeftWidget::PointsLeftWidget(QMainWindow* _parent, std::shared_ptr<Points>
     layout = new QVBoxLayout(this);
 
     actionButtons = new TopLeftMenu(this);
-    actionButtons->allCheckable();
+    actionButtons->setAllCheckable();
 
     actionButtons->getMapButton()->setEnabled(false);
     actionButtons->getEditButton()->setEnabled(false);
