@@ -4,6 +4,7 @@
 ScanRobotThread::ScanRobotThread(const QString newipAddress, const int newPort){
     ipAddress = newipAddress;
     port = newPort;
+    ok = true;
 }
 
 void ScanRobotThread::run(){
@@ -12,7 +13,7 @@ void ScanRobotThread::run(){
     socketRobot = std::shared_ptr<QTcpSocket>(new QTcpSocket());
 
     /// Connect the signal readyRead which tell us when data arrived to the function that treat them
-    connect(&(*socketRobot), SIGNAL(readyRead()), SLOT(readTcpData()) );
+    //connect(&(*socketRobot), SIGNAL(readyRead()), SLOT(readTcpData()) );
     /// Connect the signal hostFound which trigger when we find the host
     //connect( socketRobot, SIGNAL(hostFound()), SLOT(hostFoundSlot()) );
     /// Connect the signal connected which trigger when we are connected to the host
@@ -38,13 +39,28 @@ void ScanRobotThread::run(){
     }
 
     /// Throw an error if bytes are available but we can't read them
-    while (socketRobot->bytesAvailable() < (int)sizeof(quint16)) {
+    /*while (socketRobot->bytesAvailable() < (int)sizeof(quint16)) {
         if (!socketRobot->waitForReadyRead()) {
             qDebug() << "(Robot) Ready read error : " << socketRobot->errorString();
             socketRobot -> close();
             exit();
             return;
         }
+    }*/
+    while (ok) {
+        if (!socketRobot->waitForReadyRead()) {
+            qDebug() << "(Robot) Ready read error : " << socketRobot->errorString();
+            socketRobot -> close();
+            exit();
+            return;
+        }
+        QString data = socketRobot->readAll();
+        QRegExp rx("[ ]");
+        QStringList list = data.split(rx, QString::SkipEmptyParts);
+        qDebug() << "(Robot) position" << data;
+
+        /// Data are received as a string separated by a space ("width height resolution originX originY")
+        emit valueChangedRobot(list.at(0).toDouble(), list.at(1).toDouble(), list.at(2).toDouble());
     }
 }
 
@@ -67,7 +83,8 @@ void ScanRobotThread::connectedSlot(){
 }
 
 void ScanRobotThread::disconnectedSlot(){
-    qDebug() << "(Map) Disconnected";
+    qDebug() << "(Robot) Disconnected";
+    ok = false;
 }
 
 void ScanRobotThread::errorSlot(QAbstractSocket::SocketError error){

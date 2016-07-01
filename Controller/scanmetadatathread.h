@@ -75,6 +75,7 @@ private :
     std::shared_ptr<QTcpSocket> socketMetadata;
     QString ipAddress;
     int port;
+    bool ok;
 
 };
 

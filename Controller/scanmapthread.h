@@ -76,6 +76,7 @@ private :
      * The array on which we stack all the data we receive
      */
     QByteArray data;
+    bool ok;
 
 };
 
