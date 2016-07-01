@@ -9,72 +9,36 @@
 #include <QHBoxLayout>
 #include <QMainWindow>
 #include <QLabel>
-
+#include "verticalscrollarea.h"
 DisplaySelectedGroup::DisplaySelectedGroup(QMainWindow *parent, std::shared_ptr<Points> const& _points) : QWidget(parent){
+
+   VerticalScrollArea* scrollArea = new VerticalScrollArea(this);
+
     layout = new QVBoxLayout(this);
 
     name = new QLabel("\nName : ", this);
     points = _points;
+    actionButtons = new TopLeftMenu(this);
 
-    plusButton = new QPushButton(QIcon(":/icons/plus.png"),"", this);
-    plusButton->setIconSize(parent->size()/10);
-    /// a tool tip is a text displayed when the user moves his mouse over the button without clicking it
-    plusButton->setToolTip("To add a point click on the map");
-    plusButton->setEnabled(false);
-
-    minusButton = new QPushButton(QIcon(":/icons/minus.png"),"", this);
-    minusButton->setIconSize(parent->size()/10);
-    minusButton->setCheckable(true);
-    /// to force the user to choose a point first
-    minusButton->setEnabled(false);
-    minusButton->setToolTip("Select a point and click here to remove it");
-
-    editButton = new QPushButton(QIcon(":/icons/edit.png"),"", this);
-    editButton->setIconSize(parent->size()/10);
-    editButton->setCheckable(true);
-    /// to force the user to choose a point first
-    editButton->setEnabled(false);
-    editButton->setToolTip("Select a point and click here to modify it");
-
-    grid = new QHBoxLayout();
-    grid->addWidget(plusButton);
-    grid->addWidget(minusButton);
-    grid->addWidget(editButton);
-
-    eyeButton = new QPushButton(QIcon(":/icons/eye.png"), "", this);
-    eyeButton->setIconSize(parent->size()/10);
-    /// to force the user to choose a point first
-    eyeButton->setEnabled(false);
-    eyeButton->setToolTip("Select a point and click here to access its information");
-
-    mapButton = new QPushButton(QIcon(":/icons/map.png"),"", this);
-    mapButton->setIconSize(parent->size()/10);
-    mapButton->setCheckable(true);
-    /// to force the user to choose a point first
-    mapButton->setEnabled(false);
-    mapButton->setToolTip("Select a point and click here to display or hide it on the map");
-
-    eyeMapLayout = new QHBoxLayout();
-    eyeMapLayout->addWidget(eyeButton);
-    eyeMapLayout->addWidget(mapButton);
+    actionButtons->disableAll();
+    actionButtons->getMinusButton()->setCheckable(false);
+    actionButtons->getEditButton()->setCheckable(false);
+    actionButtons->getMapButton()->setCheckable(false);
 
 
-    layout->addLayout(grid);
-    layout->addLayout(eyeMapLayout);
+    layout->addWidget(actionButtons);
 
-
-    SpaceWidget* spaceWidget = new SpaceWidget(SpaceWidget::SpaceOrientation::HORIZONTAL, this);
-    layout->addWidget(spaceWidget);
 
     layout->addWidget(name);
 
-    scrollArea = new VerticalScrollArea(this);
+   // scrollArea = new VerticalScrollArea(this);
 
     pointButtonGroup = new PointButtonGroup(_points, 0, this);
+    scrollArea->setWidget(pointButtonGroup);
 
     layout->addWidget(scrollArea);
-
-    scrollArea->setWidget(pointButtonGroup);
+    setMaximumWidth(parent->width()*4/10);
+    setMinimumWidth(parent->width()*4/10);
 }
 
 void DisplaySelectedGroup::setName(const QString _name){
