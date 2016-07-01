@@ -57,7 +57,7 @@ PointView* PointsView::getPointViewFromName(const QString _name){
 
 void PointsView::addPointView(PointView* const& _pointView){
     std::pair<int, int> pointIndexes = points->findPointIndexes(_pointView->getPoint()->getName());
-
+qDebug() << "still ok" << pointIndexes.first << pointIndexes.second;
     GroupView* groupView = groupViews.at(pointIndexes.first);
     qDebug() << "trying to add a pointview to group " << points->getGroups()[pointIndexes.first]->getName() << groupView->getPointViews().size();
     groupView->addPointView(_pointView);
@@ -71,4 +71,8 @@ void PointsView::setNormalPixmaps(void){
             groupView->getPointViews().at(j)->setPixmap(PointView::PixmapType::NORMAL);
         }
     }
+}
+
+void PointsView::addGroupViewFront(){
+    groupViews.insert(groupViews.begin(), new GroupView());
 }

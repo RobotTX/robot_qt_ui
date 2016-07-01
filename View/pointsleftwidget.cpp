@@ -16,6 +16,9 @@
 #include "Model/points.h"
 #include "Model/group.h"
 #include "Model/point.h"
+#include "Controller/mainwindow.h"
+#include "View/leftmenu.h"
+#include <QKeyEvent>
 
 
 PointsLeftWidget::PointsLeftWidget(QMainWindow* _parent, std::shared_ptr<Points> const& _points, bool _groupDisplayed)
@@ -62,6 +65,7 @@ PointsLeftWidget::PointsLeftWidget(QMainWindow* _parent, std::shared_ptr<Points>
     creationLayout = new QHBoxLayout();
     saveButton = new QPushButton("Save", this);
     saveButton->hide();
+    saveButton->setEnabled(false);
     cancelButton = new QPushButton("Cancel", this);
     cancelButton->hide();
     creationLayout->addWidget(cancelButton);
@@ -81,6 +85,13 @@ PointsLeftWidget::PointsLeftWidget(QMainWindow* _parent, std::shared_ptr<Points>
 
     /// to enable the buttons
     connect(groupButtonGroup->getButtonGroup(), SIGNAL(buttonClicked(int)), this, SLOT(enableButtons(int)));
+
+    /// to make sure the name chosen for a new group is valid
+    connect(groupNameEdit, SIGNAL(textEdited(QString)), this, SLOT(checkGroupName(QString)));
+
+    connect(cancelButton, SIGNAL(clicked(bool)), this, SLOT(cancelCreationGroup()));
+
+    connect(saveButton, SIGNAL(clicked(bool)), this, SLOT(emitNewGroupSignal()));
 
     setMaximumWidth(_parent->width()*4/10);
     setMinimumWidth(_parent->width()*4/10);
@@ -156,4 +167,49 @@ void PointsLeftWidget::disableButtons(void){
     actionButtons->getEditButton()->setToolTip("Select a group or a point and click here to modify it");
     actionButtons->getEditButton()->setChecked(false);
 
+}
+
+void PointsLeftWidget::checkGroupName(QString name){
+    qDebug() << name;
+    if(!name.compare("")){
+        saveButton->setToolTip("The name of your group cannot be empty");
+        saveButton->setEnabled(false);
+        return;
+    }
+    for(int i = 0; i < points->count(); i++){
+        if(!name.compare(points->getGroups().at(i)->getName(), Qt::CaseInsensitive)){
+            saveButton->setToolTip("A group with the same name already exists, please choose another name for your group");
+            saveButton->setEnabled(false);
+            return;
+        }
+    }
+    saveButton->setToolTip("");
+    saveButton->setEnabled(true);
+}
+
+void PointsLeftWidget::cancelCreationGroup(){
+    /// hides everything that's related to the creation of a group
+    groupNameEdit->hide();
+    groupNameLabel->hide();
+    saveButton->hide();
+    cancelButton->hide();
+
+    // emit un signal a la main window or to the left menu to do it
+
+    //((LeftMenu*) parentWidget())->getReturnButton()->setEnabled(true);
+    /// resets the buttons so we can click them
+    groupButtonGroup->setEnabled(true);
+}
+
+void PointsLeftWidget::emitNewGroupSignal(){
+    qDebug() << "emitnewgroupsignal called" << groupNameEdit->text();
+    emit newGroup(groupNameEdit->text());
+}
+
+void PointsLeftWidget::keyPressEvent(QKeyEvent* event){
+    /// this is the enter key
+    if(!event->text().compare("\r")){
+        emit newGroup(groupNameEdit->text());
+        qDebug() << "enter pressed";
+    }
 }

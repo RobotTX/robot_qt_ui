@@ -66,7 +66,9 @@ DisplaySelectedPoint::DisplaySelectedPoint(QMainWindow *_parent, std::shared_ptr
     layout->addLayout(editLayout);
 
     /// to check that a point that's being edited does not get a new name that's already used in the database
-    connect(nameEdit, SIGNAL(textEdited(QString)), this, SLOT(checkPointName()));
+
+    connect(nameEdit, SIGNAL(textEdited(QString)), this, SLOT(checkPointName(QString)));
+
     setMaximumWidth(_parent->width()*4/10);
     setMinimumWidth(_parent->width()*4/10);
 }
@@ -135,19 +137,29 @@ void DisplaySelectedPoint::hideEvent(QHideEvent *event){
     QWidget::hideEvent(event);
 }
 
-void DisplaySelectedPoint::checkPointName() const {
-    qDebug() << "checkPointName called";
+void DisplaySelectedPoint::checkPointName(QString name) const {
+    qDebug() << "checkPointName called" << name;
+    /// names are the same we don't do anything
+    if(!name.compare(pointView->getPoint()->getName(), Qt::CaseInsensitive))
+        return;
+    if(!name.compare("")){
+        saveButton->setToolTip("The name of your point cannot be empty");
+        saveButton->setEnabled(false);
+        return;
+    }
+
     for(int i = 0; i < points->count(); i++){
         std::shared_ptr<Group> group = points->getGroups().at(i);
         for(int j = 0; j < group->count(); j++){
-            if(!nameEdit->text().compare(group->getPoints().at(j)->getName())){
-                qDebug() << nameEdit->text() << " already exists";
+            if(!name.compare(group->getPoints().at(j)->getName(), Qt::CaseInsensitive)){
+                qDebug() << name << " already exists";
                 saveButton->setEnabled(false);
-                saveButton->setToolTip("A point with this name already exists, please choose another name for your point.");
+                saveButton->setToolTip("A point with this name already exists, please choose another name for your point");
                 return;
             }
         }
     }
+    saveButton->setToolTip("");
     saveButton->setEnabled(true);
 
 }

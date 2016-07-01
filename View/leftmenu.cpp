@@ -24,8 +24,13 @@
 #include "verticalscrollarea.h"
 #include <QButtonGroup>
 #include "Model/group.h"
-LeftMenu::LeftMenu(MainWindow* _parent, std::shared_ptr<Points> const& points, const std::shared_ptr<Robots> &robots, PointsView * const &pointViews): QWidget(_parent), parent(_parent){
+#include "Model/points.h"
+#include "Model/xmlparser.h"
+#include "Controller/mainwindow.h"
 
+LeftMenu::LeftMenu(MainWindow* _parent, std::shared_ptr<Points> const& _points, const std::shared_ptr<Robots> &robots, PointsView * const &pointViews):
+    QWidget(_parent), parent(_parent), points(_points)
+{
     QScrollArea * scroll = new VerticalScrollArea(_parent);
 
     QVBoxLayout * leftLayout  = new QVBoxLayout(this);
@@ -37,7 +42,7 @@ LeftMenu::LeftMenu(MainWindow* _parent, std::shared_ptr<Points> const& points, c
     returnButton->setIconSize(_parent->size()/10);
     connect(returnButton, SIGNAL(clicked()), parent, SLOT(backEvent()));
 
-    QPushButton* closeBtn = new QPushButton(QIcon(":/icons/cropped_close.png"), "", this);
+    closeBtn = new QPushButton(QIcon(":/icons/cropped_close.png"), "", this);
     closeBtn->setIconSize(_parent->size()/30);
     closeBtn->setFlat(true);
     //closeBtn->setStyleSheet("QPushButton { padding: 5px;}");
@@ -50,12 +55,12 @@ LeftMenu::LeftMenu(MainWindow* _parent, std::shared_ptr<Points> const& points, c
     connect(closeBtn, SIGNAL(clicked()), _parent, SLOT(closeSlot()));
 
     /// to display the information relative to a point
-    displaySelectedPoint = new DisplaySelectedPoint(_parent, points);
+    displaySelectedPoint = new DisplaySelectedPoint(_parent, _points);
     leftLayout->addWidget(displaySelectedPoint);
     leftLayout->setAlignment(displaySelectedPoint, Qt::AlignLeft);
 
     /// to display the information relative to a group of points
-    displaySelectedGroup = new DisplaySelectedGroup(_parent, points);
+    displaySelectedGroup = new DisplaySelectedGroup(_parent, _points);
     leftLayout->addWidget(displaySelectedGroup);
     leftLayout->setAlignment(displaySelectedGroup, Qt::AlignLeft);
 
@@ -64,7 +69,7 @@ LeftMenu::LeftMenu(MainWindow* _parent, std::shared_ptr<Points> const& points, c
     leftLayout->addWidget(leftMenuWidget);
 
     /// Menu which display the list of points
-    pointsLeftWidget = new PointsLeftWidget(_parent, points);
+    pointsLeftWidget = new PointsLeftWidget(_parent, _points);
     leftLayout->addWidget(pointsLeftWidget);
 
     /// Menu which display the selected robot infos
@@ -100,7 +105,7 @@ LeftMenu::LeftMenu(MainWindow* _parent, std::shared_ptr<Points> const& points, c
     connect(editSelectedPointWidget, SIGNAL(pointSaved(int, double, double, QString)), _parent, SLOT(pointSavedEvent(int, double, double, QString)));
 
     /// Menu which display the widget for the creation of a path
-    pathCreationWidget = new PathCreationWidget(_parent, *points);
+    pathCreationWidget = new PathCreationWidget(_parent, *_points);
     leftLayout->addWidget(pathCreationWidget);
 
 
@@ -199,4 +204,5 @@ void LeftMenu::disableButtons(){
     displaySelectedGroup->getActionButtons()->getEditButton()->setEnabled(false);
 }
 
+/// to factorize the remove point events
 void LeftMenu::removePoint(){}
