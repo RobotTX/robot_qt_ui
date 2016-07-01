@@ -36,10 +36,12 @@ public:
     std::shared_ptr<Point> getPoint(void) const { return pointView->getPoint(); }
     void setPoint(std::shared_ptr<Point> const& _point) { pointView->setPoint(_point); }
     PointView* getPointView(void) const { return pointView; }
-    void setPointView(PointView* const& _pointView) { pointView = _pointView; }
+    void setPointView(PointView* const& _pointView, QString robotName);
     Origin getOrigin(void) const { return origin; }
     QLabel* getXLabel(void) const { return posXLabel; }
     QLabel* getYLabel(void) const { return posYLabel; }
+    QWidget* getHomeWidget(void) const { return homeWidget; }
+    QPushButton* getRobotButton(void) const { return robotBtn; }
 
 public:
     void displayPointInfo(void);
@@ -82,6 +84,8 @@ private:
     PointView* pointView;
     QMainWindow* parent;
     std::shared_ptr<Points> points;
+    QWidget* homeWidget;
+    QPushButton* robotBtn;
     TopLeftMenu* actionButtons;
 
     /// to determine whether we come from the group menu and have to go back to it if we click on the back button

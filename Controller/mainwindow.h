@@ -41,8 +41,8 @@ class TopLayout;
 #define PORT_MAP 4002
 #define PORT_CMD 5600
 
-//#define XML_PATH "/home/m-a/Documents/QtProject/gobot-software/points.xml"
-#define XML_PATH "/home/joan/Qt/QtProjects/gobot-software/points.xml"
+#define XML_PATH "/home/m-a/Documents/QtProject/gobot-software/points.xml"
+//#define XML_PATH "/home/joan/Qt/QtProjects/gobot-software/points.xml"
 //#define XML_PATH "/Users/fannylarradet/Desktop/GTRobots/gobot-software/points.xml"
 
 namespace Ui {
@@ -77,7 +77,7 @@ public:
     void setLastWidgets(QList<QPair<QWidget*,QString>>);
     void resetFocus();
     void switchFocus(QString name, QWidget* widget);
-    void delay() const;
+    void delay(const int ms) const;
 
 signals:
     void sendCommand(QString);
@@ -94,6 +94,7 @@ private slots:
     void editSelectedRobot(RobotView* robotView);
     void setSelectedRobot(QAbstractButton* button);
     void setSelectedRobotNoParent(QAbstractButton *button);
+    void setSelectedRobotFromPoint();
     void robotBtnEvent();
     void pointBtnEvent();
     void mapBtnEvent();

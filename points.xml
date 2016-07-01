@@ -4,19 +4,14 @@
         <name>first group</name>
         <point>
             <name>A</name>
-<<<<<<< HEAD
-            <x>63</x>
-            <y>66</y>
-=======
-            <x>35</x>
-            <y>70</y>
->>>>>>> 3523326adc3613df001df1a311379514b23946f0
-            <displayed>1</displayed>
+            <x>50</x>
+            <y>50</y>
+            <displayed>0</displayed>
         </point>
         <point>
             <name>Ma point</name>
-            <x>56</x>
-            <y>141</y>
+            <x>75</x>
+            <y>75</y>
             <displayed>1</displayed>
         </point>
         <point>
@@ -29,7 +24,7 @@
     <group>
         <name>Second group</name>
         <point>
-            <name>Fanny</name>
+            <name>Home_Roboto</name>
             <x>125</x>
             <y>125</y>
             <displayed>1</displayed>
@@ -44,7 +39,7 @@
     <group>
         <name>No group</name>
         <point>
-            <name>Un point</name>
+            <name>Home_Roboty</name>
             <x>150</x>
             <y>175</y>
             <displayed>1</displayed>
@@ -57,8 +52,8 @@
         </point>
         <point>
             <name>A final point</name>
-            <x>198</x>
-            <y>67</y>
+            <x>150</x>
+            <y>225</y>
             <displayed>1</displayed>
         </point>
     </group>
