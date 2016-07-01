@@ -37,6 +37,9 @@ public:
      * Called when we want to send a command
      */
     bool sendCommand(QString cmd);
+    QString waitAnswer();
+    void resetCommandAnswer(){ commandAnswer = ""; }
+
 
 private slots:
     /**
@@ -64,12 +67,19 @@ private slots:
      */
     void disconnectedSlot();
 
+    /**
+     * @brief readTcpData
+     * Read the data we receive
+     */
+    void readTcpData();
+
 private :
     std::shared_ptr<QTcpSocket> socketCmd;
     QString ipAddress;
     int port;
     QString robotName;
     bool connected;
+    QString commandAnswer;
 };
 
 #endif // CMDROBOTTHREAD_H

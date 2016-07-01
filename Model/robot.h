@@ -58,6 +58,8 @@ public:
      * Called to send a command to the robot
      */
     bool sendCommand(QString cmd);
+    QString waitAnswer();
+    void resetCommandAnswer();
 
 
 private:

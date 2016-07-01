@@ -36,11 +36,14 @@
 #include "View/toplayout.h"
 #include <QVBoxLayout>
 #include <QAbstractButton>
+#include <QString>
+#include <QStringList>
 
 
-//#define XML_PATH "/home/m-a/Documents/QtProject/gobot-software/points.xml"
-#define XML_PATH "/home/joan/Qt/QtProjects/gobot-software/points.xml"
+#define XML_PATH "/home/m-a/Documents/QtProject/gobot-software/points.xml"
+//#define XML_PATH "/home/joan/Qt/QtProjects/gobot-software/points.xml"
 //#define XML_PATH "/Users/fannylarradet/Desktop/GTRobots/gobot-software/points.xml"
+
 
 /**
  * @brief MainWindow::MainWindow
@@ -184,39 +187,53 @@ void MainWindow::connectToRobot(){
                     qDebug() << "Trying to connect to : " << ip;
 
                     if(selectedRobot->getRobot()->sendCommand(QString("e ") + QString::number(PORT_MAP_METADATA) + " " + QString::number(PORT_ROBOT_POS) + " " +QString::number(PORT_MAP))){
-                        selectedRobotWidget->getScanBtn()->setText("Stop to scan");
-                        clearNewMap();
-                        selectedRobotWidget->disable();
-                        selectedRobotWidget->getScanBtn()->setEnabled(true);
-                        bottomLayout->disable();
-                        setGraphicItemsState(GraphicItemState::NO_EVENT);
-                        disableMenu();
+                        QString answer = selectedRobot->getRobot()->waitAnswer();
+                        QStringList answerList = answer.split(QRegExp("[ ]"), QString::SkipEmptyParts);
+                        if(answerList.size() > 1){
+                            QString cmd = answerList.at(0);
+                            bool success = (answerList.at(1).compare("done") == 0);
+                            if((cmd.compare("e") == 0 && success) || answerList.at(0).compare("1") == 0){
+                                selectedRobotWidget->getScanBtn()->setText("Stop to scan");
+                                clearNewMap();
+                                selectedRobotWidget->disable();
+                                selectedRobotWidget->getScanBtn()->setEnabled(true);
+                                bottomLayout->disable();
+                                setGraphicItemsState(GraphicItemState::NO_EVENT);
+                                disableMenu();
 
-                        metadataThread = new ScanMetadataThread(ip, PORT_MAP_METADATA);
-                        robotThread = new ScanRobotThread(ip, PORT_ROBOT_POS);
-                        mapThread = new ScanMapThread(ip, PORT_MAP);
+                                metadataThread = new ScanMetadataThread(ip, PORT_MAP_METADATA);
+                                robotThread = new ScanRobotThread(ip, PORT_ROBOT_POS);
+                                mapThread = new ScanMapThread(ip, PORT_MAP);
 
-                        connect(robotThread, SIGNAL(valueChangedRobot(float, float, float))
-                                ,this ,SLOT(updateRobot(float, float, float)));
+                                connect(robotThread, SIGNAL(valueChangedRobot(float, float, float))
+                                        ,this ,SLOT(updateRobot(float, float, float)));
 
-                        connect(metadataThread, SIGNAL(valueChangedMetadata(int, int, float, float, float))
-                                , this , SLOT(updateMetadata(int, int, float, float, float)));
+                                connect(metadataThread, SIGNAL(valueChangedMetadata(int, int, float, float, float))
+                                        , this , SLOT(updateMetadata(int, int, float, float, float)));
 
-                        connect(mapThread, SIGNAL(valueChangedMap(QByteArray))
-                                , this , SLOT(updateMap(QByteArray)));
+                                connect(mapThread, SIGNAL(valueChangedMap(QByteArray))
+                                        , this , SLOT(updateMap(QByteArray)));
 
-                        metadataThread->start();
-                        metadataThread->moveToThread(metadataThread);
+                                metadataThread->start();
+                                metadataThread->moveToThread(metadataThread);
 
-                        robotThread->start();
-                        robotThread->moveToThread(robotThread);
+                                robotThread->start();
+                                robotThread->moveToThread(robotThread);
 
-                        mapThread->start();
-                        mapThread->moveToThread(mapThread);
+                                mapThread->start();
+                                mapThread->moveToThread(mapThread);
 
-                        scanningRobot = selectedRobot;
+                                scanningRobot = selectedRobot;
+                                topLayout->setLabel(TEXT_COLOR_SUCCESS, "Scanning a new map");
+                            } else {
+                                selectedRobotWidget->getScanBtn()->setChecked(false);
+                                topLayout->setLabel(TEXT_COLOR_DANGER, "Failed to start to scan a map, please try again");
+                            }
+                        }
+                        selectedRobot->getRobot()->resetCommandAnswer();
                     } else {
                         selectedRobotWidget->getScanBtn()->setChecked(false);
+                        topLayout->setLabel(TEXT_COLOR_DANGER, "Failed to start to scan a map, please try again");
                     }
                 }
                 break;
@@ -227,15 +244,30 @@ void MainWindow::connectToRobot(){
             }
         } else {
             if(selectedRobot->getRobot()->sendCommand("f")){
-                qDebug() << "Disconnected";
-                selectedRobotWidget->getScanBtn()->setText("Scan a map");
-                selectedRobotWidget->enable();
-                bottomLayout->enable();
-                setGraphicItemsState(GraphicItemState::NO_STATE);
-                enableMenu();
+                QString answer = selectedRobot->getRobot()->waitAnswer();
+                QStringList answerList = answer.split(QRegExp("[ ]"), QString::SkipEmptyParts);
+                if(answerList.size() > 1){
+                    QString cmd = answerList.at(0);
+                    bool success = (answerList.at(1).compare("done") == 0);
+                    if((cmd.compare("f") == 0 && success) || answerList.at(0).compare("1") == 0){
+                        qDebug() << "Disconnected";
+                        selectedRobotWidget->getScanBtn()->setText("Scan a map");
+                        selectedRobotWidget->enable();
+                        bottomLayout->enable();
+                        setGraphicItemsState(GraphicItemState::NO_STATE);
+                        enableMenu();
+                        topLayout->setLabel(TEXT_COLOR_SUCCESS, "Stopped scanning the map");
+                    } else {
+                        selectedRobotWidget->getScanBtn()->setChecked(true);
+                        topLayout->setLabel(TEXT_COLOR_DANGER, "Failed to stop the scanning, please try again");
+                    }
+                }
+                selectedRobot->getRobot()->resetCommandAnswer();
+
             } else {
                 qDebug() << "Could not disconnect";
                 selectedRobotWidget->getScanBtn()->setChecked(true);
+                topLayout->setLabel(TEXT_COLOR_DANGER, "Failed to stop the scanning, please try again");
             }
         }
     } else {
@@ -247,6 +279,76 @@ void MainWindow::initializeRobots(){
     //TODO Need to come from XML
     std::shared_ptr<Robot> robot1(new Robot("Roboty", "localhost", PORT_CMD, this));
     robot1->setWifi("Swaghetti Yolognaise");
+
+    /*std::vector<std::shared_ptr<PathPoint>> path1;
+    qDebug() << "Nb groups : " << points.getGroups().size();
+
+    if(!points.getGroups().isEmpty()){
+        qDebug() << "Nb points first group : " << points.getGroups().at(0)->getPoints().size();
+        if(!points.getGroups().at(0)->getPoints().isEmpty()){
+            if(points.getGroups().at(0)->getPoints().size() == 1){
+                std::shared_ptr<PathPoint> pathPoint1 = std::shared_ptr<PathPoint>(new PathPoint(*(points.getGroups().at(0)->getPoints().at(0)),
+                                                      PathPoint::HUMAN_ACTION));
+                path1.push_back(pathPoint1);
+                path1.push_back(pathPoint1);
+                path1.push_back(pathPoint1);
+                path1.push_back(pathPoint1);
+                path1.push_back(pathPoint1);
+                path1.push_back(pathPoint1);
+                path1.push_back(pathPoint1);
+                path1.push_back(pathPoint1);
+                path1.push_back(pathPoint1);
+                path1.push_back(pathPoint1);
+            }
+
+            if(points.getGroups().at(0)->getPoints().size() == 2){
+
+                std::shared_ptr<PathPoint> pathPoint1 = std::shared_ptr<PathPoint>(new PathPoint(*(points.getGroups().at(0)->getPoints().at(0)),
+                                                      PathPoint::HUMAN_ACTION));
+                std::shared_ptr<PathPoint> pathPoint2 = std::shared_ptr<PathPoint>(new PathPoint(*(points.getGroups().at(0)->getPoints().at(1)),
+                                                      PathPoint::WAIT, 200));
+                path1.push_back(pathPoint1);
+                path1.push_back(pathPoint2);
+
+                path1.push_back(pathPoint1);
+                path1.push_back(pathPoint2);
+
+                path1.push_back(pathPoint1);
+                path1.push_back(pathPoint2);
+
+                path1.push_back(pathPoint1);
+                path1.push_back(pathPoint2);
+
+                path1.push_back(pathPoint1);
+                path1.push_back(pathPoint2);
+            }
+
+            if(points.getGroups().at(0)->getPoints().size() > 2){
+                std::shared_ptr<PathPoint> pathPoint1 = std::shared_ptr<PathPoint>(new PathPoint(*(points.getGroups().at(0)->getPoints().at(0)),
+                                                      PathPoint::HUMAN_ACTION));
+                std::shared_ptr<PathPoint> pathPoint2 = std::shared_ptr<PathPoint>(new PathPoint(*(points.getGroups().at(0)->getPoints().at(1)),
+                                                      PathPoint::WAIT, 200));
+                std::shared_ptr<PathPoint> pathPoint3 = std::shared_ptr<PathPoint>(new PathPoint(*(points.getGroups().at(0)->getPoints().at(2)),
+                                                      PathPoint::WAIT, 500));
+
+                path1.push_back(pathPoint1);
+                path1.push_back(pathPoint2);
+                path1.push_back(pathPoint3);
+
+                path1.push_back(pathPoint1);
+                path1.push_back(pathPoint2);
+                path1.push_back(pathPoint3);
+
+                path1.push_back(pathPoint1);
+                path1.push_back(pathPoint2);
+                path1.push_back(pathPoint3);
+            }
+        }
+    }
+
+
+    robot1->setPath(path1);*/
+
     RobotView* robotView1 = new RobotView(robot1, mapPixmapItem);
     connect(robotView1, SIGNAL(setSelectedSignal(RobotView*)), this, SLOT(setSelectedRobot(RobotView*)));
     robotView1->setPosition(200, 200);
@@ -261,7 +363,7 @@ void MainWindow::initializeRobots(){
     robotView2->setParentItem(mapPixmapItem);
     robots->add(robotView2);
 
-    std::shared_ptr<Robot> robot3(new Robot("Robota", "192.168.4.175", PORT_CMD, this));
+    std::shared_ptr<Robot> robot3(new Robot("Robota", "192.168.4.236", PORT_CMD, this));
     robot3->setWifi("Swaghetti Yolognaise");
     RobotView* robotView3 = new RobotView(robot3, mapPixmapItem);
     connect(robotView3, SIGNAL(setSelectedSignal(RobotView*)), this, SLOT(setSelectedRobot(RobotView*)));
@@ -279,12 +381,24 @@ void MainWindow::stopSelectedRobot(int robotNb){
             case QMessageBox::Ok:
                 /// if the command is succesfully sent to the robot, we apply the change
                 if(robots->getRobotsVector().at(robotNb)->getRobot()->sendCommand(QString("d"))){
-                    clearPath(robotNb);
-                    if(!robots->getRobotsVector().at(robotNb)->getRobot()->getName().compare(selectedRobot->getRobot()->getName())){
-                        hideAllWidgets();
-                        selectedRobotWidget->setSelectedRobot(selectedRobot);
-                        selectedRobotWidget->show();
+                    QString answer = robots->getRobotsVector().at(robotNb)->getRobot()->waitAnswer();
+                    QStringList answerList = answer.split(QRegExp("[ ]"), QString::SkipEmptyParts);
+                    if(answerList.size() > 1){
+                        QString cmd = answerList.at(0);
+                        bool success = (answerList.at(1).compare("done") == 0);
+                        if((cmd.compare("d") == 0 && success) || answerList.at(0).compare("1") == 0){
+                            clearPath(robotNb);
+                            if(!robots->getRobotsVector().at(robotNb)->getRobot()->getName().compare(selectedRobot->getRobot()->getName())){
+                                hideAllWidgets();
+                                selectedRobotWidget->setSelectedRobot(selectedRobot);
+                                selectedRobotWidget->show();
+                            }
+                            topLayout->setLabel(TEXT_COLOR_SUCCESS, "Path deleted");
+                        } else {
+                            topLayout->setLabel(TEXT_COLOR_DANGER, "Failed to delete the path, please try again");
+                        }
                     }
+                    robots->getRobotsVector().at(robotNb)->getRobot()->resetCommandAnswer();
                 }
             break;
             case QMessageBox::Cancel:
@@ -305,8 +419,20 @@ void MainWindow::playSelectedRobot(int robotNb){
         qDebug() << "pause path on robot " << robotNb << " : " << robot->getName();
         /// if the command is succesfully sent to the robot, we apply the change
         if(robot->sendCommand(QString("d"))){
-            robot->setPlayingPath(0);
-            bottomLayout->getPlayRobotBtnGroup()->button(robotNb)->setIcon(QIcon(":/icons/play.png"));
+            QString answer = robot->waitAnswer();
+            QStringList answerList = answer.split(QRegExp("[ ]"), QString::SkipEmptyParts);
+            if(answerList.size() > 1){
+                QString cmd = answerList.at(0);
+                bool success = (answerList.at(1).compare("done") == 0);
+                if((cmd.compare("d") == 0 && success) || answerList.at(0).compare("1") == 0){
+                    robot->setPlayingPath(0);
+                    bottomLayout->getPlayRobotBtnGroup()->button(robotNb)->setIcon(QIcon(":/icons/play.png"));
+                    topLayout->setLabel(TEXT_COLOR_SUCCESS, "Path stopped");
+                } else {
+                    topLayout->setLabel(TEXT_COLOR_DANGER, "Path failed to be stopped, please try again");
+                }
+            }
+            robot->resetCommandAnswer();
         }
     } else {
         qDebug() << "play path on robot " << robotNb << " : " << robot->getName();
@@ -329,8 +455,19 @@ void MainWindow::playSelectedRobot(int robotNb){
 
         /// if the command is succesfully sent to the robot, we apply the change
         if(robot->sendCommand(QString("c ") + QString::number(newPosX) + " "  + QString::number(newPosY) + " "  + QString::number(waitTime))){
-            robot->setPlayingPath(1);
-            bottomLayout->getPlayRobotBtnGroup()->button(robotNb)->setIcon(QIcon(":/icons/pause.png"));
+            QString answer = robot->waitAnswer();
+            QStringList answerList = answer.split(QRegExp("[ ]"), QString::SkipEmptyParts);
+            if(answerList.size() > 1){
+                QString cmd = answerList.at(0);
+                bool success = (answerList.at(1).compare("done") == 0);
+                if((cmd.compare("c") == 0 && success) || answerList.at(0).compare("1") == 0){
+                    robot->setPlayingPath(1);
+                    bottomLayout->getPlayRobotBtnGroup()->button(robotNb)->setIcon(QIcon(":/icons/pause.png"));
+                    topLayout->setLabel(TEXT_COLOR_SUCCESS, "Path playing");
+                } else {
+                    topLayout->setLabel(TEXT_COLOR_DANGER, "Path failed to be played, please try again");
+                }
+            }
         }
     }
 }
@@ -435,6 +572,7 @@ void MainWindow::addPathSelecRobotBtnEvent(){
     pathCreationWidget->resetWidget();
     pathCreationWidget->setSelectedRobot(selectedRobot->getRobot());
     setGraphicItemsState(GraphicItemState::CREATING_PATH, true);
+    switchFocus(selectedRobot->getRobot()->getName(),pathCreationWidget);
 }
 
 
@@ -492,11 +630,10 @@ void MainWindow::cancelEditSelecRobotBtnEvent(){
     robotsLeftWidget->setEditBtnStatus(false);
     robotsLeftWidget->setCheckBtnStatus(false);
     editSelectedRobotWidget->hide();
-
+    selectedRobotWidget->show();
     backEvent();
     leftMenu->getReturnButton()->setEnabled(true);
     leftMenu->getReturnButton()->setToolTip("");
-
 }
 
 void MainWindow::robotSavedEvent(){
@@ -505,22 +642,53 @@ void MainWindow::robotSavedEvent(){
     bool isOK = false;
 
     /// if the command is succesfully sent to the robot, we apply the change
-    if (editSelectedRobotWidget->getWifiPwdEdit()->text() == "......")
-    {
+    if (editSelectedRobotWidget->getWifiPwdEdit()->text() == "......"){
         qDebug() << "edit name only";
 
         if(selectedRobot->getRobot()->sendCommand(QString("a ") + editSelectedRobotWidget->getNameEdit()->text())){
-            isOK = true;
+            QString answer = selectedRobot->getRobot()->waitAnswer();
+            QStringList answerList = answer.split(QRegExp("[ ]"), QString::SkipEmptyParts);
+            if(answerList.size() > 1){
+                QString cmd = answerList.at(0);
+                bool success = (answerList.at(1).compare("done") == 0);
+                if((cmd.compare("a") == 0 && success) || answerList.at(0).compare("1") == 0){
+                    isOK = true;
+                    setMessageTop(TEXT_COLOR_SUCCESS, "Robot successfully edited");
+                } else {
+                    setMessageTop(TEXT_COLOR_DANGER, "Failed to edit the robot");
+                }
+            }
+            selectedRobot->getRobot()->resetCommandAnswer();
         }
-    }
-    else
-    {
-        if(selectedRobot->getRobot()->sendCommand(QString("a ") + editSelectedRobotWidget->getNameEdit()->text())
-                && selectedRobot->getRobot()->sendCommand(QString("b ")
-              + editSelectedRobotWidget->getWifiNameEdit()->text()
-              + editSelectedRobotWidget->getWifiPwdEdit()->text())){
+    } else {
+        if(selectedRobot->getRobot()->sendCommand(QString("a ") + editSelectedRobotWidget->getNameEdit()->text())){
+            QString answer = selectedRobot->getRobot()->waitAnswer();
+            QStringList answerList = answer.split(QRegExp("[ ]"), QString::SkipEmptyParts);
+            if(answerList.size() > 1){
+                QString cmd = answerList.at(0);
+                bool success = (answerList.at(1).compare("done") == 0);
+                if((cmd.compare("a") == 0 && success) || answerList.at(0).compare("1") == 0){
+                    if(selectedRobot->getRobot()->sendCommand(QString("b ")
+                              + editSelectedRobotWidget->getWifiNameEdit()->text()
+                              + editSelectedRobotWidget->getWifiPwdEdit()->text())){
 
-            isOK=true;
+                        QString answer2 = selectedRobot->getRobot()->waitAnswer();
+                        QStringList answerList2 = answer2.split(QRegExp("[ ]"), QString::SkipEmptyParts);
+                        if(answerList2.size() > 1){
+                            QString cmd2 = answerList2.at(0);
+                            bool success2 = (answerList2.at(1).compare("done") == 0);
+                            if((cmd2.compare("b") == 0 && success2) || answerList2.at(0).compare("1") == 0){
+                                isOK = true;
+                                setMessageTop(TEXT_COLOR_SUCCESS, "Robot successfully edited");
+                            } else {
+                                setMessageTop(TEXT_COLOR_DANGER, "Failed to edit the robot");
+                            }
+                        }
+                        selectedRobot->getRobot()->resetCommandAnswer();
+                    }
+                }
+            }
+            selectedRobot->getRobot()->resetCommandAnswer();
         }
     }
 
@@ -606,12 +774,13 @@ void MainWindow::setCheckedRobot(QAbstractButton* button, bool checked){
         robots->getRobotViewByName(button->text())->display(false);
     }
 }
-
+/*
 void MainWindow::backPathCreation(void){
     qDebug() << "backPathCreation called";
     hideAllWidgets();
     selectedRobotWidget->show();
 }
+*/
 
 void MainWindow::editTmpPathPointSlot(int id, Point* point, int nbWidget){
     qDebug() << "editTmpPathPointSlot called : " << id << point->getName() << nbWidget;
@@ -653,8 +822,7 @@ void MainWindow::pathSaved(bool execPath){
 
     hideAllWidgets();
     setMessageTop(TEXT_COLOR_SUCCESS, "Path saved");
-    selectedRobotWidget->setSelectedRobot(selectedRobot);
-    selectedRobotWidget->show();
+
     bottomLayout->updateRobot(robots->getRobotId(selectedRobot->getRobot()->getName()), selectedRobot);
 
     if(execPath){
@@ -670,6 +838,7 @@ void MainWindow::pathSaved(bool execPath){
         else
             qDebug() << "No robot to play this path";
     }
+    backEvent();
 }
 
 void MainWindow::addPathPoint(Point* point){
@@ -904,9 +1073,22 @@ void MainWindow::goHomeBtnEvent(){
 
     /// if the command is succesfully sent to the robot, we apply the change
     if(selectedRobot->getRobot()->sendCommand(QString("c ") + QString::number(newPosX) + " "  + QString::number(newPosY) + " "  + QString::number(waitTime))){
-        qDebug() << "Going to home";
+        QString answer = selectedRobot->getRobot()->waitAnswer();
+        QStringList answerList = answer.split(QRegExp("[ ]"), QString::SkipEmptyParts);
+        if(answerList.size() > 1){
+            QString cmd = answerList.at(0);
+            bool success = (answerList.at(1).compare("done") == 0);
+            if((cmd.compare("d") == 0 && success) || answerList.at(0).compare("1") == 0){
+                qDebug() << "Going to home";
+                topLayout->setLabel(TEXT_COLOR_SUCCESS, "Robot going home");
+            } else {
+                topLayout->setLabel(TEXT_COLOR_DANGER, "Failed to tell the robot to go home, please try again");
+            }
+        }
+        selectedRobot->getRobot()->resetCommandAnswer();
     }
 }
+
 
 /**********************************************************************************************************************************/
 

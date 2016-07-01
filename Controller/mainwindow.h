@@ -122,7 +122,7 @@ private slots:
     void askForDeletePointConfirmation(const int index);
     void displayPointEvent(PointView* _pointView);
     void askForDeleteDefaultGroupPointConfirmation(const int groupIndex);
-    void backPathCreation(void);
+    //void backPathCreation(void);
     void displayGroupMapEvent(void);
     void pathSaved(bool execPath);
     void addPathPoint(Point* point);
