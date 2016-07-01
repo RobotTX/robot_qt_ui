@@ -247,6 +247,11 @@ void MainWindow::connectToRobot(){
                         qDebug() << "Disconnected";
                         selectedRobotWidget->getScanBtn()->setText("Scan a map");
                         selectedRobotWidget->enable();
+
+                        hideAllWidgets();
+                        selectedRobotWidget->setSelectedRobot(selectedRobot);
+                        selectedRobotWidget->show();
+
                         bottomLayout->enable();
                         setGraphicItemsState(GraphicItemState::NO_STATE);
                         enableMenu();
@@ -519,9 +524,9 @@ void MainWindow::setSelectedRobot(RobotView* robotView){
     if(leftMenu->getRobotsLeftWidget()->getEditBtnStatus()){
         editSelectedRobot(robotView);
     } else {
+        hideAllWidgets();
         selectedRobot = robotView;
         robots->setSelected(robotView);
-        hideAllWidgets();
         selectedRobotWidget->setSelectedRobot(selectedRobot);
         selectedRobotWidget->show();
         switchFocus(robotView->getRobot()->getName(),selectedRobotWidget);
@@ -908,6 +913,11 @@ void MainWindow::selectHomeEvent(){
         selectedRobotWidget->getHomeBtn()->setText("Cancel");
         selectedRobotWidget->disable();
         selectedRobotWidget->getHomeBtn()->setEnabled(true);
+        if(selectedRobot->getRobot()->getHome() != NULL){
+            selectedRobotWidget->getHomeBtn()->setEnabled(false);
+        } else {
+            selectedRobotWidget->getHomeBtn()->setEnabled(true);
+        }
         bottomLayout->disable();
         setGraphicItemsState(GraphicItemState::SELECTING_HOME);
         disableMenu();
@@ -1038,14 +1048,33 @@ void MainWindow::showHome(){
     if(selectedRobot->getRobot()->getHome() != NULL){
         PointView* pointView = pointViews->getPointViewFromPoint(*(selectedRobot->getRobot()->getHome()));
         pointView->setPixmap(PointView::PixmapType::NORMAL);
+        if(pointView->isVisible()){
+            qDebug() << "home is visible";
+            pointView->setWasShown(true);
+        }else{
+            qDebug() << "home is not visible";
+            pointView->setWasShown(false);
+        }
+
+        pointView->show();
     }
 }
 
 void MainWindow::hideHome(void){
+    qDebug() << "hideHome called";
     for(size_t i = 0; i < pointViews->getGroups().size(); i++){
         GroupView* groupView = pointViews->getGroups().at(i);
         for(size_t j = 0; j < groupView->getPointViews().size(); j++){
-            groupView->getPointViews().at(j)->QGraphicsPixmapItem::setPixmap(QPixmap(PIXMAP_NORMAL));
+            //groupView->getPointViews().at(j)->QGraphicsPixmapItem::setPixmap(QPixmap(PIXMAP_NORMAL));
+            groupView->getPointViews().at(j)->setPixmap(PointView::PixmapType::NORMAL);
+        }
+    }
+    if(selectedRobot->getRobot()->getHome() != NULL){
+        PointView* pointView = pointViews->getPointViewFromPoint(*(selectedRobot->getRobot()->getHome()));
+        qDebug() << "Home was shown :" << pointView->getWasShown();
+        if(!pointView->getWasShown()){
+            qDebug() << "hidding the home";
+            pointView->hide();
         }
     }
 }

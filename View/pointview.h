@@ -48,6 +48,8 @@ public:
     //void setPixmap(const QPixmap &pixmap);
     void setPoint(std::shared_ptr<Point> const& _point) { point = _point; }
     std::shared_ptr<Point> getPoint(void) const { return point; }
+    void setWasShown(const bool _wasShown) { wasShown = _wasShown; }
+    bool getWasShown() const { return wasShown; }
 
 protected:
     void mousePressEvent(QGraphicsSceneMouseEvent *event);
@@ -71,6 +73,7 @@ private:
     GraphicItemState state;
     bool addedToPath;
     QPixmap lastPixmap;
+    bool wasShown;
 };
 
 #endif // POINTVIEW_H
