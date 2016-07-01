@@ -14,18 +14,15 @@ layout = new QVBoxLayout(this);
 // GRID = + , -  , edit  buttons
 plusButton = new QPushButton(QIcon(":/icons/plus.png"),"", this);
 plusButton->setIconSize(parent->size());
-plusButton->setToolTip("Click here to add a new group");
 
 minusButton = new QPushButton(QIcon(":/icons/minus.png"),"", this);
 minusButton->setIconSize(parent->size());
 /// to force the user to choose a group or point first
-minusButton->setToolTip("Select a group or a point and click here to remove it");
 
 editButton = new QPushButton(QIcon(":/icons/edit.png"),"", this);
 editButton->setIconSize(parent->size());
 
 /// to force the user to choose a group or point first
-editButton->setToolTip("Select a group or a point and click here to modify it");
 
 grid = new QHBoxLayout();
 grid->addWidget(plusButton);
@@ -36,7 +33,6 @@ mapButton = new QPushButton(QIcon(":/icons/map.png"),"", this);
 mapButton->setIconSize(parent->size());
 /// to force the user to choose first
 
-mapButton->setToolTip("Select a group or a point and click here to display or hide it on the map");
 
 layout->addLayout(grid);
 
@@ -44,7 +40,6 @@ layout->addLayout(grid);
 eyeButton = new QPushButton(QIcon(":/icons/eye.png"), "", this);
 eyeButton->setIconSize(parent->size());
 /// to force the user to choose first
-eyeButton->setToolTip("Select a group or a point and click here to display its information");
 
 eyeMapLayout = new QHBoxLayout();
 eyeMapLayout->addWidget(eyeButton);

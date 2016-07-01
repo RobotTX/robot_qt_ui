@@ -50,7 +50,13 @@ PointsLeftWidget::PointsLeftWidget(QMainWindow* _parent, std::shared_ptr<Points>
     actionButtons->getMapButton()->setEnabled(false);
     actionButtons->getEyeButton()->setEnabled(false);
 
-    layout->addWidget(actionButtons);
+    actionButtons->getPlusButton()->setToolTip("Click here to add a new group");
+    actionButtons->getMinusButton()->setToolTip("Select a group or a point and click here to remove it");
+    actionButtons->getEditButton()->setToolTip("Select a group or a point and click here to modify it");
+    actionButtons->getMapButton()->setToolTip("Select a group or a point and click here to display or hide it on the map");
+    actionButtons->getEyeButton()->setToolTip("Select a group or a point and click here to display its information");
+
+        layout->addWidget(actionButtons);
 
 
     groupNameLabel = new QLabel("New group's name : ", this);
