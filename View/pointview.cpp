@@ -18,6 +18,7 @@ PointView::PointView(std::shared_ptr<Point> _point, QGraphicsItem* parent) :
     setToolTip(point->getName());
 
     addedToPath = false;
+    wasShown = true;
     setShapeMode(QGraphicsPixmapItem::BoundingRectShape);
 
     addedToPath = false;

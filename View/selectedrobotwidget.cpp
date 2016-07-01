@@ -129,9 +129,15 @@ void SelectedRobotWidget::setSelectedRobot(RobotView* const& _robotView){
     /// If the robot has a home, we display the name of the point, otherwise a default text
     if(robotView->getRobot()->getHome() != NULL){
         homeBtn->setText(robotView->getRobot()->getHome()->getName());
+        homeBtn->setFlat(true);
+        homeBtn->setStyleSheet ("QPushButton[enabled=\"false\"] {color: black;}");
+        homeBtn->setEnabled(false);
         goHome->show();
     } else {
         homeBtn->setText("Add home");
+        homeBtn->setFlat(false);
+        homeBtn->setStyleSheet ("QPushButton[enabled=\"false\"] {color: lightgrey;}");
+        homeBtn->setEnabled(true);
         goHome->hide();
     }
 
@@ -150,13 +156,20 @@ void SelectedRobotWidget::disable(){
     homeBtn->setEnabled(false);
     addPathBtn->setEnabled(false);
     scanBtn->setEnabled(false);
+    goHome->setEnabled(false);
 }
 
 void SelectedRobotWidget::enable(){
     editBtn->setEnabled(true);
-    homeBtn->setEnabled(true);
     addPathBtn->setEnabled(true);
     scanBtn->setEnabled(true);
+    goHome->setEnabled(true);
+
+    if(robotView->getRobot()->getHome() != NULL){
+        homeBtn->setEnabled(false);
+    } else {
+        homeBtn->setEnabled(true);
+    }
 }
 
 void SelectedRobotWidget::showEvent(QShowEvent *event){

@@ -62,6 +62,15 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
     map->setMapFromFile(settings.value("mapFile", ":/maps/map.pgm").toString());
 
+    /**************************************************************/
+
+    map->setWidth(2048);
+    map->setHeight(2048);
+    map->setResolution(0.050000);
+    map->setOrigin(Position(-51.224998, -51.224998));
+
+    /**************************************************************/
+
     robots = std::shared_ptr<Robots>(new Robots());
     scene = new QGraphicsScene(this);
     graphicsView = new CustomQGraphicsView(scene, this);
@@ -167,10 +176,6 @@ void MainWindow::updateRobot(const float posX, const float posY, const float ori
     scanningRobot->setOrientation(ori);
 
     scene->update();
-
-    qDebug() << "Robot position : " << scanningRobot->getRobot()->getPosition().getX()
-             << " " << scanningRobot->getRobot()->getPosition().getY()
-             << " " << scanningRobot->getRobot()->getOrientation();
 }
 
 void MainWindow::connectToRobot(){
@@ -189,50 +194,41 @@ void MainWindow::connectToRobot(){
                     qDebug() << "Trying to connect to : " << ip;
 
                     if(selectedRobot->getRobot()->sendCommand(QString("e ") + QString::number(PORT_MAP_METADATA) + " " + QString::number(PORT_ROBOT_POS) + " " +QString::number(PORT_MAP))){
-                        QString answer = selectedRobot->getRobot()->waitAnswer();
-                        QStringList answerList = answer.split(QRegExp("[ ]"), QString::SkipEmptyParts);
-                        if(answerList.size() > 1){
-                            QString cmd = answerList.at(0);
-                            bool success = (answerList.at(1).compare("done") == 0);
-                            if((cmd.compare("e") == 0 && success) || answerList.at(0).compare("1") == 0){
-                                selectedRobotWidget->getScanBtn()->setText("Stop to scan");
-                                clearNewMap();
-                                selectedRobotWidget->disable();
-                                selectedRobotWidget->getScanBtn()->setEnabled(true);
-                                bottomLayout->disable();
-                                setGraphicItemsState(GraphicItemState::NO_EVENT);
-                                disableMenu();
 
-                                metadataThread = new ScanMetadataThread(ip, PORT_MAP_METADATA);
-                                robotThread = new ScanRobotThread(ip, PORT_ROBOT_POS);
-                                mapThread = new ScanMapThread(ip, PORT_MAP);
+                        selectedRobotWidget->getScanBtn()->setText("Stop to scan");
+                        clearNewMap();
+                        selectedRobotWidget->disable();
+                        selectedRobotWidget->getScanBtn()->setEnabled(true);
+                        bottomLayout->disable();
+                        setGraphicItemsState(GraphicItemState::NO_EVENT);
+                        disableMenu();
 
-                                connect(robotThread, SIGNAL(valueChangedRobot(float, float, float))
-                                        ,this ,SLOT(updateRobot(float, float, float)));
+                        metadataThread = new ScanMetadataThread(ip, PORT_MAP_METADATA);
+                        robotThread = new ScanRobotThread(ip, PORT_ROBOT_POS);
+                        //mapThread = new ScanMapThread(ip, PORT_MAP);
 
-                                connect(metadataThread, SIGNAL(valueChangedMetadata(int, int, float, float, float))
-                                        , this , SLOT(updateMetadata(int, int, float, float, float)));
+                        connect(metadataThread, SIGNAL(valueChangedMetadata(int, int, float, float, float))
+                                , this , SLOT(updateMetadata(int, int, float, float, float)));
 
-                                connect(mapThread, SIGNAL(valueChangedMap(QByteArray))
-                                        , this , SLOT(updateMap(QByteArray)));
+                        connect(robotThread, SIGNAL(valueChangedRobot(float, float, float))
+                                ,this ,SLOT(updateRobot(float, float, float)));
 
-                                metadataThread->start();
-                                metadataThread->moveToThread(metadataThread);
+                        //connect(mapThread, SIGNAL(valueChangedMap(QByteArray))
+                                //, this , SLOT(updateMap(QByteArray)));
 
-                                robotThread->start();
-                                robotThread->moveToThread(robotThread);
+                        metadataThread->start();
+                        metadataThread->moveToThread(metadataThread);
 
-                                mapThread->start();
-                                mapThread->moveToThread(mapThread);
+                        robotThread->start();
+                        robotThread->moveToThread(robotThread);
 
-                                scanningRobot = selectedRobot;
-                                topLayout->setLabel(TEXT_COLOR_SUCCESS, "Scanning a new map");
-                            } else {
-                                selectedRobotWidget->getScanBtn()->setChecked(false);
-                                topLayout->setLabel(TEXT_COLOR_DANGER, "Failed to start to scan a map, please try again");
-                            }
-                        }
-                        selectedRobot->getRobot()->resetCommandAnswer();
+                        //mapThread->start();
+                        //mapThread->moveToThread(mapThread);
+
+                        scanningRobot = selectedRobot;
+                        topLayout->setLabel(TEXT_COLOR_SUCCESS, "Scanning a new map");
+
+                        //selectedRobot->getRobot()->resetCommandAnswer();
                     } else {
                         selectedRobotWidget->getScanBtn()->setChecked(false);
                         topLayout->setLabel(TEXT_COLOR_DANGER, "Failed to start to scan a map, please try again");
@@ -255,6 +251,11 @@ void MainWindow::connectToRobot(){
                         qDebug() << "Disconnected";
                         selectedRobotWidget->getScanBtn()->setText("Scan a map");
                         selectedRobotWidget->enable();
+
+                        hideAllWidgets();
+                        selectedRobotWidget->setSelectedRobot(selectedRobot);
+                        selectedRobotWidget->show();
+
                         bottomLayout->enable();
                         setGraphicItemsState(GraphicItemState::NO_STATE);
                         enableMenu();
@@ -527,9 +528,9 @@ void MainWindow::setSelectedRobot(RobotView* robotView){
     if(leftMenu->getRobotsLeftWidget()->getEditBtnStatus()){
         editSelectedRobot(robotView);
     } else {
+        hideAllWidgets();
         selectedRobot = robotView;
         robots->setSelected(robotView);
-        hideAllWidgets();
         selectedRobotWidget->setSelectedRobot(selectedRobot);
         selectedRobotWidget->show();
         switchFocus(robotView->getRobot()->getName(),selectedRobotWidget);
@@ -916,6 +917,11 @@ void MainWindow::selectHomeEvent(){
         selectedRobotWidget->getHomeBtn()->setText("Cancel");
         selectedRobotWidget->disable();
         selectedRobotWidget->getHomeBtn()->setEnabled(true);
+        if(selectedRobot->getRobot()->getHome() != NULL){
+            selectedRobotWidget->getHomeBtn()->setEnabled(false);
+        } else {
+            selectedRobotWidget->getHomeBtn()->setEnabled(true);
+        }
         bottomLayout->disable();
         setGraphicItemsState(GraphicItemState::SELECTING_HOME);
         disableMenu();
@@ -1046,14 +1052,33 @@ void MainWindow::showHome(){
     if(selectedRobot->getRobot()->getHome() != NULL){
         PointView* pointView = pointViews->getPointViewFromPoint(*(selectedRobot->getRobot()->getHome()));
         pointView->setPixmap(PointView::PixmapType::NORMAL);
+        if(pointView->isVisible()){
+            qDebug() << "home is visible";
+            pointView->setWasShown(true);
+        }else{
+            qDebug() << "home is not visible";
+            pointView->setWasShown(false);
+        }
+
+        pointView->show();
     }
 }
 
 void MainWindow::hideHome(void){
+    qDebug() << "hideHome called";
     for(size_t i = 0; i < pointViews->getGroups().size(); i++){
         GroupView* groupView = pointViews->getGroups().at(i);
         for(size_t j = 0; j < groupView->getPointViews().size(); j++){
-            groupView->getPointViews().at(j)->QGraphicsPixmapItem::setPixmap(QPixmap(PIXMAP_NORMAL));
+            //groupView->getPointViews().at(j)->QGraphicsPixmapItem::setPixmap(QPixmap(PIXMAP_NORMAL));
+            groupView->getPointViews().at(j)->setPixmap(PointView::PixmapType::NORMAL);
+        }
+    }
+    if(selectedRobot->getRobot()->getHome() != NULL){
+        PointView* pointView = pointViews->getPointViewFromPoint(*(selectedRobot->getRobot()->getHome()));
+        qDebug() << "Home was shown :" << pointView->getWasShown();
+        if(!pointView->getWasShown()){
+            qDebug() << "hidding the home";
+            pointView->hide();
         }
     }
 }
