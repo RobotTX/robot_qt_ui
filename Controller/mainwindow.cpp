@@ -285,9 +285,9 @@ void MainWindow::initializeRobots(){
 
 
 
-    /*updateRobotsThread = new UpdateRobotsThread(PORT_ROBOT_UPDATE);
+    updateRobotsThread = new UpdateRobotsThread(PORT_ROBOT_UPDATE);
     updateRobotsThread->start();
-    updateRobotsThread->moveToThread(updateRobotsThread);*/
+    updateRobotsThread->moveToThread(updateRobotsThread);
 
 
     //TODO Need to come from XML
