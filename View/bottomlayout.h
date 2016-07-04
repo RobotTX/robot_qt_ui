@@ -44,7 +44,7 @@ public:
     void updateRobot(const int id, RobotView* const robotView);
     void disable();
     void enable();
-    void uncheckViewPathSelectedRobot(int robotNb);
+    void uncheckViewPathSelectedRobot(const int robotNb = -1);
 
 private:
     /**

@@ -161,7 +161,6 @@ MainWindow::~MainWindow(){
 }
 
 
-
 /**********************************************************************************************************************************/
 
 //                                          ROBOTS and PATHS
@@ -908,7 +907,7 @@ void MainWindow::moveTmpEditPathPointSlot(void){
     pathCreationWidget->moveEditPathPoint(editedPointView->getPoint()->getPosition().getX(), editedPointView->getPoint()->getPosition().getY());
 }
 
-void MainWindow::clearPath(int robotNb){
+void MainWindow::clearPath(const int robotNb){
     if(robots->getRobotsVector().at(robotNb)->getRobot()->isPlayingPath()){
         qDebug() << "pause path on robot before supp " << robotNb << " : " << robots->getRobotsVector().at(robotNb)->getRobot()->getName();
         robots->getRobotsVector().at(robotNb)->getRobot()->setPlayingPath(0);
@@ -1342,7 +1341,6 @@ void MainWindow::setSelectedPoint(PointView* pointView, bool isTemporary){
 void MainWindow::pointBtnEvent(void){
     /// resets the list of groups menu
     pointsLeftWidget->disableButtons();
-
     switchFocus("Groups", pointsLeftWidget);
     qDebug() << "pointBtnEvent called ";
     /// we uncheck all buttons from all menus
@@ -1351,26 +1349,6 @@ void MainWindow::pointBtnEvent(void){
     hideAllWidgets();
     pointsLeftWidget->show();
 }
-
-/**
- * @brief MainWindow::backGroupBtnEvent
- * called when the back button of the first points menu is clicked (to go back to the general menu)
- */
-/*
-void MainWindow::backGroupBtnEvent(){
-    qDebug() << "backGroupBtnEvent called";
-    /// uncheck the buttons in the first menu
-    pointsLeftWidget->getGroupButtonGroup()->uncheck();
-    /// uncheck the other buttons
-    pointsLeftWidget->getActionButtons()->uncheckAll();
-    /// we hide those in case the previous button clicked was the plus button
-    pointsLeftWidget->getGroupNameEdit()->hide();
-    pointsLeftWidget->getGroupNameLabel()->hide();
-
-    pointsLeftWidget->hide();
-    leftMenuWidget->show();
-}
-*/
 
 void MainWindow::plusGroupBtnEvent(){
     qDebug() << "plusGroupBtnEvent called";
@@ -1412,7 +1390,6 @@ void MainWindow::minusGroupBtnEvent(){
     pointsLeftWidget->getActionButtons()->getEditButton()->setChecked(false);
     pointsLeftWidget->getActionButtons()->getEyeButton()->setChecked(false);
     pointsLeftWidget->getActionButtons()->getMapButton()->setChecked(false);
-
 
     /// we hide those in case the previous button clicked was the plus button
     pointsLeftWidget->getGroupNameEdit()->hide();
@@ -1583,7 +1560,7 @@ void MainWindow::switchFocus(QString name, QWidget* widget)
 
     if(lastWidgets.size()>1)
     {
-     leftMenu->showBackButton(lastWidgets.at(lastWidgets.size()-2).second);
+        leftMenu->showBackButton(lastWidgets.at(lastWidgets.size()-2).second);
     }
     else
     {
@@ -1616,6 +1593,8 @@ void MainWindow::updateView()
 
 void MainWindow::openLeftMenu(){
     qDebug() << "openLeftMenu called";
+    setMessageTop(TEXT_COLOR_NORMAL, "");
+
     /// resets the color of the selected point on the map and hides the temporary point`
     if(leftMenu->getDisplaySelectedPoint()->getPointView())
         leftMenu->getDisplaySelectedPoint()->getPointView()->setPixmap(PointView::PixmapType::NORMAL);
@@ -1657,18 +1636,6 @@ void MainWindow::minusSelecPointBtnEvent(){
 void MainWindow::editSelecPointBtnEvent(){
     qDebug() << "editSelecPointBtnEvent called";
 }
-
-/*
-void MainWindow::cancelEditSelecPointBtnEvent(){
-    qDebug() << "cancelEditSelecPointBtnEvent called";
-    pointsLeftWidget->setEditBtnStatus(false);
-    pointsLeftWidget->setCheckBtnStatus(false);
-    //editSelectedPointWidget->hide();
-    //if(lastWidget != NULL){
-        //lastWidget->show();
-    //}
-}
-*/
 
 /**
  * @brief MainWindow::pointSavedEvent
@@ -1883,13 +1850,13 @@ void MainWindow::askForDeleteGroupConfirmation(int index){
 
 void MainWindow::displayPointEvent(PointView* pointView){
     qDebug() << "displayPointEvent";
-
+    /// hides the temporary point
+    mapPixmapItem->getTmpPointView()->hide();
     /// resets the color of the previous selected point
     if(leftMenu->getDisplaySelectedPoint()->getPointView())
         leftMenu->getDisplaySelectedPoint()->getPointView()->setPixmap(PointView::PixmapType::NORMAL);
 
     leftMenu->getDisplaySelectedPoint()->getActionButtons()->getMapButton()->setChecked(true);
-    leftMenu->getDisplaySelectedPoint()->setOrigin(DisplaySelectedPoint::MAP);
     QString robotName = "";
     if(pointView->getPoint()->isHome()){
         robotName = robots->findRobotUsingHome(pointView->getPoint()->getName())->getRobot()->getName();
@@ -2306,8 +2273,6 @@ void MainWindow::editPointFromGroupMenu(void){
             leftMenu->getDisplaySelectedPoint()->getActionButtons()->getEditButton()->setEnabled(false);
             leftMenu->getDisplaySelectedPoint()->getActionButtons()->getEditButton()->setToolTip("You can choose to save or discard your modifications by clicking the save (Enter) and cancel button respectively");
 
-            leftMenu->getDisplaySelectedPoint()->setOrigin(DisplaySelectedPoint::GROUP_MENU);
-
             leftMenu->getDisplaySelectedPoint()->displayPointInfo();
 
             leftMenu->getDisplaySelectedPoint()->getActionButtons()->getEditButton()->setChecked(true);
@@ -2337,8 +2302,6 @@ void MainWindow::displayPointInfoFromGroupMenu(void){
             std::shared_ptr<Point> point = group->getPoints().at(pointIndex);
             qDebug() << "checked id " << pointIndex;
             DisplaySelectedPoint* selectedPoint = leftMenu->getDisplaySelectedPoint();
-            /// we set the origin of the page displayed, this is useful to implement a "return to the last page" button
-            selectedPoint->setOrigin(DisplaySelectedPoint::GROUP_MENU);
             QString robotName = "";
             if(pointViews->getPointViewFromPoint(*point)->getPoint()->isHome()){
                 robotName = robots->findRobotUsingHome(pointViews->getPointViewFromPoint(*point)->getPoint()->getName())->getRobot()->getName();
@@ -2581,7 +2544,6 @@ void MainWindow::doubleClickOnPoint(int checkedId){
         std::shared_ptr<Point> point = group->getPoints().at(checkedId);
         if(checkedId != -1 and checkedId < group->getPoints().size()){
             DisplaySelectedPoint* selectedPoint = leftMenu->getDisplaySelectedPoint();
-            selectedPoint->setOrigin(DisplaySelectedPoint::GROUP_MENU);
             QString robotName = "";
             if(pointViews->getPointViewFromPoint(*point)->getPoint()->isHome()){
                 robotName = robots->findRobotUsingHome(pointViews->getPointViewFromPoint(*point)->getPoint()->getName())->getRobot()->getName();
@@ -2752,11 +2714,6 @@ void MainWindow::modifyGroup(QString name){
 
 void MainWindow::quit(){
     close();
-}
-
-QList<QPair<QWidget*,QString>> MainWindow::getLastWidgets(void)
-{
-    return lastWidgets;
 }
 
 void MainWindow::setLastWidgets(QList<QPair<QWidget*,QString>> lw)

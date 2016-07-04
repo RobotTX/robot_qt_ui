@@ -27,13 +27,13 @@ class QVBoxLayout;
 class PathPainter;
 class TopLayout;
 
-#include "Model/origin.h"
 #include "Model/points.h"
 #include "View/robotview.h"
 #include <QMainWindow>
 #include <QModelIndex>
 #include "Model/graphicitemstate.h"
 #include <QPair>
+#include "Model/origin.h"
 
 #define PI 3.14159265
 #define PORT_MAP_METADATA 4000
@@ -54,6 +54,7 @@ public:
     ~MainWindow();
 
     std::shared_ptr<Points> getPoints(void) const { return points; }
+    QList<QPair<QWidget*, QString>> getLastWidgets() const { return lastWidgets; }
 
     void initializeMenu();
     void initializeRobots();
@@ -68,11 +69,11 @@ public:
     void clearNewMap();
     void disableMenu();
     void enableMenu();
-    void clearPath(int robotNb);
-    QList<QPair<QWidget*, QString>> getLastWidgets();
+    void clearPath(const int robotNb);
     void setLastWidgets(QList<QPair<QWidget*,QString>>);
     void resetFocus();
     void switchFocus(QString name, QWidget* widget);
+    /// to sleep for ms milliseconds
     void delay(const int ms) const;
 
 signals:
@@ -81,8 +82,7 @@ signals:
 
 private slots:
     void updateRobot(const float posX, const float posY, const float ori);
-    void updateMetadata(const int width, const int height, const float resolution
-                        , const float originX, const float originY);
+    void updateMetadata(const int width, const int height, const float resolution, const float originX, const float originY);
     void updateMap(const QByteArray mapArray);
     void connectToRobot();
     void quit();
@@ -94,7 +94,6 @@ private slots:
     void robotBtnEvent();
     void pointBtnEvent();
     void mapBtnEvent();
-   // void backGroupBtnEvent();
     void plusGroupBtnEvent();
     void minusGroupBtnEvent();
     void editGroupBtnEvent();
@@ -123,7 +122,6 @@ private slots:
     void askForDeletePointConfirmation(const int index);
     void displayPointEvent(PointView* _pointView);
     void askForDeleteDefaultGroupPointConfirmation(const int groupIndex);
-    //void backPathCreation(void);
     void displayGroupMapEvent(void);
     void pathSaved(bool execPath);
     void addPathPoint(Point* point);

@@ -5,7 +5,6 @@
 #include <QScrollArea>
 LeftMenuWidget::LeftMenuWidget(QMainWindow* parent):QWidget(parent){
 
-
     layout = new QVBoxLayout(this);
     layout->setAlignment(Qt::AlignTop);
 

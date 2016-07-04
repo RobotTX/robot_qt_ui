@@ -62,7 +62,7 @@ TopLayout::TopLayout(QMainWindow* parent):QWidget(parent){
     setMaximumHeight(parent->height()/5);
 }
 
-void TopLayout::setLabel(QString msgType, QString msg){
+void TopLayout::setLabel(const QString msgType, const QString msg){
     label->setText(msg);
     label->setStyleSheet("QLabel { color: " + QString(msgType) + "}");
 }

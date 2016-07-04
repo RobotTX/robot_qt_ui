@@ -31,7 +31,7 @@ void Robot::display(std::ostream& stream) const {
     stream << "I have " << getBatteryLevel() << "% of battery left" << std::endl;
 }
 
-bool Robot::sendCommand(QString cmd) {
+bool Robot::sendCommand(const QString cmd) {
     Q_UNUSED(cmd)
     //return cmdThread->sendCommand(cmd);
     return true;

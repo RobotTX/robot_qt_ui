@@ -222,3 +222,8 @@ void PointsLeftWidget::keyPressEvent(QKeyEvent* event){
             emit modifiedGroup(groupButtonGroup->getModifyEdit()->text());
     }
 }
+
+void PointsLeftWidget::hideEvent(QHideEvent *event){
+    resetWidget();
+    QWidget::hideEvent(event);
+}

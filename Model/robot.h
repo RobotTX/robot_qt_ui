@@ -28,13 +28,13 @@ public:
     QString getIp(void) const { return ip; }
     unsigned int getBatteryLevel(void) const { return batteryLevel; }
     QString getWifi(void) const { return wifi; }
-    std::shared_ptr<Point> getHome(void) { return home; }
-    std::vector<std::shared_ptr<PathPoint>> getPath(void) { return path; }
-    bool isPlayingPath(void) { return playingPath; }
+    std::shared_ptr<Point> getHome(void) const { return home; }
+    std::vector<std::shared_ptr<PathPoint>> getPath(void) const { return path; }
+    bool isPlayingPath(void) const { return playingPath; }
 
     /// Setters
-    void setPlayingPath( bool playPath) { playingPath = playPath; }
-    void setPath(std::vector<std::shared_ptr<PathPoint>> _path) { path = _path; }
+    void setPlayingPath(const bool playPath) { playingPath = playPath; }
+    void setPath(const std::vector<std::shared_ptr<PathPoint>>& _path) { path = _path; }
     void setHome(const std::shared_ptr<Point>& _home) { home = _home; }
     void setWifi(const QString _wifi) { wifi = _wifi; }
     void setIp(const QString _ip) { ip = _ip; }
@@ -57,7 +57,7 @@ public:
      * @return
      * Called to send a command to the robot
      */
-    bool sendCommand(QString cmd);
+    bool sendCommand(const QString cmd);
     QString waitAnswer();
     void resetCommandAnswer();
 

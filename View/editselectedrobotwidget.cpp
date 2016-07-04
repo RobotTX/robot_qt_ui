@@ -18,7 +18,6 @@ EditSelectedRobotWidget::EditSelectedRobotWidget(QMainWindow* parent, const std:
     robots = _robots;
     layout = new QVBoxLayout(this);
     wifiLayout = new QGridLayout();
-//   QFormLayout *wifiLayout = new QFormLayout;
 
     /// Name editable label
     nameEdit = new QLineEdit(this);
@@ -47,7 +46,6 @@ EditSelectedRobotWidget::EditSelectedRobotWidget(QMainWindow* parent, const std:
     wifiLayout->addWidget( wifiName, 0,0);
     wifiLayout->addWidget( wifiNameEdit, 0,1);
 
-
     wifiPwd = new QLabel("Pwd : ", this);
     wifiPwd->setWordWrap(true);
     wifiPwd->setAlignment(Qt::AlignLeft);
@@ -62,7 +60,6 @@ EditSelectedRobotWidget::EditSelectedRobotWidget(QMainWindow* parent, const std:
     wifiLayout->addWidget( wifiPwdEdit, 1,1);
     layout->addLayout(wifiLayout);
 
-
     /// Battery level widget
     QLabel* batteryLabel = new QLabel("Battery Level : ", this);
     layout->addWidget(batteryLabel);
@@ -70,7 +67,6 @@ EditSelectedRobotWidget::EditSelectedRobotWidget(QMainWindow* parent, const std:
     batteryLevel = new QProgressBar(this);
     batteryLevel->setValue(50);
     layout->addWidget(batteryLevel);
-
 
     /// Home layout with the button to select the home
     QLabel* homeLabel = new QLabel("Home : ", this);
@@ -100,15 +96,14 @@ EditSelectedRobotWidget::EditSelectedRobotWidget(QMainWindow* parent, const std:
     connect(nameEdit, SIGNAL(textEdited(QString)), this, SLOT(checkRobotName()));
     connect(wifiNameEdit, SIGNAL(textEdited(QString)), this, SLOT(deletePwd()));
 
-
-
     hide();
     setMaximumWidth(parent->width()*4/10);
     setMinimumWidth(parent->width()*4/10);
     layout->setAlignment(Qt::AlignTop);
 }
 
-void EditSelectedRobotWidget::setSelectedRobot(RobotView* const _robotView){
+void EditSelectedRobotWidget::setSelectedRobot(RobotView* const _robotView)
+{
 
     robotView = _robotView;
 

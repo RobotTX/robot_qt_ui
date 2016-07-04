@@ -122,7 +122,6 @@ EditSelectedPointWidget::EditSelectedPointWidget(QMainWindow* _parent, PointsVie
     connect(saveBtn, SIGNAL(clicked()), this, SLOT(saveEditSelecPointBtnEvent()));
     connect(nameEdit, SIGNAL(textEdited(QString)), this, SLOT(checkPointName()));
 
-    connect(groupBox, SIGNAL(activated(int)), this, SLOT(print(int)));
     qDebug() << groupBox->currentIndex();
     connect(cancelBtn, SIGNAL(clicked(bool)), this, SLOT(hideGroupLayout()));
 
@@ -167,13 +166,6 @@ void EditSelectedPointWidget::checkPointName(void) const {
     }
     saveBtn->setToolTip("");
     saveBtn->setEnabled(true);
-}
-
-void EditSelectedPointWidget::print(int id) const {
-    qDebug() << "id " << id;
-    for(int i = 0; i < groupBox->count(); i++)
-        groupBox->setItemIcon(i, QIcon(""));
-    groupBox->setItemIcon(groupBox->currentIndex(), QIcon(":/icons/tick.png"));
 }
 
 void EditSelectedPointWidget::showGroupLayout(void) const {

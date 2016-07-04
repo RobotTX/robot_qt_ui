@@ -1,6 +1,6 @@
 #ifndef ORIGIN_H
 #define ORIGIN_H
 
-enum Origin { MAP, GROUPS, POINTS };
+enum Origin { POINTS, GROUPS, MAP };
 
 #endif // ORIGIN_H

@@ -36,7 +36,7 @@ public:
      * @return
      * Called when we want to send a command
      */
-    bool sendCommand(QString cmd);
+    bool sendCommand(const QString cmd);
     QString waitAnswer();
     void resetCommandAnswer(){ commandAnswer = ""; }
 

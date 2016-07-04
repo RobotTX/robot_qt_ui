@@ -134,6 +134,7 @@ void DisplaySelectedPoint::resetWidget(){
     /// we hide the buttons relative to the edit option and make sure the points properties are not longer modifiable
     nameEdit->setReadOnly(true);
     actionButtons->getEditButton()->setChecked(false);
+
     cancelButton->hide();
     saveButton->hide();
 
@@ -150,9 +151,8 @@ void DisplaySelectedPoint::resetWidget(){
         nameEdit->setText(pointView->getPoint()->getName());
         if(pointView->getPoint()->isHome()){
             homeWidget->show();
-        } else {
+        } else
             homeWidget->hide();
-        }
     }
     emit resetState(GraphicItemState::NO_STATE, true);
 }
@@ -162,7 +162,7 @@ void DisplaySelectedPoint::hideEvent(QHideEvent *event){
     QWidget::hideEvent(event);
 }
 
-void DisplaySelectedPoint::checkPointName(QString name) const {
+void DisplaySelectedPoint::checkPointName(const QString name) const {
     qDebug() << "checkPointName called" << name;
     /// names are the same we don't do anything
     if(!name.compare(pointView->getPoint()->getName(), Qt::CaseInsensitive))

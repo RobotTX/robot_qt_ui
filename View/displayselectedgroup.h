@@ -40,18 +40,11 @@ public:
 private:
 
     PointButtonGroup* pointButtonGroup;
+
     /// this is the graphical object that allows a user to scroll the points if they can't fit in the screen
     VerticalScrollArea* scrollArea;
 
     QVBoxLayout* layout;
-   /* QPushButton* backButton;
-    QPushButton* plusButton;
-    QPushButton* minusButton;
-    QPushButton* mapButton;
-    QPushButton* eyeButton;
-    QPushButton* editButton;
-    QHBoxLayout* eyeMapLayout;
-    QHBoxLayout* grid;*/
     TopLeftMenu* actionButtons;
 
     QLabel* name;

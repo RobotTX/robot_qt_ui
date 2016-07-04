@@ -60,8 +60,8 @@ HEADERS += Controller/cmdrobotthread.h \
            View/toplayout.h \
            View/verticalscrollarea.h \
     View/doubleclickablebutton.h \
-    Model/origin.h \
-    View/topleftmenu.h
+    View/topleftmenu.h \
+    Model/origin.h
 
 FORMS += Controller/mainwindow.ui
 

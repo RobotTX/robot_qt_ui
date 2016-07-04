@@ -3,6 +3,7 @@
 
 class QDataStream;
 
+#include "Model/position.h"
 #include <QString>
 
 /**
@@ -14,26 +15,6 @@ class QDataStream;
 
 class Point
 {
-    /**
-     * @brief The Position class
-     * This class provides a model for a position, it is meant to be used by a point and therefore known to it only
-     * A point is identified by two coordinates represented as doubles numbers
-     */
-    class Position {
-    public:
-        Position(void): _x(0.0), _y(0.0) {}
-        Position(const double x, const double y): _x(x), _y(y) {}
-
-        double getX(void) const { return _x; }
-        double getY(void) const { return _y; }
-
-        void setX(const double x) { _x = x; }
-        void setY(const double y) { _y = y; }
-
-    private:
-        double _x;
-        double _y;
-    };
 
 public:
     Point(void);
