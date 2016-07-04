@@ -54,8 +54,6 @@ public:
     QLabel* getGroupNameLabel(void) const { return groupNameLabel; }
     QLineEdit* getGroupNameEdit(void) const { return groupNameEdit; }
 
-    QLineEdit* getModifyEdit(void) const { return modifyEdit; }
-
     VerticalScrollArea* getScrollArea(void) const { return scrollArea; }
 
 public:
@@ -75,7 +73,6 @@ signals:
     void newGroup(QString name);
 
 private:
-    QLineEdit* modifyEdit;
 
     QMainWindow* parent;
     QVBoxLayout* layout;

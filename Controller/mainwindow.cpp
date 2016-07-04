@@ -1518,6 +1518,7 @@ void MainWindow::editGroupBtnEvent(bool checked){
     }
     else if(checkedId != -1 && checkedId < points->count()-1){
         qDebug() << "gotta update a group";
+        /*
         pointsLeftWidget->getGroupButtonGroup()->uncheck();
         pointsLeftWidget->getGroupButtonGroup()->setEnabled(false);
         pointsLeftWidget->getModifyEdit()->setText(points->getGroups().at(checkedId)->getName());
@@ -1531,13 +1532,13 @@ void MainWindow::editGroupBtnEvent(bool checked){
         /*pointsLeftWidget->getModifyEdit()->move(
                     pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(checkedId)->pos().x(),
                     pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(checkedId)->pos().y());
-                    */
+
         pointsLeftWidget->getModifyEdit()->move(posButton.x(),//-pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(checkedId)->width()/14.5,
-                                                posButton.y());//-pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(checkedId)->height()/2);
-       /*
+                                                posButton.y()-checkedId*pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(checkedId)->height());//-pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(checkedId)->height()/2);
+
         pointsLeftWidget->getModifyEdit()->move(posButton.x()-pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(checkedId)->width()/14.5,
                                                 posButton.y()-pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(checkedId)->height()/2);
-                                                */
+
         pointsLeftWidget->getModifyEdit()->setFixedWidth(pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(checkedId)->width()*0.85);
 
         qDebug() << pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(checkedId)->mapTo(
@@ -1547,7 +1548,7 @@ void MainWindow::editGroupBtnEvent(bool checked){
         //pointsLeftWidget->getSaveButton()->show();
         //pointsLeftWidget->getSaveButton()->setEnabled(true);
         //pointsLeftWidget->getCancelButton()->show();
-        //qDebug() << (focusWidget() == pointsLeftWidget->getModifyEdit());
+        //qDebug() << (focusWidget() == pointsLeftWidget->getModifyEdit());*/
     }
 }
 

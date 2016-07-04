@@ -7,12 +7,17 @@
 #include <QDebug>
 #include <QMouseEvent>
 #include "View/doubleclickablebutton.h"
+#include <QLineEdit>
 
 GroupButtonGroup::GroupButtonGroup(const Points &_points, QWidget* _parent):QWidget(_parent)
 {
     parent = _parent;
     buttonGroup = new QButtonGroup(this);
     buttonGroup->setExclusive(true);
+
+    /// to modify the name of a group
+    modifyEdit = new QLineEdit(_parent);
+    modifyEdit->hide();
 
     layout = new QVBoxLayout(this);
     layout->setAlignment(Qt::AlignTop);

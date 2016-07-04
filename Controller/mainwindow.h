@@ -41,10 +41,6 @@ class TopLayout;
 #define PORT_MAP 4002
 #define PORT_CMD 5600
 
-#define XML_PATH "/home/m-a/Documents/QtProject/gobot-software/points.xml"
-//#define XML_PATH "/home/joan/Qt/QtProjects/gobot-software/points.xml"
-//#define XML_PATH "/Users/fannylarradet/Desktop/GTRobots/gobot-software/points.xml"
-
 namespace Ui {
 
 class MainWindow;

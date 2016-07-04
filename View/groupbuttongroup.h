@@ -5,6 +5,7 @@ class Points;
 class QButtonGroup;
 class QVBoxLayout;
 class QMouseEvent;
+class QLineEdit;
 
 #include <QButtonGroup>
 #include <QWidget>
@@ -19,6 +20,7 @@ public:
     ~GroupButtonGroup(){}
 
     QButtonGroup* getButtonGroup(void) const { return buttonGroup; }
+    QLineEdit* getModifyEdit(void) const { return modifyEdit; }
 
 public:
     void deleteButtons(void);
@@ -30,6 +32,7 @@ protected:
     void mouseDoubleClickEvent(QMouseEvent *event);
 
 private:
+    QLineEdit* modifyEdit;
     QVBoxLayout* layout;
     QButtonGroup* buttonGroup;
     QWidget* parent;

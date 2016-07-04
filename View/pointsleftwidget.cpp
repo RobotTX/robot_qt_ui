@@ -27,9 +27,7 @@ PointsLeftWidget::PointsLeftWidget(QMainWindow* _parent, std::shared_ptr<Points>
     points = _points;
     parent = _parent;
 
-    /// to modify the name of a group
-    modifyEdit = new QLineEdit(_parent);
-    modifyEdit->hide();
+
 
     scrollArea = new VerticalScrollArea(this);
 
@@ -94,7 +92,7 @@ PointsLeftWidget::PointsLeftWidget(QMainWindow* _parent, std::shared_ptr<Points>
     connect(groupNameEdit, SIGNAL(textEdited(QString)), this, SLOT(checkGroupName(QString)));
 
     /// to make sure the new name chosen for a group is valid
-    connect(modifyEdit, SIGNAL(textEdited(QString)), this, SLOT(checkGroupName(QString)));
+    connect(groupButtonGroup->getModifyEdit(), SIGNAL(textEdited(QString)), this, SLOT(checkGroupName(QString)));
 
     connect(cancelButton, SIGNAL(clicked(bool)), this, SLOT(cancelCreationGroup()));
 
