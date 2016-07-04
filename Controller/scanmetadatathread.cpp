@@ -1,6 +1,6 @@
 #include "scanmetadatathread.h"
 
-ScanMetadataThread::ScanMetadataThread(const QString newipAddress, const int newPort){
+ScanMetadataThread::ScanMetadataThread(const QString newipAddress, const int newPort, QObject* parent) : QThread(parent){
     ipAddress = newipAddress;
     port = newPort;
     ok = true;
@@ -12,7 +12,7 @@ void ScanMetadataThread::run(){
     socketMetadata = std::shared_ptr<QTcpSocket>(new QTcpSocket());
 
     /// Connect the signal readyRead which tell us when data arrived to the function that treat them
-    //connect(&(*socketMetadata), SIGNAL(readyRead()), SLOT(readTcpData()) );
+    //connect(&(*socketMetadata), SIGNAL(readyRead()), SLOT(readTcpDataSlot()) );
     /// Connect the signal hostFound which trigger when we find the host
     //connect( socketMetadata, SIGNAL(hostFound()), SLOT(hostFoundSlot()) );
     /// Connect the signal connected which trigger when we are connected to the host
@@ -64,7 +64,7 @@ void ScanMetadataThread::run(){
     }
 }
 
-void ScanMetadataThread::readTcpData(){
+void ScanMetadataThread::readTcpDataSlot(){
     QString data = socketMetadata->readAll();
     QRegExp rx("[ ]");
 

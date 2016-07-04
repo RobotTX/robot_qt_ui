@@ -65,7 +65,8 @@ HEADERS += Controller/cmdrobotthread.h \
            View/verticalscrollarea.h \
     View/doubleclickablebutton.h \
     Model/origin.h \
-    View/topleftmenu.h
+    View/topleftmenu.h \
+    Controller/updaterobotsthread.h
 
 FORMS += Controller/mainwindow.ui
 
@@ -118,7 +119,8 @@ SOURCES += main.cpp \
            View/toplayout.cpp \
            View/verticalscrollarea.cpp \
     View/doubleclickablebutton.cpp \
-    View/topLeftMenu.cpp
+    View/topLeftMenu.cpp \
+    Controller/updaterobotsthread.cpp
 
 RESOURCES += Resources/resources.qrc
 

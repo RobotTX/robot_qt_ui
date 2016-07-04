@@ -3,6 +3,7 @@
 #include "Controller/scanmetadatathread.h"
 #include "Controller/scanrobotthread.h"
 #include "Controller/scanmapthread.h"
+#include "Controller/updaterobotsthread.h"
 #include "Model/pathpoint.h"
 #include "Model/map.h"
 #include "Model/robots.h"
@@ -39,10 +40,6 @@
 #include <QString>
 #include <QStringList>
 
-
-//#define XML_PATH "/home/m-a/Documents/QtProject/gobot-software/points.xml"
-#define XML_PATH "/home/joan/Qt/QtProjects/gobot-software/points.xml"
-//#define XML_PATH "/Users/fannylarradet/Desktop/GTRobots/gobot-software/points.xml"
 
 /**
  * @brief MainWindow::MainWindow
@@ -156,6 +153,10 @@ MainWindow::~MainWindow(){
     delete pathPainter;
     qDeleteAll(pathPointViews.begin(), pathPointViews.end());
     pathPointViews.clear();
+    if (updateRobotsThread != 0 && updateRobotsThread->isRunning() ) {
+        updateRobotsThread->requestInterruption();
+        updateRobotsThread->wait();
+    }
 }
 
 
@@ -203,9 +204,9 @@ void MainWindow::connectToRobot(){
                         setGraphicItemsState(GraphicItemState::NO_EVENT);
                         disableMenu();
 
-                        metadataThread = new ScanMetadataThread(ip, PORT_MAP_METADATA);
-                        robotThread = new ScanRobotThread(ip, PORT_ROBOT_POS);
-                        //mapThread = new ScanMapThread(ip, PORT_MAP);
+                        metadataThread = new ScanMetadataThread(ip, PORT_MAP_METADATA, this);
+                        robotThread = new ScanRobotThread(ip, PORT_ROBOT_POS, this);
+                        //mapThread = new ScanMapThread(ip, PORT_MAP, this);
 
                         connect(metadataThread, SIGNAL(valueChangedMetadata(int, int, float, float, float))
                                 , this , SLOT(updateMetadata(int, int, float, float, float)));
@@ -279,6 +280,18 @@ void MainWindow::connectToRobot(){
 }
 
 void MainWindow::initializeRobots(){
+
+
+
+    updateRobotsThread = new UpdateRobotsThread(PORT_ROBOT_UPDATE);
+    updateRobotsThread->start();
+    updateRobotsThread->moveToThread(updateRobotsThread);
+
+
+
+
+
+
     //TODO Need to come from XML
     std::shared_ptr<Robot> robot1(new Robot("Roboty", "localhost", PORT_CMD, this));
     robot1->setWifi("Swaghetti Yolognaise");

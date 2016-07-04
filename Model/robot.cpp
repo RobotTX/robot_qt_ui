@@ -9,7 +9,7 @@ Robot::Robot(const QString _name, const QString _ip, const int port, QMainWindow
     orientation(0), batteryLevel(100), wifi(""), home(NULL), playingPath(0){
     qDebug() << "Robot : " << name << " ip : " << ip << " launching its cmd thread";
 
-    //cmdThread = new CmdRobotThread(ip, port, name);
+    //cmdThread = new CmdRobotThread(ip, port, name, parent);
     //cmdThread->start();
 }
 

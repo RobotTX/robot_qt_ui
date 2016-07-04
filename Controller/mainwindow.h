@@ -6,6 +6,7 @@ class PointView;
 class ScanMetadataThread;
 class ScanRobotThread;
 class ScanMapThread;
+class UpdateRobotsThread;
 class CustomQGraphicsView;
 class Map;
 class Robots;
@@ -40,6 +41,7 @@ class TopLayout;
 #define PORT_ROBOT_POS 4001
 #define PORT_MAP 4002
 #define PORT_CMD 5600
+#define PORT_ROBOT_UPDATE 6000
 
 #define XML_PATH "/home/m-a/Documents/QtProject/gobot-software/points.xml"
 //#define XML_PATH "/home/joan/Qt/QtProjects/gobot-software/points.xml"
@@ -177,6 +179,7 @@ private:
     ScanMetadataThread* metadataThread;
     ScanRobotThread* robotThread;
     ScanMapThread* mapThread;
+    UpdateRobotsThread* updateRobotsThread;
     QVBoxLayout* rightLayout;
     CustomQGraphicsView* graphicsView;
     std::shared_ptr<Map> map;

@@ -1,6 +1,9 @@
 #include "cmdrobotthread.h"
+#include <QTime>
+#include <QCoreApplication>
 
-CmdRobotThread::CmdRobotThread(const QString newipAddress, const int newPort, const QString _robotName){
+
+CmdRobotThread::CmdRobotThread(const QString newipAddress, const int newPort, const QString _robotName, QObject* parent) : QThread(parent){
     ipAddress = newipAddress;
     port = newPort;
     robotName = _robotName;
@@ -14,7 +17,7 @@ void CmdRobotThread::run(){
     socketCmd = std::shared_ptr<QTcpSocket>(new QTcpSocket());
 
     /// Connect the signal readyRead which tell us when data arrived to the function that treat them
-    connect(&(*socketCmd), SIGNAL(readyRead()), SLOT(readTcpData()) );
+    connect(&(*socketCmd), SIGNAL(readyRead()), SLOT(readTcpDataSlot()) );
     /// Connect the signal hostFound which trigger when we find the host
     //connect(&(*socketCmd), SIGNAL(hostFound()), SLOT(hostFoundSlot()) );
     /// Connect the signal connected which trigger when we are connected to the host
@@ -64,7 +67,6 @@ bool CmdRobotThread::sendCommand(QString cmd){
         } else {
             qDebug() << "(Robot" << robotName << ") " << nbDataSend << " bytes sent";
 
-            qDebug() << cmd.at(0) << QString(cmd.at(0)).compare("e");
             if(QString(cmd.at(0)).compare("e")){
                 socketCmd->waitForReadyRead();
             } else {
@@ -72,7 +74,7 @@ bool CmdRobotThread::sendCommand(QString cmd){
                 sleep(2);
             }
         }
-        qDebug() << "(Robot" << robotName << ") Returning";
+        qDebug() << "(Robot" << robotName << ") Command sent successfully";
         return true;
     } else {
         qDebug() << "(Robot" << robotName << ") Error : Robot at ip" << ipAddress << ": " << port << "not connected";
@@ -80,16 +82,16 @@ bool CmdRobotThread::sendCommand(QString cmd){
     }
 }
 
-void CmdRobotThread::readTcpData(){
+void CmdRobotThread::readTcpDataSlot(){
     commandAnswer = socketCmd->readAll();
-    qDebug() << "(Robot" << robotName << ") readTcpData :" << commandAnswer;
+    qDebug() << "(Robot" << robotName << ") readTcpDataSlot :" << commandAnswer;
 }
 
 QString CmdRobotThread::waitAnswer(){
     qDebug() << "waiting for an answer";
     int waitTime = 0;
     while(!commandAnswer.compare("") && waitTime < 5){
-        sleep(1);
+        delay(1000);
         waitTime++;
     }
     qDebug() << "Got answer and waited for" << waitTime << "seconds";
@@ -112,4 +114,10 @@ void CmdRobotThread::disconnectedSlot(){
 
 void CmdRobotThread::errorSlot(QAbstractSocket::SocketError error){
     qDebug() << "(Robot" << robotName << ") Error : " << error;
+}
+
+void CmdRobotThread::delay(const int ms) const{
+    QTime dieTime= QTime::currentTime().addMSecs(ms);
+    while (QTime::currentTime() < dieTime)
+        QCoreApplication::processEvents(QEventLoop::AllEvents, 100);
 }

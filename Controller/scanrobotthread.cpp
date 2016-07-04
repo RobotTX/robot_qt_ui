@@ -1,7 +1,7 @@
 #include "scanrobotthread.h"
 
 
-ScanRobotThread::ScanRobotThread(const QString newipAddress, const int newPort){
+ScanRobotThread::ScanRobotThread(const QString newipAddress, const int newPort, QObject* parent) : QThread(parent){
     ipAddress = newipAddress;
     port = newPort;
     ok = true;
@@ -13,7 +13,7 @@ void ScanRobotThread::run(){
     socketRobot = std::shared_ptr<QTcpSocket>(new QTcpSocket());
 
     /// Connect the signal readyRead which tell us when data arrived to the function that treat them
-    //connect(&(*socketRobot), SIGNAL(readyRead()), SLOT(readTcpData()) );
+    //connect(&(*socketRobot), SIGNAL(readyRead()), SLOT(readTcpDataSlot()) );
     /// Connect the signal hostFound which trigger when we find the host
     //connect( socketRobot, SIGNAL(hostFound()), SLOT(hostFoundSlot()) );
     /// Connect the signal connected which trigger when we are connected to the host
@@ -64,7 +64,7 @@ void ScanRobotThread::run(){
     }
 }
 
-void ScanRobotThread::readTcpData(){
+void ScanRobotThread::readTcpDataSlot(){
     QString data = socketRobot->readAll();
     QRegExp rx("[ ]");
     QStringList list = data.split(rx, QString::SkipEmptyParts);
