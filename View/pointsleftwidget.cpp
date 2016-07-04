@@ -1,6 +1,4 @@
 #include "pointsleftwidget.h"
-#include "groupmenu.h"
-#include "pointlist.h"
 #include "pointbuttongroup.h"
 #include "verticalscrollarea.h"
 #include "groupbuttongroup.h"
@@ -11,7 +9,6 @@
 #include <QHBoxLayout>
 #include <QLineEdit>
 #include <QHBoxLayout>
-#include "groupeditwindow.h"
 #include "View/spacewidget.h"
 #include "Model/points.h"
 #include "Model/group.h"
@@ -19,7 +16,7 @@
 #include "Controller/mainwindow.h"
 #include "View/leftmenu.h"
 #include <QKeyEvent>
-
+#include <QDebug>
 
 PointsLeftWidget::PointsLeftWidget(QMainWindow* _parent, std::shared_ptr<Points> const& _points, bool _groupDisplayed)
     : QWidget(_parent), groupDisplayed(_groupDisplayed)
@@ -27,14 +24,7 @@ PointsLeftWidget::PointsLeftWidget(QMainWindow* _parent, std::shared_ptr<Points>
     points = _points;
     parent = _parent;
 
-
-
     scrollArea = new VerticalScrollArea(this);
-
-    groupWindow = new GroupEditWindow(this);
-    groupWindow->getEdit()->move(200, 200);
-    groupWindow->getLabel()->move(300, 300);
-    groupWindow->hide();
 
     indexLastGroupClicked = 0;
 
@@ -54,8 +44,7 @@ PointsLeftWidget::PointsLeftWidget(QMainWindow* _parent, std::shared_ptr<Points>
     actionButtons->getMapButton()->setToolTip("Select a group or a point and click here to display or hide it on the map");
     actionButtons->getEyeButton()->setToolTip("Select a group or a point and click here to display its information");
 
-        layout->addWidget(actionButtons);
-
+    layout->addWidget(actionButtons);
 
     groupNameLabel = new QLabel("New group's name : ", this);
     groupNameLabel->hide();
@@ -180,29 +169,30 @@ void PointsLeftWidget::disableButtons(void){
 
 }
 
-void PointsLeftWidget::checkGroupName(QString name){
+bool PointsLeftWidget::checkGroupName(QString name){
     qDebug() << name;
     int checkedId = groupButtonGroup->getButtonGroup()->checkedId();
     if(checkedId != -1){
         if(!name.compare(points->getGroups().at(checkedId)->getName(), Qt::CaseInsensitive)){
             saveButton->setToolTip("");
-            return;
+            return true;
         }
     }
     if(!name.compare("")){
         saveButton->setToolTip("The name of your group cannot be empty");
         saveButton->setEnabled(false);
-        return;
+        return false;
     }
     for(int i = 0; i < points->count(); i++){
         if(!name.compare(points->getGroups().at(i)->getName(), Qt::CaseInsensitive)){
             saveButton->setToolTip("A group with the same name already exists, please choose another name for your group");
             saveButton->setEnabled(false);
-            return;
+            return false;
         }
     }
     saveButton->setToolTip("");
     saveButton->setEnabled(true);
+    return true;
 }
 
 void PointsLeftWidget::cancelCreationGroup(){
@@ -220,14 +210,16 @@ void PointsLeftWidget::cancelCreationGroup(){
 }
 
 void PointsLeftWidget::emitNewGroupSignal(){
-    qDebug() << "emitnewgroupsignal called" << groupNameEdit->text();
+    qDebug() << "emitnewgrupsignal called" << groupNameEdit->text();
     emit newGroup(groupNameEdit->text());
 }
 
 void PointsLeftWidget::keyPressEvent(QKeyEvent* event){
     /// this is the enter key
     if(!event->text().compare("\r")){
-        emit newGroup(groupNameEdit->text());
-        qDebug() << "enter pressed";
+        if(creatingGroup)
+            emit newGroup(groupNameEdit->text());
+        else
+            emit modifiedGroup(groupButtonGroup->getModifyEdit()->text());
     }
 }

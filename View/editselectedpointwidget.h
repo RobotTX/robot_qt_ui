@@ -14,7 +14,7 @@ class QComboBox;
 class SpaceWidget;
 
 #include <QListWidget>
-#include "View/groupmenu.h"
+#include "Model/points.h"
 
 /**
  * @brief The EditSelectedPointWidget class
@@ -29,8 +29,6 @@ public:
 
     bool isTemporary(void) const { return _isTemporary; }
     void setPoints(PointsView* const _points){ points = _points;}
-    //GroupMenu* getGroupMenu(void) const { return groupMenu; }
-    //int getCurrentGroupIndex(void) const { return groupMenu->getWidgetsList()->currentIndex().row(); }
     QLabel* getPosXLabel(void) const { return posXLabel; }
     QLabel* getPosYLabel(void) const { return posYLabel; }
     QLineEdit* getNameEdit(void) const { return nameEdit; }

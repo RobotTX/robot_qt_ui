@@ -1,10 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <points>
     <group>
-        <name>gr</name>
-    </group>
-    <group>
-        <name>first group</name>
+        <name>second grou</name>
         <point>
             <name>A</name>
             <x>50</x>

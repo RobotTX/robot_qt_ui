@@ -112,7 +112,6 @@ private slots:
     void setCheckedRobot(QAbstractButton* button, bool checked);
     void cancelEditSelecRobotBtnEvent();
     void robotSavedEvent();
-    void backSelecPointBtnEvent();
     void minusSelecPointBtnEvent();
     void editSelecPointBtnEvent();
     void setSelectedPoint(PointView* pointView, bool isTemporary);
@@ -150,6 +149,7 @@ private slots:
     void reestablishConnectionsPoints();
     void removePoint(std::shared_ptr<Point>& point, const Origin origin);
     void createGroup(QString name);
+    void modifyGroup(QString name);
     /**
      * @brief cancelEvent
      * Called when a user doesn't want to keep the modifications he's made on a point

@@ -16,7 +16,6 @@
 #include "View/pointview.h"
 #include "View/leftmenuwidget.h"
 #include "View/editselectedrobotwidget.h"
-#include "View/selectedpointwidget.h"
 #include "View/editselectedpointwidget.h"
 #include "View/bottomlayout.h"
 #include "View/pointsleftwidget.h"
@@ -146,6 +145,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
     /// to create a new group, the signal is sent by pointsLeftWidget
     connect(pointsLeftWidget, SIGNAL(newGroup(QString)), this, SLOT(createGroup(QString)));
+
+    /// to modify the name of a group, the signal is sent by pointsLeftWidget
+    connect(pointsLeftWidget, SIGNAL(modifiedGroup(QString)), this, SLOT(modifyGroup(QString)));
 
     mainLayout->addLayout(bottom);
     setCentralWidget(mainWidget);
@@ -1357,6 +1359,7 @@ void MainWindow::backGroupBtnEvent(){
 
 void MainWindow::plusGroupBtnEvent(){
     qDebug() << "plusGroupBtnEvent called";
+    pointsLeftWidget->setCreatingGroup(true);
     pointsLeftWidget->getGroupButtonGroup()->uncheck();
     /// resets the name edit field
     pointsLeftWidget->getGroupNameEdit()->setText("");
@@ -1479,7 +1482,7 @@ void MainWindow::editPointButtonEvent(bool checked){
  */
 void MainWindow::editGroupBtnEvent(bool checked){
     qDebug() << "editPointBtnEvent called";
-
+    pointsLeftWidget->setCreatingGroup(false);
     /// uncheck the other buttons
 
     pointsLeftWidget->getActionButtons()->getPlusButton()->setChecked(false);
@@ -1518,37 +1521,20 @@ void MainWindow::editGroupBtnEvent(bool checked){
     }
     else if(checkedId != -1 && checkedId < points->count()-1){
         qDebug() << "gotta update a group";
-        /*
+
+        pointsLeftWidget->getGroupButtonGroup()->getModifyEdit()->setText(pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(checkedId)->text());
+        pointsLeftWidget->getGroupButtonGroup()->getModifyEdit()->selectAll();
+
         pointsLeftWidget->getGroupButtonGroup()->uncheck();
         pointsLeftWidget->getGroupButtonGroup()->setEnabled(false);
-        pointsLeftWidget->getModifyEdit()->setText(points->getGroups().at(checkedId)->getName());
-        pointsLeftWidget->getModifyEdit()->selectAll();
-        pointsLeftWidget->getModifyEdit()->setFocus();
-        pointsLeftWidget->getModifyEdit()->show();
-        QPoint posButton = pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(checkedId)->mapTo(
-                    pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(checkedId)->window(), pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(checkedId)->pos());
-        //pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(checkedId)->setStyleSheet("background-color: rgba(255, 255, 255, 0);");
-        qDebug() << pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(checkedId)->pos().x() << pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(checkedId)->pos().y();
-        /*pointsLeftWidget->getModifyEdit()->move(
-                    pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(checkedId)->pos().x(),
-                    pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(checkedId)->pos().y());
+        pointsLeftWidget->getGroupButtonGroup()->getModifyEdit()->selectAll();
+        pointsLeftWidget->getGroupButtonGroup()->getModifyEdit()->setFocus();
+        pointsLeftWidget->getGroupButtonGroup()->getModifyEdit()->show();
 
-        pointsLeftWidget->getModifyEdit()->move(posButton.x(),//-pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(checkedId)->width()/14.5,
-                                                posButton.y()-checkedId*pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(checkedId)->height());//-pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(checkedId)->height()/2);
-
-        pointsLeftWidget->getModifyEdit()->move(posButton.x()-pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(checkedId)->width()/14.5,
-                                                posButton.y()-pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(checkedId)->height()/2);
-
-        pointsLeftWidget->getModifyEdit()->setFixedWidth(pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(checkedId)->width()*0.85);
-
-        qDebug() << pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(checkedId)->mapTo(
-                        pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(checkedId)->window(), pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(checkedId)->pos());
-        qDebug() << pointsLeftWidget->getModifyEdit()->pos().x() << pointsLeftWidget->getModifyEdit()->pos().y();
-        //pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(checkedId)->hide();
-        //pointsLeftWidget->getSaveButton()->show();
-        //pointsLeftWidget->getSaveButton()->setEnabled(true);
-        //pointsLeftWidget->getCancelButton()->show();
-        //qDebug() << (focusWidget() == pointsLeftWidget->getModifyEdit());*/
+        QLayoutItem* item = pointsLeftWidget->getGroupButtonGroup()->getLayout()->takeAt(pointsLeftWidget->getGroupButtonGroup()->getIndexModifyEdit());
+        pointsLeftWidget->getGroupButtonGroup()->getLayout()->insertItem(checkedId, item);
+        pointsLeftWidget->getGroupButtonGroup()->setIndexModifyEdit(checkedId);
+        pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(checkedId)->hide();
     }
 }
 
@@ -1638,17 +1624,6 @@ void MainWindow::openLeftMenu(){
                 closeSlot();
         }
     }
-}
-
-/**
- * @brief MainWindow::backSelecPointBtnEvent
- * called when the back button is clicked on the point information menu
- */
-void MainWindow::backSelecPointBtnEvent(){
-    qDebug() << "backSelecPointBtnEvent called";
-    selectedPointWidget->hide();
-    /// if we come from a menu we display it again
-    backEvent();
 }
 
 void MainWindow::minusSelecPointBtnEvent(){
@@ -2705,6 +2680,21 @@ void MainWindow::createGroup(QString name){
     pointsLeftWidget->getActionButtons()->getPlusButton()->setEnabled(true);
     pointsLeftWidget->getActionButtons()->getPlusButton()->setToolTip("Click here to add a new group");
 }
+void MainWindow::modifyGroup(QString name){
+    if(pointsLeftWidget->checkGroupName(name)){
+        /// updates the model
+        qDebug() << name;
+        points->getGroups().at(pointsLeftWidget->getGroupButtonGroup()->getIndexModifyEdit())->setName(name);
+        /// saves to file
+        XMLParser parser(XML_PATH, mapPixmapItem);
+        parser.save(*points);
+        /// enables the buttons
+        pointsLeftWidget->getGroupButtonGroup()->setEnabled(true);
+        pointsLeftWidget->disableButtons();
+        /// updates view
+        pointsLeftWidget->getGroupButtonGroup()->update(*points);
+    }
+}
 
 
 /**********************************************************************************************************************************/
@@ -2808,7 +2798,6 @@ void MainWindow::hideAllWidgets(){
     robotsLeftWidget->hide();
     mapLeftWidget->hide();
     editSelectedRobotWidget->hide();
-    selectedPointWidget->hide();
     editSelectedPointWidget->hide();
     leftMenu->getDisplaySelectedPoint()->hide();
     pathCreationWidget->hide();
