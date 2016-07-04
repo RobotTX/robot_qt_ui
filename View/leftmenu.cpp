@@ -47,6 +47,7 @@ LeftMenu::LeftMenu(MainWindow* _parent, std::shared_ptr<Points> const& _points, 
     //closeBtn->setFocusPolicy(Qt::FocusPolicy::NoFocus);
     returnButton->hide();
     topLayout->addWidget(returnButton);
+
     topLayout->addWidget(closeBtn);
 
     leftLayout->addLayout(topLayout);

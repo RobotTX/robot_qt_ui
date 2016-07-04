@@ -133,7 +133,7 @@ private slots:
     void removePointFromInformationMenu(void);
     void displayPointMapEvent(void);
     void hidePathCreationWidget(void);
-    void editPointButtonEvent(bool checked);
+    void editPointButtonEvent();
     void editTmpPathPointSlot(int id, Point* point, int nbWidget);
     void editPointFromGroupMenu(void);
     void saveTmpEditPathPointSlot(void);

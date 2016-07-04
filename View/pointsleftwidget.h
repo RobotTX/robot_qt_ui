@@ -61,7 +61,7 @@ protected:
     void keyPressEvent(QKeyEvent* event);
 
 public slots:
-     bool checkGroupName(QString name);
+     int checkGroupName(QString name);
 
 private slots:
     void enableButtons(int index);

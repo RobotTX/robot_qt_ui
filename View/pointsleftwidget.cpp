@@ -169,30 +169,29 @@ void PointsLeftWidget::disableButtons(void){
 
 }
 
-bool PointsLeftWidget::checkGroupName(QString name){
-    qDebug() << name;
-    int checkedId = groupButtonGroup->getButtonGroup()->checkedId();
-    if(checkedId != -1){
-        if(!name.compare(points->getGroups().at(checkedId)->getName(), Qt::CaseInsensitive)){
-            saveButton->setToolTip("");
-            return true;
-        }
+int PointsLeftWidget::checkGroupName(QString name){
+
+    if(!creatingGroup && !name.compare(points->getGroups().at(groupButtonGroup->getIndexModifyEdit())->getName(), Qt::CaseInsensitive)){
+        saveButton->setToolTip("");
+        qDebug() << "same name";
+        return 0;
     }
     if(!name.compare("")){
         saveButton->setToolTip("The name of your group cannot be empty");
         saveButton->setEnabled(false);
-        return false;
+        return 1;
     }
     for(int i = 0; i < points->count(); i++){
         if(!name.compare(points->getGroups().at(i)->getName(), Qt::CaseInsensitive)){
+            qDebug() << points->getGroups().at(i)->getName();
             saveButton->setToolTip("A group with the same name already exists, please choose another name for your group");
             saveButton->setEnabled(false);
-            return false;
+            return 2;
         }
     }
     saveButton->setToolTip("");
     saveButton->setEnabled(true);
-    return true;
+    return 0;
 }
 
 void PointsLeftWidget::cancelCreationGroup(){
