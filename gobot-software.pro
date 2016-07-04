@@ -38,8 +38,6 @@ HEADERS += Controller/cmdrobotthread.h \
            View/editselectedpointwidget.h \
            View/editselectedrobotwidget.h \
            View/groupbuttongroup.h \
-           View/groupeditwindow.h \
-           View/groupmenu.h \
            View/groupview.h \
            View/leftmenu.h \
            View/leftmenuwidget.h \
@@ -51,14 +49,12 @@ HEADERS += Controller/cmdrobotthread.h \
            View/pathpointlist.h \
            View/pathwidget.h \
            View/pointbuttongroup.h \
-           View/pointlist.h \
            View/pointsleftwidget.h \
            View/pointsview.h \
            View/pointview.h \
            View/robotbtngroup.h \
            View/robotsleftwidget.h \
            View/robotview.h \
-           View/selectedpointwidget.h \
            View/selectedrobotwidget.h \
            View/spacewidget.h \
            View/toplayout.h \
@@ -93,8 +89,6 @@ SOURCES += main.cpp \
            View/editselectedpointwidget.cpp \
            View/editselectedrobotwidget.cpp \
            View/groupbuttongroup.cpp \
-           View/groupeditwindow.cpp \
-           View/groupmenu.cpp \
            View/groupview.cpp \
            View/leftmenu.cpp \
            View/leftmenuwidget.cpp \
@@ -106,14 +100,12 @@ SOURCES += main.cpp \
            View/pathpointlist.cpp \
            View/pathwidget.cpp \
            View/pointbuttongroup.cpp \
-           View/pointlist.cpp \
            View/pointsleftwidget.cpp \
            View/pointsview.cpp \
            View/pointview.cpp \
            View/robotbtngroup.cpp \
            View/robotsleftwidget.cpp \
            View/robotview.cpp \
-           View/selectedpointwidget.cpp \
            View/selectedrobotwidget.cpp \
            View/spacewidget.cpp \
            View/toplayout.cpp \

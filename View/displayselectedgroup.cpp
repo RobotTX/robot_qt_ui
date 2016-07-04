@@ -25,6 +25,11 @@ DisplaySelectedGroup::DisplaySelectedGroup(QMainWindow *parent, std::shared_ptr<
     actionButtons->getEditButton()->setCheckable(false);
     actionButtons->getMapButton()->setCheckable(false);
 
+    actionButtons->getPlusButton()->setToolTip("To add a point click on the map");
+    actionButtons->getMinusButton()->setToolTip("Select a point and click here to remove it");
+    actionButtons->getEditButton()->setToolTip("Select a point and click here to modify it");
+    actionButtons->getEyeButton()->setToolTip("Select a point and click here to access its information");
+    actionButtons->getMapButton()->setToolTip("Select a point and click here to display or hide it on the map");
 
     layout->addWidget(actionButtons);
 

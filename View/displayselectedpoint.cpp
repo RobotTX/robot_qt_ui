@@ -31,6 +31,9 @@ DisplaySelectedPoint::DisplaySelectedPoint(QMainWindow *_parent, std::shared_ptr
     actionButtons->getEyeButton()->setEnabled(false);
     actionButtons->getMapButton()->setCheckable(true);
 
+    actionButtons->getMinusButton()->setToolTip("You can click this button to remove the point");
+    actionButtons->getEditButton()->setToolTip("You can click on this button and then choose between clicking on the map or drag the point to change its position");
+
     layout->addWidget(actionButtons);
 
     nameEdit = new QLineEdit(this);
@@ -102,7 +105,7 @@ void DisplaySelectedPoint::displayPointInfo(void){
     nameEdit->setText(pointView->getPoint()->getName());
 }
 
-void DisplaySelectedPoint::mousePressEvent(QEvent* event){
+void DisplaySelectedPoint::mousePressEvent(QEvent* /* unused */){
     qDebug() << "mouse pressed";
     nameEdit->setReadOnly(true);
 }

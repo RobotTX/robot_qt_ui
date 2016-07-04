@@ -7,6 +7,7 @@
 #include <QDebug>
 #include <QMouseEvent>
 #include "View/doubleclickablebutton.h"
+#include <QLineEdit>
 
 GroupButtonGroup::GroupButtonGroup(const Points &_points, QWidget* _parent):QWidget(_parent)
 {
@@ -14,8 +15,17 @@ GroupButtonGroup::GroupButtonGroup(const Points &_points, QWidget* _parent):QWid
     buttonGroup = new QButtonGroup(this);
     buttonGroup->setExclusive(true);
 
+    /// to modify the name of a group
+    modifyEdit = new QLineEdit(_parent);
+    modifyEdit->setFixedWidth(1.29*modifyEdit->width());
+    modifyEdit->hide();
+
     layout = new QVBoxLayout(this);
     layout->setAlignment(Qt::AlignTop);
+
+    /// we are going to make this widget visible when a user wants to modify a group
+    layout->addWidget(modifyEdit);
+    indexModifyEdit = 0;
 
     for(int i = 0; i < _points.getGroups().size()-1; i++){
         std::shared_ptr<Group> currentGroup = _points.getGroups().at(i);
@@ -26,14 +36,10 @@ GroupButtonGroup::GroupButtonGroup(const Points &_points, QWidget* _parent):QWid
         buttonGroup->addButton(groupButton, i);
         layout->addWidget(groupButton);
         groupButton->setIconSize(BUTTON_SIZE);
-        if(currentGroup->isDisplayed()){
-
+        if(currentGroup->isDisplayed())
             groupButton->setIcon(QIcon(":/icons/folder_tick.png"));
-        }
-        else{
-
+        else
             groupButton->setIcon(QIcon(":/icons/folder.png"));
-        }
     }
 
     /// for the last group we just want to show the points and not "no group"
@@ -61,7 +67,15 @@ void GroupButtonGroup::deleteButtons(void){
 
 void GroupButtonGroup::update(const Points& _points){
     deleteButtons();
+
     for(int i = 0; i < _points.getGroups().size()-1; i++){
+        if(i == indexModifyEdit){
+            modifyEdit = new QLineEdit(parentWidget());
+            modifyEdit->setFixedWidth(1.29*modifyEdit->width());
+            layout->addWidget(modifyEdit);
+            modifyEdit->hide();
+        }
+
         std::shared_ptr<Group> currentGroup = _points.getGroups().at(i);
         DoubleClickableButton* groupButton = new DoubleClickableButton(i, currentGroup->getName(), this);
         groupButton->setFlat(true);
@@ -74,6 +88,7 @@ void GroupButtonGroup::update(const Points& _points){
             groupButton->setIcon(QIcon(":/icons/folder_tick.png"));
         else
             groupButton->setIcon(QIcon(":/icons/folder.png"));
+
     }
 
     /// for the last group we just want to show the points and not "no group"
@@ -93,6 +108,7 @@ void GroupButtonGroup::update(const Points& _points){
         }
     }
     emit updateConnectionsRequest();
+
 }
 
 void GroupButtonGroup::uncheck(void){
@@ -103,7 +119,7 @@ void GroupButtonGroup::uncheck(void){
     buttonGroup->setExclusive(true);
 }
 
-void GroupButtonGroup::mouseDoubleClickEvent(QMouseEvent *event){
+void GroupButtonGroup::mouseDoubleClickEvent(QMouseEvent * /* unused */){
     emit doubleClick(buttonGroup->checkedId());
 }
 

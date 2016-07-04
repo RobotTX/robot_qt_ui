@@ -45,7 +45,7 @@ public:
 
 public:
     void displayPointInfo(void);
-    void mousePressEvent(QEvent* event);
+    void mousePressEvent(QEvent*);
     void keyPressEvent(QKeyEvent* event);
     void hideEvent(QHideEvent *event);
     void setOrigin(const Origin _origin);

@@ -43,10 +43,6 @@ class TopLayout;
 #define PORT_CMD 5600
 #define PORT_ROBOT_UPDATE 6000
 
-#define XML_PATH "/home/m-a/Documents/QtProject/gobot-software/points.xml"
-//#define XML_PATH "/home/joan/Qt/QtProjects/gobot-software/points.xml"
-//#define XML_PATH "/Users/fannylarradet/Desktop/GTRobots/gobot-software/points.xml"
-
 namespace Ui {
 
 class MainWindow;
@@ -103,7 +99,7 @@ private slots:
    // void backGroupBtnEvent();
     void plusGroupBtnEvent();
     void minusGroupBtnEvent();
-    void editGroupBtnEvent(bool checked);
+    void editGroupBtnEvent();
     void selectPointBtnEvent();
     void openLeftMenu();
     void backSelecRobotBtnEvent();
@@ -118,7 +114,6 @@ private slots:
     void setCheckedRobot(QAbstractButton* button, bool checked);
     void cancelEditSelecRobotBtnEvent();
     void robotSavedEvent();
-    void backSelecPointBtnEvent();
     void minusSelecPointBtnEvent();
     void editSelecPointBtnEvent();
     void setSelectedPoint(PointView* pointView, bool isTemporary);
@@ -140,7 +135,7 @@ private slots:
     void removePointFromInformationMenu(void);
     void displayPointMapEvent(void);
     void hidePathCreationWidget(void);
-    void editPointButtonEvent(bool checked);
+    void editPointButtonEvent();
     void editTmpPathPointSlot(int id, Point* point, int nbWidget);
     void editPointFromGroupMenu(void);
     void saveTmpEditPathPointSlot(void);
@@ -156,6 +151,7 @@ private slots:
     void reestablishConnectionsPoints();
     void removePoint(std::shared_ptr<Point>& point, const Origin origin);
     void createGroup(QString name);
+    void modifyGroup(QString name);
     /**
      * @brief cancelEvent
      * Called when a user doesn't want to keep the modifications he's made on a point

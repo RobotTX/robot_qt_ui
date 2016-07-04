@@ -5,6 +5,7 @@ class Points;
 class QButtonGroup;
 class QVBoxLayout;
 class QMouseEvent;
+class QLineEdit;
 
 #include <QButtonGroup>
 #include <QWidget>
@@ -19,6 +20,10 @@ public:
     ~GroupButtonGroup(){}
 
     QButtonGroup* getButtonGroup(void) const { return buttonGroup; }
+    QLineEdit* getModifyEdit(void) const { return modifyEdit; }
+    QVBoxLayout* getLayout(void) const { return layout; }
+    int getIndexModifyEdit(void) const { return indexModifyEdit; }
+    void setIndexModifyEdit(const int index) { indexModifyEdit = index; }
 
 public:
     void deleteButtons(void);
@@ -29,17 +34,18 @@ public:
 protected:
     void mouseDoubleClickEvent(QMouseEvent *event);
 
+signals:
+    void doubleClick(int);
+    void updateConnectionsRequest();
+
 private:
+    QLineEdit* modifyEdit;
     QVBoxLayout* layout;
     QButtonGroup* buttonGroup;
     QWidget* parent;
     /// to avoid resizing of the icons after deletions of points and groups
     const QSize BUTTON_SIZE = parentWidget()->size()/2;
-
-signals:
-    void doubleClick(int);
-    void updateConnectionsRequest();
-
+    int indexModifyEdit;
 };
 
 #endif // GROUPBUTTONGROUP_H

@@ -1,6 +1,5 @@
 #include "leftmenu.h"
 #include "View/editselectedrobotwidget.h"
-#include "View/selectedpointwidget.h"
 #include "View/editselectedpointwidget.h"
 #include "View/pointview.h"
 #include "View/bottomlayout.h"
@@ -13,7 +12,6 @@
 #include "View/displayselectedpoint.h"
 #include "View/displayselectedgroup.h"
 #include "View/pathcreationwidget.h"
-#include "View/groupeditwindow.h"
 #include "Controller/mainwindow.h"
 #include <QVBoxLayout>
 #include <QLabel>
@@ -27,6 +25,7 @@
 #include "Model/points.h"
 #include "Model/xmlparser.h"
 #include "Controller/mainwindow.h"
+
 LeftMenu::LeftMenu(MainWindow* _parent, std::shared_ptr<Points> const& _points, const std::shared_ptr<Robots> &robots, PointsView * const &pointViews):
     QWidget(_parent), parent(_parent), points(_points)
 {
@@ -48,6 +47,7 @@ LeftMenu::LeftMenu(MainWindow* _parent, std::shared_ptr<Points> const& _points, 
     //closeBtn->setFocusPolicy(Qt::FocusPolicy::NoFocus);
     returnButton->hide();
     topLayout->addWidget(returnButton);
+
     topLayout->addWidget(closeBtn);
 
     leftLayout->addLayout(topLayout);
@@ -94,10 +94,6 @@ LeftMenu::LeftMenu(MainWindow* _parent, std::shared_ptr<Points> const& _points, 
     connect(editSelectedRobotWidget, SIGNAL(showEditSelectedRobotWidget()), _parent, SLOT(showHome()));
     connect(editSelectedRobotWidget, SIGNAL(hideEditSelectedRobotWidget()), _parent, SLOT(hideHome()));
 
-    /// Menu which display the selected point infos
-    selectedPointWidget = new SelectedPointWidget(_parent);
-    leftLayout->addWidget(selectedPointWidget);
-
     /// Menu to edit the selected point
     editSelectedPointWidget = new EditSelectedPointWidget(_parent, pointViews);
     leftLayout->addWidget(editSelectedPointWidget);
@@ -117,7 +113,7 @@ LeftMenu::LeftMenu(MainWindow* _parent, std::shared_ptr<Points> const& _points, 
     connect(displaySelectedPoint->getRobotButton(), SIGNAL(clicked()), _parent, SLOT(setSelectedRobotFromPoint()));
     connect(displaySelectedPoint->getActionButtons()->getMinusButton(), SIGNAL(clicked(bool)), _parent, SLOT(removePointFromInformationMenu()));
     connect(displaySelectedPoint->getActionButtons()->getMapButton(), SIGNAL(clicked(bool)), _parent, SLOT(displayPointMapEvent()));
-    connect(displaySelectedPoint->getActionButtons()->getEditButton(), SIGNAL(clicked(bool)), _parent, SLOT(editPointButtonEvent(bool)));
+    connect(displaySelectedPoint->getActionButtons()->getEditButton(), SIGNAL(clicked(bool)), _parent, SLOT(editPointButtonEvent()));
 
     //to try maybe later connect(displaySelectedGroup->getMinusButton(), SIGNAL(clicked(bool)), this, SLOT(removePoint()));
     connect(displaySelectedGroup->getActionButtons()->getMinusButton(), SIGNAL(clicked(bool)), _parent, SLOT(removePointFromGroupMenu()));

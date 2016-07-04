@@ -9,9 +9,8 @@
 #include <QGraphicsWidget>
 #include "mapview.h"
 
-RobotView::RobotView (std::shared_ptr<Robot> const &_robot, QGraphicsItem* parent):state(GraphicItemState::NO_STATE), selected(false), QGraphicsPolygonItem(parent)
+RobotView::RobotView (std::shared_ptr<Robot> const &_robot, QGraphicsItem* parent): selected(false), state(GraphicItemState::NO_STATE), QGraphicsPolygonItem(parent), robot(_robot)
 {
-    robot = _robot;
     setAcceptHoverEvents(true);
     setAcceptedMouseButtons(Qt::LeftButton);
     setToolTip(robot->getName());
@@ -36,14 +35,14 @@ RobotView::RobotView (std::shared_ptr<Robot> const &_robot, QGraphicsItem* paren
         setPen(QPen(Qt::red));
     }
     shown = true;
-    mapView =(MapView*) parent;
+    mapView = (MapView*) parent;
 }
 
-RobotView::RobotView (QGraphicsItem* parent):selected(false), state(GraphicItemState::NO_STATE),
-    QGraphicsPolygonItem(parent){
+RobotView::RobotView (QGraphicsItem* parent):selected(false), QGraphicsPolygonItem(parent), state(GraphicItemState::NO_STATE)
+{
 }
 
-void RobotView::mousePressEvent(QGraphicsSceneMouseEvent *event){
+void RobotView::mousePressEvent(QGraphicsSceneMouseEvent * /* unused */){
 
     if(state == GraphicItemState::NO_STATE){
        qDebug() << "map robot clicked";
@@ -61,12 +60,12 @@ void RobotView::mousePressEvent(QGraphicsSceneMouseEvent *event){
     }
 }
 
-void RobotView::hoverEnterEvent(QGraphicsSceneHoverEvent *event){
+void RobotView::hoverEnterEvent(QGraphicsSceneHoverEvent * /* unused */){
     setToolTip(robot->getName());
     setPen(QPen(Qt::yellow));
 }
 
-void RobotView::hoverLeaveEvent(QGraphicsSceneHoverEvent *event){
+void RobotView::hoverLeaveEvent(QGraphicsSceneHoverEvent * /* unused */){
     if(selected){
         setPen(QPen(Qt::green));
     } else {

@@ -5,6 +5,6 @@ DoubleClickableButton::DoubleClickableButton(const int _id, const QString string
 {
 }
 
-void DoubleClickableButton::mouseDoubleClickEvent(QMouseEvent *event){
+void DoubleClickableButton::mouseDoubleClickEvent(QMouseEvent * /* unused */){
     emit doubleClick(id);
 }

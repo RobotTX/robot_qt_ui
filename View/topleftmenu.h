@@ -1,9 +1,11 @@
 #ifndef TOPLEFTMENU_H
 #define TOPLEFTMENU_H
 
+class SpaceWidget;
 #include <QWidget>
-#include <QVBoxLayout>
-#include <QPushButton>
+class QVBoxLayout;
+class QPushButton;
+class QHBoxLayout;
 
 class TopLeftMenu : public QWidget{
     Q_OBJECT
@@ -35,7 +37,7 @@ private:
    QPushButton* mapButton;
    QPushButton* eyeButton;
    QHBoxLayout* eyeMapLayout;
-
+   SpaceWidget* spaceWidget;
 };
 
 
