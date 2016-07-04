@@ -119,7 +119,7 @@ void GroupButtonGroup::uncheck(void){
     buttonGroup->setExclusive(true);
 }
 
-void GroupButtonGroup::mouseDoubleClickEvent(QMouseEvent *event){
+void GroupButtonGroup::mouseDoubleClickEvent(QMouseEvent * /* unused */){
     emit doubleClick(buttonGroup->checkedId());
 }
 

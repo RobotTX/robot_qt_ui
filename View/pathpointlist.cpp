@@ -14,8 +14,8 @@ PathPointList::PathPointList(QWidget* parent):QListWidget(parent){
     connect(model(), SIGNAL(rowsMoved(QModelIndex,int,int,QModelIndex,int)), this, SLOT(itemMoved(QModelIndex,int,int,QModelIndex,int)));
 }
 
-void PathPointList::itemMoved(QModelIndex parent, int first, int last,
-                                 QModelIndex destination, int row){
+void PathPointList::itemMoved(QModelIndex /* unused */, int first, int /* unused */,
+                                 QModelIndex /* unused */, int row){
 
     qDebug() << "itemMoved from" << first << "to" << row;
     if(row >= 0){

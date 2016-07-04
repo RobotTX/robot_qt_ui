@@ -1254,7 +1254,8 @@ void MainWindow::setMessageTop(const QString msgType, const QString msg){
 void MainWindow::closeSlot(){
     resetFocus();
     leftMenu->hide();
-    leftMenu->getDisplaySelectedPoint()->getPointView()->setPixmap(PointView::PixmapType::NORMAL);
+    if(leftMenu->getDisplaySelectedPoint()->getPointView())
+        leftMenu->getDisplaySelectedPoint()->getPointView()->setPixmap(PointView::PixmapType::NORMAL);
 }
 
 /**********************************************************************************************************************************/
@@ -1293,21 +1294,35 @@ void MainWindow::initializePoints(){
  */
 void MainWindow::setSelectedPoint(PointView* pointView, bool isTemporary){
     qDebug() << "setSelectedPoint";
+
     resetFocus();
     if(leftMenu->getDisplaySelectedPoint()->getPointView())
         leftMenu->getDisplaySelectedPoint()->getPointView()->setPixmap(PointView::PixmapType::NORMAL);
 
     /// we are not modifying an existing point
     if(!leftMenu->getDisplaySelectedPoint()->getActionButtons()->getEditButton()->isChecked()){
-
+        qDebug() << "editiing";
         leftMenu->show();
         selectedPoint = pointView;
         selectedPoint->setState(GraphicItemState::EDITING_PERM);
         hideAllWidgets();
         editSelectedPointWidget->setSelectedPoint(selectedPoint, isTemporary);
         editSelectedPointWidget->show();
+        float x = pointView->getPoint()->getPosition().getX();
+        float y = pointView->getPoint()->getPosition().getY();
+        if(map->getMapImage().pixelColor(x ,y) == QColor(254, 254, 254)){
+            editSelectedPointWidget->getPlusButton()->setEnabled(true);
+            editSelectedPointWidget->getPlusButton()->setToolTip("Click this button if you want to save this point permanently");
+            setMessageTop(TEXT_COLOR_INFO, "To save this point permanently click the \"+\" button");
+            qDebug() << "ce point est blanc";
+        } else {
+            qDebug() << "this pooint is not white";
+            setMessageTop(TEXT_COLOR_WARNING, "You cannot save this point because your robot(s) would not be able to go there");
+            editSelectedPointWidget->getPlusButton()->setEnabled(false);
+            editSelectedPointWidget->getPlusButton()->setToolTip("You cannot save this point because your robot(s) cannot go there");
+        }
         leftMenu->getDisplaySelectedPoint()->hide();
-        switchFocus(selectedPoint->getPoint()->getName(),editSelectedPointWidget);
+        switchFocus(selectedPoint->getPoint()->getName(), editSelectedPointWidget);
     } else {
         /// on the left we display the position of the temporary point as the user moves it around but we don't make any modifications on the model yet
         leftMenu->getDisplaySelectedPoint()->getXLabel()->setText(QString::number(mapPixmapItem->getTmpPointView()->getPoint()->getPosition().getX()));
@@ -1482,7 +1497,7 @@ void MainWindow::editPointButtonEvent(){
  * @param checked
  * called when the user wants to edit a point from the first points menu
  */
-void MainWindow::editGroupBtnEvent(bool checked){
+void MainWindow::editGroupBtnEvent(){
     qDebug() << "editPointBtnEvent called";
     pointsLeftWidget->setCreatingGroup(false);
 
@@ -1524,6 +1539,8 @@ void MainWindow::editGroupBtnEvent(bool checked){
     else if(checkedId != -1 && checkedId < points->count()-1){
         qDebug() << "gotta update a group";
         leftMenu->getReturnButton()->setEnabled(false);
+        leftMenu->getCloseButton()->setEnabled(false);
+
         pointsLeftWidget->getActionButtons()->getEditButton()->setToolTip("Type a new name for your group and press ENTER");
         /// disables the plus button
         pointsLeftWidget->getActionButtons()->getPlusButton()->setEnabled(false);
@@ -1866,6 +1883,7 @@ void MainWindow::askForDeleteGroupConfirmation(int index){
 
 void MainWindow::displayPointEvent(PointView* pointView){
     qDebug() << "displayPointEvent";
+
     /// resets the color of the previous selected point
     if(leftMenu->getDisplaySelectedPoint()->getPointView())
         leftMenu->getDisplaySelectedPoint()->getPointView()->setPixmap(PointView::PixmapType::NORMAL);
@@ -2344,9 +2362,6 @@ void MainWindow::displayPointInfoFromGroupMenu(void){
  * called when a user edits a point and save the changes either by pressing the enter key or clicking the save button
  */
 void MainWindow::updatePoint(void){
-    setMessageTop(TEXT_COLOR_SUCCESS, "Your point has been modified");
-    delay(1500);
-    setMessageTop(TEXT_COLOR_NORMAL, "");
     leftMenu->getCloseButton()->setEnabled(true);
 
     qDebug() << "update point event called";
@@ -2408,6 +2423,10 @@ void MainWindow::updatePoint(void){
     /// we enable the "back" button again
     leftMenu->getReturnButton()->setEnabled(true);
     leftMenu->getReturnButton()->setToolTip("");
+
+    setMessageTop(TEXT_COLOR_SUCCESS, "Your point has been modified");
+    delay(1500);
+    setMessageTop(TEXT_COLOR_NORMAL, "");
 }
 
 /**
@@ -2695,6 +2714,7 @@ void MainWindow::createGroup(QString name){
 }
 void MainWindow::modifyGroup(QString name){
     if(pointsLeftWidget->checkGroupName(name) == 0){
+        leftMenu->getCloseButton()->setEnabled(true);
         /// enables the plus button
         pointsLeftWidget->getActionButtons()->getPlusButton()->setEnabled(true);
         /// updates the model

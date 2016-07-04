@@ -95,12 +95,12 @@ void PointView::mouseReleaseEvent(QGraphicsSceneMouseEvent *event){
     }
 }
 
-void PointView::hoverEnterEvent(QGraphicsSceneHoverEvent *event){
+void PointView::hoverEnterEvent(QGraphicsSceneHoverEvent * /* unused */){
     setToolTip(point->getName());
     setPixmap(PointView::PixmapType::MID);
 }
 
-void PointView::hoverLeaveEvent(QGraphicsSceneHoverEvent *event){
+void PointView::hoverLeaveEvent(QGraphicsSceneHoverEvent * /* unused */){
     QGraphicsPixmapItem::setPixmap(lastPixmap);
 }
 
@@ -108,11 +108,6 @@ void PointView::setPos(const qreal x, const qreal y){
     QGraphicsPixmapItem::setPos(x - pixmap().width()*SCALE/2,
            y - pixmap().height()*SCALE);
 }
-
-/*void PointView::setPixmap(const QPixmap &pixmap){
-    lastPixmap = pixmap;
-    QGraphicsPixmapItem::setPixmap(pixmap);
-}*/
 
 void PointView::setPixmap(const PixmapType pixType){
     lastPixmap = this->pixmap();
