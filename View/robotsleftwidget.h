@@ -7,6 +7,7 @@ class RobotBtnGroup;
 class QVBoxLayout;
 class QPushButton;
 class QMainWindow;
+class TopLeftMenu;
 
 #include <QPushButton>
 #include <QWidget>
@@ -22,15 +23,13 @@ public:
     RobotsLeftWidget(QMainWindow* parent);
 
     /// Getters
-    bool getEditBtnStatus(void) const { return editBtn->isChecked(); }
-    bool getCheckBtnStatus(void) const { return checkBtn->isChecked(); }
     RobotBtnGroup* getBtnGroup(void) const { return btnGroup; }
-    RobotBtnGroup* getBtnCheckGroup(void) const { return btnCheckGroup; }
+    TopLeftMenu* getActionButtons(void) const { return actionButtons; }
+    QString getSelectedRobotName(void);
+
 
     ///Setters
     void setRobots(std::shared_ptr<Robots> const& robots);
-    void setCheckBtnStatus(const bool status) { checkBtn->setChecked(status); }
-    void setEditBtnStatus(const bool status) { editBtn->setChecked(status); }
 
     /**
      * @brief updateRobots
@@ -38,6 +37,9 @@ public:
      * Update the list of robots when needed (e.g. : when a robot's name is edited)
      */
     void updateRobots(std::shared_ptr<Robots> const& robots);
+    void unSelectAllRobots();
+   // void hideEvent(QHideEvent *event);
+    void showEvent(QShowEvent *);
 
 
 private:
@@ -46,11 +48,10 @@ private:
     std::shared_ptr<Robots> robots;
     QVBoxLayout* robotsLayout;
     RobotBtnGroup* btnGroup;
-    RobotBtnGroup* btnCheckGroup;
-    QPushButton* checkBtn;
-    QPushButton* editBtn;
     QVBoxLayout* scrollLayout;
     VerticalScrollArea* scrollArea;
+    TopLeftMenu* actionButtons;
+
 };
 
 #endif // ROBOTSLEFTWIDGET_H

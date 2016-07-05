@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <points>
     <group>
-        <name>lola</name>
+        <name>first</name>
     </group>
     <group>
-        <name>second group fe</name>
+        <name>first group</name>
         <point>
             <name>A</name>
             <x>50</x>

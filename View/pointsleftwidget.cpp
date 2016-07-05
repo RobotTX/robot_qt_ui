@@ -249,5 +249,6 @@ void PointsLeftWidget::modifyGroupAfterClick(QString name){
 }
 
 void PointsLeftWidget::reconnectModifyEdit(){
+    qDebug() << "reconnection !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!";
     connect(groupButtonGroup->getModifyEdit(), SIGNAL(clickSomewhere(QString)), this, SLOT(modifyGroupAfterClick(QString)));
 }

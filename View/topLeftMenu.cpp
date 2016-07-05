@@ -69,7 +69,15 @@ setMaximumWidth(parent->width()*4/10);
 setMinimumWidth(parent->width()*4/10);
 */
 //layout->setAlignment(Qt::AlignBottom);
+//setMaximumHeight(parent->width());
+       // ->setMaximumHeight(parent->width()*4/10);
+/*
+QPalette Pal(palette());
 
+// set black background
+Pal.setColor(QPalette::Background, Qt::black);
+setAutoFillBackground(true);
+setPalette(Pal);*/
  }
 
 void TopLeftMenu::disableAll()

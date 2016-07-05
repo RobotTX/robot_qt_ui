@@ -6,6 +6,7 @@
 #include <QtNetwork/QTcpServer>
 #include <QtNetwork/QTcpSocket>
 #include <memory>
+#include <QTime>
 
 class UpdateRobotsThread : public QThread {
     Q_OBJECT

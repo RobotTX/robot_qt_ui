@@ -110,11 +110,13 @@ private slots:
     void addPathSelecRobotBtnEvent();
     void backRobotBtnEvent();
     void editRobotBtnEvent();
-    void checkRobotBtnEvent();
+    void checkRobotBtnEventMenu();
+    void checkRobotBtnEventSelect();
+    void checkRobotBtnEvent(QString name);
     void saveMapBtnEvent();
     void loadMapBtnEvent();
     void backMapBtnEvent();
-    void setCheckedRobot(QAbstractButton* button, bool checked);
+    //void setCheckedRobot(QString name);
     void cancelEditSelecRobotBtnEvent();
     void robotSavedEvent();
     void minusSelecPointBtnEvent();
@@ -156,6 +158,8 @@ private slots:
     void modifyGroupWithEnter(QString name);
     void modifyGroupAfterClick(QString name);
     void enableReturnAndCloseButtons(void);
+    void doubleClickOnRobot(int checkedId);
+
     /**
      * @brief cancelEvent
      * Called when a user doesn't want to keep the modifications he's made on a point
@@ -173,6 +177,7 @@ private slots:
     void hideHome(void);
     void backEvent();
     void updateView();
+    void selectViewRobot();
 
 private:
     Ui::MainWindow* ui;
