@@ -5,7 +5,7 @@ class Points;
 class QButtonGroup;
 class QVBoxLayout;
 class QMouseEvent;
-class QLineEdit;
+class CustomizedLineEdit;
 
 #include <QButtonGroup>
 #include <QWidget>
@@ -20,7 +20,7 @@ public:
     ~GroupButtonGroup(){}
 
     QButtonGroup* getButtonGroup(void) const { return buttonGroup; }
-    QLineEdit* getModifyEdit(void) const { return modifyEdit; }
+    CustomizedLineEdit* getModifyEdit(void) const { return modifyEdit; }
     QVBoxLayout* getLayout(void) const { return layout; }
     int getIndexModifyEdit(void) const { return indexModifyEdit; }
     void setIndexModifyEdit(const int index) { indexModifyEdit = index; }
@@ -37,9 +37,10 @@ protected:
 signals:
     void doubleClick(int);
     void updateConnectionsRequest();
+    void modifyEditReconnection();
 
 private:
-    QLineEdit* modifyEdit;
+    CustomizedLineEdit* modifyEdit;
     QVBoxLayout* layout;
     QButtonGroup* buttonGroup;
     QWidget* parent;

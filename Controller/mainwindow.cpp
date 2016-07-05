@@ -38,7 +38,7 @@
 #include <QAbstractButton>
 #include <QString>
 #include <QStringList>
-
+#include "View/customizedlineedit.h"
 
 /**
  * @brief MainWindow::MainWindow
@@ -144,7 +144,10 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     connect(pointsLeftWidget, SIGNAL(newGroup(QString)), this, SLOT(createGroup(QString)));
 
     /// to modify the name of a group, the signal is sent by pointsLeftWidget
-    connect(pointsLeftWidget, SIGNAL(modifiedGroup(QString)), this, SLOT(modifyGroup(QString)));
+    connect(pointsLeftWidget, SIGNAL(modifiedGroup(QString)), this, SLOT(modifyGroupWithEnter(QString)));
+
+    /// same but this happens when the user clicks on a random point of the window
+    connect(pointsLeftWidget, SIGNAL(modifiedGroupAfterClick(QString)), this, SLOT(modifyGroupAfterClick(QString)));
 
     mainLayout->addLayout(bottom);
     setCentralWidget(mainWidget);
@@ -284,9 +287,9 @@ void MainWindow::initializeRobots(){
 
 
 
-    updateRobotsThread = new UpdateRobotsThread(PORT_ROBOT_UPDATE);
+    /*updateRobotsThread = new UpdateRobotsThread(PORT_ROBOT_UPDATE);
     updateRobotsThread->start();
-    updateRobotsThread->moveToThread(updateRobotsThread);
+    updateRobotsThread->moveToThread(updateRobotsThread);*/
 
 
     //TODO Need to come from XML
@@ -1529,7 +1532,7 @@ void MainWindow::editGroupBtnEvent(){
         /// disables the plus button
         pointsLeftWidget->getActionButtons()->getPlusButton()->setEnabled(false);
         /// disables the other buttons
-        //pointsLeftWidget->disableButtons();
+        pointsLeftWidget->disableButtons();
         pointsLeftWidget->getGroupButtonGroup()->getModifyEdit()->setText(pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(checkedId)->text());
         pointsLeftWidget->getGroupButtonGroup()->getModifyEdit()->selectAll();
 
@@ -2680,7 +2683,9 @@ void MainWindow::createGroup(QString name){
     pointsLeftWidget->getActionButtons()->getPlusButton()->setEnabled(true);
     pointsLeftWidget->getActionButtons()->getPlusButton()->setToolTip("Click here to add a new group");
 }
-void MainWindow::modifyGroup(QString name){
+void MainWindow::modifyGroupWithEnter(QString name){
+    qDebug() << "modifying group after enter key pressed";
+
     if(pointsLeftWidget->checkGroupName(name) == 0){
         leftMenu->getCloseButton()->setEnabled(true);
         /// enables the plus button
@@ -2695,11 +2700,16 @@ void MainWindow::modifyGroup(QString name){
         pointsLeftWidget->getGroupButtonGroup()->setEnabled(true);
         pointsLeftWidget->disableButtons();
         /// updates view
-        pointsLeftWidget->getGroupButtonGroup()->update(*points);
+        pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(pointsLeftWidget->getGroupButtonGroup()->getIndexModifyEdit())->setText(name);
+        pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(pointsLeftWidget->getGroupButtonGroup()->getIndexModifyEdit())->show();
+        pointsLeftWidget->getGroupButtonGroup()->getModifyEdit()->hide();
+
         leftMenu->getReturnButton()->setEnabled(true);
+
         setMessageTop(TEXT_COLOR_SUCCESS, "You have successfully modified the name of your group");
         delay(1500);
         setMessageTop(TEXT_COLOR_NORMAL, "");
+
     } else if(pointsLeftWidget->checkGroupName(name) == 1){
         setMessageTop(TEXT_COLOR_DANGER, "The name of your group cannot be empty. Please choose a name for your group");
         delay(2500);
@@ -2711,6 +2721,46 @@ void MainWindow::modifyGroup(QString name){
     }
 }
 
+void MainWindow::modifyGroupAfterClick(QString name){
+    qDebug() << "modifying group after random click";
+    /// resets the menu
+    leftMenu->getCloseButton()->setEnabled(true);
+    pointsLeftWidget->getActionButtons()->getPlusButton()->setEnabled(true);
+    pointsLeftWidget->getGroupButtonGroup()->setEnabled(true);
+    pointsLeftWidget->disableButtons();
+    pointsLeftWidget->getGroupButtonGroup()->getModifyEdit()->hide();
+    leftMenu->getReturnButton()->setEnabled(true);
+    if(pointsLeftWidget->checkGroupName(name) == 0){
+        /// updates the model
+        qDebug() << name;
+        points->getGroups().at(pointsLeftWidget->getGroupButtonGroup()->getIndexModifyEdit())->setName(name);
+        /// saves to file
+        XMLParser parser(XML_PATH, mapPixmapItem);
+        parser.save(*points);
+        /// updates view
+        pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(pointsLeftWidget->getGroupButtonGroup()->getIndexModifyEdit())->setText(name);
+        pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(pointsLeftWidget->getGroupButtonGroup()->getIndexModifyEdit())->show();
+        setMessageTop(TEXT_COLOR_SUCCESS, "You have successfully modified the name of your group");
+        delay(1500);
+        setMessageTop(TEXT_COLOR_NORMAL, "");
+    } else if(pointsLeftWidget->checkGroupName(name) == 1){
+        pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(pointsLeftWidget->getGroupButtonGroup()->getIndexModifyEdit())->show();
+        setMessageTop(TEXT_COLOR_DANGER, "The name of your group cannot be empty. Please choose a name for your group");
+        delay(2500);
+        setMessageTop(TEXT_COLOR_NORMAL, "");
+    } else {
+        pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(pointsLeftWidget->getGroupButtonGroup()->getIndexModifyEdit())->show();
+        setMessageTop(TEXT_COLOR_DANGER, "You cannot choose : " + name + " as a new name for your group because another group already has this name");
+        delay(2500);
+        setMessageTop(TEXT_COLOR_NORMAL, "");
+    }
+
+}
+
+void MainWindow::enableReturnAndCloseButtons(){
+    leftMenu->getReturnButton()->setEnabled(true);
+    leftMenu->getCloseButton()->setEnabled(true);
+}
 
 /**********************************************************************************************************************************/
 

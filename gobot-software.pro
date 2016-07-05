@@ -63,7 +63,8 @@ HEADERS += Controller/cmdrobotthread.h \
            View/topleftmenu.h \
            Model/origin.h \
            Controller/updaterobotsthread.h \
-           Controller/updaterobotsthread.h
+           Controller/updaterobotsthread.h \
+    View/customizedlineedit.h
 
 FORMS += Controller/mainwindow.ui
 
@@ -113,7 +114,8 @@ SOURCES += main.cpp \
            View/verticalscrollarea.cpp \
            View/doubleclickablebutton.cpp \
            View/topLeftMenu.cpp \
-           Controller/updaterobotsthread.cpp
+           Controller/updaterobotsthread.cpp \
+    View/customizedlineedit.cpp
 
 RESOURCES += Resources/resources.qrc
 

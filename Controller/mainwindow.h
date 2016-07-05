@@ -47,10 +47,6 @@ class TopLayout;
 #define PORT_CMD 5600
 #define PORT_ROBOT_UPDATE 6000
 
-#define XML_PATH "/home/m-a/Documents/QtProject/gobot-software/points.xml"
-//#define XML_PATH "/home/joan/Qt/QtProjects/gobot-software/points.xml"
-//#define XML_PATH "/Users/fannylarradet/Desktop/GTRobots/gobot-software/points.xml"
-
 namespace Ui {
 
 class MainWindow;
@@ -157,7 +153,9 @@ private slots:
     void reestablishConnectionsPoints();
     void removePoint(std::shared_ptr<Point>& point, const Origin origin);
     void createGroup(QString name);
-    void modifyGroup(QString name);
+    void modifyGroupWithEnter(QString name);
+    void modifyGroupAfterClick(QString name);
+    void enableReturnAndCloseButtons(void);
     /**
      * @brief cancelEvent
      * Called when a user doesn't want to keep the modifications he's made on a point

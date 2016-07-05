@@ -29,10 +29,9 @@
 LeftMenu::LeftMenu(MainWindow* _parent, std::shared_ptr<Points> const& _points, const std::shared_ptr<Robots> &robots, PointsView * const &pointViews):
     QWidget(_parent), parent(_parent), points(_points)
 {
-   // QScrollArea * scroll = new VerticalScrollArea(_parent);
 
     QVBoxLayout * leftLayout  = new QVBoxLayout();
-  //  QWidget* inWidget  = new QWidget();
+
     QVBoxLayout * globalLayout  = new QVBoxLayout(this);
     QHBoxLayout * topLayout  = new QHBoxLayout();
 
@@ -115,7 +114,7 @@ LeftMenu::LeftMenu(MainWindow* _parent, std::shared_ptr<Points> const& _points, 
     connect(displaySelectedPoint->getActionButtons()->getMapButton(), SIGNAL(clicked(bool)), _parent, SLOT(displayPointMapEvent()));
     connect(displaySelectedPoint->getActionButtons()->getEditButton(), SIGNAL(clicked(bool)), _parent, SLOT(editPointButtonEvent()));
 
-    //to try maybe later connect(displaySelectedGroup->getMinusButton(), SIGNAL(clicked(bool)), this, SLOT(removePoint()));
+    // to try maybe later connect(displaySelectedGroup->getMinusButton(), SIGNAL(clicked(bool)), this, SLOT(removePoint()));
     connect(displaySelectedGroup->getActionButtons()->getMinusButton(), SIGNAL(clicked(bool)), _parent, SLOT(removePointFromGroupMenu()));
     connect(displaySelectedGroup->getActionButtons()->getEditButton(), SIGNAL(clicked(bool)), _parent, SLOT(editPointFromGroupMenu()));
     connect(displaySelectedGroup->getActionButtons()->getEyeButton(), SIGNAL(clicked(bool)), _parent, SLOT(displayPointInfoFromGroupMenu()));
@@ -138,8 +137,6 @@ LeftMenu::LeftMenu(MainWindow* _parent, std::shared_ptr<Points> const& _points, 
         }
     }
 
-   // inWidget->setLayout(leftLayout);
-   // scroll->setWidget(inWidget);
     globalLayout->addLayout(leftLayout);
     globalLayout->setContentsMargins(0, 0, 0, 0);
 }

@@ -17,13 +17,11 @@
 #include "View/leftmenu.h"
 #include <QKeyEvent>
 #include <QDebug>
+#include "View/customizedlineedit.h"
 
 PointsLeftWidget::PointsLeftWidget(QMainWindow* _parent, std::shared_ptr<Points> const& _points, bool _groupDisplayed)
-    : QWidget(_parent), groupDisplayed(_groupDisplayed)
+    : QWidget(_parent), groupDisplayed(_groupDisplayed), points(_points), creatingGroup(true)
 {
-    points = _points;
-    parent = _parent;
-
     scrollArea = new VerticalScrollArea(this);
 
     indexLastGroupClicked = 0;
@@ -70,15 +68,15 @@ PointsLeftWidget::PointsLeftWidget(QMainWindow* _parent, std::shared_ptr<Points>
 
     layout->addLayout(creationLayout);
 
-    connect(actionButtons->getPlusButton(), SIGNAL(clicked(bool)), parent, SLOT(plusGroupBtnEvent()));
-    connect(actionButtons->getMinusButton(), SIGNAL(clicked(bool)), parent, SLOT(minusGroupBtnEvent()));
-    connect(actionButtons->getEditButton(), SIGNAL(clicked(bool)), parent, SLOT(editGroupBtnEvent()));
-    connect(actionButtons->getEyeButton(), SIGNAL(clicked()), parent, SLOT(displayPointsInGroup()));
-    connect(actionButtons->getMapButton(), SIGNAL(clicked()), parent, SLOT(displayGroupMapEvent()));
+    connect(actionButtons->getPlusButton(), SIGNAL(clicked(bool)), _parent, SLOT(plusGroupBtnEvent()));
+    connect(actionButtons->getMinusButton(), SIGNAL(clicked(bool)), _parent, SLOT(minusGroupBtnEvent()));
+    connect(actionButtons->getEditButton(), SIGNAL(clicked(bool)), _parent, SLOT(editGroupBtnEvent()));
+    connect(actionButtons->getEyeButton(), SIGNAL(clicked()), _parent, SLOT(displayPointsInGroup()));
+    connect(actionButtons->getMapButton(), SIGNAL(clicked()), _parent, SLOT(displayGroupMapEvent()));
 
     /// to handle double clicks
     foreach(QAbstractButton *button, groupButtonGroup->getButtonGroup()->buttons())
-        connect(button, SIGNAL(doubleClick(int)), parent, SLOT(doubleClickOnGroup(int)));
+        connect(button, SIGNAL(doubleClick(int)), _parent, SLOT(doubleClickOnGroup(int)));
 
     /// to enable the buttons
     connect(groupButtonGroup->getButtonGroup(), SIGNAL(buttonClicked(int)), this, SLOT(enableButtons(int)));
@@ -93,9 +91,19 @@ PointsLeftWidget::PointsLeftWidget(QMainWindow* _parent, std::shared_ptr<Points>
 
     connect(saveButton, SIGNAL(clicked(bool)), this, SLOT(emitNewGroupSignal()));
 
+    /// to capture the moment a user stops editing
+    connect(groupButtonGroup->getModifyEdit(), SIGNAL(clickSomewhere(QString)), this, SLOT(modifyGroupAfterClick(QString)));
+
+    connect(this, SIGNAL(enableReturn()), _parent, SLOT(enableReturnAndCloseButtons()));
+
+    /// to reconnect the modifyEdit field in the case where a user creates a new group
+    connect(groupButtonGroup, SIGNAL(modifyEditReconnection()), this, SLOT(reconnectModifyEdit()));
+
     setMaximumWidth(_parent->width()*4/10);
     setMinimumWidth(_parent->width()*4/10);
     layout->setAlignment(Qt::AlignBottom);
+
+    justPressedEnterKey = false;
 }
 
 void PointsLeftWidget::updateGroupButtonGroup(Points const& points){
@@ -103,7 +111,7 @@ void PointsLeftWidget::updateGroupButtonGroup(Points const& points){
 }
 
 void PointsLeftWidget::enableButtons(int index){
-
+    groupButtonGroup->setIndexModifyEdit(index);
     disableButtons();
     /// enables the minus button
     actionButtons->getMinusButton()->setEnabled(true);
@@ -201,9 +209,9 @@ void PointsLeftWidget::cancelCreationGroup(){
     saveButton->hide();
     cancelButton->hide();
 
-    // emit un signal a la main window or to the left menu to do it
+    /// emits un signal to the left menu to enable the return button
+    emit enableReturn();
 
-    //((LeftMenu*) parentWidget())->getReturnButton()->setEnabled(true);
     /// resets the buttons so we can click them
     groupButtonGroup->setEnabled(true);
 }
@@ -214,6 +222,8 @@ void PointsLeftWidget::emitNewGroupSignal(){
 }
 
 void PointsLeftWidget::keyPressEvent(QKeyEvent* event){
+    groupButtonGroup->getModifyEdit()->focusOutEvent(new QFocusEvent(QEvent::KeyPress, Qt::FocusReason::OtherFocusReason));
+    qDebug() << "pressed enter key";
     /// this is the enter key
     if(!event->text().compare("\r")){
         if(creatingGroup)
@@ -231,4 +241,13 @@ void PointsLeftWidget::showEvent(QShowEvent *event){
 void PointsLeftWidget::resetWidget(void){
     groupButtonGroup->uncheck();
     disableButtons();
+}
+
+void PointsLeftWidget::modifyGroupAfterClick(QString name){
+    qDebug() << "modify group after click called";
+    emit modifiedGroupAfterClick(name);
+}
+
+void PointsLeftWidget::reconnectModifyEdit(){
+    connect(groupButtonGroup->getModifyEdit(), SIGNAL(clickSomewhere(QString)), this, SLOT(modifyGroupAfterClick(QString)));
 }
