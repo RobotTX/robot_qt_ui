@@ -20,17 +20,24 @@ public:
     void run();
     void delay(const int ms) const;
 
+public:
+    struct RobotStruct {
+        QString hostname;
+        QString ip;
+        QTime lastTimeConnected;
+    };
+
 private slots:
     void newConnectionSlot();
     void disconnectedSlot();
     void readTcpDataSlot();
     void errorConnectionSlot(QAbstractSocket::SocketError error);
 
-
-private :
+private:
     int port;
     QTcpServer* server;
     QTcpSocket* socket;
+    QVector<RobotStruct> robotsVector;
 
 
 };
