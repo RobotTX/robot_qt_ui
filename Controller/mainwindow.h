@@ -158,6 +158,8 @@ private slots:
     void removePoint(std::shared_ptr<Point>& point, const Origin origin);
     void createGroup(QString name);
     void modifyGroup(QString name);
+    void doubleClickOnRobot(int checkedId);
+
     /**
      * @brief cancelEvent
      * Called when a user doesn't want to keep the modifications he's made on a point

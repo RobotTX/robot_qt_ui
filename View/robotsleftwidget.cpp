@@ -43,7 +43,7 @@ void RobotsLeftWidget::setRobots(std::shared_ptr<Robots> const &_robots){
     robots = _robots;
 
     /// Clickable buttons group to select/edit a robot
-    btnGroup = new RobotBtnGroup(robots->getRobotsVector(), false, this);
+    btnGroup = new RobotBtnGroup(robots->getRobotsVector(), false, parent);
 
     /// Checkable buttons group to show/hide a robot
     btnGroup->show();

@@ -558,6 +558,7 @@ void MainWindow::editSelectedRobot(RobotView* robotView){
     leftMenu->getReturnButton()->setToolTip("Please save or discard your modifications before navigating the menu again.");
 }
 
+
 void MainWindow::setSelectedRobot(RobotView* robotView){
 
     qDebug() << "setSelectedRobot(RobotView* robotView)";
@@ -2619,6 +2620,22 @@ void MainWindow::openInterdictionOfPointRemovalMessage(const QString pointName, 
     msgBox.exec();
 }
 
+
+
+
+/**
+ * @brief MainWindow::doubleClickOnRobot
+ * @param checkedId
+ * does the same as clicking on a robot and then on the eye button
+ */
+void MainWindow::doubleClickOnRobot(int id){
+
+    qDebug() << "double click on robot" << id;
+
+    RobotView* mySelectedRobot =  robots->getRobotViewByName(robotsLeftWidget->getBtnGroup()->getBtnGroup()->buttons()[id]->text());
+    setSelectedRobot(mySelectedRobot);
+}
+
 /**
  * @brief MainWindow::doubleClickOnPoint
  * @param checkedId
@@ -2714,6 +2731,11 @@ void MainWindow::reestablishConnectionsGroups(){
     foreach(QAbstractButton* button, pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->buttons())
         connect(button, SIGNAL(doubleClick(int)), this, SLOT(doubleClickOnGroup(int)));
 }
+
+
+
+
+
 
 /**
  * @brief MainWindow::reestablishConnections

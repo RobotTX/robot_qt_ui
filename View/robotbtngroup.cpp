@@ -3,6 +3,7 @@
 #include "Model/robot.h"
 #include <QVBoxLayout>
 #include <QPushButton>
+#include "doubleclickablebutton.h"
 
 RobotBtnGroup::RobotBtnGroup(const QVector<RobotView*>& vector, const bool checkable, QWidget* parent):QWidget(parent){
     btnGroup = new QButtonGroup(this);
@@ -15,7 +16,10 @@ RobotBtnGroup::RobotBtnGroup(const QVector<RobotView*>& vector, const bool check
     }
 */
     for(int i = 0; i < vector.length(); i++){
-        QPushButton* robotBtn = new QPushButton(vector[i]->getRobot()->getName(), this);
+     //   QPushButton* robotBtn = new QPushButton(vector[i]->getRobot()->getName(), this);
+       DoubleClickableButton* robotBtn = new DoubleClickableButton(i,vector[i]->getRobot()->getName(), this);
+       connect(robotBtn, SIGNAL(doubleClick(int)), parent, SLOT(doubleClickOnRobot(int)));
+
         robotBtn->setFlat(true);
         robotBtn->setStyleSheet("text-align:left");
         robotBtn->setCheckable(true);
