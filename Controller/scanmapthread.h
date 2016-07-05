@@ -18,7 +18,7 @@ public:
      * @param newipAddress
      * @param newPort
      */
-    ScanMapThread(const QString ipAddress, const int port, QObject *parent);
+    ScanMapThread(const QString ipAddress, const int port);
 
     /**
      * @brief run
@@ -76,7 +76,6 @@ private :
      * The array on which we stack all the data we receive
      */
     QByteArray data;
-    bool ok;
 
 };
 

@@ -10,6 +10,7 @@ class QMainWindow;
 #include <QString>
 #include <QVector>
 #include <memory>
+#include <QtNetwork/QTcpSocket>
 
 /**
  * @brief The Robot class
@@ -20,6 +21,7 @@ class Robot{
 public:
     Robot(const QString name, const QString addressIp, const int port, QMainWindow* parent);
     Robot();
+    ~Robot();
 
     /// Getters
     Position getPosition(void) const { return position; }
@@ -61,7 +63,6 @@ public:
     QString waitAnswer();
     void resetCommandAnswer();
 
-
 private:
     QString name;
     QString ip;
@@ -88,6 +89,7 @@ private:
      * Boolean representing whether or not the robot is currently executing the path
      */
     bool playingPath;
+    QTcpSocket* socketCmd;
 };
 
 /**

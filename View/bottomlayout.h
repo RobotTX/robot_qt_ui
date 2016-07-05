@@ -9,6 +9,8 @@ class QLabel;
 class QButtonGroup;
 class QMainWindow;
 class QScrollArea;
+class QVBoxLayout;
+
 
 #include <memory>
 #include <QWidget>
@@ -45,6 +47,8 @@ public:
     void disable();
     void enable();
     void uncheckViewPathSelectedRobot(int robotNb);
+    void addRobot(RobotView * const robotView);
+    void removeRobot(const int id);
 
 private:
     /**
@@ -89,6 +93,11 @@ private:
     QVector<QLabel*> vectorPathLabel;
     QList<QAbstractButton*> listEnabled;
     QScrollArea* pathScroll;
+    QVBoxLayout* columnName;
+    QVBoxLayout* columnPath;
+    QVBoxLayout* columnPlay;
+    QVBoxLayout* columnViewPath;
+    QVBoxLayout* columnStop;
 };
 
 #endif // BOTTOMLAYOUT_H

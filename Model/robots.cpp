@@ -58,7 +58,7 @@ RobotView* Robots::getRobotViewByName(const QString name){
             return robotsVector[i];
         }
     }
-    return new RobotView(NULL);
+    return NULL;
 }
 
 RobotView* Robots::getRobotViewByIp(const QString ip){
@@ -67,7 +67,7 @@ RobotView* Robots::getRobotViewByIp(const QString ip){
             return robotsVector[i];
         }
     }
-    return new RobotView(NULL);
+    return NULL;
 }
 
 void Robots::setSelected(RobotView * const robotView){
@@ -103,14 +103,11 @@ int Robots::getRobotId(const QString name){
 }
 
 RobotView* Robots::findRobotUsingHome(const QString name) const {
-    RobotView* robot(0);
     for(int i = 0; i < robotsVector.size(); i++){
         std::shared_ptr<Point> home = robotsVector.at(i)->getRobot()->getHome();
         /// we first check that this robot has a home point, if it does then we compare the names
         if(home && !home->getName().compare(name))
             return robotsVector[i];
     }
-    return robot;
-
-
+    return NULL;
 }

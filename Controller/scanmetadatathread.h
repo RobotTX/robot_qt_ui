@@ -19,7 +19,7 @@ public:
      * @param ipAddress
      * @param port
      */
-    ScanMetadataThread(const QString ipAddress, const int port, QObject *parent);
+    ScanMetadataThread(const QString ipAddress, const int port);
 
     /**
      * @brief run
@@ -75,7 +75,6 @@ private :
     std::shared_ptr<QTcpSocket> socketMetadata;
     QString ipAddress;
     int port;
-    bool ok;
 
 };
 

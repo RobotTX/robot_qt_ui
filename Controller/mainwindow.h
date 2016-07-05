@@ -173,6 +173,8 @@ private slots:
     void hideHome(void);
     void backEvent();
     void updateView();
+    void robotIsAliveSlot(QString hostname, QString ip);
+    void robotIsDeadSlot(QString hostname, QString ip);
 
 private:
     Ui::MainWindow* ui;

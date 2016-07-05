@@ -45,12 +45,12 @@ BottomLayout::BottomLayout(QMainWindow* parent, const std::shared_ptr<Robots> &r
     widgetPath->setContentsMargins(0, 0, 0, 0);*/
 
     /// The layout of the four columns
-    QVBoxLayout* columnName = new QVBoxLayout();
+    columnName = new QVBoxLayout();
     //QVBoxLayout* columnPath = new QVBoxLayout(widgetPath);
-    QVBoxLayout* columnPath = new QVBoxLayout();
-    QVBoxLayout* columnPlay = new QVBoxLayout();
-    QVBoxLayout* columnViewPath = new QVBoxLayout();
-    QVBoxLayout* columnStop = new QVBoxLayout();
+    columnPath = new QVBoxLayout();
+    columnPlay = new QVBoxLayout();
+    columnViewPath = new QVBoxLayout();
+    columnStop = new QVBoxLayout();
 
 
     /// Creation of the first collumn, with the button containing the name of the robots
@@ -173,6 +173,70 @@ void BottomLayout::updateRobot(const int id, RobotView * const robotView){
         }
         vectorPathLabel.at(id)->setText(pathStr);
     }
+}
+
+void BottomLayout::addRobot(RobotView * const robotView){
+    int i = robotBtnGroup->buttons().size();
+    /// Creation of the first collumn, with the button containing the name of the robots
+    QPushButton* robotBtn = new QPushButton(robotView->getRobot()->getName(), this);
+    robotBtn->setMinimumHeight(((QWidget*)parent())->height()/20);
+    robotBtn->setMaximumHeight(((QWidget*)parent())->height()/20);
+    robotBtn->setMaximumWidth(((QWidget*)parent())->width()*3/20);
+    robotBtn->setMinimumWidth(((QWidget*)parent())->width()*3/20);
+    robotBtnGroup->addButton(robotBtn, i);
+    columnName->addWidget(robotBtn);
+
+    /// Creation of the second collumn, with the labels containing the path of the robot
+    std::vector<std::shared_ptr<PathPoint>> path = robotView->getRobot()->getPath();
+    QString pathStr = QString("");
+    for(size_t j = 0; j < path.size(); j++){
+        if(j != 0){
+            pathStr += " - ";
+        }
+        pathStr += path.at(j)->getPoint().getName();
+    }
+    QLabel* pathLabel = new QLabel(pathStr, this);
+    pathLabel->setMinimumHeight(((QWidget*)parent())->height()/20);
+    pathLabel->setMaximumHeight(((QWidget*)parent())->height()/20);
+    vectorPathLabel.push_back(pathLabel);
+    pathLabel->setMinimumWidth(1);
+    columnPath->addWidget(pathLabel);
+
+    /// Creation of the third collumn, with the button to play/pause the robot
+    QPushButton* viewPathRobotBtn = new QPushButton(QIcon(":/icons/eye.png"),"", this);
+    viewPathRobotBtn->setMaximumWidth(((QWidget*)parent())->width()/20);
+    viewPathRobotBtn->setMinimumWidth(((QWidget*)parent())->width()/20);
+    viewPathRobotBtn->setIconSize(((QWidget*)parent())->size()/20);
+    viewPathRobotBtn->setCheckable(true);
+    if(robotView->getRobot()->getPath().size() < 1)
+        viewPathRobotBtn->setEnabled(false);
+    viewPathRobotBtnGroup->addButton(viewPathRobotBtn, i);
+    columnViewPath->addWidget(viewPathRobotBtn);
+
+    /// Creation of the fourth collumn, with the button to play/pause the robot
+    QPushButton* playRobotBtn = new QPushButton(QIcon(":/icons/play.png"),"", this);
+    playRobotBtn->setMaximumWidth(((QWidget*)parent())->width()/20);
+    playRobotBtn->setMinimumWidth(((QWidget*)parent())->width()/20);
+    playRobotBtn->setIconSize(((QWidget*)parent())->size()/20);
+    if(robotView->getRobot()->getPath().size() < 1)
+        playRobotBtn->setEnabled(false);
+    playRobotBtnGroup->addButton(playRobotBtn, i);
+    columnPlay->addWidget(playRobotBtn);
+
+    /// Creation of the fifth collumn, with the button to stop and delete the path of the robot
+    QPushButton* stopRobotBtn = new QPushButton(QIcon(":/icons/close.png"),"", this);
+    stopRobotBtn->setMaximumWidth(((QWidget*)parent())->width()/20);
+    stopRobotBtn->setMinimumWidth(((QWidget*)parent())->width()/20);
+    stopRobotBtn->setIconSize(((QWidget*)parent())->size()/20);
+    if(robotView->getRobot()->getPath().size() < 1)
+        stopRobotBtn->setEnabled(false);
+    stopRobotBtnGroup->addButton(stopRobotBtn, i);
+    columnStop->addWidget(stopRobotBtn);
+}
+
+/// TODO update all ids on delete
+void BottomLayout::removeRobot(const int id){
+    qDebug() << "removeRobot from BottomLayout soon" << id;
 }
 
 void BottomLayout::disable(){
