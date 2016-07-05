@@ -31,19 +31,14 @@ public:
     void setGroupDisplayed(const bool _groupDisplayed) { groupDisplayed = _groupDisplayed; }
     int getIndexLastGroupClicked(void) const { return indexLastGroupClicked; }
     std::shared_ptr<Points> getPoints(void) const { return points; }
+
     /**
      * @brief setIndexLastGroupClicked
      * @param index
      * the index of the last group is important to determine which points should be removed and displayed
      */
     void setIndexLastGroupClicked(const int index) { indexLastGroupClicked = index; }
-    /*
-    QPushButton* getMinusButton(void) const { return minusButton; }
-    QPushButton* getMapButton(void) const { return mapButton; }
-    QPushButton* getEditButton(void) const { return editButton; }
-    QPushButton* getPlusButton(void) const { return plusButton; }
-    QPushButton* getEyeButton(void) const { return eyeButton; }
-    */
+
     QPushButton* getSaveButton(void) const { return saveButton; }
     QPushButton* getCancelButton(void) const { return cancelButton; }
 
@@ -54,9 +49,9 @@ public:
     QLabel* getGroupNameLabel(void) const { return groupNameLabel; }
     QLineEdit* getGroupNameEdit(void) const { return groupNameEdit; }
 
-    QLineEdit* getModifyEdit(void) const { return modifyEdit; }
-
     VerticalScrollArea* getScrollArea(void) const { return scrollArea; }
+
+    void setCreatingGroup(const bool create) { creatingGroup = create; }
 
 public:
     void disableButtons(void);
@@ -65,17 +60,19 @@ public:
 protected:
     void keyPressEvent(QKeyEvent* event);
 
+public slots:
+     int checkGroupName(QString name);
+
 private slots:
     void enableButtons(int index);
-    void checkGroupName(QString name);
     void cancelCreationGroup();
     void emitNewGroupSignal();
 
 signals:
     void newGroup(QString name);
+    void modifiedGroup(QString name);
 
 private:
-    QLineEdit* modifyEdit;
 
     QMainWindow* parent;
     QVBoxLayout* layout;
@@ -107,6 +104,8 @@ private:
     bool groupDisplayed;
     int indexLastGroupClicked;
     std::shared_ptr<Points> points;
+    /// to differenciate the behavior of the enter key
+    bool creatingGroup;
 };
 
 #endif // POINTSLEFTWIDGET_H

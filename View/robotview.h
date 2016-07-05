@@ -8,8 +8,8 @@ class MapView;
 #include <memory>
 #include "Model/position.h"
 #include <QObject>
-#include <QGraphicsPolygonItem>
 #include "Model/graphicitemstate.h"
+#include <QGraphicsPolygonItem>
 
 #define ROBOT_HEIGHT_LOW 9
 #define ROBOT_HEIGHT_HIGH 12
@@ -21,6 +21,7 @@ class MapView;
  */
 class RobotView: public QObject, public QGraphicsPolygonItem {
     Q_OBJECT
+
 public:
     RobotView(const std::shared_ptr<Robot> &_robot, QGraphicsItem *parent);
     RobotView(QGraphicsItem* parent);
@@ -45,9 +46,9 @@ signals:
     void setSelectedSignal(RobotView*);
 
 protected:
-    void mousePressEvent(QGraphicsSceneMouseEvent *event);
-    void hoverEnterEvent(QGraphicsSceneHoverEvent *event);
-    void hoverLeaveEvent(QGraphicsSceneHoverEvent *event);
+    void mousePressEvent(QGraphicsSceneMouseEvent *);
+    void hoverEnterEvent(QGraphicsSceneHoverEvent *);
+    void hoverLeaveEvent(QGraphicsSceneHoverEvent *);
 
 private:
     bool selected;

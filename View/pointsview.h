@@ -19,7 +19,6 @@ public:
     ~PointsView();
 
     std::shared_ptr<Points> getPoints(void) const { return points; }
-    //void setPoints(Points _points) { points = _points; }
     std::vector<GroupView*> getGroups(void) const { return groupViews; }
 
     size_t count(void) const { return groupViews.size(); }

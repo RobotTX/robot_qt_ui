@@ -105,7 +105,7 @@ void DisplaySelectedPoint::displayPointInfo(void){
     nameEdit->setText(pointView->getPoint()->getName());
 }
 
-void DisplaySelectedPoint::mousePressEvent(QEvent* event){
+void DisplaySelectedPoint::mousePressEvent(QEvent* /* unused */){
     qDebug() << "mouse pressed";
     nameEdit->setReadOnly(true);
 }

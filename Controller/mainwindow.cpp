@@ -3,6 +3,7 @@
 #include "Controller/scanmetadatathread.h"
 #include "Controller/scanrobotthread.h"
 #include "Controller/scanmapthread.h"
+#include "Controller/updaterobotsthread.h"
 #include "Model/pathpoint.h"
 #include "Model/map.h"
 #include "Model/robots.h"
@@ -16,7 +17,6 @@
 #include "View/pointview.h"
 #include "View/leftmenuwidget.h"
 #include "View/editselectedrobotwidget.h"
-#include "View/selectedpointwidget.h"
 #include "View/editselectedpointwidget.h"
 #include "View/bottomlayout.h"
 #include "View/pointsleftwidget.h"
@@ -39,10 +39,6 @@
 #include <QString>
 #include <QStringList>
 
-
-//#define XML_PATH "/home/m-a/Documents/QtProject/gobot-software/points.xml"
-#define XML_PATH "/home/joan/Qt/QtProjects/gobot-software/points.xml"
-//#define XML_PATH "/Users/fannylarradet/Desktop/GTRobots/gobot-software/points.xml"
 
 /**
  * @brief MainWindow::MainWindow
@@ -148,6 +144,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     /// to create a new group, the signal is sent by pointsLeftWidget
     connect(pointsLeftWidget, SIGNAL(newGroup(QString)), this, SLOT(createGroup(QString)));
 
+    /// to modify the name of a group, the signal is sent by pointsLeftWidget
+    connect(pointsLeftWidget, SIGNAL(modifiedGroup(QString)), this, SLOT(modifyGroup(QString)));
+
     mainLayout->addLayout(bottom);
 
     setCentralWidget(mainWidget);
@@ -158,6 +157,10 @@ MainWindow::~MainWindow(){
     delete pathPainter;
     qDeleteAll(pathPointViews.begin(), pathPointViews.end());
     pathPointViews.clear();
+    if (updateRobotsThread != 0 && updateRobotsThread->isRunning() ) {
+        updateRobotsThread->requestInterruption();
+        updateRobotsThread->wait();
+    }
 }
 
 
@@ -205,9 +208,9 @@ void MainWindow::connectToRobot(){
                         setGraphicItemsState(GraphicItemState::NO_EVENT);
                         disableMenu();
 
-                        metadataThread = new ScanMetadataThread(ip, PORT_MAP_METADATA);
-                        robotThread = new ScanRobotThread(ip, PORT_ROBOT_POS);
-                        //mapThread = new ScanMapThread(ip, PORT_MAP);
+                        metadataThread = new ScanMetadataThread(ip, PORT_MAP_METADATA, this);
+                        robotThread = new ScanRobotThread(ip, PORT_ROBOT_POS, this);
+                        //mapThread = new ScanMapThread(ip, PORT_MAP, this);
 
                         connect(metadataThread, SIGNAL(valueChangedMetadata(int, int, float, float, float))
                                 , this , SLOT(updateMetadata(int, int, float, float, float)));
@@ -281,6 +284,14 @@ void MainWindow::connectToRobot(){
 }
 
 void MainWindow::initializeRobots(){
+
+
+
+    updateRobotsThread = new UpdateRobotsThread(PORT_ROBOT_UPDATE);
+    updateRobotsThread->start();
+    updateRobotsThread->moveToThread(updateRobotsThread);
+
+
     //TODO Need to come from XML
     std::shared_ptr<Robot> robot1(new Robot("Roboty", "localhost", PORT_CMD, this));
     robot1->setWifi("Swaghetti Yolognaise");
@@ -1294,7 +1305,8 @@ void MainWindow::setMessageTop(const QString msgType, const QString msg){
 void MainWindow::closeSlot(){
     resetFocus();
     leftMenu->hide();
-    leftMenu->getDisplaySelectedPoint()->getPointView()->setPixmap(PointView::PixmapType::NORMAL);
+    if(leftMenu->getDisplaySelectedPoint()->getPointView())
+        leftMenu->getDisplaySelectedPoint()->getPointView()->setPixmap(PointView::PixmapType::NORMAL);
 }
 
 /**********************************************************************************************************************************/
@@ -1333,21 +1345,35 @@ void MainWindow::initializePoints(){
  */
 void MainWindow::setSelectedPoint(PointView* pointView, bool isTemporary){
     qDebug() << "setSelectedPoint";
+
     resetFocus();
     if(leftMenu->getDisplaySelectedPoint()->getPointView())
         leftMenu->getDisplaySelectedPoint()->getPointView()->setPixmap(PointView::PixmapType::NORMAL);
 
     /// we are not modifying an existing point
     if(!leftMenu->getDisplaySelectedPoint()->getActionButtons()->getEditButton()->isChecked()){
-
+        qDebug() << "editiing";
         leftMenu->show();
         selectedPoint = pointView;
         selectedPoint->setState(GraphicItemState::EDITING_PERM);
         hideAllWidgets();
         editSelectedPointWidget->setSelectedPoint(selectedPoint, isTemporary);
         editSelectedPointWidget->show();
+        float x = pointView->getPoint()->getPosition().getX();
+        float y = pointView->getPoint()->getPosition().getY();
+        if(map->getMapImage().pixelColor(x ,y) == QColor(254, 254, 254)){
+            editSelectedPointWidget->getPlusButton()->setEnabled(true);
+            editSelectedPointWidget->getPlusButton()->setToolTip("Click this button if you want to save this point permanently");
+            setMessageTop(TEXT_COLOR_INFO, "To save this point permanently click the \"+\" button");
+            qDebug() << "ce point est blanc";
+        } else {
+            qDebug() << "this pooint is not white";
+            setMessageTop(TEXT_COLOR_WARNING, "You cannot save this point because your robot(s) would not be able to go there");
+            editSelectedPointWidget->getPlusButton()->setEnabled(false);
+            editSelectedPointWidget->getPlusButton()->setToolTip("You cannot save this point because your robot(s) cannot go there");
+        }
         leftMenu->getDisplaySelectedPoint()->hide();
-        switchFocus(selectedPoint->getPoint()->getName(),editSelectedPointWidget);
+        switchFocus(selectedPoint->getPoint()->getName(), editSelectedPointWidget);
     } else {
         /// on the left we display the position of the temporary point as the user moves it around but we don't make any modifications on the model yet
         leftMenu->getDisplaySelectedPoint()->getXLabel()->setText(QString::number(mapPixmapItem->getTmpPointView()->getPoint()->getPosition().getX()));
@@ -1399,6 +1425,7 @@ void MainWindow::backGroupBtnEvent(){
 
 void MainWindow::plusGroupBtnEvent(){
     qDebug() << "plusGroupBtnEvent called";
+    pointsLeftWidget->setCreatingGroup(true);
     pointsLeftWidget->getGroupButtonGroup()->uncheck();
     /// resets the name edit field
     pointsLeftWidget->getGroupNameEdit()->setText("");
@@ -1458,11 +1485,13 @@ void MainWindow::minusGroupBtnEvent(){
  * @param checked
  * called to edit an existing point
  */
-void MainWindow::editPointButtonEvent(bool checked){
+void MainWindow::editPointButtonEvent(){
     setMessageTop(TEXT_COLOR_INFO, "Click the map or drag the point to change its position");
     qDebug() << "editPointButtonEvent called";
     leftMenu->getReturnButton()->setEnabled(false);
     leftMenu->getReturnButton()->setToolTip("Please save or discard your modifications before navigating the menu again.");
+
+    leftMenu->getCloseButton()->setEnabled(false);
 
     /// update buttons enable attribute and tool tips
     leftMenu->getDisplaySelectedPoint()->getActionButtons()->getMapButton()->setChecked(true);
@@ -1519,11 +1548,11 @@ void MainWindow::editPointButtonEvent(bool checked){
  * @param checked
  * called when the user wants to edit a point from the first points menu
  */
-void MainWindow::editGroupBtnEvent(bool checked){
+void MainWindow::editGroupBtnEvent(){
     qDebug() << "editPointBtnEvent called";
+    pointsLeftWidget->setCreatingGroup(false);
 
     /// uncheck the other buttons
-
     pointsLeftWidget->getActionButtons()->getPlusButton()->setChecked(false);
     pointsLeftWidget->getActionButtons()->getMinusButton()->setChecked(false);
     pointsLeftWidget->getActionButtons()->getEyeButton()->setChecked(false);
@@ -1552,7 +1581,7 @@ void MainWindow::editGroupBtnEvent(bool checked){
         }
         /// displays the information relative the the point
         leftMenu->getDisplaySelectedPoint()->displayPointInfo();
-        editPointButtonEvent(checked);
+        editPointButtonEvent();
         pointsLeftWidget->hide();
         /// disables the back button to prevent problems, a user has to discard or save his modifications before he can start navigatin the menu again, also prevents false manipulations
        leftMenu->getDisplaySelectedPoint()->show();
@@ -1560,36 +1589,27 @@ void MainWindow::editGroupBtnEvent(bool checked){
     }
     else if(checkedId != -1 && checkedId < points->count()-1){
         qDebug() << "gotta update a group";
+        leftMenu->getReturnButton()->setEnabled(false);
+        leftMenu->getCloseButton()->setEnabled(false);
+
+        pointsLeftWidget->getActionButtons()->getEditButton()->setToolTip("Type a new name for your group and press ENTER");
+        /// disables the plus button
+        pointsLeftWidget->getActionButtons()->getPlusButton()->setEnabled(false);
+        /// disables the other buttons
+        pointsLeftWidget->disableButtons();
+        pointsLeftWidget->getGroupButtonGroup()->getModifyEdit()->setText(pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(checkedId)->text());
+        pointsLeftWidget->getGroupButtonGroup()->getModifyEdit()->selectAll();
+
         pointsLeftWidget->getGroupButtonGroup()->uncheck();
         pointsLeftWidget->getGroupButtonGroup()->setEnabled(false);
-        pointsLeftWidget->getModifyEdit()->setText(points->getGroups().at(checkedId)->getName());
-        pointsLeftWidget->getModifyEdit()->selectAll();
-        pointsLeftWidget->getModifyEdit()->setFocus();
-        pointsLeftWidget->getModifyEdit()->show();
-        QPoint posButton = pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(checkedId)->mapTo(
-                    pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(checkedId)->window(), pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(checkedId)->pos());
-        //pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(checkedId)->setStyleSheet("background-color: rgba(255, 255, 255, 0);");
-        qDebug() << pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(checkedId)->pos().x() << pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(checkedId)->pos().y();
-        /*pointsLeftWidget->getModifyEdit()->move(
-                    pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(checkedId)->pos().x(),
-                    pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(checkedId)->pos().y());
-                    */
-        pointsLeftWidget->getModifyEdit()->move(posButton.x(),//-pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(checkedId)->width()/14.5,
-                                                posButton.y());//-pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(checkedId)->height()/2);
-       /*
-        pointsLeftWidget->getModifyEdit()->move(posButton.x()-pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(checkedId)->width()/14.5,
-                                                posButton.y()-pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(checkedId)->height()/2);
-                                                */
-        pointsLeftWidget->getModifyEdit()->setFixedWidth(pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(checkedId)->width()*0.85);
+        pointsLeftWidget->getGroupButtonGroup()->getModifyEdit()->selectAll();
+        pointsLeftWidget->getGroupButtonGroup()->getModifyEdit()->setFocus();
+        pointsLeftWidget->getGroupButtonGroup()->getModifyEdit()->show();
 
-        qDebug() << pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(checkedId)->mapTo(
-                        pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(checkedId)->window(), pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(checkedId)->pos());
-        qDebug() << pointsLeftWidget->getModifyEdit()->pos().x() << pointsLeftWidget->getModifyEdit()->pos().y();
-        //pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(checkedId)->hide();
-        //pointsLeftWidget->getSaveButton()->show();
-        //pointsLeftWidget->getSaveButton()->setEnabled(true);
-        //pointsLeftWidget->getCancelButton()->show();
-        //qDebug() << (focusWidget() == pointsLeftWidget->getModifyEdit());
+        QLayoutItem* item = pointsLeftWidget->getGroupButtonGroup()->getLayout()->takeAt(pointsLeftWidget->getGroupButtonGroup()->getIndexModifyEdit());
+        pointsLeftWidget->getGroupButtonGroup()->getLayout()->insertItem(checkedId, item);
+        pointsLeftWidget->getGroupButtonGroup()->setIndexModifyEdit(checkedId);
+        pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(checkedId)->hide();
     }
 }
 
@@ -1681,17 +1701,6 @@ void MainWindow::openLeftMenu(){
     }
 }
 
-/**
- * @brief MainWindow::backSelecPointBtnEvent
- * called when the back button is clicked on the point information menu
- */
-void MainWindow::backSelecPointBtnEvent(){
-    qDebug() << "backSelecPointBtnEvent called";
-    selectedPointWidget->hide();
-    /// if we come from a menu we display it again
-    backEvent();
-}
-
 void MainWindow::minusSelecPointBtnEvent(){
     qDebug() << "minusSelecPointBtnEvent called";
 }
@@ -1723,6 +1732,8 @@ void MainWindow::cancelEditSelecPointBtnEvent(){
 void MainWindow::pointSavedEvent(int index, double x, double y, QString name){
 
     qDebug() << "pointSavedEvent called" << index;
+    leftMenu->getCloseButton()->setEnabled(true);
+    leftMenu->getReturnButton()->setEnabled(true);
 
     /// resets the status of the plus button
     editSelectedPointWidget->getPlusButton()->setEnabled(true);
@@ -1923,6 +1934,7 @@ void MainWindow::askForDeleteGroupConfirmation(int index){
 
 void MainWindow::displayPointEvent(PointView* pointView){
     qDebug() << "displayPointEvent";
+
     /// resets the color of the previous selected point
     if(leftMenu->getDisplaySelectedPoint()->getPointView())
         leftMenu->getDisplaySelectedPoint()->getPointView()->setPixmap(PointView::PixmapType::NORMAL);
@@ -2297,6 +2309,8 @@ void MainWindow::removePointFromInformationMenu(void){
  */
 void MainWindow::editPointFromGroupMenu(void){
     qDebug() << "editgroupfrommenuevent";
+    leftMenu->getCloseButton()->setEnabled(false);
+    leftMenu->getReturnButton()->setEnabled(false);
     setMessageTop(TEXT_COLOR_INFO, "Click the map or drag the point to change its position");
     std::shared_ptr<Group> group = points->findGroup(leftMenu->getDisplaySelectedGroup()->getNameLabel()->text());
     if(group){
@@ -2399,9 +2413,7 @@ void MainWindow::displayPointInfoFromGroupMenu(void){
  * called when a user edits a point and save the changes either by pressing the enter key or clicking the save button
  */
 void MainWindow::updatePoint(void){
-    setMessageTop(TEXT_COLOR_SUCCESS, "Your point has been modified");
-    delay(1500);
-    setMessageTop(TEXT_COLOR_NORMAL, "");
+    leftMenu->getCloseButton()->setEnabled(true);
 
     qDebug() << "update point event called";
     ///resets the tooltip of the edit button and the minus button
@@ -2462,6 +2474,10 @@ void MainWindow::updatePoint(void){
     /// we enable the "back" button again
     leftMenu->getReturnButton()->setEnabled(true);
     leftMenu->getReturnButton()->setToolTip("");
+
+    setMessageTop(TEXT_COLOR_SUCCESS, "Your point has been modified");
+    delay(1500);
+    setMessageTop(TEXT_COLOR_NORMAL, "");
 }
 
 /**
@@ -2469,7 +2485,8 @@ void MainWindow::updatePoint(void){
  * called when a user discard the changes made about a point
  */
 void MainWindow::cancelEvent(void){
-
+    leftMenu->getCloseButton()->setEnabled(true);
+    leftMenu->getReturnButton()->setEnabled(true);
     /// reset the color of the pointView
     leftMenu->getDisplaySelectedPoint()->getPointView()->setPixmap(PointView::PixmapType::NORMAL);
 
@@ -2746,6 +2763,36 @@ void MainWindow::createGroup(QString name){
     pointsLeftWidget->getActionButtons()->getPlusButton()->setEnabled(true);
     pointsLeftWidget->getActionButtons()->getPlusButton()->setToolTip("Click here to add a new group");
 }
+void MainWindow::modifyGroup(QString name){
+    if(pointsLeftWidget->checkGroupName(name) == 0){
+        leftMenu->getCloseButton()->setEnabled(true);
+        /// enables the plus button
+        pointsLeftWidget->getActionButtons()->getPlusButton()->setEnabled(true);
+        /// updates the model
+        qDebug() << name;
+        points->getGroups().at(pointsLeftWidget->getGroupButtonGroup()->getIndexModifyEdit())->setName(name);
+        /// saves to file
+        XMLParser parser(XML_PATH, mapPixmapItem);
+        parser.save(*points);
+        /// enables the buttons
+        pointsLeftWidget->getGroupButtonGroup()->setEnabled(true);
+        pointsLeftWidget->disableButtons();
+        /// updates view
+        pointsLeftWidget->getGroupButtonGroup()->update(*points);
+        leftMenu->getReturnButton()->setEnabled(true);
+        setMessageTop(TEXT_COLOR_SUCCESS, "You have successfully modified the name of your group");
+        delay(1500);
+        setMessageTop(TEXT_COLOR_NORMAL, "");
+    } else if(pointsLeftWidget->checkGroupName(name) == 1){
+        setMessageTop(TEXT_COLOR_DANGER, "The name of your group cannot be empty. Please choose a name for your group");
+        delay(2500);
+        setMessageTop(TEXT_COLOR_NORMAL, "");
+    } else {
+        setMessageTop(TEXT_COLOR_DANGER, "You cannot choose : " + name + " as a new name for your group because another group already has this name");
+        delay(2500);
+        setMessageTop(TEXT_COLOR_NORMAL, "");
+    }
+}
 
 
 /**********************************************************************************************************************************/
@@ -2849,7 +2896,6 @@ void MainWindow::hideAllWidgets(){
     robotsLeftWidget->hide();
     mapLeftWidget->hide();
     editSelectedRobotWidget->hide();
-    selectedPointWidget->hide();
     editSelectedPointWidget->hide();
     leftMenu->getDisplaySelectedPoint()->hide();
     pathCreationWidget->hide();

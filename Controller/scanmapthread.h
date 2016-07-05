@@ -18,7 +18,7 @@ public:
      * @param newipAddress
      * @param newPort
      */
-    ScanMapThread(const QString ipAddress, const int port);
+    ScanMapThread(const QString ipAddress, const int port, QObject *parent);
 
     /**
      * @brief run
@@ -29,10 +29,10 @@ public:
 
 private slots:
     /**
-     * @brief readTcpData
+     * @brief readTcpDataSlot
      * Read the data we receive
      */
-    void readTcpData();
+    void readTcpDataSlot();
 
     /**
      * @brief hostFoundSlot
