@@ -22,7 +22,7 @@ public:
      * @param ipAddress
      * @param port
      */
-    CmdRobotThread(const QString ipAddress, const int port, const QString _robotName);
+    CmdRobotThread(const QString ipAddress, const int port, const QString _robotName, QObject *parent);
 
     /**
      * @brief run
@@ -39,6 +39,8 @@ public:
     bool sendCommand(const QString cmd);
     QString waitAnswer();
     void resetCommandAnswer(){ commandAnswer = ""; }
+
+    void delay(const int ms) const;
 
 
 private slots:
@@ -68,10 +70,10 @@ private slots:
     void disconnectedSlot();
 
     /**
-     * @brief readTcpData
+     * @brief readTcpDataSlot
      * Read the data we receive
      */
-    void readTcpData();
+    void readTcpDataSlot();
 
 private :
     std::shared_ptr<QTcpSocket> socketCmd;

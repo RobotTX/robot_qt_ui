@@ -24,12 +24,6 @@
     <group>
         <name>Second group</name>
         <point>
-            <name>Fanny</name>
-            <x>20</x>
-            <y>81</y>
-            <displayed>1</displayed>
-        </point>
-        <point>
             <name>Michel</name>
             <x>150</x>
             <y>150</y>

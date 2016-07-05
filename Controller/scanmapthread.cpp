@@ -1,5 +1,5 @@
 #include "scanmapthread.h"
-ScanMapThread::ScanMapThread(const QString newipAddress, const int newPort){
+ScanMapThread::ScanMapThread(const QString newipAddress, const int newPort, QObject* parent) : QThread(parent){
     ipAddress = newipAddress;
     port = newPort;
     data = QByteArray();
@@ -12,7 +12,7 @@ void ScanMapThread::run(){
     socketMap = std::shared_ptr<QTcpSocket>(new QTcpSocket());
 
     /// Connect the signal readyRead which tell us when data arrived to the function that treat them
-    //connect(&(*socketMap), SIGNAL(readyRead()), SLOT(readTcpData()) );
+    //connect(&(*socketMap), SIGNAL(readyRead()), SLOT(readTcpDataSlot()) );
     /// Connect the signal hostFound which trigger when we find the host
     //connect( socketMap, SIGNAL(hostFound()), SLOT(hostFoundSlot()) );
     /// Connect the signal connected which trigger when we are connected to the host
@@ -72,7 +72,7 @@ void ScanMapThread::run(){
     }
 }
 
-void ScanMapThread::readTcpData(){
+void ScanMapThread::readTcpDataSlot(){
     data.append(socketMap->readAll());
 
     /// The TCP protocol sending blocks of data, a map is defined by a random number

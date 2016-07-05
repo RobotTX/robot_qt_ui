@@ -223,7 +223,12 @@ void PointsLeftWidget::keyPressEvent(QKeyEvent* event){
     }
 }
 
-void PointsLeftWidget::hideEvent(QHideEvent *event){
+void PointsLeftWidget::showEvent(QShowEvent *event){
     resetWidget();
-    QWidget::hideEvent(event);
+    QWidget::showEvent(event);
+}
+
+void PointsLeftWidget::resetWidget(void){
+    groupButtonGroup->uncheck();
+    disableButtons();
 }

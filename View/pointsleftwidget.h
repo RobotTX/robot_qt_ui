@@ -60,7 +60,7 @@ public:
 
 protected:
     void keyPressEvent(QKeyEvent* event);
-    void hideEvent(QHideEvent *event);
+    void showEvent(QShowEvent *event);
 
 public slots:
      int checkGroupName(QString name);
