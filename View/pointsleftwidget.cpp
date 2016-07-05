@@ -18,6 +18,7 @@
 #include <QKeyEvent>
 #include <QDebug>
 #include "View/customizedlineedit.h"
+#include "View/toplayout.h"
 
 PointsLeftWidget::PointsLeftWidget(QMainWindow* _parent, std::shared_ptr<Points> const& _points, bool _groupDisplayed)
     : QWidget(_parent), groupDisplayed(_groupDisplayed), points(_points), creatingGroup(true)
@@ -46,7 +47,7 @@ PointsLeftWidget::PointsLeftWidget(QMainWindow* _parent, std::shared_ptr<Points>
 
     groupNameLabel = new QLabel("New group's name : ", this);
     groupNameLabel->hide();
-    groupNameEdit = new QLineEdit(this);
+    groupNameEdit = new CustomizedLineEdit(this);
     groupNameEdit->hide();
 
     layout->addWidget(groupNameLabel);
@@ -91,8 +92,9 @@ PointsLeftWidget::PointsLeftWidget(QMainWindow* _parent, std::shared_ptr<Points>
 
     connect(saveButton, SIGNAL(clicked(bool)), this, SLOT(emitNewGroupSignal()));
 
-    /// to capture the moment a user stops editing
+    /// to capture the moment a user stops editing whether it is to modify or create a group
     connect(groupButtonGroup->getModifyEdit(), SIGNAL(clickSomewhere(QString)), this, SLOT(modifyGroupAfterClick(QString)));
+    connect(groupNameEdit, SIGNAL(clickSomewhere(QString)), this, SLOT(cancelCreationGroup()));
 
     connect(this, SIGNAL(enableReturn()), _parent, SLOT(enableReturnAndCloseButtons()));
 
@@ -179,30 +181,38 @@ void PointsLeftWidget::disableButtons(void){
 
 int PointsLeftWidget::checkGroupName(QString name){
 
-    if(!creatingGroup && !name.compare(points->getGroups().at(groupButtonGroup->getIndexModifyEdit())->getName(), Qt::CaseInsensitive)){
+    if(!creatingGroup && !name.simplified().compare(points->getGroups().at(groupButtonGroup->getIndexModifyEdit())->getName(), Qt::CaseInsensitive)){
         saveButton->setToolTip("");
         qDebug() << "same name";
+        connect(groupNameEdit, SIGNAL(clickSomewhere(QString)), this, SLOT(cancelCreationGroup()));
         return 0;
     }
-    if(!name.compare("")){
+    if(!name.simplified().compare("")){
         saveButton->setToolTip("The name of your group cannot be empty");
         saveButton->setEnabled(false);
+        connect(groupNameEdit, SIGNAL(clickSomewhere(QString)), this, SLOT(cancelCreationGroup()));
+        emit messageCreationGroup("The name of your group cannot be empty");
         return 1;
     }
     for(int i = 0; i < points->count(); i++){
-        if(!name.compare(points->getGroups().at(i)->getName(), Qt::CaseInsensitive)){
+        if(!name.simplified().compare(points->getGroups().at(i)->getName(), Qt::CaseInsensitive)){
             qDebug() << points->getGroups().at(i)->getName();
             saveButton->setToolTip("A group with the same name already exists, please choose another name for your group");
             saveButton->setEnabled(false);
+            connect(groupNameEdit, SIGNAL(clickSomewhere(QString)), this, SLOT(cancelCreationGroup()));
+            emit messageCreationGroup("A group with the same name already exists, please choose another name for your group");
             return 2;
         }
     }
     saveButton->setToolTip("");
     saveButton->setEnabled(true);
+    disconnect(groupNameEdit, SIGNAL(clickSomewhere(QString)), this, SLOT(cancelCreationGroup()));
+    emit messageCreationGroup("To save this group press Enter or click the \"Save button\"");
     return 0;
 }
 
 void PointsLeftWidget::cancelCreationGroup(){
+    qDebug() << "cancelcreationgroup called";
     /// hides everything that's related to the creation of a group
     groupNameEdit->hide();
     groupNameLabel->hide();
@@ -222,7 +232,6 @@ void PointsLeftWidget::emitNewGroupSignal(){
 }
 
 void PointsLeftWidget::keyPressEvent(QKeyEvent* event){
-    groupButtonGroup->getModifyEdit()->focusOutEvent(new QFocusEvent(QEvent::KeyPress, Qt::FocusReason::OtherFocusReason));
     qDebug() << "pressed enter key";
     /// this is the enter key
     if(!event->text().compare("\r")){

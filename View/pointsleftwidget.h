@@ -79,6 +79,7 @@ signals:
     void modifiedGroup(QString name);
     void modifiedGroupAfterClick(QString name);
     void enableReturn();
+    void messageCreationGroup(QString);
 
 private:
     /// if the enter key has just been pressed we don't propagate the editingFinished signal so that the modifyGroup slot is not called twice

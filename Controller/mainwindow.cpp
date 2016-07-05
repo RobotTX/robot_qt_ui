@@ -39,6 +39,7 @@
 #include <QString>
 #include <QStringList>
 #include "View/customizedlineedit.h"
+#include <QRegularExpression>
 
 /**
  * @brief MainWindow::MainWindow
@@ -149,6 +150,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
     /// same but this happens when the user clicks on a random point of the window
     connect(pointsLeftWidget, SIGNAL(modifiedGroupAfterClick(QString)), this, SLOT(modifyGroupAfterClick(QString)));
+
+    /// to know what message to display when a user is creating a group
+    connect(pointsLeftWidget, SIGNAL(messageCreationGroup(QString)), this, SLOT(setMessageCreationGroup(QString)));
 
     mainLayout->addLayout(bottom);
 
@@ -1404,7 +1408,11 @@ void MainWindow::pointBtnEvent(void){
 }
 
 void MainWindow::plusGroupBtnEvent(){
+    setMessageTop(TEXT_COLOR_INFO, "The name of your group cannot be empty");
     qDebug() << "plusGroupBtnEvent called";
+    topLayout->setEnabled(false);
+
+    pointsLeftWidget->getGroupNameEdit()->setFocus();
     pointsLeftWidget->setCreatingGroup(true);
     pointsLeftWidget->getGroupButtonGroup()->uncheck();
     /// resets the name edit field
@@ -1531,6 +1539,8 @@ void MainWindow::editGroupBtnEvent(){
     qDebug() << "editPointBtnEvent called";
     pointsLeftWidget->setCreatingGroup(false);
 
+    topLayout->setEnabled(false);
+
     /// uncheck the other buttons
     pointsLeftWidget->getActionButtons()->getPlusButton()->setChecked(false);
     pointsLeftWidget->getActionButtons()->getMinusButton()->setChecked(false);
@@ -1577,7 +1587,6 @@ void MainWindow::editGroupBtnEvent(){
         /// disables the other buttons
         pointsLeftWidget->disableButtons();
         pointsLeftWidget->getGroupButtonGroup()->getModifyEdit()->setText(pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(checkedId)->text());
-        pointsLeftWidget->getGroupButtonGroup()->getModifyEdit()->selectAll();
 
         pointsLeftWidget->getGroupButtonGroup()->uncheck();
         pointsLeftWidget->getGroupButtonGroup()->setEnabled(false);
@@ -2725,32 +2734,47 @@ int MainWindow::openEmptyGroupMessage(const QString groupName){
 
 void MainWindow::createGroup(QString name){
     qDebug() << "createGroup called" << name;
-    /// updates the model
-    points->addGroupFront(name);
-    mapPixmapItem->getPermanentPoints()->addGroupViewFront();
-    /// updates the file
-    XMLParser parser(XML_PATH, mapPixmapItem);
-    parser.save(*points);
-    /// updates list of groups in menu
-    pointsLeftWidget->updateGroupButtonGroup(*points);
-    /// updates the comboBox to make this new group available when a user creates a point
-    editSelectedPointWidget->updateGroupBox(*points);
-    /// enables the return button again
-    leftMenu->getReturnButton()->setEnabled(true);
-    /// hides everything that's related to the creation of a group
-    pointsLeftWidget->getCancelButton()->hide();
-    pointsLeftWidget->getSaveButton()->hide();
-    pointsLeftWidget->getGroupNameEdit()->hide();
-    pointsLeftWidget->getGroupNameLabel()->hide();
-    /// enables the plus button again
-    pointsLeftWidget->disableButtons();
-    pointsLeftWidget->getActionButtons()->getPlusButton()->setEnabled(true);
-    pointsLeftWidget->getActionButtons()->getPlusButton()->setToolTip("Click here to add a new group");
+    if(pointsLeftWidget->checkGroupName(name.simplified()) == 0){
+        /// updates the model
+        points->addGroupFront(name);
+        mapPixmapItem->getPermanentPoints()->addGroupViewFront();
+        /// updates the file
+        XMLParser parser(XML_PATH, mapPixmapItem);
+        parser.save(*points);
+        /// updates list of groups in menu
+        pointsLeftWidget->updateGroupButtonGroup(*points);
+        /// updates the comboBox to make this new group available when a user creates a point
+        editSelectedPointWidget->updateGroupBox(*points);
+        /// enables the return button again
+        leftMenu->getReturnButton()->setEnabled(true);
+        /// hides everything that's related to the creation of a group
+        pointsLeftWidget->getCancelButton()->hide();
+        pointsLeftWidget->getSaveButton()->hide();
+        pointsLeftWidget->getGroupNameEdit()->hide();
+        pointsLeftWidget->getGroupNameLabel()->hide();
+        /// enables the plus button again
+        pointsLeftWidget->disableButtons();
+        pointsLeftWidget->getActionButtons()->getPlusButton()->setEnabled(true);
+        pointsLeftWidget->getActionButtons()->getPlusButton()->setToolTip("Click here to add a new group");
+        topLayout->setEnabled(true);
+        setMessageTop(TEXT_COLOR_SUCCESS, "You have created a new group");
+        delay(2500);
+        setMessageTop(TEXT_COLOR_NORMAL, "");
+    } else if(pointsLeftWidget->checkGroupName(name.simplified()) == 1){
+        setMessageTop(TEXT_COLOR_DANGER, "The name of your group cannot be empty");
+        delay(2500);
+        setMessageTop(TEXT_COLOR_NORMAL, "");
+    } else {
+        setMessageTop(TEXT_COLOR_DANGER, "You cannot choose : " + name.simplified() + " as a new name for your group because another group already has this name");
+        delay(2500);
+        setMessageTop(TEXT_COLOR_NORMAL, "");
+    }
 }
+
 void MainWindow::modifyGroupWithEnter(QString name){
     qDebug() << "modifying group after enter key pressed";
-
-    if(pointsLeftWidget->checkGroupName(name) == 0){
+    topLayout->setEnabled(true);
+    if(pointsLeftWidget->checkGroupName(name.simplified()) == 0){
         leftMenu->getCloseButton()->setEnabled(true);
         /// enables the plus button
         pointsLeftWidget->getActionButtons()->getPlusButton()->setEnabled(true);
@@ -2779,13 +2803,14 @@ void MainWindow::modifyGroupWithEnter(QString name){
         delay(2500);
         setMessageTop(TEXT_COLOR_NORMAL, "");
     } else {
-        setMessageTop(TEXT_COLOR_DANGER, "You cannot choose : " + name + " as a new name for your group because another group already has this name");
+        setMessageTop(TEXT_COLOR_DANGER, "You cannot choose : " + name.simplified() + " as a new name for your group because another group already has this name");
         delay(2500);
         setMessageTop(TEXT_COLOR_NORMAL, "");
     }
 }
 
 void MainWindow::modifyGroupAfterClick(QString name){
+    topLayout->setEnabled(true);
     qDebug() << "modifying group after random click";
     /// resets the menu
     leftMenu->getCloseButton()->setEnabled(true);
@@ -2794,7 +2819,7 @@ void MainWindow::modifyGroupAfterClick(QString name){
     pointsLeftWidget->disableButtons();
     pointsLeftWidget->getGroupButtonGroup()->getModifyEdit()->hide();
     leftMenu->getReturnButton()->setEnabled(true);
-    if(pointsLeftWidget->checkGroupName(name) == 0){
+    if(pointsLeftWidget->checkGroupName(name.simplified()) == 0){
         /// updates the model
         qDebug() << name;
         points->getGroups().at(pointsLeftWidget->getGroupButtonGroup()->getIndexModifyEdit())->setName(name);
@@ -2814,7 +2839,7 @@ void MainWindow::modifyGroupAfterClick(QString name){
         setMessageTop(TEXT_COLOR_NORMAL, "");
     } else {
         pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(pointsLeftWidget->getGroupButtonGroup()->getIndexModifyEdit())->show();
-        setMessageTop(TEXT_COLOR_DANGER, "You cannot choose : " + name + " as a new name for your group because another group already has this name");
+        setMessageTop(TEXT_COLOR_DANGER, "You cannot choose : " + name.simplified() + " as a new name for your group because another group already has this name");
         delay(2500);
         setMessageTop(TEXT_COLOR_NORMAL, "");
     }
@@ -2824,6 +2849,11 @@ void MainWindow::modifyGroupAfterClick(QString name){
 void MainWindow::enableReturnAndCloseButtons(){
     leftMenu->getReturnButton()->setEnabled(true);
     leftMenu->getCloseButton()->setEnabled(true);
+    topLayout->setEnabled(true);
+}
+
+void MainWindow::setMessageCreationGroup(QString message){
+    setMessageTop(TEXT_COLOR_INFO, message);
 }
 
 /**********************************************************************************************************************************/

@@ -160,12 +160,14 @@ private slots:
     void enableReturnAndCloseButtons(void);
     void doubleClickOnRobot(int checkedId);
 
+
     /**
      * @brief cancelEvent
      * Called when a user doesn't want to keep the modifications he's made on a point
      */
     void cancelEvent(void);
     void setMessageTop(const QString msgType, const QString msg);
+    void setMessageCreationGroup(QString message);
     void homeSelected(PointView* pointView, bool temporary);
     void homeEdited(PointView* pointView, bool temporary);
     void goHomeBtnEvent();
