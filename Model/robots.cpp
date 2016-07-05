@@ -71,6 +71,7 @@ RobotView* Robots::getRobotViewByIp(const QString ip){
 }
 
 void Robots::setSelected(RobotView * const robotView){
+
     qDebug() << "Selected robot : " << robotView->getRobot()->getName();
     for(int i = 0; i < robotsVector.length(); i++){
         if(robotsVector[i]->getRobot()->getName() == robotView->getRobot()->getName() &&

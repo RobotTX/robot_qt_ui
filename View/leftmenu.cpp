@@ -73,6 +73,7 @@ LeftMenu::LeftMenu(MainWindow* _parent, std::shared_ptr<Points> const& _points, 
 
     /// Menu which display the selected robot infos
     selectedRobotWidget = new SelectedRobotWidget(_parent);
+
     connect(selectedRobotWidget, SIGNAL(selectHome(RobotView*)), _parent, SLOT(selectHomeEvent()));
     connect(selectedRobotWidget, SIGNAL(showSelectedRobotWidget()), _parent, SLOT(showHome()));
     connect(selectedRobotWidget, SIGNAL(hideSelectedRobotWidget()), _parent, SLOT(hideHome()));

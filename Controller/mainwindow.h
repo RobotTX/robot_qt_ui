@@ -109,11 +109,13 @@ private slots:
     void addPathSelecRobotBtnEvent();
     void backRobotBtnEvent();
     void editRobotBtnEvent();
-    void checkRobotBtnEvent();
+    void checkRobotBtnEventMenu();
+    void checkRobotBtnEventSelect();
+    void checkRobotBtnEvent(QString name);
     void saveMapBtnEvent();
     void loadMapBtnEvent();
     void backMapBtnEvent();
-    void setCheckedRobot(QAbstractButton* button, bool checked);
+    //void setCheckedRobot(QString name);
     void cancelEditSelecRobotBtnEvent();
     void robotSavedEvent();
     void backSelecPointBtnEvent();
@@ -171,6 +173,7 @@ private slots:
     void hideHome(void);
     void backEvent();
     void updateView();
+    void selectViewRobot();
 
 private:
     Ui::MainWindow* ui;

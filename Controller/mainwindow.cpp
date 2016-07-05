@@ -107,6 +107,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     graphicsView->setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding));
 
     leftMenu = new LeftMenu(this, points, robots, pointViews);
+
     resetFocus();
     initializeLeftMenu();
     bottom->addWidget(leftMenu);
@@ -148,6 +149,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     connect(pointsLeftWidget, SIGNAL(newGroup(QString)), this, SLOT(createGroup(QString)));
 
     mainLayout->addLayout(bottom);
+
     setCentralWidget(mainWidget);
 }
 
@@ -373,6 +375,30 @@ void MainWindow::initializeRobots(){
     robotView3->setPosition(200, 300);
     robotView3->setParentItem(mapPixmapItem);
     robots->add(robotView3);
+/*
+    std::shared_ptr<Robot> robot4(new Robot("Robotu", "192.168.4.236", PORT_CMD, this));
+    robot4->setWifi("Swaghetti Yolognaise");
+    RobotView* robotView4 = new RobotView(robot4, mapPixmapItem);
+    connect(robotView4, SIGNAL(setSelectedSignal(RobotView*)), this, SLOT(setSelectedRobot(RobotView*)));
+    robotView4->setPosition(200, 300);
+    robotView4->setParentItem(mapPixmapItem);
+    robots->add(robotView4);
+
+    std::shared_ptr<Robot> robot5(new Robot("Robote", "192.168.4.236", PORT_CMD, this));
+    robot5->setWifi("Swaghetti Yolognaise");
+    RobotView* robotView5 = new RobotView(robot3, mapPixmapItem);
+    connect(robotView3, SIGNAL(setSelectedSignal(RobotView*)), this, SLOT(setSelectedRobot(RobotView*)));
+    robotView5->setPosition(200, 300);
+    robotView5->setParentItem(mapPixmapItem);
+    robots->add(robotView5);
+
+    std::shared_ptr<Robot> robot6(new Robot("Robotr", "192.168.4.236", PORT_CMD, this));
+    robot6->setWifi("Swaghetti Yolognaise");
+    RobotView* robotView6 = new RobotView(robot3, mapPixmapItem);
+    connect(robotView6, SIGNAL(setSelectedSignal(RobotView*)), this, SLOT(setSelectedRobot(RobotView*)));
+    robotView6->setPosition(200, 300);
+    robotView6->setParentItem(mapPixmapItem);
+    robots->add(robotView6);*/
 }
 
 void MainWindow::stopSelectedRobot(int robotNb){
@@ -506,8 +532,9 @@ void MainWindow::editSelectedRobot(RobotView* robotView){
     qDebug() << "editSelectedRobot robotview ";
     selectedRobot = robotView;
     robots->setSelected(robotView);
-    robotsLeftWidget->setEditBtnStatus(false);
-    robotsLeftWidget->setCheckBtnStatus(false);
+
+  //  robotsLeftWidget->getActionButtons()->getEditButton()->setChecked(false);
+  //  robotsLeftWidget->setCheckBtnStatus(false);
     hideAllWidgets();
     setGraphicItemsState(GraphicItemState::NO_EVENT);
 
@@ -526,9 +553,9 @@ void MainWindow::setSelectedRobot(RobotView* robotView){
    // updateView();
     leftMenu->show();
 
-    if(leftMenu->getRobotsLeftWidget()->getEditBtnStatus()){
-        editSelectedRobot(robotView);
-    } else {
+    //if(leftMenu->getRobotsLeftWidget()->getEditBtnStatus()){
+    //    editSelectedRobot(robotView);
+   // } else {
         hideAllWidgets();
         selectedRobot = robotView;
         robots->setSelected(robotView);
@@ -536,7 +563,7 @@ void MainWindow::setSelectedRobot(RobotView* robotView){
         selectedRobotWidget->show();
         switchFocus(robotView->getRobot()->getName(),selectedRobotWidget);
 
-    }
+  //  }
 }
 
 void MainWindow::robotBtnEvent(void){
@@ -583,17 +610,34 @@ void MainWindow::setSelectedRobotNoParent(QAbstractButton *button){
 
    // switchFocus("Robot", selectedRobotWidget);
     resetFocus();
-    setSelectedRobot(button);
+   setSelectedRobot(robots->getRobotViewByName(button->text()));
 }
 
 void MainWindow::setSelectedRobot(QAbstractButton *button){
+
+    qDebug() << "select a robot in robot group ";
+
+    robotsLeftWidget->getActionButtons()->getEditButton()->setEnabled(true);
+    robotsLeftWidget->getActionButtons()->getEyeButton()->setEnabled(true);
+    robotsLeftWidget->getActionButtons()->getMapButton()->setEnabled(true);
+    RobotView* mySelectedRobot =  robots->getRobotViewByName(robotsLeftWidget->getBtnGroup()
+                                                  ->getBtnGroup()->checkedButton()->text());
+    robotsLeftWidget->getActionButtons()->getMapButton()->setChecked(mySelectedRobot->isVisible());
+}
+
+void MainWindow::selectViewRobot(){
+        qDebug() << "select view robot  " <<robotsLeftWidget->getSelectedRobotName();
+    /*
     qDebug() << "Edit : " << robotsLeftWidget->getEditBtnStatus() << "\nsetSelectedRobot with QAbstractButton called : " << button->text();
     if(robotsLeftWidget->getEditBtnStatus())
         (robots->getRobotViewByName(button->text()));
     else
         setSelectedRobot(robots->getRobotViewByName(button->text()));
+        */
 
+    setSelectedRobot(robots->getRobotViewByName(robotsLeftWidget->getSelectedRobotName()));
 }
+
 
 void MainWindow::setSelectedRobotFromPoint(){
     qDebug() << "setSelectedRobotFromPoint called : " << leftMenu->getDisplaySelectedPoint()->getRobotButton()->text();
@@ -602,40 +646,46 @@ void MainWindow::setSelectedRobotFromPoint(){
 
 void MainWindow::backRobotBtnEvent(){
     qDebug() << "backRobotBtnEvent called";
-    robotsLeftWidget->setEditBtnStatus(false);
-    robotsLeftWidget->setCheckBtnStatus(false);
+    //robotsLeftWidget->setEditBtnStatus(false);
+    //robotsLeftWidget->setCheckBtnStatus(false);
     robotsLeftWidget->hide();
     leftMenuWidget->show();
 }
 
 void MainWindow::editRobotBtnEvent(){
     qDebug() << "editRobotBtnEvent called";
-    if(robotsLeftWidget->getCheckBtnStatus()){
-        robotsLeftWidget->setCheckBtnStatus(false);
-        robotsLeftWidget->getBtnCheckGroup()->hide();
-        robotsLeftWidget->getBtnGroup()->show();
-    }
+
+   editSelectedRobot(robots->getRobotViewByName(robotsLeftWidget->getBtnGroup()->getBtnGroup()->checkedButton()->text()));
 }
 
-void MainWindow::checkRobotBtnEvent(){
-    qDebug() << "checkRobotBtnEvent called";
-    if(robotsLeftWidget->getEditBtnStatus())
-        robotsLeftWidget->setEditBtnStatus(false);
+void MainWindow::checkRobotBtnEventMenu(){
+    qDebug() << "checkRobotBtnEventMenu called";
+    QString name = robotsLeftWidget->getBtnGroup()->getBtnGroup()->checkedButton()->text();
 
-    if(robotsLeftWidget->getCheckBtnStatus()){
-        robotsLeftWidget->getBtnGroup()->hide();
-        robotsLeftWidget->getBtnCheckGroup()->show();
-    } else {
-        robotsLeftWidget->getBtnCheckGroup()->hide();
-        robotsLeftWidget->getBtnGroup()->show();
-    }
+    checkRobotBtnEvent(name);
+}
+
+void MainWindow::checkRobotBtnEventSelect(){
+    qDebug() << "checkRobotBtnEventMenu called";
+    QString name = selectedRobotWidget->getName();
+
+    checkRobotBtnEvent(name);
+}
+
+
+void MainWindow::checkRobotBtnEvent(QString name){
+    qDebug() << "checkRobotBtnEvent called" << name;
+
+
+   RobotView* robotView =  robots->getRobotViewByName(name);
+     robotView->display(!robotView->isVisible());
 }
 
 void MainWindow::cancelEditSelecRobotBtnEvent(){
     qDebug() << "cancelEditSelecRobotBtnEvent called";
 
-    robotsLeftWidget->setEditBtnStatus(false);
-    robotsLeftWidget->setCheckBtnStatus(false);
+    //robotsLeftWidget->setEditBtnStatus(false);
+   // robotsLeftWidget->setCheckBtnStatus(false);
     hideAllWidgets();
 
     setGraphicItemsState(GraphicItemState::NO_STATE);
@@ -701,6 +751,7 @@ void MainWindow::robotSavedEvent(){
     }
 
     if (isOK){
+        backEvent();
         leftMenu->getReturnButton()->setEnabled(true);
         leftMenu->getReturnButton()->setToolTip("");
 
@@ -760,9 +811,9 @@ void MainWindow::robotSavedEvent(){
                 break;
             }
         }
-        robotsLeftWidget->setEditBtnStatus(false);
-        robotsLeftWidget->setCheckBtnStatus(false);
-        editSelectedRobotWidget->hide();
+        //robotsLeftWidget->setEditBtnStatus(false);
+        //robotsLeftWidget->setCheckBtnStatus(false);
+      //  editSelectedRobotWidget->hide();
 
         setGraphicItemsState(GraphicItemState::NO_STATE);
 
@@ -770,27 +821,18 @@ void MainWindow::robotSavedEvent(){
         bottomLayout->updateRobot(robots->getRobotId(selectedRobot->getRobot()->getName()), selectedRobot);
 
         selectedRobotWidget->setSelectedRobot(selectedRobot );
-        selectedRobotWidget->show();
-    }
-}
-
-void MainWindow::setCheckedRobot(QAbstractButton* button, bool checked){
-    qDebug() << "setCheckedRobot called" << button->text();
-    if(checked){
-        qDebug() << "has been checked";
-        robots->getRobotViewByName(button->text())->display(true);
-    } else {
-        qDebug() << "has been unchecked";
-        robots->getRobotViewByName(button->text())->display(false);
+      //  selectedRobotWidget->show();
     }
 }
 /*
-void MainWindow::backPathCreation(void){
-    qDebug() << "backPathCreation called";
-    hideAllWidgets();
-    selectedRobotWidget->show();
-}
-*/
+void MainWindow::setCheckedRobot(QString name){
+    qDebug() << "setCheckedRobot called" << name;
+   RobotView* robotView =  robots->getRobotViewByName(name);
+     robotView->display(!robotView->isVisible());
+
+
+}*/
+
 
 void MainWindow::editTmpPathPointSlot(int id, Point* point, int nbWidget){
     qDebug() << "editTmpPathPointSlot called : " << id << point->getName() << nbWidget;
@@ -1625,8 +1667,8 @@ void MainWindow::openLeftMenu(){
         leftMenu->getDisplaySelectedPoint()->setOrigin(DisplaySelectedPoint::POINTS_MENU);
         leftMenu->getDisplaySelectedPoint()->hide();
         if(leftMenuWidget->isHidden()){
-            robotsLeftWidget->setEditBtnStatus(false);
-            robotsLeftWidget->setCheckBtnStatus(false);
+            //robotsLeftWidget->setEditBtnStatus(false);
+            //robotsLeftWidget->setCheckBtnStatus(false);
 
             hideAllWidgets();
             leftMenuWidget->show();
