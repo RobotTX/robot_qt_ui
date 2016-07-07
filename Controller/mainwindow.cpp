@@ -157,6 +157,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     mainLayout->addLayout(bottom);
 
     setCentralWidget(mainWidget);
+
+    setTabOrder(leftMenu->getReturnButton(), pointsLeftWidget->getActionButtons()->getPlusButton());
 }
 
 MainWindow::~MainWindow(){

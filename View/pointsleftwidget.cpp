@@ -21,7 +21,7 @@
 #include "View/toplayout.h"
 
 PointsLeftWidget::PointsLeftWidget(QMainWindow* _parent, std::shared_ptr<Points> const& _points, bool _groupDisplayed)
-    : QWidget(_parent), groupDisplayed(_groupDisplayed), points(_points), creatingGroup(true)
+    : QWidget(_parent), groupDisplayed(_groupDisplayed), points(_points), creatingGroup(true), lastCheckedId(-1)
 {
     scrollArea = new VerticalScrollArea(this);
 
@@ -60,9 +60,11 @@ PointsLeftWidget::PointsLeftWidget(QMainWindow* _parent, std::shared_ptr<Points>
 
     creationLayout = new QHBoxLayout();
     saveButton = new QPushButton("Save", this);
+    saveButton->setAutoDefault(true);
     saveButton->hide();
     saveButton->setEnabled(false);
     cancelButton = new QPushButton("Cancel", this);
+    cancelButton->setAutoDefault(true);
     cancelButton->hide();
     creationLayout->addWidget(cancelButton);
     creationLayout->addWidget(saveButton);
@@ -105,7 +107,7 @@ PointsLeftWidget::PointsLeftWidget(QMainWindow* _parent, std::shared_ptr<Points>
     setMinimumWidth(_parent->width()*4/10);
     layout->setAlignment(Qt::AlignBottom);
 
-    justPressedEnterKey = false;
+    //setTabOrder(cancelButton, saveButton);
 }
 
 void PointsLeftWidget::updateGroupButtonGroup(Points const& points){
@@ -113,49 +115,55 @@ void PointsLeftWidget::updateGroupButtonGroup(Points const& points){
 }
 
 void PointsLeftWidget::enableButtons(int index){
-    groupButtonGroup->setIndexModifyEdit(index);
-    groupButtonGroup->getLayout()->removeWidget(groupButtonGroup->getModifyEdit());
-    groupButtonGroup->getLayout()->insertWidget(index, groupButtonGroup->getModifyEdit());
-    disableButtons();
-    /// enables the minus button
-    actionButtons->getMinusButton()->setEnabled(true);
-    if(index < points->count()-1)
-        actionButtons->getMinusButton()->setToolTip("Click to remove the selected group");
-    else
-        actionButtons->getMinusButton()->setToolTip("Click to remove the selected point");
-    /// enables the eye button
-    actionButtons->getEyeButton()->setEnabled(true);
-    if(index < points->count()-1)
-        actionButtons->getEyeButton()->setToolTip("Click to display the information of the selected group");
-    else
-        actionButtons->getEyeButton()->setToolTip("Click to display the information of the selected point");
-    /// enables the map button
-    actionButtons->getMapButton()->setCheckable(true);
-    actionButtons->getMapButton()->setEnabled(true);
-    if(index < points->count()-1){
-        if(points->getGroups().at(index)->isDisplayed()){
-            actionButtons->getMapButton()->setChecked(true);
-            actionButtons->getMapButton()->setToolTip("Click to hide the selected group on the map");
-        } else {
-            actionButtons->getMapButton()->setChecked(false);
-            actionButtons->getMapButton()->setToolTip("Click to display the selected group on the map");
-        }
+    if(index == lastCheckedId){
+        groupButtonGroup->uncheck();
+        lastCheckedId = -1;
+        disableButtons();
     } else {
-        if(points->getDefaultGroup()->getPoints().at(index-points->count()+1)->isDisplayed()){
-            actionButtons->getMapButton()->setChecked(true);
-            actionButtons->getMapButton()->setToolTip("Click to hide the selected point on the map");
+        lastCheckedId = index;
+        groupButtonGroup->setIndexModifyEdit(index);
+        groupButtonGroup->getLayout()->removeWidget(groupButtonGroup->getModifyEdit());
+        groupButtonGroup->getLayout()->insertWidget(index, groupButtonGroup->getModifyEdit());
+        disableButtons();
+        /// enables the minus button
+        actionButtons->getMinusButton()->setEnabled(true);
+        if(index < points->count()-1)
+            actionButtons->getMinusButton()->setToolTip("Click to remove the selected group");
+        else
+            actionButtons->getMinusButton()->setToolTip("Click to remove the selected point");
+        /// enables the eye button
+        actionButtons->getEyeButton()->setEnabled(true);
+        if(index < points->count()-1)
+            actionButtons->getEyeButton()->setToolTip("Click to display the information of the selected group");
+        else
+            actionButtons->getEyeButton()->setToolTip("Click to display the information of the selected point");
+        /// enables the map button
+        actionButtons->getMapButton()->setCheckable(true);
+        actionButtons->getMapButton()->setEnabled(true);
+        if(index < points->count()-1){
+            if(points->getGroups().at(index)->isDisplayed()){
+                actionButtons->getMapButton()->setChecked(true);
+                actionButtons->getMapButton()->setToolTip("Click to hide the selected group on the map");
+            } else {
+                actionButtons->getMapButton()->setChecked(false);
+                actionButtons->getMapButton()->setToolTip("Click to display the selected group on the map");
+            }
         } else {
-            actionButtons->getMapButton()->setChecked(false);
-            actionButtons->getMapButton()->setToolTip("Click to display the selected point on the map");
+            if(points->getDefaultGroup()->getPoints().at(index-points->count()+1)->isDisplayed()){
+                actionButtons->getMapButton()->setChecked(true);
+                actionButtons->getMapButton()->setToolTip("Click to hide the selected point on the map");
+            } else {
+                actionButtons->getMapButton()->setChecked(false);
+                actionButtons->getMapButton()->setToolTip("Click to display the selected point on the map");
+            }
         }
+        /// enables the edit button
+        actionButtons->getEditButton()->setEnabled(true);
+        if(index < points->count()-1)
+            actionButtons->getEditButton()->setToolTip("Click to modify the selected group");
+        else
+            actionButtons->getEditButton()->setToolTip("click to modify the selected point");
     }
-    /// enables the edit button
-    actionButtons->getEditButton()->setEnabled(true);
-    if(index < points->count()-1)
-        actionButtons->getEditButton()->setToolTip("Click to modify the selected group");
-    else
-        actionButtons->getEditButton()->setToolTip("click to modify the selected point");
-
 }
 
 void PointsLeftWidget::disableButtons(void){
@@ -223,7 +231,7 @@ void PointsLeftWidget::cancelCreationGroup(){
 
     /// emits un signal to the left menu to enable the return button
     emit enableReturn();
-
+    emit messageCreationGroup("");
     /// resets the buttons so we can click them
     groupButtonGroup->setEnabled(true);
 }

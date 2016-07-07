@@ -13,7 +13,7 @@ GroupButtonGroup::GroupButtonGroup(const Points &_points, QWidget* _parent):QWid
 {
     parent = _parent;
     buttonGroup = new QButtonGroup(this);
-    buttonGroup->setExclusive(true);
+    //buttonGroup->setExclusive(true);
 
     /// to modify the name of a group
     modifyEdit = new CustomizedLineEdit(this);
@@ -31,9 +31,11 @@ GroupButtonGroup::GroupButtonGroup(const Points &_points, QWidget* _parent):QWid
         std::shared_ptr<Group> currentGroup = _points.getGroups().at(i);
         DoubleClickableButton* groupButton = new DoubleClickableButton(i, currentGroup->getName(), this);
         groupButton->setFlat(true);
+        groupButton->setAutoDefault(true);
         groupButton->setStyleSheet("text-align:left");
         groupButton->setCheckable(true);
         buttonGroup->addButton(groupButton, i);
+        groupButton->setAutoExclusive(true);
         layout->addWidget(groupButton);
         groupButton->setIconSize(BUTTON_SIZE);
         if(currentGroup->isDisplayed())
@@ -48,6 +50,7 @@ GroupButtonGroup::GroupButtonGroup(const Points &_points, QWidget* _parent):QWid
         DoubleClickableButton* pointButton = new DoubleClickableButton(i+_points.getGroups().size()-1, currentPoint->getName()
                                                    + " (" + QString::number(currentPoint->getPosition().getX())
                                                    + ", " + QString::number(currentPoint->getPosition().getY()) + ")", this);
+        pointButton->setAutoDefault(true);
         pointButton->setFlat(true);
         pointButton->setStyleSheet("text-align:left");
         pointButton->setCheckable(true);
@@ -56,6 +59,8 @@ GroupButtonGroup::GroupButtonGroup(const Points &_points, QWidget* _parent):QWid
         if(currentPoint->isDisplayed())
             pointButton->setIcon(QIcon(":/icons/tick.png"));
     }
+    for(int i = 0; i < buttonGroup->buttons().count()-1; i++)
+        setTabOrder(buttonGroup->button(i), buttonGroup->button(i+1));
 }
 
 void GroupButtonGroup::deleteButtons(void){
@@ -86,6 +91,7 @@ void GroupButtonGroup::update(const Points& _points){
         std::shared_ptr<Group> currentGroup = _points.getGroups().at(i);
         DoubleClickableButton* groupButton = new DoubleClickableButton(i, currentGroup->getName(), this);
         groupButton->setFlat(true);
+        groupButton->setAutoDefault(true);
         groupButton->setStyleSheet("text-align:left");
         groupButton->setCheckable(true);
         groupButton->setIconSize(BUTTON_SIZE);
@@ -106,6 +112,7 @@ void GroupButtonGroup::update(const Points& _points){
                                                        + " (" + QString::number(currentPoint->getPosition().getX())
                                                        + ", " + QString::number(currentPoint->getPosition().getY()) + ")", this);
             pointButton->setFlat(true);
+            pointButton->setAutoDefault(true);
             pointButton->setStyleSheet("text-align:left");
             pointButton->setCheckable(true);
             buttonGroup->addButton(pointButton, i+_points.getGroups().size()-1);

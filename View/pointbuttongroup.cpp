@@ -22,6 +22,7 @@ PointButtonGroup::PointButtonGroup(std::shared_ptr<Points> const&_points, const 
         DoubleClickableButton* pointButton = new DoubleClickableButton(j, currentPoint->getName()
                                                    + " (" + QString::number(currentPoint->getPosition().getX())
                                                    + ", " + QString::number(currentPoint->getPosition().getY()) + ")", this);
+        pointButton->setAutoDefault(true);
         pointButton->setFlat(true);
         pointButton->setStyleSheet("text-align:left");
         buttonGroup->addButton(pointButton, j);
@@ -40,6 +41,7 @@ void PointButtonGroup::setGroup(std::shared_ptr<Points> const&_points, const int
         DoubleClickableButton* pointButton = new DoubleClickableButton(j, currentPoint->getName()
                                                    + " (" + QString::number(currentPoint->getPosition().getX())
                                                    + ", " + QString::number(currentPoint->getPosition().getY()) + ")", this);
+        pointButton->setAutoDefault(true);
         pointButton->setFlat(true);
         pointButton->setStyleSheet("text-align:left");
         buttonGroup->addButton(pointButton, j);

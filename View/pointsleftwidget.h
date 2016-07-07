@@ -53,8 +53,6 @@ public:
 
     void setCreatingGroup(const bool create) { creatingGroup = create; }
 
-    void setJustPressedEnterKey(const bool pressed) { justPressedEnterKey = pressed; }
-
 public:
     void disableButtons(void);
     void updateGroupButtonGroup(Points const& points);
@@ -82,8 +80,6 @@ signals:
     void messageCreationGroup(QString);
 
 private:
-    /// if the enter key has just been pressed we don't propagate the editingFinished signal so that the modifyGroup slot is not called twice
-    bool justPressedEnterKey;
 
     QVBoxLayout* layout;
     QHBoxLayout* eyeMapLayout;
@@ -116,6 +112,7 @@ private:
     std::shared_ptr<Points> points;
     /// to differenciate the behavior of the enter key
     bool creatingGroup;
+    int lastCheckedId;
 };
 
 #endif // POINTSLEFTWIDGET_H

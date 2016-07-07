@@ -80,6 +80,8 @@ private:
     MainWindow* parent;
     std::shared_ptr<Points> points;
 
+    int lastCheckedId;
+
 };
 
 #endif // LEFTMENU_H

@@ -11,6 +11,7 @@ TopLayout::TopLayout(QMainWindow* parent):QWidget(parent){
     layout = new QHBoxLayout(this);
 
     menuBtn = new QPushButton(QIcon(":/icons/list.png"), "", this);
+    menuBtn->setAutoDefault(true);
     menuBtn->setIconSize(parent->size()/8);
     menuBtn->setMaximumWidth(40);
     menuBtn->setFlat(true);

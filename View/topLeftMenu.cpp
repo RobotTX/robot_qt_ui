@@ -15,18 +15,18 @@ TopLeftMenu::TopLeftMenu(QWidget * parent): QWidget(parent){
 
     layout = new QVBoxLayout(this);
 
-    // GRID = + , -  , edit  buttons
+    /// GRID = + , -  , edit  buttons
     plusButton = new QPushButton(QIcon(":/icons/plus.png"),"", this);
+    plusButton->setAutoDefault(true);
     plusButton->setIconSize(parent->size());
 
     minusButton = new QPushButton(QIcon(":/icons/minus.png"),"", this);
+    minusButton->setAutoDefault(true);
     minusButton->setIconSize(parent->size());
-    /// to force the user to choose a group or point first
 
     editButton = new QPushButton(QIcon(":/icons/edit.png"),"", this);
+    editButton->setAutoDefault(true);
     editButton->setIconSize(parent->size());
-
-    /// to force the user to choose a group or point first
 
     grid = new QHBoxLayout();
     grid->addWidget(plusButton);
@@ -34,16 +34,15 @@ TopLeftMenu::TopLeftMenu(QWidget * parent): QWidget(parent){
     grid->addWidget(editButton);
 
     mapButton = new QPushButton(QIcon(":/icons/map.png"),"", this);
+    mapButton->setAutoDefault(true);
     mapButton->setIconSize(parent->size());
-    /// to force the user to choose first
-
 
     layout->addLayout(grid);
 
-    // eyeMapLayout = eye , map buttons
+    /// eyeMapLayout = eye , map buttons
     eyeButton = new QPushButton(QIcon(":/icons/eye.png"), "", this);
+    eyeButton->setAutoDefault(true);
     eyeButton->setIconSize(parent->size());
-    /// to force the user to choose first
 
     eyeMapLayout = new QHBoxLayout();
     eyeMapLayout->addWidget(eyeButton);
@@ -52,7 +51,7 @@ TopLeftMenu::TopLeftMenu(QWidget * parent): QWidget(parent){
 
     layout->addLayout(eyeMapLayout);
 
-    // bar to separate with rest of class
+    /// bar to separate with the rest of class
 
      spaceWidget = new SpaceWidget(SpaceWidget::SpaceOrientation::HORIZONTAL, this);
     layout->addWidget(spaceWidget);
@@ -78,6 +77,10 @@ TopLeftMenu::TopLeftMenu(QWidget * parent): QWidget(parent){
     Pal.setColor(QPalette::Background, Qt::black);
     setAutoFillBackground(true);
     setPalette(Pal);*/
+    setTabOrder(plusButton, minusButton);
+    setTabOrder(minusButton, editButton);
+    setTabOrder(editButton, eyeButton);
+    setTabOrder(eyeButton, mapButton);
  }
 
 void TopLeftMenu::disableAll()
