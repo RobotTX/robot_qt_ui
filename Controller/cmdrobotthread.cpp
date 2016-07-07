@@ -60,7 +60,7 @@ void CmdRobotThread::run(){
     exec();
 }
 
-bool CmdRobotThread::sendCommand(QString cmd){
+bool CmdRobotThread::sendCommand(const QString cmd){
     qDebug() << "(Robot" << robotName << ") Command to send : " << cmd << "to " << ipAddress << "at port " << port;
 
     if(connected){

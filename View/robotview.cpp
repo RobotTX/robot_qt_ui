@@ -102,7 +102,10 @@ void RobotView::display(const bool _show){
     qDebug() << "Show : " << shown;
 }
 
+
+
 void RobotView::setOrientation(const float ori){
     setRotation(ori);
     robot->setOrientation(ori);
+
 }

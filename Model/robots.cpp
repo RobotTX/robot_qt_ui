@@ -52,7 +52,7 @@ void Robots::removeByIp(const QString ip){
     qDebug() << nb << " robot(s) with ip address " << ip << " removed";
 }
 
-RobotView* Robots::getRobotViewByName(const QString name){
+RobotView* Robots::getRobotViewByName(const QString name) const {
     for(int i = 0; i < robotsVector.length(); i++){
         if(robotsVector[i]->getRobot()->getName() == name){
             return robotsVector[i];
@@ -61,7 +61,7 @@ RobotView* Robots::getRobotViewByName(const QString name){
     return NULL;
 }
 
-RobotView* Robots::getRobotViewByIp(const QString ip){
+RobotView* Robots::getRobotViewByIp(const QString ip) const {
     for(int i = 0; i < robotsVector.length(); i++){
         if(robotsVector[i]->getRobot()->getIp() == ip){
             return robotsVector[i];
@@ -82,7 +82,7 @@ void Robots::setSelected(RobotView * const robotView){
     }
 }
 
-bool Robots::existRobotName(const QString name){
+bool Robots::existRobotName(const QString name) const {
     qDebug() << "(existRobotName) Checking robot name : " << name;
     for(int i = 0; i < robotsVector.length(); i++){
         if(robotsVector[i]->getRobot()->getName() == name){
@@ -92,7 +92,7 @@ bool Robots::existRobotName(const QString name){
     return false;
 }
 
-int Robots::getRobotId(const QString name){
+int Robots::getRobotId(const QString name) const{
     qDebug() << "(getRobotId) Checking robot name : " << name;
     for(int i = 0; i < robotsVector.length(); i++){
         if(robotsVector[i]->getRobot()->getName() == name){

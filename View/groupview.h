@@ -15,7 +15,7 @@ public:
     GroupView();
     ~GroupView();
     std::vector<PointView*> getPointViews(void) const { return pointViews; }
-    void addPointView(PointView* pointView);
+    void addPointView(PointView *pointView);
 
 private:
     std::vector<PointView*> pointViews;

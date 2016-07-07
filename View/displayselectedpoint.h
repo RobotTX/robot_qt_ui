@@ -45,11 +45,13 @@ public:
 
 public:
     void displayPointInfo(void);
+    void setOrigin(const Origin _origin);
+    void resetWidget(void);
+
+protected:
     void mousePressEvent(QEvent*);
     void keyPressEvent(QKeyEvent* event);
     void hideEvent(QHideEvent *event);
-    void setOrigin(const Origin _origin);
-    void resetWidget(void);
 
 signals:
     /// to notify the mapview that one of its points have been updated (in order to update the name that's displayed when the mouse is hovering over a point)
@@ -61,7 +63,7 @@ private slots:
     /// when a point is edited and the user clicks on the map this slot is called to update the coordinates
     void updateCoordinates(double x, double y);
     /// to check that a name is available before we proceed to the update
-    void checkPointName(QString name) const;
+    void checkPointName(const QString name) const;
 
 private:
     QLineEdit* nameEdit;

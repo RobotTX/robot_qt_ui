@@ -9,6 +9,7 @@ class QPushButton;
 class QLabel;
 class QMainWindow;
 class QProgressBar;
+class TopLeftMenu;
 
 #include <QWidget>
 #include "mainwindow.h"
@@ -32,6 +33,8 @@ public:
     QPushButton* getHomeBtn(void) const {return homeBtn;}
     void disable();
     void enable();
+    TopLeftMenu* getActionButtons(void) const {return actionButtons;}
+    QString getName(void) ;
 
 private:
     QVBoxLayout* layout;
@@ -45,8 +48,10 @@ private:
     QPushButton* homeBtn;
     PathWidget* pathWidget;
     QPushButton* scanBtn;
-    QPushButton* editBtn;
+    //QPushButton* editBtn;
     QLabel* name;
+    TopLeftMenu* actionButtons ;
+
 protected:
     void showEvent(QShowEvent *event);
     void hideEvent(QHideEvent *event);

@@ -53,12 +53,16 @@ public:
 
     void setCreatingGroup(const bool create) { creatingGroup = create; }
 
+    void setJustPressedEnterKey(const bool pressed) { justPressedEnterKey = pressed; }
+
 public:
     void disableButtons(void);
     void updateGroupButtonGroup(Points const& points);
+    void resetWidget(void);
 
 protected:
     void keyPressEvent(QKeyEvent* event);
+    void showEvent(QShowEvent *event);
 
 public slots:
      int checkGroupName(QString name);
@@ -67,14 +71,20 @@ private slots:
     void enableButtons(int index);
     void cancelCreationGroup();
     void emitNewGroupSignal();
+    void modifyGroupAfterClick(QString name);
+    void reconnectModifyEdit();
 
 signals:
     void newGroup(QString name);
     void modifiedGroup(QString name);
+    void modifiedGroupAfterClick(QString name);
+    void enableReturn();
+    void messageCreationGroup(QString);
 
 private:
+    /// if the enter key has just been pressed we don't propagate the editingFinished signal so that the modifyGroup slot is not called twice
+    bool justPressedEnterKey;
 
-    QMainWindow* parent;
     QVBoxLayout* layout;
     QHBoxLayout* eyeMapLayout;
     QHBoxLayout* grid;

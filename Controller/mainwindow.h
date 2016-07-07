@@ -28,13 +28,17 @@ class QVBoxLayout;
 class PathPainter;
 class TopLayout;
 
-#include "Model/origin.h"
 #include "Model/points.h"
 #include "View/robotview.h"
 #include <QMainWindow>
 #include <QModelIndex>
 #include "Model/graphicitemstate.h"
 #include <QPair>
+#include "Model/origin.h"
+
+//#define XML_PATH "/home/m-a/Documents/QtProject/gobot-software/points.xml"
+#define XML_PATH "/home/joan/Qt/QtProjects/gobot-software/points.xml"
+//#define XML_PATH "/Users/fannylarradet/Desktop/GTRobots/gobot-software/points.xml"
 
 #define PI 3.14159265
 #define PORT_MAP_METADATA 4000
@@ -42,10 +46,6 @@ class TopLayout;
 #define PORT_MAP 4002
 #define PORT_CMD 5600
 #define PORT_ROBOT_UPDATE 6000
-
-#define XML_PATH "/home/m-a/Documents/QtProject/gobot-software/points.xml"
-//#define XML_PATH "/home/joan/Qt/QtProjects/gobot-software/points.xml"
-//#define XML_PATH "/Users/fannylarradet/Desktop/GTRobots/gobot-software/points.xml"
 
 namespace Ui {
 
@@ -60,6 +60,7 @@ public:
     ~MainWindow();
 
     std::shared_ptr<Points> getPoints(void) const { return points; }
+    QList<QPair<QWidget*, QString>> getLastWidgets() const { return lastWidgets; }
 
     void initializeMenu();
     void initializeRobots();
@@ -74,11 +75,11 @@ public:
     void clearNewMap();
     void disableMenu();
     void enableMenu();
-    void clearPath(int robotNb);
-    QList<QPair<QWidget*, QString>> getLastWidgets();
+    void clearPath(const int robotNb);
     void setLastWidgets(QList<QPair<QWidget*,QString>>);
     void resetFocus();
     void switchFocus(QString name, QWidget* widget);
+    /// to sleep for ms milliseconds
     void delay(const int ms) const;
 
 signals:
@@ -87,8 +88,7 @@ signals:
 
 private slots:
     void updateRobot(const float posX, const float posY, const float ori);
-    void updateMetadata(const int width, const int height, const float resolution
-                        , const float originX, const float originY);
+    void updateMetadata(const int width, const int height, const float resolution, const float originX, const float originY);
     void updateMap(const QByteArray mapArray);
     void connectToRobot();
     void quit();
@@ -100,7 +100,6 @@ private slots:
     void robotBtnEvent();
     void pointBtnEvent();
     void mapBtnEvent();
-   // void backGroupBtnEvent();
     void plusGroupBtnEvent();
     void minusGroupBtnEvent();
     void editGroupBtnEvent();
@@ -111,11 +110,13 @@ private slots:
     void addPathSelecRobotBtnEvent();
     void backRobotBtnEvent();
     void editRobotBtnEvent();
-    void checkRobotBtnEvent();
+    void checkRobotBtnEventMenu();
+    void checkRobotBtnEventSelect();
+    void checkRobotBtnEvent(QString name);
     void saveMapBtnEvent();
     void loadMapBtnEvent();
     void backMapBtnEvent();
-    void setCheckedRobot(QAbstractButton* button, bool checked);
+    //void setCheckedRobot(QString name);
     void cancelEditSelecRobotBtnEvent();
     void robotSavedEvent();
     void minusSelecPointBtnEvent();
@@ -129,7 +130,6 @@ private slots:
     void askForDeletePointConfirmation(const int index);
     void displayPointEvent(PointView* _pointView);
     void askForDeleteDefaultGroupPointConfirmation(const int groupIndex);
-    //void backPathCreation(void);
     void displayGroupMapEvent(void);
     void pathSaved(bool execPath);
     void addPathPoint(Point* point);
@@ -155,13 +155,19 @@ private slots:
     void reestablishConnectionsPoints();
     void removePoint(std::shared_ptr<Point>& point, const Origin origin);
     void createGroup(QString name);
-    void modifyGroup(QString name);
+    void modifyGroupWithEnter(QString name);
+    void modifyGroupAfterClick(QString name);
+    void enableReturnAndCloseButtons(void);
+    void doubleClickOnRobot(int checkedId);
+
+
     /**
      * @brief cancelEvent
      * Called when a user doesn't want to keep the modifications he's made on a point
      */
     void cancelEvent(void);
     void setMessageTop(const QString msgType, const QString msg);
+    void setMessageCreationGroup(QString message);
     void homeSelected(PointView* pointView, bool temporary);
     void homeEdited(PointView* pointView, bool temporary);
     void goHomeBtnEvent();
@@ -175,6 +181,7 @@ private slots:
     void updateView();
     void robotIsAliveSlot(QString hostname, QString ip);
     void robotIsDeadSlot(QString hostname, QString ip);
+    void selectViewRobot();
 
 private:
     Ui::MainWindow* ui;

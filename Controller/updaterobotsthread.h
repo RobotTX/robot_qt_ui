@@ -1,11 +1,10 @@
 #ifndef UPDATEROBOTSTHREAD_H
 #define UPDATEROBOTSTHREAD_H
 
+#include <QTime>
 #include <QThread>
 #include <QtNetwork/QTcpServer>
 #include <QtNetwork/QTcpSocket>
-#include <QTime>
-
 
 class UpdateRobotsThread : public QThread {
     Q_OBJECT
