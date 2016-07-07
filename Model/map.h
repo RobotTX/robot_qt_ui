@@ -11,19 +11,6 @@
  */
 class Map {
 
-private:
-    class Rectangle {
-    public:
-        Rectangle(const Position& _topLeftCorner, const Position& _topRightCorner, const Position& _bottomLeftCorner, const Position& _bottomRightCorner):
-            topLeftCorner(_topLeftCorner), topRightCorner(_topRightCorner), bottomLeftCorner(_bottomLeftCorner), bottomRightCorner(_bottomRightCorner) {}
-        Rectangle(): topLeftCorner(Position(0, 0)), topRightCorner(Position(0 ,0)), bottomLeftCorner(Position(0, 0)), bottomRightCorner(Position(0 ,0)){}
-    private:
-        Position topLeftCorner;
-        Position topRightCorner;
-        Position bottomLeftCorner;
-        Position bottomRightCorner;
-    };
-
 public:
     Map();
 
@@ -33,6 +20,7 @@ public:
     int getWidth(void) const { return width; }
     int getHeight(void) const { return height; }
     Position getOrigin(void) const { return origin; }
+    QRect getRect(void) const { return rect; }
 
     /// Setters
     void setResolution(const float _resolution) { resolution = _resolution; }
@@ -90,7 +78,7 @@ private:
      * The rectangle whose corners are the extreme known points in each direction, its purpose is to
      * display the known part of the map by default
      */
-    Rectangle rectangle;
+    QRect rect;
 
 };
 

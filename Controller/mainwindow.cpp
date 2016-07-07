@@ -70,6 +70,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
     robots = std::shared_ptr<Robots>(new Robots());
     scene = new QGraphicsScene(this);
+
     graphicsView = new CustomQGraphicsView(scene, this);
     selectedRobot = NULL;
     scanningRobot = NULL;
@@ -78,10 +79,15 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
     //create the graphic item of the map
     QPixmap pixmap = QPixmap::fromImage(map->getMapImage());
-    mapPixmapItem = new MapView(pixmap, QSize(geometry().width(), geometry().height()), this);
+    mapPixmapItem = new MapView(pixmap, QSize(geometry().width(), geometry().height()), map, this);
+    //mapPixmapItem->centerMap();
     connect(mapPixmapItem, SIGNAL(addPathPointMapView(Point*)), this, SLOT(addPathPoint(Point*)));
     connect(mapPixmapItem, SIGNAL(homeSelected(PointView*, bool)), this, SLOT(homeSelected(PointView*, bool)));
     connect(mapPixmapItem, SIGNAL(homeEdited(PointView*, bool)), this, SLOT(homeEdited(PointView*, bool)));
+    scene->views().at(0)->centerOn(
+                (map->getRect().topLeft().x() + map->getRect().bottomRight().x()) /2,
+                (map->getRect().topLeft().y() + map->getRect().bottomRight().y()) /2);
+
 
     //create the toolbar
     topLayout = new TopLayout(this);
@@ -97,6 +103,14 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     initializeRobots();
 
     scene->addItem(mapPixmapItem);
+    qDebug() << scene->sceneRect();
+    qDebug() << mapPixmapItem->pos();
+    qDebug() << graphicsView->geometry();
+    qDebug() << graphicsView->parentWidget()->size();
+    qDebug() << scene->width() << scene->height();
+
+    graphicsView->scale(std::max(graphicsView->parentWidget()->width()/scene->width(), graphicsView->parentWidget()->height()/scene->height()),
+                        std::max(graphicsView->parentWidget()->width()/scene->width(), graphicsView->parentWidget()->height()/scene->height()));
 
     // hide the scroll bars
     graphicsView->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);

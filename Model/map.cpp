@@ -37,8 +37,8 @@ void Map::setRectangle(void){
             }
         }
     }
-    rectangle = Rectangle(Position(lefterBound, upperBound), Position(righterBound, upperBound), Position(lefterBound, lowerBound), Position(righterBound, lowerBound));
-    qDebug() << upperBound << lowerBound << righterBound << lefterBound;
+    rect = QRect(QPoint(lefterBound, lowerBound), QPoint(righterBound, upperBound));
+    qDebug() << "rect " << upperBound << righterBound << lowerBound <<  lefterBound;
 }
 
 // this code is temporarily dead
@@ -46,11 +46,6 @@ void Map::setRectangle(void){
 void Map::setMapFromArray(const QByteArray& mapArrays){
     mapImage = QImage(width, height, QImage::Format_Grayscale8);
     int index = 0;
-    /// to determine the rectangle of the map
-    double upperBound(0.0);
-    double lowerBound(0.0);
-    double righterBound(0.0);
-    double lefterBound(0.0);
     /// We set each pixel of the image, the data received being
     /// a percent (0 to 100) of chance for a wall to be there
     /// -1 can also be received, meaning we do'ont know if there is a wall
@@ -67,18 +62,10 @@ void Map::setMapFromArray(const QByteArray& mapArrays){
                 color = 205;
             else {
                 color = 0;
-                if(i > upperBound)
-                    upperBound = i;
-                else if(i < lowerBound)
-                    lowerBound = i;
-                else if(j < lefterBound)
-                    lefterBound = j;
-                else if(j > righterBound)
-                    righterBound = j;
+
             }
             mapImage.setPixelColor(QPoint(j, height-1-i), QColor(color, color, color));
-            rectangle = Rectangle(Position(lefterBound, upperBound), Position(righterBound, upperBound), Position(lefterBound, lowerBound), Position(righterBound, lowerBound));
-            qDebug() << upperBound << lowerBound << righterBound << lefterBound;
+
             index++;
         }
     }
