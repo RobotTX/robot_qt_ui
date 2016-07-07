@@ -12,6 +12,7 @@ Robot::Robot(const QString _name, const QString _ip, const int port, QMainWindow
 
     cmdThread = new CmdRobotThread(ip, port, name, parent);
     QObject::connect(cmdThread, SIGNAL(robotIsDead(QString,QString)), parent, SLOT(robotIsDeadSlot(QString,QString)));
+    QObject::connect(parent, SIGNAL(ping()), cmdThread, SLOT(pingSlot()));
     cmdThread->start();
 
     //cmdThread->moveToThread(cmdThread);
@@ -53,3 +54,10 @@ void Robot::resetCommandAnswer() {
     cmdThread->resetCommandAnswer();
 }
 
+
+void Robot::stopCmdThread() {
+    if (cmdThread != 0 && cmdThread->isRunning() ) {
+        cmdThread->requestInterruption();
+        cmdThread->wait();
+    }
+}

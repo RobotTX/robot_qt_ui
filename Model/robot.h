@@ -62,6 +62,7 @@ public:
     bool sendCommand(const QString cmd);
     QString waitAnswer();
     void resetCommandAnswer();
+    void stopCmdThread();
 
 private:
     QString name;

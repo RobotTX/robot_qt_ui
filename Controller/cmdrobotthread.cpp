@@ -9,18 +9,15 @@ CmdRobotThread::CmdRobotThread(const QString newipAddress, const int newPort, co
     robotName = _robotName;
     connected = false;
     commandAnswer = "";
+    missedPing = MISSED_PING_TIMER;
 }
 
 void CmdRobotThread::run(){
     qDebug() << "(Robot" << robotName << ") Command Thread launched";
 
     socketCmd = std::shared_ptr<QTcpSocket>(new QTcpSocket());
-    socketCmd->setSocketOption(QAbstractSocket::KeepAliveOption, 1);
 
-
-    int qtype1 = qRegisterMetaType<QAbstractSocket::SocketError>("SocketError");
-    qDebug() << "SocketError qtype :" << qtype1;
-
+    //int qtype1 = qRegisterMetaType<QAbstractSocket::SocketError>("SocketError");
 
     /// Connect the signal readyRead which tell us when data arrived to the function that treat them
     connect(&(*socketCmd), SIGNAL(readyRead()), this, SLOT(readTcpDataSlot()) );
@@ -28,7 +25,7 @@ void CmdRobotThread::run(){
     //connect(&(*socketCmd), SIGNAL(hostFound()), SLOT(hostFoundSlot()) );
     /// Connect the signal connected which trigger when we are connected to the host
     connect(&(*socketCmd), SIGNAL(connected()), this, SLOT(connectedSlot()) );
-    connect(&(*socketCmd), SIGNAL(error(QAbstractSocket::SocketError)), SLOT(errorSlot(QAbstractSocket::SocketError)) );
+    //connect(&(*socketCmd), SIGNAL(error(QAbstractSocket::SocketError)), SLOT(errorSlot(QAbstractSocket::SocketError)) );
     /// Connect the signal disconnected which trigger when we are disconnected from the host
     connect(&(*socketCmd), SIGNAL(disconnected()), this, SLOT(disconnectedSlot()));
     connect(this, SIGNAL(writeCommand(QString)), this, SLOT(writeCommandSlot(QString)));
@@ -59,11 +56,16 @@ void CmdRobotThread::run(){
         }
     }
     qDebug() << "(Robot" << robotName << ") Done";
-    /*while(!isInterruptionRequested()){
+    while(!isInterruptionRequested()){
+        if(missedPing <= 0){
+            emit robotIsDead(robotName, ipAddress);
+            return;
+        }
         //socketCmd->state();
-        //delay(1000);
-    }*/
-    exec();
+        delay(500);
+        missedPing--;
+        qDebug() << "Received no ping during the last :" << (float) ((MISSED_PING_TIMER - missedPing)/2) << " seconds.";
+    }
 }
 
 bool CmdRobotThread::sendCommand(const QString cmd){
@@ -101,13 +103,14 @@ void CmdRobotThread::writeCommandSlot(QString cmd){
 
 void CmdRobotThread::readTcpDataSlot(){
     commandAnswer = socketCmd->readAll();
+    missedPing = MISSED_PING_TIMER;
     qDebug() << "(Robot" << robotName << ") readTcpDataSlot :" << commandAnswer;
 }
 
 QString CmdRobotThread::waitAnswer(){
     qDebug() << "waiting for an answer";
     int waitTime = 0;
-    while(!commandAnswer.compare("") && waitTime < 6){
+    while(!commandAnswer.compare("") && waitTime < 3){
         delay(500);
         waitTime++;
     }
@@ -131,11 +134,20 @@ void CmdRobotThread::disconnectedSlot(){
 }
 
 void CmdRobotThread::errorSlot(QAbstractSocket::SocketError error){
-    qDebug() << "(Robot" << robotName << ") catched a connection error : " << error;
+    qDebug() << "(Robot" << robotName << ") Catched a connection error : " << error;
+}
+
+void CmdRobotThread::onStateChanged(QAbstractSocket::SocketState socketState ){
+    qDebug()<< "(Robot" << robotName << ") The state of the socket changed :" << socketState;
 }
 
 void CmdRobotThread::delay(const int ms) const{
     QTime dieTime= QTime::currentTime().addMSecs(ms);
     while (QTime::currentTime() < dieTime)
         QCoreApplication::processEvents(QEventLoop::AllEvents, 100);
+}
+
+void CmdRobotThread::pingSlot(){
+    //qDebug()<< "(Robot" << robotName << ") missedPingSlot called";
+    missedPing = MISSED_PING_TIMER;
 }

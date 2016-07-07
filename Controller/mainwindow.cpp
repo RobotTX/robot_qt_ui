@@ -1165,7 +1165,9 @@ void MainWindow::robotIsAliveSlot(QString hostname,QString ip){
     RobotView* rv = robots->getRobotViewByIp(ip);
     if(rv != NULL){
         qDebug() << "Robot" << hostname << "at ip" << ip << "is still alive";
-        ///TODO see for changes
+        /// TODO reset compteur
+        emit ping();
+        /// TODO see for changes (battery, name, wifi)
     } else {
         qDebug() << "Robot" << hostname << "at ip" << ip << "just connected";
 
@@ -1190,6 +1192,8 @@ void MainWindow::robotIsDeadSlot(QString hostname,QString ip){
     qDebug() << "Dead robot's id :" << id;
 
 
+    /// we stop the cmd thread
+    rv->getRobot()->stopCmdThread();
 
     /// if the robot had a home, make the point a normal point
     if(rv->getRobot()->getHome() != NULL)

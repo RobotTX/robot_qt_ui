@@ -86,6 +86,7 @@ public:
 signals:
     void sendCommand(QString);
     void nameChanged(QString, QString);
+    void ping();
 
 private slots:
     void updateRobot(const float posX, const float posY, const float ori);
