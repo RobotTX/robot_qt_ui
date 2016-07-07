@@ -12,8 +12,10 @@
 #include "Model/xmlparser.h"
 #include "View/spacewidget.h"
 #include "Model/group.h"
+#include "Model/map.h"
 
-DisplaySelectedPoint::DisplaySelectedPoint(QMainWindow *_parent, std::shared_ptr<Points> const& _points, PointView* _pointView, const Origin _origin): QWidget(_parent), parent(_parent), origin(_origin)
+DisplaySelectedPoint::DisplaySelectedPoint(QMainWindow *_parent, std::shared_ptr<Points> const& _points, std::shared_ptr<Map> const& _map, PointView* _pointView, const Origin _origin):
+    QWidget(_parent), parent(_parent), origin(_origin), map(_map)
 {
     parent = _parent;
     points = _points;
@@ -82,7 +84,7 @@ DisplaySelectedPoint::DisplaySelectedPoint(QMainWindow *_parent, std::shared_ptr
     robotBtn = new QPushButton("", this);
     homeLayout->addWidget(robotBtn);
 
-    homeLayout->setContentsMargins(0, 0, 0, 0);
+    //homeLayout->setContentsMargins(0, 0, 0, 0);
     homeWidget->hide();
 
     layout->addWidget(homeWidget);
@@ -93,6 +95,9 @@ DisplaySelectedPoint::DisplaySelectedPoint(QMainWindow *_parent, std::shared_ptr
 
     setMaximumWidth(_parent->width()*4/10);
     setMinimumWidth(_parent->width()*4/10);
+    layout->setContentsMargins(0,0,0,0);
+    layout->setAlignment(Qt::AlignTop);
+
 }
 
 void DisplaySelectedPoint::displayPointInfo(void){
@@ -186,13 +191,6 @@ void DisplaySelectedPoint::checkPointName(const QString name) const {
     }
     saveButton->setToolTip("");
     saveButton->setEnabled(true);
-
-}
-
-void DisplaySelectedPoint::updateCoordinates(double x, double y){
-    pointView->setPos(x, y);
-    posXLabel->setText("X : " + QString::number(x, 'f', 1));
-    posYLabel->setText("Y : " + QString::number(y, 'f', 1));
 }
 
 void DisplaySelectedPoint::setPointView(PointView* const& _pointView, QString robotName) {

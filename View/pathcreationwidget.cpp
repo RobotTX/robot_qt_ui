@@ -58,6 +58,7 @@ PathCreationWidget::PathCreationWidget(QMainWindow* parent, const Points &_point
     connect(editBtn, SIGNAL(clicked()), this, SLOT(editPathPoint()));
 
     layout->addLayout(layoutRow1);
+    layout->setContentsMargins(0,0,0,0);
 
 
     /*QHBoxLayout* layoutRow2 = new QHBoxLayout();
@@ -131,6 +132,7 @@ PathCreationWidget::PathCreationWidget(QMainWindow* parent, const Points &_point
 
     hide();
     layout->setAlignment(Qt::AlignTop);
+    layout->setContentsMargins(0,0,0,0);
 }
 
 void PathCreationWidget::addPathPoint(void){

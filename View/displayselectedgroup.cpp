@@ -41,6 +41,7 @@ DisplaySelectedGroup::DisplaySelectedGroup(QMainWindow *parent, std::shared_ptr<
     layout->addWidget(scrollArea);
     setMaximumWidth(parent->width()*4/10);
     setMinimumWidth(parent->width()*4/10);
+    layout->setContentsMargins(0,0,0,0);
 }
 
 void DisplaySelectedGroup::setName(const QString _name){

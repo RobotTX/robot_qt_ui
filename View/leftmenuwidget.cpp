@@ -10,16 +10,19 @@ LeftMenuWidget::LeftMenuWidget(QMainWindow* parent):QWidget(parent){
 
     /// Robot button
     QPushButton* robotBtn = new QPushButton(QIcon(":/icons/robot.png"), "Robots", this);
+    robotBtn->setAutoDefault(true);
     robotBtn->setIconSize(parent->size()/10);
     robotBtn->setStyleSheet ("text-align: left");
 
     /// Point button
     QPushButton* pointBtn = new QPushButton(QIcon(":/icons/coordinates.png"), "Points", this);
+    pointBtn->setAutoDefault(true);
     pointBtn->setIconSize(parent->size()/10);
     pointBtn->setStyleSheet ("text-align: left");
 
     /// Map button
     QPushButton* mapBtn = new QPushButton(QIcon(":/icons/map.png"), "Map", this);
+    mapBtn->setAutoDefault(true);
     mapBtn->setIconSize(parent->size()/10);
     mapBtn->setStyleSheet ("text-align: left");
 

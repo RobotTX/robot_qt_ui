@@ -107,11 +107,12 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     graphicsView->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     graphicsView->setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding));
 
-    leftMenu = new LeftMenu(this, points, robots, pointViews);
+    leftMenu = new LeftMenu(this, points, robots, pointViews, map);
 
     resetFocus();
     initializeLeftMenu();
     bottom->addWidget(leftMenu);
+    //mainLayout->setContentsMargins(0,0,0,0);
 
 
     rightLayout = new QVBoxLayout();
@@ -123,7 +124,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     graphicsView->show();
 
     /// to link the map and the point information menu when a point is being edited
-    connect(mapPixmapItem, SIGNAL(newCoordinates(double, double)), leftMenu->getDisplaySelectedPoint(), SLOT(updateCoordinates(double, double)));
+    connect(mapPixmapItem, SIGNAL(newCoordinates(double, double)), this, SLOT(updateCoordinates(double, double)));
 
     /// to cancel the modifications on an edited point
     connect(leftMenu->getDisplaySelectedPoint()->getCancelButton(), SIGNAL(clicked(bool)), this, SLOT(cancelEvent()));
@@ -161,6 +162,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     mainLayout->addLayout(bottom);
 
     setCentralWidget(mainWidget);
+
+    setTabOrder(leftMenu->getReturnButton(), pointsLeftWidget->getActionButtons()->getPlusButton());
 }
 
 MainWindow::~MainWindow(){
@@ -2488,8 +2491,9 @@ void MainWindow::displayPointInfoFromGroupMenu(void){
  * called when a user edits a point and save the changes either by pressing the enter key or clicking the save button
  */
 void MainWindow::updatePoint(void){
-    leftMenu->getCloseButton()->setEnabled(true);
 
+    leftMenu->getCloseButton()->setEnabled(true);
+    topLayout->setEnabled(true);
     qDebug() << "update point event called";
     ///resets the tooltip of the edit button and the minus button
     leftMenu->getDisplaySelectedPoint()->getActionButtons()->getEditButton()->setToolTip("You can click on this button and then choose between clicking on the map or drag the point to change its position");
@@ -2509,8 +2513,14 @@ void MainWindow::updatePoint(void){
     selectedPoint->getPoint()->setName(leftMenu->getDisplaySelectedPoint()->getNameEdit()->text());
 
     /// updates the position of the point
-    selectedPoint->getPoint()->setPosition(leftMenu->getDisplaySelectedPoint()->getXLabel()->text().right(4).toFloat(),
-                                           leftMenu->getDisplaySelectedPoint()->getYLabel()->text().right(4).toFloat());
+    /// to determine wheter the coordinate is 2 digits long or 3 digits long in order to parse them correctly
+    int xLength = leftMenu->getDisplaySelectedPoint()->getXLabel()->text().count();
+    int yLength = leftMenu->getDisplaySelectedPoint()->getYLabel()->text().count();
+
+    leftMenu->getDisplaySelectedPoint()->getPointView()->getPoint()->setPosition(
+                leftMenu->getDisplaySelectedPoint()->getXLabel()->text().right(xLength-4).toFloat(),
+                leftMenu->getDisplaySelectedPoint()->getYLabel()->text().right(yLength-4).toFloat());
+
     /// save changes to the file
     XMLParser parserPoints(XML_PATH, mapPixmapItem);
     parserPoints.save(*points);
@@ -2532,20 +2542,15 @@ void MainWindow::updatePoint(void){
     /// reset the state of the map so we can click it again
     setGraphicItemsState(GraphicItemState::NO_STATE);
 
+
     /// enable the edit button and the minus button again
     leftMenu->getDisplaySelectedPoint()->getActionButtons()->getEditButton()->setEnabled(true);
     leftMenu->getDisplaySelectedPoint()->getActionButtons()->getMinusButton()->setEnabled(true);
 
     /// updates the isolated points in the group menus
-    pointsLeftWidget->getGroupButtonGroup()->update(*points);
+    pointsLeftWidget->getGroupButtonGroup()->update(*points);    
 
-    /// to determine wheter the coordinate is 2 digits long or 3 digits long in order to parse them correctly
-    int xLength = leftMenu->getDisplaySelectedPoint()->getXLabel()->text().count();
-    int yLength = leftMenu->getDisplaySelectedPoint()->getYLabel()->text().count();
 
-    leftMenu->getDisplaySelectedPoint()->getPointView()->getPoint()->setPosition(
-                leftMenu->getDisplaySelectedPoint()->getXLabel()->text().right(xLength-4).toFloat(),
-                leftMenu->getDisplaySelectedPoint()->getYLabel()->text().right(yLength-4).toFloat());
     /// we enable the "back" button again
     leftMenu->getReturnButton()->setEnabled(true);
     leftMenu->getReturnButton()->setToolTip("");
@@ -2562,6 +2567,7 @@ void MainWindow::updatePoint(void){
 void MainWindow::cancelEvent(void){
     leftMenu->getCloseButton()->setEnabled(true);
     leftMenu->getReturnButton()->setEnabled(true);
+    topLayout->setEnabled(true);
     /// reset the color of the pointView
     leftMenu->getDisplaySelectedPoint()->getPointView()->setPixmap(PointView::PixmapType::NORMAL);
 
@@ -2613,8 +2619,14 @@ void MainWindow::cancelEvent(void){
  * updates the coordinates of the selected point
  */
 void MainWindow::updateCoordinates(double x, double y){
-    leftMenu->getDisplaySelectedPoint()->getXLabel()->setText("X : " + QString::number(x));
-    leftMenu->getDisplaySelectedPoint()->getYLabel()->setText("Y : " + QString::number(y));
+    qDebug() << "updateCoordinates called";
+    leftMenu->getDisplaySelectedPoint()->getXLabel()->setText("X : " + QString::number(x, 'f', 1));
+    leftMenu->getDisplaySelectedPoint()->getYLabel()->setText("Y : " + QString::number(y, 'f', 1));
+    leftMenu->getDisplaySelectedPoint()->getPointView()->setPos(x, y);
+
+    if(map->getMapImage().pixelColor(x ,y) == QColor(254, 254, 254))   leftMenu->getDisplaySelectedPoint()->getSaveButton()->setEnabled(true);
+
+    else  leftMenu->getDisplaySelectedPoint()->getSaveButton()->setEnabled(false);
 }
 
 /**
