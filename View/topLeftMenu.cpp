@@ -110,6 +110,7 @@ eyeButton->setAutoDefault(true);
 eyeMapLayout = new QHBoxLayout();
 eyeMapLayout->setContentsMargins(plusButton->width()/2 ,0,plusButton->width()/2,0);
 eyeMapLayout->setSpacing(0);
+//eyeMapLayout->setContentsMargins(0,0,0,0);
 
 //eyeMapLayout->addWidget(spaceWidget1);
 eyeMapLayout->addWidget(eyeButton);

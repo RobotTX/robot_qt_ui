@@ -1400,15 +1400,15 @@ void MainWindow::setSelectedPoint(PointView* pointView, bool isTemporary){
         float x = pointView->getPoint()->getPosition().getX();
         float y = pointView->getPoint()->getPosition().getY();
         if(map->getMapImage().pixelColor(x ,y) == QColor(254, 254, 254)){
-            editSelectedPointWidget->getPlusButton()->setEnabled(true);
-            editSelectedPointWidget->getPlusButton()->setToolTip("Click this button if you want to save this point permanently");
+            editSelectedPointWidget->getActionButtons()->getPlusButton()->setEnabled(true);
+            editSelectedPointWidget->getActionButtons()->getPlusButton()->setToolTip("Click this button if you want to save this point permanently");
             setMessageTop(TEXT_COLOR_INFO, "To save this point permanently click the \"+\" button");
             qDebug() << "ce point est blanc";
         } else {
             qDebug() << "this pooint is not white";
             setMessageTop(TEXT_COLOR_WARNING, "You cannot save this point because your robot(s) would not be able to go there");
-            editSelectedPointWidget->getPlusButton()->setEnabled(false);
-            editSelectedPointWidget->getPlusButton()->setToolTip("You cannot save this point because your robot(s) cannot go there");
+            editSelectedPointWidget->getActionButtons()->getPlusButton()->setEnabled(false);
+            editSelectedPointWidget->getActionButtons()->getPlusButton()->setToolTip("You cannot save this point because your robot(s) cannot go there");
         }
         leftMenu->getDisplaySelectedPoint()->hide();
         switchFocus(selectedPoint->getPoint()->getName(), editSelectedPointWidget);
@@ -1750,7 +1750,7 @@ void MainWindow::pointSavedEvent(int index, double x, double y, QString name){
     leftMenu->getReturnButton()->setEnabled(true);
 
     /// resets the status of the plus button
-    editSelectedPointWidget->getPlusButton()->setEnabled(true);
+    editSelectedPointWidget->getActionButtons()->getPlusButton()->setEnabled(true);
     /// hides widgets relative to the choice of a group
     editSelectedPointWidget->hideGroupLayout();
 
