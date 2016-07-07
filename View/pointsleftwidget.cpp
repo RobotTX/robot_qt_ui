@@ -114,6 +114,8 @@ void PointsLeftWidget::updateGroupButtonGroup(Points const& points){
 
 void PointsLeftWidget::enableButtons(int index){
     groupButtonGroup->setIndexModifyEdit(index);
+    groupButtonGroup->getLayout()->removeWidget(groupButtonGroup->getModifyEdit());
+    groupButtonGroup->getLayout()->insertWidget(index, groupButtonGroup->getModifyEdit());
     disableButtons();
     /// enables the minus button
     actionButtons->getMinusButton()->setEnabled(true);

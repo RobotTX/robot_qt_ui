@@ -21,6 +21,7 @@ class PointsViews;
 class PathCreationWidget;
 class QVBoxLayout;
 class MainWindow;
+class Map;
 
 #include <QWidget>
 #include <memory>
@@ -32,7 +33,7 @@ class MainWindow;
 class LeftMenu: public QWidget{
     Q_OBJECT
 public:
-    LeftMenu(MainWindow* _parent, const std::shared_ptr<Points> &_points, std::shared_ptr<Robots> const& robots, PointsView* const& pointViews);
+    LeftMenu(MainWindow* _parent, const std::shared_ptr<Points> &_points, std::shared_ptr<Robots> const& robots, PointsView* const& pointViews, std::shared_ptr<Map> const& _map);
 
     /// Getters
     LeftMenuWidget* getLeftMenuWidget(void) const {return leftMenuWidget;}

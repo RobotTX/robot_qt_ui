@@ -59,12 +59,16 @@ GroupButtonGroup::GroupButtonGroup(const Points &_points, QWidget* _parent):QWid
 }
 
 void GroupButtonGroup::deleteButtons(void){
+    layout->removeWidget(modifyEdit);
     while(QLayoutItem* item = layout->takeAt(0)){
-        if(item->widget())
-            delete item->widget();
-        if(item)
-            delete item;
+        if(item){
+            if(QWidget* button = item->widget())
+                delete button;
+        } else {
+            qDebug() << "oops";
+        }
     }
+    layout->addWidget(modifyEdit);
 }
 
 void GroupButtonGroup::update(const Points& _points){

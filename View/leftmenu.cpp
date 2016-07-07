@@ -26,7 +26,7 @@
 #include "Model/xmlparser.h"
 #include "Controller/mainwindow.h"
 
-LeftMenu::LeftMenu(MainWindow* _parent, std::shared_ptr<Points> const& _points, const std::shared_ptr<Robots> &robots, PointsView * const &pointViews):
+LeftMenu::LeftMenu(MainWindow* _parent, std::shared_ptr<Points> const& _points, const std::shared_ptr<Robots> &robots, PointsView * const &pointViews, const std::shared_ptr<Map> &_map):
     QWidget(_parent), parent(_parent), points(_points)
 {
 
@@ -53,7 +53,7 @@ LeftMenu::LeftMenu(MainWindow* _parent, std::shared_ptr<Points> const& _points, 
     connect(closeBtn, SIGNAL(clicked()), _parent, SLOT(closeSlot()));
 
     /// to display the information relative to a point
-    displaySelectedPoint = new DisplaySelectedPoint(_parent, _points);
+    displaySelectedPoint = new DisplaySelectedPoint(_parent, _points, _map);
     leftLayout->addWidget(displaySelectedPoint);
     leftLayout->setAlignment(displaySelectedPoint, Qt::AlignLeft);
 
