@@ -168,6 +168,18 @@ MainWindow::~MainWindow(){
         updateRobotsThread->requestInterruption();
         updateRobotsThread->wait();
     }
+    if (metadataThread != 0 && metadataThread->isRunning() ) {
+        metadataThread->requestInterruption();
+        metadataThread->wait();
+    }
+    if (robotThread != 0 && robotThread->isRunning() ) {
+        robotThread->requestInterruption();
+        robotThread->wait();
+    }
+    if (mapThread != 0 && mapThread->isRunning() ) {
+        mapThread->requestInterruption();
+        mapThread->wait();
+    }
 }
 
 
@@ -214,9 +226,9 @@ void MainWindow::connectToRobot(){
                         setGraphicItemsState(GraphicItemState::NO_EVENT);
                         disableMenu();
 
-                        metadataThread = new ScanMetadataThread(ip, PORT_MAP_METADATA, this);
-                        robotThread = new ScanRobotThread(ip, PORT_ROBOT_POS, this);
-                        //mapThread = new ScanMapThread(ip, PORT_MAP, this);
+                        metadataThread = new ScanMetadataThread(ip, PORT_MAP_METADATA);
+                        robotThread = new ScanRobotThread(ip, PORT_ROBOT_POS);
+                        //mapThread = new ScanMapThread(ip, PORT_MAP);
 
                         connect(metadataThread, SIGNAL(valueChangedMetadata(int, int, float, float, float))
                                 , this , SLOT(updateMetadata(int, int, float, float, float)));
@@ -291,86 +303,14 @@ void MainWindow::connectToRobot(){
 
 void MainWindow::initializeRobots(){
 
-
-
     /*updateRobotsThread = new UpdateRobotsThread(PORT_ROBOT_UPDATE);
+    connect(updateRobotsThread, SIGNAL(robotIsAlive(QString,QString)), this, SLOT(robotIsAliveSlot(QString,QString)));
     updateRobotsThread->start();
     updateRobotsThread->moveToThread(updateRobotsThread);*/
 
 
-    //TODO Need to come from XML
     std::shared_ptr<Robot> robot1(new Robot("Roboty", "localhost", PORT_CMD, this));
     robot1->setWifi("Swaghetti Yolognaise");
-
-    /*std::vector<std::shared_ptr<PathPoint>> path1;
-    qDebug() << "Nb groups : " << points.getGroups().size();
-
-    if(!points.getGroups().isEmpty()){
-        qDebug() << "Nb points first group : " << points.getGroups().at(0)->getPoints().size();
-        if(!points.getGroups().at(0)->getPoints().isEmpty()){
-            if(points.getGroups().at(0)->getPoints().size() == 1){
-                std::shared_ptr<PathPoint> pathPoint1 = std::shared_ptr<PathPoint>(new PathPoint(*(points.getGroups().at(0)->getPoints().at(0)),
-                                                      PathPoint::HUMAN_ACTION));
-                path1.push_back(pathPoint1);
-                path1.push_back(pathPoint1);
-                path1.push_back(pathPoint1);
-                path1.push_back(pathPoint1);
-                path1.push_back(pathPoint1);
-                path1.push_back(pathPoint1);
-                path1.push_back(pathPoint1);
-                path1.push_back(pathPoint1);
-                path1.push_back(pathPoint1);
-                path1.push_back(pathPoint1);
-            }
-
-            if(points.getGroups().at(0)->getPoints().size() == 2){
-
-                std::shared_ptr<PathPoint> pathPoint1 = std::shared_ptr<PathPoint>(new PathPoint(*(points.getGroups().at(0)->getPoints().at(0)),
-                                                      PathPoint::HUMAN_ACTION));
-                std::shared_ptr<PathPoint> pathPoint2 = std::shared_ptr<PathPoint>(new PathPoint(*(points.getGroups().at(0)->getPoints().at(1)),
-                                                      PathPoint::WAIT, 200));
-                path1.push_back(pathPoint1);
-                path1.push_back(pathPoint2);
-
-                path1.push_back(pathPoint1);
-                path1.push_back(pathPoint2);
-
-                path1.push_back(pathPoint1);
-                path1.push_back(pathPoint2);
-
-                path1.push_back(pathPoint1);
-                path1.push_back(pathPoint2);
-
-                path1.push_back(pathPoint1);
-                path1.push_back(pathPoint2);
-            }
-
-            if(points.getGroups().at(0)->getPoints().size() > 2){
-                std::shared_ptr<PathPoint> pathPoint1 = std::shared_ptr<PathPoint>(new PathPoint(*(points.getGroups().at(0)->getPoints().at(0)),
-                                                      PathPoint::HUMAN_ACTION));
-                std::shared_ptr<PathPoint> pathPoint2 = std::shared_ptr<PathPoint>(new PathPoint(*(points.getGroups().at(0)->getPoints().at(1)),
-                                                      PathPoint::WAIT, 200));
-                std::shared_ptr<PathPoint> pathPoint3 = std::shared_ptr<PathPoint>(new PathPoint(*(points.getGroups().at(0)->getPoints().at(2)),
-                                                      PathPoint::WAIT, 500));
-
-                path1.push_back(pathPoint1);
-                path1.push_back(pathPoint2);
-                path1.push_back(pathPoint3);
-
-                path1.push_back(pathPoint1);
-                path1.push_back(pathPoint2);
-                path1.push_back(pathPoint3);
-
-                path1.push_back(pathPoint1);
-                path1.push_back(pathPoint2);
-                path1.push_back(pathPoint3);
-            }
-        }
-    }
-
-
-    robot1->setPath(path1);*/
-
     RobotView* robotView1 = new RobotView(robot1, mapPixmapItem);
     connect(robotView1, SIGNAL(setSelectedSignal(RobotView*)), this, SLOT(setSelectedRobot(RobotView*)));
     robotView1->setPosition(200, 200);
@@ -641,25 +581,31 @@ void MainWindow::setSelectedRobot(QAbstractButton *button){
     RobotView* mySelectedRobot =  robots->getRobotViewByName(robotsLeftWidget->getBtnGroup()
                                                   ->getBtnGroup()->checkedButton()->text());
     robotsLeftWidget->getActionButtons()->getMapButton()->setChecked(mySelectedRobot->isVisible());
+    /*qDebug() << "Edit : " << robotsLeftWidget->getEditBtnStatus() << "\nsetSelectedRobot with QAbstractButton called : " << button->text();
+    RobotView* rv = robots->getRobotViewByName(button->text());
+    if(rv != NULL){
+        if(robotsLeftWidget->getEditBtnStatus()){
+            editSelectedRobot(rv);
+        }else{
+            setSelectedRobot(rv);
+        }
+    } else {
+        qDebug() << "setSelectedRobot : something unexpected happened";
+    }*/
 }
 
 void MainWindow::selectViewRobot(){
-        qDebug() << "select view robot  " <<robotsLeftWidget->getSelectedRobotName();
-    /*
-    qDebug() << "Edit : " << robotsLeftWidget->getEditBtnStatus() << "\nsetSelectedRobot with QAbstractButton called : " << button->text();
-    if(robotsLeftWidget->getEditBtnStatus())
-        (robots->getRobotViewByName(button->text()));
-    else
-        setSelectedRobot(robots->getRobotViewByName(button->text()));
-        */
-
+    qDebug() << "select view robot  " <<robotsLeftWidget->getSelectedRobotName();
     setSelectedRobot(robots->getRobotViewByName(robotsLeftWidget->getSelectedRobotName()));
 }
 
-
 void MainWindow::setSelectedRobotFromPoint(){
     qDebug() << "setSelectedRobotFromPoint called : " << leftMenu->getDisplaySelectedPoint()->getRobotButton()->text();
-    setSelectedRobot(robots->getRobotViewByName(leftMenu->getDisplaySelectedPoint()->getRobotButton()->text()));
+    RobotView* rv = robots->getRobotViewByName(leftMenu->getDisplaySelectedPoint()->getRobotButton()->text());
+    if(rv != NULL)
+        setSelectedRobot(rv);
+    else
+        qDebug() << "setSelectedRobotFromPoint : something unexpected happened";
 }
 
 void MainWindow::backRobotBtnEvent(){
@@ -839,9 +785,25 @@ void MainWindow::robotSavedEvent(){
         bottomLayout->updateRobot(robots->getRobotId(selectedRobot->getRobot()->getName()), selectedRobot);
 
         selectedRobotWidget->setSelectedRobot(selectedRobot );
-      //  selectedRobotWidget->show();
+        selectedRobotWidget->show();
     }
 }
+
+/*void MainWindow::setCheckedRobot(QAbstractButton* button, bool checked){
+    qDebug() << "setCheckedRobot called" << button->text();
+    RobotView* rv = robots->getRobotViewByName(button->text());
+    if(rv != NULL){
+        if(checked){
+            qDebug() << "has been checked";
+            rv->display(true);
+        } else {
+            qDebug() << "has been unchecked";
+            rv->display(false);
+        }
+    } else {
+        qDebug() << "setSelectedRobotFromPoint : something unexpected happened";
+    }
+}*/
 /*
 void MainWindow::setCheckedRobot(QString name){
     qDebug() << "setCheckedRobot called" << name;
@@ -1025,7 +987,6 @@ void MainWindow::editHomeEvent(){
         setGraphicItemsState(GraphicItemState::NO_STATE);
         enableMenu();
     }
-
 }
 
 void MainWindow::homeSelected(PointView* pointView, bool temporary){
@@ -1182,6 +1143,73 @@ void MainWindow::goHomeBtnEvent(){
         }
         selectedRobot->getRobot()->resetCommandAnswer();
     }
+}
+
+void MainWindow::robotIsAliveSlot(QString hostname,QString ip){
+    QRegExp rx("[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}");
+    rx.indexIn(ip);
+    ip = rx.cap(0);
+    RobotView* rv = robots->getRobotViewByIp(ip);
+    if(rv != NULL){
+        qDebug() << "Robot" << hostname << "at ip" << ip << "is still alive";
+        ///TODO see for changes
+    } else {
+        qDebug() << "Robot" << hostname << "at ip" << ip << "just connected";
+
+        std::shared_ptr<Robot> robot(new Robot(hostname, ip, PORT_CMD, this));
+        robot->setWifi("Swaghetti Yolognaise");
+        RobotView* robotView = new RobotView(robot, mapPixmapItem);
+        connect(robotView, SIGNAL(setSelectedSignal(RobotView*)), this, SLOT(setSelectedRobot(RobotView*)));
+        robotView->setPosition(robots->getRobotsVector().count()*100+100, robots->getRobotsVector().count()*100+100);
+        robotView->setParentItem(mapPixmapItem);
+        robots->add(robotView);
+        bottomLayout->addRobot(robotView);
+        robotsLeftWidget->updateRobots(robots);
+    }
+}
+
+void MainWindow::robotIsDeadSlot(QString hostname,QString ip){
+    qDebug() << "Robot" << hostname << "at ip" << ip << "... He is dead, Jim!!";
+    setMessageTop(TEXT_COLOR_DANGER, QString("Robot " + hostname + " at ip " + ip +" disconnected."));
+
+    RobotView* rv = robots->getRobotViewByIp(ip);
+    int id = robots->getRobotId(hostname);
+    /// if selected => if one of this robot related menu is open
+    if(selectedRobot != NULL && selectedRobot->getRobot()->getIp().compare(ip) == 0){
+        if(editSelectedRobotWidget->isVisible()){
+            setGraphicItemsState(GraphicItemState::NO_STATE);
+        }
+        editSelectedRobotWidget->hide();
+        selectedRobotWidget->hide();
+    }
+    qDebug() << "selectedRobot cleaned" << (rv == NULL) << robots->getRobotsVector().size();
+    /// si scanning
+    if(scanningRobot != NULL && scanningRobot->getRobot()->getIp().compare(ip) == 0){
+        selectedRobotWidget->getScanBtn()->setChecked(false);
+        selectedRobotWidget->getScanBtn()->setText("Scan a map");
+        selectedRobotWidget->enable();
+
+        hideAllWidgets();
+
+        bottomLayout->enable();
+        setGraphicItemsState(GraphicItemState::NO_STATE);
+        enableMenu();
+    }
+    qDebug() << "scanningRobot cleaned" <<  (rv == NULL) << robots->getRobotsVector().size();
+    /// enlever de robots
+    robots->remove(rv);
+    qDebug() << "robots cleaned" <<  (rv == NULL) << robots->getRobotsVector().size();
+    /// delete robotview
+    // TODO delete rv;
+    qDebug() << "robotView cleaned" <<  (rv == NULL) << robots->getRobotsVector().size();
+    /// delete robot (shouldn't be needed as rv contain a shared ptr of robot
+    //qDebug() << "robot cleaned" <<  (rv == NULL) << robots->getRobotsVector().size();
+    /// update robotsLeftWidget
+    robotsLeftWidget->updateRobots(robots);
+    qDebug() << "robotsLeftWidget cleaned" <<  (rv == NULL) << robots->getRobotsVector().size();
+    /// bottomLayout ?
+    bottomLayout->removeRobot(id);
+    qDebug() << "bottomLayout cleaned" <<  (rv == NULL) << robots->getRobotsVector().size();
 }
 
 
@@ -1562,11 +1590,16 @@ void MainWindow::editGroupBtnEvent(){
         if(pointView){
             QString robotName = "";
             if(pointView->getPoint()->isHome()){
-                robotName = robots->findRobotUsingHome(pointView->getPoint()->getName())->getRobot()->getName();
+                RobotView* rv = robots->findRobotUsingHome(pointView->getPoint()->getName());
+                if(rv != NULL)
+                    robotName = rv->getRobot()->getName();
+                else
+                    qDebug() << "editGroupBtnEvent : something unexpected happened";
+
             }
             leftMenu->getDisplaySelectedPoint()->setPointView(pointView, robotName);
         } else {
-            qDebug() << "THere is no point view associated with those indexes";
+            qDebug() << "There is no point view associated with those indexes";
         }
         /// displays the information relative the the point
         leftMenu->getDisplaySelectedPoint()->displayPointInfo();
@@ -1776,8 +1809,12 @@ void MainWindow::askForDeleteDefaultGroupPointConfirmation(int index){
             } else {
                 /// this is in fact the home point of a robot, we prompt a customized message to the end user
                 RobotView* robot = robots->findRobotUsingHome(point->getName());
-                openInterdictionOfPointRemovalMessage(point->getName(), robot->getRobot()->getName());
-                qDebug() << "Sorry this point is the home of a robot and therefore cannot be removed";
+                if(robot != NULL){
+                    openInterdictionOfPointRemovalMessage(point->getName(), robot->getRobot()->getName());
+                    qDebug() << "Sorry this point is the home of a robot and therefore cannot be removed";
+                } else {
+                    qDebug() << "setSelectedRobotFromPoint : something unexpected happened";
+                }
             }
         }
         pointsLeftWidget->disableButtons();
@@ -1843,9 +1880,13 @@ void MainWindow::askForDeletePointConfirmation(int index){
             } else {
                 /// this is in fact the home point of a robot, we prompt a customized message to the end user
                 RobotView* robot = robots->findRobotUsingHome(point->getName());
-                qDebug() << robot->getRobot()->getName();
-                openInterdictionOfPointRemovalMessage(point->getName(), robot->getRobot()->getName());
-                qDebug() << "Sorry this point is the home of a robot and therefore cannot be removed";
+                if(robot != NULL){
+                    qDebug() << robot->getRobot()->getName();
+                    openInterdictionOfPointRemovalMessage(point->getName(), robot->getRobot()->getName());
+                    qDebug() << "Sorry this point is the home of a robot and therefore cannot be removed";
+                } else {
+                    qDebug() << "askForDeletePointConfirmation : something unexpected happened";
+                }
             }
         }
         leftMenu->disableButtons();
@@ -1891,14 +1932,18 @@ void MainWindow::askForDeleteGroupConfirmation(int index){
             } else {
                 /// this group contains the home point of a robot and cannot be removed, we prompt the end user with a customized message to explain which robot has its home point in the group
                 RobotView* robot = robots->findRobotUsingHome(homePoint->getName());
-                QMessageBox msgBox;
-                msgBox.setText("This group contains the point : " + homePoint->getName() + " which is the home point of the robot " + robot->getRobot()->getName() +
-                               ". If you want to remove it you first have to indicate a new home point for this robot.");
-                msgBox.setIcon(QMessageBox::Critical);
-                msgBox.setStandardButtons(QMessageBox::Ok);
-                msgBox.setInformativeText("To modify the home point of a robot you can either click on the menu > Robots, choose a robot and Add home or simply click a robot on the map and Add home");
-                msgBox.exec();
-                qDebug() << "Sorry this point is the home of a robot and therefore cannot be removed";
+                if(robot != NULL){
+                    QMessageBox msgBox;
+                    msgBox.setText("This group contains the point : " + homePoint->getName() + " which is the home point of the robot " + robot->getRobot()->getName() +
+                                   ". If you want to remove it you first have to indicate a new home point for this robot.");
+                    msgBox.setIcon(QMessageBox::Critical);
+                    msgBox.setStandardButtons(QMessageBox::Ok);
+                    msgBox.setInformativeText("To modify the home point of a robot you can either click on the menu > Robots, choose a robot and Add home or simply click a robot on the map and Add home");
+                    msgBox.exec();
+                    qDebug() << "Sorry this point is the home of a robot and therefore cannot be removed";
+                } else {
+                    qDebug() << "askForDeleteGroupConfirmation : something unexpected happened";
+                }
             }
         }
         pointsLeftWidget->disableButtons();
@@ -1921,7 +1966,11 @@ void MainWindow::displayPointEvent(PointView* pointView){
     leftMenu->getDisplaySelectedPoint()->getActionButtons()->getMapButton()->setChecked(true);
     QString robotName = "";
     if(pointView->getPoint()->isHome()){
-        robotName = robots->findRobotUsingHome(pointView->getPoint()->getName())->getRobot()->getName();
+        RobotView* rv = robots->findRobotUsingHome(pointView->getPoint()->getName());
+        if(rv != NULL)
+            robotName = rv->getRobot()->getName();
+        else
+            qDebug() << "displayPointEvent : something unexpected happened";
     }
     leftMenu->getDisplaySelectedPoint()->setPointView(pointView, robotName);
 
@@ -2109,7 +2158,11 @@ void MainWindow::displayPointsInGroup(void){
         PointView* pointView = pointViews->getPointViewFromPoint(*(points->getGroups().at(points->count()-1)->getPoints().at(checkedId+1-points->count())));
         QString robotName = "";
         if(pointView->getPoint()->isHome()){
-            robotName = robots->findRobotUsingHome(pointView->getPoint()->getName())->getRobot()->getName();
+            RobotView* rv = robots->findRobotUsingHome(pointView->getPoint()->getName());
+            if(rv != NULL)
+                robotName = rv->getRobot()->getName();
+            else
+                qDebug() << "displayPointsInGroup : something unexpected happened";
         }
         selectedPoint->setPointView(pointView, robotName);
         selectedPoint->displayPointInfo();
@@ -2176,8 +2229,12 @@ void MainWindow::removePoint(std::shared_ptr<Point>& point, const Origin origin)
         } else {
             /// this is in fact the home point of a robot, we prompt a customized message to the end user
             RobotView* robot = robots->findRobotUsingHome(point->getName());
-            openInterdictionOfPointRemovalMessage(point->getName(), robot->getRobot()->getName());
-            qDebug() << "Sorry this point is the home of a robot and therefore cannot be removed";
+            if(robot != NULL){
+                openInterdictionOfPointRemovalMessage(point->getName(), robot->getRobot()->getName());
+                qDebug() << "Sorry this point is the home of a robot and therefore cannot be removed";
+            } else {
+                qDebug() << "removePoint : something unexpected happened";
+            }
         }
         break;
     default:
@@ -2269,8 +2326,12 @@ void MainWindow::removePointFromInformationMenu(void){
             } else {
                 /// this point is actually the home point of a robot and therefore cannot be removed
                 RobotView* robot = robots->findRobotUsingHome(point->getName());
-                openInterdictionOfPointRemovalMessage(point->getName(), robot->getRobot()->getName());
-                qDebug() << "Sorry this point is the home of a robot and therefore cannot be removed";
+                if(robot != NULL){
+                    openInterdictionOfPointRemovalMessage(point->getName(), robot->getRobot()->getName());
+                    qDebug() << "Sorry this point is the home of a robot and therefore cannot be removed";
+                } else {
+                    qDebug() << "removePointFromInformationMenu : something unexpected happened";
+                }
             }
         }
         break;
@@ -2298,7 +2359,11 @@ void MainWindow::editPointFromGroupMenu(void){
             /// update the pointview et show the point on the map with hover color
             QString robotName = "";
             if(pointViews->getPointViewFromPoint(*(group->getPoints().at(point)))->getPoint()->isHome()){
-                robotName = robots->findRobotUsingHome(pointViews->getPointViewFromPoint(*(group->getPoints().at(point)))->getPoint()->getName())->getRobot()->getName();
+                RobotView* rv = robots->findRobotUsingHome(pointViews->getPointViewFromPoint(*(group->getPoints().at(point)))->getPoint()->getName());
+                if(rv != NULL)
+                    robotName = rv->getRobot()->getName();
+                else
+                    qDebug() << "editPointFromGroupMenu : something unexpected happened";
             }
             leftMenu->getDisplaySelectedPoint()->setPointView(pointViews->getPointViewFromPoint(*(group->getPoints().at(point))), robotName);
             leftMenu->getDisplaySelectedPoint()->getPointView()->setPixmap(PointView::PixmapType::HOVER);
@@ -2365,7 +2430,11 @@ void MainWindow::displayPointInfoFromGroupMenu(void){
             DisplaySelectedPoint* selectedPoint = leftMenu->getDisplaySelectedPoint();
             QString robotName = "";
             if(pointViews->getPointViewFromPoint(*point)->getPoint()->isHome()){
-                robotName = robots->findRobotUsingHome(pointViews->getPointViewFromPoint(*point)->getPoint()->getName())->getRobot()->getName();
+                RobotView* rv = robots->findRobotUsingHome(pointViews->getPointViewFromPoint(*point)->getPoint()->getName());
+                if(rv != NULL)
+                    robotName = rv->getRobot()->getName();
+                else
+                    qDebug() << "setSelectedRobotFromPoint : something unexpected happened";
             }
             selectedPoint->setPointView(pointViews->getPointViewFromPoint(*point), robotName);
             selectedPoint->displayPointInfo();
@@ -2632,7 +2701,11 @@ void MainWindow::doubleClickOnPoint(int checkedId){
             DisplaySelectedPoint* selectedPoint = leftMenu->getDisplaySelectedPoint();
             QString robotName = "";
             if(pointViews->getPointViewFromPoint(*point)->getPoint()->isHome()){
-                robotName = robots->findRobotUsingHome(pointViews->getPointViewFromPoint(*point)->getPoint()->getName())->getRobot()->getName();
+                RobotView* rv = robots->findRobotUsingHome(pointViews->getPointViewFromPoint(*point)->getPoint()->getName());
+                if(rv != NULL)
+                    robotName = rv->getRobot()->getName();
+                else
+                    qDebug() << "doubleClickOnPoint : something unexpected happened";
             }
             selectedPoint->setPointView(pointViews->getPointViewFromPoint(*point), robotName);
             selectedPoint->displayPointInfo();
@@ -2687,7 +2760,11 @@ void MainWindow::doubleClickOnGroup(int checkedId){
         PointView* pointView = pointViews->getPointViewFromPoint(*(points->getGroups().at(points->count()-1)->getPoints().at(checkedId+1-points->count())));
         QString robotName = "";
         if(pointView->getPoint()->isHome()){
-            robotName = robots->findRobotUsingHome(pointView->getPoint()->getName())->getRobot()->getName();
+            RobotView* rv = robots->findRobotUsingHome(pointView->getPoint()->getName());
+            if(rv != NULL)
+                robotName = rv->getRobot()->getName();
+            else
+                qDebug() << "doubleClickOnGroup : something unexpected happened";
         }
         selectedPoint->setPointView(pointView, robotName);
         selectedPoint->displayPointInfo();

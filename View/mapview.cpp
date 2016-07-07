@@ -91,6 +91,7 @@ void MapView::mouseReleaseEvent(QGraphicsSceneMouseEvent *event){
             Point tmpPoint("tmpPoint", 0.0, 0.0, false);
             PointView* newPointView = new PointView(std::make_shared<Point>(tmpPoint), this);
 
+            connect(newPointView, SIGNAL(pointLeftClicked(PointView*)), mainWindow, SLOT(displayPointEvent(PointView*)));
             connect(newPointView, SIGNAL(addPointPath(PointView*)), mainWindow, SLOT(addPathPoint(PointView*)));
             connect(newPointView, SIGNAL(moveTmpEditPathPoint()), mainWindow, SLOT(moveTmpEditPathPointSlot()));
             connect(newPointView, SIGNAL(homeSelected(PointView*, bool)), mainWindow, SLOT(homeSelected(PointView*, bool)));

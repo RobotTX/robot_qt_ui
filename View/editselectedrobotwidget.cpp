@@ -150,10 +150,13 @@ void EditSelectedRobotWidget::deletePwd(void){
 void EditSelectedRobotWidget::editName(void){
     robotView->getRobot()->setName(nameEdit->text());
     robotView->getRobot()->setWifi(wifiNameEdit->text());
-
-    robots->getRobotViewByName(robotView->getRobot()->getName())->getRobot()->setName(nameEdit->text());
-    robots->getRobotViewByName(robotView->getRobot()->getName())->getRobot()->setWifi(wifiNameEdit->text());
-
+    RobotView* rv = robots->getRobotViewByName(robotView->getRobot()->getName());
+    if(rv != NULL){
+        rv->getRobot()->setName(nameEdit->text());
+        rv->getRobot()->setWifi(wifiNameEdit->text());
+    } else {
+        qDebug() << "editName : something unexpected happened";
+    }
 }
 
 void EditSelectedRobotWidget::disableAll(void){

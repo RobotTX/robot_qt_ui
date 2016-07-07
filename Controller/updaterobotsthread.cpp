@@ -1,6 +1,5 @@
 #include "updaterobotsthread.h"
 #include <QTcpServer>
-#include <QTime>
 #include <QCoreApplication>
 
 
@@ -26,43 +25,37 @@ void UpdateRobotsThread::run(){
     while(!this->isInterruptionRequested()){
         if(!server->isListening())
             server->listen(QHostAddress::Any, port);
-        delay(300);
+        delay(200);
     }
 }
 
 void UpdateRobotsThread::newConnectionSlot(){
     socket = server->nextPendingConnection();
-    connect(socket, SIGNAL(disconnected()), this, SLOT(disconnectedSlot()));
+    //connect(socket, SIGNAL(disconnected()), this, SLOT(disconnectedSlot()));
     connect(socket, SIGNAL(readyRead()), this, SLOT(readTcpDataSlot()));
 
     if(socket->state() == QTcpSocket::ConnectedState){
-        qDebug() << "\n(UpdateRobotsThread) New connection established :" << socket->peerAddress().toString();
-    } else {
-        qDebug() << "\n(UpdateRobotsThread) Error : New connection could not be established :" << socket->peerAddress().toString();
+        //qDebug() << "\n(UpdateRobotsThread) New connection established :" << socket->peerAddress().toString();
+
+        int nbDataSend = socket->write("OK");
+
+        socket->waitForBytesWritten();
+
+        if(nbDataSend == -1){
+            qDebug() << "(UpdateRobotsThread) An error occured while sending data";
+        } else {
+            socket->waitForReadyRead();
+        }
     }
-
-    int nbDataSend = socket->write("OK");
-
-    socket->waitForBytesWritten();
-
-    if(nbDataSend == -1){
-        qDebug() << "(UpdateRobotsThread) An error occured while sending data";
-    } else {
-        //qDebug() << "(UpdateRobotsThread) " << nbDataSend << " bytes sent";
-        socket->waitForReadyRead();
-    }
-    //qDebug() << "(UpdateRobotsThread) Closing the socket";
     socket->close();
-    //qDebug() << "(UpdateRobotsThread) Socket closed";
 }
 
 void UpdateRobotsThread::disconnectedSlot(){
-    qDebug() << "(UpdateRobotsThread) Disconnected from :" << socket->peerAddress().toString();
+    //qDebug() << "(UpdateRobotsThread) Disconnected from :" << socket->peerAddress().toString();
 }
 
 void UpdateRobotsThread::readTcpDataSlot(){
-    QString hostname = socket->readAll();
-    qDebug() << "(UpdateRobotsThread) Hostname received :" << hostname;
+    emit robotIsAlive(socket->readAll(), socket->peerAddress().toString());
 }
 
 void UpdateRobotsThread::delay(const int ms) const{

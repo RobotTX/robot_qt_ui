@@ -1,10 +1,9 @@
 #include "scanrobotthread.h"
 
 
-ScanRobotThread::ScanRobotThread(const QString newipAddress, const int newPort, QObject* parent) : QThread(parent){
+ScanRobotThread::ScanRobotThread(const QString newipAddress, const int newPort){
     ipAddress = newipAddress;
     port = newPort;
-    ok = true;
 }
 
 void ScanRobotThread::run(){
@@ -47,7 +46,7 @@ void ScanRobotThread::run(){
             return;
         }
     }*/
-    while (ok) {
+    while (!this->isInterruptionRequested()) {
         if (!socketRobot->waitForReadyRead()) {
             qDebug() << "(Robot) Ready read error : " << socketRobot->errorString();
             socketRobot -> close();
@@ -84,7 +83,6 @@ void ScanRobotThread::connectedSlot(){
 
 void ScanRobotThread::disconnectedSlot(){
     qDebug() << "(Robot) Disconnected";
-    ok = false;
 }
 
 void ScanRobotThread::errorSlot(QAbstractSocket::SocketError error){

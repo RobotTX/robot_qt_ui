@@ -19,7 +19,7 @@ public:
      * @param ipAddress
      * @param port
      */
-    ScanRobotThread(const QString ipAddress, const int port, QObject *parent);
+    ScanRobotThread(const QString ipAddress, const int port);
 
     /**
      * @brief run
@@ -73,7 +73,6 @@ private :
     std::shared_ptr<QTcpSocket> socketRobot;
     QString ipAddress;
     int port;
-    bool ok;
 
 };
 
