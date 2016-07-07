@@ -20,7 +20,7 @@ EditSelectedPointWidget::EditSelectedPointWidget(QMainWindow* _parent, PointsVie
 
     separator = new SpaceWidget(SpaceWidget::HORIZONTAL, this);
 
-   /*
+
     ///                     PLUS MINUS AND EDIT BUTTONS
 
     topButtonsLayout = new QHBoxLayout();
@@ -63,7 +63,7 @@ EditSelectedPointWidget::EditSelectedPointWidget(QMainWindow* _parent, PointsVie
     layout->addLayout(eyeMapLayout);
 
     layout->addWidget(separator);
-    */
+
 
     nameEdit = new QLineEdit(this);
     nameEdit->setStyleSheet ("text-align: left");
