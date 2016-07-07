@@ -14,7 +14,34 @@ void Map::setMapFromFile(const QString fileName){
     mapImage = QImage(fileName,"PGM");
     width = mapImage.width();
     height = mapImage.height();
+    setRectangle();
 }
+
+void Map::setRectangle(void){
+    /// to determine the rectangle of the map
+    double upperBound(0.0);
+    double lowerBound(height);
+    double righterBound(0.0);
+    double lefterBound(width);
+    for(int i = 0; i < height; i++){
+        for(int j = 0; j < width; j++){
+            if(mapImage.pixelColor(j, i) == QColor(254, 254, 254)){
+                if(i > upperBound)
+                    upperBound = i;
+                else if(i < lowerBound)
+                    lowerBound = i;
+                else if(j < lefterBound)
+                    lefterBound = j;
+                else if(j > righterBound)
+                    righterBound = j;
+            }
+        }
+    }
+    rect = QRect(QPoint(lefterBound, lowerBound), QPoint(righterBound, upperBound));
+    qDebug() << "rect " << upperBound << righterBound << lowerBound <<  lefterBound;
+}
+
+// this code is temporarily dead
 
 void Map::setMapFromArray(const QByteArray& mapArrays){
     mapImage = QImage(width, height, QImage::Format_Grayscale8);
@@ -33,9 +60,12 @@ void Map::setMapFromArray(const QByteArray& mapArrays){
                 color = 255;
             else if(mapArrays.at(index) < 70)
                 color = 205;
-            else
+            else {
                 color = 0;
+
+            }
             mapImage.setPixelColor(QPoint(j, height-1-i), QColor(color, color, color));
+
             index++;
         }
     }

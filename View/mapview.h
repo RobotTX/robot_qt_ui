@@ -7,6 +7,7 @@ class Point;
 class QMainWindow;
 class QMouseEvent;
 class QGraphicsSceneMouseEvent;
+class Map;
 
 #include <QObject>
 #include <QGraphicsPixmapItem>
@@ -35,6 +36,7 @@ public:
     PointView* getTmpPointView(void) const { return tmpPointView; }
     GraphicItemState getState(void) const { return state; }
     PointsView* getPermanentPoints(void) const { return permanentPoints; }
+    QMainWindow* getMainWindow(void) const { return mainWindow; }
 
     /// Setters
     void setPoint(const QSharedPointer<PointView> _point) { point = _point; }
@@ -46,7 +48,6 @@ public:
     void clearPointViews();
     void addPointView(PointView * const &_pointView);
     void updatePoints(const Points& points);
-    QMainWindow* getMainWindow(void);
 
 signals:
     void pointLeftClicked(PointView*, bool);
@@ -73,6 +74,7 @@ private:
     QMainWindow* mainWindow;
     QVector<PointView*> pathCreationPoints;
     PointView* tmpPointView;
+    std::shared_ptr<Map> map;
 };
 
 #endif // MAPVIEW_H
