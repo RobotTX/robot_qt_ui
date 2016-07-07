@@ -36,7 +36,7 @@ public:
     GraphicItemState getState(void) const { return state; }
     PointsView* getPermanentPoints(void) const { return permanentPoints; }
 
-    /// Setter
+    /// Setters
     void setPoint(const QSharedPointer<PointView> _point) { point = _point; }
     void setState(const GraphicItemState _state, const bool clear = false);
     void setPermanentPoints(const std::shared_ptr<Points> &points);
@@ -47,6 +47,7 @@ public:
     void addPointView(PointView * const &_pointView);
     void updatePoints(const Points& points);
     QMainWindow* getMainWindow(void);
+
 signals:
     void pointLeftClicked(PointView*, bool);
     void addPathPointMapView(Point*);

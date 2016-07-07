@@ -33,10 +33,7 @@ DisplaySelectedGroup::DisplaySelectedGroup(QMainWindow *parent, std::shared_ptr<
 
     layout->addWidget(actionButtons);
 
-
     layout->addWidget(name);
-
-   // scrollArea = new VerticalScrollArea(this);
 
     pointButtonGroup = new PointButtonGroup(_points, 0, this);
     scrollArea->setWidget(pointButtonGroup);

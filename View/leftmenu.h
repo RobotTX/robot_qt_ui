@@ -21,6 +21,7 @@ class PointsViews;
 class PathCreationWidget;
 class QVBoxLayout;
 class MainWindow;
+class Map;
 
 #include <QWidget>
 #include <memory>
@@ -32,8 +33,7 @@ class MainWindow;
 class LeftMenu: public QWidget{
     Q_OBJECT
 public:
-    LeftMenu(MainWindow* _parent, const std::shared_ptr<Points> &_points, std::shared_ptr<Robots> const& robots, PointsView* const& pointViews);
-    QWidget* getLastWidget() const {return lastWidget;}
+    LeftMenu(MainWindow* _parent, const std::shared_ptr<Points> &_points, std::shared_ptr<Robots> const& robots, PointsView* const& pointViews, std::shared_ptr<Map> const& _map);
 
     /// Getters
     LeftMenuWidget* getLeftMenuWidget(void) const {return leftMenuWidget;}
@@ -51,6 +51,7 @@ public:
     void hideBackButton();
     QPushButton* getReturnButton(void) const { return returnButton; }
     QPushButton* getCloseButton(void) const { return closeBtn; }
+    QWidget* getLastWidget() const {return lastWidget;}
 
 public:
     void updateGroupDisplayed(const std::shared_ptr<Points> &_points, const int groupIndex);
@@ -78,6 +79,8 @@ private:
     QPushButton * returnButton;
     MainWindow* parent;
     std::shared_ptr<Points> points;
+
+    int lastCheckedId;
 
 };
 

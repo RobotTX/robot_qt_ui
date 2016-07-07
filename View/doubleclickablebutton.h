@@ -17,6 +17,7 @@ public:
 
 protected:
     void mouseDoubleClickEvent(QMouseEvent *);
+    //void keyPressEvent(QKeyEvent* e);
 
 signals:
     void doubleClick(int);

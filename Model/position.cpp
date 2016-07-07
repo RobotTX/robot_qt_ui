@@ -6,4 +6,4 @@ Position::Position()
     y = 0;
 }
 
-Position::Position(double _x, double _y):x(_x), y(_y){}
+Position::Position(const double _x, const double _y):x(_x), y(_y){}

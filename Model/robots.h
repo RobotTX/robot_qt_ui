@@ -61,7 +61,7 @@ public:
      * @return
      * Get a robotView from the name of its robot
      */
-    RobotView* getRobotViewByName(const QString name);
+    RobotView* getRobotViewByName(const QString name) const;
 
     /**
      * @brief getRobotViewByIp
@@ -70,7 +70,7 @@ public:
      * Same as above but with the ip
      * Gets a robotView from the ip of its robot
      */
-    RobotView* getRobotViewByIp(const QString ip);
+    RobotView* getRobotViewByIp(const QString ip) const;
 
     /**
      * @brief setSelected
@@ -86,7 +86,7 @@ public:
      * @return
      * Checks if a robot with the given name already exists
      */
-    bool existRobotName(const QString name);
+    bool existRobotName(const QString name) const;
 
     /**
      * @brief getRobotId
@@ -94,7 +94,7 @@ public:
      * @return int
      * returns the index of the robot whose name is passed as a parameter within the vector of robots
      */
-    int getRobotId(const QString name);
+    int getRobotId(const QString name) const;
 
     /**
      * @brief findRobotUsingHome

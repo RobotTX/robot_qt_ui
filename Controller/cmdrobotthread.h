@@ -36,12 +36,15 @@ public:
      * @return
      * Called when we want to send a command
      */
-    bool sendCommand(QString cmd);
+    bool sendCommand(const QString cmd);
     QString waitAnswer();
     void resetCommandAnswer(){ commandAnswer = ""; }
 
     void delay(const int ms) const;
 
+signals:
+    void robotIsDead(QString hostname, QString ip);
+    void writeCommand(QString cmd);
 
 private slots:
     /**
@@ -74,6 +77,7 @@ private slots:
      * Read the data we receive
      */
     void readTcpDataSlot();
+    void writeCommandSlot(QString cmd);
 
 private :
     std::shared_ptr<QTcpSocket> socketCmd;

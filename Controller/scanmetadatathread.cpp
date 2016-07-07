@@ -1,9 +1,8 @@
 #include "scanmetadatathread.h"
 
-ScanMetadataThread::ScanMetadataThread(const QString newipAddress, const int newPort, QObject* parent) : QThread(parent){
+ScanMetadataThread::ScanMetadataThread(const QString newipAddress, const int newPort){
     ipAddress = newipAddress;
     port = newPort;
-    ok = true;
 }
 
 void ScanMetadataThread::run(){
@@ -45,7 +44,7 @@ void ScanMetadataThread::run(){
             return;
         }
     }*/
-    while (ok) {
+    while (!this->isInterruptionRequested()) {
         if (!socketMetadata->waitForReadyRead()) {
             qDebug() << "(Metadata) Ready read error : " << socketMetadata->errorString();
             socketMetadata -> close();
@@ -85,7 +84,6 @@ void ScanMetadataThread::connectedSlot(){
 
 void ScanMetadataThread::disconnectedSlot(){
     qDebug() << "(Metadata) Disconnected";
-    ok = false;
 }
 
 void ScanMetadataThread::errorSlot(QAbstractSocket::SocketError socketError){

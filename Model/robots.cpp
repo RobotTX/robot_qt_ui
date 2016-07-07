@@ -52,26 +52,25 @@ void Robots::removeByIp(const QString ip){
     qDebug() << nb << " robot(s) with ip address " << ip << " removed";
 }
 
-RobotView* Robots::getRobotViewByName(const QString name){
+RobotView* Robots::getRobotViewByName(const QString name) const {
     for(int i = 0; i < robotsVector.length(); i++){
         if(robotsVector[i]->getRobot()->getName() == name){
             return robotsVector[i];
         }
     }
-    return new RobotView(NULL);
+    return NULL;
 }
 
-RobotView* Robots::getRobotViewByIp(const QString ip){
+RobotView* Robots::getRobotViewByIp(const QString ip) const {
     for(int i = 0; i < robotsVector.length(); i++){
         if(robotsVector[i]->getRobot()->getIp() == ip){
             return robotsVector[i];
         }
     }
-    return new RobotView(NULL);
+    return NULL;
 }
 
 void Robots::setSelected(RobotView * const robotView){
-
     qDebug() << "Selected robot : " << robotView->getRobot()->getName();
     for(int i = 0; i < robotsVector.length(); i++){
         if(robotsVector[i]->getRobot()->getName() == robotView->getRobot()->getName() &&
@@ -83,7 +82,7 @@ void Robots::setSelected(RobotView * const robotView){
     }
 }
 
-bool Robots::existRobotName(const QString name){
+bool Robots::existRobotName(const QString name) const {
     qDebug() << "(existRobotName) Checking robot name : " << name;
     for(int i = 0; i < robotsVector.length(); i++){
         if(robotsVector[i]->getRobot()->getName() == name){
@@ -93,7 +92,7 @@ bool Robots::existRobotName(const QString name){
     return false;
 }
 
-int Robots::getRobotId(const QString name){
+int Robots::getRobotId(const QString name) const{
     qDebug() << "(getRobotId) Checking robot name : " << name;
     for(int i = 0; i < robotsVector.length(); i++){
         if(robotsVector[i]->getRobot()->getName() == name){
@@ -104,14 +103,11 @@ int Robots::getRobotId(const QString name){
 }
 
 RobotView* Robots::findRobotUsingHome(const QString name) const {
-    RobotView* robot(0);
     for(int i = 0; i < robotsVector.size(); i++){
         std::shared_ptr<Point> home = robotsVector.at(i)->getRobot()->getHome();
         /// we first check that this robot has a home point, if it does then we compare the names
         if(home && !home->getName().compare(name))
             return robotsVector[i];
     }
-    return robot;
-
-
+    return NULL;
 }

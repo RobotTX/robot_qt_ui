@@ -91,6 +91,7 @@ void MapView::mouseReleaseEvent(QGraphicsSceneMouseEvent *event){
             Point tmpPoint("tmpPoint", 0.0, 0.0, false);
             PointView* newPointView = new PointView(std::make_shared<Point>(tmpPoint), this);
 
+            connect(newPointView, SIGNAL(pointLeftClicked(PointView*)), mainWindow, SLOT(displayPointEvent(PointView*)));
             connect(newPointView, SIGNAL(addPointPath(PointView*)), mainWindow, SLOT(addPathPoint(PointView*)));
             connect(newPointView, SIGNAL(moveTmpEditPathPoint()), mainWindow, SLOT(moveTmpEditPathPointSlot()));
             connect(newPointView, SIGNAL(homeSelected(PointView*, bool)), mainWindow, SLOT(homeSelected(PointView*, bool)));
@@ -123,22 +124,6 @@ void MapView::mouseReleaseEvent(QGraphicsSceneMouseEvent *event){
     /// else drag
     QGraphicsPixmapItem::mouseReleaseEvent(event);
 }
-/*
-void MapView::updatePoints(const Points& points){
-    for(size_t i = 0; i < permanentPoints->getGroups().size(); i++){
-        for(size_t j = 0; j < permanentPoints->getGroups().at(i)->getPointViews().size(); j++){
-            permanentPoints->getGroups().at(i)->getPointViews().at(j)->hide();
-        }
-    }
-    permanentPoints = new PointsView(points, this);
-    for(size_t i = 0; i < permanentPoints->getGroups().size(); i++){
-        for(size_t j = 0; j < permanentPoints->getGroups().at(i)->getPointViews().size(); j++){
-            permanentPoints->getGroups().at(i)->getPointViews().at(j)->setParentItem(this);
-            connect(&(*permanentPoints->getGroups().at(i)->getPointViews().at(j)), SIGNAL(pointLeftClicked(PointView*)), mainWindow, SLOT(displayPointEvent(PointView*)));
-        }
-    }
-}
-*/
 
 void MapView::addPathPointMapViewSlot(PointView* _pointView){
     qDebug() << "addPathPointMapViewSlot called";
@@ -180,7 +165,6 @@ void MapView::setState(const GraphicItemState _state, const bool clear){
  void MapView::clearPointViews(){
     point = static_cast<QSharedPointer<PointView>>(tmpPointView);
     permanentPoints->getGroups().clear();
-    //permanentPoints->setPoints(Points());
  }
 
  void MapView::setPermanentPoints(std::shared_ptr<Points> const& points){

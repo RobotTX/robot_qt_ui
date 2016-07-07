@@ -26,17 +26,18 @@
 #include "Model/xmlparser.h"
 #include "Controller/mainwindow.h"
 
-LeftMenu::LeftMenu(MainWindow* _parent, std::shared_ptr<Points> const& _points, const std::shared_ptr<Robots> &robots, PointsView * const &pointViews):
-    QWidget(_parent), parent(_parent), points(_points)
+LeftMenu::LeftMenu(MainWindow* _parent, std::shared_ptr<Points> const& _points, const std::shared_ptr<Robots> &robots, PointsView * const &pointViews, const std::shared_ptr<Map> &_map):
+    QWidget(_parent), parent(_parent), points(_points), lastCheckedId(-1)
 {
-   // QScrollArea * scroll = new VerticalScrollArea(_parent);
 
     QVBoxLayout * leftLayout  = new QVBoxLayout();
-  //  QWidget* inWidget  = new QWidget();
+
     QVBoxLayout * globalLayout  = new QVBoxLayout(this);
     QHBoxLayout * topLayout  = new QHBoxLayout();
 
     returnButton = new QPushButton(QIcon(":/icons/arrowLeft.png"), " Return", this);
+    returnButton->setAutoDefault(true);
+    returnButton->setDefault(true);
     returnButton->setIconSize(_parent->size()/10);
     connect(returnButton, SIGNAL(clicked()), _parent, SLOT(backEvent()));
 
@@ -54,7 +55,7 @@ LeftMenu::LeftMenu(MainWindow* _parent, std::shared_ptr<Points> const& _points, 
     connect(closeBtn, SIGNAL(clicked()), _parent, SLOT(closeSlot()));
 
     /// to display the information relative to a point
-    displaySelectedPoint = new DisplaySelectedPoint(_parent, _points);
+    displaySelectedPoint = new DisplaySelectedPoint(_parent, _points, _map);
     leftLayout->addWidget(displaySelectedPoint);
     leftLayout->setAlignment(displaySelectedPoint, Qt::AlignLeft);
 
@@ -116,7 +117,7 @@ LeftMenu::LeftMenu(MainWindow* _parent, std::shared_ptr<Points> const& _points, 
     connect(displaySelectedPoint->getActionButtons()->getMapButton(), SIGNAL(clicked(bool)), _parent, SLOT(displayPointMapEvent()));
     connect(displaySelectedPoint->getActionButtons()->getEditButton(), SIGNAL(clicked(bool)), _parent, SLOT(editPointButtonEvent()));
 
-    //to try maybe later connect(displaySelectedGroup->getMinusButton(), SIGNAL(clicked(bool)), this, SLOT(removePoint()));
+    // to try maybe later connect(displaySelectedGroup->getMinusButton(), SIGNAL(clicked(bool)), this, SLOT(removePoint()));
     connect(displaySelectedGroup->getActionButtons()->getMinusButton(), SIGNAL(clicked(bool)), _parent, SLOT(removePointFromGroupMenu()));
     connect(displaySelectedGroup->getActionButtons()->getEditButton(), SIGNAL(clicked(bool)), _parent, SLOT(editPointFromGroupMenu()));
     connect(displaySelectedGroup->getActionButtons()->getEyeButton(), SIGNAL(clicked(bool)), _parent, SLOT(displayPointInfoFromGroupMenu()));
@@ -139,10 +140,8 @@ LeftMenu::LeftMenu(MainWindow* _parent, std::shared_ptr<Points> const& _points, 
         }
     }
 
-   // inWidget->setLayout(leftLayout);
-   // scroll->setWidget(inWidget);
 
-    globalLayout->addLayout(leftLayout,Qt::AlignTop);
+    globalLayout->addLayout(leftLayout);
     globalLayout->setContentsMargins(0, 0, 0, 0);
     topLayout->setContentsMargins(0, 0, 0, 0);
     globalLayout->setSpacing(0);
@@ -175,25 +174,32 @@ void LeftMenu::showBackButton(QString name)
 }
 
 void LeftMenu::enableButtons(int index){
-    displaySelectedGroup->getActionButtons()->getMapButton()->setCheckable(true);
-    /// enables the minus button
-    displaySelectedGroup->getActionButtons()->getMinusButton()->setEnabled(true);
-    displaySelectedGroup->getActionButtons()->getMinusButton()->setToolTip("Click to remove the selected point");
-    /// enables the eye button
-    displaySelectedGroup->getActionButtons()->getEyeButton()->setEnabled(true);
-    displaySelectedGroup->getActionButtons()->getEyeButton()->setToolTip("Click to see the information of the selected point");
-    /// enables the map button
-    displaySelectedGroup->getActionButtons()->getMapButton()->setEnabled(true);
-    if(displaySelectedGroup->getPoints()->getGroups().at(displaySelectedGroup->getPointButtonGroup()->getGroupIndex())->getPoints().at(index)->isDisplayed()){
-        displaySelectedGroup->getActionButtons()->getMapButton()->setChecked(true);
-        displaySelectedGroup->getActionButtons()->getMapButton()->setToolTip("Click to hide the selected point on the map");
+    if(index == lastCheckedId){
+        disableButtons();
+        lastCheckedId = -1;
+        displaySelectedGroup->uncheck();
     } else {
-        displaySelectedGroup->getActionButtons()->getMapButton()->setChecked(false);
-        displaySelectedGroup->getActionButtons()->getMapButton()->setToolTip("Click to display the selected point on the map");
+        lastCheckedId = index;
+        displaySelectedGroup->getActionButtons()->getMapButton()->setCheckable(true);
+        /// enables the minus button
+        displaySelectedGroup->getActionButtons()->getMinusButton()->setEnabled(true);
+        displaySelectedGroup->getActionButtons()->getMinusButton()->setToolTip("Click to remove the selected point");
+        /// enables the eye button
+        displaySelectedGroup->getActionButtons()->getEyeButton()->setEnabled(true);
+        displaySelectedGroup->getActionButtons()->getEyeButton()->setToolTip("Click to see the information of the selected point");
+        /// enables the map button
+        displaySelectedGroup->getActionButtons()->getMapButton()->setEnabled(true);
+        if(displaySelectedGroup->getPoints()->getGroups().at(displaySelectedGroup->getPointButtonGroup()->getGroupIndex())->getPoints().at(index)->isDisplayed()){
+            displaySelectedGroup->getActionButtons()->getMapButton()->setChecked(true);
+            displaySelectedGroup->getActionButtons()->getMapButton()->setToolTip("Click to hide the selected point on the map");
+        } else {
+            displaySelectedGroup->getActionButtons()->getMapButton()->setChecked(false);
+            displaySelectedGroup->getActionButtons()->getMapButton()->setToolTip("Click to display the selected point on the map");
+        }
+        /// enables the edit button
+        displaySelectedGroup->getActionButtons()->getEditButton()->setEnabled(true);
+        displaySelectedGroup->getActionButtons()->getEditButton()->setToolTip("Click to modify the selected point");
     }
-    /// enables the edit button
-    displaySelectedGroup->getActionButtons()->getEditButton()->setEnabled(true);
-    displaySelectedGroup->getActionButtons()->getEditButton()->setToolTip("Click to modify the selected point");
 }
 
 void LeftMenu::disableButtons(){

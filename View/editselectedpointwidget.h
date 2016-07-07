@@ -45,8 +45,7 @@ private slots:
     void saveEditSelecPointBtnEvent();
     /// check whether or not a point with the same name already exists
     void checkPointName(void) const;
-    void print(int id) const;
-    void showGroupLayout() const;
+    void showGroupLayout(void) const;
 
 public slots:
     void hideGroupLayout() const;

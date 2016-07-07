@@ -90,7 +90,7 @@ void PointView::mouseReleaseEvent(QGraphicsSceneMouseEvent *event){
         qDebug() << "to" << x << y;
         point->setPosition(x, y);
         QGraphicsPixmapItem::mouseReleaseEvent(event);
-    }else if(state == GraphicItemState::EDITING_PERM){
+    } else if(state == GraphicItemState::EDITING_PERM){
         QGraphicsPixmapItem::mouseReleaseEvent(event);
     }
 }

@@ -12,8 +12,10 @@
 #include "Model/xmlparser.h"
 #include "View/spacewidget.h"
 #include "Model/group.h"
+#include "Model/map.h"
 
-DisplaySelectedPoint::DisplaySelectedPoint(QMainWindow *_parent, std::shared_ptr<Points> const& _points, PointView* _pointView, const Origin _origin): QWidget(_parent), parent(_parent), origin(_origin)
+DisplaySelectedPoint::DisplaySelectedPoint(QMainWindow *_parent, std::shared_ptr<Points> const& _points, std::shared_ptr<Map> const& _map, PointView* _pointView, const Origin _origin):
+    QWidget(_parent), parent(_parent), origin(_origin), map(_map)
 {
     parent = _parent;
     points = _points;
@@ -137,6 +139,7 @@ void DisplaySelectedPoint::resetWidget(){
     /// we hide the buttons relative to the edit option and make sure the points properties are not longer modifiable
     nameEdit->setReadOnly(true);
     actionButtons->getEditButton()->setChecked(false);
+
     cancelButton->hide();
     saveButton->hide();
 
@@ -153,9 +156,8 @@ void DisplaySelectedPoint::resetWidget(){
         nameEdit->setText(pointView->getPoint()->getName());
         if(pointView->getPoint()->isHome()){
             homeWidget->show();
-        } else {
+        } else
             homeWidget->hide();
-        }
     }
     emit resetState(GraphicItemState::NO_STATE, true);
 }
@@ -165,7 +167,7 @@ void DisplaySelectedPoint::hideEvent(QHideEvent *event){
     QWidget::hideEvent(event);
 }
 
-void DisplaySelectedPoint::checkPointName(QString name) const {
+void DisplaySelectedPoint::checkPointName(const QString name) const {
     qDebug() << "checkPointName called" << name;
     /// names are the same we don't do anything
     if(!name.compare(pointView->getPoint()->getName(), Qt::CaseInsensitive))
@@ -189,13 +191,6 @@ void DisplaySelectedPoint::checkPointName(QString name) const {
     }
     saveButton->setToolTip("");
     saveButton->setEnabled(true);
-
-}
-
-void DisplaySelectedPoint::updateCoordinates(double x, double y){
-    pointView->setPos(x, y);
-    posXLabel->setText("X : " + QString::number(x, 'f', 1));
-    posYLabel->setText("Y : " + QString::number(y, 'f', 1));
 }
 
 void DisplaySelectedPoint::setPointView(PointView* const& _pointView, QString robotName) {

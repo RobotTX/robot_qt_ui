@@ -9,7 +9,7 @@ class Position
 {
 public:
     Position();
-    Position(double x, double y);
+    Position(const double x, const double y);
 
     /// Getters
     double getX(void) const { return x; }

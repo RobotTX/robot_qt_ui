@@ -31,6 +31,8 @@ plusButton->setIconSize(QSize(sizeI,sizeI));
 //plusButton->setMaximumHeight(sizeh);
 plusButton->setMaximumWidth(sizew);
 plusButton->setMinimumWidth(sizew);
+plusButton->setAutoDefault(true);
+
 
 /*
 yourBtn->setStyleSheet("QPushButton{background:url(:/Resources/pause_nor.png);border:0px;}"
@@ -50,6 +52,8 @@ minusButton->setIconSize(QSize(sizeI,sizeI));
 minusButton->setMaximumHeight(sizeh);
 minusButton->setMaximumWidth(plusButton->width());
 minusButton->setMinimumWidth(plusButton->width());
+minusButton->setAutoDefault(true);
+
 
 /// to force the user to choose a group or point first
 
@@ -58,6 +62,8 @@ editButton->setIconSize(QSize(sizeI,sizeI));
 editButton->setMaximumHeight(sizeh);
 editButton->setMaximumWidth(plusButton->width());
 editButton->setMinimumWidth(plusButton->width());
+editButton->setAutoDefault(true);
+
 
 /// to force the user to choose a group or point first
 
@@ -87,6 +93,7 @@ mapButton->setIconSize(QSize(sizeI,sizeI));
 mapButton->setMaximumHeight(sizeh);
 mapButton->setMaximumWidth(sizew);
 mapButton->setMinimumWidth(sizew);
+mapButton->setAutoDefault(true);
 
 
 // eyeMapLayout = eye , map buttons
@@ -95,6 +102,8 @@ eyeButton->setIconSize(QSize(sizeI,sizeI));
 eyeButton->setMaximumHeight(sizeh);
 eyeButton->setMaximumWidth(sizew);
 eyeButton->setMinimumWidth(sizew);
+eyeButton->setAutoDefault(true);
+
 
 /// to force the user to choose first
 
@@ -145,10 +154,10 @@ mapButton->setStyleSheet("QPushButton{background-position: center center;}""QPus
 
 
 
-
-
-
-
+setTabOrder(plusButton, minusButton);
+setTabOrder(minusButton, editButton);
+setTabOrder(editButton, eyeButton);
+setTabOrder(eyeButton, mapButton);
  }
 
 void TopLeftMenu::disableAll()

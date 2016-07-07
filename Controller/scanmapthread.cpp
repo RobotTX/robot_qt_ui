@@ -1,9 +1,8 @@
 #include "scanmapthread.h"
-ScanMapThread::ScanMapThread(const QString newipAddress, const int newPort, QObject* parent) : QThread(parent){
+ScanMapThread::ScanMapThread(const QString newipAddress, const int newPort){
     ipAddress = newipAddress;
     port = newPort;
     data = QByteArray();
-    ok = true;
 }
 
 void ScanMapThread::run(){
@@ -46,7 +45,7 @@ void ScanMapThread::run(){
             return;
         }
     }*/
-    while(ok){
+    while(!this->isInterruptionRequested()){
         if (!socketMap->waitForReadyRead()) {
             qDebug() << "(Map) Ready read error : " << socketMap->errorString();
             socketMap -> close();
@@ -99,7 +98,6 @@ void ScanMapThread::connectedSlot(){
 
 void ScanMapThread::disconnectedSlot(){
     qDebug() << "(Map) Disconnected";
-    ok = false;
 }
 
 void ScanMapThread::errorSlot(QAbstractSocket::SocketError error){

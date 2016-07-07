@@ -77,7 +77,7 @@ void PathPainter::refresh(void){
     }
 }
 
-void PathPainter::updatePath(QVector<Point> pointVector){
+void PathPainter::updatePath(const QVector<Point>& pointVector){
     reset();
     pathVector = pointVector;
     refresh();
@@ -112,7 +112,7 @@ void PathPainter::clearPointViews(void){
     }
 }
 
-void PathPainter::updatePath(QVector<PointView*> pointViewsVector){
+void PathPainter::updatePath(const QVector<PointView*>& pointViewsVector){
     reset();
     if(pointViewsVector.size() > 0){
         PointView* startPointView = NULL;

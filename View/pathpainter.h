@@ -22,8 +22,8 @@ class PathPainter : public QGraphicsPathItem{
 public:
     PathPainter(MapView* const& mapPixmapItem, PointsView* const& _pointViews);
 
-    void updatePath(QVector<Point> pointVector);
-    void updatePath(QVector<PointView*> pointViewsVector);
+    void updatePath(const QVector<Point>& pointVector);
+    void updatePath(const QVector<PointView*>& pointViewsVector);
     void reset(void);
     void refresh(void);
     QVector<Point> getPathVector(void) const {return pathVector;}

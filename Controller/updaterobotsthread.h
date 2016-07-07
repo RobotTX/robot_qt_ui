@@ -1,11 +1,10 @@
 #ifndef UPDATEROBOTSTHREAD_H
 #define UPDATEROBOTSTHREAD_H
 
+#include <QTime>
 #include <QThread>
 #include <QtNetwork/QTcpServer>
 #include <QtNetwork/QTcpSocket>
-#include <memory>
-#include <QTime>
 
 class UpdateRobotsThread : public QThread {
     Q_OBJECT
@@ -20,12 +19,6 @@ public:
     void run();
     void delay(const int ms) const;
 
-public:
-    struct RobotStruct {
-        QString hostname;
-        QString ip;
-        QTime lastTimeConnected;
-    };
 
 private slots:
     void newConnectionSlot();
@@ -33,11 +26,13 @@ private slots:
     void readTcpDataSlot();
     void errorConnectionSlot(QAbstractSocket::SocketError error);
 
+signals:
+    void robotIsAlive(QString hostname, QString ip);
+
 private:
     int port;
     QTcpServer* server;
     QTcpSocket* socket;
-    QVector<RobotStruct> robotsVector;
 
 
 };

@@ -10,6 +10,7 @@ class Point;
 class QEvent;
 class QKeyEvent;
 class QLabel;
+class Map;
 
 #include "Model/points.h"
 #include "View/pointview.h"
@@ -26,7 +27,7 @@ public:
     /// used to determine which menu or object (could be the map) cause the information of this point to be displayed
     enum Origin { MAP, GROUP_MENU, POINTS_MENU };
 
-    DisplaySelectedPoint(QMainWindow* _parent, const std::shared_ptr<Points> &_points, PointView* _pointView = 0, const Origin _origin = MAP);
+    DisplaySelectedPoint(QMainWindow* _parent, const std::shared_ptr<Points> &_points, std::shared_ptr<Map> const& _map, PointView* _pointView = 0, const Origin _origin = MAP);
 
     TopLeftMenu* getActionButtons(void) const { return actionButtons; }
     QPushButton* getSaveButton(void) const { return saveButton; }
@@ -45,11 +46,13 @@ public:
 
 public:
     void displayPointInfo(void);
+    void setOrigin(const Origin _origin);
+    void resetWidget(void);
+
+protected:
     void mousePressEvent(QEvent*);
     void keyPressEvent(QKeyEvent* event);
     void hideEvent(QHideEvent *event);
-    void setOrigin(const Origin _origin);
-    void resetWidget(void);
 
 signals:
     /// to notify the mapview that one of its points have been updated (in order to update the name that's displayed when the mouse is hovering over a point)
@@ -58,12 +61,11 @@ signals:
     void resetState(GraphicItemState, bool);
 
 private slots:
-    /// when a point is edited and the user clicks on the map this slot is called to update the coordinates
-    void updateCoordinates(double x, double y);
     /// to check that a name is available before we proceed to the update
-    void checkPointName(QString name) const;
+    void checkPointName(const QString name) const;
 
 private:
+    std::shared_ptr<Map> map;
     QLineEdit* nameEdit;
     QHBoxLayout* nameLayout;
     QVBoxLayout* layout;

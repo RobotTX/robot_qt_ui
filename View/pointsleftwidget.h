@@ -56,9 +56,11 @@ public:
 public:
     void disableButtons(void);
     void updateGroupButtonGroup(Points const& points);
+    void resetWidget(void);
 
 protected:
     void keyPressEvent(QKeyEvent* event);
+    void showEvent(QShowEvent *event);
 
 public slots:
      int checkGroupName(QString name);
@@ -67,14 +69,18 @@ private slots:
     void enableButtons(int index);
     void cancelCreationGroup();
     void emitNewGroupSignal();
+    void modifyGroupAfterClick(QString name);
+    void reconnectModifyEdit();
 
 signals:
     void newGroup(QString name);
     void modifiedGroup(QString name);
+    void modifiedGroupAfterClick(QString name);
+    void enableReturn();
+    void messageCreationGroup(QString);
 
 private:
 
-    QMainWindow* parent;
     QVBoxLayout* layout;
     QHBoxLayout* eyeMapLayout;
     QHBoxLayout* grid;
@@ -106,6 +112,7 @@ private:
     std::shared_ptr<Points> points;
     /// to differenciate the behavior of the enter key
     bool creatingGroup;
+    int lastCheckedId;
 };
 
 #endif // POINTSLEFTWIDGET_H

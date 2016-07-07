@@ -18,7 +18,7 @@ class TopLayout : public QWidget{
     Q_OBJECT
 public:
     TopLayout(QMainWindow* parent);
-    void setLabel(QString msgType, QString msg);
+    void setLabel(const QString msgType, const QString msg);
     void disable();
     void enable();
 
