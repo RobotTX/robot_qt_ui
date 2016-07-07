@@ -106,8 +106,9 @@ PointsLeftWidget::PointsLeftWidget(QMainWindow* _parent, std::shared_ptr<Points>
     setMaximumWidth(_parent->width()*4/10);
     setMinimumWidth(_parent->width()*4/10);
     layout->setAlignment(Qt::AlignBottom);
-
+    layout->setContentsMargins(0,0,0,0);
     //setTabOrder(cancelButton, saveButton);
+
 }
 
 void PointsLeftWidget::updateGroupButtonGroup(Points const& points){

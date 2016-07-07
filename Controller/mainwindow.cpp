@@ -108,6 +108,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     resetFocus();
     initializeLeftMenu();
     bottom->addWidget(leftMenu);
+    //mainLayout->setContentsMargins(0,0,0,0);
 
 
     rightLayout = new QVBoxLayout();
