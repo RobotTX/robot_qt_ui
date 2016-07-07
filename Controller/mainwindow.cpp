@@ -299,6 +299,9 @@ void MainWindow::connectToRobot(){
             }
         }
     } else {
+        setMessageTop(TEXT_COLOR_DANGER, "You must first click a robot on the map to establish a connection");
+        delay(2500);
+        setMessageTop(TEXT_COLOR_NORMAL, "");
         qDebug() << "Select a robot first";
     }
 }

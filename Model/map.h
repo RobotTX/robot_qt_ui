@@ -9,7 +9,21 @@
  * The model class for the Map,
  * contains the map as a QImage and its width, height, resolution and the origin
  */
-class Map{
+class Map {
+
+private:
+    class Rectangle {
+    public:
+        Rectangle(const Position& _topLeftCorner, const Position& _topRightCorner, const Position& _bottomLeftCorner, const Position& _bottomRightCorner):
+            topLeftCorner(_topLeftCorner), topRightCorner(_topRightCorner), bottomLeftCorner(_bottomLeftCorner), bottomRightCorner(_bottomRightCorner) {}
+        Rectangle(): topLeftCorner(Position(0, 0)), topRightCorner(Position(0 ,0)), bottomLeftCorner(Position(0, 0)), bottomRightCorner(Position(0 ,0)){}
+    private:
+        Position topLeftCorner;
+        Position topRightCorner;
+        Position bottomLeftCorner;
+        Position bottomRightCorner;
+    };
+
 public:
     Map();
 
@@ -47,6 +61,7 @@ public:
      */
     void saveToFile(const QString fileName);
 
+    void setRectangle(void);
 private:
     /**
      * @brief mapImage
@@ -70,6 +85,12 @@ private:
      * (which can be anywhere in the map) and not our map origin (top-left corner)
      */
     Position origin;
+    /**
+     * @brief rectangle
+     * The rectangle whose corners are the extreme known points in each direction, its purpose is to
+     * display the known part of the map by default
+     */
+    Rectangle rectangle;
 
 };
 
