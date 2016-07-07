@@ -25,7 +25,7 @@ class MapView: public QObject, public QGraphicsPixmapItem {
     Q_OBJECT
 
 public:
-    MapView (const QPixmap& pixmap, const QSize size, std::shared_ptr<Map> const& _map, QMainWindow *_mainWindow);
+    MapView (const QPixmap& pixmap, const QSize size, QMainWindow *_mainWindow);
     ~MapView();
 
     /// Getters

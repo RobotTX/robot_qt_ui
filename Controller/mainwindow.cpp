@@ -79,7 +79,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
     //create the graphic item of the map
     QPixmap pixmap = QPixmap::fromImage(map->getMapImage());
-    mapPixmapItem = new MapView(pixmap, QSize(geometry().width(), geometry().height()), map, this);
+    mapPixmapItem = new MapView(pixmap, QSize(geometry().width(), geometry().height()), this);
     //mapPixmapItem->centerMap();
     connect(mapPixmapItem, SIGNAL(addPathPointMapView(Point*)), this, SLOT(addPathPoint(Point*)));
     connect(mapPixmapItem, SIGNAL(homeSelected(PointView*, bool)), this, SLOT(homeSelected(PointView*, bool)));

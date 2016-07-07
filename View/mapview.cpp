@@ -11,8 +11,9 @@
 #include "mainwindow.h"
 #include "Model/map.h"
 
-MapView::MapView (const QPixmap& pixmap, const QSize _size, const std::shared_ptr<Map> &_map, QMainWindow* _mainWindow) :
-    QGraphicsPixmapItem(pixmap), size(_size), state(GraphicItemState::NO_STATE), map(_map) {
+MapView::MapView (const QPixmap& pixmap, const QSize _size, QMainWindow* _mainWindow) :
+    QGraphicsPixmapItem(pixmap), size(_size), state(GraphicItemState::NO_STATE)
+{
 
     mainWindow = _mainWindow;
     /// Tell the class which mouse button to accept
