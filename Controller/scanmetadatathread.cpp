@@ -23,7 +23,7 @@ void ScanMetadataThread::run(){
     socketMetadata->connectToHost(ipAddress, port);
 
     int i = 1;
-    while(!socketMetadata->waitForConnected(5000)){
+    while(!socketMetadata->waitForConnected(5000) && !isInterruptionRequested()){
         //qDebug() << "(Metadata) Attempt " << i << " :\nConnecting error : " << socketMetadata->errorString();
         socketMetadata->connectToHost(ipAddress, port);
         sleep(1);

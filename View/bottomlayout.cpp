@@ -153,7 +153,7 @@ void BottomLayout::deletePath(const int index){
 }
 
 void BottomLayout::updateRobot(const int id, RobotView * const robotView){
-    qDebug() << "(BottomLayout) updateRobot called";
+    qDebug() << "(BottomLayout) updateRobot called" << id << robotBtnGroup->buttons().size();
     robotBtnGroup->button(id)->setText(robotView->getRobot()->getName());
     if(robotView->getRobot()->getPath().size() < 1){
         stopRobotBtnGroup->button(id)->setEnabled(false);
@@ -176,6 +176,7 @@ void BottomLayout::updateRobot(const int id, RobotView * const robotView){
 }
 
 void BottomLayout::addRobot(RobotView * const robotView){
+    qDebug() << "(BottomLayout) addRobot called";
     int i = robotBtnGroup->buttons().size();
     /// Creation of the first collumn, with the button containing the name of the robots
     QPushButton* robotBtn = new QPushButton(robotView->getRobot()->getName(), this);
@@ -234,9 +235,35 @@ void BottomLayout::addRobot(RobotView * const robotView){
     columnStop->addWidget(stopRobotBtn);
 }
 
-/// TODO update all ids on delete
 void BottomLayout::removeRobot(const int id){
-    qDebug() << "removeRobot from BottomLayout soon" << id;
+    qDebug() << "(BottomLayout) removeRobot called" << id;
+    playRobotBtnGroup->removeButton(playRobotBtnGroup->buttons().at(id));
+    stopRobotBtnGroup->removeButton(stopRobotBtnGroup->buttons().at(id));
+    robotBtnGroup->removeButton(robotBtnGroup->buttons().at(id));
+    viewPathRobotBtnGroup->removeButton(viewPathRobotBtnGroup->buttons().at(id));
+
+    QLayoutItem* item1 = columnName->takeAt(id);
+    delete item1->widget();
+    delete item1;
+    QLayoutItem* item2 = columnPath->takeAt(id);
+    delete item2->widget();
+    delete item2;
+    QLayoutItem* item3 = columnPlay->takeAt(id);
+    delete item3->widget();
+    delete item3;
+    QLayoutItem* item4 = columnViewPath->takeAt(id);
+    delete item4->widget();
+    delete item4;
+    QLayoutItem* item5 = columnStop->takeAt(id);
+    delete item5->widget();
+    delete item5;
+
+    for(int i =0; i < playRobotBtnGroup->buttons().size(); i++){
+        playRobotBtnGroup->setId(playRobotBtnGroup->buttons().at(i), i);
+        stopRobotBtnGroup->setId(stopRobotBtnGroup->buttons().at(i), i);
+        robotBtnGroup->setId(robotBtnGroup->buttons().at(i), i);
+        viewPathRobotBtnGroup->setId(viewPathRobotBtnGroup->buttons().at(i), i);
+    }
 }
 
 void BottomLayout::disable(){

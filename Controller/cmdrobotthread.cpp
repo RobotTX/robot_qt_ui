@@ -15,6 +15,12 @@ void CmdRobotThread::run(){
     qDebug() << "(Robot" << robotName << ") Command Thread launched";
 
     socketCmd = std::shared_ptr<QTcpSocket>(new QTcpSocket());
+    socketCmd->setSocketOption(QAbstractSocket::KeepAliveOption, 1);
+
+
+    int qtype1 = qRegisterMetaType<QAbstractSocket::SocketError>("SocketError");
+    qDebug() << "SocketError qtype :" << qtype1;
+
 
     /// Connect the signal readyRead which tell us when data arrived to the function that treat them
     connect(&(*socketCmd), SIGNAL(readyRead()), this, SLOT(readTcpDataSlot()) );
@@ -22,7 +28,7 @@ void CmdRobotThread::run(){
     //connect(&(*socketCmd), SIGNAL(hostFound()), SLOT(hostFoundSlot()) );
     /// Connect the signal connected which trigger when we are connected to the host
     connect(&(*socketCmd), SIGNAL(connected()), this, SLOT(connectedSlot()) );
-    //connect( &(*socketCmd), SIGNAL(error(QAbstractSocket::SocketError)), SLOT(errorSlot(QAbstractSocket::SocketError)) );
+    connect(&(*socketCmd), SIGNAL(error(QAbstractSocket::SocketError)), SLOT(errorSlot(QAbstractSocket::SocketError)) );
     /// Connect the signal disconnected which trigger when we are disconnected from the host
     connect(&(*socketCmd), SIGNAL(disconnected()), this, SLOT(disconnectedSlot()));
     connect(this, SIGNAL(writeCommand(QString)), this, SLOT(writeCommandSlot(QString)));
@@ -31,7 +37,7 @@ void CmdRobotThread::run(){
     socketCmd->connectToHost(ipAddress, port);
 
     int i = 1;
-    while(!socketCmd->waitForConnected(5000)){
+    while(!socketCmd->waitForConnected(5000) && !isInterruptionRequested()){
         //qDebug() << "(Robot" << robotName << ") Attempt " << i << ":\nConnecting error : " << socketCmd->errorString();
         socketCmd->connectToHost(ipAddress, port);
         sleep(1);
@@ -44,7 +50,7 @@ void CmdRobotThread::run(){
     }
 
     /// Throw an error if bytes are available but we can't read them
-    while (socketCmd->bytesAvailable() < (int)sizeof(quint16)) {
+    while (socketCmd->bytesAvailable() < (int)sizeof(quint16) && !isInterruptionRequested()) {
         if (!socketCmd->waitForReadyRead()) {
             qDebug() << "(Robot" << robotName << ") Ready read error : " << socketCmd->errorString();
             socketCmd->close();
@@ -74,7 +80,7 @@ bool CmdRobotThread::sendCommand(const QString cmd){
 }
 
 void CmdRobotThread::writeCommandSlot(QString cmd){
-    qDebug() << "writeCommandSlot";
+    qDebug() << "writeCommandSlot called";
     int nbDataSend = socketCmd->write(QString(cmd + " } ").toUtf8());
 
     socketCmd->waitForBytesWritten();
@@ -88,7 +94,7 @@ void CmdRobotThread::writeCommandSlot(QString cmd){
             socketCmd->waitForReadyRead();
         } else {
             qDebug() << "No wait";
-            sleep(2);
+            delay(2000);
         }
     }
 }
@@ -101,11 +107,11 @@ void CmdRobotThread::readTcpDataSlot(){
 QString CmdRobotThread::waitAnswer(){
     qDebug() << "waiting for an answer";
     int waitTime = 0;
-    while(!commandAnswer.compare("") && waitTime < 5){
-        delay(1000);
+    while(!commandAnswer.compare("") && waitTime < 6){
+        delay(500);
         waitTime++;
     }
-    qDebug() << "Got answer and waited for" << waitTime << "seconds :" << commandAnswer;
+    qDebug() << "Got answer and waited for" << (waitTime*500) << "seconds :" << commandAnswer;
     return commandAnswer;
 }
 
@@ -125,7 +131,7 @@ void CmdRobotThread::disconnectedSlot(){
 }
 
 void CmdRobotThread::errorSlot(QAbstractSocket::SocketError error){
-    qDebug() << "(Robot" << robotName << ") Error : " << error;
+    qDebug() << "(Robot" << robotName << ") catched a connection error : " << error;
 }
 
 void CmdRobotThread::delay(const int ms) const{

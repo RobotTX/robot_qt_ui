@@ -1,9 +1,6 @@
 #ifndef CMDROBOTTHREAD_H
 #define CMDROBOTTHREAD_H
 
-class QtNetwork;
-class QTcpSocket;
-
 #include <QThread>
 #include <QString>
 #include <QtNetwork/QTcpSocket>

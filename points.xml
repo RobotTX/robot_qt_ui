@@ -1,9 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <points>
     <group>
-        <name>alo</name>
-    </group>
-    <group>
         <name>first group</name>
         <point>
             <name>A</name>
@@ -58,12 +55,6 @@
             <x>150</x>
             <y>225</y>
             <displayed>1</displayed>
-        </point>
-        <point>
-            <name>Home_Tartiflette</name>
-            <x>294</x>
-            <y>206</y>
-            <displayed>4</displayed>
         </point>
     </group>
 </points>
