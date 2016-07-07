@@ -106,6 +106,8 @@ EditSelectedRobotWidget::EditSelectedRobotWidget(QMainWindow* parent, const std:
     setMaximumWidth(parent->width()*4/10);
     setMinimumWidth(parent->width()*4/10);
     layout->setAlignment(Qt::AlignTop);
+    layout->setContentsMargins(0,0,0,0);
+
 }
 
 void EditSelectedRobotWidget::setSelectedRobot(RobotView* const _robotView){

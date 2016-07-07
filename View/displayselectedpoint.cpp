@@ -82,7 +82,7 @@ DisplaySelectedPoint::DisplaySelectedPoint(QMainWindow *_parent, std::shared_ptr
     robotBtn = new QPushButton("", this);
     homeLayout->addWidget(robotBtn);
 
-    homeLayout->setContentsMargins(0, 0, 0, 0);
+    //homeLayout->setContentsMargins(0, 0, 0, 0);
     homeWidget->hide();
 
     layout->addWidget(homeWidget);
@@ -93,6 +93,9 @@ DisplaySelectedPoint::DisplaySelectedPoint(QMainWindow *_parent, std::shared_ptr
 
     setMaximumWidth(_parent->width()*4/10);
     setMinimumWidth(_parent->width()*4/10);
+    layout->setContentsMargins(0,0,0,0);
+    layout->setAlignment(Qt::AlignTop);
+
 }
 
 void DisplaySelectedPoint::displayPointInfo(void){

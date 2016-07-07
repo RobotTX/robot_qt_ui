@@ -107,6 +107,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     resetFocus();
     initializeLeftMenu();
     bottom->addWidget(leftMenu);
+    //mainLayout->setContentsMargins(0,0,0,0);
 
 
     rightLayout = new QVBoxLayout();
@@ -287,9 +288,9 @@ void MainWindow::initializeRobots(){
 
 
 
-    updateRobotsThread = new UpdateRobotsThread(PORT_ROBOT_UPDATE);
+    /*updateRobotsThread = new UpdateRobotsThread(PORT_ROBOT_UPDATE);
     updateRobotsThread->start();
-    updateRobotsThread->moveToThread(updateRobotsThread);
+    updateRobotsThread->moveToThread(updateRobotsThread);*/
 
 
     //TODO Need to come from XML

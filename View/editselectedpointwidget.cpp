@@ -130,6 +130,8 @@ EditSelectedPointWidget::EditSelectedPointWidget(QMainWindow* _parent, PointsVie
     setMaximumWidth(_parent->width()*4/10);
     setMinimumWidth(_parent->width()*4/10);
     layout->setAlignment(Qt::AlignTop);
+    layout->setContentsMargins(0,0,0,0);
+
 }
 
 void EditSelectedPointWidget::setSelectedPoint(PointView * const &_pointView, const bool isTemporary){

@@ -46,7 +46,7 @@ LeftMenu::LeftMenu(MainWindow* _parent, std::shared_ptr<Points> const& _points, 
     //closeBtn->setStyleSheet("QPushButton { padding: 5px;}");
     //closeBtn->setFocusPolicy(Qt::FocusPolicy::NoFocus);
     returnButton->hide();
-    topLayout->addWidget(returnButton);
+    topLayout->addWidget(returnButton,Qt::AlignLeft);
 
     topLayout->addWidget(closeBtn);
 
@@ -82,7 +82,7 @@ LeftMenu::LeftMenu(MainWindow* _parent, std::shared_ptr<Points> const& _points, 
     /// Menu which display the list of robots
     robotsLeftWidget = new RobotsLeftWidget(_parent);
     robotsLeftWidget->setRobots(robots);
-    leftLayout->addWidget(robotsLeftWidget);
+    leftLayout->addWidget(robotsLeftWidget,Qt::AlignTop);
 
     /// Menu which display the map menu in which user can save/load a map
     mapLeftWidget = new MapLeftWidget(_parent);
@@ -141,8 +141,19 @@ LeftMenu::LeftMenu(MainWindow* _parent, std::shared_ptr<Points> const& _points, 
 
    // inWidget->setLayout(leftLayout);
    // scroll->setWidget(inWidget);
-    globalLayout->addLayout(leftLayout);
+
+    globalLayout->addLayout(leftLayout,Qt::AlignTop);
     globalLayout->setContentsMargins(0, 0, 0, 0);
+    topLayout->setContentsMargins(0, 0, 0, 0);
+    globalLayout->setSpacing(0);
+
+/*
+    // set black background
+    QPalette Pal(palette());
+    Pal.setColor(QPalette::Background, Qt::black);
+    leftLayout->setAutoFillBackground(true);
+    leftLayout->setPalette(Pal);
+    */
 }
 
 void LeftMenu::updateGroupDisplayed(std::shared_ptr<Points> const& _points, const int groupIndex){

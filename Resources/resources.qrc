@@ -1,13 +1,15 @@
 <RCC>
     <qresource prefix="/maps">
 	<file>map.pgm</file>
-	<file>map-s.pgm</file>
+        <file>map-s.pgm</file>
     </qresource>
     <qresource prefix="/icons">
 	<file alias="close.png">007__close.png</file>
 	<file alias="cropped_close.png">cropped_close.png</file>
 	<file alias="plus.png">005__plus.png</file>
-	<file alias="minus.png">006__minus.png</file>
+        <file alias="cropped_plus.png">005__cropped_plus.png</file>
+        <file alias="minus.png">006__minus.png</file>
+        <file alias="cropped_minus.png">006__cropped_minus.png</file>
 	<file alias="refresh.png">019__refresh.png</file>
 	<file alias="list.png">031__list.png</file>
 	<file alias="list_item.png">032__list_item.png</file>
@@ -23,8 +25,10 @@
 	<file alias="arrowLeft.png">021__arrow2_left.png</file>
 	<file alias="arrowRight.png">022__arrow2_right.png</file>
 	<file alias="edit.png">083__setting_edit.png</file>
+        <file alias="cropped_edit.png">083__cropped_edit.png</file>
 	<file alias="upload.png">028__upload.png</file>
 	<file>map.png</file>
+        <file>cropped_map.png</file>
 	<file>robot.png</file>
         <file>better_coords.png</file>
 	<file alias="caution.png">042__caution.png</file>
@@ -32,6 +36,7 @@
 	<file alias="play.png">131__play.png</file>
 	<file alias="pause.png">132__pause.png</file>
 	<file alias="eye.png">128__eye.png</file>
+        <file alias="cropped_eye.png">128__cropped_eye.png</file>
 
         <file>cropped_coordinates.png</file>
 	<file alias="blue_coord.png">blue_coordinates.png</file>
