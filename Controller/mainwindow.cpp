@@ -333,7 +333,6 @@ void MainWindow::initializeRobots(){
     updateRobotsThread->start();
     updateRobotsThread->moveToThread(updateRobotsThread);*/
 
-/*
 
     std::shared_ptr<Robot> robot1(new Robot("Roboty", "localhost", PORT_CMD, this));
     robot1->setWifi("Swaghetti Yolognaise");
@@ -583,7 +582,6 @@ void MainWindow::addPathSelecRobotBtnEvent(){
     hideAllWidgets();
     pathPainter->reset();
     pathCreationWidget->show();
-    pathCreationWidget->resetWidget();
     pathCreationWidget->setSelectedRobot(selectedRobot->getRobot());
     setGraphicItemsState(GraphicItemState::CREATING_PATH, true);
     switchFocus(selectedRobot->getRobot()->getName(),pathCreationWidget);

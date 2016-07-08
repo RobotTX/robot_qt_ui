@@ -31,8 +31,7 @@ PathCreationWidget::PathCreationWidget(QMainWindow* parent, const Points &_point
     creatingNewPoint = false;
 
     actionButtons = new TopLeftMenu(this);
-    actionButtons->disableAll();
-    actionButtons->getPlusButton()->setEnabled(true);
+
 
     layout->addWidget(actionButtons);
 
@@ -361,12 +360,17 @@ void PathCreationWidget::resetWidget(){
 
     pathPointsList->clear();
     idPoint = 1;
+    /*
     actionButtons->getMinusButton()->setChecked(false);
     actionButtons->getEditButton()->setChecked(false);
 
     actionButtons->getPlusButton()->setEnabled(true);
     actionButtons->getMinusButton()->setEnabled(true);
     actionButtons->getEditButton()->setEnabled(true);
+    */
+    actionButtons->uncheckAll();
+    actionButtons->disableAll();
+    actionButtons->getPlusButton()->setEnabled(true);
 
     pointList.clear();
 }
@@ -498,4 +502,12 @@ void PathCreationWidget::moveEditPathPoint(float posX, float posY){
     pointList.replace(id-1, editedPathPointCreationWidget->getPoint());
 
     updatePointPainter();
+}
+
+
+void PathCreationWidget::showEvent(QShowEvent *)
+{
+    resetWidget();
+    actionButtons->disableAll();
+    actionButtons->getPlusButton()->setEnabled(true);
 }
