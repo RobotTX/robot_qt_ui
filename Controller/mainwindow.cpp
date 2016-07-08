@@ -327,10 +327,10 @@ void MainWindow::connectToRobot(){
 
 void MainWindow::initializeRobots(){
 
-    updateRobotsThread = new UpdateRobotsThread(PORT_ROBOT_UPDATE);
+    /*updateRobotsThread = new UpdateRobotsThread(PORT_ROBOT_UPDATE);
     connect(updateRobotsThread, SIGNAL(robotIsAlive(QString,QString)), this, SLOT(robotIsAliveSlot(QString,QString)));
     updateRobotsThread->start();
-    updateRobotsThread->moveToThread(updateRobotsThread);
+    updateRobotsThread->moveToThread(updateRobotsThread);*/
 
 
     /*
