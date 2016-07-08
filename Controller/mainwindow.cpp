@@ -185,10 +185,10 @@ MainWindow::~MainWindow(){
     delete pathPainter;
     qDeleteAll(pathPointViews.begin(), pathPointViews.end());
     pathPointViews.clear();
-    if (updateRobotsThread != NULL && updateRobotsThread->isRunning() ) {
+    /*if (updateRobotsThread != NULL && updateRobotsThread->isRunning() ) {
         updateRobotsThread->requestInterruption();
         updateRobotsThread->wait();
-    }
+    }*/
     if (metadataThread != NULL && metadataThread->isRunning() ) {
         metadataThread->requestInterruption();
         metadataThread->wait();
@@ -333,7 +333,7 @@ void MainWindow::initializeRobots(){
     updateRobotsThread->moveToThread(updateRobotsThread);*/
 
 
-    /*
+
     std::shared_ptr<Robot> robot1(new Robot("Roboty", "localhost", PORT_CMD, this));
     robot1->setWifi("Swaghetti Yolognaise");
     RobotView* robotView1 = new RobotView(robot1, mapPixmapItem);
@@ -357,7 +357,9 @@ void MainWindow::initializeRobots(){
     robotView3->setPosition(200, 300);
     robotView3->setParentItem(mapPixmapItem);
     robots->add(robotView3);
-    std::shared_ptr<Robot> robot4(new Robot("Robotu", "192.168.4.236", PORT_CMD, this));
+
+
+    /*std::shared_ptr<Robot> robot4(new Robot("Robotu", "192.168.4.236", PORT_CMD, this));
     robot4->setWifi("Swaghetti Yolognaise");
     RobotView* robotView4 = new RobotView(robot4, mapPixmapItem);
     connect(robotView4, SIGNAL(setSelectedSignal(RobotView*)), this, SLOT(setSelectedRobot(RobotView*)));
