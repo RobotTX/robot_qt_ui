@@ -13,57 +13,21 @@
 #include <QComboBox>
 #include "View/spacewidget.h"
 #include <QKeyEvent>
+#include "topleftmenu.h"
+#include "View/buttonmenu.h"
+
+
 
 EditSelectedPointWidget::EditSelectedPointWidget(QMainWindow* _parent, PointsView* _points):QWidget(_parent){
     parent = _parent;
     points = _points;
 
-    separator = new SpaceWidget(SpaceWidget::HORIZONTAL, this);
-
-
-    ///                     PLUS MINUS AND EDIT BUTTONS
-
-    topButtonsLayout = new QHBoxLayout();
-
-    plusButton = new QPushButton(QIcon(":/icons/plus.png"),"", this);
-    plusButton->setIconSize(_parent->size()/10);
-    plusButton->setToolTip("Click this button if you want to save this point permanently");
-
-    minusButton = new QPushButton(QIcon(":/icons/minus.png"),"", this);
-    minusButton->setIconSize(_parent->size()/10);
-    minusButton->setEnabled(false);
-
-    editButton = new QPushButton(QIcon(":/icons/edit.png"),"", this);
-    editButton->setIconSize(_parent->size()/10);
-    editButton->setEnabled(false);
-
-    topButtonsLayout->addWidget(plusButton);
-    topButtonsLayout->addWidget(minusButton);
-    topButtonsLayout->addWidget(editButton);
-
-    ///                    EYE AND MAP BUTTONS
-
-    eyeMapLayout = new QHBoxLayout();
-
-    eyeButton = new QPushButton(QIcon(":/icons/eye.png"), "", this);
-    eyeButton->setIconSize(_parent->size()/10);
-    eyeButton->setEnabled(false);
-
-    mapButton = new QPushButton(QIcon(":/icons/map.png"),"", this);
-    mapButton->setIconSize(_parent->size()/10);
-    mapButton->setEnabled(false);
-
-    eyeMapLayout->addWidget(eyeButton);
-    eyeMapLayout->addWidget(mapButton);
-
-    ///                  add buttons to the main layout
-
     layout = new QVBoxLayout(this);
-    layout->addLayout(topButtonsLayout);
-    layout->addLayout(eyeMapLayout);
 
-    layout->addWidget(separator);
+    actionButtons = new TopLeftMenu(this);
+    actionButtons->disableAll();
 
+    layout->addWidget(actionButtons);
 
     nameEdit = new QLineEdit(this);
     nameEdit->setStyleSheet ("text-align: left");
@@ -119,7 +83,7 @@ EditSelectedPointWidget::EditSelectedPointWidget(QMainWindow* _parent, PointsVie
     ///                                  CONNECTIONS
 
     /// when the plus button is clicked we display the groupBox
-    connect(plusButton, SIGNAL(clicked(bool)), this, SLOT(showGroupLayout()));
+    connect(actionButtons->getPlusButton(), SIGNAL(clicked(bool)), this, SLOT(showGroupLayout()));
 
     connect(saveBtn, SIGNAL(clicked()), this, SLOT(saveEditSelecPointBtnEvent()));
     connect(nameEdit, SIGNAL(textEdited(QString)), this, SLOT(checkPointName()));
@@ -179,8 +143,8 @@ void EditSelectedPointWidget::showGroupLayout(void) const {
     groupBox->show();
     saveBtn->show();
     cancelBtn->show();
-    plusButton->setEnabled(false);
-    plusButton->setToolTip("");
+    actionButtons->getPlusButton()->setEnabled(false);
+    actionButtons->getPlusButton()->setToolTip("");
     nameEdit->setReadOnly(false);
     nameEdit->setAutoFillBackground(false);
     nameEdit->setFrame(true);
@@ -195,8 +159,8 @@ void EditSelectedPointWidget::hideGroupLayout(void) const {
     groupBox->hide();
     saveBtn->hide();
     cancelBtn->hide();
-    plusButton->setEnabled(true);
-    plusButton->setToolTip("Click this button if you want to save this point permanently");
+    actionButtons->getPlusButton()->setEnabled(true);
+    actionButtons->getPlusButton()->setToolTip("Click this button if you want to save this point permanently");
     nameEdit->setReadOnly(true);
     nameEdit->setAutoFillBackground(true);
     nameEdit->setFrame(false);

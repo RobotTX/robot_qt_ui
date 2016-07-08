@@ -40,6 +40,7 @@
 #include <QStringList>
 #include "View/customizedlineedit.h"
 #include <QRegularExpression>
+#include "View/buttonmenu.h"
 
 /**
  * @brief MainWindow::MainWindow
@@ -333,7 +334,6 @@ void MainWindow::initializeRobots(){
     updateRobotsThread->moveToThread(updateRobotsThread);*/
 
 
-
     std::shared_ptr<Robot> robot1(new Robot("Roboty", "localhost", PORT_CMD, this));
     robot1->setWifi("Swaghetti Yolognaise");
     RobotView* robotView1 = new RobotView(robot1, mapPixmapItem);
@@ -358,30 +358,6 @@ void MainWindow::initializeRobots(){
     robotView3->setParentItem(mapPixmapItem);
     robots->add(robotView3);
 
-
-    /*std::shared_ptr<Robot> robot4(new Robot("Robotu", "192.168.4.236", PORT_CMD, this));
-    robot4->setWifi("Swaghetti Yolognaise");
-    RobotView* robotView4 = new RobotView(robot4, mapPixmapItem);
-    connect(robotView4, SIGNAL(setSelectedSignal(RobotView*)), this, SLOT(setSelectedRobot(RobotView*)));
-    robotView4->setPosition(200, 300);
-    robotView4->setParentItem(mapPixmapItem);
-    robots->add(robotView4);
-
-    std::shared_ptr<Robot> robot5(new Robot("Robote", "192.168.4.236", PORT_CMD, this));
-    robot5->setWifi("Swaghetti Yolognaise");
-    RobotView* robotView5 = new RobotView(robot3, mapPixmapItem);
-    connect(robotView3, SIGNAL(setSelectedSignal(RobotView*)), this, SLOT(setSelectedRobot(RobotView*)));
-    robotView5->setPosition(200, 300);
-    robotView5->setParentItem(mapPixmapItem);
-    robots->add(robotView5);
-
-    std::shared_ptr<Robot> robot6(new Robot("Robotr", "192.168.4.236", PORT_CMD, this));
-    robot6->setWifi("Swaghetti Yolognaise");
-    RobotView* robotView6 = new RobotView(robot3, mapPixmapItem);
-    connect(robotView6, SIGNAL(setSelectedSignal(RobotView*)), this, SLOT(setSelectedRobot(RobotView*)));
-    robotView6->setPosition(200, 300);
-    robotView6->setParentItem(mapPixmapItem);
-    robots->add(robotView6);*/
 }
 
 void MainWindow::stopSelectedRobot(int robotNb){
@@ -1456,15 +1432,15 @@ void MainWindow::setSelectedPoint(PointView* pointView, bool isTemporary){
         float x = pointView->getPoint()->getPosition().getX();
         float y = pointView->getPoint()->getPosition().getY();
         if(map->getMapImage().pixelColor(x ,y) == QColor(254, 254, 254)){
-            editSelectedPointWidget->getPlusButton()->setEnabled(true);
-            editSelectedPointWidget->getPlusButton()->setToolTip("Click this button if you want to save this point permanently");
+            editSelectedPointWidget->getActionButtons()->getPlusButton()->setEnabled(true);
+            editSelectedPointWidget->getActionButtons()->getPlusButton()->setToolTip("Click this button if you want to save this point permanently");
             setMessageTop(TEXT_COLOR_INFO, "To save this point permanently click the \"+\" button");
             qDebug() << "ce point est blanc";
         } else {
             qDebug() << "this pooint is not white";
             setMessageTop(TEXT_COLOR_WARNING, "You cannot save this point because your robot(s) would not be able to go there");
-            editSelectedPointWidget->getPlusButton()->setEnabled(false);
-            editSelectedPointWidget->getPlusButton()->setToolTip("You cannot save this point because your robot(s) cannot go there");
+            editSelectedPointWidget->getActionButtons()->getPlusButton()->setEnabled(false);
+            editSelectedPointWidget->getActionButtons()->getPlusButton()->setToolTip("You cannot save this point because your robot(s) cannot go there");
         }
         leftMenu->getDisplaySelectedPoint()->hide();
         switchFocus(selectedPoint->getPoint()->getName(), editSelectedPointWidget);
@@ -1806,7 +1782,7 @@ void MainWindow::pointSavedEvent(int index, double x, double y, QString name){
     leftMenu->getReturnButton()->setEnabled(true);
 
     /// resets the status of the plus button
-    editSelectedPointWidget->getPlusButton()->setEnabled(true);
+    editSelectedPointWidget->getActionButtons()->getPlusButton()->setEnabled(true);
     /// hides widgets relative to the choice of a group
     editSelectedPointWidget->hideGroupLayout();
 
