@@ -18,7 +18,7 @@
 #include <QComboBox>
 #include "View/spacewidget.h"
 #include "topleftmenu.h"
-#include "view/buttonmenu.h"
+#include "View/buttonmenu.h"
 
 
 PathCreationWidget::PathCreationWidget(QMainWindow* parent, const Points &_points):QWidget(parent){

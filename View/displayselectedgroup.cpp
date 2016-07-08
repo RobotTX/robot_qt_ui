@@ -10,7 +10,7 @@
 #include <QMainWindow>
 #include <QLabel>
 #include "verticalscrollarea.h"
-#include "view/buttonmenu.h"
+#include "View/buttonmenu.h"
 
 DisplaySelectedGroup::DisplaySelectedGroup(QMainWindow *parent, std::shared_ptr<Points> const& _points) : QWidget(parent){
 

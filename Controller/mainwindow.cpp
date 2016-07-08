@@ -40,7 +40,7 @@
 #include <QStringList>
 #include "View/customizedlineedit.h"
 #include <QRegularExpression>
-#include <view/buttonmenu.h>
+#include "View/buttonmenu.h"
 
 /**
  * @brief MainWindow::MainWindow
@@ -186,10 +186,10 @@ MainWindow::~MainWindow(){
     delete pathPainter;
     qDeleteAll(pathPointViews.begin(), pathPointViews.end());
     pathPointViews.clear();
-    if (updateRobotsThread != NULL && updateRobotsThread->isRunning() ) {
+    /*if (updateRobotsThread != NULL && updateRobotsThread->isRunning() ) {
         updateRobotsThread->requestInterruption();
         updateRobotsThread->wait();
-    }
+    }*/
     if (metadataThread != NULL && metadataThread->isRunning() ) {
         metadataThread->requestInterruption();
         metadataThread->wait();
@@ -357,29 +357,7 @@ void MainWindow::initializeRobots(){
     robotView3->setPosition(200, 300);
     robotView3->setParentItem(mapPixmapItem);
     robots->add(robotView3);
-    std::shared_ptr<Robot> robot4(new Robot("Robotu", "192.168.4.236", PORT_CMD, this));/*
-    robot4->setWifi("Swaghetti Yolognaise");
-    RobotView* robotView4 = new RobotView(robot4, mapPixmapItem);
-    connect(robotView4, SIGNAL(setSelectedSignal(RobotView*)), this, SLOT(setSelectedRobot(RobotView*)));
-    robotView4->setPosition(200, 300);
-    robotView4->setParentItem(mapPixmapItem);
-    robots->add(robotView4);
 
-    std::shared_ptr<Robot> robot5(new Robot("Robote", "192.168.4.236", PORT_CMD, this));
-    robot5->setWifi("Swaghetti Yolognaise");
-    RobotView* robotView5 = new RobotView(robot3, mapPixmapItem);
-    connect(robotView3, SIGNAL(setSelectedSignal(RobotView*)), this, SLOT(setSelectedRobot(RobotView*)));
-    robotView5->setPosition(200, 300);
-    robotView5->setParentItem(mapPixmapItem);
-    robots->add(robotView5);
-
-    std::shared_ptr<Robot> robot6(new Robot("Robotr", "192.168.4.236", PORT_CMD, this));
-    robot6->setWifi("Swaghetti Yolognaise");
-    RobotView* robotView6 = new RobotView(robot3, mapPixmapItem);
-    connect(robotView6, SIGNAL(setSelectedSignal(RobotView*)), this, SLOT(setSelectedRobot(RobotView*)));
-    robotView6->setPosition(200, 300);
-    robotView6->setParentItem(mapPixmapItem);
-    robots->add(robotView6);*/
 }
 
 void MainWindow::stopSelectedRobot(int robotNb){

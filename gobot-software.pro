@@ -121,4 +121,9 @@ SOURCES += main.cpp \
 
 RESOURCES += Resources/resources.qrc
 
-DISTFILES += README
+DISTFILES += README \
+    points.xml \
+    Resources/map_ori.png \
+    Resources/robot_ori.png \
+    Resources/gtrobot-1.pgm \
+    Resources/gtrobot-1.pgm.pgm
