@@ -25,7 +25,7 @@ void ScanRobotThread::run(){
     socketRobot->connectToHost(ipAddress, port);
 
     int i = 1;
-    while(!socketRobot->waitForConnected(5000)){
+    while(!socketRobot->waitForConnected(5000) && !isInterruptionRequested()){
         //qDebug() << "(Robot) Attempt " << i << " :\nConnecting error : " << socketRobot->errorString();
         socketRobot->connectToHost(ipAddress, port);
         sleep(1);

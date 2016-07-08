@@ -9,9 +9,11 @@
 #include <QDebug>
 #include <QGraphicsSceneMouseEvent>
 #include "mainwindow.h"
+#include "Model/map.h"
 
 MapView::MapView (const QPixmap& pixmap, const QSize _size, QMainWindow* _mainWindow) :
-    QGraphicsPixmapItem(pixmap), size(_size), state(GraphicItemState::NO_STATE){
+    QGraphicsPixmapItem(pixmap), size(_size), state(GraphicItemState::NO_STATE)
+{
 
     mainWindow = _mainWindow;
     /// Tell the class which mouse button to accept
@@ -34,13 +36,7 @@ MapView::MapView (const QPixmap& pixmap, const QSize _size, QMainWindow* _mainWi
     point = static_cast<QSharedPointer<PointView>>(tmpPointView);
 
     tmpPointView->hide();
-
 }
-
- QMainWindow* MapView::getMainWindow(void)
- {
-     return mainWindow;
- }
 
 MapView::~MapView(){
     delete permanentPoints;
@@ -56,7 +52,6 @@ void MapView::mousePressEvent(QGraphicsSceneMouseEvent *event){
 void MapView::mouseReleaseEvent(QGraphicsSceneMouseEvent *event){
     float x = dragStartPosition.x() - this->pos().x();
     float y = dragStartPosition.y() - this->pos().y();
-
     /// we compare the start position of the drag event & the drop position
     /// if we have moved for more than 10 pixels, it's a drag, else it's a click
     /// and we create a temporary point
@@ -64,6 +59,7 @@ void MapView::mouseReleaseEvent(QGraphicsSceneMouseEvent *event){
         /// click
         if(state == GraphicItemState::NO_STATE){
             tmpPointView->show();
+            /// might be useless code
             point->getPoint()->setPosition(event->pos().x(), event->pos().y());
             point->setPos(event->pos().x()-tmpPointPixmap.width()/2, event->pos().y()-tmpPointPixmap.height());
             point->setParentItem(this);
@@ -206,17 +202,17 @@ void MapView::setState(const GraphicItemState _state, const bool clear){
 
  void MapView::addPointView(PointView* const& _pointView){
      _pointView->setParentItem(this);
-     connect(_pointView, SIGNAL(pointLeftClicked(PointView*)), mainWindow, SLOT(displayPointEvent(PointView*)));
+    connect(_pointView, SIGNAL(pointLeftClicked(PointView*)), mainWindow, SLOT(displayPointEvent(PointView*)));
 
-     /// to update the coordinates of the point displayed on the left when a user drags a point to change its position
-     connect(_pointView, SIGNAL(editedPointPositionChanged(double, double)), mainWindow, SLOT(updateCoordinates(double, double)));
+    /// to update the coordinates of the point displayed on the left when a user drags a point to change its position
+    connect(_pointView, SIGNAL(editedPointPositionChanged(double, double)), mainWindow, SLOT(updateCoordinates(double, double)));
 
-     connect(_pointView, SIGNAL(moveTmpEditPathPoint()), mainWindow, SLOT(moveTmpEditPathPointSlot()));
+    connect(_pointView, SIGNAL(moveTmpEditPathPoint()), mainWindow, SLOT(moveTmpEditPathPointSlot()));
 
-     connect(_pointView, SIGNAL(addPointPath(PointView*)), this, SLOT(addPathPointMapViewSlot(PointView*)));
+    connect(_pointView, SIGNAL(addPointPath(PointView*)), this, SLOT(addPathPointMapViewSlot(PointView*)));
 
-     connect(_pointView, SIGNAL(homeSelected(PointView*, bool)), mainWindow, SLOT(homeSelected(PointView*, bool)));
-     connect(_pointView, SIGNAL(homeEdited(PointView*, bool)), mainWindow, SLOT(homeEdited(PointView*, bool)));
+    connect(_pointView, SIGNAL(homeSelected(PointView*, bool)), mainWindow, SLOT(homeSelected(PointView*, bool)));
+    connect(_pointView, SIGNAL(homeEdited(PointView*, bool)), mainWindow, SLOT(homeEdited(PointView*, bool)));
 
-     permanentPoints->addPointView(_pointView);
- }
+    permanentPoints->addPointView(_pointView);
+}

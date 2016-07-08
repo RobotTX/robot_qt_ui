@@ -54,7 +54,6 @@ TopLayout::TopLayout(QMainWindow* parent):QWidget(parent){
     layout->addWidget(closeBtn);
     connect(closeBtn, SIGNAL(clicked()), parent, SLOT(quit()));
 
-
     layout->setContentsMargins(0, 0, 0, 0);
 
     setStyleSheet("QPushButton:hover { background-color: #efefef;"

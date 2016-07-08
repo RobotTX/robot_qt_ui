@@ -1,13 +1,12 @@
 #ifndef CMDROBOTTHREAD_H
 #define CMDROBOTTHREAD_H
 
-class QtNetwork;
-class QTcpSocket;
-
 #include <QThread>
 #include <QString>
 #include <QtNetwork/QTcpSocket>
 #include <memory>
+
+#define MISSED_PING_TIMER 20
 
 /**
  * @brief The CmdRobotThread class
@@ -65,6 +64,7 @@ private slots:
      * (Not connected) Slot called when there is an error
      */
     void errorSlot(QAbstractSocket::SocketError error);
+    void onStateChanged(QAbstractSocket::SocketState error);
 
     /**
      * @brief disconnectedSlot
@@ -78,6 +78,7 @@ private slots:
      */
     void readTcpDataSlot();
     void writeCommandSlot(QString cmd);
+    void pingSlot();
 
 private :
     std::shared_ptr<QTcpSocket> socketCmd;
@@ -86,6 +87,7 @@ private :
     QString robotName;
     bool connected;
     QString commandAnswer;
+    int missedPing;
 };
 
 #endif // CMDROBOTTHREAD_H

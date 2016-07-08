@@ -1,13 +1,9 @@
 #include "customqgraphicsview.h"
 #include <QWheelEvent>
 
-CustomQGraphicsView::CustomQGraphicsView ( QWidget * parent ) : QGraphicsView(parent) {
-    zoomCoeff = 1.0;
-}
+CustomQGraphicsView::CustomQGraphicsView ( QWidget * parent ) : QGraphicsView(parent), zoomCoeff(1.0) {}
 
-CustomQGraphicsView::CustomQGraphicsView ( QGraphicsScene * scene, QWidget * parent): QGraphicsView(scene, parent) {
-    zoomCoeff = 1.0;
-}
+CustomQGraphicsView::CustomQGraphicsView ( QGraphicsScene * scene, QWidget * parent): QGraphicsView(scene, parent), zoomCoeff(1.0) {}
 
 void CustomQGraphicsView::wheelEvent(QWheelEvent *event){
     if(event->delta() > 0){

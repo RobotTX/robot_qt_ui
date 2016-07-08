@@ -24,7 +24,7 @@ void ScanMapThread::run(){
     socketMap->connectToHost(ipAddress, port);
 
     int i = 1;
-    while(!socketMap->waitForConnected(5000)){
+    while(!socketMap->waitForConnected(5000) && !isInterruptionRequested()){
         //qDebug() << "(Map) Attempt " << i << " :\nConnecting error : " << socketMap->errorString();
         socketMap->connectToHost(ipAddress, port);
         sleep(1);

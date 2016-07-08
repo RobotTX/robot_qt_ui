@@ -35,10 +35,11 @@ class TopLayout;
 #include "Model/graphicitemstate.h"
 #include <QPair>
 #include "Model/origin.h"
+#include <QMessageBox>
 
 //#define XML_PATH "/home/m-a/Documents/QtProject/gobot-software/points.xml"
-#define XML_PATH "/home/joan/Qt/QtProjects/gobot-software/points.xml"
-//#define XML_PATH "/Users/fannylarradet/Desktop/GTRobots/gobot-software/points.xml"
+//#define XML_PATH "/home/joan/Qt/QtProjects/gobot-software/points.xml"
+#define XML_PATH "/Users/fannylarradet/Desktop/GTRobots/gobot-software/points.xml"
 
 #define PI 3.14159265
 #define PORT_MAP_METADATA 4000
@@ -85,6 +86,7 @@ public:
 signals:
     void sendCommand(QString);
     void nameChanged(QString, QString);
+    void ping();
 
 private slots:
     void updateRobot(const float posX, const float posY, const float ori);
@@ -216,6 +218,7 @@ private:
     LeftMenu* leftMenu;
     BottomLayout* bottomLayout;
     PathCreationWidget* pathCreationWidget;
+    QMessageBox msgBox;
 };
 
 #endif // MAINWINDOW_H

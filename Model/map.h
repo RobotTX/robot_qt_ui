@@ -9,7 +9,8 @@
  * The model class for the Map,
  * contains the map as a QImage and its width, height, resolution and the origin
  */
-class Map{
+class Map {
+
 public:
     Map();
 
@@ -19,6 +20,7 @@ public:
     int getWidth(void) const { return width; }
     int getHeight(void) const { return height; }
     Position getOrigin(void) const { return origin; }
+    QRect getRect(void) const { return rect; }
 
     /// Setters
     void setResolution(const float _resolution) { resolution = _resolution; }
@@ -47,6 +49,7 @@ public:
      */
     void saveToFile(const QString fileName);
 
+    void setRectangle(void);
 private:
     /**
      * @brief mapImage
@@ -70,6 +73,12 @@ private:
      * (which can be anywhere in the map) and not our map origin (top-left corner)
      */
     Position origin;
+    /**
+     * @brief rectangle
+     * The rectangle whose corners are the extreme known points in each direction, its purpose is to
+     * display the known part of the map by default
+     */
+    QRect rect;
 
 };
 
