@@ -14,6 +14,10 @@
 #include "View/spacewidget.h"
 #include <QKeyEvent>
 #include "topleftmenu.h"
+#include "view/buttonmenu.h"
+
+
+
 EditSelectedPointWidget::EditSelectedPointWidget(QMainWindow* _parent, PointsView* _points):QWidget(_parent){
     parent = _parent;
     points = _points;

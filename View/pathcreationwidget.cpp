@@ -17,6 +17,9 @@
 #include <QMenu>
 #include <QComboBox>
 #include "View/spacewidget.h"
+#include "topleftmenu.h"
+#include "view/buttonmenu.h"
+
 
 PathCreationWidget::PathCreationWidget(QMainWindow* parent, const Points &_points):QWidget(parent){
     layout = new QVBoxLayout(this);
@@ -26,57 +29,19 @@ PathCreationWidget::PathCreationWidget(QMainWindow* parent, const Points &_point
     previousItem = NULL;
     editedPathPointCreationWidget = NULL;
     creatingNewPoint = false;
-/*
-    /// back button
-    QPushButton* backBtn = new QPushButton(QIcon(":/icons/arrowLeft.png"),"Path", this);
-    backBtn->setStyleSheet ("text-align: left");
-    backBtn->setIconSize(parent->size()/10);
-    layout->addWidget(backBtn);
-    connect(backBtn, SIGNAL(clicked()), parent, SLOT(backPathCreation()));
-*/
 
-    QHBoxLayout* layoutRow1 = new QHBoxLayout();
+    actionButtons = new TopLeftMenu(this);
+    actionButtons->disableAll();
+    actionButtons->getPlusButton()->setEnabled(true);
 
-    /// new button to add a pathpoint
-    newBtn = new QPushButton(QIcon(":/icons/plus.png"), "", this);
-    newBtn->setIconSize(parent->size()/10);
-    layoutRow1->addWidget(newBtn);
-    connect(newBtn, SIGNAL(clicked()), this, SLOT(addPathPoint()));
+    layout->addWidget(actionButtons);
 
-    /// delete button to delete a pathpoint
-    supprBtn = new QPushButton(QIcon(":/icons/minus.png"), "", this);
-    supprBtn->setCheckable(true);
-    supprBtn->setIconSize(parent->size()/10);
-    layoutRow1->addWidget(supprBtn);
-    connect(supprBtn, SIGNAL(clicked()), this, SLOT(supprPathPoint()));
-
-    /// edit button to edit a pathpoint
-    editBtn = new QPushButton(QIcon(":/icons/edit.png"), "", this);
-    editBtn->setCheckable(true);
-    editBtn->setIconSize(parent->size()/10);
-    layoutRow1->addWidget(editBtn);
-    connect(editBtn, SIGNAL(clicked()), this, SLOT(editPathPoint()));
-
-    layout->addLayout(layoutRow1);
-    layout->setContentsMargins(0,0,0,0);
+    connect(actionButtons->getPlusButton(), SIGNAL(clicked(bool)), this, SLOT(addPathPoint()));
+    connect(actionButtons->getMinusButton(), SIGNAL(clicked()), this, SLOT(supprPathPoint()));
+    connect(actionButtons->getEditButton(), SIGNAL(clicked()), this, SLOT(editPathPoint()));
 
 
-    /*QHBoxLayout* layoutRow2 = new QHBoxLayout();
 
-    QPushButton* viewBtn = new QPushButton(QIcon(":/icons/eye.png"), "", this);
-    viewBtn->setIconSize(parent->size()/10);
-    layoutRow2->addWidget(viewBtn);
-    //connect(viewBtn, SIGNAL(clicked()), this, SLOT(viewPathPoint()));
-
-    QPushButton* mapBtn = new QPushButton(QIcon(":/icons/map.png"), "", this);
-    mapBtn->setIconSize(parent->size()/10);
-    layoutRow2->addWidget(mapBtn);
-    //connect(mapBtn, SIGNAL(clicked()), this, SLOT(mapPathPoint()));
-
-    layout->addLayout(layoutRow2);*/
-
-    SpaceWidget* spaceWidget = new SpaceWidget(SpaceWidget::SpaceOrientation::HORIZONTAL, this);
-    layout->addWidget(spaceWidget);
 
     /// The menu which display the list of point to select
     pointsMenu = new QMenu(this);
@@ -115,29 +80,37 @@ PathCreationWidget::PathCreationWidget(QMainWindow* parent, const Points &_point
     connect(pathPointsList, SIGNAL(itemClicked(QListWidgetItem*)), this, SLOT(itemClicked(QListWidgetItem*)));
     connect(pathPointsList, SIGNAL(itemMovedSignal(int, int)), this, SLOT(itemMovedSlot(int, int)));
 
-    layout->addWidget(pathPointsList);
+   layout->addWidget(pathPointsList);
 
+
+    QVBoxLayout* bottomLayout = new QVBoxLayout(this);
 
     /// The save button
     QPushButton* saveBtn = new QPushButton("Save Path", this);
-    layout->addWidget(saveBtn);
+
+    bottomLayout->addWidget(saveBtn);
+
     connect(saveBtn, SIGNAL(clicked()), this, SLOT(saveNoExecPath()));
     connect(this, SIGNAL(pathSaved(bool)), parent, SLOT(pathSaved(bool)));
 
 
     /// The save button and play the path
     QPushButton* saveExecBtn = new QPushButton("Save and play Path", this);
-    layout->addWidget(saveExecBtn);
+    bottomLayout->addWidget(saveExecBtn);
     connect(saveExecBtn, SIGNAL(clicked()), this, SLOT(saveExecPath()));
+    layout->addLayout(bottomLayout);
 
     hide();
+
     layout->setAlignment(Qt::AlignTop);
     layout->setContentsMargins(0,0,0,0);
 }
 
 void PathCreationWidget::addPathPoint(void){
-    qDebug() << "Add pathPoint" << idPoint;
+    qDebug() << "yo Add pathPoint" << idPoint;
     creatingNewPoint = true;
+  //  actionButtons->getPlusButton()->leaveEvent(QtCore.QEvent.HoverMove);
+
     clicked();
 }
 
@@ -246,9 +219,9 @@ void PathCreationWidget::supprPathPoint(){
 
     /// if the delete button is pressed, we toggle it if no path point is selected
     if(previousItem == NULL){
-        if(supprBtn->isChecked()){
+        if(actionButtons->getMinusButton()->isChecked()){
             state = CheckState::SUPPR;
-            editBtn->setChecked(false);
+            actionButtons->getEditButton()->setChecked(false);
         } else {
             state = CheckState::NO_STATE;
         }
@@ -264,15 +237,15 @@ void PathCreationWidget::editPathPoint(){
 
     /// if the edit button is pressed, we toggle it if no path point is selected
     if(previousItem == NULL){
-        if(editBtn->isChecked()){
+        if(actionButtons->getEditButton()->isChecked()){
             state = CheckState::EDIT;
-            supprBtn->setChecked(false);
+            actionButtons->getMinusButton()->setChecked(false);
         /// or we edit the selected path point
         } else {
             state = CheckState::NO_STATE;
         }
     } else {
-        if(editBtn->isChecked()){
+        if(actionButtons->getEditButton()->isChecked()){
             editItem(pathPointsList->currentItem());
         }
 
@@ -388,12 +361,12 @@ void PathCreationWidget::resetWidget(){
 
     pathPointsList->clear();
     idPoint = 1;
-    supprBtn->setChecked(false);
-    editBtn->setChecked(false);
+    actionButtons->getMinusButton()->setChecked(false);
+    actionButtons->getEditButton()->setChecked(false);
 
-    newBtn->setEnabled(true);
-    supprBtn->setEnabled(true);
-    editBtn->setEnabled(true);
+    actionButtons->getPlusButton()->setEnabled(true);
+    actionButtons->getMinusButton()->setEnabled(true);
+    actionButtons->getEditButton()->setEnabled(true);
 
     pointList.clear();
 }
@@ -428,7 +401,7 @@ void PathCreationWidget::supprItem(QListWidgetItem* item){
             qDebug() << "Should never be reached";
         break;
     }
-    supprBtn->setChecked(false);
+    actionButtons->getMinusButton()->setChecked(false);
     state = CheckState::NO_STATE;
     previousItem = NULL;
 }
@@ -456,15 +429,15 @@ void PathCreationWidget::editItem(QListWidgetItem* item){
         pathPointsList->setDragDropMode(QAbstractItemView::NoDragDrop);
         editedPathPointCreationWidget = pathPointWidget;
 
-        newBtn->setEnabled(false);
-        supprBtn->setEnabled(false);
-        editBtn->setEnabled(false);
+        actionButtons->getPlusButton()->setEnabled(false);
+        actionButtons->getMinusButton()->setEnabled(false);
+        actionButtons->getEditButton()->setEnabled(false);
     } else {
         qDebug() << "Trying to edit a permanent point";
         clicked();
     }
 
-    editBtn->setChecked(false);
+    actionButtons->getEditButton()->setChecked(false);
     state = CheckState::NO_STATE;
     previousItem = NULL;
 }
@@ -501,9 +474,9 @@ void PathCreationWidget::saveEditSlot(PathPointCreationWidget* pathPointCreation
     pathPointCreationWidget->displaySaveEditBtn(false, pathPointsList->count());
     pathPointsList->setDragDropMode(QAbstractItemView::InternalMove);
 
-    newBtn->setEnabled(true);
-    supprBtn->setEnabled(true);
-    editBtn->setEnabled(true);
+    actionButtons->getPlusButton()->setEnabled(true);
+    actionButtons->getMinusButton()->setEnabled(true);
+    actionButtons->getEditButton()->setEnabled(true);
     emit saveEditPathPoint();
 }
 

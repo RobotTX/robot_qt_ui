@@ -8,6 +8,7 @@ class QListWidgetItem;
 class PathPointCreationWidget;
 class Robot;
 class QMenu;
+class TopLeftMenu;
 
 #include "Model/points.h"
 #include "Model/point.h"
@@ -107,7 +108,7 @@ public:
     /// Setters
     void setSelectedRobot(std::shared_ptr<Robot> const& _selectedRobot){ selectedRobot = _selectedRobot; }
 
-
+    TopLeftMenu* getActionButtons(void) const {return actionButtons;}
 
 private slots:
     /**
@@ -239,9 +240,7 @@ private:
      * State of the widget (which btn is checked, delete, edit or none)
      */
     CheckState state;
-    QPushButton* newBtn;
-    QPushButton* supprBtn;
-    QPushButton* editBtn;
+
 
     /**
      * @brief previousItem
@@ -269,6 +268,13 @@ private:
      */
     QMenu* pointsMenu;
     QVector<PointInfo> pointInfos;
+
+    /**
+     * @brief actionButtons
+     * The menu containing + - edit view and map buttons
+     */
+    TopLeftMenu* actionButtons ;
+
 
 };
 

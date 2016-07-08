@@ -10,6 +10,8 @@
 #include <QMainWindow>
 #include <QLabel>
 #include "verticalscrollarea.h"
+#include "view/buttonmenu.h"
+
 DisplaySelectedGroup::DisplaySelectedGroup(QMainWindow *parent, std::shared_ptr<Points> const& _points) : QWidget(parent){
 
    VerticalScrollArea* scrollArea = new VerticalScrollArea(this);

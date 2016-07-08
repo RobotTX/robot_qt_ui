@@ -40,6 +40,7 @@
 #include <QStringList>
 #include "View/customizedlineedit.h"
 #include <QRegularExpression>
+#include <view/buttonmenu.h>
 
 /**
  * @brief MainWindow::MainWindow
