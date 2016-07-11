@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <points>
     <group>
-        <name>jj</name>
+        <name>cc</name>
     </group>
     <group>
         <name>first group</name>
@@ -15,7 +15,7 @@
             <name>Ma point</name>
             <x>75</x>
             <y>75</y>
-            <displayed>0</displayed>
+            <displayed>1</displayed>
         </point>
         <point>
             <name>A new point</name>

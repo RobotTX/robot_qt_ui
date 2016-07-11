@@ -322,9 +322,9 @@ void MainWindow::connectToRobot(){
             }
         }
     } else {
-        setMessageTop(TEXT_COLOR_DANGER, "You must first click a robot on the map to establish a connection");
-        delay(2500);
-        setMessageTop(TEXT_COLOR_NORMAL, "");
+
+         topLayout->setLabelDelay(TEXT_COLOR_DANGER, "You must first click a robot on the map to establish a connection",2500);
+
         qDebug() << "Select a robot first";
     }
 }
@@ -1255,6 +1255,7 @@ void MainWindow::setMessageCreationPath(QString message){
     setMessageTop(TEXT_COLOR_DANGER, message);
     delay(2500);
     setMessageTop(TEXT_COLOR_INFO, "Click white points of the map to add new points to the path of " + selectedRobot->getRobot()->getName());
+
 }
 
 /**********************************************************************************************************************************/
@@ -2586,6 +2587,8 @@ void MainWindow::updatePoint(void){
     setMessageTop(TEXT_COLOR_SUCCESS, "Your point has been modified");
     delay(1500);
     setMessageTop(TEXT_COLOR_NORMAL, "");
+    topLayout->setLabelDelay(TEXT_COLOR_SUCCESS, "Your point has been modified",1500);
+
 }
 
 /**
@@ -2635,9 +2638,9 @@ void MainWindow::cancelEvent(void){
     leftMenu->getReturnButton()->setEnabled(true);
     leftMenu->getReturnButton()->setToolTip("");
 
-    setMessageTop(TEXT_COLOR_WARNING, "Your point has not been modified");
-    delay(1500);
-    setMessageTop(TEXT_COLOR_NORMAL, "");
+
+    topLayout->setLabelDelay(TEXT_COLOR_WARNING, "Your point has not been modified",1500);
+
 }
 
 /**
@@ -2908,18 +2911,16 @@ void MainWindow::createGroup(QString name){
         pointsLeftWidget->getActionButtons()->getPlusButton()->setEnabled(true);
         pointsLeftWidget->getActionButtons()->getPlusButton()->setToolTip("Click here to add a new group");
         topLayout->setEnabled(true);
-        setMessageTop(TEXT_COLOR_SUCCESS, "You have created a new group");
-        delay(2500);
-        setMessageTop(TEXT_COLOR_NORMAL, "");
+
+        topLayout->setLabelDelay(TEXT_COLOR_SUCCESS, "You have created a new group",2500);
+
 
     } else if(pointsLeftWidget->checkGroupName(name.simplified()) == 1){
-        setMessageTop(TEXT_COLOR_DANGER, "The name of your group cannot be empty");
-        delay(2500);
-        setMessageTop(TEXT_COLOR_NORMAL, "");
+        topLayout->setLabelDelay(TEXT_COLOR_DANGER, "The name of your group cannot be empty",2500);
+
     } else {
-        setMessageTop(TEXT_COLOR_DANGER, "You cannot choose : " + name.simplified() + " as a new name for your group because another group already has this name");
-        delay(2500);
-        setMessageTop(TEXT_COLOR_NORMAL, "");
+
+        topLayout->setLabelDelay(TEXT_COLOR_DANGER, "You cannot choose : " + name.simplified() + " as a new name for your group because another group already has this name",2500);
     }
 }
 
@@ -2946,18 +2947,17 @@ void MainWindow::modifyGroupWithEnter(QString name){
 
         leftMenu->getReturnButton()->setEnabled(true);
 
-        setMessageTop(TEXT_COLOR_SUCCESS, "You have successfully modified the name of your group");
-        delay(1500);
-        setMessageTop(TEXT_COLOR_NORMAL, "");
+        topLayout->setLabelDelay(TEXT_COLOR_SUCCESS, "You have successfully modified the name of your group",1500);
+
 
     } else if(pointsLeftWidget->checkGroupName(name) == 1){
-        setMessageTop(TEXT_COLOR_DANGER, "The name of your group cannot be empty. Please choose a name for your group");
-        delay(2500);
-        setMessageTop(TEXT_COLOR_NORMAL, "");
+
+        topLayout->setLabelDelay(TEXT_COLOR_DANGER, "The name of your group cannot be empty. Please choose a name for your group",2500);
+
     } else {
-        setMessageTop(TEXT_COLOR_DANGER, "You cannot choose : " + name.simplified() + " as a new name for your group because another group already has this name");
-        delay(2500);
-        setMessageTop(TEXT_COLOR_NORMAL, "");
+
+        topLayout->setLabelDelay(TEXT_COLOR_DANGER, "You cannot choose : " + name.simplified() + " as a new name for your group because another group already has this name",2500);
+
     }
 }
 
@@ -2981,19 +2981,18 @@ void MainWindow::modifyGroupAfterClick(QString name){
         /// updates view
         pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(pointsLeftWidget->getGroupButtonGroup()->getIndexModifyEdit())->setText(name);
         pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(pointsLeftWidget->getGroupButtonGroup()->getIndexModifyEdit())->show();
-        setMessageTop(TEXT_COLOR_SUCCESS, "You have successfully modified the name of your group");
-        delay(1500);
-        setMessageTop(TEXT_COLOR_NORMAL, "");
+
+        topLayout->setLabelDelay(TEXT_COLOR_SUCCESS, "You have successfully modified the name of your group",1500);
+
     } else if(pointsLeftWidget->checkGroupName(name) == 1){
         pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(pointsLeftWidget->getGroupButtonGroup()->getIndexModifyEdit())->show();
-        setMessageTop(TEXT_COLOR_DANGER, "The name of your group cannot be empty. Please choose a name for your group");
-        delay(2500);
-        setMessageTop(TEXT_COLOR_NORMAL, "");
+
+        topLayout->setLabelDelay(TEXT_COLOR_DANGER, "The name of your group cannot be empty. Please choose a name for your group",2500);
     } else {
         pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(pointsLeftWidget->getGroupButtonGroup()->getIndexModifyEdit())->show();
-        setMessageTop(TEXT_COLOR_DANGER, "You cannot choose : " + name.simplified() + " as a new name for your group because another group already has this name");
-        delay(2500);
-        setMessageTop(TEXT_COLOR_NORMAL, "");
+
+        topLayout->setLabelDelay(TEXT_COLOR_DANGER, "You cannot choose : " + name.simplified() + " as a new name for your group because another group already has this name",2500);
+
     }
 
 }
