@@ -1,6 +1,6 @@
 #include "leftmenu.h"
 #include "View/editselectedrobotwidget.h"
-#include "View/editselectedpointwidget.h"
+#include "View/createpointwidget.h"
 #include "View/pointview.h"
 #include "View/bottomlayout.h"
 #include "View/leftmenuwidget.h"
@@ -99,9 +99,9 @@ LeftMenu::LeftMenu(MainWindow* _parent, std::shared_ptr<Points> const& _points, 
     connect(editSelectedRobotWidget, SIGNAL(hideEditSelectedRobotWidget()), _parent, SLOT(hideHome()));
 
     /// Menu to edit the selected point
-    editSelectedPointWidget = new EditSelectedPointWidget(_parent, pointViews);
-    leftLayout->addWidget(editSelectedPointWidget);
-    connect(editSelectedPointWidget, SIGNAL(pointSaved(int, double, double, QString)), _parent, SLOT(pointSavedEvent(int, double, double, QString)));
+    createPointWidget = new CreatePointWidget(_parent, pointViews);
+    leftLayout->addWidget(createPointWidget);
+    connect(createPointWidget, SIGNAL(pointSaved(int, double, double, QString)), _parent, SLOT(pointSavedEvent(int, double, double, QString)));
 
     /// Menu which display the widget for the creation of a path
     pathCreationWidget = new PathCreationWidget(_parent, *_points);

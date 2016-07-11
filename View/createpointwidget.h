@@ -1,5 +1,5 @@
-#ifndef EDITSELECTEDPOINTWIDGET_H
-#define EDITSELECTEDPOINTWIDGET_H
+#ifndef CreatePointWidget_H
+#define CreatePointWidget_H
 
 class PointsView;
 class PointView;
@@ -18,13 +18,13 @@ class TopLeftMenu;
 #include "Model/points.h"
 
 /**
- * @brief The EditSelectedPointWidget class
+ * @brief The CreatePointWidget class
  *
  */
-class EditSelectedPointWidget: public QWidget{
+class CreatePointWidget: public QWidget{
     Q_OBJECT
 public:
-    EditSelectedPointWidget(QMainWindow* parent, PointsView *points);
+    CreatePointWidget(QMainWindow* parent, PointsView *points);
 
     void setSelectedPoint(PointView* const& _pointView, const bool isTemporary);
 
@@ -72,4 +72,4 @@ private:
 
 };
 
-#endif // EDITSELECTEDPOINTWIDGET_H
+#endif // CreatePointWidget_H

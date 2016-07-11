@@ -1,4 +1,4 @@
-#include "editselectedpointwidget.h"
+#include "View/createpointwidget.h"
 #include "View/pointview.h"
 #include "View/pointsview.h"
 #include "Model/point.h"
@@ -18,7 +18,7 @@
 
 
 
-EditSelectedPointWidget::EditSelectedPointWidget(QMainWindow* _parent, PointsView* _points):QWidget(_parent){
+CreatePointWidget::CreatePointWidget(QMainWindow* _parent, PointsView* _points):QWidget(_parent){
     parent = _parent;
     points = _points;
 
@@ -99,7 +99,7 @@ EditSelectedPointWidget::EditSelectedPointWidget(QMainWindow* _parent, PointsVie
 
 }
 
-void EditSelectedPointWidget::setSelectedPoint(PointView * const &_pointView, const bool isTemporary){
+void CreatePointWidget::setSelectedPoint(PointView * const &_pointView, const bool isTemporary){
     _isTemporary = isTemporary;
     pointView = _pointView;
     nameEdit->setText(pointView->getPoint()->getName());
@@ -107,12 +107,12 @@ void EditSelectedPointWidget::setSelectedPoint(PointView * const &_pointView, co
     posYLabel->setText("Y : " + QString::number(pointView->getPoint()->getPosition().getY(), 'f', 1));
 }
 
-void EditSelectedPointWidget::saveEditSelecPointBtnEvent(){
+void CreatePointWidget::saveEditSelecPointBtnEvent(){
     qDebug() << "saveEditSelecPointBtnEvent called";
     emit pointSaved(groupBox->currentIndex(), posXLabel->text().right(posXLabel->text().length()-4).toDouble(), posYLabel->text().right(posYLabel->text().length()-4).toDouble(), nameEdit->text());
 }
 
-void EditSelectedPointWidget::checkPointName(void) const {
+void CreatePointWidget::checkPointName(void) const {
     qDebug() << "checkPointName called" << nameEdit->text();
     if(!nameEdit->text().compare("")){
         /// cannot add a point with no name
@@ -136,7 +136,7 @@ void EditSelectedPointWidget::checkPointName(void) const {
     saveBtn->setEnabled(true);
 }
 
-void EditSelectedPointWidget::showGroupLayout(void) const {
+void CreatePointWidget::showGroupLayout(void) const {
     /// we disable so that two points cannot be named tmpPoint
     saveBtn->setEnabled(false);
     groupLabel->show();
@@ -151,7 +151,7 @@ void EditSelectedPointWidget::showGroupLayout(void) const {
     nameEdit->setFocusPolicy(Qt::FocusPolicy::StrongFocus);
 }
 
-void EditSelectedPointWidget::hideGroupLayout(void) const {
+void CreatePointWidget::hideGroupLayout(void) const {
     /// resets the name to tmpPoint if we cancel the creation of the point
     nameEdit->setText(pointView->getPoint()->getName());
     /// hides everything that's related to creating a point
@@ -167,7 +167,7 @@ void EditSelectedPointWidget::hideGroupLayout(void) const {
     nameEdit->setFocusPolicy(Qt::FocusPolicy::NoFocus);
 }
 
-void EditSelectedPointWidget::updateGroupBox(const Points& _points){
+void CreatePointWidget::updateGroupBox(const Points& _points){
     groupBox->clear();
     /// we place the default group first
     groupBox->insertItem(0, _points.getDefaultGroup()->getName());
@@ -179,7 +179,7 @@ void EditSelectedPointWidget::updateGroupBox(const Points& _points){
     groupBox->setItemIcon(0, QIcon(":/icons/tick.png"));
 }
 
-void EditSelectedPointWidget::keyPressEvent(QKeyEvent* event){
+void CreatePointWidget::keyPressEvent(QKeyEvent* event){
     /// this is the enter key
     if(!event->text().compare("\r")){
         emit pointSaved(groupBox->currentIndex(), posXLabel->text().right(posXLabel->text().length()-4).toDouble(), posYLabel->text().right(posYLabel->text().length()-4).toDouble(), nameEdit->text());

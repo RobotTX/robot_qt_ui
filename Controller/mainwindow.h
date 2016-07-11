@@ -19,7 +19,7 @@ class RobotsLeftWidget;
 class MapLeftWidget;
 class EditSelectedRobotWidget;
 class SelectedPointWidget;
-class EditSelectedPointWidget;
+class CreatePointWidget;
 class LeftMenu;
 class BottomLayout;
 class PathCreationWidget;
@@ -161,6 +161,7 @@ private slots:
     void modifyGroupAfterClick(QString name);
     void enableReturnAndCloseButtons(void);
     void doubleClickOnRobot(int checkedId);
+    void setMessageCreationPath(QString message);
 
 
     /**
@@ -214,7 +215,7 @@ private:
     MapLeftWidget* mapLeftWidget;
     EditSelectedRobotWidget* editSelectedRobotWidget;
     SelectedPointWidget* selectedPointWidget;
-    EditSelectedPointWidget* editSelectedPointWidget;
+    CreatePointWidget* createPointWidget;
     LeftMenu* leftMenu;
     BottomLayout* bottomLayout;
     PathCreationWidget* pathCreationWidget;
