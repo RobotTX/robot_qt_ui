@@ -12,6 +12,7 @@ class QHBoxLayout;
 class QLineEdit;
 class QComboBox;
 class SpaceWidget;
+class TopLeftMenu;
 
 #include <QListWidget>
 #include "Model/points.h"
@@ -32,8 +33,8 @@ public:
     QLabel* getPosXLabel(void) const { return posXLabel; }
     QLabel* getPosYLabel(void) const { return posYLabel; }
     QLineEdit* getNameEdit(void) const { return nameEdit; }
-    QPushButton* getPlusButton(void) const { return plusButton; }
     void updateGroupBox(const Points &_points);
+    TopLeftMenu* getActionButtons(void) const { return actionButtons; }
 
 protected:
     void keyPressEvent(QKeyEvent* event);
@@ -51,13 +52,7 @@ public slots:
     void hideGroupLayout() const;
 
 private:
-    QPushButton* plusButton;
-    QPushButton* minusButton;
-    QPushButton* mapButton;
-    QPushButton* eyeButton;
-    QPushButton* editButton;
-    QHBoxLayout* topButtonsLayout;
-    QHBoxLayout* eyeMapLayout;
+
     QHBoxLayout* cancelSaveLayout;
     QMainWindow* parent;
     QVBoxLayout* layout;
@@ -73,6 +68,8 @@ private:
     QHBoxLayout* groupLayout;
     QLabel* groupLabel;
     SpaceWidget* separator;
+    TopLeftMenu* actionButtons;
+
 };
 
 #endif // CreatePointWidget_H

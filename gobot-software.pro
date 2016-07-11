@@ -63,8 +63,9 @@ HEADERS += Controller/cmdrobotthread.h \
            Model/origin.h \
            Controller/updaterobotsthread.h \
            Controller/updaterobotsthread.h \
-    View/customizedlineedit.h \
-    View/createpointwidget.h
+           View/customizedlineedit.h \
+           View/createpointwidget.h \
+           View/buttonmenu.h
 
 FORMS += Controller/mainwindow.ui
 
@@ -88,7 +89,6 @@ SOURCES += main.cpp \
            View/customqgraphicsview.cpp \
            View/displayselectedgroup.cpp \
            View/displayselectedpoint.cpp \
-           View/editselectedpointwidget.cpp \
            View/editselectedrobotwidget.cpp \
            View/groupbuttongroup.cpp \
            View/groupview.cpp \
@@ -115,8 +115,15 @@ SOURCES += main.cpp \
            View/doubleclickablebutton.cpp \
            View/topLeftMenu.cpp \
            Controller/updaterobotsthread.cpp \
-    View/customizedlineedit.cpp
+           View/customizedlineedit.cpp \
+           View/buttonmenu.cpp \
+    View/createpointwidget.cpp
 
 RESOURCES += Resources/resources.qrc
 
-DISTFILES += README
+DISTFILES += README \
+    points.xml \
+    Resources/map_ori.png \
+    Resources/robot_ori.png \
+    Resources/gtrobot-1.pgm \
+    Resources/gtrobot-1.pgm.pgm

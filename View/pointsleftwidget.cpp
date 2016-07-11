@@ -19,6 +19,8 @@
 #include <QDebug>
 #include "View/customizedlineedit.h"
 #include "View/toplayout.h"
+#include "View/buttonmenu.h"
+
 
 PointsLeftWidget::PointsLeftWidget(QMainWindow* _parent, std::shared_ptr<Points> const& _points, bool _groupDisplayed)
     : QWidget(_parent), groupDisplayed(_groupDisplayed), points(_points), creatingGroup(true), lastCheckedId(-1)

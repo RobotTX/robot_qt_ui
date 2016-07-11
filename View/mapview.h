@@ -25,7 +25,7 @@ class MapView: public QObject, public QGraphicsPixmapItem {
     Q_OBJECT
 
 public:
-    MapView (const QPixmap& pixmap, const QSize size, QMainWindow *_mainWindow);
+    MapView (const QPixmap& pixmap, const QSize size, std::shared_ptr<Map> _map, QMainWindow *_mainWindow);
     ~MapView();
 
     /// Getters
@@ -55,6 +55,7 @@ signals:
     void homeSelected(PointView* pointView, bool temporary);
     void homeEdited(PointView* pointView, bool temporary);
     void newCoordinates(double x, double y);
+    void newMessage(QString);
 
 private slots:
     void addPathPointMapViewSlot(PointView*);

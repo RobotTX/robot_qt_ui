@@ -13,7 +13,7 @@
 #include "View/spacewidget.h"
 #include "Model/group.h"
 #include "Model/map.h"
-
+#include "View/buttonmenu.h"
 DisplaySelectedPoint::DisplaySelectedPoint(QMainWindow *_parent, std::shared_ptr<Points> const& _points, std::shared_ptr<Map> const& _map, PointView* _pointView, const Origin _origin):
     QWidget(_parent), parent(_parent), origin(_origin), map(_map)
 {

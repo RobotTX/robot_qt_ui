@@ -40,6 +40,7 @@
 #include <QStringList>
 #include "View/customizedlineedit.h"
 #include <QRegularExpression>
+#include "View/buttonmenu.h"
 
 /**
  * @brief MainWindow::MainWindow
@@ -83,7 +84,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
     //create the graphic item of the map
     QPixmap pixmap = QPixmap::fromImage(map->getMapImage());
-    mapPixmapItem = new MapView(pixmap, QSize(geometry().width(), geometry().height()), this);
+    mapPixmapItem = new MapView(pixmap, QSize(geometry().width(), geometry().height()), map, this);
     //mapPixmapItem->centerMap();
     connect(mapPixmapItem, SIGNAL(addPathPointMapView(Point*)), this, SLOT(addPathPoint(Point*)));
     connect(mapPixmapItem, SIGNAL(homeSelected(PointView*, bool)), this, SLOT(homeSelected(PointView*, bool)));
@@ -173,6 +174,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     /// to know what message to display when a user is creating a group
     connect(pointsLeftWidget, SIGNAL(messageCreationGroup(QString)), this, SLOT(setMessageCreationGroup(QString)));
 
+    /// to know what message to display when a user is creating a path
+    connect(mapPixmapItem, SIGNAL(newMessage(QString)), this, SLOT(setMessageCreationPath(QString)));
+
     mainLayout->addLayout(bottom);
 
     setCentralWidget(mainWidget);
@@ -185,10 +189,10 @@ MainWindow::~MainWindow(){
     delete pathPainter;
     qDeleteAll(pathPointViews.begin(), pathPointViews.end());
     pathPointViews.clear();
-    if (updateRobotsThread != NULL && updateRobotsThread->isRunning() ) {
+    /*if (updateRobotsThread != NULL && updateRobotsThread->isRunning() ) {
         updateRobotsThread->requestInterruption();
         updateRobotsThread->wait();
-    }
+    }*/
     if (metadataThread != NULL && metadataThread->isRunning() ) {
         metadataThread->requestInterruption();
         metadataThread->wait();
@@ -333,7 +337,6 @@ void MainWindow::initializeRobots(){
     updateRobotsThread->moveToThread(updateRobotsThread);*/
 
 
-    /*
     std::shared_ptr<Robot> robot1(new Robot("Roboty", "localhost", PORT_CMD, this));
     robot1->setWifi("Swaghetti Yolognaise");
     RobotView* robotView1 = new RobotView(robot1, mapPixmapItem);
@@ -357,29 +360,7 @@ void MainWindow::initializeRobots(){
     robotView3->setPosition(200, 300);
     robotView3->setParentItem(mapPixmapItem);
     robots->add(robotView3);
-    std::shared_ptr<Robot> robot4(new Robot("Robotu", "192.168.4.236", PORT_CMD, this));
-    robot4->setWifi("Swaghetti Yolognaise");
-    RobotView* robotView4 = new RobotView(robot4, mapPixmapItem);
-    connect(robotView4, SIGNAL(setSelectedSignal(RobotView*)), this, SLOT(setSelectedRobot(RobotView*)));
-    robotView4->setPosition(200, 300);
-    robotView4->setParentItem(mapPixmapItem);
-    robots->add(robotView4);
 
-    std::shared_ptr<Robot> robot5(new Robot("Robote", "192.168.4.236", PORT_CMD, this));
-    robot5->setWifi("Swaghetti Yolognaise");
-    RobotView* robotView5 = new RobotView(robot3, mapPixmapItem);
-    connect(robotView3, SIGNAL(setSelectedSignal(RobotView*)), this, SLOT(setSelectedRobot(RobotView*)));
-    robotView5->setPosition(200, 300);
-    robotView5->setParentItem(mapPixmapItem);
-    robots->add(robotView5);
-
-    std::shared_ptr<Robot> robot6(new Robot("Robotr", "192.168.4.236", PORT_CMD, this));
-    robot6->setWifi("Swaghetti Yolognaise");
-    RobotView* robotView6 = new RobotView(robot3, mapPixmapItem);
-    connect(robotView6, SIGNAL(setSelectedSignal(RobotView*)), this, SLOT(setSelectedRobot(RobotView*)));
-    robotView6->setPosition(200, 300);
-    robotView6->setParentItem(mapPixmapItem);
-    robots->add(robotView6);*/
 }
 
 void MainWindow::stopSelectedRobot(int robotNb){
@@ -579,6 +560,7 @@ void MainWindow::editSelecRobotBtnEvent(){
 
 void MainWindow::addPathSelecRobotBtnEvent(){
     qDebug() << "addPathSelecRobotBtnEvent called on robot " << selectedRobot->getRobot()->getName();
+    setMessageTop(TEXT_COLOR_INFO, "Click white points of the map to add new points to the path of " + selectedRobot->getRobot()->getName());
     hideAllWidgets();
     pathPainter->reset();
     pathCreationWidget->show();
@@ -1269,6 +1251,11 @@ void MainWindow::robotIsDeadSlot(QString hostname,QString ip){
     setMessageTop(TEXT_COLOR_DANGER, QString("Robot " + hostname + " at ip " + ip +" disconnected."));
 }
 
+void MainWindow::setMessageCreationPath(QString message){
+    setMessageTop(TEXT_COLOR_DANGER, message);
+    delay(2500);
+    setMessageTop(TEXT_COLOR_INFO, "Click white points of the map to add new points to the path of " + selectedRobot->getRobot()->getName());
+}
 
 /**********************************************************************************************************************************/
 
@@ -1453,16 +1440,17 @@ void MainWindow::setSelectedPoint(PointView* pointView, bool isTemporary){
         createPointWidget->show();
         float x = pointView->getPoint()->getPosition().getX();
         float y = pointView->getPoint()->getPosition().getY();
+        qDebug() << map->getMapImage().pixelColor(x, y);
         if(map->getMapImage().pixelColor(x ,y) == QColor(254, 254, 254)){
-            createPointWidget->getPlusButton()->setEnabled(true);
-            createPointWidget->getPlusButton()->setToolTip("Click this button if you want to save this point permanently");
+            createPointWidget->getActionButtons()->getPlusButton()->setEnabled(true);
+            createPointWidget->getActionButtons()->getPlusButton()->setToolTip("Click this button if you want to save this point permanently");
             setMessageTop(TEXT_COLOR_INFO, "To save this point permanently click the \"+\" button");
             qDebug() << "ce point est blanc";
         } else {
             qDebug() << "this pooint is not white";
             setMessageTop(TEXT_COLOR_WARNING, "You cannot save this point because your robot(s) would not be able to go there");
-            createPointWidget->getPlusButton()->setEnabled(false);
-            createPointWidget->getPlusButton()->setToolTip("You cannot save this point because your robot(s) cannot go there");
+            createPointWidget->getActionButtons()->getPlusButton()->setEnabled(false);
+            createPointWidget->getActionButtons()->getPlusButton()->setToolTip("You cannot save this point because your robot(s) cannot go there");
         }
         leftMenu->getDisplaySelectedPoint()->hide();
         switchFocus(selectedPoint->getPoint()->getName(), createPointWidget);
@@ -1804,7 +1792,8 @@ void MainWindow::pointSavedEvent(int index, double x, double y, QString name){
     leftMenu->getReturnButton()->setEnabled(true);
 
     /// resets the status of the plus button
-    createPointWidget->getPlusButton()->setEnabled(true);
+    createPointWidget->getActionButtons()->getPlusButton()->setEnabled(true);
+
     /// hides widgets relative to the choice of a group
     createPointWidget->hideGroupLayout();
 
