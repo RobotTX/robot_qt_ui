@@ -832,19 +832,18 @@ void MainWindow::editTmpPathPointSlot(int id, Point* point, int nbWidget){
 
     QVector<PointView*> pointViewVector = mapPixmapItem->getPathCreationPoints();
     for(int i = 0; i < pointViewVector.size(); i++){
-        if(pointViewVector.at(i)->getPoint()->comparePos(point->getPosition().getX(), point->getPosition().getY())){
+        if(pointViewVector.at(i)->getPoint()->comparePos(point->getPosition().getX(), point->getPosition().getY()))
             editedPointView = pointViewVector.at(i);
-        }
     }
 
-    if(mapPixmapItem->getTmpPointView()->getPoint()->comparePos(point->getPosition().getX(), point->getPosition().getY())){
-        editedPointView = mapPixmapItem->getTmpPointView();
-    }
+    if(mapPixmapItem->getTmpPointView()->getPoint()->comparePos(point->getPosition().getX(), point->getPosition().getY()))
+        editedPointView = mapPixmapItem->getTmpPointView();  
 
     if(editedPointView == NULL){
         qDebug() << "(Error editTmpPathPointSlot) No pointview found to edit";
     } else {
         qDebug() << "Pointview found";
+        editedPointView->setPixmap(PointView::PixmapType::HOVER);
         if(nbWidget == 1){
             editedPointView->setFlag(QGraphicsItem::ItemIsMovable);
             setGraphicItemsState(GraphicItemState::NO_EVENT, false);
@@ -887,12 +886,12 @@ void MainWindow::pathSaved(bool execPath){
 }
 
 void MainWindow::addPathPoint(Point* point){
-    qDebug() << "addPathPoint called on point" << point->getName();
+    qDebug() << "addPathPoint called on point via * point" << point->getName();
     pathCreationWidget->addPathPoint(point);
 }
 
 void MainWindow::addPathPoint(PointView* pointView){
-    qDebug() << "addPathPoint called on point" << pointView->getPoint()->getName();
+    qDebug() << "addPathPoint called on point via * pointview" << pointView->getPoint()->getName();
     pathCreationWidget->addPathPoint(&(*(pointView->getPoint())));
 }
 
@@ -1257,6 +1256,14 @@ void MainWindow::setMessageCreationPath(QString message){
     setMessageTop(TEXT_COLOR_INFO, "Click white points of the map to add new points to the path of " + selectedRobot->getRobot()->getName());
 }
 
+void MainWindow::updatePathPoint(double x, double y, PointView* pointView){
+    qDebug() << "u got here";
+    if(map->getMapImage().pixelColor(x, y) == QColor(254, 254, 254))
+        pointView->getPoint()->setPosition(x, y);
+    else
+        qDebug() << "sorry u cannot put a path point in the dark";
+}
+
 /**********************************************************************************************************************************/
 
 //                                          MAPS
@@ -1407,9 +1414,7 @@ void MainWindow::initializePoints(){
     for(size_t j = 0; j < pointViews->count(); j++){
         for(size_t k = 0; k < pointViews->getGroups().at(j)->getPointViews().size(); k++){
             /// establish the right connections in order to use the points to create paths and home points
-            connect(pointViews->getGroups().at(j)->getPointViews().at(k),
-                    SIGNAL(addPointPath(PointView*)), this,
-                    SLOT(addPathPoint(PointView*)));
+            connect(pointViews->getGroups().at(j)->getPointViews().at(k), SIGNAL(addPointPath(PointView*)), this, SLOT(addPathPoint(PointView*)));
             connect(pointViews->getGroups().at(j)->getPointViews().at(k), SIGNAL(homeSelected(PointView*, bool)), this, SLOT(homeSelected(PointView*, bool)));
             connect(pointViews->getGroups().at(j)->getPointViews().at(k), SIGNAL(homeEdited(PointView*, bool)), this, SLOT(homeEdited(PointView*, bool)));
         }
@@ -1612,8 +1617,7 @@ void MainWindow::editGroupBtnEvent(){
     qDebug() << "editPointBtnEvent called";
     pointsLeftWidget->setCreatingGroup(false);
 
-    topLayout->setEnabled(false);
-
+    pointsLeftWidget->setEnabled(false);
     /// uncheck the other buttons
     pointsLeftWidget->getActionButtons()->getPlusButton()->setChecked(false);
     pointsLeftWidget->getActionButtons()->getMinusButton()->setChecked(false);
@@ -1651,7 +1655,7 @@ void MainWindow::editGroupBtnEvent(){
         editPointButtonEvent();
         pointsLeftWidget->hide();
         /// disables the back button to prevent problems, a user has to discard or save his modifications before he can start navigatin the menu again, also prevents false manipulations
-       leftMenu->getDisplaySelectedPoint()->show();
+        leftMenu->getDisplaySelectedPoint()->show();
         switchFocus("point",leftMenu->getDisplaySelectedPoint());
     }
     else if(checkedId != -1 && checkedId < points->count()-1){
@@ -2944,6 +2948,7 @@ void MainWindow::modifyGroupWithEnter(QString name){
 
 void MainWindow::modifyGroupAfterClick(QString name){
     topLayout->setEnabled(true);
+    pointsLeftWidget->setLastCheckedId(-1);
     qDebug() << "modifying group after random click";
     /// resets the menu
     leftMenu->getCloseButton()->setEnabled(true);

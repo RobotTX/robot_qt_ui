@@ -4,7 +4,6 @@
 
 CustomizedLineEdit::CustomizedLineEdit(QWidget* parent): QLineEdit(parent)
 {
-
 }
 
 void CustomizedLineEdit::focusOutEvent(QFocusEvent* e){

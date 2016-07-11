@@ -88,11 +88,11 @@ void PointView::mouseReleaseEvent(QGraphicsSceneMouseEvent *event){
         float x = pos().x() + pixmap().width()*SCALE/2;
         float y = pos().y() + pixmap().height()*SCALE;
         qDebug() << "to" << x << y;
-        point->setPosition(x, y);
-        QGraphicsPixmapItem::mouseReleaseEvent(event);
-    } else if(state == GraphicItemState::EDITING_PERM){
+        emit pathPointChanged(x, y, this);
         QGraphicsPixmapItem::mouseReleaseEvent(event);
     }
+    else if(state == GraphicItemState::EDITING_PERM)
+        QGraphicsPixmapItem::mouseReleaseEvent(event);
 }
 
 void PointView::hoverEnterEvent(QGraphicsSceneHoverEvent * /* unused */){

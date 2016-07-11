@@ -12,10 +12,8 @@
 #include "Model/map.h"
 
 MapView::MapView (const QPixmap& pixmap, const QSize _size, std::shared_ptr<Map> _map, QMainWindow* _mainWindow) :
-    QGraphicsPixmapItem(pixmap), size(_size), state(GraphicItemState::NO_STATE), map(_map)
+    QGraphicsPixmapItem(pixmap), size(_size), state(GraphicItemState::NO_STATE), map(_map), mainWindow(_mainWindow)
 {
-
-    mainWindow = _mainWindow;
     /// Tell the class which mouse button to accept
     setAcceptedMouseButtons(Qt::LeftButton);
 
@@ -33,6 +31,7 @@ MapView::MapView (const QPixmap& pixmap, const QSize _size, std::shared_ptr<Map>
     connect(tmpPointView, SIGNAL(addPointPath(PointView*)), this, SLOT(addPathPointMapViewSlot(PointView*)));
     connect(tmpPointView, SIGNAL(homeSelected(PointView*, bool)), mainWindow, SLOT(homeSelected(PointView*, bool)));
     connect(tmpPointView, SIGNAL(homeEdited(PointView*, bool)), mainWindow, SLOT(homeEdited(PointView*, bool)));
+
     point = static_cast<QSharedPointer<PointView>>(tmpPointView);
 
     tmpPointView->hide();
@@ -73,6 +72,7 @@ void MapView::mouseReleaseEvent(QGraphicsSceneMouseEvent *event){
 
                 connect(newPointView, SIGNAL(addPointPath(PointView*)), mainWindow, SLOT(addPathPoint(PointView*)));
                 connect(newPointView, SIGNAL(moveTmpEditPathPoint()), mainWindow, SLOT(moveTmpEditPathPointSlot()));
+                connect(newPointView, SIGNAL(pathPointChanged(double, double, PointView*)), mainWindow, SLOT(updatePathPoint(double, double, PointView*)));
 
                 newPointView->setState(GraphicItemState::CREATING_PATH);
                 newPointView->getPoint()->setPosition(event->pos().x(), event->pos().y());
@@ -153,10 +153,12 @@ void MapView::setState(const GraphicItemState _state, const bool clear){
  }
 
  void MapView::addPathPoint(PointView* pointView){
+     qDebug() << "MAP VIEW : addpathpoint called";
      PointView* newPointView = new PointView(std::make_shared<Point>(*(pointView->getPoint())), this);
 
      connect(newPointView, SIGNAL(addPointPath(PointView*)), mainWindow, SLOT(addPathPoint(PointView*)));
      connect(newPointView, SIGNAL(moveTmpEditPathPoint()), mainWindow, SLOT(moveTmpEditPathPointSlot()));
+
 
      newPointView->setState(GraphicItemState::CREATING_PATH);
      //newPointView->setPos(pointView->pos().x()+tmpPointPixmap.width()/2, pointView->pos().y()+tmpPointPixmap.height());
@@ -208,6 +210,7 @@ void MapView::setState(const GraphicItemState _state, const bool clear){
  }
 
  void MapView::addPointView(PointView* const& _pointView){
+     qDebug() << "addpointview called";
      _pointView->setParentItem(this);
     connect(_pointView, SIGNAL(pointLeftClicked(PointView*)), mainWindow, SLOT(displayPointEvent(PointView*)));
 
@@ -220,6 +223,8 @@ void MapView::setState(const GraphicItemState _state, const bool clear){
 
     connect(_pointView, SIGNAL(homeSelected(PointView*, bool)), mainWindow, SLOT(homeSelected(PointView*, bool)));
     connect(_pointView, SIGNAL(homeEdited(PointView*, bool)), mainWindow, SLOT(homeEdited(PointView*, bool)));
+
+    connect(_pointView, SIGNAL(pathPointChanged(double,double,PointView*)), mainWindow, SLOT(pathPointChanged(double, double, PointView*)));
 
     permanentPoints->addPointView(_pointView);
 }
