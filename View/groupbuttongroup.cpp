@@ -41,8 +41,9 @@ GroupButtonGroup::GroupButtonGroup(const Points &_points, QWidget* _parent):QWid
         if(currentGroup->isDisplayed())
             groupButton->setIcon(QIcon(":/icons/folder_tick.png"));
         else
-            groupButton->setIcon(QIcon(":/icons/folder_sapce.png"));
-        groupButton->setIconSize(QSize(this->width()/3,this->width()/3));
+            groupButton->setIcon(QIcon(":/icons/folder_space.png"));
+        groupButton->setIconSize(BUTTON_SIZE);
+
     }
 
     /// for the last group we just want to show the points and not "no group"
@@ -52,7 +53,6 @@ GroupButtonGroup::GroupButtonGroup(const Points &_points, QWidget* _parent):QWid
         //                                           + " (" + QString::number(currentPoint->getPosition().getX())
         //                                           + ", " + QString::number(currentPoint->getPosition().getY()) + ")", this);
         DoubleClickableButton* pointButton = new DoubleClickableButton(i+_points.getGroups().size()-1, currentPoint->getName(), this);
-
         pointButton->setAutoDefault(true);
         pointButton->setFlat(true);
         pointButton->setStyleSheet("text-align:left");
@@ -63,7 +63,7 @@ GroupButtonGroup::GroupButtonGroup(const Points &_points, QWidget* _parent):QWid
             pointButton->setIcon(QIcon(":/icons/tick_space.png"));
         else
             pointButton->setIcon(QIcon(":/icons/empty.png"));
-        pointButton->setIconSize(QSize(this->width()/3,this->width()/3));
+        pointButton->setIconSize(BUTTON_SIZE);
 
     }
     for(int i = 0; i < buttonGroup->buttons().count()-1; i++)
@@ -107,7 +107,8 @@ void GroupButtonGroup::update(const Points& _points){
         if(currentGroup->isDisplayed())
             groupButton->setIcon(QIcon(":/icons/folder_tick.png"));
         else
-            groupButton->setIcon(QIcon(":/icons/folder.png"));
+            groupButton->setIcon(QIcon(":/icons/folder_space.png"));
+        groupButton->setIconSize(BUTTON_SIZE);
 
     }
 
@@ -128,6 +129,7 @@ void GroupButtonGroup::update(const Points& _points){
                 pointButton->setIcon(QIcon(":/icons/tick_space.png"));
             else
                 pointButton->setIcon(QIcon(":/icons/empty.png"));
+            pointButton->setIconSize(BUTTON_SIZE);
 
         }
     }
