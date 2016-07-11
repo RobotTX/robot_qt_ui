@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <points>
     <group>
+        <name>jj</name>
+    </group>
+    <group>
         <name>first group</name>
         <point>
             <name>A</name>
@@ -12,7 +15,7 @@
             <name>Ma point</name>
             <x>75</x>
             <y>75</y>
-            <displayed>1</displayed>
+            <displayed>0</displayed>
         </point>
         <point>
             <name>A new point</name>
@@ -22,7 +25,34 @@
         </point>
     </group>
     <group>
+        <name>Second group</name>
+        <point>
+            <name>Fanny</name>
+            <x>125</x>
+            <y>125</y>
+            <displayed>1</displayed>
+        </point>
+        <point>
+            <name>Michel</name>
+            <x>150</x>
+            <y>150</y>
+            <displayed>1</displayed>
+        </point>
+    </group>
+    <group>
         <name>No group</name>
+        <point>
+            <name>Un point</name>
+            <x>150</x>
+            <y>175</y>
+            <displayed>1</displayed>
+        </point>
+        <point>
+            <name>Another point</name>
+            <x>150</x>
+            <y>200</y>
+            <displayed>0</displayed>
+        </point>
         <point>
             <name>A final point</name>
             <x>150</x>

@@ -120,7 +120,6 @@ void PointsLeftWidget::updateGroupButtonGroup(Points const& points){
 void PointsLeftWidget::enableButtons(int index){
     qDebug()   << "enable button";
     if(index == lastCheckedId){
-        qDebug()   << "ici";
 
         groupButtonGroup->uncheck();
         lastCheckedId = -1;
