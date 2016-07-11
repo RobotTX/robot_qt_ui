@@ -13,7 +13,7 @@ class RobotsLeftWidget;
 class MapLeftWidget;
 class EditSelectedRobotWidget;
 class SelectedPointWidget;
-class EditSelectedPointWidget;
+class CreatePointWidget;
 class DisplaySelectedPoint;
 class DisplaySelectedGroup;
 class PointsViews;
@@ -43,7 +43,7 @@ public:
     MapLeftWidget* getMapLeftWidget(void) const {return mapLeftWidget;}
     EditSelectedRobotWidget* getEditSelectedRobotWidget(void) const {return editSelectedRobotWidget;}
     SelectedPointWidget* getSelectedPointWidget(void) const {return selectedPointWidget;}
-    EditSelectedPointWidget* getEditSelectedPointWidget(void) const {return editSelectedPointWidget;}
+    CreatePointWidget* getEditSelectedPointWidget(void) const {return createPointWidget;}
     DisplaySelectedPoint* getDisplaySelectedPoint(void) const { return displaySelectedPoint; }
     DisplaySelectedGroup* getDisplaySelectedGroup(void) const { return displaySelectedGroup; }
     PathCreationWidget* getPathCreationWidget(void) const { return pathCreationWidget; }
@@ -72,7 +72,7 @@ private:
     MapLeftWidget* mapLeftWidget;
     EditSelectedRobotWidget* editSelectedRobotWidget;
     SelectedPointWidget* selectedPointWidget;
-    EditSelectedPointWidget* editSelectedPointWidget;
+    CreatePointWidget* createPointWidget;
     DisplaySelectedPoint* displaySelectedPoint;
     DisplaySelectedGroup* displaySelectedGroup;
     PathCreationWidget* pathCreationWidget;

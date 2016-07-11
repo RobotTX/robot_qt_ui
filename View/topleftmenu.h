@@ -15,9 +15,9 @@ public:
     //getters
     ButtonMenu* getPlusButton(void) const {return plusButton;}
     QPushButton* getMinusButton(void) const {return minusButton;}
-    QPushButton* getEditButton(void) const {return editButton;}
+    ButtonMenu* getEditButton(void) const {return editButton;}
     QPushButton* getMapButton(void) const {return mapButton;}
-    QPushButton* getEyeButton(void) const {return eyeButton;}
+    QPushButton* getGoButton(void) const {return goButton;}
 
 
     void disableAll();
@@ -34,9 +34,9 @@ private:
 
    ButtonMenu* plusButton;
    QPushButton* minusButton;
-   QPushButton* editButton;
+   ButtonMenu* editButton;
    QPushButton* mapButton;
-   QPushButton* eyeButton;
+   QPushButton* goButton;
    QHBoxLayout* eyeMapLayout;
    SpaceWidget* spaceWidget;
 };

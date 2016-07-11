@@ -37,13 +37,13 @@ PointsLeftWidget::PointsLeftWidget(QMainWindow* _parent, std::shared_ptr<Points>
     actionButtons->getMapButton()->setEnabled(false);
     actionButtons->getEditButton()->setEnabled(false);
     actionButtons->getMapButton()->setEnabled(false);
-    actionButtons->getEyeButton()->setEnabled(false);
+    actionButtons->getGoButton()->setEnabled(false);
 
     actionButtons->getPlusButton()->setToolTip("Click here to add a new group");
     actionButtons->getMinusButton()->setToolTip("Select a group or a point and click here to remove it");
     actionButtons->getEditButton()->setToolTip("Select a group or a point and click here to modify it");
     actionButtons->getMapButton()->setToolTip("Select a group or a point and click here to display or hide it on the map");
-    actionButtons->getEyeButton()->setToolTip("Select a group or a point and click here to display its information");
+    actionButtons->getGoButton()->setToolTip("Select a group or a point and click here to display its information");
 
     layout->addWidget(actionButtons);
 
@@ -76,7 +76,7 @@ PointsLeftWidget::PointsLeftWidget(QMainWindow* _parent, std::shared_ptr<Points>
     connect(actionButtons->getPlusButton(), SIGNAL(clicked(bool)), _parent, SLOT(plusGroupBtnEvent()));
     connect(actionButtons->getMinusButton(), SIGNAL(clicked(bool)), _parent, SLOT(minusGroupBtnEvent()));
     connect(actionButtons->getEditButton(), SIGNAL(clicked(bool)), _parent, SLOT(editGroupBtnEvent()));
-    connect(actionButtons->getEyeButton(), SIGNAL(clicked()), _parent, SLOT(displayPointsInGroup()));
+    connect(actionButtons->getGoButton(), SIGNAL(clicked()), _parent, SLOT(displayPointsInGroup()));
     connect(actionButtons->getMapButton(), SIGNAL(clicked()), _parent, SLOT(displayGroupMapEvent()));
 
     /// to handle double clicks
@@ -135,11 +135,11 @@ void PointsLeftWidget::enableButtons(int index){
         else
             actionButtons->getMinusButton()->setToolTip("Click to remove the selected point");
         /// enables the eye button
-        actionButtons->getEyeButton()->setEnabled(true);
+        actionButtons->getGoButton()->setEnabled(true);
         if(index < points->count()-1)
-            actionButtons->getEyeButton()->setToolTip("Click to display the information of the selected group");
+            actionButtons->getGoButton()->setToolTip("Click to display the information of the selected group");
         else
-            actionButtons->getEyeButton()->setToolTip("Click to display the information of the selected point");
+            actionButtons->getGoButton()->setToolTip("Click to display the information of the selected point");
         /// enables the map button
         actionButtons->getMapButton()->setCheckable(true);
         actionButtons->getMapButton()->setEnabled(true);
@@ -176,8 +176,8 @@ void PointsLeftWidget::disableButtons(void){
     actionButtons->getMinusButton()->setToolTip("Select a group or a point and click here to remove it");
 
     /// resets the eye button
-    actionButtons->getEyeButton()->setEnabled(false);
-    actionButtons->getEyeButton()->setToolTip("Select a group or a point and click here to display its information");
+    actionButtons->getGoButton()->setEnabled(false);
+    actionButtons->getGoButton()->setToolTip("Select a group or a point and click here to display its information");
 
     /// resets the map button
     actionButtons->getMapButton()->setEnabled(false);

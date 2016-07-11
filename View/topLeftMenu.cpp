@@ -58,7 +58,7 @@ minusButton->setAutoDefault(true);
 
 /// to force the user to choose a group or point first
 
-editButton = new QPushButton(QIcon(":/icons/edit.png"),"", this);
+editButton = new ButtonMenu(QIcon(":/icons/edit.png"),"", this);
 editButton->setIconSize(QSize(sizeI,sizeI));
 editButton->setMaximumHeight(sizeh);
 editButton->setMaximumWidth(plusButton->width());
@@ -89,7 +89,7 @@ spaceWidget2->setMinimumWidth(plusButton->width()/5);
 
 
 
-mapButton = new QPushButton(QIcon(":/icons/map.png"),"", this);
+mapButton = new QPushButton(QIcon(":/icons/eye.png"),"", this);
 mapButton->setIconSize(QSize(sizeI,sizeI));
 mapButton->setMaximumHeight(sizeh);
 mapButton->setMaximumWidth(sizew);
@@ -98,12 +98,14 @@ mapButton->setAutoDefault(true);
 
 
 // eyeMapLayout = eye , map buttons
-eyeButton = new QPushButton(QIcon(":/icons/eye.png"), "", this);
-eyeButton->setIconSize(QSize(sizeI,sizeI));
-eyeButton->setMaximumHeight(sizeh);
-eyeButton->setMaximumWidth(sizew);
-eyeButton->setMinimumWidth(sizew);
-eyeButton->setAutoDefault(true);
+//goButton = new QPushButton(QIcon(":/icons/arrowRight.png"), "", this);
+goButton = new QPushButton(QIcon(":/icons/go_inside.png"), "", this);
+
+goButton->setIconSize(QSize(sizeI,sizeI));
+goButton->setMaximumHeight(sizeh);
+goButton->setMaximumWidth(sizew);
+goButton->setMinimumWidth(sizew);
+goButton->setAutoDefault(true);
 
 
 /// to force the user to choose first
@@ -114,7 +116,7 @@ eyeMapLayout->setSpacing(0);
 //eyeMapLayout->setContentsMargins(0,0,0,0);
 
 //eyeMapLayout->addWidget(spaceWidget1);
-eyeMapLayout->addWidget(eyeButton);
+eyeMapLayout->addWidget(goButton);
 eyeMapLayout->addWidget(mapButton);
 //eyeMapLayout->addWidget(spaceWidget2);
 
@@ -149,8 +151,8 @@ minusButton->setStyleSheet("QPushButton{background-position: center center; bord
 editButton->setFlat(true);
 editButton->setStyleSheet("QPushButton{background-position: center center;}""QPushButton:hover{ background-color: grey; border: 1px;}");
 
-eyeButton->setFlat(true);
-eyeButton->setStyleSheet("QPushButton{background-position: center center; border: 1px solid;       border-right-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, x3: 0, y3: 0, stop: 0 transparent, stop: 0.5 #d3d3d3, stop: 1 transparent);border-left:none; border-top:none; border-bottom:none; position: relative;}""QPushButton:after {  content:''; background: grey;  position: absolute;  bottom: 0;  left: 0;  height: 50%; width: 1px;   }""QPushButton:hover{ background-color: grey; border: 1px;}");
+goButton->setFlat(true);
+goButton->setStyleSheet("QPushButton{background-position: center center; border: 1px solid;       border-right-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, x3: 0, y3: 0, stop: 0 transparent, stop: 0.5 #d3d3d3, stop: 1 transparent);border-left:none; border-top:none; border-bottom:none; position: relative;}""QPushButton:after {  content:''; background: grey;  position: absolute;  bottom: 0;  left: 0;  height: 50%; width: 1px;   }""QPushButton:hover{ background-color: grey; border: 1px;}");
 mapButton->setFlat(true);
 mapButton->setStyleSheet("QPushButton{background-position: center center;}""QPushButton:hover{ background-color: grey; border: 1px;}");
 
@@ -158,8 +160,8 @@ mapButton->setStyleSheet("QPushButton{background-position: center center;}""QPus
 
 setTabOrder(plusButton, minusButton);
 setTabOrder(minusButton, editButton);
-setTabOrder(editButton, eyeButton);
-setTabOrder(eyeButton, mapButton);
+setTabOrder(editButton, goButton);
+setTabOrder(goButton, mapButton);
  }
 
 void TopLeftMenu::disableAll()
@@ -167,7 +169,7 @@ void TopLeftMenu::disableAll()
      plusButton->setEnabled(false);
      minusButton->setEnabled(false);
      editButton->setEnabled(false);
-     eyeButton->setEnabled(false);
+     goButton->setEnabled(false);
      mapButton->setEnabled(false);
 }
 void TopLeftMenu::enableAll()
@@ -175,7 +177,7 @@ void TopLeftMenu::enableAll()
      plusButton->setEnabled(true);
      minusButton->setEnabled(true);
      editButton->setEnabled(true);
-     eyeButton->setEnabled(true);
+     goButton->setEnabled(true);
      mapButton->setEnabled(true);
 }
 void TopLeftMenu::uncheckAll()
@@ -183,7 +185,7 @@ void TopLeftMenu::uncheckAll()
     plusButton->setChecked(false);
     minusButton->setChecked(false);
     editButton->setChecked(false);
-    eyeButton->setChecked(false);
+    goButton->setChecked(false);
     mapButton->setChecked(false);
 }
 
@@ -193,7 +195,7 @@ void TopLeftMenu::checkAll()
     plusButton->setChecked(true);
     minusButton->setChecked(true);
     editButton->setChecked(true);
-    eyeButton->setChecked(true);
+    goButton->setChecked(true);
     mapButton->setChecked(true);
 }
 
@@ -203,7 +205,7 @@ void TopLeftMenu::setAllCheckable()
     plusButton->setCheckable(true);
     minusButton->setCheckable(true);
     editButton->setCheckable(true);
-    eyeButton->setCheckable(true);
+    goButton->setCheckable(true);
     mapButton->setCheckable(true);
 }
 
@@ -213,7 +215,7 @@ void TopLeftMenu::setAllNonCheckable()
     plusButton->setCheckable(false);
     minusButton->setCheckable(false);
     editButton->setCheckable(false);
-    eyeButton->setCheckable(false);
+    goButton->setCheckable(false);
     mapButton->setCheckable(false);
 }
 

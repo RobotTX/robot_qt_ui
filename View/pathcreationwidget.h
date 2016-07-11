@@ -110,6 +110,9 @@ public:
 
     TopLeftMenu* getActionButtons(void) const {return actionButtons;}
 
+    /// redefinition of show event
+    void showEvent(QShowEvent *);
+
 private slots:
     /**
      * @brief itemClicked

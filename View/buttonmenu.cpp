@@ -11,6 +11,7 @@ ButtonMenu::ButtonMenu(const QIcon icon,QString text, QWidget* parent): QPushBut
 }
 
  void ButtonMenu::enterEvent(QEvent * ) {
+     if(isEnabled())
     this->setStyleSheet(hoverStyle);
  }
  void ButtonMenu::leaveEvent(QEvent * ) {

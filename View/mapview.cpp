@@ -11,8 +11,8 @@
 #include "mainwindow.h"
 #include "Model/map.h"
 
-MapView::MapView (const QPixmap& pixmap, const QSize _size, QMainWindow* _mainWindow) :
-    QGraphicsPixmapItem(pixmap), size(_size), state(GraphicItemState::NO_STATE)
+MapView::MapView (const QPixmap& pixmap, const QSize _size, std::shared_ptr<Map> _map, QMainWindow* _mainWindow) :
+    QGraphicsPixmapItem(pixmap), size(_size), state(GraphicItemState::NO_STATE), map(_map)
 {
 
     mainWindow = _mainWindow;
@@ -65,19 +65,26 @@ void MapView::mouseReleaseEvent(QGraphicsSceneMouseEvent *event){
             point->setParentItem(this);
             emit pointLeftClicked(&(*point), true);
         } else if(state == GraphicItemState::CREATING_PATH){
-            qDebug() << "Clicked on the map while creating a path";
-            Point tmpPoint("tmpPoint", 0.0, 0.0, false);
-            PointView* newPointView = new PointView(std::make_shared<Point>(tmpPoint), this);
+            /// if it's not a white point of the map we cannot add it to the path
+            if(map->getMapImage().pixelColor(event->pos().x()-tmpPointPixmap.width()/2, event->pos().y()-tmpPointPixmap.height()) == QColor(254, 254, 254)){
+                qDebug() << "Clicked on the map while creating a path";
+                Point tmpPoint("tmpPoint", 0.0, 0.0, false);
+                PointView* newPointView = new PointView(std::make_shared<Point>(tmpPoint), this);
 
-            connect(newPointView, SIGNAL(addPointPath(PointView*)), mainWindow, SLOT(addPathPoint(PointView*)));
-            connect(newPointView, SIGNAL(moveTmpEditPathPoint()), mainWindow, SLOT(moveTmpEditPathPointSlot()));
+                connect(newPointView, SIGNAL(addPointPath(PointView*)), mainWindow, SLOT(addPathPoint(PointView*)));
+                connect(newPointView, SIGNAL(moveTmpEditPathPoint()), mainWindow, SLOT(moveTmpEditPathPointSlot()));
 
-            newPointView->setState(GraphicItemState::CREATING_PATH);
-            newPointView->getPoint()->setPosition(event->pos().x(), event->pos().y());
-            newPointView->setPos(event->pos().x()-tmpPointPixmap.width()/2, event->pos().y()-tmpPointPixmap.height());
-            newPointView->setParentItem(this);
-            pathCreationPoints.push_back(newPointView);
-            emit addPathPointMapView(&(*(newPointView->getPoint())));
+                newPointView->setState(GraphicItemState::CREATING_PATH);
+                newPointView->getPoint()->setPosition(event->pos().x(), event->pos().y());
+                newPointView->setPos(event->pos().x()-tmpPointPixmap.width()/2, event->pos().y()-tmpPointPixmap.height());
+                newPointView->setParentItem(this);
+                pathCreationPoints.push_back(newPointView);
+                emit addPathPointMapView(&(*(newPointView->getPoint())));
+
+           } else {
+               emit newMessage("You cannot create a point here because your robot cannot go there. You must click known areas of the map");
+               qDebug() << "sorry cannot create a point here";
+            }
         } else if(state == GraphicItemState::EDITING_PERM){
             qDebug() << "(MapView) EDITING_PERM " << event->pos().x() << event->pos().y();;
             /// to notify the point information menu that the position has changed and so the point can be displayed at its new position
