@@ -35,7 +35,6 @@ HEADERS += Controller/cmdrobotthread.h \
            View/customqgraphicsview.h \
            View/displayselectedgroup.h \
            View/displayselectedpoint.h \
-           View/editselectedpointwidget.h \
            View/editselectedrobotwidget.h \
            View/groupbuttongroup.h \
            View/groupview.h \
@@ -64,7 +63,8 @@ HEADERS += Controller/cmdrobotthread.h \
            Model/origin.h \
            Controller/updaterobotsthread.h \
            Controller/updaterobotsthread.h \
-    View/customizedlineedit.h
+    View/customizedlineedit.h \
+    View/createpointwidget.h
 
 FORMS += Controller/mainwindow.ui
 

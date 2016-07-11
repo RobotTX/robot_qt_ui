@@ -17,7 +17,7 @@
 #include "View/pointview.h"
 #include "View/leftmenuwidget.h"
 #include "View/editselectedrobotwidget.h"
-#include "View/editselectedpointwidget.h"
+#include "View/createpointwidget.h"
 #include "View/bottomlayout.h"
 #include "View/pointsleftwidget.h"
 #include "View/selectedrobotwidget.h"
@@ -1373,7 +1373,7 @@ void MainWindow::initializeLeftMenu(){
     mapLeftWidget = leftMenu->getMapLeftWidget();
     editSelectedRobotWidget = leftMenu->getEditSelectedRobotWidget();
     selectedPointWidget = leftMenu->getSelectedPointWidget();
-    editSelectedPointWidget = leftMenu->getEditSelectedPointWidget();
+    createPointWidget = leftMenu->getEditSelectedPointWidget();
     pathCreationWidget = leftMenu->getPathCreationWidget();
 }
 
@@ -1449,23 +1449,23 @@ void MainWindow::setSelectedPoint(PointView* pointView, bool isTemporary){
         selectedPoint = pointView;
         selectedPoint->setState(GraphicItemState::EDITING_PERM);
         hideAllWidgets();
-        editSelectedPointWidget->setSelectedPoint(selectedPoint, isTemporary);
-        editSelectedPointWidget->show();
+        createPointWidget->setSelectedPoint(selectedPoint, isTemporary);
+        createPointWidget->show();
         float x = pointView->getPoint()->getPosition().getX();
         float y = pointView->getPoint()->getPosition().getY();
         if(map->getMapImage().pixelColor(x ,y) == QColor(254, 254, 254)){
-            editSelectedPointWidget->getPlusButton()->setEnabled(true);
-            editSelectedPointWidget->getPlusButton()->setToolTip("Click this button if you want to save this point permanently");
+            createPointWidget->getPlusButton()->setEnabled(true);
+            createPointWidget->getPlusButton()->setToolTip("Click this button if you want to save this point permanently");
             setMessageTop(TEXT_COLOR_INFO, "To save this point permanently click the \"+\" button");
             qDebug() << "ce point est blanc";
         } else {
             qDebug() << "this pooint is not white";
             setMessageTop(TEXT_COLOR_WARNING, "You cannot save this point because your robot(s) would not be able to go there");
-            editSelectedPointWidget->getPlusButton()->setEnabled(false);
-            editSelectedPointWidget->getPlusButton()->setToolTip("You cannot save this point because your robot(s) cannot go there");
+            createPointWidget->getPlusButton()->setEnabled(false);
+            createPointWidget->getPlusButton()->setToolTip("You cannot save this point because your robot(s) cannot go there");
         }
         leftMenu->getDisplaySelectedPoint()->hide();
-        switchFocus(selectedPoint->getPoint()->getName(), editSelectedPointWidget);
+        switchFocus(selectedPoint->getPoint()->getName(), createPointWidget);
     } else {
         /// on the left we display the position of the temporary point as the user moves it around but we don't make any modifications on the model yet
         leftMenu->getDisplaySelectedPoint()->getXLabel()->setText(QString::number(mapPixmapItem->getTmpPointView()->getPoint()->getPosition().getX()));
@@ -1804,9 +1804,9 @@ void MainWindow::pointSavedEvent(int index, double x, double y, QString name){
     leftMenu->getReturnButton()->setEnabled(true);
 
     /// resets the status of the plus button
-    editSelectedPointWidget->getPlusButton()->setEnabled(true);
+    createPointWidget->getPlusButton()->setEnabled(true);
     /// hides widgets relative to the choice of a group
-    editSelectedPointWidget->hideGroupLayout();
+    createPointWidget->hideGroupLayout();
 
     std::shared_ptr<Point> newPoint = std::shared_ptr<Point> (new Point(name, x, y, true, true));
 
@@ -1833,7 +1833,7 @@ void MainWindow::pointSavedEvent(int index, double x, double y, QString name){
     mapPixmapItem->getTmpPointView()->hide();
 
     /// hide the creation widget
-    editSelectedPointWidget->hide();
+    createPointWidget->hide();
 }
 
 /**
@@ -1929,7 +1929,7 @@ void MainWindow::askForDeletePointConfirmation(int index){
                         /// hides group menu and shows list of groups menu
                         leftMenu->getDisplaySelectedGroup()->hide();
                         pointsLeftWidget->show();
-                        editSelectedPointWidget->updateGroupBox(*points);
+                        createPointWidget->updateGroupBox(*points);
                         backEvent();
                     }
                 }
@@ -1985,7 +1985,7 @@ void MainWindow::askForDeleteGroupConfirmation(int index){
                 pointsLeftWidget->getGroupButtonGroup()->update(*points);
                 pointsLeftWidget->getActionButtons()->getMinusButton()->setChecked(false);
                 /// updates the group box so that the user cannot create a point in this group anymore
-                editSelectedPointWidget->updateGroupBox(*points);
+                createPointWidget->updateGroupBox(*points);
             } else {
                 /// this group contains the home point of a robot and cannot be removed, we prompt the end user with a customized message to explain which robot has its home point in the group
                 RobotView* robot = robots->findRobotUsingHome(homePoint->getName());
@@ -2279,7 +2279,7 @@ void MainWindow::removePoint(std::shared_ptr<Point>& point, const Origin origin)
                     if(origin == Origin::GROUPS)
                         pointsLeftWidget->show();
                     /// updates the list of available groups when a user creates a point
-                    editSelectedPointWidget->updateGroupBox(*points);
+                    createPointWidget->updateGroupBox(*points);
                     backEvent();
                 }
             }
@@ -2371,7 +2371,7 @@ void MainWindow::removePointFromInformationMenu(void){
                                 parser.save(*points);
                                 /// updates menu
                                 pointsLeftWidget->getGroupButtonGroup()->update(*points);
-                                editSelectedPointWidget->updateGroupBox(*points);
+                                createPointWidget->updateGroupBox(*points);
                                 backEvent();
                             }
                         }
@@ -2887,7 +2887,7 @@ void MainWindow::createGroup(QString name){
         /// updates list of groups in menu
         pointsLeftWidget->updateGroupButtonGroup(*points);
         /// updates the comboBox to make this new group available when a user creates a point
-        editSelectedPointWidget->updateGroupBox(*points);
+        createPointWidget->updateGroupBox(*points);
         /// enables the return button again
         leftMenu->getReturnButton()->setEnabled(true);
         /// hides everything that's related to the creation of a group
@@ -3094,7 +3094,7 @@ void MainWindow::hideAllWidgets(){
     robotsLeftWidget->hide();
     mapLeftWidget->hide();
     editSelectedRobotWidget->hide();
-    editSelectedPointWidget->hide();
+    createPointWidget->hide();
     leftMenu->getDisplaySelectedPoint()->hide();
     pathCreationWidget->hide();
     leftMenu->getDisplaySelectedGroup()->hide();

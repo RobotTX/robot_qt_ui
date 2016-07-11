@@ -19,7 +19,7 @@ class RobotsLeftWidget;
 class MapLeftWidget;
 class EditSelectedRobotWidget;
 class SelectedPointWidget;
-class EditSelectedPointWidget;
+class CreatePointWidget;
 class LeftMenu;
 class BottomLayout;
 class PathCreationWidget;
@@ -214,7 +214,7 @@ private:
     MapLeftWidget* mapLeftWidget;
     EditSelectedRobotWidget* editSelectedRobotWidget;
     SelectedPointWidget* selectedPointWidget;
-    EditSelectedPointWidget* editSelectedPointWidget;
+    CreatePointWidget* createPointWidget;
     LeftMenu* leftMenu;
     BottomLayout* bottomLayout;
     PathCreationWidget* pathCreationWidget;
