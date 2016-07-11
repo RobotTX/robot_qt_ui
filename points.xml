@@ -1,6 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <points>
     <group>
+<<<<<<< HEAD
+        <name>cc</name>
+    </group>
+    <group>
+=======
+>>>>>>> f92f9ca5c0db7c4bfc28c75a5252cf0ee878503f
         <name>first group</name>
         <point>
             <name>A</name>

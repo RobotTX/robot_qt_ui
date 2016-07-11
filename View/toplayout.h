@@ -22,6 +22,7 @@ public:
     void disable();
     void enable();
     void setLabelDelay(const QString msgType, const QString msg, int delayTime);
+    void delay(const int ms) ;
 
 
 private:
