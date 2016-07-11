@@ -1522,6 +1522,7 @@ void MainWindow::plusGroupBtnEvent(){
  */
 void MainWindow::minusGroupBtnEvent(){
     qDebug() << "minusGroupBtnEvent called";
+
     /// unables the buttons
 
     /// uncheck the other buttons
@@ -1615,6 +1616,7 @@ void MainWindow::editPointButtonEvent(){
  */
 void MainWindow::editGroupBtnEvent(){
     qDebug() << "editPointBtnEvent called";
+    pointsLeftWidget->setLastCheckedId(-1);
     pointsLeftWidget->setCreatingGroup(false);
 
     pointsLeftWidget->setEnabled(false);
@@ -1635,7 +1637,7 @@ void MainWindow::editGroupBtnEvent(){
         PointView* pointView = pointViews->getPointViewFromPoint(*point);
         pointView->show();
         /// must display the tick icon in the pointsLeftWidget
-        pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(checkedId)->setIcon(QIcon(":/icons/tick_space.png"));
+        pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(checkedId)->setIcon(QIcon(":/icons/eye_space.png"));
         if(pointView){
             QString robotName = "";
             if(pointView->getPoint()->isHome()){
@@ -1855,6 +1857,8 @@ void MainWindow::askForDeleteDefaultGroupPointConfirmation(int index){
                 pointsLeftWidget->getGroupButtonGroup()->update(*points);
                 /// need to remove the point from the map
                 pointViews->getPointViewFromPoint(*point)->hide();
+                pointsLeftWidget->setLastCheckedId(-1);
+
 
             } else {
                 /// this is in fact the home point of a robot, we prompt a customized message to the end user
@@ -1965,6 +1969,7 @@ void MainWindow::askForDeleteGroupConfirmation(int index){
         /// we have to check that none of the points is the home of a robot
             std::shared_ptr<Point> homePoint = points->getGroups().at(index)->containsHomePoint();
             if(!homePoint){
+                pointsLeftWidget->setLastCheckedId(-1);
                 /// removes all the points of the group on the map
                 for(int i = 0; i < points->getGroups().at(index)->count(); i++){
                     pointViews->getPointViewFromPoint(*points->getGroups().at(index)->getPoints().at(i))->hide();
@@ -1979,6 +1984,7 @@ void MainWindow::askForDeleteGroupConfirmation(int index){
                 pointsLeftWidget->getActionButtons()->getMinusButton()->setChecked(false);
                 /// updates the group box so that the user cannot create a point in this group anymore
                 createPointWidget->updateGroupBox(*points);
+
             } else {
                 /// this group contains the home point of a robot and cannot be removed, we prompt the end user with a customized message to explain which robot has its home point in the group
                 RobotView* robot = robots->findRobotUsingHome(homePoint->getName());
@@ -2060,6 +2066,7 @@ void MainWindow::displayGroupMapEvent(void){
     if(checkedId > -1 && checkedId < points->count()-1){
         /// the group was displayed, we now have to hide it (all its points)
         if(points->getGroups().at(checkedId)->isDisplayed()){
+
             /// updates the tooltip of the map button
             pointsLeftWidget->getActionButtons()->getMapButton()->setToolTip("Click here to display the selected group on the map");
             pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(checkedId)->setIcon(QIcon(":/icons/folder_space.png"));
@@ -2072,11 +2079,21 @@ void MainWindow::displayGroupMapEvent(void){
                 XMLParser parserPoints(XML_PATH, mapPixmapItem);
                 parserPoints.save(*points);
             }
-        } else {
+        }
+         else if(points->getGroups().at(checkedId)->count() == 0)
+        {
+            pointsLeftWidget->getActionButtons()->getMapButton()->setChecked(false);
+
+                topLayout->setLabelDelay(TEXT_COLOR_WARNING, "this folder is empty. There is nothing to display",2000);
+
+         }
+        else
+        {
+
             /// updates the tooltip of the map button
             pointsLeftWidget->getActionButtons()->getMapButton()->setToolTip("Click here to hide the selected group on the map");
             /// the group must now be displayed
-            pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(checkedId)->setIcon(QIcon(":/icons/folder_tick.png"));
+            pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(checkedId)->setIcon(QIcon(":/icons/folder_eye.png"));
             for(int i = 0; i < points->getGroups().at(checkedId)->count(); i++){
                 std::shared_ptr<Point> point = points->getGroups().at(checkedId)->getPoints()[i];
                 PointView* pointView = pointViews->getPointViewFromPoint(*point);
@@ -2112,7 +2129,7 @@ void MainWindow::displayGroupMapEvent(void){
             XMLParser parserPoints(XML_PATH, mapPixmapItem);
             parserPoints.save(*points);
             /// we add the tick icon
-            pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(checkedId)->setIcon(QIcon(":/icons/tick_space.png"));
+            pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(checkedId)->setIcon(QIcon(":/icons/eye_space.png"));
         }
     }
 }
@@ -2155,14 +2172,14 @@ void MainWindow::displayPointMapEvent(){
             /// we update the groups menu
             /// it's a point that belongs to a group
             if(pointIndexes.first < points->count()-1){
-                leftMenu->getDisplaySelectedGroup()->getPointButtonGroup()->getButtonGroup()->button(pointIndexes.second)->setIcon(QIcon(":/icons/tick_space.png"));
+                leftMenu->getDisplaySelectedGroup()->getPointButtonGroup()->getButtonGroup()->button(pointIndexes.second)->setIcon(QIcon(":/icons/eye_space.png"));
                 /// we check whether or not the entire group is displayed and update the points left widget accordingly by adding a tick Icon or not
                 if(points->getGroups().at(pointsLeftWidget->getIndexLastGroupClicked())->isDisplayed())
-                    pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(pointIndexes.first)->setIcon(QIcon(":/icons/folder_tick.png"));
+                    pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(pointIndexes.first)->setIcon(QIcon(":/icons/folder_eye.png"));
             }
             /// it's an isolated point
             else
-                pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(points->count()+pointIndexes.second-1)->setIcon(QIcon(":/icons/tick_space.png"));
+                pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(points->count()+pointIndexes.second-1)->setIcon(QIcon(":/icons/eye_space.png"));
         }
     } else {
         qDebug() << " NULL pointer error in displayPointMapEvent";
@@ -2693,7 +2710,7 @@ void MainWindow::displayPointFromGroupMenu(){
             parserPoints.save(*points);
             /// we check whether or not the entire group is displayed and update the points left widget accordingly by adding a tick Icon or not
             if(points->getGroups().at(pointsLeftWidget->getIndexLastGroupClicked())->isDisplayed())
-                pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(pointsLeftWidget->getIndexLastGroupClicked())->setIcon(QIcon(":/icons/folder_tick.png"));
+                pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(pointsLeftWidget->getIndexLastGroupClicked())->setIcon(QIcon(":/icons/folder_eye.png"));
             /// changes the map button message
             leftMenu->getDisplaySelectedGroup()->getActionButtons()->getMapButton()->setToolTip("Click to hide the selected point on the map");
 
@@ -2872,6 +2889,7 @@ int MainWindow::openEmptyGroupMessage(const QString groupName){
 void MainWindow::createGroup(QString name){
     qDebug() << "createGroup called" << name;
     if(pointsLeftWidget->checkGroupName(name.simplified()) == 0){
+        pointsLeftWidget->setLastCheckedId(-1);
         /// updates the model
         points->addGroupFront(name);
         mapPixmapItem->getPermanentPoints()->addGroupViewFront();
@@ -2897,6 +2915,7 @@ void MainWindow::createGroup(QString name){
         setMessageTop(TEXT_COLOR_SUCCESS, "You have created a new group");
         delay(2500);
         setMessageTop(TEXT_COLOR_NORMAL, "");
+
     } else if(pointsLeftWidget->checkGroupName(name.simplified()) == 1){
         setMessageTop(TEXT_COLOR_DANGER, "The name of your group cannot be empty");
         delay(2500);

@@ -96,10 +96,14 @@ QDataStream& operator>>(QDataStream& in, Group& group){
 }
 
  bool Group::isDisplayed(void) const {
-    foreach(std::shared_ptr<Point> point, points)
-        if(!point->isDisplayed())
-            return false;
-    return true;
+     if (points.size() !=0)
+     {
+         foreach(std::shared_ptr<Point> point, points)
+            if(!point->isDisplayed())
+                return false;
+        return true;
+     }else
+         return false;
  }
 
 std::shared_ptr<Point> Group::containsHomePoint(void) const {

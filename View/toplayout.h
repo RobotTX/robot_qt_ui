@@ -21,6 +21,8 @@ public:
     void setLabel(const QString msgType, const QString msg);
     void disable();
     void enable();
+    void setLabelDelay(const QString msgType, const QString msg, int delayTime);
+
 
 private:
     QHBoxLayout* layout;
