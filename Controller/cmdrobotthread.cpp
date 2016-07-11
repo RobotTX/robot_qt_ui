@@ -128,7 +128,7 @@ void CmdRobotThread::connectedSlot(){
 }
 
 void CmdRobotThread::disconnectedSlot(){
-    qDebug() << "(Robot" << robotName << ") Disconnected";
+    qDebug() << "(Robot" << robotName << ") Disconnected at ip" << ipAddress;
     connected = false;
     emit robotIsDead(robotName, ipAddress);
 }

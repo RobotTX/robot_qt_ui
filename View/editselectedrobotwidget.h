@@ -25,7 +25,7 @@ class EditSelectedRobotWidget: public QWidget{
 public:
     EditSelectedRobotWidget(QMainWindow* parent, std::shared_ptr<Robots> const robots);
 
-    void setSelectedRobot(RobotView * const robotView);
+    void setSelectedRobot(RobotView * const robotView, bool firstConnection = false);
     void setRobots(std::shared_ptr<Robots> const _robots){robots = _robots;}
     void editName(void);
 
@@ -64,6 +64,7 @@ private:
     PointView* home;
     bool temporary;
     std::shared_ptr<Point> oldHome;
+    bool firstConnection;
 
 protected:
     void showEvent(QShowEvent *event);
@@ -81,6 +82,7 @@ private slots:
     * Check if the robot name is already taken
     */
     void checkRobotName(void);
+    void checkWifiName(void);
 
     void deletePwd(void);
 

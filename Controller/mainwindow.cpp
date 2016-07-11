@@ -186,10 +186,10 @@ MainWindow::~MainWindow(){
     delete pathPainter;
     qDeleteAll(pathPointViews.begin(), pathPointViews.end());
     pathPointViews.clear();
-    /*if (updateRobotsThread != NULL && updateRobotsThread->isRunning() ) {
+    if (updateRobotsThread != NULL && updateRobotsThread->isRunning() ) {
         updateRobotsThread->requestInterruption();
         updateRobotsThread->wait();
-    }*/
+    }
     if (metadataThread != NULL && metadataThread->isRunning() ) {
         metadataThread->requestInterruption();
         metadataThread->wait();
@@ -238,6 +238,7 @@ void MainWindow::connectToRobot(){
                     QString ip = selectedRobot->getRobot()->getIp();
                     qDebug() << "Trying to connect to : " << ip;
 
+                    selectedRobot->getRobot()->resetCommandAnswer();
                     if(selectedRobot->getRobot()->sendCommand(QString("e ") + QString::number(PORT_MAP_METADATA) + " " + QString::number(PORT_ROBOT_POS) + " " +QString::number(PORT_MAP))){
 
                         selectedRobotWidget->getScanBtn()->setText("Stop to scan");
@@ -286,6 +287,7 @@ void MainWindow::connectToRobot(){
                 break;
             }
         } else {
+            selectedRobot->getRobot()->resetCommandAnswer();
             if(selectedRobot->getRobot()->sendCommand("f")){
                 QString answer = selectedRobot->getRobot()->waitAnswer();
                 QStringList answerList = answer.split(QRegExp("[ ]"), QString::SkipEmptyParts);
@@ -310,7 +312,6 @@ void MainWindow::connectToRobot(){
                         topLayout->setLabel(TEXT_COLOR_DANGER, "Failed to stop the scanning, please try again");
                     }
                 }
-                selectedRobot->getRobot()->resetCommandAnswer();
 
             } else {
                 qDebug() << "Could not disconnect";
@@ -328,12 +329,12 @@ void MainWindow::connectToRobot(){
 
 void MainWindow::initializeRobots(){
 
-    /*updateRobotsThread = new UpdateRobotsThread(PORT_ROBOT_UPDATE);
+    updateRobotsThread = new UpdateRobotsThread(PORT_ROBOT_UPDATE);
     connect(updateRobotsThread, SIGNAL(robotIsAlive(QString,QString)), this, SLOT(robotIsAliveSlot(QString,QString)));
     updateRobotsThread->start();
-    updateRobotsThread->moveToThread(updateRobotsThread);*/
+    updateRobotsThread->moveToThread(updateRobotsThread);
 
-
+/*
     std::shared_ptr<Robot> robot1(new Robot("Roboty", "localhost", PORT_CMD, this));
     robot1->setWifi("Swaghetti Yolognaise");
     RobotView* robotView1 = new RobotView(robot1, mapPixmapItem);
@@ -357,7 +358,7 @@ void MainWindow::initializeRobots(){
     robotView3->setPosition(200, 300);
     robotView3->setParentItem(mapPixmapItem);
     robots->add(robotView3);
-
+*/
 }
 
 void MainWindow::stopSelectedRobot(int robotNb){
@@ -368,6 +369,7 @@ void MainWindow::stopSelectedRobot(int robotNb){
         switch (ret) {
             case QMessageBox::Ok:
                 /// if the command is succesfully sent to the robot, we apply the change
+                robots->getRobotsVector().at(robotNb)->getRobot()->resetCommandAnswer();
                 if(robots->getRobotsVector().at(robotNb)->getRobot()->sendCommand(QString("d"))){
                     QString answer = robots->getRobotsVector().at(robotNb)->getRobot()->waitAnswer();
                     QStringList answerList = answer.split(QRegExp("[ ]"), QString::SkipEmptyParts);
@@ -406,6 +408,7 @@ void MainWindow::playSelectedRobot(int robotNb){
     if(robot->isPlayingPath()){
         qDebug() << "pause path on robot " << robotNb << " : " << robot->getName();
         /// if the command is succesfully sent to the robot, we apply the change
+        robot->resetCommandAnswer();
         if(robot->sendCommand(QString("d"))){
             QString answer = robot->waitAnswer();
             QStringList answerList = answer.split(QRegExp("[ ]"), QString::SkipEmptyParts);
@@ -442,6 +445,7 @@ void MainWindow::playSelectedRobot(int robotNb){
         }
 
         /// if the command is succesfully sent to the robot, we apply the change
+        robot->resetCommandAnswer();
         if(robot->sendCommand(QString("c ") + QString::number(newPosX) + " "  + QString::number(newPosY) + " "  + QString::number(waitTime))){
             QString answer = robot->waitAnswer();
             QStringList answerList = answer.split(QRegExp("[ ]"), QString::SkipEmptyParts);
@@ -669,6 +673,7 @@ void MainWindow::robotSavedEvent(){
     /// if the command is succesfully sent to the robot, we apply the change
     if(selectedRobot->getRobot()->getName().compare(editSelectedRobotWidget->getNameEdit()->text()) != 0){
         qDebug() << "Name has been modified";
+        selectedRobot->getRobot()->resetCommandAnswer();
         if(selectedRobot->getRobot()->sendCommand(QString("a ") + editSelectedRobotWidget->getNameEdit()->text())){
             QString answer = selectedRobot->getRobot()->waitAnswer();
             QStringList answerList = answer.split(QRegExp("[ ]"), QString::SkipEmptyParts);
@@ -688,6 +693,7 @@ void MainWindow::robotSavedEvent(){
     }
     if (editSelectedRobotWidget->getWifiPwdEdit()->text() != "......"){
         qDebug() << "Wifi has been modified";
+        selectedRobot->getRobot()->resetCommandAnswer();
         if(selectedRobot->getRobot()->sendCommand(QString("b ")
                   + editSelectedRobotWidget->getWifiNameEdit()->text() + " "
                   + editSelectedRobotWidget->getWifiPwdEdit()->text())){
@@ -1136,6 +1142,7 @@ void MainWindow::goHomeBtnEvent(){
     int waitTime = -1;
 
     /// if the command is succesfully sent to the robot, we apply the change
+    selectedRobot->getRobot()->resetCommandAnswer();
     if(selectedRobot->getRobot()->sendCommand(QString("c ") + QString::number(newPosX) + " "  + QString::number(newPosY) + " "  + QString::number(waitTime))){
         QString answer = selectedRobot->getRobot()->waitAnswer();
         QStringList answerList = answer.split(QRegExp("[ ]"), QString::SkipEmptyParts);
@@ -1160,9 +1167,9 @@ void MainWindow::robotIsAliveSlot(QString hostname,QString ip){
     RobotView* rv = robots->getRobotViewByIp(ip);
     if(rv != NULL){
         qDebug() << "Robot" << hostname << "at ip" << ip << "is still alive";
-        /// TODO reset compteur
         emit ping();
         /// TODO see for changes (battery, name, wifi)
+
     } else {
         qDebug() << "Robot" << hostname << "at ip" << ip << "just connected";
 
@@ -1175,6 +1182,15 @@ void MainWindow::robotIsAliveSlot(QString hostname,QString ip){
         robots->add(robotView);
         bottomLayout->addRobot(robotView);
         robotsLeftWidget->updateRobots(robots);
+
+        /// TODO check if first connection
+        if(ip.endsWith(".7.2")){
+            selectedRobot = robotView;
+            switchFocus(hostname, editSelectedRobotWidget);
+            editSelectedRobotWidget->setSelectedRobot(selectedRobot, true);
+            hideAllWidgets();
+            editSelectedRobotWidget->show();
+        }
     }
 }
 
