@@ -41,6 +41,7 @@
 #include "View/customizedlineedit.h"
 #include <QRegularExpression>
 #include "View/buttonmenu.h"
+#include "View/pathpointcreationwidget.h"
 
 /**
  * @brief MainWindow::MainWindow
@@ -829,7 +830,9 @@ void MainWindow::setCheckedRobot(QString name){
 void MainWindow::editTmpPathPointSlot(int id, Point* point, int nbWidget){
     qDebug() << "editTmpPathPointSlot called : " << id << point->getName() << nbWidget;
     editedPointView = NULL;
-
+    setMessageTop(TEXT_COLOR_INFO, "Drag the selected point and click \"Save changes\" to modify the path of your robot");
+    leftMenu->getReturnButton()->setEnabled(false);
+    leftMenu->getCloseButton()->setEnabled(false);
     QVector<PointView*> pointViewVector = mapPixmapItem->getPathCreationPoints();
     for(int i = 0; i < pointViewVector.size(); i++){
         if(pointViewVector.at(i)->getPoint()->comparePos(point->getPosition().getX(), point->getPosition().getY()))
@@ -862,6 +865,8 @@ void MainWindow::editTmpPathPointSlot(int id, Point* point, int nbWidget){
 
 void MainWindow::pathSaved(bool execPath){
     qDebug() << "pathSaved called" << execPath;
+
+    bottomLayout->enable();
 
     hideAllWidgets();
     setMessageTop(TEXT_COLOR_SUCCESS, "Path saved");
@@ -927,10 +932,16 @@ void MainWindow::hidePathCreationWidget(){
 
 void MainWindow::saveTmpEditPathPointSlot(void){
     qDebug() << "saveTmpEditPathPointSlot called";
+    leftMenu->getCloseButton()->setEnabled(true);
+    leftMenu->getReturnButton()->setEnabled(true);
+    setMessageTop(TEXT_COLOR_SUCCESS, "You have successfully modified the path of " + selectedRobot->getRobot()->getName());
+    delay(2500);
+    setMessageTop(TEXT_COLOR_INFO, "Click white points of the map to add new points to the path of " + selectedRobot->getRobot()->getName());
+
     pathCreationWidget->applySavePathPoint(editedPointView->getPoint()->getPosition().getX(), editedPointView->getPoint()->getPosition().getY());
     editedPointView->setFlag(QGraphicsItem::ItemIsMovable, false);
     setGraphicItemsState(GraphicItemState::CREATING_PATH, false);
-
+    bottomLayout->enable();
     editedPointView = NULL;
 }
 
@@ -1258,10 +1269,13 @@ void MainWindow::setMessageCreationPath(QString message){
 
 void MainWindow::updatePathPoint(double x, double y, PointView* pointView){
     qDebug() << "u got here";
-    if(map->getMapImage().pixelColor(x, y) == QColor(254, 254, 254))
+    if(map->getMapImage().pixelColor(x, y) == QColor(254, 254, 254)){
+        //pathCreationWidget->getPathPointCreationWidget()->getSaveEditBtn()->setEnabled(true);
         pointView->getPoint()->setPosition(x, y);
-    else
+    } else {
+        //pathCreationWidget->getPathPointCreationWidget()->getSaveEditBtn()->setEnabled(false);
         qDebug() << "sorry u cannot put a path point in the dark";
+    }
 }
 
 /**********************************************************************************************************************************/
