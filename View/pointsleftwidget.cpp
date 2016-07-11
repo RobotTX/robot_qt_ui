@@ -118,11 +118,16 @@ void PointsLeftWidget::updateGroupButtonGroup(Points const& points){
 }
 
 void PointsLeftWidget::enableButtons(int index){
+    qDebug()   << "enable button";
     if(index == lastCheckedId){
+        qDebug()   << "ici";
+
         groupButtonGroup->uncheck();
         lastCheckedId = -1;
         disableButtons();
     } else {
+        qDebug()   << "la";
+
         lastCheckedId = index;
         groupButtonGroup->setIndexModifyEdit(index);
         groupButtonGroup->getLayout()->removeWidget(groupButtonGroup->getModifyEdit());
@@ -226,6 +231,7 @@ int PointsLeftWidget::checkGroupName(QString name){
 
 void PointsLeftWidget::cancelCreationGroup(){
     qDebug() << "cancelcreationgroup called";
+    setLastCheckedId(-1);
     /// hides everything that's related to the creation of a group
     groupNameEdit->hide();
     groupNameLabel->hide();
@@ -262,6 +268,7 @@ void PointsLeftWidget::showEvent(QShowEvent *event){
 
 void PointsLeftWidget::resetWidget(void){
     groupButtonGroup->uncheck();
+    lastCheckedId=-1;
     disableButtons();
 }
 
@@ -271,6 +278,6 @@ void PointsLeftWidget::modifyGroupAfterClick(QString name){
 }
 
 void PointsLeftWidget::reconnectModifyEdit(){
-    qDebug() << "reconnection !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!";
+    qDebug() << "reconnectModifyEdit";
     connect(groupButtonGroup->getModifyEdit(), SIGNAL(clickSomewhere(QString)), this, SLOT(modifyGroupAfterClick(QString)));
 }

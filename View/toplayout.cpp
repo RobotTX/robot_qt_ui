@@ -6,6 +6,8 @@
 #include <QDebug>
 #include "View/verticalscrollarea.h"
 #include "View/spacewidget.h"
+#include <QTime>
+ #include <QCoreApplication>
 
 TopLayout::TopLayout(QMainWindow* parent):QWidget(parent){
     layout = new QHBoxLayout(this);
@@ -66,6 +68,23 @@ void TopLayout::setLabel(const QString msgType, const QString msg){
     label->setText(msg);
     label->setStyleSheet("QLabel { color: " + QString(msgType) + "}");
 }
+
+void TopLayout::setLabelDelay(const QString msgType, const QString msg, int delayTime){
+    label->setText(msg);
+    label->setStyleSheet("QLabel { color: " + QString(msgType) + "}");
+
+    // wait
+    QTime dieTime= QTime::currentTime().addMSecs(delayTime);
+    while (QTime::currentTime() < dieTime)
+        QCoreApplication::processEvents(QEventLoop::AllEvents, 100);
+
+    // reset message
+    label->setText("");
+    label->setStyleSheet("QLabel { color: " + QString(TEXT_COLOR_NORMAL) + "}");
+
+
+}
+
 
 void TopLayout::disable(){
     menuBtn->setEnabled(false);
