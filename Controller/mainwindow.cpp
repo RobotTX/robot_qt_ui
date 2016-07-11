@@ -1619,7 +1619,6 @@ void MainWindow::editGroupBtnEvent(){
     pointsLeftWidget->setLastCheckedId(-1);
     pointsLeftWidget->setCreatingGroup(false);
 
-    pointsLeftWidget->setEnabled(false);
     /// uncheck the other buttons
     pointsLeftWidget->getActionButtons()->getPlusButton()->setChecked(false);
     pointsLeftWidget->getActionButtons()->getMinusButton()->setChecked(false);
@@ -2917,6 +2916,9 @@ void MainWindow::createGroup(QString name){
         setMessageTop(TEXT_COLOR_NORMAL, "");
 
     } else if(pointsLeftWidget->checkGroupName(name.simplified()) == 1){
+        setMessageTop(TEXT_COLOR_DANGER, "The name of your group cannot be empty");
+        setMessageTop(TEXT_COLOR_NORMAL, "");
+        delay(300);
         setMessageTop(TEXT_COLOR_DANGER, "The name of your group cannot be empty");
         delay(2500);
         setMessageTop(TEXT_COLOR_NORMAL, "");

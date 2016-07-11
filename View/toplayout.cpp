@@ -29,6 +29,8 @@ TopLayout::TopLayout(QMainWindow* parent):QWidget(parent){
     layout->addWidget(connectBtn);
     connect(connectBtn, SIGNAL(clicked()), parent, SLOT(connectToRobot()));
 
+//  centerBtn = new QPushButton(QIcon(":/icons/"))
+
     SpaceWidget* spaceWidget = new SpaceWidget(SpaceWidget::SpaceOrientation::VERTICAL, this);
     spaceWidget->setColor("lightgrey");
     layout->addWidget(spaceWidget);

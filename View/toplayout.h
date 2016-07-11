@@ -30,6 +30,7 @@ private:
     QPushButton* menuBtn;
     QPushButton* connectBtn;
     QPushButton* closeBtn;
+    QPushButton* centerBtn;
 };
 
 #endif // TOPLAYOUT_H
