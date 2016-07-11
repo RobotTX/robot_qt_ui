@@ -29,6 +29,7 @@ PointButtonGroup::PointButtonGroup(std::shared_ptr<Points> const&_points, const 
         layout->addWidget(pointButton);
         if(currentPoint->isDisplayed())
             pointButton->setIcon(QIcon(":/icons/tick.png"));
+
     }
 }
 

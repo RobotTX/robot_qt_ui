@@ -8,6 +8,8 @@
 #include <QMainWindow>
 #include <topleftmenu.h>
 #include <qdebug.h>
+#include "buttonmenu.h"
+
 RobotsLeftWidget::RobotsLeftWidget(QMainWindow* _parent):QWidget(_parent){
     parent = _parent;
     layout = new QVBoxLayout(this);
@@ -17,7 +19,7 @@ RobotsLeftWidget::RobotsLeftWidget(QMainWindow* _parent):QWidget(_parent){
     actionButtons = new TopLeftMenu(this);
     actionButtons->disableAll();
 
-    connect(actionButtons->getEyeButton(), SIGNAL(clicked()), parent, SLOT(selectViewRobot()));
+    connect(actionButtons->getGoButton(), SIGNAL(clicked()), parent, SLOT(selectViewRobot()));
     connect( actionButtons->getEditButton(), SIGNAL(clicked()), parent, SLOT(editRobotBtnEvent()));
     connect(actionButtons->getMapButton(), SIGNAL(clicked()), parent, SLOT(checkRobotBtnEventMenu()));
 

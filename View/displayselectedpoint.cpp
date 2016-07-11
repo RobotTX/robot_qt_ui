@@ -30,7 +30,7 @@ DisplaySelectedPoint::DisplaySelectedPoint(QMainWindow *_parent, std::shared_ptr
     actionButtons->getPlusButton()->setEnabled(false);
     actionButtons->getMinusButton()->setCheckable(true);
     actionButtons->getEditButton()->setCheckable(true);
-    actionButtons->getEyeButton()->setEnabled(false);
+    actionButtons->getGoButton()->setEnabled(false);
     actionButtons->getMapButton()->setCheckable(true);
 
     actionButtons->getMinusButton()->setToolTip("You can click this button to remove the point");

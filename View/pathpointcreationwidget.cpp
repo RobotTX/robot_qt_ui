@@ -24,6 +24,7 @@ PathPointCreationWidget::PathPointCreationWidget(const int _id, const Points& _p
     /// The widget that contain the layout for the button to select the
     /// action the robot need to do (wait for X sec or wait for human action)
     actionWidget = new QWidget(this);
+
     QVBoxLayout* actionLayout = new QVBoxLayout(actionWidget);
 
     actionBtn = new QComboBox(this);

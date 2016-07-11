@@ -14,6 +14,8 @@
 #include <QDebug>
 #include "topleftmenu.h"
 #include "verticalscrollarea.h"
+#include "buttonmenu.h"
+
 
 SelectedRobotWidget::SelectedRobotWidget(QMainWindow* parent): QWidget(parent){
 

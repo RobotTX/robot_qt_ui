@@ -37,6 +37,8 @@
 	<file alias="pause.png">132__pause.png</file>
 	<file alias="eye.png">128__eye.png</file>
         <file alias="cropped_eye.png">128__cropped_eye.png</file>
+        <file>go_inside.png</file>
+
 
         <file>cropped_coordinates.png</file>
 	<file alias="blue_coord.png">blue_coordinates.png</file>
@@ -55,6 +57,11 @@
         <file>tick.png</file>
         <file>back.png</file>
         <file>folder_tick.png</file>
+        <file>folder_space.png</file>
+        <file>tick_space.png</file>
+        <file>empty.png</file>
+
+
     </qresource>
     <qresource prefix="/xml">
 	<file>points.xml</file>

@@ -13,8 +13,6 @@ protected:
     void enterEvent(QEvent * e) ;
     void leaveEvent(QEvent * e) ;
 
-signals:
-    void clicked();
 private:
     QString noHoverStyle;
     QString hoverStyle;

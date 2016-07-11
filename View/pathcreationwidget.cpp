@@ -106,9 +106,8 @@ PathCreationWidget::PathCreationWidget(QMainWindow* parent, const Points &_point
 }
 
 void PathCreationWidget::addPathPoint(void){
-    qDebug() << "yo Add pathPoint" << idPoint;
+    qDebug() << " Add pathPoint" << idPoint;
     creatingNewPoint = true;
-  //  actionButtons->getPlusButton()->leaveEvent(QtCore.QEvent.HoverMove);
 
     clicked();
 }
@@ -158,6 +157,7 @@ void PathCreationWidget::pointClicked(QAction *action){
 void PathCreationWidget::addPathPoint(Point* point){
     qDebug() << "Add pathPoint with point" << idPoint;
 
+
     /// We create a new widget to add to the list of path point widgets
     PathPointCreationWidget* pathPoint = new PathPointCreationWidget(idPoint, points, *point, this);
 
@@ -187,6 +187,12 @@ void PathCreationWidget::initialisationPathPoint(PathPointCreationWidget* pathPo
 }
 
 void PathCreationWidget::itemClicked(QListWidgetItem* item){
+    qDebug() << "item click in list path";
+    actionButtons->getMinusButton()->setEnabled(true);
+    actionButtons->getEditButton()->setEnabled(true);
+    pathPointsList->setCurrentItem(item, QItemSelectionModel::Select);
+
+/*
 
     /// when we click on an item in the list we select/deselect it
     if(state == CheckState::NO_STATE){
@@ -211,10 +217,12 @@ void PathCreationWidget::itemClicked(QListWidgetItem* item){
         previousItem = item;
         editItem(item);
     }
+    */
 }
 
 void PathCreationWidget::supprPathPoint(){
     qDebug() << "supprPathPoint called";
+    /*
 
     /// if the delete button is pressed, we toggle it if no path point is selected
     if(previousItem == NULL){
@@ -229,11 +237,17 @@ void PathCreationWidget::supprPathPoint(){
     } else {
         supprItem(pathPointsList->currentItem());
     }
+    */
+    supprItem(pathPointsList->currentItem());
+    if (pathPointsList->count()==0)
+        resetWidget();
+
 }
 
 void PathCreationWidget::editPathPoint(){
     qDebug() << "editPathPoint called";
 
+    /*
     /// if the edit button is pressed, we toggle it if no path point is selected
     if(previousItem == NULL){
         if(actionButtons->getEditButton()->isChecked()){
@@ -247,8 +261,15 @@ void PathCreationWidget::editPathPoint(){
         if(actionButtons->getEditButton()->isChecked()){
             editItem(pathPointsList->currentItem());
         }
-
     }
+    */
+    editItem(pathPointsList->currentItem());
+    if  ( pathPointsList->selectedItems().count()==0 )
+    {
+        actionButtons->getMinusButton()->setEnabled(false);
+        actionButtons->getEditButton()->setEnabled(false);
+    }
+
 }
 
 void PathCreationWidget::saveNoExecPath(void){
@@ -369,6 +390,7 @@ void PathCreationWidget::resetWidget(){
     actionButtons->getEditButton()->setEnabled(true);
     */
     actionButtons->uncheckAll();
+
     actionButtons->disableAll();
     actionButtons->getPlusButton()->setEnabled(true);
 
@@ -433,15 +455,11 @@ void PathCreationWidget::editItem(QListWidgetItem* item){
         pathPointsList->setDragDropMode(QAbstractItemView::NoDragDrop);
         editedPathPointCreationWidget = pathPointWidget;
 
-        actionButtons->getPlusButton()->setEnabled(false);
-        actionButtons->getMinusButton()->setEnabled(false);
-        actionButtons->getEditButton()->setEnabled(false);
     } else {
         qDebug() << "Trying to edit a permanent point";
         clicked();
     }
 
-    actionButtons->getEditButton()->setChecked(false);
     state = CheckState::NO_STATE;
     previousItem = NULL;
 }

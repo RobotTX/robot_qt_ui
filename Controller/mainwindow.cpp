@@ -562,6 +562,7 @@ void MainWindow::addPathSelecRobotBtnEvent(){
     pathCreationWidget->show();
     pathCreationWidget->setSelectedRobot(selectedRobot->getRobot());
     setGraphicItemsState(GraphicItemState::CREATING_PATH, true);
+    bottomLayout->disable();
     switchFocus(selectedRobot->getRobot()->getName(),pathCreationWidget);
 }
 
@@ -577,7 +578,7 @@ void MainWindow::setSelectedRobot(QAbstractButton *button){
     qDebug() << "select a robot in robot group ";
 
     robotsLeftWidget->getActionButtons()->getEditButton()->setEnabled(true);
-    robotsLeftWidget->getActionButtons()->getEyeButton()->setEnabled(true);
+    robotsLeftWidget->getActionButtons()->getGoButton()->setEnabled(true);
     robotsLeftWidget->getActionButtons()->getMapButton()->setEnabled(true);
     RobotView* mySelectedRobot =  robots->getRobotViewByName(robotsLeftWidget->getBtnGroup()
                                                   ->getBtnGroup()->checkedButton()->text());
@@ -1511,7 +1512,7 @@ void MainWindow::minusGroupBtnEvent(){
     /// uncheck the other buttons
     pointsLeftWidget->getActionButtons()->getPlusButton()->setChecked(false);
     pointsLeftWidget->getActionButtons()->getEditButton()->setChecked(false);
-    pointsLeftWidget->getActionButtons()->getEyeButton()->setChecked(false);
+    pointsLeftWidget->getActionButtons()->getGoButton()->setChecked(false);
     pointsLeftWidget->getActionButtons()->getMapButton()->setChecked(false);
 
     /// we hide those in case the previous button clicked was the plus button
@@ -1564,7 +1565,7 @@ void MainWindow::editPointButtonEvent(){
 
     pointsLeftWidget->getActionButtons()->getPlusButton()->setChecked(false);
     pointsLeftWidget->getActionButtons()->getMinusButton()->setChecked(false);
-    pointsLeftWidget->getActionButtons()->getEyeButton()->setChecked(false);
+    pointsLeftWidget->getActionButtons()->getGoButton()->setChecked(false);
     pointsLeftWidget->getActionButtons()->getMapButton()->setChecked(false);
 
     /// this way we force the user to either click save or cancel
@@ -1606,7 +1607,7 @@ void MainWindow::editGroupBtnEvent(){
     /// uncheck the other buttons
     pointsLeftWidget->getActionButtons()->getPlusButton()->setChecked(false);
     pointsLeftWidget->getActionButtons()->getMinusButton()->setChecked(false);
-    pointsLeftWidget->getActionButtons()->getEyeButton()->setChecked(false);
+    pointsLeftWidget->getActionButtons()->getGoButton()->setChecked(false);
     pointsLeftWidget->getActionButtons()->getMapButton()->setChecked(false);
     /// we hide those in case the previous button clicked was the plus button
     pointsLeftWidget->getGroupNameEdit()->hide();
@@ -1620,7 +1621,7 @@ void MainWindow::editGroupBtnEvent(){
         PointView* pointView = pointViews->getPointViewFromPoint(*point);
         pointView->show();
         /// must display the tick icon in the pointsLeftWidget
-        pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(checkedId)->setIcon(QIcon(":/icons/tick.png"));
+        pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(checkedId)->setIcon(QIcon(":/icons/tick_space.png"));
         if(pointView){
             QString robotName = "";
             if(pointView->getPoint()->isHome()){
@@ -2033,7 +2034,7 @@ void MainWindow::displayGroupMapEvent(void){
     pointsLeftWidget->getActionButtons()->getPlusButton()->setChecked(false);
     pointsLeftWidget->getActionButtons()->getMinusButton()->setChecked(false);
     pointsLeftWidget->getActionButtons()->getEditButton()->setChecked(false);
-    pointsLeftWidget->getActionButtons()->getEyeButton()->setChecked(false);
+    pointsLeftWidget->getActionButtons()->getGoButton()->setChecked(false);
 
     /// we hide those in case the previous button clicked was the plus button
     pointsLeftWidget->getGroupNameEdit()->hide();
@@ -2046,7 +2047,7 @@ void MainWindow::displayGroupMapEvent(void){
         if(points->getGroups().at(checkedId)->isDisplayed()){
             /// updates the tooltip of the map button
             pointsLeftWidget->getActionButtons()->getMapButton()->setToolTip("Click here to display the selected group on the map");
-            pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(checkedId)->setIcon(QIcon(":/icons/folder.png"));
+            pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(checkedId)->setIcon(QIcon(":/icons/folder_space.png"));
             for(int i = 0; i < points->getGroups().at(checkedId)->count(); i++){
                 std::shared_ptr<Point> point = points->getGroups().at(checkedId)->getPoints()[i];
                 PointView* pointView = pointViews->getPointViewFromPoint(*point);
@@ -2085,7 +2086,8 @@ void MainWindow::displayGroupMapEvent(void){
             XMLParser parserPoints(XML_PATH, mapPixmapItem);
             parserPoints.save(*points);
             /// we remove the tick icon
-            pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(checkedId)->setIcon(QIcon());
+
+            pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(checkedId)->setIcon(QIcon(":/icons/empty.png"));
         } else {
             /// updates the tooltip of the map button
             pointsLeftWidget->getActionButtons()->getMapButton()->setToolTip("Click here to hide the selected point on the map");
@@ -2095,7 +2097,7 @@ void MainWindow::displayGroupMapEvent(void){
             XMLParser parserPoints(XML_PATH, mapPixmapItem);
             parserPoints.save(*points);
             /// we add the tick icon
-            pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(checkedId)->setIcon(QIcon(":/icons/tick.png"));
+            pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(checkedId)->setIcon(QIcon(":/icons/tick_space.png"));
         }
     }
 }
@@ -2119,13 +2121,13 @@ void MainWindow::displayPointMapEvent(){
             leftMenu->updateGroupDisplayed(points, pointIndexes.first);
             /// it's a point that belongs to a group
             if(pointIndexes.first < points->count()-1){
-                pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(pointIndexes.first)->setIcon(QIcon(":/icons/folder.png"));
+                pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(pointIndexes.first)->setIcon(QIcon(":/icons/folder_space.png"));
                 qDebug() << pointIndexes.second;
-                leftMenu->getDisplaySelectedGroup()->getPointButtonGroup()->getButtonGroup()->button(pointIndexes.second)->setIcon(QIcon());
+                leftMenu->getDisplaySelectedGroup()->getPointButtonGroup()->getButtonGroup()->button(pointIndexes.second)->setIcon(QIcon(":/icons/empty.png"));
             }
             /// it's an isolated point
             else
-                pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(points->count()+pointIndexes.second-1)->setIcon(QIcon());
+                pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(points->count()+pointIndexes.second-1)->setIcon(QIcon(":/icons/empty.png"));
 
         } else {
             qDebug() << " Now I have returned to be displayed";
@@ -2138,17 +2140,17 @@ void MainWindow::displayPointMapEvent(){
             /// we update the groups menu
             /// it's a point that belongs to a group
             if(pointIndexes.first < points->count()-1){
-                leftMenu->getDisplaySelectedGroup()->getPointButtonGroup()->getButtonGroup()->button(pointIndexes.second)->setIcon(QIcon(":/icons/tick.png"));
+                leftMenu->getDisplaySelectedGroup()->getPointButtonGroup()->getButtonGroup()->button(pointIndexes.second)->setIcon(QIcon(":/icons/tick_space.png"));
                 /// we check whether or not the entire group is displayed and update the points left widget accordingly by adding a tick Icon or not
                 if(points->getGroups().at(pointsLeftWidget->getIndexLastGroupClicked())->isDisplayed())
                     pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(pointIndexes.first)->setIcon(QIcon(":/icons/folder_tick.png"));
             }
             /// it's an isolated point
             else
-                pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(points->count()+pointIndexes.second-1)->setIcon(QIcon(":/icons/tick.png"));
+                pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(points->count()+pointIndexes.second-1)->setIcon(QIcon(":/icons/tick_space.png"));
         }
     } else {
-        qDebug() << "wtf am I manipulating a NULL pointer ?";
+        qDebug() << " NULL pointer error in displayPointMapEvent";
     }
 }
 
@@ -2176,7 +2178,7 @@ void MainWindow::displayPointsInGroup(void){
     /// it's a group
     if(checkedId != -1 && checkedId < points->count()-1){
        pointsLeftWidget->setIndexLastGroupClicked(checkedId);
-       pointsLeftWidget->getActionButtons()->getEyeButton()->setChecked(false);
+       pointsLeftWidget->getActionButtons()->getGoButton()->setChecked(false);
        pointsLeftWidget->hide();
        /// before we display the group of points, we make sure that the graphical object is consistent with the model
        DisplaySelectedGroup* selectedGroup = leftMenu->getDisplaySelectedGroup();
@@ -2206,7 +2208,7 @@ void MainWindow::displayPointsInGroup(void){
         else
             selectedPoint->getActionButtons()->getMapButton()->setChecked(false);
         switchFocus("Point",selectedPoint);
-        pointsLeftWidget->getActionButtons()->getEyeButton()->setChecked(false);
+        pointsLeftWidget->getActionButtons()->getGoButton()->setChecked(false);
         pointsLeftWidget->hide();
     }
 }
@@ -2656,12 +2658,12 @@ void MainWindow::displayPointFromGroupMenu(){
             /// updates the model
             points->getGroups().at(pointsLeftWidget->getIndexLastGroupClicked())->getPoints().at(checkedId)->setDisplayed(false);
             /// removes the tick icon to show that the point is not displayed on the map
-            leftMenu->getDisplaySelectedGroup()->getPointButtonGroup()->getButtonGroup()->button(checkedId)->setIcon(QIcon());
+            leftMenu->getDisplaySelectedGroup()->getPointButtonGroup()->getButtonGroup()->button(checkedId)->setIcon(QIcon(":/icons/empty.png"));
             /// updates the file
             XMLParser parserPoints(XML_PATH, mapPixmapItem);
             parserPoints.save(*points);
             /// if the entire group was displayed it is not the case anymore
-            pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(pointsLeftWidget->getIndexLastGroupClicked())->setIcon(QIcon(":/icons/folder.png"));
+            pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(pointsLeftWidget->getIndexLastGroupClicked())->setIcon(QIcon(":/icons/folder_space.png"));
             /// changes the map button message
             leftMenu->getDisplaySelectedGroup()->getActionButtons()->getMapButton()->setToolTip("Click to display the selected point on the map");
         } else {
@@ -2777,7 +2779,7 @@ void MainWindow::doubleClickOnGroup(int checkedId){
     /// it's a group
     if(checkedId != -1 && checkedId < points->count()-1){
        pointsLeftWidget->setIndexLastGroupClicked(checkedId);
-       pointsLeftWidget->getActionButtons()->getEyeButton()->setChecked(false);
+       pointsLeftWidget->getActionButtons()->getGoButton()->setChecked(false);
        pointsLeftWidget->hide();
        /// before we display the group of points, we make sure that the graphical object is consistent with the model
        DisplaySelectedGroup* selectedGroup = leftMenu->getDisplaySelectedGroup();
@@ -2803,7 +2805,7 @@ void MainWindow::doubleClickOnGroup(int checkedId){
         selectedPoint->setPointView(pointView, robotName);
         selectedPoint->displayPointInfo();
         selectedPoint->show();
-        pointsLeftWidget->getActionButtons()->getEyeButton()->setChecked(false);
+        pointsLeftWidget->getActionButtons()->getGoButton()->setChecked(false);
         if(pointView->getPoint()->isDisplayed())
             selectedPoint->getActionButtons()->getMapButton()->setChecked(true);
         else
