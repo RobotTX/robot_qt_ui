@@ -48,17 +48,6 @@ SelectedRobotWidget::SelectedRobotWidget(QMainWindow* parent): QWidget(parent){
     inLayout->addWidget(scanBtn);
     connect(scanBtn, SIGNAL(clicked()), parent, SLOT(connectToRobot()));
 
-/*
-    /// Button which allow the user to edit the info of the robot
-    editBtn = new QPushButton(QIcon(":/icons/edit.png"),"Edit", this);
-    editBtn->setStyleSheet ("text-align: left");
-    editBtn->setIconSize(parent->size()/10);
-    layout->addWidget(editBtn);
-
-
-    SpaceWidget* spaceWidget = new SpaceWidget(SpaceWidget::SpaceOrientation::HORIZONTAL, this);
-    layout->addWidget(spaceWidget);
-*/
     /// Label which display the Ip of the robot
     ipAddressLabel = new QLabel("Ip : ", this);
     ipAddressLabel->setWordWrap(true);
@@ -84,12 +73,15 @@ SelectedRobotWidget::SelectedRobotWidget(QMainWindow* parent): QWidget(parent){
 
     /// Home layout with the button to select/show the home
     QLabel* homeLabel = new QLabel("Home : ", this);
+    QLabel* noHome = new QLabel("no home set");
+
+
     homeBtn = new QPushButton(QIcon(":/icons/home.png"), "", this);
     homeBtn->setIconSize(parent->size()/10);
     homeBtn->setStyleSheet ("text-align: left");
 
     inLayout->addWidget(homeLabel);
-    inLayout->addWidget(homeBtn);
+  //  inLayout->addWidget(noHome);
 
     goHome = new QPushButton("Go Home", this);
     goHome->setMinimumHeight(30);
@@ -162,7 +154,7 @@ void SelectedRobotWidget::setSelectedRobot(RobotView* const& _robotView){
     } else {
         homeBtn->setText("Add home");
         homeBtn->setFlat(false);
-        //homeBtn->setStyleSheet ("QPushButton[enabled=\"false\"] {color: lightgrey;}");
+        homeBtn->setStyleSheet ("QPushButton[enabled=\"false\"] {color: lightgrey;}");
         homeBtn->setEnabled(true);
         goHome->hide();
     }
@@ -180,14 +172,14 @@ void SelectedRobotWidget::homeBtnEvent(){
 void SelectedRobotWidget::disable(){
    // editBtn->setEnabled(false);
     homeBtn->setEnabled(false);
-    addPathBtn->setEnabled(false);
+   // addPathBtn->setEnabled(false);
    scanBtn->setEnabled(false);
     goHome->setEnabled(false);
 }
 
 void SelectedRobotWidget::enable(){
   //  editBtn->setEnabled(true);
-    addPathBtn->setEnabled(true);
+   // addPathBtn->setEnabled(true);
     scanBtn->setEnabled(true);
     goHome->setEnabled(true);
 

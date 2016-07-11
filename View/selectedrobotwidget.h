@@ -48,7 +48,7 @@ private:
     QPushButton* homeBtn;
     PathWidget* pathWidget;
     QPushButton* scanBtn;
-    //QPushButton* editBtn;
+    QPushButton* editBtn;
     QLabel* name;
     TopLeftMenu* actionButtons ;
 

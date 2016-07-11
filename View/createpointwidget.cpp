@@ -58,7 +58,7 @@ CreatePointWidget::CreatePointWidget(QMainWindow* _parent, PointsView* _points):
 
     /// to set the default group as default
     groupBox->setCurrentIndex(0);
-    groupBox->setItemIcon(0, QIcon(":/icons/tick.png"));
+    groupBox->setItemIcon(0, QIcon(":/icons/eye.png"));
     groupBox->hide();
 
     groupLayout->addWidget(groupLabel);
@@ -176,7 +176,7 @@ void CreatePointWidget::updateGroupBox(const Points& _points){
     }
     /// to set the default group as default
     groupBox->setCurrentIndex(0);
-    groupBox->setItemIcon(0, QIcon(":/icons/tick.png"));
+    groupBox->setItemIcon(0, QIcon(":/icons/eye.png"));
 }
 
 void CreatePointWidget::keyPressEvent(QKeyEvent* event){

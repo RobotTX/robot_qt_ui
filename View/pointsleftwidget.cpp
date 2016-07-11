@@ -125,7 +125,6 @@ void PointsLeftWidget::enableButtons(int index){
         lastCheckedId = -1;
         disableButtons();
     } else {
-        qDebug()   << "la";
 
         lastCheckedId = index;
         groupButtonGroup->setIndexModifyEdit(index);
