@@ -19,7 +19,7 @@
 	<file alias="zoom_out.png">097__zoom_out.png</file>
 	<file alias="home.png">101__home.png</file>
 	<file alias="tag.png">115__tag.png</file>
-	<file alias="empty.png">086__empty.png</file>
+        <file alias="bin.png">086__empty.png</file>
 	<file alias="coordinates.png">074__coordinates.png</file>
 	<file alias="download.png">027__download.png</file>
 	<file alias="arrowLeft.png">021__arrow2_left.png</file>
