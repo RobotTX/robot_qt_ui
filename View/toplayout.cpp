@@ -29,6 +29,8 @@ TopLayout::TopLayout(QMainWindow* parent):QWidget(parent){
     layout->addWidget(connectBtn);
     connect(connectBtn, SIGNAL(clicked()), parent, SLOT(connectToRobot()));
 
+//  centerBtn = new QPushButton(QIcon(":/icons/"))
+
     SpaceWidget* spaceWidget = new SpaceWidget(SpaceWidget::SpaceOrientation::VERTICAL, this);
     spaceWidget->setColor("lightgrey");
     layout->addWidget(spaceWidget);
@@ -70,13 +72,21 @@ void TopLayout::setLabel(const QString msgType, const QString msg){
 }
 
 void TopLayout::setLabelDelay(const QString msgType, const QString msg, int delayTime){
+
+    // if it is an error make sure the person have seen it
+    if (msgType == TEXT_COLOR_DANGER)
+       {
+        label->setText("");
+        label->setStyleSheet("QLabel { color: " + QString(TEXT_COLOR_NORMAL) + "}");
+        delay(300);
+        }
+
+    // display message
     label->setText(msg);
     label->setStyleSheet("QLabel { color: " + QString(msgType) + "}");
 
-    // wait
-    QTime dieTime= QTime::currentTime().addMSecs(delayTime);
-    while (QTime::currentTime() < dieTime)
-        QCoreApplication::processEvents(QEventLoop::AllEvents, 100);
+    // wait before to remove message
+    delay(delayTime);
 
     // reset message
     label->setText("");
@@ -85,6 +95,12 @@ void TopLayout::setLabelDelay(const QString msgType, const QString msg, int dela
 
 }
 
+void TopLayout::delay(const int ms)
+{
+    QTime dieTime= QTime::currentTime().addMSecs(ms);
+    while (QTime::currentTime() < dieTime)
+        QCoreApplication::processEvents(QEventLoop::AllEvents, 100);
+}
 
 void TopLayout::disable(){
     menuBtn->setEnabled(false);

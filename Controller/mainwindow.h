@@ -38,8 +38,8 @@ class TopLayout;
 #include <QMessageBox>
 
 //#define XML_PATH "/home/m-a/Documents/QtProject/gobot-software/points.xml"
-//#define XML_PATH "/home/joan/Qt/QtProjects/gobot-software/points.xml"
-#define XML_PATH "/Users/fannylarradet/Desktop/GTRobots/gobot-software/points.xml"
+#define XML_PATH "/home/joan/Qt/QtProjects/gobot-software/points.xml"
+//#define XML_PATH "/Users/fannylarradet/Desktop/GTRobots/gobot-software/points.xml"
 
 #define PI 3.14159265
 #define PORT_MAP_METADATA 4000
@@ -162,6 +162,7 @@ private slots:
     void enableReturnAndCloseButtons(void);
     void doubleClickOnRobot(int checkedId);
     void setMessageCreationPath(QString message);
+    void updatePathPoint(double x, double y, PointView* pointView);
 
 
     /**

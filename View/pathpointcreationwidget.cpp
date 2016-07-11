@@ -16,6 +16,8 @@ PathPointCreationWidget::PathPointCreationWidget(const int _id, const Points& _p
     posX = 0;
     posY = 0;
 
+    editLayout = new QHBoxLayout(this);
+
     /// Label for the name of the point
     pointLabel = new QLabel(this);
     setName(name);
@@ -51,9 +53,15 @@ PathPointCreationWidget::PathPointCreationWidget(const int _id, const Points& _p
     layout->addWidget(actionWidget);
     actionWidget->hide();
 
+    cancelBtn = new QPushButton("Cancel", this);
+    cancelBtn->hide();
     saveEditBtn = new QPushButton("Save changes", this);
     connect(saveEditBtn, SIGNAL(clicked()), this, SLOT(saveEdit()));
+
+    //editLayout->addWidget(cancelBtn);
+    //editLayout->addWidget(saveEditBtn);
     layout->addWidget(saveEditBtn);
+    //layout->addLayout(editLayout);
     saveEditBtn->hide();
 
 
