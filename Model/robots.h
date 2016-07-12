@@ -4,6 +4,7 @@
 class RobotView;
 
 #include <QVector>
+#include <QMap>
 
 /**
  * @brief The Robots class
@@ -104,12 +105,18 @@ public:
      */
     RobotView* findRobotUsingHome(const QString name) const;
 
+
+    QMap<QString, QString> getRobotsNameMap() const {return robotsNameMap;}
+    void setRobotsNameMap(const QMap<QString, QString> &_robotsNameMap) {robotsNameMap = _robotsNameMap;}
+    void insertRobotsNameMap(QString ip, QString name) {robotsNameMap.insert(ip, name);}
+
 private:
     /**
      * @brief robotsVector
      * The vector of RobotView (which also contains the robot)
      */
     QVector<RobotView*> robotsVector;
+    QMap<QString, QString> robotsNameMap;
 };
 
 #endif // ROBOTS_H

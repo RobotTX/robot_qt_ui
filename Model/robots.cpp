@@ -6,6 +6,7 @@
 
 Robots::Robots(){
     robotsVector = QVector<RobotView*>();
+    robotsNameMap = QMap<QString, QString>();
 }
 
 
@@ -84,10 +85,11 @@ void Robots::setSelected(RobotView * const robotView){
 
 bool Robots::existRobotName(const QString name) const {
     qDebug() << "(existRobotName) Checking robot name : " << name;
-    for(int i = 0; i < robotsVector.length(); i++){
-        if(robotsVector[i]->getRobot()->getName() == name){
+    QMapIterator<QString, QString> i(robotsNameMap);
+    while (i.hasNext()) {
+        i.next();
+        if(i.value().compare(name) == 0)
             return true;
-        }
     }
     return false;
 }
