@@ -10,12 +10,12 @@ Robot::Robot(const QString _name, const QString _ip, const int port, QMainWindow
 {
     qDebug() << "Robot" << name << "at ip" << ip << " launching its cmd thread";
 
-/*
+
     cmdThread = new CmdRobotThread(ip, port, name, parent);
     QObject::connect(cmdThread, SIGNAL(robotIsDead(QString,QString)), parent, SLOT(robotIsDeadSlot(QString,QString)));
     QObject::connect(parent, SIGNAL(ping()), cmdThread, SLOT(pingSlot()));
     cmdThread->start();
-*/
+
 }
 
 Robot::Robot(): name("Default name"), ip("no Ip"), position(Position()),
@@ -23,10 +23,10 @@ Robot::Robot(): name("Default name"), ip("no Ip"), position(Position()),
 }
 
 Robot::~Robot(){
-    /*if (cmdThread != 0 && cmdThread->isRunning() ) {
+    if (cmdThread != 0 && cmdThread->isRunning() ) {
         cmdThread->requestInterruption();
         cmdThread->wait();
-    }*/
+    }
 }
 
 std::ostream& operator <<(std::ostream& stream, Robot const& robot){
@@ -41,22 +41,22 @@ void Robot::display(std::ostream& stream) const {
 }
 
 bool Robot::sendCommand(const QString cmd) {
-    //return cmdThread->sendCommand(cmd);
-    return true;
+    return cmdThread->sendCommand(cmd);
+    //return true;
 }
 
 QString Robot::waitAnswer() {
-    //return cmdThread->waitAnswer();
-    return "1 1";
+    return cmdThread->waitAnswer();
+    //return "1 1";
 }
 
 void Robot::resetCommandAnswer() {
-    //cmdThread->resetCommandAnswer();
+    cmdThread->resetCommandAnswer();
 }
 
 void Robot::stopCmdThread() {
-    /*if (cmdThread != 0 && cmdThread->isRunning() ) {
+    if (cmdThread != 0 && cmdThread->isRunning() ) {
         cmdThread->requestInterruption();
         cmdThread->wait();
-    }*/
+    }
 }

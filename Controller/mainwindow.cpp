@@ -222,13 +222,6 @@ MainWindow::~MainWindow(){
 
 void MainWindow::initializeRobots(){
 
-    /*updateRobotsThread = new UpdateRobotsThread(PORT_ROBOT_UPDATE);
-    connect(updateRobotsThread, SIGNAL(robotIsAlive(QString,QString)), this, SLOT(robotIsAliveSlot(QString,QString)));
-    updateRobotsThread->start();
-    updateRobotsThread->moveToThread(updateRobotsThread);*/
-
-
-
     /// Get the list of taken robot's name from the file
     QFile fileRead(ROBOTS_NAME_PATH);
     fileRead.open(QIODevice::ReadOnly);
@@ -241,6 +234,13 @@ void MainWindow::initializeRobots(){
 
 
 
+    updateRobotsThread = new UpdateRobotsThread(PORT_ROBOT_UPDATE);
+    connect(updateRobotsThread, SIGNAL(robotIsAlive(QString,QString)), this, SLOT(robotIsAliveSlot(QString,QString)));
+    updateRobotsThread->start();
+    updateRobotsThread->moveToThread(updateRobotsThread);
+
+
+/*
     QFile fileWrite(ROBOTS_NAME_PATH);
     fileWrite.resize(0);
     fileWrite.open(QIODevice::WriteOnly);
@@ -284,7 +284,7 @@ void MainWindow::initializeRobots(){
     robots->setRobotsNameMap(tmpMap);
     out << robots->getRobotsNameMap();
     fileWrite.close();
-
+*/
 
     qDebug() << "RobotsNameMap on init" << robots->getRobotsNameMap();
 }
@@ -487,7 +487,9 @@ void MainWindow::playSelectedRobot(int robotNb){
         /// if the command is succesfully sent to the robot, we apply the change
         robot->resetCommandAnswer();
         if(robot->sendCommand(QString("c ") + QString::number(newPosX) + " "  + QString::number(newPosY) + " "  + QString::number(waitTime))){
+            qDebug() << "Let's wait";
             QString answer = robot->waitAnswer();
+            qDebug() << "Done waiting";
             QStringList answerList = answer.split(QRegExp("[ ]"), QString::SkipEmptyParts);
             if(answerList.size() > 1){
                 QString cmd = answerList.at(0);
@@ -711,7 +713,7 @@ void MainWindow::robotSavedEvent(){
     bool isOK = false;
     int change = 0;
 
-    /// if the command is succesfully sent to the robot, we apply the change
+    /// if we changed the name
     if(selectedRobot->getRobot()->getName().compare(editSelectedRobotWidget->getNameEdit()->text()) != 0){
         qDebug() << "Name has been modified";
         selectedRobot->getRobot()->resetCommandAnswer();
@@ -744,6 +746,8 @@ void MainWindow::robotSavedEvent(){
             selectedRobot->getRobot()->resetCommandAnswer();
         }
     }
+
+    /// if we changed the wifi
     if (editSelectedRobotWidget->getWifiPwdEdit()->text() != "......"){
         qDebug() << "Wifi has been modified";
         selectedRobot->getRobot()->resetCommandAnswer();
@@ -768,6 +772,7 @@ void MainWindow::robotSavedEvent(){
         }
     }
 
+    /// if we changed the home
     PointView* pointView = editSelectedRobotWidget->getHome();
     if(pointView != NULL && !(&(*(pointView->getPoint())) == &(*(selectedRobot->getRobot()->getHome())))){
         qDebug() << "Home has been modified";
@@ -825,6 +830,7 @@ void MainWindow::robotSavedEvent(){
         }
     }
 
+    /// finally we edit
     if(editSelectedRobotWidget->isVisible()){
         if(change > 0){
             if (isOK){
@@ -1238,18 +1244,6 @@ void MainWindow::robotIsAliveSlot(QString hostname,QString ip){
         robotsLeftWidget->updateRobots(robots);
 
 
-        QMap<QString, QString> tmp = robots->getRobotsNameMap();
-        tmp[ip] = hostname;
-        robots->setRobotsNameMap(tmp);
-
-        QFile fileWrite(ROBOTS_NAME_PATH);
-        fileWrite.resize(0);
-        fileWrite.open(QIODevice::WriteOnly);
-        QDataStream out(&fileWrite);
-        out << robots->getRobotsNameMap();
-        fileWrite.close();
-        qDebug() << "RobotsNameMap updated" << robots->getRobotsNameMap();
-
 
         /// TODO check if first connection
         if(ip.endsWith(".7.1") || ip.endsWith(".7.2") || ip.endsWith(".7.3")){
@@ -1260,6 +1254,18 @@ void MainWindow::robotIsAliveSlot(QString hostname,QString ip){
             editSelectedRobotWidget->show();
             leftMenu->show();
             setEnableAll(false, GraphicItemState::NO_EVENT);
+        } else {
+            QMap<QString, QString> tmp = robots->getRobotsNameMap();
+            tmp[ip] = hostname;
+            robots->setRobotsNameMap(tmp);
+
+            QFile fileWrite(ROBOTS_NAME_PATH);
+            fileWrite.resize(0);
+            fileWrite.open(QIODevice::WriteOnly);
+            QDataStream out(&fileWrite);
+            out << robots->getRobotsNameMap();
+            fileWrite.close();
+            qDebug() << "RobotsNameMap updated" << robots->getRobotsNameMap();
         }
     }
 }

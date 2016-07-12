@@ -145,7 +145,7 @@ void EditSelectedRobotWidget::saveEditSelecRobotBtnEvent(void){
 }
 
 void EditSelectedRobotWidget::checkRobotName(void){
-    //qDebug() << "checkRobotName called";
+    qDebug() << "checkRobotName called";
     if(nameEdit->text() == ""){
         saveBtn->setEnabled(false);
         qDebug() << "Error : this name is not valid," << nameEdit->text() << "can not be empty";
