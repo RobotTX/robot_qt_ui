@@ -79,10 +79,10 @@ PathCreationWidget::PathCreationWidget(QMainWindow* parent, const Points &_point
     connect(pathPointsList, SIGNAL(itemClicked(QListWidgetItem*)), this, SLOT(itemClicked(QListWidgetItem*)));
     connect(pathPointsList, SIGNAL(itemMovedSignal(int, int)), this, SLOT(itemMovedSlot(int, int)));
 
-   layout->addWidget(pathPointsList);
+    layout->addWidget(pathPointsList);
 
 
-    QVBoxLayout* bottomLayout = new QVBoxLayout(this);
+    QVBoxLayout* bottomLayout = new QVBoxLayout();
 
     /// The save button
     QPushButton* saveBtn = new QPushButton("Save Path", this);

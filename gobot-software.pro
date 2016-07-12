@@ -113,11 +113,11 @@ SOURCES += main.cpp \
            View/toplayout.cpp \
            View/verticalscrollarea.cpp \
            View/doubleclickablebutton.cpp \
-           View/topLeftMenu.cpp \
            Controller/updaterobotsthread.cpp \
            View/customizedlineedit.cpp \
            View/buttonmenu.cpp \
-    View/createpointwidget.cpp
+    View/createpointwidget.cpp \
+    View/topleftmenu.cpp
 
 RESOURCES += Resources/resources.qrc
 

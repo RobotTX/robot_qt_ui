@@ -67,12 +67,7 @@ void TopLayout::setLabel(const QString msgType, const QString msg){
     label->setStyleSheet("QLabel { color: " + QString(msgType) + "}");
 }
 
-void TopLayout::disable(){
-    menuBtn->setEnabled(false);
-    connectBtn->setEnabled(false);
-}
-
-void TopLayout::enable(){
-    menuBtn->setEnabled(true);
-    connectBtn->setEnabled(true);
+void TopLayout::setEnable(bool enable){
+    menuBtn->setEnabled(enable);
+    connectBtn->setEnabled(enable);
 }

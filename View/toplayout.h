@@ -19,8 +19,7 @@ class TopLayout : public QWidget{
 public:
     TopLayout(QMainWindow* parent);
     void setLabel(const QString msgType, const QString msg);
-    void disable();
-    void enable();
+    void setEnable(bool enable);
 
 private:
     QHBoxLayout* layout;

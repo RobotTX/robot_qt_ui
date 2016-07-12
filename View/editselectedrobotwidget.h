@@ -36,6 +36,7 @@ public:
     void setHome(PointView* const _home, bool const _temporary){home = _home; temporary = _temporary;}
     PointView* getHome() const {return home;}
     bool isTemporaryHome()const {return temporary;}
+    bool isFirstConnection()const {return firstConnection;}
     void setOldHome(std::shared_ptr<Point> const _oldHome){oldHome = _oldHome;}
     std::shared_ptr<Point> getOldHome() const {return oldHome;}
     QLineEdit* getWifiNameEdit(void){ return wifiNameEdit; }
@@ -65,6 +66,7 @@ private:
     bool temporary;
     std::shared_ptr<Point> oldHome;
     bool firstConnection;
+    QPushButton* cancelBtn;
 
 protected:
     void showEvent(QShowEvent *event);

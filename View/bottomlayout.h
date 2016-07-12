@@ -44,8 +44,7 @@ public:
      */
     void deletePath(const int index);
     void updateRobot(const int id, RobotView* const robotView);
-    void disable();
-    void enable();
+    void setEnable(bool enable);
     void addRobot(RobotView * const robotView);
     void removeRobot(const int id);
     void uncheckViewPathSelectedRobot(const int robotNb = -1);
