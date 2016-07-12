@@ -52,6 +52,7 @@ public:
     VerticalScrollArea* getScrollArea(void) const { return scrollArea; }
 
     void setCreatingGroup(const bool create) { creatingGroup = create; }
+    void setLastCheckedId(const int  id) {lastCheckedId = id;}
 
 public:
     void disableButtons(void);

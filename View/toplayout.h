@@ -20,6 +20,10 @@ public:
     TopLayout(QMainWindow* parent);
     void setLabel(const QString msgType, const QString msg);
     void setEnable(bool enable);
+    void enable();
+    void setLabelDelay(const QString msgType, const QString msg, int delayTime);
+    void delay(const int ms) ;
+
 
 private:
     QHBoxLayout* layout;
@@ -27,6 +31,7 @@ private:
     QPushButton* menuBtn;
     QPushButton* connectBtn;
     QPushButton* closeBtn;
+    QPushButton* centerBtn;
 };
 
 #endif // TOPLAYOUT_H

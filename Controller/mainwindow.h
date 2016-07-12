@@ -162,6 +162,7 @@ private slots:
     void enableReturnAndCloseButtons(void);
     void doubleClickOnRobot(int checkedId);
     void setMessageCreationPath(QString message);
+    void updatePathPoint(double x, double y, PointView* pointView);
 
 
     /**

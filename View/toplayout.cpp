@@ -6,6 +6,8 @@
 #include <QDebug>
 #include "View/verticalscrollarea.h"
 #include "View/spacewidget.h"
+#include <QTime>
+ #include <QCoreApplication>
 
 TopLayout::TopLayout(QMainWindow* parent):QWidget(parent){
     layout = new QHBoxLayout(this);
@@ -26,6 +28,8 @@ TopLayout::TopLayout(QMainWindow* parent):QWidget(parent){
     connectBtn->setFocusPolicy(Qt::FocusPolicy::NoFocus);
     layout->addWidget(connectBtn);
     connect(connectBtn, SIGNAL(clicked()), parent, SLOT(connectToRobot()));
+
+//  centerBtn = new QPushButton(QIcon(":/icons/"))
 
     SpaceWidget* spaceWidget = new SpaceWidget(SpaceWidget::SpaceOrientation::VERTICAL, this);
     spaceWidget->setColor("lightgrey");
@@ -71,3 +75,35 @@ void TopLayout::setEnable(bool enable){
     menuBtn->setEnabled(enable);
     connectBtn->setEnabled(enable);
 }
+
+void TopLayout::setLabelDelay(const QString msgType, const QString msg, int delayTime){
+
+    // if it is an error make sure the person have seen it
+    if (msgType == TEXT_COLOR_DANGER)
+       {
+        label->setText("");
+        label->setStyleSheet("QLabel { color: " + QString(TEXT_COLOR_NORMAL) + "}");
+        delay(300);
+        }
+
+    // display message
+    label->setText(msg);
+    label->setStyleSheet("QLabel { color: " + QString(msgType) + "}");
+
+    // wait before to remove message
+    delay(delayTime);
+
+    // reset message
+    label->setText("");
+    label->setStyleSheet("QLabel { color: " + QString(TEXT_COLOR_NORMAL) + "}");
+
+
+}
+
+void TopLayout::delay(const int ms)
+{
+    QTime dieTime= QTime::currentTime().addMSecs(ms);
+    while (QTime::currentTime() < dieTime)
+        QCoreApplication::processEvents(QEventLoop::AllEvents, 100);
+}
+

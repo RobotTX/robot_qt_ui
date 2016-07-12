@@ -1,12 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <points>
     <group>
-        <name></name>
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+        <name>cc</name>
+    </group>
+    <group>
+=======
+>>>>>>> f92f9ca5c0db7c4bfc28c75a5252cf0ee878503f
+>>>>>>> 8c7a8d6d32085937bd65321922d1d257a1de9ba5
+        <name>first group</name>
         <point>
             <name>A</name>
-            <x>50</x>
-            <y>50</y>
-            <displayed>0</displayed>
+            <x>168.3</x>
+            <y>313.1</y>
+            <displayed>1</displayed>
         </point>
         <point>
             <name>Ma point</name>

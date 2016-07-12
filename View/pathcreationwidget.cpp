@@ -466,6 +466,7 @@ void PathCreationWidget::editItem(QListWidgetItem* item){
 
 
 void PathCreationWidget::updatePointPainter(){
+    qDebug() << "pathcreationwidget updatepointpainer called";
     /*qDebug() << "\n";
     for(int i = 0; i < pointList.size(); i++){
         qDebug() << i << " : " << pointList.at(i).getName() << pointList.at(i).getPosition().getX() << pointList.at(i).getPosition().getY();

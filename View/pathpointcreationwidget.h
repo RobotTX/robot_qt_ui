@@ -2,6 +2,7 @@
 #define PATHPOINTCREATIONWIDGET_H
 
 class QVBoxLayout;
+class QHBoxLayout;
 class QLabel;
 class QPushButton;
 class QLineEdit;
@@ -50,6 +51,8 @@ public:
     bool isTemporary(void) const { return (name.compare("tmpPoint") == 0); }
     Point getPoint(void) const { return point; }
     void setPointLabel(const float _posX, const float _posY);
+    QPushButton* getCancelBtn(void) const { return cancelBtn; }
+    QPushButton* getSaveEditBtn(void) const { return saveEditBtn; }
 
 private:
     QVBoxLayout* layout;
@@ -62,9 +65,11 @@ private:
     Point point;
     QComboBox* actionBtn;
     QPushButton* saveEditBtn;
+    QPushButton* cancelBtn;
     QLineEdit* timeEdit;
     QWidget* timeWidget;
     QWidget* actionWidget;
+    QHBoxLayout* editLayout;
 
 signals:
     void saveEditSignal(PathPointCreationWidget*);

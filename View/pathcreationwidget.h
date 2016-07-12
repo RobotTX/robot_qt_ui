@@ -36,6 +36,8 @@ public:
 
     PathCreationWidget(QMainWindow* parent, const Points& point);
 
+    PathPointCreationWidget* getPathPointCreationWidget(void) const { editedPathPointCreationWidget; }
+
     /**
      * @brief initialisationPathPoint
      * @param pathPoint

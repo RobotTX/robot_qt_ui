@@ -67,6 +67,7 @@ signals:
     void homeEdited(PointView* pointView, bool temporary);
     void moveTmpEditPathPoint();
     void editedPointPositionChanged(double, double);
+    void pathPointChanged(double, double, PointView*);
 
 private:
     std::shared_ptr<Point> point;
