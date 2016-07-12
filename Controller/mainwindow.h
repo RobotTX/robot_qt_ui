@@ -26,8 +26,8 @@ class PathCreationWidget;
 class QAbstractButton;
 class QVBoxLayout;
 class PathPainter;
-class TopLayout;
 
+#include "View/toplayout.h"
 #include "Model/points.h"
 #include "View/robotview.h"
 #include <QMainWindow>
@@ -137,7 +137,7 @@ private slots:
     void addPathPoint(Point* point);
     void addPathPoint(PointView* pointView);
     void displayPointsInGroup(void);
-    void updatePathPointToPainter(QVector<Point>* pointVector);
+    void updatePathPointToPainter(QVector<Point>& pointVector);
     void removePointFromInformationMenu(void);
     void displayPointMapEvent(void);
     void hidePathCreationWidget(void);
@@ -162,7 +162,7 @@ private slots:
     void enableReturnAndCloseButtons(void);
     void doubleClickOnRobot(int checkedId);
     void setMessageCreationPath(QString message);
-    void updatePathPoint(double x, double y, PointView* pointView);
+    void updatePathPoint(double x, double y, PointView* pointView = 0);
 
 
     /**
@@ -171,6 +171,7 @@ private slots:
      */
     void cancelEvent(void);
     void setMessageTop(const QString msgType, const QString msg);
+    void setLastMessage(void) { setMessageTop(topLayout->getLastMessage().first, topLayout->getLastMessage().second); }
     void setMessageCreationGroup(QString message);
     void homeSelected(PointView* pointView, bool temporary);
     void homeEdited(PointView* pointView, bool temporary);

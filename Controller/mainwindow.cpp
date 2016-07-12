@@ -42,6 +42,7 @@
 #include <QRegularExpression>
 #include "View/buttonmenu.h"
 #include "View/pathpointcreationwidget.h"
+#include "View/pathpointlist.h"
 
 /**
  * @brief MainWindow::MainWindow
@@ -141,6 +142,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
     /// to link the map and the point information menu when a point is being edited
     connect(mapPixmapItem, SIGNAL(newCoordinates(double, double)), this, SLOT(updateCoordinates(double, double)));
+
+    /// to link the map and the path information when a path point is being edited
+    connect(mapPixmapItem, SIGNAL(newCoordinatesPathPoint(double,double)), this, SLOT(updatePathPoint(double, double)));
 
     /// to cancel the modifications on an edited point
     connect(leftMenu->getDisplaySelectedPoint()->getCancelButton(), SIGNAL(clicked(bool)), this, SLOT(cancelEvent()));
@@ -830,7 +834,7 @@ void MainWindow::setCheckedRobot(QString name){
 void MainWindow::editTmpPathPointSlot(int id, Point* point, int nbWidget){
     qDebug() << "editTmpPathPointSlot called : " << id << point->getName() << nbWidget;
     editedPointView = NULL;
-    setMessageTop(TEXT_COLOR_INFO, "Drag the selected point and click \"Save changes\" to modify the path of your robot");
+    setMessageTop(TEXT_COLOR_INFO, "Drag the selected point or click the map and click \"Save changes\" to modify the path of your robot");
     leftMenu->getReturnButton()->setEnabled(false);
     leftMenu->getCloseButton()->setEnabled(false);
     QVector<PointView*> pointViewVector = mapPixmapItem->getPathCreationPoints();
@@ -851,12 +855,14 @@ void MainWindow::editTmpPathPointSlot(int id, Point* point, int nbWidget){
             editedPointView->setFlag(QGraphicsItem::ItemIsMovable);
             setGraphicItemsState(GraphicItemState::NO_EVENT, false);
             editedPointView->setState(GraphicItemState::EDITING);
+            mapPixmapItem->setState(GraphicItemState::EDITING);
         } else if(nbWidget > 1){
             mapPixmapItem->addPathPoint(editedPointView);
             editedPointView = mapPixmapItem->getPathCreationPoints().last();
             editedPointView->setFlag(QGraphicsItem::ItemIsMovable);
             setGraphicItemsState(GraphicItemState::NO_EVENT, false);
             editedPointView->setState(GraphicItemState::EDITING);
+            mapPixmapItem->setState(GraphicItemState::EDITING);
         } else {
             qDebug() << "(Error editTmpPathPointSlot) Not supposed to be here";
         }
@@ -900,8 +906,8 @@ void MainWindow::addPathPoint(PointView* pointView){
     pathCreationWidget->addPathPoint(&(*(pointView->getPoint())));
 }
 
-void MainWindow::updatePathPointToPainter(QVector<Point>* pointVector){
-    pathPainter->updatePath(*pointVector);
+void MainWindow::updatePathPointToPainter(QVector<Point> &pointVector){
+    pathPainter->updatePath(pointVector);
 }
 
 void MainWindow::stopPathCreation(){
@@ -934,6 +940,7 @@ void MainWindow::saveTmpEditPathPointSlot(void){
     qDebug() << "saveTmpEditPathPointSlot called";
     leftMenu->getCloseButton()->setEnabled(true);
     leftMenu->getReturnButton()->setEnabled(true);
+    mapPixmapItem->setState(GraphicItemState::NO_EVENT);
     setMessageTop(TEXT_COLOR_SUCCESS, "You have successfully modified the path of " + selectedRobot->getRobot()->getName());
     delay(2500);
     setMessageTop(TEXT_COLOR_INFO, "Click white points of the map to add new points to the path of " + selectedRobot->getRobot()->getName());
@@ -1269,12 +1276,52 @@ void MainWindow::setMessageCreationPath(QString message){
 }
 
 void MainWindow::updatePathPoint(double x, double y, PointView* pointView){
-    qDebug() << "u got here";
+    qDebug() << "updatepathpoint called";
+    for(int i = 0; i < mapPixmapItem->getPathCreationPoints().count(); i++){
+        PointView* pv = mapPixmapItem->getPathCreationPoints().at(i);
+        if(pv == 0)
+            qDebug() << "no pointview found to update";
+        else {
+            qDebug() << "pos pv" << pv->getPoint()->getPosition().getX() << pv->getPoint()->getPosition().getY() << " pathcr point" <<
+                        ((PathPointCreationWidget*) pathCreationWidget->getPathPointList()->itemWidget(pathCreationWidget->getPathPointList()->currentItem()))->getPoint().getPosition().getX() <<
+                        ((PathPointCreationWidget*) pathCreationWidget->getPathPointList()->itemWidget(pathCreationWidget->getPathPointList()->currentItem()))->getPoint().getPosition().getY();
+            if(pv->getPoint()->comparePos(
+                        ((PathPointCreationWidget*) pathCreationWidget->getPathPointList()->itemWidget(pathCreationWidget->getPathPointList()->currentItem()))->getPoint().getPosition())){
+                pv->getPoint()->setPosition(x, y);
+                pv->setPos(x, y);
+                ((PathPointCreationWidget*) pathCreationWidget->getPathPointList()->itemWidget(pathCreationWidget->getPathPointList()->currentItem()))->setPos(x, y);
+                qDebug() << "name" << pv->getPoint()->getName() << "index" << i;
+                pathPainter->updatePath(mapPixmapItem->getPathCreationPoints());
+                break;
+            }
+        }
+    }
     if(map->getMapImage().pixelColor(x, y) == QColor(254, 254, 254)){
-        //pathCreationWidget->getPathPointCreationWidget()->getSaveEditBtn()->setEnabled(true);
-        pointView->getPoint()->setPosition(x, y);
+        setMessageTop(TEXT_COLOR_INFO, "You can click either click \"Save changes\" to modify your path permanently or \"Cancel\" to keep the original path. If you want you can keep editing your point");
+        ((PathPointCreationWidget*) pathCreationWidget->getPathPointList()->itemWidget(pathCreationWidget->getPathPointList()->currentItem())) -> getSaveEditBtn()->setEnabled(true);
+        for(int i = 0; i < mapPixmapItem->getPathCreationPoints().count(); i++){
+            PointView* pv = mapPixmapItem->getPathCreationPoints().at(i);
+            if(pv == 0)
+                qDebug() << "no pv";
+            else {/*
+                qDebug() << "pos pv" << pv->getPoint()->getPosition().getX() << pv->getPoint()->getPosition().getY() << " pathcr point" <<
+                            ((PathPointCreationWidget*) pathCreationWidget->getPathPointList()->itemWidget(pathCreationWidget->getPathPointList()->currentItem()))->getPoint().getPosition().getX() <<
+                            ((PathPointCreationWidget*) pathCreationWidget->getPathPointList()->itemWidget(pathCreationWidget->getPathPointList()->currentItem()))->getPoint().getPosition().getY();
+                */
+                if(pv->getPoint()->comparePos(
+                            ((PathPointCreationWidget*) pathCreationWidget->getPathPointList()->itemWidget(pathCreationWidget->getPathPointList()->currentItem()))->getPoint().getPosition())){
+                    pv->getPoint()->setPosition(x, y);
+                    pv->setPos(x, y);
+                    ((PathPointCreationWidget*) pathCreationWidget->getPathPointList()->itemWidget(pathCreationWidget->getPathPointList()->currentItem()))->setPos(x, y);
+                    qDebug() << "name" << pv->getPoint()->getName() << "index" << i;
+                    pathPainter->updatePath(mapPixmapItem->getPathCreationPoints());
+                    break;
+                }
+            }
+        }
     } else {
-        //pathCreationWidget->getPathPointCreationWidget()->getSaveEditBtn()->setEnabled(false);
+        setMessageTop(TEXT_COLOR_DANGER, "You cannot save the current path because the point that you are editing is not in an known area of the map");
+        ((PathPointCreationWidget*) pathCreationWidget->getPathPointList()->itemWidget(pathCreationWidget->getPathPointList()->currentItem())) -> getSaveEditBtn()->setEnabled(false);
         qDebug() << "sorry u cannot put a path point in the dark";
     }
 }

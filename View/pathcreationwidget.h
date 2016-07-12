@@ -37,7 +37,8 @@ public:
     PathCreationWidget(QMainWindow* parent, const Points& point);
 
     PathPointCreationWidget* getPathPointCreationWidget(void) const { editedPathPointCreationWidget; }
-
+    PathPointList* getPathPointList(void) const { return pathPointsList; }
+    QVector<Point> getPointList(void) const { return pointList; }
     /**
      * @brief initialisationPathPoint
      * @param pathPoint
@@ -193,7 +194,7 @@ signals:
      * @param pointVector
      * Signal emitted to tell the path painter to update its drawing of the path
      */
-    void updatePathPointToPainter(QVector<Point>* pointVector);
+    void updatePathPointToPainter(QVector<Point>& pointVector);
 
     /**
      * @brief hidePathCreationWidget

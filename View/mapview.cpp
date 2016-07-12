@@ -120,6 +120,10 @@ void MapView::mouseReleaseEvent(QGraphicsSceneMouseEvent *event){
             newPointView->setPos(event->pos().x()-tmpPointPixmap.width()/2, event->pos().y()-tmpPointPixmap.height());
             newPointView->setParentItem(this);
             emit homeEdited(newPointView, true);
+        } else if(state == GraphicItemState::EDITING){
+            qDebug() << "(MapView) EDITING" << event->pos().x() << event->pos().y();;
+            /// to notify that a point which belongs to the path of a robot has been changed
+            emit newCoordinatesPathPoint(event->pos().x(), event->pos().y());
         } else {
             qDebug() << "(MapView) NO EVENT";
         }

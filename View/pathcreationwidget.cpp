@@ -471,7 +471,7 @@ void PathCreationWidget::updatePointPainter(){
     for(int i = 0; i < pointList.size(); i++){
         qDebug() << i << " : " << pointList.at(i).getName() << pointList.at(i).getPosition().getX() << pointList.at(i).getPosition().getY();
     }*/
-    emit updatePathPointToPainter(&pointList);
+    emit updatePathPointToPainter(pointList);
 }
 
 void PathCreationWidget::hideEvent(QHideEvent *event){

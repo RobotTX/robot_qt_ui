@@ -108,7 +108,7 @@ LeftMenu::LeftMenu(MainWindow* _parent, std::shared_ptr<Points> const& _points, 
     leftLayout->addWidget(pathCreationWidget);
 
 
-    connect(pathCreationWidget, SIGNAL(updatePathPointToPainter(QVector<Point>*)), _parent, SLOT(updatePathPointToPainter(QVector<Point>*)));
+    connect(pathCreationWidget, SIGNAL(updatePathPointToPainter(QVector<Point>&)), _parent, SLOT(updatePathPointToPainter(QVector<Point>&)));
     connect(pathCreationWidget, SIGNAL(hidePathCreationWidget()), _parent, SLOT(hidePathCreationWidget()));
     connect(pathCreationWidget, SIGNAL(editTmpPathPoint(int, Point*, int)), _parent, SLOT(editTmpPathPointSlot(int, Point*, int)));
     connect(pathCreationWidget, SIGNAL(saveEditPathPoint()), _parent, SLOT(saveTmpEditPathPointSlot()));

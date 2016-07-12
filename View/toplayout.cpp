@@ -9,7 +9,8 @@
 #include <QTime>
  #include <QCoreApplication>
 
-TopLayout::TopLayout(QMainWindow* parent):QWidget(parent){
+TopLayout::TopLayout(QMainWindow* parent): QWidget(parent), lastMessage(TEXT_COLOR_NORMAL, "")
+{
     layout = new QHBoxLayout(this);
 
     menuBtn = new QPushButton(QIcon(":/icons/list.png"), "", this);
