@@ -55,6 +55,7 @@ signals:
     void homeSelected(PointView* pointView, bool temporary);
     void homeEdited(PointView* pointView, bool temporary);
     void newCoordinates(double x, double y);
+    void newCoordinatesPathPoint(double, double);
     void newMessage(QString);
 
 private slots:
