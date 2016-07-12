@@ -10,12 +10,12 @@ Robot::Robot(const QString _name, const QString _ip, const int port, QMainWindow
 {
     qDebug() << "Robot" << name << "at ip" << ip << " launching its cmd thread";
 
-    /*cmdThread = new CmdRobotThread(ip, port, name, parent);
+/*
+    cmdThread = new CmdRobotThread(ip, port, name, parent);
     QObject::connect(cmdThread, SIGNAL(robotIsDead(QString,QString)), parent, SLOT(robotIsDeadSlot(QString,QString)));
     QObject::connect(parent, SIGNAL(ping()), cmdThread, SLOT(pingSlot()));
-    cmdThread->start();*/
-
-    //cmdThread->moveToThread(cmdThread);
+    cmdThread->start();
+*/
 }
 
 Robot::Robot(): name("Default name"), ip("no Ip"), position(Position()),

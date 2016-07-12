@@ -18,6 +18,10 @@ EditSelectedRobotWidget::EditSelectedRobotWidget(QMainWindow* parent, const std:
     robots = _robots;
     layout = new QVBoxLayout(this);
     wifiLayout = new QGridLayout();
+    robotView = NULL;
+    home = NULL;
+    oldHome = NULL;
+
 
     /// Name editable label
     nameEdit = new QLineEdit(this);
@@ -83,7 +87,7 @@ EditSelectedRobotWidget::EditSelectedRobotWidget(QMainWindow* parent, const std:
 
     QHBoxLayout* grid = new QHBoxLayout();
     /// Cancel & save buttons
-    QPushButton* cancelBtn = new QPushButton("Cancel", this);
+    cancelBtn = new QPushButton("Cancel", this);
     saveBtn = new QPushButton("Save", this);
 
     grid->addWidget(cancelBtn);
@@ -94,6 +98,7 @@ EditSelectedRobotWidget::EditSelectedRobotWidget(QMainWindow* parent, const std:
     connect(cancelBtn, SIGNAL(clicked()), parent, SLOT(cancelEditSelecRobotBtnEvent()));
     connect(saveBtn, SIGNAL(clicked()), this, SLOT(saveEditSelecRobotBtnEvent()));
     connect(nameEdit, SIGNAL(textEdited(QString)), this, SLOT(checkRobotName()));
+    connect(wifiNameEdit, SIGNAL(textEdited(QString)), this, SLOT(checkWifiName()));
     connect(wifiNameEdit, SIGNAL(textEdited(QString)), this, SLOT(deletePwd()));
 
     hide();
@@ -104,8 +109,13 @@ EditSelectedRobotWidget::EditSelectedRobotWidget(QMainWindow* parent, const std:
 
 }
 
-void EditSelectedRobotWidget::setSelectedRobot(RobotView* const _robotView)
-{
+void EditSelectedRobotWidget::setSelectedRobot(RobotView* const _robotView, bool _firstConnection){
+
+    firstConnection = _firstConnection;
+    if(firstConnection)
+        cancelBtn->setEnabled(false);
+    else
+        cancelBtn->setEnabled(true);
 
     robotView = _robotView;
 
@@ -114,7 +124,6 @@ void EditSelectedRobotWidget::setSelectedRobot(RobotView* const _robotView)
     batteryLevel->setValue(robotView->getRobot()->getBatteryLevel());
     ipAddressLabel->setText("Ip : "+robotView->getRobot()->getIp());
     wifiNameEdit->setText(robotView->getRobot()->getWifi());
-    home = NULL;
 
     /// If the robot has a home, we display the name of the point, otherwise a default text
     if(robotView->getRobot()->getHome() != NULL){
@@ -128,15 +137,32 @@ void EditSelectedRobotWidget::setSelectedRobot(RobotView* const _robotView)
 
 void EditSelectedRobotWidget::saveEditSelecRobotBtnEvent(void){
     qDebug() << "saveEditSelecRobotBtnEvent called";
-    /// Save the change on the model
-    emit robotSaved();
+    if(firstConnection && home == NULL){
+        qDebug() << "You need to select a home";
+    } else {
+        emit robotSaved();
+    }
 }
 
 void EditSelectedRobotWidget::checkRobotName(void){
     qDebug() << "checkRobotName called";
-    if((robots->existRobotName(nameEdit->text()) || nameEdit->text() == "") && nameEdit->text() != robotView->getRobot()->getName()){
+    if(nameEdit->text() == ""){
+        saveBtn->setEnabled(false);
+        qDebug() << "Save btn not enabled : " << nameEdit->text() << "can not be empty";
+    } else if(robots->existRobotName(nameEdit->text()) && nameEdit->text() != robotView->getRobot()->getName()){
         saveBtn->setEnabled(false);
         qDebug() << "Save btn not enabled : " << nameEdit->text() << "already exist";
+    } else {
+        saveBtn->setEnabled(true);
+        qDebug() << "Save btn enabled";
+    }
+}
+
+void EditSelectedRobotWidget::checkWifiName(void){
+    qDebug() << "checkWifiName called";
+    if(wifiNameEdit->text() == ""){
+        saveBtn->setEnabled(false);
+        qDebug() << "Save btn not enabled : " << wifiNameEdit->text() << "can not be empty";
     } else {
         saveBtn->setEnabled(true);
         qDebug() << "Save btn enabled";

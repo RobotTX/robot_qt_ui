@@ -25,7 +25,7 @@ class EditSelectedRobotWidget: public QWidget{
 public:
     EditSelectedRobotWidget(QMainWindow* parent, std::shared_ptr<Robots> const robots);
 
-    void setSelectedRobot(RobotView * const robotView);
+    void setSelectedRobot(RobotView * const robotView, bool firstConnection = false);
     void setRobots(std::shared_ptr<Robots> const _robots){robots = _robots;}
     void editName(void);
 
@@ -36,6 +36,7 @@ public:
     void setHome(PointView* const _home, bool const _temporary){home = _home; temporary = _temporary;}
     PointView* getHome() const {return home;}
     bool isTemporaryHome()const {return temporary;}
+    bool isFirstConnection()const {return firstConnection;}
     void setOldHome(std::shared_ptr<Point> const _oldHome){oldHome = _oldHome;}
     std::shared_ptr<Point> getOldHome() const {return oldHome;}
     QLineEdit* getWifiNameEdit(void){ return wifiNameEdit; }
@@ -64,6 +65,8 @@ private:
     PointView* home;
     bool temporary;
     std::shared_ptr<Point> oldHome;
+    bool firstConnection;
+    QPushButton* cancelBtn;
 
 protected:
     void showEvent(QShowEvent *event);
@@ -81,6 +84,7 @@ private slots:
     * Check if the robot name is already taken
     */
     void checkRobotName(void);
+    void checkWifiName(void);
 
     void deletePwd(void);
 

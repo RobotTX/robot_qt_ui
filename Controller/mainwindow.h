@@ -37,8 +37,9 @@ class PathPainter;
 #include "Model/origin.h"
 #include <QMessageBox>
 
-//#define XML_PATH "/home/m-a/Documents/QtProject/gobot-software/points.xml"
-#define XML_PATH "/home/joan/Qt/QtProjects/gobot-software/points.xml"
+
+#define XML_PATH "/home/m-a/Documents/QtProject/gobot-software/points.xml"
+//#define XML_PATH "/home/joan/Qt/QtProjects/gobot-software/points.xml"
 //#define XML_PATH "/Users/fannylarradet/Desktop/GTRobots/gobot-software/points.xml"
 
 #define PI 3.14159265
@@ -74,14 +75,13 @@ public:
     void openInterdictionOfPointRemovalMessage(const QString pointName, const QString robotName);
     int openEmptyGroupMessage(const QString groupName);
     void clearNewMap();
-    void disableMenu();
-    void enableMenu();
     void clearPath(const int robotNb);
     void setLastWidgets(QList<QPair<QWidget*,QString>>);
     void resetFocus();
     void switchFocus(QString name, QWidget* widget);
     /// to sleep for ms milliseconds
     void delay(const int ms) const;
+    void setEnableAll(bool enable, GraphicItemState state = GraphicItemState::NO_STATE, bool clearPath = false, int noReturn = -1);
 
 signals:
     void sendCommand(QString);

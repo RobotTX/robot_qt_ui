@@ -19,7 +19,7 @@ class TopLayout : public QWidget{
 public:
     TopLayout(QMainWindow* parent);
     void setLabel(const QString msgType, const QString msg);
-    void disable();
+    void setEnable(bool enable);
     void enable();
     void setLabelDelay(const QString msgType, const QString msg, int delayTime);
     void delay(const int ms) ;

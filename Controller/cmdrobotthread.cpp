@@ -128,9 +128,11 @@ void CmdRobotThread::connectedSlot(){
 }
 
 void CmdRobotThread::disconnectedSlot(){
-    qDebug() << "(Robot" << robotName << ") Disconnected";
+    qDebug() << "(Robot" << robotName << ") Disconnected at ip" << ipAddress;
     connected = false;
-    emit robotIsDead(robotName, ipAddress);
+    if(robotName.compare("") != 0){
+        emit robotIsDead(robotName, ipAddress);
+    }
 }
 
 void CmdRobotThread::errorSlot(QAbstractSocket::SocketError error){

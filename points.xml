@@ -1,18 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <points>
     <group>
-<<<<<<< HEAD
-        <name>cc</name>
-    </group>
-    <group>
-=======
->>>>>>> f92f9ca5c0db7c4bfc28c75a5252cf0ee878503f
         <name>first group</name>
         <point>
             <name>A</name>
-            <x>168.3</x>
-            <y>313.1</y>
-            <displayed>1</displayed>
+            <x>50</x>
+            <y>50</y>
+            <displayed>0</displayed>
         </point>
         <point>
             <name>Ma point</name>
@@ -61,6 +55,12 @@
             <x>150</x>
             <y>225</y>
             <displayed>1</displayed>
+        </point>
+        <point>
+            <name>Home_Roboty</name>
+            <x>543.901</x>
+            <y>535.756</y>
+            <displayed>36</displayed>
         </point>
     </group>
 </points>

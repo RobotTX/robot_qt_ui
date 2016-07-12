@@ -223,3 +223,10 @@ void LeftMenu::disableButtons(){
 
 /// to factorize the remove point events
 void LeftMenu::removePoint(){}
+
+
+void LeftMenu::setEnableReturnCloseButtons(bool enable){
+    returnButton->setEnabled(enable);
+    closeBtn->setEnabled(enable);
+}
+

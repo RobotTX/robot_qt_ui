@@ -29,9 +29,9 @@ SelectedRobotWidget::SelectedRobotWidget(QMainWindow* parent): QWidget(parent){
 
     layout->addWidget(actionButtons);
 
-   VerticalScrollArea* scrollArea = new VerticalScrollArea(this);
-   QVBoxLayout * inLayout = new QVBoxLayout(scrollArea);
-   QWidget * inWidget = new QWidget(scrollArea);
+    VerticalScrollArea* scrollArea = new VerticalScrollArea(this);
+    QVBoxLayout * inLayout = new QVBoxLayout(scrollArea);
+    QWidget * inWidget = new QWidget(scrollArea);
 
     inWidget->setLayout(inLayout);
 
@@ -178,15 +178,16 @@ void SelectedRobotWidget::homeBtnEvent(){
 }
 
 void SelectedRobotWidget::disable(){
-   // editBtn->setEnabled(false);
+    // editBtn->setEnabled(false);
     homeBtn->setEnabled(false);
     addPathBtn->setEnabled(false);
-   scanBtn->setEnabled(false);
+    scanBtn->setEnabled(false);
     goHome->setEnabled(false);
+    actionButtons->setEnable(false);
 }
 
 void SelectedRobotWidget::enable(){
-  //  editBtn->setEnabled(true);
+    // editBtn->setEnabled(true);
     addPathBtn->setEnabled(true);
     scanBtn->setEnabled(true);
     goHome->setEnabled(true);
@@ -196,6 +197,7 @@ void SelectedRobotWidget::enable(){
     } else {
         homeBtn->setEnabled(true);
     }
+    actionButtons->setEnable(true);
 }
 
 void SelectedRobotWidget::showEvent(QShowEvent *event){

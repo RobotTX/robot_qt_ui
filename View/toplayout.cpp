@@ -72,6 +72,11 @@ void TopLayout::setLabel(const QString msgType, const QString msg){
     label->setStyleSheet("QLabel { color: " + QString(msgType) + "}");
 }
 
+void TopLayout::setEnable(bool enable){
+    menuBtn->setEnabled(enable);
+    connectBtn->setEnabled(enable);
+}
+
 void TopLayout::setLabelDelay(const QString msgType, const QString msg, int delayTime){
 
     // if it is an error make sure the person have seen it
@@ -103,12 +108,3 @@ void TopLayout::delay(const int ms)
         QCoreApplication::processEvents(QEventLoop::AllEvents, 100);
 }
 
-void TopLayout::disable(){
-    menuBtn->setEnabled(false);
-    connectBtn->setEnabled(false);
-}
-
-void TopLayout::enable(){
-    menuBtn->setEnabled(true);
-    connectBtn->setEnabled(true);
-}

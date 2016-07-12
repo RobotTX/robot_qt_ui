@@ -26,6 +26,7 @@ public:
     void checkAll();
     void setAllCheckable();
     void setAllNonCheckable();
+    void setEnable(bool enable);
 
 
 private:
@@ -39,6 +40,7 @@ private:
    QPushButton* goButton;
    QHBoxLayout* eyeMapLayout;
    SpaceWidget* spaceWidget;
+   QList<QPushButton*> enabledBtns;
 };
 
 
