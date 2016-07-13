@@ -86,7 +86,7 @@ public:
     void switchFocus(QString name, QWidget* widget);
     /// to sleep for ms milliseconds
     void delay(const int ms) const;
-    void setEnableAll(bool enable, GraphicItemState state = GraphicItemState::NO_STATE, bool clearPath = false, int noReturn = -1);
+    void setEnableAll(bool enable, int noReturn = -1, GraphicItemState state = GraphicItemState::NO_STATE, bool clearPath = false);
 
 signals:
     void sendCommand(QString);

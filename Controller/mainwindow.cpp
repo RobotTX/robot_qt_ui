@@ -3272,7 +3272,7 @@ void MainWindow::delay(const int ms) const{
         QCoreApplication::processEvents(QEventLoop::AllEvents, 100);
 }
 
-void MainWindow::setEnableAll(bool enable, GraphicItemState state, bool clearPath, int noReturn){
+void MainWindow::setEnableAll(bool enable, int noReturn, GraphicItemState state, bool clearPath){
     setGraphicItemsState(state, clearPath);
     bottomLayout->setEnable(enable);
     topLayout->setEnable(enable);
