@@ -5,12 +5,19 @@ class PathPoint;
 class Point;
 class CmdRobotThread;
 class QMainWindow;
+class ScanRobotThread;
+class ScanMetadataThread;
 
 #include "Model/position.h"
 #include <QString>
 #include <QVector>
 #include <memory>
 #include <QtNetwork/QTcpSocket>
+
+#define PORT_MAP_METADATA 4000
+#define PORT_ROBOT_POS 4001
+#define PORT_MAP 4002
+#define PORT_CMD 5600
 
 /**
  * @brief The Robot class
@@ -19,7 +26,7 @@ class QMainWindow;
 
 class Robot{
 public:
-    Robot(const QString name, const QString addressIp, const int port, QMainWindow* parent);
+    Robot(const QString name, const QString addressIp, QMainWindow* parent);
     Robot();
     ~Robot();
 
@@ -62,7 +69,7 @@ public:
     bool sendCommand(const QString cmd);
     QString waitAnswer();
     void resetCommandAnswer();
-    void stopCmdThread();
+    void stopThreads();
 
 private:
     QString name;
@@ -91,6 +98,8 @@ private:
      */
     bool playingPath;
     QTcpSocket* socketCmd;
+    ScanRobotThread* robotThread;
+    ScanMetadataThread* metadataThread;
 };
 
 /**

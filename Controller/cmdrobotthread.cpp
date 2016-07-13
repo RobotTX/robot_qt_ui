@@ -3,13 +3,16 @@
 #include <QCoreApplication>
 
 
-CmdRobotThread::CmdRobotThread(const QString newipAddress, const int newPort, const QString _robotName, QObject* parent) : QThread(parent){
+CmdRobotThread::CmdRobotThread(const QString newipAddress, const int cmdPort, const int _metadataPort, const int _robotPort, const int _mapPort, const QString _robotName, QObject* parent) : QThread(parent){
     ipAddress = newipAddress;
-    port = newPort;
+    port = cmdPort;
     robotName = _robotName;
     connected = false;
     commandAnswer = "";
     missedPing = MISSED_PING_TIMER;
+    metadataPort = _metadataPort;
+    robotPort = _robotPort;
+    mapPort = _mapPort;
 }
 
 void CmdRobotThread::run(){
@@ -17,12 +20,8 @@ void CmdRobotThread::run(){
 
     socketCmd = std::shared_ptr<QTcpSocket>(new QTcpSocket());
 
-    //int qtype1 = qRegisterMetaType<QAbstractSocket::SocketError>("SocketError");
-
     /// Connect the signal readyRead which tell us when data arrived to the function that treat them
     connect(&(*socketCmd), SIGNAL(readyRead()), this, SLOT(readTcpDataSlot()) );
-    /// Connect the signal hostFound which trigger when we find the host
-    //connect(&(*socketCmd), SIGNAL(hostFound()), SLOT(hostFoundSlot()) );
     /// Connect the signal connected which trigger when we are connected to the host
     connect(&(*socketCmd), SIGNAL(connected()), this, SLOT(connectedSlot()) );
     //connect(&(*socketCmd), SIGNAL(error(QAbstractSocket::SocketError)), SLOT(errorSlot(QAbstractSocket::SocketError)) );
@@ -46,15 +45,13 @@ void CmdRobotThread::run(){
         }
     }
 
-    /// Throw an error if bytes are available but we can't read them
-    while (socketCmd->bytesAvailable() < (int)sizeof(quint16) && !isInterruptionRequested()) {
-        if (!socketCmd->waitForReadyRead(1000)) {
-            qDebug() << "(Robot" << robotName << ") Ready read error : " << socketCmd->errorString();
-            socketCmd->close();
-            exit();
-            return;
-        }
-    }
+    //delay(2000);
+    QString portStr = "h " + QString::number(metadataPort) + " " + QString::number(robotPort) + " " + QString::number(mapPort) + " } ";
+    socketCmd->write(portStr.toUtf8());
+
+    socketCmd->waitForBytesWritten(1000);
+
+
     qDebug() << "(Robot" << robotName << ") Done";
     while(!isInterruptionRequested()){
         if(missedPing <= 0){
@@ -124,10 +121,6 @@ QString CmdRobotThread::waitAnswer(){
     return commandAnswer;
 }
 
-void CmdRobotThread::hostFoundSlot(){
-    qDebug() << "(Robot" << robotName << ") Host found";
-}
-
 void CmdRobotThread::connectedSlot(){
     qDebug() << "(Robot" << robotName << ") Connected";
     connected = true;
@@ -156,6 +149,5 @@ void CmdRobotThread::delay(const int ms) const{
 }
 
 void CmdRobotThread::pingSlot(){
-    //qDebug()<< "(Robot" << robotName << ") missedPingSlot called";
     missedPing = MISSED_PING_TIMER;
 }

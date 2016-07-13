@@ -29,18 +29,6 @@ public:
 
 private slots:
     /**
-     * @brief readTcpDataSlot
-     * Read the data we receive
-     */
-    void readTcpDataSlot();
-
-    /**
-     * @brief hostFoundSlot
-     * Slot called when an host is found
-     */
-    void hostFoundSlot();
-
-    /**
      * @brief connectedSlot
      * Slot called when we are connected to the host
      */
@@ -67,7 +55,7 @@ signals:
      * @param ori
      * Signal emitted when we have received the robot position & orientation
      */
-    void valueChangedRobot(float posX, float posY, float ori);
+    void valueChangedRobot(QString ipAddress, float posX, float posY, float ori);
 
 private :
     std::shared_ptr<QTcpSocket> socketRobot;

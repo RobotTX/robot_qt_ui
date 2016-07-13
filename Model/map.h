@@ -79,7 +79,6 @@ private:
      * display the known part of the map by default
      */
     QRect rect;
-
 };
 
 #endif // MAP_H
