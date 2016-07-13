@@ -79,6 +79,7 @@ signals:
     void modifiedGroupAfterClick(QString name);
     void enableReturn();
     void messageCreationGroup(QString);
+    void messageCreationPoint();
 
 private:
 

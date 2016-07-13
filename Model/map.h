@@ -21,6 +21,7 @@ public:
     int getHeight(void) const { return height; }
     Position getOrigin(void) const { return origin; }
     QRect getRect(void) const { return rect; }
+    QPointF getCenter(void) const { return center; }
 
     /// Setters
     void setResolution(const float _resolution) { resolution = _resolution; }
@@ -79,7 +80,7 @@ private:
      * display the known part of the map by default
      */
     QRect rect;
-
+    QPointF center;
 };
 
 #endif // MAP_H

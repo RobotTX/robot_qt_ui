@@ -25,7 +25,7 @@ void Map::setRectangle(void){
     double lefterBound(width);
     for(int i = 0; i < height; i++){
         for(int j = 0; j < width; j++){
-            if(mapImage.pixelColor(j, i) == QColor(254, 254, 254)){
+            if(mapImage.pixelColor(j, i).red() == 254 && mapImage.pixelColor(j, i).green() == 254 && mapImage.pixelColor(j, i).blue() == 254){
                 if(i > upperBound)
                     upperBound = i;
                 else if(i < lowerBound)
@@ -38,7 +38,9 @@ void Map::setRectangle(void){
         }
     }
     rect = QRect(QPoint(lefterBound, lowerBound), QPoint(righterBound, upperBound));
-    qDebug() << "rect " << upperBound << righterBound << lowerBound <<  lefterBound;
+    qDebug() << "just set map rectangle " << rect;
+    center = QPointF(rect.topLeft().x() + rect.bottomRight().x() /2,
+            (rect.topLeft().y() + rect.bottomRight().y()) /2);
 }
 
 // this code is temporarily dead

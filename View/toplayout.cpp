@@ -30,7 +30,14 @@ TopLayout::TopLayout(QMainWindow* parent): QWidget(parent), lastMessage(TEXT_COL
     layout->addWidget(connectBtn);
     connect(connectBtn, SIGNAL(clicked()), parent, SLOT(connectToRobot()));
 
-//  centerBtn = new QPushButton(QIcon(":/icons/"))
+    centerBtn = new QPushButton(QIcon(":/icons/center.png"), "", this);
+    centerBtn->setToolTip("Click to center the map");
+    centerBtn->setIconSize(parent->size()/8);
+    centerBtn->setMaximumWidth(40);
+    centerBtn->setFlat(true);
+    centerBtn->setFocusPolicy(Qt::FocusPolicy::NoFocus);
+    layout->addWidget(centerBtn);
+    connect(centerBtn, SIGNAL(clicked()), parent, SLOT(centerMap()));
 
     SpaceWidget* spaceWidget = new SpaceWidget(SpaceWidget::SpaceOrientation::VERTICAL, this);
     spaceWidget->setColor("lightgrey");

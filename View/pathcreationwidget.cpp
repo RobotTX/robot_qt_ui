@@ -461,13 +461,13 @@ void PathCreationWidget::editItem(QListWidgetItem* item){
 }
 
 
-void PathCreationWidget::updatePointPainter(){
+void PathCreationWidget::updatePointPainter(const bool save){
     qDebug() << "pathcreationwidget updatepointpainer called";
     /*qDebug() << "\n";
     for(int i = 0; i < pointList.size(); i++){
         qDebug() << i << " : " << pointList.at(i).getName() << pointList.at(i).getPosition().getX() << pointList.at(i).getPosition().getY();
     }*/
-    emit updatePathPointToPainter(pointList);
+    emit updatePathPointToPainter(pointList, save);
 }
 
 void PathCreationWidget::hideEvent(QHideEvent *event){
@@ -499,7 +499,7 @@ void PathCreationWidget::saveEditSlot(PathPointCreationWidget* pathPointCreation
     emit saveEditPathPoint();
 }
 
-void PathCreationWidget::applySavePathPoint(float posX, float posY){
+void PathCreationWidget::applySavePathPoint(float posX, float posY, bool save){
     qDebug() << "applySavePathPoint called" << posX << posY;
     editedPathPointCreationWidget->setPos(posX, posY);
 

@@ -117,14 +117,14 @@ void PathPainter::clearPointViews(bool save){
     QVector<PointView*> pointViewVector = mapItem->getPathCreationPoints();
     for(int k = 0; k < pointViewVector.size(); k++){
          if(mapItem->getState() != GraphicItemState::EDITING || pointViewVector.at(k)->getType() != PointView::PixmapType::HOVER || save){
-            qDebug() << "was not orange" << k;
+            qDebug() << "was not orange" << mapItem->getState() << pointViewVector.at(k)->getType() << save;
             pointViewVector.at(k)->setPixmap(PointView::PixmapType::NORMAL);
          }
     }
 }
 
 void PathPainter::updatePath(const QVector<PointView*>& pointViewsVector, bool save){
-    reset();
+    reset(save);
     if(pointViewsVector.size() > 0){
         PointView* startPointView = NULL;
         PointView* endPointView = NULL;
