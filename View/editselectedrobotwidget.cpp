@@ -148,18 +148,18 @@ void EditSelectedRobotWidget::checkRobotName(void){
     qDebug() << "checkRobotName called";
     if(nameEdit->text() == ""){
         saveBtn->setEnabled(false);
-        qDebug() << "Save btn not enabled : " << nameEdit->text() << "can not be empty";
+        qDebug() << "Error : this name is not valid," << nameEdit->text() << "can not be empty";
     } else if(robots->existRobotName(nameEdit->text()) && nameEdit->text() != robotView->getRobot()->getName()){
         saveBtn->setEnabled(false);
-        qDebug() << "Save btn not enabled : " << nameEdit->text() << "already exist";
+        qDebug() << "Error : this name is not valid," << nameEdit->text() << "already exist";
     } else {
         saveBtn->setEnabled(true);
-        qDebug() << "Save btn enabled";
+        qDebug() << "This name is valid";
     }
 }
 
 void EditSelectedRobotWidget::checkWifiName(void){
-    qDebug() << "checkWifiName called";
+    //qDebug() << "checkWifiName called";
     if(wifiNameEdit->text() == ""){
         saveBtn->setEnabled(false);
         qDebug() << "Save btn not enabled : " << wifiNameEdit->text() << "can not be empty";

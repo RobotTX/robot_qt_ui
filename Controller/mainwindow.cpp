@@ -220,6 +220,76 @@ MainWindow::~MainWindow(){
 
 /**********************************************************************************************************************************/
 
+
+void MainWindow::initializeRobots(){
+
+    /// Get the list of taken robot's name from the file
+    QFile fileRead(ROBOTS_NAME_PATH);
+    fileRead.open(QIODevice::ReadOnly);
+    /// read the data serialized from the file
+    QDataStream in(&fileRead);
+    QMap<QString, QString> tmp;
+    in >> tmp;
+    robots->setRobotsNameMap(tmp);
+    fileRead.close();
+
+
+
+    updateRobotsThread = new UpdateRobotsThread(PORT_ROBOT_UPDATE);
+    connect(updateRobotsThread, SIGNAL(robotIsAlive(QString,QString)), this, SLOT(robotIsAliveSlot(QString,QString)));
+    updateRobotsThread->start();
+    updateRobotsThread->moveToThread(updateRobotsThread);
+
+
+/*
+    QFile fileWrite(ROBOTS_NAME_PATH);
+    fileWrite.resize(0);
+    fileWrite.open(QIODevice::WriteOnly);
+    QDataStream out(&fileWrite);
+    QMap<QString, QString> tmpMap = robots->getRobotsNameMap();
+
+    QString robotIp1 = "localhost";
+    QString robotName1 = tmpMap.value(robotIp1, "Roboty");
+
+    std::shared_ptr<Robot> robot1(new Robot(robotName1, robotIp1, PORT_CMD, this));
+    robot1->setWifi("Swaghetti Yolognaise");
+    RobotView* robotView1 = new RobotView(robot1, mapPixmapItem);
+    connect(robotView1, SIGNAL(setSelectedSignal(RobotView*)), this, SLOT(setSelectedRobot(RobotView*)));
+    robotView1->setPosition(200, 200);
+    robotView1->setParentItem(mapPixmapItem);
+    robots->add(robotView1);
+    tmpMap[robot1->getIp()] = robot1->getName();
+
+    QString robotIp2 = "192.168.4.12";
+    QString robotName2 = tmpMap.value(robotIp2, "Roboto");
+    std::shared_ptr<Robot> robot2(new Robot(robotName2, robotIp2, PORT_CMD, this));
+    robot2->setWifi("Swaghetti Yolognaise");
+    RobotView* robotView2 = new RobotView(robot2, mapPixmapItem);
+    connect(robotView2, SIGNAL(setSelectedSignal(RobotView*)), this, SLOT(setSelectedRobot(RobotView*)));
+    robotView2->setPosition(100, 100);
+    robotView2->setParentItem(mapPixmapItem);
+    robots->add(robotView2);
+    tmpMap[robot2->getIp()] = robot2->getName();
+
+    QString robotIp3 = "192.168.4.13";
+    QString robotName3 = tmpMap.value(robotIp3, "Robota");
+    std::shared_ptr<Robot> robot3(new Robot(robotName3, robotIp3, PORT_CMD, this));
+    robot3->setWifi("Swaghetti Yolognaise");
+    RobotView* robotView3 = new RobotView(robot3, mapPixmapItem);
+    connect(robotView3, SIGNAL(setSelectedSignal(RobotView*)), this, SLOT(setSelectedRobot(RobotView*)));
+    robotView3->setPosition(200, 300);
+    robotView3->setParentItem(mapPixmapItem);
+    robots->add(robotView3);
+    tmpMap[robot3->getIp()] = robot3->getName();
+
+    robots->setRobotsNameMap(tmpMap);
+    out << robots->getRobotsNameMap();
+    fileWrite.close();
+*/
+
+    qDebug() << "RobotsNameMap on init" << robots->getRobotsNameMap();
+}
+
 void MainWindow::updateRobot(const float posX, const float posY, const float oriZ){
 
     float newPosX = (-map->getOrigin().getX()+posX)/map->getResolution() + ROBOT_WIDTH;
@@ -332,40 +402,6 @@ void MainWindow::connectToRobot(){
     }
 }
 
-void MainWindow::initializeRobots(){
-
-    /*updateRobotsThread = new UpdateRobotsThread(PORT_ROBOT_UPDATE);
-    connect(updateRobotsThread, SIGNAL(robotIsAlive(QString,QString)), this, SLOT(robotIsAliveSlot(QString,QString)));
-    updateRobotsThread->start();
-    updateRobotsThread->moveToThread(updateRobotsThread);*/
-
-
-    std::shared_ptr<Robot> robot1(new Robot("Roboty", "localhost", PORT_CMD, this));
-    robot1->setWifi("Swaghetti Yolognaise");
-    RobotView* robotView1 = new RobotView(robot1, mapPixmapItem);
-    connect(robotView1, SIGNAL(setSelectedSignal(RobotView*)), this, SLOT(setSelectedRobot(RobotView*)));
-    robotView1->setPosition(200, 200);
-    robotView1->setParentItem(mapPixmapItem);
-    robots->add(robotView1);
-
-    std::shared_ptr<Robot> robot2(new Robot("Roboto", "192.168.4.12", PORT_CMD, this));
-    robot2->setWifi("Swaghetti Yolognaise");
-    RobotView* robotView2 = new RobotView(robot2, mapPixmapItem);
-    connect(robotView2, SIGNAL(setSelectedSignal(RobotView*)), this, SLOT(setSelectedRobot(RobotView*)));
-    robotView2->setPosition(100, 100);
-    robotView2->setParentItem(mapPixmapItem);
-    robots->add(robotView2);
-
-    std::shared_ptr<Robot> robot3(new Robot("Robota", "192.168.4.13", PORT_CMD, this));
-    robot3->setWifi("Swaghetti Yolognaise");
-    RobotView* robotView3 = new RobotView(robot3, mapPixmapItem);
-    connect(robotView3, SIGNAL(setSelectedSignal(RobotView*)), this, SLOT(setSelectedRobot(RobotView*)));
-    robotView3->setPosition(200, 300);
-    robotView3->setParentItem(mapPixmapItem);
-    robots->add(robotView3);
-
-}
-
 void MainWindow::stopSelectedRobot(int robotNb){
     qDebug() << "stopSelectedRobot called on robot : " << robots->getRobotsVector().at(robotNb)->getRobot()->getName();
 
@@ -452,7 +488,9 @@ void MainWindow::playSelectedRobot(int robotNb){
         /// if the command is succesfully sent to the robot, we apply the change
         robot->resetCommandAnswer();
         if(robot->sendCommand(QString("c ") + QString::number(newPosX) + " "  + QString::number(newPosY) + " "  + QString::number(waitTime))){
+            qDebug() << "Let's wait";
             QString answer = robot->waitAnswer();
+            qDebug() << "Done waiting";
             QStringList answerList = answer.split(QRegExp("[ ]"), QString::SkipEmptyParts);
             if(answerList.size() > 1){
                 QString cmd = answerList.at(0);
@@ -634,7 +672,7 @@ void MainWindow::backRobotBtnEvent(){
 void MainWindow::editRobotBtnEvent(){
     qDebug() << "editRobotBtnEvent called";
 
-   editSelectedRobot(robots->getRobotViewByName(robotsLeftWidget->getBtnGroup()->getBtnGroup()->checkedButton()->text()));
+    editSelectedRobot(robots->getRobotViewByName(robotsLeftWidget->getBtnGroup()->getBtnGroup()->checkedButton()->text()));
 }
 
 void MainWindow::checkRobotBtnEventMenu(){
@@ -664,7 +702,7 @@ void MainWindow::cancelEditSelecRobotBtnEvent(){
     qDebug() << "cancelEditSelecRobotBtnEvent called";
 
     //robotsLeftWidget->setEditBtnStatus(false);
-   // robotsLeftWidget->setCheckBtnStatus(false);
+    //robotsLeftWidget->setCheckBtnStatus(false);
     hideAllWidgets();
 
     setGraphicItemsState(GraphicItemState::NO_STATE);
@@ -679,7 +717,7 @@ void MainWindow::robotSavedEvent(){
     bool isOK = false;
     int change = 0;
 
-    /// if the command is succesfully sent to the robot, we apply the change
+    /// if we changed the name
     if(selectedRobot->getRobot()->getName().compare(editSelectedRobotWidget->getNameEdit()->text()) != 0){
         qDebug() << "Name has been modified";
         selectedRobot->getRobot()->resetCommandAnswer();
@@ -692,6 +730,18 @@ void MainWindow::robotSavedEvent(){
                 if((cmd.compare("a") == 0 && success) || answerList.at(0).compare("1") == 0){
                     isOK = true;
                     change++;
+
+                    QMap<QString, QString> tmp = robots->getRobotsNameMap();
+                    tmp[selectedRobot->getRobot()->getIp()] = editSelectedRobotWidget->getNameEdit()->text();
+                    robots->setRobotsNameMap(tmp);
+
+                    QFile fileWrite(ROBOTS_NAME_PATH);
+                    fileWrite.resize(0);
+                    fileWrite.open(QIODevice::WriteOnly);
+                    QDataStream out(&fileWrite);
+                    out << robots->getRobotsNameMap();
+                    fileWrite.close();
+                    qDebug() << "RobotsNameMap updated" << robots->getRobotsNameMap();
                 } else {
                     isOK = false;
                     setMessageTop(TEXT_COLOR_DANGER, "Failed to edit the name of the robot");
@@ -700,6 +750,8 @@ void MainWindow::robotSavedEvent(){
             selectedRobot->getRobot()->resetCommandAnswer();
         }
     }
+
+    /// if we changed the wifi
     if (editSelectedRobotWidget->getWifiPwdEdit()->text() != "......"){
         qDebug() << "Wifi has been modified";
         selectedRobot->getRobot()->resetCommandAnswer();
@@ -724,6 +776,7 @@ void MainWindow::robotSavedEvent(){
         }
     }
 
+    /// if we changed the home
     PointView* pointView = editSelectedRobotWidget->getHome();
     if(pointView != NULL && !(&(*(pointView->getPoint())) == &(*(selectedRobot->getRobot()->getHome())))){
         qDebug() << "Home has been modified";
@@ -781,6 +834,7 @@ void MainWindow::robotSavedEvent(){
         }
     }
 
+    /// finally we edit
     if(editSelectedRobotWidget->isVisible()){
         if(change > 0){
             if (isOK){
@@ -1202,6 +1256,8 @@ void MainWindow::robotIsAliveSlot(QString hostname,QString ip){
         bottomLayout->addRobot(robotView);
         robotsLeftWidget->updateRobots(robots);
 
+
+
         /// TODO check if first connection
         if(ip.endsWith(".7.1") || ip.endsWith(".7.2") || ip.endsWith(".7.3")){
             selectedRobot = robotView;
@@ -1211,6 +1267,18 @@ void MainWindow::robotIsAliveSlot(QString hostname,QString ip){
             editSelectedRobotWidget->show();
             leftMenu->show();
             setEnableAll(false, GraphicItemState::NO_EVENT);
+        } else {
+            QMap<QString, QString> tmp = robots->getRobotsNameMap();
+            tmp[ip] = hostname;
+            robots->setRobotsNameMap(tmp);
+
+            QFile fileWrite(ROBOTS_NAME_PATH);
+            fileWrite.resize(0);
+            fileWrite.open(QIODevice::WriteOnly);
+            QDataStream out(&fileWrite);
+            out << robots->getRobotsNameMap();
+            fileWrite.close();
+            qDebug() << "RobotsNameMap updated" << robots->getRobotsNameMap();
         }
     }
 }
@@ -3210,7 +3278,7 @@ void MainWindow::delay(const int ms) const{
         QCoreApplication::processEvents(QEventLoop::AllEvents, 100);
 }
 
-void MainWindow::setEnableAll(bool enable, GraphicItemState state, bool clearPath, int noReturn){
+void MainWindow::setEnableAll(bool enable, int noReturn, GraphicItemState state, bool clearPath){
     setGraphicItemsState(state, clearPath);
     bottomLayout->setEnable(enable);
     topLayout->setEnable(enable);

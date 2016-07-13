@@ -48,7 +48,7 @@ void CmdRobotThread::run(){
 
     /// Throw an error if bytes are available but we can't read them
     while (socketCmd->bytesAvailable() < (int)sizeof(quint16) && !isInterruptionRequested()) {
-        if (!socketCmd->waitForReadyRead()) {
+        if (!socketCmd->waitForReadyRead(1000)) {
             qDebug() << "(Robot" << robotName << ") Ready read error : " << socketCmd->errorString();
             socketCmd->close();
             exit();
@@ -85,7 +85,7 @@ void CmdRobotThread::writeCommandSlot(QString cmd){
     qDebug() << "writeCommandSlot called";
     int nbDataSend = socketCmd->write(QString(cmd + " } ").toUtf8());
 
-    socketCmd->waitForBytesWritten();
+    socketCmd->waitForBytesWritten(100);
 
     if(nbDataSend == -1){
         qDebug() << "(Robot" << robotName << ") An error occured while sending data";
@@ -93,7 +93,7 @@ void CmdRobotThread::writeCommandSlot(QString cmd){
         qDebug() << "(Robot" << robotName << ") " << nbDataSend << " bytes sent";
 
         if(QString(cmd.at(0)).compare("e")){
-            socketCmd->waitForReadyRead();
+            socketCmd->waitForReadyRead(100);
         } else {
             qDebug() << "No wait";
             delay(2000);
@@ -110,11 +110,17 @@ void CmdRobotThread::readTcpDataSlot(){
 QString CmdRobotThread::waitAnswer(){
     qDebug() << "waiting for an answer";
     int waitTime = 0;
-    while(!commandAnswer.compare("") && waitTime < 3){
+    while(!commandAnswer.compare("") && waitTime < 20){
         delay(500);
         waitTime++;
     }
-    qDebug() << "Got answer and waited for" << (waitTime*500) << "seconds :" << commandAnswer;
+
+    if(waitTime >= 20){
+        qDebug() << "Waited for an answer for too long";
+    } else {
+        qDebug() << "Got answer and waited for" << (waitTime/2) << "seconds :" << commandAnswer;
+    }
+
     return commandAnswer;
 }
 

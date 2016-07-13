@@ -39,8 +39,13 @@ class PathPainter;
 
 
 #define XML_PATH "/home/m-a/Documents/QtProject/gobot-software/points.xml"
+#define ROBOTS_NAME_PATH "/home/m-a/Documents/QtProject/gobot-software/robotsName.dat"
+
 //#define XML_PATH "/home/joan/Qt/QtProjects/gobot-software/points.xml"
+//#define ROBOTS_NAME_PATH "/home/joan/Qt/QtProjects/gobot-software/robotsName.dat"
+
 //#define XML_PATH "/Users/fannylarradet/Desktop/GTRobots/gobot-software/points.xml"
+//#define ROBOTS_NAME_PATH "/Users/fannylarradet/Desktop/GTRobots/gobot-software/robotsName.dat"
 
 #define PI 3.14159265
 #define PORT_MAP_METADATA 4000
@@ -81,7 +86,7 @@ public:
     void switchFocus(QString name, QWidget* widget);
     /// to sleep for ms milliseconds
     void delay(const int ms) const;
-    void setEnableAll(bool enable, GraphicItemState state = GraphicItemState::NO_STATE, bool clearPath = false, int noReturn = -1);
+    void setEnableAll(bool enable, int noReturn = -1, GraphicItemState state = GraphicItemState::NO_STATE, bool clearPath = false);
 
 signals:
     void sendCommand(QString);
