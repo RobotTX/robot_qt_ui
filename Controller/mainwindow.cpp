@@ -43,7 +43,6 @@
 #include "View/buttonmenu.h"
 #include "View/pathpointcreationwidget.h"
 #include "View/pathpointlist.h"
-#include <QGraphicsPixmapItem>
 
 /**
  * @brief MainWindow::MainWindow
@@ -577,7 +576,6 @@ void MainWindow::robotBtnEvent(void){
     qDebug() << "robotBtnEvent called";
     leftMenuWidget->hide();
     robotsLeftWidget->show();
-    mapPixmapItem->getTmpPointView()->hide();
     switchFocus("Robots", robotsLeftWidget);
 }
 
@@ -605,15 +603,13 @@ void MainWindow::editSelecRobotBtnEvent(){
 
 void MainWindow::addPathSelecRobotBtnEvent(){
     qDebug() << "addPathSelecRobotBtnEvent called on robot " << selectedRobot->getRobot()->getName();
-    setMessageTop(TEXT_COLOR_INFO, "Click white points of the map to add new points to the path of " + selectedRobot->getRobot()->getName() +
-                  "\nYou can change the position of a point within your path by clicking a point and dragging it to another position");
+    setMessageTop(TEXT_COLOR_INFO, "Click white points of the map to add new points to the path of " + selectedRobot->getRobot()->getName());
     hideAllWidgets();
     pathPainter->reset();
     pathCreationWidget->show();
     pathCreationWidget->setSelectedRobot(selectedRobot->getRobot());
 
     setEnableAll(false, GraphicItemState::CREATING_PATH, true, true);
-    mapPixmapItem->getTmpPointView()->hide();
     switchFocus(selectedRobot->getRobot()->getName(),pathCreationWidget);
 }
 
@@ -904,19 +900,13 @@ void MainWindow::editTmpPathPointSlot(int id, Point* point, int nbWidget){
     }
 
     if(mapPixmapItem->getTmpPointView()->getPoint()->comparePos(point->getPosition().getX(), point->getPosition().getY()))
-        editedPointView = mapPixmapItem->getTmpPointView();  
+        editedPointView = mapPixmapItem->getTmpPointView();
 
     if(editedPointView == NULL){
         qDebug() << "(Error editTmpPathPointSlot) No pointview found to edit";
     } else {
         qDebug() << "Pointview found";
-        qDebug() << "yo " << editedPointView->getLastType() << editedPointView->getType();
-        /// to keep the edited point view color consistent
-        PointView::PixmapType tmpType = editedPointView->getLastType();
         editedPointView->setPixmap(PointView::PixmapType::HOVER);
-        editedPointView->setLastType(tmpType);
-        qDebug() << "re " << editedPointView->getLastType() << editedPointView->getType();
-
         if(nbWidget == 1){
             editedPointView->setFlag(QGraphicsItem::ItemIsMovable);
             setGraphicItemsState(GraphicItemState::NO_EVENT, false);
@@ -933,7 +923,6 @@ void MainWindow::editTmpPathPointSlot(int id, Point* point, int nbWidget){
             qDebug() << "(Error editTmpPathPointSlot) Not supposed to be here";
         }
     }
-    qDebug() << "edittmppathpointslot terminated";
 }
 
 void MainWindow::pathSaved(bool execPath){
@@ -1008,8 +997,6 @@ void MainWindow::saveTmpEditPathPointSlot(void){
 
     pathCreationWidget->applySavePathPoint(editedPointView->getPoint()->getPosition().getX(), editedPointView->getPoint()->getPosition().getY());
 
-    /// saves permanently
-    pathPainter->updatePath(mapPixmapItem->getPathCreationPoints(), true);
     editedPointView->setFlag(QGraphicsItem::ItemIsMovable, false);
     editedPointView = NULL;
 
@@ -1018,8 +1005,8 @@ void MainWindow::saveTmpEditPathPointSlot(void){
 
     setMessageTop(TEXT_COLOR_SUCCESS, "You have successfully modified the path of " + selectedRobot->getRobot()->getName());
     delay(2500);
-    setMessageTop(TEXT_COLOR_INFO, "Click white points of the map to add new points to the path of " + selectedRobot->getRobot()->getName() +
-                  "\nYou can change the position of a point within your path by clicking a point and dragging it to another position");
+    setMessageTop(TEXT_COLOR_INFO, "Click white points of the map to add new points to the path of " + selectedRobot->getRobot()->getName());
+
 }
 
 
@@ -1352,8 +1339,7 @@ void MainWindow::robotIsDeadSlot(QString hostname,QString ip){
 void MainWindow::setMessageCreationPath(QString message){
     setMessageTop(TEXT_COLOR_DANGER, message);
     delay(2500);
-    setMessageTop(TEXT_COLOR_INFO, "Click white points of the map to add new points to the path of " + selectedRobot->getRobot()->getName() +
-                  "\nYou can change the position of a point within your path by clicking a point and dragging it to another position");
+    setMessageTop(TEXT_COLOR_INFO, "Click white points of the map to add new points to the path of " + selectedRobot->getRobot()->getName());
 
 }
 
@@ -1364,11 +1350,15 @@ void MainWindow::updatePathPoint(double x, double y, PointView* pointView){
         if(pv == 0)
             qDebug() << "no pointview found to update";
         else {
+            qDebug() << "pos pv" << pv->getPoint()->getPosition().getX() << pv->getPoint()->getPosition().getY() << " pathcr point" <<
+                        ((PathPointCreationWidget*) pathCreationWidget->getPathPointList()->itemWidget(pathCreationWidget->getPathPointList()->currentItem()))->getPoint().getPosition().getX() <<
+                        ((PathPointCreationWidget*) pathCreationWidget->getPathPointList()->itemWidget(pathCreationWidget->getPathPointList()->currentItem()))->getPoint().getPosition().getY();
             if(pv->getPoint()->comparePos(
-                    ((PathPointCreationWidget*) pathCreationWidget->getPathPointList()->itemWidget(pathCreationWidget->getPathPointList()->currentItem()))->getPoint().getPosition())){
+                        ((PathPointCreationWidget*) pathCreationWidget->getPathPointList()->itemWidget(pathCreationWidget->getPathPointList()->currentItem()))->getPoint().getPosition())){
                 pv->getPoint()->setPosition(x, y);
                 pv->setPos(x, y);
                 ((PathPointCreationWidget*) pathCreationWidget->getPathPointList()->itemWidget(pathCreationWidget->getPathPointList()->currentItem()))->setPos(x, y);
+                qDebug() << "name" << pv->getPoint()->getName() << "index" << i;
                 pathPainter->updatePath(mapPixmapItem->getPathCreationPoints());
                 break;
             }
@@ -1381,12 +1371,17 @@ void MainWindow::updatePathPoint(double x, double y, PointView* pointView){
             PointView* pv = mapPixmapItem->getPathCreationPoints().at(i);
             if(pv == 0)
                 qDebug() << "no pv";
-            else {
+            else {/*
+                qDebug() << "pos pv" << pv->getPoint()->getPosition().getX() << pv->getPoint()->getPosition().getY() << " pathcr point" <<
+                            ((PathPointCreationWidget*) pathCreationWidget->getPathPointList()->itemWidget(pathCreationWidget->getPathPointList()->currentItem()))->getPoint().getPosition().getX() <<
+                            ((PathPointCreationWidget*) pathCreationWidget->getPathPointList()->itemWidget(pathCreationWidget->getPathPointList()->currentItem()))->getPoint().getPosition().getY();
+                */
                 if(pv->getPoint()->comparePos(
                             ((PathPointCreationWidget*) pathCreationWidget->getPathPointList()->itemWidget(pathCreationWidget->getPathPointList()->currentItem()))->getPoint().getPosition())){
                     pv->getPoint()->setPosition(x, y);
                     pv->setPos(x, y);
                     ((PathPointCreationWidget*) pathCreationWidget->getPathPointList()->itemWidget(pathCreationWidget->getPathPointList()->currentItem()))->setPos(x, y);
+                    qDebug() << "name" << pv->getPoint()->getName() << "index" << i;
                     pathPainter->updatePath(mapPixmapItem->getPathCreationPoints());
                     break;
                 }
@@ -1397,7 +1392,6 @@ void MainWindow::updatePathPoint(double x, double y, PointView* pointView){
         ((PathPointCreationWidget*) pathCreationWidget->getPathPointList()->itemWidget(pathCreationWidget->getPathPointList()->currentItem())) -> getSaveEditBtn()->setEnabled(false);
         qDebug() << "sorry u cannot put a path point in the dark";
     }
-    qDebug() << "updated path point terminated";
 }
 
 /**********************************************************************************************************************************/
@@ -2708,7 +2702,7 @@ void MainWindow::updatePoint(void){
     leftMenu->getDisplaySelectedPoint()->getActionButtons()->getMinusButton()->setEnabled(true);
 
     /// updates the isolated points in the group menus
-    pointsLeftWidget->getGroupButtonGroup()->update(*points);    
+    pointsLeftWidget->getGroupButtonGroup()->update(*points);
 
 
     /// we enable the "back" button again
@@ -3278,7 +3272,7 @@ void MainWindow::delay(const int ms) const{
         QCoreApplication::processEvents(QEventLoop::AllEvents, 100);
 }
 
-void MainWindow::setEnableAll(bool enable, int noReturn, GraphicItemState state, bool clearPath){
+void MainWindow::setEnableAll(bool enable, GraphicItemState state, bool clearPath, int noReturn){
     setGraphicItemsState(state, clearPath);
     bottomLayout->setEnable(enable);
     topLayout->setEnable(enable);
