@@ -8,30 +8,6 @@
             <y>50</y>
             <displayed>0</displayed>
         </point>
-	<point>
-            <name>Ab</name>
-            <x>55</x>
-            <y>50</y>
-            <displayed>0</displayed>
-        </point>
-	<point>
-            <name>Abc</name>
-            <x>50</x>
-            <y>55</y>
-            <displayed>0</displayed>
-        </point>
-	<point>
-            <name>Aggg</name>
-            <x>50</x>
-            <y>58</y>
-            <displayed>0</displayed>
-        </point>
-	<point>
-            <name>fewf</name>
-            <x>78</x>
-            <y>50</y>
-            <displayed>0</displayed>
-        </point>
         <point>
             <name>Ma point</name>
             <x>75</x>

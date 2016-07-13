@@ -28,17 +28,6 @@ public:
 
 
 private slots:
-    /**
-     * @brief readTcpDataSlot
-     * Read the data we receive
-     */
-    void readTcpDataSlot();
-
-    /**
-     * @brief hostFoundSlot
-     * Slot called when an host is found
-     */
-    void hostFoundSlot();
 
     /**
      * @brief connectedSlot

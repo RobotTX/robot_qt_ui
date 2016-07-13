@@ -1,7 +1,5 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-#include "Controller/scanmetadatathread.h"
-#include "Controller/scanrobotthread.h"
 #include "Controller/scanmapthread.h"
 #include "Controller/updaterobotsthread.h"
 #include "Model/pathpoint.h"
@@ -83,8 +81,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     selectedPoint = NULL;
     editedPointView = NULL;
     updateRobotsThread = NULL;
-    metadataThread = NULL;
-    robotThread = NULL;
     mapThread = NULL;
 
     //create the graphic item of the map
@@ -199,14 +195,6 @@ MainWindow::~MainWindow(){
         updateRobotsThread->requestInterruption();
         updateRobotsThread->wait();
     }
-    if (metadataThread != NULL && metadataThread->isRunning() ) {
-        metadataThread->requestInterruption();
-        metadataThread->wait();
-    }
-    if (robotThread != NULL && robotThread->isRunning() ) {
-        robotThread->requestInterruption();
-        robotThread->wait();
-    }
     if (mapThread != NULL && mapThread->isRunning() ) {
         mapThread->requestInterruption();
         mapThread->wait();
@@ -251,7 +239,7 @@ void MainWindow::initializeRobots(){
     QString robotIp1 = "localhost";
     QString robotName1 = tmpMap.value(robotIp1, "Roboty");
 
-    std::shared_ptr<Robot> robot1(new Robot(robotName1, robotIp1, PORT_CMD, this));
+    std::shared_ptr<Robot> robot1(new Robot(robotName1, robotIp1, this));
     robot1->setWifi("Swaghetti Yolognaise");
     RobotView* robotView1 = new RobotView(robot1, mapPixmapItem);
     connect(robotView1, SIGNAL(setSelectedSignal(RobotView*)), this, SLOT(setSelectedRobot(RobotView*)));
@@ -262,7 +250,7 @@ void MainWindow::initializeRobots(){
 
     QString robotIp2 = "192.168.4.12";
     QString robotName2 = tmpMap.value(robotIp2, "Roboto");
-    std::shared_ptr<Robot> robot2(new Robot(robotName2, robotIp2, PORT_CMD, this));
+    std::shared_ptr<Robot> robot2(new Robot(robotName2, robotIp2, this));
     robot2->setWifi("Swaghetti Yolognaise");
     RobotView* robotView2 = new RobotView(robot2, mapPixmapItem);
     connect(robotView2, SIGNAL(setSelectedSignal(RobotView*)), this, SLOT(setSelectedRobot(RobotView*)));
@@ -273,7 +261,7 @@ void MainWindow::initializeRobots(){
 
     QString robotIp3 = "192.168.4.13";
     QString robotName3 = tmpMap.value(robotIp3, "Robota");
-    std::shared_ptr<Robot> robot3(new Robot(robotName3, robotIp3, PORT_CMD, this));
+    std::shared_ptr<Robot> robot3(new Robot(robotName3, robotIp3, this));
     robot3->setWifi("Swaghetti Yolognaise");
     RobotView* robotView3 = new RobotView(robot3, mapPixmapItem);
     connect(robotView3, SIGNAL(setSelectedSignal(RobotView*)), this, SLOT(setSelectedRobot(RobotView*)));
@@ -290,16 +278,19 @@ void MainWindow::initializeRobots(){
     qDebug() << "RobotsNameMap on init" << robots->getRobotsNameMap();
 }
 
-void MainWindow::updateRobot(const float posX, const float posY, const float oriZ){
+void MainWindow::updateRobot(const QString ipAddress, const float posX, const float posY, const float oriZ){
 
     float newPosX = (-map->getOrigin().getX()+posX)/map->getResolution() + ROBOT_WIDTH;
     float newPosY = map->getHeight()-(-map->getOrigin().getY()+posY)/map->getResolution()-ROBOT_WIDTH/2;
     float ori = asin(-oriZ) * 360.0 / PI + 90;
 
-    scanningRobot->setPosition(newPosX, newPosY);
-    scanningRobot->setOrientation(ori);
-
-    scene->update();
+    RobotView* rv = robots->getRobotViewByIp(ipAddress);
+    if(rv != NULL){
+        rv->setPosition(newPosX, newPosY);
+        rv->setOrientation(ori);
+    } else {
+        qDebug() << "(updateRobot) Could not find a RobotView for the robot at ip" << ipAddress;
+    }
 }
 
 void MainWindow::connectToRobot(){
@@ -318,40 +309,24 @@ void MainWindow::connectToRobot(){
                     qDebug() << "Trying to connect to : " << ip;
 
                     selectedRobot->getRobot()->resetCommandAnswer();
-                    if(selectedRobot->getRobot()->sendCommand(QString("e ") + QString::number(PORT_MAP_METADATA) + " " + QString::number(PORT_ROBOT_POS) + " " +QString::number(PORT_MAP))){
+                    if(selectedRobot->getRobot()->sendCommand(QString("e"))){
 
                         selectedRobotWidget->getScanBtn()->setText("Stop to scan");
                         clearNewMap();
                         selectedRobotWidget->disable();
                         selectedRobotWidget->getScanBtn()->setEnabled(true);
                         setEnableAll(false, GraphicItemState::NO_EVENT);
-
-                        metadataThread = new ScanMetadataThread(ip, PORT_MAP_METADATA);
-                        robotThread = new ScanRobotThread(ip, PORT_ROBOT_POS);
-                        //mapThread = new ScanMapThread(ip, PORT_MAP);
-
-                        connect(metadataThread, SIGNAL(valueChangedMetadata(int, int, float, float, float))
-                                , this , SLOT(updateMetadata(int, int, float, float, float)));
-
-                        connect(robotThread, SIGNAL(valueChangedRobot(float, float, float))
-                                ,this ,SLOT(updateRobot(float, float, float)));
-
-                        //connect(mapThread, SIGNAL(valueChangedMap(QByteArray))
-                                //, this , SLOT(updateMap(QByteArray)));
-
-                        metadataThread->start();
-                        metadataThread->moveToThread(metadataThread);
-
-                        robotThread->start();
-                        robotThread->moveToThread(robotThread);
-
-                        //mapThread->start();
-                        //mapThread->moveToThread(mapThread);
-
                         scanningRobot = selectedRobot;
+
+                        mapThread = new ScanMapThread(ip, PORT_MAP);
+                        connect(mapThread, SIGNAL(valueChangedMap(QByteArray)),
+                                this , SLOT(updateMap(QByteArray)));
+                        mapThread->start();
+                        mapThread->moveToThread(mapThread);
+
                         topLayout->setLabel(TEXT_COLOR_SUCCESS, "Scanning a new map");
 
-                        //selectedRobot->getRobot()->resetCommandAnswer();
+                        selectedRobot->getRobot()->resetCommandAnswer();
                     } else {
                         selectedRobotWidget->getScanBtn()->setChecked(false);
                         topLayout->setLabel(TEXT_COLOR_DANGER, "Failed to start to scan a map, please try again");
@@ -396,7 +371,7 @@ void MainWindow::connectToRobot(){
         }
     } else {
 
-         topLayout->setLabelDelay(TEXT_COLOR_DANGER, "You must first click a robot on the map to establish a connection",2500);
+        topLayout->setLabelDelay(TEXT_COLOR_DANGER, "You must first click a robot on the map to establish a connection",2500);
 
         qDebug() << "Select a robot first";
     }
@@ -1260,7 +1235,7 @@ void MainWindow::robotIsAliveSlot(QString hostname,QString ip){
     } else {
         qDebug() << "Robot" << hostname << "at ip" << ip << "just connected";
 
-        std::shared_ptr<Robot> robot(new Robot(hostname, ip, PORT_CMD, this));
+        std::shared_ptr<Robot> robot(new Robot(hostname, ip, this));
         robot->setWifi("Swaghetti Yolognaise");
         RobotView* robotView = new RobotView(robot, mapPixmapItem);
         connect(robotView, SIGNAL(setSelectedSignal(RobotView*)), this, SLOT(setSelectedRobot(RobotView*)));
@@ -1306,8 +1281,8 @@ void MainWindow::robotIsDeadSlot(QString hostname,QString ip){
     qDebug() << "Dead robot's id :" << id;
 
 
-    /// we stop the cmd thread
-    rv->getRobot()->stopCmdThread();
+    /// we stop the robots threads
+    rv->getRobot()->stopThreads();
 
     /// if the robot had a home, make the point a normal point
     if(rv->getRobot()->getHome() != NULL)
@@ -1426,12 +1401,19 @@ void MainWindow::updatePathPoint(double x, double y, PointView* pointView){
 
 void MainWindow::updateMetadata(const int width, const int height, const float resolution,
                                 const float originX, const float originY){
-    map->setWidth(width);
-    map->setHeight(height);
-    map->setResolution(resolution);
-    map->setOrigin(Position(originX, originY));
+    if(width != map->getWidth())
+        map->setWidth(width);
 
-    qDebug() << "Map metadata : " << map->getWidth() << " " << map->getHeight() << " "
+    if(height != map->getHeight())
+        map->setHeight(height);
+
+    if(resolution != map->getResolution())
+        map->setResolution(resolution);
+
+    if(originX != map->getOrigin().getX() || originY != map->getOrigin().getY())
+        map->setOrigin(Position(originX, originY));
+
+    qDebug() << "Map metadata updated : " << map->getWidth() << " " << map->getHeight() << " "
              << map->getResolution() << " " << map->getOrigin().getX()  << " " << map->getOrigin().getY() ;
 }
 

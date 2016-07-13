@@ -3,8 +3,6 @@
 
 class RobotView;
 class PointView;
-class ScanMetadataThread;
-class ScanRobotThread;
 class ScanMapThread;
 class UpdateRobotsThread;
 class CustomQGraphicsView;
@@ -49,10 +47,6 @@ class PathPainter;
 //#define ROBOTS_NAME_PATH "/Users/fannylarradet/Desktop/GTRobots/gobot-software/robotsName.dat"
 
 #define PI 3.14159265
-#define PORT_MAP_METADATA 4000
-#define PORT_ROBOT_POS 4001
-#define PORT_MAP 4002
-#define PORT_CMD 5600
 #define PORT_ROBOT_UPDATE 6000
 
 namespace Ui {
@@ -96,7 +90,7 @@ signals:
     void ping();
 
 private slots:
-    void updateRobot(const float posX, const float posY, const float ori);
+    void updateRobot(const QString ipAddress, const float posX, const float posY, const float ori);
     void updateMetadata(const int width, const int height, const float resolution, const float originX, const float originY);
     void updateMap(const QByteArray mapArray);
     void connectToRobot();
@@ -197,8 +191,6 @@ private slots:
 
 private:
     Ui::MainWindow* ui;
-    ScanMetadataThread* metadataThread;
-    ScanRobotThread* robotThread;
     ScanMapThread* mapThread;
     UpdateRobotsThread* updateRobotsThread;
     QVBoxLayout* rightLayout;
