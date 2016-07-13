@@ -116,7 +116,7 @@ SOURCES += main.cpp \
            Controller/updaterobotsthread.cpp \
            View/customizedlineedit.cpp \
            View/buttonmenu.cpp \
-    View/createpointwidget.cpp \
+           View/createpointwidget.cpp \
     View/topleftmenu.cpp
 
 RESOURCES += Resources/resources.qrc

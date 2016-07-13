@@ -1,7 +1,6 @@
 #ifndef MAPVIEW_H
 #define MAPVIEW_H
 
-class PointView;
 class PointsView;
 class Point;
 class QMainWindow;
@@ -9,6 +8,7 @@ class QMouseEvent;
 class QGraphicsSceneMouseEvent;
 class Map;
 
+#include "View/pointview.h"
 #include <QObject>
 #include <QGraphicsPixmapItem>
 #include <QSharedPointer>
@@ -61,6 +61,7 @@ signals:
 private slots:
     void addPathPointMapViewSlot(PointView*);
     void updateHover(QString, QString);
+    void updatePixmapHover(PointView::PixmapType type, PointView* pv);
 
 protected:
     void mousePressEvent(QGraphicsSceneMouseEvent *event);

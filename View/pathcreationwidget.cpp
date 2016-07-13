@@ -32,15 +32,11 @@ PathCreationWidget::PathCreationWidget(QMainWindow* parent, const Points &_point
 
     actionButtons = new TopLeftMenu(this);
 
-
     layout->addWidget(actionButtons);
 
     connect(actionButtons->getPlusButton(), SIGNAL(clicked(bool)), this, SLOT(addPathPoint()));
     connect(actionButtons->getMinusButton(), SIGNAL(clicked()), this, SLOT(supprPathPoint()));
     connect(actionButtons->getEditButton(), SIGNAL(clicked()), this, SLOT(editPathPoint()));
-
-
-
 
     /// The menu which display the list of point to select
     pointsMenu = new QMenu(this);

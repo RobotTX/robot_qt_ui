@@ -7,8 +7,8 @@
 
 
 PointView::PointView(std::shared_ptr<Point> _point, QGraphicsItem* parent) :
-  QGraphicsPixmapItem(QPixmap(PIXMAP_NORMAL), parent),
-  state(GraphicItemState::NO_STATE){
+  QGraphicsPixmapItem(QPixmap(PIXMAP_NORMAL), parent), state(GraphicItemState::NO_STATE), type(PixmapType::NORMAL), lastType(PixmapType::NORMAL)
+{
     setScale(SCALE);
     point = _point;
     setAcceptedMouseButtons(Qt::RightButton | Qt::LeftButton);
@@ -97,7 +97,12 @@ void PointView::mouseReleaseEvent(QGraphicsSceneMouseEvent *event){
 
 void PointView::hoverEnterEvent(QGraphicsSceneHoverEvent * /* unused */){
     setToolTip(point->getName());
+    qDebug() << "last type " << lastType << "curr type" << type;
+    PixmapType tmpType = type;
+
     setPixmap(PointView::PixmapType::MID);
+    /// we don't want to come back to this type but to the type just before we entered the event so we send this signal so the mapView resestablishes the right types
+    emit hoverEventSignal(tmpType, this);
 }
 
 void PointView::hoverLeaveEvent(QGraphicsSceneHoverEvent * /* unused */){
@@ -110,8 +115,12 @@ void PointView::setPos(const qreal x, const qreal y){
 }
 
 void PointView::setPixmap(const PixmapType pixType){
-    lastPixmap = this->pixmap();
+    lastType = type;
 
+    lastPixmap = this->pixmap();
+    if(type == PointView::HOVER && pixType != PointView::HOVER)
+        qDebug() << "no orange anymore";
+    type = pixType;
     QPixmap pixmap;
     if(point->isHome()){
         switch(pixType){

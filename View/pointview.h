@@ -50,6 +50,11 @@ public:
     std::shared_ptr<Point> getPoint(void) const { return point; }
     void setWasShown(const bool _wasShown) { wasShown = _wasShown; }
     bool getWasShown() const { return wasShown; }
+    PixmapType getType(void) const { return type; }
+    void setType(const PixmapType _type) { type = _type; }
+    PixmapType getLastType(void) const { return lastType; }
+    void setLastType(const PixmapType _last) { lastType = _last; }
+    QPixmap getLastPixmap(void) const { return lastPixmap; }
 
 protected:
     void mousePressEvent(QGraphicsSceneMouseEvent *event);
@@ -68,6 +73,7 @@ signals:
     void moveTmpEditPathPoint();
     void editedPointPositionChanged(double, double);
     void pathPointChanged(double, double, PointView*);
+    void hoverEventSignal(PointView::PixmapType, PointView*);
 
 private:
     std::shared_ptr<Point> point;
@@ -75,6 +81,8 @@ private:
     bool addedToPath;
     QPixmap lastPixmap;
     bool wasShown;
+    PixmapType type;
+    PixmapType lastType;
 };
 
 #endif // POINTVIEW_H

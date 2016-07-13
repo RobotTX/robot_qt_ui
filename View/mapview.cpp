@@ -79,6 +79,7 @@ void MapView::mouseReleaseEvent(QGraphicsSceneMouseEvent *event){
                 newPointView->setPos(event->pos().x()-tmpPointPixmap.width()/2, event->pos().y()-tmpPointPixmap.height());
                 newPointView->setParentItem(this);
                 pathCreationPoints.push_back(newPointView);
+                connect(newPointView, SIGNAL(hoverEventSignal(PointView::PixmapType, PointView*)), this, SLOT(updatePixmapHover(PointView::PixmapType, PointView*)));
                 emit addPathPointMapView(&(*(newPointView->getPoint())));
 
            } else {
@@ -228,7 +229,17 @@ void MapView::setState(const GraphicItemState _state, const bool clear){
     connect(_pointView, SIGNAL(homeSelected(PointView*, bool)), mainWindow, SLOT(homeSelected(PointView*, bool)));
     connect(_pointView, SIGNAL(homeEdited(PointView*, bool)), mainWindow, SLOT(homeEdited(PointView*, bool)));
 
-    connect(_pointView, SIGNAL(pathPointChanged(double,double,PointView*)), mainWindow, SLOT(pathPointChanged(double, double, PointView*)));
+    connect(_pointView, SIGNAL(pathPointChanged(double,double, PointView*)), mainWindow, SLOT(pathPointChanged(double, double, PointView*)));
 
     permanentPoints->addPointView(_pointView);
 }
+
+ /// so that the icon of a point view remains consistent while editing a point of a path and after
+ void MapView::updatePixmapHover(PointView::PixmapType type, PointView *pv){
+    if(state == GraphicItemState::EDITING){
+        qDebug() << "putting the right pixmaps back";
+        qDebug() << type;
+        pv->setLastType(type);
+        pv->setType(PointView::PixmapType::HOVER);
+    }
+ }
