@@ -17,6 +17,9 @@
 #include <boost/smart_ptr.hpp>
 #include <boost/asio.hpp>
 #include <boost/thread.hpp>
+#include <boost/regex.hpp>
+#include <list>
+#include <fstream>
 
 #define CMD_PORT 5600
 

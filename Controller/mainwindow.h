@@ -86,6 +86,7 @@ signals:
     void sendCommand(QString);
     void nameChanged(QString, QString);
     void ping();
+    void changeCmdThreadRobotName(QString);
 
 private slots:
     void updateRobot(const QString ipAddress, const float posX, const float posY, const float ori);

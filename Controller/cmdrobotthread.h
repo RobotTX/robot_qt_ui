@@ -73,6 +73,7 @@ private slots:
     void readTcpDataSlot();
     void writeCommandSlot(QString cmd);
     void pingSlot();
+    void changeRobotNameSlot(QString name);
 
 private :
     std::shared_ptr<QTcpSocket> socketCmd;
