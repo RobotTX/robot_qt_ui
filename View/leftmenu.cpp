@@ -46,8 +46,7 @@ LeftMenu::LeftMenu(MainWindow* _parent, std::shared_ptr<Points> const& _points, 
     closeBtn = new QPushButton(QIcon(":/icons/cropped_close.png"), "", this);
     closeBtn->setIconSize(_parent->size()/30);
     closeBtn->setFlat(true);
-    //closeBtn->setStyleSheet("QPushButton { padding: 5px;}");
-    //closeBtn->setFocusPolicy(Qt::FocusPolicy::NoFocus);
+
     returnButton->hide();
     topLayout->addWidget(returnButton,Qt::AlignLeft);
 
@@ -107,8 +106,7 @@ LeftMenu::LeftMenu(MainWindow* _parent, std::shared_ptr<Points> const& _points, 
     pathCreationWidget = new PathCreationWidget(_parent, *_points);
     leftLayout->addWidget(pathCreationWidget);
 
-
-    connect(pathCreationWidget, SIGNAL(updatePathPointToPainter(QVector<Point>&)), _parent, SLOT(updatePathPointToPainter(QVector<Point>&)));
+    connect(pathCreationWidget, SIGNAL(updatePathPointToPainter(QVector<Point>&, bool)), _parent, SLOT(updatePathPointToPainter(QVector<Point>&, bool)));
     connect(pathCreationWidget, SIGNAL(hidePathCreationWidget()), _parent, SLOT(hidePathCreationWidget()));
     connect(pathCreationWidget, SIGNAL(editTmpPathPoint(int, Point*, int)), _parent, SLOT(editTmpPathPointSlot(int, Point*, int)));
     connect(pathCreationWidget, SIGNAL(saveEditPathPoint()), _parent, SLOT(saveTmpEditPathPointSlot()));

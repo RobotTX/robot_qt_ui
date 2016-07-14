@@ -41,6 +41,7 @@
 #include "View/buttonmenu.h"
 #include "View/pathpointcreationwidget.h"
 #include "View/pathpointlist.h"
+#include "View/groupview.h"
 
 /**
  * @brief MainWindow::MainWindow
@@ -71,8 +72,10 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
     robots = std::shared_ptr<Robots>(new Robots());
     scene = new QGraphicsScene(this);
+    qDebug() << "scene rec with no item" << scene->sceneRect();
 
     graphicsView = new CustomQGraphicsView(scene, this);
+
     selectedRobot = NULL;
     scanningRobot = NULL;
     selectedPoint = NULL;
@@ -83,14 +86,13 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     //create the graphic item of the map
     QPixmap pixmap = QPixmap::fromImage(map->getMapImage());
     mapPixmapItem = new MapView(pixmap, QSize(geometry().width(), geometry().height()), map, this);
-    //mapPixmapItem->centerMap();
     connect(mapPixmapItem, SIGNAL(addPathPointMapView(Point*)), this, SLOT(addPathPoint(Point*)));
     connect(mapPixmapItem, SIGNAL(homeSelected(PointView*, bool)), this, SLOT(homeSelected(PointView*, bool)));
     connect(mapPixmapItem, SIGNAL(homeEdited(PointView*, bool)), this, SLOT(homeEdited(PointView*, bool)));
-    scene->views().at(0)->centerOn(
-                (map->getRect().topLeft().x() + map->getRect().bottomRight().x()) /2,
-                (map->getRect().topLeft().y() + map->getRect().bottomRight().y()) /2);
+    qDebug() << "center" << map->getCenter();
 
+    /// centers the map
+    centerMap();
 
     //create the toolbar
     topLayout = new TopLayout(this);
@@ -106,11 +108,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     initializeRobots();
 
     scene->addItem(mapPixmapItem);
-    qDebug() << scene->sceneRect();
-    qDebug() << mapPixmapItem->pos();
-    qDebug() << graphicsView->geometry();
-    qDebug() << graphicsView->parentWidget()->size();
-    qDebug() << scene->width() << scene->height();
+    qDebug() << "scene rec" << scene->sceneRect();
+    qDebug() << "map" << mapPixmapItem->boundingRect();
+    qDebug() << "map rec" << map->getRect();
 
     graphicsView->scale(std::max(graphicsView->parentWidget()->width()/scene->width(), graphicsView->parentWidget()->height()/scene->height()),
                         std::max(graphicsView->parentWidget()->width()/scene->width(), graphicsView->parentWidget()->height()/scene->height()));
@@ -174,6 +174,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
     /// to know what message to display when a user is creating a group
     connect(pointsLeftWidget, SIGNAL(messageCreationGroup(QString)), this, SLOT(setMessageCreationGroup(QString)));
+
 
     /// to know what message to display when a user is creating a path
     connect(mapPixmapItem, SIGNAL(newMessage(QString)), this, SLOT(setMessageCreationPath(QString)));
@@ -521,7 +522,7 @@ void MainWindow::editSelectedRobot(RobotView* robotView){
     editSelectedRobotWidget->setSelectedRobot(selectedRobot);
 
     editSelectedRobotWidget->show();
-    switchFocus(selectedRobot->getRobot()->getName(),editSelectedRobotWidget);
+    switchFocus(selectedRobot->getRobot()->getName(), editSelectedRobotWidget, MainWindow::WidgetType::ROBOT);
 
     leftMenu->getReturnButton()->setEnabled(false);
     leftMenu->getReturnButton()->setToolTip("Please save or discard your modifications before navigating the menu again.");
@@ -542,7 +543,7 @@ void MainWindow::setSelectedRobot(RobotView* robotView){
         robots->setSelected(robotView);
         selectedRobotWidget->setSelectedRobot(selectedRobot);
         selectedRobotWidget->show();
-        switchFocus(robotView->getRobot()->getName(),selectedRobotWidget);
+        switchFocus(robotView->getRobot()->getName(), selectedRobotWidget, MainWindow::WidgetType::ROBOT);
 
   //  }
 }
@@ -551,7 +552,7 @@ void MainWindow::robotBtnEvent(void){
     qDebug() << "robotBtnEvent called";
     leftMenuWidget->hide();
     robotsLeftWidget->show();
-    switchFocus("Robots", robotsLeftWidget);
+    switchFocus("Robots", robotsLeftWidget, MainWindow::WidgetType::ROBOTS);
 }
 
 
@@ -578,14 +579,31 @@ void MainWindow::editSelecRobotBtnEvent(){
 
 void MainWindow::addPathSelecRobotBtnEvent(){
     qDebug() << "addPathSelecRobotBtnEvent called on robot " << selectedRobot->getRobot()->getName();
-    setMessageTop(TEXT_COLOR_INFO, "Click white points of the map to add new points to the path of " + selectedRobot->getRobot()->getName());
+    setMessageTop(TEXT_COLOR_INFO, "Click white points of the map to add new points to the path of " +
+                  selectedRobot->getRobot()->getName() + "\nAlternatively you can click the \"+\" button to add an existing point to your path");
     hideAllWidgets();
     pathPainter->reset();
     pathCreationWidget->show();
     pathCreationWidget->setSelectedRobot(selectedRobot->getRobot());
 
     setEnableAll(false, GraphicItemState::CREATING_PATH, true, true);
-    switchFocus(selectedRobot->getRobot()->getName(),pathCreationWidget);
+    switchFocus(selectedRobot->getRobot()->getName(), pathCreationWidget, MainWindow::WidgetType::ROBOT);
+
+    /// displays the points in order to make them available for the edition of the path,
+    ///  we have to keep track of those which were hidden so we can hide them again once the edition is finished
+
+    for(size_t j = 0; j < pointViews->count(); j++){
+        GroupView* group = pointViews->getGroups().at(j);
+        for(size_t i = 0; i < group->getPointViews().size(); i++){
+            PointView* pointView = group->getPointViews().at(i);
+            if(!pointView->getPoint()->isDisplayed()){
+                qDebug() << pointView->getPoint()->getName();
+                pointViewsToDisplay.push_back(pointView);
+                pointView->show();
+            }
+        }
+    }
+
 }
 
 void MainWindow::setSelectedRobotNoParent(QAbstractButton *button){
@@ -863,6 +881,7 @@ void MainWindow::setCheckedRobot(QString name){
 
 void MainWindow::editTmpPathPointSlot(int id, Point* point, int nbWidget){
     qDebug() << "editTmpPathPointSlot called : " << id << point->getName() << nbWidget;
+
     editedPointView = NULL;
 
     setMessageTop(TEXT_COLOR_INFO, "Drag the selected point or click the map and click \"Save changes\" to modify the path of your robot");
@@ -882,7 +901,10 @@ void MainWindow::editTmpPathPointSlot(int id, Point* point, int nbWidget){
         qDebug() << "(Error editTmpPathPointSlot) No pointview found to edit";
     } else {
         qDebug() << "Pointview found";
-        editedPointView->setPixmap(PointView::PixmapType::HOVER);
+        /// set by hand in order to keep the colors consistent while editing the point and after
+        editedPointView->QGraphicsPixmapItem::setPixmap(QPixmap(PIXMAP_HOVER));
+        editedPointView->setType(PointView::PixmapType::HOVER);
+
         if(nbWidget == 1){
             editedPointView->setFlag(QGraphicsItem::ItemIsMovable);
             setGraphicItemsState(GraphicItemState::NO_EVENT, false);
@@ -903,6 +925,11 @@ void MainWindow::editTmpPathPointSlot(int id, Point* point, int nbWidget){
 
 void MainWindow::pathSaved(bool execPath){
     qDebug() << "pathSaved called" << execPath;
+    /// we hide the points that we displayed for the edition of the path
+
+    for(size_t i = 0; i < pointViewsToDisplay.size(); i++)
+        pointViewsToDisplay.at(i)->hide();
+    pointViewsToDisplay.clear();
 
     setEnableAll(true);
 
@@ -938,8 +965,8 @@ void MainWindow::addPathPoint(PointView* pointView){
     pathCreationWidget->addPathPoint(&(*(pointView->getPoint())));
 }
 
-void MainWindow::updatePathPointToPainter(QVector<Point> &pointVector){
-    pathPainter->updatePath(pointVector);
+void MainWindow::updatePathPointToPainter(QVector<Point> &pointVector, bool save){
+    pathPainter->updatePath(pointVector, save);
 }
 
 void MainWindow::stopPathCreation(){
@@ -971,18 +998,18 @@ void MainWindow::hidePathCreationWidget(){
 void MainWindow::saveTmpEditPathPointSlot(void){
     qDebug() << "saveTmpEditPathPointSlot called";
 
-    pathCreationWidget->applySavePathPoint(editedPointView->getPoint()->getPosition().getX(), editedPointView->getPoint()->getPosition().getY());
+    pathCreationWidget->getActionButtons()->setEnable(true);
+    setEnableAll(false, GraphicItemState::CREATING_PATH, false, true);
+
+    pathCreationWidget->applySavePathPoint(editedPointView->getPoint()->getPosition().getX(), editedPointView->getPoint()->getPosition().getY(), true);
 
     editedPointView->setFlag(QGraphicsItem::ItemIsMovable, false);
     editedPointView = NULL;
 
-    pathCreationWidget->getActionButtons()->setEnable(true);
-    setEnableAll(false, GraphicItemState::CREATING_PATH, false, true);
-
     setMessageTop(TEXT_COLOR_SUCCESS, "You have successfully modified the path of " + selectedRobot->getRobot()->getName());
     delay(2500);
-    setMessageTop(TEXT_COLOR_INFO, "Click white points of the map to add new points to the path of " + selectedRobot->getRobot()->getName());
-
+    setMessageTop(TEXT_COLOR_INFO, "Click white points of the map to add new points to the path of " +
+                  selectedRobot->getRobot()->getName() + "\nAlternatively you can click the \"+\" button to add an existing point to your path");
 }
 
 
@@ -1219,7 +1246,7 @@ void MainWindow::robotIsAliveSlot(QString hostname,QString ip){
         /// TODO check if first connection
         if(ip.endsWith(".7.1") || ip.endsWith(".7.2") || ip.endsWith(".7.3")){
             selectedRobot = robotView;
-            switchFocus(hostname, editSelectedRobotWidget);
+            switchFocus(hostname, editSelectedRobotWidget, MainWindow::WidgetType::ROBOT);
             editSelectedRobotWidget->setSelectedRobot(selectedRobot, true);
             hideAllWidgets();
             editSelectedRobotWidget->show();
@@ -1310,8 +1337,8 @@ void MainWindow::robotIsDeadSlot(QString hostname,QString ip){
 void MainWindow::setMessageCreationPath(QString message){
     setMessageTop(TEXT_COLOR_DANGER, message);
     delay(2500);
-    setMessageTop(TEXT_COLOR_INFO, "Click white points of the map to add new points to the path of " + selectedRobot->getRobot()->getName());
-
+    setMessageTop(TEXT_COLOR_INFO, "Click white points of the map to add new points to the path of " +
+                  selectedRobot->getRobot()->getName() + "\nAlternatively you can click the \"+\" button to add an existing point to your path");
 }
 
 void MainWindow::updatePathPoint(double x, double y, PointView* pointView){
@@ -1321,9 +1348,6 @@ void MainWindow::updatePathPoint(double x, double y, PointView* pointView){
         if(pv == 0)
             qDebug() << "no pointview found to update";
         else {
-            qDebug() << "pos pv" << pv->getPoint()->getPosition().getX() << pv->getPoint()->getPosition().getY() << " pathcr point" <<
-                        ((PathPointCreationWidget*) pathCreationWidget->getPathPointList()->itemWidget(pathCreationWidget->getPathPointList()->currentItem()))->getPoint().getPosition().getX() <<
-                        ((PathPointCreationWidget*) pathCreationWidget->getPathPointList()->itemWidget(pathCreationWidget->getPathPointList()->currentItem()))->getPoint().getPosition().getY();
             if(pv->getPoint()->comparePos(
                         ((PathPointCreationWidget*) pathCreationWidget->getPathPointList()->itemWidget(pathCreationWidget->getPathPointList()->currentItem()))->getPoint().getPosition())){
                 pv->getPoint()->setPosition(x, y);
@@ -1435,6 +1459,7 @@ void MainWindow::loadMapBtnEvent(){
                 QPixmap pixmap = QPixmap::fromImage(map->getMapImage());
                 mapPixmapItem->setPixmap(pixmap);
                 scene->update();
+                centerMap();
             }
         }
         break;
@@ -1467,7 +1492,7 @@ void MainWindow::mapBtnEvent(){
 
 void MainWindow::initializeLeftMenu(){
     //lastWidget = leftMenu->getLastWidget();
-    lastWidgets =  QList<QPair<QWidget*,QString>>();
+    lastWidgets =  QList<QPair<QPair<QWidget*,QString>, MainWindow::WidgetType>>();
     leftMenuWidget = leftMenu->getLeftMenuWidget();
     pointsLeftWidget = leftMenu->getPointsLeftWidget();
     selectedRobotWidget = leftMenu->getSelectedRobotWidget();
@@ -1559,7 +1584,7 @@ void MainWindow::setSelectedPoint(PointView* pointView, bool isTemporary){
             createPointWidget->getActionButtons()->getPlusButton()->setToolTip("You cannot save this point because your robot(s) cannot go there");
         }
         leftMenu->getDisplaySelectedPoint()->hide();
-        switchFocus(selectedPoint->getPoint()->getName(), createPointWidget);
+        switchFocus(selectedPoint->getPoint()->getName(), createPointWidget, MainWindow::WidgetType::POINT);
     } else {
         /// on the left we display the position of the temporary point as the user moves it around but we don't make any modifications on the model yet
         leftMenu->getDisplaySelectedPoint()->getXLabel()->setText(QString::number(mapPixmapItem->getTmpPointView()->getPoint()->getPosition().getX()));
@@ -1578,12 +1603,13 @@ void MainWindow::setSelectedPoint(PointView* pointView, bool isTemporary){
  */
 void MainWindow::pointBtnEvent(void){
     /// resets the list of groups menu
-    switchFocus("Groups", pointsLeftWidget);
+    switchFocus("Groups", pointsLeftWidget, MainWindow::WidgetType::GROUPS);
     qDebug() << "pointBtnEvent called ";
     /// we uncheck all buttons from all menus
     leftMenu->getDisplaySelectedGroup()->uncheck();
     hideAllWidgets();
     pointsLeftWidget->show();
+    setMessageTop(TEXT_COLOR_INFO, "Click the map to add a permanent point");
 }
 
 void MainWindow::plusGroupBtnEvent(){
@@ -1758,7 +1784,7 @@ void MainWindow::editGroupBtnEvent(){
         pointsLeftWidget->hide();
         /// disables the back button to prevent problems, a user has to discard or save his modifications before he can start navigatin the menu again, also prevents false manipulations
         leftMenu->getDisplaySelectedPoint()->show();
-        switchFocus("point",leftMenu->getDisplaySelectedPoint());
+        switchFocus("point",leftMenu->getDisplaySelectedPoint(), MainWindow::WidgetType::POINT);
     }
     else if(checkedId != -1 && checkedId < points->count()-1){
         qDebug() << "gotta update a group";
@@ -1789,7 +1815,7 @@ void MainWindow::selectPointBtnEvent(){
     qDebug() << "selectPointBtnEvent called";
 }
 
-void MainWindow::switchFocus(QString name, QWidget* widget)
+void MainWindow::switchFocus(QString name, QWidget* widget, MainWindow::WidgetType type)
 {
     /*if(currentWidget != NULL)
     if(lastWidgets.isEmpty())
@@ -1802,11 +1828,11 @@ void MainWindow::switchFocus(QString name, QWidget* widget)
 
     qDebug() << "__________________";
 
-    lastWidgets.append(QPair<QWidget*,QString>(widget,name));
+    lastWidgets.append(QPair<QPair<QWidget*, QString>, MainWindow::WidgetType>(QPair<QWidget*, QString>(widget,name), type));
 
     if(lastWidgets.size()>1)
     {
-        leftMenu->showBackButton(lastWidgets.at(lastWidgets.size()-2).second);
+        leftMenu->showBackButton(lastWidgets.at(lastWidgets.size()-2).first.second);
     }
     else
     {
@@ -1815,12 +1841,12 @@ void MainWindow::switchFocus(QString name, QWidget* widget)
     //debug
     for(int i=0;i<lastWidgets.size();i++)
     {
-        qDebug() << lastWidgets.at(i).second;
+        qDebug() << lastWidgets.at(i).first.second;
     }
 }
 void MainWindow::resetFocus()
 {
-    lastWidgets = QList<QPair<QWidget*,QString>>();
+    lastWidgets = QList<QPair<QPair<QWidget*,QString>, MainWindow::WidgetType>>();
     updateView();
 }
 
@@ -1832,7 +1858,7 @@ void MainWindow::updateView()
             leftMenu->hideBackButton();
         }
         else {
-            leftMenu->showBackButton(lastWidgets.last().second);
+            leftMenu->showBackButton(lastWidgets.last().first.second);
         }
     }
 }
@@ -1854,7 +1880,7 @@ void MainWindow::openLeftMenu(){
         hideAllWidgets();
         leftMenuWidget->show();
         leftMenu->show();
-        switchFocus("Menu",leftMenuWidget);
+        switchFocus("Menu", leftMenuWidget, MainWindow::WidgetType::MENU);
 
     } else {
         /// we reset the origin of the point information menu in order to display the buttons to go back in the further menus
@@ -1867,7 +1893,7 @@ void MainWindow::openLeftMenu(){
             hideAllWidgets();
             leftMenuWidget->show();
             leftMenu->show();
-            switchFocus("Menu",leftMenuWidget);
+            switchFocus("Menu",leftMenuWidget, MainWindow::WidgetType::MENU);
 
         } else {
                 closeSlot();
@@ -2143,7 +2169,7 @@ void MainWindow::displayPointEvent(PointView* pointView){
     }
     leftMenu->getDisplaySelectedPoint()->show();
     resetFocus();
-    switchFocus(leftMenu->getDisplaySelectedPoint()->getPointView()->getPoint()->getName(), leftMenu->getDisplaySelectedPoint());
+    switchFocus(leftMenu->getDisplaySelectedPoint()->getPointView()->getPoint()->getName(), leftMenu->getDisplaySelectedPoint(), MainWindow::WidgetType::POINT);
 
 }
 
@@ -2318,7 +2344,8 @@ void MainWindow::displayPointsInGroup(void){
        selectedGroup->getPointButtonGroup()->setCheckable(true);
        selectedGroup->show();
        selectedGroup->setName(points->getGroups().at(checkedId)->getName());
-       switchFocus(points->getGroups().at(checkedId)->getName(),selectedGroup);
+       switchFocus(points->getGroups().at(checkedId)->getName(), selectedGroup, MainWindow::WidgetType::GROUP);
+       setMessageTop(TEXT_COLOR_INFO, "CLick the map to add a permanent point");
     }
     /// it's an isolated point
     else if(checkedId >= points->count()-1){
@@ -2339,7 +2366,7 @@ void MainWindow::displayPointsInGroup(void){
             selectedPoint->getActionButtons()->getMapButton()->setChecked(true);
         else
             selectedPoint->getActionButtons()->getMapButton()->setChecked(false);
-        switchFocus("Point",selectedPoint);
+        switchFocus("Point", selectedPoint, MainWindow::WidgetType::POINT);
         pointsLeftWidget->getActionButtons()->getGoButton()->setChecked(false);
         pointsLeftWidget->hide();
     }
@@ -2575,7 +2602,7 @@ void MainWindow::editPointFromGroupMenu(void){
             leftMenu->getDisplaySelectedPoint()->getSaveButton()->show();
             leftMenu->getDisplaySelectedPoint()->show();
             leftMenu->getDisplaySelectedGroup()->hide();
-            switchFocus(leftMenu->getDisplaySelectedPoint()->getPoint()->getName(),leftMenu->getDisplaySelectedPoint());
+            switchFocus(leftMenu->getDisplaySelectedPoint()->getPoint()->getName(),leftMenu->getDisplaySelectedPoint(), MainWindow::WidgetType::POINT);
         }
     } else qDebug() << "no group " << leftMenu->getDisplaySelectedGroup()->getNameLabel()->text() ;
 }
@@ -2589,6 +2616,7 @@ void MainWindow::displayPointInfoFromGroupMenu(void){
     /// retrieves a pointer to the group using the text of the label
     std::shared_ptr<Group> group = points->findGroup(leftMenu->getDisplaySelectedGroup()->getNameLabel()->text());
     if(group){
+        setMessageTop(TEXT_COLOR_NORMAL, "");
         /// retrieves the index of the point that is to be displayed, within the group
         int pointIndex = leftMenu->getDisplaySelectedGroup()->getPointButtonGroup()->getButtonGroup()->checkedId();
         if(pointIndex != -1 and pointIndex < group->getPoints().size()){
@@ -2613,7 +2641,7 @@ void MainWindow::displayPointInfoFromGroupMenu(void){
                 selectedPoint->getActionButtons()->getMapButton()->setChecked(false);
             selectedPoint->show();
             leftMenu->getDisplaySelectedGroup()->hide();
-            switchFocus(selectedPoint->getPointName(),selectedPoint);
+            switchFocus(selectedPoint->getPointName(), selectedPoint, MainWindow::WidgetType::POINT);
         }
     } else qDebug() << "no group " << leftMenu->getDisplaySelectedGroup()->getNameLabel()->text() ;
 }
@@ -2864,6 +2892,7 @@ void MainWindow::doubleClickOnRobot(int id){
 void MainWindow::doubleClickOnPoint(int checkedId){
 
     qDebug() << "double click on point";
+    setMessageTop(TEXT_COLOR_NORMAL, "");
     std::shared_ptr<Group> group = points->findGroup(leftMenu->getDisplaySelectedGroup()->getNameLabel()->text());
     if(group){
         std::shared_ptr<Point> point = group->getPoints().at(checkedId);
@@ -2886,7 +2915,7 @@ void MainWindow::doubleClickOnPoint(int checkedId){
                 selectedPoint->getActionButtons()->getMapButton()->setChecked(false);
             selectedPoint->show();
             leftMenu->getDisplaySelectedGroup()->hide();
-            switchFocus(selectedPoint->getPointName(),selectedPoint);
+            switchFocus(selectedPoint->getPointName(), selectedPoint, MainWindow::WidgetType::POINT);
         }
     } else qDebug()  << "no group " << leftMenu->getDisplaySelectedGroup()->getNameLabel()->text() ;
 }
@@ -2912,6 +2941,7 @@ void MainWindow::doubleClickOnGroup(int checkedId){
 
     /// it's a group
     if(checkedId != -1 && checkedId < points->count()-1){
+       setMessageTop(TEXT_COLOR_INFO, "Click the map to add a permanent point");
        pointsLeftWidget->setIndexLastGroupClicked(checkedId);
        pointsLeftWidget->getActionButtons()->getGoButton()->setChecked(false);
        pointsLeftWidget->hide();
@@ -2921,11 +2951,11 @@ void MainWindow::doubleClickOnGroup(int checkedId){
        selectedGroup->getPointButtonGroup()->setCheckable(true);
        selectedGroup->show();
        selectedGroup->setName(points->getGroups().at(checkedId)->getName());
-       switchFocus(points->getGroups().at(checkedId)->getName(), selectedGroup);
-
+       switchFocus(points->getGroups().at(checkedId)->getName(), selectedGroup, MainWindow::WidgetType::GROUP);
     }
     /// it's an isolated point
     else if(checkedId >= points->count()-1){
+        setMessageTop(TEXT_COLOR_NORMAL, "");
         DisplaySelectedPoint* selectedPoint = leftMenu->getDisplaySelectedPoint();
         PointView* pointView = pointViews->getPointViewFromPoint(*(points->getGroups().at(points->count()-1)->getPoints().at(checkedId+1-points->count())));
         QString robotName = "";
@@ -2945,7 +2975,7 @@ void MainWindow::doubleClickOnGroup(int checkedId){
         else
             selectedPoint->getActionButtons()->getMapButton()->setChecked(false);
         pointsLeftWidget->hide();
-        switchFocus(selectedPoint->getPointName(), selectedPoint);
+        switchFocus(selectedPoint->getPointName(), selectedPoint, MainWindow::WidgetType::POINT);
     }
 }
 
@@ -2958,11 +2988,6 @@ void MainWindow::reestablishConnectionsGroups(){
     foreach(QAbstractButton* button, pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->buttons())
         connect(button, SIGNAL(doubleClick(int)), this, SLOT(doubleClickOnGroup(int)));
 }
-
-
-
-
-
 
 /**
  * @brief MainWindow::reestablishConnections
@@ -3112,6 +3137,7 @@ void MainWindow::setMessageCreationGroup(QString message){
     setMessageTop(TEXT_COLOR_INFO, message);
 }
 
+
 /**********************************************************************************************************************************/
 
 //                                          ODDS AND ENDS
@@ -3120,11 +3146,6 @@ void MainWindow::setMessageCreationGroup(QString message){
 
 void MainWindow::quit(){
     close();
-}
-
-void MainWindow::setLastWidgets(QList<QPair<QWidget*,QString>> lw)
-{
-     lastWidgets = lw;
 }
 
 void MainWindow::backEvent()
@@ -3137,14 +3158,19 @@ void MainWindow::backEvent()
     leftMenu->disableButtons();
     leftMenu->getDisplaySelectedGroup()->uncheck();
 
-    lastWidgets.last().first->hide();
+    lastWidgets.last().first.first->hide();
+
     if (lastWidgets.size() > 1)
     {
         lastWidgets.removeLast();
-        lastWidgets.last().first->show();
+        if(lastWidgets.last().second == MainWindow::WidgetType::GROUP || lastWidgets.last().second == MainWindow::WidgetType::GROUPS)
+            setMessageTop(TEXT_COLOR_INFO, "Click the map to add a permanent point");
+
+        lastWidgets.last().first.first->show();
+
         if (lastWidgets.size() >1)
         {
-            leftMenu->showBackButton(lastWidgets.at(lastWidgets.size()-2).second);
+            leftMenu->showBackButton(lastWidgets.at(lastWidgets.size()-2).first.second);
         }
         else
         {
@@ -3258,4 +3284,16 @@ void MainWindow::setEnableAll(bool enable, GraphicItemState state, bool clearPat
         leftMenu->setEnableReturnCloseButtons(enable);
     else
         leftMenu->setEnableReturnCloseButtons(noReturn);
+}
+
+void MainWindow::centerMap(){
+    qDebug() << "centerMap called la ";
+    qDebug() << (map->getRect().topLeft().x() + map->getRect().bottomRight().x()) /2 << (map->getRect().topLeft().y() + map->getRect().bottomRight().y()) /2;
+    scene->views().at(0)->centerOn(mapPixmapItem);
+
+    qDebug() << mapPixmapItem->pos() << mapPixmapItem->mapFromScene(map->getCenter());
+    while(graphicsView->getZoomCoeff()*1.3*1.3 < 4){
+        graphicsView->scale(1.3, 1.3);
+        graphicsView->setZoomCoeff(1.3*graphicsView->getZoomCoeff());
+    }
 }

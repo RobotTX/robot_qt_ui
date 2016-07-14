@@ -15,6 +15,8 @@ class CustomQGraphicsView : public QGraphicsView {
 public:
     CustomQGraphicsView(QWidget *parent = 0);
     CustomQGraphicsView(QGraphicsScene *scene, QWidget *parent = 0);
+    float getZoomCoeff(void) const { return zoomCoeff; }
+    void setZoomCoeff(const float _zoom) { zoomCoeff = _zoom; }
 
 protected:
     /**

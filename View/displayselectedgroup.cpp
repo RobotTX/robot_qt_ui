@@ -18,8 +18,6 @@ DisplaySelectedGroup::DisplaySelectedGroup(QMainWindow *parent, std::shared_ptr<
 
     layout = new QVBoxLayout(this);
 
-
-
     points = _points;
     actionButtons = new TopLeftMenu(this);
 

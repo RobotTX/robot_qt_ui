@@ -25,6 +25,7 @@ class QAbstractButton;
 class QVBoxLayout;
 class PathPainter;
 
+
 #include "View/toplayout.h"
 #include "Model/points.h"
 #include "View/robotview.h"
@@ -36,11 +37,11 @@ class PathPainter;
 #include <QMessageBox>
 
 
-#define XML_PATH "/home/m-a/Documents/QtProject/gobot-software/points.xml"
-#define ROBOTS_NAME_PATH "/home/m-a/Documents/QtProject/gobot-software/robotsName.dat"
+//#define XML_PATH "/home/m-a/Documents/QtProject/gobot-software/points.xml"
+//#define ROBOTS_NAME_PATH "/home/m-a/Documents/QtProject/gobot-software/robotsName.dat"
 
-//#define XML_PATH "/home/joan/Qt/QtProjects/gobot-software/points.xml"
-//#define ROBOTS_NAME_PATH "/home/joan/Qt/QtProjects/gobot-software/robotsName.dat"
+#define XML_PATH "/home/joan/Qt/QtProjects/gobot-software/points.xml"
+#define ROBOTS_NAME_PATH "/home/joan/Qt/QtProjects/gobot-software/robotsName.dat"
 
 //#define XML_PATH "/Users/fannylarradet/Desktop/GTRobots/gobot-software/points.xml"
 //#define ROBOTS_NAME_PATH "/Users/fannylarradet/Desktop/GTRobots/gobot-software/robotsName.dat"
@@ -60,8 +61,10 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
+    enum WidgetType { MENU, GROUPS, GROUP, POINT, ROBOTS, ROBOT };
+
     std::shared_ptr<Points> getPoints(void) const { return points; }
-    QList<QPair<QWidget*, QString>> getLastWidgets() const { return lastWidgets; }
+    QList<QPair<QPair<QWidget*, QString>, MainWindow::WidgetType>> getLastWidgets() const { return lastWidgets; }
 
     void initializeMenu();
     void initializeRobots();
@@ -75,9 +78,8 @@ public:
     int openEmptyGroupMessage(const QString groupName);
     void clearNewMap();
     void clearPath(const int robotNb);
-    void setLastWidgets(QList<QPair<QWidget*,QString>>);
     void resetFocus();
-    void switchFocus(QString name, QWidget* widget);
+    void switchFocus(QString name, QWidget* widget, WidgetType type);
     /// to sleep for ms milliseconds
     void delay(const int ms) const;
     void setEnableAll(bool enable, GraphicItemState state = GraphicItemState::NO_STATE, bool clearPath = false, int noReturn = -1);
@@ -137,7 +139,7 @@ private slots:
     void addPathPoint(Point* point);
     void addPathPoint(PointView* pointView);
     void displayPointsInGroup(void);
-    void updatePathPointToPainter(QVector<Point>& pointVector);
+    void updatePathPointToPainter(QVector<Point>& pointVector, bool save);
     void removePointFromInformationMenu(void);
     void displayPointMapEvent(void);
     void hidePathCreationWidget(void);
@@ -163,7 +165,7 @@ private slots:
     void doubleClickOnRobot(int checkedId);
     void setMessageCreationPath(QString message);
     void updatePathPoint(double x, double y, PointView* pointView = 0);
-
+    void centerMap();
 
     /**
      * @brief cancelEvent
@@ -207,7 +209,8 @@ private:
     PointView* editedPointView;
     TopLayout* topLayout;
     QVector<PointView*> pathPointViews;
-    QList<QPair<QWidget*, QString>> lastWidgets;
+    //QList<QPair<QWidget*, QString>> lastWidgets;
+    QList<QPair<QPair<QWidget*, QString>, MainWindow::WidgetType>> lastWidgets;
     LeftMenuWidget* leftMenuWidget;
     PointsLeftWidget* pointsLeftWidget;
     SelectedRobotWidget* selectedRobotWidget;
@@ -220,6 +223,7 @@ private:
     BottomLayout* bottomLayout;
     PathCreationWidget* pathCreationWidget;
     QMessageBox msgBox;
+    std::vector<PointView*> pointViewsToDisplay;
 };
 
 #endif // MAINWINDOW_H

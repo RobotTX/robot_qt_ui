@@ -115,7 +115,6 @@ void PointView::setPos(const qreal x, const qreal y){
 }
 
 void PointView::setPixmap(const PixmapType pixType){
-    lastType = type;
 
     lastPixmap = this->pixmap();
     if(type == PointView::HOVER && pixType != PointView::HOVER)
