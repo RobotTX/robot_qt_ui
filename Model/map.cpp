@@ -46,31 +46,25 @@ void Map::setRectangle(void){
 // this code is temporarily dead
 
 void Map::setMapFromArray(const QByteArray& mapArrays){
+    qDebug() << "setMapFromArray called" << mapArrays.size();
     mapImage = QImage(width, height, QImage::Format_Grayscale8);
-    int index = 0;
+    uint32_t index = 0;
+    int indexI = 0;
+    int indexJ = 0;
+
     /// We set each pixel of the image, the data received being
-    /// a percent (0 to 100) of chance for a wall to be there
-    /// -1 can also be received, meaning we do'ont know if there is a wall
-    for(int i = 0; i < height; i++){
-        for(int j = 0; j < width; j++){
-            int color = mapArrays.at(index);
-            ///The percent is transform to a color (0 to 255),
-            /// 205 being the grey
-            if(mapArrays.at(index) < 0)
-                color = 205;
-            else if(mapArrays.at(index) < 30)
-                color = 255;
-            else if(mapArrays.at(index) < 70)
-                color = 205;
-            else {
-                color = 0;
+    for(int i = 0; i < mapArrays.size(); i+=5){
+        int color = (int) ((uint8_t) mapArrays.at(i));
 
-            }
-            mapImage.setPixelColor(QPoint(j, height-1-i), QColor(color, color, color));
+        uint32_t count = (uint32_t) (((uint8_t)mapArrays.at(i+1)) << 24) + (uint32_t) (((uint8_t)mapArrays.at(i+2)) << 16)
+                        + (uint32_t) (((uint8_t)mapArrays.at(i+3)) << 8) + (uint32_t) ((uint8_t) mapArrays.at(i+4));
 
+        for(int j = 0; j < (int) count; j++){
+            mapImage.setPixelColor(QPoint((int) (index%width), height-1-((int) (index/width))), QColor((int) color, color, color));
             index++;
         }
     }
+    qDebug() << "Last indexes :" << index << indexJ << indexI;
 }
 
 void Map::saveToFile(const QString fileName){

@@ -1,4 +1,6 @@
 #include "scanmapthread.h"
+#include <QDataStream>
+
 ScanMapThread::ScanMapThread(const QString newipAddress, const int newPort){
     ipAddress = newipAddress;
     port = newPort;
@@ -44,11 +46,12 @@ void ScanMapThread::run(){
             /// The TCP protocol sending blocks of data, a map is defined by a random number
             /// of blocks, so we wait till the last byte of a block is -2, meaning we have received
             /// a complete map
-            if((int) data.at(data.size()-1) == -2 ){
+            if(data.size() >= 5 && ((int) data.at(data.size()-5) == 0  && (int) data.at(data.size()-4) == 0  && (int) data.at(data.size()-3) == 0
+                    && (int) data.at(data.size()-2) == 0  && (int) data.at(data.size()-1) == -2)){
 
                 qDebug() << "(Map) Map of" << data.size() << "bytes received";
-                /// Remove the byte -2 as we no longer need it
-                data.remove(data.size()-1,1);
+                /// Remove the end bytes 0 0 0 0 -2 as we no longer need it
+                data.remove(data.size()-5,5);
                 /// Emit the signal valueChangedMap, meaning that we finished to receive a whole map
                 /// and we can display it
                 emit valueChangedMap(data);

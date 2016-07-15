@@ -7,25 +7,61 @@ tcp::socket socket_map(io_service);
 ros::Subscriber sub_map;
 tcp::acceptor m_acceptor(io_service);
 
-
-void sendMap(const std::vector<int8_t>& my_map){
-	//std::cout << "(Map transfer) map :" << std::endl;
+void sendMap(const std::vector<uint8_t>& my_map){
 	try {
 		boost::system::error_code ignored_error;
-		std::cout << "Map size to send : " << my_map.size() << std::endl;
+		std::cout << "Map size to send in uint8_t : " << my_map.size() << std::endl;
 
 		boost::asio::write(socket_map, boost::asio::buffer(my_map), boost::asio::transfer_all(), ignored_error);
-		//sleep(2);
 	} catch (std::exception& e) {
 		e.what();
 	}
 }
 
 void getMap(const nav_msgs::OccupancyGrid::ConstPtr& msg){
-	std::vector<int8_t> my_map;
-	for(size_t i = 0; i < msg->info.width * msg->info.height; i++)
-		my_map.push_back(msg->data[i]);
+	std::vector<uint8_t> my_map;
+	int last = 205;
+	uint32_t count = 0;
+	int index = 0;
+	int map_size = msg->info.width * msg->info.height;
+
+	for(size_t i = 0; i < map_size; i++){
+		int curr = msg->data[i];
+
+	    if(curr < 0)
+            curr = 205;
+        else if(curr < 30)
+            curr = 255;
+        else if(curr < 70)
+            curr = 205;
+        else 
+            curr = 0;
+
+		if(curr != last){
+			my_map.push_back((uint8_t) last);
+			my_map.push_back((count & 0xff000000) >> 24);
+			my_map.push_back((count & 0x00ff0000) >> 16);
+			my_map.push_back((count & 0x0000ff00) >> 8);
+			my_map.push_back((count & 0x000000ff));
+
+			last = curr;
+			count = 0;
+		}
+		count++;
+		index++;
+	}
+
+	my_map.push_back((uint8_t) last);
+	my_map.push_back((count & 0xff000000) >> 24);
+	my_map.push_back((count & 0x00ff0000) >> 16);
+	my_map.push_back((count & 0x0000ff00) >> 8);
+	my_map.push_back((count & 0x000000ff));
+
 	// the user knows that when -2 is encountered a map has entirely been received
+	my_map.push_back(0);
+	my_map.push_back(0);
+	my_map.push_back(0);
+	my_map.push_back(0);
 	my_map.push_back(-2);
 	sendMap(my_map);
 }

@@ -46,7 +46,8 @@ void CmdRobotThread::run(){
     }
 
     //delay(2000);
-    QString portStr = "h " + QString::number(metadataPort) + " " + QString::number(robotPort) + " " + QString::number(mapPort) + " } ";
+    QString portStr = "h \"" + QString::number(metadataPort) + "\" \"" + QString::number(robotPort) + "\" \"" + QString::number(mapPort) + "\" } ";
+    qDebug() << "(Robot" << robotName << ") Sending ports : " << portStr;
     socketCmd->write(portStr.toUtf8());
 
     socketCmd->waitForBytesWritten(1000);
@@ -56,6 +57,8 @@ void CmdRobotThread::run(){
     while(!isInterruptionRequested()){
         if(missedPing <= 0){
             emit robotIsDead(robotName, ipAddress);
+            socketCmd -> close();
+            exit();
             return;
         }
         //socketCmd->state();
@@ -150,4 +153,10 @@ void CmdRobotThread::delay(const int ms) const{
 
 void CmdRobotThread::pingSlot(){
     missedPing = MISSED_PING_TIMER;
+}
+
+
+void CmdRobotThread::changeRobotNameSlot(QString name){
+    qDebug()<< "(Robot" << robotName << ") Changed the name of the robot to" << name;
+    robotName = name;
 }

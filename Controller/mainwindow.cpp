@@ -222,14 +222,14 @@ void MainWindow::initializeRobots(){
     fileRead.close();
 
 
-/*
+
     updateRobotsThread = new UpdateRobotsThread(PORT_ROBOT_UPDATE);
     connect(updateRobotsThread, SIGNAL(robotIsAlive(QString,QString)), this, SLOT(robotIsAliveSlot(QString,QString)));
     updateRobotsThread->start();
     updateRobotsThread->moveToThread(updateRobotsThread);
-*/
 
 
+/*
     QFile fileWrite(ROBOTS_NAME_PATH);
     fileWrite.resize(0);
     fileWrite.open(QIODevice::WriteOnly);
@@ -273,7 +273,7 @@ void MainWindow::initializeRobots(){
     robots->setRobotsNameMap(tmpMap);
     out << robots->getRobotsNameMap();
     fileWrite.close();
-
+*/
 
     qDebug() << "RobotsNameMap on init" << robots->getRobotsNameMap();
 }
@@ -462,7 +462,7 @@ void MainWindow::playSelectedRobot(int robotNb){
 
         /// if the command is succesfully sent to the robot, we apply the change
         robot->resetCommandAnswer();
-        if(robot->sendCommand(QString("c ") + QString::number(newPosX) + " "  + QString::number(newPosY) + " "  + QString::number(waitTime))){
+        if(robot->sendCommand(QString("c \"") + QString::number(newPosX) + "\" \""  + QString::number(newPosY) + "\" \""  + QString::number(waitTime)+ "\"")){
             qDebug() << "Let's wait";
             QString answer = robot->waitAnswer();
             qDebug() << "Done waiting";
@@ -710,7 +710,7 @@ void MainWindow::robotSavedEvent(){
     if(selectedRobot->getRobot()->getName().compare(editSelectedRobotWidget->getNameEdit()->text()) != 0){
         qDebug() << "Name has been modified";
         selectedRobot->getRobot()->resetCommandAnswer();
-        if(selectedRobot->getRobot()->sendCommand(QString("a ") + editSelectedRobotWidget->getNameEdit()->text())){
+        if(selectedRobot->getRobot()->sendCommand(QString("a \"") + editSelectedRobotWidget->getNameEdit()->text() + "\"")){
             QString answer = selectedRobot->getRobot()->waitAnswer();
             QStringList answerList = answer.split(QRegExp("[ ]"), QString::SkipEmptyParts);
             if(answerList.size() > 1){
@@ -722,6 +722,7 @@ void MainWindow::robotSavedEvent(){
 
                     QMap<QString, QString> tmp = robots->getRobotsNameMap();
                     tmp[selectedRobot->getRobot()->getIp()] = editSelectedRobotWidget->getNameEdit()->text();
+                    emit changeCmdThreadRobotName(editSelectedRobotWidget->getNameEdit()->text());
                     robots->setRobotsNameMap(tmp);
 
                     QFile fileWrite(ROBOTS_NAME_PATH);
@@ -744,9 +745,9 @@ void MainWindow::robotSavedEvent(){
     if (editSelectedRobotWidget->getWifiPwdEdit()->text() != "......"){
         qDebug() << "Wifi has been modified";
         selectedRobot->getRobot()->resetCommandAnswer();
-        if(selectedRobot->getRobot()->sendCommand(QString("b ")
-                  + editSelectedRobotWidget->getWifiNameEdit()->text() + " "
-                  + editSelectedRobotWidget->getWifiPwdEdit()->text())){
+        if(selectedRobot->getRobot()->sendCommand(QString("b \"")
+                  + editSelectedRobotWidget->getWifiNameEdit()->text() + "\" \""
+                  + editSelectedRobotWidget->getWifiPwdEdit()->text() + "\"")){
 
             QString answer2 = selectedRobot->getRobot()->waitAnswer();
             QStringList answerList2 = answer2.split(QRegExp("[ ]"), QString::SkipEmptyParts);
@@ -1192,11 +1193,6 @@ void MainWindow::goHomeBtnEvent(){
     qDebug() << "go home robot " << selectedRobot->getRobot()->getName() << (selectedRobot->getRobot()->getHome() == NULL);
     float oldPosX = selectedRobot->getRobot()->getHome()->getPosition().getX();
     float oldPosY = selectedRobot->getRobot()->getHome()->getPosition().getY();
-    qDebug() << "Go to next point :" << oldPosX << oldPosY;
-    qDebug() << "ok1" << (float) oldPosX;
-    qDebug() << "ok2" << (float) (oldPosX - ROBOT_WIDTH);
-    qDebug() << "ok3" << (float) ((oldPosX - ROBOT_WIDTH) * map->getResolution());
-    qDebug() << "ok4" << (float) ((oldPosX - ROBOT_WIDTH) * map->getResolution() + map->getOrigin().getX());
 
     float newPosX = (oldPosX - ROBOT_WIDTH) * map->getResolution() + map->getOrigin().getX();
     float newPosY = (-oldPosY + map->getHeight() - ROBOT_WIDTH/2) * map->getResolution() + map->getOrigin().getY();
@@ -1205,7 +1201,7 @@ void MainWindow::goHomeBtnEvent(){
 
     /// if the command is succesfully sent to the robot, we apply the change
     selectedRobot->getRobot()->resetCommandAnswer();
-    if(selectedRobot->getRobot()->sendCommand(QString("c ") + QString::number(newPosX) + " "  + QString::number(newPosY) + " "  + QString::number(waitTime))){
+    if(selectedRobot->getRobot()->sendCommand(QString("c \"") + QString::number(newPosX) + "\" \""  + QString::number(newPosY) + "\" \""  + QString::number(waitTime) + "\"")){
         QString answer = selectedRobot->getRobot()->waitAnswer();
         QStringList answerList = answer.split(QRegExp("[ ]"), QString::SkipEmptyParts);
         if(answerList.size() > 1){
@@ -1580,9 +1576,9 @@ void MainWindow::setSelectedPoint(PointView* pointView, bool isTemporary){
             createPointWidget->getActionButtons()->getPlusButton()->setEnabled(true);
             createPointWidget->getActionButtons()->getPlusButton()->setToolTip("Click this button if you want to save this point permanently");
             setMessageTop(TEXT_COLOR_INFO, "To save this point permanently click the \"+\" button");
-            qDebug() << "ce point est blanc";
+            qDebug() << "this point is white";
         } else {
-            qDebug() << "this pooint is not white";
+            qDebug() << "this point is not white";
             setMessageTop(TEXT_COLOR_WARNING, "You cannot save this point because your robot(s) would not be able to go there");
             createPointWidget->getActionButtons()->getPlusButton()->setEnabled(false);
             createPointWidget->getActionButtons()->getPlusButton()->setToolTip("You cannot save this point because your robot(s) cannot go there");

@@ -17,9 +17,13 @@ ros::ServiceClient stopMetadataClient;
 ros::ServiceClient startMapClient;
 ros::ServiceClient stopMapClient;
 
+ros::Publisher go_pub;
+
 int metadata_port = 4000;
 int robot_pos_port = 4001;
 int map_port = 4002;
+
+static const boost::regex cmd_regex("\"(.*?)\"");
 
 bool execCommand(ros::NodeHandle n, std::vector<std::string> command){
 	std::string commandStr = command.at(0);
@@ -29,9 +33,12 @@ bool execCommand(ros::NodeHandle n, std::vector<std::string> command){
 		case 'a':
 			if(command.size() > 1){
 				std::cout << "(Command system) New name : " << command.at(1) << std::endl;
-				std::string cmd = "sudo /home/ubuntu/computer_software/change_hostname.sh " + command.at(1);
 
-				system(cmd.c_str());
+				std::ofstream ofs;
+				ofs.open("/home/ubuntu/computer_software/name.txt", std::ofstream::out | std::ofstream::trunc);
+				ofs << command.at(1);
+				ofs.close();
+
 				return true;
 			} else {
 				std::cout << "(Command system) Name missing" << std::endl;
@@ -43,6 +50,10 @@ bool execCommand(ros::NodeHandle n, std::vector<std::string> command){
 			if(command.size() > 2){
 				std::cout << "(Command system) New wifi : " << command.at(1) << std::endl;
 				std::cout << "(Command system) New wifi password : " << command.at(2) << std::endl;
+				std::string cmd = "sudo bash /home/ubuntu/computer_software/change_wifi.sh \"" + command.at(1) + "\" \""+ command.at(2) + "\"";
+				std::cout << "(Command system) Cmd : " << cmd << std::endl;
+
+				system(cmd.c_str());
 				return true;
 			} else {
 				std::cout << "(Command system) Parameter missing" << std::endl;
@@ -59,7 +70,6 @@ bool execCommand(ros::NodeHandle n, std::vector<std::string> command){
 
 //rostopic pub /move_base_simple/goal geometry_msgs/PoseStamped '{ header: { frame_id: "map" }, pose: { position: { x: 2.7, y: -1.5, z: 0 }, orientation: { x: 0, y: 0, z: 0, w: 1 } } }'
 
-				ros::Publisher go_pub = n.advertise<geometry_msgs::PoseStamped>("/move_base_simple/goal", 1000);
 				geometry_msgs::PoseStamped msg;
 				msg.header.frame_id = "map";
 				msg.header.stamp = ros::Time::now();
@@ -71,10 +81,6 @@ bool execCommand(ros::NodeHandle n, std::vector<std::string> command){
 				msg.pose.orientation.z = 0;
 				msg.pose.orientation.w = 1;
 				
-
-				ros::Rate loop_rate(10);
-
-				loop_rate.sleep();
 				go_pub.publish(msg);
 			
 				if(waitTime >= 0){
@@ -219,6 +225,7 @@ void getPorts(boost::shared_ptr<tcp::socket> sock, ros::NodeHandle n){
 
 		std::cout << "getPorts launched" << std::endl;
 		std::vector<std::string> command;
+		std::string commandStr = "";
 		char data[max_length];
 		bool finishedCmd = 0;
 
@@ -242,24 +249,42 @@ void getPorts(boost::shared_ptr<tcp::socket> sock, ros::NodeHandle n){
 				std::cout << "(Command system) Command complete" << std::endl;
 				finishedCmd = 1;
 			} else {
-				command.push_back(sub);
+				commandStr += sub + " ";
 			}
 		}
+		std::cout << "Received :" << commandStr << std::endl;
 
-		std::cout << "'";
-		for(int i = 0; i < command.size(); i++){
-			std::cout << command.at(i) << " ";
+		command.push_back(std::string(1, commandStr.at(0)));
+
+		std::list<std::string> l;
+		boost::regex_split(std::back_inserter(l), commandStr, cmd_regex);
+		while(l.size()) {
+			std::string s = *(l.begin());
+			l.pop_front();
+			command.push_back(s);
 		}
-		std::cout << "'" << std::endl;
 
-		execCommand(n, command);
-		std::cout << "getPorts done" << std::endl;
+		if(finishedCmd){
+			std::cout << "(Command system) Executing command : " << std::endl;
+			if(command.size() < 10){
+				for(int i = 0; i < command.size(); i++){
+					std::cout << "'" << command.at(i) << "'" << std::endl;
+				}
+			} else {
+				std::cout << "(Command system) Too many arguments to display (" << command.size() << ")" << std::endl;
+			}
+
+			execCommand(n, command);
+			std::cout << "getPorts done" << std::endl;
+		
+		}
 }
 
 void session(boost::shared_ptr<tcp::socket> sock, ros::NodeHandle n){
 	std::cout << "(Command system) Waiting for a command" << std::endl;
 	try{
 		std::vector<std::string> command;
+		std::string commandStr = "";
 		char data[max_length];
 		bool finishedCmd = 0;
 
@@ -291,18 +316,26 @@ void session(boost::shared_ptr<tcp::socket> sock, ros::NodeHandle n){
 					std::cout << "(Command system) Command complete" << std::endl;
 					finishedCmd = 1;
 				} else {
-					command.push_back(sub);
+					commandStr += sub + " ";
 				}
 			}
 
+			command.push_back(std::string(1, commandStr.at(0)));
+
+   			std::list<std::string> l;
+			boost::regex_split(std::back_inserter(l), commandStr, cmd_regex);
+			while(l.size()) {
+				std::string s = *(l.begin());
+				l.pop_front();
+				command.push_back(s);
+			}
+
 			if(finishedCmd){
-				std::cout << "(Command system) Executing command : ";
+				std::cout << "(Command system) Executing command : " << std::endl;
 				if(command.size() < 10){
-					std::cout << "'";
 					for(int i = 0; i < command.size(); i++){
-						std::cout << command.at(i) << " ";
+						std::cout << "'" << command.at(i) << "'" << std::endl;
 					}
-					std::cout << "'" << std::endl;
 				} else {
 					std::cout << "(Command system) Too many arguments to display (" << command.size() << ")" << std::endl;
 				}
@@ -316,6 +349,7 @@ void session(boost::shared_ptr<tcp::socket> sock, ros::NodeHandle n){
 				sendMessageToPc(sock, msg);
 				command.clear();
 				finishedCmd = 0;
+				commandStr = "";
 			}
 		}
 	} catch (std::exception& e) {
@@ -398,6 +432,8 @@ int main(int argc, char* argv[]){
 		
 		startMapClient = n.serviceClient<gobot_software::Port>("start_map_sender");
 		stopMapClient = n.serviceClient<gobot_software::Port>("stop_map_sender");
+
+		go_pub = n.advertise<geometry_msgs::PoseStamped>("/move_base_simple/goal", 1000);
 
 		server(CMD_PORT, n);
 		ros::spin();

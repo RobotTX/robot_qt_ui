@@ -12,14 +12,7 @@ from std_msgs.msg import String
 file_server="/home/ubuntu/computer_software/IP/serverIP.txt"
 file_IPs="/home/ubuntu/computer_software/IP/isAlive.txt"
 ping_script = "sh /home/ubuntu/computer_software/IP/ping.sh"
-
-#file_server="/home/gtdollar/computer_software/IP/serverIP.txt"
-#file_IPs="/home/gtdollar/computer_software/IP/isAlive.txt"
-#ping_script = "sh /home/gtdollar/computer_software/IP/ping.sh"
-
-#file_server="/home/debian/computer_software/IP/serverIP.txt"
-#file_IPs="/home/debian/computer_software/IP/isAlive.txt"
-#ping_script = "sh /home/debian/computer_software/IP/ping.sh"
+file_hostname = "/home/ubuntu/computer_software/name.txt"
 
 def isServer( IP) :
 	s=socket.socket()
@@ -33,7 +26,7 @@ def isServer( IP) :
 		res= s.recv(1024)
 		if res == "OK" :
 			find = True
-			file=open("/etc/hostname")
+			file=open(file_hostname)
 			hostname = file.readline()
 			hostname = hostname.split('\n')[0]
 			s.send(hostname)

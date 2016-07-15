@@ -241,6 +241,7 @@ void BottomLayout::removeRobot(const int id){
     stopRobotBtnGroup->removeButton(stopRobotBtnGroup->buttons().at(id));
     robotBtnGroup->removeButton(robotBtnGroup->buttons().at(id));
     viewPathRobotBtnGroup->removeButton(viewPathRobotBtnGroup->buttons().at(id));
+    vectorPathLabel.remove(id);
 
     QLayoutItem* item1 = columnName->takeAt(id);
     delete item1->widget();
