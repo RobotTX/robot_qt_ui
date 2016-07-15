@@ -55,7 +55,13 @@ void CmdRobotThread::run(){
 
     qDebug() << "(Robot" << robotName << ") Done";
     while(!isInterruptionRequested()){
+        if(!socketCmd->isOpen()){
+            socketCmd -> close();
+            exit();
+            return;
+        }
         if(missedPing <= 0){
+            qDebug() << "missedPing robotIsDead";
             emit robotIsDead(robotName, ipAddress);
             socketCmd -> close();
             exit();
@@ -132,8 +138,17 @@ void CmdRobotThread::connectedSlot(){
 void CmdRobotThread::disconnectedSlot(){
     qDebug() << "(Robot" << robotName << ") Disconnected at ip" << ipAddress;
     connected = false;
+    if(!socketCmd->isOpen()){
+        socketCmd -> close();
+        exit();
+        return;
+    }
     if(robotName.compare("") != 0){
+        qDebug() << "Disconnected slot robotIsDead";
         emit robotIsDead(robotName, ipAddress);
+        socketCmd -> close();
+        exit();
+        return;
     }
 }
 

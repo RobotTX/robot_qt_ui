@@ -222,14 +222,14 @@ void MainWindow::initializeRobots(){
     fileRead.close();
 
 
-
+/*
     updateRobotsThread = new UpdateRobotsThread(PORT_ROBOT_UPDATE);
     connect(updateRobotsThread, SIGNAL(robotIsAlive(QString,QString)), this, SLOT(robotIsAliveSlot(QString,QString)));
     updateRobotsThread->start();
     updateRobotsThread->moveToThread(updateRobotsThread);
+*/
 
 
-/*
     QFile fileWrite(ROBOTS_NAME_PATH);
     fileWrite.resize(0);
     fileWrite.open(QIODevice::WriteOnly);
@@ -273,7 +273,7 @@ void MainWindow::initializeRobots(){
     robots->setRobotsNameMap(tmpMap);
     out << robots->getRobotsNameMap();
     fileWrite.close();
-*/
+
 
     qDebug() << "RobotsNameMap on init" << robots->getRobotsNameMap();
 }
@@ -386,13 +386,13 @@ void MainWindow::stopSelectedRobot(int robotNb){
             case QMessageBox::Ok:
                 /// if the command is succesfully sent to the robot, we apply the change
                 robots->getRobotsVector().at(robotNb)->getRobot()->resetCommandAnswer();
-                if(robots->getRobotsVector().at(robotNb)->getRobot()->sendCommand(QString("d"))){
+                if(robots->getRobotsVector().at(robotNb)->getRobot()->sendCommand(QString("k"))){
                     QString answer = robots->getRobotsVector().at(robotNb)->getRobot()->waitAnswer();
                     QStringList answerList = answer.split(QRegExp("[ ]"), QString::SkipEmptyParts);
                     if(answerList.size() > 1){
                         QString cmd = answerList.at(0);
                         bool success = (answerList.at(1).compare("done") == 0);
-                        if((cmd.compare("d") == 0 && success) || answerList.at(0).compare("1") == 0){
+                        if((cmd.compare("k") == 0 && success) || answerList.at(0).compare("1") == 0){
                             clearPath(robotNb);
                             if(!robots->getRobotsVector().at(robotNb)->getRobot()->getName().compare(selectedRobot->getRobot()->getName())){
                                 hideAllWidgets();
@@ -443,43 +443,6 @@ void MainWindow::playSelectedRobot(int robotNb){
         }
     } else {
         qDebug() << "play path on robot " << robotNb << " : " << robot->getName();
-        //TODO calculate all the new pathpoints
-        /*std::shared_ptr<PathPoint> pathPoint = robot->getPath().at(0);
-        float oldPosX = pathPoint->getPoint().getPosition().getX();
-        float oldPosY = pathPoint->getPoint().getPosition().getY();
-        qDebug() << "Go to next point :" << oldPosX << oldPosY;
-        qDebug() << "ok1" << (float) oldPosX;
-        qDebug() << "ok2" << (float) (oldPosX - ROBOT_WIDTH);
-        qDebug() << "ok3" << (float) ((oldPosX - ROBOT_WIDTH) * map->getResolution());
-        qDebug() << "ok4" << (float) ((oldPosX - ROBOT_WIDTH) * map->getResolution() + map->getOrigin().getX());
-
-        float newPosX = (oldPosX - ROBOT_WIDTH) * map->getResolution() + map->getOrigin().getX();
-        float newPosY = (-oldPosY + map->getHeight() - ROBOT_WIDTH/2) * map->getResolution() + map->getOrigin().getY();
-        qDebug() << "Go to next point :" << newPosX << newPosY;
-        int waitTime = -1;
-        if(pathPoint->getAction() == PathPoint::WAIT){
-            waitTime = pathPoint->getWaitTime();
-        }
-
-        /// if the command is succesfully sent to the robot, we apply the change
-        robot->resetCommandAnswer();
-        if(robot->sendCommand(QString("c \"") + QString::number(newPosX) + "\" \""  + QString::number(newPosY) + "\" \""  + QString::number(waitTime)+ "\"")){
-            qDebug() << "Let's wait";
-            QString answer = robot->waitAnswer();
-            qDebug() << "Done waiting";
-            QStringList answerList = answer.split(QRegExp("[ ]"), QString::SkipEmptyParts);
-            if(answerList.size() > 1){
-                QString cmd = answerList.at(0);
-                bool success = (answerList.at(1).compare("done") == 0);
-                if((cmd.compare("c") == 0 && success) || answerList.at(0).compare("1") == 0){
-                    robot->setPlayingPath(1);
-                    bottomLayout->getPlayRobotBtnGroup()->button(robotNb)->setIcon(QIcon(":/icons/pause.png"));
-                    topLayout->setLabel(TEXT_COLOR_SUCCESS, "Path playing");
-                } else {
-                    topLayout->setLabel(TEXT_COLOR_DANGER, "Path failed to be played, please try again");
-                }
-            }
-        }*/
 
         /// if the command is succesfully sent to the robot, we apply the change
         robot->resetCommandAnswer();
@@ -946,34 +909,69 @@ void MainWindow::editTmpPathPointSlot(int id, Point* point, int nbWidget){
 
 void MainWindow::pathSaved(bool execPath){
     qDebug() << "pathSaved called" << execPath;
-    /// we hide the points that we displayed for the edition of the path
 
-    for(size_t i = 0; i < pointViewsToDisplay.size(); i++)
-        pointViewsToDisplay.at(i)->hide();
-    pointViewsToDisplay.clear();
+    std::shared_ptr<Robot> robot = selectedRobot->getRobot();
+    QString pathStr = "";
 
-    setEnableAll(true);
+    for(int i = 0; i < robot->getPath().size(); i++){
+        std::shared_ptr<PathPoint> pathPoint = robot->getPath().at(i);
+        float oldPosX = pathPoint->getPoint().getPosition().getX();
+        float oldPosY = pathPoint->getPoint().getPosition().getY();
 
-    hideAllWidgets();
-    setMessageTop(TEXT_COLOR_SUCCESS, "Path saved");
+        float newPosX = (oldPosX - ROBOT_WIDTH) * map->getResolution() + map->getOrigin().getX();
+        float newPosY = (-oldPosY + map->getHeight() - ROBOT_WIDTH/2) * map->getResolution() + map->getOrigin().getY();
+        int waitTime = -1;
+        if(pathPoint->getAction() == PathPoint::WAIT){
+            waitTime = pathPoint->getWaitTime();
+        }
+        pathStr += + "\"" + QString::number(newPosX) + "\" \"" + QString::number(newPosY) + "\" \"" + QString::number(waitTime)+ "\" ";
+    }
 
-    bottomLayout->updateRobot(robots->getRobotId(selectedRobot->getRobot()->getName()), selectedRobot);
+    qDebug() << pathStr;
+    /// if the command is succesfully sent to the robot, we apply the change
+    robot->resetCommandAnswer();
+    if(robot->sendCommand(QString("i ") + pathStr)){
+        qDebug() << "Let's wait";
+        QString answer = robot->waitAnswer();
+        qDebug() << "Done waiting";
+        QStringList answerList = answer.split(QRegExp("[ ]"), QString::SkipEmptyParts);
+        if(answerList.size() > 1){
+            QString cmd = answerList.at(0);
+            bool success = (answerList.at(1).compare("done") == 0);
+            if((cmd.compare("i") == 0 && success) || answerList.at(0).compare("1") == 0){
+                /// we hide the points that we displayed for the edition of the path
+                for(size_t i = 0; i < pointViewsToDisplay.size(); i++)
+                    pointViewsToDisplay.at(i)->hide();
+                pointViewsToDisplay.clear();
 
-    selectedRobotWidget->setSelectedRobot(selectedRobot);
-    if(execPath){
-        int robotNb = -1;
-        for(int i = 0; i < bottomLayout->getPlayRobotBtnGroup()->buttons().size(); i++){
-            if(bottomLayout->getRobotBtnGroup()->button(i)->text().compare(selectedRobot->getRobot()->getName()) == 0){
-                robotNb = i;
-                qDebug() << "robotNb :" << robotNb;
+                setEnableAll(true);
+
+                hideAllWidgets();
+                setMessageTop(TEXT_COLOR_SUCCESS, "Path saved");
+
+                bottomLayout->updateRobot(robots->getRobotId(selectedRobot->getRobot()->getName()), selectedRobot);
+
+                selectedRobotWidget->setSelectedRobot(selectedRobot);
+                if(execPath){
+                    int robotNb = -1;
+                    for(int i = 0; i < bottomLayout->getPlayRobotBtnGroup()->buttons().size(); i++){
+                        if(bottomLayout->getRobotBtnGroup()->button(i)->text().compare(selectedRobot->getRobot()->getName()) == 0){
+                            robotNb = i;
+                            qDebug() << "robotNb :" << robotNb;
+                        }
+                    }
+                    if(robotNb >= 0)
+                        playSelectedRobot(robotNb);
+                    else
+                        qDebug() << "No robot to play this path";
+                }
+                topLayout->setLabel(TEXT_COLOR_SUCCESS, "Path saved");
+                backEvent();
+            } else {
+                topLayout->setLabel(TEXT_COLOR_DANGER, "Path failed to be saved, please try again");
             }
         }
-        if(robotNb >= 0)
-            playSelectedRobot(robotNb);
-        else
-            qDebug() << "No robot to play this path";
     }
-    backEvent();
 }
 
 void MainWindow::addPathPoint(Point* point){
@@ -1293,9 +1291,16 @@ void MainWindow::robotIsDeadSlot(QString hostname,QString ip){
     qDebug() << "Robot" << hostname << "at ip" << ip << "... He is dead, Jim!!";
     setMessageTop(TEXT_COLOR_DANGER, QString("Robot " + hostname + " at ip " + ip +" disconnected."));
 
+    qDebug() << "Available IPs";
+    for(int i = 0; i < robots->getRobotsVector().size(); i++){
+        qDebug() << robots->getRobotsVector().at(i)->getRobot()->getIp();
+    }
+
     RobotView* rv = robots->getRobotViewByIp(ip);
     int id = robots->getRobotId(hostname);
     qDebug() << "Dead robot's id :" << id;
+    qDebug() << "rv is null ? :" << (rv == NULL);
+    qDebug() << "Robot is null ? :" << (rv->getRobot() == NULL);
 
 
     /// we stop the robots threads
@@ -1382,7 +1387,7 @@ void MainWindow::updatePathPoint(double x, double y, PointView* pointView){
             }
         }
     }
-    if(map->getMapImage().pixelColor(x, y).red() == 255){
+    if(map->getMapImage().pixelColor(x, y).red() >= 254){
         setMessageTop(TEXT_COLOR_INFO, "You can click either click \"Save changes\" to modify your path permanently or \"Cancel\" to keep the original path. If you want you can keep editing your point");
         ((PathPointCreationWidget*) pathCreationWidget->getPathPointList()->itemWidget(pathCreationWidget->getPathPointList()->currentItem())) -> getSaveEditBtn()->setEnabled(true);
         for(int i = 0; i < mapPixmapItem->getPathCreationPoints().count(); i++){
@@ -1595,7 +1600,9 @@ void MainWindow::setSelectedPoint(PointView* pointView, bool isTemporary){
         float x = pointView->getPoint()->getPosition().getX();
         float y = pointView->getPoint()->getPosition().getY();
 
-        if(map->getMapImage().pixelColor(x ,y).red() == 255){
+
+        qDebug() << x << y << map->getMapImage().pixelColor(x ,y).red();
+        if(map->getMapImage().pixelColor(x ,y).red() >= 254){
             createPointWidget->getActionButtons()->getPlusButton()->setEnabled(true);
             createPointWidget->getActionButtons()->getPlusButton()->setToolTip("Click this button if you want to save this point permanently");
             setMessageTop(TEXT_COLOR_INFO, "To save this point permanently click the \"+\" button");
@@ -2809,7 +2816,7 @@ void MainWindow::updateCoordinates(double x, double y){
     leftMenu->getDisplaySelectedPoint()->getYLabel()->setText("Y : " + QString::number(y, 'f', 1));
     leftMenu->getDisplaySelectedPoint()->getPointView()->setPos(x, y);
 
-    if(map->getMapImage().pixelColor(x ,y).red() == 255)
+    if(map->getMapImage().pixelColor(x ,y).red() >= 254)
         leftMenu->getDisplaySelectedPoint()->getSaveButton()->setEnabled(true);
     else
         leftMenu->getDisplaySelectedPoint()->getSaveButton()->setEnabled(false);
