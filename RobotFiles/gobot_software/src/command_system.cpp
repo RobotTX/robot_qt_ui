@@ -23,6 +23,8 @@ int metadata_port = 4000;
 int robot_pos_port = 4001;
 int map_port = 4002;
 
+std::string path_computer_software = "/home/ubuntu/computer_software/";
+
 static const boost::regex cmd_regex("\"(.*?)\"");
 
 bool execCommand(ros::NodeHandle n, std::vector<std::string> command){
@@ -35,7 +37,7 @@ bool execCommand(ros::NodeHandle n, std::vector<std::string> command){
 				std::cout << "(Command system) New name : " << command.at(1) << std::endl;
 
 				std::ofstream ofs;
-				ofs.open("/home/ubuntu/computer_software/name.txt", std::ofstream::out | std::ofstream::trunc);
+				ofs.open(path_computer_software + "Robot_Infos/name.txt", std::ofstream::out | std::ofstream::trunc);
 				ofs << command.at(1);
 				ofs.close();
 
@@ -50,7 +52,7 @@ bool execCommand(ros::NodeHandle n, std::vector<std::string> command){
 			if(command.size() > 2){
 				std::cout << "(Command system) New wifi : " << command.at(1) << std::endl;
 				std::cout << "(Command system) New wifi password : " << command.at(2) << std::endl;
-				std::string cmd = "sudo bash /home/ubuntu/computer_software/change_wifi.sh \"" + command.at(1) + "\" \""+ command.at(2) + "\"";
+				std::string cmd = "sudo bash " + path_computer_software + "change_wifi.sh \"" + command.at(1) + "\" \""+ command.at(2) + "\"";
 				std::cout << "(Command system) Cmd : " << cmd << std::endl;
 
 				system(cmd.c_str());
@@ -153,6 +155,12 @@ bool execCommand(ros::NodeHandle n, std::vector<std::string> command){
 		/// Command for the robot to play the saved path
 		case 'j':
 			std::cout << "(Command system) Playing the path" << std::endl;
+			return true;
+		break;
+
+		/// Command for the robot to delete the saved path
+		case 'k':
+			std::cout << "(Command system) Deleting the path" << std::endl;
 			return true;
 		break;
 

@@ -65,7 +65,7 @@ void MapView::mouseReleaseEvent(QGraphicsSceneMouseEvent *event){
             emit pointLeftClicked(&(*point), true);
         } else if(state == GraphicItemState::CREATING_PATH){
             /// if it's not a white point of the map we cannot add it to the path
-            if(map->getMapImage().pixelColor(event->pos().x()-tmpPointPixmap.width()/2, event->pos().y()-tmpPointPixmap.height()).red() == 255){
+            if(map->getMapImage().pixelColor(event->pos().x()-tmpPointPixmap.width()/2, event->pos().y()-tmpPointPixmap.height()).red() >= 254){
                 qDebug() << "Clicked on the map while creating a path";
                 Point tmpPoint("tmpPoint", 0.0, 0.0, false);
                 PointView* newPointView = new PointView(std::make_shared<Point>(tmpPoint), this);
