@@ -191,10 +191,10 @@ MainWindow::~MainWindow(){
     delete pathPainter;
     qDeleteAll(pathPointViews.begin(), pathPointViews.end());
     pathPointViews.clear();
-    /*if (updateRobotsThread != NULL && updateRobotsThread->isRunning() ) {
+    if (updateRobotsThread != NULL && updateRobotsThread->isRunning() ) {
         updateRobotsThread->requestInterruption();
         updateRobotsThread->wait();
-    }*/
+    }
     if (mapThread != NULL && mapThread->isRunning() ) {
         mapThread->requestInterruption();
         mapThread->wait();
@@ -222,14 +222,14 @@ void MainWindow::initializeRobots(){
     fileRead.close();
 
 
-/*
+
     updateRobotsThread = new UpdateRobotsThread(PORT_ROBOT_UPDATE);
     connect(updateRobotsThread, SIGNAL(robotIsAlive(QString,QString)), this, SLOT(robotIsAliveSlot(QString,QString)));
     updateRobotsThread->start();
     updateRobotsThread->moveToThread(updateRobotsThread);
-*/
 
 
+/*
     QFile fileWrite(ROBOTS_NAME_PATH);
     fileWrite.resize(0);
     fileWrite.open(QIODevice::WriteOnly);
@@ -273,7 +273,7 @@ void MainWindow::initializeRobots(){
     robots->setRobotsNameMap(tmpMap);
     out << robots->getRobotsNameMap();
     fileWrite.close();
-
+*/
 
     qDebug() << "RobotsNameMap on init" << robots->getRobotsNameMap();
 }
@@ -443,7 +443,8 @@ void MainWindow::playSelectedRobot(int robotNb){
         }
     } else {
         qDebug() << "play path on robot " << robotNb << " : " << robot->getName();
-        std::shared_ptr<PathPoint> pathPoint = robot->getPath().at(0);
+        //TODO calculate all the new pathpoints
+        /*std::shared_ptr<PathPoint> pathPoint = robot->getPath().at(0);
         float oldPosX = pathPoint->getPoint().getPosition().getX();
         float oldPosY = pathPoint->getPoint().getPosition().getY();
         qDebug() << "Go to next point :" << oldPosX << oldPosY;
@@ -471,6 +472,26 @@ void MainWindow::playSelectedRobot(int robotNb){
                 QString cmd = answerList.at(0);
                 bool success = (answerList.at(1).compare("done") == 0);
                 if((cmd.compare("c") == 0 && success) || answerList.at(0).compare("1") == 0){
+                    robot->setPlayingPath(1);
+                    bottomLayout->getPlayRobotBtnGroup()->button(robotNb)->setIcon(QIcon(":/icons/pause.png"));
+                    topLayout->setLabel(TEXT_COLOR_SUCCESS, "Path playing");
+                } else {
+                    topLayout->setLabel(TEXT_COLOR_DANGER, "Path failed to be played, please try again");
+                }
+            }
+        }*/
+
+        /// if the command is succesfully sent to the robot, we apply the change
+        robot->resetCommandAnswer();
+        if(robot->sendCommand(QString("j"))){
+            qDebug() << "Let's wait";
+            QString answer = robot->waitAnswer();
+            qDebug() << "Done waiting";
+            QStringList answerList = answer.split(QRegExp("[ ]"), QString::SkipEmptyParts);
+            if(answerList.size() > 1){
+                QString cmd = answerList.at(0);
+                bool success = (answerList.at(1).compare("done") == 0);
+                if((cmd.compare("j") == 0 && success) || answerList.at(0).compare("1") == 0){
                     robot->setPlayingPath(1);
                     bottomLayout->getPlayRobotBtnGroup()->button(robotNb)->setIcon(QIcon(":/icons/pause.png"));
                     topLayout->setLabel(TEXT_COLOR_SUCCESS, "Path playing");
@@ -1279,10 +1300,12 @@ void MainWindow::robotIsDeadSlot(QString hostname,QString ip){
 
     /// we stop the robots threads
     rv->getRobot()->stopThreads();
+    qDebug() << "robots threads cleaned";
 
     /// if the robot had a home, make the point a normal point
     if(rv->getRobot()->getHome() != NULL)
         rv->getRobot()->getHome()->setHome(false, "");
+    qDebug() << "home cleaned";
 
     /// if selected => if one of this robot related menu is open
     if(selectedRobot != NULL && selectedRobot->getRobot()->getIp().compare(ip) == 0){
@@ -1359,7 +1382,7 @@ void MainWindow::updatePathPoint(double x, double y, PointView* pointView){
             }
         }
     }
-    if(map->getMapImage().pixelColor(x, y) == QColor(254, 254, 254)){
+    if(map->getMapImage().pixelColor(x, y).red() == 255){
         setMessageTop(TEXT_COLOR_INFO, "You can click either click \"Save changes\" to modify your path permanently or \"Cancel\" to keep the original path. If you want you can keep editing your point");
         ((PathPointCreationWidget*) pathCreationWidget->getPathPointList()->itemWidget(pathCreationWidget->getPathPointList()->currentItem())) -> getSaveEditBtn()->setEnabled(true);
         for(int i = 0; i < mapPixmapItem->getPathCreationPoints().count(); i++){
@@ -1562,7 +1585,7 @@ void MainWindow::setSelectedPoint(PointView* pointView, bool isTemporary){
 
     /// we are not modifying an existing point
     if(!leftMenu->getDisplaySelectedPoint()->getActionButtons()->getEditButton()->isChecked()){
-        qDebug() << "editiing";
+        qDebug() << "editing";
         leftMenu->show();
         selectedPoint = pointView;
         selectedPoint->setState(GraphicItemState::EDITING_PERM);
@@ -1571,8 +1594,8 @@ void MainWindow::setSelectedPoint(PointView* pointView, bool isTemporary){
         createPointWidget->show();
         float x = pointView->getPoint()->getPosition().getX();
         float y = pointView->getPoint()->getPosition().getY();
-        qDebug() << map->getMapImage().pixelColor(x, y);
-        if(map->getMapImage().pixelColor(x ,y) == QColor(254, 254, 254)){
+
+        if(map->getMapImage().pixelColor(x ,y).red() == 255){
             createPointWidget->getActionButtons()->getPlusButton()->setEnabled(true);
             createPointWidget->getActionButtons()->getPlusButton()->setToolTip("Click this button if you want to save this point permanently");
             setMessageTop(TEXT_COLOR_INFO, "To save this point permanently click the \"+\" button");
@@ -2786,9 +2809,10 @@ void MainWindow::updateCoordinates(double x, double y){
     leftMenu->getDisplaySelectedPoint()->getYLabel()->setText("Y : " + QString::number(y, 'f', 1));
     leftMenu->getDisplaySelectedPoint()->getPointView()->setPos(x, y);
 
-    if(map->getMapImage().pixelColor(x ,y) == QColor(254, 254, 254))   leftMenu->getDisplaySelectedPoint()->getSaveButton()->setEnabled(true);
-
-    else  leftMenu->getDisplaySelectedPoint()->getSaveButton()->setEnabled(false);
+    if(map->getMapImage().pixelColor(x ,y).red() == 255)
+        leftMenu->getDisplaySelectedPoint()->getSaveButton()->setEnabled(true);
+    else
+        leftMenu->getDisplaySelectedPoint()->getSaveButton()->setEnabled(false);
 }
 
 /**

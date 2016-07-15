@@ -12,9 +12,9 @@ from std_msgs.msg import String
 file_server="/home/ubuntu/computer_software/IP/serverIP.txt"
 file_IPs="/home/ubuntu/computer_software/IP/isAlive.txt"
 ping_script = "sh /home/ubuntu/computer_software/IP/ping.sh"
-file_hostname = "/home/ubuntu/computer_software/name.txt"
+file_hostname = "/home/ubuntu/computer_software/Robot_Infos/name.txt"
 
-def isServer( IP) :
+def isServer(IP) :
 	s=socket.socket()
 	host= IP
 	port = 6000
