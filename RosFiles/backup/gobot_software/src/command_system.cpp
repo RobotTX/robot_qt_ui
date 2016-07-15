@@ -17,6 +17,8 @@ ros::ServiceClient stopMetadataClient;
 ros::ServiceClient startMapClient;
 ros::ServiceClient stopMapClient;
 
+ros::Publisher go_pub;
+
 int metadata_port = 4000;
 int robot_pos_port = 4001;
 int map_port = 4002;
@@ -68,7 +70,6 @@ bool execCommand(ros::NodeHandle n, std::vector<std::string> command){
 
 //rostopic pub /move_base_simple/goal geometry_msgs/PoseStamped '{ header: { frame_id: "map" }, pose: { position: { x: 2.7, y: -1.5, z: 0 }, orientation: { x: 0, y: 0, z: 0, w: 1 } } }'
 
-				ros::Publisher go_pub = n.advertise<geometry_msgs::PoseStamped>("/move_base_simple/goal", 1000);
 				geometry_msgs::PoseStamped msg;
 				msg.header.frame_id = "map";
 				msg.header.stamp = ros::Time::now();
@@ -80,10 +81,6 @@ bool execCommand(ros::NodeHandle n, std::vector<std::string> command){
 				msg.pose.orientation.z = 0;
 				msg.pose.orientation.w = 1;
 				
-
-				ros::Rate loop_rate(10);
-
-				loop_rate.sleep();
 				go_pub.publish(msg);
 			
 				if(waitTime >= 0){
@@ -435,6 +432,8 @@ int main(int argc, char* argv[]){
 		
 		startMapClient = n.serviceClient<gobot_software::Port>("start_map_sender");
 		stopMapClient = n.serviceClient<gobot_software::Port>("stop_map_sender");
+
+		go_pub = n.advertise<geometry_msgs::PoseStamped>("/move_base_simple/goal", 1000);
 
 		server(CMD_PORT, n);
 		ros::spin();

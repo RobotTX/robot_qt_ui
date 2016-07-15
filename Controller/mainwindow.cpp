@@ -1576,9 +1576,9 @@ void MainWindow::setSelectedPoint(PointView* pointView, bool isTemporary){
             createPointWidget->getActionButtons()->getPlusButton()->setEnabled(true);
             createPointWidget->getActionButtons()->getPlusButton()->setToolTip("Click this button if you want to save this point permanently");
             setMessageTop(TEXT_COLOR_INFO, "To save this point permanently click the \"+\" button");
-            qDebug() << "ce point est blanc";
+            qDebug() << "this point is white";
         } else {
-            qDebug() << "this pooint is not white";
+            qDebug() << "this point is not white";
             setMessageTop(TEXT_COLOR_WARNING, "You cannot save this point because your robot(s) would not be able to go there");
             createPointWidget->getActionButtons()->getPlusButton()->setEnabled(false);
             createPointWidget->getActionButtons()->getPlusButton()->setToolTip("You cannot save this point because your robot(s) cannot go there");

@@ -19,7 +19,7 @@
 
 using boost::asio::ip::tcp;
 
-void sendMap(const std::vector<int8_t>& my_map);
+void sendMap(const std::vector<uint8_t>& my_map);
 void getMap(const nav_msgs::OccupancyGrid::ConstPtr& msg);
 bool startMap(gobot_software::Port::Request &req, gobot_software::Port::Response &res);
 bool stopMap(gobot_software::Port::Request &req, gobot_software::Port::Response &res);
