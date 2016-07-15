@@ -7,7 +7,7 @@ CustomQGraphicsView::CustomQGraphicsView ( QGraphicsScene * scene, QWidget * par
 
 void CustomQGraphicsView::wheelEvent(QWheelEvent *event){
     if(event->delta() > 0){
-        if(zoomCoeff < 4){
+        if(zoomCoeff < 15){
             scale(1.3, 1.3);
             zoomCoeff *= 1.3;
         }
