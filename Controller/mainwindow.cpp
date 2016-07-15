@@ -191,10 +191,10 @@ MainWindow::~MainWindow(){
     delete pathPainter;
     qDeleteAll(pathPointViews.begin(), pathPointViews.end());
     pathPointViews.clear();
-    if (updateRobotsThread != NULL && updateRobotsThread->isRunning() ) {
+    /*if (updateRobotsThread != NULL && updateRobotsThread->isRunning() ) {
         updateRobotsThread->requestInterruption();
         updateRobotsThread->wait();
-    }
+    }*/
     if (mapThread != NULL && mapThread->isRunning() ) {
         mapThread->requestInterruption();
         mapThread->wait();
@@ -222,14 +222,14 @@ void MainWindow::initializeRobots(){
     fileRead.close();
 
 
-
+/*
     updateRobotsThread = new UpdateRobotsThread(PORT_ROBOT_UPDATE);
     connect(updateRobotsThread, SIGNAL(robotIsAlive(QString,QString)), this, SLOT(robotIsAliveSlot(QString,QString)));
     updateRobotsThread->start();
     updateRobotsThread->moveToThread(updateRobotsThread);
+*/
 
 
-/*
     QFile fileWrite(ROBOTS_NAME_PATH);
     fileWrite.resize(0);
     fileWrite.open(QIODevice::WriteOnly);
@@ -273,7 +273,7 @@ void MainWindow::initializeRobots(){
     robots->setRobotsNameMap(tmpMap);
     out << robots->getRobotsNameMap();
     fileWrite.close();
-*/
+
 
     qDebug() << "RobotsNameMap on init" << robots->getRobotsNameMap();
 }
