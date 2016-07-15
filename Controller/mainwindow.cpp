@@ -913,7 +913,7 @@ void MainWindow::pathSaved(bool execPath){
     std::shared_ptr<Robot> robot = selectedRobot->getRobot();
     QString pathStr = "";
 
-    for(int i = 0; i < robot->getPath().size(); i++){
+    for(size_t i = 0; i < robot->getPath().size(); i++){
         std::shared_ptr<PathPoint> pathPoint = robot->getPath().at(i);
         float oldPosX = pathPoint->getPoint().getPosition().getX();
         float oldPosY = pathPoint->getPoint().getPosition().getY();

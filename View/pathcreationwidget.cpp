@@ -21,10 +21,8 @@
 #include "View/buttonmenu.h"
 
 
-PathCreationWidget::PathCreationWidget(QMainWindow* parent, const Points &_points):QWidget(parent){
+PathCreationWidget::PathCreationWidget(QMainWindow* parent, const std::shared_ptr<Points> &_points): QWidget(parent), idPoint(1), points(_points){
     layout = new QVBoxLayout(this);
-    idPoint = 1;
-    points = _points;
     selectedRobot = NULL;
     previousItem = NULL;
     editedPathPointCreationWidget = NULL;
@@ -42,28 +40,28 @@ PathCreationWidget::PathCreationWidget(QMainWindow* parent, const Points &_point
     pointsMenu = new QMenu(this);
     connect(pointsMenu, SIGNAL(triggered(QAction*)), this, SLOT(pointClicked(QAction*)));
 
-    for(int i = 0; i < points.getGroups().size(); i++){
-        if(points.getGroups().at(i)->getName().compare("No group") == 0){
-            for(int j = 0; j < points.getGroups().at(i)->getPoints().size(); j++){
-                QString pointName = points.getGroups().at(i)->getPoints().at(j)->getName();
+    for(int i = 0; i < points->getGroups().size(); i++){
+        if(points->getGroups().at(i)->getName().compare("No group") == 0){
+            for(int j = 0; j < points->getGroups().at(i)->getPoints().size(); j++){
+                QString pointName = points->getGroups().at(i)->getPoints().at(j)->getName();
                 pointsMenu->addAction(pointName);
 
                 PointInfo pointInfo;
                 pointInfo.name = pointName;
-                pointInfo.posX = points.getGroups().at(i)->getPoints().at(j)->getPosition().getX();
-                pointInfo.posY = points.getGroups().at(i)->getPoints().at(j)->getPosition().getY();
+                pointInfo.posX = points->getGroups().at(i)->getPoints().at(j)->getPosition().getX();
+                pointInfo.posY = points->getGroups().at(i)->getPoints().at(j)->getPosition().getY();
                 pointInfos.push_back(pointInfo);
             }
         } else {
-            QMenu *group = pointsMenu->addMenu("&" + points.getGroups().at(i)->getName());
-            for(int j = 0; j < points.getGroups().at(i)->getPoints().size(); j++){
-                QString pointName = points.getGroups().at(i)->getPoints().at(j)->getName();
+            QMenu *group = pointsMenu->addMenu("&" + points->getGroups().at(i)->getName());
+            for(int j = 0; j < points->getGroups().at(i)->getPoints().size(); j++){
+                QString pointName = points->getGroups().at(i)->getPoints().at(j)->getName();
                 group->addAction(pointName);
 
                 PointInfo pointInfo;
                 pointInfo.name = pointName;
-                pointInfo.posX = points.getGroups().at(i)->getPoints().at(j)->getPosition().getX();
-                pointInfo.posY = points.getGroups().at(i)->getPoints().at(j)->getPosition().getY();
+                pointInfo.posX = points->getGroups().at(i)->getPoints().at(j)->getPosition().getX();
+                pointInfo.posY = points->getGroups().at(i)->getPoints().at(j)->getPosition().getY();
                 pointInfos.push_back(pointInfo);
             }
         }
@@ -155,7 +153,7 @@ void PathCreationWidget::addPathPoint(Point* point){
 
 
     /// We create a new widget to add to the list of path point widgets
-    PathPointCreationWidget* pathPoint = new PathPointCreationWidget(idPoint, points, *point, this);
+    PathPointCreationWidget* pathPoint = new PathPointCreationWidget(idPoint, *points, *point, this);
 
     initialisationPathPoint(pathPoint);
 
@@ -525,4 +523,36 @@ void PathCreationWidget::showEvent(QShowEvent *)
     resetWidget();
     actionButtons->disableAll();
     actionButtons->getPlusButton()->setEnabled(true);
+    /// updates the edit path menu
+    updateMenu();
+}
+
+void PathCreationWidget::updateMenu(){
+    pointsMenu->clear();
+    for(int i = 0; i < points->getGroups().size(); i++){
+        if(points->getGroups().at(i)->getName().compare("No group") == 0){
+            for(int j = 0; j < points->getGroups().at(i)->getPoints().size(); j++){
+                QString pointName = points->getGroups().at(i)->getPoints().at(j)->getName();
+                pointsMenu->addAction(pointName);
+
+                PointInfo pointInfo;
+                pointInfo.name = pointName;
+                pointInfo.posX = points->getGroups().at(i)->getPoints().at(j)->getPosition().getX();
+                pointInfo.posY = points->getGroups().at(i)->getPoints().at(j)->getPosition().getY();
+                pointInfos.push_back(pointInfo);
+            }
+        } else {
+            QMenu *group = pointsMenu->addMenu("&" + points->getGroups().at(i)->getName());
+            for(int j = 0; j < points->getGroups().at(i)->getPoints().size(); j++){
+                QString pointName = points->getGroups().at(i)->getPoints().at(j)->getName();
+                group->addAction(pointName);
+
+                PointInfo pointInfo;
+                pointInfo.name = pointName;
+                pointInfo.posX = points->getGroups().at(i)->getPoints().at(j)->getPosition().getX();
+                pointInfo.posY = points->getGroups().at(i)->getPoints().at(j)->getPosition().getY();
+                pointInfos.push_back(pointInfo);
+            }
+        }
+    }
 }
