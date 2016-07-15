@@ -136,6 +136,26 @@ bool execCommand(ros::NodeHandle n, std::vector<std::string> command){
 			}
 		break;
 
+		/// Command for the robot to save a new path
+		case 'i':
+			if(command.size() > 4 && command.size()%3 == 1){
+
+				std::cout << "(Command system) Path received :" << std::endl;
+				for(int i = 1; i < command.size(); i+=3)
+					std::cout << i << " : " << command.at(i) << ", " << command.at(i+1) << " and wait for " << command.at(i+2) << std::endl;
+				
+				return true;
+			} else {
+				std::cout << "(Command system) Parameter missing" << std::endl;
+			}
+		break;
+
+		/// Command for the robot to play the saved path
+		case 'j':
+			std::cout << "(Command system) Playing the path" << std::endl;
+			return true;
+		break;
+
 		/// Default/Unknown command
 		default:
 			std::cerr << "(Command system) Unknown command '" << command.at(0) << "' with " << command.size()-1 << " arguments : ";

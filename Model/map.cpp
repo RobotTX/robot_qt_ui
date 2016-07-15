@@ -25,7 +25,7 @@ void Map::setRectangle(void){
     double lefterBound(width);
     for(int i = 0; i < height; i++){
         for(int j = 0; j < width; j++){
-            if(mapImage.pixelColor(j, i).red() == 254 && mapImage.pixelColor(j, i).green() == 254 && mapImage.pixelColor(j, i).blue() == 254){
+            if(mapImage.pixelColor(j, i).red() == 255){
                 if(i > upperBound)
                     upperBound = i;
                 else if(i < lowerBound)
