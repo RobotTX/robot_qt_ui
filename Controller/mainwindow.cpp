@@ -764,7 +764,7 @@ void MainWindow::robotSavedEvent(){
             break;
             default:
             // should never be here
-                qDebug() << " dafuk ?";
+                qDebug() << " error in robotSavedEvent";
                 isOK = false;
             break;
         }
@@ -952,6 +952,7 @@ void MainWindow::clearPath(const int robotNb){
 }
 
 void MainWindow::selectHomeEvent(){
+    /*
     qDebug() << "selectHomeEvent called";
     if(selectedRobotWidget->getScanBtn()->isEnabled()){
         setMessageTop(TEXT_COLOR_INFO, "Click on the map or on a point to select a home for the robot " + selectedRobot->getRobot()->getName());
@@ -973,7 +974,7 @@ void MainWindow::selectHomeEvent(){
         bottomLayout->enable();
         setGraphicItemsState(GraphicItemState::NO_STATE);
         enableMenu();
-    }
+    }*/
 }
 
 void MainWindow::editHomeEvent(){
@@ -1051,7 +1052,7 @@ void MainWindow::homeSelected(PointView* pointView, bool temporary){
 
                 selectedRobot->getRobot()->setHome(pointView->getPoint());
 
-                selectedRobotWidget->getHomeBtn()->setText("Select a home");
+                //selectedRobotWidget->getHomeBtn()->setText("Select a home");
                 selectedRobotWidget->enable();
                 bottomLayout->enable();
                 setGraphicItemsState(GraphicItemState::NO_STATE);

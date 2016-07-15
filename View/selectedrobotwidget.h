@@ -30,7 +30,7 @@ public:
      */
     void setSelectedRobot(RobotView* const& _robotView);
     QPushButton* getScanBtn(void) const {return scanBtn;}
-    QPushButton* getHomeBtn(void) const {return homeBtn;}
+   // QPushButton* getHomeBtn(void) const {return homeBtn;}
     void disable();
     void enable();
     TopLeftMenu* getActionButtons(void) const {return actionButtons;}
@@ -40,17 +40,19 @@ private:
     QVBoxLayout* layout;
     RobotView* robotView;
     QProgressBar* batteryLevel;
-    QPushButton* backBtn;
+  //  QPushButton* backBtn;
     QLabel* wifiNameLabel;
-    QPushButton* addPathBtn;
+   // QPushButton* addPathBtn;
     QPushButton* goHome;
     QLabel* ipAddressLabel;
-    QPushButton* homeBtn;
+   // QPushButton* homeBtn;
     PathWidget* pathWidget;
     QPushButton* scanBtn;
-    QPushButton* editBtn;
+    //QPushButton* editBtn;
     QLabel* name;
     TopLeftMenu* actionButtons ;
+     QLabel* noPath ;
+     QLabel* homeLabel2;
 
 protected:
     void showEvent(QShowEvent *event);

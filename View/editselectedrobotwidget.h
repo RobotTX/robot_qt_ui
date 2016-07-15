@@ -64,6 +64,7 @@ private:
     PointView* home;
     bool temporary;
     std::shared_ptr<Point> oldHome;
+    QPushButton* addPathBtn;
 
 protected:
     void showEvent(QShowEvent *event);

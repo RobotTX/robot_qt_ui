@@ -78,6 +78,15 @@ EditSelectedRobotWidget::EditSelectedRobotWidget(QMainWindow* parent, const std:
     layout->addWidget(homeLabel);
     layout->addWidget(homeBtn);
 
+    /// Button to add a path
+    addPathBtn = new QPushButton(QIcon(":/icons/plus.png"),"Add path", this);
+    addPathBtn->setStyleSheet ("text-align: left");
+    //addPathBtn->hide();
+    addPathBtn->setIconSize(parent->size()/10);
+    connect(addPathBtn, SIGNAL(clicked()), parent, SLOT(addPathSelecRobotBtnEvent()));
+    layout->addWidget(addPathBtn);
+
+
     SpaceWidget* spaceWidget = new SpaceWidget(SpaceWidget::SpaceOrientation::HORIZONTAL, this);
     layout->addWidget(spaceWidget);
 
