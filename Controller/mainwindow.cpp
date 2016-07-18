@@ -42,6 +42,7 @@
 #include "View/pathpointcreationwidget.h"
 #include "View/pathpointlist.h"
 #include "View/groupview.h"
+#include <QUuid>
 
 /**
  * @brief MainWindow::MainWindow
@@ -224,7 +225,7 @@ void MainWindow::initializeRobots(){
 
 /*
     updateRobotsThread = new UpdateRobotsThread(PORT_ROBOT_UPDATE);
-    connect(updateRobotsThread, SIGNAL(robotIsAlive(QString,QString)), this, SLOT(robotIsAliveSlot(QString,QString)));
+    connect(updateRobotsThread, SIGNAL(robotIsAlive(QString, QString, QString)), this, SLOT(robotIsAliveSlot(QString, QString, QString)));
     updateRobotsThread->start();
     updateRobotsThread->moveToThread(updateRobotsThread);
 */
@@ -318,9 +319,11 @@ void MainWindow::connectToRobot(){
                         setEnableAll(false, GraphicItemState::NO_EVENT);
                         scanningRobot = selectedRobot;
 
-                        mapThread = new ScanMapThread(ip, PORT_MAP);
+                        mapThread = new ScanMapThread(ip, PORT_MAP, MAP_PATH);
                         connect(mapThread, SIGNAL(valueChangedMap(QByteArray)),
                                 this , SLOT(updateMap(QByteArray)));
+                        connect(mapThread, SIGNAL(newScanSaved(QString)),
+                                this , SLOT(sendNewMapToRobots(QString)));
                         mapThread->start();
                         mapThread->moveToThread(mapThread);
 
@@ -341,6 +344,8 @@ void MainWindow::connectToRobot(){
         } else {
             selectedRobot->getRobot()->resetCommandAnswer();
             if(selectedRobot->getRobot()->sendCommand("f")){
+                qDebug() << "Need to wait for the last map ?";
+
                 QString answer = selectedRobot->getRobot()->waitAnswer();
                 QStringList answerList = answer.split(QRegExp("[ ]"), QString::SkipEmptyParts);
                 if(answerList.size() > 1){
@@ -1236,18 +1241,18 @@ void MainWindow::goHomeBtnEvent(){
     }
 }
 
-void MainWindow::robotIsAliveSlot(QString hostname,QString ip){
+void MainWindow::robotIsAliveSlot(QString hostname, QString ip, QString mapId){
     QRegExp rx("[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}");
     rx.indexIn(ip);
     ip = rx.cap(0);
     RobotView* rv = robots->getRobotViewByIp(ip);
     if(rv != NULL){
-        qDebug() << "Robot" << hostname << "at ip" << ip << "is still alive";
-        emit ping();
-        /// TODO see for changes (battery, name, wifi)
+        qDebug() << "Robot" << hostname << "at ip" << ip << "is still alive and has the map id :" << mapId;
+        rv->getRobot()->ping();
+        /// TODO see for changes (battery)
 
     } else {
-        qDebug() << "Robot" << hostname << "at ip" << ip << "just connected";
+        qDebug() << "Robot" << hostname << "at ip" << ip << "just connected and has the map id :" << mapId;
 
         std::shared_ptr<Robot> robot(new Robot(hostname, ip, this));
         robot->setWifi("Swaghetti Yolognaise");
@@ -1259,9 +1264,7 @@ void MainWindow::robotIsAliveSlot(QString hostname,QString ip){
         bottomLayout->addRobot(robotView);
         robotsLeftWidget->updateRobots(robots);
 
-
-
-        /// TODO check if first connection
+        /// Check if connection by usb
         if(ip.endsWith(".7.1") || ip.endsWith(".7.2") || ip.endsWith(".7.3")){
             selectedRobot = robotView;
             switchFocus(hostname, editSelectedRobotWidget, MainWindow::WidgetType::ROBOT);
@@ -1284,6 +1287,8 @@ void MainWindow::robotIsAliveSlot(QString hostname,QString ip){
             qDebug() << "RobotsNameMap updated" << robots->getRobotsNameMap();
         }
     }
+
+    /// TODO check if the robot has the current map
 }
 
 void MainWindow::robotIsDeadSlot(QString hostname,QString ip){
@@ -1416,6 +1421,49 @@ void MainWindow::updatePathPoint(double x, double y, PointView* pointView){
         qDebug() << "sorry u cannot put a path point in the dark";
     }
 }
+
+
+void MainWindow::sendNewMapToRobots(QString ipAddress){
+    qDebug() << "sendNewMapToRobots called";
+    /// We create a unique ID for the map
+    QUuid mapId = QUuid();
+    mapId.createUuid();
+    qDebug() << "New map id :" << mapId.toString();
+    QVector<RobotView*> robotsVector = robots->getRobotsVector();
+
+    /// We send the map to each robot
+    for(int i = 0; i < robotsVector.size(); i++){
+        std::shared_ptr<Robot> robot = robotsVector.at(i)->getRobot();
+
+        /// No need to send the map to the robot that scanned it
+        if(robot->getIp().compare(ipAddress) != 0){
+            // TODO send the map
+        }
+
+        if(robot->sendCommand(QString("l \"") + mapId.toString() + "\"")){
+            qDebug() << "Let's wait";
+            QString answer = robot->waitAnswer();
+            qDebug() << "Done waiting";
+            QStringList answerList = answer.split(QRegExp("[ ]"), QString::SkipEmptyParts);
+            if(answerList.size() > 1){
+                QString cmd = answerList.at(0);
+                bool success = (answerList.at(1).compare("done") == 0);
+                if((cmd.compare("l") == 0 && success) || answerList.at(0).compare("1") == 0){
+                    robot->setMapId(mapId);
+                } else {
+                    qDebug() << "Could not send the mapId to the robot";
+                    return;
+                }
+            }
+        }
+    }
+    qDebug() << "Sent the map to the robots";
+}
+
+void MainWindow::sendNewMapToRobot(std::shared_ptr<Robot> robot){
+    qDebug() << "sendNewMapToRobot called";
+}
+
 
 /**********************************************************************************************************************************/
 

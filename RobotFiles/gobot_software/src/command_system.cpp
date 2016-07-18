@@ -178,6 +178,20 @@ bool execCommand(ros::NodeHandle n, std::vector<std::string> command){
 			return true;
 		break;
 
+		/// Command for the robot to save the id of the new map
+		case 'l':
+			if(command.size() > 1){
+				std::cout << "(Command system) Id of the new map : " << command.at(1) << std::endl;
+				std::ofstream ofs;
+				ofs.open(path_computer_software + "Robot_Infos/mapId.txt", std::ofstream::out | std::ofstream::trunc);
+				ofs << command.at(1);
+				ofs.close();
+				return true;
+			} else {
+				std::cout << "(Command system) Parameter missing" << std::endl;
+			}
+		break;
+
 		/// Default/Unknown command
 		default:
 			std::cerr << "(Command system) Unknown command '" << command.at(0) << "' with " << command.size()-1 << " arguments : ";
@@ -350,8 +364,10 @@ void session(boost::shared_ptr<tcp::socket> sock, ros::NodeHandle n){
         	}
 
 			std::istringstream iss(data);
+			std::cout << "(Command system) Yolo1" << std::endl;
 
 			while (iss && !finishedCmd && ros::ok() && connected){
+			std::cout << "(Command system) Yolo2" << std::endl;
 				std::string sub;
 				iss >> sub;
 				if(sub.compare("}") == 0){
@@ -361,8 +377,10 @@ void session(boost::shared_ptr<tcp::socket> sock, ros::NodeHandle n){
 					commandStr += sub + " ";
 				}
 			}
+			std::cout << "(Command system) Yolo3" << std::endl;
 
 			command.push_back(std::string(1, commandStr.at(0)));
+			std::cout << "(Command system) Yolo4" << std::endl;
 
    			std::list<std::string> l;
 			boost::regex_split(std::back_inserter(l), commandStr, cmd_regex);
@@ -371,6 +389,7 @@ void session(boost::shared_ptr<tcp::socket> sock, ros::NodeHandle n){
 				l.pop_front();
 				command.push_back(s);
 			}
+			std::cout << "(Command system) Yolo5" << std::endl;
 
 			if(finishedCmd){
 				std::cout << "(Command system) Executing command : " << std::endl;
