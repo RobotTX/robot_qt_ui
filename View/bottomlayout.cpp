@@ -12,42 +12,42 @@
 #include <QDebug>
 
 BottomLayout::BottomLayout(QMainWindow* parent, const std::shared_ptr<Robots> &robots) : QWidget(parent){
-
     layout = new QHBoxLayout(this);
 
     VerticalScrollArea* scrollArea = new VerticalScrollArea(this);
-
     /// We create a widget and a scroll area
     QWidget* widget = new QWidget(scrollArea);
     QHBoxLayout* scrollLayout = new QHBoxLayout(widget);
 
     QVector<RobotView*> robotsVector = robots->getRobotsVector();
 
-    /// The button group for the column with the robots' name
+    /// The button group for the collumn with the robots' name
     robotBtnGroup = new QButtonGroup(this);
 
-    /// The button group for the column with the display path buttons
+    /// The button group for the collumn with the stop/delete path buttons
     viewPathRobotBtnGroup = new QButtonGroup(this);
     viewPathRobotBtnGroup->setExclusive(false);
 
-    /// The button group for the column with the stop/delete path buttons
+    /// The button group for the collumn with the stop/delete path buttons
     stopRobotBtnGroup = new QButtonGroup(this);
 
-    /// The button group for the column with the play/pause path buttons
+    /// The button group for the collumn with the play/pause path buttons
     playRobotBtnGroup = new QButtonGroup(this);
+    vectorPathLabel = QVector<QLabel*>();
 
-/*
+
     pathScroll = new QScrollArea(this);
     pathScroll->setWidgetResizable(true);
     pathScroll->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     pathScroll->setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+    pathScroll->setAlignment(Qt::AlignTop);
     pathScroll->setFrameShape(QFrame::NoFrame);
     QWidget* widgetPath = new QWidget(pathScroll);
     widgetPath->setContentsMargins(0, 0, 0, 0);
-*/
+
+
     /// The layout of the four columns
     columnName = new QVBoxLayout();
-   // QVBoxLayout* columnPath = new QVBoxLayout(widgetPath);
     columnPath = new QVBoxLayout();
     columnPlay = new QVBoxLayout();
     columnViewPath = new QVBoxLayout();
@@ -76,22 +76,19 @@ BottomLayout::BottomLayout(QMainWindow* parent, const std::shared_ptr<Robots> &r
             }
             pathStr += path.at(j)->getPoint().getName();
         }
-        QScrollArea* scrollarea = new QScrollArea(this);
         QLabel* pathLabel = new QLabel(pathStr, this);
-        pathLabel->setContentsMargins(0, 0, 0, -20);
-        scrollarea->setWidget(pathLabel);
-        scrollarea->setWidgetResizable(true);
-        scrollarea->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-        scrollarea->setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+        pathLabel->setMinimumHeight(parent->height()/10);
+        pathLabel->setMaximumHeight(parent->height()/10);
         vectorPathLabel.push_back(pathLabel);
-        columnPath->addWidget(scrollarea);
+        //pathLabel->setMinimumWidth(1);
+        columnPath->addWidget(pathLabel);
     }
-    //widgetPath->setLayout(columnPath);
-    //pathScroll->setWidget(widgetPath);
-    //scrollLayout->addWidget(pathScroll);
+    widgetPath->setLayout(columnPath);
+    pathScroll->setWidget(widgetPath);
+    scrollLayout->addWidget(pathScroll);
     scrollLayout->addLayout(columnPath);
 
-    /// Creation of the third column, with the button to display the robot
+    /// Creation of the third collumn, with the button to play/pause the robot
     for(int i = 0; i < robotsVector.size(); i++){
         QPushButton* viewPathRobotBtn = new QPushButton(QIcon(":/icons/eye.png"),"", this);
         viewPathRobotBtn->setMaximumWidth(parent->width()/10);
@@ -105,7 +102,7 @@ BottomLayout::BottomLayout(QMainWindow* parent, const std::shared_ptr<Robots> &r
     }
     scrollLayout->addLayout(columnViewPath);
 
-    /// Creation of the fourth column, with the button to play/pause the robot
+    /// Creation of the fourth collumn, with the button to play/pause the robot
     for(int i = 0; i < robotsVector.size(); i++){
         QPushButton* playRobotBtn = new QPushButton(QIcon(":/icons/play.png"),"", this);
         playRobotBtn->setMaximumWidth(parent->width()/10);
@@ -118,7 +115,7 @@ BottomLayout::BottomLayout(QMainWindow* parent, const std::shared_ptr<Robots> &r
     }
     scrollLayout->addLayout(columnPlay);
 
-    /// Creation of the fifth column, with the button to stop and delete the path of the robot
+    /// Creation of the fifth collumn, with the button to stop and delete the path of the robot
     for(int i = 0; i < robotsVector.size(); i++){
         QPushButton* stopRobotBtn = new QPushButton(QIcon(":/icons/close.png"),"", this);
         stopRobotBtn->setMaximumWidth(parent->width()/10);
@@ -135,7 +132,7 @@ BottomLayout::BottomLayout(QMainWindow* parent, const std::shared_ptr<Robots> &r
     connect(robotBtnGroup, SIGNAL(buttonClicked(QAbstractButton*)), parent, SLOT(setSelectedRobotNoParent(QAbstractButton*)));
     connect(stopRobotBtnGroup, SIGNAL(buttonClicked(int)), parent, SLOT(stopSelectedRobot(int)));
     connect(playRobotBtnGroup, SIGNAL(buttonClicked(int)), parent, SLOT(playSelectedRobot(int)));
-    connect(viewPathRobotBtnGroup, SIGNAL(buttonToggled(int,bool)), parent, SLOT(viewPathSelectedRobot(int, bool)));
+    connect(viewPathRobotBtnGroup, SIGNAL(buttonToggled(int, bool)), parent, SLOT(viewPathSelectedRobot(int, bool)));
 
     setMaximumHeight(parent->height()*4/10);
     setMinimumHeight(parent->height()*4/10);
@@ -167,7 +164,7 @@ void BottomLayout::updateRobot(const int id, RobotView * const robotView){
      } else {
         stopRobotBtnGroup->button(id)->setEnabled(true);
         playRobotBtnGroup->button(id)->setEnabled(true);
-        viewPathRobotBtnGroup->button(id)->setEnabled(true);    
+        viewPathRobotBtnGroup->button(id)->setEnabled(true);
         QString pathStr = QString("");
         for(size_t j = 0; j < robotView->getRobot()->getPath().size(); j++){
             if(j != 0){
@@ -175,10 +172,7 @@ void BottomLayout::updateRobot(const int id, RobotView * const robotView){
             }
             pathStr += robotView->getRobot()->getPath().at(j)->getPoint().getName();
         }
-        qDebug() << "l ol ";
-        qDebug() << vectorPathLabel.size();
         vectorPathLabel.at(id)->setText(pathStr);
-        qDebug() << "l ol ";
     }
 }
 

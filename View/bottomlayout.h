@@ -93,7 +93,7 @@ private:
      */
     QVector<QLabel*> vectorPathLabel;
     QList<QAbstractButton*> listEnabled;
-    //QScrollArea* pathScroll;
+    QScrollArea* pathScroll;
     QVBoxLayout* columnName;
     QVBoxLayout* columnPath;
     QVBoxLayout* columnPlay;
