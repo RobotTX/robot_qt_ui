@@ -280,7 +280,7 @@ void MainWindow::initializeRobots(){
 
 void MainWindow::updateRobot(const QString ipAddress, const float posX, const float posY, const float oriZ){
 
-    float newPosX = (-map->getOrigin().getX()+posX)/map->getResolution() + ROBOT_WIDTH;
+    float newPosX = (-map->getOrigin().getX()+posX)/map->getResolution() +  ROBOT_WIDTH;
     float newPosY = map->getHeight()-(-map->getOrigin().getY()+posY)/map->getResolution()-ROBOT_WIDTH/2;
     float ori = asin(-oriZ) * 360.0 / PI + 90;
 
@@ -913,7 +913,7 @@ void MainWindow::pathSaved(bool execPath){
     std::shared_ptr<Robot> robot = selectedRobot->getRobot();
     QString pathStr = "";
 
-    for(int i = 0; i < robot->getPath().size(); i++){
+    for(size_t i = 0; i < robot->getPath().size(); i++){
         std::shared_ptr<PathPoint> pathPoint = robot->getPath().at(i);
         float oldPosX = pathPoint->getPoint().getPosition().getX();
         float oldPosY = pathPoint->getPoint().getPosition().getY();

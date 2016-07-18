@@ -103,7 +103,7 @@ LeftMenu::LeftMenu(MainWindow* _parent, std::shared_ptr<Points> const& _points, 
     connect(createPointWidget, SIGNAL(pointSaved(int, double, double, QString)), _parent, SLOT(pointSavedEvent(int, double, double, QString)));
 
     /// Menu which display the widget for the creation of a path
-    pathCreationWidget = new PathCreationWidget(_parent, *_points);
+    pathCreationWidget = new PathCreationWidget(_parent, _points);
     leftLayout->addWidget(pathCreationWidget);
 
     connect(pathCreationWidget, SIGNAL(updatePathPointToPainter(QVector<Point>&, bool)), _parent, SLOT(updatePathPointToPainter(QVector<Point>&, bool)));
