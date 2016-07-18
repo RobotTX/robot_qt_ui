@@ -143,8 +143,17 @@ bool execCommand(ros::NodeHandle n, std::vector<std::string> command){
 			if(command.size() > 4 && command.size()%3 == 1){
 
 				std::cout << "(Command system) Path received :" << std::endl;
-				for(int i = 1; i < command.size(); i+=3)
+
+				std::ofstream ofs;
+				ofs.open(path_computer_software + "Robot_Infos/path.txt", std::ofstream::out | std::ofstream::trunc);
+
+				for(int i = 1; i < command.size(); i+=3){
 					std::cout << i << " : " << command.at(i) << ", " << command.at(i+1) << " and wait for " << command.at(i+2) << std::endl;
+					ofs << command.at(i) << " " << command.at(i+1) << " " << command.at(i+2) << "\n";
+				}
+
+				ofs.close();
+
 				
 				return true;
 			} else {
@@ -160,7 +169,12 @@ bool execCommand(ros::NodeHandle n, std::vector<std::string> command){
 
 		/// Command for the robot to delete the saved path
 		case 'k':
-			std::cout << "(Command system) Deleting the path" << std::endl;
+			{
+				std::cout << "(Command system) Deleting the path" << std::endl;
+				std::ofstream ofs;
+				ofs.open(path_computer_software + "Robot_Infos/path.txt", std::ofstream::out | std::ofstream::trunc);
+				ofs.close();
+			}
 			return true;
 		break;
 
