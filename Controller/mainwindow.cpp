@@ -1,7 +1,5 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-#include "Controller/scanmetadatathread.h"
-#include "Controller/scanrobotthread.h"
 #include "Controller/scanmapthread.h"
 #include "Controller/updaterobotsthread.h"
 #include "Model/pathpoint.h"
@@ -41,6 +39,10 @@
 #include "View/customizedlineedit.h"
 #include <QRegularExpression>
 #include "View/buttonmenu.h"
+#include "View/pathpointcreationwidget.h"
+#include "View/pathpointlist.h"
+#include "View/groupview.h"
+#include "pathWidget.h"
 
 /**
  * @brief MainWindow::MainWindow
@@ -71,28 +73,27 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
     robots = std::shared_ptr<Robots>(new Robots());
     scene = new QGraphicsScene(this);
+    qDebug() << "scene rec with no item" << scene->sceneRect();
 
     graphicsView = new CustomQGraphicsView(scene, this);
+
     selectedRobot = NULL;
     scanningRobot = NULL;
     selectedPoint = NULL;
     editedPointView = NULL;
     updateRobotsThread = NULL;
-    metadataThread = NULL;
-    robotThread = NULL;
     mapThread = NULL;
 
     //create the graphic item of the map
     QPixmap pixmap = QPixmap::fromImage(map->getMapImage());
     mapPixmapItem = new MapView(pixmap, QSize(geometry().width(), geometry().height()), map, this);
-    //mapPixmapItem->centerMap();
     connect(mapPixmapItem, SIGNAL(addPathPointMapView(Point*)), this, SLOT(addPathPoint(Point*)));
     connect(mapPixmapItem, SIGNAL(homeSelected(PointView*, bool)), this, SLOT(homeSelected(PointView*, bool)));
     connect(mapPixmapItem, SIGNAL(homeEdited(PointView*, bool)), this, SLOT(homeEdited(PointView*, bool)));
-    scene->views().at(0)->centerOn(
-                (map->getRect().topLeft().x() + map->getRect().bottomRight().x()) /2,
-                (map->getRect().topLeft().y() + map->getRect().bottomRight().y()) /2);
+    qDebug() << "center" << map->getCenter();
 
+    /// centers the map
+    centerMap();
 
     //create the toolbar
     topLayout = new TopLayout(this);
@@ -108,11 +109,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     initializeRobots();
 
     scene->addItem(mapPixmapItem);
-    qDebug() << scene->sceneRect();
-    qDebug() << mapPixmapItem->pos();
-    qDebug() << graphicsView->geometry();
-    qDebug() << graphicsView->parentWidget()->size();
-    qDebug() << scene->width() << scene->height();
+    qDebug() << "scene rec" << scene->sceneRect();
+    qDebug() << "map" << mapPixmapItem->boundingRect();
+    qDebug() << "map rec" << map->getRect();
 
     graphicsView->scale(std::max(graphicsView->parentWidget()->width()/scene->width(), graphicsView->parentWidget()->height()/scene->height()),
                         std::max(graphicsView->parentWidget()->width()/scene->width(), graphicsView->parentWidget()->height()/scene->height()));
@@ -140,6 +139,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
     /// to link the map and the point information menu when a point is being edited
     connect(mapPixmapItem, SIGNAL(newCoordinates(double, double)), this, SLOT(updateCoordinates(double, double)));
+
+    /// to link the map and the path information when a path point is being edited
+    connect(mapPixmapItem, SIGNAL(newCoordinatesPathPoint(double,double)), this, SLOT(updatePathPoint(double, double)));
 
     /// to cancel the modifications on an edited point
     connect(leftMenu->getDisplaySelectedPoint()->getCancelButton(), SIGNAL(clicked(bool)), this, SLOT(cancelEvent()));
@@ -174,6 +176,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     /// to know what message to display when a user is creating a group
     connect(pointsLeftWidget, SIGNAL(messageCreationGroup(QString)), this, SLOT(setMessageCreationGroup(QString)));
 
+
     /// to know what message to display when a user is creating a path
     connect(mapPixmapItem, SIGNAL(newMessage(QString)), this, SLOT(setMessageCreationPath(QString)));
 
@@ -189,17 +192,9 @@ MainWindow::~MainWindow(){
     delete pathPainter;
     qDeleteAll(pathPointViews.begin(), pathPointViews.end());
     pathPointViews.clear();
-    /*if (updateRobotsThread != NULL && updateRobotsThread->isRunning() ) {
+    if (updateRobotsThread != NULL && updateRobotsThread->isRunning() ) {
         updateRobotsThread->requestInterruption();
         updateRobotsThread->wait();
-    }*/
-    if (metadataThread != NULL && metadataThread->isRunning() ) {
-        metadataThread->requestInterruption();
-        metadataThread->wait();
-    }
-    if (robotThread != NULL && robotThread->isRunning() ) {
-        robotThread->requestInterruption();
-        robotThread->wait();
     }
     if (mapThread != NULL && mapThread->isRunning() ) {
         mapThread->requestInterruption();
@@ -214,16 +209,89 @@ MainWindow::~MainWindow(){
 
 /**********************************************************************************************************************************/
 
-void MainWindow::updateRobot(const float posX, const float posY, const float oriZ){
+
+void MainWindow::initializeRobots(){
+
+    /// Get the list of taken robot's name from the file
+    QFile fileRead(ROBOTS_NAME_PATH);
+    fileRead.open(QIODevice::ReadOnly);
+    /// read the data serialized from the file
+    QDataStream in(&fileRead);
+    QMap<QString, QString> tmp;
+    in >> tmp;
+    robots->setRobotsNameMap(tmp);
+    fileRead.close();
+
+
+/*
+    updateRobotsThread = new UpdateRobotsThread(PORT_ROBOT_UPDATE);
+    connect(updateRobotsThread, SIGNAL(robotIsAlive(QString,QString)), this, SLOT(robotIsAliveSlot(QString,QString)));
+    updateRobotsThread->start();
+    updateRobotsThread->moveToThread(updateRobotsThread);
+*/
+
+
+    QFile fileWrite(ROBOTS_NAME_PATH);
+    fileWrite.resize(0);
+    fileWrite.open(QIODevice::WriteOnly);
+    QDataStream out(&fileWrite);
+    QMap<QString, QString> tmpMap = robots->getRobotsNameMap();
+
+    QString robotIp1 = "localhost";
+    QString robotName1 = tmpMap.value(robotIp1, "Roboty");
+
+    std::shared_ptr<Robot> robot1(new Robot(robotName1, robotIp1, this));
+    robot1->setWifi("Swaghetti Yolognaise");
+    RobotView* robotView1 = new RobotView(robot1, mapPixmapItem);
+    connect(robotView1, SIGNAL(setSelectedSignal(RobotView*)), this, SLOT(setSelectedRobot(RobotView*)));
+    robotView1->setPosition(200, 200);
+    robotView1->setParentItem(mapPixmapItem);
+    robots->add(robotView1);
+    tmpMap[robot1->getIp()] = robot1->getName();
+
+    QString robotIp2 = "192.168.4.12";
+    QString robotName2 = tmpMap.value(robotIp2, "Roboto");
+    std::shared_ptr<Robot> robot2(new Robot(robotName2, robotIp2, this));
+    robot2->setWifi("Swaghetti Yolognaise");
+    RobotView* robotView2 = new RobotView(robot2, mapPixmapItem);
+    connect(robotView2, SIGNAL(setSelectedSignal(RobotView*)), this, SLOT(setSelectedRobot(RobotView*)));
+    robotView2->setPosition(100, 100);
+    robotView2->setParentItem(mapPixmapItem);
+    robots->add(robotView2);
+    tmpMap[robot2->getIp()] = robot2->getName();
+
+    QString robotIp3 = "192.168.4.13";
+    QString robotName3 = tmpMap.value(robotIp3, "Robota");
+    std::shared_ptr<Robot> robot3(new Robot(robotName3, robotIp3, this));
+    robot3->setWifi("Swaghetti Yolognaise");
+    RobotView* robotView3 = new RobotView(robot3, mapPixmapItem);
+    connect(robotView3, SIGNAL(setSelectedSignal(RobotView*)), this, SLOT(setSelectedRobot(RobotView*)));
+    robotView3->setPosition(200, 300);
+    robotView3->setParentItem(mapPixmapItem);
+    robots->add(robotView3);
+    tmpMap[robot3->getIp()] = robot3->getName();
+
+    robots->setRobotsNameMap(tmpMap);
+    out << robots->getRobotsNameMap();
+    fileWrite.close();
+
+
+    qDebug() << "RobotsNameMap on init" << robots->getRobotsNameMap();
+}
+
+void MainWindow::updateRobot(const QString ipAddress, const float posX, const float posY, const float oriZ){
 
     float newPosX = (-map->getOrigin().getX()+posX)/map->getResolution() + ROBOT_WIDTH;
     float newPosY = map->getHeight()-(-map->getOrigin().getY()+posY)/map->getResolution()-ROBOT_WIDTH/2;
     float ori = asin(-oriZ) * 360.0 / PI + 90;
 
-    scanningRobot->setPosition(newPosX, newPosY);
-    scanningRobot->setOrientation(ori);
-
-    scene->update();
+    RobotView* rv = robots->getRobotViewByIp(ipAddress);
+    if(rv != NULL){
+        rv->setPosition(newPosX, newPosY);
+        rv->setOrientation(ori);
+    } else {
+        qDebug() << "(updateRobot) Could not find a RobotView for the robot at ip" << ipAddress;
+    }
 }
 
 void MainWindow::connectToRobot(){
@@ -241,42 +309,25 @@ void MainWindow::connectToRobot(){
                     QString ip = selectedRobot->getRobot()->getIp();
                     qDebug() << "Trying to connect to : " << ip;
 
-                    if(selectedRobot->getRobot()->sendCommand(QString("e ") + QString::number(PORT_MAP_METADATA) + " " + QString::number(PORT_ROBOT_POS) + " " +QString::number(PORT_MAP))){
+                    selectedRobot->getRobot()->resetCommandAnswer();
+                    if(selectedRobot->getRobot()->sendCommand(QString("e"))){
 
                         selectedRobotWidget->getScanBtn()->setText("Stop to scan");
                         clearNewMap();
                         selectedRobotWidget->disable();
                         selectedRobotWidget->getScanBtn()->setEnabled(true);
-                        bottomLayout->disable();
-                        setGraphicItemsState(GraphicItemState::NO_EVENT);
-                        disableMenu();
-
-                        metadataThread = new ScanMetadataThread(ip, PORT_MAP_METADATA);
-                        robotThread = new ScanRobotThread(ip, PORT_ROBOT_POS);
-                        //mapThread = new ScanMapThread(ip, PORT_MAP);
-
-                        connect(metadataThread, SIGNAL(valueChangedMetadata(int, int, float, float, float))
-                                , this , SLOT(updateMetadata(int, int, float, float, float)));
-
-                        connect(robotThread, SIGNAL(valueChangedRobot(float, float, float))
-                                ,this ,SLOT(updateRobot(float, float, float)));
-
-                        //connect(mapThread, SIGNAL(valueChangedMap(QByteArray))
-                                //, this , SLOT(updateMap(QByteArray)));
-
-                        metadataThread->start();
-                        metadataThread->moveToThread(metadataThread);
-
-                        robotThread->start();
-                        robotThread->moveToThread(robotThread);
-
-                        //mapThread->start();
-                        //mapThread->moveToThread(mapThread);
-
+                        setEnableAll(false, GraphicItemState::NO_EVENT);
                         scanningRobot = selectedRobot;
+
+                        mapThread = new ScanMapThread(ip, PORT_MAP);
+                        connect(mapThread, SIGNAL(valueChangedMap(QByteArray)),
+                                this , SLOT(updateMap(QByteArray)));
+                        mapThread->start();
+                        mapThread->moveToThread(mapThread);
+
                         topLayout->setLabel(TEXT_COLOR_SUCCESS, "Scanning a new map");
 
-                        //selectedRobot->getRobot()->resetCommandAnswer();
+                        selectedRobot->getRobot()->resetCommandAnswer();
                     } else {
                         selectedRobotWidget->getScanBtn()->setChecked(false);
                         topLayout->setLabel(TEXT_COLOR_DANGER, "Failed to start to scan a map, please try again");
@@ -289,6 +340,7 @@ void MainWindow::connectToRobot(){
                 break;
             }
         } else {
+            selectedRobot->getRobot()->resetCommandAnswer();
             if(selectedRobot->getRobot()->sendCommand("f")){
                 QString answer = selectedRobot->getRobot()->waitAnswer();
                 QStringList answerList = answer.split(QRegExp("[ ]"), QString::SkipEmptyParts);
@@ -304,16 +356,13 @@ void MainWindow::connectToRobot(){
                         selectedRobotWidget->setSelectedRobot(selectedRobot);
                         selectedRobotWidget->show();
 
-                        bottomLayout->enable();
-                        setGraphicItemsState(GraphicItemState::NO_STATE);
-                        enableMenu();
+                        setEnableAll(true);
                         topLayout->setLabel(TEXT_COLOR_SUCCESS, "Stopped scanning the map");
                     } else {
                         selectedRobotWidget->getScanBtn()->setChecked(true);
                         topLayout->setLabel(TEXT_COLOR_DANGER, "Failed to stop the scanning, please try again");
                     }
                 }
-                selectedRobot->getRobot()->resetCommandAnswer();
 
             } else {
                 qDebug() << "Could not disconnect";
@@ -323,44 +372,10 @@ void MainWindow::connectToRobot(){
         }
     } else {
 
-         topLayout->setLabelDelay(TEXT_COLOR_DANGER, "You must first click a robot on the map to establish a connection",2500);
+        topLayout->setLabelDelay(TEXT_COLOR_DANGER, "You must first click a robot on the map to establish a connection",2500);
 
         qDebug() << "Select a robot first";
     }
-}
-
-void MainWindow::initializeRobots(){
-
-    /*updateRobotsThread = new UpdateRobotsThread(PORT_ROBOT_UPDATE);
-    connect(updateRobotsThread, SIGNAL(robotIsAlive(QString,QString)), this, SLOT(robotIsAliveSlot(QString,QString)));
-    updateRobotsThread->start();
-    updateRobotsThread->moveToThread(updateRobotsThread);*/
-
-
-    std::shared_ptr<Robot> robot1(new Robot("Roboty", "localhost", PORT_CMD, this));
-    robot1->setWifi("Swaghetti Yolognaise");
-    RobotView* robotView1 = new RobotView(robot1, mapPixmapItem);
-    connect(robotView1, SIGNAL(setSelectedSignal(RobotView*)), this, SLOT(setSelectedRobot(RobotView*)));
-    robotView1->setPosition(200, 200);
-    robotView1->setParentItem(mapPixmapItem);
-    robots->add(robotView1);
-
-    std::shared_ptr<Robot> robot2(new Robot("Roboto", "192.168.4.176", PORT_CMD, this));
-    robot2->setWifi("Swaghetti Yolognaise");
-    RobotView* robotView2 = new RobotView(robot2, mapPixmapItem);
-    connect(robotView2, SIGNAL(setSelectedSignal(RobotView*)), this, SLOT(setSelectedRobot(RobotView*)));
-    robotView2->setPosition(100, 100);
-    robotView2->setParentItem(mapPixmapItem);
-    robots->add(robotView2);
-
-    std::shared_ptr<Robot> robot3(new Robot("Robota", "192.168.4.236", PORT_CMD, this));
-    robot3->setWifi("Swaghetti Yolognaise");
-    RobotView* robotView3 = new RobotView(robot3, mapPixmapItem);
-    connect(robotView3, SIGNAL(setSelectedSignal(RobotView*)), this, SLOT(setSelectedRobot(RobotView*)));
-    robotView3->setPosition(200, 300);
-    robotView3->setParentItem(mapPixmapItem);
-    robots->add(robotView3);
-
 }
 
 void MainWindow::stopSelectedRobot(int robotNb){
@@ -371,13 +386,14 @@ void MainWindow::stopSelectedRobot(int robotNb){
         switch (ret) {
             case QMessageBox::Ok:
                 /// if the command is succesfully sent to the robot, we apply the change
-                if(robots->getRobotsVector().at(robotNb)->getRobot()->sendCommand(QString("d"))){
+                robots->getRobotsVector().at(robotNb)->getRobot()->resetCommandAnswer();
+                if(robots->getRobotsVector().at(robotNb)->getRobot()->sendCommand(QString("k"))){
                     QString answer = robots->getRobotsVector().at(robotNb)->getRobot()->waitAnswer();
                     QStringList answerList = answer.split(QRegExp("[ ]"), QString::SkipEmptyParts);
                     if(answerList.size() > 1){
                         QString cmd = answerList.at(0);
                         bool success = (answerList.at(1).compare("done") == 0);
-                        if((cmd.compare("d") == 0 && success) || answerList.at(0).compare("1") == 0){
+                        if((cmd.compare("k") == 0 && success) || answerList.at(0).compare("1") == 0){
                             clearPath(robotNb);
                             if(!robots->getRobotsVector().at(robotNb)->getRobot()->getName().compare(selectedRobot->getRobot()->getName())){
                                 hideAllWidgets();
@@ -409,6 +425,7 @@ void MainWindow::playSelectedRobot(int robotNb){
     if(robot->isPlayingPath()){
         qDebug() << "pause path on robot " << robotNb << " : " << robot->getName();
         /// if the command is succesfully sent to the robot, we apply the change
+        robot->resetCommandAnswer();
         if(robot->sendCommand(QString("d"))){
             QString answer = robot->waitAnswer();
             QStringList answerList = answer.split(QRegExp("[ ]"), QString::SkipEmptyParts);
@@ -427,31 +444,18 @@ void MainWindow::playSelectedRobot(int robotNb){
         }
     } else {
         qDebug() << "play path on robot " << robotNb << " : " << robot->getName();
-        std::shared_ptr<PathPoint> pathPoint = robot->getPath().at(0);
-        float oldPosX = pathPoint->getPoint().getPosition().getX();
-        float oldPosY = pathPoint->getPoint().getPosition().getY();
-        qDebug() << "Go to next point :" << oldPosX << oldPosY;
-        qDebug() << "ok1" << (float) oldPosX;
-        qDebug() << "ok2" << (float) (oldPosX - ROBOT_WIDTH);
-        qDebug() << "ok3" << (float) ((oldPosX - ROBOT_WIDTH) * map->getResolution());
-        qDebug() << "ok4" << (float) ((oldPosX - ROBOT_WIDTH) * map->getResolution() + map->getOrigin().getX());
-
-        float newPosX = (oldPosX - ROBOT_WIDTH) * map->getResolution() + map->getOrigin().getX();
-        float newPosY = (-oldPosY + map->getHeight() - ROBOT_WIDTH/2) * map->getResolution() + map->getOrigin().getY();
-        qDebug() << "Go to next point :" << newPosX << newPosY;
-        int waitTime = -1;
-        if(pathPoint->getAction() == PathPoint::WAIT){
-            waitTime = pathPoint->getWaitTime();
-        }
 
         /// if the command is succesfully sent to the robot, we apply the change
-        if(robot->sendCommand(QString("c ") + QString::number(newPosX) + " "  + QString::number(newPosY) + " "  + QString::number(waitTime))){
+        robot->resetCommandAnswer();
+        if(robot->sendCommand(QString("j"))){
+            qDebug() << "Let's wait";
             QString answer = robot->waitAnswer();
+            qDebug() << "Done waiting";
             QStringList answerList = answer.split(QRegExp("[ ]"), QString::SkipEmptyParts);
             if(answerList.size() > 1){
                 QString cmd = answerList.at(0);
                 bool success = (answerList.at(1).compare("done") == 0);
-                if((cmd.compare("c") == 0 && success) || answerList.at(0).compare("1") == 0){
+                if((cmd.compare("j") == 0 && success) || answerList.at(0).compare("1") == 0){
                     robot->setPlayingPath(1);
                     bottomLayout->getPlayRobotBtnGroup()->button(robotNb)->setIcon(QIcon(":/icons/pause.png"));
                     topLayout->setLabel(TEXT_COLOR_SUCCESS, "Path playing");
@@ -503,7 +507,7 @@ void MainWindow::editSelectedRobot(RobotView* robotView){
     editSelectedRobotWidget->setSelectedRobot(selectedRobot);
 
     editSelectedRobotWidget->show();
-    switchFocus(selectedRobot->getRobot()->getName(),editSelectedRobotWidget);
+    switchFocus(selectedRobot->getRobot()->getName(), editSelectedRobotWidget, MainWindow::WidgetType::ROBOT);
 
     leftMenu->getReturnButton()->setEnabled(false);
     leftMenu->getReturnButton()->setToolTip("Please save or discard your modifications before navigating the menu again.");
@@ -524,7 +528,7 @@ void MainWindow::setSelectedRobot(RobotView* robotView){
         robots->setSelected(robotView);
         selectedRobotWidget->setSelectedRobot(selectedRobot);
         selectedRobotWidget->show();
-        switchFocus(robotView->getRobot()->getName(),selectedRobotWidget);
+        switchFocus(robotView->getRobot()->getName(), selectedRobotWidget, MainWindow::WidgetType::ROBOT);
 
   //  }
 }
@@ -533,7 +537,7 @@ void MainWindow::robotBtnEvent(void){
     qDebug() << "robotBtnEvent called";
     leftMenuWidget->hide();
     robotsLeftWidget->show();
-    switchFocus("Robots", robotsLeftWidget);
+    switchFocus("Robots", robotsLeftWidget, MainWindow::WidgetType::ROBOTS);
 }
 
 
@@ -560,21 +564,38 @@ void MainWindow::editSelecRobotBtnEvent(){
 
 void MainWindow::addPathSelecRobotBtnEvent(){
     qDebug() << "addPathSelecRobotBtnEvent called on robot " << selectedRobot->getRobot()->getName();
-    setMessageTop(TEXT_COLOR_INFO, "Click white points of the map to add new points to the path of " + selectedRobot->getRobot()->getName());
+    setMessageTop(TEXT_COLOR_INFO, "Click white points of the map to add new points to the path of " +
+                  selectedRobot->getRobot()->getName() + "\nAlternatively you can click the \"+\" button to add an existing point to your path");
     hideAllWidgets();
     pathPainter->reset();
     pathCreationWidget->show();
     pathCreationWidget->setSelectedRobot(selectedRobot->getRobot());
-    setGraphicItemsState(GraphicItemState::CREATING_PATH, true);
-    bottomLayout->disable();
-    switchFocus(selectedRobot->getRobot()->getName(),pathCreationWidget);
+
+    setEnableAll(false, GraphicItemState::CREATING_PATH, true, true);
+    switchFocus(selectedRobot->getRobot()->getName(), pathCreationWidget, MainWindow::WidgetType::ROBOT);
+
+    /// displays the points in order to make them available for the edition of the path,
+    ///  we have to keep track of those which were hidden so we can hide them again once the edition is finished
+
+    for(size_t j = 0; j < pointViews->count(); j++){
+        GroupView* group = pointViews->getGroups().at(j);
+        for(size_t i = 0; i < group->getPointViews().size(); i++){
+            PointView* pointView = group->getPointViews().at(i);
+            if(!pointView->getPoint()->isDisplayed()){
+                qDebug() << pointView->getPoint()->getName();
+                pointViewsToDisplay.push_back(pointView);
+                pointView->show();
+            }
+        }
+    }
+
 }
 
 void MainWindow::setSelectedRobotNoParent(QAbstractButton *button){
 
-   // switchFocus("Robot", selectedRobotWidget);
+    // switchFocus("Robot", selectedRobotWidget);
     resetFocus();
-   setSelectedRobot(robots->getRobotViewByName(button->text()));
+    setSelectedRobot(robots->getRobotViewByName(button->text()));
 }
 
 void MainWindow::setSelectedRobot(QAbstractButton *button){
@@ -625,7 +646,7 @@ void MainWindow::backRobotBtnEvent(){
 void MainWindow::editRobotBtnEvent(){
     qDebug() << "editRobotBtnEvent called";
 
-   editSelectedRobot(robots->getRobotViewByName(robotsLeftWidget->getBtnGroup()->getBtnGroup()->checkedButton()->text()));
+    editSelectedRobot(robots->getRobotViewByName(robotsLeftWidget->getBtnGroup()->getBtnGroup()->checkedButton()->text()));
 }
 
 void MainWindow::checkRobotBtnEventMenu(){
@@ -655,7 +676,7 @@ void MainWindow::cancelEditSelecRobotBtnEvent(){
     qDebug() << "cancelEditSelecRobotBtnEvent called";
 
     //robotsLeftWidget->setEditBtnStatus(false);
-   // robotsLeftWidget->setCheckBtnStatus(false);
+    //robotsLeftWidget->setCheckBtnStatus(false);
     hideAllWidgets();
 
     setGraphicItemsState(GraphicItemState::NO_STATE);
@@ -670,10 +691,16 @@ void MainWindow::robotSavedEvent(){
     bool isOK = false;
     int change = 0;
 
-    /// if the command is succesfully sent to the robot, we apply the change
+    if ( editSelectedRobotWidget->getPathChanged())
+    {
+        change++;
+        isOK = true;
+    }
+    /// if we changed the name
     if(selectedRobot->getRobot()->getName().compare(editSelectedRobotWidget->getNameEdit()->text()) != 0){
         qDebug() << "Name has been modified";
-        if(selectedRobot->getRobot()->sendCommand(QString("a ") + editSelectedRobotWidget->getNameEdit()->text())){
+        selectedRobot->getRobot()->resetCommandAnswer();
+        if(selectedRobot->getRobot()->sendCommand(QString("a \"") + editSelectedRobotWidget->getNameEdit()->text() + "\"")){
             QString answer = selectedRobot->getRobot()->waitAnswer();
             QStringList answerList = answer.split(QRegExp("[ ]"), QString::SkipEmptyParts);
             if(answerList.size() > 1){
@@ -682,6 +709,19 @@ void MainWindow::robotSavedEvent(){
                 if((cmd.compare("a") == 0 && success) || answerList.at(0).compare("1") == 0){
                     isOK = true;
                     change++;
+
+                    QMap<QString, QString> tmp = robots->getRobotsNameMap();
+                    tmp[selectedRobot->getRobot()->getIp()] = editSelectedRobotWidget->getNameEdit()->text();
+                    emit changeCmdThreadRobotName(editSelectedRobotWidget->getNameEdit()->text());
+                    robots->setRobotsNameMap(tmp);
+
+                    QFile fileWrite(ROBOTS_NAME_PATH);
+                    fileWrite.resize(0);
+                    fileWrite.open(QIODevice::WriteOnly);
+                    QDataStream out(&fileWrite);
+                    out << robots->getRobotsNameMap();
+                    fileWrite.close();
+                    qDebug() << "RobotsNameMap updated" << robots->getRobotsNameMap();
                 } else {
                     isOK = false;
                     setMessageTop(TEXT_COLOR_DANGER, "Failed to edit the name of the robot");
@@ -690,11 +730,14 @@ void MainWindow::robotSavedEvent(){
             selectedRobot->getRobot()->resetCommandAnswer();
         }
     }
+
+    /// if we changed the wifi
     if (editSelectedRobotWidget->getWifiPwdEdit()->text() != "......"){
         qDebug() << "Wifi has been modified";
-        if(selectedRobot->getRobot()->sendCommand(QString("b ")
-                  + editSelectedRobotWidget->getWifiNameEdit()->text() + " "
-                  + editSelectedRobotWidget->getWifiPwdEdit()->text())){
+        selectedRobot->getRobot()->resetCommandAnswer();
+        if(selectedRobot->getRobot()->sendCommand(QString("b \"")
+                  + editSelectedRobotWidget->getWifiNameEdit()->text() + "\" \""
+                  + editSelectedRobotWidget->getWifiPwdEdit()->text() + "\"")){
 
             QString answer2 = selectedRobot->getRobot()->waitAnswer();
             QStringList answerList2 = answer2.split(QRegExp("[ ]"), QString::SkipEmptyParts);
@@ -713,6 +756,7 @@ void MainWindow::robotSavedEvent(){
         }
     }
 
+    /// if we changed the home
     PointView* pointView = editSelectedRobotWidget->getHome();
     if(pointView != NULL && !(&(*(pointView->getPoint())) == &(*(selectedRobot->getRobot()->getHome())))){
         qDebug() << "Home has been modified";
@@ -770,6 +814,7 @@ void MainWindow::robotSavedEvent(){
         }
     }
 
+    /// finally we edit
     if(editSelectedRobotWidget->isVisible()){
         if(change > 0){
             if (isOK){
@@ -779,11 +824,6 @@ void MainWindow::robotSavedEvent(){
 
                 editSelectedRobotWidget->editName();
 
-
-                //robotsLeftWidget->setEditBtnStatus(false);
-                //robotsLeftWidget->setCheckBtnStatus(false);
-              //  editSelectedRobotWidget->hide();
-
                 setGraphicItemsState(GraphicItemState::NO_STATE);
 
                 robotsLeftWidget->updateRobots(robots);
@@ -791,6 +831,9 @@ void MainWindow::robotSavedEvent(){
 
                 selectedRobotWidget->setSelectedRobot(selectedRobot );
                 selectedRobotWidget->show();
+                if(editSelectedRobotWidget->isFirstConnection()){
+                    setEnableAll(true);
+                }
                 setMessageTop(TEXT_COLOR_SUCCESS, "Robot successfully edited");
                 qDebug() << "Robot successfully edited";
             }
@@ -828,7 +871,12 @@ void MainWindow::setCheckedRobot(QString name){
 
 void MainWindow::editTmpPathPointSlot(int id, Point* point, int nbWidget){
     qDebug() << "editTmpPathPointSlot called : " << id << point->getName() << nbWidget;
+
     editedPointView = NULL;
+
+    setMessageTop(TEXT_COLOR_INFO, "Drag the selected point or click the map and click \"Save changes\" to modify the path of your robot");
+    leftMenu->setEnableReturnCloseButtons(false);
+    pathCreationWidget->getActionButtons()->setEnable(false);
 
     QVector<PointView*> pointViewVector = mapPixmapItem->getPathCreationPoints();
     for(int i = 0; i < pointViewVector.size(); i++){
@@ -837,23 +885,28 @@ void MainWindow::editTmpPathPointSlot(int id, Point* point, int nbWidget){
     }
 
     if(mapPixmapItem->getTmpPointView()->getPoint()->comparePos(point->getPosition().getX(), point->getPosition().getY()))
-        editedPointView = mapPixmapItem->getTmpPointView();  
+        editedPointView = mapPixmapItem->getTmpPointView();
 
     if(editedPointView == NULL){
         qDebug() << "(Error editTmpPathPointSlot) No pointview found to edit";
     } else {
         qDebug() << "Pointview found";
-        editedPointView->setPixmap(PointView::PixmapType::HOVER);
+        /// set by hand in order to keep the colors consistent while editing the point and after
+        editedPointView->QGraphicsPixmapItem::setPixmap(QPixmap(PIXMAP_HOVER));
+        editedPointView->setType(PointView::PixmapType::HOVER);
+
         if(nbWidget == 1){
             editedPointView->setFlag(QGraphicsItem::ItemIsMovable);
             setGraphicItemsState(GraphicItemState::NO_EVENT, false);
             editedPointView->setState(GraphicItemState::EDITING);
+            mapPixmapItem->setState(GraphicItemState::EDITING);
         } else if(nbWidget > 1){
             mapPixmapItem->addPathPoint(editedPointView);
             editedPointView = mapPixmapItem->getPathCreationPoints().last();
             editedPointView->setFlag(QGraphicsItem::ItemIsMovable);
             setGraphicItemsState(GraphicItemState::NO_EVENT, false);
             editedPointView->setState(GraphicItemState::EDITING);
+            mapPixmapItem->setState(GraphicItemState::EDITING);
         } else {
             qDebug() << "(Error editTmpPathPointSlot) Not supposed to be here";
         }
@@ -863,26 +916,69 @@ void MainWindow::editTmpPathPointSlot(int id, Point* point, int nbWidget){
 void MainWindow::pathSaved(bool execPath){
     qDebug() << "pathSaved called" << execPath;
 
-    hideAllWidgets();
-    setMessageTop(TEXT_COLOR_SUCCESS, "Path saved");
+    std::shared_ptr<Robot> robot = selectedRobot->getRobot();
+    QString pathStr = "";
 
-    bottomLayout->updateRobot(robots->getRobotId(selectedRobot->getRobot()->getName()), selectedRobot);
+    for(int i = 0; i < robot->getPath().size(); i++){
+        std::shared_ptr<PathPoint> pathPoint = robot->getPath().at(i);
+        float oldPosX = pathPoint->getPoint().getPosition().getX();
+        float oldPosY = pathPoint->getPoint().getPosition().getY();
 
-    selectedRobotWidget->setSelectedRobot(selectedRobot);
-    if(execPath){
-        int robotNb = -1;
-        for(int i = 0; i < bottomLayout->getPlayRobotBtnGroup()->buttons().size(); i++){
-            if(bottomLayout->getRobotBtnGroup()->button(i)->text().compare(selectedRobot->getRobot()->getName()) == 0){
-                robotNb = i;
-                qDebug() << "robotNb :" << robotNb;
+        float newPosX = (oldPosX - ROBOT_WIDTH) * map->getResolution() + map->getOrigin().getX();
+        float newPosY = (-oldPosY + map->getHeight() - ROBOT_WIDTH/2) * map->getResolution() + map->getOrigin().getY();
+        int waitTime = -1;
+        if(pathPoint->getAction() == PathPoint::WAIT){
+            waitTime = pathPoint->getWaitTime();
+        }
+        pathStr += + "\"" + QString::number(newPosX) + "\" \"" + QString::number(newPosY) + "\" \"" + QString::number(waitTime)+ "\" ";
+    }
+
+    qDebug() << pathStr;
+    /// if the command is succesfully sent to the robot, we apply the change
+    robot->resetCommandAnswer();
+    if(robot->sendCommand(QString("i ") + pathStr)){
+        qDebug() << "Let's wait";
+        QString answer = robot->waitAnswer();
+        qDebug() << "Done waiting";
+        QStringList answerList = answer.split(QRegExp("[ ]"), QString::SkipEmptyParts);
+        if(answerList.size() > 1){
+            QString cmd = answerList.at(0);
+            bool success = (answerList.at(1).compare("done") == 0);
+            if((cmd.compare("i") == 0 && success) || answerList.at(0).compare("1") == 0){
+                /// we hide the points that we displayed for the edition of the path
+                for(size_t i = 0; i < pointViewsToDisplay.size(); i++)
+                    pointViewsToDisplay.at(i)->hide();
+                pointViewsToDisplay.clear();
+
+                setEnableAll(true);
+
+                hideAllWidgets();
+                setMessageTop(TEXT_COLOR_SUCCESS, "Path saved");
+
+                bottomLayout->updateRobot(robots->getRobotId(selectedRobot->getRobot()->getName()), selectedRobot);
+
+                selectedRobotWidget->setSelectedRobot(selectedRobot);
+                if(execPath){
+                    int robotNb = -1;
+                    for(int i = 0; i < bottomLayout->getPlayRobotBtnGroup()->buttons().size(); i++){
+                        if(bottomLayout->getRobotBtnGroup()->button(i)->text().compare(selectedRobot->getRobot()->getName()) == 0){
+                            robotNb = i;
+                            qDebug() << "robotNb :" << robotNb;
+                        }
+                    }
+                    if(robotNb >= 0)
+                        playSelectedRobot(robotNb);
+                    else
+                        qDebug() << "No robot to play this path";
+                }
+                editSelectedRobotWidget->setPathChanged(true);
+                topLayout->setLabel(TEXT_COLOR_SUCCESS, "Path saved");
+                backEvent();
+            } else {
+                topLayout->setLabel(TEXT_COLOR_DANGER, "Path failed to be saved, please try again");
             }
         }
-        if(robotNb >= 0)
-            playSelectedRobot(robotNb);
-        else
-            qDebug() << "No robot to play this path";
     }
-    backEvent();
 }
 
 void MainWindow::addPathPoint(Point* point){
@@ -895,8 +991,8 @@ void MainWindow::addPathPoint(PointView* pointView){
     pathCreationWidget->addPathPoint(&(*(pointView->getPoint())));
 }
 
-void MainWindow::updatePathPointToPainter(QVector<Point>* pointVector){
-    pathPainter->updatePath(*pointVector);
+void MainWindow::updatePathPointToPainter(QVector<Point> &pointVector, bool save){
+    pathPainter->updatePath(pointVector, save);
 }
 
 void MainWindow::stopPathCreation(){
@@ -927,11 +1023,19 @@ void MainWindow::hidePathCreationWidget(){
 
 void MainWindow::saveTmpEditPathPointSlot(void){
     qDebug() << "saveTmpEditPathPointSlot called";
-    pathCreationWidget->applySavePathPoint(editedPointView->getPoint()->getPosition().getX(), editedPointView->getPoint()->getPosition().getY());
-    editedPointView->setFlag(QGraphicsItem::ItemIsMovable, false);
-    setGraphicItemsState(GraphicItemState::CREATING_PATH, false);
 
+    pathCreationWidget->getActionButtons()->setEnable(true);
+    setEnableAll(false, GraphicItemState::CREATING_PATH, false, true);
+
+    pathCreationWidget->applySavePathPoint(editedPointView->getPoint()->getPosition().getX(), editedPointView->getPoint()->getPosition().getY(), true);
+
+    editedPointView->setFlag(QGraphicsItem::ItemIsMovable, false);
     editedPointView = NULL;
+
+    setMessageTop(TEXT_COLOR_SUCCESS, "You have successfully modified the path of " + selectedRobot->getRobot()->getName());
+    delay(2500);
+    setMessageTop(TEXT_COLOR_INFO, "Click white points of the map to add new points to the path of " +
+                  selectedRobot->getRobot()->getName() + "\nAlternatively you can click the \"+\" button to add an existing point to your path");
 }
 
 
@@ -964,16 +1068,13 @@ void MainWindow::selectHomeEvent(){
         } else {
             selectedRobotWidget->getHomeBtn()->setEnabled(true);
         }
-        bottomLayout->disable();
-        setGraphicItemsState(GraphicItemState::SELECTING_HOME);
-        disableMenu();
+        setEnableAll(false, GraphicItemState::SELECTING_HOME);
     } else {
         setMessageTop(TEXT_COLOR_NORMAL,"");
         selectedRobotWidget->getHomeBtn()->setText("Add home");
         selectedRobotWidget->enable();
-        bottomLayout->enable();
-        setGraphicItemsState(GraphicItemState::NO_STATE);
-        enableMenu();
+        setEnableAll(true);
+
     }*/
 }
 
@@ -984,9 +1085,7 @@ void MainWindow::editHomeEvent(){
         editSelectedRobotWidget->getHomeBtn()->setText("Cancel");
         editSelectedRobotWidget->disableAll();
         editSelectedRobotWidget->getHomeBtn()->setEnabled(true);
-        bottomLayout->disable();
-        setGraphicItemsState(GraphicItemState::EDITING_HOME);
-        disableMenu();
+        setEnableAll(false, GraphicItemState::EDITING_HOME);
     } else {
         setMessageTop(TEXT_COLOR_NORMAL,"");
         if(selectedRobot->getRobot()->getHome() != NULL){
@@ -995,9 +1094,7 @@ void MainWindow::editHomeEvent(){
             editSelectedRobotWidget->getHomeBtn()->setText("Add home");
         }
         editSelectedRobotWidget->enableAll();
-        bottomLayout->enable();
-        setGraphicItemsState(GraphicItemState::NO_STATE);
-        enableMenu();
+        setEnableAll(true);
     }
 }
 
@@ -1054,9 +1151,7 @@ void MainWindow::homeSelected(PointView* pointView, bool temporary){
 
                 //selectedRobotWidget->getHomeBtn()->setText("Select a home");
                 selectedRobotWidget->enable();
-                bottomLayout->enable();
-                setGraphicItemsState(GraphicItemState::NO_STATE);
-                enableMenu();
+                setEnableAll(true);
                 hideAllWidgets();
                 selectedRobotWidget->setSelectedRobot(selectedRobot);
                 selectedRobotWidget->show();
@@ -1077,9 +1172,7 @@ void MainWindow::homeEdited(PointView* pointView, bool temporary){
 
     editSelectedRobotWidget->getHomeBtn()->setText(pointView->getPoint()->getName());
     editSelectedRobotWidget->enableAll();
-    bottomLayout->enable();
-    setGraphicItemsState(GraphicItemState::NO_EVENT);
-    enableMenu();
+    setEnableAll(true, GraphicItemState::NO_EVENT);
 }
 
 void MainWindow::showHome(){
@@ -1103,6 +1196,20 @@ void MainWindow::showHome(){
 
         pointView->show();
     }
+    RobotView* robotView =  robots->getRobotViewByName(selectedRobot->getRobot()->getName());
+    /// If the robot has a path, we display it, otherwise we show the button to add the path
+    if(robotView->getRobot()->getPath().size() > 0){
+       // addPathBtn->hide();
+
+        editSelectedRobotWidget->getPathWidget()->setSelectedRobot(robotView);
+        editSelectedRobotWidget->getPathWidget()->show();
+        editSelectedRobotWidget->getAddPathBtn()->hide();
+    } else {
+       // addPathBtn->show();
+        editSelectedRobotWidget->getPathWidget()->hide();
+        editSelectedRobotWidget->getAddPathBtn()->show();
+    }
+
 }
 
 void MainWindow::hideHome(void){
@@ -1128,11 +1235,6 @@ void MainWindow::goHomeBtnEvent(){
     qDebug() << "go home robot " << selectedRobot->getRobot()->getName() << (selectedRobot->getRobot()->getHome() == NULL);
     float oldPosX = selectedRobot->getRobot()->getHome()->getPosition().getX();
     float oldPosY = selectedRobot->getRobot()->getHome()->getPosition().getY();
-    qDebug() << "Go to next point :" << oldPosX << oldPosY;
-    qDebug() << "ok1" << (float) oldPosX;
-    qDebug() << "ok2" << (float) (oldPosX - ROBOT_WIDTH);
-    qDebug() << "ok3" << (float) ((oldPosX - ROBOT_WIDTH) * map->getResolution());
-    qDebug() << "ok4" << (float) ((oldPosX - ROBOT_WIDTH) * map->getResolution() + map->getOrigin().getX());
 
     float newPosX = (oldPosX - ROBOT_WIDTH) * map->getResolution() + map->getOrigin().getX();
     float newPosY = (-oldPosY + map->getHeight() - ROBOT_WIDTH/2) * map->getResolution() + map->getOrigin().getY();
@@ -1140,7 +1242,8 @@ void MainWindow::goHomeBtnEvent(){
     int waitTime = -1;
 
     /// if the command is succesfully sent to the robot, we apply the change
-    if(selectedRobot->getRobot()->sendCommand(QString("c ") + QString::number(newPosX) + " "  + QString::number(newPosY) + " "  + QString::number(waitTime))){
+    selectedRobot->getRobot()->resetCommandAnswer();
+    if(selectedRobot->getRobot()->sendCommand(QString("c \"") + QString::number(newPosX) + "\" \""  + QString::number(newPosY) + "\" \""  + QString::number(waitTime) + "\"")){
         QString answer = selectedRobot->getRobot()->waitAnswer();
         QStringList answerList = answer.split(QRegExp("[ ]"), QString::SkipEmptyParts);
         if(answerList.size() > 1){
@@ -1164,13 +1267,13 @@ void MainWindow::robotIsAliveSlot(QString hostname,QString ip){
     RobotView* rv = robots->getRobotViewByIp(ip);
     if(rv != NULL){
         qDebug() << "Robot" << hostname << "at ip" << ip << "is still alive";
-        /// TODO reset compteur
         emit ping();
         /// TODO see for changes (battery, name, wifi)
+
     } else {
         qDebug() << "Robot" << hostname << "at ip" << ip << "just connected";
 
-        std::shared_ptr<Robot> robot(new Robot(hostname, ip, PORT_CMD, this));
+        std::shared_ptr<Robot> robot(new Robot(hostname, ip, this));
         robot->setWifi("Swaghetti Yolognaise");
         RobotView* robotView = new RobotView(robot, mapPixmapItem);
         connect(robotView, SIGNAL(setSelectedSignal(RobotView*)), this, SLOT(setSelectedRobot(RobotView*)));
@@ -1179,6 +1282,31 @@ void MainWindow::robotIsAliveSlot(QString hostname,QString ip){
         robots->add(robotView);
         bottomLayout->addRobot(robotView);
         robotsLeftWidget->updateRobots(robots);
+
+
+
+        /// TODO check if first connection
+        if(ip.endsWith(".7.1") || ip.endsWith(".7.2") || ip.endsWith(".7.3")){
+            selectedRobot = robotView;
+            switchFocus(hostname, editSelectedRobotWidget, MainWindow::WidgetType::ROBOT);
+            editSelectedRobotWidget->setSelectedRobot(selectedRobot, true);
+            hideAllWidgets();
+            editSelectedRobotWidget->show();
+            leftMenu->show();
+            setEnableAll(false, GraphicItemState::NO_EVENT);
+        } else {
+            QMap<QString, QString> tmp = robots->getRobotsNameMap();
+            tmp[ip] = hostname;
+            robots->setRobotsNameMap(tmp);
+
+            QFile fileWrite(ROBOTS_NAME_PATH);
+            fileWrite.resize(0);
+            fileWrite.open(QIODevice::WriteOnly);
+            QDataStream out(&fileWrite);
+            out << robots->getRobotsNameMap();
+            fileWrite.close();
+            qDebug() << "RobotsNameMap updated" << robots->getRobotsNameMap();
+        }
     }
 }
 
@@ -1186,17 +1314,26 @@ void MainWindow::robotIsDeadSlot(QString hostname,QString ip){
     qDebug() << "Robot" << hostname << "at ip" << ip << "... He is dead, Jim!!";
     setMessageTop(TEXT_COLOR_DANGER, QString("Robot " + hostname + " at ip " + ip +" disconnected."));
 
+    qDebug() << "Available IPs";
+    for(int i = 0; i < robots->getRobotsVector().size(); i++){
+        qDebug() << robots->getRobotsVector().at(i)->getRobot()->getIp();
+    }
+
     RobotView* rv = robots->getRobotViewByIp(ip);
     int id = robots->getRobotId(hostname);
     qDebug() << "Dead robot's id :" << id;
+    qDebug() << "rv is null ? :" << (rv == NULL);
+    qDebug() << "Robot is null ? :" << (rv->getRobot() == NULL);
 
 
-    /// we stop the cmd thread
-    rv->getRobot()->stopCmdThread();
+    /// we stop the robots threads
+    rv->getRobot()->stopThreads();
+    qDebug() << "robots threads cleaned";
 
     /// if the robot had a home, make the point a normal point
     if(rv->getRobot()->getHome() != NULL)
         rv->getRobot()->getHome()->setHome(false, "");
+    qDebug() << "home cleaned";
 
     /// if selected => if one of this robot related menu is open
     if(selectedRobot != NULL && selectedRobot->getRobot()->getIp().compare(ip) == 0){
@@ -1224,10 +1361,7 @@ void MainWindow::robotIsDeadSlot(QString hostname,QString ip){
         selectedRobotWidget->enable();
 
         hideAllWidgets();
-
-        bottomLayout->enable();
-        setGraphicItemsState(GraphicItemState::NO_STATE);
-        enableMenu();
+        setEnableAll(true);
         qDebug() << "scanningRobot cleaned";
     }
 
@@ -1254,16 +1388,56 @@ void MainWindow::robotIsDeadSlot(QString hostname,QString ip){
 void MainWindow::setMessageCreationPath(QString message){
     setMessageTop(TEXT_COLOR_DANGER, message);
     delay(2500);
-    setMessageTop(TEXT_COLOR_INFO, "Click white points of the map to add new points to the path of " + selectedRobot->getRobot()->getName());
-
+    setMessageTop(TEXT_COLOR_INFO, "Click white points of the map to add new points to the path of " +
+                  selectedRobot->getRobot()->getName() + "\nAlternatively you can click the \"+\" button to add an existing point to your path");
 }
 
 void MainWindow::updatePathPoint(double x, double y, PointView* pointView){
-    qDebug() << "u got here";
-    if(map->getMapImage().pixelColor(x, y) == QColor(254, 254, 254))
-        pointView->getPoint()->setPosition(x, y);
-    else
+    qDebug() << "updatepathpoint called";
+    for(int i = 0; i < mapPixmapItem->getPathCreationPoints().count(); i++){
+        PointView* pv = mapPixmapItem->getPathCreationPoints().at(i);
+        if(pv == 0)
+            qDebug() << "no pointview found to update";
+        else {
+            if(pv->getPoint()->comparePos(
+                        ((PathPointCreationWidget*) pathCreationWidget->getPathPointList()->itemWidget(pathCreationWidget->getPathPointList()->currentItem()))->getPoint().getPosition())){
+                pv->getPoint()->setPosition(x, y);
+                pv->setPos(x, y);
+                ((PathPointCreationWidget*) pathCreationWidget->getPathPointList()->itemWidget(pathCreationWidget->getPathPointList()->currentItem()))->setPos(x, y);
+                qDebug() << "name" << pv->getPoint()->getName() << "index" << i;
+                pathPainter->updatePath(mapPixmapItem->getPathCreationPoints());
+                break;
+            }
+        }
+    }
+    if(map->getMapImage().pixelColor(x, y).red() >= 254){
+        setMessageTop(TEXT_COLOR_INFO, "You can click either click \"Save changes\" to modify your path permanently or \"Cancel\" to keep the original path. If you want you can keep editing your point");
+        ((PathPointCreationWidget*) pathCreationWidget->getPathPointList()->itemWidget(pathCreationWidget->getPathPointList()->currentItem())) -> getSaveEditBtn()->setEnabled(true);
+        for(int i = 0; i < mapPixmapItem->getPathCreationPoints().count(); i++){
+            PointView* pv = mapPixmapItem->getPathCreationPoints().at(i);
+            if(pv == 0)
+                qDebug() << "no pv";
+            else {/*
+                qDebug() << "pos pv" << pv->getPoint()->getPosition().getX() << pv->getPoint()->getPosition().getY() << " pathcr point" <<
+                            ((PathPointCreationWidget*) pathCreationWidget->getPathPointList()->itemWidget(pathCreationWidget->getPathPointList()->currentItem()))->getPoint().getPosition().getX() <<
+                            ((PathPointCreationWidget*) pathCreationWidget->getPathPointList()->itemWidget(pathCreationWidget->getPathPointList()->currentItem()))->getPoint().getPosition().getY();
+                */
+                if(pv->getPoint()->comparePos(
+                            ((PathPointCreationWidget*) pathCreationWidget->getPathPointList()->itemWidget(pathCreationWidget->getPathPointList()->currentItem()))->getPoint().getPosition())){
+                    pv->getPoint()->setPosition(x, y);
+                    pv->setPos(x, y);
+                    ((PathPointCreationWidget*) pathCreationWidget->getPathPointList()->itemWidget(pathCreationWidget->getPathPointList()->currentItem()))->setPos(x, y);
+                    qDebug() << "name" << pv->getPoint()->getName() << "index" << i;
+                    pathPainter->updatePath(mapPixmapItem->getPathCreationPoints());
+                    break;
+                }
+            }
+        }
+    } else {
+        setMessageTop(TEXT_COLOR_DANGER, "You cannot save the current path because the point that you are editing is not in an known area of the map");
+        ((PathPointCreationWidget*) pathCreationWidget->getPathPointList()->itemWidget(pathCreationWidget->getPathPointList()->currentItem())) -> getSaveEditBtn()->setEnabled(false);
         qDebug() << "sorry u cannot put a path point in the dark";
+    }
 }
 
 /**********************************************************************************************************************************/
@@ -1274,12 +1448,19 @@ void MainWindow::updatePathPoint(double x, double y, PointView* pointView){
 
 void MainWindow::updateMetadata(const int width, const int height, const float resolution,
                                 const float originX, const float originY){
-    map->setWidth(width);
-    map->setHeight(height);
-    map->setResolution(resolution);
-    map->setOrigin(Position(originX, originY));
+    if(width != map->getWidth())
+        map->setWidth(width);
 
-    qDebug() << "Map metadata : " << map->getWidth() << " " << map->getHeight() << " "
+    if(height != map->getHeight())
+        map->setHeight(height);
+
+    if(resolution != map->getResolution())
+        map->setResolution(resolution);
+
+    if(originX != map->getOrigin().getX() || originY != map->getOrigin().getY())
+        map->setOrigin(Position(originX, originY));
+
+    qDebug() << "Map metadata updated : " << map->getWidth() << " " << map->getHeight() << " "
              << map->getResolution() << " " << map->getOrigin().getX()  << " " << map->getOrigin().getY() ;
 }
 
@@ -1329,6 +1510,7 @@ void MainWindow::loadMapBtnEvent(){
                 QPixmap pixmap = QPixmap::fromImage(map->getMapImage());
                 mapPixmapItem->setPixmap(pixmap);
                 scene->update();
+                centerMap();
             }
         }
         break;
@@ -1361,7 +1543,7 @@ void MainWindow::mapBtnEvent(){
 
 void MainWindow::initializeLeftMenu(){
     //lastWidget = leftMenu->getLastWidget();
-    lastWidgets =  QList<QPair<QWidget*,QString>>();
+    lastWidgets =  QList<QPair<QPair<QWidget*,QString>, MainWindow::WidgetType>>();
     leftMenuWidget = leftMenu->getLeftMenuWidget();
     pointsLeftWidget = leftMenu->getPointsLeftWidget();
     selectedRobotWidget = leftMenu->getSelectedRobotWidget();
@@ -1378,14 +1560,6 @@ void MainWindow::initializeBottomPanel(){
     rightLayout->addWidget(bottomLayout);
 }
 
-void MainWindow::disableMenu(){
-    topLayout->disable();
-}
-
-void MainWindow::enableMenu(){
-    topLayout->enable();
-}
-
 void MainWindow::setMessageTop(const QString msgType, const QString msg){
     topLayout->setLabel(msgType, msg);
 }
@@ -1393,6 +1567,7 @@ void MainWindow::setMessageTop(const QString msgType, const QString msg){
 void MainWindow::closeSlot(){
     resetFocus();
     leftMenu->hide();
+    setEnableAll(true);
     if(leftMenu->getDisplaySelectedPoint()->getPointView())
         leftMenu->getDisplaySelectedPoint()->getPointView()->setPixmap(PointView::PixmapType::NORMAL);
 }
@@ -1438,7 +1613,7 @@ void MainWindow::setSelectedPoint(PointView* pointView, bool isTemporary){
 
     /// we are not modifying an existing point
     if(!leftMenu->getDisplaySelectedPoint()->getActionButtons()->getEditButton()->isChecked()){
-        qDebug() << "editiing";
+        qDebug() << "editing";
         leftMenu->show();
         selectedPoint = pointView;
         selectedPoint->setState(GraphicItemState::EDITING_PERM);
@@ -1447,20 +1622,22 @@ void MainWindow::setSelectedPoint(PointView* pointView, bool isTemporary){
         createPointWidget->show();
         float x = pointView->getPoint()->getPosition().getX();
         float y = pointView->getPoint()->getPosition().getY();
-        qDebug() << map->getMapImage().pixelColor(x, y);
-        if(map->getMapImage().pixelColor(x ,y) == QColor(254, 254, 254)){
+
+
+        qDebug() << x << y << map->getMapImage().pixelColor(x ,y).red();
+        if(map->getMapImage().pixelColor(x ,y).red() >= 254){
             createPointWidget->getActionButtons()->getPlusButton()->setEnabled(true);
             createPointWidget->getActionButtons()->getPlusButton()->setToolTip("Click this button if you want to save this point permanently");
             setMessageTop(TEXT_COLOR_INFO, "To save this point permanently click the \"+\" button");
-            qDebug() << "ce point est blanc";
+            qDebug() << "this point is white";
         } else {
-            qDebug() << "this pooint is not white";
+            qDebug() << "this point is not white";
             setMessageTop(TEXT_COLOR_WARNING, "You cannot save this point because your robot(s) would not be able to go there");
             createPointWidget->getActionButtons()->getPlusButton()->setEnabled(false);
             createPointWidget->getActionButtons()->getPlusButton()->setToolTip("You cannot save this point because your robot(s) cannot go there");
         }
         leftMenu->getDisplaySelectedPoint()->hide();
-        switchFocus(selectedPoint->getPoint()->getName(), createPointWidget);
+        switchFocus(selectedPoint->getPoint()->getName(), createPointWidget, MainWindow::WidgetType::POINT);
     } else {
         /// on the left we display the position of the temporary point as the user moves it around but we don't make any modifications on the model yet
         leftMenu->getDisplaySelectedPoint()->getXLabel()->setText(QString::number(mapPixmapItem->getTmpPointView()->getPoint()->getPosition().getX()));
@@ -1479,12 +1656,13 @@ void MainWindow::setSelectedPoint(PointView* pointView, bool isTemporary){
  */
 void MainWindow::pointBtnEvent(void){
     /// resets the list of groups menu
-    switchFocus("Groups", pointsLeftWidget);
+    switchFocus("Groups", pointsLeftWidget, MainWindow::WidgetType::GROUPS);
     qDebug() << "pointBtnEvent called ";
     /// we uncheck all buttons from all menus
     leftMenu->getDisplaySelectedGroup()->uncheck();
     hideAllWidgets();
     pointsLeftWidget->show();
+    setMessageTop(TEXT_COLOR_INFO, "Click the map to add a permanent point");
 }
 
 void MainWindow::plusGroupBtnEvent(){
@@ -1659,7 +1837,7 @@ void MainWindow::editGroupBtnEvent(){
         pointsLeftWidget->hide();
         /// disables the back button to prevent problems, a user has to discard or save his modifications before he can start navigatin the menu again, also prevents false manipulations
         leftMenu->getDisplaySelectedPoint()->show();
-        switchFocus("point",leftMenu->getDisplaySelectedPoint());
+        switchFocus("point",leftMenu->getDisplaySelectedPoint(), MainWindow::WidgetType::POINT);
     }
     else if(checkedId != -1 && checkedId < points->count()-1){
         qDebug() << "gotta update a group";
@@ -1690,7 +1868,7 @@ void MainWindow::selectPointBtnEvent(){
     qDebug() << "selectPointBtnEvent called";
 }
 
-void MainWindow::switchFocus(QString name, QWidget* widget)
+void MainWindow::switchFocus(QString name, QWidget* widget, MainWindow::WidgetType type)
 {
     /*if(currentWidget != NULL)
     if(lastWidgets.isEmpty())
@@ -1703,11 +1881,11 @@ void MainWindow::switchFocus(QString name, QWidget* widget)
 
     qDebug() << "__________________";
 
-    lastWidgets.append(QPair<QWidget*,QString>(widget,name));
+    lastWidgets.append(QPair<QPair<QWidget*, QString>, MainWindow::WidgetType>(QPair<QWidget*, QString>(widget,name), type));
 
     if(lastWidgets.size()>1)
     {
-        leftMenu->showBackButton(lastWidgets.at(lastWidgets.size()-2).second);
+        leftMenu->showBackButton(lastWidgets.at(lastWidgets.size()-2).first.second);
     }
     else
     {
@@ -1716,12 +1894,12 @@ void MainWindow::switchFocus(QString name, QWidget* widget)
     //debug
     for(int i=0;i<lastWidgets.size();i++)
     {
-        qDebug() << lastWidgets.at(i).second;
+        qDebug() << lastWidgets.at(i).first.second;
     }
 }
 void MainWindow::resetFocus()
 {
-    lastWidgets = QList<QPair<QWidget*,QString>>();
+    lastWidgets = QList<QPair<QPair<QWidget*,QString>, MainWindow::WidgetType>>();
     updateView();
 }
 
@@ -1733,7 +1911,7 @@ void MainWindow::updateView()
             leftMenu->hideBackButton();
         }
         else {
-            leftMenu->showBackButton(lastWidgets.last().second);
+            leftMenu->showBackButton(lastWidgets.last().first.second);
         }
     }
 }
@@ -1755,7 +1933,7 @@ void MainWindow::openLeftMenu(){
         hideAllWidgets();
         leftMenuWidget->show();
         leftMenu->show();
-        switchFocus("Menu",leftMenuWidget);
+        switchFocus("Menu", leftMenuWidget, MainWindow::WidgetType::MENU);
 
     } else {
         /// we reset the origin of the point information menu in order to display the buttons to go back in the further menus
@@ -1768,7 +1946,7 @@ void MainWindow::openLeftMenu(){
             hideAllWidgets();
             leftMenuWidget->show();
             leftMenu->show();
-            switchFocus("Menu",leftMenuWidget);
+            switchFocus("Menu",leftMenuWidget, MainWindow::WidgetType::MENU);
 
         } else {
                 closeSlot();
@@ -2044,7 +2222,7 @@ void MainWindow::displayPointEvent(PointView* pointView){
     }
     leftMenu->getDisplaySelectedPoint()->show();
     resetFocus();
-    switchFocus(leftMenu->getDisplaySelectedPoint()->getPointView()->getPoint()->getName(), leftMenu->getDisplaySelectedPoint());
+    switchFocus(leftMenu->getDisplaySelectedPoint()->getPointView()->getPoint()->getName(), leftMenu->getDisplaySelectedPoint(), MainWindow::WidgetType::POINT);
 
 }
 
@@ -2219,7 +2397,8 @@ void MainWindow::displayPointsInGroup(void){
        selectedGroup->getPointButtonGroup()->setCheckable(true);
        selectedGroup->show();
        selectedGroup->setName(points->getGroups().at(checkedId)->getName());
-       switchFocus(points->getGroups().at(checkedId)->getName(),selectedGroup);
+       switchFocus(points->getGroups().at(checkedId)->getName(), selectedGroup, MainWindow::WidgetType::GROUP);
+       setMessageTop(TEXT_COLOR_INFO, "CLick the map to add a permanent point");
     }
     /// it's an isolated point
     else if(checkedId >= points->count()-1){
@@ -2240,7 +2419,7 @@ void MainWindow::displayPointsInGroup(void){
             selectedPoint->getActionButtons()->getMapButton()->setChecked(true);
         else
             selectedPoint->getActionButtons()->getMapButton()->setChecked(false);
-        switchFocus("Point",selectedPoint);
+        switchFocus("Point", selectedPoint, MainWindow::WidgetType::POINT);
         pointsLeftWidget->getActionButtons()->getGoButton()->setChecked(false);
         pointsLeftWidget->hide();
     }
@@ -2476,7 +2655,7 @@ void MainWindow::editPointFromGroupMenu(void){
             leftMenu->getDisplaySelectedPoint()->getSaveButton()->show();
             leftMenu->getDisplaySelectedPoint()->show();
             leftMenu->getDisplaySelectedGroup()->hide();
-            switchFocus(leftMenu->getDisplaySelectedPoint()->getPoint()->getName(),leftMenu->getDisplaySelectedPoint());
+            switchFocus(leftMenu->getDisplaySelectedPoint()->getPoint()->getName(),leftMenu->getDisplaySelectedPoint(), MainWindow::WidgetType::POINT);
         }
     } else qDebug() << "no group " << leftMenu->getDisplaySelectedGroup()->getNameLabel()->text() ;
 }
@@ -2490,6 +2669,7 @@ void MainWindow::displayPointInfoFromGroupMenu(void){
     /// retrieves a pointer to the group using the text of the label
     std::shared_ptr<Group> group = points->findGroup(leftMenu->getDisplaySelectedGroup()->getNameLabel()->text());
     if(group){
+        setMessageTop(TEXT_COLOR_NORMAL, "");
         /// retrieves the index of the point that is to be displayed, within the group
         int pointIndex = leftMenu->getDisplaySelectedGroup()->getPointButtonGroup()->getButtonGroup()->checkedId();
         if(pointIndex != -1 and pointIndex < group->getPoints().size()){
@@ -2514,7 +2694,7 @@ void MainWindow::displayPointInfoFromGroupMenu(void){
                 selectedPoint->getActionButtons()->getMapButton()->setChecked(false);
             selectedPoint->show();
             leftMenu->getDisplaySelectedGroup()->hide();
-            switchFocus(selectedPoint->getPointName(),selectedPoint);
+            switchFocus(selectedPoint->getPointName(), selectedPoint, MainWindow::WidgetType::POINT);
         }
     } else qDebug() << "no group " << leftMenu->getDisplaySelectedGroup()->getNameLabel()->text() ;
 }
@@ -2581,7 +2761,7 @@ void MainWindow::updatePoint(void){
     leftMenu->getDisplaySelectedPoint()->getActionButtons()->getMinusButton()->setEnabled(true);
 
     /// updates the isolated points in the group menus
-    pointsLeftWidget->getGroupButtonGroup()->update(*points);    
+    pointsLeftWidget->getGroupButtonGroup()->update(*points);
 
 
     /// we enable the "back" button again
@@ -2659,9 +2839,10 @@ void MainWindow::updateCoordinates(double x, double y){
     leftMenu->getDisplaySelectedPoint()->getYLabel()->setText("Y : " + QString::number(y, 'f', 1));
     leftMenu->getDisplaySelectedPoint()->getPointView()->setPos(x, y);
 
-    if(map->getMapImage().pixelColor(x ,y) == QColor(254, 254, 254))   leftMenu->getDisplaySelectedPoint()->getSaveButton()->setEnabled(true);
-
-    else  leftMenu->getDisplaySelectedPoint()->getSaveButton()->setEnabled(false);
+    if(map->getMapImage().pixelColor(x ,y).red() >= 254)
+        leftMenu->getDisplaySelectedPoint()->getSaveButton()->setEnabled(true);
+    else
+        leftMenu->getDisplaySelectedPoint()->getSaveButton()->setEnabled(false);
 }
 
 /**
@@ -2765,6 +2946,7 @@ void MainWindow::doubleClickOnRobot(int id){
 void MainWindow::doubleClickOnPoint(int checkedId){
 
     qDebug() << "double click on point";
+    setMessageTop(TEXT_COLOR_NORMAL, "");
     std::shared_ptr<Group> group = points->findGroup(leftMenu->getDisplaySelectedGroup()->getNameLabel()->text());
     if(group){
         std::shared_ptr<Point> point = group->getPoints().at(checkedId);
@@ -2787,7 +2969,7 @@ void MainWindow::doubleClickOnPoint(int checkedId){
                 selectedPoint->getActionButtons()->getMapButton()->setChecked(false);
             selectedPoint->show();
             leftMenu->getDisplaySelectedGroup()->hide();
-            switchFocus(selectedPoint->getPointName(),selectedPoint);
+            switchFocus(selectedPoint->getPointName(), selectedPoint, MainWindow::WidgetType::POINT);
         }
     } else qDebug()  << "no group " << leftMenu->getDisplaySelectedGroup()->getNameLabel()->text() ;
 }
@@ -2813,6 +2995,7 @@ void MainWindow::doubleClickOnGroup(int checkedId){
 
     /// it's a group
     if(checkedId != -1 && checkedId < points->count()-1){
+       setMessageTop(TEXT_COLOR_INFO, "Click the map to add a permanent point");
        pointsLeftWidget->setIndexLastGroupClicked(checkedId);
        pointsLeftWidget->getActionButtons()->getGoButton()->setChecked(false);
        pointsLeftWidget->hide();
@@ -2822,11 +3005,11 @@ void MainWindow::doubleClickOnGroup(int checkedId){
        selectedGroup->getPointButtonGroup()->setCheckable(true);
        selectedGroup->show();
        selectedGroup->setName(points->getGroups().at(checkedId)->getName());
-       switchFocus(points->getGroups().at(checkedId)->getName(), selectedGroup);
-
+       switchFocus(points->getGroups().at(checkedId)->getName(), selectedGroup, MainWindow::WidgetType::GROUP);
     }
     /// it's an isolated point
     else if(checkedId >= points->count()-1){
+        setMessageTop(TEXT_COLOR_NORMAL, "");
         DisplaySelectedPoint* selectedPoint = leftMenu->getDisplaySelectedPoint();
         PointView* pointView = pointViews->getPointViewFromPoint(*(points->getGroups().at(points->count()-1)->getPoints().at(checkedId+1-points->count())));
         QString robotName = "";
@@ -2846,7 +3029,7 @@ void MainWindow::doubleClickOnGroup(int checkedId){
         else
             selectedPoint->getActionButtons()->getMapButton()->setChecked(false);
         pointsLeftWidget->hide();
-        switchFocus(selectedPoint->getPointName(), selectedPoint);
+        switchFocus(selectedPoint->getPointName(), selectedPoint, MainWindow::WidgetType::POINT);
     }
 }
 
@@ -2859,11 +3042,6 @@ void MainWindow::reestablishConnectionsGroups(){
     foreach(QAbstractButton* button, pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->buttons())
         connect(button, SIGNAL(doubleClick(int)), this, SLOT(doubleClickOnGroup(int)));
 }
-
-
-
-
-
 
 /**
  * @brief MainWindow::reestablishConnections
@@ -3013,6 +3191,7 @@ void MainWindow::setMessageCreationGroup(QString message){
     setMessageTop(TEXT_COLOR_INFO, message);
 }
 
+
 /**********************************************************************************************************************************/
 
 //                                          ODDS AND ENDS
@@ -3023,28 +3202,29 @@ void MainWindow::quit(){
     close();
 }
 
-void MainWindow::setLastWidgets(QList<QPair<QWidget*,QString>> lw)
-{
-     lastWidgets = lw;
-}
-
 void MainWindow::backEvent()
 {
     qDebug() << "back event called";
+    setEnableAll(true);
     /// resets the menus
     pointsLeftWidget->disableButtons();
     pointsLeftWidget->getGroupButtonGroup()->uncheck();
     leftMenu->disableButtons();
     leftMenu->getDisplaySelectedGroup()->uncheck();
 
-    lastWidgets.last().first->hide();
+    lastWidgets.last().first.first->hide();
+
     if (lastWidgets.size() > 1)
     {
         lastWidgets.removeLast();
-        lastWidgets.last().first->show();
+        if(lastWidgets.last().second == MainWindow::WidgetType::GROUP || lastWidgets.last().second == MainWindow::WidgetType::GROUPS)
+            setMessageTop(TEXT_COLOR_INFO, "Click the map to add a permanent point");
+
+        lastWidgets.last().first.first->show();
+
         if (lastWidgets.size() >1)
         {
-            leftMenu->showBackButton(lastWidgets.at(lastWidgets.size()-2).second);
+            leftMenu->showBackButton(lastWidgets.at(lastWidgets.size()-2).first.second);
         }
         else
         {
@@ -3144,9 +3324,30 @@ void MainWindow::clearNewMap(){
     mapPixmapItem->setPermanentPoints(points);
 }
 
-void MainWindow::delay(const int ms) const
-{
+void MainWindow::delay(const int ms) const{
     QTime dieTime= QTime::currentTime().addMSecs(ms);
     while (QTime::currentTime() < dieTime)
         QCoreApplication::processEvents(QEventLoop::AllEvents, 100);
+}
+
+void MainWindow::setEnableAll(bool enable, GraphicItemState state, bool clearPath, int noReturn){
+    setGraphicItemsState(state, clearPath);
+    bottomLayout->setEnable(enable);
+    topLayout->setEnable(enable);
+    if(noReturn == -1)
+        leftMenu->setEnableReturnCloseButtons(enable);
+    else
+        leftMenu->setEnableReturnCloseButtons(noReturn);
+}
+
+void MainWindow::centerMap(){
+    qDebug() << "centerMap called la ";
+    qDebug() << (map->getRect().topLeft().x() + map->getRect().bottomRight().x()) /2 << (map->getRect().topLeft().y() + map->getRect().bottomRight().y()) /2;
+    scene->views().at(0)->centerOn(mapPixmapItem);
+
+    qDebug() << mapPixmapItem->pos() << mapPixmapItem->mapFromScene(map->getCenter());
+    while(graphicsView->getZoomCoeff()*1.3*1.3 < 4){
+        graphicsView->scale(1.3, 1.3);
+        graphicsView->setZoomCoeff(1.3*graphicsView->getZoomCoeff());
+    }
 }

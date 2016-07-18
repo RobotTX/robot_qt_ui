@@ -65,7 +65,7 @@ void MapView::mouseReleaseEvent(QGraphicsSceneMouseEvent *event){
             emit pointLeftClicked(&(*point), true);
         } else if(state == GraphicItemState::CREATING_PATH){
             /// if it's not a white point of the map we cannot add it to the path
-            if(map->getMapImage().pixelColor(event->pos().x()-tmpPointPixmap.width()/2, event->pos().y()-tmpPointPixmap.height()) == QColor(254, 254, 254)){
+            if(map->getMapImage().pixelColor(event->pos().x()-tmpPointPixmap.width()/2, event->pos().y()-tmpPointPixmap.height()).red() >= 254){
                 qDebug() << "Clicked on the map while creating a path";
                 Point tmpPoint("tmpPoint", 0.0, 0.0, false);
                 PointView* newPointView = new PointView(std::make_shared<Point>(tmpPoint), this);
@@ -79,6 +79,7 @@ void MapView::mouseReleaseEvent(QGraphicsSceneMouseEvent *event){
                 newPointView->setPos(event->pos().x()-tmpPointPixmap.width()/2, event->pos().y()-tmpPointPixmap.height());
                 newPointView->setParentItem(this);
                 pathCreationPoints.push_back(newPointView);
+                connect(newPointView, SIGNAL(hoverEventSignal(PointView::PixmapType, PointView*)), this, SLOT(updatePixmapHover(PointView::PixmapType, PointView*)));
                 emit addPathPointMapView(&(*(newPointView->getPoint())));
 
            } else {
@@ -120,6 +121,10 @@ void MapView::mouseReleaseEvent(QGraphicsSceneMouseEvent *event){
             newPointView->setPos(event->pos().x()-tmpPointPixmap.width()/2, event->pos().y()-tmpPointPixmap.height());
             newPointView->setParentItem(this);
             emit homeEdited(newPointView, true);
+        } else if(state == GraphicItemState::EDITING){
+            qDebug() << "(MapView) EDITING" << event->pos().x() << event->pos().y();;
+            /// to notify that a point which belongs to the path of a robot has been changed
+            emit newCoordinatesPathPoint(event->pos().x(), event->pos().y());
         } else {
             qDebug() << "(MapView) NO EVENT";
         }
@@ -224,7 +229,17 @@ void MapView::setState(const GraphicItemState _state, const bool clear){
     connect(_pointView, SIGNAL(homeSelected(PointView*, bool)), mainWindow, SLOT(homeSelected(PointView*, bool)));
     connect(_pointView, SIGNAL(homeEdited(PointView*, bool)), mainWindow, SLOT(homeEdited(PointView*, bool)));
 
-    connect(_pointView, SIGNAL(pathPointChanged(double,double,PointView*)), mainWindow, SLOT(pathPointChanged(double, double, PointView*)));
+    connect(_pointView, SIGNAL(pathPointChanged(double,double, PointView*)), mainWindow, SLOT(pathPointChanged(double, double, PointView*)));
 
     permanentPoints->addPointView(_pointView);
 }
+
+ /// so that the icon of a point view remains consistent while editing a point of a path and after
+ void MapView::updatePixmapHover(PointView::PixmapType type, PointView *pv){
+    if(state == GraphicItemState::EDITING){
+        qDebug() << "putting the right pixmaps back";
+        qDebug() << type;
+        pv->setLastType(type);
+        pv->setType(PointView::PixmapType::HOVER);
+    }
+ }

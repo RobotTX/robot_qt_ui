@@ -52,6 +52,7 @@ public:
     Point getPoint(void) const { return point; }
     void setPointLabel(const float _posX, const float _posY);
     QPushButton* getCancelBtn(void) const { return cancelBtn; }
+    QPushButton* getSaveEditBtn(void) const { return saveEditBtn; }
 
 private:
     QVBoxLayout* layout;

@@ -2,20 +2,39 @@
 #include "Model/point.h"
 #include "Model/pathpoint.h"
 #include "Controller/cmdrobotthread.h"
+#include "Controller/scanrobotthread.h"
+#include "Controller/scanmetadatathread.h"
 #include <QMainWindow>
 #include <iostream>
 
-Robot::Robot(const QString _name, const QString _ip, const int port, QMainWindow* parent) : name(_name), ip(_ip), position(Position()),
+Robot::Robot(const QString _name, const QString _ip, QMainWindow* parent) : name(_name), ip(_ip), position(Position()),
     orientation(0), batteryLevel(100), wifi(""), home(NULL), playingPath(0)
 {
-    qDebug() << "Robot" << name << "at ip" << ip << " launching its cmd thread";
+    /*qDebug() << "Robot" << name << "at ip" << ip << " launching its cmd thread";
 
-    /*cmdThread = new CmdRobotThread(ip, port, name, parent);
+    cmdThread = new CmdRobotThread(ip, PORT_CMD, PORT_MAP_METADATA, PORT_ROBOT_POS, PORT_MAP, name, parent);
     QObject::connect(cmdThread, SIGNAL(robotIsDead(QString,QString)), parent, SLOT(robotIsDeadSlot(QString,QString)));
     QObject::connect(parent, SIGNAL(ping()), cmdThread, SLOT(pingSlot()));
-    cmdThread->start();*/
+    QObject::connect(parent, SIGNAL(changeCmdThreadRobotName(QString)), cmdThread, SLOT(changeRobotNameSlot(QString)));
+    cmdThread->start();
 
-    //cmdThread->moveToThread(cmdThread);
+
+    qDebug() << "Robot" << name << "at ip" << ip << " launching its robot pos thread at port" << PORT_ROBOT_POS;
+
+    robotThread = new ScanRobotThread(ip, PORT_ROBOT_POS);
+    QObject::connect(robotThread, SIGNAL(valueChangedRobot(QString, float, float, float)),
+                     parent ,SLOT(updateRobot(QString, float, float, float)));
+    robotThread->start();
+    robotThread->moveToThread(robotThread);
+
+
+    qDebug() << "Robot" << name << "at ip" << ip << " launching its metadata thread at port" << PORT_ROBOT_POS;
+
+    metadataThread = new ScanMetadataThread(ip, PORT_MAP_METADATA);
+    QObject::connect(metadataThread, SIGNAL(valueChangedMetadata(int, int, float, float, float)),
+                     parent , SLOT(updateMetadata(int, int, float, float, float)));
+    metadataThread->start();
+    metadataThread->moveToThread(metadataThread);*/
 }
 
 Robot::Robot(): name("Default name"), ip("no Ip"), position(Position()),
@@ -26,6 +45,14 @@ Robot::~Robot(){
     /*if (cmdThread != 0 && cmdThread->isRunning() ) {
         cmdThread->requestInterruption();
         cmdThread->wait();
+    }
+    if (robotThread != NULL && robotThread->isRunning() ) {
+        robotThread->requestInterruption();
+        robotThread->wait();
+    }
+    if (metadataThread != NULL && metadataThread->isRunning() ) {
+        metadataThread->requestInterruption();
+        metadataThread->wait();
     }*/
 }
 
@@ -54,9 +81,30 @@ void Robot::resetCommandAnswer() {
     //cmdThread->resetCommandAnswer();
 }
 
-void Robot::stopCmdThread() {
-    /*if (cmdThread != 0 && cmdThread->isRunning() ) {
+void Robot::stopThreads() {
+    /*qDebug() << "yolo1";
+    if (cmdThread != 0 && cmdThread->isRunning() ) {
+        qDebug() << "yolo2";
         cmdThread->requestInterruption();
+        qDebug() << "yolo3";
         cmdThread->wait();
-    }*/
+        qDebug() << "yolo4";
+    }
+    qDebug() << "yolo5";
+    if (robotThread != NULL && robotThread->isRunning() ) {
+        qDebug() << "yolo6";
+        robotThread->requestInterruption();
+        qDebug() << "yolo7";
+        robotThread->wait();
+        qDebug() << "yolo8";
+    }
+    qDebug() << "yolo9";
+    if (metadataThread != NULL && metadataThread->isRunning() ) {
+        qDebug() << "yolo10";
+        metadataThread->requestInterruption();
+        qDebug() << "yolo11";
+        metadataThread->wait();
+        qDebug() << "yolo12";
+    }
+    qDebug() << "yolo13";*/
 }

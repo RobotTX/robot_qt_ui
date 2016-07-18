@@ -3,8 +3,6 @@
 
 class RobotView;
 class PointView;
-class ScanMetadataThread;
-class ScanRobotThread;
 class ScanMapThread;
 class UpdateRobotsThread;
 class CustomQGraphicsView;
@@ -26,8 +24,9 @@ class PathCreationWidget;
 class QAbstractButton;
 class QVBoxLayout;
 class PathPainter;
-class TopLayout;
 
+
+#include "View/toplayout.h"
 #include "Model/points.h"
 #include "View/robotview.h"
 #include <QMainWindow>
@@ -37,15 +36,17 @@ class TopLayout;
 #include "Model/origin.h"
 #include <QMessageBox>
 
-//#define XML_PATH "/home/m-a/Documents/QtProject/gobot-software/points.xml"
-#define XML_PATH "/home/joan/Qt/QtProjects/gobot-software/points.xml"
+
+#define XML_PATH "/home/m-a/Documents/QtProject/gobot-software/points.xml"
+#define ROBOTS_NAME_PATH "/home/m-a/Documents/QtProject/gobot-software/robotsName.dat"
+
+//#define XML_PATH "/home/joan/Qt/QtProjects/gobot-software/points.xml"
+//#define ROBOTS_NAME_PATH "/home/joan/Qt/QtProjects/gobot-software/robotsName.dat"
+
 //#define XML_PATH "/Users/fannylarradet/Desktop/GTRobots/gobot-software/points.xml"
+//#define ROBOTS_NAME_PATH "/Users/fannylarradet/Desktop/GTRobots/gobot-software/robotsName.dat"
 
 #define PI 3.14159265
-#define PORT_MAP_METADATA 4000
-#define PORT_ROBOT_POS 4001
-#define PORT_MAP 4002
-#define PORT_CMD 5600
 #define PORT_ROBOT_UPDATE 6000
 
 namespace Ui {
@@ -60,8 +61,10 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
+    enum WidgetType { MENU, GROUPS, GROUP, POINT, ROBOTS, ROBOT };
+
     std::shared_ptr<Points> getPoints(void) const { return points; }
-    QList<QPair<QWidget*, QString>> getLastWidgets() const { return lastWidgets; }
+    QList<QPair<QPair<QWidget*, QString>, MainWindow::WidgetType>> getLastWidgets() const { return lastWidgets; }
 
     void initializeMenu();
     void initializeRobots();
@@ -74,22 +77,21 @@ public:
     void openInterdictionOfPointRemovalMessage(const QString pointName, const QString robotName);
     int openEmptyGroupMessage(const QString groupName);
     void clearNewMap();
-    void disableMenu();
-    void enableMenu();
     void clearPath(const int robotNb);
-    void setLastWidgets(QList<QPair<QWidget*,QString>>);
     void resetFocus();
-    void switchFocus(QString name, QWidget* widget);
+    void switchFocus(QString name, QWidget* widget, WidgetType type);
     /// to sleep for ms milliseconds
     void delay(const int ms) const;
+    void setEnableAll(bool enable, GraphicItemState state = GraphicItemState::NO_STATE, bool clearPath = false, int noReturn = -1);
 
 signals:
     void sendCommand(QString);
     void nameChanged(QString, QString);
     void ping();
+    void changeCmdThreadRobotName(QString);
 
 private slots:
-    void updateRobot(const float posX, const float posY, const float ori);
+    void updateRobot(const QString ipAddress, const float posX, const float posY, const float ori);
     void updateMetadata(const int width, const int height, const float resolution, const float originX, const float originY);
     void updateMap(const QByteArray mapArray);
     void connectToRobot();
@@ -137,7 +139,7 @@ private slots:
     void addPathPoint(Point* point);
     void addPathPoint(PointView* pointView);
     void displayPointsInGroup(void);
-    void updatePathPointToPainter(QVector<Point>* pointVector);
+    void updatePathPointToPainter(QVector<Point>& pointVector, bool save);
     void removePointFromInformationMenu(void);
     void displayPointMapEvent(void);
     void hidePathCreationWidget(void);
@@ -162,8 +164,8 @@ private slots:
     void enableReturnAndCloseButtons(void);
     void doubleClickOnRobot(int checkedId);
     void setMessageCreationPath(QString message);
-    void updatePathPoint(double x, double y, PointView* pointView);
-
+    void updatePathPoint(double x, double y, PointView* pointView = 0);
+    void centerMap();
 
     /**
      * @brief cancelEvent
@@ -171,6 +173,7 @@ private slots:
      */
     void cancelEvent(void);
     void setMessageTop(const QString msgType, const QString msg);
+    void setLastMessage(void) { setMessageTop(topLayout->getLastMessage().first, topLayout->getLastMessage().second); }
     void setMessageCreationGroup(QString message);
     void homeSelected(PointView* pointView, bool temporary);
     void homeEdited(PointView* pointView, bool temporary);
@@ -189,8 +192,6 @@ private slots:
 
 private:
     Ui::MainWindow* ui;
-    ScanMetadataThread* metadataThread;
-    ScanRobotThread* robotThread;
     ScanMapThread* mapThread;
     UpdateRobotsThread* updateRobotsThread;
     QVBoxLayout* rightLayout;
@@ -208,7 +209,8 @@ private:
     PointView* editedPointView;
     TopLayout* topLayout;
     QVector<PointView*> pathPointViews;
-    QList<QPair<QWidget*, QString>> lastWidgets;
+    //QList<QPair<QWidget*, QString>> lastWidgets;
+    QList<QPair<QPair<QWidget*, QString>, MainWindow::WidgetType>> lastWidgets;
     LeftMenuWidget* leftMenuWidget;
     PointsLeftWidget* pointsLeftWidget;
     SelectedRobotWidget* selectedRobotWidget;
@@ -221,6 +223,7 @@ private:
     BottomLayout* bottomLayout;
     PathCreationWidget* pathCreationWidget;
     QMessageBox msgBox;
+    std::vector<PointView*> pointViewsToDisplay;
 };
 
 #endif // MAINWINDOW_H

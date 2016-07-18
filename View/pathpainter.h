@@ -22,18 +22,19 @@ class PathPainter : public QGraphicsPathItem{
 public:
     PathPainter(MapView* const& mapPixmapItem, PointsView* const& _pointViews);
 
-    void updatePath(const QVector<Point>& pointVector);
-    void updatePath(const QVector<PointView*>& pointViewsVector);
-    void reset(void);
-    void refresh(void);
+    void updatePath(const QVector<Point>& pointVector, bool save = false);
+    void updatePath(const QVector<PointView*>& pointViewsVector, bool save = false);
+    void reset(bool save = false);
+    void refresh(bool save = false);
     QVector<Point> getPathVector(void) const {return pathVector;}
     void setPointViewPixmap(const int id, PointView* const pointView);
-    void clearPointViews(void);
+    void clearPointViews(bool save = false);
 
 private:
     QPainterPath path;
     QVector<Point> pathVector;
     PointsView* pointViews;
+    MapView* mapItem;
 };
 
 #endif // PATHPAINTER_H

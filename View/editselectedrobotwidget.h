@@ -10,7 +10,7 @@ class QLabel;
 class QMainWindow;
 class QLineEdit;
 class QProgressBar;
-
+class PathWidget;
 #include <QWidget>
 #include <memory>
 #include "Model/point.h"
@@ -25,7 +25,7 @@ class EditSelectedRobotWidget: public QWidget{
 public:
     EditSelectedRobotWidget(QMainWindow* parent, std::shared_ptr<Robots> const robots);
 
-    void setSelectedRobot(RobotView * const robotView);
+    void setSelectedRobot(RobotView * const robotView, bool firstConnection = false);
     void setRobots(std::shared_ptr<Robots> const _robots){robots = _robots;}
     void editName(void);
 
@@ -36,10 +36,15 @@ public:
     void setHome(PointView* const _home, bool const _temporary){home = _home; temporary = _temporary;}
     PointView* getHome() const {return home;}
     bool isTemporaryHome()const {return temporary;}
+    bool isFirstConnection()const {return firstConnection;}
     void setOldHome(std::shared_ptr<Point> const _oldHome){oldHome = _oldHome;}
     std::shared_ptr<Point> getOldHome() const {return oldHome;}
     QLineEdit* getWifiNameEdit(void){ return wifiNameEdit; }
     QLineEdit* getWifiPwdEdit(void){ return wifiPwdEdit; }
+    PathWidget* getPathWidget(void){ return pathWidget; }
+    QPushButton* getAddPathBtn(void){return addPathBtn;}
+    void setPathChanged(bool change){pathChanged = change;}
+    bool getPathChanged(){return pathChanged ;}
 
 signals:
     /// Signal emitted when a robot has been edited & saved
@@ -65,6 +70,10 @@ private:
     bool temporary;
     std::shared_ptr<Point> oldHome;
     QPushButton* addPathBtn;
+    bool firstConnection;
+    QPushButton* cancelBtn;
+    PathWidget* pathWidget;
+    bool pathChanged;
 
 protected:
     void showEvent(QShowEvent *event);
@@ -82,6 +91,7 @@ private slots:
     * Check if the robot name is already taken
     */
     void checkRobotName(void);
+    void checkWifiName(void);
 
     void deletePwd(void);
 

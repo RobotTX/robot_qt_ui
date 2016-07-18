@@ -6,19 +6,19 @@
 #include <QPainterPath>
 #include <QPixmap>
 
-PathPainter::PathPainter(MapView * const &mapPixmapItem, PointsView * const &_pointViews) : QGraphicsPathItem(mapPixmapItem){
+PathPainter::PathPainter(MapView * const &mapPixmapItem, PointsView * const &_pointViews) : QGraphicsPathItem(mapPixmapItem), mapItem(mapPixmapItem), pointViews(_pointViews)
+{
     setPen(QPen(Qt::red));
-    pointViews = _pointViews;
 }
 
-void PathPainter::reset(void){
-    clearPointViews();
+void PathPainter::reset(bool save){
+    clearPointViews(save);
     path = QPainterPath();
     pathVector.clear();
     setPath(path);
 }
 
-void PathPainter::refresh(void){
+void PathPainter::refresh(bool save){
     clearPointViews();
     if(pathVector.size() > 0){
         PointView* startPointView = NULL;
@@ -39,7 +39,6 @@ void PathPainter::refresh(void){
                     for(int j = 0; j < pointViewVector.size(); j++){
                         if(pathVector.at(i).comparePos(pointViewVector.at(j)->getPoint()->getPosition().getX(),
                                                        pointViewVector.at(j)->getPoint()->getPosition().getY())){
-                            //qDebug() << "But found temporary pointView";
 
                             pointView = pointViewVector.at(j);
                             pointView->setAddedToPath(true);
@@ -62,58 +61,70 @@ void PathPainter::refresh(void){
                 }
                 if(i == pathVector.size()-1)
                     endPointView = pointView;
-
-                setPointViewPixmap(i, pointView);
+                if((pointView->getType() != PointView::PixmapType::HOVER) || (mapItem->getState() != GraphicItemState::EDITING) || save){
+                    qDebug() << " oops i changed in refresh";
+                    setPointViewPixmap(i, pointView);
+                }
             }
         }
         setPath(path);
 
         if(*(startPointView->getPoint()) == *(endPointView->getPoint())){
-            startPointView->setPixmap(PointView::PixmapType::START_STOP);
+            if((startPointView->getType() != PointView::PixmapType::HOVER) || (mapItem->getState() != GraphicItemState::EDITING) || save){
+                qDebug() << "changed startend refresh la";
+                startPointView->setPixmap(PointView::PixmapType::START_STOP);
+            }
         } else {
-            startPointView->setPixmap(PointView::PixmapType::START);
-            endPointView->setPixmap(PointView::PixmapType::STOP);
+            if((startPointView->getType() != PointView::PixmapType::HOVER) || (mapItem->getState() != GraphicItemState::EDITING) || save){
+                qDebug() << "changed start refresh la";
+                startPointView->setPixmap(PointView::PixmapType::START);
+            }
+            if((endPointView->getType() != PointView::PixmapType::HOVER) || (mapItem->getState() != GraphicItemState::EDITING) || save){
+                qDebug() << "changed end refresh la";
+                endPointView->setPixmap(PointView::PixmapType::STOP);
+            }
         }
     }
 }
 
-void PathPainter::updatePath(const QVector<Point>& pointVector){
-    reset();
+void PathPainter::updatePath(const QVector<Point>& pointVector, bool save){
+    qDebug() << "path painter updatepath called";
+    reset(save);
     pathVector = pointVector;
-    refresh();
+    refresh(save);
 }
 
 void PathPainter::setPointViewPixmap(const int id, PointView* const pointView){
-    if(id == 0){
-        pointView->setPixmap(PointView::PixmapType::START);
-    } else if (id == pathVector.size()-1){
-        pointView->setPixmap(PointView::PixmapType::STOP);
+    if(mapItem->getState() == GraphicItemState::EDITING && pointView->getType() == PointView::PixmapType::HOVER){
+        qDebug() << "being edited";
+        return;
     } else {
-        pointView->setPixmap(PointView::PixmapType::MID);
+        qDebug() << "not editing";
+        if(id == 0)
+            pointView->setPixmap(PointView::PixmapType::START);
+
+        else if (id == pathVector.size()-1)
+            pointView->setPixmap(PointView::PixmapType::STOP);
+
+        else
+            pointView->setPixmap(PointView::PixmapType::MID);
     }
 }
 
-void PathPainter::clearPointViews(void){
-    for(size_t i = 0; i < pointViews->getGroups().size(); i++){
-        GroupView* groupView = pointViews->getGroups().at(i);
-        std::vector<PointView*> pointViews = groupView->getPointViews();
-        for(size_t j = 0; j < pointViews.size(); j++){
-            pointViews.at(j)->setPixmap(PointView::PixmapType::NORMAL);
-        }
-    }
+void PathPainter::clearPointViews(bool save){
+    pointViews->setNormalPixmaps();
 
-    MapView* mapView = (MapView*) parentItem();
-
-    mapView->getTmpPointView()->setPixmap(PointView::PixmapType::NORMAL);
-
-    QVector<PointView*> pointViewVector = mapView->getPathCreationPoints();
+    QVector<PointView*> pointViewVector = mapItem->getPathCreationPoints();
     for(int k = 0; k < pointViewVector.size(); k++){
-        pointViewVector.at(k)->setPixmap(PointView::PixmapType::NORMAL);
+         if((mapItem->getState() != GraphicItemState::EDITING) || (pointViewVector.at(k)->getType() != PointView::PixmapType::HOVER) || save){
+            qDebug() << "was not orange" << mapItem->getState() << pointViewVector.at(k)->getType() << save;
+            pointViewVector.at(k)->setPixmap(PointView::PixmapType::NORMAL);
+         }
     }
 }
 
-void PathPainter::updatePath(const QVector<PointView*>& pointViewsVector){
-    reset();
+void PathPainter::updatePath(const QVector<PointView*>& pointViewsVector, bool save){
+    reset(save);
     if(pointViewsVector.size() > 0){
         PointView* startPointView = NULL;
         PointView* endPointView = NULL;
@@ -128,16 +139,28 @@ void PathPainter::updatePath(const QVector<PointView*>& pointViewsVector){
             }
             if(i == pointViewsVector.size()-1)
                 endPointView = pointViewsVector.at(i);
-
-            setPointViewPixmap(i, pointViewsVector.at(i));
+            if((pointViewsVector.at(i)->getType() != PointView::PixmapType::HOVER) || (mapItem->getState() != GraphicItemState::EDITING) || save){
+                qDebug() << "was not orange la " << i;
+                qDebug() << pointViewsVector.at(i)->getType() << mapItem->getState();
+                setPointViewPixmap(i, pointViewsVector.at(i));
+            }
         }
         setPath(path);
 
         if(*(startPointView->getPoint()) == *(endPointView->getPoint())){
-            startPointView->setPixmap(PointView::PixmapType::START_STOP);
+            if((startPointView->getType() != PointView::PixmapType::HOVER) && (mapItem->getState() != GraphicItemState::EDITING) || save){
+                qDebug() << "changed startend updatepath la";
+                startPointView->setPixmap(PointView::PixmapType::START_STOP);
+            }
         } else {
-            startPointView->setPixmap(PointView::PixmapType::START);
-            endPointView->setPixmap(PointView::PixmapType::STOP);
+            if((startPointView->getType() != PointView::PixmapType::HOVER) || (mapItem->getState() != GraphicItemState::EDITING) || save){
+                qDebug() << "changed start updatepath la";
+                startPointView->setPixmap(PointView::PixmapType::START);
+            }
+            if((endPointView->getType() != PointView::PixmapType::HOVER) || (mapItem->getState() != GraphicItemState::EDITING) || save){
+                qDebug() << "changed start updatepath la";
+                endPointView->setPixmap(PointView::PixmapType::STOP);
+            }
         }
     }
 }

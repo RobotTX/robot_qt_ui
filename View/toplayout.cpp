@@ -9,7 +9,8 @@
 #include <QTime>
  #include <QCoreApplication>
 
-TopLayout::TopLayout(QMainWindow* parent):QWidget(parent){
+TopLayout::TopLayout(QMainWindow* parent): QWidget(parent), lastMessage(TEXT_COLOR_NORMAL, "")
+{
     layout = new QHBoxLayout(this);
 
     menuBtn = new QPushButton(QIcon(":/icons/list.png"), "", this);
@@ -29,7 +30,14 @@ TopLayout::TopLayout(QMainWindow* parent):QWidget(parent){
     layout->addWidget(connectBtn);
     connect(connectBtn, SIGNAL(clicked()), parent, SLOT(connectToRobot()));
 
-//  centerBtn = new QPushButton(QIcon(":/icons/"))
+    centerBtn = new QPushButton(QIcon(":/icons/center.png"), "", this);
+    centerBtn->setToolTip("Click to center the map");
+    centerBtn->setIconSize(parent->size()/8);
+    centerBtn->setMaximumWidth(40);
+    centerBtn->setFlat(true);
+    centerBtn->setFocusPolicy(Qt::FocusPolicy::NoFocus);
+    layout->addWidget(centerBtn);
+    connect(centerBtn, SIGNAL(clicked()), parent, SLOT(centerMap()));
 
     SpaceWidget* spaceWidget = new SpaceWidget(SpaceWidget::SpaceOrientation::VERTICAL, this);
     spaceWidget->setColor("lightgrey");
@@ -71,6 +79,11 @@ void TopLayout::setLabel(const QString msgType, const QString msg){
     label->setStyleSheet("QLabel { color: " + QString(msgType) + "}");
 }
 
+void TopLayout::setEnable(bool enable){
+    menuBtn->setEnabled(enable);
+    connectBtn->setEnabled(enable);
+}
+
 void TopLayout::setLabelDelay(const QString msgType, const QString msg, int delayTime){
 
     // if it is an error make sure the person have seen it
@@ -102,12 +115,3 @@ void TopLayout::delay(const int ms)
         QCoreApplication::processEvents(QEventLoop::AllEvents, 100);
 }
 
-void TopLayout::disable(){
-    menuBtn->setEnabled(false);
-    connectBtn->setEnabled(false);
-}
-
-void TopLayout::enable(){
-    menuBtn->setEnabled(true);
-    connectBtn->setEnabled(true);
-}

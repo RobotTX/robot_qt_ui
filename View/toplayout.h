@@ -19,11 +19,12 @@ class TopLayout : public QWidget{
 public:
     TopLayout(QMainWindow* parent);
     void setLabel(const QString msgType, const QString msg);
-    void disable();
+    void setEnable(bool enable);
     void enable();
     void setLabelDelay(const QString msgType, const QString msg, int delayTime);
     void delay(const int ms) ;
-
+    std::pair<QString, QString> getLastMessage(void) const { return lastMessage; }
+    void setLastMessage(const QString msgType, const QString message) { lastMessage.first = msgType; lastMessage.second = message; }
 
 private:
     QHBoxLayout* layout;
@@ -32,6 +33,7 @@ private:
     QPushButton* connectBtn;
     QPushButton* closeBtn;
     QPushButton* centerBtn;
+    std::pair<QString, QString> lastMessage;
 };
 
 #endif // TOPLAYOUT_H

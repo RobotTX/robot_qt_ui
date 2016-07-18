@@ -21,7 +21,7 @@ public:
      * @param ipAddress
      * @param port
      */
-    CmdRobotThread(const QString ipAddress, const int port, const QString _robotName, QObject *parent);
+    CmdRobotThread(const QString ipAddress, const int cmdPort, const int metadataPort, const int robotPort, const int mapPort, const QString _robotName, QObject *parent);
 
     /**
      * @brief run
@@ -46,12 +46,6 @@ signals:
     void writeCommand(QString cmd);
 
 private slots:
-    /**
-     * @brief hostFoundSlot
-     * Slot called when an host is found
-     */
-    void hostFoundSlot();
-
     /**
      * @brief connectedSlot
      * Slot called when we are connected to the host
@@ -79,6 +73,7 @@ private slots:
     void readTcpDataSlot();
     void writeCommandSlot(QString cmd);
     void pingSlot();
+    void changeRobotNameSlot(QString name);
 
 private :
     std::shared_ptr<QTcpSocket> socketCmd;
@@ -88,6 +83,9 @@ private :
     bool connected;
     QString commandAnswer;
     int missedPing;
+    int metadataPort;
+    int robotPort;
+    int mapPort;
 };
 
 #endif // CMDROBOTTHREAD_H

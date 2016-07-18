@@ -53,9 +53,9 @@ public:
     QPushButton* getCloseButton(void) const { return closeBtn; }
     QWidget* getLastWidget() const {return lastWidget;}
 
-public:
     void updateGroupDisplayed(const std::shared_ptr<Points> &_points, const int groupIndex);
     void disableButtons();
+    void setEnableReturnCloseButtons(bool enable);
 
 private slots:
     void enableButtons(int index);

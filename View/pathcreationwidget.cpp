@@ -32,15 +32,11 @@ PathCreationWidget::PathCreationWidget(QMainWindow* parent, const Points &_point
 
     actionButtons = new TopLeftMenu(this);
 
-
     layout->addWidget(actionButtons);
 
     connect(actionButtons->getPlusButton(), SIGNAL(clicked(bool)), this, SLOT(addPathPoint()));
     connect(actionButtons->getMinusButton(), SIGNAL(clicked()), this, SLOT(supprPathPoint()));
     connect(actionButtons->getEditButton(), SIGNAL(clicked()), this, SLOT(editPathPoint()));
-
-
-
 
     /// The menu which display the list of point to select
     pointsMenu = new QMenu(this);
@@ -79,10 +75,10 @@ PathCreationWidget::PathCreationWidget(QMainWindow* parent, const Points &_point
     connect(pathPointsList, SIGNAL(itemClicked(QListWidgetItem*)), this, SLOT(itemClicked(QListWidgetItem*)));
     connect(pathPointsList, SIGNAL(itemMovedSignal(int, int)), this, SLOT(itemMovedSlot(int, int)));
 
-   layout->addWidget(pathPointsList);
+    layout->addWidget(pathPointsList);
 
 
-    QVBoxLayout* bottomLayout = new QVBoxLayout(this);
+    QVBoxLayout* bottomLayout = new QVBoxLayout();
 
     /// The save button
     QPushButton* saveBtn = new QPushButton("Save Path", this);
@@ -465,13 +461,13 @@ void PathCreationWidget::editItem(QListWidgetItem* item){
 }
 
 
-void PathCreationWidget::updatePointPainter(){
+void PathCreationWidget::updatePointPainter(const bool save){
     qDebug() << "pathcreationwidget updatepointpainer called";
     /*qDebug() << "\n";
     for(int i = 0; i < pointList.size(); i++){
         qDebug() << i << " : " << pointList.at(i).getName() << pointList.at(i).getPosition().getX() << pointList.at(i).getPosition().getY();
     }*/
-    emit updatePathPointToPainter(&pointList);
+    emit updatePathPointToPainter(pointList, save);
 }
 
 void PathCreationWidget::hideEvent(QHideEvent *event){
@@ -503,7 +499,7 @@ void PathCreationWidget::saveEditSlot(PathPointCreationWidget* pathPointCreation
     emit saveEditPathPoint();
 }
 
-void PathCreationWidget::applySavePathPoint(float posX, float posY){
+void PathCreationWidget::applySavePathPoint(float posX, float posY, bool save){
     qDebug() << "applySavePathPoint called" << posX << posY;
     editedPathPointCreationWidget->setPos(posX, posY);
 

@@ -36,6 +36,9 @@ public:
 
     PathCreationWidget(QMainWindow* parent, const Points& point);
 
+    PathPointCreationWidget* getPathPointCreationWidget(void) const { return editedPathPointCreationWidget; }
+    PathPointList* getPathPointList(void) const { return pathPointsList; }
+    QVector<Point> getPointList(void) const { return pointList; }
     /**
      * @brief initialisationPathPoint
      * @param pathPoint
@@ -82,7 +85,7 @@ public:
      * @param posY
      * Called when we click to save a temporary pathPoint we were editing/dragging
      */
-    void applySavePathPoint(float posX, float posY);
+    void applySavePathPoint(const float posX, const float posY, const bool save = false);
 
     /**
      * @brief moveEditPathPoint
@@ -155,7 +158,7 @@ private slots:
      * @brief updatePointPainter
      * Function which emit the updatePathPointToPainter signal to update the painter
      */
-    void updatePointPainter(void);
+    void updatePointPainter(const bool save = false);
 
     /**
      * @brief itemMovedSlot
@@ -191,7 +194,7 @@ signals:
      * @param pointVector
      * Signal emitted to tell the path painter to update its drawing of the path
      */
-    void updatePathPointToPainter(QVector<Point>* pointVector);
+    void updatePathPointToPainter(QVector<Point>& pointVector, bool save);
 
     /**
      * @brief hidePathCreationWidget

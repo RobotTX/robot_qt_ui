@@ -59,6 +59,14 @@ bool Point::operator==(const Point& point) const {
          return false;
  }
 
+ bool Point::comparePos(const Position pos) const {
+     if(abs(pos.getX() - this->getPosition().getX()) < 0.01 &&
+             abs(pos.getY() - this->getPosition().getY()) < 0.01)
+         return true;
+     else
+         return false;
+ }
+
  bool Point::setHome(const bool _home, const QString robotName){
     if(!_home){
         home = _home;

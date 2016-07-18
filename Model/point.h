@@ -45,6 +45,7 @@ public:
     bool operator==(const Point& point1) const;
 
     bool comparePos(const double x, const double y) const;
+    bool comparePos(const Position pos) const;
 
 
 private:
