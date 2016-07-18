@@ -12,7 +12,7 @@
 #include "Model/map.h"
 
 MapView::MapView (const QPixmap& pixmap, const QSize _size, std::shared_ptr<Map> _map, QMainWindow* _mainWindow) :
-    QGraphicsPixmapItem(pixmap), size(_size), state(GraphicItemState::NO_STATE), map(_map), mainWindow(_mainWindow)
+    QGraphicsPixmapItem(pixmap), size(_size), state(GraphicItemState::NO_STATE), mainWindow(_mainWindow), map(_map)
 {
     /// Tell the class which mouse button to accept
     setAcceptedMouseButtons(Qt::LeftButton);

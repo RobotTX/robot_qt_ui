@@ -37,11 +37,11 @@ class PathPainter;
 #include <QMessageBox>
 
 
-#define XML_PATH "/home/m-a/Documents/QtProject/gobot-software/points.xml"
-#define ROBOTS_NAME_PATH "/home/m-a/Documents/QtProject/gobot-software/robotsName.dat"
+//#define XML_PATH "/home/m-a/Documents/QtProject/gobot-software/points.xml"
+//#define ROBOTS_NAME_PATH "/home/m-a/Documents/QtProject/gobot-software/robotsName.dat"
 
-//#define XML_PATH "/home/joan/Qt/QtProjects/gobot-software/points.xml"
-//#define ROBOTS_NAME_PATH "/home/joan/Qt/QtProjects/gobot-software/robotsName.dat"
+#define XML_PATH "/home/joan/Qt/QtProjects/gobot-software/points.xml"
+#define ROBOTS_NAME_PATH "/home/joan/Qt/QtProjects/gobot-software/robotsName.dat"
 
 //#define XML_PATH "/Users/fannylarradet/Desktop/GTRobots/gobot-software/points.xml"
 //#define ROBOTS_NAME_PATH "/Users/fannylarradet/Desktop/GTRobots/gobot-software/robotsName.dat"
