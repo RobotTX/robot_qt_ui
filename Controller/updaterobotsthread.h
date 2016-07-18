@@ -27,7 +27,7 @@ private slots:
     void errorConnectionSlot(QAbstractSocket::SocketError error);
 
 signals:
-    void robotIsAlive(QString hostname, QString ip);
+    void robotIsAlive(QString hostname, QString ip, QString mapId);
 
 private:
     int port;

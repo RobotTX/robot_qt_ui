@@ -37,14 +37,17 @@ class PathPainter;
 #include <QMessageBox>
 
 
-//#define XML_PATH "/home/m-a/Documents/QtProject/gobot-software/points.xml"
-//#define ROBOTS_NAME_PATH "/home/m-a/Documents/QtProject/gobot-software/robotsName.dat"
+#define XML_PATH "/home/m-a/Documents/QtProject/gobot-software/points.xml"
+#define ROBOTS_NAME_PATH "/home/m-a/Documents/QtProject/gobot-software/robotsName.dat"
+#define MAP_PATH "/home/m-a/Documents/QtProject/gobot-software/realMap.dat"
 
-#define XML_PATH "/home/joan/Qt/QtProjects/gobot-software/points.xml"
-#define ROBOTS_NAME_PATH "/home/joan/Qt/QtProjects/gobot-software/robotsName.dat"
+//#define XML_PATH "/home/joan/Qt/QtProjects/gobot-software/points.xml"
+//#define ROBOTS_NAME_PATH "/home/joan/Qt/QtProjects/gobot-software/robotsName.dat"
+//#define MAP_PATH "/home/joan/Qt/QtProjects/gobot-software/realMap.dat"
 
 //#define XML_PATH "/Users/fannylarradet/Desktop/GTRobots/gobot-software/points.xml"
 //#define ROBOTS_NAME_PATH "/Users/fannylarradet/Desktop/GTRobots/gobot-software/robotsName.dat"
+//#define MAP_PATH "/Users/fannylarradet/Desktop/GTRobots/gobot-software/realMap.dat"
 
 #define PI 3.14159265
 #define PORT_ROBOT_UPDATE 6000
@@ -87,7 +90,6 @@ public:
 signals:
     void sendCommand(QString);
     void nameChanged(QString, QString);
-    void ping();
     void changeCmdThreadRobotName(QString);
 
 private slots:
@@ -186,9 +188,11 @@ private slots:
     void hideHome(void);
     void backEvent();
     void updateView();
-    void robotIsAliveSlot(QString hostname, QString ip);
+    void robotIsAliveSlot(QString hostname, QString ip, QString mapId);
     void robotIsDeadSlot(QString hostname, QString ip);
     void selectViewRobot();
+    void sendNewMapToRobots(QString ipAddress);
+    void sendNewMapToRobot(std::shared_ptr<Robot> robot);
 
 private:
     Ui::MainWindow* ui;

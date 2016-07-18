@@ -1,10 +1,12 @@
 #include "scanmapthread.h"
 #include <QDataStream>
+#include <QFile>
 
-ScanMapThread::ScanMapThread(const QString newipAddress, const int newPort){
+ScanMapThread::ScanMapThread(const QString newipAddress, const int newPort, const QString _mapPath){
     ipAddress = newipAddress;
     port = newPort;
     data = QByteArray();
+    mapPath = _mapPath;
 }
 
 void ScanMapThread::run(){
@@ -41,6 +43,7 @@ void ScanMapThread::run(){
             exit();
             return;
         } else {
+            qDebug() << "(Map) Received data";
             data.append(socketMap->readAll());
 
             /// The TCP protocol sending blocks of data, a map is defined by a random number
@@ -57,6 +60,17 @@ void ScanMapThread::run(){
                 emit valueChangedMap(data);
                 /// Clear the Vector that contain the map, once it has been treated
                 data.clear();
+            } else if(data.at(data.size()-1) == -3){
+                ///We are receiving the real map
+                data.remove(data.size()-1,1);
+                qDebug() << "(Map) Real map of" << data.size() << "bytes received <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<";
+                QFile file(mapPath);
+                file.resize(0);
+                file.open(QIODevice::WriteOnly);
+                file.write(data);
+                file.close();
+                data.clear();
+                emit newScanSaved(ipAddress);
             }
         }
     }
