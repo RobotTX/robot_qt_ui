@@ -42,7 +42,7 @@
 #include "View/pathpointcreationwidget.h"
 #include "View/pathpointlist.h"
 #include "View/groupview.h"
-#include "pathWidget.h"
+#include "pathwidget.h"
 
 /**
  * @brief MainWindow::MainWindow

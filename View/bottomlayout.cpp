@@ -78,13 +78,12 @@ BottomLayout::BottomLayout(QMainWindow* parent, const std::shared_ptr<Robots> &r
         }
         QScrollArea* scrollarea = new QScrollArea(this);
         QLabel* pathLabel = new QLabel(pathStr, this);
-
-        scrollArea->setWidget(pathLabel);
-        pathLabel->setMinimumHeight(parent->height()/10);
-        pathLabel->setMaximumHeight(parent->height()/10);
+        pathLabel->setContentsMargins(0, 0, 0, -20);
+        scrollarea->setWidget(pathLabel);
+        scrollarea->setWidgetResizable(true);
+        scrollarea->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+        scrollarea->setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);
         vectorPathLabel.push_back(pathLabel);
-        pathLabel->setMinimumWidth(1);
-        //columnPath->addWidget(pathLabel);
         columnPath->addWidget(scrollarea);
     }
     //widgetPath->setLayout(columnPath);
