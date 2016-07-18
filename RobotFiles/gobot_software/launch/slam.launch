@@ -1,9 +1,0 @@
-<?xml version="1.0"?>
-<launch>
-	<node pkg="robot_pose_publisher" type="robot_pose_publisher" name ="robot_pose_publisher"/>
-	<node pkg="gobot_software" type="map_transfer" name ="map_transfer" output="screen"/>
-	<node pkg="gobot_software" type="robot_pos_transfer" name ="robot_pos_transfer" output="screen"/>
-	<node pkg="gobot_software" type="map_metadata_transfer" name ="map_metadata_transfer" output="screen"/>
-	<node pkg="gobot_software" type="command_system" name ="command_system" output="screen"/>
-	<node pkg="gobot_software" type="ping_server.py" name="ping_server" output="screen"/>
-</launch>

@@ -10,7 +10,7 @@
 Robot::Robot(const QString _name, const QString _ip, QMainWindow* parent) : name(_name), ip(_ip), position(Position()),
     orientation(0), batteryLevel(100), wifi(""), home(NULL), playingPath(0)
 {
-    /*qDebug() << "Robot" << name << "at ip" << ip << " launching its cmd thread";
+    qDebug() << "Robot" << name << "at ip" << ip << " launching its cmd thread";
 
     cmdThread = new CmdRobotThread(ip, PORT_CMD, PORT_MAP_METADATA, PORT_ROBOT_POS, PORT_MAP, name, parent);
     QObject::connect(cmdThread, SIGNAL(robotIsDead(QString,QString)), parent, SLOT(robotIsDeadSlot(QString,QString)));
@@ -34,7 +34,7 @@ Robot::Robot(const QString _name, const QString _ip, QMainWindow* parent) : name
     QObject::connect(metadataThread, SIGNAL(valueChangedMetadata(int, int, float, float, float)),
                      parent , SLOT(updateMetadata(int, int, float, float, float)));
     metadataThread->start();
-    metadataThread->moveToThread(metadataThread);*/
+    metadataThread->moveToThread(metadataThread);
 }
 
 Robot::Robot(): name("Default name"), ip("no Ip"), position(Position()),
@@ -42,7 +42,7 @@ Robot::Robot(): name("Default name"), ip("no Ip"), position(Position()),
 }
 
 Robot::~Robot(){
-    /*if (cmdThread != 0 && cmdThread->isRunning() ) {
+    if (cmdThread != 0 && cmdThread->isRunning() ) {
         cmdThread->requestInterruption();
         cmdThread->wait();
     }
@@ -53,7 +53,7 @@ Robot::~Robot(){
     if (metadataThread != NULL && metadataThread->isRunning() ) {
         metadataThread->requestInterruption();
         metadataThread->wait();
-    }*/
+    }
 }
 
 std::ostream& operator <<(std::ostream& stream, Robot const& robot){
@@ -68,21 +68,21 @@ void Robot::display(std::ostream& stream) const {
 }
 
 bool Robot::sendCommand(const QString cmd) {
-    //return cmdThread->sendCommand(cmd);
-    return true;
+    return cmdThread->sendCommand(cmd);
+    //return true;
 }
 
 QString Robot::waitAnswer() {
-    //return cmdThread->waitAnswer();
-    return "1 1";
+    return cmdThread->waitAnswer();
+    //return "1 1";
 }
 
 void Robot::resetCommandAnswer() {
-    //cmdThread->resetCommandAnswer();
+    cmdThread->resetCommandAnswer();
 }
 
 void Robot::stopThreads() {
-    /*qDebug() << "yolo1";
+    qDebug() << "yolo1";
     if (cmdThread != 0 && cmdThread->isRunning() ) {
         qDebug() << "yolo2";
         cmdThread->requestInterruption();
@@ -106,5 +106,5 @@ void Robot::stopThreads() {
         metadataThread->wait();
         qDebug() << "yolo12";
     }
-    qDebug() << "yolo13";*/
+    qDebug() << "yolo13";
 }
