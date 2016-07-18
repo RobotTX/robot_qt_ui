@@ -42,6 +42,7 @@
 #include "View/pathpointcreationwidget.h"
 #include "View/pathpointlist.h"
 #include "View/groupview.h"
+#include "pathWidget.h"
 
 /**
  * @brief MainWindow::MainWindow
@@ -568,6 +569,9 @@ void MainWindow::addPathSelecRobotBtnEvent(){
     pathCreationWidget->show();
     pathCreationWidget->setSelectedRobot(selectedRobot->getRobot());
 
+    editSelectedRobotWidget->setOldPath( selectedRobot->getRobot()->getPath());
+
+
     setEnableAll(false, GraphicItemState::CREATING_PATH, true, true);
     switchFocus(selectedRobot->getRobot()->getName(), pathCreationWidget, MainWindow::WidgetType::ROBOT);
 
@@ -680,7 +684,11 @@ void MainWindow::checkRobotBtnEvent(QString name){
 
 void MainWindow::cancelEditSelecRobotBtnEvent(){
     qDebug() << "cancelEditSelecRobotBtnEvent called";
-
+    // if the path has been changed, reset the path
+    if( editSelectedRobotWidget->getPathChanged())
+    {
+        selectedRobot->getRobot()->setPath(editSelectedRobotWidget->getOldPath() );
+    }
     //robotsLeftWidget->setEditBtnStatus(false);
     //robotsLeftWidget->setCheckBtnStatus(false);
     hideAllWidgets();
@@ -697,6 +705,11 @@ void MainWindow::robotSavedEvent(){
     bool isOK = false;
     int change = 0;
 
+    if ( editSelectedRobotWidget->getPathChanged())
+    {
+        change++;
+        isOK = true;
+    }
     /// if we changed the name
     if(selectedRobot->getRobot()->getName().compare(editSelectedRobotWidget->getNameEdit()->text()) != 0){
         qDebug() << "Name has been modified";
@@ -809,7 +822,7 @@ void MainWindow::robotSavedEvent(){
             break;
             default:
             // should never be here
-                qDebug() << " dafuk ?";
+                qDebug() << " error in robotSavedEvent";
                 isOK = false;
             break;
         }
@@ -975,6 +988,7 @@ void MainWindow::pathSaved(bool execPath){
                     else
                         qDebug() << "No robot to play this path";
                 }
+                editSelectedRobotWidget->setPathChanged(true);                
                 topLayout->setLabel(TEXT_COLOR_SUCCESS, "Path saved");
                 backEvent();
             } else {
@@ -1059,6 +1073,7 @@ void MainWindow::clearPath(const int robotNb){
 }
 
 void MainWindow::selectHomeEvent(){
+    /*
     qDebug() << "selectHomeEvent called";
     if(selectedRobotWidget->getScanBtn()->isEnabled()){
         setMessageTop(TEXT_COLOR_INFO, "Click on the map or on a point to select a home for the robot " + selectedRobot->getRobot()->getName());
@@ -1076,7 +1091,8 @@ void MainWindow::selectHomeEvent(){
         selectedRobotWidget->getHomeBtn()->setText("Add home");
         selectedRobotWidget->enable();
         setEnableAll(true);
-    }
+
+    }*/
 }
 
 void MainWindow::editHomeEvent(){
@@ -1150,7 +1166,7 @@ void MainWindow::homeSelected(PointView* pointView, bool temporary){
 
                 selectedRobot->getRobot()->setHome(pointView->getPoint());
 
-                selectedRobotWidget->getHomeBtn()->setText("Select a home");
+                //selectedRobotWidget->getHomeBtn()->setText("Select a home");
                 selectedRobotWidget->enable();
                 setEnableAll(true);
                 hideAllWidgets();
@@ -1197,6 +1213,28 @@ void MainWindow::showHome(){
 
         pointView->show();
     }
+    RobotView* robotView =  robots->getRobotViewByName(selectedRobot->getRobot()->getName());
+    /// If the robot has a path, we display it, otherwise we show the button to add the path
+    if(robotView->getRobot()->getPath().size() > 0){
+       // addPathBtn->hide();
+
+        selectedRobotWidget->getPathWidget()->setSelectedRobot(robotView);
+        selectedRobotWidget->getPathWidget()->show();
+        selectedRobotWidget->getNoPath()->hide();
+
+        editSelectedRobotWidget->getPathWidget()->setSelectedRobot(robotView);
+        editSelectedRobotWidget->getPathWidget()->show();
+        editSelectedRobotWidget->getAddPathBtn()->hide();
+    } else {
+       // addPathBtn->show();
+        editSelectedRobotWidget->getPathWidget()->hide();
+        editSelectedRobotWidget->getAddPathBtn()->show();
+
+        selectedRobotWidget->getPathWidget()->hide();
+        selectedRobotWidget->getNoPath()->show();
+
+    }
+
 }
 
 void MainWindow::hideHome(void){
@@ -2877,7 +2915,7 @@ void MainWindow::displayPointFromGroupMenu(){
             /// updates the model
             points->getGroups().at(pointsLeftWidget->getIndexLastGroupClicked())->getPoints().at(checkedId)->setDisplayed(true);
             /// we add a tick icon next to the name of the point to show that it is displayed on the map
-            leftMenu->getDisplaySelectedGroup()->getPointButtonGroup()->getButtonGroup()->button(checkedId)->setIcon(QIcon(":/icons/tick.png"));
+            leftMenu->getDisplaySelectedGroup()->getPointButtonGroup()->getButtonGroup()->button(checkedId)->setIcon(QIcon(":/icons/eye.png"));
             /// saves changes to the file
             XMLParser parserPoints(XML_PATH, mapPixmapItem);
             parserPoints.save(*points);

@@ -10,6 +10,7 @@ ButtonMenu::ButtonMenu(const QIcon icon,QString text, QWidget* parent): QPushBut
     this->setStyleSheet(noHoverStyle);
 }
 
+
  void ButtonMenu::enterEvent(QEvent * ) {
      if(isEnabled())
     this->setStyleSheet(hoverStyle);

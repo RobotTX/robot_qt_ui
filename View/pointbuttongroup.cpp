@@ -28,7 +28,9 @@ PointButtonGroup::PointButtonGroup(std::shared_ptr<Points> const&_points, const 
         buttonGroup->addButton(pointButton, j);
         layout->addWidget(pointButton);
         if(currentPoint->isDisplayed())
-            pointButton->setIcon(QIcon(":/icons/tick.png"));
+            pointButton->setIcon(QIcon(":/icons/eye.png"));
+        else
+            pointButton->setIcon(QIcon(":/icons/empty.png"));
 
     }
 }
@@ -48,7 +50,10 @@ void PointButtonGroup::setGroup(std::shared_ptr<Points> const&_points, const int
         buttonGroup->addButton(pointButton, j);
         layout->addWidget(pointButton);
         if(currentPoint->isDisplayed())
-            pointButton->setIcon(QIcon(":/icons/tick.png"));
+            pointButton->setIcon(QIcon(":/icons/eye.png"));
+        else
+            pointButton->setIcon(QIcon(":/icons/empty.png"));
+
     }
     emit updateConnectionsRequest();
 }
