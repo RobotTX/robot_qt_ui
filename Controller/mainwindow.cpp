@@ -42,7 +42,7 @@
 #include "View/pathpointcreationwidget.h"
 #include "View/pathpointlist.h"
 #include "View/groupview.h"
-#include <QUuid>
+#include "View/pathwidget.h"
 
 /**
  * @brief MainWindow::MainWindow
@@ -471,8 +471,7 @@ void MainWindow::playSelectedRobot(int robotNb){
     }
 }
 
-void MainWindow::viewPathSelectedRobot(int robotNb){
-    bool checked = bottomLayout->getViewPathRobotBtnGroup()->button(robotNb)->isChecked();
+void MainWindow::viewPathSelectedRobot(int robotNb, bool checked){
     if(checked){
         std::shared_ptr<Robot> robot = robots->getRobotsVector().at(robotNb)->getRobot();
         qDebug() << "viewPathSelectedRobot called on" << robot->getName() << checked;
@@ -485,7 +484,6 @@ void MainWindow::viewPathSelectedRobot(int robotNb){
         for(size_t i = 0; i < robot->getPath().size(); i++){
             std::shared_ptr<PathPoint> pathPoint = robot->getPath().at(i);
             PointView * pointView = new PointView(std::make_shared<Point>(pathPoint->getPoint()), mapPixmapItem);
-            //pointView->setParentItem(mapPixmapItem);
             pathPointViews.push_back(pointView);
         }
         pathPainter->updatePath(pathPointViews);
@@ -575,12 +573,24 @@ void MainWindow::addPathSelecRobotBtnEvent(){
     pathCreationWidget->show();
     pathCreationWidget->setSelectedRobot(selectedRobot->getRobot());
 
+    editSelectedRobotWidget->setOldPath( selectedRobot->getRobot()->getPath());
+
+
     setEnableAll(false, GraphicItemState::CREATING_PATH, true, true);
     switchFocus(selectedRobot->getRobot()->getName(), pathCreationWidget, MainWindow::WidgetType::ROBOT);
 
+    /// stop displaying the currently displayed path if it exists
+    int id = bottomLayout->getViewPathRobotBtnGroup()->checkedId();
+    if(id != -1){
+        bottomLayout->getViewPathRobotBtnGroup()->checkedButton()->setChecked(false);
+         viewPathSelectedRobot(id, false);
+    }
+
+    /// hides the temporary pointview
+    mapPixmapItem->getTmpPointView()->hide();
+
     /// displays the points in order to make them available for the edition of the path,
     ///  we have to keep track of those which were hidden so we can hide them again once the edition is finished
-
     for(size_t j = 0; j < pointViews->count(); j++){
         GroupView* group = pointViews->getGroups().at(j);
         for(size_t i = 0; i < group->getPointViews().size(); i++){
@@ -678,7 +688,11 @@ void MainWindow::checkRobotBtnEvent(QString name){
 
 void MainWindow::cancelEditSelecRobotBtnEvent(){
     qDebug() << "cancelEditSelecRobotBtnEvent called";
-
+    // if the path has been changed, reset the path
+    if( editSelectedRobotWidget->getPathChanged())
+    {
+        selectedRobot->getRobot()->setPath(editSelectedRobotWidget->getOldPath() );
+    }
     //robotsLeftWidget->setEditBtnStatus(false);
     //robotsLeftWidget->setCheckBtnStatus(false);
     hideAllWidgets();
@@ -695,6 +709,11 @@ void MainWindow::robotSavedEvent(){
     bool isOK = false;
     int change = 0;
 
+    if ( editSelectedRobotWidget->getPathChanged())
+    {
+        change++;
+        isOK = true;
+    }
     /// if we changed the name
     if(selectedRobot->getRobot()->getName().compare(editSelectedRobotWidget->getNameEdit()->text()) != 0){
         qDebug() << "Name has been modified";
@@ -807,7 +826,7 @@ void MainWindow::robotSavedEvent(){
             break;
             default:
             // should never be here
-                qDebug() << " dafuk ?";
+                qDebug() << " error in robotSavedEvent";
                 isOK = false;
             break;
         }
@@ -918,7 +937,7 @@ void MainWindow::pathSaved(bool execPath){
     std::shared_ptr<Robot> robot = selectedRobot->getRobot();
     QString pathStr = "";
 
-    for(int i = 0; i < robot->getPath().size(); i++){
+    for(size_t i = 0; i < robot->getPath().size(); i++){
         std::shared_ptr<PathPoint> pathPoint = robot->getPath().at(i);
         float oldPosX = pathPoint->getPoint().getPosition().getX();
         float oldPosY = pathPoint->getPoint().getPosition().getY();
@@ -955,6 +974,10 @@ void MainWindow::pathSaved(bool execPath){
 
                 bottomLayout->updateRobot(robots->getRobotId(selectedRobot->getRobot()->getName()), selectedRobot);
 
+                int id = robots->getRobotId(selectedRobot->getRobot()->getName());
+                bottomLayout->getViewPathRobotBtnGroup()->button(id)->setChecked(true);
+                viewPathSelectedRobot(id, true);
+
                 selectedRobotWidget->setSelectedRobot(selectedRobot);
                 if(execPath){
                     int robotNb = -1;
@@ -969,6 +992,7 @@ void MainWindow::pathSaved(bool execPath){
                     else
                         qDebug() << "No robot to play this path";
                 }
+                editSelectedRobotWidget->setPathChanged(true);                
                 topLayout->setLabel(TEXT_COLOR_SUCCESS, "Path saved");
                 backEvent();
             } else {
@@ -1053,6 +1077,7 @@ void MainWindow::clearPath(const int robotNb){
 }
 
 void MainWindow::selectHomeEvent(){
+    /*
     qDebug() << "selectHomeEvent called";
     if(selectedRobotWidget->getScanBtn()->isEnabled()){
         setMessageTop(TEXT_COLOR_INFO, "Click on the map or on a point to select a home for the robot " + selectedRobot->getRobot()->getName());
@@ -1070,7 +1095,8 @@ void MainWindow::selectHomeEvent(){
         selectedRobotWidget->getHomeBtn()->setText("Add home");
         selectedRobotWidget->enable();
         setEnableAll(true);
-    }
+
+    }*/
 }
 
 void MainWindow::editHomeEvent(){
@@ -1144,7 +1170,7 @@ void MainWindow::homeSelected(PointView* pointView, bool temporary){
 
                 selectedRobot->getRobot()->setHome(pointView->getPoint());
 
-                selectedRobotWidget->getHomeBtn()->setText("Select a home");
+                //selectedRobotWidget->getHomeBtn()->setText("Select a home");
                 selectedRobotWidget->enable();
                 setEnableAll(true);
                 hideAllWidgets();
@@ -1191,6 +1217,28 @@ void MainWindow::showHome(){
 
         pointView->show();
     }
+    RobotView* robotView =  robots->getRobotViewByName(selectedRobot->getRobot()->getName());
+    /// If the robot has a path, we display it, otherwise we show the button to add the path
+    if(robotView->getRobot()->getPath().size() > 0){
+       // addPathBtn->hide();
+
+        selectedRobotWidget->getPathWidget()->setSelectedRobot(robotView);
+        selectedRobotWidget->getPathWidget()->show();
+        selectedRobotWidget->getNoPath()->hide();
+
+        editSelectedRobotWidget->getPathWidget()->setSelectedRobot(robotView);
+        editSelectedRobotWidget->getPathWidget()->show();
+        editSelectedRobotWidget->getAddPathBtn()->hide();
+    } else {
+       // addPathBtn->show();
+        editSelectedRobotWidget->getPathWidget()->hide();
+        editSelectedRobotWidget->getAddPathBtn()->show();
+
+        selectedRobotWidget->getPathWidget()->hide();
+        selectedRobotWidget->getNoPath()->show();
+
+    }
+
 }
 
 void MainWindow::hideHome(void){
@@ -1375,6 +1423,7 @@ void MainWindow::setMessageCreationPath(QString message){
 }
 
 void MainWindow::updatePathPoint(double x, double y, PointView* pointView){
+    Q_UNUSED(pointView)
     qDebug() << "updatepathpoint called";
     for(int i = 0; i < mapPixmapItem->getPathCreationPoints().count(); i++){
         PointView* pv = mapPixmapItem->getPathCreationPoints().at(i);
@@ -2913,7 +2962,7 @@ void MainWindow::displayPointFromGroupMenu(){
             /// updates the model
             points->getGroups().at(pointsLeftWidget->getIndexLastGroupClicked())->getPoints().at(checkedId)->setDisplayed(true);
             /// we add a tick icon next to the name of the point to show that it is displayed on the map
-            leftMenu->getDisplaySelectedGroup()->getPointButtonGroup()->getButtonGroup()->button(checkedId)->setIcon(QIcon(":/icons/tick.png"));
+            leftMenu->getDisplaySelectedGroup()->getPointButtonGroup()->getButtonGroup()->button(checkedId)->setIcon(QIcon(":/icons/eye.png"));
             /// saves changes to the file
             XMLParser parserPoints(XML_PATH, mapPixmapItem);
             parserPoints.save(*points);

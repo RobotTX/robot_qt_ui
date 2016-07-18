@@ -13,6 +13,7 @@
 #include <QDebug>
 #include "View/spacewidget.h"
 #include <QGridLayout>
+#include <pathwidget.h>
 
 EditSelectedRobotWidget::EditSelectedRobotWidget(QMainWindow* parent, const std::shared_ptr<Robots> _robots):QWidget(parent){
     robots = _robots;
@@ -21,7 +22,7 @@ EditSelectedRobotWidget::EditSelectedRobotWidget(QMainWindow* parent, const std:
     robotView = NULL;
     home = NULL;
     oldHome = NULL;
-
+    pathChanged = false;
 
     /// Name editable label
     nameEdit = new QLineEdit(this);
@@ -78,12 +79,25 @@ EditSelectedRobotWidget::EditSelectedRobotWidget(QMainWindow* parent, const std:
     homeBtn->setIconSize(parent->size()/10);
     homeBtn->setStyleSheet ("text-align: left");
     connect(homeBtn, SIGNAL(clicked()), parent, SLOT(editHomeEvent()));
-
     layout->addWidget(homeLabel);
     layout->addWidget(homeBtn);
 
+    /// Button to add a path
+    addPathBtn = new QPushButton(QIcon(":/icons/plus.png"),"Add path", this);
+    addPathBtn->setStyleSheet ("text-align: left");
+    //addPathBtn->hide();
+    addPathBtn->setIconSize(parent->size()/10);
+    connect(addPathBtn, SIGNAL(clicked()), parent, SLOT(addPathSelecRobotBtnEvent()));
+    layout->addWidget(addPathBtn);
+
+
+    pathWidget = new PathWidget(this);
+    layout->addWidget(pathWidget);
+
+
     SpaceWidget* spaceWidget = new SpaceWidget(SpaceWidget::SpaceOrientation::HORIZONTAL, this);
     layout->addWidget(spaceWidget);
+
 
     QHBoxLayout* grid = new QHBoxLayout();
     /// Cancel & save buttons
@@ -111,6 +125,7 @@ EditSelectedRobotWidget::EditSelectedRobotWidget(QMainWindow* parent, const std:
 
 void EditSelectedRobotWidget::setSelectedRobot(RobotView* const _robotView, bool _firstConnection){
 
+       pathChanged = false;
     firstConnection = _firstConnection;
     if(firstConnection)
         cancelBtn->setEnabled(false);
@@ -202,6 +217,8 @@ void EditSelectedRobotWidget::enableAll(void){
 void EditSelectedRobotWidget::showEvent(QShowEvent *event){
     emit showEditSelectedRobotWidget();
     QWidget::showEvent(event);
+
+
 }
 
 void EditSelectedRobotWidget::hideEvent(QHideEvent *event){

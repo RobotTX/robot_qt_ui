@@ -33,7 +33,6 @@ RobotsLeftWidget::RobotsLeftWidget(QMainWindow* _parent):QWidget(_parent){
     layout->setAlignment(Qt::AlignTop);
     layout->setContentsMargins(0,0,0,0);
 
-
 }
 
 QString RobotsLeftWidget::getSelectedRobotName()
