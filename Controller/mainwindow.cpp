@@ -927,7 +927,6 @@ void MainWindow::pathSaved(bool execPath){
         pathStr += + "\"" + QString::number(newPosX) + "\" \"" + QString::number(newPosY) + "\" \"" + QString::number(waitTime)+ "\" ";
     }
 
-    qDebug() << pathStr;
     /// if the command is succesfully sent to the robot, we apply the change
     robot->resetCommandAnswer();
     if(robot->sendCommand(QString("i ") + pathStr)){
@@ -1291,7 +1290,7 @@ void MainWindow::robotIsDeadSlot(QString hostname,QString ip){
     qDebug() << "Robot" << hostname << "at ip" << ip << "... He is dead, Jim!!";
     setMessageTop(TEXT_COLOR_DANGER, QString("Robot " + hostname + " at ip " + ip +" disconnected."));
 
-    qDebug() << "Available IPs";
+    qDebug() << "Robots IP";
     for(int i = 0; i < robots->getRobotsVector().size(); i++){
         qDebug() << robots->getRobotsVector().at(i)->getRobot()->getIp();
     }
@@ -1299,67 +1298,68 @@ void MainWindow::robotIsDeadSlot(QString hostname,QString ip){
     RobotView* rv = robots->getRobotViewByIp(ip);
     int id = robots->getRobotId(hostname);
     qDebug() << "Dead robot's id :" << id;
-    qDebug() << "rv is null ? :" << (rv == NULL);
-    qDebug() << "Robot is null ? :" << (rv->getRobot() == NULL);
 
+    if(rv != NULL && rv->getRobot() != NULL){
+        /// we stop the robots threads
+        rv->getRobot()->stopThreads();
+        qDebug() << "robots threads cleaned";
 
-    /// we stop the robots threads
-    rv->getRobot()->stopThreads();
-    qDebug() << "robots threads cleaned";
+        /// if the robot had a home, make the point a normal point
+        if(rv->getRobot()->getHome() != NULL)
+            rv->getRobot()->getHome()->setHome(false, "");
+        qDebug() << "home cleaned";
 
-    /// if the robot had a home, make the point a normal point
-    if(rv->getRobot()->getHome() != NULL)
-        rv->getRobot()->getHome()->setHome(false, "");
-    qDebug() << "home cleaned";
+        /// if selected => if one of this robot related menu is open
+        if(selectedRobot != NULL && selectedRobot->getRobot()->getIp().compare(ip) == 0){
+            if(editSelectedRobotWidget->isVisible()){
+                setGraphicItemsState(GraphicItemState::NO_STATE);
+            }
 
-    /// if selected => if one of this robot related menu is open
-    if(selectedRobot != NULL && selectedRobot->getRobot()->getIp().compare(ip) == 0){
-        if(editSelectedRobotWidget->isVisible()){
-            setGraphicItemsState(GraphicItemState::NO_STATE);
+            /// if a box to save/edit this robot is open
+            if(msgBox.isVisible()){
+                msgBox.close();
+                qDebug() << "Closed the msgBox";
+            } else {
+                qDebug() << "No msgBox to clean";
+            }
+
+            hideAllWidgets();
+            leftMenu->hide();
+            qDebug() << "selectedRobot cleaned";
         }
 
-        /// if a box to save/edit this robot is open
-        if(msgBox.isVisible()){
-            msgBox.close();
-            qDebug() << "Closed the msgBox";
-        } else {
-            qDebug() << "No msgBox to clean";
+        /// if the robot is scanning
+        if(scanningRobot != NULL && scanningRobot->getRobot()->getIp().compare(ip) == 0){
+            selectedRobotWidget->getScanBtn()->setChecked(false);
+            selectedRobotWidget->getScanBtn()->setText("Scan a map");
+            selectedRobotWidget->enable();
+
+            hideAllWidgets();
+            setEnableAll(true);
+            qDebug() << "scanningRobot cleaned";
         }
 
-        hideAllWidgets();
-        leftMenu->hide();
-        qDebug() << "selectedRobot cleaned";
+        /// delete robotview
+        scene->removeItem(rv);
+        qDebug() << "scene cleaned";
+
+        /// enlever de robots
+        robots->remove(rv);
+        qDebug() << "robots cleaned";
+
+        /// update robotsLeftWidget
+        robotsLeftWidget->updateRobots(robots);
+        qDebug() << "robotsLeftWidget cleaned";
+
+        /// bottomLayout
+        bottomLayout->removeRobot(id);
+        qDebug() << "bottomLayout cleaned";
+
+        qDebug() << "Cleaning of the deleted robot finished";
+        setMessageTop(TEXT_COLOR_DANGER, QString("Robot " + hostname + " at ip " + ip +" disconnected."));
+    } else {
+        qDebug() << "(robotIsDeadSlot) A problem occured, the RobotView or its Robot are NULL";
     }
-
-    /// if the robot is scanning
-    if(scanningRobot != NULL && scanningRobot->getRobot()->getIp().compare(ip) == 0){
-        selectedRobotWidget->getScanBtn()->setChecked(false);
-        selectedRobotWidget->getScanBtn()->setText("Scan a map");
-        selectedRobotWidget->enable();
-
-        hideAllWidgets();
-        setEnableAll(true);
-        qDebug() << "scanningRobot cleaned";
-    }
-
-    /// delete robotview
-    scene->removeItem(rv);
-    qDebug() << "scene cleaned";
-
-    /// enlever de robots
-    robots->remove(rv);
-    qDebug() << "robots cleaned";
-
-    /// update robotsLeftWidget
-    robotsLeftWidget->updateRobots(robots);
-    qDebug() << "robotsLeftWidget cleaned";
-
-    /// bottomLayout
-    bottomLayout->removeRobot(id);
-    qDebug() << "bottomLayout cleaned";
-
-    qDebug() << "Cleaning of the deleted robot finished";
-    setMessageTop(TEXT_COLOR_DANGER, QString("Robot " + hostname + " at ip " + ip +" disconnected."));
 }
 
 void MainWindow::setMessageCreationPath(QString message){

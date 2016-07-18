@@ -56,7 +56,6 @@ void CmdRobotThread::run(){
     qDebug() << "(Robot" << robotName << ") Done";
     while(!isInterruptionRequested()){
         if(!socketCmd->isOpen()){
-            socketCmd -> close();
             exit();
             return;
         }
@@ -67,7 +66,6 @@ void CmdRobotThread::run(){
             exit();
             return;
         }
-        //socketCmd->state();
         delay(500);
         missedPing--;
         qDebug() << "Received no ping during the last :" << (float) ((MISSED_PING_TIMER - missedPing)/2) << " seconds.";
@@ -139,7 +137,6 @@ void CmdRobotThread::disconnectedSlot(){
     qDebug() << "(Robot" << robotName << ") Disconnected at ip" << ipAddress;
     connected = false;
     if(!socketCmd->isOpen()){
-        socketCmd -> close();
         exit();
         return;
     }
