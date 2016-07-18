@@ -15,6 +15,7 @@ BottomLayout::BottomLayout(QMainWindow* parent, const std::shared_ptr<Robots> &r
     layout = new QHBoxLayout(this);
 
     VerticalScrollArea* scrollArea = new VerticalScrollArea(this);
+
     /// We create a widget and a scroll area
     QWidget* widget = new QWidget(scrollArea);
     QHBoxLayout* scrollLayout = new QHBoxLayout(widget);
@@ -33,8 +34,6 @@ BottomLayout::BottomLayout(QMainWindow* parent, const std::shared_ptr<Robots> &r
 
     /// The button group for the collumn with the play/pause path buttons
     playRobotBtnGroup = new QButtonGroup(this);
-    vectorPathLabel = QVector<QLabel*>();
-
 
     pathScroll = new QScrollArea(this);
     pathScroll->setWidgetResizable(true);
@@ -45,14 +44,12 @@ BottomLayout::BottomLayout(QMainWindow* parent, const std::shared_ptr<Robots> &r
     QWidget* widgetPath = new QWidget(pathScroll);
     widgetPath->setContentsMargins(0, 0, 0, 0);
 
-
     /// The layout of the four columns
     columnName = new QVBoxLayout();
     columnPath = new QVBoxLayout();
     columnPlay = new QVBoxLayout();
     columnViewPath = new QVBoxLayout();
     columnStop = new QVBoxLayout();
-
 
     /// Creation of the first collumn, with the button containing the name of the robots
     for(int i = 0; i < robotsVector.size(); i++){
@@ -65,7 +62,6 @@ BottomLayout::BottomLayout(QMainWindow* parent, const std::shared_ptr<Robots> &r
         columnName->addWidget(robotBtn);
     }
     scrollLayout->addLayout(columnName);
-
     /// Creation of the second collumn, with the labels containing the path of the robot
     for(int i = 0; i < robotsVector.size(); i++){
         std::vector<std::shared_ptr<PathPoint>> path = robotsVector.at(i)->getRobot()->getPath();
@@ -88,7 +84,7 @@ BottomLayout::BottomLayout(QMainWindow* parent, const std::shared_ptr<Robots> &r
     scrollLayout->addWidget(pathScroll);
     scrollLayout->addLayout(columnPath);
 
-    /// Creation of the third collumn, with the button to play/pause the robot
+    /// Creation of the third column, with the button to display the path the robot
     for(int i = 0; i < robotsVector.size(); i++){
         QPushButton* viewPathRobotBtn = new QPushButton(QIcon(":/icons/eye.png"),"", this);
         viewPathRobotBtn->setMaximumWidth(parent->width()/10);
@@ -115,7 +111,7 @@ BottomLayout::BottomLayout(QMainWindow* parent, const std::shared_ptr<Robots> &r
     }
     scrollLayout->addLayout(columnPlay);
 
-    /// Creation of the fifth collumn, with the button to stop and delete the path of the robot
+    /// Creation of the fifth column, with the button to stop and delete the path of the robot
     for(int i = 0; i < robotsVector.size(); i++){
         QPushButton* stopRobotBtn = new QPushButton(QIcon(":/icons/close.png"),"", this);
         stopRobotBtn->setMaximumWidth(parent->width()/10);

@@ -399,6 +399,9 @@ void MainWindow::stopSelectedRobot(int robotNb){
                                 hideAllWidgets();
                                 selectedRobotWidget->setSelectedRobot(selectedRobot);
                                 selectedRobotWidget->show();
+                                bottomLayout->getViewPathRobotBtnGroup()->button(robotNb)->setChecked(false);
+                                bottomLayout->getViewPathRobotBtnGroup()->button(robotNb)->click();
+
                             }
                             topLayout->setLabel(TEXT_COLOR_SUCCESS, "Path deleted");
                         } else {
@@ -406,6 +409,7 @@ void MainWindow::stopSelectedRobot(int robotNb){
                         }
                     }
                     robots->getRobotsVector().at(robotNb)->getRobot()->resetCommandAnswer();
+
                 }
             break;
             case QMessageBox::Cancel:
@@ -497,8 +501,6 @@ void MainWindow::editSelectedRobot(RobotView* robotView){
     selectedRobot = robotView;
     robots->setSelected(robotView);
 
-  //  robotsLeftWidget->getActionButtons()->getEditButton()->setChecked(false);
-  //  robotsLeftWidget->setCheckBtnStatus(false);
     hideAllWidgets();
     setGraphicItemsState(GraphicItemState::NO_EVENT);
 
