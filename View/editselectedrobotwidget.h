@@ -11,6 +11,7 @@ class QMainWindow;
 class QLineEdit;
 class QProgressBar;
 class PathWidget;
+#include "pathpoint.h"
 #include <QWidget>
 #include <memory>
 #include "Model/point.h"
@@ -45,6 +46,9 @@ public:
     QPushButton* getAddPathBtn(void){return addPathBtn;}
     void setPathChanged(bool change){pathChanged = change;}
     bool getPathChanged(){return pathChanged ;}
+    void setPathWidget(PathWidget* pw){pathWidget = pw;}
+    void setOldPath(std::vector<std::shared_ptr<PathPoint>> pw){oldPath = pw;}
+    std::vector<std::shared_ptr<PathPoint>> getOldPath( ){return oldPath;}
 
 signals:
     /// Signal emitted when a robot has been edited & saved
@@ -73,6 +77,7 @@ private:
     bool firstConnection;
     QPushButton* cancelBtn;
     PathWidget* pathWidget;
+    std::vector<std::shared_ptr<PathPoint>> oldPath;
     bool pathChanged;
 
 protected:

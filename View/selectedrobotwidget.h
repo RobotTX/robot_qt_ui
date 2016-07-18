@@ -35,6 +35,8 @@ public:
     void enable();
     TopLeftMenu* getActionButtons(void) const {return actionButtons;}
     QString getName(void) ;
+    PathWidget* getPathWidget(void) const {return pathWidget;}
+    QLabel* getNoPath(void) const {return noPath;}
 
 private:
     QVBoxLayout* layout;

@@ -79,7 +79,6 @@ EditSelectedRobotWidget::EditSelectedRobotWidget(QMainWindow* parent, const std:
     homeBtn->setIconSize(parent->size()/10);
     homeBtn->setStyleSheet ("text-align: left");
     connect(homeBtn, SIGNAL(clicked()), parent, SLOT(editHomeEvent()));
-
     layout->addWidget(homeLabel);
     layout->addWidget(homeBtn);
 

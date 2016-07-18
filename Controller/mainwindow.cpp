@@ -571,6 +571,9 @@ void MainWindow::addPathSelecRobotBtnEvent(){
     pathCreationWidget->show();
     pathCreationWidget->setSelectedRobot(selectedRobot->getRobot());
 
+    editSelectedRobotWidget->setOldPath( selectedRobot->getRobot()->getPath());
+
+
     setEnableAll(false, GraphicItemState::CREATING_PATH, true, true);
     switchFocus(selectedRobot->getRobot()->getName(), pathCreationWidget, MainWindow::WidgetType::ROBOT);
 
@@ -674,7 +677,11 @@ void MainWindow::checkRobotBtnEvent(QString name){
 
 void MainWindow::cancelEditSelecRobotBtnEvent(){
     qDebug() << "cancelEditSelecRobotBtnEvent called";
-
+    // if the path has been changed, reset the path
+    if( editSelectedRobotWidget->getPathChanged())
+    {
+        selectedRobot->getRobot()->setPath(editSelectedRobotWidget->getOldPath() );
+    }
     //robotsLeftWidget->setEditBtnStatus(false);
     //robotsLeftWidget->setCheckBtnStatus(false);
     hideAllWidgets();
@@ -970,7 +977,7 @@ void MainWindow::pathSaved(bool execPath){
                     else
                         qDebug() << "No robot to play this path";
                 }
-                editSelectedRobotWidget->setPathChanged(true);
+                editSelectedRobotWidget->setPathChanged(true);                
                 topLayout->setLabel(TEXT_COLOR_SUCCESS, "Path saved");
                 backEvent();
             } else {
@@ -1200,6 +1207,10 @@ void MainWindow::showHome(){
     if(robotView->getRobot()->getPath().size() > 0){
        // addPathBtn->hide();
 
+        selectedRobotWidget->getPathWidget()->setSelectedRobot(robotView);
+        selectedRobotWidget->getPathWidget()->show();
+        selectedRobotWidget->getNoPath()->hide();
+
         editSelectedRobotWidget->getPathWidget()->setSelectedRobot(robotView);
         editSelectedRobotWidget->getPathWidget()->show();
         editSelectedRobotWidget->getAddPathBtn()->hide();
@@ -1207,6 +1218,10 @@ void MainWindow::showHome(){
        // addPathBtn->show();
         editSelectedRobotWidget->getPathWidget()->hide();
         editSelectedRobotWidget->getAddPathBtn()->show();
+
+        selectedRobotWidget->getPathWidget()->hide();
+        selectedRobotWidget->getNoPath()->show();
+
     }
 
 }
