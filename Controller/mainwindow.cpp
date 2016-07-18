@@ -466,8 +466,7 @@ void MainWindow::playSelectedRobot(int robotNb){
     }
 }
 
-void MainWindow::viewPathSelectedRobot(int robotNb){
-    bool checked = bottomLayout->getViewPathRobotBtnGroup()->button(robotNb)->isChecked();
+void MainWindow::viewPathSelectedRobot(int robotNb, bool checked){
     if(checked){
         std::shared_ptr<Robot> robot = robots->getRobotsVector().at(robotNb)->getRobot();
         qDebug() << "viewPathSelectedRobot called on" << robot->getName() << checked;
@@ -480,7 +479,6 @@ void MainWindow::viewPathSelectedRobot(int robotNb){
         for(size_t i = 0; i < robot->getPath().size(); i++){
             std::shared_ptr<PathPoint> pathPoint = robot->getPath().at(i);
             PointView * pointView = new PointView(std::make_shared<Point>(pathPoint->getPoint()), mapPixmapItem);
-            //pointView->setParentItem(mapPixmapItem);
             pathPointViews.push_back(pointView);
         }
         pathPainter->updatePath(pathPointViews);
@@ -573,9 +571,18 @@ void MainWindow::addPathSelecRobotBtnEvent(){
     setEnableAll(false, GraphicItemState::CREATING_PATH, true, true);
     switchFocus(selectedRobot->getRobot()->getName(), pathCreationWidget, MainWindow::WidgetType::ROBOT);
 
+    /// stop displaying the currently displayed path if it exists
+    int id = bottomLayout->getViewPathRobotBtnGroup()->checkedId();
+    if(id != -1){
+        bottomLayout->getViewPathRobotBtnGroup()->checkedButton()->setChecked(false);
+         viewPathSelectedRobot(id, false);
+    }
+
+    /// hides the temporary pointview
+    mapPixmapItem->getTmpPointView()->hide();
+
     /// displays the points in order to make them available for the edition of the path,
     ///  we have to keep track of those which were hidden so we can hide them again once the edition is finished
-
     for(size_t j = 0; j < pointViews->count(); j++){
         GroupView* group = pointViews->getGroups().at(j);
         for(size_t i = 0; i < group->getPointViews().size(); i++){
@@ -949,6 +956,10 @@ void MainWindow::pathSaved(bool execPath){
                 setMessageTop(TEXT_COLOR_SUCCESS, "Path saved");
 
                 bottomLayout->updateRobot(robots->getRobotId(selectedRobot->getRobot()->getName()), selectedRobot);
+
+                int id = robots->getRobotId(selectedRobot->getRobot()->getName());
+                bottomLayout->getViewPathRobotBtnGroup()->button(id)->setChecked(true);
+                viewPathSelectedRobot(id, true);
 
                 selectedRobotWidget->setSelectedRobot(selectedRobot);
                 if(execPath){

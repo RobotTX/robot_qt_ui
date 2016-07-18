@@ -97,7 +97,6 @@ void PointView::mouseReleaseEvent(QGraphicsSceneMouseEvent *event){
 
 void PointView::hoverEnterEvent(QGraphicsSceneHoverEvent * /* unused */){
     setToolTip(point->getName());
-    qDebug() << "last type " << lastType << "curr type" << type;
     PixmapType tmpType = type;
 
     setPixmap(PointView::PixmapType::MID);
