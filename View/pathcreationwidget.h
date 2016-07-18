@@ -34,15 +34,17 @@ public:
         float posY;
     };
 
-    PathCreationWidget(QMainWindow* parent, const Points& point);
+    PathCreationWidget(QMainWindow* parent, const std::shared_ptr<Points>& point);
 
     PathPointCreationWidget* getPathPointCreationWidget(void) const { return editedPathPointCreationWidget; }
     PathPointList* getPathPointList(void) const { return pathPointsList; }
     QVector<Point> getPointList(void) const { return pointList; }
+
+    void updateMenu();
     /**
      * @brief initialisationPathPoint
      * @param pathPoint
-     * Initialise a given PathPointCreationWidget
+     * Initialize a given PathPointCreationWidget
      */
     void initialisationPathPoint(PathPointCreationWidget* pathPoint);
 
@@ -238,7 +240,7 @@ private:
      * @brief points
      * List of all the permanent points
      */
-    Points points;
+    std::shared_ptr<Points> points;
     std::shared_ptr<Robot> selectedRobot;
 
     /**
