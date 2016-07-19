@@ -15,7 +15,6 @@
 #include "View/pointview.h"
 #include "View/leftmenuwidget.h"
 #include "View/editselectedrobotwidget.h"
-#include "View/createpointwidget.h"
 #include "View/bottomlayout.h"
 #include "View/pointsleftwidget.h"
 #include "View/selectedrobotwidget.h"
@@ -615,7 +614,7 @@ void MainWindow::setSelectedRobotNoParent(QAbstractButton *button){
 }
 
 void MainWindow::setSelectedRobot(QAbstractButton *button){
-
+    Q_UNUSED(button)
     qDebug() << "select a robot in robot group ";
 
     robotsLeftWidget->getActionButtons()->getEditButton()->setEnabled(true);
@@ -1054,6 +1053,8 @@ void MainWindow::saveTmpEditPathPointSlot(void){
 
     editedPointView->setFlag(QGraphicsItem::ItemIsMovable, false);
     editedPointView = NULL;
+
+
 
     setMessageTop(TEXT_COLOR_SUCCESS, "You have successfully modified the path of " + selectedRobot->getRobot()->getName());
     delay(2500);
@@ -1689,7 +1690,7 @@ void MainWindow::setSelectedPoint(PointView* pointView, bool isTemporary){
 
     /// we are not modifying an existing point
     if(!leftMenu->getDisplaySelectedPoint()->getActionButtons()->getEditButton()->isChecked()){
-        qDebug() << "editing";
+        //qDebug() << "editing";
         leftMenu->show();
         selectedPoint = pointView;
         selectedPoint->setState(GraphicItemState::EDITING_PERM);
@@ -1705,9 +1706,9 @@ void MainWindow::setSelectedPoint(PointView* pointView, bool isTemporary){
             createPointWidget->getActionButtons()->getPlusButton()->setEnabled(true);
             createPointWidget->getActionButtons()->getPlusButton()->setToolTip("Click this button if you want to save this point permanently");
             setMessageTop(TEXT_COLOR_INFO, "To save this point permanently click the \"+\" button");
-            qDebug() << "this point is white";
+            //qDebug() << "this point is white";
         } else {
-            qDebug() << "this point is not white";
+            //qDebug() << "this point is not white";
             setMessageTop(TEXT_COLOR_WARNING, "You cannot save this point because your robot(s) would not be able to go there");
             createPointWidget->getActionButtons()->getPlusButton()->setEnabled(false);
             createPointWidget->getActionButtons()->getPlusButton()->setToolTip("You cannot save this point because your robot(s) cannot go there");
@@ -2084,6 +2085,8 @@ void MainWindow::pointSavedEvent(int index, double x, double y, QString name){
 
     /// hide the creation widget
     createPointWidget->hide();
+
+    setMessageTop(TEXT_COLOR_SUCCESS, "You have created a new point");
 }
 
 /**
@@ -2339,7 +2342,7 @@ void MainWindow::displayGroupMapEvent(void){
         {
             pointsLeftWidget->getActionButtons()->getMapButton()->setChecked(false);
 
-                topLayout->setLabelDelay(TEXT_COLOR_WARNING, "this folder is empty. There is nothing to display",2000);
+                topLayout->setLabelDelay(TEXT_COLOR_WARNING, "This folder is empty. There is nothing to display", 2000);
 
          }
         else
@@ -3265,6 +3268,26 @@ void MainWindow::enableReturnAndCloseButtons(){
 
 void MainWindow::setMessageCreationGroup(QString message){
     setMessageTop(TEXT_COLOR_INFO, message);
+}
+
+void MainWindow::setMessageCreationPoint(CreatePointWidget::Error error){
+    switch(error){
+    case CreatePointWidget::Error::NoError:
+        setMessageTop(TEXT_COLOR_INFO, "Click save or press ENTER to save this point");
+        break;
+    case CreatePointWidget::Error::ContainsSemicolon:
+        setMessageTop(TEXT_COLOR_WARNING, "You cannot create a point that contains a semicolon or a curly bracket");
+        break;
+    case CreatePointWidget::Error::EmptyName:
+        setMessageTop(TEXT_COLOR_WARNING, "You cannot create a point with an empty name");
+        break;
+    case CreatePointWidget::Error::AlreadyExists:
+        setMessageTop(TEXT_COLOR_WARNING, "You cannot create a point with this name because a point with the same name already exists");
+        break;
+    default:
+        qDebug() << "Should never be here, if you do get here however, check that you have not added a new error code and forgotten to add it in the cases afterwards";
+        break;
+    }
 }
 
 

@@ -51,9 +51,15 @@
             <displayed>1</displayed>
         </point>
         <point>
-            <name>Home_Roboto</name>
+            <name>A final point</name>
             <x>150</x>
             <y>225</y>
+            <displayed>1</displayed>
+        </point>
+        <point>
+            <name>ma poin</name>
+            <x>97.3</x>
+            <y>315.6</y>
             <displayed>1</displayed>
         </point>
     </group>

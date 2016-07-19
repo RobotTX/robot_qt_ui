@@ -150,7 +150,7 @@ void BottomLayout::deletePath(const int index){
 }
 
 void BottomLayout::updateRobot(const int id, RobotView * const robotView){
-    qDebug() << "(BottomLayout) updateRobot called" << id << robotBtnGroup->buttons().size();
+    //qDebug() << "(BottomLayout) updateRobot called" << id << robotBtnGroup->buttons().size();
     robotBtnGroup->button(id)->setText(robotView->getRobot()->getName());
     if(robotView->getRobot()->getPath().size() < 1){
         stopRobotBtnGroup->button(id)->setEnabled(false);
