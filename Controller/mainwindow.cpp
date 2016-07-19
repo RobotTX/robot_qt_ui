@@ -2359,7 +2359,7 @@ void MainWindow::displayGroupMapEvent(void){
         {
             pointsLeftWidget->getActionButtons()->getMapButton()->setChecked(false);
 
-                topLayout->setLabelDelay(TEXT_COLOR_WARNING, "This folder is empty. There is nothing to display", 2000);
+                topLayout->setLabelDelay(TEXT_COLOR_WARNING, "This group is empty. There is points to display", 2000);
 
          }
         else
