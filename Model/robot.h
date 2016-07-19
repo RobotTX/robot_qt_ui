@@ -13,6 +13,7 @@ class ScanMetadataThread;
 #include <QVector>
 #include <memory>
 #include <QtNetwork/QTcpSocket>
+#include <QUuid>
 
 #define PORT_MAP_METADATA 4000
 #define PORT_ROBOT_POS 4001
@@ -52,6 +53,8 @@ public:
     void setOrientation(const float _orientation) { orientation = _orientation; }
     void setPosition(const Position _position) { position = _position; }
     void setPosition(const float _x, const float _y) { position = Position(_x,_y); }
+    void setMapId(const QUuid _mapId) { mapId = _mapId; }
+    QUuid getMapId(void) const { return mapId; }
 
     /**
      * @brief display
@@ -70,6 +73,7 @@ public:
     QString waitAnswer();
     void resetCommandAnswer();
     void stopThreads();
+    void ping();
 
 private:
     QString name;
@@ -100,6 +104,7 @@ private:
     QTcpSocket* socketCmd;
     ScanRobotThread* robotThread;
     ScanMetadataThread* metadataThread;
+    QUuid mapId;
 };
 
 /**

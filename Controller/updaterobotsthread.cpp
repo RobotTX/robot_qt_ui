@@ -1,6 +1,7 @@
 #include "updaterobotsthread.h"
 #include <QTcpServer>
 #include <QCoreApplication>
+#include <QRegExp>
 
 
 UpdateRobotsThread::UpdateRobotsThread(const int newPort){
@@ -55,7 +56,16 @@ void UpdateRobotsThread::disconnectedSlot(){
 }
 
 void UpdateRobotsThread::readTcpDataSlot(){
-    emit robotIsAlive(socket->readAll(), socket->peerAddress().toString());
+
+    QString str = socket->readAll();
+
+    QStringList strList = str.split("\"", QString::SkipEmptyParts);
+
+    if(strList.size() > 1){
+        emit robotIsAlive(strList.at(0), socket->peerAddress().toString(), strList.at(1));
+    } else {
+        qDebug() << "(UpdateRobotsThread) Not enough param received for robotIsAlive";
+    }
 }
 
 void UpdateRobotsThread::delay(const int ms) const{
@@ -68,79 +78,79 @@ void UpdateRobotsThread::errorConnectionSlot(QAbstractSocket::SocketError error)
     qDebug() << "(UpdateRobotsThread) Error while connecting :" << error;
     switch (error) {
     case(QAbstractSocket::ConnectionRefusedError):
-        qDebug() << "The connection was refused by the peer (or timed out).";
+        qDebug() << "(UpdateRobotsThread) The connection was refused by the peer (or timed out).";
         break;
     case(QAbstractSocket::RemoteHostClosedError):
-        qDebug() << "The remote host closed the connection. Note that the client socket (i.e., this socket) will be closed after the remote close notification has been sent.";
+        qDebug() << "(UpdateRobotsThread) The remote host closed the connection. Note that the client socket (i.e., this socket) will be closed after the remote close notification has been sent.";
         break;
     case(QAbstractSocket::HostNotFoundError):
-        qDebug() << "The host address was not found.";
+        qDebug() << "(UpdateRobotsThread) The host address was not found.";
         break;
     case(QAbstractSocket::SocketAccessError):
-        qDebug() << "The socket operation failed because the application lacked the required privileges.";
+        qDebug() << "(UpdateRobotsThread) The socket operation failed because the application lacked the required privileges.";
         break;
     case(QAbstractSocket::SocketResourceError):
-        qDebug() << "The local system ran out of resources (e.g., too many sockets).";
+        qDebug() << "(UpdateRobotsThread) The local system ran out of resources (e.g., too many sockets).";
         break;
     case(QAbstractSocket::SocketTimeoutError):
-        qDebug() << "The socket operation timed out.";
+        qDebug() << "(UpdateRobotsThread) The socket operation timed out.";
         break;
     case(QAbstractSocket::DatagramTooLargeError):
-        qDebug() << "The datagram was larger than the operating system's limit (which can be as low as 8192 bytes).";
+        qDebug() << "(UpdateRobotsThread) The datagram was larger than the operating system's limit (which can be as low as 8192 bytes).";
         break;
     case(QAbstractSocket::NetworkError):
-        qDebug() << "An error occurred with the network (e.g., the network cable was accidentally plugged out).";
+        qDebug() << "(UpdateRobotsThread) An error occurred with the network (e.g., the network cable was accidentally plugged out).";
         break;
     case(QAbstractSocket::AddressInUseError):
-        qDebug() << "The address specified to QAbstractSocket::bind() is already in use and was set to be exclusive.";
+        qDebug() << "(UpdateRobotsThread) The address specified to QAbstractSocket::bind() is already in use and was set to be exclusive.";
         break;
     case(QAbstractSocket::SocketAddressNotAvailableError):
-        qDebug() << "The address specified to QAbstractSocket::bind() does not belong to the host.";
+        qDebug() << "(UpdateRobotsThread) The address specified to QAbstractSocket::bind() does not belong to the host.";
         break;
     case(QAbstractSocket::UnsupportedSocketOperationError):
-        qDebug() << "The requested socket operation is not supported by the local operating system (e.g., lack of IPv6 support).";
+        qDebug() << "(UpdateRobotsThread) The requested socket operation is not supported by the local operating system (e.g., lack of IPv6 support).";
         break;
     case(QAbstractSocket::ProxyAuthenticationRequiredError):
-        qDebug() << "The socket is using a proxy, and the proxy requires authentication.";
+        qDebug() << "(UpdateRobotsThread) The socket is using a proxy, and the proxy requires authentication.";
         break;
     case(QAbstractSocket::SslHandshakeFailedError):
-        qDebug() << "The SSL/TLS handshake failed, so the connection was closed (only used in QSslSocket)";
+        qDebug() << "(UpdateRobotsThread) The SSL/TLS handshake failed, so the connection was closed (only used in QSslSocket)";
         break;
     case(QAbstractSocket::UnfinishedSocketOperationError):
-        qDebug() << "Used by QAbstractSocketEngine only, The last operation attempted has not finished yet (still in progress in the background).";
+        qDebug() << "(UpdateRobotsThread) Used by QAbstractSocketEngine only, The last operation attempted has not finished yet (still in progress in the background).";
         break;
     case(QAbstractSocket::ProxyConnectionRefusedError):
-        qDebug() << "Could not contact the proxy server because the connection to that server was denied";
+        qDebug() << "(UpdateRobotsThread) Could not contact the proxy server because the connection to that server was denied";
         break;
     case(QAbstractSocket::ProxyConnectionClosedError):
-        qDebug() << "The connection to the proxy server was closed unexpectedly (before the connection to the final peer was established)";
+        qDebug() << "(UpdateRobotsThread) The connection to the proxy server was closed unexpectedly (before the connection to the final peer was established)";
         break;
     case(QAbstractSocket::ProxyConnectionTimeoutError):
-        qDebug() << "The connection to the proxy server timed out or the proxy server stopped responding in the authentication phase.";
+        qDebug() << "(UpdateRobotsThread) The connection to the proxy server timed out or the proxy server stopped responding in the authentication phase.";
         break;
     case(QAbstractSocket::ProxyNotFoundError):
-        qDebug() << "The proxy address set with setProxy() (or the application proxy) was not found.";
+        qDebug() << "(UpdateRobotsThread) The proxy address set with setProxy() (or the application proxy) was not found.";
         break;
     case(QAbstractSocket::ProxyProtocolError):
-        qDebug() << "The connection negotiation with the proxy server failed, because the response from the proxy server could not be understood.";
+        qDebug() << "(UpdateRobotsThread) The connection negotiation with the proxy server failed, because the response from the proxy server could not be understood.";
         break;
     case(QAbstractSocket::OperationError):
-        qDebug() << "An operation was attempted while the socket was in a state that did not permit it.";
+        qDebug() << "(UpdateRobotsThread) An operation was attempted while the socket was in a state that did not permit it.";
         break;
     case(QAbstractSocket::SslInternalError):
-        qDebug() << "The SSL library being used reported an internal error. This is probably the result of a bad installation or misconfiguration of the library.";
+        qDebug() << "(UpdateRobotsThread) The SSL library being used reported an internal error. This is probably the result of a bad installation or misconfiguration of the library.";
         break;
     case(QAbstractSocket::SslInvalidUserDataError):
-        qDebug() << "Invalid data (certificate, key, cypher, etc.) was provided and its use resulted in an error in the SSL library.";
+        qDebug() << "(UpdateRobotsThread) Invalid data (certificate, key, cypher, etc.) was provided and its use resulted in an error in the SSL library.";
         break;
     case(QAbstractSocket::TemporaryError):
-        qDebug() << "A temporary error occurred (e.g., operation would block and socket is non-blocking).";
+        qDebug() << "(UpdateRobotsThread) A temporary error occurred (e.g., operation would block and socket is non-blocking).";
         break;
     case(QAbstractSocket::UnknownSocketError):
-        qDebug() << "An unidentified error occurred.";
+        qDebug() << "(UpdateRobotsThread) An unidentified error occurred.";
         break;
     default:
-        qDebug() << "Not supposed to be here.";
+        qDebug() << "(UpdateRobotsThread) Not supposed to be here.";
         break;
     }
 }

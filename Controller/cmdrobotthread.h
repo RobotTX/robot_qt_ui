@@ -40,6 +40,7 @@ public:
     void resetCommandAnswer(){ commandAnswer = ""; }
 
     void delay(const int ms) const;
+    void pingSlot();
 
 signals:
     void robotIsDead(QString hostname, QString ip);
@@ -72,7 +73,6 @@ private slots:
      */
     void readTcpDataSlot();
     void writeCommandSlot(QString cmd);
-    void pingSlot();
     void changeRobotNameSlot(QString name);
 
 private :

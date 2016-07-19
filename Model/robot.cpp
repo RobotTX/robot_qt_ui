@@ -8,13 +8,12 @@
 #include <iostream>
 
 Robot::Robot(const QString _name, const QString _ip, QMainWindow* parent) : name(_name), ip(_ip), position(Position()),
-    orientation(0), batteryLevel(100), wifi(""), home(NULL), playingPath(0)
+    orientation(0), batteryLevel(100), wifi(""), home(NULL), playingPath(0), mapId()
 {
     /*qDebug() << "Robot" << name << "at ip" << ip << " launching its cmd thread";
 
     cmdThread = new CmdRobotThread(ip, PORT_CMD, PORT_MAP_METADATA, PORT_ROBOT_POS, PORT_MAP, name, parent);
     QObject::connect(cmdThread, SIGNAL(robotIsDead(QString,QString)), parent, SLOT(robotIsDeadSlot(QString,QString)));
-    QObject::connect(parent, SIGNAL(ping()), cmdThread, SLOT(pingSlot()));
     QObject::connect(parent, SIGNAL(changeCmdThreadRobotName(QString)), cmdThread, SLOT(changeRobotNameSlot(QString)));
     cmdThread->start();
 
@@ -38,7 +37,7 @@ Robot::Robot(const QString _name, const QString _ip, QMainWindow* parent) : name
 }
 
 Robot::Robot(): name("Default name"), ip("no Ip"), position(Position()),
-    orientation(0), batteryLevel(100), wifi(""), home(NULL), playingPath(0){
+    orientation(0), batteryLevel(100), wifi(""), home(NULL), playingPath(0), mapId(){
 }
 
 Robot::~Robot(){
@@ -82,29 +81,20 @@ void Robot::resetCommandAnswer() {
 }
 
 void Robot::stopThreads() {
-    /*qDebug() << "yolo1";
-    if (cmdThread != 0 && cmdThread->isRunning() ) {
-        qDebug() << "yolo2";
+    /*if (cmdThread != 0 && cmdThread->isRunning() ) {
         cmdThread->requestInterruption();
-        qDebug() << "yolo3";
         cmdThread->wait();
-        qDebug() << "yolo4";
     }
-    qDebug() << "yolo5";
     if (robotThread != NULL && robotThread->isRunning() ) {
-        qDebug() << "yolo6";
         robotThread->requestInterruption();
-        qDebug() << "yolo7";
         robotThread->wait();
-        qDebug() << "yolo8";
     }
-    qDebug() << "yolo9";
     if (metadataThread != NULL && metadataThread->isRunning() ) {
-        qDebug() << "yolo10";
         metadataThread->requestInterruption();
-        qDebug() << "yolo11";
         metadataThread->wait();
-        qDebug() << "yolo12";
-    }
-    qDebug() << "yolo13";*/
+    }*/
+}
+
+void Robot::ping(){
+    //cmdThread->pingSlot();
 }

@@ -36,17 +36,18 @@ BottomLayout::BottomLayout(QMainWindow* parent, const std::shared_ptr<Robots> &r
     vectorPathLabel = QVector<QLabel*>();
 
 
-    /*pathScroll = new QScrollArea(this);
+    pathScroll = new QScrollArea(this);
     pathScroll->setWidgetResizable(true);
     pathScroll->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     pathScroll->setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+    pathScroll->setAlignment(Qt::AlignTop);
     pathScroll->setFrameShape(QFrame::NoFrame);
     QWidget* widgetPath = new QWidget(pathScroll);
-    widgetPath->setContentsMargins(0, 0, 0, 0);*/
+    widgetPath->setContentsMargins(0, 0, 0, 0);
+
 
     /// The layout of the four columns
     columnName = new QVBoxLayout();
-    //QVBoxLayout* columnPath = new QVBoxLayout(widgetPath);
     columnPath = new QVBoxLayout();
     columnPlay = new QVBoxLayout();
     columnViewPath = new QVBoxLayout();
@@ -79,12 +80,12 @@ BottomLayout::BottomLayout(QMainWindow* parent, const std::shared_ptr<Robots> &r
         pathLabel->setMinimumHeight(parent->height()/10);
         pathLabel->setMaximumHeight(parent->height()/10);
         vectorPathLabel.push_back(pathLabel);
-        pathLabel->setMinimumWidth(1);
+        //pathLabel->setMinimumWidth(1);
         columnPath->addWidget(pathLabel);
     }
-    /*widgetPath->setLayout(columnPath);
+    widgetPath->setLayout(columnPath);
     pathScroll->setWidget(widgetPath);
-    scrollLayout->addWidget(pathScroll);*/
+    scrollLayout->addWidget(pathScroll);
     scrollLayout->addLayout(columnPath);
 
     /// Creation of the third collumn, with the button to play/pause the robot
@@ -131,7 +132,7 @@ BottomLayout::BottomLayout(QMainWindow* parent, const std::shared_ptr<Robots> &r
     connect(robotBtnGroup, SIGNAL(buttonClicked(QAbstractButton*)), parent, SLOT(setSelectedRobotNoParent(QAbstractButton*)));
     connect(stopRobotBtnGroup, SIGNAL(buttonClicked(int)), parent, SLOT(stopSelectedRobot(int)));
     connect(playRobotBtnGroup, SIGNAL(buttonClicked(int)), parent, SLOT(playSelectedRobot(int)));
-    connect(viewPathRobotBtnGroup, SIGNAL(buttonClicked(int)), parent, SLOT(viewPathSelectedRobot(int)));
+    connect(viewPathRobotBtnGroup, SIGNAL(buttonToggled(int, bool)), parent, SLOT(viewPathSelectedRobot(int, bool)));
 
     setMaximumHeight(parent->height()*4/10);
     setMinimumHeight(parent->height()*4/10);

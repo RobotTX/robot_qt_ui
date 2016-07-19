@@ -14,7 +14,7 @@
 
 DisplaySelectedGroup::DisplaySelectedGroup(QMainWindow *parent, std::shared_ptr<Points> const& _points) : QWidget(parent){
 
-   VerticalScrollArea* scrollArea = new VerticalScrollArea(this);
+    VerticalScrollArea* scrollArea = new VerticalScrollArea(this);
 
     layout = new QVBoxLayout(this);
 
@@ -44,8 +44,7 @@ DisplaySelectedGroup::DisplaySelectedGroup(QMainWindow *parent, std::shared_ptr<
 
     QPixmap pixmap_img = watermark.scaled(QSize(this->width()/6,this->width()/6),  Qt::KeepAspectRatio);
 
-
-         label_img->setPixmap(pixmap_img);
+    label_img->setPixmap(pixmap_img);
 
     QHBoxLayout *titleLayout = new QHBoxLayout;
     titleLayout->addWidget(label_img);

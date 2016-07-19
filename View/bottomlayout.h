@@ -49,6 +49,8 @@ public:
     void removeRobot(const int id);
     void uncheckViewPathSelectedRobot(const int robotNb = -1);
 
+
+
 private:
     /**
      * @brief layout
