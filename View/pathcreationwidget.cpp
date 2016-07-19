@@ -19,7 +19,9 @@
 #include "View/spacewidget.h"
 #include "topleftmenu.h"
 #include "View/buttonmenu.h"
-
+#include "View/pointsview.h"
+#include "View/pointview.h"
+#include "View/mapview.h"
 
 PathCreationWidget::PathCreationWidget(QMainWindow* parent, const std::shared_ptr<Points> &_points): QWidget(parent), idPoint(1), points(_points){
     layout = new QVBoxLayout(this);
@@ -113,14 +115,19 @@ void PathCreationWidget::clicked(void){
 }
 
 void PathCreationWidget::pointClicked(QAction *action){
-    qDebug() << "pointClicked called " << action->text();
+   pointClicked( action->text());
+}
+
+void PathCreationWidget::pointClicked(QString name){
+
+    qDebug() << "pointClicked called " << name;
 
     float posX = 0;
     float posY = 0;
 
     /// Get the pos of the point we selected in the menu
     for(int i = 0; i < pointInfos.size(); i++){
-        if(pointInfos.at(i).name.compare(action->text()) == 0){
+        if(pointInfos.at(i).name.compare(name) == 0){
             posX = pointInfos.at(i).posX;
             posY = pointInfos.at(i).posY;
         }
@@ -129,13 +136,13 @@ void PathCreationWidget::pointClicked(QAction *action){
     /// Add the selected point to the path or edit the selected point
     if(creatingNewPoint){
         creatingNewPoint = false;
-        addPathPoint(new Point(action->text(), posX, posY));
+        addPathPoint(new Point(name, posX, posY));
 
     } else {
         PathPointCreationWidget* pathPointCreationWidget = (PathPointCreationWidget*) pathPointsList->itemWidget(pathPointsList->currentItem());
 
-        qDebug() << "Editing" << pathPointCreationWidget->getName() << "to" << action->text();
-        pathPointCreationWidget->setName(action->text());
+        qDebug() << "Editing" << pathPointCreationWidget->getName() << "to" << name;
+        pathPointCreationWidget->setName(name);
         pathPointCreationWidget->setPos(posX, posY);
 
         int id = pathPointCreationWidget->getId();
@@ -154,7 +161,6 @@ void PathCreationWidget::addPathPoint(Point* point){
 
     /// We create a new widget to add to the list of path point widgets
     PathPointCreationWidget* pathPoint = new PathPointCreationWidget(idPoint, *points, *point, this);
-
     initialisationPathPoint(pathPoint);
 
     pointList.push_back(*point);
@@ -525,6 +531,9 @@ void PathCreationWidget::showEvent(QShowEvent *)
     actionButtons->getPlusButton()->setEnabled(true);
     /// updates the edit path menu
     updateMenu();
+    updateList();
+    qDebug() << "show Path Creation Widget";
+
 }
 
 void PathCreationWidget::updateMenu(){
@@ -555,4 +564,32 @@ void PathCreationWidget::updateMenu(){
             }
         }
     }
+
 }
+
+void PathCreationWidget::updateList()
+{
+
+    Point pt ;
+    PointView* newPointView;
+
+    if (selectedRobot != NULL)
+    {
+        for (int i=0;i<selectedRobot->getPath().size();i++)
+        {
+            pt = selectedRobot->getPath().at(i)->getPoint();
+            if (pt.getName().contains(';'))
+                emit addPointEditPath(pt);
+            else
+                addPathPoint(&pt);
+            int action =  selectedRobot->getPath().at(i)->getAction();
+            if (action == PathPoint::Action::WAIT)
+                pathPointsList->update(i,0,selectedRobot->getPath().at(i)->getWaitTime());
+            else
+                pathPointsList->update(i,1);
+
+        }
+    }
+
+}
+

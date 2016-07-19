@@ -43,6 +43,7 @@
 #include "View/pathpointlist.h"
 #include "View/groupview.h"
 #include "pathWidget.h"
+#include <QVector>
 
 /**
  * @brief MainWindow::MainWindow
@@ -164,6 +165,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     /// to connect the buttons in the group menu so they can be double clicked after they were updated
     connect(leftMenu->getDisplaySelectedGroup()->getPointButtonGroup(), SIGNAL(updateConnectionsRequest()), this, SLOT(reestablishConnectionsPoints()));
 
+    /// to show path creation widget
+
     /// to create a new group, the signal is sent by pointsLeftWidget
     connect(pointsLeftWidget, SIGNAL(newGroup(QString)), this, SLOT(createGroup(QString)));
 
@@ -179,6 +182,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
     /// to know what message to display when a user is creating a path
     connect(mapPixmapItem, SIGNAL(newMessage(QString)), this, SLOT(setMessageCreationPath(QString)));
+
+    ///path creation widget show event
+    connect(pathCreationWidget, SIGNAL(addPointEditPath(Point)), mapPixmapItem, SLOT(addPointEditPath(Point)));
 
     mainLayout->addLayout(bottom);
 
@@ -568,13 +574,16 @@ void MainWindow::addPathSelecRobotBtnEvent(){
                   selectedRobot->getRobot()->getName() + "\nAlternatively you can click the \"+\" button to add an existing point to your path");
     hideAllWidgets();
     pathPainter->reset();
-    pathCreationWidget->show();
+    setEnableAll(false, GraphicItemState::CREATING_PATH, true, true);
     pathCreationWidget->setSelectedRobot(selectedRobot->getRobot());
+
+    pathCreationWidget->show();
+
 
     editSelectedRobotWidget->setOldPath( selectedRobot->getRobot()->getPath());
 
 
-    setEnableAll(false, GraphicItemState::CREATING_PATH, true, true);
+
     switchFocus(selectedRobot->getRobot()->getName(), pathCreationWidget, MainWindow::WidgetType::ROBOT);
 
     /// displays the points in order to make them available for the edition of the path,
@@ -837,7 +846,7 @@ void MainWindow::robotSavedEvent(){
                 bottomLayout->updateRobot(robots->getRobotId(selectedRobot->getRobot()->getName()), selectedRobot);
 
                 selectedRobotWidget->setSelectedRobot(selectedRobot );
-                selectedRobotWidget->show();
+               // selectedRobotWidget->show();
                 if(editSelectedRobotWidget->isFirstConnection()){
                     setEnableAll(true);
                 }
@@ -874,6 +883,7 @@ void MainWindow::setCheckedRobot(QString name){
 
 
 }*/
+
 
 
 void MainWindow::editTmpPathPointSlot(int id, Point* point, int nbWidget){
@@ -961,7 +971,7 @@ void MainWindow::pathSaved(bool execPath){
                 hideAllWidgets();
                 setMessageTop(TEXT_COLOR_SUCCESS, "Path saved");
 
-                bottomLayout->updateRobot(robots->getRobotId(selectedRobot->getRobot()->getName()), selectedRobot);
+                //bottomLayout->updateRobot(robots->getRobotId(selectedRobot->getRobot()->getName()), selectedRobot);
 
                 selectedRobotWidget->setSelectedRobot(selectedRobot);
                 if(execPath){
@@ -1048,6 +1058,9 @@ void MainWindow::saveTmpEditPathPointSlot(void){
 void MainWindow::moveTmpEditPathPointSlot(void){
     pathCreationWidget->moveEditPathPoint(editedPointView->getPoint()->getPosition().getX(), editedPointView->getPoint()->getPosition().getY());
 }
+
+
+
 
 void MainWindow::clearPath(const int robotNb){
     if(robots->getRobotsVector().at(robotNb)->getRobot()->isPlayingPath()){
@@ -1213,14 +1226,14 @@ void MainWindow::showHome(){
 
         editSelectedRobotWidget->getPathWidget()->setSelectedRobot(robotView);
         editSelectedRobotWidget->getPathWidget()->show();
-        editSelectedRobotWidget->getAddPathBtn()->hide();
+        editSelectedRobotWidget->getAddPathBtn()->setText("Edit path");
     } else {
        // addPathBtn->show();
         editSelectedRobotWidget->getPathWidget()->hide();
         editSelectedRobotWidget->getAddPathBtn()->show();
 
         selectedRobotWidget->getPathWidget()->hide();
-        selectedRobotWidget->getNoPath()->show();
+        selectedRobotWidget->getNoPath()->setText("Add path");
 
     }
 
@@ -1894,7 +1907,6 @@ void MainWindow::switchFocus(QString name, QWidget* widget, MainWindow::WidgetTy
     }
 */
 
-    qDebug() << "__________________";
 
     lastWidgets.append(QPair<QPair<QWidget*, QString>, MainWindow::WidgetType>(QPair<QWidget*, QString>(widget,name), type));
 
@@ -1907,10 +1919,15 @@ void MainWindow::switchFocus(QString name, QWidget* widget, MainWindow::WidgetTy
         leftMenu->hideBackButton();
     }
     //debug
+    qDebug() << "__________________";
+
     for(int i=0;i<lastWidgets.size();i++)
     {
         qDebug() << lastWidgets.at(i).first.second;
     }
+
+    qDebug() << "_________________";
+
 }
 void MainWindow::resetFocus()
 {
@@ -3220,6 +3237,9 @@ void MainWindow::quit(){
 void MainWindow::backEvent()
 {
     qDebug() << "back event called";
+
+    //debug
+
     setEnableAll(true);
     /// resets the menus
     pointsLeftWidget->disableButtons();
@@ -3257,8 +3277,9 @@ void MainWindow::backEvent()
 
     for(int i=0;i<lastWidgets.size();i++)
     {
-        qDebug() << lastWidgets.at(i).second;
+        qDebug() << lastWidgets.at(i).first.second;
     }
+    qDebug() << "_________________";
 
 }
 

@@ -2,6 +2,8 @@
 #include "View/pathpointcreationwidget.h"
 #include <QDebug>
 #include <QModelIndex>
+#include <QComboBox>
+#include <QLineEdit>
 
 PathPointList::PathPointList(QWidget* parent):QListWidget(parent){
     setDragDropMode(QAbstractItemView::InternalMove);
@@ -47,4 +49,18 @@ void PathPointList::refresh(void){
             ((PathPointCreationWidget*) itemWidget(item(i)))->resetAction();
         }
     }
+}
+
+
+void PathPointList::update(int indexNb,int action, int time  ){
+
+    ((PathPointCreationWidget*) itemWidget(item(indexNb)))->getAction()->setCurrentIndex(action);
+    if(action==0 && time!=NULL)
+    {
+        ((PathPointCreationWidget*) itemWidget(item(indexNb)))->getTimeEdit()->setText( QString::number(time));
+        ((PathPointCreationWidget*) itemWidget(item(indexNb)))->getTimeWidget()->show();
+    }
+    else
+        ((PathPointCreationWidget*) itemWidget(item(indexNb)))->getTimeWidget()->hide();
+
 }

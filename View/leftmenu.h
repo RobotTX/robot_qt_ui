@@ -17,7 +17,6 @@ class CreatePointWidget;
 class DisplaySelectedPoint;
 class DisplaySelectedGroup;
 class PointsViews;
-class PointsViews;
 class PathCreationWidget;
 class QVBoxLayout;
 class MainWindow;

@@ -19,7 +19,10 @@ void PathPainter::reset(bool save){
 }
 
 void PathPainter::refresh(bool save){
+    qDebug() << "PathPainter refresh";
+
     clearPointViews();
+
     if(pathVector.size() > 0){
         PointView* startPointView = NULL;
         PointView* endPointView = NULL;
@@ -44,6 +47,7 @@ void PathPainter::refresh(bool save){
                             pointView->setAddedToPath(true);
                         }
                     }
+
                     if(pathVector.at(i).comparePos(mapView->getTmpPointView()->getPoint()->getPosition().getX(),
                                                    mapView->getTmpPointView()->getPoint()->getPosition().getY())){
 
@@ -59,14 +63,23 @@ void PathPainter::refresh(bool save){
                 } else {
                     path.lineTo(pointCoord);
                 }
+
                 if(i == pathVector.size()-1)
                     endPointView = pointView;
-                if((pointView->getType() != PointView::PixmapType::HOVER) || (mapItem->getState() != GraphicItemState::EDITING) || save){
-                    qDebug() << " oops i changed in refresh";
-                    setPointViewPixmap(i, pointView);
-                }
+
+               // qDebug() << pointView->getType();
+                qDebug() << "avant" ;
+
+                    if((pointView->getType() != PointView::PixmapType::HOVER) || (mapItem->getState() != GraphicItemState::EDITING) || save){
+                        qDebug() << " oops i changed in refresh";
+                        setPointViewPixmap(i, pointView);
+                    }
+
+                qDebug() << "la";
+
             }
         }
+
         setPath(path);
 
         if(*(startPointView->getPoint()) == *(endPointView->getPoint())){
@@ -92,6 +105,7 @@ void PathPainter::updatePath(const QVector<Point>& pointVector, bool save){
     reset(save);
     pathVector = pointVector;
     refresh(save);
+
 }
 
 void PathPainter::setPointViewPixmap(const int id, PointView* const pointView){
@@ -112,6 +126,7 @@ void PathPainter::setPointViewPixmap(const int id, PointView* const pointView){
 }
 
 void PathPainter::clearPointViews(bool save){
+    qDebug() << "pathpainter: clear point views";
     pointViews->setNormalPixmaps();
 
     QVector<PointView*> pointViewVector = mapItem->getPathCreationPoints();

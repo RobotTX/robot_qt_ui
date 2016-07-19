@@ -15,6 +15,7 @@ class Map;
 #include "Model/graphicitemstate.h"
 #include "Model/points.h"
 #include "mainwindow.h"
+#include "Model/point.h"
 
 
 /**
@@ -43,6 +44,7 @@ public:
     void setState(const GraphicItemState _state, const bool clear = false);
     void setPermanentPoints(const std::shared_ptr<Points> &points);
     void setPermanentPoints(PointsView* pointsView);
+    void setTmpPointView( PointView* pv)  {  tmpPointView= pv; }
 
     void addPathPoint(PointView* pointView);
     void clearPointViews();
@@ -62,6 +64,7 @@ private slots:
     void addPathPointMapViewSlot(PointView*);
     void updateHover(QString, QString);
     void updatePixmapHover(PointView::PixmapType type, PointView* pv);
+    void addPointEditPath(Point pt);
 
 protected:
     void mousePressEvent(QGraphicsSceneMouseEvent *event);
