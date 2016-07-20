@@ -489,11 +489,7 @@ void MainWindow::viewPathSelectedRobot(int robotNb, bool checked){
         std::shared_ptr<Robot> robot = robots->getRobotsVector().at(robotNb)->getRobot();
         qDebug() << "viewPathSelectedRobot called on" << robot->getName() << checked;
         bottomLayout->uncheckViewPathSelectedRobot(robotNb);
-        if(pathPointViews.size() > 0){
-            qDeleteAll(pathPointViews.begin(), pathPointViews.end());
-            pathPointViews.clear();
-        }
-
+        clearAllPath();
         for(size_t i = 0; i < robot->getPath().size(); i++){
             std::shared_ptr<PathPoint> pathPoint = robot->getPath().at(i);
             PointView * pointView = new PointView(std::make_shared<Point>(pathPoint->getPoint()), mapPixmapItem);
@@ -501,12 +497,16 @@ void MainWindow::viewPathSelectedRobot(int robotNb, bool checked){
         }
         pathPainter->updatePath(pathPointViews);
     } else {
-        if(pathPointViews.size() > 0){
-            qDeleteAll(pathPointViews.begin(), pathPointViews.end());
-            pathPointViews.clear();
-        }
-        pathPainter->reset();
+       clearAllPath();
     }
+}
+void MainWindow::clearAllPath()
+{
+    if(pathPointViews.size() > 0){
+        qDeleteAll(pathPointViews.begin(), pathPointViews.end());
+        pathPointViews.clear();
+    }
+    pathPainter->reset();
 }
 
 void MainWindow::editSelectedRobot(RobotView* robotView){
@@ -705,7 +705,11 @@ void MainWindow::cancelEditSelecRobotBtnEvent(){
     // if the path has been changed, reset the path
     if( editSelectedRobotWidget->getPathChanged())
     {
+
+        pathPainter->reset();
+        clearAllPath();
         selectedRobot->getRobot()->setPath(editSelectedRobotWidget->getOldPath() );
+        bottomLayout->uncheckAll();
     }
     //robotsLeftWidget->setEditBtnStatus(false);
     //robotsLeftWidget->setCheckBtnStatus(false);
@@ -715,6 +719,7 @@ void MainWindow::cancelEditSelecRobotBtnEvent(){
     backEvent();
     leftMenu->getReturnButton()->setEnabled(true);
     leftMenu->getReturnButton()->setToolTip("");
+    setEnableAll(true);
 }
 
 void MainWindow::robotSavedEvent(){

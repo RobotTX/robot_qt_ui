@@ -85,6 +85,7 @@ public:
     /// to sleep for ms milliseconds
     void delay(const int ms) const;
     void setEnableAll(bool enable, GraphicItemState state = GraphicItemState::NO_STATE, bool clearPath = false, int noReturn = -1);
+    void clearAllPath();
 
 signals:
     void sendCommand(QString);
