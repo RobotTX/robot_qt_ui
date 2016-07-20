@@ -12,13 +12,13 @@
 #include "verticalscrollarea.h"
 #include "View/buttonmenu.h"
 
-DisplaySelectedGroup::DisplaySelectedGroup(QMainWindow *parent, std::shared_ptr<Points> const& _points) : QWidget(parent){
-
+DisplaySelectedGroup::DisplaySelectedGroup(QMainWindow *parent, std::shared_ptr<Points> const& _points) : QWidget(parent), points(_points)
+{
+    /// to be able to display a lot of groups and points2
     VerticalScrollArea* scrollArea = new VerticalScrollArea(this);
 
     layout = new QVBoxLayout(this);
 
-    points = _points;
     actionButtons = new TopLeftMenu(this);
 
     actionButtons->disableAll();
@@ -57,9 +57,6 @@ DisplaySelectedGroup::DisplaySelectedGroup(QMainWindow *parent, std::shared_ptr<
     titleLayout->setAlignment(Qt::AlignCenter);
 
     layout->addLayout(titleLayout);
-
-
-
     //layout->addWidget(name);
 
     pointButtonGroup = new PointButtonGroup(_points, 0, this);

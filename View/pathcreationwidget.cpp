@@ -569,27 +569,24 @@ void PathCreationWidget::updateMenu(){
 
 void PathCreationWidget::updateList()
 {
-
-    Point pt ;
-    PointView* newPointView;
+    qDebug() << "update list called";
+    std::shared_ptr<Point> pt = std::shared_ptr<Point>(new Point());
 
     if (selectedRobot != NULL)
     {
-        for (int i=0;i<selectedRobot->getPath().size();i++)
+        for (size_t i = 0; i < selectedRobot->getPath().size(); i++)
         {
-            pt = selectedRobot->getPath().at(i)->getPoint();
-            if (pt.getName().contains(';'))
-                emit addPointEditPath(pt);
+            *pt = selectedRobot->getPath().at(i)->getPoint();
+            if (pt->getName().contains(';'))
+                emit addPointEditPath(*pt);
             else
-                addPathPoint(&pt);
+                addPathPoint(&(*pt));
             int action =  selectedRobot->getPath().at(i)->getAction();
             if (action == PathPoint::Action::WAIT)
-                pathPointsList->update(i,0,selectedRobot->getPath().at(i)->getWaitTime());
+                pathPointsList->update(i, 0, selectedRobot->getPath().at(i)->getWaitTime());
             else
-                pathPointsList->update(i,1);
-
+                pathPointsList->update(i, 1);
         }
     }
-
 }
 

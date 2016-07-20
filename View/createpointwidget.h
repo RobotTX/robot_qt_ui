@@ -25,6 +25,7 @@ class CreatePointWidget: public QWidget{
     Q_OBJECT
 public:
 
+    /// to display an appropriate message to the end user when he tries to create a point
     enum Error { ContainsSemicolon, EmptyName, AlreadyExists, NoError };
     CreatePointWidget(QMainWindow* parent, PointsView *points);
 
@@ -39,10 +40,12 @@ public:
     TopLeftMenu* getActionButtons(void) const { return actionButtons; }
 
 private:
+    /// this prevents a user to type names like " a                stupidname       " by removing extra spaces
     QString formatName(const QString name) const;
 
 protected:
     void keyPressEvent(QKeyEvent* event);
+    void showEvent(QShowEvent* event);
 
 signals:
     void pointSaved(int, double, double, QString);
@@ -50,7 +53,8 @@ signals:
 
 private slots:
     void saveEditSelecPointBtnEvent();
-    /// check whether or not a point with the same name already exists
+    /// check whether or not a point is valid
+    /// a point is valid if it's not empty, already taken and if it does not contain ";" or "}"
     void checkPointName(void);
     void showGroupLayout(void) const;
 

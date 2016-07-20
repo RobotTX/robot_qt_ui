@@ -5,6 +5,7 @@ CustomQGraphicsView::CustomQGraphicsView ( QWidget * parent ) : QGraphicsView(pa
 
 CustomQGraphicsView::CustomQGraphicsView ( QGraphicsScene * scene, QWidget * parent): QGraphicsView(scene, parent), zoomCoeff(1.0) {}
 
+/// to implement a zoom on the map
 void CustomQGraphicsView::wheelEvent(QWheelEvent *event){
     if(event->delta() > 0){
         if(zoomCoeff < 15){

@@ -15,7 +15,7 @@
 #include <QGridLayout>
 #include <pathwidget.h>
 #include "verticalscrollarea.h"
-EditSelectedRobotWidget::EditSelectedRobotWidget(QMainWindow* parent, const std::shared_ptr<Robots> _robots):QWidget(parent){
+EditSelectedRobotWidget::EditSelectedRobotWidget(QMainWindow * const parent, const std::shared_ptr<Robots> _robots):QWidget(parent){
     robots = _robots;
     layout = new QVBoxLayout(this);
     wifiLayout = new QGridLayout();

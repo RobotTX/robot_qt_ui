@@ -14,17 +14,12 @@
 #include "Model/group.h"
 #include "Model/map.h"
 #include "View/buttonmenu.h"
-DisplaySelectedPoint::DisplaySelectedPoint(QMainWindow *_parent, std::shared_ptr<Points> const& _points, std::shared_ptr<Map> const& _map, PointView* _pointView, const Origin _origin):
-    QWidget(_parent), parent(_parent), origin(_origin), map(_map)
+DisplaySelectedPoint::DisplaySelectedPoint(QMainWindow *const _parent, std::shared_ptr<Points> const& _points, std::shared_ptr<Map> const& _map, PointView* _pointView, const Origin _origin):
+    QWidget(_parent), map(_map), parent(_parent), points(_points), pointView(_pointView), origin(_origin)
 {
-    parent = _parent;
-    points = _points;
-    pointView = _pointView;
-
     layout = new QVBoxLayout(this);
 
     nameLayout = new QHBoxLayout();
-
 
     actionButtons = new TopLeftMenu(this);
     actionButtons->getPlusButton()->setEnabled(false);
@@ -44,7 +39,6 @@ DisplaySelectedPoint::DisplaySelectedPoint(QMainWindow *_parent, std::shared_ptr
     nameEdit->setAutoFillBackground(true);
     nameEdit->setFrame(false);
     nameEdit->setAlignment(Qt::AlignCenter);
-   // nameEdit->setStyleSheet("");
 
     nameLayout->addWidget(nameEdit);
 
@@ -90,17 +84,17 @@ DisplaySelectedPoint::DisplaySelectedPoint(QMainWindow *_parent, std::shared_ptr
     layout->addWidget(homeWidget);
 
     /// to check that a point that's being edited does not get a new name that's already used in the database
-
     connect(nameEdit, SIGNAL(textEdited(QString)), this, SLOT(checkPointName(QString)));
 
     setMaximumWidth(_parent->width()*4/10);
     setMinimumWidth(_parent->width()*4/10);
+
     layout->setContentsMargins(0,0,0,0);
     layout->setAlignment(Qt::AlignTop);
 
 }
 
-void DisplaySelectedPoint::displayPointInfo(void){
+void DisplaySelectedPoint::displayPointInfo(void) {
     if(pointView->getPoint()->isDisplayed())
         actionButtons->getMapButton()->setToolTip("Click to hide this point");
     else

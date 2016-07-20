@@ -4,6 +4,10 @@
 #include <QLineEdit>
 #include <QFocusEvent>
 
+/**
+ * @brief The CustomizedLineEdit class
+ * this class provides a customized line edit that emits a particular signal when losing the focus
+ */
 class CustomizedLineEdit: public QLineEdit
 {
     Q_OBJECT
