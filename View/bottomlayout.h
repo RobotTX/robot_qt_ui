@@ -49,6 +49,7 @@ public:
     void removeRobot(const int id);
     /// to stop displaying the path of the robot whose id is given as a parameter
     void uncheckViewPathSelectedRobot(const int robotNb = -1);
+    void uncheckAll();
 
 private:
     /**

@@ -10,7 +10,7 @@ PathPainter::PathPainter(MapView * const &mapPixmapItem, PointsView * const &_po
 {
     setPen(QPen(Qt::red));
 }
-
+// save = do i want to save the path changes
 void PathPainter::reset(bool save){
     clearPointViews(save);
     path = QPainterPath();

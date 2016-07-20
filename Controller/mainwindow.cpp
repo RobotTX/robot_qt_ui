@@ -185,6 +185,10 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     ///path creation widget show event
     connect(pathCreationWidget, SIGNAL(addPointEditPath(Point)), mapPixmapItem, SLOT(addPointEditPath(Point)));
 
+    /// delete a point in the map when the temporary point is deleted in the path creation
+    connect(pathCreationWidget, SIGNAL(deletePointView(Point)), mapPixmapItem, SLOT(deletePointView(Point)));
+
+
     mainLayout->addLayout(bottom);
 
     setCentralWidget(mainWidget);
@@ -485,11 +489,7 @@ void MainWindow::viewPathSelectedRobot(int robotNb, bool checked){
         std::shared_ptr<Robot> robot = robots->getRobotsVector().at(robotNb)->getRobot();
         qDebug() << "viewPathSelectedRobot called on" << robot->getName() << checked;
         bottomLayout->uncheckViewPathSelectedRobot(robotNb);
-        if(pathPointViews.size() > 0){
-            qDeleteAll(pathPointViews.begin(), pathPointViews.end());
-            pathPointViews.clear();
-        }
-
+        clearAllPath();
         for(size_t i = 0; i < robot->getPath().size(); i++){
             std::shared_ptr<PathPoint> pathPoint = robot->getPath().at(i);
             PointView * pointView = new PointView(std::make_shared<Point>(pathPoint->getPoint()), mapPixmapItem);
@@ -497,12 +497,16 @@ void MainWindow::viewPathSelectedRobot(int robotNb, bool checked){
         }
         pathPainter->updatePath(pathPointViews);
     } else {
-        if(pathPointViews.size() > 0){
-            qDeleteAll(pathPointViews.begin(), pathPointViews.end());
-            pathPointViews.clear();
-        }
-        pathPainter->reset();
+       clearAllPath();
     }
+}
+void MainWindow::clearAllPath()
+{
+    if(pathPointViews.size() > 0){
+        qDeleteAll(pathPointViews.begin(), pathPointViews.end());
+        pathPointViews.clear();
+    }
+    pathPainter->reset();
 }
 
 void MainWindow::editSelectedRobot(RobotView* robotView){
@@ -701,7 +705,11 @@ void MainWindow::cancelEditSelecRobotBtnEvent(){
     // if the path has been changed, reset the path
     if( editSelectedRobotWidget->getPathChanged())
     {
+
+        pathPainter->reset();
+        clearAllPath();
         selectedRobot->getRobot()->setPath(editSelectedRobotWidget->getOldPath() );
+        bottomLayout->uncheckAll();
     }
     //robotsLeftWidget->setEditBtnStatus(false);
     //robotsLeftWidget->setCheckBtnStatus(false);
@@ -711,6 +719,7 @@ void MainWindow::cancelEditSelecRobotBtnEvent(){
     backEvent();
     leftMenu->getReturnButton()->setEnabled(true);
     leftMenu->getReturnButton()->setToolTip("");
+    setEnableAll(true);
 }
 
 void MainWindow::robotSavedEvent(){
@@ -1245,13 +1254,20 @@ void MainWindow::showHome(){
         editSelectedRobotWidget->getPathWidget()->setSelectedRobot(robotView);
         editSelectedRobotWidget->getPathWidget()->show();
         editSelectedRobotWidget->getAddPathBtn()->setText("Edit path");
+        editSelectedRobotWidget->getAddPathBtn()->setIcon(QIcon(":/icons/edit.png"));
     } else {
        // addPathBtn->show();
-        editSelectedRobotWidget->getPathWidget()->hide();
-        editSelectedRobotWidget->getAddPathBtn()->show();
 
         selectedRobotWidget->getPathWidget()->hide();
-        selectedRobotWidget->getNoPath()->setText("Add path");
+        selectedRobotWidget->getNoPath()->show();
+
+
+        editSelectedRobotWidget->getPathWidget()->hide();
+        editSelectedRobotWidget->getAddPathBtn()->show();
+        editSelectedRobotWidget->getAddPathBtn()->setIcon(QIcon(":/icons/plus.png"));
+        editSelectedRobotWidget->getAddPathBtn()->setText("Add path");
+
+//        selectedRobotWidget->getNoPath()->setText("Add path");
 
     }
 

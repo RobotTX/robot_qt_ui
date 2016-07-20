@@ -65,6 +65,7 @@ private slots:
     void updateHover(QString, QString);
     void updatePixmapHover(PointView::PixmapType type, PointView* pv);
     void addPointEditPath(Point pt);
+    void deletePointView(Point pt);
 
 protected:
     void mousePressEvent(QGraphicsSceneMouseEvent *event);

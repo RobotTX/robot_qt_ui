@@ -228,6 +228,7 @@ signals:
     void saveEditPathPoint();
     void setMessage(QString msgType, QString msg);
     void addPointEditPath(Point pt);
+    void deletePointView(Point pt);
 private:
     QVBoxLayout* layout;
 
