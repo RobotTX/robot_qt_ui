@@ -374,7 +374,7 @@ bool PathCreationWidget::savePath(){
 }
 
 void PathCreationWidget::resetWidget(){
-    qDebug() << "resetWidget called";
+    qDebug() << "pathcreationwidget resetWidget called";
     previousItem = NULL;
     editedPathPointCreationWidget = NULL;
     pathPointsList->setCurrentItem(pathPointsList->currentItem(), QItemSelectionModel::Deselect);

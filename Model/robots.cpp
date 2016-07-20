@@ -95,7 +95,7 @@ bool Robots::existRobotName(const QString name) const {
 }
 
 int Robots::getRobotId(const QString name) const{
-    qDebug() << "(getRobotId) Checking robot name : " << name;
+    //qDebug() << "(getRobotId) Checking robot name : " << name;
     for(int i = 0; i < robotsVector.length(); i++){
         if(robotsVector[i]->getRobot()->getName() == name){
             return i;

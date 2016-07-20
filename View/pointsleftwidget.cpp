@@ -196,14 +196,15 @@ void PointsLeftWidget::disableButtons(void){
 }
 
 int PointsLeftWidget::checkGroupName(QString name){
-
-    if(!creatingGroup && !name.simplified().compare(points->getGroups().at(groupButtonGroup->getIndexModifyEdit())->getName(), Qt::CaseInsensitive)){
+    groupNameEdit->setText(formatName(groupNameEdit->text()));
+    name = groupNameEdit->text().simplified();
+    if(!creatingGroup && !name.compare(points->getGroups().at(groupButtonGroup->getIndexModifyEdit())->getName(), Qt::CaseInsensitive)){
         saveButton->setToolTip("");
         qDebug() << "same name";
         connect(groupNameEdit, SIGNAL(clickSomewhere(QString)), this, SLOT(cancelCreationGroup()));
         return 0;
     }
-    if(!name.simplified().compare("")){
+    if(!name.compare("")){
         saveButton->setToolTip("The name of your group cannot be empty");
         saveButton->setEnabled(false);
         connect(groupNameEdit, SIGNAL(clickSomewhere(QString)), this, SLOT(cancelCreationGroup()));
@@ -211,7 +212,7 @@ int PointsLeftWidget::checkGroupName(QString name){
         return 1;
     }
     for(int i = 0; i < points->count(); i++){
-        if(!name.simplified().compare(points->getGroups().at(i)->getName(), Qt::CaseInsensitive)){
+        if(!name.compare(points->getGroups().at(i)->getName(), Qt::CaseInsensitive)){
             qDebug() << points->getGroups().at(i)->getName();
             saveButton->setToolTip("A group with the same name already exists, please choose another name for your group");
             saveButton->setEnabled(false);
@@ -245,7 +246,7 @@ void PointsLeftWidget::cancelCreationGroup(){
 
 void PointsLeftWidget::emitNewGroupSignal(){
     qDebug() << "emitnewgrupsignal called" << groupNameEdit->text();
-    emit newGroup(groupNameEdit->text());
+    emit newGroup(groupNameEdit->text().simplified());
 }
 
 void PointsLeftWidget::keyPressEvent(QKeyEvent* event){
@@ -278,4 +279,23 @@ void PointsLeftWidget::modifyGroupAfterClick(QString name){
 void PointsLeftWidget::reconnectModifyEdit(){
     qDebug() << "reconnectModifyEdit";
     connect(groupButtonGroup->getModifyEdit(), SIGNAL(clickSomewhere(QString)), this, SLOT(modifyGroupAfterClick(QString)));
+}
+
+QString PointsLeftWidget::formatName(const QString name) const {
+
+    QString ret("");
+    bool containsSpace(false);
+    bool containsNonSpace(false);
+    for(int i = 0; i < name.length(); i++){
+        if(!name.at(i).isSpace() || (!containsSpace && containsNonSpace)){
+            if(name.at(i).isSpace())
+                containsSpace = true;
+            else {
+                containsNonSpace = true;
+                containsSpace = false;
+            }
+            ret += name.at(i);
+        }
+    }
+    return ret;
 }

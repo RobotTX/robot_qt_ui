@@ -24,6 +24,8 @@ class TopLeftMenu;
 class CreatePointWidget: public QWidget{
     Q_OBJECT
 public:
+
+    enum Error { ContainsSemicolon, EmptyName, AlreadyExists, NoError };
     CreatePointWidget(QMainWindow* parent, PointsView *points);
 
     void setSelectedPoint(PointView* const& _pointView, const bool isTemporary);
@@ -36,16 +38,20 @@ public:
     void updateGroupBox(const Points &_points);
     TopLeftMenu* getActionButtons(void) const { return actionButtons; }
 
+private:
+    QString formatName(const QString name) const;
+
 protected:
     void keyPressEvent(QKeyEvent* event);
 
 signals:
     void pointSaved(int, double, double, QString);
+    void invalidName(CreatePointWidget::Error);
 
 private slots:
     void saveEditSelecPointBtnEvent();
     /// check whether or not a point with the same name already exists
-    void checkPointName(void) const;
+    void checkPointName(void);
     void showGroupLayout(void) const;
 
 public slots:

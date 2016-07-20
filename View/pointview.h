@@ -41,6 +41,7 @@ public:
     enum PixmapType{NORMAL, MID, START, STOP, HOVER, START_STOP};
 
     void setState(const GraphicItemState _state) { state = _state; }
+    GraphicItemState getState(void) const { return state; }
     void setPos(const qreal x, const qreal y);
     void setAddedToPath(const bool _addedToPath) { addedToPath = _addedToPath; }
     void setLastPixmap(const QPixmap& _lastPixmap) { lastPixmap = _lastPixmap; }

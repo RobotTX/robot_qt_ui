@@ -54,6 +54,8 @@ public:
     void setCreatingGroup(const bool create) { creatingGroup = create; }
     void setLastCheckedId(const int  id) {lastCheckedId = id;}
 
+private:
+    QString formatName(const QString name) const;
 public:
     void disableButtons(void);
     void updateGroupButtonGroup(Points const& points);

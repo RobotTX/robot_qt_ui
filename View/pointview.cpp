@@ -26,18 +26,20 @@ PointView::PointView(std::shared_ptr<Point> _point, QGraphicsItem* parent) :
 }
 
 void PointView::mousePressEvent(QGraphicsSceneMouseEvent *event){
+    qDebug() << "state " << state;
         if(state == GraphicItemState::NO_STATE){
             if(event->button() == Qt::RightButton){
                 qDebug() << "right click on point NO STATE" ;
                 emit pointRightClicked(this);
             }
             if(event->button() == Qt::LeftButton){
-                qDebug() << "left click on point NO STATE" ;
+                //qDebug() << "left click on point NO STATE" ;
                 emit pointLeftClicked(this);
             }
         } else if(state == GraphicItemState::CREATING_PATH){
             qDebug() << "Clicked on a point while creating a path";
             addedToPath = true;
+            //emit pointLeftClicked(this);
             emit addPointPath(this);
         } else if(state == GraphicItemState::EDITING){
             qDebug() << "(EDITING) PointView moving from" << pos().x() << pos().y();

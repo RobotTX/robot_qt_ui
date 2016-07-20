@@ -78,6 +78,7 @@ void MapView::mouseReleaseEvent(QGraphicsSceneMouseEvent *event){
                 connect(newPointView, SIGNAL(addPointPath(PointView*)), mainWindow, SLOT(addPathPoint(PointView*)));
                 connect(newPointView, SIGNAL(moveTmpEditPathPoint()), mainWindow, SLOT(moveTmpEditPathPointSlot()));
                 connect(newPointView, SIGNAL(pathPointChanged(double, double, PointView*)), mainWindow, SLOT(updatePathPoint(double, double, PointView*)));
+                connect(newPointView, SIGNAL(pointLeftClicked(PointView*)), mainWindow, SLOT(displayPointEvent(PointView*)));
 
                 newPointView->setState(GraphicItemState::CREATING_PATH);
                 newPointView->getPoint()->setPosition(event->pos().x(), event->pos().y());
@@ -156,8 +157,12 @@ void MapView::setState(const GraphicItemState _state, const bool clear){
         qDeleteAll(pathCreationPoints.begin(), pathCreationPoints.end());
         pathCreationPoints.clear();
     } else {
+        qDebug() << "mapview set state called" << _state;
+        qDebug() << pathCreationPoints.size();
         for(int i = 0; i < pathCreationPoints.size(); i++){
             pathCreationPoints.at(i)->setState(state);
+            qDebug() << pathCreationPoints.at(i)->getState();
+            pathCreationPoints.at(i)->setState(GraphicItemState::CREATING_PATH);
         }
     }
 }

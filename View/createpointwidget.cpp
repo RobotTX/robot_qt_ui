@@ -18,10 +18,8 @@
 
 
 
-CreatePointWidget::CreatePointWidget(QMainWindow* _parent, PointsView* _points):QWidget(_parent){
-    parent = _parent;
-    points = _points;
-
+CreatePointWidget::CreatePointWidget(QMainWindow* _parent, PointsView* _points): QWidget(_parent), parent(_parent), points(_points)
+{
     layout = new QVBoxLayout(this);
 
     actionButtons = new TopLeftMenu(this);
@@ -91,6 +89,9 @@ CreatePointWidget::CreatePointWidget(QMainWindow* _parent, PointsView* _points):
     qDebug() << groupBox->currentIndex();
     connect(cancelBtn, SIGNAL(clicked(bool)), this, SLOT(hideGroupLayout()));
 
+    /// to display appropriate messages when a user attemps to create a point
+    connect(this, SIGNAL(invalidName(CreatePointWidget::Error)), _parent, SLOT(setMessageCreationPoint(CreatePointWidget::Error)));
+
     hide();
     setMaximumWidth(_parent->width()*4/10);
     setMinimumWidth(_parent->width()*4/10);
@@ -109,31 +110,44 @@ void CreatePointWidget::setSelectedPoint(PointView * const &_pointView, const bo
 
 void CreatePointWidget::saveEditSelecPointBtnEvent(){
     qDebug() << "saveEditSelecPointBtnEvent called";
-    emit pointSaved(groupBox->currentIndex(), posXLabel->text().right(posXLabel->text().length()-4).toDouble(), posYLabel->text().right(posYLabel->text().length()-4).toDouble(), nameEdit->text());
+    emit pointSaved(groupBox->currentIndex(), posXLabel->text().right(posXLabel->text().length()-4).toDouble(), posYLabel->text().right(posYLabel->text().length()-4).toDouble(), nameEdit->text().simplified());
 }
 
-void CreatePointWidget::checkPointName(void) const {
+void CreatePointWidget::checkPointName(void){
+    nameEdit->setText(formatName(nameEdit->text()));
+    qDebug() << nameEdit->text();
+    if(nameEdit->text().simplified().contains(QRegularExpression("[;{}]"))){
+        qDebug() << " I contain a ; or }";
+        saveBtn->setToolTip("The name of your point cannot contain the characters \";\" and }");
+        saveBtn->setEnabled(false);
+        emit invalidName(Error::ContainsSemicolon);
+        return;
+    }
     qDebug() << "checkPointName called" << nameEdit->text();
-    if(!nameEdit->text().compare("")){
+    if(!nameEdit->text().simplified().compare("")){
+        qDebug() << " I am empty ";
         /// cannot add a point with no name
         saveBtn->setToolTip("The name of your point cannot be empty");
         saveBtn->setEnabled(false);
+        emit invalidName(Error::EmptyName);
         return;
     }
     for(int i = 0; i < points->getPoints()->count(); i++){
         std::shared_ptr<Group> group = points->getPoints()->getGroups().at(i);
         for(int j = 0; j < group->count(); j++){
-            if(!nameEdit->text().compare(group->getPoints().at(j)->getName(), Qt::CaseInsensitive)){
+            if(!nameEdit->text().simplified().compare(group->getPoints().at(j)->getName(), Qt::CaseInsensitive)){
                 qDebug() << nameEdit->text() << " already exists";
                 saveBtn->setEnabled(false);
                 /// to explain the user why he cannot add its point as it is
                 saveBtn->setToolTip("A point with this name already exists, please choose another name for your point");
+                emit invalidName(Error::AlreadyExists);
                 return;
             }
         }
     }
     saveBtn->setToolTip("");
     saveBtn->setEnabled(true);
+    emit invalidName(Error::NoError);
 }
 
 void CreatePointWidget::showGroupLayout(void) const {
@@ -182,7 +196,25 @@ void CreatePointWidget::updateGroupBox(const Points& _points){
 void CreatePointWidget::keyPressEvent(QKeyEvent* event){
     /// this is the enter key
     if(!event->text().compare("\r")){
-        emit pointSaved(groupBox->currentIndex(), posXLabel->text().right(posXLabel->text().length()-4).toDouble(), posYLabel->text().right(posYLabel->text().length()-4).toDouble(), nameEdit->text());
+        emit pointSaved(groupBox->currentIndex(), posXLabel->text().right(posXLabel->text().length()-4).toDouble(), posYLabel->text().right(posYLabel->text().length()-4).toDouble(), nameEdit->text().simplified());
         qDebug() << "enter pressed";
     }
+}
+
+QString CreatePointWidget::formatName(const QString name) const {
+    QString ret("");
+    bool containsSpace(false);
+    bool containsNonSpace(false);
+    for(int i = 0; i < name.length(); i++){
+        if(!name.at(i).isSpace() || (!containsSpace && containsNonSpace)){
+            if(name.at(i).isSpace())
+                containsSpace = true;
+            else {
+                containsNonSpace = true;
+                containsSpace = false;
+            }
+            ret += name.at(i);
+        }
+    }
+    return ret;
 }
