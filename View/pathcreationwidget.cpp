@@ -405,20 +405,25 @@ void PathCreationWidget::supprItem(QListWidgetItem* item){
     msgBox.setDefaultButton(QMessageBox::Cancel);
     int ret = msgBox.exec();
     int id;
-
+    Point pt;
     switch (ret) {
         case QMessageBox::Ok:
 
             id = pathPointsList->row(item);
             qDebug() << "Removing item" << id;
+            pt = pointList.at(id);
+
             pointList.remove(id);
             updatePointPainter();
 
             previousItem = NULL;
             pathPointsList->removeItemWidget(item);
+
             delete item;
             pathPointsList->refresh();
             idPoint--;
+            emit deletePointView(pt);
+
         break;
         case QMessageBox::Cancel:
             qDebug() << "Cancel was clicked";

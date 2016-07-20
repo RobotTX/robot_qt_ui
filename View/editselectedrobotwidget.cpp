@@ -162,6 +162,7 @@ void EditSelectedRobotWidget::setSelectedRobot(RobotView* const _robotView, bool
         homeBtn->setText("Add home");
         oldHome = NULL;
     }
+
 }
 
 void EditSelectedRobotWidget::saveEditSelecRobotBtnEvent(void){

@@ -186,6 +186,10 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     ///path creation widget show event
     connect(pathCreationWidget, SIGNAL(addPointEditPath(Point)), mapPixmapItem, SLOT(addPointEditPath(Point)));
 
+    /// delete a point in the map when the temporary point is deleted in the path creation
+    connect(pathCreationWidget, SIGNAL(deletePointView(Point)), mapPixmapItem, SLOT(deletePointView(Point)));
+
+
     mainLayout->addLayout(bottom);
 
     setCentralWidget(mainWidget);
@@ -1242,13 +1246,20 @@ void MainWindow::showHome(){
         editSelectedRobotWidget->getPathWidget()->setSelectedRobot(robotView);
         editSelectedRobotWidget->getPathWidget()->show();
         editSelectedRobotWidget->getAddPathBtn()->setText("Edit path");
+        editSelectedRobotWidget->getAddPathBtn()->setIcon(QIcon(":/icons/edit.png"));
     } else {
        // addPathBtn->show();
-        editSelectedRobotWidget->getPathWidget()->hide();
-        editSelectedRobotWidget->getAddPathBtn()->show();
 
         selectedRobotWidget->getPathWidget()->hide();
-        selectedRobotWidget->getNoPath()->setText("Add path");
+        selectedRobotWidget->getNoPath()->show();
+
+
+        editSelectedRobotWidget->getPathWidget()->hide();
+        editSelectedRobotWidget->getAddPathBtn()->show();
+        editSelectedRobotWidget->getAddPathBtn()->setIcon(QIcon(":/icons/plus.png"));
+        editSelectedRobotWidget->getAddPathBtn()->setText("Add path");
+
+//        selectedRobotWidget->getNoPath()->setText("Add path");
 
     }
 

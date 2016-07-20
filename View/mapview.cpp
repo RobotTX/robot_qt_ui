@@ -273,3 +273,19 @@ void MapView::setState(const GraphicItemState _state, const bool clear){
        emit addPathPointMapView(&(*(newPointView->getPoint())));
 
  }
+ void MapView::deletePointView(Point pt)
+ {
+
+       PointView*  ptDelete;
+     for(int j = 0; j < pathCreationPoints.size(); j++){
+        if(pt.comparePos(pathCreationPoints.at(j)->getPoint()->getPosition().getX(),
+           pathCreationPoints.at(j)->getPoint()->getPosition().getY())){
+            ptDelete = pathCreationPoints.at(j);
+            pathCreationPoints.remove(j);
+
+        }
+     }
+     delete ptDelete;
+
+ }
+
