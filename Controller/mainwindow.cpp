@@ -1497,14 +1497,14 @@ void MainWindow::sendNewMapToRobots(QString ipAddress){
         std::shared_ptr<Robot> robot = robotsVector.at(i)->getRobot();
 
         /// No need to send the map to the robot that scanned it
-        // TODO enlever comment
+        // TODO remettre/enlever comment
 
-        //if(robot->getIp().compare(ipAddress) != 0){
+        if(robot->getIp().compare(ipAddress) != 0){
             qDebug() << "Sending the map to" << robot->getName() << "at ip" << robot->getIp();
             sendNewMapToRobot(robot, mapId.toString());
-        /*} else {
+        } else {
             qDebug() << "The robot" << robot->getName() << "at ip" << robot->getIp() << "already has the current map";
-        }*/
+        }
     }
     qDebug() << "Sent the map to the robots";
 }
