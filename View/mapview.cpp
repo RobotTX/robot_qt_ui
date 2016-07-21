@@ -11,6 +11,7 @@
 #include "mainwindow.h"
 #include "Model/map.h"
 
+
 MapView::MapView (const QPixmap& pixmap, const QSize _size, std::shared_ptr<Map> _map, QMainWindow* _mainWindow) :
     QGraphicsPixmapItem(pixmap), size(_size), state(GraphicItemState::NO_STATE), mainWindow(_mainWindow), map(_map)
 {
@@ -38,6 +39,7 @@ MapView::MapView (const QPixmap& pixmap, const QSize _size, std::shared_ptr<Map>
 }
 
 MapView::~MapView(){
+    qDebug() << "creation mapview";
     delete permanentPoints;
     qDeleteAll(pathCreationPoints.begin(), pathCreationPoints.end());
 }
@@ -49,6 +51,8 @@ void MapView::mousePressEvent(QGraphicsSceneMouseEvent *event){
 }
 
 void MapView::mouseReleaseEvent(QGraphicsSceneMouseEvent *event){
+    qDebug() << "mapview mouseReleaseEvent";
+
     float x = dragStartPosition.x() - this->pos().x();
     float y = dragStartPosition.y() - this->pos().y();
     /// we compare the start position of the drag event & the drop position
@@ -57,6 +61,8 @@ void MapView::mouseReleaseEvent(QGraphicsSceneMouseEvent *event){
     if (abs(x) <= 10 && abs(y) <= 10){
         /// click
         if(state == GraphicItemState::NO_STATE){
+            qDebug() << "(MapView) NO_STATE";
+
             tmpPointView->show();
             /// might be useless code
             point->getPoint()->setPosition(event->pos().x(), event->pos().y());
@@ -65,6 +71,7 @@ void MapView::mouseReleaseEvent(QGraphicsSceneMouseEvent *event){
             emit pointLeftClicked(&(*point), true);
         } else if(state == GraphicItemState::CREATING_PATH){
             /// if it's not a white point of the map we cannot add it to the path
+            qDebug() << "(MapView) CREATING_PATH";
             if(map->getMapImage().pixelColor(event->pos().x()-tmpPointPixmap.width()/2, event->pos().y()-tmpPointPixmap.height()).red() >= 254){
                 qDebug() << "Clicked on the map while creating a path";
                 Point tmpPoint("tmpPoint", 0.0, 0.0, false);
@@ -73,14 +80,19 @@ void MapView::mouseReleaseEvent(QGraphicsSceneMouseEvent *event){
                 connect(newPointView, SIGNAL(addPointPath(PointView*)), mainWindow, SLOT(addPathPoint(PointView*)));
                 connect(newPointView, SIGNAL(moveTmpEditPathPoint()), mainWindow, SLOT(moveTmpEditPathPointSlot()));
                 connect(newPointView, SIGNAL(pathPointChanged(double, double, PointView*)), mainWindow, SLOT(updatePathPoint(double, double, PointView*)));
+                connect(newPointView, SIGNAL(pointLeftClicked(PointView*)), mainWindow, SLOT(displayPointEvent(PointView*)));
 
                 newPointView->setState(GraphicItemState::CREATING_PATH);
                 newPointView->getPoint()->setPosition(event->pos().x(), event->pos().y());
+
                 newPointView->setPos(event->pos().x()-tmpPointPixmap.width()/2, event->pos().y()-tmpPointPixmap.height());
+
                 newPointView->setParentItem(this);
+
                 pathCreationPoints.push_back(newPointView);
                 connect(newPointView, SIGNAL(hoverEventSignal(PointView::PixmapType, PointView*)), this, SLOT(updatePixmapHover(PointView::PixmapType, PointView*)));
                 emit addPathPointMapView(&(*(newPointView->getPoint())));
+
 
            } else {
                emit newMessage("You cannot create a point here because your robot cannot go there. You must click known areas of the map");
@@ -139,14 +151,20 @@ void MapView::addPathPointMapViewSlot(PointView* _pointView){
 }
 
 void MapView::setState(const GraphicItemState _state, const bool clear){
+    qDebug() << "mapview setstate";
+
     state = _state;
     tmpPointView->setState(state);
     if(clear){
         qDeleteAll(pathCreationPoints.begin(), pathCreationPoints.end());
         pathCreationPoints.clear();
     } else {
+        qDebug() << "mapview set state called" << _state;
+        qDebug() << pathCreationPoints.size();
         for(int i = 0; i < pathCreationPoints.size(); i++){
             pathCreationPoints.at(i)->setState(state);
+         //   qDebug() << pathCreationPoints.at(i)->getState();
+          //  pathCreationPoints.at(i)->setState(GraphicItemState::CREATING_PATH);
         }
     }
 }
@@ -243,3 +261,38 @@ void MapView::setState(const GraphicItemState _state, const bool clear){
         pv->setType(PointView::PixmapType::HOVER);
     }
  }
+
+ void MapView::addPointEditPath(Point pt)
+ {
+
+    qDebug() << "mapview addPointEditPath";
+       PointView* newPointView = new PointView(std::make_shared<Point>(pt), this);
+      connect(newPointView, SIGNAL(addPointPath(PointView*)), mainWindow, SLOT(addPathPoint(PointView*)));
+      connect(newPointView, SIGNAL(moveTmpEditPathPoint()), mainWindow, SLOT(moveTmpEditPathPointSlot()));
+      connect(newPointView, SIGNAL(pathPointChanged(double, double, PointView*)), mainWindow, SLOT(updatePathPoint(double, double, PointView*)));
+
+      newPointView->setState(GraphicItemState::CREATING_PATH);
+
+      newPointView->setParentItem(this);
+      pathCreationPoints.push_back(newPointView);
+
+      connect(newPointView, SIGNAL(hoverEventSignal(PointView::PixmapType, PointView*)), this, SLOT(updatePixmapHover(PointView::PixmapType, PointView*)));
+       emit addPathPointMapView(&(*(newPointView->getPoint())));
+
+ }
+ void MapView::deletePointView(Point pt)
+ {
+
+       PointView*  ptDelete;
+     for(int j = 0; j < pathCreationPoints.size(); j++){
+        if(pt.comparePos(pathCreationPoints.at(j)->getPoint()->getPosition().getX(),
+           pathCreationPoints.at(j)->getPoint()->getPosition().getY())){
+            ptDelete = pathCreationPoints.at(j);
+            pathCreationPoints.remove(j);
+
+        }
+     }
+     delete ptDelete;
+
+ }
+

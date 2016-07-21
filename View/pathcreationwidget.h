@@ -9,6 +9,7 @@ class PathPointCreationWidget;
 class Robot;
 class QMenu;
 class TopLeftMenu;
+class Point;
 
 #include "Model/points.h"
 #include "Model/point.h"
@@ -40,7 +41,10 @@ public:
     PathPointList* getPathPointList(void) const { return pathPointsList; }
     QVector<Point> getPointList(void) const { return pointList; }
 
+
     void updateMenu();
+    void updateList();
+
     /**
      * @brief initialisationPathPoint
      * @param pathPoint
@@ -112,6 +116,9 @@ public:
 
     /// Setters
     void setSelectedRobot(std::shared_ptr<Robot> const& _selectedRobot){ selectedRobot = _selectedRobot; }
+    ///getters
+    std::shared_ptr<Robot> getSelectedRobot(void){ return selectedRobot ;}
+
 
     TopLeftMenu* getActionButtons(void) const {return actionButtons;}
 
@@ -183,6 +190,7 @@ private slots:
      * Sot called when a Point is selected from the Menu of points
      */
     void pointClicked(QAction *action);
+    void pointClicked(QString name);
 
 signals:
     /**
@@ -219,8 +227,8 @@ signals:
      */
     void saveEditPathPoint();
     void setMessage(QString msgType, QString msg);
-
-
+    void addPointEditPath(Point pt);
+    void deletePointView(Point pt);
 private:
     QVBoxLayout* layout;
 

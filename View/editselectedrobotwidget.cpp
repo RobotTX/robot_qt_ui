@@ -14,7 +14,7 @@
 #include "View/spacewidget.h"
 #include <QGridLayout>
 #include <pathwidget.h>
-
+#include "verticalscrollarea.h"
 EditSelectedRobotWidget::EditSelectedRobotWidget(QMainWindow* parent, const std::shared_ptr<Robots> _robots):QWidget(parent){
     robots = _robots;
     layout = new QVBoxLayout(this);
@@ -24,22 +24,30 @@ EditSelectedRobotWidget::EditSelectedRobotWidget(QMainWindow* parent, const std:
     oldHome = NULL;
     pathChanged = false;
 
+
+    VerticalScrollArea* scrollArea = new VerticalScrollArea(this);
+    QVBoxLayout * inLayout = new QVBoxLayout(scrollArea);
+    QWidget * inWidget = new QWidget(scrollArea);
+
+    inWidget->setLayout(inLayout);
+
+
     /// Name editable label
     nameEdit = new QLineEdit(this);
     nameEdit->setStyleSheet ("text-align: left");
-    layout->addWidget(nameEdit);
+    inLayout->addWidget(nameEdit);
 
     /// Ip address label
     ipAddressLabel = new QLabel("Ip : ", this);
     ipAddressLabel->setWordWrap(true);
-    layout->addWidget(ipAddressLabel);
+    inLayout->addWidget(ipAddressLabel);
 
     /// Wifi name label
 
     wifiTitle = new QLabel("Wifi : ", this);
     wifiTitle->setWordWrap(true);
     wifiTitle->setAlignment(Qt::AlignLeft);
-    layout->addWidget(wifiTitle);
+    inLayout->addWidget(wifiTitle);
 
     wifiName = new QLabel("name : ", this);
     wifiName->setWordWrap(true);
@@ -63,15 +71,15 @@ EditSelectedRobotWidget::EditSelectedRobotWidget(QMainWindow* parent, const std:
 
     wifiLayout->addWidget( wifiPwd, 1,0);
     wifiLayout->addWidget( wifiPwdEdit, 1,1);
-    layout->addLayout(wifiLayout);
+    inLayout->addLayout(wifiLayout);
 
     /// Battery level widget
     QLabel* batteryLabel = new QLabel("Battery Level : ", this);
-    layout->addWidget(batteryLabel);
+    inLayout->addWidget(batteryLabel);
 
     batteryLevel = new QProgressBar(this);
     batteryLevel->setValue(50);
-    layout->addWidget(batteryLevel);
+    inLayout->addWidget(batteryLevel);
 
     /// Home layout with the button to select the home
     QLabel* homeLabel = new QLabel("Home : ", this);
@@ -79,8 +87,8 @@ EditSelectedRobotWidget::EditSelectedRobotWidget(QMainWindow* parent, const std:
     homeBtn->setIconSize(parent->size()/10);
     homeBtn->setStyleSheet ("text-align: left");
     connect(homeBtn, SIGNAL(clicked()), parent, SLOT(editHomeEvent()));
-    layout->addWidget(homeLabel);
-    layout->addWidget(homeBtn);
+    inLayout->addWidget(homeLabel);
+    inLayout->addWidget(homeBtn);
 
     /// Button to add a path
     addPathBtn = new QPushButton(QIcon(":/icons/plus.png"),"Add path", this);
@@ -88,15 +96,15 @@ EditSelectedRobotWidget::EditSelectedRobotWidget(QMainWindow* parent, const std:
     //addPathBtn->hide();
     addPathBtn->setIconSize(parent->size()/10);
     connect(addPathBtn, SIGNAL(clicked()), parent, SLOT(addPathSelecRobotBtnEvent()));
-    layout->addWidget(addPathBtn);
+    inLayout->addWidget(addPathBtn);
 
 
     pathWidget = new PathWidget(this);
-    layout->addWidget(pathWidget);
+    inLayout->addWidget(pathWidget);
 
 
     SpaceWidget* spaceWidget = new SpaceWidget(SpaceWidget::SpaceOrientation::HORIZONTAL, this);
-    layout->addWidget(spaceWidget);
+    inLayout->addWidget(spaceWidget);
 
 
     QHBoxLayout* grid = new QHBoxLayout();
@@ -107,7 +115,6 @@ EditSelectedRobotWidget::EditSelectedRobotWidget(QMainWindow* parent, const std:
     grid->addWidget(cancelBtn);
     grid->addWidget(saveBtn);
 
-    layout->addLayout(grid);
 
     connect(cancelBtn, SIGNAL(clicked()), parent, SLOT(cancelEditSelecRobotBtnEvent()));
     connect(saveBtn, SIGNAL(clicked()), this, SLOT(saveEditSelecRobotBtnEvent()));
@@ -118,8 +125,15 @@ EditSelectedRobotWidget::EditSelectedRobotWidget(QMainWindow* parent, const std:
     hide();
     setMaximumWidth(parent->width()*4/10);
     setMinimumWidth(parent->width()*4/10);
+    inWidget->setMaximumWidth(parent->width()*4/10);
+    inWidget->setMinimumWidth(parent->width()*4/10);
     layout->setAlignment(Qt::AlignTop);
     layout->setContentsMargins(0,0,0,0);
+
+
+    scrollArea->setWidget(inWidget);
+    layout->addWidget(scrollArea);
+    layout->addLayout(grid);
 
 }
 
@@ -148,6 +162,7 @@ void EditSelectedRobotWidget::setSelectedRobot(RobotView* const _robotView, bool
         homeBtn->setText("Add home");
         oldHome = NULL;
     }
+
 }
 
 void EditSelectedRobotWidget::saveEditSelecRobotBtnEvent(void){

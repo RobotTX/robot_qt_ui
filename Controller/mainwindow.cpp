@@ -15,7 +15,6 @@
 #include "View/pointview.h"
 #include "View/leftmenuwidget.h"
 #include "View/editselectedrobotwidget.h"
-#include "View/createpointwidget.h"
 #include "View/bottomlayout.h"
 #include "View/pointsleftwidget.h"
 #include "View/selectedrobotwidget.h"
@@ -42,6 +41,7 @@
 #include "View/pathpointcreationwidget.h"
 #include "View/pathpointlist.h"
 #include "View/groupview.h"
+#include <QVector>
 #include "View/pathwidget.h"
 
 /**
@@ -164,6 +164,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     /// to connect the buttons in the group menu so they can be double clicked after they were updated
     connect(leftMenu->getDisplaySelectedGroup()->getPointButtonGroup(), SIGNAL(updateConnectionsRequest()), this, SLOT(reestablishConnectionsPoints()));
 
+    /// to show path creation widget
+
     /// to create a new group, the signal is sent by pointsLeftWidget
     connect(pointsLeftWidget, SIGNAL(newGroup(QString)), this, SLOT(createGroup(QString)));
 
@@ -179,6 +181,13 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
     /// to know what message to display when a user is creating a path
     connect(mapPixmapItem, SIGNAL(newMessage(QString)), this, SLOT(setMessageCreationPath(QString)));
+
+    ///path creation widget show event
+    connect(pathCreationWidget, SIGNAL(addPointEditPath(Point)), mapPixmapItem, SLOT(addPointEditPath(Point)));
+
+    /// delete a point in the map when the temporary point is deleted in the path creation
+    connect(pathCreationWidget, SIGNAL(deletePointView(Point)), mapPixmapItem, SLOT(deletePointView(Point)));
+
 
     mainLayout->addLayout(bottom);
 
@@ -404,6 +413,9 @@ void MainWindow::stopSelectedRobot(int robotNb){
                                 hideAllWidgets();
                                 selectedRobotWidget->setSelectedRobot(selectedRobot);
                                 selectedRobotWidget->show();
+                                bottomLayout->getViewPathRobotBtnGroup()->button(robotNb)->setChecked(false);
+                                bottomLayout->getViewPathRobotBtnGroup()->button(robotNb)->click();
+
                             }
                             topLayout->setLabel(TEXT_COLOR_SUCCESS, "Path deleted");
                         } else {
@@ -411,6 +423,7 @@ void MainWindow::stopSelectedRobot(int robotNb){
                         }
                     }
                     robots->getRobotsVector().at(robotNb)->getRobot()->resetCommandAnswer();
+
                 }
             break;
             case QMessageBox::Cancel:
@@ -477,11 +490,7 @@ void MainWindow::viewPathSelectedRobot(int robotNb, bool checked){
         std::shared_ptr<Robot> robot = robots->getRobotsVector().at(robotNb)->getRobot();
         qDebug() << "viewPathSelectedRobot called on" << robot->getName() << checked;
         bottomLayout->uncheckViewPathSelectedRobot(robotNb);
-        if(pathPointViews.size() > 0){
-            qDeleteAll(pathPointViews.begin(), pathPointViews.end());
-            pathPointViews.clear();
-        }
-
+        clearAllPath();
         for(size_t i = 0; i < robot->getPath().size(); i++){
             std::shared_ptr<PathPoint> pathPoint = robot->getPath().at(i);
             PointView * pointView = new PointView(std::make_shared<Point>(pathPoint->getPoint()), mapPixmapItem);
@@ -489,12 +498,16 @@ void MainWindow::viewPathSelectedRobot(int robotNb, bool checked){
         }
         pathPainter->updatePath(pathPointViews);
     } else {
-        if(pathPointViews.size() > 0){
-            qDeleteAll(pathPointViews.begin(), pathPointViews.end());
-            pathPointViews.clear();
-        }
-        pathPainter->reset();
+       clearAllPath();
     }
+}
+void MainWindow::clearAllPath()
+{
+    if(pathPointViews.size() > 0){
+        qDeleteAll(pathPointViews.begin(), pathPointViews.end());
+        pathPointViews.clear();
+    }
+    pathPainter->reset();
 }
 
 void MainWindow::editSelectedRobot(RobotView* robotView){
@@ -502,8 +515,6 @@ void MainWindow::editSelectedRobot(RobotView* robotView){
     selectedRobot = robotView;
     robots->setSelected(robotView);
 
-  //  robotsLeftWidget->getActionButtons()->getEditButton()->setChecked(false);
-  //  robotsLeftWidget->setCheckBtnStatus(false);
     hideAllWidgets();
     setGraphicItemsState(GraphicItemState::NO_EVENT);
 
@@ -569,15 +580,23 @@ void MainWindow::addPathSelecRobotBtnEvent(){
     qDebug() << "addPathSelecRobotBtnEvent called on robot " << selectedRobot->getRobot()->getName();
     setMessageTop(TEXT_COLOR_INFO, "Click white points of the map to add new points to the path of " +
                   selectedRobot->getRobot()->getName() + "\nAlternatively you can click the \"+\" button to add an existing point to your path");
+
+
+    setEnableAll(false, GraphicItemState::CREATING_PATH, true, true);
+    pathCreationWidget->setSelectedRobot(selectedRobot->getRobot());
+
+    clearAllPath();
+
+
     hideAllWidgets();
     pathPainter->reset();
     pathCreationWidget->show();
-    pathCreationWidget->setSelectedRobot(selectedRobot->getRobot());
+
 
     editSelectedRobotWidget->setOldPath( selectedRobot->getRobot()->getPath());
 
 
-    setEnableAll(false, GraphicItemState::CREATING_PATH, true, true);
+
     switchFocus(selectedRobot->getRobot()->getName(), pathCreationWidget, MainWindow::WidgetType::ROBOT);
 
     /// stop displaying the currently displayed path if it exists
@@ -614,7 +633,7 @@ void MainWindow::setSelectedRobotNoParent(QAbstractButton *button){
 }
 
 void MainWindow::setSelectedRobot(QAbstractButton *button){
-
+    Q_UNUSED(button)
     qDebug() << "select a robot in robot group ";
 
     robotsLeftWidget->getActionButtons()->getEditButton()->setEnabled(true);
@@ -692,16 +711,24 @@ void MainWindow::cancelEditSelecRobotBtnEvent(){
     // if the path has been changed, reset the path
     if( editSelectedRobotWidget->getPathChanged())
     {
+
+        pathPainter->reset();
+        clearAllPath();
         selectedRobot->getRobot()->setPath(editSelectedRobotWidget->getOldPath() );
+        bottomLayout->uncheckAll();
     }
     //robotsLeftWidget->setEditBtnStatus(false);
     //robotsLeftWidget->setCheckBtnStatus(false);
     hideAllWidgets();
-
-    setGraphicItemsState(GraphicItemState::NO_STATE);
     backEvent();
+
+   // setGraphicItemsState(GraphicItemState::NO_STATE);
+
+
     leftMenu->getReturnButton()->setEnabled(true);
     leftMenu->getReturnButton()->setToolTip("");
+    setEnableAll(true);
+
 }
 
 void MainWindow::robotSavedEvent(){
@@ -849,7 +876,7 @@ void MainWindow::robotSavedEvent(){
                 bottomLayout->updateRobot(robots->getRobotId(selectedRobot->getRobot()->getName()), selectedRobot);
 
                 selectedRobotWidget->setSelectedRobot(selectedRobot );
-                selectedRobotWidget->show();
+               // selectedRobotWidget->show();
                 if(editSelectedRobotWidget->isFirstConnection()){
                     setEnableAll(true);
                 }
@@ -888,6 +915,7 @@ void MainWindow::setCheckedRobot(QString name){
 }*/
 
 
+
 void MainWindow::editTmpPathPointSlot(int id, Point* point, int nbWidget){
     qDebug() << "editTmpPathPointSlot called : " << id << point->getName() << nbWidget;
 
@@ -914,11 +942,14 @@ void MainWindow::editTmpPathPointSlot(int id, Point* point, int nbWidget){
         editedPointView->QGraphicsPixmapItem::setPixmap(QPixmap(PIXMAP_HOVER));
         editedPointView->setType(PointView::PixmapType::HOVER);
 
+        // nomber of pathpoint that use this point
         if(nbWidget == 1){
             editedPointView->setFlag(QGraphicsItem::ItemIsMovable);
             setGraphicItemsState(GraphicItemState::NO_EVENT, false);
-            editedPointView->setState(GraphicItemState::EDITING);
             mapPixmapItem->setState(GraphicItemState::EDITING);
+            editedPointView->setState(GraphicItemState::EDITING);
+            qDebug() << "only 1 point to edit";
+
         } else if(nbWidget > 1){
             mapPixmapItem->addPathPoint(editedPointView);
             editedPointView = mapPixmapItem->getPathCreationPoints().last();
@@ -973,7 +1004,7 @@ void MainWindow::pathSaved(bool execPath){
                 hideAllWidgets();
                 setMessageTop(TEXT_COLOR_SUCCESS, "Path saved");
 
-                bottomLayout->updateRobot(robots->getRobotId(selectedRobot->getRobot()->getName()), selectedRobot);
+                //bottomLayout->updateRobot(robots->getRobotId(selectedRobot->getRobot()->getName()), selectedRobot);
 
                 int id = robots->getRobotId(selectedRobot->getRobot()->getName());
                 bottomLayout->getViewPathRobotBtnGroup()->button(id)->setChecked(true);
@@ -1054,6 +1085,8 @@ void MainWindow::saveTmpEditPathPointSlot(void){
     editedPointView->setFlag(QGraphicsItem::ItemIsMovable, false);
     editedPointView = NULL;
 
+
+
     setMessageTop(TEXT_COLOR_SUCCESS, "You have successfully modified the path of " + selectedRobot->getRobot()->getName());
     delay(2500);
     setMessageTop(TEXT_COLOR_INFO, "Click white points of the map to add new points to the path of " +
@@ -1064,6 +1097,9 @@ void MainWindow::saveTmpEditPathPointSlot(void){
 void MainWindow::moveTmpEditPathPointSlot(void){
     pathCreationWidget->moveEditPathPoint(editedPointView->getPoint()->getPosition().getX(), editedPointView->getPoint()->getPosition().getY());
 }
+
+
+
 
 void MainWindow::clearPath(const int robotNb){
     if(robots->getRobotsVector().at(robotNb)->getRobot()->isPlayingPath()){
@@ -1229,14 +1265,21 @@ void MainWindow::showHome(){
 
         editSelectedRobotWidget->getPathWidget()->setSelectedRobot(robotView);
         editSelectedRobotWidget->getPathWidget()->show();
-        editSelectedRobotWidget->getAddPathBtn()->hide();
+        editSelectedRobotWidget->getAddPathBtn()->setText("Edit path");
+        editSelectedRobotWidget->getAddPathBtn()->setIcon(QIcon(":/icons/edit.png"));
     } else {
        // addPathBtn->show();
-        editSelectedRobotWidget->getPathWidget()->hide();
-        editSelectedRobotWidget->getAddPathBtn()->show();
 
         selectedRobotWidget->getPathWidget()->hide();
         selectedRobotWidget->getNoPath()->show();
+
+
+        editSelectedRobotWidget->getPathWidget()->hide();
+        editSelectedRobotWidget->getAddPathBtn()->show();
+        editSelectedRobotWidget->getAddPathBtn()->setIcon(QIcon(":/icons/plus.png"));
+        editSelectedRobotWidget->getAddPathBtn()->setText("Add path");
+
+//        selectedRobotWidget->getNoPath()->setText("Add path");
 
     }
 
@@ -1714,7 +1757,7 @@ void MainWindow::setSelectedPoint(PointView* pointView, bool isTemporary){
 
     /// we are not modifying an existing point
     if(!leftMenu->getDisplaySelectedPoint()->getActionButtons()->getEditButton()->isChecked()){
-        qDebug() << "editing";
+        //qDebug() << "editing";
         leftMenu->show();
         selectedPoint = pointView;
         selectedPoint->setState(GraphicItemState::EDITING_PERM);
@@ -1730,9 +1773,9 @@ void MainWindow::setSelectedPoint(PointView* pointView, bool isTemporary){
             createPointWidget->getActionButtons()->getPlusButton()->setEnabled(true);
             createPointWidget->getActionButtons()->getPlusButton()->setToolTip("Click this button if you want to save this point permanently");
             setMessageTop(TEXT_COLOR_INFO, "To save this point permanently click the \"+\" button");
-            qDebug() << "this point is white";
+            //qDebug() << "this point is white";
         } else {
-            qDebug() << "this point is not white";
+            //qDebug() << "this point is not white";
             setMessageTop(TEXT_COLOR_WARNING, "You cannot save this point because your robot(s) would not be able to go there");
             createPointWidget->getActionButtons()->getPlusButton()->setEnabled(false);
             createPointWidget->getActionButtons()->getPlusButton()->setToolTip("You cannot save this point because your robot(s) cannot go there");
@@ -1917,7 +1960,7 @@ void MainWindow::editGroupBtnEvent(){
         PointView* pointView = pointViews->getPointViewFromPoint(*point);
         pointView->show();
         /// must display the tick icon in the pointsLeftWidget
-        pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(checkedId)->setIcon(QIcon(":/icons/eye_space.png"));
+        pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(checkedId)->setIcon(QIcon(":/icons/eye_point.png"));
         if(pointView){
             QString robotName = "";
             if(pointView->getPoint()->isHome()){
@@ -1980,7 +2023,6 @@ void MainWindow::switchFocus(QString name, QWidget* widget, MainWindow::WidgetTy
     }
 */
 
-    qDebug() << "__________________";
 
     lastWidgets.append(QPair<QPair<QWidget*, QString>, MainWindow::WidgetType>(QPair<QWidget*, QString>(widget,name), type));
 
@@ -1993,10 +2035,15 @@ void MainWindow::switchFocus(QString name, QWidget* widget, MainWindow::WidgetTy
         leftMenu->hideBackButton();
     }
     //debug
+    qDebug() << "__________________";
+
     for(int i=0;i<lastWidgets.size();i++)
     {
         qDebug() << lastWidgets.at(i).first.second;
     }
+
+    qDebug() << "_________________";
+
 }
 void MainWindow::resetFocus()
 {
@@ -2109,6 +2156,8 @@ void MainWindow::pointSavedEvent(int index, double x, double y, QString name){
 
     /// hide the creation widget
     createPointWidget->hide();
+
+    setMessageTop(TEXT_COLOR_SUCCESS, "You have created a new point");
 }
 
 /**
@@ -2364,7 +2413,7 @@ void MainWindow::displayGroupMapEvent(void){
         {
             pointsLeftWidget->getActionButtons()->getMapButton()->setChecked(false);
 
-                topLayout->setLabelDelay(TEXT_COLOR_WARNING, "this folder is empty. There is nothing to display",2000);
+                topLayout->setLabelDelay(TEXT_COLOR_WARNING, "This group is empty. There is points to display", 2000);
 
          }
         else
@@ -2399,7 +2448,7 @@ void MainWindow::displayGroupMapEvent(void){
             parserPoints.save(*points);
             /// we remove the tick icon
 
-            pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(checkedId)->setIcon(QIcon(":/icons/empty.png"));
+            pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(checkedId)->setIcon(QIcon(":/icons/space_point.png"));
         } else {
             /// updates the tooltip of the map button
             pointsLeftWidget->getActionButtons()->getMapButton()->setToolTip("Click here to hide the selected point on the map");
@@ -2409,7 +2458,7 @@ void MainWindow::displayGroupMapEvent(void){
             XMLParser parserPoints(XML_PATH, mapPixmapItem);
             parserPoints.save(*points);
             /// we add the tick icon
-            pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(checkedId)->setIcon(QIcon(":/icons/eye_space.png"));
+            pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(checkedId)->setIcon(QIcon(":/icons/eye_point.png"));
         }
     }
 }
@@ -2435,11 +2484,11 @@ void MainWindow::displayPointMapEvent(){
             if(pointIndexes.first < points->count()-1){
                 pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(pointIndexes.first)->setIcon(QIcon(":/icons/folder_space.png"));
                 qDebug() << pointIndexes.second;
-                leftMenu->getDisplaySelectedGroup()->getPointButtonGroup()->getButtonGroup()->button(pointIndexes.second)->setIcon(QIcon(":/icons/empty.png"));
+                leftMenu->getDisplaySelectedGroup()->getPointButtonGroup()->getButtonGroup()->button(pointIndexes.second)->setIcon(QIcon(":/icons/space_point.png"));
             }
             /// it's an isolated point
             else
-                pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(points->count()+pointIndexes.second-1)->setIcon(QIcon(":/icons/empty.png"));
+                pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(points->count()+pointIndexes.second-1)->setIcon(QIcon(":/icons/space_point.png"));
 
         } else {
             qDebug() << " Now I have returned to be displayed";
@@ -2452,14 +2501,14 @@ void MainWindow::displayPointMapEvent(){
             /// we update the groups menu
             /// it's a point that belongs to a group
             if(pointIndexes.first < points->count()-1){
-                leftMenu->getDisplaySelectedGroup()->getPointButtonGroup()->getButtonGroup()->button(pointIndexes.second)->setIcon(QIcon(":/icons/eye_space.png"));
+                leftMenu->getDisplaySelectedGroup()->getPointButtonGroup()->getButtonGroup()->button(pointIndexes.second)->setIcon(QIcon(":/icons/eye_point.png"));
                 /// we check whether or not the entire group is displayed and update the points left widget accordingly by adding a tick Icon or not
                 if(points->getGroups().at(pointsLeftWidget->getIndexLastGroupClicked())->isDisplayed())
                     pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(pointIndexes.first)->setIcon(QIcon(":/icons/folder_eye.png"));
             }
             /// it's an isolated point
             else
-                pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(points->count()+pointIndexes.second-1)->setIcon(QIcon(":/icons/eye_space.png"));
+                pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(points->count()+pointIndexes.second-1)->setIcon(QIcon(":/icons/eye_point.png"));
         }
     } else {
         qDebug() << " NULL pointer error in displayPointMapEvent";
@@ -2975,7 +3024,7 @@ void MainWindow::displayPointFromGroupMenu(){
             /// updates the model
             points->getGroups().at(pointsLeftWidget->getIndexLastGroupClicked())->getPoints().at(checkedId)->setDisplayed(false);
             /// removes the tick icon to show that the point is not displayed on the map
-            leftMenu->getDisplaySelectedGroup()->getPointButtonGroup()->getButtonGroup()->button(checkedId)->setIcon(QIcon(":/icons/empty.png"));
+            leftMenu->getDisplaySelectedGroup()->getPointButtonGroup()->getButtonGroup()->button(checkedId)->setIcon(QIcon(":/icons/space_point.png"));
             /// updates the file
             XMLParser parserPoints(XML_PATH, mapPixmapItem);
             parserPoints.save(*points);
@@ -3292,6 +3341,26 @@ void MainWindow::setMessageCreationGroup(QString message){
     setMessageTop(TEXT_COLOR_INFO, message);
 }
 
+void MainWindow::setMessageCreationPoint(CreatePointWidget::Error error){
+    switch(error){
+    case CreatePointWidget::Error::NoError:
+        setMessageTop(TEXT_COLOR_INFO, "Click save or press ENTER to save this point");
+        break;
+    case CreatePointWidget::Error::ContainsSemicolon:
+        setMessageTop(TEXT_COLOR_WARNING, "You cannot create a point that contains a semicolon or a curly bracket");
+        break;
+    case CreatePointWidget::Error::EmptyName:
+        setMessageTop(TEXT_COLOR_WARNING, "You cannot create a point with an empty name");
+        break;
+    case CreatePointWidget::Error::AlreadyExists:
+        setMessageTop(TEXT_COLOR_WARNING, "You cannot create a point with this name because a point with the same name already exists");
+        break;
+    default:
+        qDebug() << "Should never be here, if you do get here however, check that you have not added a new error code and forgotten to add it in the cases afterwards";
+        break;
+    }
+}
+
 
 /**********************************************************************************************************************************/
 
@@ -3306,6 +3375,9 @@ void MainWindow::quit(){
 void MainWindow::backEvent()
 {
     qDebug() << "back event called";
+
+    //debug
+
     setEnableAll(true);
     /// resets the menus
     pointsLeftWidget->disableButtons();
@@ -3343,8 +3415,9 @@ void MainWindow::backEvent()
 
     for(int i=0;i<lastWidgets.size();i++)
     {
-        qDebug() << lastWidgets.at(i).second;
+        qDebug() << lastWidgets.at(i).first.second;
     }
+    qDebug() << "_________________";
 
 }
 

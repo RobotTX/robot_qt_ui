@@ -2,9 +2,11 @@
 <points>
     <group>
 <<<<<<< HEAD
+        <name>No Name</name>
 =======
-<<<<<<< HEAD
->>>>>>> 6179ac5d036323cfef04a97e2851947f52ca1cfd
+        <name>second gro</name>
+    </group>
+    <group>
         <name>first group</name>
         <point>
             <name>A</name>
@@ -16,11 +18,7 @@
             <name>Ma point</name>
             <x>75</x>
             <y>75</y>
-<<<<<<< HEAD
-            <displayed>1</displayed>
-=======
             <displayed>0</displayed>
->>>>>>> 6179ac5d036323cfef04a97e2851947f52ca1cfd
         </point>
         <point>
             <name>A new point</name>
@@ -35,21 +33,13 @@
             <name>Fanny</name>
             <x>125</x>
             <y>125</y>
-<<<<<<< HEAD
             <displayed>1</displayed>
-=======
-            <displayed>0</displayed>
->>>>>>> 6179ac5d036323cfef04a97e2851947f52ca1cfd
         </point>
         <point>
             <name>Michel</name>
             <x>150</x>
             <y>150</y>
-<<<<<<< HEAD
-            <displayed>1</displayed>
-=======
             <displayed>0</displayed>
->>>>>>> 6179ac5d036323cfef04a97e2851947f52ca1cfd
         </point>
     </group>
     <group>
@@ -58,39 +48,20 @@
             <name>Un point</name>
             <x>150</x>
             <y>175</y>
-<<<<<<< HEAD
             <displayed>1</displayed>
-=======
-            <displayed>0</displayed>
->>>>>>> 6179ac5d036323cfef04a97e2851947f52ca1cfd
         </point>
         <point>
             <name>Another point</name>
             <x>150</x>
             <y>200</y>
-            <displayed>0</displayed>
+            <displayed>1</displayed>
         </point>
         <point>
             <name>A final point</name>
-<<<<<<< HEAD
             <x>150</x>
             <y>225</y>
             <displayed>1</displayed>
         </point>
-        <point>
-            <name>Home_Tartiflette</name>
-            <x>103.094</x>
-            <y>331.549</y>
-            <displayed>164</displayed>
-        </point>
-=======
-            <x>1052.3</x>
-            <y>1055.4</y>
-            <displayed>1</displayed>
-        </point>
-=======
-        <name>No Name</name>
->>>>>>> 9b8f59751d8198df0cffa717b0af584b522d913d
->>>>>>> 6179ac5d036323cfef04a97e2851947f52ca1cfd
+>>>>>>> 34d3e5af84db229d4fde8d62ec60c5c565df1a49
     </group>
 </points>

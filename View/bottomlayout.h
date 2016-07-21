@@ -48,6 +48,7 @@ public:
     void addRobot(RobotView * const robotView);
     void removeRobot(const int id);
     void uncheckViewPathSelectedRobot(const int robotNb = -1);
+    void uncheckAll();
 
 
 

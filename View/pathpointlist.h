@@ -13,6 +13,7 @@ class PathPointList : public QListWidget{
 
 public:
     PathPointList(QWidget *parent);
+    void update(int indexNb,int action, int time = NULL );
 
     void refresh(void);
 

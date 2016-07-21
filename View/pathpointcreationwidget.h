@@ -53,6 +53,8 @@ public:
     void setPointLabel(const float _posX, const float _posY);
     QPushButton* getCancelBtn(void) const { return cancelBtn; }
     QPushButton* getSaveEditBtn(void) const { return saveEditBtn; }
+    QWidget* getTimeWidget(void) const { return timeWidget; }
+
 
 private:
     QVBoxLayout* layout;

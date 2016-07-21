@@ -60,9 +60,9 @@ GroupButtonGroup::GroupButtonGroup(const Points &_points, QWidget* _parent):QWid
         buttonGroup->addButton(pointButton, i+_points.getGroups().size()-1);
         layout->addWidget(pointButton);
         if(currentPoint->isDisplayed())
-            pointButton->setIcon(QIcon(":/icons/eye_space.png"));
+            pointButton->setIcon(QIcon(":/icons/eye_point.png"));
         else
-            pointButton->setIcon(QIcon(":/icons/empty.png"));
+            pointButton->setIcon(QIcon(":/icons/space_point.png"));
         pointButton->setIconSize(BUTTON_SIZE);
 
     }
@@ -126,9 +126,9 @@ void GroupButtonGroup::update(const Points& _points){
             buttonGroup->addButton(pointButton, i+_points.getGroups().size()-1);
             layout->addWidget(pointButton);
             if(currentPoint->isDisplayed())
-                pointButton->setIcon(QIcon(":/icons/eye_space.png"));
+                pointButton->setIcon(QIcon(":/icons/eye_point.png"));
             else
-                pointButton->setIcon(QIcon(":/icons/empty.png"));
+                pointButton->setIcon(QIcon(":/icons/space_point.png"));
             pointButton->setIconSize(BUTTON_SIZE);
 
         }

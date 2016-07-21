@@ -17,7 +17,6 @@ class RobotsLeftWidget;
 class MapLeftWidget;
 class EditSelectedRobotWidget;
 class SelectedPointWidget;
-class CreatePointWidget;
 class LeftMenu;
 class BottomLayout;
 class PathCreationWidget;
@@ -25,7 +24,7 @@ class QAbstractButton;
 class QVBoxLayout;
 class PathPainter;
 
-
+#include "View/createpointwidget.h"
 #include "View/toplayout.h"
 #include "Model/points.h"
 #include "View/robotview.h"
@@ -37,13 +36,13 @@ class PathPainter;
 #include <QMessageBox>
 
 
-#define XML_PATH "/home/m-a/Documents/QtProject/gobot-software/points.xml"
-#define ROBOTS_NAME_PATH "/home/m-a/Documents/QtProject/gobot-software/robotsName.dat"
-#define MAP_PATH "/home/m-a/Documents/QtProject/gobot-software/realMap.dat"
+//#define XML_PATH "/home/m-a/Documents/QtProject/gobot-software/points.xml"
+//#define ROBOTS_NAME_PATH "/home/m-a/Documents/QtProject/gobot-software/robotsName.dat"
+//#define MAP_PATH "/home/m-a/Documents/QtProject/gobot-software/realMap.dat"
 
-//#define XML_PATH "/home/joan/Qt/QtProjects/gobot-software/points.xml"
-//#define ROBOTS_NAME_PATH "/home/joan/Qt/QtProjects/gobot-software/robotsName.dat"
-//#define MAP_PATH "/home/joan/Qt/QtProjects/gobot-software/realMap.dat"
+#define XML_PATH "/home/joan/Qt/QtProjects/gobot-software/points.xml"
+#define ROBOTS_NAME_PATH "/home/joan/Qt/QtProjects/gobot-software/robotsName.dat"
+#define MAP_PATH "/home/joan/Qt/QtProjects/gobot-software/realMap.dat"
 
 //#define XML_PATH "/Users/fannylarradet/Desktop/GTRobots/gobot-software/points.xml"
 //#define ROBOTS_NAME_PATH "/Users/fannylarradet/Desktop/GTRobots/gobot-software/robotsName.dat"
@@ -86,6 +85,7 @@ public:
     /// to sleep for ms milliseconds
     void delay(const int ms) const;
     void setEnableAll(bool enable, GraphicItemState state = GraphicItemState::NO_STATE, bool clearPath = false, int noReturn = -1);
+    void clearAllPath();
 
 signals:
     void sendCommand(QString);
@@ -168,6 +168,7 @@ private slots:
     void setMessageCreationPath(QString message);
     void updatePathPoint(double x, double y, PointView* pointView = 0);
     void centerMap();
+    void setMessageCreationPoint(CreatePointWidget::Error error);
 
     /**
      * @brief cancelEvent
