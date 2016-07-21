@@ -168,7 +168,7 @@ private slots:
     void setMessageCreationPath(QString message);
     void updatePathPoint(double x, double y, PointView* pointView = 0);
     void centerMap();
-    void setMessageCreationPoint(CreatePointWidget::Error error);
+    void setMessageCreationPoint(QString type, CreatePointWidget::Error error);
 
     /**
      * @brief cancelEvent
@@ -177,7 +177,7 @@ private slots:
     void cancelEvent(void);
     void setMessageTop(const QString msgType, const QString msg);
     void setLastMessage(void) { setMessageTop(topLayout->getLastMessage().first, topLayout->getLastMessage().second); }
-    void setMessageCreationGroup(QString message);
+    void setMessageCreationGroup(QString type, QString message);
     void homeSelected(PointView* pointView, bool temporary);
     void homeEdited(PointView* pointView, bool temporary);
     void goHomeBtnEvent();

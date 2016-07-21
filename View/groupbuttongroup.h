@@ -16,7 +16,7 @@ class GroupButtonGroup: public QWidget
 {
     Q_OBJECT
 public:
-    GroupButtonGroup(Points const& _points, QWidget *_parent);
+    GroupButtonGroup(std::shared_ptr<Points> const& _points, QWidget *_parent);
     ~GroupButtonGroup(){}
 
     QButtonGroup* getButtonGroup(void) const { return buttonGroup; }
@@ -24,6 +24,7 @@ public:
     QVBoxLayout* getLayout(void) const { return layout; }
     int getIndexModifyEdit(void) const { return indexModifyEdit; }
     void setIndexModifyEdit(const int index) { indexModifyEdit = index; }
+    QString formatName(const QString name) const;
 
 public:
     void deleteButtons(void);
@@ -38,6 +39,10 @@ signals:
     void doubleClick(int);
     void updateConnectionsRequest();
     void modifyEditReconnection();
+    void codeEditGroup(int);
+
+public slots:
+    int checkEditGroupName(QString name);
 
 private:
     CustomizedLineEdit* modifyEdit;
@@ -47,6 +52,7 @@ private:
     /// to avoid resizing of the icons after deletions of points and groups
     const QSize BUTTON_SIZE = parentWidget()->size()/2;
     int indexModifyEdit;
+    std::shared_ptr<Points> points;
 };
 
 #endif // GROUPBUTTONGROUP_H

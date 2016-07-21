@@ -1,9 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <points>
     <group>
-        <name>flef</name>
-    </group>
-    <group>
         <name>first group</name>
         <point>
             <name>A</name>
@@ -22,6 +19,12 @@
             <x>100</x>
             <y>100</y>
             <displayed>0</displayed>
+        </point>
+        <point>
+            <name>fafal</name>
+            <x>89.2</x>
+            <y>325</y>
+            <displayed>1</displayed>
         </point>
     </group>
     <group>
@@ -55,8 +58,8 @@
         </point>
         <point>
             <name>A final point</name>
-            <x>150</x>
-            <y>225</y>
+            <x>116.2</x>
+            <y>298</y>
             <displayed>1</displayed>
         </point>
     </group>

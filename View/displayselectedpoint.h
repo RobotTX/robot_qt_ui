@@ -12,6 +12,7 @@ class QKeyEvent;
 class QLabel;
 class Map;
 
+#include "View/createpointwidget.h"
 #include "Model/points.h"
 #include "View/pointview.h"
 #include <QLineEdit>
@@ -43,6 +44,7 @@ public:
     QLabel* getYLabel(void) const { return posYLabel; }
     QWidget* getHomeWidget(void) const { return homeWidget; }
     QPushButton* getRobotButton(void) const { return robotBtn; }
+    QString formatName(const QString name) const;
 
 public:
     void displayPointInfo(void);
@@ -59,10 +61,11 @@ signals:
     void nameChanged(QString, QString);
     /// to reset the state of the map if a user clicks a random button while he was editting a point
     void resetState(GraphicItemState, bool);
+    void invalidName(QString, CreatePointWidget::Error);
 
 private slots:
     /// to check that a name is available before we proceed to the update
-    void checkPointName(const QString name) const;
+    int checkPointName(QString name);
 
 private:
     std::shared_ptr<Map> map;

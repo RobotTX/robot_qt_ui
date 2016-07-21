@@ -73,7 +73,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
     robots = std::shared_ptr<Robots>(new Robots());
     scene = new QGraphicsScene(this);
-    qDebug() << "scene rec with no item" << scene->sceneRect();
 
     graphicsView = new CustomQGraphicsView(scene, this);
 
@@ -90,7 +89,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     connect(mapPixmapItem, SIGNAL(addPathPointMapView(Point*)), this, SLOT(addPathPoint(Point*)));
     connect(mapPixmapItem, SIGNAL(homeSelected(PointView*, bool)), this, SLOT(homeSelected(PointView*, bool)));
     connect(mapPixmapItem, SIGNAL(homeEdited(PointView*, bool)), this, SLOT(homeEdited(PointView*, bool)));
-    qDebug() << "center" << map->getCenter();
 
     /// centers the map
     centerMap();
@@ -109,9 +107,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     initializeRobots();
 
     scene->addItem(mapPixmapItem);
-    qDebug() << "scene rec" << scene->sceneRect();
-    qDebug() << "map" << mapPixmapItem->boundingRect();
-    qDebug() << "map rec" << map->getRect();
 
     graphicsView->scale(std::max(graphicsView->parentWidget()->width()/scene->width(), graphicsView->parentWidget()->height()/scene->height()),
                         std::max(graphicsView->parentWidget()->width()/scene->width(), graphicsView->parentWidget()->height()/scene->height()));
@@ -127,7 +122,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     initializeLeftMenu();
     bottom->addWidget(leftMenu);
     //mainLayout->setContentsMargins(0,0,0,0);
-
 
     rightLayout = new QVBoxLayout();
     bottom->addLayout(rightLayout);
@@ -176,7 +170,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     connect(pointsLeftWidget, SIGNAL(modifiedGroupAfterClick(QString)), this, SLOT(modifyGroupAfterClick(QString)));
 
     /// to know what message to display when a user is creating a group
-    connect(pointsLeftWidget, SIGNAL(messageCreationGroup(QString)), this, SLOT(setMessageCreationGroup(QString)));
+    connect(pointsLeftWidget, SIGNAL(messageCreationGroup(QString, QString)), this, SLOT(setMessageCreationGroup(QString, QString)));
 
 
     /// to know what message to display when a user is creating a path
@@ -187,7 +181,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
     /// delete a point in the map when the temporary point is deleted in the path creation
     connect(pathCreationWidget, SIGNAL(deletePointView(Point)), mapPixmapItem, SLOT(deletePointView(Point)));
-
 
     mainLayout->addLayout(bottom);
 
@@ -210,7 +203,6 @@ MainWindow::~MainWindow(){
         mapThread->wait();
     }
 }
-
 
 /**********************************************************************************************************************************/
 
@@ -610,7 +602,7 @@ void MainWindow::addPathSelecRobotBtnEvent(){
         for(size_t i = 0; i < group->getPointViews().size(); i++){
             PointView* pointView = group->getPointViews().at(i);
             if(!pointView->getPoint()->isDisplayed()){
-                qDebug() << pointView->getPoint()->getName();
+                //qDebug() << pointView->getPoint()->getName();
                 pointViewsToDisplay.push_back(pointView);
                 pointView->show();
             }
@@ -3299,23 +3291,24 @@ void MainWindow::enableReturnAndCloseButtons(){
     topLayout->setEnabled(true);
 }
 
-void MainWindow::setMessageCreationGroup(QString message){
-    setMessageTop(TEXT_COLOR_INFO, message);
+void MainWindow::setMessageCreationGroup(QString type, QString message){
+    setMessageTop(type, message);
 }
 
-void MainWindow::setMessageCreationPoint(CreatePointWidget::Error error){
+void MainWindow::setMessageCreationPoint(QString type, CreatePointWidget::Error error){
+    qDebug() << "setMessageCreation point called from mainwindow";
     switch(error){
     case CreatePointWidget::Error::NoError:
-        setMessageTop(TEXT_COLOR_INFO, "Click save or press ENTER to save this point");
+        setMessageTop(type, "Click save or press ENTER to save this point");
         break;
     case CreatePointWidget::Error::ContainsSemicolon:
-        setMessageTop(TEXT_COLOR_WARNING, "You cannot create a point that contains a semicolon or a curly bracket");
+        setMessageTop(type, "You cannot create a point that contains a semicolon or a curly bracket");
         break;
     case CreatePointWidget::Error::EmptyName:
-        setMessageTop(TEXT_COLOR_WARNING, "You cannot create a point with an empty name");
+        setMessageTop(type, "You cannot create a point with an empty name");
         break;
     case CreatePointWidget::Error::AlreadyExists:
-        setMessageTop(TEXT_COLOR_WARNING, "You cannot create a point with this name because a point with the same name already exists");
+        setMessageTop(type, "You cannot create a point with this name because a point with the same name already exists");
         break;
     default:
         qDebug() << "Should never be here, if you do get here however, check that you have not added a new error code and forgotten to add it in the cases afterwards";
@@ -3478,10 +3471,10 @@ void MainWindow::setEnableAll(bool enable, GraphicItemState state, bool clearPat
 
 void MainWindow::centerMap(){
     qDebug() << "centerMap called la ";
-    qDebug() << (map->getRect().topLeft().x() + map->getRect().bottomRight().x()) /2 << (map->getRect().topLeft().y() + map->getRect().bottomRight().y()) /2;
+    //qDebug() << (map->getRect().topLeft().x() + map->getRect().bottomRight().x()) /2 << (map->getRect().topLeft().y() + map->getRect().bottomRight().y()) /2;
     scene->views().at(0)->centerOn(mapPixmapItem);
 
-    qDebug() << mapPixmapItem->pos() << mapPixmapItem->mapFromScene(map->getCenter());
+    //qDebug() << mapPixmapItem->pos() << mapPixmapItem->mapFromScene(map->getCenter());
     while(graphicsView->getZoomCoeff()*1.3*1.3 < 4){
         graphicsView->scale(1.3, 1.3);
         graphicsView->setZoomCoeff(1.3*graphicsView->getZoomCoeff());

@@ -17,7 +17,7 @@ Robots::~Robots(){
 
 void Robots::add(RobotView* const robotView){
     robotsVector.append(robotView);
-    qDebug() << "Added the robot : " << robotView->getRobot()->getName() << " to the list of robots";
+    //qDebug() << "Added the robot : " << robotView->getRobot()->getName() << " to the list of robots";
 }
 
 void Robots::remove(RobotView* robotView){

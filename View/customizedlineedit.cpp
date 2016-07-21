@@ -12,3 +12,4 @@ void CustomizedLineEdit::focusOutEvent(QFocusEvent* e){
         emit clickSomewhere(text());
     }
 }
+

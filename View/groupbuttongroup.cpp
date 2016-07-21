@@ -9,9 +9,8 @@
 #include "View/doubleclickablebutton.h"
 #include "View/customizedlineedit.h"
 
-GroupButtonGroup::GroupButtonGroup(const Points &_points, QWidget* _parent):QWidget(_parent)
+GroupButtonGroup::GroupButtonGroup(const std::shared_ptr<Points> &_points, QWidget* _parent): QWidget(_parent), parent(_parent), points(_points)
 {
-    parent = _parent;
     buttonGroup = new QButtonGroup(this);
     //buttonGroup->setExclusive(true);
 
@@ -27,8 +26,8 @@ GroupButtonGroup::GroupButtonGroup(const Points &_points, QWidget* _parent):QWid
     layout->addWidget(modifyEdit);
     indexModifyEdit = 0;
 
-    for(int i = 0; i < _points.getGroups().size()-1; i++){
-        std::shared_ptr<Group> currentGroup = _points.getGroups().at(i);
+    for(int i = 0; i < _points->getGroups().size()-1; i++){
+        std::shared_ptr<Group> currentGroup = _points->getGroups().at(i);
         DoubleClickableButton* groupButton = new DoubleClickableButton(i, currentGroup->getName(), this);
         groupButton->setFlat(true);
         groupButton->setAutoDefault(true);
@@ -46,18 +45,17 @@ GroupButtonGroup::GroupButtonGroup(const Points &_points, QWidget* _parent):QWid
 
     }
 
+    connect(modifyEdit, SIGNAL(textEdited(QString)), this, SLOT(checkEditGroupName(QString)));
+
     /// for the last group we just want to show the points and not "no group"
-    for(int i = 0; i < _points.getGroups().at(_points.getGroups().size()-1)->getPoints().size(); i++){
-        std::shared_ptr<Point> currentPoint = _points.getGroups().at(_points.getGroups().size()-1)->getPoints().at(i);
-        //DoubleClickableButton* pointButton = new DoubleClickableButton(i+_points.getGroups().size()-1, currentPoint->getName()
-        //                                           + " (" + QString::number(currentPoint->getPosition().getX())
-        //                                           + ", " + QString::number(currentPoint->getPosition().getY()) + ")", this);
-        DoubleClickableButton* pointButton = new DoubleClickableButton(i+_points.getGroups().size()-1, currentPoint->getName(), this);
+    for(int i = 0; i < _points->getGroups().at(_points->getGroups().size()-1)->getPoints().size(); i++){
+        std::shared_ptr<Point> currentPoint = _points->getGroups().at(_points->getGroups().size()-1)->getPoints().at(i);
+        DoubleClickableButton* pointButton = new DoubleClickableButton(i+_points->getGroups().size()-1, currentPoint->getName(), this);
         pointButton->setAutoDefault(true);
         pointButton->setFlat(true);
         pointButton->setStyleSheet("text-align:left");
         pointButton->setCheckable(true);
-        buttonGroup->addButton(pointButton, i+_points.getGroups().size()-1);
+        buttonGroup->addButton(pointButton, i+_points->getGroups().size()-1);
         layout->addWidget(pointButton);
         if(currentPoint->isDisplayed())
             pointButton->setIcon(QIcon(":/icons/eye_space.png"));
@@ -152,4 +150,58 @@ void GroupButtonGroup::mouseDoubleClickEvent(QMouseEvent * /* unused */){
 void GroupButtonGroup::setEnabled(const bool enable){
     foreach(QAbstractButton* button, buttonGroup->buttons())
         button->setEnabled(enable);
+}
+
+int GroupButtonGroup::checkEditGroupName(QString name){
+    qDebug() << "checking la la la" << name ;
+    modifyEdit->setText(formatName(modifyEdit->text()));
+    name = modifyEdit->text().simplified();
+    if(!name.compare(points->getGroups().at(indexModifyEdit)->getName(), Qt::CaseInsensitive)){
+        //saveBtn->setToolTip("");
+        qDebug() << "same name";
+        //connect(groupNameEdit, SIGNAL(clickSomewhere(QString)), this, SLOT(cancelCreationGroup()));
+        emit codeEditGroup(0);
+        return 0;
+    }
+    if(!name.compare("")){
+        //saveButton->setToolTip("The name of your group cannot be empty");
+        //saveButton->setEnabled(false);
+        //connect(groupNameEdit, SIGNAL(clickSomewhere(QString)), this, SLOT(cancelCreationGroup()));
+        emit codeEditGroup(1);
+        return 1;
+    }
+    for(int i = 0; i < points->count(); i++){
+        if(!name.compare(points->getGroups().at(i)->getName(), Qt::CaseInsensitive)){
+            qDebug() << points->getGroups().at(i)->getName();
+            //saveButton->setToolTip("A group with the same name already exists, please choose another name for your group");
+            //saveButton->setEnabled(false);
+            //connect(groupNameEdit, SIGNAL(clickSomewhere(QString)), this, SLOT(cancelCreationGroup()));
+            emit codeEditGroup(2);
+            return 2;
+        }
+    }
+    //saveButton->setToolTip("");
+    //saveButton->setEnabled(true);
+    //disconnect(groupNameEdit, SIGNAL(clickSomewhere(QString)), this, SLOT(cancelCreationGroup()));
+    emit codeEditGroup(0);
+    return 0;
+}
+
+QString GroupButtonGroup::formatName(const QString name) const {
+
+    QString ret("");
+    bool containsSpace(false);
+    bool containsNonSpace(false);
+    for(int i = 0; i < name.length(); i++){
+        if(!name.at(i).isSpace() || (!containsSpace && containsNonSpace)){
+            if(name.at(i).isSpace())
+                containsSpace = true;
+            else {
+                containsNonSpace = true;
+                containsSpace = false;
+            }
+            ret += name.at(i);
+        }
+    }
+    return ret;
 }

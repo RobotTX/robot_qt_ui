@@ -49,13 +49,14 @@ protected:
 
 signals:
     void pointSaved(int, double, double, QString);
-    void invalidName(CreatePointWidget::Error);
+    void invalidName(QString, CreatePointWidget::Error);
+    void errorCreationPoint(QString, QString);
 
 private slots:
     void saveEditSelecPointBtnEvent();
     /// check whether or not a point is valid
     /// a point is valid if it's not empty, already taken and if it does not contain ";" or "}"
-    void checkPointName(void);
+    int checkPointName(void);
     void showGroupLayout(void) const;
 
 public slots:
