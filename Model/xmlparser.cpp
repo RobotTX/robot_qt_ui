@@ -73,7 +73,7 @@ QVector<QString> XMLParser::readRobots(Robots& robots){
                     xmlReader.readNext();
                 }
                 else if(xmlReader.name() == "robot"){
-                    std::shared_ptr<Robot> robot = std::make_shared<Robot>(Robot());
+                    std::shared_ptr<Robot> robot = std::shared_ptr<Robot>(new Robot());
                     while(!xmlReader.atEnd()){
                         if(xmlReader.isEndElement()){
                             xmlReader.readNext();

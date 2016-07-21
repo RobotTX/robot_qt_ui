@@ -4,24 +4,36 @@
 #include "Controller/cmdrobotthread.h"
 #include "Controller/scanrobotthread.h"
 #include "Controller/scanmetadatathread.h"
+#include "Controller/sendnewmapthread.h"
 #include <QMainWindow>
 #include <iostream>
 
 Robot::Robot(const QString _name, const QString _ip, QMainWindow* parent) : name(_name), ip(_ip), position(Position()),
-    orientation(0), batteryLevel(100), wifi(""), home(NULL), playingPath(0), mapId()
+    orientation(0), batteryLevel(100), wifi(""), home(NULL), playingPath(0), mapId(), sendingMap(false)
 {
-    /*qDebug() << "Robot" << name << "at ip" << ip << " launching its cmd thread";
+/*
+    qDebug() << "Robot" << name << "at ip" << ip << " launching its cmd thread";
 
     cmdThread = new CmdRobotThread(ip, PORT_CMD, PORT_MAP_METADATA, PORT_ROBOT_POS, PORT_MAP, name, parent);
-    QObject::connect(cmdThread, SIGNAL(robotIsDead(QString,QString)), parent, SLOT(robotIsDeadSlot(QString,QString)));
-    QObject::connect(parent, SIGNAL(changeCmdThreadRobotName(QString)), cmdThread, SLOT(changeRobotNameSlot(QString)));
+    connect(cmdThread, SIGNAL(robotIsDead(QString,QString)), parent, SLOT(robotIsDeadSlot(QString,QString)));
+    connect(this, SIGNAL(sendCommandSignal(QString)), cmdThread, SLOT(sendCommand(QString)));
+    connect(this, SIGNAL(pingSignal()), cmdThread, SLOT(pingSlot()));
+    connect(parent, SIGNAL(changeCmdThreadRobotName(QString)), cmdThread, SLOT(changeRobotNameSlot(QString)));
     cmdThread->start();
+
+
+    qDebug() << "Robot" << name << "at ip" << ip << " launching its new map thread at port" << PORT_NEW_MAP;
+
+    newMapThread = new SendNewMapThread(ip, PORT_NEW_MAP);
+    connect(this, SIGNAL(sendNewMapSignal(QByteArray)), newMapThread, SLOT(writeTcpDataSlot(QByteArray)));
+    connect(newMapThread, SIGNAL(doneSendingNewMapSignal()), this, SLOT(doneSendingNewMapSlot()));
+    newMapThread->start();
 
 
     qDebug() << "Robot" << name << "at ip" << ip << " launching its robot pos thread at port" << PORT_ROBOT_POS;
 
     robotThread = new ScanRobotThread(ip, PORT_ROBOT_POS);
-    QObject::connect(robotThread, SIGNAL(valueChangedRobot(QString, float, float, float)),
+    connect(robotThread, SIGNAL(valueChangedRobot(QString, float, float, float)),
                      parent ,SLOT(updateRobot(QString, float, float, float)));
     robotThread->start();
     robotThread->moveToThread(robotThread);
@@ -30,14 +42,15 @@ Robot::Robot(const QString _name, const QString _ip, QMainWindow* parent) : name
     qDebug() << "Robot" << name << "at ip" << ip << " launching its metadata thread at port" << PORT_ROBOT_POS;
 
     metadataThread = new ScanMetadataThread(ip, PORT_MAP_METADATA);
-    QObject::connect(metadataThread, SIGNAL(valueChangedMetadata(int, int, float, float, float)),
+    connect(metadataThread, SIGNAL(valueChangedMetadata(int, int, float, float, float)),
                      parent , SLOT(updateMetadata(int, int, float, float, float)));
     metadataThread->start();
-    metadataThread->moveToThread(metadataThread);*/
+    metadataThread->moveToThread(metadataThread);
+*/
 }
 
 Robot::Robot(): name("Default name"), ip("no Ip"), position(Position()),
-    orientation(0), batteryLevel(100), wifi(""), home(NULL), playingPath(0), mapId(){
+    orientation(0), batteryLevel(100), wifi(""), home(NULL), playingPath(0), mapId(), sendingMap(false){
 }
 
 Robot::~Robot(){
@@ -52,6 +65,10 @@ Robot::~Robot(){
     if (metadataThread != NULL && metadataThread->isRunning() ) {
         metadataThread->requestInterruption();
         metadataThread->wait();
+    }
+    if (newMapThread != NULL && newMapThread->isRunning() ) {
+        newMapThread->requestInterruption();
+        newMapThread->wait();
     }*/
 }
 
@@ -67,8 +84,29 @@ void Robot::display(std::ostream& stream) const {
 }
 
 bool Robot::sendCommand(const QString cmd) {
-    //return cmdThread->sendCommand(cmd);
+    qDebug() << "(Robot) Send command called" << cmd;
+    /*emit sendCommandSignal(cmd);
+    return cmdThread->isConnected();*/
     return true;
+}
+
+void Robot::sendNewMap(QByteArray cmd) {
+    /*if(newMapThread->isConnected()){
+        if(sendingMap){
+            qDebug() << "(Robot) Send new map called but the map is already being sent";
+        } else {
+            qDebug() << "(Robot) Send new map called";
+            sendingMap = true;
+            emit sendNewMapSignal(cmd);
+        }
+    } else {
+        qDebug() << "(Robot) The new map socket is not connected yet";
+    }*/
+}
+
+void Robot::doneSendingNewMapSlot(){
+    qDebug() << "(Robot) doneSendingNewMapSlot called";
+    sendingMap = false;
 }
 
 QString Robot::waitAnswer() {
@@ -92,9 +130,13 @@ void Robot::stopThreads() {
     if (metadataThread != NULL && metadataThread->isRunning() ) {
         metadataThread->requestInterruption();
         metadataThread->wait();
+    }
+    if (newMapThread != NULL && newMapThread->isRunning() ) {
+        newMapThread->requestInterruption();
+        newMapThread->wait();
     }*/
 }
 
 void Robot::ping(){
-    //cmdThread->pingSlot();
+    emit pingSignal();
 }

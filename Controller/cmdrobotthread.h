@@ -28,23 +28,14 @@ public:
      * Function called when we start a Thread
      */
     void run();
-
-    /**
-     * @brief sendCommand
-     * @param cmd
-     * @return
-     * Called when we want to send a command
-     */
-    bool sendCommand(const QString cmd);
     QString waitAnswer();
     void resetCommandAnswer(){ commandAnswer = ""; }
 
     void delay(const int ms) const;
-    void pingSlot();
+    bool isConnected() const {return connected;}
 
 signals:
     void robotIsDead(QString hostname, QString ip);
-    void writeCommand(QString cmd);
 
 private slots:
     /**
@@ -72,11 +63,19 @@ private slots:
      * Read the data we receive
      */
     void readTcpDataSlot();
-    void writeCommandSlot(QString cmd);
     void changeRobotNameSlot(QString name);
 
+    /**
+     * @brief sendCommand
+     * @param cmd
+     * @return
+     * Called when we want to send a command
+     */
+    void sendCommand(const QString cmd);
+    void pingSlot();
+
 private :
-    std::shared_ptr<QTcpSocket> socketCmd;
+    std::shared_ptr<QTcpSocket> socket;
     QString ipAddress;
     int port;
     QString robotName;

@@ -8,6 +8,8 @@ ros::Subscriber sub_map;
 tcp::acceptor m_acceptor(io_service);
 
 bool lastMap = false;
+#define HIGH_THRESHOLD 0.65*100
+#define LOW_THRESHOLD 0.196*100
 
 void sendMap(const std::vector<uint8_t>& my_map){
 	try {
@@ -58,9 +60,9 @@ void getMap(const nav_msgs::OccupancyGrid::ConstPtr& msg){
 
 		    if(curr < 0)
 	            curr = 205;
-	        else if(curr < 30)
+	        else if(curr < LOW_THRESHOLD)
 	            curr = 255;
-	        else if(curr < 70)
+	        else if(curr < HIGH_THRESHOLD)
 	            curr = 205;
 	        else 
 	            curr = 0;

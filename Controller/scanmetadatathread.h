@@ -60,7 +60,7 @@ signals:
     void valueChangedMetadata(int width, int height, float resolution, float originX, float originY);
 
 private :
-    std::shared_ptr<QTcpSocket> socketMetadata;
+    std::shared_ptr<QTcpSocket> socket;
     QString ipAddress;
     int port;
 

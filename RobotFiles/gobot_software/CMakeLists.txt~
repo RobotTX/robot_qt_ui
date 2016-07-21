@@ -14,9 +14,7 @@ find_package(catkin REQUIRED COMPONENTS
 
 add_service_files(
   FILES
-  Gomap.srv
-  GoRobotPos.srv
-  GoMetadata.srv
+  Port.srv
   SendMessageToPc.srv
 )
 
@@ -47,11 +45,6 @@ catkin_package(
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
 # include_directories(include)
-include_directories(
-  ${catkin_INCLUDE_DIRS}
-)
-include_directories(${SFML_INCLUDE_DIR})
-
 include_directories(include ${catkin_INCLUDE_DIRS})
 
 #add_executable(map_transfer src/map_transfer.cpp)
@@ -59,10 +52,10 @@ include_directories(include ${catkin_INCLUDE_DIRS})
 #target_link_libraries(map_transfer ${SFML_LIBRARIES})
 #add_dependencies(map_transfer gobot_communication_gencpp)
 
-add_executable(map_transfer_boost src/map_transfer_boost.cpp)
-target_link_libraries(map_transfer_boost ${catkin_LIBRARIES})
-target_link_libraries(map_transfer_boost ${gobot_software} ${Boost_FILESYSTEM_LIBRARY} ${Boost_SYSTEM_LIBRARY} )
-add_dependencies(map_transfer_boost gobot_software_generate_messages_cpp)
+add_executable(map_transfer src/map_transfer.cpp)
+target_link_libraries(map_transfer ${catkin_LIBRARIES})
+target_link_libraries(map_transfer ${gobot_software} ${Boost_FILESYSTEM_LIBRARY} ${Boost_SYSTEM_LIBRARY} )
+add_dependencies(map_transfer gobot_software_generate_messages_cpp)
 
 
 add_executable(robot_pos_transfer src/robot_pos_transfer.cpp)
@@ -75,6 +68,12 @@ add_executable(map_metadata_transfer src/map_metadata_transfer.cpp)
 target_link_libraries(map_metadata_transfer ${catkin_LIBRARIES})
 target_link_libraries(map_metadata_transfer ${gobot_software} ${Boost_FILESYSTEM_LIBRARY} ${Boost_SYSTEM_LIBRARY} )
 add_dependencies(map_metadata_transfer gobot_software_generate_messages_cpp)
+
+
+add_executable(command_system src/command_system.cpp)
+target_link_libraries(command_system ${catkin_LIBRARIES})
+target_link_libraries(command_system ${gobot_software} ${Boost_FILESYSTEM_LIBRARY} ${Boost_SYSTEM_LIBRARY} )
+add_dependencies(command_system gobot_software_generate_messages_cpp)
 
 
 add_executable(command_system src/command_system.cpp)

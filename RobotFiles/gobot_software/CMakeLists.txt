@@ -45,11 +45,6 @@ catkin_package(
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
 # include_directories(include)
-include_directories(
-  ${catkin_INCLUDE_DIRS}
-)
-include_directories(${SFML_INCLUDE_DIR})
-
 include_directories(include ${catkin_INCLUDE_DIRS})
 
 #add_executable(map_transfer src/map_transfer.cpp)
@@ -79,4 +74,10 @@ add_executable(command_system src/command_system.cpp)
 target_link_libraries(command_system ${catkin_LIBRARIES})
 target_link_libraries(command_system ${gobot_software} ${Boost_FILESYSTEM_LIBRARY} ${Boost_SYSTEM_LIBRARY} )
 add_dependencies(command_system gobot_software_generate_messages_cpp)
+
+
+add_executable(read_new_map src/read_new_map.cpp)
+target_link_libraries(read_new_map ${catkin_LIBRARIES})
+target_link_libraries(read_new_map ${gobot_software} ${Boost_FILESYSTEM_LIBRARY} ${Boost_SYSTEM_LIBRARY} )
+add_dependencies(read_new_map gobot_software_generate_messages_cpp)
 

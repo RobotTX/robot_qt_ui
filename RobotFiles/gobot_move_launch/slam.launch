@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<launch>
+  	<include file="$(find gobot_move)/launch/robot.launch"/>
+  	<node name="odom" pkg="gobot_move" type="odom.py" required="true"/>
+  	<include file="$(find gobot_move)/launch/amcl_node.launch"/>
+  	<include file="$(find gobot_move)/launch/my_move_base.launch"/>
+  	<node name="twist" pkg="gobot_move" type="twist.py" required="true"/>
+</launch>

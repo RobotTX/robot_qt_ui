@@ -27,7 +27,7 @@ std::string path_computer_software = "/home/ubuntu/computer_software/";
 
 static const boost::regex cmd_regex("\"(.*?)\"");
 
-bool execCommand(ros::NodeHandle n, std::vector<std::string> command){
+bool execCommand(ros::NodeHandle n, boost::shared_ptr<tcp::socket> sock, std::vector<std::string> command){
 	std::string commandStr = command.at(0);
 	switch (commandStr.at(0)) {
 
@@ -140,7 +140,7 @@ bool execCommand(ros::NodeHandle n, std::vector<std::string> command){
 
 		/// Command for the robot to save a new path
 		case 'i':
-			if(command.size() > 4 && command.size()%3 == 1){
+			if(command.size() >= 4 && command.size()%3 == 1){
 
 				std::cout << "(Command system) Path received :" << std::endl;
 
@@ -176,20 +176,6 @@ bool execCommand(ros::NodeHandle n, std::vector<std::string> command){
 				ofs.close();
 			}
 			return true;
-		break;
-
-		/// Command for the robot to save the id of the new map
-		case 'l':
-			if(command.size() > 1){
-				std::cout << "(Command system) Id of the new map : " << command.at(1) << std::endl;
-				std::ofstream ofs;
-				ofs.open(path_computer_software + "Robot_Infos/mapId.txt", std::ofstream::out | std::ofstream::trunc);
-				ofs << command.at(1);
-				ofs.close();
-				return true;
-			} else {
-				std::cout << "(Command system) Parameter missing" << std::endl;
-			}
 		break;
 
 		/// Default/Unknown command
@@ -277,6 +263,7 @@ void stopMap(){
 	}
 }
 
+
 void getPorts(boost::shared_ptr<tcp::socket> sock, ros::NodeHandle n){
 
 		std::cout << "getPorts launched" << std::endl;
@@ -330,7 +317,7 @@ void getPorts(boost::shared_ptr<tcp::socket> sock, ros::NodeHandle n){
 				std::cout << "(Command system) Too many arguments to display (" << command.size() << ")" << std::endl;
 			}
 
-			execCommand(n, command);
+			execCommand(n, sock, command);
 			std::cout << "getPorts done" << std::endl;
 		
 		}
@@ -364,10 +351,8 @@ void session(boost::shared_ptr<tcp::socket> sock, ros::NodeHandle n){
         	}
 
 			std::istringstream iss(data);
-			std::cout << "(Command system) Yolo1" << std::endl;
 
 			while (iss && !finishedCmd && ros::ok() && connected){
-			std::cout << "(Command system) Yolo2" << std::endl;
 				std::string sub;
 				iss >> sub;
 				if(sub.compare("}") == 0){
@@ -377,10 +362,8 @@ void session(boost::shared_ptr<tcp::socket> sock, ros::NodeHandle n){
 					commandStr += sub + " ";
 				}
 			}
-			std::cout << "(Command system) Yolo3" << std::endl;
 
 			command.push_back(std::string(1, commandStr.at(0)));
-			std::cout << "(Command system) Yolo4" << std::endl;
 
    			std::list<std::string> l;
 			boost::regex_split(std::back_inserter(l), commandStr, cmd_regex);
@@ -389,7 +372,6 @@ void session(boost::shared_ptr<tcp::socket> sock, ros::NodeHandle n){
 				l.pop_front();
 				command.push_back(s);
 			}
-			std::cout << "(Command system) Yolo5" << std::endl;
 
 			if(finishedCmd){
 				std::cout << "(Command system) Executing command : " << std::endl;
@@ -402,7 +384,7 @@ void session(boost::shared_ptr<tcp::socket> sock, ros::NodeHandle n){
 				}
 
 				std::string msg = command.at(0);
-				if(execCommand(n, command)){
+				if(execCommand(n, sock, command)){
 					msg += " done";
 				} else {
 					msg += " failed";
@@ -416,6 +398,7 @@ void session(boost::shared_ptr<tcp::socket> sock, ros::NodeHandle n){
 	} catch (std::exception& e) {
 		std::cerr << "(Command system) Exception in thread: " << e.what() << "\n";
 	}
+	connected = false;
 }
 
 bool sendMessageToPc(boost::shared_ptr<tcp::socket> sock, std::string message){

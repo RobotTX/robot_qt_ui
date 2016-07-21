@@ -12,39 +12,39 @@ ScanMapThread::ScanMapThread(const QString newipAddress, const int newPort, cons
 void ScanMapThread::run(){
     qDebug() << "Map Thread";
 
-    socketMap = std::shared_ptr<QTcpSocket>(new QTcpSocket());
+    socket = std::shared_ptr<QTcpSocket>(new QTcpSocket());
 
     /// Connect the signal connected which trigger when we are connected to the host
-    connect(&(*socketMap), SIGNAL(connected()), SLOT(connectedSlot()) );
-    //connect( socketMap, SIGNAL(error(QAbstractSocket::SocketError)), SLOT(errorSlot(QAbstractSocket::SocketError)) );   
+    connect(&(*socket), SIGNAL(connected()), SLOT(connectedSlot()) );
+    //connect( socket, SIGNAL(error(QAbstractSocket::SocketError)), SLOT(errorSlot(QAbstractSocket::SocketError)) );
     /// Connect the signal disconnected which trigger when we are disconnected from the host
-    connect(&(*socketMap), SIGNAL(disconnected()),this, SLOT(disconnectedSlot()));
+    connect(&(*socket), SIGNAL(disconnected()),this, SLOT(disconnectedSlot()));
 
     /// Connect to the host
-    socketMap->connectToHost(ipAddress, port);
+    socket->connectToHost(ipAddress, port);
 
     int i = 1;
-    while(!socketMap->waitForConnected(5000) && !isInterruptionRequested()){
-        //qDebug() << "(Map) Attempt " << i << " :\nConnecting error : " << socketMap->errorString();
-        socketMap->connectToHost(ipAddress, port);
+    while(!socket->waitForConnected(5000) && !isInterruptionRequested()){
+        //qDebug() << "(Map) Attempt " << i << " :\nConnecting error : " << socket->errorString();
+        socket->connectToHost(ipAddress, port);
         sleep(1);
         if(i++ > 100){
             qDebug() << "(Map) Too much connection attempts";
-            socketMap -> close();
+            socket -> close();
             exit();
             return;
         }
     }
 
     while(!this->isInterruptionRequested()){
-        if (!socketMap->waitForReadyRead()) {
-            qDebug() << "(Map) Ready read error : " << socketMap->errorString();
-            socketMap -> close();
+        if (!socket->waitForReadyRead()) {
+            qDebug() << "(Map) Ready read error : " << socket->errorString();
+            socket -> close();
             exit();
             return;
         } else {
             qDebug() << "(Map) Received data";
-            data.append(socketMap->readAll());
+            data.append(socket->readAll());
 
             /// The TCP protocol sending blocks of data, a map is defined by a random number
             /// of blocks, so we wait till the last byte of a block is -2, meaning we have received
@@ -74,6 +74,9 @@ void ScanMapThread::run(){
             }
         }
     }
+    socket->close();
+    exit();
+    return;
 }
 
 void ScanMapThread::connectedSlot(){

@@ -7,6 +7,7 @@ class CmdRobotThread;
 class QMainWindow;
 class ScanRobotThread;
 class ScanMetadataThread;
+class SendNewMapThread;
 
 #include "Model/position.h"
 #include <QString>
@@ -19,13 +20,15 @@ class ScanMetadataThread;
 #define PORT_ROBOT_POS 4001
 #define PORT_MAP 4002
 #define PORT_CMD 5600
+#define PORT_NEW_MAP 5601
 
 /**
  * @brief The Robot class
  * Represent a Robot
  */
 
-class Robot{
+class Robot : public QObject{
+    Q_OBJECT
 public:
     Robot(const QString name, const QString addressIp, QMainWindow* parent);
     Robot();
@@ -70,10 +73,20 @@ public:
      * Called to send a command to the robot
      */
     bool sendCommand(const QString cmd);
+    void sendNewMap(QByteArray cmd);
+
     QString waitAnswer();
     void resetCommandAnswer();
     void stopThreads();
     void ping();
+
+signals:
+    void pingSignal();
+    void sendCommandSignal(QString cmd);
+    void sendNewMapSignal(QByteArray cmd);
+
+private slots:
+    void doneSendingNewMapSlot();
 
 private:
     QString name;
@@ -101,10 +114,11 @@ private:
      * Boolean representing whether or not the robot is currently executing the path
      */
     bool playingPath;
-    QTcpSocket* socketCmd;
     ScanRobotThread* robotThread;
     ScanMetadataThread* metadataThread;
+    SendNewMapThread* newMapThread;
     QUuid mapId;
+    bool sendingMap;
 };
 
 /**

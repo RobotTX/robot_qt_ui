@@ -192,7 +192,7 @@ private slots:
     void robotIsDeadSlot(QString hostname, QString ip);
     void selectViewRobot();
     void sendNewMapToRobots(QString ipAddress);
-    void sendNewMapToRobot(std::shared_ptr<Robot> robot);
+    void sendNewMapToRobot(std::shared_ptr<Robot> robot, QString mapId);
 
 private:
     Ui::MainWindow* ui;
