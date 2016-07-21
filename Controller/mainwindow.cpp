@@ -3516,12 +3516,14 @@ void MainWindow::setEnableAll(bool enable, GraphicItemState state, bool clearPat
 
 void MainWindow::centerMap(){
     qDebug() << "centerMap called la ";
-    qDebug() << (map->getRect().topLeft().x() + map->getRect().bottomRight().x()) /2 << (map->getRect().topLeft().y() + map->getRect().bottomRight().y()) /2;
+    //qDebug() << (map->getRect().topLeft().x() + map->getRect().bottomRight().x()) /2 << (map->getRect().topLeft().y() + map->getRect().bottomRight().y()) /2;
     scene->views().at(0)->centerOn(mapPixmapItem);
 
+/*
     qDebug() << mapPixmapItem->pos() << mapPixmapItem->mapFromScene(map->getCenter());
     while(graphicsView->getZoomCoeff()*1.3*1.3 < 4){
         graphicsView->scale(1.3, 1.3);
         graphicsView->setZoomCoeff(1.3*graphicsView->getZoomCoeff());
     }
+*/
 }
