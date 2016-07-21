@@ -61,6 +61,8 @@ void MapView::mouseReleaseEvent(QGraphicsSceneMouseEvent *event){
     if (abs(x) <= 10 && abs(y) <= 10){
         /// click
         if(state == GraphicItemState::NO_STATE){
+            qDebug() << "(MapView) NO_STATE";
+
             tmpPointView->show();
             /// might be useless code
             point->getPoint()->setPosition(event->pos().x(), event->pos().y());
@@ -69,7 +71,7 @@ void MapView::mouseReleaseEvent(QGraphicsSceneMouseEvent *event){
             emit pointLeftClicked(&(*point), true);
         } else if(state == GraphicItemState::CREATING_PATH){
             /// if it's not a white point of the map we cannot add it to the path
-
+            qDebug() << "(MapView) CREATING_PATH";
             if(map->getMapImage().pixelColor(event->pos().x()-tmpPointPixmap.width()/2, event->pos().y()-tmpPointPixmap.height()).red() >= 254){
                 qDebug() << "Clicked on the map while creating a path";
                 Point tmpPoint("tmpPoint", 0.0, 0.0, false);
@@ -161,8 +163,8 @@ void MapView::setState(const GraphicItemState _state, const bool clear){
         qDebug() << pathCreationPoints.size();
         for(int i = 0; i < pathCreationPoints.size(); i++){
             pathCreationPoints.at(i)->setState(state);
-            qDebug() << pathCreationPoints.at(i)->getState();
-            pathCreationPoints.at(i)->setState(GraphicItemState::CREATING_PATH);
+         //   qDebug() << pathCreationPoints.at(i)->getState();
+          //  pathCreationPoints.at(i)->setState(GraphicItemState::CREATING_PATH);
         }
     }
 }
