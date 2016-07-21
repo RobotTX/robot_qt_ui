@@ -30,7 +30,7 @@ PointButtonGroup::PointButtonGroup(std::shared_ptr<Points> const&_points, const 
         if(currentPoint->isDisplayed())
             pointButton->setIcon(QIcon(":/icons/eye.png"));
         else
-            pointButton->setIcon(QIcon(":/icons/empty.png"));
+            pointButton->setIcon(QIcon(":/icons/space_point.png"));
 
     }
 }
@@ -52,7 +52,7 @@ void PointButtonGroup::setGroup(std::shared_ptr<Points> const&_points, const int
         if(currentPoint->isDisplayed())
             pointButton->setIcon(QIcon(":/icons/eye.png"));
         else
-            pointButton->setIcon(QIcon(":/icons/empty.png"));
+            pointButton->setIcon(QIcon(":/icons/space_point.png"));
 
     }
     emit updateConnectionsRequest();

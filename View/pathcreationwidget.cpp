@@ -263,6 +263,8 @@ void PathCreationWidget::editPathPoint(){
         }
     }
     */
+
+    state = CheckState::EDIT;
     editItem(pathPointsList->currentItem());
     if  ( pathPointsList->selectedItems().count()==0 )
     {
@@ -438,6 +440,7 @@ void PathCreationWidget::supprItem(QListWidgetItem* item){
 }
 
 void PathCreationWidget::editItem(QListWidgetItem* item){
+    qDebug() << "editItem " ;
     /// Get the item to edit
     PathPointCreationWidget* pathPointWidget = (PathPointCreationWidget*) pathPointsList->itemWidget(item);
 
@@ -505,6 +508,8 @@ void PathCreationWidget::saveEditSlot(PathPointCreationWidget* pathPointCreation
     actionButtons->getPlusButton()->setEnabled(true);
     actionButtons->getMinusButton()->setEnabled(true);
     actionButtons->getEditButton()->setEnabled(true);
+    state = CheckState::NO_STATE;
+
     emit saveEditPathPoint();
 }
 
@@ -574,13 +579,17 @@ void PathCreationWidget::updateMenu(){
 
 void PathCreationWidget::updateList()
 {
+
     qDebug() << "update list called";
     std::shared_ptr<Point> pt = std::shared_ptr<Point>(new Point());
+
+
 
     if (selectedRobot != NULL)
     {
         for (size_t i = 0; i < selectedRobot->getPath().size(); i++)
         {
+
             *pt = selectedRobot->getPath().at(i)->getPoint();
             if (pt->getName().contains(';'))
                 emit addPointEditPath(*pt);
