@@ -40,7 +40,7 @@ public:
 
     enum PixmapType{NORMAL, MID, START, STOP, HOVER, START_STOP};
 
-    void setState(const GraphicItemState _state) { state = _state; qDebug()<< "change state here"<< _state;}
+    void setState(const GraphicItemState _state) { state = _state; } //qDebug()<< "change state here"<< _state;}
     GraphicItemState getState(void) const { return state; }
     void setPos(const qreal x, const qreal y);
     void setAddedToPath(const bool _addedToPath) { addedToPath = _addedToPath; }

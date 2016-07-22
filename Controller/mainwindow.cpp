@@ -182,6 +182,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     /// delete a point in the map when the temporary point is deleted in the path creation
     connect(pathCreationWidget, SIGNAL(deletePointView(Point)), mapPixmapItem, SLOT(deletePointView(Point)));
 
+    /// to notify the pathpainter that the order of the points has changed
+    connect(pathCreationWidget, SIGNAL(orderPointsChanged(int, int)), this, SLOT(updatePathPainterPoints(int, int)));
+
     mainLayout->addLayout(bottom);
 
     setCentralWidget(mainWidget);
@@ -1460,16 +1463,27 @@ void MainWindow::setMessageCreationPath(QString message){
 void MainWindow::updatePathPoint(double x, double y, PointView* pointView){
     Q_UNUSED(pointView)
     qDebug() << "updatepathpoint called";
+
+    qDebug() << "mapPixmap path points";
+    for(int i = 0; i < mapPixmapItem->getPathCreationPoints().size(); i++)
+        qDebug() << mapPixmapItem->getPathCreationPoints().at(i)->getPoint()->getPosition().getX() << mapPixmapItem->getPathCreationPoints().at(i)->getPoint()->getPosition().getY();
+
+
     for(int i = 0; i < mapPixmapItem->getPathCreationPoints().count(); i++){
         PointView* pv = mapPixmapItem->getPathCreationPoints().at(i);
+        //PointView* pv = mapPixmapItem->getPathPointByPos(pathCreationWidget->getPointList().at(i).getPosition());
         if(pv == 0)
             qDebug() << "no pointview found to update";
         else {
             if(pv->getPoint()->comparePos(
+
                         ((PathPointCreationWidget*) pathCreationWidget->getPathPointList()->itemWidget(pathCreationWidget->getPathPointList()->currentItem()))->getPoint().getPosition())){
                 pv->getPoint()->setPosition(x, y);
                 pv->setPos(x, y);
                 ((PathPointCreationWidget*) pathCreationWidget->getPathPointList()->itemWidget(pathCreationWidget->getPathPointList()->currentItem()))->setPos(x, y);
+                qDebug() << "real path points";
+                for(int i = 0; i < pathCreationWidget->getPointList().size(); i++)
+                    qDebug() << pathCreationWidget->getPointList().at(i).getPosition().getX() << pathCreationWidget->getPointList().at(i).getPosition().getY();
                 qDebug() << "name" << pv->getPoint()->getName() << "index" << i;
                 pathPainter->updatePath(mapPixmapItem->getPathCreationPoints());
                 break;
@@ -1480,14 +1494,15 @@ void MainWindow::updatePathPoint(double x, double y, PointView* pointView){
         setMessageTop(TEXT_COLOR_INFO, "You can click either click \"Save changes\" to modify your path permanently or \"Cancel\" to keep the original path. If you want you can keep editing your point");
         ((PathPointCreationWidget*) pathCreationWidget->getPathPointList()->itemWidget(pathCreationWidget->getPathPointList()->currentItem())) -> getSaveEditBtn()->setEnabled(true);
         for(int i = 0; i < mapPixmapItem->getPathCreationPoints().count(); i++){
+            //PointView* pv = mapPixmapItem->getPathPointByPos(pathCreationWidget->getPointList().at(i).getPosition());
             PointView* pv = mapPixmapItem->getPathCreationPoints().at(i);
             if(pv == 0)
                 qDebug() << "no pv";
-            else {/*
-                qDebug() << "pos pv" << pv->getPoint()->getPosition().getX() << pv->getPoint()->getPosition().getY() << " pathcr point" <<
-                            ((PathPointCreationWidget*) pathCreationWidget->getPathPointList()->itemWidget(pathCreationWidget->getPathPointList()->currentItem()))->getPoint().getPosition().getX() <<
-                            ((PathPointCreationWidget*) pathCreationWidget->getPathPointList()->itemWidget(pathCreationWidget->getPathPointList()->currentItem()))->getPoint().getPosition().getY();
-                */
+            else {
+                //qDebug() << "pos pv" << pv->getPoint()->getPosition().getX() << pv->getPoint()->getPosition().getY() << " pathcr point" <<
+                            //((PathPointCreationWidget*) pathCreationWidget->getPathPointList()->itemWidget(pathCreationWidget->getPathPointList()->currentItem()))->getPoint().getPosition().getX() <<
+                            //((PathPointCreationWidget*) pathCreationWidget->getPathPointList()->itemWidget(pathCreationWidget->getPathPointList()->currentItem()))->getPoint().getPosition().getY();
+
                 if(pv->getPoint()->comparePos(
                             ((PathPointCreationWidget*) pathCreationWidget->getPathPointList()->itemWidget(pathCreationWidget->getPathPointList()->currentItem()))->getPoint().getPosition())){
                     pv->getPoint()->setPosition(x, y);
@@ -1545,6 +1560,7 @@ void MainWindow::sendNewMapToRobots(QString ipAddress){
 }
 
 void MainWindow::sendNewMapToRobot(std::shared_ptr<Robot> robot){
+    Q_UNUSED(robot)
     qDebug() << "sendNewMapToRobot called";
 }
 
@@ -3291,9 +3307,7 @@ void MainWindow::modifyGroupAfterClick(QString name){
         pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(pointsLeftWidget->getGroupButtonGroup()->getIndexModifyEdit())->show();
 
         topLayout->setLabelDelay(TEXT_COLOR_DANGER, "You cannot choose : " + name.simplified() + " as a new name for your group because another group already has this name",2500);
-
     }
-
 }
 
 void MainWindow::enableReturnAndCloseButtons(){
@@ -3325,6 +3339,14 @@ void MainWindow::setMessageCreationPoint(QString type, CreatePointWidget::Error 
         qDebug() << "Should never be here, if you do get here however, check that you have not added a new error code and forgotten to add it in the cases afterwards";
         break;
     }
+}
+
+void MainWindow::updatePathPainterPoints(int start, int row){
+    qDebug()<< "updatepathpainterpoints called from mainwindow";
+
+    /// otherwise the mapView does not know the order of the points and the result is a wrong path while editing the points during the creation of a path
+    mapPixmapItem->changeOrderPathPoints(start, row);
+
 }
 
 

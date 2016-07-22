@@ -38,7 +38,7 @@ RobotView::RobotView (std::shared_ptr<Robot> const &_robot, QGraphicsItem* paren
     mapView = (MapView*) parent;
 }
 
-RobotView::RobotView (QGraphicsItem* parent):selected(false), QGraphicsPolygonItem(parent), state(GraphicItemState::NO_STATE)
+RobotView::RobotView (QGraphicsItem* parent): selected(false), QGraphicsPolygonItem(parent), state(GraphicItemState::NO_STATE)
 {
 }
 

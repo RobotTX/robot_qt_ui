@@ -17,7 +17,7 @@
 #include "toplayout.h"
 
 DisplaySelectedPoint::DisplaySelectedPoint(QMainWindow *const _parent, std::shared_ptr<Points> const& _points, std::shared_ptr<Map> const& _map, PointView* _pointView, const Origin _origin):
-    QWidget(_parent), map(_map), parent(_parent), points(_points), pointView(_pointView), origin(_origin)
+    QWidget(_parent), map(_map), pointView(_pointView), parent(_parent), points(_points), origin(_origin)
 {
     layout = new QVBoxLayout(this);
 

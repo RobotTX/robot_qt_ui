@@ -5,7 +5,7 @@
 #include <QComboBox>
 #include <QLineEdit>
 
-PathPointList::PathPointList(QWidget* parent):QListWidget(parent){
+PathPointList::PathPointList(QWidget* parent): QListWidget(parent){
     setDragDropMode(QAbstractItemView::InternalMove);
     setFrameShape(QFrame::NoFrame);
     viewport()->setAutoFillBackground( false );
@@ -13,11 +13,11 @@ PathPointList::PathPointList(QWidget* parent):QListWidget(parent){
     setStyleSheet(" QListWidget {color: red;};\
                     QListWidget::item:hover {background-color:grey;}");
 
-    connect(model(), SIGNAL(rowsMoved(QModelIndex,int,int,QModelIndex,int)), this, SLOT(itemMoved(QModelIndex,int,int,QModelIndex,int)));
+    connect(model(), SIGNAL(rowsMoved(QModelIndex, int, int, QModelIndex, int)), this, SLOT(itemMoved(QModelIndex, int, int, QModelIndex, int)));
 }
 
-void PathPointList::itemMoved(QModelIndex /* unused */, int first, int /* unused */,
-                                 QModelIndex /* unused */, int row){
+void PathPointList::itemMoved(QModelIndex parent, int first, int end,
+                                 QModelIndex destination, int row){
 
     qDebug() << "itemMoved from" << first << "to" << row;
     if(row >= 0){
@@ -36,7 +36,7 @@ void PathPointList::itemMoved(QModelIndex /* unused */, int first, int /* unused
         }
     }
 
-    emit itemMovedSignal(first, row);
+    emit itemMovedSignal(parent, first, end, destination, row);
 }
 
 void PathPointList::refresh(void){

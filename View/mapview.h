@@ -38,6 +38,7 @@ public:
     GraphicItemState getState(void) const { return state; }
     PointsView* getPermanentPoints(void) const { return permanentPoints; }
     QMainWindow* getMainWindow(void) const { return mainWindow; }
+    PointView* getPathPointByPos(const Position pos) const;
 
     /// Setters
     void setPoint(const QSharedPointer<PointView> _point) { point = _point; }
@@ -50,6 +51,8 @@ public:
     void clearPointViews();
     void addPointView(PointView * const &_pointView);
     void updatePoints(const Points& points);
+
+    void changeOrderPathPoints(const int start, const int row);
 
 signals:
     void pointLeftClicked(PointView*, bool);

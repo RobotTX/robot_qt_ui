@@ -73,7 +73,7 @@ PathCreationWidget::PathCreationWidget(QMainWindow* parent, const std::shared_pt
     /// the list that displays the path points
     pathPointsList = new PathPointList(this);
     connect(pathPointsList, SIGNAL(itemClicked(QListWidgetItem*)), this, SLOT(itemClicked(QListWidgetItem*)));
-    connect(pathPointsList, SIGNAL(itemMovedSignal(int, int)), this, SLOT(itemMovedSlot(int, int)));
+    connect(pathPointsList, SIGNAL(itemMovedSignal(QModelIndex, int, int, QModelIndex, int)), this, SLOT(itemMovedSlot(QModelIndex, int, int, QModelIndex, int)));
 
     layout->addWidget(pathPointsList);
 
@@ -292,7 +292,7 @@ void PathCreationWidget::saveExecPath(void){
 
 
 bool PathCreationWidget::savePath(){
-    qDebug() << "savePath called" << pathPointsList->count();
+    //qDebug() << "savePath called" << pathPointsList->count();
     bool error = false;
     QString errorMsg = "";
 
@@ -376,7 +376,7 @@ bool PathCreationWidget::savePath(){
 }
 
 void PathCreationWidget::resetWidget(){
-    qDebug() << "pathcreationwidget resetWidget called";
+    //qDebug() << "pathcreationwidget resetWidget called";
     previousItem = NULL;
     editedPathPointCreationWidget = NULL;
     pathPointsList->setCurrentItem(pathPointsList->currentItem(), QItemSelectionModel::Deselect);
@@ -474,7 +474,7 @@ void PathCreationWidget::editItem(QListWidgetItem* item){
 
 
 void PathCreationWidget::updatePointPainter(const bool save){
-    qDebug() << "pathcreationwidget updatepointpainer called";
+    //qDebug() << "pathcreationwidget updatepointpainer called";
     /*qDebug() << "\n";
     for(int i = 0; i < pointList.size(); i++){
         qDebug() << i << " : " << pointList.at(i).getName() << pointList.at(i).getPosition().getX() << pointList.at(i).getPosition().getY();
@@ -488,14 +488,33 @@ void PathCreationWidget::hideEvent(QHideEvent *event){
     QWidget::hideEvent(event);
 }
 
-void PathCreationWidget::itemMovedSlot(const int from, const int to){
-    qDebug() << "itemMovedSlot called";
-    Point point = pointList.takeAt(from);
+void PathCreationWidget::itemMovedSlot(const QModelIndex& parent, int start, int end, const QModelIndex& destination, int row){
+    //qDebug() << "itemMovedSlot called from" << parent.row() << start << end << destination.row() << row;
+    qDebug() << "start "<<start<< " row "<< row;
+    for(int i = 0; i < pointList.size(); i++)
+        qDebug() << pointList.at(i).getPosition().getX() << pointList.at(i).getPosition().getY();
 
-    if(to >= pointList.size())
+    Point point = pointList.takeAt(start);
+
+    if(row > pointList.size()){
+        qDebug() << "putting at the end";
+
         pointList.push_back(point);
-    else
-        pointList.insert(to, point);
+    }
+    else{
+        if(start < row){
+            qDebug() << "inserting in position" << row-1;
+            pointList.insert(row-1, point);
+        } else {
+            qDebug() << " inserting in position " << row;
+            pointList.insert(row, point);
+        }
+    }
+    emit orderPointsChanged(start, row);
+
+    qDebug() << "\n";
+    for(int i = 0; i < pointList.size(); i++)
+        qDebug() << pointList.at(i).getPosition().getX() << pointList.at(i).getPosition().getY();
 
     updatePointPainter();
 }
@@ -513,7 +532,8 @@ void PathCreationWidget::saveEditSlot(PathPointCreationWidget* pathPointCreation
     emit saveEditPathPoint();
 }
 
-void PathCreationWidget::applySavePathPoint(float posX, float posY, bool save){
+void PathCreationWidget::applySavePathPoint(const float posX, const float posY, const bool save){
+    Q_UNUSED(save)
     qDebug() << "applySavePathPoint called" << posX << posY;
     editedPathPointCreationWidget->setPos(posX, posY);
 
@@ -528,6 +548,7 @@ void PathCreationWidget::moveEditPathPoint(float posX, float posY){
     editedPathPointCreationWidget->setPos(posX, posY);
 
     int id = editedPathPointCreationWidget->getId();
+
     pointList.replace(id-1, editedPathPointCreationWidget->getPoint());
 
     updatePointPainter();

@@ -162,7 +162,10 @@ void MapView::setState(const GraphicItemState _state, const bool clear){
         qDebug() << "mapview set state called" << _state;
         qDebug() << pathCreationPoints.size();
         for(int i = 0; i < pathCreationPoints.size(); i++){
-            pathCreationPoints.at(i)->setState(state);
+            if(state == GraphicItemState::EDITING)
+                pathCreationPoints.at(i)->setState(GraphicItemState::NO_EVENT);
+            else
+                pathCreationPoints.at(i)->setState(state);
          //   qDebug() << pathCreationPoints.at(i)->getState();
           //  pathCreationPoints.at(i)->setState(GraphicItemState::CREATING_PATH);
         }
@@ -245,9 +248,8 @@ void MapView::setState(const GraphicItemState _state, const bool clear){
     connect(_pointView, SIGNAL(addPointPath(PointView*)), this, SLOT(addPathPointMapViewSlot(PointView*)));
 
     connect(_pointView, SIGNAL(homeSelected(PointView*, bool)), mainWindow, SLOT(homeSelected(PointView*, bool)));
-    connect(_pointView, SIGNAL(homeEdited(PointView*, bool)), mainWindow, SLOT(homeEdited(PointView*, bool)));
 
-    connect(_pointView, SIGNAL(pathPointChanged(double,double, PointView*)), mainWindow, SLOT(pathPointChanged(double, double, PointView*)));
+    connect(_pointView, SIGNAL(homeEdited(PointView*, bool)), mainWindow, SLOT(homeEdited(PointView*, bool)));
 
     permanentPoints->addPointView(_pointView);
 }
@@ -255,9 +257,9 @@ void MapView::setState(const GraphicItemState _state, const bool clear){
  /// so that the icon of a point view remains consistent while editing a point of a path and after
  void MapView::updatePixmapHover(PointView::PixmapType type, PointView *pv){
     if(state == GraphicItemState::EDITING){
-        qDebug() << "putting the right pixmaps back";
-        qDebug() << type;
-        pv->setLastType(type);
+        //qDebug() << "putting the right pixmaps back";
+        //qDebug() << "type pixmap " << type;
+        //pv->setLastType(type);
         pv->setType(PointView::PixmapType::HOVER);
     }
  }
@@ -282,17 +284,36 @@ void MapView::setState(const GraphicItemState _state, const bool clear){
  }
  void MapView::deletePointView(Point pt)
  {
-
-       PointView*  ptDelete;
      for(int j = 0; j < pathCreationPoints.size(); j++){
         if(pt.comparePos(pathCreationPoints.at(j)->getPoint()->getPosition().getX(),
-           pathCreationPoints.at(j)->getPoint()->getPosition().getY())){
-            ptDelete = pathCreationPoints.at(j);
+            pathCreationPoints.at(j)->getPoint()->getPosition().getY())){
             pathCreationPoints.remove(j);
-
         }
      }
-     delete ptDelete;
-
  }
 
+ PointView* MapView::getPathPointByPos(const Position pos) const{
+     for(int i = 0; i < pathCreationPoints.size(); i++){
+         if(pathCreationPoints.at(i)->getPoint()->comparePos(pos))
+             return pathCreationPoints.at(i);
+     }
+     qDebug() << "map view could not find a path point with pos " << pos.getX() << pos.getY();
+     return NULL;
+ }
+
+ void MapView::changeOrderPathPoints(const int start, const int row){
+     PointView* pv = pathCreationPoints.takeAt(start);
+     if(row > pathCreationPoints.size()){
+         qDebug() << "putting pv at the end";
+         pathCreationPoints.push_back(pv);
+     }
+     else{
+         if(start < row){
+             qDebug() << "inserting pv in position" << row-1;
+             pathCreationPoints.insert(row-1, pv);
+         } else {
+             qDebug() << " inserting pv in position " << row;
+             pathCreationPoints.insert(row, pv);
+         }
+     }
+ }

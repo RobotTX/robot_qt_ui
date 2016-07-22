@@ -5,6 +5,7 @@ class MapView;
 class PointsView;
 class PointView;
 
+#include "Model/point.h"
 #include <QGraphicsPathItem>
 #include <QPainterPath>
 #include <QPen>
@@ -29,6 +30,7 @@ public:
     QVector<Point> getPathVector(void) const {return pathVector;}
     void setPointViewPixmap(const int id, PointView* const pointView);
     void clearPointViews(bool save = false);
+    void setPathVector(const QVector<Point> _pathvector) { pathVector = _pathvector; }
 
 private:
     QPainterPath path;

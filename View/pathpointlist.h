@@ -18,10 +18,10 @@ public:
     void refresh(void);
 
 private slots:
-    void itemMoved(QModelIndex, int, int, QModelIndex, int);
+    void itemMoved(QModelIndex parent, int start, int end, QModelIndex destination, int row);
 
 signals:
-    void itemMovedSignal(int from, int to);
+    void itemMovedSignal(QModelIndex, int, int, QModelIndex, int);
 };
 
 #endif // PATHPOINTLIST_H
