@@ -16,7 +16,6 @@ file_hostname = "/home/ubuntu/computer_software/Robot_Infos/name.txt"
 file_map_id = "/home/ubuntu/computer_software/Robot_Infos/mapId.txt"
 
 def isServer(IP) :
-	print "isServer called"
 	s=socket.socket()
 	host= IP
 	port = 6000
@@ -31,13 +30,14 @@ def isServer(IP) :
 			file = open(file_hostname)
 			hostname = file.readline()
 			hostname = hostname.split('\n')[0]
-			print "hostname ",hostname
+			if hostname == "" :
+				hostname = "Default Name"
 			file_id = open(file_map_id)
 			map_id = file_id.readline()
 			map_id = map_id.split('\n')[0]
-			print "map_id ",map_id
+			if map_id == "" :
+				map_id = "0"
 			toSend = "%s\"%s" % (hostname, map_id)
-			print "toSend ",toSend
 			s.send(toSend)
 	except : 
 		find=False

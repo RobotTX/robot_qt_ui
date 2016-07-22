@@ -64,7 +64,8 @@ HEADERS += Controller/cmdrobotthread.h \
            Controller/updaterobotsthread.h \
            View/customizedlineedit.h \
            View/createpointwidget.h \
-           View/buttonmenu.h
+           View/buttonmenu.h \
+    Controller/sendnewmapthread.h
 
 FORMS += Controller/mainwindow.ui
 
@@ -116,7 +117,8 @@ SOURCES += main.cpp \
            View/customizedlineedit.cpp \
            View/buttonmenu.cpp \
            View/createpointwidget.cpp \
-    View/topleftmenu.cpp
+    View/topleftmenu.cpp \
+    Controller/sendnewmapthread.cpp
 
 RESOURCES += Resources/resources.qrc
 

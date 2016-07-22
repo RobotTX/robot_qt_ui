@@ -8,37 +8,37 @@ ScanMetadataThread::ScanMetadataThread(const QString newipAddress, const int new
 void ScanMetadataThread::run(){
     qDebug() << "Metadata Thread";
 
-    socketMetadata = std::shared_ptr<QTcpSocket>(new QTcpSocket());
+    socket = std::shared_ptr<QTcpSocket>(new QTcpSocket());
 
     /// Connect the signal connected which trigger when we are connected to the host
-    connect(&(*socketMetadata), SIGNAL(connected()), SLOT(connectedSlot()) );
-    //connect( socketMetadata, SIGNAL(error(QAbstractSocket::SocketError)), SLOT(errorSlots(QAbstractSocket::SocketError)) );
+    connect(&(*socket), SIGNAL(connected()), SLOT(connectedSlot()) );
+    //connect( socket, SIGNAL(error(QAbstractSocket::SocketError)), SLOT(errorSlots(QAbstractSocket::SocketError)) );
     /// Connect the signal disconnected which trigger when we are disconnected from the host
-    connect(&(*socketMetadata), SIGNAL(disconnected()),this, SLOT(disconnectedSlot()));
+    connect(&(*socket), SIGNAL(disconnected()),this, SLOT(disconnectedSlot()));
     /// Connect to the host
-    socketMetadata->connectToHost(ipAddress, port);
+    socket->connectToHost(ipAddress, port);
 
     int i = 1;
-    while(!socketMetadata->waitForConnected(5000) && !isInterruptionRequested()){
-        //qDebug() << "(Metadata) Attempt " << i << " :\nConnecting error : " << socketMetadata->errorString();
-        socketMetadata->connectToHost(ipAddress, port);
+    while(!socket->waitForConnected(5000) && !isInterruptionRequested()){
+        //qDebug() << "(Metadata) Attempt " << i << " :\nConnecting error : " << socket->errorString();
+        socket->connectToHost(ipAddress, port);
         sleep(1);
         if(i++ > 100){
             qDebug() << "(Metadata) Too much connection attempts";
-            socketMetadata -> close();
+            socket -> close();
             exit();
             return;
         }
     }
 
     while (!this->isInterruptionRequested()) {
-        if (!socketMetadata->waitForReadyRead()) {
-            qDebug() << "(Metadata) Ready read error : " << socketMetadata->errorString();
-            socketMetadata -> close();
+        if (!socket->waitForReadyRead()) {
+            qDebug() << "(Metadata) Ready read error : " << socket->errorString();
+            socket -> close();
             exit();
             return;
         } else {
-            QString data = socketMetadata->readAll();
+            QString data = socket->readAll();
             QRegExp rx("[ ]");
             qDebug() << "(Robot) Metadata" << data;
 
@@ -49,6 +49,9 @@ void ScanMetadataThread::run(){
                                       list.at(4).toFloat());
         }
     }
+    socket->close();
+    exit();
+    return;
 }
 
 void ScanMetadataThread::connectedSlot(){

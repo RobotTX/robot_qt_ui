@@ -60,7 +60,7 @@ signals:
     void newScanSaved(QString ipAddress);
 
 private :
-    std::shared_ptr<QTcpSocket>socketMap;
+    std::shared_ptr<QTcpSocket>socket;
     QString ipAddress;
     int port;
     /**

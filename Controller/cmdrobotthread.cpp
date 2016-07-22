@@ -3,8 +3,8 @@
 #include <QCoreApplication>
 
 
-CmdRobotThread::CmdRobotThread(const QString newipAddress, const int cmdPort, const int _metadataPort, const int _robotPort, const int _mapPort, const QString _robotName, QObject* parent) : QThread(parent){
-    ipAddress = newipAddress;
+CmdRobotThread::CmdRobotThread(const QString _ipAddress, const int cmdPort, const int _metadataPort, const int _robotPort, const int _mapPort, const QString _robotName, QObject* parent) : QThread(parent){
+    ipAddress = _ipAddress;
     port = cmdPort;
     robotName = _robotName;
     connected = false;
@@ -18,78 +18,66 @@ CmdRobotThread::CmdRobotThread(const QString newipAddress, const int cmdPort, co
 void CmdRobotThread::run(){
     qDebug() << "(Robot" << robotName << ") Command Thread launched";
 
-    socketCmd = std::shared_ptr<QTcpSocket>(new QTcpSocket());
+    socket = std::shared_ptr<QTcpSocket>(new QTcpSocket());
 
     /// Connect the signal readyRead which tell us when data arrived to the function that treat them
-    connect(&(*socketCmd), SIGNAL(readyRead()), this, SLOT(readTcpDataSlot()) );
+    connect(&(*socket), SIGNAL(readyRead()), this, SLOT(readTcpDataSlot()));
     /// Connect the signal connected which trigger when we are connected to the host
-    connect(&(*socketCmd), SIGNAL(connected()), this, SLOT(connectedSlot()) );
-    //connect(&(*socketCmd), SIGNAL(error(QAbstractSocket::SocketError)), SLOT(errorSlot(QAbstractSocket::SocketError)) );
+    connect(&(*socket), SIGNAL(connected()), this, SLOT(connectedSlot()));
+    //connect(&(*socket), SIGNAL(error(QAbstractSocket::SocketError)), SLOT(errorSlot(QAbstractSocket::SocketError)) );
     /// Connect the signal disconnected which trigger when we are disconnected from the host
-    connect(&(*socketCmd), SIGNAL(disconnected()), this, SLOT(disconnectedSlot()));
-    connect(this, SIGNAL(writeCommand(QString)), this, SLOT(writeCommandSlot(QString)));
+    connect(&(*socket), SIGNAL(disconnected()), this, SLOT(disconnectedSlot()));
 
     /// Connect to the host
-    socketCmd->connectToHost(ipAddress, port);
+    socket->connectToHost(ipAddress, port);
 
     int i = 1;
-    while(!socketCmd->waitForConnected(5000) && !isInterruptionRequested()){
-        //qDebug() << "(Robot" << robotName << ") Attempt " << i << ":\nConnecting error : " << socketCmd->errorString();
-        socketCmd->connectToHost(ipAddress, port);
+    while(!socket->waitForConnected(5000) && !isInterruptionRequested()){
+        socket->connectToHost(ipAddress, port);
         sleep(1);
         if(i++ > 100){
             qDebug() << "(Robot" << robotName << ") Too much connection attempts";
-            socketCmd -> close();
+            socket -> close();
             exit();
             return;
         }
     }
 
-    //delay(2000);
     QString portStr = "h \"" + QString::number(metadataPort) + "\" \"" + QString::number(robotPort) + "\" \"" + QString::number(mapPort) + "\" } ";
     qDebug() << "(Robot" << robotName << ") Sending ports : " << portStr;
-    socketCmd->write(portStr.toUtf8());
+    socket->write(portStr.toUtf8());
 
-    socketCmd->waitForBytesWritten(1000);
+    socket->waitForBytesWritten(1000);
 
 
     qDebug() << "(Robot" << robotName << ") Done";
     while(!isInterruptionRequested()){
-        if(!socketCmd->isOpen()){
+        if(!socket->isOpen()){
             exit();
             return;
         }
         if(missedPing <= 0){
             qDebug() << "missedPing robotIsDead";
             emit robotIsDead(robotName, ipAddress);
-            socketCmd -> close();
+            socket -> close();
             exit();
             return;
         }
         delay(500);
         missedPing--;
-        qDebug() << "Received no ping during the last :" << (float) ((MISSED_PING_TIMER - missedPing)/2) << " seconds.";
+        if(missedPing <= 4)
+            qDebug() << "Received no ping during the last :" << (float) ((MISSED_PING_TIMER - missedPing)/2) << " seconds.";
     }
+    socket->close();
+    exit();
+    return;
 }
 
-bool CmdRobotThread::sendCommand(const QString cmd){
-    qDebug() << "(Robot" << robotName << ") Command to send : " << cmd << "to " << ipAddress << "at port " << port;
+void CmdRobotThread::sendCommand(const QString cmd){
+    qDebug() << "(Robot" << robotName << ") Command to send :" << cmd << "to" << ipAddress << "at port " << port;
+    int nbDataSend = socket->write(QString(cmd + " } ").toUtf8());
 
-    if(connected){
-        emit writeCommand(cmd);
-        qDebug() << "(Robot" << robotName << ") Command sent successfully";
-        return true;
-    } else {
-        qDebug() << "(Robot" << robotName << ") Error : Robot at ip" << ipAddress << ": " << port << "not connected";
-        return false;
-    }
-}
-
-void CmdRobotThread::writeCommandSlot(QString cmd){
-    qDebug() << "writeCommandSlot called";
-    int nbDataSend = socketCmd->write(QString(cmd + " } ").toUtf8());
-
-    socketCmd->waitForBytesWritten(100);
+    socket->waitForBytesWritten(100);
 
     if(nbDataSend == -1){
         qDebug() << "(Robot" << robotName << ") An error occured while sending data";
@@ -97,16 +85,17 @@ void CmdRobotThread::writeCommandSlot(QString cmd){
         qDebug() << "(Robot" << robotName << ") " << nbDataSend << " bytes sent";
 
         if(QString(cmd.at(0)).compare("e")){
-            socketCmd->waitForReadyRead(100);
+            socket->waitForReadyRead(100);
         } else {
             qDebug() << "No wait";
             delay(2000);
         }
     }
+    qDebug() << "(Robot" << robotName << ") Command sent successfully";
 }
 
 void CmdRobotThread::readTcpDataSlot(){
-    commandAnswer = socketCmd->readAll();
+    commandAnswer = socket->readAll();
     missedPing = MISSED_PING_TIMER;
     qDebug() << "(Robot" << robotName << ") readTcpDataSlot :" << commandAnswer;
 }
@@ -136,14 +125,14 @@ void CmdRobotThread::connectedSlot(){
 void CmdRobotThread::disconnectedSlot(){
     qDebug() << "(Robot" << robotName << ") Disconnected at ip" << ipAddress;
     connected = false;
-    if(!socketCmd->isOpen()){
+    if(!socket->isOpen()){
         exit();
         return;
     }
     if(robotName.compare("") != 0){
         qDebug() << "Disconnected slot robotIsDead";
         emit robotIsDead(robotName, ipAddress);
-        socketCmd -> close();
+        socket->close();
         exit();
         return;
     }

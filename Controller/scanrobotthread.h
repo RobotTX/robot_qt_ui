@@ -58,7 +58,7 @@ signals:
     void valueChangedRobot(QString ipAddress, float posX, float posY, float ori);
 
 private :
-    std::shared_ptr<QTcpSocket> socketRobot;
+    std::shared_ptr<QTcpSocket> socket;
     QString ipAddress;
     int port;
 
