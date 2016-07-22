@@ -163,10 +163,8 @@ void PathCreationWidget::addPathPoint(Point* point){
         /// We create a new widget to add to the list of path point widgets
         PathPointCreationWidget* pathPoint = new PathPointCreationWidget(idPoint, *points, *point, this);
         initialisationPathPoint(pathPoint);
-
         pointList.push_back(*point);
         updatePointPainter();
-
         idPoint++;
     } else
         qDebug() << "This point is identical to the last one";
@@ -250,7 +248,7 @@ void PathCreationWidget::supprPathPoint(){
 void PathCreationWidget::editPathPoint(){
     qDebug() << "editPathPoint called";
 
-    /*
+/*
     /// if the edit button is pressed, we toggle it if no path point is selected
     if(previousItem == NULL){
         if(actionButtons->getEditButton()->isChecked()){
@@ -265,8 +263,8 @@ void PathCreationWidget::editPathPoint(){
             editItem(pathPointsList->currentItem());
         }
     }
-    */
 
+*/
     state = CheckState::EDIT;
     editItem(pathPointsList->currentItem());
     if  ( pathPointsList->selectedItems().count()==0 )

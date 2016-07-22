@@ -111,12 +111,12 @@ void PathPainter::setPointViewPixmap(const int id, PointView* const pointView){
         return;
     } else {
         qDebug() << "not editing";
-        if(id == 0)
+        if(pathVector.last().comparePos(pointView->getPoint()->getPosition()))
+            pointView->setPixmap(PointView::PixmapType::START_STOP);
+        else if(id == 0)
             pointView->setPixmap(PointView::PixmapType::START);
-
         else if (id == pathVector.size()-1)
             pointView->setPixmap(PointView::PixmapType::STOP);
-
         else
             pointView->setPixmap(PointView::PixmapType::MID);
     }
