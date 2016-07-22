@@ -175,7 +175,7 @@ private slots:
      * @param to
      * Edit the vector of Point when we dit/move a tmp point
      */
-    void itemMovedSlot(const QModelIndex& parent, int start, int end, const QModelIndex& destination, int row);
+    void itemMovedSlot(const QModelIndex&, int start, int, const QModelIndex&, int row);
 
     /**
      * @brief saveEditSlot

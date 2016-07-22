@@ -6,7 +6,7 @@
 #include <QPainterPath>
 #include <QPixmap>
 
-PathPainter::PathPainter(MapView * const &mapPixmapItem, PointsView * const &_pointViews) : QGraphicsPathItem(mapPixmapItem), mapItem(mapPixmapItem), pointViews(_pointViews)
+PathPainter::PathPainter(MapView * const &mapPixmapItem, PointsView * const &_pointViews) : QGraphicsPathItem(mapPixmapItem), pointViews(_pointViews), mapItem(mapPixmapItem)
 {
     setPen(QPen(Qt::red));
 }
@@ -160,17 +160,17 @@ void PathPainter::updatePath(const QVector<PointView*>& pointViewsVector, bool s
         setPath(path);
 
         if(*(startPointView->getPoint()) == *(endPointView->getPoint())){
-            if((startPointView->getType() != PointView::PixmapType::HOVER) && (mapItem->getState() != GraphicItemState::EDITING) || save){
-                //qDebug() << "changed startend updatepath la";
+            if((startPointView->getType() != PointView::PixmapType::HOVER) || (mapItem->getState() != GraphicItemState::EDITING) || save){
+                qDebug() << "changed startend updatepath la";
                 startPointView->setPixmap(PointView::PixmapType::START_STOP);
             }
         } else {
             if((startPointView->getType() != PointView::PixmapType::HOVER) || (mapItem->getState() != GraphicItemState::EDITING) || save){
-                //qDebug() << "changed start updatepath la";
+                qDebug() << "changed start updatepath la";
                 startPointView->setPixmap(PointView::PixmapType::START);
             }
             if((endPointView->getType() != PointView::PixmapType::HOVER) || (mapItem->getState() != GraphicItemState::EDITING) || save){
-                //qDebug() << "changed start updatepath la";
+                qDebug() << "changed start updatepath la";
                 endPointView->setPixmap(PointView::PixmapType::STOP);
             }
         }

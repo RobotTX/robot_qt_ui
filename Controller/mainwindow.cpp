@@ -1480,7 +1480,6 @@ void MainWindow::updatePathPoint(double x, double y, PointView* pointView){
 
     for(int i = 0; i < mapPixmapItem->getPathCreationPoints().count(); i++){
         PointView* pv = mapPixmapItem->getPathCreationPoints().at(i);
-        //PointView* pv = mapPixmapItem->getPathPointByPos(pathCreationWidget->getPointList().at(i).getPosition());
         if(pv == 0)
             qDebug() << "no pointview found to update";
         else {
@@ -1503,14 +1502,11 @@ void MainWindow::updatePathPoint(double x, double y, PointView* pointView){
         setMessageTop(TEXT_COLOR_INFO, "You can click either click \"Save changes\" to modify your path permanently or \"Cancel\" to keep the original path. If you want you can keep editing your point");
         ((PathPointCreationWidget*) pathCreationWidget->getPathPointList()->itemWidget(pathCreationWidget->getPathPointList()->currentItem())) -> getSaveEditBtn()->setEnabled(true);
         for(int i = 0; i < mapPixmapItem->getPathCreationPoints().count(); i++){
-            //PointView* pv = mapPixmapItem->getPathPointByPos(pathCreationWidget->getPointList().at(i).getPosition());
             PointView* pv = mapPixmapItem->getPathCreationPoints().at(i);
             if(pv == 0)
                 qDebug() << "no pv";
             else {
-                //qDebug() << "pos pv" << pv->getPoint()->getPosition().getX() << pv->getPoint()->getPosition().getY() << " pathcr point" <<
-                            //((PathPointCreationWidget*) pathCreationWidget->getPathPointList()->itemWidget(pathCreationWidget->getPathPointList()->currentItem()))->getPoint().getPosition().getX() <<
-                            //((PathPointCreationWidget*) pathCreationWidget->getPathPointList()->itemWidget(pathCreationWidget->getPathPointList()->currentItem()))->getPoint().getPosition().getY();
+
 
                 if(pv->getPoint()->comparePos(
                             ((PathPointCreationWidget*) pathCreationWidget->getPathPointList()->itemWidget(pathCreationWidget->getPathPointList()->currentItem()))->getPoint().getPosition())){

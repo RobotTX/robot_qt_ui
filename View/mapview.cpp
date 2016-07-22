@@ -73,6 +73,7 @@ void MapView::mouseReleaseEvent(QGraphicsSceneMouseEvent *event){
             /// if it's not a white point of the map we cannot add it to the path
             qDebug() << "(MapView) CREATING_PATH";
             if(map->getMapImage().pixelColor(event->pos().x()-tmpPointPixmap.width()/2, event->pos().y()-tmpPointPixmap.height()).red() >= 254){
+
                 qDebug() << "Clicked on the map while creating a path";
                 Point tmpPoint("tmpPoint", 0.0, 0.0, false);
                 PointView* newPointView = new PointView(std::make_shared<Point>(tmpPoint), this);
@@ -180,6 +181,7 @@ void MapView::setState(const GraphicItemState _state, const bool clear){
 
  void MapView::addPathPoint(PointView* pointView){
      qDebug() << "MAP VIEW : addpathpoint called";
+
      PointView* newPointView = new PointView(std::make_shared<Point>(*(pointView->getPoint())), this);
 
      connect(newPointView, SIGNAL(addPointPath(PointView*)), mainWindow, SLOT(addPathPoint(PointView*)));
@@ -256,12 +258,9 @@ void MapView::setState(const GraphicItemState _state, const bool clear){
 
  /// so that the icon of a point view remains consistent while editing a point of a path and after
  void MapView::updatePixmapHover(PointView::PixmapType type, PointView *pv){
-    if(state == GraphicItemState::EDITING){
-        //qDebug() << "putting the right pixmaps back";
-        //qDebug() << "type pixmap " << type;
-        //pv->setLastType(type);
+     Q_UNUSED(type)
+    if(state == GraphicItemState::EDITING)
         pv->setType(PointView::PixmapType::HOVER);
-    }
  }
 
  void MapView::addPointEditPath(Point pt)
@@ -290,15 +289,6 @@ void MapView::setState(const GraphicItemState _state, const bool clear){
             pathCreationPoints.remove(j);
         }
      }
- }
-
- PointView* MapView::getPathPointByPos(const Position pos) const{
-     for(int i = 0; i < pathCreationPoints.size(); i++){
-         if(pathCreationPoints.at(i)->getPoint()->comparePos(pos))
-             return pathCreationPoints.at(i);
-     }
-     qDebug() << "map view could not find a path point with pos " << pos.getX() << pos.getY();
-     return NULL;
  }
 
  void MapView::changeOrderPathPoints(const int start, const int row){

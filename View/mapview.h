@@ -38,7 +38,6 @@ public:
     GraphicItemState getState(void) const { return state; }
     PointsView* getPermanentPoints(void) const { return permanentPoints; }
     QMainWindow* getMainWindow(void) const { return mainWindow; }
-    PointView* getPathPointByPos(const Position pos) const;
 
     /// Setters
     void setPoint(const QSharedPointer<PointView> _point) { point = _point; }

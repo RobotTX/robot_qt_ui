@@ -158,15 +158,18 @@ void PathCreationWidget::pointClicked(QString name){
 void PathCreationWidget::addPathPoint(Point* point){
     qDebug() << "Add pathPoint with point" << idPoint;
 
+    /// we first check that the last point of our path is not the same one
+    if(!pointList.last().comparePos(point->getPosition())){
+        /// We create a new widget to add to the list of path point widgets
+        PathPointCreationWidget* pathPoint = new PathPointCreationWidget(idPoint, *points, *point, this);
+        initialisationPathPoint(pathPoint);
 
-    /// We create a new widget to add to the list of path point widgets
-    PathPointCreationWidget* pathPoint = new PathPointCreationWidget(idPoint, *points, *point, this);
-    initialisationPathPoint(pathPoint);
+        pointList.push_back(*point);
+        updatePointPainter();
 
-    pointList.push_back(*point);
-    updatePointPainter();
-
-    idPoint++;
+        idPoint++;
+    } else
+        qDebug() << "This point is identical to the last one";
 }
 
 void PathCreationWidget::initialisationPathPoint(PathPointCreationWidget* pathPoint){
@@ -488,33 +491,20 @@ void PathCreationWidget::hideEvent(QHideEvent *event){
     QWidget::hideEvent(event);
 }
 
-void PathCreationWidget::itemMovedSlot(const QModelIndex& parent, int start, int end, const QModelIndex& destination, int row){
+void PathCreationWidget::itemMovedSlot(const QModelIndex& , int start, int , const QModelIndex& , int row){
     //qDebug() << "itemMovedSlot called from" << parent.row() << start << end << destination.row() << row;
-    qDebug() << "start "<<start<< " row "<< row;
-    for(int i = 0; i < pointList.size(); i++)
-        qDebug() << pointList.at(i).getPosition().getX() << pointList.at(i).getPosition().getY();
 
     Point point = pointList.takeAt(start);
 
-    if(row > pointList.size()){
-        qDebug() << "putting at the end";
+    if(row > pointList.size())  pointList.push_back(point);
 
-        pointList.push_back(point);
+    else {
+        if(start < row)         pointList.insert(row-1, point);
+        else                    pointList.insert(row, point);
     }
-    else{
-        if(start < row){
-            qDebug() << "inserting in position" << row-1;
-            pointList.insert(row-1, point);
-        } else {
-            qDebug() << " inserting in position " << row;
-            pointList.insert(row, point);
-        }
-    }
+
+    /// to notify the mapView that the order of the points has changed
     emit orderPointsChanged(start, row);
-
-    qDebug() << "\n";
-    for(int i = 0; i < pointList.size(); i++)
-        qDebug() << pointList.at(i).getPosition().getX() << pointList.at(i).getPosition().getY();
 
     updatePointPainter();
 }
