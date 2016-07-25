@@ -18,6 +18,7 @@ bool Points::addGroup(const Group& group){
     return true;
 }
 
+/// returns a vector containing the names of the groups
 QVector<QString> Points::groupNames(void) const{
     QVector<QString> _names;
     for(auto it = groups.cbegin(); it != groups.cend(); ++it)
@@ -56,12 +57,13 @@ QDataStream& operator<<(QDataStream& out, const Points& points){
     return out;
 }
 
-
+/// removes the group of index <index>
 void Points::removeGroup(const int index) {
     if(index >=0 && index < groups.size())
         groups.remove(index);
 }
 
+/// returns a pointer to the group whose name is <groupName>
 std::shared_ptr<Group> Points::findGroup(const QString groupName) const {
     for(int i = 0; i < getGroups().size(); i++){
         if(!getGroups().at(i)->getName().compare(groupName))
@@ -70,6 +72,7 @@ std::shared_ptr<Group> Points::findGroup(const QString groupName) const {
     return NULL;
 }
 
+/// returns a pointer to the point whose name is <name>
 std::shared_ptr<Point> Points::findPoint(const QString name) const {
     for(int i = 0; i < groups.size(); i++){
         std::shared_ptr<Group> currentGroup = groups.at(i);
@@ -82,6 +85,7 @@ std::shared_ptr<Point> Points::findPoint(const QString name) const {
     return NULL;
 }
 
+/// returns a pointer to the point whose group's index is <indexGroup> and whose own index within that group is <indexPoint>
 std::shared_ptr<Point> Points::findPoint(const int indexGroup, const int indexPoint) const {
     if(groups.at(indexGroup)->getPoints().at(indexPoint))
         qDebug() << "hey i got " << groups.at(indexGroup)->getPoints().at(indexPoint)->getName();
@@ -90,6 +94,7 @@ std::shared_ptr<Point> Points::findPoint(const int indexGroup, const int indexPo
     return groups.at(indexGroup)->getPoints().at(indexPoint);
 }
 
+/// returns a pair of ints corresponding to the indexes of the point whose name is <name>
 std::pair<int, int> Points::findPointIndexes(const QString name) const {
     std::pair<int, int> indexes(std::make_pair<int, int>(-1, -1));
     for(int i = 0; i < groups.size(); i++){
@@ -105,7 +110,7 @@ std::pair<int, int> Points::findPointIndexes(const QString name) const {
     return indexes;
 }
 
-
+/// clears all the groups and add an empty default group
 void Points::clear(){
     groups.clear();
     addGroup(Group("No Name"));

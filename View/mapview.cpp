@@ -39,7 +39,7 @@ MapView::MapView (const QPixmap& pixmap, const QSize _size, std::shared_ptr<Map>
 }
 
 MapView::~MapView(){
-    qDebug() << "creation mapview";
+    //qDebug() << "deletion mapview";
     delete permanentPoints;
     qDeleteAll(pathCreationPoints.begin(), pathCreationPoints.end());
 }

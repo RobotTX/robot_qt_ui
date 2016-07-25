@@ -20,7 +20,6 @@ public:
 signals:
     void clickSomewhere(QString name);
     void pressedEnter();
-
 };
 
 #endif // CUSTOMIZEDLINEEDIT_H

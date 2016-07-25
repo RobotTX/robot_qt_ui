@@ -38,8 +38,8 @@ DisplaySelectedGroup::DisplaySelectedGroup(QMainWindow *parent, std::shared_ptr<
     name->setStyleSheet("* {  font-weight: bold; text-decoration:underline}");
 
 
-    QLabel  *label_img  = new QLabel(this);
-  //  QPixmap *pixmap_img = new QPixmap(":/icons/folder.png");
+    QLabel* label_img  = new QLabel(this);
+
     QPixmap watermark(":/icons/folder.png");
 
     QPixmap pixmap_img = watermark.scaled(QSize(this->width()/6,this->width()/6),  Qt::KeepAspectRatio);
@@ -57,7 +57,6 @@ DisplaySelectedGroup::DisplaySelectedGroup(QMainWindow *parent, std::shared_ptr<
     titleLayout->setAlignment(Qt::AlignCenter);
 
     layout->addLayout(titleLayout);
-    //layout->addWidget(name);
 
     pointButtonGroup = new PointButtonGroup(_points, 0, this);
     scrollArea->setWidget(pointButtonGroup);

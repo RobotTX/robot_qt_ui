@@ -95,17 +95,18 @@ QDataStream& operator>>(QDataStream& in, Group& group){
     return in;
 }
 
+/// returns true if all the points of the group are displayed and false otherwise
  bool Group::isDisplayed(void) const {
-     if (points.size() !=0)
-     {
-         foreach(std::shared_ptr<Point> point, points)
+    if (points.size() != 0){
+        foreach(std::shared_ptr<Point> point, points)
             if(!point->isDisplayed())
                 return false;
         return true;
-     }else
-         return false;
+    } else
+        return false;
  }
 
+ /// returns true if one of the points of this group is the home point of a robot
 std::shared_ptr<Point> Group::containsHomePoint(void) const {
      for(int i = 0; i < points.size(); i++){
          if(points[i]->isHome())

@@ -71,6 +71,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
     /**************************************************************/
 
+
     robots = std::shared_ptr<Robots>(new Robots());
     scene = new QGraphicsScene(this);
 
@@ -101,6 +102,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
     initializePoints();
 
+
     mapPixmapItem->setPermanentPoints(pointViews);
 
     pathPainter = new PathPainter(mapPixmapItem, pointViews);
@@ -111,7 +113,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     graphicsView->scale(std::max(graphicsView->parentWidget()->width()/scene->width(), graphicsView->parentWidget()->height()/scene->height()),
                         std::max(graphicsView->parentWidget()->width()/scene->width(), graphicsView->parentWidget()->height()/scene->height()));
 
-    // hide the scroll bars
+    /// hides the scroll bars
     graphicsView->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     graphicsView->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     graphicsView->setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding));
@@ -189,7 +191,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
     setCentralWidget(mainWidget);
 
+    /// to navigate with the tab key
     setTabOrder(leftMenu->getReturnButton(), pointsLeftWidget->getActionButtons()->getPlusButton());
+
 }
 
 MainWindow::~MainWindow(){
@@ -1499,15 +1503,13 @@ void MainWindow::updatePathPoint(double x, double y, PointView* pointView){
         }
     }
     if(map->getMapImage().pixelColor(x, y).red() >= 254){
-        setMessageTop(TEXT_COLOR_INFO, "You can click either click \"Save changes\" to modify your path permanently or \"Cancel\" to keep the original path. If you want you can keep editing your point");
+        setMessageTop(TEXT_COLOR_INFO, "You can click either \"Save changes\" to modify your path permanently or \"Cancel\" to keep the original path. If you want you can keep editing your point");
         ((PathPointCreationWidget*) pathCreationWidget->getPathPointList()->itemWidget(pathCreationWidget->getPathPointList()->currentItem())) -> getSaveEditBtn()->setEnabled(true);
         for(int i = 0; i < mapPixmapItem->getPathCreationPoints().count(); i++){
             PointView* pv = mapPixmapItem->getPathCreationPoints().at(i);
             if(pv == 0)
                 qDebug() << "no pv";
             else {
-
-
                 if(pv->getPoint()->comparePos(
                             ((PathPointCreationWidget*) pathCreationWidget->getPathPointList()->itemWidget(pathCreationWidget->getPathPointList()->currentItem()))->getPoint().getPosition())){
                     pv->getPoint()->setPosition(x, y);
@@ -3525,7 +3527,7 @@ void MainWindow::setEnableAll(bool enable, GraphicItemState state, bool clearPat
 }
 
 void MainWindow::centerMap(){
-    qDebug() << "centerMap called la ";
+    //qDebug() << "centerMap called la ";
     //qDebug() << (map->getRect().topLeft().x() + map->getRect().bottomRight().x()) /2 << (map->getRect().topLeft().y() + map->getRect().bottomRight().y()) /2;
     scene->views().at(0)->centerOn(mapPixmapItem);
 

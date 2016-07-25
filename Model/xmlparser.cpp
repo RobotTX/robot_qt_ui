@@ -258,14 +258,10 @@ void XMLParser::readPoints(std::shared_ptr<Points>& points){
                     }
                     points->addGroup(*group);
                 }
-
-
-
             } else {
                 xmlReader.readNext();
             }
         }
-
         file->close();
     }
 
@@ -296,9 +292,9 @@ bool XMLParser::readDisplayedElement(QXmlStreamReader &xmlReader){
     return displayed;
 }
 
+/// resets the file, only writting an empty default group
 void XMLParser::clear(void){
     try {
-        qDebug() << "ok";
         file->open(QIODevice::WriteOnly);
 
         QXmlStreamWriter xmlWriter(file);

@@ -87,8 +87,10 @@ public:
      */
     std::pair<int, int> findPointIndexes(const QString name) const;
 
+    /// returns a pointer to the default group
     std::shared_ptr<Group> getDefaultGroup(void) const { return groups.at(groups.size()-1); }
 
+    /// adds a group in front of the vector
     void addGroupFront(const QString name) { groups.push_front(std::shared_ptr<Group>(new Group(name))); }
 
     void clear();

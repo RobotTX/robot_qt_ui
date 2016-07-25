@@ -109,22 +109,21 @@ void CreatePointWidget::setSelectedPoint(PointView * const &_pointView, const bo
     posYLabel->setText("Y : " + QString::number(pointView->getPoint()->getPosition().getY(), 'f', 1));
 }
 
+/// emits signal when a user clicks save after editing a point
 void CreatePointWidget::saveEditSelecPointBtnEvent(){
     qDebug() << "saveEditSelecPointBtnEvent called";
     emit pointSaved(groupBox->currentIndex(), posXLabel->text().right(posXLabel->text().length()-4).toDouble(), posYLabel->text().right(posYLabel->text().length()-4).toDouble(), nameEdit->text().simplified());
 }
 
+/// to check that the name given to a point is valid ( a point with the same name does not already exist, it is not empty and does not contain ';' '{' or '}'
 int CreatePointWidget::checkPointName(void){
     nameEdit->setText(formatName(nameEdit->text()));
-    qDebug() << nameEdit->text();
     if(nameEdit->text().simplified().contains(QRegularExpression("[;{}]"))){
-        qDebug() << " I contain a ; or }";
         saveBtn->setToolTip("The name of your point cannot contain the characters \";\" and }");
         saveBtn->setEnabled(false);
         emit invalidName(TEXT_COLOR_WARNING, Error::ContainsSemicolon);
         return 0;
     }
-    qDebug() << "checkPointName called" << nameEdit->text();
     if(!nameEdit->text().simplified().compare("")){
         qDebug() << " I am empty ";
         /// cannot add a point with no name
@@ -152,6 +151,7 @@ int CreatePointWidget::checkPointName(void){
     return 3;
 }
 
+/// shows the widgets related to the choice of a group and the saving of a point
 void CreatePointWidget::showGroupLayout(void) const {
     /// we disable so that two points cannot be named tmpPoint
     saveBtn->setEnabled(false);
@@ -167,6 +167,7 @@ void CreatePointWidget::showGroupLayout(void) const {
     nameEdit->setFocusPolicy(Qt::FocusPolicy::StrongFocus);
 }
 
+/// hides everything that's related to the creation of a point
 void CreatePointWidget::hideGroupLayout(void) const {
     /// resets the name to tmpPoint if we cancel the creation of the point
     nameEdit->setText(pointView->getPoint()->getName());
@@ -183,6 +184,7 @@ void CreatePointWidget::hideGroupLayout(void) const {
     nameEdit->setFocusPolicy(Qt::FocusPolicy::NoFocus);
 }
 
+/// updates the group box when a new group is created
 void CreatePointWidget::updateGroupBox(const Points& _points){
     groupBox->clear();
     /// we place the default group first
