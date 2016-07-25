@@ -11,7 +11,6 @@ tcp::acceptor m_acceptor(io_service);
 void sendRobotPos(const std::string& robot_string){
 	try {
 		boost::system::error_code ignored_error;
-		//std::cout << robot_string << std::endl;
 		boost::asio::write(socket_robot, boost::asio::buffer(robot_string), boost::asio::transfer_all(), ignored_error);
 	} catch (std::exception& e) {
 		std::cerr << e.what() << std::endl;
@@ -20,7 +19,6 @@ void sendRobotPos(const std::string& robot_string){
 
 void getRobotPos(const geometry_msgs::Pose::ConstPtr& msg){
 	std::string robot_string = std::to_string(msg->position.x) + " " + std::to_string(msg->position.y) + " " + std::to_string(msg->orientation.z) + " ";
-	//std::cout << "(Robot Pos) robot :" << robot_string << std::endl;
 	sendRobotPos(robot_string);
 	sleep(0.5);
 }

@@ -37,19 +37,28 @@ BottomLayout::BottomLayout(QMainWindow* parent, const std::shared_ptr<Robots> &r
 
     pathScroll = new QScrollArea(this);
     pathScroll->setWidgetResizable(true);
-    pathScroll->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    /*pathScroll->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     pathScroll->setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);
     pathScroll->setAlignment(Qt::AlignTop);
-    pathScroll->setFrameShape(QFrame::NoFrame);
-    QWidget* widgetPath = new QWidget(pathScroll);
-    widgetPath->setContentsMargins(0, 0, 0, 0);
+    pathScroll->setFrameShape(QFrame::NoFrame);*/
 
     /// The layout of the four columns
+    QWidget* widgetName = new QWidget();
+    QWidget* widgetPath = new QWidget(pathScroll);
+    QWidget* widgetPlay = new QWidget();
+    QWidget* widgetViewPath = new QWidget();
+    QWidget* widgetStop = new QWidget();
+
     columnName = new QVBoxLayout();
     columnPath = new QVBoxLayout();
     columnPlay = new QVBoxLayout();
     columnViewPath = new QVBoxLayout();
     columnStop = new QVBoxLayout();
+
+    widgetName->setLayout(columnName);
+    widgetPlay->setLayout(columnPlay);
+    widgetViewPath->setLayout(columnViewPath);
+    widgetStop->setLayout(columnStop);
 
     /// Creation of the first collumn, with the button containing the name of the robots
     for(int i = 0; i < robotsVector.size(); i++){
@@ -61,7 +70,9 @@ BottomLayout::BottomLayout(QMainWindow* parent, const std::shared_ptr<Robots> &r
         robotBtnGroup->addButton(robotBtn, i);
         columnName->addWidget(robotBtn);
     }
-    scrollLayout->addLayout(columnName);
+    //scrollLayout->addLayout(columnName);
+    scrollLayout->addWidget(widgetName);
+
     /// Creation of the second collumn, with the labels containing the path of the robot
     for(int i = 0; i < robotsVector.size(); i++){
         std::vector<std::shared_ptr<PathPoint>> path = robotsVector.at(i)->getRobot()->getPath();
@@ -79,6 +90,7 @@ BottomLayout::BottomLayout(QMainWindow* parent, const std::shared_ptr<Robots> &r
         //pathLabel->setMinimumWidth(1);
         columnPath->addWidget(pathLabel);
     }
+
     widgetPath->setLayout(columnPath);
     pathScroll->setWidget(widgetPath);
     scrollLayout->addWidget(pathScroll);
@@ -96,7 +108,8 @@ BottomLayout::BottomLayout(QMainWindow* parent, const std::shared_ptr<Robots> &r
         viewPathRobotBtnGroup->addButton(viewPathRobotBtn, i);
         columnViewPath->addWidget(viewPathRobotBtn);
     }
-    scrollLayout->addLayout(columnViewPath);
+    //scrollLayout->addLayout(columnViewPath);
+    scrollLayout->addWidget(widgetViewPath);
 
     /// Creation of the fourth collumn, with the button to play/pause the robot
     for(int i = 0; i < robotsVector.size(); i++){
@@ -109,7 +122,8 @@ BottomLayout::BottomLayout(QMainWindow* parent, const std::shared_ptr<Robots> &r
         playRobotBtnGroup->addButton(playRobotBtn, i);
         columnPlay->addWidget(playRobotBtn);
     }
-    scrollLayout->addLayout(columnPlay);
+    //scrollLayout->addLayout(columnPlay);
+    scrollLayout->addWidget(widgetPlay);
 
     /// Creation of the fifth column, with the button to stop and delete the path of the robot
     for(int i = 0; i < robotsVector.size(); i++){
@@ -123,6 +137,7 @@ BottomLayout::BottomLayout(QMainWindow* parent, const std::shared_ptr<Robots> &r
         columnStop->addWidget(stopRobotBtn);
     }
     scrollLayout->addLayout(columnStop);
+    scrollLayout->addWidget(widgetStop);
 
     /// We connect the groups of buttons to their respective slot in the main window
     connect(robotBtnGroup, SIGNAL(buttonClicked(QAbstractButton*)), parent, SLOT(setSelectedRobotNoParent(QAbstractButton*)));
@@ -137,7 +152,22 @@ BottomLayout::BottomLayout(QMainWindow* parent, const std::shared_ptr<Robots> &r
     scrollArea->setWidget(widget);
 
     layout->addWidget(scrollArea);
-    //layout->setContentsMargins(0, 0, 0, 0);
+
+
+
+
+    setStyleSheet("QWidget { border: 1px solid green; margin-top : 0px; }"
+                  "QScrollArea { border: 1px solid #00BFFF; margin-top : 0px; }");
+    widgetName->setStyleSheet("QWidget { border: 1px solid blue; margin-top : 0px; }");
+    widgetPlay->setStyleSheet("QWidget { border: 1px solid violet; margin-top : 0px; }");
+    widgetViewPath->setStyleSheet("QWidget { border: 1px solid yellow; margin-top : 0px; }");
+    widgetStop->setStyleSheet("QWidget { border: 1px solid orange; margin-top : 0px; }");
+
+    //widgetPath->setContentsMargins(0, 0, 0, 0);
+    pathScroll->setStyleSheet("QWidget { border: 1px solid #FF69B4; margin-top : 0px; }"
+                              "QScrollArea { border: 1px solid #4B0082; margin-top : 0px; }");
+
+
 }
 
 void BottomLayout::deletePath(const int index){

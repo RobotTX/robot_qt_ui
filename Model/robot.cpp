@@ -106,7 +106,7 @@ void Robot::sendNewMap(QByteArray cmd) {
 
 void Robot::doneSendingNewMapSlot(){
     qDebug() << "(Robot) doneSendingNewMapSlot called";
-    sendingMap = false;
+    //sendingMap = false;
 }
 
 QString Robot::waitAnswer() {
@@ -119,19 +119,19 @@ void Robot::resetCommandAnswer() {
 }
 
 void Robot::stopThreads() {
-    /*if (cmdThread != 0 && cmdThread->isRunning() ) {
+    /*if (cmdThread != 0 && cmdThread->isRunning()){
         cmdThread->requestInterruption();
         cmdThread->wait();
     }
-    if (robotThread != NULL && robotThread->isRunning() ) {
+    if (robotThread != NULL && robotThread->isRunning()){
         robotThread->requestInterruption();
         robotThread->wait();
     }
-    if (metadataThread != NULL && metadataThread->isRunning() ) {
+    if (metadataThread != NULL && metadataThread->isRunning()){
         metadataThread->requestInterruption();
         metadataThread->wait();
     }
-    if (newMapThread != NULL && newMapThread->isRunning() ) {
+    if (newMapThread != NULL && newMapThread->isRunning()){
         newMapThread->requestInterruption();
         newMapThread->wait();
     }*/

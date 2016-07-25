@@ -37,6 +37,7 @@ void getMap(const nav_msgs::OccupancyGrid::ConstPtr& msg){
 	int map_size = msg->info.width * msg->info.height;
 	std::cout << "(Map) Just received a new map" << std::endl;
 
+	/// We want to send the last map as % so we can save it and the software can send it to the other robots
 	if(lastMap){
 		std::cout << "(Map) Sending the last map" << std::endl;
 		std::vector<int8_t> my_map;
@@ -50,6 +51,7 @@ void getMap(const nav_msgs::OccupancyGrid::ConstPtr& msg){
 		lastMap = false;
 
 	} else {
+		/// The map we send to the software for display
 		std::vector<uint8_t> my_map;
 		int last = 205;
 		uint32_t count = 0;
@@ -124,7 +126,6 @@ bool stopMap(gobot_software::Port::Request &req,
 	std::cout << "(Map) Waiting to send the last map" << std::endl;
 	lastMap = true;
 	while(ros::ok() && lastMap){
-		//std::this_thread::sleep_for(std::chrono::milliseconds(250));
 		ros::spinOnce();
 	}
 

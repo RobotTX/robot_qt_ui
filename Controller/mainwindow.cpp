@@ -234,7 +234,7 @@ void MainWindow::initializeRobots(){
 
 /*
     updateRobotsThread = new UpdateRobotsThread(PORT_ROBOT_UPDATE);
-    connect(updateRobotsThread, SIGNAL(robotIsAlive(QString, QString, QString)), this, SLOT(robotIsAliveSlot(QString, QString, QString)));
+    connect(updateRobotsThread, SIGNAL(robotIsAlive(QString, QString, QString, QString)), this, SLOT(robotIsAliveSlot(QString, QString, QString, QString)));
     updateRobotsThread->start();
     updateRobotsThread->moveToThread(updateRobotsThread);
 */
@@ -1333,7 +1333,7 @@ void MainWindow::goHomeBtnEvent(){
     }
 }
 
-void MainWindow::robotIsAliveSlot(QString hostname, QString ip, QString mapId){
+void MainWindow::robotIsAliveSlot(QString hostname, QString ip, QString mapId, QString ssid){
     QRegExp rx("[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}");
     rx.indexIn(ip);
     ip = rx.cap(0);
@@ -1347,7 +1347,7 @@ void MainWindow::robotIsAliveSlot(QString hostname, QString ip, QString mapId){
         qDebug() << "Robot" << hostname << "at ip" << ip << "just connected and has the map id :" << mapId;
 
         std::shared_ptr<Robot> robot(new Robot(hostname, ip, this));
-        robot->setWifi("Swaghetti Yolognaise");
+        robot->setWifi(ssid);
         rv = new RobotView(robot, mapPixmapItem);
         connect(rv, SIGNAL(setSelectedSignal(RobotView*)), this, SLOT(setSelectedRobot(RobotView*)));
         rv->setPosition(robots->getRobotsVector().count()*100+100, robots->getRobotsVector().count()*100+100);
