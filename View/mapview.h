@@ -53,6 +53,8 @@ public:
 
     void changeOrderPathPoints(const int start, const int row);
 
+    void addPermanentPointToPath(PointView* point);
+
 signals:
     void pointLeftClicked(PointView*, bool);
     void addPathPointMapView(Point*);

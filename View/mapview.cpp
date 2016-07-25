@@ -266,21 +266,21 @@ void MapView::setState(const GraphicItemState _state, const bool clear){
  void MapView::addPointEditPath(Point pt)
  {
 
-    qDebug() << "mapview addPointEditPath";
-       PointView* newPointView = new PointView(std::make_shared<Point>(pt), this);
-      connect(newPointView, SIGNAL(addPointPath(PointView*)), mainWindow, SLOT(addPathPoint(PointView*)));
-      connect(newPointView, SIGNAL(moveTmpEditPathPoint()), mainWindow, SLOT(moveTmpEditPathPointSlot()));
-      connect(newPointView, SIGNAL(pathPointChanged(double, double, PointView*)), mainWindow, SLOT(updatePathPoint(double, double, PointView*)));
+    qDebug() << "mapview addPointEditPath point" << pt.getName();
+    PointView* newPointView = new PointView(std::make_shared<Point>(pt), this);
+    connect(newPointView, SIGNAL(addPointPath(PointView*)), mainWindow, SLOT(addPathPoint(PointView*)));
+    connect(newPointView, SIGNAL(moveTmpEditPathPoint()), mainWindow, SLOT(moveTmpEditPathPointSlot()));
+    connect(newPointView, SIGNAL(pathPointChanged(double, double, PointView*)), mainWindow, SLOT(updatePathPoint(double, double, PointView*)));
 
-      newPointView->setState(GraphicItemState::CREATING_PATH);
+    newPointView->setState(GraphicItemState::CREATING_PATH);
 
-      newPointView->setParentItem(this);
-      pathCreationPoints.push_back(newPointView);
+    newPointView->setParentItem(this);
+    pathCreationPoints.push_back(newPointView);
 
-      connect(newPointView, SIGNAL(hoverEventSignal(PointView::PixmapType, PointView*)), this, SLOT(updatePixmapHover(PointView::PixmapType, PointView*)));
-       emit addPathPointMapView(&(*(newPointView->getPoint())));
-
+    connect(newPointView, SIGNAL(hoverEventSignal(PointView::PixmapType, PointView*)), this, SLOT(updatePixmapHover(PointView::PixmapType, PointView*)));
+    emit addPathPointMapView(&(*(newPointView->getPoint())));
  }
+
  void MapView::deletePointView(Point pt)
  {
      for(int j = 0; j < pathCreationPoints.size(); j++){
@@ -306,4 +306,11 @@ void MapView::setState(const GraphicItemState _state, const bool clear){
              pathCreationPoints.insert(row, pv);
          }
      }
+ }
+
+ /// called when a permanent point is added to the path
+ void MapView::addPermanentPointToPath(PointView *pointV){
+    qDebug() << "before addng new point" << pathCreationPoints.size();
+    pathCreationPoints.push_back(pointV);
+    qDebug() << "after adding new point" << pathCreationPoints.size();
  }

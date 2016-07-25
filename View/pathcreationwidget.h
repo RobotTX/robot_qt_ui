@@ -232,6 +232,9 @@ signals:
 
     /// to notify the path painter that the order of the points has changed
     void orderPointsChanged(int, int);
+
+    /// to notify the mapView that a permanent point has been added to a path
+    void addMapPathPoint(Point*);
 private:
     QVBoxLayout* layout;
 

@@ -68,10 +68,10 @@ void PathPainter::refresh(bool save){
                     endPointView = pointView;
 
                // qDebug() << pointView->getType();
-                qDebug() << "avant" ;
+                //qDebug() << "avant" ;
 
                 if((pointView->getType() != PointView::PixmapType::HOVER) || (mapItem->getState() != GraphicItemState::EDITING) || save){
-                    qDebug() << " oops i changed in refresh";
+                    //qDebug() << " oops i changed in refresh";
                     setPointViewPixmap(i, pointView);
                 }
             }
@@ -123,7 +123,7 @@ void PathPainter::setPointViewPixmap(const int id, PointView* const pointView){
 }
 
 void PathPainter::clearPointViews(bool save){
-    qDebug() << "pathpainter: clear point views";
+    //dqDebug() << "pathpainter: clear point views";
     pointViews->setNormalPixmaps();
 
     QVector<PointView*> pointViewVector = mapItem->getPathCreationPoints();

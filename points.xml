@@ -21,10 +21,10 @@
             <displayed>0</displayed>
         </point>
         <point>
-            <name>fafal</name>
-            <x>89.2</x>
-            <y>325</y>
-            <displayed>1</displayed>
+            <name>ok</name>
+            <x>192.7</x>
+            <y>315.8</y>
+            <displayed>0</displayed>
         </point>
     </group>
     <group>
@@ -58,8 +58,8 @@
         </point>
         <point>
             <name>A final point</name>
-            <x>116.2</x>
-            <y>298</y>
+            <x>150</x>
+            <y>225</y>
             <displayed>1</displayed>
         </point>
     </group>

@@ -88,7 +88,6 @@ PathCreationWidget::PathCreationWidget(QMainWindow* parent, const std::shared_pt
     connect(saveBtn, SIGNAL(clicked()), this, SLOT(saveNoExecPath()));
     connect(this, SIGNAL(pathSaved(bool)), parent, SLOT(pathSaved(bool)));
 
-
     /// The save button and play the path
     QPushButton* saveExecBtn = new QPushButton("Save and play Path", this);
     bottomLayout->addWidget(saveExecBtn);
@@ -98,7 +97,7 @@ PathCreationWidget::PathCreationWidget(QMainWindow* parent, const std::shared_pt
     hide();
 
     layout->setAlignment(Qt::AlignTop);
-    layout->setContentsMargins(0,0,0,0);
+    layout->setContentsMargins(0, 0, 0, 0);
 }
 
 void PathCreationWidget::addPathPoint(void){
@@ -165,6 +164,7 @@ void PathCreationWidget::addPathPoint(Point* point){
         initialisationPathPoint(pathPoint);
         pointList.push_back(*point);
         updatePointPainter();
+        emit addMapPathPoint(point);
         idPoint++;
     } else
         qDebug() << "This point is identical to the last one";
@@ -265,14 +265,24 @@ void PathCreationWidget::editPathPoint(){
     }
 
 */
-    state = CheckState::EDIT;
-    editItem(pathPointsList->currentItem());
-    if  ( pathPointsList->selectedItems().count()==0 )
-    {
-        actionButtons->getMinusButton()->setEnabled(false);
-        actionButtons->getEditButton()->setEnabled(false);
+    /// we edit the point only if the corresponding item is enabled which is the case if no other point is being edited
+    if(pathPointsList->itemWidget(pathPointsList->currentItem())->isEnabled()){
+        state = CheckState::EDIT;
+        editItem(pathPointsList->currentItem());
+        if  ( pathPointsList->selectedItems().count() == 0 )
+        {
+            actionButtons->getMinusButton()->setEnabled(false);
+            actionButtons->getEditButton()->setEnabled(false);
+        }
+        if(!((PathPointCreationWidget*) (pathPointsList->itemWidget(pathPointsList->currentItem())))->getPoint().isPermanent()){
+            for(int i = 0; i < pathPointsList->count(); i++){
+                if(!pathPointsList->item(i)->isSelected()){
+                    qDebug() << "yo";
+                    ((PathPointCreationWidget*) (pathPointsList->itemWidget(pathPointsList->item(i))))->setEnabled(false);
+                }
+            }
+        }
     }
-
 }
 
 void PathCreationWidget::saveNoExecPath(void){
@@ -467,6 +477,7 @@ void PathCreationWidget::editItem(QListWidgetItem* item){
     } else {
         qDebug() << "Trying to edit a permanent point";
         clicked();
+        pathPointsList->setEnabled(true);
     }
 
     state = CheckState::NO_STATE;
@@ -530,6 +541,8 @@ void PathCreationWidget::applySavePathPoint(const float posX, const float posY, 
 
     updatePointPainter();
     editedPathPointCreationWidget = NULL;
+    for(int i = 0; i < pathPointsList->count(); i++)
+        pathPointsList->itemWidget(pathPointsList->item(i))->setEnabled(true);
 }
 
 void PathCreationWidget::moveEditPathPoint(float posX, float posY){
