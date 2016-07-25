@@ -19,9 +19,24 @@
 
 using boost::asio::ip::tcp;
 
+/**
+ * Send the metadata to the software
+ */
 void sendMetaData(const std::string& metadata_string);
+
+/**
+ * Called when metadata are published
+ */
 void getMetaData(const nav_msgs::MapMetaData::ConstPtr& msg);
+
+/**
+ * Service called to start the listening to the metadata topic and transfer to the software
+ */
 bool startMeta(gobot_software::Port::Request &req, gobot_software::Port::Response &res);
+
+/**
+ * Service called to stop the listening to the metadata topic and transfer to the software
+ */
 bool stopMeta(gobot_software::Port::Request &req, gobot_software::Port::Response &res);
 
 #endif

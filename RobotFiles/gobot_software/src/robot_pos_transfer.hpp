@@ -19,9 +19,24 @@
 
 using boost::asio::ip::tcp;
 
-void getRobotPos(const geometry_msgs::Pose::ConstPtr& msg);
+/**
+ * Send the robot position to the software
+ */
 void sendRobotPos(const std::string& robot_string);
+
+/**
+ * Called when robot position is published
+ */
+void getRobotPos(const geometry_msgs::Pose::ConstPtr& msg);
+
+/**
+ * Service called to start the listening to the robot pos topic and transfer to the software
+ */
 bool startRobotPos(gobot_software::Port::Request &req, gobot_software::Port::Response &res);
+
+/**
+ * Service called to stop the listening to the robot pos topic and transfer to the software
+ */
 bool stopRobotPos(gobot_software::Port::Request &req, gobot_software::Port::Response &res);
 
 #endif

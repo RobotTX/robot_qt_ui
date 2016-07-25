@@ -37,13 +37,13 @@ class PathPainter;
 #include "Model/point.h"
 
 
-//#define XML_PATH "/home/m-a/Documents/QtProject/gobot-software/points.xml"
-//#define ROBOTS_NAME_PATH "/home/m-a/Documents/QtProject/gobot-software/robotsName.dat"
-//#define MAP_PATH "/home/m-a/Documents/QtProject/gobot-software/realMap.dat"
+#define XML_PATH "/home/m-a/Documents/QtProject/gobot-software/points.xml"
+#define ROBOTS_NAME_PATH "/home/m-a/Documents/QtProject/gobot-software/robotsName.dat"
+#define MAP_PATH "/home/m-a/Documents/QtProject/gobot-software/realMap.dat"
 
-#define XML_PATH "/home/joan/Qt/QtProjects/gobot-software/points.xml"
+/*#define XML_PATH "/home/joan/Qt/QtProjects/gobot-software/points.xml"
 #define ROBOTS_NAME_PATH "/home/joan/Qt/QtProjects/gobot-software/robotsName.dat"
-#define MAP_PATH "/home/joan/Qt/QtProjects/gobot-software/realMap.dat"
+#define MAP_PATH "/home/joan/Qt/QtProjects/gobot-software/realMap.dat"*/
 
 //#define XML_PATH "/Users/fannylarradet/Desktop/GTRobots/gobot-software/points.xml"
 //#define ROBOTS_NAME_PATH "/Users/fannylarradet/Desktop/GTRobots/gobot-software/robotsName.dat"
@@ -192,7 +192,7 @@ private slots:
     void hideHome(void);
     void backEvent();
     void updateView();
-    void robotIsAliveSlot(QString hostname, QString ip, QString mapId);
+    void robotIsAliveSlot(QString hostname, QString ip, QString mapId, QString ssid);
     void robotIsDeadSlot(QString hostname, QString ip);
     void selectViewRobot();
     void sendNewMapToRobots(QString ipAddress);

@@ -9,12 +9,11 @@ tcp::acceptor m_acceptor(io_service);
 
 
 void sendMetaData(const std::string& metadata_string){
-	//std::cout << "(Map transfer) metadata :" << std::endl;
 	try {
 		boost::system::error_code ignored_error;
 		boost::asio::write(socket_meta, boost::asio::buffer(metadata_string, metadata_string.length()), boost::asio::transfer_all(), ignored_error);
 	} catch (std::exception& e) {
-		std::cerr << e.what() << std::endl;
+		std::cerr << "(Map Metadata) " << e.what() << std::endl;
 	}
 }
 

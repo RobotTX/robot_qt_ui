@@ -8,41 +8,51 @@ import os
 from socket import error as socket_error
 import time 
 from std_msgs.msg import String
+import subprocess
 
-file_server="/home/ubuntu/computer_software/IP/serverIP.txt"
-file_IPs="/home/ubuntu/computer_software/IP/isAlive.txt"
-ping_script = "sh /home/ubuntu/computer_software/IP/ping.sh"
-file_hostname = "/home/ubuntu/computer_software/Robot_Infos/name.txt"
-file_map_id = "/home/ubuntu/computer_software/Robot_Infos/mapId.txt"
+computer_software = "/home/ubuntu/computer_software/"
+file_server = computer_software + "IP/serverIP.txt"
+file_IPs = computer_software + "IP/isAlive.txt"
+ping_script = "sh " + computer_software + "IP/ping.sh"
+file_hostname = computer_software + "Robot_Infos/name.txt"
+file_map_id = computer_software + "Robot_Infos/mapId.txt"
 
 def isServer(IP) :
-	s=socket.socket()
-	host= IP
-	port = 6000
-	find = False
-	try : 
-		s.setsockopt(socket.SOL_SOCKET,socket.SO_REUSEADDR,1)
-		s.settimeout(1)
-		s.connect((host,port))
-		res= s.recv(1024)
-		if res == "OK" :
-			find = True
-			file = open(file_hostname)
-			hostname = file.readline()
-			hostname = hostname.split('\n')[0]
-			if hostname == "" :
-				hostname = "Default Name"
-			file_id = open(file_map_id)
-			map_id = file_id.readline()
-			map_id = map_id.split('\n')[0]
-			if map_id == "" :
-				map_id = "0"
-			toSend = "%s\"%s" % (hostname, map_id)
-			s.send(toSend)
-	except : 
-		find=False
-	return find
-	s.close
+    s=socket.socket()
+    host= IP
+    port = 6000
+    find = False
+    try : 
+        s.setsockopt(socket.SOL_SOCKET,socket.SO_REUSEADDR,1)
+        s.settimeout(1)
+        s.connect((host,port))
+        res= s.recv(1024)
+        if res == "OK" :
+            find = True
+            # Get the hostname of the robot
+            file = open(file_hostname)
+            hostname = file.readline()
+            hostname = hostname.split('\n')[0]
+            if hostname == "" :
+                hostname = "Default Name"
+
+            # Get the map id of the map we use
+            file_id = open(file_map_id)
+            map_id = file_id.readline()
+            map_id = map_id.split('\n')[0]
+            if map_id == "" :
+                map_id = "0"
+
+            # Get the SSID of the robot
+            ssid = subprocess.Popen(["iwgetid", "-r"], stdout=subprocess.PIPE).communicate()[0]
+
+            # Send everything to the software
+            toSend = "%s\"%s\"%s" % (hostname, map_id, ssid)
+            s.send(toSend)
+    except : 
+        find=False
+    return find
+    s.close
 
 
 
