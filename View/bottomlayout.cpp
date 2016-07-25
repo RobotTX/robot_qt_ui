@@ -39,10 +39,11 @@ BottomLayout::BottomLayout(QMainWindow* parent, const std::shared_ptr<Robots> &r
     /// to scroll a path when there are two many points to display
     pathScroll = new QScrollArea(this);
     pathScroll->setWidgetResizable(true);
-    /*pathScroll->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    pathScroll->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     pathScroll->setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);
     pathScroll->setAlignment(Qt::AlignTop);
-    pathScroll->setFrameShape(QFrame::NoFrame);*/
+    pathScroll->setFrameShape(QFrame::NoFrame);
+
 
     /// The layout of the four columns
     QWidget* widgetName = new QWidget();
@@ -50,6 +51,9 @@ BottomLayout::BottomLayout(QMainWindow* parent, const std::shared_ptr<Robots> &r
     QWidget* widgetPlay = new QWidget();
     QWidget* widgetViewPath = new QWidget();
     QWidget* widgetStop = new QWidget();
+
+    widgetPath->setContentsMargins(0, 0, 0, 0);
+
 
     columnName = new QVBoxLayout();
     columnPath = new QVBoxLayout();
@@ -157,17 +161,15 @@ BottomLayout::BottomLayout(QMainWindow* parent, const std::shared_ptr<Robots> &r
 
 
 
-    setStyleSheet("QWidget { border: 1px solid green; margin-top : 0px; }"
+    /*setStyleSheet("QWidget { border: 1px solid green; margin-top : 0px; }"
                   "QScrollArea { border: 1px solid #00BFFF; margin-top : 0px; }");
     widgetName->setStyleSheet("QWidget { border: 1px solid blue; margin-top : 0px; }");
     widgetPlay->setStyleSheet("QWidget { border: 1px solid violet; margin-top : 0px; }");
     widgetViewPath->setStyleSheet("QWidget { border: 1px solid yellow; margin-top : 0px; }");
     widgetStop->setStyleSheet("QWidget { border: 1px solid orange; margin-top : 0px; }");
 
-    //widgetPath->setContentsMargins(0, 0, 0, 0);
     pathScroll->setStyleSheet("QWidget { border: 1px solid #FF69B4; margin-top : 0px; }"
-                              "QScrollArea { border: 1px solid #4B0082; margin-top : 0px; }");
-
+                              "QScrollArea { border: 1px solid #4B0082; margin-top : 0px; }");*/
 
 }
 
