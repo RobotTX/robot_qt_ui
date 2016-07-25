@@ -34,6 +34,7 @@ class PathPainter;
 #include <QPair>
 #include "Model/origin.h"
 #include <QMessageBox>
+#include "Model/point.h"
 
 
 #define XML_PATH "/home/m-a/Documents/QtProject/gobot-software/points.xml"
@@ -141,7 +142,7 @@ private slots:
     void addPathPoint(Point* point);
     void addPathPoint(PointView* pointView);
     void displayPointsInGroup(void);
-    void updatePathPointToPainter(QVector<Point>& pointVector, bool save);
+    void updatePathPointToPainter(QVector<Point> &pointVector, bool save);
     void removePointFromInformationMenu(void);
     void displayPointMapEvent(void);
     void hidePathCreationWidget(void);
@@ -168,7 +169,8 @@ private slots:
     void setMessageCreationPath(QString message);
     void updatePathPoint(double x, double y, PointView* pointView = 0);
     void centerMap();
-    void setMessageCreationPoint(CreatePointWidget::Error error);
+    void setMessageCreationPoint(QString type, CreatePointWidget::Error error);
+    void updatePathPainterPoints(int start, int row);
 
     /**
      * @brief cancelEvent
@@ -177,7 +179,7 @@ private slots:
     void cancelEvent(void);
     void setMessageTop(const QString msgType, const QString msg);
     void setLastMessage(void) { setMessageTop(topLayout->getLastMessage().first, topLayout->getLastMessage().second); }
-    void setMessageCreationGroup(QString message);
+    void setMessageCreationGroup(QString type, QString message);
     void homeSelected(PointView* pointView, bool temporary);
     void homeEdited(PointView* pointView, bool temporary);
     void goHomeBtnEvent();

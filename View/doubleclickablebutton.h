@@ -16,8 +16,7 @@ public:
     DoubleClickableButton(const int _id, const QString string, QWidget *parent = 0);
 
 protected:
-    void mouseDoubleClickEvent(QMouseEvent *);
-    //void keyPressEvent(QKeyEvent* e);
+    void mouseDoubleClickEvent(QMouseEvent *event);
 
 signals:
     void doubleClick(int);

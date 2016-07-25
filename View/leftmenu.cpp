@@ -126,6 +126,9 @@ LeftMenu::LeftMenu(MainWindow* _parent, std::shared_ptr<Points> const& _points, 
     /// to enable the buttons
     connect(displaySelectedGroup->getPointButtonGroup()->getButtonGroup(), SIGNAL(buttonClicked(int)), this, SLOT(enableButtons(int)));
 
+    /// to check the name of a point being edited
+    connect(displaySelectedPoint, SIGNAL(invalidName(QString,CreatePointWidget::Error)), _parent, SLOT(setMessageCreationPoint(QString,CreatePointWidget::Error)));
+
     hide();
     leftLayout->setContentsMargins(0,0,0,0);
     setMaximumWidth(_parent->width()*4/10);

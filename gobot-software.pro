@@ -62,7 +62,6 @@ HEADERS += Controller/cmdrobotthread.h \
            View/topleftmenu.h \
            Model/origin.h \
            Controller/updaterobotsthread.h \
-           Controller/updaterobotsthread.h \
            View/customizedlineedit.h \
            View/createpointwidget.h \
            View/buttonmenu.h \

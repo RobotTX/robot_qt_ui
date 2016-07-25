@@ -15,6 +15,7 @@
 #include <QKeyEvent>
 #include "topleftmenu.h"
 #include "View/buttonmenu.h"
+#include "toplayout.h"
 
 
 
@@ -33,6 +34,7 @@ CreatePointWidget::CreatePointWidget(QMainWindow* _parent, PointsView* _points):
     nameEdit->setStyleSheet("* { background-color: rgba(255, 0, 0, 0); }");
     nameEdit->setAutoFillBackground(true);
     nameEdit->setFrame(false);
+    nameEdit->setAlignment(Qt::AlignCenter);
     layout->addWidget(nameEdit);
 
     posXLabel = new QLabel("X : ", this);
@@ -56,7 +58,6 @@ CreatePointWidget::CreatePointWidget(QMainWindow* _parent, PointsView* _points):
 
     /// to set the default group as default
     groupBox->setCurrentIndex(0);
-    groupBox->setItemIcon(0, QIcon(":/icons/eye.png"));
     groupBox->hide();
 
     groupLayout->addWidget(groupLabel);
@@ -90,7 +91,7 @@ CreatePointWidget::CreatePointWidget(QMainWindow* _parent, PointsView* _points):
     connect(cancelBtn, SIGNAL(clicked(bool)), this, SLOT(hideGroupLayout()));
 
     /// to display appropriate messages when a user attemps to create a point
-    connect(this, SIGNAL(invalidName(CreatePointWidget::Error)), _parent, SLOT(setMessageCreationPoint(CreatePointWidget::Error)));
+    connect(this, SIGNAL(invalidName(QString, CreatePointWidget::Error)), _parent, SLOT(setMessageCreationPoint(QString, CreatePointWidget::Error)));
 
     hide();
     setMaximumWidth(_parent->width()*4/10);
@@ -108,29 +109,28 @@ void CreatePointWidget::setSelectedPoint(PointView * const &_pointView, const bo
     posYLabel->setText("Y : " + QString::number(pointView->getPoint()->getPosition().getY(), 'f', 1));
 }
 
+/// emits signal when a user clicks save after editing a point
 void CreatePointWidget::saveEditSelecPointBtnEvent(){
     qDebug() << "saveEditSelecPointBtnEvent called";
     emit pointSaved(groupBox->currentIndex(), posXLabel->text().right(posXLabel->text().length()-4).toDouble(), posYLabel->text().right(posYLabel->text().length()-4).toDouble(), nameEdit->text().simplified());
 }
 
-void CreatePointWidget::checkPointName(void){
+/// to check that the name given to a point is valid ( a point with the same name does not already exist, it is not empty and does not contain ';' '{' or '}'
+int CreatePointWidget::checkPointName(void){
     nameEdit->setText(formatName(nameEdit->text()));
-    qDebug() << nameEdit->text();
     if(nameEdit->text().simplified().contains(QRegularExpression("[;{}]"))){
-        qDebug() << " I contain a ; or }";
         saveBtn->setToolTip("The name of your point cannot contain the characters \";\" and }");
         saveBtn->setEnabled(false);
-        emit invalidName(Error::ContainsSemicolon);
-        return;
+        emit invalidName(TEXT_COLOR_WARNING, Error::ContainsSemicolon);
+        return 0;
     }
-    qDebug() << "checkPointName called" << nameEdit->text();
     if(!nameEdit->text().simplified().compare("")){
         qDebug() << " I am empty ";
         /// cannot add a point with no name
         saveBtn->setToolTip("The name of your point cannot be empty");
         saveBtn->setEnabled(false);
-        emit invalidName(Error::EmptyName);
-        return;
+        emit invalidName(TEXT_COLOR_WARNING, Error::EmptyName);
+        return 1;
     }
     for(int i = 0; i < points->getPoints()->count(); i++){
         std::shared_ptr<Group> group = points->getPoints()->getGroups().at(i);
@@ -140,16 +140,18 @@ void CreatePointWidget::checkPointName(void){
                 saveBtn->setEnabled(false);
                 /// to explain the user why he cannot add its point as it is
                 saveBtn->setToolTip("A point with this name already exists, please choose another name for your point");
-                emit invalidName(Error::AlreadyExists);
-                return;
+                emit invalidName(TEXT_COLOR_WARNING, Error::AlreadyExists);
+                return 2;
             }
         }
     }
     saveBtn->setToolTip("");
     saveBtn->setEnabled(true);
-    emit invalidName(Error::NoError);
+    emit invalidName(TEXT_COLOR_INFO, Error::NoError);
+    return 3;
 }
 
+/// shows the widgets related to the choice of a group and the saving of a point
 void CreatePointWidget::showGroupLayout(void) const {
     /// we disable so that two points cannot be named tmpPoint
     saveBtn->setEnabled(false);
@@ -165,6 +167,7 @@ void CreatePointWidget::showGroupLayout(void) const {
     nameEdit->setFocusPolicy(Qt::FocusPolicy::StrongFocus);
 }
 
+/// hides everything that's related to the creation of a point
 void CreatePointWidget::hideGroupLayout(void) const {
     /// resets the name to tmpPoint if we cancel the creation of the point
     nameEdit->setText(pointView->getPoint()->getName());
@@ -181,6 +184,7 @@ void CreatePointWidget::hideGroupLayout(void) const {
     nameEdit->setFocusPolicy(Qt::FocusPolicy::NoFocus);
 }
 
+/// updates the group box when a new group is created
 void CreatePointWidget::updateGroupBox(const Points& _points){
     groupBox->clear();
     /// we place the default group first
@@ -190,14 +194,28 @@ void CreatePointWidget::updateGroupBox(const Points& _points){
     }
     /// to set the default group as default
     groupBox->setCurrentIndex(0);
-    groupBox->setItemIcon(0, QIcon(":/icons/eye.png"));
 }
 
 void CreatePointWidget::keyPressEvent(QKeyEvent* event){
     /// this is the enter key
     if(!event->text().compare("\r")){
-        emit pointSaved(groupBox->currentIndex(), posXLabel->text().right(posXLabel->text().length()-4).toDouble(), posYLabel->text().right(posYLabel->text().length()-4).toDouble(), nameEdit->text().simplified());
-        qDebug() << "enter pressed";
+        switch(checkPointName()){
+        case 0:
+            emit invalidName(TEXT_COLOR_DANGER, Error::ContainsSemicolon);
+            break;
+        case 1:
+            emit invalidName(TEXT_COLOR_DANGER, Error::EmptyName);
+            break;
+        case 2:
+            emit invalidName(TEXT_COLOR_DANGER, Error::AlreadyExists);
+            break;
+        case 3:
+            emit pointSaved(groupBox->currentIndex(), posXLabel->text().right(posXLabel->text().length()-4).toDouble(), posYLabel->text().right(posYLabel->text().length()-4).toDouble(), nameEdit->text().simplified());
+            break;
+        default:
+            qDebug() << "if you got here it's probably that u forgot to implement the behavior for one or more error codes";
+            break;
+        }
     }
 }
 
@@ -217,4 +235,11 @@ QString CreatePointWidget::formatName(const QString name) const {
         }
     }
     return ret;
+}
+
+void CreatePointWidget::showEvent(QShowEvent* event){
+    Q_UNUSED(event)
+    cancelBtn->hide();
+    saveBtn->hide();
+    show();
 }

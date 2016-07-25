@@ -71,9 +71,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
     /**************************************************************/
 
+
     robots = std::shared_ptr<Robots>(new Robots());
     scene = new QGraphicsScene(this);
-    qDebug() << "scene rec with no item" << scene->sceneRect();
 
     graphicsView = new CustomQGraphicsView(scene, this);
 
@@ -90,7 +90,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     connect(mapPixmapItem, SIGNAL(addPathPointMapView(Point*)), this, SLOT(addPathPoint(Point*)));
     connect(mapPixmapItem, SIGNAL(homeSelected(PointView*, bool)), this, SLOT(homeSelected(PointView*, bool)));
     connect(mapPixmapItem, SIGNAL(homeEdited(PointView*, bool)), this, SLOT(homeEdited(PointView*, bool)));
-    qDebug() << "center" << map->getCenter();
 
     /// centers the map
     centerMap();
@@ -103,20 +102,18 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
     initializePoints();
 
+
     mapPixmapItem->setPermanentPoints(pointViews);
 
     pathPainter = new PathPainter(mapPixmapItem, pointViews);
     initializeRobots();
 
     scene->addItem(mapPixmapItem);
-    qDebug() << "scene rec" << scene->sceneRect();
-    qDebug() << "map" << mapPixmapItem->boundingRect();
-    qDebug() << "map rec" << map->getRect();
 
     graphicsView->scale(std::max(graphicsView->parentWidget()->width()/scene->width(), graphicsView->parentWidget()->height()/scene->height()),
                         std::max(graphicsView->parentWidget()->width()/scene->width(), graphicsView->parentWidget()->height()/scene->height()));
 
-    // hide the scroll bars
+    /// hides the scroll bars
     graphicsView->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     graphicsView->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     graphicsView->setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding));
@@ -127,7 +124,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     initializeLeftMenu();
     bottom->addWidget(leftMenu);
     //mainLayout->setContentsMargins(0,0,0,0);
-
 
     rightLayout = new QVBoxLayout();
     bottom->addLayout(rightLayout);
@@ -176,7 +172,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     connect(pointsLeftWidget, SIGNAL(modifiedGroupAfterClick(QString)), this, SLOT(modifyGroupAfterClick(QString)));
 
     /// to know what message to display when a user is creating a group
-    connect(pointsLeftWidget, SIGNAL(messageCreationGroup(QString)), this, SLOT(setMessageCreationGroup(QString)));
+    connect(pointsLeftWidget, SIGNAL(messageCreationGroup(QString, QString)), this, SLOT(setMessageCreationGroup(QString, QString)));
 
 
     /// to know what message to display when a user is creating a path
@@ -188,12 +184,16 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     /// delete a point in the map when the temporary point is deleted in the path creation
     connect(pathCreationWidget, SIGNAL(deletePointView(Point)), mapPixmapItem, SLOT(deletePointView(Point)));
 
+    /// to notify the pathpainter that the order of the points has changed
+    connect(pathCreationWidget, SIGNAL(orderPointsChanged(int, int)), this, SLOT(updatePathPainterPoints(int, int)));
 
     mainLayout->addLayout(bottom);
 
     setCentralWidget(mainWidget);
 
+    /// to navigate with the tab key
     setTabOrder(leftMenu->getReturnButton(), pointsLeftWidget->getActionButtons()->getPlusButton());
+
 }
 
 MainWindow::~MainWindow(){
@@ -210,7 +210,6 @@ MainWindow::~MainWindow(){
         mapThread->wait();
     }
 }
-
 
 /**********************************************************************************************************************************/
 
@@ -616,7 +615,7 @@ void MainWindow::addPathSelecRobotBtnEvent(){
         for(size_t i = 0; i < group->getPointViews().size(); i++){
             PointView* pointView = group->getPointViews().at(i);
             if(!pointView->getPoint()->isDisplayed()){
-                qDebug() << pointView->getPoint()->getName();
+                //qDebug() << pointView->getPoint()->getName();
                 pointViewsToDisplay.push_back(pointView);
                 pointView->show();
             }
@@ -1477,16 +1476,26 @@ void MainWindow::setMessageCreationPath(QString message){
 void MainWindow::updatePathPoint(double x, double y, PointView* pointView){
     Q_UNUSED(pointView)
     qDebug() << "updatepathpoint called";
+
+    qDebug() << "mapPixmap path points";
+    for(int i = 0; i < mapPixmapItem->getPathCreationPoints().size(); i++)
+        qDebug() << mapPixmapItem->getPathCreationPoints().at(i)->getPoint()->getPosition().getX() << mapPixmapItem->getPathCreationPoints().at(i)->getPoint()->getPosition().getY();
+
+
     for(int i = 0; i < mapPixmapItem->getPathCreationPoints().count(); i++){
         PointView* pv = mapPixmapItem->getPathCreationPoints().at(i);
         if(pv == 0)
             qDebug() << "no pointview found to update";
         else {
             if(pv->getPoint()->comparePos(
+
                         ((PathPointCreationWidget*) pathCreationWidget->getPathPointList()->itemWidget(pathCreationWidget->getPathPointList()->currentItem()))->getPoint().getPosition())){
                 pv->getPoint()->setPosition(x, y);
                 pv->setPos(x, y);
                 ((PathPointCreationWidget*) pathCreationWidget->getPathPointList()->itemWidget(pathCreationWidget->getPathPointList()->currentItem()))->setPos(x, y);
+                qDebug() << "real path points";
+                for(int i = 0; i < pathCreationWidget->getPointList().size(); i++)
+                    qDebug() << pathCreationWidget->getPointList().at(i).getPosition().getX() << pathCreationWidget->getPointList().at(i).getPosition().getY();
                 qDebug() << "name" << pv->getPoint()->getName() << "index" << i;
                 pathPainter->updatePath(mapPixmapItem->getPathCreationPoints());
                 break;
@@ -1494,17 +1503,13 @@ void MainWindow::updatePathPoint(double x, double y, PointView* pointView){
         }
     }
     if(map->getMapImage().pixelColor(x, y).red() >= 254){
-        setMessageTop(TEXT_COLOR_INFO, "You can click either click \"Save changes\" to modify your path permanently or \"Cancel\" to keep the original path. If you want you can keep editing your point");
+        setMessageTop(TEXT_COLOR_INFO, "You can click either \"Save changes\" to modify your path permanently or \"Cancel\" to keep the original path. If you want you can keep editing your point");
         ((PathPointCreationWidget*) pathCreationWidget->getPathPointList()->itemWidget(pathCreationWidget->getPathPointList()->currentItem())) -> getSaveEditBtn()->setEnabled(true);
         for(int i = 0; i < mapPixmapItem->getPathCreationPoints().count(); i++){
             PointView* pv = mapPixmapItem->getPathCreationPoints().at(i);
             if(pv == 0)
                 qDebug() << "no pv";
-            else {/*
-                qDebug() << "pos pv" << pv->getPoint()->getPosition().getX() << pv->getPoint()->getPosition().getY() << " pathcr point" <<
-                            ((PathPointCreationWidget*) pathCreationWidget->getPathPointList()->itemWidget(pathCreationWidget->getPathPointList()->currentItem()))->getPoint().getPosition().getX() <<
-                            ((PathPointCreationWidget*) pathCreationWidget->getPathPointList()->itemWidget(pathCreationWidget->getPathPointList()->currentItem()))->getPoint().getPosition().getY();
-                */
+            else {
                 if(pv->getPoint()->comparePos(
                             ((PathPointCreationWidget*) pathCreationWidget->getPathPointList()->itemWidget(pathCreationWidget->getPathPointList()->currentItem()))->getPoint().getPosition())){
                     pv->getPoint()->setPosition(x, y);
@@ -3326,9 +3331,7 @@ void MainWindow::modifyGroupAfterClick(QString name){
         pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(pointsLeftWidget->getGroupButtonGroup()->getIndexModifyEdit())->show();
 
         topLayout->setLabelDelay(TEXT_COLOR_DANGER, "You cannot choose : " + name.simplified() + " as a new name for your group because another group already has this name",2500);
-
     }
-
 }
 
 void MainWindow::enableReturnAndCloseButtons(){
@@ -3337,28 +3340,37 @@ void MainWindow::enableReturnAndCloseButtons(){
     topLayout->setEnabled(true);
 }
 
-void MainWindow::setMessageCreationGroup(QString message){
-    setMessageTop(TEXT_COLOR_INFO, message);
+void MainWindow::setMessageCreationGroup(QString type, QString message){
+    setMessageTop(type, message);
 }
 
-void MainWindow::setMessageCreationPoint(CreatePointWidget::Error error){
+void MainWindow::setMessageCreationPoint(QString type, CreatePointWidget::Error error){
+    qDebug() << "setMessageCreation point called from mainwindow";
     switch(error){
     case CreatePointWidget::Error::NoError:
-        setMessageTop(TEXT_COLOR_INFO, "Click save or press ENTER to save this point");
+        setMessageTop(type, "Click save or press ENTER to save this point");
         break;
     case CreatePointWidget::Error::ContainsSemicolon:
-        setMessageTop(TEXT_COLOR_WARNING, "You cannot create a point that contains a semicolon or a curly bracket");
+        setMessageTop(type, "You cannot create a point that contains a semicolon or a curly bracket");
         break;
     case CreatePointWidget::Error::EmptyName:
-        setMessageTop(TEXT_COLOR_WARNING, "You cannot create a point with an empty name");
+        setMessageTop(type, "You cannot create a point with an empty name");
         break;
     case CreatePointWidget::Error::AlreadyExists:
-        setMessageTop(TEXT_COLOR_WARNING, "You cannot create a point with this name because a point with the same name already exists");
+        setMessageTop(type, "You cannot create a point with this name because a point with the same name already exists");
         break;
     default:
         qDebug() << "Should never be here, if you do get here however, check that you have not added a new error code and forgotten to add it in the cases afterwards";
         break;
     }
+}
+
+void MainWindow::updatePathPainterPoints(int start, int row){
+    qDebug()<< "updatepathpainterpoints called from mainwindow";
+
+    /// otherwise the mapView does not know the order of the points and the result is a wrong path while editing the points during the creation of a path
+    mapPixmapItem->changeOrderPathPoints(start, row);
+
 }
 
 
@@ -3515,12 +3527,14 @@ void MainWindow::setEnableAll(bool enable, GraphicItemState state, bool clearPat
 }
 
 void MainWindow::centerMap(){
-    qDebug() << "centerMap called la ";
+    //qDebug() << "centerMap called la ";
     //qDebug() << (map->getRect().topLeft().x() + map->getRect().bottomRight().x()) /2 << (map->getRect().topLeft().y() + map->getRect().bottomRight().y()) /2;
     scene->views().at(0)->centerOn(mapPixmapItem);
 
+
 /*
     qDebug() << mapPixmapItem->pos() << mapPixmapItem->mapFromScene(map->getCenter());
+
     while(graphicsView->getZoomCoeff()*1.3*1.3 < 4){
         graphicsView->scale(1.3, 1.3);
         graphicsView->setZoomCoeff(1.3*graphicsView->getZoomCoeff());

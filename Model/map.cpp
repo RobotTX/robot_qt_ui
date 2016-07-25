@@ -9,7 +9,6 @@ Map::Map(){
 }
 
 void Map::setMapFromFile(const QString fileName){
-    qDebug() << "Loaded image from file";
     /// Qt has is own function to create a QImage from a PGM file
     mapImage = QImage(fileName,"PGM");
     width = mapImage.width();
@@ -38,12 +37,10 @@ void Map::setRectangle(void){
         }
     }
     rect = QRect(QPoint(lefterBound, lowerBound), QPoint(righterBound, upperBound));
-    qDebug() << "just set map rectangle " << rect;
+    //qDebug() << "just set map rectangle " << rect;
     center = QPointF(rect.topLeft().x() + rect.bottomRight().x() /2,
             (rect.topLeft().y() + rect.bottomRight().y()) /2);
 }
-
-// this code is temporarily dead
 
 void Map::setMapFromArray(const QByteArray& mapArrays){
     qDebug() << "setMapFromArray called" << mapArrays.size();
@@ -70,9 +67,8 @@ void Map::setMapFromArray(const QByteArray& mapArrays){
 void Map::saveToFile(const QString fileName){
     /// Qt has is own function to save the QImage to a PGM file
     bool status = mapImage.save(fileName, "PGM");
-    if(status){
+    if(status)
         qDebug() << "Map saved";
-    } else {
+    else
         qDebug() << "Error : map not saved";
-    }
 }

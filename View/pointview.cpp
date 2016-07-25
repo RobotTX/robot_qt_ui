@@ -119,8 +119,7 @@ void PointView::setPixmap(const PixmapType pixType){
 
     lastPixmap = this->pixmap();
     if(type == PointView::HOVER && pixType != PointView::HOVER)
-        qDebug() << "no orange anymore";
-    type = pixType;
+        type = pixType;
     QPixmap pixmap;
     if(point->isHome()){
         switch(pixType){

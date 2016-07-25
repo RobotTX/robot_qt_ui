@@ -24,7 +24,7 @@ class PathWidget;
 class EditSelectedRobotWidget: public QWidget{
     Q_OBJECT
 public:
-    EditSelectedRobotWidget(QMainWindow* parent, std::shared_ptr<Robots> const robots);
+    EditSelectedRobotWidget(QMainWindow* const parent, std::shared_ptr<Robots> const robots);
 
     void setSelectedRobot(RobotView * const robotView, bool firstConnection = false);
     void setRobots(std::shared_ptr<Robots> const _robots){robots = _robots;}

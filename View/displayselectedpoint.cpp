@@ -14,17 +14,14 @@
 #include "Model/group.h"
 #include "Model/map.h"
 #include "View/buttonmenu.h"
-DisplaySelectedPoint::DisplaySelectedPoint(QMainWindow *_parent, std::shared_ptr<Points> const& _points, std::shared_ptr<Map> const& _map, PointView* _pointView, const Origin _origin):
-    QWidget(_parent), parent(_parent), origin(_origin), map(_map)
-{
-    parent = _parent;
-    points = _points;
-    pointView = _pointView;
+#include "toplayout.h"
 
+DisplaySelectedPoint::DisplaySelectedPoint(QMainWindow *const _parent, std::shared_ptr<Points> const& _points, std::shared_ptr<Map> const& _map, PointView* _pointView, const Origin _origin):
+    QWidget(_parent), map(_map), pointView(_pointView), parent(_parent), points(_points), origin(_origin)
+{
     layout = new QVBoxLayout(this);
 
     nameLayout = new QHBoxLayout();
-
 
     actionButtons = new TopLeftMenu(this);
     actionButtons->getPlusButton()->setEnabled(false);
@@ -44,7 +41,6 @@ DisplaySelectedPoint::DisplaySelectedPoint(QMainWindow *_parent, std::shared_ptr
     nameEdit->setAutoFillBackground(true);
     nameEdit->setFrame(false);
     nameEdit->setAlignment(Qt::AlignCenter);
-   // nameEdit->setStyleSheet("");
 
     nameLayout->addWidget(nameEdit);
 
@@ -70,7 +66,6 @@ DisplaySelectedPoint::DisplaySelectedPoint(QMainWindow *_parent, std::shared_ptr
 
     layout->addLayout(editLayout);
 
-
     homeWidget = new QWidget(this);
     QVBoxLayout* homeLayout = new QVBoxLayout(homeWidget);
 
@@ -90,17 +85,17 @@ DisplaySelectedPoint::DisplaySelectedPoint(QMainWindow *_parent, std::shared_ptr
     layout->addWidget(homeWidget);
 
     /// to check that a point that's being edited does not get a new name that's already used in the database
-
     connect(nameEdit, SIGNAL(textEdited(QString)), this, SLOT(checkPointName(QString)));
 
     setMaximumWidth(_parent->width()*4/10);
     setMinimumWidth(_parent->width()*4/10);
+
     layout->setContentsMargins(0,0,0,0);
     layout->setAlignment(Qt::AlignTop);
 
 }
 
-void DisplaySelectedPoint::displayPointInfo(void){
+void DisplaySelectedPoint::displayPointInfo(void) {
     if(pointView->getPoint()->isDisplayed())
         actionButtons->getMapButton()->setToolTip("Click to hide this point");
     else
@@ -118,8 +113,23 @@ void DisplaySelectedPoint::mousePressEvent(QEvent* /* unused */){
 void DisplaySelectedPoint::keyPressEvent(QKeyEvent* event){
     /// this is the enter key
     if(!event->text().compare("\r")){
-        emit nameChanged(pointView->getPoint()->getName(), nameEdit->text());
-        qDebug() << "enter pressed";
+        switch(checkPointName(nameEdit->text())){
+        case 0:
+            emit invalidName(TEXT_COLOR_DANGER, CreatePointWidget::Error::ContainsSemicolon);
+            break;
+        case 1:
+            emit invalidName(TEXT_COLOR_DANGER, CreatePointWidget::Error::EmptyName);
+            break;
+        case 2:
+            emit invalidName(TEXT_COLOR_DANGER, CreatePointWidget::Error::AlreadyExists);
+            break;
+        case 3:
+            emit nameChanged(pointView->getPoint()->getName(), nameEdit->text());
+            break;
+        default:
+            qDebug() << "if you got here, it's probably that you forgot to define the behavior for one or more error codes";
+            break;
+        }
     }
 }
 
@@ -167,30 +177,41 @@ void DisplaySelectedPoint::hideEvent(QHideEvent *event){
     QWidget::hideEvent(event);
 }
 
-void DisplaySelectedPoint::checkPointName(const QString name) const {
-    qDebug() << "checkPointName called" << name;
-    /// names are the same we don't do anything
-    if(!name.compare(pointView->getPoint()->getName(), Qt::CaseInsensitive))
-        return;
-    if(!name.compare("")){
+int DisplaySelectedPoint::checkPointName(QString name) {
+    nameEdit->setText(formatName(name));
+    qDebug() << "checking " << nameEdit->text();
+    if(nameEdit->text().simplified().contains(QRegularExpression("[;{}]"))){
+        qDebug() << " I contain a ; or }";
+        saveButton->setToolTip("The name of your point cannot contain the characters \";\" and }");
+        saveButton->setEnabled(false);
+        emit invalidName(TEXT_COLOR_WARNING, CreatePointWidget::Error::ContainsSemicolon);
+        return 0;
+    }
+    if(!nameEdit->text().simplified().compare("")){
+        qDebug() << " I am empty ";
+        /// cannot add a point with no name
         saveButton->setToolTip("The name of your point cannot be empty");
         saveButton->setEnabled(false);
-        return;
+        emit invalidName(TEXT_COLOR_WARNING, CreatePointWidget::Error::EmptyName);
+        return 1;
     }
-
     for(int i = 0; i < points->count(); i++){
         std::shared_ptr<Group> group = points->getGroups().at(i);
         for(int j = 0; j < group->count(); j++){
-            if(!name.compare(group->getPoints().at(j)->getName(), Qt::CaseInsensitive)){
-                qDebug() << name << " already exists";
+            if(!nameEdit->text().simplified().compare(group->getPoints().at(j)->getName(), Qt::CaseInsensitive)){
+                qDebug() << nameEdit->text() << " already exists";
                 saveButton->setEnabled(false);
+                /// to explain the user why he cannot add its point as it is
                 saveButton->setToolTip("A point with this name already exists, please choose another name for your point");
-                return;
+                emit invalidName(TEXT_COLOR_WARNING, CreatePointWidget::Error::AlreadyExists);
+                return 2;
             }
         }
     }
     saveButton->setToolTip("");
     saveButton->setEnabled(true);
+    emit invalidName(TEXT_COLOR_INFO, CreatePointWidget::Error::NoError);
+    return 3;
 }
 
 void DisplaySelectedPoint::setPointView(PointView* const& _pointView, QString robotName) {
@@ -204,3 +225,20 @@ void DisplaySelectedPoint::setPointView(PointView* const& _pointView, QString ro
     }
 }
 
+QString DisplaySelectedPoint::formatName(const QString name) const {
+    QString ret("");
+    bool containsSpace(false);
+    bool containsNonSpace(false);
+    for(int i = 0; i < name.length(); i++){
+        if(!name.at(i).isSpace() || (!containsSpace && containsNonSpace)){
+            if(name.at(i).isSpace())
+                containsSpace = true;
+            else {
+                containsNonSpace = true;
+                containsSpace = false;
+            }
+            ret += name.at(i);
+        }
+    }
+    return ret;
+}

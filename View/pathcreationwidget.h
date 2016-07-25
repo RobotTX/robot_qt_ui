@@ -175,7 +175,7 @@ private slots:
      * @param to
      * Edit the vector of Point when we dit/move a tmp point
      */
-    void itemMovedSlot(const int from, const int to);
+    void itemMovedSlot(const QModelIndex&, int start, int, const QModelIndex&, int row);
 
     /**
      * @brief saveEditSlot
@@ -229,6 +229,9 @@ signals:
     void setMessage(QString msgType, QString msg);
     void addPointEditPath(Point pt);
     void deletePointView(Point pt);
+
+    /// to notify the path painter that the order of the points has changed
+    void orderPointsChanged(int, int);
 private:
     QVBoxLayout* layout;
 
@@ -290,7 +293,6 @@ private:
      * The menu containing + - edit view and map buttons
      */
     TopLeftMenu* actionButtons ;
-
 
 };
 

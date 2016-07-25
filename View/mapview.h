@@ -51,6 +51,8 @@ public:
     void addPointView(PointView * const &_pointView);
     void updatePoints(const Points& points);
 
+    void changeOrderPathPoints(const int start, const int row);
+
 signals:
     void pointLeftClicked(PointView*, bool);
     void addPathPointMapView(Point*);

@@ -54,6 +54,8 @@ public:
     void setCreatingGroup(const bool create) { creatingGroup = create; }
     void setLastCheckedId(const int  id) {lastCheckedId = id;}
 
+    //int checkEditGroupName(QString name);
+
 private:
     QString formatName(const QString name) const;
 public:
@@ -74,13 +76,14 @@ private slots:
     void emitNewGroupSignal();
     void modifyGroupAfterClick(QString name);
     void reconnectModifyEdit();
+    void sendMessageEditGroup(int code);
 
 signals:
     void newGroup(QString name);
     void modifiedGroup(QString name);
     void modifiedGroupAfterClick(QString name);
     void enableReturn();
-    void messageCreationGroup(QString);
+    void messageCreationGroup(QString, QString);
     void messageCreationPoint();
 
 private:
@@ -106,7 +109,6 @@ private:
 
     VerticalScrollArea* scrollArea;
 
-    GroupEditWindow* groupWindow;
     TopLeftMenu* actionButtons;
 
     /// true if the groups are displayed, false if the points are displayed

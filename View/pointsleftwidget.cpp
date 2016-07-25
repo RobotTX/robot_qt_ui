@@ -55,7 +55,7 @@ PointsLeftWidget::PointsLeftWidget(QMainWindow* _parent, std::shared_ptr<Points>
     layout->addWidget(groupNameLabel);
     layout->addWidget(groupNameEdit);
 
-    groupButtonGroup = new GroupButtonGroup(*_points, this);
+    groupButtonGroup = new GroupButtonGroup(_points, this);
 
     scrollArea->setWidget(groupButtonGroup);
     layout->addWidget(scrollArea);
@@ -90,7 +90,7 @@ PointsLeftWidget::PointsLeftWidget(QMainWindow* _parent, std::shared_ptr<Points>
     connect(groupNameEdit, SIGNAL(textEdited(QString)), this, SLOT(checkGroupName(QString)));
 
     /// to make sure the new name chosen for a group is valid
-    connect(groupButtonGroup->getModifyEdit(), SIGNAL(textEdited(QString)), this, SLOT(checkGroupName(QString)));
+    //connect(groupButtonGroup->getModifyEdit(), SIGNAL(textEdited(QString)), this, SLOT(checkEditGroupName(QString)));
 
     connect(cancelButton, SIGNAL(clicked(bool)), this, SLOT(cancelCreationGroup()));
 
@@ -98,12 +98,16 @@ PointsLeftWidget::PointsLeftWidget(QMainWindow* _parent, std::shared_ptr<Points>
 
     /// to capture the moment a user stops editing whether it is to modify or create a group
     connect(groupButtonGroup->getModifyEdit(), SIGNAL(clickSomewhere(QString)), this, SLOT(modifyGroupAfterClick(QString)));
-    connect(groupNameEdit, SIGNAL(clickSomewhere(QString)), this, SLOT(cancelCreationGroup()));
+
+    connect(groupNameEdit, SIGNAL(clickSomewhere(QString)), this, SLOT(cancelCreationGroup()));  
 
     connect(this, SIGNAL(enableReturn()), _parent, SLOT(enableReturnAndCloseButtons()));
 
     /// to reconnect the modifyEdit field in the case where a user creates a new group
     connect(groupButtonGroup, SIGNAL(modifyEditReconnection()), this, SLOT(reconnectModifyEdit()));
+
+    /// relay the signal to the mainWindow so it displays the appropriate messages to the user (e.g, you cannot change the name of the group for this one because it's empty)
+    connect(groupButtonGroup, SIGNAL(codeEditGroup(int)), this, SLOT(sendMessageEditGroup(int)));
 
     setMaximumWidth(_parent->width()*4/10);
     setMinimumWidth(_parent->width()*4/10);
@@ -192,10 +196,10 @@ void PointsLeftWidget::disableButtons(void){
     actionButtons->getEditButton()->setEnabled(false);
     actionButtons->getEditButton()->setToolTip("Select a group or a point and click here to modify it");
     actionButtons->getEditButton()->setChecked(false);
-
 }
 
 int PointsLeftWidget::checkGroupName(QString name){
+    qDebug() << "checking while creating" << name ;
     groupNameEdit->setText(formatName(groupNameEdit->text()));
     name = groupNameEdit->text().simplified();
     if(!creatingGroup && !name.compare(points->getGroups().at(groupButtonGroup->getIndexModifyEdit())->getName(), Qt::CaseInsensitive)){
@@ -208,7 +212,7 @@ int PointsLeftWidget::checkGroupName(QString name){
         saveButton->setToolTip("The name of your group cannot be empty");
         saveButton->setEnabled(false);
         connect(groupNameEdit, SIGNAL(clickSomewhere(QString)), this, SLOT(cancelCreationGroup()));
-        emit messageCreationGroup("The name of your group cannot be empty");
+        emit messageCreationGroup(TEXT_COLOR_WARNING, "The name of your group cannot be empty");
         return 1;
     }
     for(int i = 0; i < points->count(); i++){
@@ -217,14 +221,14 @@ int PointsLeftWidget::checkGroupName(QString name){
             saveButton->setToolTip("A group with the same name already exists, please choose another name for your group");
             saveButton->setEnabled(false);
             connect(groupNameEdit, SIGNAL(clickSomewhere(QString)), this, SLOT(cancelCreationGroup()));
-            emit messageCreationGroup("A group with the same name already exists, please choose another name for your group");
+            emit messageCreationGroup(TEXT_COLOR_WARNING, "A group with the same name already exists, please choose another name for your group");
             return 2;
         }
     }
     saveButton->setToolTip("");
     saveButton->setEnabled(true);
     disconnect(groupNameEdit, SIGNAL(clickSomewhere(QString)), this, SLOT(cancelCreationGroup()));
-    emit messageCreationGroup("To save this group press Enter or click the \"Save button\"");
+    emit messageCreationGroup(TEXT_COLOR_INFO, "To save this group press Enter or click the \"Save button\"");
     return 0;
 }
 
@@ -239,7 +243,7 @@ void PointsLeftWidget::cancelCreationGroup(){
 
     /// emits un signal to the left menu to enable the return button
     emit enableReturn();
-    emit messageCreationGroup("");
+    emit messageCreationGroup(TEXT_COLOR_NORMAL, "");
     /// resets the buttons so we can click them
     groupButtonGroup->setEnabled(true);
 }
@@ -255,8 +259,22 @@ void PointsLeftWidget::keyPressEvent(QKeyEvent* event){
     if(!event->text().compare("\r")){
         if(creatingGroup)
             emit newGroup(groupNameEdit->text());
-        else
-            emit modifiedGroup(groupButtonGroup->getModifyEdit()->text());
+        else{
+            switch(groupButtonGroup->checkEditGroupName(groupButtonGroup->getModifyEdit()->text())){
+            case 0:
+                emit modifiedGroup(groupButtonGroup->getModifyEdit()->text());
+                break;
+            case 1:
+                emit messageCreationGroup(TEXT_COLOR_DANGER, "The name of your group cannot be empty");
+                break;
+            case 2:
+                emit messageCreationGroup(TEXT_COLOR_DANGER, "A group with the same name already exists, please choose another name for your group");
+                break;
+            default:
+                qDebug() << "if you get here you probably forgot to implement the behavior for one or more error codes";
+                break;
+            }
+        }
     }
 }
 
@@ -279,6 +297,7 @@ void PointsLeftWidget::modifyGroupAfterClick(QString name){
 void PointsLeftWidget::reconnectModifyEdit(){
     qDebug() << "reconnectModifyEdit";
     connect(groupButtonGroup->getModifyEdit(), SIGNAL(clickSomewhere(QString)), this, SLOT(modifyGroupAfterClick(QString)));
+    connect(groupButtonGroup->getModifyEdit(), SIGNAL(textEdited(QString)), groupButtonGroup, SLOT(checkEditGroupName(QString)));
 }
 
 QString PointsLeftWidget::formatName(const QString name) const {
@@ -298,4 +317,21 @@ QString PointsLeftWidget::formatName(const QString name) const {
         }
     }
     return ret;
+}
+
+void PointsLeftWidget::sendMessageEditGroup(int code){
+    qDebug() << "send message edit group called from pointsleftwidget";
+    switch(code){
+    case 0:
+        emit messageCreationGroup(TEXT_COLOR_INFO, "To save this group press Enter or click the \"Save button\"");
+        break;
+    case 1:
+        emit messageCreationGroup(TEXT_COLOR_WARNING, "The name of your group cannot be empty");
+        break;
+    case 2:
+        emit messageCreationGroup(TEXT_COLOR_WARNING, "A group with the same name already exists, please choose another name for your group");
+        break;
+    default:
+        qDebug() << "if you get here you probably forgot to implement the behavior for one or more error codes";
+    }
 }

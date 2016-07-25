@@ -44,13 +44,12 @@ public:
      */
     void deletePath(const int index);
     void updateRobot(const int id, RobotView* const robotView);
-    void setEnable(bool enable);
+    void setEnable(const bool enable);
     void addRobot(RobotView * const robotView);
     void removeRobot(const int id);
+    /// to stop displaying the path of the robot whose id is given as a parameter
     void uncheckViewPathSelectedRobot(const int robotNb = -1);
     void uncheckAll();
-
-
 
 private:
     /**
