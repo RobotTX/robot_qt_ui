@@ -13,7 +13,7 @@
 
 
 MapView::MapView (const QPixmap& pixmap, const QSize _size, std::shared_ptr<Map> _map, QMainWindow* _mainWindow) :
-    QGraphicsPixmapItem(pixmap), size(_size), state(GraphicItemState::NO_STATE), mainWindow(_mainWindow), map(_map)
+    QGraphicsPixmapItem(pixmap), size(_size), state(GraphicItemState::NO_STATE), mainWindow(_mainWindow), map(_map), idTmp(0)
 {
     /// Tell the class which mouse button to accept
     setAcceptedMouseButtons(Qt::LeftButton);
@@ -75,7 +75,7 @@ void MapView::mouseReleaseEvent(QGraphicsSceneMouseEvent *event){
             if(map->getMapImage().pixelColor(event->pos().x()-tmpPointPixmap.width()/2, event->pos().y()-tmpPointPixmap.height()).red() >= 254){
 
                 qDebug() << "Clicked on the map while creating a path";
-                Point tmpPoint("tmpPoint", 0.0, 0.0, false);
+                Point tmpPoint("tmpPoint" + QString::number(idTmp++), 0.0, 0.0, false);
                 PointView* newPointView = new PointView(std::make_shared<Point>(tmpPoint), this);
 
                 connect(newPointView, SIGNAL(addPointPath(PointView*)), mainWindow, SLOT(addPathPoint(PointView*)));
@@ -187,11 +187,11 @@ void MapView::setState(const GraphicItemState _state, const bool clear){
      connect(newPointView, SIGNAL(addPointPath(PointView*)), mainWindow, SLOT(addPathPoint(PointView*)));
      connect(newPointView, SIGNAL(moveTmpEditPathPoint()), mainWindow, SLOT(moveTmpEditPathPointSlot()));
 
-
      newPointView->setState(GraphicItemState::CREATING_PATH);
      //newPointView->setPos(pointView->pos().x()+tmpPointPixmap.width()/2, pointView->pos().y()+tmpPointPixmap.height());
      //newPointView->setPos(pointView->pos().x(), pointView->pos().y());
      newPointView->setParentItem(this);
+
      pathCreationPoints.push_back(newPointView);
  }
 
@@ -310,7 +310,25 @@ void MapView::setState(const GraphicItemState _state, const bool clear){
 
  /// called when a permanent point is added to the path
  void MapView::addPermanentPointToPath(PointView *pointV){
-    qDebug() << "before addng new point" << pathCreationPoints.size();
     pathCreationPoints.push_back(pointV);
-    qDebug() << "after adding new point" << pathCreationPoints.size();
+ }
+
+ int MapView::findIndexInPathByName(const QString name){
+     for(int i = 0; i < pathCreationPoints.count(); i++){
+         std::shared_ptr<Point> currPoint = pathCreationPoints.at(i)->getPoint();
+         if(currPoint->isPermanent()){
+             if(!currPoint->getName().compare(name))
+                 return i;
+         }
+     }
+     return -1;
+ }
+
+ void MapView::replacePermanentPathPoint(const int index, PointView *const pv){
+     qDebug() << "replace permanent path point called";
+     pathCreationPoints.replace(index, pv);/*
+    pathCreationPoints.insert(index, pv);
+    pathCreationPoints.takeAt(index+1);
+    */
+
  }

@@ -1,12 +1,11 @@
 #ifndef POINTVIEW_H
 #define POINTVIEW_H
 
-class Point;
 class QGraphicsSceneMouseEvent;
 class QMouseEvent;
 class QDropEvent;
 
-
+#include "Model/point.h"
 #include <QObject>
 #include <QGraphicsPixmapItem>
 #include <memory>
@@ -40,7 +39,7 @@ public:
 
     enum PixmapType{NORMAL, MID, START, STOP, HOVER, START_STOP};
 
-    void setState(const GraphicItemState _state) { state = _state; } //qDebug()<< "change state here"<< _state;}
+    void setState(const GraphicItemState _state) { state = _state; }//  qDebug()<< "change state here" << point->getPosition().getX() << point->getPosition().getY() << _state;}
     GraphicItemState getState(void) const { return state; }
     void setPos(const qreal x, const qreal y);
     void setAddedToPath(const bool _addedToPath) { addedToPath = _addedToPath; }

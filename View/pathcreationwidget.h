@@ -235,6 +235,9 @@ signals:
 
     /// to notify the mapView that a permanent point has been added to a path
     void addMapPathPoint(Point*);
+
+    /// to update the path known to the mapView ( old point's name and new point's name given )
+    void changePermanentPoint(QString, QString);
 private:
     QVBoxLayout* layout;
 

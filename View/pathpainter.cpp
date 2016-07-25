@@ -102,7 +102,6 @@ void PathPainter::updatePath(const QVector<Point>& pointVector, bool save){
     reset(save);
     pathVector = pointVector;
     refresh(save);
-
 }
 
 void PathPainter::setPointViewPixmap(const int id, PointView* const pointView){
@@ -110,9 +109,11 @@ void PathPainter::setPointViewPixmap(const int id, PointView* const pointView){
         qDebug() << "being edited";
         return;
     } else {
-        qDebug() << "not editing";
-        if(pathVector.last().comparePos(pointView->getPoint()->getPosition()))
+        qDebug() << "not editing" << pointView->getPoint()->getName();
+        if(pathVector.last().comparePos(pointView->getPoint()->getPosition()) && pathVector.front().comparePos(pointView->getPoint()->getPosition())){
+            qDebug() << "setting start stop pixmap";
             pointView->setPixmap(PointView::PixmapType::START_STOP);
+        }
         else if(id == 0)
             pointView->setPixmap(PointView::PixmapType::START);
         else if (id == pathVector.size()-1)

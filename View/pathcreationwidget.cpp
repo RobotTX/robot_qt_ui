@@ -138,9 +138,12 @@ void PathCreationWidget::pointClicked(QString name){
         addPathPoint(new Point(name, posX, posY));
 
     } else {
-        PathPointCreationWidget* pathPointCreationWidget = (PathPointCreationWidget*) pathPointsList->itemWidget(pathPointsList->currentItem());
+        PathPointCreationWidget* pathPointCreationWidget = static_cast<PathPointCreationWidget*> (pathPointsList->itemWidget(pathPointsList->currentItem()));
 
         qDebug() << "Editing" << pathPointCreationWidget->getName() << "to" << name;
+        /// to update the path known to the mapview
+        changePermanentPoint(pathPointCreationWidget->getName(), name);
+
         pathPointCreationWidget->setName(name);
         pathPointCreationWidget->setPos(posX, posY);
 
@@ -149,7 +152,9 @@ void PathCreationWidget::pointClicked(QString name){
 
         pointList.replace(id-1, pathPointCreationWidget->getPoint());
         previousItem = NULL;
-        pathPointsList->setCurrentItem(pathPointsList->currentItem(), QItemSelectionModel::Deselect);
+
+        /// to update the path known to the mapview
+        changePermanentPoint(pathPointCreationWidget->getName(), name);
         updatePointPainter();
     }
 }
@@ -274,11 +279,11 @@ void PathCreationWidget::editPathPoint(){
             actionButtons->getMinusButton()->setEnabled(false);
             actionButtons->getEditButton()->setEnabled(false);
         }
-        if(!((PathPointCreationWidget*) (pathPointsList->itemWidget(pathPointsList->currentItem())))->getPoint().isPermanent()){
+        if(!static_cast<PathPointCreationWidget*> ((pathPointsList->itemWidget(pathPointsList->currentItem())))->getPoint().isPermanent()){
             for(int i = 0; i < pathPointsList->count(); i++){
                 if(!pathPointsList->item(i)->isSelected()){
                     qDebug() << "yo";
-                    ((PathPointCreationWidget*) (pathPointsList->itemWidget(pathPointsList->item(i))))->setEnabled(false);
+                    static_cast<PathPointCreationWidget*> (pathPointsList->itemWidget(pathPointsList->item(i)))->setEnabled(false);
                 }
             }
         }
@@ -453,21 +458,22 @@ void PathCreationWidget::supprItem(QListWidgetItem* item){
 void PathCreationWidget::editItem(QListWidgetItem* item){
     qDebug() << "editItem " ;
     /// Get the item to edit
-    PathPointCreationWidget* pathPointWidget = (PathPointCreationWidget*) pathPointsList->itemWidget(item);
+    PathPointCreationWidget* pathPointWidget = static_cast<PathPointCreationWidget*> (pathPointsList->itemWidget(item));
 
     /// if it's a temporary point we can move it
-    if(pathPointWidget->isTemporary()){
+    if(!pathPointWidget->getPoint().isPermanent()){
         qDebug() << "Trying to edit a temporary point";
         int nbWidget = 0;
         /// Get the number of path point using the same point, because if there is only one,
         /// we move the point but if there is multiples, we create a new PointView to move
         /// and not edt the other path point using this point
         for(int i = 0; i < pathPointsList->count(); i++){
-            PathPointCreationWidget* pathPointWidget2 = (PathPointCreationWidget*) pathPointsList->itemWidget(pathPointsList->item(i));
+            PathPointCreationWidget* pathPointWidget2 = static_cast<PathPointCreationWidget*> (pathPointsList->itemWidget(pathPointsList->item(i)));
             if(abs(pathPointWidget2->getPosX() - pathPointWidget->getPosX()) < 0.01 &&
                     abs(pathPointWidget2->getPosY() - pathPointWidget->getPosY()) < 0.01)
                 nbWidget++;
         }
+        qDebug() << "found" << nbWidget << "widgets";
         emit editTmpPathPoint(pathPointsList->row(item), new Point(pathPointWidget->getName(), pathPointWidget->getPosX(), pathPointWidget->getPosY()), nbWidget);
         state = CheckState::NO_STATE;
         pathPointWidget->displaySaveEditBtn(true, pathPointsList->count());

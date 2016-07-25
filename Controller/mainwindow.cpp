@@ -190,6 +190,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     /// to notify the map that a permanent point has been added to a path
     connect(pathCreationWidget, SIGNAL(addMapPathPoint(Point*)), this, SLOT(addPathPointToMap(Point*)));
 
+    /// to notify the mapview that a permanent point has been updated
+    connect(pathCreationWidget, SIGNAL(changePermanentPoint(QString,QString)), this, SLOT(updatePathPermanentPoint(QString, QString)));
+
     mainLayout->addLayout(bottom);
 
     setCentralWidget(mainWidget);
@@ -570,8 +573,6 @@ void MainWindow::backSelecRobotBtnEvent(){
     */
 }
 
-
-
 void MainWindow::editSelecRobotBtnEvent(){
     qDebug() << "editSelecRobotBtnEv"
                 "ent called";
@@ -931,39 +932,36 @@ void MainWindow::editTmpPathPointSlot(int id, Point* point, int nbWidget){
     qDebug() << pointViewVector.size();
     for(int i = 0; i < pointViewVector.size(); i++){
         qDebug() << "in edittmpathpointslot so far so good" << i << pointViewVector.at(i)->getPoint()->getName();
-        if(pointViewVector.at(i)->getPoint()->comparePos(point->getPosition().getX(), point->getPosition().getY()))
+        if(!pointViewVector.at(i)->getPoint()->getName().compare(point->getName())){
             editedPointView = pointViewVector.at(i);
+            break;
+        }
     }
-
-    if(mapPixmapItem->getTmpPointView()->getPoint()->comparePos(point->getPosition().getX(), point->getPosition().getY()))
-        editedPointView = mapPixmapItem->getTmpPointView();
 
     if(editedPointView == NULL){
         qDebug() << "(Error editTmpPathPointSlot) No pointview found to edit";
     } else {
         qDebug() << "Pointview found";
-        /// set by hand in order to keep the colors consistent while editing the point and after
-        editedPointView->QGraphicsPixmapItem::setPixmap(QPixmap(PIXMAP_HOVER));
-        editedPointView->setType(PointView::PixmapType::HOVER);
 
-        // nomber of pathpoint that use this point
+        /// number of pathpoints that use this point
         if(nbWidget == 1){
-            editedPointView->setFlag(QGraphicsItem::ItemIsMovable);
-            setGraphicItemsState(GraphicItemState::NO_EVENT, false);
-            mapPixmapItem->setState(GraphicItemState::EDITING);
-            editedPointView->setState(GraphicItemState::EDITING);
             qDebug() << "only 1 point to edit";
 
         } else if(nbWidget > 1){
             mapPixmapItem->addPathPoint(editedPointView);
+            qDebug() << "adding pointview because points used seeral times" ;
+            for(int i = 0; i < mapPixmapItem->getPathCreationPoints().size(); i++)
+                qDebug() << mapPixmapItem->getPathCreationPoints().at(i)->getPoint()->getName();
             editedPointView = mapPixmapItem->getPathCreationPoints().last();
-            editedPointView->setFlag(QGraphicsItem::ItemIsMovable);
-            setGraphicItemsState(GraphicItemState::NO_EVENT, false);
-            editedPointView->setState(GraphicItemState::EDITING);
-            mapPixmapItem->setState(GraphicItemState::EDITING);
-        } else {
-            qDebug() << "(Error editTmpPathPointSlot) Not supposed to be here";
         }
+
+        setGraphicItemsState(GraphicItemState::NO_EVENT, false);
+        mapPixmapItem->setState(GraphicItemState::EDITING);
+        editedPointView->setFlag(QGraphicsItem::ItemIsMovable);
+        editedPointView->setState(GraphicItemState::EDITING);
+        /// set by hand in order to keep the colors consistent while editing the point and after
+        editedPointView->QGraphicsPixmapItem::setPixmap(QPixmap(PIXMAP_HOVER));
+        editedPointView->setType(PointView::PixmapType::HOVER);
     }
 }
 
@@ -1483,54 +1481,54 @@ void MainWindow::setMessageCreationPath(QString message){
 void MainWindow::updatePathPoint(double x, double y, PointView* pointView){
     Q_UNUSED(pointView)
     qDebug() << "updatepathpoint called";
-
-    qDebug() << "mapPixmap path points";
     for(int i = 0; i < mapPixmapItem->getPathCreationPoints().size(); i++)
-        qDebug() << mapPixmapItem->getPathCreationPoints().at(i)->getPoint()->getPosition().getX() << mapPixmapItem->getPathCreationPoints().at(i)->getPoint()->getPosition().getY();
-
-
+        qDebug() << mapPixmapItem->getPathCreationPoints().at(i)->getPoint()->getName();
+    editedPointView->getPoint()->setPosition(x, y);
+    editedPointView->setPos(x, y);
+    static_cast<PathPointCreationWidget*> (pathCreationWidget->getPathPointList()->itemWidget(pathCreationWidget->getPathPointList()->currentItem()))->setPos(x, y);
+    for(int i = 0; i < mapPixmapItem->getPathCreationPoints().size(); i++)
+        qDebug() << mapPixmapItem->getPathCreationPoints().at(i)->getPoint()->getName();
+    pathPainter->updatePath(mapPixmapItem->getPathCreationPoints());
+    qDebug() << "path updated";
+    /*
     for(int i = 0; i < mapPixmapItem->getPathCreationPoints().count(); i++){
         PointView* pv = mapPixmapItem->getPathCreationPoints().at(i);
         if(pv == 0)
             qDebug() << "no pointview found to update";
         else {
             if(pv->getPoint()->comparePos(
-
-                        ((PathPointCreationWidget*) pathCreationWidget->getPathPointList()->itemWidget(pathCreationWidget->getPathPointList()->currentItem()))->getPoint().getPosition())){
+                        static_cast<PathPointCreationWidget*> (pathCreationWidget->getPathPointList()->itemWidget(pathCreationWidget->getPathPointList()->currentItem()))->getPoint().getPosition())){
                 pv->getPoint()->setPosition(x, y);
                 pv->setPos(x, y);
-                ((PathPointCreationWidget*) pathCreationWidget->getPathPointList()->itemWidget(pathCreationWidget->getPathPointList()->currentItem()))->setPos(x, y);
-                qDebug() << "real path points";
-                for(int i = 0; i < pathCreationWidget->getPointList().size(); i++)
-                    qDebug() << pathCreationWidget->getPointList().at(i).getPosition().getX() << pathCreationWidget->getPointList().at(i).getPosition().getY();
-                qDebug() << "name" << pv->getPoint()->getName() << "index" << i;
+                static_cast<PathPointCreationWidget*> (pathCreationWidget->getPathPointList()->itemWidget(pathCreationWidget->getPathPointList()->currentItem()))->setPos(x, y);
                 pathPainter->updatePath(mapPixmapItem->getPathCreationPoints());
                 break;
             }
         }
-    }
+    }*/
     if(map->getMapImage().pixelColor(x, y).red() >= 254){
         setMessageTop(TEXT_COLOR_INFO, "You can click either \"Save changes\" to modify your path permanently or \"Cancel\" to keep the original path. If you want you can keep editing your point");
-        ((PathPointCreationWidget*) pathCreationWidget->getPathPointList()->itemWidget(pathCreationWidget->getPathPointList()->currentItem())) -> getSaveEditBtn()->setEnabled(true);
+        static_cast<PathPointCreationWidget*> (pathCreationWidget->getPathPointList()->itemWidget(pathCreationWidget->getPathPointList()->currentItem())) -> getSaveEditBtn()->setEnabled(true);
+        /*
+
         for(int i = 0; i < mapPixmapItem->getPathCreationPoints().count(); i++){
             PointView* pv = mapPixmapItem->getPathCreationPoints().at(i);
             if(pv == 0)
                 qDebug() << "no pv";
             else {
                 if(pv->getPoint()->comparePos(
-                            ((PathPointCreationWidget*) pathCreationWidget->getPathPointList()->itemWidget(pathCreationWidget->getPathPointList()->currentItem()))->getPoint().getPosition())){
+                            static_cast<PathPointCreationWidget*> (pathCreationWidget->getPathPointList()->itemWidget(pathCreationWidget->getPathPointList()->currentItem()))->getPoint().getPosition())){
                     pv->getPoint()->setPosition(x, y);
                     pv->setPos(x, y);
-                    ((PathPointCreationWidget*) pathCreationWidget->getPathPointList()->itemWidget(pathCreationWidget->getPathPointList()->currentItem()))->setPos(x, y);
-                    qDebug() << "name" << pv->getPoint()->getName() << "index" << i;
+                    static_cast<PathPointCreationWidget*> (pathCreationWidget->getPathPointList()->itemWidget(pathCreationWidget->getPathPointList()->currentItem()))->setPos(x, y);
                     pathPainter->updatePath(mapPixmapItem->getPathCreationPoints());
                     break;
                 }
             }
-        }
+        }*/
     } else {
         setMessageTop(TEXT_COLOR_DANGER, "You cannot save the current path because the point that you are editing is not in an known area of the map");
-        ((PathPointCreationWidget*) pathCreationWidget->getPathPointList()->itemWidget(pathCreationWidget->getPathPointList()->currentItem())) -> getSaveEditBtn()->setEnabled(false);
+        static_cast<PathPointCreationWidget*> (pathCreationWidget->getPathPointList()->itemWidget(pathCreationWidget->getPathPointList()->currentItem())) -> getSaveEditBtn()->setEnabled(false);
         qDebug() << "sorry u cannot put a path point in the dark";
     }
 }
@@ -1602,6 +1600,24 @@ void MainWindow::addPathPointToMap(Point* point){
     for(int i  = 0 ; i < mapPixmapItem->getPathCreationPoints().size(); i++)
         qDebug() << mapPixmapItem->getPathCreationPoints().at(i)->getPoint()->getName();
 }
+
+void MainWindow::updatePathPermanentPoint(QString oldPointName, QString newPointName){
+    qDebug() << newPointName << oldPointName ;
+    int index = mapPixmapItem->findIndexInPathByName(oldPointName);/*
+    qDebug() << "update path permanent point called with index" << index;
+    for(int i = 0; i < mapPixmapItem->getPathCreationPoints().size(); i++)
+        qDebug() << mapPixmapItem->getPathCreationPoints().at(i)->getPoint()->getName();
+    qDebug() << "before";*/
+    if(index >= 0 && index < mapPixmapItem->getPathCreationPoints().size())
+        mapPixmapItem->replacePermanentPathPoint(index, pointViews->getPointViewFromName(newPointName));
+
+    /*
+    qDebug() << "after";
+    for(int i = 0; i < mapPixmapItem->getPathCreationPoints().size(); i++)
+        qDebug() << mapPixmapItem->getPathCreationPoints().at(i)->getPoint()->getName();
+        */
+}
+
 
 /**********************************************************************************************************************************/
 
