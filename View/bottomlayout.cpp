@@ -165,11 +165,6 @@ BottomLayout::BottomLayout(QMainWindow* parent, const std::shared_ptr<Robots> &r
     pathScroll2->resize(pathScroll->width(), 15);
 }
 
-void BottomLayout::testFct(){
-    qDebug() << "pathscroll sizes :" << widgetPath->size() << pathScroll->size() << pathScroll->viewport()->size();
-    qDebug() << "other widgets :" << actionWidget->pos() << widgetName->pos() << widgetName->size();
-}
-
 void BottomLayout::deletePath(const int index){
     /// When a path is deleted, the button to play/pause & stop the path are disabled
     /// and the path disappears from the list

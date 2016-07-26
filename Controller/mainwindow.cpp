@@ -286,19 +286,6 @@ void MainWindow::initializeRobots(){
     tmpMap[robot3->getIp()] = robot3->getName();
 
 
-
-    std::vector<std::shared_ptr<PathPoint>> path;
-    if(points->getGroups().size() > 2){
-        if(points->getGroups().at(2)->getPoints().size() > 0){
-            for(int i = 0; i < 20; i++)
-                path.push_back(std::shared_ptr<PathPoint>(new PathPoint(*(points->getGroups().at(2)->getPoints().at(0)), PathPoint::Action::WAIT, 5)));
-        }
-    }
-    robot1->setPath(path);
-    robot2->setPath(path);
-    robot3->setPath(path);
-
-
     robots->setRobotsNameMap(tmpMap);
     out << robots->getRobotsNameMap();
     fileWrite.close();
@@ -3573,5 +3560,4 @@ void MainWindow::centerMap(){
 
 void MainWindow::settingBtnSlot(){
     qDebug() << "settingBtnSlot called";
-    bottomLayout->testFct();
 }
