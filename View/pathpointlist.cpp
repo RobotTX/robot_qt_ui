@@ -9,8 +9,12 @@ PathPointList::PathPointList(QWidget* parent): QListWidget(parent){
     setDragDropMode(QAbstractItemView::InternalMove);
     setFrameShape(QFrame::NoFrame);
     viewport()->setAutoFillBackground( false );
-    setStyleSheet(" QListWidget {color: red;};\
-                    QListWidget::item:hover {background-color:grey;}");
+    setAttribute(Qt::WA_MacShowFocusRect, false);
+    setStyleSheet(" QListWidget {color: red;  }\
+                  QListWidget::item {border-bottom: 1px solid; border-bottom-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, x3: 0, y3: 0, stop: 0 transparent, stop: 0.5 #949494, stop: 1 transparent); }\
+                      QListWidget::item:hover {background-color:grey;}\
+                      QListWidget::item:selected {background-color:grey;}");
+
 
     connect(model(), SIGNAL(rowsMoved(QModelIndex, int, int, QModelIndex, int)), this, SLOT(itemMoved(QModelIndex, int, int, QModelIndex, int)));
 }

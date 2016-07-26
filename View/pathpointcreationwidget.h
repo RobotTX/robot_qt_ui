@@ -57,7 +57,8 @@ public:
 
 
 private:
-    QVBoxLayout* layout;
+    QHBoxLayout* layout;
+    QVBoxLayout* rightLayout ;
     QLabel* pointLabel;
     float posX;
     float posY;
