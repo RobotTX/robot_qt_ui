@@ -2,7 +2,7 @@
 #define SELECTEDROBOTWIDGET_H
 
 class PathWidget;
-class VerticalScrollArea;
+class CustomScrollArea;
 class RobotView;
 class QVBoxLayout;
 class QPushButton;

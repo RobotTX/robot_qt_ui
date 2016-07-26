@@ -1,7 +1,7 @@
 #include "selectedrobotwidget.h"
 #include "View/robotview.h"
 #include "View/pathwidget.h"
-#include "View/verticalscrollarea.h"
+#include "View/customscrollarea.h"
 #include "View/spacewidget.h"
 #include "Model/robot.h"
 #include "Model/point.h"
@@ -13,7 +13,7 @@
 #include "mainwindow.h"
 #include <QDebug>
 #include "topleftmenu.h"
-#include "verticalscrollarea.h"
+#include "customscrollarea.h"
 #include "buttonmenu.h"
 
 
@@ -29,7 +29,7 @@ SelectedRobotWidget::SelectedRobotWidget(QMainWindow* parent): QWidget(parent){
 
     layout->addWidget(actionButtons);
 
-    VerticalScrollArea* scrollArea = new VerticalScrollArea(this);
+    CustomScrollArea* scrollArea = new CustomScrollArea(this);
     QVBoxLayout * inLayout = new QVBoxLayout(scrollArea);
     QWidget * inWidget = new QWidget(scrollArea);
 

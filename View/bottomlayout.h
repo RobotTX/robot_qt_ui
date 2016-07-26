@@ -50,6 +50,7 @@ public:
     /// to stop displaying the path of the robot whose id is given as a parameter
     void uncheckViewPathSelectedRobot(const int robotNb = -1);
     void uncheckAll();
+    void testFct();
 
 private:
     /**
@@ -99,6 +100,9 @@ private:
     QVBoxLayout* columnPlay;
     QVBoxLayout* columnViewPath;
     QVBoxLayout* columnStop;
+    QWidget* widgetName;
+    QWidget* widgetPath;
+    QWidget* actionWidget;
 };
 
 #endif // BOTTOMLAYOUT_H

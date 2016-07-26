@@ -1,7 +1,7 @@
 #ifndef POINTSLEFTWIDGET_H
 #define POINTSLEFTWIDGET_H
 
-class VerticalScrollArea;
+class CustomScrollArea;
 class PointButtonGroup;
 class GroupButtonGroup;
 class Points;
@@ -49,7 +49,7 @@ public:
     QLabel* getGroupNameLabel(void) const { return groupNameLabel; }
     QLineEdit* getGroupNameEdit(void) const { return groupNameEdit; }
 
-    VerticalScrollArea* getScrollArea(void) const { return scrollArea; }
+    CustomScrollArea* getScrollArea(void) const { return scrollArea; }
 
     void setCreatingGroup(const bool create) { creatingGroup = create; }
     void setLastCheckedId(const int  id) {lastCheckedId = id;}
@@ -107,7 +107,7 @@ private:
     QLabel* groupNameLabel;
     QLineEdit* groupNameEdit;
 
-    VerticalScrollArea* scrollArea;
+    CustomScrollArea* scrollArea;
 
     TopLeftMenu* actionButtons;
 

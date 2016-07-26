@@ -2,7 +2,7 @@
 #define ROBOTSLEFTWIDGET_H
 
 class Robots;
-class VerticalScrollArea;
+class CustomScrollArea;
 class RobotBtnGroup;
 class QVBoxLayout;
 class QPushButton;
@@ -49,7 +49,7 @@ private:
     QVBoxLayout* robotsLayout;
     RobotBtnGroup* btnGroup;
     QVBoxLayout* scrollLayout;
-    VerticalScrollArea* scrollArea;
+    CustomScrollArea* scrollArea;
     TopLeftMenu* actionButtons;
 
 };

@@ -1,5 +1,5 @@
 #include "displayselectedgroup.h"
-#include <View/verticalscrollarea.h>
+#include <View/customscrollarea.h>
 #include <View/pointbuttongroup.h>
 #include "View/spacewidget.h"
 #include <QVBoxLayout>
@@ -9,13 +9,13 @@
 #include <QHBoxLayout>
 #include <QMainWindow>
 #include <QLabel>
-#include "verticalscrollarea.h"
+#include "customscrollarea.h"
 #include "View/buttonmenu.h"
 
 DisplaySelectedGroup::DisplaySelectedGroup(QMainWindow *parent, std::shared_ptr<Points> const& _points) : QWidget(parent), points(_points)
 {
     /// to be able to display a lot of groups and points2
-    VerticalScrollArea* scrollArea = new VerticalScrollArea(this);
+    CustomScrollArea* scrollArea = new CustomScrollArea(this);
 
     layout = new QVBoxLayout(this);
 

@@ -14,7 +14,7 @@
 #include "View/spacewidget.h"
 #include <QGridLayout>
 #include <pathwidget.h>
-#include "verticalscrollarea.h"
+#include "customscrollarea.h"
 EditSelectedRobotWidget::EditSelectedRobotWidget(QMainWindow * const parent, const std::shared_ptr<Robots> _robots):QWidget(parent){
     robots = _robots;
     layout = new QVBoxLayout(this);
@@ -25,7 +25,7 @@ EditSelectedRobotWidget::EditSelectedRobotWidget(QMainWindow * const parent, con
     pathChanged = false;
 
 
-    VerticalScrollArea* scrollArea = new VerticalScrollArea(this);
+    CustomScrollArea* scrollArea = new CustomScrollArea(this);
     QVBoxLayout * inLayout = new QVBoxLayout(scrollArea);
     QWidget * inWidget = new QWidget(scrollArea);
 

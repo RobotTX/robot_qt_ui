@@ -196,6 +196,7 @@ private slots:
     void selectViewRobot();
     void sendNewMapToRobots(QString ipAddress);
     void sendNewMapToRobot(std::shared_ptr<Robot> robot, QString mapId);
+    void settingBtnSlot();
 
 private:
     Ui::MainWindow* ui;

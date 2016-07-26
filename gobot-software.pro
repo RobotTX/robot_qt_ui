@@ -57,7 +57,6 @@ HEADERS += Controller/cmdrobotthread.h \
            View/selectedrobotwidget.h \
            View/spacewidget.h \
            View/toplayout.h \
-           View/verticalscrollarea.h \
            View/doubleclickablebutton.h \
            View/topleftmenu.h \
            Model/origin.h \
@@ -65,7 +64,8 @@ HEADERS += Controller/cmdrobotthread.h \
            View/customizedlineedit.h \
            View/createpointwidget.h \
            View/buttonmenu.h \
-    Controller/sendnewmapthread.h
+    Controller/sendnewmapthread.h \
+    View/customscrollarea.h
 
 FORMS += Controller/mainwindow.ui
 
@@ -111,14 +111,14 @@ SOURCES += main.cpp \
            View/selectedrobotwidget.cpp \
            View/spacewidget.cpp \
            View/toplayout.cpp \
-           View/verticalscrollarea.cpp \
            View/doubleclickablebutton.cpp \
            Controller/updaterobotsthread.cpp \
            View/customizedlineedit.cpp \
            View/buttonmenu.cpp \
            View/createpointwidget.cpp \
     View/topleftmenu.cpp \
-    Controller/sendnewmapthread.cpp
+    Controller/sendnewmapthread.cpp \
+    View/customscrollarea.cpp
 
 RESOURCES += Resources/resources.qrc
 

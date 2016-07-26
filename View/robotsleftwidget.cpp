@@ -1,7 +1,7 @@
 #include "robotsleftwidget.h"
 #include "Model/robots.h"
 #include "View/robotbtngroup.h"
-#include "View/verticalscrollarea.h"
+#include "View/customscrollarea.h"
 #include "View/spacewidget.h"
 #include <QVBoxLayout>
 #include <QPushButton>
@@ -14,7 +14,7 @@ RobotsLeftWidget::RobotsLeftWidget(QMainWindow* _parent):QWidget(_parent){
     parent = _parent;
     layout = new QVBoxLayout(this);
     scrollLayout = new QVBoxLayout();
-    scrollArea = new VerticalScrollArea(this);
+    scrollArea = new CustomScrollArea(this);
 
     actionButtons = new TopLeftMenu(this);
     actionButtons->disableAll();

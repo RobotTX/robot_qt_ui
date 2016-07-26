@@ -1,7 +1,7 @@
 #ifndef DISPLAYSELECTEDGROUP_H
 #define DISPLAYSELECTEDGROUP_H
 
-class VerticalScrollArea;
+class CustomScrollArea;
 class QVBoxLayout;
 class QPushButton;
 class QHBoxLayout;
@@ -42,7 +42,7 @@ private:
     PointButtonGroup* pointButtonGroup;
 
     /// this is the graphical object that allows a user to scroll the points if they can't fit in the screen
-    VerticalScrollArea* scrollArea;
+    CustomScrollArea* scrollArea;
 
     QVBoxLayout* layout;
     TopLeftMenu* actionButtons;

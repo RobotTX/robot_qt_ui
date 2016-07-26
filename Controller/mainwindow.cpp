@@ -29,7 +29,7 @@
 #include "View/groupview.h"
 #include "View/pathpainter.h"
 #include "View/pointbuttongroup.h"
-#include "View/verticalscrollarea.h"
+#include "View/customscrollarea.h"
 #include "View/toplayout.h"
 #include <QVBoxLayout>
 #include <QAbstractButton>
@@ -279,6 +279,20 @@ void MainWindow::initializeRobots(){
     robots->add(robotView3);
     tmpMap[robot3->getIp()] = robot3->getName();
 
+
+
+    std::vector<std::shared_ptr<PathPoint>> path;
+    if(points->getGroups().size() > 2){
+        if(points->getGroups().at(2)->getPoints().size() > 0){
+            for(int i = 0; i < 20; i++)
+                path.push_back(std::shared_ptr<PathPoint>(new PathPoint(*(points->getGroups().at(2)->getPoints().at(0)), PathPoint::Action::WAIT, 5)));
+        }
+    }
+    robot1->setPath(path);
+    robot2->setPath(path);
+    robot3->setPath(path);
+
+
     robots->setRobotsNameMap(tmpMap);
     out << robots->getRobotsNameMap();
     fileWrite.close();
@@ -408,14 +422,10 @@ void MainWindow::stopSelectedRobot(int robotNb){
                         bool success = (answerList.at(1).compare("done") == 0);
                         if((cmd.compare("k") == 0 && success) || answerList.at(0).compare("1") == 0){
                             clearPath(robotNb);
-                            if(!robots->getRobotsVector().at(robotNb)->getRobot()->getName().compare(selectedRobot->getRobot()->getName())){
-                                hideAllWidgets();
-                                selectedRobotWidget->setSelectedRobot(selectedRobot);
-                                selectedRobotWidget->show();
-                                bottomLayout->getViewPathRobotBtnGroup()->button(robotNb)->setChecked(false);
-                                bottomLayout->getViewPathRobotBtnGroup()->button(robotNb)->click();
+                            hideAllWidgets();
+                            bottomLayout->getViewPathRobotBtnGroup()->button(robotNb)->setChecked(false);
+                            bottomLayout->getViewPathRobotBtnGroup()->button(robotNb)->click();
 
-                            }
                             topLayout->setLabel(TEXT_COLOR_SUCCESS, "Path deleted");
                         } else {
                             topLayout->setLabel(TEXT_COLOR_DANGER, "Failed to delete the path, please try again");
@@ -3528,16 +3538,10 @@ void MainWindow::setEnableAll(bool enable, GraphicItemState state, bool clearPat
 
 void MainWindow::centerMap(){
     //qDebug() << "centerMap called la ";
-    //qDebug() << (map->getRect().topLeft().x() + map->getRect().bottomRight().x()) /2 << (map->getRect().topLeft().y() + map->getRect().bottomRight().y()) /2;
     scene->views().at(0)->centerOn(mapPixmapItem);
+}
 
-
-/*
-    qDebug() << mapPixmapItem->pos() << mapPixmapItem->mapFromScene(map->getCenter());
-
-    while(graphicsView->getZoomCoeff()*1.3*1.3 < 4){
-        graphicsView->scale(1.3, 1.3);
-        graphicsView->setZoomCoeff(1.3*graphicsView->getZoomCoeff());
-    }
-*/
+void MainWindow::settingBtnSlot(){
+    qDebug() << "settingBtnSlot called";
+    bottomLayout->testFct();
 }

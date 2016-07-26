@@ -4,7 +4,7 @@
 #include <QLabel>
 #include <QIcon>
 #include <QDebug>
-#include "View/verticalscrollarea.h"
+#include "View/customscrollarea.h"
 #include "View/spacewidget.h"
 #include <QTime>
  #include <QCoreApplication>
@@ -39,6 +39,15 @@ TopLayout::TopLayout(QMainWindow* parent): QWidget(parent), lastMessage(TEXT_COL
     layout->addWidget(centerBtn);
     connect(centerBtn, SIGNAL(clicked()), parent, SLOT(centerMap()));
 
+    QPushButton* settingBtn = new QPushButton(QIcon(":/icons/setting.png"), "", this);
+    settingBtn->setToolTip("Click to view/edit the settings");
+    settingBtn->setIconSize(parent->size()/8);
+    settingBtn->setMaximumWidth(40);
+    settingBtn->setFlat(true);
+    settingBtn->setFocusPolicy(Qt::FocusPolicy::NoFocus);
+    layout->addWidget(settingBtn);
+    connect(settingBtn, SIGNAL(clicked()), parent, SLOT(settingBtnSlot()));
+
     SpaceWidget* spaceWidget = new SpaceWidget(SpaceWidget::SpaceOrientation::VERTICAL, this);
     spaceWidget->setColor("lightgrey");
     layout->addWidget(spaceWidget);
@@ -49,7 +58,7 @@ TopLayout::TopLayout(QMainWindow* parent): QWidget(parent), lastMessage(TEXT_COL
     label->setContentsMargins(30,0,0,0);
     //layout->addWidget(label);
 
-    VerticalScrollArea* scrollArea = new VerticalScrollArea(this);
+    CustomScrollArea* scrollArea = new CustomScrollArea(this);
     scrollArea->setWidget(label);
     layout->addWidget(scrollArea);
 

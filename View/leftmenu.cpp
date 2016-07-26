@@ -19,7 +19,7 @@
 #include <QDebug>
 #include "View/pointbuttongroup.h"
 #include <QScrollArea>
-#include "verticalscrollarea.h"
+#include "customscrollarea.h"
 #include <QButtonGroup>
 #include "Model/group.h"
 #include "Model/points.h"

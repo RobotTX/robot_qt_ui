@@ -1,6 +1,6 @@
 #include "pointsleftwidget.h"
 #include "pointbuttongroup.h"
-#include "verticalscrollarea.h"
+#include "customscrollarea.h"
 #include "groupbuttongroup.h"
 #include <QVBoxLayout>
 #include <QPushButton>
@@ -25,7 +25,7 @@
 PointsLeftWidget::PointsLeftWidget(QMainWindow* _parent, std::shared_ptr<Points> const& _points, bool _groupDisplayed)
     : QWidget(_parent), groupDisplayed(_groupDisplayed), points(_points), creatingGroup(true), lastCheckedId(-1)
 {
-    scrollArea = new VerticalScrollArea(this);
+    scrollArea = new CustomScrollArea(this);
 
     indexLastGroupClicked = 0;
 
