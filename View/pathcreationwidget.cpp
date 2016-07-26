@@ -103,7 +103,6 @@ PathCreationWidget::PathCreationWidget(QMainWindow* parent, const std::shared_pt
 void PathCreationWidget::addPathPoint(void){
     qDebug() << " Add pathPoint" << idPoint;
     creatingNewPoint = true;
-
     clicked();
 }
 
@@ -170,6 +169,8 @@ void PathCreationWidget::addPathPoint(Point* point){
         pointList.push_back(*point);
         updatePointPainter();
         emit addMapPathPoint(point);
+        for(int i = 0; i < pointList.size(); i++)
+            qDebug() << pointList.at(i).getName();
         idPoint++;
     } else
         qDebug() << "This point is identical to the last one";

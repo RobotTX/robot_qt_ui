@@ -13,15 +13,17 @@ PathPainter::PathPainter(MapView * const &mapPixmapItem, PointsView * const &_po
 // save = do i want to save the path changes
 void PathPainter::reset(bool save){
     clearPointViews(save);
+    qDebug() << "pointviews cleared in pathpainter::reset";
     path = QPainterPath();
     pathVector.clear();
+    qDebug() << "pathvector also cleared";
     setPath(path);
 }
 
 void PathPainter::refresh(bool save){
     qDebug() << "pathpainter refresh called";
 
-    clearPointViews();
+    clearPointViews(save);
 
     if(pathVector.size() > 0){
         PointView* startPointView = NULL;
@@ -124,9 +126,9 @@ void PathPainter::setPointViewPixmap(const int id, PointView* const pointView){
 }
 
 void PathPainter::clearPointViews(bool save){
-    //dqDebug() << "pathpainter: clear point views";
-    pointViews->setNormalPixmaps();
-
+    qDebug() << "pathpainter: clear point views";
+    //pointViews->setNormalPixmaps();
+    qDebug() << "normal pixmaps set";
     QVector<PointView*> pointViewVector = mapItem->getPathCreationPoints();
     for(int k = 0; k < pointViewVector.size(); k++){
          if((mapItem->getState() != GraphicItemState::EDITING) || (pointViewVector.at(k)->getType() != PointView::PixmapType::HOVER) || save){
