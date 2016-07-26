@@ -493,10 +493,14 @@ void MainWindow::viewPathSelectedRobot(int robotNb, bool checked){
         qDebug() << "viewPathSelectedRobot called on" << robot->getName() << checked;
         bottomLayout->uncheckViewPathSelectedRobot(robotNb);
         clearAllPath();
+        qDebug() << "all paths cleared";
         for(size_t i = 0; i < robot->getPath().size(); i++){
             std::shared_ptr<PathPoint> pathPoint = robot->getPath().at(i);
             PointView * pointView = new PointView(std::make_shared<Point>(pathPoint->getPoint()), mapPixmapItem);
             pathPointViews.push_back(pointView);
+        }
+        for(int i = 0; i < pathPointViews.size(); i++){
+            qDebug() << "pathpointview" << i << pathPointViews.at(i)->getPoint()->getName();
         }
         pathPainter->updatePath(pathPointViews);
     } else {
@@ -505,10 +509,12 @@ void MainWindow::viewPathSelectedRobot(int robotNb, bool checked){
 }
 void MainWindow::clearAllPath()
 {
+    qDebug() << "clearallpaths called";
     if(pathPointViews.size() > 0){
         qDeleteAll(pathPointViews.begin(), pathPointViews.end());
         pathPointViews.clear();
     }
+    qDebug() << "paths cleared, about to reset pathpainter";
     pathPainter->reset();
 }
 
@@ -1041,6 +1047,7 @@ void MainWindow::addPathPoint(Point* point){
 void MainWindow::addPathPoint(PointView* pointView){
     qDebug() << "addPathPoint called on point via * pointview" << pointView->getPoint()->getName();
     pathCreationWidget->addPathPoint(&(*(pointView->getPoint())));
+    qDebug() << pointView->getPoint()->getName() << " la";
     for(int i = 0; i < mapPixmapItem->getPathCreationPoints().count(); i++)
         qDebug() << mapPixmapItem->getPathCreationPoints().at(i)->getPoint()->getName();
 }
@@ -1591,11 +1598,14 @@ void MainWindow::sendNewMapToRobot(std::shared_ptr<Robot> robot, QString mapId){
 }
 
 void MainWindow::addPathPointToMap(Point* point){
-    qDebug() << "adding a permanent point to the mapview path";
-    if(point->isPermanent())
+    if(point->isPermanent()){
+        qDebug() << "adding a permanent point to the mapview path";
         mapPixmapItem->addPermanentPointToPath(pointViews->getPointViewFromName(point->getName()));
+    }
+    qDebug() << "in mapview path";
     for(int i  = 0 ; i < mapPixmapItem->getPathCreationPoints().size(); i++)
         qDebug() << mapPixmapItem->getPathCreationPoints().at(i)->getPoint()->getName();
+    qDebug() << "----";
 }
 
 void MainWindow::updatePathPermanentPoint(QString oldPointName, QString newPointName){
