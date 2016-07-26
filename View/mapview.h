@@ -53,6 +53,12 @@ public:
 
     void changeOrderPathPoints(const int start, const int row);
 
+    void addPermanentPointToPath(PointView* point);
+
+    int findIndexInPathByName(const QString name);
+
+    void replacePermanentPathPoint(const int index, PointView *const pv);
+
 signals:
     void pointLeftClicked(PointView*, bool);
     void addPathPointMapView(Point*);
@@ -84,6 +90,7 @@ private:
     QVector<PointView*> pathCreationPoints;
     PointView* tmpPointView;
     std::shared_ptr<Map> map;
+    int idTmp;
 };
 
 #endif // MAPVIEW_H

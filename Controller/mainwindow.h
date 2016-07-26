@@ -171,6 +171,8 @@ private slots:
     void centerMap();
     void setMessageCreationPoint(QString type, CreatePointWidget::Error error);
     void updatePathPainterPoints(int start, int row);
+    void addPathPointToMap(Point* point);
+    void updatePathPermanentPoint(QString, QString);
 
     /**
      * @brief cancelEvent

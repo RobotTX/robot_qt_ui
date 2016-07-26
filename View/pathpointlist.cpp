@@ -9,7 +9,6 @@ PathPointList::PathPointList(QWidget* parent): QListWidget(parent){
     setDragDropMode(QAbstractItemView::InternalMove);
     setFrameShape(QFrame::NoFrame);
     viewport()->setAutoFillBackground( false );
-    //setStyleSheet("QListWidget::item:hover {background-color:grey;}");
     setStyleSheet(" QListWidget {color: red;};\
                     QListWidget::item:hover {background-color:grey;}");
 
@@ -26,12 +25,12 @@ void PathPointList::itemMoved(QModelIndex parent, int first, int end,
             itemNb = count()-1;
         qDebug() << "item " << ((PathPointCreationWidget*) itemWidget(item(itemNb)))->getName() << "moved to row" << row;
         for(int i = 0; i < count(); i++){
-            ((PathPointCreationWidget*) itemWidget(item(i)))->setId(i+1);
+            static_cast<PathPointCreationWidget*> (itemWidget(item(i)))->setId(i+1);
             if(i < count()-1){
-                ((PathPointCreationWidget*) itemWidget(item(i)))->displayActionWidget(true);
+                static_cast<PathPointCreationWidget*> (itemWidget(item(i)))->displayActionWidget(true);
             } else {
-                ((PathPointCreationWidget*) itemWidget(item(i)))->displayActionWidget(false);
-                ((PathPointCreationWidget*) itemWidget(item(i)))->resetAction();
+                static_cast<PathPointCreationWidget*> (itemWidget(item(i)))->displayActionWidget(false);
+                static_cast<PathPointCreationWidget*> (itemWidget(item(i)))->resetAction();
             }
         }
     }
