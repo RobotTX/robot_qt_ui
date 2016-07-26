@@ -20,6 +20,7 @@
 #include <boost/regex.hpp>
 #include <list>
 #include <fstream>
+#include "actionlib_msgs/GoalStatusArray.h"
 
 using boost::asio::ip::tcp;
 

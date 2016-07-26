@@ -1307,6 +1307,7 @@ void MainWindow::hideHome(void){
 
 void MainWindow::goHomeBtnEvent(){
     qDebug() << "go home robot " << selectedRobot->getRobot()->getName() << (selectedRobot->getRobot()->getHome() == NULL);
+    // TODO change to go from the point saved in the robot files
     float oldPosX = selectedRobot->getRobot()->getHome()->getPosition().getX();
     float oldPosY = selectedRobot->getRobot()->getHome()->getPosition().getY();
 

@@ -178,6 +178,13 @@ bool execCommand(ros::NodeHandle n, boost::shared_ptr<tcp::socket> sock, std::ve
 			return true;
 		break;
 
+		/// Command to go home
+		case 'l':
+			std::cout << "(Command system) Go to home" << std::endl;
+			// TODO GO HOME
+			return true;
+		break;
+
 		/// Unknown command
 		default:
 			std::cerr << "(Command system) Unknown command '" << command.at(0) << "' with " << command.size()-1 << " arguments : ";
@@ -433,6 +440,11 @@ void serverDisconnected(const std_msgs::String::ConstPtr& msg){
 	stopMetadata();
 }
 
+/*
+void robotGoalStatus(const actionlib_msgs::GoalStatusArray::ConstPtr& res){
+	std::cout << "(Command system) Robot Goal Status " << (int) res.status_list.status << std::endl;
+}
+*/
 
 int main(int argc, char* argv[]){
 
@@ -441,7 +453,7 @@ int main(int argc, char* argv[]){
 		ros::NodeHandle n;
 
 		/// Subscribe to server_disconnected which tell us when the server has been disconnected
-  		ros::Subscriber sub = n.subscribe("server_disconnected", 1000, serverDisconnected);
+  		ros::Subscriber subServerDisconnected = n.subscribe("server_disconnected", 1000, serverDisconnected);
 		
 		/// Services to start and stop the transfer of the robot position
 		startRobotPosClient = n.serviceClient<gobot_software::Port>("start_robot_pos_sender");
@@ -457,6 +469,10 @@ int main(int argc, char* argv[]){
 
 		/// Publisher to tell the robot where to go
 		go_pub = n.advertise<geometry_msgs::PoseStamped>("/move_base_simple/goal", 1000);
+		//stop_go_pub = n.advertise<geometry_msgs::PoseStamped>("/move_base/cancel", 1000);
+
+		/// Subscriber to know when the robot arrived to its destination
+  		//ros::Subscriber subGoalStatus = n.subscribe("move_base/status", 1000, robotGoalStatus);
 
 		server(CMD_PORT, n);
 		ros::spin();
