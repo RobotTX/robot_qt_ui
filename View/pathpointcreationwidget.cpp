@@ -82,7 +82,7 @@ PathPointCreationWidget::PathPointCreationWidget(const int _id, const Points& _p
 
     layout->addLayout(rightLayout);
     layout->setContentsMargins(2,0,0,11);
-    rightLayout->setContentsMargins(2,11,0,11);
+    rightLayout->setContentsMargins(0,11,0,11);
 
 }
 

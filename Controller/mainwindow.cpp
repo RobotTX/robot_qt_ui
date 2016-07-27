@@ -3081,7 +3081,7 @@ void MainWindow::displayPointFromGroupMenu(){
             /// updates the model
             points->getGroups().at(pointsLeftWidget->getIndexLastGroupClicked())->getPoints().at(checkedId)->setDisplayed(true);
             /// we add a tick icon next to the name of the point to show that it is displayed on the map
-            leftMenu->getDisplaySelectedGroup()->getPointButtonGroup()->getButtonGroup()->button(checkedId)->setIcon(QIcon(":/icons/eye.png"));
+            leftMenu->getDisplaySelectedGroup()->getPointButtonGroup()->getButtonGroup()->button(checkedId)->setIcon(QIcon(":/icons/eye_point.png"));
             /// saves changes to the file
             XMLParser parserPoints(XML_PATH, mapPixmapItem);
             parserPoints.save(*points);

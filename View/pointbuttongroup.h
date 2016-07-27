@@ -31,7 +31,7 @@ private:
     QVBoxLayout* layout;
     QButtonGroup* buttonGroup;
     int groupIndex;
-
+     QSize BUTTON_SIZE ;
 signals:
     void doubleClick(int);
     void updateConnectionsRequest();

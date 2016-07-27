@@ -19,18 +19,18 @@ PointButtonGroup::PointButtonGroup(std::shared_ptr<Points> const&_points, const 
     std::shared_ptr<Group> currentGroup = _points->getGroups().at(groupIndex);
     for(int j = 0; j < currentGroup->getPoints().size(); j++){
         std::shared_ptr<Point> currentPoint = currentGroup->getPoints().at(j);
-        DoubleClickableButton* pointButton = new DoubleClickableButton(j, currentPoint->getName()
-                                                   + " (" + QString::number(currentPoint->getPosition().getX())
-                                                   + ", " + QString::number(currentPoint->getPosition().getY()) + ")", this);
+        DoubleClickableButton* pointButton = new DoubleClickableButton(j, currentPoint->getName(), this);
         pointButton->setAutoDefault(true);
         pointButton->setFlat(true);
         pointButton->setStyleSheet("text-align:left");
         buttonGroup->addButton(pointButton, j);
         layout->addWidget(pointButton);
         if(currentPoint->isDisplayed())
-            pointButton->setIcon(QIcon(":/icons/eye.png"));
+            pointButton->setIcon(QIcon(":/icons/eye_point.png"));
         else
             pointButton->setIcon(QIcon(":/icons/space_point.png"));
+        BUTTON_SIZE = parentWidget()->size()/2 ;
+        pointButton->setIconSize(BUTTON_SIZE);
 
     }
 }
@@ -41,19 +41,17 @@ void PointButtonGroup::setGroup(std::shared_ptr<Points> const&_points, const int
     std::shared_ptr<Group> currentGroup = _points->getGroups().at(groupIndex);
     for(int j = 0; j < currentGroup->getPoints().size(); j++){
         std::shared_ptr<Point> currentPoint = currentGroup->getPoints().at(j);
-        DoubleClickableButton* pointButton = new DoubleClickableButton(j, currentPoint->getName()
-                                                   + " (" + QString::number(currentPoint->getPosition().getX())
-                                                   + ", " + QString::number(currentPoint->getPosition().getY()) + ")", this);
+        DoubleClickableButton* pointButton = new DoubleClickableButton(j, currentPoint->getName(), this);
         pointButton->setAutoDefault(true);
         pointButton->setFlat(true);
         pointButton->setStyleSheet("text-align:left");
         buttonGroup->addButton(pointButton, j);
         layout->addWidget(pointButton);
         if(currentPoint->isDisplayed())
-            pointButton->setIcon(QIcon(":/icons/eye.png"));
+            pointButton->setIcon(QIcon(":/icons/eye_point.png"));
         else
             pointButton->setIcon(QIcon(":/icons/space_point.png"));
-
+        pointButton->setIconSize(BUTTON_SIZE);
     }
     emit updateConnectionsRequest();
 }
