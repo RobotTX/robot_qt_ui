@@ -19,6 +19,7 @@
 #include "View/customizedlineedit.h"
 #include "View/toplayout.h"
 #include "View/buttonmenu.h"
+#include "View/pointview.h"
 #include <QAbstractButton>
 
 
@@ -227,13 +228,27 @@ int PointsLeftWidget::checkGroupName(QString name){
     }
     QMapIterator<QString, std::shared_ptr<QVector<std::shared_ptr<PointView>>>> i(*(points->getGroups()));
     while (i.hasNext()) {
+        bool valid(true);
         i.next();
+        if(i.value()){
+            for(int j = 0; j < i.value()->size(); j++){
+                if(!i.value()->at(j)->getPoint()->getName().compare(name.simplified(), Qt::CaseInsensitive)){
+                    qDebug() << name << "already exists as a point";
+                    valid = false;
+                }
+            }
+        }
         if(!name.compare(i.key(), Qt::CaseInsensitive)){
-            qDebug() << "PointsLeftWidget::checkGroupName" << i.key();
+            qDebug() << "PointsLeftWidget::checkGroupName" << i.key() << "already exists";
+            valid = false;
+
+        }
+
+        if(!valid){
             saveButton->setToolTip("A group with the same name already exists, please choose another name for your group");
             saveButton->setEnabled(false);
             connect(groupNameEdit, SIGNAL(clickSomewhere(QString)), this, SLOT(cancelCreationGroup()));
-            emit messageCreationGroup(TEXT_COLOR_WARNING, "A group with the same name already exists, please choose another name for your group");
+            emit messageCreationGroup(TEXT_COLOR_WARNING, "A group or point with the same name already exists, please choose another name for your group");
             return 2;
         }
     }

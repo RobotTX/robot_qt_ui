@@ -18,7 +18,7 @@
             <name>A new point</name>
             <x>100</x>
             <y>100</y>
-            <displayed>0</displayed>
+            <displayed>1</displayed>
         </point>
     </group>
     <group>

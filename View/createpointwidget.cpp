@@ -69,7 +69,6 @@ CreatePointWidget::CreatePointWidget(QMainWindow* _parent, std::shared_ptr<Point
 
     cancelSaveLayout = new QHBoxLayout();
 
-
     saveBtn = new QPushButton("Save", this);
     cancelBtn = new QPushButton("Cancel", this);
     cancelSaveLayout->addWidget(cancelBtn);
@@ -140,21 +139,29 @@ int CreatePointWidget::checkPointName(void){
 
     QMapIterator<QString, std::shared_ptr<QVector<std::shared_ptr<PointView>>>> i(*(points->getGroups()));
     while (i.hasNext()) {
+        /// determines whether or not the current name is a valid one (not already the name of another point or group)
+        bool valid(true);
         i.next();
+        if(!i.key().compare(nameEdit->text().simplified(), Qt::CaseInsensitive)){
+            qDebug() << "This is already the name of a group" ;
+            valid = false;
+        }
         if(i.value()){
             for(int j = 0; j < i.value()->size(); j++){
                 if(i.value()->at(j)->getPoint()->getName().compare(nameEdit->text().simplified(), Qt::CaseInsensitive) == 0){
                     qDebug() << nameEdit->text() << " already exists";
-                    saveBtn->setEnabled(false);
-                    /// to explain the user why he cannot add its point as it is
-                    saveBtn->setToolTip("A point with this name already exists, please choose another name for your point");
-                    emit invalidName(TEXT_COLOR_WARNING, Error::AlreadyExists);
-                    return 2;
+                    valid = false;
                 }
             }
         }
+        if(!valid){
+            saveBtn->setEnabled(false);
+            /// to explain the user why he cannot add its point as it is
+            saveBtn->setToolTip("A point or group with this name already exists, please choose another name for your point");
+            emit invalidName(TEXT_COLOR_WARNING, Error::AlreadyExists);
+            return 2;
+        }
     }
-
     saveBtn->setToolTip("");
     saveBtn->setEnabled(true);
     emit invalidName(TEXT_COLOR_INFO, Error::NoError);
