@@ -91,7 +91,7 @@ void GroupButtonGroup::deleteButtons(void){
     layout->addWidget(modifyEdit);
 }
 
-void GroupButtonGroup::update(){
+void GroupButtonGroup::updateButtons(){
     qDebug() << "GroupButtonGroup::update called";
 
     deleteButtons();
@@ -114,7 +114,7 @@ void GroupButtonGroup::update(){
             DoubleClickableButton* groupButton = new DoubleClickableButton(i.key(), i.key(), this);
             groupButton->setFlat(true);
             groupButton->setAutoDefault(true);
-            groupButton->setStyleSheet("text-align:left");
+            groupButton->setStyleSheet("QPushButton {color: "+text_color+";text-align:left;border: 4px; padding: 10px;}QPushButton:hover{background-color: "+button_hover_color+";}QPushButton:checked{background-color: "+button_checked_color+";}");
             groupButton->setCheckable(true);
             groupButton->setIconSize(BUTTON_SIZE);
             buttonGroup->addButton(groupButton, index);
@@ -136,7 +136,7 @@ void GroupButtonGroup::update(){
                                                    + ", " + QString::number(currentPoint->getPosition().getY()) + ")", this);
         pointButton->setFlat(true);
         pointButton->setAutoDefault(true);
-        pointButton->setStyleSheet("text-align:left");
+        pointButton->setStyleSheet("QPushButton {color: "+text_color+";text-align:left;border: 4px; padding: 10px;}QPushButton:hover{background-color: "+button_hover_color+";}QPushButton:checked{background-color: "+button_checked_color+";}");
         pointButton->setCheckable(true);
         buttonGroup->addButton(pointButton, index + i);
         layout->addWidget(pointButton);

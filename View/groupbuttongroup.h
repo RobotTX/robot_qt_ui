@@ -30,7 +30,7 @@ public:
 
 public:
     void deleteButtons(void);
-    void update();
+    void updateButtons();
     void uncheck(void);
     void setEnabled(const bool enable);
 

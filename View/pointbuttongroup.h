@@ -23,7 +23,6 @@ public:
 public:
     void deleteButtons(void);
     void setGroup(const QString groupIndex);
-    void update(const Points &_points);
     void setCheckable(const bool checkable);
     void uncheck(void);
     void createButtons();

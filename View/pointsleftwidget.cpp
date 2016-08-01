@@ -116,7 +116,7 @@ PointsLeftWidget::PointsLeftWidget(QMainWindow* _parent, std::shared_ptr<Points>
 
 }
 
-void PointsLeftWidget::updateGroupButtonGroup(Points const& points){
+void PointsLeftWidget::updateGroupButtonGroup(){
     qDebug() << "PointsLeftWidget::updateGroupButtonGroup called";
     groupButtonGroup->update();
 }
@@ -297,6 +297,7 @@ void PointsLeftWidget::showEvent(QShowEvent *event){
 
 void PointsLeftWidget::resetWidget(void){
     qDebug() << "PointsLeftWidget::resetWidget called";
+    groupButtonGroup->updateButtons();
     groupButtonGroup->uncheck();
     lastCheckedId=-1;
     disableButtons();

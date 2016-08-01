@@ -232,8 +232,6 @@ void EditSelectedRobotWidget::enableAll(void){
 void EditSelectedRobotWidget::showEvent(QShowEvent *event){
     emit showEditSelectedRobotWidget();
     QWidget::showEvent(event);
-
-
 }
 
 void EditSelectedRobotWidget::hideEvent(QHideEvent *event){
