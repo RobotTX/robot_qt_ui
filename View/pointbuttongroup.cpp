@@ -48,7 +48,8 @@ void PointButtonGroup::createButtons(std::shared_ptr<Points> const points){
                     pointButton->setIcon(QIcon(":/icons/eye.png"));
                 else
                     pointButton->setIcon(QIcon(":/icons/space_point.png"));
-
+                BUTTON_SIZE = parentWidget()->size()/2 ;
+                pointButton->setIconSize(BUTTON_SIZE);
             }
         }
     }

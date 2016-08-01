@@ -8,9 +8,11 @@
 #include <QComboBox>
 
 PathPointCreationWidget::PathPointCreationWidget(const int _id, std::shared_ptr<Points> _points, const Point& _point, QWidget* parent):QWidget(parent){
-    layout = new QVBoxLayout(this);
+    layout = new QHBoxLayout(this);
     layout->addWidget(new QLabel("PathPointCreationWidget", this));
-    /*point = _point;
+    /*QVBoxLayout* rightLayout = new QVBoxLayout(this);
+
+    point = _point;
     points = _points;
     id = _id;
     name = _point.getName();
@@ -22,7 +24,7 @@ PathPointCreationWidget::PathPointCreationWidget(const int _id, std::shared_ptr<
     /// Label for the name of the point
     pointLabel = new QLabel(this);
     setName(name);
-    layout->addWidget(pointLabel);
+    rightLayout->addWidget(pointLabel);
 
     /// The widget that contain the layout for the button to select the
     /// action the robot need to do (wait for X sec or wait for human action)
@@ -51,7 +53,7 @@ PathPointCreationWidget::PathPointCreationWidget(const int _id, std::shared_ptr<
     actionLayout->setContentsMargins(0, 0, 0, 0);
     actionLayout->addWidget(timeWidget);
 
-    layout->addWidget(actionWidget);
+    rightLayout->addWidget(actionWidget);
     actionWidget->hide();
 
     cancelBtn = new QPushButton("Cancel", this);
@@ -61,12 +63,26 @@ PathPointCreationWidget::PathPointCreationWidget(const int _id, std::shared_ptr<
 
     //editLayout->addWidget(cancelBtn);
     //editLayout->addWidget(saveEditBtn);
-    layout->addWidget(saveEditBtn);
+    rightLayout->addWidget(saveEditBtn);
     //layout->addLayout(editLayout);
     saveEditBtn->hide();
 
+    rightLayout->setAlignment(Qt::AlignTop);
 
-    layout->setAlignment(Qt::AlignTop);*/
+    QLabel*  moveImage = new QLabel();
+    QPixmap mypix (":/icons/cropped_list.png");
+    moveImage->setPixmap(mypix);
+    moveImage->setScaledContents(true);
+    moveImage->setMaximumWidth(10);
+    moveImage->setMaximumHeight(10);
+
+
+    layout->addWidget(moveImage);
+
+    layout->addLayout(rightLayout);
+    layout->setContentsMargins(2,0,0,11);
+    rightLayout->setContentsMargins(0,11,0,11);
+*/
 }
 
 void PathPointCreationWidget::setName(const QString _name){
@@ -75,7 +91,7 @@ void PathPointCreationWidget::setName(const QString _name){
     point.setName(name);
     qDebug() << "New Name :" << name;
 
-    if(name.contains("tmpPoint")){
+    if(name.compare("tmpPoint") == 0){
         posX = point.getPosition().getX();
         posY = point.getPosition().getY();
         setPointLabel(point.getPosition().getX(), point.getPosition().getY());
@@ -88,7 +104,7 @@ void PathPointCreationWidget::setId(const int _id){
     qDebug() << "PathPointCreationWidget::setId called";
     /*id = _id;
 
-    if(name.contains("tmpPoint")){
+    if(name.compare("tmpPoint") == 0){
         setPointLabel(point.getPosition().getX(), point.getPosition().getY());
     } else {
         pointLabel->setText(QString::number(id)+". "+name);

@@ -32,7 +32,7 @@ private:
     QVBoxLayout* layout;
     QButtonGroup* buttonGroup;
     QString groupIndex;
-
+    QSize BUTTON_SIZE;
 signals:
     void updateConnectionsRequest();
 };

@@ -2955,7 +2955,7 @@ void MainWindow::displayPointFromGroupMenu(){
             currentPointView->show();
 
             /// we add a tick icon next to the name of the point to show that it is displayed on the map
-            leftMenu->getDisplaySelectedGroup()->getPointButtonGroup()->getButtonGroup()->button(checkedId)->setIcon(QIcon(":/icons/eye.png"));
+            leftMenu->getDisplaySelectedGroup()->getPointButtonGroup()->getButtonGroup()->button(checkedId)->setIcon(QIcon(":/icons/eye_point.png"));
 
             /// saves changes to the file
             XMLParser parserPoints(XML_PATH);
