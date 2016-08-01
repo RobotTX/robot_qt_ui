@@ -2975,8 +2975,9 @@ void MainWindow::removePointFromGroupMenu(void){
  * called when a user displays or hides a point on the map from the group menu
  */
 void MainWindow::displayPointFromGroupMenu(){
-    qDebug() << "displaypointfromgroupmenu event called";
-    QString pointName = leftMenu->getDisplaySelectedGroup()->getPointButtonGroup()->getButtonGroup()->checkedButton()->text();
+
+    const QString pointName = leftMenu->getDisplaySelectedGroup()->getPointButtonGroup()->getButtonGroup()->checkedButton()->text();
+    qDebug() << "displaypointfromgroupmenu event called" << pointName ;
     int checkedId = leftMenu->getDisplaySelectedGroup()->getPointButtonGroup()->getButtonGroup()->checkedId();
 
     if(pointName.compare("") == 0){
