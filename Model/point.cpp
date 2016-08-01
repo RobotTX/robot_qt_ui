@@ -28,6 +28,9 @@ void Point::display(std::ostream& stream) const {
         case PATH:
             stream << "which is a Path Point";
         break;
+        default:
+            qDebug() << "Point::display : you should not be here, you probably did not implement the behavior for the type" << type;
+        break;
     }
 }
 

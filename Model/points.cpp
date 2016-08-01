@@ -226,11 +226,11 @@ bool Points::isDisplayed(const QString key) const {
     return true;
 }
 
-bool Points::isAGroup(QString groupName) const{
+bool Points::isAGroup(const QString groupName) const{
     return groups->contains(groupName);
 }
 
-bool Points::isAPoint(QString pointName) const{
+bool Points::isAPoint(const QString pointName) const{
     QMapIterator<QString, std::shared_ptr<QVector<std::shared_ptr<PointView>>>> i(*groups);
     while (i.hasNext()) {
         i.next();
@@ -244,7 +244,7 @@ bool Points::isAPoint(QString pointName) const{
     return false;
 }
 
-QVector<QString> Points::getHomeNameFromGroup(QString groupName) const{
+QVector<QString> Points::getHomeNameFromGroup(const QString groupName) const{
     QVector<QString> nameVector;
     for(int j = 0; j < groups->value(groupName)->size(); j++){
         if(groups->value(groupName)->at(j)->getPoint()->getType() == Point::PointType::HOME)
@@ -253,7 +253,7 @@ QVector<QString> Points::getHomeNameFromGroup(QString groupName) const{
     return nameVector;
 }
 
-QString Points::getGroupNameFromPointName(QString pointName) const{
+QString Points::getGroupNameFromPointName(const QString pointName) const{
     QMapIterator<QString, std::shared_ptr<QVector<std::shared_ptr<PointView>>>> i(*groups);
     while (i.hasNext()) {
         i.next();

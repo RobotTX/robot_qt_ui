@@ -61,7 +61,7 @@ private:
     QString formatName(const QString name) const;
 public:
     void disableButtons(void);
-    void updateGroupButtonGroup(Points const& points);
+    void updateGroupButtonGroup();
     void resetWidget(void);
 
 protected:
