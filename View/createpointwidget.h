@@ -28,7 +28,7 @@ public:
     enum Error { ContainsSemicolon, EmptyName, AlreadyExists, NoError };
     CreatePointWidget(QMainWindow* parent, std::shared_ptr<Points> points);
 
-    void setSelectedPoint(PointView* const& _pointView);
+    void setSelectedPoint(std::shared_ptr<PointView> const& _pointView);
 
     QLabel* getPosXLabel(void) const { return posXLabel; }
     QLabel* getPosYLabel(void) const { return posYLabel; }
@@ -64,7 +64,7 @@ private:
     QHBoxLayout* cancelSaveLayout;
     QMainWindow* parent;
     QVBoxLayout* layout;
-    PointView* pointView;
+    std::shared_ptr<PointView> pointView;
     QLineEdit* nameEdit;
     QLabel* posXLabel;
     QLabel* posYLabel;

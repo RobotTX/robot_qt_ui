@@ -28,17 +28,14 @@ public:
     /// used to determine which menu or object (could be the map) cause the information of this point to be displayed
     enum Origin { MAP, GROUP_MENU, POINTS_MENU };
 
-    DisplaySelectedPoint(QMainWindow* const _parent, const std::shared_ptr<Points> &_points, std::shared_ptr<Map> const& _map, PointView* _pointView = 0, const Origin _origin = MAP);
+    DisplaySelectedPoint(QMainWindow* const _parent, const std::shared_ptr<Points> &_points, std::shared_ptr<Map> const& _map, QString _pointName = 0, const Origin _origin = MAP);
 
     TopLeftMenu* getActionButtons(void) const { return actionButtons; }
     QPushButton* getSaveButton(void) const { return saveButton; }
     QPushButton* getCancelButton(void) const { return cancelButton; }
-    QString getPointName(void) const { return nameEdit->text(); }
     QLineEdit* getNameEdit(void) const { return nameEdit; }
-    std::shared_ptr<Point> getPoint(void) const { return pointView->getPoint(); }
-    void setPoint(std::shared_ptr<Point> const& _point) { pointView->setPoint(_point); }
-    PointView* getPointView(void) const { return pointView; }
-    void setPointView(PointView * const &pointView, QString robotName);
+    QString getPointName(void) const { return pointName; }
+    void setPointName(const QString _pointName, QString robotName);
     Origin getOrigin(void) const { return origin; }
     QLabel* getXLabel(void) const { return posXLabel; }
     QLabel* getYLabel(void) const { return posYLabel; }
@@ -86,7 +83,7 @@ private:
     QPushButton* editButton;
     QPushButton* saveButton;
     QPushButton* cancelButton;
-    PointView* pointView;
+    QString pointName;
     QMainWindow* parent;
     std::shared_ptr<Points> points;
     QWidget* homeWidget;

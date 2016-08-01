@@ -1,7 +1,6 @@
 #include "mapview.h"
 #include "View/pointview.h"
 #include "Model/points.h"
-#include "View/groupview.h"
 #include "Model/point.h"
 #include <QMainWindow>
 #include <QMouseEvent>
@@ -19,7 +18,7 @@ MapView::MapView (const QPixmap& pixmap, const QSize _size, std::shared_ptr<Map>
 
     /// To drag & drop the map
     setFlag(QGraphicsItem::ItemIsMovable);
-    connect(this, SIGNAL(pointLeftClicked(PointView*)), mainWindow, SLOT(setSelectedPoint(PointView*)));
+    connect(this, SIGNAL(pointLeftClicked(QString)), mainWindow, SLOT(setSelectedPoint(QString)));
 
 }
 
@@ -47,7 +46,7 @@ void MapView::mouseReleaseEvent(QGraphicsSceneMouseEvent *event){
             tmpPointView->show();
             /// might be useless code
             tmpPointView->setPos(event->pos().x(), event->pos().y());
-            emit pointLeftClicked(&(*tmpPointView));
+            emit pointLeftClicked(tmpPointView->getPoint()->getName());
         } else if(state == GraphicItemState::CREATING_PATH){
             /// if it's not a white point of the map we cannot add it to the path
             qDebug() << "(MapView) CREATING_PATH";
@@ -119,10 +118,11 @@ void MapView::setState(const GraphicItemState _state){
  }
 
  /// so that the icon of a point view remains consistent while editing a point of a path and after
- void MapView::updatePixmapHover(PointView::PixmapType type, PointView *pv){
-     Q_UNUSED(type)
-    if(state == GraphicItemState::EDITING)
-        pv->setType(PointView::PixmapType::HOVER);
+ void MapView::updatePixmapHover(PointView::PixmapType type, QString pointName){
+    Q_UNUSED(type)
+    std::shared_ptr<PointView> pointView = points->findPointView(pointName);
+    if(pointView && state == GraphicItemState::EDITING)
+        pointView->setType(PointView::PixmapType::HOVER);
  }
 
  void MapView::addPathPointMapViewSlot(PointView* _pointView){

@@ -102,7 +102,7 @@ CreatePointWidget::CreatePointWidget(QMainWindow* _parent, std::shared_ptr<Point
 
 }
 
-void CreatePointWidget::setSelectedPoint(PointView * const &_pointView){
+void CreatePointWidget::setSelectedPoint(const std::shared_ptr<PointView> &_pointView){
     qDebug() << "setSelectedPoint called";
     pointView = _pointView;
     nameEdit->setText(pointView->getPoint()->getName());

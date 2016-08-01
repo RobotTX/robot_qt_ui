@@ -163,13 +163,13 @@ void Points::addPoint(const QString groupName, const QString pointName, const do
         pointView->hide();
 
     connect(&(*pointView), SIGNAL(pathPointChanged(double, double, PointView*)), mainWindow, SLOT(updatePathPoint(double, double, PointView*)));
-    connect(&(*pointView), SIGNAL(hoverEventSignal(PointView::PixmapType, PointView*)), mapView, SLOT(updatePixmapHover(PointView::PixmapType, PointView*)));
-    connect(&(*pointView), SIGNAL(pointLeftClicked(PointView*)), mainWindow, SLOT(displayPointEvent(PointView*)));
+    connect(&(*pointView), SIGNAL(hoverEventSignal(PointView::PixmapType, QString)), mapView, SLOT(updatePixmapHover(PointView::PixmapType, QString)));
+    connect(&(*pointView), SIGNAL(pointLeftClicked(QString)), mainWindow, SLOT(displayPointEvent(QString)));
     connect(&(*pointView), SIGNAL(editedPointPositionChanged(double, double)), mainWindow, SLOT(updateCoordinates(double, double)));
     connect(&(*pointView), SIGNAL(moveTmpEditPathPoint()), mainWindow, SLOT(moveTmpEditPathPointSlot()));
     connect(&(*pointView), SIGNAL(addPointPath(PointView*)), mapView, SLOT(addPathPointMapViewSlot(PointView*)));
-    connect(&(*pointView), SIGNAL(homeSelected(PointView*, bool)), mainWindow, SLOT(homeSelected(PointView*, bool)));
-    connect(&(*pointView), SIGNAL(homeEdited(PointView*, bool)), mainWindow, SLOT(homeEdited(PointView*, bool)));
+    connect(&(*pointView), SIGNAL(homeSelected(QString, bool)), mainWindow, SLOT(homeSelected(QString, bool)));
+    connect(&(*pointView), SIGNAL(homeEdited(QString, bool)), mainWindow, SLOT(homeEdited(QString, bool)));
 
 
     if(!groups->empty() && groups->contains(groupName)){

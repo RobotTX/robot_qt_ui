@@ -35,7 +35,6 @@ HEADERS += Controller/cmdrobotthread.h \
            View/displayselectedpoint.h \
            View/editselectedrobotwidget.h \
            View/groupbuttongroup.h \
-           View/groupview.h \
            View/leftmenu.h \
            View/leftmenuwidget.h \
            View/mapleftwidget.h \
@@ -87,7 +86,6 @@ SOURCES += main.cpp \
            View/displayselectedpoint.cpp \
            View/editselectedrobotwidget.cpp \
            View/groupbuttongroup.cpp \
-           View/groupview.cpp \
            View/leftmenu.cpp \
            View/leftmenuwidget.cpp \
            View/mapleftwidget.cpp \

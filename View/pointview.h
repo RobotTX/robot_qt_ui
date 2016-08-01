@@ -65,15 +65,15 @@ protected:
     void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
 
 signals:
-    void pointRightClicked(PointView*);
-    void pointLeftClicked(PointView*);
-    void addPointPath(PointView*);
-    void homeSelected(PointView* pointView, bool temporary);
-    void homeEdited(PointView* pointView, bool temporary);
+    void pointRightClicked(QString);
+    void pointLeftClicked(QString);
+    void addPointPath(QString);
+    void homeSelected(QString pointView, bool temporary);
+    void homeEdited(QString pointView, bool temporary);
     void moveTmpEditPathPoint();
     void editedPointPositionChanged(double, double);
-    void pathPointChanged(double, double, PointView*);
-    void hoverEventSignal(PointView::PixmapType, PointView*);
+    void pathPointChanged(double, double, QString);
+    void hoverEventSignal(PointView::PixmapType, QString);
 
 private:
     std::shared_ptr<Point> point;

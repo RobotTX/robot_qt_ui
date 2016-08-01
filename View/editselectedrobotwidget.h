@@ -34,8 +34,8 @@ public:
     QPushButton* getHomeBtn(void){ return homeBtn; }
     void disableAll(void);
     void enableAll(void);
-    void setHome(PointView* const _home, bool const _temporary){home = _home; temporary = _temporary;}
-    PointView* getHome() const {return home;}
+    void setHome(std::shared_ptr<PointView> const _home, bool const _temporary){home = _home; temporary = _temporary;}
+    std::shared_ptr<PointView> getHome() const {return home;}
     bool isTemporaryHome()const {return temporary;}
     bool isFirstConnection()const {return firstConnection;}
     void setOldHome(std::shared_ptr<Point> const _oldHome){oldHome = _oldHome;}
@@ -70,7 +70,7 @@ private:
     std::shared_ptr<Robots> robots;
     QPushButton* saveBtn;
     QPushButton* homeBtn;
-    PointView* home;
+    std::shared_ptr<PointView> home;
     bool temporary;
     std::shared_ptr<Point> oldHome;
     QPushButton* addPathBtn;

@@ -14,12 +14,6 @@
             <y>200</y>
             <displayed>1</displayed>
         </point>
-        <point>
-            <name>A final point</name>
-            <x>150</x>
-            <y>225</y>
-            <displayed>1</displayed>
-        </point>
     </group>
     <group>
         <name>Second group</name>
@@ -47,18 +41,6 @@
     </group>
     <group>
         <name>first group</name>
-        <point>
-            <name>A</name>
-            <x>50</x>
-            <y>50</y>
-            <displayed>1</displayed>
-        </point>
-        <point>
-            <name>Ma point</name>
-            <x>75</x>
-            <y>75</y>
-            <displayed>1</displayed>
-        </point>
         <point>
             <name>A new point</name>
             <x>100</x>

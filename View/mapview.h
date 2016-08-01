@@ -45,10 +45,10 @@ public:
     int findIndexInPathByName(const QString name);
 
 signals:
-    void pointLeftClicked(PointView*);
+    void pointLeftClicked(QString);
     void addPathPointMapView(Point*);
-    void homeSelected(PointView* pointView, bool temporary);
-    void homeEdited(PointView* pointView, bool temporary);
+    void homeSelected(QString pointView, bool temporary);
+    void homeEdited(QString pointView, bool temporary);
     void newCoordinates(double x, double y);
     void newCoordinatesPathPoint(double, double);
     void newMessage(QString);
@@ -56,7 +56,7 @@ signals:
 private slots:
     void addPathPointMapViewSlot(PointView*);
     void updateHover(QString, QString);
-    void updatePixmapHover(PointView::PixmapType type, PointView* pv);
+    void updatePixmapHover(PointView::PixmapType type, QString pv);
     void addPointEditPath(Point pt);
     void deletePointView(Point pt);
 

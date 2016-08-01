@@ -127,14 +127,14 @@ private slots:
     void robotSavedEvent();
     void minusSelecPointBtnEvent();
     void editSelecPointBtnEvent();
-    void setSelectedPoint(PointView* pointView);
+    void setSelectedPoint(QString pointView);
     void pointSavedEvent(QString groupName, double x, double y, QString name);
     void selectHomeEvent();
     void stopSelectedRobot(int robotNb);
     void playSelectedRobot(int robotNb);
     void askForDeleteGroupConfirmation(const QString group);
     void askForDeletePointConfirmation(const QString index);
-    void displayPointEvent(PointView* _pointView);
+    void displayPointEvent(QString pointName);
     void askForDeleteDefaultGroupPointConfirmation(const QString index);
     void displayGroupMapEvent(void);
     void pathSaved(bool execPath);
@@ -180,8 +180,8 @@ private slots:
     void setMessageTop(const QString msgType, const QString msg);
     void setLastMessage(void) { setMessageTop(topLayout->getLastMessage().first, topLayout->getLastMessage().second); }
     void setMessageCreationGroup(QString type, QString message);
-    void homeSelected(PointView* pointView, bool temporary);
-    void homeEdited(PointView* pointView, bool temporary);
+    void homeSelected(QString pointName, bool temporary);
+    void homeEdited(QString pointView, bool temporary);
     void goHomeBtnEvent();
     void viewPathSelectedRobot(int robotNb, bool checked);
     void editHomeEvent();
@@ -210,10 +210,10 @@ private:
     MapView* mapPixmapItem;
     RobotView* selectedRobot;
     RobotView* scanningRobot;
-    PointView* selectedPoint;
+    std::shared_ptr<PointView> selectedPoint;
     std::shared_ptr<Points> points;
     PathPainter* pathPainter;
-    PointView* editedPointView;
+    std::shared_ptr<PointView> editedPointView;
     TopLayout* topLayout;
     QVector<PointView*> pathPointViews;
     //QList<QPair<QWidget*, QString>> lastWidgets;
