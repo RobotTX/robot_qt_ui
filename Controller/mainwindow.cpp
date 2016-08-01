@@ -2422,7 +2422,9 @@ void MainWindow::displayPointMapEvent(){
             if(pointIndexes.first.compare(NO_GROUP_NAME) != 0){
                 if(pointsLeftWidget->getGroupButtonGroup()->getButtonByName(pointIndexes.first) != NULL)
                     pointsLeftWidget->getGroupButtonGroup()->getButtonByName(pointIndexes.first)->setIcon(QIcon(":/icons/folder_space.png"));
-                leftMenu->getDisplaySelectedGroup()->getPointButtonGroup()->getButtonGroup()->button(pointIndexes.second)->setIcon(QIcon(":/icons/space_point.png"));
+                qDebug() << pointIndexes.second;
+                pointsLeftWidget->getGroupButtonGroup()->getButtonByName(pointIndexes.first)->setIcon(QIcon(":/icons/space_point.png"));
+                //leftMenu->getDisplaySelectedGroup()->getPointButtonGroup()->getButtonGroup()->button(pointIndexes.second)->setIcon(QIcon(":/icons/space_point.png"));
             } else {
                 /// it's an isolated point
                 if(pointsLeftWidget->getGroupButtonGroup()->getButtonByName(pointView->getPoint()->getName()) != NULL)
@@ -2441,7 +2443,9 @@ void MainWindow::displayPointMapEvent(){
             /// we update the groups menu
             /// it's a point that belongs to a group
             if(pointIndexes.first.compare(NO_GROUP_NAME) != 0){
-                leftMenu->getDisplaySelectedGroup()->getPointButtonGroup()->getButtonGroup()->button(pointIndexes.second)->setIcon(QIcon(":/icons/eye_point.png"));
+                qDebug() << pointIndexes.second;
+                pointsLeftWidget->getGroupButtonGroup()->getButtonByName(pointIndexes.first)->setIcon(QIcon(":/icons/eye_point.png"));
+                //leftMenu->getDisplaySelectedGroup()->getPointButtonGroup()->getButtonGroup()->)->setIcon(QIcon(":/icons/eye_point.png"));
                 /// we check whether or not the entire group is displayed and update the points left widget accordingly by adding a tick Icon or not
                 if(points->isDisplayed(pointIndexes.first) && pointsLeftWidget->getGroupButtonGroup()->getButtonByName(pointIndexes.first)!= NULL)
                     pointsLeftWidget->getGroupButtonGroup()->getButtonByName(pointIndexes.first)->setIcon(QIcon(":/icons/folder_eye.png"));
@@ -2943,10 +2947,14 @@ void MainWindow::updateCoordinates(double x, double y){
     leftMenu->getDisplaySelectedPoint()->getYLabel()->setText("Y : " + QString::number(y, 'f', 1));
     points->findPointView(leftMenu->getDisplaySelectedPoint()->getPointName())->setPos(x, y);
 
-    if(map->getMapImage().pixelColor(x ,y).red() >= 254)
+    if(map->getMapImage().pixelColor(x ,y).red() >= 254){
         leftMenu->getDisplaySelectedPoint()->getSaveButton()->setEnabled(true);
-    else
+        setMessageTop(TEXT_COLOR_INFO, "To save this point permanently click \"Save\" or press Enter");
+    }
+    else {
         leftMenu->getDisplaySelectedPoint()->getSaveButton()->setEnabled(false);
+        setMessageTop(TEXT_COLOR_WARNING, "You cannot save this point because the current position is known as an obstacle for the robot");
+    }
 }
 
 /**

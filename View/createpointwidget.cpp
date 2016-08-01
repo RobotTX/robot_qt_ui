@@ -69,7 +69,6 @@ CreatePointWidget::CreatePointWidget(QMainWindow* _parent, std::shared_ptr<Point
 
     cancelSaveLayout = new QHBoxLayout();
 
-
     saveBtn = new QPushButton("Save", this);
     cancelBtn = new QPushButton("Cancel", this);
     cancelSaveLayout->addWidget(cancelBtn);
