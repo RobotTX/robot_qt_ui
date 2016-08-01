@@ -158,7 +158,7 @@ LeftMenu::LeftMenu(MainWindow* _parent, std::shared_ptr<Points> const& _points, 
 }
 
 void LeftMenu::updateGroupDisplayed(std::shared_ptr<Points> const& _points, const QString groupIndex){
-    displaySelectedGroup->getPointButtonGroup()->setGroup(_points, groupIndex);
+    displaySelectedGroup->getPointButtonGroup()->setGroup(groupIndex);
 }
 
 void LeftMenu::hideBackButton(void)

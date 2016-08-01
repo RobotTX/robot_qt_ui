@@ -10,49 +10,46 @@
 #include <QLabel>
 #include "View/pointview.h"
 
-PointButtonGroup::PointButtonGroup(std::shared_ptr<Points> const points, const QString _groupIndex
-                                   , QWidget* parent): QWidget(parent){
+PointButtonGroup::PointButtonGroup(std::shared_ptr<Points> _points, const QString _groupIndex
+                                   , QWidget* parent): QWidget(parent), points(_points){
     layout = new QVBoxLayout(this);
 
     groupIndex = _groupIndex;
     buttonGroup = new QButtonGroup(this);
     layout->setAlignment(Qt::AlignTop);
 
-    createButtons(points);
+    createButtons();
 }
 
-void PointButtonGroup::setGroup(std::shared_ptr<Points> const points, const QString _groupIndex){
+void PointButtonGroup::setGroup(const QString _groupIndex){
     qDebug() << "PointButtonGroup::setGroup called";
     deleteButtons();
     groupIndex = _groupIndex;
-    createButtons(points);
+    createButtons();
     emit updateConnectionsRequest();
 }
 
-void PointButtonGroup::createButtons(std::shared_ptr<Points> const points){
-    QMapIterator<QString, std::shared_ptr<QVector<std::shared_ptr<PointView>>>> i(*(points->getGroups()));
-    while (i.hasNext()) {
-        i.next();
-        if(i.value()){
-            for(int j = 0; j < i.value()->size(); j++){
-                std::shared_ptr<Point> currentPoint = i.value()->at(j)->getPoint();
+void PointButtonGroup::createButtons(){
+    if(points->isAGroup(groupIndex) && points->getGroups()->value(groupIndex)->size() > 0){
+        std::shared_ptr<QVector<std::shared_ptr<PointView>>> group = points->getGroups()->value(groupIndex);
+        for(int j = 0; j < group->size(); j++){
+            std::shared_ptr<Point> currentPoint = group->at(j)->getPoint();
 
-                DoubleClickableButton* pointButton = new DoubleClickableButton(currentPoint->getName(), currentPoint->getName()
-                                                           + " (" + QString::number(currentPoint->getPosition().getX())
-                                                           + ", " + QString::number(currentPoint->getPosition().getY()) + ")", this);
-                pointButton->setAutoDefault(true);
-                pointButton->setFlat(true);
-                pointButton->setStyleSheet("QPushButton {color: "+text_color+";text-align:left;border: 4px; padding: 10px;}QPushButton:hover{background-color: "+button_hover_color+";}QPushButton:checked{background-color: "+button_checked_color+";}");
+            DoubleClickableButton* pointButton = new DoubleClickableButton(currentPoint->getName(), currentPoint->getName()
+                                                       + " (" + QString::number(currentPoint->getPosition().getX())
+                                                       + ", " + QString::number(currentPoint->getPosition().getY()) + ")", this);
+            pointButton->setAutoDefault(true);
+            pointButton->setFlat(true);
+            pointButton->setStyleSheet("QPushButton {color: "+text_color+";text-align:left;border: 4px; padding: 10px;}QPushButton:hover{background-color: "+button_hover_color+";}QPushButton:checked{background-color: "+button_checked_color+";}");
 
-                buttonGroup->addButton(pointButton);
-                layout->addWidget(pointButton);
-                if(i.value()->at(j)->isVisible())
-                    pointButton->setIcon(QIcon(":/icons/eye_point.png"));
-                else
-                    pointButton->setIcon(QIcon(":/icons/space_point.png"));
-                BUTTON_SIZE = parentWidget()->size()/2 ;
-                pointButton->setIconSize(BUTTON_SIZE);
-            }
+            buttonGroup->addButton(pointButton);
+            layout->addWidget(pointButton);
+            if(group->at(j)->isVisible())
+                pointButton->setIcon(QIcon(":/icons/eye_point.png"));
+            else
+                pointButton->setIcon(QIcon(":/icons/space_point.png"));
+            BUTTON_SIZE = parentWidget()->size()/2;
+            pointButton->setIconSize(BUTTON_SIZE);
         }
     }
 }

@@ -2157,7 +2157,7 @@ void MainWindow::askForDeletePointConfirmation(QString pointName){
                 points->removePoint(pointName);
 
                 /// updates the group menu
-                leftMenu->getDisplaySelectedGroup()->getPointButtonGroup()->setGroup(points, pointsLeftWidget->getIndexLastGroupClicked());
+                leftMenu->getDisplaySelectedGroup()->getPointButtonGroup()->setGroup(pointsLeftWidget->getIndexLastGroupClicked());
 
                 /// save the changes to the file
                 XMLParser parserPoints(XML_PATH);
@@ -2636,7 +2636,7 @@ void MainWindow::removePointFromInformationMenu(void){
                         parserPoints.save(*points);
 
                         /// updates the group menu
-                        leftMenu->getDisplaySelectedGroup()->getPointButtonGroup()->setGroup(points, pointsLeftWidget->getIndexLastGroupClicked());
+                        leftMenu->getDisplaySelectedGroup()->getPointButtonGroup()->setGroup(pointsLeftWidget->getIndexLastGroupClicked());
 
                         /// closes the window
                         backEvent();
