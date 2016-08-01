@@ -67,12 +67,12 @@ protected:
 signals:
     void pointRightClicked(QString);
     void pointLeftClicked(QString);
-    void addPointPath(QString);
+    void addPointPath(PointView*);
     void homeSelected(QString pointView, bool temporary);
     void homeEdited(QString pointView, bool temporary);
     void moveTmpEditPathPoint();
     void editedPointPositionChanged(double, double);
-    void pathPointChanged(double, double, QString);
+    void pathPointChanged(double, double, PointView*);
     void hoverEventSignal(PointView::PixmapType, QString);
 
 private:

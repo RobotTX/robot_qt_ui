@@ -1672,7 +1672,7 @@ void MainWindow::initializePoints(){
     /// retrieves the points from the xml file and stores them in the model
     XMLParser pParser(":/xml/points.xml");
     pParser.readPoints(points, mapPixmapItem, this);
-    points->addPoint("TmpPoint", "tmpPoint", 0, 0, false, Point::PointType::TEMP, mapPixmapItem, this);
+    points->addPoint(TMP_GROUP_NAME, "tmpPoint", 0, 0, false, Point::PointType::TEMP, mapPixmapItem, this);
     qDebug() << "Nb points after init :" << points->count();
     mapPixmapItem->setPoints(points);
 }

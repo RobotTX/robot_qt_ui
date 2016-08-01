@@ -38,7 +38,7 @@ void PointView::mousePressEvent(QGraphicsSceneMouseEvent *event){
         } else if(state == GraphicItemState::CREATING_PATH){
             qDebug() << "Clicked on a point while creating a path";
             addedToPath = true;
-            emit addPointPath(this->getPoint()->getName());
+            emit addPointPath(this);
         } else if(state == GraphicItemState::EDITING){
             qDebug() << "(EDITING) PointView moving from" << pos().x() << pos().y();
         }  else if(state == GraphicItemState::EDITING_PERM){
@@ -88,7 +88,7 @@ void PointView::mouseReleaseEvent(QGraphicsSceneMouseEvent *event){
         float x = pos().x() + pixmap().width()*SCALE/2;
         float y = pos().y() + pixmap().height()*SCALE;
         qDebug() << "to" << x << y;
-        emit pathPointChanged(x, y, this->getPoint()->getName());
+        emit pathPointChanged(x, y, this);
         QGraphicsPixmapItem::mouseReleaseEvent(event);
     }
     else if(state == GraphicItemState::EDITING_PERM)

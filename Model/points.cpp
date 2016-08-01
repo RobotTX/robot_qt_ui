@@ -193,8 +193,8 @@ int Points::count() const {
 }
 
 void Points::displayTmpPoint(const bool display){
-    if(groups->value("TmpPoint")->count() > 0 && groups->value("TmpPoint")->at(0) != NULL)
-        groups->value("TmpPoint")->at(0)->setVisible(display);
+    if(groups->value(TMP_GROUP_NAME)->count() > 0 && groups->value(TMP_GROUP_NAME)->at(0) != NULL)
+        groups->value(TMP_GROUP_NAME)->at(0)->setVisible(display);
 }
 
 void Points::setPointViewsState(const GraphicItemState state){
@@ -211,8 +211,8 @@ void Points::setPointViewsState(const GraphicItemState state){
 
 std::shared_ptr<PointView> Points::getTmpPointView() const{
     qDebug() << "Points::getTmpPointView called" << this->count();
-    if(groups->value("TmpPoint")->count() > 0 && groups->value("TmpPoint")->at(0) != NULL)
-        return groups->value("TmpPoint")->at(0);
+    if(groups->value(TMP_GROUP_NAME)->count() > 0 && groups->value(TMP_GROUP_NAME)->at(0) != NULL)
+        return groups->value(TMP_GROUP_NAME)->at(0);
 }
 
 bool Points::isDisplayed(QString key) const{

@@ -32,7 +32,9 @@ GroupButtonGroup::GroupButtonGroup(const std::shared_ptr<Points> &_points, QWidg
     QMapIterator<QString, std::shared_ptr<QVector<std::shared_ptr<PointView>>>> i(*(points->getGroups()));
     while (i.hasNext()) {
         i.next();
-        if(i.key().compare(NO_GROUP_NAME)!= 0){
+        if(i.key().compare(NO_GROUP_NAME)!= 0
+                && i.key().compare(TMP_GROUP_NAME)!= 0
+                && i.key().compare(PATH_GROUP_NAME)!= 0){
             DoubleClickableButton* groupButton = new DoubleClickableButton(i.key(), i.key(), this);
             groupButton->setFlat(true);
             groupButton->setAutoDefault(true);
@@ -98,27 +100,32 @@ void GroupButtonGroup::update(){
     QMapIterator<QString, std::shared_ptr<QVector<std::shared_ptr<PointView>>>> i(*(points->getGroups()));
     while (i.hasNext()) {
         i.next();
-        if(i.key().compare(editedGroupName) == 0){
-            modifyEdit = new CustomizedLineEdit(this);
-            modifyEdit->setFixedWidth(1.29*modifyEdit->width());
-            layout->addWidget(modifyEdit);
-            modifyEdit->hide();
-        }
+        if(i.key().compare(NO_GROUP_NAME)!= 0
+                && i.key().compare(TMP_GROUP_NAME)!= 0
+                && i.key().compare(PATH_GROUP_NAME)!= 0){
 
-        DoubleClickableButton* groupButton = new DoubleClickableButton(i.key(), i.key(), this);
-        groupButton->setFlat(true);
-        groupButton->setAutoDefault(true);
-        groupButton->setStyleSheet("text-align:left");
-        groupButton->setCheckable(true);
-        groupButton->setIconSize(BUTTON_SIZE);
-        buttonGroup->addButton(groupButton, index);
-        layout->addWidget(groupButton);
-        if(points->isDisplayed(i.key()))
-            groupButton->setIcon(QIcon(":/icons/folder_eye.png"));
-        else
-            groupButton->setIcon(QIcon(":/icons/folder_space.png"));
-        groupButton->setIconSize(BUTTON_SIZE);
-        index++;
+            if(i.key().compare(editedGroupName) == 0){
+                modifyEdit = new CustomizedLineEdit(this);
+                modifyEdit->setFixedWidth(1.29*modifyEdit->width());
+                layout->addWidget(modifyEdit);
+                modifyEdit->hide();
+            }
+
+            DoubleClickableButton* groupButton = new DoubleClickableButton(i.key(), i.key(), this);
+            groupButton->setFlat(true);
+            groupButton->setAutoDefault(true);
+            groupButton->setStyleSheet("text-align:left");
+            groupButton->setCheckable(true);
+            groupButton->setIconSize(BUTTON_SIZE);
+            buttonGroup->addButton(groupButton, index);
+            layout->addWidget(groupButton);
+            if(points->isDisplayed(i.key()))
+                groupButton->setIcon(QIcon(":/icons/folder_eye.png"));
+            else
+                groupButton->setIcon(QIcon(":/icons/folder_space.png"));
+            groupButton->setIconSize(BUTTON_SIZE);
+            index++;
+        }
     }
 
     /// for the last group we just want to show the points and not "no group"

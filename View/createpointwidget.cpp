@@ -54,7 +54,8 @@ CreatePointWidget::CreatePointWidget(QMainWindow* _parent, std::shared_ptr<Point
     int j = 0;
     while (i.hasNext()) {
         i.next();
-        groupBox->insertItem(points->count()-1-j, i.key());
+        if(i.key().compare(TMP_GROUP_NAME) != 0 && i.key().compare(PATH_GROUP_NAME) != 0)
+            groupBox->insertItem(points->count()-1-j, i.key());
     }
 
     /// to set the default group as default
@@ -120,7 +121,7 @@ void CreatePointWidget::saveEditSelecPointBtnEvent(){
 /// to check that the name given to a point is valid ( a point with the same name does not already exist, it is not empty and does not contain ';' '{' or '}'
 int CreatePointWidget::checkPointName(void){
     qDebug() << "checkPointName called";
-    return 0;
+
     nameEdit->setText(formatName(nameEdit->text()));
     if(nameEdit->text().simplified().contains(QRegularExpression("[;{}]"))){
         saveBtn->setToolTip("The name of your point cannot contain the characters \";\" and }");
@@ -203,7 +204,8 @@ void CreatePointWidget::updateGroupBox(){
     int j = 0;
     while (i.hasNext()) {
         i.next();
-        groupBox->insertItem(points->count()-1-j, i.key());
+        if(i.key().compare(TMP_GROUP_NAME) != 0 && i.key().compare(PATH_GROUP_NAME) != 0)
+            groupBox->insertItem(points->count()-1-j, i.key());
     }
     /// to set the default group as default
     groupBox->setCurrentIndex(0);

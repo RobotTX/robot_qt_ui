@@ -16,6 +16,8 @@ class MainWindow;
 #include "Model/graphicitemstate.h"
 
 #define NO_GROUP_NAME "No Group"
+#define TMP_GROUP_NAME "TmpPoint"
+#define PATH_GROUP_NAME "PathPoints"
 
 /**
  * @brief The Points class
