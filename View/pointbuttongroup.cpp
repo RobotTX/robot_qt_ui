@@ -7,6 +7,7 @@
 #include "View/doubleclickablebutton.h"
 #include <QMouseEvent>
 #include <QDebug>
+#include "colors.h"
 
 PointButtonGroup::PointButtonGroup(std::shared_ptr<Points> const&_points, const int _groupIndex
                                    , QWidget* parent): QWidget(parent)
@@ -42,9 +43,11 @@ void PointButtonGroup::setGroup(std::shared_ptr<Points> const&_points, const int
     for(int j = 0; j < currentGroup->getPoints().size(); j++){
         std::shared_ptr<Point> currentPoint = currentGroup->getPoints().at(j);
         DoubleClickableButton* pointButton = new DoubleClickableButton(j, currentPoint->getName(), this);
+
         pointButton->setAutoDefault(true);
         pointButton->setFlat(true);
-        pointButton->setStyleSheet("text-align:left");
+        pointButton->setStyleSheet("QPushButton {color: "+text_color+";text-align:left;border: 4px; padding: 10px;}QPushButton:hover{background-color: "+button_hover_color+";}QPushButton:checked{background-color: "+button_checked_color+";}");
+
         buttonGroup->addButton(pointButton, j);
         layout->addWidget(pointButton);
         if(currentPoint->isDisplayed())

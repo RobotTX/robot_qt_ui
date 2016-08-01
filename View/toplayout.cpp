@@ -7,10 +7,15 @@
 #include "View/customscrollarea.h"
 #include "View/spacewidget.h"
 #include <QTime>
- #include <QCoreApplication>
+#include <QCoreApplication>
+#include "colors.h"
 
 TopLayout::TopLayout(QMainWindow* parent): QWidget(parent), lastMessage(TEXT_COLOR_NORMAL, "")
 {
+   // QWidget * all = new QWidget(this);
+    //QHBoxLayout* thisLayout = new QHBoxLayout(this);
+
+   // layout = new QHBoxLayout(all);
     layout = new QHBoxLayout(this);
 
     menuBtn = new QPushButton(QIcon(":/icons/list.png"), "", this);
@@ -19,6 +24,10 @@ TopLayout::TopLayout(QMainWindow* parent): QWidget(parent), lastMessage(TEXT_COL
     menuBtn->setMaximumWidth(40);
     menuBtn->setFlat(true);
     menuBtn->setFocusPolicy(Qt::FocusPolicy::NoFocus);
+    menuBtn->setStyleSheet("QPushButton:hover { background-color: "+button_hover_color+";"
+                            "border: 1px solid #aaaaaa;"
+                            "border-radius: 5px }");
+
     layout->addWidget(menuBtn);
     connect(menuBtn, SIGNAL(clicked()), parent, SLOT(openLeftMenu()));
 
@@ -28,6 +37,9 @@ TopLayout::TopLayout(QMainWindow* parent): QWidget(parent), lastMessage(TEXT_COL
     connectBtn->setFlat(true);
     connectBtn->setFocusPolicy(Qt::FocusPolicy::NoFocus);
     layout->addWidget(connectBtn);
+    connectBtn->setStyleSheet("QPushButton:hover { background-color: "+button_hover_color+";"
+                            "border: 1px solid #aaaaaa;"
+                            "border-radius: 5px }");
     connect(connectBtn, SIGNAL(clicked()), parent, SLOT(connectToRobot()));
 
     centerBtn = new QPushButton(QIcon(":/icons/center.png"), "", this);
@@ -37,6 +49,9 @@ TopLayout::TopLayout(QMainWindow* parent): QWidget(parent), lastMessage(TEXT_COL
     centerBtn->setFlat(true);
     centerBtn->setFocusPolicy(Qt::FocusPolicy::NoFocus);
     layout->addWidget(centerBtn);
+    centerBtn->setStyleSheet("QPushButton:hover { background-color: "+button_hover_color+";"
+                            "border: 1px solid #aaaaaa;"
+                            "border-radius: 5px }");
     connect(centerBtn, SIGNAL(clicked()), parent, SLOT(centerMap()));
 
     QPushButton* settingBtn = new QPushButton(QIcon(":/icons/setting.png"), "", this);
@@ -46,6 +61,9 @@ TopLayout::TopLayout(QMainWindow* parent): QWidget(parent), lastMessage(TEXT_COL
     settingBtn->setFlat(true);
     settingBtn->setFocusPolicy(Qt::FocusPolicy::NoFocus);
     layout->addWidget(settingBtn);
+    settingBtn->setStyleSheet("QPushButton:hover { background-color: "+button_hover_color+";"
+                            "border: 1px solid #aaaaaa;"
+                            "border-radius: 5px }");
     connect(settingBtn, SIGNAL(clicked()), parent, SLOT(settingBtnSlot()));
 
     SpaceWidget* spaceWidget = new SpaceWidget(SpaceWidget::SpaceOrientation::VERTICAL, this);
@@ -54,13 +72,14 @@ TopLayout::TopLayout(QMainWindow* parent): QWidget(parent), lastMessage(TEXT_COL
 
     label = new QLabel(this);
     label->setWordWrap(true);
-    label->setStyleSheet("QLabel { color: " + QString(TEXT_COLOR_INFO) + "}");
+    label->setStyleSheet("QLabel { color: " + QString(TEXT_COLOR_INFO) + ";  background:transparent;}");
     label->setContentsMargins(30,0,0,0);
-    //layout->addWidget(label);
-
+    layout->addWidget(label);
     CustomScrollArea* scrollArea = new CustomScrollArea(this);
     scrollArea->setWidget(label);
     layout->addWidget(scrollArea);
+    label->setAutoFillBackground(true);
+
 
     SpaceWidget* spaceWidget2 = new SpaceWidget(SpaceWidget::SpaceOrientation::VERTICAL, this);
     spaceWidget2->setColor("lightgrey");
@@ -76,16 +95,41 @@ TopLayout::TopLayout(QMainWindow* parent): QWidget(parent), lastMessage(TEXT_COL
     connect(closeBtn, SIGNAL(clicked()), parent, SLOT(quit()));
 
     layout->setContentsMargins(0, 0, 0, 0);
+    this->setContentsMargins(0, 0, 0, 0);
 
-    setStyleSheet("QPushButton:hover { background-color: #efefef;"
-                           "border: 1px solid #aaaaaa;"
-                           "border-radius: 5px }");
-    setMaximumHeight(parent->height()/5);
+
+
+
+    this->setMaximumHeight(parent->height()/5);
+   // this->setMaximumWidth(parent->width()*2);
+   // this->setMinimumWidth(parent->width()*2);
+/*
+    all->setMaximumHeight(this->height());
+    all->setMinimumHeight(this->height());
+
+    all->setMaximumWidth(this->width());
+    all->setMinimumWidth(this->width());
+*/
+
+   // all->setMaximumSize(parent->size());
+  //  this->setMaximumHeight(parent->height()/5);
+   // this->setMaximumWidth(parent->width());
+   // this->setMinimumWidth(parent->width());
+
+    this->setContentsMargins(0, 0, 0, 0);
+   // thisLayout->addWidget(all);
+   // this->setStyleSheet("QWidget{background-color: #5481a4}");
+    QPalette pal;
+    pal.setColor(QPalette::Background, top_layout_color);
+
+    this->setPalette( pal);
+    this->setAutoFillBackground(true);
+
 }
 
 void TopLayout::setLabel(const QString msgType, const QString msg){
     label->setText(msg);
-    label->setStyleSheet("QLabel { color: " + QString(msgType) + "}");
+    label->setStyleSheet("QLabel { color: " + QString(msgType) +"; background:transparent}");
 }
 
 void TopLayout::setEnable(bool enable){
@@ -99,20 +143,20 @@ void TopLayout::setLabelDelay(const QString msgType, const QString msg, int dela
     if (msgType == TEXT_COLOR_DANGER)
        {
         label->setText("");
-        label->setStyleSheet("QLabel { color: " + QString(TEXT_COLOR_NORMAL) + "}");
+        label->setStyleSheet("QLabel { color: " + QString(TEXT_COLOR_NORMAL) +";background:transparent}");
         delay(300);
         }
 
     // display message
     label->setText(msg);
-    label->setStyleSheet("QLabel { color: " + QString(msgType) + "}");
+    label->setStyleSheet("QLabel { color: " + QString(msgType) +";background:transparent}");
 
     // wait before to remove message
     delay(delayTime);
 
     // reset message
     label->setText("");
-    label->setStyleSheet("QLabel { color: " + QString(TEXT_COLOR_NORMAL) + "}");
+    label->setStyleSheet("QLabel { color: " + QString(TEXT_COLOR_NORMAL) +";background:transparent}");
 
 
 }

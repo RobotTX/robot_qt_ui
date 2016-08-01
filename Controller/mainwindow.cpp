@@ -43,6 +43,7 @@
 #include "View/groupview.h"
 #include <QVector>
 #include "View/pathwidget.h"
+#include "colors.h"
 
 /**
  * @brief MainWindow::MainWindow
@@ -70,7 +71,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     map->setOrigin(Position(-1, -15.4));
 
     /**************************************************************/
-
 
     robots = std::shared_ptr<Robots>(new Robots());
     scene = new QGraphicsScene(this);
@@ -110,7 +110,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
     scene->addItem(mapPixmapItem);
 
-    graphicsView->scale(std::max(graphicsView->parentWidget()->width()/scene->width(), graphicsView->parentWidget()->height()/scene->height()),
+   graphicsView->scale(std::max(graphicsView->parentWidget()->width()/scene->width(), graphicsView->parentWidget()->height()/scene->height()),
                         std::max(graphicsView->parentWidget()->width()/scene->width(), graphicsView->parentWidget()->height()/scene->height()));
 
     /// hides the scroll bars
@@ -123,11 +123,11 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     resetFocus();
     initializeLeftMenu();
     bottom->addWidget(leftMenu);
-    //mainLayout->setContentsMargins(0,0,0,0);
 
     rightLayout = new QVBoxLayout();
     bottom->addLayout(rightLayout);
     rightLayout->addWidget(graphicsView);
+
 
     initializeBottomPanel();
 
@@ -194,12 +194,23 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     connect(pathCreationWidget, SIGNAL(changePermanentPoint(QString,QString)), this, SLOT(updatePathPermanentPoint(QString, QString)));
 
     mainLayout->addLayout(bottom);
-
+    graphicsView->setStyleSheet("CustomQGraphicsView{background-color: "+background_map_view+"}");
     setCentralWidget(mainWidget);
-
     /// to navigate with the tab key
     setTabOrder(leftMenu->getReturnButton(), pointsLeftWidget->getActionButtons()->getPlusButton());
-
+  // this->setStyleSheet("QWidget{background-color: white}");
+    //topLayout->setAutoFillBackground(true);
+    //topLayout->setStyleSheet("*{background-color: #5481a4}");
+    this->setAutoFillBackground(true);
+    rightLayout->setContentsMargins(0,0,0,0);
+    bottom->setContentsMargins(0,0,0,0);
+    mainLayout->setContentsMargins(0,0,0,0);
+    this->setContentsMargins(0,0,0,0);
+    mainWidget->setContentsMargins(0,0,0,0);
+    topLayout->setContentsMargins(0,0,0,0);
+    bottomLayout->setContentsMargins(0,0,0,0);
+    mainLayout->setSpacing(0);
+    //setStyleSheet("QPushButton{color: white}");
 }
 
 MainWindow::~MainWindow(){
@@ -2143,6 +2154,7 @@ void MainWindow::openLeftMenu(){
                 closeSlot();
         }
     }
+
 }
 
 void MainWindow::minusSelecPointBtnEvent(){

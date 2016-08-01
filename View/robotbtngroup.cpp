@@ -4,6 +4,7 @@
 #include <QVBoxLayout>
 #include <QPushButton>
 #include "doubleclickablebutton.h"
+#include "View/colors.h"
 
 RobotBtnGroup::RobotBtnGroup(const QVector<RobotView*>& vector, const bool checkable, QWidget* parent):QWidget(parent){
     btnGroup = new QButtonGroup(this);
@@ -21,9 +22,9 @@ RobotBtnGroup::RobotBtnGroup(const QVector<RobotView*>& vector, const bool check
        connect(robotBtn, SIGNAL(doubleClick(int)), parent, SLOT(doubleClickOnRobot(int)));
 
         robotBtn->setFlat(true);
-        robotBtn->setStyleSheet("QPushButton {text-align:left}""QPushButton:hover{text-align:left; background-color: grey; border: 1px;}");
+        robotBtn->setStyleSheet("QPushButton {color: "+text_color+";text-align:left;border: 4px; padding: 10px;}QPushButton:hover{background-color: "+button_hover_color+";}QPushButton:checked{background-color: "+button_checked_color+";}");
+
         robotBtn->setCheckable(true);
-       // robotBtn->setStyleSheet("QPushButton { border: 1px solid #d3d3d3}""QPushButton:hover{ background-color: grey; border: 1px;}");
 
         btnGroup->addButton(robotBtn, i);
         layout->addWidget(robotBtn);

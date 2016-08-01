@@ -8,6 +8,7 @@
 #include <QMouseEvent>
 #include "View/doubleclickablebutton.h"
 #include "View/customizedlineedit.h"
+# include "colors.h"
 
 GroupButtonGroup::GroupButtonGroup(const std::shared_ptr<Points> &_points, QWidget* _parent): QWidget(_parent), parent(_parent), points(_points)
 {
@@ -29,9 +30,10 @@ GroupButtonGroup::GroupButtonGroup(const std::shared_ptr<Points> &_points, QWidg
     for(int i = 0; i < _points->getGroups().size()-1; i++){
         std::shared_ptr<Group> currentGroup = _points->getGroups().at(i);
         DoubleClickableButton* groupButton = new DoubleClickableButton(i, currentGroup->getName(), this);
+
         groupButton->setFlat(true);
         groupButton->setAutoDefault(true);
-        groupButton->setStyleSheet("text-align:left");
+        groupButton->setStyleSheet("QPushButton {color: "+text_color+";text-align:left;border: 4px; padding: 10px;}QPushButton:hover{background-color: "+button_hover_color+";}QPushButton:checked{background-color: "+button_checked_color+";}");
         groupButton->setCheckable(true);
         buttonGroup->addButton(groupButton, i);
         groupButton->setAutoExclusive(true);
@@ -53,7 +55,8 @@ GroupButtonGroup::GroupButtonGroup(const std::shared_ptr<Points> &_points, QWidg
         DoubleClickableButton* pointButton = new DoubleClickableButton(i+_points->getGroups().size()-1, currentPoint->getName(), this);
         pointButton->setAutoDefault(true);
         pointButton->setFlat(true);
-        pointButton->setStyleSheet("text-align:left");
+        pointButton->setStyleSheet("QPushButton {color: "+text_color+"; text-align:left;border: 4px; padding: 10px;}QPushButton:hover{background-color: "+button_hover_color+";}QPushButton:checked{background-color: "+button_checked_color+";}");
+
         pointButton->setCheckable(true);
         buttonGroup->addButton(pointButton, i+_points->getGroups().size()-1);
         layout->addWidget(pointButton);

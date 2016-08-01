@@ -26,6 +26,7 @@
 #include "Model/xmlparser.h"
 #include "Controller/mainwindow.h"
 #include "buttonmenu.h"
+#include "colors.h"
 
 LeftMenu::LeftMenu(MainWindow* _parent, std::shared_ptr<Points> const& _points, const std::shared_ptr<Robots> &robots, PointsView * const &pointViews, const std::shared_ptr<Map> &_map):
     QWidget(_parent), parent(_parent), points(_points), lastCheckedId(-1)
@@ -40,12 +41,13 @@ LeftMenu::LeftMenu(MainWindow* _parent, std::shared_ptr<Points> const& _points, 
     returnButton->setAutoDefault(true);
     returnButton->setDefault(true);
     returnButton->setIconSize(_parent->size()/10);
-    returnButton->setStyleSheet("QPushButton {color: black;}");
+    returnButton->setStyleSheet("QPushButton{color: black;background-color:"+menu_button_color+"; border: none;}QPushButton:hover{background-color:"+button_hover_color+"; }");
     connect(returnButton, SIGNAL(clicked()), _parent, SLOT(backEvent()));
 
     closeBtn = new QPushButton(QIcon(":/icons/cropped_close.png"), "", this);
     closeBtn->setIconSize(_parent->size()/30);
     closeBtn->setFlat(true);
+    closeBtn->setStyleSheet("QPushButton{color: black;background-color:"+menu_button_color+"; }QPushButton:hover{background-color:"+button_hover_color+"; }");
 
     returnButton->hide();
     topLayout->addWidget(returnButton,Qt::AlignLeft);
@@ -145,17 +147,19 @@ LeftMenu::LeftMenu(MainWindow* _parent, std::shared_ptr<Points> const& _points, 
 
 
     globalLayout->addLayout(leftLayout);
-    globalLayout->setContentsMargins(0, 0, 0, 0);
+    globalLayout->setContentsMargins(0, 10, 0, 0);
     topLayout->setContentsMargins(0, 0, 0, 0);
     globalLayout->setSpacing(0);
 
-/*
+
     // set black background
     QPalette Pal(palette());
-    Pal.setColor(QPalette::Background, Qt::black);
-    leftLayout->setAutoFillBackground(true);
-    leftLayout->setPalette(Pal);
-    */
+    Pal.setColor(QPalette::Background, left_menu_background_color);
+    this->setAutoFillBackground(true);
+    this->setPalette(Pal);
+
+
+
 }
 
 void LeftMenu::updateGroupDisplayed(std::shared_ptr<Points> const& _points, const int groupIndex){
