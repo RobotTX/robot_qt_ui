@@ -13,31 +13,28 @@ class QDataStream;
  * to distinguish permanent and temporary points
  */
 
-class Point
-{
+class Point {
 
 public:
+    enum PointType{PERM, TEMP, HOME, PATH};
     Point(void);
     /// by default a point it set to be permanent
-    Point(const QString name, const double x, const double y, const bool permanent = true);
-    Point(const QString name, const Position position, const bool _displayed = false, const bool permanent = true);
-    Point(const QString _name, const double x, const double y, const bool _displayed, const bool _permanent);
+    Point(const QString name, const double x, const double y, const PointType type = PERM);
+    Point(const QString name, const Position position, const PointType type = PERM);
 
     Position getPosition(void) const { return position; }
 
     QString getName(void) const { return name; }
 
-    bool isDisplayed(void) const { return displayed; }
-    void setDisplayed(const bool _displayed) { displayed = _displayed; }
-
-    bool isPermanent(void) const { return permanent; }
-    void setPermanent(const bool _permanent) { permanent = _permanent; }
+    bool isPermanent(void) const { return (type == PERM); }
+    PointType getType(void) const { return type; }
+    void setType(const PointType _type) { type = _type; }
 
     void setName(const QString _name) { name = _name; }
     void setPosition(const double x, const double y) { position.setX(x); position.setY(y); }
     void setPosition(const Position _position) { position = _position; }
-    bool setHome(const bool _home, const QString robotName);
-    bool isHome(void) const { return home; }
+    bool setHome(const PointType _type, const QString robotName);
+    bool isHome(void) const { return (type == HOME); }
 
     /// a helper function to overload the << operator
     void display(std::ostream& stream) const;
@@ -52,10 +49,7 @@ public:
 private:
     QString name;
     Position position;
-    /// a point can be displayed or not on the map
-    bool displayed;
-    bool permanent;
-    bool home;
+    PointType type;
 };
 
 /**

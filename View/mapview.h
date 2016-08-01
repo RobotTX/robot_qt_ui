@@ -1,7 +1,6 @@
 #ifndef MAPVIEW_H
 #define MAPVIEW_H
 
-class PointsView;
 class Point;
 class QMainWindow;
 class QMouseEvent;
@@ -27,40 +26,26 @@ class MapView: public QObject, public QGraphicsPixmapItem {
 
 public:
     MapView (const QPixmap& pixmap, const QSize size, std::shared_ptr<Map> _map, QMainWindow *_mainWindow);
-    ~MapView();
 
     /// Getters
     QSize getSize(void) const { return size; }
     int getWidth(void) const { return size.width(); }
     int getHeight(void) const { return size.height(); }
-    QVector<PointView*> getPathCreationPoints(void) const { return pathCreationPoints; }
-    PointView* getTmpPointView(void) const { return tmpPointView; }
     GraphicItemState getState(void) const { return state; }
-    PointsView* getPermanentPoints(void) const { return permanentPoints; }
     QMainWindow* getMainWindow(void) const { return mainWindow; }
 
     /// Setters
-    void setPoint(const QSharedPointer<PointView> _point) { point = _point; }
-    void setState(const GraphicItemState _state, const bool clear = false);
-    void setPermanentPoints(const std::shared_ptr<Points> &points);
-    void setPermanentPoints(PointsView* pointsView);
-    void setTmpPointView( PointView* pv)  {  tmpPointView= pv; }
+    void setState(const GraphicItemState _state);
+    void setPoints(std::shared_ptr<Points> _points);
 
     void addPathPoint(PointView* pointView);
-    void clearPointViews();
-    void addPointView(PointView * const &_pointView);
-    void updatePoints(const Points& points);
-
     void changeOrderPathPoints(const int start, const int row);
-
     void addPermanentPointToPath(PointView* point);
-
+    void replacePermanentPathPoint(const int index, PointView *const pv);
     int findIndexInPathByName(const QString name);
 
-    void replacePermanentPathPoint(const int index, PointView *const pv);
-
 signals:
-    void pointLeftClicked(PointView*, bool);
+    void pointLeftClicked(PointView*);
     void addPathPointMapView(Point*);
     void homeSelected(PointView* pointView, bool temporary);
     void homeEdited(PointView* pointView, bool temporary);
@@ -81,14 +66,11 @@ protected:
 
 private:
     QPointF dragStartPosition;
-    QSharedPointer<PointView> point;
     QSize size;
     QPixmap tmpPointPixmap;
-    PointsView* permanentPoints;
+    std::shared_ptr<Points> points;
     GraphicItemState state;
     QMainWindow* mainWindow;
-    QVector<PointView*> pathCreationPoints;
-    PointView* tmpPointView;
     std::shared_ptr<Map> map;
     int idTmp;
 };

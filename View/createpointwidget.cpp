@@ -1,6 +1,5 @@
 #include "View/createpointwidget.h"
 #include "View/pointview.h"
-#include "View/pointsview.h"
 #include "Model/point.h"
 #include <QHBoxLayout>
 #include <QVBoxLayout>
@@ -9,7 +8,6 @@
 #include <QMainWindow>
 #include <QLineEdit>
 #include <QDebug>
-#include "Model/group.h"
 #include <QComboBox>
 #include "View/spacewidget.h"
 #include <QKeyEvent>
@@ -19,14 +17,14 @@
 
 
 
-CreatePointWidget::CreatePointWidget(QMainWindow* _parent, PointsView* _points): QWidget(_parent), parent(_parent), points(_points)
-{
+CreatePointWidget::CreatePointWidget(QMainWindow* _parent, std::shared_ptr<Points> _points): QWidget(_parent), parent(_parent), points(_points){
     layout = new QVBoxLayout(this);
 
     actionButtons = new TopLeftMenu(this);
     actionButtons->disableAll();
 
     layout->addWidget(actionButtons);
+    layout->addWidget(new QLabel("CreatePointWidget", this));
 
     nameEdit = new QLineEdit(this);
     nameEdit->setStyleSheet ("text-align: left");
@@ -52,8 +50,11 @@ CreatePointWidget::CreatePointWidget(QMainWindow* _parent, PointsView* _points):
     groupBox = new QComboBox(this);
 
     /// to insert the groups in the box
-    for(int i = 0; i < points->getPoints()->count(); i++){
-        groupBox->insertItem(points->getPoints()->count()-1-i, points->getPoints()->getGroups().at(i)->getName());
+    QMapIterator<QString, std::shared_ptr<QVector<std::shared_ptr<PointView>>>> i(*(points->getGroups()));
+    int j = 0;
+    while (i.hasNext()) {
+        i.next();
+        groupBox->insertItem(points->count()-1-j, i.key());
     }
 
     /// to set the default group as default
@@ -101,22 +102,25 @@ CreatePointWidget::CreatePointWidget(QMainWindow* _parent, PointsView* _points):
 
 }
 
-void CreatePointWidget::setSelectedPoint(PointView * const &_pointView, const bool isTemporary){
-    _isTemporary = isTemporary;
+void CreatePointWidget::setSelectedPoint(PointView * const &_pointView){
+    qDebug() << "setSelectedPoint called";
     pointView = _pointView;
     nameEdit->setText(pointView->getPoint()->getName());
     posXLabel->setText("X : " + QString::number(pointView->getPoint()->getPosition().getX(), 'f', 1));
     posYLabel->setText("Y : " + QString::number(pointView->getPoint()->getPosition().getY(), 'f', 1));
+
 }
 
 /// emits signal when a user clicks save after editing a point
 void CreatePointWidget::saveEditSelecPointBtnEvent(){
     qDebug() << "saveEditSelecPointBtnEvent called";
-    emit pointSaved(groupBox->currentIndex(), posXLabel->text().right(posXLabel->text().length()-4).toDouble(), posYLabel->text().right(posYLabel->text().length()-4).toDouble(), nameEdit->text().simplified());
+    emit pointSaved(groupBox->currentText(), posXLabel->text().right(posXLabel->text().length()-4).toDouble(), posYLabel->text().right(posYLabel->text().length()-4).toDouble(), nameEdit->text().simplified());
 }
 
 /// to check that the name given to a point is valid ( a point with the same name does not already exist, it is not empty and does not contain ';' '{' or '}'
 int CreatePointWidget::checkPointName(void){
+    qDebug() << "checkPointName called";
+    return 0;
     nameEdit->setText(formatName(nameEdit->text()));
     if(nameEdit->text().simplified().contains(QRegularExpression("[;{}]"))){
         saveBtn->setToolTip("The name of your point cannot contain the characters \";\" and }");
@@ -132,19 +136,24 @@ int CreatePointWidget::checkPointName(void){
         emit invalidName(TEXT_COLOR_WARNING, Error::EmptyName);
         return 1;
     }
-    for(int i = 0; i < points->getPoints()->count(); i++){
-        std::shared_ptr<Group> group = points->getPoints()->getGroups().at(i);
-        for(int j = 0; j < group->count(); j++){
-            if(!nameEdit->text().simplified().compare(group->getPoints().at(j)->getName(), Qt::CaseInsensitive)){
-                qDebug() << nameEdit->text() << " already exists";
-                saveBtn->setEnabled(false);
-                /// to explain the user why he cannot add its point as it is
-                saveBtn->setToolTip("A point with this name already exists, please choose another name for your point");
-                emit invalidName(TEXT_COLOR_WARNING, Error::AlreadyExists);
-                return 2;
+
+    QMapIterator<QString, std::shared_ptr<QVector<std::shared_ptr<PointView>>>> i(*(points->getGroups()));
+    while (i.hasNext()) {
+        i.next();
+        if(i.value()){
+            for(int j = 0; j < i.value()->size(); j++){
+                if(i.value()->at(j)->getPoint()->getName().compare(nameEdit->text().simplified(), Qt::CaseInsensitive) == 0){
+                    qDebug() << nameEdit->text() << " already exists";
+                    saveBtn->setEnabled(false);
+                    /// to explain the user why he cannot add its point as it is
+                    saveBtn->setToolTip("A point with this name already exists, please choose another name for your point");
+                    emit invalidName(TEXT_COLOR_WARNING, Error::AlreadyExists);
+                    return 2;
+                }
             }
         }
     }
+
     saveBtn->setToolTip("");
     saveBtn->setEnabled(true);
     emit invalidName(TEXT_COLOR_INFO, Error::NoError);
@@ -153,6 +162,7 @@ int CreatePointWidget::checkPointName(void){
 
 /// shows the widgets related to the choice of a group and the saving of a point
 void CreatePointWidget::showGroupLayout(void) const {
+    qDebug() << "showGroupLayout called";
     /// we disable so that two points cannot be named tmpPoint
     saveBtn->setEnabled(false);
     groupLabel->show();
@@ -169,6 +179,7 @@ void CreatePointWidget::showGroupLayout(void) const {
 
 /// hides everything that's related to the creation of a point
 void CreatePointWidget::hideGroupLayout(void) const {
+    qDebug() << "hideGroupLayout called";
     /// resets the name to tmpPoint if we cancel the creation of the point
     nameEdit->setText(pointView->getPoint()->getName());
     /// hides everything that's related to creating a point
@@ -185,18 +196,21 @@ void CreatePointWidget::hideGroupLayout(void) const {
 }
 
 /// updates the group box when a new group is created
-void CreatePointWidget::updateGroupBox(const Points& _points){
+void CreatePointWidget::updateGroupBox(){
+    qDebug() << "updateGroupBox called";
     groupBox->clear();
-    /// we place the default group first
-    groupBox->insertItem(0, _points.getDefaultGroup()->getName());
-    for(int i = 0; i < _points.count()-1; i++){
-        groupBox->insertItem(i+1, _points.getGroups().at(i)->getName());
+    QMapIterator<QString, std::shared_ptr<QVector<std::shared_ptr<PointView>>>> i(*(points->getGroups()));
+    int j = 0;
+    while (i.hasNext()) {
+        i.next();
+        groupBox->insertItem(points->count()-1-j, i.key());
     }
     /// to set the default group as default
     groupBox->setCurrentIndex(0);
 }
 
 void CreatePointWidget::keyPressEvent(QKeyEvent* event){
+    qDebug() << "CreatePointWidget keyPressEvent called";
     /// this is the enter key
     if(!event->text().compare("\r")){
         switch(checkPointName()){
@@ -210,7 +224,7 @@ void CreatePointWidget::keyPressEvent(QKeyEvent* event){
             emit invalidName(TEXT_COLOR_DANGER, Error::AlreadyExists);
             break;
         case 3:
-            emit pointSaved(groupBox->currentIndex(), posXLabel->text().right(posXLabel->text().length()-4).toDouble(), posYLabel->text().right(posYLabel->text().length()-4).toDouble(), nameEdit->text().simplified());
+            emit pointSaved(groupBox->currentText(), posXLabel->text().right(posXLabel->text().length()-4).toDouble(), posYLabel->text().right(posYLabel->text().length()-4).toDouble(), nameEdit->text().simplified());
             break;
         default:
             qDebug() << "if you got here it's probably that u forgot to implement the behavior for one or more error codes";
@@ -220,6 +234,8 @@ void CreatePointWidget::keyPressEvent(QKeyEvent* event){
 }
 
 QString CreatePointWidget::formatName(const QString name) const {
+    qDebug() << "formatName called";
+    return name;
     QString ret("");
     bool containsSpace(false);
     bool containsNonSpace(false);

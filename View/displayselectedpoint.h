@@ -38,7 +38,7 @@ public:
     std::shared_ptr<Point> getPoint(void) const { return pointView->getPoint(); }
     void setPoint(std::shared_ptr<Point> const& _point) { pointView->setPoint(_point); }
     PointView* getPointView(void) const { return pointView; }
-    void setPointView(PointView* const& _pointView, QString robotName);
+    void setPointView(PointView * const &pointView, QString robotName);
     Origin getOrigin(void) const { return origin; }
     QLabel* getXLabel(void) const { return posXLabel; }
     QLabel* getYLabel(void) const { return posYLabel; }

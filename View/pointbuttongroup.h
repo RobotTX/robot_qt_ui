@@ -14,26 +14,26 @@ class PointButtonGroup: public QWidget
 {
     Q_OBJECT
 public:
-    PointButtonGroup(const std::shared_ptr<Points> &_points, const int _groupIndex, QWidget *parent);
+    PointButtonGroup(const std::shared_ptr<Points> points, const QString groupIndex, QWidget *parent);
     ~PointButtonGroup(){}
 
     QButtonGroup* getButtonGroup(void) const { return buttonGroup; }
-    int getGroupIndex(void) const { return groupIndex; }
+    QString getGroupIndex(void) const { return groupIndex; }
 
 public:
     void deleteButtons(void);
-    void setGroup(const std::shared_ptr<Points> &_points, const int _groupIndex);
+    void setGroup(const std::shared_ptr<Points> points, const QString groupIndex);
     void update(const Points &_points);
     void setCheckable(const bool checkable);
     void uncheck(void);
+    void createButtons(std::shared_ptr<Points> const points);
 
 private:
     QVBoxLayout* layout;
     QButtonGroup* buttonGroup;
-    int groupIndex;
+    QString groupIndex;
 
 signals:
-    void doubleClick(int);
     void updateConnectionsRequest();
 };
 

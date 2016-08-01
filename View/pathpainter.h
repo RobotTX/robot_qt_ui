@@ -2,8 +2,8 @@
 #define PATHPAINTER_H
 
 class MapView;
-class PointsView;
 class PointView;
+class Points;
 
 #include "Model/point.h"
 #include <QGraphicsPathItem>
@@ -21,7 +21,7 @@ class PointView;
 class PathPainter : public QGraphicsPathItem{
 
 public:
-    PathPainter(MapView* const& mapPixmapItem, PointsView* const& _pointViews);
+    PathPainter(MapView* const& mapPixmapItem, std::shared_ptr<Points> const& _pointViews);
 
     void updatePath(const QVector<Point>& pointVector, bool save = false);
     void updatePath(const QVector<PointView*>& pointViewsVector, bool save = false);
@@ -35,7 +35,7 @@ public:
 private:
     QPainterPath path;
     QVector<Point> pathVector;
-    PointsView* pointViews;
+    std::shared_ptr<Points> pointViews;
     MapView* mapItem;
 };
 

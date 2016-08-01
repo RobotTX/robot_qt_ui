@@ -14,7 +14,6 @@ SpaceWidget::SpaceWidget(const SpaceOrientation orientation, QWidget* parent) : 
     else
         spaceFrame->setFrameShape(QFrame::VLine);
 
-    //layout->setContentsMargins(0, 0, 0, 0);
     layout->addWidget(spaceFrame);
 }
 

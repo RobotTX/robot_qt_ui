@@ -11,7 +11,6 @@
 #include <QHBoxLayout>
 #include "View/spacewidget.h"
 #include "Model/points.h"
-#include "Model/group.h"
 #include "Model/point.h"
 #include "Controller/mainwindow.h"
 #include "View/leftmenu.h"
@@ -20,14 +19,15 @@
 #include "View/customizedlineedit.h"
 #include "View/toplayout.h"
 #include "View/buttonmenu.h"
+#include <QAbstractButton>
 
 
 PointsLeftWidget::PointsLeftWidget(QMainWindow* _parent, std::shared_ptr<Points> const& _points, bool _groupDisplayed)
-    : QWidget(_parent), groupDisplayed(_groupDisplayed), points(_points), creatingGroup(true), lastCheckedId(-1)
+    : QWidget(_parent), groupDisplayed(_groupDisplayed), points(_points), creatingGroup(true), lastCheckedId("")
 {
     scrollArea = new CustomScrollArea(this);
 
-    indexLastGroupClicked = 0;
+    indexLastGroupClicked = "";
 
     layout = new QVBoxLayout(this);
 
@@ -55,7 +55,7 @@ PointsLeftWidget::PointsLeftWidget(QMainWindow* _parent, std::shared_ptr<Points>
     layout->addWidget(groupNameLabel);
     layout->addWidget(groupNameEdit);
 
-    groupButtonGroup = new GroupButtonGroup(_points, this);
+    groupButtonGroup = new GroupButtonGroup(points, this);
 
     scrollArea->setWidget(groupButtonGroup);
     layout->addWidget(scrollArea);
@@ -81,16 +81,16 @@ PointsLeftWidget::PointsLeftWidget(QMainWindow* _parent, std::shared_ptr<Points>
 
     /// to handle double clicks
     foreach(QAbstractButton *button, groupButtonGroup->getButtonGroup()->buttons())
-        connect(button, SIGNAL(doubleClick(int)), _parent, SLOT(doubleClickOnGroup(int)));
+        connect(button, SIGNAL(doubleClick(QString)), _parent, SLOT(doubleClickOnGroup(QString)));
 
     /// to enable the buttons
-    connect(groupButtonGroup->getButtonGroup(), SIGNAL(buttonClicked(int)), this, SLOT(enableButtons(int)));
+    connect(groupButtonGroup->getButtonGroup(), SIGNAL(buttonClicked(QAbstractButton*)), this, SLOT(enableButtons(QAbstractButton*)));
 
     /// to make sure the name chosen for a new group is valid
     connect(groupNameEdit, SIGNAL(textEdited(QString)), this, SLOT(checkGroupName(QString)));
 
     /// to make sure the new name chosen for a group is valid
-    //connect(groupButtonGroup->getModifyEdit(), SIGNAL(textEdited(QString)), this, SLOT(checkEditGroupName(QString)));
+    connect(groupButtonGroup->getModifyEdit(), SIGNAL(textEdited(QString)), groupButtonGroup, SLOT(checkEditGroupName(QString)));
 
     connect(cancelButton, SIGNAL(clicked(bool)), this, SLOT(cancelCreationGroup()));
 
@@ -113,45 +113,53 @@ PointsLeftWidget::PointsLeftWidget(QMainWindow* _parent, std::shared_ptr<Points>
     setMinimumWidth(_parent->width()*4/10);
     layout->setAlignment(Qt::AlignBottom);
     layout->setContentsMargins(0,0,0,0);
-    //setTabOrder(cancelButton, saveButton);
 
 }
 
 void PointsLeftWidget::updateGroupButtonGroup(Points const& points){
-    groupButtonGroup->update(points);
+    qDebug() << "PointsLeftWidget::updateGroupButtonGroup called";
+    groupButtonGroup->update();
 }
 
-void PointsLeftWidget::enableButtons(int index){
-    qDebug()   << "enable button";
-    if(index == lastCheckedId){
+void PointsLeftWidget::enableButtons(QAbstractButton* button){
+    qDebug() << "PointsLeftWidget::enableButtons called" << button->text();
+    enableButtons(button->text());
+}
+
+void PointsLeftWidget::enableButtons(QString button){
+    qDebug() << "PointsLeftWidget::enableButtons called" << button;
+    if(button.compare(lastCheckedId) == 0){
 
         groupButtonGroup->uncheck();
-        lastCheckedId = -1;
+        lastCheckedId = "";
         disableButtons();
     } else {
 
-        lastCheckedId = index;
-        groupButtonGroup->setIndexModifyEdit(index);
+        lastCheckedId = button;
+        groupButtonGroup->setEditedGroupName(button);
         groupButtonGroup->getLayout()->removeWidget(groupButtonGroup->getModifyEdit());
-        groupButtonGroup->getLayout()->insertWidget(index, groupButtonGroup->getModifyEdit());
+        groupButtonGroup->getLayout()->addWidget(groupButtonGroup->getModifyEdit());
         disableButtons();
         /// enables the minus button
         actionButtons->getMinusButton()->setEnabled(true);
-        if(index < points->count()-1)
+        if(points->isAGroup(button))
             actionButtons->getMinusButton()->setToolTip("Click to remove the selected group");
         else
             actionButtons->getMinusButton()->setToolTip("Click to remove the selected point");
+
         /// enables the eye button
         actionButtons->getGoButton()->setEnabled(true);
-        if(index < points->count()-1)
+        if(points->isAGroup(button))
             actionButtons->getGoButton()->setToolTip("Click to display the information of the selected group");
         else
             actionButtons->getGoButton()->setToolTip("Click to display the information of the selected point");
+
         /// enables the map button
         actionButtons->getMapButton()->setCheckable(true);
         actionButtons->getMapButton()->setEnabled(true);
-        if(index < points->count()-1){
-            if(points->getGroups().at(index)->isDisplayed()){
+
+        if(points->isAGroup(button)){
+            if(points->isDisplayed(button)){
                 actionButtons->getMapButton()->setChecked(true);
                 actionButtons->getMapButton()->setToolTip("Click to hide the selected group on the map");
             } else {
@@ -159,7 +167,7 @@ void PointsLeftWidget::enableButtons(int index){
                 actionButtons->getMapButton()->setToolTip("Click to display the selected group on the map");
             }
         } else {
-            if(points->getDefaultGroup()->getPoints().at(index-points->count()+1)->isDisplayed()){
+            if(points->isDisplayed(NO_GROUP_NAME)){
                 actionButtons->getMapButton()->setChecked(true);
                 actionButtons->getMapButton()->setToolTip("Click to hide the selected point on the map");
             } else {
@@ -167,9 +175,10 @@ void PointsLeftWidget::enableButtons(int index){
                 actionButtons->getMapButton()->setToolTip("Click to display the selected point on the map");
             }
         }
+
         /// enables the edit button
         actionButtons->getEditButton()->setEnabled(true);
-        if(index < points->count()-1)
+        if(points->isAGroup(button))
             actionButtons->getEditButton()->setToolTip("Click to modify the selected group");
         else
             actionButtons->getEditButton()->setToolTip("click to modify the selected point");
@@ -177,6 +186,7 @@ void PointsLeftWidget::enableButtons(int index){
 }
 
 void PointsLeftWidget::disableButtons(void){
+    qDebug() << "PointsLeftWidget::disableButtons called";
 
     /// resets the minus button
     actionButtons->getMinusButton()->setEnabled(false);
@@ -200,9 +210,9 @@ void PointsLeftWidget::disableButtons(void){
 
 int PointsLeftWidget::checkGroupName(QString name){
     qDebug() << "checking while creating" << name ;
-    groupNameEdit->setText(formatName(groupNameEdit->text()));
-    name = groupNameEdit->text().simplified();
-    if(!creatingGroup && !name.compare(points->getGroups().at(groupButtonGroup->getIndexModifyEdit())->getName(), Qt::CaseInsensitive)){
+    name = name.simplified();
+    groupNameEdit->setText(formatName(name));
+    if(!creatingGroup && !name.compare(groupButtonGroup->getEditedGroupName(), Qt::CaseInsensitive)){
         saveButton->setToolTip("");
         qDebug() << "same name";
         connect(groupNameEdit, SIGNAL(clickSomewhere(QString)), this, SLOT(cancelCreationGroup()));
@@ -215,9 +225,11 @@ int PointsLeftWidget::checkGroupName(QString name){
         emit messageCreationGroup(TEXT_COLOR_WARNING, "The name of your group cannot be empty");
         return 1;
     }
-    for(int i = 0; i < points->count(); i++){
-        if(!name.compare(points->getGroups().at(i)->getName(), Qt::CaseInsensitive)){
-            qDebug() << points->getGroups().at(i)->getName();
+    QMapIterator<QString, std::shared_ptr<QVector<std::shared_ptr<PointView>>>> i(*(points->getGroups()));
+    while (i.hasNext()) {
+        i.next();
+        if(!name.compare(i.key(), Qt::CaseInsensitive)){
+            qDebug() << "PointsLeftWidget::checkGroupName" << i.key();
             saveButton->setToolTip("A group with the same name already exists, please choose another name for your group");
             saveButton->setEnabled(false);
             connect(groupNameEdit, SIGNAL(clickSomewhere(QString)), this, SLOT(cancelCreationGroup()));
@@ -233,8 +245,8 @@ int PointsLeftWidget::checkGroupName(QString name){
 }
 
 void PointsLeftWidget::cancelCreationGroup(){
-    qDebug() << "cancelcreationgroup called";
-    setLastCheckedId(-1);
+    qDebug() << "PointsLeftWidget::cancelCreationGroup called";
+    setLastCheckedId("");
     /// hides everything that's related to the creation of a group
     groupNameEdit->hide();
     groupNameLabel->hide();
@@ -249,12 +261,12 @@ void PointsLeftWidget::cancelCreationGroup(){
 }
 
 void PointsLeftWidget::emitNewGroupSignal(){
-    qDebug() << "emitnewgrupsignal called" << groupNameEdit->text();
+    qDebug() << "PointsLeftWidget::emitNewGroupSignal called";
     emit newGroup(groupNameEdit->text().simplified());
 }
 
 void PointsLeftWidget::keyPressEvent(QKeyEvent* event){
-    qDebug() << "pressed enter key";
+    qDebug() << "PointsLeftWidget::keyPressEvent called";
     /// this is the enter key
     if(!event->text().compare("\r")){
         if(creatingGroup)
@@ -284,23 +296,25 @@ void PointsLeftWidget::showEvent(QShowEvent *event){
 }
 
 void PointsLeftWidget::resetWidget(void){
+    qDebug() << "PointsLeftWidget::resetWidget called";
     groupButtonGroup->uncheck();
     lastCheckedId=-1;
     disableButtons();
 }
 
 void PointsLeftWidget::modifyGroupAfterClick(QString name){
-    qDebug() << "modify group after click called";
+    qDebug() << "PointsLeftWidget::modifyGroupAfterClick called";
     emit modifiedGroupAfterClick(name);
 }
 
 void PointsLeftWidget::reconnectModifyEdit(){
-    qDebug() << "reconnectModifyEdit";
+    qDebug() << "PointsLeftWidget::reconnectModifyEdit called";
     connect(groupButtonGroup->getModifyEdit(), SIGNAL(clickSomewhere(QString)), this, SLOT(modifyGroupAfterClick(QString)));
     connect(groupButtonGroup->getModifyEdit(), SIGNAL(textEdited(QString)), groupButtonGroup, SLOT(checkEditGroupName(QString)));
 }
 
 QString PointsLeftWidget::formatName(const QString name) const {
+    qDebug() << "PointsLeftWidget::formatName called" << name;
 
     QString ret("");
     bool containsSpace(false);
@@ -316,11 +330,12 @@ QString PointsLeftWidget::formatName(const QString name) const {
             ret += name.at(i);
         }
     }
+    qDebug() << "PointsLeftWidget::formatName return :" << ret;
     return ret;
 }
 
 void PointsLeftWidget::sendMessageEditGroup(int code){
-    qDebug() << "send message edit group called from pointsleftwidget";
+    qDebug() << "PointsLeftWidget::sendMessageEditGroup called";
     switch(code){
     case 0:
         emit messageCreationGroup(TEXT_COLOR_INFO, "To save this group press Enter or click the \"Save button\"");

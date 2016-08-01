@@ -3,22 +3,32 @@
 #include <QDataStream>
 #include <iostream>
 
-Point::Point(void): name(""), position(Position(0.0, 0.0)), permanent(true), home(false){
+Point::Point(void): name(""), position(Position(0.0, 0.0)), type(PERM){
 }
 
-Point::Point(const QString name, const double x, const double y, const bool _permanent):
-    name(name), position(Position(x, y)), permanent(_permanent), home(false) {
+Point::Point(const QString name, const double x, const double y, const PointType _type):
+    name(name), position(Position(x, y)), type(_type) {
 }
 
-Point::Point(const QString _name, const double x, const double y, const bool _displayed, const bool _permanent):
-    name(_name), position(Position(x, y)), displayed(_displayed), permanent(_permanent), home(false)
-{}
-
-Point::Point(const QString name, const Position position, const bool _displayed, const bool _permanent) : name(name), position(position), displayed(_displayed), permanent(_permanent), home(false){
+Point::Point(const QString name, const Position position, const PointType _type) : name(name), position(position), type(_type){
 }
 
 void Point::display(std::ostream& stream) const {
-    stream << name.toStdString() << " (" << position.getX() << ", " << position.getY() << ")";
+    stream << name.toStdString() << " (" << position.getX() << ", " << position.getY() << ") ";
+    switch(type){
+        case PERM:
+            stream << "which is Permanent";
+        break;
+        case TEMP:
+            stream << "which is Temporary";
+        break;
+        case HOME:
+            stream << "which is a Robot Home";
+        break;
+        case PATH:
+            stream << "which is a Path Point";
+        break;
+    }
 }
 
 std::ostream& operator <<(std::ostream& stream, const Point& point){
@@ -35,9 +45,10 @@ QDataStream& operator>>(QDataStream& in, Point& point){
     QString name;
     double x;
     double y;
-    bool permanent;
-    in >> name >> x >> y >> permanent;
-    point = Point(name, x, y, permanent);
+    int typeInt;
+    in >> name >> x >> y >> typeInt;
+    Point::PointType type = static_cast<Point::PointType>(typeInt);
+    point = Point(name, x, y, type);
     return in;
 }
 
@@ -67,12 +78,12 @@ bool Point::operator==(const Point& point) const {
          return false;
  }
 
- bool Point::setHome(const bool _home, const QString robotName){
-    if(!_home){
-        home = _home;
+ bool Point::setHome(const PointType _type, const QString robotName){
+    if(_type != HOME){
+        type = _type;
         name = QString::number(position.getX(),'f', 1) + "; " + QString::number(position.getY(),'f', 1);
-    } else if(_home && !home){
-        home = _home;
+    } else if((_type == HOME) && (type != HOME)){
+        type = _type;
         name = "Home_" + robotName;
         return true;
     }

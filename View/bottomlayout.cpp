@@ -71,7 +71,6 @@ BottomLayout::BottomLayout(QMainWindow* parent, const std::shared_ptr<Robots> &r
         robotBtnGroup->addButton(robotBtn, i);
         columnName->addWidget(robotBtn);
     }
-    //scrollLayout->addLayout(columnName);
     scrollLayout->addWidget(widgetName);
 
     /// Creation of the second collumn, with the labels containing the path of the robot

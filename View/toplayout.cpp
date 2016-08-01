@@ -56,7 +56,6 @@ TopLayout::TopLayout(QMainWindow* parent): QWidget(parent), lastMessage(TEXT_COL
     label->setWordWrap(true);
     label->setStyleSheet("QLabel { color: " + QString(TEXT_COLOR_INFO) + "}");
     label->setContentsMargins(30,0,0,0);
-    //layout->addWidget(label);
 
     CustomScrollArea* scrollArea = new CustomScrollArea(this);
     scrollArea->setWidget(label);
@@ -71,7 +70,7 @@ TopLayout::TopLayout(QMainWindow* parent): QWidget(parent), lastMessage(TEXT_COL
     closeBtn->setMaximumWidth(40);
     closeBtn->setFlat(true);
     closeBtn->setFocusPolicy(Qt::FocusPolicy::NoFocus);
-    //closeBtn->hide();
+
     layout->addWidget(closeBtn);
     connect(closeBtn, SIGNAL(clicked()), parent, SLOT(quit()));
 

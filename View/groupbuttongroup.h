@@ -22,13 +22,15 @@ public:
     QButtonGroup* getButtonGroup(void) const { return buttonGroup; }
     CustomizedLineEdit* getModifyEdit(void) const { return modifyEdit; }
     QVBoxLayout* getLayout(void) const { return layout; }
-    int getIndexModifyEdit(void) const { return indexModifyEdit; }
-    void setIndexModifyEdit(const int index) { indexModifyEdit = index; }
+    QString getEditedGroupName(void) const { return editedGroupName; }
+    int getEditedGroupId(void) const;
+    void setEditedGroupName(const QString _editedGroupName) { editedGroupName = _editedGroupName; }
+    QAbstractButton* getButtonByName(QString name);
     QString formatName(const QString name) const;
 
 public:
     void deleteButtons(void);
-    void update(const Points& _points);
+    void update();
     void uncheck(void);
     void setEnabled(const bool enable);
 
@@ -36,7 +38,7 @@ protected:
     void mouseDoubleClickEvent(QMouseEvent *event);
 
 signals:
-    void doubleClick(int);
+    void doubleClick(QString);
     void updateConnectionsRequest();
     void modifyEditReconnection();
     void codeEditGroup(int);
@@ -51,7 +53,8 @@ private:
     QWidget* parent;
     /// to avoid resizing of the icons after deletions of points and groups
     const QSize BUTTON_SIZE = parentWidget()->size()/2;
-    int indexModifyEdit;
+    // indexModifyEdit => editedGroupName
+    QString editedGroupName;
     std::shared_ptr<Points> points;
 };
 

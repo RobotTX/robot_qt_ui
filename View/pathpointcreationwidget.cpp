@@ -7,9 +7,10 @@
 #include <QLineEdit>
 #include <QComboBox>
 
-PathPointCreationWidget::PathPointCreationWidget(const int _id, const Points& _points, const Point& _point, QWidget* parent):QWidget(parent){
-    point = _point;
+PathPointCreationWidget::PathPointCreationWidget(const int _id, std::shared_ptr<Points> _points, const Point& _point, QWidget* parent):QWidget(parent){
     layout = new QVBoxLayout(this);
+    layout->addWidget(new QLabel("PathPointCreationWidget", this));
+    /*point = _point;
     points = _points;
     id = _id;
     name = _point.getName();
@@ -65,11 +66,12 @@ PathPointCreationWidget::PathPointCreationWidget(const int _id, const Points& _p
     saveEditBtn->hide();
 
 
-    layout->setAlignment(Qt::AlignTop);
+    layout->setAlignment(Qt::AlignTop);*/
 }
 
 void PathPointCreationWidget::setName(const QString _name){
-    name = _name;
+    qDebug() << "PathPointCreationWidget::setName called";
+    /*name = _name;
     point.setName(name);
     qDebug() << "New Name :" << name;
 
@@ -79,73 +81,79 @@ void PathPointCreationWidget::setName(const QString _name){
         setPointLabel(point.getPosition().getX(), point.getPosition().getY());
     } else {
         pointLabel->setText(QString::number(id) + ". " + name);
-    }
+    }*/
 }
 
 void PathPointCreationWidget::setId(const int _id){
-    id = _id;
+    qDebug() << "PathPointCreationWidget::setId called";
+    /*id = _id;
 
     if(name.contains("tmpPoint")){
         setPointLabel(point.getPosition().getX(), point.getPosition().getY());
     } else {
         pointLabel->setText(QString::number(id)+". "+name);
-    }
+    }*/
 }
 
 void PathPointCreationWidget::actionClicked(QString action){
-    qDebug() << "actionClicked called ";
-    if(action.compare("Wait for") == 0){
+    qDebug() << "PathPointCreationWidget::actionClicked called";
+    /*if(action.compare("Wait for") == 0){
         timeWidget->show();
     } else {
         timeWidget->hide();
-    }
+    }*/
 }
 
 void PathPointCreationWidget::displayActionWidget(const bool show){
-    if(show)
+    qDebug() << "PathPointCreationWidget::displayActionWidget called";
+    /*if(show)
         actionWidget->show();
     else
-        actionWidget->hide();
+        actionWidget->hide();*/
 }
 
 void PathPointCreationWidget::resetAction(){
-    qDebug() << "resetAction called";
-    timeEdit->clear();
+    qDebug() << "PathPointCreationWidget::resetAction called";
+    /*timeEdit->clear();
     actionBtn->setCurrentIndex(0);
-    timeWidget->show();
+    timeWidget->show();*/
 }
 
 void PathPointCreationWidget::displaySaveEditBtn(const bool show, const int count){
-    if(show)
+    qDebug() << "PathPointCreationWidget::displaySaveEditBtn called";
+    /*if(show)
         saveEditBtn->show();
     else
         saveEditBtn->hide();
 
     if(id < count)
-        displayActionWidget(!show);
+        displayActionWidget(!show);*/
 }
 
 void PathPointCreationWidget::saveEdit(){
-    qDebug() << "saveEdit called ";
+    qDebug() << "PathPointCreationWidget::saveEdit called";
 
-    emit saveEditSignal(this);
+    //emit saveEditSignal(this);
 }
 
 void PathPointCreationWidget::setPos(const float _posX, const float _posY){
-    posX = _posX;
+    qDebug() << "PathPointCreationWidget::setPos called";
+    /*posX = _posX;
     posY = _posY;
     point.setPosition(posX, posY);
-    setPointLabel(posX, posY);
+    setPointLabel(posX, posY);*/
 }
 
 void PathPointCreationWidget::updatePointLabel(const float _posX, const float _posY){
-    setPointLabel(_posX, _posY);
+    qDebug() << "PathPointCreationWidget::updatePointLabel called";
+    //setPointLabel(_posX, _posY);
 }
 
 void PathPointCreationWidget::setPointLabel(const float _posX, const float _posY){
-    if(name.contains("tmpPoint")){
+    qDebug() << "PathPointCreationWidget::setPointLabel called";
+    /*if(name.contains("tmpPoint")){
         pointLabel->setText(QString::number(id)+". "+QString::number(_posX,'f', 1) + "; " + QString::number(_posY,'f', 1));
-    }
+    }*/
 }
 
 

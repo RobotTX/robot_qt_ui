@@ -1,35 +1,42 @@
 #include "points.h"
-#include "group.h"
-#include "point.h"
 #include <QDataStream>
 #include <QDebug>
+#include <QMapIterator>
+#include "View/pointview.h"
+#include "Controller/mainwindow.h"
+#include "View/mapview.h"
 
-Points::Points(void){
+Points::Points(QObject *parent) : QObject(parent){
+    groups = std::shared_ptr<Groups>(new Groups());
 }
 
-bool Points::addGroup(const Group& group){
-    /// we first check that no group with the same name exists
-    for(int i = 0; i < groups.size(); i++){
-        if(!group.getName().compare(groups.at(i)->getName()))
-            /// if there's already a point with the same name we don't do anything and return false
-            return false;
-    }
-    groups.push_back(std::make_shared<Group>(group));
-    return true;
+void Points::addGroup(const QString groupName, std::shared_ptr<QVector<std::shared_ptr<PointView>>> points){
+    groups->insert(groupName, points);
 }
 
 /// returns a vector containing the names of the groups
 QVector<QString> Points::groupNames(void) const{
     QVector<QString> _names;
-    for(auto it = groups.cbegin(); it != groups.cend(); ++it)
-        _names.push_back((*it)->getName());
+    QMapIterator<QString, std::shared_ptr<QVector<std::shared_ptr<PointView>>>> i(*groups);
+    while (i.hasNext()) {
+        i.next();
+        _names.push_back(i.key());
+    }
     return _names;
 }
 
 void Points::display(std::ostream& stream) const {
-    std::cout << "This list of points contains " << groups.size() << " groups :" << std::endl;
-    for(int i = 0; i < groups.size(); i++)
-        stream << *(groups[i]) << std::endl;
+    std::cout << "This list of points contains " << groups->size() << " groups :" << std::endl;
+    QMapIterator<QString, std::shared_ptr<QVector<std::shared_ptr<PointView>>>> i(*groups);
+    while (i.hasNext()) {
+        i.next();
+        stream << i.key().toStdString() << " : " << std::endl;
+        if(i.value()){
+            for(int j = 0; j < i.value()->size(); j++){
+                stream << i.value()->at(j)->getPoint() << std::endl;
+            }
+        }
+    }
 }
 
 std::ostream& operator <<(std::ostream& stream, Points const& points){
@@ -39,71 +46,101 @@ std::ostream& operator <<(std::ostream& stream, Points const& points){
 
 
 QDataStream& operator>>(QDataStream& in, Points& points){
+    qDebug() << "Points operator >> called";
     /// the size of the vector has to be serialized too in order to deserialize the object correctly
-    qint32 size;
+    /*qint32 size;
     in >> size;
     for(int i = 0; i < size; i++){
         Group group;
         in >> group;
         points.addGroup(group);
-    }
+    }*/
     return in;
 }
 
 QDataStream& operator<<(QDataStream& out, const Points& points){
-    out << qint32(points.getGroups().size());
+    qDebug() << "Points operator << called";
+    /*out << qint32(points.getGroups().size());
     for(int i = 0; i < points.getGroups().size(); i++)
         out << *(points.getGroups().at(i));
-    return out;
+    return out;*/
 }
 
-/// removes the group of index <index>
-void Points::removeGroup(const int index) {
-    if(index >=0 && index < groups.size())
-        groups.remove(index);
+void Points::removeGroup(const QString groupName) {
+    if(groupName.compare(NO_GROUP_NAME) != 0)
+        groups->remove(groupName);
 }
 
-/// returns a pointer to the group whose name is <groupName>
-std::shared_ptr<Group> Points::findGroup(const QString groupName) const {
-    for(int i = 0; i < getGroups().size(); i++){
-        if(!getGroups().at(i)->getName().compare(groupName))
-            return getGroups().at(i);
+void Points::removePoint(const QString pointName) {
+    QMapIterator<QString, std::shared_ptr<QVector<std::shared_ptr<PointView>>>> i(*groups);
+    QString key = "";
+    int index = -1;
+    while (i.hasNext()) {
+        i.next();
+        if(i.value()){
+            for(int j = 0; j < i.value()->size(); j++){
+                if(i.value()->at(j)->getPoint()->getName().compare(pointName) == 0){
+                    key = i.key();
+                    index = j;
+                }
+            }
+        }
     }
-    return NULL;
+    if(key.compare("") != 0 && index != -1){
+        groups->value(key)->remove(index);
+        qDebug() << "Points::removePoint" << pointName << "done";
+    } else {
+        qDebug() << "Points::removePoint could not find the point to delete";
+    }
 }
 
-/// returns a pointer to the point whose name is <name>
-std::shared_ptr<Point> Points::findPoint(const QString name) const {
-    for(int i = 0; i < groups.size(); i++){
-        std::shared_ptr<Group> currentGroup = groups.at(i);
-        for(int j = 0; j < currentGroup->getPoints().size(); j++){
-            std::shared_ptr<Point> currentPoint = currentGroup->getPoints().at(j);
-            if(!name.compare(currentPoint->getName()))
-                return currentPoint;
+std::shared_ptr<QVector<std::shared_ptr<PointView>>> Points::findGroup(const QString groupName) const {
+    return groups->value(groupName);
+}
+
+std::shared_ptr<PointView> Points::findPointView(const QString pointName) const{
+    QMapIterator<QString, std::shared_ptr<QVector<std::shared_ptr<PointView>>>> i(*groups);
+    while (i.hasNext()) {
+        i.next();
+        if(i.value()){
+            for(int j = 0; j < i.value()->size(); j++){
+                if(i.value()->at(j)->getPoint()->getName().compare(pointName) == 0)
+                    return i.value()->at(j);
+            }
         }
     }
     return NULL;
 }
 
-/// returns a pointer to the point whose group's index is <indexGroup> and whose own index within that group is <indexPoint>
-std::shared_ptr<Point> Points::findPoint(const int indexGroup, const int indexPoint) const {
-    if(groups.at(indexGroup)->getPoints().at(indexPoint))
-        qDebug() << "hey i got " << groups.at(indexGroup)->getPoints().at(indexPoint)->getName();
-    else
-        qDebug() << "oh no, no point";
-    return groups.at(indexGroup)->getPoints().at(indexPoint);
+std::shared_ptr<Point> Points::findPoint(const QString pointName) const {
+    QMapIterator<QString, std::shared_ptr<QVector<std::shared_ptr<PointView>>>> i(*groups);
+    while (i.hasNext()) {
+        i.next();
+        if(i.value()){
+            for(int j = 0; j < i.value()->size(); j++){
+                if(i.value()->at(j)->getPoint()->getName().compare(pointName) == 0)
+                    return i.value()->at(j)->getPoint();
+            }
+        }
+    }
+    return NULL;
 }
 
-/// returns a pair of ints corresponding to the indexes of the point whose name is <name>
-std::pair<int, int> Points::findPointIndexes(const QString name) const {
-    std::pair<int, int> indexes(std::make_pair<int, int>(-1, -1));
-    for(int i = 0; i < groups.size(); i++){
-        std::shared_ptr<Group> currentGroup = groups.at(i);
-        for(int j = 0; j < currentGroup->getPoints().size(); j++){
-            std::shared_ptr<Point> currentPoint = currentGroup->getPoints().at(j);
-            if(!name.compare(currentPoint->getName())){
-                indexes.first = i;
-                indexes.second = j;
+std::shared_ptr<Point> Points::findPoint(const QString groupName, const int indexPoint) const {
+    return groups->value(groupName)->at(indexPoint)->getPoint();
+}
+
+std::pair<QString, int> Points::findPointIndexes(const QString pointName) const {
+    std::pair<QString, int> indexes(std::make_pair<QString, int>("", -1));
+    QMapIterator<QString, std::shared_ptr<QVector<std::shared_ptr<PointView>>>> i(*groups);
+    while (i.hasNext()) {
+        i.next();
+        if(i.value()){
+            for(int j = 0; j < i.value()->size(); j++){
+                if(i.value()->at(j)->getPoint()->getName().compare(pointName) == 0){
+                    indexes.first = i.key();
+                    indexes.second = j;
+                }
             }
         }
     }
@@ -112,6 +149,126 @@ std::pair<int, int> Points::findPointIndexes(const QString name) const {
 
 /// clears all the groups and add an empty default group
 void Points::clear(){
-    groups.clear();
-    addGroup(Group("No Name"));
+    qDebug() << "Points::clear called";
+    groups->clear();
+    //addGroup(Group(NO_GROUP_NAME));
+}
+
+void Points::addPoint(const QString groupName, const QString pointName, const double x, const double y, const bool displayed, const Point::PointType type,
+                      MapView* mapView, MainWindow* mainWindow){
+    qDebug() << "Points::addPoint called";
+    std::shared_ptr<Point> point = std::shared_ptr<Point>(new Point(pointName, x, y, type));
+    std::shared_ptr<PointView> pointView = std::shared_ptr<PointView>(new PointView(point, mapView));
+    if(!displayed)
+        pointView->hide();
+
+    connect(&(*pointView), SIGNAL(pathPointChanged(double, double, PointView*)), mainWindow, SLOT(updatePathPoint(double, double, PointView*)));
+    connect(&(*pointView), SIGNAL(hoverEventSignal(PointView::PixmapType, PointView*)), mapView, SLOT(updatePixmapHover(PointView::PixmapType, PointView*)));
+    connect(&(*pointView), SIGNAL(pointLeftClicked(PointView*)), mainWindow, SLOT(displayPointEvent(PointView*)));
+    connect(&(*pointView), SIGNAL(editedPointPositionChanged(double, double)), mainWindow, SLOT(updateCoordinates(double, double)));
+    connect(&(*pointView), SIGNAL(moveTmpEditPathPoint()), mainWindow, SLOT(moveTmpEditPathPointSlot()));
+    connect(&(*pointView), SIGNAL(addPointPath(PointView*)), mapView, SLOT(addPathPointMapViewSlot(PointView*)));
+    connect(&(*pointView), SIGNAL(homeSelected(PointView*, bool)), mainWindow, SLOT(homeSelected(PointView*, bool)));
+    connect(&(*pointView), SIGNAL(homeEdited(PointView*, bool)), mainWindow, SLOT(homeEdited(PointView*, bool)));
+
+
+    if(!groups->empty() && groups->contains(groupName)){
+        groups->value(groupName)->push_back(pointView);
+    } else {
+        std::shared_ptr<QVector<std::shared_ptr<PointView>>> vector = std::shared_ptr<QVector<std::shared_ptr<PointView>>>(new QVector<std::shared_ptr<PointView>>());
+        vector->push_back(pointView);
+        groups->insert(groupName, vector);
+    }
+}
+
+int Points::count() const {
+    int nbPoints = 0;
+    QMapIterator<QString, std::shared_ptr<QVector<std::shared_ptr<PointView>>>> i(*groups);
+    while (i.hasNext()) {
+        i.next();
+        if(i.value())
+            nbPoints += i.value()->size();
+    }
+    return nbPoints;
+}
+
+void Points::displayTmpPoint(const bool display){
+    if(groups->value("TmpPoint")->count() > 0 && groups->value("TmpPoint")->at(0) != NULL)
+        groups->value("TmpPoint")->at(0)->setVisible(display);
+}
+
+void Points::setPointViewsState(const GraphicItemState state){
+    QMapIterator<QString, std::shared_ptr<QVector<std::shared_ptr<PointView>>>> i(*groups);
+    while (i.hasNext()) {
+        i.next();
+        if(i.value()){
+            for(int j = 0; j < i.value()->size(); j++){
+                i.value()->at(j)->setState(state);
+            }
+        }
+    }
+}
+
+std::shared_ptr<PointView> Points::getTmpPointView() const{
+    qDebug() << "Points::getTmpPointView called" << this->count();
+    if(groups->value("TmpPoint")->count() > 0 && groups->value("TmpPoint")->at(0) != NULL)
+        return groups->value("TmpPoint")->at(0);
+}
+
+bool Points::isDisplayed(QString key) const{
+    qDebug() << "Points::isDisplayed called" << key;
+    if(groups->value(key) && groups->value(key)->size() > 0){
+        QMapIterator<QString, std::shared_ptr<QVector<std::shared_ptr<PointView>>>> i(*groups);
+        while (i.hasNext()) {
+            i.next();
+            if(i.value()){
+                for(int j = 0; j < i.value()->size(); j++){
+                    if(i.value()->at(j)->isVisible())
+                        return true;
+                }
+            }
+        }
+    }
+    return false;
+}
+
+bool Points::isAGroup(QString groupName) const{
+    return groups->contains(groupName);
+}
+
+bool Points::isAPoint(QString pointName) const{
+    QMapIterator<QString, std::shared_ptr<QVector<std::shared_ptr<PointView>>>> i(*groups);
+    while (i.hasNext()) {
+        i.next();
+        if(i.value()){
+            for(int j = 0; j < i.value()->size(); j++){
+                if(i.value()->at(j)->getPoint()->getName().compare(pointName) == 0)
+                    return true;
+            }
+        }
+    }
+    return false;
+}
+
+QVector<QString> Points::getHomeNameFromGroup(QString groupName) const{
+    QVector<QString> nameVector;
+    for(int j = 0; j < groups->value(groupName)->size(); j++){
+        if(groups->value(groupName)->at(j)->getPoint()->getType() == Point::PointType::HOME)
+            nameVector.push_back(groups->value(groupName)->at(j)->getPoint()->getName());
+    }
+    return nameVector;
+}
+
+QString Points::getGroupNameFromPointName(QString pointName) const{
+    QMapIterator<QString, std::shared_ptr<QVector<std::shared_ptr<PointView>>>> i(*groups);
+    while (i.hasNext()) {
+        i.next();
+        if(i.value()){
+            for(int j = 0; j < i.value()->size(); j++){
+                if(i.value()->at(j)->getPoint()->getName().compare(pointName) == 0)
+                    return i.key();
+            }
+        }
+    }
+    return "";
 }

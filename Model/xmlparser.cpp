@@ -1,16 +1,13 @@
 #include "xmlparser.h"
 #include "points.h"
-#include "robot.h"
-#include "robots.h"
-#include "group.h"
 #include "point.h"
-#include "View/robotview.h"
 #include <QFile>
 #include <QXmlStreamWriter>
 #include <QDebug>
+#include "View/mapview.h"
+#include "Controller/mainwindow.h"
 
-XMLParser::XMLParser(const QString filename, QGraphicsItem* const& _parent): parent(_parent)
-{
+XMLParser::XMLParser(const QString filename){
     file = new QFile(filename);
 }
 
@@ -19,6 +16,7 @@ XMLParser::~XMLParser(){
 }
 
 void XMLParser::save(const Points& points) const {
+    qDebug() << "XMLParser::save called";
     try {
 
         file->open(QIODevice::WriteOnly);
@@ -29,22 +27,27 @@ void XMLParser::save(const Points& points) const {
 
         xmlWriter.writeStartElement("points");
 
-        for(int i = 0; i < points.getGroups().size(); i++){
+        QMapIterator<QString, std::shared_ptr<QVector<std::shared_ptr<PointView>>>> i(*(points.getGroups()));
+        /// For each group
+        while (i.hasNext()) {
+            i.next();
+
             xmlWriter.writeStartElement("group");
-            xmlWriter.writeTextElement("name", points.getGroups()[i]->getName());
-            // for each point of the group
-            for(int j = 0; j < points.getGroups()[i]->getPoints().size(); j++){
-                xmlWriter.writeStartElement("point");
-                std::shared_ptr<Point> currPoint = points.getGroups()[i]->getPoints()[j];
-                xmlWriter.writeTextElement("name", currPoint->getName());
-                xmlWriter.writeTextElement("x", QString::number(currPoint->getPosition().getX())); // the x attribute of a point object or node
-                xmlWriter.writeTextElement("y", QString::number(currPoint->getPosition().getY())); // the y attribute of a point object or node
-                xmlWriter.writeTextElement("displayed", QString::number(currPoint->isDisplayed()));
-                xmlWriter.writeEndElement();
+            xmlWriter.writeTextElement("name", i.key());
+
+            if(i.value()){
+                /// For each point of the group
+                for(int j = 0; j < i.value()->size(); j++){
+                    xmlWriter.writeStartElement("point");
+                    xmlWriter.writeTextElement("name", i.value()->at(j)->getPoint()->getName());
+                    xmlWriter.writeTextElement("x", QString::number(i.value()->at(j)->getPoint()->getPosition().getX()));
+                    xmlWriter.writeTextElement("y", QString::number(i.value()->at(j)->getPoint()->getPosition().getY()));
+                    xmlWriter.writeTextElement("displayed", QString::number(i.value()->at(j)->isVisible()));
+                    xmlWriter.writeEndElement();
+                }
             }
             xmlWriter.writeEndElement();
         }
-
         xmlWriter.writeEndElement();
 
         file->close();
@@ -54,66 +57,6 @@ void XMLParser::save(const Points& points) const {
     }
 }
 
-
-QVector<QString> XMLParser::readRobots(Robots& robots){
-
-    QXmlStreamReader xmlReader;
-    QVector<QString> robotsNames;
-
-    try {
-
-        file->open(QFile::ReadOnly | QFile::Text);
-
-        xmlReader.setDevice(file);
-        xmlReader.readNext();
-
-        while(!xmlReader.atEnd()){
-            if(xmlReader.isStartElement()){
-                if(xmlReader.name() == "robots"){
-                    xmlReader.readNext();
-                }
-                else if(xmlReader.name() == "robot"){
-                    std::shared_ptr<Robot> robot = std::shared_ptr<Robot>(new Robot());
-                    while(!xmlReader.atEnd()){
-                        if(xmlReader.isEndElement()){
-                            xmlReader.readNext();
-                            break;
-                        }
-                        else if(xmlReader.isCharacters()){
-                            xmlReader.readNext();
-                        }
-                        else if(xmlReader.isStartElement()){
-                            if(xmlReader.name() == "name"){
-                                QString robotName = readNameElement(xmlReader);
-                                robot->setName(robotName);
-                                robotsNames.push_back(robotName);
-                            }
-                            else if(xmlReader.name() == "IP"){
-                                robot->setIp(readIPElement(xmlReader));
-                                robots.add(new RobotView(robot, parent));
-                            }
-
-                            xmlReader.readNext();
-                        } else {
-                            xmlReader.readNext();
-                        }
-                    }
-                }
-            } else {
-                xmlReader.readNext();
-            }
-        }
-
-        file->close();
-    }
-
-    catch(std::exception e) {
-        qDebug() << "here ";
-        qDebug() << e.what();
-    }
-
-    return robotsNames;
-}
 
 QString XMLParser::readNameElement(QXmlStreamReader& xmlReader){
     QString nameElement("");
@@ -178,7 +121,8 @@ float XMLParser::readCoordinateElement(QXmlStreamReader &xmlReader){
     return coordinate;
 }
 
-void XMLParser::readPoints(std::shared_ptr<Points>& points){
+void XMLParser::readPoints(std::shared_ptr<Points>& points, MapView* mapView, MainWindow* mainWindow){
+    qDebug() << "XMLParser::readPoints called";
     QXmlStreamReader xmlReader;
 
     try {
@@ -194,7 +138,7 @@ void XMLParser::readPoints(std::shared_ptr<Points>& points){
                     xmlReader.readNext();
                 }
                 else if(xmlReader.name() == "group"){
-                    Group* group = new Group();
+                    QString groupName("");
                     while(!xmlReader.atEnd()){
                         if(xmlReader.isEndElement()){
                             xmlReader.readNext();
@@ -205,15 +149,14 @@ void XMLParser::readPoints(std::shared_ptr<Points>& points){
                         }
                         else if(xmlReader.isStartElement()){
                             if(xmlReader.name() == "name"){
-                                group->setName(readNameElement(xmlReader));
+                                groupName = readNameElement(xmlReader);
                             }
                             else if(xmlReader.name() == "point"){
-                                Point point;
-                                float x(0.0);
-                                float y(0.0);
+                                double x(0.0);
+                                double y(0.0);
                                 QString name;
+                                Point::PointType type = Point::PointType::PERM;
                                 bool displayed;
-                                point.setPosition(x, y);
                                 xmlReader.readNext();
                                 while(!xmlReader.atEnd()){
 
@@ -228,12 +171,10 @@ void XMLParser::readPoints(std::shared_ptr<Points>& points){
                                         }
                                         else if(xmlReader.name() == "name"){
                                             name = readNameElement(xmlReader);
-                                            point.setName(name);
                                             xmlReader.readNext();
                                         }
                                         else if(xmlReader.name() == "displayed"){
                                             displayed = readDisplayedElement(xmlReader);
-                                            point.setDisplayed(displayed);
                                             xmlReader.readNext();
                                         }
                                         else {
@@ -246,9 +187,7 @@ void XMLParser::readPoints(std::shared_ptr<Points>& points){
                                     }
                                     else xmlReader.readNext();
                                 }
-
-                                point.setPosition(x, y);
-                                group->addPoint(std::make_shared<Point> (Point(point)));
+                                points->addPoint(groupName, name, x, y, displayed, type, mapView, mainWindow);
                             }
 
                             xmlReader.readNext();
@@ -256,7 +195,6 @@ void XMLParser::readPoints(std::shared_ptr<Points>& points){
                             xmlReader.readNext();
                         }
                     }
-                    points->addGroup(*group);
                 }
             } else {
                 xmlReader.readNext();
@@ -266,8 +204,7 @@ void XMLParser::readPoints(std::shared_ptr<Points>& points){
     }
 
     catch(std::exception e) {
-        qDebug() << "here ";
-        qDebug() << e.what();
+        qDebug() << "Exception in XMLParser::readPoints :" << e.what();
     }
 }
 
@@ -294,6 +231,7 @@ bool XMLParser::readDisplayedElement(QXmlStreamReader &xmlReader){
 
 /// resets the file, only writting an empty default group
 void XMLParser::clear(void){
+    qDebug() << "XMLParser::clear called";
     try {
         file->open(QIODevice::WriteOnly);
 
@@ -304,7 +242,7 @@ void XMLParser::clear(void){
         xmlWriter.writeStartElement("points");
 
         xmlWriter.writeStartElement("group");
-        xmlWriter.writeTextElement("name", "no group");
+        xmlWriter.writeTextElement("name", NO_GROUP_NAME);
 
         xmlWriter.writeEndElement();
         xmlWriter.writeEndElement();
