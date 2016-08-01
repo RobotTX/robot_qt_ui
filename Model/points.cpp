@@ -215,21 +215,15 @@ std::shared_ptr<PointView> Points::getTmpPointView() const{
         return groups->value(TMP_GROUP_NAME)->at(0);
 }
 
-bool Points::isDisplayed(QString key) const{
+bool Points::isDisplayed(const QString key) const {
     qDebug() << "Points::isDisplayed called" << key;
     if(groups->value(key) && groups->value(key)->size() > 0){
-        QMapIterator<QString, std::shared_ptr<QVector<std::shared_ptr<PointView>>>> i(*groups);
-        while (i.hasNext()) {
-            i.next();
-            if(i.value()){
-                for(int j = 0; j < i.value()->size(); j++){
-                    if(i.value()->at(j)->isVisible())
-                        return true;
-                }
-            }
+        for(int i = 0; i < groups->value(key)->size(); i++){
+            if(!groups->value(key)->at(i)->isVisible())
+                return false;
         }
     }
-    return false;
+    return true;
 }
 
 bool Points::isAGroup(QString groupName) const{

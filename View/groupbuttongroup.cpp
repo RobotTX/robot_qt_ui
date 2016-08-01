@@ -229,7 +229,7 @@ int GroupButtonGroup::getEditedGroupId(void) const{
     return -1;
 }
 
-QAbstractButton* GroupButtonGroup::getButtonByName(const QString name) const{
+QAbstractButton* GroupButtonGroup::getButtonByName(const QString name) const {
     for(int i = 0; i < getButtonGroup()->buttons().size(); i++){
         if(getButtonGroup()->button(i)->text().compare(name) == 0)
             return getButtonGroup()->button(i);
