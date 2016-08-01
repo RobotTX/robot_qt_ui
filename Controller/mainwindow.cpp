@@ -68,8 +68,10 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
     /**************************************************************/
 
+
+
     robots = std::shared_ptr<Robots>(new Robots());
-    scene = new QGraphicsScene(this);
+    scene = new QGraphicsScene();
 
     graphicsView = new CustomQGraphicsView(scene, this);
 
@@ -86,6 +88,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     connect(mapPixmapItem, SIGNAL(addPathPointMapView(Point*)), this, SLOT(addPathPoint(Point*)));
     connect(mapPixmapItem, SIGNAL(homeSelected(QString, bool)), this, SLOT(homeSelected(QString, bool)));
     connect(mapPixmapItem, SIGNAL(homeEdited(QString, bool)), this, SLOT(homeEdited(QString, bool)));
+
+
 
     /// Centers the map
     centerMap();
@@ -104,6 +108,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
     scene->addItem(mapPixmapItem);
 
+
+
    graphicsView->scale(std::max(graphicsView->parentWidget()->width()/scene->width(), graphicsView->parentWidget()->height()/scene->height()),
                         std::max(graphicsView->parentWidget()->width()/scene->width(), graphicsView->parentWidget()->height()/scene->height()));
 
@@ -111,6 +117,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     graphicsView->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     graphicsView->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     graphicsView->setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding));
+
 
     leftMenu = new LeftMenu(this, points, robots, points, map);
 
@@ -202,6 +209,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     bottomLayout->setContentsMargins(0,0,0,0);
     mainLayout->setSpacing(0);
     //setStyleSheet("QPushButton{color: white}");
+
+
 }
 
 MainWindow::~MainWindow(){
@@ -1520,7 +1529,7 @@ void MainWindow::addPathPointToMap(Point* point){
 
 void MainWindow::updatePathPermanentPoint(QString oldPointName, QString newPointName){
     qDebug() << "updatePathPermanentPoint called" << newPointName << oldPointName;
-    /*int index = mapPixmapItem->findIndexInPathByName(oldPointName);/*
+    /*int index = mapPixmapItem->findIndexInPathByName(oldPointName);
     if(index >= 0 && index < mapPixmapItem->getPathCreationPoints().size())
         mapPixmapItem->replacePermanentPathPoint(index, pointViews->getPointViewFromName(newPointName));
 */

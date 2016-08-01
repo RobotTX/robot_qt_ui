@@ -22,6 +22,7 @@ MapView::MapView (const QPixmap& pixmap, const QSize _size, std::shared_ptr<Map>
 
 }
 
+
 void MapView::mousePressEvent(QGraphicsSceneMouseEvent *event){
     /// On mouse press event, we set the drag start position
     dragStartPosition = this->pos();

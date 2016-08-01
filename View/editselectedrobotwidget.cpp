@@ -139,7 +139,7 @@ EditSelectedRobotWidget::EditSelectedRobotWidget(QMainWindow * const parent, con
 
 void EditSelectedRobotWidget::setSelectedRobot(RobotView* const _robotView, bool _firstConnection){
 
-       pathChanged = false;
+    pathChanged = false;
     firstConnection = _firstConnection;
     if(firstConnection)
         cancelBtn->setEnabled(false);
