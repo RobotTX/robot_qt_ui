@@ -14,7 +14,7 @@ class PointButtonGroup: public QWidget
 {
     Q_OBJECT
 public:
-    PointButtonGroup(const std::shared_ptr<Points> points, const QString groupIndex, QWidget *parent);
+    PointButtonGroup(std::shared_ptr<Points> points, const QString groupIndex, QWidget *parent);
     ~PointButtonGroup(){}
 
     QButtonGroup* getButtonGroup(void) const { return buttonGroup; }
@@ -22,17 +22,18 @@ public:
 
 public:
     void deleteButtons(void);
-    void setGroup(const std::shared_ptr<Points> points, const QString groupIndex);
+    void setGroup(const QString groupIndex);
     void update(const Points &_points);
     void setCheckable(const bool checkable);
     void uncheck(void);
-    void createButtons(std::shared_ptr<Points> const points);
+    void createButtons();
 
 private:
     QVBoxLayout* layout;
     QButtonGroup* buttonGroup;
     QString groupIndex;
     QSize BUTTON_SIZE;
+    std::shared_ptr<Points> points;
 signals:
     void updateConnectionsRequest();
 };
