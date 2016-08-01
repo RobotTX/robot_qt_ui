@@ -1804,8 +1804,6 @@ void MainWindow::minusGroupBtnEvent(){
     pointsLeftWidget->getGroupNameLabel()->hide();
 
     QString checkedId = pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->checkedButton()->text();
-    QRegularExpression regex(" \\([0-9]*, [0-9]*\\)$");
-    checkedId.remove(regex);
 
     /// we have to delete a group
     if(points->isAGroup(checkedId))
@@ -1901,8 +1899,6 @@ void MainWindow::editGroupBtnEvent(){
     pointsLeftWidget->getGroupNameLabel()->hide();
     QAbstractButton* btn = pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->checkedButton();
     QString checkedId = pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->checkedButton()->text();
-    QRegularExpression regex(" \\([0-9]*, [0-9]*\\)$");
-    checkedId.remove(regex);
 
     /// it's an isolated point
     if(checkedId.compare("") != 0 && points->isAPoint(checkedId)){
@@ -2335,8 +2331,6 @@ void MainWindow::displayGroupMapEvent(void){
     pointsLeftWidget->getGroupNameLabel()->hide();
 
     QString checkedName = pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->checkedButton()->text();
-    QRegularExpression regex(" \\([0-9]*, [0-9]*\\)$");
-    checkedName.remove(regex);
 
     int checkedId = pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->checkedId();
     /// we display groups
@@ -2487,8 +2481,6 @@ void MainWindow::displayPointsInGroup(void){
 
     /// retrieves the id of the checked button within the group of buttons
     QString checkedName = pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->checkedButton()->text();
-    QRegularExpression regex(" \\([0-9]*, [0-9]*\\)$");
-    checkedName.remove(regex);
 
     /// it's a group
     if(points->isAGroup(checkedName)){
@@ -2711,8 +2703,6 @@ void MainWindow::editPointFromGroupMenu(void){
     qDebug() << "working on group" << groupName << "and id" << leftMenu->getDisplaySelectedGroup()->getPointButtonGroup()->getButtonGroup()->checkedId();
     int point = leftMenu->getDisplaySelectedGroup()->getPointButtonGroup()->getButtonGroup()->checkedId();
     QString pointName = leftMenu->getDisplaySelectedGroup()->getPointButtonGroup()->getButtonGroup()->checkedButton()->text();
-    QRegularExpression regex(" \\([0-9]*, [0-9]*\\)$");
-    pointName.remove(regex);
 
     if(pointName.compare("") != 0){
         /// update the pointview and show the point on the map with hover color
@@ -2780,8 +2770,6 @@ void MainWindow::displayPointInfoFromGroupMenu(void){
     qDebug() << "display point info from group menu event called";
     /// retrieves a pointer to the pointView using the text of the label
     QString pointName = leftMenu->getDisplaySelectedGroup()->getPointButtonGroup()->getButtonGroup()->checkedButton()->text();
-    QRegularExpression regex(" \\([0-9]*, [0-9]*\\)$");
-    pointName.remove(regex);
     std::shared_ptr<PointView> pointView = points->findPointView(pointName);
 
     if(pointName.compare("") != 0 && pointView){
@@ -2978,8 +2966,6 @@ void MainWindow::updateCoordinates(double x, double y){
  */
 void MainWindow::removePointFromGroupMenu(void){
     QString checkedId = leftMenu->getDisplaySelectedGroup()->getPointButtonGroup()->getButtonGroup()->checkedButton()->text();
-    QRegularExpression regex(" \\([0-9]*, [0-9]*\\)$");
-    checkedId.remove(regex);
 
     if(checkedId.compare("") != 0)
         askForDeletePointConfirmation(checkedId);
@@ -2996,9 +2982,6 @@ void MainWindow::displayPointFromGroupMenu(){
 
     const QString pointName = leftMenu->getDisplaySelectedGroup()->getPointButtonGroup()->getButtonGroup()->checkedButton()->text();
     qDebug() << "displaypointfromgroupmenu event called" << pointName ;
-
-    QRegularExpression regex(" \\([0-9]*, [0-9]*\\)$");
-    pointName.remove(regex);
 
     int checkedId = leftMenu->getDisplaySelectedGroup()->getPointButtonGroup()->getButtonGroup()->checkedId();
 

@@ -131,9 +131,7 @@ void GroupButtonGroup::updateButtons(){
     /// for the last group we just want to show the points and not "no group"
     for(int i = 0; i < points->getGroups()->value(NO_GROUP_NAME)->size(); i++){
         std::shared_ptr<Point> currentPoint = points->getGroups()->value(NO_GROUP_NAME)->at(i)->getPoint();
-        DoubleClickableButton* pointButton = new DoubleClickableButton(currentPoint->getName(), currentPoint->getName()
-                                                   + " (" + QString::number(currentPoint->getPosition().getX())
-                                                   + ", " + QString::number(currentPoint->getPosition().getY()) + ")", this);
+        DoubleClickableButton* pointButton = new DoubleClickableButton(currentPoint->getName(), currentPoint->getName(), this);
         pointButton->setFlat(true);
         pointButton->setAutoDefault(true);
         pointButton->setStyleSheet("QPushButton {color: "+text_color+";text-align:left;border: 4px; padding: 10px;}QPushButton:hover{background-color: "+button_hover_color+";}QPushButton:checked{background-color: "+button_checked_color+";}");
