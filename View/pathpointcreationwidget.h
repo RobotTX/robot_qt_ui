@@ -28,7 +28,7 @@ public:
      * @param point
      * The construcor of the widget when we clicked on the map and selected a point
      */
-    PathPointCreationWidget(const int id, const Points& points, const Point& point, QWidget *parent);
+    PathPointCreationWidget(const int id, std::shared_ptr<Points> points, const Point& point, QWidget *parent);
 
 
     void displayActionWidget(const bool show);
@@ -64,7 +64,7 @@ private:
     float posY;
     QString name;
     int id;
-    Points points;
+    std::shared_ptr<Points> points;
     Point point;
     QComboBox* actionBtn;
     QPushButton* saveEditBtn;

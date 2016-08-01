@@ -13,6 +13,7 @@ class QLineEdit;
 class QHBoxLayout;
 class GroupEditWindow;
 class Points;
+class QAbstractButton;
 
 #include <QWidget>
 #include <memory>
@@ -29,7 +30,7 @@ public:
 
     bool getGroupDisplayed(void) const { return groupDisplayed; }
     void setGroupDisplayed(const bool _groupDisplayed) { groupDisplayed = _groupDisplayed; }
-    int getIndexLastGroupClicked(void) const { return indexLastGroupClicked; }
+    QString getIndexLastGroupClicked(void) const { return indexLastGroupClicked; }
     std::shared_ptr<Points> getPoints(void) const { return points; }
 
     /**
@@ -37,7 +38,7 @@ public:
      * @param index
      * the index of the last group is important to determine which points should be removed and displayed
      */
-    void setIndexLastGroupClicked(const int index) { indexLastGroupClicked = index; }
+    void setIndexLastGroupClicked(const QString index) { indexLastGroupClicked = index; }
 
     QPushButton* getSaveButton(void) const { return saveButton; }
     QPushButton* getCancelButton(void) const { return cancelButton; }
@@ -52,7 +53,7 @@ public:
     CustomScrollArea* getScrollArea(void) const { return scrollArea; }
 
     void setCreatingGroup(const bool create) { creatingGroup = create; }
-    void setLastCheckedId(const int  id) {lastCheckedId = id;}
+    void setLastCheckedId(const QString  id) {lastCheckedId = id;}
 
     //int checkEditGroupName(QString name);
 
@@ -71,7 +72,8 @@ public slots:
      int checkGroupName(QString name);
 
 private slots:
-    void enableButtons(int index);
+    void enableButtons(QString button);
+    void enableButtons(QAbstractButton* button);
     void cancelCreationGroup();
     void emitNewGroupSignal();
     void modifyGroupAfterClick(QString name);
@@ -114,11 +116,11 @@ private:
     /// true if the groups are displayed, false if the points are displayed
     /// this way we can implement two different behavior for the same button minus
     bool groupDisplayed;
-    int indexLastGroupClicked;
+    QString indexLastGroupClicked;
     std::shared_ptr<Points> points;
     /// to differenciate the behavior of the enter key
     bool creatingGroup;
-    int lastCheckedId;
+    QString lastCheckedId;
 };
 
 #endif // POINTSLEFTWIDGET_H

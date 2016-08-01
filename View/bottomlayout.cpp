@@ -74,7 +74,6 @@ BottomLayout::BottomLayout(QMainWindow* parent, const std::shared_ptr<Robots> &r
         robotBtn->setStyleSheet("QPushButton { border: 1px solid #d3d3d3}""QPushButton:hover{ background-color: "+button_hover_color+"; border: 1px;}");
 
     }
-    //scrollLayout->addLayout(columnName);
     scrollLayout->addWidget(widgetName);
 
     /// Creation of the second collumn, with the labels containing the path of the robot

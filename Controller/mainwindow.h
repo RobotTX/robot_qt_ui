@@ -9,7 +9,6 @@ class CustomQGraphicsView;
 class Map;
 class Robots;
 class MapView;
-class PointsView;
 class LeftMenuWidget;
 class PointsLeftWidget;
 class SelectedRobotWidget;
@@ -37,13 +36,13 @@ class PathPainter;
 #include "Model/point.h"
 
 
-//#define XML_PATH "/home/m-a/Documents/QtProject/gobot-software/points.xml"
-//#define ROBOTS_NAME_PATH "/home/m-a/Documents/QtProject/gobot-software/robotsName.dat"
-//#define MAP_PATH "/home/m-a/Documents/QtProject/gobot-software/realMap.dat"
+#define XML_PATH "/home/m-a/Documents/QtProject/gobot-software/points.xml"
+#define ROBOTS_NAME_PATH "/home/m-a/Documents/QtProject/gobot-software/robotsName.dat"
+#define MAP_PATH "/home/m-a/Documents/QtProject/gobot-software/realMap.dat"
 
-#define XML_PATH "/home/joan/Qt/QtProjects/gobot-software/points.xml"
-#define ROBOTS_NAME_PATH "/home/joan/Qt/QtProjects/gobot-software/robotsName.dat"
-#define MAP_PATH "/home/joan/Qt/QtProjects/gobot-software/realMap.dat"
+//#define XML_PATH "/home/joan/Qt/QtProjects/gobot-software/points.xml"
+//#define ROBOTS_NAME_PATH "/home/joan/Qt/QtProjects/gobot-software/robotsName.dat"
+//#define MAP_PATH "/home/joan/Qt/QtProjects/gobot-software/realMap.dat"
 
 //#define XML_PATH "/Users/fannylarradet/Desktop/GTRobots/gobot-software/points.xml"
 //#define ROBOTS_NAME_PATH "/Users/fannylarradet/Desktop/GTRobots/gobot-software/robotsName.dat"
@@ -128,15 +127,15 @@ private slots:
     void robotSavedEvent();
     void minusSelecPointBtnEvent();
     void editSelecPointBtnEvent();
-    void setSelectedPoint(PointView* pointView, bool isTemporary);
-    void pointSavedEvent(int index, double x, double y, QString name);
+    void setSelectedPoint(PointView* pointView);
+    void pointSavedEvent(QString groupName, double x, double y, QString name);
     void selectHomeEvent();
     void stopSelectedRobot(int robotNb);
     void playSelectedRobot(int robotNb);
-    void askForDeleteGroupConfirmation(const int group);
-    void askForDeletePointConfirmation(const int index);
+    void askForDeleteGroupConfirmation(const QString group);
+    void askForDeletePointConfirmation(const QString index);
     void displayPointEvent(PointView* _pointView);
-    void askForDeleteDefaultGroupPointConfirmation(const int groupIndex);
+    void askForDeleteDefaultGroupPointConfirmation(const QString index);
     void displayGroupMapEvent(void);
     void pathSaved(bool execPath);
     void addPathPoint(Point* point);
@@ -156,16 +155,15 @@ private slots:
     void updateCoordinates(double x, double y);
     void removePointFromGroupMenu(void);
     void displayPointFromGroupMenu();
-    void doubleClickOnPoint(int checkedId);
-    void doubleClickOnGroup(int checkedId);
+    void doubleClickOnPoint(QString checkedId);
+    void doubleClickOnGroup(QString checkedId);
     void reestablishConnectionsGroups();
     void reestablishConnectionsPoints();
-    void removePoint(std::shared_ptr<Point>& point, const Origin origin);
     void createGroup(QString name);
     void modifyGroupWithEnter(QString name);
     void modifyGroupAfterClick(QString name);
     void enableReturnAndCloseButtons(void);
-    void doubleClickOnRobot(int checkedId);
+    void doubleClickOnRobot(QString checkedId);
     void setMessageCreationPath(QString message);
     void updatePathPoint(double x, double y, PointView* pointView = 0);
     void centerMap();
@@ -212,7 +210,6 @@ private:
     MapView* mapPixmapItem;
     RobotView* selectedRobot;
     RobotView* scanningRobot;
-    PointsView* pointViews;
     PointView* selectedPoint;
     std::shared_ptr<Points> points;
     PathPainter* pathPainter;

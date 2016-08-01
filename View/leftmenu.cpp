@@ -8,7 +8,6 @@
 #include "View/selectedrobotwidget.h"
 #include "View/robotsleftwidget.h"
 #include "View/mapleftwidget.h"
-#include "View/pointsview.h"
 #include "View/displayselectedpoint.h"
 #include "View/displayselectedgroup.h"
 #include "View/pathcreationwidget.h"
@@ -21,14 +20,13 @@
 #include <QScrollArea>
 #include "customscrollarea.h"
 #include <QButtonGroup>
-#include "Model/group.h"
 #include "Model/points.h"
 #include "Model/xmlparser.h"
 #include "Controller/mainwindow.h"
 #include "buttonmenu.h"
 #include "colors.h"
 
-LeftMenu::LeftMenu(MainWindow* _parent, std::shared_ptr<Points> const& _points, const std::shared_ptr<Robots> &robots, PointsView * const &pointViews, const std::shared_ptr<Map> &_map):
+LeftMenu::LeftMenu(MainWindow* _parent, std::shared_ptr<Points> const& _points, const std::shared_ptr<Robots> &robots, const std::shared_ptr<Points> &pointViews, const std::shared_ptr<Map> &_map):
     QWidget(_parent), parent(_parent), points(_points), lastCheckedId(-1)
 {
 
@@ -102,7 +100,7 @@ LeftMenu::LeftMenu(MainWindow* _parent, std::shared_ptr<Points> const& _points, 
     /// Menu to edit the selected point
     createPointWidget = new CreatePointWidget(_parent, pointViews);
     leftLayout->addWidget(createPointWidget);
-    connect(createPointWidget, SIGNAL(pointSaved(int, double, double, QString)), _parent, SLOT(pointSavedEvent(int, double, double, QString)));
+    connect(createPointWidget, SIGNAL(pointSaved(QString, double, double, QString)), _parent, SLOT(pointSavedEvent(QString, double, double, QString)));
 
     /// Menu which display the widget for the creation of a path
     pathCreationWidget = new PathCreationWidget(_parent, _points);
@@ -119,17 +117,17 @@ LeftMenu::LeftMenu(MainWindow* _parent, std::shared_ptr<Points> const& _points, 
     connect(displaySelectedPoint->getActionButtons()->getMapButton(), SIGNAL(clicked(bool)), _parent, SLOT(displayPointMapEvent()));
     connect(displaySelectedPoint->getActionButtons()->getEditButton(), SIGNAL(clicked(bool)), _parent, SLOT(editPointButtonEvent()));
 
-    // to try maybe later connect(displaySelectedGroup->getMinusButton(), SIGNAL(clicked(bool)), this, SLOT(removePoint()));
     connect(displaySelectedGroup->getActionButtons()->getMinusButton(), SIGNAL(clicked(bool)), _parent, SLOT(removePointFromGroupMenu()));
     connect(displaySelectedGroup->getActionButtons()->getEditButton(), SIGNAL(clicked(bool)), _parent, SLOT(editPointFromGroupMenu()));
     connect(displaySelectedGroup->getActionButtons()->getGoButton(), SIGNAL(clicked(bool)), _parent, SLOT(displayPointInfoFromGroupMenu()));
     connect(displaySelectedGroup->getActionButtons()->getMapButton(), SIGNAL(clicked(bool)), _parent, SLOT(displayPointFromGroupMenu()));
 
     /// to enable the buttons
-    connect(displaySelectedGroup->getPointButtonGroup()->getButtonGroup(), SIGNAL(buttonClicked(int)), this, SLOT(enableButtons(int)));
+    connect(displaySelectedGroup->getPointButtonGroup()->getButtonGroup(), SIGNAL(buttonClicked(QAbstractButton*)), this, SLOT(enableButtons(QAbstractButton*)));
 
     /// to check the name of a point being edited
     connect(displaySelectedPoint, SIGNAL(invalidName(QString,CreatePointWidget::Error)), _parent, SLOT(setMessageCreationPoint(QString,CreatePointWidget::Error)));
+
 
     hide();
     leftLayout->setContentsMargins(0,0,0,0);
@@ -151,18 +149,15 @@ LeftMenu::LeftMenu(MainWindow* _parent, std::shared_ptr<Points> const& _points, 
     topLayout->setContentsMargins(0, 0, 0, 0);
     globalLayout->setSpacing(0);
 
-
     // set black background
     QPalette Pal(palette());
     Pal.setColor(QPalette::Background, left_menu_background_color);
     this->setAutoFillBackground(true);
     this->setPalette(Pal);
 
-
-
 }
 
-void LeftMenu::updateGroupDisplayed(std::shared_ptr<Points> const& _points, const int groupIndex){
+void LeftMenu::updateGroupDisplayed(std::shared_ptr<Points> const& _points, const QString groupIndex){
     displaySelectedGroup->getPointButtonGroup()->setGroup(_points, groupIndex);
 }
 
@@ -180,13 +175,13 @@ void LeftMenu::showBackButton(QString name)
     }
 }
 
-void LeftMenu::enableButtons(int index){
-    if(index == lastCheckedId){
+void LeftMenu::enableButtons(QAbstractButton* button){
+    if(button->text().compare(lastCheckedId) == 0){
         disableButtons();
-        lastCheckedId = -1;
+        lastCheckedId = "";
         displaySelectedGroup->uncheck();
     } else {
-        lastCheckedId = index;
+        lastCheckedId = button->text();
         displaySelectedGroup->getActionButtons()->getMapButton()->setCheckable(true);
         /// enables the minus button
         displaySelectedGroup->getActionButtons()->getMinusButton()->setEnabled(true);
@@ -196,7 +191,7 @@ void LeftMenu::enableButtons(int index){
         displaySelectedGroup->getActionButtons()->getGoButton()->setToolTip("Click to see the information of the selected point");
         /// enables the map button
         displaySelectedGroup->getActionButtons()->getMapButton()->setEnabled(true);
-        if(displaySelectedGroup->getPoints()->getGroups().at(displaySelectedGroup->getPointButtonGroup()->getGroupIndex())->getPoints().at(index)->isDisplayed()){
+        if(points->isDisplayed(button->text())){
             displaySelectedGroup->getActionButtons()->getMapButton()->setChecked(true);
             displaySelectedGroup->getActionButtons()->getMapButton()->setToolTip("Click to hide the selected point on the map");
         } else {
@@ -225,10 +220,6 @@ void LeftMenu::disableButtons(){
     displaySelectedGroup->getActionButtons()->getEditButton()->setEnabled(false);
     displaySelectedGroup->getActionButtons()->getEditButton()->setToolTip("Select a point and click here to modify it");
 }
-
-/// to factorize the remove point events
-void LeftMenu::removePoint(){}
-
 
 void LeftMenu::setEnableReturnCloseButtons(bool enable){
     returnButton->setEnabled(enable);

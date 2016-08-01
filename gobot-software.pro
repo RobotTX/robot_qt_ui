@@ -20,9 +20,7 @@ HEADERS += Controller/cmdrobotthread.h \
            Controller/scanmapthread.h \
            Controller/scanmetadatathread.h \
            Controller/scanrobotthread.h \
-           Model/comparerobotsxml.h \
            Model/graphicitemstate.h \
-           Model/group.h \
            Model/map.h \
            Model/pathpoint.h \
            Model/point.h \
@@ -49,7 +47,6 @@ HEADERS += Controller/cmdrobotthread.h \
            View/pathwidget.h \
            View/pointbuttongroup.h \
            View/pointsleftwidget.h \
-           View/pointsview.h \
            View/pointview.h \
            View/robotbtngroup.h \
            View/robotsleftwidget.h \
@@ -76,8 +73,6 @@ SOURCES += main.cpp \
            Controller/scanmapthread.cpp \
            Controller/scanmetadatathread.cpp \
            Controller/scanrobotthread.cpp \
-           Model/comparerobotsxml.cpp \
-           Model/group.cpp \
            Model/map.cpp \
            Model/pathpoint.cpp \
            Model/point.cpp \
@@ -104,7 +99,6 @@ SOURCES += main.cpp \
            View/pathwidget.cpp \
            View/pointbuttongroup.cpp \
            View/pointsleftwidget.cpp \
-           View/pointsview.cpp \
            View/pointview.cpp \
            View/robotbtngroup.cpp \
            View/robotsleftwidget.cpp \

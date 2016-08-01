@@ -5,7 +5,6 @@
 
 class Points;
 class Robots;
-class PointsView;
 class LeftMenuWidget;
 class PointsLeftWidget;
 class SelectedRobotWidget;
@@ -16,7 +15,6 @@ class SelectedPointWidget;
 class CreatePointWidget;
 class DisplaySelectedPoint;
 class DisplaySelectedGroup;
-class PointsViews;
 class PathCreationWidget;
 class QVBoxLayout;
 class MainWindow;
@@ -32,7 +30,7 @@ class Map;
 class LeftMenu: public QWidget{
     Q_OBJECT
 public:
-    LeftMenu(MainWindow* _parent, const std::shared_ptr<Points> &_points, std::shared_ptr<Robots> const& robots, PointsView* const& pointViews, std::shared_ptr<Map> const& _map);
+    LeftMenu(MainWindow* _parent, const std::shared_ptr<Points> &_points, std::shared_ptr<Robots> const& robots, std::shared_ptr<Points> const &pointViews, std::shared_ptr<Map> const& _map);
 
     /// Getters
     LeftMenuWidget* getLeftMenuWidget(void) const {return leftMenuWidget;}
@@ -52,13 +50,12 @@ public:
     QPushButton* getCloseButton(void) const { return closeBtn; }
     QWidget* getLastWidget() const {return lastWidget;}
 
-    void updateGroupDisplayed(const std::shared_ptr<Points> &_points, const int groupIndex);
+    void updateGroupDisplayed(const std::shared_ptr<Points> &_points, const QString groupIndex);
     void disableButtons();
     void setEnableReturnCloseButtons(bool enable);
 
 private slots:
-    void enableButtons(int index);
-    void removePoint();
+    void enableButtons(QAbstractButton* button);
 
 private:
     QPushButton* closeBtn;
@@ -79,7 +76,7 @@ private:
     MainWindow* parent;
     std::shared_ptr<Points> points;
 
-    int lastCheckedId;
+    QString lastCheckedId;
 
 };
 

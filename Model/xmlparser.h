@@ -5,6 +5,8 @@ class Points;
 class Robots;
 class QFile;
 class QXmlStreamReader;
+class MapView;
+class MainWindow;
 
 #include <QVector>
 #include <QGraphicsItem>
@@ -18,11 +20,10 @@ class QXmlStreamReader;
  * Be careful the functions of this class do not check whether or not you provided the appropriate type of xml files
  */
 
-class XMLParser
-{
+class XMLParser{
 
 public:
-    XMLParser(const QString filename, QGraphicsItem * const &mapPixmapItem);
+    XMLParser(const QString filename);
     ~XMLParser();
 
 public:
@@ -38,15 +39,7 @@ public:
      * @param points
      * Imports a list of points from an xml file to the model
      */
-    void readPoints(std::shared_ptr<Points>& points);
-
-    /**
-     * @brief readRobots
-     * @param robots
-     * @return QVector<QString>
-     * Imports a list of robots from an xml file to the model
-     */
-    QVector<QString> readRobots(Robots& robots);
+    void readPoints(std::shared_ptr<Points>& points, MapView* mapView, MainWindow *mainWindow);
 
     /**
      * @brief readNameElement
@@ -90,7 +83,6 @@ public:
 private:
     /// a pointer to the file that will be opened in order to retrieve or save the model
     QFile* file;
-    QGraphicsItem* parent;
 };
 
 #endif // XMLPARSER_H

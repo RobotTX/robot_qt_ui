@@ -1,7 +1,6 @@
 #ifndef CreatePointWidget_H
 #define CreatePointWidget_H
 
-class PointsView;
 class PointView;
 class QHBoxLayout;
 class QVBoxLayout;
@@ -27,16 +26,14 @@ public:
 
     /// to display an appropriate message to the end user when he tries to create a point
     enum Error { ContainsSemicolon, EmptyName, AlreadyExists, NoError };
-    CreatePointWidget(QMainWindow* parent, PointsView *points);
+    CreatePointWidget(QMainWindow* parent, std::shared_ptr<Points> points);
 
-    void setSelectedPoint(PointView* const& _pointView, const bool isTemporary);
+    void setSelectedPoint(PointView* const& _pointView);
 
-    bool isTemporary(void) const { return _isTemporary; }
-    void setPoints(PointsView* const _points){ points = _points;}
     QLabel* getPosXLabel(void) const { return posXLabel; }
     QLabel* getPosYLabel(void) const { return posYLabel; }
     QLineEdit* getNameEdit(void) const { return nameEdit; }
-    void updateGroupBox(const Points &_points);
+    void updateGroupBox();
     TopLeftMenu* getActionButtons(void) const { return actionButtons; }
 
 private:
@@ -48,7 +45,7 @@ protected:
     void showEvent(QShowEvent* event);
 
 signals:
-    void pointSaved(int, double, double, QString);
+    void pointSaved(QString, double, double, QString);
     void invalidName(QString, CreatePointWidget::Error);
     void errorCreationPoint(QString, QString);
 
@@ -71,11 +68,10 @@ private:
     QLineEdit* nameEdit;
     QLabel* posXLabel;
     QLabel* posYLabel;
-    PointsView* points;
+    std::shared_ptr<Points> points;
     QPushButton* saveBtn;
     QPushButton* cancelBtn;
     QComboBox* groupBox;
-    bool _isTemporary;
     QHBoxLayout* groupLayout;
     QLabel* groupLabel;
     SpaceWidget* separator;

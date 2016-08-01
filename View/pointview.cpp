@@ -6,7 +6,7 @@
 #include <QMouseEvent>
 
 
-PointView::PointView(std::shared_ptr<Point> _point, QGraphicsItem* parent) :
+PointView::PointView(std::shared_ptr<Point> _point, QGraphicsItem *parent) :
   QGraphicsPixmapItem(QPixmap(PIXMAP_NORMAL), parent), state(GraphicItemState::NO_STATE), type(PixmapType::NORMAL), lastType(PixmapType::NORMAL)
 {
     setScale(SCALE);
@@ -33,13 +33,11 @@ void PointView::mousePressEvent(QGraphicsSceneMouseEvent *event){
                 emit pointRightClicked(this);
             }
             if(event->button() == Qt::LeftButton){
-                //qDebug() << "left click on point NO STATE" ;
                 emit pointLeftClicked(this);
             }
         } else if(state == GraphicItemState::CREATING_PATH){
             qDebug() << "Clicked on a point while creating a path";
             addedToPath = true;
-            //emit pointLeftClicked(this);
             emit addPointPath(this);
         } else if(state == GraphicItemState::EDITING){
             qDebug() << "(EDITING) PointView moving from" << pos().x() << pos().y();
@@ -111,64 +109,65 @@ void PointView::hoverLeaveEvent(QGraphicsSceneHoverEvent * /* unused */){
 }
 
 void PointView::setPos(const qreal x, const qreal y){
+    point->setPosition(x, y);
     QGraphicsPixmapItem::setPos(x - pixmap().width()*SCALE/2,
            y - pixmap().height()*SCALE);
 }
 
 void PointView::setPixmap(const PixmapType pixType){
 
-    lastPixmap = this->pixmap();
+    lastPixmap = pixmap();
     if(type == PointView::HOVER && pixType != PointView::HOVER)
         type = pixType;
-    QPixmap pixmap;
+    QPixmap pixmap2;
     if(point->isHome()){
         switch(pixType){
             case NORMAL:
-                pixmap = QPixmap(PIXMAP_HOME_NORMAL);
+                pixmap2 = QPixmap(PIXMAP_HOME_NORMAL);
             break;
             case MID:
-                pixmap = QPixmap(PIXMAP_HOME_MID);
+                pixmap2 = QPixmap(PIXMAP_HOME_MID);
             break;
             case START:
-                pixmap = QPixmap(PIXMAP_HOME_START);
+                pixmap2 = QPixmap(PIXMAP_HOME_START);
             break;
             case STOP:
-                pixmap = QPixmap(PIXMAP_HOME_STOP);
+                pixmap2 = QPixmap(PIXMAP_HOME_STOP);
             break;
             case HOVER:
-                pixmap = QPixmap(PIXMAP_HOME_HOVER);
+                pixmap2 = QPixmap(PIXMAP_HOME_HOVER);
             break;
             case START_STOP:
-                pixmap = QPixmap(PIXMAP_HOME_START_STOP);
+                pixmap2 = QPixmap(PIXMAP_HOME_START_STOP);
             break;
             default:
-                pixmap = QPixmap(PIXMAP_HOME_NORMAL);
+                pixmap2 = QPixmap(PIXMAP_HOME_NORMAL);
             break;
         }
     } else {
         switch(pixType){
             case NORMAL:
-                pixmap = QPixmap(PIXMAP_NORMAL);
+                pixmap2 = QPixmap(PIXMAP_NORMAL);
             break;
             case MID:
-                pixmap = QPixmap(PIXMAP_MID);
+                pixmap2 = QPixmap(PIXMAP_MID);
             break;
             case START:
-                pixmap = QPixmap(PIXMAP_START);
+                pixmap2 = QPixmap(PIXMAP_START);
             break;
             case STOP:
-                pixmap = QPixmap(PIXMAP_STOP);
+                pixmap2 = QPixmap(PIXMAP_STOP);
             break;
             case HOVER:
-                pixmap = QPixmap(PIXMAP_HOVER);
+                pixmap2 = QPixmap(PIXMAP_HOVER);
             break;
             case START_STOP:
-                pixmap = QPixmap(PIXMAP_START_STOP);
+                pixmap2 = QPixmap(PIXMAP_START_STOP);
             break;
             default:
-                pixmap = QPixmap(PIXMAP_NORMAL);
+                pixmap2 = QPixmap(PIXMAP_NORMAL);
             break;
         }
     }
-    QGraphicsPixmapItem::setPixmap(pixmap);
+    QGraphicsPixmapItem::setPixmap(pixmap2);
 }

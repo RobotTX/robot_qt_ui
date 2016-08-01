@@ -11,7 +11,6 @@
 #include <QKeyEvent>
 #include "Model/xmlparser.h"
 #include "View/spacewidget.h"
-#include "Model/group.h"
 #include "Model/map.h"
 #include "View/buttonmenu.h"
 #include "toplayout.h"
@@ -79,7 +78,6 @@ DisplaySelectedPoint::DisplaySelectedPoint(QMainWindow *const _parent, std::shar
     robotBtn = new QPushButton("", this);
     homeLayout->addWidget(robotBtn);
 
-    //homeLayout->setContentsMargins(0, 0, 0, 0);
     homeWidget->hide();
 
     layout->addWidget(homeWidget);
@@ -96,7 +94,8 @@ DisplaySelectedPoint::DisplaySelectedPoint(QMainWindow *const _parent, std::shar
 }
 
 void DisplaySelectedPoint::displayPointInfo(void) {
-    if(pointView->getPoint()->isDisplayed())
+    qDebug() << "DisplaySelectedPoint::displayPointInfo called";
+    if(pointView->isVisible())
         actionButtons->getMapButton()->setToolTip("Click to hide this point");
     else
         actionButtons->getMapButton()->setToolTip("Click to display this point");
@@ -111,6 +110,7 @@ void DisplaySelectedPoint::mousePressEvent(QEvent* /* unused */){
 }
 
 void DisplaySelectedPoint::keyPressEvent(QKeyEvent* event){
+    qDebug() << "DisplaySelectedPoint::keyPressEvent called";
     /// this is the enter key
     if(!event->text().compare("\r")){
         switch(checkPointName(nameEdit->text())){
@@ -134,14 +134,15 @@ void DisplaySelectedPoint::keyPressEvent(QKeyEvent* event){
 }
 
 void DisplaySelectedPoint::setOrigin(const Origin _origin){
-    origin = _origin;
     /// if we come from the map there is simply no where
     /// to return so we hide the button
     /// the distinction between when we come from the group menu
     /// and when we come from the points menu is made in the pointBtnEvent
+    origin = _origin;
 }
 
 void DisplaySelectedPoint::resetWidget(){
+    qDebug() << "DisplaySelectedPoint::resetWidget called";
 
     /// to change the aspect of the point name
     nameEdit->setAutoFillBackground(true);
@@ -178,6 +179,7 @@ void DisplaySelectedPoint::hideEvent(QHideEvent *event){
 }
 
 int DisplaySelectedPoint::checkPointName(QString name) {
+    qDebug() << "DisplaySelectedPoint::checkPointName called";
     nameEdit->setText(formatName(name));
     qDebug() << "checking " << nameEdit->text();
     if(nameEdit->text().simplified().contains(QRegularExpression("[;{}]"))){
@@ -195,16 +197,20 @@ int DisplaySelectedPoint::checkPointName(QString name) {
         emit invalidName(TEXT_COLOR_WARNING, CreatePointWidget::Error::EmptyName);
         return 1;
     }
-    for(int i = 0; i < points->count(); i++){
-        std::shared_ptr<Group> group = points->getGroups().at(i);
-        for(int j = 0; j < group->count(); j++){
-            if(!nameEdit->text().simplified().compare(group->getPoints().at(j)->getName(), Qt::CaseInsensitive)){
-                qDebug() << nameEdit->text() << " already exists";
-                saveButton->setEnabled(false);
-                /// to explain the user why he cannot add its point as it is
-                saveButton->setToolTip("A point with this name already exists, please choose another name for your point");
-                emit invalidName(TEXT_COLOR_WARNING, CreatePointWidget::Error::AlreadyExists);
-                return 2;
+
+    QMapIterator<QString, std::shared_ptr<QVector<std::shared_ptr<PointView>>>> i(*(points->getGroups()));
+    while (i.hasNext()) {
+        i.next();
+        if(i.value()){
+            for(int j = 0; j < i.value()->size(); j++){
+                if(i.value()->at(j)->getPoint()->getName().compare(nameEdit->text().simplified(), Qt::CaseInsensitive) == 0){
+                    qDebug() << nameEdit->text() << " already exists";
+                    saveButton->setEnabled(false);
+                    /// to explain the user why he cannot add its point as it is
+                    saveButton->setToolTip("A point with this name already exists, please choose another name for your point");
+                    emit invalidName(TEXT_COLOR_WARNING, CreatePointWidget::Error::AlreadyExists);
+                    return 2;
+                }
             }
         }
     }
@@ -215,6 +221,7 @@ int DisplaySelectedPoint::checkPointName(QString name) {
 }
 
 void DisplaySelectedPoint::setPointView(PointView* const& _pointView, QString robotName) {
+    qDebug() << "DisplaySelectedPoint::setPointView called";
     pointView = _pointView;
     if(pointView->getPoint()->isHome()){
         homeWidget->show();
@@ -226,6 +233,7 @@ void DisplaySelectedPoint::setPointView(PointView* const& _pointView, QString ro
 }
 
 QString DisplaySelectedPoint::formatName(const QString name) const {
+    qDebug() << "DisplaySelectedPoint::formatName called";
     QString ret("");
     bool containsSpace(false);
     bool containsNonSpace(false);

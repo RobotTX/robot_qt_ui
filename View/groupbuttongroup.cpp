@@ -1,77 +1,82 @@
 #include "groupbuttongroup.h"
 #include "Model/points.h"
-#include "Model/group.h"
 #include "Model/point.h"
+#include "View/pointview.h"
 #include <QVBoxLayout>
 #include <QPushButton>
 #include <QDebug>
 #include <QMouseEvent>
+#include <QLabel>
 #include "View/doubleclickablebutton.h"
 #include "View/customizedlineedit.h"
 # include "colors.h"
 
 GroupButtonGroup::GroupButtonGroup(const std::shared_ptr<Points> &_points, QWidget* _parent): QWidget(_parent), parent(_parent), points(_points)
 {
+    layout = new QVBoxLayout(this);
+    layout->setAlignment(Qt::AlignTop);
     buttonGroup = new QButtonGroup(this);
-    //buttonGroup->setExclusive(true);
 
     /// to modify the name of a group
     modifyEdit = new CustomizedLineEdit(this);
     modifyEdit->setFixedWidth(1.29*modifyEdit->width());
     modifyEdit->hide();
 
-    layout = new QVBoxLayout(this);
-    layout->setAlignment(Qt::AlignTop);
 
     /// we are going to make this widget visible when a user wants to modify a group
     layout->addWidget(modifyEdit);
-    indexModifyEdit = 0;
 
-    for(int i = 0; i < _points->getGroups().size()-1; i++){
-        std::shared_ptr<Group> currentGroup = _points->getGroups().at(i);
-        DoubleClickableButton* groupButton = new DoubleClickableButton(i, currentGroup->getName(), this);
+    editedGroupName = "";
 
-        groupButton->setFlat(true);
-        groupButton->setAutoDefault(true);
-        groupButton->setStyleSheet("QPushButton {color: "+text_color+";text-align:left;border: 4px; padding: 10px;}QPushButton:hover{background-color: "+button_hover_color+";}QPushButton:checked{background-color: "+button_checked_color+";}");
-        groupButton->setCheckable(true);
-        buttonGroup->addButton(groupButton, i);
-        groupButton->setAutoExclusive(true);
-        layout->addWidget(groupButton);
-        groupButton->setIconSize(BUTTON_SIZE);
-        if(currentGroup->isDisplayed())
-            groupButton->setIcon(QIcon(":/icons/folder_eye.png"));
-        else
-            groupButton->setIcon(QIcon(":/icons/folder_space.png"));
-        groupButton->setIconSize(BUTTON_SIZE);
-
+    int index = 0;
+    QMapIterator<QString, std::shared_ptr<QVector<std::shared_ptr<PointView>>>> i(*(points->getGroups()));
+    while (i.hasNext()) {
+        i.next();
+        if(i.key().compare(NO_GROUP_NAME)!= 0){
+            DoubleClickableButton* groupButton = new DoubleClickableButton(i.key(), i.key(), this);
+            groupButton->setFlat(true);
+            groupButton->setAutoDefault(true);
+            groupButton->setStyleSheet("QPushButton {color: "+text_color+";text-align:left;border: 4px; padding: 10px;}QPushButton:hover{background-color: "+button_hover_color+";}QPushButton:checked{background-color: "+button_checked_color+";}");
+            groupButton->setCheckable(true);
+            buttonGroup->addButton(groupButton, index);
+            groupButton->setAutoExclusive(true);
+            layout->addWidget(groupButton);
+            groupButton->setIconSize(BUTTON_SIZE);
+            if(points->isDisplayed(i.key()))
+                groupButton->setIcon(QIcon(":/icons/folder_eye.png"));
+            else
+                groupButton->setIcon(QIcon(":/icons/folder_space.png"));
+            groupButton->setIconSize(BUTTON_SIZE);
+            index++;
+        }
     }
 
-    connect(modifyEdit, SIGNAL(textEdited(QString)), this, SLOT(checkEditGroupName(QString)));
 
     /// for the last group we just want to show the points and not "no group"
-    for(int i = 0; i < _points->getGroups().at(_points->getGroups().size()-1)->getPoints().size(); i++){
-        std::shared_ptr<Point> currentPoint = _points->getGroups().at(_points->getGroups().size()-1)->getPoints().at(i);
-        DoubleClickableButton* pointButton = new DoubleClickableButton(i+_points->getGroups().size()-1, currentPoint->getName(), this);
+    for(int i = 0; i < points->getGroups()->value(NO_GROUP_NAME)->size(); i++){
+        std::shared_ptr<Point> currentPoint = points->getGroups()->value(NO_GROUP_NAME)->at(i)->getPoint();
+        DoubleClickableButton* pointButton = new DoubleClickableButton(currentPoint->getName(), currentPoint->getName(), this);
         pointButton->setAutoDefault(true);
         pointButton->setFlat(true);
         pointButton->setStyleSheet("QPushButton {color: "+text_color+"; text-align:left;border: 4px; padding: 10px;}QPushButton:hover{background-color: "+button_hover_color+";}QPushButton:checked{background-color: "+button_checked_color+";}");
 
         pointButton->setCheckable(true);
-        buttonGroup->addButton(pointButton, i+_points->getGroups().size()-1);
+        buttonGroup->addButton(pointButton, index + i);
         layout->addWidget(pointButton);
-        if(currentPoint->isDisplayed())
+        if(points->isDisplayed(NO_GROUP_NAME))
             pointButton->setIcon(QIcon(":/icons/eye_point.png"));
         else
             pointButton->setIcon(QIcon(":/icons/space_point.png"));
         pointButton->setIconSize(BUTTON_SIZE);
 
     }
-    for(int i = 0; i < buttonGroup->buttons().count()-1; i++)
-        setTabOrder(buttonGroup->button(i), buttonGroup->button(i+1));
+
+    connect(modifyEdit, SIGNAL(textEdited(QString)), this, SLOT(checkEditGroupName(QString)));
+
 }
 
 void GroupButtonGroup::deleteButtons(void){
+    qDebug() << "GroupButtonGroup::deleteButtons called";
     layout->removeWidget(modifyEdit);
     while(QLayoutItem* item = layout->takeAt(0)){
         if(item){
@@ -84,61 +89,64 @@ void GroupButtonGroup::deleteButtons(void){
     layout->addWidget(modifyEdit);
 }
 
-void GroupButtonGroup::update(const Points& _points){
+void GroupButtonGroup::update(){
+    qDebug() << "GroupButtonGroup::update called";
 
     deleteButtons();
 
-    for(int i = 0; i < _points.getGroups().size()-1; i++){
-        if(i == indexModifyEdit){
+    int index = 0;
+    QMapIterator<QString, std::shared_ptr<QVector<std::shared_ptr<PointView>>>> i(*(points->getGroups()));
+    while (i.hasNext()) {
+        i.next();
+        if(i.key().compare(editedGroupName) == 0){
             modifyEdit = new CustomizedLineEdit(this);
             modifyEdit->setFixedWidth(1.29*modifyEdit->width());
             layout->addWidget(modifyEdit);
             modifyEdit->hide();
         }
 
-        std::shared_ptr<Group> currentGroup = _points.getGroups().at(i);
-        DoubleClickableButton* groupButton = new DoubleClickableButton(i, currentGroup->getName(), this);
+        DoubleClickableButton* groupButton = new DoubleClickableButton(i.key(), i.key(), this);
         groupButton->setFlat(true);
         groupButton->setAutoDefault(true);
         groupButton->setStyleSheet("text-align:left");
         groupButton->setCheckable(true);
         groupButton->setIconSize(BUTTON_SIZE);
-        buttonGroup->addButton(groupButton, i);
+        buttonGroup->addButton(groupButton, index);
         layout->addWidget(groupButton);
-        if(currentGroup->isDisplayed())
+        if(points->isDisplayed(i.key()))
             groupButton->setIcon(QIcon(":/icons/folder_eye.png"));
         else
             groupButton->setIcon(QIcon(":/icons/folder_space.png"));
         groupButton->setIconSize(BUTTON_SIZE);
-
+        index++;
     }
 
     /// for the last group we just want to show the points and not "no group"
-    if(_points.getGroups().size() > 0){
-        for(int i = 0; i < _points.getGroups().at(_points.getGroups().size()-1)->getPoints().size(); i++){
-            std::shared_ptr<Point> currentPoint = _points.getGroups().at(_points.getGroups().size()-1)->getPoints().at(i);
-            DoubleClickableButton* pointButton = new DoubleClickableButton(i+_points.getGroups().size()-1, currentPoint->getName()
-                                                       + " (" + QString::number(currentPoint->getPosition().getX())
-                                                       + ", " + QString::number(currentPoint->getPosition().getY()) + ")", this);
-            pointButton->setFlat(true);
-            pointButton->setAutoDefault(true);
-            pointButton->setStyleSheet("text-align:left");
-            pointButton->setCheckable(true);
-            buttonGroup->addButton(pointButton, i+_points.getGroups().size()-1);
-            layout->addWidget(pointButton);
-            if(currentPoint->isDisplayed())
-                pointButton->setIcon(QIcon(":/icons/eye_point.png"));
-            else
-                pointButton->setIcon(QIcon(":/icons/space_point.png"));
-            pointButton->setIconSize(BUTTON_SIZE);
+    for(int i = 0; i < points->getGroups()->value(NO_GROUP_NAME)->size(); i++){
+        std::shared_ptr<Point> currentPoint = points->getGroups()->value(NO_GROUP_NAME)->at(i)->getPoint();
+        DoubleClickableButton* pointButton = new DoubleClickableButton(currentPoint->getName(), currentPoint->getName()
+                                                   + " (" + QString::number(currentPoint->getPosition().getX())
+                                                   + ", " + QString::number(currentPoint->getPosition().getY()) + ")", this);
+        pointButton->setFlat(true);
+        pointButton->setAutoDefault(true);
+        pointButton->setStyleSheet("text-align:left");
+        pointButton->setCheckable(true);
+        buttonGroup->addButton(pointButton, index + i);
+        layout->addWidget(pointButton);
+        if(points->isDisplayed(NO_GROUP_NAME))
+            pointButton->setIcon(QIcon(":/icons/eye_point.png"));
+        else
+            pointButton->setIcon(QIcon(":/icons/space_point.png"));
+        pointButton->setIconSize(BUTTON_SIZE);
 
-        }
     }
+
     emit modifyEditReconnection();
     emit updateConnectionsRequest();
 }
 
 void GroupButtonGroup::uncheck(void){
+    qDebug() << "GroupButtonGroup::uncheck called";
     /// little trick to uncheck all buttons because the class doesn't provide a function to do it
     buttonGroup->setExclusive(false);
     if(buttonGroup->checkedButton())
@@ -147,53 +155,48 @@ void GroupButtonGroup::uncheck(void){
 }
 
 void GroupButtonGroup::mouseDoubleClickEvent(QMouseEvent * /* unused */){
-    emit doubleClick(buttonGroup->checkedId());
+    qDebug() << "GroupButtonGroup::mouseDoubleClickEvent called";
+    emit doubleClick(buttonGroup->checkedButton()->text());
 }
 
 void GroupButtonGroup::setEnabled(const bool enable){
+    qDebug() << "GroupButtonGroup::setEnabled called";
     foreach(QAbstractButton* button, buttonGroup->buttons())
         button->setEnabled(enable);
 }
 
 int GroupButtonGroup::checkEditGroupName(QString name){
-    qDebug() << "checking la la la" << name ;
+    qDebug() << "GroupButtonGroup::checkEditGroupName called";
     modifyEdit->setText(formatName(modifyEdit->text()));
     name = modifyEdit->text().simplified();
-    if(!name.compare(points->getGroups().at(indexModifyEdit)->getName(), Qt::CaseInsensitive)){
-        //saveBtn->setToolTip("");
+    if(!name.compare(editedGroupName, Qt::CaseInsensitive)){
         qDebug() << "same name";
-        //connect(groupNameEdit, SIGNAL(clickSomewhere(QString)), this, SLOT(cancelCreationGroup()));
         emit codeEditGroup(0);
         return 0;
     }
     if(!name.compare("")){
-        //saveButton->setToolTip("The name of your group cannot be empty");
-        //saveButton->setEnabled(false);
-        //connect(groupNameEdit, SIGNAL(clickSomewhere(QString)), this, SLOT(cancelCreationGroup()));
         emit codeEditGroup(1);
         return 1;
     }
-    for(int i = 0; i < points->count(); i++){
-        if(!name.compare(points->getGroups().at(i)->getName(), Qt::CaseInsensitive)){
-            qDebug() << points->getGroups().at(i)->getName();
-            //saveButton->setToolTip("A group with the same name already exists, please choose another name for your group");
-            //saveButton->setEnabled(false);
-            //connect(groupNameEdit, SIGNAL(clickSomewhere(QString)), this, SLOT(cancelCreationGroup()));
+
+    QMapIterator<QString, std::shared_ptr<QVector<std::shared_ptr<PointView>>>> i(*(points->getGroups()));
+    while (i.hasNext()) {
+        i.next();
+        if(!name.compare(i.key(), Qt::CaseInsensitive)){
+            qDebug() << "GroupButtonGroup::checkEditGroupName" << i.key();
             emit codeEditGroup(2);
             return 2;
         }
     }
-    //saveButton->setToolTip("");
-    //saveButton->setEnabled(true);
-    //disconnect(groupNameEdit, SIGNAL(clickSomewhere(QString)), this, SLOT(cancelCreationGroup()));
     emit codeEditGroup(0);
     return 0;
 }
 
 QString GroupButtonGroup::formatName(const QString name) const {
+    qDebug() << "GroupButtonGroup::formatName called";
 
     QString ret("");
-    bool containsSpace(false);
+   bool containsSpace(false);
     bool containsNonSpace(false);
     for(int i = 0; i < name.length(); i++){
         if(!name.at(i).isSpace() || (!containsSpace && containsNonSpace)){
@@ -207,4 +210,22 @@ QString GroupButtonGroup::formatName(const QString name) const {
         }
     }
     return ret;
+}
+
+
+int GroupButtonGroup::getEditedGroupId(void) const{
+    for(int i = 0; i < getButtonGroup()->buttons().size(); i++){
+        if(getButtonGroup()->button(i)->text().compare(editedGroupName) == 0){
+            return i;
+        }
+    }
+    return -1;
+}
+
+QAbstractButton* GroupButtonGroup::getButtonByName(QString name){
+    for(int i = 0; i < getButtonGroup()->buttons().size(); i++){
+        if(getButtonGroup()->button(i)->text().compare(name) == 0)
+            return getButtonGroup()->button(i);
+    }
+    return NULL;
 }
