@@ -3,18 +3,6 @@
     <group>
         <name>No Group</name>
         <point>
-            <name>Un point</name>
-            <x>150</x>
-            <y>175</y>
-            <displayed>1</displayed>
-        </point>
-        <point>
-            <name>Another point</name>
-            <x>150</x>
-            <y>200</y>
-            <displayed>1</displayed>
-        </point>
-        <point>
             <name>A final point</name>
             <x>150</x>
             <y>225</y>
@@ -25,20 +13,14 @@
         <name>Second group</name>
         <point>
             <name>Fanny</name>
-            <x>125</x>
-            <y>125</y>
+            <x>94.8</x>
+            <y>303.5</y>
             <displayed>1</displayed>
         </point>
         <point>
             <name>Michel</name>
-            <x>150</x>
-            <y>150</y>
-            <displayed>0</displayed>
-        </point>
-        <point>
-            <name>tmpPointq4123</name>
-            <x>114.6</x>
-            <y>306</y>
+            <x>146</x>
+            <y>305.2</y>
             <displayed>1</displayed>
         </point>
     </group>
@@ -46,9 +28,9 @@
         <name>TmpPoint</name>
         <point>
             <name>tmpPoint</name>
-            <x>114.64</x>
-            <y>305.982</y>
-            <displayed>1</displayed>
+            <x>0</x>
+            <y>0</y>
+            <displayed>0</displayed>
         </point>
     </group>
     <group>

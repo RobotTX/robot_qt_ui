@@ -215,28 +215,22 @@ std::shared_ptr<PointView> Points::getTmpPointView() const{
         return groups->value(TMP_GROUP_NAME)->at(0);
 }
 
-bool Points::isDisplayed(QString key) const{
+bool Points::isDisplayed(const QString key) const {
     qDebug() << "Points::isDisplayed called" << key;
     if(groups->value(key) && groups->value(key)->size() > 0){
-        QMapIterator<QString, std::shared_ptr<QVector<std::shared_ptr<PointView>>>> i(*groups);
-        while (i.hasNext()) {
-            i.next();
-            if(i.value()){
-                for(int j = 0; j < i.value()->size(); j++){
-                    if(i.value()->at(j)->isVisible())
-                        return true;
-                }
-            }
+        for(int i = 0; i < groups->value(key)->size(); i++){
+            if(!groups->value(key)->at(i)->isVisible())
+                return false;
         }
     }
-    return false;
+    return true;
 }
 
-bool Points::isAGroup(QString groupName) const{
+bool Points::isAGroup(const QString groupName) const{
     return groups->contains(groupName);
 }
 
-bool Points::isAPoint(QString pointName) const{
+bool Points::isAPoint(const QString pointName) const{
     QMapIterator<QString, std::shared_ptr<QVector<std::shared_ptr<PointView>>>> i(*groups);
     while (i.hasNext()) {
         i.next();
@@ -250,7 +244,7 @@ bool Points::isAPoint(QString pointName) const{
     return false;
 }
 
-QVector<QString> Points::getHomeNameFromGroup(QString groupName) const{
+QVector<QString> Points::getHomeNameFromGroup(const QString groupName) const{
     QVector<QString> nameVector;
     for(int j = 0; j < groups->value(groupName)->size(); j++){
         if(groups->value(groupName)->at(j)->getPoint()->getType() == Point::PointType::HOME)
@@ -259,7 +253,7 @@ QVector<QString> Points::getHomeNameFromGroup(QString groupName) const{
     return nameVector;
 }
 
-QString Points::getGroupNameFromPointName(QString pointName) const{
+QString Points::getGroupNameFromPointName(const QString pointName) const{
     QMapIterator<QString, std::shared_ptr<QVector<std::shared_ptr<PointView>>>> i(*groups);
     while (i.hasNext()) {
         i.next();

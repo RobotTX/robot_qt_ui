@@ -55,11 +55,11 @@ public:
     void displayTmpPoint(const bool display);
     void setPointViewsState(const GraphicItemState state);
     std::shared_ptr<PointView> getTmpPointView() const;
-    bool isDisplayed(QString key) const;
-    bool isAGroup(QString groupName) const;
-    bool isAPoint(QString pointName) const;
-    QVector<QString> getHomeNameFromGroup(QString groupName) const;
-    QString getGroupNameFromPointName(QString pointName) const;
+    bool isDisplayed(const QString key) const;
+    bool isAGroup(const QString groupName) const;
+    bool isAPoint(const QString pointName) const;
+    QVector<QString> getHomeNameFromGroup(const QString groupName) const;
+    QString getGroupNameFromPointName(const QString pointName) const;
 
 private:
     std::shared_ptr<Groups> groups;

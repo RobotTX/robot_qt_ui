@@ -25,12 +25,12 @@ public:
     QString getEditedGroupName(void) const { return editedGroupName; }
     int getEditedGroupId(void) const;
     void setEditedGroupName(const QString _editedGroupName) { editedGroupName = _editedGroupName; }
-    QAbstractButton* getButtonByName(QString name);
+    QAbstractButton* getButtonByName(const QString name) const;
     QString formatName(const QString name) const;
 
 public:
     void deleteButtons(void);
-    void update();
+    void updateButtons();
     void uncheck(void);
     void setEnabled(const bool enable);
 

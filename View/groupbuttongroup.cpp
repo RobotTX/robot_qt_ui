@@ -91,7 +91,7 @@ void GroupButtonGroup::deleteButtons(void){
     layout->addWidget(modifyEdit);
 }
 
-void GroupButtonGroup::update(){
+void GroupButtonGroup::updateButtons(){
     qDebug() << "GroupButtonGroup::update called";
 
     deleteButtons();
@@ -114,7 +114,7 @@ void GroupButtonGroup::update(){
             DoubleClickableButton* groupButton = new DoubleClickableButton(i.key(), i.key(), this);
             groupButton->setFlat(true);
             groupButton->setAutoDefault(true);
-            groupButton->setStyleSheet("text-align:left");
+            groupButton->setStyleSheet("QPushButton {color: "+text_color+";text-align:left;border: 4px; padding: 10px;}QPushButton:hover{background-color: "+button_hover_color+";}QPushButton:checked{background-color: "+button_checked_color+";}");
             groupButton->setCheckable(true);
             groupButton->setIconSize(BUTTON_SIZE);
             buttonGroup->addButton(groupButton, index);
@@ -131,12 +131,10 @@ void GroupButtonGroup::update(){
     /// for the last group we just want to show the points and not "no group"
     for(int i = 0; i < points->getGroups()->value(NO_GROUP_NAME)->size(); i++){
         std::shared_ptr<Point> currentPoint = points->getGroups()->value(NO_GROUP_NAME)->at(i)->getPoint();
-        DoubleClickableButton* pointButton = new DoubleClickableButton(currentPoint->getName(), currentPoint->getName()
-                                                   + " (" + QString::number(currentPoint->getPosition().getX())
-                                                   + ", " + QString::number(currentPoint->getPosition().getY()) + ")", this);
+        DoubleClickableButton* pointButton = new DoubleClickableButton(currentPoint->getName(), currentPoint->getName(), this);
         pointButton->setFlat(true);
         pointButton->setAutoDefault(true);
-        pointButton->setStyleSheet("text-align:left");
+        pointButton->setStyleSheet("QPushButton {color: "+text_color+";text-align:left;border: 4px; padding: 10px;}QPushButton:hover{background-color: "+button_hover_color+";}QPushButton:checked{background-color: "+button_checked_color+";}");
         pointButton->setCheckable(true);
         buttonGroup->addButton(pointButton, index + i);
         layout->addWidget(pointButton);
@@ -229,7 +227,7 @@ int GroupButtonGroup::getEditedGroupId(void) const{
     return -1;
 }
 
-QAbstractButton* GroupButtonGroup::getButtonByName(QString name){
+QAbstractButton* GroupButtonGroup::getButtonByName(const QString name) const {
     for(int i = 0; i < getButtonGroup()->buttons().size(); i++){
         if(getButtonGroup()->button(i)->text().compare(name) == 0)
             return getButtonGroup()->button(i);
