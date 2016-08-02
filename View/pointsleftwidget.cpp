@@ -119,7 +119,7 @@ PointsLeftWidget::PointsLeftWidget(QMainWindow* _parent, std::shared_ptr<Points>
 
 void PointsLeftWidget::updateGroupButtonGroup(){
     qDebug() << "PointsLeftWidget::updateGroupButtonGroup called";
-    groupButtonGroup->update();
+    groupButtonGroup->updateButtons();
 }
 
 void PointsLeftWidget::enableButtons(QAbstractButton* button){

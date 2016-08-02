@@ -1,7 +1,40 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <points>
     <group>
+        <name>First group</name>
+        <point>
+            <name>A</name>
+            <x>50</x>
+            <y>50</y>
+            <displayed>0</displayed>
+        </point>
+        <point>
+            <name>Ma point</name>
+            <x>75</x>
+            <y>75</y>
+            <displayed>0</displayed>
+        </point>
+        <point>
+            <name>A new point</name>
+            <x>100</x>
+            <y>100</y>
+            <displayed>0</displayed>
+        </point>
+    </group>
+    <group>
         <name>No Group</name>
+        <point>
+            <name>Un point</name>
+            <x>150</x>
+            <y>175</y>
+            <displayed>1</displayed>
+        </point>
+        <point>
+            <name>Another point</name>
+            <x>150</x>
+            <y>200</y>
+            <displayed>1</displayed>
+        </point>
         <point>
             <name>A final point</name>
             <x>150</x>
@@ -13,15 +46,15 @@
         <name>Second group</name>
         <point>
             <name>Fanny</name>
-            <x>94.8</x>
-            <y>303.5</y>
+            <x>125</x>
+            <y>125</y>
             <displayed>1</displayed>
         </point>
         <point>
             <name>Michel</name>
-            <x>146</x>
-            <y>305.2</y>
-            <displayed>1</displayed>
+            <x>150</x>
+            <y>150</y>
+            <displayed>0</displayed>
         </point>
     </group>
     <group>
@@ -34,24 +67,6 @@
         </point>
     </group>
     <group>
-        <name>first group</name>
-        <point>
-            <name>A</name>
-            <x>50</x>
-            <y>50</y>
-            <displayed>1</displayed>
-        </point>
-        <point>
-            <name>Ma point</name>
-            <x>75</x>
-            <y>75</y>
-            <displayed>1</displayed>
-        </point>
-        <point>
-            <name>A new point</name>
-            <x>100</x>
-            <y>100</y>
-            <displayed>0</displayed>
-        </point>
+        <name>s</name>
     </group>
 </points>
