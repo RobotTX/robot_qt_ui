@@ -13,7 +13,7 @@ RobotBtnGroup::RobotBtnGroup(const QVector<RobotView*>& vector, const bool check
     layout->setAlignment(Qt::AlignTop);
 
     for(int i = 0; i < vector.length(); i++){
-        DoubleClickableButton* robotBtn = new DoubleClickableButton(vector[i]->getRobot()->getName(),vector[i]->getRobot()->getName(), this);
+        DoubleClickableButton* robotBtn = new DoubleClickableButton(vector[i]->getRobot()->getName(), this);
         connect(robotBtn, SIGNAL(doubleClick(QString)), parent, SLOT(doubleClickOnRobot(QString)));
 
         robotBtn->setFlat(true);

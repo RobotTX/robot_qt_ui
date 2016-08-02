@@ -40,6 +40,7 @@
 #include <QVector>
 #include "View/pathwidget.h"
 #include "colors.h"
+#include <QMap>
 
 /**
  * @brief MainWindow::MainWindow
@@ -1693,10 +1694,10 @@ void MainWindow::initializePoints(){
  * set the selected point, could be a temporary point or a point that already exists and that might be edited
  */
 void MainWindow::setSelectedPoint(QString pointName){
-    qDebug() << "setSelectedPoint called";
+    qDebug() << "setSelectedPoint called" << pointName;
 
     resetFocus();
-    std::shared_ptr<PointView> displaySelectedPointView = points->findPointView(leftMenu->getDisplaySelectedPoint()->getPointName());
+    std::shared_ptr<PointView> displaySelectedPointView = points->findPointView(pointName);
     if(displaySelectedPointView)
         displaySelectedPointView->setPixmap(PointView::PixmapType::NORMAL);
 
@@ -1838,6 +1839,16 @@ void MainWindow::editPointButtonEvent(){
 
     /// hide the temporary point on the map
     std::shared_ptr<PointView> displaySelectedPointView = points->findPointView(leftMenu->getDisplaySelectedPoint()->getPointName());
+    qDebug() << "selected point to edit " << leftMenu->getDisplaySelectedPoint()->getPointName();
+
+    QMapIterator<QString, std::shared_ptr<QVector<std::shared_ptr<PointView>>>> i(*points->getGroups());
+    while (i.hasNext()) {
+        i.next();
+        for(int j = 0; j < i.value()->size(); j++)
+            qDebug() << i.key() << i.value()->at(j)->getPoint()->getName();
+    }
+
+
     if(displaySelectedPointView && !(*(displaySelectedPointView->getPoint()) == *(points->getTmpPointView()->getPoint())))
         points->displayTmpPoint(false);
 
@@ -1882,10 +1893,10 @@ void MainWindow::editPointButtonEvent(){
  * called when the user wants to edit a point from the first points menu
  */
 void MainWindow::editGroupBtnEvent(){
-    qDebug() << "editPointBtnEvent called";
+    qDebug() << "editPointBtnEvent called" << pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->checkedButton()->text();
 
     int btnIndex = pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->checkedId();
-    pointsLeftWidget->setLastCheckedId("");
+    pointsLeftWidget->setLastCheckedId(pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->checkedButton()->text());
     pointsLeftWidget->setCreatingGroup(false);
 
     /// uncheck the other buttons
@@ -1918,7 +1929,8 @@ void MainWindow::editGroupBtnEvent(){
                 else
                     qDebug() << "editGroupBtnEvent : something unexpected happened";
             }
-            leftMenu->getDisplaySelectedPoint()->setPointName(pointView->getPoint()->getName(), robotName);
+            leftMenu->getDisplaySelectedPoint()->setPointView(pointView);
+            //leftMenu->getDisplaySelectedPoint()->setPointName(pointView->getPoint()->getName(), robotName);
         } else {
             qDebug() << "There is no point view associated with those indexes";
         }
@@ -1980,6 +1992,7 @@ void MainWindow::switchFocus(QString name, QWidget* widget, MainWindow::WidgetTy
     qDebug() << "_________________";
 
 }
+
 void MainWindow::resetFocus()
 {
     lastWidgets = QList<QPair<QPair<QWidget*,QString>, MainWindow::WidgetType>>();
@@ -2004,9 +2017,11 @@ void MainWindow::openLeftMenu(){
     setMessageTop(TEXT_COLOR_NORMAL, "");
 
     /// resets the color of the selected point on the map and hides the temporary point`
-    std::shared_ptr<PointView> displaySelectedPointView = points->findPointView(leftMenu->getDisplaySelectedPoint()->getPointName());
-    if(displaySelectedPointView)
-        displaySelectedPointView->setPixmap(PointView::PixmapType::NORMAL);
+    if(leftMenu->getDisplaySelectedPoint()->getPointView()){
+        std::shared_ptr<PointView> displaySelectedPointView = points->findPointView(leftMenu->getDisplaySelectedPoint()->getPointName());
+        if(displaySelectedPointView)
+            displaySelectedPointView->setPixmap(PointView::PixmapType::NORMAL);
+    }
 
     resetFocus();
 
@@ -2160,7 +2175,7 @@ void MainWindow::askForDeletePointConfirmation(QString pointName){
                 points->removePoint(pointName);
 
                 /// updates the group menu
-                leftMenu->getDisplaySelectedGroup()->getPointButtonGroup()->setGroup(pointsLeftWidget->getIndexLastGroupClicked());
+                leftMenu->getDisplaySelectedGroup()->getPointButtonGroup()->setGroup(pointsLeftWidget->getLastCheckedId());
 
                 /// save the changes to the file
                 XMLParser parserPoints(XML_PATH);
@@ -2174,7 +2189,7 @@ void MainWindow::askForDeletePointConfirmation(QString pointName){
                     int res = openEmptyGroupMessage(group);
                     if(res == QMessageBox::Yes){
                         /// updates model
-                        points->removeGroup(pointsLeftWidget->getIndexLastGroupClicked());
+                        points->removeGroup(pointsLeftWidget->getLastCheckedId());
 
                         /// updates file
                         XMLParser parser(XML_PATH);
@@ -2230,7 +2245,6 @@ void MainWindow::askForDeleteGroupConfirmation(QString index){
             /// we have to check that none of the points is the home of a robot
             QVector<QString> homePointNames = points->getHomeNameFromGroup(index);
             if(homePointNames.size() <= 0){
-                pointsLeftWidget->setLastCheckedId("");
 
                 /// removes all the points of the group on the map
                 for(int i = 0; i < points->getGroups()->value(index)->size(); i++){
@@ -2247,6 +2261,7 @@ void MainWindow::askForDeleteGroupConfirmation(QString index){
                 /// updates the menu
                 pointsLeftWidget->getGroupButtonGroup()->updateButtons();
                 pointsLeftWidget->getActionButtons()->getMinusButton()->setChecked(false);
+                pointsLeftWidget->setLastCheckedId("");
 
                 /// updates the group box so that the user cannot create a point in this group anymore
                 createPointWidget->updateGroupBox();
@@ -2282,15 +2297,18 @@ void MainWindow::askForDeleteGroupConfirmation(QString index){
 }
 
 void MainWindow::displayPointEvent(QString pointName){
-    qDebug() << "MainWindow::displayPointEvent called";
+    qDebug() << "MainWindow::displayPointEvent called" << pointName;
     /// hides the temporary point
     std::shared_ptr<PointView> pointView = points->findPointView(pointName);
+    leftMenu->getDisplaySelectedPoint()->setPointView(pointView);
     if(pointView && !(*(pointView->getPoint()) == *(points->getTmpPointView()->getPoint())))
         points->displayTmpPoint(false);
-    /// resets the color of the previous selected point
+    /// resets the color of the previous selected point if such point exists
+
     std::shared_ptr<PointView> displaySelectedPointView = points->findPointView(leftMenu->getDisplaySelectedPoint()->getPointName());
     if(displaySelectedPointView)
         displaySelectedPointView->setPixmap(PointView::PixmapType::NORMAL);
+
 
     leftMenu->getDisplaySelectedPoint()->getActionButtons()->getMapButton()->setChecked(true);
 
@@ -2483,7 +2501,7 @@ void MainWindow::displayPointsInGroup(void){
 
     /// it's a group
     if(points->isAGroup(checkedName)){
-       pointsLeftWidget->setIndexLastGroupClicked(checkedName);
+       pointsLeftWidget->setLastCheckedId(checkedName);
        pointsLeftWidget->getActionButtons()->getGoButton()->setChecked(false);
        pointsLeftWidget->hide();
 
@@ -2641,7 +2659,7 @@ void MainWindow::removePointFromInformationMenu(void){
                         parserPoints.save(*points);
 
                         /// updates the group menu
-                        leftMenu->getDisplaySelectedGroup()->getPointButtonGroup()->setGroup(pointsLeftWidget->getIndexLastGroupClicked());
+                        leftMenu->getDisplaySelectedGroup()->getPointButtonGroup()->setGroup(pointsLeftWidget->getLastCheckedId());
 
                         /// closes the window
                         backEvent();
@@ -2713,51 +2731,54 @@ void MainWindow::editPointFromGroupMenu(void){
             else
                 qDebug() << "editPointFromGroupMenu : something unexpected happened";
         }
-        std::shared_ptr<PointView> displaySelectedPointView = points->findPointView(leftMenu->getDisplaySelectedPoint()->getPointName());
+        qDebug() << "name point u trying to edit" << pointName;
+        std::shared_ptr<PointView> displaySelectedPointView = points->findPointView(pointName);
         if(displaySelectedPointView){
             displaySelectedPointView->setPixmap(PointView::PixmapType::HOVER);
             displaySelectedPointView->show();
-        }
-        leftMenu->getDisplaySelectedPoint()->setPointName(pointName, robotName);
 
-        /// update the file
-        XMLParser parser(XML_PATH);
-        parser.save(*points);
+            leftMenu->getDisplaySelectedPoint()->setPointName(pointName, robotName);
 
-        leftMenu->getDisplaySelectedPoint()->getNameEdit()->setAutoFillBackground(false);
-        leftMenu->getDisplaySelectedPoint()->getNameEdit()->setFrame(true);
+            /// update the file
+            XMLParser parser(XML_PATH);
+            parser.save(*points);
 
-        /// if the point is a home point any modification of its name is forbidden
-        if(!displaySelectedPointView->getPoint()->isHome())
+            leftMenu->getDisplaySelectedPoint()->getNameEdit()->setAutoFillBackground(false);
+            leftMenu->getDisplaySelectedPoint()->getNameEdit()->setFrame(true);
+
+            /// if the point is a home point any modification of its name is forbidden
+
+            if(!displaySelectedPointView->getPoint()->isHome())
+                leftMenu->getDisplaySelectedPoint()->getNameEdit()->setReadOnly(false);
+
+            /// sets the state of the map and the other widgets to prevent other concurrent actions
+            setGraphicItemsState(GraphicItemState::NO_EVENT, false);
+            mapPixmapItem->setState(GraphicItemState::EDITING_PERM);
+
+            /// sets the state of the point of the map to make it draggable
+            displaySelectedPointView->setState(GraphicItemState::EDITING_PERM);
+            displaySelectedPointView->setFlag(QGraphicsItem::ItemIsMovable, true);
+
+            leftMenu->getDisplaySelectedPoint()->getActionButtons()->getMinusButton()->setEnabled(false);
+            leftMenu->getDisplaySelectedPoint()->getActionButtons()->getMinusButton()->setToolTip("");
+            leftMenu->getDisplaySelectedPoint()->getActionButtons()->getMapButton()->setEnabled(false);
+            leftMenu->getDisplaySelectedPoint()->getActionButtons()->getMapButton()->setToolTip("");
+            leftMenu->getDisplaySelectedPoint()->getActionButtons()->getMapButton()->setChecked(true);
+
+            /// to force the user to click either the save or the cancel button
+            leftMenu->getDisplaySelectedPoint()->getActionButtons()->getEditButton()->setEnabled(false);
+            leftMenu->getDisplaySelectedPoint()->getActionButtons()->getEditButton()->setToolTip("You can choose to save or discard your modifications by clicking the save (Enter) and cancel button respectively");
+
+            leftMenu->getDisplaySelectedPoint()->displayPointInfo();
+
+            leftMenu->getDisplaySelectedPoint()->getActionButtons()->getEditButton()->setChecked(true);
             leftMenu->getDisplaySelectedPoint()->getNameEdit()->setReadOnly(false);
-
-        /// sets the state of the map and the other widgets to prevent other concurrent actions
-        setGraphicItemsState(GraphicItemState::NO_EVENT, false);
-        mapPixmapItem->setState(GraphicItemState::EDITING_PERM);
-
-        /// sets the state of the point of the map to make it draggable
-        displaySelectedPointView->setState(GraphicItemState::EDITING_PERM);
-        displaySelectedPointView->setFlag(QGraphicsItem::ItemIsMovable, true);
-
-        leftMenu->getDisplaySelectedPoint()->getActionButtons()->getMinusButton()->setEnabled(false);
-        leftMenu->getDisplaySelectedPoint()->getActionButtons()->getMinusButton()->setToolTip("");
-        leftMenu->getDisplaySelectedPoint()->getActionButtons()->getMapButton()->setEnabled(false);
-        leftMenu->getDisplaySelectedPoint()->getActionButtons()->getMapButton()->setToolTip("");
-        leftMenu->getDisplaySelectedPoint()->getActionButtons()->getMapButton()->setChecked(true);
-
-        /// to force the user to click either the save or the cancel button
-        leftMenu->getDisplaySelectedPoint()->getActionButtons()->getEditButton()->setEnabled(false);
-        leftMenu->getDisplaySelectedPoint()->getActionButtons()->getEditButton()->setToolTip("You can choose to save or discard your modifications by clicking the save (Enter) and cancel button respectively");
-
-        leftMenu->getDisplaySelectedPoint()->displayPointInfo();
-
-        leftMenu->getDisplaySelectedPoint()->getActionButtons()->getEditButton()->setChecked(true);
-        leftMenu->getDisplaySelectedPoint()->getNameEdit()->setReadOnly(false);
-        leftMenu->getDisplaySelectedPoint()->getCancelButton()->show();
-        leftMenu->getDisplaySelectedPoint()->getSaveButton()->show();
-        leftMenu->getDisplaySelectedPoint()->show();
-        leftMenu->getDisplaySelectedGroup()->hide();
-        switchFocus(leftMenu->getDisplaySelectedPoint()->getPointName(),leftMenu->getDisplaySelectedPoint(), MainWindow::WidgetType::POINT);
+            leftMenu->getDisplaySelectedPoint()->getCancelButton()->show();
+            leftMenu->getDisplaySelectedPoint()->getSaveButton()->show();
+            leftMenu->getDisplaySelectedPoint()->show();
+            leftMenu->getDisplaySelectedGroup()->hide();
+            switchFocus(leftMenu->getDisplaySelectedPoint()->getPointName(),leftMenu->getDisplaySelectedPoint(), MainWindow::WidgetType::POINT);
+        }
     }
 }
 
@@ -2818,8 +2839,9 @@ void MainWindow::updatePoint(void){
     leftMenu->getDisplaySelectedPoint()->getActionButtons()->getMapButton()->setToolTip("Click to hide this point");
 
     DisplaySelectedPoint* selectedPoint = leftMenu->getDisplaySelectedPoint();
-
+    qDebug() << "updating point" << selectedPoint->getPointName();
     std::shared_ptr<PointView> displaySelectedPointView = points->findPointView(selectedPoint->getPointName());
+    //selectedPoint->setPointName(leftMenu->getDisplaySelectedPoint()->getNameEdit()->text());
     /// resets the color of the pointView
     if(displaySelectedPointView){
         displaySelectedPointView->setPixmap(PointView::PixmapType::NORMAL);
@@ -2836,8 +2858,8 @@ void MainWindow::updatePoint(void){
         int yLength = leftMenu->getDisplaySelectedPoint()->getYLabel()->text().count();
 
         displaySelectedPointView->getPoint()->setPosition(
-                    leftMenu->getDisplaySelectedPoint()->getXLabel()->text().right(xLength-4).toFloat(),
-                    leftMenu->getDisplaySelectedPoint()->getYLabel()->text().right(yLength-4).toFloat());
+        leftMenu->getDisplaySelectedPoint()->getXLabel()->text().right(xLength-4).toFloat(),
+        leftMenu->getDisplaySelectedPoint()->getYLabel()->text().right(yLength-4).toFloat());
     }
 
     /// save changes to the file
@@ -2877,7 +2899,7 @@ void MainWindow::updatePoint(void){
     setMessageTop(TEXT_COLOR_SUCCESS, "Your point has been modified");
     delay(1500);
     setMessageTop(TEXT_COLOR_NORMAL, "");
-    topLayout->setLabelDelay(TEXT_COLOR_SUCCESS, "Your point has been modified",1500);
+    topLayout->setLabelDelay(TEXT_COLOR_SUCCESS, "Your point has been modified", 1500);
 
 }
 
@@ -3003,8 +3025,8 @@ void MainWindow::displayPointFromGroupMenu(){
             parserPoints.save(*points);
 
             /// if the entire group was displayed it is not the case anymore
-            if(pointsLeftWidget->getGroupButtonGroup()->getButtonByName(pointsLeftWidget->getIndexLastGroupClicked()) != NULL)
-                pointsLeftWidget->getGroupButtonGroup()->getButtonByName(pointsLeftWidget->getIndexLastGroupClicked())->setIcon(QIcon(":/icons/folder_space.png"));
+            if(pointsLeftWidget->getGroupButtonGroup()->getButtonByName(pointsLeftWidget->getLastCheckedId()) != NULL)
+                pointsLeftWidget->getGroupButtonGroup()->getButtonByName(pointsLeftWidget->getLastCheckedId())->setIcon(QIcon(":/icons/folder_space.png"));
 
             /// changes the map button message
             leftMenu->getDisplaySelectedGroup()->getActionButtons()->getMapButton()->setToolTip("Click to display the selected point on the map");
@@ -3022,9 +3044,9 @@ void MainWindow::displayPointFromGroupMenu(){
             parserPoints.save(*points);
 
             /// we check whether or not the entire group is displayed and update the points left widget accordingly by adding a tick Icon or not
-            if(points->isDisplayed(pointsLeftWidget->getIndexLastGroupClicked())){
-                if(pointsLeftWidget->getGroupButtonGroup()->getButtonByName(pointsLeftWidget->getIndexLastGroupClicked()) != NULL)
-                    pointsLeftWidget->getGroupButtonGroup()->getButtonByName(pointsLeftWidget->getIndexLastGroupClicked())->setIcon(QIcon(":/icons/folder_eye.png"));
+            if(points->isDisplayed(pointsLeftWidget->getLastCheckedId())){
+                if(pointsLeftWidget->getGroupButtonGroup()->getButtonByName(pointsLeftWidget->getLastCheckedId()) != NULL)
+                    pointsLeftWidget->getGroupButtonGroup()->getButtonByName(pointsLeftWidget->getLastCheckedId())->setIcon(QIcon(":/icons/folder_eye.png"));
             }
 
             /// changes the map button message
@@ -3125,7 +3147,7 @@ void MainWindow::doubleClickOnGroup(QString checkedName){
     /// it's a group
     if(points->isAGroup(checkedName)){
        setMessageTop(TEXT_COLOR_INFO, "Click the map to add a permanent point");
-       pointsLeftWidget->setIndexLastGroupClicked(checkedName);
+       pointsLeftWidget->setLastCheckedId(checkedName);
        pointsLeftWidget->getActionButtons()->getGoButton()->setChecked(false);
        pointsLeftWidget->hide();
 
@@ -3205,7 +3227,8 @@ int MainWindow::openEmptyGroupMessage(const QString groupName){
 void MainWindow::createGroup(QString groupName){
     qDebug() << "createGroup called" << groupName;
 
-    if(pointsLeftWidget->checkGroupName(groupName.simplified()) == 0){
+    groupName = groupName.simplified();
+    if(pointsLeftWidget->checkGroupName(groupName) == 0){
         pointsLeftWidget->setLastCheckedId("");
 
         /// updates the model
@@ -3237,19 +3260,24 @@ void MainWindow::createGroup(QString groupName){
         topLayout->setEnabled(true);
 
         topLayout->setLabelDelay(TEXT_COLOR_SUCCESS, "You have created a new group",2500);
-    } else if(pointsLeftWidget->checkGroupName(groupName.simplified()) == 1){
+    } else if(pointsLeftWidget->checkGroupName(groupName) == 1){
         topLayout->setLabelDelay(TEXT_COLOR_DANGER, "The name of your group cannot be empty",2500);
     } else {
-        topLayout->setLabelDelay(TEXT_COLOR_DANGER, "You cannot choose : " + groupName.simplified() + " as a new name for your group because another group already has this name",2500);
+        topLayout->setLabelDelay(TEXT_COLOR_DANGER, "You cannot choose : " + groupName + " as a new name for your group because another group already has this name",2500);
     }
 }
 
 void MainWindow::modifyGroupWithEnter(QString name){
-    qDebug() << "modifying group after enter key pressed";
+    name = name.simplified();
+    qDebug() << "modifying group after enter key pressed from" << pointsLeftWidget->getLastCheckedId() << "to" << name;
+
     topLayout->setEnabled(true);
 
-    if(pointsLeftWidget->checkGroupName(name.simplified()) == 0){
+    if(pointsLeftWidget->checkGroupName(name) == 0){
         leftMenu->getCloseButton()->setEnabled(true);
+
+        /// Update the model
+        points->getGroups()->insert(name, points->getGroups()->take(pointsLeftWidget->getLastCheckedId()));
 
         /// enables the plus button
         pointsLeftWidget->getActionButtons()->getPlusButton()->setEnabled(true);
@@ -3276,15 +3304,16 @@ void MainWindow::modifyGroupWithEnter(QString name){
     } else if(pointsLeftWidget->checkGroupName(name) == 1){
         topLayout->setLabelDelay(TEXT_COLOR_DANGER, "The name of your group cannot be empty. Please choose a name for your group",2500);
     } else {
-        topLayout->setLabelDelay(TEXT_COLOR_DANGER, "You cannot choose : " + name.simplified() + " as a new name for your group because another group already has this name",2500);
+        topLayout->setLabelDelay(TEXT_COLOR_DANGER, "You cannot choose : " + name + " as a new name for your group because another group already has this name",2500);
     }
 }
 
 void MainWindow::modifyGroupAfterClick(QString name){
-    qDebug() << "modifyGroupAfterClick called";
+    name = name.simplified();
+    qDebug() << "modifyGroupAfterClick called from" << pointsLeftWidget->getLastCheckedId() << "to" << name;
+
     topLayout->setEnabled(true);
     pointsLeftWidget->setLastCheckedId("");
-    qDebug() << "modifying group after random click";
 
     /// resets the menu
     leftMenu->getCloseButton()->setEnabled(true);
@@ -3295,7 +3324,10 @@ void MainWindow::modifyGroupAfterClick(QString name){
     leftMenu->getReturnButton()->setEnabled(true);
     int checkedId = pointsLeftWidget->getGroupButtonGroup()->getButtonIdByName(pointsLeftWidget->getGroupButtonGroup()->getEditedGroupName());
 
-    if(pointsLeftWidget->checkGroupName(name.simplified()) == 0){
+    if(pointsLeftWidget->checkGroupName(name) == 0){
+        /// Update the model
+        points->getGroups()->insert(name, points->getGroups()->take(pointsLeftWidget->getLastCheckedId()));
+
         /// saves to file
         XMLParser parser(XML_PATH);
         parser.save(*points);

@@ -6,7 +6,7 @@
 #include <QMouseEvent>
 
 
-PointView::PointView(std::shared_ptr<Point> _point, QGraphicsItem *parent) :
+PointView::PointView(const std::shared_ptr<Point> &_point, QGraphicsItem *parent) :
   QGraphicsPixmapItem(QPixmap(PIXMAP_NORMAL), parent), state(GraphicItemState::NO_STATE), type(PixmapType::NORMAL), lastType(PixmapType::NORMAL)
 {
     setScale(SCALE);
@@ -26,7 +26,7 @@ PointView::PointView(std::shared_ptr<Point> _point, QGraphicsItem *parent) :
 }
 
 void PointView::mousePressEvent(QGraphicsSceneMouseEvent *event){
-    qDebug() << "state " << state;
+    qDebug() << "pv" << point->getName() << "state " << state;
         if(state == GraphicItemState::NO_STATE){
             if(event->button() == Qt::RightButton){
                 qDebug() << "right click on point NO STATE" ;

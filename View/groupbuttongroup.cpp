@@ -35,7 +35,7 @@ GroupButtonGroup::GroupButtonGroup(const std::shared_ptr<Points> &_points, QWidg
         if(i.key().compare(NO_GROUP_NAME)!= 0
                 && i.key().compare(TMP_GROUP_NAME)!= 0
                 && i.key().compare(PATH_GROUP_NAME)!= 0){
-            DoubleClickableButton* groupButton = new DoubleClickableButton(i.key(), i.key(), this);
+            DoubleClickableButton* groupButton = new DoubleClickableButton(i.key(), this);
             groupButton->setFlat(true);
             groupButton->setAutoDefault(true);
             groupButton->setStyleSheet("QPushButton {color: "+text_color+";text-align:left;border: 4px; padding: 10px;}QPushButton:hover{background-color: "+button_hover_color+";}QPushButton:checked{background-color: "+button_checked_color+";}");
@@ -58,7 +58,7 @@ GroupButtonGroup::GroupButtonGroup(const std::shared_ptr<Points> &_points, QWidg
     if(points->getGroups()->value(NO_GROUP_NAME)){
         for(int i = 0; i < points->getGroups()->value(NO_GROUP_NAME)->size(); i++){
             std::shared_ptr<Point> currentPoint = points->getGroups()->value(NO_GROUP_NAME)->at(i)->getPoint();
-            DoubleClickableButton* pointButton = new DoubleClickableButton(currentPoint->getName(), currentPoint->getName(), this);
+            DoubleClickableButton* pointButton = new DoubleClickableButton(currentPoint->getName(), this);
             pointButton->setAutoDefault(true);
             pointButton->setFlat(true);
             pointButton->setStyleSheet("QPushButton {color: "+text_color+"; text-align:left;border: 4px; padding: 10px;}QPushButton:hover{background-color: "+button_hover_color+";}QPushButton:checked{background-color: "+button_checked_color+";}");
@@ -113,7 +113,7 @@ void GroupButtonGroup::updateButtons(){
                 modifyEdit->hide();
             }
 
-            DoubleClickableButton* groupButton = new DoubleClickableButton(i.key(), i.key(), this);
+            DoubleClickableButton* groupButton = new DoubleClickableButton(i.key(), this);
             groupButton->setFlat(true);
             groupButton->setAutoDefault(true);
             groupButton->setStyleSheet("QPushButton {color: "+text_color+";text-align:left;border: 4px; padding: 10px;}QPushButton:hover{background-color: "+button_hover_color+";}QPushButton:checked{background-color: "+button_checked_color+";}");
@@ -134,7 +134,7 @@ void GroupButtonGroup::updateButtons(){
     if(points->getGroups()->value(NO_GROUP_NAME)){
         for(int i = 0; i < points->getGroups()->value(NO_GROUP_NAME)->size(); i++){
             std::shared_ptr<Point> currentPoint = points->getGroups()->value(NO_GROUP_NAME)->at(i)->getPoint();
-            DoubleClickableButton* pointButton = new DoubleClickableButton(currentPoint->getName(), currentPoint->getName(), this);
+            DoubleClickableButton* pointButton = new DoubleClickableButton(currentPoint->getName(), this);
             pointButton->setFlat(true);
             pointButton->setAutoDefault(true);
             pointButton->setStyleSheet("QPushButton {color: "+text_color+";text-align:left;border: 4px; padding: 10px;}QPushButton:hover{background-color: "+button_hover_color+";}QPushButton:checked{background-color: "+button_checked_color+";}");
@@ -204,19 +204,14 @@ QString GroupButtonGroup::formatName(const QString name) const {
     qDebug() << "GroupButtonGroup::formatName called";
 
     QString ret("");
-   bool containsSpace(false);
-    bool containsNonSpace(false);
-    for(int i = 0; i < name.length(); i++){
-        if(!name.at(i).isSpace() || (!containsSpace && containsNonSpace)){
-            if(name.at(i).isSpace())
-                containsSpace = true;
-            else {
-                containsNonSpace = true;
-                containsSpace = false;
-            }
-            ret += name.at(i);
-        }
+    QStringList nameStrList = name.split(" ", QString::SkipEmptyParts);
+    for(int i = 0; i < nameStrList.size(); i++){
+        if(i > 0)
+            ret += " ";
+        ret += nameStrList.at(i);
     }
+    if(name.size() > 0 && name.at(name.size()-1) == ' ')
+        ret += " ";
     return ret;
 }
 

@@ -30,15 +30,7 @@ public:
 
     bool getGroupDisplayed(void) const { return groupDisplayed; }
     void setGroupDisplayed(const bool _groupDisplayed) { groupDisplayed = _groupDisplayed; }
-    QString getIndexLastGroupClicked(void) const { return indexLastGroupClicked; }
     std::shared_ptr<Points> getPoints(void) const { return points; }
-
-    /**
-     * @brief setIndexLastGroupClicked
-     * @param index
-     * the index of the last group is important to determine which points should be removed and displayed
-     */
-    void setIndexLastGroupClicked(const QString index) { indexLastGroupClicked = index; }
 
     QPushButton* getSaveButton(void) const { return saveButton; }
     QPushButton* getCancelButton(void) const { return cancelButton; }
@@ -54,6 +46,7 @@ public:
 
     void setCreatingGroup(const bool create) { creatingGroup = create; }
     void setLastCheckedId(const QString  id) {lastCheckedId = id;}
+    QString getLastCheckedId() const { return lastCheckedId;}
 
     //int checkEditGroupName(QString name);
 
@@ -116,7 +109,6 @@ private:
     /// true if the groups are displayed, false if the points are displayed
     /// this way we can implement two different behavior for the same button minus
     bool groupDisplayed;
-    QString indexLastGroupClicked;
     std::shared_ptr<Points> points;
     /// to differenciate the behavior of the enter key
     bool creatingGroup;

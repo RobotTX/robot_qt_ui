@@ -28,7 +28,7 @@ PointsLeftWidget::PointsLeftWidget(QMainWindow* _parent, std::shared_ptr<Points>
 {
     scrollArea = new CustomScrollArea(this);
 
-    indexLastGroupClicked = "";
+    lastCheckedId = "";
 
     layout = new QVBoxLayout(this);
 
@@ -210,9 +210,9 @@ void PointsLeftWidget::disableButtons(void){
 }
 
 int PointsLeftWidget::checkGroupName(QString name){
-    qDebug() << "checking while creating" << name ;
-    name = name.simplified();
+    qDebug() << "checking while creating" << name;
     groupNameEdit->setText(formatName(name));
+    name = name.simplified();
     if(!creatingGroup && !name.compare(groupButtonGroup->getEditedGroupName(), Qt::CaseInsensitive)){
         saveButton->setToolTip("");
         qDebug() << "same name";
@@ -333,20 +333,14 @@ QString PointsLeftWidget::formatName(const QString name) const {
     qDebug() << "PointsLeftWidget::formatName called" << name;
 
     QString ret("");
-    bool containsSpace(false);
-    bool containsNonSpace(false);
-    for(int i = 0; i < name.length(); i++){
-        if(!name.at(i).isSpace() || (!containsSpace && containsNonSpace)){
-            if(name.at(i).isSpace())
-                containsSpace = true;
-            else {
-                containsNonSpace = true;
-                containsSpace = false;
-            }
-            ret += name.at(i);
-        }
+    QStringList nameStrList = name.split(" ", QString::SkipEmptyParts);
+    for(int i = 0; i < nameStrList.size(); i++){
+        if(i > 0)
+            ret += " ";
+        ret += nameStrList.at(i);
     }
-    qDebug() << "PointsLeftWidget::formatName return :" << ret;
+    if(name.size() > 0 && name.at(name.size()-1) == ' ')
+        ret += " ";
     return ret;
 }
 

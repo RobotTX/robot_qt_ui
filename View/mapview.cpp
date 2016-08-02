@@ -42,7 +42,6 @@ void MapView::mouseReleaseEvent(QGraphicsSceneMouseEvent *event){
         if(state == GraphicItemState::NO_STATE){
             qDebug() << "(MapView) NO_STATE";
             qDebug() << "(MapView) ok" << (points==NULL);
-
             std::shared_ptr<PointView> tmpPointView = points->getTmpPointView();
             tmpPointView->show();
             /// might be useless code

@@ -13,7 +13,7 @@ class DoubleClickableButton: public QPushButton
 {
     Q_OBJECT
 public:
-    DoubleClickableButton(const QString id, const QString string, QWidget *parent = 0);
+    DoubleClickableButton(const QString string, QWidget *parent = 0);
 
 protected:
     void mouseDoubleClickEvent(QMouseEvent *event);
@@ -21,8 +21,6 @@ protected:
 signals:
     void doubleClick(QString);
 
-private:
-    QString id;
 };
 
 #endif // DOUBLECLICKABLEBUTTON_H
