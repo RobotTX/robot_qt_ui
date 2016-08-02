@@ -1699,6 +1699,10 @@ void MainWindow::setSelectedPoint(QString pointName){
     qDebug() << "MainWindow::setSelectedPoint called" << pointName;
 
     resetFocus();
+
+    createPointWidget->getGroupBox()->hide();
+    createPointWidget->getGroupLabel()->hide();
+
     std::shared_ptr<PointView> displaySelectedPointView = points->findPointView(pointName);
 
     /// sets the pixmaps of the other points
@@ -3283,6 +3287,9 @@ void MainWindow::modifyGroupWithEnter(QString name){
 
         /// Update the model
         points->getGroups()->insert(name, points->getGroups()->take(pointsLeftWidget->getLastCheckedId()));
+
+        /// updates the group box to create a point
+        createPointWidget->updateGroupBox();
 
         /// enables the plus button
         pointsLeftWidget->getActionButtons()->getPlusButton()->setEnabled(true);
