@@ -15,8 +15,8 @@
 #include "View/buttonmenu.h"
 #include "toplayout.h"
 
-DisplaySelectedPoint::DisplaySelectedPoint(QMainWindow *const _parent, std::shared_ptr<Points> const& _points, std::shared_ptr<Map> const& _map, QString _pointName, const Origin _origin):
-    QWidget(_parent), map(_map), pointName(_pointName), parent(_parent), points(_points), origin(_origin)
+DisplaySelectedPoint::DisplaySelectedPoint(QMainWindow *const _parent, std::shared_ptr<Points> const& _points, std::shared_ptr<Map> const& _map, const std::shared_ptr<PointView> &_pointView, const Origin _origin):
+    QWidget(_parent), map(_map), pointView(_pointView), parent(_parent), points(_points), origin(_origin)
 {
     layout = new QVBoxLayout(this);
 
@@ -95,7 +95,6 @@ DisplaySelectedPoint::DisplaySelectedPoint(QMainWindow *const _parent, std::shar
 
 void DisplaySelectedPoint::displayPointInfo(void) {
     qDebug() << "DisplaySelectedPoint::displayPointInfo called";
-    std::shared_ptr<PointView> pointView = points->findPointView(pointName);
     if(pointView){
         if(pointView->isVisible())
             actionButtons->getMapButton()->setToolTip("Click to hide this point");
@@ -105,8 +104,8 @@ void DisplaySelectedPoint::displayPointInfo(void) {
         posYLabel->setText("Y : " + QString::number(pointView->getPoint()->getPosition().getY(), 'f', 1));
         nameEdit->setText(pointView->getPoint()->getName());
     } else {
-        qDebug() << "DisplaySelectedPoint::displayPointInfo no pointView found with this pointName :" << pointName;
-        pointName = "";
+        qDebug() << "DisplaySelectedPoint::displayPointInfo no pointView found with this pointName :" << pointView->getPoint()->getName();
+        pointView->getPoint()->setName("");
     }
 }
 
@@ -130,7 +129,7 @@ void DisplaySelectedPoint::keyPressEvent(QKeyEvent* event){
             emit invalidName(TEXT_COLOR_DANGER, CreatePointWidget::Error::AlreadyExists);
             break;
         case 3:
-            emit nameChanged(pointName, nameEdit->text());
+            emit nameChanged(pointView->getPoint()->getName(), nameEdit->text());
             break;
         default:
             qDebug() << "if you got here, it's probably that you forgot to define the behavior for one or more error codes";
@@ -163,7 +162,6 @@ void DisplaySelectedPoint::resetWidget(){
     actionButtons->getEditButton()->setEnabled(true);
     actionButtons->getEditButton()->setToolTip("You can click on this button and then choose between clicking on the map or drag the point to change its position");
 
-    std::shared_ptr<PointView> pointView = points->findPointView(pointName);
     if(pointView){
         /// in case the user had dragged the point around the map or clicked it, this resets the coordinates displayed to the original ones, otherwise this has no effect
         /// reset the position
@@ -177,8 +175,8 @@ void DisplaySelectedPoint::resetWidget(){
         } else
             homeWidget->hide();
     } else {
-        qDebug() << "DisplaySelectedPoint::resetWidget no pointView found with this pointName :" << pointName;
-        pointName = "";
+        qDebug() << "DisplaySelectedPoint::resetWidget no pointView found with this pointName :" << pointView->getPoint()->getName();
+        pointView->getPoint()->setName("");
     }
     emit resetState(GraphicItemState::NO_STATE, true);
 }
@@ -230,10 +228,11 @@ int DisplaySelectedPoint::checkPointName(QString name) {
     return 3;
 }
 
-void DisplaySelectedPoint::setPointName(QString const _pointName, QString robotName) {
+void DisplaySelectedPoint::setPointName(const QString _pointName, const QString robotName) {
     qDebug() << "DisplaySelectedPoint::setPointView called";
-    pointName = _pointName;
-    std::shared_ptr<PointView> pointView = points->findPointView(pointName);
+    pointView->getPoint()->setName(_pointName);/*
+    std::shared_ptr<PointView> pointView = points->findPointView(pointView->getPoint()->getName());
+    std::shared_ptr<Point> point = pointView->getPoint();
     if(pointView){
         if(pointView->getPoint()->isHome()){
             homeWidget->show();
@@ -243,9 +242,9 @@ void DisplaySelectedPoint::setPointName(QString const _pointName, QString robotN
             robotBtn->setText("");
         }
     } else {
-        qDebug() << "DisplaySelectedPoint::setPointName no pointView found with this pointName :" << pointName;
-        pointName = "";
-    }
+        qDebug() << "DisplaySelectedPoint::setPointName no pointView found with this pointName :" << pointView->getPoint()->getName();
+        pointView->getPoint()->setName("");
+    }*/
 }
 
 QString DisplaySelectedPoint::formatName(const QString name) const {

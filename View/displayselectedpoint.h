@@ -6,7 +6,6 @@ class QMainWindow;
 class QVBoxLayout;
 class QHBoxLayout;
 class QPushButton;
-class Point;
 class QEvent;
 class QKeyEvent;
 class QLabel;
@@ -21,6 +20,8 @@ class Map;
 #include <QObject>
 #include "Model/graphicitemstate.h"
 #include "topleftmenu.h"
+#include "Model/point.h"
+
 class DisplaySelectedPoint: public QWidget
 {
         Q_OBJECT
@@ -28,20 +29,23 @@ public:
     /// used to determine which menu or object (could be the map) cause the information of this point to be displayed
     enum Origin { MAP, GROUP_MENU, POINTS_MENU };
 
-    DisplaySelectedPoint(QMainWindow* const _parent, const std::shared_ptr<Points> &_points, std::shared_ptr<Map> const& _map, QString _pointName = 0, const Origin _origin = MAP);
+    DisplaySelectedPoint(QMainWindow* const _parent, const std::shared_ptr<Points> &_points, std::shared_ptr<Map> const& _map, std::shared_ptr<PointView> const& _point= 0, const Origin _origin = MAP);
 
     TopLeftMenu* getActionButtons(void) const { return actionButtons; }
     QPushButton* getSaveButton(void) const { return saveButton; }
     QPushButton* getCancelButton(void) const { return cancelButton; }
     QLineEdit* getNameEdit(void) const { return nameEdit; }
-    QString getPointName(void) const { return pointName; }
-    void setPointName(const QString _pointName, QString robotName);
+    QString getPointName(void) const { return pointView->getPoint()->getName(); }
+    void setPointName(const QString name) { pointView->getPoint()->setName(name); }
+    void setPointName(const QString _pointName, const QString robotName);
     Origin getOrigin(void) const { return origin; }
     QLabel* getXLabel(void) const { return posXLabel; }
     QLabel* getYLabel(void) const { return posYLabel; }
     QWidget* getHomeWidget(void) const { return homeWidget; }
     QPushButton* getRobotButton(void) const { return robotBtn; }
     QString formatName(const QString name) const;
+    void setPointView(const std::shared_ptr<PointView>& _pointView) { pointView = _pointView; }
+    std::shared_ptr<PointView> getPointView(void) { return pointView; }
 
 public:
     void displayPointInfo(void);
@@ -83,7 +87,7 @@ private:
     QPushButton* editButton;
     QPushButton* saveButton;
     QPushButton* cancelButton;
-    QString pointName;
+    std::shared_ptr<PointView> pointView;
     QMainWindow* parent;
     std::shared_ptr<Points> points;
     QWidget* homeWidget;
