@@ -268,3 +268,14 @@ QString Points::getGroupNameFromPointName(const QString pointName) const{
     }
     return "";
 }
+
+void Points::setNormalPixmaps(){
+    QMapIterator<QString, std::shared_ptr<QVector<std::shared_ptr<PointView>>>> i(*groups);
+    while (i.hasNext()) {
+        i.next();
+        if(i.value()){
+            for(int j = 0; j < i.value()->count(); j++)
+                i.value()->at(j)->setPixmap(PointView::NORMAL);
+        }
+    }
+}

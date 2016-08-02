@@ -1702,15 +1702,8 @@ void MainWindow::setSelectedPoint(QString pointName){
     std::shared_ptr<PointView> displaySelectedPointView = points->findPointView(pointName);
 
     /// sets the pixmaps of the other points
-    QMapIterator<QString, std::shared_ptr<QVector<std::shared_ptr<PointView>>>> i(*points->getGroups());
-    while (i.hasNext()) {
-        i.next();
-        qDebug() << i.key();
-        if(i.value()){
-            for(int j = 0; j < i.value()->count(); j++)
-                i.value()->at(j)->setPixmap(PointView::NORMAL);
-        }
-    }
+    points->setNormalPixmaps();
+
     /// tmp point is blue
     points->getTmpPointView()->setPixmap(PointView::MID);
 
