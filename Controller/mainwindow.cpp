@@ -2146,6 +2146,8 @@ void MainWindow::askForDeletePointConfirmation(QString pointName){
         case QMessageBox::Ok : {
             leftMenu->getDisplaySelectedGroup()->getPointButtonGroup()->setCheckable(true);
             /// we first check that our point is not the home of a robot
+            qDebug() << "pointName:" << pointName;
+
             std::shared_ptr<PointView> point = points->findPointView(pointName);
             QString group = points->getGroupNameFromPointName(pointName);
             if(point && !point->getPoint()->isHome()){
