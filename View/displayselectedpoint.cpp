@@ -226,6 +226,11 @@ void DisplaySelectedPoint::setPointView(const std::shared_ptr<PointView>& _point
     qDebug() << "DisplaySelectedPoint::setPointView called";
 
     pointView = _pointView;
+    /// sets the pixmaps of the other points (black)
+    points->setNormalPixmaps();
+
+    /// sets the color of the displayed pointView to blue
+    pointView->setPixmap(PointView::MID);
     if(pointView){
         if(pointView->getPoint()->isHome()){
             homeWidget->show();

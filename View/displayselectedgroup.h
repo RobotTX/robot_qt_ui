@@ -20,8 +20,8 @@ class Points;
  * contained by the group that was just clicked
  */
 
-class DisplaySelectedGroup: public QWidget
-{
+class DisplaySelectedGroup: public QWidget{
+    Q_OBJECT
 public:
     DisplaySelectedGroup(QMainWindow *_parent, const std::shared_ptr<Points> &_points);
 
@@ -34,8 +34,11 @@ public:
 
     void setName(const QString _name);
 
-public:
     void uncheck(void) { pointButtonGroup->uncheck(); }
+    void disableButtons();
+
+private slots:
+    void buttonClickedSlot(QAbstractButton*);
 
 private:
 
@@ -49,6 +52,7 @@ private:
 
     QLabel* name;
     std::shared_ptr<Points> points;
+    QString lastCheckedButton;
 };
 
 #endif // DISPLAYSELECTEDGROUP_H

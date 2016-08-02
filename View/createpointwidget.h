@@ -35,6 +35,8 @@ public:
     QLineEdit* getNameEdit(void) const { return nameEdit; }
     void updateGroupBox();
     TopLeftMenu* getActionButtons(void) const { return actionButtons; }
+    QComboBox* getGroupBox(void) const { return groupBox; }
+    QLabel* getGroupLabel(void) const { return groupLabel; }
 
 private:
     /// this prevents a user to type names like " a                stupidname       " by removing extra spaces

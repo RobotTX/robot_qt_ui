@@ -54,9 +54,6 @@ public:
     void disableButtons();
     void setEnableReturnCloseButtons(bool enable);
 
-private slots:
-    void enableButtons(QAbstractButton* button);
-
 private:
     QPushButton* closeBtn;
     QVBoxLayout* leftLayout;

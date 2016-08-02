@@ -211,6 +211,7 @@ void CreatePointWidget::updateGroupBox(){
     int j = 0;
     while (i.hasNext()) {
         i.next();
+        qDebug() << "updategroupBox group key" << i.key();
         if(i.key().compare(TMP_GROUP_NAME) != 0 && i.key().compare(PATH_GROUP_NAME) != 0)
             groupBox->insertItem(points->count()-1-j, i.key());
     }

@@ -60,9 +60,9 @@ HEADERS += Controller/cmdrobotthread.h \
            View/customizedlineedit.h \
            View/createpointwidget.h \
            View/buttonmenu.h \
-    Controller/sendnewmapthread.h \
-    View/customscrollarea.h \
-    View/colors.h
+           Controller/sendnewmapthread.h \
+           View/customscrollarea.h \
+           View/colors.h
 
 FORMS += Controller/mainwindow.ui
 
