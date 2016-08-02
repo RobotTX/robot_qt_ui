@@ -36,9 +36,9 @@ class PathPainter;
 #include "Model/point.h"
 
 
-#define XML_PATH "/home/m-a/Documents/QtProject/gobot-software/points.xml"
-#define ROBOTS_NAME_PATH "/home/m-a/Documents/QtProject/gobot-software/robotsName.dat"
-#define MAP_PATH "/home/m-a/Documents/QtProject/gobot-software/realMap.dat"
+//#define XML_PATH "/home/m-a/Documents/QtProject/gobot-software/points.xml"
+//#define ROBOTS_NAME_PATH "/home/m-a/Documents/QtProject/gobot-software/robotsName.dat"
+//#define MAP_PATH "/home/m-a/Documents/QtProject/gobot-software/realMap.dat"
 
 #define XML_PATH "/home/joan/Qt/QtProjects/gobot-software/points.xml"
 #define ROBOTS_NAME_PATH "/home/joan/Qt/QtProjects/gobot-software/robotsName.dat"
@@ -86,6 +86,7 @@ public:
     void delay(const int ms) const;
     void setEnableAll(bool enable, GraphicItemState state = GraphicItemState::NO_STATE, bool clearPath = false, int noReturn = -1);
     void clearAllPath();
+    void setTemporaryMessageTop(const QString type, const QString message, const int ms);
 
 signals:
     void sendCommand(QString);

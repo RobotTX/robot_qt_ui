@@ -55,6 +55,8 @@ public:
     PixmapType getLastType(void) const { return lastType; }
     void setLastType(const PixmapType _last) { lastType = _last; }
     QPixmap getLastPixmap(void) const { return lastPixmap; }
+    void setOriginalPosition(const Position position) { originalPosition = position; }
+    Position getOriginalPosition(void) const { return originalPosition; }
 
 protected:
     void mousePressEvent(QGraphicsSceneMouseEvent *event);
@@ -83,6 +85,7 @@ private:
     bool wasShown;
     PixmapType type;
     PixmapType lastType;
+    Position originalPosition;
 };
 
 #endif // POINTVIEW_H
