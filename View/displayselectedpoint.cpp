@@ -250,20 +250,16 @@ void DisplaySelectedPoint::setPointName(QString const _pointName, QString robotN
 
 QString DisplaySelectedPoint::formatName(const QString name) const {
     qDebug() << "DisplaySelectedPoint::formatName called";
+
     QString ret("");
-    bool containsSpace(false);
-    bool containsNonSpace(false);
-    for(int i = 0; i < name.length(); i++){
-        if(!name.at(i).isSpace() || (!containsSpace && containsNonSpace)){
-            if(name.at(i).isSpace())
-                containsSpace = true;
-            else {
-                containsNonSpace = true;
-                containsSpace = false;
-            }
-            ret += name.at(i);
-        }
+    QStringList nameStrList = name.split(" ", QString::SkipEmptyParts);
+    for(int i = 0; i < nameStrList.size(); i++){
+        if(i > 0)
+            ret += " ";
+        ret += nameStrList.at(i);
     }
+    if(name.size() > 0 && name.at(name.size()-1) == ' ')
+        ret += " ";
     return ret;
 }
 

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <points>
     <group>
-        <name>First group</name>
+        <name>First group wqer</name>
         <point>
             <name>A</name>
             <x>50</x>
@@ -61,12 +61,21 @@
         <name>TmpPoint</name>
         <point>
             <name>tmpPoint</name>
-            <x>0</x>
-            <y>0</y>
-            <displayed>0</displayed>
+            <x>108.867</x>
+            <y>302.683</y>
+            <displayed>1</displayed>
         </point>
     </group>
     <group>
-        <name>okidoki</name>
+        <name>oki doki</name>
+        <point>
+            <name>tmpPointtid</name>
+            <x>108.9</x>
+            <y>302.7</y>
+            <displayed>1</displayed>
+        </point>
+    </group>
+    <group>
+        <name>oki doki qwe</name>
     </group>
 </points>

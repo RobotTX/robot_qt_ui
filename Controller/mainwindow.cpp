@@ -1882,10 +1882,10 @@ void MainWindow::editPointButtonEvent(){
  * called when the user wants to edit a point from the first points menu
  */
 void MainWindow::editGroupBtnEvent(){
-    qDebug() << "editPointBtnEvent called";
+    qDebug() << "editPointBtnEvent called" << pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->checkedButton()->text();
 
     int btnIndex = pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->checkedId();
-    pointsLeftWidget->setLastCheckedId("");
+    pointsLeftWidget->setLastCheckedId(pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->checkedButton()->text());
     pointsLeftWidget->setCreatingGroup(false);
 
     /// uncheck the other buttons
@@ -1980,6 +1980,7 @@ void MainWindow::switchFocus(QString name, QWidget* widget, MainWindow::WidgetTy
     qDebug() << "_________________";
 
 }
+
 void MainWindow::resetFocus()
 {
     lastWidgets = QList<QPair<QPair<QWidget*,QString>, MainWindow::WidgetType>>();
@@ -2158,7 +2159,7 @@ void MainWindow::askForDeletePointConfirmation(QString pointName){
                 points->removePoint(pointName);
 
                 /// updates the group menu
-                leftMenu->getDisplaySelectedGroup()->getPointButtonGroup()->setGroup(pointsLeftWidget->getIndexLastGroupClicked());
+                leftMenu->getDisplaySelectedGroup()->getPointButtonGroup()->setGroup(pointsLeftWidget->getLastCheckedId());
 
                 /// save the changes to the file
                 XMLParser parserPoints(XML_PATH);
@@ -2172,7 +2173,7 @@ void MainWindow::askForDeletePointConfirmation(QString pointName){
                     int res = openEmptyGroupMessage(group);
                     if(res == QMessageBox::Yes){
                         /// updates model
-                        points->removeGroup(pointsLeftWidget->getIndexLastGroupClicked());
+                        points->removeGroup(pointsLeftWidget->getLastCheckedId());
 
                         /// updates file
                         XMLParser parser(XML_PATH);
@@ -2228,7 +2229,6 @@ void MainWindow::askForDeleteGroupConfirmation(QString index){
             /// we have to check that none of the points is the home of a robot
             QVector<QString> homePointNames = points->getHomeNameFromGroup(index);
             if(homePointNames.size() <= 0){
-                pointsLeftWidget->setLastCheckedId("");
 
                 /// removes all the points of the group on the map
                 for(int i = 0; i < points->getGroups()->value(index)->size(); i++){
@@ -2245,6 +2245,7 @@ void MainWindow::askForDeleteGroupConfirmation(QString index){
                 /// updates the menu
                 pointsLeftWidget->getGroupButtonGroup()->updateButtons();
                 pointsLeftWidget->getActionButtons()->getMinusButton()->setChecked(false);
+                pointsLeftWidget->setLastCheckedId("");
 
                 /// updates the group box so that the user cannot create a point in this group anymore
                 createPointWidget->updateGroupBox();
@@ -2481,7 +2482,7 @@ void MainWindow::displayPointsInGroup(void){
 
     /// it's a group
     if(points->isAGroup(checkedName)){
-       pointsLeftWidget->setIndexLastGroupClicked(checkedName);
+       pointsLeftWidget->setLastCheckedId(checkedName);
        pointsLeftWidget->getActionButtons()->getGoButton()->setChecked(false);
        pointsLeftWidget->hide();
 
@@ -2639,7 +2640,7 @@ void MainWindow::removePointFromInformationMenu(void){
                         parserPoints.save(*points);
 
                         /// updates the group menu
-                        leftMenu->getDisplaySelectedGroup()->getPointButtonGroup()->setGroup(pointsLeftWidget->getIndexLastGroupClicked());
+                        leftMenu->getDisplaySelectedGroup()->getPointButtonGroup()->setGroup(pointsLeftWidget->getLastCheckedId());
 
                         /// closes the window
                         backEvent();
@@ -2998,8 +2999,8 @@ void MainWindow::displayPointFromGroupMenu(){
             parserPoints.save(*points);
 
             /// if the entire group was displayed it is not the case anymore
-            if(pointsLeftWidget->getGroupButtonGroup()->getButtonByName(pointsLeftWidget->getIndexLastGroupClicked()) != NULL)
-                pointsLeftWidget->getGroupButtonGroup()->getButtonByName(pointsLeftWidget->getIndexLastGroupClicked())->setIcon(QIcon(":/icons/folder_space.png"));
+            if(pointsLeftWidget->getGroupButtonGroup()->getButtonByName(pointsLeftWidget->getLastCheckedId()) != NULL)
+                pointsLeftWidget->getGroupButtonGroup()->getButtonByName(pointsLeftWidget->getLastCheckedId())->setIcon(QIcon(":/icons/folder_space.png"));
 
             /// changes the map button message
             leftMenu->getDisplaySelectedGroup()->getActionButtons()->getMapButton()->setToolTip("Click to display the selected point on the map");
@@ -3016,9 +3017,9 @@ void MainWindow::displayPointFromGroupMenu(){
             parserPoints.save(*points);
 
             /// we check whether or not the entire group is displayed and update the points left widget accordingly by adding a tick Icon or not
-            if(points->isDisplayed(pointsLeftWidget->getIndexLastGroupClicked())){
-                if(pointsLeftWidget->getGroupButtonGroup()->getButtonByName(pointsLeftWidget->getIndexLastGroupClicked()) != NULL)
-                    pointsLeftWidget->getGroupButtonGroup()->getButtonByName(pointsLeftWidget->getIndexLastGroupClicked())->setIcon(QIcon(":/icons/folder_eye.png"));
+            if(points->isDisplayed(pointsLeftWidget->getLastCheckedId())){
+                if(pointsLeftWidget->getGroupButtonGroup()->getButtonByName(pointsLeftWidget->getLastCheckedId()) != NULL)
+                    pointsLeftWidget->getGroupButtonGroup()->getButtonByName(pointsLeftWidget->getLastCheckedId())->setIcon(QIcon(":/icons/folder_eye.png"));
             }
 
             /// changes the map button message
@@ -3119,7 +3120,7 @@ void MainWindow::doubleClickOnGroup(QString checkedName){
     /// it's a group
     if(points->isAGroup(checkedName)){
        setMessageTop(TEXT_COLOR_INFO, "Click the map to add a permanent point");
-       pointsLeftWidget->setIndexLastGroupClicked(checkedName);
+       pointsLeftWidget->setLastCheckedId(checkedName);
        pointsLeftWidget->getActionButtons()->getGoButton()->setChecked(false);
        pointsLeftWidget->hide();
 
@@ -3199,7 +3200,8 @@ int MainWindow::openEmptyGroupMessage(const QString groupName){
 void MainWindow::createGroup(QString groupName){
     qDebug() << "createGroup called" << groupName;
 
-    if(pointsLeftWidget->checkGroupName(groupName.simplified()) == 0){
+    groupName = groupName.simplified();
+    if(pointsLeftWidget->checkGroupName(groupName) == 0){
         pointsLeftWidget->setLastCheckedId("");
 
         /// updates the model
@@ -3231,19 +3233,24 @@ void MainWindow::createGroup(QString groupName){
         topLayout->setEnabled(true);
 
         topLayout->setLabelDelay(TEXT_COLOR_SUCCESS, "You have created a new group",2500);
-    } else if(pointsLeftWidget->checkGroupName(groupName.simplified()) == 1){
+    } else if(pointsLeftWidget->checkGroupName(groupName) == 1){
         topLayout->setLabelDelay(TEXT_COLOR_DANGER, "The name of your group cannot be empty",2500);
     } else {
-        topLayout->setLabelDelay(TEXT_COLOR_DANGER, "You cannot choose : " + groupName.simplified() + " as a new name for your group because another group already has this name",2500);
+        topLayout->setLabelDelay(TEXT_COLOR_DANGER, "You cannot choose : " + groupName + " as a new name for your group because another group already has this name",2500);
     }
 }
 
 void MainWindow::modifyGroupWithEnter(QString name){
-    qDebug() << "modifying group after enter key pressed";
+    name = name.simplified();
+    qDebug() << "modifying group after enter key pressed from" << pointsLeftWidget->getLastCheckedId() << "to" << name;
+
     topLayout->setEnabled(true);
 
-    if(pointsLeftWidget->checkGroupName(name.simplified()) == 0){
+    if(pointsLeftWidget->checkGroupName(name) == 0){
         leftMenu->getCloseButton()->setEnabled(true);
+
+        /// Update the model
+        points->getGroups()->insert(name, points->getGroups()->take(pointsLeftWidget->getLastCheckedId()));
 
         /// enables the plus button
         pointsLeftWidget->getActionButtons()->getPlusButton()->setEnabled(true);
@@ -3270,15 +3277,16 @@ void MainWindow::modifyGroupWithEnter(QString name){
     } else if(pointsLeftWidget->checkGroupName(name) == 1){
         topLayout->setLabelDelay(TEXT_COLOR_DANGER, "The name of your group cannot be empty. Please choose a name for your group",2500);
     } else {
-        topLayout->setLabelDelay(TEXT_COLOR_DANGER, "You cannot choose : " + name.simplified() + " as a new name for your group because another group already has this name",2500);
+        topLayout->setLabelDelay(TEXT_COLOR_DANGER, "You cannot choose : " + name + " as a new name for your group because another group already has this name",2500);
     }
 }
 
 void MainWindow::modifyGroupAfterClick(QString name){
-    qDebug() << "modifyGroupAfterClick called";
+    name = name.simplified();
+    qDebug() << "modifyGroupAfterClick called from" << pointsLeftWidget->getLastCheckedId() << "to" << name;
+
     topLayout->setEnabled(true);
     pointsLeftWidget->setLastCheckedId("");
-    qDebug() << "modifying group after random click";
 
     /// resets the menu
     leftMenu->getCloseButton()->setEnabled(true);
@@ -3289,7 +3297,10 @@ void MainWindow::modifyGroupAfterClick(QString name){
     leftMenu->getReturnButton()->setEnabled(true);
     int checkedId = pointsLeftWidget->getGroupButtonGroup()->getButtonIdByName(pointsLeftWidget->getGroupButtonGroup()->getEditedGroupName());
 
-    if(pointsLeftWidget->checkGroupName(name.simplified()) == 0){
+    if(pointsLeftWidget->checkGroupName(name) == 0){
+        /// Update the model
+        points->getGroups()->insert(name, points->getGroups()->take(pointsLeftWidget->getLastCheckedId()));
+
         /// saves to file
         XMLParser parser(XML_PATH);
         parser.save(*points);

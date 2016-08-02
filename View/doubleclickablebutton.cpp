@@ -2,12 +2,12 @@
 #include <QDebug>
 #include <QKeyEvent>
 
-DoubleClickableButton::DoubleClickableButton(const QString _id, const QString string, QWidget* parent): QPushButton(string, parent), id(_id)
+DoubleClickableButton::DoubleClickableButton(const QString string, QWidget* parent): QPushButton(string, parent)
 {
 }
 
 void DoubleClickableButton::mouseDoubleClickEvent(QMouseEvent * event){
     Q_UNUSED(event)
-    emit doubleClick(id);
+    emit doubleClick(text());
 }
 

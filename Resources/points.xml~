@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <points>
     <group>
-        <name>first group</name>
+        <name>First group</name>
         <point>
             <name>A</name>
             <x>50</x>
@@ -34,27 +34,6 @@
             <x>150</x>
             <y>150</y>
             <displayed>0</displayed>
-        </point>
-    </group>
-    <group>
-        <name>No Group</name>
-        <point>
-            <name>Un point</name>
-            <x>150</x>
-            <y>175</y>
-            <displayed>1</displayed>
-        </point>
-        <point>
-            <name>Another point</name>
-            <x>150</x>
-            <y>200</y>
-            <displayed>1</displayed>
-        </point>
-        <point>
-            <name>A final point</name>
-            <x>150</x>
-            <y>225</y>
-            <displayed>1</displayed>
         </point>
     </group>
 </points>
