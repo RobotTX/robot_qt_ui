@@ -71,12 +71,10 @@ GroupButtonGroup::GroupButtonGroup(const std::shared_ptr<Points> &_points, QWidg
             else
                 pointButton->setIcon(QIcon(":/icons/space_point.png"));
             pointButton->setIconSize(BUTTON_SIZE);
-
         }
     }
 
     connect(modifyEdit, SIGNAL(textEdited(QString)), this, SLOT(checkEditGroupName(QString)));
-
 }
 
 void GroupButtonGroup::deleteButtons(void){
