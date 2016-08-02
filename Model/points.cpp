@@ -149,8 +149,8 @@ void Points::addPoint(const QString groupName, const QString pointName, const do
     connect(&(*pointView), SIGNAL(editedPointPositionChanged(double, double)), mainWindow, SLOT(updateCoordinates(double, double)));
     connect(&(*pointView), SIGNAL(moveTmpEditPathPoint()), mainWindow, SLOT(moveTmpEditPathPointSlot()));
     connect(&(*pointView), SIGNAL(addPointPath(PointView*)), mapView, SLOT(addPathPointMapViewSlot(PointView*)));
-    connect(&(*pointView), SIGNAL(homeSelected(QString, bool)), mainWindow, SLOT(homeSelected(QString, bool)));
-    connect(&(*pointView), SIGNAL(homeEdited(QString, bool)), mainWindow, SLOT(homeEdited(QString, bool)));
+    connect(&(*pointView), SIGNAL(homeSelected(QString)), mainWindow, SLOT(homeSelected(QString)));
+    connect(&(*pointView), SIGNAL(homeEdited(QString)), mainWindow, SLOT(homeEdited(QString)));
 
 
     if(!groups->empty() && groups->contains(groupName)){

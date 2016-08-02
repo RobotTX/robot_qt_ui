@@ -27,29 +27,29 @@ PointView::PointView(const std::shared_ptr<Point> &_point, QGraphicsItem *parent
 
 void PointView::mousePressEvent(QGraphicsSceneMouseEvent *event){
     qDebug() << "pv" << point->getName() << "state " << state;
-        if(state == GraphicItemState::NO_STATE){
-            if(event->button() == Qt::RightButton){
-                qDebug() << "right click on point NO STATE" ;
-                emit pointRightClicked(this->getPoint()->getName());
-            }
-            if(event->button() == Qt::LeftButton){
-                emit pointLeftClicked(this->getPoint()->getName());
-            }
-        } else if(state == GraphicItemState::CREATING_PATH){
-            qDebug() << "Clicked on a point while creating a path";
-            addedToPath = true;
-            emit addPointPath(this);
-        } else if(state == GraphicItemState::EDITING){
-            qDebug() << "(EDITING) PointView moving from" << pos().x() << pos().y();
-        }  else if(state == GraphicItemState::EDITING_PERM){
-            qDebug() << "Editing permanently PointView moving from" << pos().x() << pos().y();;
-        } else if(state == GraphicItemState::SELECTING_HOME){
-            emit homeSelected(this->getPoint()->getName());
-        } else if(state == GraphicItemState::EDITING_HOME){
-            emit homeEdited(this->getPoint()->getName());
-        } else {
-            qDebug() << "(PointView " << point->getName() << ") NO EVENT";
+    if(state == GraphicItemState::NO_STATE){
+        if(event->button() == Qt::RightButton){
+            qDebug() << "right click on point NO STATE" ;
+            emit pointRightClicked(this->getPoint()->getName());
         }
+        if(event->button() == Qt::LeftButton){
+            emit pointLeftClicked(this->getPoint()->getName());
+        }
+    } else if(state == GraphicItemState::CREATING_PATH){
+        qDebug() << "Clicked on a point while creating a path";
+        addedToPath = true;
+        emit addPointPath(this);
+    } else if(state == GraphicItemState::EDITING){
+        qDebug() << "(EDITING) PointView moving from" << pos().x() << pos().y();
+    }  else if(state == GraphicItemState::EDITING_PERM){
+        qDebug() << "Editing permanently PointView moving from" << pos().x() << pos().y();;
+    } else if(state == GraphicItemState::SELECTING_HOME){
+        emit homeSelected(this->getPoint()->getName());
+    } else if(state == GraphicItemState::EDITING_HOME){
+        emit homeEdited(this->getPoint()->getName());
+    } else {
+        qDebug() << "(PointView " << point->getName() << ") NO EVENT";
+    }
 }
 
 void PointView::mouseMoveEvent(QGraphicsSceneMouseEvent *event){
