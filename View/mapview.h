@@ -44,7 +44,7 @@ public:
     int findIndexInPathByName(const QString name);
 
 signals:
-    void pointLeftClicked(std::shared_ptr<PointView>);
+    void pointLeftClicked(QString);
     void addPathPointMapView(Point*);
     void homeSelected(QString pointView, bool temporary);
     void homeEdited(QString pointView, bool temporary);

@@ -1694,10 +1694,14 @@ void MainWindow::initializePoints(){
  * set the selected point, could be a temporary point or a point that already exists and that might be edited
  */
 void MainWindow::setSelectedPoint(QString pointName){
+<<<<<<< HEAD
     qDebug() << "MainWindow::setSelectedPoint called";
+=======
+    qDebug() << "setSelectedPoint called" << pointName;
+>>>>>>> 9b505db41a52cfaeac04bc6f849cbd04d4f9a994
 
     resetFocus();
-    std::shared_ptr<PointView> displaySelectedPointView = points->findPointView(leftMenu->getDisplaySelectedPoint()->getPointName());
+    std::shared_ptr<PointView> displaySelectedPointView = points->findPointView(pointName);
     if(displaySelectedPointView)
         displaySelectedPointView->setPixmap(PointView::PixmapType::NORMAL);
 
@@ -2295,11 +2299,11 @@ void MainWindow::askForDeleteGroupConfirmation(QString index){
     }
 }
 
-void MainWindow::displayPointEvent(QString pointName){
+void MainWindow::displayPointEvent(std::shared_ptr<PointView> pointView){
     qDebug() << "MainWindow::displayPointEvent called";
     /// hides the temporary point
-    std::shared_ptr<PointView> pointView = points->findPointView(pointName);
-    leftMenu->getDisplaySelectedPoint()->setPointView(pointView);
+
+    //leftMenu->getDisplaySelectedPoint()->setPointView(pointView);
     if(pointView && !(*(pointView->getPoint()) == *(points->getTmpPointView()->getPoint())))
         points->displayTmpPoint(false);
     /// resets the color of the previous selected point if such point exists

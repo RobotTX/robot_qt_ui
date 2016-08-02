@@ -46,7 +46,7 @@ void MapView::mouseReleaseEvent(QGraphicsSceneMouseEvent *event){
             tmpPointView->show();
             /// might be useless code
             tmpPointView->setPos(event->pos().x(), event->pos().y());
-            emit pointLeftClicked(tmpPointView);
+            emit pointLeftClicked(tmpPointView->getPoint()->getName());
         } else if(state == GraphicItemState::CREATING_PATH){
             /// if it's not a white point of the map we cannot add it to the path
             qDebug() << "(MapView) CREATING_PATH";

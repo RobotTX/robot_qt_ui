@@ -103,7 +103,7 @@ CreatePointWidget::CreatePointWidget(QMainWindow* _parent, std::shared_ptr<Point
 }
 
 void CreatePointWidget::setSelectedPoint(const std::shared_ptr<PointView> &_pointView){
-    qDebug() << "setSelectedPoint called";
+    qDebug() << "CreatePointWidget setSelectedPoint called";
     pointView = _pointView;
     nameEdit->setText(pointView->getPoint()->getName());
     posXLabel->setText("X : " + QString::number(pointView->getPoint()->getPosition().getX(), 'f', 1));

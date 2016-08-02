@@ -175,8 +175,10 @@ void DisplaySelectedPoint::resetWidget(){
         } else
             homeWidget->hide();
     } else {
-        qDebug() << "DisplaySelectedPoint::resetWidget no pointView found with this pointName :" << pointView->getPoint()->getName();
-        pointView->getPoint()->setName("");
+        if(pointView){
+            qDebug() << "DisplaySelectedPoint::resetWidget no pointView found with this pointName :" << pointView->getPoint()->getName();
+            pointView->getPoint()->setName("");
+        }
     }
     emit resetState(GraphicItemState::NO_STATE, true);
 }
