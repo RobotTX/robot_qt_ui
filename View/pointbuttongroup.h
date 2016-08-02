@@ -5,6 +5,7 @@ class Points;
 class QButtonGroup;
 class QVBoxLayout;
 class QMouseEvent;
+class QAbstractButton;
 
 #include <QObject>
 #include <QWidget>
@@ -18,6 +19,8 @@ public:
     ~PointButtonGroup(){}
 
     QButtonGroup* getButtonGroup(void) const { return buttonGroup; }
+    QAbstractButton* getButtonByName(const QString name) const;
+    int getButtonIdByName(const QString name) const;
     QString getGroupIndex(void) const { return groupIndex; }
 
 public:

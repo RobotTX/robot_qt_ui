@@ -26,6 +26,7 @@ public:
     int getEditedGroupId(void) const;
     void setEditedGroupName(const QString _editedGroupName) { editedGroupName = _editedGroupName; }
     QAbstractButton* getButtonByName(const QString name) const;
+    int getButtonIdByName(const QString name) const;
     QString formatName(const QString name) const;
 
 public:

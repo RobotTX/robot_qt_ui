@@ -30,7 +30,7 @@ void PointButtonGroup::setGroup(const QString _groupIndex){
 }
 
 void PointButtonGroup::createButtons(){
-    if(points->isAGroup(groupIndex) && points->getGroups()->value(groupIndex)->size() > 0){
+    if(points->isAGroup(groupIndex) && points->getGroups()->value(groupIndex) && points->getGroups()->value(groupIndex)->size() > 0){
         std::shared_ptr<QVector<std::shared_ptr<PointView>>> group = points->getGroups()->value(groupIndex);
         for(int j = 0; j < group->size(); j++){
             std::shared_ptr<Point> currentPoint = group->at(j)->getPoint();
@@ -72,4 +72,20 @@ void PointButtonGroup::uncheck(void){
     if(buttonGroup->checkedButton())
         buttonGroup->checkedButton()->setChecked(false);
     buttonGroup->setExclusive(true);
+}
+
+QAbstractButton* PointButtonGroup::getButtonByName(const QString name) const {
+    for(int i = 0; i < getButtonGroup()->buttons().size(); i++){
+        if(getButtonGroup()->button(i)->text().compare(name) == 0)
+            return getButtonGroup()->button(i);
+    }
+    return NULL;
+}
+
+int PointButtonGroup::getButtonIdByName(const QString name) const {
+    for(int i = 0; i < getButtonGroup()->buttons().size(); i++){
+        if(getButtonGroup()->button(i)->text().compare(name) == 0)
+            return i;
+    }
+    return -1;
 }
