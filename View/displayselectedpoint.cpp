@@ -203,16 +203,14 @@ int DisplaySelectedPoint::checkPointName(QString name) {
     QMapIterator<QString, std::shared_ptr<QVector<std::shared_ptr<PointView>>>> i(*(points->getGroups()));
     while (i.hasNext()) {
         i.next();
-        if(i.value()){
-            for(int j = 0; j < i.value()->size(); j++){
-                if(i.value()->at(j)->getPoint()->getName().compare(nameEdit->text().simplified(), Qt::CaseInsensitive) == 0){
-                    qDebug() << nameEdit->text() << " already exists";
-                    saveButton->setEnabled(false);
-                    /// to explain the user why he cannot add its point as it is
-                    saveButton->setToolTip("A point with this name already exists, please choose another name for your point");
-                    emit invalidName(TEXT_COLOR_WARNING, CreatePointWidget::Error::AlreadyExists);
-                    return 2;
-                }
+        for(int j = 0; j < i.value()->size(); j++){
+            if(i.value()->at(j)->getPoint()->getName().compare(nameEdit->text().simplified(), Qt::CaseInsensitive) == 0){
+                qDebug() << nameEdit->text() << " already exists";
+                saveButton->setEnabled(false);
+                /// to explain the user why he cannot add its point as it is
+                saveButton->setToolTip("A point with this name already exists, please choose another name for your point");
+                emit invalidName(TEXT_COLOR_WARNING, CreatePointWidget::Error::AlreadyExists);
+                return 2;
             }
         }
     }

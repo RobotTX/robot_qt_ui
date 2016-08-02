@@ -40,7 +40,6 @@ public:
     int countGroups(void) const { return groups->count(); }
     int count(void) const;
     void addGroup(const QString groupName, std::shared_ptr<QVector<std::shared_ptr<PointView>>> points);
-    QVector<QString> groupNames(void) const;
     void removeGroup(const QString groupName);
     void removePoint(const QString pointName);
     std::shared_ptr<QVector<std::shared_ptr<PointView>>> findGroup(const QString groupName) const;
@@ -62,7 +61,7 @@ public:
     QString getGroupNameFromPointName(const QString pointName) const;
     void setNormalPixmaps(void);
     void addTmpPoint(MapView *mapView, MainWindow *mainWindow);
-    void addPoint(QString groupName, std::shared_ptr<PointView> pointView);
+    void addPoint(const QString groupName, const std::shared_ptr<PointView>& pointView);
 
 private:
     std::shared_ptr<Groups> groups;
