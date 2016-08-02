@@ -35,7 +35,7 @@ class PointView : public QObject, public QGraphicsPixmapItem {
     Q_OBJECT
 
 public:
-    PointView(std::shared_ptr<Point> point, QGraphicsItem *parent = 0);
+    PointView(std::shared_ptr<Point> const& point, QGraphicsItem *parent = 0);
 
     enum PixmapType{NORMAL, MID, START, STOP, HOVER, START_STOP};
 

@@ -40,6 +40,7 @@
 #include <QVector>
 #include "View/pathwidget.h"
 #include "colors.h"
+#include <QMap>
 
 /**
  * @brief MainWindow::MainWindow
@@ -1838,6 +1839,16 @@ void MainWindow::editPointButtonEvent(){
 
     /// hide the temporary point on the map
     std::shared_ptr<PointView> displaySelectedPointView = points->findPointView(leftMenu->getDisplaySelectedPoint()->getPointName());
+    qDebug() << "selected point to edit " << leftMenu->getDisplaySelectedPoint()->getPointName();
+
+    QMapIterator<QString, std::shared_ptr<QVector<std::shared_ptr<PointView>>>> i(*points->getGroups());
+    while (i.hasNext()) {
+        i.next();
+        for(int j = 0; j < i.value()->size(); j++)
+            qDebug() << i.key() << i.value()->at(j)->getPoint()->getName();
+    }
+
+
     if(displaySelectedPointView && !(*(displaySelectedPointView->getPoint()) == *(points->getTmpPointView()->getPoint())))
         points->displayTmpPoint(false);
 
@@ -1918,7 +1929,8 @@ void MainWindow::editGroupBtnEvent(){
                 else
                     qDebug() << "editGroupBtnEvent : something unexpected happened";
             }
-            leftMenu->getDisplaySelectedPoint()->setPointName(pointView->getPoint()->getName(), robotName);
+            leftMenu->getDisplaySelectedPoint()->setPointView(pointView);
+            //leftMenu->getDisplaySelectedPoint()->setPointName(pointView->getPoint()->getName(), robotName);
         } else {
             qDebug() << "There is no point view associated with those indexes";
         }
@@ -2004,9 +2016,11 @@ void MainWindow::openLeftMenu(){
     setMessageTop(TEXT_COLOR_NORMAL, "");
 
     /// resets the color of the selected point on the map and hides the temporary point`
-    std::shared_ptr<PointView> displaySelectedPointView = points->findPointView(leftMenu->getDisplaySelectedPoint()->getPointName());
-    if(displaySelectedPointView)
-        displaySelectedPointView->setPixmap(PointView::PixmapType::NORMAL);
+    if(leftMenu->getDisplaySelectedPoint()->getPointView()){
+        std::shared_ptr<PointView> displaySelectedPointView = points->findPointView(leftMenu->getDisplaySelectedPoint()->getPointName());
+        if(displaySelectedPointView)
+            displaySelectedPointView->setPixmap(PointView::PixmapType::NORMAL);
+    }
 
     resetFocus();
 
@@ -2283,12 +2297,15 @@ void MainWindow::displayPointEvent(QString pointName){
     qDebug() << "MainWindow::displayPointEvent called";
     /// hides the temporary point
     std::shared_ptr<PointView> pointView = points->findPointView(pointName);
+    leftMenu->getDisplaySelectedPoint()->setPointView(pointView);
     if(pointView && !(*(pointView->getPoint()) == *(points->getTmpPointView()->getPoint())))
         points->displayTmpPoint(false);
-    /// resets the color of the previous selected point
+    /// resets the color of the previous selected point if such point exists
+
     std::shared_ptr<PointView> displaySelectedPointView = points->findPointView(leftMenu->getDisplaySelectedPoint()->getPointName());
     if(displaySelectedPointView)
         displaySelectedPointView->setPixmap(PointView::PixmapType::NORMAL);
+
 
     leftMenu->getDisplaySelectedPoint()->getActionButtons()->getMapButton()->setChecked(true);
 
@@ -2714,51 +2731,54 @@ void MainWindow::editPointFromGroupMenu(void){
             else
                 qDebug() << "editPointFromGroupMenu : something unexpected happened";
         }
-        std::shared_ptr<PointView> displaySelectedPointView = points->findPointView(leftMenu->getDisplaySelectedPoint()->getPointName());
+        qDebug() << "name point u trying to edit" << pointName;
+        std::shared_ptr<PointView> displaySelectedPointView = points->findPointView(pointName);
         if(displaySelectedPointView){
             displaySelectedPointView->setPixmap(PointView::PixmapType::HOVER);
             displaySelectedPointView->show();
-        }
-        leftMenu->getDisplaySelectedPoint()->setPointName(pointName, robotName);
 
-        /// update the file
-        XMLParser parser(XML_PATH);
-        parser.save(*points);
+            leftMenu->getDisplaySelectedPoint()->setPointName(pointName, robotName);
 
-        leftMenu->getDisplaySelectedPoint()->getNameEdit()->setAutoFillBackground(false);
-        leftMenu->getDisplaySelectedPoint()->getNameEdit()->setFrame(true);
+            /// update the file
+            XMLParser parser(XML_PATH);
+            parser.save(*points);
 
-        /// if the point is a home point any modification of its name is forbidden
-        if(!displaySelectedPointView->getPoint()->isHome())
+            leftMenu->getDisplaySelectedPoint()->getNameEdit()->setAutoFillBackground(false);
+            leftMenu->getDisplaySelectedPoint()->getNameEdit()->setFrame(true);
+
+            /// if the point is a home point any modification of its name is forbidden
+
+            if(!displaySelectedPointView->getPoint()->isHome())
+                leftMenu->getDisplaySelectedPoint()->getNameEdit()->setReadOnly(false);
+
+            /// sets the state of the map and the other widgets to prevent other concurrent actions
+            setGraphicItemsState(GraphicItemState::NO_EVENT, false);
+            mapPixmapItem->setState(GraphicItemState::EDITING_PERM);
+
+            /// sets the state of the point of the map to make it draggable
+            displaySelectedPointView->setState(GraphicItemState::EDITING_PERM);
+            displaySelectedPointView->setFlag(QGraphicsItem::ItemIsMovable, true);
+
+            leftMenu->getDisplaySelectedPoint()->getActionButtons()->getMinusButton()->setEnabled(false);
+            leftMenu->getDisplaySelectedPoint()->getActionButtons()->getMinusButton()->setToolTip("");
+            leftMenu->getDisplaySelectedPoint()->getActionButtons()->getMapButton()->setEnabled(false);
+            leftMenu->getDisplaySelectedPoint()->getActionButtons()->getMapButton()->setToolTip("");
+            leftMenu->getDisplaySelectedPoint()->getActionButtons()->getMapButton()->setChecked(true);
+
+            /// to force the user to click either the save or the cancel button
+            leftMenu->getDisplaySelectedPoint()->getActionButtons()->getEditButton()->setEnabled(false);
+            leftMenu->getDisplaySelectedPoint()->getActionButtons()->getEditButton()->setToolTip("You can choose to save or discard your modifications by clicking the save (Enter) and cancel button respectively");
+
+            leftMenu->getDisplaySelectedPoint()->displayPointInfo();
+
+            leftMenu->getDisplaySelectedPoint()->getActionButtons()->getEditButton()->setChecked(true);
             leftMenu->getDisplaySelectedPoint()->getNameEdit()->setReadOnly(false);
-
-        /// sets the state of the map and the other widgets to prevent other concurrent actions
-        setGraphicItemsState(GraphicItemState::NO_EVENT, false);
-        mapPixmapItem->setState(GraphicItemState::EDITING_PERM);
-
-        /// sets the state of the point of the map to make it draggable
-        displaySelectedPointView->setState(GraphicItemState::EDITING_PERM);
-        displaySelectedPointView->setFlag(QGraphicsItem::ItemIsMovable, true);
-
-        leftMenu->getDisplaySelectedPoint()->getActionButtons()->getMinusButton()->setEnabled(false);
-        leftMenu->getDisplaySelectedPoint()->getActionButtons()->getMinusButton()->setToolTip("");
-        leftMenu->getDisplaySelectedPoint()->getActionButtons()->getMapButton()->setEnabled(false);
-        leftMenu->getDisplaySelectedPoint()->getActionButtons()->getMapButton()->setToolTip("");
-        leftMenu->getDisplaySelectedPoint()->getActionButtons()->getMapButton()->setChecked(true);
-
-        /// to force the user to click either the save or the cancel button
-        leftMenu->getDisplaySelectedPoint()->getActionButtons()->getEditButton()->setEnabled(false);
-        leftMenu->getDisplaySelectedPoint()->getActionButtons()->getEditButton()->setToolTip("You can choose to save or discard your modifications by clicking the save (Enter) and cancel button respectively");
-
-        leftMenu->getDisplaySelectedPoint()->displayPointInfo();
-
-        leftMenu->getDisplaySelectedPoint()->getActionButtons()->getEditButton()->setChecked(true);
-        leftMenu->getDisplaySelectedPoint()->getNameEdit()->setReadOnly(false);
-        leftMenu->getDisplaySelectedPoint()->getCancelButton()->show();
-        leftMenu->getDisplaySelectedPoint()->getSaveButton()->show();
-        leftMenu->getDisplaySelectedPoint()->show();
-        leftMenu->getDisplaySelectedGroup()->hide();
-        switchFocus(leftMenu->getDisplaySelectedPoint()->getPointName(),leftMenu->getDisplaySelectedPoint(), MainWindow::WidgetType::POINT);
+            leftMenu->getDisplaySelectedPoint()->getCancelButton()->show();
+            leftMenu->getDisplaySelectedPoint()->getSaveButton()->show();
+            leftMenu->getDisplaySelectedPoint()->show();
+            leftMenu->getDisplaySelectedGroup()->hide();
+            switchFocus(leftMenu->getDisplaySelectedPoint()->getPointName(),leftMenu->getDisplaySelectedPoint(), MainWindow::WidgetType::POINT);
+        }
     }
 }
 
@@ -2819,8 +2839,9 @@ void MainWindow::updatePoint(void){
     leftMenu->getDisplaySelectedPoint()->getActionButtons()->getMapButton()->setToolTip("Click to hide this point");
 
     DisplaySelectedPoint* selectedPoint = leftMenu->getDisplaySelectedPoint();
-
+    qDebug() << "updating point" << selectedPoint->getPointName();
     std::shared_ptr<PointView> displaySelectedPointView = points->findPointView(selectedPoint->getPointName());
+    //selectedPoint->setPointName(leftMenu->getDisplaySelectedPoint()->getNameEdit()->text());
     /// resets the color of the pointView
     if(displaySelectedPointView){
         displaySelectedPointView->setPixmap(PointView::PixmapType::NORMAL);
@@ -2837,8 +2858,8 @@ void MainWindow::updatePoint(void){
         int yLength = leftMenu->getDisplaySelectedPoint()->getYLabel()->text().count();
 
         displaySelectedPointView->getPoint()->setPosition(
-                    leftMenu->getDisplaySelectedPoint()->getXLabel()->text().right(xLength-4).toFloat(),
-                    leftMenu->getDisplaySelectedPoint()->getYLabel()->text().right(yLength-4).toFloat());
+        leftMenu->getDisplaySelectedPoint()->getXLabel()->text().right(xLength-4).toFloat(),
+        leftMenu->getDisplaySelectedPoint()->getYLabel()->text().right(yLength-4).toFloat());
     }
 
     /// save changes to the file
@@ -2878,7 +2899,7 @@ void MainWindow::updatePoint(void){
     setMessageTop(TEXT_COLOR_SUCCESS, "Your point has been modified");
     delay(1500);
     setMessageTop(TEXT_COLOR_NORMAL, "");
-    topLayout->setLabelDelay(TEXT_COLOR_SUCCESS, "Your point has been modified",1500);
+    topLayout->setLabelDelay(TEXT_COLOR_SUCCESS, "Your point has been modified", 1500);
 
 }
 
