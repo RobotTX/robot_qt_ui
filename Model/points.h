@@ -60,6 +60,7 @@ public:
     bool isAPoint(const QString pointName) const;
     QVector<QString> getHomeNameFromGroup(const QString groupName) const;
     QString getGroupNameFromPointName(const QString pointName) const;
+    void setNormalPixmaps(void);
 
 private:
     std::shared_ptr<Groups> groups;
