@@ -83,7 +83,9 @@ QAbstractButton* PointButtonGroup::getButtonByName(const QString name) const {
 }
 
 int PointButtonGroup::getButtonIdByName(const QString name) const {
+    qDebug() << "PointButtonGroup::getButtonIdByName" << getButtonGroup()->buttons().size() << name;
     for(int i = 0; i < getButtonGroup()->buttons().size(); i++){
+        qDebug() << i << getButtonGroup()->button(i)->text();
         if(getButtonGroup()->button(i)->text().compare(name) == 0)
             return i;
     }
