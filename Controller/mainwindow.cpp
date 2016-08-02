@@ -1694,7 +1694,7 @@ void MainWindow::initializePoints(){
  * set the selected point, could be a temporary point or a point that already exists and that might be edited
  */
 void MainWindow::setSelectedPoint(QString pointName){
-    qDebug() << "setSelectedPoint called";
+    qDebug() << "MainWindow::setSelectedPoint called";
 
     resetFocus();
     std::shared_ptr<PointView> displaySelectedPointView = points->findPointView(leftMenu->getDisplaySelectedPoint()->getPointName());
@@ -1706,6 +1706,7 @@ void MainWindow::setSelectedPoint(QString pointName){
         //qDebug() << "editing";
         leftMenu->show();
         std::shared_ptr<PointView> pointView = points->findPointView(pointName);
+        qDebug() << (pointView == NULL);
         if(pointView){
             selectedPoint = pointView;
             selectedPoint->setState(GraphicItemState::EDITING_PERM);
