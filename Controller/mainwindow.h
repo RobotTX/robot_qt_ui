@@ -134,7 +134,7 @@ private slots:
     void playSelectedRobot(int robotNb);
     void askForDeleteGroupConfirmation(const QString group);
     void askForDeletePointConfirmation(const QString index);
-    void displayPointEvent(std::shared_ptr<PointView> pointView);
+    void displayPointEvent(QString pointName);
     void askForDeleteDefaultGroupPointConfirmation(const QString index);
     void displayGroupMapEvent(void);
     void pathSaved(bool execPath);

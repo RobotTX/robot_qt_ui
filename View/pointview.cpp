@@ -26,7 +26,7 @@ PointView::PointView(const std::shared_ptr<Point> &_point, QGraphicsItem *parent
 }
 
 void PointView::mousePressEvent(QGraphicsSceneMouseEvent *event){
-    qDebug() << "state " << state;
+    qDebug() << "pv" << point->getName() << "state " << state;
         if(state == GraphicItemState::NO_STATE){
             if(event->button() == Qt::RightButton){
                 qDebug() << "right click on point NO STATE" ;

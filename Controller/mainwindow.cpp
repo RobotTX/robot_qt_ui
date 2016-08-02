@@ -2294,11 +2294,11 @@ void MainWindow::askForDeleteGroupConfirmation(QString index){
     }
 }
 
-void MainWindow::displayPointEvent(std::shared_ptr<PointView> pointView){
-    qDebug() << "MainWindow::displayPointEvent called";
+void MainWindow::displayPointEvent(QString pointName){
+    qDebug() << "MainWindow::displayPointEvent called" << pointName;
     /// hides the temporary point
-
-    //leftMenu->getDisplaySelectedPoint()->setPointView(pointView);
+    std::shared_ptr<PointView> pointView = points->findPointView(pointName);
+    leftMenu->getDisplaySelectedPoint()->setPointView(pointView);
     if(pointView && !(*(pointView->getPoint()) == *(points->getTmpPointView()->getPoint())))
         points->displayTmpPoint(false);
     /// resets the color of the previous selected point if such point exists
