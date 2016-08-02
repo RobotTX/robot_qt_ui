@@ -1849,6 +1849,7 @@ void MainWindow::editPointButtonEvent(){
     /// hide the temporary point on the map
     std::shared_ptr<PointView> displaySelectedPointView = points->findPointView(leftMenu->getDisplaySelectedPoint()->getPointName());
     qDebug() << "selected point to edit " << leftMenu->getDisplaySelectedPoint()->getPointName();
+    displaySelectedPointView->setOriginalPosition(displaySelectedPointView->getPoint()->getPosition());
 
     QMapIterator<QString, std::shared_ptr<QVector<std::shared_ptr<PointView>>>> i(*points->getGroups());
     while (i.hasNext()) {
@@ -1856,7 +1857,6 @@ void MainWindow::editPointButtonEvent(){
         for(int j = 0; j < i.value()->size(); j++)
             qDebug() << i.key() << i.value()->at(j)->getPoint()->getName();
     }
-
 
     if(displaySelectedPointView && !(*(displaySelectedPointView->getPoint()) == *(points->getTmpPointView()->getPoint())))
         points->displayTmpPoint(false);
@@ -1893,7 +1893,6 @@ void MainWindow::editPointButtonEvent(){
     /// sets the state of the point of the map to make it draggable
     displaySelectedPointView->setState(GraphicItemState::EDITING_PERM);
     displaySelectedPointView->setFlag(QGraphicsItem::ItemIsMovable, true);
-
 }
 
 /**
@@ -2651,6 +2650,7 @@ void MainWindow::removePointFromInformationMenu(void){
                         pointsLeftWidget->getGroupButtonGroup()->updateButtons();
                         backEvent();
 
+
                     } else {
                         /// need to remove the point from the map
                         pointView->hide();
@@ -2688,6 +2688,7 @@ void MainWindow::removePointFromInformationMenu(void){
                             }
                         }
 
+                        setTemporaryMessageTop(TEXT_COLOR_SUCCESS, "You have deleted the point : " + pointName + " from the group : " + pointIndexes.first, 2500);
                     }
                 } else {
                     qDebug() << "could not find this point";
@@ -2722,7 +2723,7 @@ void MainWindow::editPointFromGroupMenu(void){
     QString groupName = leftMenu->getDisplaySelectedGroup()->getNameLabel()->text();
 
     qDebug() << "working on group" << groupName << "and id" << leftMenu->getDisplaySelectedGroup()->getPointButtonGroup()->getButtonGroup()->checkedId();
-    int point = leftMenu->getDisplaySelectedGroup()->getPointButtonGroup()->getButtonGroup()->checkedId();
+
     QString pointName = leftMenu->getDisplaySelectedGroup()->getPointButtonGroup()->getButtonGroup()->checkedButton()->text();
 
     if(pointName.compare("") != 0){
@@ -2737,11 +2738,15 @@ void MainWindow::editPointFromGroupMenu(void){
         }
         qDebug() << "name point u trying to edit" << pointName;
         std::shared_ptr<PointView> displaySelectedPointView = points->findPointView(pointName);
+        displaySelectedPointView->setOriginalPosition(displaySelectedPointView->getPoint()->getPosition());
+
         if(displaySelectedPointView){
-            displaySelectedPointView->setPixmap(PointView::PixmapType::HOVER);
-            displaySelectedPointView->show();
+            qDebug() << "about to put u orange";
 
             leftMenu->getDisplaySelectedPoint()->setPointView(displaySelectedPointView, robotName);
+
+            displaySelectedPointView->setPixmap(PointView::PixmapType::HOVER);
+            displaySelectedPointView->show();
 
             /// update the file
             XMLParser parser(XML_PATH);
@@ -2912,6 +2917,7 @@ void MainWindow::updatePoint(void){
  * called when a user discard the changes made about a point
  */
 void MainWindow::cancelEvent(void){
+    qDebug() << "cancel edit point event called";
     leftMenu->getCloseButton()->setEnabled(true);
     leftMenu->getReturnButton()->setEnabled(true);
     topLayout->setEnabled(true);
@@ -2919,6 +2925,9 @@ void MainWindow::cancelEvent(void){
     std::shared_ptr<PointView> displaySelectedPointView = points->findPointView(leftMenu->getDisplaySelectedPoint()->getPointName());
     if(displaySelectedPointView){
         displaySelectedPointView->setPixmap(PointView::PixmapType::NORMAL);
+        qDebug() << "about to reset your position";
+
+        displaySelectedPointView->getPoint()->setPosition(displaySelectedPointView->getOriginalPosition());
 
         /// to change the aspect of the point name
         leftMenu->getDisplaySelectedPoint()->getNameEdit()->setAutoFillBackground(true);
@@ -3544,4 +3553,10 @@ void MainWindow::centerMap(){
 
 void MainWindow::settingBtnSlot(){
     qDebug() << "settingBtnSlot called";
+}
+
+void MainWindow::setTemporaryMessageTop(const QString type, const QString message, const int ms){
+    setMessageTop(type, message);
+    delay(ms);
+    setMessageTop(TEXT_COLOR_NORMAL, "");
 }
