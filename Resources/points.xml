@@ -4,20 +4,20 @@
         <name>first group</name>
         <point>
             <name>A</name>
-            <x>50</x>
-            <y>50</y>
+            <x>905</x>
+            <y>1146</y>
             <displayed>1</displayed>
         </point>
         <point>
             <name>Ma point</name>
-            <x>75</x>
-            <y>75</y>
+            <x>1150</x>
+            <y>885</y>
             <displayed>1</displayed>
         </point>
         <point>
             <name>A new point</name>
-            <x>100</x>
-            <y>100</y>
+            <x>1150</x>
+            <y>1200</y>
             <displayed>1</displayed>
         </point>
     </group>
@@ -25,14 +25,14 @@
         <name>Second group</name>
         <point>
             <name>Fanny</name>
-            <x>125</x>
-            <y>125</y>
+            <x>940</x>
+            <y>990</y>
             <displayed>1</displayed>
         </point>
         <point>
             <name>Michel</name>
-            <x>150</x>
-            <y>150</y>
+            <x>1146</x>
+            <y>1209</y>
             <displayed>0</displayed>
         </point>
     </group>
@@ -40,20 +40,20 @@
         <name>No Group</name>
         <point>
             <name>Un point</name>
-            <x>150</x>
-            <y>175</y>
+            <x>1065</x>
+            <y>1140</y>
             <displayed>1</displayed>
         </point>
         <point>
             <name>Another point</name>
-            <x>150</x>
-            <y>200</y>
+            <x>970</x>
+            <y>1160</y>
             <displayed>1</displayed>
         </point>
         <point>
             <name>A final point</name>
-            <x>150</x>
-            <y>225</y>
+            <x>1120</x>
+            <y>948</y>
             <displayed>1</displayed>
         </point>
     </group>
