@@ -103,9 +103,6 @@ void DisplaySelectedPoint::displayPointInfo(void) {
         posXLabel->setText("X : " + QString::number(pointView->getPoint()->getPosition().getX(), 'f', 1));
         posYLabel->setText("Y : " + QString::number(pointView->getPoint()->getPosition().getY(), 'f', 1));
         nameEdit->setText(pointView->getPoint()->getName());
-    } else {
-        qDebug() << "DisplaySelectedPoint::displayPointInfo no pointView found with this pointName :" << pointView->getPoint()->getName();
-        pointView->getPoint()->setName("");
     }
 }
 
@@ -174,11 +171,6 @@ void DisplaySelectedPoint::resetWidget(){
             homeWidget->show();
         } else
             homeWidget->hide();
-    } else {
-        if(pointView){
-            qDebug() << "DisplaySelectedPoint::resetWidget no pointView found with this pointName :" << pointView->getPoint()->getName();
-            pointView->getPoint()->setName("");
-        }
     }
     emit resetState(GraphicItemState::NO_STATE, true);
 }
@@ -230,11 +222,9 @@ int DisplaySelectedPoint::checkPointName(QString name) {
     return 3;
 }
 
-void DisplaySelectedPoint::setPointName(const QString _pointName, const QString robotName) {
+void DisplaySelectedPoint::setPointView(const std::shared_ptr<PointView>& _pointView, const QString robotName) {
     qDebug() << "DisplaySelectedPoint::setPointView called";
-    pointView->getPoint()->setName(_pointName);/*
-    std::shared_ptr<PointView> pointView = points->findPointView(pointView->getPoint()->getName());
-    std::shared_ptr<Point> point = pointView->getPoint();
+    pointView = _pointView;
     if(pointView){
         if(pointView->getPoint()->isHome()){
             homeWidget->show();
@@ -243,10 +233,7 @@ void DisplaySelectedPoint::setPointName(const QString _pointName, const QString 
             homeWidget->hide();
             robotBtn->setText("");
         }
-    } else {
-        qDebug() << "DisplaySelectedPoint::setPointName no pointView found with this pointName :" << pointView->getPoint()->getName();
-        pointView->getPoint()->setName("");
-    }*/
+    }
 }
 
 QString DisplaySelectedPoint::formatName(const QString name) const {
