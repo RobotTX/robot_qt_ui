@@ -1112,7 +1112,7 @@ void MainWindow::editHomeEvent(){
 
 void MainWindow::homeSelected(QString pointName){
     qDebug() << "MainWindow::homeSelected called" << pointName;
-    /*std::shared_ptr<PointView> pointView = points->findPointView(pointName);
+    std::shared_ptr<PointView> pointView = points->findPointView(pointName);
     if(pointView){
         int ret = openConfirmMessage("Do you really want to set the point " + pointView->getPoint()->getName() +
                                      + " (" + QString::number(pointView->getPoint()->getPosition().getX(),'f', 1) + ","
@@ -1172,12 +1172,12 @@ void MainWindow::homeSelected(QString pointName){
         }
     } else {
         qDebug() << "MainWindow::homeSelected the pointview could not be found :" << pointName;
-    }*/
+    }
 }
 
 void MainWindow::homeEdited(QString pointName){
     qDebug() << "MainWindow::homeEdited called" << pointName;
-/*
+
     std::shared_ptr<PointView> pointView = points->findPointView(pointName);
     if(pointView)
         editSelectedRobotWidget->setHome(pointView);
@@ -1186,7 +1186,7 @@ void MainWindow::homeEdited(QString pointName){
 
     editSelectedRobotWidget->getHomeBtn()->setText(pointName);
     editSelectedRobotWidget->enableAll();
-    setEnableAll(true, GraphicItemState::NO_EVENT);*/
+    setEnableAll(true, GraphicItemState::NO_EVENT);
 }
 
 void MainWindow::showHome(){
