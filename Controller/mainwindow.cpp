@@ -3002,6 +3002,10 @@ void MainWindow::removePointFromGroupMenu(void){
  */
 void MainWindow::displayPointFromGroupMenu(){
 
+    qDebug() << "1" << (leftMenu->getDisplaySelectedGroup() == NULL);
+    qDebug() << "2" << (leftMenu->getDisplaySelectedGroup()->getPointButtonGroup() == NULL);
+    qDebug() << "3" << (leftMenu->getDisplaySelectedGroup()->getPointButtonGroup()->getButtonGroup() == NULL);
+    qDebug() << "4" << (leftMenu->getDisplaySelectedGroup()->getPointButtonGroup()->getButtonGroup()->checkedButton() == NULL);
     const QString pointName = leftMenu->getDisplaySelectedGroup()->getPointButtonGroup()->getButtonGroup()->checkedButton()->text();
     qDebug() << "displaypointfromgroupmenu event called" << pointName ;
 
