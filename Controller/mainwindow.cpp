@@ -2423,6 +2423,7 @@ void MainWindow::displayPointMapEvent(){
     std::shared_ptr<PointView> pointView = points->findPointView(leftMenu->getDisplaySelectedPoint()->getPointName());
     std::pair<QString, int> pointIndexes = points->findPointIndexes(pointView->getPoint()->getName());
     qDebug() << "Indexes are " << pointIndexes.first << pointIndexes.second;
+    int checkedId = pointsLeftWidget->getGroupButtonGroup()->getButtonIdByName(pointIndexes.first);
 
     if(pointView && pointView->getPoint()){
         if(pointView->isVisible()){
@@ -2439,15 +2440,13 @@ void MainWindow::displayPointMapEvent(){
 
             /// it's a point that belongs to a group
             if(pointIndexes.first.compare(NO_GROUP_NAME) != 0){
-                if(pointsLeftWidget->getGroupButtonGroup()->getButtonByName(pointIndexes.first) != NULL)
-                    pointsLeftWidget->getGroupButtonGroup()->getButtonByName(pointIndexes.first)->setIcon(QIcon(":/icons/folder_space.png"));
+                pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(checkedId)->setIcon(QIcon(":/icons/folder_space.png"));
                 qDebug() << pointIndexes.second;
-                pointsLeftWidget->getGroupButtonGroup()->getButtonByName(pointIndexes.first)->setIcon(QIcon(":/icons/space_point.png"));
+                pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(checkedId)->setIcon(QIcon(":/icons/space_point.png"));
                 //leftMenu->getDisplaySelectedGroup()->getPointButtonGroup()->getButtonGroup()->button(pointIndexes.second)->setIcon(QIcon(":/icons/space_point.png"));
             } else {
                 /// it's an isolated point
-                if(pointsLeftWidget->getGroupButtonGroup()->getButtonByName(pointView->getPoint()->getName()) != NULL)
-                    pointsLeftWidget->getGroupButtonGroup()->getButtonByName(pointView->getPoint()->getName())->setIcon(QIcon(":/icons/space_point.png"));
+                pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(checkedId)->setIcon(QIcon(":/icons/space_point.png"));
             }
 
         } else {
@@ -2463,15 +2462,13 @@ void MainWindow::displayPointMapEvent(){
             /// it's a point that belongs to a group
             if(pointIndexes.first.compare(NO_GROUP_NAME) != 0){
                 qDebug() << pointIndexes.second;
-                pointsLeftWidget->getGroupButtonGroup()->getButtonByName(pointIndexes.first)->setIcon(QIcon(":/icons/eye_point.png"));
+                pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(checkedId)->setIcon(QIcon(":/icons/eye_point.png"));
                 //leftMenu->getDisplaySelectedGroup()->getPointButtonGroup()->getButtonGroup()->)->setIcon(QIcon(":/icons/eye_point.png"));
                 /// we check whether or not the entire group is displayed and update the points left widget accordingly by adding a tick Icon or not
-                if(points->isDisplayed(pointIndexes.first) && pointsLeftWidget->getGroupButtonGroup()->getButtonByName(pointIndexes.first)!= NULL)
-                    pointsLeftWidget->getGroupButtonGroup()->getButtonByName(pointIndexes.first)->setIcon(QIcon(":/icons/folder_eye.png"));
+                pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(checkedId)->setIcon(QIcon(":/icons/folder_eye.png"));
             } else {
                 /// it's an isolated point
-                if(pointsLeftWidget->getGroupButtonGroup()->getButtonByName(pointView->getPoint()->getName()) != NULL)
-                    pointsLeftWidget->getGroupButtonGroup()->getButtonByName(pointView->getPoint()->getName())->setIcon(QIcon(":/icons/eye_point.png"));
+                pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(checkedId)->setIcon(QIcon(":/icons/eye_point.png"));
             }
         }
     } else {
@@ -3004,7 +3001,7 @@ void MainWindow::displayPointFromGroupMenu(){
     const QString pointName = leftMenu->getDisplaySelectedGroup()->getPointButtonGroup()->getButtonGroup()->checkedButton()->text();
     qDebug() << "displaypointfromgroupmenu event called" << pointName ;
 
-    int checkedId = leftMenu->getDisplaySelectedGroup()->getPointButtonGroup()->getButtonGroup()->checkedId();
+    int checkedId = leftMenu->getDisplaySelectedGroup()->getPointButtonGroup()->getButtonIdByName(pointName);
 
     if(pointName.compare("") == 0){
         std::shared_ptr<PointView> currentPointView = points->findPointView(pointName);
@@ -3077,7 +3074,7 @@ void MainWindow::openInterdictionOfPointRemovalMessage(const QString pointName, 
 
 /**
  * @brief MainWindow::doubleClickOnRobot
- * @param checkedId
+ * @param id
  * does the same as clicking on a robot and then on the eye button
  */
 void MainWindow::doubleClickOnRobot(QString id){
@@ -3087,7 +3084,7 @@ void MainWindow::doubleClickOnRobot(QString id){
 
 /**
  * @brief MainWindow::doubleClickOnPoint
- * @param checkedId
+ * @param pointName
  * does the same as clicking on a point and then on the eye button
  */
 void MainWindow::doubleClickOnPoint(QString pointName){
@@ -3281,10 +3278,10 @@ void MainWindow::modifyGroupWithEnter(QString name){
         pointsLeftWidget->disableButtons();
 
         /// updates view
-        if(pointsLeftWidget->getGroupButtonGroup()->getButtonByName(pointsLeftWidget->getGroupButtonGroup()->getEditedGroupName()) != NULL){
-            pointsLeftWidget->getGroupButtonGroup()->getButtonByName(pointsLeftWidget->getGroupButtonGroup()->getEditedGroupName())->show();
-            pointsLeftWidget->getGroupButtonGroup()->getButtonByName(pointsLeftWidget->getGroupButtonGroup()->getEditedGroupName())->setText(name);
-        }
+        int checkedId = pointsLeftWidget->getGroupButtonGroup()->getButtonIdByName(pointsLeftWidget->getGroupButtonGroup()->getEditedGroupName());
+        pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(checkedId)->show();
+        pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(checkedId)->setText(name);
+
 
         pointsLeftWidget->getGroupButtonGroup()->getModifyEdit()->hide();
 
@@ -3311,6 +3308,7 @@ void MainWindow::modifyGroupAfterClick(QString name){
     pointsLeftWidget->disableButtons();
     pointsLeftWidget->getGroupButtonGroup()->getModifyEdit()->hide();
     leftMenu->getReturnButton()->setEnabled(true);
+    int checkedId = pointsLeftWidget->getGroupButtonGroup()->getButtonIdByName(pointsLeftWidget->getGroupButtonGroup()->getEditedGroupName());
 
     if(pointsLeftWidget->checkGroupName(name.simplified()) == 0){
         /// saves to file
@@ -3318,8 +3316,7 @@ void MainWindow::modifyGroupAfterClick(QString name){
         parser.save(*points);
 
         /// updates view
-        if(pointsLeftWidget->getGroupButtonGroup()->getButtonByName(pointsLeftWidget->getGroupButtonGroup()->getEditedGroupName()) != NULL)
-            pointsLeftWidget->getGroupButtonGroup()->getButtonByName(pointsLeftWidget->getGroupButtonGroup()->getEditedGroupName())->setText(name);
+        pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(checkedId)->setText(name);
 
         topLayout->setLabelDelay(TEXT_COLOR_SUCCESS, "You have successfully modified the name of your group",1500);
     } else if(pointsLeftWidget->checkGroupName(name) == 1){
@@ -3327,9 +3324,7 @@ void MainWindow::modifyGroupAfterClick(QString name){
     } else {
         topLayout->setLabelDelay(TEXT_COLOR_DANGER, "You cannot choose : " + name.simplified() + " as a new name for your group because another group already has this name",2500);
     }
-
-    if(pointsLeftWidget->getGroupButtonGroup()->getButtonByName(pointsLeftWidget->getGroupButtonGroup()->getEditedGroupName()) != NULL)
-        pointsLeftWidget->getGroupButtonGroup()->getButtonByName(pointsLeftWidget->getGroupButtonGroup()->getEditedGroupName())->show();
+    pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(checkedId)->show();
 }
 
 void MainWindow::enableReturnAndCloseButtons(){
