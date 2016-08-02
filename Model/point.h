@@ -27,6 +27,10 @@ public:
     QString getName(void) const { return name; }
 
     bool isPermanent(void) const { return (type == PERM); }
+    bool isTemporary(void) const { return (type == TEMP); }
+    bool isHome(void) const { return (type == HOME); }
+    bool isPath(void) const { return (type == PATH); }
+
     PointType getType(void) const { return type; }
     void setType(const PointType _type) { type = _type; }
 
@@ -34,7 +38,6 @@ public:
     void setPosition(const double x, const double y) { position.setX(x); position.setY(y); }
     void setPosition(const Position _position) { position = _position; }
     bool setHome(const PointType _type, const QString robotName);
-    bool isHome(void) const { return (type == HOME); }
 
     /// a helper function to overload the << operator
     void display(std::ostream& stream) const;

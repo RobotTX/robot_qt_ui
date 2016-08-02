@@ -180,8 +180,8 @@ private slots:
     void setMessageTop(const QString msgType, const QString msg);
     void setLastMessage(void) { setMessageTop(topLayout->getLastMessage().first, topLayout->getLastMessage().second); }
     void setMessageCreationGroup(QString type, QString message);
-    void homeSelected(QString pointName, bool temporary);
-    void homeEdited(QString pointView, bool temporary);
+    void homeSelected(QString pointName);
+    void homeEdited(QString pointView);
     void goHomeBtnEvent();
     void viewPathSelectedRobot(int robotNb, bool checked);
     void editHomeEvent();

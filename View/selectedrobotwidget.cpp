@@ -15,6 +15,7 @@
 #include "topleftmenu.h"
 #include "customscrollarea.h"
 #include "buttonmenu.h"
+#include "View/pointview.h"
 
 
 SelectedRobotWidget::SelectedRobotWidget(QMainWindow* parent): QWidget(parent){
@@ -151,7 +152,7 @@ void SelectedRobotWidget::setSelectedRobot(RobotView* const& _robotView){
 
     /// If the robot has a home, we display the name of the point, otherwise a default text
     if(robotView->getRobot()->getHome() != NULL){
-        homeLabel2->setText(robotView->getRobot()->getHome()->getName());
+        homeLabel2->setText(robotView->getRobot()->getHome()->getPoint()->getName());
         goHome->show();
 
     } else {

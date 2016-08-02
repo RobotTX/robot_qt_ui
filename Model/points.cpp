@@ -181,6 +181,18 @@ void Points::addPoint(const QString groupName, const QString pointName, const do
     }
 }
 
+void Points::addPoint(QString groupName, std::shared_ptr<PointView> pointView){
+    qDebug() << "Points::addPoint called with pointView";
+
+    if(!groups->empty() && groups->contains(groupName)){
+        groups->value(groupName)->push_back(pointView);
+    } else {
+        std::shared_ptr<QVector<std::shared_ptr<PointView>>> vector = std::shared_ptr<QVector<std::shared_ptr<PointView>>>(new QVector<std::shared_ptr<PointView>>());
+        vector->push_back(pointView);
+        groups->insert(groupName, vector);
+    }
+}
+
 int Points::count() const {
     int nbPoints = 0;
     QMapIterator<QString, std::shared_ptr<QVector<std::shared_ptr<PointView>>>> i(*groups);
@@ -279,3 +291,8 @@ void Points::setNormalPixmaps(){
         }
     }
 }
+
+void Points::addTmpPoint(MapView *mapView, MainWindow *mainWindow){
+    addPoint(TMP_GROUP_NAME, "tmpPoint", 0, 0, false, Point::PointType::TEMP, mapView, mainWindow);
+}
+

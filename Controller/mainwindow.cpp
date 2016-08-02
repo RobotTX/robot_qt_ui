@@ -87,8 +87,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     QPixmap pixmap = QPixmap::fromImage(map->getMapImage());
     mapPixmapItem = new MapView(pixmap, QSize(geometry().width(), geometry().height()), map, this);
     connect(mapPixmapItem, SIGNAL(addPathPointMapView(Point*)), this, SLOT(addPathPoint(Point*)));
-    connect(mapPixmapItem, SIGNAL(homeSelected(QString, bool)), this, SLOT(homeSelected(QString, bool)));
-    connect(mapPixmapItem, SIGNAL(homeEdited(QString, bool)), this, SLOT(homeEdited(QString, bool)));
+    connect(mapPixmapItem, SIGNAL(homeSelected(QString)), this, SLOT(homeSelected(QString)));
+    connect(mapPixmapItem, SIGNAL(homeEdited(QString)), this, SLOT(homeEdited(QString)));
 
 
 
@@ -1101,7 +1101,7 @@ void MainWindow::editHomeEvent(){
     } else {
         setMessageTop(TEXT_COLOR_NORMAL,"");
         if(selectedRobot->getRobot()->getHome() != NULL){
-            editSelectedRobotWidget->getHomeBtn()->setText(selectedRobot->getRobot()->getHome()->getName());
+            editSelectedRobotWidget->getHomeBtn()->setText(selectedRobot->getRobot()->getHome()->getPoint()->getName());
         } else {
             editSelectedRobotWidget->getHomeBtn()->setText("Add home");
         }
@@ -1110,85 +1110,83 @@ void MainWindow::editHomeEvent(){
     }
 }
 
-void MainWindow::homeSelected(QString pointName, bool temporary){
-    qDebug() << "homeSelected called" << pointName;
-/*
-    int ret = openConfirmMessage("Do you really want to set the point " + pointView->getPoint()->getName() +
-                                 + " (" + QString::number(pointView->getPoint()->getPosition().getX(),'f', 1) + ","
-                                 + QString::number(pointView->getPoint()->getPosition().getY(),'f', 1) + ") as the home for "
-                                 + selectedRobot->getRobot()->getName() +" ?");
-    switch(ret){
-        case QMessageBox::Cancel :
-            pointsLeftWidget->getActionButtons()->getMinusButton()->setChecked(false);
-            if(temporary){
-                delete pointView;
-            }
-        break;
-        case QMessageBox::Ok : {
+void MainWindow::homeSelected(QString pointName){
+    qDebug() << "MainWindow::homeSelected called" << pointName;
+    /*std::shared_ptr<PointView> pointView = points->findPointView(pointName);
+    if(pointView){
+        int ret = openConfirmMessage("Do you really want to set the point " + pointView->getPoint()->getName() +
+                                     + " (" + QString::number(pointView->getPoint()->getPosition().getX(),'f', 1) + ","
+                                     + QString::number(pointView->getPoint()->getPosition().getY(),'f', 1) + ") as the home for "
+                                     + selectedRobot->getRobot()->getName() +" ?");
+        switch(ret){
+            case QMessageBox::Cancel :
+                pointsLeftWidget->getActionButtons()->getMinusButton()->setChecked(false);
+            break;
+            case QMessageBox::Ok : {
 
-            bool done = false;
-            if(temporary){
-                qDebug() << "Tmp point";
-                if(points->count() > 0 && pointViews->getGroups().size() > 0){
+                bool done = false;
+                if(pointView->getPoint()->isTemporary()){
+                    qDebug() << "Tmp point";
                     pointView->getPoint()->setHome(Point::PointType::HOME, selectedRobot->getRobot()->getName());
-                    points->getGroups().at(points->count()-1)->addPoint(pointView->getPoint());
-                    XMLParser parserPoints(XML_PATH, mapPixmapItem);
+
+                    points->addPoint(NO_GROUP_NAME, points->getGroups()->value(TMP_GROUP_NAME)->takeFirst());
+                    points->addTmpPoint(mapPixmapItem, this);
+
+                    XMLParser parserPoints(XML_PATH);
                     parserPoints.save(*points);
 
-                    //pointViews->setPoints(points);
-                    pointViews->getGroups().at(pointViews->getGroups().size()-1)->addPointView(pointView);
-                    done = true;
-                }
-            } else {
-                qDebug() << "Permanent point";
-                if(pointView->getPoint()->setHome(Point::PointType::HOME, selectedRobot->getRobot()->getName())){
-                    XMLParser parserPoints(XML_PATH, mapPixmapItem);
-                    parserPoints.save(*points);
                     done = true;
                 } else {
-                    setMessageTop(TEXT_COLOR_DANGER, "Sorry, this point is already a home\nPlease select another");
-                }
-            }
-
-            pointsLeftWidget->updateGroupButtonGroup(*points);
-
-            if(done){
-                setMessageTop(TEXT_COLOR_SUCCESS, selectedRobot->getRobot()->getName() + " now has a new home");
-
-                if(selectedRobot->getRobot()->getHome() != NULL){
-                    selectedRobot->getRobot()->getHome()->setHome(Point::PointType::PERM, "");
+                    qDebug() << "Permanent point";
+                    if(pointView->getPoint()->setHome(Point::PointType::HOME, selectedRobot->getRobot()->getName())){
+                        XMLParser parserPoints(XML_PATH);
+                        parserPoints.save(*points);
+                        done = true;
+                    } else {
+                        setMessageTop(TEXT_COLOR_DANGER, "Sorry, this point is already a home\nPlease select another");
+                    }
                 }
 
-                selectedRobot->getRobot()->setHome(pointView->getPoint());
+                pointsLeftWidget->updateGroupButtonGroup();
 
-                //selectedRobotWidget->getHomeBtn()->setText("Select a home");
-                selectedRobotWidget->enable();
-                setEnableAll(true);
-                hideAllWidgets();
-                selectedRobotWidget->setSelectedRobot(selectedRobot);
-                selectedRobotWidget->show();
+                if(done){
+                    setMessageTop(TEXT_COLOR_SUCCESS, selectedRobot->getRobot()->getName() + " now has a new home");
+
+                    if(selectedRobot->getRobot()->getHome() != NULL){
+                        selectedRobot->getRobot()->getHome()->getPoint()->setHome(Point::PointType::PERM, "");
+                    }
+
+                    selectedRobot->getRobot()->setHome(pointView);
+
+                    selectedRobotWidget->enable();
+                    setEnableAll(true);
+                    hideAllWidgets();
+                    selectedRobotWidget->setSelectedRobot(selectedRobot);
+                    selectedRobotWidget->show();
+                }
             }
+            break;
+            default:
+                qDebug() << "MainWindow::homeSelected should never be here";
+            break;
         }
-        break;
-        default:
-        // should never be here
-            qDebug() << " dafuk ?";
-        break;
+    } else {
+        qDebug() << "MainWindow::homeSelected the pointview could not be found :" << pointName;
     }*/
 }
 
-void MainWindow::homeEdited(QString pointName, bool temporary){
+void MainWindow::homeEdited(QString pointName){
     qDebug() << "MainWindow::homeEdited called" << pointName;
-
+/*
     std::shared_ptr<PointView> pointView = points->findPointView(pointName);
     if(pointView)
-        editSelectedRobotWidget->setHome(pointView, temporary);
+        editSelectedRobotWidget->setHome(pointView);
     else
         qDebug() << "MainWindow::homeEdited could not found the pointView :" << pointName;
 
     editSelectedRobotWidget->getHomeBtn()->setText(pointName);
     editSelectedRobotWidget->enableAll();
-    setEnableAll(true, GraphicItemState::NO_EVENT);
+    setEnableAll(true, GraphicItemState::NO_EVENT);*/
 }
 
 void MainWindow::showHome(){
@@ -1265,8 +1263,8 @@ void MainWindow::hideHome(void){
 void MainWindow::goHomeBtnEvent(){
     qDebug() << "go home robot " << selectedRobot->getRobot()->getName() << (selectedRobot->getRobot()->getHome() == NULL);
     // TODO change to go from the point saved in the robot files
-    float oldPosX = selectedRobot->getRobot()->getHome()->getPosition().getX();
-    float oldPosY = selectedRobot->getRobot()->getHome()->getPosition().getY();
+    float oldPosX = selectedRobot->getRobot()->getHome()->getPoint()->getPosition().getX();
+    float oldPosY = selectedRobot->getRobot()->getHome()->getPoint()->getPosition().getY();
 
     float newPosX = (oldPosX - ROBOT_WIDTH) * map->getResolution() + map->getOrigin().getX();
     float newPosY = (-oldPosY + map->getHeight() - ROBOT_WIDTH/2) * map->getResolution() + map->getOrigin().getY();
@@ -1370,7 +1368,7 @@ void MainWindow::robotIsDeadSlot(QString hostname,QString ip){
 
         /// if the robot had a home, make the point a normal point
         if(rv->getRobot()->getHome() != NULL)
-            rv->getRobot()->getHome()->setHome(Point::PointType::PERM, "");
+            rv->getRobot()->getHome()->getPoint()->setHome(Point::PointType::PERM, "");
         qDebug() << "home cleaned";
 
         /// if selected => if one of this robot related menu is open
@@ -1684,7 +1682,7 @@ void MainWindow::initializePoints(){
     /// retrieves the points from the xml file and stores them in the model
     XMLParser pParser(":/xml/points.xml");
     pParser.readPoints(points, mapPixmapItem, this);
-    points->addPoint(TMP_GROUP_NAME, "tmpPoint", 0, 0, false, Point::PointType::TEMP, mapPixmapItem, this);
+    points->addTmpPoint(mapPixmapItem, this);
     qDebug() << "Nb points after init :" << points->count();
     mapPixmapItem->setPoints(points);
 }
@@ -2076,7 +2074,7 @@ void MainWindow::editSelecPointBtnEvent(){
  */
 void MainWindow::pointSavedEvent(QString groupName, double x, double y, QString name){
 
-    qDebug() << "pointSavedEvent called" << groupName;
+    qDebug() << "MainWindow::pointSavedEvent called" << groupName;
     leftMenu->getCloseButton()->setEnabled(true);
     leftMenu->getReturnButton()->setEnabled(true);
 
@@ -2099,7 +2097,8 @@ void MainWindow::pointSavedEvent(QString groupName, double x, double y, QString 
     points->getTmpPointView()->hide();
 
     /// hide the creation widget
-    createPointWidget->hide();
+    hideAllWidgets();
+    leftMenu->hide();
 
     setMessageTop(TEXT_COLOR_SUCCESS, "You have created a new point");
 }

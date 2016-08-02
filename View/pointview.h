@@ -68,8 +68,8 @@ signals:
     void pointRightClicked(QString);
     void pointLeftClicked(QString);
     void addPointPath(PointView*);
-    void homeSelected(QString pointView, bool temporary);
-    void homeEdited(QString pointView, bool temporary);
+    void homeSelected(QString pointView);
+    void homeEdited(QString pointView);
     void moveTmpEditPathPoint();
     void editedPointPositionChanged(double, double);
     void pathPointChanged(double, double, PointView*);

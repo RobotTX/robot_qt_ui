@@ -41,7 +41,6 @@ void MapView::mouseReleaseEvent(QGraphicsSceneMouseEvent *event){
         /// click
         if(state == GraphicItemState::NO_STATE){
             qDebug() << "(MapView) NO_STATE";
-            qDebug() << "(MapView) ok" << (points==NULL);
             std::shared_ptr<PointView> tmpPointView = points->getTmpPointView();
             tmpPointView->show();
             /// might be useless code
@@ -77,24 +76,18 @@ void MapView::mouseReleaseEvent(QGraphicsSceneMouseEvent *event){
             emit newCoordinates(event->pos().x(), event->pos().y());
         } else if(state == GraphicItemState::SELECTING_HOME){
             qDebug() << "(MapView) SELECTING_HOME";
-/*            Point tmpPoint("tmpPoint", 0.0, 0.0, Point::PointType::HOME);
-            PointView* newPointView = new PointView(std::make_shared<Point>(tmpPoint), this);
-
-            newPointView->setState(GraphicItemState::SELECTING_HOME);
-            newPointView->getPoint()->setPosition(event->pos().x(), event->pos().y());
-            newPointView->setPos(event->pos().x()-tmpPointPixmap.width()/2, event->pos().y()-tmpPointPixmap.height());
-            newPointView->setParentItem(this);
-            emit homeSelected(newPointView, true);*/
+            std::shared_ptr<PointView> tmpPointView = points->getTmpPointView();
+            tmpPointView->show();
+            /// might be useless code
+            tmpPointView->setPos(event->pos().x(), event->pos().y());
+            emit homeSelected(tmpPointView->getPoint()->getName());
         } else if(state == GraphicItemState::EDITING_HOME){
             qDebug() << "(MapView) EDITING_HOME";
- /*           Point tmpPoint("tmpPoint", 0.0, 0.0, Point::PointType::HOME);
-            PointView* newPointView = new PointView(std::make_shared<Point>(tmpPoint), this);
-
-            newPointView->setState(GraphicItemState::EDITING_HOME);
-            newPointView->getPoint()->setPosition(event->pos().x(), event->pos().y());
-            newPointView->setPos(event->pos().x()-tmpPointPixmap.width()/2, event->pos().y()-tmpPointPixmap.height());
-            newPointView->setParentItem(this);
-            emit homeEdited(newPointView, true);*/
+            std::shared_ptr<PointView> tmpPointView = points->getTmpPointView();
+            tmpPointView->show();
+            /// might be useless code
+            tmpPointView->setPos(event->pos().x(), event->pos().y());
+            emit homeEdited(tmpPointView->getPoint()->getName());
         } else if(state == GraphicItemState::EDITING){
             qDebug() << "(MapView) EDITING" << event->pos().x() << event->pos().y();;
             /// to notify that a point which belongs to the path of a robot has been changed

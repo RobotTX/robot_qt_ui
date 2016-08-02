@@ -113,7 +113,7 @@ void CreatePointWidget::setSelectedPoint(const std::shared_ptr<PointView> &_poin
 
 /// emits signal when a user clicks save after editing a point
 void CreatePointWidget::saveEditSelecPointBtnEvent(){
-    qDebug() << "saveEditSelecPointBtnEvent called";
+    qDebug() << "CreatePointWidget::saveEditSelecPointBtnEvent called";
     emit pointSaved(groupBox->currentText(), posXLabel->text().right(posXLabel->text().length()-4).toDouble(), posYLabel->text().right(posYLabel->text().length()-4).toDouble(), nameEdit->text().simplified());
 }
 
