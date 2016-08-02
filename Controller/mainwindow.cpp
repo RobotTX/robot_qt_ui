@@ -967,7 +967,7 @@ void MainWindow::pathSaved(bool execPath){
                 if(execPath){
                     int robotNb = -1;
                     for(int i = 0; i < bottomLayout->getPlayRobotBtnGroup()->buttons().size(); i++){
-                        if(bottomLayout->getRobotBtnGroup()->button(i)->text().compare(selectedRobot->getRobot()->getName()) == 0){
+                        if(bottomLayout->getRobotBtnGroup()->buttons().at(i)->text().compare(selectedRobot->getRobot()->getName()) == 0){
                             robotNb = i;
                             qDebug() << "robotNb :" << robotNb;
                         }
@@ -1696,7 +1696,7 @@ void MainWindow::initializePoints(){
  * set the selected point, could be a temporary point or a point that already exists and that might be edited
  */
 void MainWindow::setSelectedPoint(QString pointName){
-    qDebug() << "setSelectedPoint called" << pointName;
+    qDebug() << "MainWindow::setSelectedPoint called" << pointName;
 
     resetFocus();
     std::shared_ptr<PointView> displaySelectedPointView = points->findPointView(pointName);
@@ -1708,6 +1708,7 @@ void MainWindow::setSelectedPoint(QString pointName){
         //qDebug() << "editing";
         leftMenu->show();
         std::shared_ptr<PointView> pointView = points->findPointView(pointName);
+        qDebug() << (pointView == NULL);
         if(pointView){
             selectedPoint = pointView;
             selectedPoint->setState(GraphicItemState::EDITING_PERM);
@@ -1931,8 +1932,7 @@ void MainWindow::editGroupBtnEvent(){
                 else
                     qDebug() << "editGroupBtnEvent : something unexpected happened";
             }
-            leftMenu->getDisplaySelectedPoint()->setPointView(pointView);
-            //leftMenu->getDisplaySelectedPoint()->setPointName(pointView->getPoint()->getName(), robotName);
+            leftMenu->getDisplaySelectedPoint()->setPointView(pointView, robotName);
         } else {
             qDebug() << "There is no point view associated with those indexes";
         }
@@ -2302,15 +2302,10 @@ void MainWindow::displayPointEvent(QString pointName){
     qDebug() << "MainWindow::displayPointEvent called" << pointName;
     /// hides the temporary point
     std::shared_ptr<PointView> pointView = points->findPointView(pointName);
-    leftMenu->getDisplaySelectedPoint()->setPointView(pointView);
+
     if(pointView && !(*(pointView->getPoint()) == *(points->getTmpPointView()->getPoint())))
         points->displayTmpPoint(false);
     /// resets the color of the previous selected point if such point exists
-
-    std::shared_ptr<PointView> displaySelectedPointView = points->findPointView(leftMenu->getDisplaySelectedPoint()->getPointName());
-    if(displaySelectedPointView)
-        displaySelectedPointView->setPixmap(PointView::PixmapType::NORMAL);
-
 
     leftMenu->getDisplaySelectedPoint()->getActionButtons()->getMapButton()->setChecked(true);
 
@@ -2322,7 +2317,7 @@ void MainWindow::displayPointEvent(QString pointName){
         else
             qDebug() << "displayPointEvent : something unexpected happened";
     }
-    leftMenu->getDisplaySelectedPoint()->setPointName(pointView->getPoint()->getName(), robotName);
+    leftMenu->getDisplaySelectedPoint()->setPointView(pointView, robotName);
 
     pointView->setPixmap(PointView::PixmapType::MID);
     pointView->setState(GraphicItemState::NO_STATE);
@@ -2532,7 +2527,7 @@ void MainWindow::displayPointsInGroup(void){
                 qDebug() << "MainWindow::displayPointsInGroup something unexpected happened";
         }
 
-        selectedPoint->setPointName(pointView->getPoint()->getName(), robotName);
+        selectedPoint->setPointView(pointView, robotName);
         selectedPoint->displayPointInfo();
         selectedPoint->show();
 
@@ -2740,7 +2735,7 @@ void MainWindow::editPointFromGroupMenu(void){
             displaySelectedPointView->setPixmap(PointView::PixmapType::HOVER);
             displaySelectedPointView->show();
 
-            leftMenu->getDisplaySelectedPoint()->setPointName(pointName, robotName);
+            leftMenu->getDisplaySelectedPoint()->setPointView(displaySelectedPointView, robotName);
 
             /// update the file
             XMLParser parser(XML_PATH);
@@ -2808,7 +2803,7 @@ void MainWindow::displayPointInfoFromGroupMenu(void){
                 qDebug() << "setSelectedRobotFromPoint : something unexpected happened";
         }
 
-        selectedPoint->setPointName(pointView->getPoint()->getName(), robotName);
+        selectedPoint->setPointView(pointView, robotName);
         selectedPoint->displayPointInfo();
 
         /// map is checked if the point is displayed
@@ -3098,7 +3093,7 @@ void MainWindow::doubleClickOnRobot(QString id){
  * does the same as clicking on a point and then on the eye button
  */
 void MainWindow::doubleClickOnPoint(QString pointName){
-    qDebug() << "double click on point";
+    qDebug() << "MainWindow::double click on point";
     setMessageTop(TEXT_COLOR_NORMAL, "");
     std::shared_ptr<PointView> pointView = points->findPointView(pointName);
 
@@ -3112,7 +3107,7 @@ void MainWindow::doubleClickOnPoint(QString pointName){
             else
                 qDebug() << "doubleClickOnPoint : something unexpected happened";
         }
-        selectedPoint->setPointName(pointView->getPoint()->getName(), robotName);
+        selectedPoint->setPointView(pointView, robotName);
         selectedPoint->displayPointInfo();
 
         if(pointView->isVisible())
@@ -3178,7 +3173,7 @@ void MainWindow::doubleClickOnGroup(QString checkedName){
                 qDebug() << "doubleClickOnGroup : something unexpected happened";
         }
 
-        selectedPoint->setPointName(pointView->getPoint()->getName(), robotName);
+        selectedPoint->setPointView(pointView, robotName);
         selectedPoint->displayPointInfo();
         selectedPoint->show();
 

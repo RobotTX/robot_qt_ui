@@ -36,15 +36,13 @@ public:
     QPushButton* getCancelButton(void) const { return cancelButton; }
     QLineEdit* getNameEdit(void) const { return nameEdit; }
     QString getPointName(void) const { return pointView->getPoint()->getName(); }
-    void setPointName(const QString name) { pointView->getPoint()->setName(name); }
-    void setPointName(const QString _pointName, const QString robotName);
+    void setPointView(const std::shared_ptr<PointView>& _pointView, const QString robotName);
     Origin getOrigin(void) const { return origin; }
     QLabel* getXLabel(void) const { return posXLabel; }
     QLabel* getYLabel(void) const { return posYLabel; }
     QWidget* getHomeWidget(void) const { return homeWidget; }
     QPushButton* getRobotButton(void) const { return robotBtn; }
     QString formatName(const QString name) const;
-    void setPointView(const std::shared_ptr<PointView>& _pointView) { pointView = _pointView; }
     std::shared_ptr<PointView> getPointView(void) { return pointView; }
 
 public:
