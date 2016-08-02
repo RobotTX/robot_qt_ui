@@ -48,6 +48,8 @@ void PointButtonGroup::createButtons(){
             else
                 pointButton->setIcon(QIcon(":/icons/space_point.png"));
             pointButton->setIconSize(BUTTON_SIZE);
+
+
         }
     }
 }
@@ -84,8 +86,10 @@ QAbstractButton* PointButtonGroup::getButtonByName(const QString name) const {
 }
 
 int PointButtonGroup::getButtonIdByName(const QString name) const {
+    qDebug() << "size="<<getButtonGroup()->buttons().size();
+
     for(int i = 0; i < getButtonGroup()->buttons().size(); i++){
-        if(getButtonGroup()->button(i)->text().compare(name) == 0)
+        if(getButtonGroup()->buttons().at(i)->text().compare(name) == 0)
             return i;
     }
     return -1;

@@ -6,13 +6,13 @@
             <name>A</name>
             <x>50</x>
             <y>50</y>
-            <displayed>0</displayed>
+            <displayed>1</displayed>
         </point>
         <point>
             <name>Ma point</name>
             <x>75</x>
             <y>75</y>
-            <displayed>0</displayed>
+            <displayed>1</displayed>
         </point>
         <point>
             <name>A new point</name>
@@ -65,8 +65,5 @@
             <y>0</y>
             <displayed>0</displayed>
         </point>
-    </group>
-    <group>
-        <name>s</name>
     </group>
 </points>

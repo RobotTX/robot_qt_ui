@@ -2984,16 +2984,19 @@ void MainWindow::displayPointFromGroupMenu(){
 
     int checkedId = leftMenu->getDisplaySelectedGroup()->getPointButtonGroup()->getButtonIdByName(pointName);
 
-    if(pointName.compare("") == 0){
+
+    //if(pointName.compare("") == 0){
+    if(checkedId != -1){
         std::shared_ptr<PointView> currentPointView = points->findPointView(pointName);
 
         /// if the point is displayed we stop displaying it
         if(currentPointView->isVisible()){
+
             /// hides the point on the map
             currentPointView->hide();
 
             /// removes the tick icon to show that the point is not displayed on the map
-            leftMenu->getDisplaySelectedGroup()->getPointButtonGroup()->getButtonGroup()->button(checkedId)->setIcon(QIcon(":/icons/space_point.png"));
+            leftMenu->getDisplaySelectedGroup()->getPointButtonGroup()->getButtonGroup()->buttons()[checkedId]->setIcon(QIcon(":/icons/space_point.png"));
 
             /// updates the file
             XMLParser parserPoints(XML_PATH);
@@ -3007,11 +3010,12 @@ void MainWindow::displayPointFromGroupMenu(){
             leftMenu->getDisplaySelectedGroup()->getActionButtons()->getMapButton()->setToolTip("Click to display the selected point on the map");
 
         } else {
+
             /// shows the point on the map
             currentPointView->show();
 
             /// we add a tick icon next to the name of the point to show that it is displayed on the map
-            leftMenu->getDisplaySelectedGroup()->getPointButtonGroup()->getButtonGroup()->button(checkedId)->setIcon(QIcon(":/icons/eye_point.png"));
+            leftMenu->getDisplaySelectedGroup()->getPointButtonGroup()->getButtonGroup()->buttons()[checkedId]->setIcon(QIcon(":/icons/eye_point.png"));
 
             /// saves changes to the file
             XMLParser parserPoints(XML_PATH);
