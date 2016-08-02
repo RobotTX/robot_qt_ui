@@ -224,6 +224,7 @@ int DisplaySelectedPoint::checkPointName(QString name) {
 
 void DisplaySelectedPoint::setPointView(const std::shared_ptr<PointView>& _pointView, const QString robotName) {
     qDebug() << "DisplaySelectedPoint::setPointView called";
+
     pointView = _pointView;
     if(pointView){
         if(pointView->getPoint()->isHome()){
@@ -233,6 +234,8 @@ void DisplaySelectedPoint::setPointView(const std::shared_ptr<PointView>& _point
             homeWidget->hide();
             robotBtn->setText("");
         }
+    } else {
+        qDebug() << "displayselectedpoint::setpointview pointview null pointer";
     }
 }
 
