@@ -1699,6 +1699,10 @@ void MainWindow::setSelectedPoint(QString pointName){
     qDebug() << "MainWindow::setSelectedPoint called" << pointName;
 
     resetFocus();
+
+    createPointWidget->getGroupBox()->hide();
+    createPointWidget->getGroupLabel()->hide();
+
     std::shared_ptr<PointView> displaySelectedPointView = points->findPointView(pointName);
 
     /// sets the pixmaps of the other points
