@@ -42,12 +42,11 @@ void MapView::mouseReleaseEvent(QGraphicsSceneMouseEvent *event){
         if(state == GraphicItemState::NO_STATE){
             qDebug() << "(MapView) NO_STATE";
             qDebug() << "(MapView) ok" << (points==NULL);
-
             std::shared_ptr<PointView> tmpPointView = points->getTmpPointView();
             tmpPointView->show();
             /// might be useless code
             tmpPointView->setPos(event->pos().x(), event->pos().y());
-            emit pointLeftClicked(tmpPointView->getPoint()->getName());
+            emit pointLeftClicked(tmpPointView);
         } else if(state == GraphicItemState::CREATING_PATH){
             /// if it's not a white point of the map we cannot add it to the path
             qDebug() << "(MapView) CREATING_PATH";
