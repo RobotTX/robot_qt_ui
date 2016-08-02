@@ -30,6 +30,7 @@ void PointButtonGroup::setGroup(const QString _groupIndex){
 }
 
 void PointButtonGroup::createButtons(){
+
     if(points->isAGroup(groupIndex) && points->getGroups()->value(groupIndex) && points->getGroups()->value(groupIndex)->size() > 0){
         std::shared_ptr<QVector<std::shared_ptr<PointView>>> group = points->getGroups()->value(groupIndex);
         for(int j = 0; j < group->size(); j++){
@@ -47,6 +48,8 @@ void PointButtonGroup::createButtons(){
             else
                 pointButton->setIcon(QIcon(":/icons/space_point.png"));
             pointButton->setIconSize(BUTTON_SIZE);
+
+
         }
     }
 }
@@ -83,8 +86,10 @@ QAbstractButton* PointButtonGroup::getButtonByName(const QString name) const {
 }
 
 int PointButtonGroup::getButtonIdByName(const QString name) const {
+    qDebug() << "size="<<getButtonGroup()->buttons().size();
+
     for(int i = 0; i < getButtonGroup()->buttons().size(); i++){
-        if(getButtonGroup()->button(i)->text().compare(name) == 0)
+        if(getButtonGroup()->buttons().at(i)->text().compare(name) == 0)
             return i;
     }
     return -1;
