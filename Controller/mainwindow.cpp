@@ -2451,6 +2451,7 @@ void MainWindow::displayPointMapEvent(){
                 //leftMenu->getDisplaySelectedGroup()->getPointButtonGroup()->getButtonGroup()->button(pointIndexes.second)->setIcon(QIcon(":/icons/space_point.png"));
             } else {
                 /// it's an isolated point
+
                 pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(checkedId)->setIcon(QIcon(":/icons/space_point.png"));
             }
 

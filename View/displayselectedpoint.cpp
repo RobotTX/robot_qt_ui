@@ -232,9 +232,8 @@ int DisplaySelectedPoint::checkPointName(QString name) {
 
 void DisplaySelectedPoint::setPointName(const QString _pointName, const QString robotName) {
     qDebug() << "DisplaySelectedPoint::setPointView called";
-    pointView->getPoint()->setName(_pointName);/*
-    std::shared_ptr<PointView> pointView = points->findPointView(pointView->getPoint()->getName());
-    std::shared_ptr<Point> point = pointView->getPoint();
+    pointView->getPoint()->setName(_pointName);
+
     if(pointView){
         if(pointView->getPoint()->isHome()){
             homeWidget->show();
@@ -246,7 +245,7 @@ void DisplaySelectedPoint::setPointName(const QString _pointName, const QString 
     } else {
         qDebug() << "DisplaySelectedPoint::setPointName no pointView found with this pointName :" << pointView->getPoint()->getName();
         pointView->getPoint()->setName("");
-    }*/
+    }
 }
 
 QString DisplaySelectedPoint::formatName(const QString name) const {
