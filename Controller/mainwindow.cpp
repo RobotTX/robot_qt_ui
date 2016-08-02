@@ -2352,38 +2352,42 @@ void MainWindow::displayGroupMapEvent(void){
     int checkedId = pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->checkedId();
     /// we display groups
     if(points->isAGroup(checkedName)){
-        /// the group was displayed, we now have to hide it (all its points)
-        if(points->isDisplayed(checkedName)){
+        if(points->getGroups()->value(checkedName)){
+            /// the group was displayed, we now have to hide it (all its points)
+            if(points->isDisplayed(checkedName)){
 
-            /// updates the tooltip of the map button
-            pointsLeftWidget->getActionButtons()->getMapButton()->setToolTip("Click here to display the selected group on the map");
-            pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(checkedId)->setIcon(QIcon(":/icons/folder_space.png"));
+                /// updates the tooltip of the map button
+                pointsLeftWidget->getActionButtons()->getMapButton()->setToolTip("Click here to display the selected group on the map");
+                pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(checkedId)->setIcon(QIcon(":/icons/folder_space.png"));
 
-            for(int i = 0; i < points->getGroups()->value(checkedName)->size(); i++){
-                std::shared_ptr<PointView> point = points->getGroups()->value(checkedName)->at(i);
-                point->hide();
+                if(points->getGroups()->value(checkedName)){
+                    for(int i = 0; i < points->getGroups()->value(checkedName)->size(); i++){
+                        std::shared_ptr<PointView> point = points->getGroups()->value(checkedName)->at(i);
+                        point->hide();
 
-                /// update the file
-                XMLParser parserPoints(XML_PATH);
-                parserPoints.save(*points);
-            }
-        } else if(points->getGroups()->value(checkedName)->size() == 0) {
-            pointsLeftWidget->getActionButtons()->getMapButton()->setChecked(false);
-            topLayout->setLabelDelay(TEXT_COLOR_WARNING, "This group is empty. There is points to display", 2000);
-        } else {
+                        /// update the file
+                        XMLParser parserPoints(XML_PATH);
+                        parserPoints.save(*points);
+                    }
+                }
+            } else if(points->getGroups()->value(checkedName)->size() == 0) {
+                pointsLeftWidget->getActionButtons()->getMapButton()->setChecked(false);
+                topLayout->setLabelDelay(TEXT_COLOR_WARNING, "This group is empty. There is points to display", 2000);
+            } else {
 
-            /// updates the tooltip of the map button
-            pointsLeftWidget->getActionButtons()->getMapButton()->setToolTip("Click here to hide the selected group on the map");
-            /// the group must now be displayed
-            pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(checkedId)->setIcon(QIcon(":/icons/folder_eye.png"));
+                /// updates the tooltip of the map button
+                pointsLeftWidget->getActionButtons()->getMapButton()->setToolTip("Click here to hide the selected group on the map");
+                /// the group must now be displayed
+                pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(checkedId)->setIcon(QIcon(":/icons/folder_eye.png"));
 
-            for(int i = 0; i < points->getGroups()->value(checkedName)->size(); i++){
-                std::shared_ptr<PointView> point = points->getGroups()->value(checkedName)->at(i);
-                point->show();
+                for(int i = 0; i < points->getGroups()->value(checkedName)->size(); i++){
+                    std::shared_ptr<PointView> point = points->getGroups()->value(checkedName)->at(i);
+                    point->show();
 
-                /// update the file
-                XMLParser parserPoints(XML_PATH);
-                parserPoints.save(*points);
+                    /// update the file
+                    XMLParser parserPoints(XML_PATH);
+                    parserPoints.save(*points);
+                }
             }
         }
     }

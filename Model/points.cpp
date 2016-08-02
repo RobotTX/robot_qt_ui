@@ -217,7 +217,9 @@ std::shared_ptr<PointView> Points::getTmpPointView() const{
 
 bool Points::isDisplayed(const QString key) const {
     qDebug() << "Points::isDisplayed called" << key;
-    if(groups->value(key) && groups->value(key)->size() > 0){
+    if(!groups->value(key) || groups->value(key)->size() <= 0) {
+        return false;
+    } else {
         for(int i = 0; i < groups->value(key)->size(); i++){
             if(!groups->value(key)->at(i)->isVisible())
                 return false;
