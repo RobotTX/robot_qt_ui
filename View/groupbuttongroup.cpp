@@ -162,7 +162,8 @@ void GroupButtonGroup::uncheck(void){
 
 void GroupButtonGroup::mouseDoubleClickEvent(QMouseEvent * /* unused */){
     qDebug() << "GroupButtonGroup::mouseDoubleClickEvent called";
-    emit doubleClick(buttonGroup->checkedButton()->text());
+    if(buttonGroup->checkedButton())
+        emit doubleClick(buttonGroup->checkedButton()->text());
 }
 
 void GroupButtonGroup::setEnabled(const bool enable){

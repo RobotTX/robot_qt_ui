@@ -8,18 +8,20 @@
 #include <QPushButton>
 #include <QHBoxLayout>
 #include <QMainWindow>
+#include <QButtonGroup>
 #include <QLabel>
 #include "customscrollarea.h"
 #include "View/buttonmenu.h"
+#include "View/pointview.h"
 
-DisplaySelectedGroup::DisplaySelectedGroup(QMainWindow *parent, std::shared_ptr<Points> const& _points) : QWidget(parent), points(_points)
-{
+DisplaySelectedGroup::DisplaySelectedGroup(QMainWindow *parent, std::shared_ptr<Points> const& _points) : QWidget(parent), points(_points){
     /// to be able to display a lot of groups and points2
     CustomScrollArea* scrollArea = new CustomScrollArea(this);
 
     layout = new QVBoxLayout(this);
 
     actionButtons = new TopLeftMenu(this);
+    lastCheckedButton = "";
 
     actionButtons->disableAll();
     actionButtons->getMinusButton()->setCheckable(false);
@@ -54,6 +56,7 @@ DisplaySelectedGroup::DisplaySelectedGroup(QMainWindow *parent, std::shared_ptr<
     layout->addLayout(titleLayout);
 
     pointButtonGroup = new PointButtonGroup(points, 0, this);
+    connect(pointButtonGroup->getButtonGroup(), SIGNAL(buttonClicked(QAbstractButton*)), this, SLOT(buttonClickedSlot(QAbstractButton*)));
     scrollArea->setWidget(pointButtonGroup);
 
     layout->addWidget(scrollArea);
@@ -67,4 +70,53 @@ void DisplaySelectedGroup::setName(const QString _name){
     name->setWordWrap(true);
 }
 
+void DisplaySelectedGroup::disableButtons(){
+    getActionButtons()->getMapButton()->setCheckable(false);
+    uncheck();
+    /// resets the minus button
+    getActionButtons()->getMinusButton()->setEnabled(false);
+    getActionButtons()->getMinusButton()->setToolTip("Select a point and click here to remove it");
+    /// resets the eye button
+    getActionButtons()->getGoButton()->setEnabled(false);
+    getActionButtons()->getGoButton()->setToolTip("Select a point and click here to access its information");
+    /// resets the map button
+    getActionButtons()->getMapButton()->setEnabled(false);
+    getActionButtons()->getMapButton()->setToolTip("Select a point and click here to display or hide it on the map");
+    /// resets the edit button
+    getActionButtons()->getEditButton()->setEnabled(false);
+    getActionButtons()->getEditButton()->setToolTip("Select a point and click here to modify it");
+    lastCheckedButton = "";
+}
+
+void DisplaySelectedGroup::buttonClickedSlot(QAbstractButton* button){
+    qDebug() << "DisplaySelectedGroup::buttonClickedSlot called";
+    if(button->text().compare(lastCheckedButton) == 0){
+        disableButtons();
+    } else {
+        getActionButtons()->getMapButton()->setCheckable(true);
+        /// enables the minus button
+        getActionButtons()->getMinusButton()->setEnabled(true);
+        getActionButtons()->getMinusButton()->setToolTip("Click to remove the selected point");
+        /// enables the eye button
+        getActionButtons()->getGoButton()->setEnabled(true);
+        getActionButtons()->getGoButton()->setToolTip("Click to see the information of the selected point");
+        /// enables the map button
+        getActionButtons()->getMapButton()->setEnabled(true);
+        if(points->findPointView(button->text())){
+            if(points->findPointView(button->text())->isVisible()){
+                getActionButtons()->getMapButton()->setChecked(true);
+                getActionButtons()->getMapButton()->setToolTip("Click to hide the selected point on the map");
+            } else {
+                getActionButtons()->getMapButton()->setChecked(false);
+                getActionButtons()->getMapButton()->setToolTip("Click to display the selected point on the map");
+            }
+        } else {
+            qDebug() << "DisplaySelectedGroup::buttonClickedSlot could not find the pointView :" << button->text();
+        }
+        /// enables the edit button
+        getActionButtons()->getEditButton()->setEnabled(true);
+        getActionButtons()->getEditButton()->setToolTip("Click to modify the selected point");
+        lastCheckedButton = button->text();
+    }
+}
 

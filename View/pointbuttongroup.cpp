@@ -16,6 +16,7 @@ PointButtonGroup::PointButtonGroup(std::shared_ptr<Points> _points, const QStrin
 
     groupIndex = _groupIndex;
     buttonGroup = new QButtonGroup(this);
+    buttonGroup->setExclusive(true);
     layout->setAlignment(Qt::AlignTop);
     BUTTON_SIZE = parentWidget()->size()/2;
     createButtons();
@@ -30,6 +31,7 @@ void PointButtonGroup::setGroup(const QString _groupIndex){
 }
 
 void PointButtonGroup::createButtons(){
+    qDebug() << "PointButtonGroup::createButtons called";
 
     if(points->isAGroup(groupIndex) && points->getGroups()->value(groupIndex) && points->getGroups()->value(groupIndex)->size() > 0){
         std::shared_ptr<QVector<std::shared_ptr<PointView>>> group = points->getGroups()->value(groupIndex);
