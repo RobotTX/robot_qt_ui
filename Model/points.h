@@ -61,6 +61,8 @@ public:
     QVector<QString> getHomeNameFromGroup(const QString groupName) const;
     QString getGroupNameFromPointName(const QString pointName) const;
     void setNormalPixmaps(void);
+    void addTmpPoint(MapView *mapView, MainWindow *mainWindow);
+    void addPoint(QString groupName, std::shared_ptr<PointView> pointView);
 
 private:
     std::shared_ptr<Groups> groups;

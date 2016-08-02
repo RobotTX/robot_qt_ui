@@ -156,7 +156,7 @@ void EditSelectedRobotWidget::setSelectedRobot(RobotView* const _robotView, bool
 
     /// If the robot has a home, we display the name of the point, otherwise a default text
     if(robotView->getRobot()->getHome() != NULL){
-        homeBtn->setText(robotView->getRobot()->getHome()->getName());
+        homeBtn->setText(robotView->getRobot()->getHome()->getPoint()->getName());
         oldHome = robotView->getRobot()->getHome();
     } else {
         homeBtn->setText("Add home");

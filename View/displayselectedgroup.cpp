@@ -89,7 +89,7 @@ void DisplaySelectedGroup::disableButtons(){
 }
 
 void DisplaySelectedGroup::buttonClickedSlot(QAbstractButton* button){
-    qDebug() << "DisplaySelectedGroup::buttonClickedSlot called";
+    qDebug() << "DisplaySelectedGroup::buttonClickedSlot called" << button->isChecked() << button->text() << lastCheckedButton;
     if(button->text().compare(lastCheckedButton) == 0){
         disableButtons();
     } else {
@@ -120,3 +120,8 @@ void DisplaySelectedGroup::buttonClickedSlot(QAbstractButton* button){
     }
 }
 
+void DisplaySelectedGroup::showEvent(QShowEvent* event){
+    Q_UNUSED(event)
+    getPointButtonGroup()->setGroup(getPointButtonGroup()->getGroupIndex());
+    QWidget::show();
+}

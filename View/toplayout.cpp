@@ -95,8 +95,8 @@ TopLayout::TopLayout(QMainWindow* parent): QWidget(parent), lastMessage(TEXT_COL
     layout->addWidget(closeBtn);
     connect(closeBtn, SIGNAL(clicked()), parent, SLOT(quit()));
 
-    layout->setContentsMargins(0, 0, 0, 0);
-    this->setContentsMargins(0, 0, 0, 0);
+    //layout->setContentsMargins(0, 0, 0, 0);
+    //this->setContentsMargins(0, 0, 0, 0);
 
 
 
