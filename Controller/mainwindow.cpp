@@ -1662,9 +1662,11 @@ void MainWindow::closeSlot(){
     resetFocus();
     leftMenu->hide();
     setEnableAll(true);
-    std::shared_ptr<PointView> displaySelectedPointView = points->findPointView(leftMenu->getDisplaySelectedPoint()->getPointName());
-    if(displaySelectedPointView)
-       displaySelectedPointView->setPixmap(PointView::PixmapType::NORMAL);
+    if(leftMenu->getDisplaySelectedPoint()->getPointView()){
+        std::shared_ptr<PointView> displaySelectedPointView = points->findPointView(leftMenu->getDisplaySelectedPoint()->getPointName());
+        if(displaySelectedPointView)
+           displaySelectedPointView->setPixmap(PointView::PixmapType::NORMAL);
+    }
 }
 
 /**********************************************************************************************************************************/
