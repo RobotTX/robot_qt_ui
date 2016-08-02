@@ -35,9 +35,7 @@ void PointButtonGroup::createButtons(){
         for(int j = 0; j < group->size(); j++){
             std::shared_ptr<Point> currentPoint = group->at(j)->getPoint();
 
-            DoubleClickableButton* pointButton = new DoubleClickableButton(currentPoint->getName(), currentPoint->getName()
-                                                       + " (" + QString::number(currentPoint->getPosition().getX())
-                                                       + ", " + QString::number(currentPoint->getPosition().getY()) + ")", this);
+            DoubleClickableButton* pointButton = new DoubleClickableButton(currentPoint->getName(), currentPoint->getName(), this);
             pointButton->setAutoDefault(true);
             pointButton->setFlat(true);
             pointButton->setStyleSheet("QPushButton {color: "+text_color+";text-align:left;border: 4px; padding: 10px;}QPushButton:hover{background-color: "+button_hover_color+";}QPushButton:checked{background-color: "+button_checked_color+";}");
