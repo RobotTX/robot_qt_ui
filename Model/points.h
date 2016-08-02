@@ -49,7 +49,7 @@ public:
     std::shared_ptr<PointView> findPointView(const QString pointName) const;
     std::pair<QString, int> findPointIndexes(const QString pointName) const;
     std::shared_ptr<QVector<std::shared_ptr<PointView>>> getDefaultGroup(void) const { return groups->value(NO_GROUP_NAME); }
-    void addGroup(const QString name) { groups->insert(name, std::shared_ptr<QVector<std::shared_ptr<PointView>>>()); }
+    void addGroup(const QString name) { groups->insert(name, std::shared_ptr<QVector<std::shared_ptr<PointView>>>(new QVector<std::shared_ptr<PointView>>)); }
     void clear();
     void addPoint(const QString groupName, const QString pointName, const double x, const double y, const bool displayed, const Point::PointType type, MapView *mapView, MainWindow *mainWindow);
     void displayTmpPoint(const bool display);
