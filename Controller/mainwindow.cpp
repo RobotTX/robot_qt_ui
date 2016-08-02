@@ -1700,9 +1700,15 @@ void MainWindow::setSelectedPoint(QString pointName){
 
     resetFocus();
     std::shared_ptr<PointView> displaySelectedPointView = points->findPointView(pointName);
-    if(displaySelectedPointView)
-        displaySelectedPointView->setPixmap(PointView::PixmapType::NORMAL);
 
+    QMapIterator<QString, std::shared_ptr<QVector<std::shared_ptr<PointView>>>> i(*points->getGroups());
+    while (i.hasNext()) {
+        i.next();
+        for(int j = 0; j < i.value()->size(); j++)
+            i.value()->at(j)->setPixmap(PointView::NORMAL);
+    }
+
+    points->getTmpPointView()->setPixmap(PointView::MID);
     /// we are not modifying an existing point
     if(!leftMenu->getDisplaySelectedPoint()->getActionButtons()->getEditButton()->isChecked()){
         //qDebug() << "editing";
@@ -2362,7 +2368,6 @@ void MainWindow::displayGroupMapEvent(void){
             for(int i = 0; i < points->getGroups()->value(checkedName)->size(); i++){
                 std::shared_ptr<PointView> point = points->getGroups()->value(checkedName)->at(i);
                 point->hide();
-
                 /// update the file
                 XMLParser parserPoints(XML_PATH);
                 parserPoints.save(*points);
