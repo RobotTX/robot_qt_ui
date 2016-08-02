@@ -3280,6 +3280,9 @@ void MainWindow::modifyGroupWithEnter(QString name){
         /// Update the model
         points->getGroups()->insert(name, points->getGroups()->take(pointsLeftWidget->getLastCheckedId()));
 
+        /// updates the group box to create a point
+        createPointWidget->updateGroupBox();
+
         /// enables the plus button
         pointsLeftWidget->getActionButtons()->getPlusButton()->setEnabled(true);
 
