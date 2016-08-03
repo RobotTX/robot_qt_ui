@@ -106,15 +106,33 @@ void PointView::hoverEnterEvent(QGraphicsSceneHoverEvent * /* unused */){
 
 void PointView::hoverLeaveEvent(QGraphicsSceneHoverEvent * /* unused */){
     QGraphicsPixmapItem::setPixmap(lastPixmap);
+    updatePos();
 }
 
 void PointView::setPos(const qreal x, const qreal y){
+    qDebug() << "PointView::setPos called"
+             << getPoint()->getName() << "from"
+             << getPoint()->getPosition().getX()
+             << getPoint()->getPosition().getY()
+             << "to" << x << y;
     point->setPosition(x, y);
     QGraphicsPixmapItem::setPos(x - pixmap().width()*SCALE/2,
            y - pixmap().height()*SCALE);
 }
 
+void PointView::updatePos(void){
+    qDebug() << "PointView::updatePos called"
+             << getPoint()->getName() << "from"
+             << getPoint()->getPosition().getX()
+             << "to" << getPoint()->getPosition().getY();
+    float x = getPoint()->getPosition().getX();
+    float y = getPoint()->getPosition().getY();
+    QGraphicsPixmapItem::setPos(x - pixmap().width()*SCALE/2,
+           y - pixmap().height()*SCALE);
+}
+
 void PointView::setPixmap(const PixmapType pixType){
+    qDebug() << "PointView::setPixmap called" << getPoint()->getName();
 
     lastPixmap = pixmap();
     if(type == PointView::HOVER && pixType != PointView::HOVER)
@@ -170,4 +188,5 @@ void PointView::setPixmap(const PixmapType pixType){
         }
     }
     QGraphicsPixmapItem::setPixmap(pixmap2);
+    updatePos();
 }

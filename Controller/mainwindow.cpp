@@ -87,10 +87,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     connect(mapPixmapItem, SIGNAL(homeEdited(QString)), this, SLOT(homeEdited(QString)));
 
 
-
-    /// Centers the map
-    centerMap();
-
     /// Create the toolbar
     topLayout = new TopLayout(this);
     mainLayout->addWidget(topLayout);
@@ -99,7 +95,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
     initializePoints();
 
-
     pathPainter = new PathPainter(mapPixmapItem, points);
     initializeRobots();
 
@@ -107,7 +102,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
 
 
-   graphicsView->scale(std::max(graphicsView->parentWidget()->width()/scene->width(), graphicsView->parentWidget()->height()/scene->height()),
+    graphicsView->scale(std::max(graphicsView->parentWidget()->width()/scene->width(), graphicsView->parentWidget()->height()/scene->height()),
                         std::max(graphicsView->parentWidget()->width()/scene->width(), graphicsView->parentWidget()->height()/scene->height()));
 
     /// hides the scroll bars
@@ -191,8 +186,14 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     mainLayout->addLayout(bottom);
     graphicsView->setStyleSheet("CustomQGraphicsView{background-color: "+background_map_view+"}");
     setCentralWidget(mainWidget);
+
     /// to navigate with the tab key
     setTabOrder(leftMenu->getReturnButton(), pointsLeftWidget->getActionButtons()->getPlusButton());
+
+    /// Centers the map
+    centerMap();
+
+    /// Some style
   // this->setStyleSheet("QWidget{background-color: white}");
     //topLayout->setAutoFillBackground(true);
     //topLayout->setStyleSheet("*{background-color: #5481a4}");
@@ -816,7 +817,6 @@ void MainWindow::robotSavedEvent(){
                         setMessageTop(TEXT_COLOR_DANGER, "Sorry, this point is already a home\nPlease select another");
                     }
                 }
-
                 pointsLeftWidget->updateGroupButtonGroup();
 
                 if(done){
@@ -908,8 +908,7 @@ void MainWindow::editTmpPathPointSlot(int id, Point* point, int nbWidget){
         editedPointView->setFlag(QGraphicsItem::ItemIsMovable);
         editedPointView->setState(GraphicItemState::EDITING);
         /// set by hand in order to keep the colors consistent while editing the point and after
-        editedPointView->QGraphicsPixmapItem::setPixmap(QPixmap(PIXMAP_HOVER));
-        editedPointView->setType(PointView::PixmapType::HOVER);
+        editedPointView->setPixmap(PointView::PixmapType::HOVER);
     }*/
 }
 
@@ -2315,7 +2314,6 @@ void MainWindow::displayPointEvent(QString pointName){
     leftMenu->getDisplaySelectedPoint()->show();
     resetFocus();
     switchFocus(pointView->getPoint()->getName(), leftMenu->getDisplaySelectedPoint(), MainWindow::WidgetType::POINT);
-
 }
 
 void MainWindow::displayGroupMapEvent(void){
@@ -2828,6 +2826,7 @@ void MainWindow::updatePoint(void){
     qDebug() << "updating point" << selectedPoint->getPointName();
     std::shared_ptr<PointView> displaySelectedPointView = points->findPointView(selectedPoint->getPointName());
     //selectedPoint->setPointName(leftMenu->getDisplaySelectedPoint()->getNameEdit()->text());
+
     /// resets the color of the pointView
     if(displaySelectedPointView){
         displaySelectedPointView->setPixmap(PointView::PixmapType::NORMAL);
@@ -2843,7 +2842,7 @@ void MainWindow::updatePoint(void){
         int xLength = leftMenu->getDisplaySelectedPoint()->getXLabel()->text().count();
         int yLength = leftMenu->getDisplaySelectedPoint()->getYLabel()->text().count();
 
-        displaySelectedPointView->getPoint()->setPosition(
+        displaySelectedPointView->setPos(
         leftMenu->getDisplaySelectedPoint()->getXLabel()->text().right(xLength-4).toFloat(),
         leftMenu->getDisplaySelectedPoint()->getYLabel()->text().right(yLength-4).toFloat());
     }

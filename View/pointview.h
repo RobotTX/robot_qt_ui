@@ -57,6 +57,7 @@ public:
     QPixmap getLastPixmap(void) const { return lastPixmap; }
     void setOriginalPosition(const Position position) { originalPosition = position; }
     Position getOriginalPosition(void) const { return originalPosition; }
+    void updatePos(void);
 
 protected:
     void mousePressEvent(QGraphicsSceneMouseEvent *event);
