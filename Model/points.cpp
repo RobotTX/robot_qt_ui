@@ -2,7 +2,6 @@
 #include <QDataStream>
 #include <QDebug>
 #include <QMapIterator>
-#include "View/pointview.h"
 #include "Controller/mainwindow.h"
 #include "View/mapview.h"
 
@@ -281,13 +280,24 @@ QString Points::getGroupNameFromPointName(const QString pointName) const{
     return "";
 }
 
-void Points::setNormalPixmaps(){
+void Points::setPixmapAll(PointView::PixmapType type){
     QMapIterator<QString, std::shared_ptr<QVector<std::shared_ptr<PointView>>>> i(*groups);
     while (i.hasNext()) {
         i.next();
         if(i.value()){
             for(int j = 0; j < i.value()->count(); j++)
-                i.value()->at(j)->setPixmap(PointView::NORMAL);
+                i.value()->at(j)->setPixmap(type);
+        }
+    }
+}
+
+void Points::setPixmapAll(QPixmap pixmap){
+    QMapIterator<QString, std::shared_ptr<QVector<std::shared_ptr<PointView>>>> i(*groups);
+    while (i.hasNext()) {
+        i.next();
+        if(i.value()){
+            for(int j = 0; j < i.value()->count(); j++)
+                i.value()->at(j)->QGraphicsPixmapItem::setPixmap(pixmap);
         }
     }
 }

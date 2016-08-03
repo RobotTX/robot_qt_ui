@@ -52,10 +52,14 @@ class PathPainter;
 #define PORT_ROBOT_UPDATE 6000
 
 namespace Ui {
-
-class MainWindow;
+    class MainWindow;
 }
 
+/**
+ * @brief MainWindow::MainWindow
+ * @param parent
+ * The main controller of the application
+ */
 class MainWindow : public QMainWindow{
     Q_OBJECT
 

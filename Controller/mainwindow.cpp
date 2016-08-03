@@ -42,11 +42,7 @@
 #include "colors.h"
 #include <QMap>
 
-/**
- * @brief MainWindow::MainWindow
- * @param parent
- * The main controller of the application
- */
+
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow) {
     ui->setupUi(this);
 
@@ -410,7 +406,7 @@ void MainWindow::connectToRobot(){
 }
 
 void MainWindow::stopSelectedRobot(int robotNb){
-    qDebug() << "stopSelectedRobot called on robot : " << robots->getRobotsVector().at(robotNb)->getRobot()->getName();
+    qDebug() << "stopSelectedRobot called on robot :" << robots->getRobotsVector().at(robotNb)->getRobot()->getName();
 
     if(robots->getRobotsVector().at(robotNb)->getRobot()->getPath().size() > 0){
         int ret = openConfirmMessage("Are you sure you want to delete this path ?");
@@ -1065,7 +1061,7 @@ void MainWindow::clearPath(const int robotNb){
 
 /// TODO check if used
 void MainWindow::selectHomeEvent(){
-    qDebug() << "selectHomeEvent called";
+    qDebug() << "MainWindow::selectHomeEvent called";
     /*if(selectedRobotWidget->getScanBtn()->isEnabled()){
         setMessageTop(TEXT_COLOR_INFO, "Click on the map or on a point to select a home for the robot " + selectedRobot->getRobot()->getName());
         selectedRobotWidget->getHomeBtn()->setText("Cancel");
@@ -1187,14 +1183,8 @@ void MainWindow::homeEdited(QString pointName){
 }
 
 void MainWindow::showHome(){
-    qDebug() << "showHome called" << (selectedRobot->getRobot()->getHome()==NULL);
-    /// TODO check if usefull
-    /*for(size_t i = 0; i < pointViews->getGroups().size(); i++){
-        GroupView* groupView = pointViews->getGroups().at(i);
-        for(size_t j = 0; j < groupView->getPointViews().size(); j++){
-            groupView->getPointViews().at(j)->QGraphicsPixmapItem::setPixmap(QPixmap(PIXMAP_NORMAL));
-        }
-    }*/
+    qDebug() << "MainWindow::showHome called" << (selectedRobot->getRobot()->getHome()==NULL);
+    points->setPixmapAll(QPixmap(PIXMAP_NORMAL));
 
     if(selectedRobot->getRobot()->getHome() != NULL){
         std::shared_ptr<PointView> pointView = selectedRobot->getRobot()->getHome();
@@ -1234,15 +1224,8 @@ void MainWindow::showHome(){
 }
 
 void MainWindow::hideHome(void){
-    qDebug() << "hideHome called";
-    /// TODO check if usefull
-    /*for(size_t i = 0; i < pointViews->getGroups().size(); i++){
-        GroupView* groupView = pointViews->getGroups().at(i);
-        for(size_t j = 0; j < groupView->getPointViews().size(); j++){
-            //groupView->getPointViews().at(j)->QGraphicsPixmapItem::setPixmap(QPixmap(PIXMAP_NORMAL));
-            groupView->getPointViews().at(j)->setPixmap(PointView::PixmapType::NORMAL);
-        }
-    }*/
+    qDebug() << "MainWindow::hideHome called";
+    points->setPixmapAll(PointView::PixmapType::NORMAL);
 
     if(selectedRobot->getRobot()->getHome() != NULL){
         std::shared_ptr<PointView> pointView = selectedRobot->getRobot()->getHome();
@@ -1698,7 +1681,7 @@ void MainWindow::setSelectedPoint(QString pointName){
     std::shared_ptr<PointView> displaySelectedPointView = points->findPointView(pointName);
 
     /// sets the pixmaps of the other points
-    points->setNormalPixmaps();
+    points->setPixmapAll(PointView::PixmapType::NORMAL);
 
     /// tmp point is blue
     points->getTmpPointView()->setPixmap(PointView::MID);

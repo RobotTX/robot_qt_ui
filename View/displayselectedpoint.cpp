@@ -227,7 +227,7 @@ void DisplaySelectedPoint::setPointView(const std::shared_ptr<PointView>& _point
 
     pointView = _pointView;
     /// sets the pixmaps of the other points (black)
-    points->setNormalPixmaps();
+    points->setPixmapAll(PointView::PixmapType::NORMAL);
 
     /// sets the color of the displayed pointView to blue
     pointView->setPixmap(PointView::MID);

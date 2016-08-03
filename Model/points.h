@@ -14,6 +14,7 @@ class MainWindow;
 #include "point.h"
 #include <QObject>
 #include "Model/graphicitemstate.h"
+#include "View/pointview.h"
 
 #define NO_GROUP_NAME "No Group"
 #define TMP_GROUP_NAME "TmpPoint"
@@ -60,9 +61,10 @@ public:
     bool isAPoint(const QString pointName) const;
     QVector<QString> getHomeNameFromGroup(const QString groupName) const;
     QString getGroupNameFromPointName(const QString pointName) const;
-    void setNormalPixmaps(void);
     void addTmpPoint(MapView *mapView, MainWindow *mainWindow);
     void addPoint(QString groupName, std::shared_ptr<PointView> pointView);
+    void setPixmapAll(PointView::PixmapType type);
+    void setPixmapAll(QPixmap pixmap);
 
 private:
     std::shared_ptr<Groups> groups;
