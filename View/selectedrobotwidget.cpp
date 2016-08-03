@@ -76,11 +76,6 @@ SelectedRobotWidget::SelectedRobotWidget(QMainWindow* parent): QWidget(parent){
     QLabel* homeLabel = new QLabel("Home : ", this);
      homeLabel2 = new QLabel("no home set");
 
-    /*
-    homeBtn = new QPushButton(QIcon(":/icons/home.png"), "", this);
-    homeBtn->setIconSize(parent->size()/10);
-    homeBtn->setStyleSheet ("text-align: left");
-    */
     inLayout->addWidget(homeLabel);
     inLayout->addWidget(homeLabel2);
 
@@ -97,16 +92,6 @@ SelectedRobotWidget::SelectedRobotWidget(QMainWindow* parent): QWidget(parent){
     noPath = new QLabel("no path set");
     inLayout->addWidget(noPath);
 
-/*
-    /// Button to add a path
-    addPathBtn = new QPushButton(QIcon(":/icons/plus.png"),"Add path", this);
-    addPathBtn->setStyleSheet ("text-align: left");
-    addPathBtn->hide();
-    addPathBtn->setIconSize(parent->size()/10);
-    connect(addPathBtn, SIGNAL(clicked()), parent, SLOT(addPathSelecRobotBtnEvent()));
-    inLayout->addWidget(addPathBtn);
-*/
-
     pathWidget = new PathWidget(this);
     inLayout->addWidget(pathWidget);
 
@@ -114,7 +99,6 @@ SelectedRobotWidget::SelectedRobotWidget(QMainWindow* parent): QWidget(parent){
     scrollArea->setWidget(inWidget);
     layout->addWidget(scrollArea);
 
-  //  connect(homeBtn, SIGNAL(clicked()), this, SLOT(homeBtnEvent()));
     connect(goHome, SIGNAL(clicked()), parent, SLOT(goHomeBtnEvent()));
     connect(actionButtons->getMapButton(), SIGNAL(clicked()), parent, SLOT(checkRobotBtnEventSelect()));
     hide();
@@ -140,12 +124,10 @@ void SelectedRobotWidget::setSelectedRobot(RobotView* const& _robotView){
 
     /// If the robot has a path, we display it, otherwise we show the button to add the path
     if(robotView->getRobot()->getPath().size() > 0){
-       // addPathBtn->hide();
         pathWidget->setSelectedRobot(robotView);
         pathWidget->show();
         noPath->hide();
     } else {
-       // addPathBtn->show();
         pathWidget->hide();
         noPath->show();
     }
@@ -156,10 +138,6 @@ void SelectedRobotWidget::setSelectedRobot(RobotView* const& _robotView){
         goHome->show();
 
     } else {
-      /*  homeBtn->setText("Add home");
-        homeBtn->setFlat(false);
-        //homeBtn->setStyleSheet ("QPushButton[enabled=\"false\"] {color: lightgrey;}");
-        homeBtn->setEnabled(true);*/
         homeLabel2->setText("no home set");
         goHome->hide();
     }
@@ -175,29 +153,15 @@ void SelectedRobotWidget::homeBtnEvent(){
 }
 
 void SelectedRobotWidget::disable(){
-   // editBtn->setEnabled(false);
-    //homeBtn->setEnabled(false);
-   // addPathBtn->setEnabled(false);
-   scanBtn->setEnabled(false);
-
+    scanBtn->setEnabled(false);
     goHome->setEnabled(false);
     actionButtons->setEnable(false);
 }
 
 void SelectedRobotWidget::enable(){
-  //  editBtn->setEnabled(true);
-   // addPathBtn->setEnabled(true);
-
     scanBtn->setEnabled(true);
     goHome->setEnabled(true);
-/*
-    if(robotView->getRobot()->getHome() != NULL){
-        homeBtn->setEnabled(false);
-    } else {
-        homeBtn->setEnabled(true);
-    }*/
- actionButtons->setEnable(true);
-
+    actionButtons->setEnable(true);
 }
 
 void SelectedRobotWidget::showEvent(QShowEvent *event){

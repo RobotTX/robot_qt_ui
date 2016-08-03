@@ -2,7 +2,6 @@
 #include <QDataStream>
 #include <QDebug>
 #include <QMapIterator>
-#include "View/pointview.h"
 #include "Controller/mainwindow.h"
 #include "View/mapview.h"
 
@@ -256,14 +255,27 @@ QString Points::getGroupNameFromPointName(const QString pointName) const{
     return "";
 }
 
-/// sets all the pixmaps to be the normal pixmap (black)
-void Points::setNormalPixmaps(){
-    qDebug() << "points::setnormalpixmaps called";
+void Points::setPixmapAll(const PointView::PixmapType type){
     QMapIterator<QString, std::shared_ptr<QVector<std::shared_ptr<PointView>>>> i(*groups);
     while (i.hasNext()) {
         i.next();
-        for(int j = 0; j < i.value()->count(); j++)
-            i.value()->at(j)->setPixmap(PointView::NORMAL);
+        if(i.value()){
+            for(int j = 0; j < i.value()->count(); j++)
+                i.value()->at(j)->setPixmap(type);
+        }
+    }
+}
+
+void Points::setPixmapAll(const QPixmap pixmap){
+    QMapIterator<QString, std::shared_ptr<QVector<std::shared_ptr<PointView>>>> i(*groups);
+    while (i.hasNext()) {
+        i.next();
+        if(i.value()){
+            for(int j = 0; j < i.value()->count(); j++){
+                i.value()->at(j)->QGraphicsPixmapItem::setPixmap(pixmap);
+                i.value()->at(j)->updatePos();
+            }
+        }
     }
 }
 

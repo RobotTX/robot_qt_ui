@@ -42,11 +42,7 @@
 #include "colors.h"
 #include <QMap>
 
-/**
- * @brief MainWindow::MainWindow
- * @param parent
- * The main controller of the application
- */
+
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow) {
     ui->setupUi(this);
 
@@ -91,10 +87,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     connect(mapPixmapItem, SIGNAL(homeEdited(QString)), this, SLOT(homeEdited(QString)));
 
 
-
-    /// Centers the map
-    centerMap();
-
     /// Create the toolbar
     topLayout = new TopLayout(this);
     mainLayout->addWidget(topLayout);
@@ -103,7 +95,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
     initializePoints();
 
-
     pathPainter = new PathPainter(mapPixmapItem, points);
     initializeRobots();
 
@@ -111,7 +102,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
 
 
-   graphicsView->scale(std::max(graphicsView->parentWidget()->width()/scene->width(), graphicsView->parentWidget()->height()/scene->height()),
+    graphicsView->scale(std::max(graphicsView->parentWidget()->width()/scene->width(), graphicsView->parentWidget()->height()/scene->height()),
                         std::max(graphicsView->parentWidget()->width()/scene->width(), graphicsView->parentWidget()->height()/scene->height()));
 
     /// hides the scroll bars
@@ -195,8 +186,14 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     mainLayout->addLayout(bottom);
     graphicsView->setStyleSheet("CustomQGraphicsView{background-color: "+background_map_view+"}");
     setCentralWidget(mainWidget);
+
     /// to navigate with the tab key
     setTabOrder(leftMenu->getReturnButton(), pointsLeftWidget->getActionButtons()->getPlusButton());
+
+    /// Centers the map
+    centerMap();
+
+    /// Some style
   // this->setStyleSheet("QWidget{background-color: white}");
     //topLayout->setAutoFillBackground(true);
     //topLayout->setStyleSheet("*{background-color: #5481a4}");
@@ -410,7 +407,7 @@ void MainWindow::connectToRobot(){
 }
 
 void MainWindow::stopSelectedRobot(int robotNb){
-    qDebug() << "stopSelectedRobot called on robot : " << robots->getRobotsVector().at(robotNb)->getRobot()->getName();
+    qDebug() << "stopSelectedRobot called on robot :" << robots->getRobotsVector().at(robotNb)->getRobot()->getName();
 
     if(robots->getRobotsVector().at(robotNb)->getRobot()->getPath().size() > 0){
         int ret = openConfirmMessage("Are you sure you want to delete this path ?");
@@ -820,7 +817,6 @@ void MainWindow::robotSavedEvent(){
                         setMessageTop(TEXT_COLOR_DANGER, "Sorry, this point is already a home\nPlease select another");
                     }
                 }
-
                 pointsLeftWidget->updateGroupButtonGroup();
 
                 if(done){
@@ -912,8 +908,7 @@ void MainWindow::editTmpPathPointSlot(int id, Point* point, int nbWidget){
         editedPointView->setFlag(QGraphicsItem::ItemIsMovable);
         editedPointView->setState(GraphicItemState::EDITING);
         /// set by hand in order to keep the colors consistent while editing the point and after
-        editedPointView->QGraphicsPixmapItem::setPixmap(QPixmap(PIXMAP_HOVER));
-        editedPointView->setType(PointView::PixmapType::HOVER);
+        editedPointView->setPixmap(PointView::PixmapType::HOVER);
     }*/
 }
 
@@ -1065,7 +1060,7 @@ void MainWindow::clearPath(const int robotNb){
 
 /// TODO check if used
 void MainWindow::selectHomeEvent(){
-    qDebug() << "selectHomeEvent called";
+    qDebug() << "MainWindow::selectHomeEvent called";
     /*if(selectedRobotWidget->getScanBtn()->isEnabled()){
         setMessageTop(TEXT_COLOR_INFO, "Click on the map or on a point to select a home for the robot " + selectedRobot->getRobot()->getName());
         selectedRobotWidget->getHomeBtn()->setText("Cancel");
@@ -1187,14 +1182,8 @@ void MainWindow::homeEdited(QString pointName){
 }
 
 void MainWindow::showHome(){
-    qDebug() << "showHome called" << (selectedRobot->getRobot()->getHome()==NULL);
-    /// TODO check if usefull
-    /*for(size_t i = 0; i < pointViews->getGroups().size(); i++){
-        GroupView* groupView = pointViews->getGroups().at(i);
-        for(size_t j = 0; j < groupView->getPointViews().size(); j++){
-            groupView->getPointViews().at(j)->QGraphicsPixmapItem::setPixmap(QPixmap(PIXMAP_NORMAL));
-        }
-    }*/
+    qDebug() << "MainWindow::showHome called" << (selectedRobot->getRobot()->getHome()==NULL);
+    points->setPixmapAll(QPixmap(PIXMAP_NORMAL));
 
     if(selectedRobot->getRobot()->getHome() != NULL){
         std::shared_ptr<PointView> pointView = selectedRobot->getRobot()->getHome();
@@ -1234,15 +1223,8 @@ void MainWindow::showHome(){
 }
 
 void MainWindow::hideHome(void){
-    qDebug() << "hideHome called";
-    /// TODO check if usefull
-    /*for(size_t i = 0; i < pointViews->getGroups().size(); i++){
-        GroupView* groupView = pointViews->getGroups().at(i);
-        for(size_t j = 0; j < groupView->getPointViews().size(); j++){
-            //groupView->getPointViews().at(j)->QGraphicsPixmapItem::setPixmap(QPixmap(PIXMAP_NORMAL));
-            groupView->getPointViews().at(j)->setPixmap(PointView::PixmapType::NORMAL);
-        }
-    }*/
+    qDebug() << "MainWindow::hideHome called";
+    points->setPixmapAll(PointView::PixmapType::NORMAL);
 
     if(selectedRobot->getRobot()->getHome() != NULL){
         std::shared_ptr<PointView> pointView = selectedRobot->getRobot()->getHome();
@@ -1698,7 +1680,7 @@ void MainWindow::setSelectedPoint(QString pointName){
     std::shared_ptr<PointView> displaySelectedPointView = points->findPointView(pointName);
 
     /// sets the pixmaps of the other points
-    points->setNormalPixmaps();
+    points->setPixmapAll(PointView::PixmapType::NORMAL);
 
     /// tmp point is blue
     points->getTmpPointView()->setPixmap(PointView::MID);
@@ -2332,7 +2314,6 @@ void MainWindow::displayPointEvent(QString pointName){
     leftMenu->getDisplaySelectedPoint()->show();
     resetFocus();
     switchFocus(pointView->getPoint()->getName(), leftMenu->getDisplaySelectedPoint(), MainWindow::WidgetType::POINT);
-
 }
 
 void MainWindow::displayGroupMapEvent(void){
@@ -2845,6 +2826,7 @@ void MainWindow::updatePoint(void){
     qDebug() << "updating point" << selectedPoint->getPointName();
     std::shared_ptr<PointView> displaySelectedPointView = points->findPointView(selectedPoint->getPointName());
     //selectedPoint->setPointName(leftMenu->getDisplaySelectedPoint()->getNameEdit()->text());
+
     /// resets the color of the pointView
     if(displaySelectedPointView){
         displaySelectedPointView->setPixmap(PointView::PixmapType::NORMAL);
@@ -2860,7 +2842,7 @@ void MainWindow::updatePoint(void){
         int xLength = leftMenu->getDisplaySelectedPoint()->getXLabel()->text().count();
         int yLength = leftMenu->getDisplaySelectedPoint()->getYLabel()->text().count();
 
-        displaySelectedPointView->getPoint()->setPosition(
+        displaySelectedPointView->setPos(
         leftMenu->getDisplaySelectedPoint()->getXLabel()->text().right(xLength-4).toFloat(),
         leftMenu->getDisplaySelectedPoint()->getYLabel()->text().right(yLength-4).toFloat());
     }

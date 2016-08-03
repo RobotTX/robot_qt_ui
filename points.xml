@@ -9,21 +9,21 @@
             <displayed>1</displayed>
         </point>
         <point>
-            <name>Home_Robotyodfhgf</name>
+            <name>Another point</name>
             <x>150</x>
             <y>200</y>
             <displayed>1</displayed>
         </point>
         <point>
-            <name>Home_Robotyodfhgf</name>
+            <name>A final point</name>
             <x>150</x>
             <y>225</y>
             <displayed>1</displayed>
         </point>
         <point>
             <name>Home_Robota</name>
-            <x>98.1452</x>
-            <y>300.209</y>
+            <x>112.991</x>
+            <y>307.632</y>
             <displayed>1</displayed>
         </point>
     </group>
@@ -46,9 +46,9 @@
         <name>TmpPoint</name>
         <point>
             <name>tmpPoint</name>
-            <x>159.177</x>
-            <y>296.91</y>
-            <displayed>1</displayed>
+            <x>0</x>
+            <y>0</y>
+            <displayed>0</displayed>
         </point>
     </group>
     <group>
