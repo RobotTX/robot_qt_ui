@@ -788,9 +788,9 @@ void MainWindow::robotSavedEvent(){
     if(pointView != NULL && (selectedRobot->getRobot()->getHome() == NULL || !(&(*(pointView->getPoint())) == &(*(selectedRobot->getRobot()->getHome()->getPoint()))))){
         qDebug() << "Home has been modified";
         int ret = openConfirmMessage("Do you really want to set the point " + pointView->getPoint()->getName() +
-                                     + " (" + QString::number(pointView->getPoint()->getPosition().getX(),'f', 1) + ","
+                                     + " (" + QString::number(pointView->getPoint()->getPosition().getX(),'f', 1) + ", "
                                      + QString::number(pointView->getPoint()->getPosition().getY(),'f', 1) + ") as the home for "
-                                     + selectedRobot->getRobot()->getName() +" ?");
+                                     + selectedRobot->getRobot()->getName() + " ?");
         switch(ret){
             case QMessageBox::Cancel :
                 pointsLeftWidget->getActionButtons()->getMinusButton()->setChecked(false);
