@@ -77,8 +77,10 @@ void PathCreationWidget::updatePointsList(void){
         }
     }
 
-    for(int k = 0; k < points->getGroups()->value(NO_GROUP_NAME)->count(); k++){
-        pointsMenu->addAction(points->getGroups()->value(NO_GROUP_NAME)->at(k)->getPoint()->getName());
+    if(points->getGroups()->value(NO_GROUP_NAME)){
+        for(int k = 0; k < points->getGroups()->value(NO_GROUP_NAME)->count(); k++){
+            pointsMenu->addAction(points->getGroups()->value(NO_GROUP_NAME)->at(k)->getPoint()->getName());
+        }
     }
 }
 
