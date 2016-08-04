@@ -6,7 +6,9 @@ class SpaceWidget;
 class QVBoxLayout;
 class QPushButton;
 class QHBoxLayout;
-class ButtonMenu;
+
+#include <QPushButton>
+#include <buttonmenu.h>
 
 class TopLeftMenu : public QWidget{
     Q_OBJECT

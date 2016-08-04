@@ -11,6 +11,7 @@
 Robot::Robot(const QString _name, const QString _ip, QMainWindow* parent) : name(_name), ip(_ip), position(Position()),
     orientation(0), batteryLevel(100), wifi(""), home(NULL), playingPath(0), mapId(), sendingMap(false)
 {
+    path = std::shared_ptr<QVector<std::shared_ptr<PathPoint>>>(new QVector<std::shared_ptr<PathPoint>>());
 /*
     qDebug() << "Robot" << name << "at ip" << ip << " launching its cmd thread";
 

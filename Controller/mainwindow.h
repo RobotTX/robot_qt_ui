@@ -96,6 +96,7 @@ signals:
     void sendCommand(QString);
     void nameChanged(QString, QString);
     void changeCmdThreadRobotName(QString);
+    void addPointPath(QString name, double x, double y);
 
 private slots:
     void updateRobot(const QString ipAddress, const float posX, const float posY, const float ori);
@@ -134,7 +135,6 @@ private slots:
     void editSelecPointBtnEvent();
     void setSelectedPoint(QString pointView);
     void pointSavedEvent(QString groupName, double x, double y, QString name);
-    void selectHomeEvent();
     void stopSelectedRobot(int robotNb);
     void playSelectedRobot(int robotNb);
     void askForDeleteGroupConfirmation(const QString group);
@@ -143,8 +143,7 @@ private slots:
     void askForDeleteDefaultGroupPointConfirmation(const QString index);
     void displayGroupMapEvent(void);
     void pathSaved(bool execPath);
-    void addPathPoint(Point* point);
-    void addPathPoint(PointView* pointView);
+    void addPointPathSlot(QString name, double x, double y);
     void displayPointsInGroup(void);
     void updatePathPointToPainter(QVector<Point> &pointVector, bool save);
     void removePointFromInformationMenu(void);
@@ -173,7 +172,6 @@ private slots:
     void updatePathPoint(double x, double y, PointView* pointView = 0);
     void centerMap();
     void setMessageCreationPoint(QString type, CreatePointWidget::Error error);
-    void updatePathPainterPoints(int start, int row);
     void addPathPointToMap(Point* point);
     void updatePathPermanentPoint(QString, QString);
 
@@ -185,7 +183,6 @@ private slots:
     void setMessageTop(const QString msgType, const QString msg);
     void setLastMessage(void) { setMessageTop(topLayout->getLastMessage().first, topLayout->getLastMessage().second); }
     void setMessageCreationGroup(QString type, QString message);
-    void homeSelected(QString pointName);
     void homeEdited(QString pointView);
     void goHomeBtnEvent();
     void viewPathSelectedRobot(int robotNb, bool checked);
@@ -217,11 +214,12 @@ private:
     RobotView* scanningRobot;
     std::shared_ptr<PointView> selectedPoint;
     std::shared_ptr<Points> points;
-    PathPainter* pathPainter;
     std::shared_ptr<PointView> editedPointView;
+    QVector<std::shared_ptr<PointView>> pointViewsToDisplay;
+    std::shared_ptr<PathPainter> pathPainter;
     TopLayout* topLayout;
-    QVector<PointView*> pathPointViews;
-    //QList<QPair<QWidget*, QString>> lastWidgets;
+    QMessageBox msgBox;
+
     QList<QPair<QPair<QWidget*, QString>, MainWindow::WidgetType>> lastWidgets;
     LeftMenuWidget* leftMenuWidget;
     PointsLeftWidget* pointsLeftWidget;
@@ -234,8 +232,6 @@ private:
     LeftMenu* leftMenu;
     BottomLayout* bottomLayout;
     PathCreationWidget* pathCreationWidget;
-    QMessageBox msgBox;
-    std::vector<PointView*> pointViewsToDisplay;
 };
 
 #endif // MAINWINDOW_H

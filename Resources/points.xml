@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <points>
     <group>
-        <name>first group</name>
+        <name>First group</name>
         <point>
             <name>A</name>
             <x>50</x>
@@ -37,7 +37,7 @@
         </point>
     </group>
     <group>
-        <name>No group</name>
+        <name>No Group</name>
         <point>
             <name>Un point</name>
             <x>150</x>

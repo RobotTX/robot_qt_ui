@@ -87,9 +87,21 @@ std::shared_ptr<PointView> Points::findPointView(const QString pointName) const{
     QMapIterator<QString, std::shared_ptr<QVector<std::shared_ptr<PointView>>>> i(*groups);
     while (i.hasNext()) {
         i.next();
-        for(int j = 0; j < i.value()->size(); j++){
-            if(i.value()->at(j)->getPoint()->getName().compare(pointName) == 0)
-                return i.value()->at(j);
+        if(i.key().compare(PATH_GROUP_NAME) != 0){
+            for(int j = 0; j < i.value()->size(); j++){
+                if(i.value()->at(j)->getPoint()->getName().compare(pointName) == 0)
+                    return i.value()->at(j);
+            }
+        }
+    }
+    return NULL;
+}
+
+std::shared_ptr<PointView> Points::findPathPointView(const QString pointName) const{
+    if(groups->value(PATH_GROUP_NAME)){
+        for(int j = 0; j < groups->value(PATH_GROUP_NAME)->size(); j++){
+            if(groups->value(PATH_GROUP_NAME)->at(j)->getPoint()->getName().compare(pointName) == 0)
+                return groups->value(PATH_GROUP_NAME)->at(j);
         }
     }
     return NULL;
@@ -100,9 +112,11 @@ std::shared_ptr<Point> Points::findPoint(const QString pointName) const {
     QMapIterator<QString, std::shared_ptr<QVector<std::shared_ptr<PointView>>>> i(*groups);
     while (i.hasNext()) {
         i.next();
-        for(int j = 0; j < i.value()->size(); j++){
-            if(i.value()->at(j)->getPoint()->getName().compare(pointName) == 0)
-                return i.value()->at(j)->getPoint();
+        if(i.key().compare(PATH_GROUP_NAME) != 0){
+            for(int j = 0; j < i.value()->size(); j++){
+                if(i.value()->at(j)->getPoint()->getName().compare(pointName) == 0)
+                    return i.value()->at(j)->getPoint();
+            }
         }
     }
     return NULL;
@@ -117,10 +131,12 @@ std::pair<QString, int> Points::findPointIndexes(const QString pointName) const 
     QMapIterator<QString, std::shared_ptr<QVector<std::shared_ptr<PointView>>>> i(*groups);
     while (i.hasNext()) {
         i.next();
-        for(int j = 0; j < i.value()->size(); j++){
-            if(i.value()->at(j)->getPoint()->getName().compare(pointName) == 0){
-                indexes.first = i.key();
-                indexes.second = j;
+        if(i.key().compare(PATH_GROUP_NAME) != 0){
+            for(int j = 0; j < i.value()->size(); j++){
+                if(i.value()->at(j)->getPoint()->getName().compare(pointName) == 0){
+                    indexes.first = i.key();
+                    indexes.second = j;
+                }
             }
         }
     }
@@ -147,8 +163,7 @@ void Points::addPoint(const QString groupName, const QString pointName, const do
     connect(&(*pointView), SIGNAL(pointLeftClicked(QString)), mainWindow, SLOT(displayPointEvent(QString)));
     connect(&(*pointView), SIGNAL(editedPointPositionChanged(double, double)), mainWindow, SLOT(updateCoordinates(double, double)));
     connect(&(*pointView), SIGNAL(moveTmpEditPathPoint()), mainWindow, SLOT(moveTmpEditPathPointSlot()));
-    connect(&(*pointView), SIGNAL(addPointPath(PointView*)), mapView, SLOT(addPathPointMapViewSlot(PointView*)));
-    connect(&(*pointView), SIGNAL(homeSelected(QString)), mainWindow, SLOT(homeSelected(QString)));
+    connect(&(*pointView), SIGNAL(addPointPath(QString, double, double)), mainWindow, SLOT(addPointPathSlot(QString, double, double)));
     connect(&(*pointView), SIGNAL(homeEdited(QString)), mainWindow, SLOT(homeEdited(QString)));
 
 
@@ -226,9 +241,11 @@ bool Points::isAPoint(const QString pointName) const{
     QMapIterator<QString, std::shared_ptr<QVector<std::shared_ptr<PointView>>>> i(*groups);
     while (i.hasNext()) {
         i.next();
-        for(int j = 0; j < i.value()->size(); j++){
-            if(i.value()->at(j)->getPoint()->getName().compare(pointName) == 0)
-                return true;
+        if(i.key().compare(PATH_GROUP_NAME) != 0){
+            for(int j = 0; j < i.value()->size(); j++){
+                if(i.value()->at(j)->getPoint()->getName().compare(pointName) == 0)
+                    return true;
+            }
         }
     }
     return false;
@@ -247,9 +264,11 @@ QString Points::getGroupNameFromPointName(const QString pointName) const{
     QMapIterator<QString, std::shared_ptr<QVector<std::shared_ptr<PointView>>>> i(*groups);
     while (i.hasNext()) {
         i.next();
-        for(int j = 0; j < i.value()->size(); j++){
-            if(i.value()->at(j)->getPoint()->getName().compare(pointName) == 0)
-                return i.key();
+        if(i.key().compare(PATH_GROUP_NAME) != 0){
+            for(int j = 0; j < i.value()->size(); j++){
+                if(i.value()->at(j)->getPoint()->getName().compare(pointName) == 0)
+                    return i.key();
+            }
         }
     }
     return "";
@@ -280,5 +299,5 @@ void Points::setPixmapAll(const QPixmap pixmap){
 }
 
 void Points::addTmpPoint(MapView *mapView, MainWindow *mainWindow){
-    addPoint(TMP_GROUP_NAME, "tmpPoint", 0, 0, false, Point::PointType::TEMP, mapView, mainWindow);
+    addPoint(TMP_GROUP_NAME, TMP_POINT_NAME, 0, 0, false, Point::PointType::TEMP, mapView, mainWindow);
 }

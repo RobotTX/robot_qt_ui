@@ -17,6 +17,8 @@ class PathWidget;
 #include "Model/point.h"
 #include "View/pointview.h"
 #include "mainwindow.h"
+
+
 /**
  * @brief The EditSelectedRobotWidget class
  * The class which display the menu to edit a robot
@@ -46,8 +48,8 @@ public:
     void setPathChanged(bool change){pathChanged = change;}
     bool getPathChanged(){return pathChanged ;}
     void setPathWidget(PathWidget* pw){pathWidget = pw;}
-    void setOldPath(std::vector<std::shared_ptr<PathPoint>> pw){oldPath = pw;}
-    std::vector<std::shared_ptr<PathPoint>> getOldPath( ){return oldPath;}
+    void setOldPath(QVector<std::shared_ptr<PathPoint>> pw){oldPath = pw;}
+    QVector<std::shared_ptr<PathPoint>> getOldPath( ){return oldPath;}
 
 signals:
     /// Signal emitted when a robot has been edited & saved
@@ -75,7 +77,7 @@ private:
     bool firstConnection;
     QPushButton* cancelBtn;
     PathWidget* pathWidget;
-    std::vector<std::shared_ptr<PathPoint>> oldPath;
+    QVector<std::shared_ptr<PathPoint>> oldPath;
     bool pathChanged;
 
 protected:

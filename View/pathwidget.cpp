@@ -17,12 +17,12 @@ PathWidget::PathWidget(QWidget* _parent):QWidget(_parent){
 void PathWidget::setSelectedRobot(RobotView *const robotView){
 
     /// Get the path of the robot
-    std::vector<std::shared_ptr<PathPoint>> path = robotView->getRobot()->getPath();
+    std::shared_ptr<QVector<std::shared_ptr<PathPoint>>> path = robotView->getRobot()->getPath();
 
     clearLayout(layout);
-    for(size_t i = 0; i < path.size(); i++){
+    for(size_t i = 0; i < path->size(); i++){
         /// Index & name of the point
-        QLabel* nameLabel = new QLabel(QString::number(i+1) + " : " + path.at(i)->getPoint().getName(), this);
+        QLabel* nameLabel = new QLabel(QString::number(i+1) + " : " + path->at(i)->getPoint().getName(), this);
         nameLabel->setWordWrap(true);
         nameLabel->setMinimumWidth(1);
         layout->addWidget(nameLabel);
@@ -30,17 +30,17 @@ void PathWidget::setSelectedRobot(RobotView *const robotView){
 
         /// Action to do (wait for human or a ertain amount of time)
         QLabel* actionLabel = new QLabel(this);
-        if(path.at(i)->getAction() == PathPoint::HUMAN_ACTION){
+        if(path->at(i)->getAction() == PathPoint::HUMAN_ACTION){
             actionLabel->setText("Wait for Human Action");
         } else {
-            actionLabel->setText("Wait for " + QString::number(path.at(i)->getWaitTime()) + QString(" s"));
+            actionLabel->setText("Wait for " + QString::number(path->at(i)->getWaitTime()) + QString(" s"));
         }
 
         actionLabel->setWordWrap(true);
         actionLabel->setMinimumWidth(1);
         layout->addWidget(actionLabel);
 
-        if(i == path.size()-1){
+        if(i == path->size()-1){
             actionLabel->hide();
         }
     }

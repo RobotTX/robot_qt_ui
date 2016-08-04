@@ -42,36 +42,23 @@ private:
     QVBoxLayout* layout;
     RobotView* robotView;
     QProgressBar* batteryLevel;
-  //  QPushButton* backBtn;
     QLabel* wifiNameLabel;
-   // QPushButton* addPathBtn;
     QPushButton* goHome;
     QLabel* ipAddressLabel;
-   // QPushButton* homeBtn;
     PathWidget* pathWidget;
     QPushButton* scanBtn;
-    //QPushButton* editBtn;
     QLabel* name;
     TopLeftMenu* actionButtons ;
-     QLabel* noPath ;
-     QLabel* homeLabel2;
+    QLabel* noPath ;
+    QLabel* homeLabel2;
 
 protected:
     void showEvent(QShowEvent *event);
     void hideEvent(QHideEvent *event);
 
 signals:
-    /**
-     * @brief selectHome
-     * Signal emitted when the user click on the button of the home point, but there is
-     * no home so he can choose one
-     */
-    void selectHome(RobotView*);
     void showSelectedRobotWidget();
     void hideSelectedRobotWidget();
-
-private slots:
-    void homeBtnEvent();
 };
 
 #endif // SELECTEDROBOTWIDGET_H

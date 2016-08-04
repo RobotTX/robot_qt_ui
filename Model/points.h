@@ -18,6 +18,7 @@ class MainWindow;
 
 #define NO_GROUP_NAME "No Group"
 #define TMP_GROUP_NAME "TmpPoint"
+#define TMP_POINT_NAME "tmpPoint"
 #define PATH_GROUP_NAME "PathPoints"
 
 /**
@@ -47,6 +48,7 @@ public:
     std::shared_ptr<Point> findPoint(const QString pointName) const;
     std::shared_ptr<Point> findPoint(const QString groupName, const int indexPoint) const;
     std::shared_ptr<PointView> findPointView(const QString pointName) const;
+    std::shared_ptr<PointView> findPathPointView(const QString pointName) const;
     std::pair<QString, int> findPointIndexes(const QString pointName) const;
     std::shared_ptr<QVector<std::shared_ptr<PointView>>> getDefaultGroup(void) const { return groups->value(NO_GROUP_NAME); }
     void addGroup(const QString name) { groups->insert(name, std::shared_ptr<QVector<std::shared_ptr<PointView>>>(new QVector<std::shared_ptr<PointView>>)); }

@@ -1,10 +1,8 @@
 #include "View/topleftmenu.h"
 #include "spacewidget.h"
 #include <QVBoxLayout>
-#include <QPushButton>
 #include <QHBoxLayout>
 #include <QSize>
-#include <buttonmenu.h>
 #include "colors.h"
 
 TopLeftMenu::TopLeftMenu(QWidget * parent): QWidget(parent){

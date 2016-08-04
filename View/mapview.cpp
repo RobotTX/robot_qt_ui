@@ -30,7 +30,7 @@ void MapView::mousePressEvent(QGraphicsSceneMouseEvent *event){
 }
 
 void MapView::mouseReleaseEvent(QGraphicsSceneMouseEvent *event){
-    qDebug() << "mapview mouseReleaseEvent";
+    qDebug() << "MapView::mouseReleaseEvent called";
 
     float x = dragStartPosition.x() - this->pos().x();
     float y = dragStartPosition.y() - this->pos().y();
@@ -40,60 +40,38 @@ void MapView::mouseReleaseEvent(QGraphicsSceneMouseEvent *event){
     if (abs(x) <= 10 && abs(y) <= 10){
         /// click
         if(state == GraphicItemState::NO_STATE){
-            qDebug() << "(MapView) NO_STATE";
+            qDebug() << "MapView::mouseReleaseEvent NO_STATE";
             std::shared_ptr<PointView> tmpPointView = points->getTmpPointView();
             tmpPointView->show();
             /// might be useless code
             tmpPointView->setPos(event->pos().x(), event->pos().y());
             emit pointLeftClicked(tmpPointView->getPoint()->getName());
         } else if(state == GraphicItemState::CREATING_PATH){
+            qDebug() << "MapView::mouseReleaseEvent CREATING_PATH";
             /// if it's not a white point of the map we cannot add it to the path
-            qDebug() << "(MapView) CREATING_PATH";
-   /*         if(map->getMapImage().pixelColor(event->pos().x()-tmpPointPixmap.width()/2, event->pos().y()-tmpPointPixmap.height()).red() >= 254){
-
-                qDebug() << "Clicked on the map while creating a path";
-                Point tmpPoint("tmpPoint" + QString::number(idTmp++), 0.0, 0.0, Point::PointType::PATH);
-                PointView* newPointView = new PointView(std::make_shared<Point>(tmpPoint), this);
-
-                newPointView->setState(GraphicItemState::CREATING_PATH);
-                newPointView->getPoint()->setPosition(event->pos().x(), event->pos().y());
-
-                newPointView->setPos(event->pos().x()-tmpPointPixmap.width()/2, event->pos().y()-tmpPointPixmap.height());
-
-                newPointView->setParentItem(this);
-
-                pathCreationPoints.push_back(newPointView);
-                emit addPathPointMapView(&(*(newPointView->getPoint())));
-
-
+            if(map->getMapImage().pixelColor(event->pos().x()-tmpPointPixmap.width()/2, event->pos().y()-tmpPointPixmap.height()).red() >= 254){
+                emit addPointPath(TMP_POINT_NAME, event->pos().x(), event->pos().y());
            } else {
                emit newMessage("You cannot create a point here because your robot cannot go there. You must click known areas of the map");
                qDebug() << "sorry cannot create a point here";
-            }*/
+            }
         } else if(state == GraphicItemState::EDITING_PERM){
-            qDebug() << "(MapView) EDITING_PERM " << event->pos().x() << event->pos().y();;
+            qDebug() << "MapView::mouseReleaseEvent EDITING_PERM" << event->pos().x() << event->pos().y();
             /// to notify the point information menu that the position has changed and so the point can be displayed at its new position
             emit newCoordinates(event->pos().x(), event->pos().y());
-        } else if(state == GraphicItemState::SELECTING_HOME){
-            qDebug() << "(MapView) SELECTING_HOME";
-            std::shared_ptr<PointView> tmpPointView = points->getTmpPointView();
-            tmpPointView->show();
-            /// might be useless code
-            tmpPointView->setPos(event->pos().x(), event->pos().y());
-            emit homeSelected(tmpPointView->getPoint()->getName());
         } else if(state == GraphicItemState::EDITING_HOME){
-            qDebug() << "(MapView) EDITING_HOME";
+            qDebug() << "MapView::mouseReleaseEvent EDITING_HOME";
             std::shared_ptr<PointView> tmpPointView = points->getTmpPointView();
             tmpPointView->show();
             /// might be useless code
             tmpPointView->setPos(event->pos().x(), event->pos().y());
             emit homeEdited(tmpPointView->getPoint()->getName());
-        } else if(state == GraphicItemState::EDITING){
-            qDebug() << "(MapView) EDITING" << event->pos().x() << event->pos().y();;
+        } else if(state == GraphicItemState::EDITING_PATH){
+            qDebug() << "MapView::mouseReleaseEvent EDITING_PATH" << event->pos().x() << event->pos().y();
             /// to notify that a point which belongs to the path of a robot has been changed
             //emit newCoordinatesPathPoint(event->pos().x(), event->pos().y());
         } else {
-            qDebug() << "(MapView) NO EVENT";
+            qDebug() << "MapView::mouseReleaseEvent NO_EVENT";
         }
     }
     /// else drag
@@ -114,89 +92,9 @@ void MapView::setState(const GraphicItemState _state){
  void MapView::updatePixmapHover(PointView::PixmapType type, QString pointName){
     Q_UNUSED(type)
     std::shared_ptr<PointView> pointView = points->findPointView(pointName);
-    if(pointView && state == GraphicItemState::EDITING)
+    if(pointView && state == GraphicItemState::EDITING_PATH)
         pointView->setType(PointView::PixmapType::HOVER);
  }
-
- void MapView::addPathPointMapViewSlot(PointView* _pointView){
-     qDebug() << "addPathPointMapViewSlot called";
-     //emit addPathPointMapView(&(*(_pointView->getPoint())));
- }
-
-
- void MapView::addPathPoint(PointView* pointView){
-     qDebug() << "MapView::addPathPoint called";
-/*
-     PointView* newPointView = new PointView(std::make_shared<Point>(*(pointView->getPoint())), this);
-
-     newPointView->setState(GraphicItemState::CREATING_PATH);
-     //newPointView->setPos(pointView->pos().x()+tmpPointPixmap.width()/2, pointView->pos().y()+tmpPointPixmap.height());
-     //newPointView->setPos(pointView->pos().x(), pointView->pos().y());
-     newPointView->setParentItem(this);
-
-     pathCreationPoints.push_back(newPointView);*/
- }
-
- void MapView::addPointEditPath(Point pt){
-
-    qDebug() << "mapview addPointEditPath point" << pt.getName();
-    /*PointView* newPointView = new PointView(std::make_shared<Point>(pt), this);
-
-    newPointView->setState(GraphicItemState::CREATING_PATH);
-
-    newPointView->setParentItem(this);
-    pathCreationPoints.push_back(newPointView);
-
-    emit addPathPointMapView(&(*(newPointView->getPoint())));*/
- }
-
- void MapView::deletePointView(Point pt){
-     /*for(int j = 0; j < pathCreationPoints.size(); j++){
-        if(pt.comparePos(pathCreationPoints.at(j)->getPoint()->getPosition().getX(),
-            pathCreationPoints.at(j)->getPoint()->getPosition().getY())){
-            pathCreationPoints.remove(j);
-        }
-     }*/
- }
-
- void MapView::changeOrderPathPoints(const int start, const int row){
-     /*PointView* pv = pathCreationPoints.takeAt(start);
-     if(row > pathCreationPoints.size()){
-         qDebug() << "putting pv at the end";
-         pathCreationPoints.push_back(pv);
-     }
-     else{
-         if(start < row){
-             qDebug() << "inserting pv in position" << row-1;
-             pathCreationPoints.insert(row-1, pv);
-         } else {
-             qDebug() << " inserting pv in position " << row;
-             pathCreationPoints.insert(row, pv);
-         }
-     }*/
- }
-
- /// called when a permanent point is added to the path
- void MapView::addPermanentPointToPath(PointView *pointV){
-    //pathCreationPoints.push_back(pointV);
- }
-
- int MapView::findIndexInPathByName(const QString name){
-     /*for(int i = 0; i < pathCreationPoints.count(); i++){
-         std::shared_ptr<Point> currPoint = pathCreationPoints.at(i)->getPoint();
-         if(currPoint->isPermanent()){
-             if(!currPoint->getName().compare(name))
-                 return i;
-         }
-     }*/
-     return -1;
- }
-
- void MapView::replacePermanentPathPoint(const int index, PointView *const pv){
-     qDebug() << "replace permanent path point called";
-     //pathCreationPoints.replace(index, pv);
- }
-
 
  void MapView::setPoints(std::shared_ptr<Points> _points){
      qDebug() << "MapView::setPoints called" << _points->count();

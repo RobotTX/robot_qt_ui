@@ -78,13 +78,13 @@ BottomLayout::BottomLayout(QMainWindow* parent, const std::shared_ptr<Robots> &r
 
     /// Creation of the second collumn, with the labels containing the path of the robot
     for(int i = 0; i < robotsVector.size(); i++){
-        std::vector<std::shared_ptr<PathPoint>> path = robotsVector.at(i)->getRobot()->getPath();
+        std::shared_ptr<QVector<std::shared_ptr<PathPoint>>> path = robotsVector.at(i)->getRobot()->getPath();
         QString pathStr = QString("");
-        for(size_t j = 0; j < path.size(); j++){
+        for(size_t j = 0; j < path->size(); j++){
             if(j != 0){
                 pathStr += " - ";
             }
-            pathStr += path.at(j)->getPoint().getName();
+            pathStr += path->at(j)->getPoint().getName();
         }
         QLabel* pathLabel = new QLabel(pathStr, this);
         pathLabel->setMinimumHeight(parent->height()/10);
@@ -104,7 +104,7 @@ BottomLayout::BottomLayout(QMainWindow* parent, const std::shared_ptr<Robots> &r
         viewPathRobotBtn->setMinimumWidth(parent->width()/10);
         viewPathRobotBtn->setIconSize(parent->size()/10);
         viewPathRobotBtn->setCheckable(true);
-        if(robots->getRobotsVector().at(i)->getRobot()->getPath().size() < 1)
+        if(robots->getRobotsVector().at(i)->getRobot()->getPath()->size() < 1)
             viewPathRobotBtn->setEnabled(false);
         viewPathRobotBtnGroup->addButton(viewPathRobotBtn, i);
         columnViewPath->addWidget(viewPathRobotBtn);
@@ -119,7 +119,7 @@ BottomLayout::BottomLayout(QMainWindow* parent, const std::shared_ptr<Robots> &r
         playRobotBtn->setMaximumWidth(parent->width()/10);
         playRobotBtn->setMinimumWidth(parent->width()/10);
         playRobotBtn->setIconSize(parent->size()/10);
-        if(robots->getRobotsVector().at(i)->getRobot()->getPath().size() < 1)
+        if(robots->getRobotsVector().at(i)->getRobot()->getPath()->size() < 1)
             playRobotBtn->setEnabled(false);
         playRobotBtnGroup->addButton(playRobotBtn, i);
         columnPlay->addWidget(playRobotBtn);
@@ -134,7 +134,7 @@ BottomLayout::BottomLayout(QMainWindow* parent, const std::shared_ptr<Robots> &r
         stopRobotBtn->setMaximumWidth(parent->width()/10);
         stopRobotBtn->setMinimumWidth(parent->width()/10);
         stopRobotBtn->setIconSize(parent->size()/10);
-        if(robots->getRobotsVector().at(i)->getRobot()->getPath().size() < 1)
+        if(robots->getRobotsVector().at(i)->getRobot()->getPath()->size() < 1)
             stopRobotBtn->setEnabled(false);
         stopRobotBtnGroup->addButton(stopRobotBtn, i);
         columnStop->addWidget(stopRobotBtn);
@@ -197,7 +197,7 @@ void BottomLayout::deletePath(const int index){
 void BottomLayout::updateRobot(const int id, RobotView * const robotView){
     qDebug() << "(BottomLayout) updateRobot called" << id << robotBtnGroup->buttons().size();
     robotBtnGroup->button(id)->setText(robotView->getRobot()->getName());
-    if(robotView->getRobot()->getPath().size() < 1){
+    if(robotView->getRobot()->getPath()->size() < 1){
         stopRobotBtnGroup->button(id)->setEnabled(false);
         playRobotBtnGroup->button(id)->setEnabled(false);
         viewPathRobotBtnGroup->button(id)->setEnabled(false);
@@ -207,11 +207,11 @@ void BottomLayout::updateRobot(const int id, RobotView * const robotView){
         playRobotBtnGroup->button(id)->setEnabled(true);
         viewPathRobotBtnGroup->button(id)->setEnabled(true);
         QString pathStr = QString("");
-        for(size_t j = 0; j < robotView->getRobot()->getPath().size(); j++){
+        for(size_t j = 0; j < robotView->getRobot()->getPath()->size(); j++){
             if(j != 0){
                 pathStr += " - ";
             }
-            pathStr += robotView->getRobot()->getPath().at(j)->getPoint().getName();
+            pathStr += robotView->getRobot()->getPath()->at(j)->getPoint().getName();
         }
         vectorPathLabel.at(id)->setText(pathStr);
     }
@@ -230,13 +230,13 @@ void BottomLayout::addRobot(RobotView * const robotView){
     columnName->addWidget(robotBtn);
 
     /// Creation of the second column, with the labels containing the path of the robot
-    std::vector<std::shared_ptr<PathPoint>> path = robotView->getRobot()->getPath();
+    std::shared_ptr<QVector<std::shared_ptr<PathPoint>>> path = robotView->getRobot()->getPath();
     QString pathStr = QString("");
-    for(size_t j = 0; j < path.size(); j++){
+    for(size_t j = 0; j < path->size(); j++){
         if(j != 0){
             pathStr += " - ";
         }
-        pathStr += path.at(j)->getPoint().getName();
+        pathStr += path->at(j)->getPoint().getName();
     }
     QLabel* pathLabel = new QLabel(pathStr, this);
     pathLabel->setMinimumHeight(((QWidget*)parent())->height()/20);
@@ -251,7 +251,7 @@ void BottomLayout::addRobot(RobotView * const robotView){
     viewPathRobotBtn->setMinimumWidth(((QWidget*)parent())->width()/20);
     viewPathRobotBtn->setIconSize(((QWidget*)parent())->size()/20);
     viewPathRobotBtn->setCheckable(true);
-    if(robotView->getRobot()->getPath().size() < 1)
+    if(robotView->getRobot()->getPath()->size() < 1)
         viewPathRobotBtn->setEnabled(false);
     viewPathRobotBtnGroup->addButton(viewPathRobotBtn, i);
     columnViewPath->addWidget(viewPathRobotBtn);
@@ -261,7 +261,7 @@ void BottomLayout::addRobot(RobotView * const robotView){
     playRobotBtn->setMaximumWidth(((QWidget*)parent())->width()/20);
     playRobotBtn->setMinimumWidth(((QWidget*)parent())->width()/20);
     playRobotBtn->setIconSize(((QWidget*)parent())->size()/20);
-    if(robotView->getRobot()->getPath().size() < 1)
+    if(robotView->getRobot()->getPath()->size() < 1)
         playRobotBtn->setEnabled(false);
     playRobotBtnGroup->addButton(playRobotBtn, i);
     columnPlay->addWidget(playRobotBtn);
@@ -271,7 +271,7 @@ void BottomLayout::addRobot(RobotView * const robotView){
     stopRobotBtn->setMaximumWidth(((QWidget*)parent())->width()/20);
     stopRobotBtn->setMinimumWidth(((QWidget*)parent())->width()/20);
     stopRobotBtn->setIconSize(((QWidget*)parent())->size()/20);
-    if(robotView->getRobot()->getPath().size() < 1)
+    if(robotView->getRobot()->getPath()->size() < 1)
         stopRobotBtn->setEnabled(false);
     stopRobotBtnGroup->addButton(stopRobotBtn, i);
     columnStop->addWidget(stopRobotBtn);
