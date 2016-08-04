@@ -757,16 +757,18 @@ void MainWindow::robotSavedEvent(){
     std::shared_ptr<PointView> pointView = editSelectedRobotWidget->getHome();
     if(pointView != NULL && (selectedRobot->getRobot()->getHome() == NULL || !(&(*(pointView->getPoint())) == &(*(selectedRobot->getRobot()->getHome()->getPoint()))))){
         qDebug() << "Home has been modified";
-        int ret = openConfirmMessage("Do you really want to set the point " + pointView->getPoint()->getName() +
+       /* int ret = openConfirmMessage("Do you really want to set the point " + pointView->getPoint()->getName() +
                                      + " (" + QString::number(pointView->getPoint()->getPosition().getX(),'f', 1) + ", "
                                      + QString::number(pointView->getPoint()->getPosition().getY(),'f', 1) + ") as the home for "
                                      + selectedRobot->getRobot()->getName() + " ?");
+
         switch(ret){
             case QMessageBox::Cancel :
                 pointsLeftWidget->getActionButtons()->getMinusButton()->setChecked(false);
                 isOK = false;
             break;
             case QMessageBox::Ok : {
+            */
                 bool done = false;
 
                 if(pointView->getPoint()->isTemporary()){
@@ -800,13 +802,14 @@ void MainWindow::robotSavedEvent(){
                 }
                 isOK = true;
                 change++;
-            }
+           /* }
             break;
             default:
                 qDebug() << "MainWindow::robotSavedEvent should never be here";
                 isOK = false;
             break;
-        }
+
+        }*/
     }
 
     /// finally we edit
@@ -1037,6 +1040,7 @@ void MainWindow::editHomeEvent(){
         editSelectedRobotWidget->disableAll();
         editSelectedRobotWidget->getHomeBtn()->setEnabled(true);
         setEnableAll(false, GraphicItemState::EDITING_HOME);
+
     } else {
         setMessageTop(TEXT_COLOR_NORMAL,"");
         if(selectedRobot->getRobot()->getHome() != NULL){

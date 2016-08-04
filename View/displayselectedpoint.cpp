@@ -19,6 +19,7 @@ DisplaySelectedPoint::DisplaySelectedPoint(QMainWindow *const _parent, std::shar
     QWidget(_parent), map(_map), pointView(_pointView), parent(_parent), points(_points), origin(_origin)
 {
     layout = new QVBoxLayout(this);
+    QVBoxLayout * Downlayout = new QVBoxLayout(this);
 
     nameLayout = new QHBoxLayout();
 
@@ -43,15 +44,15 @@ DisplaySelectedPoint::DisplaySelectedPoint(QMainWindow *const _parent, std::shar
 
     nameLayout->addWidget(nameEdit);
 
-    layout->addLayout(nameLayout);
+    Downlayout->addLayout(nameLayout);
 
     posXLabel = new QLabel("X : ", this);
     posXLabel->setWordWrap(true);
-    layout->addWidget(posXLabel);
+    Downlayout->addWidget(posXLabel);
 
     posYLabel = new QLabel("Y : ", this);
     posYLabel->setWordWrap(true);
-    layout->addWidget(posYLabel);
+    Downlayout->addWidget(posYLabel);
 
     cancelButton = new QPushButton("Cancel", this);
     cancelButton->hide();
@@ -63,7 +64,7 @@ DisplaySelectedPoint::DisplaySelectedPoint(QMainWindow *const _parent, std::shar
     editLayout->addWidget(cancelButton);
     editLayout->addWidget(saveButton);
 
-    layout->addLayout(editLayout);
+    Downlayout->addLayout(editLayout);
 
     homeWidget = new QWidget(this);
     QVBoxLayout* homeLayout = new QVBoxLayout(homeWidget);
@@ -80,7 +81,7 @@ DisplaySelectedPoint::DisplaySelectedPoint(QMainWindow *const _parent, std::shar
 
     homeWidget->hide();
 
-    layout->addWidget(homeWidget);
+    Downlayout->addWidget(homeWidget);
 
     /// to check that a point that's being edited does not get a new name that's already used in the database
     connect(nameEdit, SIGNAL(textEdited(QString)), this, SLOT(checkPointName(QString)));
@@ -88,7 +89,10 @@ DisplaySelectedPoint::DisplaySelectedPoint(QMainWindow *const _parent, std::shar
     setMaximumWidth(_parent->width()*4/10);
     setMinimumWidth(_parent->width()*4/10);
 
-    //layout->setContentsMargins(0,0,0,0);
+    layout->addLayout(Downlayout);
+    Downlayout->setContentsMargins(20,0,0,0);
+
+    layout->setContentsMargins(0,0,0,0);
     layout->setAlignment(Qt::AlignTop);
 
 }
