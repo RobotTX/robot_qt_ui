@@ -20,6 +20,12 @@
             <y>225</y>
             <displayed>1</displayed>
         </point>
+        <point>
+            <name>Home_Robota</name>
+            <x>112.991</x>
+            <y>307.632</y>
+            <displayed>1</displayed>
+        </point>
     </group>
     <group>
         <name>Second group</name>
@@ -63,7 +69,7 @@
             <name>A new point</name>
             <x>100</x>
             <y>100</y>
-            <displayed>1</displayed>
+            <displayed>0</displayed>
         </point>
     </group>
 </points>

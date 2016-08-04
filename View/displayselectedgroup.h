@@ -40,6 +40,9 @@ public:
 private slots:
     void buttonClickedSlot(QAbstractButton*);
 
+protected:
+    void showEvent(QShowEvent* event);
+
 private:
 
     PointButtonGroup* pointButtonGroup;

@@ -55,6 +55,9 @@ public:
     PixmapType getLastType(void) const { return lastType; }
     void setLastType(const PixmapType _last) { lastType = _last; }
     QPixmap getLastPixmap(void) const { return lastPixmap; }
+    void setOriginalPosition(const Position position) { originalPosition = position; }
+    Position getOriginalPosition(void) const { return originalPosition; }
+    void updatePos(void);
 
 protected:
     void mousePressEvent(QGraphicsSceneMouseEvent *event);
@@ -68,8 +71,8 @@ signals:
     void pointRightClicked(QString);
     void pointLeftClicked(QString);
     void addPointPath(PointView*);
-    void homeSelected(QString pointView, bool temporary);
-    void homeEdited(QString pointView, bool temporary);
+    void homeSelected(QString pointView);
+    void homeEdited(QString pointView);
     void moveTmpEditPathPoint();
     void editedPointPositionChanged(double, double);
     void pathPointChanged(double, double, PointView*);
@@ -83,6 +86,7 @@ private:
     bool wasShown;
     PixmapType type;
     PixmapType lastType;
+    Position originalPosition;
 };
 
 #endif // POINTVIEW_H

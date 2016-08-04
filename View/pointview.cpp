@@ -27,29 +27,29 @@ PointView::PointView(const std::shared_ptr<Point> &_point, QGraphicsItem *parent
 
 void PointView::mousePressEvent(QGraphicsSceneMouseEvent *event){
     qDebug() << "pv" << point->getName() << "state " << state;
-        if(state == GraphicItemState::NO_STATE){
-            if(event->button() == Qt::RightButton){
-                qDebug() << "right click on point NO STATE" ;
-                emit pointRightClicked(this->getPoint()->getName());
-            }
-            if(event->button() == Qt::LeftButton){
-                emit pointLeftClicked(this->getPoint()->getName());
-            }
-        } else if(state == GraphicItemState::CREATING_PATH){
-            qDebug() << "Clicked on a point while creating a path";
-            addedToPath = true;
-            emit addPointPath(this);
-        } else if(state == GraphicItemState::EDITING){
-            qDebug() << "(EDITING) PointView moving from" << pos().x() << pos().y();
-        }  else if(state == GraphicItemState::EDITING_PERM){
-            qDebug() << "Editing permanently PointView moving from" << pos().x() << pos().y();;
-        } else if(state == GraphicItemState::SELECTING_HOME){
-            emit homeSelected(this->getPoint()->getName(), false);
-        } else if(state == GraphicItemState::EDITING_HOME){
-            emit homeEdited(this->getPoint()->getName(), false);
-        } else {
-            qDebug() << "(PointView " << point->getName() << ") NO EVENT";
+    if(state == GraphicItemState::NO_STATE){
+        if(event->button() == Qt::RightButton){
+            qDebug() << "right click on point NO STATE" ;
+            emit pointRightClicked(this->getPoint()->getName());
         }
+        if(event->button() == Qt::LeftButton){
+            emit pointLeftClicked(this->getPoint()->getName());
+        }
+    } else if(state == GraphicItemState::CREATING_PATH){
+        qDebug() << "Clicked on a point while creating a path";
+        addedToPath = true;
+        emit addPointPath(this);
+    } else if(state == GraphicItemState::EDITING){
+        qDebug() << "(EDITING) PointView moving from" << pos().x() << pos().y();
+    }  else if(state == GraphicItemState::EDITING_PERM){
+        qDebug() << "Editing permanently PointView moving from" << pos().x() << pos().y();;
+    } else if(state == GraphicItemState::SELECTING_HOME){
+        emit homeSelected(this->getPoint()->getName());
+    } else if(state == GraphicItemState::EDITING_HOME){
+        emit homeEdited(this->getPoint()->getName());
+    } else {
+        qDebug() << "(PointView " << point->getName() << ") NO EVENT";
+    }
 }
 
 void PointView::mouseMoveEvent(QGraphicsSceneMouseEvent *event){
@@ -106,15 +106,33 @@ void PointView::hoverEnterEvent(QGraphicsSceneHoverEvent * /* unused */){
 
 void PointView::hoverLeaveEvent(QGraphicsSceneHoverEvent * /* unused */){
     QGraphicsPixmapItem::setPixmap(lastPixmap);
+    updatePos();
 }
 
 void PointView::setPos(const qreal x, const qreal y){
+    qDebug() << "PointView::setPos called"
+             << getPoint()->getName() << "from"
+             << getPoint()->getPosition().getX()
+             << getPoint()->getPosition().getY()
+             << "to" << x << y;
     point->setPosition(x, y);
     QGraphicsPixmapItem::setPos(x - pixmap().width()*SCALE/2,
            y - pixmap().height()*SCALE);
 }
 
+void PointView::updatePos(void){
+    qDebug() << "PointView::updatePos called"
+             << getPoint()->getName() << "from"
+             << getPoint()->getPosition().getX()
+             << "to" << getPoint()->getPosition().getY();
+    float x = getPoint()->getPosition().getX();
+    float y = getPoint()->getPosition().getY();
+    QGraphicsPixmapItem::setPos(x - pixmap().width()*SCALE/2,
+           y - pixmap().height()*SCALE);
+}
+
 void PointView::setPixmap(const PixmapType pixType){
+    qDebug() << "PointView::setPixmap called" << getPoint()->getName();
 
     lastPixmap = pixmap();
     if(type == PointView::HOVER && pixType != PointView::HOVER)
@@ -170,4 +188,5 @@ void PointView::setPixmap(const PixmapType pixType){
         }
     }
     QGraphicsPixmapItem::setPixmap(pixmap2);
+    updatePos();
 }

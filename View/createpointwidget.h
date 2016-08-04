@@ -26,6 +26,7 @@ public:
 
     /// to display an appropriate message to the end user when he tries to create a point
     enum Error { ContainsSemicolon, EmptyName, AlreadyExists, NoError };
+
     CreatePointWidget(QMainWindow* parent, std::shared_ptr<Points> points);
 
     void setSelectedPoint(std::shared_ptr<PointView> const& _pointView);

@@ -230,12 +230,10 @@ int PointsLeftWidget::checkGroupName(QString name){
     while (i.hasNext()) {
         bool valid(true);
         i.next();
-        if(i.value()){
-            for(int j = 0; j < i.value()->size(); j++){
-                if(!i.value()->at(j)->getPoint()->getName().compare(name.simplified(), Qt::CaseInsensitive)){
-                    qDebug() << name << "already exists as a point";
-                    valid = false;
-                }
+        for(int j = 0; j < i.value()->size(); j++){
+            if(!i.value()->at(j)->getPoint()->getName().compare(name.simplified(), Qt::CaseInsensitive)){
+                qDebug() << name << "already exists as a point";
+                valid = false;
             }
         }
         if(!name.compare(i.key(), Qt::CaseInsensitive)){

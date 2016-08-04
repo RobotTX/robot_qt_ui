@@ -16,7 +16,6 @@ PointButtonGroup::PointButtonGroup(std::shared_ptr<Points> _points, const QStrin
 
     groupIndex = _groupIndex;
     buttonGroup = new QButtonGroup(this);
-    buttonGroup->setExclusive(true);
     layout->setAlignment(Qt::AlignTop);
     BUTTON_SIZE = parentWidget()->size()/2;
     createButtons();
@@ -27,6 +26,7 @@ void PointButtonGroup::setGroup(const QString _groupIndex){
     deleteButtons();
     groupIndex = _groupIndex;
     createButtons();
+    setCheckable(true);
     emit updateConnectionsRequest();
 }
 

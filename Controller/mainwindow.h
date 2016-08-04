@@ -40,9 +40,9 @@ class PathPainter;
 #define ROBOTS_NAME_PATH "/home/m-a/Documents/QtProject/gobot-software/robotsName.dat"
 #define MAP_PATH "/home/m-a/Documents/QtProject/gobot-software/realMap.dat"
 
-#define XML_PATH "/home/joan/Qt/QtProjects/gobot-software/points.xml"
-#define ROBOTS_NAME_PATH "/home/joan/Qt/QtProjects/gobot-software/robotsName.dat"
-#define MAP_PATH "/home/joan/Qt/QtProjects/gobot-software/realMap.dat"
+//#define XML_PATH "/home/joan/Qt/QtProjects/gobot-software/points.xml"
+//#define ROBOTS_NAME_PATH "/home/joan/Qt/QtProjects/gobot-software/robotsName.dat"
+//#define MAP_PATH "/home/joan/Qt/QtProjects/gobot-software/realMap.dat"
 
 //#define XML_PATH "/Users/fannylarradet/Desktop/GTRobots/gobot-software/points.xml"
 //#define ROBOTS_NAME_PATH "/Users/fannylarradet/Desktop/GTRobots/gobot-software/robotsName.dat"
@@ -52,10 +52,14 @@ class PathPainter;
 #define PORT_ROBOT_UPDATE 6000
 
 namespace Ui {
-
-class MainWindow;
+    class MainWindow;
 }
 
+/**
+ * @brief MainWindow::MainWindow
+ * @param parent
+ * The main controller of the application
+ */
 class MainWindow : public QMainWindow{
     Q_OBJECT
 
@@ -86,6 +90,7 @@ public:
     void delay(const int ms) const;
     void setEnableAll(bool enable, GraphicItemState state = GraphicItemState::NO_STATE, bool clearPath = false, int noReturn = -1);
     void clearAllPath();
+    void setTemporaryMessageTop(const QString type, const QString message, const int ms);
 
 signals:
     void sendCommand(QString);
@@ -180,8 +185,8 @@ private slots:
     void setMessageTop(const QString msgType, const QString msg);
     void setLastMessage(void) { setMessageTop(topLayout->getLastMessage().first, topLayout->getLastMessage().second); }
     void setMessageCreationGroup(QString type, QString message);
-    void homeSelected(QString pointName, bool temporary);
-    void homeEdited(QString pointView, bool temporary);
+    void homeSelected(QString pointName);
+    void homeEdited(QString pointView);
     void goHomeBtnEvent();
     void viewPathSelectedRobot(int robotNb, bool checked);
     void editHomeEvent();

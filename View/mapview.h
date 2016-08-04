@@ -46,8 +46,8 @@ public:
 signals:
     void pointLeftClicked(QString);
     void addPathPointMapView(Point*);
-    void homeSelected(QString pointView, bool temporary);
-    void homeEdited(QString pointView, bool temporary);
+    void homeSelected(QString pointView);
+    void homeEdited(QString pointView);
     void newCoordinates(double x, double y);
     void newCoordinatesPathPoint(double, double);
     void newMessage(QString);

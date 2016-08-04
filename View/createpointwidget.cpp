@@ -113,7 +113,7 @@ void CreatePointWidget::setSelectedPoint(const std::shared_ptr<PointView> &_poin
 
 /// emits signal when a user clicks save after editing a point
 void CreatePointWidget::saveEditSelecPointBtnEvent(){
-    qDebug() << "saveEditSelecPointBtnEvent called";
+    qDebug() << "CreatePointWidget::saveEditSelecPointBtnEvent called";
     emit pointSaved(groupBox->currentText(), posXLabel->text().right(posXLabel->text().length()-4).toDouble(), posYLabel->text().right(posYLabel->text().length()-4).toDouble(), nameEdit->text().simplified());
 }
 
@@ -146,14 +146,13 @@ int CreatePointWidget::checkPointName(void){
             qDebug() << "This is already the name of a group" ;
             valid = false;
         }
-        if(i.value()){
-            for(int j = 0; j < i.value()->size(); j++){
-                if(i.value()->at(j)->getPoint()->getName().compare(nameEdit->text().simplified(), Qt::CaseInsensitive) == 0){
-                    qDebug() << nameEdit->text() << " already exists";
-                    valid = false;
-                }
+        for(int j = 0; j < i.value()->size(); j++){
+            if(i.value()->at(j)->getPoint()->getName().compare(nameEdit->text().simplified(), Qt::CaseInsensitive) == 0){
+                qDebug() << nameEdit->text() << " already exists";
+                valid = false;
             }
         }
+
         if(!valid){
             saveBtn->setEnabled(false);
             /// to explain the user why he cannot add its point as it is

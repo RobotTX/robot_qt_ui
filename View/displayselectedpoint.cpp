@@ -103,6 +103,10 @@ void DisplaySelectedPoint::displayPointInfo(void) {
         posXLabel->setText("X : " + QString::number(pointView->getPoint()->getPosition().getX(), 'f', 1));
         posYLabel->setText("Y : " + QString::number(pointView->getPoint()->getPosition().getY(), 'f', 1));
         nameEdit->setText(pointView->getPoint()->getName());
+        if(pointView->getPoint()->isHome()){
+            homeWidget->show();
+        } else
+            homeWidget->hide();
     }
 }
 
@@ -159,19 +163,6 @@ void DisplaySelectedPoint::resetWidget(){
     actionButtons->getEditButton()->setEnabled(true);
     actionButtons->getEditButton()->setToolTip("You can click on this button and then choose between clicking on the map or drag the point to change its position");
 
-    if(pointView){
-        /// in case the user had dragged the point around the map or clicked it, this resets the coordinates displayed to the original ones, otherwise this has no effect
-        /// reset the position
-        posXLabel->setText(QString::number(pointView->getPoint()->getPosition().getX()));
-        posYLabel->setText(QString::number(pointView->getPoint()->getPosition().getY()));
-        pointView->setPos(static_cast<qreal>(pointView->getPoint()->getPosition().getX()), static_cast<qreal>(pointView->getPoint()->getPosition().getY()));
-        /// reset its name in the hover on the map
-        nameEdit->setText(pointView->getPoint()->getName());
-        if(pointView->getPoint()->isHome()){
-            homeWidget->show();
-        } else
-            homeWidget->hide();
-    }
     emit resetState(GraphicItemState::NO_STATE, true);
 }
 
@@ -203,16 +194,14 @@ int DisplaySelectedPoint::checkPointName(QString name) {
     QMapIterator<QString, std::shared_ptr<QVector<std::shared_ptr<PointView>>>> i(*(points->getGroups()));
     while (i.hasNext()) {
         i.next();
-        if(i.value()){
-            for(int j = 0; j < i.value()->size(); j++){
-                if(i.value()->at(j)->getPoint()->getName().compare(nameEdit->text().simplified(), Qt::CaseInsensitive) == 0){
-                    qDebug() << nameEdit->text() << " already exists";
-                    saveButton->setEnabled(false);
-                    /// to explain the user why he cannot add its point as it is
-                    saveButton->setToolTip("A point with this name already exists, please choose another name for your point");
-                    emit invalidName(TEXT_COLOR_WARNING, CreatePointWidget::Error::AlreadyExists);
-                    return 2;
-                }
+        for(int j = 0; j < i.value()->size(); j++){
+            if(i.value()->at(j)->getPoint()->getName().compare(nameEdit->text().simplified(), Qt::CaseInsensitive) == 0){
+                qDebug() << nameEdit->text() << " already exists";
+                saveButton->setEnabled(false);
+                /// to explain the user why he cannot add its point as it is
+                saveButton->setToolTip("A point with this name already exists, please choose another name for your point");
+                emit invalidName(TEXT_COLOR_WARNING, CreatePointWidget::Error::AlreadyExists);
+                return 2;
             }
         }
     }
@@ -227,7 +216,7 @@ void DisplaySelectedPoint::setPointView(const std::shared_ptr<PointView>& _point
 
     pointView = _pointView;
     /// sets the pixmaps of the other points (black)
-    points->setNormalPixmaps();
+    points->setPixmapAll(PointView::PixmapType::NORMAL);
 
     /// sets the color of the displayed pointView to blue
     pointView->setPixmap(PointView::MID);
