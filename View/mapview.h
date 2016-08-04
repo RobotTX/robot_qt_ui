@@ -45,10 +45,6 @@ signals:
     void newCoordinatesPathPoint(double, double);
     void newMessage(QString);
 
-private slots:
-    void updateHover(QString, QString);
-    void updatePixmapHover(PointView::PixmapType type, QString pv);
-
 protected:
     void mousePressEvent(QGraphicsSceneMouseEvent *event);
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);

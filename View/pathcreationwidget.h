@@ -8,6 +8,7 @@ class TopLeftMenu;
 class QMenu;
 class PathPointList;
 class QListWidgetItem;
+class PathPointCreationWidget;
 
 #include <QWidget>
 #include <memory>
@@ -35,17 +36,23 @@ public:
     PathCreationWidget(MainWindow* parent, const std::shared_ptr<Points>& points);
     void updateRobot(std::shared_ptr<Robot> robot);
     void updatePointsList(void);
+    void resetWidget(void);
+    void deleteItem(QListWidgetItem* item);
 
 protected:
     void showEvent(QShowEvent* event);
 
 signals:
-    void setMessage(QString msgType, QString msg);
-    void addPathPoint(QString name, double x, double y);
+    void setMessage(QString, QString );
+    void addPathPoint(QString, double, double);
+    void deletePathPoint(int);
+    void orderPathPointChanged(int, int);
+    void resetPath();
+    void actionChanged(int, QString);
 
 private slots:
     void addPathPointByMenuSlot(void);
-    void supprPathPointSlot(void);
+    void deletePathPointSlot(void);
     void editPathPointSlot(void);
     void itemClicked(QListWidgetItem* item);
     void itemMovedSlot(const QModelIndex& , int start, int , const QModelIndex& , int row);
@@ -53,6 +60,9 @@ private slots:
     void clicked(void);
     void pointClicked(QAction *action);
     void addPointPathSlot(QString name, double x, double y);
+    void saveEditSlot(PathPointCreationWidget* pathPointCreationWidget);
+    void actionChangedSlot(int id, QString waitTime);
+
 
 private:
     std::shared_ptr<Points> points;
@@ -90,11 +100,11 @@ private:
     void resetWidget(void);
 
     **
-     * @brief supprItem
+     * @brief deleteItem
      * @param item
      * Delete the given pathPoint from the list
      *
-    void supprItem(QListWidgetItem* item);
+    void deleteItem(QListWidgetItem* item);
 
     **
      * @brief editItem
@@ -165,10 +175,10 @@ private slots:
     void itemClicked(QListWidgetItem* item);
 
     **
-     * @brief supprPathPoint
+     * @brief deletePathPoint
      * Slot called when we click on the minus btn
      *
-    void supprPathPoint(void);
+    void deletePathPoint(void);
 
     **
      * @brief editPathPoint

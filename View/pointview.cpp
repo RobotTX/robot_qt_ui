@@ -26,6 +26,7 @@ PointView::PointView(const std::shared_ptr<Point> &_point, QGraphicsItem *parent
 
 void PointView::mousePressEvent(QGraphicsSceneMouseEvent *event){
     qDebug() << "PointView::mousePressEvent" << point->getName() << "state " << state;
+
     if(state == GraphicItemState::NO_STATE){
         qDebug() << "PointView::mousePressEvent NO_STATE";
         if(event->button() == Qt::RightButton){
@@ -34,17 +35,22 @@ void PointView::mousePressEvent(QGraphicsSceneMouseEvent *event){
         if(event->button() == Qt::LeftButton){
             emit pointLeftClicked(this->getPoint()->getName());
         }
+
     } else if(state == GraphicItemState::CREATING_PATH){
         qDebug() << "PointView::mousePressEvent CREATING_PATH";
         addedToPath = true;
         emit addPointPath(getPoint()->getName(), getPoint()->getPosition().getX(), getPoint()->getPosition().getY());
+
     } else if(state == GraphicItemState::EDITING_PATH){
         qDebug() << "PointView::mousePressEvent EDITING_PATH" << pos().x() << pos().y();
+
     }  else if(state == GraphicItemState::EDITING_PERM){
         qDebug() << "PointView::mousePressEvent EDITING_PERM" << pos().x() << pos().y();
+
     } else if(state == GraphicItemState::EDITING_HOME){
         qDebug() << "PointView::mousePressEvent EDITING_HOME";
         emit homeEdited(this->getPoint()->getName());
+
     } else {
         qDebug() << "PointView::mousePressEvent NO_EVENT";
     }
@@ -88,31 +94,29 @@ void PointView::mouseReleaseEvent(QGraphicsSceneMouseEvent *event){
         qDebug() << "to" << x << y;
         emit pathPointChanged(x, y, this);
         QGraphicsPixmapItem::mouseReleaseEvent(event);
-    }
-    else if(state == GraphicItemState::EDITING_PERM)
+
+    } else if(state == GraphicItemState::EDITING_PERM)
         QGraphicsPixmapItem::mouseReleaseEvent(event);
 }
 
 void PointView::hoverEnterEvent(QGraphicsSceneHoverEvent * /* unused */){
     setToolTip(point->getName());
-    PixmapType tmpType = type;
-
     setPixmap(PointView::PixmapType::MID);
-    /// we don't want to come back to this type but to the type just before we entered the event so we send this signal so the mapView resestablishes the right types
-    emit hoverEventSignal(tmpType, this->getPoint()->getName());
 }
 
 void PointView::hoverLeaveEvent(QGraphicsSceneHoverEvent * /* unused */){
     QGraphicsPixmapItem::setPixmap(lastPixmap);
     updatePos();
+    if(state == GraphicItemState::CREATING_PATH || state == GraphicItemState::EDITING_PATH)
+        emit updatePathPainterPointView();
 }
 
 void PointView::setPos(const qreal x, const qreal y){
-    qDebug() << "PointView::setPos called"
+    /*qDebug() << "PointView::setPos called"
              << getPoint()->getName() << "from"
              << getPoint()->getPosition().getX()
              << getPoint()->getPosition().getY()
-             << "to" << x << y;
+             << "to" << x << y;*/
 
     point->setPosition(x, y);
     QGraphicsPixmapItem::setPos(x - pixmap().width()*SCALE/2,
@@ -120,10 +124,10 @@ void PointView::setPos(const qreal x, const qreal y){
 }
 
 void PointView::updatePos(void){
-    qDebug() << "PointView::updatePos called"
+    /*qDebug() << "PointView::updatePos called"
              << getPoint()->getName() << "from"
              << getPoint()->getPosition().getX()
-             << "to" << getPoint()->getPosition().getY();
+             << "to" << getPoint()->getPosition().getY();*/
 
     float x = getPoint()->getPosition().getX();
     float y = getPoint()->getPosition().getY();
@@ -132,7 +136,7 @@ void PointView::updatePos(void){
 }
 
 void PointView::setPixmap(const PixmapType pixType){
-    qDebug() << "PointView::setPixmap called" << getPoint()->getName();
+    //qDebug() << "PointView::setPixmap called" << getPoint()->getName();
 
     lastPixmap = pixmap();
     if(type == PointView::HOVER && pixType != PointView::HOVER)

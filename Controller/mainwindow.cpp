@@ -143,9 +143,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     /// the purpose of this connection is just to propagate the signal to the map view through the main window
     connect(leftMenu->getDisplaySelectedPoint(), SIGNAL(nameChanged(QString, QString)), this, SLOT(updatePoint()));
 
-    /// to update the names of the points displayed when a user changes the name of a point via the edit button
-    connect(this, SIGNAL(nameChanged(QString, QString)), mapPixmapItem, SLOT(updateHover(QString, QString)));
-
     /// to reset the state of everybody when a user click on a random button while he was editing a point
     connect(leftMenu->getDisplaySelectedPoint(), SIGNAL(resetState(GraphicItemState, bool)),  this, SLOT(setGraphicItemsState(GraphicItemState, bool)));
 
@@ -175,6 +172,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
     /// to add a path point when we click on a pointView (which is relayed by the mainWindow)
     connect(this, SIGNAL(addPointPath(QString, double, double)), pathCreationWidget, SLOT(addPointPathSlot(QString, double, double)));
+    connect(this, SIGNAL(updatePathPainter()), pathPainter.get(), SLOT(updatePathPainterSlot()));
+    connect(this, SIGNAL(updatePathPainterPointView()), pathPainter.get(), SLOT(updatePathPainterPointViewSlot()));
 
     mainLayout->addLayout(bottom);
     graphicsView->setStyleSheet("CustomQGraphicsView{background-color: "+background_map_view+"}");
@@ -507,11 +506,6 @@ void MainWindow::viewPathSelectedRobot(int robotNb, bool checked){
     }*/
 }
 
-void MainWindow::clearAllPath(){
-    qDebug() << "clearallpaths called";
-    pathPainter->reset();
-}
-
 void MainWindow::editSelectedRobot(RobotView* robotView){
     qDebug() << "editSelectedRobot robotview ";
     selectedRobot = robotView;
@@ -571,11 +565,7 @@ void MainWindow::addPathSelecRobotBtnEvent(){
     setEnableAll(false, GraphicItemState::CREATING_PATH, true, true);
     pathCreationWidget->updateRobot(selectedRobot->getRobot());
 
-    clearAllPath();
-
-
     hideAllWidgets();
-    pathPainter->reset();
     pathCreationWidget->show();
 
     editSelectedRobotWidget->setOldPath(*(selectedRobot->getRobot()->getPath()));
@@ -966,13 +956,8 @@ void MainWindow::pathSaved(bool execPath){
 
 void MainWindow::addPointPathSlot(QString name, double x, double y){
     qDebug() << "addPathPoint called on point via * point" << x << y;
+    /// Relay to pathPainter::addPathPointSlot()
     emit addPointPath(name, x, y);
-}
-
-
-void MainWindow::updatePathPointToPainter(QVector<Point> &pointVector, bool save){
-    qDebug() << "MainWindow::updatePathPointToPainter called";
-    //pathPainter->updatePath(pointVector, save);
 }
 
 void MainWindow::stopPathCreation(){
@@ -1037,6 +1022,11 @@ void MainWindow::clearPath(const int robotNb){
     robots->getRobotsVector().at(robotNb)->getRobot()->setPath(std::vector<std::shared_ptr<PathPoint>>());
 
     bottomLayout->deletePath(robotNb);*/
+}
+
+void MainWindow::updatePathPainterPointViewSlot(){
+    /// Relay to pathPainter::updatePathPainterSlot()
+    emit updatePathPainterPointView();
 }
 
 void MainWindow::editHomeEvent(){

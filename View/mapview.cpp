@@ -82,20 +82,6 @@ void MapView::setState(const GraphicItemState _state){
     state = _state;
 }
 
- void MapView::updateHover(QString oldName, QString newName){
-     qDebug() << "MapView::updateHover from" << oldName << "to" << newName;
-     /*PointView* pointView = permanentPoints->getPointViewFromName(oldName);
-     pointView->setToolTip(newName);*/
- }
-
- /// so that the icon of a point view remains consistent while editing a point of a path and after
- void MapView::updatePixmapHover(PointView::PixmapType type, QString pointName){
-    Q_UNUSED(type)
-    std::shared_ptr<PointView> pointView = points->findPointView(pointName);
-    if(pointView && state == GraphicItemState::EDITING_PATH)
-        pointView->setType(PointView::PixmapType::HOVER);
- }
-
  void MapView::setPoints(std::shared_ptr<Points> _points){
      qDebug() << "MapView::setPoints called" << _points->count();
     points = _points;

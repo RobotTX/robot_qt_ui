@@ -89,7 +89,6 @@ public:
     /// to sleep for ms milliseconds
     void delay(const int ms) const;
     void setEnableAll(bool enable, GraphicItemState state = GraphicItemState::NO_STATE, bool clearPath = false, int noReturn = -1);
-    void clearAllPath();
     void setTemporaryMessageTop(const QString type, const QString message, const int ms);
 
 signals:
@@ -97,6 +96,8 @@ signals:
     void nameChanged(QString, QString);
     void changeCmdThreadRobotName(QString);
     void addPointPath(QString name, double x, double y);
+    void updatePathPainter();
+    void updatePathPainterPointView();
 
 private slots:
     void updateRobot(const QString ipAddress, const float posX, const float posY, const float ori);
@@ -145,7 +146,6 @@ private slots:
     void pathSaved(bool execPath);
     void addPointPathSlot(QString name, double x, double y);
     void displayPointsInGroup(void);
-    void updatePathPointToPainter(QVector<Point> &pointVector, bool save);
     void removePointFromInformationMenu(void);
     void displayPointMapEvent(void);
     void hidePathCreationWidget(void);
@@ -199,6 +199,7 @@ private slots:
     void sendNewMapToRobots(QString ipAddress);
     void sendNewMapToRobot(std::shared_ptr<Robot> robot, QString mapId);
     void settingBtnSlot();
+    void updatePathPainterPointViewSlot();
 
 private:
     Ui::MainWindow* ui;

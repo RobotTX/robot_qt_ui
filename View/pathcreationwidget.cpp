@@ -9,6 +9,7 @@
 #include <QMenu>
 #include <QListWidgetItem>
 #include "View/pathpointlist.h"
+#include "View/pathpointcreationwidget.h"
 
 
 PathCreationWidget::PathCreationWidget(MainWindow *parent, const std::shared_ptr<Points> &_points): QWidget(parent), points(_points){
@@ -17,22 +18,32 @@ PathCreationWidget::PathCreationWidget(MainWindow *parent, const std::shared_ptr
     creatingNewPoint = false;
 
     actionButtons = new TopLeftMenu(this);
+    actionButtons->getGoButton()->setEnabled(false);
+    actionButtons->getMapButton()->setEnabled(false);
+    actionButtons->getMinusButton()->setEnabled(false);
+    actionButtons->getEditButton()->setEnabled(false);
     layout->addWidget(actionButtons);
 
     /// The menu which display the list of point to select
     pointsMenu = new QMenu(this);
 
-    /// the list that displays the path points
+    /// The list that displays the path points
     pathPointsList = new PathPointList(this);
     layout->addWidget(pathPointsList);
 
-    /// The save button
-    QPushButton* saveBtn = new QPushButton("Save Path", this);
-    layout->addWidget(saveBtn);
+    /// Cancel & save buttons
+    QHBoxLayout* grid = new QHBoxLayout();
+    QPushButton* cancelBtn = new QPushButton("Cancel", this);
+    QPushButton* saveBtn = new QPushButton("Save", this);
+
+    grid->addWidget(cancelBtn);
+    grid->addWidget(saveBtn);
+
+    layout->addLayout(grid);
 
 
     connect(actionButtons->getPlusButton(), SIGNAL(clicked()), this, SLOT(addPathPointByMenuSlot()));
-    connect(actionButtons->getMinusButton(), SIGNAL(clicked()), this, SLOT(supprPathPointSlot()));
+    connect(actionButtons->getMinusButton(), SIGNAL(clicked()), this, SLOT(deletePathPointSlot()));
     connect(actionButtons->getEditButton(), SIGNAL(clicked()), this, SLOT(editPathPointSlot()));
 
     connect(pointsMenu, SIGNAL(triggered(QAction*)), this, SLOT(pointClicked(QAction*)));
@@ -41,6 +52,7 @@ PathCreationWidget::PathCreationWidget(MainWindow *parent, const std::shared_ptr
     connect(pathPointsList, SIGNAL(itemMovedSignal(QModelIndex, int, int, QModelIndex, int)), this, SLOT(itemMovedSlot(QModelIndex, int, int, QModelIndex, int)));
 
     connect(saveBtn, SIGNAL(clicked()), this, SLOT(savePath()));
+    connect(cancelBtn, SIGNAL(clicked()), parent, SLOT(backEvent()));
 
 
     hide();
@@ -54,7 +66,7 @@ void PathCreationWidget::updateRobot(std::shared_ptr<Robot> robot){
 
 void PathCreationWidget::showEvent(QShowEvent* event){
     Q_UNUSED(event)
-    updatePointsList();
+    resetWidget();
     show();
 }
 
@@ -85,13 +97,56 @@ void PathCreationWidget::updatePointsList(void){
 }
 
 void PathCreationWidget::addPathPointByMenuSlot(void){
-    qDebug() << "PathCreationWidget::addPathPoint called";
+    qDebug() << "PathCreationWidget::addPathPointByMenuSlot called";
     creatingNewPoint = true;
     clicked();
 }
 
-void PathCreationWidget::supprPathPointSlot(void){
-    qDebug() << "PathCreationWidget::supprPathPoint called";
+void PathCreationWidget::deletePathPointSlot(void){
+    qDebug() << "PathCreationWidget::deletePathPointSlot called";
+    deleteItem(pathPointsList->currentItem());
+    if (pathPointsList->count()==0)
+        resetWidget();
+}
+void PathCreationWidget::deleteItem(QListWidgetItem* item){
+    /// Pop up which ask to confirm the suppression of a path point
+    QMessageBox msgBox;
+    msgBox.setText("Are you sure you want to delete this point ?");
+    msgBox.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
+    msgBox.setDefaultButton(QMessageBox::Cancel);
+    int ret = msgBox.exec();
+    switch (ret) {
+        case QMessageBox::Ok:
+        {
+            int id = pathPointsList->row(item);
+            qDebug() << "PathCreationWidget::deleteItem Removing item" << id;
+            pathPointsList->removeItemWidget(item);
+
+            delete item;
+            pathPointsList->refresh();
+            emit deletePathPoint(id);
+        }
+        break;
+        case QMessageBox::Cancel:
+            qDebug() << "PathCreationWidget::deleteItem Cancel was clicked";
+        break;
+        default:
+            qDebug() << "PathCreationWidget::deleteItem Should never be reached";
+        break;
+    }
+}
+
+void PathCreationWidget::resetWidget(){
+    qDebug() << "PathCreationWidget::resetWidget called";
+
+    actionButtons->getMinusButton()->setEnabled(false);
+    actionButtons->getEditButton()->setEnabled(false);
+
+    pathPointsList->clear();
+    creatingNewPoint = false;
+
+    updatePointsList();
+    emit resetPath();
 }
 
 void PathCreationWidget::editPathPointSlot(void){
@@ -100,10 +155,14 @@ void PathCreationWidget::editPathPointSlot(void){
 
 void PathCreationWidget::itemClicked(QListWidgetItem* item){
     qDebug() << "PathCreationWidget::itemClicked called";
+    actionButtons->getMinusButton()->setEnabled(true);
+    actionButtons->getEditButton()->setEnabled(true);
+    pathPointsList->setCurrentItem(item, QItemSelectionModel::Select);
 }
 
 void PathCreationWidget::itemMovedSlot(const QModelIndex& , int start, int , const QModelIndex& , int row){
     qDebug() << "PathCreationWidget::itemClicked called" << start << row;
+    emit orderPathPointChanged(start, row);
 }
 
 void PathCreationWidget::savePath(void){
@@ -128,12 +187,37 @@ void PathCreationWidget::pointClicked(QAction *action){
 }
 
 void PathCreationWidget::addPointPathSlot(QString name, double x, double y){
-    /// TODO add to list
+    /// Add the points to the list
+
+    PathPointCreationWidget* pathPoint = new PathPointCreationWidget(pathPointsList->count(), name, x, y, this);
+    connect(pathPoint, SIGNAL(saveEditSignal(PathPointCreationWidget*)), this, SLOT(saveEditSlot(PathPointCreationWidget*)));
+    connect(pathPoint, SIGNAL(actionChanged(int, QString)), this, SLOT(actionChangedSlot(int, QString)));
+
+    /// We add the path point widget to the list
+    QListWidgetItem* listWidgetItem = new QListWidgetItem(pathPointsList);
+    listWidgetItem->setSizeHint(QSize(listWidgetItem->sizeHint().width(), WIDGET_HEIGHT));
+    listWidgetItem->setBackgroundColor(QColor(255, 255, 255, 10));
+
+    pathPointsList->addItem(listWidgetItem);
+    pathPointsList->setItemWidget(listWidgetItem, pathPoint);
+
+    if(pathPointsList->count() > 1){
+        qDebug() << ((PathPointCreationWidget*) pathPointsList->itemWidget(pathPointsList->item(pathPointsList->count() - 2)))->getName();
+        ((PathPointCreationWidget*) pathPointsList->itemWidget(pathPointsList->item(pathPointsList->count() - 2)))->displayActionWidget(true);
+    }
+
     emit addPathPoint(name, x, y);
+    creatingNewPoint = false;
 }
 
+void PathCreationWidget::saveEditSlot(PathPointCreationWidget* pathPointCreationWidget){
+    qDebug() << "PathCreationWidget::saveEditSlot called";
+}
 
-
+void PathCreationWidget::actionChangedSlot(int id, QString waitTime){
+    qDebug() << "PathCreationWidget::actionChangedSlot called" << id << waitTime;
+    emit actionChanged(id, waitTime);
+}
 
 
 
@@ -154,7 +238,7 @@ PathCreationWidget::PathCreationWidget(MainWindow *parent, const std::shared_ptr
     creatingNewPoint = false;
 
     connect(actionButtons->getPlusButton(), SIGNAL(clicked(bool)), this, SLOT(addPathPoint()));
-    connect(actionButtons->getMinusButton(), SIGNAL(clicked()), this, SLOT(supprPathPoint()));
+    connect(actionButtons->getMinusButton(), SIGNAL(clicked()), this, SLOT(deletePathPoint()));
     connect(actionButtons->getEditButton(), SIGNAL(clicked()), this, SLOT(editPathPoint()));
 
     /// The menu which display the list of point to select
@@ -322,10 +406,10 @@ void PathCreationWidget::itemClicked(QListWidgetItem* item){
     pathPointsList->setCurrentItem(item, QItemSelectionModel::Select);
 }
 
-void PathCreationWidget::supprPathPoint(){
-    qDebug() << "supprPathPoint called";
+void PathCreationWidget::deletePathPoint(){
+    qDebug() << "deletePathPoint called";
 
-    supprItem(pathPointsList->currentItem());
+    deleteItem(pathPointsList->currentItem());
     if (pathPointsList->count()==0)
         resetWidget();
 
@@ -472,7 +556,7 @@ void PathCreationWidget::resetWidget(){
     pointList.clear();
 }
 
-void PathCreationWidget::supprItem(QListWidgetItem* item){
+void PathCreationWidget::deleteItem(QListWidgetItem* item){
     /// Pop up which ask to confirm the suppression of a path point
     QMessageBox msgBox;
     msgBox.setText("Are you sure you want to delete this point ?");

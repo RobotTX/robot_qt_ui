@@ -62,8 +62,7 @@ HEADERS += Controller/cmdrobotthread.h \
            View/buttonmenu.h \
            Controller/sendnewmapthread.h \
            View/customscrollarea.h \
-           View/colors.h \
-    Model/currentpath.h
+           View/colors.h
 
 FORMS += Controller/mainwindow.ui
 
@@ -112,8 +111,7 @@ SOURCES += main.cpp \
            View/createpointwidget.cpp \
     View/topleftmenu.cpp \
     Controller/sendnewmapthread.cpp \
-    View/customscrollarea.cpp \
-    Model/currentpath.cpp
+    View/customscrollarea.cpp
 
 RESOURCES += Resources/resources.qrc
 
