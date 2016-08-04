@@ -88,7 +88,7 @@ DisplaySelectedPoint::DisplaySelectedPoint(QMainWindow *const _parent, std::shar
     setMaximumWidth(_parent->width()*4/10);
     setMinimumWidth(_parent->width()*4/10);
 
-    layout->setContentsMargins(0,0,0,0);
+    //layout->setContentsMargins(0,0,0,0);
     layout->setAlignment(Qt::AlignTop);
 
 }
