@@ -24,7 +24,6 @@ CreatePointWidget::CreatePointWidget(QMainWindow* _parent, std::shared_ptr<Point
     actionButtons->disableAll();
 
     layout->addWidget(actionButtons);
-    layout->addWidget(new QLabel("CreatePointWidget", this));
 
     nameEdit = new QLineEdit(this);
     nameEdit->setStyleSheet ("text-align: left");

@@ -7,8 +7,7 @@
 
 
 PointView::PointView(const std::shared_ptr<Point> &_point, QGraphicsItem *parent) :
-  QGraphicsPixmapItem(QPixmap(PIXMAP_NORMAL), parent), state(GraphicItemState::NO_STATE), type(PixmapType::NORMAL), lastType(PixmapType::NORMAL)
-{
+  QGraphicsPixmapItem(QPixmap(PIXMAP_NORMAL), parent), state(GraphicItemState::NO_STATE), type(PixmapType::NORMAL), lastType(PixmapType::NORMAL){
     setScale(SCALE);
     point = _point;
     setAcceptedMouseButtons(Qt::RightButton | Qt::LeftButton);
@@ -26,35 +25,34 @@ PointView::PointView(const std::shared_ptr<Point> &_point, QGraphicsItem *parent
 }
 
 void PointView::mousePressEvent(QGraphicsSceneMouseEvent *event){
-    qDebug() << "pv" << point->getName() << "state " << state;
+    qDebug() << "PointView::mousePressEvent" << point->getName() << "state " << state;
     if(state == GraphicItemState::NO_STATE){
+        qDebug() << "PointView::mousePressEvent NO_STATE";
         if(event->button() == Qt::RightButton){
-            qDebug() << "right click on point NO STATE" ;
             emit pointRightClicked(this->getPoint()->getName());
         }
         if(event->button() == Qt::LeftButton){
             emit pointLeftClicked(this->getPoint()->getName());
         }
     } else if(state == GraphicItemState::CREATING_PATH){
-        qDebug() << "Clicked on a point while creating a path";
+        qDebug() << "PointView::mousePressEvent CREATING_PATH";
         addedToPath = true;
-        emit addPointPath(this);
-    } else if(state == GraphicItemState::EDITING){
-        qDebug() << "(EDITING) PointView moving from" << pos().x() << pos().y();
+        emit addPointPath(getPoint()->getName(), getPoint()->getPosition().getX(), getPoint()->getPosition().getY());
+    } else if(state == GraphicItemState::EDITING_PATH){
+        qDebug() << "PointView::mousePressEvent EDITING_PATH" << pos().x() << pos().y();
     }  else if(state == GraphicItemState::EDITING_PERM){
-        qDebug() << "Editing permanently PointView moving from" << pos().x() << pos().y();;
-    } else if(state == GraphicItemState::SELECTING_HOME){
-        emit homeSelected(this->getPoint()->getName());
+        qDebug() << "PointView::mousePressEvent EDITING_PERM" << pos().x() << pos().y();
     } else if(state == GraphicItemState::EDITING_HOME){
+        qDebug() << "PointView::mousePressEvent EDITING_HOME";
         emit homeEdited(this->getPoint()->getName());
     } else {
-        qDebug() << "(PointView " << point->getName() << ") NO EVENT";
+        qDebug() << "PointView::mousePressEvent NO_EVENT";
     }
 }
 
 void PointView::mouseMoveEvent(QGraphicsSceneMouseEvent *event){
 
-    if(state == GraphicItemState::EDITING || state == GraphicItemState::EDITING_PERM){
+    if(state == GraphicItemState::EDITING_PATH || state == GraphicItemState::EDITING_PERM){
         QGraphicsItem::mouseMoveEvent(event);
 
         float x = pos().x() + pixmap().width()*SCALE/2;
@@ -74,7 +72,7 @@ void PointView::mouseMoveEvent(QGraphicsSceneMouseEvent *event){
         }
         setPos(x, y);
 
-        if(state == GraphicItemState::EDITING){
+        if(state == GraphicItemState::EDITING_PATH){
             point->setPosition(x, y);
             emit moveTmpEditPathPoint();
         } else if(state == GraphicItemState::EDITING_PERM){
@@ -84,7 +82,7 @@ void PointView::mouseMoveEvent(QGraphicsSceneMouseEvent *event){
 }
 
 void PointView::mouseReleaseEvent(QGraphicsSceneMouseEvent *event){
-    if(state == GraphicItemState::EDITING){
+    if(state == GraphicItemState::EDITING_PATH){
         float x = pos().x() + pixmap().width()*SCALE/2;
         float y = pos().y() + pixmap().height()*SCALE;
         qDebug() << "to" << x << y;
@@ -115,6 +113,7 @@ void PointView::setPos(const qreal x, const qreal y){
              << getPoint()->getPosition().getX()
              << getPoint()->getPosition().getY()
              << "to" << x << y;
+
     point->setPosition(x, y);
     QGraphicsPixmapItem::setPos(x - pixmap().width()*SCALE/2,
            y - pixmap().height()*SCALE);
@@ -125,6 +124,7 @@ void PointView::updatePos(void){
              << getPoint()->getName() << "from"
              << getPoint()->getPosition().getX()
              << "to" << getPoint()->getPosition().getY();
+
     float x = getPoint()->getPosition().getX();
     float y = getPoint()->getPosition().getY();
     QGraphicsPixmapItem::setPos(x - pixmap().width()*SCALE/2,

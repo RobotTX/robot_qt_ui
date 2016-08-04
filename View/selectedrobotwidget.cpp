@@ -123,7 +123,7 @@ void SelectedRobotWidget::setSelectedRobot(RobotView* const& _robotView){
     wifiNameLabel->setText("Wifi : "+robotView->getRobot()->getWifi());
 
     /// If the robot has a path, we display it, otherwise we show the button to add the path
-    if(robotView->getRobot()->getPath().size() > 0){
+    if(robotView->getRobot()->getPath()->size() > 0){
         pathWidget->setSelectedRobot(robotView);
         pathWidget->show();
         noPath->hide();
@@ -144,12 +144,6 @@ void SelectedRobotWidget::setSelectedRobot(RobotView* const& _robotView){
 
 
     update();
-}
-
-void SelectedRobotWidget::homeBtnEvent(){
-    if(robotView->getRobot()->getHome() == NULL){
-        emit selectHome(robotView);
-    }
 }
 
 void SelectedRobotWidget::disable(){

@@ -82,9 +82,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     /// Create the graphic item of the map
     QPixmap pixmap = QPixmap::fromImage(map->getMapImage());
     mapPixmapItem = new MapView(pixmap, QSize(geometry().width(), geometry().height()), map, this);
-    connect(mapPixmapItem, SIGNAL(addPathPointMapView(Point*)), this, SLOT(addPathPoint(Point*)));
-    connect(mapPixmapItem, SIGNAL(homeSelected(QString)), this, SLOT(homeSelected(QString)));
-    connect(mapPixmapItem, SIGNAL(homeEdited(QString)), this, SLOT(homeEdited(QString)));
 
 
     /// Create the toolbar
@@ -95,7 +92,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
     initializePoints();
 
-    pathPainter = new PathPainter(mapPixmapItem, points);
+    pathPainter = std::shared_ptr<PathPainter>(new PathPainter(this, mapPixmapItem, points));
+    /// TODO connect pathCreationWidget add, edit, etc to pathpainter
+
     initializeRobots();
 
     scene->addItem(mapPixmapItem);
@@ -111,7 +110,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     graphicsView->setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding));
 
 
-    leftMenu = new LeftMenu(this, points, robots, points, map);
+    leftMenu = new LeftMenu(this, points, robots, points, map, pathPainter);
 
     resetFocus();
     initializeLeftMenu();
@@ -125,6 +124,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     initializeBottomPanel();
 
     graphicsView->show();
+
+    /// to link the map and the home widget menu when a home is being edited
+    connect(mapPixmapItem, SIGNAL(homeEdited(QString)), this, SLOT(homeEdited(QString)));
 
     /// to link the map and the point information menu when a point is being edited
     connect(mapPixmapItem, SIGNAL(newCoordinates(double, double)), this, SLOT(updateCoordinates(double, double)));
@@ -168,20 +170,11 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     /// to know what message to display when a user is creating a path
     connect(mapPixmapItem, SIGNAL(newMessage(QString)), this, SLOT(setMessageCreationPath(QString)));
 
-    ///path creation widget show event
-    connect(pathCreationWidget, SIGNAL(addPointEditPath(Point)), mapPixmapItem, SLOT(addPointEditPath(Point)));
+    /// to add a path point when we click on the map
+    connect(mapPixmapItem, SIGNAL(addPointPath(QString, double, double)), pathCreationWidget, SLOT(addPointPathSlot(QString, double, double)));
 
-    /// delete a point in the map when the temporary point is deleted in the path creation
-    connect(pathCreationWidget, SIGNAL(deletePointView(Point)), mapPixmapItem, SLOT(deletePointView(Point)));
-
-    /// to notify the pathpainter that the order of the points has changed
-    connect(pathCreationWidget, SIGNAL(orderPointsChanged(int, int)), this, SLOT(updatePathPainterPoints(int, int)));
-
-    /// to notify the map that a permanent point has been added to a path
-    connect(pathCreationWidget, SIGNAL(addMapPathPoint(Point*)), this, SLOT(addPathPointToMap(Point*)));
-
-    /// to notify the mapview that a permanent point has been updated
-    connect(pathCreationWidget, SIGNAL(changePermanentPoint(QString,QString)), this, SLOT(updatePathPermanentPoint(QString, QString)));
+    /// to add a path point when we click on a pointView (which is relayed by the mainWindow)
+    connect(this, SIGNAL(addPointPath(QString, double, double)), pathCreationWidget, SLOT(addPointPathSlot(QString, double, double)));
 
     mainLayout->addLayout(bottom);
     graphicsView->setStyleSheet("CustomQGraphicsView{background-color: "+background_map_view+"}");
@@ -213,9 +206,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
 MainWindow::~MainWindow(){
     delete ui;
-    delete pathPainter;
-    qDeleteAll(pathPointViews.begin(), pathPointViews.end());
-    pathPointViews.clear();
     if (updateRobotsThread != NULL && updateRobotsThread->isRunning() ) {
         updateRobotsThread->requestInterruption();
         updateRobotsThread->wait();
@@ -409,7 +399,7 @@ void MainWindow::connectToRobot(){
 void MainWindow::stopSelectedRobot(int robotNb){
     qDebug() << "stopSelectedRobot called on robot :" << robots->getRobotsVector().at(robotNb)->getRobot()->getName();
 
-    if(robots->getRobotsVector().at(robotNb)->getRobot()->getPath().size() > 0){
+    if(robots->getRobotsVector().at(robotNb)->getRobot()->getPath()->size() > 0){
         int ret = openConfirmMessage("Are you sure you want to delete this path ?");
         switch (ret) {
             case QMessageBox::Ok:
@@ -496,7 +486,8 @@ void MainWindow::playSelectedRobot(int robotNb){
 }
 
 void MainWindow::viewPathSelectedRobot(int robotNb, bool checked){
-    if(checked){
+    qDebug() << "MainWindow::viewPathSelectedRobot called";
+    /*if(checked){
         std::shared_ptr<Robot> robot = robots->getRobotsVector().at(robotNb)->getRobot();
         qDebug() << "viewPathSelectedRobot called on" << robot->getName() << checked;
         bottomLayout->uncheckViewPathSelectedRobot(robotNb);
@@ -513,16 +504,11 @@ void MainWindow::viewPathSelectedRobot(int robotNb, bool checked){
         pathPainter->updatePath(pathPointViews);
     } else {
        clearAllPath();
-    }
+    }*/
 }
-void MainWindow::clearAllPath()
-{
+
+void MainWindow::clearAllPath(){
     qDebug() << "clearallpaths called";
-    if(pathPointViews.size() > 0){
-        qDeleteAll(pathPointViews.begin(), pathPointViews.end());
-        pathPointViews.clear();
-    }
-    qDebug() << "paths cleared, about to reset pathpainter";
     pathPainter->reset();
 }
 
@@ -577,13 +563,13 @@ void MainWindow::editSelecRobotBtnEvent(){
 }
 
 void MainWindow::addPathSelecRobotBtnEvent(){
-    qDebug() << "addPathSelecRobotBtnEvent called on robot " << selectedRobot->getRobot()->getName();
-    /*setMessageTop(TEXT_COLOR_INFO, "Click white points of the map to add new points to the path of " +
+    qDebug() << "MainWindow::addPathSelecRobotBtnEvent called on robot " << selectedRobot->getRobot()->getName();
+    setMessageTop(TEXT_COLOR_INFO, "Click white points of the map to add new points to the path of " +
                   selectedRobot->getRobot()->getName() + "\nAlternatively you can click the \"+\" button to add an existing point to your path");
 
 
     setEnableAll(false, GraphicItemState::CREATING_PATH, true, true);
-    pathCreationWidget->setSelectedRobot(selectedRobot->getRobot());
+    pathCreationWidget->updateRobot(selectedRobot->getRobot());
 
     clearAllPath();
 
@@ -592,10 +578,7 @@ void MainWindow::addPathSelecRobotBtnEvent(){
     pathPainter->reset();
     pathCreationWidget->show();
 
-
-    editSelectedRobotWidget->setOldPath( selectedRobot->getRobot()->getPath());
-
-
+    editSelectedRobotWidget->setOldPath(*(selectedRobot->getRobot()->getPath()));
 
     switchFocus(selectedRobot->getRobot()->getName(), pathCreationWidget, MainWindow::WidgetType::ROBOT);
 
@@ -607,22 +590,22 @@ void MainWindow::addPathSelecRobotBtnEvent(){
     }
 
     /// hides the temporary pointview
-    mapPixmapItem->getTmpPointView()->hide();
+    points->getTmpPointView()->hide();
 
     /// displays the points in order to make them available for the edition of the path,
     ///  we have to keep track of those which were hidden so we can hide them again once the edition is finished
-    for(size_t j = 0; j < pointViews->count(); j++){
-        GroupView* group = pointViews->getGroups().at(j);
-        for(size_t i = 0; i < group->getPointViews().size(); i++){
-            PointView* pointView = group->getPointViews().at(i);
-            if(!pointView->getPoint()->isDisplayed()){
-                //qDebug() << pointView->getPoint()->getName();
-                pointViewsToDisplay.push_back(pointView);
-                pointView->show();
+    QMapIterator<QString, std::shared_ptr<QVector<std::shared_ptr<PointView>>>> i(*(points->getGroups()));
+    while (i.hasNext()) {
+        i.next();
+        if(i.value()){
+            for(int j = 0; j < i.value()->count(); j++){
+                if(!i.value()->at(j)->isVisible()){
+                    i.value()->at(j)->show();
+                    pointViewsToDisplay.push_back(i.value()->at(j));
+                }
             }
         }
-    }*/
-
+    }
 }
 
 void MainWindow::setSelectedRobotNoParent(QAbstractButton *button){
@@ -694,12 +677,12 @@ void MainWindow::checkRobotBtnEvent(QString name){
 void MainWindow::cancelEditSelecRobotBtnEvent(){
     qDebug() << "cancelEditSelecRobotBtnEvent called";
     /// if the path has been changed, reset the path
-    if(editSelectedRobotWidget->getPathChanged()){
+    /*if(editSelectedRobotWidget->getPathChanged()){
         pathPainter->reset();
         clearAllPath();
         selectedRobot->getRobot()->setPath(editSelectedRobotWidget->getOldPath() );
         bottomLayout->uncheckAll();
-    }
+    }*/
 
     hideAllWidgets();
     backEvent();
@@ -904,9 +887,9 @@ void MainWindow::editTmpPathPointSlot(int id, Point* point, int nbWidget){
         }
 
         setGraphicItemsState(GraphicItemState::NO_EVENT, false);
-        mapPixmapItem->setState(GraphicItemState::EDITING);
+        mapPixmapItem->setState(GraphicItemState::EDITING_PATH);
         editedPointView->setFlag(QGraphicsItem::ItemIsMovable);
-        editedPointView->setState(GraphicItemState::EDITING);
+        editedPointView->setState(GraphicItemState::EDITING_PATH);
         /// set by hand in order to keep the colors consistent while editing the point and after
         editedPointView->setPixmap(PointView::PixmapType::HOVER);
     }*/
@@ -914,11 +897,11 @@ void MainWindow::editTmpPathPointSlot(int id, Point* point, int nbWidget){
 
 void MainWindow::pathSaved(bool execPath){
     qDebug() << "pathSaved called" << execPath;
-
+/*
     std::shared_ptr<Robot> robot = selectedRobot->getRobot();
     QString pathStr = "";
 
-    for(size_t i = 0; i < robot->getPath().size(); i++){
+    for(size_t i = 0; i < robot->getPath()->size(); i++){
         std::shared_ptr<PathPoint> pathPoint = robot->getPath().at(i);
         float oldPosX = pathPoint->getPoint().getPosition().getX();
         float oldPosY = pathPoint->getPoint().getPosition().getY();
@@ -978,27 +961,22 @@ void MainWindow::pathSaved(bool execPath){
                 topLayout->setLabel(TEXT_COLOR_DANGER, "Path failed to be saved, please try again");
             }
         }
-    }
+    }*/
 }
 
-void MainWindow::addPathPoint(Point* point){
-    qDebug() << "addPathPoint called on point via * point" << point->getName();
-    pathCreationWidget->addPathPoint(point);
+void MainWindow::addPointPathSlot(QString name, double x, double y){
+    qDebug() << "addPathPoint called on point via * point" << x << y;
+    emit addPointPath(name, x, y);
 }
 
-void MainWindow::addPathPoint(PointView* pointView){
-    qDebug() << "addPathPoint called on point via * pointview" << pointView->getPoint()->getName();
-    /*pathCreationWidget->addPathPoint(&(*(pointView->getPoint())));
-    qDebug() << pointView->getPoint()->getName() << " la";
-    for(int i = 0; i < mapPixmapItem->getPathCreationPoints().count(); i++)
-        qDebug() << mapPixmapItem->getPathCreationPoints().at(i)->getPoint()->getName();*/
-}
 
 void MainWindow::updatePathPointToPainter(QVector<Point> &pointVector, bool save){
-    pathPainter->updatePath(pointVector, save);
+    qDebug() << "MainWindow::updatePathPointToPainter called";
+    //pathPainter->updatePath(pointVector, save);
 }
 
 void MainWindow::stopPathCreation(){
+    qDebug() << "MainWindow::stopPathCreation called";
     /*for(size_t i = 0; i < pointViews->count(); i++){
         GroupView* groupView = pointViews->getGroups().at(i);
         std::vector<PointView*> pointViews = groupView->getPointViews();
@@ -1027,7 +1005,7 @@ void MainWindow::hidePathCreationWidget(){
 void MainWindow::saveTmpEditPathPointSlot(void){
     qDebug() << "saveTmpEditPathPointSlot called";
 
-    pathCreationWidget->getActionButtons()->setEnable(true);
+    /*pathCreationWidget->getActionButtons()->setEnable(true);
     setEnableAll(false, GraphicItemState::CREATING_PATH, false, true);
 
     pathCreationWidget->applySavePathPoint(editedPointView->getPoint()->getPosition().getX(), editedPointView->getPoint()->getPosition().getY(), true);
@@ -1039,15 +1017,18 @@ void MainWindow::saveTmpEditPathPointSlot(void){
     delay(2500);
     setMessageTop(TEXT_COLOR_INFO, "Click white points of the map to add new points to the path of " +
                   selectedRobot->getRobot()->getName() + "\nAlternatively you can click the \"+\" button to add an existing point to your path");
+                  */
 }
 
 
 void MainWindow::moveTmpEditPathPointSlot(void){
-    pathCreationWidget->moveEditPathPoint(editedPointView->getPoint()->getPosition().getX(), editedPointView->getPoint()->getPosition().getY());
+    qDebug() << "MainWindow::moveTmpEditPathPointSlot called";
+    //pathCreationWidget->moveEditPathPoint(editedPointView->getPoint()->getPosition().getX(), editedPointView->getPoint()->getPosition().getY());
 }
 
 void MainWindow::clearPath(const int robotNb){
-    if(robots->getRobotsVector().at(robotNb)->getRobot()->isPlayingPath()){
+    qDebug() << "MainWindow::clearPath called";
+    /*if(robots->getRobotsVector().at(robotNb)->getRobot()->isPlayingPath()){
         qDebug() << "pause path on robot before supp " << robotNb << " : " << robots->getRobotsVector().at(robotNb)->getRobot()->getName();
         robots->getRobotsVector().at(robotNb)->getRobot()->setPlayingPath(0);
         bottomLayout->getPlayRobotBtnGroup()->button(robotNb)->setIcon(QIcon(":/icons/play.png"));
@@ -1055,30 +1036,7 @@ void MainWindow::clearPath(const int robotNb){
     robots->getRobotsVector().at(robotNb)->getRobot()->getPath().clear();
     robots->getRobotsVector().at(robotNb)->getRobot()->setPath(std::vector<std::shared_ptr<PathPoint>>());
 
-    bottomLayout->deletePath(robotNb);
-}
-
-/// TODO check if used
-void MainWindow::selectHomeEvent(){
-    qDebug() << "MainWindow::selectHomeEvent called";
-    /*if(selectedRobotWidget->getScanBtn()->isEnabled()){
-        setMessageTop(TEXT_COLOR_INFO, "Click on the map or on a point to select a home for the robot " + selectedRobot->getRobot()->getName());
-        selectedRobotWidget->getHomeBtn()->setText("Cancel");
-        selectedRobotWidget->disable();
-        selectedRobotWidget->getHomeBtn()->setEnabled(true);
-        if(selectedRobot->getRobot()->getHome() != NULL){
-            selectedRobotWidget->getHomeBtn()->setEnabled(false);
-        } else {
-            selectedRobotWidget->getHomeBtn()->setEnabled(true);
-        }
-        setEnableAll(false, GraphicItemState::SELECTING_HOME);
-    } else {
-        setMessageTop(TEXT_COLOR_NORMAL,"");
-        selectedRobotWidget->getHomeBtn()->setText("Add home");
-        selectedRobotWidget->enable();
-        setEnableAll(true);
-
-    }*/
+    bottomLayout->deletePath(robotNb);*/
 }
 
 void MainWindow::editHomeEvent(){
@@ -1099,72 +1057,6 @@ void MainWindow::editHomeEvent(){
         editSelectedRobotWidget->enableAll();
         setEnableAll(true);
     }
-}
-
-/// TODO check if used
-void MainWindow::homeSelected(QString pointName){
-    qDebug() << "MainWindow::homeSelected called" << pointName;
-    /*std::shared_ptr<PointView> pointView = points->findPointView(pointName);
-    if(pointView){
-        int ret = openConfirmMessage("Do you really want to set the point " + pointView->getPoint()->getName() +
-                                     + " (" + QString::number(pointView->getPoint()->getPosition().getX(),'f', 1) + ","
-                                     + QString::number(pointView->getPoint()->getPosition().getY(),'f', 1) + ") as the home for "
-                                     + selectedRobot->getRobot()->getName() +" ?");
-        switch(ret){
-            case QMessageBox::Cancel :
-                pointsLeftWidget->getActionButtons()->getMinusButton()->setChecked(false);
-            break;
-            case QMessageBox::Ok : {
-
-                bool done = false;
-                if(pointView->getPoint()->isTemporary()){
-                    qDebug() << "Tmp point";
-                    pointView->getPoint()->setHome(Point::PointType::HOME, selectedRobot->getRobot()->getName());
-
-                    points->addPoint(NO_GROUP_NAME, points->getGroups()->value(TMP_GROUP_NAME)->takeFirst());
-                    points->addTmpPoint(mapPixmapItem, this);
-
-                    XMLParser parserPoints(XML_PATH);
-                    parserPoints.save(*points);
-
-                    done = true;
-                } else {
-                    qDebug() << "Permanent point";
-                    if(pointView->getPoint()->setHome(Point::PointType::HOME, selectedRobot->getRobot()->getName())){
-                        XMLParser parserPoints(XML_PATH);
-                        parserPoints.save(*points);
-                        done = true;
-                    } else {
-                        setMessageTop(TEXT_COLOR_DANGER, "Sorry, this point is already a home\nPlease select another");
-                    }
-                }
-
-                pointsLeftWidget->updateGroupButtonGroup();
-
-                if(done){
-                    setMessageTop(TEXT_COLOR_SUCCESS, selectedRobot->getRobot()->getName() + " now has a new home");
-
-                    if(selectedRobot->getRobot()->getHome() != NULL){
-                        selectedRobot->getRobot()->getHome()->getPoint()->setHome(Point::PointType::PERM, "");
-                    }
-
-                    selectedRobot->getRobot()->setHome(pointView);
-
-                    selectedRobotWidget->enable();
-                    setEnableAll(true);
-                    hideAllWidgets();
-                    selectedRobotWidget->setSelectedRobot(selectedRobot);
-                    selectedRobotWidget->show();
-                }
-            }
-            break;
-            default:
-                qDebug() << "MainWindow::homeSelected should never be here";
-            break;
-        }
-    } else {
-        qDebug() << "MainWindow::homeSelected the pointview could not be found :" << pointName;
-    }*/
 }
 
 void MainWindow::homeEdited(QString pointName){
@@ -1201,7 +1093,7 @@ void MainWindow::showHome(){
 
     RobotView* robotView =  robots->getRobotViewByName(selectedRobot->getRobot()->getName());
     /// If the robot has a path, we display it, otherwise we show the button to add the path
-    if(robotView->getRobot()->getPath().size() > 0){
+    if(robotView->getRobot()->getPath()->size() > 0){
         selectedRobotWidget->getPathWidget()->setSelectedRobot(robotView);
         selectedRobotWidget->getPathWidget()->show();
         selectedRobotWidget->getNoPath()->hide();
@@ -3369,14 +3261,6 @@ void MainWindow::setMessageCreationPoint(QString type, CreatePointWidget::Error 
         qDebug() << "Should never be here, if you do get here however, check that you have not added a new error code and forgotten to add it in the cases afterwards";
         break;
     }
-}
-
-void MainWindow::updatePathPainterPoints(int start, int row){
-    qDebug()<< "updatepathpainterpoints called from mainwindow";
-
-    /// otherwise the mapView does not know the order of the points and the result is a wrong path while editing the points during the creation of a path
-    mapPixmapItem->changeOrderPathPoints(start, row);
-
 }
 
 

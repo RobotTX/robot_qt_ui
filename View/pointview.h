@@ -70,8 +70,7 @@ protected:
 signals:
     void pointRightClicked(QString);
     void pointLeftClicked(QString);
-    void addPointPath(PointView*);
-    void homeSelected(QString pointView);
+    void addPointPath(QString name, double x, double y);
     void homeEdited(QString pointView);
     void moveTmpEditPathPoint();
     void editedPointPositionChanged(double, double);

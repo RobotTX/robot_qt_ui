@@ -6,6 +6,7 @@
 #include <QDebug>
 #include "View/mapview.h"
 #include "Controller/mainwindow.h"
+#include "View/pathcreationwidget.h"
 
 XMLParser::XMLParser(const QString filename){
     file = new QFile(filename);

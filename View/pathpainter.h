@@ -2,28 +2,33 @@
 #define PATHPAINTER_H
 
 class MapView;
-class PointView;
+class CurrentPath;
 class Points;
+class MainWindow;
 
-#include "Model/point.h"
+#include <QObject>
 #include <QGraphicsPathItem>
 #include <QPainterPath>
 #include <QPen>
 #include <QVector>
 #include <memory>
 #include "Model/point.h"
-#include "Model/pathpoint.h"
 
 /**
  * @brief The PathPainter class
  * The class that draw the lines between each points showing the path of a robot
  */
-class PathPainter : public QGraphicsPathItem{
+class PathPainter : public QObject, public QGraphicsPathItem{
+    Q_OBJECT
 
 public:
-    PathPainter(MapView* const& mapPixmapItem, std::shared_ptr<Points> const& _pointViews);
+    PathPainter(MainWindow* const &mainWindow, MapView* const &mapPixmapItem, std::shared_ptr<Points> points);
+    std::shared_ptr<CurrentPath> getCurrentPath(void){ return currentPath; }
+    void reset(void);
 
-    void updatePath(const QVector<Point>& pointVector, bool save = false);
+
+
+/*    void updatePath(const QVector<Point>& pointVector, bool save = false);
     void updatePath(const QVector<PointView*>& pointViewsVector, bool save = false);
     void reset(bool save = false);
     void refresh(bool save = false);
@@ -31,12 +36,13 @@ public:
     void setPointViewPixmap(const int id, PointView* const pointView);
     void clearPointViews(bool save = false);
     void setPathVector(const QVector<Point> _pathvector) { pathVector = _pathvector; }
+*/
+private slots:
+    void addPathPointSlot(QString name, double x, double y);
 
 private:
     QPainterPath path;
-    QVector<Point> pathVector;
-    std::shared_ptr<Points> pointViews;
-    MapView* mapItem;
+    std::shared_ptr<CurrentPath> currentPath;
 };
 
 #endif // PATHPAINTER_H

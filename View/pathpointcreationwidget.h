@@ -24,11 +24,10 @@ public:
     /**
      * @brief PathPointCreationWidget
      * @param id
-     * @param points
      * @param point
      * The construcor of the widget when we clicked on the map and selected a point
      */
-    PathPointCreationWidget(const int id, std::shared_ptr<Points> points, const Point& point, QWidget *parent);
+    PathPointCreationWidget(const int ids, const Point& point, QWidget *parent);
 
 
     void displayActionWidget(const bool show);
@@ -48,7 +47,7 @@ public:
     QLineEdit* getTimeEdit(void) const { return timeEdit; }
     int getPosX(void) const { return posX; }
     int getPosY(void) const { return posY; }
-    bool isTemporary(void) const { return (name.compare("tmpPoint") == 0); }
+    bool isTemporary(void) const { return (name.compare(TMP_POINT_NAME) == 0); }
     Point getPoint(void) const { return point; }
     void setPointLabel(const float _posX, const float _posY);
     QPushButton* getCancelBtn(void) const { return cancelBtn; }
@@ -64,7 +63,6 @@ private:
     float posY;
     QString name;
     int id;
-    std::shared_ptr<Points> points;
     Point point;
     QComboBox* actionBtn;
     QPushButton* saveEditBtn;
