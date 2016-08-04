@@ -156,7 +156,7 @@ void EditSelectedRobotWidget::setSelectedRobot(RobotView* const _robotView, bool
 
     /// If the robot has a home, we display the name of the point, otherwise a default text
     if(robotView->getRobot()->getHome() != NULL){
-        homeBtn->setText(robotView->getRobot()->getHome()->getPoint()->getName());
+        homeBtn->setText("edit home");
         oldHome = robotView->getRobot()->getHome();
     } else {
         homeBtn->setText("Add home");
@@ -221,12 +221,21 @@ void EditSelectedRobotWidget::disableAll(void){
     nameEdit->setEnabled(false);
     homeBtn->setEnabled(false);
     saveBtn->setEnabled(false);
+    addPathBtn->setEnabled(false);
+    wifiNameEdit->setEnabled(false);
+    wifiPwdEdit->setEnabled(false);
+    nameEdit->setEnabled(false);
 }
 
 void EditSelectedRobotWidget::enableAll(void){
     nameEdit->setEnabled(true);
     homeBtn->setEnabled(true);
     saveBtn->setEnabled(true);
+    addPathBtn->setEnabled(true);
+    wifiNameEdit->setEnabled(true);
+    wifiPwdEdit->setEnabled(true);
+    nameEdit->setEnabled(true);
+
 }
 
 void EditSelectedRobotWidget::showEvent(QShowEvent *event){
