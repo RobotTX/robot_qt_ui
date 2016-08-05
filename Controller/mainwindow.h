@@ -36,17 +36,17 @@ class PathPainter;
 #include "Model/point.h"
 
 
-#define XML_PATH "/home/m-a/Documents/QtProject/gobot-software/points.xml"
-#define ROBOTS_NAME_PATH "/home/m-a/Documents/QtProject/gobot-software/robotsName.dat"
-#define MAP_PATH "/home/m-a/Documents/QtProject/gobot-software/realMap.dat"
+//#define XML_PATH "/home/m-a/Documents/QtProject/gobot-software/points.xml"
+//#define ROBOTS_NAME_PATH "/home/m-a/Documents/QtProject/gobot-software/robotsName.dat"
+//#define MAP_PATH "/home/m-a/Documents/QtProject/gobot-software/realMap.dat"
 
 //#define XML_PATH "/home/joan/Qt/QtProjects/gobot-software/points.xml"
 //#define ROBOTS_NAME_PATH "/home/joan/Qt/QtProjects/gobot-software/robotsName.dat"
 //#define MAP_PATH "/home/joan/Qt/QtProjects/gobot-software/realMap.dat"
 
-//#define XML_PATH "/Users/fannylarradet/Desktop/GTRobots/gobot-software/points.xml"
-//#define ROBOTS_NAME_PATH "/Users/fannylarradet/Desktop/GTRobots/gobot-software/robotsName.dat"
-//#define MAP_PATH "/Users/fannylarradet/Desktop/GTRobots/gobot-software/realMap.dat"
+#define XML_PATH "/Users/fannylarradet/Desktop/GTRobots/gobot-software/points.xml"
+#define ROBOTS_NAME_PATH "/Users/fannylarradet/Desktop/GTRobots/gobot-software/robotsName.dat"
+#define MAP_PATH "/Users/fannylarradet/Desktop/GTRobots/gobot-software/realMap.dat"
 
 #define PI 3.14159265
 #define PORT_ROBOT_UPDATE 6000
