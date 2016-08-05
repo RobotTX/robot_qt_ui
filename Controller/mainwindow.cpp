@@ -957,7 +957,7 @@ void MainWindow::pathSaved(bool execPath){
                     else
                         qDebug() << "No robot to play this path";
                 }
-                editSelectedRobotWidget->setPathChanged(true);                
+                editSelectedRobotWidget->setPathChanged(true);
                 topLayout->setLabel(TEXT_COLOR_SUCCESS, "Path saved");
                 backEvent();
             } else {
@@ -1072,7 +1072,8 @@ void MainWindow::homeEdited(QString pointName){
     else
         qDebug() << "MainWindow::homeEdited could not found the pointView :" << pointName;
 
-    editSelectedRobotWidget->getHomeBtn()->setText(pointName);
+    editSelectedRobotWidget->getHomeBtn()->setText("Edit home");
+    editSelectedRobotWidget->getHomeLabel()->setText("Home: "+pointName);
     editSelectedRobotWidget->enableAll();
     setEnableAll(true, GraphicItemState::NO_EVENT);
 }
