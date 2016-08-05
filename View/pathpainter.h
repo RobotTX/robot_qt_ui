@@ -1,8 +1,8 @@
 #ifndef PATHPAINTER_H
 #define PATHPAINTER_H
 
+class PathPoint;
 class MapView;
-class CurrentPath;
 class Points;
 class MainWindow;
 
@@ -22,27 +22,25 @@ class PathPainter : public QObject, public QGraphicsPathItem{
     Q_OBJECT
 
 public:
-    PathPainter(MainWindow* const &mainWindow, MapView* const &mapPixmapItem, std::shared_ptr<Points> points);
-    std::shared_ptr<CurrentPath> getCurrentPath(void){ return currentPath; }
-    void reset(void);
+    PathPainter(MainWindow* const &mainWindow, MapView* const &mapPixmapItem, std::shared_ptr<Points> _points);
+    void setCurrentPath(const QVector<std::shared_ptr<PathPoint>>& _currentPath) { currentPath = _currentPath; }
+    QVector<std::shared_ptr<PathPoint>> getCurrentPath(void) const { return currentPath; }
 
-
-
-/*    void updatePath(const QVector<Point>& pointVector, bool save = false);
-    void updatePath(const QVector<PointView*>& pointViewsVector, bool save = false);
-    void reset(bool save = false);
-    void refresh(bool save = false);
-    QVector<Point> getPathVector(void) const {return pathVector;}
-    void setPointViewPixmap(const int id, PointView* const pointView);
-    void clearPointViews(bool save = false);
-    void setPathVector(const QVector<Point> _pathvector) { pathVector = _pathvector; }
-*/
 private slots:
+    void resetPathSlot(void);
     void addPathPointSlot(QString name, double x, double y);
+    void deletePathPointSlot(int id);
+    void updatePathPainterSlot(void);
+    void updatePathPainterPointViewSlot(void);
+    void orderPathPointChangedSlot(int from, int to);
+    void actionChangedSlot(int id, QString waitTime);
 
 private:
     QPainterPath path;
-    std::shared_ptr<CurrentPath> currentPath;
+    std::shared_ptr<Points> points;
+    QVector<std::shared_ptr<PathPoint>> currentPath;
+    MainWindow* mainWindow;
+    MapView* mapView;
 };
 
 #endif // PATHPAINTER_H

@@ -97,10 +97,10 @@ std::shared_ptr<PointView> Points::findPointView(const QString pointName) const{
     return NULL;
 }
 
-std::shared_ptr<PointView> Points::findPathPointView(const QString pointName) const{
+std::shared_ptr<PointView> Points::findPathPointView(const double x, const double y) const{
     if(groups->value(PATH_GROUP_NAME)){
         for(int j = 0; j < groups->value(PATH_GROUP_NAME)->size(); j++){
-            if(groups->value(PATH_GROUP_NAME)->at(j)->getPoint()->getName().compare(pointName) == 0)
+            if(groups->value(PATH_GROUP_NAME)->at(j)->getPoint()->comparePos(x, y))
                 return groups->value(PATH_GROUP_NAME)->at(j);
         }
     }
@@ -159,13 +159,12 @@ void Points::addPoint(const QString groupName, const QString pointName, const do
         pointView->hide();
 
     connect(&(*pointView), SIGNAL(pathPointChanged(double, double, PointView*)), mainWindow, SLOT(updatePathPoint(double, double, PointView*)));
-    connect(&(*pointView), SIGNAL(hoverEventSignal(PointView::PixmapType, QString)), mapView, SLOT(updatePixmapHover(PointView::PixmapType, QString)));
     connect(&(*pointView), SIGNAL(pointLeftClicked(QString)), mainWindow, SLOT(displayPointEvent(QString)));
     connect(&(*pointView), SIGNAL(editedPointPositionChanged(double, double)), mainWindow, SLOT(updateCoordinates(double, double)));
     connect(&(*pointView), SIGNAL(moveTmpEditPathPoint()), mainWindow, SLOT(moveTmpEditPathPointSlot()));
     connect(&(*pointView), SIGNAL(addPointPath(QString, double, double)), mainWindow, SLOT(addPointPathSlot(QString, double, double)));
     connect(&(*pointView), SIGNAL(homeEdited(QString)), mainWindow, SLOT(homeEdited(QString)));
-
+    connect(&(*pointView), SIGNAL(updatePathPainterPointView()), mainWindow, SLOT(updatePathPainterPointViewSlot()));
 
     if(!groups->empty() && groups->contains(groupName)){
         groups->value(groupName)->push_back(pointView);

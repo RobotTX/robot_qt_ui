@@ -109,7 +109,11 @@ LeftMenu::LeftMenu(MainWindow* _parent, std::shared_ptr<Points> const& _points,
     leftLayout->addWidget(pathCreationWidget);
 
     connect(pathCreationWidget, SIGNAL(addPathPoint(QString, double, double)), pathPainter.get(), SLOT(addPathPointSlot(QString, double, double)));
+    connect(pathCreationWidget, SIGNAL(deletePathPoint(int)), pathPainter.get(), SLOT(deletePathPointSlot(int)));
+    connect(pathCreationWidget, SIGNAL(orderPathPointChanged(int, int)), pathPainter.get(), SLOT(orderPathPointChangedSlot(int, int)));
+    connect(pathCreationWidget, SIGNAL(resetPath()), pathPainter.get(), SLOT(resetPathSlot()));
     connect(pathCreationWidget, SIGNAL(setMessage(QString, QString)), parent, SLOT(setMessageTop(QString, QString)));
+    connect(pathCreationWidget, SIGNAL(actionChanged(int, QString)), pathPainter.get(), SLOT(actionChangedSlot(int, QString)));
 
     connect(displaySelectedPoint->getRobotButton(), SIGNAL(clicked()), parent, SLOT(setSelectedRobotFromPoint()));
     connect(displaySelectedPoint->getActionButtons()->getMinusButton(), SIGNAL(clicked(bool)), parent, SLOT(removePointFromInformationMenu()));

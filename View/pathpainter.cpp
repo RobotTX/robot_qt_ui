@@ -1,30 +1,155 @@
 #include "pathpainter.h"
 #include "View/mapview.h"
 #include "Model/points.h"
-#include "Model/currentpath.h"
 #include <QDebug>
 #include <QPainterPath>
 #include <QPixmap>
 #include "Controller/mainwindow.h"
+#include "Model/pathpoint.h"
 
-PathPainter::PathPainter(MainWindow* const &mainWindow, MapView* const &mapPixmapItem, std::shared_ptr<Points> points)
-    : QGraphicsPathItem(mapPixmapItem){
+PathPainter::PathPainter(MainWindow* const &mainWindow, MapView* const &mapPixmapItem, std::shared_ptr<Points> _points)
+    : QGraphicsPathItem(mapPixmapItem), points(_points), mainWindow(mainWindow), mapView(mapPixmapItem){
     setPen(QPen(Qt::red));
-    currentPath = std::shared_ptr<CurrentPath>(new CurrentPath(mainWindow, mapPixmapItem, points));
 }
 
-void PathPainter::reset(){
-    qDebug() << "PathPainter::reset called";
+void PathPainter::resetPathSlot(void){
+    qDebug() << "PathPainter::resetPathSlot called";
     path = QPainterPath();
-    currentPath->reset();
+    currentPath.clear();
 }
 
 void PathPainter::addPathPointSlot(QString name, double x, double y){
     qDebug() << "PathPainter::addPathPointSlot called" << x << y;
-    /// TODO add to points, currentPath & draw
+    /// Add the point to the current path
+    std::shared_ptr<PointView> pointView = points->findPathPointView(x, y);
+    if(pointView)
+        points->addPoint(PATH_GROUP_NAME, pointView);
+    else
+        points->addPoint(PATH_GROUP_NAME, name, x, y, true, Point::PointType::PATH, mapView, mainWindow);
+
+    points->getGroups()->value(PATH_GROUP_NAME)->last()->setState(GraphicItemState::CREATING_PATH);
+    Point point = *(points->getGroups()->value(PATH_GROUP_NAME)->last()->getPoint());
+    currentPath.push_back(std::shared_ptr<PathPoint>(new PathPoint(point, PathPoint::Action::WAIT)));
+
+    /// Update the path painter
+    updatePathPainterSlot();
 }
 
+void PathPainter::orderPathPointChangedSlot(int from, int to){
+    qDebug() << "PathPainter::updatePathPainter called from" << from << "to" << to;
 
+    /// Do the change in the model
+    std::shared_ptr<PathPoint> pathPoint = currentPath.takeAt(from);
+    std::shared_ptr<PointView> pointView = points->getGroups()->value(PATH_GROUP_NAME)->takeAt(from);
+
+    if(to > currentPath.size()){
+        currentPath.push_back(pathPoint);
+        points->getGroups()->value(PATH_GROUP_NAME)->push_back(pointView);
+    } else {
+        if(from < to){
+            currentPath.insert(to-1, pathPoint);
+            points->getGroups()->value(PATH_GROUP_NAME)->insert(to-1, pointView);
+        } else {
+            currentPath.insert(to, pathPoint);
+            points->getGroups()->value(PATH_GROUP_NAME)->insert(to, pointView);
+        }
+    }
+
+    /// Update the path painter
+    updatePathPainterSlot();
+}
+
+void PathPainter::deletePathPointSlot(int id){
+    qDebug() << "PathPainter::deletePathPointSlot called";
+
+    /// Remove the item from the model
+    currentPath.remove(id);
+    points->getGroups()->value(PATH_GROUP_NAME)->remove(id);
+
+    /// Update the path painter
+    updatePathPainterSlot();
+}
+
+void PathPainter::actionChangedSlot(int id, QString waitTimeStr){
+    qDebug() << "PathPainter::actionChangedSlot called" << id << waitTimeStr;
+    PathPoint::Action action;
+    int waitTime = 0;
+    if(waitTimeStr.compare("") == 0){
+        action = PathPoint::Action::HUMAN_ACTION;
+    } else {
+        action = PathPoint::Action::WAIT;
+        waitTime = waitTimeStr.toInt();
+    }
+    currentPath.at(id)->setAction(action);
+    currentPath.at(id)->setWaitTime(waitTime);
+}
+
+void PathPainter::updatePathPainterSlot(void){
+    qDebug() << "PathPainter::updatePathPainter called";
+    std::shared_ptr<QVector<std::shared_ptr<PointView>>> group = points->getGroups()->value(PATH_GROUP_NAME);
+
+    std::shared_ptr<PointView> startPointView = std::shared_ptr<PointView>();
+    std::shared_ptr<PointView> endPointView = std::shared_ptr<PointView>();
+    std::shared_ptr<PointView> currentPointView = std::shared_ptr<PointView>();
+
+    if(group){
+        for(int i = 0; i < group->size(); i++){
+            currentPointView = group->at(i);
+            currentPointView->setPixmap(PointView::PixmapType::MID);
+            QPointF pointCoord = QPointF(currentPointView->getPoint()->getPosition().getX(),
+                                         currentPointView->getPoint()->getPosition().getY());
+            if(i == 0){
+                path = QPainterPath(pointCoord);
+                startPointView = currentPointView;
+            } else {
+                path.lineTo(pointCoord);
+            }
+
+            if(i == group->size()-1)
+                endPointView = currentPointView;
+        }
+
+        setPath(path);
+
+        if(*(startPointView->getPoint()) == *(endPointView->getPoint())){
+            startPointView->setPixmap(PointView::PixmapType::START_STOP);
+        } else {
+            startPointView->setPixmap(PointView::PixmapType::START);
+            endPointView->setPixmap(PointView::PixmapType::STOP);
+        }
+    }
+}
+
+void PathPainter::updatePathPainterPointViewSlot(void){
+    qDebug() << "PathPainter::updatePathPainterPointViewSlot called";
+    std::shared_ptr<QVector<std::shared_ptr<PointView>>> group = points->getGroups()->value(PATH_GROUP_NAME);
+
+    std::shared_ptr<PointView> startPointView = std::shared_ptr<PointView>();
+    std::shared_ptr<PointView> endPointView = std::shared_ptr<PointView>();
+    std::shared_ptr<PointView> currentPointView = std::shared_ptr<PointView>();
+
+    if(group){
+        for(int i = 0; i < group->size(); i++){
+            currentPointView = group->at(i);
+
+            if(i == 0){
+                startPointView = currentPointView;
+            } else {
+                currentPointView->setPixmap(PointView::PixmapType::MID);
+            }
+
+            if(i == group->size()-1)
+                endPointView = currentPointView;
+        }
+
+        if(*(startPointView->getPoint()) == *(endPointView->getPoint())){
+            startPointView->setPixmap(PointView::PixmapType::START_STOP);
+        } else {
+            startPointView->setPixmap(PointView::PixmapType::START);
+            endPointView->setPixmap(PointView::PixmapType::STOP);
+        }
+    }
+}
 
 
 
@@ -36,8 +161,8 @@ void PathPainter::reset(bool save){
     clearPointViews(save);
     qDebug() << "pointviews cleared in pathpainter::reset";
     path = QPainterPath();
-    pathVector.clear();
-    qDebug() << "pathvector also cleared";
+    currentPath.clear();
+    qDebug() << "currentPath also cleared";
     setPath(path);
 }
 
@@ -46,14 +171,14 @@ void PathPainter::refresh(bool save){
 
     clearPointViews(save);
 
-    if(pathVector.size() > 0){
+    if(currentPath.size() > 0){
         PointView* startPointView = NULL;
         PointView* endPointView = NULL;
-        for(int i = 0; i < pathVector.size(); i++){
-            if(pathVector.at(i).getName().size() > 0){
-                QPointF pointCoord = QPointF(pathVector.at(i).getPosition().getX(),
-                                                            pathVector.at(i).getPosition().getY());
-                PointView* pointView = &(*(pointViews->getPointViewFromPoint(pathVector.at(i))));
+        for(int i = 0; i < currentPath.size(); i++){
+            if(currentPath.at(i).getName().size() > 0){
+                QPointF pointCoord = QPointF(currentPath.at(i).getPosition().getX(),
+                                                            currentPath.at(i).getPosition().getY());
+                PointView* pointView = &(*(pointViews->getPointViewFromPoint(currentPath.at(i))));
 
                 if(pointView != NULL){
                     //qDebug() << "Found permanent pointView";
@@ -63,7 +188,7 @@ void PathPainter::refresh(bool save){
                     MapView* mapView = (MapView*) parentItem();
                     QVector<PointView*> pointViewVector = mapView->getPathCreationPoints();
                     for(int j = 0; j < pointViewVector.size(); j++){
-                        if(pathVector.at(i).comparePos(pointViewVector.at(j)->getPoint()->getPosition().getX(),
+                        if(currentPath.at(i).comparePos(pointViewVector.at(j)->getPoint()->getPosition().getX(),
                                                        pointViewVector.at(j)->getPoint()->getPosition().getY())){
 
                             pointView = pointViewVector.at(j);
@@ -71,7 +196,7 @@ void PathPainter::refresh(bool save){
                         }
                     }
 
-                    if(pathVector.at(i).comparePos(mapView->getTmpPointView()->getPoint()->getPosition().getX(),
+                    if(currentPath.at(i).comparePos(mapView->getTmpPointView()->getPoint()->getPosition().getX(),
                                                    mapView->getTmpPointView()->getPoint()->getPosition().getY())){
 
                         //qDebug() << "But found the unique temporary pointView";
@@ -87,7 +212,7 @@ void PathPainter::refresh(bool save){
                     path.lineTo(pointCoord);
                 }
 
-                if(i == pathVector.size()-1)
+                if(i == currentPath.size()-1)
                     endPointView = pointView;
 
                // qDebug() << pointView->getType();
@@ -123,7 +248,7 @@ void PathPainter::refresh(bool save){
 void PathPainter::updatePath(const QVector<Point>& pointVector, bool save){
     qDebug() << "path painter updatepath called";
     reset(save);
-    pathVector = pointVector;
+    currentPath = pointVector;
     refresh(save);
 }
 
@@ -134,13 +259,13 @@ void PathPainter::setPointViewPixmap(const int id, PointView* const pointView){
         return;
     } else {
         qDebug() << "not editing" << pointView->getPoint()->getName();
-        if(pathVector.last().comparePos(pointView->getPoint()->getPosition()) && pathVector.front().comparePos(pointView->getPoint()->getPosition())){
+        if(currentPath.last().comparePos(pointView->getPoint()->getPosition()) && currentPath.front().comparePos(pointView->getPoint()->getPosition())){
             qDebug() << "setting start stop pixmap";
             pointView->setPixmap(PointView::PixmapType::START_STOP);
         }
         else if(id == 0)
             pointView->setPixmap(PointView::PixmapType::START);
-        else if (id == pathVector.size()-1)
+        else if (id == currentPath.size()-1)
             pointView->setPixmap(PointView::PixmapType::STOP);
         else
             pointView->setPixmap(PointView::PixmapType::MID);

@@ -48,7 +48,7 @@ public:
     std::shared_ptr<Point> findPoint(const QString pointName) const;
     std::shared_ptr<Point> findPoint(const QString groupName, const int indexPoint) const;
     std::shared_ptr<PointView> findPointView(const QString pointName) const;
-    std::shared_ptr<PointView> findPathPointView(const QString pointName) const;
+    std::shared_ptr<PointView> findPathPointView(const double x, const double y) const;
     std::pair<QString, int> findPointIndexes(const QString pointName) const;
     std::shared_ptr<QVector<std::shared_ptr<PointView>>> getDefaultGroup(void) const { return groups->value(NO_GROUP_NAME); }
     void addGroup(const QString name) { groups->insert(name, std::shared_ptr<QVector<std::shared_ptr<PointView>>>(new QVector<std::shared_ptr<PointView>>)); }

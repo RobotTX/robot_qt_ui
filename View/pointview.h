@@ -76,6 +76,7 @@ signals:
     void editedPointPositionChanged(double, double);
     void pathPointChanged(double, double, PointView*);
     void hoverEventSignal(PointView::PixmapType, QString);
+    void updatePathPainterPointView();
 
 private:
     std::shared_ptr<Point> point;
