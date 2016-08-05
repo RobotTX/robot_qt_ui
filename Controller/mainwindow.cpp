@@ -1063,7 +1063,16 @@ void MainWindow::homeEdited(QString pointName){
         qDebug() << "MainWindow::homeEdited could not found the pointView :" << pointName;
 
     editSelectedRobotWidget->getHomeBtn()->setText("Edit home");
-    editSelectedRobotWidget->getHomeLabel()->setText("Home: "+pointName);
+    if (pointName == "tmpPoint")
+    {
+        QString name = QString::number(pointView->getPoint()->getPosition().getX(),'f', 1) + "; " + QString::number(pointView->getPoint()->getPosition().getY(),'f', 1);
+        editSelectedRobotWidget->getHomeLabel()->setText("Home: "+name);
+
+    }
+    else
+    {
+        editSelectedRobotWidget->getHomeLabel()->setText("Home: "+pointName);
+    }
     editSelectedRobotWidget->enableAll();
     setEnableAll(true, GraphicItemState::NO_EVENT);
 }
