@@ -789,6 +789,8 @@ void MainWindow::robotSavedEvent(){
                         parserPoints.save(*points);
                         done = true;
                     } else {
+                        isOK = false;
+                        done= false;
                         setMessageTop(TEXT_COLOR_DANGER, "Sorry, this point is already a home\nPlease select another");
                     }
                 }
@@ -799,8 +801,9 @@ void MainWindow::robotSavedEvent(){
                         selectedRobot->getRobot()->getHome()->getPoint()->setHome(Point::PointType::PERM, "");
 
                     selectedRobot->getRobot()->setHome(editSelectedRobotWidget->getHome());
+                    isOK = true;
+
                 }
-                isOK = true;
                 change++;
            /* }
             break;
