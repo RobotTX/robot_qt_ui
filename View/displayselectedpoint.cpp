@@ -223,7 +223,7 @@ void DisplaySelectedPoint::setPointView(const std::shared_ptr<PointView>& _point
     else
         qDebug() << "DisplaySelectedPoint::setPointView : there is no pointView to assign";
     /// sets the pixmaps of the other points (black)
-    points->setPixmapAll(PointView::PixmapType::NORMAL);
+    //points->setPixmapAll(PointView::PixmapType::NORMAL);
     qDebug() << "pixmaps set";
     /// sets the color of the displayed pointView to blue
     if(pointView){

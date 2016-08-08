@@ -39,19 +39,15 @@ void PathPainter::addPathPointSlot(QString name, double x, double y){
     qDebug() << "PathPainter::addPathPointSlot called" << name << x << y;
 
     int nb = nbUsedPointView(name, x, y);
+    std::shared_ptr<PointView> pointView = points->findPathPointView(x, y);
     /// If found, it's a permanent point which is already in the path
-    if(nb > 0){
-        std::shared_ptr<PointView> pointView = points->findPathPointView(x, y);
+    if(nb > 0 && pointView){
         points->addPoint(PATH_GROUP_NAME, pointView);
     } else {
-        if(name.contains(PATH_POINT_NAME)){
-            name = PATH_POINT_NAME + QString::number(currentPath.size()+1) ;
-        }
+        name = PATH_POINT_NAME + QString::number(currentPath.size()+1) ;
         points->addPoint(PATH_GROUP_NAME, name, x, y, true, Point::PointType::PATH, mapView, mainWindow);
     }
 
-    qDebug() << points->getGroups()->value(PATH_GROUP_NAME)->size();
-    qDebug() << (points->getGroups()->value(PATH_GROUP_NAME)->last() == NULL);
     points->getGroups()->value(PATH_GROUP_NAME)->last()->setState(GraphicItemState::CREATING_PATH);
     Point point = *(points->getGroups()->value(PATH_GROUP_NAME)->last()->getPoint());
     currentPath.push_back(std::shared_ptr<PathPoint>(new PathPoint(point, PathPoint::Action::WAIT)));
@@ -225,17 +221,9 @@ int PathPainter::nbUsedPointView(QString name, double x, double y){
 }
 
 void PathPainter::setCurrentPath(const QVector<std::shared_ptr<PathPoint>>& _currentPath){
-    currentPath = _currentPath;
-    for(int i = 0; i < currentPath.size(); i++){
-        Point point = currentPath.at(i)->getPoint();
-
-        std::shared_ptr<PointView> pointView = points->findPointView(point.getName());
-        if(pointView && !point.getName().contains(PATH_POINT_NAME))
-            points->addPoint(PATH_GROUP_NAME, pointView);
-        else
-            points->addPoint(PATH_GROUP_NAME, point.getName(), point.getPosition().getX(),
-                             point.getPosition().getY(), true, Point::PointType::PATH,
-                             mapView, mainWindow);
+    for(int i = 0; i < _currentPath.size(); i++){
+        Point point = _currentPath.at(i)->getPoint();
+        addPathPointSlot(point.getName(), point.getPosition().getX(), point.getPosition().getY());
     }
 }
 

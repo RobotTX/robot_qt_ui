@@ -300,9 +300,12 @@ void Points::setPixmapAll(const PointView::PixmapType type){
     qDebug() << "Points::setPixmapAll called";
     while(i.hasNext()) {
         i.next();
+        qDebug() << i.key();
         if(i.key().compare(PATH_GROUP_NAME) != 0){
-            for(int j = 0; j < i.value()->count(); j++)
+            for(int j = 0; j < i.value()->count(); j++){
+                qDebug() << i.value()->at(j)->getPoint()->getName();
                 i.value()->at(j)->setPixmap(type);
+            }
         }
     }
 }
