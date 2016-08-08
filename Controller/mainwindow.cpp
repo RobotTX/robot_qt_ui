@@ -769,7 +769,6 @@ void MainWindow::robotSavedEvent(){
 
             XMLParser parserPoints(XML_PATH);
             parserPoints.save(*points);
-
             done = true;
         } else {
             qDebug() << "MainWindow::robotSavedEvent Permanent point";
@@ -786,7 +785,6 @@ void MainWindow::robotSavedEvent(){
         if(done){
             if(selectedRobot->getRobot()->getHome() != NULL)
                 selectedRobot->getRobot()->getHome()->getPoint()->setHome(Point::PointType::PERM, "");
-
             selectedRobot->getRobot()->setHome(editSelectedRobotWidget->getHome());
         }
         isOK = true;
@@ -1037,7 +1035,17 @@ void MainWindow::homeEdited(QString pointName){
     else
         qDebug() << "MainWindow::homeEdited could not found the pointView :" << pointName;
 
-    editSelectedRobotWidget->getHomeBtn()->setText(pointName);
+    editSelectedRobotWidget->getHomeBtn()->setText("Edit home");
+    if (pointName == "tmpPoint")
+    {
+        QString name = QString::number(pointView->getPoint()->getPosition().getX(),'f', 1) + "; " + QString::number(pointView->getPoint()->getPosition().getY(),'f', 1);
+        editSelectedRobotWidget->getHomeLabel()->setText("Home: "+name);
+
+    }
+    else
+    {
+        editSelectedRobotWidget->getHomeLabel()->setText("Home: "+pointName);
+    }
     editSelectedRobotWidget->enableAll();
     setEnableAll(true, GraphicItemState::NO_EVENT);
 }
@@ -1743,8 +1751,11 @@ void MainWindow::editPointButtonEvent(){
 void MainWindow::editGroupBtnEvent(){
     qDebug() << "editPointBtnEvent called" << pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->checkedButton()->text();
 
+    setEnableAll(false);
     int btnIndex = pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->checkedId();
+    qDebug() << "btnIndex" << btnIndex;
     pointsLeftWidget->setLastCheckedId(pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->checkedButton()->text());
+
     pointsLeftWidget->setCreatingGroup(false);
 
     /// uncheck the other buttons
@@ -3171,37 +3182,43 @@ void MainWindow::modifyGroupWithEnter(QString name){
 void MainWindow::modifyGroupAfterClick(QString name){
     name = name.simplified();
     qDebug() << "modifyGroupAfterClick called from" << pointsLeftWidget->getLastCheckedId() << "to" << name;
+    if (pointsLeftWidget->getLastCheckedId()!="")
+     {
+        topLayout->setEnabled(true);
 
-    topLayout->setEnabled(true);
-    pointsLeftWidget->setLastCheckedId("");
+        /// resets the menu
+        leftMenu->getCloseButton()->setEnabled(true);
 
-    /// resets the menu
-    leftMenu->getCloseButton()->setEnabled(true);
-    pointsLeftWidget->getActionButtons()->getPlusButton()->setEnabled(true);
-    pointsLeftWidget->getGroupButtonGroup()->setEnabled(true);
-    pointsLeftWidget->disableButtons();
-    pointsLeftWidget->getGroupButtonGroup()->getModifyEdit()->hide();
-    leftMenu->getReturnButton()->setEnabled(true);
-    int checkedId = pointsLeftWidget->getGroupButtonGroup()->getButtonIdByName(pointsLeftWidget->getGroupButtonGroup()->getEditedGroupName());
+        pointsLeftWidget->getActionButtons()->getPlusButton()->setEnabled(true);
+        pointsLeftWidget->getGroupButtonGroup()->setEnabled(true);
+        pointsLeftWidget->disableButtons();
 
-    if(pointsLeftWidget->checkGroupName(name) == 0){
-        /// Update the model
-        points->getGroups()->insert(name, points->getGroups()->take(pointsLeftWidget->getLastCheckedId()));
+        pointsLeftWidget->getGroupButtonGroup()->getModifyEdit()->hide();
+        leftMenu->getReturnButton()->setEnabled(true);
+        int checkedId = pointsLeftWidget->getGroupButtonGroup()->getButtonIdByName(pointsLeftWidget->getGroupButtonGroup()->getEditedGroupName());
 
-        /// saves to file
-        XMLParser parser(XML_PATH);
-        parser.save(*points);
+        if(pointsLeftWidget->checkGroupName(name) == 0){
+            /// Update the model
+            qDebug() <<   pointsLeftWidget->getLastCheckedId();
+            points->getGroups()->insert(name, points->getGroups()->take(pointsLeftWidget->getLastCheckedId()));
 
-        /// updates view
-        pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(checkedId)->setText(name);
+            /// saves to file
+            XMLParser parser(XML_PATH);
+            parser.save(*points);
 
-        topLayout->setLabelDelay(TEXT_COLOR_SUCCESS, "You have successfully modified the name of your group",1500);
-    } else if(pointsLeftWidget->checkGroupName(name) == 1){
-        topLayout->setLabelDelay(TEXT_COLOR_DANGER, "The name of your group cannot be empty. Please choose a name for your group",2500);
-    } else {
-        topLayout->setLabelDelay(TEXT_COLOR_DANGER, "You cannot choose : " + name.simplified() + " as a new name for your group because another group already has this name",2500);
+            /// updates view
+            pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(checkedId)->setText(name);
+
+            topLayout->setLabelDelay(TEXT_COLOR_SUCCESS, "You have successfully modified the name of your group",1500);
+        } else if(pointsLeftWidget->checkGroupName(name) == 1){
+            topLayout->setLabelDelay(TEXT_COLOR_DANGER, "The name of your group cannot be empty. Please choose a name for your group",2500);
+        } else {
+            topLayout->setLabelDelay(TEXT_COLOR_DANGER, "You cannot choose : " + name.simplified() + " as a new name for your group because another group already has this name",2500);
+        }
+        pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(checkedId)->show();
+         pointsLeftWidget->setLastCheckedId("");
     }
-    pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(checkedId)->show();
+
 }
 
 void MainWindow::enableReturnAndCloseButtons(){

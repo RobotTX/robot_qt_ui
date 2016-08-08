@@ -84,7 +84,7 @@ EditSelectedRobotWidget::EditSelectedRobotWidget(QMainWindow * const parent, con
     inLayout->addWidget(batteryLevel);
 
     /// Home layout with the button to select the home
-    QLabel* homeLabel = new QLabel("Home : ", this);
+     homeLabel = new QLabel("Home : ", this);
     homeBtn = new QPushButton(QIcon(":/icons/home.png"), "", this);
     homeBtn->setIconSize(parent->size()/10);
     homeBtn->setStyleSheet ("text-align: left");
@@ -160,13 +160,13 @@ void EditSelectedRobotWidget::setSelectedRobot(RobotView* const _robotView, bool
     if(robotView->getRobot()->getHome() != NULL){
         homeBtn->setText("Edit Home");
         oldHome = robotView->getRobot()->getHome();
+        homeLabel->setText("Home: "+robotView->getRobot()->getHome()->getPoint()->getName());
+
     } else {
         homeBtn->setText("Add Home");
+        homeLabel->setText("Home: ");
         oldHome = NULL;
     }
-
-    setPath(robotView->getRobot()->getPath());
-
 }
 
 void EditSelectedRobotWidget::saveEditSelecRobotBtnEvent(void){

@@ -52,6 +52,7 @@ public:
     QVector<std::shared_ptr<PathPoint>> getOldPath( ){return oldPath;}
     void setPath(QVector<std::shared_ptr<PathPoint>> const path);
     void clearPath();
+    QLabel* getHomeLabel(void){return homeLabel;}
 
 signals:
     /// Signal emitted when a robot has been edited & saved
@@ -81,7 +82,7 @@ private:
     PathWidget* pathWidget;
     QVector<std::shared_ptr<PathPoint>> oldPath;
     bool pathChanged;
-
+    QLabel* homeLabel;
 protected:
     void showEvent(QShowEvent *event);
     void hideEvent(QHideEvent *event);
