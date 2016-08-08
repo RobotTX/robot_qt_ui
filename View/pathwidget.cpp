@@ -36,7 +36,7 @@ void PathWidget::clearLayout(QLayout* _layout){
 void PathWidget::setPath(QVector<std::shared_ptr<PathPoint>> const path){
 
     clearLayout(layout);
-    for(size_t i = 0; i < path.size(); i++){
+    for(int i = 0; i < path.size(); i++){
         /// Index & name of the point
 
         QLabel* nameLabel = new QLabel(this);

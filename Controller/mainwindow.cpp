@@ -681,6 +681,7 @@ void MainWindow::cancelEditSelecRobotBtnEvent(){
 
     leftMenu->getReturnButton()->setEnabled(true);
     leftMenu->getReturnButton()->setToolTip("");
+
     setEnableAll(true);
 }
 
@@ -783,6 +784,7 @@ void MainWindow::robotSavedEvent(){
         }
         pointsLeftWidget->updateGroupButtonGroup();
 
+
         if(done){
             if(selectedRobot->getRobot()->getHome() != NULL)
                 selectedRobot->getRobot()->getHome()->getPoint()->setHome(Point::PointType::PERM, "");
@@ -798,7 +800,7 @@ void MainWindow::robotSavedEvent(){
         std::shared_ptr<Robot> robot = selectedRobot->getRobot();
         QString pathStr = "";
 
-        for(size_t i = 0; i < robot->getPath().size(); i++){
+        for(int i = 0; i < robot->getPath().size(); i++){
             std::shared_ptr<PathPoint> pathPoint = pathPainter->getCurrentPath().at(i);
             float oldPosX = pathPoint->getPoint().getPosition().getX();
             float oldPosY = pathPoint->getPoint().getPosition().getY();
@@ -821,7 +823,9 @@ void MainWindow::robotSavedEvent(){
                 QString cmd = answerList.at(0);
                 bool success = (answerList.at(1).compare("done") == 0);
                 if((cmd.compare("i") == 0 && success) || answerList.at(0).compare("1") == 0){
+
                     qDebug() << "MainWindow::robotSavedEvent Path saved";
+
                 } else {
                     qDebug() << "MainWindow::robotSavedEvent Path failed to be saved, please try again";
                 }
@@ -867,8 +871,8 @@ void MainWindow::robotSavedEvent(){
                 qDebug() << "Robot successfully edited";
             }
         } else {
-            setMessageTop(TEXT_COLOR_DANGER, "Nothing has been modified");
-            qDebug() << "Nothing has been modified";
+            setMessageTop(TEXT_COLOR_INFO, "Nothing has been modified because this point was already the home point of the robot " + selectedRobot->getRobot()->getName());
+            qDebug() << "Nothing has been modified because this point was already the home point of the robot " + selectedRobot->getRobot()->getName();
         }
     }
 }
@@ -1730,8 +1734,9 @@ void MainWindow::editPointButtonEvent(){
     leftMenu->getDisplaySelectedPoint()->getNameEdit()->setFrame(true);
 
     /// if the point is a home point any modification of its name is forbidden
-    if(!displaySelectedPointView->getPoint()->isHome())
-        leftMenu->getDisplaySelectedPoint()->getNameEdit()->setReadOnly(false);
+    /// not anymore since its name is no longer imposed by the application
+    //if(!displaySelectedPointView->getPoint()->isHome())
+    leftMenu->getDisplaySelectedPoint()->getNameEdit()->setReadOnly(false);
 
     /// sets the state of the map and the other widgets to prevent other concurrent actions
     setGraphicItemsState(GraphicItemState::NO_EVENT, false);

@@ -186,7 +186,7 @@ void PathCreationWidget::clicked(void){
 }
 
 void PathCreationWidget::pointClicked(QAction *action){
-    /// A permanent point has been selected on the QMenu so we had it to the list or edit the selected item
+    /// A permanent point has been selected on the QMenu so we add it to the list or edit the selected item
     Position pos = points->findPoint(action->text())->getPosition();
     if(state == CREATE){
        qDebug() << "PathCreationWidget::pointClicked called to create a new path point" << action->text();
@@ -636,7 +636,7 @@ bool PathCreationWidget::savePath(){
             }
 
             QString name = pointList.at(i).getName();
-            if(pointList.at(i).getName().compare(PATH_POINT_NAME) == 0){
+            if(pointList.at(i).getName().compare(TMP_POINT_NAME) == 0){
                 name = QString::number(pointList.at(i).getPosition().getX(),'f', 1) + "; " +
                         QString::number(pointList.at(i).getPosition().getY(),'f', 1);
             }
