@@ -72,9 +72,9 @@ signals:
     void pointLeftClicked(QString);
     void addPointPath(QString name, double x, double y);
     void homeEdited(QString pointView);
-    void moveTmpEditPathPoint();
+    void moveEditedPathPoint();
     void editedPointPositionChanged(double, double);
-    void pathPointChanged(double, double, PointView*);
+    void pathPointChanged(double, double);
     void hoverEventSignal(PointView::PixmapType, QString);
     void updatePathPainterPointView();
 

@@ -2,23 +2,20 @@
 <points>
     <group>
 <<<<<<< HEAD
-        <name>No Name</name>
+        <name>First group</name>
 =======
-        <name>second gro</name>
-    </group>
-    <group>
-        <name>first group</name>
+        <name>First groups</name>
         <point>
             <name>A</name>
             <x>50</x>
             <y>50</y>
-            <displayed>0</displayed>
+            <displayed>1</displayed>
         </point>
         <point>
             <name>Ma point</name>
             <x>75</x>
             <y>75</y>
-            <displayed>0</displayed>
+            <displayed>1</displayed>
         </point>
         <point>
             <name>A new point</name>
@@ -26,24 +23,10 @@
             <y>100</y>
             <displayed>0</displayed>
         </point>
+>>>>>>> 1aea730178ba0a5593f28f18ce0a1ebd444e67bd
     </group>
     <group>
-        <name>Second group</name>
-        <point>
-            <name>Fanny</name>
-            <x>125</x>
-            <y>125</y>
-            <displayed>1</displayed>
-        </point>
-        <point>
-            <name>Michel</name>
-            <x>150</x>
-            <y>150</y>
-            <displayed>0</displayed>
-        </point>
-    </group>
-    <group>
-        <name>No group</name>
+        <name>No Group</name>
         <point>
             <name>Un point</name>
             <x>150</x>
@@ -62,6 +45,29 @@
             <y>225</y>
             <displayed>1</displayed>
         </point>
->>>>>>> 34d3e5af84db229d4fde8d62ec60c5c565df1a49
+    </group>
+    <group>
+        <name>Second group</name>
+        <point>
+            <name>Fanny</name>
+            <x>125</x>
+            <y>125</y>
+            <displayed>1</displayed>
+        </point>
+        <point>
+            <name>Michel</name>
+            <x>150</x>
+            <y>150</y>
+            <displayed>0</displayed>
+        </point>
+    </group>
+    <group>
+        <name>TmpPoint</name>
+        <point>
+            <name>tmpPoint</name>
+            <x>0</x>
+            <y>0</y>
+            <displayed>0</displayed>
+        </point>
     </group>
 </points>

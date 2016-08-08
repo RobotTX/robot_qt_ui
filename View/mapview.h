@@ -39,7 +39,7 @@ public:
 
 signals:
     void pointLeftClicked(QString);
-    void addPointPath(QString, double, double);
+    void addPathPoint(QString, double, double);
     void homeEdited(QString);
     void newCoordinates(double, double);
     void newCoordinatesPathPoint(double, double);

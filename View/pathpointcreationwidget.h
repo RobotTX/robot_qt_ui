@@ -52,6 +52,8 @@ public:
     QPushButton* getCancelBtn(void) const { return cancelBtn; }
     QPushButton* getSaveEditBtn(void) const { return saveEditBtn; }
     QWidget* getTimeWidget(void) const { return timeWidget; }
+    QWidget* getEditWidget(void) const { return editWidget; }
+    QWidget* getPathWidget(void) const { return pathWidget; }
 
 
 private:
@@ -68,15 +70,18 @@ private:
     QLineEdit* timeEdit;
     QWidget* timeWidget;
     QWidget* actionWidget;
-    QHBoxLayout* editLayout;
+    QWidget* editWidget;
+    QWidget* pathWidget;
 
 signals:
     void saveEditSignal(PathPointCreationWidget*);
+    void cancelEditSignal(PathPointCreationWidget*);
     void actionChanged(int, QString);
 
 private slots:
     void actionClicked(QString action);
     void saveEdit();
+    void cancelEdit();
     void timeChanged(QString);
 };
 

@@ -24,7 +24,7 @@ class PathPointCreationWidget;
 class PathCreationWidget: public QWidget{
     Q_OBJECT
 
-enum CheckState { NO_STATE, SUPPR, EDIT };
+enum CheckState { NO_STATE, CREATE, EDIT };
 
 public:
     struct PointInfo{
@@ -38,6 +38,8 @@ public:
     void updatePointsList(void);
     void resetWidget(void);
     void deleteItem(QListWidgetItem* item);
+    void editPathPoint(QString name, double x, double y);
+    PathPointList* getPathPointList(void) const { return pathPointsList; }
 
 protected:
     void showEvent(QShowEvent* event);
@@ -49,6 +51,11 @@ signals:
     void orderPathPointChanged(int, int);
     void resetPath();
     void actionChanged(int, QString);
+    void editPathPoint(int, QString, double, double);
+    void editTmpPathPoint(int, QString, double, double);
+    void saveEditPathPoint();
+    void cancelEditPathPoint();
+    void savePath();
 
 private slots:
     void addPathPointByMenuSlot(void);
@@ -56,11 +63,12 @@ private slots:
     void editPathPointSlot(void);
     void itemClicked(QListWidgetItem* item);
     void itemMovedSlot(const QModelIndex& , int start, int , const QModelIndex& , int row);
-    void savePath(void);
+    void savePathClicked(void);
     void clicked(void);
     void pointClicked(QAction *action);
-    void addPointPathSlot(QString name, double x, double y);
+    void addPathPointSlot(QString name, double x, double y);
     void saveEditSlot(PathPointCreationWidget* pathPointCreationWidget);
+    void cancelEditSlot(PathPointCreationWidget* pathPointCreationWidget);
     void actionChangedSlot(int id, QString waitTime);
 
 
@@ -70,7 +78,7 @@ private:
     TopLeftMenu* actionButtons;
     QMenu* pointsMenu;
     PathPointList* pathPointsList;
-    bool creatingNewPoint;
+    CheckState state;
 };
 
 #endif // PATHCREATIONWIDGET_H
