@@ -2175,8 +2175,9 @@ void MainWindow::displayPointEvent(PointView* pointView){
         if(rv != NULL)
             robotName = rv->getRobot()->getName();
         else
-            qDebug() << "MainWindow::displayPointEvent  : something unexpected happened";
+            qDebug() << "MainWindow::displayPointEvent : something unexpected happened";
     }
+
     leftMenu->getDisplaySelectedPoint()->setPointView(std::shared_ptr<PointView>(pointView), robotName);
 
     pointView->setPixmap(PointView::PixmapType::MID);
