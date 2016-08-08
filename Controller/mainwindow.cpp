@@ -680,6 +680,7 @@ void MainWindow::cancelEditSelecRobotBtnEvent(){
 
     leftMenu->getReturnButton()->setEnabled(true);
     leftMenu->getReturnButton()->setToolTip("");
+
     setEnableAll(true);
 }
 
