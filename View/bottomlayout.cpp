@@ -362,7 +362,7 @@ QString BottomLayout::pathToStr(const QVector<std::shared_ptr<PathPoint> > path)
         if(i != 0){
             pathStr += " - ";
         }
-        if(path.at(i)->getPoint().getName().compare(PATH_POINT_NAME) == 0){
+        if(path.at(i)->getPoint().getName().contains(PATH_POINT_NAME)){
             pathStr += QString::number(path.at(i)->getPoint().getPosition().getX(),'f', 1)
                     + "; "
                     + QString::number(path.at(i)->getPoint().getPosition().getY(),'f', 1);

@@ -271,7 +271,7 @@ void PathCreationWidget::editPathPointSlot(void){
                  << pointView->getPoint()->getPosition().getY();
 
 
-        if(pointView->getPoint()->getName().compare(PATH_POINT_NAME) == 0){
+        if(pointView->getPoint()->getName().contains(PATH_POINT_NAME)){
             qDebug() << "PathCreationWidget::editPathPoint This is a temporary point";
             pathPointsList->setDragDropMode(QAbstractItemView::NoDragDrop);
             actionButtons->getPlusButton()->setEnabled(false);

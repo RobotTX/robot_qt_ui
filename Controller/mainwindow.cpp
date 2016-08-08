@@ -675,6 +675,7 @@ void MainWindow::cancelEditSelecRobotBtnEvent(){
         selectedRobot->getRobot()->setPath(editSelectedRobotWidget->getOldPath() );
         bottomLayout->uncheckAll();
     }*/
+    emit resetPath();
 
     backEvent();
 

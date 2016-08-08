@@ -36,15 +36,22 @@ void PathPainter::displayPath(void){
 }
 
 void PathPainter::addPathPointSlot(QString name, double x, double y){
-    qDebug() << "PathPainter::addPathPointSlot called" << x << y;
-    /// Add the point to the current path
-    std::shared_ptr<PointView> pointView = points->findPathPointView(x, y);
-    /// If found, it's a permanent point else it's a temporary point
-    if(pointView)
-        points->addPoint(PATH_GROUP_NAME, pointView);
-    else
-        points->addPoint(PATH_GROUP_NAME, name, x, y, true, Point::PointType::PATH, mapView, mainWindow);
+    qDebug() << "PathPainter::addPathPointSlot called" << name << x << y;
 
+    int nb = nbUsedPointView(name, x, y);
+    /// If found, it's a permanent point which is already in the path
+    if(nb > 0){
+        std::shared_ptr<PointView> pointView = points->findPathPointView(x, y);
+        points->addPoint(PATH_GROUP_NAME, pointView);
+    } else {
+        if(name.contains(PATH_POINT_NAME)){
+            name = PATH_POINT_NAME + QString::number(currentPath.size()+1) ;
+        }
+        points->addPoint(PATH_GROUP_NAME, name, x, y, true, Point::PointType::PATH, mapView, mainWindow);
+    }
+
+    qDebug() << points->getGroups()->value(PATH_GROUP_NAME)->size();
+    qDebug() << (points->getGroups()->value(PATH_GROUP_NAME)->last() == NULL);
     points->getGroups()->value(PATH_GROUP_NAME)->last()->setState(GraphicItemState::CREATING_PATH);
     Point point = *(points->getGroups()->value(PATH_GROUP_NAME)->last()->getPoint());
     currentPath.push_back(std::shared_ptr<PathPoint>(new PathPoint(point, PathPoint::Action::WAIT)));
@@ -203,7 +210,7 @@ void PathPainter::updatePathPainterPointViewSlot(void){
 int PathPainter::nbUsedPointView(QString name, double x, double y){
     qDebug() << "PathPainter::nbUsedPointView called";
     int nbUsed = 0;
-    if(name.compare(PATH_POINT_NAME) == 0){
+    if(name.contains(PATH_POINT_NAME)){
         for(int i = 0; i < currentPath.size(); i++){
             if(currentPath.at(i)->getPoint().comparePos(x, y))
                 nbUsed++;
@@ -223,7 +230,7 @@ void PathPainter::setCurrentPath(const QVector<std::shared_ptr<PathPoint>>& _cur
         Point point = currentPath.at(i)->getPoint();
 
         std::shared_ptr<PointView> pointView = points->findPointView(point.getName());
-        if(pointView && point.getName().compare(PATH_POINT_NAME) != 0)
+        if(pointView && !point.getName().contains(PATH_POINT_NAME))
             points->addPoint(PATH_GROUP_NAME, pointView);
         else
             points->addPoint(PATH_GROUP_NAME, point.getName(), point.getPosition().getX(),
