@@ -674,6 +674,8 @@ void MainWindow::cancelEditSelecRobotBtnEvent(){
         bottomLayout->uncheckAll();
     }*/
 
+    points->getTmpPointView()->hide();
+
     hideAllWidgets();
     backEvent();
 
@@ -791,7 +793,7 @@ void MainWindow::robotSavedEvent(){
                     } else {
                         isOK = false;
                         done= false;
-                        setMessageTop(TEXT_COLOR_DANGER, "Sorry, this point is already a home\nPlease select another");
+                        setMessageTop(TEXT_COLOR_DANGER, "Sorry, this point is already a home\nPlease select another one");
                     }
                 }
                 pointsLeftWidget->updateGroupButtonGroup();
@@ -839,8 +841,8 @@ void MainWindow::robotSavedEvent(){
                 qDebug() << "Robot successfully edited";
             }
         } else {
-            setMessageTop(TEXT_COLOR_DANGER, "Nothing has been modified");
-            qDebug() << "Nothing has been modified";
+            setMessageTop(TEXT_COLOR_INFO, "Nothing has been modified because this point was already the home point of the robot " + selectedRobot->getRobot()->getName());
+            qDebug() << "Nothing has been modified because this point was already the home point of the robot " + selectedRobot->getRobot()->getName();
         }
     }
 }
@@ -1758,8 +1760,9 @@ void MainWindow::editPointButtonEvent(){
     leftMenu->getDisplaySelectedPoint()->getNameEdit()->setFrame(true);
 
     /// if the point is a home point any modification of its name is forbidden
-    if(!displaySelectedPointView->getPoint()->isHome())
-        leftMenu->getDisplaySelectedPoint()->getNameEdit()->setReadOnly(false);
+    /// not anymore since its name is no longer imposed by the application
+    //if(!displaySelectedPointView->getPoint()->isHome())
+    leftMenu->getDisplaySelectedPoint()->getNameEdit()->setReadOnly(false);
 
     /// sets the state of the map and the other widgets to prevent other concurrent actions
     setGraphicItemsState(GraphicItemState::NO_EVENT, false);
