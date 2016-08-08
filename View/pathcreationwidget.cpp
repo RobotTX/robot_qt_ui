@@ -27,7 +27,7 @@ PathCreationWidget::PathCreationWidget(MainWindow *parent, const std::shared_ptr
     actionButtons->getEditButton()->setEnabled(false);
     layout->addWidget(actionButtons);
 
-    /// The menu which display the list of point to select
+    /// The menu which display the list of points to select
     pointsMenu = new QMenu(this);
 
     /// The list that displays the path points
@@ -186,7 +186,7 @@ void PathCreationWidget::clicked(void){
 }
 
 void PathCreationWidget::pointClicked(QAction *action){
-    /// A permanent point has been selected on the QMenu so we had it to the list or edit the selected item
+    /// A permanent point has been selected on the QMenu so we add it to the list or edit the selected item
     Position pos = points->findPoint(action->text())->getPosition();
     if(state == CREATE){
        qDebug() << "PathCreationWidget::pointClicked called to create a new path point" << action->text();
