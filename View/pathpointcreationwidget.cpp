@@ -83,7 +83,7 @@ void PathPointCreationWidget::setName(const QString _name){
     qDebug() << "PathPointCreationWidget::setName called" << _name;
     name = _name;
 
-    if(name.compare(TMP_POINT_NAME) == 0){
+    if(name.compare(PATH_POINT_NAME) == 0){
         setPointLabel(posX, posY);
     } else {
         pointLabel->setText(QString::number(id) + ". " + name);
@@ -94,7 +94,7 @@ void PathPointCreationWidget::setId(const int _id){
     qDebug() << "PathPointCreationWidget::setId called" << _id;
     id = _id;
 
-    if(name.compare(TMP_POINT_NAME) == 0){
+    if(name.compare(PATH_POINT_NAME) == 0){
         setPointLabel(posX, posY);
     } else {
         pointLabel->setText(QString::number(id)+". "+name);
@@ -169,7 +169,7 @@ void PathPointCreationWidget::updatePointLabel(const float x, const float y){
 
 void PathPointCreationWidget::setPointLabel(const float _posX, const float _posY){
     qDebug() << "PathPointCreationWidget::setPointLabel called";
-    if(name.contains(TMP_POINT_NAME)){
+    if(name.contains(PATH_POINT_NAME)){
         pointLabel->setText(QString::number(id+1)+". "+QString::number(_posX,'f', 1) + "; " + QString::number(_posY,'f', 1));
     }
 }

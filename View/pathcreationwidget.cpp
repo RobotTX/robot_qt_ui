@@ -27,7 +27,7 @@ PathCreationWidget::PathCreationWidget(MainWindow *parent, const std::shared_ptr
     actionButtons->getEditButton()->setEnabled(false);
     layout->addWidget(actionButtons);
 
-    /// The menu which display the list of points to select
+    /// The menu which display the list of point to select
     pointsMenu = new QMenu(this);
 
     /// The list that displays the path points

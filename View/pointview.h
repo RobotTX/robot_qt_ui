@@ -68,10 +68,10 @@ protected:
     void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
 
 signals:
-    void pointRightClicked(QString);
-    void pointLeftClicked(QString);
+    void pointRightClicked(PointView* pointView);
+    void pointLeftClicked(PointView* pointView);
     void addPointPath(QString name, double x, double y);
-    void homeEdited(QString pointView);
+    void homeEdited(PointView* pointView);
     void moveEditedPathPoint();
     void editedPointPositionChanged(double, double);
     void pathPointChanged(double, double);

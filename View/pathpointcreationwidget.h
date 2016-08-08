@@ -48,7 +48,7 @@ public:
     QLineEdit* getTimeEdit(void) const { return timeEdit; }
     int getPosX(void) const { return posX; }
     int getPosY(void) const { return posY; }
-    bool isTemporary(void) const { return (name.compare(TMP_POINT_NAME) == 0); }
+    bool isTemporary(void) const { return (name.compare(PATH_POINT_NAME) == 0); }
     QPushButton* getCancelBtn(void) const { return cancelBtn; }
     QPushButton* getSaveEditBtn(void) const { return saveEditBtn; }
     QWidget* getTimeWidget(void) const { return timeWidget; }

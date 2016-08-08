@@ -36,17 +36,17 @@ class PathPainter;
 #include "Model/point.h"
 
 
-//#define XML_PATH "/home/m-a/Documents/QtProject/gobot-software/points.xml"
-//#define ROBOTS_NAME_PATH "/home/m-a/Documents/QtProject/gobot-software/robotsName.dat"
-//#define MAP_PATH "/home/m-a/Documents/QtProject/gobot-software/realMap.dat"
+#define XML_PATH "/home/m-a/Documents/QtProject/gobot-software/points.xml"
+#define ROBOTS_NAME_PATH "/home/m-a/Documents/QtProject/gobot-software/robotsName.dat"
+#define MAP_PATH "/home/m-a/Documents/QtProject/gobot-software/realMap.dat"
 
 //#define XML_PATH "/home/joan/Qt/QtProjects/gobot-software/points.xml"
 //#define ROBOTS_NAME_PATH "/home/joan/Qt/QtProjects/gobot-software/robotsName.dat"
 //#define MAP_PATH "/home/joan/Qt/QtProjects/gobot-software/realMap.dat"
 
-#define XML_PATH "/Users/fannylarradet/Desktop/GTRobots/gobot-software/points.xml"
-#define ROBOTS_NAME_PATH "/Users/fannylarradet/Desktop/GTRobots/gobot-software/robotsName.dat"
-#define MAP_PATH "/Users/fannylarradet/Desktop/GTRobots/gobot-software/realMap.dat"
+//#define XML_PATH "/Users/fannylarradet/Desktop/GTRobots/gobot-software/points.xml"
+//#define ROBOTS_NAME_PATH "/Users/fannylarradet/Desktop/GTRobots/gobot-software/robotsName.dat"
+//#define MAP_PATH "/Users/fannylarradet/Desktop/GTRobots/gobot-software/realMap.dat"
 
 #define PI 3.14159265
 #define PORT_ROBOT_UPDATE 6000
@@ -98,6 +98,7 @@ signals:
     void addPathPoint(QString name, double x, double y);
     void updatePathPainter();
     void updatePathPainterPointView();
+    void resetPath();
 
 private slots:
     void updateRobot(const QString ipAddress, const float posX, const float posY, const float ori);
@@ -134,13 +135,13 @@ private slots:
     void robotSavedEvent();
     void minusSelecPointBtnEvent();
     void editSelecPointBtnEvent();
-    void setSelectedPoint(QString pointView);
+    void setSelectedPoint();
     void pointSavedEvent(QString groupName, double x, double y, QString name);
     void stopSelectedRobot(int robotNb);
     void playSelectedRobot(int robotNb);
     void askForDeleteGroupConfirmation(const QString group);
     void askForDeletePointConfirmation(const QString index);
-    void displayPointEvent(QString pointName);
+    void displayPointEvent(PointView* pointView);
     void askForDeleteDefaultGroupPointConfirmation(const QString index);
     void displayGroupMapEvent(void);
     void savePathSlot();
@@ -185,7 +186,7 @@ private slots:
     void setMessageTop(const QString msgType, const QString msg);
     void setLastMessage(void) { setMessageTop(topLayout->getLastMessage().first, topLayout->getLastMessage().second); }
     void setMessageCreationGroup(QString type, QString message);
-    void homeEdited(QString pointView);
+    void homeEdited(PointView *pointView);
     void goHomeBtnEvent();
     void viewPathSelectedRobot(int robotNb, bool checked);
     void editHomeEvent();
