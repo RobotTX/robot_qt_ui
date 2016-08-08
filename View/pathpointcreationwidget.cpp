@@ -83,7 +83,7 @@ void PathPointCreationWidget::setName(const QString _name){
     qDebug() << "PathPointCreationWidget::setName called" << _name;
     name = _name;
 
-    if(name.compare(PATH_POINT_NAME) == 0){
+    if(name.contains(PATH_POINT_NAME)){
         setPointLabel(posX, posY);
     } else {
         pointLabel->setText(QString::number(id) + ". " + name);
@@ -94,7 +94,7 @@ void PathPointCreationWidget::setId(const int _id){
     qDebug() << "PathPointCreationWidget::setId called" << _id;
     id = _id;
 
-    if(name.compare(PATH_POINT_NAME) == 0){
+    if(name.contains(PATH_POINT_NAME)){
         setPointLabel(posX, posY);
     } else {
         pointLabel->setText(QString::number(id)+". "+name);

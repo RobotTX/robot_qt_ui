@@ -300,8 +300,7 @@ void Points::setPixmapAll(const PointView::PixmapType type){
     qDebug() << "Points::setPixmapAll called";
     while(i.hasNext()) {
         i.next();
-        qDebug() << "taking care of pixmap" << i.key();
-        if(i.key().compare("PathPoints")){
+        if(i.key().compare(PATH_GROUP_NAME) != 0){
             for(int j = 0; j < i.value()->count(); j++)
                 i.value()->at(j)->setPixmap(type);
         }
@@ -313,7 +312,7 @@ void Points::setPixmapAll(const QPixmap pixmap){
     qDebug() << "Points::setPixmapAll pixmap version called";
     while (i.hasNext()) {
         i.next();
-        if(i.value()){
+        if(i.value() && i.key().compare(PATH_GROUP_NAME) != 0){
             for(int j = 0; j < i.value()->count(); j++){
                 i.value()->at(j)->QGraphicsPixmapItem::setPixmap(pixmap);
                 i.value()->at(j)->updatePos();
