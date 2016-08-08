@@ -1,6 +1,7 @@
 #include "pathpainter.h"
 #include "View/mapview.h"
 #include "Model/points.h"
+#include "Model/point.h"
 #include <QDebug>
 #include <QPainterPath>
 #include <QPixmap>
@@ -15,6 +16,7 @@ PathPainter::PathPainter(MainWindow* const &mainWindow, MapView* const &mapPixma
 void PathPainter::resetPathSlot(void){
     qDebug() << "PathPainter::resetPathSlot called";
     path = QPainterPath();
+    points->setPixmapAll(PointView::PixmapType::NORMAL);
     if(points->getGroups()->value(PATH_GROUP_NAME))
         points->getGroups()->value(PATH_GROUP_NAME)->clear();
     currentPath.clear();
@@ -201,7 +203,7 @@ void PathPainter::updatePathPainterPointViewSlot(void){
 int PathPainter::nbUsedPointView(QString name, double x, double y){
     qDebug() << "PathPainter::nbUsedPointView called";
     int nbUsed = 0;
-    if(name.compare(TMP_POINT_NAME) == 0){
+    if(name.compare(PATH_POINT_NAME) == 0){
         for(int i = 0; i < currentPath.size(); i++){
             if(currentPath.at(i)->getPoint().comparePos(x, y))
                 nbUsed++;
@@ -215,6 +217,20 @@ int PathPainter::nbUsedPointView(QString name, double x, double y){
     return nbUsed;
 }
 
+void PathPainter::setCurrentPath(const QVector<std::shared_ptr<PathPoint>>& _currentPath){
+    currentPath = _currentPath;
+    for(int i = 0; i < currentPath.size(); i++){
+        Point point = currentPath.at(i)->getPoint();
+
+        std::shared_ptr<PointView> pointView = points->findPointView(point.getName());
+        if(pointView && point.getName().compare(PATH_POINT_NAME) != 0)
+            points->addPoint(PATH_GROUP_NAME, pointView);
+        else
+            points->addPoint(PATH_GROUP_NAME, point.getName(), point.getPosition().getX(),
+                             point.getPosition().getY(), true, Point::PointType::PATH,
+                             mapView, mainWindow);
+    }
+}
 
 
 /*

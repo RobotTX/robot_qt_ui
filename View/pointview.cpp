@@ -30,10 +30,10 @@ void PointView::mousePressEvent(QGraphicsSceneMouseEvent *event){
     if(state == GraphicItemState::NO_STATE){
         qDebug() << "PointView::mousePressEvent NO_STATE";
         if(event->button() == Qt::RightButton){
-            emit pointRightClicked(this->getPoint()->getName());
+            emit pointRightClicked(this);
         }
         if(event->button() == Qt::LeftButton){
-            emit pointLeftClicked(this->getPoint()->getName());
+            emit pointLeftClicked(this);
         }
 
     } else if(state == GraphicItemState::CREATING_PATH){
@@ -49,7 +49,7 @@ void PointView::mousePressEvent(QGraphicsSceneMouseEvent *event){
 
     } else if(state == GraphicItemState::EDITING_HOME){
         qDebug() << "PointView::mousePressEvent EDITING_HOME";
-        emit homeEdited(this->getPoint()->getName());
+        emit homeEdited(this);
 
     } else {
         qDebug() << "PointView::mousePressEvent NO_EVENT";

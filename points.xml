@@ -43,6 +43,27 @@
         </point>
     </group>
     <group>
+        <name>PathPoints</name>
+        <point>
+            <name>PathPoint</name>
+            <x>33.8147</x>
+            <y>354.642</y>
+            <displayed>1</displayed>
+        </point>
+        <point>
+            <name>PathPoint</name>
+            <x>107.217</x>
+            <y>304.333</y>
+            <displayed>1</displayed>
+        </point>
+        <point>
+            <name>PathPoint</name>
+            <x>167.424</x>
+            <y>302.683</y>
+            <displayed>1</displayed>
+        </point>
+    </group>
+    <group>
         <name>Second group</name>
         <point>
             <name>Fanny</name>

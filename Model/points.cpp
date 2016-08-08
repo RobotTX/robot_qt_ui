@@ -157,11 +157,11 @@ std::shared_ptr<PointView> Points::createPoint(const QString pointName, const do
     if(!displayed)
         pointView->hide();
 
-    connect(&(*pointView), SIGNAL(pointLeftClicked(QString)), mainWindow, SLOT(displayPointEvent(QString)));
+    connect(&(*pointView), SIGNAL(pointLeftClicked(PointView*)), mainWindow, SLOT(displayPointEvent(PointView*)));
     connect(&(*pointView), SIGNAL(editedPointPositionChanged(double, double)), mainWindow, SLOT(updateCoordinates(double, double)));
     connect(&(*pointView), SIGNAL(moveEditedPathPoint()), mainWindow, SLOT(moveEditedPathPointSlot()));
     connect(&(*pointView), SIGNAL(addPointPath(QString, double, double)), mainWindow, SLOT(addPointPathSlot(QString, double, double)));
-    connect(&(*pointView), SIGNAL(homeEdited(QString)), mainWindow, SLOT(homeEdited(QString)));
+    connect(&(*pointView), SIGNAL(homeEdited(PointView*)), mainWindow, SLOT(homeEdited(PointView*)));
     connect(&(*pointView), SIGNAL(updatePathPainterPointView()), mainWindow, SLOT(updatePathPainterPointViewSlot()));
 
     return pointView;

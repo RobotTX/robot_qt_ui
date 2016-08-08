@@ -20,6 +20,7 @@ class MainWindow;
 #define TMP_GROUP_NAME "TmpPoint"
 #define TMP_POINT_NAME "tmpPoint"
 #define PATH_GROUP_NAME "PathPoints"
+#define PATH_POINT_NAME "PathPoint"
 
 /**
  * @brief The Points class
