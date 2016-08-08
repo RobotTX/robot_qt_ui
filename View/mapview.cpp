@@ -50,7 +50,7 @@ void MapView::mouseReleaseEvent(QGraphicsSceneMouseEvent *event){
             qDebug() << "MapView::mouseReleaseEvent CREATING_PATH";
             /// if it's not a white point of the map we cannot add it to the path
             if(map->getMapImage().pixelColor(event->pos().x()-tmpPointPixmap.width()/2, event->pos().y()-tmpPointPixmap.height()).red() >= 254){
-                emit addPointPath(TMP_POINT_NAME, event->pos().x(), event->pos().y());
+                emit addPathPoint(TMP_POINT_NAME, event->pos().x(), event->pos().y());
            } else {
                emit newMessage("You cannot create a point here because your robot cannot go there. You must click known areas of the map");
                qDebug() << "sorry cannot create a point here";
@@ -69,7 +69,7 @@ void MapView::mouseReleaseEvent(QGraphicsSceneMouseEvent *event){
         } else if(state == GraphicItemState::EDITING_PATH){
             qDebug() << "MapView::mouseReleaseEvent EDITING_PATH" << event->pos().x() << event->pos().y();
             /// to notify that a point which belongs to the path of a robot has been changed
-            //emit newCoordinatesPathPoint(event->pos().x(), event->pos().y());
+            emit newCoordinatesPathPoint(event->pos().x(), event->pos().y());
         } else {
             qDebug() << "MapView::mouseReleaseEvent NO_EVENT";
         }

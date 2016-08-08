@@ -28,15 +28,7 @@ void PathPointList::itemMoved(QModelIndex parent, int first, int end,
         if(itemNb >= count())
             itemNb = count()-1;
         qDebug() << "item " << ((PathPointCreationWidget*) itemWidget(item(itemNb)))->getName() << "moved to row" << row;
-        for(int i = 0; i < count(); i++){
-            static_cast<PathPointCreationWidget*> (itemWidget(item(i)))->setId(i+1);
-            if(i < count()-1){
-                static_cast<PathPointCreationWidget*> (itemWidget(item(i)))->displayActionWidget(true);
-            } else {
-                static_cast<PathPointCreationWidget*> (itemWidget(item(i)))->displayActionWidget(false);
-                static_cast<PathPointCreationWidget*> (itemWidget(item(i)))->resetAction();
-            }
-        }
+        refresh();
     }
 
     emit itemMovedSignal(parent, first, end, destination, row);
@@ -44,12 +36,12 @@ void PathPointList::itemMoved(QModelIndex parent, int first, int end,
 
 void PathPointList::refresh(void){
     for(int i = 0; i < count(); i++){
-        ((PathPointCreationWidget*) itemWidget(item(i)))->setId(i+1);
+        static_cast<PathPointCreationWidget*> (itemWidget(item(i)))->setId(i);
         if(i < count()-1){
-            ((PathPointCreationWidget*) itemWidget(item(i)))->displayActionWidget(true);
+            static_cast<PathPointCreationWidget*> (itemWidget(item(i)))->displayActionWidget(true);
         } else {
-            ((PathPointCreationWidget*) itemWidget(item(i)))->displayActionWidget(false);
-            ((PathPointCreationWidget*) itemWidget(item(i)))->resetAction();
+            static_cast<PathPointCreationWidget*> (itemWidget(item(i)))->displayActionWidget(false);
+            static_cast<PathPointCreationWidget*> (itemWidget(item(i)))->resetAction();
         }
     }
 }

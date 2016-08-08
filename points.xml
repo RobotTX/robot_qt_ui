@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <points>
     <group>
+        <name>First group</name>
+    </group>
+    <group>
         <name>No Group</name>
         <point>
             <name>Un point</name>
@@ -18,12 +21,6 @@
             <name>A final point</name>
             <x>150</x>
             <y>225</y>
-            <displayed>1</displayed>
-        </point>
-        <point>
-            <name>Home_Robota</name>
-            <x>86.5987</x>
-            <y>320.828</y>
             <displayed>1</displayed>
         </point>
     </group>
@@ -48,27 +45,6 @@
             <name>tmpPoint</name>
             <x>0</x>
             <y>0</y>
-            <displayed>0</displayed>
-        </point>
-    </group>
-    <group>
-        <name>first group</name>
-        <point>
-            <name>A</name>
-            <x>50</x>
-            <y>50</y>
-            <displayed>1</displayed>
-        </point>
-        <point>
-            <name>Ma point</name>
-            <x>75</x>
-            <y>75</y>
-            <displayed>1</displayed>
-        </point>
-        <point>
-            <name>A new point</name>
-            <x>100</x>
-            <y>100</y>
             <displayed>0</displayed>
         </point>
     </group>

@@ -93,7 +93,7 @@ EditSelectedRobotWidget::EditSelectedRobotWidget(QMainWindow * const parent, con
     inLayout->addWidget(homeBtn);
 
     /// Button to add a path
-    addPathBtn = new QPushButton(QIcon(":/icons/plus.png"),"Add path", this);
+    addPathBtn = new QPushButton(QIcon(":/icons/plus.png"),"Add Path", this);
     addPathBtn->setStyleSheet ("text-align: left");
     //addPathBtn->hide();
     addPathBtn->setIconSize(parent->size()/10);
@@ -158,12 +158,14 @@ void EditSelectedRobotWidget::setSelectedRobot(RobotView* const _robotView, bool
 
     /// If the robot has a home, we display the name of the point, otherwise a default text
     if(robotView->getRobot()->getHome() != NULL){
-        homeBtn->setText("edit home");
+        homeBtn->setText("Edit Home");
         oldHome = robotView->getRobot()->getHome();
     } else {
-        homeBtn->setText("Add home");
+        homeBtn->setText("Add Home");
         oldHome = NULL;
     }
+
+    setPath(robotView->getRobot()->getPath());
 
 }
 
@@ -248,4 +250,19 @@ void EditSelectedRobotWidget::showEvent(QShowEvent *event){
 void EditSelectedRobotWidget::hideEvent(QHideEvent *event){
     emit hideEditSelectedRobotWidget();
     QWidget::hideEvent(event);
+}
+
+void EditSelectedRobotWidget::setPath(const QVector<std::shared_ptr<PathPoint> > path){
+    if(path.size() > 0){
+        pathWidget->show();
+        addPathBtn->setText("Edit Path");
+        addPathBtn->setIcon(QIcon(":/icons/edit.png"));
+        pathWidget->setPath(path);
+    }
+}
+
+void EditSelectedRobotWidget::clearPath(){
+    addPathBtn->setText("Add Path");
+    addPathBtn->setIcon(QIcon(":/icons/plus.png"));
+    pathWidget->hide();
 }

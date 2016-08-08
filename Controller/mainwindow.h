@@ -95,7 +95,7 @@ signals:
     void sendCommand(QString);
     void nameChanged(QString, QString);
     void changeCmdThreadRobotName(QString);
-    void addPointPath(QString name, double x, double y);
+    void addPathPoint(QString name, double x, double y);
     void updatePathPainter();
     void updatePathPainterPointView();
 
@@ -143,17 +143,19 @@ private slots:
     void displayPointEvent(QString pointName);
     void askForDeleteDefaultGroupPointConfirmation(const QString index);
     void displayGroupMapEvent(void);
-    void pathSaved(bool execPath);
+    void savePathSlot();
+    void cancelPathSlot();
     void addPointPathSlot(QString name, double x, double y);
     void displayPointsInGroup(void);
     void removePointFromInformationMenu(void);
     void displayPointMapEvent(void);
     void hidePathCreationWidget(void);
     void editPointButtonEvent();
-    void editTmpPathPointSlot(int id, Point* point, int nbWidget);
+    void editTmpPathPointSlot(int id, QString name, double x, double y);
     void editPointFromGroupMenu(void);
-    void saveTmpEditPathPointSlot(void);
-    void moveTmpEditPathPointSlot(void);
+    void saveEditPathPointSlot(void);
+    void cancelEditPathPointSlot(void);
+    void moveEditedPathPointSlot(void);
     void displayPointInfoFromGroupMenu(void);
     void updatePoint(void);
     void updateCoordinates(double x, double y);
@@ -169,7 +171,7 @@ private slots:
     void enableReturnAndCloseButtons(void);
     void doubleClickOnRobot(QString checkedId);
     void setMessageCreationPath(QString message);
-    void updatePathPoint(double x, double y, PointView* pointView = 0);
+    void updateEditedPathPoint(double x, double y);
     void centerMap();
     void setMessageCreationPoint(QString type, CreatePointWidget::Error error);
     void addPathPointToMap(Point* point);

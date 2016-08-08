@@ -50,6 +50,8 @@ public:
     void setPathWidget(PathWidget* pw){pathWidget = pw;}
     void setOldPath(QVector<std::shared_ptr<PathPoint>> pw){oldPath = pw;}
     QVector<std::shared_ptr<PathPoint>> getOldPath( ){return oldPath;}
+    void setPath(QVector<std::shared_ptr<PathPoint>> const path);
+    void clearPath();
 
 signals:
     /// Signal emitted when a robot has been edited & saved

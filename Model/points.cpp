@@ -150,29 +150,29 @@ void Points::clear(){
     //addGroup(Group(NO_GROUP_NAME));
 }
 
-void Points::addPoint(const QString groupName, const QString pointName, const double x, const double y, const bool displayed, const Point::PointType type,
-                      MapView* mapView, MainWindow* mainWindow){
-    qDebug() << "Points::addPoint called";
+std::shared_ptr<PointView> Points::createPoint(const QString pointName, const double x, const double y, const bool displayed, const Point::PointType type,
+                                               MapView* mapView, MainWindow* mainWindow){
     std::shared_ptr<Point> point = std::shared_ptr<Point>(new Point(pointName, x, y, type));
     std::shared_ptr<PointView> pointView = std::shared_ptr<PointView>(new PointView(point, mapView));
     if(!displayed)
         pointView->hide();
 
-    connect(&(*pointView), SIGNAL(pathPointChanged(double, double, PointView*)), mainWindow, SLOT(updatePathPoint(double, double, PointView*)));
     connect(&(*pointView), SIGNAL(pointLeftClicked(QString)), mainWindow, SLOT(displayPointEvent(QString)));
     connect(&(*pointView), SIGNAL(editedPointPositionChanged(double, double)), mainWindow, SLOT(updateCoordinates(double, double)));
-    connect(&(*pointView), SIGNAL(moveTmpEditPathPoint()), mainWindow, SLOT(moveTmpEditPathPointSlot()));
+    connect(&(*pointView), SIGNAL(moveEditedPathPoint()), mainWindow, SLOT(moveEditedPathPointSlot()));
     connect(&(*pointView), SIGNAL(addPointPath(QString, double, double)), mainWindow, SLOT(addPointPathSlot(QString, double, double)));
     connect(&(*pointView), SIGNAL(homeEdited(QString)), mainWindow, SLOT(homeEdited(QString)));
     connect(&(*pointView), SIGNAL(updatePathPainterPointView()), mainWindow, SLOT(updatePathPainterPointViewSlot()));
 
-    if(!groups->empty() && groups->contains(groupName)){
-        groups->value(groupName)->push_back(pointView);
-    } else {
-        std::shared_ptr<QVector<std::shared_ptr<PointView>>> vector = std::shared_ptr<QVector<std::shared_ptr<PointView>>>(new QVector<std::shared_ptr<PointView>>());
-        vector->push_back(pointView);
-        groups->insert(groupName, vector);
-    }
+    return pointView;
+}
+
+void Points::addPoint(const QString groupName, const QString pointName, const double x, const double y, const bool displayed, const Point::PointType type,
+                      MapView* mapView, MainWindow* mainWindow){
+    qDebug() << "Points::addPoint called";
+
+    std::shared_ptr<PointView> pointView = createPoint(pointName, x, y , displayed, type, mapView, mainWindow);
+    addPoint(groupName, pointView);
 }
 
 void Points::addPoint(const QString groupName, const std::shared_ptr<PointView> &pointView){
@@ -185,6 +185,28 @@ void Points::addPoint(const QString groupName, const std::shared_ptr<PointView> 
         vector->push_back(pointView);
         groups->insert(groupName, vector);
     }
+}
+
+void Points::insertPoint(const QString groupName, const int id, const std::shared_ptr<PointView>& pointView){
+    qDebug() << "Points::insertPoint called with pointView";
+
+    if(!groups->empty() && groups->contains(groupName)){
+        if(groups->value(groupName)->size() > 0)
+            groups->value(groupName)->insert(id, pointView);
+        else
+            groups->value(groupName)->push_back(pointView);
+    } else {
+        std::shared_ptr<QVector<std::shared_ptr<PointView>>> vector = std::shared_ptr<QVector<std::shared_ptr<PointView>>>(new QVector<std::shared_ptr<PointView>>());
+        vector->push_back(pointView);
+        groups->insert(groupName, vector);
+    }
+}
+
+void Points::insertPoint(const QString groupName, const int id, const QString pointName, const double x, const double y, const bool displayed, const Point::PointType type,
+                      MapView* mapView, MainWindow* mainWindow){
+    qDebug() << "Points::insertPoint called";
+    std::shared_ptr<PointView> pointView = createPoint(pointName, x, y , displayed, type, mapView, mainWindow);
+    insertPoint(groupName, id, pointView);
 }
 
 int Points::count() const {
