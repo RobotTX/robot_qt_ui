@@ -297,9 +297,11 @@ QString Points::getGroupNameFromPointName(const QString pointName) const{
 
 void Points::setPixmapAll(const PointView::PixmapType type){
     QMapIterator<QString, std::shared_ptr<QVector<std::shared_ptr<PointView>>>> i(*groups);
-    while (i.hasNext()) {
+    qDebug() << "Points::setPixmapAll called";
+    while(i.hasNext()) {
         i.next();
-        if(i.value()){
+        qDebug() << "taking care of pixmap" << i.key();
+        if(i.key().compare("PathPoints")){
             for(int j = 0; j < i.value()->count(); j++)
                 i.value()->at(j)->setPixmap(type);
         }
@@ -308,6 +310,7 @@ void Points::setPixmapAll(const PointView::PixmapType type){
 
 void Points::setPixmapAll(const QPixmap pixmap){
     QMapIterator<QString, std::shared_ptr<QVector<std::shared_ptr<PointView>>>> i(*groups);
+    qDebug() << "Points::setPixmapAll pixmap version called";
     while (i.hasNext()) {
         i.next();
         if(i.value()){
