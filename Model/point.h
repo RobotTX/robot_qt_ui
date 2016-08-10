@@ -16,7 +16,7 @@ class QDataStream;
 class Point {
 
 public:
-    enum PointType{PERM, TEMP, HOME, PATH};
+    enum PointType { PERM, TEMP, HOME, PATH };
     Point(void);
     /// by default a point it set to be permanent
     Point(const QString name, const double x, const double y, const PointType type = PERM);

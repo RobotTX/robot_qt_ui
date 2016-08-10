@@ -194,8 +194,7 @@ void PathCreationWidget::pointClicked(QAction *action){
     } else if(state == EDIT){
        qDebug() << "PathCreationWidget::pointClicked called to edit a path point into" << action->text();
        editPathPoint(action->text(), pos.getX(), pos.getY());
-    } else {
-        qDebug() << "PathCreationWidget::pointClicked called while in NO_STATE" << action->text();
+    } else {        qDebug() << "PathCreationWidget::pointClicked called while in NO_STATE" << action->text();
     }
 }
 

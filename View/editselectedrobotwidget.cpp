@@ -243,7 +243,7 @@ void EditSelectedRobotWidget::enableAll(void){
 }
 
 void EditSelectedRobotWidget::showEvent(QShowEvent *event){
-    qDebug() << "EditSelectedRobotWidget::showEvent called";
+    //qDebug() << "EditSelectedRobotWidget::showEvent called";
     nameEdit->setEnabled(true);
     wifiNameEdit->setEnabled(true);
     wifiPwdEdit->setEnabled(true);

@@ -954,9 +954,6 @@ void MainWindow::cancelPathSlot(){
 
     pathCreationWidget->resetWidget();
     */
-    qDebug() << "Resetting the path ! ";
-    pathPainter->setSavedPath(pathPainter->getSavedPath());
-    emit updatePathPainter();
     backEvent();
 }
 

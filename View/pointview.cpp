@@ -101,6 +101,7 @@ void PointView::mouseReleaseEvent(QGraphicsSceneMouseEvent *event){
 void PointView::hoverEnterEvent(QGraphicsSceneHoverEvent * /* unused */){
     setToolTip(point->getName());
     setPixmap(PointView::PixmapType::MID);
+    //qDebug() << "hoverEnterEvent : " << lastPixmap
 }
 
 void PointView::hoverLeaveEvent(QGraphicsSceneHoverEvent * /* unused */){
@@ -135,11 +136,13 @@ void PointView::updatePos(void){
 }
 
 void PointView::setPixmap(const PixmapType pixType){
-    //qDebug() << "PointView::setPixmap called" << getPoint()->getName();
+    //qDebug() << "PointView::setPixmap called" << getPoint()->getName() << pixType;
 
     lastPixmap = pixmap();
+
     if(type == PointView::HOVER && pixType != PointView::HOVER)
         type = pixType;
+
     QPixmap pixmap2;
     if(point->isHome()){
         switch(pixType){

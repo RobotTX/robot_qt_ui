@@ -152,7 +152,7 @@ void GroupButtonGroup::updateButtons(){
 }
 
 void GroupButtonGroup::uncheck(void){
-    qDebug() << "GroupButtonGroup::uncheck called";
+    //qDebug() << "GroupButtonGroup::uncheck called";
     /// little trick to uncheck all buttons because the class doesn't provide a function to do it
     buttonGroup->setExclusive(false);
     if(buttonGroup->checkedButton())

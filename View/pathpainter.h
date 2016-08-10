@@ -42,6 +42,7 @@ private slots:
 private:
     QPainterPath path;
     std::shared_ptr<Points> points;
+    /// changing as the user edits the path of its robot
     QVector<std::shared_ptr<PathPoint>> currentPath;
     MainWindow* mainWindow;
     MapView* mapView;

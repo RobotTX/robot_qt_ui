@@ -87,12 +87,12 @@ std::shared_ptr<PointView> Points::findPointView(const QString pointName) const{
     QMapIterator<QString, std::shared_ptr<QVector<std::shared_ptr<PointView>>>> i(*groups);
     while (i.hasNext()) {
         i.next();
-        if(i.key().compare(PATH_GROUP_NAME) != 0){
+        //if(i.key().compare(PATH_GROUP_NAME) != 0){
             for(int j = 0; j < i.value()->size(); j++){
                 if(i.value()->at(j)->getPoint()->getName().compare(pointName) == 0)
                     return i.value()->at(j);
             }
-        }
+        //}
     }
     return NULL;
 }
@@ -297,13 +297,13 @@ QString Points::getGroupNameFromPointName(const QString pointName) const{
 
 void Points::setPixmapAll(const PointView::PixmapType type){
     QMapIterator<QString, std::shared_ptr<QVector<std::shared_ptr<PointView>>>> i(*groups);
-    qDebug() << "Points::setPixmapAll called";
+    //qDebug() << "Points::setPixmapAll called";
     while(i.hasNext()) {
         i.next();
-        qDebug() << i.key();
+        //qDebug() << i.key();
         if(i.key().compare(PATH_GROUP_NAME) != 0){
             for(int j = 0; j < i.value()->count(); j++){
-                qDebug() << i.value()->at(j)->getPoint()->getName();
+                //qDebug() << i.value()->at(j)->getPoint()->getName();
                 i.value()->at(j)->setPixmap(type);
             }
         }
@@ -315,7 +315,7 @@ void Points::setPixmapAll(const QPixmap pixmap){
     qDebug() << "Points::setPixmapAll pixmap version called";
     while (i.hasNext()) {
         i.next();
-        if(i.value() && i.key().compare(PATH_GROUP_NAME) != 0){
+        if(i.key().compare(PATH_GROUP_NAME) != 0){
             for(int j = 0; j < i.value()->count(); j++){
                 i.value()->at(j)->QGraphicsPixmapItem::setPixmap(pixmap);
                 i.value()->at(j)->updatePos();

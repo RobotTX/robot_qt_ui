@@ -43,7 +43,7 @@ public:
     GraphicItemState getState(void) const { return state; }
     void setPos(const qreal x, const qreal y);
     void setAddedToPath(const bool _addedToPath) { addedToPath = _addedToPath; }
-    void setLastPixmap(const QPixmap& _lastPixmap) { lastPixmap = _lastPixmap; }
+    void setLastPixmap(const QPixmap _lastPixmap) { lastPixmap = _lastPixmap; }
     void setPixmap(const PixmapType pixType);
     //void setPixmap(const QPixmap &pixmap);
     void setPoint(std::shared_ptr<Point> const& _point) { point = _point; }
