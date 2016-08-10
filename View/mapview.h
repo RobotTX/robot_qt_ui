@@ -38,9 +38,9 @@ public:
     void setPoints(std::shared_ptr<Points> _points);
 
 signals:
-    void pointLeftClicked(QString);
-    void addPointPath(QString, double, double);
-    void homeEdited(QString);
+    void pointLeftClicked();
+    void addPathPoint(QString, double, double);
+    void homeEdited(PointView*);
     void newCoordinates(double, double);
     void newCoordinatesPathPoint(double, double);
     void newMessage(QString);

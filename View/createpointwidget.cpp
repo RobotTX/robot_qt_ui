@@ -121,7 +121,7 @@ int CreatePointWidget::checkPointName(void){
     qDebug() << "checkPointName called";
 
     nameEdit->setText(formatName(nameEdit->text()));
-    if(nameEdit->text().simplified().contains(QRegularExpression("[;{}]"))){
+    if(nameEdit->text().simplified().contains(QRegularExpression("[;{}]")) || nameEdit->text().contains("pathpoint", Qt::CaseInsensitive)){
         saveBtn->setToolTip("The name of your point cannot contain the characters \";\" and }");
         saveBtn->setEnabled(false);
         emit invalidName(TEXT_COLOR_WARNING, Error::ContainsSemicolon);

@@ -11,14 +11,15 @@ PathPointCreationWidget::PathPointCreationWidget(const int _id, const QString _n
     :QWidget(parent), id(_id), name(_name), posX(x), posY(y){
     layout = new QHBoxLayout(this);
 
-    QVBoxLayout* rightLayout = new QVBoxLayout();
-
-    editLayout = new QHBoxLayout(this);
+    pathWidget = new QWidget(this);
+    editWidget = new QWidget(this);
+    QVBoxLayout* pathLayout = new QVBoxLayout(pathWidget);
+    QVBoxLayout* editLayout = new QVBoxLayout(editWidget);
 
     /// Label for the name of the point
     pointLabel = new QLabel(this);
     setName(name);
-    rightLayout->addWidget(pointLabel);
+    pathLayout->addWidget(pointLabel);
 
     /// The widget that contain the layout for the button to select the
     /// action the robot need to do (wait for X sec or wait for human action)
@@ -46,23 +47,23 @@ PathPointCreationWidget::PathPointCreationWidget(const int _id, const QString _n
     actionLayout->setContentsMargins(0, 0, 0, 0);
     actionLayout->addWidget(timeWidget);
 
-    rightLayout->addWidget(actionWidget);
+    pathLayout->addWidget(actionWidget);
     actionWidget->hide();
 
     cancelBtn = new QPushButton("Cancel", this);
-    cancelBtn->hide();
     saveEditBtn = new QPushButton("Save changes", this);
-    saveEditBtn->hide();
+    editLayout->addWidget(saveEditBtn);
+    editLayout->addWidget(cancelBtn);
+    editWidget->hide();
 
 
     connect(actionBtn, SIGNAL(activated(QString)), this, SLOT(actionClicked(QString)));
     connect(saveEditBtn, SIGNAL(clicked()), this, SLOT(saveEdit()));
+    connect(cancelBtn, SIGNAL(clicked()), this, SLOT(cancelEdit()));
     connect(timeEdit, SIGNAL(textChanged(QString)), this, SLOT(timeChanged(QString)));
 
 
-
-    rightLayout->addWidget(saveEditBtn);
-    rightLayout->setAlignment(Qt::AlignTop);
+    pathLayout->setAlignment(Qt::AlignTop);
 
     QLabel*  moveImage = new QLabel();
     QPixmap mypix (":/icons/cropped_list.png");
@@ -72,16 +73,17 @@ PathPointCreationWidget::PathPointCreationWidget(const int _id, const QString _n
     moveImage->setMaximumHeight(10);
     layout->addWidget(moveImage);
 
-    layout->addLayout(rightLayout);
+    layout->addWidget(pathWidget);
+    layout->addWidget(editWidget);
     layout->setContentsMargins(2,0,0,11);
-    rightLayout->setContentsMargins(0,11,0,11);
+    pathLayout->setContentsMargins(0,11,0,11);
 }
 
 void PathPointCreationWidget::setName(const QString _name){
     qDebug() << "PathPointCreationWidget::setName called" << _name;
     name = _name;
 
-    if(name.compare(TMP_POINT_NAME) == 0){
+    if(name.contains(PATH_POINT_NAME)){
         setPointLabel(posX, posY);
     } else {
         pointLabel->setText(QString::number(id) + ". " + name);
@@ -92,7 +94,7 @@ void PathPointCreationWidget::setId(const int _id){
     qDebug() << "PathPointCreationWidget::setId called" << _id;
     id = _id;
 
-    if(name.compare(TMP_POINT_NAME) == 0){
+    if(name.contains(PATH_POINT_NAME)){
         setPointLabel(posX, posY);
     } else {
         pointLabel->setText(QString::number(id)+". "+name);
@@ -105,7 +107,7 @@ void PathPointCreationWidget::actionClicked(QString action){
         timeWidget->show();
     } else {
         timeWidget->hide();
-        timeEdit->setText("");
+        timeEdit->setText("0");
     }
     emit actionChanged(id, timeEdit->text());
 }
@@ -125,7 +127,7 @@ void PathPointCreationWidget::displayActionWidget(const bool show){
 
 void PathPointCreationWidget::resetAction(){
     qDebug() << "PathPointCreationWidget::resetAction called";
-    timeEdit->clear();
+    timeEdit->setText("0");
     actionBtn->setCurrentIndex(0);
     timeWidget->show();
 }
@@ -147,6 +149,12 @@ void PathPointCreationWidget::saveEdit(){
     emit saveEditSignal(this);
 }
 
+void PathPointCreationWidget::cancelEdit(){
+    qDebug() << "PathPointCreationWidget::cancelEdit called";
+
+    emit cancelEditSignal(this);
+}
+
 void PathPointCreationWidget::setPos(const float x, const float y){
     qDebug() << "PathPointCreationWidget::setPos called";
     posX = x;
@@ -161,8 +169,8 @@ void PathPointCreationWidget::updatePointLabel(const float x, const float y){
 
 void PathPointCreationWidget::setPointLabel(const float _posX, const float _posY){
     qDebug() << "PathPointCreationWidget::setPointLabel called";
-    if(name.contains(TMP_POINT_NAME)){
-        pointLabel->setText(QString::number(id)+". "+QString::number(_posX,'f', 1) + "; " + QString::number(_posY,'f', 1));
+    if(name.contains(PATH_POINT_NAME)){
+        pointLabel->setText(QString::number(id+1)+". "+QString::number(_posX,'f', 1) + "; " + QString::number(_posY,'f', 1));
     }
 }
 

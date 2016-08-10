@@ -18,7 +18,7 @@ MapView::MapView (const QPixmap& pixmap, const QSize _size, std::shared_ptr<Map>
 
     /// To drag & drop the map
     setFlag(QGraphicsItem::ItemIsMovable);
-    connect(this, SIGNAL(pointLeftClicked(QString)), mainWindow, SLOT(setSelectedPoint(QString)));
+    connect(this, SIGNAL(pointLeftClicked()), mainWindow, SLOT(setSelectedPoint()));
 
 }
 
@@ -45,12 +45,12 @@ void MapView::mouseReleaseEvent(QGraphicsSceneMouseEvent *event){
             tmpPointView->show();
             /// might be useless code
             tmpPointView->setPos(event->pos().x(), event->pos().y());
-            emit pointLeftClicked(tmpPointView->getPoint()->getName());
+            emit pointLeftClicked();
         } else if(state == GraphicItemState::CREATING_PATH){
             qDebug() << "MapView::mouseReleaseEvent CREATING_PATH";
             /// if it's not a white point of the map we cannot add it to the path
             if(map->getMapImage().pixelColor(event->pos().x()-tmpPointPixmap.width()/2, event->pos().y()-tmpPointPixmap.height()).red() >= 254){
-                emit addPointPath(TMP_POINT_NAME, event->pos().x(), event->pos().y());
+                emit addPathPoint(PATH_POINT_NAME, event->pos().x(), event->pos().y());
            } else {
                emit newMessage("You cannot create a point here because your robot cannot go there. You must click known areas of the map");
                qDebug() << "sorry cannot create a point here";
@@ -65,11 +65,11 @@ void MapView::mouseReleaseEvent(QGraphicsSceneMouseEvent *event){
             tmpPointView->show();
             /// might be useless code
             tmpPointView->setPos(event->pos().x(), event->pos().y());
-            emit homeEdited(tmpPointView->getPoint()->getName());
+            emit homeEdited(tmpPointView.get());
         } else if(state == GraphicItemState::EDITING_PATH){
             qDebug() << "MapView::mouseReleaseEvent EDITING_PATH" << event->pos().x() << event->pos().y();
             /// to notify that a point which belongs to the path of a robot has been changed
-            //emit newCoordinatesPathPoint(event->pos().x(), event->pos().y());
+            emit newCoordinatesPathPoint(event->pos().x(), event->pos().y());
         } else {
             qDebug() << "MapView::mouseReleaseEvent NO_EVENT";
         }
@@ -78,7 +78,7 @@ void MapView::mouseReleaseEvent(QGraphicsSceneMouseEvent *event){
     QGraphicsPixmapItem::mouseReleaseEvent(event);
 }
 void MapView::setState(const GraphicItemState _state){
-    qDebug() << "mapview setstate" << _state;
+    //qDebug() << "mapview setstate" << _state;
     state = _state;
 }
 

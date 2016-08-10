@@ -41,16 +41,19 @@ public:
     bool isFirstConnection()const {return firstConnection;}
     void setOldHome(std::shared_ptr<PointView> const _oldHome){oldHome = _oldHome;}
     std::shared_ptr<PointView> getOldHome() const {return oldHome;}
-    QLineEdit* getWifiNameEdit(void){ return wifiNameEdit; }
-    QLineEdit* getWifiPwdEdit(void){ return wifiPwdEdit; }
-    PathWidget* getPathWidget(void){ return pathWidget; }
-    QPushButton* getAddPathBtn(void){return addPathBtn;}
-    void setPathChanged(bool change){pathChanged = change;}
-    bool getPathChanged(){return pathChanged ;}
-    void setPathWidget(PathWidget* pw){pathWidget = pw;}
-    void setOldPath(QVector<std::shared_ptr<PathPoint>> pw){oldPath = pw;}
-    QVector<std::shared_ptr<PathPoint>> getOldPath( ){return oldPath;}
-    QLabel* getHomeLabel(void){return homeLabel;}
+    QLineEdit* getWifiNameEdit(void) const { return wifiNameEdit; }
+    QLineEdit* getWifiPwdEdit(void) const { return wifiPwdEdit; }
+    PathWidget* getPathWidget(void) const { return pathWidget; }
+    QPushButton* getAddPathBtn(void) const { return addPathBtn;}
+    void setPathChanged(const bool change) { pathChanged = change; }
+    bool getPathChanged() const { return pathChanged; }
+    void setPathWidget(PathWidget* pw) { pathWidget = pw; }
+    void setOldPath(const QVector<std::shared_ptr<PathPoint>>& pw) { oldPath = pw; }
+    QVector<std::shared_ptr<PathPoint>> getOldPath() const {return oldPath;}
+    void setPath(QVector<std::shared_ptr<PathPoint>> const path);
+    void clearPath();
+    QLabel* getHomeLabel(void) const {return homeLabel;}
+    QPushButton* getSaveButton(void) const { return saveBtn; }
 
 signals:
     /// Signal emitted when a robot has been edited & saved

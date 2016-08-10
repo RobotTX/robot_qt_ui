@@ -8,6 +8,7 @@ ros::Subscriber sub_map;
 tcp::acceptor m_acceptor(io_service);
 
 bool lastMap = false;
+
 #define HIGH_THRESHOLD 0.65*100
 #define LOW_THRESHOLD 0.196*100
 
@@ -15,17 +16,6 @@ void sendMap(const std::vector<uint8_t>& my_map){
 	try {
 		boost::system::error_code ignored_error;
 		std::cout << "(Map) Map size to send in uint8_t : " << my_map.size() << std::endl;
-
-		boost::asio::write(socket_map, boost::asio::buffer(my_map), boost::asio::transfer_all(), ignored_error);
-	} catch (std::exception& e) {
-		e.what();
-	}
-}
-
-void sendMap(const std::vector<int8_t>& my_map){
-	try {
-		boost::system::error_code ignored_error;
-		std::cout << "(Map) Last map size to send in int8_t : " << my_map.size() << std::endl;
 
 		boost::asio::write(socket_map, boost::asio::buffer(my_map), boost::asio::transfer_all(), ignored_error);
 	} catch (std::exception& e) {

@@ -20,6 +20,7 @@ class MainWindow;
 #define TMP_GROUP_NAME "TmpPoint"
 #define TMP_POINT_NAME "tmpPoint"
 #define PATH_GROUP_NAME "PathPoints"
+#define PATH_POINT_NAME "PathPoint"
 
 /**
  * @brief The Points class
@@ -64,8 +65,12 @@ public:
     QString getGroupNameFromPointName(const QString pointName) const;
     void addTmpPoint(MapView *mapView, MainWindow *mainWindow);
     void addPoint(const QString groupName, const std::shared_ptr<PointView>& pointView);
+    void insertPoint(const QString groupName, const int id, const std::shared_ptr<PointView>& pointView);
+    void insertPoint(const QString groupName, const int id, const QString pointName, const double x, const double y, const bool displayed, const Point::PointType type, MapView *mapView, MainWindow *mainWindow);
     void setPixmapAll(const PointView::PixmapType type);
     void setPixmapAll(const QPixmap pixmap);
+    std::shared_ptr<PointView> createPoint(const QString pointName, const double x, const double y, const bool displayed, const Point::PointType type,
+                                                   MapView* mapView, MainWindow* mainWindow);
 
 private:
     std::shared_ptr<Groups> groups;

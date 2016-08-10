@@ -87,12 +87,12 @@ std::shared_ptr<PointView> Points::findPointView(const QString pointName) const{
     QMapIterator<QString, std::shared_ptr<QVector<std::shared_ptr<PointView>>>> i(*groups);
     while (i.hasNext()) {
         i.next();
-        if(i.key().compare(PATH_GROUP_NAME) != 0){
+        //if(i.key().compare(PATH_GROUP_NAME) != 0){
             for(int j = 0; j < i.value()->size(); j++){
                 if(i.value()->at(j)->getPoint()->getName().compare(pointName) == 0)
                     return i.value()->at(j);
             }
-        }
+        //}
     }
     return NULL;
 }
@@ -150,29 +150,29 @@ void Points::clear(){
     //addGroup(Group(NO_GROUP_NAME));
 }
 
-void Points::addPoint(const QString groupName, const QString pointName, const double x, const double y, const bool displayed, const Point::PointType type,
-                      MapView* mapView, MainWindow* mainWindow){
-    qDebug() << "Points::addPoint called";
+std::shared_ptr<PointView> Points::createPoint(const QString pointName, const double x, const double y, const bool displayed, const Point::PointType type,
+                                               MapView* mapView, MainWindow* mainWindow){
     std::shared_ptr<Point> point = std::shared_ptr<Point>(new Point(pointName, x, y, type));
     std::shared_ptr<PointView> pointView = std::shared_ptr<PointView>(new PointView(point, mapView));
     if(!displayed)
         pointView->hide();
 
-    connect(&(*pointView), SIGNAL(pathPointChanged(double, double, PointView*)), mainWindow, SLOT(updatePathPoint(double, double, PointView*)));
-    connect(&(*pointView), SIGNAL(pointLeftClicked(QString)), mainWindow, SLOT(displayPointEvent(QString)));
+    connect(&(*pointView), SIGNAL(pointLeftClicked(PointView*)), mainWindow, SLOT(displayPointEvent(PointView*)));
     connect(&(*pointView), SIGNAL(editedPointPositionChanged(double, double)), mainWindow, SLOT(updateCoordinates(double, double)));
-    connect(&(*pointView), SIGNAL(moveTmpEditPathPoint()), mainWindow, SLOT(moveTmpEditPathPointSlot()));
+    connect(&(*pointView), SIGNAL(moveEditedPathPoint()), mainWindow, SLOT(moveEditedPathPointSlot()));
     connect(&(*pointView), SIGNAL(addPointPath(QString, double, double)), mainWindow, SLOT(addPointPathSlot(QString, double, double)));
-    connect(&(*pointView), SIGNAL(homeEdited(QString)), mainWindow, SLOT(homeEdited(QString)));
+    connect(&(*pointView), SIGNAL(homeEdited(PointView*)), mainWindow, SLOT(homeEdited(PointView*)));
     connect(&(*pointView), SIGNAL(updatePathPainterPointView()), mainWindow, SLOT(updatePathPainterPointViewSlot()));
 
-    if(!groups->empty() && groups->contains(groupName)){
-        groups->value(groupName)->push_back(pointView);
-    } else {
-        std::shared_ptr<QVector<std::shared_ptr<PointView>>> vector = std::shared_ptr<QVector<std::shared_ptr<PointView>>>(new QVector<std::shared_ptr<PointView>>());
-        vector->push_back(pointView);
-        groups->insert(groupName, vector);
-    }
+    return pointView;
+}
+
+void Points::addPoint(const QString groupName, const QString pointName, const double x, const double y, const bool displayed, const Point::PointType type,
+                      MapView* mapView, MainWindow* mainWindow){
+    qDebug() << "Points::addPoint called";
+
+    std::shared_ptr<PointView> pointView = createPoint(pointName, x, y , displayed, type, mapView, mainWindow);
+    addPoint(groupName, pointView);
 }
 
 void Points::addPoint(const QString groupName, const std::shared_ptr<PointView> &pointView){
@@ -185,6 +185,28 @@ void Points::addPoint(const QString groupName, const std::shared_ptr<PointView> 
         vector->push_back(pointView);
         groups->insert(groupName, vector);
     }
+}
+
+void Points::insertPoint(const QString groupName, const int id, const std::shared_ptr<PointView>& pointView){
+    qDebug() << "Points::insertPoint called with pointView";
+
+    if(!groups->empty() && groups->contains(groupName)){
+        if(groups->value(groupName)->size() > 0)
+            groups->value(groupName)->insert(id, pointView);
+        else
+            groups->value(groupName)->push_back(pointView);
+    } else {
+        std::shared_ptr<QVector<std::shared_ptr<PointView>>> vector = std::shared_ptr<QVector<std::shared_ptr<PointView>>>(new QVector<std::shared_ptr<PointView>>());
+        vector->push_back(pointView);
+        groups->insert(groupName, vector);
+    }
+}
+
+void Points::insertPoint(const QString groupName, const int id, const QString pointName, const double x, const double y, const bool displayed, const Point::PointType type,
+                      MapView* mapView, MainWindow* mainWindow){
+    qDebug() << "Points::insertPoint called";
+    std::shared_ptr<PointView> pointView = createPoint(pointName, x, y , displayed, type, mapView, mainWindow);
+    insertPoint(groupName, id, pointView);
 }
 
 int Points::count() const {
@@ -275,20 +297,25 @@ QString Points::getGroupNameFromPointName(const QString pointName) const{
 
 void Points::setPixmapAll(const PointView::PixmapType type){
     QMapIterator<QString, std::shared_ptr<QVector<std::shared_ptr<PointView>>>> i(*groups);
-    while (i.hasNext()) {
+    //qDebug() << "Points::setPixmapAll called";
+    while(i.hasNext()) {
         i.next();
-        if(i.value()){
-            for(int j = 0; j < i.value()->count(); j++)
+        //qDebug() << i.key();
+        if(i.key().compare(PATH_GROUP_NAME) != 0){
+            for(int j = 0; j < i.value()->count(); j++){
+                //qDebug() << i.value()->at(j)->getPoint()->getName();
                 i.value()->at(j)->setPixmap(type);
+            }
         }
     }
 }
 
 void Points::setPixmapAll(const QPixmap pixmap){
     QMapIterator<QString, std::shared_ptr<QVector<std::shared_ptr<PointView>>>> i(*groups);
+    qDebug() << "Points::setPixmapAll pixmap version called";
     while (i.hasNext()) {
         i.next();
-        if(i.value()){
+        if(i.key().compare(PATH_GROUP_NAME) != 0){
             for(int j = 0; j < i.value()->count(); j++){
                 i.value()->at(j)->QGraphicsPixmapItem::setPixmap(pixmap);
                 i.value()->at(j)->updatePos();

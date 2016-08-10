@@ -61,10 +61,16 @@ int main(int argc, char **argv){
 
 	ros::NodeHandle n;
 
+	// sets the loop rate manually in order to publish fast enough otherwise the position might not be received
+	ros::Rate loop_rate(20);
+
 	ros::ServiceServer start_service = n.advertiseService("start_robot_pos_sender", startRobotPos);
 	ros::ServiceServer stop_service = n.advertiseService("stop_robot_pos_sender", stopRobotPos);
 
-	ros::spin();
+	while(ros::ok()){
+		ros::spinOnce();
+		loop_rate.sleep();
+	}
 
 
 	return 0;

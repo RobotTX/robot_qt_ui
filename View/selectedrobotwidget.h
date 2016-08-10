@@ -36,7 +36,9 @@ public:
     TopLeftMenu* getActionButtons(void) const {return actionButtons;}
     QString getName(void) ;
     PathWidget* getPathWidget(void) const {return pathWidget;}
-    QLabel* getNoPath(void) const {return noPath;}
+    QLabel* getNoPath(void) const { return noPath; }
+    QLabel* getNameLabel(void) const { return name; }
+    QLabel* getWifiLabel(void) const { return wifiNameLabel; }
 
 private:
     QVBoxLayout* layout;

@@ -43,7 +43,7 @@ public:
     GraphicItemState getState(void) const { return state; }
     void setPos(const qreal x, const qreal y);
     void setAddedToPath(const bool _addedToPath) { addedToPath = _addedToPath; }
-    void setLastPixmap(const QPixmap& _lastPixmap) { lastPixmap = _lastPixmap; }
+    void setLastPixmap(const QPixmap _lastPixmap) { lastPixmap = _lastPixmap; }
     void setPixmap(const PixmapType pixType);
     //void setPixmap(const QPixmap &pixmap);
     void setPoint(std::shared_ptr<Point> const& _point) { point = _point; }
@@ -68,13 +68,13 @@ protected:
     void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
 
 signals:
-    void pointRightClicked(QString);
-    void pointLeftClicked(QString);
+    void pointRightClicked(PointView* pointView);
+    void pointLeftClicked(PointView* pointView);
     void addPointPath(QString name, double x, double y);
-    void homeEdited(QString pointView);
-    void moveTmpEditPathPoint();
+    void homeEdited(PointView* pointView);
+    void moveEditedPathPoint();
     void editedPointPositionChanged(double, double);
-    void pathPointChanged(double, double, PointView*);
+    void pathPointChanged(double, double);
     void hoverEventSignal(PointView::PixmapType, QString);
     void updatePathPainterPointView();
 

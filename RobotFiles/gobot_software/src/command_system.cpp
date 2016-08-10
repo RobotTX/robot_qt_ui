@@ -1,11 +1,9 @@
 #include "command_system.hpp"
 
-
-#define MAX_LENGTH 5600
+const int max_length = 1024;
 
 bool waiting = false;
 bool connected = false;
-
 ros::ServiceClient startRobotPosClient;
 ros::ServiceClient stopRobotPosClient;
 
@@ -15,24 +13,25 @@ ros::ServiceClient stopMetadataClient;
 ros::ServiceClient startMapClient;
 ros::ServiceClient stopMapClient;
 
+ros::ServiceClient playPathClient;
+ros::ServiceClient pausePathClient;
+ros::ServiceClient stopPathClient;
+
 ros::Publisher go_pub;
 
-/// Default ports
-#define CMD_PORT 5600
 int metadata_port = 4000;
 int robot_pos_port = 4001;
 int map_port = 4002;
 
-std::string path_computer_software = "/home/ubuntu/computer_software/";
+std::string path_computer_software = "/home/gtdollar/computer_software/";
 
-/// Regex to parse the commands we receive
 static const boost::regex cmd_regex("\"(.*?)\"");
 
-bool execCommand(ros::NodeHandle n, boost::shared_ptr<tcp::socket> sock, std::vector<std::string> command){
+bool execCommand(ros::NodeHandle n, std::vector<std::string> command){
 	std::string commandStr = command.at(0);
 	switch (commandStr.at(0)) {
 
-		/// Command to change the name of the robot
+		/// Command for changing the name of the robot
 		case 'a':
 			if(command.size() > 1){
 				std::cout << "(Command system) New name : " << command.at(1) << std::endl;
@@ -48,7 +47,7 @@ bool execCommand(ros::NodeHandle n, boost::shared_ptr<tcp::socket> sock, std::ve
 			}
 		break;
 
-		/// Command to change the wifi
+		/// Command for changing the wifi of the robot
 		case 'b':
 			if(command.size() > 2){
 				std::cout << "(Command system) New wifi : " << command.at(1) << std::endl;
@@ -63,7 +62,7 @@ bool execCommand(ros::NodeHandle n, boost::shared_ptr<tcp::socket> sock, std::ve
 			}
 		break;
 
-		/// Command to move to a point
+		/// Command for the robot to move to a point
 		case 'c':
 			std::cout << "(Command system) Gobot go to point" << std::endl;
 			if(command.size() > 3){
@@ -71,7 +70,7 @@ bool execCommand(ros::NodeHandle n, boost::shared_ptr<tcp::socket> sock, std::ve
 				float posY = std::stof(command.at(2));
 				int waitTime = std::stoi(command.at(3));
 
-				//rostopic pub /move_base_simple/goal geometry_msgs/PoseStamped '{ header: { frame_id: "map" }, pose: { position: { x: 2.7, y: -1.5, z: 0 }, orientation: { x: 0, y: 0, z: 0, w: 1 } } }'
+//rostopic pub /move_base_simple/goal geometry_msgs/PoseStamped '{ header: { frame_id: "map" }, pose: { position: { x: 2.7, y: -1.5, z: 0 }, orientation: { x: 0, y: 0, z: 0, w: 1 } } }'
 
 				geometry_msgs::PoseStamped msg;
 				msg.header.frame_id = "map";
@@ -97,13 +96,19 @@ bool execCommand(ros::NodeHandle n, boost::shared_ptr<tcp::socket> sock, std::ve
 			}
 		break;
 
-		/// Command to stop where it is
-		case 'd':
-			std::cout << "(Command system) Gobot stop" << std::endl;
+		/// Command for the robot to pause the path
+		case 'd':{
+			std::cout << "(Command system) Pausing the path" << std::endl;
+			std_srvs::Empty arg;
+			if(ros::service::call("pause_path", arg))
+				std::cout << "Pause path service called with success";
+			else
+				std::cout << "Pause path service call failed";
 			return true;
+		}
 		break;
 
-		/// Command to start to scan the map
+		/// Command for the robot to start to scan the map
 		case 'e':
 			std::cout << "(Command system) Gobot scan the map" << std::endl;
 			startMap(n);
@@ -111,20 +116,20 @@ bool execCommand(ros::NodeHandle n, boost::shared_ptr<tcp::socket> sock, std::ve
 
 		break;
 
-		/// Command to stop to scan the map
+		/// Command for the robot to stop to scan the map
 		case 'f':
 			std::cout << "(Command system) Gobot stop scanning the map" << std::endl;
 			stopMap();
 			return true;
 		break;
 
-		/// Command to receive the map
+		/// Command for the robot to receive the map
 		case 'g':
 			std::cout << "(Command system) Gobot here is the map" << std::endl;
 			return true;
 		break;
 
-		/// Command to receive the ports needed for the map, metadata and robot pos services
+		/// Command for the robot to receive the ports needed for the map, metadata and robot pos services
 		case 'h':
 			if(command.size() > 3){
 
@@ -139,53 +144,68 @@ bool execCommand(ros::NodeHandle n, boost::shared_ptr<tcp::socket> sock, std::ve
 			}
 		break;
 
-		/// Command to save a new path
+		/// Command for the robot to save a new path
 		case 'i':
 			if(command.size() >= 4 && command.size()%3 == 1){
 
 				std::cout << "(Command system) Path received :" << std::endl;
 
-				std::ofstream ofs;
-				ofs.open(path_computer_software + "Robot_Infos/path.txt", std::ofstream::out | std::ofstream::trunc);
-
-				for(int i = 1; i < command.size(); i+=3){
-					ofs << command.at(i) << " " << command.at(i+1) << " " << command.at(i+2) << "\n";
-				}
-
-				ofs.close();
-
+				std::ofstream ofs(path_computer_software + "Robot_Infos/path.txt", std::ofstream::out | std::ofstream::trunc);
 				
+				if(ofs){
+
+					for(int i = 1; i < command.size(); i+=3)
+						ofs << command.at(i) << " " << command.at(i+1) << " " << command.at(i+2) << "\n";
+
+					ofs.close();
+
+				} else std::cout << "sorry could nt open the file " << path_computer_software + "Robot_Infos/path.txt";
+
 				return true;
-			} else {
+
+			} else 
 				std::cout << "(Command system) Parameter missing" << std::endl;
-			}
+			
 		break;
 
-		/// Command to play the saved path
-		case 'j':
+		/// Command for the robot to play the saved path
+		case 'j':{
 			std::cout << "(Command system) Playing the path" << std::endl;
+			std_srvs::Empty arg;
+			if(ros::service::call("play_path", arg))
+				std::cout << "Play path service called with success";
+			else
+				std::cout << "Play path service call failed";
 			return true;
+		}
 		break;
 
-		/// Command to delete the saved path
+		/// Command for the robot to delete the saved path
 		case 'k':
 			{
 				std::cout << "(Command system) Deleting the path" << std::endl;
 				std::ofstream ofs;
 				ofs.open(path_computer_software + "Robot_Infos/path.txt", std::ofstream::out | std::ofstream::trunc);
 				ofs.close();
+				return true;
 			}
-			return true;
 		break;
 
-		/// Command to go home
-		case 'l':
-			std::cout << "(Command system) Go to home" << std::endl;
-			// TODO GO HOME
+		/// Command to stop the robot while following its path
+		case 'l':{
+			std::cout << "(Command system) Stopping the path" << std::endl;
+			std_srvs::Empty arg;
+			if(ros::service::call("stop_path", arg))
+				std::cout << "Stop path service called with success";
+			else
+				std::cout << "Stop path service call failed";
+			std::cout << "command system returning true after cmd l";
+			std::cout << "(Command system) Stopping the path" << std::endl;
 			return true;
+		}
 		break;
 
-		/// Unknown command
+		/// Default/Unknown command
 		default:
 			std::cerr << "(Command system) Unknown command '" << command.at(0) << "' with " << command.size()-1 << " arguments : ";
 			if(command.size() < 10){
@@ -240,11 +260,11 @@ void startMetadata(ros::NodeHandle n){
 void stopMetadata(){
 	gobot_software::Port srv;
 
-	if (stopMetadataClient.call(srv)) {
+	if (stopMetadataClient.call(srv)) 
 		std::cout << "(Command system) stop_map_metadata_sender service started" << std::endl;
-	} else {
+	else 
 		std::cerr << "(Command system) Failed to call service stop_map_metadata_sender" << std::endl;
-	}
+	
 }
 
 void startMap(ros::NodeHandle n){
@@ -270,24 +290,24 @@ void stopMap(){
 	}
 }
 
-std::vector<std::string> readCommand(boost::shared_ptr<tcp::socket> sock){
-	bool finishedCmd = 0;
-	char data[MAX_LENGTH];
-	std::vector<std::string> command;
-	boost::system::error_code error;
-	std::string commandStr = "";
+void getPorts(boost::shared_ptr<tcp::socket> sock, ros::NodeHandle n){
 
-	while (!finishedCmd && ros::ok() && connected){
+		std::cout << "getPorts launched" << std::endl;
+		std::vector<std::string> command;
+		std::string commandStr = "";
+		char data[max_length];
+		bool finishedCmd = 0;
 
+		boost::system::error_code error;
 		size_t length = sock->read_some(boost::asio::buffer(data), error);
-		std::cout << "(Command system) " << length << " byte(s) received" << std::endl;
+		std::cout << length << " byte(s) received" << std::endl;
 		if ((error == boost::asio::error::eof) || (error == boost::asio::error::connection_reset)){
 			std::cout << "(Command system) Connection closed" << std::endl;
 			connected = false;
-			return std::vector<std::string>();
-		} else if (error) {
+			return;
+    	} else if (error) {
 			throw boost::system::system_error(error); // Some other error.
-		}
+    	}
 
 		std::istringstream iss(data);
 
@@ -301,6 +321,7 @@ std::vector<std::string> readCommand(boost::shared_ptr<tcp::socket> sock){
 				commandStr += sub + " ";
 			}
 		}
+		std::cout << "Received :" << commandStr << std::endl;
 
 		command.push_back(std::string(1, commandStr.at(0)));
 
@@ -311,18 +332,8 @@ std::vector<std::string> readCommand(boost::shared_ptr<tcp::socket> sock){
 			l.pop_front();
 			command.push_back(s);
 		}
-	}
 
-	return command;
-}
-
-void getPorts(boost::shared_ptr<tcp::socket> sock, ros::NodeHandle n){
-	std::cout << "(Command system) Trying to get the ports" << std::endl;
-
-	try{
-		std::vector<std::string> command = readCommand(sock);
-
-		if(command.size() > 0){
+		if(finishedCmd){
 			std::cout << "(Command system) Executing command : " << std::endl;
 			if(command.size() < 10){
 				for(int i = 0; i < command.size(); i++){
@@ -332,29 +343,63 @@ void getPorts(boost::shared_ptr<tcp::socket> sock, ros::NodeHandle n){
 				std::cout << "(Command system) Too many arguments to display (" << command.size() << ")" << std::endl;
 			}
 
-			execCommand(n, sock, command);		
-		} else {
-			std::cout << "(Command system) Command for ports is empty" << std::endl;
+			execCommand(n, command);
+			std::cout << "getPorts done" << std::endl;
+		
 		}
-	} catch (std::exception& e) {
-		std::cerr << "(Command system) Exception in getPorts: " << e.what() << "\n";
-	}
 }
 
 void session(boost::shared_ptr<tcp::socket> sock, ros::NodeHandle n){
 	std::cout << "(Command system) Waiting for a command" << std::endl;
-
 	try{
+		std::vector<std::string> command;
+		std::string commandStr = "";
+		char data[max_length];
+		bool finishedCmd = 0;
+
 		getPorts(sock, n);
 
 		startRobotPos(n);
 		startMetadata(n);
 
 		while(ros::ok() && connected){
-			
-			std::vector<std::string> command = readCommand(sock);
+			char data[max_length];
 
-			if(command.size() > 0){
+			boost::system::error_code error;
+			size_t length = sock->read_some(boost::asio::buffer(data), error);
+			std::cout << length << " byte(s) received" << std::endl;
+			if ((error == boost::asio::error::eof) || (error == boost::asio::error::connection_reset)){
+				std::cout << "(Command system) Connection closed" << std::endl;
+				connected = false;
+				return;
+        	} else if (error) {
+				throw boost::system::system_error(error); // Some other error.
+        	}
+
+			std::istringstream iss(data);
+
+			while (iss && !finishedCmd && ros::ok() && connected){
+				std::string sub;
+				iss >> sub;
+				if(sub.compare("}") == 0){
+					std::cout << "(Command system) Command complete" << std::endl;
+					finishedCmd = 1;
+				} else {
+					commandStr += sub + " ";
+				}
+			}
+
+			command.push_back(std::string(1, commandStr.at(0)));
+
+   			std::list<std::string> l;
+			boost::regex_split(std::back_inserter(l), commandStr, cmd_regex);
+			while(l.size()) {
+				std::string s = *(l.begin());
+				l.pop_front();
+				command.push_back(s);
+			}
+
+			if(finishedCmd){
 				std::cout << "(Command system) Executing command : " << std::endl;
 				if(command.size() < 10){
 					for(int i = 0; i < command.size(); i++){
@@ -365,20 +410,20 @@ void session(boost::shared_ptr<tcp::socket> sock, ros::NodeHandle n){
 				}
 
 				std::string msg = command.at(0);
-				if(execCommand(n, sock, command)){
+				if(execCommand(n, command)){
 					msg += " done";
 				} else {
 					msg += " failed";
 				}
 				sendMessageToPc(sock, msg);
-			} else {
-				std::cout << "(Command system) Command is empty" << std::endl;
+				command.clear();
+				finishedCmd = 0;
+				commandStr = "";
 			}
 		}
 	} catch (std::exception& e) {
-		std::cerr << "(Command system) Exception in session: " << e.what() << "\n";
+		std::cerr << "(Command system) Exception in thread: " << e.what() << "\n";
 	}
-	connected = false;
 }
 
 bool sendMessageToPc(boost::shared_ptr<tcp::socket> sock, std::string message){
@@ -440,39 +485,28 @@ void serverDisconnected(const std_msgs::String::ConstPtr& msg){
 	stopMetadata();
 }
 
-/*
-void robotGoalStatus(const actionlib_msgs::GoalStatusArray::ConstPtr& res){
-	std::cout << "(Command system) Robot Goal Status " << (int) res.status_list.status << std::endl;
-}
-*/
 
 int main(int argc, char* argv[]){
 
 	try{
 		ros::init(argc, argv, "command_system");
 		ros::NodeHandle n;
-
-		/// Subscribe to server_disconnected which tell us when the server has been disconnected
-  		ros::Subscriber subServerDisconnected = n.subscribe("server_disconnected", 1000, serverDisconnected);
+  		ros::Subscriber sub = n.subscribe("server_disconnected", 1000, serverDisconnected);
 		
-		/// Services to start and stop the transfer of the robot position
 		startRobotPosClient = n.serviceClient<gobot_software::Port>("start_robot_pos_sender");
 		stopRobotPosClient = n.serviceClient<gobot_software::Port>("stop_robot_pos_sender");
 		
-		/// Services to start and stop the transfer of the map metadata
 		startMetadataClient = n.serviceClient<gobot_software::Port>("start_map_metadata_sender");
 		stopMetadataClient = n.serviceClient<gobot_software::Port>("stop_map_metadata_sender");
 		
-		/// Services to start and stop the transfer of the map
 		startMapClient = n.serviceClient<gobot_software::Port>("start_map_sender");
 		stopMapClient = n.serviceClient<gobot_software::Port>("stop_map_sender");
 
-		/// Publisher to tell the robot where to go
-		go_pub = n.advertise<geometry_msgs::PoseStamped>("/move_base_simple/goal", 1000);
-		//stop_go_pub = n.advertise<geometry_msgs::PoseStamped>("/move_base/cancel", 1000);
+		playPathClient = n.serviceClient<std_srvs::Empty>("play_path");
+		pausePathClient = n.serviceClient<std_srvs::Empty>("pause_path");
+		stopPathClient = n.serviceClient<std_srvs::Empty>("stop_path");
 
-		/// Subscriber to know when the robot arrived to its destination
-  		//ros::Subscriber subGoalStatus = n.subscribe("move_base/status", 1000, robotGoalStatus);
+		go_pub = n.advertise<geometry_msgs::PoseStamped>("/move_base_simple/goal", 1000);
 
 		server(CMD_PORT, n);
 		ros::spin();

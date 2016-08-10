@@ -4,9 +4,11 @@
 class RobotView;
 class QVBoxLayout;
 class QPushButton;
+class PathPoint;
 class QLabel;
 
 #include <QWidget>
+#include <memory>
 
 /**
  * @brief The PathWidget class
@@ -16,7 +18,7 @@ class PathWidget: public QWidget{
 public:
     PathWidget(QWidget* parent);
 
-    void setSelectedRobot(RobotView * const robotView);
+    void setPath(QVector<std::shared_ptr<PathPoint>> const path);
 
     /**
      * @brief clearLayout

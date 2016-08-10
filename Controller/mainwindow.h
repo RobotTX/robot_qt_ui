@@ -40,13 +40,13 @@ class PathPainter;
 //#define ROBOTS_NAME_PATH "/home/m-a/Documents/QtProject/gobot-software/robotsName.dat"
 //#define MAP_PATH "/home/m-a/Documents/QtProject/gobot-software/realMap.dat"
 
-//#define XML_PATH "/home/joan/Qt/QtProjects/gobot-software/points.xml"
-//#define ROBOTS_NAME_PATH "/home/joan/Qt/QtProjects/gobot-software/robotsName.dat"
-//#define MAP_PATH "/home/joan/Qt/QtProjects/gobot-software/realMap.dat"
+#define XML_PATH "/home/joan/Qt/QtProjects/gobot-software/points.xml"
+#define ROBOTS_NAME_PATH "/home/joan/Qt/QtProjects/gobot-software/robotsName.dat"
+#define MAP_PATH "/home/joan/Qt/QtProjects/gobot-software/realMap.dat"
 
-#define XML_PATH "/Users/fannylarradet/Desktop/GTRobots/gobot-software/points.xml"
-#define ROBOTS_NAME_PATH "/Users/fannylarradet/Desktop/GTRobots/gobot-software/robotsName.dat"
-#define MAP_PATH "/Users/fannylarradet/Desktop/GTRobots/gobot-software/realMap.dat"
+//#define XML_PATH "/Users/fannylarradet/Desktop/GTRobots/gobot-software/points.xml"
+//#define ROBOTS_NAME_PATH "/Users/fannylarradet/Desktop/GTRobots/gobot-software/robotsName.dat"
+//#define MAP_PATH "/Users/fannylarradet/Desktop/GTRobots/gobot-software/realMap.dat"
 
 #define PI 3.14159265
 #define PORT_ROBOT_UPDATE 6000
@@ -95,9 +95,10 @@ signals:
     void sendCommand(QString);
     void nameChanged(QString, QString);
     void changeCmdThreadRobotName(QString);
-    void addPointPath(QString name, double x, double y);
+    void addPathPoint(QString name, double x, double y);
     void updatePathPainter();
     void updatePathPainterPointView();
+    void resetPath();
 
 private slots:
     void updateRobot(const QString ipAddress, const float posX, const float posY, const float ori);
@@ -134,26 +135,28 @@ private slots:
     void robotSavedEvent();
     void minusSelecPointBtnEvent();
     void editSelecPointBtnEvent();
-    void setSelectedPoint(QString pointView);
+    void setSelectedPoint();
     void pointSavedEvent(QString groupName, double x, double y, QString name);
     void stopSelectedRobot(int robotNb);
     void playSelectedRobot(int robotNb);
     void askForDeleteGroupConfirmation(const QString group);
     void askForDeletePointConfirmation(const QString index);
-    void displayPointEvent(QString pointName);
+    void displayPointEvent(PointView* pointView);
     void askForDeleteDefaultGroupPointConfirmation(const QString index);
     void displayGroupMapEvent(void);
-    void pathSaved(bool execPath);
+    void savePathSlot();
+    void cancelPathSlot();
     void addPointPathSlot(QString name, double x, double y);
     void displayPointsInGroup(void);
     void removePointFromInformationMenu(void);
     void displayPointMapEvent(void);
     void hidePathCreationWidget(void);
     void editPointButtonEvent();
-    void editTmpPathPointSlot(int id, Point* point, int nbWidget);
+    void editTmpPathPointSlot(int id, QString name, double x, double y);
     void editPointFromGroupMenu(void);
-    void saveTmpEditPathPointSlot(void);
-    void moveTmpEditPathPointSlot(void);
+    void saveEditPathPointSlot(void);
+    void cancelEditPathPointSlot(void);
+    void moveEditedPathPointSlot(void);
     void displayPointInfoFromGroupMenu(void);
     void updatePoint(void);
     void updateCoordinates(double x, double y);
@@ -169,7 +172,7 @@ private slots:
     void enableReturnAndCloseButtons(void);
     void doubleClickOnRobot(QString checkedId);
     void setMessageCreationPath(QString message);
-    void updatePathPoint(double x, double y, PointView* pointView = 0);
+    void updateEditedPathPoint(double x, double y);
     void centerMap();
     void setMessageCreationPoint(QString type, CreatePointWidget::Error error);
     void addPathPointToMap(Point* point);
@@ -183,7 +186,7 @@ private slots:
     void setMessageTop(const QString msgType, const QString msg);
     void setLastMessage(void) { setMessageTop(topLayout->getLastMessage().first, topLayout->getLastMessage().second); }
     void setMessageCreationGroup(QString type, QString message);
-    void homeEdited(QString pointView);
+    void homeEdited(PointView *pointView);
     void goHomeBtnEvent();
     void viewPathSelectedRobot(int robotNb, bool checked);
     void editHomeEvent();

@@ -10,7 +10,7 @@ import time
 from std_msgs.msg import String
 import subprocess
 
-computer_software = "/home/ubuntu/computer_software/"
+computer_software = "/home/gtdollar/computer_software/"
 file_server = computer_software + "IP/serverIP.txt"
 file_IPs = computer_software + "IP/isAlive.txt"
 ping_script = "sh " + computer_software + "IP/ping.sh"
@@ -18,15 +18,16 @@ file_hostname = computer_software + "Robot_Infos/name.txt"
 file_map_id = computer_software + "Robot_Infos/mapId.txt"
 
 def isServer(IP) :
-    s=socket.socket()
+    s = socket.socket()
     host= IP
     port = 6000
     find = False
     try : 
         s.setsockopt(socket.SOL_SOCKET,socket.SO_REUSEADDR,1)
-        s.settimeout(1)
+        # blocking operations of the socket time out after 5 seconds
+        s.settimeout(5)
         s.connect((host,port))
-        res= s.recv(1024)
+        res = s.recv(1024)
         if res == "OK" :
             find = True
             # Get the hostname of the robot
@@ -44,15 +45,15 @@ def isServer(IP) :
                 map_id = "0"
 
             # Get the SSID of the robot
-            ssid = subprocess.Popen(["iwgetid", "-r"], stdout=subprocess.PIPE).communicate()[0]
+            ssid = subprocess.Popen(["iwgetid", "-r"], stdout = subprocess.PIPE).communicate()[0]
 
             # Send everything to the software
             toSend = "%s\"%s\"%s" % (hostname, map_id, ssid)
             s.send(toSend)
     except : 
-        find=False
+        find = False
     return find
-    s.close
+    #s.close
 
 
 
@@ -61,7 +62,7 @@ def checkIPs ():
 	with open(file_IPs) as f:
 		for line in f:
 			print line
-			found= isServer(line)
+			found = isServer(line)
 			if found:
 				print "my server is ",line
 				file= open(file_server,"w")
@@ -76,7 +77,7 @@ def client (pub, checkOldIP):
 
 	if checkOldIP :
 		print "check old"
-		found=False
+		found = False
 		if os.path.exists(file_server):
 			file = open(file_server)
 			IP= file.readline()
@@ -95,12 +96,13 @@ def client (pub, checkOldIP):
 			if not found : 
 				print "server not found"
 
-
-rospy.init_node('ping_server', anonymous=True)
-rate = rospy.Rate(10)
-pub = rospy.Publisher('server_disconnected', String, queue_size=10)
-  
-while not rospy.is_shutdown(): 
-	rate.sleep()
-	client(pub, True)
-	time.sleep(2)
+if __name__ == "__main__":
+    
+    rospy.init_node('ping_server', anonymous = True)
+    rate = rospy.Rate(10)
+    pub = rospy.Publisher('server_disconnected', String, queue_size = 10)
+      
+    while not rospy.is_shutdown(): 
+    	rate.sleep()
+    	client(pub, True)
+    	time.sleep(2)

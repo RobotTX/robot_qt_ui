@@ -10,6 +10,7 @@ class QButtonGroup;
 class QMainWindow;
 class QScrollArea;
 class QVBoxLayout;
+class PathPoint;
 
 
 #include <memory>
@@ -50,6 +51,7 @@ public:
     /// to stop displaying the path of the robot whose id is given as a parameter
     void uncheckViewPathSelectedRobot(const int robotNb = -1);
     void uncheckAll();
+    QString pathToStr(QVector<std::shared_ptr<PathPoint>> const path);
 
 private:
     /**
