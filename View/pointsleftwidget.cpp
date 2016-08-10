@@ -271,6 +271,7 @@ void PointsLeftWidget::cancelCreationGroup(){
     emit messageCreationGroup(TEXT_COLOR_NORMAL, "");
     /// resets the buttons so we can click them
     groupButtonGroup->setEnabled(true);
+
 }
 
 void PointsLeftWidget::emitNewGroupSignal(){
@@ -288,6 +289,7 @@ void PointsLeftWidget::keyPressEvent(QKeyEvent* event){
             switch(groupButtonGroup->checkEditGroupName(groupButtonGroup->getModifyEdit()->text())){
             case 0:
                 emit modifiedGroup(groupButtonGroup->getModifyEdit()->text());
+                setLastCheckedId("");
                 break;
             case 1:
                 emit messageCreationGroup(TEXT_COLOR_DANGER, "The name of your group cannot be empty");
