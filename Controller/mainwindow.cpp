@@ -3203,7 +3203,7 @@ void MainWindow::modifyGroupWithEnter(QString name){
         pointsLeftWidget->getGroupButtonGroup()->getModifyEdit()->hide();
 
         leftMenu->getReturnButton()->setEnabled(true);
-
+        pointsLeftWidget->setLastCheckedId("");
         topLayout->setLabelDelay(TEXT_COLOR_SUCCESS, "You have successfully modified the name of your group",1500);
     } else if(pointsLeftWidget->checkGroupName(name) == 1){
         topLayout->setLabelDelay(TEXT_COLOR_DANGER, "The name of your group cannot be empty. Please choose a name for your group",2500);
