@@ -15,7 +15,7 @@
 #include "View/buttonmenu.h"
 #include "toplayout.h"
 
-DisplaySelectedPoint::DisplaySelectedPoint(QMainWindow *const _parent, std::shared_ptr<Points> const& _points, std::shared_ptr<Map> const& _map, const std::shared_ptr<PointView> &_pointView, const Origin _origin):
+DisplaySelectedPoint::DisplaySelectedPoint(QMainWindow *const _parent, std::shared_ptr<Points> const& _points, std::shared_ptr<Map> const& _map, PointView* _pointView, const Origin _origin):
     QWidget(_parent), map(_map), pointView(_pointView), parent(_parent), points(_points), origin(_origin)
 {
     layout = new QVBoxLayout(this);
@@ -215,7 +215,7 @@ int DisplaySelectedPoint::checkPointName(QString name) {
     return 3;
 }
 
-void DisplaySelectedPoint::setPointView(const std::shared_ptr<PointView>& _pointView, const QString robotName) {
+void DisplaySelectedPoint::setPointView(PointView* _pointView, const QString robotName) {
     qDebug() << "DisplaySelectedPoint::setPointView called";
 
     /// sets the pixmaps of the other points (black)
