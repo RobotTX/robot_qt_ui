@@ -62,7 +62,7 @@ void UpdateRobotsThread::readTcpDataSlot(){
     QStringList strList = str.split("\"", QString::SkipEmptyParts);
 
     if(strList.size() > 1){
-        emit robotIsAlive(strList.at(0), socket->peerAddress().toString(), strList.at(1), strList.at(2));
+        emit robotIsAlive(strList.at(0), socket->peerAddress().toString(), strList.at(1), strList.at(2), std::stoi(strList.at(3).toStdString()));
     } else {
         qDebug() << "(UpdateRobotsThread) Not enough param received for robotIsAlive";
     }

@@ -247,7 +247,7 @@ void MainWindow::initializeRobots(){
 
 
     updateRobotsThread = new UpdateRobotsThread(PORT_ROBOT_UPDATE);
-    connect(updateRobotsThread, SIGNAL(robotIsAlive(QString, QString, QString, QString)), this, SLOT(robotIsAliveSlot(QString, QString, QString, QString)));
+    connect(updateRobotsThread, SIGNAL(robotIsAlive(QString, QString, QString, QString, int)), this, SLOT(robotIsAliveSlot(QString, QString, QString, QString, int)));
     updateRobotsThread->start();
     updateRobotsThread->moveToThread(updateRobotsThread);
 
@@ -405,8 +405,8 @@ void MainWindow::connectToRobot(){
     }
 }
 
-void MainWindow::stopSelectedRobot(int robotNb){
-    qDebug() << "stopSelectedRobot called on robot :" << robots->getRobotsVector().at(robotNb)->getRobot()->getName();
+void MainWindow::deletePath(int robotNb){
+    qDebug() << "MainWindow::deletepath called on robot :" << robots->getRobotsVector().at(robotNb)->getRobot()->getName();
 
     if(robots->getRobotsVector().at(robotNb)->getRobot()->getPath().size() > 0){
         int ret = openConfirmMessage("Are you sure you want to delete this path ?");
@@ -447,6 +447,29 @@ void MainWindow::stopSelectedRobot(int robotNb){
     }
 }
 
+void MainWindow::stopPath(int robotNb){
+    qDebug() << "MainWindow::StopPath called";
+    std::shared_ptr<Robot> robot = robots->getRobotsVector().at(robotNb)->getRobot();
+    robot->resetCommandAnswer();
+    if(robot->sendCommand(QString("l"))){
+        QString answer = robot->waitAnswer();
+        QStringList answerList = answer.split(QRegExp("[ ]"), QString::SkipEmptyParts);
+        if(answerList.size() > 1){
+            QString cmd = answerList.at(0);
+            bool success = (answerList.at(1).compare("done") == 0);
+            if((cmd.compare("l") == 0 && success) || answerList.at(0).compare("1") == 0){
+                robot->setPlayingPath(false);
+                bottomLayout->getPlayRobotBtnGroup()->button(robotNb)->setIcon(QIcon(":/icons/play.png"));
+                bottomLayout->getStopRobotBtnGroup()->button(robotNb)->setEnabled(false);
+                topLayout->setLabel(TEXT_COLOR_SUCCESS, "Path stopped");
+            } else {
+                topLayout->setLabel(TEXT_COLOR_DANGER, "Path failed to be stopped, please try again");
+            }
+        }
+        robot->resetCommandAnswer();
+    }
+}
+
 void MainWindow::playSelectedRobot(int robotNb){
     std::shared_ptr<Robot> robot = robots->getRobotsVector().at(robotNb)->getRobot();
     if(robot->isPlayingPath()){
@@ -462,6 +485,7 @@ void MainWindow::playSelectedRobot(int robotNb){
                 if((cmd.compare("d") == 0 && success) || answerList.at(0).compare("1") == 0){
                     robot->setPlayingPath(0);
                     bottomLayout->getPlayRobotBtnGroup()->button(robotNb)->setIcon(QIcon(":/icons/play.png"));
+                    bottomLayout->getStopRobotBtnGroup()->button(robotNb)->setEnabled(true);
                     topLayout->setLabel(TEXT_COLOR_SUCCESS, "Path stopped");
                 } else {
                     topLayout->setLabel(TEXT_COLOR_DANGER, "Path failed to be stopped, please try again");
@@ -485,9 +509,10 @@ void MainWindow::playSelectedRobot(int robotNb){
                 if((cmd.compare("j") == 0 && success) || answerList.at(0).compare("1") == 0){
                     robot->setPlayingPath(1);
                     bottomLayout->getPlayRobotBtnGroup()->button(robotNb)->setIcon(QIcon(":/icons/pause.png"));
+                    bottomLayout->getStopRobotBtnGroup()->button(robotNb)->setEnabled(true);
                     topLayout->setLabel(TEXT_COLOR_SUCCESS, "Path playing");
                 } else {
-                    topLayout->setLabel(TEXT_COLOR_DANGER, "Path failed to be played, please try again");
+                    topLayout->setLabel(TEXT_COLOR_DANGER, "Path failed to start, please try again");
                 }
             }
         }
@@ -1149,7 +1174,7 @@ void MainWindow::goHomeBtnEvent(){
             QString cmd = answerList.at(0);
             bool success = (answerList.at(1).compare("done") == 0);
             if((cmd.compare("d") == 0 && success) || answerList.at(0).compare("1") == 0){
-                qDebug() << "Going to home";
+                qDebug() << "Going home";
                 topLayout->setLabel(TEXT_COLOR_SUCCESS, "Robot going home");
             } else {
                 topLayout->setLabel(TEXT_COLOR_DANGER, "Failed to tell the robot to go home, please try again");
@@ -1159,11 +1184,12 @@ void MainWindow::goHomeBtnEvent(){
     }
 }
 
-void MainWindow::robotIsAliveSlot(QString hostname, QString ip, QString mapId, QString ssid){
+void MainWindow::robotIsAliveSlot(QString hostname, QString ip, QString mapId, QString ssid, int stage){
     QRegExp rx("[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}");
     rx.indexIn(ip);
     ip = rx.cap(0);
     RobotView* rv = robots->getRobotViewByIp(ip);
+
     if(rv != NULL){
         qDebug() << "Robot" << hostname << "at ip" << ip << "is still alive and has the map id :" << mapId;
         rv->getRobot()->ping();
@@ -1215,51 +1241,13 @@ void MainWindow::robotIsAliveSlot(QString hostname, QString ip, QString mapId, Q
         qDebug() << "Which is an old map";
         sendNewMapToRobot(rv->getRobot(), currMapId);
     }
-}
 
-void MainWindow::deletePath(int robotNb){
-    qDebug() << "stopSelectedRobot called on robot : " << robots->getRobotsVector().at(robotNb)->getRobot()->getName();
-
-    if(robots->getRobotsVector().at(robotNb)->getRobot()->getPath().size() > 0){
-        int ret = openConfirmMessage("Are you sure you want to delete this path ?");
-        switch (ret) {
-            case QMessageBox::Ok:
-                /// if the command is succesfully sent to the robot, we apply the change
-                robots->getRobotsVector().at(robotNb)->getRobot()->resetCommandAnswer();
-                if(robots->getRobotsVector().at(robotNb)->getRobot()->sendCommand(QString("k"))){
-                    QString answer = robots->getRobotsVector().at(robotNb)->getRobot()->waitAnswer();
-                    QStringList answerList = answer.split(QRegExp("[ ]"), QString::SkipEmptyParts);
-                    if(answerList.size() > 1){
-                        QString cmd = answerList.at(0);
-                        bool success = (answerList.at(1).compare("done") == 0);
-                        if((cmd.compare("k") == 0 && success) || answerList.at(0).compare("1") == 0){
-                            clearPath(robotNb);
-                            if(!robots->getRobotsVector().at(robotNb)->getRobot()->getName().compare(selectedRobot->getRobot()->getName())){
-                                hideAllWidgets();
-                                selectedRobotWidget->setSelectedRobot(selectedRobot);
-                                selectedRobotWidget->show();
-                                bottomLayout->getViewPathRobotBtnGroup()->button(robotNb)->setChecked(false);
-                                bottomLayout->getViewPathRobotBtnGroup()->button(robotNb)->click();
-
-                            }
-                            topLayout->setLabel(TEXT_COLOR_SUCCESS, "Path deleted");
-                        } else {
-                            topLayout->setLabel(TEXT_COLOR_DANGER, "Failed to delete the path, please try again");
-                        }
-                    }
-                    robots->getRobotsVector().at(robotNb)->getRobot()->resetCommandAnswer();
-
-                }
-            break;
-            case QMessageBox::Cancel:
-                qDebug() << "Cancel was clicked";
-            break;
-            default:
-                qDebug() << "Should never be reached";
-            break;
-        }
-    } else {
-        qDebug() << "This robot has no path";
+    /// Check the current stage of the robot
+    int robotId = robots->getRobotId(rv->getRobot()->getName());
+    if(rv->getRobot()->getPath().size() == stage){
+        setMessageTop(TEXT_COLOR_SUCCESS, "The robot " + rv->getRobot()->getName() + " has successfully reached its destination");
+        bottomLayout->getPlayRobotBtnGroup()->button(robotId)->setIcon(QIcon(":/icons/play.png"));
+        bottomLayout->getStopRobotBtnGroup()->button(robotId)->setEnabled(false);
     }
 }
 
