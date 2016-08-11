@@ -3302,7 +3302,9 @@ void MainWindow::modifyGroupAfterClick(QString name){
         pointsLeftWidget->getGroupButtonGroup()->getModifyEdit()->hide();
         leftMenu->getReturnButton()->setEnabled(true);
         int checkedId = pointsLeftWidget->getGroupButtonGroup()->getButtonIdByName(pointsLeftWidget->getGroupButtonGroup()->getEditedGroupName());
-
+           QString color ="";
+           QString msg = "";
+           int time=1500;
         if(pointsLeftWidget->checkGroupName(name) == 0){
             /// Update the model
             qDebug() <<   pointsLeftWidget->getLastCheckedId();
@@ -3314,15 +3316,23 @@ void MainWindow::modifyGroupAfterClick(QString name){
 
             /// updates view
             pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(checkedId)->setText(name);
-
-            topLayout->setLabelDelay(TEXT_COLOR_SUCCESS, "You have successfully modified the name of your group",1500);
+            color= TEXT_COLOR_SUCCESS;
+            msg= "You have successfully modified the name of your group";
+            time=1500;
         } else if(pointsLeftWidget->checkGroupName(name) == 1){
-            topLayout->setLabelDelay(TEXT_COLOR_DANGER, "The name of your group cannot be empty. Please choose a name for your group",2500);
+            color=TEXT_COLOR_DANGER;
+            msg= "The name of your group cannot be empty. Please choose a name for your group";
+            time=2500;
         } else {
-            topLayout->setLabelDelay(TEXT_COLOR_DANGER, "You cannot choose : " + name.simplified() + " as a new name for your group because another group already has this name",2500);
+            color=TEXT_COLOR_DANGER;
+            msg = "You cannot choose : " + name.simplified() + " as a new name for your group because another group already has this name";
+            time = 2500;
         }
+
         pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(checkedId)->show();
          pointsLeftWidget->setLastCheckedId("");
+         topLayout->setLabelDelay(color, msg,time);
+
     }
 
 }
