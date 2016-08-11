@@ -272,6 +272,21 @@ bool Points::isAPoint(const QString pointName) const{
     return false;
 }
 
+bool Points::isAPoint(const QString pointName, const double x, const double y) const{
+    QMapIterator<QString, std::shared_ptr<QVector<std::shared_ptr<PointView>>>> i(*groups);
+    while (i.hasNext()) {
+        i.next();
+        if(i.key().compare(PATH_GROUP_NAME) != 0){
+            for(int j = 0; j < i.value()->size(); j++){
+                if(i.value()->at(j)->getPoint()->getName().compare(pointName) == 0
+                        && i.value()->at(j)->getPoint()->comparePos(x, y))
+                    return true;
+            }
+        }
+    }
+    return false;
+}
+
 QVector<QString> Points::getHomeNameFromGroup(const QString groupName) const{
     QVector<QString> nameVector;
     for(int j = 0; j < groups->value(groupName)->size(); j++){

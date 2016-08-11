@@ -61,6 +61,7 @@ public:
     bool isDisplayed(const QString key) const;
     bool isAGroup(const QString groupName) const;
     bool isAPoint(const QString pointName) const;
+    bool isAPoint(const QString pointName, const double x, const double y) const;
     QVector<QString> getHomeNameFromGroup(const QString groupName) const;
     QString getGroupNameFromPointName(const QString pointName) const;
     void addTmpPoint(MapView *mapView, MainWindow *mainWindow);
