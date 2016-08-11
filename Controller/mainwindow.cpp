@@ -510,6 +510,8 @@ void MainWindow::viewPathSelectedRobot(int robotNb, bool checked){
                      << robot->getPath().at(i)->getWaitTime();
         }
         pathPainter->setCurrentPath(robot->getPath());
+        robot->setPath(pathPainter->getCurrentPath());
+        bottomLayout->updateRobot(robotNb, robots->getRobotsVector().at(robotNb));
         emit updatePathPainter();
     } else {
         /// TODO close displaySelectedPoint if opened on a path point
@@ -960,6 +962,8 @@ void MainWindow::cancelPathSlot(){
     pathCreationWidget->resetWidget();
     emit resetPath();
     pathPainter->setCurrentPath(selectedRobot->getRobot()->getPath());
+    selectedRobot->getRobot()->setPath(pathPainter->getCurrentPath());
+    bottomLayout->updateRobot(robots->getRobotId(selectedRobot->getRobot()->getName()), selectedRobot);
 
     backEvent();
 }
@@ -1413,6 +1417,24 @@ void MainWindow::updatePathPermanentPoint(QString oldPointName, QString newPoint
 }
 
 
+void MainWindow::updateAllPaths(void){
+    for(int i = 0; i < robots->getRobotsVector().size(); i++){
+        std::shared_ptr<Robot> robot = robots->getRobotsVector().at(i)->getRobot();
+        QVector<std::shared_ptr<PathPoint>> path = robot->getPath();
+        for(int j = 0; j < path.size(); j++){
+            Point point = path.at(j)->getPoint();
+            qDebug() << "MainWindow::updatePoint Before" << point.getName();
+            if(!points->isAPoint(point.getName(), point.getPosition().getX(), point.getPosition().getY())){
+                point.setName(PATH_POINT_NAME + QString::number(j+1));
+                path.at(j)->setPoint(point);
+            }
+            qDebug() << "MainWindow::updatePoint After" << point.getName();
+        }
+        robot->setPath(path);
+        bottomLayout->updateRobot(robots->getRobotId(robot->getName()), robots->getRobotsVector().at(i));
+    }
+}
+
 /**********************************************************************************************************************************/
 
 //                                          MAPS
@@ -1706,7 +1728,7 @@ void MainWindow::minusGroupBtnEvent(){
  */
 void MainWindow::editPointButtonEvent(){
     setMessageTop(TEXT_COLOR_INFO, "Click the map or drag the point to change its position");
-    qDebug() << "editPointButtonEvent called";
+    qDebug() << "MainWindow::editPointButtonEvent called";
     leftMenu->getReturnButton()->setEnabled(false);
     leftMenu->getReturnButton()->setToolTip("Please save or discard your modifications before navigating the menu again.");
 
@@ -1721,7 +1743,7 @@ void MainWindow::editPointButtonEvent(){
 
     /// hide the temporary point on the map
     std::shared_ptr<PointView> displaySelectedPointView = points->findPointView(leftMenu->getDisplaySelectedPoint()->getPointName());
-    qDebug() << "selected point to edit " << leftMenu->getDisplaySelectedPoint()->getPointName();
+    qDebug() << "MainWindow::editPointButtonEvent selected point to edit " << leftMenu->getDisplaySelectedPoint()->getPointName();
     displaySelectedPointView->setOriginalPosition(displaySelectedPointView->getPoint()->getPosition());
 
     QMapIterator<QString, std::shared_ptr<QVector<std::shared_ptr<PointView>>>> i(*points->getGroups());
@@ -2185,11 +2207,10 @@ void MainWindow::askForDeleteGroupConfirmation(QString index){
 void MainWindow::displayPointEvent(PointView* pointView){
     qDebug() << "MainWindow::displayPointEvent called" << pointView->getPoint()->getName();
 
-    std::shared_ptr<PointView> pv = points->findPointView(pointView->getPoint()->getName());
 
 
     /// resets the color of the previous selected point if such point exists
-    if(pv && !(*(pv->getPoint()) == *(points->getTmpPointView()->getPoint())))
+    if(pointView && !(*(pointView->getPoint()) == *(points->getTmpPointView()->getPoint())))
         points->displayTmpPoint(false);
 
     leftMenu->getDisplaySelectedPoint()->getActionButtons()->getMapButton()->setChecked(true);
@@ -2203,6 +2224,7 @@ void MainWindow::displayPointEvent(PointView* pointView){
             qDebug() << "MainWindow::displayPointEvent : something unexpected happened";
     }
 
+    std::shared_ptr<PointView> pv = points->findPointView(pointView->getPoint()->getName());
     leftMenu->getDisplaySelectedPoint()->setPointView(pv, robotName);
 
     /// so that the points don't stay blue if we click a new point
@@ -2220,7 +2242,8 @@ void MainWindow::displayPointEvent(PointView* pointView){
     resetFocus();
     switchFocus(pointView->getPoint()->getName(), leftMenu->getDisplaySelectedPoint(), MainWindow::WidgetType::POINT);
 
-    if(pv->getPoint()->getType() != Point::PointType::PATH){
+    qDebug() << "MainWindow::displayPointEvent  : is this point a path ?" << (pointView->getPoint()->isPath()) << pointView->getPoint()->getType();
+    if(!pointView->getPoint()->isPath()){
         if(pointView->getPoint()->isHome()){
             RobotView* rv = robots->findRobotUsingHome(pointView->getPoint()->getName());
             if(rv != NULL)
@@ -2584,7 +2607,7 @@ void MainWindow::removePointFromInformationMenu(void){
                                 backEvent();
                             }
                         }
-
+                        updateAllPaths();
                         setTemporaryMessageTop(TEXT_COLOR_SUCCESS, "You have deleted the point : " + pointName + " from the group : " + pointIndexes.first, 2500);
                     }
                 } else {
@@ -2733,10 +2756,9 @@ void MainWindow::displayPointInfoFromGroupMenu(void){
  * called when a user edits a point and save the changes either by pressing the enter key or clicking the save button
  */
 void MainWindow::updatePoint(void){
-
+    qDebug() << "MainWindow::updatePoint called";
     leftMenu->getCloseButton()->setEnabled(true);
     topLayout->setEnabled(true);
-    qDebug() << "update point event called";
     ///resets the tooltip of the edit button and the minus button
     leftMenu->getDisplaySelectedPoint()->getActionButtons()->getEditButton()->setToolTip("You can click on this button and then choose between clicking on the map or drag the point to change its position");
     leftMenu->getDisplaySelectedPoint()->getActionButtons()->getMinusButton()->setToolTip("You can click this button to remove the point");
@@ -2745,7 +2767,7 @@ void MainWindow::updatePoint(void){
     leftMenu->getDisplaySelectedPoint()->getActionButtons()->getMapButton()->setToolTip("Click to hide this point");
 
     DisplaySelectedPoint* selectedPoint = leftMenu->getDisplaySelectedPoint();
-    qDebug() << "updating point" << selectedPoint->getPointName();
+    qDebug() << "MainWindow::updatePoint updating point" << selectedPoint->getPointName();
     std::shared_ptr<PointView> displaySelectedPointView = points->findPointView(selectedPoint->getPointName());
     //selectedPoint->setPointName(leftMenu->getDisplaySelectedPoint()->getNameEdit()->text());
 
@@ -2802,6 +2824,9 @@ void MainWindow::updatePoint(void){
     /// we enable the "back" button again
     leftMenu->getReturnButton()->setEnabled(true);
     leftMenu->getReturnButton()->setToolTip("");
+
+    /// We update the path as this point might have been used in a path
+    updateAllPaths();
 
     setMessageTop(TEXT_COLOR_SUCCESS, "Your point has been modified");
     delay(1500);

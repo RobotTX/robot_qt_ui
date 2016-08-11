@@ -23,7 +23,7 @@ class PathPainter : public QObject, public QGraphicsPathItem{
 
 public:
     PathPainter(MainWindow* const &mainWindow, MapView* const &mapPixmapItem, std::shared_ptr<Points> _points);
-    void setCurrentPath(const QVector<std::shared_ptr<PathPoint>>& _currentPath);
+    void setCurrentPath(QVector<std::shared_ptr<PathPoint> > _currentPath);
     QVector<std::shared_ptr<PathPoint>> getCurrentPath(void) const { return currentPath; }
     void displayPath(void);
     int nbUsedPointView(QString name, double x, double y);

@@ -44,9 +44,8 @@ void PathPainter::addPathPointSlot(QString name, double x, double y){
     if(nb > 0 && pointView){
         points->addPoint(PATH_GROUP_NAME, pointView);
     } else {
-        //QRegularExpression("[0-9]+\\.[0-9]+; [0-9]+\\.[0-9]+");
-        if(name.contains(PATH_POINT_NAME))
-            name = PATH_POINT_NAME + QString::number(currentPath.size()+1) ;
+        if(!points->isAPoint(name, x, y))
+            name = PATH_POINT_NAME + QString::number(currentPath.size()+1);
         points->addPoint(PATH_GROUP_NAME, name, x, y, true, Point::PointType::PATH, mapView, mainWindow);
     }
 
@@ -222,7 +221,7 @@ int PathPainter::nbUsedPointView(QString name, double x, double y){
     return nbUsed;
 }
 
-void PathPainter::setCurrentPath(const QVector<std::shared_ptr<PathPoint>>& _currentPath){
+void PathPainter::setCurrentPath(QVector<std::shared_ptr<PathPoint>> _currentPath){
     for(int i = 0; i < _currentPath.size(); i++){
         Point point = _currentPath.at(i)->getPoint();
         addPathPointSlot(point.getName(), point.getPosition().getX(), point.getPosition().getY());
