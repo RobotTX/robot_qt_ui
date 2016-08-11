@@ -66,7 +66,7 @@ PathCreationWidget::PathCreationWidget(MainWindow *parent, const std::shared_ptr
 void PathCreationWidget::updateRobot(std::shared_ptr<Robot> robot){
     qDebug() << "PathCreationWidget::updateRobot called" << robot->getName();
     if (robot != NULL){
-        for (size_t i = 0; i < robot->getPath().size(); i++){
+        for(int i = 0; i < robot->getPath().size(); i++){
             addPathPointSlot(robot->getPath().at(i)->getPoint().getName(),
                              robot->getPath().at(i)->getPoint().getPosition().getX(),
                              robot->getPath().at(i)->getPoint().getPosition().getY());

@@ -247,11 +247,11 @@ void MainWindow::initializeRobots(){
 
 /*
     updateRobotsThread = new UpdateRobotsThread(PORT_ROBOT_UPDATE);
-    connect(updateRobotsThread, SIGNAL(robotIsAlive(QString, QString, QString, QString)), this, SLOT(robotIsAliveSlot(QString, QString, QString, QString)));
+    connect(updateRobotsThread, SIGNAL(robotIsAlive(QString, QString, QString, QString, int)), this, SLOT(robotIsAliveSlot(QString, QString, QString, QString, int)));
     updateRobotsThread->start();
     updateRobotsThread->moveToThread(updateRobotsThread);
-*/
 
+*/
 
     QFile fileWrite(ROBOTS_NAME_PATH);
     fileWrite.resize(0);
@@ -405,8 +405,8 @@ void MainWindow::connectToRobot(){
     }
 }
 
-void MainWindow::stopSelectedRobot(int robotNb){
-    qDebug() << "stopSelectedRobot called on robot :" << robots->getRobotsVector().at(robotNb)->getRobot()->getName();
+void MainWindow::deletePath(int robotNb){
+    qDebug() << "MainWindow::deletepath called on robot :" << robots->getRobotsVector().at(robotNb)->getRobot()->getName();
 
     if(robots->getRobotsVector().at(robotNb)->getRobot()->getPath().size() > 0){
         int ret = openConfirmMessage("Are you sure you want to delete this path ?");
@@ -447,6 +447,29 @@ void MainWindow::stopSelectedRobot(int robotNb){
     }
 }
 
+void MainWindow::stopPath(int robotNb){
+    qDebug() << "MainWindow::StopPath called";
+    std::shared_ptr<Robot> robot = robots->getRobotsVector().at(robotNb)->getRobot();
+    robot->resetCommandAnswer();
+    if(robot->sendCommand(QString("l"))){
+        QString answer = robot->waitAnswer();
+        QStringList answerList = answer.split(QRegExp("[ ]"), QString::SkipEmptyParts);
+        if(answerList.size() > 1){
+            QString cmd = answerList.at(0);
+            bool success = (answerList.at(1).compare("done") == 0);
+            if((cmd.compare("l") == 0 && success) || answerList.at(0).compare("1") == 0){
+                robot->setPlayingPath(false);
+                bottomLayout->getPlayRobotBtnGroup()->button(robotNb)->setIcon(QIcon(":/icons/play.png"));
+                bottomLayout->getStopRobotBtnGroup()->button(robotNb)->setEnabled(false);
+                topLayout->setLabel(TEXT_COLOR_SUCCESS, "Path stopped");
+            } else {
+                topLayout->setLabel(TEXT_COLOR_DANGER, "Path failed to be stopped, please try again");
+            }
+        }
+        robot->resetCommandAnswer();
+    }
+}
+
 void MainWindow::playSelectedRobot(int robotNb){
     std::shared_ptr<Robot> robot = robots->getRobotsVector().at(robotNb)->getRobot();
     if(robot->isPlayingPath()){
@@ -462,6 +485,7 @@ void MainWindow::playSelectedRobot(int robotNb){
                 if((cmd.compare("d") == 0 && success) || answerList.at(0).compare("1") == 0){
                     robot->setPlayingPath(0);
                     bottomLayout->getPlayRobotBtnGroup()->button(robotNb)->setIcon(QIcon(":/icons/play.png"));
+                    bottomLayout->getStopRobotBtnGroup()->button(robotNb)->setEnabled(true);
                     topLayout->setLabel(TEXT_COLOR_SUCCESS, "Path stopped");
                 } else {
                     topLayout->setLabel(TEXT_COLOR_DANGER, "Path failed to be stopped, please try again");
@@ -485,9 +509,10 @@ void MainWindow::playSelectedRobot(int robotNb){
                 if((cmd.compare("j") == 0 && success) || answerList.at(0).compare("1") == 0){
                     robot->setPlayingPath(1);
                     bottomLayout->getPlayRobotBtnGroup()->button(robotNb)->setIcon(QIcon(":/icons/pause.png"));
+                    bottomLayout->getStopRobotBtnGroup()->button(robotNb)->setEnabled(true);
                     topLayout->setLabel(TEXT_COLOR_SUCCESS, "Path playing");
                 } else {
-                    topLayout->setLabel(TEXT_COLOR_DANGER, "Path failed to be played, please try again");
+                    topLayout->setLabel(TEXT_COLOR_DANGER, "Path failed to start, please try again");
                 }
             }
         }
@@ -840,6 +865,13 @@ void MainWindow::robotSavedEvent(){
                 QString cmd = answerList.at(0);
                 bool success = (answerList.at(1).compare("done") == 0);
                 if((cmd.compare("i") == 0 && success) || answerList.at(0).compare("1") == 0){
+                    /// we update the path on the application side by serializing the path
+                    QFile fileWrite("/home/joan/Qt/QtProjects/gobot-software/" + robot->getIp());
+                    fileWrite.resize(0);
+                    fileWrite.open(QIODevice::WriteOnly);
+                    QDataStream out(&fileWrite);
+                    out << *robot;
+                    fileWrite.close();
                     qDebug() << "MainWindow::robotSavedEvent Path saved";
                 } else {
                     qDebug() << "MainWindow::robotSavedEvent Path failed to be saved, please try again";
@@ -1112,7 +1144,7 @@ void MainWindow::goHomeBtnEvent(){
             QString cmd = answerList.at(0);
             bool success = (answerList.at(1).compare("done") == 0);
             if((cmd.compare("d") == 0 && success) || answerList.at(0).compare("1") == 0){
-                qDebug() << "Going to home";
+                qDebug() << "Going home";
                 topLayout->setLabel(TEXT_COLOR_SUCCESS, "Robot going home");
             } else {
                 topLayout->setLabel(TEXT_COLOR_DANGER, "Failed to tell the robot to go home, please try again");
@@ -1122,11 +1154,12 @@ void MainWindow::goHomeBtnEvent(){
     }
 }
 
-void MainWindow::robotIsAliveSlot(QString hostname, QString ip, QString mapId, QString ssid){
+void MainWindow::robotIsAliveSlot(QString hostname, QString ip, QString mapId, QString ssid, int stage){
     QRegExp rx("[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}");
     rx.indexIn(ip);
     ip = rx.cap(0);
     RobotView* rv = robots->getRobotViewByIp(ip);
+
     if(rv != NULL){
         qDebug() << "Robot" << hostname << "at ip" << ip << "is still alive and has the map id :" << mapId;
         rv->getRobot()->ping();
@@ -1177,6 +1210,14 @@ void MainWindow::robotIsAliveSlot(QString hostname, QString ip, QString mapId, Q
     } else {
         qDebug() << "Which is an old map";
         sendNewMapToRobot(rv->getRobot(), currMapId);
+    }
+
+    /// Check the current stage of the robot
+    int robotId = robots->getRobotId(rv->getRobot()->getName());
+    if(rv->getRobot()->getPath().size() == stage){
+        setMessageTop(TEXT_COLOR_SUCCESS, "The robot " + rv->getRobot()->getName() + " has successfully reached its destination");
+        bottomLayout->getPlayRobotBtnGroup()->button(robotId)->setIcon(QIcon(":/icons/play.png"));
+        bottomLayout->getStopRobotBtnGroup()->button(robotId)->setEnabled(false);
     }
 }
 
@@ -3206,7 +3247,9 @@ void MainWindow::modifyGroupAfterClick(QString name){
         pointsLeftWidget->getGroupButtonGroup()->getModifyEdit()->hide();
         leftMenu->getReturnButton()->setEnabled(true);
         int checkedId = pointsLeftWidget->getGroupButtonGroup()->getButtonIdByName(pointsLeftWidget->getGroupButtonGroup()->getEditedGroupName());
-
+           QString color ="";
+           QString msg = "";
+           int time=1500;
         if(pointsLeftWidget->checkGroupName(name) == 0){
             /// Update the model
             qDebug() <<   pointsLeftWidget->getLastCheckedId();
@@ -3218,15 +3261,23 @@ void MainWindow::modifyGroupAfterClick(QString name){
 
             /// updates view
             pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(checkedId)->setText(name);
-
-            topLayout->setLabelDelay(TEXT_COLOR_SUCCESS, "You have successfully modified the name of your group",1500);
+            color= TEXT_COLOR_SUCCESS;
+            msg= "You have successfully modified the name of your group";
+            time=1500;
         } else if(pointsLeftWidget->checkGroupName(name) == 1){
-            topLayout->setLabelDelay(TEXT_COLOR_DANGER, "The name of your group cannot be empty. Please choose a name for your group",2500);
+            color=TEXT_COLOR_DANGER;
+            msg= "The name of your group cannot be empty. Please choose a name for your group";
+            time=2500;
         } else {
-            topLayout->setLabelDelay(TEXT_COLOR_DANGER, "You cannot choose : " + name.simplified() + " as a new name for your group because another group already has this name",2500);
+            color=TEXT_COLOR_DANGER;
+            msg = "You cannot choose : " + name.simplified() + " as a new name for your group because another group already has this name";
+            time = 2500;
         }
+
         pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(checkedId)->show();
          pointsLeftWidget->setLastCheckedId("");
+         topLayout->setLabelDelay(color, msg,time);
+
     }
 
 }

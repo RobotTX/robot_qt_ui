@@ -3,6 +3,8 @@
 
 #include "Model/point.h"
 
+#include <QDataStream>
+
 /**
  * @brief The PathPoint class
  * Represent a point on a robot path
@@ -18,14 +20,16 @@ public:
     PathPoint(const Point& point, const Action& action, const int waitTime = 0);
 
     /// Getters
-    Point getPoint(void) { return point; }
-    Action getAction(void) { return action; }
-    int getWaitTime(void) { return waitTime; }
+    Point getPoint(void) const { return point; }
+    Action getAction(void) const { return action; }
+    int getWaitTime(void) const { return waitTime; }
 
     /// Setters
     void setPoint(const Point& _point) { point = _point; }
     void setAction(const Action& _action) { action = _action; }
     void setWaitTime(const int _waitTime) { waitTime = _waitTime; }
+
+
 
 private:
     /**
@@ -45,7 +49,18 @@ private:
      * How long the robot needs to wait if its action is to wait
      */
     int waitTime;
+
+
 };
+
+/**
+ * @brief operator <<
+ * @param out
+ * @param pathPoint
+ * @return
+ */
+QDataStream& operator<<(QDataStream& out, const PathPoint& robot);
+QDataStream& operator>>(QDataStream& in, PathPoint& robot);
 
 #endif // PATHPOINT_H
 

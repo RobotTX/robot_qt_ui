@@ -137,7 +137,7 @@ private slots:
     void editSelecPointBtnEvent();
     void setSelectedPoint();
     void pointSavedEvent(QString groupName, double x, double y, QString name);
-    void stopSelectedRobot(int robotNb);
+    void deletePath(int robotNb);
     void playSelectedRobot(int robotNb);
     void askForDeleteGroupConfirmation(const QString group);
     void askForDeletePointConfirmation(const QString index);
@@ -193,13 +193,14 @@ private slots:
     void hideHome(void);
     void backEvent();
     void updateView();
-    void robotIsAliveSlot(QString hostname, QString ip, QString mapId, QString ssid);
+    void robotIsAliveSlot(QString hostname, QString ip, QString mapId, QString ssid, int stage);
     void robotIsDeadSlot(QString hostname, QString ip);
     void selectViewRobot();
     void sendNewMapToRobots(QString ipAddress);
     void sendNewMapToRobot(std::shared_ptr<Robot> robot, QString mapId);
     void settingBtnSlot();
     void updatePathPainterPointViewSlot();
+    void stopPath(int robotNb);
 
 private:
     Ui::MainWindow* ui;

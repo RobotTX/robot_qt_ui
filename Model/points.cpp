@@ -169,14 +169,14 @@ std::shared_ptr<PointView> Points::createPoint(const QString pointName, const do
 
 void Points::addPoint(const QString groupName, const QString pointName, const double x, const double y, const bool displayed, const Point::PointType type,
                       MapView* mapView, MainWindow* mainWindow){
-    qDebug() << "Points::addPoint called";
+    //qDebug() << "Points::addPoint called";
 
     std::shared_ptr<PointView> pointView = createPoint(pointName, x, y , displayed, type, mapView, mainWindow);
     addPoint(groupName, pointView);
 }
 
 void Points::addPoint(const QString groupName, const std::shared_ptr<PointView> &pointView){
-    qDebug() << "Points::addPoint called with pointView";
+    //qDebug() << "Points::addPoint called with pointView";
 
     if(!groups->empty() && groups->contains(groupName)){
         groups->value(groupName)->push_back(pointView);
