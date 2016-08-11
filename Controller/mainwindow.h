@@ -177,6 +177,7 @@ private slots:
     void setMessageCreationPoint(QString type, CreatePointWidget::Error error);
     void addPathPointToMap(Point* point);
     void updatePathPermanentPoint(QString, QString);
+    void deletePath(int robotNb);
 
     /**
      * @brief cancelEvent

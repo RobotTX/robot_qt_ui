@@ -246,14 +246,14 @@ void MainWindow::initializeRobots(){
     fileRead.close();
 
 
-/*
+
     updateRobotsThread = new UpdateRobotsThread(PORT_ROBOT_UPDATE);
     connect(updateRobotsThread, SIGNAL(robotIsAlive(QString, QString, QString, QString)), this, SLOT(robotIsAliveSlot(QString, QString, QString, QString)));
     updateRobotsThread->start();
     updateRobotsThread->moveToThread(updateRobotsThread);
-*/
 
 
+/*
     QFile fileWrite(ROBOTS_NAME_PATH);
     fileWrite.resize(0);
     fileWrite.open(QIODevice::WriteOnly);
@@ -298,7 +298,7 @@ void MainWindow::initializeRobots(){
     robots->setRobotsNameMap(tmpMap);
     out << robots->getRobotsNameMap();
     fileWrite.close();
-
+*/
 
     qDebug() << "RobotsNameMap on init" << robots->getRobotsNameMap();
 }
@@ -1207,6 +1207,52 @@ void MainWindow::robotIsAliveSlot(QString hostname, QString ip, QString mapId, Q
     } else {
         qDebug() << "Which is an old map";
         sendNewMapToRobot(rv->getRobot(), currMapId);
+    }
+}
+
+void MainWindow::deletePath(int robotNb){
+    qDebug() << "stopSelectedRobot called on robot : " << robots->getRobotsVector().at(robotNb)->getRobot()->getName();
+
+    if(robots->getRobotsVector().at(robotNb)->getRobot()->getPath().size() > 0){
+        int ret = openConfirmMessage("Are you sure you want to delete this path ?");
+        switch (ret) {
+            case QMessageBox::Ok:
+                /// if the command is succesfully sent to the robot, we apply the change
+                robots->getRobotsVector().at(robotNb)->getRobot()->resetCommandAnswer();
+                if(robots->getRobotsVector().at(robotNb)->getRobot()->sendCommand(QString("k"))){
+                    QString answer = robots->getRobotsVector().at(robotNb)->getRobot()->waitAnswer();
+                    QStringList answerList = answer.split(QRegExp("[ ]"), QString::SkipEmptyParts);
+                    if(answerList.size() > 1){
+                        QString cmd = answerList.at(0);
+                        bool success = (answerList.at(1).compare("done") == 0);
+                        if((cmd.compare("k") == 0 && success) || answerList.at(0).compare("1") == 0){
+                            clearPath(robotNb);
+                            if(!robots->getRobotsVector().at(robotNb)->getRobot()->getName().compare(selectedRobot->getRobot()->getName())){
+                                hideAllWidgets();
+                                selectedRobotWidget->setSelectedRobot(selectedRobot);
+                                selectedRobotWidget->show();
+                                bottomLayout->getViewPathRobotBtnGroup()->button(robotNb)->setChecked(false);
+                                bottomLayout->getViewPathRobotBtnGroup()->button(robotNb)->click();
+
+                            }
+                            topLayout->setLabel(TEXT_COLOR_SUCCESS, "Path deleted");
+                        } else {
+                            topLayout->setLabel(TEXT_COLOR_DANGER, "Failed to delete the path, please try again");
+                        }
+                    }
+                    robots->getRobotsVector().at(robotNb)->getRobot()->resetCommandAnswer();
+
+                }
+            break;
+            case QMessageBox::Cancel:
+                qDebug() << "Cancel was clicked";
+            break;
+            default:
+                qDebug() << "Should never be reached";
+            break;
+        }
+    } else {
+        qDebug() << "This robot has no path";
     }
 }
 
