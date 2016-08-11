@@ -92,6 +92,15 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
     initializePoints();
 
+    QMapIterator<QString, std::shared_ptr<QVector<std::shared_ptr<PointView>>>> i(*(points->getGroups()));
+    while (i.hasNext()) {
+        i.next();
+        for(int j = 0; j < i.value()->count(); j++){
+            qDebug() << i.key() << i.value()->at(j)->getPoint()->getName();
+        }
+
+    }
+
     pathPainter = std::shared_ptr<PathPainter>(new PathPainter(this, mapPixmapItem, points));
 
     initializeRobots();
@@ -675,7 +684,6 @@ void MainWindow::cancelEditSelecRobotBtnEvent(){
         selectedRobot->getRobot()->setPath(editSelectedRobotWidget->getOldPath() );
         bottomLayout->uncheckAll();
     }*/
-    emit resetPath();
 
     backEvent();
 
@@ -849,14 +857,13 @@ void MainWindow::robotSavedEvent(){
                 bottomLayout->updateRobot(robots->getRobotId(selectedRobot->getRobot()->getName()), selectedRobot);
 
                 selectedRobotWidget->setSelectedRobot(selectedRobot );
-                if(editSelectedRobotWidget->isFirstConnection()){
+                /*if(editSelectedRobotWidget->isFirstConnection()){
                     setEnableAll(true);
-                }
+                }*/
 
                 if(editSelectedRobotWidget->getPathChanged()){
                     selectedRobot->getRobot()->setPath(pathPainter->getCurrentPath());
 
-                    setEnableAll(true);
 
                     int id = robots->getRobotId(selectedRobot->getRobot()->getName());
                     bottomLayout->updateRobot(id, selectedRobot);
@@ -866,6 +873,7 @@ void MainWindow::robotSavedEvent(){
                     selectedRobotWidget->setSelectedRobot(selectedRobot);
                     editSelectedRobotWidget->setPathChanged(false);
                 }
+                setEnableAll(true);
 
                 setMessageTop(TEXT_COLOR_SUCCESS, "Robot successfully edited");
                 qDebug() << "Robot successfully edited";
@@ -918,7 +926,7 @@ void MainWindow::editTmpPathPointSlot(int id, QString name, double x, double y){
 void MainWindow::savePathSlot(){
     qDebug() << "MainWindow::savePath called";
     /// we hide the points that we displayed for the edition of the path
-    for(size_t i = 0; i < pointViewsToDisplay.size(); i++)
+    for(int i = 0; i < pointViewsToDisplay.size(); i++)
         pointViewsToDisplay.at(i)->hide();
     pointViewsToDisplay.clear();
 
@@ -931,7 +939,7 @@ void MainWindow::savePathSlot(){
 void MainWindow::cancelPathSlot(){
     qDebug() << "MainWindow::cancelPathSlot called";
     /// we hide the points that we displayed for the edition of the path
-    for(size_t i = 0; i < pointViewsToDisplay.size(); i++)
+    for(int i = 0; i < pointViewsToDisplay.size(); i++)
         pointViewsToDisplay.at(i)->hide();
     pointViewsToDisplay.clear();
 
@@ -2162,6 +2170,7 @@ void MainWindow::askForDeleteGroupConfirmation(QString index){
 
 void MainWindow::displayPointEvent(PointView* pointView){
     qDebug() << "MainWindow::displayPointEvent called" << pointView->getPoint()->getName();
+    std::shared_ptr<PointView> pv = points->findPointView(pointView->getPoint()->getName());
 
     if(pointView && !(*(pointView->getPoint()) == *(points->getTmpPointView()->getPoint())))
         points->displayTmpPoint(false);
@@ -2178,10 +2187,11 @@ void MainWindow::displayPointEvent(PointView* pointView){
             qDebug() << "MainWindow::displayPointEvent : something unexpected happened";
     }
 
-    leftMenu->getDisplaySelectedPoint()->setPointView(std::shared_ptr<PointView>(pointView), robotName);
+    leftMenu->getDisplaySelectedPoint()->setPointView(pv, robotName);
 
     pointView->setPixmap(PointView::PixmapType::MID);
     pointView->setState(GraphicItemState::NO_STATE);
+
 
     leftMenu->getDisplaySelectedPoint()->displayPointInfo();
 
@@ -2192,6 +2202,7 @@ void MainWindow::displayPointEvent(PointView* pointView){
     leftMenu->getDisplaySelectedPoint()->show();
     resetFocus();
     switchFocus(pointView->getPoint()->getName(), leftMenu->getDisplaySelectedPoint(), MainWindow::WidgetType::POINT);
+
 }
 
 void MainWindow::displayGroupMapEvent(void){
