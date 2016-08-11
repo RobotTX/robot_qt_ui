@@ -44,11 +44,13 @@ void PathPainter::addPathPointSlot(QString name, double x, double y){
     if(nb > 0 && pointView){
         points->addPoint(PATH_GROUP_NAME, pointView);
     } else {
-        name = PATH_POINT_NAME + QString::number(currentPath.size()+1) ;
+        //QRegularExpression("[0-9]+\\.[0-9]+; [0-9]+\\.[0-9]+");
+        if(name.contains(PATH_POINT_NAME))
+            name = PATH_POINT_NAME + QString::number(currentPath.size()+1) ;
         points->addPoint(PATH_GROUP_NAME, name, x, y, true, Point::PointType::PATH, mapView, mainWindow);
     }
 
-    points->getGroups()->value(PATH_GROUP_NAME)->last()->setState(GraphicItemState::CREATING_PATH);
+    points->getGroups()->value(PATH_GROUP_NAME)->last()->setState(mapView->getState());
     Point point = *(points->getGroups()->value(PATH_GROUP_NAME)->last()->getPoint());
     currentPath.push_back(std::shared_ptr<PathPoint>(new PathPoint(point, PathPoint::Action::WAIT)));
 

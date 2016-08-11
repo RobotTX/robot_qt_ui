@@ -48,8 +48,6 @@ public:
     void setPathChanged(const bool change) { pathChanged = change; }
     bool getPathChanged() const { return pathChanged; }
     void setPathWidget(PathWidget* pw) { pathWidget = pw; }
-    void setOldPath(const QVector<std::shared_ptr<PathPoint>>& pw) { oldPath = pw; }
-    QVector<std::shared_ptr<PathPoint>> getOldPath() const {return oldPath;}
     void setPath(QVector<std::shared_ptr<PathPoint>> const path);
     void clearPath();
     QLabel* getHomeLabel(void) const {return homeLabel;}
@@ -81,7 +79,6 @@ private:
     bool firstConnection;
     QPushButton* cancelBtn;
     PathWidget* pathWidget;
-    QVector<std::shared_ptr<PathPoint>> oldPath;
     bool pathChanged;
     QLabel* homeLabel;
 protected:

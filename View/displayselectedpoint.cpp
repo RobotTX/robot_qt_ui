@@ -218,15 +218,12 @@ int DisplaySelectedPoint::checkPointName(QString name) {
 void DisplaySelectedPoint::setPointView(const std::shared_ptr<PointView>& _pointView, const QString robotName) {
     qDebug() << "DisplaySelectedPoint::setPointView called";
 
-    if(_pointView)
-        pointView = _pointView;
-    else
-        qDebug() << "DisplaySelectedPoint::setPointView : there is no pointView to assign";
     /// sets the pixmaps of the other points (black)
     //points->setPixmapAll(PointView::PixmapType::NORMAL);
-    qDebug() << "pixmaps set";
+
     /// sets the color of the displayed pointView to blue
-    if(pointView){
+    if(_pointView){
+        pointView = _pointView;
         // no point if path point
         if(pointView->getPoint()->isHome()){
             homeWidget->show();
