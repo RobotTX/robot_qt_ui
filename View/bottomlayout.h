@@ -87,6 +87,8 @@ private:
      */
     QButtonGroup* viewPathRobotBtnGroup;
 
+    QButtonGroup* deletePathBtnGroup;
+
     /**
      * @brief vectorPathLabel
      * vector containing the different labels displaying the path of each robot,
@@ -101,6 +103,7 @@ private:
     QVBoxLayout* columnPlay;
     QVBoxLayout* columnViewPath;
     QVBoxLayout* columnStop;
+    QVBoxLayout* columnDelete;
     QWidget* widgetName;
     QWidget* widgetPath;
     QWidget* actionWidget;

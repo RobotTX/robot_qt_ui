@@ -2187,16 +2187,6 @@ void MainWindow::displayPointEvent(PointView* pointView){
     leftMenu->getDisplaySelectedPoint()->getActionButtons()->getMapButton()->setChecked(true);
 
     QString robotName = "";
-<<<<<<< HEAD
-    if(pointView->getPoint()->isHome()){
-        RobotView* rv = robots->findRobotUsingHome(pointView->getPoint()->getName());
-        if(rv != NULL)
-            robotName = rv->getRobot()->getName();
-        else
-            qDebug() << "MainWindow::displayPointEvent : something unexpected happened";
-    }
-=======
->>>>>>> f0f96b3f880455f90b60e4d7f7fabd47802880ee
 
     leftMenu->getDisplaySelectedPoint()->setPointView(pv, robotName);
 
@@ -3213,7 +3203,7 @@ void MainWindow::modifyGroupWithEnter(QString name){
         pointsLeftWidget->getGroupButtonGroup()->getModifyEdit()->hide();
 
         leftMenu->getReturnButton()->setEnabled(true);
-        pointsLeftWidget->setLastCheckedId("");
+
         topLayout->setLabelDelay(TEXT_COLOR_SUCCESS, "You have successfully modified the name of your group",1500);
     } else if(pointsLeftWidget->checkGroupName(name) == 1){
         topLayout->setLabelDelay(TEXT_COLOR_DANGER, "The name of your group cannot be empty. Please choose a name for your group",2500);

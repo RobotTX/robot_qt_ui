@@ -71,7 +71,7 @@ void PointButtonGroup::setCheckable(const bool checkable){
 }
 
 void PointButtonGroup::uncheck(void){
-    qDebug() << "PointButtonGroup::uncheck called";
+    //qDebug() << "PointButtonGroup::uncheck called";
     /// little trick to uncheck all buttons because the class doesn't provide a function to do it
     buttonGroup->setExclusive(false);
     if(buttonGroup->checkedButton())

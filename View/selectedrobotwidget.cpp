@@ -75,7 +75,7 @@ SelectedRobotWidget::SelectedRobotWidget(QMainWindow* parent): QWidget(parent){
     /// Home layout with the button to select/show the home
     QLabel* homeLabel = new QLabel("Home : ", this);
      homeLabel2 = new QLabel("no home set");
-
+    homeLabel2->setAlignment(Qt::AlignCenter);
     inLayout->addWidget(homeLabel);
     inLayout->addWidget(homeLabel2);
 
@@ -90,6 +90,8 @@ SelectedRobotWidget::SelectedRobotWidget(QMainWindow* parent): QWidget(parent){
     QLabel* pathLabel = new QLabel("Path : ", this);
     inLayout->addWidget(pathLabel);
     noPath = new QLabel("no path set");
+    noPath->setAlignment(Qt::AlignCenter);
+
     inLayout->addWidget(noPath);
 
     pathWidget = new PathWidget(this);

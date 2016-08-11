@@ -63,8 +63,8 @@
         <file>eye_point.png</file>
         <file alias="center.png">073__focus.png</file>
         <file alias="setting.png">082__setting_cog.png</file>
-        <file >cropped_list.png</file>
-
+        <file>cropped_list.png</file>
+        <file>stop.png</file>
 
     </qresource>
     <qresource prefix="/xml">

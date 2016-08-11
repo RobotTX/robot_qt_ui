@@ -78,7 +78,7 @@ void MapView::mouseReleaseEvent(QGraphicsSceneMouseEvent *event){
     QGraphicsPixmapItem::mouseReleaseEvent(event);
 }
 void MapView::setState(const GraphicItemState _state){
-    qDebug() << "mapview setstate" << _state;
+    //qDebug() << "mapview setstate" << _state;
     state = _state;
 }
 
