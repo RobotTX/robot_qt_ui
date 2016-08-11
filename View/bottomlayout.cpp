@@ -27,23 +27,25 @@ BottomLayout::BottomLayout(QMainWindow* parent, const std::shared_ptr<Robots> &r
 
     QVector<RobotView*> robotsVector = robots->getRobotsVector();
 
-    /// The button group for the collumn with the robots' name
+    /// The button group for the column with the robots' name
     robotBtnGroup = new QButtonGroup(this);
 
-    /// The button group for the collumn with the stop/delete path buttons
+    /// The button group for the column with the stop/delete path buttons
     viewPathRobotBtnGroup = new QButtonGroup(this);
     viewPathRobotBtnGroup->setExclusive(false);
 
-    /// The button group for the collumn with the stop/delete path buttons
+    /// The button group for the column with the stop/delete path buttons
     stopRobotBtnGroup = new QButtonGroup(this);
 
-    /// The button group for the collumn with the play/pause path buttons
+    /// The button group for the column with the play/pause path buttons
     playRobotBtnGroup = new QButtonGroup(this);
+
+    /// the button group for the column with the delete path buttons
+    deletePathBtnGroup = new QButtonGroup(this);
 
     /// to scroll a path when there are two many points to display
     QScrollBar* pathScroll2 = new QScrollBar(Qt::Orientation::Horizontal, this);
     pathScroll = new CustomScrollArea(this, false, pathScroll2);
-
 
     /// The layout of the three columns
     widgetName = new QWidget(this);
@@ -52,15 +54,18 @@ BottomLayout::BottomLayout(QMainWindow* parent, const std::shared_ptr<Robots> &r
 
     QHBoxLayout* actionLayout = new QHBoxLayout(actionWidget);
 
-
     columnName = new QVBoxLayout();
     columnPath = new QVBoxLayout();
     columnPlay = new QVBoxLayout();
     columnViewPath = new QVBoxLayout();
     columnStop = new QVBoxLayout();
+    columnDelete = new QVBoxLayout();
+
     actionLayout->addLayout(columnViewPath);
     actionLayout->addLayout(columnPlay);
     actionLayout->addLayout(columnStop);
+    actionLayout->addLayout(columnDelete);
+
     actionLayout->setContentsMargins(0,0,0,0);
     widgetName->setLayout(columnName);
 
@@ -75,11 +80,11 @@ BottomLayout::BottomLayout(QMainWindow* parent, const std::shared_ptr<Robots> &r
         columnName->addWidget(robotBtn);
         robotBtn->setFlat(true);
         robotBtn->setStyleSheet("QPushButton { border: 1px solid #d3d3d3}""QPushButton:hover{ background-color: "+button_hover_color+"; border: 1px;}");
-
     }
+
     scrollLayout->addWidget(widgetName);
 
-    /// Creation of the second collumn, with the labels containing the path of the robot
+    /// Creation of the second column, with the labels containing the path of the robot
     for(int i = 0; i < robotsVector.size(); i++){
         QLabel* pathLabel = new QLabel(pathToStr(robotsVector.at(i)->getRobot()->getPath()), this);
         pathLabel->setMinimumHeight(parent->height()/10);
@@ -108,7 +113,7 @@ BottomLayout::BottomLayout(QMainWindow* parent, const std::shared_ptr<Robots> &r
 
     }
 
-    /// Creation of the fourth collumn, with the button to play/pause the robot
+    /// Creation of the fourth column, with the button to play/pause the robot
     for(int i = 0; i < robotsVector.size(); i++){
         QPushButton* playRobotBtn = new QPushButton(QIcon(":/icons/play.png"),"", this);
         playRobotBtn->setMaximumWidth(parent->width()/10);
@@ -120,12 +125,11 @@ BottomLayout::BottomLayout(QMainWindow* parent, const std::shared_ptr<Robots> &r
         columnPlay->addWidget(playRobotBtn);
         playRobotBtn->setFlat(true);
         playRobotBtn->setStyleSheet("QPushButton{background-position: center center; border: 1px solid;       border-right-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, x3: 0, y3: 0, stop: 0 transparent, stop: 0.5 #d3d3d3, stop: 1 transparent);border-left:none; border-top:none; border-bottom:none; position: relative;}""QPushButton:after {  content:''; background: grey;  position: absolute;  bottom: 0;  left: 0;  height: 50%; width: 1px;   }""QPushButton:hover{ background-color: "+button_hover_color+";}");
-
     }
 
-    /// Creation of the fifth column, with the button to stop and delete the path of the robot
+    ///  Creation of the fifth column to stop playing the path (new !)
     for(int i = 0; i < robotsVector.size(); i++){
-        QPushButton* stopRobotBtn = new QPushButton(QIcon(":/icons/close.png"),"", this);
+        QPushButton* stopRobotBtn = new QPushButton(QIcon(":/icons/stop.png"),"", this);
         stopRobotBtn->setMaximumWidth(parent->width()/10);
         stopRobotBtn->setMinimumWidth(parent->width()/10);
         stopRobotBtn->setIconSize(parent->size()/10);
@@ -135,7 +139,18 @@ BottomLayout::BottomLayout(QMainWindow* parent, const std::shared_ptr<Robots> &r
         columnStop->addWidget(stopRobotBtn);
         stopRobotBtn->setFlat(true);
         stopRobotBtn->setStyleSheet("QPushButton{background-position: center center; border: 1px solid;       border-right-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, x3: 0, y3: 0, stop: 0 transparent, stop: 0.5 #d3d3d3, stop: 1 transparent);border-left:none; border-top:none; border-bottom:none; position: relative;}""QPushButton:after {  content:''; background: grey;  position: absolute;  bottom: 0;  left: 0;  height: 50%; width: 1px;   }""QPushButton:hover{ background-color: "+button_hover_color+"; }");
+    }
 
+    /// Creation of the sixth column, with the button to delete the path of the robot
+    for(int i = 0; i < robotsVector.size(); i++){
+        QPushButton* deletePathButton = new QPushButton(QIcon(":/icons/close.png"), "", this);
+        deletePathButton->setMaximumWidth(parent->width()/10);
+        deletePathButton->setMinimumWidth(parent->width()/10);
+        deletePathButton->setIconSize(parent->size()/10);
+        deletePathBtnGroup->addButton(deletePathButton, i);
+        columnDelete->addWidget(deletePathButton);
+        deletePathButton->setFlat(true);
+        deletePathButton->setStyleSheet("QPushButton{background-position: center center; border: 1px solid;       border-right-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, x3: 0, y3: 0, stop: 0 transparent, stop: 0.5 #d3d3d3, stop: 1 transparent);border-left:none; border-top:none; border-bottom:none; position: relative;}""QPushButton:after {  content:''; background: grey;  position: absolute;  bottom: 0;  left: 0;  height: 50%; width: 1px;   }""QPushButton:hover{ background-color: "+button_hover_color+"; }");
     }
     scrollLayout->addWidget(actionWidget);
 
@@ -144,6 +159,7 @@ BottomLayout::BottomLayout(QMainWindow* parent, const std::shared_ptr<Robots> &r
     connect(stopRobotBtnGroup, SIGNAL(buttonClicked(int)), parent, SLOT(stopSelectedRobot(int)));
     connect(playRobotBtnGroup, SIGNAL(buttonClicked(int)), parent, SLOT(playSelectedRobot(int)));
     connect(viewPathRobotBtnGroup, SIGNAL(buttonToggled(int, bool)), parent, SLOT(viewPathSelectedRobot(int, bool)));
+    connect(deletePathBtnGroup, SIGNAL(buttonClicked(int)), parent, SLOT(deletePath(int)));
 
     setMaximumHeight(parent->height()*4/10);
     setMinimumHeight(parent->height()*4/10);
@@ -158,8 +174,6 @@ BottomLayout::BottomLayout(QMainWindow* parent, const std::shared_ptr<Robots> &r
                                                      "border: none; "
                                                      "background-color: transparent; "
                                                      "margin-top : 40px}");
-
-
 
     pathScroll2->move(pathScroll->pos().x() + 10, pathScroll->pos().y()
                       + pathScroll->height() - 45);
@@ -176,8 +190,6 @@ BottomLayout::BottomLayout(QMainWindow* parent, const std::shared_ptr<Robots> &r
 
     this->setPalette( pal);
     this->setAutoFillBackground(true);
-
-
 }
 
 void BottomLayout::deletePath(const int index){
