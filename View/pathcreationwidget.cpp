@@ -77,6 +77,7 @@ void PathCreationWidget::updateRobot(std::shared_ptr<Robot> robot){
 void PathCreationWidget::showEvent(QShowEvent* event){
     Q_UNUSED(event)
     //resetWidget();
+    updatePointsList();
     show();
 }
 
@@ -180,6 +181,7 @@ void PathCreationWidget::addPathPointByMenuSlot(void){
 
 void PathCreationWidget::clicked(void){
     /// We triger the QMenu to display the list of permanent points
+    qDebug() << (pointsMenu != NULL);
     if(pointsMenu != NULL){
         pointsMenu->exec(QCursor::pos());
     }
