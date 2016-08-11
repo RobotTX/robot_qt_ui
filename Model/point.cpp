@@ -57,7 +57,7 @@ QDataStream& operator>>(QDataStream& in, Point& point){
 
 bool Point::operator==(const Point& point) const {
     if(!point.getName().compare(this->getName()) &&
-            /// because it's a bad practice to directly compare double values we just decide of a range of coordinates that are close enough from each other to be considered the same
+            /// because it's a bad practice to directly compare double values (could lead to unexpected behaviors) we just decide of a range of coordinates that are close enough from each other to be considered the same
             abs(point.getPosition().getX() - this->getPosition().getX()) < 0.01 &&
             abs(point.getPosition().getY() - this->getPosition().getY()) < 0.01)
         return true;
@@ -88,10 +88,7 @@ bool Point::operator==(const Point& point) const {
     } else if((_type == HOME) && (type != HOME)){
         type = _type;
         if (name == "tmpPoint")
-        {
             name = QString::number(position.getX(),'f', 1) + "; " + QString::number(position.getY(),'f', 1);
-        }
-
         return true;
     }
     return false;

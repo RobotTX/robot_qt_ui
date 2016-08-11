@@ -245,14 +245,14 @@ void MainWindow::initializeRobots(){
     fileRead.close();
 
 
-
+/*
     updateRobotsThread = new UpdateRobotsThread(PORT_ROBOT_UPDATE);
     connect(updateRobotsThread, SIGNAL(robotIsAlive(QString, QString, QString, QString, int)), this, SLOT(robotIsAliveSlot(QString, QString, QString, QString, int)));
     updateRobotsThread->start();
     updateRobotsThread->moveToThread(updateRobotsThread);
 
+*/
 
-/*
     QFile fileWrite(ROBOTS_NAME_PATH);
     fileWrite.resize(0);
     fileWrite.open(QIODevice::WriteOnly);
@@ -297,7 +297,7 @@ void MainWindow::initializeRobots(){
     robots->setRobotsNameMap(tmpMap);
     out << robots->getRobotsNameMap();
     fileWrite.close();
-*/
+
 
     qDebug() << "RobotsNameMap on init" << robots->getRobotsNameMap();
 }
@@ -872,6 +872,13 @@ void MainWindow::robotSavedEvent(){
                 QString cmd = answerList.at(0);
                 bool success = (answerList.at(1).compare("done") == 0);
                 if((cmd.compare("i") == 0 && success) || answerList.at(0).compare("1") == 0){
+                    /// we update the path on the application side by serializing the path
+                    QFile fileWrite("/home/joan/Qt/QtProjects/gobot-software/" + robot->getIp());
+                    fileWrite.resize(0);
+                    fileWrite.open(QIODevice::WriteOnly);
+                    QDataStream out(&fileWrite);
+                    out << *robot;
+                    fileWrite.close();
                     qDebug() << "MainWindow::robotSavedEvent Path saved";
                 } else {
                     qDebug() << "MainWindow::robotSavedEvent Path failed to be saved, please try again";

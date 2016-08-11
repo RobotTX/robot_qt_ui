@@ -15,6 +15,7 @@ class SendNewMapThread;
 #include <memory>
 #include <QtNetwork/QTcpSocket>
 #include <QUuid>
+#include <QDataStream>
 
 #define PORT_MAP_METADATA 4000
 #define PORT_ROBOT_POS 4001
@@ -120,6 +121,15 @@ private:
     QUuid mapId;
     bool sendingMap;
 };
+
+/**
+ * @brief operator <<
+ * @param out
+ * @param robot
+ * @return
+ */
+QDataStream& operator<<(QDataStream& out, const Robot& robot);
+QDataStream& operator>>(QDataStream& in, Robot& robot);
 
 /**
  * @brief operator <<
