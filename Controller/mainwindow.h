@@ -78,12 +78,10 @@ public:
     void initializeBottomPanel();
     void initializeLeftMenu();
     void hideAllWidgets();
-    void stopPathCreation();
     int openConfirmMessage(const QString);
     void openInterdictionOfPointRemovalMessage(const QString pointName, const QString robotName);
     int openEmptyGroupMessage(const QString groupName);
     void clearNewMap();
-    void clearPath(const int robotNb);
     void resetFocus();
     void switchFocus(QString name, QWidget* widget, WidgetType type);
     /// to sleep for ms milliseconds
@@ -91,6 +89,7 @@ public:
     void setEnableAll(bool enable, GraphicItemState state = GraphicItemState::NO_STATE, bool clearPath = false, int noReturn = -1);
     void setTemporaryMessageTop(const QString type, const QString message, const int ms);
     void updateAllPaths(void);
+    void clearPath(const int robotNb);
 
 signals:
     void sendCommand(QString);
@@ -151,7 +150,6 @@ private slots:
     void displayPointsInGroup(void);
     void removePointFromInformationMenu(void);
     void displayPointMapEvent(void);
-    void hidePathCreationWidget(void);
     void editPointButtonEvent();
     void editTmpPathPointSlot(int id, QString name, double x, double y);
     void editPointFromGroupMenu(void);
@@ -176,8 +174,6 @@ private slots:
     void updateEditedPathPoint(double x, double y);
     void centerMap();
     void setMessageCreationPoint(QString type, CreatePointWidget::Error error);
-    void addPathPointToMap(Point* point);
-    void updatePathPermanentPoint(QString, QString);
 
     /**
      * @brief cancelEvent

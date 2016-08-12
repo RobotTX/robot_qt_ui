@@ -539,13 +539,11 @@ void MainWindow::viewPathSelectedRobot(int robotNb, bool checked){
         bottomLayout->updateRobot(robotNb, robots->getRobotsVector().at(robotNb));
         emit updatePathPainter();
     } else {
-        /// TODO close displaySelectedPoint if opened on a path point
-        if(leftMenu->getDisplaySelectedPoint()->isVisible() && leftMenu->getDisplaySelectedPoint()->getPointView()->getPoint()->isPath()){
+        if(leftMenu->getDisplaySelectedPoint() && leftMenu->getDisplaySelectedPoint()->isVisible() && leftMenu->getDisplaySelectedPoint()->getPointView()->getPoint()->isPath()){
             leftMenu->getDisplaySelectedPoint()->getPointView()->hide();
             selectedPoint = NULL;
-            leftMenu->getDisplaySelectedPoint()->setPointView(selectedPoint, "");
-            hideAllWidgets();
-            leftMenu->hide();
+            leftMenu->getDisplaySelectedPoint()->setPointView(selectedPoint.get(), "");
+            backEvent();
         }
 
         emit resetPath();
@@ -573,11 +571,6 @@ void MainWindow::editSelectedRobot(RobotView* robotView){
 void MainWindow::setSelectedRobot(RobotView* robotView){
 
     qDebug() << "setSelectedRobot(RobotView* robotView)";
-/*
-    if(selectedRobot)
-        if(!robotView->getRobot()->getName().compare(selectedRobot->getRobot()->getName()))
-        pathCreationWidget->resetWidget();
-*/
     leftMenu->show();
 
     hideAllWidgets();
@@ -886,11 +879,6 @@ void MainWindow::robotSavedEvent(){
     if(editSelectedRobotWidget->isVisible()){
         if(change > 0){
             if (isOK){
-
-                /*if(editSelectedRobotWidget->isFirstConnection()){
-                    setEnableAll(true);
-                }*/
-
                 if(editSelectedRobotWidget->getPathChanged()){
                     selectedRobot->getRobot()->setPath(pathPainter->getCurrentPath());
 
@@ -1020,33 +1008,6 @@ void MainWindow::addPointPathSlot(QString name, double x, double y){
     emit addPathPoint(name, x, y);
 }
 
-void MainWindow::stopPathCreation(){
-    qDebug() << "MainWindow::stopPathCreation called";
-    /*for(size_t i = 0; i < pointViews->count(); i++){
-        GroupView* groupView = pointViews->getGroups().at(i);
-        std::vector<PointView*> pointViews = groupView->getPointViews();
-        for(size_t j = 0; j < pointViews.size(); j++){
-            pointViews.at(j)->setPixmap(PointView::PixmapType::NORMAL);
-        }
-    }*/
-}
-
-void MainWindow::hidePathCreationWidget(){
-    qDebug() << "hidePathCreationWidget called";
-    /*setGraphicItemsState(GraphicItemState::NO_STATE, true);
-    for(size_t i = 0; i < pointViews->count(); i++){
-        GroupView* groupView = pointViews->getGroups().at(i);
-        std::vector<PointView*> pointViews = groupView->getPointViews();
-        for(size_t j = 0; j < pointViews.size(); j++){
-            pointViews.at(j)->setPixmap(PointView::PixmapType::NORMAL);
-            pointViews.at(j)->setAddedToPath(false);
-        }
-    }
-    pathCreationWidget->resetWidget();
-    pathPainter->reset();
-    setMessageTop(TEXT_COLOR_NORMAL, "");*/
-}
-
 void MainWindow::saveEditPathPointSlot(void){
     qDebug() << "MainWindow::saveEditPathPointSlot called";
 
@@ -1070,19 +1031,6 @@ void MainWindow::cancelEditPathPointSlot(void){
 
     editedPointView->setFlag(QGraphicsItem::ItemIsMovable, false);
     editedPointView = NULL;
-}
-
-void MainWindow::clearPath(const int robotNb){
-    qDebug() << "MainWindow::clearPath called";
-    /*if(robots->getRobotsVector().at(robotNb)->getRobot()->isPlayingPath()){
-        qDebug() << "pause path on robot before supp " << robotNb << " : " << robots->getRobotsVector().at(robotNb)->getRobot()->getName();
-        robots->getRobotsVector().at(robotNb)->getRobot()->setPlayingPath(0);
-        bottomLayout->getPlayRobotBtnGroup()->button(robotNb)->setIcon(QIcon(":/icons/play.png"));
-    }
-    robots->getRobotsVector().at(robotNb)->getRobot()->getPath().clear();
-    robots->getRobotsVector().at(robotNb)->getRobot()->setPath(std::vector<std::shared_ptr<PathPoint>>());
-
-    bottomLayout->deletePath(robotNb);*/
 }
 
 void MainWindow::updatePathPainterPointViewSlot(){
@@ -1165,9 +1113,20 @@ void MainWindow::showHome(){
 
 }
 
+void MainWindow::clearPath(const int robotNb){
+    qDebug() << "MainWindow::clearPath called";
+    if(robots->getRobotsVector().at(robotNb)->getRobot()->isPlayingPath()){
+        qDebug() << "MainWindow::clearPath pause path on robot before supp " << robotNb << " : " << robots->getRobotsVector().at(robotNb)->getRobot()->getName();
+        robots->getRobotsVector().at(robotNb)->getRobot()->setPlayingPath(0);
+        bottomLayout->getPlayRobotBtnGroup()->button(robotNb)->setIcon(QIcon(":/icons/play.png"));
+    }
+    robots->getRobotsVector().at(robotNb)->getRobot()->getPath().clear();
+
+    bottomLayout->deletePath(robotNb);
+}
+
 void MainWindow::hideHome(void){
     qDebug() << "MainWindow::hideHome called";
-    //points->setPixmapAll(PointView::PixmapType::NORMAL);
 
     if(selectedRobot->getRobot()->getHome() != NULL){
         std::shared_ptr<PointView> pointView = selectedRobot->getRobot()->getHome();
@@ -1449,26 +1408,6 @@ void MainWindow::sendNewMapToRobot(std::shared_ptr<Robot> robot, QString mapId){
 
     robot->sendNewMap(byteArray);
     qDebug() << "Done sending the new map";
-}
-
-void MainWindow::addPathPointToMap(Point* point){
-    qDebug() << "addPathPointToMap called";
-    /*if(point->isPermanent()){
-        qDebug() << "adding a permanent point to the mapview path";
-        mapPixmapItem->addPermanentPointToPath(pointViews->getPointViewFromName(point->getName()));
-    }
-    qDebug() << "in mapview path";
-    for(int i  = 0 ; i < mapPixmapItem->getPathCreationPoints().size(); i++)
-        qDebug() << mapPixmapItem->getPathCreationPoints().at(i)->getPoint()->getName();
-    qDebug() << "----";*/
-}
-
-void MainWindow::updatePathPermanentPoint(QString oldPointName, QString newPointName){
-    qDebug() << "updatePathPermanentPoint called" << newPointName << oldPointName;
-    /*int index = mapPixmapItem->findIndexInPathByName(oldPointName);
-    if(index >= 0 && index < mapPixmapItem->getPathCreationPoints().size())
-        mapPixmapItem->replacePermanentPathPoint(index, pointViews->getPointViewFromName(newPointName));
-*/
 }
 
 
@@ -1909,7 +1848,7 @@ void MainWindow::editGroupBtnEvent(){
                 else
                     qDebug() << "editGroupBtnEvent : something unexpected happened";
             }
-            leftMenu->getDisplaySelectedPoint()->setPointView(pointView, robotName);
+            leftMenu->getDisplaySelectedPoint()->setPointView(pointView.get(), robotName);
         } else {
             qDebug() << "There is no point view associated with those indexes";
         }
@@ -2297,8 +2236,7 @@ void MainWindow::displayPointEvent(PointView* pointView){
             qDebug() << "MainWindow::displayPointEvent : something unexpected happened";
     }
 
-    std::shared_ptr<PointView> pv = points->findPointView(pointView->getPoint()->getName());
-    leftMenu->getDisplaySelectedPoint()->setPointView(pv, robotName);
+    leftMenu->getDisplaySelectedPoint()->setPointView(pointView, robotName);
 
     /// so that the points don't stay blue if we click a new point
     points->setPixmapAll(PointView::PixmapType::NORMAL);
@@ -2525,7 +2463,7 @@ void MainWindow::displayPointsInGroup(void){
                 qDebug() << "MainWindow::displayPointsInGroup something unexpected happened";
         }
 
-        selectedPoint->setPointView(pointView, robotName);
+        selectedPoint->setPointView(pointView.get(), robotName);
         selectedPoint->displayPointInfo();
         selectedPoint->show();
 
@@ -2736,7 +2674,7 @@ void MainWindow::editPointFromGroupMenu(void){
         if(displaySelectedPointView){
             qDebug() << "about to put u orange";
 
-            leftMenu->getDisplaySelectedPoint()->setPointView(displaySelectedPointView, robotName);
+            leftMenu->getDisplaySelectedPoint()->setPointView(displaySelectedPointView.get(), robotName);
 
             displaySelectedPointView->setPixmap(PointView::PixmapType::HOVER);
             displaySelectedPointView->show();
@@ -2807,7 +2745,7 @@ void MainWindow::displayPointInfoFromGroupMenu(void){
                 qDebug() << "setSelectedRobotFromPoint : something unexpected happened";
         }
 
-        selectedPoint->setPointView(pointView, robotName);
+        selectedPoint->setPointView(pointView.get(), robotName);
         selectedPoint->displayPointInfo();
 
         /// map is checked if the point is displayed
@@ -3122,7 +3060,7 @@ void MainWindow::doubleClickOnPoint(QString pointName){
             else
                 qDebug() << "doubleClickOnPoint : something unexpected happened";
         }
-        selectedPoint->setPointView(pointView, robotName);
+        selectedPoint->setPointView(pointView.get(), robotName);
         selectedPoint->displayPointInfo();
 
         if(pointView->isVisible())
@@ -3188,7 +3126,7 @@ void MainWindow::doubleClickOnGroup(QString checkedName){
                 qDebug() << "doubleClickOnGroup : something unexpected happened";
         }
 
-        selectedPoint->setPointView(pointView, robotName);
+        selectedPoint->setPointView(pointView.get(), robotName);
         selectedPoint->displayPointInfo();
         selectedPoint->show();
 
