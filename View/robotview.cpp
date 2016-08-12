@@ -14,6 +14,7 @@ RobotView::RobotView (std::shared_ptr<Robot> const &_robot, QGraphicsItem* paren
     setAcceptHoverEvents(true);
     setAcceptedMouseButtons(Qt::LeftButton);
     setToolTip(robot->getName());
+    setFlag(QGraphicsItem::ItemIgnoresTransformations, true);
 
     /// We create a polygon of the robot by writting each points of the polygon
     QPolygonF polygon;
