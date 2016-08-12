@@ -34,6 +34,9 @@ PathCreationWidget::PathCreationWidget(MainWindow *parent, const std::shared_ptr
     pathPointsList = new PathPointList(this);
     layout->addWidget(pathPointsList);
 
+    QPushButton* cleanBtn = new QPushButton("Clean", this);
+    layout->addWidget(cleanBtn);
+
     /// Cancel & save buttons
     QHBoxLayout* grid = new QHBoxLayout();
     QPushButton* cancelBtn = new QPushButton("Cancel", this);
@@ -56,6 +59,7 @@ PathCreationWidget::PathCreationWidget(MainWindow *parent, const std::shared_ptr
 
     connect(saveBtn, SIGNAL(clicked()), this, SLOT(savePathClicked()));
     connect(cancelBtn, SIGNAL(clicked()), parent, SLOT(cancelPathSlot()));
+    connect(cleanBtn, SIGNAL(clicked()), this, SLOT(resetWidget()));
 
 
     hide();

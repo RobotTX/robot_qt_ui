@@ -36,7 +36,6 @@ public:
     PathCreationWidget(MainWindow* parent, const std::shared_ptr<Points>& points);
     void updateRobot(std::shared_ptr<Robot> robot);
     void updatePointsList(void);
-    void resetWidget(void);
     void deleteItem(QListWidgetItem* item);
     void editPathPoint(QString name, double x, double y);
     PathPointList* getPathPointList(void) const { return pathPointsList; }
@@ -58,6 +57,7 @@ signals:
     void savePath();
 
 private slots:
+    void resetWidget(void);
     void addPathPointByMenuSlot(void);
     void deletePathPointSlot(void);
     void editPathPointSlot(void);

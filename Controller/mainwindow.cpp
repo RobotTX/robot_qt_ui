@@ -184,6 +184,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     connect(pathCreationWidget, SIGNAL(cancelEditPathPoint()), this, SLOT(cancelEditPathPointSlot()));
     connect(pathCreationWidget, SIGNAL(savePath()), this, SLOT(savePathSlot()));
     connect(this, SIGNAL(resetPath()), pathPainter.get(), SLOT(resetPathSlot()));
+    connect(this, SIGNAL(resetPathCreationWidget()), pathCreationWidget, SLOT(resetWidget()));
 
     mainLayout->addLayout(bottom);
     graphicsView->setStyleSheet("CustomQGraphicsView{background-color: "+background_map_view+"}");
@@ -715,7 +716,7 @@ void MainWindow::checkRobotBtnEvent(QString name){
 void MainWindow::cancelEditSelecRobotBtnEvent(){
     qDebug() << "cancelEditSelecRobotBtnEvent called";
     /// if the path has been changed, reset the path
-    pathCreationWidget->resetWidget();
+    emit resetPathCreationWidget();
     emit resetPath();
 
     backEvent();
@@ -995,7 +996,7 @@ void MainWindow::cancelPathSlot(){
         pointViewsToDisplay.at(i)->hide();
     pointViewsToDisplay.clear();
 
-    pathCreationWidget->resetWidget();
+    emit resetPathCreationWidget();
     emit resetPath();
     pathPainter->setCurrentPath(selectedRobot->getRobot()->getPath());
     selectedRobot->getRobot()->setPath(pathPainter->getCurrentPath());

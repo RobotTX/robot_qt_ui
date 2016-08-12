@@ -99,6 +99,7 @@ signals:
     void updatePathPainter();
     void updatePathPainterPointView();
     void resetPath();
+    void resetPathCreationWidget();
 
 private slots:
     void updateRobot(const QString ipAddress, const float posX, const float posY, const float ori);
