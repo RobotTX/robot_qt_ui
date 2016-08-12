@@ -113,7 +113,7 @@ LeftMenu::LeftMenu(MainWindow* _parent, std::shared_ptr<Points> const& _points,
     connect(pathCreationWidget, SIGNAL(orderPathPointChanged(int, int)), pathPainter.get(), SLOT(orderPathPointChangedSlot(int, int)));
     connect(pathCreationWidget, SIGNAL(resetPath()), pathPainter.get(), SLOT(resetPathSlot()));
     connect(pathCreationWidget, SIGNAL(setMessage(QString, QString)), parent, SLOT(setMessageTop(QString, QString)));
-    connect(pathCreationWidget, SIGNAL(actionChanged(int, QString)), pathPainter.get(), SLOT(actionChangedSlot(int, QString)));
+    connect(pathCreationWidget, SIGNAL(actionChanged(int, int, QString)), pathPainter.get(), SLOT(actionChangedSlot(int, int, QString)));
     connect(pathCreationWidget, SIGNAL(editPathPoint(int, QString, double, double)), pathPainter.get(), SLOT(editPathPointSlot(int, QString, double, double)));
 
     connect(displaySelectedPoint->getRobotButton(), SIGNAL(clicked()), parent, SLOT(setSelectedRobotFromPoint()));

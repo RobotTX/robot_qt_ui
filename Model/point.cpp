@@ -40,7 +40,7 @@ std::ostream& operator <<(std::ostream& stream, const Point& point){
 }
 
 QDataStream& operator<<(QDataStream& out, const Point& point){
-    out << point.getName() << point.getPosition().getX() << point.getPosition().getY() << point.isPermanent();
+    out << point.getName() << point.getPosition().getX() << point.getPosition().getY() << static_cast<qint32>(point.getType());
     return out;
 }
 
@@ -48,7 +48,7 @@ QDataStream& operator>>(QDataStream& in, Point& point){
     QString name;
     double x;
     double y;
-    int typeInt;
+    qint32 typeInt;
     in >> name >> x >> y >> typeInt;
     Point::PointType type = static_cast<Point::PointType>(typeInt);
     point = Point(name, x, y, type);

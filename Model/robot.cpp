@@ -151,18 +151,19 @@ QDataStream& operator>>(QDataStream& in, Robot& robot){
     /// the size of the vector has to be serialized too in order to deserialize the object correctly
     qint32 size;
     in >> size;
+    qDebug() << "reconstructing a path of size" << size;
     QVector<std::shared_ptr<PathPoint>> _path;
+    PathPoint pathPoint;
     for(int i = 0; i < size; i++){
-        PathPoint pathPoint(Point(), PathPoint::HUMAN_ACTION, 0);
         in >> pathPoint;
-        _path.push_back(std::make_shared<PathPoint> (pathPoint));
+        _path.push_back(std::shared_ptr<PathPoint> (new PathPoint(pathPoint)));
     }
     robot.setPath(_path);
     return in;
 }
 
 QDataStream& operator<<(QDataStream& out, const Robot& robot){
-    qDebug() << "robot operator << called";
+    qDebug() << "robot operator << called with path size" << robot.getPath().size();
     qint32 pathSize(robot.getPath().size());
     out << pathSize;
     for(int i = 0; i < pathSize; i++)

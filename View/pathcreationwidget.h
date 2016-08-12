@@ -50,7 +50,7 @@ signals:
     void deletePathPoint(int);
     void orderPathPointChanged(int, int);
     void resetPath();
-    void actionChanged(int, QString);
+    void actionChanged(int, int, QString);
     void editPathPoint(int, QString, double, double);
     void editTmpPathPoint(int, QString, double, double);
     void saveEditPathPoint();
@@ -69,7 +69,7 @@ private slots:
     void addPathPointSlot(QString name, double x, double y);
     void saveEditSlot(PathPointCreationWidget* pathPointCreationWidget);
     void cancelEditSlot(PathPointCreationWidget* pathPointCreationWidget);
-    void actionChangedSlot(int id, QString waitTime);
+    void actionChangedSlot(int id, int action, QString waitTime);
 
 
 private:

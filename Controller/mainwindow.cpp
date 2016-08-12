@@ -873,13 +873,8 @@ void MainWindow::robotSavedEvent(){
                 bool success = (answerList.at(1).compare("done") == 0);
                 if((cmd.compare("i") == 0 && success) || answerList.at(0).compare("1") == 0){
                     /// we update the path on the application side by serializing the path
-                    QFile fileWrite("/home/joan/Qt/QtProjects/gobot-software/" + robot->getIp());
-                    fileWrite.resize(0);
-                    fileWrite.open(QIODevice::WriteOnly);
-                    QDataStream out(&fileWrite);
-                    out << *robot;
-                    fileWrite.close();
-                    qDebug() << "MainWindow::robotSavedEvent Path saved";
+
+                    qDebug() << "MainWindow::robotSavedEvent Path saved for robot" << robot->getIp();
                 } else {
                     qDebug() << "MainWindow::robotSavedEvent Path failed to be saved, please try again";
                 }
@@ -903,6 +898,25 @@ void MainWindow::robotSavedEvent(){
                     bottomLayout->updateRobot(id, selectedRobot);
                     bottomLayout->getViewPathRobotBtnGroup()->button(id)->setChecked(true);
                     viewPathSelectedRobot(id, true);
+
+                    QFile fileWrite("/home/joan/Qt/QtProjects/gobot-software/" + selectedRobot->getRobot()->getIp());
+                    fileWrite.resize(0);
+                    fileWrite.open(QIODevice::WriteOnly);
+                    QDataStream out(&fileWrite);
+                    out << *(selectedRobot->getRobot());
+                    fileWrite.close();
+
+                    Robot _robot;
+                    QFile fileRead("/home/joan/Qt/QtProjects/gobot-software/" + selectedRobot->getRobot()->getIp());
+                    fileRead.open(QIODevice::ReadOnly);
+                    QDataStream in(&fileRead);
+                    in >> _robot;
+                    fileRead.close();
+                    qDebug() << "after deserialization: size" << _robot.getPath().size();
+                    for(int i = 0; i < _robot.getPath().size(); i++){
+                        qDebug() << _robot.getPath().at(i)->getPoint().getName() << _robot.getPath().at(i)->getPoint().getPosition().getX() <<
+                                    _robot.getPath().at(i)->getPoint().getPosition().getY();
+                    }
 
                 }
                 editSelectedRobotWidget->setPathChanged(false);
@@ -1623,6 +1637,24 @@ void MainWindow::initializePoints(){
     /// retrieves the points from the xml file and stores them in the model
     XMLParser pParser(":/xml/points.xml");
     pParser.readPoints(points, mapPixmapItem, this);
+
+    QFile fileWrite("/home/joan/Qt/QtProjects/gobot-software/point.dat");
+    fileWrite.resize(0);
+    fileWrite.open(QIODevice::WriteOnly);
+    QDataStream out(&fileWrite);
+    out << *(points->getGroups()->value(NO_GROUP_NAME)->at(0)->getPoint()) << *(points->getGroups()->value(NO_GROUP_NAME)->at(1)->getPoint());
+    fileWrite.close();
+
+    QFile fileRead("/home/joan/Qt/QtProjects/gobot-software/point.dat");
+    fileRead.open(QIODevice::ReadOnly);
+    QDataStream in(&fileRead);
+    Point p, p1;
+    in >> p >> p1;
+    fileRead.close();
+
+    qDebug() << "The points I have serialized are" << p.getName() << p.getPosition().getX() << p.getPosition().getY();
+    qDebug() << p1.getName() << p1.getPosition().getX() << p1.getPosition().getY();
+
     points->addTmpPoint(mapPixmapItem, this);
     qDebug() << "Nb points after init :" << points->count();
     mapPixmapItem->setPoints(points);
