@@ -6,7 +6,6 @@
 #include <QPainterPath>
 #include <QPixmap>
 #include "Controller/mainwindow.h"
-#include "Model/pathpoint.h"
 
 PathPainter::PathPainter(MainWindow* const &mainWindow, MapView* const &mapPixmapItem, std::shared_ptr<Points> _points)
     : QGraphicsPathItem(mapPixmapItem), points(_points), mainWindow(mainWindow), mapView(mapPixmapItem){
@@ -111,17 +110,10 @@ void PathPainter::editPathPointSlot(int id, QString name, double x, double y){
     updatePathPainterSlot();
 }
 
-void PathPainter::actionChangedSlot(int id, QString waitTimeStr){
+void PathPainter::actionChangedSlot(int id, int action, QString waitTimeStr){
     qDebug() << "PathPainter::actionChangedSlot called" << id << waitTimeStr;
-    PathPoint::Action action;
-    int waitTime = 0;
-    if(waitTimeStr.compare("") == 0){
-        action = PathPoint::Action::HUMAN_ACTION;
-    } else {
-        action = PathPoint::Action::WAIT;
-        waitTime = waitTimeStr.toInt();
-    }
-    currentPath.at(id)->setAction(action);
+    int waitTime = waitTimeStr.toInt();
+    currentPath.at(id)->setAction(static_cast<PathPoint::Action>(action));
     currentPath.at(id)->setWaitTime(waitTime);
 }
 

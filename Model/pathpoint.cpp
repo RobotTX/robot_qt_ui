@@ -7,17 +7,18 @@ PathPoint::PathPoint(const Point &_point, const Action &_action, const int _wait
 }
 
 QDataStream& operator>>(QDataStream& in, PathPoint& pathPoint){
-    qDebug() << "PathPoint operator >> called";
     Point _point;
     qint32 _waitTime;
     in >> _point >> _waitTime;
+    qDebug() << "Deserializing" << _point.getName() << _point.getPosition().getX() << _point.getPosition().getY() << _waitTime;
     pathPoint.setPoint(_point);
-    pathPoint.setWaitTime(_waitTime);
+    pathPoint.setWaitTime(static_cast<int>(_waitTime));
     return in;
 }
 
 QDataStream& operator<<(QDataStream& out, const PathPoint& pathPoint){
-    qDebug() << "PathPoint operator << called";
-    out << pathPoint.getPoint() << pathPoint.getWaitTime();
+    qDebug() << "serializing pathpoint" << pathPoint.getPoint().getName() << pathPoint.getPoint().getPosition().getX() <<
+                pathPoint.getPoint().getPosition().getY() << pathPoint.getWaitTime();
+    out << pathPoint.getPoint() << static_cast<qint32>(pathPoint.getWaitTime());
     return out;
 }
