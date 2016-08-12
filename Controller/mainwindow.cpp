@@ -91,15 +91,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
     initializePoints();
 
-    QMapIterator<QString, std::shared_ptr<QVector<std::shared_ptr<PointView>>>> i(*(points->getGroups()));
-    while (i.hasNext()) {
-        i.next();
-        for(int j = 0; j < i.value()->count(); j++){
-            qDebug() << i.key() << i.value()->at(j)->getPoint()->getName();
-        }
-
-    }
-
     pathPainter = std::shared_ptr<PathPainter>(new PathPainter(this, mapPixmapItem, points));
 
     initializeRobots();
@@ -245,13 +236,12 @@ void MainWindow::initializeRobots(){
     fileRead.close();
 
 
-/*
     updateRobotsThread = new UpdateRobotsThread(PORT_ROBOT_UPDATE);
     connect(updateRobotsThread, SIGNAL(robotIsAlive(QString, QString, QString, QString, int)), this, SLOT(robotIsAliveSlot(QString, QString, QString, QString, int)));
     updateRobotsThread->start();
     updateRobotsThread->moveToThread(updateRobotsThread);
 
-*/
+/*
 
     QFile fileWrite(ROBOTS_NAME_PATH);
     fileWrite.resize(0);
@@ -300,6 +290,7 @@ void MainWindow::initializeRobots(){
 
 
     qDebug() << "RobotsNameMap on init" << robots->getRobotsNameMap();
+    */
 }
 
 void MainWindow::updateRobot(const QString ipAddress, const float posX, const float posY, const float oriZ){
@@ -412,28 +403,60 @@ void MainWindow::deletePath(int robotNb){
         int ret = openConfirmMessage("Are you sure you want to delete this path ?");
         switch (ret) {
             case QMessageBox::Ok:
+            {
                 /// if the command is succesfully sent to the robot, we apply the change
-                robots->getRobotsVector().at(robotNb)->getRobot()->resetCommandAnswer();
-                if(robots->getRobotsVector().at(robotNb)->getRobot()->sendCommand(QString("k"))){
-                    QString answer = robots->getRobotsVector().at(robotNb)->getRobot()->waitAnswer();
-                    QStringList answerList = answer.split(QRegExp("[ ]"), QString::SkipEmptyParts);
-                    if(answerList.size() > 1){
-                        QString cmd = answerList.at(0);
-                        bool success = (answerList.at(1).compare("done") == 0);
-                        if((cmd.compare("k") == 0 && success) || answerList.at(0).compare("1") == 0){
-                            clearPath(robotNb);
-                            hideAllWidgets();
-                            bottomLayout->getViewPathRobotBtnGroup()->button(robotNb)->setChecked(false);
-                            bottomLayout->getViewPathRobotBtnGroup()->button(robotNb)->click();
+                std::shared_ptr<Robot> robot = robots->getRobotsVector().at(robotNb)->getRobot();
+                robot->resetCommandAnswer();
+                /// if the robot is not playing its path
+                if(!robot->isPlayingPath()){
+                    if(robot->sendCommand(QString("k"))){
+                        QString answer = robot->waitAnswer();
+                        QStringList answerList = answer.split(QRegExp("[ ]"), QString::SkipEmptyParts);
+                        if(answerList.size() > 1){
+                            QString cmd = answerList.at(0);
+                            bool success = (answerList.at(1).compare("done") == 0);
+                            if((cmd.compare("k") == 0 && success) || answerList.at(0).compare("1") == 0){
+                                clearPath(robotNb);
+                                hideAllWidgets();
+                                bottomLayout->getViewPathRobotBtnGroup()->button(robotNb)->setChecked(false);
+                                bottomLayout->getViewPathRobotBtnGroup()->button(robotNb)->click();
 
-                            topLayout->setLabel(TEXT_COLOR_SUCCESS, "Path deleted");
-                        } else {
-                            topLayout->setLabel(TEXT_COLOR_DANGER, "Failed to delete the path, please try again");
+                                topLayout->setLabel(TEXT_COLOR_SUCCESS, "Path deleted");
+                            } else {
+                                topLayout->setLabel(TEXT_COLOR_DANGER, "Failed to delete the path, please try again");
+                            }
                         }
+                        robot->resetCommandAnswer();
                     }
-                    robots->getRobotsVector().at(robotNb)->getRobot()->resetCommandAnswer();
+                } else {
+                    msgBox.setText(robot->getName() + " is currently playing this path, if you delete it the robot will be stopped even if it"
+                                                      "has not reached its destination yet. Continue ?");
+                    msgBox.setIcon(QMessageBox::Warning);
+                    msgBox.setStandardButtons(QMessageBox::Cancel);
+                    msgBox.setStandardButtons(QMessageBox::Ok);
+                    msgBox.setDefaultButton(QMessageBox::Cancel);
+                    int ret = msgBox.exec();
+                    if(ret == QMessageBox::Ok && robot->sendCommand(QString("m"))){
+                        QString answer = robot->waitAnswer();
+                        QStringList answerList = answer.split(QRegExp("[ ]"), QString::SkipEmptyParts);
+                        if(answerList.size() > 1){
+                            QString cmd = answerList.at(0);
+                            bool success = (answerList.at(1).compare("done") == 0);
+                            if((cmd.compare("m") == 0 && success) || answerList.at(0).compare("1") == 0){
+                                clearPath(robotNb);
+                                hideAllWidgets();
+                                bottomLayout->getViewPathRobotBtnGroup()->button(robotNb)->setChecked(false);
+                                bottomLayout->getViewPathRobotBtnGroup()->button(robotNb)->click();
 
+                                topLayout->setLabel(TEXT_COLOR_SUCCESS, "Path deleted");
+                            } else {
+                                topLayout->setLabel(TEXT_COLOR_DANGER, "Failed to delete the path, please try again");
+                            }
+                        }
+                        robot->resetCommandAnswer();
+                    }
                 }
+            }
             break;
             case QMessageBox::Cancel:
                 qDebug() << "Cancel was clicked";
@@ -887,26 +910,8 @@ void MainWindow::robotSavedEvent(){
                     bottomLayout->getViewPathRobotBtnGroup()->button(id)->setChecked(true);
                     viewPathSelectedRobot(id, true);
 
-                    QFile fileWrite("/home/joan/Qt/QtProjects/gobot-software/" + selectedRobot->getRobot()->getIp());
-                    fileWrite.resize(0);
-                    fileWrite.open(QIODevice::WriteOnly);
-                    QDataStream out(&fileWrite);
-                    out << *(selectedRobot->getRobot());
-                    fileWrite.close();
-
-                    Robot _robot;
-                    QFile fileRead("/home/joan/Qt/QtProjects/gobot-software/" + selectedRobot->getRobot()->getIp());
-                    fileRead.open(QIODevice::ReadOnly);
-                    QDataStream in(&fileRead);
-                    in >> _robot;
-                    fileRead.close();
-                    qDebug() << "after deserialization: size" << _robot.getPath().size();
-                    for(int i = 0; i < _robot.getPath().size(); i++){
-                        qDebug() << _robot.getPath().at(i)->getPoint().getName() << _robot.getPath().at(i)->getPoint().getPosition().getX() <<
-                                    _robot.getPath().at(i)->getPoint().getPosition().getY();
-                    }
-
                 }
+
                 editSelectedRobotWidget->setPathChanged(false);
 
                 backEvent();
@@ -1227,10 +1232,16 @@ void MainWindow::robotIsAliveSlot(QString hostname, QString ip, QString mapId, Q
         qDebug() << "Which is an old map";
         sendNewMapToRobot(rv->getRobot(), currMapId);
     }
-
+/*
+    /// To put in a different color the stage where the robot is currently at
+    if(rv->getRobot()->isPlayingPath()){
+        QString greenPart = QString("<span style=" color:#00ff00;">%1</span>").arg(bottomLayout->getVectorPathLabel().at(robotId)->text().mid(5));
+        bottomLayout->getVectorPathLabel().at(robotId)
+    }
+*/
     /// Check the current stage of the robot
     int robotId = robots->getRobotId(rv->getRobot()->getName());
-    if(rv->getRobot()->getPath().size() == stage){
+    if(rv->getRobot()->isPlayingPath() && rv->getRobot()->getPath().size() == stage){
         setMessageTop(TEXT_COLOR_SUCCESS, "The robot " + rv->getRobot()->getName() + " has successfully reached its destination");
         bottomLayout->getPlayRobotBtnGroup()->button(robotId)->setIcon(QIcon(":/icons/play.png"));
         bottomLayout->getStopRobotBtnGroup()->button(robotId)->setEnabled(false);
@@ -1574,13 +1585,13 @@ void MainWindow::closeSlot(){
  * initialize the points on the map and in the model
  */
 void MainWindow::initializePoints(){
-    qDebug() << "initializePoints called";
+    //qDebug() << "initializePoints called";
     /// retrieves the points from the xml file and stores them in the model
     XMLParser pParser(":/xml/points.xml");
     pParser.readPoints(points, mapPixmapItem, this);
 
     points->addTmpPoint(mapPixmapItem, this);
-    qDebug() << "Nb points after init :" << points->count();
+    //qDebug() << "Nb points after init :" << points->count();
     mapPixmapItem->setPoints(points);
 }
 
