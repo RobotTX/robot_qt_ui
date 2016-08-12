@@ -1577,23 +1577,6 @@ void MainWindow::initializePoints(){
     XMLParser pParser(":/xml/points.xml");
     pParser.readPoints(points, mapPixmapItem, this);
 
-    QFile fileWrite("/home/joan/Qt/QtProjects/gobot-software/point.dat");
-    fileWrite.resize(0);
-    fileWrite.open(QIODevice::WriteOnly);
-    QDataStream out(&fileWrite);
-    out << *(points->getGroups()->value(NO_GROUP_NAME)->at(0)->getPoint()) << *(points->getGroups()->value(NO_GROUP_NAME)->at(1)->getPoint());
-    fileWrite.close();
-
-    QFile fileRead("/home/joan/Qt/QtProjects/gobot-software/point.dat");
-    fileRead.open(QIODevice::ReadOnly);
-    QDataStream in(&fileRead);
-    Point p, p1;
-    in >> p >> p1;
-    fileRead.close();
-
-    qDebug() << "The points I have serialized are" << p.getName() << p.getPosition().getX() << p.getPosition().getY();
-    qDebug() << p1.getName() << p1.getPosition().getX() << p1.getPosition().getY();
-
     points->addTmpPoint(mapPixmapItem, this);
     qDebug() << "Nb points after init :" << points->count();
     mapPixmapItem->setPoints(points);
