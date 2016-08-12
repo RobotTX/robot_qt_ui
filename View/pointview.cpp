@@ -15,8 +15,6 @@ PointView::PointView(const std::shared_ptr<Point> &_point, QGraphicsItem *parent
     setPos(point->getPosition().getX(),
            point->getPosition().getY());
     setToolTip(point->getName());
-    setScale(0.4);
-    setFlag(QGraphicsItem::ItemIgnoresTransformations, true);
 
     addedToPath = false;
     wasShown = true;
