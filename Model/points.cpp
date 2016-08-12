@@ -342,3 +342,13 @@ void Points::setPixmapAll(const QPixmap pixmap){
 void Points::addTmpPoint(MapView *mapView, MainWindow *mainWindow){
     addPoint(TMP_GROUP_NAME, TMP_POINT_NAME, 0, 0, false, Point::PointType::TEMP, mapView, mainWindow);
 }
+
+void Points::updatePointViews(void){
+    QMapIterator<QString, std::shared_ptr<QVector<std::shared_ptr<PointView>>>> i(*groups);
+    while (i.hasNext()) {
+        i.next();
+        for(int j = 0; j < i.value()->count(); j++){
+            i.value()->at(j)->updatePos();
+        }
+    }
+}
