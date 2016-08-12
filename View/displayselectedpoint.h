@@ -10,6 +10,7 @@ class QEvent;
 class QKeyEvent;
 class QLabel;
 class Map;
+class Robots;
 
 #include "View/createpointwidget.h"
 #include "Model/points.h"
@@ -22,6 +23,7 @@ class Map;
 #include "topleftmenu.h"
 #include "Model/point.h"
 
+
 class DisplaySelectedPoint: public QWidget
 {
         Q_OBJECT
@@ -29,7 +31,7 @@ public:
     /// used to determine which menu or object (could be the map) cause the information of this point to be displayed
     enum Origin { MAP, GROUP_MENU, POINTS_MENU };
 
-    DisplaySelectedPoint(QMainWindow* const _parent, const std::shared_ptr<Points> &_points, std::shared_ptr<Map> const& _map, PointView* _point= 0, const Origin _origin = MAP);
+    DisplaySelectedPoint(QMainWindow* const _parent, std::shared_ptr<Robots> const robots,const std::shared_ptr<Points> &_points, std::shared_ptr<Map> const& _map, PointView* _point= 0, const Origin _origin = MAP);
 
     TopLeftMenu* getActionButtons(void) const { return actionButtons; }
     QPushButton* getSaveButton(void) const { return saveButton; }
@@ -49,6 +51,7 @@ public:
     void displayPointInfo(void);
     void setOrigin(const Origin _origin);
     void resetWidget(void);
+    void setRobotsLabel(void);
 
 protected:
     void mousePressEvent(QEvent*);
@@ -72,17 +75,11 @@ private:
     QHBoxLayout* nameLayout;
     QVBoxLayout* layout;
     QHBoxLayout* editLayout;
-    QHBoxLayout* eyeMapLayout;
-    QHBoxLayout* grid;
 
     QLabel* posXLabel;
     QLabel* posYLabel;
+    QLabel* robotsLabel;
 
-    QPushButton* plusButton;
-    QPushButton* minusButton;
-    QPushButton* mapButton;
-    QPushButton* eyeButton;
-    QPushButton* editButton;
     QPushButton* saveButton;
     QPushButton* cancelButton;
     PointView* pointView;
@@ -91,6 +88,7 @@ private:
     QWidget* homeWidget;
     QPushButton* robotBtn;
     TopLeftMenu* actionButtons;
+    std::shared_ptr<Robots> robots;
 
     /// to determine whether we come from the group menu and have to go back to it if we click on the back button
     /// or if we got here by clicking on the map

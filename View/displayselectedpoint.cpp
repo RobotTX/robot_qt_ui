@@ -14,12 +14,18 @@
 #include "Model/map.h"
 #include "View/buttonmenu.h"
 #include "toplayout.h"
+#include "Model/robots.h"
+#include "Model/robot.h"
+#include "View/robotview.h"
+#include "Model/pathpoint.h"
+#include <QSet>
 
-DisplaySelectedPoint::DisplaySelectedPoint(QMainWindow *const _parent, std::shared_ptr<Points> const& _points, std::shared_ptr<Map> const& _map, PointView* _pointView, const Origin _origin):
+DisplaySelectedPoint::DisplaySelectedPoint(QMainWindow *const _parent,  std::shared_ptr<Robots> const _robots,std::shared_ptr<Points> const& _points, std::shared_ptr<Map> const& _map, PointView* _pointView, const Origin _origin):
     QWidget(_parent), map(_map), pointView(_pointView), parent(_parent), points(_points), origin(_origin)
 {
+    robots = std::shared_ptr<Robots>(_robots);
     layout = new QVBoxLayout(this);
-    QVBoxLayout * Downlayout = new QVBoxLayout(this);
+    QVBoxLayout * downLayout = new QVBoxLayout(this);
 
     nameLayout = new QHBoxLayout();
 
@@ -44,15 +50,15 @@ DisplaySelectedPoint::DisplaySelectedPoint(QMainWindow *const _parent, std::shar
 
     nameLayout->addWidget(nameEdit);
 
-    Downlayout->addLayout(nameLayout);
+    downLayout->addLayout(nameLayout);
 
     posXLabel = new QLabel("X : ", this);
     posXLabel->setWordWrap(true);
-    Downlayout->addWidget(posXLabel);
+    downLayout->addWidget(posXLabel);
 
     posYLabel = new QLabel("Y : ", this);
     posYLabel->setWordWrap(true);
-    Downlayout->addWidget(posYLabel);
+    downLayout->addWidget(posYLabel);
 
     cancelButton = new QPushButton("Cancel", this);
     cancelButton->hide();
@@ -64,7 +70,7 @@ DisplaySelectedPoint::DisplaySelectedPoint(QMainWindow *const _parent, std::shar
     editLayout->addWidget(cancelButton);
     editLayout->addWidget(saveButton);
 
-    Downlayout->addLayout(editLayout);
+    downLayout->addLayout(editLayout);
 
     homeWidget = new QWidget(this);
     QVBoxLayout* homeLayout = new QVBoxLayout(homeWidget);
@@ -81,7 +87,10 @@ DisplaySelectedPoint::DisplaySelectedPoint(QMainWindow *const _parent, std::shar
 
     homeWidget->hide();
 
-    Downlayout->addWidget(homeWidget);
+    downLayout->addWidget(homeWidget);
+
+    robotsLabel = new QLabel(this);
+    downLayout->addWidget(robotsLabel);
 
     /// to check that a point that's being edited does not get a new name that's already used in the database
     connect(nameEdit, SIGNAL(textEdited(QString)), this, SLOT(checkPointName(QString)));
@@ -89,8 +98,8 @@ DisplaySelectedPoint::DisplaySelectedPoint(QMainWindow *const _parent, std::shar
     setMaximumWidth(_parent->width()*4/10);
     setMinimumWidth(_parent->width()*4/10);
 
-    layout->addLayout(Downlayout);
-    Downlayout->setContentsMargins(20,0,0,0);
+    layout->addLayout(downLayout);
+    downLayout->setContentsMargins(20,0,0,0);
 
     layout->setContentsMargins(0,0,0,0);
     layout->setAlignment(Qt::AlignTop);
@@ -107,11 +116,32 @@ void DisplaySelectedPoint::displayPointInfo(void) {
         posXLabel->setText("X : " + QString::number(pointView->getPoint()->getPosition().getX(), 'f', 1));
         posYLabel->setText("Y : " + QString::number(pointView->getPoint()->getPosition().getY(), 'f', 1));
         nameEdit->setText(pointView->getPoint()->getName());
+
         if(pointView->getPoint()->isHome()){
             homeWidget->show();
         } else
             homeWidget->hide();
+        qDebug() << "DisplaySelectedPoint::displayPointInfo calling setRobotsLabel";
+        setRobotsLabel();
     }
+}
+
+void DisplaySelectedPoint::setRobotsLabel(void){
+    QSet<QString> robotNameSet;
+    for(int i = 0; i < robots->getRobotsVector().size(); i++){
+        std::shared_ptr<Robot> robot = robots->getRobotsVector().at(i)->getRobot();
+        for(int j = 0; j < robot->getPath().size(); j++){
+            if(robot->getPath().at(j)->getPoint().getName().compare(pointView->getPoint()->getName()) == 0){
+                robotNameSet.insert(robot->getName());
+            }
+        }
+    }
+    qDebug() << "DisplaySelectedPoint::setRobotsLabel " << robotNameSet;
+    QString robotNameStr = "";
+    QSetIterator<QString> k(robotNameSet);
+    while (k.hasNext())
+        robotNameStr += k.next() + "\n";
+    robotsLabel->setText(robotNameStr);
 }
 
 void DisplaySelectedPoint::mousePressEvent(QEvent* /* unused */){
@@ -232,6 +262,8 @@ void DisplaySelectedPoint::setPointView(PointView* _pointView, const QString rob
             homeWidget->hide();
             robotBtn->setText("");
         }
+        qDebug() << "DisplaySelectedPoint::setPointView calling setRobotsLabel";
+        setRobotsLabel();
     } else {
         qDebug() << "displayselectedpoint::setpointview pointview null pointer";
     }
