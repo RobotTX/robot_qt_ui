@@ -2,9 +2,11 @@
 #define ROBOTS_H
 
 class RobotView;
+class Point;
 
 #include <QVector>
 #include <QMap>
+#include <memory>
 
 /**
  * @brief The Robots class
@@ -105,6 +107,7 @@ public:
      */
     RobotView* findRobotUsingHome(const QString name) const;
 
+    RobotView* findRobotUsingTmpPointInPath(const std::shared_ptr<Point> point) const;
 
     QMap<QString, QString> getRobotsNameMap() const {return robotsNameMap;}
     void setRobotsNameMap(const QMap<QString, QString> &_robotsNameMap) {robotsNameMap = _robotsNameMap;}

@@ -3,6 +3,7 @@
 #include "robot.h"
 #include <QDebug>
 #include "Model/point.h"
+#include "Model/pathpoint.h"
 #include "View/pointview.h"
 
 Robots::Robots(){
@@ -111,6 +112,18 @@ RobotView* Robots::findRobotUsingHome(const QString name) const {
         /// we first check that this robot has a home point, if it does then we compare the names
         if(home && !home->getPoint()->getName().compare(name))
             return robotsVector[i];
+    }
+    return NULL;
+}
+
+RobotView* Robots::findRobotUsingTmpPointInPath(const std::shared_ptr<Point> point) const {
+    for(int i = 0; i < robotsVector.size(); i++){
+        QVector<std::shared_ptr<PathPoint>> path = robotsVector.at(i)->getRobot()->getPath();
+        for(int j = 0; j < path.size(); j++){
+            if(path.at(j)->getPoint().getName().compare(point->getName()) == 0 &&
+                path.at(j)->getPoint().comparePos(point->getPosition().getX(), point->getPosition().getY()))
+                return robotsVector[i];
+        }
     }
     return NULL;
 }

@@ -28,18 +28,18 @@
 #include "View/pointbuttongroup.h"
 #include "View/customscrollarea.h"
 #include "View/toplayout.h"
-#include <QVBoxLayout>
-#include <QAbstractButton>
-#include <QString>
-#include <QStringList>
 #include "View/customizedlineedit.h"
 #include "View/buttonmenu.h"
 #include "View/pathpointcreationwidget.h"
 #include "View/pathpointlist.h"
-#include <QVector>
 #include "View/pathwidget.h"
 #include "colors.h"
 #include <QMap>
+#include <QVBoxLayout>
+#include <QAbstractButton>
+#include <QString>
+#include <QStringList>
+#include <QVector>
 
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow) {
@@ -965,7 +965,9 @@ void MainWindow::savePathSlot(){
         pointViewsToDisplay.at(i)->hide();
     pointViewsToDisplay.clear();
 
+
     backEvent();
+    setGraphicItemsState(GraphicItemState::NO_EVENT);
     editSelectedRobotWidget->setPathChanged(true);
     editSelectedRobotWidget->setPath(pathPainter->getCurrentPath());
     emit updatePathPainter();
@@ -2188,41 +2190,42 @@ void MainWindow::displayPointEvent(PointView* pointView){
     qDebug() << "MainWindow::displayPointEvent called" << pointView->getPoint()->getName();
 
 
+    /// If the point is not a path or is a path but from a permanent point, we display the menu with informations on the point
+    if(!(pointView->getPoint()->isPath() && pointView->getPoint()->getName().contains(PATH_POINT_NAME))){
 
-    /// resets the color of the previous selected point if such point exists
-    if(pointView && !(*(pointView->getPoint()) == *(points->getTmpPointView()->getPoint())))
-        points->displayTmpPoint(false);
+        /// resets the color of the previous selected point if such point exists
+        if(pointView && !(*(pointView->getPoint()) == *(points->getTmpPointView()->getPoint())))
+            points->displayTmpPoint(false);
 
-    leftMenu->getDisplaySelectedPoint()->getActionButtons()->getMapButton()->setChecked(true);
+        leftMenu->getDisplaySelectedPoint()->getActionButtons()->getMapButton()->setChecked(true);
 
-    QString robotName = "";
-    if(pointView->getPoint()->isHome()){
-        RobotView* rv = robots->findRobotUsingHome(pointView->getPoint()->getName());
-        if(rv != NULL)
-            robotName = rv->getRobot()->getName();
-        else
-            qDebug() << "MainWindow::displayPointEvent : something unexpected happened";
-    }
+        QString robotName = "";
+        if(pointView->getPoint()->isHome()){
+            RobotView* rv = robots->findRobotUsingHome(pointView->getPoint()->getName());
+            if(rv != NULL)
+                robotName = rv->getRobot()->getName();
+            else
+                qDebug() << "MainWindow::displayPointEvent : something unexpected happened";
+        }
 
-    leftMenu->getDisplaySelectedPoint()->setPointView(pointView, robotName);
+        leftMenu->getDisplaySelectedPoint()->setPointView(pointView, robotName);
 
-    /// so that the points don't stay blue if we click a new point
-    points->setPixmapAll(PointView::PixmapType::NORMAL);
+        /// so that the points don't stay blue if we click a new point
+        points->setPixmapAll(PointView::PixmapType::NORMAL);
 
-    pointView->setState(GraphicItemState::NO_STATE);
+        pointView->setState(GraphicItemState::NO_STATE);
 
-    leftMenu->getDisplaySelectedPoint()->displayPointInfo();
+        leftMenu->getDisplaySelectedPoint()->displayPointInfo();
 
-    hideAllWidgets();
+        hideAllWidgets();
 
-    leftMenu->show();
+        leftMenu->show();
 
-    leftMenu->getDisplaySelectedPoint()->show();
-    resetFocus();
-    switchFocus(pointView->getPoint()->getName(), leftMenu->getDisplaySelectedPoint(), MainWindow::WidgetType::POINT);
+        leftMenu->getDisplaySelectedPoint()->show();
+        resetFocus();
+        switchFocus(pointView->getPoint()->getName(), leftMenu->getDisplaySelectedPoint(), MainWindow::WidgetType::POINT);
 
-    qDebug() << "MainWindow::displayPointEvent  : is this point a path ?" << (pointView->getPoint()->isPath()) << pointView->getPoint()->getType();
-    if(!pointView->getPoint()->isPath()){
+        qDebug() << "MainWindow::displayPointEvent  : is this point a path ?" << (pointView->getPoint()->isPath()) << pointView->getPoint()->getType();
         if(pointView->getPoint()->isHome()){
             RobotView* rv = robots->findRobotUsingHome(pointView->getPoint()->getName());
             if(rv != NULL)
@@ -2233,10 +2236,20 @@ void MainWindow::displayPointEvent(PointView* pointView){
         pointView->setPixmap(PointView::PixmapType::MID);
         pointView->setLastPixmap(QPixmap(PIXMAP_MID));
 
+        if(pointView->getPoint()->isPath()){
+            /// if it's a path point the edition/suppression is forbidden from here
+            leftMenu->getDisplaySelectedPoint()->getActionButtons()->getEditButton()->setEnabled(false);
+            leftMenu->getDisplaySelectedPoint()->getActionButtons()->getMinusButton()->setEnabled(false);
+        }
+
     } else {
-        /// if it's a path point the edition/suppression is forbidden from heres
-        leftMenu->getDisplaySelectedPoint()->getActionButtons()->getEditButton()->setEnabled(false);
-        leftMenu->getDisplaySelectedPoint()->getActionButtons()->getMinusButton()->setEnabled(false);
+        /// The point is a path' point from a temporary point so we display the page of the robot in which this pathpoint is used
+        RobotView* robot = robots->findRobotUsingTmpPointInPath(pointView->getPoint());
+        if(robot){
+            qDebug() << "MainWindow::displayPointEvent  At least, I found the robot" << robot->getRobot()->getName();
+            resetFocus();
+            setSelectedRobot(robot);
+        }
     }
 }
 
@@ -3385,10 +3398,8 @@ int MainWindow::openConfirmMessage(const QString text){
  * resets the state of the map, robotViews et pointViews
  */
 void MainWindow::setGraphicItemsState(const GraphicItemState state, const bool clear){
-    //qDebug() << "setGraphicItemsState called";
+    qDebug() << "MainWindow::setGraphicItemsState called" << state << robots->getRobotsVector().size();
     mapPixmapItem->setState(state);
-    if(clear)
-        //qDebug() << "MainWindow::setGraphicItemsState need to clear tmpPathPoints";
 
     for(int i = 0; i < robots->getRobotsVector().size(); i++){
         robots->getRobotsVector().at(i)->setState(state);
