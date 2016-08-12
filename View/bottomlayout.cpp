@@ -100,6 +100,10 @@ BottomLayout::BottomLayout(QMainWindow* parent, const std::shared_ptr<Robots> &r
     for(int i = 0; i < robotsVector.size(); i++){
         QPushButton* viewPathRobotBtn = new QPushButton(QIcon(":/icons/eye.png"),"", this);
         viewPathRobotBtn->setCheckable(true);
+        viewPathRobotBtn->setMaximumWidth(parent->width()/10);
+        viewPathRobotBtn->setMinimumWidth(parent->width()/10);
+        viewPathRobotBtn->setIconSize(parent->size()/10);
+
         if(robots->getRobotsVector().at(i)->getRobot()->getPath().size() < 1)
             viewPathRobotBtn->setEnabled(false);
         viewPathRobotBtnGroup->addButton(viewPathRobotBtn, i);
@@ -113,6 +117,9 @@ BottomLayout::BottomLayout(QMainWindow* parent, const std::shared_ptr<Robots> &r
         if(robots->getRobotsVector().at(i)->getRobot()->getPath().size() < 1)
             playRobotBtn->setEnabled(false);
         playRobotBtnGroup->addButton(playRobotBtn, i);
+        playRobotBtn->setMaximumWidth(parent->width()/10);
+        playRobotBtn->setMinimumWidth(parent->width()/10);
+        playRobotBtn->setIconSize(parent->size()/10);
         columnPlay->addWidget(playRobotBtn);
         playRobotBtn->setFlat(true);
     }
@@ -123,6 +130,9 @@ BottomLayout::BottomLayout(QMainWindow* parent, const std::shared_ptr<Robots> &r
         if(robots->getRobotsVector().at(i)->getRobot()->getPath().size() < 1)
             stopRobotBtn->setEnabled(false);
         stopRobotBtnGroup->addButton(stopRobotBtn, i);
+        stopRobotBtn->setMaximumWidth(parent->width()/10);
+        stopRobotBtn->setMinimumWidth(parent->width()/10);
+        stopRobotBtn->setIconSize(parent->size()/10);
         columnStop->addWidget(stopRobotBtn);
         stopRobotBtn->setFlat(true);
     }
@@ -133,6 +143,9 @@ BottomLayout::BottomLayout(QMainWindow* parent, const std::shared_ptr<Robots> &r
         deletePathBtnGroup->addButton(deletePathButton, i);
         columnDelete->addWidget(deletePathButton);
         deletePathButton->setFlat(true);
+        deletePathButton->setMaximumWidth(parent->width()/10);
+        deletePathButton->setMinimumWidth(parent->width()/10);
+        deletePathButton->setIconSize(parent->size()/10);
     }
     scrollLayout->addWidget(actionWidget);
 
