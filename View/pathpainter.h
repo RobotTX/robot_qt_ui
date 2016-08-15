@@ -28,6 +28,7 @@ public:
     void displayPath(void);
     int nbUsedPointView(QString name, double x, double y);
     void updateCurrentPath(void);
+    void updatePathPainterName(void);
 
 private slots:
     void resetPathSlot(void);

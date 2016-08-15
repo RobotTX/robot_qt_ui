@@ -18,6 +18,7 @@
 #include "Model/robot.h"
 #include "View/robotview.h"
 #include "Model/pathpoint.h"
+#include "View/displayselectedpointrobots.h"
 #include <QSet>
 
 DisplaySelectedPoint::DisplaySelectedPoint(QMainWindow *const _parent,  std::shared_ptr<Robots> const _robots,std::shared_ptr<Points> const& _points, std::shared_ptr<Map> const& _map, PointView* _pointView, const Origin _origin):
@@ -72,25 +73,8 @@ DisplaySelectedPoint::DisplaySelectedPoint(QMainWindow *const _parent,  std::sha
 
     downLayout->addLayout(editLayout);
 
-    homeWidget = new QWidget(this);
-    QVBoxLayout* homeLayout = new QVBoxLayout(homeWidget);
-
-    SpaceWidget* spaceWidget2 = new SpaceWidget(SpaceWidget::SpaceOrientation::HORIZONTAL, this);
-    homeLayout->addWidget(spaceWidget2);
-
-    QLabel* homeLabel = new QLabel("This point is the home for the robot :", this);
-    homeLabel->setWordWrap(true);
-    homeLayout->addWidget(homeLabel);
-
-    robotBtn = new QPushButton("", this);
-    homeLayout->addWidget(robotBtn);
-
-    homeWidget->hide();
-
-    downLayout->addWidget(homeWidget);
-
-    robotsLabel = new QLabel(this);
-    downLayout->addWidget(robotsLabel);
+    robotsWidget = new DisplaySelectedPointRobots(this);
+    downLayout->addWidget(robotsWidget);
 
     /// to check that a point that's being edited does not get a new name that's already used in the database
     connect(nameEdit, SIGNAL(textEdited(QString)), this, SLOT(checkPointName(QString)));
@@ -117,31 +101,8 @@ void DisplaySelectedPoint::displayPointInfo(void) {
         posYLabel->setText("Y : " + QString::number(pointView->getPoint()->getPosition().getY(), 'f', 1));
         nameEdit->setText(pointView->getPoint()->getName());
 
-        if(pointView->getPoint()->isHome()){
-            homeWidget->show();
-        } else
-            homeWidget->hide();
-        qDebug() << "DisplaySelectedPoint::displayPointInfo calling setRobotsLabel";
-        setRobotsLabel();
+        robotsWidget->setRobotsWidget(pointView, robots);
     }
-}
-
-void DisplaySelectedPoint::setRobotsLabel(void){
-    QSet<QString> robotNameSet;
-    for(int i = 0; i < robots->getRobotsVector().size(); i++){
-        std::shared_ptr<Robot> robot = robots->getRobotsVector().at(i)->getRobot();
-        for(int j = 0; j < robot->getPath().size(); j++){
-            if(robot->getPath().at(j)->getPoint().getName().compare(pointView->getPoint()->getName()) == 0){
-                robotNameSet.insert(robot->getName());
-            }
-        }
-    }
-    qDebug() << "DisplaySelectedPoint::setRobotsLabel " << robotNameSet;
-    QString robotNameStr = "";
-    QSetIterator<QString> k(robotNameSet);
-    while (k.hasNext())
-        robotNameStr += k.next() + "\n";
-    robotsLabel->setText(robotNameStr);
 }
 
 void DisplaySelectedPoint::mousePressEvent(QEvent* /* unused */){
@@ -248,22 +209,10 @@ int DisplaySelectedPoint::checkPointName(QString name) {
 void DisplaySelectedPoint::setPointView(PointView* _pointView, const QString robotName) {
     qDebug() << "DisplaySelectedPoint::setPointView called";
 
-    /// sets the pixmaps of the other points (black)
-    //points->setPixmapAll(PointView::PixmapType::NORMAL);
-
-    /// sets the color of the displayed pointView to blue
     if(_pointView){
         pointView = _pointView;
-        // no point if path point
-        if(pointView->getPoint()->isHome()){
-            homeWidget->show();
-            robotBtn->setText(robotName);
-        } else {
-            homeWidget->hide();
-            robotBtn->setText("");
-        }
-        qDebug() << "DisplaySelectedPoint::setPointView calling setRobotsLabel";
-        setRobotsLabel();
+
+        robotsWidget->setRobotsWidget(pointView, robots, robotName);
     } else {
         qDebug() << "displayselectedpoint::setpointview pointview null pointer";
     }
