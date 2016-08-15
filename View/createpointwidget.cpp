@@ -178,7 +178,8 @@ void CreatePointWidget::showGroupLayout(void) const {
     actionButtons->getPlusButton()->setEnabled(false);
     actionButtons->getPlusButton()->setToolTip("");
     nameEdit->setReadOnly(false);
-    nameEdit->setAutoFillBackground(false);
+    //nameEdit->setPlaceholderText("");
+    nameEdit->setAutoFillBackground(true);
     nameEdit->setFrame(true);
     nameEdit->setFocusPolicy(Qt::FocusPolicy::StrongFocus);
 }

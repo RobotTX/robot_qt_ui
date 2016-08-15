@@ -128,6 +128,7 @@ void PointsLeftWidget::enableButtons(QAbstractButton* button){
 }
 
 void PointsLeftWidget::enableButtons(QString button){
+    points->setPixmapAll(PointView::PixmapType::NORMAL);
     qDebug() << "PointsLeftWidget::enableButtons called" << button;
     if(button.compare(lastCheckedId) == 0){
 
@@ -167,8 +168,17 @@ void PointsLeftWidget::enableButtons(QString button){
                 actionButtons->getMapButton()->setChecked(false);
                 actionButtons->getMapButton()->setToolTip("Click to display the selected group on the map");
             }
+            /// changes the pointviews of all the points displayed in the group on the map
+            for(int i = 0; i < points->getGroups()->value(button)->size(); i++){
+                std::shared_ptr<PointView> pv = points->getGroups()->value(button)->at(i);
+                if(pv->isVisible())
+                    pv->setPixmap(PointView::PixmapType::MID);
+            }
         } else {
-            if(points->isDisplayed(NO_GROUP_NAME)){
+
+            if(points->findPointView(button)->isVisible()){
+                /// if the point is displayed, changes its pointview on the map
+                points->findPointView(button)->setPixmap(PointView::PixmapType::MID);
                 actionButtons->getMapButton()->setChecked(true);
                 actionButtons->getMapButton()->setToolTip("Click to hide the selected point on the map");
             } else {
@@ -307,6 +317,7 @@ void PointsLeftWidget::keyPressEvent(QKeyEvent* event){
 
 void PointsLeftWidget::showEvent(QShowEvent *event){
     resetWidget();
+    points->setPixmapAll(PointView::PixmapType::NORMAL);
     QWidget::showEvent(event);
 }
 

@@ -3,7 +3,10 @@
 #include <QMainWindow>
 #include <QPushButton>
 #include <QScrollArea>
-LeftMenuWidget::LeftMenuWidget(QMainWindow* parent):QWidget(parent){
+#include "Model/points.h"
+
+LeftMenuWidget::LeftMenuWidget(QMainWindow* parent, std::shared_ptr<Points> const& _points): QWidget(parent), points(_points)
+{
 
     layout = new QVBoxLayout(this);
     layout->setAlignment(Qt::AlignTop);
@@ -40,5 +43,10 @@ LeftMenuWidget::LeftMenuWidget(QMainWindow* parent):QWidget(parent){
     setMinimumWidth(parent->width()*4/10);
 
     layout->setAlignment(Qt::AlignTop);
+}
+
+void LeftMenuWidget::showEvent(QShowEvent *event){
+    points->setPixmapAll(PointView::PixmapType::NORMAL);
+    QWidget::showEvent(event);
 }
 
