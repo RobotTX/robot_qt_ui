@@ -136,7 +136,7 @@ void PathCreationWidget::itemClicked(QListWidgetItem* item){
 
 void PathCreationWidget::itemMovedSlot(const QModelIndex& , int start, int , const QModelIndex& , int row){
     qDebug() << "PathCreationWidget::itemClicked called" << start << row;
-    /// hen an item has been dragged in the path point list
+    /// when an item has been dragged in the path point list
     emit orderPathPointChanged(start, row);
 }
 

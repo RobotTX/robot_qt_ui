@@ -111,7 +111,7 @@ private slots:
     void editSelectedRobot(RobotView* robotView);
     void setSelectedRobot(QAbstractButton* button);
     void setSelectedRobotNoParent(QAbstractButton *button);
-    void setSelectedRobotFromPoint();
+    void setSelectedRobotFromPointSlot(QString robotName);
     void robotBtnEvent();
     void pointBtnEvent();
     void mapBtnEvent();

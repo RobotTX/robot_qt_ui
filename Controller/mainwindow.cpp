@@ -40,6 +40,7 @@
 #include <QString>
 #include <QStringList>
 #include <QVector>
+#include "View/displayselectedpointrobots.h"
 
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow) {
@@ -695,13 +696,13 @@ void MainWindow::selectViewRobot(){
     setSelectedRobot(robots->getRobotViewByName(robotsLeftWidget->getSelectedRobotName()));
 }
 
-void MainWindow::setSelectedRobotFromPoint(){
-    qDebug() << "setSelectedRobotFromPoint called : " << leftMenu->getDisplaySelectedPoint()->getRobotButton()->text();
-    RobotView* rv = robots->getRobotViewByName(leftMenu->getDisplaySelectedPoint()->getRobotButton()->text());
+void MainWindow::setSelectedRobotFromPointSlot(QString robotName){
+    qDebug() << "MainWindow::setSelectedRobotFromPointSlot called :" << robotName;
+    RobotView* rv = robots->getRobotViewByName(robotName);
     if(rv != NULL)
         setSelectedRobot(rv);
     else
-        qDebug() << "setSelectedRobotFromPoint : something unexpected happened";
+        qDebug() << "MainWindow::setSelectedRobotFromPointSlot : Error could not find the robot named :" << robotName;
 }
 
 void MainWindow::backRobotBtnEvent(){
@@ -1063,7 +1064,7 @@ void MainWindow::editHomeEvent(){
         if(selectedRobot->getRobot()->getHome() != NULL){
             editSelectedRobotWidget->getHomeBtn()->setText(selectedRobot->getRobot()->getHome()->getPoint()->getName());
         } else {
-            editSelectedRobotWidget->getHomeBtn()->setText("Add home");
+            editSelectedRobotWidget->getHomeBtn()->setText("Add Home");
         }
         editSelectedRobotWidget->enableAll();
         setEnableAll(true);
@@ -1649,9 +1650,9 @@ void MainWindow::setSelectedPoint(){
         leftMenu->getDisplaySelectedPoint()->getXLabel()->setText(QString::number(points->getTmpPointView()->getPoint()->getPosition().getX()));
         leftMenu->getDisplaySelectedPoint()->getYLabel()->setText(QString::number(points->getTmpPointView()->getPoint()->getPosition().getY()));
         if(displaySelectedPointView->getPoint()->isHome()){
-            leftMenu->getDisplaySelectedPoint()->getHomeWidget()->show();
+            leftMenu->getDisplaySelectedPoint()->getDisplaySelectedPointRobots()->getHomeWidget()->show();
         } else {
-            leftMenu->getDisplaySelectedPoint()->getHomeWidget()->hide();
+            leftMenu->getDisplaySelectedPoint()->getDisplaySelectedPointRobots()->getHomeWidget()->hide();
         }
     }
 }
@@ -2201,7 +2202,7 @@ void MainWindow::askForDeleteGroupConfirmation(QString index){
                                + " If you want to remove it you first have to indicate a new home point for this robot.");
                 msgBox.setIcon(QMessageBox::Critical);
                 msgBox.setStandardButtons(QMessageBox::Ok);
-                msgBox.setInformativeText("To modify the home point of a robot you can either click on the menu > Robots, choose a robot and Add home or simply click a robot on the map and Add home");
+                msgBox.setInformativeText("To modify the home point of a robot you can either click on the menu > Robots, choose a robot and Add Home or simply click a robot on the map and Add Home");
                 msgBox.exec();
                 qDebug() << "Sorry this point is the home of a robot and therefore cannot be removed";
             }
@@ -3033,7 +3034,7 @@ void MainWindow::openInterdictionOfPointRemovalMessage(const QString pointName, 
                    ". If you want to remove it you first have to indicate a new home point for this robot.");
     msgBox.setIcon(QMessageBox::Critical);
     msgBox.setStandardButtons(QMessageBox::Ok);
-    msgBox.setInformativeText("To modify the home point of a robot you can either click on the menu > Robots, choose a robot and Add home or simply click a robot on the map and Add home");
+    msgBox.setInformativeText("To modify the home point of a robot you can either click on the menu > Robots, choose a robot and Add Home or simply click a robot on the map and Add Home");
     msgBox.exec();
 }
 

@@ -57,7 +57,7 @@ void PathPainter::addPathPointSlot(QString name, double x, double y){
 }
 
 void PathPainter::orderPathPointChangedSlot(int from, int to){
-    qDebug() << "PathPainter::updatePathPainter called from" << from << "to" << to;
+    qDebug() << "PathPainter::orderPathPointChangedSlot called from" << from << "to" << to;
 
     /// Do the change in the model
     std::shared_ptr<PathPoint> pathPoint = currentPath.takeAt(from);
@@ -76,9 +76,23 @@ void PathPainter::orderPathPointChangedSlot(int from, int to){
         }
     }
 
+    updatePathPainterName();
     /// Update the path painter
     updatePathPainterSlot();
 }
+
+void PathPainter::updatePathPainterName(void){
+    qDebug() << "PathPainter::updatePathPainterName called";
+    for(int i = 0; i < currentPath.size(); i++){
+        if(currentPath.at(i)->getPoint().getName().contains(PATH_POINT_NAME)){
+            Point point = currentPath.at(i)->getPoint();
+            point.setName(PATH_POINT_NAME + QString::number(i+1));
+            currentPath.at(i)->setPoint(point);
+            points->getGroups()->value(PATH_GROUP_NAME)->at(i)->getPoint()->setName(point.getName());
+        }
+    }
+}
+
 
 void PathPainter::deletePathPointSlot(int id){
     qDebug() << "PathPainter::deletePathPointSlot called";
@@ -94,8 +108,7 @@ void PathPainter::deletePathPointSlot(int id){
 void PathPainter::editPathPointSlot(int id, QString name, double x, double y){
     qDebug() << "PathPainter::editPathPointSlot called" << id << name << x << y;
 
-    points->getGroups()->value(PATH_GROUP_NAME)->remove(id);
-    std::shared_ptr<PointView> newPointView = points->findPointView(name);
+    std::shared_ptr<PointView> newPointView = points->getGroups()->value(PATH_GROUP_NAME)->takeAt(id);
 
     /// If found, it's a permanent point else it's a temporary point
     if(newPointView){

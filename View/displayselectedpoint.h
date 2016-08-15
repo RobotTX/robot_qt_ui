@@ -11,6 +11,7 @@ class QKeyEvent;
 class QLabel;
 class Map;
 class Robots;
+class DisplaySelectedPointRobots;
 
 #include "View/createpointwidget.h"
 #include "Model/points.h"
@@ -38,14 +39,13 @@ public:
     QPushButton* getCancelButton(void) const { return cancelButton; }
     QLineEdit* getNameEdit(void) const { return nameEdit; }
     QString getPointName(void) const { return pointView->getPoint()->getName(); }
-    void setPointView(PointView *_pointView, const QString robotName);
+    void setPointView(PointView* _pointView, const QString robotName);
     Origin getOrigin(void) const { return origin; }
     QLabel* getXLabel(void) const { return posXLabel; }
     QLabel* getYLabel(void) const { return posYLabel; }
-    QWidget* getHomeWidget(void) const { return homeWidget; }
-    QPushButton* getRobotButton(void) const { return robotBtn; }
     QString formatName(const QString name) const;
-    PointView* getPointView(void) { return pointView; }
+    PointView* getPointView(void) const { return pointView; }
+    DisplaySelectedPointRobots* getDisplaySelectedPointRobots(void) { return robotsWidget; }
 
 public:
     void displayPointInfo(void);
@@ -64,6 +64,7 @@ signals:
     /// to reset the state of the map if a user clicks a random button while he was editting a point
     void resetState(GraphicItemState, bool);
     void invalidName(QString, CreatePointWidget::Error);
+    void setSelectedRobotFromPoint(QString);
 
 private slots:
     /// to check that a name is available before we proceed to the update
@@ -78,15 +79,13 @@ private:
 
     QLabel* posXLabel;
     QLabel* posYLabel;
-    QLabel* robotsLabel;
+    DisplaySelectedPointRobots* robotsWidget;
 
     QPushButton* saveButton;
     QPushButton* cancelButton;
     PointView* pointView;
     QMainWindow* parent;
     std::shared_ptr<Points> points;
-    QWidget* homeWidget;
-    QPushButton* robotBtn;
     TopLeftMenu* actionButtons;
     std::shared_ptr<Robots> robots;
 
