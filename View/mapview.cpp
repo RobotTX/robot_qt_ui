@@ -40,7 +40,7 @@ void MapView::mouseReleaseEvent(QGraphicsSceneMouseEvent *event){
         /// click
         if(state == GraphicItemState::NO_STATE){
             qDebug() << "MapView::mouseReleaseEvent NO_STATE";
-            std::shared_ptr<PointView> tmpPointView = points->getTmpPointView();
+            PointView* tmpPointView = points->getTmpPointView();
             tmpPointView->show();
             /// might be useless code
             tmpPointView->setPos(event->pos().x(), event->pos().y());
@@ -60,11 +60,11 @@ void MapView::mouseReleaseEvent(QGraphicsSceneMouseEvent *event){
             emit newCoordinates(event->pos().x(), event->pos().y());
         } else if(state == GraphicItemState::EDITING_HOME){
             qDebug() << "MapView::mouseReleaseEvent EDITING_HOME";
-            std::shared_ptr<PointView> tmpPointView = points->getTmpPointView();
+            PointView* tmpPointView = points->getTmpPointView();
             tmpPointView->show();
             /// might be useless code
             tmpPointView->setPos(event->pos().x(), event->pos().y());
-            emit homeEdited(tmpPointView.get());
+            emit homeEdited(tmpPointView);
         } else if(state == GraphicItemState::EDITING_PATH){
             qDebug() << "MapView::mouseReleaseEvent EDITING_PATH" << event->pos().x() << event->pos().y();
             /// to notify that a point which belongs to the path of a robot has been changed

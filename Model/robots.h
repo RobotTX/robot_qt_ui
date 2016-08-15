@@ -15,7 +15,6 @@ class Point;
 class Robots{
 public:
     Robots();
-    ~Robots();
 
     /**
      * @brief setRobotsVector

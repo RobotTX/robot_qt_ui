@@ -31,7 +31,7 @@ class MainWindow;
 class Points : public QObject{
     Q_OBJECT
 
-    typedef QMap<QString, std::shared_ptr<QVector<std::shared_ptr<PointView>>>> Groups;
+    typedef QMap<QString, std::shared_ptr<QVector<PointView*>>> Groups;
 public:
     Points(QObject* parent);
 
@@ -42,22 +42,22 @@ public:
     std::shared_ptr<Groups> getGroups(void) const { return groups; }
     int countGroups(void) const { return groups->count(); }
     int count(void) const;
-    void addGroup(const QString groupName, std::shared_ptr<QVector<std::shared_ptr<PointView>>> points);
+    void addGroup(const QString groupName, std::shared_ptr<QVector<PointView*>> points);
     void removeGroup(const QString groupName);
     void removePoint(const QString pointName);
-    std::shared_ptr<QVector<std::shared_ptr<PointView>>> findGroup(const QString groupName) const;
+    std::shared_ptr<QVector<PointView*>> findGroup(const QString groupName) const;
     std::shared_ptr<Point> findPoint(const QString pointName) const;
     std::shared_ptr<Point> findPoint(const QString groupName, const int indexPoint) const;
-    std::shared_ptr<PointView> findPointView(const QString pointName) const;
-    std::shared_ptr<PointView> findPathPointView(const double x, const double y) const;
+    PointView* findPointView(const QString pointName) const;
+    PointView* findPathPointView(const double x, const double y) const;
     std::pair<QString, int> findPointIndexes(const QString pointName) const;
-    std::shared_ptr<QVector<std::shared_ptr<PointView>>> getDefaultGroup(void) const { return groups->value(NO_GROUP_NAME); }
-    void addGroup(const QString name) { groups->insert(name, std::shared_ptr<QVector<std::shared_ptr<PointView>>>(new QVector<std::shared_ptr<PointView>>)); }
+    std::shared_ptr<QVector<PointView*>> getDefaultGroup(void) const { return groups->value(NO_GROUP_NAME); }
+    void addGroup(const QString name) { groups->insert(name, std::shared_ptr<QVector<PointView*>>(new QVector<PointView*>)); }
     void clear();
     void addPoint(const QString groupName, const QString pointName, const double x, const double y, const bool displayed, const Point::PointType type, MapView *mapView, MainWindow *mainWindow);
     void displayTmpPoint(const bool display);
     void setPointViewsState(const GraphicItemState state);
-    std::shared_ptr<PointView> getTmpPointView() const;
+    PointView* getTmpPointView() const;
     bool isDisplayed(const QString key) const;
     bool isAGroup(const QString groupName) const;
     bool isAPoint(const QString pointName) const;
@@ -65,12 +65,12 @@ public:
     QVector<QString> getHomeNameFromGroup(const QString groupName) const;
     QString getGroupNameFromPointName(const QString pointName) const;
     void addTmpPoint(MapView *mapView, MainWindow *mainWindow);
-    void addPoint(const QString groupName, const std::shared_ptr<PointView>& pointView);
-    void insertPoint(const QString groupName, const int id, const std::shared_ptr<PointView>& pointView);
+    void addPoint(const QString groupName, PointView *pointView);
+    void insertPoint(const QString groupName, const int id, PointView *pointView);
     void insertPoint(const QString groupName, const int id, const QString pointName, const double x, const double y, const bool displayed, const Point::PointType type, MapView *mapView, MainWindow *mainWindow);
     void setPixmapAll(const PointView::PixmapType type);
     void setPixmapAll(const QPixmap pixmap);
-    std::shared_ptr<PointView> createPoint(const QString pointName, const double x, const double y, const bool displayed, const Point::PointType type,
+    PointView* createPoint(const QString pointName, const double x, const double y, const bool displayed, const Point::PointType type,
                                                    MapView* mapView, MainWindow* mainWindow);
     void updatePointViews(void);
 

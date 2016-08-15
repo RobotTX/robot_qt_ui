@@ -169,12 +169,12 @@ void PointsLeftWidget::enableButtons(QString button){
             }
             /// changes the pointviews of all the points displayed in the group on the map
             for(int i = 0; i < points->getGroups()->value(button)->size(); i++){
-                std::shared_ptr<PointView> pv = points->getGroups()->value(button)->at(i);
+                PointView* pv = points->getGroups()->value(button)->at(i);
                 if(pv->isVisible())
                     pv->setPixmap(PointView::PixmapType::MID);
             }
         } else {
-            std::shared_ptr<PointView> pv = points->findPointView(button);
+            PointView* pv = points->findPointView(button);
             if(pv->isVisible()){
                 /// if the point is displayed, changes its pointview on the map
                 points->findPointView(button)->setPixmap(PointView::PixmapType::MID);
@@ -242,7 +242,7 @@ int PointsLeftWidget::checkGroupName(QString name){
         emit messageCreationGroup(TEXT_COLOR_WARNING, "The name of your group cannot be empty");
         return 1;
     }
-    QMapIterator<QString, std::shared_ptr<QVector<std::shared_ptr<PointView>>>> i(*(points->getGroups()));
+    QMapIterator<QString, std::shared_ptr<QVector<PointView*>>> i(*(points->getGroups()));
     while (i.hasNext()) {
         bool valid(true);
         i.next();

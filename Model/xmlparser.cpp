@@ -28,7 +28,7 @@ void XMLParser::save(const Points& points) const {
 
         xmlWriter.writeStartElement("points");
 
-        QMapIterator<QString, std::shared_ptr<QVector<std::shared_ptr<PointView>>>> i(*(points.getGroups()));
+        QMapIterator<QString, std::shared_ptr<QVector<PointView*>>> i(*(points.getGroups()));
         /// For each group
         while (i.hasNext()) {
             i.next();

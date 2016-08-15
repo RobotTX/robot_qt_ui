@@ -90,7 +90,7 @@ void PathCreationWidget::updatePointsList(void){
     pointsMenu->clear();
 
     /// We update the QMenu used to add/edit a permanent point
-    QMapIterator<QString, std::shared_ptr<QVector<std::shared_ptr<PointView>>>> i(*(points->getGroups()));
+    QMapIterator<QString, std::shared_ptr<QVector<PointView*>>> i(*(points->getGroups()));
     while (i.hasNext()) {
         i.next();
         if(i.value() && i.key().compare(NO_GROUP_NAME)
@@ -269,7 +269,7 @@ void PathCreationWidget::editPathPointSlot(void){
     /// we edit the point only if the corresponding item is enabled which is the case if no other point is being edited
     if(pathPointsList->itemWidget(pathPointsList->currentItem())->isEnabled()){
         /// We get the edited pointView
-        std::shared_ptr<PointView> pointView = points->getGroups()->value(PATH_GROUP_NAME)->at(id);
+        PointView* pointView = points->getGroups()->value(PATH_GROUP_NAME)->at(id);
         qDebug() << "PathCreationWidget::editPathPoint"
                  << pointView->getPoint()->getName()
                  << pointView->getPoint()->getPosition().getX()

@@ -16,8 +16,11 @@ void PathPainter::resetPathSlot(void){
     qDebug() << "PathPainter::resetPathSlot called";
     path = QPainterPath();
     points->setPixmapAll(PointView::PixmapType::NORMAL);
-    if(points->getGroups()->value(PATH_GROUP_NAME))
-        points->getGroups()->value(PATH_GROUP_NAME)->clear();
+    if(points->getGroups()->value(PATH_GROUP_NAME)){
+        std::shared_ptr<QVector<PointView*>> group = points->getGroups()->value(PATH_GROUP_NAME);
+        qDeleteAll(group->begin(), group->end());
+        group->clear();
+    }
     currentPath.clear();
     setPath(path);
 }
@@ -38,7 +41,7 @@ void PathPainter::addPathPointSlot(QString name, double x, double y){
     qDebug() << "PathPainter::addPathPointSlot called" << name << x << y;
 
     int nb = nbUsedPointView(name, x, y);
-    std::shared_ptr<PointView> pointView = points->findPathPointView(x, y);
+    PointView* pointView = points->findPathPointView(x, y);
     /// If found, it's a permanent point which is already in the path
     if(nb > 0 && pointView){
         points->addPoint(PATH_GROUP_NAME, pointView);
@@ -61,7 +64,7 @@ void PathPainter::orderPathPointChangedSlot(int from, int to){
 
     /// Do the change in the model
     std::shared_ptr<PathPoint> pathPoint = currentPath.takeAt(from);
-    std::shared_ptr<PointView> pointView = points->getGroups()->value(PATH_GROUP_NAME)->takeAt(from);
+    PointView* pointView = points->getGroups()->value(PATH_GROUP_NAME)->takeAt(from);
 
     if(to > currentPath.size()){
         currentPath.push_back(pathPoint);
@@ -108,7 +111,7 @@ void PathPainter::deletePathPointSlot(int id){
 void PathPainter::editPathPointSlot(int id, QString name, double x, double y){
     qDebug() << "PathPainter::editPathPointSlot called" << id << name << x << y;
 
-    std::shared_ptr<PointView> newPointView = points->getGroups()->value(PATH_GROUP_NAME)->takeAt(id);
+    PointView* newPointView = points->getGroups()->value(PATH_GROUP_NAME)->takeAt(id);
 
     /// If found, it's a permanent point else it's a temporary point
     if(newPointView){
@@ -140,11 +143,11 @@ void PathPainter::updateCurrentPath(void){
 void PathPainter::updatePathPainterSlot(void){
     qDebug() << "PathPainter::updatePathPainter called";
     points->setPixmapAll(PointView::PixmapType::NORMAL);
-    std::shared_ptr<QVector<std::shared_ptr<PointView>>> group = points->getGroups()->value(PATH_GROUP_NAME);
+    std::shared_ptr<QVector<PointView*>> group = points->getGroups()->value(PATH_GROUP_NAME);
 
-    std::shared_ptr<PointView> startPointView = std::shared_ptr<PointView>();
-    std::shared_ptr<PointView> endPointView = std::shared_ptr<PointView>();
-    std::shared_ptr<PointView> currentPointView = std::shared_ptr<PointView>();
+    PointView* startPointView(0);
+    PointView* endPointView(0);
+    PointView* currentPointView(0);
 
     if(group && group->size() > 0){
         for(int i = 0; i < group->size(); i++){
@@ -180,11 +183,11 @@ void PathPainter::updatePathPainterSlot(void){
 
 void PathPainter::updatePathPainterPointViewSlot(void){
     qDebug() << "PathPainter::updatePathPainterPointViewSlot called";
-    std::shared_ptr<QVector<std::shared_ptr<PointView>>> group = points->getGroups()->value(PATH_GROUP_NAME);
+    std::shared_ptr<QVector<PointView*>> group = points->getGroups()->value(PATH_GROUP_NAME);
 
-    std::shared_ptr<PointView> startPointView = std::shared_ptr<PointView>();
-    std::shared_ptr<PointView> endPointView = std::shared_ptr<PointView>();
-    std::shared_ptr<PointView> currentPointView = std::shared_ptr<PointView>();
+    PointView* startPointView(0);
+    PointView* endPointView(0);
+    PointView* currentPointView(0);
 
     if(group && group->size() > 0){
         for(int i = 0; i < group->size(); i++){

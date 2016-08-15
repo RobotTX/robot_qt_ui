@@ -92,7 +92,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
     initializePoints();
 
-    pathPainter = std::shared_ptr<PathPainter>(new PathPainter(this, mapPixmapItem, points));
+    pathPainter = new PathPainter(this, mapPixmapItem, points);
 
     initializeRobots();
 
@@ -169,13 +169,13 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
     /// to add a path point when we click on a pointView (which is relayed by the mainWindow)
     connect(this, SIGNAL(addPathPoint(QString, double, double)), pathCreationWidget, SLOT(addPathPointSlot(QString, double, double)));
-    connect(this, SIGNAL(updatePathPainter()), pathPainter.get(), SLOT(updatePathPainterSlot()));
-    connect(this, SIGNAL(updatePathPainterPointView()), pathPainter.get(), SLOT(updatePathPainterPointViewSlot()));
+    connect(this, SIGNAL(updatePathPainter()), pathPainter, SLOT(updatePathPainterSlot()));
+    connect(this, SIGNAL(updatePathPainterPointView()), pathPainter, SLOT(updatePathPainterPointViewSlot()));
     connect(pathCreationWidget, SIGNAL(editTmpPathPoint(int, QString, double, double)), this, SLOT(editTmpPathPointSlot(int, QString, double, double)));
     connect(pathCreationWidget, SIGNAL(saveEditPathPoint()), this, SLOT(saveEditPathPointSlot()));
     connect(pathCreationWidget, SIGNAL(cancelEditPathPoint()), this, SLOT(cancelEditPathPointSlot()));
     connect(pathCreationWidget, SIGNAL(savePath()), this, SLOT(savePathSlot()));
-    connect(this, SIGNAL(resetPath()), pathPainter.get(), SLOT(resetPathSlot()));
+    connect(this, SIGNAL(resetPath()), pathPainter, SLOT(resetPathSlot()));
     connect(this, SIGNAL(resetPathCreationWidget()), pathCreationWidget, SLOT(resetWidget()));
 
     mainLayout->addLayout(bottom);
@@ -570,7 +570,7 @@ void MainWindow::viewPathSelectedRobot(int robotNb, bool checked){
         if(leftMenu->getDisplaySelectedPoint() && leftMenu->getDisplaySelectedPoint()->isVisible() && leftMenu->getDisplaySelectedPoint()->getPointView()->getPoint()->isPath()){
             leftMenu->getDisplaySelectedPoint()->getPointView()->hide();
             selectedPoint = NULL;
-            leftMenu->getDisplaySelectedPoint()->setPointView(selectedPoint.get(), "");
+            leftMenu->getDisplaySelectedPoint()->setPointView(selectedPoint, "");
             backEvent();
         }
 
@@ -660,7 +660,7 @@ void MainWindow::addPathSelecRobotBtnEvent(){
 
     /// displays the points in order to make them available for the edition of the path,
     ///  we have to keep track of those which were hidden so we can hide them again once the edition is finished
-    QMapIterator<QString, std::shared_ptr<QVector<std::shared_ptr<PointView>>>> i(*(points->getGroups()));
+    QMapIterator<QString, std::shared_ptr<QVector<PointView*>>> i(*(points->getGroups()));
     while (i.hasNext()) {
         i.next();
         if(i.value() && i.key().compare(PATH_GROUP_NAME) != 0){
@@ -826,7 +826,7 @@ void MainWindow::robotSavedEvent(){
     }
 
     /// if we changed the home
-    std::shared_ptr<PointView> pointView = editSelectedRobotWidget->getHome();
+    PointView* pointView = editSelectedRobotWidget->getHome();
     if(pointView != NULL && (selectedRobot->getRobot()->getHome() == NULL || !(&(*(pointView->getPoint())) == &(*(selectedRobot->getRobot()->getHome()->getPoint()))))){
         qDebug() << "MainWindow::robotSavedEvent Home has been modified";
         bool done = false;
@@ -1074,7 +1074,7 @@ void MainWindow::editHomeEvent(){
 void MainWindow::homeEdited(PointView* pointView){
     qDebug() << "MainWindow::homeEdited called" << pointView->getPoint()->getName();
 
-    editSelectedRobotWidget->setHome(std::shared_ptr<PointView>(pointView));
+    editSelectedRobotWidget->setHome(pointView);
     editSelectedRobotWidget->getHomeBtn()->setText("Edit home");
 
     if (pointView->getPoint()->getName().compare(TMP_POINT_NAME) == 0){
@@ -1093,7 +1093,7 @@ void MainWindow::showHome(){
     points->setPixmapAll(QPixmap(PIXMAP_NORMAL));
 
     if(selectedRobot->getRobot()->getHome() != NULL){
-        std::shared_ptr<PointView> pointView = selectedRobot->getRobot()->getHome();
+        PointView* pointView = selectedRobot->getRobot()->getHome();
         pointView->setPixmap(PointView::PixmapType::NORMAL);
         if(pointView->isVisible()){
             qDebug() << "home is visible";
@@ -1133,6 +1133,7 @@ void MainWindow::clearPath(const int robotNb){
     }
     robots->getRobotsVector().at(robotNb)->getRobot()->getPath().clear();
 
+
     bottomLayout->deletePath(robotNb);
 }
 
@@ -1140,7 +1141,7 @@ void MainWindow::hideHome(void){
     qDebug() << "MainWindow::hideHome called";
 
     if(selectedRobot->getRobot()->getHome() != NULL){
-        std::shared_ptr<PointView> pointView = selectedRobot->getRobot()->getHome();
+        PointView* pointView = selectedRobot->getRobot()->getHome();
         qDebug() << "Home was shown :" << pointView->getWasShown();
         if(!pointView->getWasShown()){
             qDebug() << "hidding the home";
@@ -1572,7 +1573,7 @@ void MainWindow::closeSlot(){
     leftMenu->hide();
     setEnableAll(true);
     if(leftMenu->getDisplaySelectedPoint()->getPointView()){
-        std::shared_ptr<PointView> displaySelectedPointView = points->findPointView(leftMenu->getDisplaySelectedPoint()->getPointName());
+        PointView* displaySelectedPointView = points->findPointView(leftMenu->getDisplaySelectedPoint()->getPointName());
         if(displaySelectedPointView)
            displaySelectedPointView->setPixmap(PointView::PixmapType::NORMAL);
     }
@@ -1613,7 +1614,7 @@ void MainWindow::setSelectedPoint(){
     createPointWidget->getGroupBox()->hide();
     createPointWidget->getGroupLabel()->hide();
 
-    std::shared_ptr<PointView> displaySelectedPointView = points->getTmpPointView();
+    PointView* displaySelectedPointView = points->getTmpPointView();
 
     /// sets the pixmaps of the other points
     points->setPixmapAll(PointView::NORMAL);
@@ -1754,7 +1755,7 @@ void MainWindow::editPointButtonEvent(){
     leftMenu->getDisplaySelectedPoint()->getActionButtons()->getMapButton()->setToolTip("");
 
     /// hide the temporary point on the map
-    std::shared_ptr<PointView> displaySelectedPointView = points->findPointView(leftMenu->getDisplaySelectedPoint()->getPointName());
+    PointView* displaySelectedPointView = points->findPointView(leftMenu->getDisplaySelectedPoint()->getPointName());
     qDebug() << "MainWindow::editPointButtonEvent selected point to edit " << leftMenu->getDisplaySelectedPoint()->getPointName();
     displaySelectedPointView->setOriginalPosition(displaySelectedPointView->getPoint()->getPosition());
 
@@ -1827,7 +1828,7 @@ void MainWindow::editGroupBtnEvent(){
     if(checkedId.compare("") != 0 && points->isAPoint(checkedId)){
 
         /// retrieves the pointview associated to the point on the map and displays it if it was not already the case
-        std::shared_ptr<PointView> pointView = points->findPointView(checkedId);
+        PointView* pointView = points->findPointView(checkedId);
 
         /// must display the tick icon in the pointsLeftWidget
         pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->checkedButton()->setIcon(QIcon(":/icons/eye_point.png"));
@@ -1841,7 +1842,7 @@ void MainWindow::editGroupBtnEvent(){
                 else
                     qDebug() << "editGroupBtnEvent : something unexpected happened";
             }
-            leftMenu->getDisplaySelectedPoint()->setPointView(pointView.get(), robotName);
+            leftMenu->getDisplaySelectedPoint()->setPointView(pointView, robotName);
         } else {
             qDebug() << "There is no point view associated with those indexes";
         }
@@ -1929,7 +1930,7 @@ void MainWindow::openLeftMenu(){
 
     /// resets the color of the selected point on the map and hides the temporary point`
     if(leftMenu->getDisplaySelectedPoint()->getPointView()){
-        std::shared_ptr<PointView> displaySelectedPointView = points->findPointView(leftMenu->getDisplaySelectedPoint()->getPointName());
+        PointView* displaySelectedPointView = points->findPointView(leftMenu->getDisplaySelectedPoint()->getPointName());
         if(displaySelectedPointView)
             displaySelectedPointView->setPixmap(PointView::PixmapType::NORMAL);
     }
@@ -2077,7 +2078,7 @@ void MainWindow::askForDeletePointConfirmation(QString pointName){
                 /// we first check that our point is not the home of a robot
                 qDebug() << "pointName:" << pointName;
 
-                std::shared_ptr<PointView> point = points->findPointView(pointName);
+                PointView* point = points->findPointView(pointName);
                 QString group = points->getGroupNameFromPointName(pointName);
                 if(point && !point->getPoint()->isHome()){
                     qDebug() << "Go ahead and remove me I am not a home point anyway";
@@ -2303,7 +2304,7 @@ void MainWindow::displayGroupMapEvent(void){
                 pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(checkedId)->setIcon(QIcon(":/icons/folder_space.png"));
 
                 for(int i = 0; i < points->getGroups()->value(checkedName)->size(); i++){
-                    std::shared_ptr<PointView> point = points->getGroups()->value(checkedName)->at(i);
+                    PointView* point = points->getGroups()->value(checkedName)->at(i);
                     point->hide();
 
                 }
@@ -2320,7 +2321,7 @@ void MainWindow::displayGroupMapEvent(void){
                 pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(checkedId)->setIcon(QIcon(":/icons/folder_eye.png"));
 
                 for(int i = 0; i < points->getGroups()->value(checkedName)->size(); i++){
-                    std::shared_ptr<PointView> point = points->getGroups()->value(checkedName)->at(i);
+                    PointView* point = points->getGroups()->value(checkedName)->at(i);
                     point->show();
                     point->setPixmap(PointView::PixmapType::MID);
                     /// update the file
@@ -2332,7 +2333,7 @@ void MainWindow::displayGroupMapEvent(void){
     }
     /// we display isolated points
     else if(points->isAPoint(checkedName)){
-        std::shared_ptr<PointView> point = points->findPointView(checkedName);
+        PointView* point = points->findPointView(checkedName);
 
         /// if the point is displayed we hide it
         if(point && point->isVisible()){
@@ -2363,7 +2364,7 @@ void MainWindow::displayGroupMapEvent(void){
 
 void MainWindow::displayPointMapEvent(){
     qDebug() << "MainWindow::displayPointMapEvent called";
-    std::shared_ptr<PointView> pointView = points->findPointView(leftMenu->getDisplaySelectedPoint()->getPointName());
+    PointView* pointView = points->findPointView(leftMenu->getDisplaySelectedPoint()->getPointName());
     std::pair<QString, int> pointIndexes = points->findPointIndexes(pointView->getPoint()->getName());
     qDebug() << "Indexes are " << pointIndexes.first << pointIndexes.second;
     int checkedId = pointsLeftWidget->getGroupButtonGroup()->getButtonIdByName(pointIndexes.first);
@@ -2456,7 +2457,7 @@ void MainWindow::displayPointsInGroup(void){
     } else if(points->isAPoint(checkedName)){
         /// it's an isolated point
         DisplaySelectedPoint* selectedPoint = leftMenu->getDisplaySelectedPoint();
-        std::shared_ptr<PointView> pointView = points->findPointView(checkedName);
+        PointView* pointView = points->findPointView(checkedName);
         QString robotName = "";
 
         if(pointView && pointView->getPoint()->isHome()){
@@ -2467,7 +2468,7 @@ void MainWindow::displayPointsInGroup(void){
                 qDebug() << "MainWindow::displayPointsInGroup something unexpected happened";
         }
 
-        selectedPoint->setPointView(pointView.get(), robotName);
+        selectedPoint->setPointView(pointView, robotName);
         selectedPoint->displayPointInfo();
         selectedPoint->show();
 
@@ -2561,7 +2562,7 @@ void MainWindow::removePointFromInformationMenu(void){
         break;
         case QMessageBox::Ok : {
             /// first we check that this point is not a home
-            std::shared_ptr<PointView> pointView = points->findPointView(leftMenu->getDisplaySelectedPoint()->getPointName());
+            PointView* pointView = points->findPointView(leftMenu->getDisplaySelectedPoint()->getPointName());
             if(pointView && !pointView->getPoint()->isHome()){
                 QString pointName = pointView->getPoint()->getName();
 
@@ -2672,13 +2673,13 @@ void MainWindow::editPointFromGroupMenu(void){
                 qDebug() << "editPointFromGroupMenu : something unexpected happened";
         }
         qDebug() << "name point u trying to edit" << pointName;
-        std::shared_ptr<PointView> displaySelectedPointView = points->findPointView(pointName);
+        PointView* displaySelectedPointView = points->findPointView(pointName);
         displaySelectedPointView->setOriginalPosition(displaySelectedPointView->getPoint()->getPosition());
 
         if(displaySelectedPointView){
             qDebug() << "about to put u orange";
 
-            leftMenu->getDisplaySelectedPoint()->setPointView(displaySelectedPointView.get(), robotName);
+            leftMenu->getDisplaySelectedPoint()->setPointView(displaySelectedPointView, robotName);
 
             displaySelectedPointView->setPixmap(PointView::PixmapType::HOVER);
             displaySelectedPointView->show();
@@ -2734,7 +2735,7 @@ void MainWindow::displayPointInfoFromGroupMenu(void){
     qDebug() << "display point info from group menu event called";
     /// retrieves a pointer to the pointView using the text of the label
     QString pointName = leftMenu->getDisplaySelectedGroup()->getPointButtonGroup()->getButtonGroup()->checkedButton()->text();
-    std::shared_ptr<PointView> pointView = points->findPointView(pointName);
+    PointView* pointView = points->findPointView(pointName);
 
     if(pointName.compare("") != 0 && pointView){
         setMessageTop(TEXT_COLOR_NORMAL, "");
@@ -2749,7 +2750,7 @@ void MainWindow::displayPointInfoFromGroupMenu(void){
                 qDebug() << "setSelectedRobotFromPoint : something unexpected happened";
         }
 
-        selectedPoint->setPointView(pointView.get(), robotName);
+        selectedPoint->setPointView(pointView, robotName);
         selectedPoint->displayPointInfo();
 
         /// map is checked if the point is displayed
@@ -2783,7 +2784,7 @@ void MainWindow::updatePoint(void){
 
     DisplaySelectedPoint* selectedPoint = leftMenu->getDisplaySelectedPoint();
     qDebug() << "MainWindow::updatePoint updating point" << selectedPoint->getPointName();
-    std::shared_ptr<PointView> displaySelectedPointView = points->findPointView(selectedPoint->getPointName());
+    PointView* displaySelectedPointView = points->findPointView(selectedPoint->getPointName());
     //selectedPoint->setPointName(leftMenu->getDisplaySelectedPoint()->getNameEdit()->text());
 
     /// resets the color of the pointView
@@ -2860,7 +2861,7 @@ void MainWindow::cancelEvent(void){
     leftMenu->getReturnButton()->setEnabled(true);
     topLayout->setEnabled(true);
     /// reset the color of the pointView
-    std::shared_ptr<PointView> displaySelectedPointView = points->findPointView(leftMenu->getDisplaySelectedPoint()->getPointName());
+    PointView* displaySelectedPointView = points->findPointView(leftMenu->getDisplaySelectedPoint()->getPointName());
     if(displaySelectedPointView){
         displaySelectedPointView->setPixmap(PointView::PixmapType::NORMAL);
         qDebug() << "about to reset your position";
@@ -2964,7 +2965,7 @@ void MainWindow::displayPointFromGroupMenu(){
 
     //if(pointName.compare("") == 0){
     if(checkedId != -1){
-        std::shared_ptr<PointView> currentPointView = points->findPointView(pointName);
+        PointView* currentPointView = points->findPointView(pointName);
 
         /// if the point is displayed we stop displaying it
         if(currentPointView->isVisible()){
@@ -3052,7 +3053,7 @@ void MainWindow::doubleClickOnRobot(QString id){
 void MainWindow::doubleClickOnPoint(QString pointName){
     qDebug() << "MainWindow::double click on point";
     setMessageTop(TEXT_COLOR_NORMAL, "");
-    std::shared_ptr<PointView> pointView = points->findPointView(pointName);
+    PointView* pointView = points->findPointView(pointName);
 
     if(pointView){
         DisplaySelectedPoint* selectedPoint = leftMenu->getDisplaySelectedPoint();
@@ -3064,7 +3065,7 @@ void MainWindow::doubleClickOnPoint(QString pointName){
             else
                 qDebug() << "doubleClickOnPoint : something unexpected happened";
         }
-        selectedPoint->setPointView(pointView.get(), robotName);
+        selectedPoint->setPointView(pointView, robotName);
         selectedPoint->displayPointInfo();
 
         if(pointView->isVisible())
@@ -3119,7 +3120,7 @@ void MainWindow::doubleClickOnGroup(QString checkedName){
         /// it's an isolated point
         setMessageTop(TEXT_COLOR_NORMAL, "");
         DisplaySelectedPoint* selectedPoint = leftMenu->getDisplaySelectedPoint();
-        std::shared_ptr<PointView> pointView = points->findPointView(checkedName);
+        PointView* pointView = points->findPointView(checkedName);
 
         QString robotName = "";
         if(pointView->getPoint()->isHome()){
@@ -3130,7 +3131,7 @@ void MainWindow::doubleClickOnGroup(QString checkedName){
                 qDebug() << "doubleClickOnGroup : something unexpected happened";
         }
 
-        selectedPoint->setPointView(pointView.get(), robotName);
+        selectedPoint->setPointView(pointView, robotName);
         selectedPoint->displayPointInfo();
         selectedPoint->show();
 
@@ -3447,14 +3448,10 @@ void MainWindow::hideAllWidgets(){
 void MainWindow::clearNewMap(){
     qDebug() << "clearNewMap called";
 
-    /// Clear all the paths and home
-    /*for(int i = 0; i < robots->getRobotsVector().size(); i++){
-        clearPath(i);
-        robots->getRobotsVector().at(i)->getRobot()->setHome(NULL);
-    }*/
-
     selectedPoint = NULL;
     editedPointView = NULL;
+
+    resetPath();
 
     /// Clear the list of points
     points->clear();

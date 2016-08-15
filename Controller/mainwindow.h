@@ -215,11 +215,11 @@ private:
     MapView* mapPixmapItem;
     RobotView* selectedRobot;
     RobotView* scanningRobot;
-    std::shared_ptr<PointView> selectedPoint;
+    PointView* selectedPoint;
     std::shared_ptr<Points> points;
-    std::shared_ptr<PointView> editedPointView;
-    QVector<std::shared_ptr<PointView>> pointViewsToDisplay;
-    std::shared_ptr<PathPainter> pathPainter;
+    PointView* editedPointView;
+    QVector<PointView*> pointViewsToDisplay;
+    PathPainter* pathPainter;
     TopLayout* topLayout;
     QMessageBox msgBox;
 
