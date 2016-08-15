@@ -98,10 +98,10 @@ void DisplaySelectedGroup::buttonClickedSlot(QAbstractButton* button){
         disableButtons();
     } else {
         /// changes the pointview on the map to show which point is selected
-        std::shared_ptr<PointView> pv = points->findPointView(button->text());
+        PointView* pv = points->findPointView(button->text());
         pv->setPixmap(PointView::PixmapType::MID);
         /// if the point is also part of the path we change the point view associated
-        if(std::shared_ptr<PointView> pathPv = points->findPathPointView(pv->getPoint()->getPosition().getX(), pv->getPoint()->getPosition().getY()))
+        if(PointView* pathPv = points->findPathPointView(pv->getPoint()->getPosition().getX(), pv->getPoint()->getPosition().getY()))
             pathPv->setPixmap(PointView::PixmapType::MID);
         getActionButtons()->getMapButton()->setCheckable(true);
         /// enables the minus button

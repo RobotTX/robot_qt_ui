@@ -29,7 +29,7 @@
 
 LeftMenu::LeftMenu(MainWindow* _parent, std::shared_ptr<Points> const& _points,
                    const std::shared_ptr<Robots> &robots, const std::shared_ptr<Points> &pointViews,
-                   const std::shared_ptr<Map> &_map, const std::shared_ptr<PathPainter> &pathPainter):
+                   const std::shared_ptr<Map> &_map, const PathPainter *pathPainter):
     QWidget(_parent), parent(_parent), points(_points), lastCheckedId("s")
 {
 
@@ -108,15 +108,14 @@ LeftMenu::LeftMenu(MainWindow* _parent, std::shared_ptr<Points> const& _points,
     pathCreationWidget = new PathCreationWidget(parent, _points);
     leftLayout->addWidget(pathCreationWidget);
 
-    connect(pathCreationWidget, SIGNAL(addPathPoint(QString, double, double)), pathPainter.get(), SLOT(addPathPointSlot(QString, double, double)));
-    connect(pathCreationWidget, SIGNAL(deletePathPoint(int)), pathPainter.get(), SLOT(deletePathPointSlot(int)));
-    connect(pathCreationWidget, SIGNAL(orderPathPointChanged(int, int)), pathPainter.get(), SLOT(orderPathPointChangedSlot(int, int)));
-    connect(pathCreationWidget, SIGNAL(resetPath()), pathPainter.get(), SLOT(resetPathSlot()));
+    connect(pathCreationWidget, SIGNAL(addPathPoint(QString, double, double)), pathPainter, SLOT(addPathPointSlot(QString, double, double)));
+    connect(pathCreationWidget, SIGNAL(deletePathPoint(int)), pathPainter, SLOT(deletePathPointSlot(int)));
+    connect(pathCreationWidget, SIGNAL(orderPathPointChanged(int, int)), pathPainter, SLOT(orderPathPointChangedSlot(int, int)));
+    connect(pathCreationWidget, SIGNAL(resetPath()), pathPainter, SLOT(resetPathSlot()));
     connect(pathCreationWidget, SIGNAL(setMessage(QString, QString)), parent, SLOT(setMessageTop(QString, QString)));
-    connect(pathCreationWidget, SIGNAL(actionChanged(int, int, QString)), pathPainter.get(), SLOT(actionChangedSlot(int, int, QString)));
-    connect(pathCreationWidget, SIGNAL(editPathPoint(int, QString, double, double)), pathPainter.get(), SLOT(editPathPointSlot(int, QString, double, double)));
+    connect(pathCreationWidget, SIGNAL(actionChanged(int, int, QString)), pathPainter, SLOT(actionChangedSlot(int, int, QString)));
+    connect(pathCreationWidget, SIGNAL(editPathPoint(int, QString, double, double)), pathPainter, SLOT(editPathPointSlot(int, QString, double, double)));
 
-   // connect(displaySelectedPoint->getDisplaySelectedPointRobots(), SIGNAL(setSelectedRobotFromPoint(QString)), parent, SLOT(setSelectedRobotFromPointSlot(QString)));
     connect(displaySelectedPoint->getActionButtons()->getMinusButton(), SIGNAL(clicked(bool)), parent, SLOT(removePointFromInformationMenu()));
     connect(displaySelectedPoint->getActionButtons()->getMapButton(), SIGNAL(clicked(bool)), parent, SLOT(displayPointMapEvent()));
     connect(displaySelectedPoint->getActionButtons()->getEditButton(), SIGNAL(clicked(bool)), parent, SLOT(editPointButtonEvent()));
