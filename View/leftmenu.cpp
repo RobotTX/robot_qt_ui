@@ -59,7 +59,7 @@ LeftMenu::LeftMenu(MainWindow* _parent, std::shared_ptr<Points> const& _points,
     connect(closeBtn, SIGNAL(clicked()), parent, SLOT(closeSlot()));
 
     /// to display the information relative to a point
-    displaySelectedPoint = new DisplaySelectedPoint(parent, _points, _map);
+    displaySelectedPoint = new DisplaySelectedPoint(parent, robots, _points, _map);
     leftLayout->addWidget(displaySelectedPoint);
     leftLayout->setAlignment(displaySelectedPoint, Qt::AlignLeft);
 
@@ -69,7 +69,7 @@ LeftMenu::LeftMenu(MainWindow* _parent, std::shared_ptr<Points> const& _points,
     leftLayout->setAlignment(displaySelectedGroup, Qt::AlignLeft);
 
     /// The first menu with 3 buttons : Robots, Points, Map
-    leftMenuWidget = new LeftMenuWidget(parent);
+    leftMenuWidget = new LeftMenuWidget(parent, points);
     leftLayout->addWidget(leftMenuWidget);
 
     /// Menu which display the list of points
@@ -113,10 +113,10 @@ LeftMenu::LeftMenu(MainWindow* _parent, std::shared_ptr<Points> const& _points,
     connect(pathCreationWidget, SIGNAL(orderPathPointChanged(int, int)), pathPainter.get(), SLOT(orderPathPointChangedSlot(int, int)));
     connect(pathCreationWidget, SIGNAL(resetPath()), pathPainter.get(), SLOT(resetPathSlot()));
     connect(pathCreationWidget, SIGNAL(setMessage(QString, QString)), parent, SLOT(setMessageTop(QString, QString)));
-    connect(pathCreationWidget, SIGNAL(actionChanged(int, QString)), pathPainter.get(), SLOT(actionChangedSlot(int, QString)));
+    connect(pathCreationWidget, SIGNAL(actionChanged(int, int, QString)), pathPainter.get(), SLOT(actionChangedSlot(int, int, QString)));
     connect(pathCreationWidget, SIGNAL(editPathPoint(int, QString, double, double)), pathPainter.get(), SLOT(editPathPointSlot(int, QString, double, double)));
 
-    connect(displaySelectedPoint->getRobotButton(), SIGNAL(clicked()), parent, SLOT(setSelectedRobotFromPoint()));
+   // connect(displaySelectedPoint->getDisplaySelectedPointRobots(), SIGNAL(setSelectedRobotFromPoint(QString)), parent, SLOT(setSelectedRobotFromPointSlot(QString)));
     connect(displaySelectedPoint->getActionButtons()->getMinusButton(), SIGNAL(clicked(bool)), parent, SLOT(removePointFromInformationMenu()));
     connect(displaySelectedPoint->getActionButtons()->getMapButton(), SIGNAL(clicked(bool)), parent, SLOT(displayPointMapEvent()));
     connect(displaySelectedPoint->getActionButtons()->getEditButton(), SIGNAL(clicked(bool)), parent, SLOT(editPointButtonEvent()));

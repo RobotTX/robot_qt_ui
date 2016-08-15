@@ -10,6 +10,8 @@ class QEvent;
 class QKeyEvent;
 class QLabel;
 class Map;
+class Robots;
+class DisplaySelectedPointRobots;
 
 #include "View/createpointwidget.h"
 #include "Model/points.h"
@@ -22,6 +24,7 @@ class Map;
 #include "topleftmenu.h"
 #include "Model/point.h"
 
+
 class DisplaySelectedPoint: public QWidget
 {
         Q_OBJECT
@@ -29,26 +32,26 @@ public:
     /// used to determine which menu or object (could be the map) cause the information of this point to be displayed
     enum Origin { MAP, GROUP_MENU, POINTS_MENU };
 
-    DisplaySelectedPoint(QMainWindow* const _parent, const std::shared_ptr<Points> &_points, std::shared_ptr<Map> const& _map, std::shared_ptr<PointView> const& _point= 0, const Origin _origin = MAP);
+    DisplaySelectedPoint(QMainWindow* const _parent, std::shared_ptr<Robots> const robots,const std::shared_ptr<Points> &_points, std::shared_ptr<Map> const& _map, PointView* _point= 0, const Origin _origin = MAP);
 
     TopLeftMenu* getActionButtons(void) const { return actionButtons; }
     QPushButton* getSaveButton(void) const { return saveButton; }
     QPushButton* getCancelButton(void) const { return cancelButton; }
     QLineEdit* getNameEdit(void) const { return nameEdit; }
     QString getPointName(void) const { return pointView->getPoint()->getName(); }
-    void setPointView(const std::shared_ptr<PointView>& _pointView, const QString robotName);
+    void setPointView(PointView* _pointView, const QString robotName);
     Origin getOrigin(void) const { return origin; }
     QLabel* getXLabel(void) const { return posXLabel; }
     QLabel* getYLabel(void) const { return posYLabel; }
-    QWidget* getHomeWidget(void) const { return homeWidget; }
-    QPushButton* getRobotButton(void) const { return robotBtn; }
     QString formatName(const QString name) const;
-    std::shared_ptr<PointView> getPointView(void) { return pointView; }
+    PointView* getPointView(void) const { return pointView; }
+    DisplaySelectedPointRobots* getDisplaySelectedPointRobots(void) { return robotsWidget; }
 
 public:
     void displayPointInfo(void);
     void setOrigin(const Origin _origin);
     void resetWidget(void);
+    void setRobotsLabel(void);
 
 protected:
     void mousePressEvent(QEvent*);
@@ -61,6 +64,7 @@ signals:
     /// to reset the state of the map if a user clicks a random button while he was editting a point
     void resetState(GraphicItemState, bool);
     void invalidName(QString, CreatePointWidget::Error);
+    void setSelectedRobotFromPoint(QString);
 
 private slots:
     /// to check that a name is available before we proceed to the update
@@ -72,25 +76,18 @@ private:
     QHBoxLayout* nameLayout;
     QVBoxLayout* layout;
     QHBoxLayout* editLayout;
-    QHBoxLayout* eyeMapLayout;
-    QHBoxLayout* grid;
 
     QLabel* posXLabel;
     QLabel* posYLabel;
+    DisplaySelectedPointRobots* robotsWidget;
 
-    QPushButton* plusButton;
-    QPushButton* minusButton;
-    QPushButton* mapButton;
-    QPushButton* eyeButton;
-    QPushButton* editButton;
     QPushButton* saveButton;
     QPushButton* cancelButton;
-    std::shared_ptr<PointView> pointView;
+    PointView* pointView;
     QMainWindow* parent;
     std::shared_ptr<Points> points;
-    QWidget* homeWidget;
-    QPushButton* robotBtn;
     TopLeftMenu* actionButtons;
+    std::shared_ptr<Robots> robots;
 
     /// to determine whether we come from the group menu and have to go back to it if we click on the back button
     /// or if we got here by clicking on the map

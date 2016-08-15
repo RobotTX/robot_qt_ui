@@ -72,6 +72,7 @@ public:
     void setPixmapAll(const QPixmap pixmap);
     std::shared_ptr<PointView> createPoint(const QString pointName, const double x, const double y, const bool displayed, const Point::PointType type,
                                                    MapView* mapView, MainWindow* mainWindow);
+    void updatePointViews(void);
 
 private:
     std::shared_ptr<Groups> groups;

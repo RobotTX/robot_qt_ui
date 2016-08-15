@@ -1,7 +1,6 @@
 #ifndef PATHPAINTER_H
 #define PATHPAINTER_H
 
-class PathPoint;
 class MapView;
 class Points;
 class MainWindow;
@@ -13,6 +12,7 @@ class MainWindow;
 #include <QVector>
 #include <memory>
 #include "Model/point.h"
+#include "Model/pathpoint.h"
 
 /**
  * @brief The PathPainter class
@@ -28,6 +28,7 @@ public:
     void displayPath(void);
     int nbUsedPointView(QString name, double x, double y);
     void updateCurrentPath(void);
+    void updatePathPainterName(void);
 
 private slots:
     void resetPathSlot(void);
@@ -36,7 +37,7 @@ private slots:
     void updatePathPainterSlot(void);
     void updatePathPainterPointViewSlot(void);
     void orderPathPointChangedSlot(int from, int to);
-    void actionChangedSlot(int id, QString waitTime);
+    void actionChangedSlot(int id, int action, QString waitTime);
     void editPathPointSlot(int id, QString name, double x, double y);
 
 private:

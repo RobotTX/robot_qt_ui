@@ -110,6 +110,9 @@ PointsLeftWidget::PointsLeftWidget(QMainWindow* _parent, std::shared_ptr<Points>
     /// relay the signal to the mainWindow so it displays the appropriate messages to the user (e.g, you cannot change the name of the group for this one because it's empty)
     connect(groupButtonGroup, SIGNAL(codeEditGroup(int)), this, SLOT(sendMessageEditGroup(int)));
 
+    /// to reset the path points point views after a path point is deselected
+    connect(this, SIGNAL(resetPathPointViews()), _parent, SLOT(resetPathPointViewsSlot()));
+
     setMaximumWidth(_parent->width()*4/10);
     setMinimumWidth(_parent->width()*4/10);
     downLayout->setAlignment(Qt::AlignBottom);
@@ -130,7 +133,8 @@ void PointsLeftWidget::enableButtons(QAbstractButton* button){
 }
 
 void PointsLeftWidget::enableButtons(QString button){
-    qDebug() << "PointsLeftWidget::enableButtons called" << button;
+    points->setPixmapAll(PointView::PixmapType::NORMAL);
+    emit resetPathPointViews();
     if(button.compare(lastCheckedId) == 0){
 
         groupButtonGroup->uncheck();
@@ -169,13 +173,29 @@ void PointsLeftWidget::enableButtons(QString button){
                 actionButtons->getMapButton()->setChecked(false);
                 actionButtons->getMapButton()->setToolTip("Click to display the selected group on the map");
             }
+            /// changes the pointviews of all the points displayed in the group on the map
+            for(int i = 0; i < points->getGroups()->value(button)->size(); i++){
+                std::shared_ptr<PointView> pv = points->getGroups()->value(button)->at(i);
+                if(pv->isVisible())
+                    pv->setPixmap(PointView::PixmapType::MID);
+            }
         } else {
-            if(points->isDisplayed(NO_GROUP_NAME)){
+            std::shared_ptr<PointView> pv = points->findPointView(button);
+            if(pv->isVisible()){
+                /// if the point is displayed, changes its pointview on the map
+                points->findPointView(button)->setPixmap(PointView::PixmapType::MID);
                 actionButtons->getMapButton()->setChecked(true);
                 actionButtons->getMapButton()->setToolTip("Click to hide the selected point on the map");
             } else {
                 actionButtons->getMapButton()->setChecked(false);
                 actionButtons->getMapButton()->setToolTip("Click to display the selected point on the map");
+            }
+            /// if this point belongs to a path we also need to set the pixmap of the path point point view
+            if(std::shared_ptr<PointView> pathPv = points->findPathPointView(pv->getPoint()->getPosition().getX(), pv->getPoint()->getPosition().getY())){
+                qDebug() << "PATH !";
+                pathPv->setPixmap(PointView::PixmapType::MID);
+            } else {
+                qDebug() << "NOT PATH";
             }
         }
 
@@ -309,6 +329,8 @@ void PointsLeftWidget::keyPressEvent(QKeyEvent* event){
 
 void PointsLeftWidget::showEvent(QShowEvent *event){
     resetWidget();
+    points->setPixmapAll(PointView::PixmapType::NORMAL);
+    emit resetPathPointViews();
     QWidget::showEvent(event);
 }
 

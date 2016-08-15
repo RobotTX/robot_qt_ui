@@ -82,6 +82,6 @@ void MapView::setState(const GraphicItemState _state){
 }
 
  void MapView::setPoints(std::shared_ptr<Points> _points){
-     qDebug() << "MapView::setPoints called" << _points->count();
+    //qDebug() << "MapView::setPoints called" << _points->count();
     points = _points;
  }

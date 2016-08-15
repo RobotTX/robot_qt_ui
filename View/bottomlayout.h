@@ -32,11 +32,12 @@ public:
     BottomLayout(QMainWindow* parent, std::shared_ptr<Robots> const& robots);
 
     /// Getters
-    QButtonGroup* getPlayRobotBtnGroup(void) const{return playRobotBtnGroup;}
-    QButtonGroup* getStopRobotBtnGroup(void) const{return stopRobotBtnGroup;}
-    QButtonGroup* getRobotBtnGroup(void) const{return robotBtnGroup;}
-    QButtonGroup* getViewPathRobotBtnGroup(void) const{return viewPathRobotBtnGroup;}
-    QVector<QLabel*> getVectorPathLabel(void) const{return vectorPathLabel;}
+    QButtonGroup* getPlayRobotBtnGroup(void) const { return playRobotBtnGroup; }
+    QButtonGroup* getStopRobotBtnGroup(void) const { return stopRobotBtnGroup; }
+    QButtonGroup* getRobotBtnGroup(void) const { return robotBtnGroup; }
+    QButtonGroup* getViewPathRobotBtnGroup(void) const { return viewPathRobotBtnGroup; }
+    QButtonGroup* getDeletePathBtnGroup(void) const { return deletePathBtnGroup; }
+    QVector<QLabel*> getVectorPathLabel(void) const { return vectorPathLabel; }
 
     /**
      * @brief deletePath

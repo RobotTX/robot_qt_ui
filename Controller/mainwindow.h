@@ -36,13 +36,13 @@ class PathPainter;
 #include "Model/point.h"
 
 
-//#define XML_PATH "/home/m-a/Documents/QtProject/gobot-software/points.xml"
-//#define ROBOTS_NAME_PATH "/home/m-a/Documents/QtProject/gobot-software/robotsName.dat"
-//#define MAP_PATH "/home/m-a/Documents/QtProject/gobot-software/realMap.dat"
+#define XML_PATH "/home/m-a/Documents/QtProject/gobot-software/points.xml"
+#define ROBOTS_NAME_PATH "/home/m-a/Documents/QtProject/gobot-software/robotsName.dat"
+#define MAP_PATH "/home/m-a/Documents/QtProject/gobot-software/realMap.dat"
 
-#define XML_PATH "/home/joan/Qt/QtProjects/gobot-software/points.xml"
-#define ROBOTS_NAME_PATH "/home/joan/Qt/QtProjects/gobot-software/robotsName.dat"
-#define MAP_PATH "/home/joan/Qt/QtProjects/gobot-software/realMap.dat"
+//#define XML_PATH "/home/joan/Qt/QtProjects/gobot-software/points.xml"
+//#define ROBOTS_NAME_PATH "/home/joan/Qt/QtProjects/gobot-software/robotsName.dat"
+//#define MAP_PATH "/home/joan/Qt/QtProjects/gobot-software/realMap.dat"
 
 //#define XML_PATH "/Users/fannylarradet/Desktop/GTRobots/gobot-software/points.xml"
 //#define ROBOTS_NAME_PATH "/Users/fannylarradet/Desktop/GTRobots/gobot-software/robotsName.dat"
@@ -78,12 +78,10 @@ public:
     void initializeBottomPanel();
     void initializeLeftMenu();
     void hideAllWidgets();
-    void stopPathCreation();
     int openConfirmMessage(const QString);
     void openInterdictionOfPointRemovalMessage(const QString pointName, const QString robotName);
     int openEmptyGroupMessage(const QString groupName);
     void clearNewMap();
-    void clearPath(const int robotNb);
     void resetFocus();
     void switchFocus(QString name, QWidget* widget, WidgetType type);
     /// to sleep for ms milliseconds
@@ -91,6 +89,7 @@ public:
     void setEnableAll(bool enable, GraphicItemState state = GraphicItemState::NO_STATE, bool clearPath = false, int noReturn = -1);
     void setTemporaryMessageTop(const QString type, const QString message, const int ms);
     void updateAllPaths(void);
+    void clearPath(const int robotNb);
 
 signals:
     void sendCommand(QString);
@@ -100,6 +99,7 @@ signals:
     void updatePathPainter();
     void updatePathPainterPointView();
     void resetPath();
+    void resetPathCreationWidget();
 
 private slots:
     void updateRobot(const QString ipAddress, const float posX, const float posY, const float ori);
@@ -111,7 +111,7 @@ private slots:
     void editSelectedRobot(RobotView* robotView);
     void setSelectedRobot(QAbstractButton* button);
     void setSelectedRobotNoParent(QAbstractButton *button);
-    void setSelectedRobotFromPoint();
+    void setSelectedRobotFromPointSlot(QString robotName);
     void robotBtnEvent();
     void pointBtnEvent();
     void mapBtnEvent();
@@ -151,7 +151,6 @@ private slots:
     void displayPointsInGroup(void);
     void removePointFromInformationMenu(void);
     void displayPointMapEvent(void);
-    void hidePathCreationWidget(void);
     void editPointButtonEvent();
     void editTmpPathPointSlot(int id, QString name, double x, double y);
     void editPointFromGroupMenu(void);
@@ -176,8 +175,6 @@ private slots:
     void updateEditedPathPoint(double x, double y);
     void centerMap();
     void setMessageCreationPoint(QString type, CreatePointWidget::Error error);
-    void addPathPointToMap(Point* point);
-    void updatePathPermanentPoint(QString, QString);
 
     /**
      * @brief cancelEvent
@@ -205,6 +202,7 @@ private slots:
     void settingBtnSlot();
     void updatePathPainterPointViewSlot();
     void stopPath(int robotNb);
+    void resetPathPointViewsSlot();
 
 private:
     Ui::MainWindow* ui;

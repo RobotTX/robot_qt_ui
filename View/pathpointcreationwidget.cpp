@@ -6,6 +6,7 @@
 #include <QDebug>
 #include <QLineEdit>
 #include <QComboBox>
+#include "Model/pathpoint.h"
 
 PathPointCreationWidget::PathPointCreationWidget(const int _id, const QString _name, const double x, const double y, QWidget* parent)
     :QWidget(parent), id(_id), name(_name), posX(x), posY(y){
@@ -103,18 +104,21 @@ void PathPointCreationWidget::setId(const int _id){
 
 void PathPointCreationWidget::actionClicked(QString action){
     qDebug() << "PathPointCreationWidget::actionClicked called" << action;
+    PathPoint::Action _action;
     if(action.compare("Wait for") == 0){
         timeWidget->show();
+        _action = PathPoint::Action::WAIT;
     } else {
         timeWidget->hide();
         timeEdit->setText("0");
+        _action = PathPoint::Action::HUMAN_ACTION;
     }
-    emit actionChanged(id, timeEdit->text());
+    emit actionChanged(id, static_cast<int>(_action), timeEdit->text());
 }
 
 void PathPointCreationWidget::timeChanged(QString){
     qDebug() << "PathPointCreationWidget::timeChanged called";
-    emit actionChanged(id, timeEdit->text());
+    emit actionChanged(id, static_cast<int>(PathPoint::Action::WAIT), timeEdit->text());
 }
 
 void PathPointCreationWidget::displayActionWidget(const bool show){

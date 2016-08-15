@@ -115,7 +115,7 @@ SelectedRobotWidget::SelectedRobotWidget(QMainWindow* parent): QWidget(parent){
 
 void SelectedRobotWidget::setSelectedRobot(RobotView* const& _robotView){
     /// We update all the informations
-    qDebug() << "select this robot";
+    qDebug() << "SelectedRobotWidget::setSelectedRobot called on" << _robotView->getRobot()->getName();
     robotView = _robotView;
 
     name->setText(robotView->getRobot()->getName());

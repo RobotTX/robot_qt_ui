@@ -76,7 +76,7 @@ private:
 signals:
     void saveEditSignal(PathPointCreationWidget*);
     void cancelEditSignal(PathPointCreationWidget*);
-    void actionChanged(int, QString);
+    void actionChanged(int, int, QString);
 
 private slots:
     void actionClicked(QString action);

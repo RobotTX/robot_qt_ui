@@ -63,6 +63,8 @@ DisplaySelectedGroup::DisplaySelectedGroup(QMainWindow *parent, std::shared_ptr<
     setMaximumWidth(parent->width()*4/10);
     setMinimumWidth(parent->width()*4/10);
     layout->setContentsMargins(0,0,0,0);
+
+    connect(this, SIGNAL(resetPathPointViews()), parent, SLOT(resetPathPointViewsSlot()));
 }
 
 void DisplaySelectedGroup::setName(const QString _name){
@@ -90,9 +92,17 @@ void DisplaySelectedGroup::disableButtons(){
 
 void DisplaySelectedGroup::buttonClickedSlot(QAbstractButton* button){
     qDebug() << "DisplaySelectedGroup::buttonClickedSlot called" << button->isChecked() << button->text() << lastCheckedButton;
+    points->setPixmapAll(PointView::PixmapType::NORMAL);
+    emit resetPathPointViews();
     if(button->text().compare(lastCheckedButton) == 0){
         disableButtons();
     } else {
+        /// changes the pointview on the map to show which point is selected
+        std::shared_ptr<PointView> pv = points->findPointView(button->text());
+        pv->setPixmap(PointView::PixmapType::MID);
+        /// if the point is also part of the path we change the point view associated
+        if(std::shared_ptr<PointView> pathPv = points->findPathPointView(pv->getPoint()->getPosition().getX(), pv->getPoint()->getPosition().getY()))
+            pathPv->setPixmap(PointView::PixmapType::MID);
         getActionButtons()->getMapButton()->setCheckable(true);
         /// enables the minus button
         getActionButtons()->getMinusButton()->setEnabled(true);
@@ -123,5 +133,6 @@ void DisplaySelectedGroup::buttonClickedSlot(QAbstractButton* button){
 void DisplaySelectedGroup::showEvent(QShowEvent* event){
     Q_UNUSED(event)
     getPointButtonGroup()->setGroup(getPointButtonGroup()->getGroupIndex());
+    emit resetPathPointViews();
     QWidget::show();
 }

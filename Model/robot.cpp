@@ -11,9 +11,8 @@
 Robot::Robot(const QString _name, const QString _ip, QMainWindow* parent) : name(_name), ip(_ip), position(Position()),
     orientation(0), batteryLevel(100), wifi(""), home(NULL), playingPath(0), mapId(), sendingMap(false)
 {
-/*
     qDebug() << "Robot" << name << "at ip" << ip << " launching its cmd thread";
-
+/*
     cmdThread = new CmdRobotThread(ip, PORT_CMD, PORT_MAP_METADATA, PORT_ROBOT_POS, PORT_MAP, name, parent);
     connect(cmdThread, SIGNAL(robotIsDead(QString,QString)), parent, SLOT(robotIsDeadSlot(QString,QString)));
     connect(this, SIGNAL(sendCommandSignal(QString)), cmdThread, SLOT(sendCommand(QString)));
@@ -46,6 +45,7 @@ Robot::Robot(const QString _name, const QString _ip, QMainWindow* parent) : name
                      parent , SLOT(updateMetadata(int, int, float, float, float)));
     metadataThread->start();
     metadataThread->moveToThread(metadataThread);
+
 */
 }
 
@@ -54,7 +54,8 @@ Robot::Robot(): name("Default name"), ip("no Ip"), position(Position()),
 }
 
 Robot::~Robot(){
-    /*if (cmdThread != 0 && cmdThread->isRunning() ) {
+    /*
+    if (cmdThread != 0 && cmdThread->isRunning() ) {
         cmdThread->requestInterruption();
         cmdThread->wait();
     }
@@ -69,7 +70,8 @@ Robot::~Robot(){
     if (newMapThread != NULL && newMapThread->isRunning() ) {
         newMapThread->requestInterruption();
         newMapThread->wait();
-    }*/
+    }
+    */
 }
 
 std::ostream& operator <<(std::ostream& stream, Robot const& robot){
@@ -85,13 +87,14 @@ void Robot::display(std::ostream& stream) const {
 
 bool Robot::sendCommand(const QString cmd) {
     qDebug() << "(Robot) Send command called" << cmd;
-    /*emit sendCommandSignal(cmd);
-    return cmdThread->isConnected();*/
+    //emit sendCommandSignal(cmd);
+    //return cmdThread->isConnected();
     return true;
 }
 
 void Robot::sendNewMap(QByteArray cmd) {
-    /*if(newMapThread->isConnected()){
+/*
+    if(newMapThread->isConnected()){
         if(sendingMap){
             qDebug() << "(Robot) Send new map called but the map is already being sent";
         } else {
@@ -101,7 +104,8 @@ void Robot::sendNewMap(QByteArray cmd) {
         }
     } else {
         qDebug() << "(Robot) The new map socket is not connected yet";
-    }*/
+    }
+    */
 }
 
 void Robot::doneSendingNewMapSlot(){
@@ -119,7 +123,8 @@ void Robot::resetCommandAnswer() {
 }
 
 void Robot::stopThreads() {
-    /*if (cmdThread != 0 && cmdThread->isRunning()){
+/*
+    if (cmdThread != 0 && cmdThread->isRunning()){
         cmdThread->requestInterruption();
         cmdThread->wait();
     }
@@ -134,9 +139,35 @@ void Robot::stopThreads() {
     if (newMapThread != NULL && newMapThread->isRunning()){
         newMapThread->requestInterruption();
         newMapThread->wait();
-    }*/
+    }
+*/
 }
 
 void Robot::ping(){
-    emit pingSignal();
+    //emit pingSignal();
+}
+
+QDataStream& operator>>(QDataStream& in, Robot& robot){
+    qDebug() << "Robot operator >> called";
+    /// the size of the vector has to be serialized too in order to deserialize the object correctly
+    qint32 size;
+    in >> size;
+    qDebug() << "reconstructing a path of size" << size;
+    QVector<std::shared_ptr<PathPoint>> _path;
+    PathPoint pathPoint;
+    for(int i = 0; i < size; i++){
+        in >> pathPoint;
+        _path.push_back(std::shared_ptr<PathPoint> (new PathPoint(pathPoint)));
+    }
+    robot.setPath(_path);
+    return in;
+}
+
+QDataStream& operator<<(QDataStream& out, const Robot& robot){
+    qDebug() << "robot operator << called with path size" << robot.getPath().size();
+    qint32 pathSize(robot.getPath().size());
+    out << pathSize;
+    for(int i = 0; i < pathSize; i++)
+        out << *(robot.getPath().at(i));
+    return out;
 }
