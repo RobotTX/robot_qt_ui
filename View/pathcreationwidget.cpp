@@ -80,7 +80,7 @@ void PathCreationWidget::updateRobot(std::shared_ptr<Robot> robot){
 
 void PathCreationWidget::showEvent(QShowEvent* event){
     Q_UNUSED(event)
-    //resetWidget();
+    resetWidget();
     updatePointsList();
     show();
 }
