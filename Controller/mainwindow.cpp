@@ -399,17 +399,17 @@ void MainWindow::connectToRobot(){
 
 void MainWindow::deletePath(int robotNb){
     qDebug() << "MainWindow::deletepath called on robot :" << robots->getRobotsVector().at(robotNb)->getRobot()->getName();
-
-    if(robots->getRobotsVector().at(robotNb)->getRobot()->getPath().size() > 0){
-        int ret = openConfirmMessage("Are you sure you want to delete this path ?");
-        switch (ret) {
-            case QMessageBox::Ok:
-            {
-                /// if the command is succesfully sent to the robot, we apply the change
-                std::shared_ptr<Robot> robot = robots->getRobotsVector().at(robotNb)->getRobot();
-                robot->resetCommandAnswer();
-                /// if the robot is not playing its path
-                if(!robot->isPlayingPath()){
+    std::shared_ptr<Robot> robot = robots->getRobotsVector().at(robotNb)->getRobot();
+    if(robot->getPath().size() > 0){
+        /// if the robot is not playing its path
+        if(!robot->isPlayingPath()){
+            msgBox.setIcon(QMessageBox::Question);
+            int ret = openConfirmMessage("Are you sure you want to delete this path ?");
+            switch (ret) {
+                case QMessageBox::Ok:
+                {
+                    /// if the command is succesfully sent to the robot, we apply the change
+                    robot->resetCommandAnswer();
                     if(robot->sendCommand(QString("k"))){
                         QString answer = robot->waitAnswer();
                         QStringList answerList = answer.split(QRegExp("[ ]"), QString::SkipEmptyParts);
@@ -421,23 +421,34 @@ void MainWindow::deletePath(int robotNb){
                                 hideAllWidgets();
                                 bottomLayout->getViewPathRobotBtnGroup()->button(robotNb)->setChecked(false);
                                 bottomLayout->getViewPathRobotBtnGroup()->button(robotNb)->click();
-
                                 topLayout->setLabel(TEXT_COLOR_SUCCESS, "Path deleted");
+
                             } else {
                                 topLayout->setLabel(TEXT_COLOR_DANGER, "Failed to delete the path, please try again");
                             }
                         }
                         robot->resetCommandAnswer();
                     }
-                } else {
-                    msgBox.setText(robot->getName() + " is currently playing this path, if you delete it the robot will be stopped even if it"
-                                                      "has not reached its destination yet. Continue ?");
-                    msgBox.setIcon(QMessageBox::Warning);
-                    msgBox.setStandardButtons(QMessageBox::Cancel);
-                    msgBox.setStandardButtons(QMessageBox::Ok);
-                    msgBox.setDefaultButton(QMessageBox::Cancel);
-                    int ret = msgBox.exec();
-                    if(ret == QMessageBox::Ok && robot->sendCommand(QString("m"))){
+                }
+                break;
+                case QMessageBox::Cancel:
+                    qDebug() << "Cancel was clicked";
+                break;
+                default:
+                    qDebug() << "Should never be reached";
+                break;
+            }
+        } else {
+            msgBox.setIcon(QMessageBox::Warning);
+            int ret = openConfirmMessage(robot->getName() + " is currently playing this path, if you delete it the robot will be stopped even if it"
+                                                            "has not reached its destination yet. Continue ?");
+            switch (ret) {
+                case QMessageBox::Ok:
+                {
+                    /// if the command is succesfully sent to the robot, we apply the change
+                    std::shared_ptr<Robot> robot = robots->getRobotsVector().at(robotNb)->getRobot();
+                    robot->resetCommandAnswer();
+                    if(robot->sendCommand(QString("m"))){
                         QString answer = robot->waitAnswer();
                         QStringList answerList = answer.split(QRegExp("[ ]"), QString::SkipEmptyParts);
                         if(answerList.size() > 1){
@@ -448,7 +459,6 @@ void MainWindow::deletePath(int robotNb){
                                 hideAllWidgets();
                                 bottomLayout->getViewPathRobotBtnGroup()->button(robotNb)->setChecked(false);
                                 bottomLayout->getViewPathRobotBtnGroup()->button(robotNb)->click();
-
                                 topLayout->setLabel(TEXT_COLOR_SUCCESS, "Path deleted");
                             } else {
                                 topLayout->setLabel(TEXT_COLOR_DANGER, "Failed to delete the path, please try again");
@@ -458,13 +468,6 @@ void MainWindow::deletePath(int robotNb){
                     }
                 }
             }
-            break;
-            case QMessageBox::Cancel:
-                qDebug() << "Cancel was clicked";
-            break;
-            default:
-                qDebug() << "Should never be reached";
-            break;
         }
     } else {
         qDebug() << "This robot has no path";
@@ -1118,7 +1121,6 @@ void MainWindow::showHome(){
 
         editSelectedRobotWidget->clearPath();
     }
-
 }
 
 void MainWindow::clearPath(const int robotNb){
@@ -2316,7 +2318,7 @@ void MainWindow::displayGroupMapEvent(void){
                 parserPoints.save(*points);
             } else if(points->getGroups()->value(checkedName)->size() == 0) {
                 pointsLeftWidget->getActionButtons()->getMapButton()->setChecked(false);
-                topLayout->setLabelDelay(TEXT_COLOR_WARNING, "This group is empty. There is points to display", 2000);
+                topLayout->setLabelDelay(TEXT_COLOR_WARNING, "This group is empty. There is no points to display", 2000);
             } else {
                 /// updates the tooltip of the map button
                 pointsLeftWidget->getActionButtons()->getMapButton()->setToolTip("Click here to hide the selected group on the map");
@@ -2326,7 +2328,7 @@ void MainWindow::displayGroupMapEvent(void){
                 for(int i = 0; i < points->getGroups()->value(checkedName)->size(); i++){
                     std::shared_ptr<PointView> point = points->getGroups()->value(checkedName)->at(i);
                     point->show();
-
+                    point->setPixmap(PointView::PixmapType::MID);
                     /// update the file
                     XMLParser parserPoints(XML_PATH);
                     parserPoints.save(*points);
@@ -3339,7 +3341,7 @@ void MainWindow::setMessageCreationPoint(QString type, CreatePointWidget::Error 
         setMessageTop(type, "Click save or press ENTER to save this point");
         break;
     case CreatePointWidget::Error::ContainsSemicolon:
-        setMessageTop(type, "You cannot create a point that contains a semicolon, a curly bracket or the pattern \"pathpoint\"");
+        setMessageTop(type, "You cannot create a point with a name that contains a semicolon, a curly bracket or the pattern \"pathpoint\"");
         break;
     case CreatePointWidget::Error::EmptyName:
         setMessageTop(type, "You cannot create a point with an empty name");

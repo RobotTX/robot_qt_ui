@@ -69,7 +69,7 @@ LeftMenu::LeftMenu(MainWindow* _parent, std::shared_ptr<Points> const& _points,
     leftLayout->setAlignment(displaySelectedGroup, Qt::AlignLeft);
 
     /// The first menu with 3 buttons : Robots, Points, Map
-    leftMenuWidget = new LeftMenuWidget(parent);
+    leftMenuWidget = new LeftMenuWidget(parent, points);
     leftLayout->addWidget(leftMenuWidget);
 
     /// Menu which display the list of points

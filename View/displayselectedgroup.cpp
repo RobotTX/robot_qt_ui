@@ -90,9 +90,12 @@ void DisplaySelectedGroup::disableButtons(){
 
 void DisplaySelectedGroup::buttonClickedSlot(QAbstractButton* button){
     qDebug() << "DisplaySelectedGroup::buttonClickedSlot called" << button->isChecked() << button->text() << lastCheckedButton;
+    points->setPixmapAll(PointView::PixmapType::NORMAL);
     if(button->text().compare(lastCheckedButton) == 0){
         disableButtons();
     } else {
+        /// changes the pointview on the map to show which point is selected
+        points->findPointView(button->text())->setPixmap(PointView::PixmapType::MID);
         getActionButtons()->getMapButton()->setCheckable(true);
         /// enables the minus button
         getActionButtons()->getMinusButton()->setEnabled(true);
@@ -124,4 +127,5 @@ void DisplaySelectedGroup::showEvent(QShowEvent* event){
     Q_UNUSED(event)
     getPointButtonGroup()->setGroup(getPointButtonGroup()->getGroupIndex());
     QWidget::show();
+    /// resets the colors of the pointviews on the map
 }
