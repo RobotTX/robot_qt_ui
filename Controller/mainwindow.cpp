@@ -663,7 +663,7 @@ void MainWindow::addPathSelecRobotBtnEvent(){
     QMapIterator<QString, std::shared_ptr<QVector<std::shared_ptr<PointView>>>> i(*(points->getGroups()));
     while (i.hasNext()) {
         i.next();
-        if(i.value()){
+        if(i.value() && i.key().compare(PATH_GROUP_NAME) != 0){
             for(int j = 0; j < i.value()->count(); j++){
                 if(!i.value()->at(j)->isVisible() && i.value()->at(j)->getPoint()->getName().compare(TMP_POINT_NAME)){
                     i.value()->at(j)->show();
@@ -1757,13 +1757,6 @@ void MainWindow::editPointButtonEvent(){
     std::shared_ptr<PointView> displaySelectedPointView = points->findPointView(leftMenu->getDisplaySelectedPoint()->getPointName());
     qDebug() << "MainWindow::editPointButtonEvent selected point to edit " << leftMenu->getDisplaySelectedPoint()->getPointName();
     displaySelectedPointView->setOriginalPosition(displaySelectedPointView->getPoint()->getPosition());
-
-    QMapIterator<QString, std::shared_ptr<QVector<std::shared_ptr<PointView>>>> i(*points->getGroups());
-    while (i.hasNext()) {
-        i.next();
-        for(int j = 0; j < i.value()->size(); j++)
-            qDebug() << i.key() << i.value()->at(j)->getPoint()->getName();
-    }
 
     if(displaySelectedPointView && !(*(displaySelectedPointView->getPoint()) == *(points->getTmpPointView()->getPoint())))
         points->displayTmpPoint(false);
