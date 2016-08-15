@@ -236,14 +236,14 @@ void MainWindow::initializeRobots(){
     in >> tmp;
     robots->setRobotsNameMap(tmp);
     fileRead.close();
-
+/*
 
     updateRobotsThread = new UpdateRobotsThread(PORT_ROBOT_UPDATE);
     connect(updateRobotsThread, SIGNAL(robotIsAlive(QString, QString, QString, QString, int)), this, SLOT(robotIsAliveSlot(QString, QString, QString, QString, int)));
     updateRobotsThread->start();
     updateRobotsThread->moveToThread(updateRobotsThread);
+*/
 
-/*
 
     QFile fileWrite(ROBOTS_NAME_PATH);
     fileWrite.resize(0);
@@ -292,7 +292,7 @@ void MainWindow::initializeRobots(){
 
 
     qDebug() << "RobotsNameMap on init" << robots->getRobotsNameMap();
-    */
+
 }
 
 void MainWindow::updateRobot(const QString ipAddress, const float posX, const float posY, const float oriZ){
