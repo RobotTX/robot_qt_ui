@@ -6,13 +6,13 @@
 
 MapLeftWidget::MapLeftWidget(QMainWindow* parent):QWidget(parent){
     layout = new QVBoxLayout(this);
-
+/*
     /// Back button
     QPushButton* backBtn = new QPushButton(QIcon(":/icons/arrowLeft.png"),"Menu", this);
     backBtn->setStyleSheet ("text-align: left");
     backBtn->setIconSize(parent->size()/10);
     layout->addWidget(backBtn);
-
+*/
     /// Save & load buttons
     QPushButton* saveBtn = new QPushButton(QIcon(":/icons/upload.png"),"Save this map", this);
     QPushButton* loadBtn = new QPushButton(QIcon(":/icons/download.png"),"Load a map", this);
@@ -30,7 +30,7 @@ MapLeftWidget::MapLeftWidget(QMainWindow* parent):QWidget(parent){
     label->setStyleSheet ("text-align: left");
     layout->addWidget(label);
 
-    connect(backBtn, SIGNAL(clicked()), parent, SLOT(backMapBtnEvent()));
+   // connect(backBtn, SIGNAL(clicked()), parent, SLOT(backMapBtnEvent()));
     connect(saveBtn, SIGNAL(clicked()), parent, SLOT(saveMapBtnEvent()));
     connect(loadBtn, SIGNAL(clicked()), parent, SLOT(loadMapBtnEvent()));
 
@@ -38,5 +38,5 @@ MapLeftWidget::MapLeftWidget(QMainWindow* parent):QWidget(parent){
     setMaximumWidth(parent->width()*4/10);
     setMinimumWidth(parent->width()*4/10);
     layout->setAlignment(Qt::AlignTop);
-    layout->setContentsMargins(0,0,0,0);
+    layout->setContentsMargins(10,0,0,0);
 }
