@@ -42,14 +42,14 @@ public:
     QString getIp(void) const { return ip; }
     unsigned int getBatteryLevel(void) const { return batteryLevel; }
     QString getWifi(void) const { return wifi; }
-    std::shared_ptr<PointView> getHome(void) const { return home; }
+    PointView* getHome(void) const { return home; }
     QVector<std::shared_ptr<PathPoint>> getPath(void) const { return path; }
     bool isPlayingPath(void) const { return playingPath; }
 
     /// Setters
     void setPlayingPath(const bool playPath) { playingPath = playPath; }
     void setPath(const QVector<std::shared_ptr<PathPoint>>& _path) { path = _path; }
-    void setHome(const std::shared_ptr<PointView>& _home) { home = _home; }
+    void setHome(PointView* _home) { home = _home; }
     void setWifi(const QString _wifi) { wifi = _wifi; }
     void setIp(const QString _ip) { ip = _ip; }
     void setBatteryLevel(const unsigned int _batteryLevel) { batteryLevel = _batteryLevel; }
@@ -102,7 +102,7 @@ private:
      * @brief home
      * Home point of the robot
      */
-    std::shared_ptr<PointView> home;
+    PointView* home;
 
     /**
      * @brief path

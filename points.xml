@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<<<<<<< HEAD
+<points/>
+=======
 <points>
     <group>
         <name>No Group</name>
@@ -97,3 +100,4 @@
         </point>
     </group>
 </points>
+>>>>>>> 4217dfb58baa806e5976ef15c4fb00f681b126d7

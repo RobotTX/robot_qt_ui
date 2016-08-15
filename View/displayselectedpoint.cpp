@@ -78,6 +78,7 @@ DisplaySelectedPoint::DisplaySelectedPoint(QMainWindow *const _parent,  std::sha
 
     /// to check that a point that's being edited does not get a new name that's already used in the database
     connect(nameEdit, SIGNAL(textEdited(QString)), this, SLOT(checkPointName(QString)));
+    connect(robotsWidget, SIGNAL(setSelectedRobotFromPoint(QString)), parent, SLOT(setSelectedRobotFromPointSlot(QString)));
 
     setMaximumWidth(_parent->width()*4/10);
     setMinimumWidth(_parent->width()*4/10);
@@ -186,7 +187,7 @@ int DisplaySelectedPoint::checkPointName(QString name) {
         return 1;
     }
 
-    QMapIterator<QString, std::shared_ptr<QVector<std::shared_ptr<PointView>>>> i(*(points->getGroups()));
+    QMapIterator<QString, std::shared_ptr<QVector<PointView*>>> i(*(points->getGroups()));
     while (i.hasNext()) {
         i.next();
         for(int j = 0; j < i.value()->size(); j++){

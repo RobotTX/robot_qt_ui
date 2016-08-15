@@ -49,7 +49,7 @@ CreatePointWidget::CreatePointWidget(QMainWindow* _parent, std::shared_ptr<Point
     groupBox = new QComboBox(this);
 
     /// to insert the groups in the box
-    QMapIterator<QString, std::shared_ptr<QVector<std::shared_ptr<PointView>>>> i(*(points->getGroups()));
+    QMapIterator<QString, std::shared_ptr<QVector<PointView*>>> i(*(points->getGroups()));
     int j = 0;
     while (i.hasNext()) {
         i.next();
@@ -101,7 +101,7 @@ CreatePointWidget::CreatePointWidget(QMainWindow* _parent, std::shared_ptr<Point
 
 }
 
-void CreatePointWidget::setSelectedPoint(const std::shared_ptr<PointView> &_pointView){
+void CreatePointWidget::setSelectedPoint(PointView* _pointView){
     qDebug() << "CreatePointWidget setSelectedPoint called";
     pointView = _pointView;
     nameEdit->setText(pointView->getPoint()->getName());
@@ -136,7 +136,7 @@ int CreatePointWidget::checkPointName(void){
         return 1;
     }
 
-    QMapIterator<QString, std::shared_ptr<QVector<std::shared_ptr<PointView>>>> i(*(points->getGroups()));
+    QMapIterator<QString, std::shared_ptr<QVector<PointView*>>> i(*(points->getGroups()));
     while (i.hasNext()) {
         /// determines whether or not the current name is a valid one (not already the name of another point or group)
         bool valid(true);
@@ -206,7 +206,7 @@ void CreatePointWidget::hideGroupLayout(void) const {
 void CreatePointWidget::updateGroupBox(){
     qDebug() << "updateGroupBox called";
     groupBox->clear();
-    QMapIterator<QString, std::shared_ptr<QVector<std::shared_ptr<PointView>>>> i(*(points->getGroups()));
+    QMapIterator<QString, std::shared_ptr<QVector<PointView*>>> i(*(points->getGroups()));
     int j = 0;
     while (i.hasNext()) {
         i.next();

@@ -11,12 +11,6 @@ Robots::Robots(){
     robotsNameMap = QMap<QString, QString>();
 }
 
-
-Robots::~Robots(){
-    qDeleteAll(robotsVector.begin(), robotsVector.end());
-    robotsVector.clear();
-}
-
 void Robots::add(RobotView* const robotView){
     robotsVector.append(robotView);
     //qDebug() << "Added the robot : " << robotView->getRobot()->getName() << " to the list of robots";
@@ -108,7 +102,7 @@ int Robots::getRobotId(const QString name) const{
 
 RobotView* Robots::findRobotUsingHome(const QString name) const {
     for(int i = 0; i < robotsVector.size(); i++){
-        std::shared_ptr<PointView> home = robotsVector.at(i)->getRobot()->getHome();
+        PointView* home = robotsVector.at(i)->getRobot()->getHome();
         /// we first check that this robot has a home point, if it does then we compare the names
         if(home && !home->getPoint()->getName().compare(name))
             return robotsVector[i];

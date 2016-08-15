@@ -29,7 +29,7 @@ public:
 
     CreatePointWidget(QMainWindow* parent, std::shared_ptr<Points> points);
 
-    void setSelectedPoint(std::shared_ptr<PointView> const& _pointView);
+    void setSelectedPoint(PointView* _pointView);
 
     QLabel* getPosXLabel(void) const { return posXLabel; }
     QLabel* getPosYLabel(void) const { return posYLabel; }
@@ -67,7 +67,7 @@ private:
     QHBoxLayout* cancelSaveLayout;
     QMainWindow* parent;
     QVBoxLayout* layout;
-    std::shared_ptr<PointView> pointView;
+    PointView* pointView;
     QLineEdit* nameEdit;
     QLabel* posXLabel;
     QLabel* posYLabel;
