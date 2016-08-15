@@ -15,6 +15,7 @@ GroupButtonGroup::GroupButtonGroup(const std::shared_ptr<Points> &_points, QWidg
 {
     layout = new QVBoxLayout(this);
     layout->setAlignment(Qt::AlignTop);
+
     buttonGroup = new QButtonGroup(this);
 
     /// to modify the name of a group
@@ -75,6 +76,8 @@ GroupButtonGroup::GroupButtonGroup(const std::shared_ptr<Points> &_points, QWidg
     }
 
     connect(modifyEdit, SIGNAL(textEdited(QString)), this, SLOT(checkEditGroupName(QString)));
+    layout->setContentsMargins(0,0,30,0);
+
 }
 
 void GroupButtonGroup::deleteButtons(void){

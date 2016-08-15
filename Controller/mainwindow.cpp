@@ -1531,17 +1531,18 @@ void MainWindow::loadMapBtnEvent(){
         break;
     }
 }
-
+/*
 void MainWindow::backMapBtnEvent(){
     qDebug() << "backMapBtnEvent called";
     mapLeftWidget->hide();
     leftMenuWidget->show();
 }
-
+*/
 void MainWindow::mapBtnEvent(){
     qDebug() << "mapBtnEvent called";
     leftMenuWidget->hide();
     mapLeftWidget->show();
+    switchFocus("Menu",mapLeftWidget,MainWindow::WidgetType::MAP);
 }
 
 /**********************************************************************************************************************************/

@@ -17,6 +17,7 @@ public:
     explicit CustomScrollArea(QWidget *parent, bool vertical = true, QScrollBar* childBar = NULL);
 
     virtual bool eventFilter(QObject *o, QEvent *e);
+    virtual void resizeEvent(QResizeEvent *event) ;
 
 private:
     bool vertical;
