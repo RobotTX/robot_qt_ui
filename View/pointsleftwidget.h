@@ -48,10 +48,9 @@ public:
     void setLastCheckedId(const QString  id) {lastCheckedId = id;}
     QString getLastCheckedId() const { return lastCheckedId;}
 
-    //int checkEditGroupName(QString name);
-
 private:
     QString formatName(const QString name) const;
+
 public:
     void disableButtons(void);
     void updateGroupButtonGroup();
@@ -80,6 +79,7 @@ signals:
     void enableReturn();
     void messageCreationGroup(QString, QString);
     void messageCreationPoint();
+    void resetPathPointViews();
 
 private:
 

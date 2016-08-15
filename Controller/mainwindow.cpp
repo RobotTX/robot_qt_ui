@@ -1446,6 +1446,10 @@ void MainWindow::updateAllPaths(void){
     }
 }
 
+void MainWindow::resetPathPointViewsSlot(){
+    emit updatePathPainter();
+}
+
 /**********************************************************************************************************************************/
 
 //                                          MAPS

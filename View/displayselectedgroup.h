@@ -43,6 +43,9 @@ private slots:
 protected:
     void showEvent(QShowEvent* event);
 
+signals:
+    void resetPathPointViews();
+
 private:
 
     PointButtonGroup* pointButtonGroup;

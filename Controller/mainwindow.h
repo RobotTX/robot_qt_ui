@@ -202,6 +202,7 @@ private slots:
     void settingBtnSlot();
     void updatePathPainterPointViewSlot();
     void stopPath(int robotNb);
+    void resetPathPointViewsSlot();
 
 private:
     Ui::MainWindow* ui;

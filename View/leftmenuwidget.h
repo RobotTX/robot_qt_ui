@@ -13,6 +13,7 @@ class Points;
  * Class which display the first menu with 3 buttons : Robots, Points & MAp
  */
 class LeftMenuWidget: public QWidget{
+    Q_OBJECT
 public:
     LeftMenuWidget(QMainWindow* parent, std::shared_ptr<Points> const& _points);
 
@@ -22,6 +23,9 @@ private:
 
 protected:
     void showEvent(QShowEvent *event);
+
+signals:
+    void resetPathPointViews();
 };
 
 #endif // LEFTMENUWIDGET_H

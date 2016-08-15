@@ -110,6 +110,9 @@ PointsLeftWidget::PointsLeftWidget(QMainWindow* _parent, std::shared_ptr<Points>
     /// relay the signal to the mainWindow so it displays the appropriate messages to the user (e.g, you cannot change the name of the group for this one because it's empty)
     connect(groupButtonGroup, SIGNAL(codeEditGroup(int)), this, SLOT(sendMessageEditGroup(int)));
 
+    /// to reset the path points point views after a path point is deselected
+    connect(this, SIGNAL(resetPathPointViews()), _parent, SLOT(resetPathPointViewsSlot()));
+
     setMaximumWidth(_parent->width()*4/10);
     setMinimumWidth(_parent->width()*4/10);
     layout->setAlignment(Qt::AlignBottom);
@@ -129,6 +132,7 @@ void PointsLeftWidget::enableButtons(QAbstractButton* button){
 
 void PointsLeftWidget::enableButtons(QString button){
     points->setPixmapAll(PointView::PixmapType::NORMAL);
+    emit resetPathPointViews();
     if(button.compare(lastCheckedId) == 0){
 
         groupButtonGroup->uncheck();
@@ -185,9 +189,9 @@ void PointsLeftWidget::enableButtons(QString button){
                 actionButtons->getMapButton()->setToolTip("Click to display the selected point on the map");
             }
             /// if this point belongs to a path we also need to set the pixmap of the path point point view
-            if(pv->getPoint()->isPath()){
+            if(std::shared_ptr<PointView> pathPv = points->findPathPointView(pv->getPoint()->getPosition().getX(), pv->getPoint()->getPosition().getY())){
                 qDebug() << "PATH !";
-                points->findPathPointView(pv->getPoint()->getPosition().getX(), pv->getPoint()->getPosition().getY())->setPixmap(PointView::PixmapType::MID);
+                pathPv->setPixmap(PointView::PixmapType::MID);
             } else {
                 qDebug() << "NOT PATH";
             }
@@ -324,6 +328,7 @@ void PointsLeftWidget::keyPressEvent(QKeyEvent* event){
 void PointsLeftWidget::showEvent(QShowEvent *event){
     resetWidget();
     points->setPixmapAll(PointView::PixmapType::NORMAL);
+    emit resetPathPointViews();
     QWidget::showEvent(event);
 }
 

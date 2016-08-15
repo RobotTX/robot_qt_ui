@@ -87,12 +87,12 @@ std::shared_ptr<PointView> Points::findPointView(const QString pointName) const{
     QMapIterator<QString, std::shared_ptr<QVector<std::shared_ptr<PointView>>>> i(*groups);
     while (i.hasNext()) {
         i.next();
-        //if(i.key().compare(PATH_GROUP_NAME) != 0){
+        if(i.key().compare(PATH_GROUP_NAME) != 0){
             for(int j = 0; j < i.value()->size(); j++){
                 if(i.value()->at(j)->getPoint()->getName().compare(pointName) == 0)
                     return i.value()->at(j);
             }
-        //}
+        }
     }
     return NULL;
 }
