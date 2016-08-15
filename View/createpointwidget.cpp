@@ -24,6 +24,7 @@ CreatePointWidget::CreatePointWidget(QMainWindow* _parent, std::shared_ptr<Point
     actionButtons->disableAll();
 
     layout->addWidget(actionButtons);
+    QVBoxLayout*  downLayout = new QVBoxLayout(this);
 
     nameEdit = new QLineEdit(this);
     nameEdit->setStyleSheet ("text-align: left");
@@ -32,13 +33,14 @@ CreatePointWidget::CreatePointWidget(QMainWindow* _parent, std::shared_ptr<Point
     nameEdit->setAutoFillBackground(true);
     nameEdit->setFrame(false);
     nameEdit->setAlignment(Qt::AlignCenter);
-    layout->addWidget(nameEdit);
+    downLayout->addWidget(nameEdit);
+    nameEdit->setStyleSheet("* { background-color: rgba(255, 0, 0, 0); font-weight: bold; text-decoration:underline}");
 
     posXLabel = new QLabel("X : ", this);
-    layout->addWidget(posXLabel);
+    downLayout->addWidget(posXLabel);
 
     posYLabel = new QLabel("Y : ", this);
-    layout->addWidget(posYLabel);
+    downLayout->addWidget(posYLabel);
 
     ///                                  ADD GROUP LABEL AND QComboBox
 
@@ -75,8 +77,8 @@ CreatePointWidget::CreatePointWidget(QMainWindow* _parent, std::shared_ptr<Point
     saveBtn->hide();
     cancelBtn->hide();
 
-    layout->addLayout(groupLayout);
-    layout->addLayout(cancelSaveLayout);
+    downLayout->addLayout(groupLayout);
+    downLayout->addLayout(cancelSaveLayout);
 
 
     ///                                  CONNECTIONS
@@ -96,8 +98,11 @@ CreatePointWidget::CreatePointWidget(QMainWindow* _parent, std::shared_ptr<Point
     hide();
     setMaximumWidth(_parent->width()*4/10);
     setMinimumWidth(_parent->width()*4/10);
+    layout->addLayout(downLayout);
+
     layout->setAlignment(Qt::AlignTop);
     layout->setContentsMargins(0,0,0,0);
+    downLayout->setContentsMargins(20,0,10,0);
 
 }
 
