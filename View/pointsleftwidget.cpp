@@ -47,20 +47,20 @@ PointsLeftWidget::PointsLeftWidget(QMainWindow* _parent, std::shared_ptr<Points>
     actionButtons->getGoButton()->setToolTip("Select a group or a point and click here to display its information");
 
     layout->addWidget(actionButtons);
+    QVBoxLayout* downLayout = new QVBoxLayout(this);
 
     groupNameLabel = new QLabel("New group's name : ", this);
     groupNameLabel->hide();
     groupNameEdit = new CustomizedLineEdit(this);
     groupNameEdit->hide();
 
-    layout->addWidget(groupNameLabel);
-    layout->addWidget(groupNameEdit);
+    downLayout->addWidget(groupNameLabel);
+    downLayout->addWidget(groupNameEdit);
 
     groupButtonGroup = new GroupButtonGroup(points, this);
-
     scrollArea->setWidget(groupButtonGroup);
-    layout->addWidget(scrollArea);
-
+    downLayout->addWidget(scrollArea);
+    //downLayout->addWidget(groupButtonGroup);
     creationLayout = new QHBoxLayout();
     saveButton = new QPushButton("Save", this);
     saveButton->setAutoDefault(true);
@@ -72,7 +72,7 @@ PointsLeftWidget::PointsLeftWidget(QMainWindow* _parent, std::shared_ptr<Points>
     creationLayout->addWidget(cancelButton);
     creationLayout->addWidget(saveButton);
 
-    layout->addLayout(creationLayout);
+    downLayout->addLayout(creationLayout);
 
     connect(actionButtons->getPlusButton(), SIGNAL(clicked(bool)), _parent, SLOT(plusGroupBtnEvent()));
     connect(actionButtons->getMinusButton(), SIGNAL(clicked(bool)), _parent, SLOT(minusGroupBtnEvent()));
@@ -112,9 +112,11 @@ PointsLeftWidget::PointsLeftWidget(QMainWindow* _parent, std::shared_ptr<Points>
 
     setMaximumWidth(_parent->width()*4/10);
     setMinimumWidth(_parent->width()*4/10);
-    layout->setAlignment(Qt::AlignBottom);
+    downLayout->setAlignment(Qt::AlignBottom);
+    downLayout->setContentsMargins(10,0,30,0);
+    layout->addLayout(downLayout);
     layout->setContentsMargins(0,0,0,0);
-
+    creationLayout->setContentsMargins(0,0,0,20);
 }
 
 void PointsLeftWidget::updateGroupButtonGroup(){
