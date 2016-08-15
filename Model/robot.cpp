@@ -11,9 +11,8 @@
 Robot::Robot(const QString _name, const QString _ip, QMainWindow* parent) : name(_name), ip(_ip), position(Position()),
     orientation(0), batteryLevel(100), wifi(""), home(NULL), playingPath(0), mapId(), sendingMap(false)
 {
-/*
     qDebug() << "Robot" << name << "at ip" << ip << " launching its cmd thread";
-
+/*
     cmdThread = new CmdRobotThread(ip, PORT_CMD, PORT_MAP_METADATA, PORT_ROBOT_POS, PORT_MAP, name, parent);
     connect(cmdThread, SIGNAL(robotIsDead(QString,QString)), parent, SLOT(robotIsDeadSlot(QString,QString)));
     connect(this, SIGNAL(sendCommandSignal(QString)), cmdThread, SLOT(sendCommand(QString)));
@@ -46,15 +45,16 @@ Robot::Robot(const QString _name, const QString _ip, QMainWindow* parent) : name
                      parent , SLOT(updateMetadata(int, int, float, float, float)));
     metadataThread->start();
     metadataThread->moveToThread(metadataThread);
-    */
 
+*/
 }
 
 Robot::Robot(): name("Default name"), ip("no Ip"), position(Position()),
     orientation(0), batteryLevel(100), wifi(""), home(NULL), playingPath(0), mapId(), sendingMap(false){
 }
 
-Robot::~Robot(){/*
+Robot::~Robot(){
+    /*
     if (cmdThread != 0 && cmdThread->isRunning() ) {
         cmdThread->requestInterruption();
         cmdThread->wait();
@@ -70,7 +70,8 @@ Robot::~Robot(){/*
     if (newMapThread != NULL && newMapThread->isRunning() ) {
         newMapThread->requestInterruption();
         newMapThread->wait();
-    }*/
+    }
+    */
 }
 
 std::ostream& operator <<(std::ostream& stream, Robot const& robot){
@@ -92,7 +93,7 @@ bool Robot::sendCommand(const QString cmd) {
 }
 
 void Robot::sendNewMap(QByteArray cmd) {
-    /*
+/*
     if(newMapThread->isConnected()){
         if(sendingMap){
             qDebug() << "(Robot) Send new map called but the map is already being sent";
@@ -122,7 +123,7 @@ void Robot::resetCommandAnswer() {
 }
 
 void Robot::stopThreads() {
-    /*
+/*
     if (cmdThread != 0 && cmdThread->isRunning()){
         cmdThread->requestInterruption();
         cmdThread->wait();
@@ -139,11 +140,11 @@ void Robot::stopThreads() {
         newMapThread->requestInterruption();
         newMapThread->wait();
     }
-    */
+*/
 }
 
 void Robot::ping(){
-    emit pingSignal();
+    //emit pingSignal();
 }
 
 QDataStream& operator>>(QDataStream& in, Robot& robot){

@@ -129,7 +129,6 @@ void PointsLeftWidget::enableButtons(QAbstractButton* button){
 
 void PointsLeftWidget::enableButtons(QString button){
     points->setPixmapAll(PointView::PixmapType::NORMAL);
-    qDebug() << "PointsLeftWidget::enableButtons called" << button;
     if(button.compare(lastCheckedId) == 0){
 
         groupButtonGroup->uncheck();
@@ -175,8 +174,8 @@ void PointsLeftWidget::enableButtons(QString button){
                     pv->setPixmap(PointView::PixmapType::MID);
             }
         } else {
-
-            if(points->findPointView(button)->isVisible()){
+            std::shared_ptr<PointView> pv = points->findPointView(button);
+            if(pv->isVisible()){
                 /// if the point is displayed, changes its pointview on the map
                 points->findPointView(button)->setPixmap(PointView::PixmapType::MID);
                 actionButtons->getMapButton()->setChecked(true);
@@ -184,6 +183,13 @@ void PointsLeftWidget::enableButtons(QString button){
             } else {
                 actionButtons->getMapButton()->setChecked(false);
                 actionButtons->getMapButton()->setToolTip("Click to display the selected point on the map");
+            }
+            /// if this point belongs to a path we also need to set the pixmap of the path point point view
+            if(pv->getPoint()->isPath()){
+                qDebug() << "PATH !";
+                points->findPathPointView(pv->getPoint()->getPosition().getX(), pv->getPoint()->getPosition().getY())->setPixmap(PointView::PixmapType::MID);
+            } else {
+                qDebug() << "NOT PATH";
             }
         }
 
