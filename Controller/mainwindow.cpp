@@ -832,24 +832,52 @@ void MainWindow::robotSavedEvent(){
         bool done = false;
 
         if(pointView->getPoint()->isTemporary()){
-            qDebug() << "MainWindow::robotSavedEvent Tmp point";
-            pointView->getPoint()->setHome(Point::PointType::HOME, selectedRobot->getRobot()->getName());
+            if(selectedRobot->getRobot()->sendCommand(QString("n \"") + QString::number(pointView->getPoint()->getPosition().getX()) + "\" \""
+                                                              + QString::number(pointView->getPoint()->getPosition().getY()) + "\"")){
+                QString answerHome = selectedRobot->getRobot()->waitAnswer();
+                QStringList answerList2 = answerHome.split(QRegExp("[ ]"), QString::SkipEmptyParts);
+                if(answerList2.size() > 1){
+                    QString cmd2 = answerList2.at(0);
+                    bool success2 = (answerList2.at(1).compare("done") == 0);
+                    if((cmd2.compare("n") == 0 && success2) || answerList2.at(0).compare("1") == 0){
 
-            points->addPoint(NO_GROUP_NAME, points->getGroups()->value(TMP_GROUP_NAME)->takeFirst());
-            points->addTmpPoint(mapPixmapItem, this);
+                        qDebug() << "MainWindow::robotSavedEvent Tmp point";
+                        pointView->getPoint()->setHome(Point::PointType::HOME, selectedRobot->getRobot()->getName());
 
-            XMLParser parserPoints(XML_PATH);
-            parserPoints.save(*points);
-            done = true;
+                        points->addPoint(NO_GROUP_NAME, points->getGroups()->value(TMP_GROUP_NAME)->takeFirst());
+                        points->addTmpPoint(mapPixmapItem, this);
+
+                        XMLParser parserPoints(XML_PATH);
+                        parserPoints.save(*points);
+                        done = true;
+                        setMessageTop(TEXT_COLOR_SUCCESS, selectedRobot->getRobot()->getName() + " successfully saved its home point");
+                    } else
+                        setMessageTop(TEXT_COLOR_DANGER, selectedRobot->getRobot()->getName() + " failed to save its home point, please try again");
+                }
+            }
+            selectedRobot->getRobot()->resetCommandAnswer();
         } else {
             qDebug() << "MainWindow::robotSavedEvent Permanent point";
             if(pointView->getPoint()->setHome(Point::PointType::HOME, selectedRobot->getRobot()->getName())){
-                XMLParser parserPoints(XML_PATH);
-                parserPoints.save(*points);
-                done = true;
-            } else {
+                if(selectedRobot->getRobot()->sendCommand(QString("n \"") + QString::number(pointView->getPoint()->getPosition().getX()) + "\" \""
+                                                                  + QString::number(pointView->getPoint()->getPosition().getY()) + "\"")){
+                    QString answerHome = selectedRobot->getRobot()->waitAnswer();
+                    QStringList answerList2 = answerHome.split(QRegExp("[ ]"), QString::SkipEmptyParts);
+                    if(answerList2.size() > 1){
+                        QString cmd2 = answerList2.at(0);
+                        bool success2 = (answerList2.at(1).compare("done") == 0);
+                        if((cmd2.compare("n") == 0 && success2) || answerList2.at(0).compare("1") == 0){
+                            XMLParser parserPoints(XML_PATH);
+                            parserPoints.save(*points);
+                            done = true;
+                            setMessageTop(TEXT_COLOR_SUCCESS, selectedRobot->getRobot()->getName() + " successfully saved its home point");
+                        } else
+                            setMessageTop(TEXT_COLOR_DANGER, selectedRobot->getRobot()->getName() + " failed to save its home point, please try again");
+                    }
+                }
+            } else
                 setMessageTop(TEXT_COLOR_DANGER, "Sorry, this point is already a home\nPlease select another");
-            }
+            selectedRobot->getRobot()->resetCommandAnswer();
         }
         pointsLeftWidget->updateGroupButtonGroup();
 
@@ -934,7 +962,7 @@ void MainWindow::robotSavedEvent(){
                 editSelectedRobotWidget->setSelectedRobot(selectedRobot);
                 setEnableAll(true);
 
-                setMessageTop(TEXT_COLOR_SUCCESS, "Robot successfully edited");
+                //setMessageTop(TEXT_COLOR_SUCCESS, "Robot successfully edited");
                 qDebug() << "Robot successfully edited";
             }
         } else {
@@ -1153,6 +1181,7 @@ void MainWindow::hideHome(void){
 
 void MainWindow::goHomeBtnEvent(){
     qDebug() << "go home robot " << selectedRobot->getRobot()->getName() << (selectedRobot->getRobot()->getHome() == NULL);
+    /*
     /// TODO change to go from the point saved in the robot files
     float oldPosX = selectedRobot->getRobot()->getHome()->getPoint()->getPosition().getX();
     float oldPosY = selectedRobot->getRobot()->getHome()->getPoint()->getPosition().getY();
@@ -1161,16 +1190,17 @@ void MainWindow::goHomeBtnEvent(){
     float newPosY = (-oldPosY + map->getHeight() - ROBOT_WIDTH/2) * map->getResolution() + map->getOrigin().getY();
     qDebug() << "Go to next point :" << newPosX << newPosY;
     int waitTime = -1;
+    */
 
     /// if the command is succesfully sent to the robot, we apply the change
     selectedRobot->getRobot()->resetCommandAnswer();
-    if(selectedRobot->getRobot()->sendCommand(QString("c \"") + QString::number(newPosX) + "\" \""  + QString::number(newPosY) + "\" \""  + QString::number(waitTime) + "\"")){
+    if(selectedRobot->getRobot()->sendCommand(QString("o \"")))// + QString::number(newPosX) + "\" \""  + QString::number(newPosY) + "\" \""  + QString::number(waitTime) + "\"")){
         QString answer = selectedRobot->getRobot()->waitAnswer();
         QStringList answerList = answer.split(QRegExp("[ ]"), QString::SkipEmptyParts);
         if(answerList.size() > 1){
             QString cmd = answerList.at(0);
             bool success = (answerList.at(1).compare("done") == 0);
-            if((cmd.compare("d") == 0 && success) || answerList.at(0).compare("1") == 0){
+            if((cmd.compare("o") == 0 && success) || answerList.at(0).compare("1") == 0){
                 qDebug() << "Going home";
                 topLayout->setLabel(TEXT_COLOR_SUCCESS, "Robot going home");
             } else {
