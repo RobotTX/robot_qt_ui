@@ -1,2 +1,103 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<<<<<<< HEAD
 <points/>
+=======
+<points>
+    <group>
+        <name>No Group</name>
+        <point>
+            <name>Un point</name>
+            <x>950</x>
+            <y>1145</y>
+            <displayed>1</displayed>
+        </point>
+        <point>
+            <name>Another point</name>
+<<<<<<< HEAD
+            <x>1148</x>
+            <y>1203</y>
+=======
+            <x>150</x>
+            <y>200</y>
+>>>>>>> 6c9ecc00db886b8f50c95c4a9acb06f3df555883
+            <displayed>0</displayed>
+        </point>
+        <point>
+            <name>A final point</name>
+<<<<<<< HEAD
+            <x>1153</x>
+            <y>843</y>
+            <displayed>1</displayed>
+=======
+            <x>150</x>
+            <y>225</y>
+            <displayed>0</displayed>
+>>>>>>> 6c9ecc00db886b8f50c95c4a9acb06f3df555883
+        </point>
+    </group>
+    <group>
+        <name>PathPoints</name>
+    </group>
+    <group>
+        <name>Second group</name>
+        <point>
+            <name>Fanny</name>
+            <x>1126</x>
+            <y>943</y>
+            <displayed>1</displayed>
+        </point>
+        <point>
+            <name>Michel</name>
+            <x>1086</x>
+            <y>1019</y>
+            <displayed>1</displayed>
+        </point>
+    </group>
+    <group>
+        <name>TmpPoint</name>
+        <point>
+            <name>tmpPoint</name>
+            <x>0</x>
+            <y>0</y>
+            <displayed>0</displayed>
+        </point>
+    </group>
+    <group>
+        <name>first group</name>
+        <point>
+            <name>A</name>
+<<<<<<< HEAD
+            <x>1130</x>
+            <y>820</y>
+            <displayed>0</displayed>
+        </point>
+        <point>
+            <name>Ma point</name>
+            <x>1145</x>
+            <y>890</y>
+=======
+            <x>50</x>
+            <y>50</y>
+            <displayed>1</displayed>
+        </point>
+        <point>
+            <name>Ma point</name>
+            <x>75</x>
+            <y>75</y>
+>>>>>>> 6c9ecc00db886b8f50c95c4a9acb06f3df555883
+            <displayed>1</displayed>
+        </point>
+        <point>
+            <name>A new point</name>
+<<<<<<< HEAD
+            <x>946</x>
+            <y>983</y>
+=======
+            <x>100</x>
+            <y>100</y>
+>>>>>>> 6c9ecc00db886b8f50c95c4a9acb06f3df555883
+            <displayed>0</displayed>
+        </point>
+    </group>
+</points>
+>>>>>>> 4217dfb58baa806e5976ef15c4fb00f681b126d7

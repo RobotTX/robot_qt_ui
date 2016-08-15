@@ -37,6 +37,8 @@ LeftMenuWidget::LeftMenuWidget(QMainWindow* parent, std::shared_ptr<Points> cons
     connect(pointBtn, SIGNAL(clicked()), parent, SLOT(pointBtnEvent()));
     connect(mapBtn, SIGNAL(clicked()), parent, SLOT(mapBtnEvent()));
 
+    connect(this, SIGNAL(resetPathPointViews()), parent, SLOT(resetPathPointViewsSlot()));
+
     hide();
 
     setMaximumWidth(parent->width()*4/10);
@@ -47,6 +49,7 @@ LeftMenuWidget::LeftMenuWidget(QMainWindow* parent, std::shared_ptr<Points> cons
 
 void LeftMenuWidget::showEvent(QShowEvent *event){
     points->setPixmapAll(PointView::PixmapType::NORMAL);
+    emit resetPathPointViews();
     QWidget::showEvent(event);
 }
 

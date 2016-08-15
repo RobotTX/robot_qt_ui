@@ -47,20 +47,20 @@ PointsLeftWidget::PointsLeftWidget(QMainWindow* _parent, std::shared_ptr<Points>
     actionButtons->getGoButton()->setToolTip("Select a group or a point and click here to display its information");
 
     layout->addWidget(actionButtons);
+    QVBoxLayout* downLayout = new QVBoxLayout(this);
 
     groupNameLabel = new QLabel("New group's name : ", this);
     groupNameLabel->hide();
     groupNameEdit = new CustomizedLineEdit(this);
     groupNameEdit->hide();
 
-    layout->addWidget(groupNameLabel);
-    layout->addWidget(groupNameEdit);
+    downLayout->addWidget(groupNameLabel);
+    downLayout->addWidget(groupNameEdit);
 
     groupButtonGroup = new GroupButtonGroup(points, this);
-
     scrollArea->setWidget(groupButtonGroup);
-    layout->addWidget(scrollArea);
-
+    downLayout->addWidget(scrollArea);
+    //downLayout->addWidget(groupButtonGroup);
     creationLayout = new QHBoxLayout();
     saveButton = new QPushButton("Save", this);
     saveButton->setAutoDefault(true);
@@ -72,7 +72,7 @@ PointsLeftWidget::PointsLeftWidget(QMainWindow* _parent, std::shared_ptr<Points>
     creationLayout->addWidget(cancelButton);
     creationLayout->addWidget(saveButton);
 
-    layout->addLayout(creationLayout);
+    downLayout->addLayout(creationLayout);
 
     connect(actionButtons->getPlusButton(), SIGNAL(clicked(bool)), _parent, SLOT(plusGroupBtnEvent()));
     connect(actionButtons->getMinusButton(), SIGNAL(clicked(bool)), _parent, SLOT(minusGroupBtnEvent()));
@@ -110,11 +110,16 @@ PointsLeftWidget::PointsLeftWidget(QMainWindow* _parent, std::shared_ptr<Points>
     /// relay the signal to the mainWindow so it displays the appropriate messages to the user (e.g, you cannot change the name of the group for this one because it's empty)
     connect(groupButtonGroup, SIGNAL(codeEditGroup(int)), this, SLOT(sendMessageEditGroup(int)));
 
+    /// to reset the path points point views after a path point is deselected
+    connect(this, SIGNAL(resetPathPointViews()), _parent, SLOT(resetPathPointViewsSlot()));
+
     setMaximumWidth(_parent->width()*4/10);
     setMinimumWidth(_parent->width()*4/10);
-    layout->setAlignment(Qt::AlignBottom);
+    downLayout->setAlignment(Qt::AlignBottom);
+    downLayout->setContentsMargins(10,0,30,0);
+    layout->addLayout(downLayout);
     layout->setContentsMargins(0,0,0,0);
-
+    creationLayout->setContentsMargins(0,0,0,20);
 }
 
 void PointsLeftWidget::updateGroupButtonGroup(){
@@ -129,6 +134,7 @@ void PointsLeftWidget::enableButtons(QAbstractButton* button){
 
 void PointsLeftWidget::enableButtons(QString button){
     points->setPixmapAll(PointView::PixmapType::NORMAL);
+    emit resetPathPointViews();
     if(button.compare(lastCheckedId) == 0){
 
         groupButtonGroup->uncheck();
@@ -185,9 +191,9 @@ void PointsLeftWidget::enableButtons(QString button){
                 actionButtons->getMapButton()->setToolTip("Click to display the selected point on the map");
             }
             /// if this point belongs to a path we also need to set the pixmap of the path point point view
-            if(pv->getPoint()->isPath()){
+            if(PointView* pathPv = points->findPathPointView(pv->getPoint()->getPosition().getX(), pv->getPoint()->getPosition().getY())){
                 qDebug() << "PATH !";
-                points->findPathPointView(pv->getPoint()->getPosition().getX(), pv->getPoint()->getPosition().getY())->setPixmap(PointView::PixmapType::MID);
+                pathPv->setPixmap(PointView::PixmapType::MID);
             } else {
                 qDebug() << "NOT PATH";
             }
@@ -324,6 +330,7 @@ void PointsLeftWidget::keyPressEvent(QKeyEvent* event){
 void PointsLeftWidget::showEvent(QShowEvent *event){
     resetWidget();
     points->setPixmapAll(PointView::PixmapType::NORMAL);
+    emit resetPathPointViews();
     QWidget::showEvent(event);
 }
 

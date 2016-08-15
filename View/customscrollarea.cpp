@@ -48,3 +48,10 @@ bool CustomScrollArea::eventFilter(QObject *o, QEvent *e){
 
     return QScrollArea::eventFilter(o, e);
 }
+
+ void CustomScrollArea::resizeEvent(QResizeEvent *event)
+{
+    // Define content margins here
+ //  setViewportMargins(0, 0, 50, 0); // <<<<< SET MARGINS HERE
+    QScrollArea::resizeEvent(event);
+}

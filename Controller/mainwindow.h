@@ -67,7 +67,7 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
-    enum WidgetType { MENU, GROUPS, GROUP, POINT, ROBOTS, ROBOT };
+    enum WidgetType { MENU, GROUPS, GROUP, POINT, ROBOTS, ROBOT , MAP };
 
     std::shared_ptr<Points> getPoints(void) const { return points; }
     QList<QPair<QPair<QWidget*, QString>, MainWindow::WidgetType>> getLastWidgets() const { return lastWidgets; }
@@ -130,7 +130,7 @@ private slots:
     void checkRobotBtnEvent(QString name);
     void saveMapBtnEvent();
     void loadMapBtnEvent();
-    void backMapBtnEvent();
+   // void backMapBtnEvent();
     //void setCheckedRobot(QString name);
     void cancelEditSelecRobotBtnEvent();
     void robotSavedEvent();
@@ -202,6 +202,7 @@ private slots:
     void settingBtnSlot();
     void updatePathPainterPointViewSlot();
     void stopPath(int robotNb);
+    void resetPathPointViewsSlot();
 
 private:
     Ui::MainWindow* ui;

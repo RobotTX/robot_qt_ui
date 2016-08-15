@@ -140,6 +140,8 @@ BottomLayout::BottomLayout(QMainWindow* parent, const std::shared_ptr<Robots> &r
     /// Creation of the sixth column, with the button to delete the path of the robot
     for(int i = 0; i < robotsVector.size(); i++){
         QPushButton* deletePathButton = new QPushButton(QIcon(":/icons/close.png"), "", this);
+        if(robots->getRobotsVector().at(i)->getRobot()->getPath().size() < 1)
+            deletePathButton->setEnabled(false);
         deletePathBtnGroup->addButton(deletePathButton, i);
         columnDelete->addWidget(deletePathButton);
         deletePathButton->setFlat(true);

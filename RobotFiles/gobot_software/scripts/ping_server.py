@@ -16,6 +16,7 @@ file_IPs = computer_software + "IP/isAlive.txt"
 ping_script = "sh " + computer_software + "IP/ping.sh"
 file_hostname = computer_software + "Robot_Infos/name.txt"
 file_map_id = computer_software + "Robot_Infos/mapId.txt"
+file_path_stage = computer_software + "Robot_Infos/path_stage.txt"
 
 def isServer(IP) :
     s = socket.socket()
@@ -47,9 +48,16 @@ def isServer(IP) :
             # Get the SSID of the robot
             ssid = subprocess.Popen(["iwgetid", "-r"], stdout = subprocess.PIPE).communicate()[0]
 
+            # sends the path stage
+            stage = 0
+            with open(file_path_stage, 'r') as file_path:
+                stage = file_path.readline()
+                file_path.close()
+
             # Send everything to the software
-            toSend = "%s\"%s\"%s" % (hostname, map_id, ssid)
+            toSend = "%s\"%s\"%s\"%s" % (hostname, map_id, ssid, stage)
             s.send(toSend)
+
     except : 
         find = False
     return find

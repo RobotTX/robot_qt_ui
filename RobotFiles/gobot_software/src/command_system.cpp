@@ -187,8 +187,8 @@ bool execCommand(ros::NodeHandle n, std::vector<std::string> command){
 				std::ofstream ofs;
 				ofs.open(path_computer_software + "Robot_Infos/path.txt", std::ofstream::out | std::ofstream::trunc);
 				ofs.close();
-				return true;
 			}
+			return true;
 		break;
 
 		/// Command to stop the robot while following its path
@@ -199,11 +199,85 @@ bool execCommand(ros::NodeHandle n, std::vector<std::string> command){
 				std::cout << "Stop path service called with success";
 			else
 				std::cout << "Stop path service call failed";
-			std::cout << "command system returning true after cmd l";
-			std::cout << "(Command system) Stopping the path" << std::endl;
 			return true;
 		}
 		break;
+
+		// command to stop the robot and then delete its path
+		case 'm':
+			{
+				std::cout << "(Command system) Stopping the robot and deleting its path" << std::endl;
+				std_srvs::Empty arg;
+				if(ros::service::call("stop_path", arg)){
+					std::cout << "Stop path service called with success";
+					std::ofstream ofs;
+					ofs.open(path_computer_software + "Robot_Infos/path.txt", std::ofstream::out | std::ofstream::trunc);
+					ofs.close();
+				}
+				else {
+					std::cout << "Stop path service call failed";
+					return false;
+				}
+				return true;
+			}
+			break;
+
+		// command to save the home of the robot
+		case 'n':
+			if(command.size() == 3){
+
+				std::cout << "(Command system) Home received :" << std::endl;
+
+				std::ofstream ofs(path_computer_software + "Robot_Infos/home.txt", std::ofstream::out | std::ofstream::trunc);
+				
+				if(ofs){
+
+					ofs << command.at(1) << " " << command.at(2) << " ";
+
+					ofs.close();
+
+				} else {
+
+					std::cout << "sorry could nt open the file " << path_computer_software + "Robot_Infos/path.txt";
+					return false;
+				}
+
+				return true;
+
+			} else {
+				std::cout << "Not enough arguments, received " << command.size() << " arguments, 3 arguments expected" << std::endl; 
+				return false;
+			}
+		break;
+
+		// command to send the robot home
+		case 'o':
+			
+			std::cout << "(Command system) Sending the robot home" << std::endl;
+			std_srvs::Empty arg;
+			if(ros::service::call("go_home", arg)){
+				std::cout << "Go home service called with success" << std::endl;
+				return true;
+			}
+			else {
+				std::cout << "Stop path service call failed" << std::endl;
+				return false;
+			}
+
+			break;
+
+		// command so that the robot stops on its way home
+		case 'p':
+			std::cout << "(Command system) Stopping the robot on its way home" << std::endl;
+			std_srvs::Empty arg;
+			if(ros::service::call("stop_going_home", arg)){
+				std::cout << "Stop going home service called with success" << std::endl;
+				return true;
+			}
+			else {
+				std::cout << "Stop going home service call failed" << std::endl;
+				return false;
+			}
 
 		/// Default/Unknown command
 		default:
