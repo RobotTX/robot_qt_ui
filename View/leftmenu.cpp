@@ -59,7 +59,7 @@ LeftMenu::LeftMenu(MainWindow* _parent, std::shared_ptr<Points> const& _points,
     connect(closeBtn, SIGNAL(clicked()), parent, SLOT(closeSlot()));
 
     /// to display the information relative to a point
-    displaySelectedPoint = new DisplaySelectedPoint(parent, _points, _map);
+    displaySelectedPoint = new DisplaySelectedPoint(parent, robots, _points, _map);
     leftLayout->addWidget(displaySelectedPoint);
     leftLayout->setAlignment(displaySelectedPoint, Qt::AlignLeft);
 
