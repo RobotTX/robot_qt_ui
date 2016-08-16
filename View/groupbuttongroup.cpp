@@ -58,8 +58,8 @@ GroupButtonGroup::GroupButtonGroup(const std::shared_ptr<Points> &_points, QWidg
     /// for the last group we just want to show the points and not "no group"
     if(points->getGroups()->value(NO_GROUP_NAME)){
         for(int i = 0; i < points->getGroups()->value(NO_GROUP_NAME)->size(); i++){
-            std::shared_ptr<Point> currentPoint = points->getGroups()->value(NO_GROUP_NAME)->at(i)->getPoint();
-            DoubleClickableButton* pointButton = new DoubleClickableButton(currentPoint->getName(), this);
+            PointView* currentPointView = points->getGroups()->value(NO_GROUP_NAME)->at(i);
+            DoubleClickableButton* pointButton = new DoubleClickableButton(currentPointView->getPoint()->getName(), this);
             pointButton->setAutoDefault(true);
             pointButton->setFlat(true);
             pointButton->setStyleSheet("QPushButton {color: "+text_color+"; text-align:left;border: 4px; padding: 10px;}QPushButton:hover{background-color: "+button_hover_color+";}QPushButton:checked{background-color: "+button_checked_color+";}");
@@ -67,7 +67,7 @@ GroupButtonGroup::GroupButtonGroup(const std::shared_ptr<Points> &_points, QWidg
             pointButton->setCheckable(true);
             buttonGroup->addButton(pointButton, index + i);
             layout->addWidget(pointButton);
-            if(points->isDisplayed(NO_GROUP_NAME))
+            if(currentPointView->isVisible())
                 pointButton->setIcon(QIcon(":/icons/eye_point.png"));
             else
                 pointButton->setIcon(QIcon(":/icons/space_point.png"));
@@ -142,7 +142,7 @@ void GroupButtonGroup::updateButtons(){
             pointButton->setCheckable(true);
             buttonGroup->addButton(pointButton, index + i);
             layout->addWidget(pointButton);
-            if(points->isDisplayed(NO_GROUP_NAME))
+            if(points->findPointView(currentPoint->getName())->isVisible())
                 pointButton->setIcon(QIcon(":/icons/eye_point.png"));
             else
                 pointButton->setIcon(QIcon(":/icons/space_point.png"));

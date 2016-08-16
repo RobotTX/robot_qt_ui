@@ -24,7 +24,7 @@ CreatePointWidget::CreatePointWidget(QMainWindow* _parent, std::shared_ptr<Point
     actionButtons->disableAll();
 
     layout->addWidget(actionButtons);
-    QVBoxLayout*  downLayout = new QVBoxLayout(this);
+    QVBoxLayout*  downLayout = new QVBoxLayout();
 
     nameEdit = new QLineEdit(this);
     nameEdit->setStyleSheet ("text-align: left");

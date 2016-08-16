@@ -47,7 +47,7 @@ PointsLeftWidget::PointsLeftWidget(QMainWindow* _parent, std::shared_ptr<Points>
     actionButtons->getGoButton()->setToolTip("Select a group or a point and click here to display its information");
 
     layout->addWidget(actionButtons);
-    QVBoxLayout* downLayout = new QVBoxLayout(this);
+    QVBoxLayout* downLayout = new QVBoxLayout();
 
     groupNameLabel = new QLabel("New group's name : ", this);
     groupNameLabel->hide();
