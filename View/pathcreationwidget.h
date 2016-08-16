@@ -11,7 +11,7 @@ class QListWidgetItem;
 class PathPointCreationWidget;
 
 #include <QWidget>
-#include <memory>
+#include <QSharedPointer>
 #include <QVBoxLayout>
 
 #define WIDGET_HEIGHT 100
@@ -33,8 +33,8 @@ public:
         float posY;
     };
 
-    PathCreationWidget(MainWindow* parent, const std::shared_ptr<Points>& points);
-    void updateRobot(std::shared_ptr<Robot> robot);
+    PathCreationWidget(MainWindow* parent, const QSharedPointer<Points>& points);
+    void updateRobot(QSharedPointer<Robot> robot);
     void updatePointsList(void);
     void deleteItem(QListWidgetItem* item);
     void editPathPoint(QString name, double x, double y);
@@ -73,7 +73,7 @@ private slots:
 
 
 private:
-    std::shared_ptr<Points> points;
+    QSharedPointer<Points> points;
     QVBoxLayout* layout;
     TopLeftMenu* actionButtons;
     QMenu* pointsMenu;

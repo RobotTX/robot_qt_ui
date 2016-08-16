@@ -18,7 +18,7 @@ CmdRobotThread::CmdRobotThread(const QString _ipAddress, const int cmdPort, cons
 void CmdRobotThread::run(){
     qDebug() << "(Robot" << robotName << ") Command Thread launched";
 
-    socket = std::shared_ptr<QTcpSocket>(new QTcpSocket());
+    socket = QSharedPointer<QTcpSocket>(new QTcpSocket());
 
     /// Connect the signal readyRead which tell us when data arrived to the function that treat them
     connect(&(*socket), SIGNAL(readyRead()), this, SLOT(readTcpDataSlot()));

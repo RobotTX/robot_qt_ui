@@ -16,7 +16,7 @@ class Points;
 class QAbstractButton;
 
 #include <QWidget>
-#include <memory>
+#include <QSharedPointer>
 #include "topleftmenu.h"
 /**
  * @brief The PointsLeftWidget class
@@ -26,11 +26,11 @@ class QAbstractButton;
 class PointsLeftWidget: public QWidget{
     Q_OBJECT
 public:
-    PointsLeftWidget(QMainWindow* parent, std::shared_ptr<Points> const& _points, bool _groupDisplayed = true);
+    PointsLeftWidget(QMainWindow* parent, QSharedPointer<Points> const& _points, bool _groupDisplayed = true);
 
     bool getGroupDisplayed(void) const { return groupDisplayed; }
     void setGroupDisplayed(const bool _groupDisplayed) { groupDisplayed = _groupDisplayed; }
-    std::shared_ptr<Points> getPoints(void) const { return points; }
+    QSharedPointer<Points> getPoints(void) const { return points; }
 
     QPushButton* getSaveButton(void) const { return saveButton; }
     QPushButton* getCancelButton(void) const { return cancelButton; }
@@ -109,7 +109,7 @@ private:
     /// true if the groups are displayed, false if the points are displayed
     /// this way we can implement two different behavior for the same button minus
     bool groupDisplayed;
-    std::shared_ptr<Points> points;
+    QSharedPointer<Points> points;
     /// to differenciate the behavior of the enter key
     bool creatingGroup;
     QString lastCheckedId;

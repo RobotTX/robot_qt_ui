@@ -102,7 +102,7 @@ int Robots::getRobotId(const QString name) const{
 
 RobotView* Robots::findRobotUsingHome(const QString name) const {
     for(int i = 0; i < robotsVector.size(); i++){
-        PointView* home = robotsVector.at(i)->getRobot()->getHome();
+        QSharedPointer<PointView> home = robotsVector.at(i)->getRobot()->getHome();
         /// we first check that this robot has a home point, if it does then we compare the names
         if(home && !home->getPoint()->getName().compare(name))
             return robotsVector[i];
@@ -110,9 +110,9 @@ RobotView* Robots::findRobotUsingHome(const QString name) const {
     return NULL;
 }
 
-RobotView* Robots::findRobotUsingTmpPointInPath(const std::shared_ptr<Point> point) const {
+RobotView* Robots::findRobotUsingTmpPointInPath(const QSharedPointer<Point> point) const {
     for(int i = 0; i < robotsVector.size(); i++){
-        QVector<std::shared_ptr<PathPoint>> path = robotsVector.at(i)->getRobot()->getPath();
+        QVector<QSharedPointer<PathPoint>> path = robotsVector.at(i)->getRobot()->getPath();
         for(int j = 0; j < path.size(); j++){
             if(path.at(j)->getPoint().getName().compare(point->getName()) == 0 &&
                 path.at(j)->getPoint().comparePos(point->getPosition().getX(), point->getPosition().getY()))

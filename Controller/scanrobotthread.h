@@ -4,7 +4,7 @@
 #include <QThread>
 #include <QString>
 #include <QtNetwork/QTcpSocket>
-#include <memory>
+#include <QSharedPointer>
 
 /**
  * @brief The RobotThread class
@@ -58,7 +58,7 @@ signals:
     void valueChangedRobot(QString ipAddress, float posX, float posY, float ori);
 
 private :
-    std::shared_ptr<QTcpSocket> socket;
+    QSharedPointer<QTcpSocket> socket;
     QString ipAddress;
     int port;
 

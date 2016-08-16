@@ -6,8 +6,8 @@
 #include <QVBoxLayout>
 #include <QPushButton>
 #include <QMainWindow>
-#include <topleftmenu.h>
-#include <qdebug.h>
+#include "topleftmenu.h"
+#include <QDebug>
 #include "buttonmenu.h"
 #include "View/doubleclickablebutton.h"
 
@@ -41,10 +41,10 @@ QString RobotsLeftWidget::getSelectedRobotName()
     qDebug() << "check for name";
 
 
-    return ((DoubleClickableButton* )btnGroup->getBtnGroup()->checkedButton())->getRealName();
+    return (static_cast<DoubleClickableButton*>(btnGroup->getBtnGroup()->checkedButton())->getRealName());
 }
 
-void RobotsLeftWidget::setRobots(std::shared_ptr<Robots> const &_robots){
+void RobotsLeftWidget::setRobots(QSharedPointer<Robots> const &_robots){
     robots = _robots;
 
     /// Clickable buttons group to select/edit a robot
@@ -66,7 +66,7 @@ void RobotsLeftWidget::setRobots(std::shared_ptr<Robots> const &_robots){
 }
 
 
-void RobotsLeftWidget::updateRobots(std::shared_ptr<Robots> const& _robots){
+void RobotsLeftWidget::updateRobots(QSharedPointer<Robots> const& _robots){
     scrollLayout->removeWidget(btnGroup);
     delete btnGroup;
 

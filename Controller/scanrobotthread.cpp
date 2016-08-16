@@ -9,7 +9,7 @@ ScanRobotThread::ScanRobotThread(const QString newipAddress, const int newPort){
 void ScanRobotThread::run(){
     qDebug() << "(Robot pos thread" << ipAddress << ") Running";
 
-    socket = std::shared_ptr<QTcpSocket>(new QTcpSocket());
+    socket = QSharedPointer<QTcpSocket>(new QTcpSocket());
 
     /// Connect the signal connected which trigger when we are connected to the host
     connect(&(*socket), SIGNAL(connected()), SLOT(connectedSlot()) );

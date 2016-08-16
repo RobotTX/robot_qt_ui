@@ -15,6 +15,8 @@ public:
     DoubleClickableButton(const QString string, QWidget *parent = 0);
     QString getRealName() const { return realName; }
 
+    void setName(const QString newName);
+
 private :
     QString realName;
     QString nameToDisplay;

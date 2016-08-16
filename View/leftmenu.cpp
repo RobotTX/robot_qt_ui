@@ -27,9 +27,9 @@
 #include "colors.h"
 #include "View/pathpainter.h"
 
-LeftMenu::LeftMenu(MainWindow* _parent, std::shared_ptr<Points> const& _points,
-                   const std::shared_ptr<Robots> &robots, const std::shared_ptr<Points> &pointViews,
-                   const std::shared_ptr<Map> &_map, const PathPainter *pathPainter):
+LeftMenu::LeftMenu(MainWindow* _parent, QSharedPointer<Points> const& _points,
+                   const QSharedPointer<Robots> &robots, const QSharedPointer<Points> &pointViews,
+                   const QSharedPointer<Map> &_map, const PathPainter *pathPainter):
     QWidget(_parent), parent(_parent), points(_points), lastCheckedId("s")
 {
 
@@ -155,7 +155,7 @@ LeftMenu::LeftMenu(MainWindow* _parent, std::shared_ptr<Points> const& _points,
     this->setPalette(Pal);
 }
 
-void LeftMenu::updateGroupDisplayed(std::shared_ptr<Points> const& _points, const QString groupIndex){
+void LeftMenu::updateGroupDisplayed(QSharedPointer<Points> const& _points, const QString groupIndex){
     displaySelectedGroup->getPointButtonGroup()->setGroup(groupIndex);
 }
 

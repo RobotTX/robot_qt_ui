@@ -15,7 +15,7 @@
 #include "View/pathpointcreationwidget.h"
 
 
-PathCreationWidget::PathCreationWidget(MainWindow *parent, const std::shared_ptr<Points> &_points): QWidget(parent), points(_points){
+PathCreationWidget::PathCreationWidget(MainWindow *parent, const QSharedPointer<Points> &_points): QWidget(parent), points(_points){
     layout = new QVBoxLayout(this);
 
     state = NO_STATE;
@@ -67,7 +67,7 @@ PathCreationWidget::PathCreationWidget(MainWindow *parent, const std::shared_ptr
     layout->setContentsMargins(0, 0, 0, 0);
 }
 
-void PathCreationWidget::updateRobot(std::shared_ptr<Robot> robot){
+void PathCreationWidget::updateRobot(QSharedPointer<Robot> robot){
     qDebug() << "PathCreationWidget::updateRobot called" << robot->getName();
     if (robot != NULL){
         for(int i = 0; i < robot->getPath().size(); i++){
@@ -90,7 +90,7 @@ void PathCreationWidget::updatePointsList(void){
     pointsMenu->clear();
 
     /// We update the QMenu used to add/edit a permanent point
-    QMapIterator<QString, std::shared_ptr<QVector<PointView*>>> i(*(points->getGroups()));
+    QMapIterator<QString, QSharedPointer<QVector<QSharedPointer<PointView>>>> i(*(points->getGroups()));
     while (i.hasNext()) {
         i.next();
         if(i.value() && i.key().compare(NO_GROUP_NAME)
@@ -269,7 +269,7 @@ void PathCreationWidget::editPathPointSlot(void){
     /// we edit the point only if the corresponding item is enabled which is the case if no other point is being edited
     if(pathPointsList->itemWidget(pathPointsList->currentItem())->isEnabled()){
         /// We get the edited pointView
-        PointView* pointView = points->getGroups()->value(PATH_GROUP_NAME)->at(id);
+        QSharedPointer<PointView> pointView = points->getGroups()->value(PATH_GROUP_NAME)->at(id);
         qDebug() << "PathCreationWidget::editPathPoint"
                  << pointView->getPoint()->getName()
                  << pointView->getPoint()->getPosition().getX()

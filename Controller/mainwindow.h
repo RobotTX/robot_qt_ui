@@ -69,7 +69,7 @@ public:
 
     enum WidgetType { MENU, GROUPS, GROUP, POINT, ROBOTS, ROBOT , MAP };
 
-    std::shared_ptr<Points> getPoints(void) const { return points; }
+    QSharedPointer<Points> getPoints(void) const { return points; }
     QList<QPair<QPair<QWidget*, QString>, MainWindow::WidgetType>> getLastWidgets() const { return lastWidgets; }
 
     void initializeMenu();
@@ -142,7 +142,7 @@ private slots:
     void playSelectedRobot(int robotNb);
     void askForDeleteGroupConfirmation(const QString group);
     void askForDeletePointConfirmation(const QString index);
-    void displayPointEvent(PointView* pointView);
+    void displayPointEvent(QString name, double x, double y);
     void askForDeleteDefaultGroupPointConfirmation(const QString index);
     void displayGroupMapEvent(void);
     void savePathSlot();
@@ -185,7 +185,7 @@ private slots:
     void setMessageTop(const QString msgType, const QString msg);
     void setLastMessage(void) { setMessageTop(topLayout->getLastMessage().first, topLayout->getLastMessage().second); }
     void setMessageCreationGroup(QString type, QString message);
-    void homeEdited(PointView *pointView);
+    void homeEdited(QString name);
     void goHomeBtnEvent();
     void viewPathSelectedRobot(int robotNb, bool checked);
     void editHomeEvent();
@@ -199,7 +199,7 @@ private slots:
     void robotIsDeadSlot(QString hostname, QString ip);
     void selectViewRobot();
     void sendNewMapToRobots(QString ipAddress);
-    void sendNewMapToRobot(std::shared_ptr<Robot> robot, QString mapId);
+    void sendNewMapToRobot(QSharedPointer<Robot> robot, QString mapId);
     void settingBtnSlot();
     void updatePathPainterPointViewSlot();
     void stopPath(int robotNb);
@@ -211,16 +211,16 @@ private:
     UpdateRobotsThread* updateRobotsThread;
     QVBoxLayout* rightLayout;
     CustomQGraphicsView* graphicsView;
-    std::shared_ptr<Map> map;
-    std::shared_ptr<Robots> robots;
+    QSharedPointer<Map> map;
+    QSharedPointer<Robots> robots;
     QGraphicsScene* scene;
     MapView* mapPixmapItem;
     RobotView* selectedRobot;
     RobotView* scanningRobot;
-    PointView* selectedPoint;
-    std::shared_ptr<Points> points;
-    PointView* editedPointView;
-    QVector<PointView*> pointViewsToDisplay;
+    QSharedPointer<PointView> selectedPoint;
+    QSharedPointer<Points> points;
+    QSharedPointer<PointView> editedPointView;
+    QVector<QSharedPointer<PointView>> pointViewsToDisplay;
     PathPainter* pathPainter;
     TopLayout* topLayout;
     QMessageBox msgBox;

@@ -5,7 +5,7 @@
 #include <QScrollArea>
 #include "Model/points.h"
 
-LeftMenuWidget::LeftMenuWidget(QMainWindow* parent, std::shared_ptr<Points> const& _points): QWidget(parent), points(_points)
+LeftMenuWidget::LeftMenuWidget(QMainWindow* parent, QSharedPointer<Points> const& _points): QWidget(parent), points(_points)
 {
 
     layout = new QVBoxLayout(this);

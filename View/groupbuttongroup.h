@@ -9,14 +9,14 @@ class CustomizedLineEdit;
 
 #include <QButtonGroup>
 #include <QWidget>
-#include <memory>
+#include <QSharedPointer>
 #include <QObject>
 
 class GroupButtonGroup: public QWidget
 {
     Q_OBJECT
 public:
-    GroupButtonGroup(std::shared_ptr<Points> const& _points, QWidget *_parent);
+    GroupButtonGroup(QSharedPointer<Points> const& _points, QWidget *_parent);
     ~GroupButtonGroup(){}
 
     QButtonGroup* getButtonGroup(void) const { return buttonGroup; }
@@ -56,7 +56,7 @@ private:
     const QSize BUTTON_SIZE = parentWidget()->size()/2;
     // indexModifyEdit => editedGroupName
     QString editedGroupName;
-    std::shared_ptr<Points> points;
+    QSharedPointer<Points> points;
 };
 
 #endif // GROUPBUTTONGROUP_H

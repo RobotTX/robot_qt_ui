@@ -4,14 +4,20 @@
 
 DoubleClickableButton::DoubleClickableButton(const QString string, QWidget* parent): QPushButton(string, parent)
 {
-     realName = string ;
-     if (realName.length()>7)
-     {
-         nameToDisplay = string.left(7) + "..";
-        setText(nameToDisplay);
-     }
-     this->setToolTip(realName);
+    setName(string);
 }
+
+void DoubleClickableButton::setName(const QString newName)
+{
+    realName = newName ;
+    if (realName.length()>7)
+    {
+        nameToDisplay = newName.left(7) + "..";
+        this->setText(nameToDisplay);
+    }
+    this->setToolTip(realName);
+}
+
 
 void DoubleClickableButton::mouseDoubleClickEvent(QMouseEvent * event){
     Q_UNUSED(event)

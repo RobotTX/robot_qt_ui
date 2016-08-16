@@ -13,7 +13,7 @@ class QProgressBar;
 class PathWidget;
 #include "pathpoint.h"
 #include <QWidget>
-#include <memory>
+#include <QSharedPointer>
 #include "Model/point.h"
 #include "View/pointview.h"
 #include "mainwindow.h"
@@ -26,21 +26,21 @@ class PathWidget;
 class EditSelectedRobotWidget: public QWidget{
     Q_OBJECT
 public:
-    EditSelectedRobotWidget(QMainWindow* const parent, std::shared_ptr<Robots> const robots);
+    EditSelectedRobotWidget(QMainWindow* const parent, QSharedPointer<Robots> const robots);
 
     void setSelectedRobot(RobotView * const robotView, bool firstConnection = false);
-    void setRobots(std::shared_ptr<Robots> const _robots){robots = _robots;}
+    void setRobots(QSharedPointer<Robots> const _robots){robots = _robots;}
     void editName(void);
 
     QLineEdit* getNameEdit(void){ return nameEdit; }
     QPushButton* getHomeBtn(void){ return homeBtn; }
     void disableAll(void);
     void enableAll(void);
-    void setHome(PointView* const _home){home = _home;}
-    PointView* getHome() const {return home;}
+    void setHome(QSharedPointer<PointView> const _home){home = _home;}
+    QSharedPointer<PointView> getHome() const {return home;}
     bool isFirstConnection()const {return firstConnection;}
-    void setOldHome(PointView* const _oldHome){oldHome = _oldHome;}
-    PointView* getOldHome() const {return oldHome;}
+    void setOldHome(QSharedPointer<PointView> const _oldHome){oldHome = _oldHome;}
+    QSharedPointer<PointView> getOldHome() const {return oldHome;}
     QLineEdit* getWifiNameEdit(void) const { return wifiNameEdit; }
     QLineEdit* getWifiPwdEdit(void) const { return wifiPwdEdit; }
     PathWidget* getPathWidget(void) const { return pathWidget; }
@@ -48,7 +48,7 @@ public:
     void setPathChanged(const bool change) { pathChanged = change; }
     bool getPathChanged() const { return pathChanged; }
     void setPathWidget(PathWidget* pw) { pathWidget = pw; }
-    void setPath(QVector<std::shared_ptr<PathPoint>> const path);
+    void setPath(QVector<QSharedPointer<PathPoint>> const path);
     void clearPath();
     QLabel* getHomeLabel(void) const {return homeLabel;}
     QPushButton* getSaveButton(void) const { return saveBtn; }
@@ -70,11 +70,11 @@ private:
     QLabel* wifiPwd;
     QLineEdit* wifiPwdEdit;
     QLabel* ipAddressLabel;
-    std::shared_ptr<Robots> robots;
+    QSharedPointer<Robots> robots;
     QPushButton* saveBtn;
     QPushButton* homeBtn;
-    PointView* home;
-    PointView* oldHome;
+    QSharedPointer<PointView> home;
+    QSharedPointer<PointView> oldHome;
     QPushButton* addPathBtn;
     bool firstConnection;
     QPushButton* cancelBtn;

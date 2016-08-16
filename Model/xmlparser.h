@@ -10,7 +10,7 @@ class MainWindow;
 
 #include <QVector>
 #include <QGraphicsItem>
-#include <memory>
+#include <QSharedPointer>
 
 
 /**
@@ -39,7 +39,7 @@ public:
      * @param points
      * Imports a list of points from an xml file to the model
      */
-    void readPoints(std::shared_ptr<Points>& points, MapView* mapView, MainWindow *mainWindow);
+    void readPoints(QSharedPointer<Points>& points, MapView* mapView, MainWindow *mainWindow);
 
     /**
      * @brief readNameElement

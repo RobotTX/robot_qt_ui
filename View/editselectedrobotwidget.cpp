@@ -17,13 +17,13 @@
 #include "customscrollarea.h"
 
 
-EditSelectedRobotWidget::EditSelectedRobotWidget(QMainWindow * const parent, const std::shared_ptr<Robots> _robots):QWidget(parent){
+EditSelectedRobotWidget::EditSelectedRobotWidget(QMainWindow * const parent, const QSharedPointer<Robots> _robots):QWidget(parent){
     robots = _robots;
     layout = new QVBoxLayout(this);
     wifiLayout = new QGridLayout();
     robotView = NULL;
-    home = NULL;
-    oldHome = NULL;
+    home = QSharedPointer<PointView>();
+    oldHome = QSharedPointer<PointView>();
     pathChanged = false;
 
 
@@ -165,7 +165,7 @@ void EditSelectedRobotWidget::setSelectedRobot(RobotView* const _robotView, bool
     } else {
         homeBtn->setText("Add Home");
         homeLabel->setText("Home: ");
-        oldHome = NULL;
+        oldHome = QSharedPointer<PointView>();
     }
 }
 
@@ -258,7 +258,7 @@ void EditSelectedRobotWidget::hideEvent(QHideEvent *event){
     QWidget::hideEvent(event);
 }
 
-void EditSelectedRobotWidget::setPath(const QVector<std::shared_ptr<PathPoint> > path){
+void EditSelectedRobotWidget::setPath(const QVector<QSharedPointer<PathPoint> > path){
     if(path.size() > 0){
         pathWidget->show();
         addPathBtn->setText("Edit Path");

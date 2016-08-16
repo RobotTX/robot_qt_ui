@@ -11,7 +11,7 @@ class TopLeftMenu;
 
 #include <QPushButton>
 #include <QWidget>
-#include <memory>
+#include <QSharedPointer>
 
 /**
  * @brief The RobotsLeftWidget class
@@ -29,14 +29,14 @@ public:
 
 
     ///Setters
-    void setRobots(std::shared_ptr<Robots> const& robots);
+    void setRobots(QSharedPointer<Robots> const& robots);
 
     /**
      * @brief updateRobots
      * @param robots
      * Update the list of robots when needed (e.g. : when a robot's name is edited)
      */
-    void updateRobots(std::shared_ptr<Robots> const& robots);
+    void updateRobots(QSharedPointer<Robots> const& robots);
     void unSelectAllRobots();
    // void hideEvent(QHideEvent *event);
     void showEvent(QShowEvent *);
@@ -45,7 +45,7 @@ public:
 private:
     QMainWindow* parent;
     QVBoxLayout* layout;
-    std::shared_ptr<Robots> robots;
+    QSharedPointer<Robots> robots;
     QVBoxLayout* robotsLayout;
     RobotBtnGroup* btnGroup;
     QVBoxLayout* scrollLayout;

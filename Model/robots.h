@@ -6,7 +6,7 @@ class Point;
 
 #include <QVector>
 #include <QMap>
-#include <memory>
+#include <QSharedPointer>
 
 /**
  * @brief The Robots class
@@ -106,7 +106,7 @@ public:
      */
     RobotView* findRobotUsingHome(const QString name) const;
 
-    RobotView* findRobotUsingTmpPointInPath(const std::shared_ptr<Point> point) const;
+    RobotView* findRobotUsingTmpPointInPath(const QSharedPointer<Point> point) const;
 
     QMap<QString, QString> getRobotsNameMap() const {return robotsNameMap;}
     void setRobotsNameMap(const QMap<QString, QString> &_robotsNameMap) {robotsNameMap = _robotsNameMap;}

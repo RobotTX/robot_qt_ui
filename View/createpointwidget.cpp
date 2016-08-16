@@ -17,7 +17,7 @@
 
 
 
-CreatePointWidget::CreatePointWidget(QMainWindow* _parent, std::shared_ptr<Points> _points): QWidget(_parent), parent(_parent), points(_points){
+CreatePointWidget::CreatePointWidget(QMainWindow* _parent, QSharedPointer<Points> _points): QWidget(_parent), parent(_parent), points(_points){
     layout = new QVBoxLayout(this);
 
     actionButtons = new TopLeftMenu(this);
@@ -51,7 +51,7 @@ CreatePointWidget::CreatePointWidget(QMainWindow* _parent, std::shared_ptr<Point
     groupBox = new QComboBox(this);
 
     /// to insert the groups in the box
-    QMapIterator<QString, std::shared_ptr<QVector<PointView*>>> i(*(points->getGroups()));
+    QMapIterator<QString, QSharedPointer<QVector<QSharedPointer<PointView>>>> i(*(points->getGroups()));
     int j = 0;
     while (i.hasNext()) {
         i.next();
@@ -108,7 +108,7 @@ CreatePointWidget::CreatePointWidget(QMainWindow* _parent, std::shared_ptr<Point
 
 }
 
-void CreatePointWidget::setSelectedPoint(PointView* _pointView){
+void CreatePointWidget::setSelectedPoint(QSharedPointer<PointView> _pointView){
     qDebug() << "CreatePointWidget setSelectedPoint called";
     pointView = _pointView;
     nameEdit->setText(pointView->getPoint()->getName());
@@ -143,7 +143,7 @@ int CreatePointWidget::checkPointName(void){
         return 1;
     }
 
-    QMapIterator<QString, std::shared_ptr<QVector<PointView*>>> i(*(points->getGroups()));
+    QMapIterator<QString, QSharedPointer<QVector<QSharedPointer<PointView>>>> i(*(points->getGroups()));
     while (i.hasNext()) {
         /// determines whether or not the current name is a valid one (not already the name of another point or group)
         bool valid(true);
@@ -215,15 +215,19 @@ void CreatePointWidget::hideGroupLayout(void) const {
 void CreatePointWidget::updateGroupBox(){
     qDebug() << "updateGroupBox called";
     groupBox->clear();
-    QMapIterator<QString, std::shared_ptr<QVector<PointView*>>> i(*(points->getGroups()));
+
+    QMapIterator<QString, QSharedPointer<QVector<QSharedPointer<PointView>>>> i(*(points->getGroups()));
+
     while (i.hasNext()) {
         i.next();
         qDebug() << "updategroupBox group key" << i.key();
+
         if(i.key().compare(TMP_GROUP_NAME) != 0 && i.key().compare(PATH_GROUP_NAME) != 0)
             groupBox->insertItem(points->count()-1, i.key());
     }
     /// to set the default group as default
     groupBox->setCurrentIndex(0);
+
 }
 
 void CreatePointWidget::keyPressEvent(QKeyEvent* event){

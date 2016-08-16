@@ -4,7 +4,7 @@
 #include <QThread>
 #include <QString>
 #include <QtNetwork/QTcpSocket>
-#include <memory>
+#include <QSharedPointer>
 
 /**
  * @brief The ScanMetadataThread class
@@ -60,7 +60,7 @@ signals:
     void valueChangedMetadata(int width, int height, float resolution, float originX, float originY);
 
 private :
-    std::shared_ptr<QTcpSocket> socket;
+    QSharedPointer<QTcpSocket> socket;
     QString ipAddress;
     int port;
 

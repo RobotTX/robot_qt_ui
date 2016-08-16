@@ -22,7 +22,7 @@ class Map;
 class PathPainter;
 
 #include <QWidget>
-#include <memory>
+#include <QSharedPointer>
 #include <QPushButton>
 /**
  * @brief The LeftMenu class
@@ -31,7 +31,7 @@ class PathPainter;
 class LeftMenu: public QWidget{
     Q_OBJECT
 public:
-    LeftMenu(MainWindow* _parent, const std::shared_ptr<Points> &_points, std::shared_ptr<Robots> const& robots, std::shared_ptr<Points> const &pointViews, std::shared_ptr<Map> const& _map, const PathPainter* pathPainter);
+    LeftMenu(MainWindow* _parent, const QSharedPointer<Points> &_points, QSharedPointer<Robots> const& robots, QSharedPointer<Points> const &pointViews, QSharedPointer<Map> const& _map, const PathPainter* pathPainter);
 
     /// Getters
     LeftMenuWidget* getLeftMenuWidget(void) const {return leftMenuWidget;}
@@ -51,7 +51,7 @@ public:
     QPushButton* getCloseButton(void) const { return closeBtn; }
     QWidget* getLastWidget() const {return lastWidget;}
 
-    void updateGroupDisplayed(const std::shared_ptr<Points> &_points, const QString groupIndex);
+    void updateGroupDisplayed(const QSharedPointer<Points> &_points, const QString groupIndex);
     void disableButtons();
     void setEnableReturnCloseButtons(bool enable);
 
@@ -72,7 +72,7 @@ private:
     PathCreationWidget* pathCreationWidget;
     QPushButton * returnButton;
     MainWindow* parent;
-    std::shared_ptr<Points> points;
+    QSharedPointer<Points> points;
 
     QString lastCheckedId;
 

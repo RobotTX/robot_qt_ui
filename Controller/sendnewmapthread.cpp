@@ -9,7 +9,7 @@ SendNewMapThread::SendNewMapThread(const QString _ipAddress, const int _port){
 void SendNewMapThread::run(){
     qDebug() << "(New Map) Command Thread launched";
 
-    socket = std::shared_ptr<QTcpSocket>(new QTcpSocket());
+    socket = QSharedPointer<QTcpSocket>(new QTcpSocket());
 
     /// Connect the signal connected which trigger when we are connected to the host
     connect(&(*socket), SIGNAL(connected()), this, SLOT(connectedSlot()));

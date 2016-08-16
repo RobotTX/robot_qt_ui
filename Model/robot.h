@@ -12,7 +12,7 @@ class SendNewMapThread;
 #include "Model/position.h"
 #include <QString>
 #include <QVector>
-#include <memory>
+#include <QSharedPointer>
 #include <QtNetwork/QTcpSocket>
 #include <QUuid>
 #include <QDataStream>
@@ -42,14 +42,14 @@ public:
     QString getIp(void) const { return ip; }
     unsigned int getBatteryLevel(void) const { return batteryLevel; }
     QString getWifi(void) const { return wifi; }
-    PointView* getHome(void) const { return home; }
-    QVector<std::shared_ptr<PathPoint>> getPath(void) const { return path; }
+    QSharedPointer<PointView> getHome(void) const { return home; }
+    QVector<QSharedPointer<PathPoint>> getPath(void) const { return path; }
     bool isPlayingPath(void) const { return playingPath; }
 
     /// Setters
     void setPlayingPath(const bool playPath) { playingPath = playPath; }
-    void setPath(const QVector<std::shared_ptr<PathPoint>>& _path) { path = _path; }
-    void setHome(PointView* _home) { home = _home; }
+    void setPath(const QVector<QSharedPointer<PathPoint>>& _path) { path = _path; }
+    void setHome(QSharedPointer<PointView> _home) { home = _home; }
     void setWifi(const QString _wifi) { wifi = _wifi; }
     void setIp(const QString _ip) { ip = _ip; }
     void setBatteryLevel(const unsigned int _batteryLevel) { batteryLevel = _batteryLevel; }
@@ -103,13 +103,13 @@ private:
      * @brief home
      * Home point of the robot
      */
-    PointView* home;
+    QSharedPointer<PointView> home;
 
     /**
      * @brief path
      * Path linked to that robot
      */
-    QVector<std::shared_ptr<PathPoint>> path;
+    QVector<QSharedPointer<PathPoint>> path;
 
     /**
      * @brief playingPath
