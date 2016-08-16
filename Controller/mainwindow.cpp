@@ -3309,7 +3309,7 @@ void MainWindow::modifyGroupAfterClick(QString name){
             parser.save(*points);
 
             /// updates view
-            pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(checkedId)->setText(name);
+            ((DoubleClickableButton* )pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(checkedId))->setName(name);
             color= TEXT_COLOR_SUCCESS;
             msg= "You have successfully modified the name of your group";
             time=1500;

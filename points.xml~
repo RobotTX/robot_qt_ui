@@ -1,34 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <points>
     <group>
-<<<<<<< HEAD
-        <name>First group</name>
-=======
-        <name>First groups</name>
-        <point>
-            <name>A</name>
-            <x>50</x>
-            <y>50</y>
-            <displayed>1</displayed>
-        </point>
-        <point>
-            <name>Ma point</name>
-            <x>75</x>
-            <y>75</y>
-            <displayed>1</displayed>
-        </point>
-        <point>
-            <name>A new point</name>
-            <x>100</x>
-            <y>100</y>
-            <displayed>0</displayed>
-        </point>
->>>>>>> 1aea730178ba0a5593f28f18ce0a1ebd444e67bd
-    </group>
-    <group>
         <name>No Group</name>
         <point>
-            <name>Un point</name>
+            <name>Un points</name>
             <x>150</x>
             <y>175</y>
             <displayed>1</displayed>
@@ -47,7 +22,26 @@
         </point>
     </group>
     <group>
+<<<<<<< HEAD
+        <name>PathPoints</name>
+        <point>
+            <name>PathPoint1</name>
+            <x>131.96</x>
+            <y>282.064</y>
+            <displayed>1</displayed>
+        </point>
+        <point>
+            <name>A final point</name>
+            <x>150</x>
+            <y>225</y>
+            <displayed>1</displayed>
+        </point>
+    </group>
+    <group>
         <name>Second group</name>
+=======
+        <name>Second groups</name>
+>>>>>>> 8e79acf27048782bc8e636acd5397e379097e9c3
         <point>
             <name>Fanny</name>
             <x>125</x>
@@ -58,7 +52,7 @@
             <name>Michel</name>
             <x>150</x>
             <y>150</y>
-            <displayed>0</displayed>
+            <displayed>1</displayed>
         </point>
     </group>
     <group>
@@ -67,6 +61,27 @@
             <name>tmpPoint</name>
             <x>0</x>
             <y>0</y>
+            <displayed>0</displayed>
+        </point>
+    </group>
+    <group>
+        <name>first group</name>
+        <point>
+            <name>A</name>
+            <x>50</x>
+            <y>50</y>
+            <displayed>0</displayed>
+        </point>
+        <point>
+            <name>Ma point</name>
+            <x>75</x>
+            <y>75</y>
+            <displayed>0</displayed>
+        </point>
+        <point>
+            <name>A new point</name>
+            <x>100</x>
+            <y>100</y>
             <displayed>0</displayed>
         </point>
     </group>
