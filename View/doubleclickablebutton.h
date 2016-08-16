@@ -2,7 +2,6 @@
 #define DOUBLECLICKABLEBUTTON_H
 
 class QMouseEvent;
-
 #include <QPushButton>
 
 /**
@@ -14,13 +13,16 @@ class DoubleClickableButton: public QPushButton
     Q_OBJECT
 public:
     DoubleClickableButton(const QString string, QWidget *parent = 0);
+    QString getRealName() {return realName;}
 
+private :
+    QString realName;
+    QString nameToDisplay;
 protected:
     void mouseDoubleClickEvent(QMouseEvent *event);
 
 signals:
     void doubleClick(QString);
-
 };
 
 #endif // DOUBLECLICKABLEBUTTON_H

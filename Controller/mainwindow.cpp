@@ -41,7 +41,7 @@
 #include <QStringList>
 #include <QVector>
 #include "View/displayselectedpointrobots.h"
-
+#include "doubleclickablebutton.h"
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow) {
     ui->setupUi(this);
@@ -674,9 +674,9 @@ void MainWindow::addPathSelecRobotBtnEvent(){
     }
 }
 
-void MainWindow::setSelectedRobotNoParent(QAbstractButton *button){
+void MainWindow::setSelectedRobotNoParent(DoubleClickableButton *button){
     resetFocus();
-    setSelectedRobot(robots->getRobotViewByName(button->text()));
+    setSelectedRobot(robots->getRobotViewByName( button->getRealName()));
 }
 
 void MainWindow::setSelectedRobot(QAbstractButton *button){
@@ -686,8 +686,8 @@ void MainWindow::setSelectedRobot(QAbstractButton *button){
     robotsLeftWidget->getActionButtons()->getEditButton()->setEnabled(true);
     robotsLeftWidget->getActionButtons()->getGoButton()->setEnabled(true);
     robotsLeftWidget->getActionButtons()->getMapButton()->setEnabled(true);
-    RobotView* mySelectedRobot =  robots->getRobotViewByName(robotsLeftWidget->getBtnGroup()
-                                                  ->getBtnGroup()->checkedButton()->text());
+    RobotView* mySelectedRobot =  robots->getRobotViewByName(((DoubleClickableButton *)robotsLeftWidget->getBtnGroup()
+                                                  ->getBtnGroup()->checkedButton())->getRealName());
     robotsLeftWidget->getActionButtons()->getMapButton()->setChecked(mySelectedRobot->isVisible());
 }
 
@@ -714,12 +714,12 @@ void MainWindow::backRobotBtnEvent(){
 void MainWindow::editRobotBtnEvent(){
     qDebug() << "editRobotBtnEvent called";
 
-    editSelectedRobot(robots->getRobotViewByName(robotsLeftWidget->getBtnGroup()->getBtnGroup()->checkedButton()->text()));
+    editSelectedRobot(robots->getRobotViewByName(((DoubleClickableButton *)robotsLeftWidget->getBtnGroup()->getBtnGroup()->checkedButton())->getRealName()));
 }
 
 void MainWindow::checkRobotBtnEventMenu(){
     qDebug() << "checkRobotBtnEventMenu called";
-    QString name = robotsLeftWidget->getBtnGroup()->getBtnGroup()->checkedButton()->text();
+    QString name = ((DoubleClickableButton *)robotsLeftWidget->getBtnGroup()->getBtnGroup()->checkedButton())->getRealName();
 
     checkRobotBtnEvent(name);
 }
@@ -1726,8 +1726,7 @@ void MainWindow::minusGroupBtnEvent(){
     pointsLeftWidget->getGroupNameEdit()->hide();
     pointsLeftWidget->getGroupNameLabel()->hide();
 
-    QString checkedId = pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->checkedButton()->text();
-
+    QString checkedId = ((DoubleClickableButton *) pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->checkedButton())->getRealName();
     /// we have to delete a group
     if(points->isAGroup(checkedId))
         askForDeleteGroupConfirmation(checkedId);
@@ -1827,7 +1826,7 @@ void MainWindow::editGroupBtnEvent(){
     pointsLeftWidget->getGroupNameEdit()->hide();
     pointsLeftWidget->getGroupNameLabel()->hide();
     QAbstractButton* btn = pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->checkedButton();
-    QString checkedId = pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->checkedButton()->text();
+    QString checkedId =  ((DoubleClickableButton *)pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->checkedButton())->getRealName();
 
     /// it's an isolated point
     if(checkedId.compare("") != 0 && points->isAPoint(checkedId)){
@@ -2295,7 +2294,7 @@ void MainWindow::displayGroupMapEvent(void){
     pointsLeftWidget->getGroupNameEdit()->hide();
     pointsLeftWidget->getGroupNameLabel()->hide();
 
-    QString checkedName = pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->checkedButton()->text();
+    QString checkedName = ((DoubleClickableButton *) pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->checkedButton())->getRealName();
 
     int checkedId = pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->checkedId();
     /// we display groups
@@ -2441,7 +2440,7 @@ void MainWindow::displayPointsInGroup(void){
     pointsLeftWidget->getGroupNameLabel()->hide();
 
     /// retrieves the id of the checked button within the group of buttons
-    QString checkedName = pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->checkedButton()->text();
+    QString checkedName = ((DoubleClickableButton *)pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->checkedButton())->getRealName();
 
     /// it's a group
     if(points->isAGroup(checkedName)){
@@ -2962,7 +2961,7 @@ void MainWindow::displayPointFromGroupMenu(){
     qDebug() << "2" << (leftMenu->getDisplaySelectedGroup()->getPointButtonGroup() == NULL);
     qDebug() << "3" << (leftMenu->getDisplaySelectedGroup()->getPointButtonGroup()->getButtonGroup() == NULL);
     qDebug() << "4" << (leftMenu->getDisplaySelectedGroup()->getPointButtonGroup()->getButtonGroup()->checkedButton() == NULL);
-    const QString pointName = leftMenu->getDisplaySelectedGroup()->getPointButtonGroup()->getButtonGroup()->checkedButton()->text();
+    const QString pointName = ((DoubleClickableButton *)leftMenu->getDisplaySelectedGroup()->getPointButtonGroup()->getButtonGroup()->checkedButton())->getRealName();
     qDebug() << "displaypointfromgroupmenu event called" << pointName ;
 
     int checkedId = leftMenu->getDisplaySelectedGroup()->getPointButtonGroup()->getButtonIdByName(pointName);

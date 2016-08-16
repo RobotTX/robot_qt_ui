@@ -81,7 +81,7 @@ void PointButtonGroup::uncheck(void){
 
 QAbstractButton* PointButtonGroup::getButtonByName(const QString name) const {
     for(int i = 0; i < getButtonGroup()->buttons().size(); i++){
-        if(getButtonGroup()->buttons().at(i)->text().compare(name) == 0)
+        if(((DoubleClickableButton* )getButtonGroup()->buttons().at(i))->getRealName().compare(name) == 0)
             return getButtonGroup()->buttons().at(i);
     }
     return NULL;
@@ -91,7 +91,7 @@ int PointButtonGroup::getButtonIdByName(const QString name) const {
     qDebug() << "PointButtonGroup::getButtonIdByName" << getButtonGroup()->buttons().size();
 
     for(int i = 0; i < getButtonGroup()->buttons().size(); i++){
-        if(getButtonGroup()->buttons().at(i)->text().compare(name) == 0)
+        if(((DoubleClickableButton* )getButtonGroup()->buttons().at(i))->getRealName().compare(name) == 0)
             return i;
     }
     return -1;

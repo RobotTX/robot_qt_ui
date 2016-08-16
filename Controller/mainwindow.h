@@ -22,7 +22,7 @@ class PathCreationWidget;
 class QAbstractButton;
 class QVBoxLayout;
 class PathPainter;
-
+class DoubleClickableButton;
 #include "View/createpointwidget.h"
 #include "View/toplayout.h"
 #include "Model/points.h"
@@ -110,7 +110,7 @@ private slots:
     void setSelectedRobot(RobotView* robotView);
     void editSelectedRobot(RobotView* robotView);
     void setSelectedRobot(QAbstractButton* button);
-    void setSelectedRobotNoParent(QAbstractButton *button);
+    void setSelectedRobotNoParent(DoubleClickableButton *button);
     void setSelectedRobotFromPointSlot(QString robotName);
     void robotBtnEvent();
     void pointBtnEvent();
