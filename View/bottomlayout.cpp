@@ -72,8 +72,8 @@ BottomLayout::BottomLayout(QMainWindow* parent, const std::shared_ptr<Robots> &r
     /// Creation of the first collumn, with the button containing the name of the robots
     for(int i = 0; i < robotsVector.size(); i++){
         QPushButton* robotBtn = new QPushButton(robotsVector.at(i)->getRobot()->getName(), this);
-        robotBtn->setMinimumHeight(parent->height()/10);
-        robotBtn->setMaximumHeight(parent->height()/10);
+        robotBtn->setMinimumHeight(30);
+        robotBtn->setMaximumHeight(30);
         robotBtn->setMaximumWidth(parent->width()*3/10);
         robotBtn->setMinimumWidth(parent->width()*3/10);
         robotBtnGroup->addButton(robotBtn, i);
@@ -187,15 +187,6 @@ BottomLayout::BottomLayout(QMainWindow* parent, const std::shared_ptr<Robots> &r
 
     this->setPalette( pal);
     this->setAutoFillBackground(true);
-}
-
-void BottomLayout::deletePath(const int index){
-    /// When a path is deleted, the button to play/pause & stop the path are disabled
-    /// and the path disappears from the list
-    playRobotBtnGroup->button(index)->setEnabled(false);
-    stopRobotBtnGroup->button(index)->setEnabled(false);
-    viewPathRobotBtnGroup->button(index)->setEnabled(false);
-    vectorPathLabel.at(index)->setText("");
 }
 
 void BottomLayout::updateRobot(const int id, RobotView * const robotView){

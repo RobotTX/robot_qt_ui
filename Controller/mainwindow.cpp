@@ -1131,10 +1131,10 @@ void MainWindow::clearPath(const int robotNb){
         robots->getRobotsVector().at(robotNb)->getRobot()->setPlayingPath(0);
         bottomLayout->getPlayRobotBtnGroup()->button(robotNb)->setIcon(QIcon(":/icons/play.png"));
     }
-    robots->getRobotsVector().at(robotNb)->getRobot()->getPath().clear();
 
+    robots->getRobotsVector().at(robotNb)->getRobot()->clearPath();
 
-    bottomLayout->deletePath(robotNb);
+    bottomLayout->updateRobot(robotNb, robots->getRobotsVector().at(robotNb));
 }
 
 void MainWindow::hideHome(void){

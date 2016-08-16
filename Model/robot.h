@@ -80,6 +80,7 @@ public:
     void resetCommandAnswer();
     void stopThreads();
     void ping();
+    void clearPath();
 
 signals:
     void pingSignal();

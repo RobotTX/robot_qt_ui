@@ -73,7 +73,6 @@ private slots:
 private:
     std::shared_ptr<Map> map;
     QLineEdit* nameEdit;
-    QHBoxLayout* nameLayout;
     QVBoxLayout* layout;
     QHBoxLayout* editLayout;
 
