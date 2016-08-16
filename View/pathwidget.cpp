@@ -15,6 +15,10 @@ PathWidget::PathWidget(QWidget* _parent):QWidget(_parent){
     layout->setAlignment(Qt::AlignTop);
 }
 
+PathWidget::~PathWidget(){
+    delete layout;
+}
+
 void PathWidget::clearLayout(QLayout* _layout){
     QLayoutItem *item = NULL;
     /// We need to delete every item recursively or the item would still be there
@@ -33,7 +37,7 @@ void PathWidget::clearLayout(QLayout* _layout){
     }
 }
 
-void PathWidget::setPath(QVector<std::shared_ptr<PathPoint>> const path){
+void PathWidget::setPath(QVector<QSharedPointer<PathPoint>> const path){
 
     clearLayout(layout);
     for(int i = 0; i < path.size(); i++){

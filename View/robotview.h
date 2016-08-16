@@ -5,7 +5,7 @@ class Robot;
 class QGraphicsSceneMouseEvent;
 class MapView;
 
-#include <memory>
+#include <QSharedPointer>
 #include "Model/position.h"
 #include <QObject>
 #include "Model/graphicitemstate.h"
@@ -23,14 +23,14 @@ class RobotView: public QObject, public QGraphicsPolygonItem {
     Q_OBJECT
 
 public:
-    RobotView(const std::shared_ptr<Robot> &_robot, QGraphicsItem *parent);
+    RobotView(const QSharedPointer<Robot> &_robot, QGraphicsItem *parent);
     RobotView(QGraphicsItem* parent);
 
     /// Getter
-    std::shared_ptr<Robot> getRobot(void) { return robot; }
+    QSharedPointer<Robot> getRobot(void) { return robot; }
 
     /// Setters
-    void setRobot(std::shared_ptr<Robot> const& _robot) { robot = _robot; }
+    void setRobot(QSharedPointer<Robot> const& _robot) { robot = _robot; }
     void setPosition(const Position _position);
     void setPosition(const float x, const float y);
     void setOrientation(const float ori);
@@ -53,7 +53,7 @@ protected:
 private:
     bool selected;
     GraphicItemState state;
-    std::shared_ptr<Robot> robot;
+    QSharedPointer<Robot> robot;
     bool shown;
     MapView* mapView;
 };

@@ -10,7 +10,7 @@
 #include "Model/map.h"
 
 
-MapView::MapView (const QPixmap& pixmap, const QSize _size, std::shared_ptr<Map> _map, QMainWindow* _mainWindow) :
+MapView::MapView (const QPixmap& pixmap, const QSize _size, QSharedPointer<Map> _map, QMainWindow* _mainWindow) :
     QGraphicsPixmapItem(pixmap), size(_size), state(GraphicItemState::NO_STATE), mainWindow(_mainWindow), map(_map), idTmp(0){
     /// Tell the class which mouse button to accept
     setAcceptedMouseButtons(Qt::LeftButton);
@@ -40,7 +40,7 @@ void MapView::mouseReleaseEvent(QGraphicsSceneMouseEvent *event){
         /// click
         if(state == GraphicItemState::NO_STATE){
             qDebug() << "MapView::mouseReleaseEvent NO_STATE";
-            PointView* tmpPointView = points->getTmpPointView();
+            QSharedPointer<PointView> tmpPointView = points->getTmpPointView();
             tmpPointView->show();
             /// might be useless code
             tmpPointView->setPos(event->pos().x(), event->pos().y());
@@ -60,11 +60,11 @@ void MapView::mouseReleaseEvent(QGraphicsSceneMouseEvent *event){
             emit newCoordinates(event->pos().x(), event->pos().y());
         } else if(state == GraphicItemState::EDITING_HOME){
             qDebug() << "MapView::mouseReleaseEvent EDITING_HOME";
-            PointView* tmpPointView = points->getTmpPointView();
+            QSharedPointer<PointView> tmpPointView = points->getTmpPointView();
             tmpPointView->show();
             /// might be useless code
             tmpPointView->setPos(event->pos().x(), event->pos().y());
-            emit homeEdited(tmpPointView);
+            emit homeEdited(QString(TMP_POINT_NAME));
         } else if(state == GraphicItemState::EDITING_PATH){
             qDebug() << "MapView::mouseReleaseEvent EDITING_PATH" << event->pos().x() << event->pos().y();
             /// to notify that a point which belongs to the path of a robot has been changed
@@ -81,7 +81,7 @@ void MapView::setState(const GraphicItemState _state){
     state = _state;
 }
 
- void MapView::setPoints(std::shared_ptr<Points> _points){
+ void MapView::setPoints(QSharedPointer<Points> _points){
     //qDebug() << "MapView::setPoints called" << _points->count();
     points = _points;
  }

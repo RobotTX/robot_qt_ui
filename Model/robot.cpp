@@ -153,11 +153,11 @@ QDataStream& operator>>(QDataStream& in, Robot& robot){
     qint32 size;
     in >> size;
     qDebug() << "reconstructing a path of size" << size;
-    QVector<std::shared_ptr<PathPoint>> _path;
+    QVector<QSharedPointer<PathPoint>> _path;
     PathPoint pathPoint;
     for(int i = 0; i < size; i++){
         in >> pathPoint;
-        _path.push_back(std::shared_ptr<PathPoint> (new PathPoint(pathPoint)));
+        _path.push_back(QSharedPointer<PathPoint> (new PathPoint(pathPoint)));
     }
     robot.setPath(_path);
     return in;
@@ -174,5 +174,5 @@ QDataStream& operator<<(QDataStream& out, const Robot& robot){
 
 void Robot::clearPath(){
     path.clear();
-    //path = QVector<std::shared_ptr<PathPoint>>();
+    //path = QVector<QSharedPointer<PathPoint>>();
 }

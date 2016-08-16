@@ -7,7 +7,7 @@
 #include <QPixmap>
 #include "Controller/mainwindow.h"
 
-PathPainter::PathPainter(MainWindow* const &mainWindow, MapView* const &mapPixmapItem, std::shared_ptr<Points> _points)
+PathPainter::PathPainter(MainWindow* const &mainWindow, MapView* const &mapPixmapItem, QSharedPointer<Points> _points)
     : QGraphicsPathItem(mapPixmapItem), points(_points), mainWindow(mainWindow), mapView(mapPixmapItem){
     setPen(QPen(Qt::red));
 }
@@ -17,7 +17,7 @@ void PathPainter::resetPathSlot(void){
     path = QPainterPath();
     points->setPixmapAll(PointView::PixmapType::NORMAL);
 
-    if(std::shared_ptr<QVector<PointView*>> group = points->getGroups()->value(PATH_GROUP_NAME)){
+    if(QSharedPointer<QVector<QSharedPointer<PointView>>> group = points->getGroups()->value(PATH_GROUP_NAME)){
         for(int i = 0; i < group->size(); i++){
             group->at(i)->deleteLater();
         }
@@ -44,7 +44,7 @@ void PathPainter::addPathPointSlot(QString name, double x, double y){
     qDebug() << "PathPainter::addPathPointSlot called" << name << x << y;
 
     int nb = nbUsedPointView(name, x, y);
-    PointView* pointView = points->findPathPointView(x, y);
+    QSharedPointer<PointView> pointView = points->findPathPointView(x, y);
     /// If found, it's a permanent point which is already in the path
     if(nb > 0 && pointView){
         points->addPoint(PATH_GROUP_NAME, pointView);
@@ -56,7 +56,7 @@ void PathPainter::addPathPointSlot(QString name, double x, double y){
 
     points->getGroups()->value(PATH_GROUP_NAME)->last()->setState(mapView->getState());
     Point point = *(points->getGroups()->value(PATH_GROUP_NAME)->last()->getPoint());
-    currentPath.push_back(std::shared_ptr<PathPoint>(new PathPoint(point, PathPoint::Action::WAIT)));
+    currentPath.push_back(QSharedPointer<PathPoint>(new PathPoint(point, PathPoint::Action::WAIT)));
 
     /// Update the path painter
     updatePathPainterSlot();
@@ -66,8 +66,8 @@ void PathPainter::orderPathPointChangedSlot(int from, int to){
     qDebug() << "PathPainter::orderPathPointChangedSlot called from" << from << "to" << to;
 
     /// Do the change in the model
-    std::shared_ptr<PathPoint> pathPoint = currentPath.takeAt(from);
-    PointView* pointView = points->getGroups()->value(PATH_GROUP_NAME)->takeAt(from);
+    QSharedPointer<PathPoint> pathPoint = currentPath.takeAt(from);
+    QSharedPointer<PointView> pointView = points->getGroups()->value(PATH_GROUP_NAME)->takeAt(from);
 
     if(to > currentPath.size()){
         currentPath.push_back(pathPoint);
@@ -114,7 +114,7 @@ void PathPainter::deletePathPointSlot(int id){
 void PathPainter::editPathPointSlot(int id, QString name, double x, double y){
     qDebug() << "PathPainter::editPathPointSlot called" << id << name << x << y;
 
-    PointView* newPointView = points->getGroups()->value(PATH_GROUP_NAME)->takeAt(id);
+    QSharedPointer<PointView> newPointView = points->getGroups()->value(PATH_GROUP_NAME)->takeAt(id);
 
     /// If found, it's a permanent point else it's a temporary point
     if(newPointView){
@@ -146,11 +146,11 @@ void PathPainter::updateCurrentPath(void){
 void PathPainter::updatePathPainterSlot(void){
     qDebug() << "PathPainter::updatePathPainter called";
     points->setPixmapAll(PointView::PixmapType::NORMAL);
-    std::shared_ptr<QVector<PointView*>> group = points->getGroups()->value(PATH_GROUP_NAME);
+    QSharedPointer<QVector<QSharedPointer<PointView>>> group = points->getGroups()->value(PATH_GROUP_NAME);
 
-    PointView* startPointView(0);
-    PointView* endPointView(0);
-    PointView* currentPointView(0);
+    QSharedPointer<PointView> startPointView(0);
+    QSharedPointer<PointView> endPointView(0);
+    QSharedPointer<PointView> currentPointView(0);
 
     if(group && group->size() > 0){
         for(int i = 0; i < group->size(); i++){
@@ -186,11 +186,11 @@ void PathPainter::updatePathPainterSlot(void){
 
 void PathPainter::updatePathPainterPointViewSlot(void){
     qDebug() << "PathPainter::updatePathPainterPointViewSlot called";
-    std::shared_ptr<QVector<PointView*>> group = points->getGroups()->value(PATH_GROUP_NAME);
+    QSharedPointer<QVector<QSharedPointer<PointView>>> group = points->getGroups()->value(PATH_GROUP_NAME);
 
-    PointView* startPointView(0);
-    PointView* endPointView(0);
-    PointView* currentPointView(0);
+    QSharedPointer<PointView> startPointView(0);
+    QSharedPointer<PointView> endPointView(0);
+    QSharedPointer<PointView> currentPointView(0);
 
     if(group && group->size() > 0){
         for(int i = 0; i < group->size(); i++){
@@ -232,7 +232,7 @@ int PathPainter::nbUsedPointView(QString name, double x, double y){
     return nbUsed;
 }
 
-void PathPainter::setCurrentPath(QVector<std::shared_ptr<PathPoint>> _currentPath){
+void PathPainter::setCurrentPath(QVector<QSharedPointer<PathPoint>> _currentPath){
     for(int i = 0; i < _currentPath.size(); i++){
         Point point = _currentPath.at(i)->getPoint();
         addPathPointSlot(point.getName(), point.getPosition().getX(), point.getPosition().getY());

@@ -6,7 +6,7 @@
 #include <QMouseEvent>
 
 
-PointView::PointView(const std::shared_ptr<Point> &_point, QGraphicsItem *parent) :
+PointView::PointView(const QSharedPointer<Point> &_point, QGraphicsItem *parent) :
     QGraphicsPixmapItem(QPixmap(PIXMAP_NORMAL), parent), state(GraphicItemState::NO_STATE), type(PixmapType::NORMAL), lastType(PixmapType::NORMAL){
     setScale(SCALE);
     point = _point;
@@ -30,11 +30,11 @@ void PointView::mousePressEvent(QGraphicsSceneMouseEvent *event){
     if(state == GraphicItemState::NO_STATE){
         qDebug() << "PointView::mousePressEvent NO_STATE";
         if(event->button() == Qt::RightButton){
-            emit pointRightClicked(this);
+            emit pointRightClicked(getPoint()->getName());
         }
         if(event->button() == Qt::LeftButton){
             qDebug() << "PointView::mousePressEvent blabla" << getPoint()->isPath();
-            emit pointLeftClicked(this);
+            emit pointLeftClicked(getPoint()->getName());
         }
 
     } else if(state == GraphicItemState::CREATING_PATH){
@@ -50,7 +50,7 @@ void PointView::mousePressEvent(QGraphicsSceneMouseEvent *event){
 
     } else if(state == GraphicItemState::EDITING_HOME){
         qDebug() << "PointView::mousePressEvent EDITING_HOME";
-        emit homeEdited(this);
+        emit homeEdited(getPoint()->getName());
 
     } else {
         qDebug() << "PointView::mousePressEvent NO_EVENT";

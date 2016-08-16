@@ -28,7 +28,7 @@ void XMLParser::save(const Points& points) const {
 
         xmlWriter.writeStartElement("points");
 
-        QMapIterator<QString, std::shared_ptr<QVector<PointView*>>> i(*(points.getGroups()));
+        QMapIterator<QString, QSharedPointer<QVector<QSharedPointer<PointView>>>> i(*(points.getGroups()));
         /// For each group
         while (i.hasNext()) {
             i.next();
@@ -121,7 +121,7 @@ float XMLParser::readCoordinateElement(QXmlStreamReader &xmlReader){
     return coordinate;
 }
 
-void XMLParser::readPoints(std::shared_ptr<Points>& points, MapView* mapView, MainWindow* mainWindow){
+void XMLParser::readPoints(QSharedPointer<Points>& points, MapView* mapView, MainWindow* mainWindow){
     qDebug() << "XMLParser::readPoints called";
     QXmlStreamReader xmlReader;
 

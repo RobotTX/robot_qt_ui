@@ -15,7 +15,7 @@
 #include "colors.h"
 
 
-BottomLayout::BottomLayout(QMainWindow* parent, const std::shared_ptr<Robots> &robots) : QWidget(parent){
+BottomLayout::BottomLayout(QMainWindow* parent, const QSharedPointer<Robots> &robots) : QWidget(parent){
 
     layout = new QHBoxLayout(this);
 
@@ -370,7 +370,7 @@ void BottomLayout::uncheckAll(){
      }
  }
 
-QString BottomLayout::pathToStr(const QVector<std::shared_ptr<PathPoint> > path){
+QString BottomLayout::pathToStr(const QVector<QSharedPointer<PathPoint> > path){
     QString pathStr = QString("");
     for(int i = 0; i < path.size(); i++){
         if(i != 0){

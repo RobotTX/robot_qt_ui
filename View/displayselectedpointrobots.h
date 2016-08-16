@@ -7,7 +7,7 @@ class QButtonGroup;
 
 #include <QWidget>
 #include <QVBoxLayout>
-#include <memory>
+#include <QSharedPointer>
 #include <QPushButton>
 #include <QObject>
 
@@ -15,7 +15,7 @@ class DisplaySelectedPointRobots: public QWidget {
     Q_OBJECT
 public:
     DisplaySelectedPointRobots(QWidget* parent);
-    void setRobotsWidget(PointView* pointView, std::shared_ptr<Robots> robots, const QString robotName = "");
+    void setRobotsWidget(QSharedPointer<PointView> pointView, QSharedPointer<Robots> robots, const QString robotName = "");
     void removeAllPathButtons();
     QWidget* getHomeWidget(void) const { return homeWidget; }
 

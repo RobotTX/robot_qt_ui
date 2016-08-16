@@ -6,7 +6,7 @@ class QVBoxLayout;
 class Points;
 
 #include <QWidget>
-#include <memory>
+#include <QSharedPointer>
 
 /**
  * @brief The LeftMenuWidget class
@@ -15,11 +15,11 @@ class Points;
 class LeftMenuWidget: public QWidget{
     Q_OBJECT
 public:
-    LeftMenuWidget(QMainWindow* parent, std::shared_ptr<Points> const& _points);
+    LeftMenuWidget(QMainWindow* parent, QSharedPointer<Points> const& _points);
 
 private:
     QVBoxLayout* layout;
-    std::shared_ptr<Points> points;
+    QSharedPointer<Points> points;
 
 protected:
     void showEvent(QShowEvent *event);

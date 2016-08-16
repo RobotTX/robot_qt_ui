@@ -11,7 +11,7 @@
 #include "View/customizedlineedit.h"
 # include "colors.h"
 
-GroupButtonGroup::GroupButtonGroup(const std::shared_ptr<Points> &_points, QWidget* _parent): QWidget(_parent), parent(_parent), points(_points)
+GroupButtonGroup::GroupButtonGroup(const QSharedPointer<Points> &_points, QWidget* _parent): QWidget(_parent), parent(_parent), points(_points)
 {
     layout = new QVBoxLayout(this);
     layout->setAlignment(Qt::AlignTop);
@@ -30,7 +30,7 @@ GroupButtonGroup::GroupButtonGroup(const std::shared_ptr<Points> &_points, QWidg
     editedGroupName = "";
 
     int index = 0;
-    QMapIterator<QString, std::shared_ptr<QVector<PointView*>>> i(*(points->getGroups()));
+    QMapIterator<QString, QSharedPointer<QVector<QSharedPointer<PointView>>>> i(*(points->getGroups()));
     while (i.hasNext()) {
         i.next();
         if(i.key().compare(NO_GROUP_NAME)!= 0
@@ -58,7 +58,7 @@ GroupButtonGroup::GroupButtonGroup(const std::shared_ptr<Points> &_points, QWidg
     /// for the last group we just want to show the points and not "no group"
     if(points->getGroups()->value(NO_GROUP_NAME)){
         for(int i = 0; i < points->getGroups()->value(NO_GROUP_NAME)->size(); i++){
-            std::shared_ptr<Point> currentPoint = points->getGroups()->value(NO_GROUP_NAME)->at(i)->getPoint();
+            QSharedPointer<Point> currentPoint = points->getGroups()->value(NO_GROUP_NAME)->at(i)->getPoint();
             DoubleClickableButton* pointButton = new DoubleClickableButton(currentPoint->getName(), this);
             pointButton->setAutoDefault(true);
             pointButton->setFlat(true);
@@ -100,7 +100,7 @@ void GroupButtonGroup::updateButtons(){
     deleteButtons();
 
     int index = 0;
-    QMapIterator<QString, std::shared_ptr<QVector<PointView*>>> i(*(points->getGroups()));
+    QMapIterator<QString, QSharedPointer<QVector<QSharedPointer<PointView>>>> i(*(points->getGroups()));
     while (i.hasNext()) {
         i.next();
         if(i.key().compare(NO_GROUP_NAME)!= 0
@@ -134,7 +134,7 @@ void GroupButtonGroup::updateButtons(){
     /// for the last group we just want to show the points and not "no group"
     if(points->getGroups()->value(NO_GROUP_NAME)){
         for(int i = 0; i < points->getGroups()->value(NO_GROUP_NAME)->size(); i++){
-            std::shared_ptr<Point> currentPoint = points->getGroups()->value(NO_GROUP_NAME)->at(i)->getPoint();
+            QSharedPointer<Point> currentPoint = points->getGroups()->value(NO_GROUP_NAME)->at(i)->getPoint();
             DoubleClickableButton* pointButton = new DoubleClickableButton(currentPoint->getName(), this);
             pointButton->setFlat(true);
             pointButton->setAutoDefault(true);
@@ -189,7 +189,7 @@ int GroupButtonGroup::checkEditGroupName(QString name){
         return 1;
     }
 
-    QMapIterator<QString, std::shared_ptr<QVector<PointView*>>> i(*(points->getGroups()));
+    QMapIterator<QString, QSharedPointer<QVector<QSharedPointer<PointView>>>> i(*(points->getGroups()));
     while (i.hasNext()) {
         i.next();
         if(!name.compare(i.key(), Qt::CaseInsensitive)){

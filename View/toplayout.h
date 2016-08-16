@@ -23,7 +23,7 @@ public:
     void enable();
     void setLabelDelay(const QString msgType, const QString msg, int delayTime);
     void delay(const int ms) ;
-    std::pair<QString, QString> getLastMessage(void) const { return lastMessage; }
+    QPair<QString, QString> getLastMessage(void) const { return lastMessage; }
     void setLastMessage(const QString msgType, const QString message) { lastMessage.first = msgType; lastMessage.second = message; }
 
 private:
@@ -33,7 +33,7 @@ private:
     QPushButton* connectBtn;
     QPushButton* closeBtn;
     QPushButton* centerBtn;
-    std::pair<QString, QString> lastMessage;
+    QPair<QString, QString> lastMessage;
 };
 
 #endif // TOPLAYOUT_H

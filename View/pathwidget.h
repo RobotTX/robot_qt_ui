@@ -8,7 +8,7 @@ class PathPoint;
 class QLabel;
 
 #include <QWidget>
-#include <memory>
+#include <QSharedPointer>
 
 /**
  * @brief The PathWidget class
@@ -17,8 +17,9 @@ class QLabel;
 class PathWidget: public QWidget{
 public:
     PathWidget(QWidget* parent);
+    ~PathWidget();
 
-    void setPath(QVector<std::shared_ptr<PathPoint>> const path);
+    void setPath(QVector<QSharedPointer<PathPoint>> const path);
 
     /**
      * @brief clearLayout

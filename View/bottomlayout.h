@@ -13,7 +13,7 @@ class QVBoxLayout;
 class PathPoint;
 
 
-#include <memory>
+#include <QSharedPointer>
 #include <QWidget>
 #include <QVector>
 #include <QList>
@@ -29,7 +29,7 @@ class PathPoint;
 class BottomLayout: public QWidget
 {
 public:
-    BottomLayout(QMainWindow* parent, std::shared_ptr<Robots> const& robots);
+    BottomLayout(QMainWindow* parent, QSharedPointer<Robots> const& robots);
 
     /// Getters
     QButtonGroup* getPlayRobotBtnGroup(void) const { return playRobotBtnGroup; }
@@ -47,7 +47,7 @@ public:
     /// to stop displaying the path of the robot whose id is given as a parameter
     void uncheckViewPathSelectedRobot(const int robotNb = -1);
     void uncheckAll();
-    QString pathToStr(QVector<std::shared_ptr<PathPoint>> const path);
+    QString pathToStr(QVector<QSharedPointer<PathPoint>> const path);
 
 private:
     /**

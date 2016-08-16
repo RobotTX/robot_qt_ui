@@ -4,7 +4,7 @@
 #include <QThread>
 #include <QString>
 #include <QtNetwork/QTcpSocket>
-#include <memory>
+#include <QSharedPointer>
 
 #define MISSED_PING_TIMER 20
 
@@ -75,7 +75,7 @@ private slots:
     void pingSlot();
 
 private :
-    std::shared_ptr<QTcpSocket> socket;
+    QSharedPointer<QTcpSocket> socket;
     QString ipAddress;
     int port;
     QString robotName;

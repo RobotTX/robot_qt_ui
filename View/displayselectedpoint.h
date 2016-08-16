@@ -17,7 +17,7 @@ class DisplaySelectedPointRobots;
 #include "Model/points.h"
 #include "View/pointview.h"
 #include <QLineEdit>
-#include <memory>
+#include <QSharedPointer>
 #include <QWidget>
 #include <QObject>
 #include "Model/graphicitemstate.h"
@@ -32,19 +32,19 @@ public:
     /// used to determine which menu or object (could be the map) cause the information of this point to be displayed
     enum Origin { MAP, GROUP_MENU, POINTS_MENU };
 
-    DisplaySelectedPoint(QMainWindow* const _parent, std::shared_ptr<Robots> const robots,const std::shared_ptr<Points> &_points, std::shared_ptr<Map> const& _map, PointView* _point= 0, const Origin _origin = MAP);
+    DisplaySelectedPoint(QMainWindow* const _parent, QSharedPointer<Robots> const robots,const QSharedPointer<Points> &_points, QSharedPointer<Map> const& _map, QSharedPointer<PointView> _point = QSharedPointer<PointView>(), const Origin _origin = MAP);
 
     TopLeftMenu* getActionButtons(void) const { return actionButtons; }
     QPushButton* getSaveButton(void) const { return saveButton; }
     QPushButton* getCancelButton(void) const { return cancelButton; }
     QLineEdit* getNameEdit(void) const { return nameEdit; }
     QString getPointName(void) const { return pointView->getPoint()->getName(); }
-    void setPointView(PointView* _pointView, const QString robotName);
+    void setPointView(QSharedPointer<PointView> _pointView, const QString robotName);
     Origin getOrigin(void) const { return origin; }
     QLabel* getXLabel(void) const { return posXLabel; }
     QLabel* getYLabel(void) const { return posYLabel; }
     QString formatName(const QString name) const;
-    PointView* getPointView(void) const { return pointView; }
+    QSharedPointer<PointView> getPointView(void) const { return pointView; }
     DisplaySelectedPointRobots* getDisplaySelectedPointRobots(void) { return robotsWidget; }
 
 public:
@@ -71,7 +71,7 @@ private slots:
     int checkPointName(QString name);
 
 private:
-    std::shared_ptr<Map> map;
+    QSharedPointer<Map> map;
     QLineEdit* nameEdit;
     QVBoxLayout* layout;
     QHBoxLayout* editLayout;
@@ -82,11 +82,11 @@ private:
 
     QPushButton* saveButton;
     QPushButton* cancelButton;
-    PointView* pointView;
+    QSharedPointer<PointView> pointView;
     QMainWindow* parent;
-    std::shared_ptr<Points> points;
+    QSharedPointer<Points> points;
     TopLeftMenu* actionButtons;
-    std::shared_ptr<Robots> robots;
+    QSharedPointer<Robots> robots;
 
     /// to determine whether we come from the group menu and have to go back to it if we click on the back button
     /// or if we got here by clicking on the map

@@ -10,7 +10,7 @@ class MainWindow;
 #include <QPainterPath>
 #include <QPen>
 #include <QVector>
-#include <memory>
+#include <QSharedPointer>
 #include "Model/point.h"
 #include "Model/pathpoint.h"
 
@@ -22,9 +22,9 @@ class PathPainter : public QObject, public QGraphicsPathItem{
     Q_OBJECT
 
 public:
-    PathPainter(MainWindow* const &mainWindow, MapView* const &mapPixmapItem, std::shared_ptr<Points> _points);
-    void setCurrentPath(QVector<std::shared_ptr<PathPoint> > _currentPath);
-    QVector<std::shared_ptr<PathPoint>> getCurrentPath(void) const { return currentPath; }
+    PathPainter(MainWindow* const &mainWindow, MapView* const &mapPixmapItem, QSharedPointer<Points> _points);
+    void setCurrentPath(QVector<QSharedPointer<PathPoint> > _currentPath);
+    QVector<QSharedPointer<PathPoint>> getCurrentPath(void) const { return currentPath; }
     void displayPath(void);
     int nbUsedPointView(QString name, double x, double y);
     void updateCurrentPath(void);
@@ -42,9 +42,9 @@ private slots:
 
 private:
     QPainterPath path;
-    std::shared_ptr<Points> points;
+    QSharedPointer<Points> points;
     /// changing as the user edits the path of its robot
-    QVector<std::shared_ptr<PathPoint>> currentPath;
+    QVector<QSharedPointer<PathPoint>> currentPath;
     MainWindow* mainWindow;
     MapView* mapView;
 };

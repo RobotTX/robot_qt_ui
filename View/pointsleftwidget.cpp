@@ -23,7 +23,7 @@
 #include <QAbstractButton>
 
 
-PointsLeftWidget::PointsLeftWidget(QMainWindow* _parent, std::shared_ptr<Points> const& _points, bool _groupDisplayed)
+PointsLeftWidget::PointsLeftWidget(QMainWindow* _parent, QSharedPointer<Points> const& _points, bool _groupDisplayed)
     : QWidget(_parent), groupDisplayed(_groupDisplayed), points(_points), creatingGroup(true), lastCheckedId("")
 {
     scrollArea = new CustomScrollArea(this);
@@ -175,12 +175,12 @@ void PointsLeftWidget::enableButtons(QString button){
             }
             /// changes the pointviews of all the points displayed in the group on the map
             for(int i = 0; i < points->getGroups()->value(button)->size(); i++){
-                PointView* pv = points->getGroups()->value(button)->at(i);
+                QSharedPointer<PointView> pv = points->getGroups()->value(button)->at(i);
                 if(pv->isVisible())
                     pv->setPixmap(PointView::PixmapType::MID);
             }
         } else {
-            PointView* pv = points->findPointView(button);
+            QSharedPointer<PointView> pv = points->findPointView(button);
             if(pv->isVisible()){
                 /// if the point is displayed, changes its pointview on the map
                 points->findPointView(button)->setPixmap(PointView::PixmapType::MID);
@@ -191,7 +191,7 @@ void PointsLeftWidget::enableButtons(QString button){
                 actionButtons->getMapButton()->setToolTip("Click to display the selected point on the map");
             }
             /// if this point belongs to a path we also need to set the pixmap of the path point point view
-            if(PointView* pathPv = points->findPathPointView(pv->getPoint()->getPosition().getX(), pv->getPoint()->getPosition().getY())){
+            if(QSharedPointer<PointView> pathPv = points->findPathPointView(pv->getPoint()->getPosition().getX(), pv->getPoint()->getPosition().getY())){
                 qDebug() << "PATH !";
                 pathPv->setPixmap(PointView::PixmapType::MID);
             } else {
@@ -248,7 +248,7 @@ int PointsLeftWidget::checkGroupName(QString name){
         emit messageCreationGroup(TEXT_COLOR_WARNING, "The name of your group cannot be empty");
         return 1;
     }
-    QMapIterator<QString, std::shared_ptr<QVector<PointView*>>> i(*(points->getGroups()));
+    QMapIterator<QString, QSharedPointer<QVector<QSharedPointer<PointView>>>> i(*(points->getGroups()));
     while (i.hasNext()) {
         bool valid(true);
         i.next();

@@ -10,7 +10,7 @@
 #include <QLabel>
 #include "View/pointview.h"
 
-PointButtonGroup::PointButtonGroup(std::shared_ptr<Points> _points, const QString _groupIndex
+PointButtonGroup::PointButtonGroup(QSharedPointer<Points> _points, const QString _groupIndex
                                    , QWidget* parent): QWidget(parent), points(_points){
     layout = new QVBoxLayout(this);
 
@@ -34,9 +34,9 @@ void PointButtonGroup::createButtons(){
     qDebug() << "PointButtonGroup::createButtons called";
 
     if(points->isAGroup(groupIndex) && points->getGroups()->value(groupIndex) && points->getGroups()->value(groupIndex)->size() > 0){
-        std::shared_ptr<QVector<PointView*>> group = points->getGroups()->value(groupIndex);
+        QSharedPointer<QVector<QSharedPointer<PointView>>> group = points->getGroups()->value(groupIndex);
         for(int j = 0; j < group->size(); j++){
-            std::shared_ptr<Point> currentPoint = group->at(j)->getPoint();
+            QSharedPointer<Point> currentPoint = group->at(j)->getPoint();
 
             DoubleClickableButton* pointButton = new DoubleClickableButton(currentPoint->getName(), this);
             pointButton->setAutoDefault(true);

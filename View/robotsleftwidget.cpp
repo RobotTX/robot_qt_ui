@@ -43,7 +43,7 @@ QString RobotsLeftWidget::getSelectedRobotName()
     return btnGroup->getBtnGroup()->checkedButton()->text();
 }
 
-void RobotsLeftWidget::setRobots(std::shared_ptr<Robots> const &_robots){
+void RobotsLeftWidget::setRobots(QSharedPointer<Robots> const &_robots){
     robots = _robots;
 
     /// Clickable buttons group to select/edit a robot
@@ -65,7 +65,7 @@ void RobotsLeftWidget::setRobots(std::shared_ptr<Robots> const &_robots){
 }
 
 
-void RobotsLeftWidget::updateRobots(std::shared_ptr<Robots> const& _robots){
+void RobotsLeftWidget::updateRobots(QSharedPointer<Robots> const& _robots){
     scrollLayout->removeWidget(btnGroup);
     delete btnGroup;
 

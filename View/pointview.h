@@ -8,7 +8,7 @@ class QDropEvent;
 #include "Model/point.h"
 #include <QObject>
 #include <QGraphicsPixmapItem>
-#include <memory>
+#include <QSharedPointer>
 #include "Model/graphicitemstate.h"
 
 #define SCALE 0.3
@@ -35,7 +35,7 @@ class PointView : public QObject, public QGraphicsPixmapItem {
     Q_OBJECT
 
 public:
-    PointView(std::shared_ptr<Point> const& point, QGraphicsItem *parent = 0);
+    PointView(QSharedPointer<Point> const& point, QGraphicsItem *parent = 0);
 
     enum PixmapType{NORMAL, MID, START, STOP, HOVER, START_STOP};
 
@@ -46,8 +46,8 @@ public:
     void setLastPixmap(const QPixmap _lastPixmap) { lastPixmap = _lastPixmap; }
     void setPixmap(const PixmapType pixType);
     //void setPixmap(const QPixmap &pixmap);
-    void setPoint(std::shared_ptr<Point> const& _point) { point = _point; }
-    std::shared_ptr<Point> getPoint(void) const { return point; }
+    void setPoint(QSharedPointer<Point> const& _point) { point = _point; }
+    QSharedPointer<Point> getPoint(void) const { return point; }
     void setWasShown(const bool _wasShown) { wasShown = _wasShown; }
     bool getWasShown() const { return wasShown; }
     PixmapType getType(void) const { return type; }
@@ -68,10 +68,10 @@ protected:
     void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
 
 signals:
-    void pointRightClicked(PointView* pointView);
-    void pointLeftClicked(PointView* pointView);
+    void pointRightClicked(QString);
+    void pointLeftClicked(QString);
     void addPointPath(QString name, double x, double y);
-    void homeEdited(PointView* pointView);
+    void homeEdited(QString);
     void moveEditedPathPoint();
     void editedPointPositionChanged(double, double);
     void pathPointChanged(double, double);
@@ -79,7 +79,7 @@ signals:
     void updatePathPainterPointView();
 
 private:
-    std::shared_ptr<Point> point;
+    QSharedPointer<Point> point;
     GraphicItemState state;
     bool addedToPath;
     QPixmap lastPixmap;

@@ -12,7 +12,7 @@ class Points;
 #include "Model/points.h"
 #include <QWidget>
 #include "View/pointbuttongroup.h"
-#include <memory>
+#include <QSharedPointer>
 #include "topleftmenu.h"
 /**
  * @brief The DisplaySelectedGroup class
@@ -23,14 +23,14 @@ class Points;
 class DisplaySelectedGroup: public QWidget{
     Q_OBJECT
 public:
-    DisplaySelectedGroup(QMainWindow *_parent, const std::shared_ptr<Points> &_points);
+    DisplaySelectedGroup(QMainWindow *_parent, const QSharedPointer<Points> &_points);
 
     PointButtonGroup* getPointButtonGroup(void) const { return pointButtonGroup; }
 
     TopLeftMenu* getActionButtons(void) const { return actionButtons; }
 
     QLabel* getNameLabel(void) const { return name; }
-    std::shared_ptr<Points> getPoints(void) const { return points; }
+    QSharedPointer<Points> getPoints(void) const { return points; }
 
     void setName(const QString _name);
 
@@ -57,7 +57,7 @@ private:
     TopLeftMenu* actionButtons;
 
     QLabel* name;
-    std::shared_ptr<Points> points;
+    QSharedPointer<Points> points;
     QString lastCheckedButton;
 };
 

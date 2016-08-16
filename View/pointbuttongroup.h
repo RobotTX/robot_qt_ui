@@ -9,13 +9,13 @@ class QAbstractButton;
 
 #include <QObject>
 #include <QWidget>
-#include <memory>
+#include <QSharedPointer>
 
 class PointButtonGroup: public QWidget
 {
     Q_OBJECT
 public:
-    PointButtonGroup(std::shared_ptr<Points> points, const QString groupIndex, QWidget *parent);
+    PointButtonGroup(QSharedPointer<Points> points, const QString groupIndex, QWidget *parent);
     ~PointButtonGroup(){}
 
     QButtonGroup* getButtonGroup(void) const { return buttonGroup; }
@@ -35,7 +35,7 @@ private:
     QButtonGroup* buttonGroup;
     QString groupIndex;
     QSize BUTTON_SIZE;
-    std::shared_ptr<Points> points;
+    QSharedPointer<Points> points;
 signals:
     void updateConnectionsRequest();
 };

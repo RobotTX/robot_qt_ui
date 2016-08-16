@@ -4,7 +4,7 @@
 #include <QThread>
 #include <QString>
 #include <QtNetwork/QTcpSocket>
-#include <memory>
+#include <QSharedPointer>
 
 class SendNewMapThread : public QThread {
     Q_OBJECT
@@ -32,7 +32,7 @@ private slots:
     void writeTcpDataSlot(QByteArray cmd);
 
 private :
-    std::shared_ptr<QTcpSocket> socket;
+    QSharedPointer<QTcpSocket> socket;
     QString ipAddress;
     int port;
     bool connected;

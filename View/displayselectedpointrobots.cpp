@@ -56,7 +56,7 @@ DisplaySelectedPointRobots::DisplaySelectedPointRobots(QWidget *parent):QWidget(
     layout->addWidget(pathWidget);
 }
 
-void DisplaySelectedPointRobots::setRobotsWidget(PointView* pointView, std::shared_ptr<Robots> robots, const QString robotName){
+void DisplaySelectedPointRobots::setRobotsWidget(QSharedPointer<PointView> pointView, QSharedPointer<Robots> robots, const QString robotName){
     qDebug() << "DisplaySelectedPointRobots::setRobotsWidget called";
     removeAllPathButtons();
 
@@ -72,7 +72,7 @@ void DisplaySelectedPointRobots::setRobotsWidget(PointView* pointView, std::shar
 
     QSet<QString> robotNameSet;
     for(int i = 0; i < robots->getRobotsVector().size(); i++){
-        std::shared_ptr<Robot> robot = robots->getRobotsVector().at(i)->getRobot();
+        QSharedPointer<Robot> robot = robots->getRobotsVector().at(i)->getRobot();
         for(int j = 0; j < robot->getPath().size(); j++){
             if(robot->getPath().at(j)->getPoint().getName().compare(pointView->getPoint()->getName()) == 0){
                 robotNameSet.insert(robot->getName());

@@ -14,7 +14,7 @@
 #include "View/buttonmenu.h"
 #include "View/pointview.h"
 
-DisplaySelectedGroup::DisplaySelectedGroup(QMainWindow *parent, std::shared_ptr<Points> const& _points) : QWidget(parent), points(_points){
+DisplaySelectedGroup::DisplaySelectedGroup(QMainWindow *parent, QSharedPointer<Points> const& _points) : QWidget(parent), points(_points){
     /// to be able to display a lot of groups and points2
     CustomScrollArea* scrollArea = new CustomScrollArea(this);
 
@@ -98,10 +98,10 @@ void DisplaySelectedGroup::buttonClickedSlot(QAbstractButton* button){
         disableButtons();
     } else {
         /// changes the pointview on the map to show which point is selected
-        PointView* pv = points->findPointView(button->text());
+        QSharedPointer<PointView> pv = points->findPointView(button->text());
         pv->setPixmap(PointView::PixmapType::MID);
         /// if the point is also part of the path we change the point view associated
-        if(PointView* pathPv = points->findPathPointView(pv->getPoint()->getPosition().getX(), pv->getPoint()->getPosition().getY()))
+        if(QSharedPointer<PointView> pathPv = points->findPathPointView(pv->getPoint()->getPosition().getX(), pv->getPoint()->getPosition().getY()))
             pathPv->setPixmap(PointView::PixmapType::MID);
         getActionButtons()->getMapButton()->setCheckable(true);
         /// enables the minus button

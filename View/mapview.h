@@ -25,7 +25,7 @@ class MapView: public QObject, public QGraphicsPixmapItem {
     Q_OBJECT
 
 public:
-    MapView (const QPixmap& pixmap, const QSize size, std::shared_ptr<Map> _map, QMainWindow *_mainWindow);
+    MapView (const QPixmap& pixmap, const QSize size, QSharedPointer<Map> _map, QMainWindow *_mainWindow);
     /// Getters
     QSize getSize(void) const { return size; }
     int getWidth(void) const { return size.width(); }
@@ -35,12 +35,12 @@ public:
 
     /// Setters
     void setState(const GraphicItemState _state);
-    void setPoints(std::shared_ptr<Points> _points);
+    void setPoints(QSharedPointer<Points> _points);
 
 signals:
     void pointLeftClicked();
     void addPathPoint(QString, double, double);
-    void homeEdited(PointView*);
+    void homeEdited(QString);
     void newCoordinates(double, double);
     void newCoordinatesPathPoint(double, double);
     void newMessage(QString);
@@ -53,10 +53,10 @@ private:
     QPointF dragStartPosition;
     QSize size;
     QPixmap tmpPointPixmap;
-    std::shared_ptr<Points> points;
+    QSharedPointer<Points> points;
     GraphicItemState state;
     QMainWindow* mainWindow;
-    std::shared_ptr<Map> map;
+    QSharedPointer<Map> map;
     int idTmp;
 };
 
