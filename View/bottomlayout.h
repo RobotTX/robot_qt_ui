@@ -39,12 +39,7 @@ public:
     QButtonGroup* getDeletePathBtnGroup(void) const { return deletePathBtnGroup; }
     QVector<QLabel*> getVectorPathLabel(void) const { return vectorPathLabel; }
 
-    /**
-     * @brief deletePath
-     * @param index
-     * Function to delete the path from the robot in the given index
-     */
-    void deletePath(const int index);
+
     void updateRobot(const int id, RobotView* const robotView);
     void setEnable(const bool enable);
     void addRobot(RobotView * const robotView);

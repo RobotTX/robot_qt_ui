@@ -20,15 +20,20 @@
 #include "Model/pathpoint.h"
 #include "View/displayselectedpointrobots.h"
 #include <QSet>
+#include "View/customscrollarea.h"
 
 DisplaySelectedPoint::DisplaySelectedPoint(QMainWindow *const _parent,  std::shared_ptr<Robots> const _robots,std::shared_ptr<Points> const& _points, std::shared_ptr<Map> const& _map, PointView* _pointView, const Origin _origin):
-    QWidget(_parent), map(_map), pointView(_pointView), parent(_parent), points(_points), origin(_origin)
-{
+    QWidget(_parent), map(_map), pointView(_pointView), parent(_parent), points(_points), origin(_origin){
+
     robots = std::shared_ptr<Robots>(_robots);
     layout = new QVBoxLayout(this);
-    QVBoxLayout * downLayout = new QVBoxLayout();
 
-    nameLayout = new QHBoxLayout();
+    QVBoxLayout* downLayout = new QVBoxLayout();
+
+    CustomScrollArea* scrollArea = new CustomScrollArea(this);
+
+    QVBoxLayout * scrollLayout = new QVBoxLayout(scrollArea);
+    QVBoxLayout * infoLayout = new QVBoxLayout();
 
     actionButtons = new TopLeftMenu(this);
     actionButtons->getPlusButton()->setEnabled(false);
@@ -49,17 +54,17 @@ DisplaySelectedPoint::DisplaySelectedPoint(QMainWindow *const _parent,  std::sha
     nameEdit->setFrame(false);
     nameEdit->setAlignment(Qt::AlignCenter);
 
-    nameLayout->addWidget(nameEdit);
-
-    downLayout->addLayout(nameLayout);
+    infoLayout->addWidget(nameEdit);
 
     posXLabel = new QLabel("X : ", this);
     posXLabel->setWordWrap(true);
-    downLayout->addWidget(posXLabel);
+    infoLayout->addWidget(posXLabel);
 
     posYLabel = new QLabel("Y : ", this);
     posYLabel->setWordWrap(true);
-    downLayout->addWidget(posYLabel);
+    infoLayout->addWidget(posYLabel);
+
+    scrollLayout->addLayout(infoLayout);
 
     cancelButton = new QPushButton("Cancel", this);
     cancelButton->hide();
@@ -71,10 +76,10 @@ DisplaySelectedPoint::DisplaySelectedPoint(QMainWindow *const _parent,  std::sha
     editLayout->addWidget(cancelButton);
     editLayout->addWidget(saveButton);
 
-    downLayout->addLayout(editLayout);
+    scrollLayout->addLayout(editLayout);
 
     robotsWidget = new DisplaySelectedPointRobots(this);
-    downLayout->addWidget(robotsWidget);
+    scrollLayout->addWidget(robotsWidget);
 
     /// to check that a point that's being edited does not get a new name that's already used in the database
     connect(nameEdit, SIGNAL(textEdited(QString)), this, SLOT(checkPointName(QString)));
@@ -83,11 +88,13 @@ DisplaySelectedPoint::DisplaySelectedPoint(QMainWindow *const _parent,  std::sha
     setMaximumWidth(_parent->width()*4/10);
     setMinimumWidth(_parent->width()*4/10);
 
-    layout->addLayout(downLayout);
-    downLayout->setContentsMargins(20,0,0,0);
+    scrollLayout->setContentsMargins(20,0,0,0);
+    scrollLayout->setAlignment(Qt::AlignTop);
+
+    layout->addWidget(scrollArea);
+
 
     layout->setContentsMargins(0,0,0,0);
-    layout->setAlignment(Qt::AlignTop);
 
 }
 
@@ -102,7 +109,7 @@ void DisplaySelectedPoint::displayPointInfo(void) {
         posYLabel->setText("Y : " + QString::number(pointView->getPoint()->getPosition().getY(), 'f', 1));
         nameEdit->setText(pointView->getPoint()->getName());
 
-        robotsWidget->setRobotsWidget(pointView, robots);
+        //robotsWidget->setRobotsWidget(pointView, robots);
     }
 }
 

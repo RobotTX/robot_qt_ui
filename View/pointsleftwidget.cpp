@@ -21,7 +21,7 @@
 #include "View/buttonmenu.h"
 #include "View/pointview.h"
 #include <QAbstractButton>
-
+#include "doubleclickablebutton.h"
 
 PointsLeftWidget::PointsLeftWidget(QMainWindow* _parent, std::shared_ptr<Points> const& _points, bool _groupDisplayed)
     : QWidget(_parent), groupDisplayed(_groupDisplayed), points(_points), creatingGroup(true), lastCheckedId("")
@@ -129,7 +129,7 @@ void PointsLeftWidget::updateGroupButtonGroup(){
 
 void PointsLeftWidget::enableButtons(QAbstractButton* button){
     qDebug() << "PointsLeftWidget::enableButtons called" << button->text();
-    enableButtons(button->text());
+    enableButtons(((DoubleClickableButton *)button)->getRealName());
 }
 
 void PointsLeftWidget::enableButtons(QString button){

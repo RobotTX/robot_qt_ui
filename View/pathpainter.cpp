@@ -16,11 +16,14 @@ void PathPainter::resetPathSlot(void){
     qDebug() << "PathPainter::resetPathSlot called";
     path = QPainterPath();
     points->setPixmapAll(PointView::PixmapType::NORMAL);
-    if(points->getGroups()->value(PATH_GROUP_NAME)){
-        std::shared_ptr<QVector<PointView*>> group = points->getGroups()->value(PATH_GROUP_NAME);
-        qDeleteAll(group->begin(), group->end());
+
+    if(std::shared_ptr<QVector<PointView*>> group = points->getGroups()->value(PATH_GROUP_NAME)){
+        for(int i = 0; i < group->size(); i++){
+            group->at(i)->deleteLater();
+        }
         group->clear();
     }
+
     currentPath.clear();
     setPath(path);
 }

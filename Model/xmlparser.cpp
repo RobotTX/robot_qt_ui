@@ -17,7 +17,7 @@ XMLParser::~XMLParser(){
 }
 
 void XMLParser::save(const Points& points) const {
-    qDebug() << "XMLParser::save called";
+    //qDebug() << "XMLParser::save called";
     try {
 
         file->open(QIODevice::WriteOnly);
@@ -122,7 +122,7 @@ float XMLParser::readCoordinateElement(QXmlStreamReader &xmlReader){
 }
 
 void XMLParser::readPoints(std::shared_ptr<Points>& points, MapView* mapView, MainWindow* mainWindow){
-    qDebug() << "XMLParser::readPoints called";
+    //qDebug() << "XMLParser::readPoints called";
     QXmlStreamReader xmlReader;
 
     try {
@@ -231,7 +231,7 @@ bool XMLParser::readDisplayedElement(QXmlStreamReader &xmlReader){
 
 /// resets the file, only writting an empty default group
 void XMLParser::clear(void){
-    qDebug() << "XMLParser::clear called";
+    //qDebug() << "XMLParser::clear called";
     try {
         file->open(QIODevice::WriteOnly);
 

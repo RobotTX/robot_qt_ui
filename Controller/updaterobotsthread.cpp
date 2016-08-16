@@ -5,7 +5,7 @@
 
 
 UpdateRobotsThread::UpdateRobotsThread(const int newPort){
-    qDebug() << "(UpdateRobotsThread) Thread launched";
+    //qDebug() << "(UpdateRobotsThread) Thread launched";
     port = newPort;
     server = new QTcpServer(this);
     connect(server, SIGNAL(newConnection()), this, SLOT(newConnectionSlot()));
@@ -22,7 +22,7 @@ UpdateRobotsThread::~UpdateRobotsThread(){
 }
 
 void UpdateRobotsThread::run(){
-    qDebug() << "(UpdateRobotsThread) Waiting on port" << port;
+    //qDebug() << "(UpdateRobotsThread) Waiting on port" << port;
     while(!this->isInterruptionRequested()){
         if(!server->isListening())
             server->listen(QHostAddress::Any, port);

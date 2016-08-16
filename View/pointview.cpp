@@ -7,7 +7,7 @@
 
 
 PointView::PointView(const std::shared_ptr<Point> &_point, QGraphicsItem *parent) :
-  QGraphicsPixmapItem(QPixmap(PIXMAP_NORMAL), parent), state(GraphicItemState::NO_STATE), type(PixmapType::NORMAL), lastType(PixmapType::NORMAL){
+    QGraphicsPixmapItem(QPixmap(PIXMAP_NORMAL), parent), state(GraphicItemState::NO_STATE), type(PixmapType::NORMAL), lastType(PixmapType::NORMAL){
     setScale(SCALE);
     point = _point;
     setAcceptedMouseButtons(Qt::RightButton | Qt::LeftButton);
@@ -89,12 +89,7 @@ void PointView::mouseMoveEvent(QGraphicsSceneMouseEvent *event){
 }
 
 void PointView::mouseReleaseEvent(QGraphicsSceneMouseEvent *event){
-    if(state == GraphicItemState::EDITING_PATH){
-        float x = pos().x() + pixmap().width()*SCALE/2;
-        float y = pos().y() + pixmap().height()*SCALE;
-        QGraphicsPixmapItem::mouseReleaseEvent(event);
-
-    } else if(state == GraphicItemState::EDITING_PERM)
+    if(state == GraphicItemState::EDITING_PATH || state == GraphicItemState::EDITING_PERM)
         QGraphicsPixmapItem::mouseReleaseEvent(event);
 }
 
