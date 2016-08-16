@@ -26,7 +26,7 @@ DisplaySelectedPoint::DisplaySelectedPoint(QMainWindow *const _parent,  std::sha
 {
     robots = std::shared_ptr<Robots>(_robots);
     layout = new QVBoxLayout(this);
-    QVBoxLayout * downLayout = new QVBoxLayout(this);
+    QVBoxLayout * downLayout = new QVBoxLayout();
 
     nameLayout = new QHBoxLayout();
 

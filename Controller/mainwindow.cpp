@@ -2392,6 +2392,7 @@ void MainWindow::displayGroupMapEvent(void){
         } else {
             /// updates the tooltip of the map button
             pointsLeftWidget->getActionButtons()->getMapButton()->setToolTip("Click here to hide the selected point on the map");
+            point->setPixmap(PointView::PixmapType::MID);
             point->show();
 
             /// update the file
