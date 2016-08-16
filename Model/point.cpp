@@ -1,7 +1,10 @@
 #include "point.h"
+#include "Model/points.h"
 #include <QDebug>
 #include <QDataStream>
 #include <iostream>
+
+
 
 Point::Point(void): name(""), position(Position(0.0, 0.0)), type(PERM){
 }
@@ -87,7 +90,7 @@ bool Point::operator==(const Point& point) const {
         name = QString::number(position.getX(),'f', 1) + "; " + QString::number(position.getY(),'f', 1);
     } else if((_type == HOME) && (type != HOME)){
         type = _type;
-        if (name == "tmpPoint")
+        if (!name.compare(TMP_POINT_NAME))
             name = QString::number(position.getX(),'f', 1) + "; " + QString::number(position.getY(),'f', 1);
         return true;
     }

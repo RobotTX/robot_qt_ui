@@ -136,6 +136,8 @@ void TopLayout::setLabel(const QString msgType, const QString msg){
 void TopLayout::setEnable(bool enable){
     menuBtn->setEnabled(enable);
     connectBtn->setEnabled(enable);
+    centerBtn->setEnabled(enable);
+    closeBtn->setEnabled(enable);
 }
 
 void TopLayout::setLabelDelay(const QString msgType, const QString msg, int delayTime){

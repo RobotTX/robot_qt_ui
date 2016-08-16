@@ -95,6 +95,8 @@ CreatePointWidget::CreatePointWidget(QMainWindow* _parent, std::shared_ptr<Point
     /// to display appropriate messages when a user attemps to create a point
     connect(this, SIGNAL(invalidName(QString, CreatePointWidget::Error)), _parent, SLOT(setMessageCreationPoint(QString, CreatePointWidget::Error)));
 
+    connect(this, SIGNAL(displayMessageCreation(QString)), _parent, SLOT(choosePointName(QString)));
+
     hide();
     setMaximumWidth(_parent->width()*4/10);
     setMinimumWidth(_parent->width()*4/10);
@@ -172,7 +174,7 @@ int CreatePointWidget::checkPointName(void){
 }
 
 /// shows the widgets related to the choice of a group and the saving of a point
-void CreatePointWidget::showGroupLayout(void) const {
+void CreatePointWidget::showGroupLayout(void) {
     qDebug() << "showGroupLayout called";
     /// we disable so that two points cannot be named tmpPoint
     saveBtn->setEnabled(false);
@@ -187,6 +189,8 @@ void CreatePointWidget::showGroupLayout(void) const {
     nameEdit->setAutoFillBackground(true);
     nameEdit->setFrame(true);
     nameEdit->setFocusPolicy(Qt::FocusPolicy::StrongFocus);
+    /// so that the main window sets a message to help the user figuring out what to do
+    emit displayMessageCreation("Choose a name for your point by filling up the corresponding field");
 }
 
 /// hides everything that's related to the creation of a point

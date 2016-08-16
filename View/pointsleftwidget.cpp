@@ -343,7 +343,7 @@ void PointsLeftWidget::resetWidget(void){
 }
 
 void PointsLeftWidget::modifyGroupAfterClick(QString name){
-    qDebug() << "PointsLeftWidget::modifyGroupAfterClick called";
+    //qDebug() << "PointsLeftWidget::modifyGroupAfterClick called";
     emit modifiedGroupAfterClick(name);
 }
 

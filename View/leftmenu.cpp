@@ -143,7 +143,6 @@ LeftMenu::LeftMenu(MainWindow* _parent, std::shared_ptr<Points> const& _points,
         }
     }
 
-
     globalLayout->addLayout(leftLayout);
     globalLayout->setContentsMargins(0, 10, 0, 0);
     topLayout->setContentsMargins(0, 0, 0, 0);
@@ -154,7 +153,6 @@ LeftMenu::LeftMenu(MainWindow* _parent, std::shared_ptr<Points> const& _points,
     Pal.setColor(QPalette::Background, left_menu_background_color);
     this->setAutoFillBackground(true);
     this->setPalette(Pal);
-
 }
 
 void LeftMenu::updateGroupDisplayed(std::shared_ptr<Points> const& _points, const QString groupIndex){
@@ -179,4 +177,3 @@ void LeftMenu::setEnableReturnCloseButtons(bool enable){
     returnButton->setEnabled(enable);
     closeBtn->setEnabled(enable);
 }
-

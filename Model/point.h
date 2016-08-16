@@ -3,6 +3,9 @@
 
 class QDataStream;
 
+#define TMP_POINT_NAME "tmpPoint"
+#define PATH_POINT_NAME "PathPoint"
+
 #include "Model/position.h"
 #include <QString>
 
