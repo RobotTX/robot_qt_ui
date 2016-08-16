@@ -12,6 +12,7 @@
 DisplaySelectedPointRobots::DisplaySelectedPointRobots(QWidget *parent):QWidget(parent){
     layout = new QVBoxLayout(this);
 
+
     homeWidget = new QWidget(this);
     QVBoxLayout* homeLayout = new QVBoxLayout(homeWidget);
     SpaceWidget* spaceWidget = new SpaceWidget(SpaceWidget::SpaceOrientation::HORIZONTAL, this);
@@ -22,6 +23,9 @@ DisplaySelectedPointRobots::DisplaySelectedPointRobots(QWidget *parent):QWidget(
     homeLayout->addWidget(homeLabel);
 
     robotBtn = new QPushButton("", this);
+    robotBtn->setMinimumHeight(30);
+    robotBtn->setMaximumHeight(30);
+    //robotBtn->setFlat(true);
     homeLayout->addWidget(robotBtn);
     connect(robotBtn, SIGNAL(clicked()), this, SLOT(robotBtnClicked()));
 
@@ -31,12 +35,16 @@ DisplaySelectedPointRobots::DisplaySelectedPointRobots(QWidget *parent):QWidget(
 
     pathWidget = new QWidget(this);
     QVBoxLayout* pathLayout = new QVBoxLayout(pathWidget);
-    SpaceWidget* spaceWidget2 = new SpaceWidget(SpaceWidget::SpaceOrientation::HORIZONTAL, this);
-    pathLayout->addWidget(spaceWidget2);
 
+    QVBoxLayout* pathLabelLayout = new QVBoxLayout(pathWidget);
+    SpaceWidget* spaceWidget2 = new SpaceWidget(SpaceWidget::SpaceOrientation::HORIZONTAL, this);
+    pathLabelLayout->addWidget(spaceWidget2);
     QLabel* pathLabel = new QLabel("This point is part of the path of the robot(s) :", this);
     pathLabel->setWordWrap(true);
-    pathLayout->addWidget(pathLabel);
+    pathLabel->setMinimumHeight(60);
+    pathLabel->setMaximumHeight(60);
+    pathLabelLayout->addWidget(pathLabel);
+    pathLayout->addLayout(pathLabelLayout);
 
     pathBtnLayout = new QVBoxLayout();
     pathLayout->addLayout(pathBtnLayout);
@@ -51,7 +59,6 @@ DisplaySelectedPointRobots::DisplaySelectedPointRobots(QWidget *parent):QWidget(
 void DisplaySelectedPointRobots::setRobotsWidget(PointView* pointView, std::shared_ptr<Robots> robots, const QString robotName){
     qDebug() << "DisplaySelectedPointRobots::setRobotsWidget called";
     removeAllPathButtons();
-
 
     if(pointView->getPoint()->isHome()){
         homeWidget->show();
@@ -78,6 +85,9 @@ void DisplaySelectedPointRobots::setRobotsWidget(PointView* pointView, std::shar
         QSetIterator<QString> k(robotNameSet);
         while (k.hasNext()){
             QPushButton* btn = new QPushButton(k.next(), this);
+            btn->setMinimumHeight(30);
+            btn->setMaximumHeight(30);
+            //btn->setFlat(true);
             pathBtnGroup->addButton(btn);
             pathBtnLayout->addWidget(btn);
         }

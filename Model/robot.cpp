@@ -171,3 +171,8 @@ QDataStream& operator<<(QDataStream& out, const Robot& robot){
         out << *(robot.getPath().at(i));
     return out;
 }
+
+void Robot::clearPath(){
+    path.clear();
+    //path = QVector<std::shared_ptr<PathPoint>>();
+}
