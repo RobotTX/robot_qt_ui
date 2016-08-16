@@ -1812,7 +1812,7 @@ void MainWindow::editGroupBtnEvent(){
     setEnableAll(false);
     int btnIndex = pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->checkedId();
     qDebug() << "btnIndex" << btnIndex;
-    pointsLeftWidget->setLastCheckedId(pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->checkedButton()->text());
+    pointsLeftWidget->setLastCheckedId(((DoubleClickableButton * )pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->checkedButton())->getRealName());
 
     pointsLeftWidget->setCreatingGroup(false);
 
@@ -2664,7 +2664,7 @@ void MainWindow::editPointFromGroupMenu(void){
 
     qDebug() << "working on group" << groupName << "and id" << leftMenu->getDisplaySelectedGroup()->getPointButtonGroup()->getButtonGroup()->checkedId();
 
-    QString pointName = leftMenu->getDisplaySelectedGroup()->getPointButtonGroup()->getButtonGroup()->checkedButton()->text();
+    QString pointName = ((DoubleClickableButton *)leftMenu->getDisplaySelectedGroup()->getPointButtonGroup()->getButtonGroup()->checkedButton())->getRealName();
 
     if(pointName.compare("") != 0){
         /// update the pointview and show the point on the map with hover color
@@ -2738,7 +2738,7 @@ void MainWindow::editPointFromGroupMenu(void){
 void MainWindow::displayPointInfoFromGroupMenu(void){
     qDebug() << "display point info from group menu event called";
     /// retrieves a pointer to the pointView using the text of the label
-    QString pointName = leftMenu->getDisplaySelectedGroup()->getPointButtonGroup()->getButtonGroup()->checkedButton()->text();
+    QString pointName = ((DoubleClickableButton*)leftMenu->getDisplaySelectedGroup()->getPointButtonGroup()->getButtonGroup()->checkedButton())->getRealName();
     PointView* pointView = points->findPointView(pointName);
 
     if(pointName.compare("") != 0 && pointView){
@@ -2942,7 +2942,7 @@ void MainWindow::updateCoordinates(double x, double y){
  * removes a point which does not belong to the default group, from the group menu
  */
 void MainWindow::removePointFromGroupMenu(void){
-    QString checkedId = leftMenu->getDisplaySelectedGroup()->getPointButtonGroup()->getButtonGroup()->checkedButton()->text();
+    QString checkedId = ((DoubleClickableButton *)leftMenu->getDisplaySelectedGroup()->getPointButtonGroup()->getButtonGroup()->checkedButton())->getRealName();
 
     if(checkedId.compare("") != 0)
         askForDeletePointConfirmation(checkedId);
@@ -3236,9 +3236,9 @@ void MainWindow::modifyGroupWithEnter(QString name){
     if(pointsLeftWidget->checkGroupName(name) == 0){
         leftMenu->getCloseButton()->setEnabled(true);
 
+
         /// Update the model
         points->getGroups()->insert(name, points->getGroups()->take(pointsLeftWidget->getLastCheckedId()));
-
         /// updates the group box to create a point
         createPointWidget->updateGroupBox();
 
@@ -3255,8 +3255,9 @@ void MainWindow::modifyGroupWithEnter(QString name){
 
         /// updates view
         int checkedId = pointsLeftWidget->getGroupButtonGroup()->getButtonIdByName(pointsLeftWidget->getGroupButtonGroup()->getEditedGroupName());
+
         pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(checkedId)->show();
-        pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(checkedId)->setText(name);
+        ((DoubleClickableButton *)pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(checkedId))->setName(name);
 
 
         pointsLeftWidget->getGroupButtonGroup()->getModifyEdit()->hide();

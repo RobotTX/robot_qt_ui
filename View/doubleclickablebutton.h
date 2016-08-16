@@ -14,7 +14,7 @@ class DoubleClickableButton: public QPushButton
 public:
     DoubleClickableButton(const QString string, QWidget *parent = 0);
     QString getRealName() {return realName;}
-
+    void setName(QString newName);
 private :
     QString realName;
     QString nameToDisplay;
