@@ -25,7 +25,7 @@ class QDropEvent;
 #define PIXMAP_HOME_STOP ":/icons/red_home"
 #define PIXMAP_HOME_HOVER ":/icons/orange_home"
 #define PIXMAP_HOME_START_STOP ":/icons/green_red_home"
-#include <qdebug.h>
+#include <QDebug>
 
 /**
  * @brief The PointView class
@@ -69,7 +69,7 @@ protected:
 
 signals:
     void pointRightClicked(QString);
-    void pointLeftClicked(QString);
+    void pointLeftClicked(QString name, double x, double y);
     void addPointPath(QString name, double x, double y);
     void homeEdited(QString);
     void moveEditedPathPoint();

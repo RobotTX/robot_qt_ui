@@ -6,9 +6,10 @@
 #include <QVBoxLayout>
 #include <QPushButton>
 #include <QMainWindow>
-#include <topleftmenu.h>
-#include <qdebug.h>
+#include "topleftmenu.h"
+#include <QDebug>
 #include "buttonmenu.h"
+#include "View/doubleclickablebutton.h"
 
 RobotsLeftWidget::RobotsLeftWidget(QMainWindow* _parent):QWidget(_parent){
     parent = _parent;
@@ -40,7 +41,7 @@ QString RobotsLeftWidget::getSelectedRobotName()
     qDebug() << "check for name";
 
 
-    return btnGroup->getBtnGroup()->checkedButton()->text();
+    return (static_cast<DoubleClickableButton*>(btnGroup->getBtnGroup()->checkedButton())->getRealName());
 }
 
 void RobotsLeftWidget::setRobots(QSharedPointer<Robots> const &_robots){

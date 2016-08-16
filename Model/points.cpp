@@ -165,7 +165,7 @@ QSharedPointer<PointView> Points::createPoint(const QString pointName, const dou
     if(!displayed)
         pointView->hide();
 
-    connect(&(*pointView), SIGNAL(pointLeftClicked(QString)), mainWindow, SLOT(displayPointEvent(QString)));
+    connect(&(*pointView), SIGNAL(pointLeftClicked(QString, double, double)), mainWindow, SLOT(displayPointEvent(QString, double, double)));
     connect(&(*pointView), SIGNAL(editedPointPositionChanged(double, double)), mainWindow, SLOT(updateCoordinates(double, double)));
     connect(&(*pointView), SIGNAL(moveEditedPathPoint()), mainWindow, SLOT(moveEditedPathPointSlot()));
     connect(&(*pointView), SIGNAL(addPointPath(QString, double, double)), mainWindow, SLOT(addPointPathSlot(QString, double, double)));

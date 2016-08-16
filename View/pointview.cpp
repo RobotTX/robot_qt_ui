@@ -34,7 +34,9 @@ void PointView::mousePressEvent(QGraphicsSceneMouseEvent *event){
         }
         if(event->button() == Qt::LeftButton){
             qDebug() << "PointView::mousePressEvent blabla" << getPoint()->isPath();
-            emit pointLeftClicked(getPoint()->getName());
+            emit pointLeftClicked(getPoint()->getName(),
+                                  getPoint()->getPosition().getX(),
+                                  getPoint()->getPosition().getY());
         }
 
     } else if(state == GraphicItemState::CREATING_PATH){

@@ -41,7 +41,7 @@
 #include <QStringList>
 #include <QVector>
 #include "View/displayselectedpointrobots.h"
-
+#include "doubleclickablebutton.h"
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow) {
     ui->setupUi(this);
@@ -686,8 +686,8 @@ void MainWindow::setSelectedRobot(QAbstractButton *button){
     robotsLeftWidget->getActionButtons()->getEditButton()->setEnabled(true);
     robotsLeftWidget->getActionButtons()->getGoButton()->setEnabled(true);
     robotsLeftWidget->getActionButtons()->getMapButton()->setEnabled(true);
-    RobotView* mySelectedRobot =  robots->getRobotViewByName(robotsLeftWidget->getBtnGroup()
-                                                  ->getBtnGroup()->checkedButton()->text());
+    RobotView* mySelectedRobot =  robots->getRobotViewByName(((DoubleClickableButton *)robotsLeftWidget->getBtnGroup()
+                                                  ->getBtnGroup()->checkedButton())->getRealName());
     robotsLeftWidget->getActionButtons()->getMapButton()->setChecked(mySelectedRobot->isVisible());
 }
 
@@ -714,12 +714,12 @@ void MainWindow::backRobotBtnEvent(){
 void MainWindow::editRobotBtnEvent(){
     qDebug() << "editRobotBtnEvent called";
 
-    editSelectedRobot(robots->getRobotViewByName(robotsLeftWidget->getBtnGroup()->getBtnGroup()->checkedButton()->text()));
+    editSelectedRobot(robots->getRobotViewByName(((DoubleClickableButton *)robotsLeftWidget->getBtnGroup()->getBtnGroup()->checkedButton())->getRealName()));
 }
 
 void MainWindow::checkRobotBtnEventMenu(){
     qDebug() << "checkRobotBtnEventMenu called";
-    QString name = robotsLeftWidget->getBtnGroup()->getBtnGroup()->checkedButton()->text();
+    QString name = ((DoubleClickableButton *)robotsLeftWidget->getBtnGroup()->getBtnGroup()->checkedButton())->getRealName();
 
     checkRobotBtnEvent(name);
 }
@@ -1724,8 +1724,7 @@ void MainWindow::minusGroupBtnEvent(){
     pointsLeftWidget->getGroupNameEdit()->hide();
     pointsLeftWidget->getGroupNameLabel()->hide();
 
-    QString checkedId = pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->checkedButton()->text();
-
+    QString checkedId = ((DoubleClickableButton *) pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->checkedButton())->getRealName();
     /// we have to delete a group
     if(points->isAGroup(checkedId))
         askForDeleteGroupConfirmation(checkedId);
@@ -1811,7 +1810,7 @@ void MainWindow::editGroupBtnEvent(){
     setEnableAll(false);
     int btnIndex = pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->checkedId();
     qDebug() << "btnIndex" << btnIndex;
-    pointsLeftWidget->setLastCheckedId(pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->checkedButton()->text());
+    pointsLeftWidget->setLastCheckedId(((DoubleClickableButton * )pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->checkedButton())->getRealName());
 
     pointsLeftWidget->setCreatingGroup(false);
 
@@ -1825,7 +1824,7 @@ void MainWindow::editGroupBtnEvent(){
     pointsLeftWidget->getGroupNameEdit()->hide();
     pointsLeftWidget->getGroupNameLabel()->hide();
     QAbstractButton* btn = pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->checkedButton();
-    QString checkedId = pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->checkedButton()->text();
+    QString checkedId =  ((DoubleClickableButton *)pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->checkedButton())->getRealName();
 
     /// it's an isolated point
     if(checkedId.compare("") != 0 && points->isAPoint(checkedId)){
@@ -2213,70 +2212,77 @@ void MainWindow::askForDeleteGroupConfirmation(QString index){
     }
 }
 
-void MainWindow::displayPointEvent(QString name){
+void MainWindow::displayPointEvent(QString name, double x, double y){
     qDebug() << "MainWindow::displayPointEvent called" << name;
     QSharedPointer<PointView> pointView = points->findPointView(name);
+    if(!pointView){
+        pointView = points->findPathPointView(x, y);
+    }
 
-    /// If the point is not a path or is a path but from a permanent point, we display the menu with informations on the point
-    if(!(pointView->getPoint()->isPath() && pointView->getPoint()->getName().contains(PATH_POINT_NAME))){
+    if(pointView){
+        /// If the point is not a path or is a path but from a permanent point, we display the menu with informations on the point
+        if(!(pointView->getPoint()->isPath() && pointView->getPoint()->getName().contains(PATH_POINT_NAME))){
 
-        /// resets the color of the previous selected point if such point exists
-        if(pointView && !(*(pointView->getPoint()) == *(points->getTmpPointView()->getPoint())))
-            points->displayTmpPoint(false);
+            /// resets the color of the previous selected point if such point exists
+            if(pointView && !(*(pointView->getPoint()) == *(points->getTmpPointView()->getPoint())))
+                points->displayTmpPoint(false);
 
-        leftMenu->getDisplaySelectedPoint()->getActionButtons()->getMapButton()->setChecked(true);
+            leftMenu->getDisplaySelectedPoint()->getActionButtons()->getMapButton()->setChecked(true);
 
-        QString robotName = "";
-        if(pointView->getPoint()->isHome()){
-            RobotView* rv = robots->findRobotUsingHome(pointView->getPoint()->getName());
-            if(rv != NULL)
-                robotName = rv->getRobot()->getName();
-            else
-                qDebug() << "MainWindow::displayPointEvent : something unexpected happened";
-        }
+            QString robotName = "";
+            if(pointView->getPoint()->isHome()){
+                RobotView* rv = robots->findRobotUsingHome(pointView->getPoint()->getName());
+                if(rv != NULL)
+                    robotName = rv->getRobot()->getName();
+                else
+                    qDebug() << "MainWindow::displayPointEvent : something unexpected happened";
+            }
 
-        leftMenu->getDisplaySelectedPoint()->setPointView(pointView, robotName);
+            leftMenu->getDisplaySelectedPoint()->setPointView(pointView, robotName);
 
-        /// so that the points don't stay blue if we click a new point
-        points->setPixmapAll(PointView::PixmapType::NORMAL);
+            /// so that the points don't stay blue if we click a new point
+            points->setPixmapAll(PointView::PixmapType::NORMAL);
 
-        pointView->setState(GraphicItemState::NO_STATE);
+            pointView->setState(GraphicItemState::NO_STATE);
 
-        leftMenu->getDisplaySelectedPoint()->displayPointInfo();
+            leftMenu->getDisplaySelectedPoint()->displayPointInfo();
 
-        hideAllWidgets();
+            hideAllWidgets();
 
-        leftMenu->show();
+            leftMenu->show();
 
-        leftMenu->getDisplaySelectedPoint()->show();
-        resetFocus();
-        switchFocus(pointView->getPoint()->getName(), leftMenu->getDisplaySelectedPoint(), MainWindow::WidgetType::POINT);
-
-        qDebug() << "MainWindow::displayPointEvent  : is this point a path ?" << (pointView->getPoint()->isPath()) << pointView->getPoint()->getType();
-        if(pointView->getPoint()->isHome()){
-            RobotView* rv = robots->findRobotUsingHome(pointView->getPoint()->getName());
-            if(rv != NULL)
-                robotName = rv->getRobot()->getName();
-            else
-                qDebug() << "MainWindow::displayPointEvent  : something unexpected happened";
-        }
-        pointView->setPixmap(PointView::PixmapType::MID);
-        pointView->setLastPixmap(QPixmap(PIXMAP_MID));
-
-        if(pointView->getPoint()->isPath()){
-            /// if it's a path point the edition/suppression is forbidden from here
-            leftMenu->getDisplaySelectedPoint()->getActionButtons()->getEditButton()->setEnabled(false);
-            leftMenu->getDisplaySelectedPoint()->getActionButtons()->getMinusButton()->setEnabled(false);
-        }
-
-    } else {
-        /// The point is a path' point from a temporary point so we display the page of the robot in which this pathpoint is used
-        RobotView* robot = robots->findRobotUsingTmpPointInPath(pointView->getPoint());
-        if(robot){
-            qDebug() << "MainWindow::displayPointEvent  At least, I found the robot" << robot->getRobot()->getName();
+            leftMenu->getDisplaySelectedPoint()->show();
             resetFocus();
-            setSelectedRobot(robot);
+            switchFocus(pointView->getPoint()->getName(), leftMenu->getDisplaySelectedPoint(), MainWindow::WidgetType::POINT);
+
+            qDebug() << "MainWindow::displayPointEvent  : is this point a path ?" << (pointView->getPoint()->isPath()) << pointView->getPoint()->getType();
+            if(pointView->getPoint()->isHome()){
+                RobotView* rv = robots->findRobotUsingHome(pointView->getPoint()->getName());
+                if(rv != NULL)
+                    robotName = rv->getRobot()->getName();
+                else
+                    qDebug() << "MainWindow::displayPointEvent  : something unexpected happened";
+            }
+            pointView->setPixmap(PointView::PixmapType::MID);
+            pointView->setLastPixmap(QPixmap(PIXMAP_MID));
+
+            if(pointView->getPoint()->isPath()){
+                /// if it's a path point the edition/suppression is forbidden from here
+                leftMenu->getDisplaySelectedPoint()->getActionButtons()->getEditButton()->setEnabled(false);
+                leftMenu->getDisplaySelectedPoint()->getActionButtons()->getMinusButton()->setEnabled(false);
+            }
+
+        } else {
+            /// The point is a path' point from a temporary point so we display the page of the robot in which this pathpoint is used
+            RobotView* robot = robots->findRobotUsingTmpPointInPath(pointView->getPoint());
+            if(robot){
+                qDebug() << "MainWindow::displayPointEvent  At least, I found the robot" << robot->getRobot()->getName();
+                resetFocus();
+                setSelectedRobot(robot);
+            }
         }
+    } else {
+        qDebug() << "MainWindow::displayPointEvent could not found the pointView" << name << x << y;
     }
 }
 
@@ -2293,7 +2299,7 @@ void MainWindow::displayGroupMapEvent(void){
     pointsLeftWidget->getGroupNameEdit()->hide();
     pointsLeftWidget->getGroupNameLabel()->hide();
 
-    QString checkedName = pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->checkedButton()->text();
+    QString checkedName = ((DoubleClickableButton *) pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->checkedButton())->getRealName();
 
     int checkedId = pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->checkedId();
     /// we display groups
@@ -2439,7 +2445,7 @@ void MainWindow::displayPointsInGroup(void){
     pointsLeftWidget->getGroupNameLabel()->hide();
 
     /// retrieves the id of the checked button within the group of buttons
-    QString checkedName = pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->checkedButton()->text();
+    QString checkedName = ((DoubleClickableButton *)pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->checkedButton())->getRealName();
 
     /// it's a group
     if(points->isAGroup(checkedName)){
@@ -2663,7 +2669,7 @@ void MainWindow::editPointFromGroupMenu(void){
 
     qDebug() << "working on group" << groupName << "and id" << leftMenu->getDisplaySelectedGroup()->getPointButtonGroup()->getButtonGroup()->checkedId();
 
-    QString pointName = leftMenu->getDisplaySelectedGroup()->getPointButtonGroup()->getButtonGroup()->checkedButton()->text();
+    QString pointName = ((DoubleClickableButton *)leftMenu->getDisplaySelectedGroup()->getPointButtonGroup()->getButtonGroup()->checkedButton())->getRealName();
 
     if(pointName.compare("") != 0){
         /// update the pointview and show the point on the map with hover color
@@ -2737,8 +2743,10 @@ void MainWindow::editPointFromGroupMenu(void){
 void MainWindow::displayPointInfoFromGroupMenu(void){
     qDebug() << "display point info from group menu event called";
     /// retrieves a pointer to the pointView using the text of the label
-    QString pointName = leftMenu->getDisplaySelectedGroup()->getPointButtonGroup()->getButtonGroup()->checkedButton()->text();
+
+    QString pointName = static_cast<DoubleClickableButton*>(leftMenu->getDisplaySelectedGroup()->getPointButtonGroup()->getButtonGroup()->checkedButton())->getRealName();
     QSharedPointer<PointView> pointView = points->findPointView(pointName);
+
 
     if(pointName.compare("") != 0 && pointView){
         setMessageTop(TEXT_COLOR_NORMAL, "");
@@ -2941,7 +2949,7 @@ void MainWindow::updateCoordinates(double x, double y){
  * removes a point which does not belong to the default group, from the group menu
  */
 void MainWindow::removePointFromGroupMenu(void){
-    QString checkedId = leftMenu->getDisplaySelectedGroup()->getPointButtonGroup()->getButtonGroup()->checkedButton()->text();
+    QString checkedId = ((DoubleClickableButton *)leftMenu->getDisplaySelectedGroup()->getPointButtonGroup()->getButtonGroup()->checkedButton())->getRealName();
 
     if(checkedId.compare("") != 0)
         askForDeletePointConfirmation(checkedId);
@@ -2960,7 +2968,7 @@ void MainWindow::displayPointFromGroupMenu(){
     qDebug() << "2" << (leftMenu->getDisplaySelectedGroup()->getPointButtonGroup() == NULL);
     qDebug() << "3" << (leftMenu->getDisplaySelectedGroup()->getPointButtonGroup()->getButtonGroup() == NULL);
     qDebug() << "4" << (leftMenu->getDisplaySelectedGroup()->getPointButtonGroup()->getButtonGroup()->checkedButton() == NULL);
-    const QString pointName = leftMenu->getDisplaySelectedGroup()->getPointButtonGroup()->getButtonGroup()->checkedButton()->text();
+    const QString pointName = ((DoubleClickableButton *)leftMenu->getDisplaySelectedGroup()->getPointButtonGroup()->getButtonGroup()->checkedButton())->getRealName();
     qDebug() << "displaypointfromgroupmenu event called" << pointName ;
 
     int checkedId = leftMenu->getDisplaySelectedGroup()->getPointButtonGroup()->getButtonIdByName(pointName);
@@ -3235,9 +3243,9 @@ void MainWindow::modifyGroupWithEnter(QString name){
     if(pointsLeftWidget->checkGroupName(name) == 0){
         leftMenu->getCloseButton()->setEnabled(true);
 
+
         /// Update the model
         points->getGroups()->insert(name, points->getGroups()->take(pointsLeftWidget->getLastCheckedId()));
-
         /// updates the group box to create a point
         createPointWidget->updateGroupBox();
 
@@ -3254,8 +3262,9 @@ void MainWindow::modifyGroupWithEnter(QString name){
 
         /// updates view
         int checkedId = pointsLeftWidget->getGroupButtonGroup()->getButtonIdByName(pointsLeftWidget->getGroupButtonGroup()->getEditedGroupName());
+
         pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(checkedId)->show();
-        pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(checkedId)->setText(name);
+        ((DoubleClickableButton *)pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(checkedId))->setName(name);
 
 
         pointsLeftWidget->getGroupButtonGroup()->getModifyEdit()->hide();
