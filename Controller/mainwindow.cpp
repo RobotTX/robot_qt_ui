@@ -1650,6 +1650,7 @@ void MainWindow::setSelectedPoint(){
 
     resetFocus();
 
+
     createPointWidget->getGroupBox()->hide();
     createPointWidget->getGroupLabel()->hide();
 
@@ -1661,40 +1662,31 @@ void MainWindow::setSelectedPoint(){
     /// tmp point is blue
     displaySelectedPointView->setPixmap(PointView::MID);
 
-    /// we are not modifying an existing point
-    if(!leftMenu->getDisplaySelectedPoint()->getActionButtons()->getEditButton()->isChecked()){
-    //qDebug() << "editing";
+
+    int id = bottomLayout->getViewPathRobotBtnGroup()->checkedId();
+    if(id > 0)
+        pathPainter->setCurrentPath(robots->getRobotsVector().at(id)->getRobot()->getPath());
+
     leftMenu->show();
 
-        displaySelectedPointView->setState(GraphicItemState::EDITING_PERM);
-        hideAllWidgets();
-        createPointWidget->setSelectedPoint(displaySelectedPointView);
-        createPointWidget->show();
-        float x = displaySelectedPointView->getPoint()->getPosition().getX();
-        float y = displaySelectedPointView->getPoint()->getPosition().getY();
+    hideAllWidgets();
+    createPointWidget->setSelectedPoint(displaySelectedPointView);
+    createPointWidget->show();
+    float x = displaySelectedPointView->getPoint()->getPosition().getX();
+    float y = displaySelectedPointView->getPoint()->getPosition().getY();
 
-        if(map->getMapImage().pixelColor(x ,y).red() >= 254){
-            setMessageTop(TEXT_COLOR_INFO, "To save this point permanently click the \"+\" button");
-            createPointWidget->getActionButtons()->getPlusButton()->setEnabled(true);
-            createPointWidget->getActionButtons()->getPlusButton()->setToolTip("Click this button if you want to save this point permanently");
-        } else {
-            setMessageTop(TEXT_COLOR_WARNING, "You cannot save this point because your robot(s) would not be able to go there");
-            createPointWidget->getActionButtons()->getPlusButton()->setEnabled(false);
-            createPointWidget->getActionButtons()->getPlusButton()->setToolTip("You cannot save this point because your robot(s) cannot go there");
-        }
-
-        leftMenu->getDisplaySelectedPoint()->hide();
-        switchFocus(displaySelectedPointView->getPoint()->getName(), createPointWidget, MainWindow::WidgetType::POINT);
+    if(map->getMapImage().pixelColor(x ,y).red() >= 254){
+        setMessageTop(TEXT_COLOR_INFO, "To save this point permanently click the \"+\" button");
+        createPointWidget->getActionButtons()->getPlusButton()->setEnabled(true);
+        createPointWidget->getActionButtons()->getPlusButton()->setToolTip("Click this button if you want to save this point permanently");
     } else {
-        /// on the left we display the position of the temporary point as the user moves it around but we don't make any modifications on the model yet
-        leftMenu->getDisplaySelectedPoint()->getXLabel()->setText(QString::number(points->getTmpPointView()->getPoint()->getPosition().getX()));
-        leftMenu->getDisplaySelectedPoint()->getYLabel()->setText(QString::number(points->getTmpPointView()->getPoint()->getPosition().getY()));
-        if(displaySelectedPointView->getPoint()->isHome()){
-            leftMenu->getDisplaySelectedPoint()->getDisplaySelectedPointRobots()->getHomeWidget()->show();
-        } else {
-            leftMenu->getDisplaySelectedPoint()->getDisplaySelectedPointRobots()->getHomeWidget()->hide();
-        }
+        setMessageTop(TEXT_COLOR_WARNING, "You cannot save this point because your robot(s) would not be able to go there");
+        createPointWidget->getActionButtons()->getPlusButton()->setEnabled(false);
+        createPointWidget->getActionButtons()->getPlusButton()->setToolTip("You cannot save this point because your robot(s) cannot go there");
     }
+
+    leftMenu->getDisplaySelectedPoint()->hide();
+    switchFocus(displaySelectedPointView->getPoint()->getName(), createPointWidget, MainWindow::WidgetType::POINT);
 }
 
 /**
