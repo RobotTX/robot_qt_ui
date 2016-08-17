@@ -4,7 +4,7 @@
 #include <QMainWindow>
 #include <QLabel>
 
-MapLeftWidget::MapLeftWidget(QMainWindow* parent):QWidget(parent){
+MapLeftWidget::MapLeftWidget(QMainWindow* parent): QWidget(parent){
     layout = new QVBoxLayout(this);
 /*
     /// Back button
@@ -16,15 +16,19 @@ MapLeftWidget::MapLeftWidget(QMainWindow* parent):QWidget(parent){
     /// Save & load buttons
     QPushButton* saveBtn = new QPushButton(QIcon(":/icons/upload.png"),"Save this map", this);
     QPushButton* loadBtn = new QPushButton(QIcon(":/icons/download.png"),"Load a map", this);
+    QPushButton* saveStateBtn = new QPushButton(QIcon(":/icons/save_map.png"), "Save the state of the map", this);
 
     saveBtn->setIconSize(parent->size()/10);
     loadBtn->setIconSize(parent->size()/10);
+    saveStateBtn->setIconSize(parent->size()/10);
 
-    saveBtn->setStyleSheet ("text-align: left");
-    loadBtn->setStyleSheet ("text-align: left");
+    saveBtn->setStyleSheet("text-align: left");
+    loadBtn->setStyleSheet("text-align: left");
+    saveStateBtn->setStyleSheet("text-align: left");
 
     layout->addWidget(saveBtn);
     layout->addWidget(loadBtn);
+    layout->addWidget(saveStateBtn);
 
     QLabel* label = new QLabel("To scan a Map,\nselect a robot\nand click the button\n\"Scan a map\"", this);
     label->setStyleSheet ("text-align: left");
@@ -33,6 +37,7 @@ MapLeftWidget::MapLeftWidget(QMainWindow* parent):QWidget(parent){
    // connect(backBtn, SIGNAL(clicked()), parent, SLOT(backMapBtnEvent()));
     connect(saveBtn, SIGNAL(clicked()), parent, SLOT(saveMapBtnEvent()));
     connect(loadBtn, SIGNAL(clicked()), parent, SLOT(loadMapBtnEvent()));
+    connect(saveStateBtn, SIGNAL(clicked()), parent, SLOT(saveMapState()));
 
     hide();
     setMaximumWidth(parent->width()*4/10);

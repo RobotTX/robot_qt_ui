@@ -34,6 +34,7 @@ private:
     QPushButton* closeBtn;
     QPushButton* centerBtn;
     QPushButton* settingBtn;
+    QPushButton* saveMapBtn;
 
     QPair<QString, QString> lastMessage;
 };

@@ -42,6 +42,18 @@ TopLayout::TopLayout(QMainWindow* parent): QWidget(parent), lastMessage(TEXT_COL
                             "border-radius: 5px }");
     connect(connectBtn, SIGNAL(clicked()), parent, SLOT(connectToRobot()));
 
+    saveMapBtn = new QPushButton(QIcon(":/icons/save_map.png"), "", this);
+    saveMapBtn->setIconSize(parent->size()/8);
+    saveMapBtn->setMaximumWidth(40);
+    saveMapBtn->setFlat(true);
+    saveMapBtn->setFocusPolicy(Qt::FocusPolicy::NoFocus);
+    layout->addWidget(saveMapBtn);
+    saveMapBtn->setStyleSheet("QPushButton:hover { background-color: " + button_hover_color + ";"
+                                                                                          "border: 1px solid #aaaaaa;"
+                                                                                          "border-radius: 5px }");
+    saveMapBtn->setToolTip("Restore the state of the map");
+    connect(saveMapBtn, SIGNAL(clicked()), parent, SLOT(saveMapState()));
+
     centerBtn = new QPushButton(QIcon(":/icons/center.png"), "", this);
     centerBtn->setToolTip("Click to center the map");
     centerBtn->setIconSize(parent->size()/8);

@@ -16,10 +16,12 @@ void CustomizedLineEdit::focusOutEvent(QFocusEvent* e){
 
 void CustomizedLineEdit::hideEvent(QHideEvent *event){
     emit enableGroupEdit(true);
+    qDebug() << "LineEdit::hideEvent called";
     QWidget::hide();
 }
 
 void CustomizedLineEdit::showEvent(QShowEvent *event){
     emit enableGroupEdit(false);
+    qDebug() << "LineEdit::showEvent called";
     QWidget::show();
 }

@@ -1,7 +1,7 @@
 #ifndef COLORS_H
 #define COLORS_H
 
-#include <qstring.h>
+#include <QString>
 
 // color theme, if you change colors you may have to clean and rebuild for it to be effective
 // for "no color" ( the default grey) , put transparent

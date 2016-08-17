@@ -65,6 +65,7 @@
         <file alias="setting.png">082__setting_cog.png</file>
         <file>cropped_list.png</file>
         <file alias="stop.png">awesome_stop.png</file>
+        <file alias="save_map.png">map_and_pin.png</file>
     </qresource>
     <qresource prefix="/xml">
         <file>points.xml</file>

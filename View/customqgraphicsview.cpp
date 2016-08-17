@@ -15,8 +15,25 @@ void CustomQGraphicsView::wheelEvent(QWheelEvent *event){
         }
     } else {
         if(zoomCoeff > 0.6){
-            scale(0.7,0.7);
-            zoomCoeff *= 0.7;
+            scale(1/1.3,1/1.3);
+            zoomCoeff *= 1/1.3;
+        }
+    }
+}
+
+void CustomQGraphicsView::setZoomCoeff(const float _zoom){
+    if(_zoom > zoomCoeff){
+        while(zoomCoeff < _zoom){
+            //qDebug() << "zooming";
+            scale(1.3, 1.3);
+            zoomCoeff *= 1.3;
+        }
+    } else {
+        if(_zoom < zoomCoeff){
+            while(zoomCoeff > _zoom){
+                scale(1/1.3, 1/1.3);
+                zoomCoeff *= 1/1.3;
+            }
         }
     }
 }

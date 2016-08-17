@@ -52,9 +52,11 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     QVBoxLayout* mainLayout = new QVBoxLayout(mainWidget);
     map = QSharedPointer<Map>(new Map());
 
-    QSettings settings;
-
     map->setMapFromFile(settings.value("mapFile", ":/maps/map.pgm").toString());
+
+    mapState.first.setX(settings.value("mapState/point/x", .0f).toFloat());
+    mapState.first.setY(settings.value("mapState/point/y", .0f).toFloat());
+    mapState.second = settings.value("mapState/zoom", 1.0f).toFloat();
 
     /**************************************************************/
 
@@ -64,8 +66,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     map->setOrigin(Position(-1, -15.4));
 
     /**************************************************************/
-
-
 
     robots = QSharedPointer<Robots>(new Robots());
     scene = new QGraphicsScene();
@@ -96,7 +96,11 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
     initializeRobots();
 
+    scene->setSceneRect(0, 0, 800, 600);
+
     scene->addItem(mapPixmapItem);
+
+
 
     graphicsView->scale(std::max(graphicsView->parentWidget()->width()/scene->width(), graphicsView->parentWidget()->height()/scene->height()),
                         std::max(graphicsView->parentWidget()->width()/scene->width(), graphicsView->parentWidget()->height()/scene->height()));
@@ -105,7 +109,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     graphicsView->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     graphicsView->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     graphicsView->setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding));
-
 
     leftMenu = new LeftMenu(this, points, robots, points, map, pathPainter);
 
@@ -179,19 +182,18 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     connect(this, SIGNAL(resetPathCreationWidget()), pathCreationWidget, SLOT(resetWidget()));
 
     mainLayout->addLayout(bottom);
-    graphicsView->setStyleSheet("CustomQGraphicsView{background-color: "+background_map_view+"}");
+    graphicsView->setStyleSheet("CustomQGraphicsView{background-color: " + background_map_view + "}");
     setCentralWidget(mainWidget);
 
     /// to navigate with the tab key
     setTabOrder(leftMenu->getReturnButton(), pointsLeftWidget->getActionButtons()->getPlusButton());
 
-    /// Centers the map
+    /// Centers the map and initialize the map state
+
     centerMap();
 
     /// Some style
-    //this->setStyleSheet("QWidget{background-color: white}");
-    //topLayout->setAutoFillBackground(true);
-    //topLayout->setStyleSheet("*{background-color: #5481a4}");
+
     this->setAutoFillBackground(true);
     rightLayout->setContentsMargins(0,0,0,0);
     bottom->setContentsMargins(0,0,0,0);
@@ -202,8 +204,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     bottomLayout->setContentsMargins(0,0,0,0);
     mainLayout->setSpacing(0);
     //setStyleSheet("QPushButton{color: white}");
-
-
 }
 
 MainWindow::~MainWindow(){
@@ -258,7 +258,7 @@ void MainWindow::initializeRobots(){
     robot1->setWifi("Swaghetti Yolognaise");
     RobotView* robotView1 = new RobotView(robot1, mapPixmapItem);
     connect(robotView1, SIGNAL(setSelectedSignal(RobotView*)), this, SLOT(setSelectedRobot(RobotView*)));
-    robotView1->setPosition(200, 200);
+    robotView1->setPosition(896, 1094);
     robotView1->setParentItem(mapPixmapItem);
     robots->add(robotView1);
     tmpMap[robot1->getIp()] = robot1->getName();
@@ -269,7 +269,7 @@ void MainWindow::initializeRobots(){
     robot2->setWifi("Swaghetti Yolognaise");
     RobotView* robotView2 = new RobotView(robot2, mapPixmapItem);
     connect(robotView2, SIGNAL(setSelectedSignal(RobotView*)), this, SLOT(setSelectedRobot(RobotView*)));
-    robotView2->setPosition(100, 100);
+    robotView2->setPosition(907, 1175);
     robotView2->setParentItem(mapPixmapItem);
     robots->add(robotView2);
     tmpMap[robot2->getIp()] = robot2->getName();
@@ -280,7 +280,7 @@ void MainWindow::initializeRobots(){
     robot3->setWifi("Swaghetti Yolognaise");
     RobotView* robotView3 = new RobotView(robot3, mapPixmapItem);
     connect(robotView3, SIGNAL(setSelectedSignal(RobotView*)), this, SLOT(setSelectedRobot(RobotView*)));
-    robotView3->setPosition(200, 300);
+    robotView3->setPosition(1148, 915);
     robotView3->setParentItem(mapPixmapItem);
     robots->add(robotView3);
     tmpMap[robot3->getIp()] = robot3->getName();
@@ -1712,7 +1712,6 @@ void MainWindow::pointBtnEvent(void){
 void MainWindow::plusGroupBtnEvent(){
     setMessageTop(TEXT_COLOR_INFO, "The name of your group cannot be empty");
     qDebug() << "plusGroupBtnEvent called";
-    topLayout->setEnabled(false);
 
     pointsLeftWidget->getGroupNameEdit()->setFocus();
     pointsLeftWidget->setCreatingGroup(true);
@@ -3320,7 +3319,7 @@ void MainWindow::modifyGroupAfterClick(QString name){
     name = name.simplified();
     qDebug() << "modifyGroupAfterClick called from" << pointsLeftWidget->getLastCheckedId() << "to" << name;
     topLayout->setEnabled(true);
-    setEnableAll(true);
+
     if (pointsLeftWidget->getLastCheckedId() != "")
      {
         /// resets the menu
@@ -3398,7 +3397,6 @@ void MainWindow::setMessageCreationPoint(QString type, CreatePointWidget::Error 
 void MainWindow::choosePointName(QString message){
     setMessageTop(TEXT_COLOR_INFO, message);
 }
-
 
 /**********************************************************************************************************************************/
 
@@ -3530,7 +3528,9 @@ void MainWindow::setEnableAll(bool enable, GraphicItemState state, bool clearPat
 }
 
 void MainWindow::centerMap(){
-    scene->views().at(0)->centerOn(mapPixmapItem);
+    mapPixmapItem->setPos(mapState.first);
+    graphicsView->centerOn(mapState.first);
+    graphicsView->setZoomCoeff(mapState.second);
 }
 
 void MainWindow::settingBtnSlot(){
@@ -3541,4 +3541,12 @@ void MainWindow::setTemporaryMessageTop(const QString type, const QString messag
     setMessageTop(type, message);
     delay(ms);
     setMessageTop(TEXT_COLOR_NORMAL, "");
+}
+
+void MainWindow::saveMapState(){
+    mapState.first = mapPixmapItem->pos();
+    mapState.second = graphicsView->getZoomCoeff();
+    settings.setValue("mapState/point/x", mapState.first.x());
+    settings.setValue("mapState/point/y", mapState.first.y());
+    settings.setValue("mapState/zoom", mapState.second);
 }

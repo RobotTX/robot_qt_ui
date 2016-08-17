@@ -23,6 +23,7 @@ class QAbstractButton;
 class QVBoxLayout;
 class PathPainter;
 class DoubleClickableButton;
+
 #include "View/createpointwidget.h"
 #include "View/toplayout.h"
 #include "Model/points.h"
@@ -34,6 +35,7 @@ class DoubleClickableButton;
 #include "Model/origin.h"
 #include <QMessageBox>
 #include "Model/point.h"
+#include <QSettings>
 
 
 //#define XML_PATH "/home/m-a/Documents/QtProject/gobot-software/points.xml"
@@ -175,6 +177,7 @@ private slots:
     void centerMap();
     void setMessageCreationPoint(QString type, CreatePointWidget::Error error);
     void choosePointName(QString message);
+    void saveMapState();
 
     /**
      * @brief cancelEvent
@@ -237,6 +240,10 @@ private:
     LeftMenu* leftMenu;
     BottomLayout* bottomLayout;
     PathCreationWidget* pathCreationWidget;
+
+    QPair<QPointF, float> mapState;
+
+    QSettings settings;
 };
 
 #endif // MAINWINDOW_H
