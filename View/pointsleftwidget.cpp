@@ -113,6 +113,9 @@ PointsLeftWidget::PointsLeftWidget(QMainWindow* _parent, QSharedPointer<Points> 
     /// to reset the path points point views after a path point is deselected
     connect(this, SIGNAL(resetPathPointViews()), _parent, SLOT(resetPathPointViewsSlot()));
 
+    connect(groupNameEdit, SIGNAL(enableGroupEdit(bool)), _parent, SLOT(setEnableAll(bool)));
+    connect(groupButtonGroup->getModifyEdit(), SIGNAL(enableGroupEdit(bool)), _parent, SLOT(setEnableAll(bool)));
+
     setMaximumWidth(_parent->width()*4/10);
     setMinimumWidth(_parent->width()*4/10);
     downLayout->setAlignment(Qt::AlignBottom);

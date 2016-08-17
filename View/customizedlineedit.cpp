@@ -13,3 +13,13 @@ void CustomizedLineEdit::focusOutEvent(QFocusEvent* e){
     }
 }
 
+
+void CustomizedLineEdit::hideEvent(QHideEvent *event){
+    emit enableGroupEdit(true);
+    QWidget::hide();
+}
+
+void CustomizedLineEdit::showEvent(QShowEvent *event){
+    emit enableGroupEdit(false);
+    QWidget::show();
+}

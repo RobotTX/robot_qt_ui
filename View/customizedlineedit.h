@@ -16,10 +16,13 @@ public:
 
 public:
     void focusOutEvent(QFocusEvent* e);
+    void hideEvent(QHideEvent* event);
+    void showEvent(QShowEvent *event);
 
 signals:
     void clickSomewhere(QString name);
     void pressedEnter();
+    void enableGroupEdit(bool);
 };
 
 #endif // CUSTOMIZEDLINEEDIT_H

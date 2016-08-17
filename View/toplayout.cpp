@@ -54,7 +54,7 @@ TopLayout::TopLayout(QMainWindow* parent): QWidget(parent), lastMessage(TEXT_COL
                             "border-radius: 5px }");
     connect(centerBtn, SIGNAL(clicked()), parent, SLOT(centerMap()));
 
-    QPushButton* settingBtn = new QPushButton(QIcon(":/icons/setting.png"), "", this);
+    settingBtn = new QPushButton(QIcon(":/icons/setting.png"), "", this);
     settingBtn->setToolTip("Click to view/edit the settings");
     settingBtn->setIconSize(parent->size()/8);
     settingBtn->setMaximumWidth(40);
@@ -138,6 +138,7 @@ void TopLayout::setEnable(bool enable){
     connectBtn->setEnabled(enable);
     centerBtn->setEnabled(enable);
     closeBtn->setEnabled(enable);
+    settingBtn->setEnabled(enable);
 }
 
 void TopLayout::setLabelDelay(const QString msgType, const QString msg, int delayTime){

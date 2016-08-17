@@ -33,6 +33,8 @@ private:
     QPushButton* connectBtn;
     QPushButton* closeBtn;
     QPushButton* centerBtn;
+    QPushButton* settingBtn;
+
     QPair<QString, QString> lastMessage;
 };
 

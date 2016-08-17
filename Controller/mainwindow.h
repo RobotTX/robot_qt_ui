@@ -86,7 +86,6 @@ public:
     void switchFocus(QString name, QWidget* widget, WidgetType type);
     /// to sleep for ms milliseconds
     void delay(const int ms) const;
-    void setEnableAll(bool enable, GraphicItemState state = GraphicItemState::NO_STATE, bool clearPath = false, int noReturn = -1);
     void setTemporaryMessageTop(const QString type, const QString message, const int ms);
     void updateAllPaths(void);
     void clearPath(const int robotNb);
@@ -204,6 +203,7 @@ private slots:
     void updatePathPainterPointViewSlot();
     void stopPath(int robotNb);
     void resetPathPointViewsSlot();
+    void setEnableAll(bool enable, GraphicItemState state = GraphicItemState::NO_STATE, bool clearPath = false, int noReturn = -1);
 
 private:
     Ui::MainWindow* ui;

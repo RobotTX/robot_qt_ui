@@ -14,6 +14,7 @@ class QHBoxLayout;
 class GroupEditWindow;
 class Points;
 class QAbstractButton;
+class CustomizedLineEdit;
 
 #include <QWidget>
 #include <QSharedPointer>
@@ -40,7 +41,7 @@ public:
     GroupButtonGroup* getGroupButtonGroup(void) const { return groupButtonGroup; }
 
     QLabel* getGroupNameLabel(void) const { return groupNameLabel; }
-    QLineEdit* getGroupNameEdit(void) const { return groupNameEdit; }
+    CustomizedLineEdit* getGroupNameEdit(void) const { return groupNameEdit; }
 
     CustomScrollArea* getScrollArea(void) const { return scrollArea; }
 
@@ -100,7 +101,7 @@ private:
 
 
     QLabel* groupNameLabel;
-    QLineEdit* groupNameEdit;
+    CustomizedLineEdit* groupNameEdit;
 
     CustomScrollArea* scrollArea;
 
