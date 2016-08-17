@@ -553,7 +553,6 @@ void MainWindow::viewPathSelectedRobot(int robotNb, bool checked){
         QSharedPointer<Robot> robot = robots->getRobotsVector().at(robotNb)->getRobot();
         qDebug() << "viewPathSelectedRobot called on" << robot->getName();
         bottomLayout->uncheckViewPathSelectedRobot(robotNb);
-        emit resetPath();
 
         for(int i = 0; i < robot->getPath().size(); i++){
             qDebug() << i << ":" << robot->getPath().at(i)->getPoint().getName()
@@ -603,11 +602,15 @@ void MainWindow::setSelectedRobot(RobotView* robotView){
 
     hideAllWidgets();
     selectedRobot = robotView;
+    points->setPixmapAll(PointView::PixmapType::NORMAL, robotView);
     robots->setSelected(robotView);
     selectedRobotWidget->setSelectedRobot(selectedRobot);
     selectedRobotWidget->show();
-    switchFocus(robotView->getRobot()->getName(), selectedRobotWidget, MainWindow::WidgetType::ROBOT);
+    int id = bottomLayout->getViewPathRobotBtnGroup()->checkedId();
+    if(id > 0)
+        pathPainter->setCurrentPath(robots->getRobotsVector().at(id)->getRobot()->getPath());
 
+    switchFocus(robotView->getRobot()->getName(), selectedRobotWidget, MainWindow::WidgetType::ROBOT);
 
 }
 
@@ -1034,8 +1037,8 @@ void MainWindow::cancelPathSlot(){
     pointViewsToDisplay.clear();
 
     emit resetPathCreationWidget();
-    emit resetPath();
     pathPainter->setCurrentPath(selectedRobot->getRobot()->getPath());
+
     selectedRobot->getRobot()->setPath(pathPainter->getCurrentPath());
     bottomLayout->updateRobot(robots->getRobotId(selectedRobot->getRobot()->getName()), selectedRobot);
 
@@ -1122,11 +1125,11 @@ void MainWindow::homeEdited(QString name){
 
 void MainWindow::showHome(){
     qDebug() << "MainWindow::showHome called" << (selectedRobot->getRobot()->getHome()==NULL);
-    points->setPixmapAll(QPixmap(PIXMAP_NORMAL));
+
+    points->setPixmapAll(PointView::PixmapType::NORMAL, selectedRobot);
 
     if(selectedRobot->getRobot()->getHome() != NULL){
         QSharedPointer<PointView> pointView = selectedRobot->getRobot()->getHome();
-        pointView->setPixmap(PointView::PixmapType::NORMAL);
         if(pointView->isVisible()){
             qDebug() << "home is visible";
             pointView->setWasShown(true);
@@ -2302,7 +2305,6 @@ void MainWindow::displayPointEvent(QString name, double x, double y){
                     qDebug() << "MainWindow::displayPointEvent  : something unexpected happened";
             }
             pointView->setPixmap(PointView::PixmapType::MID);
-            pointView->setLastPixmap(QPixmap(PIXMAP_MID));
 
             if(pointView->getPoint()->isPath()){
                 /// if it's a path point the edition/suppression is forbidden from here

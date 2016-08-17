@@ -60,20 +60,24 @@ LeftMenu::LeftMenu(MainWindow* _parent, QSharedPointer<Points> const& _points,
 
     /// to display the information relative to a point
     displaySelectedPoint = new DisplaySelectedPoint(parent, robots, _points, _map);
+    displaySelectedPoint->hide();
     leftLayout->addWidget(displaySelectedPoint);
     leftLayout->setAlignment(displaySelectedPoint, Qt::AlignLeft);
 
     /// to display the information relative to a group of points
     displaySelectedGroup = new DisplaySelectedGroup(parent, _points);
+    displaySelectedGroup->hide();
     leftLayout->addWidget(displaySelectedGroup);
     leftLayout->setAlignment(displaySelectedGroup, Qt::AlignLeft);
 
     /// The first menu with 3 buttons : Robots, Points, Map
     leftMenuWidget = new LeftMenuWidget(parent, points);
+    leftMenuWidget->hide();
     leftLayout->addWidget(leftMenuWidget);
 
     /// Menu which display the list of points
     pointsLeftWidget = new PointsLeftWidget(parent, _points);
+    pointsLeftWidget->hide();
     leftLayout->addWidget(pointsLeftWidget);
 
     /// Menu which display the selected robot infos
@@ -81,19 +85,23 @@ LeftMenu::LeftMenu(MainWindow* _parent, QSharedPointer<Points> const& _points,
 
     connect(selectedRobotWidget, SIGNAL(showSelectedRobotWidget()), parent, SLOT(showHome()));
     connect(selectedRobotWidget, SIGNAL(hideSelectedRobotWidget()), parent, SLOT(hideHome()));
+    selectedRobotWidget->hide();
     leftLayout->addWidget(selectedRobotWidget);
 
     /// Menu which display the list of robots
     robotsLeftWidget = new RobotsLeftWidget(parent);
     robotsLeftWidget->setRobots(robots);
+    robotsLeftWidget->hide();
     leftLayout->addWidget(robotsLeftWidget,Qt::AlignTop);
 
     /// Menu which display the map menu in which user can save/load a map
     mapLeftWidget = new MapLeftWidget(parent);
+    mapLeftWidget->hide();
     leftLayout->addWidget(mapLeftWidget);
 
     /// Menu to edit the selected robot
     editSelectedRobotWidget = new EditSelectedRobotWidget(parent, robots);
+    editSelectedRobotWidget->hide();
     leftLayout->addWidget(editSelectedRobotWidget);
     connect(editSelectedRobotWidget, SIGNAL(robotSaved()), parent, SLOT(robotSavedEvent()));
     connect(editSelectedRobotWidget, SIGNAL(showEditSelectedRobotWidget()), parent, SLOT(showHome()));
@@ -101,11 +109,13 @@ LeftMenu::LeftMenu(MainWindow* _parent, QSharedPointer<Points> const& _points,
 
     /// Menu to edit the selected point
     createPointWidget = new CreatePointWidget(parent, pointViews);
+    createPointWidget->hide();
     leftLayout->addWidget(createPointWidget);
     connect(createPointWidget, SIGNAL(pointSaved(QString, double, double, QString)), parent, SLOT(pointSavedEvent(QString, double, double, QString)));
 
     /// Menu which display the widget for the creation of a path
     pathCreationWidget = new PathCreationWidget(parent, _points);
+    pathCreationWidget->hide();
     leftLayout->addWidget(pathCreationWidget);
 
     connect(pathCreationWidget, SIGNAL(addPathPoint(QString, double, double)), pathPainter, SLOT(addPathPointSlot(QString, double, double)));

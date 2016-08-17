@@ -2,7 +2,6 @@
 #define POINTS_H
 
 class QDataStream;
-class PointView;
 class MapView;
 class MainWindow;
 
@@ -31,7 +30,7 @@ class Points : public QObject{
 
     typedef QMap<QString, QSharedPointer<QVector<QSharedPointer<PointView>>>> Groups;
 public:
-    Points(QObject* parent);
+    Points(MainWindow *parent);
 
     /// a helper class to overload the << operator
     void display(std::ostream& stream) const;
@@ -60,20 +59,22 @@ public:
     bool isAGroup(const QString groupName) const;
     bool isAPoint(const QString pointName) const;
     bool isAPoint(const QString pointName, const double x, const double y) const;
+    bool isAHome(const QString pointName, const double x, const double y) const;
     QVector<QString> getHomeNameFromGroup(const QString groupName) const;
     QString getGroupNameFromPointName(const QString pointName) const;
     void addTmpPoint(MapView *mapView, MainWindow *mainWindow);
     void addPoint(const QString groupName, QSharedPointer<PointView>pointView);
     void insertPoint(const QString groupName, const int id, QSharedPointer<PointView>pointView);
     void insertPoint(const QString groupName, const int id, const QString pointName, const double x, const double y, const bool displayed, const Point::PointType type, MapView *mapView, MainWindow *mainWindow);
-    void setPixmapAll(const PointView::PixmapType type);
-    void setPixmapAll(const QPixmap pixmap);
+    void setPixmapAll(const PointView::PixmapType type, RobotView *selectedRobot = 0);
+    //void setPixmapAll(const QPixmap pixmap);
     QSharedPointer<PointView> createPoint(const QString pointName, const double x, const double y, const bool displayed, const Point::PointType type,
                                                    MapView* mapView, MainWindow* mainWindow);
     void updatePointViews(void);
 
 private:
     QSharedPointer<Groups> groups;
+    MainWindow* parent;
 };
 
 
