@@ -5,7 +5,7 @@
 #include "Controller/mainwindow.h"
 #include "View/mapview.h"
 
-Points::Points(QObject *parent) : QObject(parent){
+Points::Points(MainWindow *_parent) : parent(_parent), QObject(_parent){
     groups = QSharedPointer<Groups>(new Groups());
 }
 
@@ -145,7 +145,7 @@ QPair<QString, int> Points::findPointIndexes(const QString pointName) const {
     return indexes;
 }
 
-/// clears all the groups and add an empty default group
+/// clears all the groups
 void Points::clear(){
     qDebug() << "Points::clear called";
 
@@ -297,6 +297,21 @@ bool Points::isAPoint(const QString pointName, const double x, const double y) c
     return false;
 }
 
+bool Points::isAHome(const QString pointName, const double x, const double y) const{
+    QMapIterator<QString, QSharedPointer<QVector<QSharedPointer<PointView>>>> i(*groups);
+    while (i.hasNext()) {
+        i.next();
+        if(i.key().compare(PATH_GROUP_NAME) != 0){
+            for(int j = 0; j < i.value()->size(); j++){
+                if(i.value()->at(j)->getPoint()->getName().compare(pointName) == 0
+                        && i.value()->at(j)->getPoint()->comparePos(x, y))
+                    return i.value()->at(j)->getPoint()->isHome();
+            }
+        }
+    }
+    return false;
+}
+
 QVector<QString> Points::getHomeNameFromGroup(const QString groupName) const{
     QVector<QString> nameVector;
     for(int j = 0; j < groups->value(groupName)->size(); j++){
@@ -320,24 +335,22 @@ QString Points::getGroupNameFromPointName(const QString pointName) const{
     return "";
 }
 
-void Points::setPixmapAll(const PointView::PixmapType type){
+void Points::setPixmapAll(const PointView::PixmapType type, RobotView* selectedRobot){
     QMapIterator<QString, QSharedPointer<QVector<QSharedPointer<PointView>>>> i(*groups);
-    //qDebug() << "Points::setPixmapAll called";
+    qDebug() << "Points::setPixmapAll with PixmapType called";
     while(i.hasNext()) {
         i.next();
-        //qDebug() << i.key();
         if(i.key().compare(PATH_GROUP_NAME) != 0){
             for(int j = 0; j < i.value()->count(); j++){
-                //qDebug() << i.value()->at(j)->getPoint()->getName();
-                i.value()->at(j)->setPixmap(type);
+                i.value()->at(j)->setPixmap(type, selectedRobot);
             }
         }
     }
 }
-
+/*
 void Points::setPixmapAll(const QPixmap pixmap){
     QMapIterator<QString, QSharedPointer<QVector<QSharedPointer<PointView>>>> i(*groups);
-    qDebug() << "Points::setPixmapAll pixmap version called";
+    qDebug() << "Points::setPixmapAll with QPixmap called";
     while (i.hasNext()) {
         i.next();
         if(i.key().compare(PATH_GROUP_NAME) != 0){
@@ -347,7 +360,7 @@ void Points::setPixmapAll(const QPixmap pixmap){
             }
         }
     }
-}
+}*/
 
 void Points::addTmpPoint(MapView *mapView, MainWindow *mainWindow){
     addPoint(TMP_GROUP_NAME, TMP_POINT_NAME, 0, 0, false, Point::PointType::TEMP, mapView, mainWindow);

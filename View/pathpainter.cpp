@@ -2,6 +2,8 @@
 #include "View/mapview.h"
 #include "Model/points.h"
 #include "Model/point.h"
+#include "Model/robot.h"
+#include "View/pointview.h"
 #include <QDebug>
 #include <QPainterPath>
 #include <QPixmap>
@@ -15,7 +17,7 @@ PathPainter::PathPainter(MainWindow* const &mainWindow, MapView* const &mapPixma
 void PathPainter::resetPathSlot(void){
     qDebug() << "PathPainter::resetPathSlot called";
     path = QPainterPath();
-    points->setPixmapAll(PointView::PixmapType::NORMAL);
+    points->setPixmapAll(PointView::PixmapType::NORMAL, mainWindow->getSelectedRobot());
 
     if(QSharedPointer<QVector<QSharedPointer<PointView>>> group = points->getGroups()->value(PATH_GROUP_NAME)){
         for(int i = 0; i < group->size(); i++){
@@ -45,13 +47,22 @@ void PathPainter::addPathPointSlot(QString name, double x, double y){
 
     int nb = nbUsedPointView(name, x, y);
     QSharedPointer<PointView> pointView = points->findPathPointView(x, y);
+
     /// If found, it's a permanent point which is already in the path
     if(nb > 0 && pointView){
         points->addPoint(PATH_GROUP_NAME, pointView);
     } else {
         if(!points->isAPoint(name, x, y))
             name = PATH_POINT_NAME + QString::number(currentPath.size()+1);
-        points->addPoint(PATH_GROUP_NAME, name, x, y, true, Point::PointType::PATH, mapView, mainWindow);
+
+        Point::PointType type = Point::PointType::PATH;
+        qDebug() << "PathPainter::addPathPointSlot" << (mainWindow->getSelectedRobot() == NULL);
+        if((mainWindow->getSelectedRobot() && mainWindow->getSelectedRobot()->getRobot()->getHome() && mainWindow->getSelectedRobot()->getRobot()->getHome()->getPoint()->getName().compare(name) == 0)
+                || (mainWindow->getSelectedRobot() == NULL))
+            type= Point::PointType::HOME;
+        /*if(points->isAHome(name, x, y))
+            type= Point::PointType::HOME;*/
+        points->addPoint(PATH_GROUP_NAME, name, x, y, true, type, mapView, mainWindow);
     }
 
     points->getGroups()->value(PATH_GROUP_NAME)->last()->setState(mapView->getState());
@@ -145,7 +156,7 @@ void PathPainter::updateCurrentPath(void){
 
 void PathPainter::updatePathPainterSlot(void){
     qDebug() << "PathPainter::updatePathPainter called";
-    points->setPixmapAll(PointView::PixmapType::NORMAL);
+    points->setPixmapAll(PointView::PixmapType::NORMAL, mainWindow->getSelectedRobot());
     QSharedPointer<QVector<QSharedPointer<PointView>>> group = points->getGroups()->value(PATH_GROUP_NAME);
 
     QSharedPointer<PointView> startPointView(0);
@@ -155,15 +166,22 @@ void PathPainter::updatePathPainterSlot(void){
     if(group && group->size() > 0){
         for(int i = 0; i < group->size(); i++){
             currentPointView = group->at(i);
-            currentPointView->setPixmap(PointView::PixmapType::MID);
             QPointF pointCoord = QPointF(currentPointView->getPoint()->getPosition().getX(),
                                          currentPointView->getPoint()->getPosition().getY());
 
+            /// TODO if the original point is displaying a home => display home else no display home
+            /// ( changer type ? home -> path et path -> home ? )
+
+            /*QSharedPointer<PointView> realPointView = points->findPointView(currentPointView->getPoint()->getName());
+            qDebug() << "realPointView" << (realPointView == NULL);
+
+            //if(realPointView->getType() == )*/
             if(i == 0){
                 path = QPainterPath(pointCoord);
                 startPointView = currentPointView;
             } else {
                 path.lineTo(pointCoord);
+                currentPointView->setPixmap(PointView::PixmapType::MID);
             }
 
             if(i == group->size()-1)
@@ -233,6 +251,7 @@ int PathPainter::nbUsedPointView(QString name, double x, double y){
 }
 
 void PathPainter::setCurrentPath(QVector<QSharedPointer<PathPoint>> _currentPath){
+    resetPathSlot();
     for(int i = 0; i < _currentPath.size(); i++){
         Point point = _currentPath.at(i)->getPoint();
         addPathPointSlot(point.getName(), point.getPosition().getX(), point.getPosition().getY());

@@ -4,6 +4,7 @@
 class QGraphicsSceneMouseEvent;
 class QMouseEvent;
 class QDropEvent;
+class RobotView;
 
 #include "Model/point.h"
 #include <QObject>
@@ -35,7 +36,7 @@ class PointView : public QObject, public QGraphicsPixmapItem {
     Q_OBJECT
 
 public:
-    PointView(QSharedPointer<Point> const& point, QGraphicsItem *parent = 0);
+    PointView(QSharedPointer<Point> const& point, QGraphicsItem *parent);
 
     enum PixmapType{NORMAL, MID, START, STOP, HOVER, START_STOP};
 
@@ -43,8 +44,7 @@ public:
     GraphicItemState getState(void) const { return state; }
     void setPos(const qreal x, const qreal y);
     void setAddedToPath(const bool _addedToPath) { addedToPath = _addedToPath; }
-    void setLastPixmap(const QPixmap _lastPixmap) { lastPixmap = _lastPixmap; }
-    void setPixmap(const PixmapType pixType);
+    void setPixmap(const PixmapType pixType, RobotView *selectedRobot = 0);
     //void setPixmap(const QPixmap &pixmap);
     void setPoint(QSharedPointer<Point> const& _point) { point = _point; }
     QSharedPointer<Point> getPoint(void) const { return point; }
@@ -54,7 +54,6 @@ public:
     void setType(const PixmapType _type) { type = _type; }
     PixmapType getLastType(void) const { return lastType; }
     void setLastType(const PixmapType _last) { lastType = _last; }
-    QPixmap getLastPixmap(void) const { return lastPixmap; }
     void setOriginalPosition(const Position position) { originalPosition = position; }
     Position getOriginalPosition(void) const { return originalPosition; }
     void updatePos(void);
@@ -82,11 +81,11 @@ private:
     QSharedPointer<Point> point;
     GraphicItemState state;
     bool addedToPath;
-    QPixmap lastPixmap;
     bool wasShown;
     PixmapType type;
     PixmapType lastType;
     Position originalPosition;
+    RobotView* selectedRobot;
 };
 
 #endif // POINTVIEW_H

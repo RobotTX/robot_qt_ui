@@ -4,6 +4,8 @@
 #include <QDebug>
 #include <QPixmap>
 #include <QMouseEvent>
+#include "View/robotview.h"
+#include "Model/robot.h"
 
 
 PointView::PointView(const QSharedPointer<Point> &_point, QGraphicsItem *parent) :
@@ -21,7 +23,7 @@ PointView::PointView(const QSharedPointer<Point> &_point, QGraphicsItem *parent)
     setShapeMode(QGraphicsPixmapItem::BoundingRectShape);
 
     addedToPath = false;
-    lastPixmap = QPixmap(PIXMAP_NORMAL);
+    selectedRobot = NULL;
 }
 
 void PointView::mousePressEvent(QGraphicsSceneMouseEvent *event){
@@ -97,12 +99,12 @@ void PointView::mouseReleaseEvent(QGraphicsSceneMouseEvent *event){
 
 void PointView::hoverEnterEvent(QGraphicsSceneHoverEvent * /* unused */){
     setToolTip(point->getName());
-    setPixmap(PointView::PixmapType::MID);
+    setPixmap(PointView::PixmapType::MID, selectedRobot);
     //qDebug() << "hoverEnterEvent : " << lastPixmap
 }
 
 void PointView::hoverLeaveEvent(QGraphicsSceneHoverEvent * /* unused */){
-    QGraphicsPixmapItem::setPixmap(lastPixmap);
+    setPixmap(lastType, selectedRobot);
     updatePos();
     if(state == GraphicItemState::CREATING_PATH || state == GraphicItemState::EDITING_PATH)
         emit updatePathPainterPointView();
@@ -132,16 +134,38 @@ void PointView::updatePos(void){
            y - pixmap().height()*SCALE);
 }
 
-void PointView::setPixmap(const PixmapType pixType){
-    //qDebug() << "PointView::setPixmap called" << getPoint()->getName() << pixType;
+void PointView::setPixmap(const PixmapType pixType, RobotView* _selectedRobot){
+    qDebug() << "PointView::setPixmap called" << getPoint()->getName() << pixType;
 
-    lastPixmap = pixmap();
+    lastType = type;
+    selectedRobot = _selectedRobot;
 
     if(type == PointView::HOVER && pixType != PointView::HOVER)
         type = pixType;
 
+    /*if(_selectedRobot){
+        qDebug() << "Got a selected robot";
+        if(_selectedRobot->getRobot()->getHome()){
+            qDebug() << "has a home";
+            if(_selectedRobot->getRobot()->getHome()->getPoint()->getName().compare(point->getName()) == 0)
+                qDebug() << "which is this point";
+            else
+                qDebug() << "which is not this point";
+
+        } else {
+            qDebug() << "which has no home";
+        }
+    } else {
+        qDebug() << "Got no selected robot and the point";
+        if(point->isHome())
+            qDebug() << "is a home";
+        else
+            qDebug() << "is not a home";
+    }*/
+
     QPixmap pixmap2;
-    if(point->isHome()){
+    if(((_selectedRobot && _selectedRobot->getRobot()->getHome() && _selectedRobot->getRobot()->getHome()->getPoint()->getName().compare(point->getName()) == 0)
+            || (!_selectedRobot && point->isHome()))){
         switch(pixType){
             case NORMAL:
                 pixmap2 = QPixmap(PIXMAP_HOME_NORMAL);

@@ -553,7 +553,6 @@ void MainWindow::viewPathSelectedRobot(int robotNb, bool checked){
         QSharedPointer<Robot> robot = robots->getRobotsVector().at(robotNb)->getRobot();
         qDebug() << "viewPathSelectedRobot called on" << robot->getName();
         bottomLayout->uncheckViewPathSelectedRobot(robotNb);
-        emit resetPath();
 
         for(int i = 0; i < robot->getPath().size(); i++){
             qDebug() << i << ":" << robot->getPath().at(i)->getPoint().getName()
@@ -603,11 +602,15 @@ void MainWindow::setSelectedRobot(RobotView* robotView){
 
     hideAllWidgets();
     selectedRobot = robotView;
+    points->setPixmapAll(PointView::PixmapType::NORMAL, robotView);
     robots->setSelected(robotView);
     selectedRobotWidget->setSelectedRobot(selectedRobot);
     selectedRobotWidget->show();
-    switchFocus(robotView->getRobot()->getName(), selectedRobotWidget, MainWindow::WidgetType::ROBOT);
+    int id = bottomLayout->getViewPathRobotBtnGroup()->checkedId();
+    if(id > 0)
+        pathPainter->setCurrentPath(robots->getRobotsVector().at(id)->getRobot()->getPath());
 
+    switchFocus(robotView->getRobot()->getName(), selectedRobotWidget, MainWindow::WidgetType::ROBOT);
 
 }
 
@@ -1034,8 +1037,8 @@ void MainWindow::cancelPathSlot(){
     pointViewsToDisplay.clear();
 
     emit resetPathCreationWidget();
-    emit resetPath();
     pathPainter->setCurrentPath(selectedRobot->getRobot()->getPath());
+
     selectedRobot->getRobot()->setPath(pathPainter->getCurrentPath());
     bottomLayout->updateRobot(robots->getRobotId(selectedRobot->getRobot()->getName()), selectedRobot);
 
@@ -1122,11 +1125,11 @@ void MainWindow::homeEdited(QString name){
 
 void MainWindow::showHome(){
     qDebug() << "MainWindow::showHome called" << (selectedRobot->getRobot()->getHome()==NULL);
-    points->setPixmapAll(QPixmap(PIXMAP_NORMAL));
+
+    points->setPixmapAll(PointView::PixmapType::NORMAL, selectedRobot);
 
     if(selectedRobot->getRobot()->getHome() != NULL){
         QSharedPointer<PointView> pointView = selectedRobot->getRobot()->getHome();
-        pointView->setPixmap(PointView::PixmapType::NORMAL);
         if(pointView->isVisible()){
             qDebug() << "home is visible";
             pointView->setWasShown(true);
@@ -1647,6 +1650,7 @@ void MainWindow::setSelectedPoint(){
 
     resetFocus();
 
+
     createPointWidget->getGroupBox()->hide();
     createPointWidget->getGroupLabel()->hide();
 
@@ -1658,40 +1662,31 @@ void MainWindow::setSelectedPoint(){
     /// tmp point is blue
     displaySelectedPointView->setPixmap(PointView::MID);
 
-    /// we are not modifying an existing point
-    if(!leftMenu->getDisplaySelectedPoint()->getActionButtons()->getEditButton()->isChecked()){
-    //qDebug() << "editing";
+
+    int id = bottomLayout->getViewPathRobotBtnGroup()->checkedId();
+    if(id > 0)
+        pathPainter->setCurrentPath(robots->getRobotsVector().at(id)->getRobot()->getPath());
+
     leftMenu->show();
 
-        displaySelectedPointView->setState(GraphicItemState::EDITING_PERM);
-        hideAllWidgets();
-        createPointWidget->setSelectedPoint(displaySelectedPointView);
-        createPointWidget->show();
-        float x = displaySelectedPointView->getPoint()->getPosition().getX();
-        float y = displaySelectedPointView->getPoint()->getPosition().getY();
+    hideAllWidgets();
+    createPointWidget->setSelectedPoint(displaySelectedPointView);
+    createPointWidget->show();
+    float x = displaySelectedPointView->getPoint()->getPosition().getX();
+    float y = displaySelectedPointView->getPoint()->getPosition().getY();
 
-        if(map->getMapImage().pixelColor(x ,y).red() >= 254){
-            setMessageTop(TEXT_COLOR_INFO, "To save this point permanently click the \"+\" button");
-            createPointWidget->getActionButtons()->getPlusButton()->setEnabled(true);
-            createPointWidget->getActionButtons()->getPlusButton()->setToolTip("Click this button if you want to save this point permanently");
-        } else {
-            setMessageTop(TEXT_COLOR_WARNING, "You cannot save this point because your robot(s) would not be able to go there");
-            createPointWidget->getActionButtons()->getPlusButton()->setEnabled(false);
-            createPointWidget->getActionButtons()->getPlusButton()->setToolTip("You cannot save this point because your robot(s) cannot go there");
-        }
-
-        leftMenu->getDisplaySelectedPoint()->hide();
-        switchFocus(displaySelectedPointView->getPoint()->getName(), createPointWidget, MainWindow::WidgetType::POINT);
+    if(map->getMapImage().pixelColor(x ,y).red() >= 254){
+        setMessageTop(TEXT_COLOR_INFO, "To save this point permanently click the \"+\" button");
+        createPointWidget->getActionButtons()->getPlusButton()->setEnabled(true);
+        createPointWidget->getActionButtons()->getPlusButton()->setToolTip("Click this button if you want to save this point permanently");
     } else {
-        /// on the left we display the position of the temporary point as the user moves it around but we don't make any modifications on the model yet
-        leftMenu->getDisplaySelectedPoint()->getXLabel()->setText(QString::number(points->getTmpPointView()->getPoint()->getPosition().getX()));
-        leftMenu->getDisplaySelectedPoint()->getYLabel()->setText(QString::number(points->getTmpPointView()->getPoint()->getPosition().getY()));
-        if(displaySelectedPointView->getPoint()->isHome()){
-            leftMenu->getDisplaySelectedPoint()->getDisplaySelectedPointRobots()->getHomeWidget()->show();
-        } else {
-            leftMenu->getDisplaySelectedPoint()->getDisplaySelectedPointRobots()->getHomeWidget()->hide();
-        }
+        setMessageTop(TEXT_COLOR_WARNING, "You cannot save this point because your robot(s) would not be able to go there");
+        createPointWidget->getActionButtons()->getPlusButton()->setEnabled(false);
+        createPointWidget->getActionButtons()->getPlusButton()->setToolTip("You cannot save this point because your robot(s) cannot go there");
     }
+
+    leftMenu->getDisplaySelectedPoint()->hide();
+    switchFocus(displaySelectedPointView->getPoint()->getName(), createPointWidget, MainWindow::WidgetType::POINT);
 }
 
 /**
@@ -2301,7 +2296,6 @@ void MainWindow::displayPointEvent(QString name, double x, double y){
                     qDebug() << "MainWindow::displayPointEvent  : something unexpected happened";
             }
             pointView->setPixmap(PointView::PixmapType::MID);
-            pointView->setLastPixmap(QPixmap(PIXMAP_MID));
 
             if(pointView->getPoint()->isPath()){
                 /// if it's a path point the edition/suppression is forbidden from here
