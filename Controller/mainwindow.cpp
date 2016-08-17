@@ -3540,6 +3540,7 @@ void MainWindow::setTemporaryMessageTop(const QString type, const QString messag
 void MainWindow::saveMapState(){
     mapState.first = mapPixmapItem->pos();
     mapState.second = graphicsView->getZoomCoeff();
+    qDebug() << "Zoom saved" << mapState.second;
     settings.setValue("mapState/point/x", mapState.first.x());
     settings.setValue("mapState/point/y", mapState.first.y());
     settings.setValue("mapState/zoom", mapState.second);

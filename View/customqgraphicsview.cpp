@@ -24,16 +24,14 @@ void CustomQGraphicsView::wheelEvent(QWheelEvent *event){
 void CustomQGraphicsView::setZoomCoeff(const float _zoom){
     if(_zoom > zoomCoeff){
         while(zoomCoeff < _zoom){
-            //qDebug() << "zooming";
             scale(1.3, 1.3);
             zoomCoeff *= 1.3;
         }
     } else {
-        if(_zoom < zoomCoeff){
-            while(zoomCoeff > _zoom){
-                scale(1/1.3, 1/1.3);
-                zoomCoeff *= 1/1.3;
-            }
+        while(zoomCoeff > _zoom){
+            scale(1/1.3, 1/1.3);
+            zoomCoeff *= 1/1.3;
         }
     }
+    qDebug() << "Zoom set" << zoomCoeff;
 }
