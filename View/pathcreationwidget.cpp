@@ -67,20 +67,17 @@ PathCreationWidget::PathCreationWidget(MainWindow *parent, const QSharedPointer<
     layout->setContentsMargins(0, 0, 0, 0);
 }
 
-void PathCreationWidget::updateRobot(QSharedPointer<Robot> robot){
-    qDebug() << "PathCreationWidget::updateRobot called" << robot->getName();
-    if (robot != NULL){
-        for(int i = 0; i < robot->getPath().size(); i++){
-            addPathPointSlot(robot->getPath().at(i)->getPoint().getName(),
-                             robot->getPath().at(i)->getPoint().getPosition().getX(),
-                             robot->getPath().at(i)->getPoint().getPosition().getY());
-        }
+void PathCreationWidget::updatePath(const QVector<QSharedPointer<PathPoint>> _path){
+    qDebug() << "PathCreationWidget::updatePath called";
+    for(int i = 0; i < _path.size(); i++){
+        addPathPointSlot(_path.at(i)->getPoint().getName(),
+                         _path.at(i)->getPoint().getPosition().getX(),
+                         _path.at(i)->getPoint().getPosition().getY());
     }
 }
 
 void PathCreationWidget::showEvent(QShowEvent* event){
     Q_UNUSED(event)
-    resetWidget();
     updatePointsList();
     show();
 }

@@ -180,13 +180,13 @@ void PointsLeftWidget::enableButtons(QString button){
             for(int i = 0; i < points->getGroups()->value(button)->size(); i++){
                 QSharedPointer<PointView> pv = points->getGroups()->value(button)->at(i);
                 if(pv->isVisible())
-                    pv->setPixmap(PointView::PixmapType::MID);
+                    pv->setPixmap(PointView::PixmapType::SELECTED);
             }
         } else {
             QSharedPointer<PointView> pv = points->findPointView(button);
             if(pv->isVisible()){
                 /// if the point is displayed, changes its pointview on the map
-                points->findPointView(button)->setPixmap(PointView::PixmapType::MID);
+                points->findPointView(button)->setPixmap(PointView::PixmapType::SELECTED);
                 actionButtons->getMapButton()->setChecked(true);
                 actionButtons->getMapButton()->setToolTip("Click to hide the selected point on the map");
             } else {
@@ -196,7 +196,7 @@ void PointsLeftWidget::enableButtons(QString button){
             /// if this point belongs to a path we also need to set the pixmap of the path point point view
             if(QSharedPointer<PointView> pathPv = points->findPathPointView(pv->getPoint()->getPosition().getX(), pv->getPoint()->getPosition().getY())){
                 qDebug() << "PATH !";
-                pathPv->setPixmap(PointView::PixmapType::MID);
+                pathPv->setPixmap(PointView::PixmapType::SELECTED);
             } else {
                 qDebug() << "NOT PATH";
             }

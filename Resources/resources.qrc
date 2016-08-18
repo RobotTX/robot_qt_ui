@@ -44,12 +44,14 @@
         <file alias="green_coord.png">green_coordinates.png</file>
         <file alias="green_red_coord.png">green_red_coordinates.png</file>
         <file alias="orange_coord.png">orange_coordinates.png</file>
+        <file alias="violet_coord.png">violet_coordinates.png</file>
         <file>cropped_home.png</file>
-        <file alias="blue_home.png">blue_home.png</file>
-        <file alias="red_home.png">red_home.png</file>
-        <file alias="green_home.png">green_home.png</file>
-        <file alias="green_red_home.png">green_red_home.png</file>
-        <file alias="orange_home.png">orange_home.png</file>
+        <file>blue_home.png</file>
+        <file>red_home.png</file>
+        <file>green_home.png</file>
+        <file>green_red_home.png</file>
+        <file>orange_home.png</file>
+        <file>violet_home.png</file>
         <file>folder.png</file>
         <file>tick.png</file>
         <file>back.png</file>
