@@ -14,14 +14,16 @@ class RobotView;
 
 #define SCALE 0.3
 #define PIXMAP_NORMAL ":/icons/cropped_coordinates"
-#define PIXMAP_MID ":/icons/blue_coord"
+#define PIXMAP_MID ":/icons/violet_coord"
+#define PIXMAP_SELECTED ":/icons/blue_coord"
 #define PIXMAP_START ":/icons/green_coord"
 #define PIXMAP_STOP ":/icons/red_coord"
 #define PIXMAP_HOVER ":/icons/orange_coord"
 #define PIXMAP_START_STOP ":/icons/green_red_coord"
 
 #define PIXMAP_HOME_NORMAL ":/icons/cropped_home"
-#define PIXMAP_HOME_MID ":/icons/blue_home"
+#define PIXMAP_HOME_MID ":/icons/violet_home"
+#define PIXMAP_HOME_SELECTED ":/icons/blue_home"
 #define PIXMAP_HOME_START ":/icons/green_home"
 #define PIXMAP_HOME_STOP ":/icons/red_home"
 #define PIXMAP_HOME_HOVER ":/icons/orange_home"
@@ -38,7 +40,7 @@ class PointView : public QObject, public QGraphicsPixmapItem {
 public:
     PointView(QSharedPointer<Point> const& point, QGraphicsItem *parent);
 
-    enum PixmapType{NORMAL, MID, START, STOP, HOVER, START_STOP};
+    enum PixmapType{NORMAL, MID, START, STOP, HOVER, START_STOP, SELECTED};
 
     void setState(const GraphicItemState _state) { state = _state; }//  qDebug()<< "change state here" << point->getPosition().getX() << point->getPosition().getY() << _state;}
     GraphicItemState getState(void) const { return state; }

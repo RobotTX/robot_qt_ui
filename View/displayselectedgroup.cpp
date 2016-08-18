@@ -104,10 +104,10 @@ void DisplaySelectedGroup::buttonClickedSlot(QAbstractButton* button){
     } else {
         /// changes the pointview on the map to show which point is selected
         QSharedPointer<PointView> pv = points->findPointView(btn->getRealName());
-        pv->setPixmap(PointView::PixmapType::MID);
+        pv->setPixmap(PointView::PixmapType::SELECTED);
         /// if the point is also part of the path we change the point view associated
         if(QSharedPointer<PointView> pathPv = points->findPathPointView(pv->getPoint()->getPosition().getX(), pv->getPoint()->getPosition().getY()))
-            pathPv->setPixmap(PointView::PixmapType::MID);
+            pathPv->setPixmap(PointView::PixmapType::SELECTED);
         getActionButtons()->getMapButton()->setCheckable(true);
 
         /// enables the minus button

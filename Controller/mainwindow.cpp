@@ -636,7 +636,8 @@ void MainWindow::editSelecRobotBtnEvent(){
 void MainWindow::addPathSelecRobotBtnEvent(){
     qDebug() << "MainWindow::addPathSelecRobotBtnEvent called on robot " << selectedRobot->getRobot()->getName();
     setMessageTop(TEXT_COLOR_INFO, "Click white points of the map to add new points to the path of " +
-                  selectedRobot->getRobot()->getName() + "\nAlternatively you can click the \"+\" button to add an existing point to your path");
+                  selectedRobot->getRobot()->getName() + "\nAlternatively you can click the \"+\" button to add an existing point to your path"
+                  "\nYou can re-order the points in the list by dragging them");
 
     setEnableAll(false, GraphicItemState::CREATING_PATH, true, true);
 
@@ -1380,7 +1381,8 @@ void MainWindow::setMessageCreationPath(QString message){
     setMessageTop(TEXT_COLOR_DANGER, message);
     delay(2500);
     setMessageTop(TEXT_COLOR_INFO, "Click white points of the map to add new points to the path of " +
-                  selectedRobot->getRobot()->getName() + "\nAlternatively you can click the \"+\" button to add an existing point to your path");
+                  selectedRobot->getRobot()->getName() + "\nAlternatively you can click the \"+\" button to add an existing point to your path"
+                  "\nYou can re-order the points in the list by dragging them");
 }
 
 void MainWindow::updateEditedPathPoint(double x, double y){
@@ -2308,7 +2310,7 @@ void MainWindow::displayPointEvent(QString name, double x, double y){
                 else
                     qDebug() << "MainWindow::displayPointEvent  : something unexpected happened";
             }
-            pointView->setPixmap(PointView::PixmapType::MID);
+            pointView->setPixmap(PointView::PixmapType::SELECTED);
 
             if(pointView->getPoint()->isPath()){
                 /// if it's a path point the edition/suppression is forbidden from here
@@ -2376,7 +2378,7 @@ void MainWindow::displayGroupMapEvent(void){
                 for(int i = 0; i < points->getGroups()->value(checkedName)->size(); i++){
                     QSharedPointer<PointView> point = points->getGroups()->value(checkedName)->at(i);
                     point->show();
-                    point->setPixmap(PointView::PixmapType::MID);
+                    point->setPixmap(PointView::PixmapType::SELECTED);
                     /// update the file
                     XMLParser parserPoints(XML_PATH);
                     parserPoints.save(*points);
@@ -2403,7 +2405,7 @@ void MainWindow::displayGroupMapEvent(void){
         } else {
             /// updates the tooltip of the map button
             pointsLeftWidget->getActionButtons()->getMapButton()->setToolTip("Click here to hide the selected point on the map");
-            point->setPixmap(PointView::PixmapType::MID);
+            point->setPixmap(PointView::PixmapType::SELECTED);
             point->show();
 
             /// update the file
@@ -2844,7 +2846,7 @@ void MainWindow::updatePoint(void){
 
     /// resets the color of the pointView
     if(displaySelectedPointView){
-        displaySelectedPointView->setPixmap(PointView::PixmapType::MID);
+        displaySelectedPointView->setPixmap(PointView::PixmapType::SELECTED);
 
         /// notifies the map that the point's name has changed and that the hover has to be updated
         emit nameChanged(displaySelectedPointView->getPoint()->getName(), leftMenu->getDisplaySelectedPoint()->getNameEdit()->text());
@@ -2918,7 +2920,7 @@ void MainWindow::cancelEvent(void){
     /// reset the color of the pointView
     QSharedPointer<PointView> displaySelectedPointView = points->findPointView(leftMenu->getDisplaySelectedPoint()->getPointName());
     if(displaySelectedPointView){
-        displaySelectedPointView->setPixmap(PointView::PixmapType::MID);
+        displaySelectedPointView->setPixmap(PointView::PixmapType::SELECTED);
         qDebug() << "about to reset your position";
 
         displaySelectedPointView->getPoint()->setPosition(displaySelectedPointView->getOriginalPosition());
