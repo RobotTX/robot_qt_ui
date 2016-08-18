@@ -6,13 +6,13 @@ class CustomScrollArea;
 class RobotView;
 class QVBoxLayout;
 class QPushButton;
-class QLabel;
 class QMainWindow;
 class QProgressBar;
 class TopLeftMenu;
 
 #include <QWidget>
 #include "mainwindow.h"
+#include <QLabel>
 /**
  * @brief The SelectedRobotWidget class
  * Widget of the left menu which is displayed when a robot is selected
@@ -28,17 +28,19 @@ public:
      * @param _robotView
      * Update the widget with the selected robot
      */
-    void setSelectedRobot(RobotView* const& _robotView);
+
     QPushButton* getScanBtn(void) const {return scanBtn;}
-   // QPushButton* getHomeBtn(void) const {return homeBtn;}
-    void disable();
-    void enable();
-    TopLeftMenu* getActionButtons(void) const {return actionButtons;}
-    QString getName(void) ;
+    QString getName(void) const { return name->text(); }
     PathWidget* getPathWidget(void) const {return pathWidget;}
     QLabel* getNoPath(void) const { return noPath; }
     QLabel* getNameLabel(void) const { return name; }
     QLabel* getWifiLabel(void) const { return wifiNameLabel; }
+    TopLeftMenu* getActionButtons(void) const {return actionButtons;}
+
+    void disable();
+    void enable();
+
+    void setSelectedRobot(RobotView* const& _robotView);
 
 private:
     QVBoxLayout* layout;

@@ -23,12 +23,14 @@ class PathPainter : public QObject, public QGraphicsPathItem{
 
 public:
     PathPainter(MainWindow* const &mainWindow, MapView* const &mapPixmapItem, QSharedPointer<Points> _points);
-    void setCurrentPath(const QVector<QSharedPointer<PathPoint> > _currentPath);
+
     QVector<QSharedPointer<PathPoint>> getCurrentPath(void) const { return currentPath; }
-    void setOldPath(const QVector<QSharedPointer<PathPoint> > _oldPath);
     QVector<QSharedPointer<PathPoint>> getOldPath(void) const { return oldPath; }
+
+    void setCurrentPath(const QVector<QSharedPointer<PathPoint> > _currentPath);
+    void setOldPath(const QVector<QSharedPointer<PathPoint> > _oldPath);
     void displayPath(void);
-    int nbUsedPointView(QString name, double x, double y);
+    int nbUsedPointView(const QString name, const double x, const double y);
     void updateCurrentPath(void);
     void updatePathPainterName(void);
     void clearOldPath();

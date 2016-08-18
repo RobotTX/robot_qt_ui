@@ -7,7 +7,6 @@
 #include "Model/point.h"
 #include <QVBoxLayout>
 #include <QPushButton>
-#include <QLabel>
 #include <QMainWindow>
 #include <QProgressBar>
 #include "mainwindow.h"
@@ -20,13 +19,11 @@
 
 SelectedRobotWidget::SelectedRobotWidget(QMainWindow* parent): QWidget(parent){
 
-
     layout = new QVBoxLayout(this);
 
     actionButtons = new TopLeftMenu(this);
 
     connect(actionButtons->getEditButton(), SIGNAL(clicked()), parent, SLOT(editSelecRobotBtnEvent()));
-
 
     layout->addWidget(actionButtons);
 
@@ -175,10 +172,5 @@ void SelectedRobotWidget::hideEvent(QHideEvent *event){
 
     emit hideSelectedRobotWidget();
     QWidget::hideEvent(event);
-}
-
-QString SelectedRobotWidget::getName(void)
-{
-    return name->text();
 }
 

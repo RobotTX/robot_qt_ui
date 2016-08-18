@@ -46,10 +46,11 @@ signals:
     void updateConnectionsRequest();
     /// emitted when buttons are updated to reestablish the connection with the line edit to modify a group
     void modifyEditReconnection();
+    /// emitted upon edition of a group's name to signify the mainWindow that the name is valid or not
     void codeEditGroup(int);
 
 public slots:
-    /// emitted upon edition of a group's name to signify the mainWindow that the name is valid or not
+
     int checkEditGroupName(QString name);
 
 private:

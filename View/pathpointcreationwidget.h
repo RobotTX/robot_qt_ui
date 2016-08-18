@@ -29,19 +29,10 @@ public:
      */
     PathPointCreationWidget(const int ids, const QString name, const double x, const double y, QWidget *parent);
 
-
-    void displayActionWidget(const bool show);
-    void displaySaveEditBtn(const bool show, const int count);
-    void resetAction(void);
-    void updatePointLabel(const float x, const float y);
-    void setPointLabel(const float _posX, const float _posY);
-
-    /// Setters
     void setName(const QString name);
     void setId(const int id);
     void setPos(const float _posX, const float y);
 
-    /// Getters
     QString getName(void) const { return name; }
     int getId(void) const { return id; }
     QComboBox* getAction(void) const { return actionBtn; }
@@ -55,6 +46,13 @@ public:
     QWidget* getEditWidget(void) const { return editWidget; }
     QWidget* getPathWidget(void) const { return pathWidget; }
 
+public:
+
+    void displayActionWidget(const bool show);
+    void displaySaveEditBtn(const bool show, const int count);
+    void resetAction(void);
+    void updatePointLabel(const float x, const float y);
+    void setPointLabel(const float _posX, const float _posY);
 
 private:
     QHBoxLayout* layout;

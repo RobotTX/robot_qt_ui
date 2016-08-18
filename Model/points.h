@@ -73,8 +73,9 @@ public:
     void updatePointViews(void);
 
 private:
-    QSharedPointer<Groups> groups;
     MainWindow* parent;
+    QSharedPointer<Groups> groups;
+
 };
 
 

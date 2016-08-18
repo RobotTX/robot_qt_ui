@@ -25,6 +25,7 @@ protected:
     void showEvent(QShowEvent *event);
 
 signals:
+    /// when showing this widget the application resets the colors of the path points on the map
     void resetPathPointViews();
 };
 

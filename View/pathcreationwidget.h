@@ -28,29 +28,36 @@ class PathCreationWidget: public QWidget{
 enum CheckState { NO_STATE, CREATE, EDIT };
 
 public:
-    struct PointInfo{
+    struct PointInfo {
         QString name;
         float posX;
         float posY;
     };
 
     PathCreationWidget(MainWindow* parent, const QSharedPointer<Points>& points);
-    void updatePath(const QVector<QSharedPointer<PathPoint> > _currentPath);
+    void updatePath(const QVector<QSharedPointer<PathPoint> >& _currentPath);
     void updatePointsList(void);
     void deleteItem(QListWidgetItem* item);
-    void editPathPoint(QString name, double x, double y);
+    void editPathPoint(const QString name, const double x, const double y);
     PathPointList* getPathPointList(void) const { return pathPointsList; }
 
 protected:
     void showEvent(QShowEvent* event);
 
 signals:
+    /// emitted when the waiting times of points have not been set properly so that a message is displayed to the user
     void setMessage(QString, QString );
+    /// emitted when a new path point is added to the list
     void addPathPoint(QString, double, double);
+    /// emitted when a path point is deleted
     void deletePathPoint(int);
+    /// emitted when the order of the path has changed
     void orderPathPointChanged(int, int);
+    /// emitted when the widget is reset
     void resetPath();
+    /// emitted when a waiting time is changed
     void actionChanged(int, int, QString);
+    /// emitted when a path point is edited
     void editPathPoint(int, QString, double, double);
     void editTmpPathPoint(int, QString, double, double);
     void saveEditPathPoint();
@@ -71,7 +78,6 @@ private slots:
     void saveEditSlot(PathPointCreationWidget* pathPointCreationWidget);
     void cancelEditSlot(PathPointCreationWidget* pathPointCreationWidget);
     void actionChangedSlot(int id, int action, QString waitTime);
-
 
 private:
     QSharedPointer<Points> points;

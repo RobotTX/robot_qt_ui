@@ -26,23 +26,27 @@ class MapView: public QObject, public QGraphicsPixmapItem {
 
 public:
     MapView (const QPixmap& pixmap, const QSize size, QSharedPointer<Map> _map, QMainWindow *_mainWindow);
-    /// Getters
+
     QSize getSize(void) const { return size; }
     int getWidth(void) const { return size.width(); }
     int getHeight(void) const { return size.height(); }
     GraphicItemState getState(void) const { return state; }
     QMainWindow* getMainWindow(void) const { return mainWindow; }
 
-    /// Setters
-    void setState(const GraphicItemState _state);
-    void setPoints(QSharedPointer<Points> _points);
+    void setState(const GraphicItemState _state) { state = _state; }
+    void setPoints(QSharedPointer<Points> _points) { points = _points; }
 
 signals:
     void pointLeftClicked();
+    /// emitted when a user is constructing a path
     void addPathPoint(QString, double, double);
+    /// emitted when a user is choosing a home for his robot
     void homeEdited(QString);
+    /// emitted when a user is editing a permanent point
     void newCoordinates(double, double);
+    /// emitted when a user is editing a path point
     void newCoordinatesPathPoint(double, double);
+    /// emitted when a user clicks an unknown part of the map to show him a message saying that he cannot create a point there
     void newMessage(QString);
 
 protected:

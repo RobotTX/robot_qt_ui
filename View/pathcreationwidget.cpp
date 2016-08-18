@@ -47,7 +47,6 @@ PathCreationWidget::PathCreationWidget(MainWindow *parent, const QSharedPointer<
 
     layout->addLayout(grid);
 
-
     connect(actionButtons->getPlusButton(), SIGNAL(clicked()), this, SLOT(addPathPointByMenuSlot()));
     connect(actionButtons->getMinusButton(), SIGNAL(clicked()), this, SLOT(deletePathPointSlot()));
     connect(actionButtons->getEditButton(), SIGNAL(clicked()), this, SLOT(editPathPointSlot()));
@@ -61,13 +60,12 @@ PathCreationWidget::PathCreationWidget(MainWindow *parent, const QSharedPointer<
     connect(cancelBtn, SIGNAL(clicked()), parent, SLOT(cancelPathSlot()));
     connect(cleanBtn, SIGNAL(clicked()), this, SLOT(resetWidget()));
 
-
     hide();
     layout->setAlignment(Qt::AlignTop);
     layout->setContentsMargins(0, 0, 0, 0);
 }
 
-void PathCreationWidget::updatePath(const QVector<QSharedPointer<PathPoint>> _path){
+void PathCreationWidget::updatePath(const QVector<QSharedPointer<PathPoint>>& _path){
     qDebug() << "PathCreationWidget::updatePath called";
     for(int i = 0; i < _path.size(); i++){
         addPathPointSlot(_path.at(i)->getPoint().getName(),
@@ -103,9 +101,8 @@ void PathCreationWidget::updatePointsList(void){
     }
 
     if(points->getGroups()->value(NO_GROUP_NAME)){
-        for(int k = 0; k < points->getGroups()->value(NO_GROUP_NAME)->count(); k++){
+        for(int k = 0; k < points->getGroups()->value(NO_GROUP_NAME)->count(); k++)
             pointsMenu->addAction(points->getGroups()->value(NO_GROUP_NAME)->at(k)->getPoint()->getName());
-        }
     }
 }
 
@@ -197,8 +194,8 @@ void PathCreationWidget::pointClicked(QAction *action){
     } else if(state == EDIT){
        qDebug() << "PathCreationWidget::pointClicked called to edit a path point into" << action->text();
        editPathPoint(action->text(), pos.getX(), pos.getY());
-    } else {        qDebug() << "PathCreationWidget::pointClicked called while in NO_STATE" << action->text();
-    }
+    } else
+        qDebug() << "PathCreationWidget::pointClicked called while in NO_STATE" << action->text();
 }
 
 void PathCreationWidget::addPathPointSlot(QString name, double x, double y){

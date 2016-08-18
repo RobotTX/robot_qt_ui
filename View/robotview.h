@@ -51,9 +51,9 @@ protected:
     void hoverLeaveEvent(QGraphicsSceneHoverEvent *);
 
 private:
+    QSharedPointer<Robot> robot;
     bool selected;
     GraphicItemState state;
-    QSharedPointer<Robot> robot;
     bool shown;
     MapView* mapView;
 };

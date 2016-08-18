@@ -78,12 +78,4 @@ void MapView::mouseReleaseEvent(QGraphicsSceneMouseEvent *event){
     /// else drag
     QGraphicsPixmapItem::mouseReleaseEvent(event);
 }
-void MapView::setState(const GraphicItemState _state){
-    //qDebug() << "mapview setstate" << _state;
-    state = _state;
-}
 
- void MapView::setPoints(QSharedPointer<Points> _points){
-    //qDebug() << "MapView::setPoints called" << _points->count();
-    points = _points;
- }

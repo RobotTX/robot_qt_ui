@@ -45,11 +45,12 @@ public:
     DisplaySelectedPoint* getDisplaySelectedPoint(void) const { return displaySelectedPoint; }
     DisplaySelectedGroup* getDisplaySelectedGroup(void) const { return displaySelectedGroup; }
     PathCreationWidget* getPathCreationWidget(void) const { return pathCreationWidget; }
-    void showBackButton(QString name);
-    void hideBackButton();
     QPushButton* getReturnButton(void) const { return returnButton; }
     QPushButton* getCloseButton(void) const { return closeBtn; }
-    QWidget* getLastWidget() const {return lastWidget;}
+    QWidget* getLastWidget() const {return lastWidget; }
+
+    void showBackButton(QString name);
+    void hideBackButton();
 
     void updateGroupDisplayed(const QSharedPointer<Points> &_points, const QString groupIndex);
     void disableButtons();
