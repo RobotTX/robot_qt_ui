@@ -638,6 +638,8 @@ void MainWindow::addPathSelecRobotBtnEvent(){
     setMessageTop(TEXT_COLOR_INFO, "Click white points of the map to add new points to the path of " +
                   selectedRobot->getRobot()->getName() + "\nAlternatively you can click the \"+\" button to add an existing point to your path");
 
+    setEnableAll(false, GraphicItemState::CREATING_PATH, true, true);
+
     /// stop displaying the currently displayed path if it exists
 
     /*int id = bottomLayout->getViewPathRobotBtnGroup()->checkedId();
@@ -649,11 +651,15 @@ void MainWindow::addPathSelecRobotBtnEvent(){
         pathCreationWidget->getPathPointList()->clear();
     }
 
-    setEnableAll(false, GraphicItemState::CREATING_PATH, true, true);
+
+    if(editSelectedRobotWidget->getAddPathBtn()->text().compare("Add Path") == 0 || pathPainter->getOldPath().size() <= 0){
+        emit resetPathCreationWidget();
+        pathCreationWidget->updatePath(selectedRobot->getRobot()->getPath());
+    }
 
     hideAllWidgets();
     pathCreationWidget->show();
-    pathCreationWidget->updateRobot(selectedRobot->getRobot());
+    pathPainter->setOldPath(pathPainter->getCurrentPath());
 
     switchFocus(selectedRobot->getRobot()->getName(), pathCreationWidget, MainWindow::WidgetType::ROBOT);
 
@@ -1030,17 +1036,18 @@ void MainWindow::savePathSlot(){
 
 void MainWindow::cancelPathSlot(){
     qDebug() << "MainWindow::cancelPathSlot called";
-    /// we hide the points that we displayed for the edition of the path
 
+    /// we hide the points that we displayed just for the edition of the path
     for(int i = 0; i < pointViewsToDisplay.size(); i++)
         pointViewsToDisplay.at(i)->hide();
     pointViewsToDisplay.clear();
 
     emit resetPathCreationWidget();
-    pathPainter->setCurrentPath(selectedRobot->getRobot()->getPath());
+    //pathPainter->setCurrentPath(pathPainter->getOldPath());
+    pathCreationWidget->updatePath(pathPainter->getOldPath());
 
-    selectedRobot->getRobot()->setPath(pathPainter->getCurrentPath());
-    bottomLayout->updateRobot(robots->getRobotId(selectedRobot->getRobot()->getName()), selectedRobot);
+    //selectedRobot->getRobot()->setPath(pathPainter->getCurrentPath());
+    //bottomLayout->updateRobot(robots->getRobotId(selectedRobot->getRobot()->getName()), selectedRobot);
 
     backEvent();
 }
@@ -1141,21 +1148,27 @@ void MainWindow::showHome(){
         pointView->show();
     }
 
-    RobotView* robotView =  robots->getRobotViewByName(selectedRobot->getRobot()->getName());
-    /// If the robot has a path, we display it, otherwise we show the button to add the path
-    if(robotView->getRobot()->getPath().size() > 0){
-        //qDebug() << "MainWindow::showHome I have a path !";
-        selectedRobotWidget->getPathWidget()->setPath(robotView->getRobot()->getPath());
-        selectedRobotWidget->getPathWidget()->show();
-        selectedRobotWidget->getNoPath()->hide();
+    if(pathPainter->getOldPath().size() > 0){
+        editSelectedRobotWidget->setPath(pathPainter->getOldPath());
 
-        editSelectedRobotWidget->setPath(robotView->getRobot()->getPath());
+        pathPainter->clearOldPath();
     } else {
-        qDebug() << "MainWindow::showHome I don't have a path !";
-        selectedRobotWidget->getPathWidget()->hide();
-        selectedRobotWidget->getNoPath()->show();
+        RobotView* robotView =  robots->getRobotViewByName(selectedRobot->getRobot()->getName());
+        /// If the robot has a path, we display it, otherwise we show the button to add the path
+        if(robotView->getRobot()->getPath().size() > 0){
+            //qDebug() << "MainWindow::showHome I have a path !";
+            selectedRobotWidget->getPathWidget()->setPath(robotView->getRobot()->getPath());
+            selectedRobotWidget->getPathWidget()->show();
+            selectedRobotWidget->getNoPath()->hide();
 
-        editSelectedRobotWidget->clearPath();
+            editSelectedRobotWidget->setPath(robotView->getRobot()->getPath());
+        } else {
+            qDebug() << "MainWindow::showHome I don't have a path !";
+            selectedRobotWidget->getPathWidget()->hide();
+            selectedRobotWidget->getNoPath()->show();
+
+            editSelectedRobotWidget->clearPath();
+        }
     }
 }
 

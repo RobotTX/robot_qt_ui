@@ -250,10 +250,22 @@ int PathPainter::nbUsedPointView(QString name, double x, double y){
     return nbUsed;
 }
 
-void PathPainter::setCurrentPath(QVector<QSharedPointer<PathPoint>> _currentPath){
+void PathPainter::setCurrentPath(const QVector<QSharedPointer<PathPoint>> _currentPath){
     resetPathSlot();
     for(int i = 0; i < _currentPath.size(); i++){
         Point point = _currentPath.at(i)->getPoint();
         addPathPointSlot(point.getName(), point.getPosition().getX(), point.getPosition().getY());
     }
+}
+
+void PathPainter::setOldPath(const QVector<QSharedPointer<PathPoint> > _oldPath){
+    oldPath.clear();
+    for(int i = 0; i < _oldPath.size(); i++){
+        QSharedPointer<PathPoint> pathPoint = QSharedPointer<PathPoint>(new PathPoint(_oldPath.at(i)->getPoint(), _oldPath.at(i)->getAction(), _oldPath.at(i)->getWaitTime()));
+        oldPath.push_back(pathPoint);
+    }
+}
+
+void PathPainter::clearOldPath(){
+    oldPath.clear();
 }

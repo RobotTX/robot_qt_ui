@@ -23,12 +23,15 @@ class PathPainter : public QObject, public QGraphicsPathItem{
 
 public:
     PathPainter(MainWindow* const &mainWindow, MapView* const &mapPixmapItem, QSharedPointer<Points> _points);
-    void setCurrentPath(QVector<QSharedPointer<PathPoint> > _currentPath);
+    void setCurrentPath(const QVector<QSharedPointer<PathPoint> > _currentPath);
     QVector<QSharedPointer<PathPoint>> getCurrentPath(void) const { return currentPath; }
+    void setOldPath(const QVector<QSharedPointer<PathPoint> > _oldPath);
+    QVector<QSharedPointer<PathPoint>> getOldPath(void) const { return oldPath; }
     void displayPath(void);
     int nbUsedPointView(QString name, double x, double y);
     void updateCurrentPath(void);
     void updatePathPainterName(void);
+    void clearOldPath();
 
 private slots:
     void resetPathSlot(void);
@@ -45,6 +48,7 @@ private:
     QSharedPointer<Points> points;
     /// changing as the user edits the path of its robot
     QVector<QSharedPointer<PathPoint>> currentPath;
+    QVector<QSharedPointer<PathPoint>> oldPath;
     MainWindow* mainWindow;
     MapView* mapView;
 };

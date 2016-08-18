@@ -9,6 +9,7 @@ class QMenu;
 class PathPointList;
 class QListWidgetItem;
 class PathPointCreationWidget;
+class PathPoint;
 
 #include <QWidget>
 #include <QSharedPointer>
@@ -34,7 +35,7 @@ public:
     };
 
     PathCreationWidget(MainWindow* parent, const QSharedPointer<Points>& points);
-    void updateRobot(QSharedPointer<Robot> robot);
+    void updatePath(const QVector<QSharedPointer<PathPoint> > _currentPath);
     void updatePointsList(void);
     void deleteItem(QListWidgetItem* item);
     void editPathPoint(QString name, double x, double y);
