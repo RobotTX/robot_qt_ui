@@ -40,9 +40,11 @@ public:
     QSharedPointer<PointView> getOldHome() const { return oldHome; }
     QLabel* getHomeLabel(void) const { return homeLabel; }
     QPushButton* getSaveButton(void) const { return saveBtn; }
+    bool isEditing(void) const { return editing; }
 
 
     void setRobots(QSharedPointer<Robots> const _robots) { robots = _robots; }
+    void setEditing(bool const _editing) { editing = _editing; }
     void setHome(QSharedPointer<PointView> const _home) { home = _home; }
     void setOldHome(QSharedPointer<PointView> const _oldHome) { oldHome = _oldHome;}
     void setPathChanged(const bool change) { pathChanged = change; }
@@ -84,9 +86,11 @@ private:
     QPushButton* addPathBtn;
     bool firstConnection;
     QPushButton* cancelBtn;
+    QPushButton* deletePathBtn;
     PathWidget* pathWidget;
     bool pathChanged;
     QLabel* homeLabel;
+    bool editing;
 
 protected:
     void showEvent(QShowEvent *event);

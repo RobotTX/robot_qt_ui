@@ -583,9 +583,10 @@ void MainWindow::editSelectedRobot(RobotView* robotView){
     robots->setSelected(robotView);
 
     hideAllWidgets();
-    setGraphicItemsState(GraphicItemState::NO_EVENT);
+    setEnableAll(false, GraphicItemState::NO_EVENT);
 
     editSelectedRobotWidget->setSelectedRobot(selectedRobot);
+    pathPainter->setPathDeleted(false);
 
     editSelectedRobotWidget->show();
     switchFocus(selectedRobot->getRobot()->getName(), editSelectedRobotWidget, MainWindow::WidgetType::ROBOT);
@@ -653,9 +654,11 @@ void MainWindow::addPathSelecRobotBtnEvent(){
     }
 
 
-    if(editSelectedRobotWidget->getAddPathBtn()->text().compare("Add Path") == 0 || pathPainter->getOldPath().size() <= 0){
-        emit resetPathCreationWidget();
-        pathCreationWidget->updatePath(selectedRobot->getRobot()->getPath());
+    if(!pathPainter->getPathDeleted()){
+        if(editSelectedRobotWidget->getAddPathBtn()->text().compare("Add Path") == 0 || pathPainter->getOldPath().size() <= 0){
+            emit resetPathCreationWidget();
+            pathCreationWidget->updatePath(selectedRobot->getRobot()->getPath());
+        }
     }
 
     hideAllWidgets();
@@ -682,6 +685,16 @@ void MainWindow::addPathSelecRobotBtnEvent(){
             }
         }
     }
+}
+
+void MainWindow::deletePathSelecRobotBtnEvent(){
+    qDebug() << "MainWindow::deletePathSelecRobotBtnEvent called on robot " << selectedRobot->getRobot()->getName();
+    emit resetPath();
+    emit resetPathCreationWidget();
+    editSelectedRobotWidget->setPathChanged(true);
+    editSelectedRobotWidget->clearPath();
+    bottomLayout->uncheckAll();
+    pathPainter->setPathDeleted(true);
 }
 
 void MainWindow::setSelectedRobotNoParent(QAbstractButton *button){
@@ -755,6 +768,7 @@ void MainWindow::cancelEditSelecRobotBtnEvent(){
     /// if the path has been changed, reset the path
     emit resetPathCreationWidget();
     emit resetPath();
+    editSelectedRobotWidget->setEditing(false);
 
     backEvent();
 
@@ -924,6 +938,7 @@ void MainWindow::robotSavedEvent(){
 
         /// if the command is succesfully sent to the robot, we apply the change
         robot->resetCommandAnswer();
+        // TODO check if pathStr empty, means deleting the path => cmd send without parem => check robotFiles/command.cpp
         if(robot->sendCommand(QString("i ") + pathStr)){
             QString answer = robot->waitAnswer();
             QStringList answerList = answer.split(QRegExp("[ ]"), QString::SkipEmptyParts);
@@ -950,9 +965,10 @@ void MainWindow::robotSavedEvent(){
 
                     int id = robots->getRobotId(selectedRobot->getRobot()->getName());
                     bottomLayout->updateRobot(id, selectedRobot);
-                    bottomLayout->getViewPathRobotBtnGroup()->button(id)->setChecked(true);
-                    viewPathSelectedRobot(id, true);
-
+                    if(pathPainter->getCurrentPath().size() > 0){
+                        bottomLayout->getViewPathRobotBtnGroup()->button(id)->setChecked(true);
+                        viewPathSelectedRobot(id, true);
+                    }
                 }
 
                 editSelectedRobotWidget->setPathChanged(false);
@@ -963,14 +979,13 @@ void MainWindow::robotSavedEvent(){
 
                 editSelectedRobotWidget->editName();
 
-                setGraphicItemsState(GraphicItemState::NO_STATE);
-
+                setEnableAll(true);
                 robotsLeftWidget->updateRobots(robots);
                 bottomLayout->updateRobot(robots->getRobotId(selectedRobot->getRobot()->getName()), selectedRobot);
 
                 selectedRobotWidget->setSelectedRobot(selectedRobot);
                 editSelectedRobotWidget->setSelectedRobot(selectedRobot);
-                setEnableAll(true);
+                editSelectedRobotWidget->setEditing(false);
 
                 //setMessageTop(TEXT_COLOR_SUCCESS, "Robot successfully edited");
                 qDebug() << "Robot successfully edited";
@@ -1022,14 +1037,18 @@ void MainWindow::editTmpPathPointSlot(int id, QString name, double x, double y){
 
 void MainWindow::savePathSlot(){
     qDebug() << "MainWindow::savePath called";
+    backEvent();
+
     /// we hide the points that we displayed for the edition of the path
     for(int i = 0; i < pointViewsToDisplay.size(); i++)
         pointViewsToDisplay.at(i)->hide();
     pointViewsToDisplay.clear();
 
 
-    backEvent();
-    setGraphicItemsState(GraphicItemState::NO_EVENT);
+    pathPainter->setPathDeleted(false);
+    pathPainter->setOldPath(pathPainter->getCurrentPath());
+
+    setEnableAll(false, GraphicItemState::NO_EVENT);
     editSelectedRobotWidget->setPathChanged(true);
     editSelectedRobotWidget->setPath(pathPainter->getCurrentPath());
     emit updatePathPainter();
@@ -1038,6 +1057,7 @@ void MainWindow::savePathSlot(){
 void MainWindow::cancelPathSlot(){
     qDebug() << "MainWindow::cancelPathSlot called";
 
+    QVector<QSharedPointer<PathPoint>> oldPath = pathPainter->getOldPath();
     /// we hide the points that we displayed just for the edition of the path
     for(int i = 0; i < pointViewsToDisplay.size(); i++)
         pointViewsToDisplay.at(i)->hide();
@@ -1045,12 +1065,14 @@ void MainWindow::cancelPathSlot(){
 
     emit resetPathCreationWidget();
     //pathPainter->setCurrentPath(pathPainter->getOldPath());
-    pathCreationWidget->updatePath(pathPainter->getOldPath());
+    pathCreationWidget->updatePath(oldPath);
 
     //selectedRobot->getRobot()->setPath(pathPainter->getCurrentPath());
     //bottomLayout->updateRobot(robots->getRobotId(selectedRobot->getRobot()->getName()), selectedRobot);
 
     backEvent();
+    pathPainter->setOldPath(oldPath);
+    setEnableAll(false, GraphicItemState::NO_EVENT);
 }
 
 void MainWindow::addPointPathSlot(QString name, double x, double y){
@@ -1106,7 +1128,7 @@ void MainWindow::editHomeEvent(){
             editSelectedRobotWidget->getHomeBtn()->setText("Add Home");
         }
         editSelectedRobotWidget->enableAll();
-        setEnableAll(true);
+        setEnableAll(false);
     }
 }
 
@@ -1125,7 +1147,7 @@ void MainWindow::homeEdited(QString name){
             editSelectedRobotWidget->getHomeLabel()->setText("Home: " + pointView->getPoint()->getName());
 
         editSelectedRobotWidget->enableAll();
-        setEnableAll(true, GraphicItemState::NO_EVENT);
+        setEnableAll(false, GraphicItemState::NO_EVENT);
     } else
         qDebug() << "MainWindow::homeEdited could not find a point named" << name;
 }
@@ -1149,27 +1171,38 @@ void MainWindow::showHome(){
         pointView->show();
     }
 
-    if(pathPainter->getOldPath().size() > 0){
-        editSelectedRobotWidget->setPath(pathPainter->getOldPath());
+    if(!editSelectedRobotWidget->isEditing()){
+        bottomLayout->uncheckAll();
+        if(pathPainter->getOldPath().size() > 0){
+            editSelectedRobotWidget->setPath(pathPainter->getOldPath());
 
-        pathPainter->clearOldPath();
-    } else {
-        RobotView* robotView =  robots->getRobotViewByName(selectedRobot->getRobot()->getName());
-        /// If the robot has a path, we display it, otherwise we show the button to add the path
-        if(robotView->getRobot()->getPath().size() > 0){
-            //qDebug() << "MainWindow::showHome I have a path !";
-            selectedRobotWidget->getPathWidget()->setPath(robotView->getRobot()->getPath());
-            selectedRobotWidget->getPathWidget()->show();
-            selectedRobotWidget->getNoPath()->hide();
-
-            editSelectedRobotWidget->setPath(robotView->getRobot()->getPath());
+            pathPainter->clearOldPath();
         } else {
-            qDebug() << "MainWindow::showHome I don't have a path !";
-            selectedRobotWidget->getPathWidget()->hide();
-            selectedRobotWidget->getNoPath()->show();
+            RobotView* robotView =  robots->getRobotViewByName(selectedRobot->getRobot()->getName());
+            /// If the robot has a path, we display it, otherwise we show the button to add the path
+            if(robotView->getRobot()->getPath().size() > 0){
+                bottomLayout->getViewPathRobotBtnGroup()->button(robots->getRobotId(selectedRobot->getRobot()->getName()))->setChecked(true);
+                //qDebug() << "MainWindow::showHome I have a path !";
+                selectedRobotWidget->getPathWidget()->setPath(robotView->getRobot()->getPath());
+                selectedRobotWidget->getPathWidget()->show();
+                selectedRobotWidget->getNoPath()->hide();
 
-            editSelectedRobotWidget->clearPath();
+                editSelectedRobotWidget->setPath(robotView->getRobot()->getPath());
+            } else {
+                qDebug() << "MainWindow::showHome I don't have a path !";
+                selectedRobotWidget->getPathWidget()->hide();
+                selectedRobotWidget->getNoPath()->show();
+
+                editSelectedRobotWidget->clearPath();
+            }
         }
+    }
+}
+
+void MainWindow::showEditHome(){
+    showHome();
+    if(!editSelectedRobotWidget->isEditing()){
+        editSelectedRobotWidget->setEditing(true);
     }
 }
 

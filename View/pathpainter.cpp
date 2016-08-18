@@ -10,7 +10,7 @@
 #include "Controller/mainwindow.h"
 
 PathPainter::PathPainter(MainWindow* const &mainWindow, MapView* const &mapPixmapItem, QSharedPointer<Points> _points)
-    : QGraphicsPathItem(mapPixmapItem), points(_points), mainWindow(mainWindow), mapView(mapPixmapItem){
+    : QGraphicsPathItem(mapPixmapItem), points(_points), mainWindow(mainWindow), mapView(mapPixmapItem), pathDeleted(false){
     setPen(QPen(Qt::red));
 }
 

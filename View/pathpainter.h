@@ -34,6 +34,8 @@ public:
     void updateCurrentPath(void);
     void updatePathPainterName(void);
     void clearOldPath();
+    bool getPathDeleted(void) const { return pathDeleted; }
+    void setPathDeleted(bool _pathDeleted){ pathDeleted = _pathDeleted; }
 
 private slots:
     void resetPathSlot(void);
@@ -53,6 +55,7 @@ private:
     QVector<QSharedPointer<PathPoint>> oldPath;
     MainWindow* mainWindow;
     MapView* mapView;
+    bool pathDeleted;
 };
 
 #endif // PATHPAINTER_H

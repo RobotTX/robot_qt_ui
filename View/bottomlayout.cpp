@@ -139,7 +139,7 @@ BottomLayout::BottomLayout(QMainWindow* parent, const QSharedPointer<Robots> &ro
 
     /// Creation of the sixth column, with the button to delete the path of the robot
     for(int i = 0; i < robotsVector.size(); i++){
-        QPushButton* deletePathButton = new QPushButton(QIcon(":/icons/close.png"), "", this);
+        QPushButton* deletePathButton = new QPushButton(QIcon(":/icons/bin.png"), "", this);
         if(robots->getRobotsVector().at(i)->getRobot()->getPath().size() < 1)
             deletePathButton->setEnabled(false);
         deletePathBtnGroup->addButton(deletePathButton, i);
@@ -341,6 +341,14 @@ void BottomLayout::setEnable(const bool enable){
         }
 
         list = viewPathRobotBtnGroup->buttons();
+        for(int i =0; i < list.size(); i++){
+            if(list.at(i)->isEnabled()){
+                list.at(i)->setEnabled(false);
+                listEnabled.push_back(list.at(i));
+            }
+        }
+
+        list = deletePathBtnGroup->buttons();
         for(int i =0; i < list.size(); i++){
             if(list.at(i)->isEnabled()){
                 list.at(i)->setEnabled(false);

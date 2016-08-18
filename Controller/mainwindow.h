@@ -195,6 +195,7 @@ private slots:
     void closeSlot();
     void setGraphicItemsState(const GraphicItemState state, const bool clear = false);
     void showHome();
+    void showEditHome();
     void hideHome(void);
     void backEvent();
     void updateView();
@@ -208,6 +209,7 @@ private slots:
     void stopPath(int robotNb);
     void resetPathPointViewsSlot();
     void setEnableAll(bool enable, GraphicItemState state = GraphicItemState::NO_STATE, bool clearPath = false, int noReturn = -1);
+    void deletePathSelecRobotBtnEvent();
 
 private:
     Ui::MainWindow* ui;

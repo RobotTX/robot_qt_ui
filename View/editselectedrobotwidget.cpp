@@ -25,6 +25,7 @@ EditSelectedRobotWidget::EditSelectedRobotWidget(QMainWindow * const parent, con
     home = QSharedPointer<PointView>();
     oldHome = QSharedPointer<PointView>();
     pathChanged = false;
+    editing = false;
 
 
     CustomScrollArea* scrollArea = new CustomScrollArea(this);
@@ -99,6 +100,14 @@ EditSelectedRobotWidget::EditSelectedRobotWidget(QMainWindow * const parent, con
     addPathBtn->setIconSize(parent->size()/10);
     connect(addPathBtn, SIGNAL(clicked()), parent, SLOT(addPathSelecRobotBtnEvent()));
     inLayout->addWidget(addPathBtn);
+
+    deletePathBtn = new QPushButton(QIcon(":/icons/bin.png"),"Delete Path", this);
+    deletePathBtn->setStyleSheet ("text-align: left");
+    //addPathBtn->hide();
+    deletePathBtn->setIconSize(parent->size()/10);
+    deletePathBtn->hide();
+    connect(deletePathBtn, SIGNAL(clicked()), parent, SLOT(deletePathSelecRobotBtnEvent()));
+    inLayout->addWidget(deletePathBtn);
 
 
     pathWidget = new PathWidget(this);
@@ -226,6 +235,7 @@ void EditSelectedRobotWidget::disableAll(void){
     homeBtn->setEnabled(false);
     saveBtn->setEnabled(false);
     addPathBtn->setEnabled(false);
+    deletePathBtn->setEnabled(false);
     wifiNameEdit->setEnabled(false);
     wifiPwdEdit->setEnabled(false);
     nameEdit->setEnabled(false);
@@ -236,6 +246,7 @@ void EditSelectedRobotWidget::enableAll(void){
     homeBtn->setEnabled(true);
     saveBtn->setEnabled(true);
     addPathBtn->setEnabled(true);
+    deletePathBtn->setEnabled(false);
     wifiNameEdit->setEnabled(true);
     wifiPwdEdit->setEnabled(true);
     nameEdit->setEnabled(true);
@@ -248,6 +259,7 @@ void EditSelectedRobotWidget::showEvent(QShowEvent *event){
     wifiNameEdit->setEnabled(true);
     wifiPwdEdit->setEnabled(true);
     addPathBtn->setEnabled(true);
+    deletePathBtn->setEnabled(true);
     saveBtn->setEnabled(true);
     emit showEditSelectedRobotWidget();
     QWidget::showEvent(event);
@@ -263,6 +275,7 @@ void EditSelectedRobotWidget::setPath(const QVector<QSharedPointer<PathPoint> >&
         pathWidget->show();
         addPathBtn->setText("Edit Path");
         addPathBtn->setIcon(QIcon(":/icons/edit.png"));
+        deletePathBtn->show();
         pathWidget->setPath(path);
     }
 }
@@ -271,4 +284,5 @@ void EditSelectedRobotWidget::clearPath(){
     addPathBtn->setText("Add Path");
     addPathBtn->setIcon(QIcon(":/icons/plus.png"));
     pathWidget->hide();
+    deletePathBtn->hide();
 }
