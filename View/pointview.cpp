@@ -99,7 +99,7 @@ void PointView::mouseReleaseEvent(QGraphicsSceneMouseEvent *event){
 
 void PointView::hoverEnterEvent(QGraphicsSceneHoverEvent * /* unused */){
     setToolTip(point->getName());
-    setPixmap(PointView::PixmapType::SELECTED, selectedRobot);
+    setPixmap(PointView::PixmapType::HOVER, selectedRobot);
     //qDebug() << "hoverEnterEvent : " << lastPixmap
 }
 
@@ -140,9 +140,12 @@ void PointView::setPixmap(const PixmapType pixType, RobotView* _selectedRobot){
     lastType = type;
     selectedRobot = _selectedRobot;
 
-    if(pixType != PixmapType::SELECTED)
+    if(pixType != PixmapType::HOVER)
         type = pixType;
 
+    /*if(getPoint()->getName().compare(TMP_POINT_NAME) == 0){
+        qDebug() << "lol";
+    }*/
 
     /*if(_selectedRobot){
         qDebug() << "Got a selected robot";

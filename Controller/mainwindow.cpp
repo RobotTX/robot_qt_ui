@@ -1016,7 +1016,7 @@ void MainWindow::editTmpPathPointSlot(int id, QString name, double x, double y){
         editedPointView->setFlag(QGraphicsItem::ItemIsMovable);
         editedPointView->setState(GraphicItemState::EDITING_PATH);
         /// set by hand in order to keep the colors consistent while editing the point and after
-        editedPointView->setPixmap(PointView::PixmapType::HOVER);
+        editedPointView->setPixmap(PointView::PixmapType::SELECTED);
     }
 }
 
@@ -1674,7 +1674,6 @@ void MainWindow::setSelectedPoint(){
     /// sets the pixmaps of the other points
     points->setPixmapAll(PointView::NORMAL);
 
-    /// tmp point is blue
     displaySelectedPointView->setPixmap(PointView::MID);
 
 
@@ -1807,7 +1806,7 @@ void MainWindow::editPointButtonEvent(){
         points->displayTmpPoint(false);
 
     /// change the color of the pointview that's selected on the map
-    displaySelectedPointView->setPixmap(PointView::PixmapType::HOVER);
+    displaySelectedPointView->setPixmap(PointView::PixmapType::SELECTED);
     displaySelectedPointView->show();
 
     pointsLeftWidget->getActionButtons()->getPlusButton()->setChecked(false);
@@ -2310,7 +2309,6 @@ void MainWindow::displayPointEvent(QString name, double x, double y){
                 else
                     qDebug() << "MainWindow::displayPointEvent  : something unexpected happened";
             }
-            pointView->setPixmap(PointView::PixmapType::SELECTED);
 
             if(pointView->getPoint()->isPath()){
                 /// if it's a path point the edition/suppression is forbidden from here
@@ -2737,7 +2735,7 @@ void MainWindow::editPointFromGroupMenu(void){
 
             leftMenu->getDisplaySelectedPoint()->setPointView(displaySelectedPointView, robotName);
 
-            displaySelectedPointView->setPixmap(PointView::PixmapType::HOVER);
+            displaySelectedPointView->setPixmap(PointView::PixmapType::SELECTED);
             displaySelectedPointView->show();
 
             /// update the file
@@ -2846,7 +2844,8 @@ void MainWindow::updatePoint(void){
 
     /// resets the color of the pointView
     if(displaySelectedPointView){
-        displaySelectedPointView->setPixmap(PointView::PixmapType::SELECTED);
+        displaySelectedPointView->setPixmap(PointView::PixmapType::NORMAL);
+        points->getTmpPointView()->setPixmap(PointView::PixmapType::NORMAL);
 
         /// notifies the map that the point's name has changed and that the hover has to be updated
         emit nameChanged(displaySelectedPointView->getPoint()->getName(), leftMenu->getDisplaySelectedPoint()->getNameEdit()->text());
@@ -2920,7 +2919,8 @@ void MainWindow::cancelEvent(void){
     /// reset the color of the pointView
     QSharedPointer<PointView> displaySelectedPointView = points->findPointView(leftMenu->getDisplaySelectedPoint()->getPointName());
     if(displaySelectedPointView){
-        displaySelectedPointView->setPixmap(PointView::PixmapType::SELECTED);
+        displaySelectedPointView->setPixmap(PointView::PixmapType::NORMAL);
+        points->getTmpPointView()->setPixmap(PointView::PixmapType::NORMAL);
         qDebug() << "about to reset your position";
 
         displaySelectedPointView->getPoint()->setPosition(displaySelectedPointView->getOriginalPosition());
