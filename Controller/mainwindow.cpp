@@ -769,6 +769,7 @@ void MainWindow::cancelEditSelecRobotBtnEvent(){
     emit resetPathCreationWidget();
     emit resetPath();
     editSelectedRobotWidget->setEditing(false);
+    pathPainter->clearOldPath();
 
     backEvent();
 
@@ -971,6 +972,7 @@ void MainWindow::robotSavedEvent(){
                     }
                 }
 
+                pathPainter->clearOldPath();
                 editSelectedRobotWidget->setPathChanged(false);
 
                 backEvent();
@@ -1181,7 +1183,10 @@ void MainWindow::showHome(){
             RobotView* robotView =  robots->getRobotViewByName(selectedRobot->getRobot()->getName());
             /// If the robot has a path, we display it, otherwise we show the button to add the path
             if(robotView->getRobot()->getPath().size() > 0){
+                //setEnableAll(true);
                 bottomLayout->getViewPathRobotBtnGroup()->button(robots->getRobotId(selectedRobot->getRobot()->getName()))->setChecked(true);
+                //setEnableAll(false,);
+
                 //qDebug() << "MainWindow::showHome I have a path !";
                 selectedRobotWidget->getPathWidget()->setPath(robotView->getRobot()->getPath());
                 selectedRobotWidget->getPathWidget()->show();

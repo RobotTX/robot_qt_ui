@@ -203,6 +203,11 @@ void BottomLayout::updateRobot(const int id, RobotView * const robotView){
         viewPathRobotBtnGroup->button(id)->setEnabled(true);
         vectorPathLabel.at(id)->setText(pathToStr(robotView->getRobot()->getPath()));
     }
+
+    if(listEnabled.size() > 0){
+        setEnable(true);
+        setEnable(false);
+    }
 }
 
 void BottomLayout::addRobot(RobotView * const robotView){
