@@ -28,36 +28,42 @@ class EditSelectedRobotWidget: public QWidget{
 public:
     EditSelectedRobotWidget(QMainWindow* const parent, QSharedPointer<Robots> const robots);
 
-    void setSelectedRobot(RobotView * const robotView, bool firstConnection = false);
-    void setRobots(QSharedPointer<Robots> const _robots){robots = _robots;}
-    void editName(void);
-
     QLineEdit* getNameEdit(void){ return nameEdit; }
     QPushButton* getHomeBtn(void){ return homeBtn; }
-    void disableAll(void);
-    void enableAll(void);
-    void setHome(QSharedPointer<PointView> const _home){home = _home;}
-    QSharedPointer<PointView> getHome() const {return home;}
-    bool isFirstConnection()const {return firstConnection;}
-    void setOldHome(QSharedPointer<PointView> const _oldHome){oldHome = _oldHome;}
-    QSharedPointer<PointView> getOldHome() const {return oldHome;}
+    QSharedPointer<PointView> getHome() const { return home; }
+    bool isFirstConnection() const { return firstConnection; }
     QLineEdit* getWifiNameEdit(void) const { return wifiNameEdit; }
     QLineEdit* getWifiPwdEdit(void) const { return wifiPwdEdit; }
     PathWidget* getPathWidget(void) const { return pathWidget; }
-    QPushButton* getAddPathBtn(void) const { return addPathBtn;}
-    void setPathChanged(const bool change) { pathChanged = change; }
+    QPushButton* getAddPathBtn(void) const { return addPathBtn; }
     bool getPathChanged() const { return pathChanged; }
-    void setPathWidget(PathWidget* pw) { pathWidget = pw; }
-    void setPath(QVector<QSharedPointer<PathPoint>> const path);
-    void clearPath();
-    QLabel* getHomeLabel(void) const {return homeLabel;}
+    QSharedPointer<PointView> getOldHome() const { return oldHome; }
+    QLabel* getHomeLabel(void) const { return homeLabel; }
     QPushButton* getSaveButton(void) const { return saveBtn; }
+
+
+    void setRobots(QSharedPointer<Robots> const _robots) { robots = _robots; }
+    void setHome(QSharedPointer<PointView> const _home) { home = _home; }
+    void setOldHome(QSharedPointer<PointView> const _oldHome) { oldHome = _oldHome;}
+    void setPathChanged(const bool change) { pathChanged = change; }
+    void setPathWidget(PathWidget* pw) { pathWidget = pw; }
+
+    /// updates the name and wifi or the robot
+    void editName(void);
+    /// disables the buttons and line edits
+    void disableAll(void);
+    /// enables the buttons and line edits
+    void enableAll(void);
+    void setSelectedRobot(RobotView * const robotView, bool firstConnection = false);
+    void setPath(const QVector<QSharedPointer<PathPoint> > &path);
+    void clearPath();
 
 signals:
     /// Signal emitted when a robot has been edited & saved
     void robotSaved(void);
     void showEditSelectedRobotWidget(void);
     void hideEditSelectedRobotWidget(void);
+
 private:
     QVBoxLayout* layout;
     QGridLayout* wifiLayout;
@@ -81,6 +87,7 @@ private:
     PathWidget* pathWidget;
     bool pathChanged;
     QLabel* homeLabel;
+
 protected:
     void showEvent(QShowEvent *event);
     void hideEvent(QHideEvent *event);

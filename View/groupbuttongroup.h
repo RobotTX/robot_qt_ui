@@ -27,6 +27,8 @@ public:
     void setEditedGroupName(const QString _editedGroupName) { editedGroupName = _editedGroupName; }
     QAbstractButton* getButtonByName(const QString name) const;
     int getButtonIdByName(const QString name) const;
+
+    /// removes useless spaces
     QString formatName(const QString name) const;
 
 public:
@@ -40,11 +42,14 @@ protected:
 
 signals:
     void doubleClick(QString);
+    /// emitted when buttons are updated to reestablish the connections
     void updateConnectionsRequest();
+    /// emitted when buttons are updated to reestablish the connection with the line edit to modify a group
     void modifyEditReconnection();
     void codeEditGroup(int);
 
 public slots:
+    /// emitted upon edition of a group's name to signify the mainWindow that the name is valid or not
     int checkEditGroupName(QString name);
 
 private:
@@ -52,11 +57,11 @@ private:
     QVBoxLayout* layout;
     QButtonGroup* buttonGroup;
     QWidget* parent;
-    /// to avoid resizing of the icons after deletions of points and groups
-    const QSize BUTTON_SIZE = parentWidget()->size()/2;
-    // indexModifyEdit => editedGroupName
     QString editedGroupName;
     QSharedPointer<Points> points;
+
+    /// to avoid resizing of the icons after deletions of points and groups
+    const QSize BUTTON_SIZE = parentWidget()->size()/2;
 };
 
 #endif // GROUPBUTTONGROUP_H

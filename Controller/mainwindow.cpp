@@ -1979,8 +1979,6 @@ void MainWindow::openLeftMenu(){
         switchFocus("Menu", leftMenuWidget, MainWindow::WidgetType::MENU);
 
     } else {
-        /// we reset the origin of the point information menu in order to display the buttons to go back in the further menus
-        leftMenu->getDisplaySelectedPoint()->setOrigin(DisplaySelectedPoint::POINTS_MENU);
         leftMenu->getDisplaySelectedPoint()->hide();
         if(leftMenuWidget->isHidden()){
             hideAllWidgets();
@@ -3524,7 +3522,8 @@ void MainWindow::setEnableAll(bool enable, GraphicItemState state, bool clearPat
 void MainWindow::centerMap(){
     mapPixmapItem->setPos(mapState.first);
     graphicsView->centerOn(mapState.first);
-    graphicsView->setZoomCoeff(mapState.second);
+    if(graphicsView->getZoomCoeff() != mapState.second)
+        graphicsView->setZoomCoeff(mapState.second);
 }
 
 void MainWindow::settingBtnSlot(){

@@ -20,6 +20,7 @@ public:
     void showEvent(QShowEvent *event);
 
 signals:
+    /// emitted when the QLineEdit loses the focus
     void clickSomewhere(QString name);
     void pressedEnter();
     void enableGroupEdit(bool);

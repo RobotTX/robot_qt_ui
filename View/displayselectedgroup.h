@@ -26,9 +26,7 @@ public:
     DisplaySelectedGroup(QMainWindow *_parent, const QSharedPointer<Points> &_points);
 
     PointButtonGroup* getPointButtonGroup(void) const { return pointButtonGroup; }
-
     TopLeftMenu* getActionButtons(void) const { return actionButtons; }
-
     QLabel* getNameLabel(void) const { return name; }
     QSharedPointer<Points> getPoints(void) const { return points; }
 
@@ -44,6 +42,7 @@ protected:
     void showEvent(QShowEvent* event);
 
 signals:
+    /// emitted when a button is clicked to reset the colors of the path points
     void resetPathPointViews();
 
 private:

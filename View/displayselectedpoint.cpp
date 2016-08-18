@@ -22,8 +22,8 @@
 #include <QSet>
 #include "View/customscrollarea.h"
 
-DisplaySelectedPoint::DisplaySelectedPoint(QMainWindow *const _parent,  QSharedPointer<Robots> const _robots,QSharedPointer<Points> const& _points, QSharedPointer<Map> const& _map, QSharedPointer<PointView> _pointView, const Origin _origin):
-    QWidget(_parent), map(_map), pointView(_pointView), parent(_parent), points(_points), origin(_origin){
+DisplaySelectedPoint::DisplaySelectedPoint(QMainWindow *const _parent,  QSharedPointer<Robots> const _robots, QSharedPointer<Points> const& _points, QSharedPointer<Map> const& _map, QSharedPointer<PointView> _pointView):
+    QWidget(_parent), map(_map), pointView(_pointView), parent(_parent), points(_points){
 
     robots = QSharedPointer<Robots>(_robots);
     layout = new QVBoxLayout(this);
@@ -140,14 +140,6 @@ void DisplaySelectedPoint::keyPressEvent(QKeyEvent* event){
             break;
         }
     }
-}
-
-void DisplaySelectedPoint::setOrigin(const Origin _origin){
-    /// if we come from the map there is simply no where
-    /// to return so we hide the button
-    /// the distinction between when we come from the group menu
-    /// and when we come from the points menu is made in the pointBtnEvent
-    origin = _origin;
 }
 
 void DisplaySelectedPoint::resetWidget(){

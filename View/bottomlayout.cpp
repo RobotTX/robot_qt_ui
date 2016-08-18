@@ -69,7 +69,7 @@ BottomLayout::BottomLayout(QMainWindow* parent, const QSharedPointer<Robots> &ro
     actionLayout->setContentsMargins(0,0,0,0);
     widgetName->setLayout(columnName);
 
-    /// Creation of the first collumn, with the button containing the name of the robots
+    /// Creation of the first column, with the button containing the name of the robots
     for(int i = 0; i < robotsVector.size(); i++){
         QPushButton* robotBtn = new QPushButton(robotsVector.at(i)->getRobot()->getName(), this);
         robotBtn->setMinimumHeight(30);
@@ -360,7 +360,6 @@ void BottomLayout::uncheckViewPathSelectedRobot(const int robotNb){
     }
 }
 
-
 void BottomLayout::uncheckAll(){
     QList<QAbstractButton*> list = viewPathRobotBtnGroup->buttons();
      for(int i =0; i < list.size(); i++){
@@ -370,7 +369,7 @@ void BottomLayout::uncheckAll(){
      }
  }
 
-QString BottomLayout::pathToStr(const QVector<QSharedPointer<PathPoint> > path){
+QString BottomLayout::pathToStr(const QVector<QSharedPointer<PathPoint> >& path){
     QString pathStr = QString("");
     for(int i = 0; i < path.size(); i++){
         if(i != 0){

@@ -47,7 +47,9 @@ public:
     /// to stop displaying the path of the robot whose id is given as a parameter
     void uncheckViewPathSelectedRobot(const int robotNb = -1);
     void uncheckAll();
-    QString pathToStr(QVector<QSharedPointer<PathPoint>> const path);
+
+    /// to create a QString to display from the path
+    QString pathToStr(const QVector<QSharedPointer<PathPoint> > &path);
 
 private:
     /**

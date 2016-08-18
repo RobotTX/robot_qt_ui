@@ -25,7 +25,7 @@ DisplaySelectedPointRobots::DisplaySelectedPointRobots(QWidget *parent):QWidget(
     robotBtn = new QPushButton("", this);
     robotBtn->setMinimumHeight(30);
     robotBtn->setMaximumHeight(30);
-    //robotBtn->setFlat(true);
+
     homeLayout->addWidget(robotBtn);
     connect(robotBtn, SIGNAL(clicked()), this, SLOT(robotBtnClicked()));
 

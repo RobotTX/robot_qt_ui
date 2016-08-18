@@ -29,10 +29,8 @@ class DisplaySelectedPoint: public QWidget
 {
         Q_OBJECT
 public:
-    /// used to determine which menu or object (could be the map) cause the information of this point to be displayed
-    enum Origin { MAP, GROUP_MENU, POINTS_MENU };
 
-    DisplaySelectedPoint(QMainWindow* const _parent, QSharedPointer<Robots> const robots,const QSharedPointer<Points> &_points, QSharedPointer<Map> const& _map, QSharedPointer<PointView> _point = QSharedPointer<PointView>(), const Origin _origin = MAP);
+    DisplaySelectedPoint(QMainWindow* const _parent, QSharedPointer<Robots> const robots,const QSharedPointer<Points> &_points, QSharedPointer<Map> const& _map, QSharedPointer<PointView> _point = QSharedPointer<PointView>());
 
     TopLeftMenu* getActionButtons(void) const { return actionButtons; }
     QPushButton* getSaveButton(void) const { return saveButton; }
@@ -40,18 +38,16 @@ public:
     QLineEdit* getNameEdit(void) const { return nameEdit; }
     QString getPointName(void) const { return pointView->getPoint()->getName(); }
     void setPointView(QSharedPointer<PointView> _pointView, const QString robotName);
-    Origin getOrigin(void) const { return origin; }
     QLabel* getXLabel(void) const { return posXLabel; }
     QLabel* getYLabel(void) const { return posYLabel; }
-    QString formatName(const QString name) const;
     QSharedPointer<PointView> getPointView(void) const { return pointView; }
     DisplaySelectedPointRobots* getDisplaySelectedPointRobots(void) { return robotsWidget; }
 
 public:
     void displayPointInfo(void);
-    void setOrigin(const Origin _origin);
     void resetWidget(void);
     void setRobotsLabel(void);
+    QString formatName(const QString name) const;
 
 protected:
     void mousePressEvent(QEvent*);
@@ -63,7 +59,10 @@ signals:
     void nameChanged(QString, QString);
     /// to reset the state of the map if a user clicks a random button while he was editting a point
     void resetState(GraphicItemState, bool);
+    /// emitted when the field to type the name of the point is changed to allow or not the user to save its point
     void invalidName(QString, CreatePointWidget::Error);
+    /// in the event where this point is a special point for a robot (home or part of a path), allows those pieces of information to
+    /// be displayed
     void setSelectedRobotFromPoint(QString);
 
 private slots:
@@ -87,10 +86,6 @@ private:
     QSharedPointer<Points> points;
     TopLeftMenu* actionButtons;
     QSharedPointer<Robots> robots;
-
-    /// to determine whether we come from the group menu and have to go back to it if we click on the back button
-    /// or if we got here by clicking on the map
-    Origin origin;
 };
 
 #endif // DISPLAYSELECTEDPOINT_H

@@ -258,7 +258,7 @@ void EditSelectedRobotWidget::hideEvent(QHideEvent *event){
     QWidget::hideEvent(event);
 }
 
-void EditSelectedRobotWidget::setPath(const QVector<QSharedPointer<PathPoint> > path){
+void EditSelectedRobotWidget::setPath(const QVector<QSharedPointer<PathPoint> >& path){
     if(path.size() > 0){
         pathWidget->show();
         addPathBtn->setText("Edit Path");

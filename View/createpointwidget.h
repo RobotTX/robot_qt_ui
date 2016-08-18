@@ -48,19 +48,23 @@ protected:
     void showEvent(QShowEvent* event);
 
 signals:
+    /// emitted when the 'save' button is clicked
     void pointSaved(QString, double, double, QString);
+    /// emitted every time the input field changes to allow (no error) or not the creation of the point with the indicated name
     void invalidName(QString, CreatePointWidget::Error);
-    void errorCreationPoint(QString, QString);
+    /// emitted after the user clicks the plus button to explain him what to do to create his point
     void displayMessageCreation(QString);
 
 private slots:
     void saveEditSelecPointBtnEvent();
     /// check whether or not a point is valid
-    /// a point is valid if it's not empty, already taken and if it does not contain ";" or "}"
+    /// a point is valid if it's not empty, already taken and if it does not contain ";" or "}" or "pathpoint" (case insensitive)
     int checkPointName(void);
+    /// shows the widgets necessary to the creation of a point, cancel and save buttons and checkbox
     void showGroupLayout(void);
 
 public slots:
+    /// hides the widgets necessary to the creation of a point, cancel and save buttons and checkbox
     void hideGroupLayout() const;
 
 private:

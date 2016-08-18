@@ -3,9 +3,10 @@
 
 #include <QString>
 
-// color theme, if you change colors you may have to clean and rebuild for it to be effective
-// for "no color" ( the default grey) , put transparent
+/// color theme, if you change colors you may have to clean and rebuild for it to be effective
+/// for "no color" ( the default grey) , put transparent
 // grey
+
 /*
   const QString button_hover_color="#d3d3d3";
   const QString button_checked_color="#c6c6c6";

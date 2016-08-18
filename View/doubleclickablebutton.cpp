@@ -7,8 +7,7 @@ DoubleClickableButton::DoubleClickableButton(const QString string, QWidget* pare
     setName(string);
 }
 
-void DoubleClickableButton::setName(const QString newName)
-{
+void DoubleClickableButton::setName(const QString newName){
     realName = newName ;
     if (realName.length()>7)
     {

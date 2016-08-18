@@ -185,9 +185,12 @@ void CreatePointWidget::showGroupLayout(void) {
     actionButtons->getPlusButton()->setEnabled(false);
     actionButtons->getPlusButton()->setToolTip("");
     nameEdit->setReadOnly(false);
-    //nameEdit->setPlaceholderText("");
+    nameEdit->setText("");
+    //setFocus();
+    //nameEdit->setPlaceholderText("type your name");
     nameEdit->setAutoFillBackground(true);
     nameEdit->setFrame(true);
+
     nameEdit->setFocusPolicy(Qt::FocusPolicy::StrongFocus);
     /// so that the main window sets a message to help the user figuring out what to do
     emit displayMessageCreation("Choose a name for your point by filling up the corresponding field");

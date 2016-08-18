@@ -29,4 +29,11 @@ private:
     float zoomCoeff;
 };
 
+/// to set a particular zoom on the map
+inline void CustomQGraphicsView::setZoomCoeff(const float _zoom){
+    qDebug() << zoomCoeff << "wanted->" << _zoom;
+    scale(_zoom/zoomCoeff, _zoom/zoomCoeff);
+    zoomCoeff = _zoom;
+}
+
 #endif // CUSTOMQGRAPHICSVIEW_H

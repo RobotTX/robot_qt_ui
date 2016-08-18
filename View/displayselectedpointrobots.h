@@ -11,6 +11,11 @@ class QButtonGroup;
 #include <QPushButton>
 #include <QObject>
 
+/**
+ * @brief The DisplaySelectedPointRobots class
+ * This class provides a wdiget whose purpose is to display information relative to points being homes or parts of robot paths
+ */
+
 class DisplaySelectedPointRobots: public QWidget {
     Q_OBJECT
 public:
@@ -20,6 +25,7 @@ public:
     QWidget* getHomeWidget(void) const { return homeWidget; }
 
 private slots:
+    /// shortcuts to go to the robot page
     void robotBtnClicked();
     void pathBtnClicked(QAbstractButton*button);
 

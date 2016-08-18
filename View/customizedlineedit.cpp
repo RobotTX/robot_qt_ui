@@ -15,12 +15,14 @@ void CustomizedLineEdit::focusOutEvent(QFocusEvent* e){
 
 
 void CustomizedLineEdit::hideEvent(QHideEvent *event){
+    /// enables the edition of a group
     emit enableGroupEdit(true);
     qDebug() << "LineEdit::hideEvent called";
     QWidget::hide();
 }
 
 void CustomizedLineEdit::showEvent(QShowEvent *event){
+    /// disables the edition of a group
     emit enableGroupEdit(false);
     qDebug() << "LineEdit::showEvent called";
     QWidget::show();
