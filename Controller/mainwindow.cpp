@@ -1783,6 +1783,11 @@ void MainWindow::setSelectedPoint(){
 
     leftMenu->getDisplaySelectedPoint()->hide();
     switchFocus(displaySelectedPointView->getPoint()->getName(), createPointWidget, MainWindow::WidgetType::POINT);
+
+    /// to deselect a potentially selected robot
+    bottomLayout->uncheckRobots();
+    robots->deselect();
+    bottomLayout->setLastCheckedId(-1);
 }
 
 /**
