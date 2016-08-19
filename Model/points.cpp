@@ -337,7 +337,7 @@ QString Points::getGroupNameFromPointName(const QString pointName) const{
 
 void Points::setPixmapAll(const PointView::PixmapType type, RobotView* selectedRobot){
     QMapIterator<QString, QSharedPointer<QVector<QSharedPointer<PointView>>>> i(*groups);
-    qDebug() << "Points::setPixmapAll with PixmapType called";
+    //qDebug() << "Points::setPixmapAll with PixmapType called";
     while(i.hasNext()) {
         i.next();
         if(i.key().compare(PATH_GROUP_NAME) != 0){

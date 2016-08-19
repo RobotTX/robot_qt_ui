@@ -141,6 +141,8 @@ void SelectedRobotWidget::setSelectedRobot(RobotView* const& _robotView){
         goHome->hide();
     }
 
+
+
     update();
 }
 

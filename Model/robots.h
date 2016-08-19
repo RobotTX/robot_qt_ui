@@ -111,6 +111,7 @@ public:
     QMap<QString, QString> getRobotsNameMap() const {return robotsNameMap;}
     void setRobotsNameMap(const QMap<QString, QString> &_robotsNameMap) {robotsNameMap = _robotsNameMap;}
     void insertRobotsNameMap(QString ip, QString name) {robotsNameMap.insert(ip, name);}
+    void deselect(void);
 
 private:
     /**

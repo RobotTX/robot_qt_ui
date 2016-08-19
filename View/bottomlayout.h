@@ -12,7 +12,6 @@ class QScrollArea;
 class QVBoxLayout;
 class PathPoint;
 
-
 #include <QSharedPointer>
 #include <QWidget>
 #include <QVector>
@@ -38,8 +37,11 @@ public:
     QButtonGroup* getViewPathRobotBtnGroup(void) const { return viewPathRobotBtnGroup; }
     QButtonGroup* getDeletePathBtnGroup(void) const { return deletePathBtnGroup; }
     QVector<QLabel*> getVectorPathLabel(void) const { return vectorPathLabel; }
+    int getLastCheckedId(void) const { return lastCheckedId; }
 
+    void setLastCheckedId(const int id) { lastCheckedId = id; }
 
+    void uncheckRobots(void);
     void updateRobot(const int id, RobotView* const robotView);
     void setEnable(const bool enable);
     void addRobot(RobotView * const robotView);
@@ -105,6 +107,8 @@ private:
     QWidget* widgetName;
     QWidget* widgetPath;
     QWidget* actionWidget;
+
+    int lastCheckedId;
 };
 
 #endif // BOTTOMLAYOUT_H

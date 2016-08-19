@@ -14,8 +14,7 @@
 #include "Model/points.h"
 #include "colors.h"
 
-
-BottomLayout::BottomLayout(QMainWindow* parent, const QSharedPointer<Robots> &robots) : QWidget(parent){
+BottomLayout::BottomLayout(QMainWindow* parent, const QSharedPointer<Robots> &robots) : QWidget(parent), lastCheckedId(-1){
 
     layout = new QHBoxLayout(this);
 
@@ -79,6 +78,7 @@ BottomLayout::BottomLayout(QMainWindow* parent, const QSharedPointer<Robots> &ro
         robotBtnGroup->addButton(robotBtn, i);
         columnName->addWidget(robotBtn);
         robotBtn->setFlat(true);
+        robotBtn->setCheckable(true);
     }
 
     scrollLayout->addWidget(widgetName);
@@ -360,7 +360,6 @@ void BottomLayout::setEnable(const bool enable){
                 listEnabled.push_back(list.at(i));
             }
         }
-
     }
 }
 
@@ -397,4 +396,11 @@ QString BottomLayout::pathToStr(const QVector<QSharedPointer<PathPoint> >& path)
         }
     }
     return pathStr;
+}
+
+void BottomLayout::uncheckRobots(){
+    robotBtnGroup->setExclusive(false);
+    if(robotBtnGroup->checkedButton())
+        robotBtnGroup->checkedButton()->setChecked(false);
+    robotBtnGroup->setExclusive(true);
 }

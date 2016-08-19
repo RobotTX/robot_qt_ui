@@ -135,7 +135,7 @@ void PointView::updatePos(void){
 }
 
 void PointView::setPixmap(const PixmapType pixType, RobotView* _selectedRobot){
-    qDebug() << "PointView::setPixmap called" << getPoint()->getName() << pixType;
+    //qDebug() << "PointView::setPixmap called" << getPoint()->getName() << pixType;
 
     lastType = type;
     selectedRobot = _selectedRobot;

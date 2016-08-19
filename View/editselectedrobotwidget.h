@@ -40,6 +40,7 @@ public:
     QSharedPointer<PointView> getOldHome() const { return oldHome; }
     QLabel* getHomeLabel(void) const { return homeLabel; }
     QPushButton* getSaveButton(void) const { return saveBtn; }
+    QPushButton* getCancelButton(void) const { return cancelBtn; }
     bool isEditing(void) const { return editing; }
 
 

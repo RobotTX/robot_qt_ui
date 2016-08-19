@@ -121,3 +121,8 @@ RobotView* Robots::findRobotUsingTmpPointInPath(const QSharedPointer<Point> poin
     }
     return NULL;
 }
+
+void Robots::deselect(){
+    for(int i = 0; i < robotsVector.size(); i++)
+        robotsVector[i]->setSelected(false);
+}

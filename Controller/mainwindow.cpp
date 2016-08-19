@@ -611,6 +611,12 @@ void MainWindow::setSelectedRobot(RobotView* robotView){
     if(id > 0)
         pathPainter->setCurrentPath(robots->getRobotsVector().at(id)->getRobot()->getPath());
 
+    //if(!bottomLayout->getRobotBtnGroup()->button(robots->getRobotId(robotView->getRobot()->getName()))->isChecked())
+        bottomLayout->getRobotBtnGroup()->button(robots->getRobotId(robotView->getRobot()->getName()))->setChecked(true);
+        bottomLayout->setLastCheckedId(robots->getRobotId(robotView->getRobot()->getName()));
+    //else
+
+
     switchFocus(robotView->getRobot()->getName(), selectedRobotWidget, MainWindow::WidgetType::ROBOT);
 
 }
@@ -698,8 +704,26 @@ void MainWindow::deletePathSelecRobotBtnEvent(){
 }
 
 void MainWindow::setSelectedRobotNoParent(QAbstractButton *button){
-    resetFocus();
-    setSelectedRobot(robots->getRobotViewByName(button->text()));
+    qDebug() << "Setselectedrobotnoparent called with id" << bottomLayout->getRobotBtnGroup()->id(button) << ", last id is" << bottomLayout->getLastCheckedId();
+    if(bottomLayout->getLastCheckedId() == bottomLayout->getRobotBtnGroup()->id(button)){
+        qDebug() << "gotta hide the robot" << button->text();
+        /// if the button was already checked we uncheck it
+        selectedRobotWidget->hide();
+        bottomLayout->uncheckRobots();
+        bottomLayout->setLastCheckedId(-1);
+        robots->deselect();
+        /// we hide the path
+        bottomLayout->getViewPathRobotBtnGroup()->button(bottomLayout->getRobotBtnGroup()->id(button))->setChecked(false);
+        selectedRobot = 0;
+        points->setPixmapAll(PointView::PixmapType::NORMAL);
+        //if(selectedRobot->getRobot()->getHome())
+            //selectedRobot->getRobot()->getHome()->hide();
+    } else if(bottomLayout->getRobotBtnGroup()->id(button) != -1 ){
+        qDebug() << "have to display the robot" << button->text();
+        resetFocus();
+        setSelectedRobot(robots->getRobotViewByName(button->text()));
+        bottomLayout->setLastCheckedId(bottomLayout->getRobotBtnGroup()->id(button));
+    }
 }
 
 void MainWindow::setSelectedRobot(QAbstractButton *button){
@@ -1152,11 +1176,23 @@ void MainWindow::homeEdited(QString name){
         setEnableAll(false, GraphicItemState::NO_EVENT);
     } else
         qDebug() << "MainWindow::homeEdited could not find a point named" << name;
+
+    float x = pointView->getPoint()->getPosition().getX();
+    float y = pointView->getPoint()->getPosition().getY();
+    /// this point is a white point of the map and we can set the robot's home to be this point
+    if(map->getMapImage().pixelColor(x, y).red() >= 254){
+        setMessageTop(TEXT_COLOR_INFO, "Click \"Save\" to terminate");
+        editSelectedRobotWidget->getSaveButton()->setEnabled(true);
+    } else {
+    /// this is an unknown point, it cannot be used as a home for a robot
+        setMessageTop(TEXT_COLOR_INFO, "You cannot set the home of your robot to this point because it is not a known part of the robot's environment");
+        editSelectedRobotWidget->getSaveButton()->setEnabled(false);
+    }
 }
 
 
 void MainWindow::showHome(){
-    qDebug() << "MainWindow::showHome called" << (selectedRobot->getRobot()->getHome()==NULL);
+    //qDebug() << "MainWindow::showHome called" << (selectedRobot->getRobot()->getHome()==NULL);
 
     points->setPixmapAll(PointView::PixmapType::NORMAL, selectedRobot);
 
@@ -1727,7 +1763,7 @@ void MainWindow::setSelectedPoint(){
     float x = displaySelectedPointView->getPoint()->getPosition().getX();
     float y = displaySelectedPointView->getPoint()->getPosition().getY();
 
-    if(map->getMapImage().pixelColor(x ,y).red() >= 254){
+    if(map->getMapImage().pixelColor(x, y).red() >= 254){
         setMessageTop(TEXT_COLOR_INFO, "To save this point permanently click the \"+\" button");
         createPointWidget->getActionButtons()->getPlusButton()->setEnabled(true);
         createPointWidget->getActionButtons()->getPlusButton()->setToolTip("Click this button if you want to save this point permanently");
