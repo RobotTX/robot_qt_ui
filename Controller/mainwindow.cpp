@@ -709,6 +709,7 @@ void MainWindow::setSelectedRobotNoParent(QAbstractButton *button){
         qDebug() << "gotta hide the robot" << button->text();
         /// if the button was already checked we uncheck it
         selectedRobotWidget->hide();
+        leftMenu->hide();
         bottomLayout->uncheckRobots();
         bottomLayout->setLastCheckedId(-1);
         robots->deselect();
