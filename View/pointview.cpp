@@ -54,7 +54,9 @@ void PointView::mousePressEvent(QGraphicsSceneMouseEvent *event){
 
     } else if(state == GraphicItemState::EDITING_HOME){
         qDebug() << "PointView::mousePressEvent EDITING_HOME";
-        emit homeEdited(getPoint()->getName());
+        float x = pos().x() + pixmap().width()*SCALE/2;
+        float y = pos().y() + pixmap().height()*SCALE;
+        emit editedHomePositionChanged(x, y, point->getName());
 
     } else {
         qDebug() << "PointView::mousePressEvent NO_EVENT";
@@ -63,7 +65,7 @@ void PointView::mousePressEvent(QGraphicsSceneMouseEvent *event){
 
 void PointView::mouseMoveEvent(QGraphicsSceneMouseEvent *event){
 
-    if(state == GraphicItemState::EDITING_PATH || state == GraphicItemState::EDITING_PERM){
+    if(state == GraphicItemState::EDITING_PATH || state == GraphicItemState::EDITING_PERM || state == GraphicItemState::EDITING_HOME){
         QGraphicsItem::mouseMoveEvent(event);
 
         float x = pos().x() + pixmap().width()*SCALE/2;
@@ -88,13 +90,20 @@ void PointView::mouseMoveEvent(QGraphicsSceneMouseEvent *event){
             emit moveEditedPathPoint();
         } else if(state == GraphicItemState::EDITING_PERM){
             emit editedPointPositionChanged(x, y);
+        } else if(state == GraphicItemState::EDITING_HOME){
+            if(!point->getName().compare("tmpPoint")){
+                emit editedHomePositionChanged(x, y, point->getName());
+                qDebug() << point->getName() << "being dragged";
+            }
         }
     }
 }
 
 void PointView::mouseReleaseEvent(QGraphicsSceneMouseEvent *event){
-    if(state == GraphicItemState::EDITING_PATH || state == GraphicItemState::EDITING_PERM)
+    if(state == GraphicItemState::EDITING_PATH || state == GraphicItemState::EDITING_PERM || state == GraphicItemState::EDITING_HOME){
         QGraphicsPixmapItem::mouseReleaseEvent(event);
+        qDebug() << "mousereleaseseventcalled on point view with state" << state;
+    }
 }
 
 void PointView::hoverEnterEvent(QGraphicsSceneHoverEvent * /* unused */){

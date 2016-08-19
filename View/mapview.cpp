@@ -66,7 +66,11 @@ void MapView::mouseReleaseEvent(QGraphicsSceneMouseEvent *event){
             tmpPointView->show();
             /// might be useless code
             tmpPointView->setPos(event->pos().x(), event->pos().y());
-            emit homeEdited(QString(TMP_POINT_NAME));
+            qDebug() << "State of the tmp point view" << tmpPointView->getState();
+            emit homeEdited(tmpPointView->getPoint()->getPosition().getX(),
+                            tmpPointView->getPoint()->getPosition().getY(),
+                            QString(TMP_POINT_NAME));
+
         } else if(state == GraphicItemState::EDITING_PATH){
             //qDebug() << "MapView::mouseReleaseEvent EDITING_PATH" << event->pos().x() << event->pos().y();
             /// to notify that a point which belongs to the path of a robot has been changed

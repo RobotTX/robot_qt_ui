@@ -126,7 +126,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     graphicsView->show();
 
     /// to link the map and the home widget menu when a home is being edited
-    connect(mapPixmapItem, SIGNAL(homeEdited(QString)), this, SLOT(homeEdited(QString)));
+    connect(mapPixmapItem, SIGNAL(homeEdited(float, float, QString)), this, SLOT(updateHomeCoordinates(float,float,QString)));
 
     /// to link the map and the point information menu when a point is being edited
     connect(mapPixmapItem, SIGNAL(newCoordinates(double, double)), this, SLOT(updateCoordinates(double, double)));
@@ -705,24 +705,29 @@ void MainWindow::deletePathSelecRobotBtnEvent(){
 
 void MainWindow::setSelectedRobotNoParent(QAbstractButton *button){
     qDebug() << "Setselectedrobotnoparent called with id" << bottomLayout->getRobotBtnGroup()->id(button) << ", last id is" << bottomLayout->getLastCheckedId();
+    /// if the button was already checked we uncheck it
     if(bottomLayout->getLastCheckedId() == bottomLayout->getRobotBtnGroup()->id(button)){
         qDebug() << "gotta hide the robot" << button->text();
-        /// if the button was already checked we uncheck it
+        /// hides the left menu
         selectedRobotWidget->hide();
         leftMenu->hide();
+        /// enables the robot buttons (otherwise there is a bug that makes the buttons uncheckable for some reason)
         bottomLayout->uncheckRobots();
+        /// resets the last check Id to -1 which means, no robot was selected before me
         bottomLayout->setLastCheckedId(-1);
+        /// to change the pixmap of the robot on the map
         robots->deselect();
         /// we hide the path
         bottomLayout->getViewPathRobotBtnGroup()->button(bottomLayout->getRobotBtnGroup()->id(button))->setChecked(false);
         selectedRobot = 0;
         points->setPixmapAll(PointView::PixmapType::NORMAL);
-        //if(selectedRobot->getRobot()->getHome())
-            //selectedRobot->getRobot()->getHome()->hide();
+
     } else if(bottomLayout->getRobotBtnGroup()->id(button) != -1 ){
         qDebug() << "have to display the robot" << button->text();
         resetFocus();
+        /// updates the robot menu on the left to fit this particular robot's information
         setSelectedRobot(robots->getRobotViewByName(button->text()));
+        /// updates the last checked id to the id of the current button / robot
         bottomLayout->setLastCheckedId(bottomLayout->getRobotBtnGroup()->id(button));
     }
 }
@@ -1157,12 +1162,12 @@ void MainWindow::editHomeEvent(){
         editSelectedRobotWidget->enableAll();
         setEnableAll(false);
     }
+    points->getTmpPointView()->setFlag(QGraphicsItem::ItemIsMovable);
 }
 
-void MainWindow::homeEdited(QString name){
-    qDebug() << "MainWindow::homeEdited called" << name;
+void MainWindow::updateHomeCoordinates(float x, float y, QString name){
+    qDebug() << "MainWindow::updateHomeCoordinates called";
     QSharedPointer<PointView> pointView = points->findPointView(name);
-
     if(pointView){
         editSelectedRobotWidget->setHome(pointView);
         editSelectedRobotWidget->getHomeBtn()->setText("Edit home");
@@ -1174,12 +1179,11 @@ void MainWindow::homeEdited(QString name){
             editSelectedRobotWidget->getHomeLabel()->setText("Home: " + pointView->getPoint()->getName());
 
         editSelectedRobotWidget->enableAll();
-        setEnableAll(false, GraphicItemState::NO_EVENT);
+        //setEnableAll(false, GraphicItemState::NO_EVENT);
+        pointView->setState(GraphicItemState::EDITING_HOME);
     } else
         qDebug() << "MainWindow::homeEdited could not find a point named" << name;
 
-    float x = pointView->getPoint()->getPosition().getX();
-    float y = pointView->getPoint()->getPosition().getY();
     /// this point is a white point of the map and we can set the robot's home to be this point
     if(map->getMapImage().pixelColor(x, y).red() >= 254){
         setMessageTop(TEXT_COLOR_INFO, "Click \"Save\" to terminate");
@@ -1189,8 +1193,11 @@ void MainWindow::homeEdited(QString name){
         setMessageTop(TEXT_COLOR_INFO, "You cannot set the home of your robot to this point because it is not a known part of the robot's environment");
         editSelectedRobotWidget->getSaveButton()->setEnabled(false);
     }
-}
 
+    /// if this is not the tmp pointview we hide it
+    if(pointView->getPoint()->getName().compare("tmpPoint"))
+        points->getTmpPointView()->hide();
+}
 
 void MainWindow::showHome(){
     //qDebug() << "MainWindow::showHome called" << (selectedRobot->getRobot()->getHome()==NULL);

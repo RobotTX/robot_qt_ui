@@ -188,7 +188,6 @@ private slots:
     void setMessageTop(const QString msgType, const QString msg);
     void setLastMessage(void) { setMessageTop(topLayout->getLastMessage().first, topLayout->getLastMessage().second); }
     void setMessageCreationGroup(QString type, QString message);
-    void homeEdited(QString name);
     void goHomeBtnEvent();
     void viewPathSelectedRobot(int robotNb, bool checked);
     void editHomeEvent();
@@ -210,6 +209,7 @@ private slots:
     void resetPathPointViewsSlot();
     void setEnableAll(bool enable, GraphicItemState state = GraphicItemState::NO_STATE, bool clearPath = false, int noReturn = -1);
     void deletePathSelecRobotBtnEvent();
+    void updateHomeCoordinates(float x, float y, QString name);
 
 private:
     Ui::MainWindow* ui;
