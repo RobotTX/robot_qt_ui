@@ -84,7 +84,7 @@ private:
     QLabel* groupLabel;
     SpaceWidget* separator;
     TopLeftMenu* actionButtons;
-
+    QLabel* messageCreationLabel;
 };
 
 #endif // CreatePointWidget_H

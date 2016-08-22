@@ -75,11 +75,11 @@ public:
 private:
     MainWindow* parent;
     QSharedPointer<Groups> groups;
-
 };
 
 
 std::ostream& operator <<(std::ostream& stream, Points const& points);
+
 
 /**
  * @brief operator <<
@@ -88,7 +88,9 @@ std::ostream& operator <<(std::ostream& stream, Points const& points);
  * @return QDataStream&
  * Overloads the << and >> operators in order to be able to serialize a Group objet
  */
+/*
 QDataStream& operator<<(QDataStream& out, const Points& points);
 QDataStream& operator>>(QDataStream& in, Points& points);
+*/
 
 #endif // POINTS_H

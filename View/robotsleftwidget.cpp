@@ -9,7 +9,6 @@
 #include "topleftmenu.h"
 #include <QDebug>
 #include "buttonmenu.h"
-#include "View/doubleclickablebutton.h"
 
 RobotsLeftWidget::RobotsLeftWidget(QMainWindow* _parent):QWidget(_parent){
     parent = _parent;
@@ -36,19 +35,17 @@ RobotsLeftWidget::RobotsLeftWidget(QMainWindow* _parent):QWidget(_parent){
 
 }
 
-QString RobotsLeftWidget::getSelectedRobotName()
-{
+QString RobotsLeftWidget::getSelectedRobotName(){
     qDebug() << "check for name";
 
-
-    return (static_cast<DoubleClickableButton*>(btnGroup->getBtnGroup()->checkedButton())->getRealName());
+    return btnGroup->getBtnGroup()->checkedButton()->text();
 }
 
 void RobotsLeftWidget::setRobots(QSharedPointer<Robots> const &_robots){
     robots = _robots;
 
     /// Clickable buttons group to select/edit a robot
-    btnGroup = new RobotBtnGroup(robots->getRobotsVector(), false, parent);
+    btnGroup = new RobotBtnGroup(robots->getRobotsVector(), parent);
 
     /// Checkable buttons group to show/hide a robot
     btnGroup->show();

@@ -28,8 +28,6 @@ DisplaySelectedPoint::DisplaySelectedPoint(QMainWindow *const _parent,  QSharedP
     robots = QSharedPointer<Robots>(_robots);
     layout = new QVBoxLayout(this);
 
-    QVBoxLayout* downLayout = new QVBoxLayout();
-
     CustomScrollArea* scrollArea = new CustomScrollArea(this);
 
     QVBoxLayout * scrollLayout = new QVBoxLayout(scrollArea);
@@ -158,7 +156,7 @@ void DisplaySelectedPoint::resetWidget(){
     actionButtons->getEditButton()->setEnabled(true);
     actionButtons->getEditButton()->setToolTip("You can click on this button and then choose between clicking on the map or drag the point to change its position");
 
-    emit resetState(GraphicItemState::NO_STATE, true);
+    emit resetState(GraphicItemState::NO_STATE);
 }
 
 void DisplaySelectedPoint::hideEvent(QHideEvent *event){

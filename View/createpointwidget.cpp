@@ -18,6 +18,11 @@
 
 
 CreatePointWidget::CreatePointWidget(QMainWindow* _parent, QSharedPointer<Points> _points): QWidget(_parent), parent(_parent), points(_points){
+
+    /// to explain the user what to do with his temporary point
+    messageCreationLabel = new QLabel("This point is temporary, click \"+\" to save it permanently", this);
+    messageCreationLabel->setWordWrap(true);
+
     layout = new QVBoxLayout(this);
 
     actionButtons = new TopLeftMenu(this);
@@ -25,6 +30,8 @@ CreatePointWidget::CreatePointWidget(QMainWindow* _parent, QSharedPointer<Points
 
     layout->addWidget(actionButtons);
     QVBoxLayout*  downLayout = new QVBoxLayout();
+
+    downLayout->addWidget(messageCreationLabel);
 
     nameEdit = new QLineEdit(this);
     nameEdit->setStyleSheet ("text-align: left");
@@ -35,6 +42,7 @@ CreatePointWidget::CreatePointWidget(QMainWindow* _parent, QSharedPointer<Points
     nameEdit->setAlignment(Qt::AlignCenter);
     downLayout->addWidget(nameEdit);
     nameEdit->setStyleSheet("* { background-color: rgba(255, 0, 0, 0); font-weight: bold; text-decoration:underline}");
+    nameEdit->hide();
 
     posXLabel = new QLabel("X : ", this);
     downLayout->addWidget(posXLabel);
@@ -111,10 +119,15 @@ CreatePointWidget::CreatePointWidget(QMainWindow* _parent, QSharedPointer<Points
 void CreatePointWidget::setSelectedPoint(QSharedPointer<PointView> _pointView){
     qDebug() << "CreatePointWidget setSelectedPoint called";
     pointView = _pointView;
-    nameEdit->setText(pointView->getPoint()->getName());
+    if(_pointView->getPoint()->getName().compare("tmpPoint")){
+        nameEdit->setText(pointView->getPoint()->getName());
+    }
+    else {
+        messageCreationLabel->show();
+    }
+
     posXLabel->setText("X : " + QString::number(pointView->getPoint()->getPosition().getX(), 'f', 1));
     posYLabel->setText("Y : " + QString::number(pointView->getPoint()->getPosition().getY(), 'f', 1));
-
 }
 
 /// emits signal when a user clicks save after editing a point

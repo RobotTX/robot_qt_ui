@@ -13,7 +13,6 @@
 #include "customscrollarea.h"
 #include "View/buttonmenu.h"
 #include "View/pointview.h"
-#include "doubleclickablebutton.h"
 
 DisplaySelectedGroup::DisplaySelectedGroup(QMainWindow *parent, QSharedPointer<Points> const& _points) : QWidget(parent), points(_points){
     /// to be able to display a lot of groups and points2
@@ -92,18 +91,18 @@ void DisplaySelectedGroup::disableButtons(){
 }
 
 void DisplaySelectedGroup::buttonClickedSlot(QAbstractButton* button){
-    DoubleClickableButton* btn = static_cast<DoubleClickableButton*>(button);
-    qDebug() << "DisplaySelectedGroup::buttonClickedSlot called" << btn->isChecked() << btn->getRealName() << lastCheckedButton;
+    qDebug() << "DisplaySelectedGroup::buttonClickedSlot called" << button->isChecked() << button->text() << lastCheckedButton;
+
     points->setPixmapAll(PointView::PixmapType::NORMAL);
     emit resetPathPointViews();
 
 
-    if(btn->getRealName().compare(lastCheckedButton) == 0){
+    if(button->text().compare(lastCheckedButton) == 0){
         disableButtons();
 
     } else {
         /// changes the pointview on the map to show which point is selected
-        QSharedPointer<PointView> pv = points->findPointView(btn->getRealName());
+        QSharedPointer<PointView> pv = points->findPointView(button->text());
         pv->setPixmap(PointView::PixmapType::SELECTED);
         /// if the point is also part of the path we change the point view associated
         if(QSharedPointer<PointView> pathPv = points->findPathPointView(pv->getPoint()->getPosition().getX(), pv->getPoint()->getPosition().getY()))
@@ -121,8 +120,8 @@ void DisplaySelectedGroup::buttonClickedSlot(QAbstractButton* button){
         /// enables the map button
         getActionButtons()->getMapButton()->setEnabled(true);
 
-        if(points->findPointView(btn->getRealName())){
-            if(points->findPointView(btn->getRealName())->isVisible()){
+        if(points->findPointView(button->text())){
+            if(points->findPointView(button->text())->isVisible()){
                 getActionButtons()->getMapButton()->setChecked(true);
                 getActionButtons()->getMapButton()->setToolTip("Click to hide the selected point on the map");
             } else {
@@ -130,13 +129,13 @@ void DisplaySelectedGroup::buttonClickedSlot(QAbstractButton* button){
                 getActionButtons()->getMapButton()->setToolTip("Click to display the selected point on the map");
             }
         } else {
-            qDebug() << "DisplaySelectedGroup::buttonClickedSlot could not find the pointView :" << btn->getRealName();
+            qDebug() << "DisplaySelectedGroup::buttonClickedSlot could not find the pointView :" << button->text();
         }
 
         /// enables the edit button
         getActionButtons()->getEditButton()->setEnabled(true);
         getActionButtons()->getEditButton()->setToolTip("Click to modify the selected point");
-        lastCheckedButton = btn->getRealName();
+        lastCheckedButton = button->text();
     }
 }
 

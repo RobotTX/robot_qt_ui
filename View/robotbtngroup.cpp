@@ -7,7 +7,7 @@
 #include "View/colors.h"
 #include <QAbstractButton>
 
-RobotBtnGroup::RobotBtnGroup(const QVector<RobotView*>& vector, const bool checkable, QWidget* parent):QWidget(parent){
+RobotBtnGroup::RobotBtnGroup(const QVector<RobotView*>& vector, QWidget* parent):QWidget(parent){
     btnGroup = new QButtonGroup(this);
     layout = new QVBoxLayout(this);
     layout->setAlignment(Qt::AlignTop);

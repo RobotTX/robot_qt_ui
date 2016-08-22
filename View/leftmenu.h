@@ -52,7 +52,7 @@ public:
     void showBackButton(QString name);
     void hideBackButton();
 
-    void updateGroupDisplayed(const QSharedPointer<Points> &_points, const QString groupIndex);
+    void updateGroupDisplayed(const QString groupIndex);
     void disableButtons();
     void setEnableReturnCloseButtons(bool enable);
 

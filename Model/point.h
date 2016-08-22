@@ -40,7 +40,7 @@ public:
     void setName(const QString _name) { name = _name; }
     void setPosition(const double x, const double y) { position.setX(x); position.setY(y); }
     void setPosition(const Position _position) { position = _position; }
-    bool setHome(const PointType _type, const QString robotName);
+    bool setHome(const PointType _type);
 
     /// a helper function to overload the << operator
     void display(std::ostream& stream) const;

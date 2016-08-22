@@ -166,7 +166,7 @@ void GroupButtonGroup::uncheck(void){
 void GroupButtonGroup::mouseDoubleClickEvent(QMouseEvent * /* unused */){
     qDebug() << "GroupButtonGroup::mouseDoubleClickEvent called";
     if(buttonGroup->checkedButton())
-        emit doubleClick(static_cast<DoubleClickableButton*> (buttonGroup->checkedButton())->getRealName());
+        emit doubleClick(buttonGroup->checkedButton()->text());
 
 }
 
@@ -221,7 +221,7 @@ QString GroupButtonGroup::formatName(const QString name) const {
 
 int GroupButtonGroup::getEditedGroupId(void) const{
     for(int i = 0; i < getButtonGroup()->buttons().size(); i++){
-        if(static_cast<DoubleClickableButton*> (getButtonGroup()->buttons().at(i))->getRealName().compare(editedGroupName) == 0){
+        if(getButtonGroup()->buttons().at(i)->text().compare(editedGroupName) == 0){
             return i;
         }
     }
@@ -230,14 +230,14 @@ int GroupButtonGroup::getEditedGroupId(void) const{
 
 QAbstractButton* GroupButtonGroup::getButtonByName(const QString name) const {
     for(int i = 0; i < getButtonGroup()->buttons().size(); i++){
-        if(static_cast<DoubleClickableButton*> (getButtonGroup()->buttons().at(i))->getRealName().compare(name) == 0)
+        if(getButtonGroup()->buttons().at(i)->text().compare(name) == 0)
             return getButtonGroup()->buttons().at(i);
     }
     return NULL;
 }
 int GroupButtonGroup::getButtonIdByName(const QString name) const {
     for(int i = 0; i < getButtonGroup()->buttons().size(); i++){
-        if(static_cast<DoubleClickableButton*> (getButtonGroup()->buttons().at(i))->getRealName().compare(name) == 0)
+        if(getButtonGroup()->buttons().at(i)->text().compare(name) == 0)
             return i;
     }
     return -1;

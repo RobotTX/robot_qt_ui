@@ -107,7 +107,10 @@ void PointView::mouseReleaseEvent(QGraphicsSceneMouseEvent *event){
 }
 
 void PointView::hoverEnterEvent(QGraphicsSceneHoverEvent * /* unused */){
-    setToolTip(point->getName());
+    if(point->getName().compare("tmpPoint"))
+        setToolTip(point->getName());
+    else
+        setToolTip("This point is only temporary,\nto save it permanently click a valid spot\non the map and click the \"+\" button");
     setPixmap(PointView::PixmapType::HOVER, selectedRobot);
     //qDebug() << "hoverEnterEvent : " << lastPixmap
 }

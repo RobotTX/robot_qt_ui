@@ -192,7 +192,7 @@ private slots:
     void viewPathSelectedRobot(int robotNb, bool checked);
     void editHomeEvent();
     void closeSlot();
-    void setGraphicItemsState(const GraphicItemState state, const bool clear = false);
+    void setGraphicItemsState(const GraphicItemState state);
     void showHome();
     void showEditHome();
     void hideHome(void);
@@ -207,7 +207,7 @@ private slots:
     void updatePathPainterPointViewSlot();
     void stopPath(int robotNb);
     void resetPathPointViewsSlot();
-    void setEnableAll(bool enable, GraphicItemState state = GraphicItemState::NO_STATE, bool clearPath = false, int noReturn = -1);
+    void setEnableAll(bool enable, GraphicItemState state = GraphicItemState::NO_STATE, int noReturn = -1);
     void deletePathSelecRobotBtnEvent();
     void updateHomeCoordinates(float x, float y, QString name);
 

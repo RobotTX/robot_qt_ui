@@ -14,7 +14,7 @@ class QVBoxLayout;
  */
 class RobotBtnGroup: public QWidget{
 public:
-    RobotBtnGroup(const QVector<RobotView*>& vector, const bool checkable, QWidget *parent);
+    RobotBtnGroup(const QVector<RobotView*>& vector, QWidget *parent);
     QButtonGroup* getBtnGroup(void) const { return btnGroup; }
 
 private:

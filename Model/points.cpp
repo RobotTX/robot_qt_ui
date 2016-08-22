@@ -5,7 +5,7 @@
 #include "Controller/mainwindow.h"
 #include "View/mapview.h"
 
-Points::Points(MainWindow *_parent) : parent(_parent), QObject(_parent){
+Points::Points(MainWindow *_parent) : QObject(_parent), parent(_parent){
     groups = QSharedPointer<Groups>(new Groups());
 }
 
@@ -30,27 +30,30 @@ std::ostream& operator <<(std::ostream& stream, Points const& points){
     return stream;
 }
 
-
+/*
 QDataStream& operator>>(QDataStream& in, Points& points){
     qDebug() << "Points operator >> called";
     /// the size of the vector has to be serialized too in order to deserialize the object correctly
-    /*qint32 size;
+    qint32 size;
     in >> size;
     for(int i = 0; i < size; i++){
         Group group;
         in >> group;
         points.addGroup(group);
-    }*/
+    }
     return in;
 }
+*/
 
+/*
 QDataStream& operator<<(QDataStream& out, const Points& points){
     qDebug() << "Points operator << called";
-    /*out << qint32(points.getGroups().size());
+    out << qint32(points.getGroups().size());
     for(int i = 0; i < points.getGroups().size(); i++)
         out << *(points.getGroups().at(i));
-    return out;*/
+    return out;
 }
+*/
 
 void Points::removeGroup(const QString groupName) {
     if(groupName.compare(NO_GROUP_NAME) != 0)

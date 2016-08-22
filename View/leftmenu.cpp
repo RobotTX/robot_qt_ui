@@ -165,7 +165,7 @@ LeftMenu::LeftMenu(MainWindow* _parent, QSharedPointer<Points> const& _points,
     this->setPalette(Pal);
 }
 
-void LeftMenu::updateGroupDisplayed(QSharedPointer<Points> const& _points, const QString groupIndex){
+void LeftMenu::updateGroupDisplayed(const QString groupIndex){
     displaySelectedGroup->getPointButtonGroup()->setGroup(groupIndex);
 }
 
