@@ -5,6 +5,8 @@
 #include "Model/points.h"
 #include "Model/paths.h"
 
+class GroupsPathsButtonGroup;
+class PathButtonGroup;
 class TopLeftMenu;
 class MainWindow;
 class QLabel;
@@ -16,11 +18,14 @@ class GroupsPathsWidget: public QWidget
 public:
     GroupsPathsWidget(MainWindow* _parent, const QSharedPointer<Points> &_points);
 
+    PathButtonGroup* getPathButtonGroup(void) const { return pathButtonGroup; }
+
 private:
     QSharedPointer<Points> points;
     QSharedPointer<Paths> paths;
     QVBoxLayout* layout;
-
+    GroupsPathsButtonGroup* buttonGroup;
+    PathButtonGroup* pathButtonGroup;
     TopLeftMenu* actionButtons;
 };
 

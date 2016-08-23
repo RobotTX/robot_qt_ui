@@ -15,7 +15,7 @@ class MainWindow;
 class Paths: public QObject {
     Q_OBJECT
 
-private:
+public:
     typedef QVector<QSharedPointer<PathPoint> > Path;
     typedef QMap<QString, QSharedPointer<Path> > CollectionPaths;
     typedef QMap<QString, QSharedPointer<CollectionPaths> > Groups;

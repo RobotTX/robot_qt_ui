@@ -66,8 +66,9 @@ HEADERS += Controller/cmdrobotthread.h \
            View/displayselectedpointrobots.h \
            View/displayselectedpath.h \
            View/groupspathswidget.h \
-           View/pathbuttongroup.h \
-           Model/paths.h
+           Model/paths.h \
+    View/groupspathsbuttongroup.h \
+    View/pathbuttongroup.h
 
 FORMS += Controller/mainwindow.ui
 
@@ -120,8 +121,9 @@ SOURCES += main.cpp \
            View/displayselectedpointrobots.cpp \
            View/displayselectedpath.cpp \
            View/groupspathswidget.cpp \
-           View/pathbuttongroup.cpp \
-           Model/paths.cpp
+           Model/paths.cpp \
+    View/groupspathsbuttongroup.cpp \
+    View/pathbuttongroup.cpp
 
 RESOURCES += Resources/resources.qrc
 
