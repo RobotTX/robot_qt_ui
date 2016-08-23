@@ -63,7 +63,10 @@ HEADERS += Controller/cmdrobotthread.h \
            Controller/sendnewmapthread.h \
            View/customscrollarea.h \
            View/colors.h \
-    View/displayselectedpointrobots.h
+    View/displayselectedpointrobots.h \
+    View/groupspathswidget.h \
+    View/pathbuttongroup.h \
+    Model/paths.h
 
 FORMS += Controller/mainwindow.ui
 
@@ -113,7 +116,10 @@ SOURCES += main.cpp \
     View/topleftmenu.cpp \
     Controller/sendnewmapthread.cpp \
     View/customscrollarea.cpp \
-    View/displayselectedpointrobots.cpp
+    View/displayselectedpointrobots.cpp \
+    View/groupspathswidget.cpp \
+    View/pathbuttongroup.cpp \
+    Model/paths.cpp
 
 RESOURCES += Resources/resources.qrc
 

@@ -23,7 +23,6 @@ GroupButtonGroup::GroupButtonGroup(const QSharedPointer<Points> &_points, QWidge
     modifyEdit->setFixedWidth(1.29*modifyEdit->width());
     modifyEdit->hide();
 
-
     /// we are going to make this widget visible when a user wants to modify a group
     layout->addWidget(modifyEdit);
 

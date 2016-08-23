@@ -10,8 +10,11 @@
 #include "Controller/mainwindow.h"
 
 PathPainter::PathPainter(MainWindow* const &mainWindow, MapView* const &mapPixmapItem, QSharedPointer<Points> _points)
-    : QGraphicsPathItem(mapPixmapItem), points(_points), mainWindow(mainWindow), mapView(mapPixmapItem), pathDeleted(false){
+    : QGraphicsPathItem(mapPixmapItem), points(_points), mainWindow(mainWindow), mapView(mapPixmapItem), pathDeleted(false)
+{
     setPen(QPen(Qt::red));
+
+    connect(this, SIGNAL(updatePoints(int, QString)), mainWindow, SLOT(replacePoint(int, QString)));
 }
 
 void PathPainter::resetPathSlot(void){
@@ -125,16 +128,25 @@ void PathPainter::deletePathPointSlot(int id){
 void PathPainter::editPathPointSlot(int id, QString name, double x, double y){
     qDebug() << "PathPainter::editPathPointSlot called" << id << name << x << y;
 
-    QSharedPointer<PointView> newPointView = points->getGroups()->value(PATH_GROUP_NAME)->takeAt(id);
-
+    QSharedPointer<PointView> newPointView = points->getGroups()->value(points->findPointIndexes(name).first)->
+            takeAt(points->findPointIndexes(name).second);
+    //QSharedPointer<PointView> newPointView = points->findPointView(name);
+    //QSharedPointer<PointView> newPointView = points->getGroups()->value(PATH_GROUP_NAME)->takeAt(id);
+    qDebug() << "the point im about to insert" << newPointView->getPoint()->getName() <<
+                newPointView->getPoint()->getPosition().getX() <<
+                newPointView->getPoint()->getPosition().getY();
     /// If found, it's a permanent point else it's a temporary point
     if(newPointView){
         qDebug() << "PathPainter::editPathPointSlot editing a permanent point";
+        // gotta change next line
+        //emit updatePoints(id, name);
+        points->getGroups()->value(PATH_GROUP_NAME)->remove(id);
         points->insertPoint(PATH_GROUP_NAME, id, newPointView);
+        //points->getGroups()->value(PATH_GROUP_NAME)->push_back(newPointView);
+
         currentPath.at(id)->setPoint(*(newPointView->getPoint()));
-    } else {
+    } else
         qDebug() << "PathPainter::editPathPointSlot editing a tmpPoint";
-    }
 
     /// Update the path painter
     updatePathPainterSlot();
@@ -166,6 +178,10 @@ void PathPainter::updatePathPainterSlot(void){
     if(group && group->size() > 0){
         for(int i = 0; i < group->size(); i++){
             currentPointView = group->at(i);
+            qDebug() << "updatepathpainterslot" << currentPointView->getPoint()->getName() <<
+                        currentPointView->getPoint()->getPosition().getX() <<
+                        currentPointView->getPoint()->getPosition().getY();
+
             QPointF pointCoord = QPointF(currentPointView->getPoint()->getPosition().getX(),
                                          currentPointView->getPoint()->getPosition().getY());
 

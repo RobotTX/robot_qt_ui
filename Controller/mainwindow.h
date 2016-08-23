@@ -23,6 +23,7 @@ class QAbstractButton;
 class QVBoxLayout;
 class PathPainter;
 class DoubleClickableButton;
+class GroupsPathsWidget;
 
 #include "View/createpointwidget.h"
 #include "View/toplayout.h"
@@ -69,7 +70,7 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
-    enum WidgetType { MENU, GROUPS, GROUP, POINT, ROBOTS, ROBOT , MAP };
+    enum WidgetType { MENU, GROUPS, GROUP, POINT, ROBOTS, ROBOT , MAP, GROUPS_PATHS };
 
     QSharedPointer<Points> getPoints(void) const { return points; }
     QList<QPair<QPair<QWidget*, QString>, MainWindow::WidgetType>> getLastWidgets() const { return lastWidgets; }
@@ -85,7 +86,7 @@ public:
     int openEmptyGroupMessage(const QString groupName);
     void clearNewMap();
     void resetFocus();
-    void switchFocus(QString name, QWidget* widget, WidgetType type);
+    void switchFocus(const QString name, QWidget* widget, const WidgetType type);
     /// to sleep for ms milliseconds
     void delay(const int ms) const;
     void setTemporaryMessageTop(const QString type, const QString message, const int ms);
@@ -117,6 +118,7 @@ private slots:
     void robotBtnEvent();
     void pointBtnEvent();
     void mapBtnEvent();
+    void pathBtnEvent();
     void plusGroupBtnEvent();
     void minusGroupBtnEvent();
     void editGroupBtnEvent();
@@ -210,6 +212,7 @@ private slots:
     void setEnableAll(bool enable, GraphicItemState state = GraphicItemState::NO_STATE, int noReturn = -1);
     void deletePathSelecRobotBtnEvent();
     void updateHomeCoordinates(float x, float y, QString name);
+    void replacePoint(int id, QString name);
 
 private:
     Ui::MainWindow* ui;

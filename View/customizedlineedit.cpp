@@ -13,7 +13,6 @@ void CustomizedLineEdit::focusOutEvent(QFocusEvent* e){
     }
 }
 
-
 void CustomizedLineEdit::hideEvent(QHideEvent *event){
     Q_UNUSED(event)
     /// enables the edition of a group

@@ -66,8 +66,8 @@ public:
     void addPoint(const QString groupName, QSharedPointer<PointView>pointView);
     void insertPoint(const QString groupName, const int id, QSharedPointer<PointView>pointView);
     void insertPoint(const QString groupName, const int id, const QString pointName, const double x, const double y, const bool displayed, const Point::PointType type, MapView *mapView, MainWindow *mainWindow);
+    void replacePoint(const QString groupName, const int id, const QSharedPointer<PointView> &pointView);
     void setPixmapAll(const PointView::PixmapType type, RobotView *selectedRobot = 0);
-    //void setPixmapAll(const QPixmap pixmap);
     QSharedPointer<PointView> createPoint(const QString pointName, const double x, const double y, const bool displayed, const Point::PointType type,
                                                    MapView* mapView, MainWindow* mainWindow);
     void updatePointViews(void);

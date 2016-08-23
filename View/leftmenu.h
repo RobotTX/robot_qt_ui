@@ -20,6 +20,7 @@ class QVBoxLayout;
 class MainWindow;
 class Map;
 class PathPainter;
+class GroupsPathsWidget;
 
 #include <QWidget>
 #include <QSharedPointer>
@@ -47,7 +48,8 @@ public:
     PathCreationWidget* getPathCreationWidget(void) const { return pathCreationWidget; }
     QPushButton* getReturnButton(void) const { return returnButton; }
     QPushButton* getCloseButton(void) const { return closeBtn; }
-    QWidget* getLastWidget() const {return lastWidget; }
+    QWidget* getLastWidget(void) const { return lastWidget; }
+    GroupsPathsWidget* getGroupsPathsWidget(void) const { return groupsPathsWidget; }
 
     void showBackButton(QString name);
     void hideBackButton();
@@ -65,6 +67,7 @@ private:
     SelectedRobotWidget* selectedRobotWidget;
     RobotsLeftWidget* robotsLeftWidget;
     MapLeftWidget* mapLeftWidget;
+    GroupsPathsWidget* groupsPathsWidget;
     EditSelectedRobotWidget* editSelectedRobotWidget;
     SelectedPointWidget* selectedPointWidget;
     CreatePointWidget* createPointWidget;

@@ -200,17 +200,28 @@ void Points::addPoint(const QString groupName, QSharedPointer<PointView> pointVi
 }
 
 void Points::insertPoint(const QString groupName, const int id, QSharedPointer<PointView> pointView){
-    qDebug() << "Points::insertPoint called with pointView";
+    qDebug() << "Points::insertPoint called with pointView, groupname" << groupName;
 
     if(!groups->empty() && groups->contains(groupName)){
+        qDebug() << "found the group";
         if(groups->value(groupName)->size() > 0)
             groups->value(groupName)->insert(id, pointView);
         else
             groups->value(groupName)->push_back(pointView);
     } else {
+        qDebug() << "could not find the group";
         QSharedPointer<QVector<QSharedPointer<PointView>>> vector = QSharedPointer<QVector<QSharedPointer<PointView>>>(new QVector<QSharedPointer<PointView>>());
         vector->push_back(pointView);
         groups->insert(groupName, vector);
+    }
+}
+
+void Points::replacePoint(const QString groupName, const int id, const QSharedPointer<PointView>& pointView){
+    qDebug() << "Points::replacePoint called with pointview, groupName and id" << groupName << id;
+
+    if(id >= 0 && id < groups->value(groupName)->size()){
+        groups->value(groupName)->removeAt(id);
+        groups->value(groupName)->insert(id, pointView);
     }
 }
 

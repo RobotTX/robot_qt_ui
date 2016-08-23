@@ -121,7 +121,7 @@ PointsLeftWidget::PointsLeftWidget(QMainWindow* _parent, QSharedPointer<Points> 
     downLayout->setContentsMargins(10,0,30,0);
     layout->addLayout(downLayout);
     layout->setContentsMargins(0,0,0,0);
-    creationLayout->setContentsMargins(0,0,0,20);
+    creationLayout->setContentsMargins(0, 0, 0, 20);
 }
 
 void PointsLeftWidget::updateGroupButtonGroup(){

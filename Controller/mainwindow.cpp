@@ -42,6 +42,7 @@
 #include <QVector>
 #include "View/displayselectedpointrobots.h"
 #include "doubleclickablebutton.h"
+#include "View/groupspathswidget.h"
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow) {
     ui->setupUi(this);
@@ -119,7 +120,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     rightLayout = new QVBoxLayout();
     bottom->addLayout(rightLayout);
     rightLayout->addWidget(graphicsView);
-
 
     initializeBottomPanel();
 
@@ -705,6 +705,8 @@ void MainWindow::deletePathSelecRobotBtnEvent(){
 
 void MainWindow::setSelectedRobotNoParent(QAbstractButton *button){
     qDebug() << "Setselectedrobotnoparent called with id" << bottomLayout->getRobotBtnGroup()->id(button) << ", last id is" << bottomLayout->getLastCheckedId();
+    /// displays the robot on the map
+    const int robotId = bottomLayout->getRobotBtnGroup()->id(button);
     /// if the button was already checked we uncheck it
     if(bottomLayout->getLastCheckedId() == bottomLayout->getRobotBtnGroup()->id(button)){
         qDebug() << "gotta hide the robot" << button->text();
@@ -718,17 +720,17 @@ void MainWindow::setSelectedRobotNoParent(QAbstractButton *button){
         /// to change the pixmap of the robot on the map
         robots->deselect();
         /// we hide the path
-        bottomLayout->getViewPathRobotBtnGroup()->button(bottomLayout->getRobotBtnGroup()->id(button))->setChecked(false);
+        bottomLayout->getViewPathRobotBtnGroup()->button(robotId)->setChecked(false);
         selectedRobot = 0;
         points->setPixmapAll(PointView::PixmapType::NORMAL);
 
-    } else if(bottomLayout->getRobotBtnGroup()->id(button) != -1 ){
+    } else if(robotId != -1 ){
         qDebug() << "have to display the robot" << button->text();
         resetFocus();
         /// updates the robot menu on the left to fit this particular robot's information
         setSelectedRobot(robots->getRobotViewByName(button->text()));
         /// updates the last checked id to the id of the current button / robot
-        bottomLayout->setLastCheckedId(bottomLayout->getRobotBtnGroup()->id(button));
+        bottomLayout->setLastCheckedId(robotId);
     }
 }
 
@@ -741,7 +743,16 @@ void MainWindow::setSelectedRobot(QAbstractButton *button){
     robotsLeftWidget->getActionButtons()->getMapButton()->setEnabled(true);
     RobotView* mySelectedRobot =  robots->getRobotViewByName(((DoubleClickableButton *)robotsLeftWidget->getBtnGroup()
                                                   ->getBtnGroup()->checkedButton())->text());
+
+    const int robotId = robotsLeftWidget->getBtnGroup()->getBtnGroup()->id(button);
     robotsLeftWidget->getActionButtons()->getMapButton()->setChecked(mySelectedRobot->isVisible());
+    /// to show the selected robot with a different color
+    robots->deselect();
+    robots->getRobotsVector().at(robotId)->setSelected(true);
+    /// to select the robot in the bottom layout accordingly
+    bottomLayout->uncheckRobots();
+    bottomLayout->getRobotBtnGroup()->button(robotId)->setChecked(true);
+    bottomLayout->setLastCheckedId(robotId);
 }
 
 void MainWindow::selectViewRobot(){
@@ -1582,6 +1593,11 @@ void MainWindow::resetPathPointViewsSlot(){
     emit updatePathPainter();
 }
 
+void MainWindow::replacePoint(int id, QString name){
+    points->getGroups()->value(PATH_GROUP_NAME)->remove(id);
+    points->insertPoint(PATH_GROUP_NAME, id, points->findPointView(name));
+}
+
 /**********************************************************************************************************************************/
 
 //                                          MAPS
@@ -2021,21 +2037,19 @@ void MainWindow::selectPointBtnEvent(){
     qDebug() << "selectPointBtnEvent called";
 }
 
-void MainWindow::switchFocus(QString name, QWidget* widget, MainWindow::WidgetType type)
+void MainWindow::switchFocus(const QString name, QWidget* widget, const MainWindow::WidgetType type)
 {
     lastWidgets.append(QPair<QPair<QWidget*, QString>, MainWindow::WidgetType>(QPair<QWidget*, QString>(widget,name), type));
 
-    if(lastWidgets.size()>1) {
+    if(lastWidgets.size() > 1)
         leftMenu->showBackButton(lastWidgets.at(lastWidgets.size()-2).first.second);
-    } else {
+    else
         leftMenu->hideBackButton();
-    }
 
     qDebug() << "__________________";
 
-    for(int i=0;i<lastWidgets.size();i++) {
+    for(int i = 0; i < lastWidgets.size(); i++)
         qDebug() << lastWidgets.at(i).first.second;
-    }
 
     qDebug() << "_________________";
 
@@ -2120,7 +2134,7 @@ void MainWindow::pointSavedEvent(QString groupName, double x, double y, QString 
     createPointWidget->getActionButtons()->getPlusButton()->setEnabled(true);
 
     /// hides widgets relative to the choice of a group
-    createPointWidget->hideGroupLayout();
+    createPointWidget->hideGroupLayout(true);
 
     points->addPoint(groupName, name, x, y, true, Point::PointType::TEMP, mapPixmapItem, this);
 
@@ -3483,6 +3497,30 @@ void MainWindow::setMessageCreationPoint(QString type, CreatePointWidget::Error 
 
 void MainWindow::choosePointName(QString message){
     setMessageTop(TEXT_COLOR_INFO, message);
+}
+
+/**********************************************************************************************************************************/
+
+//                                          PATHS
+
+/**********************************************************************************************************************************/
+
+void MainWindow::pathBtnEvent(){
+    hideAllWidgets();
+
+    robots->deselect();
+    bottomLayout->uncheckRobots();
+    bottomLayout->setLastCheckedId(-1);
+    /// resets the list of groups menu
+    switchFocus("Paths", leftMenu->getGroupsPathsWidget(), MainWindow::WidgetType::GROUPS_PATHS);
+    leftMenu->getGroupsPathsWidget()->show();
+    /*
+    qDebug() << "pointBtnEvent called ";
+    /// we uncheck all buttons from all menus
+    leftMenu->getDisplaySelectedGroup()->uncheck();
+    hideAllWidgets();
+    pointsLeftWidget->show();
+    setMessageTop(TEXT_COLOR_INFO, "Click the map to add a permanent point");*/
 }
 
 /**********************************************************************************************************************************/
