@@ -26,6 +26,7 @@
 #include "buttonmenu.h"
 #include "colors.h"
 #include "View/pathpainter.h"
+#include "View/displayselectedpath.h"
 
 LeftMenu::LeftMenu(MainWindow* _parent, QSharedPointer<Points> const& _points,
                    const QSharedPointer<Robots> &robots, const QSharedPointer<Points> &pointViews,
@@ -117,6 +118,11 @@ LeftMenu::LeftMenu(MainWindow* _parent, QSharedPointer<Points> const& _points,
     pathCreationWidget = new PathCreationWidget(parent, _points);
     pathCreationWidget->hide();
     leftLayout->addWidget(pathCreationWidget);
+
+    /// Menu which display the informations of a path
+    displaySelectedPath = new DisplaySelectedPath(this);
+    displaySelectedPath->hide();
+    leftLayout->addWidget(displaySelectedPath);
 
     connect(pathCreationWidget, SIGNAL(addPathPoint(QString, double, double)), pathPainter, SLOT(addPathPointSlot(QString, double, double)));
     connect(pathCreationWidget, SIGNAL(deletePathPoint(int)), pathPainter, SLOT(deletePathPointSlot(int)));

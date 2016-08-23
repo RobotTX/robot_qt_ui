@@ -42,6 +42,7 @@
 #include <QVector>
 #include "View/displayselectedpointrobots.h"
 #include "doubleclickablebutton.h"
+#include "View/displayselectedpath.h"
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow) {
     ui->setupUi(this);
@@ -3629,7 +3630,28 @@ void MainWindow::centerMap(){
 }
 
 void MainWindow::settingBtnSlot(){
-    qDebug() << "settingBtnSlot called";
+    qDebug() << "MainWindow::settingBtnSlot called"
+             << robots->getRobotViewByIp("localhost")->getRobot()->getName()
+             << robots->getRobotViewByIp("localhost")->getRobot()->getPath().size();
+    DisplaySelectedPath* displaySelectedPath = leftMenu->getDisplaySelectedPath();
+    if(displaySelectedPath->isVisible()){
+        ///hide
+        hideAllWidgets();
+        resetFocus();
+    } else {
+        /// show
+        hideAllWidgets();
+        switchFocus("Path pas par la");
+
+        QVector<QSharedPointer<PathPoint>> path;
+        if(points->getGroups()->value("first group")->size() > 2){
+            for(int i = 0; i < points->getGroups()->value("first group")->size(); i++){
+                QSharedPointer<PathPoint> pathPoint = QSharedPointer<PathPoint>(new PathPoint(*(points->getGroups()->value("first group")->at(i)->getPoint()), PathPoint::Action::WAIT, 0));
+                path.push_back(pathPoint);
+            }
+        }
+        robot1->setPath(path);
+    }
 }
 
 void MainWindow::setTemporaryMessageTop(const QString type, const QString message, const int ms){
