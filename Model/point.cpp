@@ -87,7 +87,6 @@ bool Point::operator==(const Point& point) const {
  bool Point::setHome(const PointType _type){
     if(_type != HOME){
         type = _type;
-        name = QString::number(position.getX(),'f', 1) + "; " + QString::number(position.getY(),'f', 1);
     } else if((_type == HOME) && (type != HOME)){
         type = _type;
         if (!name.compare(TMP_POINT_NAME))

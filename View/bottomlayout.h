@@ -51,7 +51,8 @@ public:
     void uncheckAll();
 
     /// to create a QString to display from the path
-    QString pathToStr(const QVector<QSharedPointer<PathPoint> > &path);
+    QString pathToStr(const QVector<QSharedPointer<PathPoint> > &path, const int stage = 0);
+    void updateStageRobot(const int id, RobotView *robotView, const int stage);
 
 private:
     /**

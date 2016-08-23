@@ -10,8 +10,15 @@
         </point>
         <point>
             <name>Another point</name>
-            <x>949.4</x>
-            <y>1075.1</y>
+            <x>1148</x>
+            <y>1203</y>
+            <displayed>0</displayed>
+        </point>
+        <point>
+            <name>A final point</name>
+            <x>1153</x>
+            <y>843</y>
+>>>>>>> b90176b3d87ff86823f0de725dbc57faa81dd5aa
             <displayed>1</displayed>
         </point>
     </group>
@@ -27,7 +34,7 @@
             <name>Michel</name>
             <x>1086</x>
             <y>1019</y>
-            <displayed>1</displayed>
+            <displayed>0</displayed>
         </point>
     </group>
     <group>
@@ -45,7 +52,7 @@
             <name>A</name>
             <x>1130</x>
             <y>820</y>
-            <displayed>1</displayed>
+            <displayed>0</displayed>
         </point>
         <point>
             <name>Ma point</name>
@@ -57,7 +64,7 @@
             <name>A new point</name>
             <x>946</x>
             <y>983</y>
-            <displayed>1</displayed>
+            <displayed>0</displayed>
         </point>
     </group>
 </points>

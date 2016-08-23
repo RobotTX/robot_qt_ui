@@ -61,7 +61,7 @@ void PathPainter::addPathPointSlot(QString name, double x, double y){
         Point::PointType type = Point::PointType::PATH;
         qDebug() << "PathPainter::addPathPointSlot" << (mainWindow->getSelectedRobot() == NULL);
         if((mainWindow->getSelectedRobot() && mainWindow->getSelectedRobot()->getRobot()->getHome() && mainWindow->getSelectedRobot()->getRobot()->getHome()->getPoint()->getName().compare(name) == 0)
-                || (mainWindow->getSelectedRobot() == NULL))
+                || (mainWindow->getSelectedRobot() == NULL && points->isAHome(name, x, y)))
             type= Point::PointType::HOME;
         /*if(points->isAHome(name, x, y))
             type= Point::PointType::HOME;*/
@@ -197,7 +197,8 @@ void PathPainter::updatePathPainterSlot(void){
                 startPointView = currentPointView;
             } else {
                 path.lineTo(pointCoord);
-                currentPointView->setPixmap(PointView::PixmapType::MID);
+                if(currentPointView->getType() != PointView::PixmapType::SELECTED)
+                    currentPointView->setPixmap(PointView::PixmapType::MID);
             }
 
             if(i == group->size()-1)
@@ -207,10 +208,14 @@ void PathPainter::updatePathPainterSlot(void){
         setPath(path);
 
         if(*(startPointView->getPoint()) == *(endPointView->getPoint())){
-            startPointView->setPixmap(PointView::PixmapType::START_STOP);
+            if(startPointView->getType() != PointView::PixmapType::SELECTED)
+                startPointView->setPixmap(PointView::PixmapType::START_STOP);
         } else {
-            startPointView->setPixmap(PointView::PixmapType::START);
-            endPointView->setPixmap(PointView::PixmapType::STOP);
+            if(startPointView->getType() != PointView::PixmapType::SELECTED)
+                startPointView->setPixmap(PointView::PixmapType::START);
+
+            if(endPointView->getType() != PointView::PixmapType::SELECTED)
+                endPointView->setPixmap(PointView::PixmapType::STOP);
         }
     } else {
         resetPathSlot();
@@ -233,7 +238,8 @@ void PathPainter::updatePathPainterPointViewSlot(void){
             if(i == 0){
                 startPointView = currentPointView;
             } else {
-                currentPointView->setPixmap(PointView::PixmapType::MID);
+                if(currentPointView->getType() != PointView::PixmapType::SELECTED)
+                    currentPointView->setPixmap(PointView::PixmapType::MID);
             }
 
             if(i == group->size()-1)
@@ -241,10 +247,14 @@ void PathPainter::updatePathPainterPointViewSlot(void){
         }
 
         if(*(startPointView->getPoint()) == *(endPointView->getPoint())){
-            startPointView->setPixmap(PointView::PixmapType::START_STOP);
+            if(startPointView->getType() != PointView::PixmapType::SELECTED)
+                startPointView->setPixmap(PointView::PixmapType::START_STOP);
         } else {
-            startPointView->setPixmap(PointView::PixmapType::START);
-            endPointView->setPixmap(PointView::PixmapType::STOP);
+            if(startPointView->getType() != PointView::PixmapType::SELECTED)
+                startPointView->setPixmap(PointView::PixmapType::START);
+
+            if(endPointView->getType() != PointView::PixmapType::SELECTED)
+                endPointView->setPixmap(PointView::PixmapType::STOP);
         }
     }
 }

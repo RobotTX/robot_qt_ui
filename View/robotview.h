@@ -37,6 +37,8 @@ public:
     void setSelected(const bool _selected);
     void display(const bool show) ;
     void setState(const GraphicItemState _state) { state = _state; }
+    void setLastStage(const int _stage) { lastStage = _stage; }
+    int getLastStage(void) const { return lastStage; }
 
 signals:
     /**
@@ -56,6 +58,7 @@ private:
     GraphicItemState state;
     bool shown;
     MapView* mapView;
+    int lastStage;
 };
 
 #endif // ROBOTVIEW_H
