@@ -85,7 +85,7 @@ BottomLayout::BottomLayout(QMainWindow* parent, const QSharedPointer<Robots> &ro
 
     /// Creation of the second column, with the labels containing the path of the robot
     for(int i = 0; i < robotsVector.size(); i++){
-        QLabel* pathLabel = new QLabel(pathToStr(robotsVector.at(i)->getRobot()->getPath()), this);
+        QLabel* pathLabel = new QLabel(pathToStr(robotsVector.at(i)->getRobot()->getPath(), robotsVector.at(i)->getLastStage()), this);
         pathLabel->setMinimumHeight(parent->height()/10);
         pathLabel->setMaximumHeight(parent->height()/10);
         vectorPathLabel.push_back(pathLabel);
@@ -201,12 +201,18 @@ void BottomLayout::updateRobot(const int id, RobotView * const robotView){
         deletePathBtnGroup->button(id)->setEnabled(true);
         playRobotBtnGroup->button(id)->setEnabled(true);
         viewPathRobotBtnGroup->button(id)->setEnabled(true);
-        vectorPathLabel.at(id)->setText(pathToStr(robotView->getRobot()->getPath()));
+        vectorPathLabel.at(id)->setText(pathToStr(robotView->getRobot()->getPath(), robotView->getLastStage()));
     }
 
     if(listEnabled.size() > 0){
         setEnable(true);
         setEnable(false);
+    }
+}
+
+void BottomLayout::updateStageRobot(const int id, RobotView* robotView, const int stage){
+    if(robotView->getRobot()->getPath().size() > 0){
+        vectorPathLabel.at(id)->setText(pathToStr(robotView->getRobot()->getPath(), stage));
     }
 }
 
@@ -223,7 +229,7 @@ void BottomLayout::addRobot(RobotView * const robotView){
     columnName->addWidget(robotBtn);
 
     /// Creation of the second column, with the labels containing the path of the robot
-    QLabel* pathLabel = new QLabel(pathToStr(robotView->getRobot()->getPath()), this);
+    QLabel* pathLabel = new QLabel(pathToStr(robotView->getRobot()->getPath(), robotView->getLastStage()), this);
     pathLabel->setMinimumHeight(((QWidget*)parent())->height()/20);
     pathLabel->setMaximumHeight(((QWidget*)parent())->height()/20);
     vectorPathLabel.push_back(pathLabel);
@@ -381,18 +387,27 @@ void BottomLayout::uncheckAll(){
      }
  }
 
-QString BottomLayout::pathToStr(const QVector<QSharedPointer<PathPoint> >& path){
+QString BottomLayout::pathToStr(const QVector<QSharedPointer<PathPoint> >& path, const int stage){
     QString pathStr = QString("");
     for(int i = 0; i < path.size(); i++){
+        if(stage > 0 && i < stage){
+            pathStr += "<font color=\"green\">";
+        }
+
         if(i != 0){
             pathStr += " - ";
         }
+
         if(path.at(i)->getPoint().getName().contains(PATH_POINT_NAME)){
             pathStr += QString::number(path.at(i)->getPoint().getPosition().getX(),'f', 1)
                     + "; "
                     + QString::number(path.at(i)->getPoint().getPosition().getY(),'f', 1);
         } else {
             pathStr += path.at(i)->getPoint().getName();
+        }
+
+        if(stage >0 && i <= stage){
+            pathStr += "</font>";
         }
     }
     return pathStr;

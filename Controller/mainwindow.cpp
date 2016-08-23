@@ -258,6 +258,18 @@ void MainWindow::initializeRobots(){
     QSharedPointer<Robot> robot1(new Robot(robotName1, robotIp1));
     robot1->setWifi("Swaghetti Yolognaise");
     RobotView* robotView1 = new RobotView(robot1, mapPixmapItem);
+
+    QVector<QSharedPointer<PathPoint>> path;
+    if(points->getGroups()->value("first group")->size() > 2){
+        for(int i = 0; i < points->getGroups()->value("first group")->size(); i++){
+            QSharedPointer<PathPoint> pathPoint = QSharedPointer<PathPoint>(new PathPoint(*(points->getGroups()->value("first group")->at(i)->getPoint()), PathPoint::Action::WAIT, 0));
+            path.push_back(pathPoint);
+        }
+    }
+    robot1->setPath(path);
+    robotView1->setLastStage(2);
+
+
     connect(robotView1, SIGNAL(setSelectedSignal(RobotView*)), this, SLOT(setSelectedRobot(RobotView*)));
     robotView1->setPosition(896, 1094);
     robotView1->setParentItem(mapPixmapItem);
@@ -1379,15 +1391,15 @@ void MainWindow::robotIsAliveSlot(QString hostname, QString ip, QString mapId, Q
         qDebug() << "Which is an old map";
         sendNewMapToRobot(rv->getRobot(), currMapId);
     }
-/*
-    /// To put in a different color the stage where the robot is currently at
-    if(rv->getRobot()->isPlayingPath()){
-        QString greenPart = QString("<span style=" color:#00ff00;">%1</span>").arg(bottomLayout->getVectorPathLabel().at(robotId)->text().mid(5));
-        bottomLayout->getVectorPathLabel().at(robotId)
-    }
-*/
-    /// Check the current stage of the robot
+
     int robotId = robots->getRobotId(rv->getRobot()->getName());
+
+    if(rv->getLastStage() != stage){
+        rv->setLastStage(stage);
+        bottomLayout->updateStageRobot(robotId, rv, stage);
+    }
+
+    /// Check the current stage of the robot
     if(rv->getRobot()->isPlayingPath() && rv->getRobot()->getPath().size() == stage){
         setMessageTop(TEXT_COLOR_SUCCESS, "The robot " + rv->getRobot()->getName() + " has successfully reached its destination");
         bottomLayout->getPlayRobotBtnGroup()->button(robotId)->setIcon(QIcon(":/icons/play.png"));
