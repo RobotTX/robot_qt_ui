@@ -3,6 +3,7 @@
 
 #include <QWidget>
 #include "Model/points.h"
+#include "Model/paths.h"
 
 class TopLeftMenu;
 class MainWindow;
@@ -17,6 +18,7 @@ public:
 
 private:
     QSharedPointer<Points> points;
+    QSharedPointer<Paths> paths;
     QVBoxLayout* layout;
 
     TopLeftMenu* actionButtons;

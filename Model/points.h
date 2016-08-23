@@ -25,7 +25,7 @@ class MainWindow;
  * A Points objet is identified by a vector of pointers on Group objets
  */
 
-class Points : public QObject{
+class Points : public QObject {
     Q_OBJECT
 
     typedef QMap<QString, QSharedPointer<QVector<QSharedPointer<PointView>>>> Groups;

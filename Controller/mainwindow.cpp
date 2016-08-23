@@ -3615,6 +3615,7 @@ void MainWindow::hideAllWidgets(){
     leftMenu->getDisplaySelectedPoint()->hide();
     pathCreationWidget->hide();
     leftMenu->getDisplaySelectedGroup()->hide();
+    leftMenu->getGroupsPathsWidget()->hide();
 }
 
 void MainWindow::clearNewMap(){
