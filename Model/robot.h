@@ -2,7 +2,6 @@
 #define ROBOT_H
 
 class PathPoint;
-class PointView;
 class CmdRobotThread;
 class QMainWindow;
 class ScanRobotThread;
@@ -16,6 +15,7 @@ class SendNewMapThread;
 #include <QtNetwork/QTcpSocket>
 #include <QUuid>
 #include <QDataStream>
+#include "View/pointview.h"
 
 #define PORT_MAP_METADATA 4000
 #define PORT_ROBOT_POS 4001
@@ -31,7 +31,7 @@ class SendNewMapThread;
 class Robot : public QObject{
     Q_OBJECT
 public:
-    Robot(const QString name, const QString addressIp, QMainWindow* parent);
+    Robot(const QString name, const QString addressIp);
     Robot();
     ~Robot();
 

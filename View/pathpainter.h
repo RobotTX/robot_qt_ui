@@ -47,6 +47,9 @@ private slots:
     void actionChangedSlot(int id, int action, QString waitTime);
     void editPathPointSlot(int id, QString name, double x, double y);
 
+signals:
+    void updatePoints(int id, QString name);
+
 private:
     QPainterPath path;
     QSharedPointer<Points> points;

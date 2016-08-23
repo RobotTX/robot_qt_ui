@@ -21,6 +21,7 @@ class QVBoxLayout;
 class MainWindow;
 class Map;
 class PathPainter;
+class GroupsPathsWidget;
 
 #include <QWidget>
 #include <QSharedPointer>
@@ -50,11 +51,13 @@ public:
     QPushButton* getCloseButton(void) const { return closeBtn; }
     QWidget* getLastWidget() const {return lastWidget; }
     DisplaySelectedPath* getDisplaySelectedPath(void) const { return displaySelectedPath; }
+    GroupsPathsWidget* getGroupsPathsWidget(void) const { return groupsPathsWidget; }
+
 
     void showBackButton(QString name);
     void hideBackButton();
 
-    void updateGroupDisplayed(const QSharedPointer<Points> &_points, const QString groupIndex);
+    void updateGroupDisplayed(const QString groupIndex);
     void disableButtons();
     void setEnableReturnCloseButtons(bool enable);
 
@@ -67,6 +70,7 @@ private:
     SelectedRobotWidget* selectedRobotWidget;
     RobotsLeftWidget* robotsLeftWidget;
     MapLeftWidget* mapLeftWidget;
+    GroupsPathsWidget* groupsPathsWidget;
     EditSelectedRobotWidget* editSelectedRobotWidget;
     SelectedPointWidget* selectedPointWidget;
     CreatePointWidget* createPointWidget;

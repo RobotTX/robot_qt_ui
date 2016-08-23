@@ -8,8 +8,9 @@
 #include <QComboBox>
 #include "Model/pathpoint.h"
 
-PathPointCreationWidget::PathPointCreationWidget(const int _id, const QString _name, const double x, const double y, QWidget* parent)
-    :QWidget(parent), id(_id), name(_name), posX(x), posY(y){
+PathPointCreationWidget::PathPointCreationWidget(const int _id, const QString _name, const double x, const double y, QWidget* parent):
+    QWidget(parent), id(_id), name(_name), posX(x), posY(y)
+{
     layout = new QHBoxLayout(this);
 
     pathWidget = new QWidget(this);

@@ -27,6 +27,7 @@
 #include "colors.h"
 #include "View/pathpainter.h"
 #include "View/displayselectedpath.h"
+#include "View/groupspathswidget.h"
 
 LeftMenu::LeftMenu(MainWindow* _parent, QSharedPointer<Points> const& _points,
                    const QSharedPointer<Robots> &robots, const QSharedPointer<Points> &pointViews,
@@ -114,15 +115,21 @@ LeftMenu::LeftMenu(MainWindow* _parent, QSharedPointer<Points> const& _points,
     leftLayout->addWidget(createPointWidget);
     connect(createPointWidget, SIGNAL(pointSaved(QString, double, double, QString)), parent, SLOT(pointSavedEvent(QString, double, double, QString)));
 
-    /// Menu which display the widget for the creation of a path
+    /// Menu which displays the widget for the creation of a path
     pathCreationWidget = new PathCreationWidget(parent, _points);
     pathCreationWidget->hide();
     leftLayout->addWidget(pathCreationWidget);
 
     /// Menu which display the informations of a path
-    displaySelectedPath = new DisplaySelectedPath(this);
+    displaySelectedPath = new DisplaySelectedPath(parent);
     displaySelectedPath->hide();
     leftLayout->addWidget(displaySelectedPath);
+
+    /// Menu which displays the groups of paths
+    groupsPathsWidget = new GroupsPathsWidget(parent, points);
+    groupsPathsWidget->hide();
+    leftLayout->addWidget(groupsPathsWidget);
+
 
     connect(pathCreationWidget, SIGNAL(addPathPoint(QString, double, double)), pathPainter, SLOT(addPathPointSlot(QString, double, double)));
     connect(pathCreationWidget, SIGNAL(deletePathPoint(int)), pathPainter, SLOT(deletePathPointSlot(int)));
@@ -171,7 +178,7 @@ LeftMenu::LeftMenu(MainWindow* _parent, QSharedPointer<Points> const& _points,
     this->setPalette(Pal);
 }
 
-void LeftMenu::updateGroupDisplayed(QSharedPointer<Points> const& _points, const QString groupIndex){
+void LeftMenu::updateGroupDisplayed(const QString groupIndex){
     displaySelectedGroup->getPointButtonGroup()->setGroup(groupIndex);
 }
 

@@ -126,3 +126,17 @@ void Robots::deselect(){
     for(int i = 0; i < robotsVector.size(); i++)
         robotsVector[i]->setSelected(false);
 }
+
+void Robots::hide() const {
+    for(int i = 0; i < robotsVector.size(); i++)
+        robotsVector[i]->hide();
+}
+
+void Robots::show() const {
+    for(int i = 0; i < robotsVector.size(); i++)
+        robotsVector[i]->show();
+}
+
+void Robots::showRobot(const int id) const {
+    robotsVector.at(id)->show();
+}

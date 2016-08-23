@@ -5,7 +5,7 @@
 #include "Controller/mainwindow.h"
 #include "View/mapview.h"
 
-Points::Points(MainWindow *_parent) : parent(_parent), QObject(_parent){
+Points::Points(MainWindow *_parent) : QObject(_parent), parent(_parent){
     groups = QSharedPointer<Groups>(new Groups());
 }
 
@@ -30,27 +30,30 @@ std::ostream& operator <<(std::ostream& stream, Points const& points){
     return stream;
 }
 
-
+/*
 QDataStream& operator>>(QDataStream& in, Points& points){
     qDebug() << "Points operator >> called";
     /// the size of the vector has to be serialized too in order to deserialize the object correctly
-    /*qint32 size;
+    qint32 size;
     in >> size;
     for(int i = 0; i < size; i++){
         Group group;
         in >> group;
         points.addGroup(group);
-    }*/
+    }
     return in;
 }
+*/
 
+/*
 QDataStream& operator<<(QDataStream& out, const Points& points){
     qDebug() << "Points operator << called";
-    /*out << qint32(points.getGroups().size());
+    out << qint32(points.getGroups().size());
     for(int i = 0; i < points.getGroups().size(); i++)
         out << *(points.getGroups().at(i));
-    return out;*/
+    return out;
 }
+*/
 
 void Points::removeGroup(const QString groupName) {
     if(groupName.compare(NO_GROUP_NAME) != 0)
@@ -197,17 +200,28 @@ void Points::addPoint(const QString groupName, QSharedPointer<PointView> pointVi
 }
 
 void Points::insertPoint(const QString groupName, const int id, QSharedPointer<PointView> pointView){
-    qDebug() << "Points::insertPoint called with pointView";
+    qDebug() << "Points::insertPoint called with pointView, groupname" << groupName;
 
     if(!groups->empty() && groups->contains(groupName)){
+        qDebug() << "found the group";
         if(groups->value(groupName)->size() > 0)
             groups->value(groupName)->insert(id, pointView);
         else
             groups->value(groupName)->push_back(pointView);
     } else {
+        qDebug() << "could not find the group";
         QSharedPointer<QVector<QSharedPointer<PointView>>> vector = QSharedPointer<QVector<QSharedPointer<PointView>>>(new QVector<QSharedPointer<PointView>>());
         vector->push_back(pointView);
         groups->insert(groupName, vector);
+    }
+}
+
+void Points::replacePoint(const QString groupName, const int id, const QSharedPointer<PointView>& pointView){
+    qDebug() << "Points::replacePoint called with pointview, groupName and id" << groupName << id;
+
+    if(id >= 0 && id < groups->value(groupName)->size()){
+        groups->value(groupName)->removeAt(id);
+        groups->value(groupName)->insert(id, pointView);
     }
 }
 

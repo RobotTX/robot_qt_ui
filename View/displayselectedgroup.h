@@ -8,7 +8,7 @@ class QHBoxLayout;
 class QMainWindow;
 class QLabel;
 class Points;
-class DoubleClickableButton;
+
 #include "Model/points.h"
 #include <QWidget>
 #include "View/pointbuttongroup.h"

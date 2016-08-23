@@ -19,7 +19,6 @@
 #include "View/robotview.h"
 #include "Model/pathpoint.h"
 #include "View/displayselectedpointrobots.h"
-#include <QSet>
 #include "View/customscrollarea.h"
 
 DisplaySelectedPoint::DisplaySelectedPoint(QMainWindow *const _parent,  QSharedPointer<Robots> const _robots, QSharedPointer<Points> const& _points, QSharedPointer<Map> const& _map, QSharedPointer<PointView> _pointView):
@@ -27,8 +26,6 @@ DisplaySelectedPoint::DisplaySelectedPoint(QMainWindow *const _parent,  QSharedP
 
     robots = QSharedPointer<Robots>(_robots);
     layout = new QVBoxLayout(this);
-
-    QVBoxLayout* downLayout = new QVBoxLayout();
 
     CustomScrollArea* scrollArea = new CustomScrollArea(this);
 
@@ -158,7 +155,7 @@ void DisplaySelectedPoint::resetWidget(){
     actionButtons->getEditButton()->setEnabled(true);
     actionButtons->getEditButton()->setToolTip("You can click on this button and then choose between clicking on the map or drag the point to change its position");
 
-    emit resetState(GraphicItemState::NO_STATE, true);
+    emit resetState(GraphicItemState::NO_STATE);
 }
 
 void DisplaySelectedPoint::hideEvent(QHideEvent *event){

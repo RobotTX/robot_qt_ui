@@ -44,7 +44,6 @@ void MapView::mouseReleaseEvent(QGraphicsSceneMouseEvent *event){
             //qDebug() << "MapView::mouseReleaseEvent NO_STATE";
             QSharedPointer<PointView> tmpPointView = points->getTmpPointView();
             tmpPointView->show();
-            /// might be useless code
             tmpPointView->setPos(event->pos().x(), event->pos().y());
             emit pointLeftClicked();
         } else if(state == GraphicItemState::CREATING_PATH){
@@ -54,7 +53,6 @@ void MapView::mouseReleaseEvent(QGraphicsSceneMouseEvent *event){
                 emit addPathPoint(PATH_POINT_NAME, event->pos().x(), event->pos().y());
            } else {
                emit newMessage("You cannot create a point here because your robot cannot go there. You must click known areas of the map");
-               //qDebug() << "sorry cannot create a point here";
             }
         } else if(state == GraphicItemState::EDITING_PERM){
             //qDebug() << "MapView::mouseReleaseEvent EDITING_PERM" << event->pos().x() << event->pos().y();
@@ -72,7 +70,6 @@ void MapView::mouseReleaseEvent(QGraphicsSceneMouseEvent *event){
                             QString(TMP_POINT_NAME));
 
         } else if(state == GraphicItemState::EDITING_PATH){
-            //qDebug() << "MapView::mouseReleaseEvent EDITING_PATH" << event->pos().x() << event->pos().y();
             /// to notify that a point which belongs to the path of a robot has been changed
             emit newCoordinatesPathPoint(event->pos().x(), event->pos().y());
         } else {

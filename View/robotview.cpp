@@ -9,7 +9,8 @@
 #include <QGraphicsWidget>
 #include "mapview.h"
 
-RobotView::RobotView (QSharedPointer<Robot> const &_robot, QGraphicsItem* parent): robot(_robot), selected(false), state(GraphicItemState::NO_STATE), shown(true), QGraphicsPolygonItem(parent)
+RobotView::RobotView (QSharedPointer<Robot> const &_robot, QGraphicsItem* parent):
+    QGraphicsPolygonItem(parent), robot(_robot), selected(false), state(GraphicItemState::NO_STATE), shown(true)
 {
     setAcceptHoverEvents(true);
     setAcceptedMouseButtons(Qt::LeftButton);
@@ -38,7 +39,7 @@ RobotView::RobotView (QSharedPointer<Robot> const &_robot, QGraphicsItem* parent
     mapView = (MapView*) parent;
 }
 
-RobotView::RobotView (QGraphicsItem* parent): selected(false), QGraphicsPolygonItem(parent), state(GraphicItemState::NO_STATE)
+RobotView::RobotView (QGraphicsItem* parent): QGraphicsPolygonItem(parent), selected(false), state(GraphicItemState::NO_STATE)
 {
 }
 

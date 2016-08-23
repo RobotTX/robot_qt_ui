@@ -57,8 +57,8 @@ protected:
 signals:
     /// to notify the mapview that one of its points have been updated (in order to update the name that's displayed when the mouse is hovering over a point)
     void nameChanged(QString, QString);
-    /// to reset the state of the map if a user clicks a random button while he was editting a point
-    void resetState(GraphicItemState, bool);
+    /// to reset the state of the map if a user clicks a random button while he was editing a point
+    void resetState(GraphicItemState);
     /// emitted when the field to type the name of the point is changed to allow or not the user to save its point
     void invalidName(QString, CreatePointWidget::Error);
     /// in the event where this point is a special point for a robot (home or part of a path), allows those pieces of information to

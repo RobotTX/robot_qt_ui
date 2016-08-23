@@ -23,6 +23,7 @@ class QAbstractButton;
 class QVBoxLayout;
 class PathPainter;
 class DoubleClickableButton;
+class GroupsPathsWidget;
 
 #include "View/createpointwidget.h"
 #include "View/toplayout.h"
@@ -38,13 +39,13 @@ class DoubleClickableButton;
 #include <QSettings>
 
 
-//#define XML_PATH "/home/m-a/Documents/QtProject/gobot-software/points.xml"
-//#define ROBOTS_NAME_PATH "/home/m-a/Documents/QtProject/gobot-software/robotsName.dat"
-//#define MAP_PATH "/home/m-a/Documents/QtProject/gobot-software/realMap.dat"
+#define XML_PATH "/home/m-a/Documents/QtProject/gobot-software/points.xml"
+#define ROBOTS_NAME_PATH "/home/m-a/Documents/QtProject/gobot-software/robotsName.dat"
+#define MAP_PATH "/home/m-a/Documents/QtProject/gobot-software/realMap.dat"
 
-#define XML_PATH "/home/joan/Qt/QtProjects/gobot-software/points.xml"
-#define ROBOTS_NAME_PATH "/home/joan/Qt/QtProjects/gobot-software/robotsName.dat"
-#define MAP_PATH "/home/joan/Qt/QtProjects/gobot-software/realMap.dat"
+//#define XML_PATH "/home/joan/Qt/QtProjects/gobot-software/points.xml"
+//#define ROBOTS_NAME_PATH "/home/joan/Qt/QtProjects/gobot-software/robotsName.dat"
+//#define MAP_PATH "/home/joan/Qt/QtProjects/gobot-software/realMap.dat"
 
 //#define XML_PATH "/Users/fannylarradet/Desktop/GTRobots/gobot-software/points.xml"
 //#define ROBOTS_NAME_PATH "/Users/fannylarradet/Desktop/GTRobots/gobot-software/robotsName.dat"
@@ -69,7 +70,7 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
-    enum WidgetType { MENU, GROUPS, GROUP, POINT, ROBOTS, ROBOT , MAP };
+    enum WidgetType { MENU, GROUPS, GROUP, POINT, ROBOTS, ROBOT , MAP, GROUPS_PATHS, PATH };
 
     QSharedPointer<Points> getPoints(void) const { return points; }
     QList<QPair<QPair<QWidget*, QString>, MainWindow::WidgetType>> getLastWidgets() const { return lastWidgets; }
@@ -85,7 +86,7 @@ public:
     int openEmptyGroupMessage(const QString groupName);
     void clearNewMap();
     void resetFocus();
-    void switchFocus(QString name, QWidget* widget, WidgetType type);
+    void switchFocus(const QString name, QWidget* widget, const WidgetType type);
     /// to sleep for ms milliseconds
     void delay(const int ms) const;
     void setTemporaryMessageTop(const QString type, const QString message, const int ms);
@@ -117,6 +118,7 @@ private slots:
     void robotBtnEvent();
     void pointBtnEvent();
     void mapBtnEvent();
+    void pathBtnEvent();
     void plusGroupBtnEvent();
     void minusGroupBtnEvent();
     void editGroupBtnEvent();
@@ -192,7 +194,7 @@ private slots:
     void viewPathSelectedRobot(int robotNb, bool checked);
     void editHomeEvent();
     void closeSlot();
-    void setGraphicItemsState(const GraphicItemState state, const bool clear = false);
+    void setGraphicItemsState(const GraphicItemState state);
     void showHome();
     void showEditHome();
     void hideHome(void);
@@ -207,9 +209,13 @@ private slots:
     void updatePathPainterPointViewSlot();
     void stopPath(int robotNb);
     void resetPathPointViewsSlot();
-    void setEnableAll(bool enable, GraphicItemState state = GraphicItemState::NO_STATE, bool clearPath = false, int noReturn = -1);
+    void setEnableAll(bool enable, GraphicItemState state = GraphicItemState::NO_STATE, int noReturn = -1);
     void deletePathSelecRobotBtnEvent();
     void updateHomeCoordinates(float x, float y, QString name);
+    void replacePoint(int id, QString name);
+    void deletePathSlot(QString groupName, QString pathName);
+    void editPathSlot(QString groupName, QString pathName);
+    void displayPathSlot(QString groupName, QString pathName, bool display);
 
 private:
     Ui::MainWindow* ui;

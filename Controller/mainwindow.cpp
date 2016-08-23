@@ -43,6 +43,7 @@
 #include "View/displayselectedpointrobots.h"
 #include "doubleclickablebutton.h"
 #include "View/displayselectedpath.h"
+#include "View/groupspathswidget.h"
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow) {
     ui->setupUi(this);
@@ -121,7 +122,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     bottom->addLayout(rightLayout);
     rightLayout->addWidget(graphicsView);
 
-
     initializeBottomPanel();
 
     graphicsView->show();
@@ -145,7 +145,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     connect(leftMenu->getDisplaySelectedPoint(), SIGNAL(nameChanged(QString, QString)), this, SLOT(updatePoint()));
 
     /// to reset the state of everybody when a user click on a random button while he was editing a point
-    connect(leftMenu->getDisplaySelectedPoint(), SIGNAL(resetState(GraphicItemState, bool)),  this, SLOT(setGraphicItemsState(GraphicItemState, bool)));
+    connect(leftMenu->getDisplaySelectedPoint(), SIGNAL(resetState(GraphicItemState)),  this, SLOT(setGraphicItemsState(GraphicItemState)));
 
     /// to connect the buttons in the left menu so they can be double clicked after they were updated
     connect(pointsLeftWidget->getGroupButtonGroup(), SIGNAL(updateConnectionsRequest()), this, SLOT(reestablishConnectionsGroups()));
@@ -255,7 +255,7 @@ void MainWindow::initializeRobots(){
     QString robotIp1 = "localhost";
     QString robotName1 = tmpMap.value(robotIp1, "Roboty");
 
-    QSharedPointer<Robot> robot1(new Robot(robotName1, robotIp1, this));
+    QSharedPointer<Robot> robot1(new Robot(robotName1, robotIp1));
     robot1->setWifi("Swaghetti Yolognaise");
     RobotView* robotView1 = new RobotView(robot1, mapPixmapItem);
     connect(robotView1, SIGNAL(setSelectedSignal(RobotView*)), this, SLOT(setSelectedRobot(RobotView*)));
@@ -266,7 +266,7 @@ void MainWindow::initializeRobots(){
 
     QString robotIp2 = "192.168.4.12";
     QString robotName2 = tmpMap.value(robotIp2, "Roboto");
-    QSharedPointer<Robot> robot2(new Robot(robotName2, robotIp2, this));
+    QSharedPointer<Robot> robot2(new Robot(robotName2, robotIp2));
     robot2->setWifi("Swaghetti Yolognaise");
     RobotView* robotView2 = new RobotView(robot2, mapPixmapItem);
     connect(robotView2, SIGNAL(setSelectedSignal(RobotView*)), this, SLOT(setSelectedRobot(RobotView*)));
@@ -277,7 +277,7 @@ void MainWindow::initializeRobots(){
 
     QString robotIp3 = "192.168.4.13";
     QString robotName3 = tmpMap.value(robotIp3, "Robota");
-    QSharedPointer<Robot> robot3(new Robot(robotName3, robotIp3, this));
+    QSharedPointer<Robot> robot3(new Robot(robotName3, robotIp3));
     robot3->setWifi("Swaghetti Yolognaise");
     RobotView* robotView3 = new RobotView(robot3, mapPixmapItem);
     connect(robotView3, SIGNAL(setSelectedSignal(RobotView*)), this, SLOT(setSelectedRobot(RobotView*)));
@@ -647,7 +647,7 @@ void MainWindow::addPathSelecRobotBtnEvent(){
                   selectedRobot->getRobot()->getName() + "\nAlternatively you can click the \"+\" button to add an existing point to your path"
                   "\nYou can re-order the points in the list by dragging them");
 
-    setEnableAll(false, GraphicItemState::CREATING_PATH, true, true);
+    setEnableAll(false, GraphicItemState::CREATING_PATH, true);
 
     /// stop displaying the currently displayed path if it exists
 
@@ -706,6 +706,8 @@ void MainWindow::deletePathSelecRobotBtnEvent(){
 
 void MainWindow::setSelectedRobotNoParent(QAbstractButton *button){
     qDebug() << "Setselectedrobotnoparent called with id" << bottomLayout->getRobotBtnGroup()->id(button) << ", last id is" << bottomLayout->getLastCheckedId();
+    /// displays the robot on the map
+    const int robotId = bottomLayout->getRobotBtnGroup()->id(button);
     /// if the button was already checked we uncheck it
     if(bottomLayout->getLastCheckedId() == bottomLayout->getRobotBtnGroup()->id(button)){
         qDebug() << "gotta hide the robot" << button->text();
@@ -719,17 +721,17 @@ void MainWindow::setSelectedRobotNoParent(QAbstractButton *button){
         /// to change the pixmap of the robot on the map
         robots->deselect();
         /// we hide the path
-        bottomLayout->getViewPathRobotBtnGroup()->button(bottomLayout->getRobotBtnGroup()->id(button))->setChecked(false);
+        bottomLayout->getViewPathRobotBtnGroup()->button(robotId)->setChecked(false);
         selectedRobot = 0;
         points->setPixmapAll(PointView::PixmapType::NORMAL);
 
-    } else if(bottomLayout->getRobotBtnGroup()->id(button) != -1 ){
+    } else if(robotId != -1 ){
         qDebug() << "have to display the robot" << button->text();
         resetFocus();
         /// updates the robot menu on the left to fit this particular robot's information
         setSelectedRobot(robots->getRobotViewByName(button->text()));
         /// updates the last checked id to the id of the current button / robot
-        bottomLayout->setLastCheckedId(bottomLayout->getRobotBtnGroup()->id(button));
+        bottomLayout->setLastCheckedId(robotId);
     }
 }
 
@@ -741,8 +743,17 @@ void MainWindow::setSelectedRobot(QAbstractButton *button){
     robotsLeftWidget->getActionButtons()->getGoButton()->setEnabled(true);
     robotsLeftWidget->getActionButtons()->getMapButton()->setEnabled(true);
     RobotView* mySelectedRobot =  robots->getRobotViewByName(((DoubleClickableButton *)robotsLeftWidget->getBtnGroup()
-                                                  ->getBtnGroup()->checkedButton())->getRealName());
+                                                  ->getBtnGroup()->checkedButton())->text());
+
+    const int robotId = robotsLeftWidget->getBtnGroup()->getBtnGroup()->id(button);
     robotsLeftWidget->getActionButtons()->getMapButton()->setChecked(mySelectedRobot->isVisible());
+    /// to show the selected robot with a different color
+    robots->deselect();
+    robots->getRobotsVector().at(robotId)->setSelected(true);
+    /// to select the robot in the bottom layout accordingly
+    bottomLayout->uncheckRobots();
+    bottomLayout->getRobotBtnGroup()->button(robotId)->setChecked(true);
+    bottomLayout->setLastCheckedId(robotId);
 }
 
 void MainWindow::selectViewRobot(){
@@ -768,12 +779,12 @@ void MainWindow::backRobotBtnEvent(){
 void MainWindow::editRobotBtnEvent(){
     qDebug() << "editRobotBtnEvent called";
 
-    editSelectedRobot(robots->getRobotViewByName(((DoubleClickableButton *)robotsLeftWidget->getBtnGroup()->getBtnGroup()->checkedButton())->getRealName()));
+    editSelectedRobot(robots->getRobotViewByName(((DoubleClickableButton *)robotsLeftWidget->getBtnGroup()->getBtnGroup()->checkedButton())->text()));
 }
 
 void MainWindow::checkRobotBtnEventMenu(){
     qDebug() << "checkRobotBtnEventMenu called";
-    QString name = ((DoubleClickableButton *)robotsLeftWidget->getBtnGroup()->getBtnGroup()->checkedButton())->getRealName();
+    QString name = robotsLeftWidget->getBtnGroup()->getBtnGroup()->checkedButton()->text();
 
     checkRobotBtnEvent(name);
 }
@@ -898,7 +909,7 @@ void MainWindow::robotSavedEvent(){
                     if((cmd2.compare("n") == 0 && success2) || answerList2.at(0).compare("1") == 0){
 
                         qDebug() << "MainWindow::robotSavedEvent Tmp point";
-                        pointView->getPoint()->setHome(Point::PointType::HOME, selectedRobot->getRobot()->getName());
+                        pointView->getPoint()->setHome(Point::PointType::HOME);
 
                         points->addPoint(NO_GROUP_NAME, points->getGroups()->value(TMP_GROUP_NAME)->takeFirst());
                         points->addTmpPoint(mapPixmapItem, this);
@@ -914,7 +925,7 @@ void MainWindow::robotSavedEvent(){
             selectedRobot->getRobot()->resetCommandAnswer();
         } else {
             qDebug() << "MainWindow::robotSavedEvent Permanent point";
-            if(pointView->getPoint()->setHome(Point::PointType::HOME, selectedRobot->getRobot()->getName())){
+            if(pointView->getPoint()->setHome(Point::PointType::HOME)){
                 if(selectedRobot->getRobot()->sendCommand(QString("n \"") + QString::number(pointView->getPoint()->getPosition().getX()) + "\" \""
                                                                   + QString::number(pointView->getPoint()->getPosition().getY()) + "\"")){
                     QString answerHome = selectedRobot->getRobot()->waitAnswer();
@@ -940,7 +951,7 @@ void MainWindow::robotSavedEvent(){
 
         if(done){
             if(selectedRobot->getRobot()->getHome() != NULL)
-                selectedRobot->getRobot()->getHome()->getPoint()->setHome(Point::PointType::PERM, "");
+                selectedRobot->getRobot()->getHome()->getPoint()->setHome(Point::PointType::PERM);
             selectedRobot->getRobot()->setHome(editSelectedRobotWidget->getHome());
         }
         isOK = true;
@@ -1059,7 +1070,7 @@ void MainWindow::editTmpPathPointSlot(int id, QString name, double x, double y){
             points->insertPoint(PATH_GROUP_NAME, id, editedPointView);
         }
 
-        setGraphicItemsState(GraphicItemState::NO_EVENT, false);
+        setGraphicItemsState(GraphicItemState::NO_EVENT);
         mapPixmapItem->setState(GraphicItemState::EDITING_PATH);
         editedPointView->setFlag(QGraphicsItem::ItemIsMovable);
         editedPointView->setState(GraphicItemState::EDITING_PATH);
@@ -1117,7 +1128,7 @@ void MainWindow::addPointPathSlot(QString name, double x, double y){
 void MainWindow::saveEditPathPointSlot(void){
     qDebug() << "MainWindow::saveEditPathPointSlot called";
 
-    setEnableAll(false, GraphicItemState::CREATING_PATH, false, true);
+    setEnableAll(false, GraphicItemState::CREATING_PATH, true);
     pathPainter->updateCurrentPath();
 
     editedPointView->setFlag(QGraphicsItem::ItemIsMovable, false);
@@ -1127,7 +1138,7 @@ void MainWindow::saveEditPathPointSlot(void){
 void MainWindow::cancelEditPathPointSlot(void){
     qDebug() << "MainWindow::cancelEditPathPointSlot called";
 
-    setEnableAll(false, GraphicItemState::CREATING_PATH, false, true);
+    setEnableAll(false, GraphicItemState::CREATING_PATH, true);
 
     int id = pathCreationWidget->getPathPointList()->row(pathCreationWidget->getPathPointList()->currentItem());
     Position pos = pathPainter->getCurrentPath().at(id)->getPoint().getPosition();
@@ -1325,7 +1336,7 @@ void MainWindow::robotIsAliveSlot(QString hostname, QString ip, QString mapId, Q
     } else {
         qDebug() << "Robot" << hostname << "at ip" << ip << "just connected and has the map id :" << mapId;
 
-        QSharedPointer<Robot> robot(new Robot(hostname, ip, this));
+        QSharedPointer<Robot> robot(new Robot(hostname, ip));
         robot->setWifi(ssid);
         rv = new RobotView(robot, mapPixmapItem);
         connect(rv, SIGNAL(setSelectedSignal(RobotView*)), this, SLOT(setSelectedRobot(RobotView*)));
@@ -1404,7 +1415,7 @@ void MainWindow::robotIsDeadSlot(QString hostname,QString ip){
 
         /// if the robot had a home, make the point a normal point
         if(rv->getRobot()->getHome() != NULL)
-            rv->getRobot()->getHome()->getPoint()->setHome(Point::PointType::PERM, "");
+            rv->getRobot()->getHome()->getPoint()->setHome(Point::PointType::PERM);
         qDebug() << "home cleaned";
 
         /// if selected => if one of this robot related menu is open
@@ -1581,6 +1592,11 @@ void MainWindow::updateAllPaths(void){
 
 void MainWindow::resetPathPointViewsSlot(){
     emit updatePathPainter();
+}
+
+void MainWindow::replacePoint(int id, QString name){
+    points->getGroups()->value(PATH_GROUP_NAME)->remove(id);
+    points->insertPoint(PATH_GROUP_NAME, id, points->findPointView(name));
 }
 
 /**********************************************************************************************************************************/
@@ -1853,7 +1869,8 @@ void MainWindow::minusGroupBtnEvent(){
     pointsLeftWidget->getGroupNameEdit()->hide();
     pointsLeftWidget->getGroupNameLabel()->hide();
 
-    QString checkedId = ((DoubleClickableButton *) pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->checkedButton())->getRealName();
+    QString checkedId = pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->checkedButton()->text();
+
     /// we have to delete a group
     if(points->isAGroup(checkedId))
         askForDeleteGroupConfirmation(checkedId);
@@ -1920,7 +1937,7 @@ void MainWindow::editPointButtonEvent(){
     leftMenu->getDisplaySelectedPoint()->getNameEdit()->setReadOnly(false);
 
     /// sets the state of the map and the other widgets to prevent other concurrent actions
-    setGraphicItemsState(GraphicItemState::NO_EVENT, false);
+    setGraphicItemsState(GraphicItemState::NO_EVENT);
     mapPixmapItem->setState(GraphicItemState::EDITING_PERM);
 
     /// sets the state of the point of the map to make it draggable
@@ -1941,7 +1958,7 @@ void MainWindow::editGroupBtnEvent(){
         setEnableAll(false);
         int btnIndex = pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->checkedId();
         qDebug() << "btnIndex" << btnIndex;
-        pointsLeftWidget->setLastCheckedId(static_cast<DoubleClickableButton*>(pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->checkedButton())->getRealName());
+        pointsLeftWidget->setLastCheckedId(static_cast<DoubleClickableButton*>(pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->checkedButton())->text());
 
         pointsLeftWidget->setCreatingGroup(false);
 
@@ -1955,7 +1972,7 @@ void MainWindow::editGroupBtnEvent(){
         pointsLeftWidget->getGroupNameEdit()->hide();
         pointsLeftWidget->getGroupNameLabel()->hide();
         QAbstractButton* btn = pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->checkedButton();
-        QString checkedId =  static_cast<DoubleClickableButton*> (pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->checkedButton())->getRealName();
+        QString checkedId = pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->checkedButton()->text();
 
         /// it's an isolated point
         if(checkedId.compare("") != 0 && points->isAPoint(checkedId)){
@@ -2021,21 +2038,19 @@ void MainWindow::selectPointBtnEvent(){
     qDebug() << "selectPointBtnEvent called";
 }
 
-void MainWindow::switchFocus(QString name, QWidget* widget, MainWindow::WidgetType type)
+void MainWindow::switchFocus(const QString name, QWidget* widget, const MainWindow::WidgetType type)
 {
     lastWidgets.append(QPair<QPair<QWidget*, QString>, MainWindow::WidgetType>(QPair<QWidget*, QString>(widget,name), type));
 
-    if(lastWidgets.size()>1) {
+    if(lastWidgets.size() > 1)
         leftMenu->showBackButton(lastWidgets.at(lastWidgets.size()-2).first.second);
-    } else {
+    else
         leftMenu->hideBackButton();
-    }
 
     qDebug() << "__________________";
 
-    for(int i=0;i<lastWidgets.size();i++) {
+    for(int i = 0; i < lastWidgets.size(); i++)
         qDebug() << lastWidgets.at(i).first.second;
-    }
 
     qDebug() << "_________________";
 
@@ -2120,7 +2135,7 @@ void MainWindow::pointSavedEvent(QString groupName, double x, double y, QString 
     createPointWidget->getActionButtons()->getPlusButton()->setEnabled(true);
 
     /// hides widgets relative to the choice of a group
-    createPointWidget->hideGroupLayout();
+    createPointWidget->hideGroupLayout(true);
 
     points->addPoint(groupName, name, x, y, true, Point::PointType::TEMP, mapPixmapItem, this);
 
@@ -2429,7 +2444,7 @@ void MainWindow::displayGroupMapEvent(void){
     pointsLeftWidget->getGroupNameEdit()->hide();
     pointsLeftWidget->getGroupNameLabel()->hide();
 
-    QString checkedName = ((DoubleClickableButton *) pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->checkedButton())->getRealName();
+    QString checkedName = pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->checkedButton()->text();
 
     int checkedId = pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->checkedId();
     /// we display groups
@@ -2520,7 +2535,7 @@ void MainWindow::displayPointMapEvent(){
             parserPoints.save(*points);
 
             /// we update the group menu
-            leftMenu->updateGroupDisplayed(points, pointIndexes.first);
+            leftMenu->updateGroupDisplayed(pointIndexes.first);
 
             /// it's a point that belongs to a group
             if(pointIndexes.first.compare(NO_GROUP_NAME) != 0){
@@ -2576,7 +2591,7 @@ void MainWindow::displayPointsInGroup(void){
     pointsLeftWidget->getGroupNameLabel()->hide();
 
     /// retrieves the id of the checked button within the group of buttons
-    QString checkedName = ((DoubleClickableButton *)pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->checkedButton())->getRealName();
+    QString checkedName = pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->checkedButton()->text();
 
     /// it's a group
     if(points->isAGroup(checkedName)){
@@ -2586,7 +2601,7 @@ void MainWindow::displayPointsInGroup(void){
 
        /// before we display the group of points, we make sure that the graphical object is consistent with the model
        DisplaySelectedGroup* selectedGroup = leftMenu->getDisplaySelectedGroup();
-       leftMenu->updateGroupDisplayed(points, checkedName);
+       leftMenu->updateGroupDisplayed(checkedName);
        selectedGroup->getPointButtonGroup()->setCheckable(true);
        selectedGroup->show();
        selectedGroup->setName(checkedName);
@@ -2800,7 +2815,7 @@ void MainWindow::editPointFromGroupMenu(void){
 
     qDebug() << "working on group" << groupName << "and id" << leftMenu->getDisplaySelectedGroup()->getPointButtonGroup()->getButtonGroup()->checkedId();
 
-    QString pointName = ((DoubleClickableButton *)leftMenu->getDisplaySelectedGroup()->getPointButtonGroup()->getButtonGroup()->checkedButton())->getRealName();
+    QString pointName = static_cast<DoubleClickableButton *> (leftMenu->getDisplaySelectedGroup()->getPointButtonGroup()->getButtonGroup()->checkedButton())->text();
 
     if(pointName.compare("") != 0){
         /// update the pointview and show the point on the map with hover color
@@ -2837,7 +2852,7 @@ void MainWindow::editPointFromGroupMenu(void){
                 leftMenu->getDisplaySelectedPoint()->getNameEdit()->setReadOnly(false);
 
             /// sets the state of the map and the other widgets to prevent other concurrent actions
-            setGraphicItemsState(GraphicItemState::NO_EVENT, false);
+            setGraphicItemsState(GraphicItemState::NO_EVENT);
             mapPixmapItem->setState(GraphicItemState::EDITING_PERM);
 
             /// sets the state of the point of the map to make it draggable
@@ -2875,7 +2890,7 @@ void MainWindow::displayPointInfoFromGroupMenu(void){
     qDebug() << "display point info from group menu event called";
     /// retrieves a pointer to the pointView using the text of the label
 
-    QString pointName = static_cast<DoubleClickableButton*>(leftMenu->getDisplaySelectedGroup()->getPointButtonGroup()->getButtonGroup()->checkedButton())->getRealName();
+    QString pointName = static_cast<DoubleClickableButton*>(leftMenu->getDisplaySelectedGroup()->getPointButtonGroup()->getButtonGroup()->checkedButton())->text();
     QSharedPointer<PointView> pointView = points->findPointView(pointName);
 
 
@@ -3081,7 +3096,7 @@ void MainWindow::updateCoordinates(double x, double y){
  * removes a point which does not belong to the default group, from the group menu
  */
 void MainWindow::removePointFromGroupMenu(void){
-    QString checkedId = ((DoubleClickableButton *)leftMenu->getDisplaySelectedGroup()->getPointButtonGroup()->getButtonGroup()->checkedButton())->getRealName();
+    QString checkedId = static_cast<DoubleClickableButton *> (leftMenu->getDisplaySelectedGroup()->getPointButtonGroup()->getButtonGroup()->checkedButton())->text();
 
     if(checkedId.compare("") != 0)
         askForDeletePointConfirmation(checkedId);
@@ -3096,17 +3111,12 @@ void MainWindow::removePointFromGroupMenu(void){
  */
 void MainWindow::displayPointFromGroupMenu(){
 
-    qDebug() << "1" << (leftMenu->getDisplaySelectedGroup() == NULL);
-    qDebug() << "2" << (leftMenu->getDisplaySelectedGroup()->getPointButtonGroup() == NULL);
-    qDebug() << "3" << (leftMenu->getDisplaySelectedGroup()->getPointButtonGroup()->getButtonGroup() == NULL);
-    qDebug() << "4" << (leftMenu->getDisplaySelectedGroup()->getPointButtonGroup()->getButtonGroup()->checkedButton() == NULL);
-    const QString pointName = ((DoubleClickableButton *)leftMenu->getDisplaySelectedGroup()->getPointButtonGroup()->getButtonGroup()->checkedButton())->getRealName();
+    const QString pointName = leftMenu->getDisplaySelectedGroup()->getPointButtonGroup()->getButtonGroup()->checkedButton()->text();
+
     qDebug() << "displaypointfromgroupmenu event called" << pointName ;
 
     int checkedId = leftMenu->getDisplaySelectedGroup()->getPointButtonGroup()->getButtonIdByName(pointName);
 
-
-    //if(pointName.compare("") == 0){
     if(checkedId != -1){
         QSharedPointer<PointView> currentPointView = points->findPointView(pointName);
 
@@ -3252,7 +3262,7 @@ void MainWindow::doubleClickOnGroup(QString checkedName){
 
        /// before we display the group of points, we make sure that the graphical object is consistent with the model
        DisplaySelectedGroup* selectedGroup = leftMenu->getDisplaySelectedGroup();
-       leftMenu->updateGroupDisplayed(points, checkedName);
+       leftMenu->updateGroupDisplayed(checkedName);
        selectedGroup->getPointButtonGroup()->setCheckable(true);
        selectedGroup->show();
        selectedGroup->setName(checkedName);
@@ -3395,12 +3405,9 @@ void MainWindow::modifyGroupWithEnter(QString name){
         int checkedId = pointsLeftWidget->getGroupButtonGroup()->getButtonIdByName(pointsLeftWidget->getGroupButtonGroup()->getEditedGroupName());
 
         pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(checkedId)->show();
-
-        static_cast<DoubleClickableButton*>(pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(checkedId))->setName(name);
-
+        pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(checkedId)->setText(name);
         pointsLeftWidget->getGroupButtonGroup()->getModifyEdit()->hide();
 
-        //leftMenu->getReturnButton()->setEnabled(true);
         pointsLeftWidget->setLastCheckedId("");
         topLayout->setLabelDelay(TEXT_COLOR_SUCCESS, "You have successfully modified the name of your group", 1500);
 
@@ -3438,7 +3445,7 @@ void MainWindow::modifyGroupAfterClick(QString name){
             parser.save(*points);
 
             /// updates view
-            ((DoubleClickableButton* )pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(checkedId))->setName(name);
+
             color= TEXT_COLOR_SUCCESS;
             msg = "You have successfully modified the name of your group";
             time = 1500;
@@ -3491,6 +3498,45 @@ void MainWindow::setMessageCreationPoint(QString type, CreatePointWidget::Error 
 
 void MainWindow::choosePointName(QString message){
     setMessageTop(TEXT_COLOR_INFO, message);
+}
+
+/**********************************************************************************************************************************/
+
+//                                          PATHS
+
+/**********************************************************************************************************************************/
+
+void MainWindow::pathBtnEvent(){
+    hideAllWidgets();
+
+    robots->deselect();
+    bottomLayout->uncheckRobots();
+    bottomLayout->setLastCheckedId(-1);
+    /// resets the list of groups menu
+    switchFocus("Paths", leftMenu->getGroupsPathsWidget(), MainWindow::WidgetType::GROUPS_PATHS);
+    leftMenu->getGroupsPathsWidget()->show();
+    /*
+    qDebug() << "pointBtnEvent called ";
+    /// we uncheck all buttons from all menus
+    leftMenu->getDisplaySelectedGroup()->uncheck();
+    hideAllWidgets();
+    pointsLeftWidget->show();
+    setMessageTop(TEXT_COLOR_INFO, "Click the map to add a permanent point");*/
+}
+
+void MainWindow::deletePathSlot(QString groupName, QString pathName){
+    qDebug() << "MainWindow::deletePathSlot called on group :" << groupName << ", path :" << pathName;
+
+}
+
+void MainWindow::editPathSlot(QString groupName, QString pathName){
+    qDebug() << "MainWindow::editPathSlot called on group :" << groupName << ", path :" << pathName;
+
+}
+
+void MainWindow::displayPathSlot(QString groupName, QString pathName, bool display){
+    qDebug() << "MainWindow::displayPathSlot called on group :" << groupName << ", path :" << pathName << ", display :" << display;
+
 }
 
 /**********************************************************************************************************************************/
@@ -3563,7 +3609,7 @@ int MainWindow::openConfirmMessage(const QString text){
  * @param clear
  * resets the state of the map, robotViews et pointViews
  */
-void MainWindow::setGraphicItemsState(const GraphicItemState state, const bool clear){
+void MainWindow::setGraphicItemsState(const GraphicItemState state){
     qDebug() << "MainWindow::setGraphicItemsState called" << state << robots->getRobotsVector().size();
     mapPixmapItem->setState(state);
 
@@ -3585,6 +3631,7 @@ void MainWindow::hideAllWidgets(){
     leftMenu->getDisplaySelectedPoint()->hide();
     pathCreationWidget->hide();
     leftMenu->getDisplaySelectedGroup()->hide();
+    leftMenu->getDisplaySelectedPath()->hide();
 }
 
 void MainWindow::clearNewMap(){
@@ -3612,8 +3659,8 @@ void MainWindow::delay(const int ms) const{
         QCoreApplication::processEvents(QEventLoop::AllEvents, 100);
 }
 
-void MainWindow::setEnableAll(bool enable, GraphicItemState state, bool clearPath, int noReturn){
-    setGraphicItemsState(state, clearPath);
+void MainWindow::setEnableAll(bool enable, GraphicItemState state, int noReturn){
+    setGraphicItemsState(state);
     bottomLayout->setEnable(enable);
     topLayout->setEnable(enable);
     if(noReturn == -1)
@@ -3630,18 +3677,20 @@ void MainWindow::centerMap(){
 }
 
 void MainWindow::settingBtnSlot(){
-    qDebug() << "MainWindow::settingBtnSlot called"
-             << robots->getRobotViewByIp("localhost")->getRobot()->getName()
-             << robots->getRobotViewByIp("localhost")->getRobot()->getPath().size();
+    qDebug() << "MainWindow::settingBtnSlot called";
     DisplaySelectedPath* displaySelectedPath = leftMenu->getDisplaySelectedPath();
     if(displaySelectedPath->isVisible()){
         ///hide
         hideAllWidgets();
         resetFocus();
+        leftMenu->hide();
     } else {
         /// show
         hideAllWidgets();
-        switchFocus("Path pas par la");
+        QString pathName = "Path moi le sel";
+        switchFocus(pathName, displaySelectedPath, WidgetType::PATH);
+        displaySelectedPath->show();
+        leftMenu->show();
 
         QVector<QSharedPointer<PathPoint>> path;
         if(points->getGroups()->value("first group")->size() > 2){
@@ -3650,7 +3699,8 @@ void MainWindow::settingBtnSlot(){
                 path.push_back(pathPoint);
             }
         }
-        robot1->setPath(path);
+        displaySelectedPath->updatePath("Group1", pathName, path);
+
     }
 }
 

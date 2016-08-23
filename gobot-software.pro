@@ -63,8 +63,11 @@ HEADERS += Controller/cmdrobotthread.h \
            Controller/sendnewmapthread.h \
            View/customscrollarea.h \
            View/colors.h \
-    View/displayselectedpointrobots.h \
-    View/displayselectedpath.h
+           View/displayselectedpointrobots.h \
+           View/displayselectedpath.h \
+           View/groupspathswidget.h \
+           View/pathbuttongroup.h \
+           Model/paths.h
 
 FORMS += Controller/mainwindow.ui
 
@@ -111,11 +114,14 @@ SOURCES += main.cpp \
            View/customizedlineedit.cpp \
            View/buttonmenu.cpp \
            View/createpointwidget.cpp \
-    View/topleftmenu.cpp \
-    Controller/sendnewmapthread.cpp \
-    View/customscrollarea.cpp \
-    View/displayselectedpointrobots.cpp \
-    View/displayselectedpath.cpp
+           View/topleftmenu.cpp \
+           Controller/sendnewmapthread.cpp \
+           View/customscrollarea.cpp \
+           View/displayselectedpointrobots.cpp \
+           View/displayselectedpath.cpp \
+           View/groupspathswidget.cpp \
+           View/pathbuttongroup.cpp \
+           Model/paths.cpp
 
 RESOURCES += Resources/resources.qrc
 

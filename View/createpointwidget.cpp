@@ -18,6 +18,11 @@
 
 
 CreatePointWidget::CreatePointWidget(QMainWindow* _parent, QSharedPointer<Points> _points): QWidget(_parent), parent(_parent), points(_points){
+
+    /// to explain the user what to do with his temporary point
+    messageCreationLabel = new QLabel("Click \"+\" to save", this);
+    messageCreationLabel->setWordWrap(true);
+
     layout = new QVBoxLayout(this);
 
     actionButtons = new TopLeftMenu(this);
@@ -25,6 +30,8 @@ CreatePointWidget::CreatePointWidget(QMainWindow* _parent, QSharedPointer<Points
 
     layout->addWidget(actionButtons);
     QVBoxLayout*  downLayout = new QVBoxLayout();
+
+    downLayout->addWidget(messageCreationLabel);
 
     nameEdit = new QLineEdit(this);
     nameEdit->setStyleSheet ("text-align: left");
@@ -35,6 +42,7 @@ CreatePointWidget::CreatePointWidget(QMainWindow* _parent, QSharedPointer<Points
     nameEdit->setAlignment(Qt::AlignCenter);
     downLayout->addWidget(nameEdit);
     nameEdit->setStyleSheet("* { background-color: rgba(255, 0, 0, 0); font-weight: bold; text-decoration:underline}");
+    nameEdit->hide();
 
     posXLabel = new QLabel("X : ", this);
     downLayout->addWidget(posXLabel);
@@ -90,12 +98,14 @@ CreatePointWidget::CreatePointWidget(QMainWindow* _parent, QSharedPointer<Points
     connect(nameEdit, SIGNAL(textEdited(QString)), this, SLOT(checkPointName()));
 
     qDebug() << groupBox->currentIndex();
-    connect(cancelBtn, SIGNAL(clicked(bool)), this, SLOT(hideGroupLayout()));
+    connect(cancelBtn, SIGNAL(clicked(bool)), this, SLOT(hideGroupLayout(bool)));
 
     /// to display appropriate messages when a user attemps to create a point
     connect(this, SIGNAL(invalidName(QString, CreatePointWidget::Error)), _parent, SLOT(setMessageCreationPoint(QString, CreatePointWidget::Error)));
 
     connect(this, SIGNAL(displayMessageCreation(QString)), _parent, SLOT(choosePointName(QString)));
+
+    connect(this, SIGNAL(resetMessageTop(QString, QString)), _parent, SLOT(setMessageTop(QString, QString)));
 
     hide();
     setMaximumWidth(_parent->width()*4/10);
@@ -111,10 +121,15 @@ CreatePointWidget::CreatePointWidget(QMainWindow* _parent, QSharedPointer<Points
 void CreatePointWidget::setSelectedPoint(QSharedPointer<PointView> _pointView){
     qDebug() << "CreatePointWidget setSelectedPoint called";
     pointView = _pointView;
-    nameEdit->setText(pointView->getPoint()->getName());
+    if(_pointView->getPoint()->getName().compare("tmpPoint")){
+        nameEdit->setText(pointView->getPoint()->getName());
+    }
+    else {
+        messageCreationLabel->show();
+    }
+
     posXLabel->setText("X : " + QString::number(pointView->getPoint()->getPosition().getX(), 'f', 1));
     posYLabel->setText("Y : " + QString::number(pointView->getPoint()->getPosition().getY(), 'f', 1));
-
 }
 
 /// emits signal when a user clicks save after editing a point
@@ -186,8 +201,10 @@ void CreatePointWidget::showGroupLayout(void) {
     actionButtons->getPlusButton()->setToolTip("");
     nameEdit->setReadOnly(false);
     nameEdit->setText("");
-    //setFocus();
-    //nameEdit->setPlaceholderText("type your name");
+    nameEdit->show();
+    messageCreationLabel->hide();
+    setFocus();
+    nameEdit->setPlaceholderText("type your name");
     nameEdit->setAutoFillBackground(true);
     nameEdit->setFrame(true);
 
@@ -197,8 +214,8 @@ void CreatePointWidget::showGroupLayout(void) {
 }
 
 /// hides everything that's related to the creation of a point
-void CreatePointWidget::hideGroupLayout(void) const {
-    qDebug() << "hideGroupLayout called";
+void CreatePointWidget::hideGroupLayout(const bool pointAdded) {
+    qDebug() << "hideGroupLayout called, add point" << pointAdded;
     /// resets the name to tmpPoint if we cancel the creation of the point
     nameEdit->setText(pointView->getPoint()->getName());
     /// hides everything that's related to creating a point
@@ -212,6 +229,10 @@ void CreatePointWidget::hideGroupLayout(void) const {
     nameEdit->setAutoFillBackground(true);
     nameEdit->setFrame(false);
     nameEdit->setFocusPolicy(Qt::FocusPolicy::NoFocus);
+    nameEdit->hide();
+    messageCreationLabel->show();
+    if(!pointAdded)
+        emit resetMessageTop(TEXT_COLOR_INFO, "To save this point permanently click the \"+\" button");
 }
 
 /// updates the group box when a new group is created

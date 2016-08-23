@@ -55,13 +55,14 @@ public:
     void setPointLabel(const float _posX, const float _posY);
 
 private:
+    int id;
+    QString name;
+    float posX;
+    float posY;
+
     QHBoxLayout* layout;
     QVBoxLayout* rightLayout ;
     QLabel* pointLabel;
-    float posX;
-    float posY;
-    QString name;
-    int id;
     QComboBox* actionBtn;
     QPushButton* saveEditBtn;
     QPushButton* cancelBtn;

@@ -54,6 +54,8 @@ signals:
     void invalidName(QString, CreatePointWidget::Error);
     /// emitted after the user clicks the plus button to explain him what to do to create his point
     void displayMessageCreation(QString);
+    /// to signify the mainWindow that it has to display "Click the + button to save the point" in the top layout
+    void resetMessageTop(QString, QString);
 
 private slots:
     void saveEditSelecPointBtnEvent();
@@ -63,9 +65,12 @@ private slots:
     /// shows the widgets necessary to the creation of a point, cancel and save buttons and checkbox
     void showGroupLayout(void);
 
+
 public slots:
-    /// hides the widgets necessary to the creation of a point, cancel and save buttons and checkbox
-    void hideGroupLayout() const;
+    /// hides the widgets necessary to the creation of a point, cancel and save buttons and checkbox, resetTopMessage holds whether
+    /// it's been called by the cancel button by opposition to ENTER key pressed or save button and therefore if the message in the lop layout should be reset or changed to
+    /// "you have created a new point"
+    void hideGroupLayout(const bool pointAdded);
 
 private:
 
@@ -84,7 +89,7 @@ private:
     QLabel* groupLabel;
     SpaceWidget* separator;
     TopLeftMenu* actionButtons;
-
+    QLabel* messageCreationLabel;
 };
 
 #endif // CreatePointWidget_H

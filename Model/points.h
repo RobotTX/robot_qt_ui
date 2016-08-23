@@ -66,8 +66,8 @@ public:
     void addPoint(const QString groupName, QSharedPointer<PointView>pointView);
     void insertPoint(const QString groupName, const int id, QSharedPointer<PointView>pointView);
     void insertPoint(const QString groupName, const int id, const QString pointName, const double x, const double y, const bool displayed, const Point::PointType type, MapView *mapView, MainWindow *mainWindow);
+    void replacePoint(const QString groupName, const int id, const QSharedPointer<PointView> &pointView);
     void setPixmapAll(const PointView::PixmapType type, RobotView *selectedRobot = 0);
-    //void setPixmapAll(const QPixmap pixmap);
     QSharedPointer<PointView> createPoint(const QString pointName, const double x, const double y, const bool displayed, const Point::PointType type,
                                                    MapView* mapView, MainWindow* mainWindow);
     void updatePointViews(void);
@@ -75,11 +75,11 @@ public:
 private:
     MainWindow* parent;
     QSharedPointer<Groups> groups;
-
 };
 
 
 std::ostream& operator <<(std::ostream& stream, Points const& points);
+
 
 /**
  * @brief operator <<
@@ -88,7 +88,9 @@ std::ostream& operator <<(std::ostream& stream, Points const& points);
  * @return QDataStream&
  * Overloads the << and >> operators in order to be able to serialize a Group objet
  */
+/*
 QDataStream& operator<<(QDataStream& out, const Points& points);
 QDataStream& operator>>(QDataStream& in, Points& points);
+*/
 
 #endif // POINTS_H

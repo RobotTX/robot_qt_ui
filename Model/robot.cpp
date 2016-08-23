@@ -8,7 +8,7 @@
 #include <QMainWindow>
 #include <iostream>
 
-Robot::Robot(const QString _name, const QString _ip, QMainWindow* parent) : name(_name), ip(_ip), position(Position()),
+Robot::Robot(const QString _name, const QString _ip) : name(_name), ip(_ip), position(Position()),
     orientation(0), batteryLevel(100), wifi(""), home(NULL), playingPath(0), mapId(), sendingMap(false)
 {
     //qDebug() << "Robot" << name << "at ip" << ip << " launching its cmd thread";
@@ -93,6 +93,7 @@ bool Robot::sendCommand(const QString cmd) {
 }
 
 void Robot::sendNewMap(QByteArray cmd) {
+    Q_UNUSED(cmd)
 /*
     if(newMapThread->isConnected()){
         if(sendingMap){
