@@ -42,6 +42,7 @@
 #include <QVector>
 #include "View/displayselectedpointrobots.h"
 #include "doubleclickablebutton.h"
+#include "View/displayselectedpath.h"
 #include "View/groupspathswidget.h"
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow) {
@@ -3523,6 +3524,21 @@ void MainWindow::pathBtnEvent(){
     setMessageTop(TEXT_COLOR_INFO, "Click the map to add a permanent point");*/
 }
 
+void MainWindow::deletePathSlot(QString groupName, QString pathName){
+    qDebug() << "MainWindow::deletePathSlot called on group :" << groupName << ", path :" << pathName;
+
+}
+
+void MainWindow::editPathSlot(QString groupName, QString pathName){
+    qDebug() << "MainWindow::editPathSlot called on group :" << groupName << ", path :" << pathName;
+
+}
+
+void MainWindow::displayPathSlot(QString groupName, QString pathName, bool display){
+    qDebug() << "MainWindow::displayPathSlot called on group :" << groupName << ", path :" << pathName << ", display :" << display;
+
+}
+
 /**********************************************************************************************************************************/
 
 //                                          ODDS AND ENDS
@@ -3616,6 +3632,7 @@ void MainWindow::hideAllWidgets(){
     pathCreationWidget->hide();
     leftMenu->getDisplaySelectedGroup()->hide();
     leftMenu->getGroupsPathsWidget()->hide();
+    leftMenu->getDisplaySelectedPath()->hide();
 }
 
 void MainWindow::clearNewMap(){
@@ -3661,7 +3678,31 @@ void MainWindow::centerMap(){
 }
 
 void MainWindow::settingBtnSlot(){
-    qDebug() << "settingBtnSlot called";
+    qDebug() << "MainWindow::settingBtnSlot called";
+    DisplaySelectedPath* displaySelectedPath = leftMenu->getDisplaySelectedPath();
+    if(displaySelectedPath->isVisible()){
+        ///hide
+        hideAllWidgets();
+        resetFocus();
+        leftMenu->hide();
+    } else {
+        /// show
+        hideAllWidgets();
+        QString pathName = "Path moi le sel";
+        switchFocus(pathName, displaySelectedPath, WidgetType::PATH);
+        displaySelectedPath->show();
+        leftMenu->show();
+
+        QVector<QSharedPointer<PathPoint>> path;
+        if(points->getGroups()->value("first group")->size() > 2){
+            for(int i = 0; i < points->getGroups()->value("first group")->size(); i++){
+                QSharedPointer<PathPoint> pathPoint = QSharedPointer<PathPoint>(new PathPoint(*(points->getGroups()->value("first group")->at(i)->getPoint()), PathPoint::Action::WAIT, 0));
+                path.push_back(pathPoint);
+            }
+        }
+        displaySelectedPath->updatePath("Group1", pathName, path);
+
+    }
 }
 
 void MainWindow::setTemporaryMessageTop(const QString type, const QString message, const int ms){

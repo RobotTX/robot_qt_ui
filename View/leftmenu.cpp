@@ -26,6 +26,7 @@
 #include "buttonmenu.h"
 #include "colors.h"
 #include "View/pathpainter.h"
+#include "View/displayselectedpath.h"
 #include "View/groupspathswidget.h"
 
 LeftMenu::LeftMenu(MainWindow* _parent, QSharedPointer<Points> const& _points,
@@ -119,10 +120,16 @@ LeftMenu::LeftMenu(MainWindow* _parent, QSharedPointer<Points> const& _points,
     pathCreationWidget->hide();
     leftLayout->addWidget(pathCreationWidget);
 
+    /// Menu which display the informations of a path
+    displaySelectedPath = new DisplaySelectedPath(parent);
+    displaySelectedPath->hide();
+    leftLayout->addWidget(displaySelectedPath);
+
     /// Menu which displays the groups of paths
     groupsPathsWidget = new GroupsPathsWidget(parent, points);
     groupsPathsWidget->hide();
     leftLayout->addWidget(groupsPathsWidget);
+
 
     connect(pathCreationWidget, SIGNAL(addPathPoint(QString, double, double)), pathPainter, SLOT(addPathPointSlot(QString, double, double)));
     connect(pathCreationWidget, SIGNAL(deletePathPoint(int)), pathPainter, SLOT(deletePathPointSlot(int)));

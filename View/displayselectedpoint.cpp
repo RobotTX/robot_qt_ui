@@ -19,7 +19,6 @@
 #include "View/robotview.h"
 #include "Model/pathpoint.h"
 #include "View/displayselectedpointrobots.h"
-#include <QSet>
 #include "View/customscrollarea.h"
 
 DisplaySelectedPoint::DisplaySelectedPoint(QMainWindow *const _parent,  QSharedPointer<Robots> const _robots, QSharedPointer<Points> const& _points, QSharedPointer<Map> const& _map, QSharedPointer<PointView> _pointView):

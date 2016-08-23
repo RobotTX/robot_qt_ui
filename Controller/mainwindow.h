@@ -39,13 +39,13 @@ class GroupsPathsWidget;
 #include <QSettings>
 
 
-//#define XML_PATH "/home/m-a/Documents/QtProject/gobot-software/points.xml"
-//#define ROBOTS_NAME_PATH "/home/m-a/Documents/QtProject/gobot-software/robotsName.dat"
-//#define MAP_PATH "/home/m-a/Documents/QtProject/gobot-software/realMap.dat"
+#define XML_PATH "/home/m-a/Documents/QtProject/gobot-software/points.xml"
+#define ROBOTS_NAME_PATH "/home/m-a/Documents/QtProject/gobot-software/robotsName.dat"
+#define MAP_PATH "/home/m-a/Documents/QtProject/gobot-software/realMap.dat"
 
-#define XML_PATH "/home/joan/Qt/QtProjects/gobot-software/points.xml"
-#define ROBOTS_NAME_PATH "/home/joan/Qt/QtProjects/gobot-software/robotsName.dat"
-#define MAP_PATH "/home/joan/Qt/QtProjects/gobot-software/realMap.dat"
+//#define XML_PATH "/home/joan/Qt/QtProjects/gobot-software/points.xml"
+//#define ROBOTS_NAME_PATH "/home/joan/Qt/QtProjects/gobot-software/robotsName.dat"
+//#define MAP_PATH "/home/joan/Qt/QtProjects/gobot-software/realMap.dat"
 
 //#define XML_PATH "/Users/fannylarradet/Desktop/GTRobots/gobot-software/points.xml"
 //#define ROBOTS_NAME_PATH "/Users/fannylarradet/Desktop/GTRobots/gobot-software/robotsName.dat"
@@ -70,7 +70,7 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
-    enum WidgetType { MENU, GROUPS, GROUP, POINT, ROBOTS, ROBOT , MAP, GROUPS_PATHS };
+    enum WidgetType { MENU, GROUPS, GROUP, POINT, ROBOTS, ROBOT , MAP, GROUPS_PATHS, PATH };
 
     QSharedPointer<Points> getPoints(void) const { return points; }
     QList<QPair<QPair<QWidget*, QString>, MainWindow::WidgetType>> getLastWidgets() const { return lastWidgets; }
@@ -213,6 +213,9 @@ private slots:
     void deletePathSelecRobotBtnEvent();
     void updateHomeCoordinates(float x, float y, QString name);
     void replacePoint(int id, QString name);
+    void deletePathSlot(QString groupName, QString pathName);
+    void editPathSlot(QString groupName, QString pathName);
+    void displayPathSlot(QString groupName, QString pathName, bool display);
 
 private:
     Ui::MainWindow* ui;

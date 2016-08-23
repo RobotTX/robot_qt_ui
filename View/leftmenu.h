@@ -16,6 +16,7 @@ class CreatePointWidget;
 class DisplaySelectedPoint;
 class DisplaySelectedGroup;
 class PathCreationWidget;
+class DisplaySelectedPath;
 class QVBoxLayout;
 class MainWindow;
 class Map;
@@ -48,8 +49,10 @@ public:
     PathCreationWidget* getPathCreationWidget(void) const { return pathCreationWidget; }
     QPushButton* getReturnButton(void) const { return returnButton; }
     QPushButton* getCloseButton(void) const { return closeBtn; }
-    QWidget* getLastWidget(void) const { return lastWidget; }
+    QWidget* getLastWidget() const {return lastWidget; }
+    DisplaySelectedPath* getDisplaySelectedPath(void) const { return displaySelectedPath; }
     GroupsPathsWidget* getGroupsPathsWidget(void) const { return groupsPathsWidget; }
+
 
     void showBackButton(QString name);
     void hideBackButton();
@@ -77,6 +80,7 @@ private:
     QPushButton * returnButton;
     MainWindow* parent;
     QSharedPointer<Points> points;
+    DisplaySelectedPath* displaySelectedPath;
 
     QString lastCheckedId;
 
