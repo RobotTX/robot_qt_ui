@@ -22,10 +22,14 @@ GroupsPathsWidget::GroupsPathsWidget(MainWindow* _parent, const QSharedPointer<P
     paths->createPath("monday", "room1");
     paths->createPath("tuesday", "room2");
     paths->createPath("tuesday", "room3");
+    paths->createPath("tuesday", "room2");
     paths->createPath("wednesday", "room3");
     Point point("First point", 4.2, 3.1);
     paths->addPathPoint("monday", "room1", QSharedPointer<PathPoint>(new PathPoint(point, PathPoint::Action::HUMAN_ACTION, 2)));
     paths->addPathPoint("wednesday", "room1", QSharedPointer<PathPoint>(new PathPoint(point, PathPoint::Action::HUMAN_ACTION, 2)));
+    paths->addPathPoint("monday", "room1", QSharedPointer<PathPoint>(new PathPoint(point, PathPoint::Action::HUMAN_ACTION, 2)));
+    paths->addPathPoint("tuesday", "room4", QSharedPointer<PathPoint>(new PathPoint(point, PathPoint::Action::HUMAN_ACTION, 2)));
+    paths->addPathPoint("tuesday", "room2", QSharedPointer<PathPoint>(new PathPoint(point, PathPoint::Action::HUMAN_ACTION, 2)));
     paths->displayGroups();
 
     layout->setAlignment(Qt::AlignTop);

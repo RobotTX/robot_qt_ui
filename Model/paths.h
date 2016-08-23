@@ -39,7 +39,7 @@ inline void Paths::createGroup(const QString name){
         groups->insert(name,
                        QSharedPointer<CollectionPaths>(new CollectionPaths));
     else
-        qDebug() << " a group with this name already exists";
+        qDebug() << "A group named" << name << "already exists";
 }
 
 #endif // PATHS_H
