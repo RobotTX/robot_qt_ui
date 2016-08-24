@@ -60,3 +60,20 @@ void Paths::addPathPoint(const QString groupName, const QString pathName, const 
     } else
         qDebug() << "Paths::addPathPoint the group of paths" << groupName << "does not exist";
 }
+
+void Paths::createGroup(const QString name){
+    if(groups->find(name) == groups->end())
+        groups->insert(name,
+                       QSharedPointer<CollectionPaths>(new CollectionPaths));
+    else
+        qDebug() << "A group named" << name << "already exists";
+}
+
+void Paths::deleteGroup(const QString name){
+    qDebug() << "Paths::deleteGroup called";
+    if(groups->find(name) != groups->end()){
+        int r = groups->remove(name);
+        qDebug() << "removed" << r << "value(s) with key" << name;
+    } else
+        qDebug() << name << "is not in the map";
+}

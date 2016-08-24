@@ -45,6 +45,7 @@
 #include "View/displaypathgroup.h"
 #include "View/pathbuttongroup.h"
 #include "View/custompushbutton.h"
+#include "View/groupspathsbuttongroup.h"
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow) {
     ui->setupUi(this);
@@ -3587,15 +3588,17 @@ void MainWindow::createGroupPaths(){
 
     leftMenu->getGroupsPathsWidget()->getGroupNameEdit()->setFocus();
     leftMenu->getGroupsPathsWidget()->setCreatingGroup(true);
-    //leftMenu->getGroupsPathsWidget()->getPathButtonGroup()->uncheck();
+    /// unchecks the potential checked button
+    leftMenu->getGroupsPathsWidget()->getButtonGroup()->uncheck();
+
     /// resets the name edit field
     leftMenu->getGroupsPathsWidget()->getGroupNameEdit()->setText("");
     /// stops a user from creating a new group with no name
     leftMenu->getGroupsPathsWidget()->getSaveButton()->setEnabled(false);
+
     /// uncheck and disable the buttons
     leftMenu->getGroupsPathsWidget()->getActionButtons()->uncheckAll();
-
-    leftMenu->getGroupsPathsWidget()->getActionButtons()->enableAll();
+    leftMenu->getGroupsPathsWidget()->getActionButtons()->disableAll();
 
     leftMenu->getGroupsPathsWidget()->getActionButtons()->getPlusButton()->setToolTip("Enter a name for your group and click \"save\" or click \"cancel\" to cancel");
 
@@ -3609,10 +3612,26 @@ void MainWindow::createGroupPaths(){
     leftMenu->getGroupsPathsWidget()->getGroupNameLabel()->show();
     leftMenu->getGroupsPathsWidget()->getCancelButton()->show();
     leftMenu->getGroupsPathsWidget()->getSaveButton()->show();
+
 }
 
 void MainWindow::deleteGroupPaths(){
     qDebug() << "MainWindow::deleteGroupPaths called";
+    int answer = openConfirmMessage("Are you sure you want to delete this group of path, all the paths inside would be deleted as well ?");
+    switch(answer){
+    case QMessageBox::StandardButton::Ok:
+        paths->deleteGroup(leftMenu->getGroupsPathsWidget()->getButtonGroup()->getButtonGroup()->checkedButton()->text());
+        leftMenu->getGroupsPathsWidget()->updateGroupsPaths();
+        break;
+    case QMessageBox::StandardButton::Cancel:
+        /// unchecks the group button (prettier imo but not necessary on the logic level)
+        leftMenu->getGroupsPathsWidget()->uncheck();
+        break;
+    default:
+        qDebug() << "MainWindow::deleteGroupPaths ended up in the default case which suggests that you forgot to implement the behavior relative to a particular button";
+        break;
+    }
+
 }
 
 void MainWindow::saveGroupPaths(QString name){
@@ -3642,7 +3661,7 @@ void MainWindow::saveGroupPaths(QString name){
         leftMenu->getGroupsPathsWidget()->getActionButtons()->getPlusButton()->setEnabled(true);
         leftMenu->getGroupsPathsWidget()->getActionButtons()->getPlusButton()->setToolTip("Click here to add a new group of paths");
         topLayout->setEnabled(true);
-
+        leftMenu->getGroupsPathsWidget()->getActionButtons()->getPlusButton()->setEnabled(true);
         topLayout->setLabelDelay(TEXT_COLOR_SUCCESS, "You have created a new group of paths", 2500);
     } else if(pointsLeftWidget->checkGroupName(name) == 1)
         topLayout->setLabelDelay(TEXT_COLOR_DANGER, "The name of your group cannot be empty", 2500);

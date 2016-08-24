@@ -75,6 +75,12 @@ GroupsPathsWidget::GroupsPathsWidget(MainWindow* _parent, const QSharedPointer<P
     /// to make sure the name chosen for a new group is valid
     connect(groupNameEdit, SIGNAL(textEdited(QString)), this, SLOT(checkGroupName(QString)));
 
+    /// to save a group of paths if the name is valid
+    connect(saveButton, SIGNAL(clicked()), this, SLOT(newGroupPaths()));
+
+    /// to cancel the creation of a group of paths
+    connect(cancelButton, SIGNAL(clicked(bool)), this, SLOT(cancelCreationGroup()));
+
     hide();
 }
 
@@ -205,4 +211,54 @@ void GroupsPathsWidget::updateGroupsPaths(void){
     buttonGroup->createButtons();
 }
 
+void GroupsPathsWidget::uncheck(){
 
+    /// little trick to uncheck all buttons because the class doesn't provide a function to do it
+    buttonGroup->getButtonGroup()->setExclusive(false);
+    if(buttonGroup->getButtonGroup()->checkedButton())
+        buttonGroup->getButtonGroup()->checkedButton()->setChecked(false);
+    buttonGroup->getButtonGroup()->setExclusive(true);
+}
+
+void GroupsPathsWidget::newGroupPaths(){
+    emit newPathGroup(groupNameEdit->text());
+}
+
+void GroupsPathsWidget::cancelCreationGroup(){
+    qDebug() << "PointsLeftWidget::cancelCreationGroup called";
+    setLastCheckedButton("");
+
+    hideCreationWidgets();
+
+    enableActionButtons();
+
+    /// emits un signal to the left menu to enable the return button
+    //emit enableReturn();
+    emit messageCreationGroup(TEXT_COLOR_NORMAL, "");
+    /// resets the buttons so we can click them
+    buttonGroup->setEnabled(true);
+}
+
+void GroupsPathsWidget::enableActionButtons(){
+    actionButtons->getEditButton()->setEnabled(true);
+    actionButtons->getGoButton()->setEnabled(true);
+    actionButtons->getMinusButton()->setEnabled(true);
+    actionButtons->getPlusButton()->setEnabled(true);
+}
+
+void GroupsPathsWidget::hideEvent(QHideEvent *event){
+    actionButtons->getPlusButton()->setEnabled(true);
+    hideCreationWidgets();
+    setLastCheckedButton("");
+    /// resets the buttons so we can click them
+    buttonGroup->setEnabled(true);
+    QWidget::hideEvent(event);
+}
+
+void GroupsPathsWidget::hideCreationWidgets(){
+    /// hides everything that's related to the creation of a group
+    groupNameEdit->hide();
+    groupNameLabel->hide();
+    saveButton->hide();
+    cancelButton->hide();
+}

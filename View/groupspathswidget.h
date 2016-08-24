@@ -6,7 +6,6 @@
 
 class CustomizedLineEdit;
 class GroupsPathsButtonGroup;
-class PathButtonGroup;
 class TopLeftMenu;
 class MainWindow;
 class QLabel;
@@ -22,7 +21,7 @@ class GroupsPathsWidget: public QWidget
 public:
     GroupsPathsWidget(MainWindow* _parent, const QSharedPointer<Paths> &_paths);
 
-    PathButtonGroup* getPathButtonGroup(void) const { return pathButtonGroup; }
+    GroupsPathsButtonGroup* getButtonGroup(void) const { return buttonGroup; }
     TopLeftMenu* getActionButtons(void) const { return actionButtons; }
     CustomPushButton* getSaveButton(void) const { return saveButton; }
     CustomPushButton* getCancelButton(void) const { return cancelButton; }
@@ -36,10 +35,13 @@ public:
     void disableButtons();
     QString formatName(const QString name) const;
     void updateGroupsPaths(void);
-
+    void uncheck(void);
+    void enableActionButtons(void);
+    void hideCreationWidgets(void);
 
 protected:
     void keyPressEvent(QKeyEvent* event);
+    void hideEvent(QHideEvent *event);
 
 signals:
     void newPathGroup(QString);
@@ -47,9 +49,12 @@ signals:
 
 public slots:
     int checkGroupName(QString name);
+    void cancelCreationGroup();
 
 private slots:
     void enableButtons(QAbstractButton* button);
+    void newGroupPaths();
+
 
 private:
     QHBoxLayout* creationLayout;
@@ -60,7 +65,6 @@ private:
     QSharedPointer<Paths> paths;
     QVBoxLayout* layout;
     GroupsPathsButtonGroup* buttonGroup;
-    PathButtonGroup* pathButtonGroup;
     TopLeftMenu* actionButtons;
     QString lastCheckedButton;
     CustomPushButton* saveButton;
