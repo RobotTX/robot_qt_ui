@@ -25,6 +25,7 @@ class PathPainter;
 class CustomPushButton;
 class GroupsPathsWidget;
 
+#include "Model/paths.h"
 #include "View/createpointwidget.h"
 #include "View/toplayout.h"
 #include "Model/points.h"
@@ -218,6 +219,7 @@ private slots:
     void editGroupPaths();
     void createGroupPaths();
     void deleteGroupPaths();
+    void saveGroupPaths(QString name);
 
 private:
     Ui::MainWindow* ui;
@@ -254,6 +256,7 @@ private:
 
     QPair<QPointF, float> mapState;
 
+    QSharedPointer<Paths> paths;
     QSettings settings;
 };
 

@@ -31,7 +31,25 @@ public:
     CustomizedLineEdit* getGroupNameEdit(void) const { return groupNameEdit; }
     QLabel* getGroupNameLabel(void) const { return groupNameLabel; }
 
+    void setLastCheckedButton(const QString textButton) { lastCheckedButton = textButton; }
+
     void disableButtons();
+    QString formatName(const QString name) const;
+    void updateGroupsPaths(void);
+
+
+protected:
+    void keyPressEvent(QKeyEvent* event);
+
+signals:
+    void newPathGroup(QString);
+    void messageCreationGroup(QString, QString);
+
+public slots:
+    int checkGroupName(QString name);
+
+private slots:
+    void enableButtons(QAbstractButton* button);
 
 private:
     QHBoxLayout* creationLayout;
@@ -49,9 +67,6 @@ private:
     CustomPushButton* cancelButton;
     /// to differenciate the behavior of the enter key
     bool creatingGroup;
-
-private slots:
-    void enableButtons(QAbstractButton* button);
 
 };
 

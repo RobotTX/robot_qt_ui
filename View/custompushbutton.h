@@ -14,7 +14,7 @@ public:
     CustomPushButton(const QString &text = "", QWidget *parent = Q_NULLPTR, const bool checkable = false,
                      const bool enable = true);
     void initialize(const bool checkable, const bool enable);
-    void addStyleSheet(QString style);
+    void addStyleSheet(const QString style);
 
 protected:
     void mouseDoubleClickEvent(QMouseEvent *event);

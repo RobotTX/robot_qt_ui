@@ -26,8 +26,6 @@ PointsLeftWidget::PointsLeftWidget(QMainWindow* _parent, QSharedPointer<Points> 
 {
     scrollArea = new CustomScrollArea(this);
 
-    lastCheckedId = "";
-
     layout = new QVBoxLayout(this);
 
     actionButtons = new TopLeftMenu(this);
@@ -45,6 +43,7 @@ PointsLeftWidget::PointsLeftWidget(QMainWindow* _parent, QSharedPointer<Points> 
     actionButtons->getGoButton()->setToolTip("Select a group or a point and click here to display its information");
 
     layout->addWidget(actionButtons);
+
     QVBoxLayout* downLayout = new QVBoxLayout();
 
     groupNameLabel = new QLabel("New group's name : ", this);

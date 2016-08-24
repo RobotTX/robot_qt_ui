@@ -44,7 +44,7 @@ void CustomPushButton::mouseDoubleClickEvent(QMouseEvent * event){
     emit doubleClick(text());
 }
 
-void CustomPushButton::addStyleSheet(QString style){
+void CustomPushButton::addStyleSheet(const QString style){
     setStyleSheet(styleSheet() + style);
 }
 
