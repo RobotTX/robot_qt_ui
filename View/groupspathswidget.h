@@ -12,7 +12,7 @@ class MainWindow;
 class QLabel;
 class QVBoxLayout;
 class QAbstractButton;
-class QPushButton;
+class CustomPushButton;
 class CustomScrollArea;
 class QHBoxLayout;
 
@@ -24,8 +24,8 @@ public:
 
     PathButtonGroup* getPathButtonGroup(void) const { return pathButtonGroup; }
     TopLeftMenu* getActionButtons(void) const { return actionButtons; }
-    QPushButton* getSaveButton(void) const { return saveButton; }
-    QPushButton* getCancelButton(void) const { return cancelButton; }
+    CustomPushButton* getSaveButton(void) const { return saveButton; }
+    CustomPushButton* getCancelButton(void) const { return cancelButton; }
     void setCreatingGroup(const bool creating) { creatingGroup = creating; }
     CustomizedLineEdit* getModifyEdit(void) const { return modifyEdit; }
     CustomizedLineEdit* getGroupNameEdit(void) const { return groupNameEdit; }
@@ -45,8 +45,8 @@ private:
     PathButtonGroup* pathButtonGroup;
     TopLeftMenu* actionButtons;
     QString lastCheckedButton;
-    QPushButton* saveButton;
-    QPushButton* cancelButton;
+    CustomPushButton* saveButton;
+    CustomPushButton* cancelButton;
     /// to differenciate the behavior of the enter key
     bool creatingGroup;
 

@@ -3,11 +3,10 @@
 
 class SpaceWidget;
 class QVBoxLayout;
-class QPushButton;
+class CustomPushButton;
 class QHBoxLayout;
+class CustomPushButton;
 
-#include <QPushButton>
-#include <buttonmenu.h>
 #include <QWidget>
 
 class TopLeftMenu : public QWidget{
@@ -17,11 +16,11 @@ public:
 
     TopLeftMenu(QWidget* parent);
 
-    ButtonMenu* getPlusButton(void) const {return plusButton;}
-    QPushButton* getMinusButton(void) const {return minusButton;}
-    ButtonMenu* getEditButton(void) const {return editButton;}
-    QPushButton* getMapButton(void) const {return mapButton;}
-    QPushButton* getGoButton(void) const {return goButton;}
+    CustomPushButton* getPlusButton(void) const {return plusButton;}
+    CustomPushButton* getMinusButton(void) const {return minusButton;}
+    CustomPushButton* getEditButton(void) const {return editButton;}
+    CustomPushButton* getMapButton(void) const {return mapButton;}
+    CustomPushButton* getGoButton(void) const {return goButton;}
 
     void disableAll();
     void enableAll();
@@ -36,14 +35,14 @@ private:
    QVBoxLayout* layout ;
    QHBoxLayout* grid;
 
-   ButtonMenu* plusButton;
-   QPushButton* minusButton;
-   ButtonMenu* editButton;
-   QPushButton* mapButton;
-   QPushButton* goButton;
+   CustomPushButton* plusButton;
+   CustomPushButton* minusButton;
+   CustomPushButton* editButton;
+   CustomPushButton* mapButton;
+   CustomPushButton* goButton;
    QHBoxLayout* eyeMapLayout;
    SpaceWidget* spaceWidget;
-   QList<QPushButton*> enabledBtns;
+   QList<CustomPushButton*> enabledBtns;
 };
 
 

@@ -3,13 +3,11 @@
 #include "Model/point.h"
 #include "View/pointview.h"
 #include <QVBoxLayout>
-#include <QPushButton>
 #include <QDebug>
 #include <QMouseEvent>
 #include <QLabel>
-#include "View/doubleclickablebutton.h"
 #include "View/customizedlineedit.h"
-# include "colors.h"
+#include "View/custompushbutton.h"
 
 GroupButtonGroup::GroupButtonGroup(const QSharedPointer<Points> &_points, QWidget* _parent): QWidget(_parent), parent(_parent), points(_points)
 {
@@ -35,13 +33,10 @@ GroupButtonGroup::GroupButtonGroup(const QSharedPointer<Points> &_points, QWidge
         if(i.key().compare(NO_GROUP_NAME)!= 0
                 && i.key().compare(TMP_GROUP_NAME)!= 0
                 && i.key().compare(PATH_GROUP_NAME)!= 0){
-            DoubleClickableButton* groupButton = new DoubleClickableButton(i.key(), this);
-            groupButton->setFlat(true);
-            groupButton->setAutoDefault(true);
-            groupButton->setStyleSheet("QPushButton {color: "+text_color+";text-align:left;border: 4px; padding: 10px;}QPushButton:hover{background-color: "+button_hover_color+";}QPushButton:checked{background-color: "+button_checked_color+";}");
-            groupButton->setCheckable(true);
+            CustomPushButton* groupButton = new CustomPushButton(i.key(), this, true);
             buttonGroup->addButton(groupButton, index);
-            groupButton->setAutoExclusive(true);
+            //groupButton->setAutoExclusive(true);
+
             layout->addWidget(groupButton);
             groupButton->setIconSize(BUTTON_SIZE);
             if(points->isDisplayed(i.key()))
@@ -58,12 +53,9 @@ GroupButtonGroup::GroupButtonGroup(const QSharedPointer<Points> &_points, QWidge
     if(points->getGroups()->value(NO_GROUP_NAME)){
         for(int i = 0; i < points->getGroups()->value(NO_GROUP_NAME)->size(); i++){
             QSharedPointer<PointView> currentPointView = points->getGroups()->value(NO_GROUP_NAME)->at(i);
-            DoubleClickableButton* pointButton = new DoubleClickableButton(currentPointView->getPoint()->getName(), this);
-            pointButton->setAutoDefault(true);
-            pointButton->setFlat(true);
-            pointButton->setStyleSheet("QPushButton {color: "+text_color+"; text-align:left;border: 4px; padding: 10px;}QPushButton:hover{background-color: "+button_hover_color+";}QPushButton:checked{background-color: "+button_checked_color+";}");
+            CustomPushButton* pointButton = new CustomPushButton(currentPointView->getPoint()->getName(), this, true);
+            //pointButton->setAutoDefault(true);
 
-            pointButton->setCheckable(true);
             buttonGroup->addButton(pointButton, index + i);
             layout->addWidget(pointButton);
             if(currentPointView->isVisible())
@@ -113,11 +105,9 @@ void GroupButtonGroup::updateButtons(){
                 modifyEdit->hide();
             }
 
-            DoubleClickableButton* groupButton = new DoubleClickableButton(i.key(), this);
-            groupButton->setFlat(true);
-            groupButton->setAutoDefault(true);
-            groupButton->setStyleSheet("QPushButton {color: "+text_color+";text-align:left;border: 4px; padding: 10px;}QPushButton:hover{background-color: "+button_hover_color+";}QPushButton:checked{background-color: "+button_checked_color+";}");
-            groupButton->setCheckable(true);
+            CustomPushButton* groupButton = new CustomPushButton(i.key(), this, true);
+            //groupButton->setAutoDefault(true);
+
             groupButton->setIconSize(BUTTON_SIZE);
             buttonGroup->addButton(groupButton, index);
             layout->addWidget(groupButton);
@@ -134,11 +124,9 @@ void GroupButtonGroup::updateButtons(){
     if(points->getGroups()->value(NO_GROUP_NAME)){
         for(int i = 0; i < points->getGroups()->value(NO_GROUP_NAME)->size(); i++){
             QSharedPointer<Point> currentPoint = points->getGroups()->value(NO_GROUP_NAME)->at(i)->getPoint();
-            DoubleClickableButton* pointButton = new DoubleClickableButton(currentPoint->getName(), this);
-            pointButton->setFlat(true);
-            pointButton->setAutoDefault(true);
-            pointButton->setStyleSheet("QPushButton {color: "+text_color+";text-align:left;border: 4px; padding: 10px;}QPushButton:hover{background-color: "+button_hover_color+";}QPushButton:checked{background-color: "+button_checked_color+";}");
-            pointButton->setCheckable(true);
+            CustomPushButton* pointButton = new CustomPushButton(currentPoint->getName(), this, true);
+            //pointButton->setAutoDefault(true);
+
             buttonGroup->addButton(pointButton, index + i);
             layout->addWidget(pointButton);
             if(points->findPointView(currentPoint->getName())->isVisible())

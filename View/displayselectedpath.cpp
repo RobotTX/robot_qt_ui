@@ -3,6 +3,7 @@
 #include "View/pathwidget.h"
 #include "Model/pathpoint.h"
 #include "Controller/mainwindow.h"
+#include "View/custompushbutton.h"
 
 #include <QLabel>
 #include <QVBoxLayout>

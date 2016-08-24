@@ -13,6 +13,7 @@
 #include "View/pathpointlist.h"
 #include "Model/pathpoint.h"
 #include "View/pathpointcreationwidget.h"
+#include "View/custompushbutton.h"
 
 
 PathCreationWidget::PathCreationWidget(MainWindow *parent, const QSharedPointer<Points> &_points): QWidget(parent), points(_points){
@@ -34,13 +35,13 @@ PathCreationWidget::PathCreationWidget(MainWindow *parent, const QSharedPointer<
     pathPointsList = new PathPointList(this);
     layout->addWidget(pathPointsList);
 
-    QPushButton* cleanBtn = new QPushButton("Clean", this);
+    CustomPushButton* cleanBtn = new CustomPushButton("Clean", this);
     layout->addWidget(cleanBtn);
 
     /// Cancel & save buttons
     QHBoxLayout* grid = new QHBoxLayout();
-    QPushButton* cancelBtn = new QPushButton("Cancel", this);
-    QPushButton* saveBtn = new QPushButton("Save", this);
+    CustomPushButton* cancelBtn = new CustomPushButton("Cancel", this);
+    CustomPushButton* saveBtn = new CustomPushButton("Save", this);
 
     grid->addWidget(cancelBtn);
     grid->addWidget(saveBtn);

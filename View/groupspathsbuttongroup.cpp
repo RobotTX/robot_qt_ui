@@ -1,6 +1,6 @@
 #include "View/groupspathsbuttongroup.h"
 #include <QVBoxLayout>
-#include "View/doubleclickablebutton.h"
+#include "View/custompushbutton.h"
 #include "Model/paths.h"
 #include "View/colors.h"
 
@@ -19,11 +19,8 @@ void GroupsPathsButtonGroup::createButtons(){
     QMapIterator<QString, QSharedPointer<Paths::CollectionPaths>> it_paths_groups(*(paths->getGroups()));
     while(it_paths_groups.hasNext()){
         it_paths_groups.next();
-        DoubleClickableButton* groupButton = new DoubleClickableButton(it_paths_groups.key(), this);
-        groupButton->setAutoDefault(true);
-        groupButton->setFlat(true);
-        groupButton->setStyleSheet("QPushButton {color: "+text_color+";text-align:left;border: 4px; padding: 10px;}QPushButton:hover{background-color: "+button_hover_color+";}QPushButton:checked{background-color: "+button_checked_color+";}");
-        groupButton->setCheckable(true);
+        CustomPushButton* groupButton = new CustomPushButton(it_paths_groups.key(), this, true);
+
         buttonGroup->addButton(groupButton);
         layout->addWidget(groupButton);
         groupButton->setIcon(QIcon(":/icons/folder.png"));

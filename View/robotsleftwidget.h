@@ -5,11 +5,9 @@ class Robots;
 class CustomScrollArea;
 class RobotBtnGroup;
 class QVBoxLayout;
-class QPushButton;
 class QMainWindow;
 class TopLeftMenu;
 
-#include <QPushButton>
 #include <QWidget>
 #include <QSharedPointer>
 

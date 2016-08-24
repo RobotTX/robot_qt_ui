@@ -23,10 +23,11 @@ class Map;
 class PathPainter;
 class GroupsPathsWidget;
 class DisplayPathGroup;
+class CustomPushButton;
 
 #include <QWidget>
 #include <QSharedPointer>
-#include <QPushButton>
+
 /**
  * @brief The LeftMenu class
  * The main menu class that initialize all the other menu
@@ -48,8 +49,8 @@ public:
     DisplaySelectedPoint* getDisplaySelectedPoint(void) const { return displaySelectedPoint; }
     DisplaySelectedGroup* getDisplaySelectedGroup(void) const { return displaySelectedGroup; }
     PathCreationWidget* getPathCreationWidget(void) const { return pathCreationWidget; }
-    QPushButton* getReturnButton(void) const { return returnButton; }
-    QPushButton* getCloseButton(void) const { return closeBtn; }
+    CustomPushButton* getReturnButton(void) const { return returnButton; }
+    CustomPushButton* getCloseButton(void) const { return closeBtn; }
     QWidget* getLastWidget() const {return lastWidget; }
     DisplaySelectedPath* getDisplaySelectedPath(void) const { return displaySelectedPath; }
     GroupsPathsWidget* getGroupsPathsWidget(void) const { return groupsPathsWidget; }
@@ -63,7 +64,7 @@ public:
     void setEnableReturnCloseButtons(bool enable);
 
 private:
-    QPushButton* closeBtn;
+    CustomPushButton* closeBtn;
     QVBoxLayout* leftLayout;
     QWidget* lastWidget;
     LeftMenuWidget* leftMenuWidget;
@@ -78,7 +79,7 @@ private:
     DisplaySelectedPoint* displaySelectedPoint;
     DisplaySelectedGroup* displaySelectedGroup;
     PathCreationWidget* pathCreationWidget;
-    QPushButton * returnButton;
+    CustomPushButton * returnButton;
     MainWindow* parent;
     QSharedPointer<Points> points;
     DisplaySelectedPath* displaySelectedPath;

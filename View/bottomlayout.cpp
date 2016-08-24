@@ -5,14 +5,14 @@
 #include "Model/robot.h"
 #include "Model/pathpoint.h"
 #include <QHBoxLayout>
-#include <QPushButton>
 #include <QLabel>
 #include <QMainWindow>
 #include <QButtonGroup>
 #include <QDebug>
 #include <QScrollBar>
 #include "Model/points.h"
-#include "colors.h"
+#include "View/colors.h"
+#include "View/custompushbutton.h"
 
 BottomLayout::BottomLayout(QMainWindow* parent, const QSharedPointer<Robots> &robots) : QWidget(parent), lastCheckedId(-1){
 
@@ -70,15 +70,13 @@ BottomLayout::BottomLayout(QMainWindow* parent, const QSharedPointer<Robots> &ro
 
     /// Creation of the first column, with the button containing the name of the robots
     for(int i = 0; i < robotsVector.size(); i++){
-        QPushButton* robotBtn = new QPushButton(robotsVector.at(i)->getRobot()->getName(), this);
+        CustomPushButton* robotBtn = new CustomPushButton(robotsVector.at(i)->getRobot()->getName(), this, true);
         robotBtn->setMinimumHeight(30);
         robotBtn->setMaximumHeight(30);
         robotBtn->setMaximumWidth(parent->width()*3/10);
         robotBtn->setMinimumWidth(parent->width()*3/10);
         robotBtnGroup->addButton(robotBtn, i);
         columnName->addWidget(robotBtn);
-        robotBtn->setFlat(true);
-        robotBtn->setCheckable(true);
     }
 
     scrollLayout->addWidget(widgetName);
@@ -98,8 +96,7 @@ BottomLayout::BottomLayout(QMainWindow* parent, const QSharedPointer<Robots> &ro
 
     /// Creation of the third column, with the button to display the path the robot
     for(int i = 0; i < robotsVector.size(); i++){
-        QPushButton* viewPathRobotBtn = new QPushButton(QIcon(":/icons/eye.png"),"", this);
-        viewPathRobotBtn->setCheckable(true);
+        CustomPushButton* viewPathRobotBtn = new CustomPushButton(QIcon(":/icons/eye.png"),"", this, true);
         viewPathRobotBtn->setMaximumWidth(parent->width()/10);
         viewPathRobotBtn->setMinimumWidth(parent->width()/10);
         viewPathRobotBtn->setIconSize(parent->size()/10);
@@ -108,12 +105,11 @@ BottomLayout::BottomLayout(QMainWindow* parent, const QSharedPointer<Robots> &ro
             viewPathRobotBtn->setEnabled(false);
         viewPathRobotBtnGroup->addButton(viewPathRobotBtn, i);
         columnViewPath->addWidget(viewPathRobotBtn);
-        viewPathRobotBtn->setFlat(true);
     }
 
     /// Creation of the fourth column, with the button to play/pause the robot
     for(int i = 0; i < robotsVector.size(); i++){
-        QPushButton* playRobotBtn = new QPushButton(QIcon(":/icons/play.png"),"", this);
+        CustomPushButton* playRobotBtn = new CustomPushButton(QIcon(":/icons/play.png"),"", this);
         if(robots->getRobotsVector().at(i)->getRobot()->getPath().size() < 1)
             playRobotBtn->setEnabled(false);
         playRobotBtnGroup->addButton(playRobotBtn, i);
@@ -121,12 +117,11 @@ BottomLayout::BottomLayout(QMainWindow* parent, const QSharedPointer<Robots> &ro
         playRobotBtn->setMinimumWidth(parent->width()/10);
         playRobotBtn->setIconSize(parent->size()/10);
         columnPlay->addWidget(playRobotBtn);
-        playRobotBtn->setFlat(true);
     }
 
     ///  Creation of the fifth column to stop playing the path (new !)
     for(int i = 0; i < robotsVector.size(); i++){
-        QPushButton* stopRobotBtn = new QPushButton(QIcon(":/icons/stop.png"),"", this);
+        CustomPushButton* stopRobotBtn = new CustomPushButton(QIcon(":/icons/stop.png"),"", this);
         if(robots->getRobotsVector().at(i)->getRobot()->getPath().size() < 1)
             stopRobotBtn->setEnabled(false);
         stopRobotBtnGroup->addButton(stopRobotBtn, i);
@@ -134,17 +129,15 @@ BottomLayout::BottomLayout(QMainWindow* parent, const QSharedPointer<Robots> &ro
         stopRobotBtn->setMinimumWidth(parent->width()/10);
         stopRobotBtn->setIconSize(parent->size()/10);
         columnStop->addWidget(stopRobotBtn);
-        stopRobotBtn->setFlat(true);
     }
 
     /// Creation of the sixth column, with the button to delete the path of the robot
     for(int i = 0; i < robotsVector.size(); i++){
-        QPushButton* deletePathButton = new QPushButton(QIcon(":/icons/bin.png"), "", this);
+        CustomPushButton* deletePathButton = new CustomPushButton(QIcon(":/icons/bin.png"), "", this);
         if(robots->getRobotsVector().at(i)->getRobot()->getPath().size() < 1)
             deletePathButton->setEnabled(false);
         deletePathBtnGroup->addButton(deletePathButton, i);
         columnDelete->addWidget(deletePathButton);
-        deletePathButton->setFlat(true);
         deletePathButton->setMaximumWidth(parent->width()/10);
         deletePathButton->setMinimumWidth(parent->width()/10);
         deletePathButton->setIconSize(parent->size()/10);
@@ -220,7 +213,7 @@ void BottomLayout::addRobot(RobotView * const robotView){
     qDebug() << "(BottomLayout) addRobot called";
     int i = robotBtnGroup->buttons().size();
     /// Creation of the first column, with the button containing the name of the robots
-    QPushButton* robotBtn = new QPushButton(robotView->getRobot()->getName(), this);
+    CustomPushButton* robotBtn = new CustomPushButton(robotView->getRobot()->getName(), this, true);
     robotBtn->setMinimumHeight(((QWidget*)parent())->height()/20);
     robotBtn->setMaximumHeight(((QWidget*)parent())->height()/20);
     robotBtn->setMaximumWidth(((QWidget*)parent())->width()*3/20);
@@ -237,18 +230,17 @@ void BottomLayout::addRobot(RobotView * const robotView){
     columnPath->addWidget(pathLabel);
 
     /// Creation of the third column, with the button to display/stop displaying the robot
-    QPushButton* viewPathRobotBtn = new QPushButton(QIcon(":/icons/eye.png"),"", this);
+    CustomPushButton* viewPathRobotBtn = new CustomPushButton(QIcon(":/icons/eye.png"),"", this, true);
     viewPathRobotBtn->setMaximumWidth(((QWidget*)parent())->width()/20);
     viewPathRobotBtn->setMinimumWidth(((QWidget*)parent())->width()/20);
     viewPathRobotBtn->setIconSize(((QWidget*)parent())->size()/20);
-    viewPathRobotBtn->setCheckable(true);
     if(robotView->getRobot()->getPath().size() < 1)
         viewPathRobotBtn->setEnabled(false);
     viewPathRobotBtnGroup->addButton(viewPathRobotBtn, i);
     columnViewPath->addWidget(viewPathRobotBtn);
 
     /// Creation of the fourth column, with the button to play/pause the robot
-    QPushButton* playRobotBtn = new QPushButton(QIcon(":/icons/play.png"),"", this);
+    CustomPushButton* playRobotBtn = new CustomPushButton(QIcon(":/icons/play.png"),"", this);
     playRobotBtn->setMaximumWidth(((QWidget*)parent())->width()/20);
     playRobotBtn->setMinimumWidth(((QWidget*)parent())->width()/20);
     playRobotBtn->setIconSize(((QWidget*)parent())->size()/20);
@@ -258,7 +250,7 @@ void BottomLayout::addRobot(RobotView * const robotView){
     columnPlay->addWidget(playRobotBtn);
 
     ///  Creation of the fifth column to stop playing the path (new !)
-    QPushButton* stopRobotBtn = new QPushButton(QIcon(":/icons/stop.png"),"", this);
+    CustomPushButton* stopRobotBtn = new CustomPushButton(QIcon(":/icons/stop.png"),"", this);
     stopRobotBtn->setMaximumWidth(((QWidget*)parent())->width()/20);
     stopRobotBtn->setMinimumWidth(((QWidget*)parent())->width()/20);
     stopRobotBtn->setIconSize(((QWidget*)parent())->size()/20);
@@ -269,7 +261,7 @@ void BottomLayout::addRobot(RobotView * const robotView){
     columnStop->addWidget(stopRobotBtn);
 
     /// Creation of the sixth column, with the button to delete the path of the robot
-    QPushButton* deletePathButton = new QPushButton(QIcon(":/icons/close.png"),"", this);
+    CustomPushButton* deletePathButton = new CustomPushButton(QIcon(":/icons/close.png"),"", this);
     deletePathButton->setMaximumWidth(((QWidget*)parent())->width()/20);
     deletePathButton->setMinimumWidth(((QWidget*)parent())->width()/20);
     deletePathButton->setIconSize(((QWidget*)parent())->size()/20);

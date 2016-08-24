@@ -1,9 +1,9 @@
 #include "leftmenuwidget.h"
 #include <QVBoxLayout>
 #include <QMainWindow>
-#include <QPushButton>
 #include <QScrollArea>
 #include "Model/points.h"
+#include "View/custompushbutton.h"
 
 LeftMenuWidget::LeftMenuWidget(QMainWindow* parent, QSharedPointer<Points> const& _points): QWidget(parent), points(_points)
 {
@@ -12,28 +12,24 @@ LeftMenuWidget::LeftMenuWidget(QMainWindow* parent, QSharedPointer<Points> const
     layout->setAlignment(Qt::AlignTop);
 
     /// Robot button
-    QPushButton* robotBtn = new QPushButton(QIcon(":/icons/robot.png"), "Robots", this);
-    robotBtn->setAutoDefault(true);
+    CustomPushButton* robotBtn = new CustomPushButton(QIcon(":/icons/robot.png"), "Robots", this);
+    //robotBtn->setAutoDefault(true);
     robotBtn->setIconSize(parent->size()/10);
-    robotBtn->setStyleSheet ("text-align: left");
 
     /// Point button
-    QPushButton* pointBtn = new QPushButton(QIcon(":/icons/coordinates.png"), "Points", this);
-    pointBtn->setAutoDefault(true);
+    CustomPushButton* pointBtn = new CustomPushButton(QIcon(":/icons/coordinates.png"), "Points", this);
+    //pointBtn->setAutoDefault(true);
     pointBtn->setIconSize(parent->size()/10);
-    pointBtn->setStyleSheet ("text-align: left");
 
     /// Map button
-    QPushButton* mapBtn = new QPushButton(QIcon(":/icons/map.png"), "Map", this);
-    mapBtn->setAutoDefault(true);
+    CustomPushButton* mapBtn = new CustomPushButton(QIcon(":/icons/map.png"), "Map", this);
+    //mapBtn->setAutoDefault(true);
     mapBtn->setIconSize(parent->size()/10);
-    mapBtn->setStyleSheet("text-align: left");
 
     /// Path button
-    QPushButton* pathBtn = new QPushButton(QIcon(":/icons/path.png"), "Paths", this);
-    pathBtn->setAutoDefault(true);
+    CustomPushButton* pathBtn = new CustomPushButton(QIcon(":/icons/path.png"), "Paths", this);
+    //pathBtn->setAutoDefault(true);
     pathBtn->setIconSize(parent->size()/10);
-    pathBtn->setStyleSheet("text-align: left");
 
     layout->addWidget(robotBtn);
     layout->addWidget(pointBtn);

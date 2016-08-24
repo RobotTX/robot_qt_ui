@@ -5,6 +5,7 @@
 #include "View/topleftmenu.h"
 #include <QVBoxLayout>
 #include <QMainWindow>
+#include "View/custompushbutton.h"
 
 DisplayPathGroup::DisplayPathGroup(QMainWindow* _parent, const QSharedPointer<Paths>& _paths):
     QWidget(_parent), paths(_paths)

@@ -2,11 +2,11 @@
 #include <QIntValidator>
 #include <QVBoxLayout>
 #include <QLabel>
-#include <QPushButton>
 #include <QDebug>
 #include <QLineEdit>
 #include <QComboBox>
 #include "Model/pathpoint.h"
+#include "View/custompushbutton.h"
 
 PathPointCreationWidget::PathPointCreationWidget(const int _id, const QString _name, const double x, const double y, QWidget* parent):
     QWidget(parent), id(_id), name(_name), posX(x), posY(y)
@@ -52,8 +52,8 @@ PathPointCreationWidget::PathPointCreationWidget(const int _id, const QString _n
     pathLayout->addWidget(actionWidget);
     actionWidget->hide();
 
-    cancelBtn = new QPushButton("Cancel", this);
-    saveEditBtn = new QPushButton("Save changes", this);
+    cancelBtn = new CustomPushButton("Cancel", this);
+    saveEditBtn = new CustomPushButton("Save changes", this);
     editLayout->addWidget(saveEditBtn);
     editLayout->addWidget(cancelBtn);
     editWidget->hide();

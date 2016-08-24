@@ -3,7 +3,6 @@
 #include "customscrollarea.h"
 #include "groupbuttongroup.h"
 #include <QVBoxLayout>
-#include <QPushButton>
 #include <QLabel>
 #include <QMainWindow>
 #include <QHBoxLayout>
@@ -18,9 +17,9 @@
 #include <QDebug>
 #include "View/customizedlineedit.h"
 #include "View/toplayout.h"
-#include "View/buttonmenu.h"
 #include "View/pointview.h"
 #include <QAbstractButton>
+#include "View/custompushbutton.h"
 
 PointsLeftWidget::PointsLeftWidget(QMainWindow* _parent, QSharedPointer<Points> const& _points, bool _groupDisplayed)
     : QWidget(_parent), groupDisplayed(_groupDisplayed), points(_points), creatingGroup(true), lastCheckedId("")
@@ -61,12 +60,13 @@ PointsLeftWidget::PointsLeftWidget(QMainWindow* _parent, QSharedPointer<Points> 
     downLayout->addWidget(scrollArea);
 
     creationLayout = new QHBoxLayout();
-    saveButton = new QPushButton("Save", this);
-    saveButton->setAutoDefault(true);
+    saveButton = new CustomPushButton("Save", this, false, false);
+    //saveButton->setAutoDefault(true);
     saveButton->hide();
-    saveButton->setEnabled(false);
-    cancelButton = new QPushButton("Cancel", this);
-    cancelButton->setAutoDefault(true);
+    //saveButton->setEnabled(false);
+
+    cancelButton = new CustomPushButton("Cancel", this);
+    //cancelButton->setAutoDefault(true);
     cancelButton->hide();
     creationLayout->addWidget(cancelButton);
     creationLayout->addWidget(saveButton);

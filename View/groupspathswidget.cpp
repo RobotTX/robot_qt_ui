@@ -9,9 +9,9 @@
 #include "View/pathbuttongroup.h"
 #include "View/customizedlineedit.h"
 #include <QAbstractButton>
-#include <QPushButton>
 #include "View/customscrollarea.h"
 #include <QHBoxLayout>
+#include "View/custompushbutton.h"
 
 GroupsPathsWidget::GroupsPathsWidget(MainWindow* _parent, const QSharedPointer<Paths> &_paths): QWidget(_parent), paths(_paths), lastCheckedButton("")
 {
@@ -60,12 +60,10 @@ GroupsPathsWidget::GroupsPathsWidget(MainWindow* _parent, const QSharedPointer<P
     connect(buttonGroup->getButtonGroup(), SIGNAL(buttonClicked(QAbstractButton*)), this, SLOT(enableButtons(QAbstractButton*)));    
 
     creationLayout = new QHBoxLayout();
-    saveButton = new QPushButton("Save", this);
-    saveButton->setAutoDefault(true);
+    saveButton = new CustomPushButton("Save", this, false, false);
     saveButton->hide();
-    saveButton->setEnabled(false);
-    cancelButton = new QPushButton("Cancel", this);
-    cancelButton->setAutoDefault(true);
+
+    cancelButton = new CustomPushButton("Cancel", this);
     cancelButton->hide();
     creationLayout->addWidget(cancelButton);
     creationLayout->addWidget(saveButton);

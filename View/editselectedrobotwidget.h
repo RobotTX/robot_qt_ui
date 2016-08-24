@@ -5,7 +5,7 @@ class Robots;
 class RobotView;
 class QVBoxLayout;
 class QGridLayout;
-class QPushButton;
+class CustomPushButton;
 class QLabel;
 class QMainWindow;
 class QLineEdit;
@@ -29,18 +29,18 @@ public:
     EditSelectedRobotWidget(QMainWindow* const parent, QSharedPointer<Robots> const robots);
 
     QLineEdit* getNameEdit(void){ return nameEdit; }
-    QPushButton* getHomeBtn(void){ return homeBtn; }
+    CustomPushButton* getHomeBtn(void){ return homeBtn; }
     QSharedPointer<PointView> getHome() const { return home; }
     bool isFirstConnection() const { return firstConnection; }
     QLineEdit* getWifiNameEdit(void) const { return wifiNameEdit; }
     QLineEdit* getWifiPwdEdit(void) const { return wifiPwdEdit; }
     PathWidget* getPathWidget(void) const { return pathWidget; }
-    QPushButton* getAddPathBtn(void) const { return addPathBtn; }
+    CustomPushButton* getAddPathBtn(void) const { return addPathBtn; }
     bool getPathChanged() const { return pathChanged; }
     QSharedPointer<PointView> getOldHome() const { return oldHome; }
     QLabel* getHomeLabel(void) const { return homeLabel; }
-    QPushButton* getSaveButton(void) const { return saveBtn; }
-    QPushButton* getCancelButton(void) const { return cancelBtn; }
+    CustomPushButton* getSaveButton(void) const { return saveBtn; }
+    CustomPushButton* getCancelButton(void) const { return cancelBtn; }
     bool isEditing(void) const { return editing; }
 
 
@@ -80,14 +80,14 @@ private:
     QLineEdit* wifiPwdEdit;
     QLabel* ipAddressLabel;
     QSharedPointer<Robots> robots;
-    QPushButton* saveBtn;
-    QPushButton* homeBtn;
+    CustomPushButton* saveBtn;
+    CustomPushButton* homeBtn;
     QSharedPointer<PointView> home;
     QSharedPointer<PointView> oldHome;
-    QPushButton* addPathBtn;
+    CustomPushButton* addPathBtn;
     bool firstConnection;
-    QPushButton* cancelBtn;
-    QPushButton* deletePathBtn;
+    CustomPushButton* cancelBtn;
+    CustomPushButton* deletePathBtn;
     PathWidget* pathWidget;
     bool pathChanged;
     QLabel* homeLabel;

@@ -4,11 +4,10 @@
 #include "View/customscrollarea.h"
 #include "View/spacewidget.h"
 #include <QVBoxLayout>
-#include <QPushButton>
 #include <QMainWindow>
 #include "topleftmenu.h"
 #include <QDebug>
-#include "buttonmenu.h"
+#include "View/custompushbutton.h"
 
 RobotsLeftWidget::RobotsLeftWidget(QMainWindow* _parent):QWidget(_parent){
     parent = _parent;
@@ -20,7 +19,7 @@ RobotsLeftWidget::RobotsLeftWidget(QMainWindow* _parent):QWidget(_parent){
     actionButtons->disableAll();
 
     connect(actionButtons->getGoButton(), SIGNAL(clicked()), parent, SLOT(selectViewRobot()));
-    connect( actionButtons->getEditButton(), SIGNAL(clicked()), parent, SLOT(editRobotBtnEvent()));
+    connect(actionButtons->getEditButton(), SIGNAL(clicked()), parent, SLOT(editRobotBtnEvent()));
     connect(actionButtons->getMapButton(), SIGNAL(clicked()), parent, SLOT(checkRobotBtnEventMenu()));
 
     actionButtons->getMapButton()->setCheckable(true);

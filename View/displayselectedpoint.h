@@ -5,7 +5,7 @@ class Point;
 class QMainWindow;
 class QVBoxLayout;
 class QHBoxLayout;
-class QPushButton;
+class CustomPushButton;
 class QEvent;
 class QKeyEvent;
 class QLabel;
@@ -33,8 +33,8 @@ public:
     DisplaySelectedPoint(QMainWindow* const _parent, QSharedPointer<Robots> const robots,const QSharedPointer<Points> &_points, QSharedPointer<Map> const& _map, QSharedPointer<PointView> _point = QSharedPointer<PointView>());
 
     TopLeftMenu* getActionButtons(void) const { return actionButtons; }
-    QPushButton* getSaveButton(void) const { return saveButton; }
-    QPushButton* getCancelButton(void) const { return cancelButton; }
+    CustomPushButton* getSaveButton(void) const { return saveButton; }
+    CustomPushButton* getCancelButton(void) const { return cancelButton; }
     QLineEdit* getNameEdit(void) const { return nameEdit; }
     QString getPointName(void) const { return pointView->getPoint()->getName(); }
     void setPointView(QSharedPointer<PointView> _pointView, const QString robotName);
@@ -79,8 +79,8 @@ private:
     QLabel* posYLabel;
     DisplaySelectedPointRobots* robotsWidget;
 
-    QPushButton* saveButton;
-    QPushButton* cancelButton;
+    CustomPushButton* saveButton;
+    CustomPushButton* cancelButton;
     QSharedPointer<PointView> pointView;
     QMainWindow* parent;
     QSharedPointer<Points> points;

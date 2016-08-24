@@ -1,6 +1,5 @@
 #include "toplayout.h"
 #include <QHBoxLayout>
-#include <QPushButton>
 #include <QLabel>
 #include <QIcon>
 #include <QDebug>
@@ -9,6 +8,7 @@
 #include <QTime>
 #include <QCoreApplication>
 #include "colors.h"
+#include "View/custompushbutton.h"
 
 TopLayout::TopLayout(QMainWindow* parent): QWidget(parent), lastMessage(TEXT_COLOR_NORMAL, "")
 {
@@ -18,64 +18,44 @@ TopLayout::TopLayout(QMainWindow* parent): QWidget(parent), lastMessage(TEXT_COL
    // layout = new QHBoxLayout(all);
     layout = new QHBoxLayout(this);
 
-    menuBtn = new QPushButton(QIcon(":/icons/list.png"), "", this);
-    menuBtn->setAutoDefault(true);
+    menuBtn = new CustomPushButton(QIcon(":/icons/list.png"), "", this);
+    //menuBtn->setAutoDefault(true);
     menuBtn->setIconSize(parent->size()/8);
     menuBtn->setMaximumWidth(40);
-    menuBtn->setFlat(true);
     menuBtn->setFocusPolicy(Qt::FocusPolicy::NoFocus);
-    menuBtn->setStyleSheet("QPushButton:hover { background-color: "+button_hover_color+";"
-                            "border: 1px solid #aaaaaa;"
-                            "border-radius: 5px }");
 
     layout->addWidget(menuBtn);
     connect(menuBtn, SIGNAL(clicked()), parent, SLOT(openLeftMenu()));
 
-    connectBtn = new QPushButton(QIcon(":/icons/wifi.png"), "", this);
+    connectBtn = new CustomPushButton(QIcon(":/icons/wifi.png"), "", this);
     connectBtn->setIconSize(parent->size()/8);
     connectBtn->setMaximumWidth(40);
-    connectBtn->setFlat(true);
     connectBtn->setFocusPolicy(Qt::FocusPolicy::NoFocus);
     layout->addWidget(connectBtn);
-    connectBtn->setStyleSheet("QPushButton:hover { background-color: "+button_hover_color+";"
-                            "border: 1px solid #aaaaaa;"
-                            "border-radius: 5px }");
     connect(connectBtn, SIGNAL(clicked()), parent, SLOT(connectToRobot()));
 
-    saveMapBtn = new QPushButton(QIcon(":/icons/save_map.png"), "", this);
+    saveMapBtn = new CustomPushButton(QIcon(":/icons/save_map.png"), "", this);
     saveMapBtn->setIconSize(parent->size()/8);
     saveMapBtn->setMaximumWidth(40);
-    saveMapBtn->setFlat(true);
     saveMapBtn->setFocusPolicy(Qt::FocusPolicy::NoFocus);
     layout->addWidget(saveMapBtn);
-    saveMapBtn->setStyleSheet("QPushButton:hover { background-color: " + button_hover_color + ";"
-                                                                                          "border: 1px solid #aaaaaa;"
-                                                                                          "border-radius: 5px }");
     saveMapBtn->setToolTip("Restore the state of the map");
     connect(saveMapBtn, SIGNAL(clicked()), parent, SLOT(saveMapState()));
 
-    centerBtn = new QPushButton(QIcon(":/icons/center.png"), "", this);
+    centerBtn = new CustomPushButton(QIcon(":/icons/center.png"), "", this);
     centerBtn->setToolTip("Click to center the map");
     centerBtn->setIconSize(parent->size()/8);
     centerBtn->setMaximumWidth(40);
-    centerBtn->setFlat(true);
     centerBtn->setFocusPolicy(Qt::FocusPolicy::NoFocus);
     layout->addWidget(centerBtn);
-    centerBtn->setStyleSheet("QPushButton:hover { background-color: "+button_hover_color+";"
-                            "border: 1px solid #aaaaaa;"
-                            "border-radius: 5px }");
     connect(centerBtn, SIGNAL(clicked()), parent, SLOT(centerMap()));
 
-    settingBtn = new QPushButton(QIcon(":/icons/setting.png"), "", this);
+    settingBtn = new CustomPushButton(QIcon(":/icons/setting.png"), "", this);
     settingBtn->setToolTip("Click to view/edit the settings");
     settingBtn->setIconSize(parent->size()/8);
     settingBtn->setMaximumWidth(40);
-    settingBtn->setFlat(true);
     settingBtn->setFocusPolicy(Qt::FocusPolicy::NoFocus);
     layout->addWidget(settingBtn);
-    settingBtn->setStyleSheet("QPushButton:hover { background-color: "+button_hover_color+";"
-                            "border: 1px solid #aaaaaa;"
-                            "border-radius: 5px }");
     connect(settingBtn, SIGNAL(clicked()), parent, SLOT(settingBtnSlot()));
 
     SpaceWidget* spaceWidget = new SpaceWidget(SpaceWidget::SpaceOrientation::VERTICAL, this);
@@ -98,10 +78,9 @@ TopLayout::TopLayout(QMainWindow* parent): QWidget(parent), lastMessage(TEXT_COL
     spaceWidget2->setColor("lightgrey");
     layout->addWidget(spaceWidget2);
 
-    closeBtn = new QPushButton(QIcon(":/icons/close.png"), "", this);
+    closeBtn = new CustomPushButton(QIcon(":/icons/close.png"), "", this);
     closeBtn->setIconSize(parent->size()/8);
     closeBtn->setMaximumWidth(40);
-    closeBtn->setFlat(true);
     closeBtn->setFocusPolicy(Qt::FocusPolicy::NoFocus);
 
     layout->addWidget(closeBtn);

@@ -3,7 +3,6 @@
 #include "Model/point.h"
 #include <QHBoxLayout>
 #include <QVBoxLayout>
-#include <QPushButton>
 #include <QLabel>
 #include <QMainWindow>
 #include <QLineEdit>
@@ -12,9 +11,8 @@
 #include "View/spacewidget.h"
 #include <QKeyEvent>
 #include "topleftmenu.h"
-#include "View/buttonmenu.h"
 #include "toplayout.h"
-
+#include "View/custompushbutton.h"
 
 
 CreatePointWidget::CreatePointWidget(QMainWindow* _parent, QSharedPointer<Points> _points): QWidget(_parent), parent(_parent), points(_points){
@@ -34,9 +32,7 @@ CreatePointWidget::CreatePointWidget(QMainWindow* _parent, QSharedPointer<Points
     downLayout->addWidget(messageCreationLabel);
 
     nameEdit = new QLineEdit(this);
-    nameEdit->setStyleSheet ("text-align: left");
     nameEdit->setReadOnly(true);
-    nameEdit->setStyleSheet("* { background-color: rgba(255, 0, 0, 0); }");
     nameEdit->setAutoFillBackground(true);
     nameEdit->setFrame(false);
     nameEdit->setAlignment(Qt::AlignCenter);
@@ -78,8 +74,8 @@ CreatePointWidget::CreatePointWidget(QMainWindow* _parent, QSharedPointer<Points
 
     cancelSaveLayout = new QHBoxLayout();
 
-    saveBtn = new QPushButton("Save", this);
-    cancelBtn = new QPushButton("Cancel", this);
+    saveBtn = new CustomPushButton("Save", this);
+    cancelBtn = new CustomPushButton("Cancel", this);
     cancelSaveLayout->addWidget(cancelBtn);
     cancelSaveLayout->addWidget(saveBtn);
     saveBtn->hide();

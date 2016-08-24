@@ -8,6 +8,8 @@
 #include <QLayoutItem>
 #include "View/spacewidget.h"
 #include <QButtonGroup>
+#include "View/custompushbutton.h"
+#include <QAbstractButton>
 
 DisplaySelectedPointRobots::DisplaySelectedPointRobots(QWidget *parent):QWidget(parent){
     layout = new QVBoxLayout(this);
@@ -22,7 +24,7 @@ DisplaySelectedPointRobots::DisplaySelectedPointRobots(QWidget *parent):QWidget(
     homeLabel->setWordWrap(true);
     homeLayout->addWidget(homeLabel);
 
-    robotBtn = new QPushButton("", this);
+    robotBtn = new CustomPushButton("", this);
     robotBtn->setMinimumHeight(30);
     robotBtn->setMaximumHeight(30);
 
@@ -84,10 +86,9 @@ void DisplaySelectedPointRobots::setRobotsWidget(QSharedPointer<PointView> point
     if(robotNameSet.count() > 0){
         QSetIterator<QString> k(robotNameSet);
         while (k.hasNext()){
-            QPushButton* btn = new QPushButton(k.next(), this);
+            CustomPushButton* btn = new CustomPushButton(k.next(), this);
             btn->setMinimumHeight(30);
             btn->setMaximumHeight(30);
-            //btn->setFlat(true);
             pathBtnGroup->addButton(btn);
             pathBtnLayout->addWidget(btn);
         }

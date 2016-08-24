@@ -4,7 +4,6 @@
 class Robots;
 class RobotView;
 class QHBoxLayout;
-class QPushButton;
 class QLabel;
 class QButtonGroup;
 class QMainWindow;

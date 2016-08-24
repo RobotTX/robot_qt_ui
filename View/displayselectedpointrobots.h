@@ -4,11 +4,12 @@
 class PointView;
 class Robots;
 class QButtonGroup;
+class CustomPushButton;
+class QAbstractButton;
 
 #include <QWidget>
 #include <QVBoxLayout>
 #include <QSharedPointer>
-#include <QPushButton>
 #include <QObject>
 
 /**
@@ -27,7 +28,7 @@ public:
 private slots:
     /// shortcuts to go to the robot page
     void robotBtnClicked();
-    void pathBtnClicked(QAbstractButton*button);
+    void pathBtnClicked(QAbstractButton* button);
 
 signals:
     void setSelectedRobotFromPoint(QString);
@@ -35,7 +36,7 @@ signals:
 private:
     QVBoxLayout* layout;
     QWidget* homeWidget;
-    QPushButton* robotBtn;
+    CustomPushButton* robotBtn;
 
     QWidget* pathWidget;
     QButtonGroup* pathBtnGroup;
