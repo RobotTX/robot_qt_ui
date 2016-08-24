@@ -94,22 +94,33 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
     QHBoxLayout* bottom = new QHBoxLayout();
 
-    paths = QSharedPointer<Paths>(new Paths(this));
+    /************************** NO NEED AFTER FIRST TIME INIT **************************/
+    QSharedPointer<Paths> tmpPaths = QSharedPointer<Paths>(new Paths(this));
 
-    paths->createGroup("monday");
-    paths->createGroup("tuesday");
-    paths->createGroup("monday");
-    paths->createPath("monday", "room1");
-    paths->createPath("tuesday", "room2");
-    paths->createPath("tuesday", "room3");
-    paths->createPath("tuesday", "room2");
-    paths->createPath("wednesday", "room3");
+    tmpPaths->createGroup("monday");
+    tmpPaths->createGroup("tuesday");
+    tmpPaths->createGroup("monday");
+    tmpPaths->createPath("monday", "room1");
+    tmpPaths->createPath("tuesday", "room2");
+    tmpPaths->createPath("tuesday", "room3");
+    tmpPaths->createPath("tuesday", "room2");
+    tmpPaths->createPath("wednesday", "room3");
     Point point("First point", 4.2, 3.1);
-    paths->addPathPoint("monday", "room1", QSharedPointer<PathPoint>(new PathPoint(point, PathPoint::Action::HUMAN_ACTION, 2)));
-    paths->addPathPoint("wednesday", "room1", QSharedPointer<PathPoint>(new PathPoint(point, PathPoint::Action::HUMAN_ACTION, 2)));
-    paths->addPathPoint("monday", "room1", QSharedPointer<PathPoint>(new PathPoint(point, PathPoint::Action::HUMAN_ACTION, 2)));
-    paths->addPathPoint("tuesday", "room4", QSharedPointer<PathPoint>(new PathPoint(point, PathPoint::Action::HUMAN_ACTION, 2)));
-    paths->addPathPoint("tuesday", "room2", QSharedPointer<PathPoint>(new PathPoint(point, PathPoint::Action::HUMAN_ACTION, 2)));
+    tmpPaths->addPathPoint("monday", "room1", QSharedPointer<PathPoint>(new PathPoint(point, PathPoint::Action::HUMAN_ACTION, 2)));
+    tmpPaths->addPathPoint("wednesday", "room1", QSharedPointer<PathPoint>(new PathPoint(point, PathPoint::Action::HUMAN_ACTION, 2)));
+    tmpPaths->addPathPoint("monday", "room1", QSharedPointer<PathPoint>(new PathPoint(point, PathPoint::Action::HUMAN_ACTION, 2)));
+    tmpPaths->addPathPoint("tuesday", "room4", QSharedPointer<PathPoint>(new PathPoint(point, PathPoint::Action::HUMAN_ACTION, 2)));
+    tmpPaths->addPathPoint("tuesday", "room2", QSharedPointer<PathPoint>(new PathPoint(point, PathPoint::Action::HUMAN_ACTION, 2)));
+
+    QFile pathFile(PATHS_PATH);
+    pathFile.resize(0);
+    pathFile.open(QIODevice::WriteOnly);
+    QDataStream out(&pathFile);
+    out << *tmpPaths;
+    pathFile.close();
+    /*****************************************************/
+
+    initializePaths();
 
     initializePoints();
 
@@ -1986,7 +1997,7 @@ void MainWindow::editPointButtonEvent(){
 void MainWindow::editGroupBtnEvent(){
 
     if(pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->checkedButton()){
-        qDebug() << "editPointBtnEvent called" << pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->checkedButton()->text();
+        qDebug() << "editGroupBtnEvent called" << pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->checkedButton()->text();
         topLayout->setEnabled(false);
         setEnableAll(false);
         int btnIndex = pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->checkedId();
@@ -3539,6 +3550,21 @@ void MainWindow::choosePointName(QString message){
 
 /**********************************************************************************************************************************/
 
+void MainWindow::initializePaths(){
+    paths = QSharedPointer<Paths>(new Paths(this));
+
+    QFile pathFile(PATHS_PATH);
+    pathFile.open(QIODevice::ReadOnly);
+    QDataStream in(&pathFile);
+
+    Paths tmpPaths;
+    in >> tmpPaths;
+    pathFile.close();
+
+    paths->setGroups(tmpPaths.getGroups());
+    paths->displayGroups();
+}
+
 void MainWindow::pathBtnEvent(){
     hideAllWidgets();
 
@@ -3580,6 +3606,86 @@ void MainWindow::displayGroupPaths(){
 
 void MainWindow::editGroupPaths(){
     qDebug() << "MainWindow::editGroupPaths called";
+    if(pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->checkedButton()){
+        qDebug() << "editGroupBtnEvent called" << pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->checkedButton()->text();
+        topLayout->setEnabled(false);
+        setEnableAll(false);
+        int btnIndex = pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->checkedId();
+        qDebug() << "btnIndex" << btnIndex;
+        pointsLeftWidget->setLastCheckedId(static_cast<CustomPushButton*>(pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->checkedButton())->text());
+
+        pointsLeftWidget->setCreatingGroup(false);
+
+        /// uncheck the other buttons
+        pointsLeftWidget->getActionButtons()->getPlusButton()->setChecked(false);
+        pointsLeftWidget->getActionButtons()->getMinusButton()->setChecked(false);
+        pointsLeftWidget->getActionButtons()->getGoButton()->setChecked(false);
+        pointsLeftWidget->getActionButtons()->getMapButton()->setChecked(false);
+
+        /// we hide those in case the previous button clicked was the plus button
+        pointsLeftWidget->getGroupNameEdit()->hide();
+        pointsLeftWidget->getGroupNameLabel()->hide();
+        QAbstractButton* btn = pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->checkedButton();
+        QString checkedId = pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->checkedButton()->text();
+
+        /// it's an isolated point
+        if(checkedId.compare("") != 0 && points->isAPoint(checkedId)){
+
+            /// retrieves the pointview associated to the point on the map and displays it if it was not already the case
+            QSharedPointer<PointView> pointView = points->findPointView(checkedId);
+
+            /// must display the tick icon in the pointsLeftWidget
+            pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->checkedButton()->setIcon(QIcon(":/icons/eye_point.png"));
+            if(pointView){
+                pointView->show();
+                QString robotName = "";
+                if(pointView->getPoint()->isHome()){
+                    RobotView* rv = robots->findRobotUsingHome(pointView->getPoint()->getName());
+                    if(rv != NULL)
+                        robotName = rv->getRobot()->getName();
+                    else
+                        qDebug() << "editGroupBtnEvent : something unexpected happened";
+                }
+                leftMenu->getDisplaySelectedPoint()->setPointView(pointView, robotName);
+            } else {
+                qDebug() << "There is no point view associated with those indexes";
+            }
+
+            /// displays the information relative the the point
+            leftMenu->getDisplaySelectedPoint()->displayPointInfo();
+            editPointButtonEvent();
+            pointsLeftWidget->hide();
+
+            /// disables the back button to prevent problems, a user has to discard or save his modifications before he can start navigatin the menu again, also prevents false manipulations
+            leftMenu->getDisplaySelectedPoint()->show();
+            switchFocus("point", leftMenu->getDisplaySelectedPoint(), MainWindow::WidgetType::POINT);
+        } else if(checkedId.compare("") != 0 && points->isAGroup(checkedId)){
+            qDebug() << "gotta update a group";
+            leftMenu->getReturnButton()->setEnabled(false);
+            leftMenu->getCloseButton()->setEnabled(false);
+            topLayout->setEnable(false);
+
+
+            pointsLeftWidget->getActionButtons()->getEditButton()->setToolTip("Type a new name for your group and press ENTER");
+            /// disables the plus button
+            pointsLeftWidget->getActionButtons()->getPlusButton()->setEnabled(false);
+            /// disables the other buttons
+            pointsLeftWidget->disableButtons();
+            pointsLeftWidget->getGroupButtonGroup()->getModifyEdit()->setText(checkedId);
+
+            pointsLeftWidget->getGroupButtonGroup()->uncheck();
+            pointsLeftWidget->getGroupButtonGroup()->setEnabled(false);
+            pointsLeftWidget->getGroupButtonGroup()->getModifyEdit()->selectAll();
+            pointsLeftWidget->getGroupButtonGroup()->getModifyEdit()->setFocus();
+            pointsLeftWidget->getGroupButtonGroup()->getModifyEdit()->show();
+
+
+            pointsLeftWidget->getGroupButtonGroup()->getLayout()->removeWidget(pointsLeftWidget->getGroupButtonGroup()->getModifyEdit());
+            pointsLeftWidget->getGroupButtonGroup()->getLayout()->insertWidget(btnIndex, pointsLeftWidget->getGroupButtonGroup()->getModifyEdit());
+            pointsLeftWidget->getGroupButtonGroup()->setEditedGroupName(checkedId);
+            btn->hide();
+        }
+    }
 }
 
 void MainWindow::createGroupPaths(){
@@ -3618,6 +3724,7 @@ void MainWindow::createGroupPaths(){
 void MainWindow::deleteGroupPaths(){
     qDebug() << "MainWindow::deleteGroupPaths called";
     int answer = openConfirmMessage("Are you sure you want to delete this group of path, all the paths inside would be deleted as well ?");
+    leftMenu->getGroupsPathsWidget()->resetWidget();
     switch(answer){
     case QMessageBox::StandardButton::Ok:
         paths->deleteGroup(leftMenu->getGroupsPathsWidget()->getButtonGroup()->getButtonGroup()->checkedButton()->text());
@@ -3631,7 +3738,6 @@ void MainWindow::deleteGroupPaths(){
         qDebug() << "MainWindow::deleteGroupPaths ended up in the default case which suggests that you forgot to implement the behavior relative to a particular button";
         break;
     }
-
 }
 
 void MainWindow::saveGroupPaths(QString name){

@@ -34,6 +34,9 @@ void CustomPushButton::initialize(const bool checkable, const bool enable){
                   "}"
                   "QPushButton:checked{"
                       "background-color: " + button_checked_color + ";"
+                  "}"
+                  "QPushButton:disabled{"
+                      "color: grey;"
                   "}");
 
     setAutoDefault(true);

@@ -7,6 +7,7 @@ Paths::Paths(MainWindow *parent): QObject(parent)
 }
 
 void Paths::displayGroups() const {
+    qDebug() << "\nPaths::displayGroups called";
     QMapIterator<QString, QSharedPointer<CollectionPaths>> it(*(groups));
     while(it.hasNext()){
         it.next();
@@ -22,6 +23,7 @@ void Paths::displayGroups() const {
             }
         }
     }
+    qDebug() << "";
 }
 
 void Paths::createPath(const QString groupName, const QString pathName){
@@ -76,4 +78,53 @@ void Paths::deleteGroup(const QString name){
         qDebug() << "removed" << r << "value(s) with key" << name;
     } else
         qDebug() << name << "is not in the map";
+}
+
+QDataStream& operator>>(QDataStream& in, Paths& paths){
+    qDebug() << "Paths operator>> Deserializing the paths";
+
+    QMap<QString, QMap<QString, QVector<PathPoint>>> tmpPaths;
+    in >> tmpPaths;
+
+    QMapIterator<QString, QMap<QString, QVector<PathPoint>>> it(tmpPaths);
+    while(it.hasNext()){
+        it.next();
+        paths.createGroup(it.key());
+        QMapIterator<QString, QVector<PathPoint>> it_paths(it.value());
+        while(it_paths.hasNext()){
+            it_paths.next();
+            paths.createPath(it.key(), it_paths.key());
+            for(int i = 0; i < it_paths.value().size(); i++){
+                paths.addPathPoint(it.key(), it_paths.key(), QSharedPointer<PathPoint>(new PathPoint(it_paths.value().at(i))));
+            }
+        }
+    }
+
+    return in;
+}
+
+QDataStream& operator<<(QDataStream& out, const Paths& paths){
+    qDebug() << "Paths operator<< Serializing the paths";
+
+    QMap<QString, QMap<QString, QVector<PathPoint>>> tmpPaths;
+
+    QMapIterator<QString, QSharedPointer<Paths::CollectionPaths>> it(*(paths.getGroups()));
+    while(it.hasNext()){
+        it.next();
+        QMap<QString, QVector<PathPoint>> tmpGroup;
+        QMapIterator<QString, QSharedPointer<Paths::Path> > it_paths(*(it.value()));
+        while(it_paths.hasNext()){
+            it_paths.next();
+            QVector<PathPoint> tmpPath;
+            if(it_paths.value()){
+                for(int i = 0; i < it_paths.value()->size(); i++){
+                    tmpPath.push_back(*(it_paths.value()->at(i)));
+                }
+            }
+            tmpGroup.insert(it_paths.key(), tmpPath);
+        }
+        tmpPaths.insert(it.key(), tmpGroup);
+    }
+    out << tmpPaths;
+    return out;
 }

@@ -38,6 +38,9 @@ public:
     void uncheck(void);
     void enableActionButtons(void);
     void hideCreationWidgets(void);
+    /// sets the widget in the state where u can either click a group or create a new one but nothing else
+    /// same state as when u show the widget
+    void resetWidget(void);
 
 protected:
     void keyPressEvent(QKeyEvent* event);
@@ -46,9 +49,11 @@ protected:
 signals:
     void newPathGroup(QString);
     void messageCreationGroup(QString, QString);
+    void codeEditGroup(int);
 
 public slots:
     int checkGroupName(QString name);
+    int checkEditGroupName(QString name);
     void cancelCreationGroup();
 
 private slots:

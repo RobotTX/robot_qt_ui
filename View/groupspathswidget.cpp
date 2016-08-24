@@ -262,3 +262,38 @@ void GroupsPathsWidget::hideCreationWidgets(){
     saveButton->hide();
     cancelButton->hide();
 }
+
+void GroupsPathsWidget::resetWidget(){
+    actionButtons->getPlusButton()->setEnabled(true);
+    actionButtons->getGoButton()->setEnabled(false);
+    actionButtons->getMinusButton()->setEnabled(false);
+    actionButtons->getEditButton()->setEnabled(false);
+    setLastCheckedButton("");
+}
+
+int GroupsPathsWidget::checkEditGroupName(QString name){
+    qDebug() << "GroupButtonGroup::checkEditGroupName called";
+    modifyEdit->setText(formatName(modifyEdit->text()));
+    name = modifyEdit->text().simplified();
+    if(!name.compare(buttonGroup->getButtonGroup()->checkedButton()->text(), Qt::CaseInsensitive)){
+        qDebug() << "same name";
+        emit codeEditGroup(0);
+        return 0;
+    }
+    if(!name.compare("")){
+        emit codeEditGroup(1);
+        return 1;
+    }
+
+    QMapIterator<QString, QSharedPointer<Paths::CollectionPaths>> i(*(paths->getGroups()));
+    while (i.hasNext()) {
+        i.next();
+        if(!name.compare(i.key(), Qt::CaseInsensitive)){
+            qDebug() << "GroupButtonGroup::checkEditGroupName" << i.key();
+            emit codeEditGroup(2);
+            return 2;
+        }
+    }
+    emit codeEditGroup(0);
+    return 0;
+}
