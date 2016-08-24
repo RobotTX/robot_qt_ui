@@ -16,14 +16,15 @@ class Paths: public QObject {
     Q_OBJECT
 
 public:
-    typedef QVector<QSharedPointer<PathPoint> > Path;
-    typedef QMap<QString, QSharedPointer<Path> > CollectionPaths;
-    typedef QMap<QString, QSharedPointer<CollectionPaths> > Groups;
+    typedef QVector<QSharedPointer<PathPoint>> Path;
+    typedef QMap<QString, QSharedPointer<Path>> CollectionPaths;
+    typedef QMap<QString, QSharedPointer<CollectionPaths>> Groups;
 
 public:
     Paths(MainWindow *parent);
 
     QSharedPointer<Groups> getGroups(void) const { return groups; }
+    void setGroups(QSharedPointer<Groups> _groups) { groups = _groups; }
     void createGroup(const QString name);
     void createPath(const QString groupName, const QString pathName);
     void addPathPoint(const QString groupName, const QString pathName, const QSharedPointer<PathPoint>& pathPoint);
@@ -33,6 +34,9 @@ public:
 private:
     QSharedPointer<Groups> groups;
 };
+
+QDataStream& operator<<(QDataStream& out, const Paths& paths);
+QDataStream& operator>>(QDataStream& in, Paths& paths);
 
 inline void Paths::createGroup(const QString name){
     if(groups->find(name) == groups->end())
