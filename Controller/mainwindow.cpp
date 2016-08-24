@@ -2065,13 +2065,7 @@ void MainWindow::editGroupBtnEvent(){
 
             pointsLeftWidget->getGroupButtonGroup()->uncheck();
             pointsLeftWidget->getGroupButtonGroup()->setEnabled(false);
-            pointsLeftWidget->getGroupButtonGroup()->getModifyEdit()->selectAll();
-            pointsLeftWidget->getGroupButtonGroup()->getModifyEdit()->setFocus();
-            pointsLeftWidget->getGroupButtonGroup()->getModifyEdit()->show();
 
-
-            pointsLeftWidget->getGroupButtonGroup()->getLayout()->removeWidget(pointsLeftWidget->getGroupButtonGroup()->getModifyEdit());
-            pointsLeftWidget->getGroupButtonGroup()->getLayout()->insertWidget(btnIndex, pointsLeftWidget->getGroupButtonGroup()->getModifyEdit());
             pointsLeftWidget->getGroupButtonGroup()->setEditedGroupName(checkedId);
             btn->hide();
         }
@@ -3606,86 +3600,32 @@ void MainWindow::displayGroupPaths(){
 
 void MainWindow::editGroupPaths(){
     qDebug() << "MainWindow::editGroupPaths called";
-    if(pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->checkedButton()){
-        qDebug() << "editGroupBtnEvent called" << pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->checkedButton()->text();
-        topLayout->setEnabled(false);
-        setEnableAll(false);
-        int btnIndex = pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->checkedId();
-        qDebug() << "btnIndex" << btnIndex;
-        pointsLeftWidget->setLastCheckedId(static_cast<CustomPushButton*>(pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->checkedButton())->text());
 
-        pointsLeftWidget->setCreatingGroup(false);
+    leftMenu->getGroupsPathsWidget()->getActionButtons()->getEditButton()->setToolTip("Choose a new name for your group and press the ENTER key");
 
-        /// uncheck the other buttons
-        pointsLeftWidget->getActionButtons()->getPlusButton()->setChecked(false);
-        pointsLeftWidget->getActionButtons()->getMinusButton()->setChecked(false);
-        pointsLeftWidget->getActionButtons()->getGoButton()->setChecked(false);
-        pointsLeftWidget->getActionButtons()->getMapButton()->setChecked(false);
+    int btnIndex = leftMenu->getGroupsPathsWidget()->getButtonGroup()->getButtonGroup()->checkedId();
 
-        /// we hide those in case the previous button clicked was the plus button
-        pointsLeftWidget->getGroupNameEdit()->hide();
-        pointsLeftWidget->getGroupNameLabel()->hide();
-        QAbstractButton* btn = pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->checkedButton();
-        QString checkedId = pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->checkedButton()->text();
+    leftMenu->getGroupsPathsWidget()->setCreatingGroup(false);
 
-        /// it's an isolated point
-        if(checkedId.compare("") != 0 && points->isAPoint(checkedId)){
+    /// disables the buttons
+    leftMenu->getGroupsPathsWidget()->getActionButtons()->disableAll();
 
-            /// retrieves the pointview associated to the point on the map and displays it if it was not already the case
-            QSharedPointer<PointView> pointView = points->findPointView(checkedId);
+    /// we hide those in case the previous button clicked was the plus button
+    /*
+    pointsLeftWidget->getGroupNameEdit()->hide();
+    pointsLeftWidget->getGroupNameLabel()->hide();
+    QAbstractButton* btn = pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->checkedButton();
+    QString checkedId = pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->checkedButton()->text();
+    */
+    leftMenu->getReturnButton()->setEnabled(false);
+    leftMenu->getCloseButton()->setEnabled(false);
 
-            /// must display the tick icon in the pointsLeftWidget
-            pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->checkedButton()->setIcon(QIcon(":/icons/eye_point.png"));
-            if(pointView){
-                pointView->show();
-                QString robotName = "";
-                if(pointView->getPoint()->isHome()){
-                    RobotView* rv = robots->findRobotUsingHome(pointView->getPoint()->getName());
-                    if(rv != NULL)
-                        robotName = rv->getRobot()->getName();
-                    else
-                        qDebug() << "editGroupBtnEvent : something unexpected happened";
-                }
-                leftMenu->getDisplaySelectedPoint()->setPointView(pointView, robotName);
-            } else {
-                qDebug() << "There is no point view associated with those indexes";
-            }
+    leftMenu->getGroupsPathsWidget()->getButtonGroup()->getModifyEdit()->selectAll();
+    leftMenu->getGroupsPathsWidget()->getButtonGroup()->getModifyEdit()->setFocus();
+    leftMenu->getGroupsPathsWidget()->getButtonGroup()->getModifyEdit()->show();
 
-            /// displays the information relative the the point
-            leftMenu->getDisplaySelectedPoint()->displayPointInfo();
-            editPointButtonEvent();
-            pointsLeftWidget->hide();
-
-            /// disables the back button to prevent problems, a user has to discard or save his modifications before he can start navigatin the menu again, also prevents false manipulations
-            leftMenu->getDisplaySelectedPoint()->show();
-            switchFocus("point", leftMenu->getDisplaySelectedPoint(), MainWindow::WidgetType::POINT);
-        } else if(checkedId.compare("") != 0 && points->isAGroup(checkedId)){
-            qDebug() << "gotta update a group";
-            leftMenu->getReturnButton()->setEnabled(false);
-            leftMenu->getCloseButton()->setEnabled(false);
-            topLayout->setEnable(false);
-
-
-            pointsLeftWidget->getActionButtons()->getEditButton()->setToolTip("Type a new name for your group and press ENTER");
-            /// disables the plus button
-            pointsLeftWidget->getActionButtons()->getPlusButton()->setEnabled(false);
-            /// disables the other buttons
-            pointsLeftWidget->disableButtons();
-            pointsLeftWidget->getGroupButtonGroup()->getModifyEdit()->setText(checkedId);
-
-            pointsLeftWidget->getGroupButtonGroup()->uncheck();
-            pointsLeftWidget->getGroupButtonGroup()->setEnabled(false);
-            pointsLeftWidget->getGroupButtonGroup()->getModifyEdit()->selectAll();
-            pointsLeftWidget->getGroupButtonGroup()->getModifyEdit()->setFocus();
-            pointsLeftWidget->getGroupButtonGroup()->getModifyEdit()->show();
-
-
-            pointsLeftWidget->getGroupButtonGroup()->getLayout()->removeWidget(pointsLeftWidget->getGroupButtonGroup()->getModifyEdit());
-            pointsLeftWidget->getGroupButtonGroup()->getLayout()->insertWidget(btnIndex, pointsLeftWidget->getGroupButtonGroup()->getModifyEdit());
-            pointsLeftWidget->getGroupButtonGroup()->setEditedGroupName(checkedId);
-            btn->hide();
-        }
-    }
+    leftMenu->getGroupsPathsWidget()->getButtonGroup()->getLayout()->removeWidget(leftMenu->getGroupsPathsWidget()->getButtonGroup()->getModifyEdit());
+    leftMenu->getGroupsPathsWidget()->getButtonGroup()->getLayout()->insertWidget(btnIndex, leftMenu->getGroupsPathsWidget()->getButtonGroup()->getModifyEdit());
 }
 
 void MainWindow::createGroupPaths(){

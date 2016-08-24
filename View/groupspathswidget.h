@@ -26,7 +26,6 @@ public:
     CustomPushButton* getSaveButton(void) const { return saveButton; }
     CustomPushButton* getCancelButton(void) const { return cancelButton; }
     void setCreatingGroup(const bool creating) { creatingGroup = creating; }
-    CustomizedLineEdit* getModifyEdit(void) const { return modifyEdit; }
     CustomizedLineEdit* getGroupNameEdit(void) const { return groupNameEdit; }
     QLabel* getGroupNameLabel(void) const { return groupNameLabel; }
 
@@ -65,7 +64,7 @@ private:
     QHBoxLayout* creationLayout;
     CustomScrollArea* scrollArea;
     QLabel* groupNameLabel;
-    CustomizedLineEdit* modifyEdit;
+
     CustomizedLineEdit* groupNameEdit;
     QSharedPointer<Paths> paths;
     QVBoxLayout* layout;

@@ -44,12 +44,6 @@ GroupsPathsWidget::GroupsPathsWidget(MainWindow* _parent, const QSharedPointer<P
     downLayout->addWidget(groupNameLabel);
     downLayout->addWidget(groupNameEdit);
 
-    /// to modify the names of groups of paths
-
-    modifyEdit = new CustomizedLineEdit(this);
-    modifyEdit->setFixedWidth(1.29*modifyEdit->width());
-    modifyEdit->hide();
-
     buttonGroup = new GroupsPathsButtonGroup(_parent, paths);
     scrollArea->setWidget(buttonGroup);
     downLayout->addWidget(scrollArea);
@@ -273,8 +267,8 @@ void GroupsPathsWidget::resetWidget(){
 
 int GroupsPathsWidget::checkEditGroupName(QString name){
     qDebug() << "GroupButtonGroup::checkEditGroupName called";
-    modifyEdit->setText(formatName(modifyEdit->text()));
-    name = modifyEdit->text().simplified();
+    buttonGroup->getModifyEdit()->setText(formatName(buttonGroup->getModifyEdit()->text()));
+    name =  buttonGroup->getModifyEdit()->text().simplified();
     if(!name.compare(buttonGroup->getButtonGroup()->checkedButton()->text(), Qt::CaseInsensitive)){
         qDebug() << "same name";
         emit codeEditGroup(0);
