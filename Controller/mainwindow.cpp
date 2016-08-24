@@ -2066,6 +2066,12 @@ void MainWindow::editGroupBtnEvent(){
             pointsLeftWidget->getGroupButtonGroup()->uncheck();
             pointsLeftWidget->getGroupButtonGroup()->setEnabled(false);
 
+            pointsLeftWidget->getGroupButtonGroup()->getModifyEdit()->selectAll();
+            pointsLeftWidget->getGroupButtonGroup()->getModifyEdit()->setFocus();
+            pointsLeftWidget->getGroupButtonGroup()->getModifyEdit()->show();
+            pointsLeftWidget->getGroupButtonGroup()->getLayout()->removeWidget(pointsLeftWidget->getGroupButtonGroup()->getModifyEdit());
+            pointsLeftWidget->getGroupButtonGroup()->getLayout()->insertWidget(btnIndex, pointsLeftWidget->getGroupButtonGroup()->getModifyEdit());
+
             pointsLeftWidget->getGroupButtonGroup()->setEditedGroupName(checkedId);
             btn->hide();
         }
