@@ -93,6 +93,23 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
     QHBoxLayout* bottom = new QHBoxLayout();
 
+    paths = QSharedPointer<Paths>(new Paths(this));
+
+    paths->createGroup("monday");
+    paths->createGroup("tuesday");
+    paths->createGroup("monday");
+    paths->createPath("monday", "room1");
+    paths->createPath("tuesday", "room2");
+    paths->createPath("tuesday", "room3");
+    paths->createPath("tuesday", "room2");
+    paths->createPath("wednesday", "room3");
+    Point point("First point", 4.2, 3.1);
+    paths->addPathPoint("monday", "room1", QSharedPointer<PathPoint>(new PathPoint(point, PathPoint::Action::HUMAN_ACTION, 2)));
+    paths->addPathPoint("wednesday", "room1", QSharedPointer<PathPoint>(new PathPoint(point, PathPoint::Action::HUMAN_ACTION, 2)));
+    paths->addPathPoint("monday", "room1", QSharedPointer<PathPoint>(new PathPoint(point, PathPoint::Action::HUMAN_ACTION, 2)));
+    paths->addPathPoint("tuesday", "room4", QSharedPointer<PathPoint>(new PathPoint(point, PathPoint::Action::HUMAN_ACTION, 2)));
+    paths->addPathPoint("tuesday", "room2", QSharedPointer<PathPoint>(new PathPoint(point, PathPoint::Action::HUMAN_ACTION, 2)));
+
     initializePoints();
 
     pathPainter = new PathPainter(this, mapPixmapItem, points);
@@ -113,7 +130,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     graphicsView->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     graphicsView->setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding));
 
-    leftMenu = new LeftMenu(this, points, robots, points, map, pathPainter);
+    leftMenu = new LeftMenu(this, points, paths, robots, points, map, pathPainter);
 
     resetFocus();
     initializeLeftMenu();
@@ -182,6 +199,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     connect(pathCreationWidget, SIGNAL(savePath()), this, SLOT(savePathSlot()));
     connect(this, SIGNAL(resetPath()), pathPainter, SLOT(resetPathSlot()));
     connect(this, SIGNAL(resetPathCreationWidget()), pathCreationWidget, SLOT(resetWidget()));
+
+    connect(leftMenu->getGroupsPathsWidget(), SIGNAL(newPathGroup(QString)), this, SLOT(saveGroupPaths(QString)));
+    connect(leftMenu->getGroupsPathsWidget(), SIGNAL(messageCreationGroup(QString,QString)), this, SLOT(setMessageCreationGroup(QString,QString)));
 
     mainLayout->addLayout(bottom);
     graphicsView->setStyleSheet("CustomQGraphicsView{background-color: " + background_map_view + "}");
@@ -3554,7 +3574,7 @@ void MainWindow::displayPathSlot(QString groupName, QString pathName, bool displ
 void MainWindow::displayGroupPaths(){
     qDebug() << "MainWindow::displayGroupPaths called";
     leftMenu->getGroupsPathsWidget()->hide();
-    leftMenu->getPathGroupDisplayed()->show();
+    //leftMenu->getPathGroupDisplayed()->show();
 }
 
 void MainWindow::editGroupPaths(){
@@ -3580,7 +3600,7 @@ void MainWindow::createGroupPaths(){
     leftMenu->getGroupsPathsWidget()->getActionButtons()->getPlusButton()->setToolTip("Enter a name for your group and click \"save\" or click \"cancel\" to cancel");
 
     /// to prevent the user from clicking on the buttons
-    leftMenu->getGroupsPathsWidget()->getPathButtonGroup()->setEnabled(false);
+    //leftMenu->getGroupsPathsWidget()->getPathButtonGroup()->setEnabled(false);
     //leftMenu->getGroupsPathsWidget()->getReturnButton()->setEnabled(false);
     //leftMenu->getGroupsPathsWidget()->getCloseButton()->setEnabled(false);
 
@@ -3593,6 +3613,41 @@ void MainWindow::createGroupPaths(){
 
 void MainWindow::deleteGroupPaths(){
     qDebug() << "MainWindow::deleteGroupPaths called";
+}
+
+void MainWindow::saveGroupPaths(QString name){
+    qDebug() << "saveGroupPaths called" << name;
+
+    name = name.simplified();
+    if(leftMenu->getGroupsPathsWidget()->checkGroupName(name) == 0){
+        leftMenu->getGroupsPathsWidget()->setLastCheckedButton("");
+
+        /// updates the model
+        paths->createGroup(name);
+
+        /// updates list of groups in menu
+        leftMenu->getGroupsPathsWidget()->updateGroupsPaths();
+
+        /// enables the return button again
+        leftMenu->getReturnButton()->setEnabled(true);
+
+        /// hides everything that's related to the creation of a group
+        leftMenu->getGroupsPathsWidget()->getSaveButton()->hide();
+        leftMenu->getGroupsPathsWidget()->getCancelButton()->hide();
+        leftMenu->getGroupsPathsWidget()->getGroupNameEdit()->hide();
+        leftMenu->getGroupsPathsWidget()->getGroupNameLabel()->hide();
+
+        /// enables the plus button again
+        leftMenu->getGroupsPathsWidget()->disableButtons();
+        leftMenu->getGroupsPathsWidget()->getActionButtons()->getPlusButton()->setEnabled(true);
+        leftMenu->getGroupsPathsWidget()->getActionButtons()->getPlusButton()->setToolTip("Click here to add a new group of paths");
+        topLayout->setEnabled(true);
+
+        topLayout->setLabelDelay(TEXT_COLOR_SUCCESS, "You have created a new group of paths", 2500);
+    } else if(pointsLeftWidget->checkGroupName(name) == 1)
+        topLayout->setLabelDelay(TEXT_COLOR_DANGER, "The name of your group cannot be empty", 2500);
+    else
+        topLayout->setLabelDelay(TEXT_COLOR_DANGER, "You cannot choose : " + name + " as a new name for your group because another group already has this name", 2500);
 }
 
 /**********************************************************************************************************************************/

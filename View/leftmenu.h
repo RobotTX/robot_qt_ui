@@ -24,6 +24,7 @@ class PathPainter;
 class GroupsPathsWidget;
 class DisplayPathGroup;
 class CustomPushButton;
+class Paths;
 
 #include <QWidget>
 #include <QSharedPointer>
@@ -35,7 +36,7 @@ class CustomPushButton;
 class LeftMenu: public QWidget{
     Q_OBJECT
 public:
-    LeftMenu(MainWindow* _parent, const QSharedPointer<Points> &_points, QSharedPointer<Robots> const& robots, QSharedPointer<Points> const &pointViews, QSharedPointer<Map> const& _map, const PathPainter* pathPainter);
+    LeftMenu(MainWindow* _parent, const QSharedPointer<Points> &_points, QSharedPointer<Paths> const& _paths, QSharedPointer<Robots> const& robots, QSharedPointer<Points> const &pointViews, QSharedPointer<Map> const& _map, const PathPainter* pathPainter);
 
     /// Getters
     LeftMenuWidget* getLeftMenuWidget(void) const {return leftMenuWidget;}
@@ -82,6 +83,7 @@ private:
     CustomPushButton * returnButton;
     MainWindow* parent;
     QSharedPointer<Points> points;
+    QSharedPointer<Paths> paths;
     DisplaySelectedPath* displaySelectedPath;
     DisplayPathGroup* pathGroup;
     QString lastCheckedId;

@@ -31,10 +31,10 @@
 #include "View/displaypathgroup.h"
 #include "View/custompushbutton.h"
 
-LeftMenu::LeftMenu(MainWindow* _parent, QSharedPointer<Points> const& _points,
+LeftMenu::LeftMenu(MainWindow* _parent, QSharedPointer<Points> const& _points, QSharedPointer<Paths> const& _paths,
                    const QSharedPointer<Robots> &robots, const QSharedPointer<Points> &pointViews,
                    const QSharedPointer<Map> &_map, const PathPainter *pathPainter):
-    QWidget(_parent), parent(_parent), points(_points), lastCheckedId("s")
+    QWidget(_parent), parent(_parent), points(_points), paths(_paths), lastCheckedId("s")
 {
 
     QVBoxLayout * leftLayout  = new QVBoxLayout();
@@ -145,23 +145,8 @@ LeftMenu::LeftMenu(MainWindow* _parent, QSharedPointer<Points> const& _points,
     /// to check the name of a point being edited
     connect(displaySelectedPoint, SIGNAL(invalidName(QString,CreatePointWidget::Error)), parent, SLOT(setMessageCreationPoint(QString,CreatePointWidget::Error)));
 
-    QSharedPointer<Paths> paths = QSharedPointer<Paths>(new Paths(_parent));
 
-    paths->createGroup("monday");
-    paths->createGroup("tuesday");
-    paths->createGroup("monday");
-    paths->createPath("monday", "room1");
-    paths->createPath("tuesday", "room2");
-    paths->createPath("tuesday", "room3");
-    paths->createPath("tuesday", "room2");
-    paths->createPath("wednesday", "room3");
-    Point point("First point", 4.2, 3.1);
-    paths->addPathPoint("monday", "room1", QSharedPointer<PathPoint>(new PathPoint(point, PathPoint::Action::HUMAN_ACTION, 2)));
-    paths->addPathPoint("wednesday", "room1", QSharedPointer<PathPoint>(new PathPoint(point, PathPoint::Action::HUMAN_ACTION, 2)));
-    paths->addPathPoint("monday", "room1", QSharedPointer<PathPoint>(new PathPoint(point, PathPoint::Action::HUMAN_ACTION, 2)));
-    paths->addPathPoint("tuesday", "room4", QSharedPointer<PathPoint>(new PathPoint(point, PathPoint::Action::HUMAN_ACTION, 2)));
-    paths->addPathPoint("tuesday", "room2", QSharedPointer<PathPoint>(new PathPoint(point, PathPoint::Action::HUMAN_ACTION, 2)));
-    paths->displayGroups();
+
     /// Menu which displays the groups of paths
     groupsPathsWidget = new GroupsPathsWidget(parent, paths);
     groupsPathsWidget->hide();

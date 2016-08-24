@@ -3,6 +3,7 @@
 #include "View/custompushbutton.h"
 #include "Model/paths.h"
 #include "View/colors.h"
+#include "View/customizedlineedit.h"
 
 GroupsPathsButtonGroup::GroupsPathsButtonGroup(QWidget *_parent, QSharedPointer<Paths> _paths): QWidget(_parent), paths(_paths)
 {
@@ -11,6 +12,14 @@ GroupsPathsButtonGroup::GroupsPathsButtonGroup(QWidget *_parent, QSharedPointer<
     layout->setAlignment(Qt::AlignTop);
     BUTTON_SIZE = parentWidget()->size()/20;
     createButtons();
+
+    /// to modify the name of a group
+    modifyEdit = new CustomizedLineEdit(this);
+    modifyEdit->setFixedWidth(1.29*modifyEdit->width());
+    modifyEdit->hide();
+
+    /// we are going to make this widget visible when a user wants to modify a group
+    layout->addWidget(modifyEdit);
 }
 
 void GroupsPathsButtonGroup::createButtons(){
@@ -33,4 +42,18 @@ void GroupsPathsButtonGroup::uncheck(){
     if(buttonGroup->checkedButton())
         buttonGroup->checkedButton()->setChecked(false);
     buttonGroup->setExclusive(true);
+}
+
+void GroupsPathsButtonGroup::deleteButtons(){
+    qDebug() << "GroupButtonGroup::deleteButtons called";
+    layout->removeWidget(modifyEdit);
+    while(QLayoutItem* item = layout->takeAt(0)){
+        if(item){
+            if(QWidget* button = item->widget())
+                delete button;
+        } else {
+            qDebug() << "oops";
+        }
+    }
+    layout->addWidget(modifyEdit);
 }
