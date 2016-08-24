@@ -20,6 +20,7 @@ public:
     QVBoxLayout* getLayout(void) const { return layout; }
 
     void deleteButtons(void);
+    void setEnabledGroup(const bool enable);
 
 public:
     void createButtons(void);

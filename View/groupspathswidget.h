@@ -49,6 +49,7 @@ signals:
     void newPathGroup(QString);
     void messageCreationGroup(QString, QString);
     void codeEditGroup(int);
+    void modifiedGroup(QString);
 
 public slots:
     int checkGroupName(QString name);

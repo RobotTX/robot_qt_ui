@@ -24,13 +24,13 @@ GroupsPathsButtonGroup::GroupsPathsButtonGroup(QWidget *_parent, QSharedPointer<
 
 void GroupsPathsButtonGroup::createButtons(){
     qDebug() << "GroupsPathsButtonGroup::createButtons called";
-
+    int i(0);
     QMapIterator<QString, QSharedPointer<Paths::CollectionPaths>> it_paths_groups(*(paths->getGroups()));
     while(it_paths_groups.hasNext()){
         it_paths_groups.next();
         CustomPushButton* groupButton = new CustomPushButton(it_paths_groups.key(), this, true);
 
-        buttonGroup->addButton(groupButton);
+        buttonGroup->addButton(groupButton, i++);
         layout->addWidget(groupButton);
         groupButton->setIcon(QIcon(":/icons/folder.png"));
         groupButton->setIconSize(BUTTON_SIZE);
@@ -56,4 +56,10 @@ void GroupsPathsButtonGroup::deleteButtons(){
         }
     }
     layout->addWidget(modifyEdit);
+}
+
+void GroupsPathsButtonGroup::setEnabledGroup(const bool enable){
+    qDebug() << "GroupButtonGroup::setEnabled called";
+    foreach(QAbstractButton* button, buttonGroup->buttons())
+        button->setEnabled(enable);
 }

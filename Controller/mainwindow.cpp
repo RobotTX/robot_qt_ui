@@ -214,6 +214,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
     connect(leftMenu->getGroupsPathsWidget(), SIGNAL(newPathGroup(QString)), this, SLOT(saveGroupPaths(QString)));
     connect(leftMenu->getGroupsPathsWidget(), SIGNAL(messageCreationGroup(QString,QString)), this, SLOT(setMessageCreationGroup(QString,QString)));
+    connect(leftMenu->getGroupsPathsWidget(), SIGNAL(modifiedGroup(QString)), this, SLOT(modifyGroupPathsWithEnter(QString)));
 
     mainLayout->addLayout(bottom);
     graphicsView->setStyleSheet("CustomQGraphicsView{background-color: " + background_map_view + "}");
@@ -3610,11 +3611,17 @@ void MainWindow::editGroupPaths(){
     leftMenu->getGroupsPathsWidget()->getActionButtons()->getEditButton()->setToolTip("Choose a new name for your group and press the ENTER key");
 
     int btnIndex = leftMenu->getGroupsPathsWidget()->getButtonGroup()->getButtonGroup()->checkedId();
-
+    qDebug() << "index" << btnIndex;
     leftMenu->getGroupsPathsWidget()->setCreatingGroup(false);
+
+    /// hides the button so we can show the QLineEdit on top of it
+    leftMenu->getGroupsPathsWidget()->getButtonGroup()->getButtonGroup()->button(btnIndex)->hide();
 
     /// disables the buttons
     leftMenu->getGroupsPathsWidget()->getActionButtons()->disableAll();
+
+    /// disables the QButtonGroup
+    leftMenu->getGroupsPathsWidget()->getButtonGroup()->setEnabledGroup(false);
 
     /// we hide those in case the previous button clicked was the plus button
     /*
@@ -3719,6 +3726,32 @@ void MainWindow::saveGroupPaths(QString name){
         topLayout->setLabelDelay(TEXT_COLOR_DANGER, "The name of your group cannot be empty", 2500);
     else
         topLayout->setLabelDelay(TEXT_COLOR_DANGER, "You cannot choose : " + name + " as a new name for your group because another group already has this name", 2500);
+}
+
+void MainWindow::modifyGroupPathsWithEnter(QString name){
+    name = name.simplified();
+    qDebug() << "modifying group paths after enter key pressed from" << pointsLeftWidget->getLastCheckedId() << "to" << name;
+
+    //topLayout->setEnabled(true);
+    //setEnableAll(true);
+
+    /// Update the model
+    QSharedPointer<Paths::CollectionPaths> value = paths->getGroups()->value(leftMenu->getGroupsPathsWidget()->getButtonGroup()->getButtonGroup()->checkedButton()->text());
+    paths->getGroups()->remove(leftMenu->getGroupsPathsWidget()->getButtonGroup()->getButtonGroup()->checkedButton()->text());
+    paths->getGroups()->insert(name, value);
+
+    leftMenu->getGroupsPathsWidget()->updateGroupsPaths();
+
+    /// enables the plus button
+    leftMenu->getGroupsPathsWidget()->getActionButtons()->getPlusButton()->setEnabled(true);
+
+    /// enables the buttons
+    //leftMenu->getGroupsPathsWidget()->getButtonGroup()->setEnabled(true);
+    //leftMenu->getGroupsPathsWidget()->disableButtons();
+    leftMenu->getGroupsPathsWidget()->getButtonGroup()->getModifyEdit()->hide();
+
+    leftMenu->getGroupsPathsWidget()->setLastCheckedButton("");
+    topLayout->setLabelDelay(TEXT_COLOR_SUCCESS, "You have successfully modified the name of your group", 1500);
 }
 
 /**********************************************************************************************************************************/

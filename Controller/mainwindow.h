@@ -223,6 +223,7 @@ private slots:
     void createGroupPaths();
     void deleteGroupPaths();
     void saveGroupPaths(QString name);
+    void modifyGroupPathsWithEnter(QString name);
 
 private:
     Ui::MainWindow* ui;

@@ -128,12 +128,12 @@ void GroupsPathsWidget::keyPressEvent(QKeyEvent* event){
     if(!event->text().compare("\r")){
         if(creatingGroup)
             emit newPathGroup(groupNameEdit->text());
-        else{
-            /*
-            switch(groupButtonGroup->checkEditGroupName(groupButtonGroup->getModifyEdit()->text())){
+        else {
+            qDebug() << "editing group";
+            switch(checkEditGroupName(buttonGroup->getModifyEdit()->text())){
             case 0:
-                emit modifiedGroup(groupButtonGroup->getModifyEdit()->text());
-                setLastCheckedId("");
+                emit modifiedGroup(buttonGroup->getModifyEdit()->text());
+                setLastCheckedButton("");
                 break;
             case 1:
                 emit messageCreationGroup(TEXT_COLOR_DANGER, "The name of your group cannot be empty");
@@ -145,7 +145,6 @@ void GroupsPathsWidget::keyPressEvent(QKeyEvent* event){
                 qDebug() << "if you get here you probably forgot to implement the behavior for one or more error codes";
                 break;
             }
-            */
         }
     }
 }
@@ -247,6 +246,9 @@ void GroupsPathsWidget::hideEvent(QHideEvent *event){
     /// resets the buttons so we can click them
     buttonGroup->setEnabled(true);
     QWidget::hideEvent(event);
+    buttonGroup->setEnabledGroup(true);
+    buttonGroup->deleteButtons();
+    buttonGroup->createButtons();
 }
 
 void GroupsPathsWidget::hideCreationWidgets(){
