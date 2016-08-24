@@ -21,7 +21,7 @@ public:
     typedef QMap<QString, QSharedPointer<CollectionPaths>> Groups;
 
 public:
-    Paths(MainWindow *parent);
+    Paths(MainWindow *parent = Q_NULLPTR);
 
     QSharedPointer<Groups> getGroups(void) const { return groups; }
     void setGroups(QSharedPointer<Groups> _groups) { groups = _groups; }

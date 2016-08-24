@@ -93,22 +93,33 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
     QHBoxLayout* bottom = new QHBoxLayout();
 
-    paths = QSharedPointer<Paths>(new Paths(this));
+    /************************** NO NEED AFTER FIRST TIME INIT **************************/
+    QSharedPointer<Paths> tmpPaths = QSharedPointer<Paths>(new Paths(this));
 
-    paths->createGroup("monday");
-    paths->createGroup("tuesday");
-    paths->createGroup("monday");
-    paths->createPath("monday", "room1");
-    paths->createPath("tuesday", "room2");
-    paths->createPath("tuesday", "room3");
-    paths->createPath("tuesday", "room2");
-    paths->createPath("wednesday", "room3");
+    tmpPaths->createGroup("monday");
+    tmpPaths->createGroup("tuesday");
+    tmpPaths->createGroup("monday");
+    tmpPaths->createPath("monday", "room1");
+    tmpPaths->createPath("tuesday", "room2");
+    tmpPaths->createPath("tuesday", "room3");
+    tmpPaths->createPath("tuesday", "room2");
+    tmpPaths->createPath("wednesday", "room3");
     Point point("First point", 4.2, 3.1);
-    paths->addPathPoint("monday", "room1", QSharedPointer<PathPoint>(new PathPoint(point, PathPoint::Action::HUMAN_ACTION, 2)));
-    paths->addPathPoint("wednesday", "room1", QSharedPointer<PathPoint>(new PathPoint(point, PathPoint::Action::HUMAN_ACTION, 2)));
-    paths->addPathPoint("monday", "room1", QSharedPointer<PathPoint>(new PathPoint(point, PathPoint::Action::HUMAN_ACTION, 2)));
-    paths->addPathPoint("tuesday", "room4", QSharedPointer<PathPoint>(new PathPoint(point, PathPoint::Action::HUMAN_ACTION, 2)));
-    paths->addPathPoint("tuesday", "room2", QSharedPointer<PathPoint>(new PathPoint(point, PathPoint::Action::HUMAN_ACTION, 2)));
+    tmpPaths->addPathPoint("monday", "room1", QSharedPointer<PathPoint>(new PathPoint(point, PathPoint::Action::HUMAN_ACTION, 2)));
+    tmpPaths->addPathPoint("wednesday", "room1", QSharedPointer<PathPoint>(new PathPoint(point, PathPoint::Action::HUMAN_ACTION, 2)));
+    tmpPaths->addPathPoint("monday", "room1", QSharedPointer<PathPoint>(new PathPoint(point, PathPoint::Action::HUMAN_ACTION, 2)));
+    tmpPaths->addPathPoint("tuesday", "room4", QSharedPointer<PathPoint>(new PathPoint(point, PathPoint::Action::HUMAN_ACTION, 2)));
+    tmpPaths->addPathPoint("tuesday", "room2", QSharedPointer<PathPoint>(new PathPoint(point, PathPoint::Action::HUMAN_ACTION, 2)));
+
+    QFile pathFile(PATHS_PATH);
+    pathFile.resize(0);
+    pathFile.open(QIODevice::WriteOnly);
+    QDataStream out(&pathFile);
+    out << *tmpPaths;
+    pathFile.close();
+    /*****************************************************/
+
+    initializePaths();
 
     initializePoints();
 
@@ -3537,6 +3548,21 @@ void MainWindow::choosePointName(QString message){
 //                                          PATHS
 
 /**********************************************************************************************************************************/
+
+void MainWindow::initializePaths(){
+    paths = QSharedPointer<Paths>(new Paths(this));
+
+    QFile pathFile(PATHS_PATH);
+    pathFile.open(QIODevice::ReadOnly);
+    QDataStream in(&pathFile);
+
+    Paths tmpPaths;
+    in >> tmpPaths;
+    pathFile.close();
+
+    paths->setGroups(tmpPaths.getGroups());
+    paths->displayGroups();
+}
 
 void MainWindow::pathBtnEvent(){
     hideAllWidgets();
