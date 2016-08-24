@@ -18,6 +18,7 @@ public:
 
 public:
     void createButtons(void);
+    void uncheck(void);
 
 private:
     QVBoxLayout* layout;

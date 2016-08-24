@@ -28,6 +28,8 @@
 #include "View/pathpainter.h"
 #include "View/displayselectedpath.h"
 #include "View/groupspathswidget.h"
+#include "Model/paths.h"
+#include "View/displaypathgroup.h"
 
 LeftMenu::LeftMenu(MainWindow* _parent, QSharedPointer<Points> const& _points,
                    const QSharedPointer<Robots> &robots, const QSharedPointer<Points> &pointViews,
@@ -125,12 +127,6 @@ LeftMenu::LeftMenu(MainWindow* _parent, QSharedPointer<Points> const& _points,
     displaySelectedPath->hide();
     leftLayout->addWidget(displaySelectedPath);
 
-    /// Menu which displays the groups of paths
-    groupsPathsWidget = new GroupsPathsWidget(parent, points);
-    groupsPathsWidget->hide();
-    leftLayout->addWidget(groupsPathsWidget);
-
-
     connect(pathCreationWidget, SIGNAL(addPathPoint(QString, double, double)), pathPainter, SLOT(addPathPointSlot(QString, double, double)));
     connect(pathCreationWidget, SIGNAL(deletePathPoint(int)), pathPainter, SLOT(deletePathPointSlot(int)));
     connect(pathCreationWidget, SIGNAL(orderPathPointChanged(int, int)), pathPainter, SLOT(orderPathPointChangedSlot(int, int)));
@@ -151,6 +147,37 @@ LeftMenu::LeftMenu(MainWindow* _parent, QSharedPointer<Points> const& _points,
     /// to check the name of a point being edited
     connect(displaySelectedPoint, SIGNAL(invalidName(QString,CreatePointWidget::Error)), parent, SLOT(setMessageCreationPoint(QString,CreatePointWidget::Error)));
 
+    QSharedPointer<Paths> paths = QSharedPointer<Paths>(new Paths(_parent));
+
+    paths->createGroup("monday");
+    paths->createGroup("tuesday");
+    paths->createGroup("monday");
+    paths->createPath("monday", "room1");
+    paths->createPath("tuesday", "room2");
+    paths->createPath("tuesday", "room3");
+    paths->createPath("tuesday", "room2");
+    paths->createPath("wednesday", "room3");
+    Point point("First point", 4.2, 3.1);
+    paths->addPathPoint("monday", "room1", QSharedPointer<PathPoint>(new PathPoint(point, PathPoint::Action::HUMAN_ACTION, 2)));
+    paths->addPathPoint("wednesday", "room1", QSharedPointer<PathPoint>(new PathPoint(point, PathPoint::Action::HUMAN_ACTION, 2)));
+    paths->addPathPoint("monday", "room1", QSharedPointer<PathPoint>(new PathPoint(point, PathPoint::Action::HUMAN_ACTION, 2)));
+    paths->addPathPoint("tuesday", "room4", QSharedPointer<PathPoint>(new PathPoint(point, PathPoint::Action::HUMAN_ACTION, 2)));
+    paths->addPathPoint("tuesday", "room2", QSharedPointer<PathPoint>(new PathPoint(point, PathPoint::Action::HUMAN_ACTION, 2)));
+    paths->displayGroups();
+    /// Menu which displays the groups of paths
+    groupsPathsWidget = new GroupsPathsWidget(parent, paths);
+    groupsPathsWidget->hide();
+    leftLayout->addWidget(groupsPathsWidget);
+
+    /// Menu which displays a particular group of paths
+    pathGroup = new DisplayPathGroup(parent, paths);
+    pathGroup->hide();
+    leftLayout->addWidget(pathGroup);
+
+    connect(groupsPathsWidget->getActionButtons()->getGoButton(), SIGNAL(clicked()), parent, SLOT(displayGroupPaths()));
+    connect(groupsPathsWidget->getActionButtons()->getEditButton(), SIGNAL(clicked()), parent, SLOT(editGroupPaths()));
+    connect(groupsPathsWidget->getActionButtons()->getPlusButton(), SIGNAL(clicked()), parent, SLOT(createGroupPaths()));
+    connect(groupsPathsWidget->getActionButtons()->getMinusButton(), SIGNAL(clicked()), parent, SLOT(deleteGroupPaths()));
 
     hide();
     leftLayout->setContentsMargins(0,0,0,0);

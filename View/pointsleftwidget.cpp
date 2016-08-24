@@ -59,7 +59,7 @@ PointsLeftWidget::PointsLeftWidget(QMainWindow* _parent, QSharedPointer<Points> 
     groupButtonGroup = new GroupButtonGroup(points, this);
     scrollArea->setWidget(groupButtonGroup);
     downLayout->addWidget(scrollArea);
-    //downLayout->addWidget(groupButtonGroup);
+
     creationLayout = new QHBoxLayout();
     saveButton = new QPushButton("Save", this);
     saveButton->setAutoDefault(true);
@@ -118,7 +118,7 @@ PointsLeftWidget::PointsLeftWidget(QMainWindow* _parent, QSharedPointer<Points> 
     setMaximumWidth(_parent->width()*4/10);
     setMinimumWidth(_parent->width()*4/10);
     downLayout->setAlignment(Qt::AlignBottom);
-    downLayout->setContentsMargins(10,0,30,0);
+    downLayout->setContentsMargins(10, 0, 30, 0);
     layout->addLayout(downLayout);
     layout->setContentsMargins(0,0,0,0);
     creationLayout->setContentsMargins(0, 0, 0, 20);

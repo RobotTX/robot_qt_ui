@@ -35,3 +35,5 @@ void PathButtonGroup::setGroupPaths(const QString groupName){
         }
     }
 }
+
+

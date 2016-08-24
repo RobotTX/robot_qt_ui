@@ -39,17 +39,13 @@ class GroupsPathsWidget;
 #include <QSettings>
 
 
-#define XML_PATH "/home/m-a/Documents/QtProject/gobot-software/points.xml"
-#define ROBOTS_NAME_PATH "/home/m-a/Documents/QtProject/gobot-software/robotsName.dat"
-#define MAP_PATH "/home/m-a/Documents/QtProject/gobot-software/realMap.dat"
+//#define XML_PATH "/home/m-a/Documents/QtProject/gobot-software/points.xml"
+//#define ROBOTS_NAME_PATH "/home/m-a/Documents/QtProject/gobot-software/robotsName.dat"
+//#define MAP_PATH "/home/m-a/Documents/QtProject/gobot-software/realMap.dat"
 
-//#define XML_PATH "/home/joan/Qt/QtProjects/gobot-software/points.xml"
-//#define ROBOTS_NAME_PATH "/home/joan/Qt/QtProjects/gobot-software/robotsName.dat"
-//#define MAP_PATH "/home/joan/Qt/QtProjects/gobot-software/realMap.dat"
-
-//#define XML_PATH "/Users/fannylarradet/Desktop/GTRobots/gobot-software/points.xml"
-//#define ROBOTS_NAME_PATH "/Users/fannylarradet/Desktop/GTRobots/gobot-software/robotsName.dat"
-//#define MAP_PATH "/Users/fannylarradet/Desktop/GTRobots/gobot-software/realMap.dat"
+#define XML_PATH "/home/joan/Qt/QtProjects/gobot-software/points.xml"
+#define ROBOTS_NAME_PATH "/home/joan/Qt/QtProjects/gobot-software/robotsName.dat"
+#define MAP_PATH "/home/joan/Qt/QtProjects/gobot-software/realMap.dat"
 
 #define PI 3.14159265
 #define PORT_ROBOT_UPDATE 6000
@@ -216,6 +212,12 @@ private slots:
     void deletePathSlot(QString groupName, QString pathName);
     void editPathSlot(QString groupName, QString pathName);
     void displayPathSlot(QString groupName, QString pathName, bool display);
+
+    /// for menu paths
+    void displayGroupPaths();
+    void editGroupPaths();
+    void createGroupPaths();
+    void deleteGroupPaths();
 
 private:
     Ui::MainWindow* ui;

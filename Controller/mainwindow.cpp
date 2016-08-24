@@ -44,6 +44,8 @@
 #include "doubleclickablebutton.h"
 #include "View/displayselectedpath.h"
 #include "View/groupspathswidget.h"
+#include "View/displaypathgroup.h"
+#include "View/pathbuttongroup.h"
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow) {
     ui->setupUi(this);
@@ -3549,6 +3551,50 @@ void MainWindow::editPathSlot(QString groupName, QString pathName){
 void MainWindow::displayPathSlot(QString groupName, QString pathName, bool display){
     qDebug() << "MainWindow::displayPathSlot called on group :" << groupName << ", path :" << pathName << ", display :" << display;
 
+}
+
+void MainWindow::displayGroupPaths(){
+    qDebug() << "MainWindow::displayGroupPaths called";
+    leftMenu->getGroupsPathsWidget()->hide();
+    leftMenu->getPathGroupDisplayed()->show();
+}
+
+void MainWindow::editGroupPaths(){
+    qDebug() << "MainWindow::editGroupPaths called";
+}
+
+void MainWindow::createGroupPaths(){
+    qDebug() << "MainWindow::createGroupPaths called";
+    setMessageTop(TEXT_COLOR_INFO, "The name of your group cannot be empty");
+
+    leftMenu->getGroupsPathsWidget()->getGroupNameEdit()->setFocus();
+    leftMenu->getGroupsPathsWidget()->setCreatingGroup(true);
+    //leftMenu->getGroupsPathsWidget()->getPathButtonGroup()->uncheck();
+    /// resets the name edit field
+    leftMenu->getGroupsPathsWidget()->getGroupNameEdit()->setText("");
+    /// stops a user from creating a new group with no name
+    leftMenu->getGroupsPathsWidget()->getSaveButton()->setEnabled(false);
+    /// uncheck and disable the buttons
+    leftMenu->getGroupsPathsWidget()->getActionButtons()->uncheckAll();
+
+    leftMenu->getGroupsPathsWidget()->getActionButtons()->enableAll();
+
+    leftMenu->getGroupsPathsWidget()->getActionButtons()->getPlusButton()->setToolTip("Enter a name for your group and click \"save\" or click \"cancel\" to cancel");
+
+    /// to prevent the user from clicking on the buttons
+    leftMenu->getGroupsPathsWidget()->getPathButtonGroup()->setEnabled(false);
+    //leftMenu->getGroupsPathsWidget()->getReturnButton()->setEnabled(false);
+    //leftMenu->getGroupsPathsWidget()->getCloseButton()->setEnabled(false);
+
+    /// here we allow a user to create a new group
+    leftMenu->getGroupsPathsWidget()->getGroupNameEdit()->show();
+    leftMenu->getGroupsPathsWidget()->getGroupNameLabel()->show();
+    leftMenu->getGroupsPathsWidget()->getCancelButton()->show();
+    leftMenu->getGroupsPathsWidget()->getSaveButton()->show();
+}
+
+void MainWindow::deleteGroupPaths(){
+    qDebug() << "MainWindow::deleteGroupPaths called";
 }
 
 /**********************************************************************************************************************************/

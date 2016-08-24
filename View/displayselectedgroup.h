@@ -20,7 +20,7 @@ class Points;
  * contained by the group that was just clicked
  */
 
-class DisplaySelectedGroup: public QWidget{
+class DisplaySelectedGroup: public QWidget {
     Q_OBJECT
 public:
     DisplaySelectedGroup(QMainWindow *_parent, const QSharedPointer<Points> &_points);

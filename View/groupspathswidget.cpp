@@ -7,48 +7,115 @@
 #include "Model/point.h"
 #include "View/groupspathsbuttongroup.h"
 #include "View/pathbuttongroup.h"
+#include "View/customizedlineedit.h"
+#include <QAbstractButton>
+#include <QPushButton>
+#include "View/customscrollarea.h"
+#include <QHBoxLayout>
 
-GroupsPathsWidget::GroupsPathsWidget(MainWindow* _parent, const QSharedPointer<Points> &_points): QWidget(_parent), points(_points)
+GroupsPathsWidget::GroupsPathsWidget(MainWindow* _parent, const QSharedPointer<Paths> &_paths): QWidget(_parent), paths(_paths), lastCheckedButton("")
 {
+    scrollArea = new CustomScrollArea(this);
+
     layout = new QVBoxLayout(this);
 
+    QVBoxLayout* downLayout = new QVBoxLayout();
+
+    groupNameLabel = new QLabel("New group's name : ", this);
+    groupNameLabel->hide();
+    groupNameEdit = new CustomizedLineEdit(this);
+    groupNameEdit->hide();
+
+    downLayout->addWidget(groupNameEdit);
+    downLayout->addWidget(groupNameLabel);
+
+    /// to modify the names of groups of paths
+    modifyEdit = new CustomizedLineEdit(this);
+    modifyEdit->setFixedWidth(1.29*modifyEdit->width());
+    modifyEdit->hide();
+
     actionButtons = new TopLeftMenu(this);
-    actionButtons->getPlusButton()->setToolTip("Click to create a new group of paths");
-    actionButtons->getMinusButton()->setToolTip("Click to remove a group of paths");
+
+    /// initializes the appropriate tooltips
+    actionButtons->getEditButton()->setToolTip("Select a group of paths and click here to modify it");
+    actionButtons->getMinusButton()->setToolTip("Select a group of paths and click here to delete it");
+    actionButtons->getGoButton()->setToolTip("Select a group of paths and click here to display its paths");
+    actionButtons->getPlusButton()->setToolTip("Click here to add a new group of paths");
+
+    /// disables buttons until one of the group of paths is clicked
+    actionButtons->getEditButton()->setEnabled(false);
+    actionButtons->getMinusButton()->setEnabled(false);
+    actionButtons->getMapButton()->setEnabled(false);
+    actionButtons->getGoButton()->setEnabled(false);
+
     layout->addWidget(actionButtons);
 
-    paths = QSharedPointer<Paths>(new Paths(_parent));
-
-    paths->createGroup("monday");
-    paths->createGroup("tuesday");
-    paths->createGroup("monday");
-    paths->createPath("monday", "room1");
-    paths->createPath("tuesday", "room2");
-    paths->createPath("tuesday", "room3");
-    paths->createPath("tuesday", "room2");
-    paths->createPath("wednesday", "room3");
-    Point point("First point", 4.2, 3.1);
-    paths->addPathPoint("monday", "room1", QSharedPointer<PathPoint>(new PathPoint(point, PathPoint::Action::HUMAN_ACTION, 2)));
-    paths->addPathPoint("wednesday", "room1", QSharedPointer<PathPoint>(new PathPoint(point, PathPoint::Action::HUMAN_ACTION, 2)));
-    paths->addPathPoint("monday", "room1", QSharedPointer<PathPoint>(new PathPoint(point, PathPoint::Action::HUMAN_ACTION, 2)));
-    paths->addPathPoint("tuesday", "room4", QSharedPointer<PathPoint>(new PathPoint(point, PathPoint::Action::HUMAN_ACTION, 2)));
-    paths->addPathPoint("tuesday", "room2", QSharedPointer<PathPoint>(new PathPoint(point, PathPoint::Action::HUMAN_ACTION, 2)));
-    paths->displayGroups();
-
     buttonGroup = new GroupsPathsButtonGroup(_parent, paths);
+
+    scrollArea->setWidget(buttonGroup);
+    downLayout->addWidget(scrollArea);
+
     layout->addWidget(buttonGroup);
+    /// to enable the buttons
+    connect(buttonGroup->getButtonGroup(), SIGNAL(buttonClicked(QAbstractButton*)), this, SLOT(enableButtons(QAbstractButton*)));    
 
-    pathButtonGroup = new PathButtonGroup(this, paths);
-/*
-    foreach(QAbstractButton *button, buttonGroup->getButtonGroup()->buttons())
-        connect(buttonGroup->getButtonGroup(), SIGNAL(doubleClick), )
-        */
-/*
-    /// to handle double clicks
-    foreach(QAbstractButton *button, pathButtonGroup->getButtonGroup()->buttons())
-        connect(button, SIGNAL(doubleClick(QString)), _parent, SLOT(double(QString)));
-        */
+    creationLayout = new QHBoxLayout();
+    saveButton = new QPushButton("Save", this);
+    saveButton->setAutoDefault(true);
+    saveButton->hide();
+    saveButton->setEnabled(false);
+    cancelButton = new QPushButton("Cancel", this);
+    cancelButton->setAutoDefault(true);
+    cancelButton->hide();
+    creationLayout->addWidget(cancelButton);
+    creationLayout->addWidget(saveButton);
 
+    downLayout->setAlignment(Qt::AlignBottom);
     layout->setAlignment(Qt::AlignTop);
+    layout->addLayout(downLayout);
     hide();
+}
+
+void GroupsPathsWidget::enableButtons(QAbstractButton* button){
+
+    if(!button->text().compare(lastCheckedButton)){
+        buttonGroup->uncheck();
+        lastCheckedButton = "";
+        disableButtons();
+
+    } else {
+        qDebug() << "GroupsPathsWidget::enableButtons enabling buttons";
+        lastCheckedButton = button->text();
+        /*
+        groupButtonGroup->setEditedGroupName(button);
+        groupButtonGroup->getLayout()->removeWidget(groupButtonGroup->getModifyEdit());
+        groupButtonGroup->getLayout()->addWidget(groupButtonGroup->getModifyEdit());
+        */
+        disableButtons();
+        /// enables the minus button
+        actionButtons->getMinusButton()->setEnabled(true);
+
+        actionButtons->getMinusButton()->setToolTip("Click to remove the selected group");
+
+
+        /// enables the eye button
+        actionButtons->getGoButton()->setEnabled(true);
+        actionButtons->getGoButton()->setToolTip("Click to display the paths of this group");
+
+        /// enables the edit button
+        actionButtons->getEditButton()->setEnabled(true);
+        actionButtons->getEditButton()->setToolTip("Click to modify the selected group");
+    }
+}
+
+void GroupsPathsWidget::disableButtons(){
+    qDebug() << "GroupsPathsWidget disableButtons called";
+    actionButtons->getMinusButton()->setEnabled(false);
+    actionButtons->getMinusButton()->setToolTip("Select a group of paths and click here to delete it");
+
+    actionButtons->getGoButton()->setEnabled(false);
+    actionButtons->getGoButton()->setToolTip("Select a group of paths and click here to display its paths");
+
+    actionButtons->getEditButton()->setEnabled(false);
+    actionButtons->getEditButton()->setToolTip("Select a group of paths and click here to modify it");
 }

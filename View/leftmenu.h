@@ -22,6 +22,7 @@ class MainWindow;
 class Map;
 class PathPainter;
 class GroupsPathsWidget;
+class DisplayPathGroup;
 
 #include <QWidget>
 #include <QSharedPointer>
@@ -52,7 +53,7 @@ public:
     QWidget* getLastWidget() const {return lastWidget; }
     DisplaySelectedPath* getDisplaySelectedPath(void) const { return displaySelectedPath; }
     GroupsPathsWidget* getGroupsPathsWidget(void) const { return groupsPathsWidget; }
-
+    DisplayPathGroup* getPathGroupDisplayed(void) const { return pathGroup; }
 
     void showBackButton(QString name);
     void hideBackButton();
@@ -81,7 +82,7 @@ private:
     MainWindow* parent;
     QSharedPointer<Points> points;
     DisplaySelectedPath* displaySelectedPath;
-
+    DisplayPathGroup* pathGroup;
     QString lastCheckedId;
 
 };
