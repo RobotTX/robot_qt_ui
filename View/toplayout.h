@@ -3,7 +3,7 @@
 
 class QHBoxLayout;
 class QLabel;
-class QPushButton;
+class CustomPushButton;
 
 #include <QWidget>
 #include <QMainWindow>
@@ -33,12 +33,12 @@ public:
 private:
     QHBoxLayout* layout;
     QLabel* label;
-    QPushButton* menuBtn;
-    QPushButton* connectBtn;
-    QPushButton* closeBtn;
-    QPushButton* centerBtn;
-    QPushButton* settingBtn;
-    QPushButton* saveMapBtn;
+    CustomPushButton* menuBtn;
+    CustomPushButton* connectBtn;
+    CustomPushButton* closeBtn;
+    CustomPushButton* centerBtn;
+    CustomPushButton* settingBtn;
+    CustomPushButton* saveMapBtn;
 
     QPair<QString, QString> lastMessage;
 };

@@ -12,7 +12,6 @@
 #include "Model/xmlparser.h"
 #include "View/spacewidget.h"
 #include "Model/map.h"
-#include "View/buttonmenu.h"
 #include "toplayout.h"
 #include "Model/robots.h"
 #include "Model/robot.h"
@@ -20,6 +19,7 @@
 #include "Model/pathpoint.h"
 #include "View/displayselectedpointrobots.h"
 #include "View/customscrollarea.h"
+#include "View/custompushbutton.h"
 
 DisplaySelectedPoint::DisplaySelectedPoint(QMainWindow *const _parent,  QSharedPointer<Robots> const _robots, QSharedPointer<Points> const& _points, QSharedPointer<Map> const& _map, QSharedPointer<PointView> _pointView):
     QWidget(_parent), map(_map), pointView(_pointView), parent(_parent), points(_points){
@@ -63,10 +63,10 @@ DisplaySelectedPoint::DisplaySelectedPoint(QMainWindow *const _parent,  QSharedP
 
     scrollLayout->addLayout(infoLayout);
 
-    cancelButton = new QPushButton("Cancel", this);
+    cancelButton = new CustomPushButton("Cancel", this);
     cancelButton->hide();
 
-    saveButton = new QPushButton("Save", this);
+    saveButton = new CustomPushButton("Save", this);
     saveButton->hide();
 
     editLayout = new QHBoxLayout();

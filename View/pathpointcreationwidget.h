@@ -4,7 +4,7 @@
 class QVBoxLayout;
 class QHBoxLayout;
 class QLabel;
-class QPushButton;
+class CustomPushButton;
 class QLineEdit;
 class QComboBox;
 
@@ -40,8 +40,8 @@ public:
     int getPosX(void) const { return posX; }
     int getPosY(void) const { return posY; }
     bool isTemporary(void) const { return name.contains(PATH_POINT_NAME); }
-    QPushButton* getCancelBtn(void) const { return cancelBtn; }
-    QPushButton* getSaveEditBtn(void) const { return saveEditBtn; }
+    CustomPushButton* getCancelBtn(void) const { return cancelBtn; }
+    CustomPushButton* getSaveEditBtn(void) const { return saveEditBtn; }
     QWidget* getTimeWidget(void) const { return timeWidget; }
     QWidget* getEditWidget(void) const { return editWidget; }
     QWidget* getPathWidget(void) const { return pathWidget; }
@@ -64,8 +64,8 @@ private:
     QVBoxLayout* rightLayout ;
     QLabel* pointLabel;
     QComboBox* actionBtn;
-    QPushButton* saveEditBtn;
-    QPushButton* cancelBtn;
+    CustomPushButton* saveEditBtn;
+    CustomPushButton* cancelBtn;
     QLineEdit* timeEdit;
     QWidget* timeWidget;
     QWidget* actionWidget;

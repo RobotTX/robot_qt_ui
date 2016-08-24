@@ -3,7 +3,6 @@
 
 class CustomScrollArea;
 class QVBoxLayout;
-class QPushButton;
 class QHBoxLayout;
 class QMainWindow;
 class QLabel;

@@ -23,11 +23,11 @@
 #include "Model/points.h"
 #include "Model/xmlparser.h"
 #include "Controller/mainwindow.h"
-#include "buttonmenu.h"
 #include "colors.h"
 #include "View/pathpainter.h"
 #include "View/displayselectedpath.h"
 #include "View/groupspathswidget.h"
+#include "View/custompushbutton.h"
 
 LeftMenu::LeftMenu(MainWindow* _parent, QSharedPointer<Points> const& _points,
                    const QSharedPointer<Robots> &robots, const QSharedPointer<Points> &pointViews,
@@ -40,17 +40,15 @@ LeftMenu::LeftMenu(MainWindow* _parent, QSharedPointer<Points> const& _points,
     QVBoxLayout * globalLayout  = new QVBoxLayout(this);
     QHBoxLayout * topLayout  = new QHBoxLayout();
 
-    returnButton = new QPushButton(QIcon(":/icons/arrowLeft.png"), " Return", this);
-    returnButton->setAutoDefault(true);
+    returnButton = new CustomPushButton(QIcon(":/icons/arrowLeft.png"), " Return", this);
+    //returnButton->setAutoDefault(true);
     returnButton->setDefault(true);
     returnButton->setIconSize(parent->size()/10);
-    returnButton->setStyleSheet("QPushButton{color: black;background-color:"+menu_button_color+"; border: none;}QPushButton:hover{background-color:"+button_hover_color+"; }");
     connect(returnButton, SIGNAL(clicked()), parent, SLOT(backEvent()));
 
-    closeBtn = new QPushButton(QIcon(":/icons/cropped_close.png"), "", this);
+    closeBtn = new CustomPushButton(QIcon(":/icons/cropped_close.png"), "", this);
     closeBtn->setIconSize(parent->size()/30);
-    closeBtn->setFlat(true);
-    closeBtn->setStyleSheet("QPushButton{color: black;background-color:"+menu_button_color+"; }QPushButton:hover{background-color:"+button_hover_color+"; }");
+    closeBtn->addStyleSheet("QPushButton {padding-top: 15px; padding-bottom: 15px;}");
 
     returnButton->hide();
     topLayout->addWidget(returnButton,Qt::AlignLeft);
@@ -153,7 +151,7 @@ LeftMenu::LeftMenu(MainWindow* _parent, QSharedPointer<Points> const& _points,
 
 
     hide();
-    leftLayout->setContentsMargins(0,0,0,0);
+    //leftLayout->setContentsMargins(0,0,0,0);
     setMaximumWidth(parent->width()*4/10);
     setMinimumWidth(parent->width()*4/10);
     leftLayout->setAlignment(Qt::AlignTop);

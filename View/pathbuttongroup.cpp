@@ -1,8 +1,7 @@
 #include "pathbuttongroup.h"
 #include <QVBoxLayout>
 #include "Model/paths.h"
-#include "View/colors.h"
-#include "View/doubleclickablebutton.h"
+#include "View/custompushbutton.h"
 
 PathButtonGroup::PathButtonGroup(QWidget *_parent, QSharedPointer<Paths> _paths): QWidget(_parent), paths(_paths)
 {
@@ -23,11 +22,8 @@ void PathButtonGroup::setGroupPaths(const QString groupName){
         while(it_paths.hasNext()){
             it_paths.next();
 
-            DoubleClickableButton* groupButton = new DoubleClickableButton(it_paths.key(), this);
-            groupButton->setAutoDefault(true);
-            groupButton->setFlat(true);
-            groupButton->setStyleSheet("QPushButton {color: "+text_color+";text-align:left;border: 4px; padding: 10px;}QPushButton:hover{background-color: "+button_hover_color+";}QPushButton:checked{background-color: "+button_checked_color+";}");
-
+            CustomPushButton* groupButton = new CustomPushButton(it_paths.key(), this);
+            //groupButton->setAutoDefault(true);
             buttonGroup->addButton(groupButton);
             layout->addWidget(groupButton);
 

@@ -4,7 +4,7 @@
 class PointView;
 class QHBoxLayout;
 class QVBoxLayout;
-class QPushButton;
+class CustomPushButton;
 class QLabel;
 class QMainWindow;
 class QHBoxLayout;
@@ -82,8 +82,8 @@ private:
     QLabel* posXLabel;
     QLabel* posYLabel;
     QSharedPointer<Points> points;
-    QPushButton* saveBtn;
-    QPushButton* cancelBtn;
+    CustomPushButton* saveBtn;
+    CustomPushButton* cancelBtn;
     QComboBox* groupBox;
     QHBoxLayout* groupLayout;
     QLabel* groupLabel;

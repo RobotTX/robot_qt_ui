@@ -6,15 +6,14 @@
 #include "Model/robot.h"
 #include "Model/point.h"
 #include <QVBoxLayout>
-#include <QPushButton>
 #include <QMainWindow>
 #include <QProgressBar>
 #include "mainwindow.h"
 #include <QDebug>
 #include "topleftmenu.h"
 #include "customscrollarea.h"
-#include "buttonmenu.h"
 #include "View/pointview.h"
+#include "View/custompushbutton.h"
 
 
 SelectedRobotWidget::SelectedRobotWidget(QMainWindow* parent): QWidget(parent){
@@ -39,9 +38,7 @@ SelectedRobotWidget::SelectedRobotWidget(QMainWindow* parent): QWidget(parent){
     inLayout->addWidget(name);
 
     /// Button which allow the user to scan the map from a robot
-    scanBtn = new QPushButton(QIcon(":/icons/map.png"),"Scan a map", this);
-    scanBtn->setCheckable(true);
-    scanBtn->setStyleSheet ("text-align: left");
+    scanBtn = new CustomPushButton(QIcon(":/icons/map.png"),"Scan a map", this, true);
     scanBtn->setIconSize(parent->size()/10);
     inLayout->addWidget(scanBtn);
     connect(scanBtn, SIGNAL(clicked()), parent, SLOT(connectToRobot()));
@@ -76,7 +73,7 @@ SelectedRobotWidget::SelectedRobotWidget(QMainWindow* parent): QWidget(parent){
     inLayout->addWidget(homeLabel);
     inLayout->addWidget(homeLabel2);
 
-    goHome = new QPushButton("Go Home", this);
+    goHome = new CustomPushButton("Go Home", this);
     goHome->setMinimumHeight(30);
     goHome->setMaximumHeight(30);
     goHome->hide();

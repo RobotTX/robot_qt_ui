@@ -3,7 +3,6 @@
 
 class RobotView;
 class QVBoxLayout;
-class QPushButton;
 class PathPoint;
 class QLabel;
 

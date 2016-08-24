@@ -5,7 +5,7 @@ class PathWidget;
 class CustomScrollArea;
 class RobotView;
 class QVBoxLayout;
-class QPushButton;
+class CustomPushButton;
 class QMainWindow;
 class QProgressBar;
 class TopLeftMenu;
@@ -29,7 +29,7 @@ public:
      * Update the widget with the selected robot
      */
 
-    QPushButton* getScanBtn(void) const {return scanBtn;}
+    CustomPushButton* getScanBtn(void) const {return scanBtn;}
     QString getName(void) const { return name->text(); }
     PathWidget* getPathWidget(void) const {return pathWidget;}
     QLabel* getNoPath(void) const { return noPath; }
@@ -47,10 +47,10 @@ private:
     RobotView* robotView;
     QProgressBar* batteryLevel;
     QLabel* wifiNameLabel;
-    QPushButton* goHome;
+    CustomPushButton* goHome;
     QLabel* ipAddressLabel;
     PathWidget* pathWidget;
-    QPushButton* scanBtn;
+    CustomPushButton* scanBtn;
     QLabel* name;
     TopLeftMenu* actionButtons ;
     QLabel* noPath ;

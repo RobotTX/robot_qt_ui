@@ -22,7 +22,7 @@ class PathCreationWidget;
 class QAbstractButton;
 class QVBoxLayout;
 class PathPainter;
-class DoubleClickableButton;
+class CustomPushButton;
 class GroupsPathsWidget;
 
 #include "View/createpointwidget.h"

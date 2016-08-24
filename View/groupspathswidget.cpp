@@ -7,6 +7,7 @@
 #include "Model/point.h"
 #include "View/groupspathsbuttongroup.h"
 #include "View/pathbuttongroup.h"
+#include "View/custompushbutton.h"
 
 GroupsPathsWidget::GroupsPathsWidget(MainWindow* _parent, const QSharedPointer<Points> &_points): QWidget(_parent), points(_points)
 {

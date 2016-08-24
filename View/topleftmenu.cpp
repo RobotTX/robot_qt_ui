@@ -3,7 +3,8 @@
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QSize>
-#include "colors.h"
+#include "View/colors.h"
+#include "View/custompushbutton.h"
 
 TopLeftMenu::TopLeftMenu(QWidget * parent): QWidget(parent){
 
@@ -18,30 +19,30 @@ TopLeftMenu::TopLeftMenu(QWidget * parent): QWidget(parent){
     int sizeh = this->height();
 
 
-    plusButton = new ButtonMenu(QIcon(":/icons/plus.png"),"", this);
+    plusButton = new CustomPushButton(QIcon(":/icons/plus.png"), "", this);
 
     plusButton->setIconSize(QSize(sizeI,sizeI));
     plusButton->setMaximumWidth(sizew);
     plusButton->setMinimumWidth(sizew);
-    plusButton->setAutoDefault(true);
+    //plusButton->setAutoDefault(true);
 
 
-    minusButton = new QPushButton(QIcon(":/icons/minus.png"),"", this);
+    minusButton = new CustomPushButton(QIcon(":/icons/minus.png"),"", this);
     minusButton->setIconSize(QSize(sizeI,sizeI));
     minusButton->setMaximumHeight(sizeh);
     minusButton->setMaximumWidth(plusButton->width());
     minusButton->setMinimumWidth(plusButton->width());
-    minusButton->setAutoDefault(true);
+    //minusButton->setAutoDefault(true);
 
 
     /// to force the user to choose a group or point first
 
-    editButton = new ButtonMenu(QIcon(":/icons/edit.png"),"", this);
+    editButton = new CustomPushButton(QIcon(":/icons/edit.png"),"", this);
     editButton->setIconSize(QSize(sizeI,sizeI));
     editButton->setMaximumHeight(sizeh);
     editButton->setMaximumWidth(plusButton->width());
     editButton->setMinimumWidth(plusButton->width());
-    editButton->setAutoDefault(true);
+    //editButton->setAutoDefault(true);
 
 
     /// to force the user to choose a group or point first
@@ -63,19 +64,19 @@ TopLeftMenu::TopLeftMenu(QWidget * parent): QWidget(parent){
     spaceWidget2->setMaximumWidth(plusButton->width()/5);
     spaceWidget2->setMinimumWidth(plusButton->width()/5);
 
-    mapButton = new QPushButton(QIcon(":/icons/eye.png"),"", this);
+    mapButton = new CustomPushButton(QIcon(":/icons/eye.png"),"", this);
     mapButton->setIconSize(QSize(sizeI,sizeI));
     mapButton->setMaximumHeight(sizeh);
     mapButton->setMaximumWidth(sizew);
     mapButton->setMinimumWidth(sizew);
-    mapButton->setAutoDefault(true);
+    //mapButton->setAutoDefault(true);
 
-    goButton = new QPushButton(QIcon(":/icons/go_inside.png"), "", this);
+    goButton = new CustomPushButton(QIcon(":/icons/go_inside.png"), "", this);
     goButton->setIconSize(QSize(sizeI,sizeI));
     goButton->setMaximumHeight(sizeh);
     goButton->setMaximumWidth(sizew);
     goButton->setMinimumWidth(sizew);
-    goButton->setAutoDefault(true);
+    //goButton->setAutoDefault(true);
 
 
     /// to force the user to choose first
@@ -91,11 +92,29 @@ TopLeftMenu::TopLeftMenu(QWidget * parent): QWidget(parent){
     spaceWidget = new SpaceWidget(SpaceWidget::SpaceOrientation::HORIZONTAL, this);
     layout->addWidget(spaceWidget);
 
-
+/*
     plusButton->setFlat(true);
 
     minusButton->setFlat(true);
-    minusButton->setStyleSheet("QPushButton{background-position: center center; border: 1px solid;       border-right-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, x3: 0, y3: 0, stop: 0 transparent, stop: 0.5 #d3d3d3, stop: 1 transparent);border-left:none; border-top:none; border-bottom:none; position: relative;}QPushButton:after {  content:''; background: grey;  position: absolute;  bottom: 0;  left: 0;  height: 50%; width: 1px;   }QPushButton:hover{ background-color: "+button_hover_color+";}");
+    minusButton->setStyleSheet(""
+                               "QPushButton{"
+                                   "background-position: center center; "
+                                   "border: 1px solid;"
+                                   "border-right-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, x3: 0, y3: 0, stop: 0 transparent, stop: 0.5 #d3d3d3, stop: 1 transparent);"
+                                   "border-left:none; border-top:none; border-bottom:none; position: relative;"
+                               "}"
+                               "QPushButton:after {"
+                                   "content:'';"
+                                   "background: grey;"
+                                   "position: absolute;"
+                                   "bottom: 0;"
+                                   "left: 0;"
+                                   "height: 50%"
+                                   "width: 1px;"
+                               "}"
+                               "QPushButton:hover{"
+                                   "background-color: " + button_hover_color + ";"
+                               "}");
 
     editButton->setFlat(true);
     editButton->setStyleSheet("QPushButton{background-position: center center;border: 1px;}""QPushButton:hover{ background-color: grey; }");
@@ -105,7 +124,7 @@ TopLeftMenu::TopLeftMenu(QWidget * parent): QWidget(parent){
 
     mapButton->setFlat(true);
     mapButton->setStyleSheet("QPushButton{background-position: center center;border: 1px;}""QPushButton:hover{ background-color: "+button_hover_color+";}QPushButton:checked{ background-color: "+button_checked_color+";}");
-
+*/
 
     setTabOrder(plusButton, minusButton);
     setTabOrder(minusButton, editButton);
@@ -134,7 +153,6 @@ void TopLeftMenu::uncheckAll(){
     goButton->setChecked(false);
     mapButton->setChecked(false);
 }
-
 
 void TopLeftMenu::checkAll(){
     plusButton->setChecked(true);

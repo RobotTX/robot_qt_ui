@@ -7,7 +7,7 @@ class GroupButtonGroup;
 class Points;
 class QMainWindow;
 class QVBoxLayout;
-class QPushButton;
+class CustomPushButton;
 class QLabel;
 class QLineEdit;
 class QHBoxLayout;
@@ -33,8 +33,8 @@ public:
     void setGroupDisplayed(const bool _groupDisplayed) { groupDisplayed = _groupDisplayed; }
     QSharedPointer<Points> getPoints(void) const { return points; }
 
-    QPushButton* getSaveButton(void) const { return saveButton; }
-    QPushButton* getCancelButton(void) const { return cancelButton; }
+    CustomPushButton* getSaveButton(void) const { return saveButton; }
+    CustomPushButton* getCancelButton(void) const { return cancelButton; }
 
     TopLeftMenu* getActionButtons(void) {return actionButtons;}
 
@@ -91,13 +91,8 @@ private:
 
     GroupButtonGroup* groupButtonGroup;
 
-    QPushButton* minusButton;
-    QPushButton* mapButton;
-    QPushButton* plusButton;
-    QPushButton* editButton;
-    QPushButton* eyeButton;
-    QPushButton* saveButton;
-    QPushButton* cancelButton;
+    CustomPushButton* saveButton;
+    CustomPushButton* cancelButton;
 
 
     QLabel* groupNameLabel;

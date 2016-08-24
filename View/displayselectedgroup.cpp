@@ -5,14 +5,13 @@
 #include <QVBoxLayout>
 #include <QDebug>
 #include <QIcon>
-#include <QPushButton>
 #include <QHBoxLayout>
 #include <QMainWindow>
 #include <QButtonGroup>
 #include <QLabel>
 #include "customscrollarea.h"
-#include "View/buttonmenu.h"
 #include "View/pointview.h"
+#include "View/custompushbutton.h"
 
 DisplaySelectedGroup::DisplaySelectedGroup(QMainWindow *parent, QSharedPointer<Points> const& _points) : QWidget(parent), points(_points){
     /// to be able to display a lot of groups and points2

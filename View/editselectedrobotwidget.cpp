@@ -4,7 +4,6 @@
 #include "Model/robot.h"
 #include "Model/point.h"
 #include <QVBoxLayout>
-#include <QPushButton>
 #include <QLabel>
 #include <QMainWindow>
 #include <QHBoxLayout>
@@ -15,6 +14,7 @@
 #include <QGridLayout>
 #include <pathwidget.h>
 #include "customscrollarea.h"
+#include "View/custompushbutton.h"
 
 
 EditSelectedRobotWidget::EditSelectedRobotWidget(QMainWindow * const parent, const QSharedPointer<Robots> _robots):QWidget(parent){
@@ -86,24 +86,19 @@ EditSelectedRobotWidget::EditSelectedRobotWidget(QMainWindow * const parent, con
 
     /// Home layout with the button to select the home
      homeLabel = new QLabel("Home : ", this);
-    homeBtn = new QPushButton(QIcon(":/icons/home.png"), "", this);
+    homeBtn = new CustomPushButton(QIcon(":/icons/home.png"), "Add Home", this);
     homeBtn->setIconSize(parent->size()/10);
-    homeBtn->setStyleSheet ("text-align: left");
     connect(homeBtn, SIGNAL(clicked()), parent, SLOT(editHomeEvent()));
     inLayout->addWidget(homeLabel);
     inLayout->addWidget(homeBtn);
 
     /// Button to add a path
-    addPathBtn = new QPushButton(QIcon(":/icons/plus.png"),"Add Path", this);
-    addPathBtn->setStyleSheet ("text-align: left");
-    //addPathBtn->hide();
+    addPathBtn = new CustomPushButton(QIcon(":/icons/plus.png"),"Add Path", this);
     addPathBtn->setIconSize(parent->size()/10);
     connect(addPathBtn, SIGNAL(clicked()), parent, SLOT(addPathSelecRobotBtnEvent()));
     inLayout->addWidget(addPathBtn);
 
-    deletePathBtn = new QPushButton(QIcon(":/icons/bin.png"),"Delete Path", this);
-    deletePathBtn->setStyleSheet ("text-align: left");
-    //addPathBtn->hide();
+    deletePathBtn = new CustomPushButton(QIcon(":/icons/bin.png"),"Delete Path", this);
     deletePathBtn->setIconSize(parent->size()/10);
     deletePathBtn->hide();
     connect(deletePathBtn, SIGNAL(clicked()), parent, SLOT(deletePathSelecRobotBtnEvent()));
@@ -120,8 +115,8 @@ EditSelectedRobotWidget::EditSelectedRobotWidget(QMainWindow * const parent, con
 
     QHBoxLayout* grid = new QHBoxLayout();
     /// Cancel & save buttons
-    cancelBtn = new QPushButton("Cancel", this);
-    saveBtn = new QPushButton("Save", this);
+    cancelBtn = new CustomPushButton("Cancel", this);
+    saveBtn = new CustomPushButton("Save", this);
 
     grid->addWidget(cancelBtn);
     grid->addWidget(saveBtn);

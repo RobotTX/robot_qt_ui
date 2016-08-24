@@ -53,13 +53,11 @@ HEADERS += Controller/cmdrobotthread.h \
            View/selectedrobotwidget.h \
            View/spacewidget.h \
            View/toplayout.h \
-           View/doubleclickablebutton.h \
            View/topleftmenu.h \
            Model/origin.h \
            Controller/updaterobotsthread.h \
            View/customizedlineedit.h \
            View/createpointwidget.h \
-           View/buttonmenu.h \
            Controller/sendnewmapthread.h \
            View/customscrollarea.h \
            View/colors.h \
@@ -68,7 +66,8 @@ HEADERS += Controller/cmdrobotthread.h \
            View/groupspathswidget.h \
            Model/paths.h \
     View/groupspathsbuttongroup.h \
-    View/pathbuttongroup.h
+    View/pathbuttongroup.h \
+    View/custompushbutton.h
 
 FORMS += Controller/mainwindow.ui
 
@@ -110,10 +109,8 @@ SOURCES += main.cpp \
            View/selectedrobotwidget.cpp \
            View/spacewidget.cpp \
            View/toplayout.cpp \
-           View/doubleclickablebutton.cpp \
            Controller/updaterobotsthread.cpp \
            View/customizedlineedit.cpp \
-           View/buttonmenu.cpp \
            View/createpointwidget.cpp \
            View/topleftmenu.cpp \
            Controller/sendnewmapthread.cpp \
@@ -123,7 +120,8 @@ SOURCES += main.cpp \
            View/groupspathswidget.cpp \
            Model/paths.cpp \
     View/groupspathsbuttongroup.cpp \
-    View/pathbuttongroup.cpp
+    View/pathbuttongroup.cpp \
+    View/custompushbutton.cpp
 
 RESOURCES += Resources/resources.qrc
 

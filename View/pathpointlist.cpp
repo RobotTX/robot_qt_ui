@@ -5,6 +5,7 @@
 #include <QComboBox>
 #include <QLineEdit>
 #include "colors.h"
+
 PathPointList::PathPointList(QWidget* parent): QListWidget(parent){
     setDragDropMode(QAbstractItemView::InternalMove);
     setFrameShape(QFrame::NoFrame);

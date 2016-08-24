@@ -4,7 +4,6 @@
 #include "Model/robot.h"
 #include "Model/points.h"
 #include <QVBoxLayout>
-#include <QPushButton>
 #include <QLabel>
 
 PathWidget::PathWidget(QWidget* _parent):QWidget(_parent){
