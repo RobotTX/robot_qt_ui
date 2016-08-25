@@ -215,7 +215,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     connect(leftMenu->getGroupsPathsWidget(), SIGNAL(messageCreationGroup(QString,QString)), this, SLOT(setMessageCreationGroup(QString,QString)));
 
     mainLayout->addLayout(bottom);
-    graphicsView->setStyleSheet("CustomQGraphicsView{background-color: " + background_map_view + "}");
+    graphicsView->setStyleSheet("CustomQGraphicsView {background-color: " + background_map_view + "}");
     setCentralWidget(mainWidget);
 
     /// to navigate with the tab key
@@ -227,15 +227,18 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
     /// Some style
 
+    setStyleSheet("QWidget {border: 1px solid red}"
+                  "QPushButton {border: 1px solid green}"
+                  "QLabel {border: 1px solid blue}");
     this->setAutoFillBackground(true);
-    rightLayout->setContentsMargins(0,0,0,0);
+    /*rightLayout->setContentsMargins(0,0,0,0);
     bottom->setContentsMargins(0,0,0,0);
     mainLayout->setContentsMargins(0,0,0,0);
     this->setContentsMargins(0,0,0,0);
     mainWidget->setContentsMargins(0,0,0,0);
     topLayout->setContentsMargins(0,0,0,0);
     bottomLayout->setContentsMargins(0,0,0,0);
-    mainLayout->setSpacing(0);
+    mainLayout->setSpacing(0);*/
 }
 
 MainWindow::~MainWindow(){
@@ -3552,6 +3555,21 @@ void MainWindow::choosePointName(QString message){
 void MainWindow::initializePaths(){
     paths = QSharedPointer<Paths>(new Paths(this));
 
+    deserializePaths();
+
+    paths->displayGroups();
+}
+
+void MainWindow::serializePaths(void){
+    QFile pathFile(PATHS_PATH);
+    pathFile.resize(0);
+    pathFile.open(QIODevice::WriteOnly);
+    QDataStream out(&pathFile);
+    out << *paths;
+    pathFile.close();
+}
+
+void MainWindow::deserializePaths(void){
     QFile pathFile(PATHS_PATH);
     pathFile.open(QIODevice::ReadOnly);
     QDataStream in(&pathFile);
@@ -3561,7 +3579,6 @@ void MainWindow::initializePaths(){
     pathFile.close();
 
     paths->setGroups(tmpPaths.getGroups());
-    paths->displayGroups();
 }
 
 void MainWindow::pathBtnEvent(){

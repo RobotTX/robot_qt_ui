@@ -84,13 +84,13 @@ DisplaySelectedPoint::DisplaySelectedPoint(QMainWindow *const _parent,  QSharedP
     setMaximumWidth(_parent->width()*4/10);
     setMinimumWidth(_parent->width()*4/10);
 
-    scrollLayout->setContentsMargins(20,0,0,0);
+    //scrollLayout->setContentsMargins(20,0,0,0);
     scrollLayout->setAlignment(Qt::AlignTop);
 
     layout->addWidget(scrollArea);
 
 
-    layout->setContentsMargins(0,0,0,0);
+    //layout->setContentsMargins(0,0,0,0);
 
 }
 

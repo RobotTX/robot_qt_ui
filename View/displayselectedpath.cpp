@@ -44,7 +44,7 @@ DisplaySelectedPath::DisplaySelectedPath(MainWindow *parent):QWidget(parent){
     connect(this, SIGNAL(displayPath(QString, QString, bool)), parent, SLOT(displayPathSlot(QString, QString, bool)));
 
     layout->setAlignment(Qt::AlignTop);
-    layout->setContentsMargins(0,0,0,0);
+    //layout->setContentsMargins(0,0,0,0);
 }
 
 void DisplaySelectedPath::updatePath(QString groupName, QString pathName, QVector<QSharedPointer<PathPoint>> path){

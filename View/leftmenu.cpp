@@ -163,7 +163,6 @@ LeftMenu::LeftMenu(MainWindow* _parent, QSharedPointer<Points> const& _points, Q
     connect(groupsPathsWidget->getActionButtons()->getMinusButton(), SIGNAL(clicked()), parent, SLOT(deleteGroupPaths()));
 
     hide();
-    //leftLayout->setContentsMargins(0,0,0,0);
     setMaximumWidth(parent->width()*4/10);
     setMinimumWidth(parent->width()*4/10);
     leftLayout->setAlignment(Qt::AlignTop);
@@ -177,9 +176,9 @@ LeftMenu::LeftMenu(MainWindow* _parent, QSharedPointer<Points> const& _points, Q
     }
 
     globalLayout->addLayout(leftLayout);
-    globalLayout->setContentsMargins(0, 10, 0, 0);
+    /*globalLayout->setContentsMargins(0, 10, 0, 0);
     topLayout->setContentsMargins(0, 0, 0, 0);
-    globalLayout->setSpacing(0);
+    globalLayout->setSpacing(0);*/
 
     // set black background
     QPalette Pal(palette());

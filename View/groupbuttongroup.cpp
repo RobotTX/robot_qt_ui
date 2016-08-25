@@ -67,7 +67,7 @@ GroupButtonGroup::GroupButtonGroup(const QSharedPointer<Points> &_points, QWidge
     }
 
     connect(modifyEdit, SIGNAL(textEdited(QString)), this, SLOT(checkEditGroupName(QString)));
-    layout->setContentsMargins(0,0,30,0);
+    //layout->setContentsMargins(0,0,30,0);
 
 }
 

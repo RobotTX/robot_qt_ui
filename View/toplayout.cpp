@@ -34,17 +34,17 @@ TopLayout::TopLayout(QMainWindow* parent): QWidget(parent), lastMessage(TEXT_COL
     layout->addWidget(connectBtn);
     connect(connectBtn, SIGNAL(clicked()), parent, SLOT(connectToRobot()));
 
-    saveMapBtn = new CustomPushButton(QIcon(":/icons/save_map.png"), "", this);
-    saveMapBtn->setIconSize(parent->size()/8);
+    saveMapBtn = new CustomPushButton(QIcon(":/icons/load_map.png"), "", this);
+    saveMapBtn->setIconSize(parent->size()/12);
     saveMapBtn->setMaximumWidth(40);
     saveMapBtn->setFocusPolicy(Qt::FocusPolicy::NoFocus);
     layout->addWidget(saveMapBtn);
-    saveMapBtn->setToolTip("Restore the state of the map");
+    saveMapBtn->setToolTip("Save the state of the map");
     connect(saveMapBtn, SIGNAL(clicked()), parent, SLOT(saveMapState()));
 
-    centerBtn = new CustomPushButton(QIcon(":/icons/center.png"), "", this);
-    centerBtn->setToolTip("Click to center the map");
-    centerBtn->setIconSize(parent->size()/8);
+    centerBtn = new CustomPushButton(QIcon(":/icons/save_map.png"), "", this);
+    centerBtn->setToolTip("Restore the state of the map");
+    centerBtn->setIconSize(parent->size()/12);
     centerBtn->setMaximumWidth(40);
     centerBtn->setFocusPolicy(Qt::FocusPolicy::NoFocus);
     layout->addWidget(centerBtn);
@@ -65,7 +65,7 @@ TopLayout::TopLayout(QMainWindow* parent): QWidget(parent), lastMessage(TEXT_COL
     label = new QLabel(this);
     label->setWordWrap(true);
     label->setStyleSheet("QLabel { color: " + QString(TEXT_COLOR_INFO) + ";  background:transparent;}");
-    label->setContentsMargins(30,0,0,0);
+    //label->setContentsMargins(30,0,0,0);
     layout->addWidget(label);
 
     CustomScrollArea* scrollArea = new CustomScrollArea(this);
@@ -86,31 +86,10 @@ TopLayout::TopLayout(QMainWindow* parent): QWidget(parent), lastMessage(TEXT_COL
     layout->addWidget(closeBtn);
     connect(closeBtn, SIGNAL(clicked()), parent, SLOT(quit()));
 
-    //layout->setContentsMargins(0, 0, 0, 0);
-    //this->setContentsMargins(0, 0, 0, 0);
-
-
 
 
     this->setMaximumHeight(parent->height()/5);
-   // this->setMaximumWidth(parent->width()*2);
-   // this->setMinimumWidth(parent->width()*2);
-/*
-    all->setMaximumHeight(this->height());
-    all->setMinimumHeight(this->height());
-
-    all->setMaximumWidth(this->width());
-    all->setMinimumWidth(this->width());
-*/
-
-   // all->setMaximumSize(parent->size());
-  //  this->setMaximumHeight(parent->height()/5);
-   // this->setMaximumWidth(parent->width());
-   // this->setMinimumWidth(parent->width());
-
-    this->setContentsMargins(0, 0, 0, 0);
-   // thisLayout->addWidget(all);
-   // this->setStyleSheet("QWidget{background-color: #5481a4}");
+    //this->setContentsMargins(0, 0, 0, 0);
     QPalette pal;
     pal.setColor(QPalette::Background, top_layout_color);
 

@@ -63,7 +63,7 @@ PathCreationWidget::PathCreationWidget(MainWindow *parent, const QSharedPointer<
 
     hide();
     layout->setAlignment(Qt::AlignTop);
-    layout->setContentsMargins(0, 0, 0, 0);
+    //layout->setContentsMargins(0, 0, 0, 0);
 }
 
 void PathCreationWidget::updatePath(const QVector<QSharedPointer<PathPoint>>& _path){

@@ -61,7 +61,7 @@ DisplaySelectedGroup::DisplaySelectedGroup(QMainWindow *parent, QSharedPointer<P
     layout->addWidget(scrollArea);
     setMaximumWidth(parent->width()*4/10);
     setMinimumWidth(parent->width()*4/10);
-    layout->setContentsMargins(0,0,0,0);
+    //layout->setContentsMargins(0,0,0,0);
 
     connect(this, SIGNAL(resetPathPointViews()), parent, SLOT(resetPathPointViewsSlot()));
 }

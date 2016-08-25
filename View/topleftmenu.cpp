@@ -11,8 +11,8 @@ TopLeftMenu::TopLeftMenu(QWidget * parent): QWidget(parent){
     setMaximumHeight(parent->height()*3);
 
     layout = new QVBoxLayout(this);
-    layout->setContentsMargins(0,0,0,0);
-    layout->setSpacing(0);
+    //layout->setContentsMargins(0,0,0,0);
+    //layout->setSpacing(0);
 
     int sizeI = this->width()/3;
     int sizew = (this->width()*1.6)/3;
@@ -48,8 +48,8 @@ TopLeftMenu::TopLeftMenu(QWidget * parent): QWidget(parent){
     /// to force the user to choose a group or point first
 
     grid = new QHBoxLayout();
-    grid->setContentsMargins(0,0,0,0);
-    grid->setSpacing(0);
+    //grid->setContentsMargins(0,0,0,0);
+    //grid->setSpacing(0);
 
 
     grid->addWidget(plusButton);
@@ -82,8 +82,8 @@ TopLeftMenu::TopLeftMenu(QWidget * parent): QWidget(parent){
     /// to force the user to choose first
 
     eyeMapLayout = new QHBoxLayout();
-    eyeMapLayout->setContentsMargins(plusButton->width()/2 ,0,plusButton->width()/2,0);
-    eyeMapLayout->setSpacing(0);
+    //eyeMapLayout->setContentsMargins(plusButton->width()/2 ,0,plusButton->width()/2,0);
+    //eyeMapLayout->setSpacing(0);
     eyeMapLayout->addWidget(goButton);
     eyeMapLayout->addWidget(mapButton);
     layout->addLayout(eyeMapLayout);

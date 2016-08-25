@@ -38,6 +38,6 @@ DisplayPathGroup::DisplayPathGroup(QMainWindow* _parent, const QSharedPointer<Pa
     layout->addWidget(scrollArea);
     setMaximumWidth(_parent->width()*4/10);
     setMinimumWidth(_parent->width()*4/10);
-    layout->setContentsMargins(0,0,0,0);
+    //layout->setContentsMargins(0,0,0,0);
 
 }

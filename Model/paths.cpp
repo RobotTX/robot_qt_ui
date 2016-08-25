@@ -64,7 +64,7 @@ void Paths::addPathPoint(const QString groupName, const QString pathName, const 
 }
 
 QDataStream& operator>>(QDataStream& in, Paths& paths){
-    qDebug() << "Paths operator>> Deserializing the paths";
+    qDebug() << "\nPaths operator>> Deserializing the paths";
 
     QMap<QString, QMap<QString, QVector<PathPoint>>> tmpPaths;
     in >> tmpPaths;
@@ -87,7 +87,7 @@ QDataStream& operator>>(QDataStream& in, Paths& paths){
 }
 
 QDataStream& operator<<(QDataStream& out, const Paths& paths){
-    qDebug() << "Paths operator<< Serializing the paths";
+    qDebug() << "\nPaths operator<< Serializing the paths";
 
     QMap<QString, QMap<QString, QVector<PathPoint>>> tmpPaths;
 

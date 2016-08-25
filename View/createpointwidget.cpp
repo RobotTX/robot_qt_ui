@@ -109,8 +109,8 @@ CreatePointWidget::CreatePointWidget(QMainWindow* _parent, QSharedPointer<Points
     layout->addLayout(downLayout);
 
     layout->setAlignment(Qt::AlignTop);
-    layout->setContentsMargins(0,0,0,0);
-    downLayout->setContentsMargins(20,0,10,0);
+    /*layout->setContentsMargins(0,0,0,0);
+    downLayout->setContentsMargins(20,0,10,0);*/
 
 }
 

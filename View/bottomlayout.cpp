@@ -65,7 +65,7 @@ BottomLayout::BottomLayout(QMainWindow* parent, const QSharedPointer<Robots> &ro
     actionLayout->addLayout(columnStop);
     actionLayout->addLayout(columnDelete);
 
-    actionLayout->setContentsMargins(0,0,0,0);
+    //actionLayout->setContentsMargins(0,0,0,0);
     widgetName->setLayout(columnName);
 
     /// Creation of the first column, with the button containing the name of the robots
@@ -173,7 +173,7 @@ BottomLayout::BottomLayout(QMainWindow* parent, const QSharedPointer<Robots> &ro
     pathScroll2->setPageStep(pathScroll->verticalScrollBar()->pageStep());
     connect(pathScroll2, SIGNAL(valueChanged(int)), pathScroll->horizontalScrollBar(), SLOT(setValue(int)));
     pathScroll2->resize(pathScroll->width(), 15);
-    actionLayout->setSpacing(0);
+    //actionLayout->setSpacing(0);
 
     QPalette pal;
     pal.setColor(QPalette::Background, bottom_menu_background_color);

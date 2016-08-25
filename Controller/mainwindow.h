@@ -93,6 +93,8 @@ public:
     void updateAllPaths(void);
     void clearPath(const int robotNb);
     RobotView* getSelectedRobot(void) const { return selectedRobot; }
+    void serializePaths(void);
+    void deserializePaths(void);
 
 signals:
     void sendCommand(QString);
