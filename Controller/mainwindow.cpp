@@ -50,6 +50,10 @@
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow) {
     ui->setupUi(this);
 
+    /// centers the msgBox on the middle of the screen
+    msgBox.move(mapToGlobal(QPoint(QApplication::desktop()->screenGeometry().width()/2,
+                                   QApplication::desktop()->screenGeometry().height()/2) ));
+
     points = QSharedPointer<Points>(new Points(this));
     QWidget* mainWidget = new QWidget(this);
 
@@ -105,13 +109,18 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     tmpPaths->createPath("tuesday", "room3");
     tmpPaths->createPath("tuesday", "room2");
     tmpPaths->createPath("wednesday", "room3");
-    Point point("First point", 4.2, 3.1);
+    Point point("First point", 400, 300);
+    Point point2("Second point", 800, 600);
+    Point point3("Third point", 1200, 1200);
+    Point point4("4th point", 1500, 1450);
     tmpPaths->addPathPoint("monday", "room1", QSharedPointer<PathPoint>(new PathPoint(point, PathPoint::Action::HUMAN_ACTION, 2)));
     tmpPaths->addPathPoint("wednesday", "room1", QSharedPointer<PathPoint>(new PathPoint(point, PathPoint::Action::HUMAN_ACTION, 2)));
-    tmpPaths->addPathPoint("monday", "room1", QSharedPointer<PathPoint>(new PathPoint(point, PathPoint::Action::HUMAN_ACTION, 2)));
+    tmpPaths->addPathPoint("monday", "room1", QSharedPointer<PathPoint>(new PathPoint(point2, PathPoint::Action::HUMAN_ACTION, 2)));
     tmpPaths->addPathPoint("tuesday", "room4", QSharedPointer<PathPoint>(new PathPoint(point, PathPoint::Action::HUMAN_ACTION, 2)));
     tmpPaths->addPathPoint("tuesday", "room2", QSharedPointer<PathPoint>(new PathPoint(point, PathPoint::Action::HUMAN_ACTION, 2)));
-
+    tmpPaths->addPathPoint("tuesday", "room2", QSharedPointer<PathPoint>(new PathPoint(point3, PathPoint::Action::HUMAN_ACTION, 2)));
+    tmpPaths->addPathPoint("tuesday", "room3", QSharedPointer<PathPoint>(new PathPoint(point3, PathPoint::Action::HUMAN_ACTION, 2)));
+    tmpPaths->addPathPoint("tuesday", "room3", QSharedPointer<PathPoint>(new PathPoint(point4, PathPoint::Action::HUMAN_ACTION, 2)));
     QFile pathFile(PATHS_PATH);
     pathFile.resize(0);
     pathFile.open(QIODevice::WriteOnly);
@@ -3808,12 +3817,15 @@ void MainWindow::deletePath(){
         qDebug() << "MainWindow::deletePath you should not be here, you probably forgot to implement the behavior for one of your buttons";
     break;
     }
-
-
 }
 
 void MainWindow::displayPathOnMap(const bool display){
     qDebug() << "MainWindow::displayPathOnMap called";
+    if(display)
+        pathPainter->setCurrentPath(paths->getPath(lastWidgets.at(lastWidgets.size()-1).first.second,
+                                               leftMenu->getPathGroupDisplayed()->getLastCheckedButton()));
+    else
+        resetPath();
 }
 
 void MainWindow::editPath(){

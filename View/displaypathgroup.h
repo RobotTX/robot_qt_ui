@@ -33,6 +33,7 @@ public:
 
 private slots:
     void enableButtons(QAbstractButton* button);
+    void resetMapButton();
 
 protected:
     void showEvent(QShowEvent* event);

@@ -31,6 +31,7 @@
 #include "View/displaypathgroup.h"
 #include "View/custompushbutton.h"
 #include "View/displayselectedpointrobots.h"
+#include "View/pathbuttongroup.h"
 
 LeftMenu::LeftMenu(MainWindow* _parent, QSharedPointer<Points> const& _points, QSharedPointer<Paths> const& _paths,
                    const QSharedPointer<Robots> &robots, const QSharedPointer<Points> &pointViews,
@@ -38,10 +39,10 @@ LeftMenu::LeftMenu(MainWindow* _parent, QSharedPointer<Points> const& _points, Q
     QWidget(_parent), parent(_parent), points(_points), paths(_paths), lastCheckedId("s")
 {
 
-    QVBoxLayout * leftLayout  = new QVBoxLayout();
+    QVBoxLayout* leftLayout  = new QVBoxLayout();
 
-    QVBoxLayout * globalLayout  = new QVBoxLayout(this);
-    QHBoxLayout * topLayout  = new QHBoxLayout();
+    QVBoxLayout* globalLayout  = new QVBoxLayout(this);
+    QHBoxLayout* topLayout  = new QHBoxLayout();
 
     returnButton = new CustomPushButton(QIcon(":/icons/arrowLeft.png"), " Return", this);
     //returnButton->setAutoDefault(true);
@@ -190,6 +191,8 @@ LeftMenu::LeftMenu(MainWindow* _parent, QSharedPointer<Points> const& _points, Q
     connect(pathGroup->getActionButtons()->getMapButton(), SIGNAL(toggled(bool)), parent, SLOT(displayPathOnMap(bool)));
     connect(pathGroup->getActionButtons()->getEditButton(), SIGNAL(clicked()), parent, SLOT(editPath()));
 
+    connect(pathGroup->getPathButtonGroup()->getButtonGroup(), SIGNAL(buttonToggled(int, bool)), pathGroup, SLOT(resetMapButton()));
+
     hide();
     /*setMaximumWidth(parent->width()*4/10);
     setMinimumWidth(parent->width()*4/10);*/
@@ -238,3 +241,5 @@ void LeftMenu::setEnableReturnCloseButtons(bool enable){
     returnButton->setEnabled(enable);
     closeBtn->setEnabled(enable);
 }
+
+

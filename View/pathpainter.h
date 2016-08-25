@@ -27,7 +27,7 @@ public:
     QVector<QSharedPointer<PathPoint>> getCurrentPath(void) const { return currentPath; }
     QVector<QSharedPointer<PathPoint>> getOldPath(void) const { return oldPath; }
 
-    void setCurrentPath(const QVector<QSharedPointer<PathPoint> > _currentPath);
+    void setCurrentPath(const QVector<QSharedPointer<PathPoint> > &_currentPath);
     void setOldPath(const QVector<QSharedPointer<PathPoint> > _oldPath);
     void displayPath(void);
     int nbUsedPointView(const QString name, const double x, const double y);

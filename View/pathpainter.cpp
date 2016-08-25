@@ -276,10 +276,11 @@ int PathPainter::nbUsedPointView(QString name, double x, double y){
     return nbUsed;
 }
 
-void PathPainter::setCurrentPath(const QVector<QSharedPointer<PathPoint>> _currentPath){
+void PathPainter::setCurrentPath(const QVector<QSharedPointer<PathPoint>>& _currentPath){
     resetPathSlot();
     for(int i = 0; i < _currentPath.size(); i++){
         Point point = _currentPath.at(i)->getPoint();
+        qDebug() << "constructing path" << point.getName() << point.getPosition().getX() << point.getPosition().getY();
         addPathPointSlot(point.getName(), point.getPosition().getX(), point.getPosition().getY());
     }
 }

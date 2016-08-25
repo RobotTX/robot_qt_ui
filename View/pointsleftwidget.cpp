@@ -118,9 +118,12 @@ PointsLeftWidget::PointsLeftWidget(QWidget* _parent, MainWindow* const mainWindo
     setMinimumWidth(mainWindow->width()*4/10);*/
     downLayout->setAlignment(Qt::AlignBottom);
     //downLayout->setContentsMargins(10, 0, 30, 0);
+
     layout->addLayout(downLayout);
+
     /*layout->setContentsMargins(0,0,0,0);
     creationLayout->setContentsMargins(0, 0, 0, 20);*/
+    setAutoFillBackground(true);
 }
 
 void PointsLeftWidget::updateGroupButtonGroup(){

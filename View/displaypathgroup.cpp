@@ -77,3 +77,8 @@ void DisplayPathGroup::enableButtons(QAbstractButton *button){
         pathButtonGroup->uncheck();
     }
 }
+
+void DisplayPathGroup::resetMapButton(){
+    qDebug() << "DisplayPathGroup::resetEyeButton called";
+    actionButtons->getMapButton()->setChecked(false);
+}
