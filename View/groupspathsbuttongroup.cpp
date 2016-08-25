@@ -2,7 +2,7 @@
 #include <QVBoxLayout>
 #include "View/custompushbutton.h"
 #include "Model/paths.h"
-#include "View/colors.h"
+#include "View/stylesettings.h"
 #include "View/customizedlineedit.h"
 
 GroupsPathsButtonGroup::GroupsPathsButtonGroup(QWidget *_parent, const QSharedPointer<Paths> &_paths): QWidget(_parent), paths(_paths), BUTTON_SIZE(parentWidget()->size()/20)
@@ -32,7 +32,7 @@ void GroupsPathsButtonGroup::createButtons(){
         buttonGroup->addButton(groupButton, i++);
         layout->addWidget(groupButton);
         groupButton->setIcon(QIcon(":/icons/folder.png"));
-        groupButton->setIconSize(BUTTON_SIZE);
+        groupButton->setIconSize(normal_icon_size);
     }
 }
 

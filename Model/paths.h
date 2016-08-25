@@ -38,6 +38,7 @@ public:
     void addPathPoint(const QString groupName, const QString pathName, const QSharedPointer<PathPoint>& pathPoint);
     void deleteGroup(const QString name);
     void displayGroups(void) const;
+    void deletePath(const QString groupName, const QString pathName);
 
 private:
     QSharedPointer<Groups> groups;

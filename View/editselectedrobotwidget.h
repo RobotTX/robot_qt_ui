@@ -7,7 +7,7 @@ class QVBoxLayout;
 class QGridLayout;
 class CustomPushButton;
 class QLabel;
-class QMainWindow;
+class MainWindow;
 class QLineEdit;
 class QProgressBar;
 class PathWidget;
@@ -26,7 +26,7 @@ class PathWidget;
 class EditSelectedRobotWidget: public QWidget{
     Q_OBJECT
 public:
-    EditSelectedRobotWidget(QMainWindow* const parent, QSharedPointer<Robots> const robots);
+    EditSelectedRobotWidget(QWidget* parent, MainWindow* mainWindow, QSharedPointer<Robots> const robots);
 
     QLineEdit* getNameEdit(void){ return nameEdit; }
     CustomPushButton* getHomeBtn(void){ return homeBtn; }

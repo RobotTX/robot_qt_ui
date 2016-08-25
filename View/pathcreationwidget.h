@@ -34,7 +34,7 @@ public:
         float posY;
     };
 
-    PathCreationWidget(MainWindow* parent, const QSharedPointer<Points>& points);
+    PathCreationWidget(QWidget *parent, MainWindow *mainWindow, const QSharedPointer<Points>& points);
     void updatePath(const QVector<QSharedPointer<PathPoint> >& _currentPath);
     void updatePointsList(void);
     void deleteItem(QListWidgetItem* item);

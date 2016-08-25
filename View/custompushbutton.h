@@ -18,6 +18,7 @@ public:
 
 protected:
     void mouseDoubleClickEvent(QMouseEvent *event);
+    void enterEvent(QEvent *e);
 
 signals:
     void doubleClick(QString);

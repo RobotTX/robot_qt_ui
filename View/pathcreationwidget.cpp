@@ -16,7 +16,7 @@
 #include "View/custompushbutton.h"
 
 
-PathCreationWidget::PathCreationWidget(MainWindow *parent, const QSharedPointer<Points> &_points): QWidget(parent), points(_points){
+PathCreationWidget::PathCreationWidget(QWidget* parent, MainWindow *mainWindow, const QSharedPointer<Points> &_points): QWidget(parent), points(_points){
     layout = new QVBoxLayout(this);
 
     state = NO_STATE;
@@ -58,12 +58,12 @@ PathCreationWidget::PathCreationWidget(MainWindow *parent, const QSharedPointer<
     connect(pathPointsList, SIGNAL(itemMovedSignal(QModelIndex, int, int, QModelIndex, int)), this, SLOT(itemMovedSlot(QModelIndex, int, int, QModelIndex, int)));
 
     connect(saveBtn, SIGNAL(clicked()), this, SLOT(savePathClicked()));
-    connect(cancelBtn, SIGNAL(clicked()), parent, SLOT(cancelPathSlot()));
+    connect(cancelBtn, SIGNAL(clicked()), mainWindow, SLOT(cancelPathSlot()));
     connect(cleanBtn, SIGNAL(clicked()), this, SLOT(resetWidget()));
 
     hide();
     layout->setAlignment(Qt::AlignTop);
-    layout->setContentsMargins(0, 0, 0, 0);
+    //layout->setContentsMargins(0, 0, 0, 0);
 }
 
 void PathCreationWidget::updatePath(const QVector<QSharedPointer<PathPoint>>& _path){

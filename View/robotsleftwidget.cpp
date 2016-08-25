@@ -4,13 +4,13 @@
 #include "View/customscrollarea.h"
 #include "View/spacewidget.h"
 #include <QVBoxLayout>
-#include <QMainWindow>
+#include "Controller/mainwindow.h"
 #include "topleftmenu.h"
 #include <QDebug>
 #include "View/custompushbutton.h"
 
-RobotsLeftWidget::RobotsLeftWidget(QMainWindow* _parent):QWidget(_parent){
-    parent = _parent;
+RobotsLeftWidget::RobotsLeftWidget(QWidget* parent, MainWindow* _mainWindow):QWidget(parent), mainWindow(_mainWindow){
+    mainWindow = mainWindow;
     layout = new QVBoxLayout(this);
     scrollLayout = new QVBoxLayout();
     scrollArea = new CustomScrollArea(this);
@@ -18,19 +18,19 @@ RobotsLeftWidget::RobotsLeftWidget(QMainWindow* _parent):QWidget(_parent){
     actionButtons = new TopLeftMenu(this);
     actionButtons->disableAll();
 
-    connect(actionButtons->getGoButton(), SIGNAL(clicked()), parent, SLOT(selectViewRobot()));
-    connect(actionButtons->getEditButton(), SIGNAL(clicked()), parent, SLOT(editRobotBtnEvent()));
-    connect(actionButtons->getMapButton(), SIGNAL(clicked()), parent, SLOT(checkRobotBtnEventMenu()));
+    connect(actionButtons->getGoButton(), SIGNAL(clicked()), mainWindow, SLOT(selectViewRobot()));
+    connect(actionButtons->getEditButton(), SIGNAL(clicked()), mainWindow, SLOT(editRobotBtnEvent()));
+    connect(actionButtons->getMapButton(), SIGNAL(clicked()), mainWindow, SLOT(checkRobotBtnEventMenu()));
 
     actionButtons->getMapButton()->setCheckable(true);
 
     layout->addWidget(actionButtons);
     layout->addWidget(scrollArea);
 
-    setMaximumWidth(parent->width()*4/10);
-    setMinimumWidth(parent->width()*4/10);
+    /*setMaximumWidth(mainWindow->width()*4/10);
+    setMinimumWidth(mainWindow->width()*4/10);*/
     layout->setAlignment(Qt::AlignTop);
-    layout->setContentsMargins(0,0,0,0);
+    //layout->setContentsMargins(0,0,0,0);
 
 }
 
@@ -44,12 +44,13 @@ void RobotsLeftWidget::setRobots(QSharedPointer<Robots> const &_robots){
     robots = _robots;
 
     /// Clickable buttons group to select/edit a robot
-    btnGroup = new RobotBtnGroup(robots->getRobotsVector(), parent);
+    btnGroup = new RobotBtnGroup(robots->getRobotsVector(), mainWindow);
+    //btnGroup->setMaximumWidth(width());
 
     /// Checkable buttons group to show/hide a robot
     btnGroup->show();
 
-    connect(btnGroup->getBtnGroup(), SIGNAL(buttonClicked(QAbstractButton*)), parent, SLOT(setSelectedRobot(QAbstractButton*)));
+    connect(btnGroup->getBtnGroup(), SIGNAL(buttonClicked(QAbstractButton*)), mainWindow, SLOT(setSelectedRobot(QAbstractButton*)));
 
     scrollLayout->addWidget(btnGroup);
 

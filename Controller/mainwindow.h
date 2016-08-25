@@ -39,11 +39,12 @@ class GroupsPathsWidget;
 #include "Model/point.h"
 #include <QSettings>
 
-
-//#define XML_PATH "/home/m-a/Documents/QtProject/gobot-software/points.xml"
-//#define ROBOTS_NAME_PATH "/home/m-a/Documents/QtProject/gobot-software/robotsName.dat"
-//#define MAP_PATH "/home/m-a/Documents/QtProject/gobot-software/realMap.dat"
-//#define PATHS_PATH "/home/m-a/Documents/QtProject/gobot-software/savedPaths.dat"
+/*
+#define XML_PATH "/home/m-a/Documents/QtProject/gobot-software/points.xml"
+#define ROBOTS_NAME_PATH "/home/m-a/Documents/QtProject/gobot-software/robotsName.dat"
+#define MAP_PATH "/home/m-a/Documents/QtProject/gobot-software/realMap.dat"
+#define PATHS_PATH "/home/m-a/Documents/QtProject/gobot-software/savedPaths.dat"
+*/
 
 #define XML_PATH "/home/joan/Qt/QtProjects/gobot-software/points.xml"
 #define ROBOTS_NAME_PATH "/home/joan/Qt/QtProjects/gobot-software/robotsName.dat"
@@ -93,6 +94,8 @@ public:
     void updateAllPaths(void);
     void clearPath(const int robotNb);
     RobotView* getSelectedRobot(void) const { return selectedRobot; }
+    void serializePaths(void);
+    void deserializePaths(void);
 
 signals:
     void sendCommand(QString);

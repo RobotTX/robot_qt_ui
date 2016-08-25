@@ -5,7 +5,7 @@
 #include "Model/point.h"
 #include <QVBoxLayout>
 #include <QLabel>
-#include <QMainWindow>
+#include "Controller/mainwindow.h"
 #include <QHBoxLayout>
 #include <QProgressBar>
 #include <QLineEdit>
@@ -15,9 +15,10 @@
 #include <pathwidget.h>
 #include "customscrollarea.h"
 #include "View/custompushbutton.h"
+#include "View/stylesettings.h"
 
 
-EditSelectedRobotWidget::EditSelectedRobotWidget(QMainWindow * const parent, const QSharedPointer<Robots> _robots):QWidget(parent){
+EditSelectedRobotWidget::EditSelectedRobotWidget(QWidget* parent, MainWindow* mainWindow, const QSharedPointer<Robots> _robots):QWidget(parent){
     robots = _robots;
     layout = new QVBoxLayout(this);
     wifiLayout = new QGridLayout();
@@ -87,21 +88,21 @@ EditSelectedRobotWidget::EditSelectedRobotWidget(QMainWindow * const parent, con
     /// Home layout with the button to select the home
      homeLabel = new QLabel("Home : ", this);
     homeBtn = new CustomPushButton(QIcon(":/icons/home.png"), "Add Home", this);
-    homeBtn->setIconSize(parent->size()/10);
-    connect(homeBtn, SIGNAL(clicked()), parent, SLOT(editHomeEvent()));
+    homeBtn->setIconSize(normal_icon_size);
+    connect(homeBtn, SIGNAL(clicked()), mainWindow, SLOT(editHomeEvent()));
     inLayout->addWidget(homeLabel);
     inLayout->addWidget(homeBtn);
 
     /// Button to add a path
     addPathBtn = new CustomPushButton(QIcon(":/icons/plus.png"),"Add Path", this);
-    addPathBtn->setIconSize(parent->size()/10);
-    connect(addPathBtn, SIGNAL(clicked()), parent, SLOT(addPathSelecRobotBtnEvent()));
+    addPathBtn->setIconSize(normal_icon_size);
+    connect(addPathBtn, SIGNAL(clicked()), mainWindow, SLOT(addPathSelecRobotBtnEvent()));
     inLayout->addWidget(addPathBtn);
 
     deletePathBtn = new CustomPushButton(QIcon(":/icons/bin.png"),"Delete Path", this);
-    deletePathBtn->setIconSize(parent->size()/10);
+    deletePathBtn->setIconSize(normal_icon_size);
     deletePathBtn->hide();
-    connect(deletePathBtn, SIGNAL(clicked()), parent, SLOT(deletePathSelecRobotBtnEvent()));
+    connect(deletePathBtn, SIGNAL(clicked()), mainWindow, SLOT(deletePathSelecRobotBtnEvent()));
     inLayout->addWidget(deletePathBtn);
 
 
@@ -122,19 +123,19 @@ EditSelectedRobotWidget::EditSelectedRobotWidget(QMainWindow * const parent, con
     grid->addWidget(saveBtn);
 
 
-    connect(cancelBtn, SIGNAL(clicked()), parent, SLOT(cancelEditSelecRobotBtnEvent()));
+    connect(cancelBtn, SIGNAL(clicked()), mainWindow, SLOT(cancelEditSelecRobotBtnEvent()));
     connect(saveBtn, SIGNAL(clicked()), this, SLOT(saveEditSelecRobotBtnEvent()));
     connect(nameEdit, SIGNAL(textEdited(QString)), this, SLOT(checkRobotName()));
     connect(wifiNameEdit, SIGNAL(textEdited(QString)), this, SLOT(checkWifiName()));
     connect(wifiNameEdit, SIGNAL(textEdited(QString)), this, SLOT(deletePwd()));
 
     hide();
-    setMaximumWidth(parent->width()*4/10);
-    setMinimumWidth(parent->width()*4/10);
-    inWidget->setMaximumWidth(parent->width()*4/10);
-    inWidget->setMinimumWidth(parent->width()*4/10);
+    /*setMaximumWidth(mainWindow->width()*4/10);
+    setMinimumWidth(mainWindow->width()*4/10);
+    inWidget->setMaximumWidth(mainWindow->width()*4/10);
+    inWidget->setMinimumWidth(mainWindow->width()*4/10);*/
     layout->setAlignment(Qt::AlignTop);
-    layout->setContentsMargins(0,0,0,0);
+    //layout->setContentsMargins(0,0,0,0);
 
 
     scrollArea->setWidget(inWidget);

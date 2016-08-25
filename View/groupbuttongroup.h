@@ -17,7 +17,6 @@ class GroupButtonGroup: public QWidget
     Q_OBJECT
 public:
     GroupButtonGroup(QSharedPointer<Points> const& _points, QWidget *_parent);
-    ~GroupButtonGroup(){}
 
     QButtonGroup* getButtonGroup(void) const { return buttonGroup; }
     CustomizedLineEdit* getModifyEdit(void) const { return modifyEdit; }
@@ -60,9 +59,6 @@ private:
     QWidget* parent;
     QString editedGroupName;
     QSharedPointer<Points> points;
-
-    /// to avoid resizing of the icons after deletions of points and groups
-    const QSize BUTTON_SIZE = parentWidget()->size()/2;
 };
 
 #endif // GROUPBUTTONGROUP_H

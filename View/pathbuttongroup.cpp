@@ -2,6 +2,7 @@
 #include <QVBoxLayout>
 #include "Model/paths.h"
 #include "View/custompushbutton.h"
+#include "View/stylesettings.h"
 
 PathButtonGroup::PathButtonGroup(QWidget *_parent, QSharedPointer<Paths> _paths): QWidget(_parent), paths(_paths), BUTTON_SIZE(parentWidget()->size()/2)
 {
@@ -28,7 +29,7 @@ void PathButtonGroup::setGroupPaths(const QString groupName){
             buttonGroup->addButton(groupButton, i++);
             groupButton->setCheckable(true);
             layout->addWidget(groupButton);
-            groupButton->setIconSize(BUTTON_SIZE);
+            groupButton->setIconSize(normal_icon_size);
         }
     }
 }

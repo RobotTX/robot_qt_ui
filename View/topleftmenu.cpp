@@ -3,7 +3,7 @@
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QSize>
-#include "View/colors.h"
+#include "View/stylesettings.h"
 #include "View/custompushbutton.h"
 
 TopLeftMenu::TopLeftMenu(QWidget * parent): QWidget(parent){
@@ -11,45 +11,40 @@ TopLeftMenu::TopLeftMenu(QWidget * parent): QWidget(parent){
     setMaximumHeight(parent->height()*3);
 
     layout = new QVBoxLayout(this);
-    layout->setContentsMargins(0,0,0,0);
-    layout->setSpacing(0);
-
-    int sizeI = this->width()/3;
-    int sizew = (this->width()*1.6)/3;
-    int sizeh = this->height();
+    //layout->setContentsMargins(0,0,0,0);
+    //layout->setSpacing(0);
 
 
     plusButton = new CustomPushButton(QIcon(":/icons/plus.png"), "", this);
 
-    plusButton->setIconSize(QSize(sizeI,sizeI));
-    plusButton->setMaximumWidth(sizew);
-    plusButton->setMinimumWidth(sizew);
-    //plusButton->setAutoDefault(true);
+    plusButton->setIconSize(normal_icon_size);
+    /*plusButton->setMaximumWidth(sizew);
+    plusButton->setMinimumWidth(sizew);*/
 
 
     minusButton = new CustomPushButton(QIcon(":/icons/minus.png"),"", this);
-    minusButton->setIconSize(QSize(sizeI,sizeI));
-    minusButton->setMaximumHeight(sizeh);
+    minusButton->setIconSize(normal_icon_size);
+    /*minusButton->setMaximumHeight(sizeh);
     minusButton->setMaximumWidth(plusButton->width());
-    minusButton->setMinimumWidth(plusButton->width());
+    minusButton->setMinimumWidth(plusButton->width());*/
     //minusButton->setAutoDefault(true);
 
 
     /// to force the user to choose a group or point first
 
     editButton = new CustomPushButton(QIcon(":/icons/edit.png"),"", this);
-    editButton->setIconSize(QSize(sizeI,sizeI));
-    editButton->setMaximumHeight(sizeh);
+    editButton->setIconSize(normal_icon_size);
+    /*editButton->setMaximumHeight(sizeh);
     editButton->setMaximumWidth(plusButton->width());
-    editButton->setMinimumWidth(plusButton->width());
+    editButton->setMinimumWidth(plusButton->width());*/
     //editButton->setAutoDefault(true);
 
 
     /// to force the user to choose a group or point first
 
     grid = new QHBoxLayout();
-    grid->setContentsMargins(0,0,0,0);
-    grid->setSpacing(0);
+    //grid->setContentsMargins(0,0,0,0);
+    //grid->setSpacing(0);
 
 
     grid->addWidget(plusButton);
@@ -57,33 +52,26 @@ TopLeftMenu::TopLeftMenu(QWidget * parent): QWidget(parent){
     grid->addWidget(editButton);
     layout->addLayout(grid);
 
-    QWidget* spaceWidget1 = new QWidget(this);
-    spaceWidget1->setMaximumWidth(plusButton->width()/5);
-    spaceWidget1->setMinimumWidth(plusButton->width()/5);
-    QWidget* spaceWidget2 = new QWidget(this);
-    spaceWidget2->setMaximumWidth(plusButton->width()/5);
-    spaceWidget2->setMinimumWidth(plusButton->width()/5);
-
     mapButton = new CustomPushButton(QIcon(":/icons/eye.png"),"", this);
-    mapButton->setIconSize(QSize(sizeI,sizeI));
-    mapButton->setMaximumHeight(sizeh);
+    mapButton->setIconSize(normal_icon_size);
+    /*mapButton->setMaximumHeight(sizeh);
     mapButton->setMaximumWidth(sizew);
-    mapButton->setMinimumWidth(sizew);
+    mapButton->setMinimumWidth(sizew);*/
     //mapButton->setAutoDefault(true);
 
     goButton = new CustomPushButton(QIcon(":/icons/go_inside.png"), "", this);
-    goButton->setIconSize(QSize(sizeI,sizeI));
-    goButton->setMaximumHeight(sizeh);
+    goButton->setIconSize(normal_icon_size);
+    /*goButton->setMaximumHeight(sizeh);
     goButton->setMaximumWidth(sizew);
-    goButton->setMinimumWidth(sizew);
+    goButton->setMinimumWidth(sizew);*/
     //goButton->setAutoDefault(true);
 
 
     /// to force the user to choose first
 
     eyeMapLayout = new QHBoxLayout();
-    eyeMapLayout->setContentsMargins(plusButton->width()/2 ,0,plusButton->width()/2,0);
-    eyeMapLayout->setSpacing(0);
+    //eyeMapLayout->setContentsMargins(plusButton->width()/2 ,0,plusButton->width()/2,0);
+    //eyeMapLayout->setSpacing(0);
     eyeMapLayout->addWidget(goButton);
     eyeMapLayout->addWidget(mapButton);
     layout->addLayout(eyeMapLayout);

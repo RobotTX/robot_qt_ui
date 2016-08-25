@@ -4,7 +4,7 @@
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 #include <QLabel>
-#include <QMainWindow>
+#include "Controller/mainwindow.h"
 #include <QLineEdit>
 #include <QDebug>
 #include <QComboBox>
@@ -15,7 +15,7 @@
 #include "View/custompushbutton.h"
 
 
-CreatePointWidget::CreatePointWidget(QMainWindow* _parent, QSharedPointer<Points> _points): QWidget(_parent), parent(_parent), points(_points){
+CreatePointWidget::CreatePointWidget(QWidget *parent, MainWindow *mainWindow, QSharedPointer<Points> _points): QWidget(parent), points(_points){
 
     /// to explain the user what to do with his temporary point
     messageCreationLabel = new QLabel("Click \"+\" to save", this);
@@ -97,20 +97,20 @@ CreatePointWidget::CreatePointWidget(QMainWindow* _parent, QSharedPointer<Points
     connect(cancelBtn, SIGNAL(clicked(bool)), this, SLOT(hideGroupLayout(bool)));
 
     /// to display appropriate messages when a user attemps to create a point
-    connect(this, SIGNAL(invalidName(QString, CreatePointWidget::Error)), _parent, SLOT(setMessageCreationPoint(QString, CreatePointWidget::Error)));
+    connect(this, SIGNAL(invalidName(QString, CreatePointWidget::Error)), mainWindow, SLOT(setMessageCreationPoint(QString, CreatePointWidget::Error)));
 
-    connect(this, SIGNAL(displayMessageCreation(QString)), _parent, SLOT(choosePointName(QString)));
+    connect(this, SIGNAL(displayMessageCreation(QString)), mainWindow, SLOT(choosePointName(QString)));
 
-    connect(this, SIGNAL(resetMessageTop(QString, QString)), _parent, SLOT(setMessageTop(QString, QString)));
+    connect(this, SIGNAL(resetMessageTop(QString, QString)), mainWindow, SLOT(setMessageTop(QString, QString)));
 
     hide();
-    setMaximumWidth(_parent->width()*4/10);
-    setMinimumWidth(_parent->width()*4/10);
+    /*setMaximumWidth(mainWindow->width()*4/10);
+    setMinimumWidth(mainWindow->width()*4/10);*/
     layout->addLayout(downLayout);
 
     layout->setAlignment(Qt::AlignTop);
-    layout->setContentsMargins(0,0,0,0);
-    downLayout->setContentsMargins(20,0,10,0);
+    /*layout->setContentsMargins(0,0,0,0);
+    downLayout->setContentsMargins(20,0,10,0);*/
 
 }
 

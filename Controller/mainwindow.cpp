@@ -32,7 +32,7 @@
 #include "View/pathpointcreationwidget.h"
 #include "View/pathpointlist.h"
 #include "View/pathwidget.h"
-#include "colors.h"
+#include "stylesettings.h"
 #include <QMap>
 #include <QVBoxLayout>
 #include <QAbstractButton>
@@ -62,7 +62,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     mapState.first.setY(settings.value("mapState/point/y", .0f).toFloat());
     mapState.second = settings.value("mapState/zoom", 1.0f).toFloat();
 
-    /**************************************************************/
+    /*************************** TODO GET FROM A SAVE FILE/MAP SETTINGS ***********************************/
 
     map->setWidth(320);
     map->setHeight(608);
@@ -217,7 +217,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     connect(leftMenu->getGroupsPathsWidget(), SIGNAL(modifiedGroup(QString)), this, SLOT(modifyGroupPathsWithEnter(QString)));
 
     mainLayout->addLayout(bottom);
-    graphicsView->setStyleSheet("CustomQGraphicsView{background-color: " + background_map_view + "}");
+    graphicsView->setStyleSheet("CustomQGraphicsView {background-color: " + background_map_view + "}");
     setCentralWidget(mainWidget);
 
     /// to navigate with the tab key
@@ -229,15 +229,20 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
     /// Some style
 
+    setStyleSheet("QWidget {border: 1px solid red}"
+                  "QPushButton {border: 1px solid green}"
+                  "QLabel {border: 1px solid blue}"
+                  "LeftMenu {border: 1px solid yellow}");
     this->setAutoFillBackground(true);
-    rightLayout->setContentsMargins(0,0,0,0);
+
+    /*rightLayout->setContentsMargins(0,0,0,0);
     bottom->setContentsMargins(0,0,0,0);
     mainLayout->setContentsMargins(0,0,0,0);
     this->setContentsMargins(0,0,0,0);
     mainWidget->setContentsMargins(0,0,0,0);
     topLayout->setContentsMargins(0,0,0,0);
     bottomLayout->setContentsMargins(0,0,0,0);
-    mainLayout->setSpacing(0);
+    mainLayout->setSpacing(0);*/
 }
 
 MainWindow::~MainWindow(){
@@ -3554,6 +3559,21 @@ void MainWindow::choosePointName(QString message){
 void MainWindow::initializePaths(){
     paths = QSharedPointer<Paths>(new Paths(this));
 
+    deserializePaths();
+
+    paths->displayGroups();
+}
+
+void MainWindow::serializePaths(void){
+    QFile pathFile(PATHS_PATH);
+    pathFile.resize(0);
+    pathFile.open(QIODevice::WriteOnly);
+    QDataStream out(&pathFile);
+    out << *paths;
+    pathFile.close();
+}
+
+void MainWindow::deserializePaths(void){
     QFile pathFile(PATHS_PATH);
     pathFile.open(QIODevice::ReadOnly);
     QDataStream in(&pathFile);
@@ -3563,7 +3583,6 @@ void MainWindow::initializePaths(){
     pathFile.close();
 
     paths->setGroups(tmpPaths.getGroups());
-    //paths->displayGroups();
 }
 
 void MainWindow::pathBtnEvent(){
@@ -3775,6 +3794,8 @@ void MainWindow::createPath(){
 
 void MainWindow::deletePath(){
     qDebug() << "MainWindow::deletePath called";
+    paths->deletePath(lastWidgets.at(lastWidgets.size()-1).first.second, leftMenu->getPathGroupDisplayed()->getLastCheckedButton());
+    leftMenu->getPathGroupDisplayed()->getPathButtonGroup()->setGroupPaths(lastWidgets.at(lastWidgets.size()-1).first.second);
 }
 
 void MainWindow::displayPathOnMap(const bool display){

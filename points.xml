@@ -22,6 +22,7 @@
         </point>
     </group>
     <group>
+<<<<<<< HEAD
         <name>TmpPoint</name>
         <point>
             <name>tmpPoint</name>
@@ -32,6 +33,9 @@
     </group>
     <group>
         <name>dsf</name>
+=======
+        <name>Second groupsgfsgfsdfhsjfg</name>
+>>>>>>> aa0f1d471385c65ade09a1799831163617ce8fb7
         <point>
             <name>Fanny</name>
             <x>1126</x>

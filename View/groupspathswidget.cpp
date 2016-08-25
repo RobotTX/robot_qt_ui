@@ -13,7 +13,8 @@
 #include <QHBoxLayout>
 #include "View/custompushbutton.h"
 
-GroupsPathsWidget::GroupsPathsWidget(MainWindow* _parent, const QSharedPointer<Paths> &_paths): QWidget(_parent), parent(_parent), paths(_paths), lastCheckedButton("")
+
+GroupsPathsWidget::GroupsPathsWidget(QWidget* parent, MainWindow* _mainWindow, const QSharedPointer<Paths> &_paths): QWidget(parent), mainWindow(_mainWindow), paths(_paths), lastCheckedButton("")
 {
     /// to scroll the QButtonGroup if there is a lot of groups of paths
     scrollArea = new CustomScrollArea(this);
@@ -36,7 +37,7 @@ GroupsPathsWidget::GroupsPathsWidget(MainWindow* _parent, const QSharedPointer<P
     downLayout->addWidget(groupNameLabel);
     downLayout->addWidget(groupNameEdit);
 
-    buttonGroup = new GroupsPathsButtonGroup(_parent, paths);
+    buttonGroup = new GroupsPathsButtonGroup(this, paths);
     scrollArea->setWidget(buttonGroup);
     downLayout->addWidget(scrollArea);
 
@@ -70,7 +71,7 @@ GroupsPathsWidget::GroupsPathsWidget(MainWindow* _parent, const QSharedPointer<P
 
     /// to handle double clicks
     foreach(QAbstractButton *button, buttonGroup->getButtonGroup()->buttons())
-        connect(button, SIGNAL(doubleClick(QString)), _parent, SLOT(doubleClickOnPathsGroup(QString)));
+        connect(button, SIGNAL(doubleClick(QString)), mainWindow, SLOT(doubleClickOnPathsGroup(QString)));
 
     hide();
 }
@@ -249,7 +250,7 @@ void GroupsPathsWidget::hideEvent(QHideEvent *event){
     /// to reestablish the connections so we can doubleclick the buttons
     /// to handle double clicks
     foreach(QAbstractButton *button, buttonGroup->getButtonGroup()->buttons())
-        connect(button, SIGNAL(doubleClick(QString)), parent, SLOT(doubleClickOnPathsGroup(QString)));
+        connect(button, SIGNAL(doubleClick(QString)), mainWindow, SLOT(doubleClickOnPathsGroup(QString)));
     QWidget::hideEvent(event);
 }
 

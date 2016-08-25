@@ -7,7 +7,7 @@
 #include <QMainWindow>
 #include "View/custompushbutton.h"
 
-DisplayPathGroup::DisplayPathGroup(QMainWindow* _parent, const QSharedPointer<Paths>& _paths):
+DisplayPathGroup::DisplayPathGroup(QWidget* _parent, const QSharedPointer<Paths>& _paths):
     QWidget(_parent), paths(_paths), lastCheckedButton("")
 {
     /// to scroll the button group if there is a lot of paths
@@ -22,7 +22,8 @@ DisplayPathGroup::DisplayPathGroup(QMainWindow* _parent, const QSharedPointer<Pa
 
     layout->addWidget(actionButtons);
 
-    pathButtonGroup = new PathButtonGroup(_parent, paths);
+    pathButtonGroup = new PathButtonGroup(this, paths);
+
     /// called when a button is clicked in the button group
     connect(pathButtonGroup->getButtonGroup(), SIGNAL(buttonClicked(QAbstractButton*)), this, SLOT(enableButtons(QAbstractButton*)));
 
@@ -30,8 +31,10 @@ DisplayPathGroup::DisplayPathGroup(QMainWindow* _parent, const QSharedPointer<Pa
 
     layout->addWidget(scrollArea);
 
-    setMaximumWidth(_parent->width()*4 / 10);
-    setMinimumWidth(_parent->width()*4 / 10);
+    /*setMaximumWidth(_parent->width()*4/10);
+    setMinimumWidth(_parent->width()*4/10);*/
+    //layout->setContentsMargins(0,0,0,0);
+
 }
 
 /// we reset the action buttons everytime we show the widget

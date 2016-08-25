@@ -4,7 +4,7 @@
 class QVBoxLayout;
 class QLabel;
 class QVBoxLayout;
-class QMainWindow;
+class MainWindow;
 
 #include <QWidget>
 
@@ -14,7 +14,7 @@ class QMainWindow;
  */
 class MapLeftWidget: public QWidget{
 public:
-    MapLeftWidget(QMainWindow* parent);
+    MapLeftWidget(QWidget* parent, MainWindow* mainWindow);
 
 private:
     QVBoxLayout* layout;

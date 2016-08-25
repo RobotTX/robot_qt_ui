@@ -9,7 +9,7 @@
 #include <QVBoxLayout>
 #include <QDebug>
 
-DisplaySelectedPath::DisplaySelectedPath(MainWindow *parent):QWidget(parent){
+DisplaySelectedPath::DisplaySelectedPath(QWidget *parent, MainWindow *mainWindow):QWidget(parent){
     layout = new QVBoxLayout(this);
 
     /// Top menu with the 5 buttons
@@ -39,12 +39,12 @@ DisplaySelectedPath::DisplaySelectedPath(MainWindow *parent):QWidget(parent){
     layout->addWidget(pathWidget);
 
 
-    connect(this, SIGNAL(deletePath(QString, QString)), parent, SLOT(deletePathSlot(QString, QString)));
-    connect(this, SIGNAL(editPath(QString, QString)), parent, SLOT(editPathSlot(QString, QString)));
-    connect(this, SIGNAL(displayPath(QString, QString, bool)), parent, SLOT(displayPathSlot(QString, QString, bool)));
+    connect(this, SIGNAL(deletePath(QString, QString)), mainWindow, SLOT(deletePathSlot(QString, QString)));
+    connect(this, SIGNAL(editPath(QString, QString)), mainWindow, SLOT(editPathSlot(QString, QString)));
+    connect(this, SIGNAL(displayPath(QString, QString, bool)), mainWindow, SLOT(displayPathSlot(QString, QString, bool)));
 
     layout->setAlignment(Qt::AlignTop);
-    layout->setContentsMargins(0,0,0,0);
+    //layout->setContentsMargins(0,0,0,0);
 }
 
 void DisplaySelectedPath::updatePath(QString groupName, QString pathName, QVector<QSharedPointer<PathPoint>> path){

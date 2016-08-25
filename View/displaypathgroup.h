@@ -21,10 +21,11 @@ class DisplayPathGroup: public QWidget {
     Q_OBJECT
 
 public:
-    DisplayPathGroup(QMainWindow *_parent, const QSharedPointer<Paths> &_paths);
+    DisplayPathGroup(QWidget *_parent, const QSharedPointer<Paths> &_paths);
 
     PathButtonGroup* getPathButtonGroup(void) const { return pathButtonGroup; }
     TopLeftMenu* getActionButtons(void) const { return actionButtons; }
+    QString getLastCheckedButton(void) const { return lastCheckedButton; }
 
 public:
     void initializeActionButtons(void);

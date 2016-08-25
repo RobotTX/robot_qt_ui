@@ -20,8 +20,8 @@
 #include "View/customscrollarea.h"
 #include "View/custompushbutton.h"
 
-DisplaySelectedPoint::DisplaySelectedPoint(QMainWindow *const _parent,  QSharedPointer<Robots> const _robots, QSharedPointer<Points> const& _points, QSharedPointer<Map> const& _map, QSharedPointer<PointView> _pointView):
-    QWidget(_parent), map(_map), pointView(_pointView), parent(_parent), points(_points){
+DisplaySelectedPoint::DisplaySelectedPoint(QWidget* _parent, QSharedPointer<Robots> const _robots, QSharedPointer<Points> const& _points, QSharedPointer<Map> const& _map, QSharedPointer<PointView> _pointView):
+    QWidget(_parent), map(_map), pointView(_pointView), points(_points){
 
     robots = QSharedPointer<Robots>(_robots);
     layout = new QVBoxLayout(this);
@@ -79,18 +79,17 @@ DisplaySelectedPoint::DisplaySelectedPoint(QMainWindow *const _parent,  QSharedP
 
     /// to check that a point that's being edited does not get a new name that's already used in the database
     connect(nameEdit, SIGNAL(textEdited(QString)), this, SLOT(checkPointName(QString)));
-    connect(robotsWidget, SIGNAL(setSelectedRobotFromPoint(QString)), parent, SLOT(setSelectedRobotFromPointSlot(QString)));
 
-    setMaximumWidth(_parent->width()*4/10);
-    setMinimumWidth(_parent->width()*4/10);
+    /*setMaximumWidth(mainWindow->width()*4/10);
+    setMinimumWidth(mainWindow->width()*4/10);*/
 
-    scrollLayout->setContentsMargins(20,0,0,0);
+    //scrollLayout->setContentsMargins(20,0,0,0);
     scrollLayout->setAlignment(Qt::AlignTop);
 
     layout->addWidget(scrollArea);
 
 
-    layout->setContentsMargins(0,0,0,0);
+    //layout->setContentsMargins(0,0,0,0);
 
 }
 

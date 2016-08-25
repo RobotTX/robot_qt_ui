@@ -8,6 +8,7 @@
 #include <QDebug>
 #include <QLabel>
 #include "View/pointview.h"
+#include "View/stylesettings.h"
 
 PointButtonGroup::PointButtonGroup(QSharedPointer<Points> _points, const QString _groupIndex
                                    , QWidget* parent): QWidget(parent), points(_points){
@@ -16,7 +17,6 @@ PointButtonGroup::PointButtonGroup(QSharedPointer<Points> _points, const QString
     groupIndex = _groupIndex;
     buttonGroup = new QButtonGroup(this);
     layout->setAlignment(Qt::AlignTop);
-    BUTTON_SIZE = parentWidget()->size()/2;
     createButtons();
 }
 
@@ -46,7 +46,7 @@ void PointButtonGroup::createButtons(){
                 pointButton->setIcon(QIcon(":/icons/eye_point.png"));
             else
                 pointButton->setIcon(QIcon(":/icons/space_point.png"));
-            pointButton->setIconSize(BUTTON_SIZE);
+            pointButton->setIconSize(normal_icon_size);
 
 
         }

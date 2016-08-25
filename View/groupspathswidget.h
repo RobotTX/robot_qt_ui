@@ -19,7 +19,7 @@ class GroupsPathsWidget: public QWidget
 {
     Q_OBJECT
 public:
-    GroupsPathsWidget(MainWindow* _parent, const QSharedPointer<Paths> &_paths);
+    GroupsPathsWidget(QWidget* parent, MainWindow* _mainWindow, const QSharedPointer<Paths> &_paths);
 
     GroupsPathsButtonGroup* getButtonGroup(void) const { return buttonGroup; }
     TopLeftMenu* getActionButtons(void) const { return actionButtons; }
@@ -28,6 +28,7 @@ public:
     void setCreatingGroup(const bool creating) { creatingGroup = creating; }
     CustomizedLineEdit* getGroupNameEdit(void) const { return groupNameEdit; }
     QLabel* getGroupNameLabel(void) const { return groupNameLabel; }
+    QString getLastCheckedButton(void) const { return lastCheckedButton; }
 
     void setLastCheckedButton(const QString textButton) { lastCheckedButton = textButton; }
 
@@ -64,7 +65,7 @@ private slots:
 
 
 private:
-    MainWindow* parent;
+    MainWindow* mainWindow;
 
     QHBoxLayout* creationLayout;
     CustomScrollArea* scrollArea;

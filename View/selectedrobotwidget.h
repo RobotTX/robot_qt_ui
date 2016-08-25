@@ -21,7 +21,7 @@ class TopLeftMenu;
 class SelectedRobotWidget: public QWidget{
     Q_OBJECT
 public:
-    SelectedRobotWidget(QMainWindow* parent);
+    SelectedRobotWidget(QWidget* parent, MainWindow* mainWindow);
 
     /**
      * @brief setSelectedRobot

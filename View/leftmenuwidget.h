@@ -4,6 +4,7 @@
 class QMainWindow;
 class QVBoxLayout;
 class Points;
+class CustomPushButton;
 
 #include <QWidget>
 #include <QSharedPointer>
@@ -15,11 +16,19 @@ class Points;
 class LeftMenuWidget: public QWidget{
     Q_OBJECT
 public:
-    LeftMenuWidget(QMainWindow* parent, QSharedPointer<Points> const& _points);
+    LeftMenuWidget(QWidget* parent, QSharedPointer<Points> const& _points);
+    CustomPushButton* getRobotBtn(void) const {return robotBtn; }
+    CustomPushButton* getPointBtn(void) const {return pointBtn; }
+    CustomPushButton* getMapBtn(void) const {return mapBtn; }
+    CustomPushButton* getPathBtn(void) const {return pathBtn; }
 
 private:
     QVBoxLayout* layout;
     QSharedPointer<Points> points;
+    CustomPushButton* robotBtn;
+    CustomPushButton* pointBtn;
+    CustomPushButton* mapBtn;
+    CustomPushButton* pathBtn;
 
 protected:
     void showEvent(QShowEvent *event);
