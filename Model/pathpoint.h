@@ -18,7 +18,7 @@ public:
      */
     enum Action { WAIT, HUMAN_ACTION };
     PathPoint(const Point& point, const Action& action, const int waitTime = 0);
-    PathPoint(): point(Point("Alfred", 4.2, 5.3)), action(Action::WAIT), waitTime(12) {}
+    PathPoint(void);
 
     /// Getters
     Point getPoint(void) const { return point; }

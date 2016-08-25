@@ -12,6 +12,14 @@ class MainWindow;
 
 #include "Model/pathpoint.h"
 
+/**
+ * @brief The Paths class
+ * Contains all the paths saved by the user (those which may or may not assigned to a robot or several robots)
+ * The structure of a Paths object :
+ * Map of Groups of paths indexed by their names
+ *      Map of paths indexed by their names as well
+ *          paths : vector of path points
+ */
 class Paths: public QObject {
     Q_OBJECT
 
@@ -35,6 +43,7 @@ private:
     QSharedPointer<Groups> groups;
 };
 
+/// to serialize, deserialize Path objects
 QDataStream& operator<<(QDataStream& out, const Paths& paths);
 QDataStream& operator>>(QDataStream& in, Paths& paths);
 

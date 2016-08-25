@@ -17,7 +17,6 @@ XMLParser::~XMLParser(){
 }
 
 void XMLParser::save(const Points& points) const {
-    //qDebug() << "XMLParser::save called";
     try {
 
         file->open(QIODevice::WriteOnly);

@@ -6,6 +6,9 @@ PathPoint::PathPoint(const Point &_point, const Action &_action, const int _wait
 {
 }
 
+/// the main purpose of this constructor is the deserialization of a path point
+PathPoint::PathPoint(void): point(Point("DefaultPoint", -1.0, -1.0)), action(Action::HUMAN_ACTION), waitTime(0) {}
+
 QDataStream& operator>>(QDataStream& in, PathPoint& pathPoint){
     Point _point;
     qint32 _waitTime;

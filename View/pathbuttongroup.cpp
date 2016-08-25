@@ -3,12 +3,11 @@
 #include "Model/paths.h"
 #include "View/custompushbutton.h"
 
-PathButtonGroup::PathButtonGroup(QWidget *_parent, QSharedPointer<Paths> _paths): QWidget(_parent), paths(_paths)
+PathButtonGroup::PathButtonGroup(QWidget *_parent, QSharedPointer<Paths> _paths): QWidget(_parent), paths(_paths), BUTTON_SIZE(parentWidget()->size()/2)
 {
     layout = new QVBoxLayout(this);
     buttonGroup = new QButtonGroup(this);
     layout->setAlignment(Qt::AlignTop);
-    BUTTON_SIZE = parentWidget()->size()/2;
 }
 
 void PathButtonGroup::setGroupPaths(const QString groupName){
@@ -34,6 +33,7 @@ void PathButtonGroup::setGroupPaths(const QString groupName){
     }
 }
 
+/// delete the buttons so they can be reconstructed (to update the QButtonGroup in the event of a creating or edition)
 void PathButtonGroup::deleteButtons(void){
     qDebug() << "PathButtonGroup::deleteButtons called";
     while(QLayoutItem* item = layout->takeAt(0)){

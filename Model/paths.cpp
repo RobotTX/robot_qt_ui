@@ -6,6 +6,7 @@ Paths::Paths(MainWindow *parent): QObject(parent)
     groups = QSharedPointer<Groups>(new Groups());
 }
 
+/// Simple function to display the content of a path object
 void Paths::displayGroups() const {
     qDebug() << "\nPaths::displayGroups called";
     QMapIterator<QString, QSharedPointer<CollectionPaths>> it(*(groups));
@@ -26,6 +27,10 @@ void Paths::displayGroups() const {
     qDebug() << "";
 }
 
+/// to create a path in the group of paths indexed by <groupName>
+/// if the object does not contain a group of paths named <groupName> or if a path called <pathName> already exists
+/// this function does not do anything, otherwise it creates an empty path which name is <pathName>
+/// in the group of paths which name is <groupName>
 void Paths::createPath(const QString groupName, const QString pathName){
     auto it_group = groups->find(groupName);
     if(it_group == groups->end())
@@ -39,6 +44,8 @@ void Paths::createPath(const QString groupName, const QString pathName){
     }
 }
 
+/// to add a path point to the path called <pathName> in the group of paths <groupName>
+/// if either one of the group of paths or path itself does not exist, this function does not do anything
 void Paths::addPathPoint(const QString groupName, const QString pathName, const QSharedPointer<PathPoint> &pathPoint){
     /// if the group of paths exists
     auto it = groups->find(groupName);
@@ -55,7 +62,6 @@ void Paths::addPathPoint(const QString groupName, const QString pathName, const 
                 new_path_ptr->push_back(pathPoint);
                 (*(*groups)[groupName])[pathName] = new_path_ptr;
             }
-
         } else
             qDebug() << "Paths::addPathPoint The path" << pathName << "does not exist";
 
@@ -63,6 +69,7 @@ void Paths::addPathPoint(const QString groupName, const QString pathName, const 
         qDebug() << "Paths::addPathPoint the group of paths" << groupName << "does not exist";
 }
 
+/// attempts to create a group of paths called <name>, if the group already exists the function does not do anything
 void Paths::createGroup(const QString name){
     if(groups->find(name) == groups->end())
         groups->insert(name,
@@ -71,6 +78,7 @@ void Paths::createGroup(const QString name){
         qDebug() << "A group named" << name << "already exists";
 }
 
+/// attempts to delete a group of paths called <name>, if the group does not exist, the function does not do anything
 void Paths::deleteGroup(const QString name){
     qDebug() << "Paths::deleteGroup called";
     if(groups->find(name) != groups->end()){

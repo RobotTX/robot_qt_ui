@@ -31,6 +31,8 @@ public:
 
     void setLastCheckedButton(const QString textButton) { lastCheckedButton = textButton; }
 
+public:
+    void initializeActionButtons(void);
     void disableButtons();
     QString formatName(const QString name) const;
     void updateGroupsPaths(void);

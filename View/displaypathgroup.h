@@ -12,6 +12,11 @@ class TopLeftMenu;
 class Paths;
 class QAbstractButton;
 
+/**
+ * @brief The DisplayPathGroup class
+ * This class provides a widget to display the paths contained in a group of paths and allows a user to perform actions
+ * such as remove or edit on those paths as well as creating new paths
+ */
 class DisplayPathGroup: public QWidget {
     Q_OBJECT
 

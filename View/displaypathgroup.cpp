@@ -10,10 +10,12 @@
 DisplayPathGroup::DisplayPathGroup(QMainWindow* _parent, const QSharedPointer<Paths>& _paths):
     QWidget(_parent), paths(_paths), lastCheckedButton("")
 {
+    /// to scroll the button group if there is a lot of paths
     CustomScrollArea* scrollArea = new CustomScrollArea(this);
 
     layout = new QVBoxLayout(this);
 
+    /// 5 buttons displayed at the top
     actionButtons = new TopLeftMenu(this);
 
     initializeActionButtons();
@@ -21,15 +23,18 @@ DisplayPathGroup::DisplayPathGroup(QMainWindow* _parent, const QSharedPointer<Pa
     layout->addWidget(actionButtons);
 
     pathButtonGroup = new PathButtonGroup(_parent, paths);
+    /// called when a button is clicked in the button group
     connect(pathButtonGroup->getButtonGroup(), SIGNAL(buttonClicked(QAbstractButton*)), this, SLOT(enableButtons(QAbstractButton*)));
 
     scrollArea->setWidget(pathButtonGroup);
 
     layout->addWidget(scrollArea);
-    setMaximumWidth(_parent->width()*4/10);
-    setMinimumWidth(_parent->width()*4/10);
+
+    setMaximumWidth(_parent->width()*4 / 10);
+    setMinimumWidth(_parent->width()*4 / 10);
 }
 
+/// we reset the action buttons everytime we show the widget
 void DisplayPathGroup::showEvent(QShowEvent *event){
     initializeActionButtons();
     QWidget::showEvent(event);
@@ -49,6 +54,9 @@ void DisplayPathGroup::initializeActionButtons(){
     actionButtons->getMapButton()->setToolTip("Select a path and click here to display or hide it on the map");
 }
 
+/// called when a button is clicked in the button group
+/// if the button was already checked, the button is unchecked and the appropriate action buttons disabled
+/// lastCheckButton is updated to keep track of the last checked button
 void DisplayPathGroup::enableButtons(QAbstractButton *button){
     if(button->text().compare(lastCheckedButton)){
         lastCheckedButton = button->text();
