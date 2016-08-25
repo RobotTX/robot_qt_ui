@@ -26,6 +26,7 @@ public:
     PathButtonGroup* getPathButtonGroup(void) const { return pathButtonGroup; }
     TopLeftMenu* getActionButtons(void) const { return actionButtons; }
     QString getLastCheckedButton(void) const { return lastCheckedButton; }
+    void setLastCheckedButton(const QString checkedButton) { lastCheckedButton = checkedButton; }
 
 public:
     void initializeActionButtons(void);

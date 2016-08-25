@@ -3794,8 +3794,22 @@ void MainWindow::createPath(){
 
 void MainWindow::deletePath(){
     qDebug() << "MainWindow::deletePath called";
-    paths->deletePath(lastWidgets.at(lastWidgets.size()-1).first.second, leftMenu->getPathGroupDisplayed()->getLastCheckedButton());
-    leftMenu->getPathGroupDisplayed()->getPathButtonGroup()->setGroupPaths(lastWidgets.at(lastWidgets.size()-1).first.second);
+    int answer = openConfirmMessage("Are you sure you want to delete this path, this action is irreversible ?");
+    switch(answer){
+    case QMessageBox::StandardButton::Ok:
+        paths->deletePath(lastWidgets.at(lastWidgets.size()-1).first.second, leftMenu->getPathGroupDisplayed()->getLastCheckedButton());
+        leftMenu->getPathGroupDisplayed()->getPathButtonGroup()->setGroupPaths(lastWidgets.at(lastWidgets.size()-1).first.second);
+    break;
+    case QMessageBox::StandardButton::Cancel:
+        leftMenu->getPathGroupDisplayed()->getPathButtonGroup()->uncheck();
+        leftMenu->getPathGroupDisplayed()->setLastCheckedButton("");
+    break;
+    default:
+        qDebug() << "MainWindow::deletePath you should not be here, you probably forgot to implement the behavior for one of your buttons";
+    break;
+    }
+
+
 }
 
 void MainWindow::displayPathOnMap(const bool display){
