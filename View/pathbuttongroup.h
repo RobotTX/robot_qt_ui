@@ -18,6 +18,8 @@ public:
 
 public:
     void setGroupPaths(const QString groupName);
+    void deleteButtons(void);
+    void uncheck(void);
 
 private:
     QVBoxLayout* layout;

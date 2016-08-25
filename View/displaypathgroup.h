@@ -10,6 +10,7 @@ class PathButtonGroup;
 class QVBoxLayout;
 class TopLeftMenu;
 class Paths;
+class QAbstractButton;
 
 class DisplayPathGroup: public QWidget {
     Q_OBJECT
@@ -18,12 +19,16 @@ public:
     DisplayPathGroup(QWidget *_parent, const QSharedPointer<Paths> &_paths);
 
     PathButtonGroup* getPathButtonGroup(void) const { return pathButtonGroup; }
+    TopLeftMenu* getActionButtons(void) const { return actionButtons; }
 
 public:
     void initializeActionButtons(void);
 
+private slots:
+    void enableButtons(QAbstractButton* button);
+
 protected:
-    void showEvent(QEvent* event);
+    void showEvent(QShowEvent* event);
 
 private:
     QSharedPointer<Paths> paths;
@@ -31,6 +36,7 @@ private:
     PathButtonGroup* pathButtonGroup;
     TopLeftMenu* actionButtons;
     QVBoxLayout* layout;
+    QString lastCheckedButton;
 };
 
 #endif // DISPLAYPATHGROUP_H

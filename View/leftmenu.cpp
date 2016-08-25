@@ -168,10 +168,15 @@ LeftMenu::LeftMenu(MainWindow* _parent, QSharedPointer<Points> const& _points, Q
 
 
     /// Menu which displays the groups of paths
-    groupsPathsWidget = new GroupsPathsWidget(this, paths);
+    groupsPathsWidget = new GroupsPathsWidget(this, _parent, paths);
     //groupsPathsWidget->setMaximumWidth(parent->width()*4/10);
     groupsPathsWidget->hide();
     leftLayout->addWidget(groupsPathsWidget);
+
+    connect(groupsPathsWidget->getActionButtons()->getGoButton(), SIGNAL(clicked()), parent, SLOT(displayGroupPaths()));
+    connect(groupsPathsWidget->getActionButtons()->getEditButton(), SIGNAL(clicked()), parent, SLOT(editGroupPaths()));
+    connect(groupsPathsWidget->getActionButtons()->getPlusButton(), SIGNAL(clicked()), parent, SLOT(createGroupPaths()));
+    connect(groupsPathsWidget->getActionButtons()->getMinusButton(), SIGNAL(clicked()), parent, SLOT(deleteGroupPaths()));
 
     /// Menu which displays a particular group of paths
     pathGroup = new DisplayPathGroup(this, paths);
@@ -179,10 +184,11 @@ LeftMenu::LeftMenu(MainWindow* _parent, QSharedPointer<Points> const& _points, Q
     pathGroup->hide();
     leftLayout->addWidget(pathGroup);
 
-    connect(groupsPathsWidget->getActionButtons()->getGoButton(), SIGNAL(clicked()), parent, SLOT(displayGroupPaths()));
-    connect(groupsPathsWidget->getActionButtons()->getEditButton(), SIGNAL(clicked()), parent, SLOT(editGroupPaths()));
-    connect(groupsPathsWidget->getActionButtons()->getPlusButton(), SIGNAL(clicked()), parent, SLOT(createGroupPaths()));
-    connect(groupsPathsWidget->getActionButtons()->getMinusButton(), SIGNAL(clicked()), parent, SLOT(deleteGroupPaths()));
+    connect(pathGroup->getActionButtons()->getGoButton(), SIGNAL(clicked()), parent, SLOT(displayPath()));
+    connect(pathGroup->getActionButtons()->getPlusButton(), SIGNAL(clicked()), parent, SLOT(createPath()));
+    connect(pathGroup->getActionButtons()->getMinusButton(), SIGNAL(clicked()), parent, SLOT(deletePath()));
+    connect(pathGroup->getActionButtons()->getMapButton(), SIGNAL(toggled(bool)), parent, SLOT(displayPathOnMap(bool)));
+    connect(pathGroup->getActionButtons()->getEditButton(), SIGNAL(clicked()), parent, SLOT(editPath()));
 
     hide();
     /*setMaximumWidth(parent->width()*4/10);

@@ -58,10 +58,10 @@ DisplaySelectedGroup::DisplaySelectedGroup(QWidget* parent, QSharedPointer<Point
     scrollArea->setWidget(pointButtonGroup);
 
     layout->addWidget(scrollArea);
+
     /*setMaximumWidth(mainWindow->width()*4/10);
     setMinimumWidth(mainWindow->width()*4/10);*/
     //layout->setContentsMargins(0,0,0,0);
-
 }
 
 void DisplaySelectedGroup::setName(const QString _name){

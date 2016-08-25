@@ -19,7 +19,7 @@ class GroupsPathsWidget: public QWidget
 {
     Q_OBJECT
 public:
-    GroupsPathsWidget(QWidget* parent, const QSharedPointer<Paths> &_paths);
+    GroupsPathsWidget(QWidget* parent, MainWindow* _mainWindow, const QSharedPointer<Paths> &_paths);
 
     GroupsPathsButtonGroup* getButtonGroup(void) const { return buttonGroup; }
     TopLeftMenu* getActionButtons(void) const { return actionButtons; }
@@ -62,6 +62,8 @@ private slots:
 
 
 private:
+    MainWindow* mainWindow;
+
     QHBoxLayout* creationLayout;
     CustomScrollArea* scrollArea;
     QLabel* groupNameLabel;
@@ -76,6 +78,7 @@ private:
     CustomPushButton* cancelButton;
     /// to differenciate the behavior of the enter key
     bool creatingGroup;
+
 
 };
 

@@ -3777,6 +3777,33 @@ void MainWindow::modifyGroupPathsWithEnter(QString name){
     topLayout->setLabelDelay(TEXT_COLOR_SUCCESS, "You have successfully modified the name of your group", 1500);
 }
 
+void MainWindow::doubleClickOnPathsGroup(QString checkedButton){
+    leftMenu->getPathGroupDisplayed()->getPathButtonGroup()->setGroupPaths(checkedButton);
+    switchFocus(checkedButton, leftMenu->getPathGroupDisplayed(), MainWindow::WidgetType::GROUP_OF_PATHS);
+    leftMenu->getGroupsPathsWidget()->hide();
+    leftMenu->getPathGroupDisplayed()->show();
+}
+
+void MainWindow::displayPath(){
+    qDebug() << "MainWindow::displayPath called";
+}
+
+void MainWindow::createPath(){
+    qDebug() << "MainWindow::createPath called";
+}
+
+void MainWindow::deletePath(){
+    qDebug() << "MainWindow::deletePath called";
+}
+
+void MainWindow::displayPathOnMap(const bool display){
+    qDebug() << "MainWindow::displayPathOnMap called";
+}
+
+void MainWindow::editPath(){
+    qDebug() << "MainWindow::editPath called";
+}
+
 /**********************************************************************************************************************************/
 
 //                                          ODDS AND ENDS
