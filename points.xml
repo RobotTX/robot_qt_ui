@@ -18,12 +18,20 @@
             <name>A final point</name>
             <x>1153</x>
             <y>843</y>
->>>>>>> b90176b3d87ff86823f0de725dbc57faa81dd5aa
             <displayed>1</displayed>
         </point>
     </group>
     <group>
-        <name>Second group</name>
+        <name>TmpPoint</name>
+        <point>
+            <name>tmpPoint</name>
+            <x>0</x>
+            <y>0</y>
+            <displayed>0</displayed>
+        </point>
+    </group>
+    <group>
+        <name>dsf</name>
         <point>
             <name>Fanny</name>
             <x>1126</x>
@@ -38,16 +46,7 @@
         </point>
     </group>
     <group>
-        <name>TmpPoint</name>
-        <point>
-            <name>tmpPoint</name>
-            <x>0</x>
-            <y>0</y>
-            <displayed>0</displayed>
-        </point>
-    </group>
-    <group>
-        <name>first group</name>
+        <name>fsdfs</name>
         <point>
             <name>A</name>
             <x>1130</x>
