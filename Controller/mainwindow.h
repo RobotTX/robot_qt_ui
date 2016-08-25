@@ -45,10 +45,12 @@ class GroupsPathsWidget;
 #define MAP_PATH "/home/m-a/Documents/QtProject/gobot-software/realMap.dat"
 #define PATHS_PATH "/home/m-a/Documents/QtProject/gobot-software/savedPaths.dat"
 
-//#define XML_PATH "/home/joan/Qt/QtProjects/gobot-software/points.xml"
-//#define ROBOTS_NAME_PATH "/home/joan/Qt/QtProjects/gobot-software/robotsName.dat"
-//#define MAP_PATH "/home/joan/Qt/QtProjects/gobot-software/realMap.dat"
-//#define PATHS_PATH "/home/joan/Qt/QtProjects/gobot-software/savedPaths.dat"
+/*
+#define XML_PATH "/home/joan/Qt/QtProjects/gobot-software/points.xml"
+#define ROBOTS_NAME_PATH "/home/joan/Qt/QtProjects/gobot-software/robotsName.dat"
+#define MAP_PATH "/home/joan/Qt/QtProjects/gobot-software/realMap.dat"
+#define PATHS_PATH "/home/joan/Qt/QtProjects/gobot-software/savedPaths.dat"
+*/
 
 #define PI 3.14159265
 #define PORT_ROBOT_UPDATE 6000
@@ -69,7 +71,7 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
-    enum WidgetType { MENU, GROUPS, GROUP, POINT, ROBOTS, ROBOT , MAP, GROUPS_PATHS, PATH };
+    enum WidgetType { MENU, GROUPS, GROUP, POINT, ROBOTS, ROBOT , MAP, GROUPS_PATHS, GROUP_OF_PATHS, PATH };
 
     QSharedPointer<Points> getPoints(void) const { return points; }
     QList<QPair<QPair<QWidget*, QString>, MainWindow::WidgetType>> getLastWidgets() const { return lastWidgets; }
@@ -225,6 +227,7 @@ private slots:
     void createGroupPaths();
     void deleteGroupPaths();
     void saveGroupPaths(QString name);
+    void modifyGroupPathsWithEnter(QString name);
 
 private:
     Ui::MainWindow* ui;

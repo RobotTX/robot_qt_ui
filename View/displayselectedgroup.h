@@ -22,7 +22,7 @@ class Points;
 class DisplaySelectedGroup: public QWidget {
     Q_OBJECT
 public:
-    DisplaySelectedGroup(QMainWindow *_parent, const QSharedPointer<Points> &_points);
+    DisplaySelectedGroup(QWidget *_parent, const QSharedPointer<Points> &_points);
 
     PointButtonGroup* getPointButtonGroup(void) const { return pointButtonGroup; }
     TopLeftMenu* getActionButtons(void) const { return actionButtons; }

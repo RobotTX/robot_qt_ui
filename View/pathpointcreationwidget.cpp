@@ -42,7 +42,7 @@ PathPointCreationWidget::PathPointCreationWidget(const int _id, const QString _n
     timeLayout->addWidget(timeEdit);
 
     QLabel* sLabel = new QLabel("sec", this);
-    sLabel->setMaximumWidth(30);
+    //sLabel->setMaximumWidth(30);
     timeLayout->addWidget(sLabel);
 
     /*timeLayout->setContentsMargins(0, 0, 0, 0);
@@ -71,8 +71,8 @@ PathPointCreationWidget::PathPointCreationWidget(const int _id, const QString _n
     QPixmap mypix (":/icons/cropped_list.png");
     moveImage->setPixmap(mypix);
     moveImage->setScaledContents(true);
-    moveImage->setMaximumWidth(10);
-    moveImage->setMaximumHeight(10);
+    /*moveImage->setMaximumWidth(10);
+    moveImage->setMaximumHeight(10);*/
     layout->addWidget(moveImage);
 
     layout->addWidget(pathWidget);

@@ -41,7 +41,7 @@ DisplaySelectedPointRobots::DisplaySelectedPointRobots(QWidget *parent):QWidget(
     QVBoxLayout* pathLabelLayout = new QVBoxLayout(pathWidget);
     SpaceWidget* spaceWidget2 = new SpaceWidget(SpaceWidget::SpaceOrientation::HORIZONTAL, this);
     pathLabelLayout->addWidget(spaceWidget2);
-    QLabel* pathLabel = new QLabel("This point is part of the path of the robot(s) :", this);
+    QLabel* pathLabel = new QLabel("This point belongs to the path of the robot(s) :", this);
     pathLabel->setWordWrap(true);
     pathLabel->setMinimumHeight(60);
     pathLabel->setMaximumHeight(60);

@@ -32,7 +32,7 @@
 #include "View/pathpointcreationwidget.h"
 #include "View/pathpointlist.h"
 #include "View/pathwidget.h"
-#include "colors.h"
+#include "stylesettings.h"
 #include <QMap>
 #include <QVBoxLayout>
 #include <QAbstractButton>
@@ -45,6 +45,7 @@
 #include "View/displaypathgroup.h"
 #include "View/pathbuttongroup.h"
 #include "View/custompushbutton.h"
+#include "View/groupspathsbuttongroup.h"
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow) {
     ui->setupUi(this);
@@ -61,7 +62,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     mapState.first.setY(settings.value("mapState/point/y", .0f).toFloat());
     mapState.second = settings.value("mapState/zoom", 1.0f).toFloat();
 
-    /**************************************************************/
+    /*************************** TODO GET FROM A SAVE FILE/MAP SETTINGS ***********************************/
 
     map->setWidth(320);
     map->setHeight(608);
@@ -213,6 +214,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
     connect(leftMenu->getGroupsPathsWidget(), SIGNAL(newPathGroup(QString)), this, SLOT(saveGroupPaths(QString)));
     connect(leftMenu->getGroupsPathsWidget(), SIGNAL(messageCreationGroup(QString,QString)), this, SLOT(setMessageCreationGroup(QString,QString)));
+    connect(leftMenu->getGroupsPathsWidget(), SIGNAL(modifiedGroup(QString)), this, SLOT(modifyGroupPathsWithEnter(QString)));
 
     mainLayout->addLayout(bottom);
     graphicsView->setStyleSheet("CustomQGraphicsView {background-color: " + background_map_view + "}");
@@ -229,8 +231,10 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
     setStyleSheet("QWidget {border: 1px solid red}"
                   "QPushButton {border: 1px solid green}"
-                  "QLabel {border: 1px solid blue}");
+                  "QLabel {border: 1px solid blue}"
+                  "LeftMenu {border: 1px solid yellow}");
     this->setAutoFillBackground(true);
+
     /*rightLayout->setContentsMargins(0,0,0,0);
     bottom->setContentsMargins(0,0,0,0);
     mainLayout->setContentsMargins(0,0,0,0);
@@ -1999,7 +2003,7 @@ void MainWindow::editPointButtonEvent(){
 void MainWindow::editGroupBtnEvent(){
 
     if(pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->checkedButton()){
-        qDebug() << "editPointBtnEvent called" << pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->checkedButton()->text();
+        qDebug() << "editGroupBtnEvent called" << pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->checkedButton()->text();
         topLayout->setEnabled(false);
         setEnableAll(false);
         int btnIndex = pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->checkedId();
@@ -2067,13 +2071,13 @@ void MainWindow::editGroupBtnEvent(){
 
             pointsLeftWidget->getGroupButtonGroup()->uncheck();
             pointsLeftWidget->getGroupButtonGroup()->setEnabled(false);
+
             pointsLeftWidget->getGroupButtonGroup()->getModifyEdit()->selectAll();
             pointsLeftWidget->getGroupButtonGroup()->getModifyEdit()->setFocus();
             pointsLeftWidget->getGroupButtonGroup()->getModifyEdit()->show();
-
-
             pointsLeftWidget->getGroupButtonGroup()->getLayout()->removeWidget(pointsLeftWidget->getGroupButtonGroup()->getModifyEdit());
             pointsLeftWidget->getGroupButtonGroup()->getLayout()->insertWidget(btnIndex, pointsLeftWidget->getGroupButtonGroup()->getModifyEdit());
+
             pointsLeftWidget->getGroupButtonGroup()->setEditedGroupName(checkedId);
             btn->hide();
         }
@@ -3616,12 +3620,48 @@ void MainWindow::displayPathSlot(QString groupName, QString pathName, bool displ
 
 void MainWindow::displayGroupPaths(){
     qDebug() << "MainWindow::displayGroupPaths called";
+    switchFocus(leftMenu->getGroupsPathsWidget()->getButtonGroup()->getButtonGroup()->checkedButton()->text(),
+                leftMenu->getPathGroupDisplayed(), MainWindow::WidgetType::GROUP_OF_PATHS);
+    leftMenu->getPathGroupDisplayed()->getPathButtonGroup()->setGroupPaths(
+                leftMenu->getGroupsPathsWidget()->getButtonGroup()->getButtonGroup()->checkedButton()->text());
     leftMenu->getGroupsPathsWidget()->hide();
-    //leftMenu->getPathGroupDisplayed()->show();
+    leftMenu->getPathGroupDisplayed()->show();
 }
 
 void MainWindow::editGroupPaths(){
     qDebug() << "MainWindow::editGroupPaths called";
+
+    leftMenu->getGroupsPathsWidget()->getActionButtons()->getEditButton()->setToolTip("Choose a new name for your group and press the ENTER key");
+
+    int btnIndex = leftMenu->getGroupsPathsWidget()->getButtonGroup()->getButtonGroup()->checkedId();
+    qDebug() << "index" << btnIndex;
+    leftMenu->getGroupsPathsWidget()->setCreatingGroup(false);
+
+    /// hides the button so we can show the QLineEdit on top of it
+    leftMenu->getGroupsPathsWidget()->getButtonGroup()->getButtonGroup()->button(btnIndex)->hide();
+
+    /// disables the buttons
+    leftMenu->getGroupsPathsWidget()->getActionButtons()->disableAll();
+
+    /// disables the QButtonGroup
+    leftMenu->getGroupsPathsWidget()->getButtonGroup()->setEnabledGroup(false);
+
+    /// we hide those in case the previous button clicked was the plus button
+    /*
+    pointsLeftWidget->getGroupNameEdit()->hide();
+    pointsLeftWidget->getGroupNameLabel()->hide();
+    QAbstractButton* btn = pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->checkedButton();
+    QString checkedId = pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->checkedButton()->text();
+    */
+    leftMenu->getReturnButton()->setEnabled(false);
+    leftMenu->getCloseButton()->setEnabled(false);
+
+    leftMenu->getGroupsPathsWidget()->getButtonGroup()->getModifyEdit()->selectAll();
+    leftMenu->getGroupsPathsWidget()->getButtonGroup()->getModifyEdit()->setFocus();
+    leftMenu->getGroupsPathsWidget()->getButtonGroup()->getModifyEdit()->show();
+
+    leftMenu->getGroupsPathsWidget()->getButtonGroup()->getLayout()->removeWidget(leftMenu->getGroupsPathsWidget()->getButtonGroup()->getModifyEdit());
+    leftMenu->getGroupsPathsWidget()->getButtonGroup()->getLayout()->insertWidget(btnIndex, leftMenu->getGroupsPathsWidget()->getButtonGroup()->getModifyEdit());
 }
 
 void MainWindow::createGroupPaths(){
@@ -3630,15 +3670,17 @@ void MainWindow::createGroupPaths(){
 
     leftMenu->getGroupsPathsWidget()->getGroupNameEdit()->setFocus();
     leftMenu->getGroupsPathsWidget()->setCreatingGroup(true);
-    //leftMenu->getGroupsPathsWidget()->getPathButtonGroup()->uncheck();
+    /// unchecks the potential checked button
+    leftMenu->getGroupsPathsWidget()->getButtonGroup()->uncheck();
+
     /// resets the name edit field
     leftMenu->getGroupsPathsWidget()->getGroupNameEdit()->setText("");
     /// stops a user from creating a new group with no name
     leftMenu->getGroupsPathsWidget()->getSaveButton()->setEnabled(false);
+
     /// uncheck and disable the buttons
     leftMenu->getGroupsPathsWidget()->getActionButtons()->uncheckAll();
-
-    leftMenu->getGroupsPathsWidget()->getActionButtons()->enableAll();
+    leftMenu->getGroupsPathsWidget()->getActionButtons()->disableAll();
 
     leftMenu->getGroupsPathsWidget()->getActionButtons()->getPlusButton()->setToolTip("Enter a name for your group and click \"save\" or click \"cancel\" to cancel");
 
@@ -3652,10 +3694,26 @@ void MainWindow::createGroupPaths(){
     leftMenu->getGroupsPathsWidget()->getGroupNameLabel()->show();
     leftMenu->getGroupsPathsWidget()->getCancelButton()->show();
     leftMenu->getGroupsPathsWidget()->getSaveButton()->show();
+
 }
 
 void MainWindow::deleteGroupPaths(){
     qDebug() << "MainWindow::deleteGroupPaths called";
+    int answer = openConfirmMessage("Are you sure you want to delete this group of path, all the paths inside would be deleted as well ?");
+    leftMenu->getGroupsPathsWidget()->resetWidget();
+    switch(answer){
+    case QMessageBox::StandardButton::Ok:
+        paths->deleteGroup(leftMenu->getGroupsPathsWidget()->getButtonGroup()->getButtonGroup()->checkedButton()->text());
+        leftMenu->getGroupsPathsWidget()->updateGroupsPaths();
+        break;
+    case QMessageBox::StandardButton::Cancel:
+        /// unchecks the group button (prettier imo but not necessary on the logic level)
+        leftMenu->getGroupsPathsWidget()->uncheck();
+        break;
+    default:
+        qDebug() << "MainWindow::deleteGroupPaths ended up in the default case which suggests that you forgot to implement the behavior relative to a particular button";
+        break;
+    }
 }
 
 void MainWindow::saveGroupPaths(QString name){
@@ -3685,12 +3743,38 @@ void MainWindow::saveGroupPaths(QString name){
         leftMenu->getGroupsPathsWidget()->getActionButtons()->getPlusButton()->setEnabled(true);
         leftMenu->getGroupsPathsWidget()->getActionButtons()->getPlusButton()->setToolTip("Click here to add a new group of paths");
         topLayout->setEnabled(true);
-
+        leftMenu->getGroupsPathsWidget()->getActionButtons()->getPlusButton()->setEnabled(true);
         topLayout->setLabelDelay(TEXT_COLOR_SUCCESS, "You have created a new group of paths", 2500);
     } else if(pointsLeftWidget->checkGroupName(name) == 1)
         topLayout->setLabelDelay(TEXT_COLOR_DANGER, "The name of your group cannot be empty", 2500);
     else
         topLayout->setLabelDelay(TEXT_COLOR_DANGER, "You cannot choose : " + name + " as a new name for your group because another group already has this name", 2500);
+}
+
+void MainWindow::modifyGroupPathsWithEnter(QString name){
+    name = name.simplified();
+    qDebug() << "modifying group paths after enter key pressed from" << pointsLeftWidget->getLastCheckedId() << "to" << name;
+
+    //topLayout->setEnabled(true);
+    //setEnableAll(true);
+
+    /// Update the model
+    QSharedPointer<Paths::CollectionPaths> value = paths->getGroups()->value(leftMenu->getGroupsPathsWidget()->getButtonGroup()->getButtonGroup()->checkedButton()->text());
+    paths->getGroups()->remove(leftMenu->getGroupsPathsWidget()->getButtonGroup()->getButtonGroup()->checkedButton()->text());
+    paths->getGroups()->insert(name, value);
+
+    leftMenu->getGroupsPathsWidget()->updateGroupsPaths();
+
+    /// enables the plus button
+    leftMenu->getGroupsPathsWidget()->getActionButtons()->getPlusButton()->setEnabled(true);
+
+    /// enables the buttons
+    //leftMenu->getGroupsPathsWidget()->getButtonGroup()->setEnabled(true);
+    //leftMenu->getGroupsPathsWidget()->disableButtons();
+    leftMenu->getGroupsPathsWidget()->getButtonGroup()->getModifyEdit()->hide();
+
+    leftMenu->getGroupsPathsWidget()->setLastCheckedButton("");
+    topLayout->setLabelDelay(TEXT_COLOR_SUCCESS, "You have successfully modified the name of your group", 1500);
 }
 
 /**********************************************************************************************************************************/
@@ -3705,8 +3789,6 @@ void MainWindow::quit(){
 
 void MainWindow::backEvent(){
     //qDebug() << "back event called";
-
-    //debug
 
     setEnableAll(true);
     /// resets the menus
@@ -3787,6 +3869,7 @@ void MainWindow::hideAllWidgets(){
     leftMenu->getDisplaySelectedGroup()->hide();
     leftMenu->getGroupsPathsWidget()->hide();
     leftMenu->getDisplaySelectedPath()->hide();
+    leftMenu->getPathGroupDisplayed()->hide();
 }
 
 void MainWindow::clearNewMap(){

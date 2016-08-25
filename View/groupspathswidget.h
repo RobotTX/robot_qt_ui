@@ -6,7 +6,6 @@
 
 class CustomizedLineEdit;
 class GroupsPathsButtonGroup;
-class PathButtonGroup;
 class TopLeftMenu;
 class MainWindow;
 class QLabel;
@@ -20,14 +19,13 @@ class GroupsPathsWidget: public QWidget
 {
     Q_OBJECT
 public:
-    GroupsPathsWidget(MainWindow* _parent, const QSharedPointer<Paths> &_paths);
+    GroupsPathsWidget(QWidget* parent, const QSharedPointer<Paths> &_paths);
 
-    PathButtonGroup* getPathButtonGroup(void) const { return pathButtonGroup; }
+    GroupsPathsButtonGroup* getButtonGroup(void) const { return buttonGroup; }
     TopLeftMenu* getActionButtons(void) const { return actionButtons; }
     CustomPushButton* getSaveButton(void) const { return saveButton; }
     CustomPushButton* getCancelButton(void) const { return cancelButton; }
     void setCreatingGroup(const bool creating) { creatingGroup = creating; }
-    CustomizedLineEdit* getModifyEdit(void) const { return modifyEdit; }
     CustomizedLineEdit* getGroupNameEdit(void) const { return groupNameEdit; }
     QLabel* getGroupNameLabel(void) const { return groupNameLabel; }
 
@@ -36,31 +34,42 @@ public:
     void disableButtons();
     QString formatName(const QString name) const;
     void updateGroupsPaths(void);
-
+    void uncheck(void);
+    void enableActionButtons(void);
+    void hideCreationWidgets(void);
+    /// sets the widget in the state where u can either click a group or create a new one but nothing else
+    /// same state as when u show the widget
+    void resetWidget(void);
 
 protected:
     void keyPressEvent(QKeyEvent* event);
+    void hideEvent(QHideEvent *event);
 
 signals:
     void newPathGroup(QString);
     void messageCreationGroup(QString, QString);
+    void codeEditGroup(int);
+    void modifiedGroup(QString);
 
 public slots:
     int checkGroupName(QString name);
+    int checkEditGroupName(QString name);
+    void cancelCreationGroup();
 
 private slots:
     void enableButtons(QAbstractButton* button);
+    void newGroupPaths();
+
 
 private:
     QHBoxLayout* creationLayout;
     CustomScrollArea* scrollArea;
     QLabel* groupNameLabel;
-    CustomizedLineEdit* modifyEdit;
+
     CustomizedLineEdit* groupNameEdit;
     QSharedPointer<Paths> paths;
     QVBoxLayout* layout;
     GroupsPathsButtonGroup* buttonGroup;
-    PathButtonGroup* pathButtonGroup;
     TopLeftMenu* actionButtons;
     QString lastCheckedButton;
     CustomPushButton* saveButton;

@@ -34,7 +34,6 @@ private:
     QVBoxLayout* layout;
     QButtonGroup* buttonGroup;
     QString groupIndex;
-    QSize BUTTON_SIZE;
     QSharedPointer<Points> points;
 signals:
     void updateConnectionsRequest();

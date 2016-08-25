@@ -1,10 +1,11 @@
 #include "mapleftwidget.h"
 #include <QVBoxLayout>
-#include <QMainWindow>
+#include "Controller/mainwindow.h"
 #include <QLabel>
 #include "View/custompushbutton.h"
+#include "View/stylesettings.h"
 
-MapLeftWidget::MapLeftWidget(QMainWindow* parent): QWidget(parent){
+MapLeftWidget::MapLeftWidget(QWidget* parent, MainWindow* mainWindow): QWidget(parent){
     layout = new QVBoxLayout(this);
 
     /// Save & load buttons
@@ -14,9 +15,9 @@ MapLeftWidget::MapLeftWidget(QMainWindow* parent): QWidget(parent){
     /// this button allows a user to save a particular state for the map (point in the center of its screen and zoom)
     CustomPushButton* saveStateBtn = new CustomPushButton(QIcon(":/icons/save_map.png"), "Save the state of the map", this);
 
-    saveBtn->setIconSize(parent->size()/10);
-    loadBtn->setIconSize(parent->size()/10);
-    saveStateBtn->setIconSize(parent->size()/10);
+    saveBtn->setIconSize(normal_icon_size);
+    loadBtn->setIconSize(normal_icon_size);
+    saveStateBtn->setIconSize(normal_icon_size);
 
     layout->addWidget(saveBtn);
     layout->addWidget(loadBtn);
@@ -26,13 +27,13 @@ MapLeftWidget::MapLeftWidget(QMainWindow* parent): QWidget(parent){
     label->setStyleSheet ("text-align: left");
     layout->addWidget(label);
 
-    connect(saveBtn, SIGNAL(clicked()), parent, SLOT(saveMapBtnEvent()));
-    connect(loadBtn, SIGNAL(clicked()), parent, SLOT(loadMapBtnEvent()));
-    connect(saveStateBtn, SIGNAL(clicked()), parent, SLOT(saveMapState()));
+    connect(saveBtn, SIGNAL(clicked()), mainWindow, SLOT(saveMapBtnEvent()));
+    connect(loadBtn, SIGNAL(clicked()), mainWindow, SLOT(loadMapBtnEvent()));
+    connect(saveStateBtn, SIGNAL(clicked()), mainWindow, SLOT(saveMapState()));
 
     hide();
-    setMaximumWidth(parent->width()*4/10);
-    setMinimumWidth(parent->width()*4/10);
+    /*setMaximumWidth(mainWindow->width()*4/10);
+    setMinimumWidth(mainWindow->width()*4/10);*/
     layout->setAlignment(Qt::AlignTop);
     //layout->setContentsMargins(10,0,0,0);
 }

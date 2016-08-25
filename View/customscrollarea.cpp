@@ -40,6 +40,7 @@ bool CustomScrollArea::eventFilter(QObject *o, QEvent *e){
             childBar->resize(width(), 15);
         }
         if(childBar->maximum() <= 0){
+            
             childBar->hide();
         } else {
             childBar->show();
@@ -47,11 +48,4 @@ bool CustomScrollArea::eventFilter(QObject *o, QEvent *e){
     }
 
     return QScrollArea::eventFilter(o, e);
-}
-
- void CustomScrollArea::resizeEvent(QResizeEvent *event)
-{
-    // Define content margins here
- //  setViewportMargins(0, 0, 50, 0); // <<<<< SET MARGINS HERE
-    QScrollArea::resizeEvent(event);
 }

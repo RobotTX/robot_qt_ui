@@ -13,14 +13,13 @@
 #include "View/pointview.h"
 #include "View/custompushbutton.h"
 
-DisplaySelectedGroup::DisplaySelectedGroup(QMainWindow *parent, QSharedPointer<Points> const& _points) : QWidget(parent), points(_points){
+DisplaySelectedGroup::DisplaySelectedGroup(QWidget* parent, QSharedPointer<Points> const& _points) : QWidget(parent), points(_points), lastCheckedButton(""){
     /// to be able to display a lot of groups and points2
     CustomScrollArea* scrollArea = new CustomScrollArea(this);
 
     layout = new QVBoxLayout(this);
 
     actionButtons = new TopLeftMenu(this);
-    lastCheckedButton = "";
 
     actionButtons->disableAll();
     actionButtons->getMinusButton()->setCheckable(false);
@@ -59,11 +58,10 @@ DisplaySelectedGroup::DisplaySelectedGroup(QMainWindow *parent, QSharedPointer<P
     scrollArea->setWidget(pointButtonGroup);
 
     layout->addWidget(scrollArea);
-    setMaximumWidth(parent->width()*4/10);
-    setMinimumWidth(parent->width()*4/10);
+    /*setMaximumWidth(mainWindow->width()*4/10);
+    setMinimumWidth(mainWindow->width()*4/10);*/
     //layout->setContentsMargins(0,0,0,0);
 
-    connect(this, SIGNAL(resetPathPointViews()), parent, SLOT(resetPathPointViewsSlot()));
 }
 
 void DisplaySelectedGroup::setName(const QString _name){

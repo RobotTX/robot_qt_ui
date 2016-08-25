@@ -12,6 +12,7 @@ RobotBtnGroup::RobotBtnGroup(const QVector<RobotView*>& vector, QWidget* parent)
 
     for(int i = 0; i < vector.length(); i++){
         CustomPushButton* robotBtn = new CustomPushButton(vector[i]->getRobot()->getName(), this, true);
+        //robotBtn->setMaximumWidth(this->width());
         connect(robotBtn, SIGNAL(doubleClick(QString)), parent, SLOT(doubleClickOnRobot(QString)));
 
         btnGroup->addButton(robotBtn, i);

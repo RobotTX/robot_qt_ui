@@ -1,7 +1,8 @@
-#ifndef COLORS_H
-#define COLORS_H
+#ifndef STYLE_SETTINGS_H
+#define STYLE_SETTINGS_H
 
 #include <QString>
+#include <QSize>
 
 /// color theme, if you change colors you may have to clean and rebuild for it to be effective
 /// for "no color" ( the default grey) , put transparent
@@ -22,6 +23,9 @@ const QString bottom_menu_background_color= "#e0e0e0";
 const QString background_map_view= "white";
 const QString text_color="#306893";
 const QString menu_button_color = "transparent";
+const QSize small_icon_size = QSize(10, 10);
+const QSize normal_icon_size = QSize(30, 30);
+const QSize big_icon_size = QSize(45, 45);
 
 //light grey "#F4F4F4";
 //dark grey : #404244

@@ -14,15 +14,16 @@
 #include "customscrollarea.h"
 #include "View/pointview.h"
 #include "View/custompushbutton.h"
+#include "View/stylesettings.h"
 
 
-SelectedRobotWidget::SelectedRobotWidget(QMainWindow* parent): QWidget(parent){
+SelectedRobotWidget::SelectedRobotWidget(QWidget* parent, MainWindow* mainWindow): QWidget(parent){
 
     layout = new QVBoxLayout(this);
 
     actionButtons = new TopLeftMenu(this);
 
-    connect(actionButtons->getEditButton(), SIGNAL(clicked()), parent, SLOT(editSelecRobotBtnEvent()));
+    connect(actionButtons->getEditButton(), SIGNAL(clicked()), mainWindow, SLOT(editSelecRobotBtnEvent()));
 
     layout->addWidget(actionButtons);
 
@@ -39,9 +40,9 @@ SelectedRobotWidget::SelectedRobotWidget(QMainWindow* parent): QWidget(parent){
 
     /// Button which allow the user to scan the map from a robot
     scanBtn = new CustomPushButton(QIcon(":/icons/map.png"),"Scan a map", this, true);
-    scanBtn->setIconSize(parent->size()/10);
+    scanBtn->setIconSize(normal_icon_size);
     inLayout->addWidget(scanBtn);
-    connect(scanBtn, SIGNAL(clicked()), parent, SLOT(connectToRobot()));
+    connect(scanBtn, SIGNAL(clicked()), mainWindow, SLOT(connectToRobot()));
 
     /// Label which display the Ip of the robot
     ipAddressLabel = new QLabel("Ip : ", this);
@@ -95,13 +96,13 @@ SelectedRobotWidget::SelectedRobotWidget(QMainWindow* parent): QWidget(parent){
     scrollArea->setWidget(inWidget);
     layout->addWidget(scrollArea);
 
-    connect(goHome, SIGNAL(clicked()), parent, SLOT(goHomeBtnEvent()));
-    connect(actionButtons->getMapButton(), SIGNAL(clicked()), parent, SLOT(checkRobotBtnEventSelect()));
+    connect(goHome, SIGNAL(clicked()), mainWindow, SLOT(goHomeBtnEvent()));
+    connect(actionButtons->getMapButton(), SIGNAL(clicked()), mainWindow, SLOT(checkRobotBtnEventSelect()));
     hide();
-    setMaximumWidth(parent->width()*4/10);
-    setMinimumWidth(parent->width()*4/10);
-    inWidget->setMaximumWidth(parent->width()*4/10);
-    inWidget->setMinimumWidth(parent->width()*4/10);
+    /*setMaximumWidth(mainWindow->width()*4/10);
+    setMinimumWidth(mainWindow->width()*4/10);
+    inWidget->setMaximumWidth(mainWindow->width()*4/10);
+    inWidget->setMinimumWidth(mainWindow->width()*4/10);*/
     layout->setAlignment(Qt::AlignTop);
     //layout->setContentsMargins(0,0,0,0);
 

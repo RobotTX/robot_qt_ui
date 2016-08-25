@@ -7,7 +7,7 @@
 #include "View/spacewidget.h"
 #include <QTime>
 #include <QCoreApplication>
-#include "colors.h"
+#include "stylesettings.h"
 #include "View/custompushbutton.h"
 
 TopLayout::TopLayout(QMainWindow* parent): QWidget(parent), lastMessage(TEXT_COLOR_NORMAL, "")
@@ -20,23 +20,23 @@ TopLayout::TopLayout(QMainWindow* parent): QWidget(parent), lastMessage(TEXT_COL
 
     menuBtn = new CustomPushButton(QIcon(":/icons/list.png"), "", this);
     //menuBtn->setAutoDefault(true);
-    menuBtn->setIconSize(parent->size()/8);
-    menuBtn->setMaximumWidth(40);
+    menuBtn->setIconSize(normal_icon_size);
+    //menuBtn->setMaximumWidth(40);
     menuBtn->setFocusPolicy(Qt::FocusPolicy::NoFocus);
 
     layout->addWidget(menuBtn);
     connect(menuBtn, SIGNAL(clicked()), parent, SLOT(openLeftMenu()));
 
     connectBtn = new CustomPushButton(QIcon(":/icons/wifi.png"), "", this);
-    connectBtn->setIconSize(parent->size()/8);
-    connectBtn->setMaximumWidth(40);
+    connectBtn->setIconSize(normal_icon_size);
+    //connectBtn->setMaximumWidth(40);
     connectBtn->setFocusPolicy(Qt::FocusPolicy::NoFocus);
     layout->addWidget(connectBtn);
     connect(connectBtn, SIGNAL(clicked()), parent, SLOT(connectToRobot()));
 
     saveMapBtn = new CustomPushButton(QIcon(":/icons/load_map.png"), "", this);
-    saveMapBtn->setIconSize(parent->size()/12);
-    saveMapBtn->setMaximumWidth(40);
+    saveMapBtn->setIconSize(normal_icon_size);
+    //saveMapBtn->setMaximumWidth(40);
     saveMapBtn->setFocusPolicy(Qt::FocusPolicy::NoFocus);
     layout->addWidget(saveMapBtn);
     saveMapBtn->setToolTip("Save the state of the map");
@@ -44,16 +44,16 @@ TopLayout::TopLayout(QMainWindow* parent): QWidget(parent), lastMessage(TEXT_COL
 
     centerBtn = new CustomPushButton(QIcon(":/icons/save_map.png"), "", this);
     centerBtn->setToolTip("Restore the state of the map");
-    centerBtn->setIconSize(parent->size()/12);
-    centerBtn->setMaximumWidth(40);
+    centerBtn->setIconSize(normal_icon_size);
+    //centerBtn->setMaximumWidth(40);
     centerBtn->setFocusPolicy(Qt::FocusPolicy::NoFocus);
     layout->addWidget(centerBtn);
     connect(centerBtn, SIGNAL(clicked()), parent, SLOT(centerMap()));
 
     settingBtn = new CustomPushButton(QIcon(":/icons/setting.png"), "", this);
     settingBtn->setToolTip("Click to view/edit the settings");
-    settingBtn->setIconSize(parent->size()/8);
-    settingBtn->setMaximumWidth(40);
+    settingBtn->setIconSize(normal_icon_size);
+    //settingBtn->setMaximumWidth(40);
     settingBtn->setFocusPolicy(Qt::FocusPolicy::NoFocus);
     layout->addWidget(settingBtn);
     connect(settingBtn, SIGNAL(clicked()), parent, SLOT(settingBtnSlot()));
@@ -79,8 +79,8 @@ TopLayout::TopLayout(QMainWindow* parent): QWidget(parent), lastMessage(TEXT_COL
     layout->addWidget(spaceWidget2);
 
     closeBtn = new CustomPushButton(QIcon(":/icons/close.png"), "", this);
-    closeBtn->setIconSize(parent->size()/8);
-    closeBtn->setMaximumWidth(40);
+    closeBtn->setIconSize(normal_icon_size);
+    //closeBtn->setMaximumWidth(40);
     closeBtn->setFocusPolicy(Qt::FocusPolicy::NoFocus);
 
     layout->addWidget(closeBtn);

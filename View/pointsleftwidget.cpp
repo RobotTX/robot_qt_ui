@@ -21,7 +21,7 @@
 #include <QAbstractButton>
 #include "View/custompushbutton.h"
 
-PointsLeftWidget::PointsLeftWidget(QMainWindow* _parent, QSharedPointer<Points> const& _points, bool _groupDisplayed)
+PointsLeftWidget::PointsLeftWidget(QWidget* _parent, MainWindow* const mainWindow, QSharedPointer<Points> const& _points, bool _groupDisplayed)
     : QWidget(_parent), groupDisplayed(_groupDisplayed), points(_points), creatingGroup(true), lastCheckedId("")
 {
     scrollArea = new CustomScrollArea(this);
@@ -72,15 +72,15 @@ PointsLeftWidget::PointsLeftWidget(QMainWindow* _parent, QSharedPointer<Points> 
 
     downLayout->addLayout(creationLayout);
 
-    connect(actionButtons->getPlusButton(), SIGNAL(clicked(bool)), _parent, SLOT(plusGroupBtnEvent()));
-    connect(actionButtons->getMinusButton(), SIGNAL(clicked(bool)), _parent, SLOT(minusGroupBtnEvent()));
-    connect(actionButtons->getEditButton(), SIGNAL(clicked(bool)), _parent, SLOT(editGroupBtnEvent()));
-    connect(actionButtons->getGoButton(), SIGNAL(clicked()), _parent, SLOT(displayPointsInGroup()));
-    connect(actionButtons->getMapButton(), SIGNAL(clicked()), _parent, SLOT(displayGroupMapEvent()));
+    connect(actionButtons->getPlusButton(), SIGNAL(clicked(bool)), mainWindow, SLOT(plusGroupBtnEvent()));
+    connect(actionButtons->getMinusButton(), SIGNAL(clicked(bool)), mainWindow, SLOT(minusGroupBtnEvent()));
+    connect(actionButtons->getEditButton(), SIGNAL(clicked(bool)), mainWindow, SLOT(editGroupBtnEvent()));
+    connect(actionButtons->getGoButton(), SIGNAL(clicked()), mainWindow, SLOT(displayPointsInGroup()));
+    connect(actionButtons->getMapButton(), SIGNAL(clicked()), mainWindow, SLOT(displayGroupMapEvent()));
 
     /// to handle double clicks
     foreach(QAbstractButton *button, groupButtonGroup->getButtonGroup()->buttons())
-        connect(button, SIGNAL(doubleClick(QString)), _parent, SLOT(doubleClickOnGroup(QString)));
+        connect(button, SIGNAL(doubleClick(QString)), mainWindow, SLOT(doubleClickOnGroup(QString)));
 
     /// to enable the buttons
     connect(groupButtonGroup->getButtonGroup(), SIGNAL(buttonClicked(QAbstractButton*)), this, SLOT(enableButtons(QAbstractButton*)));
@@ -100,7 +100,7 @@ PointsLeftWidget::PointsLeftWidget(QMainWindow* _parent, QSharedPointer<Points> 
 
     connect(groupNameEdit, SIGNAL(clickSomewhere(QString)), this, SLOT(cancelCreationGroup()));  
 
-    connect(this, SIGNAL(enableReturn()), _parent, SLOT(enableReturnAndCloseButtons()));
+    connect(this, SIGNAL(enableReturn()), mainWindow, SLOT(enableReturnAndCloseButtons()));
 
     /// to reconnect the modifyEdit field in the case where a user creates a new group
     connect(groupButtonGroup, SIGNAL(modifyEditReconnection()), this, SLOT(reconnectModifyEdit()));
@@ -109,13 +109,13 @@ PointsLeftWidget::PointsLeftWidget(QMainWindow* _parent, QSharedPointer<Points> 
     connect(groupButtonGroup, SIGNAL(codeEditGroup(int)), this, SLOT(sendMessageEditGroup(int)));
 
     /// to reset the path points point views after a path point is deselected
-    connect(this, SIGNAL(resetPathPointViews()), _parent, SLOT(resetPathPointViewsSlot()));
+    connect(this, SIGNAL(resetPathPointViews()), mainWindow, SLOT(resetPathPointViewsSlot()));
 
-    connect(groupNameEdit, SIGNAL(enableGroupEdit(bool)), _parent, SLOT(setEnableAll(bool)));
-    connect(groupButtonGroup->getModifyEdit(), SIGNAL(enableGroupEdit(bool)), _parent, SLOT(setEnableAll(bool)));
+    connect(groupNameEdit, SIGNAL(enableGroupEdit(bool)), mainWindow, SLOT(setEnableAll(bool)));
+    connect(groupButtonGroup->getModifyEdit(), SIGNAL(enableGroupEdit(bool)), mainWindow, SLOT(setEnableAll(bool)));
 
-    setMaximumWidth(_parent->width()*4/10);
-    setMinimumWidth(_parent->width()*4/10);
+    /*setMaximumWidth(mainWindow->width()*4/10);
+    setMinimumWidth(mainWindow->width()*4/10);*/
     downLayout->setAlignment(Qt::AlignBottom);
     //downLayout->setContentsMargins(10, 0, 30, 0);
     layout->addLayout(downLayout);

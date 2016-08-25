@@ -5,7 +5,7 @@ class Robots;
 class CustomScrollArea;
 class RobotBtnGroup;
 class QVBoxLayout;
-class QMainWindow;
+class MainWindow;
 class TopLeftMenu;
 
 #include <QWidget>
@@ -18,7 +18,7 @@ class TopLeftMenu;
  */
 class RobotsLeftWidget: public QWidget{
 public:
-    RobotsLeftWidget(QMainWindow* parent);
+    RobotsLeftWidget(QWidget *parent, MainWindow *mainWindow);
 
     /// Getters
     RobotBtnGroup* getBtnGroup(void) const { return btnGroup; }
@@ -41,7 +41,7 @@ public:
 
 
 private:
-    QMainWindow* parent;
+    MainWindow* mainWindow;
     QVBoxLayout* layout;
     QSharedPointer<Robots> robots;
     QVBoxLayout* robotsLayout;

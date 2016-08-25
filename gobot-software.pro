@@ -60,7 +60,6 @@ HEADERS += Controller/cmdrobotthread.h \
            View/createpointwidget.h \
            Controller/sendnewmapthread.h \
            View/customscrollarea.h \
-           View/colors.h \
            View/displayselectedpointrobots.h \
            View/displayselectedpath.h \
            View/groupspathswidget.h \
@@ -68,7 +67,8 @@ HEADERS += Controller/cmdrobotthread.h \
            View/groupspathsbuttongroup.h \
            View/pathbuttongroup.h \
            View/displaypathgroup.h \
-           View/custompushbutton.h
+           View/custompushbutton.h \
+    View/stylesettings.h
 
 FORMS += Controller/mainwindow.ui
 

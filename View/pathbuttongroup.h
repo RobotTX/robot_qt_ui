@@ -22,7 +22,6 @@ public:
 private:
     QVBoxLayout* layout;
     QButtonGroup* buttonGroup;
-    QSize BUTTON_SIZE;
     QSharedPointer<Paths> paths;
 };
 

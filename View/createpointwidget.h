@@ -6,7 +6,7 @@ class QHBoxLayout;
 class QVBoxLayout;
 class CustomPushButton;
 class QLabel;
-class QMainWindow;
+class MainWindow;
 class QHBoxLayout;
 class QLineEdit;
 class QComboBox;
@@ -27,7 +27,7 @@ public:
     /// to display an appropriate message to the end user when he tries to create a point
     enum Error { ContainsSemicolon, EmptyName, AlreadyExists, NoError };
 
-    CreatePointWidget(QMainWindow* parent, QSharedPointer<Points> points);
+    CreatePointWidget(QWidget* parent, MainWindow* mainWindow, QSharedPointer<Points> points);
 
     void setSelectedPoint(QSharedPointer<PointView> _pointView);
 
@@ -75,7 +75,6 @@ public slots:
 private:
 
     QHBoxLayout* cancelSaveLayout;
-    QMainWindow* parent;
     QVBoxLayout* layout;
     QSharedPointer<PointView> pointView;
     QLineEdit* nameEdit;

@@ -1,5 +1,5 @@
 #include "custompushbutton.h"
-#include "View/colors.h"
+#include "View/stylesettings.h"
 #include <QDebug>
 
 CustomPushButton::CustomPushButton(const QIcon &icon, const QString &text, QWidget *parent,

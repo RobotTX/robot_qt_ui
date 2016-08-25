@@ -15,7 +15,15 @@ class DisplayPathGroup: public QWidget {
     Q_OBJECT
 
 public:
-    DisplayPathGroup(QMainWindow *_parent, const QSharedPointer<Paths> &_paths);
+    DisplayPathGroup(QWidget *_parent, const QSharedPointer<Paths> &_paths);
+
+    PathButtonGroup* getPathButtonGroup(void) const { return pathButtonGroup; }
+
+public:
+    void initializeActionButtons(void);
+
+protected:
+    void showEvent(QEvent* event);
 
 private:
     QSharedPointer<Paths> paths;

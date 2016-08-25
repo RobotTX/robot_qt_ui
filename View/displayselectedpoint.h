@@ -30,7 +30,7 @@ class DisplaySelectedPoint: public QWidget
         Q_OBJECT
 public:
 
-    DisplaySelectedPoint(QMainWindow* const _parent, QSharedPointer<Robots> const robots,const QSharedPointer<Points> &_points, QSharedPointer<Map> const& _map, QSharedPointer<PointView> _point = QSharedPointer<PointView>());
+    DisplaySelectedPoint(QWidget* _parent, QSharedPointer<Robots> const robots, const QSharedPointer<Points> &_points, QSharedPointer<Map> const& _map, QSharedPointer<PointView> _point = QSharedPointer<PointView>());
 
     TopLeftMenu* getActionButtons(void) const { return actionButtons; }
     CustomPushButton* getSaveButton(void) const { return saveButton; }
@@ -82,7 +82,6 @@ private:
     CustomPushButton* saveButton;
     CustomPushButton* cancelButton;
     QSharedPointer<PointView> pointView;
-    QMainWindow* parent;
     QSharedPointer<Points> points;
     TopLeftMenu* actionButtons;
     QSharedPointer<Robots> robots;

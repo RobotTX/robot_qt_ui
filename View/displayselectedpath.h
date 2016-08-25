@@ -22,7 +22,7 @@ public:
       QVector<QSharedPointer<PathPoint>> path;
     };
 
-    DisplaySelectedPath(MainWindow* parent);
+    DisplaySelectedPath(QWidget* parent, MainWindow* mainWindow);
     void updatePath(QString groupName, QString pathName, QVector<QSharedPointer<PathPoint>> path);
 
 private:

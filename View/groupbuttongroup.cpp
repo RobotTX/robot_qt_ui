@@ -8,6 +8,7 @@
 #include <QLabel>
 #include "View/customizedlineedit.h"
 #include "View/custompushbutton.h"
+#include "View/stylesettings.h"
 
 GroupButtonGroup::GroupButtonGroup(const QSharedPointer<Points> &_points, QWidget* _parent): QWidget(_parent), parent(_parent), points(_points)
 {
@@ -38,12 +39,12 @@ GroupButtonGroup::GroupButtonGroup(const QSharedPointer<Points> &_points, QWidge
             //groupButton->setAutoExclusive(true);
 
             layout->addWidget(groupButton);
-            groupButton->setIconSize(BUTTON_SIZE);
+            groupButton->setIconSize(normal_icon_size);
             if(points->isDisplayed(i.key()))
                 groupButton->setIcon(QIcon(":/icons/folder_eye.png"));
             else
                 groupButton->setIcon(QIcon(":/icons/folder_space.png"));
-            groupButton->setIconSize(BUTTON_SIZE);
+            groupButton->setIconSize(normal_icon_size);
             index++;
         }
     }
@@ -54,7 +55,6 @@ GroupButtonGroup::GroupButtonGroup(const QSharedPointer<Points> &_points, QWidge
         for(int i = 0; i < points->getGroups()->value(NO_GROUP_NAME)->size(); i++){
             QSharedPointer<PointView> currentPointView = points->getGroups()->value(NO_GROUP_NAME)->at(i);
             CustomPushButton* pointButton = new CustomPushButton(currentPointView->getPoint()->getName(), this, true);
-            //pointButton->setAutoDefault(true);
 
             buttonGroup->addButton(pointButton, index + i);
             layout->addWidget(pointButton);
@@ -62,7 +62,7 @@ GroupButtonGroup::GroupButtonGroup(const QSharedPointer<Points> &_points, QWidge
                 pointButton->setIcon(QIcon(":/icons/eye_point.png"));
             else
                 pointButton->setIcon(QIcon(":/icons/space_point.png"));
-            pointButton->setIconSize(BUTTON_SIZE);
+            pointButton->setIconSize(normal_icon_size);
         }
     }
 
@@ -106,16 +106,14 @@ void GroupButtonGroup::updateButtons(){
             }
 
             CustomPushButton* groupButton = new CustomPushButton(i.key(), this, true);
-            //groupButton->setAutoDefault(true);
-
-            groupButton->setIconSize(BUTTON_SIZE);
+            groupButton->setIconSize(normal_icon_size);
             buttonGroup->addButton(groupButton, index);
             layout->addWidget(groupButton);
             if(points->isDisplayed(i.key()))
                 groupButton->setIcon(QIcon(":/icons/folder_eye.png"));
             else
                 groupButton->setIcon(QIcon(":/icons/folder_space.png"));
-            groupButton->setIconSize(BUTTON_SIZE);
+            groupButton->setIconSize(normal_icon_size);
             index++;
         }
     }
@@ -133,7 +131,7 @@ void GroupButtonGroup::updateButtons(){
                 pointButton->setIcon(QIcon(":/icons/eye_point.png"));
             else
                 pointButton->setIcon(QIcon(":/icons/space_point.png"));
-            pointButton->setIconSize(BUTTON_SIZE);
+            pointButton->setIconSize(normal_icon_size);
         }
     }
 
