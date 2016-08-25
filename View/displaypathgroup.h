@@ -17,6 +17,14 @@ class DisplayPathGroup: public QWidget {
 public:
     DisplayPathGroup(QMainWindow *_parent, const QSharedPointer<Paths> &_paths);
 
+    PathButtonGroup* getPathButtonGroup(void) const { return pathButtonGroup; }
+
+public:
+    void initializeActionButtons(void);
+
+protected:
+    void showEvent(QEvent* event);
+
 private:
     QSharedPointer<Paths> paths;
     CustomScrollArea* scrollArea;

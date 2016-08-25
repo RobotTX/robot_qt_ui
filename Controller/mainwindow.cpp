@@ -3563,7 +3563,7 @@ void MainWindow::initializePaths(){
     pathFile.close();
 
     paths->setGroups(tmpPaths.getGroups());
-    paths->displayGroups();
+    //paths->displayGroups();
 }
 
 void MainWindow::pathBtnEvent(){
@@ -3601,8 +3601,12 @@ void MainWindow::displayPathSlot(QString groupName, QString pathName, bool displ
 
 void MainWindow::displayGroupPaths(){
     qDebug() << "MainWindow::displayGroupPaths called";
+    switchFocus(leftMenu->getGroupsPathsWidget()->getButtonGroup()->getButtonGroup()->checkedButton()->text(),
+                leftMenu->getPathGroupDisplayed(), MainWindow::WidgetType::GROUP_OF_PATHS);
+    leftMenu->getPathGroupDisplayed()->getPathButtonGroup()->setGroupPaths(
+                leftMenu->getGroupsPathsWidget()->getButtonGroup()->getButtonGroup()->checkedButton()->text());
     leftMenu->getGroupsPathsWidget()->hide();
-    //leftMenu->getPathGroupDisplayed()->show();
+    leftMenu->getPathGroupDisplayed()->show();
 }
 
 void MainWindow::editGroupPaths(){
@@ -3767,8 +3771,6 @@ void MainWindow::quit(){
 void MainWindow::backEvent(){
     //qDebug() << "back event called";
 
-    //debug
-
     setEnableAll(true);
     /// resets the menus
     pointsLeftWidget->disableButtons();
@@ -3848,6 +3850,7 @@ void MainWindow::hideAllWidgets(){
     leftMenu->getDisplaySelectedGroup()->hide();
     leftMenu->getGroupsPathsWidget()->hide();
     leftMenu->getDisplaySelectedPath()->hide();
+    leftMenu->getPathGroupDisplayed()->hide();
 }
 
 void MainWindow::clearNewMap(){
