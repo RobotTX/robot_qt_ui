@@ -13,6 +13,7 @@ PathButtonGroup::PathButtonGroup(QWidget *_parent, QSharedPointer<Paths> _paths)
 
 void PathButtonGroup::setGroupPaths(const QString groupName){
     qDebug() << "GroupsPathsButtonGroup::setGroupPaths called";
+    deleteButtons();
     /// if the group of paths exists
     if(paths->getGroups()->find(groupName) != paths->getGroups()->end()){
         qDebug() << "found" << groupName;
@@ -33,4 +34,17 @@ void PathButtonGroup::setGroupPaths(const QString groupName){
     }
 }
 
+void PathButtonGroup::deleteButtons(void){
+    qDebug() << "PathButtonGroup::deleteButtons called";
+    while(QLayoutItem* item = layout->takeAt(0)){
+        if(QWidget* button = item->widget())
+            delete button;
+    }
+}
 
+void PathButtonGroup::uncheck(){
+    buttonGroup->setExclusive(false);
+    if(buttonGroup->checkedButton())
+        buttonGroup->checkedButton()->setChecked(false);
+    buttonGroup->setExclusive(true);
+}

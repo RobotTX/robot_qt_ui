@@ -152,18 +152,24 @@ LeftMenu::LeftMenu(MainWindow* _parent, QSharedPointer<Points> const& _points, Q
     groupsPathsWidget->hide();
     leftLayout->addWidget(groupsPathsWidget);
 
-    /// Menu which displays a particular group of paths
-    pathGroup = new DisplayPathGroup(parent, paths);
-    pathGroup->hide();
-    leftLayout->addWidget(pathGroup);
-
     connect(groupsPathsWidget->getActionButtons()->getGoButton(), SIGNAL(clicked()), parent, SLOT(displayGroupPaths()));
     connect(groupsPathsWidget->getActionButtons()->getEditButton(), SIGNAL(clicked()), parent, SLOT(editGroupPaths()));
     connect(groupsPathsWidget->getActionButtons()->getPlusButton(), SIGNAL(clicked()), parent, SLOT(createGroupPaths()));
     connect(groupsPathsWidget->getActionButtons()->getMinusButton(), SIGNAL(clicked()), parent, SLOT(deleteGroupPaths()));
 
+    /// Menu which displays a particular group of paths
+    pathGroup = new DisplayPathGroup(parent, paths);
+    pathGroup->hide();
+    leftLayout->addWidget(pathGroup);
+
+    connect(pathGroup->getActionButtons()->getGoButton(), SIGNAL(clicked()), parent, SLOT(displayPath()));
+    connect(pathGroup->getActionButtons()->getPlusButton(), SIGNAL(clicked()), parent, SLOT(createPath()));
+    connect(pathGroup->getActionButtons()->getMinusButton(), SIGNAL(clicked()), parent, SLOT(deletePath()));
+    connect(pathGroup->getActionButtons()->getMapButton(), SIGNAL(toggled(bool)), parent, SLOT(displayPathOnMap(bool)));
+    connect(pathGroup->getActionButtons()->getEditButton(), SIGNAL(clicked()), parent, SLOT(editPath()));
+
     hide();
-    //leftLayout->setContentsMargins(0,0,0,0);
+
     setMaximumWidth(parent->width()*4/10);
     setMinimumWidth(parent->width()*4/10);
     leftLayout->setAlignment(Qt::AlignTop);

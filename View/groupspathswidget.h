@@ -62,6 +62,8 @@ private slots:
 
 
 private:
+    MainWindow* parent;
+
     QHBoxLayout* creationLayout;
     CustomScrollArea* scrollArea;
     QLabel* groupNameLabel;
@@ -76,6 +78,7 @@ private:
     CustomPushButton* cancelButton;
     /// to differenciate the behavior of the enter key
     bool creatingGroup;
+
 
 };
 

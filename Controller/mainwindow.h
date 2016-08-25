@@ -168,6 +168,7 @@ private slots:
     void displayPointFromGroupMenu();
     void doubleClickOnPoint(QString checkedId);
     void doubleClickOnGroup(QString checkedId);
+    void doubleClickOnPathsGroup(QString checkedButton);
     void reestablishConnectionsGroups();
     void reestablishConnectionsPoints();
     void createGroup(QString name);
@@ -224,6 +225,11 @@ private slots:
     void deleteGroupPaths();
     void saveGroupPaths(QString name);
     void modifyGroupPathsWithEnter(QString name);
+    void displayPath();
+    void createPath();
+    void deletePath();
+    void displayPathOnMap(const bool display);
+    void editPath();
 
 private:
     Ui::MainWindow* ui;
