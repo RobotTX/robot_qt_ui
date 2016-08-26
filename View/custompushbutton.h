@@ -2,6 +2,7 @@
 #define CUSTOMPUSHBUTTON_H
 
 class QMouseEvent;
+class QLabel;
 
 #include <QPushButton>
 
@@ -16,14 +17,18 @@ public:
                      const bool checkable = false, const bool enable = true);
     void initialize(const bool checkable, const bool enable);
     void addStyleSheet(const QString style);
+    void setText(const QString &text);
+    void moveLabel();
 
 private:
     ButtonType buttonType;
+    QLabel* label;
 
 protected:
     void mouseDoubleClickEvent(QMouseEvent *event);
     void enterEvent(QEvent *e);
     void resizeEvent(QResizeEvent *event);
+    void showEvent(QShowEvent* event);
 
 signals:
     void doubleClick(QString);
