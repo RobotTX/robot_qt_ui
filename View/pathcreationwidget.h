@@ -11,6 +11,7 @@ class QListWidgetItem;
 class PathPointCreationWidget;
 class PathPoint;
 class QLineEdit;
+class QLabel;
 
 #include <QWidget>
 #include <QSharedPointer>
@@ -42,6 +43,7 @@ public:
     void deleteItem(QListWidgetItem* item);
     void editPathPoint(const QString name, const double x, const double y);
     PathPointList* getPathPointList(void) const { return pathPointsList; }
+    void setCurrentGroupName(const QString name) { currentGroupName = name; }
 
 protected:
     void showEvent(QShowEvent* event);
@@ -65,6 +67,7 @@ signals:
     void saveEditPathPoint();
     void cancelEditPathPoint();
     void savePath();
+    void codeEditPath(int codeError);
 
 private slots:
     void resetWidget(void);
@@ -80,6 +83,7 @@ private slots:
     void saveEditSlot(PathPointCreationWidget* pathPointCreationWidget);
     void cancelEditSlot(PathPointCreationWidget* pathPointCreationWidget);
     void actionChangedSlot(int id, int action, QString waitTime);
+    void checkPathName(const QString name);
 
 private:
     QSharedPointer<Points> points;
@@ -89,7 +93,9 @@ private:
     QMenu* pointsMenu;
     PathPointList* pathPointsList;
     CheckState state;
+    QLabel* nameLabel;
     QLineEdit* nameEdit;
+    QString currentGroupName;
 };
 
 #endif // PATHCREATIONWIDGET_H

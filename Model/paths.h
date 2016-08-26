@@ -39,7 +39,8 @@ public:
     void deleteGroup(const QString name);
     void displayGroups(void) const;
     void deletePath(const QString groupName, const QString pathName);
-    Path getPath(const QString groupName, const QString pathName);
+    /// the foundFlag is set within the function, after the function returns it holds true if the path has been found and false otherwise
+    Path getPath(const QString groupName, const QString pathName, bool& foundFlag);
 
 private:
     QSharedPointer<Groups> groups;

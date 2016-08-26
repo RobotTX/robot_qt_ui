@@ -249,13 +249,25 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     /// to add a path point when we click on a pointView (which is relayed by the mainWindow)
     connect(this, SIGNAL(addPathPoint(QString, double, double)), robotPathCreationWidget, SLOT(addPathPointSlot(QString, double, double)));
     connect(this, SIGNAL(updatePathPainter()), pathPainter, SLOT(updatePathPainterSlot()));
-    connect(this, SIGNAL(updatePathPainterPointView()), pathPainter, SLOT(updatePathPainterPointViewSlot()));
+
     connect(robotPathCreationWidget, SIGNAL(editTmpPathPoint(int, QString, double, double)), this, SLOT(editTmpPathPointSlot(int, QString, double, double)));
+    connect(noRobotPathCreationWidget, SIGNAL(editTmpPathPoint(int, QString, double, double)), this, SLOT(editTmpPathPointSlot(int, QString, double, double)));
+
+    connect(this, SIGNAL(updatePathPainterPointView()), pathPainter, SLOT(updatePathPainterPointViewSlot()));
+
     connect(robotPathCreationWidget, SIGNAL(saveEditPathPoint()), this, SLOT(saveEditPathPointSlot()));
+    connect(noRobotPathCreationWidget, SIGNAL(saveEditPathPoint()), this, SLOT(saveEditPathPointSlot()));
+
     connect(robotPathCreationWidget, SIGNAL(cancelEditPathPoint()), this, SLOT(cancelEditPathPointSlot()));
+    connect(noRobotPathCreationWidget, SIGNAL(cancelEditPathPoint()), this, SLOT(cancelEditPathPointSlot()));
+
     connect(robotPathCreationWidget, SIGNAL(savePath()), this, SLOT(savePathSlot()));
+    //connect(noRobotPathCreationWidget, SIGNAL(savePath()), this, SLOT(savePathSlot()));
+
     connect(this, SIGNAL(resetPath()), pathPainter, SLOT(resetPathSlot()));
+
     connect(this, SIGNAL(resetPathCreationWidget()), robotPathCreationWidget, SLOT(resetWidget()));
+    connect(this, SIGNAL(resetPathCreationWidget()), noRobotPathCreationWidget, SLOT(resetWidget()));
 
     connect(leftMenu->getGroupsPathsWidget(), SIGNAL(newPathGroup(QString)), this, SLOT(saveGroupPaths(QString)));
     connect(leftMenu->getGroupsPathsWidget(), SIGNAL(messageCreationGroup(QString,QString)), this, SLOT(setMessageCreationGroup(QString,QString)));
@@ -3861,8 +3873,14 @@ void MainWindow::editPathSlot(QString groupName, QString pathName){
 
 void MainWindow::displayPathSlot(QString groupName, QString pathName, bool display){
     qDebug() << "MainWindow::displayPathSlot called on group :" << groupName << ", path :" << pathName << ", display :" << display;
-    if(display)
-        pathPainter->setCurrentPath(paths->getPath(groupName, pathName));
+    if(display){
+        bool foundFlag = false;
+        Paths::Path path = paths->getPath(groupName, pathName, foundFlag);
+        if(foundFlag)
+            pathPainter->setCurrentPath(path);
+        else
+            qDebug() << "MainWindow::displayPathSlot Sorry could not find the path";
+    }
     else
         resetPath();
 }
@@ -3871,6 +3889,10 @@ void MainWindow::displayGroupPaths(){
     qDebug() << "MainWindow::displayGroupPaths called";
     switchFocus(leftMenu->getGroupsPathsWidget()->getButtonGroup()->getButtonGroup()->checkedButton()->text(),
                 leftMenu->getPathGroupDisplayed(), MainWindow::WidgetType::GROUP_OF_PATHS);
+
+    /// updates the currentGroup displayed
+    leftMenu->getNoRobotPathCreationWidget()->setCurrentGroupName(leftMenu->getGroupsPathsWidget()->getButtonGroup()->getButtonGroup()->checkedButton()->text());
+
     /// updates the label to display the name of the group
     leftMenu->getPathGroupDisplayed()->getGroupNameLabel()->setText(leftMenu->getGroupsPathsWidget()->getButtonGroup()->getButtonGroup()->checkedButton()->text());
     leftMenu->getPathGroupDisplayed()->setPathsGroup(
@@ -4027,7 +4049,7 @@ void MainWindow::modifyGroupPathsWithEnter(QString name){
 void MainWindow::doubleClickOnPathsGroup(QString checkedButton){
     leftMenu->getPathGroupDisplayed()->setPathsGroup(checkedButton);
     switchFocus(checkedButton, leftMenu->getPathGroupDisplayed(), MainWindow::WidgetType::GROUP_OF_PATHS);
-
+    leftMenu->getNoRobotPathCreationWidget()->setCurrentGroupName(checkedButton);
     leftMenu->getPathGroupDisplayed()->getGroupNameLabel()->setText(checkedButton);
     leftMenu->getGroupsPathsWidget()->hide();
     leftMenu->getPathGroupDisplayed()->show();
@@ -4038,10 +4060,10 @@ void MainWindow::displayPath(){
     QString groupName = lastWidgets.at(lastWidgets.size()-1).first.second;
     QString pathName = leftMenu->getPathGroupDisplayed()->getLastCheckedButton();
     qDebug() << "MainWindow::displayPath called" << groupName << pathName;
-
+    bool foundFlag = false;
     leftMenu->getDisplaySelectedPath()->updatePath(groupName,
                                                    pathName,
-                                                   paths->getPath(groupName, pathName));
+                                                   paths->getPath(groupName, pathName, foundFlag));
     switchFocus(leftMenu->getPathGroupDisplayed()->getLastCheckedButton(), leftMenu->getDisplaySelectedPath(), MainWindow::WidgetType::PATH);
     leftMenu->getPathGroupDisplayed()->hide();
     leftMenu->getDisplaySelectedPath()->show();
@@ -4051,6 +4073,7 @@ void MainWindow::displayPath(){
 
 void MainWindow::createPath(){
     qDebug() << "MainWindow::createPath called";
+    setMessageTop(TEXT_COLOR_INFO, "The name of your path cannot be empty, fill up the corresponding field to give your path a name");
     hideAllWidgets();
     setEnableAll(false, GraphicItemState::CREATING_PATH, true);
     leftMenu->getNoRobotPathCreationWidget()->show();
@@ -4078,9 +4101,11 @@ void MainWindow::deletePath(){
 
 void MainWindow::displayPathOnMap(const bool display){
     qDebug() << "MainWindow::displayPathOnMap called";
-    if(display)
+    if(display){
+        bool foundFlag = false;
         pathPainter->setCurrentPath(paths->getPath(lastWidgets.at(lastWidgets.size()-1).first.second,
-                                               leftMenu->getPathGroupDisplayed()->getLastCheckedButton()));
+                                               leftMenu->getPathGroupDisplayed()->getLastCheckedButton(), foundFlag));
+    }
     else
         resetPath();
 }
@@ -4092,10 +4117,10 @@ void MainWindow::editPath(){
 void MainWindow::doubleClickOnPath(QString pathName){
     QString groupName = lastWidgets.at(lastWidgets.size()-1).first.second;
     qDebug() << "MainWindow::displayPath called" << groupName << pathName;
-
+    bool foundFlag = false;
     leftMenu->getDisplaySelectedPath()->updatePath(groupName,
                                                    pathName,
-                                                   paths->getPath(groupName, pathName));
+                                                   paths->getPath(groupName, pathName, foundFlag));
     switchFocus(pathName, leftMenu->getDisplaySelectedPath(), MainWindow::WidgetType::PATH);
     leftMenu->getPathGroupDisplayed()->hide();
     leftMenu->getDisplaySelectedPath()->show();

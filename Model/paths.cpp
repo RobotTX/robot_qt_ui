@@ -104,15 +104,17 @@ void Paths::deletePath(const QString groupName, const QString pathName){
     }
 }
 
-Paths::Path Paths::getPath(const QString groupName, const QString pathName){
+Paths::Path Paths::getPath(const QString groupName, const QString pathName, bool& foundFlag){
     qDebug() << "Paths::getPath called";
     auto it_group = groups->find(groupName);
     if(it_group == groups->end())
         qDebug() << "Paths::getPath the group of paths" << groupName << "does not exist";
     else {
         QSharedPointer<QMap<QString, QSharedPointer<Path>> > current_paths = (*groups)[groupName];
-        if(current_paths->find(pathName) != current_paths->end())
+        if(current_paths->find(pathName) != current_paths->end()){
+            foundFlag = true;
             return *(current_paths->find(pathName).value());
+        }
         else
             qDebug() << "Paths::getPath the path" << pathName << "does not exist within the group" << groupName;
     }
