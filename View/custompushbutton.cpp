@@ -54,10 +54,10 @@ void CustomPushButton::addStyleSheet(const QString style){
 }
 
 void CustomPushButton::enterEvent(QEvent *event){
-    /*QFontMetrics fm(font());
+    QFontMetrics fm(font());
     int strWidth = fm.width(text());
     qDebug() << "CustomPushButton::enterEvent on" << text()
-             << strWidth << width() << static_cast<QWidget*>(parent())->width() << static_cast<QWidget*>(parent()->parent())->width();*/
+             << strWidth << width();
     QPushButton::enterEvent(event);
 }
 

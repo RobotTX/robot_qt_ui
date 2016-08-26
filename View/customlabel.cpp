@@ -20,13 +20,3 @@ void CustomLabel::resizeEvent(QResizeEvent *event){
 
     QLabel::resizeEvent(event);
 }
-
-
-void CustomLabel::enterEvent(QEvent *event){
-   /* QFontMetrics fm(font());
-    int strWidth = fm.width(text());
-    qDebug() << "CustomLabel::enterEvent on" << text()
-             << strWidth << width() << static_cast<QWidget*>(parent())->width() << static_cast<QWidget*>(parent()->parent())->width();
-    setMaximumWidth(static_cast<QWidget*>(parent())->width()-static_cast<QWidget*>(parent())->contentsMargins().right()-static_cast<QWidget*>(parent())->contentsMargins().left());*/
-    QLabel::enterEvent(event);
-}
