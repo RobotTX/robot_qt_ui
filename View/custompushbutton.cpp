@@ -1,6 +1,7 @@
 #include "custompushbutton.h"
 #include "View/stylesettings.h"
 #include <QDebug>
+#include <QLabel>
 
 CustomPushButton::CustomPushButton(const QIcon &icon, const QString &text, QWidget *parent, const ButtonType type,
         const bool checkable, const bool enable) : QPushButton(icon, text, parent), buttonType(type){
@@ -16,6 +17,9 @@ void CustomPushButton::initialize(const bool checkable, const bool enable){
     setCheckable(checkable);
     setEnabled(enable);
     setFlat(true);
+
+    label = new QLabel("...", this);
+    label->hide();
 
     QString style = "";
     if(text().compare(""))
@@ -38,10 +42,12 @@ void CustomPushButton::initialize(const bool checkable, const bool enable){
                   "}"
                   "QPushButton:disabled{"
                       "color: grey;"
+                  "}"
+                  "QLabel {"
+                      "color: " + text_color + ";"
                   "}");
 
     setAutoDefault(true);
-    //qDebug() << "CustomPushButton::initialize on" << text() << width() << static_cast<QWidget*>(parent())->width() << static_cast<QWidget*>(parent()->parent())->width();
 }
 
 void CustomPushButton::mouseDoubleClickEvent(QMouseEvent * event){
@@ -54,11 +60,30 @@ void CustomPushButton::addStyleSheet(const QString style){
 }
 
 void CustomPushButton::enterEvent(QEvent *event){
-    /*QFontMetrics fm(font());
-    int strWidth = fm.width(text());
-    qDebug() << "CustomPushButton::enterEvent on" << text()
-             << strWidth << width() << static_cast<QWidget*>(parent())->width() << static_cast<QWidget*>(parent()->parent())->width();*/
+    /*if(!text().isEmpty()){
+        QFontMetrics fm(font());
+        int strWidth = fm.width(text());
+        int maxStrWidth = width()-20;
+        if(!icon().isNull())
+            maxStrWidth -= iconSize().width();
+
+        qDebug() << "CustomPushButton::resizeEvent on" << text() << height();
+        if(strWidth >= maxStrWidth){
+            //qDebug() << "CustomPushButton::resizeEvent TOO LONG";
+            label->move(width()-label->width()+2, height()/3);
+            label->show();
+        } else {
+            //qDebug() << "CustomPushButton::resizeEvent PURRFECT";
+            label->hide();
+        }
+    }*/
+    moveLabel();
     QPushButton::enterEvent(event);
+}
+
+void CustomPushButton::setText(const QString &str){
+    QPushButton::setText(str);
+    moveLabel();
 }
 
 void CustomPushButton::resizeEvent(QResizeEvent *event){
@@ -72,4 +97,32 @@ void CustomPushButton::resizeEvent(QResizeEvent *event){
     }
 
     QPushButton::resizeEvent(event);
+    moveLabel();
+}
+
+void CustomPushButton::showEvent(QShowEvent* event){
+    QPushButton::showEvent(event);
+    moveLabel();
+}
+
+void CustomPushButton::moveLabel(){
+    if(!text().isEmpty()){
+        QFontMetrics fm(font());
+        int strWidth = fm.width(text());
+        int maxStrWidth = width()-20;
+        int iconWidth = 0;
+        if(!icon().isNull())
+            iconWidth = iconSize().width();
+        maxStrWidth -= iconWidth;
+
+
+        if(strWidth >= maxStrWidth){
+            label->move(width()-label->width()+2, height()/3);
+            setToolTip(text());
+            label->show();
+        } else {
+            setToolTip("");
+            label->hide();
+        }
+    }
 }

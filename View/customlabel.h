@@ -10,7 +10,6 @@ public:
 
 protected:
     void resizeEvent(QResizeEvent *event);
-    void enterEvent(QEvent *event);
 
 };
 
