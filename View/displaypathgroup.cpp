@@ -8,6 +8,7 @@
 #include "View/custompushbutton.h"
 #include "Controller/mainwindow.h"
 #include "View/stylesettings.h"
+#include <QLabel>
 
 DisplayPathGroup::DisplayPathGroup(QWidget* _parent, MainWindow* _mainWindow, const QSharedPointer<Paths>& _paths):
     QWidget(_parent), mainWindow(_mainWindow), paths(_paths), lastCheckedButton("")
@@ -23,6 +24,11 @@ DisplayPathGroup::DisplayPathGroup(QWidget* _parent, MainWindow* _mainWindow, co
     initializeActionButtons();
 
     layout->addWidget(actionButtons);
+
+    groupNameLabel = new QLabel(this);
+    groupNameLabel->setAlignment(Qt::AlignHCenter);
+    groupNameLabel->setStyleSheet("font-weight: bold; text-decoration:underline");
+    layout->addWidget(groupNameLabel);
 
     pathButtonGroup = new PathButtonGroup(this, paths);
 

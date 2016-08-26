@@ -49,14 +49,13 @@ void PathPointList::refresh(void){
 
 
 void PathPointList::update(const int indexNb, const int action, const int time){
-
-    ((PathPointCreationWidget*) itemWidget(item(indexNb)))->getAction()->setCurrentIndex(action);
+    static_cast<PathPointCreationWidget*> (itemWidget(item(indexNb)))->getAction()->setCurrentIndex(action);
     if(action==0 && time != 0)
     {
-        ((PathPointCreationWidget*) itemWidget(item(indexNb)))->getTimeEdit()->setText( QString::number(time));
-        ((PathPointCreationWidget*) itemWidget(item(indexNb)))->getTimeWidget()->show();
+        static_cast<PathPointCreationWidget*> (itemWidget(item(indexNb)))->getTimeEdit()->setText( QString::number(time));
+        static_cast<PathPointCreationWidget*> (itemWidget(item(indexNb)))->getTimeWidget()->show();
     }
     else
-        ((PathPointCreationWidget*) itemWidget(item(indexNb)))->getTimeWidget()->hide();
+        static_cast<PathPointCreationWidget*> (itemWidget(item(indexNb)))->getTimeWidget()->hide();
 
 }

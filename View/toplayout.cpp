@@ -103,12 +103,13 @@ void TopLayout::setLabel(const QString msgType, const QString msg){
     label->setStyleSheet("QLabel { color: " + QString(msgType) +"; background:transparent}");
 }
 
-void TopLayout::setEnable(bool enable){
+void TopLayout::setEnable(const bool enable){
     menuBtn->setEnabled(enable);
     connectBtn->setEnabled(enable);
     centerBtn->setEnabled(enable);
     closeBtn->setEnabled(enable);
     settingBtn->setEnabled(enable);
+    saveMapBtn->setEnabled(enable);
 }
 
 void TopLayout::setLabelDelay(const QString msgType, const QString msg, int delayTime){
