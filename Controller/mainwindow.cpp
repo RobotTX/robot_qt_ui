@@ -273,6 +273,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     connect(leftMenu->getGroupsPathsWidget(), SIGNAL(messageCreationGroup(QString,QString)), this, SLOT(setMessageCreationGroup(QString,QString)));
     connect(leftMenu->getGroupsPathsWidget(), SIGNAL(modifiedGroup(QString)), this, SLOT(modifyGroupPathsWithEnter(QString)));
 
+    connect(leftMenu->getNoRobotPathCreationWidget(), SIGNAL(codeEditPath(int)), this, SLOT(setMessageNoRobotPath(int)));
+
     mainLayout->addLayout(bottom);
     //graphicsView->setStyleSheet("CustomQGraphicsView {background-color: " + background_map_view + "}");
     setCentralWidget(mainWidget);
@@ -4125,6 +4127,23 @@ void MainWindow::doubleClickOnPath(QString pathName){
     leftMenu->getPathGroupDisplayed()->hide();
     leftMenu->getDisplaySelectedPath()->show();
     leftMenu->getPathGroupDisplayed()->getPathButtonGroup()->uncheck();
+}
+
+void MainWindow::setMessageNoRobotPath(const int code){
+    switch(code){
+    case 0:
+        setMessageTop(TEXT_COLOR_INFO, "You cannot save your path because its name is still empty");
+    break;
+    case 1:
+        setMessageTop(TEXT_COLOR_INFO, "You cannot save your path because the name you chose is already taken by another path in the same group");
+    break;
+    case 2:
+        setMessageTop(TEXT_COLOR_INFO, "You can save your path any time you want by clicking the \"Save\" button");
+    break;
+    default:
+        qDebug() << "MainWindow::setMessageNoRobotPath you should not be here you probably forgot to implement the behavior for the error code" << code;
+    break;
+    }
 }
 
 /**********************************************************************************************************************************/
