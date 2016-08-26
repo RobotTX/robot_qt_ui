@@ -200,6 +200,9 @@ void GroupsPathsWidget::updateGroupsPaths(void){
     qDebug() << "GroupsPathsWidget::updateGroupsPaths called";
     buttonGroup->deleteButtons();
     buttonGroup->createButtons();
+    /// to handle double clicks
+    foreach(QAbstractButton *button, buttonGroup->getButtonGroup()->buttons())
+        connect(button, SIGNAL(doubleClick(QString)), mainWindow, SLOT(doubleClickOnPathsGroup(QString)));
 }
 
 void GroupsPathsWidget::uncheck(){

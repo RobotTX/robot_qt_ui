@@ -11,6 +11,7 @@ class QVBoxLayout;
 class TopLeftMenu;
 class Paths;
 class QAbstractButton;
+class MainWindow;
 
 /**
  * @brief The DisplayPathGroup class
@@ -21,7 +22,7 @@ class DisplayPathGroup: public QWidget {
     Q_OBJECT
 
 public:
-    DisplayPathGroup(QWidget *_parent, const QSharedPointer<Paths> &_paths);
+    DisplayPathGroup(QWidget *_parent, MainWindow *_mainWindow, const QSharedPointer<Paths> &_paths);
 
     PathButtonGroup* getPathButtonGroup(void) const { return pathButtonGroup; }
     TopLeftMenu* getActionButtons(void) const { return actionButtons; }
@@ -30,6 +31,7 @@ public:
 
 public:
     void initializeActionButtons(void);
+    void setPathsGroup(const QString groupName);
 
 private slots:
     void enableButtons(QAbstractButton* button);
@@ -39,6 +41,7 @@ protected:
     void showEvent(QShowEvent* event);
 
 private:
+    MainWindow* mainWindow;
     QSharedPointer<Paths> paths;
     CustomScrollArea* scrollArea;
     PathButtonGroup* pathButtonGroup;

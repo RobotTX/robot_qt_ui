@@ -46,6 +46,7 @@
 #include "View/pathbuttongroup.h"
 #include "View/custompushbutton.h"
 #include "View/groupspathsbuttongroup.h"
+#include "View/custompushbutton.h"
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow) {
     ui->setupUi(this);
@@ -103,24 +104,57 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
     tmpPaths->createGroup("monday");
     tmpPaths->createGroup("tuesday");
-    tmpPaths->createGroup("monday");
     tmpPaths->createPath("monday", "room1");
     tmpPaths->createPath("tuesday", "room2");
     tmpPaths->createPath("tuesday", "room3");
-    tmpPaths->createPath("tuesday", "room2");
-    tmpPaths->createPath("wednesday", "room3");
     Point point("First point", 400, 300);
     Point point2("Second point", 800, 600);
     Point point3("Third point", 1200, 1200);
-    Point point4("4th point", 1500, 1450);
+    Point point5("4th point", 1500, 700);
+    Point point6("5th point", 1300, 1450);
+    Point point7("6th point", 1100, 1450);
+    Point point8("7th point", 800, 1180);
+    Point point9("8th point", 900, 1250);
+    Point point10("9th point", 1600, 1000);
+    Point point11("10th point", 1050, 1500);
+    Point point12("11th point", 1200, 950);
+    Point point13("12th point", 600, 850);
+    Point point14("13th point", 1300, 1040);
+    Point point15("14th point", 500, 1260);
+    Point point16("15th point", 255, 480);
+    Point point17("16th point", 380, 1100);
+    Point point18("17th point", 1240, 1000);
+    Point point19("18th point", 1300, 890);
+    Point point20("19th point", 1851, 640);
+    Point point21("20th point", 1100, 870);
+    Point point22("21th point", 260, 1500);
+    Point point23("22th point", 1420, 480);
     tmpPaths->addPathPoint("monday", "room1", QSharedPointer<PathPoint>(new PathPoint(point, PathPoint::Action::HUMAN_ACTION, 2)));
     tmpPaths->addPathPoint("wednesday", "room1", QSharedPointer<PathPoint>(new PathPoint(point, PathPoint::Action::HUMAN_ACTION, 2)));
     tmpPaths->addPathPoint("monday", "room1", QSharedPointer<PathPoint>(new PathPoint(point2, PathPoint::Action::HUMAN_ACTION, 2)));
-    tmpPaths->addPathPoint("tuesday", "room4", QSharedPointer<PathPoint>(new PathPoint(point, PathPoint::Action::HUMAN_ACTION, 2)));
     tmpPaths->addPathPoint("tuesday", "room2", QSharedPointer<PathPoint>(new PathPoint(point, PathPoint::Action::HUMAN_ACTION, 2)));
     tmpPaths->addPathPoint("tuesday", "room2", QSharedPointer<PathPoint>(new PathPoint(point3, PathPoint::Action::HUMAN_ACTION, 2)));
     tmpPaths->addPathPoint("tuesday", "room3", QSharedPointer<PathPoint>(new PathPoint(point3, PathPoint::Action::HUMAN_ACTION, 2)));
-    tmpPaths->addPathPoint("tuesday", "room3", QSharedPointer<PathPoint>(new PathPoint(point4, PathPoint::Action::HUMAN_ACTION, 2)));
+    tmpPaths->addPathPoint("tuesday", "room3", QSharedPointer<PathPoint>(new PathPoint(point5, PathPoint::Action::HUMAN_ACTION, 2)));
+    tmpPaths->addPathPoint("tuesday", "room3", QSharedPointer<PathPoint>(new PathPoint(point6, PathPoint::Action::HUMAN_ACTION, 2)));
+    tmpPaths->addPathPoint("tuesday", "room3", QSharedPointer<PathPoint>(new PathPoint(point7, PathPoint::Action::HUMAN_ACTION, 2)));
+    tmpPaths->addPathPoint("tuesday", "room3", QSharedPointer<PathPoint>(new PathPoint(point8, PathPoint::Action::HUMAN_ACTION, 2)));
+    tmpPaths->addPathPoint("tuesday", "room3", QSharedPointer<PathPoint>(new PathPoint(point9, PathPoint::Action::HUMAN_ACTION, 2)));
+    tmpPaths->addPathPoint("tuesday", "room3", QSharedPointer<PathPoint>(new PathPoint(point10, PathPoint::Action::HUMAN_ACTION, 2)));
+    tmpPaths->addPathPoint("tuesday", "room3", QSharedPointer<PathPoint>(new PathPoint(point11, PathPoint::Action::HUMAN_ACTION, 2)));
+    tmpPaths->addPathPoint("tuesday", "room3", QSharedPointer<PathPoint>(new PathPoint(point12, PathPoint::Action::HUMAN_ACTION, 2)));
+    tmpPaths->addPathPoint("tuesday", "room3", QSharedPointer<PathPoint>(new PathPoint(point13, PathPoint::Action::HUMAN_ACTION, 2)));
+    tmpPaths->addPathPoint("tuesday", "room3", QSharedPointer<PathPoint>(new PathPoint(point14, PathPoint::Action::HUMAN_ACTION, 2)));
+    tmpPaths->addPathPoint("tuesday", "room3", QSharedPointer<PathPoint>(new PathPoint(point15, PathPoint::Action::HUMAN_ACTION, 2)));
+    tmpPaths->addPathPoint("tuesday", "room3", QSharedPointer<PathPoint>(new PathPoint(point16, PathPoint::Action::HUMAN_ACTION, 2)));
+    tmpPaths->addPathPoint("tuesday", "room3", QSharedPointer<PathPoint>(new PathPoint(point17, PathPoint::Action::HUMAN_ACTION, 2)));
+    tmpPaths->addPathPoint("tuesday", "room3", QSharedPointer<PathPoint>(new PathPoint(point18, PathPoint::Action::HUMAN_ACTION, 2)));
+    tmpPaths->addPathPoint("tuesday", "room3", QSharedPointer<PathPoint>(new PathPoint(point19, PathPoint::Action::HUMAN_ACTION, 2)));
+    tmpPaths->addPathPoint("tuesday", "room3", QSharedPointer<PathPoint>(new PathPoint(point20, PathPoint::Action::HUMAN_ACTION, 2)));
+    tmpPaths->addPathPoint("tuesday", "room3", QSharedPointer<PathPoint>(new PathPoint(point21, PathPoint::Action::HUMAN_ACTION, 2)));
+    tmpPaths->addPathPoint("tuesday", "room3", QSharedPointer<PathPoint>(new PathPoint(point22, PathPoint::Action::HUMAN_ACTION, 2)));
+    tmpPaths->addPathPoint("tuesday", "room3", QSharedPointer<PathPoint>(new PathPoint(point23, PathPoint::Action::HUMAN_ACTION, 2)));
+
     QFile pathFile(PATHS_PATH);
     pathFile.resize(0);
     pathFile.open(QIODevice::WriteOnly);
@@ -226,7 +260,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     connect(leftMenu->getGroupsPathsWidget(), SIGNAL(modifiedGroup(QString)), this, SLOT(modifyGroupPathsWithEnter(QString)));
 
     mainLayout->addLayout(bottom);
-    graphicsView->setStyleSheet("CustomQGraphicsView {background-color: " + background_map_view + "}");
+    //graphicsView->setStyleSheet("CustomQGraphicsView {background-color: " + background_map_view + "}");
     setCentralWidget(mainWidget);
 
     /// to navigate with the tab key
@@ -237,12 +271,13 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     centerMap();
 
     /// Some style
-
+    /*
     setStyleSheet("QWidget {border: 1px solid red}"
                   "QPushButton {border: 1px solid green}"
                   "QLabel {border: 1px solid blue}"
                   "LeftMenu {border: 1px solid yellow}");
     this->setAutoFillBackground(true);
+    */
 
     /*rightLayout->setContentsMargins(0,0,0,0);
     bottom->setContentsMargins(0,0,0,0);
@@ -2991,8 +3026,8 @@ void MainWindow::updatePoint(void){
     leftMenu->getCloseButton()->setEnabled(true);
     topLayout->setEnabled(true);
     ///resets the tooltip of the edit button and the minus button
-    leftMenu->getDisplaySelectedPoint()->getActionButtons()->getEditButton()->setToolTip("You can click on this button and then choose between clicking on the map or drag the point to change its position");
-    leftMenu->getDisplaySelectedPoint()->getActionButtons()->getMinusButton()->setToolTip("You can click this button to remove the point");
+    leftMenu->getDisplaySelectedPoint()->getActionButtons()->getEditButton()->setToolTip("Click here and then choose between clicking on the map or drag the point to change its position");
+    leftMenu->getDisplaySelectedPoint()->getActionButtons()->getMinusButton()->setToolTip("Click here to remove the point");
 
     leftMenu->getDisplaySelectedPoint()->getActionButtons()->getMapButton()->setEnabled(true);
     leftMenu->getDisplaySelectedPoint()->getActionButtons()->getMapButton()->setToolTip("Click to hide this point");
@@ -3567,10 +3602,7 @@ void MainWindow::choosePointName(QString message){
 
 void MainWindow::initializePaths(){
     paths = QSharedPointer<Paths>(new Paths(this));
-
     deserializePaths();
-
-    paths->displayGroups();
 }
 
 void MainWindow::serializePaths(void){
@@ -3614,7 +3646,6 @@ void MainWindow::pathBtnEvent(){
 
 void MainWindow::deletePathSlot(QString groupName, QString pathName){
     qDebug() << "MainWindow::deletePathSlot called on group :" << groupName << ", path :" << pathName;
-
 }
 
 void MainWindow::editPathSlot(QString groupName, QString pathName){
@@ -3624,14 +3655,17 @@ void MainWindow::editPathSlot(QString groupName, QString pathName){
 
 void MainWindow::displayPathSlot(QString groupName, QString pathName, bool display){
     qDebug() << "MainWindow::displayPathSlot called on group :" << groupName << ", path :" << pathName << ", display :" << display;
-
+    if(display)
+        pathPainter->setCurrentPath(paths->getPath(groupName, pathName));
+    else
+        resetPath();
 }
 
 void MainWindow::displayGroupPaths(){
     qDebug() << "MainWindow::displayGroupPaths called";
     switchFocus(leftMenu->getGroupsPathsWidget()->getButtonGroup()->getButtonGroup()->checkedButton()->text(),
                 leftMenu->getPathGroupDisplayed(), MainWindow::WidgetType::GROUP_OF_PATHS);
-    leftMenu->getPathGroupDisplayed()->getPathButtonGroup()->setGroupPaths(
+    leftMenu->getPathGroupDisplayed()->setPathsGroup(
                 leftMenu->getGroupsPathsWidget()->getButtonGroup()->getButtonGroup()->checkedButton()->text());
     leftMenu->getGroupsPathsWidget()->hide();
     leftMenu->getPathGroupDisplayed()->show();
@@ -3764,8 +3798,7 @@ void MainWindow::modifyGroupPathsWithEnter(QString name){
     name = name.simplified();
     qDebug() << "modifying group paths after enter key pressed from" << pointsLeftWidget->getLastCheckedId() << "to" << name;
 
-    //topLayout->setEnabled(true);
-    //setEnableAll(true);
+    leftMenu->setEnableReturnCloseButtons(true);
 
     /// Update the model
     QSharedPointer<Paths::CollectionPaths> value = paths->getGroups()->value(leftMenu->getGroupsPathsWidget()->getButtonGroup()->getButtonGroup()->checkedButton()->text());
@@ -3777,9 +3810,6 @@ void MainWindow::modifyGroupPathsWithEnter(QString name){
     /// enables the plus button
     leftMenu->getGroupsPathsWidget()->getActionButtons()->getPlusButton()->setEnabled(true);
 
-    /// enables the buttons
-    //leftMenu->getGroupsPathsWidget()->getButtonGroup()->setEnabled(true);
-    //leftMenu->getGroupsPathsWidget()->disableButtons();
     leftMenu->getGroupsPathsWidget()->getButtonGroup()->getModifyEdit()->hide();
 
     leftMenu->getGroupsPathsWidget()->setLastCheckedButton("");
@@ -3787,14 +3817,26 @@ void MainWindow::modifyGroupPathsWithEnter(QString name){
 }
 
 void MainWindow::doubleClickOnPathsGroup(QString checkedButton){
-    leftMenu->getPathGroupDisplayed()->getPathButtonGroup()->setGroupPaths(checkedButton);
+    leftMenu->getPathGroupDisplayed()->setPathsGroup(checkedButton);
     switchFocus(checkedButton, leftMenu->getPathGroupDisplayed(), MainWindow::WidgetType::GROUP_OF_PATHS);
     leftMenu->getGroupsPathsWidget()->hide();
     leftMenu->getPathGroupDisplayed()->show();
 }
 
 void MainWindow::displayPath(){
-    qDebug() << "MainWindow::displayPath called";
+
+    QString groupName = lastWidgets.at(lastWidgets.size()-1).first.second;
+    QString pathName = leftMenu->getPathGroupDisplayed()->getLastCheckedButton();
+    qDebug() << "MainWindow::displayPath called" << groupName << pathName;
+
+    leftMenu->getDisplaySelectedPath()->updatePath(groupName,
+                                                   pathName,
+                                                   paths->getPath(groupName, pathName));
+    switchFocus(leftMenu->getPathGroupDisplayed()->getLastCheckedButton(), leftMenu->getDisplaySelectedPath(), MainWindow::WidgetType::PATH);
+    leftMenu->getPathGroupDisplayed()->hide();
+    leftMenu->getDisplaySelectedPath()->show();
+    leftMenu->getPathGroupDisplayed()->getPathButtonGroup()->uncheck();
+    leftMenu->getPathGroupDisplayed()->getPathButtonGroup()->setCheckable(true);
 }
 
 void MainWindow::createPath(){
@@ -3807,7 +3849,7 @@ void MainWindow::deletePath(){
     switch(answer){
     case QMessageBox::StandardButton::Ok:
         paths->deletePath(lastWidgets.at(lastWidgets.size()-1).first.second, leftMenu->getPathGroupDisplayed()->getLastCheckedButton());
-        leftMenu->getPathGroupDisplayed()->getPathButtonGroup()->setGroupPaths(lastWidgets.at(lastWidgets.size()-1).first.second);
+        leftMenu->getPathGroupDisplayed()->setPathsGroup(lastWidgets.at(lastWidgets.size()-1).first.second);
     break;
     case QMessageBox::StandardButton::Cancel:
         leftMenu->getPathGroupDisplayed()->getPathButtonGroup()->uncheck();
@@ -3830,6 +3872,19 @@ void MainWindow::displayPathOnMap(const bool display){
 
 void MainWindow::editPath(){
     qDebug() << "MainWindow::editPath called";
+}
+
+void MainWindow::doubleClickOnPath(QString pathName){
+    QString groupName = lastWidgets.at(lastWidgets.size()-1).first.second;
+    qDebug() << "MainWindow::displayPath called" << groupName << pathName;
+
+    leftMenu->getDisplaySelectedPath()->updatePath(groupName,
+                                                   pathName,
+                                                   paths->getPath(groupName, pathName));
+    switchFocus(pathName, leftMenu->getDisplaySelectedPath(), MainWindow::WidgetType::PATH);
+    leftMenu->getPathGroupDisplayed()->hide();
+    leftMenu->getDisplaySelectedPath()->show();
+    leftMenu->getPathGroupDisplayed()->getPathButtonGroup()->uncheck();
 }
 
 /**********************************************************************************************************************************/

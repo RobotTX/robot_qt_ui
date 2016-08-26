@@ -159,12 +159,12 @@ BottomLayout::BottomLayout(QMainWindow* parent, const QSharedPointer<Robots> &ro
 
     layout->addWidget(scrollArea);
 
-
+    /*
     pathScroll->horizontalScrollBar()->setStyleSheet(" * { color: transparent; "
                                                      "border: none; "
                                                      "background-color: transparent; "
                                                      "margin-top : 40px}");
-
+*/
     pathScroll2->move(pathScroll->pos().x() + 10, pathScroll->pos().y()
                       + pathScroll->height() - 45);
     pathScroll2->setMinimum(pathScroll->verticalScrollBar()->minimum());

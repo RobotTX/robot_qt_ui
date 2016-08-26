@@ -233,6 +233,7 @@ private slots:
     void deletePath();
     void displayPathOnMap(const bool display);
     void editPath();
+    void doubleClickOnPath(QString pathName);
 
 private:
     Ui::MainWindow* ui;

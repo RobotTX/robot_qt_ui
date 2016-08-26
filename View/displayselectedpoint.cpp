@@ -38,7 +38,7 @@ DisplaySelectedPoint::DisplaySelectedPoint(QWidget* _parent, QSharedPointer<Robo
     actionButtons->getGoButton()->setEnabled(false);
     actionButtons->getMapButton()->setCheckable(true);
 
-    actionButtons->getMinusButton()->setToolTip("You can click this button to remove the point");
+    actionButtons->getMinusButton()->setToolTip("Click here to remove the point");
     actionButtons->getEditButton()->setToolTip("You can click on this button and then choose between clicking on the map or drag the point to change its position");
 
     layout->addWidget(actionButtons);

@@ -6,9 +6,11 @@
 #include <QVBoxLayout>
 #include <QMainWindow>
 #include "View/custompushbutton.h"
+#include "Controller/mainwindow.h"
+#include "View/stylesettings.h"
 
-DisplayPathGroup::DisplayPathGroup(QWidget* _parent, const QSharedPointer<Paths>& _paths):
-    QWidget(_parent), paths(_paths), lastCheckedButton("")
+DisplayPathGroup::DisplayPathGroup(QWidget* _parent, MainWindow* _mainWindow, const QSharedPointer<Paths>& _paths):
+    QWidget(_parent), mainWindow(_mainWindow), paths(_paths), lastCheckedButton("")
 {
     /// to scroll the button group if there is a lot of paths
     CustomScrollArea* scrollArea = new CustomScrollArea(this);
@@ -34,6 +36,10 @@ DisplayPathGroup::DisplayPathGroup(QWidget* _parent, const QSharedPointer<Paths>
     /*setMaximumWidth(_parent->width()*4/10);
     setMinimumWidth(_parent->width()*4/10);*/
     //layout->setContentsMargins(0,0,0,0);
+
+    /// to handle double clicks
+    foreach(QAbstractButton *button, pathButtonGroup->getButtonGroup()->buttons())
+        connect(button, SIGNAL(doubleClick(QString)), _mainWindow, SLOT(doubleClickOnPath(QString)));
 
 }
 
@@ -79,6 +85,30 @@ void DisplayPathGroup::enableButtons(QAbstractButton *button){
 }
 
 void DisplayPathGroup::resetMapButton(){
-    qDebug() << "DisplayPathGroup::resetEyeButton called";
+    qDebug() << "DisplayPathGroup::resetMapButton called";
     actionButtons->getMapButton()->setChecked(false);
+}
+
+void DisplayPathGroup::setPathsGroup(const QString groupName){
+    qDebug() << "GroupsPathsButtonGroup::setGroupPaths called";
+    pathButtonGroup->deleteButtons();
+    /// if the group of paths exists
+    if(paths->getGroups()->find(groupName) != paths->getGroups()->end()){
+        qDebug() << "found" << groupName;
+        /// we iterate over it to create the buttons
+        QSharedPointer<Paths::CollectionPaths> current_group = paths->getGroups()->value(groupName);
+        QMapIterator<QString, QSharedPointer<Paths::Path>> it_paths(*current_group);
+        int i(0);
+        while(it_paths.hasNext()){
+            it_paths.next();
+            qDebug() << "found this path" << it_paths.key();
+            CustomPushButton* groupButton = new CustomPushButton(it_paths.key(), this);
+            //groupButton->setAutoDefault(true);
+            pathButtonGroup->getButtonGroup()->addButton(groupButton, i++);
+            connect(groupButton, SIGNAL(doubleClick(QString)), mainWindow, SLOT(doubleClickOnPath(QString)));
+            groupButton->setCheckable(true);
+            pathButtonGroup->getLayout()->addWidget(groupButton);
+            groupButton->setIconSize(normal_icon_size);
+        }
+    }
 }

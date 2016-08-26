@@ -4,12 +4,16 @@
 #include "Model/pathpoint.h"
 #include "Controller/mainwindow.h"
 #include "View/custompushbutton.h"
+#include "View/customscrollarea.h"
 
 #include <QLabel>
 #include <QVBoxLayout>
 #include <QDebug>
 
 DisplaySelectedPath::DisplaySelectedPath(QWidget *parent, MainWindow *mainWindow):QWidget(parent){
+
+    scrollArea = new CustomScrollArea(this);
+
     layout = new QVBoxLayout(this);
 
     /// Top menu with the 5 buttons
@@ -18,9 +22,9 @@ DisplaySelectedPath::DisplaySelectedPath(QWidget *parent, MainWindow *mainWindow
     actionButtons->getGoButton()->setEnabled(false);
     actionButtons->getMapButton()->setCheckable(true);
 
-    actionButtons->getMinusButton()->setToolTip("You can click this button to remove the path");
-    actionButtons->getEditButton()->setToolTip("You can click this button to edit the path");
-    actionButtons->getMapButton()->setToolTip("You can click this button to display the path");
+    actionButtons->getMinusButton()->setToolTip("Click here to remove the path");
+    actionButtons->getEditButton()->setToolTip("Click here to edit the path");
+    actionButtons->getMapButton()->setToolTip("Click here to display the path");
 
     connect(actionButtons->getMinusButton(), SIGNAL(clicked(bool)), this, SLOT(minusBtnSlot(bool)));
     connect(actionButtons->getEditButton(), SIGNAL(clicked(bool)), this, SLOT(editBtnSlot(bool)));
@@ -36,8 +40,8 @@ DisplaySelectedPath::DisplaySelectedPath(QWidget *parent, MainWindow *mainWindow
 
     /// Widget displaying the path
     pathWidget = new PathWidget(this);
-    layout->addWidget(pathWidget);
-
+    scrollArea->setWidget(pathWidget);
+    layout->addWidget(scrollArea);
 
     connect(this, SIGNAL(deletePath(QString, QString)), mainWindow, SLOT(deletePathSlot(QString, QString)));
     connect(this, SIGNAL(editPath(QString, QString)), mainWindow, SLOT(editPathSlot(QString, QString)));

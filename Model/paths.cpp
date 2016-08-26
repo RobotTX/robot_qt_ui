@@ -120,7 +120,7 @@ Paths::Path Paths::getPath(const QString groupName, const QString pathName){
 }
 
 QDataStream& operator>>(QDataStream& in, Paths& paths){
-    qDebug() << "\nPaths operator>> Deserializing the paths";
+    //qDebug() << "\nPaths operator>> Deserializing the paths";
 
     QMap<QString, QMap<QString, QVector<PathPoint>>> tmpPaths;
     in >> tmpPaths;
@@ -143,7 +143,7 @@ QDataStream& operator>>(QDataStream& in, Paths& paths){
 }
 
 QDataStream& operator<<(QDataStream& out, const Paths& paths){
-    qDebug() << "\nPaths operator<< Serializing the paths";
+    //qDebug() << "\nPaths operator<< Serializing the paths";
 
     QMap<QString, QMap<QString, QVector<PathPoint>>> tmpPaths;
 

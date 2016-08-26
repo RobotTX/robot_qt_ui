@@ -180,7 +180,7 @@ LeftMenu::LeftMenu(MainWindow* _parent, QSharedPointer<Points> const& _points, Q
     connect(groupsPathsWidget->getActionButtons()->getMinusButton(), SIGNAL(clicked()), parent, SLOT(deleteGroupPaths()));
 
     /// Menu which displays a particular group of paths
-    pathGroup = new DisplayPathGroup(this, paths);
+    pathGroup = new DisplayPathGroup(this, _parent, paths);
     //pathGroup->setMaximumWidth(parent->width()*4/10);
     pathGroup->hide();
     leftLayout->addWidget(pathGroup);
