@@ -37,7 +37,7 @@ CreatePointWidget::CreatePointWidget(QWidget *parent, MainWindow *mainWindow, QS
     nameEdit->setFrame(false);
     nameEdit->setAlignment(Qt::AlignCenter);
     downLayout->addWidget(nameEdit);
-    nameEdit->setStyleSheet("* { background-color: rgba(255, 0, 0, 0); font-weight: bold; text-decoration:underline}");
+    nameEdit->setStyleSheet("QLineEdit { background-color: rgba(255, 0, 0, 0); font-weight: bold; text-decoration:underline}");
     nameEdit->hide();
 
     posXLabel = new QLabel("X : ", this);

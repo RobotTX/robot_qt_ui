@@ -142,3 +142,16 @@ void DisplaySelectedGroup::showEvent(QShowEvent* event){
     emit resetPathPointViews();
     QWidget::show();
 }
+
+void DisplaySelectedGroup::resizeEvent(QResizeEvent *event){
+    qDebug() << "DisplaySelectedGroup::resizeEvent"
+             << width() << static_cast<QWidget*>(parent())->width() << static_cast<QWidget*>(parent()->parent())->width();
+    QWidget* widget = static_cast<QWidget*>(parent());
+    int maxWidth = widget->width() - 18;
+    /*if(widget->width() > static_cast<QWidget*>(widget->parent())->width()){
+        maxWidth = static_cast<QWidget*>(widget->parent())->width() - 15 - static_cast<QWidget*>(widget->parent())->contentsMargins().right() - static_cast<QWidget*>(widget->parent())->contentsMargins().left();
+    }*/
+    setFixedWidth(maxWidth);
+
+    QWidget::resizeEvent(event);
+}

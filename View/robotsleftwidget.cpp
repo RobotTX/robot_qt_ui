@@ -9,10 +9,9 @@
 #include <QDebug>
 #include "View/custompushbutton.h"
 
-RobotsLeftWidget::RobotsLeftWidget(QWidget* parent, MainWindow* _mainWindow):QWidget(parent), mainWindow(_mainWindow){
+RobotsLeftWidget::RobotsLeftWidget(QWidget* parent, MainWindow* _mainWindow, QSharedPointer<Robots> const &_robots):QWidget(parent), mainWindow(_mainWindow){
     mainWindow = mainWindow;
     layout = new QVBoxLayout(this);
-    scrollLayout = new QVBoxLayout();
     scrollArea = new CustomScrollArea(this);
 
     actionButtons = new TopLeftMenu(this);
@@ -25,8 +24,10 @@ RobotsLeftWidget::RobotsLeftWidget(QWidget* parent, MainWindow* _mainWindow):QWi
     actionButtons->getMapButton()->setCheckable(true);
 
     layout->addWidget(actionButtons);
-    layout->addWidget(scrollArea);
 
+    setRobots(_robots);
+
+    layout->addWidget(scrollArea);
     /*setMaximumWidth(mainWindow->width()*4/10);
     setMinimumWidth(mainWindow->width()*4/10);*/
     layout->setAlignment(Qt::AlignTop);
@@ -52,39 +53,35 @@ void RobotsLeftWidget::setRobots(QSharedPointer<Robots> const &_robots){
 
     connect(btnGroup->getBtnGroup(), SIGNAL(buttonClicked(QAbstractButton*)), mainWindow, SLOT(setSelectedRobot(QAbstractButton*)));
 
-    scrollLayout->addWidget(btnGroup);
-
-    QWidget* widget = new QWidget(this);
-
-    widget->setLayout(scrollLayout);
-    scrollArea->setWidget(widget);
-
-    update();
+    scrollArea->setWidget(btnGroup);
 }
 
-
 void RobotsLeftWidget::updateRobots(QSharedPointer<Robots> const& _robots){
-    scrollLayout->removeWidget(btnGroup);
+    scrollArea->takeWidget();
     delete btnGroup;
 
     setRobots(_robots);
 }
 
-void RobotsLeftWidget::unSelectAllRobots()
-{
+void RobotsLeftWidget::unSelectAllRobots(){
     btnGroup->getBtnGroup()->setExclusive(false);
 
-    for (int i=0;i<  btnGroup->getBtnGroup()->buttons().size() ;i++)
-    {
-            btnGroup->getBtnGroup()->buttons()[i]->setChecked(false);
+    for (int i=0;i<  btnGroup->getBtnGroup()->buttons().size() ;i++){
+            btnGroup->getBtnGroup()->buttons().at(i)->setChecked(false);
     }
     btnGroup->getBtnGroup()->setExclusive(true);
 }
 
-void RobotsLeftWidget::showEvent(QShowEvent *)
-{
+void RobotsLeftWidget::showEvent(QShowEvent *){
+    actionButtons->disableAll();
+    actionButtons->uncheckAll();
+    unSelectAllRobots();
+}
 
-actionButtons->disableAll();
-actionButtons->uncheckAll();
-unSelectAllRobots();
+void RobotsLeftWidget::resizeEvent(QResizeEvent *event){
+    qDebug() << "RobotsLeftWidget::resizeEvent" << width() << static_cast<QWidget*>(parent())->width()
+             << static_cast<QWidget*>(parent()->parent())->width();
+    //QWidget* widget = static_cast<QWidget*>(parent());
+    //setMaximumWidth(widget->width()-widget->contentsMargins().right()-widget->contentsMargins().left());
+    QWidget::resizeEvent(event);
 }

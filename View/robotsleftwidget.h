@@ -18,7 +18,7 @@ class TopLeftMenu;
  */
 class RobotsLeftWidget: public QWidget{
 public:
-    RobotsLeftWidget(QWidget *parent, MainWindow *mainWindow);
+    RobotsLeftWidget(QWidget *parent, MainWindow *mainWindow, QSharedPointer<Robots> const &_robots);
 
     /// Getters
     RobotBtnGroup* getBtnGroup(void) const { return btnGroup; }
@@ -46,9 +46,11 @@ private:
     QSharedPointer<Robots> robots;
     QVBoxLayout* robotsLayout;
     RobotBtnGroup* btnGroup;
-    QVBoxLayout* scrollLayout;
     CustomScrollArea* scrollArea;
     TopLeftMenu* actionButtons;
+
+protected:
+    void resizeEvent(QResizeEvent *event);
 
 };
 

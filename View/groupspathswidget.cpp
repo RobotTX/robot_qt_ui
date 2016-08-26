@@ -53,7 +53,7 @@ GroupsPathsWidget::GroupsPathsWidget(QWidget* parent, MainWindow* _mainWindow, c
     connect(buttonGroup->getButtonGroup(), SIGNAL(buttonClicked(QAbstractButton*)), this, SLOT(enableButtons(QAbstractButton*)));    
 
     creationLayout = new QHBoxLayout();
-    saveButton = new CustomPushButton("Save", this, false, false);
+    saveButton = new CustomPushButton("Save", this, CustomPushButton::ButtonType::LEFT_MENU, false, false);
     saveButton->hide();
 
     cancelButton = new CustomPushButton("Cancel", this);

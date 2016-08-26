@@ -18,7 +18,7 @@ TopLayout::TopLayout(QMainWindow* parent): QWidget(parent), lastMessage(TEXT_COL
    // layout = new QHBoxLayout(all);
     layout = new QHBoxLayout(this);
 
-    menuBtn = new CustomPushButton(QIcon(":/icons/list.png"), "", this);
+    menuBtn = new CustomPushButton(QIcon(":/icons/list.png"), "", this, CustomPushButton::ButtonType::TOP);
     //menuBtn->setAutoDefault(true);
     menuBtn->setIconSize(normal_icon_size);
     //menuBtn->setMaximumWidth(40);
@@ -27,14 +27,14 @@ TopLayout::TopLayout(QMainWindow* parent): QWidget(parent), lastMessage(TEXT_COL
     layout->addWidget(menuBtn);
     connect(menuBtn, SIGNAL(clicked()), parent, SLOT(openLeftMenu()));
 
-    connectBtn = new CustomPushButton(QIcon(":/icons/wifi.png"), "", this);
+    connectBtn = new CustomPushButton(QIcon(":/icons/wifi.png"), "", this, CustomPushButton::ButtonType::TOP);
     connectBtn->setIconSize(normal_icon_size);
     //connectBtn->setMaximumWidth(40);
     connectBtn->setFocusPolicy(Qt::FocusPolicy::NoFocus);
     layout->addWidget(connectBtn);
     connect(connectBtn, SIGNAL(clicked()), parent, SLOT(connectToRobot()));
 
-    saveMapBtn = new CustomPushButton(QIcon(":/icons/load_map.png"), "", this);
+    saveMapBtn = new CustomPushButton(QIcon(":/icons/load_map.png"), "", this, CustomPushButton::ButtonType::TOP);
     saveMapBtn->setIconSize(normal_icon_size);
     //saveMapBtn->setMaximumWidth(40);
     saveMapBtn->setFocusPolicy(Qt::FocusPolicy::NoFocus);
@@ -42,7 +42,7 @@ TopLayout::TopLayout(QMainWindow* parent): QWidget(parent), lastMessage(TEXT_COL
     saveMapBtn->setToolTip("Save the state of the map");
     connect(saveMapBtn, SIGNAL(clicked()), parent, SLOT(saveMapState()));
 
-    centerBtn = new CustomPushButton(QIcon(":/icons/save_map.png"), "", this);
+    centerBtn = new CustomPushButton(QIcon(":/icons/save_map.png"), "", this, CustomPushButton::ButtonType::TOP);
     centerBtn->setToolTip("Restore the state of the map");
     centerBtn->setIconSize(normal_icon_size);
     //centerBtn->setMaximumWidth(40);
@@ -50,7 +50,7 @@ TopLayout::TopLayout(QMainWindow* parent): QWidget(parent), lastMessage(TEXT_COL
     layout->addWidget(centerBtn);
     connect(centerBtn, SIGNAL(clicked()), parent, SLOT(centerMap()));
 
-    settingBtn = new CustomPushButton(QIcon(":/icons/setting.png"), "", this);
+    settingBtn = new CustomPushButton(QIcon(":/icons/setting.png"), "", this, CustomPushButton::ButtonType::TOP);
     settingBtn->setToolTip("Click to view/edit the settings");
     settingBtn->setIconSize(normal_icon_size);
     //settingBtn->setMaximumWidth(40);
@@ -78,7 +78,7 @@ TopLayout::TopLayout(QMainWindow* parent): QWidget(parent), lastMessage(TEXT_COL
     spaceWidget2->setColor("lightgrey");
     layout->addWidget(spaceWidget2);
 
-    closeBtn = new CustomPushButton(QIcon(":/icons/close.png"), "", this);
+    closeBtn = new CustomPushButton(QIcon(":/icons/close.png"), "", this, CustomPushButton::ButtonType::TOP);
     closeBtn->setIconSize(normal_icon_size);
     //closeBtn->setMaximumWidth(40);
     closeBtn->setFocusPolicy(Qt::FocusPolicy::NoFocus);

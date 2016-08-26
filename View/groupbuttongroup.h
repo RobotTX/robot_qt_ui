@@ -38,6 +38,7 @@ public:
 
 protected:
     void mouseDoubleClickEvent(QMouseEvent *event);
+    void resizeEvent(QResizeEvent *event);
 
 signals:
     void doubleClick(QString);
@@ -56,7 +57,7 @@ private:
     CustomizedLineEdit* modifyEdit;
     QVBoxLayout* layout;
     QButtonGroup* buttonGroup;
-    QWidget* parent;
+    QWidget* parentWidget;
     QString editedGroupName;
     QSharedPointer<Points> points;
 };

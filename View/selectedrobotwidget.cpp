@@ -33,24 +33,24 @@ SelectedRobotWidget::SelectedRobotWidget(QWidget* parent, MainWindow* mainWindow
 
     inWidget->setLayout(inLayout);
 
-    name = new QLabel();
+    name = new CustomLabel();
     name->setAlignment(Qt::AlignCenter);
     name->setStyleSheet("font-weight: bold; text-decoration:underline");
     inLayout->addWidget(name);
 
     /// Button which allow the user to scan the map from a robot
-    scanBtn = new CustomPushButton(QIcon(":/icons/map.png"),"Scan a map", this, true);
+    scanBtn = new CustomPushButton(QIcon(":/icons/map.png"),"Scan a map", this, CustomPushButton::ButtonType::LEFT_MENU, true);
     scanBtn->setIconSize(normal_icon_size);
     inLayout->addWidget(scanBtn);
     connect(scanBtn, SIGNAL(clicked()), mainWindow, SLOT(connectToRobot()));
 
     /// Label which display the Ip of the robot
-    ipAddressLabel = new QLabel("Ip : ", this);
+    ipAddressLabel = new CustomLabel("Ip : ", this);
     ipAddressLabel->setWordWrap(true);
     inLayout->addWidget(ipAddressLabel);
 
     /// Label which display the Wifi name of the robot
-    wifiNameLabel = new QLabel("Wifi : ", this);
+    wifiNameLabel = new CustomLabel("Wifi : ", this);
     wifiNameLabel->setWordWrap(true);
     inLayout->addWidget(wifiNameLabel);
 
@@ -172,5 +172,17 @@ void SelectedRobotWidget::hideEvent(QHideEvent *event){
 
     emit hideSelectedRobotWidget();
     QWidget::hideEvent(event);
+}
+
+void SelectedRobotWidget::resizeEvent(QResizeEvent *event){
+
+    /*QWidget* w = static_cast<QWidget*>(parent());
+    int maxWidth = w->width()-w->contentsMargins().right()-w->contentsMargins().left();
+
+    qDebug() << "SelectedRobotWidget::resizeEvent" << width() << static_cast<QWidget*>(parent())->width()
+             << static_cast<QWidget*>(parent()->parent())->width()
+             << maxWidth;*/
+
+    QWidget::resizeEvent(event);
 }
 

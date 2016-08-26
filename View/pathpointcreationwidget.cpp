@@ -45,8 +45,8 @@ PathPointCreationWidget::PathPointCreationWidget(const int _id, const QString _n
     //sLabel->setMaximumWidth(30);
     timeLayout->addWidget(sLabel);
 
-    /*timeLayout->setContentsMargins(0, 0, 0, 0);
-    actionLayout->setContentsMargins(0, 0, 0, 0);*/
+    timeLayout->setContentsMargins(0, 0, 0, 0);
+    actionLayout->setContentsMargins(0, 0, 0, 0);
     actionLayout->addWidget(timeWidget);
 
     pathLayout->addWidget(actionWidget);
@@ -71,14 +71,14 @@ PathPointCreationWidget::PathPointCreationWidget(const int _id, const QString _n
     QPixmap mypix (":/icons/cropped_list.png");
     moveImage->setPixmap(mypix);
     moveImage->setScaledContents(true);
-    /*moveImage->setMaximumWidth(10);
-    moveImage->setMaximumHeight(10);*/
+    moveImage->setMaximumWidth(10);
+    moveImage->setMaximumHeight(10);
     layout->addWidget(moveImage);
 
     layout->addWidget(pathWidget);
     layout->addWidget(editWidget);
-    /*layout->setContentsMargins(2,0,0,11);
-    pathLayout->setContentsMargins(0,11,0,11);*/
+    layout->setContentsMargins(0,0,0,0);
+    pathLayout->setContentsMargins(0,0,0,0);
 }
 
 void PathPointCreationWidget::setName(const QString _name){

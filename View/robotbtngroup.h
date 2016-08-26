@@ -20,6 +20,9 @@ public:
 private:
     QButtonGroup* btnGroup;
     QVBoxLayout* layout;
+
+protected:
+    void resizeEvent(QResizeEvent *event);
 };
 
 #endif // ROBOTBTNGROUP_H

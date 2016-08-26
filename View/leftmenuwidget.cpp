@@ -6,7 +6,7 @@
 #include "View/custompushbutton.h"
 #include "View/stylesettings.h"
 
-LeftMenuWidget::LeftMenuWidget(QWidget *parent, QSharedPointer<Points> const& _points): QWidget(parent), points(_points)
+LeftMenuWidget::LeftMenuWidget(QWidget *_parent, QSharedPointer<Points> const& _points): QWidget(_parent), points(_points)
 {
 
     layout = new QVBoxLayout(this);
@@ -41,6 +41,7 @@ LeftMenuWidget::LeftMenuWidget(QWidget *parent, QSharedPointer<Points> const& _p
 
     /*setMaximumWidth(parent->width()*4/10);
     setMinimumWidth(parent->width()*4/10);*/
+    layout->setContentsMargins(0, 0, 0, 0);
 
     layout->setAlignment(Qt::AlignTop);
 }
