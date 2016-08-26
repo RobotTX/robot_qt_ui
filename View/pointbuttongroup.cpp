@@ -95,8 +95,8 @@ int PointButtonGroup::getButtonIdByName(const QString name) const {
 }
 
 void PointButtonGroup::resizeEvent(QResizeEvent *event){
-    qDebug() << "PointButtonGroup::resizeEvent"
-             << width() << static_cast<QWidget*>(parent())->width() << static_cast<QWidget*>(parent()->parent())->width();
+    /*qDebug() << "PointButtonGroup::resizeEvent"
+             << width() << static_cast<QWidget*>(parent())->width() << static_cast<QWidget*>(parent()->parent())->width();*/
     QWidget* widget = static_cast<QWidget*>(parent()->parent());
     int maxWidth = widget->width();
     /*if(widget->width() > static_cast<QWidget*>(widget->parent())->width()){

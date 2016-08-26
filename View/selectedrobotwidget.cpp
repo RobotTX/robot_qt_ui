@@ -174,15 +174,3 @@ void SelectedRobotWidget::hideEvent(QHideEvent *event){
     QWidget::hideEvent(event);
 }
 
-void SelectedRobotWidget::resizeEvent(QResizeEvent *event){
-
-    /*QWidget* w = static_cast<QWidget*>(parent());
-    int maxWidth = w->width()-w->contentsMargins().right()-w->contentsMargins().left();
-
-    qDebug() << "SelectedRobotWidget::resizeEvent" << width() << static_cast<QWidget*>(parent())->width()
-             << static_cast<QWidget*>(parent()->parent())->width()
-             << maxWidth;*/
-
-    QWidget::resizeEvent(event);
-}
-

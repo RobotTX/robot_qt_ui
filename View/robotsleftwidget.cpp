@@ -10,7 +10,7 @@
 #include "View/custompushbutton.h"
 
 RobotsLeftWidget::RobotsLeftWidget(QWidget* parent, MainWindow* _mainWindow, QSharedPointer<Robots> const &_robots):QWidget(parent), mainWindow(_mainWindow){
-    mainWindow = mainWindow;
+
     layout = new QVBoxLayout(this);
     scrollArea = new CustomScrollArea(this);
 
@@ -32,7 +32,6 @@ RobotsLeftWidget::RobotsLeftWidget(QWidget* parent, MainWindow* _mainWindow, QSh
     setMinimumWidth(mainWindow->width()*4/10);*/
     layout->setAlignment(Qt::AlignTop);
     //layout->setContentsMargins(0,0,0,0);
-
 }
 
 QString RobotsLeftWidget::getSelectedRobotName(){
@@ -76,12 +75,4 @@ void RobotsLeftWidget::showEvent(QShowEvent *){
     actionButtons->disableAll();
     actionButtons->uncheckAll();
     unSelectAllRobots();
-}
-
-void RobotsLeftWidget::resizeEvent(QResizeEvent *event){
-    qDebug() << "RobotsLeftWidget::resizeEvent" << width() << static_cast<QWidget*>(parent())->width()
-             << static_cast<QWidget*>(parent()->parent())->width();
-    //QWidget* widget = static_cast<QWidget*>(parent());
-    //setMaximumWidth(widget->width()-widget->contentsMargins().right()-widget->contentsMargins().left());
-    QWidget::resizeEvent(event);
 }

@@ -13,7 +13,7 @@ class GroupsPathsButtonGroup: public QWidget {
     Q_OBJECT
 
 public:
-    GroupsPathsButtonGroup(QWidget *_parent, QSharedPointer<Paths> _paths);
+    GroupsPathsButtonGroup(QWidget *_parent, const QSharedPointer<Paths>& _paths);
 
     QButtonGroup* getButtonGroup(void) const { return buttonGroup; }
     CustomizedLineEdit* getModifyEdit(void) const { return modifyEdit; }
@@ -31,6 +31,7 @@ private:
     QButtonGroup* buttonGroup;
     QSharedPointer<Paths> paths;
     CustomizedLineEdit* modifyEdit;
+    const QSize BUTTON_SIZE;
 };
 
 #endif // PATHBUTTONGROUP_H

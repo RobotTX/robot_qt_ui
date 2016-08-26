@@ -28,9 +28,12 @@ public:
     void setCreatingGroup(const bool creating) { creatingGroup = creating; }
     CustomizedLineEdit* getGroupNameEdit(void) const { return groupNameEdit; }
     QLabel* getGroupNameLabel(void) const { return groupNameLabel; }
+    QString getLastCheckedButton(void) const { return lastCheckedButton; }
 
     void setLastCheckedButton(const QString textButton) { lastCheckedButton = textButton; }
 
+public:
+    void initializeActionButtons(void);
     void disableButtons();
     QString formatName(const QString name) const;
     void updateGroupsPaths(void);

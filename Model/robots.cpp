@@ -122,21 +122,25 @@ RobotView* Robots::findRobotUsingTmpPointInPath(const QSharedPointer<Point> poin
     return NULL;
 }
 
+/// deselects the robot on the map (changing its pixmap)
 void Robots::deselect(){
     for(int i = 0; i < robotsVector.size(); i++)
         robotsVector[i]->setSelected(false);
 }
 
+/// hides the robots on the map
 void Robots::hide() const {
     for(int i = 0; i < robotsVector.size(); i++)
         robotsVector[i]->hide();
 }
 
+/// shows the robots on the map
 void Robots::show() const {
     for(int i = 0; i < robotsVector.size(); i++)
         robotsVector[i]->show();
 }
 
+/// shows the robots with id <id>
 void Robots::showRobot(const int id) const {
     robotsVector.at(id)->show();
 }

@@ -31,6 +31,7 @@
 #include "View/displaypathgroup.h"
 #include "View/custompushbutton.h"
 #include "View/displayselectedpointrobots.h"
+#include "View/pathbuttongroup.h"
 
 LeftMenu::LeftMenu(MainWindow* _mainWindow, QSharedPointer<Points> const& _points, QSharedPointer<Paths> const& _paths,
                    const QSharedPointer<Robots> &robots, const QSharedPointer<Points> &pointViews,
@@ -38,10 +39,10 @@ LeftMenu::LeftMenu(MainWindow* _mainWindow, QSharedPointer<Points> const& _point
     QWidget(_mainWindow), mainWindow(_mainWindow), points(_points), paths(_paths), lastCheckedId("s")
 {
 
-    QVBoxLayout * leftLayout  = new QVBoxLayout();
+    QVBoxLayout* leftLayout  = new QVBoxLayout();
 
-    QVBoxLayout * globalLayout  = new QVBoxLayout(this);
-    QHBoxLayout * topLayout  = new QHBoxLayout();
+    QVBoxLayout* globalLayout  = new QVBoxLayout(this);
+    QHBoxLayout* topLayout  = new QHBoxLayout();
 
     returnButton = new CustomPushButton(QIcon(":/icons/arrowLeft.png"), " Return", this);
     //returnButton->setAutoDefault(true);
@@ -178,8 +179,9 @@ LeftMenu::LeftMenu(MainWindow* _mainWindow, QSharedPointer<Points> const& _point
     connect(groupsPathsWidget->getActionButtons()->getMinusButton(), SIGNAL(clicked()), mainWindow, SLOT(deleteGroupPaths()));
 
     /// Menu which displays a particular group of paths
-    pathGroup = new DisplayPathGroup(this, paths);
-    //pathGroup->setMaximumWidth(mainWindow->width()*4/10);
+    pathGroup = new DisplayPathGroup(this, _mainWindow, paths);
+    //pathGroup->setMaximumWidth(parent->width()*4/10);
+
     pathGroup->hide();
     leftLayout->addWidget(pathGroup);
 
@@ -188,6 +190,8 @@ LeftMenu::LeftMenu(MainWindow* _mainWindow, QSharedPointer<Points> const& _point
     connect(pathGroup->getActionButtons()->getMinusButton(), SIGNAL(clicked()), mainWindow, SLOT(deletePath()));
     connect(pathGroup->getActionButtons()->getMapButton(), SIGNAL(toggled(bool)), mainWindow, SLOT(displayPathOnMap(bool)));
     connect(pathGroup->getActionButtons()->getEditButton(), SIGNAL(clicked()), mainWindow, SLOT(editPath()));
+
+    connect(pathGroup->getPathButtonGroup()->getButtonGroup(), SIGNAL(buttonToggled(int, bool)), pathGroup, SLOT(resetMapButton()));
 
     hide();
 
@@ -239,3 +243,5 @@ void LeftMenu::setEnableReturnCloseButtons(bool enable){
     returnButton->setEnabled(enable);
     closeBtn->setEnabled(enable);
 }
+
+

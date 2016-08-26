@@ -15,16 +15,18 @@ public:
     ~PathButtonGroup(){}
 
     QButtonGroup* getButtonGroup(void) const { return buttonGroup; }
+    QVBoxLayout* getLayout(void) const { return layout; }
 
 public:
-    void setGroupPaths(const QString groupName);
     void deleteButtons(void);
     void uncheck(void);
+    void setCheckable(const bool checkable);
 
 private:
     QVBoxLayout* layout;
     QButtonGroup* buttonGroup;
     QSharedPointer<Paths> paths;
+    const QSize BUTTON_SIZE;
 };
 
 #endif // PATHBUTTONGROUP_H

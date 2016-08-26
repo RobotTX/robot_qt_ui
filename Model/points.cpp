@@ -30,36 +30,14 @@ std::ostream& operator <<(std::ostream& stream, Points const& points){
     return stream;
 }
 
-/*
-QDataStream& operator>>(QDataStream& in, Points& points){
-    qDebug() << "Points operator >> called";
-    /// the size of the vector has to be serialized too in order to deserialize the object correctly
-    qint32 size;
-    in >> size;
-    for(int i = 0; i < size; i++){
-        Group group;
-        in >> group;
-        points.addGroup(group);
-    }
-    return in;
-}
-*/
-
-/*
-QDataStream& operator<<(QDataStream& out, const Points& points){
-    qDebug() << "Points operator << called";
-    out << qint32(points.getGroups().size());
-    for(int i = 0; i < points.getGroups().size(); i++)
-        out << *(points.getGroups().at(i));
-    return out;
-}
-*/
-
+/// removes a group from the vector of groups unless this group is the default group
+/// in which case the function does not do anything
 void Points::removeGroup(const QString groupName) {
     if(groupName.compare(NO_GROUP_NAME) != 0)
         groups->remove(groupName);
 }
 
+/// looks in every group but the path group for the pointview whose point's name is <pointName> and delete it if it exists
 void Points::removePoint(const QString pointName) {
     qDebug() << "RemovePoint called" << pointName;
     QMapIterator<QString, QSharedPointer<QVector<QSharedPointer<PointView>>>> i(*groups);
@@ -79,16 +57,16 @@ void Points::removePoint(const QString pointName) {
     if(key.compare("") != 0 && index != -1){
         groups->value(key)->remove(index);
         qDebug() << "Points::removePoint" << pointName << "done";
-    } else {
+    } else
         qDebug() << "Points::removePoint could not find the point to delete";
-    }
 }
 
 QSharedPointer<QVector<QSharedPointer<PointView>>> Points::findGroup(const QString groupName) const {
     return groups->value(groupName);
 }
 
-QSharedPointer<PointView> Points::findPointView(const QString pointName) const{
+/// finds a pointview that does not belong to a path
+QSharedPointer<PointView> Points::findPointView(const QString pointName) const {
     QMapIterator<QString, QSharedPointer<QVector<QSharedPointer<PointView>>>> i(*groups);
     while (i.hasNext()) {
         i.next();
@@ -102,7 +80,8 @@ QSharedPointer<PointView> Points::findPointView(const QString pointName) const{
     return QSharedPointer<PointView>();
 }
 
-QSharedPointer<PointView> Points::findPathPointView(const double x, const double y) const{
+/// finds a pointview that belongs to a path
+QSharedPointer<PointView> Points::findPathPointView(const double x, const double y) const {
     if(groups->value(PATH_GROUP_NAME)){
         for(int j = 0; j < groups->value(PATH_GROUP_NAME)->size(); j++){
             if(groups->value(PATH_GROUP_NAME)->at(j)->getPoint()->comparePos(x, y))
@@ -127,10 +106,13 @@ QSharedPointer<Point> Points::findPoint(const QString pointName) const {
     return QSharedPointer<Point>();
 }
 
+/// returns the point contained in the group <groupName> at index <indexPoint>, assumes that indexPoint is within the range [0, size_group)
 QSharedPointer<Point> Points::findPoint(const QString groupName, const int indexPoint) const {
     return groups->value(groupName)->at(indexPoint)->getPoint();
 }
 
+/// finds the pair <QString, int> which represents a couple (group_name, index_in_group) of a given point identified by its name
+/// the function does not look into the group of path points
 QPair<QString, int> Points::findPointIndexes(const QString pointName) const {
     QPair<QString, int> indexes("", -1);
     QMapIterator<QString, QSharedPointer<QVector<QSharedPointer<PointView>>>> i(*groups);
@@ -155,7 +137,6 @@ void Points::clear(){
     QMapIterator<QString, QSharedPointer<QVector<QSharedPointer<PointView>>>> i(*groups);
     while (i.hasNext()) {
         i.next();
-        //qDeleteAll(i.value()->begin(), i.value()->end());
         i.value()->clear();
     }
     groups->clear();
@@ -172,6 +153,7 @@ QSharedPointer<PointView> Points::createPoint(const QString pointName, const dou
     connect(&(*pointView), SIGNAL(editedPointPositionChanged(double, double)), mainWindow, SLOT(updateCoordinates(double, double)));
     connect(&(*pointView), SIGNAL(moveEditedPathPoint()), mainWindow, SLOT(moveEditedPathPointSlot()));
     connect(&(*pointView), SIGNAL(addPointPath(QString, double, double)), mainWindow, SLOT(addPointPathSlot(QString, double, double)));
+
     /// to update the left menu when the home point is being edited
     connect(&(*pointView), SIGNAL(editedHomePositionChanged(float,float, QString)), mainWindow, SLOT(updateHomeCoordinates(float, float, QString)));
     connect(&(*pointView), SIGNAL(updatePathPainterPointView()), mainWindow, SLOT(updatePathPainterPointViewSlot()));
@@ -181,7 +163,6 @@ QSharedPointer<PointView> Points::createPoint(const QString pointName, const dou
 
 void Points::addPoint(const QString groupName, const QString pointName, const double x, const double y, const bool displayed, const Point::PointType type,
                       MapView* mapView, MainWindow* mainWindow){
-    //qDebug() << "Points::addPoint called";
 
     QSharedPointer<PointView> pointView = createPoint(pointName, x, y , displayed, type, mapView, mainWindow);
     addPoint(groupName, pointView);
@@ -190,9 +171,9 @@ void Points::addPoint(const QString groupName, const QString pointName, const do
 void Points::addPoint(const QString groupName, QSharedPointer<PointView> pointView){
     //qDebug() << "Points::addPoint called with pointView";
 
-    if(!groups->empty() && groups->contains(groupName)){
+    if(!groups->empty() && groups->contains(groupName))
         groups->value(groupName)->push_back(pointView);
-    } else {
+    else {
         QSharedPointer<QVector<QSharedPointer<PointView>>> vector = QSharedPointer<QVector<QSharedPointer<PointView>>>(new QVector<QSharedPointer<PointView>>());
         vector->push_back(pointView);
         groups->insert(groupName, vector);
@@ -362,20 +343,6 @@ void Points::setPixmapAll(const PointView::PixmapType type, RobotView* selectedR
         }
     }
 }
-/*
-void Points::setPixmapAll(const QPixmap pixmap){
-    QMapIterator<QString, QSharedPointer<QVector<QSharedPointer<PointView>>>> i(*groups);
-    qDebug() << "Points::setPixmapAll with QPixmap called";
-    while (i.hasNext()) {
-        i.next();
-        if(i.key().compare(PATH_GROUP_NAME) != 0){
-            for(int j = 0; j < i.value()->count(); j++){
-                i.value()->at(j)->QGraphicsPixmapItem::setPixmap(pixmap);
-                i.value()->at(j)->updatePos();
-            }
-        }
-    }
-}*/
 
 void Points::addTmpPoint(MapView *mapView, MainWindow *mainWindow){
     addPoint(TMP_GROUP_NAME, TMP_POINT_NAME, 0, 0, false, Point::PointType::TEMP, mapView, mainWindow);

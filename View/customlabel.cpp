@@ -10,7 +10,7 @@ CustomLabel::CustomLabel(const QString &text, QWidget *parent):QLabel(text, pare
 }
 
 void CustomLabel::resizeEvent(QResizeEvent *event){
-    qDebug() << "CustomLabel::resizeEvent" << text() << maximumWidth();
+    //qDebug() << "CustomLabel::resizeEvent" << text() << maximumWidth();
     QWidget* widget = static_cast<QWidget*>(parent());
     int maxWidth = widget->width()-widget->contentsMargins().right()-widget->contentsMargins().left();
     if(widget->width() > static_cast<QWidget*>(widget->parent())->width()){
@@ -23,10 +23,10 @@ void CustomLabel::resizeEvent(QResizeEvent *event){
 
 
 void CustomLabel::enterEvent(QEvent *event){
-    QFontMetrics fm(font());
+   /* QFontMetrics fm(font());
     int strWidth = fm.width(text());
     qDebug() << "CustomLabel::enterEvent on" << text()
              << strWidth << width() << static_cast<QWidget*>(parent())->width() << static_cast<QWidget*>(parent()->parent())->width();
-    //setMaximumWidth(static_cast<QWidget*>(parent())->width()-static_cast<QWidget*>(parent())->contentsMargins().right()-static_cast<QWidget*>(parent())->contentsMargins().left());
+    setMaximumWidth(static_cast<QWidget*>(parent())->width()-static_cast<QWidget*>(parent())->contentsMargins().right()-static_cast<QWidget*>(parent())->contentsMargins().left());*/
     QLabel::enterEvent(event);
 }

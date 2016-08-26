@@ -168,7 +168,6 @@ void TopLeftMenu::setAllNonCheckable(){
 
 void TopLeftMenu::setEnable(bool enable){
     if(enable){
-
         for(int i =0; i < enabledBtns.size(); i++){
             enabledBtns.at(i)->setEnabled(true);
         }

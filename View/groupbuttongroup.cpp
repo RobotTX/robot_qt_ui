@@ -229,8 +229,8 @@ int GroupButtonGroup::getButtonIdByName(const QString name) const {
 }
 
 void GroupButtonGroup::resizeEvent(QResizeEvent *event){
-    qDebug() << "GroupButtonGroup::resizeEvent"
-             << width() << static_cast<QWidget*>(parent())->width() << static_cast<QWidget*>(parent()->parent())->width();
+    /*qDebug() << "GroupButtonGroup::resizeEvent"
+             << width() << static_cast<QWidget*>(parent())->width() << static_cast<QWidget*>(parent()->parent())->width();*/
     QWidget* widget = static_cast<QWidget*>(parent()->parent());
     int maxWidth = widget->width();
     /*if(widget->width() > static_cast<QWidget*>(widget->parent())->width()){

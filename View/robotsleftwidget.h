@@ -36,8 +36,6 @@ public:
      */
     void updateRobots(QSharedPointer<Robots> const& robots);
     void unSelectAllRobots();
-   // void hideEvent(QHideEvent *event);
-    void showEvent(QShowEvent *);
 
 
 private:
@@ -50,7 +48,7 @@ private:
     TopLeftMenu* actionButtons;
 
 protected:
-    void resizeEvent(QResizeEvent *event);
+    void showEvent(QShowEvent *);
 
 };
 

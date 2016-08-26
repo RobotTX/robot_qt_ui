@@ -6,14 +6,18 @@
 #include <QVBoxLayout>
 #include <QMainWindow>
 #include "View/custompushbutton.h"
+#include "Controller/mainwindow.h"
+#include "View/stylesettings.h"
 
-DisplayPathGroup::DisplayPathGroup(QWidget* _parent, const QSharedPointer<Paths>& _paths):
-    QWidget(_parent), paths(_paths), lastCheckedButton("")
+DisplayPathGroup::DisplayPathGroup(QWidget* _parent, MainWindow* _mainWindow, const QSharedPointer<Paths>& _paths):
+    QWidget(_parent), mainWindow(_mainWindow), paths(_paths), lastCheckedButton("")
 {
+    /// to scroll the button group if there is a lot of paths
     CustomScrollArea* scrollArea = new CustomScrollArea(this);
 
     layout = new QVBoxLayout(this);
 
+    /// 5 buttons displayed at the top
     actionButtons = new TopLeftMenu(this);
 
     initializeActionButtons();
@@ -21,16 +25,25 @@ DisplayPathGroup::DisplayPathGroup(QWidget* _parent, const QSharedPointer<Paths>
     layout->addWidget(actionButtons);
 
     pathButtonGroup = new PathButtonGroup(this, paths);
+
+    /// called when a button is clicked in the button group
     connect(pathButtonGroup->getButtonGroup(), SIGNAL(buttonClicked(QAbstractButton*)), this, SLOT(enableButtons(QAbstractButton*)));
 
     scrollArea->setWidget(pathButtonGroup);
 
     layout->addWidget(scrollArea);
+
     /*setMaximumWidth(_parent->width()*4/10);
     setMinimumWidth(_parent->width()*4/10);*/
     //layout->setContentsMargins(0,0,0,0);
+
+    /// to handle double clicks
+    foreach(QAbstractButton *button, pathButtonGroup->getButtonGroup()->buttons())
+        connect(button, SIGNAL(doubleClick(QString)), _mainWindow, SLOT(doubleClickOnPath(QString)));
+
 }
 
+/// we reset the action buttons everytime we show the widget
 void DisplayPathGroup::showEvent(QShowEvent *event){
     initializeActionButtons();
     QWidget::showEvent(event);
@@ -50,6 +63,9 @@ void DisplayPathGroup::initializeActionButtons(){
     actionButtons->getMapButton()->setToolTip("Select a path and click here to display or hide it on the map");
 }
 
+/// called when a button is clicked in the button group
+/// if the button was already checked, the button is unchecked and the appropriate action buttons disabled
+/// lastCheckButton is updated to keep track of the last checked button
 void DisplayPathGroup::enableButtons(QAbstractButton *button){
     if(button->text().compare(lastCheckedButton)){
         lastCheckedButton = button->text();
@@ -65,5 +81,34 @@ void DisplayPathGroup::enableButtons(QAbstractButton *button){
         lastCheckedButton = "";
         initializeActionButtons();
         pathButtonGroup->uncheck();
+    }
+}
+
+void DisplayPathGroup::resetMapButton(){
+    qDebug() << "DisplayPathGroup::resetMapButton called";
+    actionButtons->getMapButton()->setChecked(false);
+}
+
+void DisplayPathGroup::setPathsGroup(const QString groupName){
+    qDebug() << "GroupsPathsButtonGroup::setGroupPaths called";
+    pathButtonGroup->deleteButtons();
+    /// if the group of paths exists
+    if(paths->getGroups()->find(groupName) != paths->getGroups()->end()){
+        qDebug() << "found" << groupName;
+        /// we iterate over it to create the buttons
+        QSharedPointer<Paths::CollectionPaths> current_group = paths->getGroups()->value(groupName);
+        QMapIterator<QString, QSharedPointer<Paths::Path>> it_paths(*current_group);
+        int i(0);
+        while(it_paths.hasNext()){
+            it_paths.next();
+            qDebug() << "found this path" << it_paths.key();
+            CustomPushButton* groupButton = new CustomPushButton(it_paths.key(), this);
+            //groupButton->setAutoDefault(true);
+            pathButtonGroup->getButtonGroup()->addButton(groupButton, i++);
+            connect(groupButton, SIGNAL(doubleClick(QString)), mainWindow, SLOT(doubleClickOnPath(QString)));
+            groupButton->setCheckable(true);
+            pathButtonGroup->getLayout()->addWidget(groupButton);
+            groupButton->setIconSize(normal_icon_size);
+        }
     }
 }
