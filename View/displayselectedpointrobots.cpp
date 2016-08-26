@@ -25,8 +25,8 @@ DisplaySelectedPointRobots::DisplaySelectedPointRobots(QWidget *parent):QWidget(
     homeLayout->addWidget(homeLabel);
 
     robotBtn = new CustomPushButton("", this);
-    robotBtn->setMinimumHeight(30);
-    robotBtn->setMaximumHeight(30);
+    //robotBtn->setMinimumHeight(30);
+    //robotBtn->setMaximumHeight(30);
 
     homeLayout->addWidget(robotBtn);
     connect(robotBtn, SIGNAL(clicked()), this, SLOT(robotBtnClicked()));
@@ -43,8 +43,8 @@ DisplaySelectedPointRobots::DisplaySelectedPointRobots(QWidget *parent):QWidget(
     pathLabelLayout->addWidget(spaceWidget2);
     QLabel* pathLabel = new QLabel("This point belongs to the path of the robot(s) :", this);
     pathLabel->setWordWrap(true);
-    pathLabel->setMinimumHeight(60);
-    pathLabel->setMaximumHeight(60);
+    //pathLabel->setMinimumHeight(60);
+    //pathLabel->setMaximumHeight(60);
     pathLabelLayout->addWidget(pathLabel);
     pathLayout->addLayout(pathLabelLayout);
 
@@ -87,8 +87,8 @@ void DisplaySelectedPointRobots::setRobotsWidget(QSharedPointer<PointView> point
         QSetIterator<QString> k(robotNameSet);
         while (k.hasNext()){
             CustomPushButton* btn = new CustomPushButton(k.next(), this);
-            btn->setMinimumHeight(30);
-            btn->setMaximumHeight(30);
+            //btn->setMinimumHeight(30);
+            //btn->setMaximumHeight(30);
             pathBtnGroup->addButton(btn);
             pathBtnLayout->addWidget(btn);
         }

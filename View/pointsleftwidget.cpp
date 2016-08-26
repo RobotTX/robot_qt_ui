@@ -44,22 +44,20 @@ PointsLeftWidget::PointsLeftWidget(QWidget* _parent, MainWindow* const mainWindo
 
     layout->addWidget(actionButtons);
 
-    QVBoxLayout* downLayout = new QVBoxLayout();
-
     groupNameLabel = new QLabel("New group's name : ", this);
     groupNameLabel->hide();
     groupNameEdit = new CustomizedLineEdit(this);
     groupNameEdit->hide();
 
-    downLayout->addWidget(groupNameLabel);
-    downLayout->addWidget(groupNameEdit);
+    layout->addWidget(groupNameLabel);
+    layout->addWidget(groupNameEdit);
 
     groupButtonGroup = new GroupButtonGroup(points, this);
     scrollArea->setWidget(groupButtonGroup);
-    downLayout->addWidget(scrollArea);
+    layout->addWidget(scrollArea);
 
     creationLayout = new QHBoxLayout();
-    saveButton = new CustomPushButton("Save", this, false, false);
+    saveButton = new CustomPushButton("Save", this, CustomPushButton::ButtonType::LEFT_MENU, false, false);
     //saveButton->setAutoDefault(true);
     saveButton->hide();
     //saveButton->setEnabled(false);
@@ -70,7 +68,7 @@ PointsLeftWidget::PointsLeftWidget(QWidget* _parent, MainWindow* const mainWindo
     creationLayout->addWidget(cancelButton);
     creationLayout->addWidget(saveButton);
 
-    downLayout->addLayout(creationLayout);
+    layout->addLayout(creationLayout);
 
     connect(actionButtons->getPlusButton(), SIGNAL(clicked(bool)), mainWindow, SLOT(plusGroupBtnEvent()));
     connect(actionButtons->getMinusButton(), SIGNAL(clicked(bool)), mainWindow, SLOT(minusGroupBtnEvent()));
@@ -116,10 +114,8 @@ PointsLeftWidget::PointsLeftWidget(QWidget* _parent, MainWindow* const mainWindo
 
     /*setMaximumWidth(mainWindow->width()*4/10);
     setMinimumWidth(mainWindow->width()*4/10);*/
-    downLayout->setAlignment(Qt::AlignBottom);
+    //downLayout->setAlignment(Qt::AlignBottom);
     //downLayout->setContentsMargins(10, 0, 30, 0);
-
-    layout->addLayout(downLayout);
 
     /*layout->setContentsMargins(0,0,0,0);
     creationLayout->setContentsMargins(0, 0, 0, 20);*/

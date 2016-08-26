@@ -46,7 +46,7 @@ GroupsPathsWidget::GroupsPathsWidget(QWidget* parent, MainWindow* _mainWindow, c
 
     /// this layout contains the widgets necessary to the creation of a group
     creationLayout = new QHBoxLayout();
-    saveButton = new CustomPushButton("Save", this, false, false);
+    saveButton = new CustomPushButton("Save", this, CustomPushButton::ButtonType::LEFT_MENU, false, false);
     saveButton->hide();
 
     cancelButton = new CustomPushButton("Cancel", this);

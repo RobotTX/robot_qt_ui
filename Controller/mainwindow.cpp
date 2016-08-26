@@ -190,6 +190,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     resetFocus();
     initializeLeftMenu();
     bottom->addWidget(leftMenu);
+    leftMenu->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
 
     rightLayout = new QVBoxLayout();
     bottom->addLayout(rightLayout);
@@ -272,22 +273,20 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     centerMap();
 
     /// Some style
-    /*
-    setStyleSheet("QWidget {border: 1px solid red}"
+
+    /*setStyleSheet("QWidget {border: 1px solid red}"
                   "QPushButton {border: 1px solid green}"
                   "QLabel {border: 1px solid blue}"
-                  "LeftMenu {border: 1px solid yellow}");
-    this->setAutoFillBackground(true);
-    */
+                  "QScrollArea {border: 1px solid yellow}");*/
 
-    /*rightLayout->setContentsMargins(0,0,0,0);
+    this->setAutoFillBackground(true);
+
+    rightLayout->setContentsMargins(0,0,0,0);
     bottom->setContentsMargins(0,0,0,0);
     mainLayout->setContentsMargins(0,0,0,0);
-    this->setContentsMargins(0,0,0,0);
-    mainWidget->setContentsMargins(0,0,0,0);
     topLayout->setContentsMargins(0,0,0,0);
     bottomLayout->setContentsMargins(0,0,0,0);
-    mainLayout->setSpacing(0);*/
+    mainLayout->setSpacing(0);
 }
 
 MainWindow::~MainWindow(){
@@ -380,6 +379,193 @@ void MainWindow::initializeRobots(){
     robotView3->setParentItem(mapPixmapItem);
     robots->add(robotView3);
     tmpMap[robot3->getIp()] = robot3->getName();
+
+    QString robotIp4 = "192.168.4.14";
+    QString robotName4 = tmpMap.value(robotIp4, "Robota4");
+    QSharedPointer<Robot> robot4(new Robot(robotName4, robotIp4));
+    robot4->setWifi("Swaghetti Yolognaise");
+    RobotView* robotView4 = new RobotView(robot4, mapPixmapItem);
+    connect(robotView4, SIGNAL(setSelectedSignal(RobotView*)), this, SLOT(setSelectedRobot(RobotView*)));
+    robotView4->setPosition(148, 45);
+    robotView4->setParentItem(mapPixmapItem);
+    robots->add(robotView4);
+    tmpMap[robot4->getIp()] = robot4->getName();
+
+    QString robotIp5 = "192.168.4.15";
+    QString robotName5 = tmpMap.value(robotIp5, "Robota5");
+    QSharedPointer<Robot> robot5(new Robot(robotName5, robotIp5));
+    robot5->setWifi("Swaghetti Yolognaise");
+    RobotView* robotView5 = new RobotView(robot5, mapPixmapItem);
+    connect(robotView5, SIGNAL(setSelectedSignal(RobotView*)), this, SLOT(setSelectedRobot(RobotView*)));
+    robotView5->setPosition(158, 55);
+    robotView5->setParentItem(mapPixmapItem);
+    robots->add(robotView5);
+    tmpMap[robot5->getIp()] = robot5->getName();
+
+    QString robotIp6 = "192.168.4.16";
+    QString robotName6 = tmpMap.value(robotIp6, "Robota6");
+    QSharedPointer<Robot> robot6(new Robot(robotName6, robotIp6));
+    robot6->setWifi("Swaghetti Yolognaise");
+    RobotView* robotView6 = new RobotView(robot6, mapPixmapItem);
+    connect(robotView6, SIGNAL(setSelectedSignal(RobotView*)), this, SLOT(setSelectedRobot(RobotView*)));
+    robotView6->setPosition(168, 65);
+    robotView6->setParentItem(mapPixmapItem);
+    robots->add(robotView6);
+    tmpMap[robot6->getIp()] = robot6->getName();
+
+    QString robotIp7 = "192.168.4.17";
+    QString robotName7 = tmpMap.value(robotIp7, "Robota7");
+    QSharedPointer<Robot> robot7(new Robot(robotName7, robotIp7));
+    robot7->setWifi("Swaghetti Yolognaise");
+    RobotView* robotView7 = new RobotView(robot7, mapPixmapItem);
+    connect(robotView7, SIGNAL(setSelectedSignal(RobotView*)), this, SLOT(setSelectedRobot(RobotView*)));
+    robotView7->setPosition(178, 75);
+    robotView7->setParentItem(mapPixmapItem);
+    robots->add(robotView7);
+    tmpMap[robot7->getIp()] = robot7->getName();
+
+    QString robotIp8 = "192.168.4.18";
+    QString robotName8 = tmpMap.value(robotIp8, "Robota8");
+    QSharedPointer<Robot> robot8(new Robot(robotName8, robotIp8));
+    robot8->setWifi("Swaghetti Yolognaise");
+    RobotView* robotView8 = new RobotView(robot8, mapPixmapItem);
+    connect(robotView8, SIGNAL(setSelectedSignal(RobotView*)), this, SLOT(setSelectedRobot(RobotView*)));
+    robotView8->setPosition(188, 85);
+    robotView8->setParentItem(mapPixmapItem);
+    robots->add(robotView8);
+    tmpMap[robot8->getIp()] = robot8->getName();
+
+    QString robotIp9 = "192.168.4.19";
+    QString robotName9 = tmpMap.value(robotIp9, "Robota9");
+    QSharedPointer<Robot> robot9(new Robot(robotName9, robotIp9));
+    robot9->setWifi("Swaghetti Yolognaise");
+    RobotView* robotView9 = new RobotView(robot9, mapPixmapItem);
+    connect(robotView9, SIGNAL(setSelectedSignal(RobotView*)), this, SLOT(setSelectedRobot(RobotView*)));
+    robotView9->setPosition(198, 95);
+    robotView9->setParentItem(mapPixmapItem);
+    robots->add(robotView9);
+    tmpMap[robot9->getIp()] = robot9->getName();
+
+    QString robotIp10 = "192.168.4.110";
+    QString robotName10 = tmpMap.value(robotIp10, "Robota10");
+    QSharedPointer<Robot> robot10(new Robot(robotName10, robotIp10));
+    robot10->setWifi("Swaghetti Yolognaise");
+    RobotView* robotView10 = new RobotView(robot10, mapPixmapItem);
+    connect(robotView10, SIGNAL(setSelectedSignal(RobotView*)), this, SLOT(setSelectedRobot(RobotView*)));
+    robotView10->setPosition(1108, 105);
+    robotView10->setParentItem(mapPixmapItem);
+    robots->add(robotView10);
+    tmpMap[robot10->getIp()] = robot10->getName();
+
+    QString robotIp11 = "192.168.4.111";
+    QString robotName11 = tmpMap.value(robotIp11, "Robota11");
+    QSharedPointer<Robot> robot11(new Robot(robotName11, robotIp11));
+    robot11->setWifi("Swaghetti Yolognaise");
+    RobotView* robotView11 = new RobotView(robot11, mapPixmapItem);
+    connect(robotView11, SIGNAL(setSelectedSignal(RobotView*)), this, SLOT(setSelectedRobot(RobotView*)));
+    robotView11->setPosition(1118, 115);
+    robotView11->setParentItem(mapPixmapItem);
+    robots->add(robotView11);
+    tmpMap[robot11->getIp()] = robot11->getName();
+
+    QString robotIp12 = "192.168.4.112";
+    QString robotName12 = tmpMap.value(robotIp12, "Robota12");
+    QSharedPointer<Robot> robot12(new Robot(robotName12, robotIp12));
+    robot12->setWifi("Swaghetti Yolognaise");
+    RobotView* robotView12 = new RobotView(robot12, mapPixmapItem);
+    connect(robotView12, SIGNAL(setSelectedSignal(RobotView*)), this, SLOT(setSelectedRobot(RobotView*)));
+    robotView12->setPosition(1128, 125);
+    robotView12->setParentItem(mapPixmapItem);
+    robots->add(robotView12);
+    tmpMap[robot12->getIp()] = robot12->getName();
+
+    QString robotIp13 = "192.168.4.113";
+    QString robotName13 = tmpMap.value(robotIp13, "Robota13");
+    QSharedPointer<Robot> robot13(new Robot(robotName13, robotIp13));
+    robot13->setWifi("Swaghetti Yolognaise");
+    RobotView* robotView13 = new RobotView(robot13, mapPixmapItem);
+    connect(robotView13, SIGNAL(setSelectedSignal(RobotView*)), this, SLOT(setSelectedRobot(RobotView*)));
+    robotView13->setPosition(1138, 135);
+    robotView13->setParentItem(mapPixmapItem);
+    robots->add(robotView13);
+    tmpMap[robot13->getIp()] = robot13->getName();
+
+    QString robotIp14 = "192.168.4.114";
+    QString robotName14 = tmpMap.value(robotIp14, "Robota14");
+    QSharedPointer<Robot> robot14(new Robot(robotName14, robotIp14));
+    robot14->setWifi("Swaghetti Yolognaise");
+    RobotView* robotView14 = new RobotView(robot14, mapPixmapItem);
+    connect(robotView14, SIGNAL(setSelectedSignal(RobotView*)), this, SLOT(setSelectedRobot(RobotView*)));
+    robotView14->setPosition(1148, 145);
+    robotView14->setParentItem(mapPixmapItem);
+    robots->add(robotView14);
+    tmpMap[robot14->getIp()] = robot14->getName();
+
+    QString robotIp15 = "192.168.4.115";
+    QString robotName15 = tmpMap.value(robotIp15, "Robota15");
+    QSharedPointer<Robot> robot15(new Robot(robotName15, robotIp15));
+    robot15->setWifi("Swaghetti Yolognaise");
+    RobotView* robotView15 = new RobotView(robot15, mapPixmapItem);
+    connect(robotView15, SIGNAL(setSelectedSignal(RobotView*)), this, SLOT(setSelectedRobot(RobotView*)));
+    robotView15->setPosition(1158, 155);
+    robotView15->setParentItem(mapPixmapItem);
+    robots->add(robotView15);
+    tmpMap[robot15->getIp()] = robot15->getName();
+
+    QString robotIp16 = "192.168.4.116";
+    QString robotName16 = tmpMap.value(robotIp16, "Robota16");
+    QSharedPointer<Robot> robot16(new Robot(robotName16, robotIp16));
+    robot16->setWifi("Swaghetti Yolognaise");
+    RobotView* robotView16 = new RobotView(robot16, mapPixmapItem);
+    connect(robotView16, SIGNAL(setSelectedSignal(RobotView*)), this, SLOT(setSelectedRobot(RobotView*)));
+    robotView16->setPosition(1168, 165);
+    robotView16->setParentItem(mapPixmapItem);
+    robots->add(robotView16);
+    tmpMap[robot16->getIp()] = robot16->getName();
+
+    QString robotIp17 = "192.168.4.117";
+    QString robotName17 = tmpMap.value(robotIp17, "Robota17");
+    QSharedPointer<Robot> robot17(new Robot(robotName17, robotIp17));
+    robot17->setWifi("Swaghetti Yolognaise");
+    RobotView* robotView17 = new RobotView(robot17, mapPixmapItem);
+    connect(robotView17, SIGNAL(setSelectedSignal(RobotView*)), this, SLOT(setSelectedRobot(RobotView*)));
+    robotView17->setPosition(1178, 175);
+    robotView17->setParentItem(mapPixmapItem);
+    robots->add(robotView17);
+    tmpMap[robot17->getIp()] = robot17->getName();
+
+    QString robotIp18 = "192.168.4.118";
+    QString robotName18 = tmpMap.value(robotIp18, "Robota18");
+    QSharedPointer<Robot> robot18(new Robot(robotName18, robotIp18));
+    robot18->setWifi("Swaghetti Yolognaise");
+    RobotView* robotView18 = new RobotView(robot18, mapPixmapItem);
+    connect(robotView18, SIGNAL(setSelectedSignal(RobotView*)), this, SLOT(setSelectedRobot(RobotView*)));
+    robotView18->setPosition(1188, 185);
+    robotView18->setParentItem(mapPixmapItem);
+    robots->add(robotView18);
+    tmpMap[robot18->getIp()] = robot18->getName();
+
+    QString robotIp19 = "192.168.4.119";
+    QString robotName19 = tmpMap.value(robotIp19, "Robota19");
+    QSharedPointer<Robot> robot19(new Robot(robotName19, robotIp19));
+    robot19->setWifi("Swaghetti Yolognaise");
+    RobotView* robotView19 = new RobotView(robot19, mapPixmapItem);
+    connect(robotView19, SIGNAL(setSelectedSignal(RobotView*)), this, SLOT(setSelectedRobot(RobotView*)));
+    robotView19->setPosition(1198, 195);
+    robotView19->setParentItem(mapPixmapItem);
+    robots->add(robotView19);
+    tmpMap[robot19->getIp()] = robot19->getName();
+
+    QString robotIp20 = "192.168.4.120";
+    QString robotName20 = tmpMap.value(robotIp20, "Robota20");
+    QSharedPointer<Robot> robot20(new Robot(robotName20, robotIp20));
+    robot20->setWifi("Swaghetti Yolognaise");
+    RobotView* robotView20 = new RobotView(robot20, mapPixmapItem);
+    connect(robotView20, SIGNAL(setSelectedSignal(RobotView*)), this, SLOT(setSelectedRobot(RobotView*)));
+    robotView20->setPosition(1208, 205);
+    robotView20->setParentItem(mapPixmapItem);
+    robots->add(robotView20);
+    tmpMap[robot20->getIp()] = robot20->getName();
 
 
     robots->setRobotsNameMap(tmpMap);
@@ -3865,10 +4051,10 @@ void MainWindow::displayPath(){
 
 void MainWindow::createPath(){
     qDebug() << "MainWindow::createPath called";
-    leftMenu->getPathGroupDisplayed()->hide();
+    hideAllWidgets();
+    setEnableAll(false, GraphicItemState::CREATING_PATH, true);
     leftMenu->getNoRobotPathCreationWidget()->show();
     qDebug() << mapPixmapItem->getState();
-    setEnableAll(false, GraphicItemState::CREATING_PATH, true);
     qDebug() << mapPixmapItem->getState();
 }
 

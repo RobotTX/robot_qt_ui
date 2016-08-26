@@ -68,7 +68,8 @@ HEADERS += Controller/cmdrobotthread.h \
            View/pathbuttongroup.h \
            View/displaypathgroup.h \
            View/custompushbutton.h \
-    View/stylesettings.h
+    View/stylesettings.h \
+    View/customlabel.h
 
 FORMS += Controller/mainwindow.ui
 
@@ -123,7 +124,8 @@ SOURCES += main.cpp \
            View/groupspathsbuttongroup.cpp \
            View/pathbuttongroup.cpp \
            View/displaypathgroup.cpp \
-           View/custompushbutton.cpp
+           View/custompushbutton.cpp \
+    View/customlabel.cpp
 
 RESOURCES += Resources/resources.qrc
 

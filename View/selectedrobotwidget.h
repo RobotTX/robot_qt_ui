@@ -13,6 +13,8 @@ class TopLeftMenu;
 #include <QWidget>
 #include "mainwindow.h"
 #include <QLabel>
+#include "View/customlabel.h"
+
 /**
  * @brief The SelectedRobotWidget class
  * Widget of the left menu which is displayed when a robot is selected
@@ -33,8 +35,8 @@ public:
     QString getName(void) const { return name->text(); }
     PathWidget* getPathWidget(void) const {return pathWidget;}
     QLabel* getNoPath(void) const { return noPath; }
-    QLabel* getNameLabel(void) const { return name; }
-    QLabel* getWifiLabel(void) const { return wifiNameLabel; }
+    CustomLabel* getNameLabel(void) const { return name; }
+    CustomLabel* getWifiLabel(void) const { return wifiNameLabel; }
     TopLeftMenu* getActionButtons(void) const {return actionButtons;}
 
     void disable();
@@ -46,12 +48,12 @@ private:
     QVBoxLayout* layout;
     RobotView* robotView;
     QProgressBar* batteryLevel;
-    QLabel* wifiNameLabel;
+    CustomLabel* wifiNameLabel;
     CustomPushButton* goHome;
-    QLabel* ipAddressLabel;
+    CustomLabel* ipAddressLabel;
     PathWidget* pathWidget;
     CustomPushButton* scanBtn;
-    QLabel* name;
+    CustomLabel* name;
     TopLeftMenu* actionButtons ;
     QLabel* noPath ;
     QLabel* homeLabel2;

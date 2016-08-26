@@ -35,8 +35,12 @@ private:
     QButtonGroup* buttonGroup;
     QString groupIndex;
     QSharedPointer<Points> points;
+
 signals:
     void updateConnectionsRequest();
+
+protected:
+    void resizeEvent(QResizeEvent *event);
 };
 
 #endif // POINTBUTTONGROUP_H

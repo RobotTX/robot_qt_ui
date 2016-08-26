@@ -10,7 +10,7 @@
 #include "View/custompushbutton.h"
 #include "View/stylesettings.h"
 
-GroupButtonGroup::GroupButtonGroup(const QSharedPointer<Points> &_points, QWidget* _parent): QWidget(_parent), parent(_parent), points(_points)
+GroupButtonGroup::GroupButtonGroup(const QSharedPointer<Points> &_points, QWidget* _parent): QWidget(_parent), parentWidget(_parent), points(_points)
 {
     layout = new QVBoxLayout(this);
     layout->setAlignment(Qt::AlignTop);
@@ -34,7 +34,7 @@ GroupButtonGroup::GroupButtonGroup(const QSharedPointer<Points> &_points, QWidge
         if(i.key().compare(NO_GROUP_NAME)!= 0
                 && i.key().compare(TMP_GROUP_NAME)!= 0
                 && i.key().compare(PATH_GROUP_NAME)!= 0){
-            CustomPushButton* groupButton = new CustomPushButton(i.key(), this, true);
+            CustomPushButton* groupButton = new CustomPushButton(i.key(), this, CustomPushButton::ButtonType::LEFT_MENU, true);
             buttonGroup->addButton(groupButton, index);
             //groupButton->setAutoExclusive(true);
 
@@ -54,7 +54,7 @@ GroupButtonGroup::GroupButtonGroup(const QSharedPointer<Points> &_points, QWidge
     if(points->getGroups()->value(NO_GROUP_NAME)){
         for(int i = 0; i < points->getGroups()->value(NO_GROUP_NAME)->size(); i++){
             QSharedPointer<PointView> currentPointView = points->getGroups()->value(NO_GROUP_NAME)->at(i);
-            CustomPushButton* pointButton = new CustomPushButton(currentPointView->getPoint()->getName(), this, true);
+            CustomPushButton* pointButton = new CustomPushButton(currentPointView->getPoint()->getName(), this, CustomPushButton::ButtonType::LEFT_MENU, true);
 
             buttonGroup->addButton(pointButton, index + i);
             layout->addWidget(pointButton);
@@ -105,7 +105,7 @@ void GroupButtonGroup::updateButtons(){
                 modifyEdit->hide();
             }
 
-            CustomPushButton* groupButton = new CustomPushButton(i.key(), this, true);
+            CustomPushButton* groupButton = new CustomPushButton(i.key(), this, CustomPushButton::ButtonType::LEFT_MENU, true);
             groupButton->setIconSize(normal_icon_size);
             buttonGroup->addButton(groupButton, index);
             layout->addWidget(groupButton);
@@ -122,7 +122,7 @@ void GroupButtonGroup::updateButtons(){
     if(points->getGroups()->value(NO_GROUP_NAME)){
         for(int i = 0; i < points->getGroups()->value(NO_GROUP_NAME)->size(); i++){
             QSharedPointer<Point> currentPoint = points->getGroups()->value(NO_GROUP_NAME)->at(i)->getPoint();
-            CustomPushButton* pointButton = new CustomPushButton(currentPoint->getName(), this, true);
+            CustomPushButton* pointButton = new CustomPushButton(currentPoint->getName(), this, CustomPushButton::ButtonType::LEFT_MENU, true);
             //pointButton->setAutoDefault(true);
 
             buttonGroup->addButton(pointButton, index + i);
@@ -226,4 +226,17 @@ int GroupButtonGroup::getButtonIdByName(const QString name) const {
             return i;
     }
     return -1;
+}
+
+void GroupButtonGroup::resizeEvent(QResizeEvent *event){
+    /*qDebug() << "GroupButtonGroup::resizeEvent"
+             << width() << static_cast<QWidget*>(parent())->width() << static_cast<QWidget*>(parent()->parent())->width();*/
+    QWidget* widget = static_cast<QWidget*>(parent()->parent());
+    int maxWidth = widget->width();
+    /*if(widget->width() > static_cast<QWidget*>(widget->parent())->width()){
+        maxWidth = static_cast<QWidget*>(widget->parent())->width() - 15 - static_cast<QWidget*>(widget->parent())->contentsMargins().right() - static_cast<QWidget*>(widget->parent())->contentsMargins().left();
+    }*/
+    setMaximumWidth(maxWidth);
+
+    QWidget::resizeEvent(event);
 }

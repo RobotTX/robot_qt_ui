@@ -39,6 +39,7 @@ private slots:
 
 protected:
     void showEvent(QShowEvent* event);
+    void resizeEvent(QResizeEvent *event);
 
 signals:
     /// emitted when a button is clicked to reset the colors of the path points

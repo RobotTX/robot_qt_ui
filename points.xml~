@@ -3,17 +3,13 @@
     <group>
         <name>No Group</name>
         <point>
-            <name>Un point</name>
+            <name>Un point avec un nom beaucoup trop looooooooooooong</name>
             <x>950</x>
             <y>1145</y>
             <displayed>1</displayed>
         </point>
         <point>
             <name>Another point</name>
-<<<<<<< HEAD
-            <x>949.4</x>
-            <y>1075.1</y>
-=======
             <x>1148</x>
             <y>1203</y>
             <displayed>0</displayed>
@@ -22,14 +18,30 @@
             <name>A final point</name>
             <x>1153</x>
             <y>843</y>
->>>>>>> b90176b3d87ff86823f0de725dbc57faa81dd5aa
             <displayed>1</displayed>
         </point>
     </group>
     <group>
+<<<<<<< HEAD
         <name>Second group</name>
+=======
+<<<<<<< HEAD
+        <name>TmpPoint</name>
         <point>
-            <name>Fanny</name>
+            <name>tmpPoint</name>
+            <x>0</x>
+            <y>0</y>
+            <displayed>0</displayed>
+        </point>
+    </group>
+    <group>
+        <name>dsf</name>
+=======
+        <name>Second groupsgfsgfsdfhsjfg</name>
+>>>>>>> aa0f1d471385c65ade09a1799831163617ce8fb7
+>>>>>>> b2842f4ab60825832cfd7ef50d5c0825bc1ddb35
+        <point>
+            <name>Fanny6+54651351kohbghdxrdadfxhgvuhfdtfsdx</name>
             <x>1126</x>
             <y>943</y>
             <displayed>1</displayed>
@@ -42,25 +54,12 @@
         </point>
     </group>
     <group>
-        <name>TmpPoint</name>
-        <point>
-            <name>tmpPoint</name>
-            <x>0</x>
-            <y>0</y>
-            <displayed>0</displayed>
-        </point>
-    </group>
-    <group>
-        <name>first group</name>
+        <name>fsdfs</name>
         <point>
             <name>A</name>
             <x>1130</x>
             <y>820</y>
-<<<<<<< HEAD
-            <displayed>1</displayed>
-=======
             <displayed>0</displayed>
->>>>>>> b90176b3d87ff86823f0de725dbc57faa81dd5aa
         </point>
         <point>
             <name>Ma point</name>
@@ -72,11 +71,7 @@
             <name>A new point</name>
             <x>946</x>
             <y>983</y>
-<<<<<<< HEAD
-            <displayed>1</displayed>
-=======
             <displayed>0</displayed>
->>>>>>> b90176b3d87ff86823f0de725dbc57faa81dd5aa
         </point>
     </group>
 </points>

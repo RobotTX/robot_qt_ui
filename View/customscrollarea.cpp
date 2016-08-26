@@ -2,6 +2,7 @@
 #include <QEvent>
 #include <QScrollBar>
 #include <QDebug>
+#include <QLayout>
 
 CustomScrollArea::CustomScrollArea(QWidget *parent, bool _vertical, QScrollBar* _childBar):
     QScrollArea(parent), vertical(_vertical), childBar(_childBar){
@@ -17,13 +18,13 @@ CustomScrollArea::CustomScrollArea(QWidget *parent, bool _vertical, QScrollBar* 
 }
 
 bool CustomScrollArea::eventFilter(QObject *o, QEvent *e){
-    if(o && o == widget() && e->type() == QEvent::Resize){
+    /*if(o && o == widget() && e->type() == QEvent::Resize){
         if(vertical){
             setMinimumWidth(widget()->minimumSizeHint().width() + verticalScrollBar()->width());
         } else {
             setMinimumHeight(widget()->minimumSizeHint().height() + horizontalScrollBar()->height());
         }
-    }
+    }*/
 
     if(childBar != NULL && e->type() == QEvent::Resize){
         if(vertical){
