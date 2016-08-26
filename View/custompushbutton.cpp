@@ -41,7 +41,7 @@ void CustomPushButton::initialize(const bool checkable, const bool enable){
                   "}");
 
     setAutoDefault(true);
-    qDebug() << "CustomPushButton::initialize on" << text() << width() << static_cast<QWidget*>(parent())->width() << static_cast<QWidget*>(parent()->parent())->width();
+    //qDebug() << "CustomPushButton::initialize on" << text() << width() << static_cast<QWidget*>(parent())->width() << static_cast<QWidget*>(parent()->parent())->width();
 }
 
 void CustomPushButton::mouseDoubleClickEvent(QMouseEvent * event){

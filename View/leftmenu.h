@@ -49,13 +49,14 @@ public:
     CreatePointWidget* getEditSelectedPointWidget(void) const {return createPointWidget;}
     DisplaySelectedPoint* getDisplaySelectedPoint(void) const { return displaySelectedPoint; }
     DisplaySelectedGroup* getDisplaySelectedGroup(void) const { return displaySelectedGroup; }
-    PathCreationWidget* getPathCreationWidget(void) const { return pathCreationWidget; }
+    PathCreationWidget* getRobotPathCreationWidget(void) const { return robotPathCreationWidget; }
     CustomPushButton* getReturnButton(void) const { return returnButton; }
     CustomPushButton* getCloseButton(void) const { return closeBtn; }
     QWidget* getLastWidget() const {return lastWidget; }
     DisplaySelectedPath* getDisplaySelectedPath(void) const { return displaySelectedPath; }
     GroupsPathsWidget* getGroupsPathsWidget(void) const { return groupsPathsWidget; }
     DisplayPathGroup* getPathGroupDisplayed(void) const { return pathGroup; }
+    PathCreationWidget* getNoRobotPathCreationWidget(void) const { return noRobotPathCreationWidget; }
 
     void showBackButton(QString name);
     void hideBackButton();
@@ -79,7 +80,7 @@ private:
     CreatePointWidget* createPointWidget;
     DisplaySelectedPoint* displaySelectedPoint;
     DisplaySelectedGroup* displaySelectedGroup;
-    PathCreationWidget* pathCreationWidget;
+    PathCreationWidget* robotPathCreationWidget;
     CustomPushButton * returnButton;
     MainWindow* mainWindow;
     QSharedPointer<Points> points;
@@ -87,6 +88,7 @@ private:
     DisplaySelectedPath* displaySelectedPath;
     DisplayPathGroup* pathGroup;
     QString lastCheckedId;
+    PathCreationWidget* noRobotPathCreationWidget;
 
 };
 

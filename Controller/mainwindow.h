@@ -266,7 +266,8 @@ private:
     CreatePointWidget* createPointWidget;
     LeftMenu* leftMenu;
     BottomLayout* bottomLayout;
-    PathCreationWidget* pathCreationWidget;
+    PathCreationWidget* robotPathCreationWidget;
+    PathCreationWidget* noRobotPathCreationWidget;
 
     QPair<QPointF, float> mapState;
 

@@ -25,7 +25,7 @@ public:
     void setLastMessage(const QString msgType, const QString message) { lastMessage.first = msgType; lastMessage.second = message; }
 
     void setLabel(const QString msgType, const QString msg);
-    void setEnable(bool enable);
+    void setEnable(const bool enable);
     void enable();
     void setLabelDelay(const QString msgType, const QString msg, int delayTime);
     void delay(const int ms);

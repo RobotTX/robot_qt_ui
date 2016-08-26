@@ -14,9 +14,12 @@
 #include "Model/pathpoint.h"
 #include "View/pathpointcreationwidget.h"
 #include "View/custompushbutton.h"
+#include <QLineEdit>
 
 
-PathCreationWidget::PathCreationWidget(QWidget* parent, MainWindow *mainWindow, const QSharedPointer<Points> &_points): QWidget(parent), points(_points){
+PathCreationWidget::PathCreationWidget(QWidget* parent, MainWindow *mainWindow, const QSharedPointer<Points> &_points, const QSharedPointer<Paths>& _paths, const bool associatedToRobot):
+    QWidget(parent), points(_points), paths(_paths)
+{
     layout = new QVBoxLayout(this);
 
     state = NO_STATE;
@@ -27,6 +30,13 @@ PathCreationWidget::PathCreationWidget(QWidget* parent, MainWindow *mainWindow, 
     actionButtons->getMinusButton()->setEnabled(false);
     actionButtons->getEditButton()->setEnabled(false);
     layout->addWidget(actionButtons);
+
+    /// to edit the name of a path if it is not a path associated to a robot
+    nameEdit = new QLineEdit(this);
+    if(associatedToRobot)
+       nameEdit->hide();
+
+    layout->addWidget(nameEdit);
 
     /// The menu which display the list of point to select
     pointsMenu = new QMenu(this);
