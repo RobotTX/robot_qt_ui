@@ -4,6 +4,17 @@
 #include <QString>
 #include <QSize>
 
+
+const QSize small_icon_size = QSize(10, 10);
+const QSize normal_icon_size = QSize(30, 30);
+const QSize big_icon_size = QSize(45, 45);
+const int small_button_height = 20;
+const int normal_button_height = 30;
+const int big_button_height = 40;
+const int top_layout_height = 60;
+const int top_left_menu_height = 110;
+
+
 /// color theme, if you change colors you may have to clean and rebuild for it to be effective
 /// for "no color" ( the default grey) , put transparent
 // grey
@@ -14,18 +25,15 @@
 */
  // blue theme
 
-const QString button_hover_color="#e4f3fd";
-const QString button_checked_color="#9bccef";
-//const QString color_backgroud_main="white";
-const QString top_layout_color="#6ea9d7";
-const QString left_menu_background_color= "#e0e0e0";
-const QString bottom_menu_background_color= "#e0e0e0";
-const QString background_map_view= "white";
-const QString text_color="#306893";
+const QString button_hover_color = "#e4f3fd";
+const QString button_checked_color = "#9bccef";
+//const QString color_backgroud_main = "white";
+const QString top_layout_color = "#6ea9d7";
+const QString left_menu_background_color = "#e0e0e0";
+const QString bottom_menu_background_color = "#e0e0e0";
+const QString background_map_view = "white";
+const QString text_color = "#306893";
 const QString menu_button_color = "transparent";
-const QSize small_icon_size = QSize(10, 10);
-const QSize normal_icon_size = QSize(30, 30);
-const QSize big_icon_size = QSize(45, 45);
 
 //light grey "#F4F4F4";
 //dark grey : #404244

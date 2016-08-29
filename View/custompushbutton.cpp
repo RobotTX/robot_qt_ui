@@ -19,6 +19,12 @@ void CustomPushButton::initialize(const bool checkable, const bool enable){
     setFlat(true);
 
     label = new QLabel("...", this);
+    label->setAttribute(Qt::WA_TranslucentBackground, false);
+    label->setStyleSheet(
+                "QLabel {"
+                    "color: " + text_color + ";"
+                    "background-color: " + left_menu_background_color + ";"
+                "}");
     label->hide();
 
     QString style = "";
@@ -34,7 +40,7 @@ void CustomPushButton::initialize(const bool checkable, const bool enable){
                       "border: 1px;"
                       + style +
                   "}"
-                  "QPushButton:hover{"
+                  "QPushButton:hover {"
                       "background-color: " + button_hover_color + ";"
                   "}"
                   "QPushButton:checked{"
@@ -42,12 +48,35 @@ void CustomPushButton::initialize(const bool checkable, const bool enable){
                   "}"
                   "QPushButton:disabled{"
                       "color: grey;"
-                  "}"
-                  "QLabel {"
-                      "color: " + text_color + ";"
                   "}");
 
     setAutoDefault(true);
+    connect(this, SIGNAL(toggled(bool)), this, SLOT(toggledSlot(bool)));
+
+    switch(buttonType){
+        case TOP:
+            setMinimumHeight(big_button_height);
+            setMaximumHeight(big_button_height);
+            setMinimumWidth(big_button_height);
+            setMaximumWidth(big_button_height);
+        break;
+        case BOTTOM:
+            setMinimumHeight(normal_button_height);
+            setMaximumHeight(normal_button_height);
+        break;
+        case LEFT_MENU:
+            setMinimumHeight(big_button_height);
+            setMaximumHeight(big_button_height);
+        break;
+        case TOP_LEFT_MENU:
+            setMinimumHeight(normal_button_height);
+            setMaximumHeight(normal_button_height);
+        break;
+        default:
+            setMinimumHeight(big_button_height);
+            setMaximumHeight(big_button_height);
+        break;
+    }
 }
 
 void CustomPushButton::mouseDoubleClickEvent(QMouseEvent * event){
@@ -59,35 +88,28 @@ void CustomPushButton::addStyleSheet(const QString style){
     setStyleSheet(styleSheet() + style);
 }
 
-void CustomPushButton::enterEvent(QEvent *event){
-    /*if(!text().isEmpty()){
-        QFontMetrics fm(font());
-        int strWidth = fm.width(text());
-        int maxStrWidth = width()-20;
-        if(!icon().isNull())
-            maxStrWidth -= iconSize().width();
-
-        qDebug() << "CustomPushButton::resizeEvent on" << text() << height();
-        if(strWidth >= maxStrWidth){
-            //qDebug() << "CustomPushButton::resizeEvent TOO LONG";
-            label->move(width()-label->width()+2, height()/3);
-            label->show();
-        } else {
-            //qDebug() << "CustomPushButton::resizeEvent PURRFECT";
-            label->hide();
-        }
-    }*/
-    moveLabel();
-    QPushButton::enterEvent(event);
-}
-
 void CustomPushButton::setText(const QString &str){
     QPushButton::setText(str);
     moveLabel();
 }
 
+void CustomPushButton::toggledSlot(bool checked){
+    qDebug() << "CustomPushButton::toggledSlot" << text() << checked;
+    QString tmpColor = left_menu_background_color;
+    if(checked)
+        tmpColor = button_checked_color;
+
+    label->setStyleSheet(
+                "QLabel {"
+                    "color: " + text_color + ";"
+                    "background-color: " + tmpColor + ";"
+                "}");
+
+    setChecked(checked);
+}
+
 void CustomPushButton::resizeEvent(QResizeEvent *event){
-    if(buttonType == LEFT_MENU){
+    if(buttonType == LEFT_MENU || buttonType == TOP_LEFT_MENU){
         QWidget* widget = static_cast<QWidget*>(parent());
         int maxWidth = widget->width()-widget->contentsMargins().right()-widget->contentsMargins().left();
         if(widget->width() > static_cast<QWidget*>(widget->parent())->width()){
@@ -98,6 +120,27 @@ void CustomPushButton::resizeEvent(QResizeEvent *event){
 
     QPushButton::resizeEvent(event);
     moveLabel();
+}
+
+void CustomPushButton::enterEvent(QEvent *event){
+    qDebug() << "CustomPushButton::enterEvent" << text() << size();
+    if(!isChecked())
+        label->setStyleSheet(
+                    "QLabel {"
+                        "color: " + text_color + ";"
+                        "background-color: " + button_hover_color + ";"
+                    "}");
+    QPushButton::enterEvent(event);
+}
+
+void CustomPushButton::leaveEvent(QEvent *event){
+    if(!isChecked())
+        label->setStyleSheet(
+                    "QLabel {"
+                        "color: " + text_color + ";"
+                        "background-color: " + left_menu_background_color + ";"
+                    "}");
+    QPushButton::leaveEvent(event);
 }
 
 void CustomPushButton::showEvent(QShowEvent* event){
@@ -112,12 +155,32 @@ void CustomPushButton::moveLabel(){
         int maxStrWidth = width()-20;
         int iconWidth = 0;
         if(!icon().isNull())
-            iconWidth = iconSize().width();
+            iconWidth = iconSize().width() - 3;
         maxStrWidth -= iconWidth;
 
 
+
         if(strWidth >= maxStrWidth){
-            label->move(width()-label->width()+2, height()/3);
+            QPoint moveTo = QPoint(0, 0);
+            QString str = text();
+            QString tmpStr = "";
+
+            for(int i = 0; i < str.size(); i++){
+                tmpStr += str.at(i);
+                if(fm.width(tmpStr) >= maxStrWidth){
+                    tmpStr.remove(tmpStr.size()-1, 1);
+                    if(tmpStr.at(tmpStr.size()-1) == ' ')
+                        tmpStr.remove(tmpStr.size()-1, 1);
+
+                    moveTo = QPoint(fm.width(tmpStr) + 10 + iconWidth, height()/3);
+                    if(height() < big_button_height)
+                        moveTo.setY(moveTo.y() - 2);
+
+                    break;
+                }
+            }
+
+            label->move(moveTo);
             setToolTip(text());
             label->show();
         } else {

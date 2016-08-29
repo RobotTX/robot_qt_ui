@@ -75,8 +75,6 @@ SelectedRobotWidget::SelectedRobotWidget(QWidget* parent, MainWindow* mainWindow
     inLayout->addWidget(homeLabel2);
 
     goHome = new CustomPushButton("Go Home", this);
-    goHome->setMinimumHeight(30);
-    goHome->setMaximumHeight(30);
     goHome->hide();
 
     inLayout->addWidget(goHome);

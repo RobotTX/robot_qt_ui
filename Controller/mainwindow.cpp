@@ -67,6 +67,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     mapState.first.setY(settings.value("mapState/point/y", .0f).toFloat());
     mapState.second = settings.value("mapState/zoom", 1.0f).toFloat();
 
+
     /*************************** TODO GET FROM A SAVE FILE/MAP SETTINGS ***********************************/
 
     map->setWidth(320);
@@ -99,7 +100,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
     QHBoxLayout* bottom = new QHBoxLayout();
 
+
     /************************** NO NEED AFTER FIRST TIME INIT **************************/
+
     QSharedPointer<Paths> tmpPaths = QSharedPointer<Paths>(new Paths(this));
 
     tmpPaths->createGroup("monday");
@@ -161,6 +164,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     QDataStream out(&pathFile);
     out << *tmpPaths;
     pathFile.close();
+
     /*****************************************************/
 
     initializePaths();
