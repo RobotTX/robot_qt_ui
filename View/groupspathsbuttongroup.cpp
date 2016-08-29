@@ -33,7 +33,7 @@ void GroupsPathsButtonGroup::createButtons(){
         buttonGroup->addButton(groupButton, i++);
         layout->addWidget(groupButton);
         groupButton->setIcon(QIcon(":/icons/folder.png"));
-        groupButton->setIconSize(normal_icon_size);
+        groupButton->setIconSize(xl_icon_size);
     }
 }
 

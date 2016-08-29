@@ -13,21 +13,21 @@ class RobotView;
 #include "Model/graphicitemstate.h"
 
 #define SCALE 0.3
-#define PIXMAP_NORMAL ":/icons/cropped_coordinates"
-#define PIXMAP_MID ":/icons/blue_coord"
-#define PIXMAP_SELECTED ":/icons/orange_coord"
-#define PIXMAP_START ":/icons/green_coord"
-#define PIXMAP_STOP ":/icons/red_coord"
-#define PIXMAP_HOVER ":/icons/violet_coord"
-#define PIXMAP_START_STOP ":/icons/green_red_coord"
+#define PIXMAP_NORMAL ":/icons/coordinates.png"
+#define PIXMAP_MID ":/icons/blue_coord.png"
+#define PIXMAP_SELECTED ":/icons/orange_coord.png"
+#define PIXMAP_START ":/icons/green_coord.png"
+#define PIXMAP_STOP ":/icons/red_coord.png"
+#define PIXMAP_HOVER ":/icons/violet_coord.png"
+#define PIXMAP_START_STOP ":/icons/green_red_coord.png"
 
-#define PIXMAP_HOME_NORMAL ":/icons/cropped_home"
-#define PIXMAP_HOME_MID ":/icons/blue_home"
-#define PIXMAP_HOME_SELECTED ":/icons/orange_home"
-#define PIXMAP_HOME_START ":/icons/green_home"
-#define PIXMAP_HOME_STOP ":/icons/red_home"
-#define PIXMAP_HOME_HOVER ":/icons/violet_home"
-#define PIXMAP_HOME_START_STOP ":/icons/green_red_home"
+#define PIXMAP_HOME_NORMAL ":/icons/home.png"
+#define PIXMAP_HOME_MID ":/icons/blue_home.png"
+#define PIXMAP_HOME_SELECTED ":/icons/orange_home.png"
+#define PIXMAP_HOME_START ":/icons/green_home.png"
+#define PIXMAP_HOME_STOP ":/icons/red_home.png"
+#define PIXMAP_HOME_HOVER ":/icons/violet_home.png"
+#define PIXMAP_HOME_START_STOP ":/icons/green_red_home.png"
 
 /**
  * @brief The PointView class

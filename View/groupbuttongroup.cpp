@@ -39,12 +39,11 @@ GroupButtonGroup::GroupButtonGroup(const QSharedPointer<Points> &_points, QWidge
             //groupButton->setAutoExclusive(true);
 
             layout->addWidget(groupButton);
-            groupButton->setIconSize(normal_icon_size);
             if(points->isDisplayed(i.key()))
                 groupButton->setIcon(QIcon(":/icons/folder_eye.png"));
             else
                 groupButton->setIcon(QIcon(":/icons/folder_space.png"));
-            groupButton->setIconSize(normal_icon_size);
+            groupButton->setIconSize(xl_icon_size);
             index++;
         }
     }
@@ -62,7 +61,7 @@ GroupButtonGroup::GroupButtonGroup(const QSharedPointer<Points> &_points, QWidge
                 pointButton->setIcon(QIcon(":/icons/eye_point.png"));
             else
                 pointButton->setIcon(QIcon(":/icons/space_point.png"));
-            pointButton->setIconSize(normal_icon_size);
+            pointButton->setIconSize(xl_icon_size);
         }
     }
 
@@ -106,14 +105,14 @@ void GroupButtonGroup::updateButtons(){
             }
 
             CustomPushButton* groupButton = new CustomPushButton(i.key(), this, CustomPushButton::ButtonType::LEFT_MENU, true);
-            groupButton->setIconSize(normal_icon_size);
+            groupButton->setIconSize(xl_icon_size);
             buttonGroup->addButton(groupButton, index);
             layout->addWidget(groupButton);
             if(points->isDisplayed(i.key()))
                 groupButton->setIcon(QIcon(":/icons/folder_eye.png"));
             else
                 groupButton->setIcon(QIcon(":/icons/folder_space.png"));
-            groupButton->setIconSize(normal_icon_size);
+            groupButton->setIconSize(xl_icon_size);
             index++;
         }
     }
@@ -131,7 +130,7 @@ void GroupButtonGroup::updateButtons(){
                 pointButton->setIcon(QIcon(":/icons/eye_point.png"));
             else
                 pointButton->setIcon(QIcon(":/icons/space_point.png"));
-            pointButton->setIconSize(normal_icon_size);
+            pointButton->setIconSize(xl_icon_size);
         }
     }
 

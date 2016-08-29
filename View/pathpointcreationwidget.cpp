@@ -68,7 +68,7 @@ PathPointCreationWidget::PathPointCreationWidget(const int _id, const QString _n
     pathLayout->setAlignment(Qt::AlignTop);
 
     QLabel*  moveImage = new QLabel();
-    QPixmap mypix (":/icons/cropped_list.png");
+    QPixmap mypix (":/icons/list.png");
     moveImage->setPixmap(mypix);
     moveImage->setScaledContents(true);
     moveImage->setMaximumWidth(10);

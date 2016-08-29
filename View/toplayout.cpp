@@ -10,33 +10,24 @@
 #include "stylesettings.h"
 #include "View/custompushbutton.h"
 
-TopLayout::TopLayout(QMainWindow* parent): QWidget(parent), lastMessage(TEXT_COLOR_NORMAL, "")
-{
-   // QWidget * all = new QWidget(this);
-    //QHBoxLayout* thisLayout = new QHBoxLayout(this);
-
-   // layout = new QHBoxLayout(all);
+TopLayout::TopLayout(QMainWindow* parent): QWidget(parent), lastMessage(TEXT_COLOR_NORMAL, ""){
     layout = new QHBoxLayout(this);
 
     menuBtn = new CustomPushButton(QIcon(":/icons/list.png"), "", this, CustomPushButton::ButtonType::TOP);
-    //menuBtn->setAutoDefault(true);
-    menuBtn->setIconSize(normal_icon_size);
-    //menuBtn->setMaximumWidth(40);
+    menuBtn->setIconSize(xs_icon_size);
     menuBtn->setFocusPolicy(Qt::FocusPolicy::NoFocus);
 
     layout->addWidget(menuBtn);
     connect(menuBtn, SIGNAL(clicked()), parent, SLOT(openLeftMenu()));
 
     connectBtn = new CustomPushButton(QIcon(":/icons/wifi.png"), "", this, CustomPushButton::ButtonType::TOP);
-    connectBtn->setIconSize(normal_icon_size);
-    //connectBtn->setMaximumWidth(40);
+    connectBtn->setIconSize(s_icon_size);
     connectBtn->setFocusPolicy(Qt::FocusPolicy::NoFocus);
     layout->addWidget(connectBtn);
     connect(connectBtn, SIGNAL(clicked()), parent, SLOT(connectToRobot()));
 
     saveMapBtn = new CustomPushButton(QIcon(":/icons/load_map.png"), "", this, CustomPushButton::ButtonType::TOP);
-    saveMapBtn->setIconSize(normal_icon_size);
-    //saveMapBtn->setMaximumWidth(40);
+    saveMapBtn->setIconSize(s_icon_size);
     saveMapBtn->setFocusPolicy(Qt::FocusPolicy::NoFocus);
     layout->addWidget(saveMapBtn);
     saveMapBtn->setToolTip("Save the state of the map");
@@ -44,16 +35,14 @@ TopLayout::TopLayout(QMainWindow* parent): QWidget(parent), lastMessage(TEXT_COL
 
     centerBtn = new CustomPushButton(QIcon(":/icons/save_map.png"), "", this, CustomPushButton::ButtonType::TOP);
     centerBtn->setToolTip("Restore the state of the map");
-    centerBtn->setIconSize(normal_icon_size);
-    //centerBtn->setMaximumWidth(40);
+    centerBtn->setIconSize(s_icon_size);
     centerBtn->setFocusPolicy(Qt::FocusPolicy::NoFocus);
     layout->addWidget(centerBtn);
     connect(centerBtn, SIGNAL(clicked()), parent, SLOT(centerMap()));
 
     settingBtn = new CustomPushButton(QIcon(":/icons/setting.png"), "", this, CustomPushButton::ButtonType::TOP);
     settingBtn->setToolTip("Click to view/edit the settings");
-    settingBtn->setIconSize(normal_icon_size);
-    //settingBtn->setMaximumWidth(40);
+    settingBtn->setIconSize(s_icon_size);
     settingBtn->setFocusPolicy(Qt::FocusPolicy::NoFocus);
     layout->addWidget(settingBtn);
     connect(settingBtn, SIGNAL(clicked()), parent, SLOT(settingBtnSlot()));
@@ -65,7 +54,6 @@ TopLayout::TopLayout(QMainWindow* parent): QWidget(parent), lastMessage(TEXT_COL
     label = new QLabel(this);
     label->setWordWrap(true);
     label->setStyleSheet("QLabel { color: " + QString(TEXT_COLOR_INFO) + ";  background:transparent;}");
-    //label->setContentsMargins(30,0,0,0);
     layout->addWidget(label);
 
     CustomScrollArea* scrollArea = new CustomScrollArea(this);
@@ -79,8 +67,7 @@ TopLayout::TopLayout(QMainWindow* parent): QWidget(parent), lastMessage(TEXT_COL
     layout->addWidget(spaceWidget2);
 
     closeBtn = new CustomPushButton(QIcon(":/icons/close.png"), "", this, CustomPushButton::ButtonType::TOP);
-    closeBtn->setIconSize(normal_icon_size);
-    //closeBtn->setMaximumWidth(40);
+    closeBtn->setIconSize(xxs_icon_size);
     closeBtn->setFocusPolicy(Qt::FocusPolicy::NoFocus);
 
     layout->addWidget(closeBtn);
@@ -89,7 +76,6 @@ TopLayout::TopLayout(QMainWindow* parent): QWidget(parent), lastMessage(TEXT_COL
 
 
     this->setMaximumHeight(top_layout_height);
-    //this->setContentsMargins(0, 0, 0, 0);
     QPalette pal;
     pal.setColor(QPalette::Background, top_layout_color);
 
@@ -114,7 +100,7 @@ void TopLayout::setEnable(const bool enable){
 
 void TopLayout::setLabelDelay(const QString msgType, const QString msg, int delayTime){
 
-    // if it is an error make sure the person have seen it
+    /// if it is an error make sure the person have seen it
     if (msgType == TEXT_COLOR_DANGER)
        {
         label->setText("");
@@ -122,22 +108,19 @@ void TopLayout::setLabelDelay(const QString msgType, const QString msg, int dela
         delay(300);
         }
 
-    // display message
+    /// display message
     label->setText(msg);
     label->setStyleSheet("QLabel { color: " + QString(msgType) +";background:transparent}");
 
-    // wait before to remove message
+    /// wait before to remove message
     delay(delayTime);
 
-    // reset message
+    /// reset message
     label->setText("");
     label->setStyleSheet("QLabel { color: " + QString(TEXT_COLOR_NORMAL) +";background:transparent}");
-
-
 }
 
-void TopLayout::delay(const int ms)
-{
+void TopLayout::delay(const int ms){
     QTime dieTime= QTime::currentTime().addMSecs(ms);
     while (QTime::currentTime() < dieTime)
         QCoreApplication::processEvents(QEventLoop::AllEvents, 100);

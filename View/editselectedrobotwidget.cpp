@@ -88,19 +88,19 @@ EditSelectedRobotWidget::EditSelectedRobotWidget(QWidget* parent, MainWindow* ma
     /// Home layout with the button to select the home
      homeLabel = new QLabel("Home : ", this);
     homeBtn = new CustomPushButton(QIcon(":/icons/home.png"), "Add Home", this);
-    homeBtn->setIconSize(normal_icon_size);
+    homeBtn->setIconSize(s_icon_size);
     connect(homeBtn, SIGNAL(clicked()), mainWindow, SLOT(editHomeEvent()));
     inLayout->addWidget(homeLabel);
     inLayout->addWidget(homeBtn);
 
     /// Button to add a path
     addPathBtn = new CustomPushButton(QIcon(":/icons/plus.png"),"Add Path", this);
-    addPathBtn->setIconSize(normal_icon_size);
+    addPathBtn->setIconSize(s_icon_size);
     connect(addPathBtn, SIGNAL(clicked()), mainWindow, SLOT(addPathSelecRobotBtnEvent()));
     inLayout->addWidget(addPathBtn);
 
-    deletePathBtn = new CustomPushButton(QIcon(":/icons/bin.png"),"Delete Path", this);
-    deletePathBtn->setIconSize(normal_icon_size);
+    deletePathBtn = new CustomPushButton(QIcon(":/icons/empty.png"),"Delete Path", this);
+    deletePathBtn->setIconSize(s_icon_size);
     deletePathBtn->hide();
     connect(deletePathBtn, SIGNAL(clicked()), mainWindow, SLOT(deletePathSelecRobotBtnEvent()));
     inLayout->addWidget(deletePathBtn);
@@ -226,37 +226,19 @@ void EditSelectedRobotWidget::editName(void){
     }
 }
 
-void EditSelectedRobotWidget::disableAll(void){
-    nameEdit->setEnabled(false);
-    homeBtn->setEnabled(false);
-    saveBtn->setEnabled(false);
-    addPathBtn->setEnabled(false);
-    deletePathBtn->setEnabled(false);
-    wifiNameEdit->setEnabled(false);
-    wifiPwdEdit->setEnabled(false);
-    nameEdit->setEnabled(false);
-}
-
-void EditSelectedRobotWidget::enableAll(void){
-    nameEdit->setEnabled(true);
-    homeBtn->setEnabled(true);
-    saveBtn->setEnabled(true);
-    addPathBtn->setEnabled(true);
-    deletePathBtn->setEnabled(false);
-    wifiNameEdit->setEnabled(true);
-    wifiPwdEdit->setEnabled(true);
-    nameEdit->setEnabled(true);
-
+void EditSelectedRobotWidget::setEnableAll(bool enable){
+    nameEdit->setEnabled(enable);
+    homeBtn->setEnabled(enable);
+    saveBtn->setEnabled(enable);
+    addPathBtn->setEnabled(enable);
+    deletePathBtn->setEnabled(enable);
+    wifiNameEdit->setEnabled(enable);
+    wifiPwdEdit->setEnabled(enable);
+    nameEdit->setEnabled(enable);
 }
 
 void EditSelectedRobotWidget::showEvent(QShowEvent *event){
-    //qDebug() << "EditSelectedRobotWidget::showEvent called";
-    nameEdit->setEnabled(true);
-    wifiNameEdit->setEnabled(true);
-    wifiPwdEdit->setEnabled(true);
-    addPathBtn->setEnabled(true);
-    deletePathBtn->setEnabled(true);
-    saveBtn->setEnabled(true);
+    setEnableAll(true);
     emit showEditSelectedRobotWidget();
     QWidget::showEvent(event);
 }

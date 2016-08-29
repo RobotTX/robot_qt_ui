@@ -46,9 +46,7 @@ void PointButtonGroup::createButtons(){
                 pointButton->setIcon(QIcon(":/icons/eye_point.png"));
             else
                 pointButton->setIcon(QIcon(":/icons/space_point.png"));
-            pointButton->setIconSize(normal_icon_size);
-
-
+            pointButton->setIconSize(xl_icon_size);
         }
     }
 }

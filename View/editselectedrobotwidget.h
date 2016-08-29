@@ -56,7 +56,7 @@ public:
     /// disables the buttons and line edits
     void disableAll(void);
     /// enables the buttons and line edits
-    void enableAll(void);
+    void setEnableAll(bool enable);
     void setSelectedRobot(RobotView * const robotView, bool firstConnection = false);
     void setPath(const QVector<QSharedPointer<PathPoint> > &path);
     void clearPath();

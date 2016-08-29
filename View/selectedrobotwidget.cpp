@@ -40,7 +40,7 @@ SelectedRobotWidget::SelectedRobotWidget(QWidget* parent, MainWindow* mainWindow
 
     /// Button which allow the user to scan the map from a robot
     scanBtn = new CustomPushButton(QIcon(":/icons/map.png"),"Scan a map", this, CustomPushButton::ButtonType::LEFT_MENU, true);
-    scanBtn->setIconSize(normal_icon_size);
+    scanBtn->setIconSize(s_icon_size);
     inLayout->addWidget(scanBtn);
     connect(scanBtn, SIGNAL(clicked()), mainWindow, SLOT(connectToRobot()));
 
