@@ -71,8 +71,8 @@ BottomLayout::BottomLayout(QMainWindow* parent, const QSharedPointer<Robots> &ro
     /// Creation of the first column, with the button containing the name of the robots
     for(int i = 0; i < robotsVector.size(); i++){
         CustomPushButton* robotBtn = new CustomPushButton(robotsVector.at(i)->getRobot()->getName(), this, CustomPushButton::ButtonType::BOTTOM, true);
-        robotBtn->setMinimumHeight(30);
-        robotBtn->setMaximumHeight(30);
+        /*robotBtn->setMinimumHeight(30);
+        robotBtn->setMaximumHeight(30);*/
         robotBtn->setMaximumWidth(parent->width()*3/10);
         robotBtn->setMinimumWidth(parent->width()*3/10);
         robotBtnGroup->addButton(robotBtn, i);
@@ -84,8 +84,8 @@ BottomLayout::BottomLayout(QMainWindow* parent, const QSharedPointer<Robots> &ro
     /// Creation of the second column, with the labels containing the path of the robot
     for(int i = 0; i < robotsVector.size(); i++){
         QLabel* pathLabel = new QLabel(pathToStr(robotsVector.at(i)->getRobot()->getPath(), robotsVector.at(i)->getLastStage()), this);
-        pathLabel->setMinimumHeight(parent->height()/10);
-        pathLabel->setMaximumHeight(parent->height()/10);
+        pathLabel->setMinimumHeight(normal_button_height);
+        pathLabel->setMaximumHeight(normal_button_height);
         vectorPathLabel.push_back(pathLabel);
         columnPath->addWidget(pathLabel);
     }
@@ -214,8 +214,6 @@ void BottomLayout::addRobot(RobotView * const robotView){
     int i = robotBtnGroup->buttons().size();
     /// Creation of the first column, with the button containing the name of the robots
     CustomPushButton* robotBtn = new CustomPushButton(robotView->getRobot()->getName(), this, CustomPushButton::ButtonType::BOTTOM, true);
-    robotBtn->setMinimumHeight(((QWidget*)parent())->height()/20);
-    robotBtn->setMaximumHeight(((QWidget*)parent())->height()/20);
     robotBtn->setMaximumWidth(((QWidget*)parent())->width()*3/20);
     robotBtn->setMinimumWidth(((QWidget*)parent())->width()*3/20);
     robotBtnGroup->addButton(robotBtn, i);
@@ -223,8 +221,8 @@ void BottomLayout::addRobot(RobotView * const robotView){
 
     /// Creation of the second column, with the labels containing the path of the robot
     QLabel* pathLabel = new QLabel(pathToStr(robotView->getRobot()->getPath(), robotView->getLastStage()), this);
-    pathLabel->setMinimumHeight(((QWidget*)parent())->height()/20);
-    pathLabel->setMaximumHeight(((QWidget*)parent())->height()/20);
+    pathLabel->setMinimumHeight(normal_button_height);
+    pathLabel->setMaximumHeight(normal_button_height);
     vectorPathLabel.push_back(pathLabel);
     pathLabel->setMinimumWidth(1);
     columnPath->addWidget(pathLabel);

@@ -88,7 +88,7 @@ TopLayout::TopLayout(QMainWindow* parent): QWidget(parent), lastMessage(TEXT_COL
 
 
 
-    this->setMaximumHeight(parent->height()/5);
+    this->setMaximumHeight(top_layout_height);
     //this->setContentsMargins(0, 0, 0, 0);
     QPalette pal;
     pal.setColor(QPalette::Background, top_layout_color);

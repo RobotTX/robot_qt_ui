@@ -3,10 +3,10 @@
     <group>
         <name>No Group</name>
         <point>
-            <name>Un point avec un nom beaucoup trop loooooooooooooangs</name>
+            <name>Un point avec un nom beaucoup trop looooooooooooong</name>
             <x>950</x>
             <y>1145</y>
-            <displayed>1</displayed>
+            <displayed>0</displayed>
         </point>
         <point>
             <name>Another point</name>
@@ -18,8 +18,11 @@
             <name>A final point</name>
             <x>1153</x>
             <y>843</y>
-            <displayed>1</displayed>
+            <displayed>0</displayed>
         </point>
+    </group>
+    <group>
+        <name>PathPoints</name>
     </group>
     <group>
         <name>Second group</name>
