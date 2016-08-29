@@ -110,6 +110,7 @@ void DisplayPathGroup::setPathsGroup(const QString groupName){
             it_paths.next();
             qDebug() << "found this path" << it_paths.key();
             CustomPushButton* groupButton = new CustomPushButton(it_paths.key(), this);
+            groupButton->setIconSize(xl_icon_size);
             /// if this path is displayed on the map we also add an icon to show it on the button
             if(!it_paths.key().compare(paths->getVisiblePath()))
                 groupButton->setIcon(QIcon(":/icons/eye.png"));
@@ -121,7 +122,7 @@ void DisplayPathGroup::setPathsGroup(const QString groupName){
             connect(groupButton, SIGNAL(doubleClick(QString)), mainWindow, SLOT(doubleClickOnPath(QString)));
             groupButton->setCheckable(true);
             pathButtonGroup->getLayout()->addWidget(groupButton);
-            groupButton->setIconSize(normal_icon_size);
+            groupButton->setIconSize(m_icon_size);
         }
     }
 }

@@ -5,12 +5,18 @@
 #include <QSize>
 
 
-const QSize small_icon_size = QSize(10, 10);
-const QSize normal_icon_size = QSize(30, 30);
-const QSize big_icon_size = QSize(45, 45);
-const int small_button_height = 20;
-const int normal_button_height = 30;
-const int big_button_height = 40;
+const QSize xxs_icon_size = QSize(10, 10);
+const QSize xs_icon_size = QSize(12, 12);
+const QSize s_icon_size = QSize(17, 17);
+const QSize m_icon_size = QSize(25, 25);
+const QSize l_icon_size = QSize(30, 30);
+const QSize xl_icon_size = QSize(37, 37);
+const QSize xxl_icon_size = QSize(45, 45);
+
+const int s_button_height = 20;
+const int m_button_height = 30;
+const int l_button_height = 40;
+
 const int top_layout_height = 60;
 const int top_left_menu_height = 110;
 

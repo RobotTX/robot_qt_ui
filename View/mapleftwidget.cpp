@@ -15,9 +15,9 @@ MapLeftWidget::MapLeftWidget(QWidget* parent, MainWindow* mainWindow): QWidget(p
     /// this button allows a user to save a particular state for the map (point in the center of its screen and zoom)
     CustomPushButton* saveStateBtn = new CustomPushButton(QIcon(":/icons/save_map.png"), "Save the state of the map", this);
 
-    saveBtn->setIconSize(normal_icon_size);
-    loadBtn->setIconSize(normal_icon_size);
-    saveStateBtn->setIconSize(normal_icon_size);
+    saveBtn->setIconSize(s_icon_size);
+    loadBtn->setIconSize(s_icon_size);
+    saveStateBtn->setIconSize(s_icon_size);
 
     layout->addWidget(saveBtn);
     layout->addWidget(loadBtn);

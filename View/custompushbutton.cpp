@@ -57,26 +57,26 @@ void CustomPushButton::initialize(const bool checkable, const bool enable){
 
     switch(buttonType){
         case TOP:
-            setMinimumHeight(big_button_height);
-            setMaximumHeight(big_button_height);
-            setMinimumWidth(big_button_height);
-            setMaximumWidth(big_button_height);
+            setMinimumHeight(l_button_height);
+            setMaximumHeight(l_button_height);
+            setMinimumWidth(l_button_height);
+            setMaximumWidth(l_button_height);
         break;
         case BOTTOM:
-            setMinimumHeight(normal_button_height);
-            setMaximumHeight(normal_button_height);
+            setMinimumHeight(m_button_height);
+            setMaximumHeight(m_button_height);
         break;
         case LEFT_MENU:
-            setMinimumHeight(big_button_height);
-            setMaximumHeight(big_button_height);
+            setMinimumHeight(l_button_height);
+            setMaximumHeight(l_button_height);
         break;
         case TOP_LEFT_MENU:
-            setMinimumHeight(normal_button_height);
-            setMaximumHeight(normal_button_height);
+            setMinimumHeight(m_button_height);
+            setMaximumHeight(m_button_height);
         break;
         default:
-            setMinimumHeight(big_button_height);
-            setMaximumHeight(big_button_height);
+            setMinimumHeight(l_button_height);
+            setMaximumHeight(l_button_height);
         break;
     }
 }
@@ -175,7 +175,7 @@ void CustomPushButton::moveLabel(){
                         tmpStr.remove(tmpStr.size()-1, 1);
 
                     moveTo = QPoint(fm.width(tmpStr) + 10 + iconWidth, height()/3);
-                    if(height() < big_button_height)
+                    if(height() < l_button_height)
                         moveTo.setY(moveTo.y() - 2);
 
                     break;

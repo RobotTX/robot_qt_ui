@@ -1470,7 +1470,7 @@ void MainWindow::editHomeEvent(){
     if(editSelectedRobotWidget->getNameEdit()->isEnabled()){
         setMessageTop(TEXT_COLOR_INFO, "Click on the map or on a point to select a home for the robot " + selectedRobot->getRobot()->getName());
         editSelectedRobotWidget->getHomeBtn()->setText("Cancel");
-        editSelectedRobotWidget->disableAll();
+        editSelectedRobotWidget->setEnableAll(false);
         editSelectedRobotWidget->getHomeBtn()->setEnabled(true);
         setEnableAll(false, GraphicItemState::EDITING_HOME);
 
@@ -1481,7 +1481,7 @@ void MainWindow::editHomeEvent(){
         } else {
             editSelectedRobotWidget->getHomeBtn()->setText("Add Home");
         }
-        editSelectedRobotWidget->enableAll();
+        editSelectedRobotWidget->setEnableAll(true);
         setEnableAll(false);
     }
     points->getTmpPointView()->setFlag(QGraphicsItem::ItemIsMovable);
@@ -1500,8 +1500,7 @@ void MainWindow::updateHomeCoordinates(float x, float y, QString name){
         } else
             editSelectedRobotWidget->getHomeLabel()->setText("Home: " + pointView->getPoint()->getName());
 
-        editSelectedRobotWidget->enableAll();
-        //setEnableAll(false, GraphicItemState::NO_EVENT);
+        editSelectedRobotWidget->setEnableAll(true);
         pointView->setState(GraphicItemState::EDITING_HOME);
     } else
         qDebug() << "MainWindow::homeEdited could not find a point named" << name;

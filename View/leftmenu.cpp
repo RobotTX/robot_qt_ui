@@ -47,11 +47,11 @@ LeftMenu::LeftMenu(MainWindow* _mainWindow, QSharedPointer<Points> const& _point
     returnButton = new CustomPushButton(QIcon(":/icons/arrowLeft.png"), " Return", this);
     //returnButton->setAutoDefault(true);
     returnButton->setDefault(true);
-    returnButton->setIconSize(normal_icon_size);
+    returnButton->setIconSize(xs_icon_size);
     connect(returnButton, SIGNAL(clicked()), mainWindow, SLOT(backEvent()));
 
-    closeBtn = new CustomPushButton(QIcon(":/icons/cropped_close.png"), "", this);
-    closeBtn->setIconSize(small_icon_size);
+    closeBtn = new CustomPushButton(QIcon(":/icons/close.png"), "", this);
+    closeBtn->setIconSize(xxs_icon_size);
     closeBtn->addStyleSheet("QPushButton {padding-top: 15px; padding-bottom: 15px;}");
 
     returnButton->hide();
