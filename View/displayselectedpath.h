@@ -9,6 +9,7 @@ class PathPoint;
 class MainWindow;
 class CustomScrollArea;
 
+#include "Model/paths.h"
 #include <QWidget>
 #include <QSharedPointer>
 #include <QMap>
@@ -23,7 +24,7 @@ public:
       QVector<QSharedPointer<PathPoint>> path;
     };
 
-    DisplaySelectedPath(QWidget* parent, MainWindow* mainWindow);
+    DisplaySelectedPath(QWidget* parent, MainWindow* mainWindow, const QSharedPointer<Paths>& _paths);
     void updatePath(QString groupName, QString pathName, QVector<QSharedPointer<PathPoint>> path);
 
 signals:
@@ -37,6 +38,7 @@ private slots:
     void mapBtnSlot(bool checked);
 
 private:
+    QSharedPointer<Paths> paths;
     QVBoxLayout* layout;
     TopLeftMenu* actionButtons;
     QLabel* nameLabel;

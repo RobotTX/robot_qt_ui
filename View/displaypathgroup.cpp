@@ -52,6 +52,7 @@ DisplayPathGroup::DisplayPathGroup(QWidget* _parent, MainWindow* _mainWindow, co
 /// we reset the action buttons everytime we show the widget
 void DisplayPathGroup::showEvent(QShowEvent *event){
     initializeActionButtons();
+    updateDisplayedPath();
     QWidget::showEvent(event);
 }
 
@@ -109,6 +110,12 @@ void DisplayPathGroup::setPathsGroup(const QString groupName){
             it_paths.next();
             qDebug() << "found this path" << it_paths.key();
             CustomPushButton* groupButton = new CustomPushButton(it_paths.key(), this);
+            /// if this path is displayed on the map we also add an icon to show it on the button
+            if(!it_paths.key().compare(paths->getVisiblePath()))
+                groupButton->setIcon(QIcon(":/icons/eye.png"));
+            else
+                groupButton->setIcon(QIcon(""));
+
             //groupButton->setAutoDefault(true);
             pathButtonGroup->getButtonGroup()->addButton(groupButton, i++);
             connect(groupButton, SIGNAL(doubleClick(QString)), mainWindow, SLOT(doubleClickOnPath(QString)));
@@ -116,5 +123,14 @@ void DisplayPathGroup::setPathsGroup(const QString groupName){
             pathButtonGroup->getLayout()->addWidget(groupButton);
             groupButton->setIconSize(normal_icon_size);
         }
+    }
+}
+
+void DisplayPathGroup::updateDisplayedPath(){
+    foreach(QAbstractButton* button, pathButtonGroup->getButtonGroup()->buttons()){
+        if(!button->text().compare(paths->getVisiblePath()))
+            button->setIcon(QIcon(":/icons/eye.png"));
+        else
+            button->setIcon(QIcon(""));
     }
 }

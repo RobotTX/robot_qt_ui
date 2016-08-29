@@ -32,6 +32,8 @@ public:
     Paths(MainWindow *parent = Q_NULLPTR);
 
     QSharedPointer<Groups> getGroups(void) const { return groups; }
+    QString getVisiblePath(void) const { return visiblePath; }
+    void setVisiblePath(const QString path) { visiblePath = path; qDebug() << path << "path displayed"; }
     void setGroups(QSharedPointer<Groups> _groups) { groups = _groups; }
     void createGroup(const QString name);
     void createPath(const QString groupName, const QString pathName);
@@ -42,7 +44,9 @@ public:
     /// the foundFlag is set within the function, after the function returns it holds true if the path has been found and false otherwise
     Path getPath(const QString groupName, const QString pathName, bool& foundFlag);
 
+
 private:
+    QString visiblePath;
     QSharedPointer<Groups> groups;
 };
 

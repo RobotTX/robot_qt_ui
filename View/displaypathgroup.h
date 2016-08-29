@@ -34,6 +34,8 @@ public:
 public:
     void initializeActionButtons(void);
     void setPathsGroup(const QString groupName);
+    /// to update the icons to show which path is displayed
+    void updateDisplayedPath(void);
 
 private slots:
     void enableButtons(QAbstractButton* button);

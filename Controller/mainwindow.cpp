@@ -100,7 +100,10 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     QHBoxLayout* bottom = new QHBoxLayout();
 
     /************************** NO NEED AFTER FIRST TIME INIT **************************/
+
+
     QSharedPointer<Paths> tmpPaths = QSharedPointer<Paths>(new Paths(this));
+
 
     tmpPaths->createGroup("monday");
     tmpPaths->createGroup("tuesday");
@@ -155,12 +158,15 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     tmpPaths->addPathPoint("tuesday", "room3", QSharedPointer<PathPoint>(new PathPoint(point22, PathPoint::Action::HUMAN_ACTION, 2)));
     tmpPaths->addPathPoint("tuesday", "room3", QSharedPointer<PathPoint>(new PathPoint(point23, PathPoint::Action::HUMAN_ACTION, 2)));
 
+
     QFile pathFile(PATHS_PATH);
     pathFile.resize(0);
     pathFile.open(QIODevice::WriteOnly);
     QDataStream out(&pathFile);
     out << *tmpPaths;
     pathFile.close();
+
+
     /*****************************************************/
 
     initializePaths();
@@ -868,7 +874,7 @@ void MainWindow::viewPathSelectedRobot(int robotNb, bool checked){
             leftMenu->getDisplaySelectedPoint()->setPointView(selectedPoint, "");
             backEvent();
         }
-
+        paths->setVisiblePath("");
         emit resetPath();
     }
 }
@@ -991,6 +997,7 @@ void MainWindow::addPathSelecRobotBtnEvent(){
 
 void MainWindow::deletePathSelecRobotBtnEvent(){
     qDebug() << "MainWindow::deletePathSelecRobotBtnEvent called on robot " << selectedRobot->getRobot()->getName();
+    paths->setVisiblePath("");
     emit resetPath();
     emit resetPathCreationWidget();
     editSelectedRobotWidget->setPathChanged(true);
@@ -1104,6 +1111,7 @@ void MainWindow::cancelEditSelecRobotBtnEvent(){
     qDebug() << "cancelEditSelecRobotBtnEvent called";
     /// if the path has been changed, reset the path
     emit resetPathCreationWidget();
+    paths->setVisiblePath("");
     emit resetPath();
     editSelectedRobotWidget->setEditing(false);
     pathPainter->clearOldPath();
@@ -3848,11 +3856,11 @@ void MainWindow::pathBtnEvent(){
 
 void MainWindow::deletePathSlot(QString groupName, QString pathName){
     qDebug() << "MainWindow::deletePathSlot called on group :" << groupName << ", path :" << pathName;
-    qDebug() << "MainWindow::deletePath called";
     int answer = openConfirmMessage("Are you sure you want to delete this path, this action is irreversible ?");
     switch(answer){
     case QMessageBox::StandardButton::Ok:
         paths->deletePath(groupName, pathName);
+        serializePaths();
         leftMenu->getPathGroupDisplayed()->setPathsGroup(groupName);
         leftMenu->getPathGroupDisplayed()->show();
         leftMenu->getDisplaySelectedPath()->hide();
@@ -3878,13 +3886,17 @@ void MainWindow::displayPathSlot(QString groupName, QString pathName, bool displ
     if(display){
         bool foundFlag = false;
         Paths::Path path = paths->getPath(groupName, pathName, foundFlag);
-        if(foundFlag)
+        if(foundFlag) {
             pathPainter->setCurrentPath(path);
+            paths->setVisiblePath(pathName);
+        }
         else
             qDebug() << "MainWindow::displayPathSlot Sorry could not find the path";
     }
-    else
+    else {
+        paths->setVisiblePath("");
         resetPath();
+    }
 }
 
 void MainWindow::displayGroupPaths(){
@@ -3979,6 +3991,7 @@ void MainWindow::deleteGroupPaths(){
     switch(answer){
     case QMessageBox::StandardButton::Ok:
         paths->deleteGroup(leftMenu->getGroupsPathsWidget()->getButtonGroup()->getButtonGroup()->checkedButton()->text());
+        serializePaths();
         leftMenu->getGroupsPathsWidget()->updateGroupsPaths();
         break;
     case QMessageBox::StandardButton::Cancel:
@@ -4020,6 +4033,7 @@ void MainWindow::saveGroupPaths(QString name){
         topLayout->setEnabled(true);
         leftMenu->getGroupsPathsWidget()->getActionButtons()->getPlusButton()->setEnabled(true);
         topLayout->setLabelDelay(TEXT_COLOR_SUCCESS, "You have created a new group of paths", 2500);
+        serializePaths();
     } else if(pointsLeftWidget->checkGroupName(name) == 1)
         topLayout->setLabelDelay(TEXT_COLOR_DANGER, "The name of your group cannot be empty", 2500);
     else
@@ -4089,6 +4103,7 @@ void MainWindow::deletePath(){
     switch(answer){
     case QMessageBox::StandardButton::Ok:
         paths->deletePath(lastWidgets.at(lastWidgets.size()-1).first.second, leftMenu->getPathGroupDisplayed()->getLastCheckedButton());
+        serializePaths();
         leftMenu->getPathGroupDisplayed()->setPathsGroup(lastWidgets.at(lastWidgets.size()-1).first.second);
     break;
     case QMessageBox::StandardButton::Cancel:
@@ -4107,9 +4122,15 @@ void MainWindow::displayPathOnMap(const bool display){
         bool foundFlag = false;
         pathPainter->setCurrentPath(paths->getPath(lastWidgets.at(lastWidgets.size()-1).first.second,
                                                leftMenu->getPathGroupDisplayed()->getLastCheckedButton(), foundFlag));
+        paths->setVisiblePath(leftMenu->getPathGroupDisplayed()->getLastCheckedButton());
     }
-    else
+    else {
         resetPath();
+        paths->setVisiblePath("");
+    }
+    /// to set the 'eye' icon appropriately
+    leftMenu->getPathGroupDisplayed()->updateDisplayedPath();
+
 }
 
 void MainWindow::editPath(){
@@ -4247,6 +4268,7 @@ void MainWindow::clearNewMap(){
     selectedPoint = QSharedPointer<PointView>();
     editedPointView = QSharedPointer<PointView>();
 
+    paths->setVisiblePath("");
     resetPath();
 
     /// Clear the list of points

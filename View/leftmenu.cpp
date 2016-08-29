@@ -140,7 +140,7 @@ LeftMenu::LeftMenu(MainWindow* _mainWindow, QSharedPointer<Points> const& _point
     leftLayout->addWidget(robotPathCreationWidget);
 
     /// Menu which display the informations of a path
-    displaySelectedPath = new DisplaySelectedPath(this, mainWindow);
+    displaySelectedPath = new DisplaySelectedPath(this, mainWindow, paths);
     //displaySelectedPath->setMaximumWidth(mainWindow->width()*4/10);
     displaySelectedPath->hide();
     leftLayout->addWidget(displaySelectedPath);
