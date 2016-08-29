@@ -17,7 +17,7 @@
 #include <QLineEdit>
 #include <QLabel>
 
-PathCreationWidget::PathCreationWidget(QWidget* parent, MainWindow *mainWindow, const QSharedPointer<Points> &_points, const QSharedPointer<Paths>& _paths, const bool associatedToRobot):
+PathCreationWidget::PathCreationWidget(QWidget* parent, const QSharedPointer<Points> &_points, const QSharedPointer<Paths>& _paths, const bool associatedToRobot):
     QWidget(parent), points(_points), paths(_paths), currentGroupName("")
 {
     layout = new QVBoxLayout(this);
@@ -57,12 +57,12 @@ PathCreationWidget::PathCreationWidget(QWidget* parent, MainWindow *mainWindow, 
     pathPointsList = new PathPointList(this);
     layout->addWidget(pathPointsList);
 
-    CustomPushButton* cleanBtn = new CustomPushButton("Clean", this);
+    cleanBtn = new CustomPushButton("Clean", this);
     layout->addWidget(cleanBtn);
 
     /// Cancel & save buttons
     QHBoxLayout* grid = new QHBoxLayout();
-    CustomPushButton* cancelBtn = new CustomPushButton("Cancel", this);
+    cancelBtn = new CustomPushButton("Cancel", this);
     CustomPushButton* saveBtn = new CustomPushButton("Save", this);
 
     grid->addWidget(cancelBtn);
@@ -80,7 +80,7 @@ PathCreationWidget::PathCreationWidget(QWidget* parent, MainWindow *mainWindow, 
     connect(pathPointsList, SIGNAL(itemMovedSignal(QModelIndex, int, int, QModelIndex, int)), this, SLOT(itemMovedSlot(QModelIndex, int, int, QModelIndex, int)));
 
     connect(saveBtn, SIGNAL(clicked()), this, SLOT(savePathClicked()));
-    connect(cancelBtn, SIGNAL(clicked()), mainWindow, SLOT(cancelPathSlot()));
+
     connect(cleanBtn, SIGNAL(clicked()), this, SLOT(resetWidget()));
 
     hide();

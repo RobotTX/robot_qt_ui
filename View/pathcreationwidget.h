@@ -12,6 +12,7 @@ class PathPointCreationWidget;
 class PathPoint;
 class QLineEdit;
 class QLabel;
+class CustomPushButton;
 
 #include <QWidget>
 #include <QSharedPointer>
@@ -37,13 +38,16 @@ public:
         float posY;
     };
 
-    PathCreationWidget(QWidget *parent, MainWindow *mainWindow, const QSharedPointer<Points>& points, const QSharedPointer<Paths>& _paths, const bool associatedToRobot);
+    PathCreationWidget(QWidget *parent, const QSharedPointer<Points>& points, const QSharedPointer<Paths>& _paths, const bool associatedToRobot);
     void updatePath(const QVector<QSharedPointer<PathPoint> >& _currentPath);
     void updatePointsList(void);
     void deleteItem(QListWidgetItem* item);
     void editPathPoint(const QString name, const double x, const double y);
     PathPointList* getPathPointList(void) const { return pathPointsList; }
     void setCurrentGroupName(const QString name) { currentGroupName = name; }
+    QString getCurrentGroupName(void) const { return currentGroupName; }
+    CustomPushButton* getCancelButton(void) const { return cancelBtn; }
+    QLineEdit* getNameEdit(void) const { return nameEdit; }
 
 protected:
     void showEvent(QShowEvent* event);
@@ -96,6 +100,8 @@ private:
     QLabel* nameLabel;
     QLineEdit* nameEdit;
     QString currentGroupName;
+    CustomPushButton* cleanBtn;
+    CustomPushButton* cancelBtn;
 };
 
 #endif // PATHCREATIONWIDGET_H

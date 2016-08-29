@@ -257,6 +257,11 @@ void GroupsPathsWidget::hideEvent(QHideEvent *event){
     QWidget::hideEvent(event);
 }
 
+void GroupsPathsWidget::showEvent(QShowEvent *event){
+    hideCreationWidgets();
+    QWidget::showEvent(event);
+}
+
 void GroupsPathsWidget::hideCreationWidgets(){
     /// hides everything that's related to the creation of a group
     groupNameEdit->hide();

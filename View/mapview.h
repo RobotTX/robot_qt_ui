@@ -38,8 +38,10 @@ public:
 
 signals:
     void pointLeftClicked();
-    /// emitted when a user is constructing a path
+    /// emitted when a user is constructing a path for a robot
     void addPathPoint(QString, double, double);
+    /// emitted when a user is constructing a path without a robot
+    void addNoRobotPathPoint(QString, double, double);
     /// emitted when a user is choosing a home for his robot
     void homeEdited(float, float, QString);
     /// emitted when a user is editing a permanent point

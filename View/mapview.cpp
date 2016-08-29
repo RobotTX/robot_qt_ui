@@ -46,14 +46,21 @@ void MapView::mouseReleaseEvent(QGraphicsSceneMouseEvent *event){
             tmpPointView->show();
             tmpPointView->setPos(event->pos().x(), event->pos().y());
             emit pointLeftClicked();
-        } else if(state == GraphicItemState::CREATING_PATH){
+        } else if(state == GraphicItemState::ROBOT_CREATING_PATH){
             //qDebug() << "MapView::mouseReleaseEvent CREATING_PATH";
             /// if it's not a white point of the map we cannot add it to the path
-            if(map->getMapImage().pixelColor(event->pos().x()-tmpPointPixmap.width()/2, event->pos().y()-tmpPointPixmap.height()).red() >= 254){
+           if(map->getMapImage().pixelColor(event->pos().x()-tmpPointPixmap.width()/2, event->pos().y()-tmpPointPixmap.height()).red() >= 254){
                 emit addPathPoint(PATH_POINT_NAME, event->pos().x(), event->pos().y());
            } else {
                emit newMessage("You cannot create a point here because your robot cannot go there. You must click known areas of the map");
             }
+        } else if(state == GraphicItemState::NO_ROBOT_CREATING_PATH){
+            /// if it's not a white point of the map we cannot add it to the path
+           if(map->getMapImage().pixelColor(event->pos().x()-tmpPointPixmap.width()/2, event->pos().y()-tmpPointPixmap.height()).red() >= 254){
+                emit addNoRobotPathPoint(PATH_POINT_NAME, event->pos().x(), event->pos().y());
+           } else {
+                emit newMessage("You cannot create a point here because your robot cannot go there. You must click known areas of the map");
+           }
         } else if(state == GraphicItemState::EDITING_PERM){
             //qDebug() << "MapView::mouseReleaseEvent EDITING_PERM" << event->pos().x() << event->pos().y();
             /// to notify the point information menu that the position has changed and so the point can be displayed at its new position
@@ -69,7 +76,7 @@ void MapView::mouseReleaseEvent(QGraphicsSceneMouseEvent *event){
                             tmpPointView->getPoint()->getPosition().getY(),
                             QString(TMP_POINT_NAME));
 
-        } else if(state == GraphicItemState::EDITING_PATH){
+        } else if(state == GraphicItemState::ROBOT_EDITING_PATH){
             /// to notify that a point which belongs to the path of a robot has been changed
             emit newCoordinatesPathPoint(event->pos().x(), event->pos().y());
         } else {

@@ -70,6 +70,7 @@ void PathPainter::addPathPointSlot(QString name, double x, double y){
 
     points->getGroups()->value(PATH_GROUP_NAME)->last()->setState(mapView->getState());
     Point point = *(points->getGroups()->value(PATH_GROUP_NAME)->last()->getPoint());
+
     currentPath.push_back(QSharedPointer<PathPoint>(new PathPoint(point, PathPoint::Action::WAIT)));
 
     /// Update the path painter
@@ -80,7 +81,11 @@ void PathPainter::orderPathPointChangedSlot(int from, int to){
     qDebug() << "PathPainter::orderPathPointChangedSlot called from" << from << "to" << to;
 
     /// Do the change in the model
+    qDebug() << currentPath.size();
     QSharedPointer<PathPoint> pathPoint = currentPath.takeAt(from);
+     qDebug() << currentPath.size();
+    //QSharedPointer<PathPoint> pathPoint = currentPath.at(from);
+    //currentPath.remove(from);
     QSharedPointer<PointView> pointView = points->getGroups()->value(PATH_GROUP_NAME)->takeAt(from);
 
     if(to > currentPath.size()){

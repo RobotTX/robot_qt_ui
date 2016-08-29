@@ -102,6 +102,7 @@ signals:
     void nameChanged(QString, QString);
     void changeCmdThreadRobotName(QString);
     void addPathPoint(QString name, double x, double y);
+    void addNoRobotPathPoint(QString name, double x, double y);
     void updatePathPainter();
     void updatePathPainterPointView();
     void resetPath();
@@ -235,6 +236,10 @@ private slots:
     void editPath();
     void doubleClickOnPath(QString pathName);
     void setMessageNoRobotPath(const int code);
+    void addNoRobotPointPathSlot(QString name, double x, double y);
+    void cancelEditNoRobotPathPointSlot();
+    void cancelNoRobotPathSlot();
+    void saveNoRobotPathSlot();
 
 private:
     Ui::MainWindow* ui;
@@ -252,7 +257,9 @@ private:
     QSharedPointer<Points> points;
     QSharedPointer<PointView> editedPointView;
     QVector<QSharedPointer<PointView>> pointViewsToDisplay;
-    PathPainter* pathPainter;
+    PathPainter* robotPathPainter;
+    PathPainter* noRobotPathPainter;
+
     TopLayout* topLayout;
     QMessageBox msgBox;
 

@@ -4,12 +4,14 @@
 #include <QLabel>
 
 CustomPushButton::CustomPushButton(const QIcon &icon, const QString &text, QWidget *parent, const ButtonType type,
-        const bool checkable, const bool enable) : QPushButton(icon, text, parent), buttonType(type){
+        const bool checkable, const bool enable) : QPushButton(icon, text, parent), buttonType(type)
+{
     initialize(checkable, enable);
 }
 
 CustomPushButton::CustomPushButton(const QString &text, QWidget *parent, const ButtonType type, const bool checkable,
-        const bool enable) : QPushButton(text, parent), buttonType(type){
+        const bool enable) : QPushButton(text, parent), buttonType(type)
+{
     initialize(checkable, enable);
 }
 
@@ -94,7 +96,7 @@ void CustomPushButton::setText(const QString &str){
 }
 
 void CustomPushButton::toggledSlot(bool checked){
-    qDebug() << "CustomPushButton::toggledSlot" << text() << checked;
+    //qDebug() << "CustomPushButton::toggledSlot" << text() << checked;
     QString tmpColor = left_menu_background_color;
     if(checked)
         tmpColor = button_checked_color;
@@ -123,7 +125,7 @@ void CustomPushButton::resizeEvent(QResizeEvent *event){
 }
 
 void CustomPushButton::enterEvent(QEvent *event){
-    qDebug() << "CustomPushButton::enterEvent" << text() << size();
+    //qDebug() << "CustomPushButton::enterEvent" << text() << size();
     if(!isChecked())
         label->setStyleSheet(
                     "QLabel {"

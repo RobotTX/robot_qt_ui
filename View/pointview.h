@@ -71,6 +71,7 @@ signals:
     void pointRightClicked(QString);
     void pointLeftClicked(QString name, double x, double y);
     void addPointPath(QString name, double x, double y);
+    void addNoRobotPointPath(QString name, double x, double y);
     void homeEdited(QString);
     void moveEditedPathPoint();
     void editedPointPositionChanged(double, double);
