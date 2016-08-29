@@ -4089,12 +4089,12 @@ void MainWindow::displayPath(){
 
 void MainWindow::createPath(){
     qDebug() << "MainWindow::createPath called";
+    resetPath();
     setMessageTop(TEXT_COLOR_INFO, "The name of your path cannot be empty, fill up the corresponding field to give your path a name");
     hideAllWidgets();
     setEnableAll(false, GraphicItemState::CREATING_PATH, true);
     leftMenu->getNoRobotPathCreationWidget()->show();
-    qDebug() << mapPixmapItem->getState();
-    qDebug() << mapPixmapItem->getState();
+
 }
 
 void MainWindow::deletePath(){

@@ -365,7 +365,7 @@ void PathCreationWidget::checkPathName(const QString name){
         qDebug() << "PathCreatioNWidget::checkPathName The name of your path cannot be empty";
     } else {
         bool foundFlag(false);
-        // the found flag will have the value true after the call if the path has been found which means it already exists
+        /// the found flag will have the value true after the call if the path has been found which means it already exists
         paths->getPath(currentGroupName, name.simplified(), foundFlag);
         if(foundFlag){
             qDebug() << "PathCreatioNWidget::checkPathName Sorry there is already a path with the same name";
