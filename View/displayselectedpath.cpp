@@ -10,7 +10,9 @@
 #include <QVBoxLayout>
 #include <QDebug>
 
-DisplaySelectedPath::DisplaySelectedPath(QWidget *parent, MainWindow *mainWindow):QWidget(parent){
+DisplaySelectedPath::DisplaySelectedPath(QWidget *parent, MainWindow *mainWindow,  const QSharedPointer<Paths>& _paths):
+    QWidget(parent), paths(_paths)
+{
 
     scrollArea = new CustomScrollArea(this);
 
@@ -58,6 +60,10 @@ void DisplaySelectedPath::updatePath(QString groupName, QString pathName, QVecto
     currentPath.path = path;
     nameLabel->setText(pathName);
     pathWidget->setPath(path);
+    if(!paths->getVisiblePath().compare(currentPath.pathName))
+        actionButtons->getMapButton()->setChecked(true);
+    else
+        actionButtons->getMapButton()->setChecked(false);
 }
 
 void DisplaySelectedPath::minusBtnSlot(bool){

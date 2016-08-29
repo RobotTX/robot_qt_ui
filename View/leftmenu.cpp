@@ -140,7 +140,7 @@ LeftMenu::LeftMenu(MainWindow* _mainWindow, QSharedPointer<Points> const& _point
     leftLayout->addWidget(robotPathCreationWidget);
 
     /// Menu which display the informations of a path
-    displaySelectedPath = new DisplaySelectedPath(this, mainWindow);
+    displaySelectedPath = new DisplaySelectedPath(this, mainWindow, paths);
     //displaySelectedPath->setMaximumWidth(mainWindow->width()*4/10);
     displaySelectedPath->hide();
     leftLayout->addWidget(displaySelectedPath);
@@ -188,7 +188,7 @@ LeftMenu::LeftMenu(MainWindow* _mainWindow, QSharedPointer<Points> const& _point
     connect(pathGroup->getActionButtons()->getGoButton(), SIGNAL(clicked()), mainWindow, SLOT(displayPath()));
     connect(pathGroup->getActionButtons()->getPlusButton(), SIGNAL(clicked()), mainWindow, SLOT(createPath()));
     connect(pathGroup->getActionButtons()->getMinusButton(), SIGNAL(clicked()), mainWindow, SLOT(deletePath()));
-    connect(pathGroup->getActionButtons()->getMapButton(), SIGNAL(toggled(bool)), mainWindow, SLOT(displayPathOnMap(bool)));
+    connect(pathGroup->getActionButtons()->getMapButton(), SIGNAL(clicked(bool)), mainWindow, SLOT(displayPathOnMap(bool)));
     connect(pathGroup->getActionButtons()->getEditButton(), SIGNAL(clicked()), mainWindow, SLOT(editPath()));
 
     connect(pathGroup->getPathButtonGroup()->getButtonGroup(), SIGNAL(buttonToggled(int, bool)), pathGroup, SLOT(resetMapButton()));

@@ -15,10 +15,10 @@
 #include "View/pathpointcreationwidget.h"
 #include "View/custompushbutton.h"
 #include <QLineEdit>
-
+#include <QLabel>
 
 PathCreationWidget::PathCreationWidget(QWidget* parent, MainWindow *mainWindow, const QSharedPointer<Points> &_points, const QSharedPointer<Paths>& _paths, const bool associatedToRobot):
-    QWidget(parent), points(_points), paths(_paths)
+    QWidget(parent), points(_points), paths(_paths), currentGroupName("")
 {
     layout = new QVBoxLayout(this);
 
@@ -31,12 +31,24 @@ PathCreationWidget::PathCreationWidget(QWidget* parent, MainWindow *mainWindow, 
     actionButtons->getEditButton()->setEnabled(false);
     layout->addWidget(actionButtons);
 
+    ///////////////////////////////////////////////////////////////////////////////////////////////
     /// to edit the name of a path if it is not a path associated to a robot
-    nameEdit = new QLineEdit(this);
-    if(associatedToRobot)
-       nameEdit->hide();
 
+    nameLabel = new QLabel("Name :", this);
+    nameLabel->setAlignment(Qt::AlignHCenter);
+    nameEdit = new QLineEdit(this);
+    if(associatedToRobot){
+       nameEdit->hide();
+       nameLabel->hide();
+    }
+
+    layout->addWidget(nameLabel);
     layout->addWidget(nameEdit);
+
+    /// to check that the name given to the path is valid
+    connect(nameEdit, SIGNAL(textEdited(QString)), this, SLOT(checkPathName(QString)));
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////
 
     /// The menu which display the list of point to select
     pointsMenu = new QMenu(this);
@@ -346,4 +358,22 @@ void PathCreationWidget::actionChangedSlot(int id, int action, QString waitTime)
     emit actionChanged(id, action, waitTime);
 }
 
+void PathCreationWidget::checkPathName(const QString name){
+    qDebug() << "PathCreationWidget::checkPathName" << name.simplified();
+    if(!name.simplified().compare("")){
+        emit codeEditPath(0);
+        qDebug() << "PathCreatioNWidget::checkPathName The name of your path cannot be empty";
+    } else {
+        bool foundFlag(false);
+        // the found flag will have the value true after the call if the path has been found which means it already exists
+        paths->getPath(currentGroupName, name.simplified(), foundFlag);
+        if(foundFlag){
+            qDebug() << "PathCreatioNWidget::checkPathName Sorry there is already a path with the same name";
+            emit codeEditPath(1);
+        } else {
+            qDebug() << "PathCreatioNWidget::checkPathName nice this path does not exist yet !";
+            emit codeEditPath(2);
+        }
+    }
+}
 
