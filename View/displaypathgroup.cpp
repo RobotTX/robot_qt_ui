@@ -115,7 +115,7 @@ void DisplayPathGroup::setPathsGroup(const QString groupName){
             if(!it_paths.key().compare(paths->getVisiblePath()))
                 groupButton->setIcon(QIcon(":/icons/eye.png"));
             else
-                groupButton->setIcon(QIcon(":/icons/empty.png"));
+                groupButton->setIcon(QIcon(":/icons/blank.png"));
 
             //groupButton->setAutoDefault(true);
             pathButtonGroup->getButtonGroup()->addButton(groupButton, i++);
@@ -132,6 +132,7 @@ void DisplayPathGroup::updateDisplayedPath(){
         if(!button->text().compare(paths->getVisiblePath()))
             button->setIcon(QIcon(":/icons/eye.png"));
         else
-            button->setIcon(QIcon(":/icons/empty.png"));
+            button->setIcon(QIcon(":/icons/blank.png"));
+        button->setIconSize(s_icon_size);
     }
 }
