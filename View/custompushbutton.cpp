@@ -3,19 +3,18 @@
 #include <QDebug>
 #include <QLabel>
 
-CustomPushButton::CustomPushButton(const QIcon &icon, const QString &text, QWidget *parent, const ButtonType type,
-        const bool checkable, const bool enable) : QPushButton(icon, text, parent), buttonType(type)
-{
-    initialize(checkable, enable);
+
+CustomPushButton::CustomPushButton(const QIcon &icon, const QString &text, QWidget *parent, const ButtonType type, const QString align,
+        const bool checkable, const bool enable) : QPushButton(icon, text, parent), buttonType(type){
+    initialize(checkable, enable, align);
 }
 
-CustomPushButton::CustomPushButton(const QString &text, QWidget *parent, const ButtonType type, const bool checkable,
-        const bool enable) : QPushButton(text, parent), buttonType(type)
-{
-    initialize(checkable, enable);
+CustomPushButton::CustomPushButton(const QString &text, QWidget *parent, const ButtonType type, const QString align, const bool checkable,
+        const bool enable) : QPushButton(text, parent), buttonType(type){
+    initialize(checkable, enable, align);
 }
 
-void CustomPushButton::initialize(const bool checkable, const bool enable){
+void CustomPushButton::initialize(const bool checkable, const bool enable, const QString align){
     setCheckable(checkable);
     setEnabled(enable);
     setFlat(true);
@@ -31,7 +30,7 @@ void CustomPushButton::initialize(const bool checkable, const bool enable){
 
     QString style = "";
     if(text().compare(""))
-        style = "padding: 5px 10px 5px 10px; text-align:left;";
+        style = "padding: 5px 10px 5px 10px; text-align:" + align + ";";
     else
         style = "background-position: center center;";
 

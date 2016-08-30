@@ -70,7 +70,7 @@ BottomLayout::BottomLayout(QMainWindow* parent, const QSharedPointer<Robots> &ro
 
     /// Creation of the first column, with the button containing the name of the robots
     for(int i = 0; i < robotsVector.size(); i++){
-        CustomPushButton* robotBtn = new CustomPushButton(robotsVector.at(i)->getRobot()->getName(), this, CustomPushButton::ButtonType::BOTTOM, true);
+        CustomPushButton* robotBtn = new CustomPushButton(robotsVector.at(i)->getRobot()->getName(), this, CustomPushButton::ButtonType::BOTTOM, "left", true);
         /*robotBtn->setMinimumHeight(30);
         robotBtn->setMaximumHeight(30);*/
         robotBtn->setMaximumWidth(parent->width()*3/10);
@@ -96,7 +96,7 @@ BottomLayout::BottomLayout(QMainWindow* parent, const QSharedPointer<Robots> &ro
 
     /// Creation of the third column, with the button to display the path the robot
     for(int i = 0; i < robotsVector.size(); i++){
-        CustomPushButton* viewPathRobotBtn = new CustomPushButton(QIcon(":/icons/eye.png"),"", this, CustomPushButton::ButtonType::BOTTOM, true);
+        CustomPushButton* viewPathRobotBtn = new CustomPushButton(QIcon(":/icons/eye.png"),"", this, CustomPushButton::ButtonType::BOTTOM, "left", true);
         viewPathRobotBtn->setMaximumWidth(parent->width()/10);
         viewPathRobotBtn->setMinimumWidth(parent->width()/10);
         viewPathRobotBtn->setIconSize(s_icon_size);
@@ -213,7 +213,7 @@ void BottomLayout::addRobot(RobotView * const robotView){
     qDebug() << "(BottomLayout) addRobot called";
     int i = robotBtnGroup->buttons().size();
     /// Creation of the first column, with the button containing the name of the robots
-    CustomPushButton* robotBtn = new CustomPushButton(robotView->getRobot()->getName(), this, CustomPushButton::ButtonType::BOTTOM, true);
+    CustomPushButton* robotBtn = new CustomPushButton(robotView->getRobot()->getName(), this, CustomPushButton::ButtonType::BOTTOM, "left", true);
     robotBtn->setMaximumWidth(((QWidget*)parent())->width()*3/20);
     robotBtn->setMinimumWidth(((QWidget*)parent())->width()*3/20);
     robotBtnGroup->addButton(robotBtn, i);
@@ -228,7 +228,7 @@ void BottomLayout::addRobot(RobotView * const robotView){
     columnPath->addWidget(pathLabel);
 
     /// Creation of the third column, with the button to display/stop displaying the robot
-    CustomPushButton* viewPathRobotBtn = new CustomPushButton(QIcon(":/icons/eye.png"),"", this, CustomPushButton::ButtonType::BOTTOM, true);
+    CustomPushButton* viewPathRobotBtn = new CustomPushButton(QIcon(":/icons/eye.png"),"", this, CustomPushButton::ButtonType::BOTTOM, "left", true);
     viewPathRobotBtn->setMaximumWidth(((QWidget*)parent())->width()/20);
     viewPathRobotBtn->setMinimumWidth(((QWidget*)parent())->width()/20);
     viewPathRobotBtn->setIconSize(s_icon_size);

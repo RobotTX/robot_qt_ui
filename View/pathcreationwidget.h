@@ -102,6 +102,7 @@ private:
     QString currentGroupName;
     CustomPushButton* cleanBtn;
     CustomPushButton* cancelBtn;
+    CustomPushButton* saveBtn;
 };
 
 #endif // PATHCREATIONWIDGET_H
