@@ -102,7 +102,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
 
     /************************** NO NEED AFTER FIRST TIME INIT **************************/
-
+/*
 
     QSharedPointer<Paths> tmpPaths = QSharedPointer<Paths>(new Paths(this));
 
@@ -139,7 +139,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     tmpPaths->addPathPoint("monday", "room1", QSharedPointer<PathPoint>(new PathPoint(point2, PathPoint::Action::HUMAN_ACTION, 2)));
     tmpPaths->addPathPoint("tuesday", "room2", QSharedPointer<PathPoint>(new PathPoint(point, PathPoint::Action::HUMAN_ACTION, 2)));
     tmpPaths->addPathPoint("tuesday", "room2", QSharedPointer<PathPoint>(new PathPoint(point3, PathPoint::Action::HUMAN_ACTION, 2)));
-    /*
+
     tmpPaths->addPathPoint("tuesday", "room3", QSharedPointer<PathPoint>(new PathPoint(point3, PathPoint::Action::HUMAN_ACTION, 2)));
     tmpPaths->addPathPoint("tuesday", "room3", QSharedPointer<PathPoint>(new PathPoint(point5, PathPoint::Action::HUMAN_ACTION, 2)));
     tmpPaths->addPathPoint("tuesday", "room3", QSharedPointer<PathPoint>(new PathPoint(point6, PathPoint::Action::HUMAN_ACTION, 2)));
@@ -160,7 +160,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     tmpPaths->addPathPoint("tuesday", "room3", QSharedPointer<PathPoint>(new PathPoint(point21, PathPoint::Action::HUMAN_ACTION, 2)));
     tmpPaths->addPathPoint("tuesday", "room3", QSharedPointer<PathPoint>(new PathPoint(point22, PathPoint::Action::HUMAN_ACTION, 2)));
     tmpPaths->addPathPoint("tuesday", "room3", QSharedPointer<PathPoint>(new PathPoint(point23, PathPoint::Action::HUMAN_ACTION, 2)));
-*/
+
 
     QFile pathFile(PATHS_PATH);
     pathFile.resize(0);
@@ -168,6 +168,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     QDataStream out(&pathFile);
     out << *tmpPaths;
     pathFile.close();
+
+    */
 
     /*****************************************************/
 
@@ -3918,8 +3920,6 @@ void MainWindow::createPath(){
 
     noRobotPathCreationWidget->getPathPointList()->clear();
 
-
-
     /// hides the temporary pointview
     points->getTmpPointView()->hide();
 
@@ -3944,6 +3944,10 @@ void MainWindow::deletePath(){
     int answer = openConfirmMessage("Are you sure you want to delete this path, this action is irreversible ?");
     switch(answer){
     case QMessageBox::StandardButton::Ok:
+        leftMenu->getPathGroupDisplayed()->initializeActionButtons();
+        /// resets the path painter if the path displayed is the one we just destroyed
+        if(!paths->getVisiblePath().compare(leftMenu->getPathGroupDisplayed()->getLastCheckedButton()))
+            emit resetPath();
         paths->deletePath(lastWidgets.at(lastWidgets.size()-1).first.second, leftMenu->getPathGroupDisplayed()->getLastCheckedButton());
         serializePaths();
         leftMenu->getPathGroupDisplayed()->setPathsGroup(lastWidgets.at(lastWidgets.size()-1).first.second);
@@ -4068,6 +4072,9 @@ void MainWindow::saveNoRobotPathSlot(){
     paths->createPath(groupName, pathName);
     for(int i = 0; i < noRobotPathPainter->getCurrentPath().size(); i++)
         paths->addPathPoint(groupName, pathName, noRobotPathPainter->getCurrentPath().at(i));
+
+    /// updates the visible path
+    paths->setVisiblePath(pathName);
 
     /// resets the menu so that it reflects the creation of this new path
     leftMenu->getPathGroupDisplayed()->setPathsGroup(noRobotPathCreationWidget->getCurrentGroupName());

@@ -62,6 +62,7 @@ void DisplayPathGroup::initializeActionButtons(){
     actionButtons->getMinusButton()->setCheckable(false);
     actionButtons->getEditButton()->setCheckable(false);
     actionButtons->getMapButton()->setCheckable(true);
+    actionButtons->getMapButton()->setChecked(false);
 
     actionButtons->getPlusButton()->setToolTip("Click to create a new path");
     actionButtons->getMinusButton()->setToolTip("Select a path and click here to remove it");
@@ -75,7 +76,14 @@ void DisplayPathGroup::initializeActionButtons(){
 /// lastCheckButton is updated to keep track of the last checked button
 void DisplayPathGroup::enableButtons(QAbstractButton *button){
     if(button->text().compare(lastCheckedButton)){
+        /// if the path is visible on the map the eye button is checked
+        if(!paths->getVisiblePath().compare(button->text()))
+            actionButtons->getMapButton()->setChecked(true);
+
+        /// updates the last checked button to be the one the user has just checked
         lastCheckedButton = button->text();
+
+        /// updates the tooltips to explain the user what to do
         actionButtons->getMinusButton()->setEnabled(true);
         actionButtons->getMinusButton()->setToolTip("Click to remove the selected path");
         actionButtons->getMapButton()->setEnabled(true);
@@ -88,6 +96,7 @@ void DisplayPathGroup::enableButtons(QAbstractButton *button){
         lastCheckedButton = "";
         initializeActionButtons();
         pathButtonGroup->uncheck();
+        actionButtons->getMapButton()->setChecked(false);
     }
 }
 
@@ -97,7 +106,7 @@ void DisplayPathGroup::resetMapButton(){
 }
 
 void DisplayPathGroup::setPathsGroup(const QString groupName){
-    qDebug() << "GroupsPathsButtonGroup::setGroupPaths called";
+    qDebug() << "DsplayGroup::setPathsGroup called";
     pathButtonGroup->deleteButtons();
     /// if the group of paths exists
     if(paths->getGroups()->find(groupName) != paths->getGroups()->end()){
@@ -110,7 +119,7 @@ void DisplayPathGroup::setPathsGroup(const QString groupName){
             it_paths.next();
             qDebug() << "found this path" << it_paths.key();
             CustomPushButton* groupButton = new CustomPushButton(it_paths.key(), this);
-            groupButton->setIconSize(xl_icon_size);
+            groupButton->setIconSize(s_icon_size);
             /// if this path is displayed on the map we also add an icon to show it on the button
             if(!it_paths.key().compare(paths->getVisiblePath()))
                 groupButton->setIcon(QIcon(":/icons/eye.png"));
@@ -122,7 +131,7 @@ void DisplayPathGroup::setPathsGroup(const QString groupName){
             connect(groupButton, SIGNAL(doubleClick(QString)), mainWindow, SLOT(doubleClickOnPath(QString)));
             groupButton->setCheckable(true);
             pathButtonGroup->getLayout()->addWidget(groupButton);
-            groupButton->setIconSize(m_icon_size);
+
         }
     }
 }
