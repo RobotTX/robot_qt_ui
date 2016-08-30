@@ -119,6 +119,7 @@ PointsLeftWidget::PointsLeftWidget(QWidget* _parent, MainWindow* const mainWindo
 
     /*layout->setContentsMargins(0,0,0,0);
     creationLayout->setContentsMargins(0, 0, 0, 20);*/
+    layout->setContentsMargins(0,0,0,0);
     setAutoFillBackground(true);
 }
 
@@ -383,4 +384,12 @@ void PointsLeftWidget::sendMessageEditGroup(int code){
     default:
         qDebug() << "if you get here you probably forgot to implement the behavior for one or more error codes";
     }
+}
+
+void PointsLeftWidget::resizeEvent(QResizeEvent *event){
+    QWidget* widget = static_cast<QWidget*>(parent());
+    int maxWidth = widget->width() - 18;
+    setFixedWidth(maxWidth);
+
+    QWidget::resizeEvent(event);
 }

@@ -35,5 +35,5 @@ MapLeftWidget::MapLeftWidget(QWidget* parent, MainWindow* mainWindow): QWidget(p
     /*setMaximumWidth(mainWindow->width()*4/10);
     setMinimumWidth(mainWindow->width()*4/10);*/
     layout->setAlignment(Qt::AlignTop);
-    //layout->setContentsMargins(10,0,0,0);
+    layout->setContentsMargins(0,0,0,0);
 }

@@ -4,17 +4,17 @@
 #include <QLabel>
 
 
-CustomPushButton::CustomPushButton(const QIcon &icon, const QString &text, QWidget *parent, const ButtonType type, const QString align,
-        const bool checkable, const bool enable) : QPushButton(icon, text, parent), buttonType(type){
+CustomPushButton::CustomPushButton(const QIcon &icon, const QString &text, QWidget *parent, const ButtonType &type, const QString &align,
+        const bool &checkable, const bool &enable) : QPushButton(icon, text, parent), buttonType(type){
     initialize(checkable, enable, align);
 }
 
-CustomPushButton::CustomPushButton(const QString &text, QWidget *parent, const ButtonType type, const QString align, const bool checkable,
-        const bool enable) : QPushButton(text, parent), buttonType(type){
+CustomPushButton::CustomPushButton(const QString &text, QWidget *parent, const ButtonType &type, const QString &align, const bool &checkable,
+        const bool &enable) : QPushButton(text, parent), buttonType(type){
     initialize(checkable, enable, align);
 }
 
-void CustomPushButton::initialize(const bool checkable, const bool enable, const QString align){
+void CustomPushButton::initialize(const bool &checkable, const bool &enable, const QString &align){
     setCheckable(checkable);
     setEnabled(enable);
     setFlat(true);
@@ -77,6 +77,8 @@ void CustomPushButton::initialize(const bool checkable, const bool enable, const
             setMaximumHeight(l_button_height);
         break;
     }
+
+    moveLabel();
 }
 
 void CustomPushButton::mouseDoubleClickEvent(QMouseEvent * event){

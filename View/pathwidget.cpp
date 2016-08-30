@@ -12,6 +12,7 @@ PathWidget::PathWidget(QWidget* _parent):QWidget(_parent){
     layout = new QVBoxLayout(this);
 
     layout->setAlignment(Qt::AlignTop);
+    layout->setContentsMargins(0, 0, 0, 0);
 }
 
 PathWidget::~PathWidget(){

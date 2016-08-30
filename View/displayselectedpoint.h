@@ -53,6 +53,7 @@ protected:
     void mousePressEvent(QEvent*);
     void keyPressEvent(QKeyEvent* event);
     void hideEvent(QHideEvent *event);
+    void resizeEvent(QResizeEvent *event);
 
 signals:
     /// to notify the mapview that one of its points have been updated (in order to update the name that's displayed when the mouse is hovering over a point)

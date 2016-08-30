@@ -11,11 +11,11 @@ class CustomPushButton: public QPushButton{
     Q_OBJECT
 public:
     enum ButtonType { TOP, BOTTOM, LEFT_MENU, TOP_LEFT_MENU };
-    CustomPushButton(const QIcon& icon, const QString &text = "", QWidget *parent = Q_NULLPTR, const ButtonType type = LEFT_MENU, const QString align = "left",
-                     const bool checkable = false, const bool enable = true);
-    CustomPushButton(const QString &text = "", QWidget *parent = Q_NULLPTR, const ButtonType type = LEFT_MENU, const QString align = "left",
-                     const bool checkable = false, const bool enable = true);
-    void initialize(const bool checkable, const bool enable, const QString align);
+    CustomPushButton(const QIcon& icon, const QString &text = "", QWidget *parent = Q_NULLPTR, const ButtonType &type = LEFT_MENU, const QString &align = "left",
+                     const bool &checkable = false, const bool &enable = true);
+    CustomPushButton(const QString &text = "", QWidget *parent = Q_NULLPTR, const ButtonType &type = LEFT_MENU, const QString &align = "left",
+                     const bool &checkable = false, const bool &enable = true);
+    void initialize(const bool &checkable, const bool &enable, const QString &align);
     void addStyleSheet(const QString style);
     void setText(const QString &text);
     void moveLabel();

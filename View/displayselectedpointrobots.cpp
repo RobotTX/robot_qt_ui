@@ -56,6 +56,11 @@ DisplaySelectedPointRobots::DisplaySelectedPointRobots(QWidget *parent):QWidget(
 
     pathWidget->hide();
     layout->addWidget(pathWidget);
+
+    //layout->setContentsMargins(0, 0, 0, 0);
+    homeLayout->setContentsMargins(0, 0, 0, 0);
+    pathLayout->setContentsMargins(0, 0, 0, 0);
+    layout->setContentsMargins(0, 0, 0, 0);
 }
 
 void DisplaySelectedPointRobots::setRobotsWidget(QSharedPointer<PointView> pointView, QSharedPointer<Robots> robots, const QString robotName){

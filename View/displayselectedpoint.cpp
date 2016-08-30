@@ -62,6 +62,9 @@ DisplaySelectedPoint::DisplaySelectedPoint(QWidget* _parent, QSharedPointer<Robo
 
     scrollLayout->addLayout(infoLayout);
 
+    robotsWidget = new DisplaySelectedPointRobots(this);
+    scrollLayout->addWidget(robotsWidget);
+
     cancelButton = new CustomPushButton("Cancel", this, CustomPushButton::ButtonType::LEFT_MENU, "center");
     cancelButton->hide();
 
@@ -74,22 +77,15 @@ DisplaySelectedPoint::DisplaySelectedPoint(QWidget* _parent, QSharedPointer<Robo
 
     scrollLayout->addLayout(editLayout);
 
-    robotsWidget = new DisplaySelectedPointRobots(this);
-    scrollLayout->addWidget(robotsWidget);
-
     /// to check that a point that's being edited does not get a new name that's already used in the database
     connect(nameEdit, SIGNAL(textEdited(QString)), this, SLOT(checkPointName(QString)));
 
-    /*setMaximumWidth(mainWindow->width()*4/10);
-    setMinimumWidth(mainWindow->width()*4/10);*/
-
-    //scrollLayout->setContentsMargins(20,0,0,0);
     scrollLayout->setAlignment(Qt::AlignTop);
 
     layout->addWidget(scrollArea);
 
 
-    //layout->setContentsMargins(0,0,0,0);
+    layout->setContentsMargins(0,0,0,0);
 
 }
 
@@ -209,7 +205,7 @@ void DisplaySelectedPoint::setPointView(QSharedPointer<PointView> _pointView, co
 
         robotsWidget->setRobotsWidget(pointView, robots, robotName);
     } else {
-        qDebug() << "displayselectedpoint::setpointview pointview null pointer";
+        qDebug() << "Displayselectedpoint::setpointview pointview null pointer";
     }
 }
 
@@ -226,5 +222,13 @@ QString DisplaySelectedPoint::formatName(const QString name) const {
     if(name.size() > 0 && name.at(name.size()-1) == ' ')
         ret += " ";
     return ret;
+}
+
+void DisplaySelectedPoint::resizeEvent(QResizeEvent *event){
+    QWidget* widget = static_cast<QWidget*>(parent());
+    int maxWidth = widget->width() - 18;
+    setFixedWidth(maxWidth);
+
+    QWidget::resizeEvent(event);
 }
 

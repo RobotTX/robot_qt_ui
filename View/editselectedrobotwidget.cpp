@@ -135,7 +135,7 @@ EditSelectedRobotWidget::EditSelectedRobotWidget(QWidget* parent, MainWindow* ma
     inWidget->setMaximumWidth(mainWindow->width()*4/10);
     inWidget->setMinimumWidth(mainWindow->width()*4/10);*/
     layout->setAlignment(Qt::AlignTop);
-    //layout->setContentsMargins(0,0,0,0);
+    layout->setContentsMargins(0,0,0,0);
 
 
     scrollArea->setWidget(inWidget);

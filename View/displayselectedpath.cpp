@@ -50,7 +50,7 @@ DisplaySelectedPath::DisplaySelectedPath(QWidget *parent, MainWindow *mainWindow
     connect(this, SIGNAL(displayPath(QString, QString, bool)), mainWindow, SLOT(displayPathSlot(QString, QString, bool)));
 
     layout->setAlignment(Qt::AlignTop);
-    //layout->setContentsMargins(0,0,0,0);
+    layout->setContentsMargins(0,0,0,0);
 }
 
 void DisplaySelectedPath::updatePath(QString groupName, QString pathName, QVector<QSharedPointer<PathPoint>> path){

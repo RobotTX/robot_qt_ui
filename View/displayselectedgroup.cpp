@@ -61,7 +61,7 @@ DisplaySelectedGroup::DisplaySelectedGroup(QWidget* parent, QSharedPointer<Point
 
     /*setMaximumWidth(mainWindow->width()*4/10);
     setMinimumWidth(mainWindow->width()*4/10);*/
-    //layout->setContentsMargins(0,0,0,0);
+    layout->setContentsMargins(0,0,0,0);
 }
 
 void DisplaySelectedGroup::setName(const QString _name){
