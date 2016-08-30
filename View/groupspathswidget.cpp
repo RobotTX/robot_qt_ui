@@ -63,6 +63,11 @@ GroupsPathsWidget::GroupsPathsWidget(QWidget* parent, MainWindow* _mainWindow, c
     /// to make sure the name chosen for a new group is valid
     connect(groupNameEdit, SIGNAL(textEdited(QString)), this, SLOT(checkGroupName(QString)));
 
+    /// to notify the user whether the name he chose is valid or not
+    connect(buttonGroup->getModifyEdit(), SIGNAL(textEdited(QString)), this, SLOT(checkEditGroupName(QString)));
+    connect(this, SIGNAL(codeEditGroup(int)), _mainWindow, SLOT(setMessageModifGroupPaths(int)));
+
+
     /// to save a group of paths if the name is valid
     connect(saveButton, SIGNAL(clicked()), this, SLOT(newGroupPaths()));
 
@@ -226,7 +231,8 @@ void GroupsPathsWidget::cancelCreationGroup(){
     /// the widgets to create a group are no longer necessary so we hide them
     hideCreationWidgets();
 
-    enableActionButtons();
+
+    actionButtons->getPlusButton()->setEnabled(true);
 
     emit messageCreationGroup(TEXT_COLOR_NORMAL, "");
 

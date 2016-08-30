@@ -189,6 +189,7 @@ void BottomLayout::updateRobot(const int id, RobotView * const robotView){
         deletePathBtnGroup->button(id)->setEnabled(false);
         playRobotBtnGroup->button(id)->setEnabled(false);
         viewPathRobotBtnGroup->button(id)->setEnabled(false);
+        stopRobotBtnGroup->button(id)->setEnabled(false);
         vectorPathLabel.at(id)->setText("");
      } else {
         deletePathBtnGroup->button(id)->setEnabled(true);
