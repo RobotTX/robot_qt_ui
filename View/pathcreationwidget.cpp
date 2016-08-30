@@ -225,6 +225,15 @@ void PathCreationWidget::pointClicked(QAction *action){
 }
 
 void PathCreationWidget::addPathPointSlot(QString name, double x, double y){
+    if(pathPointsList->count() > 0){
+        PathPointCreationWidget* pathPoint = static_cast<PathPointCreationWidget*> (pathPointsList->itemWidget(pathPointsList->item(pathPointsList->count()-1)));
+        Point helperPoint = Point(name, x, y);
+        if(helperPoint.comparePos(pathPoint->getPosX(), pathPoint->getPosY())){
+            qDebug() << "same point";
+            return;
+        }
+    }
+
     PathPointCreationWidget* pathPoint = new PathPointCreationWidget(pathPointsList->count(), name, x, y, this);
     connect(pathPoint, SIGNAL(saveEditSignal(PathPointCreationWidget*)), this, SLOT(saveEditSlot(PathPointCreationWidget*)));
     connect(pathPoint, SIGNAL(cancelEditSignal(PathPointCreationWidget*)), this, SLOT(cancelEditSlot(PathPointCreationWidget*)));
@@ -244,6 +253,8 @@ void PathCreationWidget::addPathPointSlot(QString name, double x, double y){
 
     emit addPathPoint(name, x, y);
     state = NO_STATE;
+
+
 }
 
 void PathCreationWidget::deletePathPointSlot(void){

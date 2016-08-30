@@ -48,9 +48,11 @@ public:
     QString getCurrentGroupName(void) const { return currentGroupName; }
     CustomPushButton* getCancelButton(void) const { return cancelBtn; }
     QLineEdit* getNameEdit(void) const { return nameEdit; }
+    CustomPushButton* getSaveButton(void) const { return saveBtn; }
 
 protected:
     void showEvent(QShowEvent* event);
+    void keyPressEvent(QKeyEvent* event);
 
 signals:
     /// emitted when the waiting times of points have not been set properly so that a message is displayed to the user

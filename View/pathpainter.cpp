@@ -48,33 +48,36 @@ void PathPainter::displayPath(void){
 void PathPainter::addPathPointSlot(QString name, double x, double y){
     qDebug() << "PathPainter::addPathPointSlot called" << name << x << y;
 
-    int nb = nbUsedPointView(name, x, y);
-    QSharedPointer<PointView> pointView = points->findPathPointView(x, y);
+    if(currentPath.size() == 0 || (currentPath.size() > 0 && !currentPath.last()->getPoint().comparePos(x, y))){
 
-    /// If found, it's a permanent point which is already in the path
-    if(nb > 0 && pointView){
-        points->addPoint(PATH_GROUP_NAME, pointView);
-    } else {
-        if(!points->isAPoint(name, x, y))
-            name = PATH_POINT_NAME + QString::number(currentPath.size()+1);
+        int nb = nbUsedPointView(name, x, y);
+        QSharedPointer<PointView> pointView = points->findPathPointView(x, y);
 
-        Point::PointType type = Point::PointType::PATH;
-        qDebug() << "PathPainter::addPathPointSlot" << (mainWindow->getSelectedRobot() == NULL);
-        if((mainWindow->getSelectedRobot() && mainWindow->getSelectedRobot()->getRobot()->getHome() && mainWindow->getSelectedRobot()->getRobot()->getHome()->getPoint()->getName().compare(name) == 0)
-                || (mainWindow->getSelectedRobot() == NULL && points->isAHome(name, x, y)))
-            type= Point::PointType::HOME;
-        /*if(points->isAHome(name, x, y))
-            type= Point::PointType::HOME;*/
-        points->addPoint(PATH_GROUP_NAME, name, x, y, true, type, mapView, mainWindow);
+        /// If found, it's a permanent point which is already in the path
+        if(nb > 0 && pointView){
+            points->addPoint(PATH_GROUP_NAME, pointView);
+        } else {
+            if(!points->isAPoint(name, x, y))
+                name = PATH_POINT_NAME + QString::number(currentPath.size()+1);
+
+            Point::PointType type = Point::PointType::PATH;
+            qDebug() << "PathPainter::addPathPointSlot" << (mainWindow->getSelectedRobot() == NULL);
+            if((mainWindow->getSelectedRobot() && mainWindow->getSelectedRobot()->getRobot()->getHome() && mainWindow->getSelectedRobot()->getRobot()->getHome()->getPoint()->getName().compare(name) == 0)
+                    || (mainWindow->getSelectedRobot() == NULL && points->isAHome(name, x, y)))
+                type= Point::PointType::HOME;
+            /*if(points->isAHome(name, x, y))
+                type= Point::PointType::HOME;*/
+            points->addPoint(PATH_GROUP_NAME, name, x, y, true, type, mapView, mainWindow);
+        }
+
+        points->getGroups()->value(PATH_GROUP_NAME)->last()->setState(mapView->getState());
+        Point point = *(points->getGroups()->value(PATH_GROUP_NAME)->last()->getPoint());
+
+        currentPath.push_back(QSharedPointer<PathPoint>(new PathPoint(point, PathPoint::Action::WAIT)));
+
+        /// Update the path painter
+        updatePathPainterSlot();
     }
-
-    points->getGroups()->value(PATH_GROUP_NAME)->last()->setState(mapView->getState());
-    Point point = *(points->getGroups()->value(PATH_GROUP_NAME)->last()->getPoint());
-
-    currentPath.push_back(QSharedPointer<PathPoint>(new PathPoint(point, PathPoint::Action::WAIT)));
-
-    /// Update the path painter
-    updatePathPainterSlot();
 }
 
 void PathPainter::orderPathPointChangedSlot(int from, int to){

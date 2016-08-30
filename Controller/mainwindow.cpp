@@ -258,7 +258,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
     /// to add a path point when we click on a pointView (which is relayed by the mainWindow)
     connect(this, SIGNAL(addPathPoint(QString, double, double)), robotPathCreationWidget, SLOT(addPathPointSlot(QString, double, double)));
-    connect(this, SIGNAL(addNoRobotPathPoint(QString,double,double)), noRobotPathCreationWidget, SLOT(addPathPointSlot(QString,double,double)));
+    connect(this, SIGNAL(addNoRobotPathPoint(QString, double, double)), noRobotPathCreationWidget, SLOT(addPathPointSlot(QString,double,double)));
     connect(this, SIGNAL(updatePathPainter()), robotPathPainter, SLOT(updatePathPainterSlot()));
 
     connect(robotPathCreationWidget, SIGNAL(editTmpPathPoint(int, QString, double, double)), this, SLOT(editTmpPathPointSlot(int, QString, double, double)));
@@ -288,7 +288,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     connect(robotPathCreationWidget->getCancelButton(), SIGNAL(clicked()), this, SLOT(cancelPathSlot()));
     connect(noRobotPathCreationWidget->getCancelButton(), SIGNAL(clicked()), this, SLOT(cancelNoRobotPathSlot()));
 
-    //connect(leftMenu->getNoRobotPathCreationWidget(), SIGNAL(codeEditPath(int)), this, SLOT(setMessageNoRobotPath(int)));
+    connect(leftMenu->getNoRobotPathCreationWidget(), SIGNAL(codeEditPath(int)), this, SLOT(setMessageNoRobotPath(int)));
 
     mainLayout->addLayout(bottom);
 
@@ -541,7 +541,6 @@ void MainWindow::deletePath(int robotNb){
                             bool success = (answerList.at(1).compare("done") == 0);
                             if((cmd.compare("k") == 0 && success) || answerList.at(0).compare("1") == 0){
                                 clearPath(robotNb);
-                                hideAllWidgets();
                                 bottomLayout->getViewPathRobotBtnGroup()->button(robotNb)->setChecked(false);
                                 bottomLayout->getViewPathRobotBtnGroup()->button(robotNb)->click();
                                 topLayout->setLabel(TEXT_COLOR_SUCCESS, "Path deleted");
@@ -1596,9 +1595,14 @@ void MainWindow::robotIsDeadSlot(QString hostname,QString ip){
 void MainWindow::setMessageCreationPath(QString message){
     setMessageTop(TEXT_COLOR_DANGER, message);
     delay(2500);
-    setMessageTop(TEXT_COLOR_INFO, "Click white points of the map to add new points to the path of " +
+    if(selectedRobot)
+        setMessageTop(TEXT_COLOR_INFO, "Click white points of the map to add new points to the path of " +
                   selectedRobot->getRobot()->getName() + "\nAlternatively you can click the \"+\" button to add an existing point to your path"
                   "\nYou can re-order the points in the list by dragging them");
+    else
+        setMessageTop(TEXT_COLOR_INFO, "Click white points of the map to add new points to your path\n"
+                                       "Alternatively you can click the \"+\" button to add an existing point to your path"
+                                       "\nYou can re-order the points in the list by dragging them");
 }
 
 void MainWindow::updateEditedPathPoint(double x, double y){
@@ -3906,6 +3910,10 @@ void MainWindow::displayPath(){
 
 void MainWindow::createPath(){
     qDebug() << "MainWindow::createPath called";
+    /// to prevent a path to be saved with an empty name
+    leftMenu->getNoRobotPathCreationWidget()->getNameEdit()->setText("");
+    leftMenu->getNoRobotPathCreationWidget()->getSaveButton()->setEnabled(false);
+
     switchFocus("newPath", noRobotPathCreationWidget, MainWindow::WidgetType::PATH);
     emit resetPath();
     setMessageTop(TEXT_COLOR_INFO, "The name of your path cannot be empty, fill up the corresponding field to give your path a name");
@@ -3997,12 +4005,15 @@ void MainWindow::setMessageNoRobotPath(const int code){
     switch(code){
     case 0:
         setMessageTop(TEXT_COLOR_INFO, "You cannot save your path because its name is still empty");
+        leftMenu->getNoRobotPathCreationWidget()->getSaveButton()->setEnabled(false);
     break;
     case 1:
         setMessageTop(TEXT_COLOR_INFO, "You cannot save your path because the name you chose is already taken by another path in the same group");
+        leftMenu->getNoRobotPathCreationWidget()->getSaveButton()->setEnabled(false);
     break;
     case 2:
         setMessageTop(TEXT_COLOR_INFO, "You can save your path any time you want by clicking the \"Save\" button");
+        leftMenu->getNoRobotPathCreationWidget()->getSaveButton()->setEnabled(true);
     break;
     default:
         qDebug() << "MainWindow::setMessageNoRobotPath you should not be here you probably forgot to implement the behavior for the error code" << code;
@@ -4027,9 +4038,11 @@ void MainWindow::cancelEditNoRobotPathPointSlot(){
 void MainWindow::cancelNoRobotPathSlot(){
     qDebug() << "MainWindow::cancelNoRobotPathSlot called";
 
+
+    leftMenu->getPathGroupDisplayed()->setPathsGroup(noRobotPathCreationWidget->getCurrentGroupName());
+
     QVector<QSharedPointer<PathPoint>> oldPath = noRobotPathPainter->getOldPath();
     /// we hide the points that we displayed just for the edition of the path
-
     for(int i = 0; i < pointViewsToDisplay.size(); i++)
         pointViewsToDisplay.at(i)->hide();
     pointViewsToDisplay.clear();
@@ -4044,6 +4057,8 @@ void MainWindow::cancelNoRobotPathSlot(){
     backEvent();
     noRobotPathPainter->setOldPath(oldPath);
     setEnableAll(false, GraphicItemState::NO_EVENT);
+    leftMenu->setEnableReturnCloseButtons(true);
+    topLayout->setEnable(true);
 }
 
 void MainWindow::saveNoRobotPathSlot(){
