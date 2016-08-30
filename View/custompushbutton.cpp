@@ -122,7 +122,7 @@ void CustomPushButton::resizeEvent(QResizeEvent *event){
 }
 
 void CustomPushButton::enterEvent(QEvent *event){
-    qDebug() << "CustomPushButton::enterEvent" << text() << size();
+    //qDebug() << "CustomPushButton::enterEvent" << text() << size();
     if(!isChecked())
         label->setStyleSheet(
                     "QLabel {"

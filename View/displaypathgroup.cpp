@@ -53,6 +53,8 @@ DisplayPathGroup::DisplayPathGroup(QWidget* _parent, MainWindow* _mainWindow, co
 void DisplayPathGroup::showEvent(QShowEvent *event){
     initializeActionButtons();
     updateDisplayedPath();
+    /// for some reason the buttongroup sometimes becomes uncheckable after some operations, this just makes sure it does not happen
+    setEnabled(true);
     QWidget::showEvent(event);
 }
 
