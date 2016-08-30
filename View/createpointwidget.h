@@ -46,6 +46,7 @@ private:
 protected:
     void keyPressEvent(QKeyEvent* event);
     void showEvent(QShowEvent* event);
+    void resizeEvent(QResizeEvent *event);
 
 signals:
     /// emitted when the 'save' button is clicked

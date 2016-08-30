@@ -17,36 +17,35 @@
 
 CreatePointWidget::CreatePointWidget(QWidget *parent, MainWindow *mainWindow, QSharedPointer<Points> _points): QWidget(parent), points(_points){
 
-    /// to explain the user what to do with his temporary point
-    messageCreationLabel = new QLabel("Click \"+\" to save", this);
-    messageCreationLabel->setWordWrap(true);
 
     layout = new QVBoxLayout(this);
 
     actionButtons = new TopLeftMenu(this);
     actionButtons->disableAll();
-
     layout->addWidget(actionButtons);
-    QVBoxLayout*  downLayout = new QVBoxLayout();
 
-    downLayout->addWidget(messageCreationLabel);
+    /// to explain the user what to do with his temporary point
+    messageCreationLabel = new QLabel("Click \"+\" to save", this);
+    messageCreationLabel->setWordWrap(true);
+    layout->addWidget(messageCreationLabel);
 
     nameEdit = new QLineEdit(this);
     nameEdit->setReadOnly(true);
     nameEdit->setAutoFillBackground(true);
     nameEdit->setFrame(false);
     nameEdit->setAlignment(Qt::AlignCenter);
-    downLayout->addWidget(nameEdit);
+    layout->addWidget(nameEdit);
     nameEdit->setStyleSheet("QLineEdit { background-color: rgba(255, 0, 0, 0); font-weight: bold; text-decoration:underline}");
     nameEdit->hide();
 
     posXLabel = new QLabel("X : ", this);
-    downLayout->addWidget(posXLabel);
+    layout->addWidget(posXLabel);
 
     posYLabel = new QLabel("Y : ", this);
-    downLayout->addWidget(posYLabel);
+    layout->addWidget(posYLabel);
 
-    ///                                  ADD GROUP LABEL AND QComboBox
+
+    /// Add QLabel and QComboBox
 
     groupLayout = new QHBoxLayout();
 
@@ -70,7 +69,8 @@ CreatePointWidget::CreatePointWidget(QWidget *parent, MainWindow *mainWindow, QS
     groupLayout->addWidget(groupLabel);
     groupLayout->addWidget(groupBox);
 
-    ///                                   ADD CANCEL AND SAVE BUTTONS
+
+    /// Add Cancel and Save buttons
 
     cancelSaveLayout = new QHBoxLayout();
 
@@ -81,11 +81,10 @@ CreatePointWidget::CreatePointWidget(QWidget *parent, MainWindow *mainWindow, QS
     saveBtn->hide();
     cancelBtn->hide();
 
-    downLayout->addLayout(groupLayout);
-    downLayout->addLayout(cancelSaveLayout);
+    layout->addLayout(groupLayout);
+    layout->addLayout(cancelSaveLayout);
 
 
-    ///                                  CONNECTIONS
 
     /// when the plus button is clicked we display the groupBox
     connect(actionButtons->getPlusButton(), SIGNAL(clicked(bool)), this, SLOT(showGroupLayout()));
@@ -93,7 +92,6 @@ CreatePointWidget::CreatePointWidget(QWidget *parent, MainWindow *mainWindow, QS
     connect(saveBtn, SIGNAL(clicked()), this, SLOT(saveEditSelecPointBtnEvent()));
     connect(nameEdit, SIGNAL(textEdited(QString)), this, SLOT(checkPointName()));
 
-    qDebug() << groupBox->currentIndex();
     connect(cancelBtn, SIGNAL(clicked(bool)), this, SLOT(hideGroupLayout(bool)));
 
     /// to display appropriate messages when a user attemps to create a point
@@ -104,13 +102,12 @@ CreatePointWidget::CreatePointWidget(QWidget *parent, MainWindow *mainWindow, QS
     connect(this, SIGNAL(resetMessageTop(QString, QString)), mainWindow, SLOT(setMessageTop(QString, QString)));
 
     hide();
+
+    layout->setSizeConstraint(QLayout::SetFixedSize);
     /*setMaximumWidth(mainWindow->width()*4/10);
     setMinimumWidth(mainWindow->width()*4/10);*/
-    layout->addLayout(downLayout);
-
     layout->setAlignment(Qt::AlignTop);
-    /*layout->setContentsMargins(0,0,0,0);
-    downLayout->setContentsMargins(20,0,10,0);*/
+    //layout->setContentsMargins(0,0,0,0);
 
 }
 
@@ -201,7 +198,6 @@ void CreatePointWidget::showGroupLayout(void) {
     messageCreationLabel->hide();
     setFocus();
     nameEdit->setPlaceholderText("type your name");
-    nameEdit->setAutoFillBackground(true);
     nameEdit->setFrame(true);
 
     nameEdit->setFocusPolicy(Qt::FocusPolicy::StrongFocus);
@@ -222,7 +218,6 @@ void CreatePointWidget::hideGroupLayout(const bool pointAdded) {
     actionButtons->getPlusButton()->setEnabled(true);
     actionButtons->getPlusButton()->setToolTip("Click this button if you want to save this point permanently");
     nameEdit->setReadOnly(true);
-    nameEdit->setAutoFillBackground(true);
     nameEdit->setFrame(false);
     nameEdit->setFocusPolicy(Qt::FocusPolicy::NoFocus);
     nameEdit->hide();
@@ -294,4 +289,12 @@ void CreatePointWidget::showEvent(QShowEvent* event){
     cancelBtn->hide();
     saveBtn->hide();
     show();
+}
+
+void CreatePointWidget::resizeEvent(QResizeEvent *event){
+    QWidget* widget = static_cast<QWidget*>(parent());
+    int maxWidth = widget->width()-31;
+    messageCreationLabel->setFixedWidth(maxWidth);
+
+    QWidget::resizeEvent(event);
 }

@@ -31,8 +31,6 @@ void CustomPushButton::initialize(const bool checkable, const bool enable, const
     QString style = "";
     if(text().compare(""))
         style = "padding: 5px 10px 5px 10px; text-align:" + align + ";";
-    //else
-        style += "background-position: center center;";
 
 
 
@@ -40,6 +38,7 @@ void CustomPushButton::initialize(const bool checkable, const bool enable, const
                       "color: " + text_color + ";"
                       "border: 1px;"
                       + style +
+                      "background-position: center center;"
                   "}"
                   "QPushButton:hover {"
                       "background-color: " + button_hover_color + ";"

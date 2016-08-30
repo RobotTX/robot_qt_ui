@@ -24,11 +24,6 @@ RobotBtnGroup::RobotBtnGroup(const QVector<RobotView*>& vector, QWidget* parent)
 void RobotBtnGroup::resizeEvent(QResizeEvent *event){
     QWidget* widget = static_cast<QWidget*>(parent());
     int maxWidth = widget->width()-widget->contentsMargins().right()-widget->contentsMargins().left();
-
-    /*qDebug() << "RobotBtnGroup::resizeEvent" << width() << static_cast<QWidget*>(parent())->width()
-                 << static_cast<QWidget*>(parent()->parent())->width()
-                     << static_cast<QWidget*>(parent()->parent()->parent())->width()
-                     << maxWidth;*/
     setMaximumWidth(maxWidth);
     QWidget::resizeEvent(event);
 }
