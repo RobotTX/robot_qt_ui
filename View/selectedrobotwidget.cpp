@@ -34,8 +34,7 @@ SelectedRobotWidget::SelectedRobotWidget(QWidget* parent, MainWindow* mainWindow
     inWidget->setLayout(inLayout);
 
     name = new CustomLabel();
-    name->setAlignment(Qt::AlignCenter);
-    name->setStyleSheet("font-weight: bold; text-decoration:underline");
+    name->setStyleSheet("QLabel { font-weight: bold; text-decoration: underline; text-align: left; }");
     inLayout->addWidget(name);
 
     /// Button which allow the user to scan the map from a robot
@@ -69,7 +68,7 @@ SelectedRobotWidget::SelectedRobotWidget(QWidget* parent, MainWindow* mainWindow
 
     /// Home layout with the button to select/show the home
     QLabel* homeLabel = new QLabel("Home : ", this);
-     homeLabel2 = new QLabel("no home set");
+    homeLabel2 = new QLabel("no home set");
     homeLabel2->setAlignment(Qt::AlignCenter);
     inLayout->addWidget(homeLabel);
     inLayout->addWidget(homeLabel2);
