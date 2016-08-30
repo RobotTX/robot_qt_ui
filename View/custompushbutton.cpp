@@ -15,9 +15,6 @@ CustomPushButton::CustomPushButton(const QString &text, QWidget *parent, const B
 }
 
 void CustomPushButton::initialize(const bool &checkable, const bool &enable, const QString &align){
-    setCheckable(checkable);
-    setEnabled(enable);
-    setFlat(true);
 
     label = new QLabel("...", this);
     label->setAttribute(Qt::WA_TranslucentBackground, false);
@@ -25,6 +22,9 @@ void CustomPushButton::initialize(const bool &checkable, const bool &enable, con
                 "QLabel {"
                     "color: " + text_color + ";"
                     "background-color: " + left_menu_background_color + ";"
+                "}"
+                "QLabel:disabled {"
+                    "color: grey;"
                 "}");
     label->hide();
 
@@ -78,6 +78,10 @@ void CustomPushButton::initialize(const bool &checkable, const bool &enable, con
         break;
     }
 
+    setCheckable(checkable);
+    setEnabled(enable);
+    setFlat(true);
+
     moveLabel();
 }
 
@@ -104,9 +108,19 @@ void CustomPushButton::toggledSlot(bool checked){
                 "QLabel {"
                     "color: " + text_color + ";"
                     "background-color: " + tmpColor + ";"
+                "}"
+                "QLabel:disabled {"
+                    "color: grey;"
                 "}");
 
     setChecked(checked);
+}
+
+void CustomPushButton::setEnabled(bool checked){
+    qDebug() << "CustomPushButton::setEnabled" << text() << checked;
+    label->setEnabled(checked);
+
+    QPushButton::setEnabled(checked);
 }
 
 void CustomPushButton::resizeEvent(QResizeEvent *event){
@@ -125,7 +139,7 @@ void CustomPushButton::resizeEvent(QResizeEvent *event){
 
 void CustomPushButton::enterEvent(QEvent *event){
     //qDebug() << "CustomPushButton::enterEvent" << text() << size();
-    if(!isChecked())
+    if(!isChecked() && isEnabled())
         label->setStyleSheet(
                     "QLabel {"
                         "color: " + text_color + ";"
@@ -135,7 +149,7 @@ void CustomPushButton::enterEvent(QEvent *event){
 }
 
 void CustomPushButton::leaveEvent(QEvent *event){
-    if(!isChecked())
+    if(!isChecked() && isEnabled())
         label->setStyleSheet(
                     "QLabel {"
                         "color: " + text_color + ";"

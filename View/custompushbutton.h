@@ -19,6 +19,7 @@ public:
     void addStyleSheet(const QString style);
     void setText(const QString &text);
     void moveLabel();
+    void setEnabled(bool checked);
 
 private slots:
     void toggledSlot(bool checked);
