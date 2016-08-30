@@ -61,12 +61,12 @@ PathCreationWidget::PathCreationWidget(QWidget* parent, const QSharedPointer<Poi
 
     /// Clean, cancel & save buttons
     QGridLayout* grid = new QGridLayout();
-    cleanBtn = new CustomPushButton("Clean", this);
+    cleanBtn = new CustomPushButton("Clean", this, CustomPushButton::ButtonType::LEFT_MENU, "center");
     grid->addWidget(cleanBtn, 0, 0);
 
-    cancelBtn = new CustomPushButton("Cancel", this);
+    cancelBtn = new CustomPushButton("Cancel", this, CustomPushButton::ButtonType::LEFT_MENU, "center");
 
-    saveBtn = new CustomPushButton("Save", this);
+    saveBtn = new CustomPushButton("Save", this, CustomPushButton::ButtonType::LEFT_MENU, "center");
 
     grid->addWidget(cancelBtn, 1, 0);
     grid->addWidget(saveBtn, 1, 1);
@@ -88,7 +88,7 @@ PathCreationWidget::PathCreationWidget(QWidget* parent, const QSharedPointer<Poi
 
     hide();
     layout->setAlignment(Qt::AlignTop);
-    //layout->setContentsMargins(0, 0, 0, 0);
+    layout->setContentsMargins(0, 0, 0, 0);
 }
 
 void PathCreationWidget::updatePath(const QVector<QSharedPointer<PathPoint>>& _path){

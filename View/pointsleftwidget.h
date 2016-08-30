@@ -61,6 +61,7 @@ public:
 protected:
     void keyPressEvent(QKeyEvent* event);
     void showEvent(QShowEvent *event);
+    void resizeEvent(QResizeEvent *event);
 
 public slots:
      int checkGroupName(QString name);

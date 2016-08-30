@@ -291,14 +291,13 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     //connect(leftMenu->getNoRobotPathCreationWidget(), SIGNAL(codeEditPath(int)), this, SLOT(setMessageNoRobotPath(int)));
 
     mainLayout->addLayout(bottom);
-    //graphicsView->setStyleSheet("CustomQGraphicsView {background-color: " + background_map_view + "}");
+
     setCentralWidget(mainWidget);
 
     /// to navigate with the tab key
     setTabOrder(leftMenu->getReturnButton(), pointsLeftWidget->getActionButtons()->getPlusButton());
 
     /// Centers the map and initialize the map state
-
     centerMap();
 
     /// Some style
@@ -2077,11 +2076,10 @@ void MainWindow::editPointButtonEvent(){
 void MainWindow::editGroupBtnEvent(){
 
     if(pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->checkedButton()){
-        qDebug() << "editGroupBtnEvent called" << pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->checkedButton()->text();
+        qDebug() << "MainWindow::editGroupBtnEvent called" << pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->checkedButton()->text();
         topLayout->setEnabled(false);
         setEnableAll(false);
         int btnIndex = pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->checkedId();
-        qDebug() << "btnIndex" << btnIndex;
         pointsLeftWidget->setLastCheckedId(static_cast<CustomPushButton*>(pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->checkedButton())->text());
 
         pointsLeftWidget->setCreatingGroup(false);
@@ -2114,11 +2112,11 @@ void MainWindow::editGroupBtnEvent(){
                     if(rv != NULL)
                         robotName = rv->getRobot()->getName();
                     else
-                        qDebug() << "editGroupBtnEvent : something unexpected happened";
+                        qDebug() << "MainWindow::editGroupBtnEvent : something unexpected happened";
                 }
                 leftMenu->getDisplaySelectedPoint()->setPointView(pointView, robotName);
             } else {
-                qDebug() << "There is no point view associated with those indexes";
+                qDebug() << "MainWindow::editGroupBtnEvent There is no point view associated with those indexes";
             }
 
             /// displays the information relative the the point
@@ -2130,7 +2128,7 @@ void MainWindow::editGroupBtnEvent(){
             leftMenu->getDisplaySelectedPoint()->show();
             switchFocus("point", leftMenu->getDisplaySelectedPoint(), MainWindow::WidgetType::POINT);
         } else if(checkedId.compare("") != 0 && points->isAGroup(checkedId)){
-            qDebug() << "gotta update a group";
+            /// update a group
             leftMenu->getReturnButton()->setEnabled(false);
             leftMenu->getCloseButton()->setEnabled(false);
             topLayout->setEnable(false);
@@ -3529,7 +3527,7 @@ void MainWindow::modifyGroupWithEnter(QString name){
         int checkedId = pointsLeftWidget->getGroupButtonGroup()->getButtonIdByName(pointsLeftWidget->getGroupButtonGroup()->getEditedGroupName());
 
         pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(checkedId)->show();
-        pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(checkedId)->setText(name);
+        static_cast<CustomPushButton*>(pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(checkedId))->setText(name);
         pointsLeftWidget->getGroupButtonGroup()->getModifyEdit()->hide();
 
         pointsLeftWidget->setLastCheckedId("");
@@ -3546,8 +3544,7 @@ void MainWindow::modifyGroupAfterClick(QString name){
     qDebug() << "modifyGroupAfterClick called from" << pointsLeftWidget->getLastCheckedId() << "to" << name;
     topLayout->setEnabled(true);
 
-    if (pointsLeftWidget->getLastCheckedId() != "")
-     {
+    if (pointsLeftWidget->getLastCheckedId() != ""){
         /// resets the menu
         pointsLeftWidget->getActionButtons()->getPlusButton()->setEnabled(true);
         pointsLeftWidget->getGroupButtonGroup()->setEnabled(true);

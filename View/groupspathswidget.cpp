@@ -79,6 +79,7 @@ GroupsPathsWidget::GroupsPathsWidget(QWidget* parent, MainWindow* _mainWindow, c
         connect(button, SIGNAL(doubleClick(QString)), mainWindow, SLOT(doubleClickOnPathsGroup(QString)));
 
     hide();
+    layout->setContentsMargins(0, 0, 0, 0);
 }
 
 void GroupsPathsWidget::enableButtons(QAbstractButton* button){

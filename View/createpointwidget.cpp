@@ -104,10 +104,8 @@ CreatePointWidget::CreatePointWidget(QWidget *parent, MainWindow *mainWindow, QS
     hide();
 
     layout->setSizeConstraint(QLayout::SetFixedSize);
-    /*setMaximumWidth(mainWindow->width()*4/10);
-    setMinimumWidth(mainWindow->width()*4/10);*/
     layout->setAlignment(Qt::AlignTop);
-    //layout->setContentsMargins(0,0,0,0);
+    layout->setContentsMargins(0,0,0,0);
 
 }
 
@@ -293,7 +291,7 @@ void CreatePointWidget::showEvent(QShowEvent* event){
 
 void CreatePointWidget::resizeEvent(QResizeEvent *event){
     QWidget* widget = static_cast<QWidget*>(parent());
-    int maxWidth = widget->width()-31;
+    int maxWidth = widget->width()-18;
     messageCreationLabel->setFixedWidth(maxWidth);
 
     QWidget::resizeEvent(event);

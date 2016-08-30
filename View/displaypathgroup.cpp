@@ -41,7 +41,7 @@ DisplayPathGroup::DisplayPathGroup(QWidget* _parent, MainWindow* _mainWindow, co
 
     /*setMaximumWidth(_parent->width()*4/10);
     setMinimumWidth(_parent->width()*4/10);*/
-    //layout->setContentsMargins(0,0,0,0);
+    layout->setContentsMargins(0,0,0,0);
 
     /// to handle double clicks
     foreach(QAbstractButton *button, pathButtonGroup->getButtonGroup()->buttons())
