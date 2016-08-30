@@ -391,3 +391,6 @@ void PathCreationWidget::checkPathName(const QString name){
     }
 }
 
+void PathCreationWidget::keyPressEvent(QKeyEvent *event){
+    Q_UNUSED(event)
+}
