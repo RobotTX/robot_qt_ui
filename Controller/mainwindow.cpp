@@ -4087,6 +4087,22 @@ void MainWindow::saveNoRobotPathSlot(){
     //emit updatePathPainter();
 }
 
+void MainWindow::setMessageModifGroupPaths(int code){
+    switch(code){
+    case 0:
+        setMessageTop(TEXT_COLOR_INFO, "Press enter to save this name for your group");
+        break;
+    case 1:
+        setMessageTop(TEXT_COLOR_INFO, "You cannot have an empty name for your group");
+        break;
+    case 2:
+        setMessageTop(TEXT_COLOR_INFO, "You cannot save this name for your group as it is already the name of another group");
+        break;
+    default:
+        qDebug() << "MainWindow::setMessageModifGroupPaths You should not be here you probably forgot to implement the behavior for the code" << code;
+    }
+}
+
 /**********************************************************************************************************************************/
 
 //                                          ODDS AND ENDS
@@ -4228,30 +4244,6 @@ void MainWindow::centerMap(){
 
 void MainWindow::settingBtnSlot(){
     qDebug() << "MainWindow::settingBtnSlot called";
-    DisplaySelectedPath* displaySelectedPath = leftMenu->getDisplaySelectedPath();
-    if(displaySelectedPath->isVisible()){
-        ///hide
-        hideAllWidgets();
-        resetFocus();
-        leftMenu->hide();
-    } else {
-        /// show
-        hideAllWidgets();
-        QString pathName = "Path moi le sel";
-        switchFocus(pathName, displaySelectedPath, WidgetType::PATH);
-        displaySelectedPath->show();
-        leftMenu->show();
-
-        QVector<QSharedPointer<PathPoint>> path;
-        if(points->getGroups()->value("first group")->size() > 2){
-            for(int i = 0; i < points->getGroups()->value("first group")->size(); i++){
-                QSharedPointer<PathPoint> pathPoint = QSharedPointer<PathPoint>(new PathPoint(*(points->getGroups()->value("first group")->at(i)->getPoint()), PathPoint::Action::WAIT, 0));
-                path.push_back(pathPoint);
-            }
-        }
-        displaySelectedPath->updatePath("Group1", pathName, path);
-
-    }
 }
 
 void MainWindow::setTemporaryMessageTop(const QString type, const QString message, const int ms){

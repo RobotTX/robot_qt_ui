@@ -240,6 +240,7 @@ private slots:
     void cancelEditNoRobotPathPointSlot();
     void cancelNoRobotPathSlot();
     void saveNoRobotPathSlot();
+    void setMessageModifGroupPaths(int code);
 
 private:
     Ui::MainWindow* ui;
