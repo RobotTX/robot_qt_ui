@@ -30,8 +30,8 @@ void CustomPushButton::initialize(const bool checkable, const bool enable, const
     QString style = "";
     if(text().compare(""))
         style = "padding: 5px 10px 5px 10px; text-align:" + align + ";";
-    else
-        style = "background-position: center center;";
+    //else
+        style += "background-position: center center;";
 
 
 
@@ -94,7 +94,6 @@ void CustomPushButton::setText(const QString &str){
 }
 
 void CustomPushButton::toggledSlot(bool checked){
-    //qDebug() << "CustomPushButton::toggledSlot" << text() << checked;
     QString tmpColor = left_menu_background_color;
     if(checked)
         tmpColor = button_checked_color;
@@ -123,7 +122,7 @@ void CustomPushButton::resizeEvent(QResizeEvent *event){
 }
 
 void CustomPushButton::enterEvent(QEvent *event){
-    //qDebug() << "CustomPushButton::enterEvent" << text() << size();
+    qDebug() << "CustomPushButton::enterEvent" << text() << size();
     if(!isChecked())
         label->setStyleSheet(
                     "QLabel {"
