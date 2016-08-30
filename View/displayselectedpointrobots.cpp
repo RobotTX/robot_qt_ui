@@ -112,7 +112,6 @@ void DisplaySelectedPointRobots::removeAllPathButtons(){
     while (i.hasNext())
         pathBtnGroup->removeButton(i.next());
 
-
     QLayoutItem *child;
     while ((child = pathBtnLayout->takeAt(0)) != 0) {
         delete child->widget();
