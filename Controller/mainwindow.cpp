@@ -139,6 +139,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     tmpPaths->addPathPoint("monday", "room1", QSharedPointer<PathPoint>(new PathPoint(point2, PathPoint::Action::HUMAN_ACTION, 2)));
     tmpPaths->addPathPoint("tuesday", "room2", QSharedPointer<PathPoint>(new PathPoint(point, PathPoint::Action::HUMAN_ACTION, 2)));
     tmpPaths->addPathPoint("tuesday", "room2", QSharedPointer<PathPoint>(new PathPoint(point3, PathPoint::Action::HUMAN_ACTION, 2)));
+    /*
     tmpPaths->addPathPoint("tuesday", "room3", QSharedPointer<PathPoint>(new PathPoint(point3, PathPoint::Action::HUMAN_ACTION, 2)));
     tmpPaths->addPathPoint("tuesday", "room3", QSharedPointer<PathPoint>(new PathPoint(point5, PathPoint::Action::HUMAN_ACTION, 2)));
     tmpPaths->addPathPoint("tuesday", "room3", QSharedPointer<PathPoint>(new PathPoint(point6, PathPoint::Action::HUMAN_ACTION, 2)));
@@ -159,7 +160,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     tmpPaths->addPathPoint("tuesday", "room3", QSharedPointer<PathPoint>(new PathPoint(point21, PathPoint::Action::HUMAN_ACTION, 2)));
     tmpPaths->addPathPoint("tuesday", "room3", QSharedPointer<PathPoint>(new PathPoint(point22, PathPoint::Action::HUMAN_ACTION, 2)));
     tmpPaths->addPathPoint("tuesday", "room3", QSharedPointer<PathPoint>(new PathPoint(point23, PathPoint::Action::HUMAN_ACTION, 2)));
-
+*/
 
     QFile pathFile(PATHS_PATH);
     pathFile.resize(0);
@@ -168,22 +169,21 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     out << *tmpPaths;
     pathFile.close();
 
-
     /*****************************************************/
 
     initializePaths();
 
     initializePoints();
 
-    pathPainter = new PathPainter(this, mapPixmapItem, points);
+    robotPathPainter = new PathPainter(this, mapPixmapItem, points);
+
+    noRobotPathPainter = new PathPainter(this, mapPixmapItem, points);
 
     initializeRobots();
 
     scene->setSceneRect(0, 0, 800, 600);
 
     scene->addItem(mapPixmapItem);
-
-
 
     graphicsView->scale(std::max(graphicsView->parentWidget()->width()/scene->width(), graphicsView->parentWidget()->height()/scene->height()),
                         std::max(graphicsView->parentWidget()->width()/scene->width(), graphicsView->parentWidget()->height()/scene->height()));
@@ -193,7 +193,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     graphicsView->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     graphicsView->setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding));
 
-    leftMenu = new LeftMenu(this, points, paths, robots, points, map, pathPainter);
+    leftMenu = new LeftMenu(this, points, paths, robots, points, map, robotPathPainter, noRobotPathPainter);
 
     resetFocus();
     initializeLeftMenu();
@@ -252,27 +252,29 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
     /// to add a path point when we click on the map
     connect(mapPixmapItem, SIGNAL(addPathPoint(QString, double, double)), robotPathCreationWidget, SLOT(addPathPointSlot(QString, double, double)));
-    connect(mapPixmapItem, SIGNAL(addPathPoint(QString,double,double)), noRobotPathCreationWidget, SLOT(addPathPointSlot(QString,double,double)));
+    connect(mapPixmapItem, SIGNAL(addNoRobotPathPoint(QString,double,double)), noRobotPathCreationWidget, SLOT(addPathPointSlot(QString,double,double)));
 
     /// to add a path point when we click on a pointView (which is relayed by the mainWindow)
     connect(this, SIGNAL(addPathPoint(QString, double, double)), robotPathCreationWidget, SLOT(addPathPointSlot(QString, double, double)));
-    connect(this, SIGNAL(updatePathPainter()), pathPainter, SLOT(updatePathPainterSlot()));
+    connect(this, SIGNAL(addNoRobotPathPoint(QString,double,double)), noRobotPathCreationWidget, SLOT(addPathPointSlot(QString,double,double)));
+    connect(this, SIGNAL(updatePathPainter()), robotPathPainter, SLOT(updatePathPainterSlot()));
 
     connect(robotPathCreationWidget, SIGNAL(editTmpPathPoint(int, QString, double, double)), this, SLOT(editTmpPathPointSlot(int, QString, double, double)));
-    connect(noRobotPathCreationWidget, SIGNAL(editTmpPathPoint(int, QString, double, double)), this, SLOT(editTmpPathPointSlot(int, QString, double, double)));
+    //connect(noRobotPathCreationWidget, SIGNAL(editTmpPathPoint(int, QString, double, double)), this, SLOT(editTmpPathPointSlot(int, QString, double, double)));
 
-    connect(this, SIGNAL(updatePathPainterPointView()), pathPainter, SLOT(updatePathPainterPointViewSlot()));
+    connect(this, SIGNAL(updatePathPainterPointView()), robotPathPainter, SLOT(updatePathPainterPointViewSlot()));
 
     connect(robotPathCreationWidget, SIGNAL(saveEditPathPoint()), this, SLOT(saveEditPathPointSlot()));
-    connect(noRobotPathCreationWidget, SIGNAL(saveEditPathPoint()), this, SLOT(saveEditPathPointSlot()));
+    //connect(noRobotPathCreationWidget, SIGNAL(saveEditPathPoint()), this, SLOT(saveEditPathPointSlot()));
 
     connect(robotPathCreationWidget, SIGNAL(cancelEditPathPoint()), this, SLOT(cancelEditPathPointSlot()));
-    connect(noRobotPathCreationWidget, SIGNAL(cancelEditPathPoint()), this, SLOT(cancelEditPathPointSlot()));
+    connect(noRobotPathCreationWidget, SIGNAL(cancelEditPathPoint()), this, SLOT(cancelEditNoRobotPathPointSlot()));
 
     connect(robotPathCreationWidget, SIGNAL(savePath()), this, SLOT(savePathSlot()));
-    //connect(noRobotPathCreationWidget, SIGNAL(savePath()), this, SLOT(savePathSlot()));
+    connect(noRobotPathCreationWidget, SIGNAL(savePath()), this, SLOT(saveNoRobotPathSlot()));
 
-    connect(this, SIGNAL(resetPath()), pathPainter, SLOT(resetPathSlot()));
+    connect(this, SIGNAL(resetPath()), robotPathPainter, SLOT(resetPathSlot()));
+    connect(this, SIGNAL(resetPath()), noRobotPathPainter, SLOT(resetPathSlot()));
 
     connect(this, SIGNAL(resetPathCreationWidget()), robotPathCreationWidget, SLOT(resetWidget()));
     connect(this, SIGNAL(resetPathCreationWidget()), noRobotPathCreationWidget, SLOT(resetWidget()));
@@ -281,7 +283,10 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     connect(leftMenu->getGroupsPathsWidget(), SIGNAL(messageCreationGroup(QString,QString)), this, SLOT(setMessageCreationGroup(QString,QString)));
     connect(leftMenu->getGroupsPathsWidget(), SIGNAL(modifiedGroup(QString)), this, SLOT(modifyGroupPathsWithEnter(QString)));
 
-    connect(leftMenu->getNoRobotPathCreationWidget(), SIGNAL(codeEditPath(int)), this, SLOT(setMessageNoRobotPath(int)));
+    connect(robotPathCreationWidget->getCancelButton(), SIGNAL(clicked()), this, SLOT(cancelPathSlot()));
+    connect(noRobotPathCreationWidget->getCancelButton(), SIGNAL(clicked()), this, SLOT(cancelNoRobotPathSlot()));
+
+    //connect(leftMenu->getNoRobotPathCreationWidget(), SIGNAL(codeEditPath(int)), this, SLOT(setMessageNoRobotPath(int)));
 
     mainLayout->addLayout(bottom);
     //graphicsView->setStyleSheet("CustomQGraphicsView {background-color: " + background_map_view + "}");
@@ -401,194 +406,6 @@ void MainWindow::initializeRobots(){
     robotView3->setParentItem(mapPixmapItem);
     robots->add(robotView3);
     tmpMap[robot3->getIp()] = robot3->getName();
-
-    QString robotIp4 = "192.168.4.14";
-    QString robotName4 = tmpMap.value(robotIp4, "Robota4");
-    QSharedPointer<Robot> robot4(new Robot(robotName4, robotIp4));
-    robot4->setWifi("Swaghetti Yolognaise");
-    RobotView* robotView4 = new RobotView(robot4, mapPixmapItem);
-    connect(robotView4, SIGNAL(setSelectedSignal(RobotView*)), this, SLOT(setSelectedRobot(RobotView*)));
-    robotView4->setPosition(148, 45);
-    robotView4->setParentItem(mapPixmapItem);
-    robots->add(robotView4);
-    tmpMap[robot4->getIp()] = robot4->getName();
-
-    QString robotIp5 = "192.168.4.15";
-    QString robotName5 = tmpMap.value(robotIp5, "Robota5");
-    QSharedPointer<Robot> robot5(new Robot(robotName5, robotIp5));
-    robot5->setWifi("Swaghetti Yolognaise");
-    RobotView* robotView5 = new RobotView(robot5, mapPixmapItem);
-    connect(robotView5, SIGNAL(setSelectedSignal(RobotView*)), this, SLOT(setSelectedRobot(RobotView*)));
-    robotView5->setPosition(158, 55);
-    robotView5->setParentItem(mapPixmapItem);
-    robots->add(robotView5);
-    tmpMap[robot5->getIp()] = robot5->getName();
-
-    QString robotIp6 = "192.168.4.16";
-    QString robotName6 = tmpMap.value(robotIp6, "Robota6");
-    QSharedPointer<Robot> robot6(new Robot(robotName6, robotIp6));
-    robot6->setWifi("Swaghetti Yolognaise");
-    RobotView* robotView6 = new RobotView(robot6, mapPixmapItem);
-    connect(robotView6, SIGNAL(setSelectedSignal(RobotView*)), this, SLOT(setSelectedRobot(RobotView*)));
-    robotView6->setPosition(168, 65);
-    robotView6->setParentItem(mapPixmapItem);
-    robots->add(robotView6);
-    tmpMap[robot6->getIp()] = robot6->getName();
-
-    QString robotIp7 = "192.168.4.17";
-    QString robotName7 = tmpMap.value(robotIp7, "Robota7");
-    QSharedPointer<Robot> robot7(new Robot(robotName7, robotIp7));
-    robot7->setWifi("Swaghetti Yolognaise");
-    RobotView* robotView7 = new RobotView(robot7, mapPixmapItem);
-    connect(robotView7, SIGNAL(setSelectedSignal(RobotView*)), this, SLOT(setSelectedRobot(RobotView*)));
-    robotView7->setPosition(178, 75);
-    robotView7->setParentItem(mapPixmapItem);
-    robots->add(robotView7);
-    tmpMap[robot7->getIp()] = robot7->getName();
-
-    QString robotIp8 = "192.168.4.18";
-    QString robotName8 = tmpMap.value(robotIp8, "Robota8");
-    QSharedPointer<Robot> robot8(new Robot(robotName8, robotIp8));
-    robot8->setWifi("Swaghetti Yolognaise");
-    RobotView* robotView8 = new RobotView(robot8, mapPixmapItem);
-    connect(robotView8, SIGNAL(setSelectedSignal(RobotView*)), this, SLOT(setSelectedRobot(RobotView*)));
-    robotView8->setPosition(188, 85);
-    robotView8->setParentItem(mapPixmapItem);
-    robots->add(robotView8);
-    tmpMap[robot8->getIp()] = robot8->getName();
-
-    QString robotIp9 = "192.168.4.19";
-    QString robotName9 = tmpMap.value(robotIp9, "Robota9");
-    QSharedPointer<Robot> robot9(new Robot(robotName9, robotIp9));
-    robot9->setWifi("Swaghetti Yolognaise");
-    RobotView* robotView9 = new RobotView(robot9, mapPixmapItem);
-    connect(robotView9, SIGNAL(setSelectedSignal(RobotView*)), this, SLOT(setSelectedRobot(RobotView*)));
-    robotView9->setPosition(198, 95);
-    robotView9->setParentItem(mapPixmapItem);
-    robots->add(robotView9);
-    tmpMap[robot9->getIp()] = robot9->getName();
-
-    QString robotIp10 = "192.168.4.110";
-    QString robotName10 = tmpMap.value(robotIp10, "Robota10");
-    QSharedPointer<Robot> robot10(new Robot(robotName10, robotIp10));
-    robot10->setWifi("Swaghetti Yolognaise");
-    RobotView* robotView10 = new RobotView(robot10, mapPixmapItem);
-    connect(robotView10, SIGNAL(setSelectedSignal(RobotView*)), this, SLOT(setSelectedRobot(RobotView*)));
-    robotView10->setPosition(1108, 105);
-    robotView10->setParentItem(mapPixmapItem);
-    robots->add(robotView10);
-    tmpMap[robot10->getIp()] = robot10->getName();
-
-    QString robotIp11 = "192.168.4.111";
-    QString robotName11 = tmpMap.value(robotIp11, "Robota11");
-    QSharedPointer<Robot> robot11(new Robot(robotName11, robotIp11));
-    robot11->setWifi("Swaghetti Yolognaise");
-    RobotView* robotView11 = new RobotView(robot11, mapPixmapItem);
-    connect(robotView11, SIGNAL(setSelectedSignal(RobotView*)), this, SLOT(setSelectedRobot(RobotView*)));
-    robotView11->setPosition(1118, 115);
-    robotView11->setParentItem(mapPixmapItem);
-    robots->add(robotView11);
-    tmpMap[robot11->getIp()] = robot11->getName();
-
-    QString robotIp12 = "192.168.4.112";
-    QString robotName12 = tmpMap.value(robotIp12, "Robota12");
-    QSharedPointer<Robot> robot12(new Robot(robotName12, robotIp12));
-    robot12->setWifi("Swaghetti Yolognaise");
-    RobotView* robotView12 = new RobotView(robot12, mapPixmapItem);
-    connect(robotView12, SIGNAL(setSelectedSignal(RobotView*)), this, SLOT(setSelectedRobot(RobotView*)));
-    robotView12->setPosition(1128, 125);
-    robotView12->setParentItem(mapPixmapItem);
-    robots->add(robotView12);
-    tmpMap[robot12->getIp()] = robot12->getName();
-
-    QString robotIp13 = "192.168.4.113";
-    QString robotName13 = tmpMap.value(robotIp13, "Robota13");
-    QSharedPointer<Robot> robot13(new Robot(robotName13, robotIp13));
-    robot13->setWifi("Swaghetti Yolognaise");
-    RobotView* robotView13 = new RobotView(robot13, mapPixmapItem);
-    connect(robotView13, SIGNAL(setSelectedSignal(RobotView*)), this, SLOT(setSelectedRobot(RobotView*)));
-    robotView13->setPosition(1138, 135);
-    robotView13->setParentItem(mapPixmapItem);
-    robots->add(robotView13);
-    tmpMap[robot13->getIp()] = robot13->getName();
-
-    QString robotIp14 = "192.168.4.114";
-    QString robotName14 = tmpMap.value(robotIp14, "Robota14");
-    QSharedPointer<Robot> robot14(new Robot(robotName14, robotIp14));
-    robot14->setWifi("Swaghetti Yolognaise");
-    RobotView* robotView14 = new RobotView(robot14, mapPixmapItem);
-    connect(robotView14, SIGNAL(setSelectedSignal(RobotView*)), this, SLOT(setSelectedRobot(RobotView*)));
-    robotView14->setPosition(1148, 145);
-    robotView14->setParentItem(mapPixmapItem);
-    robots->add(robotView14);
-    tmpMap[robot14->getIp()] = robot14->getName();
-
-    QString robotIp15 = "192.168.4.115";
-    QString robotName15 = tmpMap.value(robotIp15, "Robota15");
-    QSharedPointer<Robot> robot15(new Robot(robotName15, robotIp15));
-    robot15->setWifi("Swaghetti Yolognaise");
-    RobotView* robotView15 = new RobotView(robot15, mapPixmapItem);
-    connect(robotView15, SIGNAL(setSelectedSignal(RobotView*)), this, SLOT(setSelectedRobot(RobotView*)));
-    robotView15->setPosition(1158, 155);
-    robotView15->setParentItem(mapPixmapItem);
-    robots->add(robotView15);
-    tmpMap[robot15->getIp()] = robot15->getName();
-
-    QString robotIp16 = "192.168.4.116";
-    QString robotName16 = tmpMap.value(robotIp16, "Robota16");
-    QSharedPointer<Robot> robot16(new Robot(robotName16, robotIp16));
-    robot16->setWifi("Swaghetti Yolognaise");
-    RobotView* robotView16 = new RobotView(robot16, mapPixmapItem);
-    connect(robotView16, SIGNAL(setSelectedSignal(RobotView*)), this, SLOT(setSelectedRobot(RobotView*)));
-    robotView16->setPosition(1168, 165);
-    robotView16->setParentItem(mapPixmapItem);
-    robots->add(robotView16);
-    tmpMap[robot16->getIp()] = robot16->getName();
-
-    QString robotIp17 = "192.168.4.117";
-    QString robotName17 = tmpMap.value(robotIp17, "Robota17");
-    QSharedPointer<Robot> robot17(new Robot(robotName17, robotIp17));
-    robot17->setWifi("Swaghetti Yolognaise");
-    RobotView* robotView17 = new RobotView(robot17, mapPixmapItem);
-    connect(robotView17, SIGNAL(setSelectedSignal(RobotView*)), this, SLOT(setSelectedRobot(RobotView*)));
-    robotView17->setPosition(1178, 175);
-    robotView17->setParentItem(mapPixmapItem);
-    robots->add(robotView17);
-    tmpMap[robot17->getIp()] = robot17->getName();
-
-    QString robotIp18 = "192.168.4.118";
-    QString robotName18 = tmpMap.value(robotIp18, "Robota18");
-    QSharedPointer<Robot> robot18(new Robot(robotName18, robotIp18));
-    robot18->setWifi("Swaghetti Yolognaise");
-    RobotView* robotView18 = new RobotView(robot18, mapPixmapItem);
-    connect(robotView18, SIGNAL(setSelectedSignal(RobotView*)), this, SLOT(setSelectedRobot(RobotView*)));
-    robotView18->setPosition(1188, 185);
-    robotView18->setParentItem(mapPixmapItem);
-    robots->add(robotView18);
-    tmpMap[robot18->getIp()] = robot18->getName();
-
-    QString robotIp19 = "192.168.4.119";
-    QString robotName19 = tmpMap.value(robotIp19, "Robota19");
-    QSharedPointer<Robot> robot19(new Robot(robotName19, robotIp19));
-    robot19->setWifi("Swaghetti Yolognaise");
-    RobotView* robotView19 = new RobotView(robot19, mapPixmapItem);
-    connect(robotView19, SIGNAL(setSelectedSignal(RobotView*)), this, SLOT(setSelectedRobot(RobotView*)));
-    robotView19->setPosition(1198, 195);
-    robotView19->setParentItem(mapPixmapItem);
-    robots->add(robotView19);
-    tmpMap[robot19->getIp()] = robot19->getName();
-
-    QString robotIp20 = "192.168.4.120";
-    QString robotName20 = tmpMap.value(robotIp20, "Robota20");
-    QSharedPointer<Robot> robot20(new Robot(robotName20, robotIp20));
-    robot20->setWifi("Swaghetti Yolognaise");
-    RobotView* robotView20 = new RobotView(robot20, mapPixmapItem);
-    connect(robotView20, SIGNAL(setSelectedSignal(RobotView*)), this, SLOT(setSelectedRobot(RobotView*)));
-    robotView20->setPosition(1208, 205);
-    robotView20->setParentItem(mapPixmapItem);
-    robots->add(robotView20);
-    tmpMap[robot20->getIp()] = robot20->getName();
-
 
     robots->setRobotsNameMap(tmpMap);
     out << robots->getRobotsNameMap();
@@ -865,8 +682,8 @@ void MainWindow::viewPathSelectedRobot(int robotNb, bool checked){
                      << (int) robot->getPath().at(i)->getAction()
                      << robot->getPath().at(i)->getWaitTime();
         }
-        pathPainter->setCurrentPath(robot->getPath());
-        robot->setPath(pathPainter->getCurrentPath());
+        robotPathPainter->setCurrentPath(robot->getPath());
+        robot->setPath(robotPathPainter->getCurrentPath());
         bottomLayout->updateRobot(robotNb, robots->getRobotsVector().at(robotNb));
         emit updatePathPainter();
     } else {
@@ -890,7 +707,7 @@ void MainWindow::editSelectedRobot(RobotView* robotView){
     setEnableAll(false, GraphicItemState::NO_EVENT);
 
     editSelectedRobotWidget->setSelectedRobot(selectedRobot);
-    pathPainter->setPathDeleted(false);
+    robotPathPainter->setPathDeleted(false);
 
     editSelectedRobotWidget->show();
     switchFocus(selectedRobot->getRobot()->getName(), editSelectedRobotWidget, MainWindow::WidgetType::ROBOT);
@@ -913,7 +730,7 @@ void MainWindow::setSelectedRobot(RobotView* robotView){
     selectedRobotWidget->show();
     int id = bottomLayout->getViewPathRobotBtnGroup()->checkedId();
     if(id > 0)
-        pathPainter->setCurrentPath(robots->getRobotsVector().at(id)->getRobot()->getPath());
+        robotPathPainter->setCurrentPath(robots->getRobotsVector().at(id)->getRobot()->getPath());
 
     //if(!bottomLayout->getRobotBtnGroup()->button(robots->getRobotId(robotView->getRobot()->getName()))->isChecked())
         bottomLayout->getRobotBtnGroup()->button(robots->getRobotId(robotView->getRobot()->getName()))->setChecked(true);
@@ -950,7 +767,7 @@ void MainWindow::addPathSelecRobotBtnEvent(){
                   selectedRobot->getRobot()->getName() + "\nAlternatively you can click the \"+\" button to add an existing point to your path"
                   "\nYou can re-order the points in the list by dragging them");
 
-    setEnableAll(false, GraphicItemState::CREATING_PATH, true);
+    setEnableAll(false, GraphicItemState::ROBOT_CREATING_PATH, true);
 
     /// stop displaying the currently displayed path if it exists
 
@@ -964,8 +781,8 @@ void MainWindow::addPathSelecRobotBtnEvent(){
     }
 
 
-    if(!pathPainter->getPathDeleted()){
-        if(editSelectedRobotWidget->getAddPathBtn()->text().compare("Add Path") == 0 || pathPainter->getOldPath().size() <= 0){
+    if(!robotPathPainter->getPathDeleted()){
+        if(editSelectedRobotWidget->getAddPathBtn()->text().compare("Add Path") == 0 || robotPathPainter->getOldPath().size() <= 0){
             emit resetPathCreationWidget();
             robotPathCreationWidget->updatePath(selectedRobot->getRobot()->getPath());
         }
@@ -973,7 +790,7 @@ void MainWindow::addPathSelecRobotBtnEvent(){
 
     hideAllWidgets();
     robotPathCreationWidget->show();
-    pathPainter->setOldPath(pathPainter->getCurrentPath());
+    robotPathPainter->setOldPath(robotPathPainter->getCurrentPath());
 
     switchFocus(selectedRobot->getRobot()->getName(), robotPathCreationWidget, MainWindow::WidgetType::ROBOT);
 
@@ -1005,7 +822,7 @@ void MainWindow::deletePathSelecRobotBtnEvent(){
     editSelectedRobotWidget->setPathChanged(true);
     editSelectedRobotWidget->clearPath();
     bottomLayout->uncheckAll();
-    pathPainter->setPathDeleted(true);
+    robotPathPainter->setPathDeleted(true);
 }
 
 void MainWindow::setSelectedRobotNoParent(QAbstractButton *button){
@@ -1116,7 +933,7 @@ void MainWindow::cancelEditSelecRobotBtnEvent(){
     paths->setVisiblePath("");
     emit resetPath();
     editSelectedRobotWidget->setEditing(false);
-    pathPainter->clearOldPath();
+    robotPathPainter->clearOldPath();
 
     backEvent();
 
@@ -1269,9 +1086,9 @@ void MainWindow::robotSavedEvent(){
         QSharedPointer<Robot> robot = selectedRobot->getRobot();
         QString pathStr = "";
 
-        qDebug() << "MainWindow::robotSavedEvent" << pathPainter->getCurrentPath().size();
-        for(int i = 0; i < pathPainter->getCurrentPath().size(); i++){
-            QSharedPointer<PathPoint> pathPoint = pathPainter->getCurrentPath().at(i);
+        qDebug() << "MainWindow::robotSavedEvent" << robotPathPainter->getCurrentPath().size();
+        for(int i = 0; i < robotPathPainter->getCurrentPath().size(); i++){
+            QSharedPointer<PathPoint> pathPoint = robotPathPainter->getCurrentPath().at(i);
             float oldPosX = pathPoint->getPoint().getPosition().getX();
             float oldPosY = pathPoint->getPoint().getPosition().getY();
 
@@ -1309,17 +1126,17 @@ void MainWindow::robotSavedEvent(){
         if(change > 0){
             if (isOK){
                 if(editSelectedRobotWidget->getPathChanged()){
-                    selectedRobot->getRobot()->setPath(pathPainter->getCurrentPath());
+                    selectedRobot->getRobot()->setPath(robotPathPainter->getCurrentPath());
 
                     int id = robots->getRobotId(selectedRobot->getRobot()->getName());
                     bottomLayout->updateRobot(id, selectedRobot);
-                    if(pathPainter->getCurrentPath().size() > 0){
+                    if(robotPathPainter->getCurrentPath().size() > 0){
                         bottomLayout->getViewPathRobotBtnGroup()->button(id)->setChecked(true);
                         viewPathSelectedRobot(id, true);
                     }
                 }
 
-                pathPainter->clearOldPath();
+                robotPathPainter->clearOldPath();
                 editSelectedRobotWidget->setPathChanged(false);
 
                 backEvent();
@@ -1360,7 +1177,7 @@ void MainWindow::editTmpPathPointSlot(int id, QString name, double x, double y){
     } else {
         qDebug() << "MainWindow::editTmpPathPointSlot Pointview found";
 
-        int nbWidget = pathPainter->nbUsedPointView(name, x ,y);
+        int nbWidget = robotPathPainter->nbUsedPointView(name, x ,y);
         qDebug() << "MainWindow::editTmpPathPointSlot number of widget with the same pointView : " << nbWidget;
         /// if 2 path points have the same pointView, we need to create a copy to only
         /// move one of the two path points
@@ -1376,9 +1193,9 @@ void MainWindow::editTmpPathPointSlot(int id, QString name, double x, double y){
         }
 
         setGraphicItemsState(GraphicItemState::NO_EVENT);
-        mapPixmapItem->setState(GraphicItemState::EDITING_PATH);
+        mapPixmapItem->setState(GraphicItemState::ROBOT_EDITING_PATH);
         editedPointView->setFlag(QGraphicsItem::ItemIsMovable);
-        editedPointView->setState(GraphicItemState::EDITING_PATH);
+        editedPointView->setState(GraphicItemState::ROBOT_EDITING_PATH);
         /// set by hand in order to keep the colors consistent while editing the point and after
         editedPointView->setPixmap(PointView::PixmapType::SELECTED);
     }
@@ -1394,33 +1211,33 @@ void MainWindow::savePathSlot(){
     pointViewsToDisplay.clear();
 
 
-    pathPainter->setPathDeleted(false);
-    pathPainter->setOldPath(pathPainter->getCurrentPath());
+    robotPathPainter->setPathDeleted(false);
+    robotPathPainter->setOldPath(robotPathPainter->getCurrentPath());
 
     setEnableAll(false, GraphicItemState::NO_EVENT);
     editSelectedRobotWidget->setPathChanged(true);
-    editSelectedRobotWidget->setPath(pathPainter->getCurrentPath());
+    editSelectedRobotWidget->setPath(robotPathPainter->getCurrentPath());
     emit updatePathPainter();
 }
 
 void MainWindow::cancelPathSlot(){
     qDebug() << "MainWindow::cancelPathSlot called";
 
-    QVector<QSharedPointer<PathPoint>> oldPath = pathPainter->getOldPath();
+    QVector<QSharedPointer<PathPoint>> oldPath = robotPathPainter->getOldPath();
     /// we hide the points that we displayed just for the edition of the path
     for(int i = 0; i < pointViewsToDisplay.size(); i++)
         pointViewsToDisplay.at(i)->hide();
     pointViewsToDisplay.clear();
 
     emit resetPathCreationWidget();
-    //pathPainter->setCurrentPath(pathPainter->getOldPath());
+    //robotPathPainter->setCurrentPath(robotPathPainter->getOldPath());
     robotPathCreationWidget->updatePath(oldPath);
 
-    //selectedRobot->getRobot()->setPath(pathPainter->getCurrentPath());
+    //selectedRobot->getRobot()->setPath(robotPathPainter->getCurrentPath());
     //bottomLayout->updateRobot(robots->getRobotId(selectedRobot->getRobot()->getName()), selectedRobot);
 
     backEvent();
-    pathPainter->setOldPath(oldPath);
+    robotPathPainter->setOldPath(oldPath);
     setEnableAll(false, GraphicItemState::NO_EVENT);
 }
 
@@ -1433,8 +1250,8 @@ void MainWindow::addPointPathSlot(QString name, double x, double y){
 void MainWindow::saveEditPathPointSlot(void){
     qDebug() << "MainWindow::saveEditPathPointSlot called";
 
-    setEnableAll(false, GraphicItemState::CREATING_PATH, true);
-    pathPainter->updateCurrentPath();
+    setEnableAll(false, GraphicItemState::ROBOT_CREATING_PATH, true);
+    robotPathPainter->updateCurrentPath();
 
     editedPointView->setFlag(QGraphicsItem::ItemIsMovable, false);
     editedPointView = QSharedPointer<PointView>();
@@ -1443,10 +1260,10 @@ void MainWindow::saveEditPathPointSlot(void){
 void MainWindow::cancelEditPathPointSlot(void){
     qDebug() << "MainWindow::cancelEditPathPointSlot called";
 
-    setEnableAll(false, GraphicItemState::CREATING_PATH, true);
+    setEnableAll(false, GraphicItemState::ROBOT_CREATING_PATH, true);
 
     int id = robotPathCreationWidget->getPathPointList()->row(robotPathCreationWidget->getPathPointList()->currentItem());
-    Position pos = pathPainter->getCurrentPath().at(id)->getPoint().getPosition();
+    Position pos = robotPathPainter->getCurrentPath().at(id)->getPoint().getPosition();
     editedPointView->setPos(pos.getX(), pos.getY());
 
     emit updatePathPainter();
@@ -1535,10 +1352,10 @@ void MainWindow::showHome(){
 
     if(!editSelectedRobotWidget->isEditing()){
         bottomLayout->uncheckAll();
-        if(pathPainter->getOldPath().size() > 0){
-            editSelectedRobotWidget->setPath(pathPainter->getOldPath());
+        if(robotPathPainter->getOldPath().size() > 0){
+            editSelectedRobotWidget->setPath(robotPathPainter->getOldPath());
 
-            pathPainter->clearOldPath();
+            robotPathPainter->clearOldPath();
         } else {
             RobotView* robotView =  robots->getRobotViewByName(selectedRobot->getRobot()->getName());
             /// If the robot has a path, we display it, otherwise we show the button to add the path
@@ -2083,7 +1900,7 @@ void MainWindow::setSelectedPoint(){
 
     int id = bottomLayout->getViewPathRobotBtnGroup()->checkedId();
     if(id > 0)
-        pathPainter->setCurrentPath(robots->getRobotsVector().at(id)->getRobot()->getPath());
+        robotPathPainter->setCurrentPath(robots->getRobotsVector().at(id)->getRobot()->getPath());
 
     leftMenu->show();
 
@@ -3888,7 +3705,7 @@ void MainWindow::displayPathSlot(QString groupName, QString pathName, bool displ
         bool foundFlag = false;
         Paths::Path path = paths->getPath(groupName, pathName, foundFlag);
         if(foundFlag) {
-            pathPainter->setCurrentPath(path);
+            noRobotPathPainter->setCurrentPath(path);
             paths->setVisiblePath(pathName);
         }
         else
@@ -4090,12 +3907,36 @@ void MainWindow::displayPath(){
 
 void MainWindow::createPath(){
     qDebug() << "MainWindow::createPath called";
+    switchFocus("newPath", noRobotPathCreationWidget, MainWindow::WidgetType::PATH);
+    emit resetPath();
     setMessageTop(TEXT_COLOR_INFO, "The name of your path cannot be empty, fill up the corresponding field to give your path a name");
     hideAllWidgets();
-    setEnableAll(false, GraphicItemState::CREATING_PATH, true);
+    setEnableAll(false, GraphicItemState::NO_ROBOT_CREATING_PATH, true);
     leftMenu->getNoRobotPathCreationWidget()->show();
-    qDebug() << mapPixmapItem->getState();
-    qDebug() << mapPixmapItem->getState();
+
+    /// stop displaying the currently displayed path if it exists
+
+    noRobotPathCreationWidget->getPathPointList()->clear();
+
+
+
+    /// hides the temporary pointview
+    points->getTmpPointView()->hide();
+
+    /// displays the points in order to make them available for the edition of the path,
+    ///  we have to keep track of those which were hidden so we can hide them again once the edition is finished
+    QMapIterator<QString, QSharedPointer<QVector<QSharedPointer<PointView>>>> i(*(points->getGroups()));
+    while (i.hasNext()) {
+        i.next();
+        if(i.value() && i.key().compare(PATH_GROUP_NAME) != 0){
+            for(int j = 0; j < i.value()->count(); j++){
+                if(!i.value()->at(j)->isVisible() && i.value()->at(j)->getPoint()->getName().compare(TMP_POINT_NAME)){
+                    i.value()->at(j)->show();
+                    pointViewsToDisplay.push_back(i.value()->at(j));
+                }
+            }
+        }
+    }
 }
 
 void MainWindow::deletePath(){
@@ -4121,7 +3962,7 @@ void MainWindow::displayPathOnMap(const bool display){
     qDebug() << "MainWindow::displayPathOnMap called";
     if(display){
         bool foundFlag = false;
-        pathPainter->setCurrentPath(paths->getPath(lastWidgets.at(lastWidgets.size()-1).first.second,
+        noRobotPathPainter->setCurrentPath(paths->getPath(lastWidgets.at(lastWidgets.size()-1).first.second,
                                                leftMenu->getPathGroupDisplayed()->getLastCheckedButton(), foundFlag));
         paths->setVisiblePath(leftMenu->getPathGroupDisplayed()->getLastCheckedButton());
     }
@@ -4168,6 +4009,77 @@ void MainWindow::setMessageNoRobotPath(const int code){
     }
 }
 
+void MainWindow::addNoRobotPointPathSlot(QString name, double x, double y){
+    emit addNoRobotPathPoint(name, x, y);
+}
+
+void MainWindow::cancelEditNoRobotPathPointSlot(){
+    /*setEnableAll(false, GraphicItemState::NO_ROBOT_CREATING_PATH, true);
+
+
+    emit updatePathPainter();
+
+    editedPointView->setFlag(QGraphicsItem::ItemIsMovable, false);
+    editedPointView = QSharedPointer<PointView>();*/
+}
+
+void MainWindow::cancelNoRobotPathSlot(){
+    qDebug() << "MainWindow::cancelNoRobotPathSlot called";
+
+    QVector<QSharedPointer<PathPoint>> oldPath = noRobotPathPainter->getOldPath();
+    /// we hide the points that we displayed just for the edition of the path
+
+    for(int i = 0; i < pointViewsToDisplay.size(); i++)
+        pointViewsToDisplay.at(i)->hide();
+    pointViewsToDisplay.clear();
+
+    emit resetPathCreationWidget();
+    //robotPathPainter->setCurrentPath(robotPathPainter->getOldPath());
+    noRobotPathCreationWidget->updatePath(oldPath);
+
+    //selectedRobot->getRobot()->setPath(robotPathPainter->getCurrentPath());
+    //bottomLayout->updateRobot(robots->getRobotId(selectedRobot->getRobot()->getName()), selectedRobot);
+
+    backEvent();
+    noRobotPathPainter->setOldPath(oldPath);
+    setEnableAll(false, GraphicItemState::NO_EVENT);
+}
+
+void MainWindow::saveNoRobotPathSlot(){
+    qDebug() << "MainWindow::saveNoRobotPath called";
+    backEvent();
+
+    /// we hide the points that we displayed for the edition of the path
+    for(int i = 0; i < pointViewsToDisplay.size(); i++)
+        pointViewsToDisplay.at(i)->hide();
+    pointViewsToDisplay.clear();
+
+    noRobotPathPainter->setPathDeleted(false);
+    noRobotPathPainter->setOldPath(noRobotPathPainter->getCurrentPath());
+
+    setEnableAll(false, GraphicItemState::NO_EVENT);
+
+    leftMenu->setEnableReturnCloseButtons(true);
+
+    /// gotta update the model and serialize the paths
+    const QString groupName = noRobotPathCreationWidget->getCurrentGroupName();
+    const QString pathName = noRobotPathCreationWidget->getNameEdit()->text().simplified();
+    qDebug() << groupName << pathName;
+    paths->createPath(groupName, pathName);
+    for(int i = 0; i < noRobotPathPainter->getCurrentPath().size(); i++)
+        paths->addPathPoint(groupName, pathName, noRobotPathPainter->getCurrentPath().at(i));
+
+    /// resets the menu so that it reflects the creation of this new path
+    leftMenu->getPathGroupDisplayed()->setPathsGroup(noRobotPathCreationWidget->getCurrentGroupName());
+
+    /// add this path to the file
+    serializePaths();
+
+    //editSelectedRobotWidget->setPathChanged(true);
+    //editSelectedRobotWidget->setPath(robotPathPainter->getCurrentPath());
+    //emit updatePathPainter();
+}
+
 /**********************************************************************************************************************************/
 
 //                                          ODDS AND ENDS
@@ -4203,7 +4115,7 @@ void MainWindow::backEvent(){
             leftMenu->hideBackButton();
         }
     } else {
-           resetFocus();
+        resetFocus();
         leftMenu->hide();
     }
 
@@ -4257,6 +4169,7 @@ void MainWindow::hideAllWidgets(){
     createPointWidget->hide();
     leftMenu->getDisplaySelectedPoint()->hide();
     robotPathCreationWidget->hide();
+    noRobotPathCreationWidget->hide();
     leftMenu->getDisplaySelectedGroup()->hide();
     leftMenu->getGroupsPathsWidget()->hide();
     leftMenu->getDisplaySelectedPath()->hide();

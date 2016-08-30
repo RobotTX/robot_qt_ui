@@ -3,6 +3,7 @@
 #include <QDebug>
 #include <QLabel>
 
+
 CustomPushButton::CustomPushButton(const QIcon &icon, const QString &text, QWidget *parent, const ButtonType type, const QString align,
         const bool checkable, const bool enable) : QPushButton(icon, text, parent), buttonType(type){
     initialize(checkable, enable, align);

@@ -36,7 +36,8 @@ class Paths;
 class LeftMenu: public QWidget{
     Q_OBJECT
 public:
-    LeftMenu(MainWindow* _mainWindow, const QSharedPointer<Points> &_points, QSharedPointer<Paths> const& _paths, QSharedPointer<Robots> const& robots, QSharedPointer<Points> const &pointViews, QSharedPointer<Map> const& _map, const PathPainter* pathPainter);
+    LeftMenu(MainWindow* _mainWindow, const QSharedPointer<Points> &_points, QSharedPointer<Paths> const& _paths, QSharedPointer<Robots> const& robots,
+             QSharedPointer<Points> const &pointViews, QSharedPointer<Map> const& _map, const PathPainter* robotPathPainter, const PathPainter* noRobotPathPainter);
 
     /// Getters
     LeftMenuWidget* getLeftMenuWidget(void) const {return leftMenuWidget;}

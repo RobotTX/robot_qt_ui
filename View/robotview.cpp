@@ -53,7 +53,7 @@ void RobotView::mousePressEvent(QGraphicsSceneMouseEvent * /* unused */){
         emit setSelectedSignal(this);
 
 
-    } else if(state == GraphicItemState::CREATING_PATH){
+    } else if(state == GraphicItemState::ROBOT_CREATING_PATH){
         qDebug() << "Clicked on a robot while creating a path";
     } else {
         qDebug() << "(RobotView) NO EVENT";

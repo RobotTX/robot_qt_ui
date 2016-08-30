@@ -38,7 +38,7 @@ void Paths::createPath(const QString groupName, const QString pathName){
     else {
         QSharedPointer<QMap<QString, QSharedPointer<Path>> > current_paths = (*groups)[groupName];
         if(current_paths->find(pathName) == current_paths->end())
-            current_paths->insert(pathName, QSharedPointer<Path>());
+            current_paths->insert(pathName, QSharedPointer<Path>(new Path()));
         else
             qDebug() << "The group of paths" << groupName << "already contains a path named" << pathName;
     }
