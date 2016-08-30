@@ -68,7 +68,7 @@ void PointView::mousePressEvent(QGraphicsSceneMouseEvent *event){
 
 void PointView::mouseMoveEvent(QGraphicsSceneMouseEvent *event){
 
-    if(state == GraphicItemState::ROBOT_EDITING_PATH || state == GraphicItemState::EDITING_PERM || state == GraphicItemState::EDITING_HOME){
+    if(state == GraphicItemState::NO_ROBOT_EDITING_PATH || state == GraphicItemState::ROBOT_EDITING_PATH || state == GraphicItemState::EDITING_PERM || state == GraphicItemState::EDITING_HOME){
         QGraphicsItem::mouseMoveEvent(event);
 
         float x = pos().x() + pixmap().width()*SCALE/2;
@@ -91,6 +91,9 @@ void PointView::mouseMoveEvent(QGraphicsSceneMouseEvent *event){
         if(state == GraphicItemState::ROBOT_EDITING_PATH){
             point->setPosition(x, y);
             emit moveEditedPathPoint();
+        } else if(state == GraphicItemState::NO_ROBOT_EDITING_PATH){
+            point->setPosition(x, y);
+            emit moveEditedNoRobotPathPoint();
         } else if(state == GraphicItemState::EDITING_PERM){
             emit editedPointPositionChanged(x, y);
         } else if(state == GraphicItemState::EDITING_HOME){
