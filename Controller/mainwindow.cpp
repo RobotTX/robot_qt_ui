@@ -4247,11 +4247,22 @@ void MainWindow::saveNoRobotPathSlot(){
 
     setEnableAll(false, GraphicItemState::NO_EVENT);
 
+    leftMenu->setEnableReturnCloseButtons(true);
+
     /// gotta update the model and serialize the paths
-    qDebug() << noRobotPathCreationWidget->getCurrentGroupName() << noRobotPathCreationWidget->getNameEdit()->text().simplified();
-    paths->createPath(noRobotPathCreationWidget->getCurrentGroupName(), noRobotPathCreationWidget->getNameEdit()->text().simplified());
+    const QString groupName = noRobotPathCreationWidget->getCurrentGroupName();
+    const QString pathName = noRobotPathCreationWidget->getNameEdit()->text().simplified();
+    qDebug() << groupName << pathName;
+    paths->createPath(groupName, pathName);
+    for(int i = 0; i < noRobotPathPainter->getCurrentPath().size(); i++)
+        paths->addPathPoint(groupName, pathName, noRobotPathPainter->getCurrentPath().at(i));
+
+    /// resets the menu so that it reflects the creation of this new path
     leftMenu->getPathGroupDisplayed()->setPathsGroup(noRobotPathCreationWidget->getCurrentGroupName());
+
+    /// add this path to the file
     serializePaths();
+
     //editSelectedRobotWidget->setPathChanged(true);
     //editSelectedRobotWidget->setPath(robotPathPainter->getCurrentPath());
     //emit updatePathPainter();
