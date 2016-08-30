@@ -1,7 +1,6 @@
 <RCC>
     <qresource prefix="/maps">
         <file>map.pgm</file>
-        <file>map-s.pgm</file>
     </qresource>
     <qresource prefix="/icons">
         <file alias="blue_coord.png">blue_coordinates.png</file>

@@ -116,8 +116,8 @@ EditSelectedRobotWidget::EditSelectedRobotWidget(QWidget* parent, MainWindow* ma
 
     QHBoxLayout* grid = new QHBoxLayout();
     /// Cancel & save buttons
-    cancelBtn = new CustomPushButton("Cancel", this);
-    saveBtn = new CustomPushButton("Save", this);
+    cancelBtn = new CustomPushButton("Cancel", this, CustomPushButton::ButtonType::LEFT_MENU, "center");
+    saveBtn = new CustomPushButton("Save", this, CustomPushButton::ButtonType::LEFT_MENU, "center");
 
     grid->addWidget(cancelBtn);
     grid->addWidget(saveBtn);

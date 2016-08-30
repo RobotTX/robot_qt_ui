@@ -16,6 +16,7 @@
 #include "View/custompushbutton.h"
 #include <QLineEdit>
 #include <QLabel>
+#include <QGridLayout>
 
 PathCreationWidget::PathCreationWidget(QWidget* parent, MainWindow *mainWindow, const QSharedPointer<Points> &_points, const QSharedPointer<Paths>& _paths, const bool associatedToRobot):
     QWidget(parent), points(_points), paths(_paths), currentGroupName("")
@@ -57,16 +58,16 @@ PathCreationWidget::PathCreationWidget(QWidget* parent, MainWindow *mainWindow, 
     pathPointsList = new PathPointList(this);
     layout->addWidget(pathPointsList);
 
+    /// Clean, cancel & save buttons
+    QGridLayout* grid = new QGridLayout();
     CustomPushButton* cleanBtn = new CustomPushButton("Clean", this);
-    layout->addWidget(cleanBtn);
+    grid->addWidget(cleanBtn, 0, 0);
 
-    /// Cancel & save buttons
-    QHBoxLayout* grid = new QHBoxLayout();
     CustomPushButton* cancelBtn = new CustomPushButton("Cancel", this);
     CustomPushButton* saveBtn = new CustomPushButton("Save", this);
 
-    grid->addWidget(cancelBtn);
-    grid->addWidget(saveBtn);
+    grid->addWidget(cancelBtn, 1, 0);
+    grid->addWidget(saveBtn, 1, 1);
 
     layout->addLayout(grid);
 

@@ -22,27 +22,6 @@
         </point>
     </group>
     <group>
-        <name>PathPoints</name>
-        <point>
-            <name>A</name>
-            <x>1130</x>
-            <y>820</y>
-            <displayed>1</displayed>
-        </point>
-        <point>
-            <name>Ma point</name>
-            <x>1145</x>
-            <y>890</y>
-            <displayed>1</displayed>
-        </point>
-        <point>
-            <name>A new point</name>
-            <x>946</x>
-            <y>983</y>
-            <displayed>1</displayed>
-        </point>
-    </group>
-    <group>
         <name>Second group</name>
         <point>
             <name>Fanny</name>
