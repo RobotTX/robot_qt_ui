@@ -152,7 +152,7 @@ QSharedPointer<PointView> Points::createPoint(const QString pointName, const dou
     connect(&(*pointView), SIGNAL(pointLeftClicked(QString, double, double)), mainWindow, SLOT(displayPointEvent(QString, double, double)));
     connect(&(*pointView), SIGNAL(editedPointPositionChanged(double, double)), mainWindow, SLOT(updateCoordinates(double, double)));
     connect(&(*pointView), SIGNAL(moveEditedPathPoint()), mainWindow, SLOT(moveEditedPathPointSlot()));
-    connect(&(*pointView), SIGNAL(moveEditedPathPoint()), mainWindow, SLOT(moveEditedNoRobotPathPointSlot()));
+    connect(&(*pointView), SIGNAL(moveEditedNoRobotPathPoint()), mainWindow, SLOT(moveEditedNoRobotPathPointSlot()));
     connect(&(*pointView), SIGNAL(addPointPath(QString, double, double)), mainWindow, SLOT(addPointPathSlot(QString, double, double)));
     connect(&(*pointView), SIGNAL(addNoRobotPointPath(QString, double, double)), mainWindow, SLOT(addNoRobotPointPathSlot(QString, double, double)));
 

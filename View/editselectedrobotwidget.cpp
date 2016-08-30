@@ -95,7 +95,7 @@ EditSelectedRobotWidget::EditSelectedRobotWidget(QWidget* parent, MainWindow* ma
 
     /// Button to add a path
     addPathBtn = new CustomPushButton(QIcon(":/icons/plus.png"),"Add Path", this);
-    addPathBtn->setIconSize(s_icon_size);
+    addPathBtn->setIconSize(xs_icon_size);
     connect(addPathBtn, SIGNAL(clicked()), mainWindow, SLOT(addPathSelecRobotBtnEvent()));
     inLayout->addWidget(addPathBtn);
 
@@ -261,6 +261,7 @@ void EditSelectedRobotWidget::setPath(const QVector<QSharedPointer<PathPoint> >&
 void EditSelectedRobotWidget::clearPath(){
     addPathBtn->setText("Add Path");
     addPathBtn->setIcon(QIcon(":/icons/plus.png"));
+    addPathBtn->setIconSize(xs_icon_size);
     pathWidget->hide();
     deletePathBtn->hide();
 }

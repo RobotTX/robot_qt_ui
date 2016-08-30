@@ -17,6 +17,7 @@
 #include <QLineEdit>
 #include <QLabel>
 #include <QGridLayout>
+#include <QKeyEvent>
 
 PathCreationWidget::PathCreationWidget(QWidget* parent, const QSharedPointer<Points> &_points, const QSharedPointer<Paths>& _paths, const bool associatedToRobot):
     QWidget(parent), points(_points), paths(_paths), currentGroupName("")
@@ -169,7 +170,7 @@ void PathCreationWidget::savePathClicked(void){
     /// we check if we have path points
     if(pathPointsList->count() > 0){
         for(int i = 0; i < pathPointsList->count(); i++){
-            PathPointCreationWidget* pathPointWidget = ((PathPointCreationWidget*) pathPointsList->itemWidget(pathPointsList->item(i)));
+            PathPointCreationWidget* pathPointWidget = static_cast<PathPointCreationWidget*> (pathPointsList->itemWidget(pathPointsList->item(i)));
 
             /// check the action and if a number of time to wait has been set if needed
             if(pathPointWidget->getAction()->currentText().compare("Human Action") != 0){
@@ -247,9 +248,8 @@ void PathCreationWidget::addPathPointSlot(QString name, double x, double y){
     pathPointsList->addItem(listWidgetItem);
     pathPointsList->setItemWidget(listWidgetItem, pathPoint);
 
-    if(pathPointsList->count() > 1){
+    if(pathPointsList->count() > 1)
         static_cast<PathPointCreationWidget*> (pathPointsList->itemWidget(pathPointsList->item(pathPointsList->count() - 2)))->displayActionWidget(true);
-    }
 
     emit addPathPoint(name, x, y);
     state = NO_STATE;
@@ -392,5 +392,6 @@ void PathCreationWidget::checkPathName(const QString name){
 }
 
 void PathCreationWidget::keyPressEvent(QKeyEvent *event){
-    Q_UNUSED(event)
+    if(!event->text().compare("\r"))
+        savePathClicked();
 }
