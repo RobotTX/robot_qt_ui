@@ -117,7 +117,7 @@ void CustomPushButton::toggledSlot(bool checked){
 }
 
 void CustomPushButton::setEnabled(bool checked){
-    qDebug() << "CustomPushButton::setEnabled" << text() << checked;
+    //qDebug() << "CustomPushButton::setEnabled" << text() << checked;
     label->setEnabled(checked);
 
     QPushButton::setEnabled(checked);
