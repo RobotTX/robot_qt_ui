@@ -152,6 +152,7 @@ QSharedPointer<PointView> Points::createPoint(const QString pointName, const dou
     connect(&(*pointView), SIGNAL(pointLeftClicked(QString, double, double)), mainWindow, SLOT(displayPointEvent(QString, double, double)));
     connect(&(*pointView), SIGNAL(editedPointPositionChanged(double, double)), mainWindow, SLOT(updateCoordinates(double, double)));
     connect(&(*pointView), SIGNAL(moveEditedPathPoint()), mainWindow, SLOT(moveEditedPathPointSlot()));
+    connect(&(*pointView), SIGNAL(moveEditedPathPoint()), mainWindow, SLOT(moveEditedNoRobotPathPointSlot()));
     connect(&(*pointView), SIGNAL(addPointPath(QString, double, double)), mainWindow, SLOT(addPointPathSlot(QString, double, double)));
     connect(&(*pointView), SIGNAL(addNoRobotPointPath(QString, double, double)), mainWindow, SLOT(addNoRobotPointPathSlot(QString, double, double)));
 
@@ -242,7 +243,7 @@ void Points::setPointViewsState(const GraphicItemState state){
 }
 
 QSharedPointer<PointView> Points::getTmpPointView() const{
-    qDebug() << "Points::getTmpPointView called" << this->count();
+    //qDebug() << "Points::getTmpPointView called" << this->count();
     if(groups->value(TMP_GROUP_NAME)->count() > 0 && groups->value(TMP_GROUP_NAME)->at(0) != NULL)
         return groups->value(TMP_GROUP_NAME)->at(0);
     return QSharedPointer<PointView>();

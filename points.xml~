@@ -22,26 +22,9 @@
         </point>
     </group>
     <group>
-<<<<<<< HEAD
-        <name>Second group</name>
-=======
-<<<<<<< HEAD
-        <name>TmpPoint</name>
+        <name>Second group duh duh duh</name>
         <point>
-            <name>tmpPoint</name>
-            <x>0</x>
-            <y>0</y>
-            <displayed>0</displayed>
-        </point>
-    </group>
-    <group>
-        <name>dsf</name>
-=======
-        <name>Second groupsgfsgfsdfhsjfg</name>
->>>>>>> aa0f1d471385c65ade09a1799831163617ce8fb7
->>>>>>> b2842f4ab60825832cfd7ef50d5c0825bc1ddb35
-        <point>
-            <name>Fanny6+54651351kohbghdxrdadfxhgvuhfdtfsdx</name>
+            <name>Fanny</name>
             <x>1126</x>
             <y>943</y>
             <displayed>1</displayed>
@@ -54,7 +37,25 @@
         </point>
     </group>
     <group>
-        <name>fsdfs</name>
+        <name>TmpPoint</name>
+        <point>
+            <name>tmpPoint</name>
+            <x>0</x>
+            <y>0</y>
+            <displayed>0</displayed>
+        </point>
+    </group>
+    <group>
+<<<<<<< HEAD
+=======
+        <name>asfasfawqr</name>
+    </group>
+    <group>
+        <name>duhduhduhdudhudhduhdudhudhduhduhdhd</name>
+    </group>
+    <group>
+>>>>>>> c98c0f10de7a460fe91fd8a2336e09fb31d76325
+        <name>first group</name>
         <point>
             <name>A</name>
             <x>1130</x>
@@ -73,5 +74,12 @@
             <y>983</y>
             <displayed>0</displayed>
         </point>
+    </group>
+    <group>
+<<<<<<< HEAD
+        <name>ofsdfadssssssssssssssssssssssssssssssssss</name>
+=======
+        <name>qwrqwrqwrqwrqwrqwrqwrqwrqwrqwrqwrqwrqwerq</name>
+>>>>>>> c98c0f10de7a460fe91fd8a2336e09fb31d76325
     </group>
 </points>

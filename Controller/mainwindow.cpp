@@ -216,8 +216,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     /// to link the map and the point information menu when a point is being edited
     connect(mapPixmapItem, SIGNAL(newCoordinates(double, double)), this, SLOT(updateCoordinates(double, double)));
 
-    /// to link the map and the path information when a path point is being edited
+    /// to link the map and the path information when a path point is being edited (associated to a robot or not)
     connect(mapPixmapItem, SIGNAL(newCoordinatesPathPoint(double,double)), this, SLOT(updateEditedPathPoint(double, double)));
+    connect(mapPixmapItem, SIGNAL(newCoordinatesNoRobotPathPoint(double,double)), this, SLOT(updateEditedNoRobotPathPoint(double, double)));
 
     /// to cancel the modifications on an edited point
     connect(leftMenu->getDisplaySelectedPoint()->getCancelButton(), SIGNAL(clicked(bool)), this, SLOT(cancelEvent()));
@@ -259,15 +260,16 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     /// to add a path point when we click on a pointView (which is relayed by the mainWindow)
     connect(this, SIGNAL(addPathPoint(QString, double, double)), robotPathCreationWidget, SLOT(addPathPointSlot(QString, double, double)));
     connect(this, SIGNAL(addNoRobotPathPoint(QString, double, double)), noRobotPathCreationWidget, SLOT(addPathPointSlot(QString,double,double)));
+    connect(this, SIGNAL(updatePathPainter()), noRobotPathPainter, SLOT(updatePathPainterSlot()));
     connect(this, SIGNAL(updatePathPainter()), robotPathPainter, SLOT(updatePathPainterSlot()));
 
     connect(robotPathCreationWidget, SIGNAL(editTmpPathPoint(int, QString, double, double)), this, SLOT(editTmpPathPointSlot(int, QString, double, double)));
-    //connect(noRobotPathCreationWidget, SIGNAL(editTmpPathPoint(int, QString, double, double)), this, SLOT(editTmpPathPointSlot(int, QString, double, double)));
+    connect(noRobotPathCreationWidget, SIGNAL(editTmpPathPoint(int, QString, double, double)), this, SLOT(editTmpPathPointSlot(int, QString, double, double)));
 
     connect(this, SIGNAL(updatePathPainterPointView()), robotPathPainter, SLOT(updatePathPainterPointViewSlot()));
 
     connect(robotPathCreationWidget, SIGNAL(saveEditPathPoint()), this, SLOT(saveEditPathPointSlot()));
-    //connect(noRobotPathCreationWidget, SIGNAL(saveEditPathPoint()), this, SLOT(saveEditPathPointSlot()));
+    connect(noRobotPathCreationWidget, SIGNAL(saveEditPathPoint()), this, SLOT(saveEditNoRobotPathPointSlot()));
 
     connect(robotPathCreationWidget, SIGNAL(cancelEditPathPoint()), this, SLOT(cancelEditPathPointSlot()));
     connect(noRobotPathCreationWidget, SIGNAL(cancelEditPathPoint()), this, SLOT(cancelEditNoRobotPathPointSlot()));
@@ -291,13 +293,14 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     connect(leftMenu->getNoRobotPathCreationWidget(), SIGNAL(codeEditPath(int)), this, SLOT(setMessageNoRobotPath(int)));
 
     mainLayout->addLayout(bottom);
-
+    //graphicsView->setStyleSheet("CustomQGraphicsView {background-color: " + background_map_view + "}");
     setCentralWidget(mainWidget);
 
     /// to navigate with the tab key
     setTabOrder(leftMenu->getReturnButton(), pointsLeftWidget->getActionButtons()->getPlusButton());
 
     /// Centers the map and initialize the map state
+
     centerMap();
 
     /// Some style
@@ -1618,10 +1621,14 @@ void MainWindow::updateEditedPathPoint(double x, double y){
 
     if(map->getMapImage().pixelColor(x, y).red() >= 254){
         setMessageTop(TEXT_COLOR_INFO, "You can click either \"Save changes\" to modify your path permanently or \"Cancel\" to keep the original path. If you want you can keep editing your point");
-        static_cast<PathPointCreationWidget*> (robotPathCreationWidget->getPathPointList()->itemWidget(robotPathCreationWidget->getPathPointList()->currentItem())) -> getSaveEditBtn()->setEnabled(true);
+        static_cast<PathPointCreationWidget*> (noRobotPathCreationWidget->getPathPointList()->
+                                               itemWidget(noRobotPathCreationWidget->getPathPointList()->currentItem()))
+                                               -> getSaveEditBtn()->setEnabled(true);
     } else {
         setMessageTop(TEXT_COLOR_DANGER, "You cannot save the current path because the point that you are editing is not in a known area of the map");
-        static_cast<PathPointCreationWidget*> (robotPathCreationWidget->getPathPointList()->itemWidget(robotPathCreationWidget->getPathPointList()->currentItem())) -> getSaveEditBtn()->setEnabled(false);
+        static_cast<PathPointCreationWidget*> (noRobotPathCreationWidget->getPathPointList()->
+                                               itemWidget(noRobotPathCreationWidget->getPathPointList()->currentItem()))
+                                               -> getSaveEditBtn()->setEnabled(false);
     }
 }
 
@@ -2080,10 +2087,11 @@ void MainWindow::editPointButtonEvent(){
 void MainWindow::editGroupBtnEvent(){
 
     if(pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->checkedButton()){
-        qDebug() << "MainWindow::editGroupBtnEvent called" << pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->checkedButton()->text();
+        qDebug() << "editGroupBtnEvent called" << pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->checkedButton()->text();
         topLayout->setEnabled(false);
         setEnableAll(false);
         int btnIndex = pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->checkedId();
+        qDebug() << "btnIndex" << btnIndex;
         pointsLeftWidget->setLastCheckedId(static_cast<CustomPushButton*>(pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->checkedButton())->text());
 
         pointsLeftWidget->setCreatingGroup(false);
@@ -2116,11 +2124,11 @@ void MainWindow::editGroupBtnEvent(){
                     if(rv != NULL)
                         robotName = rv->getRobot()->getName();
                     else
-                        qDebug() << "MainWindow::editGroupBtnEvent : something unexpected happened";
+                        qDebug() << "editGroupBtnEvent : something unexpected happened";
                 }
                 leftMenu->getDisplaySelectedPoint()->setPointView(pointView, robotName);
             } else {
-                qDebug() << "MainWindow::editGroupBtnEvent There is no point view associated with those indexes";
+                qDebug() << "There is no point view associated with those indexes";
             }
 
             /// displays the information relative the the point
@@ -2132,7 +2140,7 @@ void MainWindow::editGroupBtnEvent(){
             leftMenu->getDisplaySelectedPoint()->show();
             switchFocus("point", leftMenu->getDisplaySelectedPoint(), MainWindow::WidgetType::POINT);
         } else if(checkedId.compare("") != 0 && points->isAGroup(checkedId)){
-            /// update a group
+            qDebug() << "gotta update a group";
             leftMenu->getReturnButton()->setEnabled(false);
             leftMenu->getCloseButton()->setEnabled(false);
             topLayout->setEnable(false);
@@ -3531,7 +3539,7 @@ void MainWindow::modifyGroupWithEnter(QString name){
         int checkedId = pointsLeftWidget->getGroupButtonGroup()->getButtonIdByName(pointsLeftWidget->getGroupButtonGroup()->getEditedGroupName());
 
         pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(checkedId)->show();
-        static_cast<CustomPushButton*>(pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(checkedId))->setText(name);
+        pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(checkedId)->setText(name);
         pointsLeftWidget->getGroupButtonGroup()->getModifyEdit()->hide();
 
         pointsLeftWidget->setLastCheckedId("");
@@ -3548,7 +3556,8 @@ void MainWindow::modifyGroupAfterClick(QString name){
     qDebug() << "modifyGroupAfterClick called from" << pointsLeftWidget->getLastCheckedId() << "to" << name;
     topLayout->setEnabled(true);
 
-    if (pointsLeftWidget->getLastCheckedId() != ""){
+    if (pointsLeftWidget->getLastCheckedId() != "")
+     {
         /// resets the menu
         pointsLeftWidget->getActionButtons()->getPlusButton()->setEnabled(true);
         pointsLeftWidget->getGroupButtonGroup()->setEnabled(true);
@@ -4112,6 +4121,50 @@ void MainWindow::setMessageModifGroupPaths(int code){
         break;
     default:
         qDebug() << "MainWindow::setMessageModifGroupPaths You should not be here you probably forgot to implement the behavior for the code" << code;
+    }
+}
+
+void MainWindow::updateEditedNoRobotPathPoint(double x, double y){
+    qDebug() << "MainWindow::updateEditedPathPoint called";
+
+    if(editedPointView)
+        editedPointView->setPos(x, y);
+    else
+        qDebug() << "MainWindow::updateEditedPathPoint Could not find the pointView to edit";
+
+
+    emit updatePathPainter();
+
+    if(map->getMapImage().pixelColor(x, y).red() >= 254){
+        setMessageTop(TEXT_COLOR_INFO, "You can click either \"Save changes\" to modify your path permanently or \"Cancel\" to keep the original path. If you want you can keep editing your point");
+        static_cast<PathPointCreationWidget*> (robotPathCreationWidget->getPathPointList()->itemWidget(robotPathCreationWidget->getPathPointList()->currentItem())) -> getSaveEditBtn()->setEnabled(true);
+    } else {
+        setMessageTop(TEXT_COLOR_DANGER, "You cannot save the current path because the point that you are editing is not in a known area of the map");
+        static_cast<PathPointCreationWidget*> (robotPathCreationWidget->getPathPointList()->itemWidget(robotPathCreationWidget->getPathPointList()->currentItem())) -> getSaveEditBtn()->setEnabled(false);
+    }
+}
+
+void MainWindow::saveEditNoRobotPathPointSlot(){
+
+    qDebug() << "MainWindow::saveEditPathPointSlot called";
+
+    setEnableAll(false, GraphicItemState::NO_ROBOT_CREATING_PATH, true);
+    noRobotPathPainter->updateCurrentPath();
+
+    editedPointView->setFlag(QGraphicsItem::ItemIsMovable, false);
+    editedPointView = QSharedPointer<PointView>();
+}
+
+void MainWindow::moveEditedNoRobotPathPointSlot(void){
+    qDebug() << "MainWindow::moveEditedPathPointSlot called";
+    emit updatePathPainter();
+
+    if(map->getMapImage().pixelColor(editedPointView->getPoint()->getPosition().getX(), editedPointView->getPoint()->getPosition().getY()).red() >= 254){
+        setMessageTop(TEXT_COLOR_INFO, "You can click either \"Save changes\" to modify your path permanently or \"Cancel\" to keep the original path. If you want you can keep editing your point");
+        static_cast<PathPointCreationWidget*> (noRobotPathCreationWidget->getPathPointList()->itemWidget(noRobotPathCreationWidget->getPathPointList()->currentItem())) -> getSaveEditBtn()->setEnabled(true);
+    } else {
+        setMessageTop(TEXT_COLOR_DANGER, "You cannot save the current path because the point that you are editing is not in a known area of the map");
+        static_cast<PathPointCreationWidget*> (noRobotPathCreationWidget->getPathPointList()->itemWidget(noRobotPathCreationWidget->getPathPointList()->currentItem())) -> getSaveEditBtn()->setEnabled(false);
     }
 }
 
