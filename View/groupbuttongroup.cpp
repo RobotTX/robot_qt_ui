@@ -6,7 +6,7 @@
 #include <QDebug>
 #include <QMouseEvent>
 #include <QLabel>
-#include "View/customizedlineedit.h"
+#include "View/customlineedit.h"
 #include "View/custompushbutton.h"
 #include "View/stylesettings.h"
 
@@ -18,7 +18,7 @@ GroupButtonGroup::GroupButtonGroup(const QSharedPointer<Points> &_points, QWidge
     buttonGroup = new QButtonGroup(this);
 
     /// to modify the name of a group
-    modifyEdit = new CustomizedLineEdit(this);
+    modifyEdit = new CustomLineEdit(this);
     modifyEdit->setFixedWidth(1.29*modifyEdit->width());
     modifyEdit->hide();
 
@@ -98,7 +98,7 @@ void GroupButtonGroup::updateButtons(){
                 && i.key().compare(PATH_GROUP_NAME)!= 0){
 
             if(i.key().compare(editedGroupName) == 0){
-                modifyEdit = new CustomizedLineEdit(this);
+                modifyEdit = new CustomLineEdit(this);
                 modifyEdit->setFixedWidth(1.29*modifyEdit->width());
                 layout->addWidget(modifyEdit);
                 modifyEdit->hide();

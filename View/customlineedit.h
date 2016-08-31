@@ -1,18 +1,18 @@
-#ifndef CUSTOMIZEDLINEEDIT_H
-#define CUSTOMIZEDLINEEDIT_H
+#ifndef CUSTOM_LINE_EDIT_H
+#define CUSTOM_LINE_EDIT_H
 
 #include <QLineEdit>
 #include <QFocusEvent>
 
 /**
- * @brief The CustomizedLineEdit class
+ * @brief The CustomLineEdit class
  * this class provides a customized line edit that emits a particular signal when losing the focus
  */
-class CustomizedLineEdit: public QLineEdit
+class CustomLineEdit: public QLineEdit
 {
     Q_OBJECT
 public:
-    CustomizedLineEdit(QWidget *parent = 0);
+    CustomLineEdit(QWidget *parent = 0);
 
 public:
     void focusOutEvent(QFocusEvent* e);
@@ -26,4 +26,4 @@ signals:
     void enableGroupEdit(bool);
 };
 
-#endif // CUSTOMIZEDLINEEDIT_H
+#endif // CUSTOM_LINE_EDIT_H

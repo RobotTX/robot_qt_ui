@@ -1,19 +1,19 @@
-#include "customizedlineedit.h"
+#include "customlineedit.h"
 #include <QDebug>
 #include <QShortcut>
 
-CustomizedLineEdit::CustomizedLineEdit(QWidget* parent): QLineEdit(parent)
+CustomLineEdit::CustomLineEdit(QWidget* parent): QLineEdit(parent)
 {
 }
 
-void CustomizedLineEdit::focusOutEvent(QFocusEvent* e){
+void CustomLineEdit::focusOutEvent(QFocusEvent* e){
     if(e->reason() == Qt::MouseFocusReason){
         qDebug() << "clicked somewhere";
         emit clickSomewhere(text());
     }
 }
 
-void CustomizedLineEdit::hideEvent(QHideEvent *event){
+void CustomLineEdit::hideEvent(QHideEvent *event){
     Q_UNUSED(event)
     /// enables the edition of a group
     emit enableGroupEdit(true);
@@ -21,7 +21,7 @@ void CustomizedLineEdit::hideEvent(QHideEvent *event){
     QWidget::hide();
 }
 
-void CustomizedLineEdit::showEvent(QShowEvent *event){
+void CustomLineEdit::showEvent(QShowEvent *event){
     Q_UNUSED(event)
     /// disables the edition of a group
     emit enableGroupEdit(false);

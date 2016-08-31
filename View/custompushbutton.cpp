@@ -26,6 +26,7 @@ void CustomPushButton::initialize(const bool &checkable, const bool &enable, con
                 "QLabel:disabled {"
                     "color: grey;"
                 "}");
+
     label->hide();
 
     QString style = "";
@@ -59,22 +60,32 @@ void CustomPushButton::initialize(const bool &checkable, const bool &enable, con
             setMaximumHeight(l_button_height);
             setMinimumWidth(l_button_height);
             setMaximumWidth(l_button_height);
+            label->setMinimumHeight(l_button_height);
+            label->setMaximumHeight(l_button_height);
         break;
         case BOTTOM:
             setMinimumHeight(m_button_height);
             setMaximumHeight(m_button_height);
+            label->setMinimumHeight(m_button_height);
+            label->setMaximumHeight(m_button_height);
         break;
         case LEFT_MENU:
             setMinimumHeight(l_button_height);
             setMaximumHeight(l_button_height);
+            label->setMinimumHeight(l_button_height);
+            label->setMaximumHeight(l_button_height);
         break;
         case TOP_LEFT_MENU:
             setMinimumHeight(m_button_height);
             setMaximumHeight(m_button_height);
+            label->setMinimumHeight(m_button_height);
+            label->setMaximumHeight(m_button_height);
         break;
         default:
             setMinimumHeight(l_button_height);
             setMaximumHeight(l_button_height);
+            label->setMinimumHeight(l_button_height);
+            label->setMaximumHeight(l_button_height);
         break;
     }
 
@@ -117,9 +128,7 @@ void CustomPushButton::toggledSlot(bool checked){
 }
 
 void CustomPushButton::setEnabled(bool checked){
-    //qDebug() << "CustomPushButton::setEnabled" << text() << checked;
     label->setEnabled(checked);
-
     QPushButton::setEnabled(checked);
 }
 
@@ -138,7 +147,7 @@ void CustomPushButton::resizeEvent(QResizeEvent *event){
 }
 
 void CustomPushButton::enterEvent(QEvent *event){
-    //qDebug() << "CustomPushButton::enterEvent" << text() << size();
+    //qDebug() << "CustomPushButton::enterEvent" << text() << size() << label->size();
     if(!isChecked() && isEnabled())
         label->setStyleSheet(
                     "QLabel {"
@@ -187,9 +196,7 @@ void CustomPushButton::moveLabel(){
                     if(tmpStr.at(tmpStr.size()-1) == ' ')
                         tmpStr.remove(tmpStr.size()-1, 1);
 
-                    moveTo = QPoint(fm.width(tmpStr) + 10 + iconWidth, height()/3);
-                    if(height() < l_button_height)
-                        moveTo.setY(moveTo.y() - 2);
+                    moveTo = QPoint(fm.width(tmpStr) + 10 + iconWidth, 0);
 
                     break;
                 }

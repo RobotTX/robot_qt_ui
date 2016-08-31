@@ -4,7 +4,7 @@
 #include <QWidget>
 #include "Model/paths.h"
 
-class CustomizedLineEdit;
+class CustomLineEdit;
 class GroupsPathsButtonGroup;
 class TopLeftMenu;
 class MainWindow;
@@ -26,7 +26,7 @@ public:
     CustomPushButton* getSaveButton(void) const { return saveButton; }
     CustomPushButton* getCancelButton(void) const { return cancelButton; }
     void setCreatingGroup(const bool creating) { creatingGroup = creating; }
-    CustomizedLineEdit* getGroupNameEdit(void) const { return groupNameEdit; }
+    CustomLineEdit* getGroupNameEdit(void) const { return groupNameEdit; }
     QLabel* getGroupNameLabel(void) const { return groupNameLabel; }
     QString getLastCheckedButton(void) const { return lastCheckedButton; }
 
@@ -72,7 +72,7 @@ private:
     CustomScrollArea* scrollArea;
     QLabel* groupNameLabel;
 
-    CustomizedLineEdit* groupNameEdit;
+    CustomLineEdit* groupNameEdit;
     QSharedPointer<Paths> paths;
     QVBoxLayout* layout;
     GroupsPathsButtonGroup* buttonGroup;

@@ -7,7 +7,7 @@
 #include "Model/point.h"
 #include "View/groupspathsbuttongroup.h"
 #include "View/pathbuttongroup.h"
-#include "View/customizedlineedit.h"
+#include "View/customlineedit.h"
 #include <QAbstractButton>
 #include "View/customscrollarea.h"
 #include <QHBoxLayout>
@@ -31,7 +31,7 @@ GroupsPathsWidget::GroupsPathsWidget(QWidget* parent, MainWindow* _mainWindow, c
 
     groupNameLabel = new QLabel("New group's name : ", this);
     groupNameLabel->hide();
-    groupNameEdit = new CustomizedLineEdit(this);
+    groupNameEdit = new CustomLineEdit(this);
     groupNameEdit->hide();
 
     downLayout->addWidget(groupNameLabel);

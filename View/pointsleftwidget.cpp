@@ -15,7 +15,7 @@
 #include "View/leftmenu.h"
 #include <QKeyEvent>
 #include <QDebug>
-#include "View/customizedlineedit.h"
+#include "View/customlineedit.h"
 #include "View/toplayout.h"
 #include "View/pointview.h"
 #include <QAbstractButton>
@@ -46,7 +46,7 @@ PointsLeftWidget::PointsLeftWidget(QWidget* _parent, MainWindow* const mainWindo
 
     groupNameLabel = new QLabel("New group's name : ", this);
     groupNameLabel->hide();
-    groupNameEdit = new CustomizedLineEdit(this);
+    groupNameEdit = new CustomLineEdit(this);
     groupNameEdit->hide();
 
     layout->addWidget(groupNameLabel);

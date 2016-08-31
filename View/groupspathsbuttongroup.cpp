@@ -3,7 +3,7 @@
 #include "View/custompushbutton.h"
 #include "Model/paths.h"
 #include "View/stylesettings.h"
-#include "View/customizedlineedit.h"
+#include "View/customlineedit.h"
 
 GroupsPathsButtonGroup::GroupsPathsButtonGroup(QWidget *_parent, const QSharedPointer<Paths> &_paths): QWidget(_parent), paths(_paths), BUTTON_SIZE(parentWidget()->size()/20)
 {
@@ -13,7 +13,7 @@ GroupsPathsButtonGroup::GroupsPathsButtonGroup(QWidget *_parent, const QSharedPo
 
     createButtons();
 
-    modifyEdit = new CustomizedLineEdit(this);
+    modifyEdit = new CustomLineEdit(this);
     modifyEdit->setFixedWidth(1.29 * modifyEdit->width());
     modifyEdit->hide();
 
