@@ -801,6 +801,7 @@ void MainWindow::addPathSelecRobotBtnEvent(){
     if(!robotPathPainter->getPathDeleted()){
         if(editSelectedRobotWidget->getAddPathBtn()->text().compare("Add Path") == 0 || robotPathPainter->getOldPath().size() <= 0){
             emit resetPathCreationWidget(GraphicItemState::ROBOT_CREATING_PATH);
+            emit resetPathCreationWidget(GraphicItemState::NO_ROBOT_CREATING_PATH);
             robotPathCreationWidget->updatePath(selectedRobot->getRobot()->getPath());
         }
     }
@@ -1216,6 +1217,10 @@ void MainWindow::editTmpPathPointSlot(int id, QString name, double x, double y, 
         points->insertPoint(PATH_GROUP_NAME, id, editedPointView);
     }
 
+    if(state == GraphicItemState::ROBOT_CREATING_PATH)
+        editedPointView->setState(GraphicItemState::ROBOT_EDITING_PATH);
+    else
+        editedPointView->setState(GraphicItemState::NO_ROBOT_EDITING_PATH);
 
     editedPointView->setFlag(QGraphicsItem::ItemIsMovable);
     /// set by hand in order to keep the colors consistent while editing the point and after
@@ -1235,16 +1240,33 @@ void MainWindow::savePathSlot(GraphicItemState state){
     if(state == GraphicItemState::ROBOT_CREATING_PATH){
         robotPathPainter->setPathDeleted(false);
         robotPathPainter->setOldPath(robotPathPainter->getCurrentPath());
-
-
         editSelectedRobotWidget->setPathChanged(true);
         editSelectedRobotWidget->setPath(robotPathPainter->getCurrentPath());
     } else {
         noRobotPathPainter->setPathDeleted(false);
         noRobotPathPainter->setOldPath(noRobotPathPainter->getCurrentPath());
+
+        /// gotta update the model and serialize the paths
+        const QString groupName = noRobotPathCreationWidget->getCurrentGroupName();
+        const QString pathName = noRobotPathCreationWidget->getNameEdit()->text().simplified();
+        qDebug() << groupName << pathName;
+        paths->createPath(groupName, pathName);
+        for(int i = 0; i < noRobotPathPainter->getCurrentPath().size(); i++)
+            paths->addPathPoint(groupName, pathName, noRobotPathPainter->getCurrentPath().at(i));
+
+        /// updates the visible path
+        paths->setVisiblePath(pathName);
+
+        /// resets the menu so that it reflects the creation of this new path
+        leftMenu->getPathGroupDisplayed()->setPathsGroup(noRobotPathCreationWidget->getCurrentGroupName());
+
+        /// add this path to the file
+        serializePaths();
     }
 
     setEnableAll(false, GraphicItemState::NO_EVENT);
+
+    leftMenu->setEnableReturnCloseButtons(true);
 
     emit updatePathPainter(state);
 }
@@ -3977,7 +3999,11 @@ void MainWindow::createPath(){
     leftMenu->getNoRobotPathCreationWidget()->getSaveButton()->setEnabled(false);
 
     switchFocus("newPath", noRobotPathCreationWidget, MainWindow::WidgetType::PATH);
+
+    /// to clear the map of any path
     emit resetPath(GraphicItemState::ROBOT_CREATING_PATH);
+    emit resetPath(GraphicItemState::NO_ROBOT_CREATING_PATH);
+
     setMessageTop(TEXT_COLOR_INFO, "The name of your path cannot be empty, fill up the corresponding field to give your path a name");
     hideAllWidgets();
     setEnableAll(false, GraphicItemState::NO_ROBOT_CREATING_PATH, true);
