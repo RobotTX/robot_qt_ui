@@ -17,13 +17,14 @@
 #include <QLineEdit>
 #include <QLabel>
 #include <QGridLayout>
+#include <QKeyEvent>
 
-PathCreationWidget::PathCreationWidget(QWidget* parent, const QSharedPointer<Points> &_points, const QSharedPointer<Paths>& _paths, const bool associatedToRobot):
-    QWidget(parent), points(_points), paths(_paths), currentGroupName("")
+PathCreationWidget::PathCreationWidget(QWidget* parent, const QSharedPointer<Points> &_points, const QSharedPointer<Paths>& _paths, const bool associatedToRobot, const GraphicItemState _state):
+    QWidget(parent), points(_points), paths(_paths), currentGroupName(""), state(_state)
 {
     layout = new QVBoxLayout(this);
 
-    state = NO_STATE;
+    checkState = NO_STATE;
 
     actionButtons = new TopLeftMenu(this);
     actionButtons->getGoButton()->setEnabled(false);
@@ -139,10 +140,10 @@ void PathCreationWidget::resetWidget(){
     actionButtons->getEditButton()->setEnabled(false);
 
     pathPointsList->clear();
-    state = NO_STATE;
+    checkState = NO_STATE;
 
     updatePointsList();
-    emit resetPath();
+    emit resetPath(state);
 }
 
 void PathCreationWidget::itemClicked(QListWidgetItem* item){
@@ -169,7 +170,7 @@ void PathCreationWidget::savePathClicked(void){
     /// we check if we have path points
     if(pathPointsList->count() > 0){
         for(int i = 0; i < pathPointsList->count(); i++){
-            PathPointCreationWidget* pathPointWidget = ((PathPointCreationWidget*) pathPointsList->itemWidget(pathPointsList->item(i)));
+            PathPointCreationWidget* pathPointWidget = static_cast<PathPointCreationWidget*> (pathPointsList->itemWidget(pathPointsList->item(i)));
 
             /// check the action and if a number of time to wait has been set if needed
             if(pathPointWidget->getAction()->currentText().compare("Human Action") != 0){
@@ -192,14 +193,14 @@ void PathCreationWidget::savePathClicked(void){
         emit setMessage(TEXT_COLOR_DANGER, msg);
     } else {
         qDebug() << "PathCreationWidget::savePathClicked No error, ready to save";
-        emit savePath();
+        emit savePath(state);
     }
 }
 
 void PathCreationWidget::addPathPointByMenuSlot(void){
     qDebug() << "PathCreationWidget::addPathPointByMenuSlot called";
     /// We had a point by clicking on the plus button
-    state = CREATE;
+    checkState = CREATE;
     clicked();
 }
 
@@ -214,10 +215,10 @@ void PathCreationWidget::clicked(void){
 void PathCreationWidget::pointClicked(QAction *action){
     /// A permanent point has been selected on the QMenu so we add it to the list or edit the selected item
     Position pos = points->findPoint(action->text())->getPosition();
-    if(state == CREATE){
+    if(checkState == CREATE){
        qDebug() << "PathCreationWidget::pointClicked called to create a new path point" << action->text();
        addPathPointSlot(action->text(), pos.getX(), pos.getY());
-    } else if(state == EDIT){
+    } else if(checkState == EDIT){
        qDebug() << "PathCreationWidget::pointClicked called to edit a path point into" << action->text();
        editPathPoint(action->text(), pos.getX(), pos.getY());
     } else
@@ -247,12 +248,11 @@ void PathCreationWidget::addPathPointSlot(QString name, double x, double y){
     pathPointsList->addItem(listWidgetItem);
     pathPointsList->setItemWidget(listWidgetItem, pathPoint);
 
-    if(pathPointsList->count() > 1){
+    if(pathPointsList->count() > 1)
         static_cast<PathPointCreationWidget*> (pathPointsList->itemWidget(pathPointsList->item(pathPointsList->count() - 2)))->displayActionWidget(true);
-    }
 
     emit addPathPoint(name, x, y);
-    state = NO_STATE;
+    checkState = NO_STATE;
 
 
 }
@@ -295,7 +295,7 @@ void PathCreationWidget::deleteItem(QListWidgetItem* item){
 void PathCreationWidget::editPathPointSlot(void){
     qDebug() << "PathCreationWidget::editPathPointSlot called";
     int id = pathPointsList->row(pathPointsList->currentItem());
-    state = EDIT;
+    checkState = EDIT;
 
     /// we edit the point only if the corresponding item is enabled which is the case if no other point is being edited
     if(pathPointsList->itemWidget(pathPointsList->currentItem())->isEnabled()){
@@ -320,7 +320,7 @@ void PathCreationWidget::editPathPointSlot(void){
 
 
             emit editTmpPathPoint(id, pointView->getPoint()->getName(),
-                                  pointView->getPoint()->getPosition().getX(), pointView->getPoint()->getPosition().getY());
+                                  pointView->getPoint()->getPosition().getX(), pointView->getPoint()->getPosition().getY(), state);
         } else {
             qDebug() << "PathCreationWidget::editPathPointSlot This is a permanent point";
             clicked();
@@ -347,9 +347,9 @@ void PathCreationWidget::saveEditSlot(PathPointCreationWidget* pathPointCreation
     pathPointCreationWidget->getPathWidget()->show();
     pathPointsList->setDragDropMode(QAbstractItemView::InternalMove);
 
-    state = NO_STATE;
+    checkState = NO_STATE;
 
-    emit saveEditPathPoint();
+    emit saveEditPathPoint(state);
 }
 
 void PathCreationWidget::cancelEditSlot(PathPointCreationWidget* pathPointCreationWidget){
@@ -362,9 +362,9 @@ void PathCreationWidget::cancelEditSlot(PathPointCreationWidget* pathPointCreati
     pathPointCreationWidget->getPathWidget()->show();
     pathPointsList->setDragDropMode(QAbstractItemView::InternalMove);
 
-    state = NO_STATE;
+    checkState = NO_STATE;
 
-    emit cancelEditPathPoint();
+    emit cancelEditPathPoint(state);
 }
 
 void PathCreationWidget::actionChangedSlot(int id, int action, QString waitTime){
@@ -392,5 +392,6 @@ void PathCreationWidget::checkPathName(const QString name){
 }
 
 void PathCreationWidget::keyPressEvent(QKeyEvent *event){
-    Q_UNUSED(event)
+    if(!event->text().compare("\r"))
+        savePathClicked();
 }

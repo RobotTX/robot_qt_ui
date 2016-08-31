@@ -44,13 +44,13 @@ void PointView::mousePressEvent(QGraphicsSceneMouseEvent *event){
     } else if(state == GraphicItemState::ROBOT_CREATING_PATH){
         qDebug() << "PointView::mousePressEvent CREATING_PATH";
         addedToPath = true;
-        emit addPointPath(getPoint()->getName(), getPoint()->getPosition().getX(), getPoint()->getPosition().getY());
+        emit addPointPath(getPoint()->getName(), getPoint()->getPosition().getX(), getPoint()->getPosition().getY(), GraphicItemState::ROBOT_CREATING_PATH);
 
     } else if(state == GraphicItemState::NO_ROBOT_CREATING_PATH){
         qDebug() << "PointView::mousePressEvent NO_ROBOT_CREATING_PATH";
         emit addNoRobotPointPath(getPoint()->getName(), getPoint()->getPosition().getX(), getPoint()->getPosition().getY());
-    } else if(state == GraphicItemState::ROBOT_EDITING_PATH){
-        qDebug() << "PointView::mousePressEvent EDITING_PATH" << pos().x() << pos().y();
+    } else if(state == GraphicItemState::ROBOT_EDITING_PATH || state == GraphicItemState::NO_ROBOT_EDITING_PATH){
+        qDebug() << "PointView::mousePressEvent " << state << pos().x() << pos().y();
 
     }  else if(state == GraphicItemState::EDITING_PERM){
         qDebug() << "PointView::mousePressEvent EDITING_PERM" << pos().x() << pos().y();

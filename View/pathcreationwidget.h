@@ -18,6 +18,7 @@ class CustomPushButton;
 #include <QSharedPointer>
 #include <QVBoxLayout>
 #include "Model/paths.h"
+#include "Model/graphicitemstate.h"
 
 #define WIDGET_HEIGHT 100
 
@@ -38,7 +39,7 @@ public:
         float posY;
     };
 
-    PathCreationWidget(QWidget *parent, const QSharedPointer<Points>& points, const QSharedPointer<Paths>& _paths, const bool associatedToRobot);
+    PathCreationWidget(QWidget *parent, const QSharedPointer<Points>& points, const QSharedPointer<Paths>& _paths, const bool associatedToRobot, const GraphicItemState _state);
     void updatePath(const QVector<QSharedPointer<PathPoint> >& _currentPath);
     void updatePointsList(void);
     void deleteItem(QListWidgetItem* item);
@@ -64,15 +65,15 @@ signals:
     /// emitted when the order of the path has changed
     void orderPathPointChanged(int, int);
     /// emitted when the widget is reset
-    void resetPath();
+    void resetPath(GraphicItemState);
     /// emitted when a waiting time is changed
     void actionChanged(int, int, QString);
     /// emitted when a path point is edited
     void editPathPoint(int, QString, double, double);
-    void editTmpPathPoint(int, QString, double, double);
-    void saveEditPathPoint();
-    void cancelEditPathPoint();
-    void savePath();
+    void editTmpPathPoint(int, QString, double, double, GraphicItemState);
+    void saveEditPathPoint(GraphicItemState);
+    void cancelEditPathPoint(GraphicItemState);
+    void savePath(GraphicItemState);
     void codeEditPath(int codeError);
 
 private slots:
@@ -98,13 +99,14 @@ private:
     TopLeftMenu* actionButtons;
     QMenu* pointsMenu;
     PathPointList* pathPointsList;
-    CheckState state;
+    CheckState checkState;
     QLabel* nameLabel;
     QLineEdit* nameEdit;
     QString currentGroupName;
     CustomPushButton* cleanBtn;
     CustomPushButton* cancelBtn;
     CustomPushButton* saveBtn;
+    const GraphicItemState state;
 };
 
 #endif // PATHCREATIONWIDGET_H

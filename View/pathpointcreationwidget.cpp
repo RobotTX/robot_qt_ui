@@ -11,6 +11,7 @@
 PathPointCreationWidget::PathPointCreationWidget(const int _id, const QString _name, const double x, const double y, QWidget* parent):
     QWidget(parent), id(_id), name(_name), posX(x), posY(y)
 {
+    qDebug() << "id pathpointcreationwidget" << id << name;
     layout = new QHBoxLayout(this);
 
     pathWidget = new QWidget(this);
@@ -88,7 +89,7 @@ void PathPointCreationWidget::setName(const QString _name){
     if(name.contains(PATH_POINT_NAME)){
         setPointLabel(posX, posY);
     } else {
-        pointLabel->setText(QString::number(id) + ". " + name);
+        pointLabel->setText(QString::number(id+1) + ". " + name);
     }
 }
 
@@ -99,7 +100,7 @@ void PathPointCreationWidget::setId(const int _id){
     if(name.contains(PATH_POINT_NAME)){
         setPointLabel(posX, posY);
     } else {
-        pointLabel->setText(QString::number(id)+". "+name);
+        pointLabel->setText(QString::number(id+1)+". "+name);
     }
 }
 
