@@ -70,7 +70,7 @@ protected:
 signals:
     void pointRightClicked(QString);
     void pointLeftClicked(QString name, double x, double y);
-    void addPointPath(QString name, double x, double y);
+    void addPointPath(QString name, double x, double y, GraphicItemState);
     void addNoRobotPointPath(QString name, double x, double y);
     void homeEdited(QString);
     /// when an edited path point of a robot is dragged

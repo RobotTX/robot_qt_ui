@@ -44,7 +44,7 @@ void PointView::mousePressEvent(QGraphicsSceneMouseEvent *event){
     } else if(state == GraphicItemState::ROBOT_CREATING_PATH){
         qDebug() << "PointView::mousePressEvent CREATING_PATH";
         addedToPath = true;
-        emit addPointPath(getPoint()->getName(), getPoint()->getPosition().getX(), getPoint()->getPosition().getY());
+        emit addPointPath(getPoint()->getName(), getPoint()->getPosition().getX(), getPoint()->getPosition().getY(), GraphicItemState::ROBOT_CREATING_PATH);
 
     } else if(state == GraphicItemState::NO_ROBOT_CREATING_PATH){
         qDebug() << "PointView::mousePressEvent NO_ROBOT_CREATING_PATH";

@@ -102,11 +102,11 @@ signals:
     void sendCommand(QString);
     void nameChanged(QString, QString);
     void changeCmdThreadRobotName(QString);
-    void addPathPoint(QString name, double x, double y);
+    void addPathPoint(QString name, double x, double y, GraphicItemState);
     void addNoRobotPathPoint(QString name, double x, double y);
-    void updatePathPainter();
-    void updatePathPainterPointView();
-    void resetPath();
+    void updatePathPainter(GraphicItemState);
+    void updatePathPainterPointView(GraphicItemState);
+    void resetPath(GraphicItemState);
     void resetPathCreationWidget();
 
 private slots:
@@ -127,7 +127,6 @@ private slots:
     void plusGroupBtnEvent();
     void minusGroupBtnEvent();
     void editGroupBtnEvent();
-    void selectPointBtnEvent();
     void openLeftMenu();
     void backSelecRobotBtnEvent();
     void editSelecRobotBtnEvent();
@@ -154,17 +153,17 @@ private slots:
     void displayPointEvent(QString name, double x, double y);
     void askForDeleteDefaultGroupPointConfirmation(const QString index);
     void displayGroupMapEvent(void);
-    void savePathSlot();
+    void savePathSlot(GraphicItemState state);
     void cancelPathSlot();
-    void addPointPathSlot(QString name, double x, double y);
+    void addPointPathSlot(QString name, double x, double y, GraphicItemState state);
     void displayPointsInGroup(void);
     void removePointFromInformationMenu(void);
     void displayPointMapEvent(void);
     void editPointButtonEvent();
-    void editTmpPathPointSlot(int id, QString name, double x, double y);
+    void editTmpPathPointSlot(int id, QString name, double x, double y, GraphicItemState state);
     void editPointFromGroupMenu(void);
-    void saveEditPathPointSlot(void);
-    void cancelEditPathPointSlot(void);
+    void saveEditPathPointSlot(GraphicItemState state);
+    void cancelEditPathPointSlot(GraphicItemState state);
     void moveEditedPathPointSlot(void);
     void displayPointInfoFromGroupMenu(void);
     void updatePoint(void);
@@ -182,7 +181,7 @@ private slots:
     void enableReturnAndCloseButtons(void);
     void doubleClickOnRobot(QString checkedId);
     void setMessageCreationPath(QString message);
-    void updateEditedPathPoint(double x, double y);
+    void updateEditedPathPoint(double x, double y, GraphicItemState state);
     void centerMap();
     void setMessageCreationPoint(QString type, CreatePointWidget::Error error);
     void choosePointName(QString message);

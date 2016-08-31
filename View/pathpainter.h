@@ -13,6 +13,7 @@ class MainWindow;
 #include <QSharedPointer>
 #include "Model/point.h"
 #include "Model/pathpoint.h"
+#include "Model/graphicitemstate.h"
 
 /**
  * @brief The PathPainter class
@@ -22,7 +23,7 @@ class PathPainter : public QObject, public QGraphicsPathItem{
     Q_OBJECT
 
 public:
-    PathPainter(MainWindow* const &mainWindow, MapView* const &mapPixmapItem, QSharedPointer<Points> _points);
+    PathPainter(MainWindow* const &mainWindow, MapView* const &mapPixmapItem, const QSharedPointer<Points> _points, const GraphicItemState _state);
 
     QVector<QSharedPointer<PathPoint>> getCurrentPath(void) const { return currentPath; }
     QVector<QSharedPointer<PathPoint>> getOldPath(void) const { return oldPath; }
@@ -38,11 +39,11 @@ public:
     void setPathDeleted(bool _pathDeleted){ pathDeleted = _pathDeleted; }
 
 private slots:
-    void resetPathSlot(void);
+    void resetPathSlot(GraphicItemState _state);
     void addPathPointSlot(QString name, double x, double y);
     void deletePathPointSlot(int id);
-    void updatePathPainterSlot(void);
-    void updatePathPainterPointViewSlot(void);
+    void updatePathPainterSlot(GraphicItemState _state);
+    void updatePathPainterPointViewSlot(GraphicItemState _state);
     void orderPathPointChangedSlot(int from, int to);
     void actionChangedSlot(int id, int action, QString waitTime);
     void editPathPointSlot(int id, QString name, double x, double y);
@@ -59,6 +60,8 @@ private:
     MainWindow* mainWindow;
     MapView* mapView;
     bool pathDeleted;
+    /// to hold whether one instance is drawing paths related to robots or not
+    const GraphicItemState state;
 };
 
 #endif // PATHPAINTER_H
