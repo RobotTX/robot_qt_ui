@@ -48,7 +48,7 @@ void PointView::mousePressEvent(QGraphicsSceneMouseEvent *event){
 
     } else if(state == GraphicItemState::NO_ROBOT_CREATING_PATH){
         qDebug() << "PointView::mousePressEvent NO_ROBOT_CREATING_PATH";
-        emit addNoRobotPointPath(getPoint()->getName(), getPoint()->getPosition().getX(), getPoint()->getPosition().getY());
+        emit addPointPath(getPoint()->getName(), getPoint()->getPosition().getX(), getPoint()->getPosition().getY(), GraphicItemState::NO_ROBOT_CREATING_PATH);
     } else if(state == GraphicItemState::ROBOT_EDITING_PATH || state == GraphicItemState::NO_ROBOT_EDITING_PATH){
         qDebug() << "PointView::mousePressEvent " << state << pos().x() << pos().y();
 
@@ -90,10 +90,10 @@ void PointView::mouseMoveEvent(QGraphicsSceneMouseEvent *event){
 
         if(state == GraphicItemState::ROBOT_EDITING_PATH){
             point->setPosition(x, y);
-            emit moveEditedPathPoint();
+            emit moveEditedPathPoint(GraphicItemState::ROBOT_EDITING_PATH);
         } else if(state == GraphicItemState::NO_ROBOT_EDITING_PATH){
             point->setPosition(x, y);
-            emit moveEditedNoRobotPathPoint();
+            emit moveEditedPathPoint(GraphicItemState::NO_ROBOT_EDITING_PATH);
         } else if(state == GraphicItemState::EDITING_PERM){
             emit editedPointPositionChanged(x, y);
         } else if(state == GraphicItemState::EDITING_HOME){
@@ -124,7 +124,8 @@ void PointView::hoverEnterEvent(QGraphicsSceneHoverEvent * /* unused */){
 void PointView::hoverLeaveEvent(QGraphicsSceneHoverEvent * /* unused */){
     setPixmap(lastType, selectedRobot);
     updatePos();
-    if(state == GraphicItemState::ROBOT_CREATING_PATH || state == GraphicItemState::ROBOT_EDITING_PATH)
+    if(state == GraphicItemState::ROBOT_CREATING_PATH || state == GraphicItemState::ROBOT_EDITING_PATH
+    || state == GraphicItemState::NO_ROBOT_CREATING_PATH || state == GraphicItemState::NO_ROBOT_EDITING_PATH)
         emit updatePathPainterPointView();
 }
 

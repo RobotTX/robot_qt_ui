@@ -50,6 +50,7 @@ public:
     CustomPushButton* getCancelButton(void) const { return cancelBtn; }
     CustomLineEdit* getNameEdit(void) const { return nameEdit; }
     CustomPushButton* getSaveButton(void) const { return saveBtn; }
+    TopLeftMenu* getActionButtons(void) const { return actionButtons; }
 
 protected:
     void showEvent(QShowEvent* event);
@@ -75,22 +76,26 @@ signals:
     void cancelEditPathPoint(GraphicItemState);
     void savePath(GraphicItemState);
     void codeEditPath(int codeError);
+    void editPathPointSignal(GraphicItemState);
+    void resetWidgetSignal(GraphicItemState);
 
 private slots:
-    void resetWidget(void);
+    void resetWidgetRelaySlot();
+    void resetWidget(GraphicItemState _state);
     void addPathPointByMenuSlot(void);
-    void deletePathPointSlot(void);
-    void editPathPointSlot(void);
+    void deletePathPointSlot();
+    void editPathPointSlot(GraphicItemState _state);
     void itemClicked(QListWidgetItem* item);
     void itemMovedSlot(const QModelIndex& , int start, int , const QModelIndex& , int row);
     void savePathClicked(void);
     void clicked(void);
     void pointClicked(QAction *action);
-    void addPathPointSlot(QString name, double x, double y);
+    void addPathPointSlot(QString name, double x, double y, GraphicItemState _state);
     void saveEditSlot(PathPointCreationWidget* pathPointCreationWidget);
     void cancelEditSlot(PathPointCreationWidget* pathPointCreationWidget);
     void actionChangedSlot(int id, int action, QString waitTime);
     void checkPathName(const QString name);
+    void editPathPointSlotRelay();
 
 private:
     QSharedPointer<Points> points;

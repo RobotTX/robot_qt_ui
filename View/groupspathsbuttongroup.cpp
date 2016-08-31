@@ -22,7 +22,7 @@ GroupsPathsButtonGroup::GroupsPathsButtonGroup(QWidget *_parent, const QSharedPo
 }
 
 void GroupsPathsButtonGroup::createButtons(){
-    qDebug() << "GroupsPathsButtonGroup::createButtons called";
+    //qDebug() << "GroupsPathsButtonGroup::createButtons called";
     /// to give a different id to each button
     int i(0);
     QMapIterator<QString, QSharedPointer<Paths::CollectionPaths>> it_paths_groups(*(paths->getGroups()));

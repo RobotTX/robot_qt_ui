@@ -30,7 +30,7 @@ void PointButtonGroup::setGroup(const QString _groupIndex){
 }
 
 void PointButtonGroup::createButtons(){
-    qDebug() << "PointButtonGroup::createButtons called";
+    //qDebug() << "PointButtonGroup::createButtons called";
 
     if(points->isAGroup(groupIndex) && points->getGroups()->value(groupIndex) && points->getGroups()->value(groupIndex)->size() > 0){
         QSharedPointer<QVector<QSharedPointer<PointView>>> group = points->getGroups()->value(groupIndex);
