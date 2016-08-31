@@ -76,10 +76,13 @@ signals:
     void savePath(GraphicItemState);
     void codeEditPath(int codeError);
 
+    void resetWidgetSignal(GraphicItemState);
+
 private slots:
-    void resetWidget(void);
+    void resetWidgetRelaySlot();
+    void resetWidget(GraphicItemState _state);
     void addPathPointByMenuSlot(void);
-    void deletePathPointSlot(void);
+    void deletePathPointSlot();
     void editPathPointSlot(void);
     void itemClicked(QListWidgetItem* item);
     void itemMovedSlot(const QModelIndex& , int start, int , const QModelIndex& , int row);

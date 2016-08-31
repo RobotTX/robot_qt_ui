@@ -107,7 +107,7 @@ signals:
     void updatePathPainter(GraphicItemState);
     void updatePathPainterPointView(GraphicItemState);
     void resetPath(GraphicItemState);
-    void resetPathCreationWidget();
+    void resetPathCreationWidget(GraphicItemState);
 
 private slots:
     void updateRobot(const QString ipAddress, const float posX, const float posY, const float ori);

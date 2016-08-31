@@ -78,10 +78,10 @@ void MapView::mouseReleaseEvent(QGraphicsSceneMouseEvent *event){
 
         } else if(state == GraphicItemState::ROBOT_EDITING_PATH){
             /// to notify that a point which belongs to the path of a robot has been changed
-            emit newCoordinatesPathPoint(event->pos().x(), event->pos().y(), GraphicItemState::ROBOT_EDITING_PATH);
+            emit newCoordinatesPathPoint(event->pos().x(), event->pos().y(), GraphicItemState::ROBOT_CREATING_PATH);
         } else if(state == GraphicItemState::NO_ROBOT_EDITING_PATH){
             qDebug() << "mapView::NO_ROBOT_EDITING_PATH";
-            emit newCoordinatesNoRobotPathPoint(event->pos().x(), event->pos().y());
+            emit newCoordinatesPathPoint(event->pos().x(), event->pos().y(), GraphicItemState::NO_ROBOT_CREATING_PATH);
         } else {
             //qDebug() << "MapView::mouseReleaseEvent NO_EVENT";
         }

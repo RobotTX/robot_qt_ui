@@ -34,8 +34,7 @@
 #include "View/pathbuttongroup.h"
 
 LeftMenu::LeftMenu(MainWindow* _mainWindow, QSharedPointer<Points> const& _points, QSharedPointer<Paths> const& _paths,
-                   const QSharedPointer<Robots> &robots, const QSharedPointer<Points> &pointViews,
-                   const QSharedPointer<Map> &_map, const PathPainter *robotPathPainter, const PathPainter *noRobotPathPainter)
+                   const QSharedPointer<Robots> &robots, const QSharedPointer<Map> &_map, const PathPainter *robotPathPainter, const PathPainter *noRobotPathPainter)
     : QWidget(_mainWindow), mainWindow(_mainWindow), points(_points), paths(_paths), lastCheckedId("s"){
 
     QVBoxLayout* leftLayout  = new QVBoxLayout();
@@ -117,7 +116,7 @@ LeftMenu::LeftMenu(MainWindow* _mainWindow, QSharedPointer<Points> const& _point
     connect(editSelectedRobotWidget, SIGNAL(hideEditSelectedRobotWidget()), mainWindow, SLOT(hideHome()));
 
     /// Menu to edit the selected point
-    createPointWidget = new CreatePointWidget(this, mainWindow, pointViews);
+    createPointWidget = new CreatePointWidget(this, mainWindow, points);
     createPointWidget->hide();
     leftLayout->addWidget(createPointWidget);
     connect(createPointWidget, SIGNAL(pointSaved(QString, double, double, QString)), mainWindow, SLOT(pointSavedEvent(QString, double, double, QString)));

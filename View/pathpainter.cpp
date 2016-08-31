@@ -36,7 +36,8 @@ void PathPainter::resetPathSlot(GraphicItemState _state){
 }
 
 void PathPainter::displayPath(void){
-    qDebug() << "\nPathPainter::displayPath called";
+    //qDebug() << "\nPathPainter::displayPath called";
+    /*
     for(int i = 0; i < currentPath.size(); i++){
         qDebug() << i << ":" << currentPath.at(i)->getPoint().getName()
                  << currentPath.at(i)->getPoint().getPosition().getX()
@@ -44,7 +45,8 @@ void PathPainter::displayPath(void){
                  << (int) currentPath.at(i)->getAction()
                  << currentPath.at(i)->getWaitTime();
     }
-    qDebug() << "\n";
+    */
+    //qDebug() << "\n";
 }
 
 void PathPainter::addPathPointSlot(QString name, double x, double y){
@@ -179,7 +181,7 @@ void PathPainter::updateCurrentPath(void){
 void PathPainter::updatePathPainterSlot(GraphicItemState _state){
     /// we only update if the state given as parameter is the same as ours (the signal is intended for us)
     if(state == _state){
-        qDebug() << "PathPainter::updatePathPainter called";
+        qDebug() << "PathPainter::updatePathPainter called" << state;
         points->setPixmapAll(PointView::PixmapType::NORMAL, mainWindow->getSelectedRobot());
         QSharedPointer<QVector<QSharedPointer<PointView>>> group = points->getGroups()->value(PATH_GROUP_NAME);
 

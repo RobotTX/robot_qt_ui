@@ -85,7 +85,9 @@ PathCreationWidget::PathCreationWidget(QWidget* parent, const QSharedPointer<Poi
 
     connect(saveBtn, SIGNAL(clicked()), this, SLOT(savePathClicked()));
 
-    connect(cleanBtn, SIGNAL(clicked()), this, SLOT(resetWidget()));
+    connect(cleanBtn, SIGNAL(clicked()), this, SLOT(resetWidgetRelaySlot()));
+
+    connect(this, SIGNAL(resetWidgetSignal(GraphicItemState)), this, SLOT(resetWidget(GraphicItemState)));
 
     hide();
     layout->setAlignment(Qt::AlignTop);
@@ -133,17 +135,19 @@ void PathCreationWidget::updatePointsList(void){
     }
 }
 
-void PathCreationWidget::resetWidget(){
-    qDebug() << "PathCreationWidget::resetWidget called";
+void PathCreationWidget::resetWidget(GraphicItemState _state){
+    if(state == _state){
+        qDebug() << "PathCreationWidget::resetWidget called";
 
-    actionButtons->getMinusButton()->setEnabled(false);
-    actionButtons->getEditButton()->setEnabled(false);
+        actionButtons->getMinusButton()->setEnabled(false);
+        actionButtons->getEditButton()->setEnabled(false);
 
-    pathPointsList->clear();
-    checkState = NO_STATE;
+        pathPointsList->clear();
+        checkState = NO_STATE;
 
-    updatePointsList();
-    emit resetPath(state);
+        updatePointsList();
+        emit resetPath(state);
+    }
 }
 
 void PathCreationWidget::itemClicked(QListWidgetItem* item){
@@ -257,12 +261,14 @@ void PathCreationWidget::addPathPointSlot(QString name, double x, double y){
 
 }
 
-void PathCreationWidget::deletePathPointSlot(void){
-    qDebug() << "PathCreationWidget::deletePathPointSlot called";
+void PathCreationWidget::deletePathPointSlot(){
+    qDebug() << "PathCreationWidget::deletePathPointSlot called with state" << state;
+
     /// Delete the item and reset the widget
     deleteItem(pathPointsList->currentItem());
-    if (pathPointsList->count()==0)
-        resetWidget();
+    if (pathPointsList->count() == 0)
+        resetWidget(state);
+
 }
 void PathCreationWidget::deleteItem(QListWidgetItem* item){
     /// Pop up which ask to confirm the suppression of a path point
@@ -394,4 +400,8 @@ void PathCreationWidget::checkPathName(const QString name){
 void PathCreationWidget::keyPressEvent(QKeyEvent *event){
     if(!event->text().compare("\r"))
         savePathClicked();
+}
+
+void PathCreationWidget::resetWidgetRelaySlot(){
+    emit resetWidgetSignal(state);
 }
