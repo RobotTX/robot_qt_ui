@@ -99,7 +99,7 @@ void PathCreationWidget::updatePath(const QVector<QSharedPointer<PathPoint>>& _p
     for(int i = 0; i < _path.size(); i++){
         addPathPointSlot(_path.at(i)->getPoint().getName(),
                          _path.at(i)->getPoint().getPosition().getX(),
-                         _path.at(i)->getPoint().getPosition().getY());
+                         _path.at(i)->getPoint().getPosition().getY(), state);
     }
 }
 
@@ -221,7 +221,7 @@ void PathCreationWidget::pointClicked(QAction *action){
     Position pos = points->findPoint(action->text())->getPosition();
     if(checkState == CREATE){
        qDebug() << "PathCreationWidget::pointClicked called to create a new path point" << action->text();
-       addPathPointSlot(action->text(), pos.getX(), pos.getY());
+       addPathPointSlot(action->text(), pos.getX(), pos.getY(), state);
     } else if(checkState == EDIT){
        qDebug() << "PathCreationWidget::pointClicked called to edit a path point into" << action->text();
        editPathPoint(action->text(), pos.getX(), pos.getY());
@@ -229,36 +229,36 @@ void PathCreationWidget::pointClicked(QAction *action){
         qDebug() << "PathCreationWidget::pointClicked called while in NO_STATE" << action->text();
 }
 
-void PathCreationWidget::addPathPointSlot(QString name, double x, double y){
-    if(pathPointsList->count() > 0){
-        PathPointCreationWidget* pathPoint = static_cast<PathPointCreationWidget*> (pathPointsList->itemWidget(pathPointsList->item(pathPointsList->count()-1)));
-        Point helperPoint = Point(name, x, y);
-        if(helperPoint.comparePos(pathPoint->getPosX(), pathPoint->getPosY())){
-            qDebug() << "same point";
-            return;
+void PathCreationWidget::addPathPointSlot(QString name, double x, double y, GraphicItemState _state){
+    if(state == _state){
+        if(pathPointsList->count() > 0){
+            PathPointCreationWidget* pathPoint = static_cast<PathPointCreationWidget*> (pathPointsList->itemWidget(pathPointsList->item(pathPointsList->count()-1)));
+            Point helperPoint = Point(name, x, y);
+            if(helperPoint.comparePos(pathPoint->getPosX(), pathPoint->getPosY())){
+                qDebug() << "same point";
+                return;
+            }
         }
+
+        PathPointCreationWidget* pathPoint = new PathPointCreationWidget(pathPointsList->count(), name, x, y, this);
+        connect(pathPoint, SIGNAL(saveEditSignal(PathPointCreationWidget*)), this, SLOT(saveEditSlot(PathPointCreationWidget*)));
+        connect(pathPoint, SIGNAL(cancelEditSignal(PathPointCreationWidget*)), this, SLOT(cancelEditSlot(PathPointCreationWidget*)));
+        connect(pathPoint, SIGNAL(actionChanged(int, int, QString)), this, SLOT(actionChangedSlot(int, int, QString)));
+
+        /// We add the path point widget to the list
+        QListWidgetItem* listWidgetItem = new QListWidgetItem(pathPointsList);
+        listWidgetItem->setSizeHint(QSize(listWidgetItem->sizeHint().width(), WIDGET_HEIGHT));
+        listWidgetItem->setBackgroundColor(QColor(255, 255, 255, 10));
+
+        pathPointsList->addItem(listWidgetItem);
+        pathPointsList->setItemWidget(listWidgetItem, pathPoint);
+
+        if(pathPointsList->count() > 1)
+            static_cast<PathPointCreationWidget*> (pathPointsList->itemWidget(pathPointsList->item(pathPointsList->count() - 2)))->displayActionWidget(true);
+
+        emit addPathPoint(name, x, y);
+        checkState = NO_STATE;
     }
-
-    PathPointCreationWidget* pathPoint = new PathPointCreationWidget(pathPointsList->count(), name, x, y, this);
-    connect(pathPoint, SIGNAL(saveEditSignal(PathPointCreationWidget*)), this, SLOT(saveEditSlot(PathPointCreationWidget*)));
-    connect(pathPoint, SIGNAL(cancelEditSignal(PathPointCreationWidget*)), this, SLOT(cancelEditSlot(PathPointCreationWidget*)));
-    connect(pathPoint, SIGNAL(actionChanged(int, int, QString)), this, SLOT(actionChangedSlot(int, int, QString)));
-
-    /// We add the path point widget to the list
-    QListWidgetItem* listWidgetItem = new QListWidgetItem(pathPointsList);
-    listWidgetItem->setSizeHint(QSize(listWidgetItem->sizeHint().width(), WIDGET_HEIGHT));
-    listWidgetItem->setBackgroundColor(QColor(255, 255, 255, 10));
-
-    pathPointsList->addItem(listWidgetItem);
-    pathPointsList->setItemWidget(listWidgetItem, pathPoint);
-
-    if(pathPointsList->count() > 1)
-        static_cast<PathPointCreationWidget*> (pathPointsList->itemWidget(pathPointsList->item(pathPointsList->count() - 2)))->displayActionWidget(true);
-
-    emit addPathPoint(name, x, y);
-    checkState = NO_STATE;
-
-
 }
 
 void PathCreationWidget::deletePathPointSlot(){

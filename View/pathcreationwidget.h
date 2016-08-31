@@ -50,6 +50,7 @@ public:
     CustomPushButton* getCancelButton(void) const { return cancelBtn; }
     QLineEdit* getNameEdit(void) const { return nameEdit; }
     CustomPushButton* getSaveButton(void) const { return saveBtn; }
+    TopLeftMenu* getActionButtons(void) const { return actionButtons; }
 
 protected:
     void showEvent(QShowEvent* event);
@@ -89,7 +90,7 @@ private slots:
     void savePathClicked(void);
     void clicked(void);
     void pointClicked(QAction *action);
-    void addPathPointSlot(QString name, double x, double y);
+    void addPathPointSlot(QString name, double x, double y, GraphicItemState _state);
     void saveEditSlot(PathPointCreationWidget* pathPointCreationWidget);
     void cancelEditSlot(PathPointCreationWidget* pathPointCreationWidget);
     void actionChangedSlot(int id, int action, QString waitTime);

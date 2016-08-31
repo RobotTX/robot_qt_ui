@@ -250,7 +250,7 @@ QSharedPointer<PointView> Points::getTmpPointView() const{
 }
 
 bool Points::isDisplayed(const QString key) const {
-    qDebug() << "Points::isDisplayed called" << key;
+    //qDebug() << "Points::isDisplayed called" << key;
     if(!groups->value(key) || groups->value(key)->size() <= 0) {
         return false;
     } else {

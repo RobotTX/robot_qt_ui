@@ -241,7 +241,6 @@ private slots:
     void cancelNoRobotPathSlot();
     void saveNoRobotPathSlot();
     void setMessageModifGroupPaths(int code);
-    void updateEditedNoRobotPathPoint(double x, double y);
     void saveEditNoRobotPathPointSlot();
     void moveEditedNoRobotPathPointSlot();
     void editTmpNoRobotPathPointSlot(int id, QString name, double x, double y);

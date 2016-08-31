@@ -19,7 +19,7 @@ PathPainter::PathPainter(MainWindow* const &mainWindow, MapView* const &mapPixma
 
 void PathPainter::resetPathSlot(GraphicItemState _state){
     if(state == _state){
-        qDebug() << "PathPainter::resetPathSlot called";
+        qDebug() << "PathPainter::resetPathSlot called with state !!" << state;
         path = QPainterPath();
         points->setPixmapAll(PointView::PixmapType::NORMAL, mainWindow->getSelectedRobot());
 
@@ -90,9 +90,7 @@ void PathPainter::orderPathPointChangedSlot(int from, int to){
     /// Do the change in the model
     qDebug() << currentPath.size();
     QSharedPointer<PathPoint> pathPoint = currentPath.takeAt(from);
-     qDebug() << currentPath.size();
-    //QSharedPointer<PathPoint> pathPoint = currentPath.at(from);
-    //currentPath.remove(from);
+
     QSharedPointer<PointView> pointView = points->getGroups()->value(PATH_GROUP_NAME)->takeAt(from);
 
     if(to > currentPath.size()){
@@ -172,9 +170,9 @@ void PathPainter::actionChangedSlot(int id, int action, QString waitTimeStr){
 }
 
 void PathPainter::updateCurrentPath(void){
-    for(int i = 0; i < currentPath.size(); i++){
+    for(int i = 0; i < currentPath.size(); i++)
         currentPath.at(i)->setPoint(*(points->getGroups()->value(PATH_GROUP_NAME)->at(i)->getPoint()));
-    }
+
     displayPath();
 }
 
@@ -202,10 +200,6 @@ void PathPainter::updatePathPainterSlot(GraphicItemState _state){
                 /// TODO if the original point is displaying a home => display home else no display home
                 /// ( changer type ? home -> path et path -> home ? )
 
-                /*QSharedPointer<PointView> realPointView = points->findPointView(currentPointView->getPoint()->getName());
-                qDebug() << "realPointView" << (realPointView == NULL);
-
-                //if(realPointView->getType() == )*/
                 if(i == 0){
                     path = QPainterPath(pointCoord);
                     startPointView = currentPointView;
@@ -222,16 +216,24 @@ void PathPainter::updatePathPainterSlot(GraphicItemState _state){
             setPath(path);
 
             if(*(startPointView->getPoint()) == *(endPointView->getPoint())){
-                if(startPointView->getType() != PointView::PixmapType::SELECTED)
+                qDebug() << "those are the same points !!!" << startPointView->getType();
+                if(startPointView->getType() != PointView::PixmapType::SELECTED){
+                    qDebug() << "setting the start stop pixmap";
                     startPointView->setPixmap(PointView::PixmapType::START_STOP);
+                }
             } else {
-                if(startPointView->getType() != PointView::PixmapType::SELECTED)
+                if(startPointView->getType() != PointView::PixmapType::SELECTED){
+                    qDebug() << "setting the start pixmap";
                     startPointView->setPixmap(PointView::PixmapType::START);
+                }
 
-                if(endPointView->getType() != PointView::PixmapType::SELECTED)
+                if(endPointView->getType() != PointView::PixmapType::SELECTED){
                     endPointView->setPixmap(PointView::PixmapType::STOP);
+                    qDebug() << "setting the stop pixmap";
+                }
             }
         } else {
+            qDebug() << "resetting with state" << state;
             resetPathSlot(_state);
         }
         displayPath();
