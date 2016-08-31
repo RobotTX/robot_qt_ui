@@ -22,7 +22,7 @@
         </point>
     </group>
     <group>
-        <name>Second group duh duh duh</name>
+        <name>Second group</name>
         <point>
             <name>Fanny</name>
             <x>1126</x>
@@ -44,6 +44,10 @@
             <y>0</y>
             <displayed>0</displayed>
         </point>
+    </group>
+    <group>
+        <name>afaf</name>
+    </group>
     <group>
         <name>first group</name>
         <point>

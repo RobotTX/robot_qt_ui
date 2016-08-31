@@ -9,7 +9,7 @@ class QMainWindow;
 class QVBoxLayout;
 class CustomPushButton;
 class QLabel;
-class QLineEdit;
+class CustomLineEdit;
 class QHBoxLayout;
 class GroupEditWindow;
 class Points;

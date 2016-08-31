@@ -20,16 +20,18 @@ void CustomLabel::initialize(){
         tmpFont.setPointSize(13);
         setFont(tmpFont);
         label->setFont(tmpFont);
+        style += "text-align: center;";
+    } else {
+        style += "text-align: left;";
     }
 
     setStyleSheet(
-                "QLabel { text-align: left; }");
+                "QLabel { " + style + "}");
 
     label->setAttribute(Qt::WA_TranslucentBackground, false);
     label->setStyleSheet(
                 "QLabel {"
                     "color: #222222;"
-                    "text-decoration: none;"
                     "padding-right: 5px;"
                     "background-color: " + left_menu_background_color + ";"
                 "}"
@@ -41,14 +43,18 @@ void CustomLabel::initialize(){
 }
 
 void CustomLabel::enterEvent(QEvent *event){
-    QFontMetrics fm(font());
+    /*QFontMetrics fm(font());
     qDebug() << "CustomLabel::enterEvent" << text() << size() << label->size()
-             << fm.width(text()) << fm.height();
+             << fm.width(text()) << fm.height();*/
     QLabel::enterEvent(event);
 }
 
+void CustomLabel::showEvent(QShowEvent* event){
+    QLabel::showEvent(event);
+    moveLabel();
+}
+
 void CustomLabel::resizeEvent(QResizeEvent *event){
-    //qDebug() << "CustomLabel::resizeEvent" << text() << maximumWidth();
     QWidget* widget = static_cast<QWidget*> (parent());
     int maxWidth = widget->width()-widget->contentsMargins().right()-widget->contentsMargins().left();
     if(widget->width() > static_cast<QWidget*> (widget->parent())->width()){
@@ -56,6 +62,11 @@ void CustomLabel::resizeEvent(QResizeEvent *event){
     }
     setMaximumWidth(maxWidth);
     QLabel::resizeEvent(event);
+    moveLabel();
+}
+
+void CustomLabel::setText(const QString &str){
+    QLabel::setText(str);
     moveLabel();
 }
 
@@ -90,9 +101,15 @@ void CustomLabel::moveLabel(){
             label->move(moveTo);
             setToolTip(text());
             label->show();
+
+            if(title)
+                setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
         } else {
             setToolTip("");
             label->hide();
+
+            if(title)
+                setAlignment(Qt::AlignCenter | Qt::AlignVCenter);
         }
     }
 }

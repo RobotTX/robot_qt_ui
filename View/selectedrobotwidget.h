@@ -48,12 +48,12 @@ private:
     QVBoxLayout* layout;
     RobotView* robotView;
     QProgressBar* batteryLevel;
+    CustomLabel* name;
     CustomLabel* wifiNameLabel;
-    CustomPushButton* goHome;
     CustomLabel* ipAddressLabel;
+    CustomPushButton* goHome;
     PathWidget* pathWidget;
     CustomPushButton* scanBtn;
-    CustomLabel* name;
     TopLeftMenu* actionButtons ;
     QLabel* noPath ;
     QLabel* homeLabel2;

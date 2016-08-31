@@ -5,7 +5,7 @@ class QVBoxLayout;
 class QHBoxLayout;
 class QLabel;
 class CustomPushButton;
-class QLineEdit;
+class CustomLineEdit;
 class QComboBox;
 
 #include "Model/points.h"
@@ -36,7 +36,7 @@ public:
     QString getName(void) const { return name; }
     int getId(void) const { return id; }
     QComboBox* getAction(void) const { return actionBtn; }
-    QLineEdit* getTimeEdit(void) const { return timeEdit; }
+    CustomLineEdit* getTimeEdit(void) const { return timeEdit; }
     int getPosX(void) const { return posX; }
     int getPosY(void) const { return posY; }
     bool isTemporary(void) const { return name.contains(PATH_POINT_NAME); }
@@ -66,7 +66,7 @@ private:
     QComboBox* actionBtn;
     CustomPushButton* saveEditBtn;
     CustomPushButton* cancelBtn;
-    QLineEdit* timeEdit;
+    CustomLineEdit* timeEdit;
     QWidget* timeWidget;
     QWidget* actionWidget;
     QWidget* editWidget;

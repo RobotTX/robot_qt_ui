@@ -18,6 +18,7 @@
 #include <QLabel>
 #include <QGridLayout>
 #include <QKeyEvent>
+#include "View/customlineedit.h"
 
 PathCreationWidget::PathCreationWidget(QWidget* parent, const QSharedPointer<Points> &_points, const QSharedPointer<Paths>& _paths, const bool associatedToRobot, const GraphicItemState _state):
     QWidget(parent), points(_points), paths(_paths), currentGroupName(""), state(_state)
@@ -38,7 +39,7 @@ PathCreationWidget::PathCreationWidget(QWidget* parent, const QSharedPointer<Poi
 
     nameLabel = new QLabel("Name :", this);
     nameLabel->setAlignment(Qt::AlignHCenter);
-    nameEdit = new QLineEdit(this);
+    nameEdit = new CustomLineEdit(this);
     if(associatedToRobot){
        nameEdit->hide();
        nameLabel->hide();

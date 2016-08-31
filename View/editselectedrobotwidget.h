@@ -8,9 +8,10 @@ class QGridLayout;
 class CustomPushButton;
 class QLabel;
 class MainWindow;
-class QLineEdit;
+class CustomLineEdit;
 class QProgressBar;
 class PathWidget;
+
 #include "pathpoint.h"
 #include <QWidget>
 #include <QSharedPointer>
@@ -28,12 +29,12 @@ class EditSelectedRobotWidget: public QWidget{
 public:
     EditSelectedRobotWidget(QWidget* parent, MainWindow* mainWindow, QSharedPointer<Robots> const robots);
 
-    QLineEdit* getNameEdit(void){ return nameEdit; }
+    CustomLineEdit* getNameEdit(void){ return nameEdit; }
     CustomPushButton* getHomeBtn(void){ return homeBtn; }
     QSharedPointer<PointView> getHome() const { return home; }
     bool isFirstConnection() const { return firstConnection; }
-    QLineEdit* getWifiNameEdit(void) const { return wifiNameEdit; }
-    QLineEdit* getWifiPwdEdit(void) const { return wifiPwdEdit; }
+    CustomLineEdit* getWifiNameEdit(void) const { return wifiNameEdit; }
+    CustomLineEdit* getWifiPwdEdit(void) const { return wifiPwdEdit; }
     PathWidget* getPathWidget(void) const { return pathWidget; }
     CustomPushButton* getAddPathBtn(void) const { return addPathBtn; }
     bool getPathChanged() const { return pathChanged; }
@@ -72,12 +73,12 @@ private:
     QGridLayout* wifiLayout;
     RobotView* robotView;
     QProgressBar* batteryLevel;
-    QLineEdit* nameEdit;
+    CustomLineEdit* nameEdit;
     QLabel* wifiTitle;
     QLabel* wifiName;
-    QLineEdit* wifiNameEdit;
+    CustomLineEdit* wifiNameEdit;
     QLabel* wifiPwd;
-    QLineEdit* wifiPwdEdit;
+    CustomLineEdit* wifiPwdEdit;
     QLabel* ipAddressLabel;
     QSharedPointer<Robots> robots;
     CustomPushButton* saveBtn;

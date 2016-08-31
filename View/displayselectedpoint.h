@@ -8,15 +8,15 @@ class QHBoxLayout;
 class CustomPushButton;
 class QEvent;
 class QKeyEvent;
-class QLabel;
+class CustomLabel;
 class Map;
 class Robots;
 class DisplaySelectedPointRobots;
+class CustomLineEdit;
 
 #include "View/createpointwidget.h"
 #include "Model/points.h"
 #include "View/pointview.h"
-#include <QLineEdit>
 #include <QSharedPointer>
 #include <QWidget>
 #include <QObject>
@@ -35,11 +35,11 @@ public:
     TopLeftMenu* getActionButtons(void) const { return actionButtons; }
     CustomPushButton* getSaveButton(void) const { return saveButton; }
     CustomPushButton* getCancelButton(void) const { return cancelButton; }
-    QLineEdit* getNameEdit(void) const { return nameEdit; }
+    CustomLineEdit* getNameEdit(void) const { return nameEdit; }
     QString getPointName(void) const { return pointView->getPoint()->getName(); }
     void setPointView(QSharedPointer<PointView> _pointView, const QString robotName);
-    QLabel* getXLabel(void) const { return posXLabel; }
-    QLabel* getYLabel(void) const { return posYLabel; }
+    CustomLabel* getXLabel(void) const { return posXLabel; }
+    CustomLabel* getYLabel(void) const { return posYLabel; }
     QSharedPointer<PointView> getPointView(void) const { return pointView; }
     DisplaySelectedPointRobots* getDisplaySelectedPointRobots(void) { return robotsWidget; }
 
@@ -72,12 +72,12 @@ private slots:
 
 private:
     QSharedPointer<Map> map;
-    QLineEdit* nameEdit;
+    CustomLineEdit* nameEdit;
     QVBoxLayout* layout;
     QHBoxLayout* editLayout;
 
-    QLabel* posXLabel;
-    QLabel* posYLabel;
+    CustomLabel* posXLabel;
+    CustomLabel* posYLabel;
     DisplaySelectedPointRobots* robotsWidget;
 
     CustomPushButton* saveButton;

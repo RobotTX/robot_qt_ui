@@ -16,6 +16,7 @@
 #include "customscrollarea.h"
 #include "View/custompushbutton.h"
 #include "View/stylesettings.h"
+#include "View/customlineedit.h"
 
 
 EditSelectedRobotWidget::EditSelectedRobotWidget(QWidget* parent, MainWindow* mainWindow, const QSharedPointer<Robots> _robots):QWidget(parent){
@@ -37,8 +38,7 @@ EditSelectedRobotWidget::EditSelectedRobotWidget(QWidget* parent, MainWindow* ma
 
 
     /// Name editable label
-    nameEdit = new QLineEdit(this);
-    nameEdit->setStyleSheet ("text-align: left");
+    nameEdit = new CustomLineEdit(this);
     inLayout->addWidget(nameEdit);
 
     /// Ip address label
@@ -57,8 +57,7 @@ EditSelectedRobotWidget::EditSelectedRobotWidget(QWidget* parent, MainWindow* ma
     wifiName->setWordWrap(true);
     wifiName->setAlignment(Qt::AlignLeft);
 
-    wifiNameEdit = new QLineEdit(this);
-    wifiNameEdit->setStyleSheet ("text-align: left");
+    wifiNameEdit = new CustomLineEdit(this);
     wifiNameEdit->setAlignment(Qt::AlignRight);
     wifiLayout->addWidget( wifiName, 0,0);
     wifiLayout->addWidget( wifiNameEdit, 0,1);
@@ -68,8 +67,7 @@ EditSelectedRobotWidget::EditSelectedRobotWidget(QWidget* parent, MainWindow* ma
     wifiPwd->setAlignment(Qt::AlignLeft);
 
     /// Wifi password label
-    wifiPwdEdit = new QLineEdit(this);
-    wifiPwdEdit->setStyleSheet ("text-align: left");
+    wifiPwdEdit = new CustomLineEdit(this);
     wifiPwdEdit->setText("......");
     wifiPwdEdit->setEchoMode(QLineEdit::Password);
 

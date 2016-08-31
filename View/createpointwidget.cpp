@@ -13,6 +13,8 @@
 #include "topleftmenu.h"
 #include "toplayout.h"
 #include "View/custompushbutton.h"
+#include "View/customlabel.h"
+#include "View/customlineedit.h"
 
 
 CreatePointWidget::CreatePointWidget(QWidget *parent, MainWindow *mainWindow, QSharedPointer<Points> _points): QWidget(parent), points(_points){
@@ -29,13 +31,10 @@ CreatePointWidget::CreatePointWidget(QWidget *parent, MainWindow *mainWindow, QS
     messageCreationLabel->setWordWrap(true);
     layout->addWidget(messageCreationLabel);
 
-    nameEdit = new QLineEdit(this);
+    nameEdit = new CustomLineEdit(this);
     nameEdit->setReadOnly(true);
-    nameEdit->setAutoFillBackground(true);
     nameEdit->setFrame(false);
-    nameEdit->setAlignment(Qt::AlignCenter);
     layout->addWidget(nameEdit);
-    nameEdit->setStyleSheet("QLineEdit { background-color: rgba(255, 0, 0, 0); font-weight: bold; text-decoration:underline}");
     nameEdit->hide();
 
     posXLabel = new QLabel("X : ", this);
