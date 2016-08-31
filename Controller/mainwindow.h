@@ -164,7 +164,7 @@ private slots:
     void editPointFromGroupMenu(void);
     void saveEditPathPointSlot(GraphicItemState state);
     void cancelEditPathPointSlot(GraphicItemState state);
-    void moveEditedPathPointSlot(void);
+    void moveEditedPathPointSlot(GraphicItemState state);
     void displayPointInfoFromGroupMenu(void);
     void updatePoint(void);
     void updateCoordinates(double x, double y);
@@ -236,13 +236,10 @@ private slots:
     void editPath();
     void doubleClickOnPath(QString pathName);
     void setMessageNoRobotPath(const int code);
-    void addNoRobotPointPathSlot(QString name, double x, double y);
     void cancelEditNoRobotPathPointSlot();
     void cancelNoRobotPathSlot();
     void saveNoRobotPathSlot();
     void setMessageModifGroupPaths(int code);
-    void saveEditNoRobotPathPointSlot();
-    void moveEditedNoRobotPathPointSlot();
     void editTmpNoRobotPathPointSlot(int id, QString name, double x, double y);
 
 private:

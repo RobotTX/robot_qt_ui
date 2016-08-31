@@ -325,11 +325,11 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
     this->setAutoFillBackground(true);
 
-    rightLayout->setContentsMargins(0,0,0,0);
-    bottom->setContentsMargins(0,0,0,0);
-    mainLayout->setContentsMargins(0,0,0,0);
-    topLayout->setContentsMargins(0,0,0,0);
-    bottomLayout->setContentsMargins(0,0,0,0);
+    rightLayout->setContentsMargins(0, 0, 0, 0);
+    bottom->setContentsMargins(0, 0, 0, 0);
+    mainLayout->setContentsMargins(0, 0, 0, 0);
+    topLayout->setContentsMargins(0, 0, 0, 0);
+    bottomLayout->setContentsMargins(0, 0, 0, 0);
     mainLayout->setSpacing(0);
 }
 
@@ -734,6 +734,8 @@ void MainWindow::editSelectedRobot(RobotView* robotView){
 
 
 void MainWindow::setSelectedRobot(RobotView* robotView){
+
+    emit resetPath(GraphicItemState::NO_ROBOT_CREATING_PATH);
 
     qDebug() << "setSelectedRobot(RobotView* robotView)";
     leftMenu->show();
@@ -1710,16 +1712,28 @@ void MainWindow::updateEditedPathPoint(double x, double y, GraphicItemState stat
     }
 }
 
-void MainWindow::moveEditedPathPointSlot(void){
-    qDebug() << "MainWindow::moveEditedPathPointSlot called";
-    emit updatePathPainter(GraphicItemState::ROBOT_CREATING_PATH);
+void MainWindow::moveEditedPathPointSlot(GraphicItemState state){
+    qDebug() << "MainWindow::moveEditedPathPointSlot called with state" << state;
+    if(state == GraphicItemState::ROBOT_EDITING_PATH){
+        emit updatePathPainter(GraphicItemState::ROBOT_CREATING_PATH);
 
-    if(map->getMapImage().pixelColor(editedPointView->getPoint()->getPosition().getX(), editedPointView->getPoint()->getPosition().getY()).red() >= 254){
-        setMessageTop(TEXT_COLOR_INFO, "You can click either \"Save changes\" to modify your path permanently or \"Cancel\" to keep the original path. If you want you can keep editing your point");
-        static_cast<PathPointCreationWidget*> (robotPathCreationWidget->getPathPointList()->itemWidget(robotPathCreationWidget->getPathPointList()->currentItem())) -> getSaveEditBtn()->setEnabled(true);
+        if(map->getMapImage().pixelColor(editedPointView->getPoint()->getPosition().getX(), editedPointView->getPoint()->getPosition().getY()).red() >= 254){
+            setMessageTop(TEXT_COLOR_INFO, "You can click either \"Save changes\" to modify your path permanently or \"Cancel\" to keep the original path. If you want you can keep editing your point");
+            static_cast<PathPointCreationWidget*> (robotPathCreationWidget->getPathPointList()->itemWidget(robotPathCreationWidget->getPathPointList()->currentItem())) -> getSaveEditBtn()->setEnabled(true);
+        } else {
+            setMessageTop(TEXT_COLOR_DANGER, "You cannot save the current path because the point that you are editing is not in a known area of the map");
+            static_cast<PathPointCreationWidget*> (robotPathCreationWidget->getPathPointList()->itemWidget(robotPathCreationWidget->getPathPointList()->currentItem())) -> getSaveEditBtn()->setEnabled(false);
+        }
     } else {
-        setMessageTop(TEXT_COLOR_DANGER, "You cannot save the current path because the point that you are editing is not in a known area of the map");
-        static_cast<PathPointCreationWidget*> (robotPathCreationWidget->getPathPointList()->itemWidget(robotPathCreationWidget->getPathPointList()->currentItem())) -> getSaveEditBtn()->setEnabled(false);
+        emit updatePathPainter(GraphicItemState::NO_ROBOT_CREATING_PATH);
+
+        if(map->getMapImage().pixelColor(editedPointView->getPoint()->getPosition().getX(), editedPointView->getPoint()->getPosition().getY()).red() >= 254){
+            setMessageTop(TEXT_COLOR_INFO, "You can click either \"Save changes\" to modify your path permanently or \"Cancel\" to keep the original path. If you want you can keep editing your point");
+            static_cast<PathPointCreationWidget*> (noRobotPathCreationWidget->getPathPointList()->itemWidget(noRobotPathCreationWidget->getPathPointList()->currentItem())) -> getSaveEditBtn()->setEnabled(true);
+        } else {
+            setMessageTop(TEXT_COLOR_DANGER, "You cannot save the current path because the point that you are editing is not in a known area of the map");
+            static_cast<PathPointCreationWidget*> (noRobotPathCreationWidget->getPathPointList()->itemWidget(noRobotPathCreationWidget->getPathPointList()->currentItem())) -> getSaveEditBtn()->setEnabled(false);
+        }
     }
 }
 
@@ -4153,10 +4167,6 @@ void MainWindow::setMessageNoRobotPath(const int code){
     }
 }
 
-void MainWindow::addNoRobotPointPathSlot(QString name, double x, double y){
-    emit addNoRobotPathPoint(name, x, y);
-}
-
 void MainWindow::cancelEditNoRobotPathPointSlot(){
     /*setEnableAll(false, GraphicItemState::NO_ROBOT_CREATING_PATH, true);
 
@@ -4241,30 +4251,6 @@ void MainWindow::setMessageModifGroupPaths(int code){
         break;
     default:
         qDebug() << "MainWindow::setMessageModifGroupPaths You should not be here you probably forgot to implement the behavior for the code" << code;
-    }
-}
-
-void MainWindow::saveEditNoRobotPathPointSlot(){
-
-    qDebug() << "MainWindow::saveEditPathPointSlot called";
-
-    setEnableAll(false, GraphicItemState::NO_ROBOT_CREATING_PATH, true);
-    noRobotPathPainter->updateCurrentPath();
-
-    editedPointView->setFlag(QGraphicsItem::ItemIsMovable, false);
-    editedPointView = QSharedPointer<PointView>();
-}
-
-void MainWindow::moveEditedNoRobotPathPointSlot(void){
-    qDebug() << "MainWindow::moveEditedPathPointSlot called";
-    emit updatePathPainter(GraphicItemState::NO_ROBOT_CREATING_PATH);
-
-    if(map->getMapImage().pixelColor(editedPointView->getPoint()->getPosition().getX(), editedPointView->getPoint()->getPosition().getY()).red() >= 254){
-        setMessageTop(TEXT_COLOR_INFO, "You can click either \"Save changes\" to modify your path permanently or \"Cancel\" to keep the original path. If you want you can keep editing your point");
-        static_cast<PathPointCreationWidget*> (noRobotPathCreationWidget->getPathPointList()->itemWidget(noRobotPathCreationWidget->getPathPointList()->currentItem())) -> getSaveEditBtn()->setEnabled(true);
-    } else {
-        setMessageTop(TEXT_COLOR_DANGER, "You cannot save the current path because the point that you are editing is not in a known area of the map");
-        static_cast<PathPointCreationWidget*> (noRobotPathCreationWidget->getPathPointList()->itemWidget(noRobotPathCreationWidget->getPathPointList()->currentItem())) -> getSaveEditBtn()->setEnabled(false);
     }
 }
 

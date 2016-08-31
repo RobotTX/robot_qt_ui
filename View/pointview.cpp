@@ -90,10 +90,10 @@ void PointView::mouseMoveEvent(QGraphicsSceneMouseEvent *event){
 
         if(state == GraphicItemState::ROBOT_EDITING_PATH){
             point->setPosition(x, y);
-            emit moveEditedPathPoint();
+            emit moveEditedPathPoint(GraphicItemState::ROBOT_EDITING_PATH);
         } else if(state == GraphicItemState::NO_ROBOT_EDITING_PATH){
             point->setPosition(x, y);
-            emit moveEditedNoRobotPathPoint();
+            emit moveEditedPathPoint(GraphicItemState::NO_ROBOT_EDITING_PATH);
         } else if(state == GraphicItemState::EDITING_PERM){
             emit editedPointPositionChanged(x, y);
         } else if(state == GraphicItemState::EDITING_HOME){

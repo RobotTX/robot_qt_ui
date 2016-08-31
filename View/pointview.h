@@ -73,10 +73,8 @@ signals:
     void addPointPath(QString name, double x, double y, GraphicItemState);
     void addNoRobotPointPath(QString name, double x, double y);
     void homeEdited(QString);
-    /// when an edited path point of a robot is dragged
-    void moveEditedPathPoint();
-    /// when an edited path point of a path that's not associated to a robot is dragged
-    void moveEditedNoRobotPathPoint();
+    /// when an edited path point is dragged
+    void moveEditedPathPoint(GraphicItemState);
     void editedPointPositionChanged(double, double);
     void editedHomePositionChanged(float, float, QString);
     void pathPointChanged(double, double);

@@ -76,7 +76,7 @@ signals:
     void cancelEditPathPoint(GraphicItemState);
     void savePath(GraphicItemState);
     void codeEditPath(int codeError);
-
+    void editPathPointSignal(GraphicItemState);
     void resetWidgetSignal(GraphicItemState);
 
 private slots:
@@ -84,7 +84,7 @@ private slots:
     void resetWidget(GraphicItemState _state);
     void addPathPointByMenuSlot(void);
     void deletePathPointSlot();
-    void editPathPointSlot(void);
+    void editPathPointSlot(GraphicItemState _state);
     void itemClicked(QListWidgetItem* item);
     void itemMovedSlot(const QModelIndex& , int start, int , const QModelIndex& , int row);
     void savePathClicked(void);
@@ -95,6 +95,7 @@ private slots:
     void cancelEditSlot(PathPointCreationWidget* pathPointCreationWidget);
     void actionChangedSlot(int id, int action, QString waitTime);
     void checkPathName(const QString name);
+    void editPathPointSlotRelay();
 
 private:
     QSharedPointer<Points> points;

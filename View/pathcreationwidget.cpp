@@ -76,8 +76,8 @@ PathCreationWidget::PathCreationWidget(QWidget* parent, const QSharedPointer<Poi
 
     connect(actionButtons->getPlusButton(), SIGNAL(clicked()), this, SLOT(addPathPointByMenuSlot()));
     connect(actionButtons->getMinusButton(), SIGNAL(clicked()), this, SLOT(deletePathPointSlot()));
-    connect(actionButtons->getEditButton(), SIGNAL(clicked()), this, SLOT(editPathPointSlot()));
-
+    connect(actionButtons->getEditButton(), SIGNAL(clicked()), this, SLOT(editPathPointSlotRelay()));
+    connect(this, SIGNAL(editPathPointSignal(GraphicItemState)), this, SLOT(editPathPointSlot(GraphicItemState)));
     connect(pointsMenu, SIGNAL(triggered(QAction*)), this, SLOT(pointClicked(QAction*)));
 
     connect(pathPointsList, SIGNAL(itemClicked(QListWidgetItem*)), this, SLOT(itemClicked(QListWidgetItem*)));
@@ -136,6 +136,7 @@ void PathCreationWidget::updatePointsList(void){
 }
 
 void PathCreationWidget::resetWidget(GraphicItemState _state){
+    qDebug() << "PathCreationWidget::resetWidget called with state" << _state << "my state" << state;
     if(state == _state){
         qDebug() << "PathCreationWidget::resetWidget called";
 
@@ -298,38 +299,40 @@ void PathCreationWidget::deleteItem(QListWidgetItem* item){
     }
 }
 
-void PathCreationWidget::editPathPointSlot(void){
-    qDebug() << "PathCreationWidget::editPathPointSlot called";
-    int id = pathPointsList->row(pathPointsList->currentItem());
-    checkState = EDIT;
+void PathCreationWidget::editPathPointSlot(GraphicItemState _state){
+    if(_state == state){
+        qDebug() << "PathCreationWidget::editPathPointSlot called";
+        int id = pathPointsList->row(pathPointsList->currentItem());
+        checkState = EDIT;
 
-    /// we edit the point only if the corresponding item is enabled which is the case if no other point is being edited
-    if(pathPointsList->itemWidget(pathPointsList->currentItem())->isEnabled()){
-        /// We get the edited pointView
-        QSharedPointer<PointView> pointView = points->getGroups()->value(PATH_GROUP_NAME)->at(id);
-        qDebug() << "PathCreationWidget::editPathPointSlot"
-                 << pointView->getPoint()->getName()
-                 << pointView->getPoint()->getPosition().getX()
-                 << pointView->getPoint()->getPosition().getY();
-
-
-        if(pointView->getPoint()->getName().contains(PATH_POINT_NAME)){
-            qDebug() << "PathCreationWidget::editPathPointSlot This is a temporary point";
-            pathPointsList->setDragDropMode(QAbstractItemView::NoDragDrop);
-            actionButtons->getPlusButton()->setEnabled(false);
-            actionButtons->getMinusButton()->setEnabled(false);
-            actionButtons->getEditButton()->setEnabled(false);
-
-            PathPointCreationWidget* pathPointCreationWidget = static_cast<PathPointCreationWidget*> (pathPointsList->itemWidget(pathPointsList->currentItem()));
-            pathPointCreationWidget->getEditWidget()->show();
-            pathPointCreationWidget->getPathWidget()->hide();
+        /// we edit the point only if the corresponding item is enabled which is the case if no other point is being edited
+        if(pathPointsList->itemWidget(pathPointsList->currentItem())->isEnabled()){
+            /// We get the edited pointView
+            QSharedPointer<PointView> pointView = points->getGroups()->value(PATH_GROUP_NAME)->at(id);
+            qDebug() << "PathCreationWidget::editPathPointSlot"
+                     << pointView->getPoint()->getName()
+                     << pointView->getPoint()->getPosition().getX()
+                     << pointView->getPoint()->getPosition().getY();
 
 
-            emit editTmpPathPoint(id, pointView->getPoint()->getName(),
-                                  pointView->getPoint()->getPosition().getX(), pointView->getPoint()->getPosition().getY(), state);
-        } else {
-            qDebug() << "PathCreationWidget::editPathPointSlot This is a permanent point";
-            clicked();
+            if(pointView->getPoint()->getName().contains(PATH_POINT_NAME)){
+                qDebug() << "PathCreationWidget::editPathPointSlot This is a temporary point";
+                pathPointsList->setDragDropMode(QAbstractItemView::NoDragDrop);
+                actionButtons->getPlusButton()->setEnabled(false);
+                actionButtons->getMinusButton()->setEnabled(false);
+                actionButtons->getEditButton()->setEnabled(false);
+
+                PathPointCreationWidget* pathPointCreationWidget = static_cast<PathPointCreationWidget*> (pathPointsList->itemWidget(pathPointsList->currentItem()));
+                pathPointCreationWidget->getEditWidget()->show();
+                pathPointCreationWidget->getPathWidget()->hide();
+
+
+                emit editTmpPathPoint(id, pointView->getPoint()->getName(),
+                                      pointView->getPoint()->getPosition().getX(), pointView->getPoint()->getPosition().getY(), state);
+            } else {
+                qDebug() << "PathCreationWidget::editPathPointSlot This is a permanent point";
+                clicked();
+            }
         }
     }
 }
@@ -403,5 +406,11 @@ void PathCreationWidget::keyPressEvent(QKeyEvent *event){
 }
 
 void PathCreationWidget::resetWidgetRelaySlot(){
+    qDebug() << "resetwidgetsignal emitted";
     emit resetWidgetSignal(state);
+}
+
+void PathCreationWidget::editPathPointSlotRelay(){
+    qDebug() << "editpathpointsignal emitted";
+    emit editPathPointSignal(state);
 }

@@ -42,8 +42,8 @@ void CustomLabel::initialize(){
 
 void CustomLabel::enterEvent(QEvent *event){
     QFontMetrics fm(font());
-    qDebug() << "CustomLabel::enterEvent" << text() << size() << label->size()
-             << fm.width(text()) << fm.height();
+    //qDebug() << "CustomLabel::enterEvent" << text() << size() << label->size()
+             //<< fm.width(text()) << fm.height();
     QLabel::enterEvent(event);
 }
 
