@@ -28,7 +28,7 @@
 #include "View/pointbuttongroup.h"
 #include "View/customscrollarea.h"
 #include "View/toplayout.h"
-#include "View/customizedlineedit.h"
+#include "View/customlineedit.h"
 #include "View/pathpointcreationwidget.h"
 #include "View/pathpointlist.h"
 #include "View/pathwidget.h"

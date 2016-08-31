@@ -33,8 +33,7 @@ SelectedRobotWidget::SelectedRobotWidget(QWidget* parent, MainWindow* mainWindow
 
     inWidget->setLayout(inLayout);
 
-    name = new CustomLabel();
-    name->setStyleSheet("QLabel { font-weight: bold; text-decoration: underline; text-align: left; }");
+    name = new CustomLabel(this, true);
     inLayout->addWidget(name);
 
     /// Button which allow the user to scan the map from a robot

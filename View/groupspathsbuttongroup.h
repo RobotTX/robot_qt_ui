@@ -7,7 +7,7 @@
 #include <QVBoxLayout>
 
 class QVBoxLayout;
-class CustomizedLineEdit;
+class CustomLineEdit;
 
 class GroupsPathsButtonGroup: public QWidget {
     Q_OBJECT
@@ -16,7 +16,7 @@ public:
     GroupsPathsButtonGroup(QWidget *_parent, const QSharedPointer<Paths>& _paths);
 
     QButtonGroup* getButtonGroup(void) const { return buttonGroup; }
-    CustomizedLineEdit* getModifyEdit(void) const { return modifyEdit; }
+    CustomLineEdit* getModifyEdit(void) const { return modifyEdit; }
     QVBoxLayout* getLayout(void) const { return layout; }
 
     void deleteButtons(void);
@@ -30,7 +30,7 @@ private:
     QVBoxLayout* layout;
     QButtonGroup* buttonGroup;
     QSharedPointer<Paths> paths;
-    CustomizedLineEdit* modifyEdit;
+    CustomLineEdit* modifyEdit;
     const QSize BUTTON_SIZE;
 };
 

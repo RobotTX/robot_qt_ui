@@ -5,7 +5,7 @@ class Points;
 class QButtonGroup;
 class QVBoxLayout;
 class QMouseEvent;
-class CustomizedLineEdit;
+class CustomLineEdit;
 
 #include <QButtonGroup>
 #include <QWidget>
@@ -19,7 +19,7 @@ public:
     GroupButtonGroup(QSharedPointer<Points> const& _points, QWidget *_parent);
 
     QButtonGroup* getButtonGroup(void) const { return buttonGroup; }
-    CustomizedLineEdit* getModifyEdit(void) const { return modifyEdit; }
+    CustomLineEdit* getModifyEdit(void) const { return modifyEdit; }
     QVBoxLayout* getLayout(void) const { return layout; }
     QString getEditedGroupName(void) const { return editedGroupName; }
     int getEditedGroupId(void) const;
@@ -54,7 +54,7 @@ public slots:
     int checkEditGroupName(QString name);
 
 private:
-    CustomizedLineEdit* modifyEdit;
+    CustomLineEdit* modifyEdit;
     QVBoxLayout* layout;
     QButtonGroup* buttonGroup;
     QWidget* parentWidget;
