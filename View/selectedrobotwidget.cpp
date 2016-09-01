@@ -99,6 +99,7 @@ SelectedRobotWidget::SelectedRobotWidget(QWidget* parent, MainWindow* mainWindow
     setMinimumWidth(mainWindow->width()*4/10);
     inWidget->setMaximumWidth(mainWindow->width()*4/10);
     inWidget->setMinimumWidth(mainWindow->width()*4/10);*/
+    inLayout->setAlignment(Qt::AlignTop);
     layout->setAlignment(Qt::AlignTop);
     layout->setContentsMargins(0,0,0,0);
 

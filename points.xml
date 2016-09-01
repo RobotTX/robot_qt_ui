@@ -22,6 +22,27 @@
         </point>
     </group>
     <group>
+        <name>PathPoints</name>
+        <point>
+            <name>A</name>
+            <x>1130</x>
+            <y>820</y>
+            <displayed>1</displayed>
+        </point>
+        <point>
+            <name>Ma point</name>
+            <x>1145</x>
+            <y>890</y>
+            <displayed>1</displayed>
+        </point>
+        <point>
+            <name>A new point</name>
+            <x>946</x>
+            <y>983</y>
+            <displayed>1</displayed>
+        </point>
+    </group>
+    <group>
         <name>Second group</name>
         <point>
             <name>Fanny</name>
@@ -40,13 +61,10 @@
         <name>TmpPoint</name>
         <point>
             <name>tmpPoint</name>
-            <x>0</x>
-            <y>0</y>
+            <x>957.52</x>
+            <y>1075.34</y>
             <displayed>0</displayed>
         </point>
-    </group>
-    <group>
-        <name>afaf</name>
     </group>
     <group>
         <name>first group</name>

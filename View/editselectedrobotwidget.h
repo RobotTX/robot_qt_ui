@@ -70,14 +70,10 @@ signals:
 
 private:
     QVBoxLayout* layout;
-    QGridLayout* wifiLayout;
+    QVBoxLayout* pathLayout;
     RobotView* robotView;
-    QProgressBar* batteryLevel;
     CustomLineEdit* nameEdit;
-    QLabel* wifiTitle;
-    QLabel* wifiName;
     CustomLineEdit* wifiNameEdit;
-    QLabel* wifiPwd;
     CustomLineEdit* wifiPwdEdit;
     QLabel* ipAddressLabel;
     QSharedPointer<Robots> robots;
@@ -93,6 +89,7 @@ private:
     bool pathChanged;
     QLabel* homeLabel;
     bool editing;
+    SpaceWidget* pathSpaceWidget;
 
 protected:
     void showEvent(QShowEvent *event);

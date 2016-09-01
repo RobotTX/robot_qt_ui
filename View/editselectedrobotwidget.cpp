@@ -22,7 +22,6 @@
 EditSelectedRobotWidget::EditSelectedRobotWidget(QWidget* parent, MainWindow* mainWindow, const QSharedPointer<Robots> _robots):QWidget(parent){
     robots = _robots;
     layout = new QVBoxLayout(this);
-    wifiLayout = new QGridLayout();
     robotView = NULL;
     home = QSharedPointer<PointView>();
     oldHome = QSharedPointer<PointView>();
@@ -41,6 +40,10 @@ EditSelectedRobotWidget::EditSelectedRobotWidget(QWidget* parent, MainWindow* ma
     nameEdit = new CustomLineEdit(this);
     inLayout->addWidget(nameEdit);
 
+
+    SpaceWidget* spaceWidget = new SpaceWidget(SpaceWidget::SpaceOrientation::HORIZONTAL, this);
+    inLayout->addWidget(spaceWidget);
+
     /// Ip address label
     ipAddressLabel = new QLabel("Ip : ", this);
     ipAddressLabel->setWordWrap(true);
@@ -48,22 +51,15 @@ EditSelectedRobotWidget::EditSelectedRobotWidget(QWidget* parent, MainWindow* ma
 
     /// Wifi name label
 
-    wifiTitle = new QLabel("Wifi : ", this);
+    QLabel* wifiTitle = new QLabel("Wifi name :", this);
     wifiTitle->setWordWrap(true);
     wifiTitle->setAlignment(Qt::AlignLeft);
     inLayout->addWidget(wifiTitle);
 
-    wifiName = new QLabel("name : ", this);
-    wifiName->setWordWrap(true);
-    wifiName->setAlignment(Qt::AlignLeft);
-
     wifiNameEdit = new CustomLineEdit(this);
-    wifiNameEdit->setAlignment(Qt::AlignRight);
-    wifiLayout->addWidget( wifiName, 0,0);
-    wifiLayout->addWidget( wifiNameEdit, 0,1);
+    inLayout->addWidget(wifiNameEdit);
 
-    wifiPwd = new QLabel("Pwd : ", this);
-    wifiPwd->setWordWrap(true);
+    QLabel* wifiPwd = new QLabel("Wifi pwd :", this);
     wifiPwd->setAlignment(Qt::AlignLeft);
 
     /// Wifi password label
@@ -71,20 +67,15 @@ EditSelectedRobotWidget::EditSelectedRobotWidget(QWidget* parent, MainWindow* ma
     wifiPwdEdit->setText("......");
     wifiPwdEdit->setEchoMode(QLineEdit::Password);
 
-    wifiLayout->addWidget( wifiPwd, 1,0);
-    wifiLayout->addWidget( wifiPwdEdit, 1,1);
-    inLayout->addLayout(wifiLayout);
+    inLayout->addWidget(wifiPwd);
+    inLayout->addWidget(wifiPwdEdit);
 
-    /// Battery level widget
-    QLabel* batteryLabel = new QLabel("Battery Level : ", this);
-    inLayout->addWidget(batteryLabel);
 
-    batteryLevel = new QProgressBar(this);
-    batteryLevel->setValue(50);
-    inLayout->addWidget(batteryLevel);
+    SpaceWidget* spaceWidget2 = new SpaceWidget(SpaceWidget::SpaceOrientation::HORIZONTAL, this);
+    inLayout->addWidget(spaceWidget2);
 
     /// Home layout with the button to select the home
-     homeLabel = new QLabel("Home : ", this);
+    homeLabel = new QLabel("Home : ", this);
     homeBtn = new CustomPushButton(QIcon(":/icons/home.png"), "Add Home", this);
     homeBtn->setIconSize(s_icon_size);
     connect(homeBtn, SIGNAL(clicked()), mainWindow, SLOT(editHomeEvent()));
@@ -104,12 +95,11 @@ EditSelectedRobotWidget::EditSelectedRobotWidget(QWidget* parent, MainWindow* ma
     inLayout->addWidget(deletePathBtn);
 
 
+    pathSpaceWidget = new SpaceWidget(SpaceWidget::SpaceOrientation::HORIZONTAL, this);
+    inLayout->addWidget(pathSpaceWidget);
+
     pathWidget = new PathWidget(this);
     inLayout->addWidget(pathWidget);
-
-
-    SpaceWidget* spaceWidget = new SpaceWidget(SpaceWidget::SpaceOrientation::HORIZONTAL, this);
-    inLayout->addWidget(spaceWidget);
 
 
     QHBoxLayout* grid = new QHBoxLayout();
@@ -132,9 +122,9 @@ EditSelectedRobotWidget::EditSelectedRobotWidget(QWidget* parent, MainWindow* ma
     setMinimumWidth(mainWindow->width()*4/10);
     inWidget->setMaximumWidth(mainWindow->width()*4/10);
     inWidget->setMinimumWidth(mainWindow->width()*4/10);*/
+    inLayout->setAlignment(Qt::AlignTop);
     layout->setAlignment(Qt::AlignTop);
     layout->setContentsMargins(0,0,0,0);
-
 
     scrollArea->setWidget(inWidget);
     layout->addWidget(scrollArea);
@@ -155,7 +145,6 @@ void EditSelectedRobotWidget::setSelectedRobot(RobotView* const _robotView, bool
 
     /// When a robot is selected, the informations are updated
     nameEdit->setText(robotView->getRobot()->getName());
-    batteryLevel->setValue(robotView->getRobot()->getBatteryLevel());
     ipAddressLabel->setText("Ip : "+robotView->getRobot()->getIp());
     wifiNameEdit->setText(robotView->getRobot()->getWifi());
 
@@ -249,6 +238,7 @@ void EditSelectedRobotWidget::hideEvent(QHideEvent *event){
 void EditSelectedRobotWidget::setPath(const QVector<QSharedPointer<PathPoint> >& path){
     if(path.size() > 0){
         pathWidget->show();
+        pathSpaceWidget->show();
         addPathBtn->setText("Edit Path");
         addPathBtn->setIcon(QIcon(":/icons/edit.png"));
         deletePathBtn->show();
@@ -261,5 +251,6 @@ void EditSelectedRobotWidget::clearPath(){
     addPathBtn->setIcon(QIcon(":/icons/plus.png"));
     addPathBtn->setIconSize(xs_icon_size);
     pathWidget->hide();
+    pathSpaceWidget->hide();
     deletePathBtn->hide();
 }

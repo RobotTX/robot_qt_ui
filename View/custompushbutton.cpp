@@ -34,7 +34,6 @@ void CustomPushButton::initialize(const bool &checkable, const bool &enable, con
         style = "padding: 5px 10px 5px 10px; text-align:" + align + ";";
 
 
-
     setStyleSheet("QPushButton {"
                       "color: " + text_color + ";"
                       "border: 1px;"
@@ -114,6 +113,9 @@ void CustomPushButton::toggledSlot(bool checked){
     QString tmpColor = left_menu_background_color;
     if(checked)
         tmpColor = button_checked_color;
+    else
+        if(hasFocus())
+            tmpColor = button_hover_color;
 
     label->setStyleSheet(
                 "QLabel {"

@@ -50,6 +50,7 @@ DisplaySelectedPoint::DisplaySelectedPoint(QWidget* _parent, QSharedPointer<Robo
     nameEdit->setAlignment(Qt::AlignCenter);
 
     infoLayout->addWidget(nameEdit);
+    nameEdit->setContentsMargins(0, 0, 0, 10);
 
     posXLabel = new CustomLabel("X : ", this);
     posXLabel->setWordWrap(true);
@@ -58,6 +59,7 @@ DisplaySelectedPoint::DisplaySelectedPoint(QWidget* _parent, QSharedPointer<Robo
     posYLabel = new CustomLabel("Y : ", this);
     posYLabel->setWordWrap(true);
     infoLayout->addWidget(posYLabel);
+    infoLayout->setAlignment(Qt::AlignTop);
 
     scrollLayout->addLayout(infoLayout);
 
@@ -79,13 +81,9 @@ DisplaySelectedPoint::DisplaySelectedPoint(QWidget* _parent, QSharedPointer<Robo
     /// to check that a point that's being edited does not get a new name that's already used in the database
     connect(nameEdit, SIGNAL(textEdited(QString)), this, SLOT(checkPointName(QString)));
 
-    scrollLayout->setAlignment(Qt::AlignTop);
 
     layout->addWidget(scrollArea);
-
-
-    layout->setContentsMargins(0,0,0,0);
-
+    layout->setContentsMargins(0, 0, 0, 0);
 }
 
 void DisplaySelectedPoint::displayPointInfo(void) {

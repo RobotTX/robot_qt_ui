@@ -79,6 +79,7 @@ void CustomLineEdit::moveLabel(){
     } else {
         setStyleSheet("QLineEdit {background-color: #eeeeee;}");
         setFrame(true);
+        home(false);
         setToolTip("");
     }
 
