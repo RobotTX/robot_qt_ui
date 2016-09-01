@@ -241,6 +241,9 @@ private slots:
     void saveNoRobotPathSlot();
     void setMessageModifGroupPaths(int code);
     void editTmpNoRobotPathPointSlot(int id, QString name, double x, double y);
+    void displayAssignedPath(QString groupName, QString pathName);
+    /// to clear paths on the map
+    void clearMapOfPaths();
 
 private:
     Ui::MainWindow* ui;

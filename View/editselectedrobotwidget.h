@@ -11,12 +11,14 @@ class MainWindow;
 class QLineEdit;
 class QProgressBar;
 class PathWidget;
+
 #include "pathpoint.h"
 #include <QWidget>
 #include <QSharedPointer>
 #include "Model/point.h"
 #include "View/pointview.h"
 #include "mainwindow.h"
+#include "Model/paths.h"
 
 
 /**
@@ -26,7 +28,7 @@ class PathWidget;
 class EditSelectedRobotWidget: public QWidget{
     Q_OBJECT
 public:
-    EditSelectedRobotWidget(QWidget* parent, MainWindow* mainWindow, QSharedPointer<Robots> const robots);
+    EditSelectedRobotWidget(QWidget* parent, MainWindow* mainWindow, QSharedPointer<Robots> const robots, const QSharedPointer<Paths>& _paths);
 
     QLineEdit* getNameEdit(void){ return nameEdit; }
     CustomPushButton* getHomeBtn(void){ return homeBtn; }
@@ -66,6 +68,8 @@ signals:
     void robotSaved(void);
     void showEditSelectedRobotWidget(void);
     void hideEditSelectedRobotWidget(void);
+    void showPath(QString, QString);
+    void clearMapOfPaths();
 
 private:
     QVBoxLayout* layout;
@@ -80,6 +84,7 @@ private:
     QLineEdit* wifiPwdEdit;
     QLabel* ipAddressLabel;
     QSharedPointer<Robots> robots;
+    QSharedPointer<Paths> paths;
     CustomPushButton* saveBtn;
     CustomPushButton* homeBtn;
     QSharedPointer<PointView> home;
@@ -92,6 +97,10 @@ private:
     bool pathChanged;
     QLabel* homeLabel;
     bool editing;
+    QMenu* pathsMenu;
+
+public slots:
+    void updatePathsMenu();
 
 protected:
     void showEvent(QShowEvent *event);
@@ -110,8 +119,9 @@ private slots:
     */
     void checkRobotName(void);
     void checkWifiName(void);
-
+    void openMenu();
     void deletePwd(void);
+    void assignPath(QAction*action);
 
 };
 

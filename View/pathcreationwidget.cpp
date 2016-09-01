@@ -110,7 +110,7 @@ void PathCreationWidget::showEvent(QShowEvent* event){
 }
 
 void PathCreationWidget::updatePointsList(void){
-    qDebug() << "PathCreationWidget::updatePointsList called";
+    //qDebug() << "PathCreationWidget::updatePointsList called";
     pointsMenu->clear();
 
     /// We update the QMenu used to add/edit a permanent point
@@ -136,9 +136,9 @@ void PathCreationWidget::updatePointsList(void){
 }
 
 void PathCreationWidget::resetWidget(GraphicItemState _state){
-    qDebug() << "PathCreationWidget::resetWidget called with state" << _state << "my state" << state;
+    //qDebug() << "PathCreationWidget::resetWidget called with state" << _state << "my state" << state;
     if(state == _state){
-        qDebug() << "PathCreationWidget::resetWidget called";
+        //qDebug() << "PathCreationWidget::resetWidget called";
 
         actionButtons->getMinusButton()->setEnabled(false);
         actionButtons->getEditButton()->setEnabled(false);
@@ -152,7 +152,7 @@ void PathCreationWidget::resetWidget(GraphicItemState _state){
 }
 
 void PathCreationWidget::itemClicked(QListWidgetItem* item){
-    qDebug() << "PathCreationWidget::itemClicked called";
+    //qDebug() << "PathCreationWidget::itemClicked called";
     /// When an item in the path point list is clicked, we select it
 
     actionButtons->getMinusButton()->setEnabled(true);
@@ -161,7 +161,7 @@ void PathCreationWidget::itemClicked(QListWidgetItem* item){
 }
 
 void PathCreationWidget::itemMovedSlot(const QModelIndex& , int start, int , const QModelIndex& , int row){
-    qDebug() << "PathCreationWidget::itemClicked called" << start << row;
+    //qDebug() << "PathCreationWidget::itemClicked called" << start << row;
     /// when an item has been dragged in the path point list
     emit orderPathPointChanged(start, row);
 }

@@ -47,6 +47,7 @@
 #include "View/custompushbutton.h"
 #include "View/groupspathsbuttongroup.h"
 #include "View/custompushbutton.h"
+#include <assert.h>
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow) {
     ui->setupUi(this);
@@ -793,11 +794,11 @@ void MainWindow::addPathSelecRobotBtnEvent(){
     if(id != -1){
         viewPathSelectedRobot(id, false);
     }*/
+
     if(bottomLayout->getViewPathRobotBtnGroup()->checkedButton()){
         bottomLayout->getViewPathRobotBtnGroup()->checkedButton()->setChecked(false);
         robotPathCreationWidget->getPathPointList()->clear();
     }
-
 
     if(!robotPathPainter->getPathDeleted()){
         if(editSelectedRobotWidget->getAddPathBtn()->text().compare("Add Path") == 0 || robotPathPainter->getOldPath().size() <= 0){
@@ -812,7 +813,6 @@ void MainWindow::addPathSelecRobotBtnEvent(){
     robotPathPainter->setOldPath(robotPathPainter->getCurrentPath());
 
     switchFocus(selectedRobot->getRobot()->getName(), robotPathCreationWidget, MainWindow::WidgetType::ROBOT);
-
 
     /// hides the temporary pointview
     points->getTmpPointView()->hide();
@@ -837,11 +837,14 @@ void MainWindow::deletePathSelecRobotBtnEvent(){
     qDebug() << "MainWindow::deletePathSelecRobotBtnEvent called on robot " << selectedRobot->getRobot()->getName();
     paths->setVisiblePath("");
     emit resetPath(GraphicItemState::ROBOT_CREATING_PATH);
+    emit resetPath(GraphicItemState::NO_ROBOT_CREATING_PATH);
     emit resetPathCreationWidget(GraphicItemState::ROBOT_CREATING_PATH);
     editSelectedRobotWidget->setPathChanged(true);
     editSelectedRobotWidget->clearPath();
     bottomLayout->uncheckAll();
     robotPathPainter->setPathDeleted(true);
+    /// to uncheck the previously checked path
+    editSelectedRobotWidget->updatePathsMenu();
 }
 
 void MainWindow::setSelectedRobotNoParent(QAbstractButton *button){
@@ -4071,6 +4074,8 @@ void MainWindow::deletePath(){
 void MainWindow::displayPathOnMap(const bool display){
     qDebug() << "MainWindow::displayPathOnMap called";
     if(display){
+        /// to hide the path drawn by the robot path painter
+        emit resetPath(GraphicItemState::ROBOT_CREATING_PATH);
         bool foundFlag = false;
         noRobotPathPainter->setCurrentPath(paths->getPath(lastWidgets.at(lastWidgets.size()-1).first.second,
                                                leftMenu->getPathGroupDisplayed()->getLastCheckedButton(), foundFlag));
@@ -4289,6 +4294,37 @@ void MainWindow::editTmpNoRobotPathPointSlot(int id, QString name, double x, dou
         /// set by hand in order to keep the colors consistent while editing the point and after
         editedPointView->setPixmap(PointView::PixmapType::SELECTED);
     }
+}
+
+void MainWindow::displayAssignedPath(QString groupName, QString pathName){
+    paths->setVisiblePath(pathName);
+    bool foundFlag(false);
+    robotPathPainter->setCurrentPath(paths->getPath(groupName, pathName, foundFlag));
+    assert(foundFlag);
+    robotPathCreationWidget->setCurrentGroupName(groupName);
+    //selectedRobot->getRobot()->setPath(robotPathPainter->getCurrentPath());
+    /*
+    int id = robots->getRobotId(selectedRobot->getRobot()->getName());
+    bottomLayout->updateRobot(id, selectedRobot);
+    if(robotPathPainter->getCurrentPath().size() > 0){
+        bottomLayout->getViewPathRobotBtnGroup()->button(id)->setChecked(true);
+        viewPathSelectedRobot(id, true);
+    }
+
+    robotsLeftWidget->updateRobots(robots);
+
+    bottomLayout->updateRobot(robots->getRobotId(selectedRobot->getRobot()->getName()), selectedRobot);
+
+    selectedRobotWidget->setSelectedRobot(selectedRobot);
+    editSelectedRobotWidget->setSelectedRobot(selectedRobot);
+    editSelectedRobotWidget->setEditing(false);
+    */
+
+}
+
+void MainWindow::clearMapOfPaths(){
+    emit resetPath(GraphicItemState::ROBOT_CREATING_PATH);
+    emit resetPath(GraphicItemState::NO_ROBOT_CREATING_PATH);
 }
 
 /**********************************************************************************************************************************/

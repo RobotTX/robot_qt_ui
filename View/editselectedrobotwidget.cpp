@@ -16,10 +16,13 @@
 #include "customscrollarea.h"
 #include "View/custompushbutton.h"
 #include "View/stylesettings.h"
+#include <QMenu>
+#include <assert.h>
 
 
-EditSelectedRobotWidget::EditSelectedRobotWidget(QWidget* parent, MainWindow* mainWindow, const QSharedPointer<Robots> _robots):QWidget(parent){
-    robots = _robots;
+EditSelectedRobotWidget::EditSelectedRobotWidget(QWidget* parent, MainWindow* mainWindow, const QSharedPointer<Robots> _robots, const QSharedPointer<Paths> &_paths):
+    QWidget(parent), robots(_robots), paths(_paths)
+{
     layout = new QVBoxLayout(this);
     wifiLayout = new QGridLayout();
     robotView = NULL;
@@ -94,10 +97,20 @@ EditSelectedRobotWidget::EditSelectedRobotWidget(QWidget* parent, MainWindow* ma
     inLayout->addWidget(homeBtn);
 
     /// Button to add a path
-    addPathBtn = new CustomPushButton(QIcon(":/icons/plus.png"),"Add Path", this);
+    addPathBtn = new CustomPushButton(QIcon(":/icons/plus.png"),"Create Path", this);
     addPathBtn->setIconSize(xs_icon_size);
     connect(addPathBtn, SIGNAL(clicked()), mainWindow, SLOT(addPathSelecRobotBtnEvent()));
     inLayout->addWidget(addPathBtn);
+
+    /// to assign an existing path to the robot
+    CustomPushButton* assignPathButton = new CustomPushButton(QIcon(":/icons/path.png"), "Assign a path", this);
+    assignPathButton->setIconSize(s_icon_size);
+    inLayout->addWidget(assignPathButton);
+    connect(assignPathButton, SIGNAL(clicked(bool)), this, SLOT(openMenu()));
+
+    pathsMenu = new QMenu("Assign path", this);
+    updatePathsMenu();
+    connect(pathsMenu, SIGNAL(triggered(QAction*)), this, SLOT(assignPath(QAction*)));
 
     deletePathBtn = new CustomPushButton(QIcon(":/icons/empty.png"),"Delete Path", this);
     deletePathBtn->setIconSize(s_icon_size);
@@ -105,14 +118,11 @@ EditSelectedRobotWidget::EditSelectedRobotWidget(QWidget* parent, MainWindow* ma
     connect(deletePathBtn, SIGNAL(clicked()), mainWindow, SLOT(deletePathSelecRobotBtnEvent()));
     inLayout->addWidget(deletePathBtn);
 
-
     pathWidget = new PathWidget(this);
     inLayout->addWidget(pathWidget);
 
-
     SpaceWidget* spaceWidget = new SpaceWidget(SpaceWidget::SpaceOrientation::HORIZONTAL, this);
     inLayout->addWidget(spaceWidget);
-
 
     QHBoxLayout* grid = new QHBoxLayout();
     /// Cancel & save buttons
@@ -128,6 +138,10 @@ EditSelectedRobotWidget::EditSelectedRobotWidget(QWidget* parent, MainWindow* ma
     connect(nameEdit, SIGNAL(textEdited(QString)), this, SLOT(checkRobotName()));
     connect(wifiNameEdit, SIGNAL(textEdited(QString)), this, SLOT(checkWifiName()));
     connect(wifiNameEdit, SIGNAL(textEdited(QString)), this, SLOT(deletePwd()));
+
+    /// to display a path that's assigned to the robot after clearing the map of other path(s)
+    connect(this, SIGNAL(clearMapOfPaths()), mainWindow, SLOT(clearMapOfPaths()));
+    connect(this, SIGNAL(showPath(QString, QString)), mainWindow, SLOT(displayAssignedPath(QString, QString)));
 
     hide();
     /*setMaximumWidth(mainWindow->width()*4/10);
@@ -240,6 +254,7 @@ void EditSelectedRobotWidget::setEnableAll(bool enable){
 void EditSelectedRobotWidget::showEvent(QShowEvent *event){
     setEnableAll(true);
     emit showEditSelectedRobotWidget();
+    updatePathsMenu();
     QWidget::showEvent(event);
 }
 
@@ -264,4 +279,38 @@ void EditSelectedRobotWidget::clearPath(){
     addPathBtn->setIconSize(xs_icon_size);
     pathWidget->hide();
     deletePathBtn->hide();
+}
+
+void EditSelectedRobotWidget::updatePathsMenu(){
+    qDebug() << "updateGroupBox called";
+    pathsMenu->clear();
+    QMapIterator<QString, QSharedPointer<Paths::CollectionPaths>> i(*(paths->getGroups()));
+    while (i.hasNext()) {
+        i.next();
+        QMapIterator<QString, QSharedPointer<Paths::Path> > it_paths(*(i.value()));
+        QMenu* group = pathsMenu->addMenu("&" + i.key());
+        while(it_paths.hasNext()){
+            it_paths.next();
+            if(it_paths.value())
+                group->addAction(it_paths.key());
+        }
+    }
+}
+
+void EditSelectedRobotWidget::openMenu(){
+    pathsMenu->exec(QCursor::pos());
+}
+
+void EditSelectedRobotWidget::assignPath(QAction *action){
+    emit clearMapOfPaths();
+    setPathChanged(true);
+    action->setCheckable(true);
+    action->setChecked(true);
+    bool foundFlag(false);
+    qDebug() << action->actionGroup() << " asso:" << action->associatedWidgets() << "menu:" << action->menu();
+    QString groupName = (static_cast<QMenu*> (action->associatedWidgets().at(0))->title()).mid(1);
+    setPath(paths->getPath(groupName, action->text(), foundFlag));
+    assert(foundFlag);
+    paths->setVisiblePath(action->text());
+    emit showPath(groupName, action->text());
 }

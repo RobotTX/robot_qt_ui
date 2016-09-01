@@ -136,7 +136,7 @@ void PathPainter::deletePathPointSlot(int id){
 }
 
 void PathPainter::editPathPointSlot(int id, QString name, double x, double y){
-    qDebug() << "PathPainter::editPathPointSlot called" << id << name << x << y;
+    //qDebug() << "PathPainter::editPathPointSlot called" << id << name << x << y;
 
     QSharedPointer<PointView> newPointView = points->getGroups()->value(points->findPointIndexes(name).first)->
             takeAt(points->findPointIndexes(name).second);
@@ -163,7 +163,7 @@ void PathPainter::editPathPointSlot(int id, QString name, double x, double y){
 }
 
 void PathPainter::actionChangedSlot(int id, int action, QString waitTimeStr){
-    qDebug() << "PathPainter::actionChangedSlot called" << id << waitTimeStr;
+    //qDebug() << "PathPainter::actionChangedSlot called" << id << waitTimeStr;
     int waitTime = waitTimeStr.toInt();
     currentPath.at(id)->setAction(static_cast<PathPoint::Action>(action));
     currentPath.at(id)->setWaitTime(waitTime);
@@ -179,7 +179,7 @@ void PathPainter::updateCurrentPath(void){
 void PathPainter::updatePathPainterSlot(GraphicItemState _state){
     /// we only update if the state given as parameter is the same as ours (the signal is intended for us)
     if(state == _state){
-        qDebug() << "PathPainter::updatePathPainter called" << state;
+        //qDebug() << "PathPainter::updatePathPainter called" << state;
         points->setPixmapAll(PointView::PixmapType::NORMAL, mainWindow->getSelectedRobot());
         QSharedPointer<QVector<QSharedPointer<PointView>>> group = points->getGroups()->value(PATH_GROUP_NAME);
 
@@ -190,9 +190,6 @@ void PathPainter::updatePathPainterSlot(GraphicItemState _state){
         if(group && group->size() > 0){
             for(int i = 0; i < group->size(); i++){
                 currentPointView = group->at(i);
-                qDebug() << "updatepathpainterslot" << currentPointView->getPoint()->getName() <<
-                            currentPointView->getPoint()->getPosition().getX() <<
-                            currentPointView->getPoint()->getPosition().getY();
 
                 QPointF pointCoord = QPointF(currentPointView->getPoint()->getPosition().getX(),
                                              currentPointView->getPoint()->getPosition().getY());
@@ -242,7 +239,7 @@ void PathPainter::updatePathPainterSlot(GraphicItemState _state){
 
 void PathPainter::updatePathPainterPointViewSlot(GraphicItemState _state){
     if(state == _state){
-        qDebug() << "PathPainter::updatePathPainterPointViewSlot called";
+        //qDebug() << "PathPainter::updatePathPainterPointViewSlot called";
         QSharedPointer<QVector<QSharedPointer<PointView>>> group = points->getGroups()->value(PATH_GROUP_NAME);
 
         QSharedPointer<PointView> startPointView(0);
@@ -279,7 +276,7 @@ void PathPainter::updatePathPainterPointViewSlot(GraphicItemState _state){
 }
 
 int PathPainter::nbUsedPointView(QString name, double x, double y){
-    qDebug() << "PathPainter::nbUsedPointView called";
+    //qDebug() << "PathPainter::nbUsedPointView called";
     int nbUsed = 0;
     if(name.contains(PATH_POINT_NAME)){
         for(int i = 0; i < currentPath.size(); i++){

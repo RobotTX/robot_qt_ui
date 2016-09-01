@@ -108,7 +108,7 @@ LeftMenu::LeftMenu(MainWindow* _mainWindow, QSharedPointer<Points> const& _point
     leftLayout->addWidget(mapLeftWidget);
 
     /// Menu to edit the selected robot
-    editSelectedRobotWidget = new EditSelectedRobotWidget(this, mainWindow, robots);
+    editSelectedRobotWidget = new EditSelectedRobotWidget(this, mainWindow, robots, paths);
     editSelectedRobotWidget->hide();
     leftLayout->addWidget(editSelectedRobotWidget);
     connect(editSelectedRobotWidget, SIGNAL(robotSaved()), mainWindow, SLOT(robotSavedEvent()));
