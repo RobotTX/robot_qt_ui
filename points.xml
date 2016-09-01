@@ -22,7 +22,7 @@
         </point>
     </group>
     <group>
-        <name>Second group duh duh duh</name>
+        <name>Second group</name>
         <point>
             <name>Fanny</name>
             <x>1126</x>
@@ -36,14 +36,6 @@
             <displayed>0</displayed>
         </point>
     </group>
-    <group>
-        <name>TmpPoint</name>
-        <point>
-            <name>tmpPoint</name>
-            <x>0</x>
-            <y>0</y>
-            <displayed>0</displayed>
-        </point>
     <group>
         <name>first group</name>
         <point>
