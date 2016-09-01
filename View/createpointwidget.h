@@ -8,7 +8,7 @@ class CustomPushButton;
 class QLabel;
 class MainWindow;
 class QHBoxLayout;
-class QLineEdit;
+class CustomLineEdit;
 class QComboBox;
 class SpaceWidget;
 class TopLeftMenu;
@@ -33,7 +33,7 @@ public:
 
     QLabel* getPosXLabel(void) const { return posXLabel; }
     QLabel* getPosYLabel(void) const { return posYLabel; }
-    QLineEdit* getNameEdit(void) const { return nameEdit; }
+    CustomLineEdit* getNameEdit(void) const { return nameEdit; }
     void updateGroupBox();
     TopLeftMenu* getActionButtons(void) const { return actionButtons; }
     QComboBox* getGroupBox(void) const { return groupBox; }
@@ -78,7 +78,7 @@ private:
     QHBoxLayout* cancelSaveLayout;
     QVBoxLayout* layout;
     QSharedPointer<PointView> pointView;
-    QLineEdit* nameEdit;
+    CustomLineEdit* nameEdit;
     QLabel* posXLabel;
     QLabel* posYLabel;
     QSharedPointer<Points> points;

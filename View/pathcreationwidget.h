@@ -10,7 +10,7 @@ class PathPointList;
 class QListWidgetItem;
 class PathPointCreationWidget;
 class PathPoint;
-class QLineEdit;
+class CustomLineEdit;
 class QLabel;
 class CustomPushButton;
 
@@ -48,7 +48,7 @@ public:
     void setCurrentGroupName(const QString name) { currentGroupName = name; }
     QString getCurrentGroupName(void) const { return currentGroupName; }
     CustomPushButton* getCancelButton(void) const { return cancelBtn; }
-    QLineEdit* getNameEdit(void) const { return nameEdit; }
+    CustomLineEdit* getNameEdit(void) const { return nameEdit; }
     CustomPushButton* getSaveButton(void) const { return saveBtn; }
     TopLeftMenu* getActionButtons(void) const { return actionButtons; }
 
@@ -106,7 +106,7 @@ private:
     PathPointList* pathPointsList;
     CheckState checkState;
     QLabel* nameLabel;
-    QLineEdit* nameEdit;
+    CustomLineEdit* nameEdit;
     QString currentGroupName;
     CustomPushButton* cleanBtn;
     CustomPushButton* cancelBtn;

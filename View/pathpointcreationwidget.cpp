@@ -7,6 +7,7 @@
 #include <QComboBox>
 #include "Model/pathpoint.h"
 #include "View/custompushbutton.h"
+#include "View/customlineedit.h"
 
 PathPointCreationWidget::PathPointCreationWidget(const int _id, const QString _name, const double x, const double y, QWidget* parent):
     QWidget(parent), id(_id), name(_name), posX(x), posY(y)
@@ -37,13 +38,12 @@ PathPointCreationWidget::PathPointCreationWidget(const int _id, const QString _n
 
     timeWidget = new QWidget(this);
     QHBoxLayout* timeLayout = new QHBoxLayout(timeWidget);
-    timeEdit = new QLineEdit("0" ,this);
+    timeEdit = new CustomLineEdit("0" ,this);
     timeEdit->setAlignment(Qt::AlignCenter);
     timeEdit->setValidator(new QIntValidator(0, 99999, this));
     timeLayout->addWidget(timeEdit);
 
     QLabel* sLabel = new QLabel("sec", this);
-    //sLabel->setMaximumWidth(30);
     timeLayout->addWidget(sLabel);
 
     timeLayout->setContentsMargins(0, 0, 0, 0);

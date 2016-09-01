@@ -3,7 +3,7 @@
 #include <QDebug>
 #include <QModelIndex>
 #include <QComboBox>
-#include <QLineEdit>
+#include "View/customlineedit.h"
 #include "stylesettings.h"
 
 PathPointList::PathPointList(QWidget* parent): QListWidget(parent){

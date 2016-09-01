@@ -12,6 +12,7 @@
 #include "customscrollarea.h"
 #include "View/pointview.h"
 #include "View/custompushbutton.h"
+#include "View/customlabel.h"
 
 DisplaySelectedGroup::DisplaySelectedGroup(QWidget* parent, QSharedPointer<Points> const& _points) : QWidget(parent), points(_points), lastCheckedButton(""){
     /// to be able to display a lot of groups and points2
@@ -34,33 +35,15 @@ DisplaySelectedGroup::DisplaySelectedGroup(QWidget* parent, QSharedPointer<Point
 
     layout->addWidget(actionButtons);
 
-    name = new QLabel("\nName : ", this);
-    name->setStyleSheet("* {  font-weight: bold; text-decoration:underline}");
-
-
-    QLabel* label_img  = new QLabel(this);
-
-    QPixmap watermark(":/icons/folder.png");
-
-    QPixmap pixmap_img = watermark.scaled(QSize(this->width()/6,this->width()/6),  Qt::KeepAspectRatio);
-
-    label_img->setPixmap(pixmap_img);
-
-    QHBoxLayout *titleLayout = new QHBoxLayout;
-    titleLayout->addWidget(label_img);
-    titleLayout->addWidget(name);
-    titleLayout->setAlignment(Qt::AlignCenter);
-
-    layout->addLayout(titleLayout);
+    name = new CustomLabel("\nName : ", this, true);
+    layout->addWidget(name);
 
     pointButtonGroup = new PointButtonGroup(points, 0, this);
-    connect(pointButtonGroup->getButtonGroup(), SIGNAL(buttonClicked(QAbstractButton*)), this, SLOT(buttonClickedSlot(QAbstractButton*)));
     scrollArea->setWidget(pointButtonGroup);
-
     layout->addWidget(scrollArea);
 
-    /*setMaximumWidth(mainWindow->width()*4/10);
-    setMinimumWidth(mainWindow->width()*4/10);*/
+    connect(pointButtonGroup->getButtonGroup(), SIGNAL(buttonClicked(QAbstractButton*)), this, SLOT(buttonClickedSlot(QAbstractButton*)));
+
     layout->setContentsMargins(0,0,0,0);
 }
 

@@ -19,6 +19,8 @@
 #include "View/displayselectedpointrobots.h"
 #include "View/customscrollarea.h"
 #include "View/custompushbutton.h"
+#include "View/customlabel.h"
+#include "View/customlineedit.h"
 
 DisplaySelectedPoint::DisplaySelectedPoint(QWidget* _parent, QSharedPointer<Robots> const _robots, QSharedPointer<Points> const& _points, QSharedPointer<Map> const& _map, QSharedPointer<PointView> _pointView):
     QWidget(_parent), map(_map), pointView(_pointView), points(_points){
@@ -43,22 +45,21 @@ DisplaySelectedPoint::DisplaySelectedPoint(QWidget* _parent, QSharedPointer<Robo
 
     layout->addWidget(actionButtons);
 
-    nameEdit = new QLineEdit(this);
+    nameEdit = new CustomLineEdit(this);
     nameEdit->setReadOnly(true);
-    nameEdit->setStyleSheet("* { background-color: rgba(255, 0, 0, 0); font-weight: bold; text-decoration:underline}");
-    nameEdit->setAutoFillBackground(true);
-    nameEdit->setFrame(false);
     nameEdit->setAlignment(Qt::AlignCenter);
 
     infoLayout->addWidget(nameEdit);
+    nameEdit->setContentsMargins(0, 0, 0, 10);
 
-    posXLabel = new QLabel("X : ", this);
+    posXLabel = new CustomLabel("X : ", this);
     posXLabel->setWordWrap(true);
     infoLayout->addWidget(posXLabel);
 
-    posYLabel = new QLabel("Y : ", this);
+    posYLabel = new CustomLabel("Y : ", this);
     posYLabel->setWordWrap(true);
     infoLayout->addWidget(posYLabel);
+    infoLayout->setAlignment(Qt::AlignTop);
 
     scrollLayout->addLayout(infoLayout);
 
@@ -80,13 +81,9 @@ DisplaySelectedPoint::DisplaySelectedPoint(QWidget* _parent, QSharedPointer<Robo
     /// to check that a point that's being edited does not get a new name that's already used in the database
     connect(nameEdit, SIGNAL(textEdited(QString)), this, SLOT(checkPointName(QString)));
 
-    scrollLayout->setAlignment(Qt::AlignTop);
 
     layout->addWidget(scrollArea);
-
-
-    layout->setContentsMargins(0,0,0,0);
-
+    layout->setContentsMargins(0, 0, 0, 0);
 }
 
 void DisplaySelectedPoint::displayPointInfo(void) {
@@ -136,9 +133,6 @@ void DisplaySelectedPoint::keyPressEvent(QKeyEvent* event){
 void DisplaySelectedPoint::resetWidget(){
     qDebug() << "DisplaySelectedPoint::resetWidget called";
 
-    /// to change the aspect of the point name
-    nameEdit->setAutoFillBackground(true);
-    nameEdit->setFrame(false);
     /// we hide the buttons relative to the edit option and make sure the points properties are not longer modifiable
     nameEdit->setReadOnly(true);
     actionButtons->getEditButton()->setChecked(false);

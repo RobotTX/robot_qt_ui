@@ -13,10 +13,12 @@
 #include "topleftmenu.h"
 #include "toplayout.h"
 #include "View/custompushbutton.h"
+#include "View/customlabel.h"
+#include "View/customlineedit.h"
+#include "View/stylesettings.h"
 
 
 CreatePointWidget::CreatePointWidget(QWidget *parent, MainWindow *mainWindow, QSharedPointer<Points> _points): QWidget(parent), points(_points){
-
 
     layout = new QVBoxLayout(this);
 
@@ -24,25 +26,24 @@ CreatePointWidget::CreatePointWidget(QWidget *parent, MainWindow *mainWindow, QS
     actionButtons->disableAll();
     layout->addWidget(actionButtons);
 
+    QVBoxLayout* infosLayout = new QVBoxLayout();
+    infosLayout->setContentsMargins(10, 0, 10, 0);
     /// to explain the user what to do with his temporary point
     messageCreationLabel = new QLabel("Click \"+\" to save", this);
     messageCreationLabel->setWordWrap(true);
-    layout->addWidget(messageCreationLabel);
+    infosLayout->addWidget(messageCreationLabel);
 
-    nameEdit = new QLineEdit(this);
+    nameEdit = new CustomLineEdit(this);
     nameEdit->setReadOnly(true);
-    nameEdit->setAutoFillBackground(true);
     nameEdit->setFrame(false);
-    nameEdit->setAlignment(Qt::AlignCenter);
-    layout->addWidget(nameEdit);
-    nameEdit->setStyleSheet("QLineEdit { background-color: rgba(255, 0, 0, 0); font-weight: bold; text-decoration:underline}");
+    infosLayout->addWidget(nameEdit);
     nameEdit->hide();
 
     posXLabel = new QLabel("X : ", this);
-    layout->addWidget(posXLabel);
+    infosLayout->addWidget(posXLabel);
 
     posYLabel = new QLabel("Y : ", this);
-    layout->addWidget(posYLabel);
+    infosLayout->addWidget(posYLabel);
 
 
     /// Add QLabel and QComboBox
@@ -66,8 +67,11 @@ CreatePointWidget::CreatePointWidget(QWidget *parent, MainWindow *mainWindow, QS
     groupBox->setCurrentIndex(0);
     groupBox->hide();
 
+    groupLayout->setContentsMargins(0, 0, 0, 0);
     groupLayout->addWidget(groupLabel);
     groupLayout->addWidget(groupBox);
+    infosLayout->addLayout(groupLayout);
+    layout->addLayout(infosLayout);
 
 
     /// Add Cancel and Save buttons
@@ -80,10 +84,9 @@ CreatePointWidget::CreatePointWidget(QWidget *parent, MainWindow *mainWindow, QS
     cancelSaveLayout->addWidget(saveBtn);
     saveBtn->hide();
     cancelBtn->hide();
+    cancelSaveLayout->setAlignment(Qt::AlignBottom);
 
-    layout->addLayout(groupLayout);
     layout->addLayout(cancelSaveLayout);
-
 
 
     /// when the plus button is clicked we display the groupBox
@@ -101,12 +104,11 @@ CreatePointWidget::CreatePointWidget(QWidget *parent, MainWindow *mainWindow, QS
 
     connect(this, SIGNAL(resetMessageTop(QString, QString)), mainWindow, SLOT(setMessageTop(QString, QString)));
 
-    hide();
-
-    layout->setSizeConstraint(QLayout::SetFixedSize);
-    layout->setAlignment(Qt::AlignTop);
+    infosLayout->setAlignment(Qt::AlignTop);
+    //layout->setAlignment(Qt::AlignBottom);
     layout->setContentsMargins(0,0,0,0);
 
+    hide();
 }
 
 void CreatePointWidget::setSelectedPoint(QSharedPointer<PointView> _pointView){
@@ -293,6 +295,7 @@ void CreatePointWidget::resizeEvent(QResizeEvent *event){
     QWidget* widget = static_cast<QWidget*>(parent());
     int maxWidth = widget->width()-18;
     messageCreationLabel->setFixedWidth(maxWidth);
+    setFixedHeight(widget->height() - 30 - l_button_height);
 
     QWidget::resizeEvent(event);
 }

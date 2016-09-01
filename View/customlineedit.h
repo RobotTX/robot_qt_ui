@@ -12,17 +12,22 @@ class CustomLineEdit: public QLineEdit
 {
     Q_OBJECT
 public:
-    CustomLineEdit(QWidget *parent = 0);
+    CustomLineEdit(QWidget *parent = Q_NULLPTR);
+    CustomLineEdit(const QString &text, QWidget *parent = Q_NULLPTR);
+    void moveLabel();
+    void initialize(void);
+    void setText(const QString &text);
 
 public:
     void focusOutEvent(QFocusEvent* e);
     void hideEvent(QHideEvent* event);
     void showEvent(QShowEvent *event);
+    void resizeEvent(QResizeEvent *event);
+    void enterEvent(QEvent *event);
 
 signals:
     /// emitted when the QLineEdit loses the focus
     void clickSomewhere(QString name);
-    void pressedEnter();
     void enableGroupEdit(bool);
 };
 
