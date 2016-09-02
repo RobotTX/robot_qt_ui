@@ -22,30 +22,6 @@
         </point>
     </group>
     <group>
-<<<<<<< HEAD
-=======
-        <name>PathPoints</name>
-        <point>
-            <name>A</name>
-            <x>1130</x>
-            <y>820</y>
-            <displayed>1</displayed>
-        </point>
-        <point>
-            <name>Ma point</name>
-            <x>1145</x>
-            <y>890</y>
-            <displayed>1</displayed>
-        </point>
-        <point>
-            <name>A new point</name>
-            <x>946</x>
-            <y>983</y>
-            <displayed>1</displayed>
-        </point>
-    </group>
-    <group>
->>>>>>> 83369c975bcbf1384149e39951c147f0b69dd451
         <name>Second group</name>
         <point>
             <name>Fanny</name>
@@ -61,18 +37,15 @@
         </point>
     </group>
     <group>
-<<<<<<< HEAD
-=======
         <name>TmpPoint</name>
         <point>
             <name>tmpPoint</name>
-            <x>957.52</x>
-            <y>1075.34</y>
+            <x>948.765</x>
+            <y>1066.41</y>
             <displayed>0</displayed>
         </point>
     </group>
     <group>
->>>>>>> 83369c975bcbf1384149e39951c147f0b69dd451
         <name>first group</name>
         <point>
             <name>A</name>
