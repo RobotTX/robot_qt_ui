@@ -83,7 +83,7 @@ PathPointCreationWidget::PathPointCreationWidget(const int _id, const QString _n
 }
 
 void PathPointCreationWidget::setName(const QString _name){
-    qDebug() << "PathPointCreationWidget::setName called" << _name;
+    //qDebug() << "PathPointCreationWidget::setName called" << _name;
     name = _name;
 
     if(name.contains(PATH_POINT_NAME)){
@@ -94,7 +94,7 @@ void PathPointCreationWidget::setName(const QString _name){
 }
 
 void PathPointCreationWidget::setId(const int _id){
-    qDebug() << "PathPointCreationWidget::setId called" << _id;
+    //qDebug() << "PathPointCreationWidget::setId called" << _id;
     id = _id;
 
     if(name.contains(PATH_POINT_NAME)){
@@ -105,7 +105,7 @@ void PathPointCreationWidget::setId(const int _id){
 }
 
 void PathPointCreationWidget::actionClicked(QString action){
-    qDebug() << "PathPointCreationWidget::actionClicked called" << action;
+    //qDebug() << "PathPointCreationWidget::actionClicked called" << action;
     PathPoint::Action _action;
     if(action.compare("Wait for") == 0){
         timeWidget->show();
@@ -119,12 +119,12 @@ void PathPointCreationWidget::actionClicked(QString action){
 }
 
 void PathPointCreationWidget::timeChanged(QString){
-    qDebug() << "PathPointCreationWidget::timeChanged called";
+    //qDebug() << "PathPointCreationWidget::timeChanged called";
     emit actionChanged(id, static_cast<int>(PathPoint::Action::WAIT), timeEdit->text());
 }
 
 void PathPointCreationWidget::displayActionWidget(const bool show){
-    qDebug() << "PathPointCreationWidget::displayActionWidget called";
+    //qDebug() << "PathPointCreationWidget::displayActionWidget called";
     if(show)
         actionWidget->show();
     else
@@ -132,7 +132,7 @@ void PathPointCreationWidget::displayActionWidget(const bool show){
 }
 
 void PathPointCreationWidget::resetAction(){
-    qDebug() << "PathPointCreationWidget::resetAction called";
+    //qDebug() << "PathPointCreationWidget::resetAction called";
     timeEdit->setText("0");
     actionBtn->setCurrentIndex(0);
     timeWidget->show();
@@ -150,7 +150,7 @@ void PathPointCreationWidget::displaySaveEditBtn(const bool show, const int coun
 }
 
 void PathPointCreationWidget::saveEdit(){
-    qDebug() << "PathPointCreationWidget::saveEdit called";
+    //qDebug() << "PathPointCreationWidget::saveEdit called";
 
     emit saveEditSignal(this);
 }
@@ -162,19 +162,19 @@ void PathPointCreationWidget::cancelEdit(){
 }
 
 void PathPointCreationWidget::setPos(const float x, const float y){
-    qDebug() << "PathPointCreationWidget::setPos called";
+    //qDebug() << "PathPointCreationWidget::setPos called";
     posX = x;
     posY = y;
     setPointLabel(posX, posY);
 }
 
 void PathPointCreationWidget::updatePointLabel(const float x, const float y){
-    qDebug() << "PathPointCreationWidget::updatePointLabel called";
+    //qDebug() << "PathPointCreationWidget::updatePointLabel called";
     setPointLabel(x, y);
 }
 
 void PathPointCreationWidget::setPointLabel(const float _posX, const float _posY){
-    qDebug() << "PathPointCreationWidget::setPointLabel called";
+    //qDebug() << "PathPointCreationWidget::setPointLabel called";
     if(name.contains(PATH_POINT_NAME)){
         pointLabel->setText(QString::number(id+1)+". "+QString::number(_posX,'f', 1) + "; " + QString::number(_posY,'f', 1));
     }

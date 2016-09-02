@@ -96,7 +96,8 @@ PathCreationWidget::PathCreationWidget(QWidget* parent, const QSharedPointer<Poi
 }
 
 void PathCreationWidget::updatePath(const QVector<QSharedPointer<PathPoint>>& _path){
-    qDebug() << "PathCreationWidget::updatePath called";
+    qDebug() << "PathCreationWidget::updatePath called with state" << state << "pathsize" << _path.size();
+    pathPointsList->clear();
     for(int i = 0; i < _path.size(); i++){
         addPathPointSlot(_path.at(i)->getPoint().getName(),
                          _path.at(i)->getPoint().getPosition().getX(),
@@ -204,7 +205,7 @@ void PathCreationWidget::savePathClicked(void){
 }
 
 void PathCreationWidget::addPathPointByMenuSlot(void){
-    qDebug() << "PathCreationWidget::addPathPointByMenuSlot called";
+    //qDebug() << "PathCreationWidget::addPathPointByMenuSlot called";
     /// We had a point by clicking on the plus button
     checkState = CREATE;
     clicked();
@@ -264,7 +265,7 @@ void PathCreationWidget::addPathPointSlot(QString name, double x, double y, Grap
 }
 
 void PathCreationWidget::deletePathPointSlot(){
-    qDebug() << "PathCreationWidget::deletePathPointSlot called with state" << state;
+    //qDebug() << "PathCreationWidget::deletePathPointSlot called with state" << state;
 
     /// Delete the item and reset the widget
     deleteItem(pathPointsList->currentItem());
@@ -302,7 +303,7 @@ void PathCreationWidget::deleteItem(QListWidgetItem* item){
 
 void PathCreationWidget::editPathPointSlot(GraphicItemState _state){
     if(_state == state){
-        qDebug() << "PathCreationWidget::editPathPointSlot called";
+        //qDebug() << "PathCreationWidget::editPathPointSlot called";
         int id = pathPointsList->row(pathPointsList->currentItem());
         checkState = EDIT;
 
@@ -310,12 +311,13 @@ void PathCreationWidget::editPathPointSlot(GraphicItemState _state){
         if(pathPointsList->itemWidget(pathPointsList->currentItem())->isEnabled()){
             /// We get the edited pointView
             QSharedPointer<PointView> pointView = points->getGroups()->value(PATH_GROUP_NAME)->at(id);
+            /*
             qDebug() << "PathCreationWidget::editPathPointSlot"
                      << pointView->getPoint()->getName()
                      << pointView->getPoint()->getPosition().getX()
                      << pointView->getPoint()->getPosition().getY();
 
-
+            */
             if(pointView->getPoint()->getName().contains(PATH_POINT_NAME)){
                 qDebug() << "PathCreationWidget::editPathPointSlot This is a temporary point";
                 pathPointsList->setDragDropMode(QAbstractItemView::NoDragDrop);
@@ -383,19 +385,19 @@ void PathCreationWidget::actionChangedSlot(int id, int action, QString waitTime)
 }
 
 void PathCreationWidget::checkPathName(const QString name){
-    qDebug() << "PathCreationWidget::checkPathName" << name.simplified();
+    //qDebug() << "PathCreationWidget::checkPathName" << name.simplified();
     if(!name.simplified().compare("")){
         emit codeEditPath(0);
-        qDebug() << "PathCreatioNWidget::checkPathName The name of your path cannot be empty";
+        //qDebug() << "PathCreatioNWidget::checkPathName The name of your path cannot be empty";
     } else {
         bool foundFlag(false);
         /// the found flag will have the value true after the call if the path has been found which means it already exists
         paths->getPath(currentGroupName, name.simplified(), foundFlag);
         if(foundFlag){
-            qDebug() << "PathCreatioNWidget::checkPathName Sorry there is already a path with the same name";
+            //qDebug() << "PathCreatioNWidget::checkPathName Sorry there is already a path with the same name";
             emit codeEditPath(1);
         } else {
-            qDebug() << "PathCreatioNWidget::checkPathName nice this path does not exist yet !";
+            //qDebug() << "PathCreatioNWidget::checkPathName nice this path does not exist yet !";
             emit codeEditPath(2);
         }
     }

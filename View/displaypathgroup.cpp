@@ -55,6 +55,7 @@ void DisplayPathGroup::showEvent(QShowEvent *event){
     updateDisplayedPath();
     /// for some reason the buttongroup sometimes becomes uncheckable after some operations, this just makes sure it does not happen
     setEnabled(true);
+    pathButtonGroup->uncheck();
     QWidget::showEvent(event);
 }
 
@@ -103,16 +104,16 @@ void DisplayPathGroup::enableButtons(QAbstractButton *button){
 }
 
 void DisplayPathGroup::resetMapButton(){
-    qDebug() << "DisplayPathGroup::resetMapButton called";
+    //qDebug() << "DisplayPathGroup::resetMapButton called";
     actionButtons->getMapButton()->setChecked(false);
 }
 
 void DisplayPathGroup::setPathsGroup(const QString groupName){
-    qDebug() << "DsplayGroup::setPathsGroup called";
+    //qDebug() << "DsplayGroup::setPathsGroup called";
     pathButtonGroup->deleteButtons();
     /// if the group of paths exists
     if(paths->getGroups()->find(groupName) != paths->getGroups()->end()){
-        qDebug() << "found" << groupName;
+        //qDebug() << "found" << groupName;
         /// we iterate over it to create the buttons
         QSharedPointer<Paths::CollectionPaths> current_group = paths->getGroups()->value(groupName);
         QMapIterator<QString, QSharedPointer<Paths::Path>> it_paths(*current_group);

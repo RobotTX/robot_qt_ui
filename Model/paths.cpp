@@ -31,17 +31,20 @@ void Paths::displayGroups() const {
 /// if the object does not contain a group of paths named <groupName> or if a path called <pathName> already exists
 /// this function does not do anything, otherwise it creates an empty path which name is <pathName>
 /// in the group of paths which name is <groupName>
-void Paths::createPath(const QString groupName, const QString pathName){
+bool Paths::createPath(const QString groupName, const QString pathName){
     auto it_group = groups->find(groupName);
     if(it_group == groups->end())
         qDebug() << "Paths::createPath the group of paths" << groupName << "does not exist";
     else {
         QSharedPointer<QMap<QString, QSharedPointer<Path>> > current_paths = (*groups)[groupName];
-        if(current_paths->find(pathName) == current_paths->end())
+        if(current_paths->find(pathName) == current_paths->end()){
             current_paths->insert(pathName, QSharedPointer<Path>(new Path()));
+            return true;
+        }
         else
-            qDebug() << "The group of paths" << groupName << "already contains a path named" << pathName;
+            return false;
     }
+    return false;
 }
 
 /// to add a path point to the path called <pathName> in the group of paths <groupName>

@@ -228,14 +228,14 @@ void CreatePointWidget::hideGroupLayout(const bool pointAdded) {
 
 /// updates the group box when a new group is created
 void CreatePointWidget::updateGroupBox(){
-    qDebug() << "updateGroupBox called";
+    //qDebug() << "updateGroupBox called";
     groupBox->clear();
 
     QMapIterator<QString, QSharedPointer<QVector<QSharedPointer<PointView>>>> i(*(points->getGroups()));
 
     while (i.hasNext()) {
         i.next();
-        qDebug() << "updategroupBox group key" << i.key();
+        //qDebug() << "updategroupBox group key" << i.key();
 
         if(i.key().compare(TMP_GROUP_NAME) != 0 && i.key().compare(PATH_GROUP_NAME) != 0)
             groupBox->insertItem(points->count()-1, i.key());

@@ -36,7 +36,7 @@ public:
     void setVisiblePath(const QString path) { visiblePath = path; qDebug() << path << "path displayed"; }
     void setGroups(QSharedPointer<Groups> _groups) { groups = _groups; }
     void createGroup(const QString name);
-    void createPath(const QString groupName, const QString pathName);
+    bool createPath(const QString groupName, const QString pathName);
     void addPathPoint(const QString groupName, const QString pathName, const QSharedPointer<PathPoint>& pathPoint);
     void deleteGroup(const QString name);
     void displayGroups(void) const;

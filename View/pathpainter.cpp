@@ -50,7 +50,7 @@ void PathPainter::displayPath(void){
 }
 
 void PathPainter::addPathPointSlot(QString name, double x, double y){
-    qDebug() << "PathPainter::addPathPointSlot called" << name << x << y;
+    //qDebug() << "PathPainter::addPathPointSlot called" << name << x << y;
 
     if(currentPath.size() == 0 || (currentPath.size() > 0 && !currentPath.last()->getPoint().comparePos(x, y))){
 
@@ -65,7 +65,7 @@ void PathPainter::addPathPointSlot(QString name, double x, double y){
                 name = PATH_POINT_NAME + QString::number(currentPath.size()+1);
 
             Point::PointType type = Point::PointType::PATH;
-            qDebug() << "PathPainter::addPathPointSlot" << (mainWindow->getSelectedRobot() == NULL);
+            //qDebug() << "PathPainter::addPathPointSlot" << (mainWindow->getSelectedRobot() == NULL);
             if((mainWindow->getSelectedRobot() && mainWindow->getSelectedRobot()->getRobot()->getHome() && mainWindow->getSelectedRobot()->getRobot()->getHome()->getPoint()->getName().compare(name) == 0)
                     || (mainWindow->getSelectedRobot() == NULL && points->isAHome(name, x, y)))
                 type= Point::PointType::HOME;
@@ -79,7 +79,7 @@ void PathPainter::addPathPointSlot(QString name, double x, double y){
 
         currentPath.push_back(QSharedPointer<PathPoint>(new PathPoint(point, PathPoint::Action::WAIT)));
 
-        /// Update the path painter
+        /// Updates the path painter
         updatePathPainterSlot(state);
     }
 }
@@ -213,21 +213,15 @@ void PathPainter::updatePathPainterSlot(GraphicItemState _state){
             setPath(path);
 
             if(*(startPointView->getPoint()) == *(endPointView->getPoint())){
-                qDebug() << "those are the same points !!!" << startPointView->getType();
-                if(startPointView->getType() != PointView::PixmapType::SELECTED){
-                    qDebug() << "setting the start stop pixmap";
+                if(startPointView->getType() != PointView::PixmapType::SELECTED)
                     startPointView->setPixmap(PointView::PixmapType::START_STOP);
-                }
-            } else {
-                if(startPointView->getType() != PointView::PixmapType::SELECTED){
-                    qDebug() << "setting the start pixmap";
-                    startPointView->setPixmap(PointView::PixmapType::START);
-                }
 
-                if(endPointView->getType() != PointView::PixmapType::SELECTED){
+            } else {
+                if(startPointView->getType() != PointView::PixmapType::SELECTED)
+                    startPointView->setPixmap(PointView::PixmapType::START);
+
+                if(endPointView->getType() != PointView::PixmapType::SELECTED)
                     endPointView->setPixmap(PointView::PixmapType::STOP);
-                    qDebug() << "setting the stop pixmap";
-                }
             }
         } else {
             qDebug() << "resetting with state" << state;

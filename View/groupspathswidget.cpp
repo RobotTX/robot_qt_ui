@@ -94,7 +94,7 @@ void GroupsPathsWidget::enableButtons(QAbstractButton* button){
     } else {
     /// if the button was not selected before we enable the appropriate action buttons and update the tooltips
     /// we also update the last checked button to the button just clicked
-        qDebug() << "GroupsPathsWidget::enableButtons enabling buttons";
+        //qDebug() << "GroupsPathsWidget::enableButtons enabling buttons";
         lastCheckedButton = button->text();
 
         disableButtons();
@@ -116,7 +116,7 @@ void GroupsPathsWidget::enableButtons(QAbstractButton* button){
 
 /// disables the buttons and resets the tooltips
 void GroupsPathsWidget::disableButtons(){
-    qDebug() << "GroupsPathsWidget disableButtons called";
+    //qDebug() << "GroupsPathsWidget disableButtons called";
     actionButtons->getMinusButton()->setEnabled(false);
     actionButtons->getMinusButton()->setToolTip("Select a group of paths and click here to delete it");
 
@@ -129,7 +129,7 @@ void GroupsPathsWidget::disableButtons(){
 
 /// called when the Enter key is pressed
 void GroupsPathsWidget::keyPressEvent(QKeyEvent* event){
-    qDebug() << "PointsLeftWidget::keyPressEvent called, creating a group ?" << creatingGroup;
+    qDebug() << "GroupsPathsWidget::keyPressEvent called, creating a group ?" << creatingGroup;
     /// this is the enter key
     if(!event->text().compare("\r")){
         /// if a group is being created
@@ -144,7 +144,8 @@ void GroupsPathsWidget::keyPressEvent(QKeyEvent* event){
                 setLastCheckedButton("");
                 break;
             case 1:
-                emit messageCreationGroup(TEXT_COLOR_DANGER, "The name of your group cannot be empty");
+                emit modifiedGroup(lastCheckedButton);
+                setLastCheckedButton("");
                 break;
             case 2:
                 emit messageCreationGroup(TEXT_COLOR_DANGER, "A group with the same name already exists, please choose another name for your group");
@@ -187,7 +188,7 @@ int GroupsPathsWidget::checkGroupName(QString name){
 
 /// to remove extra spaces like "A          word  " becomes "A word"
 QString GroupsPathsWidget::formatName(const QString name) const {
-    qDebug() << "PointsLeftWidget::formatName called" << name;
+    qDebug() << "GroupsPathsWidget::formatName called" << name;
 
     QString ret("");
     QStringList nameStrList = name.split(" ", QString::SkipEmptyParts);
@@ -225,7 +226,7 @@ void GroupsPathsWidget::newGroupPaths(){
 }
 
 void GroupsPathsWidget::cancelCreationGroup(){
-    qDebug() << "PointsLeftWidget::cancelCreationGroup called";
+    qDebug() << "GroupsPathsWidget::cancelCreationGroup called";
     /// resets the last checked button to no button
     setLastCheckedButton("");
 
@@ -287,7 +288,7 @@ void GroupsPathsWidget::resetWidget(){
 
 /// to check that the name edited for a group is valid
 int GroupsPathsWidget::checkEditGroupName(QString name){
-    qDebug() << "GroupButtonGroup::checkEditGroupName called";
+    qDebug() << "GroupPathsWidget::checkEditGroupName called";
     buttonGroup->getModifyEdit()->setText(formatName(buttonGroup->getModifyEdit()->text()));
     name =  buttonGroup->getModifyEdit()->text().simplified();
     if(!name.compare(buttonGroup->getButtonGroup()->checkedButton()->text(), Qt::CaseInsensitive)){
@@ -306,7 +307,7 @@ int GroupsPathsWidget::checkEditGroupName(QString name){
     while (i.hasNext()) {
         i.next();
         if(!name.compare(i.key(), Qt::CaseInsensitive)){
-            qDebug() << "GroupButtonGroup::checkEditGroupName" << i.key();
+            qDebug() << "GroupPathsGroup::checkEditGroupName" << i.key();
             /// if the name is already the name of another group of paths we return 2, saving this name is also forbidden
             emit codeEditGroup(2);
             return 2;
