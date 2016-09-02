@@ -80,7 +80,7 @@ void PathPainter::addPathPointSlot(QString name, double x, double y){
         currentPath.push_back(QSharedPointer<PathPoint>(new PathPoint(point, PathPoint::Action::WAIT)));
 
         /// Updates the path painter
-        updatePathPainterSlot(state);
+        updatePathPainterSlot(state, false);
     }
 }
 
@@ -108,7 +108,7 @@ void PathPainter::orderPathPointChangedSlot(int from, int to){
 
     updatePathPainterName();
     /// Update the path painter
-    updatePathPainterSlot(state);
+    updatePathPainterSlot(state, false);
 }
 
 void PathPainter::updatePathPainterName(void){
@@ -132,7 +132,7 @@ void PathPainter::deletePathPointSlot(int id){
     points->getGroups()->value(PATH_GROUP_NAME)->remove(id);
 
     /// Update the path painter
-    updatePathPainterSlot(state);
+    updatePathPainterSlot(state, false);
 }
 
 void PathPainter::editPathPointSlot(int id, QString name, double x, double y){
@@ -159,7 +159,7 @@ void PathPainter::editPathPointSlot(int id, QString name, double x, double y){
         qDebug() << "PathPainter::editPathPointSlot editing a tmpPoint";
 
     /// Update the path painter
-    updatePathPainterSlot(state);
+    updatePathPainterSlot(state, false);
 }
 
 void PathPainter::actionChangedSlot(int id, int action, QString waitTimeStr){
@@ -176,10 +176,10 @@ void PathPainter::updateCurrentPath(void){
     displayPath();
 }
 
-void PathPainter::updatePathPainterSlot(GraphicItemState _state){
+void PathPainter::updatePathPainterSlot(GraphicItemState _state, const bool savePath /* to deal with pv selected after save */){
     /// we only update if the state given as parameter is the same as ours (the signal is intended for us)
     if(state == _state){
-        //qDebug() << "PathPainter::updatePathPainter called" << state;
+        qDebug() << "PathPainter::updatePathPainter called" << state;
         points->setPixmapAll(PointView::PixmapType::NORMAL, mainWindow->getSelectedRobot());
         QSharedPointer<QVector<QSharedPointer<PointView>>> group = points->getGroups()->value(PATH_GROUP_NAME);
 
@@ -190,7 +190,7 @@ void PathPainter::updatePathPainterSlot(GraphicItemState _state){
         if(group && group->size() > 0){
             for(int i = 0; i < group->size(); i++){
                 currentPointView = group->at(i);
-
+                qDebug() << "current pv" << currentPointView->getPoint()->getName() << currentPointView->getType();
                 QPointF pointCoord = QPointF(currentPointView->getPoint()->getPosition().getX(),
                                              currentPointView->getPoint()->getPosition().getY());
 
@@ -202,7 +202,7 @@ void PathPainter::updatePathPainterSlot(GraphicItemState _state){
                     startPointView = currentPointView;
                 } else {
                     path.lineTo(pointCoord);
-                    if(currentPointView->getType() != PointView::PixmapType::SELECTED)
+                    if(currentPointView->getType() != PointView::PixmapType::SELECTED || savePath)
                         currentPointView->setPixmap(PointView::PixmapType::MID);
                 }
 
@@ -213,14 +213,14 @@ void PathPainter::updatePathPainterSlot(GraphicItemState _state){
             setPath(path);
 
             if(*(startPointView->getPoint()) == *(endPointView->getPoint())){
-                if(startPointView->getType() != PointView::PixmapType::SELECTED)
+                if(startPointView->getType() != PointView::PixmapType::SELECTED || savePath)
                     startPointView->setPixmap(PointView::PixmapType::START_STOP);
 
             } else {
-                if(startPointView->getType() != PointView::PixmapType::SELECTED)
+                if(startPointView->getType() != PointView::PixmapType::SELECTED || savePath)
                     startPointView->setPixmap(PointView::PixmapType::START);
 
-                if(endPointView->getType() != PointView::PixmapType::SELECTED)
+                if(endPointView->getType() != PointView::PixmapType::SELECTED || savePath)
                     endPointView->setPixmap(PointView::PixmapType::STOP);
             }
         } else {

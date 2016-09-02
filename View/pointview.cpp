@@ -106,7 +106,8 @@ void PointView::mouseMoveEvent(QGraphicsSceneMouseEvent *event){
 }
 
 void PointView::mouseReleaseEvent(QGraphicsSceneMouseEvent *event){
-    if(state == GraphicItemState::ROBOT_EDITING_PATH || state == GraphicItemState::EDITING_PERM || state == GraphicItemState::EDITING_HOME){
+    if(state == GraphicItemState::ROBOT_EDITING_PATH || state == GraphicItemState::EDITING_PERM || state == GraphicItemState::EDITING_HOME
+            || state == GraphicItemState::NO_ROBOT_EDITING_PATH){
         QGraphicsPixmapItem::mouseReleaseEvent(event);
         qDebug() << "mousereleaseseventcalled on point view with state" << state;
     }

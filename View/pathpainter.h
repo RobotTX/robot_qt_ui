@@ -42,7 +42,7 @@ private slots:
     void resetPathSlot(GraphicItemState _state);
     void addPathPointSlot(QString name, double x, double y);
     void deletePathPointSlot(int id);
-    void updatePathPainterSlot(GraphicItemState _state);
+    void updatePathPainterSlot(GraphicItemState _state, const bool savePath);
     void updatePathPainterPointViewSlot(GraphicItemState _state);
     void orderPathPointChangedSlot(int from, int to);
     void actionChangedSlot(int id, int action, QString waitTime);
