@@ -24,10 +24,7 @@ DisplaySelectedPointRobots::DisplaySelectedPointRobots(QWidget *parent):QWidget(
     homeLabel->setWordWrap(true);
     homeLayout->addWidget(homeLabel);
 
-    robotBtn = new CustomPushButton("", this);
-    //robotBtn->setMinimumHeight(30);
-    //robotBtn->setMaximumHeight(30);
-
+    robotBtn = new CustomPushButton("Home", this);
     homeLayout->addWidget(robotBtn);
     connect(robotBtn, SIGNAL(clicked()), this, SLOT(robotBtnClicked()));
 
@@ -43,8 +40,6 @@ DisplaySelectedPointRobots::DisplaySelectedPointRobots(QWidget *parent):QWidget(
     pathLabelLayout->addWidget(spaceWidget2);
     QLabel* pathLabel = new QLabel("This point belongs to the path of the robot(s) :", this);
     pathLabel->setWordWrap(true);
-    //pathLabel->setMinimumHeight(60);
-    //pathLabel->setMaximumHeight(60);
     pathLabelLayout->addWidget(pathLabel);
     pathLayout->addLayout(pathLabelLayout);
 
@@ -57,7 +52,6 @@ DisplaySelectedPointRobots::DisplaySelectedPointRobots(QWidget *parent):QWidget(
     pathWidget->hide();
     layout->addWidget(pathWidget);
 
-    //layout->setContentsMargins(0, 0, 0, 0);
     homeLayout->setContentsMargins(0, 0, 0, 0);
     pathLayout->setContentsMargins(0, 0, 0, 0);
     layout->setContentsMargins(0, 0, 0, 0);

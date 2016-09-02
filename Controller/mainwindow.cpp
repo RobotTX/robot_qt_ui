@@ -2613,64 +2613,67 @@ void MainWindow::displayPointEvent(QString name, double x, double y){
     }
 
     if(pointView){
-        /// If the point is not a path or is a path but from a permanent point, we display the menu with informations on the point
-        if(!(pointView->getPoint()->isPath() && pointView->getPoint()->getName().contains(PATH_POINT_NAME))){
+        if(!(*(pointView->getPoint()) == *(points->getTmpPointView()->getPoint()))){
+            /// If the point is not a path or is a path but from a permanent point, we display the menu with informations on the point
+            if(!(pointView->getPoint()->isPath() && pointView->getPoint()->getName().contains(PATH_POINT_NAME))){
 
-            /// resets the color of the previous selected point if such point exists
-            if(pointView && !(*(pointView->getPoint()) == *(points->getTmpPointView()->getPoint())))
                 points->displayTmpPoint(false);
 
-            leftMenu->getDisplaySelectedPoint()->getActionButtons()->getMapButton()->setChecked(true);
+                leftMenu->getDisplaySelectedPoint()->getActionButtons()->getMapButton()->setChecked(true);
 
-            QString robotName = "";
-            if(pointView->getPoint()->isHome()){
-                RobotView* rv = robots->findRobotUsingHome(pointView->getPoint()->getName());
-                if(rv != NULL)
-                    robotName = rv->getRobot()->getName();
-                else
-                    qDebug() << "MainWindow::displayPointEvent : something unexpected happened";
-            }
+                QString robotName = "";
+                if(pointView->getPoint()->isHome()){
+                    RobotView* rv = robots->findRobotUsingHome(pointView->getPoint()->getName());
+                    if(rv != NULL)
+                        robotName = rv->getRobot()->getName();
+                    else
+                        qDebug() << "MainWindow::displayPointEvent : something unexpected happened";
+                }
 
-            leftMenu->getDisplaySelectedPoint()->setPointView(pointView, robotName);
+                leftMenu->getDisplaySelectedPoint()->setPointView(pointView, robotName);
 
-            /// so that the points don't stay blue if we click a new point
-            points->setPixmapAll(PointView::PixmapType::NORMAL);
+                /// so that the points don't stay blue if we click a new point
+                points->setPixmapAll(PointView::PixmapType::NORMAL);
 
-            pointView->setState(GraphicItemState::NO_STATE);
+                pointView->setState(GraphicItemState::NO_STATE);
 
-            leftMenu->getDisplaySelectedPoint()->displayPointInfo();
+                leftMenu->getDisplaySelectedPoint()->displayPointInfo();
 
-            hideAllWidgets();
+                hideAllWidgets();
 
-            leftMenu->show();
+                leftMenu->show();
 
-            leftMenu->getDisplaySelectedPoint()->show();
-            resetFocus();
-            switchFocus(pointView->getPoint()->getName(), leftMenu->getDisplaySelectedPoint(), MainWindow::WidgetType::POINT);
-
-            qDebug() << "MainWindow::displayPointEvent  : is this point a path ?" << (pointView->getPoint()->isPath()) << pointView->getPoint()->getType();
-            if(pointView->getPoint()->isHome()){
-                RobotView* rv = robots->findRobotUsingHome(pointView->getPoint()->getName());
-                if(rv != NULL)
-                    robotName = rv->getRobot()->getName();
-                else
-                    qDebug() << "MainWindow::displayPointEvent  : something unexpected happened";
-            }
-
-            if(pointView->getPoint()->isPath()){
-                /// if it's a path point the edition/suppression is forbidden from here
-                leftMenu->getDisplaySelectedPoint()->getActionButtons()->getEditButton()->setEnabled(false);
-                leftMenu->getDisplaySelectedPoint()->getActionButtons()->getMinusButton()->setEnabled(false);
-            }
-
-        } else {
-            /// The point is a path' point from a temporary point so we display the page of the robot in which this pathpoint is used
-            RobotView* robot = robots->findRobotUsingTmpPointInPath(pointView->getPoint());
-            if(robot){
-                qDebug() << "MainWindow::displayPointEvent  At least, I found the robot" << robot->getRobot()->getName();
+                leftMenu->getDisplaySelectedPoint()->show();
                 resetFocus();
-                setSelectedRobot(robot);
+                switchFocus(pointView->getPoint()->getName(), leftMenu->getDisplaySelectedPoint(), MainWindow::WidgetType::POINT);
+
+                qDebug() << "MainWindow::displayPointEvent  : is this point a path ?" << (pointView->getPoint()->isPath()) << pointView->getPoint()->getType();
+                if(pointView->getPoint()->isHome()){
+                    RobotView* rv = robots->findRobotUsingHome(pointView->getPoint()->getName());
+                    if(rv != NULL)
+                        robotName = rv->getRobot()->getName();
+                    else
+                        qDebug() << "MainWindow::displayPointEvent  : something unexpected happened";
+                }
+
+                if(pointView->getPoint()->isPath()){
+                    /// if it's a path point the edition/suppression is forbidden from here
+                    leftMenu->getDisplaySelectedPoint()->getActionButtons()->getEditButton()->setEnabled(false);
+                    leftMenu->getDisplaySelectedPoint()->getActionButtons()->getMinusButton()->setEnabled(false);
+                }
+
+            } else {
+                /// The point is a path' point from a temporary point so we display the page of the robot in which this pathpoint is used
+                RobotView* robot = robots->findRobotUsingTmpPointInPath(pointView->getPoint());
+                if(robot){
+                    qDebug() << "MainWindow::displayPointEvent  At least, I found the robot" << robot->getRobot()->getName();
+                    resetFocus();
+                    setSelectedRobot(robot);
+                }
             }
+        } else {
+            /// It's the tmpPoint
+            setSelectedPoint();
         }
     } else {
         qDebug() << "MainWindow::displayPointEvent could not found the pointView" << name << x << y;

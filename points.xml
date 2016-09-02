@@ -20,6 +20,12 @@
             <y>843</y>
             <displayed>1</displayed>
         </point>
+        <point>
+            <name>970.6; 1089.2</name>
+            <x>970.613</x>
+            <y>1089.17</y>
+            <displayed>1</displayed>
+        </point>
     </group>
     <group>
         <name>Second group</name>
@@ -40,8 +46,8 @@
         <name>TmpPoint</name>
         <point>
             <name>tmpPoint</name>
-            <x>948.765</x>
-            <y>1066.41</y>
+            <x>0</x>
+            <y>0</y>
             <displayed>0</displayed>
         </point>
     </group>
