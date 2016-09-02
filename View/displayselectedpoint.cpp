@@ -27,10 +27,12 @@ DisplaySelectedPoint::DisplaySelectedPoint(QWidget* _parent, QSharedPointer<Robo
 
     robots = QSharedPointer<Robots>(_robots);
     layout = new QVBoxLayout(this);
+    layout->setAlignment(Qt::AlignTop);
 
     CustomScrollArea* scrollArea = new CustomScrollArea(this);
 
     QVBoxLayout * scrollLayout = new QVBoxLayout(scrollArea);
+    scrollLayout->setAlignment(Qt::AlignTop);
     QVBoxLayout * infoLayout = new QVBoxLayout();
 
     actionButtons = new TopLeftMenu(this);
@@ -59,7 +61,6 @@ DisplaySelectedPoint::DisplaySelectedPoint(QWidget* _parent, QSharedPointer<Robo
     posYLabel = new CustomLabel("Y : ", this);
     posYLabel->setWordWrap(true);
     infoLayout->addWidget(posYLabel);
-    infoLayout->setAlignment(Qt::AlignTop);
 
     scrollLayout->addLayout(infoLayout);
 
