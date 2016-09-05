@@ -24,7 +24,10 @@ class CustomLineEdit;
 #include "topleftmenu.h"
 #include "Model/point.h"
 
-
+/**
+ * @brief The DisplaySelectedPoint class
+ * provides a widget to display the information of a given point as well as the possibility to edit it
+ */
 class DisplaySelectedPoint: public QWidget
 {
         Q_OBJECT

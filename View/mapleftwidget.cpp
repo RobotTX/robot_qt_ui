@@ -5,7 +5,7 @@
 #include "View/custompushbutton.h"
 #include "View/stylesettings.h"
 
-MapLeftWidget::MapLeftWidget(QWidget* parent, MainWindow* mainWindow): QWidget(parent){
+MapLeftWidget::MapLeftWidget(QWidget* parent, const MainWindow *mainWindow): QWidget(parent){
     layout = new QVBoxLayout(this);
 
     /// Save & load buttons

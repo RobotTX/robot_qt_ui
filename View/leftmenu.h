@@ -59,12 +59,31 @@ public:
     DisplayPathGroup* getPathGroupDisplayed(void) const { return pathGroup; }
     PathCreationWidget* getNoRobotPathCreationWidget(void) const { return noRobotPathCreationWidget; }
 
-    void showBackButton(QString name);
+    /**
+     * @brief showBackButton
+     * @param name
+     * to set the label appropriately on the back button
+     */
+    void showBackButton(const QString name);
+    /**
+     * @brief hideBackButton
+     * hides the back button
+     */
     void hideBackButton();
 
-    void updateGroupDisplayed(const QString groupIndex);
-    void disableButtons();
-    void setEnableReturnCloseButtons(bool enable);
+    /**
+     * @brief updateGroupDisplayed
+     * @param groupName
+     * updates the group displayed identified by its name
+     */
+    void updateGroupDisplayed(const QString groupName);
+
+    /**
+     * @brief setEnableReturnCloseButtons
+     * @param enable
+     * enables or disables the return and close buttons
+     */
+    void setEnableReturnCloseButtons(const bool enable);
 
 private:
     CustomPushButton* closeBtn;

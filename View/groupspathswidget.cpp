@@ -156,7 +156,8 @@ void GroupsPathsWidget::keyPressEvent(QKeyEvent* event){
             }
         }
     }
-    /// this is the escape key
+    /// this is the escape key, if the name given is empty while creating or editing a group
+    /// the widget is just reset like nothing happened
     else if(!event->text().compare("\u001B")){
         if(creatingGroup)
             emit newPathGroup("");

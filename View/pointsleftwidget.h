@@ -33,30 +33,25 @@ public:
     bool getGroupDisplayed(void) const { return groupDisplayed; }
     void setGroupDisplayed(const bool _groupDisplayed) { groupDisplayed = _groupDisplayed; }
     QSharedPointer<Points> getPoints(void) const { return points; }
-
     CustomPushButton* getSaveButton(void) const { return saveButton; }
     CustomPushButton* getCancelButton(void) const { return cancelButton; }
-
     TopLeftMenu* getActionButtons(void) {return actionButtons;}
-
     GroupButtonGroup* getGroupButtonGroup(void) const { return groupButtonGroup; }
-
     QLabel* getGroupNameLabel(void) const { return groupNameLabel; }
     CustomLineEdit* getGroupNameEdit(void) const { return groupNameEdit; }
-
     CustomScrollArea* getScrollArea(void) const { return scrollArea; }
+    QString getLastCheckedId() const { return lastCheckedId;}
 
     void setCreatingGroup(const bool create) { creatingGroup = create; }
     void setLastCheckedId(const QString  id) {lastCheckedId = id;}
-    QString getLastCheckedId() const { return lastCheckedId;}
-
-private:
-    QString formatName(const QString name) const;
 
 public:
     void disableButtons(void);
     void updateGroupButtonGroup();
     void resetWidget(void);
+
+private:
+    QString formatName(const QString name) const;
 
 protected:
     void keyPressEvent(QKeyEvent* event);

@@ -4,7 +4,7 @@
 #include "View/custompushbutton.h"
 #include "View/stylesettings.h"
 
-PathButtonGroup::PathButtonGroup(QWidget *_parent, QSharedPointer<Paths> _paths): QWidget(_parent), paths(_paths), BUTTON_SIZE(parentWidget()->size()/2)
+PathButtonGroup::PathButtonGroup(QWidget *_parent, const QSharedPointer<Paths> &_paths): QWidget(_parent), paths(_paths), BUTTON_SIZE(parentWidget()->size()/2)
 {
     layout = new QVBoxLayout(this);
     buttonGroup = new QButtonGroup(this);

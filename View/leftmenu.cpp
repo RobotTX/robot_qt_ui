@@ -217,8 +217,8 @@ LeftMenu::LeftMenu(MainWindow* _mainWindow, QSharedPointer<Points> const& _point
     this->setPalette(Pal);
 }
 
-void LeftMenu::updateGroupDisplayed(const QString groupIndex){
-    displaySelectedGroup->getPointButtonGroup()->setGroup(groupIndex);
+void LeftMenu::updateGroupDisplayed(const QString groupName){
+    displaySelectedGroup->getPointButtonGroup()->setGroup(groupName);
 }
 
 void LeftMenu::hideBackButton(void)
@@ -227,7 +227,7 @@ void LeftMenu::hideBackButton(void)
         returnButton->hide();
 }
 
-void LeftMenu::showBackButton(QString name)
+void LeftMenu::showBackButton(const QString name)
 {
     if(returnButton){
         returnButton->setText(name);
@@ -235,7 +235,7 @@ void LeftMenu::showBackButton(QString name)
     }
 }
 
-void LeftMenu::setEnableReturnCloseButtons(bool enable){
+void LeftMenu::setEnableReturnCloseButtons(const bool enable){
     returnButton->setEnabled(enable);
     closeBtn->setEnabled(enable);
 }

@@ -18,7 +18,7 @@ class TopLeftMenu;
 
 /**
  * @brief The CreatePointWidget class
- *
+ * Class that provides a widget that allows a user to create a permanent point upon clicking the map
  */
 class CreatePointWidget: public QWidget{
     Q_OBJECT
@@ -59,6 +59,10 @@ signals:
     void resetMessageTop(QString, QString);
 
 private slots:
+    /**
+     * @brief saveEditSelecPointBtnEvent
+     * emit a signal to save the point
+     */
     void saveEditSelecPointBtnEvent();
     /// check whether or not a point is valid
     /// a point is valid if it's not empty, already taken and if it does not contain ";" or "}" or "pathpoint" (case insensitive)

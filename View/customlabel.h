@@ -3,6 +3,10 @@
 
 #include <QLabel>
 
+/**
+ * @brief The CustomLabel class
+ * class that provides a customed label
+ */
 class CustomLabel : public QLabel {
 public:
     CustomLabel(QWidget *parent = Q_NULLPTR, bool title = false);
