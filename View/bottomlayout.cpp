@@ -100,7 +100,7 @@ BottomLayout::BottomLayout(QMainWindow* parent, const QSharedPointer<Robots> &ro
         viewPathRobotBtn->setMaximumWidth(parent->width()/10);
         viewPathRobotBtn->setMinimumWidth(parent->width()/10);
         viewPathRobotBtn->setIconSize(s_icon_size);
-
+        viewPathRobotBtn->setToolTip("Click to display the path");
         if(robots->getRobotsVector().at(i)->getRobot()->getPath().size() < 1)
             viewPathRobotBtn->setEnabled(false);
         viewPathRobotBtnGroup->addButton(viewPathRobotBtn, i);
@@ -112,6 +112,7 @@ BottomLayout::BottomLayout(QMainWindow* parent, const QSharedPointer<Robots> &ro
         CustomPushButton* playRobotBtn = new CustomPushButton(QIcon(":/icons/play.png"),"", this, CustomPushButton::ButtonType::BOTTOM);
         if(robots->getRobotsVector().at(i)->getRobot()->getPath().size() < 1)
             playRobotBtn->setEnabled(false);
+        playRobotBtn->setToolTip("Click to play/pause the robot");
         playRobotBtnGroup->addButton(playRobotBtn, i);
         playRobotBtn->setMaximumWidth(parent->width()/10);
         playRobotBtn->setMinimumWidth(parent->width()/10);
@@ -124,6 +125,7 @@ BottomLayout::BottomLayout(QMainWindow* parent, const QSharedPointer<Robots> &ro
         CustomPushButton* stopRobotBtn = new CustomPushButton(QIcon(":/icons/stop.png"),"", this, CustomPushButton::ButtonType::BOTTOM);
         if(robots->getRobotsVector().at(i)->getRobot()->getPath().size() < 1)
             stopRobotBtn->setEnabled(false);
+        stopRobotBtn->setToolTip("Click to stop the robot");
         stopRobotBtnGroup->addButton(stopRobotBtn, i);
         stopRobotBtn->setMaximumWidth(parent->width()/10);
         stopRobotBtn->setMinimumWidth(parent->width()/10);
@@ -136,6 +138,7 @@ BottomLayout::BottomLayout(QMainWindow* parent, const QSharedPointer<Robots> &ro
         CustomPushButton* deletePathButton = new CustomPushButton(QIcon(":/icons/empty.png"), "", this, CustomPushButton::ButtonType::BOTTOM);
         if(robots->getRobotsVector().at(i)->getRobot()->getPath().size() < 1)
             deletePathButton->setEnabled(false);
+        deletePathButton->setToolTip("Click to delete the path");
         deletePathBtnGroup->addButton(deletePathButton, i);
         columnDelete->addWidget(deletePathButton);
         deletePathButton->setMaximumWidth(parent->width()/10);

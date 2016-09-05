@@ -290,7 +290,6 @@ void PathPainter::setCurrentPath(const QVector<QSharedPointer<PathPoint>>& _curr
     resetPathSlot(state);
     for(int i = 0; i < _currentPath.size(); i++){
         Point point = _currentPath.at(i)->getPoint();
-        qDebug() << "constructing path" << point.getName() << point.getPosition().getX() << point.getPosition().getY();
         addPathPointSlot(point.getName(), point.getPosition().getX(), point.getPosition().getY());
     }
 }

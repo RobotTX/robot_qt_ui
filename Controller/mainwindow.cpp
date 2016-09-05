@@ -849,6 +849,7 @@ void MainWindow::deletePathSelecRobotBtnEvent(){
         robotPathPainter->setPathDeleted(true);
         /// to uncheck the previously checked path
         editSelectedRobotWidget->updatePathsMenu();
+        setTemporaryMessageTop(TEXT_COLOR_SUCCESS, "You have successfully deleted the path of the robot " + selectedRobot->getRobot()->getName(), 2500);
         break;
     default:
         qDebug() << "MainWindow::deletePathSelecRobotBtnEvent you should never reach this point, you probably forgot to implement the behavior for" << answer;
@@ -975,6 +976,8 @@ void MainWindow::cancelEditSelecRobotBtnEvent(){
     leftMenu->getReturnButton()->setToolTip("");
 
     setEnableAll(true);
+
+    setTemporaryMessageTop(TEXT_COLOR_INFO, "You have cancelled all the modifications made to the robot " + selectedRobot->getRobot()->getName(), 2500);
 }
 
 void MainWindow::robotSavedEvent(){
@@ -1187,8 +1190,7 @@ void MainWindow::robotSavedEvent(){
                 editSelectedRobotWidget->setSelectedRobot(selectedRobot);
                 editSelectedRobotWidget->setEditing(false);
 
-                //setMessageTop(TEXT_COLOR_SUCCESS, "Robot successfully edited");
-                qDebug() << "Robot successfully edited";
+                setTemporaryMessageTop(TEXT_COLOR_SUCCESS, "The information of the robot " + selectedRobot->getRobot()->getName() + " have been successfully updated", 2500);
             }
         } else {
             setMessageTop(TEXT_COLOR_INFO, "Nothing has been modified because this point was already the home point of the robot " + selectedRobot->getRobot()->getName());
@@ -1313,6 +1315,8 @@ void MainWindow::cancelPathSlot(){
     backEvent();
     robotPathPainter->setOldPath(oldPath);
     setEnableAll(false, GraphicItemState::NO_EVENT);
+
+    setTemporaryMessageTop(TEXT_COLOR_INFO, "You have cancelled the edition of a path for the robot " + selectedRobot->getRobot()->getName(), 2500);
 }
 
 void MainWindow::addPointPathSlot(QString name, double x, double y, GraphicItemState state){
@@ -2525,8 +2529,11 @@ void MainWindow::askForDeletePointConfirmation(QString pointName){
                         qDebug() << "askForDeletePointConfirmation : something unexpected happened";
                     }
                 }
+                leftMenu->getDisplaySelectedGroup()->disableButtons();
+                if(point && !point->getPoint()->isHome())
+                    setTemporaryMessageTop(TEXT_COLOR_SUCCESS, "You have successfully deleted the point \"" + pointName + "\"", 2500);
             }
-            leftMenu->getDisplaySelectedGroup()->disableButtons();
+
         break;
         default:
         /// should never be here
@@ -2537,30 +2544,30 @@ void MainWindow::askForDeletePointConfirmation(QString pointName){
 
 /**
  * @brief MainWindow::askForDeleteGroupConfirmation
- * @param index
+ * @param groupName
  * Called when a user wants to remove a whole group of points
- * the index given is the index of the group within the Points object
  */
-void MainWindow::askForDeleteGroupConfirmation(QString index){
+void MainWindow::askForDeleteGroupConfirmation(QString groupName){
     qDebug() << "askForDeleteGroupConfirmation called";
     int ret = openConfirmMessage("Do you really want to remove this group ? All the points in this group would also be removed.");
     switch(ret){
         case QMessageBox::Cancel :
             qDebug() << "clicked no";
             pointsLeftWidget->getActionButtons()->getMinusButton()->setChecked(false);
+            pointsLeftWidget->disableButtons();
         break;
         case QMessageBox::Ok : {
             /// we have to check that none of the points is the home of a robot
-            QVector<QString> homePointNames = points->getHomeNameFromGroup(index);
+            QVector<QString> homePointNames = points->getHomeNameFromGroup(groupName);
             if(homePointNames.size() <= 0){
 
                 /// removes all the points of the group on the map
-                for(int i = 0; i < points->getGroups()->value(index)->size(); i++){
-                    points->getGroups()->value(index)->at(i)->hide();
+                for(int i = 0; i < points->getGroups()->value(groupName)->size(); i++){
+                    points->getGroups()->value(groupName)->at(i)->hide();
                 }
 
                 /// removes the group from the model
-                points->removeGroup(index);
+                points->removeGroup(groupName);
 
                 /// updates the file
                 XMLParser parserPoints(XML_PATH);
@@ -2573,6 +2580,7 @@ void MainWindow::askForDeleteGroupConfirmation(QString index){
 
                 /// updates the group box so that the user cannot create a point in this group anymore
                 createPointWidget->updateGroupBox();
+
 
             } else {
                 /// this group contains the home point of a robot and cannot be removed,
@@ -2594,8 +2602,13 @@ void MainWindow::askForDeleteGroupConfirmation(QString index){
                 msgBox.exec();
                 qDebug() << "Sorry this point is the home of a robot and therefore cannot be removed";
             }
+             pointsLeftWidget->disableButtons();
+
+            if(homePointNames.size() <= 0)
+                setTemporaryMessageTop(TEXT_COLOR_SUCCESS, "You have successfully deleted the group \"" + groupName + "\"", 2500);
+
         }
-        pointsLeftWidget->disableButtons();
+
         break;
         default:
             /// should never be here
@@ -4391,11 +4404,14 @@ void MainWindow::setMessageModifGroupPaths(int code){
 }
 
 void MainWindow::displayAssignedPath(QString groupName, QString pathName){
+
     paths->setVisiblePath(pathName);
     bool foundFlag(false);
     robotPathPainter->setCurrentPath(paths->getPath(groupName, pathName, foundFlag));
     assert(foundFlag);
     robotPathCreationWidget->setCurrentGroupName(groupName);
+
+    setTemporaryMessageTop(TEXT_COLOR_SUCCESS, "You have successfully assigned the path \"" + pathName + "\" to the robot " + selectedRobot->getRobot()->getName(), 2500);
     //selectedRobot->getRobot()->setPath(robotPathPainter->getCurrentPath());
     /*
     int id = robots->getRobotId(selectedRobot->getRobot()->getName());

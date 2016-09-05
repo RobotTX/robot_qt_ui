@@ -56,7 +56,6 @@ void RobotsLeftWidget::setRobots(QSharedPointer<Robots> const &_robots){
 void RobotsLeftWidget::updateRobots(QSharedPointer<Robots> const& _robots){
     scrollArea->takeWidget();
     delete btnGroup;
-
     setRobots(_robots);
 }
 
