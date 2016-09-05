@@ -4353,9 +4353,26 @@ void MainWindow::saveNoRobotPathSlot(){
     qDebug() << "MainWindow::saveNoRobotPath called";
     backEvent();
 
+    /// gotta update the model and serialize the paths
+    const QString groupName = noRobotPathCreationWidget->getCurrentGroupName();
+    const QString pathName = noRobotPathCreationWidget->getNameEdit()->text().simplified();
+    qDebug() << groupName << pathName;
+    paths->createPath(groupName, pathName);
+    for(int i = 0; i < noRobotPathPainter->getCurrentPath().size(); i++)
+        paths->addPathPoint(groupName, pathName, noRobotPathPainter->getCurrentPath().at(i));
+
     /// we hide the points that we displayed for the edition of the path
-    for(int i = 0; i < pointViewsToDisplay.size(); i++)
-        pointViewsToDisplay.at(i)->hide();
+    for(int i = 0; i < pointViewsToDisplay.size(); i++){
+        bool hidePointView(true);
+        for(int j = 0; j < noRobotPathPainter->getCurrentPath().size(); j++){
+            if(noRobotPathPainter->getCurrentPath().at(j)->getPoint() == *(pointViewsToDisplay.at(i)->getPoint())){
+                hidePointView = false;
+                break;
+            }
+        }
+        if(hidePointView)
+            pointViewsToDisplay.at(i)->hide();
+    }
     pointViewsToDisplay.clear();
 
     noRobotPathPainter->setPathDeleted(false);
@@ -4364,14 +4381,6 @@ void MainWindow::saveNoRobotPathSlot(){
     setEnableAll(false, GraphicItemState::NO_EVENT);
 
     leftMenu->setEnableReturnCloseButtons(true);
-
-    /// gotta update the model and serialize the paths
-    const QString groupName = noRobotPathCreationWidget->getCurrentGroupName();
-    const QString pathName = noRobotPathCreationWidget->getNameEdit()->text().simplified();
-    qDebug() << groupName << pathName;
-    paths->createPath(groupName, pathName);
-    for(int i = 0; i < noRobotPathPainter->getCurrentPath().size(); i++)
-        paths->addPathPoint(groupName, pathName, noRobotPathPainter->getCurrentPath().at(i));
 
     /// updates the visible path
     paths->setVisiblePath(pathName);

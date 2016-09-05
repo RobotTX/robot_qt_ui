@@ -123,8 +123,7 @@ BottomLayout::BottomLayout(QMainWindow* parent, const QSharedPointer<Robots> &ro
     ///  Creation of the fifth column to stop playing the path (new !)
     for(int i = 0; i < robotsVector.size(); i++){
         CustomPushButton* stopRobotBtn = new CustomPushButton(QIcon(":/icons/stop.png"),"", this, CustomPushButton::ButtonType::BOTTOM);
-        if(robots->getRobotsVector().at(i)->getRobot()->getPath().size() < 1)
-            stopRobotBtn->setEnabled(false);
+        stopRobotBtn->setEnabled(false);
         stopRobotBtn->setToolTip("Click to stop the robot");
         stopRobotBtnGroup->addButton(stopRobotBtn, i);
         stopRobotBtn->setMaximumWidth(parent->width()/10);
@@ -256,8 +255,8 @@ void BottomLayout::addRobot(RobotView * const robotView){
     stopRobotBtn->setMaximumWidth(((QWidget*)parent())->width()/20);
     stopRobotBtn->setMinimumWidth(((QWidget*)parent())->width()/20);
     stopRobotBtn->setIconSize(xs_icon_size);
-    if(robotView->getRobot()->getPath().size() < 1)
-        stopRobotBtn->setEnabled(false);
+
+    stopRobotBtn->setEnabled(false);
 
     stopRobotBtnGroup->addButton(stopRobotBtn, i);
     columnStop->addWidget(stopRobotBtn);

@@ -77,6 +77,15 @@ public:
      */
     void deletePath(const QString groupName, const QString pathName);
 
+    /**
+     * @brief containsPoint
+     * @param groupName
+     * @param pathName
+     * @return bool
+     * returns true if the path <pathName> of the group <groupName> contains the point <point>
+     */
+    bool containsPoint(const QString groupName, const QString pathName, const Point& point);
+
 
     /// Getters
     QSharedPointer<Groups> getGroups(void) const { return groups; }
