@@ -132,7 +132,7 @@ LeftMenu::LeftMenu(MainWindow* _mainWindow, QSharedPointer<Points> const& _point
     leftLayout->addWidget(displaySelectedPath);
 
     connect(robotPathCreationWidget, SIGNAL(addPathPoint(QString, double, double)), robotPathPainter, SLOT(addPathPointSlot(QString, double, double)));
-    connect(robotPathCreationWidget, SIGNAL(deletePathPoint(int)), robotPathPainter, SLOT(deletePathPointSlot(int)));
+    connect(robotPathCreationWidget, SIGNAL(deletePathPoint(int, GraphicItemState)), robotPathPainter, SLOT(deletePathPointSlot(int, GraphicItemState)));
     connect(robotPathCreationWidget, SIGNAL(orderPathPointChanged(int, int)), robotPathPainter, SLOT(orderPathPointChangedSlot(int, int)));
     connect(robotPathCreationWidget, SIGNAL(resetPath(GraphicItemState)), robotPathPainter, SLOT(resetPathSlot(GraphicItemState)));
     connect(robotPathCreationWidget, SIGNAL(setMessage(QString, QString)), mainWindow, SLOT(setMessageTop(QString, QString)));
@@ -181,7 +181,7 @@ LeftMenu::LeftMenu(MainWindow* _mainWindow, QSharedPointer<Points> const& _point
 
     noRobotPathCreationWidget = new PathCreationWidget(this, points, paths, false, GraphicItemState::NO_ROBOT_CREATING_PATH);
     connect(noRobotPathCreationWidget, SIGNAL(addPathPoint(QString, double, double)), noRobotPathPainter, SLOT(addPathPointSlot(QString, double, double)));
-    connect(noRobotPathCreationWidget, SIGNAL(deletePathPoint(int)), robotPathPainter, SLOT(deletePathPointSlot(int)));
+    connect(noRobotPathCreationWidget, SIGNAL(deletePathPoint(int, GraphicItemState)), noRobotPathPainter, SLOT(deletePathPointSlot(int, GraphicItemState)));
     connect(noRobotPathCreationWidget, SIGNAL(orderPathPointChanged(int, int)), noRobotPathPainter, SLOT(orderPathPointChangedSlot(int, int)));
     connect(noRobotPathCreationWidget, SIGNAL(resetPath(GraphicItemState)), noRobotPathPainter, SLOT(resetPathSlot(GraphicItemState)));
     connect(noRobotPathCreationWidget, SIGNAL(setMessage(QString, QString)), mainWindow, SLOT(setMessageTop(QString, QString)));

@@ -124,15 +124,16 @@ void PathPainter::updatePathPainterName(void){
 }
 
 
-void PathPainter::deletePathPointSlot(int id){
-    qDebug() << "PathPainter::deletePathPointSlot called";
+void PathPainter::deletePathPointSlot(int id, GraphicItemState _state){
+    qDebug() << "PathPainter::deletePathPointSlot called with id" << id << "current path size" << currentPath.size();
+    if(state == _state){
+        /// Remove the item from the model
+        currentPath.remove(id);
+        points->getGroups()->value(PATH_GROUP_NAME)->remove(id);
 
-    /// Remove the item from the model
-    currentPath.remove(id);
-    points->getGroups()->value(PATH_GROUP_NAME)->remove(id);
-
-    /// Update the path painter
-    updatePathPainterSlot(state, false);
+        /// Update the path painter
+        updatePathPainterSlot(state, false);
+    }
 }
 
 void PathPainter::editPathPointSlot(int id, QString name, double x, double y){
