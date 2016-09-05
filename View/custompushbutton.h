@@ -6,7 +6,10 @@ class QLabel;
 
 #include <QPushButton>
 
-
+/**
+ * @brief The CustomPushButton class
+ * class that provides a custom button that handles for example double clicks
+ */
 class CustomPushButton: public QPushButton{
     Q_OBJECT
 public:

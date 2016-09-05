@@ -19,7 +19,7 @@ class PathPoint;
 
 /**
  * @brief The BottomLayout class
- * The widget displayed on the bottom of the app
+ * The widget displayed at the bottom of the app
  * Showing the path of each robot and allowing the user
  * to play/pause the path of the robot or delete the path
  */

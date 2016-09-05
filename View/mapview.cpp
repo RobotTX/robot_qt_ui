@@ -17,7 +17,7 @@ MapView::MapView (const QPixmap& pixmap, const QSize _size, QSharedPointer<Map> 
 
     /// To drag & drop the map
     setFlag(QGraphicsItem::ItemIsMovable);
-    connect(this, SIGNAL(pointLeftClicked()), mainWindow, SLOT(setSelectedPoint()));
+    connect(this, SIGNAL(leftClick()), mainWindow, SLOT(setSelectedPoint()));
 
 }
 
@@ -45,7 +45,7 @@ void MapView::mouseReleaseEvent(QGraphicsSceneMouseEvent *event){
             QSharedPointer<PointView> tmpPointView = points->getTmpPointView();
             tmpPointView->show();
             tmpPointView->setPos(event->pos().x(), event->pos().y());
-            emit pointLeftClicked();
+            emit leftClick();
         } else if(state == GraphicItemState::ROBOT_CREATING_PATH){
             //qDebug() << "MapView::mouseReleaseEvent CREATING_PATH";
             /// if it's not a white point of the map we cannot add it to the path

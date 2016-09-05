@@ -2127,7 +2127,7 @@ void MainWindow::minusGroupBtnEvent(){
     else if(points->isAPoint(checkedId))
         askForDeleteDefaultGroupPointConfirmation(checkedId);
 
-    leftMenu->getDisplaySelectedGroup()->getPointButtonGroup()->setGroup(leftMenu->getDisplaySelectedGroup()->getPointButtonGroup()->getGroupIndex());
+    leftMenu->getDisplaySelectedGroup()->getPointButtonGroup()->setGroup(leftMenu->getDisplaySelectedGroup()->getPointButtonGroup()->getGroupName());
     leftMenu->getPointsLeftWidget()->updateGroupButtonGroup();
 }
 

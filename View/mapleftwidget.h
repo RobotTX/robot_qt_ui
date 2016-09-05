@@ -14,7 +14,7 @@ class MainWindow;
  */
 class MapLeftWidget: public QWidget{
 public:
-    MapLeftWidget(QWidget* parent, MainWindow* mainWindow);
+    MapLeftWidget(QWidget* parent, const MainWindow* mainWindow);
 
 private:
     QVBoxLayout* layout;

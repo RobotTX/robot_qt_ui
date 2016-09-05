@@ -12,6 +12,12 @@ class CustomLineEdit;
 #include <QSharedPointer>
 #include <QObject>
 
+/**
+ * @brief The GroupButtonGroup class
+ * provides a widget to display all the groups of points along with points which do not belong to any group
+ * also allows a user to perform actions on those objects
+ */
+
 class GroupButtonGroup: public QWidget
 {
     Q_OBJECT
@@ -31,9 +37,26 @@ public:
     QString formatName(const QString name) const;
 
 public:
+    /**
+     * @brief deleteButtons
+     * delete the buttons so they can be recreated (to update our widget)
+     */
     void deleteButtons(void);
+    /**
+     * @brief deleteButton
+     * update the buttons for example after a creation, edition or deletions
+     */
     void updateButtons();
+    /**
+     * @brief uncheck
+     * unchecks the buttons
+     */
     void uncheck(void);
+    /**
+     * @brief setEnabled
+     * @param enable
+     * enables or disables the buttons
+     */
     void setEnabled(const bool enable);
 
 protected:

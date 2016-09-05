@@ -121,7 +121,7 @@ void DisplaySelectedGroup::buttonClickedSlot(QAbstractButton* button){
 
 void DisplaySelectedGroup::showEvent(QShowEvent* event){
     Q_UNUSED(event)
-    getPointButtonGroup()->setGroup(getPointButtonGroup()->getGroupIndex());
+    getPointButtonGroup()->setGroup(getPointButtonGroup()->getGroupName());
     emit resetPathPointViews();
     QWidget::show();
 }

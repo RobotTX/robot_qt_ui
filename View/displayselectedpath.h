@@ -14,6 +14,11 @@ class CustomScrollArea;
 #include <QSharedPointer>
 #include <QMap>
 
+/**
+ * @brief The DisplaySelectedPath class
+ * class that provides a widget to display the information of a given path
+ * also allows to edit the path
+ */
 class DisplaySelectedPath: public QWidget{
     Q_OBJECT
 

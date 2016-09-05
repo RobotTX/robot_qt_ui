@@ -10,20 +10,20 @@
 #include "View/pointview.h"
 #include "View/stylesettings.h"
 
-PointButtonGroup::PointButtonGroup(QSharedPointer<Points> _points, const QString _groupIndex
+PointButtonGroup::PointButtonGroup(QSharedPointer<Points> _points, const QString _groupName
                                    , QWidget* parent): QWidget(parent), points(_points){
     layout = new QVBoxLayout(this);
 
-    groupIndex = _groupIndex;
+    groupName = _groupName;
     buttonGroup = new QButtonGroup(this);
     layout->setAlignment(Qt::AlignTop);
     createButtons();
 }
 
-void PointButtonGroup::setGroup(const QString _groupIndex){
+void PointButtonGroup::setGroup(const QString _groupName){
     qDebug() << "PointButtonGroup::setGroup called";
     deleteButtons();
-    groupIndex = _groupIndex;
+    groupName = _groupName;
     createButtons();
     setCheckable(true);
     emit updateConnectionsRequest();
@@ -32,8 +32,8 @@ void PointButtonGroup::setGroup(const QString _groupIndex){
 void PointButtonGroup::createButtons(){
     //qDebug() << "PointButtonGroup::createButtons called";
 
-    if(points->isAGroup(groupIndex) && points->getGroups()->value(groupIndex) && points->getGroups()->value(groupIndex)->size() > 0){
-        QSharedPointer<QVector<QSharedPointer<PointView>>> group = points->getGroups()->value(groupIndex);
+    if(points->isAGroup(groupName) && points->getGroups()->value(groupName) && points->getGroups()->value(groupName)->size() > 0){
+        QSharedPointer<QVector<QSharedPointer<PointView>>> group = points->getGroups()->value(groupName);
         for(int j = 0; j < group->size(); j++){
             QSharedPointer<Point> currentPoint = group->at(j)->getPoint();
 
