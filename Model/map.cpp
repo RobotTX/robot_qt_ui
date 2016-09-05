@@ -42,18 +42,17 @@ void Map::setRectangle(void){
 }
 
 void Map::setMapFromArray(const QByteArray& mapArrays){
+    // if breaks check casts
     qDebug() << "Map::setMapFromArray called" << mapArrays.size();
     mapImage = QImage(width, height, QImage::Format_Grayscale8);
     uint32_t index = 0;
-    int indexI = 0;
-    int indexJ = 0;
 
     /// We set each pixel of the image, the data received being
     for(int i = 0; i < mapArrays.size(); i+=5){
-        int color = (int) ((uint8_t) mapArrays.at(i));
+        int color = static_cast<int> (static_cast<uint8_t> (mapArrays.at(i)));
 
-        uint32_t count = (uint32_t) (((uint8_t)mapArrays.at(i+1)) << 24) + (uint32_t) (((uint8_t)mapArrays.at(i+2)) << 16)
-                        + (uint32_t) (((uint8_t)mapArrays.at(i+3)) << 8) + (uint32_t) ((uint8_t) mapArrays.at(i+4));
+        uint32_t count = static_cast<uint32_t> (static_cast<uint8_t> (mapArrays.at(i+1)) << 24) + static_cast<uint32_t> (static_cast<uint8_t> (mapArrays.at(i+2)) << 16)
+                        + static_cast<uint32_t> (static_cast<uint8_t> (mapArrays.at(i+3)) << 8) + static_cast<uint32_t> (static_cast<uint8_t> (mapArrays.at(i+4)));
 
         for(int j = 0; j < (int) count; j++){
             mapImage.setPixelColor(QPoint((int) (index%width), height-1-((int) (index/width))), QColor((int) color, color, color));

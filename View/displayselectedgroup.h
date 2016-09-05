@@ -29,12 +29,32 @@ public:
     QLabel* getNameLabel(void) const { return name; }
     QSharedPointer<Points> getPoints(void) const { return points; }
 
+    /**
+     * @brief setName
+     * @param _name
+     * sets the text of the label displaying the name
+     */
     void setName(const QString _name);
 
+    /**
+     * @brief uncheck
+     * unchecks all the buttons of the group
+     */
     void uncheck(void) { pointButtonGroup->uncheck(); }
+
+    /**
+     * @brief disableButtons
+     * resets the enability, checkability, tooltips of the buttons (called after an operation is performed and
+     * no point is selected
+     */
     void disableButtons();
 
 private slots:
+    /**
+     * @brief buttonClickedSlot
+     * called when a button is clicked in the group to either unselect it (if it was already selected before being clicked)
+     * or enable other buttons
+     */
     void buttonClickedSlot(QAbstractButton*);
 
 protected:

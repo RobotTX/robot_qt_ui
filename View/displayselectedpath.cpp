@@ -10,10 +10,9 @@
 #include <QVBoxLayout>
 #include <QDebug>
 
-DisplaySelectedPath::DisplaySelectedPath(QWidget *parent, MainWindow *mainWindow,  const QSharedPointer<Paths>& _paths):
+DisplaySelectedPath::DisplaySelectedPath(QWidget *parent, const MainWindow *mainWindow,  const QSharedPointer<Paths>& _paths):
     QWidget(parent), paths(_paths)
 {
-
     scrollArea = new CustomScrollArea(this);
 
     layout = new QVBoxLayout(this);
@@ -53,7 +52,7 @@ DisplaySelectedPath::DisplaySelectedPath(QWidget *parent, MainWindow *mainWindow
     layout->setContentsMargins(0,0,0,0);
 }
 
-void DisplaySelectedPath::updatePath(QString groupName, QString pathName, QVector<QSharedPointer<PathPoint>> path){
+void DisplaySelectedPath::updatePath(const QString groupName, const QString pathName, const QVector<QSharedPointer<PathPoint>>& path){
     qDebug() << "DisplaySelectedPath::updatePath called";
     currentPath.groupName = groupName;
     currentPath.pathName = pathName;

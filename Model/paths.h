@@ -100,7 +100,7 @@ private:
  * @param out
  * @param paths
  * @return
- * Serialization a the paths
+ * Serialization of the paths
  */
 QDataStream& operator<<(QDataStream& out, const Paths& paths);
 
@@ -109,7 +109,7 @@ QDataStream& operator<<(QDataStream& out, const Paths& paths);
  * @param in
  * @param paths
  * @return
- * Deserialization a the paths
+ * Deserialization of the paths
  */
 QDataStream& operator>>(QDataStream& in, Paths& paths);
 

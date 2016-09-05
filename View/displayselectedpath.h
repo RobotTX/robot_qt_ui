@@ -24,17 +24,28 @@ public:
       QVector<QSharedPointer<PathPoint>> path;
     };
 
-    DisplaySelectedPath(QWidget* parent, MainWindow* mainWindow, const QSharedPointer<Paths>& _paths);
-    void updatePath(QString groupName, QString pathName, QVector<QSharedPointer<PathPoint>> path);
+    DisplaySelectedPath(QWidget* parent, const MainWindow* mainWindow, const QSharedPointer<Paths>& _paths);
+    void updatePath(const QString groupName, const QString pathName, const QVector<QSharedPointer<PathPoint> > &path);
 
 signals:
     void deletePath(QString, QString);
     void editPath(QString, QString);
     void displayPath(QString, QString, bool);
 
-private slots:
+private slots:/**
+     * @brief deletePath
+     * emits the delete path signal when the minus button is clicked
+     */
     void minusBtnSlot(bool checked);
+    /**
+     * @brief deletePath
+     * emits the edit path signal when the edit button is clicked
+     */
     void editBtnSlot(bool checked);
+    /**
+     * @brief deletePath
+     * emits the display path signal when the edit button is clicked
+     */
     void mapBtnSlot(bool checked);
 
 private:

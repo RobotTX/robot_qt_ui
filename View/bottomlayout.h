@@ -51,6 +51,8 @@ public:
 
     /// to create a QString to display from the path
     QString pathToStr(const QVector<QSharedPointer<PathPoint> > &path, const int stage = 0);
+
+    /// to display at which stage of the path the robot is in the label itself (with a different color)
     void updateStageRobot(const int id, RobotView *robotView, const int stage);
 
 private:

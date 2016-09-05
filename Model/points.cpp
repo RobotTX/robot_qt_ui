@@ -143,7 +143,7 @@ void Points::clear(){
 }
 
 QSharedPointer<PointView> Points::createPoint(const QString pointName, const double x, const double y, const bool displayed, const Point::PointType type,
-                                               MapView* mapView, MainWindow* mainWindow){
+                                               MapView* mapView, const MainWindow *mainWindow){
     QSharedPointer<Point> point = QSharedPointer<Point>(new Point(pointName, x, y, type));
     QSharedPointer<PointView> pointView = QSharedPointer<PointView>(new PointView(point, mapView));
     if(!displayed)
@@ -207,7 +207,7 @@ void Points::replacePoint(const QString groupName, const int id, const QSharedPo
 }
 
 void Points::insertPoint(const QString groupName, const int id, const QString pointName, const double x, const double y, const bool displayed, const Point::PointType type,
-                      MapView* mapView, MainWindow* mainWindow){
+                      MapView* mapView, const MainWindow *mainWindow){
     qDebug() << "Points::insertPoint called";
     QSharedPointer<PointView> pointView = createPoint(pointName, x, y , displayed, type, mapView, mainWindow);
     insertPoint(groupName, id, pointView);

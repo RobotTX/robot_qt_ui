@@ -32,13 +32,36 @@ public:
     QLabel* getGroupNameLabel(void) const { return groupNameLabel; }
 
 public:
+    /**
+     * @brief initializeActionButtons
+     * sets enability, checkability and tooltips of buttons
+     */
     void initializeActionButtons(void);
+    /**
+     * @brief setPathsGroup
+     * @param groupName
+     * display the list of paths contained in the group with an eye icon before the name if the path is displayed
+     */
     void setPathsGroup(const QString groupName);
     /// to update the icons to show which path is displayed
+    /**
+     * @brief updateDisplayedPath
+     * updates the icons so that the visible path has the "eye" icon
+     */
     void updateDisplayedPath(void);
 
 private slots:
+    /**
+     * @brief enableButtons
+     * @param button
+     * called when a user select a path to allow him to perform different operations on the selected paths
+     */
     void enableButtons(QAbstractButton* button);
+    /**
+     * @brief resetMapButton
+     * checks or unchecks the eye button appropriately when a new path is selected,
+     * the button is checked if the path is visible, unchecked otherwise
+     */
     void resetMapButton();
 
 protected:

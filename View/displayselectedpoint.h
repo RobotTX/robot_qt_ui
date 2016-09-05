@@ -44,9 +44,25 @@ public:
     DisplaySelectedPointRobots* getDisplaySelectedPointRobots(void) { return robotsWidget; }
 
 public:
+    /**
+     * @brief displayPointInfo
+     * displays the name and coordinates of the point as well as checks / unchecks the map button
+     * to reflect the visibility of the point on the map
+     */
     void displayPointInfo(void);
+
+    /**
+     * @brief resetWidget
+     * hides the cancel and save buttons, resets tooltips and state of the edit button
+     * emits a signal to reset the state of the map
+     */
     void resetWidget(void);
-    void setRobotsLabel(void);
+    /**
+     * @brief formatName
+     * @param name
+     * @return QString
+     * formats the name given as a parameter so that duplicated and useless spaces are removed ex: " a     name" -> "a name"
+     */
     QString formatName(const QString name) const;
 
 protected:

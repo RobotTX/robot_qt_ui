@@ -260,7 +260,7 @@ public:
      * @param mainWindow
      * Create and insert a PointView at the position id in groupName
      */
-    void insertPoint(const QString groupName, const int id, const QString pointName, const double x, const double y, const bool displayed, const Point::PointType type, MapView *mapView, MainWindow *mainWindow);
+    void insertPoint(const QString groupName, const int id, const QString pointName, const double x, const double y, const bool displayed, const Point::PointType type, MapView *mapView, const MainWindow *mainWindow);
 
     /**
      * @brief replacePoint
@@ -290,7 +290,7 @@ public:
      * @param mainWindow
      * @return a pointView created with the given informations
      */
-    QSharedPointer<PointView> createPoint(const QString pointName, const double x, const double y, const bool displayed, const Point::PointType type, MapView* mapView, MainWindow* mainWindow);
+    QSharedPointer<PointView> createPoint(const QString pointName, const double x, const double y, const bool displayed, const Point::PointType type, MapView* mapView, const MainWindow* mainWindow);
 
     /**
      * @brief updatePointViews
