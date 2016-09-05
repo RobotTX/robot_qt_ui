@@ -55,10 +55,19 @@ private:
 /**
  * @brief operator <<
  * @param out
- * @param pathPoint
+ * @param robot
  * @return
+ * Serialization of a pathpoint
  */
 QDataStream& operator<<(QDataStream& out, const PathPoint& robot);
+
+/**
+ * @brief operator >>
+ * @param in
+ * @param robot
+ * @return
+ * Deserialization of a pathpoint
+ */
 QDataStream& operator>>(QDataStream& in, PathPoint& robot);
 
 #endif // PATHPOINT_H
