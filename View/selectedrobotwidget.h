@@ -25,12 +25,7 @@ class SelectedRobotWidget: public QWidget{
 public:
     SelectedRobotWidget(QWidget* parent, MainWindow* mainWindow);
 
-    /**
-     * @brief setSelectedRobot
-     * @param _robotView
-     * Update the widget with the selected robot
-     */
-
+    /// Getters
     CustomPushButton* getScanBtn(void) const {return scanBtn;}
     QString getName(void) const { return name->text(); }
     PathWidget* getPathWidget(void) const {return pathWidget;}
@@ -39,9 +34,18 @@ public:
     CustomLabel* getWifiLabel(void) const { return wifiNameLabel; }
     TopLeftMenu* getActionButtons(void) const {return actionButtons;}
 
-    void disable();
-    void enable();
+    /**
+     * @brief enable
+     * @param enable
+     * Enable the buttons to the given bool
+     */
+    void enable(bool enable);
 
+    /**
+     * @brief setSelectedRobot
+     * @param _robotView
+     * Set the information robot to display in the widget
+     */
     void setSelectedRobot(RobotView* const& _robotView);
 
 private:

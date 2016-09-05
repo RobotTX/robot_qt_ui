@@ -50,12 +50,10 @@ void PathPointList::refresh(void){
 
 void PathPointList::update(const int indexNb, const int action, const int time){
     static_cast<PathPointCreationWidget*> (itemWidget(item(indexNb)))->getAction()->setCurrentIndex(action);
-    if(action==0 && time != 0)
-    {
+    if(action==0 && time != 0){
         static_cast<PathPointCreationWidget*> (itemWidget(item(indexNb)))->getTimeEdit()->setText( QString::number(time));
         static_cast<PathPointCreationWidget*> (itemWidget(item(indexNb)))->getTimeWidget()->show();
-    }
-    else
+    } else
         static_cast<PathPointCreationWidget*> (itemWidget(item(indexNb)))->getTimeWidget()->hide();
 
 }

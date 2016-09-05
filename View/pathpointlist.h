@@ -15,9 +15,22 @@ public:
     PathPointList(QWidget *parent);
     void update(const int indexNb, const int action, const int time = 0);
 
+    /**
+     * @brief refresh
+     * Refresh the id of every PathpointCreationWidget in the list
+     */
     void refresh(void);
 
 private slots:
+    /**
+     * @brief itemMoved
+     * @param parent
+     * @param start
+     * @param end
+     * @param destination
+     * @param row
+     * Called when an item is dragged and dropped in the list
+     */
     void itemMoved(QModelIndex parent, int start, int end, QModelIndex destination, int row);
 
 signals:

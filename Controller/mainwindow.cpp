@@ -469,7 +469,7 @@ void MainWindow::connectToRobot(){
 
                         selectedRobotWidget->getScanBtn()->setText("Stop to scan");
                         clearNewMap();
-                        selectedRobotWidget->disable();
+                        selectedRobotWidget->enable(false);
                         selectedRobotWidget->getScanBtn()->setEnabled(true);
                         setEnableAll(false, GraphicItemState::NO_EVENT);
                         scanningRobot = selectedRobot;
@@ -508,7 +508,7 @@ void MainWindow::connectToRobot(){
                     if((cmd.compare("f") == 0 && success) || answerList.at(0).compare("1") == 0){
                         qDebug() << "Stopped scanning the map";
                         selectedRobotWidget->getScanBtn()->setText("Scan a map");
-                        selectedRobotWidget->enable();
+                        selectedRobotWidget->enable(true);
 
                         hideAllWidgets();
                         selectedRobotWidget->setSelectedRobot(selectedRobot);
@@ -1650,7 +1650,7 @@ void MainWindow::robotIsDeadSlot(QString hostname,QString ip){
         if(scanningRobot != NULL && scanningRobot->getRobot()->getIp().compare(ip) == 0){
             selectedRobotWidget->getScanBtn()->setChecked(false);
             selectedRobotWidget->getScanBtn()->setText("Scan a map");
-            selectedRobotWidget->enable();
+            selectedRobotWidget->enable(true);
 
             hideAllWidgets();
             setEnableAll(true);

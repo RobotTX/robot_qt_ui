@@ -141,16 +141,10 @@ void SelectedRobotWidget::setSelectedRobot(RobotView* const& _robotView){
     update();
 }
 
-void SelectedRobotWidget::disable(){
-    scanBtn->setEnabled(false);
-    goHome->setEnabled(false);
-    actionButtons->setEnable(false);
-}
-
-void SelectedRobotWidget::enable(){
-    scanBtn->setEnabled(true);
-    goHome->setEnabled(true);
-    actionButtons->setEnable(true);
+void SelectedRobotWidget::enable(bool enable){
+    scanBtn->setEnabled(enable);
+    goHome->setEnabled(enable);
+    actionButtons->setEnable(enable);
 }
 
 void SelectedRobotWidget::showEvent(QShowEvent *event){

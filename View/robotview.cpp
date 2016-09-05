@@ -21,11 +21,8 @@ RobotView::RobotView (QSharedPointer<Robot> const &_robot, QGraphicsItem* parent
     polygon << QPointF(ROBOT_WIDTH/2, ROBOT_HEIGHT_HIGH) << QPointF(0, ROBOT_HEIGHT_LOW)
                << QPointF(ROBOT_WIDTH/2, 0) << QPointF(ROBOT_WIDTH, ROBOT_HEIGHT_LOW);
     setPolygon(polygon);
-    /*QLinearGradient linearGrad(QPointF(ROBOT_WIDTH/2, ROBOT_HEIGHT_HIGH), QPointF(ROBOT_WIDTH/2, 0));
-    linearGrad.setColorAt(0, Qt::red);
-    linearGrad.setColorAt(0.5, Qt::red);
-    linearGrad.setColorAt(1, Qt::black);
-    setBrush(QBrush(linearGrad));*/
+
+
     /// Brush = the inner part of the polygon
     setBrush(QBrush(Qt::red));
 

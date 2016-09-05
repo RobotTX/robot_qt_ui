@@ -18,6 +18,11 @@ public:
     PathWidget(QWidget* parent);
     ~PathWidget();
 
+    /**
+     * @brief setPath
+     * @param path
+     * Set the path to display in this widget
+     */
     void setPath(QVector<QSharedPointer<PathPoint>> const path);
 
     /**

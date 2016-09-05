@@ -26,8 +26,9 @@ public:
     RobotView(const QSharedPointer<Robot> &_robot, QGraphicsItem *parent);
     RobotView(QGraphicsItem* parent);
 
-    /// Getter
+    /// Getters
     QSharedPointer<Robot> getRobot(void) { return robot; }
+    int getLastStage(void) const { return lastStage; }
 
     /// Setters
     void setRobot(QSharedPointer<Robot> const& _robot) { robot = _robot; }
@@ -38,7 +39,6 @@ public:
     void display(const bool show) ;
     void setState(const GraphicItemState _state) { state = _state; }
     void setLastStage(const int _stage) { lastStage = _stage; }
-    int getLastStage(void) const { return lastStage; }
 
 signals:
     /**
