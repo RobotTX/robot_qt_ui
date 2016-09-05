@@ -82,13 +82,13 @@ void Paths::createGroup(const QString name){
 }
 
 /// attempts to delete a group of paths called <name>, if the group does not exist, the function does not do anything
-void Paths::deleteGroup(const QString name){
+void Paths::deleteGroup(const QString groupName){
     qDebug() << "Paths::deleteGroup called";
-    if(groups->find(name) != groups->end()){
-        int r = groups->remove(name);
-        qDebug() << "removed" << r << "value(s) with key" << name;
+    if(groups->find(groupName) != groups->end()){
+        int r = groups->remove(groupName);
+        qDebug() << "removed" << r << "value(s) with key" << groupName;
     } else
-        qDebug() << name << "is not in the map";
+        qDebug() << groupName << "is not in the map";
 }
 
 /// attempts to delete a path with name <pathName> in the group <groupName>, does not

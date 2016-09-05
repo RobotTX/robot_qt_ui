@@ -16,18 +16,13 @@ class Robots{
 public:
     Robots();
 
-    /**
-     * @brief setRobotsVector
-     * @param _robotsVector
-     * Setter for the vector of RobotView
-     */
-    void setRobotsVector(const QVector<RobotView*>& _robotsVector) { robotsVector = _robotsVector; }
-
-    /**
-     * @brief getRobotsVector
-     * @return A vector of RobotView
-     */
+    /// Getters
     QVector<RobotView*> getRobotsVector() const { return robotsVector; }
+    QMap<QString, QString> getRobotsNameMap() const {return robotsNameMap;}
+
+    /// Setters
+    void setRobotsVector(const QVector<RobotView*>& _robotsVector) { robotsVector = _robotsVector; }
+    void setRobotsNameMap(const QMap<QString, QString> &_robotsNameMap) {robotsNameMap = _robotsNameMap;}
 
     /**
      * @brief add
@@ -101,19 +96,48 @@ public:
     /**
      * @brief findRobotUsingHome
      * @param name
-     * @return RobotView*
-     * returns a pointer to the robot whose home point's name is passed as an argument
+     * @return returns the RobotView whose home point's name is passed as an argument
      */
     RobotView* findRobotUsingHome(const QString name) const;
 
+    /**
+     * @brief findRobotUsingTmpPointInPath
+     * @param point
+     * @return the RobotView using the given temporary point in its path
+     */
     RobotView* findRobotUsingTmpPointInPath(const QSharedPointer<Point> point) const;
 
-    QMap<QString, QString> getRobotsNameMap() const {return robotsNameMap;}
-    void setRobotsNameMap(const QMap<QString, QString> &_robotsNameMap) {robotsNameMap = _robotsNameMap;}
+    /**
+     * @brief insertRobotsNameMap
+     * @param ip
+     * @param name
+     * Insert the given robot name with it's ip in robotsNameMap
+     */
     void insertRobotsNameMap(QString ip, QString name) {robotsNameMap.insert(ip, name);}
+
+    /**
+     * @brief deselect
+     * Deselect any selected robotView
+     */
     void deselect(void);
+
+    /**
+     * @brief hide
+     * Hide all robots
+     */
     void hide(void) const;
+
+    /**
+     * @brief show
+     * Show all robots
+     */
     void show(void) const;
+
+    /**
+     * @brief showRobot
+     * @param id
+     * Show the robot at the given id
+     */
     void showRobot(const int id) const;
 
 private:

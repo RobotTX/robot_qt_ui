@@ -31,18 +31,62 @@ public:
 public:
     Paths(MainWindow *parent = Q_NULLPTR);
 
+    /**
+     * @brief createGroup
+     * @param groupName
+     * Create the group of paths groupName
+     */
+    void createGroup(const QString groupName);
+
+    /**
+     * @brief createPath
+     * @param groupName
+     * @param pathName
+     * @return
+     * Create the path pathName in the group groupName
+     */
+    bool createPath(const QString groupName, const QString pathName);
+
+    /**
+     * @brief addPathPoint
+     * @param groupName
+     * @param pathName
+     * @param pathPoint
+     * Add pathPoint to the path pathName in the group groupName
+     */
+    void addPathPoint(const QString groupName, const QString pathName, const QSharedPointer<PathPoint>& pathPoint);
+
+    /**
+     * @brief deleteGroup
+     * @param groupName
+     * Delete the group of paths groupName
+     */
+    void deleteGroup(const QString groupName);
+
+    /**
+     * @brief displayGroups
+     * Display all the groups
+     */
+    void displayGroups(void) const;
+
+    /**
+     * @brief deletePath
+     * @param groupName
+     * @param pathName
+     * Delete pathName in the given group
+     */
+    void deletePath(const QString groupName, const QString pathName);
+
+
+    /// Getters
     QSharedPointer<Groups> getGroups(void) const { return groups; }
     QString getVisiblePath(void) const { return visiblePath; }
-    void setVisiblePath(const QString path) { visiblePath = path; qDebug() << path << "path displayed"; }
-    void setGroups(QSharedPointer<Groups> _groups) { groups = _groups; }
-    void createGroup(const QString name);
-    bool createPath(const QString groupName, const QString pathName);
-    void addPathPoint(const QString groupName, const QString pathName, const QSharedPointer<PathPoint>& pathPoint);
-    void deleteGroup(const QString name);
-    void displayGroups(void) const;
-    void deletePath(const QString groupName, const QString pathName);
     /// the foundFlag is set within the function, after the function returns it holds true if the path has been found and false otherwise
     Path getPath(const QString groupName, const QString pathName, bool& foundFlag);
+
+    /// Setters
+    void setVisiblePath(const QString path) { visiblePath = path; qDebug() << path << "path displayed"; }
+    void setGroups(QSharedPointer<Groups> _groups) { groups = _groups; }
 
 
 private:
@@ -50,8 +94,23 @@ private:
     QSharedPointer<Groups> groups;
 };
 
-/// to serialize, deserialize Path objects
+
+/**
+ * @brief operator <<
+ * @param out
+ * @param paths
+ * @return
+ * Serialization a the paths
+ */
 QDataStream& operator<<(QDataStream& out, const Paths& paths);
+
+/**
+ * @brief operator >>
+ * @param in
+ * @param paths
+ * @return
+ * Deserialization a the paths
+ */
 QDataStream& operator>>(QDataStream& in, Paths& paths);
 
 #endif // PATHS_H

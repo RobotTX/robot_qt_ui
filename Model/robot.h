@@ -74,12 +74,42 @@ public:
      * Called to send a command to the robot
      */
     bool sendCommand(const QString cmd);
+
+    /**
+     * @brief sendNewMap
+     * @param cmd
+     * To send the new map to the robot
+     */
     void sendNewMap(QByteArray cmd);
 
+    /**
+     * @brief waitAnswer
+     * @return the answer returned by the robot after sending a command (success or fail)
+     */
     QString waitAnswer();
+
+    /**
+     * @brief resetCommandAnswer
+     * to reset the answer
+     */
     void resetCommandAnswer();
+
+    /**
+     * @brief stopThreads
+     * Stop every threads
+     */
     void stopThreads();
+
+    /**
+     * @brief ping
+     * To tell the command thread of this robot that we are still alive
+     */
     void ping();
+
+    /**
+     * @brief clearPath
+     * Delete the path of this robot
+     */
     void clearPath();
 
 signals:
@@ -97,24 +127,9 @@ private:
     float orientation;
     unsigned int batteryLevel;
     QString wifi;
-
     CmdRobotThread* cmdThread;
-    /**
-     * @brief home
-     * Home point of the robot
-     */
     QSharedPointer<PointView> home;
-
-    /**
-     * @brief path
-     * Path linked to that robot
-     */
     QVector<QSharedPointer<PathPoint>> path;
-
-    /**
-     * @brief playingPath
-     * Boolean representing whether or not the robot is currently executing the path
-     */
     bool playingPath;
     ScanRobotThread* robotThread;
     ScanMetadataThread* metadataThread;
