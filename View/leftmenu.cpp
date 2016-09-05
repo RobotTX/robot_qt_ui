@@ -188,10 +188,6 @@ LeftMenu::LeftMenu(MainWindow* _mainWindow, QSharedPointer<Points> const& _point
     connect(noRobotPathCreationWidget, SIGNAL(actionChanged(int, int, QString)), noRobotPathPainter, SLOT(actionChangedSlot(int, int, QString)));
     connect(noRobotPathCreationWidget, SIGNAL(editPathPoint(int, QString, double, double)), noRobotPathPainter, SLOT(editPathPointSlot(int, QString, double, double)));
 
-
-    connect(noRobotPathCreationWidget->getActionButtons()->getEditButton(), SIGNAL(clicked(bool)), noRobotPathCreationWidget, SLOT(editPathPointSlotRelay()));
-
-
     noRobotPathCreationWidget->hide();
     leftLayout->addWidget(noRobotPathCreationWidget);
     hide();
