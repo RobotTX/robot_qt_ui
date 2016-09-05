@@ -1250,17 +1250,39 @@ void MainWindow::savePathSlot(GraphicItemState state){
     qDebug() << "MainWindow::savePath called";
     backEvent();
 
-    /// we hide the points that we displayed for the edition of the path
-    for(int i = 0; i < pointViewsToDisplay.size(); i++)
-        pointViewsToDisplay.at(i)->hide();
-    pointViewsToDisplay.clear();
-
     if(state == GraphicItemState::ROBOT_CREATING_PATH){
         robotPathPainter->setPathDeleted(false);
         robotPathPainter->setOldPath(robotPathPainter->getCurrentPath());
         editSelectedRobotWidget->setPathChanged(true);
         editSelectedRobotWidget->setPath(robotPathPainter->getCurrentPath());
+        /// we hide the points that we displayed for the edition of the path
+        for(int i = 0; i < pointViewsToDisplay.size(); i++){
+            bool hidePointView(true);
+            for(int j = 0; j < robotPathPainter->getCurrentPath().size(); j++){
+                if(robotPathPainter->getCurrentPath().at(j)->getPoint() == *(pointViewsToDisplay.at(i)->getPoint())){
+                    hidePointView = false;
+                    break;
+                }
+            }
+            if(hidePointView)
+                pointViewsToDisplay.at(i)->hide();
+        }
+        pointViewsToDisplay.clear();
     } else {
+        /// we hide the points that we displayed for the edition of the path
+        for(int i = 0; i < pointViewsToDisplay.size(); i++){
+            bool hidePointView(true);
+            for(int j = 0; j < noRobotPathPainter->getCurrentPath().size(); j++){
+                if(noRobotPathPainter->getCurrentPath().at(j)->getPoint() == *(pointViewsToDisplay.at(i)->getPoint())){
+                    hidePointView = false;
+                    break;
+                }
+            }
+            if(hidePointView)
+                pointViewsToDisplay.at(i)->hide();
+        }
+        pointViewsToDisplay.clear();
+
         noRobotPathPainter->setPathDeleted(false);
         noRobotPathPainter->setOldPath(noRobotPathPainter->getCurrentPath());
 
