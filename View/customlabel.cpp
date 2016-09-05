@@ -12,6 +12,7 @@ CustomLabel::CustomLabel(const QString &text, QWidget *parent, bool _title) : QL
 
 void CustomLabel::initialize(){
 
+    /// Set the style of the label "..." which is used when a text is too long for the button to display "text..." without modifying the text
     label = new QLabel("...", this);
 
     QString style = "";
@@ -25,6 +26,7 @@ void CustomLabel::initialize(){
         style += "text-align: left;";
     }
 
+    /// Style of the label
     setStyleSheet(
                 "QLabel { " + style + "}");
 
@@ -40,11 +42,6 @@ void CustomLabel::initialize(){
                 "}");
     label->hide();
     moveLabel();
-}
-
-void CustomLabel::enterEvent(QEvent *event){
-
-    QLabel::enterEvent(event);
 }
 
 void CustomLabel::showEvent(QShowEvent* event){
@@ -78,6 +75,7 @@ void CustomLabel::moveLabel(){
         int strWidth = fm.width(text());
         int maxStrWidth = width() - fmLabel.width(label->text()) - 5;
 
+        /// If the text is too long for the button we display "..." at the right position
         if(strWidth >= maxStrWidth){
             QPoint moveTo = QPoint(0, 0);
             QString str = text();

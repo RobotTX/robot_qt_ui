@@ -14,8 +14,8 @@ class CustomLineEdit: public QLineEdit
 public:
     CustomLineEdit(QWidget *parent = Q_NULLPTR);
     CustomLineEdit(const QString &text, QWidget *parent = Q_NULLPTR);
-    void moveLabel();
     void initialize(void);
+    void updateStyle();
     void setText(const QString &text);
 
 public:

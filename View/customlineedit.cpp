@@ -12,6 +12,7 @@ CustomLineEdit::CustomLineEdit(const QString &text, QWidget *parent): QLineEdit(
 }
 
 void CustomLineEdit::initialize(void){
+    /// Some style might be there one day
 /*
     setFrame(false);
     setAutoFillBackground(true);
@@ -43,7 +44,7 @@ void CustomLineEdit::showEvent(QShowEvent *event){
     //qDebug() << "LineEdit::showEvent called";
     /// disables the edition of a group
     emit enableGroupEdit(false);
-    moveLabel();
+    updateStyle();
 }
 
 void CustomLineEdit::resizeEvent(QResizeEvent *event){
@@ -54,7 +55,7 @@ void CustomLineEdit::resizeEvent(QResizeEvent *event){
     }
     setMaximumWidth(maxWidth);
     QLineEdit::resizeEvent(event);
-    moveLabel();
+    updateStyle();
 }
 
 void CustomLineEdit::enterEvent(QEvent *event){
@@ -68,7 +69,7 @@ void CustomLineEdit::setText(const QString &str){
     QLineEdit::setText(str);
 }
 
-void CustomLineEdit::moveLabel(){
+void CustomLineEdit::updateStyle(){
     if(isReadOnly()){
         setReadOnly(false);
         home(false);
@@ -82,24 +83,4 @@ void CustomLineEdit::moveLabel(){
         home(false);
         setToolTip("");
     }
-
-    /*if(!text().isEmpty()){
-
-        QFontMetrics fm(font());
-        int strWidth = fm.width(text());
-        int maxStrWidth = width();
-
-        if(strWidth >= maxStrWidth){
-            //setStyleSheet("QLineEdit { text-align: right; }");
-            //setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
-
-            /// tooltip if disabled
-            //setToolTip(text());
-
-        } else {
-            //setAlignment(Qt::AlignCenter | Qt::AlignVCenter);
-            //setStyleSheet("QLineEdit { text-align: center; }");
-            setToolTip("");
-        }
-    }*/
 }

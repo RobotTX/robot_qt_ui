@@ -141,11 +141,13 @@ public:
     void showRobot(const int id) const;
 
 private:
-    /**
-     * @brief robotsVector
-     * The vector of RobotView (which also contains the robot)
-     */
+
     QVector<RobotView*> robotsVector;
+
+    /**
+     * @brief robotsNameMap
+     * A map of the robot
+     */
     QMap<QString, QString> robotsNameMap;
 };
 

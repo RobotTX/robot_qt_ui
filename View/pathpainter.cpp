@@ -65,12 +65,11 @@ void PathPainter::addPathPointSlot(QString name, double x, double y){
                 name = PATH_POINT_NAME + QString::number(currentPath.size()+1);
 
             Point::PointType type = Point::PointType::PATH;
-            //qDebug() << "PathPainter::addPathPointSlot" << (mainWindow->getSelectedRobot() == NULL);
+
             if((mainWindow->getSelectedRobot() && mainWindow->getSelectedRobot()->getRobot()->getHome() && mainWindow->getSelectedRobot()->getRobot()->getHome()->getPoint()->getName().compare(name) == 0)
                     || (mainWindow->getSelectedRobot() == NULL && points->isAHome(name, x, y)))
                 type= Point::PointType::HOME;
-            /*if(points->isAHome(name, x, y))
-                type= Point::PointType::HOME;*/
+
             points->addPoint(PATH_GROUP_NAME, name, x, y, true, type, mapView, mainWindow);
         }
 

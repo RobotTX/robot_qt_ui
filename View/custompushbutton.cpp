@@ -16,6 +16,7 @@ CustomPushButton::CustomPushButton(const QString &text, QWidget *parent, const B
 
 void CustomPushButton::initialize(const bool &checkable, const bool &enable, const QString &align){
 
+    /// Set the style of the label "..." which is used when a text is too long for the button to display "text..." without modifying the text
     label = new QLabel("...", this);
     label->setAttribute(Qt::WA_TranslucentBackground, false);
     label->setStyleSheet(
@@ -29,6 +30,7 @@ void CustomPushButton::initialize(const bool &checkable, const bool &enable, con
 
     label->hide();
 
+    /// Style of the button
     QString style = "";
     if(text().compare(""))
         style = "padding: 5px 10px 5px 10px; text-align:" + align + ";";
@@ -53,6 +55,7 @@ void CustomPushButton::initialize(const bool &checkable, const bool &enable, con
     setAutoDefault(true);
     connect(this, SIGNAL(toggled(bool)), this, SLOT(toggledSlot(bool)));
 
+    /// Set the size of the button depending of its type
     switch(buttonType){
         case TOP:
             setMinimumHeight(l_button_height);
@@ -110,6 +113,7 @@ void CustomPushButton::setText(const QString &str){
 }
 
 void CustomPushButton::toggledSlot(bool checked){
+    /// When toggled, we also need to change the style of the label
     QString tmpColor = left_menu_background_color;
     if(checked)
         tmpColor = button_checked_color;
@@ -149,7 +153,6 @@ void CustomPushButton::resizeEvent(QResizeEvent *event){
 }
 
 void CustomPushButton::enterEvent(QEvent *event){
-    //qDebug() << "CustomPushButton::enterEvent" << text() << size() << label->size();
     if(!isChecked() && isEnabled())
         label->setStyleSheet(
                     "QLabel {"
@@ -184,8 +187,7 @@ void CustomPushButton::moveLabel(){
             iconWidth = iconSize().width() - 3;
         maxStrWidth -= iconWidth;
 
-
-
+        /// If the text is too long for the button we display "..." at the right position
         if(strWidth >= maxStrWidth){
             QPoint moveTo = QPoint(0, 0);
             QString str = text();
