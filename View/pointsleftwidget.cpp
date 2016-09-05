@@ -243,10 +243,7 @@ int PointsLeftWidget::checkGroupName(QString name){
         return 0;
     }
     if(!name.compare("")){
-        saveButton->setToolTip("The name of your group cannot be empty");
-        saveButton->setEnabled(false);
-        connect(groupNameEdit, SIGNAL(clickSomewhere(QString)), this, SLOT(cancelCreationGroup()));
-        emit messageCreationGroup(TEXT_COLOR_WARNING, "The name of your group cannot be empty");
+        emit messageCreationGroup(TEXT_COLOR_NORMAL, "");
         return 1;
     }
     QMapIterator<QString, QSharedPointer<QVector<QSharedPointer<PointView>>>> i(*(points->getGroups()));
@@ -315,7 +312,8 @@ void PointsLeftWidget::keyPressEvent(QKeyEvent* event){
                 setLastCheckedId("");
                 break;
             case 1:
-                emit messageCreationGroup(TEXT_COLOR_DANGER, "The name of your group cannot be empty");
+                emit modifiedGroup("");
+                setLastCheckedId("");
                 break;
             case 2:
                 emit messageCreationGroup(TEXT_COLOR_DANGER, "A group with the same name already exists, please choose another name for your group");
@@ -324,6 +322,15 @@ void PointsLeftWidget::keyPressEvent(QKeyEvent* event){
                 qDebug() << "if you get here you probably forgot to implement the behavior for one or more error codes";
                 break;
             }
+        }
+    }
+    /// this is the escape key, in this case we simply cancel the creation / edition
+    else if(!event->text().compare("\u001B")){
+        if(creatingGroup)
+            emit newGroup("");
+        else {
+            emit modifiedGroup("");
+            setLastCheckedId("");
         }
     }
 }
@@ -376,7 +383,7 @@ void PointsLeftWidget::sendMessageEditGroup(int code){
         emit messageCreationGroup(TEXT_COLOR_INFO, "To save this group press Enter or click the \"Save button\"");
         break;
     case 1:
-        emit messageCreationGroup(TEXT_COLOR_WARNING, "The name of your group cannot be empty");
+        emit messageCreationGroup(TEXT_COLOR_INFO, "");
         break;
     case 2:
         emit messageCreationGroup(TEXT_COLOR_WARNING, "A group with the same name already exists, please choose another name for your group");

@@ -270,8 +270,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     connect(this, SIGNAL(addPathPoint(QString, double, double, GraphicItemState)), robotPathCreationWidget, SLOT(addPathPointSlot(QString, double, double, GraphicItemState)));
     connect(this, SIGNAL(addPathPoint(QString, double, double, GraphicItemState)), noRobotPathCreationWidget, SLOT(addPathPointSlot(QString, double, double, GraphicItemState)));
 
-    connect(this, SIGNAL(updatePathPainter(GraphicItemState)), noRobotPathPainter, SLOT(updatePathPainterSlot(GraphicItemState)));
-    connect(this, SIGNAL(updatePathPainter(GraphicItemState)), robotPathPainter, SLOT(updatePathPainterSlot(GraphicItemState)));
+    connect(this, SIGNAL(updatePathPainter(GraphicItemState, bool)), noRobotPathPainter, SLOT(updatePathPainterSlot(GraphicItemState, bool)));
+    connect(this, SIGNAL(updatePathPainter(GraphicItemState, bool)), robotPathPainter, SLOT(updatePathPainterSlot(GraphicItemState, bool)));
 
     connect(robotPathCreationWidget, SIGNAL(editTmpPathPoint(int, QString, double, double, GraphicItemState)), this, SLOT(editTmpPathPointSlot(int, QString, double, double, GraphicItemState)));
     connect(noRobotPathCreationWidget, SIGNAL(editTmpPathPoint(int, QString, double, double, GraphicItemState)), this, SLOT(editTmpPathPointSlot(int, QString, double, double, GraphicItemState)));
@@ -702,7 +702,7 @@ void MainWindow::viewPathSelectedRobot(int robotNb, bool checked){
         robotPathPainter->setCurrentPath(robot->getPath());
         robot->setPath(robotPathPainter->getCurrentPath());
         bottomLayout->updateRobot(robotNb, robots->getRobotsVector().at(robotNb));
-        emit updatePathPainter(GraphicItemState::ROBOT_CREATING_PATH);
+        emit updatePathPainter(GraphicItemState::ROBOT_CREATING_PATH, false);
     } else {
         if(leftMenu->getDisplaySelectedPoint() && leftMenu->getDisplaySelectedPoint()->isVisible() && leftMenu->getDisplaySelectedPoint()->getPointView()->getPoint()->isPath()){
             leftMenu->getDisplaySelectedPoint()->getPointView()->hide();
@@ -803,7 +803,6 @@ void MainWindow::addPathSelecRobotBtnEvent(){
     if(!robotPathPainter->getPathDeleted()){
         if(editSelectedRobotWidget->getAddPathBtn()->text().compare("Add Path") == 0 || robotPathPainter->getOldPath().size() <= 0){
             emit resetPathCreationWidget(GraphicItemState::ROBOT_CREATING_PATH);
-            emit resetPathCreationWidget(GraphicItemState::NO_ROBOT_CREATING_PATH);
             robotPathCreationWidget->updatePath(selectedRobot->getRobot()->getPath());
         }
     }
@@ -1292,7 +1291,7 @@ void MainWindow::savePathSlot(GraphicItemState state){
 
     leftMenu->setEnableReturnCloseButtons(true);
 
-    emit updatePathPainter(state);
+    emit updatePathPainter(state, true);
 }
 
 void MainWindow::cancelPathSlot(){
@@ -1334,6 +1333,7 @@ void MainWindow::saveEditPathPointSlot(GraphicItemState state){
 
     editedPointView->setFlag(QGraphicsItem::ItemIsMovable, false);
     editedPointView = QSharedPointer<PointView>();
+    emit updatePathPainter(state, true);
 }
 
 void MainWindow::cancelEditPathPointSlot(GraphicItemState state){
@@ -1354,7 +1354,7 @@ void MainWindow::cancelEditPathPointSlot(GraphicItemState state){
 
     editedPointView->setPos(pos.getX(), pos.getY());
 
-    emit updatePathPainter(state);
+    emit updatePathPainter(state, true);
 
     editedPointView->setFlag(QGraphicsItem::ItemIsMovable, false);
     editedPointView = QSharedPointer<PointView>();
@@ -1702,7 +1702,7 @@ void MainWindow::updateEditedPathPoint(double x, double y, GraphicItemState stat
         qDebug() << "MainWindow::updateEditedPathPoint Could not find the pointView to edit";
 
 
-    emit updatePathPainter(state);
+    emit updatePathPainter(state, false);
 
     if(state == GraphicItemState::ROBOT_CREATING_PATH){
         if(map->getMapImage().pixelColor(x, y).red() >= 254){
@@ -1736,26 +1736,26 @@ void MainWindow::updateEditedPathPoint(double x, double y, GraphicItemState stat
 }
 
 void MainWindow::moveEditedPathPointSlot(GraphicItemState state){
-    qDebug() << "MainWindow::moveEditedPathPointSlot called with state" << state;
-    if(state == GraphicItemState::ROBOT_EDITING_PATH){
-        emit updatePathPainter(GraphicItemState::ROBOT_CREATING_PATH);
 
+    if(state == GraphicItemState::ROBOT_EDITING_PATH){
+        emit updatePathPainter(GraphicItemState::ROBOT_CREATING_PATH, false);
+        qDebug() << "MainWindow::moveEditedPathPointSlot called with state" << state;
         if(map->getMapImage().pixelColor(editedPointView->getPoint()->getPosition().getX(), editedPointView->getPoint()->getPosition().getY()).red() >= 254){
             setMessageTop(TEXT_COLOR_INFO, "You can click either \"Save changes\" to modify your path permanently or \"Cancel\" to keep the original path. If you want you can keep editing your point");
-            static_cast<PathPointCreationWidget*> (robotPathCreationWidget->getPathPointList()->itemWidget(robotPathCreationWidget->getPathPointList()->currentItem())) -> getSaveEditBtn()->setEnabled(true);
+            static_cast<PathPointCreationWidget*> (robotPathCreationWidget->getPathPointList()->itemWidget(robotPathCreationWidget->getPathPointList()->currentItem()))->getSaveEditBtn()->setEnabled(true);
         } else {
             setMessageTop(TEXT_COLOR_DANGER, "You cannot save the current path because the point that you are editing is not in a known area of the map");
-            static_cast<PathPointCreationWidget*> (robotPathCreationWidget->getPathPointList()->itemWidget(robotPathCreationWidget->getPathPointList()->currentItem())) -> getSaveEditBtn()->setEnabled(false);
+            static_cast<PathPointCreationWidget*> (robotPathCreationWidget->getPathPointList()->itemWidget(robotPathCreationWidget->getPathPointList()->currentItem()))->getSaveEditBtn()->setEnabled(false);
         }
     } else {
-        emit updatePathPainter(GraphicItemState::NO_ROBOT_CREATING_PATH);
-
+        emit updatePathPainter(GraphicItemState::NO_ROBOT_CREATING_PATH, false);
+        qDebug() << "MainWindow::moveEditedPathPointSlot no robot called with state" << state;
         if(map->getMapImage().pixelColor(editedPointView->getPoint()->getPosition().getX(), editedPointView->getPoint()->getPosition().getY()).red() >= 254){
             setMessageTop(TEXT_COLOR_INFO, "You can click either \"Save changes\" to modify your path permanently or \"Cancel\" to keep the original path. If you want you can keep editing your point");
-            static_cast<PathPointCreationWidget*> (noRobotPathCreationWidget->getPathPointList()->itemWidget(noRobotPathCreationWidget->getPathPointList()->currentItem())) -> getSaveEditBtn()->setEnabled(true);
+            static_cast<PathPointCreationWidget*> (noRobotPathCreationWidget->getPathPointList()->itemWidget(noRobotPathCreationWidget->getPathPointList()->currentItem()))->getSaveEditBtn()->setEnabled(true);
         } else {
             setMessageTop(TEXT_COLOR_DANGER, "You cannot save the current path because the point that you are editing is not in a known area of the map");
-            static_cast<PathPointCreationWidget*> (noRobotPathCreationWidget->getPathPointList()->itemWidget(noRobotPathCreationWidget->getPathPointList()->currentItem())) -> getSaveEditBtn()->setEnabled(false);
+            static_cast<PathPointCreationWidget*> (noRobotPathCreationWidget->getPathPointList()->itemWidget(noRobotPathCreationWidget->getPathPointList()->currentItem()))->getSaveEditBtn()->setEnabled(false);
         }
     }
 }
@@ -1839,7 +1839,7 @@ void MainWindow::updateAllPaths(void){
 }
 
 void MainWindow::resetPathPointViewsSlot(){
-    emit updatePathPainter(GraphicItemState::ROBOT_CREATING_PATH);
+    emit updatePathPainter(GraphicItemState::ROBOT_CREATING_PATH, false);
 }
 
 void MainWindow::replacePoint(int id, QString name){
@@ -2266,7 +2266,7 @@ void MainWindow::editGroupBtnEvent(){
             pointsLeftWidget->getActionButtons()->getPlusButton()->setEnabled(false);
             /// disables the other buttons
             pointsLeftWidget->disableButtons();
-            pointsLeftWidget->getGroupButtonGroup()->getModifyEdit()->setText(checkedId);
+            pointsLeftWidget->getGroupButtonGroup()->getModifyEdit()->setText("");
 
             pointsLeftWidget->getGroupButtonGroup()->uncheck();
             pointsLeftWidget->getGroupButtonGroup()->setEnabled(false);
@@ -3618,7 +3618,25 @@ void MainWindow::createGroup(QString groupName){
 
         topLayout->setLabelDelay(TEXT_COLOR_SUCCESS, "You have created a new group",2500);
     } else if(pointsLeftWidget->checkGroupName(groupName) == 1){
-        topLayout->setLabelDelay(TEXT_COLOR_DANGER, "The name of your group cannot be empty",2500);
+        pointsLeftWidget->setLastCheckedId("");
+
+        /// updates list of groups in menu
+        pointsLeftWidget->updateGroupButtonGroup();
+
+        /// enables the return button again
+        leftMenu->getReturnButton()->setEnabled(true);
+
+        /// hides everything that's related to the creation of a group
+        pointsLeftWidget->getCancelButton()->hide();
+        pointsLeftWidget->getSaveButton()->hide();
+        pointsLeftWidget->getGroupNameEdit()->hide();
+        pointsLeftWidget->getGroupNameLabel()->hide();
+
+        /// enables the plus button again
+        pointsLeftWidget->disableButtons();
+        pointsLeftWidget->getActionButtons()->getPlusButton()->setEnabled(true);
+        pointsLeftWidget->getActionButtons()->getPlusButton()->setToolTip("Click here to add a new group");
+        topLayout->setEnabled(true);
     } else {
         topLayout->setLabelDelay(TEXT_COLOR_DANGER, "You cannot choose : " + groupName + " as a new name for your group because another group already has this name",2500);
     }
@@ -3659,8 +3677,20 @@ void MainWindow::modifyGroupWithEnter(QString name){
         pointsLeftWidget->setLastCheckedId("");
         topLayout->setLabelDelay(TEXT_COLOR_SUCCESS, "You have successfully modified the name of your group", 1500);
 
-    } else if(pointsLeftWidget->checkGroupName(name) == 1)
-        topLayout->setLabelDelay(TEXT_COLOR_DANGER, "The name of your group cannot be empty. Please choose a name for your group", 2500);
+    } else if(pointsLeftWidget->checkGroupName(name) == 1){
+        /// enables the buttons
+        pointsLeftWidget->getGroupButtonGroup()->setEnabled(true);
+        pointsLeftWidget->disableButtons();
+
+        /// updates view
+        int checkedId = pointsLeftWidget->getGroupButtonGroup()->getButtonIdByName(pointsLeftWidget->getGroupButtonGroup()->getEditedGroupName());
+
+        pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(checkedId)->show();
+        pointsLeftWidget->getGroupButtonGroup()->getModifyEdit()->hide();
+
+        /// enables the plus button
+        pointsLeftWidget->getActionButtons()->getPlusButton()->setEnabled(true);
+    }
     else
         topLayout->setLabelDelay(TEXT_COLOR_DANGER, "You cannot choose : " + name + " as a new name for your group because another group already has this name", 2500);
 }
@@ -4030,8 +4060,23 @@ void MainWindow::saveGroupPaths(QString name){
         leftMenu->getGroupsPathsWidget()->getActionButtons()->getPlusButton()->setEnabled(true);
         topLayout->setLabelDelay(TEXT_COLOR_SUCCESS, "You have created a new group of paths", 2500);
         serializePaths();
-    } else if(pointsLeftWidget->checkGroupName(name) == 1)
-        topLayout->setLabelDelay(TEXT_COLOR_DANGER, "The name of your group cannot be empty", 2500);
+    } else if(leftMenu->getGroupsPathsWidget()->checkGroupName(name) == 1){
+        /// enables the return button again
+        leftMenu->getReturnButton()->setEnabled(true);
+
+        /// hides everything that's related to the creation of a group
+        leftMenu->getGroupsPathsWidget()->getSaveButton()->hide();
+        leftMenu->getGroupsPathsWidget()->getCancelButton()->hide();
+        leftMenu->getGroupsPathsWidget()->getGroupNameEdit()->hide();
+        leftMenu->getGroupsPathsWidget()->getGroupNameLabel()->hide();
+
+        /// enables the plus button again
+        leftMenu->getGroupsPathsWidget()->disableButtons();
+        leftMenu->getGroupsPathsWidget()->getActionButtons()->getPlusButton()->setEnabled(true);
+        leftMenu->getGroupsPathsWidget()->getActionButtons()->getPlusButton()->setToolTip("Click here to add a new group of paths");
+        topLayout->setEnabled(true);
+        leftMenu->getGroupsPathsWidget()->getActionButtons()->getPlusButton()->setEnabled(true);
+    }
     else
         topLayout->setLabelDelay(TEXT_COLOR_DANGER, "You cannot choose : " + name + " as a new name for your group because another group already has this name", 2500);
 }
@@ -4042,20 +4087,25 @@ void MainWindow::modifyGroupPathsWithEnter(QString name){
 
     leftMenu->setEnableReturnCloseButtons(true);
 
-    /// Update the model
-    QSharedPointer<Paths::CollectionPaths> value = paths->getGroups()->value(leftMenu->getGroupsPathsWidget()->getButtonGroup()->getButtonGroup()->checkedButton()->text());
-    paths->getGroups()->remove(leftMenu->getGroupsPathsWidget()->getButtonGroup()->getButtonGroup()->checkedButton()->text());
-    paths->getGroups()->insert(name, value);
-
-    leftMenu->getGroupsPathsWidget()->updateGroupsPaths();
-
     /// enables the plus button
     leftMenu->getGroupsPathsWidget()->getActionButtons()->getPlusButton()->setEnabled(true);
 
     leftMenu->getGroupsPathsWidget()->getButtonGroup()->getModifyEdit()->hide();
 
+    /// if the name has really changed
+    if(name.compare(leftMenu->getGroupsPathsWidget()->getLastCheckedButton())){
+        /// Update the model
+        QSharedPointer<Paths::CollectionPaths> value = paths->getGroups()->value(leftMenu->getGroupsPathsWidget()->getButtonGroup()->getButtonGroup()->checkedButton()->text());
+        paths->getGroups()->remove(leftMenu->getGroupsPathsWidget()->getButtonGroup()->getButtonGroup()->checkedButton()->text());
+        paths->getGroups()->insert(name, value);
+        leftMenu->getGroupsPathsWidget()->updateGroupsPaths();
+        topLayout->setLabelDelay(TEXT_COLOR_SUCCESS, "You have successfully modified the name of your group", 1500);
+    } else {
+        leftMenu->getGroupsPathsWidget()->updateGroupsPaths();
+        setMessageTop(TEXT_COLOR_NORMAL, "");
+    }
+
     leftMenu->getGroupsPathsWidget()->setLastCheckedButton("");
-    topLayout->setLabelDelay(TEXT_COLOR_SUCCESS, "You have successfully modified the name of your group", 1500);
 }
 
 void MainWindow::doubleClickOnPathsGroup(QString checkedButton){
@@ -4151,6 +4201,8 @@ void MainWindow::deletePath(){
 
 void MainWindow::displayPathOnMap(const bool display){
     qDebug() << "MainWindow::displayPathOnMap called";
+    /// to hide the path drawn by the robot path painter
+    emit resetPath(GraphicItemState::ROBOT_CREATING_PATH);
     if(display){
         bool foundFlag = false;
         noRobotPathPainter->setCurrentPath(paths->getPath(lastWidgets.at(lastWidgets.size()-1).first.second, leftMenu->getPathGroupDisplayed()->getLastCheckedButton(), foundFlag));
@@ -4159,9 +4211,8 @@ void MainWindow::displayPathOnMap(const bool display){
     else {
         paths->setVisiblePath("");
         qDebug() << "no path visible !";
+        emit resetPath(GraphicItemState::NO_ROBOT_CREATING_PATH);
     }
-    /// to hide the path drawn by the robot path painter
-    emit resetPath(GraphicItemState::NO_ROBOT_CREATING_PATH);
     /// to set the 'eye' icon appropriately
     leftMenu->getPathGroupDisplayed()->updateDisplayedPath();
 }
@@ -4336,43 +4387,6 @@ void MainWindow::setMessageModifGroupPaths(int code){
         break;
     default:
         qDebug() << "MainWindow::setMessageModifGroupPaths You should not be here you probably forgot to implement the behavior for the code" << code;
-    }
-}
-
-void MainWindow::editTmpNoRobotPathPointSlot(int id, QString name, double x, double y){
-    qDebug() << "MainWindow::editTmpNoRobotPathPointSlot called : " << id << name << x << y;
-
-    editedPointView = points->getGroups()->value(PATH_GROUP_NAME)->at(id);
-
-    setMessageTop(TEXT_COLOR_INFO, "Drag the selected point or click the map and click \"Save changes\" to modify the path of your robot");
-    leftMenu->setEnableReturnCloseButtons(false);
-
-    if(editedPointView == NULL)
-        qDebug() << "MainWindow::editTmpPathPointSlot Error : No pointview found to edit";
-    else {
-        qDebug() << "MainWindow::editTmpPathPointSlot Pointview found";
-
-        int nbWidget = noRobotPathPainter->nbUsedPointView(name, x ,y);
-        qDebug() << "MainWindow::editTmpPathPointSlot number of widget with the same pointView : " << nbWidget;
-        /// if 2 path points have the same pointView, we need to create a copy to only
-        /// move one of the two path points
-        if(nbWidget > 1){
-            editedPointView = points->createPoint(
-                        editedPointView->getPoint()->getName(),
-                        editedPointView->getPoint()->getPosition().getX(),
-                        editedPointView->getPoint()->getPosition().getY(),
-                        true, Point::PointType::PATH,
-                        mapPixmapItem, this);
-            points->getGroups()->value(PATH_GROUP_NAME)->remove(id);
-            points->insertPoint(PATH_GROUP_NAME, id, editedPointView);
-        }
-
-        setGraphicItemsState(GraphicItemState::NO_EVENT);
-        mapPixmapItem->setState(GraphicItemState::NO_ROBOT_EDITING_PATH);
-        editedPointView->setFlag(QGraphicsItem::ItemIsMovable);
-        editedPointView->setState(GraphicItemState::NO_ROBOT_EDITING_PATH);
-        /// set by hand in order to keep the colors consistent while editing the point and after
-        editedPointView->setPixmap(PointView::PixmapType::SELECTED);
     }
 }
 

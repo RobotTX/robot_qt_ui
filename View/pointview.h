@@ -39,7 +39,7 @@ class PointView : public QObject, public QGraphicsPixmapItem {
 public:
     PointView(QSharedPointer<Point> const& point, QGraphicsItem *parent);
 
-    enum PixmapType{NORMAL, MID, START, STOP, HOVER, START_STOP, SELECTED};
+    enum PixmapType { NORMAL, MID, START, STOP, HOVER, START_STOP, SELECTED };
 
     void setState(const GraphicItemState _state) { state = _state; }//  qDebug()<< "change state here" << point->getPosition().getX() << point->getPosition().getY() << _state;}
     GraphicItemState getState(void) const { return state; }

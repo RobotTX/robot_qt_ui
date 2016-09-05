@@ -20,9 +20,37 @@
             <y>843</y>
             <displayed>1</displayed>
         </point>
+<<<<<<< HEAD
+        <point>
+            <name>970.6; 1089.2</name>
+            <x>970.613</x>
+            <y>1089.17</y>
+=======
     </group>
     <group>
-        <name>Second group duh duh duh</name>
+        <name>PathPoints</name>
+        <point>
+            <name>A</name>
+            <x>1130</x>
+            <y>820</y>
+            <displayed>1</displayed>
+        </point>
+        <point>
+            <name>Ma point</name>
+            <x>1145</x>
+            <y>890</y>
+            <displayed>1</displayed>
+        </point>
+        <point>
+            <name>A new point</name>
+            <x>946</x>
+            <y>983</y>
+>>>>>>> bebae81415ec62291eb9e34c5a010309801a7005
+            <displayed>1</displayed>
+        </point>
+    </group>
+    <group>
+        <name>Second group</name>
         <point>
             <name>Fanny</name>
             <x>1126</x>
@@ -46,15 +74,6 @@
         </point>
     </group>
     <group>
-<<<<<<< HEAD
-=======
-        <name>asfasfawqr</name>
-    </group>
-    <group>
-        <name>duhduhduhdudhudhduhdudhudhduhduhdhd</name>
-    </group>
-    <group>
->>>>>>> c98c0f10de7a460fe91fd8a2336e09fb31d76325
         <name>first group</name>
         <point>
             <name>A</name>
@@ -74,12 +93,5 @@
             <y>983</y>
             <displayed>0</displayed>
         </point>
-    </group>
-    <group>
-<<<<<<< HEAD
-        <name>ofsdfadssssssssssssssssssssssssssssssssss</name>
-=======
-        <name>qwrqwrqwrqwrqwrqwrqwrqwrqwrqwrqwrqwrqwerq</name>
->>>>>>> c98c0f10de7a460fe91fd8a2336e09fb31d76325
     </group>
 </points>

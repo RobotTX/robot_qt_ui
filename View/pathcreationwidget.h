@@ -62,7 +62,7 @@ signals:
     /// emitted when a new path point is added to the list
     void addPathPoint(QString, double, double);
     /// emitted when a path point is deleted
-    void deletePathPoint(int);
+    void deletePathPoint(int, GraphicItemState);
     /// emitted when the order of the path has changed
     void orderPathPointChanged(int, int);
     /// emitted when the widget is reset

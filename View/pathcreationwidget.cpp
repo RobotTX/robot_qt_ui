@@ -289,7 +289,7 @@ void PathCreationWidget::deleteItem(QListWidgetItem* item){
 
             delete item;
             pathPointsList->refresh();
-            emit deletePathPoint(id);
+            emit deletePathPoint(id, state);
         }
         break;
         case QMessageBox::Cancel:

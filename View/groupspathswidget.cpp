@@ -129,7 +129,7 @@ void GroupsPathsWidget::disableButtons(){
 
 /// called when the Enter key is pressed
 void GroupsPathsWidget::keyPressEvent(QKeyEvent* event){
-    qDebug() << "GroupsPathsWidget::keyPressEvent called, creating a group ?" << creatingGroup;
+    qDebug() << "GroupsPathsWidget::keyPressEvent called, creating a group ?" << creatingGroup << event->text();
     /// this is the enter key
     if(!event->text().compare("\r")){
         /// if a group is being created
@@ -156,6 +156,17 @@ void GroupsPathsWidget::keyPressEvent(QKeyEvent* event){
             }
         }
     }
+    /// this is the escape key
+    else if(!event->text().compare("\u001B")){
+        if(creatingGroup)
+            emit newPathGroup("");
+        else {
+            if(checkEditGroupName(buttonGroup->getModifyEdit()->text()) == 1){
+                emit modifiedGroup(lastCheckedButton);
+                setLastCheckedButton("");
+            }
+        }
+    }
 }
 
 int GroupsPathsWidget::checkGroupName(QString name){
@@ -167,7 +178,7 @@ int GroupsPathsWidget::checkGroupName(QString name){
     if(!name.compare("")){
         saveButton->setToolTip("The name of your group cannot be empty");
         saveButton->setEnabled(false);
-        emit messageCreationGroup(TEXT_COLOR_WARNING, "The name of your group cannot be empty");
+        emit messageCreationGroup(TEXT_COLOR_INFO, "");
         return 1;
     }
     QMapIterator<QString, QSharedPointer<Paths::CollectionPaths>> it(*(paths->getGroups()));
@@ -323,7 +334,7 @@ void GroupsPathsWidget::initializeActionButtons(void){
     actionButtons->getEditButton()->setToolTip("Select a group of paths and click here to modify it");
     actionButtons->getMinusButton()->setToolTip("Select a group of paths and click here to delete it");
     actionButtons->getGoButton()->setToolTip("Select a group of paths and click here to display its paths");
-    actionButtons->getPlusButton()->setToolTip("Click here to add a new group of paths");
+    actionButtons->getPlusButton()->setToolTip("Click to add a new group of paths");
 
     /// disables buttons until one of the group of paths is clicked
     actionButtons->getEditButton()->setEnabled(false);

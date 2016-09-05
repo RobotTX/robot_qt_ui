@@ -60,8 +60,7 @@ void CustomLineEdit::resizeEvent(QResizeEvent *event){
 
 void CustomLineEdit::enterEvent(QEvent *event){
     QFontMetrics fm(font());
-    qDebug() << "CustomLabel::enterEvent" << text() << size()
-             << fm.width(text()) << fm.height();
+    //qDebug() << "CustomLabel::enterEvent" << text() << size() << fm.width(text()) << fm.height();
     QLineEdit::enterEvent(event);
 }
 
