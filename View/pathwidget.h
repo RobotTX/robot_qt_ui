@@ -23,7 +23,7 @@ public:
      * @param path
      * Set the path to display in this widget
      */
-    void setPath(QVector<QSharedPointer<PathPoint>> const path);
+    void setPath(QVector<QSharedPointer<PathPoint>> const& path);
 
     /**
      * @brief clearLayout

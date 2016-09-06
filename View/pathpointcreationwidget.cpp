@@ -8,6 +8,7 @@
 #include "Model/pathpoint.h"
 #include "View/custompushbutton.h"
 #include "View/customlineedit.h"
+#include "View/stylesettings.h"
 
 PathPointCreationWidget::PathPointCreationWidget(const int _id, const QString _name, const double x, const double y, QWidget* parent):
     QWidget(parent), id(_id), name(_name), posX(x), posY(y)
@@ -20,10 +21,17 @@ PathPointCreationWidget::PathPointCreationWidget(const int _id, const QString _n
     QVBoxLayout* pathLayout = new QVBoxLayout(pathWidget);
     QVBoxLayout* editLayout = new QVBoxLayout(editWidget);
 
+
+    topLayout = new QHBoxLayout();
     /// Label for the name of the point
     pointLabel = new QLabel(this);
     setName(name);
-    pathLayout->addWidget(pointLabel);
+    topLayout->addWidget(pointLabel);
+    closeBtn = new CustomPushButton(QIcon(":/icons/close.png"), "", this);
+    closeBtn->setIconSize(xxs_icon_size);
+    qDebug() << "size of parent" << parentWidget()->width() << parentWidget()->height();
+    topLayout->addWidget(closeBtn);
+    pathLayout->addLayout(topLayout);
 
     /// The widget that contain the layout for the button to select the
     /// action the robot need to do (wait for X sec or wait for human action)
@@ -59,12 +67,11 @@ PathPointCreationWidget::PathPointCreationWidget(const int _id, const QString _n
     editLayout->addWidget(cancelBtn);
     editWidget->hide();
 
-
     connect(actionBtn, SIGNAL(activated(QString)), this, SLOT(actionClicked(QString)));
     connect(saveEditBtn, SIGNAL(clicked()), this, SLOT(saveEdit()));
     connect(cancelBtn, SIGNAL(clicked()), this, SLOT(cancelEdit()));
     connect(timeEdit, SIGNAL(textChanged(QString)), this, SLOT(timeChanged(QString)));
-
+    connect(closeBtn, SIGNAL(clicked()), this, SLOT(removePathPoint()));
 
     pathLayout->setAlignment(Qt::AlignTop);
 
@@ -180,5 +187,8 @@ void PathPointCreationWidget::setPointLabel(const float _posX, const float _posY
     }
 }
 
-
+void PathPointCreationWidget::removePathPoint(){
+    qDebug() << "PathPointCreationWidget::removePathPoint called";
+    emit removePathPoint(this);
+}
 

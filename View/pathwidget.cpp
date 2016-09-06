@@ -37,7 +37,7 @@ void PathWidget::clearLayout(QLayout* _layout){
     }
 }
 
-void PathWidget::setPath(QVector<QSharedPointer<PathPoint>> const path){
+void PathWidget::setPath(const QVector<QSharedPointer<PathPoint> > &path){
 
     clearLayout(layout);
     for(int i = 0; i < path.size(); i++){
@@ -53,8 +53,7 @@ void PathWidget::setPath(QVector<QSharedPointer<PathPoint>> const path){
         nameLabel->setMinimumWidth(1);
         layout->addWidget(nameLabel);
 
-
-        /// Action to do (wait for human or a ertain amount of time)
+        /// Action to do (wait for human or a certain amount of time)
         QLabel* actionLabel = new QLabel(this);
         if(path.at(i)->getAction() == PathPoint::HUMAN_ACTION){
             actionLabel->setText("Wait for Human Action");

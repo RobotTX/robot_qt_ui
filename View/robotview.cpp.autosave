@@ -8,7 +8,6 @@
 #include "mainwindow.h"
 #include <QGraphicsWidget>
 #include "mapview.h"
-#include <QGraphicsPixmapItem>
 
 RobotView::RobotView (QSharedPointer<Robot> const &_robot, QGraphicsItem* parent):
     QGraphicsPixmapItem(QPixmap(":/icons/robot_icon.png"), parent), robot(_robot), selected(false), state(GraphicItemState::NO_STATE), shown(true), lastStage(0)

@@ -113,11 +113,18 @@ private slots:
      * When the time has been changed in the action widget
      */
     void timeChanged(QString);
+    /**
+     * @brief removePathPoint
+     * @param checked
+     * called when the cross is clicked within an item of the list
+     */
+    void removePathPoint();
 
 signals:
     void saveEditSignal(PathPointCreationWidget*);
     void cancelEditSignal(PathPointCreationWidget*);
     void actionChanged(int, int, QString);
+    void removePathPoint(PathPointCreationWidget*);
 
 private:
     int id;
@@ -126,10 +133,13 @@ private:
     float posY;
     QHBoxLayout* layout;
     QVBoxLayout* rightLayout ;
+    /// contains the label with the name, position and cross button
+    QHBoxLayout* topLayout;
     QLabel* pointLabel;
     QComboBox* actionBtn;
     CustomPushButton* saveEditBtn;
     CustomPushButton* cancelBtn;
+    CustomPushButton* closeBtn;
     CustomLineEdit* timeEdit;
     QWidget* timeWidget;
     QWidget* actionWidget;

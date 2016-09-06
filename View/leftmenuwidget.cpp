@@ -8,7 +8,6 @@
 
 LeftMenuWidget::LeftMenuWidget(QWidget *_parent, QSharedPointer<Points> const& _points): QWidget(_parent), points(_points)
 {
-
     layout = new QVBoxLayout(this);
     layout->setAlignment(Qt::AlignTop);
 
@@ -20,18 +19,18 @@ LeftMenuWidget::LeftMenuWidget(QWidget *_parent, QSharedPointer<Points> const& _
     pointBtn = new CustomPushButton(QIcon(":/icons/coordinates.png"), "Points", this);
     pointBtn->setIconSize(s_icon_size);
 
-    /// Map button
-    mapBtn = new CustomPushButton(QIcon(":/icons/map.png"), "Map", this);
-    mapBtn->setIconSize(s_icon_size);
-
     /// Path button
     pathBtn = new CustomPushButton(QIcon(":/icons/path.png"), "Paths", this);
     pathBtn->setIconSize(m_icon_size);
 
+    /// Map button
+    mapBtn = new CustomPushButton(QIcon(":/icons/map.png"), "Map", this);
+    mapBtn->setIconSize(s_icon_size);
+
     layout->addWidget(robotBtn);
     layout->addWidget(pointBtn);
-    layout->addWidget(mapBtn);
     layout->addWidget(pathBtn);
+    layout->addWidget(mapBtn);
 
     hide();
 

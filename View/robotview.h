@@ -5,11 +5,11 @@ class Robot;
 class QGraphicsSceneMouseEvent;
 class MapView;
 
+#include <QGraphicsPixmapItem>
 #include <QSharedPointer>
 #include "Model/position.h"
 #include <QObject>
 #include "Model/graphicitemstate.h"
-#include <QGraphicsPolygonItem>
 
 #define ROBOT_HEIGHT_LOW 9
 #define ROBOT_HEIGHT_HIGH 12
@@ -19,7 +19,7 @@ class MapView;
  * @brief The RobotView class
  * A view that display one robot on the map
  */
-class RobotView: public QObject, public QGraphicsPolygonItem {
+class RobotView: public QObject, public QGraphicsPixmapItem {
     Q_OBJECT
 
 public:

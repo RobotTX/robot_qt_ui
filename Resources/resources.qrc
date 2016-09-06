@@ -46,7 +46,8 @@
         <file alias="stop.png">cropped_stop.png</file>
         <file alias="upload.png">cropped_upload.png</file>
         <file alias="wifi.png">cropped_wifi.png</file>
-
+        <file alias="robot_icon.png">cropped_robot_icon.png</file>
+        <file alias="robot_icon_bis.png">cropped_robot_icon_bis.png</file>
     </qresource>
     <qresource prefix="/xml">
         <file>points.xml</file>

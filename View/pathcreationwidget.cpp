@@ -244,6 +244,7 @@ void PathCreationWidget::addPathPointSlot(QString name, double x, double y, Grap
         }
 
         PathPointCreationWidget* pathPoint = new PathPointCreationWidget(pathPointsList->count(), name, x, y, this);
+        connect(pathPoint, SIGNAL(removePathPoint(PathPointCreationWidget*)), this, SLOT(deletePathPointWithCross(PathPointCreationWidget*)));
         connect(pathPoint, SIGNAL(saveEditSignal(PathPointCreationWidget*)), this, SLOT(saveEditSlot(PathPointCreationWidget*)));
         connect(pathPoint, SIGNAL(cancelEditSignal(PathPointCreationWidget*)), this, SLOT(cancelEditSlot(PathPointCreationWidget*)));
         connect(pathPoint, SIGNAL(actionChanged(int, int, QString)), this, SLOT(actionChangedSlot(int, int, QString)));
@@ -416,4 +417,12 @@ void PathCreationWidget::resetWidgetRelaySlot(){
 void PathCreationWidget::editPathPointSlotRelay(){
     qDebug() << "editpathpointsignal emitted";
     emit editPathPointSignal(state);
+}
+
+void PathCreationWidget::deletePathPointWithCross(PathPointCreationWidget *pathPointCreationWidget){
+    qDebug() << "PathCreationWidget::deletePathPointWithCross called" << pathPointCreationWidget->getId();
+    /// Delete the item and reset the widget
+    deleteItem(pathPointsList->item(pathPointCreationWidget->getId()));
+    if(pathPointsList->count() == 0)
+        resetWidget(state);
 }
