@@ -58,7 +58,7 @@ public:
     /// disables the buttons and line edits
     void disableAll(void);
     /// enables the buttons and line edits
-    void setEnableAll(bool enable);
+    void setEnableAll(const bool enable);
     void setSelectedRobot(RobotView * const robotView, bool firstConnection = false);
     void setPath(const QVector<QSharedPointer<PathPoint> > &path);
     void clearPath();
@@ -95,6 +95,7 @@ private:
     bool editing;
     QMenu* pathsMenu;
     SpaceWidget* pathSpaceWidget;
+    CustomPushButton* assignPathButton;
 
 public slots:
     void updatePathsMenu();

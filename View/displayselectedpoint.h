@@ -84,6 +84,8 @@ signals:
     /// in the event where this point is a special point for a robot (home or part of a path), allows those pieces of information to
     /// be displayed
     void setSelectedRobotFromPoint(QString);
+    /// to remove the point when pressing the delete key
+    void removePoint();
 
 private slots:
     /// to check that a name is available before we proceed to the update

@@ -92,7 +92,7 @@ EditSelectedRobotWidget::EditSelectedRobotWidget(QWidget* parent, MainWindow* ma
     inLayout->addWidget(addPathBtn);
 
     /// to assign an existing path to the robot
-    CustomPushButton* assignPathButton = new CustomPushButton(QIcon(":/icons/path.png"), "Assign a path", this);
+    assignPathButton = new CustomPushButton(QIcon(":/icons/path.png"), "Assign a path", this);
     assignPathButton->setIconSize(s_icon_size);
     inLayout->addWidget(assignPathButton);
     connect(assignPathButton, SIGNAL(clicked(bool)), this, SLOT(openMenu()));
@@ -229,15 +229,17 @@ void EditSelectedRobotWidget::editName(void){
     }
 }
 
-void EditSelectedRobotWidget::setEnableAll(bool enable){
+void EditSelectedRobotWidget::setEnableAll(const bool enable){
+    qDebug() << "editselectedrobotwidget::setenableall called" << enable;
     nameEdit->setEnabled(enable);
     homeBtn->setEnabled(enable);
     saveBtn->setEnabled(enable);
-    addPathBtn->setEnabled(enable);
     deletePathBtn->setEnabled(enable);
     wifiNameEdit->setEnabled(enable);
     wifiPwdEdit->setEnabled(enable);
     nameEdit->setEnabled(enable);
+    addPathBtn->setEnabled(enable);
+    assignPathButton->setEnabled(enable);
 }
 
 void EditSelectedRobotWidget::showEvent(QShowEvent *event){

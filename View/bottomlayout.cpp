@@ -186,7 +186,7 @@ BottomLayout::BottomLayout(QMainWindow* parent, const QSharedPointer<Robots> &ro
 
 void BottomLayout::updateRobot(const int id, RobotView * const robotView){
     qDebug() << "(BottomLayout) updateRobot called" << id << robotBtnGroup->buttons().size();
-    robotBtnGroup->button(id)->setText(robotView->getRobot()->getName());
+    static_cast<CustomPushButton*> (robotBtnGroup->button(id))->setText(robotView->getRobot()->getName());
     if(robotView->getRobot()->getPath().size() < 1){
         deletePathBtnGroup->button(id)->setEnabled(false);
         playRobotBtnGroup->button(id)->setEnabled(false);

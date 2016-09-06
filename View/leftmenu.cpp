@@ -142,14 +142,18 @@ LeftMenu::LeftMenu(MainWindow* _mainWindow, QSharedPointer<Points> const& _point
     connect(displaySelectedPoint->getActionButtons()->getMinusButton(), SIGNAL(clicked(bool)), mainWindow, SLOT(removePointFromInformationMenu()));
     connect(displaySelectedPoint->getActionButtons()->getMapButton(), SIGNAL(clicked(bool)), mainWindow, SLOT(displayPointMapEvent()));
     connect(displaySelectedPoint->getActionButtons()->getEditButton(), SIGNAL(clicked(bool)), mainWindow, SLOT(editPointButtonEvent()));
+    /// to remove the point by pressing the delete key
+    connect(displaySelectedPoint, SIGNAL(removePoint()), mainWindow, SLOT(removePointFromInformationMenu()));
 
     connect(displaySelectedGroup->getActionButtons()->getMinusButton(), SIGNAL(clicked(bool)), mainWindow, SLOT(removePointFromGroupMenu()));
     connect(displaySelectedGroup->getActionButtons()->getEditButton(), SIGNAL(clicked(bool)), mainWindow, SLOT(editPointFromGroupMenu()));
     connect(displaySelectedGroup->getActionButtons()->getGoButton(), SIGNAL(clicked(bool)), mainWindow, SLOT(displayPointInfoFromGroupMenu()));
     connect(displaySelectedGroup->getActionButtons()->getMapButton(), SIGNAL(clicked(bool)), mainWindow, SLOT(displayPointFromGroupMenu()));
+    /// to remove the point by pressing the delete key
+    connect(displaySelectedGroup, SIGNAL(removePoint()), mainWindow, SLOT(removePointFromGroupMenu()));
 
     /// to check the name of a point being edited
-    connect(displaySelectedPoint, SIGNAL(invalidName(QString,CreatePointWidget::Error)), mainWindow, SLOT(setMessageCreationPoint(QString,CreatePointWidget::Error)));
+    connect(displaySelectedPoint, SIGNAL(invalidName(QString, CreatePointWidget::Error)), mainWindow, SLOT(setMessageCreationPoint(QString,CreatePointWidget::Error)));
 
 
 
@@ -163,6 +167,8 @@ LeftMenu::LeftMenu(MainWindow* _mainWindow, QSharedPointer<Points> const& _point
     connect(groupsPathsWidget->getActionButtons()->getEditButton(), SIGNAL(clicked()), mainWindow, SLOT(editGroupPaths()));
     connect(groupsPathsWidget->getActionButtons()->getPlusButton(), SIGNAL(clicked()), mainWindow, SLOT(createGroupPaths()));
     connect(groupsPathsWidget->getActionButtons()->getMinusButton(), SIGNAL(clicked()), mainWindow, SLOT(deleteGroupPaths()));
+    /// to delete a group with the delete key
+    connect(groupsPathsWidget, SIGNAL(deleteGroup()), mainWindow, SLOT(deleteGroupPaths()));
 
     /// Menu which displays a particular group of paths
     pathGroup = new DisplayPathGroup(this, _mainWindow, paths);
@@ -176,6 +182,8 @@ LeftMenu::LeftMenu(MainWindow* _mainWindow, QSharedPointer<Points> const& _point
     connect(pathGroup->getActionButtons()->getMinusButton(), SIGNAL(clicked()), mainWindow, SLOT(deletePath()));
     connect(pathGroup->getActionButtons()->getMapButton(), SIGNAL(clicked(bool)), mainWindow, SLOT(displayPathOnMap(bool)));
     connect(pathGroup->getActionButtons()->getEditButton(), SIGNAL(clicked()), mainWindow, SLOT(editPath()));
+    /// to delete a path with the delete key
+    connect(pathGroup, SIGNAL(deletePath()), mainWindow, SLOT(deletePath()));
 
     connect(pathGroup->getPathButtonGroup()->getButtonGroup(), SIGNAL(buttonToggled(int, bool)), pathGroup, SLOT(resetMapButton()));
 

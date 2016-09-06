@@ -5,7 +5,7 @@
 #include "Controller/mainwindow.h"
 #include "View/custompushbutton.h"
 #include "View/customscrollarea.h"
-
+#include <QKeyEvent>
 #include <QLabel>
 #include <QVBoxLayout>
 #include <QDebug>
@@ -36,7 +36,7 @@ DisplaySelectedPath::DisplaySelectedPath(QWidget *parent, const MainWindow *main
     /// Label with the name of the path
     nameLabel = new QLabel("", this);
     nameLabel->setAlignment(Qt::AlignCenter);
-    nameLabel->setStyleSheet("font-weight: bold; text-decoration:underline");
+    nameLabel->setStyleSheet("font-weight: bold");
     layout->addWidget(nameLabel);
 
     /// Widget displaying the path
@@ -49,7 +49,7 @@ DisplaySelectedPath::DisplaySelectedPath(QWidget *parent, const MainWindow *main
     connect(this, SIGNAL(displayPath(QString, QString, bool)), mainWindow, SLOT(displayPathSlot(QString, QString, bool)));
 
     layout->setAlignment(Qt::AlignTop);
-    layout->setContentsMargins(0,0,0,0);
+    //layout->setContentsMargins(0,0,0,0);
 }
 
 void DisplaySelectedPath::updatePath(const QString groupName, const QString pathName, const QVector<QSharedPointer<PathPoint>>& path){
@@ -78,4 +78,11 @@ void DisplaySelectedPath::editBtnSlot(bool){
 void DisplaySelectedPath::mapBtnSlot(bool checked){
     qDebug() << "DisplaySelectedPath::mapBtnSlot called + checked :" << checked;
     emit displayPath(currentPath.groupName, currentPath.pathName, checked);
+}
+
+void DisplaySelectedPath::keyPressEvent(QKeyEvent *event){
+    if(event->key() == Qt::Key_Delete){
+        emit deletePath(currentPath.groupName, currentPath.pathName);
+        qDebug() << "event delete";
+    }
 }

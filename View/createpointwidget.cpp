@@ -288,6 +288,9 @@ void CreatePointWidget::showEvent(QShowEvent* event){
     Q_UNUSED(event)
     cancelBtn->hide();
     saveBtn->hide();
+    groupBox->hide();
+    nameEdit->hide();
+    nameEdit->setText("");
     show();
 }
 

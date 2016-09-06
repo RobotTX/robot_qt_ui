@@ -11,13 +11,13 @@ LeftMenuWidget::LeftMenuWidget(QWidget *_parent, QSharedPointer<Points> const& _
     layout = new QVBoxLayout(this);
     layout->setAlignment(Qt::AlignTop);
 
-    /// Robot button
-    robotBtn = new CustomPushButton(QIcon(":/icons/robot.png"), "Robots", this);
-    robotBtn->setIconSize(s_icon_size);
-
     /// Point button
     pointBtn = new CustomPushButton(QIcon(":/icons/coordinates.png"), "Points", this);
     pointBtn->setIconSize(s_icon_size);
+
+    /// Robot button
+    robotBtn = new CustomPushButton(QIcon(":/icons/robot.png"), "Robots", this);
+    robotBtn->setIconSize(s_icon_size);
 
     /// Path button
     pathBtn = new CustomPushButton(QIcon(":/icons/path.png"), "Paths", this);
@@ -27,8 +27,8 @@ LeftMenuWidget::LeftMenuWidget(QWidget *_parent, QSharedPointer<Points> const& _
     mapBtn = new CustomPushButton(QIcon(":/icons/map.png"), "Map", this);
     mapBtn->setIconSize(s_icon_size);
 
-    layout->addWidget(robotBtn);
     layout->addWidget(pointBtn);
+    layout->addWidget(robotBtn);
     layout->addWidget(pathBtn);
     layout->addWidget(mapBtn);
 

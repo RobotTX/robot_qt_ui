@@ -168,6 +168,10 @@ void GroupsPathsWidget::keyPressEvent(QKeyEvent* event){
             }
         }
     }
+    else if(event->key() == Qt::Key_Delete){
+        if(buttonGroup->getButtonGroup()->checkedButton())
+            emit deleteGroup();
+    }
 }
 
 int GroupsPathsWidget::checkGroupName(QString name){

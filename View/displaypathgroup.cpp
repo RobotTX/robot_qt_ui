@@ -9,6 +9,7 @@
 #include "Controller/mainwindow.h"
 #include "View/stylesettings.h"
 #include <QLabel>
+#include <QKeyEvent>
 
 DisplayPathGroup::DisplayPathGroup(QWidget* _parent, MainWindow* _mainWindow, const QSharedPointer<Paths>& _paths):
     QWidget(_parent), mainWindow(_mainWindow), paths(_paths), lastCheckedButton("")
@@ -146,5 +147,12 @@ void DisplayPathGroup::updateDisplayedPath(){
         else
             button->setIcon(QIcon(":/icons/blank.png"));
         button->setIconSize(s_icon_size);
+    }
+}
+
+void DisplayPathGroup::keyPressEvent(QKeyEvent *event){
+    if(event->key() == Qt::Key_Delete){
+        if(pathButtonGroup->getButtonGroup()->checkedButton())
+            emit deletePath();
     }
 }

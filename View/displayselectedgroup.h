@@ -60,10 +60,14 @@ private slots:
 protected:
     void showEvent(QShowEvent* event);
     void resizeEvent(QResizeEvent *event);
+    void keyPressEvent(QKeyEvent* event);
+
 
 signals:
     /// emitted when a button is clicked to reset the colors of the path points
     void resetPathPointViews();
+    /// emitted when the delete key is pressed
+    void removePoint();
 
 private:
 

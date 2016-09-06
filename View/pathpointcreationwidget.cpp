@@ -85,8 +85,8 @@ PathPointCreationWidget::PathPointCreationWidget(const int _id, const QString _n
 
     layout->addWidget(pathWidget);
     layout->addWidget(editWidget);
-    layout->setContentsMargins(0,0,0,0);
-    pathLayout->setContentsMargins(0,0,0,0);
+    layout->setContentsMargins(0, 0, 0, 0);
+    //pathLayout->setContentsMargins(0,0,0,0);
 }
 
 void PathPointCreationWidget::setName(const QString _name){

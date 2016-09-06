@@ -112,6 +112,8 @@ PointsLeftWidget::PointsLeftWidget(QWidget* _parent, MainWindow* const mainWindo
     connect(groupNameEdit, SIGNAL(enableGroupEdit(bool)), mainWindow, SLOT(setEnableAll(bool)));
     connect(groupButtonGroup->getModifyEdit(), SIGNAL(enableGroupEdit(bool)), mainWindow, SLOT(setEnableAll(bool)));
 
+    connect(this, SIGNAL(deleteGroup()), mainWindow, SLOT(minusGroupBtnEvent()));
+
     /*setMaximumWidth(mainWindow->width()*4/10);
     setMinimumWidth(mainWindow->width()*4/10);*/
     //downLayout->setAlignment(Qt::AlignBottom);
@@ -332,6 +334,10 @@ void PointsLeftWidget::keyPressEvent(QKeyEvent* event){
             emit modifiedGroup("");
             setLastCheckedId("");
         }
+    }
+    else if(event->key() == Qt::Key_Delete){
+        if(groupButtonGroup->getButtonGroup()->checkedButton())
+            emit deleteGroup();
     }
 }
 

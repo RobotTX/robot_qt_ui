@@ -82,6 +82,8 @@ signals:
     void messageCreationGroup(QString, QString);
     void codeEditGroup(int);
     void modifiedGroup(QString);
+    /// to delete a group with the delete key
+    void deleteGroup();
 
 public slots:
     /**

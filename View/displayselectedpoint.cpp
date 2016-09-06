@@ -44,12 +44,13 @@ DisplaySelectedPoint::DisplaySelectedPoint(QWidget* _parent, QSharedPointer<Robo
 
     actionButtons->getMinusButton()->setToolTip("Click here to remove the point");
     actionButtons->getEditButton()->setToolTip("You can click on this button and then choose between clicking on the map or drag the point to change its position");
+    actionButtons->getEditButton()->setCheckable(false);
 
     layout->addWidget(actionButtons);
 
     nameEdit = new CustomLineEdit(this);
     nameEdit->setReadOnly(true);
-    nameEdit->setAlignment(Qt::AlignCenter);
+    nameEdit->setAlignment(Qt::AlignLeft);
 
     infoLayout->addWidget(nameEdit);
     nameEdit->setContentsMargins(0, 0, 0, 10);
@@ -129,6 +130,9 @@ void DisplaySelectedPoint::keyPressEvent(QKeyEvent* event){
             break;
         }
     }
+    else if(event->key() == Qt::Key_Delete){
+        emit removePoint();
+    }
 }
 
 void DisplaySelectedPoint::resetWidget(){
@@ -155,7 +159,15 @@ void DisplaySelectedPoint::hideEvent(QHideEvent *event){
 int DisplaySelectedPoint::checkPointName(QString name) {
     qDebug() << "DisplaySelectedPoint::checkPointName called";
     nameEdit->setText(formatName(name));
-    qDebug() << "checking " << nameEdit->text();
+
+    /// if it keeps the same name we allow the point to be saved
+    if(!formatName(name).compare(pointView->getPoint()->getName())){
+        saveButton->setToolTip("");
+        saveButton->setEnabled(true);
+        emit invalidName(TEXT_COLOR_INFO, CreatePointWidget::Error::NoError);
+        return 3;
+    }
+
     if(nameEdit->text().simplified().contains(QRegularExpression("[;{}]"))){
         qDebug() << " I contain a ; or }";
         saveButton->setToolTip("The name of your point cannot contain the characters \";\" and }");

@@ -66,6 +66,11 @@ private slots:
 
 protected:
     void showEvent(QShowEvent* event);
+    void keyPressEvent(QKeyEvent* event);
+
+signals:
+    /// to delete a path with the delete key
+    void deletePath();
 
 private:
     MainWindow* mainWindow;

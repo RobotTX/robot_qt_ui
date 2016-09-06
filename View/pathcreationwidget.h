@@ -20,7 +20,7 @@ class CustomPushButton;
 #include "Model/paths.h"
 #include "Model/graphicitemstate.h"
 
-#define WIDGET_HEIGHT 100
+#define WIDGET_HEIGHT 120
 
 /**
  * @brief The PathCreationWidget class

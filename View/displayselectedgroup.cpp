@@ -13,6 +13,7 @@
 #include "View/pointview.h"
 #include "View/custompushbutton.h"
 #include "View/customlabel.h"
+#include <QKeyEvent>
 
 DisplaySelectedGroup::DisplaySelectedGroup(QWidget* parent, QSharedPointer<Points> const& _points) : QWidget(parent), points(_points), lastCheckedButton(""){
     /// to be able to display a lot of groups and points2
@@ -132,4 +133,11 @@ void DisplaySelectedGroup::resizeEvent(QResizeEvent *event){
     setFixedWidth(maxWidth);
 
     QWidget::resizeEvent(event);
+}
+
+void DisplaySelectedGroup::keyPressEvent(QKeyEvent *event){
+    if(pointButtonGroup->getButtonGroup()->checkedButton()){
+        if(event->key() == Qt::Key_Delete)
+            emit removePoint();
+    }
 }

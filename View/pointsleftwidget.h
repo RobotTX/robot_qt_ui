@@ -78,7 +78,8 @@ signals:
     void messageCreationGroup(QString, QString);
     void messageCreationPoint();
     void resetPathPointViews();
-
+    /// to trigger the same slot as the minus button by using the delete key
+    void deleteGroup();
 private:
 
     QVBoxLayout* layout;
