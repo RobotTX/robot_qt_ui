@@ -313,7 +313,7 @@ void BottomLayout::removeRobot(const int id){
 }
 
 void BottomLayout::setEnable(const bool enable){
-    qDebug() << "BottomLayout::setEnable called";
+    //qDebug() << "BottomLayout::setEnable called";
     if(enable){
         for(int i =0; i < listEnabled.size(); i++){
             listEnabled.at(i)->setEnabled(true);

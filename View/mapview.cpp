@@ -66,15 +66,6 @@ void MapView::mouseReleaseEvent(QGraphicsSceneMouseEvent *event){
             /// to notify the point information menu that the position has changed and so the point can be displayed at its new position
             emit newCoordinates(event->pos().x(), event->pos().y());
         } else if(state == GraphicItemState::EDITING_HOME){
-            //qDebug() << "MapView::mouseReleaseEvent EDITING_HOME";
-            QSharedPointer<PointView> tmpPointView = points->getTmpPointView();
-            tmpPointView->show();
-            /// might be useless code
-            tmpPointView->setPos(event->pos().x(), event->pos().y());
-            qDebug() << "State of the tmp point view" << tmpPointView->getState();
-            emit homeEdited(tmpPointView->getPoint()->getPosition().getX(),
-                            tmpPointView->getPoint()->getPosition().getY(),
-                            QString(TMP_POINT_NAME));
 
         } else if(state == GraphicItemState::ROBOT_EDITING_PATH){
             /// to notify that a point which belongs to the path of a robot has been changed

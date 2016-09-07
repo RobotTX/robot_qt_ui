@@ -214,9 +214,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
     ///      ------------------                   POINTS MENUS CONNECTS     ------------------------------------------------
 
-    /// to link the map and the home widget menu when a home is being edited
-    connect(mapPixmapItem, SIGNAL(homeEdited(float, float, QString)), this, SLOT(updateHomeCoordinates(float,float,QString)));
-
     /// to link the map and the point information menu when a point is being edited
     connect(mapPixmapItem, SIGNAL(newCoordinates(double, double)), this, SLOT(updateCoordinates(double, double)));
 
@@ -724,7 +721,11 @@ void MainWindow::viewPathSelectedRobot(int robotNb, bool checked){
 }
 
 void MainWindow::editSelectedRobot(RobotView* robotView){
-    qDebug() << "editSelectedRobot robotview ";
+    qDebug() << "MainWindow::editselectedrobot robotview" << robotView->getRobot()->getName();
+    /// resets the home
+    editSelectedRobotWidget->setHome(static_cast<QSharedPointer<PointView>> (0));
+    editSelectedRobotWidget->setOldHome(static_cast<QSharedPointer<PointView>> (0));
+
     selectedRobot = robotView;
     robots->setSelected(robotView);
 
@@ -734,11 +735,18 @@ void MainWindow::editSelectedRobot(RobotView* robotView){
     editSelectedRobotWidget->setSelectedRobot(selectedRobot);
     robotPathPainter->setPathDeleted(false);
 
+    viewPathSelectedRobot(robots->getRobotId(robotView->getRobot()->getName()), true);
+
     editSelectedRobotWidget->show();
     switchFocus(selectedRobot->getRobot()->getName(), editSelectedRobotWidget, MainWindow::WidgetType::ROBOT);
 
+    /// it was disable by setEnableAll
+    leftMenu->getReturnButton()->setEnabled(true);
+
+    /*
     leftMenu->getReturnButton()->setEnabled(false);
     leftMenu->getReturnButton()->setToolTip("Please save or discard your modifications before navigating the menu again.");
+    */
 }
 
 
@@ -894,6 +902,8 @@ void MainWindow::setSelectedRobotNoParent(QAbstractButton *button){
         /// updates the robot menu on the left to fit this particular robot's information
         setSelectedRobot(robots->getRobotViewByName(button->text()));
         editSelectedRobotWidget->setGroupPath(robots->getRobotViewByName(button->text())->getRobot()->getGroupPathName());
+        editSelectedRobotWidget->setHome(robots->getRobotsVector().at(robotId)->getRobot()->getHome());
+        editSelectedRobotWidget->setOldHome(robots->getRobotsVector().at(robotId)->getRobot()->getHome());
         editSelectedRobotWidget->setAssignedPath(robots->getRobotViewByName(button->text())->getRobot()->getPathName());
         /// updates the last checked id to the id of the current button / robot
         bottomLayout->setLastCheckedId(robotId);
@@ -979,8 +989,20 @@ void MainWindow::cancelEditSelecRobotBtnEvent(){
     /// if the path has been changed, reset the path
     emit resetPathCreationWidget(GraphicItemState::ROBOT_CREATING_PATH);
     displayAssignedPath(selectedRobot->getRobot()->getGroupPathName(), selectedRobot->getRobot()->getPathName());
+    /// if a home has been edited we reset it to its old value which might be a null pointer
+    if(editSelectedRobotWidget->getHome())
+        editSelectedRobotWidget->getHome()->getPoint()->setHome(Point::PERM);
+
+    if(editSelectedRobotWidget->getOldHome())
+        editSelectedRobotWidget->setHome(editSelectedRobotWidget->getOldHome());
+    else
+        editSelectedRobotWidget->setHome(static_cast<QSharedPointer<PointView>> (0));
+
+    editSelectedRobotWidget->updateHomeMenu();
+
     editSelectedRobotWidget->setGroupPath(selectedRobot->getRobot()->getGroupPathName());
     editSelectedRobotWidget->setAssignedPath(selectedRobot->getRobot()->getPathName());
+    editSelectedRobotWidget->setHome(editSelectedRobotWidget->getOldHome());
     editSelectedRobotWidget->updatePathsMenu();
     //paths->setVisiblePath("");
     //emit resetPath(GraphicItemState::ROBOT_CREATING_PATH);
@@ -991,6 +1013,8 @@ void MainWindow::cancelEditSelecRobotBtnEvent(){
     /// so it might be better to stay on the same page
     //backEvent();
     editSelectedRobotWidget->setPathChanged(false);
+    points->getTmpPointView()->setPixmap(PointView::PixmapType::MID);
+    points->getTmpPointView()->hide();
 
     leftMenu->getReturnButton()->setEnabled(true);
     leftMenu->getReturnButton()->setToolTip("");
@@ -1004,8 +1028,10 @@ void MainWindow::robotSavedEvent(){
     qDebug() << "MainWindow::robotSavedEvent called";
 
     /// to reset the color of the home
-    if(selectedRobot->getRobot()->getHome())
-        selectedRobot->getRobot()->getHome()->setPixmap(PointView::PixmapType::NORMAL);
+    if(editSelectedRobotWidget->getHome()){
+        qDebug() << "resetting the color of my home" << editSelectedRobotWidget->getHome()->getPoint()->getName();
+        editSelectedRobotWidget->getHome()->setPixmap(PointView::PixmapType::NORMAL);
+    }
 
     bool isOK = false;
     int change = 0;
@@ -1202,8 +1228,8 @@ void MainWindow::robotSavedEvent(){
                 robotPathPainter->clearOldPath();
                 editSelectedRobotWidget->setPathChanged(false);
 
-                backEvent();
-                leftMenu->getReturnButton()->setEnabled(true);
+                //backEvent();
+                //leftMenu->getReturnButton()->setEnabled(true);
                 leftMenu->getReturnButton()->setToolTip("");
 
                 editSelectedRobotWidget->editName();
@@ -1449,39 +1475,6 @@ void MainWindow::editHomeEvent(){
         setEnableAll(false);
     }
     points->getTmpPointView()->setFlag(QGraphicsItem::ItemIsMovable);
-}
-
-void MainWindow::updateHomeCoordinates(float x, float y, QString name){
-    qDebug() << "MainWindow::updateHomeCoordinates called";
-    QSharedPointer<PointView> pointView = points->findPointView(name);
-    if(pointView){
-        editSelectedRobotWidget->setHome(pointView);
-        editSelectedRobotWidget->getHomeBtn()->setText("Edit home");
-
-        if (pointView->getPoint()->getName().compare(TMP_POINT_NAME) == 0){
-            QString name = QString::number(pointView->getPoint()->getPosition().getX(),'f', 1) + "; " + QString::number(pointView->getPoint()->getPosition().getY(),'f', 1);
-            editSelectedRobotWidget->getHomeLabel()->setText("Home: " + name);
-        } else
-            editSelectedRobotWidget->getHomeLabel()->setText("Home: " + pointView->getPoint()->getName());
-
-        editSelectedRobotWidget->setEnableAll(true);
-        pointView->setState(GraphicItemState::EDITING_HOME);
-    } else
-        qDebug() << "MainWindow::homeEdited could not find a point named" << name;
-
-    /// this point is a white point of the map and we can set the robot's home to be this point
-    if(map->getMapImage().pixelColor(x, y).red() >= 254){
-        setMessageTop(TEXT_COLOR_INFO, "Click \"Save\" to terminate");
-        editSelectedRobotWidget->getSaveButton()->setEnabled(true);
-    } else {
-    /// this is an unknown point, it cannot be used as a home for a robot
-        setMessageTop(TEXT_COLOR_INFO, "You cannot set the home of your robot to this point because it is not a known part of the robot's environment");
-        editSelectedRobotWidget->getSaveButton()->setEnabled(false);
-    }
-
-    /// if this is not the tmp pointview we hide it
-    if(pointView->getPoint()->getName().compare("tmpPoint"))
-        points->getTmpPointView()->hide();
 }
 
 void MainWindow::showHome(){
@@ -1913,10 +1906,34 @@ void MainWindow::replacePoint(int id, QString name){
 
 void MainWindow::setNewHome(QString homeName){
     qDebug() << "mainWindow::setNewHome called" << homeName << selectedRobot->getRobot()->getName();
-    points->setPixmapAll(PointView::PixmapType::NORMAL);
-    selectedRobot->getRobot()->setHome(points->findPointView(homeName));
-    selectedRobot->getRobot()->getHome()->setPixmap(PointView::PixmapType::SELECTED, selectedRobot);
-    selectedRobot->getRobot()->getHome()->show();
+    /// retrieves the pointview which name has been clicked in the menu
+    QSharedPointer<PointView> home = points->findPointView(homeName);
+    /// resets the other pixmaps
+    editSelectedRobotWidget->getHome()->getPoint()->setHome(Point::PERM);
+    editSelectedRobotWidget->getHome()->setPixmap(PointView::PixmapType::NORMAL);
+    //selectedRobot->getRobot()->setHome(points->findPointView(homeName));
+    //selectedRobot->getRobot()->getHome()->setPixmap(PointView::PixmapType::SELECTED, selectedRobot);
+    //selectedRobot->getRobot()->getHome()->show();
+
+    points->findPointView(homeName)->getPoint()->setHome(Point::HOME);
+    points->findPointView(homeName)->setPixmap(PointView::PixmapType::SELECTED);
+    points->findPointView(homeName)->show();
+    if(editSelectedRobotWidget->getOldHome()){
+        if(editSelectedRobotWidget->getHome())
+            qDebug() << "old" << editSelectedRobotWidget->getOldHome()->getPoint()->getName() <<
+                    "current" << editSelectedRobotWidget->getHome()->getPoint()->getName();
+        else
+            qDebug() << "old" << editSelectedRobotWidget->getOldHome()->getPoint()->getName() << "no current home";
+    }
+    else {
+        if(editSelectedRobotWidget->getHome())
+            qDebug() << "no old home, current" << editSelectedRobotWidget->getHome()->getPoint()->getName();
+        else
+            qDebug() << "no home at all";
+    }
+
+    editSelectedRobotWidget->setHome(home);
+
     editSelectedRobotWidget->updateHomeMenu();
 }
 
@@ -4497,8 +4514,9 @@ void MainWindow::setMessageModifGroupPaths(int code){
 void MainWindow::displayAssignedPath(QString groupName, QString pathName){
 
     paths->setVisiblePath(pathName);
-    bool foundFlag(false);
-    robotPathPainter->setCurrentPath(paths->getPath(groupName, pathName, foundFlag));
+    bool foundFlag(true);
+    if(robotPathPainter->getCurrentPath().size() > 0)
+        robotPathPainter->setCurrentPath(paths->getPath(groupName, pathName, foundFlag));
     editSelectedRobotWidget->updatePathsMenu();
     assert(foundFlag);
     robotPathCreationWidget->setCurrentGroupName(groupName);

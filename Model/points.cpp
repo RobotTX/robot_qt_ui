@@ -154,8 +154,6 @@ QSharedPointer<PointView> Points::createPoint(const QString pointName, const dou
     connect(&(*pointView), SIGNAL(moveEditedPathPoint(GraphicItemState)), mainWindow, SLOT(moveEditedPathPointSlot(GraphicItemState)));
     connect(&(*pointView), SIGNAL(addPointPath(QString, double, double, GraphicItemState)), mainWindow, SLOT(addPointPathSlot(QString, double, double, GraphicItemState)));
 
-    /// to update the left menu when the home point is being edited
-    connect(&(*pointView), SIGNAL(editedHomePositionChanged(float,float, QString)), mainWindow, SLOT(updateHomeCoordinates(float, float, QString)));
     connect(&(*pointView), SIGNAL(updatePathPainterPointView()), mainWindow, SLOT(updatePathPainterPointViewSlot()));
 
     return pointView;

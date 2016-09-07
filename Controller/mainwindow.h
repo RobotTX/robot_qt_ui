@@ -215,7 +215,6 @@ private slots:
     void resetPathPointViewsSlot();
     void setEnableAll(bool enable, GraphicItemState state = GraphicItemState::NO_STATE, int noReturn = -1);
     void deletePathSelecRobotBtnEvent();
-    void updateHomeCoordinates(float x, float y, QString name);
     void replacePoint(int id, QString name);
     void deletePathSlot(QString groupName, QString pathName);
     void editPathSlot(QString groupName, QString pathName);

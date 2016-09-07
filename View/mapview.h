@@ -43,8 +43,6 @@ signals:
     void addPathPoint(QString, double, double, GraphicItemState);
     /// emitted when a user is constructing a path without a robot
     void addNoRobotPathPoint(QString, double, double);
-    /// emitted when a user is choosing a home for his robot
-    void homeEdited(float, float, QString);
     /// emitted when a user is editing a permanent point
     void newCoordinates(double, double);
     /// emitted when a user is editing a path point

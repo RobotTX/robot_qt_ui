@@ -124,7 +124,9 @@ EditSelectedRobotWidget::EditSelectedRobotWidget(QWidget* parent, MainWindow* ma
     QHBoxLayout* grid = new QHBoxLayout();
     /// Cancel & save buttons
     cancelBtn = new CustomPushButton("Cancel", this, CustomPushButton::ButtonType::LEFT_MENU, "center");
+    cancelBtn->setToolTip("This will discard all changes made since the last time you saved");
     saveBtn = new CustomPushButton("Save", this, CustomPushButton::ButtonType::LEFT_MENU, "center");
+    saveBtn->setToolTip("This will apply the your changes to the robot");
 
     grid->addWidget(cancelBtn);
     grid->addWidget(saveBtn);
@@ -337,6 +339,7 @@ void EditSelectedRobotWidget::assignHome(QAction *action){
     setHome(points->findPointView(homeName));
     homeLabel->setText("Home : " + homeName);
     homeLabel->wordWrap();
+    action->setEnabled(false);
     emit newHome(homeName);
 }
 
@@ -351,11 +354,12 @@ void EditSelectedRobotWidget::updateHomeMenu(){
                 for(int j = 0; j < i.value()->count(); j++){
                     group->addAction(i.value()->at(j)->getPoint()->getName());
                     /// if a home exists we tick it in the menu
-                    qDebug() << "point : " << i.value()->at(j)->getPoint()->getName();
                     if(home && home->getPoint() == i.value()->at(j)->getPoint()){    
                         group->actions().at(j)->setCheckable(true);
                         group->actions().at(j)->setChecked(true);
                     }
+                    if(i.value()->at(j)->getPoint()->isHome())
+                        group->actions().at(j)->setEnabled(false);
                 }
             }
         }

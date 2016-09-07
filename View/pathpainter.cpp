@@ -19,7 +19,7 @@ PathPainter::PathPainter(MainWindow* const &mainWindow, MapView* const &mapPixma
 
 void PathPainter::resetPathSlot(GraphicItemState _state){
     if(state == _state){
-        qDebug() << "PathPainter::resetPathSlot called with state !!" << state;
+        //qDebug() << "PathPainter::resetPathSlot called with state !!" << state;
         path = QPainterPath();
         points->setPixmapAll(PointView::PixmapType::NORMAL, mainWindow->getSelectedRobot());
 
@@ -84,7 +84,7 @@ void PathPainter::addPathPointSlot(QString name, double x, double y){
 }
 
 void PathPainter::orderPathPointChangedSlot(int from, int to){
-    qDebug() << "PathPainter::orderPathPointChangedSlot called from" << from << "to" << to;
+    //qDebug() << "PathPainter::orderPathPointChangedSlot called from" << from << "to" << to;
 
     /// Do the change in the model
     qDebug() << currentPath.size();
@@ -111,7 +111,7 @@ void PathPainter::orderPathPointChangedSlot(int from, int to){
 }
 
 void PathPainter::updatePathPainterName(void){
-    qDebug() << "PathPainter::updatePathPainterName called";
+    //qDebug() << "PathPainter::updatePathPainterName called";
     for(int i = 0; i < currentPath.size(); i++){
         if(currentPath.at(i)->getPoint().getName().contains(PATH_POINT_NAME)){
             Point point = currentPath.at(i)->getPoint();
@@ -124,7 +124,7 @@ void PathPainter::updatePathPainterName(void){
 
 
 void PathPainter::deletePathPointSlot(int id, GraphicItemState _state){
-    qDebug() << "PathPainter::deletePathPointSlot called with id" << id << "current path size" << currentPath.size();
+    //qDebug() << "PathPainter::deletePathPointSlot called with id" << id << "current path size" << currentPath.size();
     if(state == _state){
         /// Remove the item from the model
         currentPath.remove(id);
@@ -144,12 +144,12 @@ void PathPainter::editPathPointSlot(int id, QString name, double x, double y){
             takeAt(points->findPointIndexes(name).second);
     //QSharedPointer<PointView> newPointView = points->findPointView(name);
     //QSharedPointer<PointView> newPointView = points->getGroups()->value(PATH_GROUP_NAME)->takeAt(id);
-    qDebug() << "the point im about to insert" << newPointView->getPoint()->getName() <<
-                newPointView->getPoint()->getPosition().getX() <<
-                newPointView->getPoint()->getPosition().getY();
+    //qDebug() << "the point im about to insert" << newPointView->getPoint()->getName() <<
+          //      newPointView->getPoint()->getPosition().getX() <<
+           //     newPointView->getPoint()->getPosition().getY();
     /// If found, it's a permanent point else it's a temporary point
     if(newPointView){
-        qDebug() << "PathPainter::editPathPointSlot editing a permanent point";
+        //qDebug() << "PathPainter::editPathPointSlot editing a permanent point";
         // gotta change next line
         //emit updatePoints(id, name);
         points->getGroups()->value(PATH_GROUP_NAME)->remove(id);
@@ -181,7 +181,7 @@ void PathPainter::updateCurrentPath(void){
 void PathPainter::updatePathPainterSlot(GraphicItemState _state, const bool savePath /* to deal with pv selected after save */){
     /// we only update if the state given as parameter is the same as ours (the signal is intended for us)
     if(state == _state){
-        qDebug() << "PathPainter::updatePathPainter called" << state;
+        //qDebug() << "PathPainter::updatePathPainter called" << state;
         points->setPixmapAll(PointView::PixmapType::NORMAL, mainWindow->getSelectedRobot());
         QSharedPointer<QVector<QSharedPointer<PointView>>> group = points->getGroups()->value(PATH_GROUP_NAME);
 
@@ -192,7 +192,7 @@ void PathPainter::updatePathPainterSlot(GraphicItemState _state, const bool save
         if(group && group->size() > 0){
             for(int i = 0; i < group->size(); i++){
                 currentPointView = group->at(i);
-                qDebug() << "current pv" << currentPointView->getPoint()->getName() << currentPointView->getType();
+                //qDebug() << "current pv" << currentPointView->getPoint()->getName() << currentPointView->getType();
                 QPointF pointCoord = QPointF(currentPointView->getPoint()->getPosition().getX(),
                                              currentPointView->getPoint()->getPosition().getY());
 
