@@ -172,7 +172,7 @@ QDataStream& operator<<(QDataStream& out, const Paths& paths){
 bool Paths::containsPoint(const QString groupName, const QString pathName, const Point &point){
     bool foundFlag(false);
     Path path = getPath(groupName, pathName, foundFlag);
-    for(size_t i = 0; i < path.size(); i++){
+    for(int i = 0; i < path.size(); i++){
         if(path.at(i)->getPoint() == point)
             return true;
     }

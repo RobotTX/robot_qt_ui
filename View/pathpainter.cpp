@@ -136,6 +136,8 @@ void PathPainter::deletePathPointSlot(int id, GraphicItemState _state){
 }
 
 void PathPainter::editPathPointSlot(int id, QString name, double x, double y){
+    Q_UNUSED(x)
+    Q_UNUSED(y)
     //qDebug() << "PathPainter::editPathPointSlot called" << id << name << x << y;
 
     QSharedPointer<PointView> newPointView = points->getGroups()->value(points->findPointIndexes(name).first)->

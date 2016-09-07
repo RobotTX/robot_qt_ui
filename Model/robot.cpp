@@ -9,7 +9,7 @@
 #include <iostream>
 
 Robot::Robot(const QString _name, const QString _ip) : name(_name), ip(_ip), position(Position()),
-    orientation(0), batteryLevel(100), wifi(""), home(NULL), playingPath(0), mapId(), sendingMap(false)
+    orientation(0), batteryLevel(100), wifi(""), home(NULL), playingPath(0), mapId(), sendingMap(false), pathName(""), groupName("")
 {
     //qDebug() << "Robot" << name << "at ip" << ip << " launching its cmd thread";
 /*

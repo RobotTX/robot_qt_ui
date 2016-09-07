@@ -45,6 +45,8 @@ public:
     QSharedPointer<PointView> getHome(void) const { return home; }
     QVector<QSharedPointer<PathPoint>> getPath(void) const { return path; }
     bool isPlayingPath(void) const { return playingPath; }
+    QString getPathName(void) const { return pathName; }
+    QString getGroupPathName(void) const { return groupName; }
 
     /// Setters
     void setPlayingPath(const bool playPath) { playingPath = playPath; }
@@ -59,6 +61,8 @@ public:
     void setPosition(const float _x, const float _y) { position = Position(_x,_y); }
     void setMapId(const QUuid _mapId) { mapId = _mapId; }
     QUuid getMapId(void) const { return mapId; }
+    void setPathName(const QString name) { pathName = name; }
+    void setGroupPathName(const QString name) { groupName = name; }
 
     /**
      * @brief display
@@ -136,6 +140,8 @@ private:
     SendNewMapThread* newMapThread;
     QUuid mapId;
     bool sendingMap;
+    QString pathName;
+    QString groupName;
 };
 
 /**

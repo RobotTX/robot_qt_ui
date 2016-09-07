@@ -19,10 +19,11 @@
 #include <QMenu>
 #include <assert.h>
 #include "View/customlineedit.h"
+#include "Model/points.h"
 
 
-EditSelectedRobotWidget::EditSelectedRobotWidget(QWidget* parent, MainWindow* mainWindow, const QSharedPointer<Robots> _robots, const QSharedPointer<Paths> &_paths):
-    QWidget(parent), robots(_robots), paths(_paths)
+EditSelectedRobotWidget::EditSelectedRobotWidget(QWidget* parent, MainWindow* mainWindow, const QSharedPointer<Points> &_points, const QSharedPointer<Robots> _robots, const QSharedPointer<Paths> &_paths):
+    QWidget(parent), points(_points), robots(_robots), paths(_paths), assignedPath("")
 {
     layout = new QVBoxLayout(this);
     robotView = NULL;
@@ -79,11 +80,17 @@ EditSelectedRobotWidget::EditSelectedRobotWidget(QWidget* parent, MainWindow* ma
 
     /// Home layout with the button to select the home
     homeLabel = new QLabel("Home : ", this);
-    homeBtn = new CustomPushButton(QIcon(":/icons/home.png"), "Add Home", this);
+    homeBtn = new CustomPushButton(QIcon(":/icons/home.png"), "Assign a home point", this);
     homeBtn->setIconSize(s_icon_size);
-    connect(homeBtn, SIGNAL(clicked()), mainWindow, SLOT(editHomeEvent()));
+    connect(homeBtn, SIGNAL(clicked(bool)), this, SLOT(openHomeMenu()));
+    //connect(homeBtn, SIGNAL(clicked()), mainWindow, SLOT(editHomeEvent()));
     inLayout->addWidget(homeLabel);
     inLayout->addWidget(homeBtn);
+
+    /// to assign an existing point to be the home of the robot
+    homeMenu = new QMenu("Assign home", this);
+    updateHomeMenu();
+    connect(homeMenu, SIGNAL(triggered(QAction*)), this, SLOT(assignHome(QAction*)));
 
     /// Button to add a path
     addPathBtn = new CustomPushButton(QIcon(":/icons/plus.png"),"Create Path", this);
@@ -133,6 +140,8 @@ EditSelectedRobotWidget::EditSelectedRobotWidget(QWidget* parent, MainWindow* ma
     connect(this, SIGNAL(clearMapOfPaths()), mainWindow, SLOT(clearMapOfPaths()));
     connect(this, SIGNAL(showPath(QString, QString)), mainWindow, SLOT(displayAssignedPath(QString, QString)));
 
+    connect(this, SIGNAL(newHome(QString)), mainWindow, SLOT(setNewHome(QString)));
+
     hide();
     /*setMaximumWidth(mainWindow->width()*4/10);
     setMinimumWidth(mainWindow->width()*4/10);
@@ -168,11 +177,11 @@ void EditSelectedRobotWidget::setSelectedRobot(RobotView* const _robotView, bool
     if(robotView->getRobot()->getHome() != NULL){
         homeBtn->setText("Edit Home");
         oldHome = robotView->getRobot()->getHome();
-        homeLabel->setText("Home: "+robotView->getRobot()->getHome()->getPoint()->getName());
+        homeLabel->setText("Home : "+robotView->getRobot()->getHome()->getPoint()->getName());
 
     } else {
-        homeBtn->setText("Add Home");
-        homeLabel->setText("Home: ");
+        homeBtn->setText("Assign a home point");
+        homeLabel->setText("Home : ");
         oldHome = QSharedPointer<PointView>();
     }
 }
@@ -246,6 +255,7 @@ void EditSelectedRobotWidget::showEvent(QShowEvent *event){
     setEnableAll(true);
     emit showEditSelectedRobotWidget();
     updatePathsMenu();
+    updateHomeMenu();
     QWidget::showEvent(event);
 }
 
@@ -284,8 +294,14 @@ void EditSelectedRobotWidget::updatePathsMenu(){
         QMenu* group = pathsMenu->addMenu("&" + i.key());
         while(it_paths.hasNext()){
             it_paths.next();
-            if(it_paths.value())
+            if(it_paths.value()){
                 group->addAction(it_paths.key());
+                if(!assignedPath.compare(it_paths.key())){
+                    group->actions().last()->setCheckable(true);
+                    group->actions().last()->setChecked(true);
+                }
+            }
+
         }
     }
 }
@@ -300,10 +316,48 @@ void EditSelectedRobotWidget::assignPath(QAction *action){
     action->setCheckable(true);
     action->setChecked(true);
     bool foundFlag(false);
+    QString groupName = static_cast<QMenu*> (action->associatedWidgets().at(0))->title().mid(1);
+    assignedPath = action->text();
+    groupAssignedPath = groupName;
     qDebug() << action->actionGroup() << " asso:" << action->associatedWidgets() << "menu:" << action->menu();
-    QString groupName = (static_cast<QMenu*> (action->associatedWidgets().at(0))->title()).mid(1);
     setPath(paths->getPath(groupName, action->text(), foundFlag));
     assert(foundFlag);
     paths->setVisiblePath(action->text());
     emit showPath(groupName, action->text());
+}
+
+void EditSelectedRobotWidget::openHomeMenu(){
+    homeMenu->exec(QCursor::pos());
+}
+
+void EditSelectedRobotWidget::assignHome(QAction *action){
+    action->setCheckable(true);
+    action->setChecked(true);
+    QString homeName = action->text();
+    setHome(points->findPointView(homeName));
+    homeLabel->setText("Home : " + homeName);
+    homeLabel->wordWrap();
+    emit newHome(homeName);
+}
+
+void EditSelectedRobotWidget::updateHomeMenu(){
+    homeMenu->clear();
+    QMapIterator<QString, QSharedPointer<QVector<QSharedPointer<PointView>>>> i(*(points->getGroups()));
+    while (i.hasNext()) {
+        i.next();
+        if(i.value() && i.key().compare(TMP_GROUP_NAME) && i.key().compare(PATH_GROUP_NAME)){
+            if(i.value()->count() > 0){
+                QMenu *group = homeMenu->addMenu("&" + i.key());
+                for(int j = 0; j < i.value()->count(); j++){
+                    group->addAction(i.value()->at(j)->getPoint()->getName());
+                    /// if a home exists we tick it in the menu
+                    qDebug() << "point : " << i.value()->at(j)->getPoint()->getName();
+                    if(home && home->getPoint() == i.value()->at(j)->getPoint()){    
+                        group->actions().at(j)->setCheckable(true);
+                        group->actions().at(j)->setChecked(true);
+                    }
+                }
+            }
+        }
+    }
 }

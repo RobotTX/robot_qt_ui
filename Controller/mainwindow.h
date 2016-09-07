@@ -220,6 +220,7 @@ private slots:
     void deletePathSlot(QString groupName, QString pathName);
     void editPathSlot(QString groupName, QString pathName);
     void displayPathSlot(QString groupName, QString pathName, bool display);
+    void setNewHome(QString homeName);
 
     /// for menu paths
     void displayGroupPaths();
