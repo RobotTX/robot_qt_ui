@@ -1271,7 +1271,9 @@ void MainWindow::robotSavedEvent(){
                 if(pointView){
                     pointView->getPoint()->setHome(Point::PointType::HOME);
                     pointView->getPoint()->setRobotName(selectedRobot->getRobot()->getName());
+                    selectedRobot->getRobot()->setHome(pointView);
                 } else qDebug() << "no pointview";
+
 
                 robotPathPainter->clearOldPath();
                 editSelectedRobotWidget->setPathChanged(false);
