@@ -743,6 +743,7 @@ void MainWindow::editSelectedRobot(RobotView* robotView){
     /// it was disable by setEnableAll
     leftMenu->getReturnButton()->setEnabled(true);
 
+    showHomes();
     /*
     leftMenu->getReturnButton()->setEnabled(false);
     leftMenu->getReturnButton()->setToolTip("Please save or discard your modifications before navigating the menu again.");
@@ -753,6 +754,7 @@ void MainWindow::editSelectedRobot(RobotView* robotView){
 void MainWindow::setSelectedRobot(RobotView* robotView){
 
     emit resetPath(GraphicItemState::NO_ROBOT_CREATING_PATH);
+    emit resetPath(GraphicItemState::ROBOT_CREATING_PATH);
 
     qDebug() << "setSelectedRobot(RobotView* robotView)";
     leftMenu->show();
@@ -772,6 +774,7 @@ void MainWindow::setSelectedRobot(RobotView* robotView){
         bottomLayout->setLastCheckedId(robots->getRobotId(robotView->getRobot()->getName()));
     //else
 
+    showHomes();
 
     switchFocus(robotView->getRobot()->getName(), selectedRobotWidget, MainWindow::WidgetType::ROBOT);
 
@@ -907,6 +910,11 @@ void MainWindow::setSelectedRobotNoParent(QAbstractButton *button){
         editSelectedRobotWidget->setAssignedPath(robots->getRobotViewByName(button->text())->getRobot()->getPathName());
         /// updates the last checked id to the id of the current button / robot
         bottomLayout->setLastCheckedId(robotId);
+        /// shows all homes as normal points except for the home of the selected robot
+        QMapIterator<QString, QSharedPointer<QVector<QSharedPointer<PointView>>>> i(*(points->getGroups()));
+
+        /// show only the home of the selected robot
+        showHomes();
     }
 }
 
@@ -1586,14 +1594,10 @@ void MainWindow::clearPath(const int robotNb){
     bottomLayout->updateRobot(robotNb, robots->getRobotsVector().at(robotNb));
 }
 
-void MainWindow::hideHome(void){
-    qDebug() << "MainWindow::hideHome called";
-
-    QSharedPointer<PointView> pointView = QSharedPointer<PointView>(selectedRobot->getRobot()->getHome());
-    if(pointView && !pointView->getWasShown()){
-        qDebug() << "hidding the home";
-        pointView->hide();
-    }
+void MainWindow::showAllHomes(void){
+    qDebug() << "MainWindow::showAllHomes called after editselectrobot went hidden";
+    /// shows the home of each robot
+    points->setPixmapAll(PointView::PixmapType::NORMAL);
 }
 
 void MainWindow::goHomeBtnEvent(){
@@ -4744,4 +4748,29 @@ void MainWindow::saveMapState(){
     settings.setValue("mapState/point/x", mapState.first.x());
     settings.setValue("mapState/point/y", mapState.first.y());
     settings.setValue("mapState/zoom", mapState.second);
+}
+
+void MainWindow::showHomes(){
+    QMapIterator<QString, QSharedPointer<QVector<QSharedPointer<PointView>>>> i(*(points->getGroups()));
+    while (i.hasNext()) {
+        i.next();
+        if(i.value() && i.key().compare(PATH_GROUP_NAME) != 0 && i.key().compare(TMP_GROUP_NAME)){
+            for(int j = 0; j < i.value()->count(); j++){
+                qDebug() << i.value()->at(j)->getPoint()->getRobotName();
+                if(i.value()->at(j)->getPoint()->isHome()){
+                    if(!i.value()->at(j)->getPoint()->getRobotName().compare(selectedRobot->getRobot()->getName())){
+                        qDebug() << "yeah man" << selectedRobot->getRobot()->getName();
+                        /// to make the old home a normal point again
+                        i.value()->at(j)->getPoint()->setHome(Point::HOME);
+                        i.value()->at(j)->setPixmap(PointView::PixmapType::NORMAL);
+                    } else {
+                        /// to make it look like a normal point we alter its type temporarily
+                        i.value()->at(j)->getPoint()->setHome(Point::PERM);
+                        i.value()->at(j)->setPixmap(PointView::PixmapType::NORMAL);
+                        i.value()->at(j)->getPoint()->setHome(Point::HOME);
+                    }
+                }
+            }
+        }
+    }
 }

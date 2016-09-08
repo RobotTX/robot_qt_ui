@@ -68,7 +68,7 @@ void PathPainter::addPathPointSlot(QString name, double x, double y){
 
             if((mainWindow->getSelectedRobot() && mainWindow->getSelectedRobot()->getRobot()->getHome() && mainWindow->getSelectedRobot()->getRobot()->getHome()->getPoint()->getName().compare(name) == 0)
                     || (mainWindow->getSelectedRobot() == NULL && points->isAHome(name, x, y)))
-                type= Point::PointType::HOME;
+                type = Point::PointType::HOME;
 
             points->addPoint(PATH_GROUP_NAME, name, x, y, true, type, mapView, mainWindow);
         }

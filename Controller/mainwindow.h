@@ -96,6 +96,7 @@ public:
     RobotView* getSelectedRobot(void) const { return selectedRobot; }
     void serializePaths(void);
     void deserializePaths(void);
+    void showHomes();
 
 signals:
     void sendCommand(QString);
@@ -201,7 +202,7 @@ private slots:
     void setGraphicItemsState(const GraphicItemState state);
     void showHome();
     void showEditHome();
-    void hideHome(void);
+    void showAllHomes(void);
     void backEvent();
     void updateView();
     void robotIsAliveSlot(QString hostname, QString ip, QString mapId, QString ssid, int stage);

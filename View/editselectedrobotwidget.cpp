@@ -357,6 +357,8 @@ void EditSelectedRobotWidget::updateHomeMenu(){
                 QMenu *group = homeMenu->addMenu("&" + i.key());
                 for(int j = 0; j < i.value()->count(); j++){
                     group->addAction(i.value()->at(j)->getPoint()->getName());
+
+                    /*
                     /// if a home exists we tick it in the menu
                     if(home && home->getPoint() == i.value()->at(j)->getPoint()){    
                         group->actions().at(j)->setCheckable(true);
@@ -364,6 +366,14 @@ void EditSelectedRobotWidget::updateHomeMenu(){
                     }
                     if(i.value()->at(j)->getPoint()->isHome())
                         group->actions().at(j)->setEnabled(false);
+                        */
+                    if(i.value()->at(j)->getPoint()->isHome()){
+                        group->actions().at(j)->setEnabled(false);
+                        if(!i.value()->at(j)->getPoint()->getRobotName().compare(robotView->getRobot()->getName())){
+                            group->actions().at(j)->setCheckable(true);
+                            group->actions().at(j)->setChecked(true);
+                        }
+                    }
                 }
             }
         }

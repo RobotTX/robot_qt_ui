@@ -93,7 +93,7 @@ LeftMenu::LeftMenu(MainWindow* _mainWindow, QSharedPointer<Points> const& _point
     selectedRobotWidget = new SelectedRobotWidget(this, mainWindow);
 
     connect(selectedRobotWidget, SIGNAL(showSelectedRobotWidget()), mainWindow, SLOT(showHome()));
-    connect(selectedRobotWidget, SIGNAL(hideSelectedRobotWidget()), mainWindow, SLOT(hideHome()));
+    connect(selectedRobotWidget, SIGNAL(hideSelectedRobotWidget()), mainWindow, SLOT(showAllHomes()));
     selectedRobotWidget->hide();
     leftLayout->addWidget(selectedRobotWidget);
 
@@ -113,7 +113,7 @@ LeftMenu::LeftMenu(MainWindow* _mainWindow, QSharedPointer<Points> const& _point
     leftLayout->addWidget(editSelectedRobotWidget);
     connect(editSelectedRobotWidget, SIGNAL(robotSaved()), mainWindow, SLOT(robotSavedEvent()));
     connect(editSelectedRobotWidget, SIGNAL(showEditSelectedRobotWidget()), mainWindow, SLOT(showEditHome()));
-    connect(editSelectedRobotWidget, SIGNAL(hideEditSelectedRobotWidget()), mainWindow, SLOT(hideHome()));
+    connect(editSelectedRobotWidget, SIGNAL(hideEditSelectedRobotWidget()), mainWindow, SLOT(showAllHomes()));
 
     /// Menu to edit the selected point
     createPointWidget = new CreatePointWidget(this, mainWindow, points);

@@ -48,6 +48,8 @@
         <file alias="wifi.png">cropped_wifi.png</file>
         <file alias="robot_icon.png">cropped_robot_icon.png</file>
         <file alias="robot_icon_bis.png">cropped_robot_icon_bis.png</file>
+        <file alias="hover_robot_icon.png">violet_robot_icon.png</file>
+        <file alias="selected_robot_icon.png">orange_robot_icon.png</file>
     </qresource>
     <qresource prefix="/xml">
         <file>points.xml</file>

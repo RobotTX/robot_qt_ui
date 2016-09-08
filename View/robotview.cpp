@@ -8,7 +8,6 @@
 #include "mainwindow.h"
 #include <QGraphicsWidget>
 #include "mapview.h"
-#include <QGraphicsPixmapItem>
 
 RobotView::RobotView (QSharedPointer<Robot> const &_robot, QGraphicsItem* parent):
     QGraphicsPixmapItem(QPixmap(":/icons/robot_icon.png"), parent), robot(_robot), selected(false), state(GraphicItemState::NO_STATE), shown(true), lastStage(0)
@@ -17,22 +16,6 @@ RobotView::RobotView (QSharedPointer<Robot> const &_robot, QGraphicsItem* parent
     setAcceptHoverEvents(true);
     setAcceptedMouseButtons(Qt::LeftButton);
     setToolTip(robot->getName());
-/*
-    /// We create a polygon of the robot by writting each points of the polygon
-    QPolygonF polygon;
-    polygon << QPointF(ROBOT_WIDTH/2, ROBOT_HEIGHT_HIGH) << QPointF(0, ROBOT_HEIGHT_LOW)
-               << QPointF(ROBOT_WIDTH/2, 0) << QPointF(ROBOT_WIDTH, ROBOT_HEIGHT_LOW);
-    setPolygon(polygon);
-
-    /// Brush = the inner part of the polygon
-    setBrush(QBrush(Qt::red));
-
-    /// Pen = the border of the polygon
-    if(selected)
-        setPen(QPen(Qt::green));
-    else
-        setPen(QPen(Qt::red));
-*/
 
     mapView = static_cast<MapView*> (parent);
 }
@@ -59,20 +42,16 @@ void RobotView::mousePressEvent(QGraphicsSceneMouseEvent * /* unused */){
 }
 
 void RobotView::hoverEnterEvent(QGraphicsSceneHoverEvent * /* unused */){
-    /*
+
     setToolTip(robot->getName());
-    setPen(QPen(Qt::yellow));
-    */
+    setPixmap(QPixmap(":/icons/hover_robot_icon.png"));
 }
 
 void RobotView::hoverLeaveEvent(QGraphicsSceneHoverEvent * /* unused */){
-    /*
-    if(selected){
-        setPen(QPen(Qt::green));
-    } else {
-        setPen(QPen(Qt::red));
-    }
-    */
+    if(selected)
+        setPixmap(QPixmap(":/icons/selected_robot_icon.png"));
+    else
+        setPixmap(QPixmap(":/icons/robot_icon.png"));
 }
 
 void RobotView::setPosition(const Position _position) {
@@ -87,13 +66,11 @@ void RobotView::setPosition(const float x, const float y) {
 
 void RobotView::setSelected(const bool _selected){
     selected = _selected;
-    /*
-    if(selected){
-        setPen(QPen(Qt::green));
-    } else {
-        setPen(QPen(Qt::red));
-    }
-    */
+
+    if(selected)
+        setPixmap(QPixmap(":/icons/selected_robot_icon.png"));
+    else
+        setPixmap(QPixmap(":/icons/robot_icon.png"));
 }
 
 void RobotView::display(const bool _show){
