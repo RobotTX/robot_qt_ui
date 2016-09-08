@@ -13,7 +13,7 @@ Point::Point(const QString name, const double x, const double y, const PointType
     name(name), position(Position(x, y)), type(_type) {
 }
 
-Point::Point(const QString name, const Position position, const PointType _type) : name(name), position(position), type(_type){
+Point::Point(const QString name, const Position position, const PointType _type) : name(name), position(position), type(_type), robotName(""){
 }
 
 void Point::display(std::ostream& stream) const {

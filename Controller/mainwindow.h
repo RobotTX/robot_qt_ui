@@ -46,10 +46,10 @@ class GroupsPathsWidget;
 #define PATHS_PATH "/home/m-a/Documents/QtProject/gobot-software/savedPaths.dat"
 */
 
-#define XML_PATH "/home/joan/Qt/QtProjects/gobot-software/points.xml"
-#define ROBOTS_NAME_PATH "/home/joan/Qt/QtProjects/gobot-software/robotsName.dat"
-#define MAP_PATH "/home/joan/Qt/QtProjects/gobot-software/realMap.dat"
-#define PATHS_PATH "/home/joan/Qt/QtProjects/gobot-software/savedPaths.dat"
+#define XML_PATH "/home/joan/Gobot/gobot-software/points.xml"
+#define ROBOTS_NAME_PATH "/home/joan/Gobot/gobot-software/robotsName.dat"
+#define MAP_PATH "/home/joan/Gobot/gobot-software/realMap.dat"
+#define PATHS_PATH "/home/joan/Gobot/gobot-software/savedPaths.dat"
 
 #define PI 3.14159265
 #define PORT_ROBOT_UPDATE 6000

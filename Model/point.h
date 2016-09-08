@@ -33,6 +33,7 @@ public:
     bool isHome(void) const { return (type == HOME); }
     bool isPath(void) const { return (type == PATH); }
     PointType getType(void) const { return type; }
+    QString getRobotName(void) const { return robotName; }
 
     /// Setters
     void setPosition(const double x, const double y) { position.setX(x); position.setY(y); }
@@ -40,6 +41,8 @@ public:
     void setName(const QString _name) { name = _name; }
     void setType(const PointType _type) { type = _type; }
     bool setHome(const PointType _type);
+    void setRobotName(const QString name) { robotName = name; }
+
 
     /// a helper function to overload the << operator
     void display(std::ostream& stream) const;
@@ -61,6 +64,7 @@ private:
     QString name;
     Position position;
     PointType type;
+    QString robotName;
 };
 
 /**

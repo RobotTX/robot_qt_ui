@@ -321,7 +321,6 @@ void EditSelectedRobotWidget::assignPath(QAction *action){
     QString groupName = static_cast<QMenu*> (action->associatedWidgets().at(0))->title().mid(1);
     assignedPath = action->text();
     groupAssignedPath = groupName;
-    qDebug() << action->actionGroup() << " asso:" << action->associatedWidgets() << "menu:" << action->menu();
     setPath(paths->getPath(groupName, action->text(), foundFlag));
     assert(foundFlag);
     paths->setVisiblePath(action->text());
@@ -344,6 +343,11 @@ void EditSelectedRobotWidget::assignHome(QAction *action){
 }
 
 void EditSelectedRobotWidget::updateHomeMenu(){
+    if(home && oldHome)
+        qDebug() << "EditSelectedRobotWidget::updateHomeMenu, home is"
+                 << home->getPoint()->getName() << "old home is" << oldHome->getPoint()->getName();
+    else
+        qDebug() << "EditSelectedRobotWidget::updateHomeMenu, no home";
     homeMenu->clear();
     QMapIterator<QString, QSharedPointer<QVector<QSharedPointer<PointView>>>> i(*(points->getGroups()));
     while (i.hasNext()) {
