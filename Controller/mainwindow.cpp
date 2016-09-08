@@ -1157,12 +1157,13 @@ void MainWindow::robotSavedEvent(){
         }
         pointsLeftWidget->updateGroupButtonGroup();
 
-
+/*
         if(done){
             if(selectedRobot->getRobot()->getHome() != NULL)
                 selectedRobot->getRobot()->getHome()->getPoint()->setHome(Point::PointType::PERM);
             selectedRobot->getRobot()->setHome(editSelectedRobotWidget->getHome());
         }
+        */
         isOK = true;
         change++;
     }

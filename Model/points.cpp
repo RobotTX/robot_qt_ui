@@ -336,6 +336,8 @@ void Points::setPixmapAll(const PointView::PixmapType type, RobotView* selectedR
         i.next();
         if(i.key().compare(PATH_GROUP_NAME) != 0){
             for(int j = 0; j < i.value()->count(); j++){
+                if(i.value()->at(j)->getPoint()->isHome())
+                    qDebug() << i.value()->at(j)->getPoint()->getName();
                 i.value()->at(j)->setPixmap(type, selectedRobot);
             }
         }
