@@ -21,7 +21,7 @@ void PathPainter::resetPathSlot(GraphicItemState _state){
     if(state == _state){
         //qDebug() << "PathPainter::resetPathSlot called with state !!" << state;
         path = QPainterPath();
-        points->setPixmapAll(PointView::PixmapType::NORMAL, mainWindow->getSelectedRobot());
+        points->setPixmapAll(PointView::PixmapType::NORMAL, mainWindow->getSelectedRobot(), true);
 
         if(QSharedPointer<QVector<QSharedPointer<PointView>>> group = points->getGroups()->value(PATH_GROUP_NAME)){
             for(int i = 0; i < group->size(); i++){

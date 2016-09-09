@@ -40,7 +40,6 @@ public:
     PathWidget* getPathWidget(void) const { return pathWidget; }
     CustomPushButton* getAddPathBtn(void) const { return addPathBtn; }
     bool getPathChanged() const { return pathChanged; }
-    QSharedPointer<PointView> getOldHome() const { return oldHome; }
     QLabel* getHomeLabel(void) const { return homeLabel; }
     CustomPushButton* getSaveButton(void) const { return saveBtn; }
     CustomPushButton* getCancelButton(void) const { return cancelBtn; }
@@ -54,7 +53,6 @@ public:
     void setRobots(QSharedPointer<Robots> const _robots) { robots = _robots; }
     void setEditing(bool const _editing) { editing = _editing; }
     void setHome(QSharedPointer<PointView> const _home) { home = _home; }
-    void setOldHome(QSharedPointer<PointView> const _oldHome) { oldHome = _oldHome;}
     void setPathChanged(const bool change) { pathChanged = change; }
     void setPathWidget(PathWidget* pw) { pathWidget = pw; }
 
@@ -82,36 +80,6 @@ signals:
     /// to notify that a new home has been assigned
     void newHome(QString);
 
-private:
-    QVBoxLayout* layout;
-    QVBoxLayout* pathLayout;
-    RobotView* robotView;
-    CustomLineEdit* nameEdit;
-    CustomLineEdit* wifiNameEdit;
-    CustomLineEdit* wifiPwdEdit;
-    QLabel* ipAddressLabel;
-    QSharedPointer<Points> points;
-    QSharedPointer<Robots> robots;
-    QSharedPointer<Paths> paths;
-    CustomPushButton* saveBtn;
-    CustomPushButton* homeBtn;
-    QSharedPointer<PointView> home;
-    QSharedPointer<PointView> oldHome;
-    CustomPushButton* addPathBtn;
-    bool firstConnection;
-    CustomPushButton* cancelBtn;
-    CustomPushButton* deletePathBtn;
-    PathWidget* pathWidget;
-    bool pathChanged;
-    QLabel* homeLabel;
-    bool editing;
-    QMenu* pathsMenu;
-    QMenu* homeMenu;
-    SpaceWidget* pathSpaceWidget;
-    CustomPushButton* assignPathButton;
-    QString assignedPath;
-    QString groupAssignedPath;
-
 protected:
     void showEvent(QShowEvent *event);
     void hideEvent(QHideEvent *event);
@@ -134,6 +102,38 @@ private slots:
     void deletePwd(void);
     void assignPath(QAction* action);
     void assignHome(QAction* action);
+
+private:
+    QVBoxLayout* layout;
+    QVBoxLayout* pathLayout;
+    RobotView* robotView;
+    CustomLineEdit* nameEdit;
+    CustomLineEdit* wifiNameEdit;
+    CustomLineEdit* wifiPwdEdit;
+    QLabel* ipAddressLabel;
+    QSharedPointer<Points> points;
+    QSharedPointer<Robots> robots;
+    QSharedPointer<Paths> paths;
+    CustomPushButton* saveBtn;
+    CustomPushButton* homeBtn;
+    QSharedPointer<PointView> home;
+    CustomPushButton* addPathBtn;
+    bool firstConnection;
+    CustomPushButton* cancelBtn;
+    CustomPushButton* deletePathBtn;
+    PathWidget* pathWidget;
+    bool pathChanged;
+    QLabel* homeLabel;
+    bool editing;
+    QMenu* pathsMenu;
+    QMenu* homeMenu;
+    SpaceWidget* pathSpaceWidget;
+    CustomPushButton* assignPathButton;
+    QString assignedPath;
+    QString groupAssignedPath;
+    CustomPushButton* scanBtn;
+    QProgressBar* batteryLevel;
+    CustomPushButton* deleteHomeBtn;
 
 
 };

@@ -17,7 +17,7 @@ RobotsLeftWidget::RobotsLeftWidget(QWidget* parent, MainWindow* _mainWindow, QSh
     actionButtons = new TopLeftMenu(this);
     actionButtons->disableAll();
 
-    connect(actionButtons->getGoButton(), SIGNAL(clicked()), mainWindow, SLOT(selectViewRobot()));
+    //connect(actionButtons->getGoButton(), SIGNAL(clicked()), mainWindow, SLOT(selectViewRobot()));
     connect(actionButtons->getEditButton(), SIGNAL(clicked()), mainWindow, SLOT(editRobotBtnEvent()));
     connect(actionButtons->getMapButton(), SIGNAL(clicked()), mainWindow, SLOT(checkRobotBtnEventMenu()));
 

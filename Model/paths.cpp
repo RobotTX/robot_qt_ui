@@ -108,7 +108,7 @@ void Paths::deletePath(const QString groupName, const QString pathName){
 }
 
 Paths::Path Paths::getPath(const QString groupName, const QString pathName, bool& foundFlag){
-    qDebug() << "Paths::getPath called";
+    //qDebug() << "Paths::getPath called";
     auto it_group = groups->find(groupName);
     if(it_group == groups->end())
         qDebug() << "Paths::getPath the group of paths" << groupName << "does not exist";

@@ -20,6 +20,7 @@
 #include <assert.h>
 #include "View/customlineedit.h"
 #include "Model/points.h"
+#include <QProgressBar>
 
 
 EditSelectedRobotWidget::EditSelectedRobotWidget(QWidget* parent, MainWindow* mainWindow, const QSharedPointer<Points> &_points, const QSharedPointer<Robots> _robots, const QSharedPointer<Paths> &_paths):
@@ -28,10 +29,8 @@ EditSelectedRobotWidget::EditSelectedRobotWidget(QWidget* parent, MainWindow* ma
     layout = new QVBoxLayout(this);
     robotView = NULL;
     home = QSharedPointer<PointView>();
-    oldHome = QSharedPointer<PointView>();
     pathChanged = false;
     editing = false;
-
 
     CustomScrollArea* scrollArea = new CustomScrollArea(this);
     QVBoxLayout * inLayout = new QVBoxLayout(scrollArea);
@@ -39,11 +38,15 @@ EditSelectedRobotWidget::EditSelectedRobotWidget(QWidget* parent, MainWindow* ma
 
     inWidget->setLayout(inLayout);
 
-
     /// Name editable label
     nameEdit = new CustomLineEdit(this);
     inLayout->addWidget(nameEdit);
 
+    /// Button which allow the user to scan the map from a robot
+    scanBtn = new CustomPushButton(QIcon(":/icons/map.png"),"Scan a map", this, CustomPushButton::ButtonType::LEFT_MENU, "center", true);
+    scanBtn->setIconSize(s_icon_size);
+    inLayout->addWidget(scanBtn);
+    connect(scanBtn, SIGNAL(clicked()), mainWindow, SLOT(connectToRobot()));
 
     SpaceWidget* spaceWidget = new SpaceWidget(SpaceWidget::SpaceOrientation::HORIZONTAL, this);
     inLayout->addWidget(spaceWidget);
@@ -74,6 +77,10 @@ EditSelectedRobotWidget::EditSelectedRobotWidget(QWidget* parent, MainWindow* ma
     inLayout->addWidget(wifiPwd);
     inLayout->addWidget(wifiPwdEdit);
 
+    /// ProgressBar which display the level of battery
+    batteryLevel = new QProgressBar(this);
+    batteryLevel->setValue(50);
+    inLayout->addWidget(batteryLevel);
 
     SpaceWidget* spaceWidget2 = new SpaceWidget(SpaceWidget::SpaceOrientation::HORIZONTAL, this);
     inLayout->addWidget(spaceWidget2);
@@ -92,11 +99,18 @@ EditSelectedRobotWidget::EditSelectedRobotWidget(QWidget* parent, MainWindow* ma
     updateHomeMenu();
     connect(homeMenu, SIGNAL(triggered(QAction*)), this, SLOT(assignHome(QAction*)));
 
+    /*
     /// Button to add a path
     addPathBtn = new CustomPushButton(QIcon(":/icons/plus.png"),"Create Path", this);
     addPathBtn->setIconSize(xs_icon_size);
     connect(addPathBtn, SIGNAL(clicked()), mainWindow, SLOT(addPathSelecRobotBtnEvent()));
     inLayout->addWidget(addPathBtn);
+    */
+    deleteHomeBtn = new CustomPushButton(QIcon(":/icons/empty.png"), "Delete home", this);
+    deleteHomeBtn->setToolTip("Clicking this button will not delete the point but this point won't be this robot's home anymore");
+    deleteHomeBtn->setIconSize(s_icon_size);
+    connect(deleteHomeBtn, SIGNAL(clicked()), mainWindow, SLOT(deleteHome()));
+    inLayout->addWidget(deleteHomeBtn);
 
     /// to assign an existing path to the robot
     assignPathButton = new CustomPushButton(QIcon(":/icons/path.png"), "Assign a path", this);
@@ -122,6 +136,7 @@ EditSelectedRobotWidget::EditSelectedRobotWidget(QWidget* parent, MainWindow* ma
 
 
     QHBoxLayout* grid = new QHBoxLayout();
+/*
     /// Cancel & save buttons
     cancelBtn = new CustomPushButton("Cancel", this, CustomPushButton::ButtonType::LEFT_MENU, "center");
     cancelBtn->setToolTip("This will discard all changes made since the last time you saved");
@@ -134,6 +149,9 @@ EditSelectedRobotWidget::EditSelectedRobotWidget(QWidget* parent, MainWindow* ma
 
     connect(cancelBtn, SIGNAL(clicked()), mainWindow, SLOT(cancelEditSelecRobotBtnEvent()));
     connect(saveBtn, SIGNAL(clicked()), this, SLOT(saveEditSelecRobotBtnEvent()));
+
+    */
+
     connect(nameEdit, SIGNAL(textEdited(QString)), this, SLOT(checkRobotName()));
     connect(wifiNameEdit, SIGNAL(textEdited(QString)), this, SLOT(checkWifiName()));
     connect(wifiNameEdit, SIGNAL(textEdited(QString)), this, SLOT(deletePwd()));
@@ -160,14 +178,16 @@ EditSelectedRobotWidget::EditSelectedRobotWidget(QWidget* parent, MainWindow* ma
 }
 
 void EditSelectedRobotWidget::setSelectedRobot(RobotView* const _robotView, bool _firstConnection){
+    qDebug() << _robotView->getRobot()->getName();
 
     pathChanged = false;
     firstConnection = _firstConnection;
+    /*
     if(firstConnection)
         cancelBtn->setEnabled(false);
     else
         cancelBtn->setEnabled(true);
-
+*/
     robotView = _robotView;
 
     /// When a robot is selected, the informations are updated
@@ -177,14 +197,13 @@ void EditSelectedRobotWidget::setSelectedRobot(RobotView* const _robotView, bool
 
     /// If the robot has a home, we display the name of the point, otherwise a default text
     if(robotView->getRobot()->getHome() != NULL){
-        homeBtn->setText("Edit Home");
-        oldHome = robotView->getRobot()->getHome();
+        home = robotView->getRobot()->getHome();
         homeLabel->setText("Home : "+robotView->getRobot()->getHome()->getPoint()->getName());
 
     } else {
         homeBtn->setText("Assign a home point");
         homeLabel->setText("Home : ");
-        oldHome = QSharedPointer<PointView>();
+        home = QSharedPointer<PointView>();
     }
 }
 
@@ -199,6 +218,7 @@ void EditSelectedRobotWidget::saveEditSelecRobotBtnEvent(void){
 
 void EditSelectedRobotWidget::checkRobotName(void){
     qDebug() << "checkRobotName called";
+    /*
     if(nameEdit->text() == ""){
         saveBtn->setEnabled(false);
         qDebug() << "Error : this name is not valid," << nameEdit->text() << "can not be empty";
@@ -209,10 +229,12 @@ void EditSelectedRobotWidget::checkRobotName(void){
         saveBtn->setEnabled(true);
         qDebug() << "This name is valid";
     }
+    */
 }
 
 void EditSelectedRobotWidget::checkWifiName(void){
     //qDebug() << "checkWifiName called";
+    /*
     if(wifiNameEdit->text() == ""){
         saveBtn->setEnabled(false);
         qDebug() << "Save btn not enabled : " << wifiNameEdit->text() << "can not be empty";
@@ -220,6 +242,7 @@ void EditSelectedRobotWidget::checkWifiName(void){
         saveBtn->setEnabled(true);
         qDebug() << "Save btn enabled";
     }
+    */
 }
 
 void EditSelectedRobotWidget::deletePwd(void){
@@ -244,12 +267,12 @@ void EditSelectedRobotWidget::setEnableAll(const bool enable){
     qDebug() << "editselectedrobotwidget::setenableall called" << enable;
     nameEdit->setEnabled(enable);
     homeBtn->setEnabled(enable);
-    saveBtn->setEnabled(enable);
+    //saveBtn->setEnabled(enable);
     deletePathBtn->setEnabled(enable);
     wifiNameEdit->setEnabled(enable);
     wifiPwdEdit->setEnabled(enable);
     nameEdit->setEnabled(enable);
-    addPathBtn->setEnabled(enable);
+    //addPathBtn->setEnabled(enable);
     assignPathButton->setEnabled(enable);
 }
 
@@ -270,17 +293,19 @@ void EditSelectedRobotWidget::setPath(const QVector<QSharedPointer<PathPoint> >&
     if(path.size() > 0){
         pathWidget->show();
         pathSpaceWidget->show();
-        addPathBtn->setText("Edit Path");
-        addPathBtn->setIcon(QIcon(":/icons/edit.png"));
+        //addPathBtn->setText("Edit Path");
+        //addPathBtn->setIcon(QIcon(":/icons/edit.png"));
         deletePathBtn->show();
         pathWidget->setPath(path);
     }
 }
 
 void EditSelectedRobotWidget::clearPath(){
+    /*
     addPathBtn->setText("Add Path");
     addPathBtn->setIcon(QIcon(":/icons/plus.png"));
     addPathBtn->setIconSize(xs_icon_size);
+    */
     pathWidget->hide();
     pathSpaceWidget->hide();
     deletePathBtn->hide();
@@ -335,7 +360,6 @@ void EditSelectedRobotWidget::assignHome(QAction *action){
     action->setCheckable(true);
     action->setChecked(true);
     QString homeName = action->text();
-    setHome(points->findPointView(homeName));
     homeLabel->setText("Home : " + homeName);
     homeLabel->wordWrap();
     action->setEnabled(false);
@@ -343,11 +367,6 @@ void EditSelectedRobotWidget::assignHome(QAction *action){
 }
 
 void EditSelectedRobotWidget::updateHomeMenu(){
-    if(home && oldHome)
-        qDebug() << "EditSelectedRobotWidget::updateHomeMenu, home is"
-                 << home->getPoint()->getName() << "old home is" << oldHome->getPoint()->getName();
-    else
-        qDebug() << "EditSelectedRobotWidget::updateHomeMenu, no home";
     homeMenu->clear();
     QMapIterator<QString, QSharedPointer<QVector<QSharedPointer<PointView>>>> i(*(points->getGroups()));
     while (i.hasNext()) {
@@ -357,16 +376,6 @@ void EditSelectedRobotWidget::updateHomeMenu(){
                 QMenu *group = homeMenu->addMenu("&" + i.key());
                 for(int j = 0; j < i.value()->count(); j++){
                     group->addAction(i.value()->at(j)->getPoint()->getName());
-
-                    /*
-                    /// if a home exists we tick it in the menu
-                    if(home && home->getPoint() == i.value()->at(j)->getPoint()){    
-                        group->actions().at(j)->setCheckable(true);
-                        group->actions().at(j)->setChecked(true);
-                    }
-                    if(i.value()->at(j)->getPoint()->isHome())
-                        group->actions().at(j)->setEnabled(false);
-                        */
                     if(i.value()->at(j)->getPoint()->isHome()){
                         group->actions().at(j)->setEnabled(false);
                         if(!i.value()->at(j)->getPoint()->getRobotName().compare(robotView->getRobot()->getName())){

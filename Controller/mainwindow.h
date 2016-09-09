@@ -97,6 +97,8 @@ public:
     void serializePaths(void);
     void deserializePaths(void);
     void showHomes();
+    void showHomes(QSharedPointer<Robot> robot);
+    void showSelectedRobotHomeOnly();
 
 signals:
     void sendCommand(QString);
@@ -221,6 +223,7 @@ private slots:
     void editPathSlot(QString groupName, QString pathName);
     void displayPathSlot(QString groupName, QString pathName, bool display);
     void setNewHome(QString homeName);
+    void deleteHome();
 
     /// for menu paths
     void displayGroupPaths();

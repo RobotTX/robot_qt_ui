@@ -316,10 +316,12 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
     /// Some style
 
-    /*setStyleSheet("QWidget {border: 1px solid red}"
+    /*
+     * setStyleSheet("QWidget {border: 1px solid red}"
                   "QPushButton {border: 1px solid green}"
                   "QLabel {border: 1px solid blue}"
-                  "QScrollArea {border: 1px solid yellow}");*/
+                  "QScrollArea {border: 1px solid yellow}");
+*/
 
     this->setAutoFillBackground(true);
 
@@ -692,22 +694,14 @@ void MainWindow::playSelectedRobot(int robotNb){
 
 void MainWindow::viewPathSelectedRobot(int robotNb, bool checked){
     qDebug() << "MainWindow::viewPathSelectedRobot called" << robotNb << checked;
+
     if(checked){
         QSharedPointer<Robot> robot = robots->getRobotsVector().at(robotNb)->getRobot();
         qDebug() << "viewPathSelectedRobot called on" << robot->getName();
         bottomLayout->uncheckViewPathSelectedRobot(robotNb);
-
-        for(int i = 0; i < robot->getPath().size(); i++){
-            qDebug() << i << ":" << robot->getPath().at(i)->getPoint().getName()
-                     << robot->getPath().at(i)->getPoint().getPosition().getX()
-                     << robot->getPath().at(i)->getPoint().getPosition().getY()
-                     << (int) robot->getPath().at(i)->getAction()
-                     << robot->getPath().at(i)->getWaitTime();
-        }
         robotPathPainter->setCurrentPath(robot->getPath());
-        robot->setPath(robotPathPainter->getCurrentPath());
         bottomLayout->updateRobot(robotNb, robots->getRobotsVector().at(robotNb));
-        emit updatePathPainter(GraphicItemState::ROBOT_CREATING_PATH, false);
+        //emit updatePathPainter(GraphicItemState::ROBOT_CREATING_PATH, false);
     } else {
         if(leftMenu->getDisplaySelectedPoint() && leftMenu->getDisplaySelectedPoint()->isVisible() && leftMenu->getDisplaySelectedPoint()->getPointView()->getPoint()->isPath()){
             leftMenu->getDisplaySelectedPoint()->getPointView()->hide();
@@ -723,8 +717,7 @@ void MainWindow::viewPathSelectedRobot(int robotNb, bool checked){
 void MainWindow::editSelectedRobot(RobotView* robotView){
     qDebug() << "MainWindow::editselectedrobot robotview" << robotView->getRobot()->getName();
     /// resets the home
-    editSelectedRobotWidget->setHome(static_cast<QSharedPointer<PointView>> (0));
-    editSelectedRobotWidget->setOldHome(static_cast<QSharedPointer<PointView>> (0));
+    editSelectedRobotWidget->setHome(robotView->getRobot()->getHome());
 
     selectedRobot = robotView;
     robots->setSelected(robotView);
@@ -744,15 +737,13 @@ void MainWindow::editSelectedRobot(RobotView* robotView){
     leftMenu->getReturnButton()->setEnabled(true);
 
     showHomes();
-    /*
-    leftMenu->getReturnButton()->setEnabled(false);
-    leftMenu->getReturnButton()->setToolTip("Please save or discard your modifications before navigating the menu again.");
-    */
+
 }
 
 
 void MainWindow::setSelectedRobot(RobotView* robotView){
-
+    editSelectedRobot(robotView);
+/*
     emit resetPath(GraphicItemState::NO_ROBOT_CREATING_PATH);
     emit resetPath(GraphicItemState::ROBOT_CREATING_PATH);
 
@@ -777,6 +768,7 @@ void MainWindow::setSelectedRobot(RobotView* robotView){
     showHomes();
 
     switchFocus(robotView->getRobot()->getName(), selectedRobotWidget, MainWindow::WidgetType::ROBOT);
+    */
 
 }
 
@@ -794,8 +786,7 @@ void MainWindow::backSelecRobotBtnEvent(){
 }
 
 void MainWindow::editSelecRobotBtnEvent(){
-    qDebug() << "editSelecRobotBtnEv"
-                "ent called";
+    qDebug() << "editSelecRobotBtnEvent called";
     editSelectedRobot(selectedRobot);
 }
 
@@ -906,7 +897,6 @@ void MainWindow::setSelectedRobotNoParent(QAbstractButton *button){
         setSelectedRobot(robots->getRobotViewByName(button->text()));
         editSelectedRobotWidget->setGroupPath(robots->getRobotViewByName(button->text())->getRobot()->getGroupPathName());
         editSelectedRobotWidget->setHome(robots->getRobotsVector().at(robotId)->getRobot()->getHome());
-        editSelectedRobotWidget->setOldHome(robots->getRobotsVector().at(robotId)->getRobot()->getHome());
         editSelectedRobotWidget->setAssignedPath(robots->getRobotViewByName(button->text())->getRobot()->getPathName());
         /// updates the last checked id to the id of the current button / robot
         bottomLayout->setLastCheckedId(robotId);
@@ -923,7 +913,7 @@ void MainWindow::setSelectedRobot(QAbstractButton *button){
     qDebug() << "select a robot in robot group ";
 
     robotsLeftWidget->getActionButtons()->getEditButton()->setEnabled(true);
-    robotsLeftWidget->getActionButtons()->getGoButton()->setEnabled(true);
+    //robotsLeftWidget->getActionButtons()->getGoButton()->setEnabled(true);
     robotsLeftWidget->getActionButtons()->getMapButton()->setEnabled(true);
     RobotView* mySelectedRobot =  robots->getRobotViewByName(((CustomPushButton *)robotsLeftWidget->getBtnGroup()
                                                   ->getBtnGroup()->checkedButton())->text());
@@ -995,8 +985,8 @@ void MainWindow::checkRobotBtnEvent(QString name){
 void MainWindow::cancelEditSelecRobotBtnEvent(){
     qDebug() << "cancelEditSelecRobotBtnEvent called";
     /// resets the name
-    if(editSelectedRobotWidget->getOldHome())
-        editSelectedRobotWidget->getHomeLabel()->setText("Home : " + editSelectedRobotWidget->getOldHome()->getPoint()->getName());
+    if(editSelectedRobotWidget->getHome())
+        editSelectedRobotWidget->getHomeLabel()->setText("Home : " + editSelectedRobotWidget->getHome()->getPoint()->getName());
     else
         editSelectedRobotWidget->getHomeLabel()->setText("Home : ");
     /// if a home has been edited we reset it to its old value which might be a null pointer
@@ -1006,8 +996,8 @@ void MainWindow::cancelEditSelecRobotBtnEvent(){
         editSelectedRobotWidget->getHome()->setPixmap(PointView::PixmapType::NORMAL);
     }
 
-    if(editSelectedRobotWidget->getOldHome())
-        editSelectedRobotWidget->setHome(editSelectedRobotWidget->getOldHome());
+    if(editSelectedRobotWidget->getHome())
+        editSelectedRobotWidget->setHome(editSelectedRobotWidget->getHome());
     else
         editSelectedRobotWidget->setHome(static_cast<QSharedPointer<PointView>> (0));
 
@@ -1018,7 +1008,7 @@ void MainWindow::cancelEditSelecRobotBtnEvent(){
 
     editSelectedRobotWidget->setGroupPath(selectedRobot->getRobot()->getGroupPathName());
     editSelectedRobotWidget->setAssignedPath(selectedRobot->getRobot()->getPathName());
-    editSelectedRobotWidget->setHome(editSelectedRobotWidget->getOldHome());
+    editSelectedRobotWidget->setHome(editSelectedRobotWidget->getHome());
     editSelectedRobotWidget->updatePathsMenu();
     //paths->setVisiblePath("");
     //emit resetPath(GraphicItemState::ROBOT_CREATING_PATH);
@@ -1187,7 +1177,7 @@ void MainWindow::robotSavedEvent(){
         qDebug() << "MainWindow::robotSavedEvent path changed";
         QSharedPointer<Robot> robot = selectedRobot->getRobot();
         QString pathStr = "";
-
+        /// prepares the cmd to send to the robot
         qDebug() << "MainWindow::robotSavedEvent" << robotPathPainter->getCurrentPath().size();
         for(int i = 0; i < robotPathPainter->getCurrentPath().size(); i++){
             QSharedPointer<PathPoint> pathPoint = robotPathPainter->getCurrentPath().at(i);
@@ -1263,8 +1253,7 @@ void MainWindow::robotSavedEvent(){
                     editSelectedRobotWidget->getHome()->setPixmap(PointView::PixmapType::NORMAL);
                 }
 
-                qDebug() << "about to set old home to be" << editSelectedRobotWidget->getHome()->getPoint()->getName();
-                editSelectedRobotWidget->setOldHome(editSelectedRobotWidget->getHome());
+                editSelectedRobotWidget->setHome(editSelectedRobotWidget->getHome());
 
                 editSelectedRobotWidget->updateHomeMenu();
 
@@ -1600,6 +1589,9 @@ void MainWindow::showAllHomes(void){
     qDebug() << "MainWindow::showAllHomes called after editselectrobot went hidden";
     /// shows the home of each robot
     points->setPixmapAll(PointView::PixmapType::NORMAL);
+    selectedRobot = 0;
+    emit updatePathPainter(GraphicItemState::ROBOT_CREATING_PATH, false);
+    bottomLayout->uncheckRobots();
 }
 
 void MainWindow::goHomeBtnEvent(){
@@ -1951,36 +1943,45 @@ void MainWindow::replacePoint(int id, QString name){
 }
 
 void MainWindow::setNewHome(QString homeName){
-    qDebug() << "mainWindow::setNewHome called" << homeName << selectedRobot->getRobot()->getName();
+
+    if(editSelectedRobotWidget->getHome()){
+        editSelectedRobotWidget->getHome()->getPoint()->setHome(Point::PERM);
+        editSelectedRobotWidget->getHome()->setPixmap(PointView::PixmapType::NORMAL);
+    }
+
     /// retrieves the pointview which name has been clicked in the menu
     QSharedPointer<PointView> home = points->findPointView(homeName);
-    if(!home) qDebug() << "could not find home" << homeName;
-    /// resets the other pixmaps
-    editSelectedRobotWidget->getHome()->getPoint()->setHome(Point::PERM);
-    editSelectedRobotWidget->getHome()->setPixmap(PointView::PixmapType::NORMAL);
-    //selectedRobot->getRobot()->setHome(points->findPointView(homeName));
-    //selectedRobot->getRobot()->getHome()->setPixmap(PointView::PixmapType::SELECTED, selectedRobot);
-    //selectedRobot->getRobot()->getHome()->show();
-
-    points->findPointView(homeName)->getPoint()->setHome(Point::HOME);
-    points->findPointView(homeName)->setPixmap(PointView::PixmapType::SELECTED);
-    points->findPointView(homeName)->show();
-    if(editSelectedRobotWidget->getOldHome()){
-        if(editSelectedRobotWidget->getHome())
-            qDebug() << "old" << editSelectedRobotWidget->getOldHome()->getPoint()->getName() <<
-                    "current" << editSelectedRobotWidget->getHome()->getPoint()->getName();
-        else
-            qDebug() << "old" << editSelectedRobotWidget->getOldHome()->getPoint()->getName() << "no current home";
-    }
-    else {
-        if(editSelectedRobotWidget->getHome())
-            qDebug() << "no old home, current" << editSelectedRobotWidget->getHome()->getPoint()->getName();
-        else
-            qDebug() << "no home at all";
-    }
-
     editSelectedRobotWidget->setHome(home);
 
+    /// associates the robot to the point
+    home->getPoint()->setRobotName(selectedRobot->getRobot()->getName());
+
+    home->getPoint()->setHome(Point::HOME);
+    home->setPixmap(PointView::PixmapType::SELECTED);
+    home->show();
+
+    selectedRobot->getRobot()->setHome(home);
+
+
+
+    editSelectedRobotWidget->updateHomeMenu();
+
+    /// so that if the new home if part of the path it displays the path correctly (not a house on top of a normal point)
+    /// this call makes the home
+    robotPathPainter->setCurrentPath(selectedRobot->getRobot()->getPath());
+    /*
+
+
+    showSelectedRobotHomeOnly();*/
+}
+
+void MainWindow::deleteHome(){
+    qDebug() << "MainWindow::deleteHome called";
+    editSelectedRobotWidget->getHome()->getPoint()->setHome(Point::PERM);
+    editSelectedRobotWidget->getHome()->setPixmap(PointView::PixmapType::NORMAL);
+    editSelectedRobotWidget->setHome(QSharedPointer<PointView> ());
+    selectedRobot->getRobot()->setHome(QSharedPointer<PointView> ());
+    editSelectedRobotWidget->getHomeLabel()->setText("Home : ");
     editSelectedRobotWidget->updateHomeMenu();
 }
 
@@ -4563,10 +4564,23 @@ void MainWindow::displayAssignedPath(QString groupName, QString pathName){
     paths->setVisiblePath(pathName);
     bool foundFlag(true);
     //if(robotPathPainter->getCurrentPath().size() > 0)
-        robotPathPainter->setCurrentPath(paths->getPath(groupName, pathName, foundFlag));
+    robotPathPainter->setCurrentPath(paths->getPath(groupName, pathName, foundFlag));
     editSelectedRobotWidget->updatePathsMenu();
     assert(foundFlag);
     robotPathCreationWidget->setCurrentGroupName(groupName);
+
+
+    selectedRobot->getRobot()->setPath(robotPathPainter->getCurrentPath());
+    selectedRobot->getRobot()->setGroupPathName(editSelectedRobotWidget->getGroupPathName());
+    selectedRobot->getRobot()->setPathName(editSelectedRobotWidget->getPathName());
+    int id = robots->getRobotId(selectedRobot->getRobot()->getName());
+    bottomLayout->updateRobot(id, selectedRobot);
+    if(robotPathPainter->getCurrentPath().size() > 0){
+        bottomLayout->getViewPathRobotBtnGroup()->button(id)->setChecked(true);
+        viewPathSelectedRobot(id, true);
+    }
+
+    robotPathPainter->setCurrentPath(selectedRobot->getRobot()->getPath());
 
     //setTemporaryMessageTop(TEXT_COLOR_SUCCESS, "You have successfully assigned the path \"" + pathName + "\" to the robot " + selectedRobot->getRobot()->getName(), 2500);
     //selectedRobot->getRobot()->setPath(robotPathPainter->getCurrentPath());
@@ -4771,6 +4785,48 @@ void MainWindow::showHomes(){
                         i.value()->at(j)->setPixmap(PointView::PixmapType::NORMAL);
                         i.value()->at(j)->getPoint()->setHome(Point::HOME);
                     }
+                }
+            }
+        }
+    }
+}
+
+void MainWindow::showHomes(QSharedPointer<Robot> robot){
+    QMapIterator<QString, QSharedPointer<QVector<QSharedPointer<PointView>>>> i(*(points->getGroups()));
+    while (i.hasNext()) {
+        i.next();
+        if(i.value() && i.key().compare(PATH_GROUP_NAME) != 0 && i.key().compare(TMP_GROUP_NAME)){
+            for(int j = 0; j < i.value()->count(); j++){
+                qDebug() << i.value()->at(j)->getPoint()->getRobotName();
+                if(i.value()->at(j)->getPoint()->isHome()){
+                    if(i.value()->at(j)->getPoint()->getRobotName().compare(robot->getName())){
+                        /// to make it look like a normal point we alter its type temporarily
+                        i.value()->at(j)->getPoint()->setHome(Point::PERM);
+                        i.value()->at(j)->setPixmap(PointView::PixmapType::NORMAL);
+                        i.value()->at(j)->getPoint()->setHome(Point::HOME);
+                    } else
+                        qDebug() << "robot's home" << robot->getName() << i.value()->at(j)->getPoint()->getName();
+                }
+            }
+        }
+    }
+}
+
+void MainWindow::showSelectedRobotHomeOnly(){
+    QMapIterator<QString, QSharedPointer<QVector<QSharedPointer<PointView>>>> i(*(points->getGroups()));
+    while (i.hasNext()) {
+        i.next();
+        if(i.value() && i.key().compare(PATH_GROUP_NAME) != 0 && i.key().compare(TMP_GROUP_NAME)){
+            for(int j = 0; j < i.value()->count(); j++){
+                qDebug() << i.value()->at(j)->getPoint()->getRobotName();
+                if(i.value()->at(j)->getPoint()->isHome()){
+                    if(i.value()->at(j)->getPoint()->getRobotName().compare(selectedRobot->getRobot()->getName())){
+                        /// to make it look like a normal point we alter its type temporarily
+                        i.value()->at(j)->getPoint()->setHome(Point::PERM);
+                        i.value()->at(j)->setPixmap(PointView::PixmapType::NORMAL);
+                        i.value()->at(j)->getPoint()->setHome(Point::HOME);
+                    } else
+                        qDebug() << "robot's home" << selectedRobot->getRobot()->getName() << i.value()->at(j)->getPoint()->getName();
                 }
             }
         }
