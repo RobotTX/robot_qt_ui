@@ -45,7 +45,7 @@ public:
     GraphicItemState getState(void) const { return state; }
     void setPos(const qreal x, const qreal y);
     void setAddedToPath(const bool _addedToPath) { addedToPath = _addedToPath; }
-    void setPixmap(const PixmapType pixType, RobotView *selectedRobot = 0, const bool alwaysShowHome = true);
+    void setPixmap(const PixmapType pixType, RobotView *selectedRobot = 0);
     //void setPixmap(const QPixmap &pixmap);
     void setPoint(QSharedPointer<Point> const& _point) { point = _point; }
     QSharedPointer<Point> getPoint(void) const { return point; }

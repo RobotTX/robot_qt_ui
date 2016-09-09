@@ -154,7 +154,7 @@ void PointView::updatePos(void){
            y - pixmap().height()*SCALE);
 }
 
-void PointView::setPixmap(const PixmapType pixType, RobotView* _selectedRobot, const bool alwaysShowHome){
+void PointView::setPixmap(const PixmapType pixType, RobotView* _selectedRobot){
     //qDebug() << "PointView::setPixmap called" << getPoint()->getName() << pixType;
 
     lastType = type;
@@ -189,7 +189,7 @@ void PointView::setPixmap(const PixmapType pixType, RobotView* _selectedRobot, c
 
     QPixmap pixmap2;
     if(((_selectedRobot && _selectedRobot->getRobot()->getHome() && _selectedRobot->getRobot()->getHome()->getPoint()->getName().compare(point->getName()) == 0)
-            || (_selectedRobot && point->isHome()))){
+            || (!_selectedRobot && point->isHome()))){
         switch(pixType){
             case NORMAL:
                 pixmap2 = QPixmap(PIXMAP_HOME_NORMAL);

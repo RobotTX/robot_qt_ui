@@ -329,7 +329,7 @@ QString Points::getGroupNameFromPointName(const QString pointName) const{
     return "";
 }
 
-void Points::setPixmapAll(const PointView::PixmapType type, RobotView* selectedRobot, const bool alwaysShowHome){
+void Points::setPixmapAll(const PointView::PixmapType type, RobotView* selectedRobot){
     QMapIterator<QString, QSharedPointer<QVector<QSharedPointer<PointView>>>> i(*groups);
     //qDebug() << "Points::setPixmapAll with PixmapType called";
     while(i.hasNext()) {
@@ -338,7 +338,7 @@ void Points::setPixmapAll(const PointView::PixmapType type, RobotView* selectedR
             for(int j = 0; j < i.value()->count(); j++){
                 if(i.value()->at(j)->getPoint()->isHome())
                     qDebug() << i.value()->at(j)->getPoint()->getName();
-                i.value()->at(j)->setPixmap(type, selectedRobot, alwaysShowHome);
+                i.value()->at(j)->setPixmap(type, selectedRobot);
             }
         }
     }

@@ -277,7 +277,7 @@ public:
      * @param selectedRobot
      * Set the pixmap of all pointViews
      */
-    void setPixmapAll(const PointView::PixmapType type, RobotView *selectedRobot = 0, const bool alwaysShowHome = true);
+    void setPixmapAll(const PointView::PixmapType type, RobotView *selectedRobot = 0);
 
     /**
      * @brief createPoint
