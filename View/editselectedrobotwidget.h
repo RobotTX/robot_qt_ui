@@ -49,6 +49,8 @@ public:
     void setGroupPath(const QString group) { groupAssignedPath = group; }
     QString getPathName(void) { return assignedPath; }
     QString getGroupPathName(void) { return groupAssignedPath; }
+    CustomPushButton* getDeleteHomeBtn(void) { return deleteHomeBtn; }
+    CustomPushButton* getDeletePathBtn(void) { return deletePathBtn; }
 
     void setRobots(QSharedPointer<Robots> const _robots) { robots = _robots; }
     void setEditing(bool const _editing) { editing = _editing; }
@@ -134,7 +136,6 @@ private:
     CustomPushButton* scanBtn;
     QProgressBar* batteryLevel;
     CustomPushButton* deleteHomeBtn;
-
 
 };
 

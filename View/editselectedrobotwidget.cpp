@@ -109,6 +109,7 @@ EditSelectedRobotWidget::EditSelectedRobotWidget(QWidget* parent, MainWindow* ma
     deleteHomeBtn = new CustomPushButton(QIcon(":/icons/empty.png"), "Delete home", this);
     deleteHomeBtn->setToolTip("Clicking this button will not delete the point but this point won't be this robot's home anymore");
     deleteHomeBtn->setIconSize(s_icon_size);
+    deleteHomeBtn->hide();
     connect(deleteHomeBtn, SIGNAL(clicked()), mainWindow, SLOT(deleteHome()));
     inLayout->addWidget(deleteHomeBtn);
 

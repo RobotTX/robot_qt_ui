@@ -190,6 +190,7 @@ void PointView::setPixmap(const PixmapType pixType, RobotView* _selectedRobot){
     QPixmap pixmap2;
     if(((_selectedRobot && _selectedRobot->getRobot()->getHome() && _selectedRobot->getRobot()->getHome()->getPoint()->getName().compare(point->getName()) == 0)
             || (!_selectedRobot && point->isHome()))){
+        qDebug() << "pixmap home set for" << point->getName();
         switch(pixType){
             case NORMAL:
                 pixmap2 = QPixmap(PIXMAP_HOME_NORMAL);
