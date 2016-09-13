@@ -7,10 +7,13 @@
 #include "Controller/sendnewmapthread.h"
 #include <QMainWindow>
 #include <iostream>
+#include <QFile>
 
-Robot::Robot(const QString _name, const QString _ip) : name(_name), ip(_ip), position(Position()),
+
+Robot::Robot(const QSharedPointer<Paths>& _paths, const QString _name, const QString _ip) : paths(_paths), name(_name), ip(_ip), position(Position()),
     orientation(0), batteryLevel(100), wifi(""), home(NULL), playingPath(0), mapId(), sendingMap(false), pathName(""), groupName("")
 {
+
     //qDebug() << "Robot" << name << "at ip" << ip << " launching its cmd thread";
 /*
     cmdThread = new CmdRobotThread(ip, PORT_CMD, PORT_MAP_METADATA, PORT_ROBOT_POS, PORT_MAP, name, parent);
@@ -150,6 +153,16 @@ void Robot::ping(){
 
 QDataStream& operator>>(QDataStream& in, Robot& robot){
     qDebug() << "Robot operator >> called";
+    QString _pathName("");
+    QString _groupName("");
+    in >> _pathName >> _groupName;
+    qDebug() << "assigning path" << _pathName << _groupName << "from file";
+    robot.setPathName(_pathName);
+    robot.setGroupPathName(_groupName);
+    bool flag(false);
+    robot.setPath(robot.getPaths()->getPath(_groupName, _pathName, flag));
+    return in;
+    /*
     /// the size of the vector has to be serialized too in order to deserialize the object correctly
     qint32 size;
     in >> size;
@@ -162,15 +175,21 @@ QDataStream& operator>>(QDataStream& in, Robot& robot){
     }
     robot.setPath(_path);
     return in;
+    */
 }
 
 QDataStream& operator<<(QDataStream& out, const Robot& robot){
+    qDebug() << "saving path" << robot.getPathName() << robot.getGroupPathName() << "associated to robot" << robot.getName();
+    out << robot.getPathName() << robot.getGroupPathName();
+    return out;
+    /*
     qDebug() << "robot operator << called with path size" << robot.getPath().size();
     qint32 pathSize(robot.getPath().size());
     out << pathSize;
     for(int i = 0; i < pathSize; i++)
         out << *(robot.getPath().at(i));
     return out;
+    */
 }
 
 void Robot::clearPath(){

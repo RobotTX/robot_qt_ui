@@ -16,6 +16,7 @@ class SendNewMapThread;
 #include <QUuid>
 #include <QDataStream>
 #include "View/pointview.h"
+#include "Model/paths.h"
 
 #define PORT_MAP_METADATA 4000
 #define PORT_ROBOT_POS 4001
@@ -31,7 +32,7 @@ class SendNewMapThread;
 class Robot : public QObject{
     Q_OBJECT
 public:
-    Robot(const QString name, const QString addressIp);
+    Robot(const QSharedPointer<Paths> &_paths, const QString name, const QString addressIp);
     Robot();
     ~Robot();
 
@@ -47,6 +48,7 @@ public:
     bool isPlayingPath(void) const { return playingPath; }
     QString getPathName(void) const { return pathName; }
     QString getGroupPathName(void) const { return groupName; }
+    QSharedPointer<Paths> getPaths(void) const { return paths; }
 
     /// Setters
     void setPlayingPath(const bool playPath) { playingPath = playPath; }
@@ -125,6 +127,7 @@ private slots:
     void doneSendingNewMapSlot();
 
 private:
+    QSharedPointer<Paths> paths;
     QString name;
     QString ip;
     Position position;

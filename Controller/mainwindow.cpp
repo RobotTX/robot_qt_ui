@@ -381,7 +381,7 @@ void MainWindow::initializeRobots(){
     QString robotIp1 = "localhost";
     QString robotName1 = tmpMap.value(robotIp1, "Roboty");
 
-    QSharedPointer<Robot> robot1(new Robot(robotName1, robotIp1));
+    QSharedPointer<Robot> robot1(new Robot(paths, robotName1, robotIp1));
     robot1->setWifi("Swaghetti Yolognaise");
     RobotView* robotView1 = new RobotView(robot1, mapPixmapItem);
 
@@ -398,9 +398,11 @@ void MainWindow::initializeRobots(){
     robot1->setGroupPathName("first group");
     */
     bool flag(false);
+    /*
     robot1->setPath(paths->getPath("wednesday", "wed path", flag));
     robot1->setGroupPathName("wednesday");
     robot1->setPathName("wed path");
+    */
     robotView1->setLastStage(2);
 
 
@@ -412,7 +414,7 @@ void MainWindow::initializeRobots(){
 
     QString robotIp2 = "192.168.4.12";
     QString robotName2 = tmpMap.value(robotIp2, "Roboto");
-    QSharedPointer<Robot> robot2(new Robot(robotName2, robotIp2));
+    QSharedPointer<Robot> robot2(new Robot(paths, robotName2, robotIp2));
     robot2->setWifi("Swaghetti Yolognaise");
     RobotView* robotView2 = new RobotView(robot2, mapPixmapItem);
     connect(robotView2, SIGNAL(setSelectedSignal(RobotView*)), this, SLOT(setSelectedRobot(RobotView*)));
@@ -423,7 +425,7 @@ void MainWindow::initializeRobots(){
 
     QString robotIp3 = "192.168.4.13";
     QString robotName3 = tmpMap.value(robotIp3, "Robota");
-    QSharedPointer<Robot> robot3(new Robot(robotName3, robotIp3));
+    QSharedPointer<Robot> robot3(new Robot(paths, robotName3, robotIp3));
     robot3->setWifi("Swaghetti Yolognaise");
     RobotView* robotView3 = new RobotView(robot3, mapPixmapItem);
     connect(robotView3, SIGNAL(setSelectedSignal(RobotView*)), this, SLOT(setSelectedRobot(RobotView*)));
@@ -435,6 +437,14 @@ void MainWindow::initializeRobots(){
     robots->setRobotsNameMap(tmpMap);
     out << robots->getRobotsNameMap();
     fileWrite.close();
+
+    for(int i = 0; i < robots->getRobotsVector().size(); i++){
+        QFile robotPathFile("/home/joan/Gobot/gobot-software/robots_paths/" + robots->getRobotsVector().at(i)->getRobot()->getName() + "_path.dat");
+        robotPathFile.open(QIODevice::ReadOnly);
+        QDataStream in(&robotPathFile);
+        in >> *(robots->getRobotsVector().at(i)->getRobot());
+        robotPathFile.close();
+    }
 
 
     //qDebug() << "RobotsNameMap on init" << robots->getRobotsNameMap();
@@ -733,18 +743,18 @@ void MainWindow::editSelectedRobot(RobotView* robotView){
 
     }
 
-    selectedRobot = robotView;
     robots->setSelected(robotView);
 
     hideAllWidgets();
-    setEnableAll(false, GraphicItemState::NO_EVENT);
+
+    selectedRobot = robotView;
+
+    //setEnableAll(false, GraphicItemState::NO_EVENT);
 
     editSelectedRobotWidget->setSelectedRobot(selectedRobot);
     robotPathPainter->setPathDeleted(false);
 
     viewPathSelectedRobot(robots->getRobotId(robotView->getRobot()->getName()), true);
-
-    editSelectedRobotWidget->show();
     switchFocus(selectedRobot->getRobot()->getName(), editSelectedRobotWidget, MainWindow::WidgetType::ROBOT);
 
     /// it was disable by setEnableAll
@@ -754,6 +764,8 @@ void MainWindow::editSelectedRobot(RobotView* robotView){
     robotPathPainter->setCurrentPath(robotView->getRobot()->getPath());
 
     showHomes();
+    leftMenu->show();
+    editSelectedRobotWidget->show();
 
 }
 
@@ -912,6 +924,7 @@ void MainWindow::setSelectedRobotNoParent(QAbstractButton *button){
         resetFocus();
         /// updates the robot menu on the left to fit this particular robot's information
         setSelectedRobot(robots->getRobotViewByName(button->text()));
+
         editSelectedRobotWidget->setGroupPath(robots->getRobotViewByName(button->text())->getRobot()->getGroupPathName());
         editSelectedRobotWidget->setHome(robots->getRobotsVector().at(robotId)->getRobot()->getHome());
         editSelectedRobotWidget->setAssignedPath(robots->getRobotViewByName(button->text())->getRobot()->getPathName());
@@ -920,6 +933,7 @@ void MainWindow::setSelectedRobotNoParent(QAbstractButton *button){
         editSelectedRobotWidget->show();
         /// show only the home of the selected robot
         showHomes();
+
     }
 }
 
@@ -1656,7 +1670,7 @@ void MainWindow::robotIsAliveSlot(QString hostname, QString ip, QString mapId, Q
     } else {
         qDebug() << "Robot" << hostname << "at ip" << ip << "just connected and has the map id :" << mapId;
 
-        QSharedPointer<Robot> robot(new Robot(hostname, ip));
+        QSharedPointer<Robot> robot(new Robot(paths, hostname, ip));
         robot->setWifi(ssid);
         rv = new RobotView(robot, mapPixmapItem);
         connect(rv, SIGNAL(setSelectedSignal(RobotView*)), this, SLOT(setSelectedRobot(RobotView*)));
@@ -4590,7 +4604,6 @@ void MainWindow::displayAssignedPath(QString groupName, QString pathName){
     assert(foundFlag);
     robotPathCreationWidget->setCurrentGroupName(groupName);
 
-
     selectedRobot->getRobot()->setPath(robotPathPainter->getCurrentPath());
     selectedRobot->getRobot()->setGroupPathName(editSelectedRobotWidget->getGroupPathName());
     selectedRobot->getRobot()->setPathName(editSelectedRobotWidget->getPathName());
@@ -4602,6 +4615,14 @@ void MainWindow::displayAssignedPath(QString groupName, QString pathName){
     }
 
     robotPathPainter->setCurrentPath(selectedRobot->getRobot()->getPath());
+
+    QFile robotPathFile("/home/joan/Gobot/gobot-software/robots_paths/" + selectedRobot->getRobot()->getName() + "_path.dat");
+    robotPathFile.resize(0);
+    robotPathFile.open(QIODevice::WriteOnly);
+    QDataStream out(&robotPathFile);
+    out << *selectedRobot->getRobot();
+    robotPathFile.close();
+
 
     //setTemporaryMessageTop(TEXT_COLOR_SUCCESS, "You have successfully assigned the path \"" + pathName + "\" to the robot " + selectedRobot->getRobot()->getName(), 2500);
     //selectedRobot->getRobot()->setPath(robotPathPainter->getCurrentPath());
@@ -4743,6 +4764,13 @@ void MainWindow::clearNewMap(){
 
     /// Update the left menu displaying the list of groups and buttons
     pointsLeftWidget->updateGroupButtonGroup();
+
+    for(int i = 0; i < robots->getRobotsVector().size(); i++){
+        robots->getRobotsVector().at(i)->getRobot()->setPathName("");
+        robots->getRobotsVector().at(i)->getRobot()->setGroupPathName("");
+        QSharedPointer<Paths::Path> path;
+        robots->getRobotsVector().at(i)->getRobot()->setPath(*path);
+    }
 }
 
 void MainWindow::delay(const int ms) const{
@@ -4825,8 +4853,9 @@ void MainWindow::showHomes(QSharedPointer<Robot> robot){
                         i.value()->at(j)->getPoint()->setHome(Point::PERM);
                         i.value()->at(j)->setPixmap(PointView::PixmapType::NORMAL);
                         i.value()->at(j)->getPoint()->setHome(Point::HOME);
-                    } else
-                        qDebug() << "robot's home" << robot->getName() << i.value()->at(j)->getPoint()->getName();
+                    }
+                    //} else
+                        //qDebug() << "robot's home" << robot->getName() << i.value()->at(j)->getPoint()->getName();
                 }
             }
         }
