@@ -749,7 +749,8 @@ void MainWindow::editSelectedRobot(RobotView* robotView){
 
     selectedRobot = robotView;
 
-    //setEnableAll(false, GraphicItemState::NO_EVENT);
+    editSelectedRobotWidget->setAssignedPath(selectedRobot->getRobot()->getPathName());
+    editSelectedRobotWidget->setGroupPath(selectedRobot->getRobot()->getGroupPathName());
 
     editSelectedRobotWidget->setSelectedRobot(selectedRobot);
     robotPathPainter->setPathDeleted(false);
@@ -766,7 +767,14 @@ void MainWindow::editSelectedRobot(RobotView* robotView){
     showHomes();
     leftMenu->show();
     editSelectedRobotWidget->show();
-
+    /// we uncheck the last robot if such robot exists
+    if(bottomLayout->getLastCheckedId() != -1){
+        bottomLayout->getViewPathRobotBtnGroup()->button(bottomLayout->getLastCheckedId())->setChecked(false);
+        bottomLayout->getRobotBtnGroup()->button(bottomLayout->getLastCheckedId())->setChecked(false);
+    }
+    if(selectedRobot->getRobot()->getPath().size() > 0)
+        bottomLayout->getViewPathRobotBtnGroup()->button(robots->getRobotId(robotView->getRobot()->getName()))->setChecked(true);
+    bottomLayout->getRobotBtnGroup()->button(robots->getRobotId(robotView->getRobot()->getName()))->setChecked(true);
 }
 
 
@@ -878,19 +886,31 @@ void MainWindow::deletePathSelecRobotBtnEvent(){
     case QMessageBox::Cancel:
         break;
     case QMessageBox::Ok:
+    {
         paths->setVisiblePath("");
         emit resetPath(GraphicItemState::ROBOT_CREATING_PATH);
         emit resetPath(GraphicItemState::NO_ROBOT_CREATING_PATH);
         emit resetPathCreationWidget(GraphicItemState::ROBOT_CREATING_PATH);
+        selectedRobot->getRobot()->clearPath();
         editSelectedRobotWidget->setPathChanged(true);
         editSelectedRobotWidget->clearPath();
         bottomLayout->uncheckAll();
-        robotPathPainter->setPathDeleted(true);/*
+        robotPathPainter->setPathDeleted(true);
         /// to uncheck the previously checked path
         editSelectedRobotWidget->updatePathsMenu();
-        */
+        editSelectedRobotWidget->getPathWidget()->hide();
+        bottomLayout->updateRobot(robots->getRobotId(selectedRobot->getRobot()->getName()), selectedRobot);
+        selectedRobot->getRobot()->setPathName("");
+        selectedRobot->getRobot()->setGroupPathName("");
+        /// serializes the new path (which is actually an empty path)
+        QFile robotPathFile("/home/joan/Gobot/gobot-software/robots_paths/" + selectedRobot->getRobot()->getName() + "_path.dat");
+        robotPathFile.resize(0);
+        robotPathFile.open(QIODevice::WriteOnly);
+        QDataStream out(&robotPathFile);
+        out << *(selectedRobot->getRobot());
         setTemporaryMessageTop(TEXT_COLOR_SUCCESS, "You have successfully deleted the path of the robot " + selectedRobot->getRobot()->getName(), 2500);
         break;
+    }
     default:
         qDebug() << "MainWindow::deletePathSelecRobotBtnEvent you should never reach this point, you probably forgot to implement the behavior for" << answer;
     }

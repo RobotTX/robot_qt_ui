@@ -282,6 +282,11 @@ void EditSelectedRobotWidget::showEvent(QShowEvent *event){
     emit showEditSelectedRobotWidget();
     updatePathsMenu();
     updateHomeMenu();
+    pathWidget->setPath(robotView->getRobot()->getPath());
+    if(robotView->getRobot()->getPath().size() < 1)
+        pathWidget->hide();
+    else
+        pathWidget->show();
     QWidget::showEvent(event);
 }
 
@@ -324,7 +329,7 @@ void EditSelectedRobotWidget::updatePathsMenu(){
             it_paths.next();
             if(it_paths.value()){
                 group->addAction(it_paths.key());
-                if(!assignedPath.compare(it_paths.key())){
+                if(!assignedPath.compare(it_paths.key()) && !groupAssignedPath.compare(i.key())){
                     group->actions().last()->setCheckable(true);
                     group->actions().last()->setChecked(true);
                 }

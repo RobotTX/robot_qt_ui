@@ -14,3 +14,4 @@ QMAKE_DEFAULT_LIBDIRS = \
     /usr/lib \
     /lib/x86_64-linux-gnu \
     /lib
+QMAKE_LICHECK_TIMESTAMP = "Tue Sep 13"
