@@ -16,6 +16,7 @@ PointView::PointView(const QSharedPointer<Point> &_point, QGraphicsItem *parent)
     setAcceptHoverEvents(true);
     setPos(point->getPosition().getX(),
            point->getPosition().getY());
+
     setToolTip(point->getName());
 
     addedToPath = false;
@@ -97,7 +98,7 @@ void PointView::mouseMoveEvent(QGraphicsSceneMouseEvent *event){
         } else if(state == GraphicItemState::EDITING_PERM){
             emit editedPointPositionChanged(x, y);
         } else if(state == GraphicItemState::EDITING_HOME){
-            if(!point->getName().compare("tmpPoint")){
+            if(!point->getName().compare(TMP_POINT_NAME)){
                 emit editedHomePositionChanged(x, y, point->getName());
                 qDebug() << point->getName() << "being dragged";
             }
@@ -114,9 +115,9 @@ void PointView::mouseReleaseEvent(QGraphicsSceneMouseEvent *event){
 }
 
 void PointView::hoverEnterEvent(QGraphicsSceneHoverEvent * /* unused */){
-    if(point->getName().compare("tmpPoint"))
+    if(point->getName().compare(TMP_POINT_NAME)){
         setToolTip(point->getName());
-    else
+    } else
         setToolTip("This point is only temporary,\nto save it permanently click a valid spot\non the map and click the \"+\" button");
     setPixmap(PointView::PixmapType::HOVER, selectedRobot);
     //qDebug() << "hoverEnterEvent : " << lastPixmap
@@ -247,4 +248,19 @@ void PointView::setPixmap(const PixmapType pixType, RobotView* _selectedRobot){
     }
     QGraphicsPixmapItem::setPixmap(pixmap2);
     updatePos();
+}
+
+
+void PointView::setToolTip(const QString &toolTip){
+    QString name = toolTip;
+    if(name.indexOf(PATH_POINT_NAME) == 0){
+        name.remove(PATH_POINT_NAME);
+        if(name.toInt()){
+            QGraphicsPixmapItem::setToolTip("Point number " + name);
+        } else {
+            QGraphicsPixmapItem::setToolTip(toolTip);
+        }
+    } else {
+        QGraphicsPixmapItem::setToolTip(toolTip);
+    }
 }
