@@ -27,3 +27,11 @@ void RobotBtnGroup::resizeEvent(QResizeEvent *event){
     setMaximumWidth(maxWidth);
     QWidget::resizeEvent(event);
 }
+
+void RobotBtnGroup::uncheck(){
+    /// little trick to uncheck all buttons because the class doesn't provide a function to do it
+    btnGroup->setExclusive(false);
+    if(btnGroup->checkedButton())
+        btnGroup->checkedButton()->setChecked(false);
+    btnGroup->setExclusive(true);
+}

@@ -1,6 +1,5 @@
 #include "robotsleftwidget.h"
 #include "Model/robots.h"
-#include "View/robotbtngroup.h"
 #include "View/customscrollarea.h"
 #include "View/spacewidget.h"
 #include <QVBoxLayout>
@@ -9,7 +8,9 @@
 #include <QDebug>
 #include "View/custompushbutton.h"
 
-RobotsLeftWidget::RobotsLeftWidget(QWidget* parent, MainWindow* _mainWindow, QSharedPointer<Robots> const &_robots):QWidget(parent), mainWindow(_mainWindow){
+RobotsLeftWidget::RobotsLeftWidget(QWidget* parent, MainWindow* _mainWindow, QSharedPointer<Robots> const &_robots):
+    QWidget(parent), mainWindow(_mainWindow), lastCheckedId(-1)
+{
 
     layout = new QVBoxLayout(this);
     scrollArea = new CustomScrollArea(this);
@@ -30,12 +31,6 @@ RobotsLeftWidget::RobotsLeftWidget(QWidget* parent, MainWindow* _mainWindow, QSh
     layout->addWidget(scrollArea);
     layout->setAlignment(Qt::AlignTop);
     layout->setContentsMargins(0,0,0,0);
-}
-
-QString RobotsLeftWidget::getSelectedRobotName(){
-    qDebug() << "check for name";
-
-    return btnGroup->getBtnGroup()->checkedButton()->text();
 }
 
 void RobotsLeftWidget::setRobots(QSharedPointer<Robots> const &_robots){

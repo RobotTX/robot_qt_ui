@@ -981,23 +981,33 @@ void MainWindow::setSelectedRobot(QAbstractButton *button){
     Q_UNUSED(button)
     qDebug() << "select a robot in robot group ";
 
-    robotsLeftWidget->getActionButtons()->getEditButton()->setEnabled(true);
-    //robotsLeftWidget->getActionButtons()->getGoButton()->setEnabled(true);
-    robotsLeftWidget->getActionButtons()->getMapButton()->setEnabled(true);
-    RobotView* mySelectedRobot =  robots->getRobotViewByName(((CustomPushButton *)robotsLeftWidget->getBtnGroup()
-                                                  ->getBtnGroup()->checkedButton())->text());
-    editSelectedRobotWidget->setGroupPath(mySelectedRobot->getRobot()->getGroupPathName());
-    editSelectedRobotWidget->setAssignedPath(mySelectedRobot->getRobot()->getPathName());
+    if(robotsLeftWidget->getLastCheckedId() != robotsLeftWidget->getBtnGroup()->getBtnGroup()->id(button)){
+        robotsLeftWidget->setLastCheckedId(robotsLeftWidget->getBtnGroup()->getBtnGroup()->id(button));
+        robotsLeftWidget->getActionButtons()->getEditButton()->setEnabled(true);
+        robotsLeftWidget->getActionButtons()->getMapButton()->setEnabled(true);
+        RobotView* mySelectedRobot = robots->getRobotViewByName(static_cast<CustomPushButton *> (robotsLeftWidget->getBtnGroup()->getBtnGroup()->checkedButton())->text());
+        editSelectedRobotWidget->setGroupPath(mySelectedRobot->getRobot()->getGroupPathName());
+        editSelectedRobotWidget->setAssignedPath(mySelectedRobot->getRobot()->getPathName());
 
-    const int robotId = robotsLeftWidget->getBtnGroup()->getBtnGroup()->id(button);
-    robotsLeftWidget->getActionButtons()->getMapButton()->setChecked(mySelectedRobot->isVisible());
-    /// to show the selected robot with a different color
-    robots->deselect();
-    robots->getRobotsVector().at(robotId)->setSelected(true);
-    /// to select the robot in the bottom layout accordingly
-    bottomLayout->uncheckRobots();
-    bottomLayout->getRobotBtnGroup()->button(robotId)->setChecked(true);
-    bottomLayout->setLastCheckedId(robotId);
+        const int robotId = robotsLeftWidget->getBtnGroup()->getBtnGroup()->id(button);
+        robotsLeftWidget->getActionButtons()->getMapButton()->setChecked(mySelectedRobot->isVisible());
+        /// to show the selected robot with a different color
+        robots->deselect();
+        robots->getRobotsVector().at(robotId)->setSelected(true);
+        /// to select the robot in the bottom layout accordingly
+        bottomLayout->uncheckRobots();
+        bottomLayout->getRobotBtnGroup()->button(robotId)->setChecked(true);
+        bottomLayout->setLastCheckedId(robotId);
+    } else {
+        robotsLeftWidget->getBtnGroup()->uncheck();
+        robotsLeftWidget->getActionButtons()->getMapButton()->setChecked(false);
+        robotsLeftWidget->setLastCheckedId(-1);
+        robots->deselect();
+        bottomLayout->uncheckRobots();
+        bottomLayout->setLastCheckedId(-1);
+        robotsLeftWidget->getActionButtons()->getEditButton()->setEnabled(false);
+        robotsLeftWidget->getActionButtons()->getMapButton()->setEnabled(false);
+    }
 }
 
 void MainWindow::selectViewRobot(){
