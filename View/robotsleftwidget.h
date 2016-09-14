@@ -6,6 +6,7 @@ class CustomScrollArea;
 class QVBoxLayout;
 class MainWindow;
 class TopLeftMenu;
+class QHideEvent;
 
 #include <QWidget>
 #include <QSharedPointer>
@@ -38,6 +39,9 @@ public:
      */
     void updateRobots(QSharedPointer<Robots> const& robots);
     void unSelectAllRobots();
+
+protected:
+    void hideEvent(QHideEvent *event);
 
 private:
     MainWindow* mainWindow;

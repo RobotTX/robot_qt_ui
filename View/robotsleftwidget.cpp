@@ -7,6 +7,7 @@
 #include "topleftmenu.h"
 #include <QDebug>
 #include "View/custompushbutton.h"
+#include <QHideEvent>
 
 RobotsLeftWidget::RobotsLeftWidget(QWidget* parent, MainWindow* _mainWindow, QSharedPointer<Robots> const &_robots):
     QWidget(parent), mainWindow(_mainWindow), lastCheckedId(-1)
@@ -67,4 +68,8 @@ void RobotsLeftWidget::showEvent(QShowEvent *){
     actionButtons->disableAll();
     actionButtons->uncheckAll();
     unSelectAllRobots();
+}
+void RobotsLeftWidget::hideEvent(QHideEvent *event){
+    lastCheckedId = -1;
+    QWidget::hideEvent(event);
 }
