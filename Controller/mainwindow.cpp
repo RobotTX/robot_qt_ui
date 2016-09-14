@@ -4454,9 +4454,10 @@ void MainWindow::displayPathOnMap(const bool display){
     /// to hide the path drawn by the robot path painter
     emit resetPath(GraphicItemState::ROBOT_CREATING_PATH);
     if(display){
+        bottomLayout->uncheckViewPathSelectedRobot(bottomLayout->getLastCheckedId());
         bool foundFlag = false;
         noRobotPathPainter->setCurrentPath(paths->getPath(lastWidgets.at(lastWidgets.size()-1).first.second, leftMenu->getPathGroupDisplayed()->getLastCheckedButton(), foundFlag));
-        paths->setVisiblePath(leftMenu->getPathGroupDisplayed()->getLastCheckedButton());
+        paths->setVisiblePath(leftMenu->getPathGroupDisplayed()->getLastCheckedButton());     
     }
     else {
         paths->setVisiblePath("");
