@@ -4199,8 +4199,6 @@ void MainWindow::editGroupPaths(){
     QAbstractButton* btn = pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->checkedButton();
     QString checkedId = pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->checkedButton()->text();
     */
-    leftMenu->getReturnButton()->setEnabled(false);
-    leftMenu->getCloseButton()->setEnabled(false);
 
     leftMenu->getGroupsPathsWidget()->getButtonGroup()->getModifyEdit()->setPlaceholderText(leftMenu->getGroupsPathsWidget()->getLastCheckedButton());
     leftMenu->getGroupsPathsWidget()->getButtonGroup()->getModifyEdit()->setFocus();

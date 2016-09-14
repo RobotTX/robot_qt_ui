@@ -283,6 +283,7 @@ void GroupsPathsWidget::hideEvent(QHideEvent *event){
 
 void GroupsPathsWidget::showEvent(QShowEvent *event){
     hideCreationWidgets();
+    buttonGroup->getModifyEdit()->hide();
     QWidget::showEvent(event);
 }
 
