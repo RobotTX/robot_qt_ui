@@ -7,6 +7,7 @@ class QLabel;
 class CustomPushButton;
 class CustomLineEdit;
 class QComboBox;
+class QGridLayout;
 
 #include "Model/points.h"
 #include "Model/point.h"
@@ -134,7 +135,7 @@ private:
     QHBoxLayout* layout;
     QVBoxLayout* rightLayout ;
     /// contains the label with the name, position and cross button
-    QHBoxLayout* topLayout;
+    QGridLayout* topLayout;
     QLabel* pointLabel;
     QComboBox* actionBtn;
     CustomPushButton* saveEditBtn;

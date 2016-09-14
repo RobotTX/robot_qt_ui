@@ -1,6 +1,7 @@
 #include "pathpointcreationwidget.h"
 #include <QIntValidator>
 #include <QVBoxLayout>
+#include <QGridLayout>
 #include <QLabel>
 #include <QDebug>
 #include <QLineEdit>
@@ -22,16 +23,19 @@ PathPointCreationWidget::PathPointCreationWidget(const int _id, const QString _n
     QVBoxLayout* editLayout = new QVBoxLayout(editWidget);
 
 
-    topLayout = new QHBoxLayout();
+    topLayout = new QGridLayout();
     /// Label for the name of the point
     pointLabel = new QLabel(this);
     setName(name);
-    topLayout->addWidget(pointLabel);
+    topLayout->addWidget(pointLabel, 0, 0);
+
     closeBtn = new CustomPushButton(QIcon(":/icons/close.png"), "", this);
     closeBtn->setIconSize(xxs_icon_size);
-    qDebug() << "size of parent" << parentWidget()->width() << parentWidget()->height();
-    topLayout->addWidget(closeBtn);
+    topLayout->addWidget(closeBtn, 0, 1);
+
+    topLayout->setColumnStretch(0, 1);
     pathLayout->addLayout(topLayout);
+
 
     /// The widget that contain the layout for the button to select the
     /// action the robot need to do (wait for X sec or wait for human action)
