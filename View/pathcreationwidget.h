@@ -52,6 +52,7 @@ public:
     CustomPushButton* getSaveButton(void) const { return saveBtn; }
     TopLeftMenu* getActionButtons(void) const { return actionButtons; }
     void setCurrentPathName(const QString name) { currentPathName = name; }
+    QString getCurrentPathName(void) const { return currentPathName; }
 
 protected:
     void showEvent(QShowEvent* event);

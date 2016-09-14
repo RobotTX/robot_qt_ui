@@ -707,6 +707,10 @@ void MainWindow::viewPathSelectedRobot(int robotNb, bool checked){
     qDebug() << "MainWindow::viewPathSelectedRobot called" << robotNb << checked;
 
     if(checked){
+        /// in case we were displaying a path from the menu we make sure the eye button as well as the eye icon are unchecked and hidden respectively
+        leftMenu->getPathGroupDisplayed()->getActionButtons()->getMapButton()->setChecked(false);
+        leftMenu->getPathGroupDisplayed()->getPathButtonGroup()->uncheck();
+        displayPathOnMap(false);
         QSharedPointer<Robot> robot = robots->getRobotsVector().at(robotNb)->getRobot();
         qDebug() << "viewPathSelectedRobot called on" << robot->getName();
         bottomLayout->uncheckViewPathSelectedRobot(robotNb);
@@ -1424,7 +1428,7 @@ void MainWindow::savePathSlot(GraphicItemState state){
         }
         pointViewsToDisplay.clear();
     } else {
-        noRobotPathCreationWidget->setCurrentPathName(noRobotPathCreationWidget->getNameEdit()->text().simplified());
+
         /// we hide the points that we displayed for the edition of the path
         for(int i = 0; i < pointViewsToDisplay.size(); i++){
             bool hidePointView(true);
@@ -1446,16 +1450,13 @@ void MainWindow::savePathSlot(GraphicItemState state){
         const QString groupName = noRobotPathCreationWidget->getCurrentGroupName();
         const QString pathName = noRobotPathCreationWidget->getNameEdit()->text().simplified();
         qDebug() << groupName << pathName;
-        if(paths->createPath(groupName, pathName)){
-            for(int i = 0; i < noRobotPathPainter->getCurrentPath().size(); i++)
-                paths->addPathPoint(groupName, pathName, noRobotPathPainter->getCurrentPath().at(i));
-        } else {
-            /// if the path existed before we destroy it and reconstruct it
-            paths->deletePath(groupName, pathName);
-            paths->createPath(groupName, pathName);
-            for(int i = 0; i < noRobotPathPainter->getCurrentPath().size(); i++)
-                paths->addPathPoint(groupName, pathName, noRobotPathPainter->getCurrentPath().at(i));
-        }
+
+        /// if the path existed before we destroy it and reconstruct it
+        paths->deletePath(groupName, noRobotPathCreationWidget->getCurrentPathName());
+        paths->createPath(groupName, pathName);
+        for(int i = 0; i < noRobotPathPainter->getCurrentPath().size(); i++)
+            paths->addPathPoint(groupName, pathName, noRobotPathPainter->getCurrentPath().at(i));
+
 
         /// updates the visible path
         paths->setVisiblePath(pathName);
@@ -1465,6 +1466,9 @@ void MainWindow::savePathSlot(GraphicItemState state){
 
         /// add this path to the file
         serializePaths();
+
+        /// updates the path of the pathcreation widget
+        noRobotPathCreationWidget->setCurrentPathName(noRobotPathCreationWidget->getNameEdit()->text().simplified());
     }
 
     setEnableAll(false, GraphicItemState::NO_EVENT);
