@@ -7,3 +7,4 @@ points.xml
 Resources/points.xml
 Resources/points.*
 Build/*
+*.dat
