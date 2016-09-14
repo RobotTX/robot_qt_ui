@@ -7,4 +7,5 @@ points.xml
 Resources/points.xml
 Resources/points.*
 Build/*
-*.dat
+robot_paths/*
+savedPaths.dat
