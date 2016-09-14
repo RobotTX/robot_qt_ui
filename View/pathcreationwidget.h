@@ -90,7 +90,7 @@ private slots:
      * deletes the path point using the minus button
      */
     void deletePathPointSlot();
-    void editPathPointSlot(GraphicItemState _state);
+    void editPathPointSlot();
     void itemClicked(QListWidgetItem* item);
     void itemMovedSlot(const QModelIndex& , int start, int , const QModelIndex& , int row);
     void savePathClicked(void);
@@ -101,7 +101,6 @@ private slots:
     void cancelEditSlot(PathPointCreationWidget* pathPointCreationWidget);
     void actionChangedSlot(int id, int action, QString waitTime);
     void checkPathName(const QString name);
-    void editPathPointSlotRelay();
     /**
      * @brief deletePathPointWithCross
      * @param pathPointCreationWidget
