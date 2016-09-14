@@ -58,6 +58,7 @@ public:
     void setOriginalPosition(const Position position) { originalPosition = position; }
     Position getOriginalPosition(void) const { return originalPosition; }
     void updatePos(void);
+    void setToolTip(const QString &toolTip);
 
 protected:
     void mousePressEvent(QGraphicsSceneMouseEvent *event);
