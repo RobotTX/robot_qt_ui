@@ -326,6 +326,10 @@ void PathCreationWidget::editPathPointSlot(){
             actionButtons->getMinusButton()->setEnabled(false);
             actionButtons->getEditButton()->setEnabled(false);
 
+            cleanBtn->setEnabled(false);
+            cancelBtn->setEnabled(false);
+            saveBtn->setEnabled(false);
+
             PathPointCreationWidget* pathPointCreationWidget = static_cast<PathPointCreationWidget*> (pathPointsList->itemWidget(pathPointsList->currentItem()));
             pathPointCreationWidget->getEditWidget()->show();
             pathPointCreationWidget->getPathWidget()->hide();
@@ -352,12 +356,19 @@ void PathCreationWidget::saveEditSlot(PathPointCreationWidget* pathPointCreation
     actionButtons->getPlusButton()->setEnabled(true);
     actionButtons->getMinusButton()->setEnabled(true);
     actionButtons->getEditButton()->setEnabled(true);
+    cleanBtn->setEnabled(true);
+    cancelBtn->setEnabled(true);
+    saveBtn->setEnabled(true);
 
     Position pos = points->getGroups()->value(PATH_GROUP_NAME)->at(pathPointCreationWidget->getId())->getPoint()->getPosition();
     pathPointCreationWidget->setPos(pos.getX(), pos.getY());
     pathPointCreationWidget->getEditWidget()->hide();
     pathPointCreationWidget->getPathWidget()->show();
     pathPointsList->setDragDropMode(QAbstractItemView::InternalMove);
+
+    emit setMessage(TEXT_COLOR_INFO, "Click white points of the map to add new points to this path"
+                                   "\nAlternatively you can click the \"+\" button to add an existing point to your path"
+                                   "\nYou can re-order the points in the list by dragging them");
 
     checkState = NO_STATE;
 
@@ -369,10 +380,17 @@ void PathCreationWidget::cancelEditSlot(PathPointCreationWidget* pathPointCreati
     actionButtons->getPlusButton()->setEnabled(true);
     actionButtons->getMinusButton()->setEnabled(true);
     actionButtons->getEditButton()->setEnabled(true);
+    cleanBtn->setEnabled(true);
+    cancelBtn->setEnabled(true);
+    saveBtn->setEnabled(true);
 
     pathPointCreationWidget->getEditWidget()->hide();
     pathPointCreationWidget->getPathWidget()->show();
     pathPointsList->setDragDropMode(QAbstractItemView::InternalMove);
+
+    emit setMessage(TEXT_COLOR_INFO, "Click white points of the map to add new points to this path"
+                                   "\nAlternatively you can click the \"+\" button to add an existing point to your path"
+                                   "\nYou can re-order the points in the list by dragging them");
 
     checkState = NO_STATE;
 
@@ -415,29 +433,34 @@ void PathCreationWidget::keyPressEvent(QKeyEvent *event){
     /// in the path and whether waiting times are filled
 
     if(!event->text().compare("\r")){
-        qDebug() << "old path" << currentPathName << " new path" << nameEdit->text().simplified();
-        if(!currentPathName.compare(nameEdit->text().simplified())){
-            savePathClicked();
-            return;
-        }
-        if(!nameEdit->text().simplified().compare(""))
-            return;
+        if(checkState != CheckState::EDIT){
+            qDebug() << "old path" << currentPathName << " new path" << nameEdit->text().simplified();
+            if(!currentPathName.compare(nameEdit->text().simplified())){
+                savePathClicked();
+                return;
+            }
+            if(!nameEdit->text().simplified().compare(""))
+                return;
 
-        /// we check that the path name is valid (not taken and not empty)
-        auto it = paths->getGroups()->find(currentGroupName);
-        if(it != paths->getGroups()->end()){
-            QSharedPointer<Paths::CollectionPaths> paths_ptr = it.value();
-            QMapIterator<QString, QSharedPointer<Paths::Path> > it_paths(*paths_ptr);
-            while(it_paths.hasNext()){
-                it_paths.next();
-                qDebug() << "pathCreationWidget::keyPressEvent, checking whether or not you can add this path" << it_paths.key();
-                if(!it_paths.key().compare(nameEdit->text().simplified())){
-                    qDebug() << "already a path named" << it_paths.key();
-                    return;
+            /// we check that the path name is valid (not taken and not empty)
+            auto it = paths->getGroups()->find(currentGroupName);
+            if(it != paths->getGroups()->end()){
+                QSharedPointer<Paths::CollectionPaths> paths_ptr = it.value();
+                QMapIterator<QString, QSharedPointer<Paths::Path> > it_paths(*paths_ptr);
+                while(it_paths.hasNext()){
+                    it_paths.next();
+                    qDebug() << "pathCreationWidget::keyPressEvent, checking whether or not you can add this path" << it_paths.key();
+                    if(!it_paths.key().compare(nameEdit->text().simplified())){
+                        qDebug() << "already a path named" << it_paths.key();
+                        return;
+                    }
                 }
             }
+            savePathClicked();
+        } else {
+            QString msg = "Please finish editing your point before saving";
+            emit setMessage(TEXT_COLOR_DANGER, msg);
         }
-        savePathClicked();
     }
 }
 
