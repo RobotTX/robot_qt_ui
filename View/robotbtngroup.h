@@ -17,6 +17,9 @@ public:
     RobotBtnGroup(const QVector<RobotView*>& vector, QWidget *parent);
     QButtonGroup* getBtnGroup(void) const { return btnGroup; }
 
+public:
+    void uncheck();
+
 private:
     QButtonGroup* btnGroup;
     QVBoxLayout* layout;

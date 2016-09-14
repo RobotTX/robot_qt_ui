@@ -3,13 +3,14 @@
 
 class Robots;
 class CustomScrollArea;
-class RobotBtnGroup;
 class QVBoxLayout;
 class MainWindow;
 class TopLeftMenu;
 
 #include <QWidget>
 #include <QSharedPointer>
+#include "View/robotbtngroup.h"
+#include <QAbstractButton>
 
 /**
  * @brief The RobotsLeftWidget class
@@ -23,11 +24,12 @@ public:
     /// Getters
     RobotBtnGroup* getBtnGroup(void) const { return btnGroup; }
     TopLeftMenu* getActionButtons(void) const { return actionButtons; }
-    QString getSelectedRobotName(void);
-
+    QString getSelectedRobotName(void) const { return btnGroup->getBtnGroup()->checkedButton()->text(); }
+    int getLastCheckedId(void) const { return lastCheckedId; }
 
     ///Setters
     void setRobots(QSharedPointer<Robots> const& robots);
+    void setLastCheckedId(const int id) { lastCheckedId = id; }
 
     /**
      * @brief updateRobots
@@ -37,7 +39,6 @@ public:
     void updateRobots(QSharedPointer<Robots> const& robots);
     void unSelectAllRobots();
 
-
 private:
     MainWindow* mainWindow;
     QVBoxLayout* layout;
@@ -46,6 +47,7 @@ private:
     RobotBtnGroup* btnGroup;
     CustomScrollArea* scrollArea;
     TopLeftMenu* actionButtons;
+    int lastCheckedId;
 
 protected:
     void showEvent(QShowEvent *);
