@@ -528,8 +528,8 @@ void MainWindow::connectToRobot(){
                         selectedRobotWidget->getScanBtn()->setText("Scan a map");
                         selectedRobotWidget->enable(true);
 
-                        hideAllWidgets();
                         selectedRobotWidget->setSelectedRobot(selectedRobot);
+                        hideAllWidgets();
                         selectedRobotWidget->show();
 
                         setEnableAll(true);
@@ -1428,7 +1428,6 @@ void MainWindow::savePathSlot(GraphicItemState state){
         }
         pointViewsToDisplay.clear();
     } else {
-
         /// we hide the points that we displayed for the edition of the path
         for(int i = 0; i < pointViewsToDisplay.size(); i++){
             bool hidePointView(true);
@@ -1469,6 +1468,8 @@ void MainWindow::savePathSlot(GraphicItemState state){
 
         /// updates the path of the pathcreation widget
         noRobotPathCreationWidget->setCurrentPathName(noRobotPathCreationWidget->getNameEdit()->text().simplified());
+
+        setTemporaryMessageTop(TEXT_COLOR_SUCCESS, "You have successfully modified the path \"" + pathName + "\"", 2500);
     }
 
     setEnableAll(false, GraphicItemState::NO_EVENT);
@@ -4097,6 +4098,8 @@ void MainWindow::editPathSlot(QString groupName, QString pathName){
                  "\nAlternatively you can click the \"+\" button to add an existing point to your path"
                  "\nYou can re-order the points in the list by dragging them");
 
+    noRobotPathCreationWidget->setCurrentPathName(pathName);
+
     setEnableAll(false, GraphicItemState::NO_ROBOT_CREATING_PATH, true);
 
     /// when we edit a path we set the name in the edit field the current name
@@ -4463,6 +4466,7 @@ void MainWindow::editPath(){
     setEnableAll(false, GraphicItemState::NO_ROBOT_CREATING_PATH, true);
 
     /// to be able to know if the path name is different from the old one
+    qDebug() << "setting the current path name to" << leftMenu->getPathGroupDisplayed()->getPathButtonGroup()->getButtonGroup()->checkedButton()->text();
     noRobotPathCreationWidget->setCurrentPathName(leftMenu->getPathGroupDisplayed()->getPathButtonGroup()->getButtonGroup()->checkedButton()->text());
 
     /// when we edit a path we set the name in the edit field the current name
@@ -4574,6 +4578,8 @@ void MainWindow::cancelNoRobotPathSlot(){
     setEnableAll(false, GraphicItemState::NO_EVENT);
     leftMenu->setEnableReturnCloseButtons(true);
     topLayout->setEnable(true);
+
+    setTemporaryMessageTop(TEXT_COLOR_INFO, "You have cancelled the modifications of the path \"" + noRobotPathCreationWidget->getCurrentPathName() + "\"", 2500);
 }
 
 void MainWindow::saveNoRobotPathSlot(){
