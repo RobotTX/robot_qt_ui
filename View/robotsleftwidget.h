@@ -40,8 +40,6 @@ public:
     void updateRobots(QSharedPointer<Robots> const& robots);
     void unSelectAllRobots();
 
-protected:
-    void hideEvent(QHideEvent *event);
 
 private:
     MainWindow* mainWindow;

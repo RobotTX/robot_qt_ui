@@ -65,11 +65,10 @@ void RobotsLeftWidget::unSelectAllRobots(){
 }
 
 void RobotsLeftWidget::showEvent(QShowEvent *){
+    lastCheckedId = -1;
     actionButtons->disableAll();
     actionButtons->uncheckAll();
+    robots->deselect();
     unSelectAllRobots();
 }
-void RobotsLeftWidget::hideEvent(QHideEvent *event){
-    lastCheckedId = -1;
-    QWidget::hideEvent(event);
-}
+
