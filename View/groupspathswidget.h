@@ -8,7 +8,7 @@ class CustomLineEdit;
 class GroupsPathsButtonGroup;
 class TopLeftMenu;
 class MainWindow;
-class QLabel;
+class CustomLabel;
 class QVBoxLayout;
 class QAbstractButton;
 class CustomPushButton;
@@ -27,7 +27,7 @@ public:
     CustomPushButton* getCancelButton(void) const { return cancelButton; }
     void setCreatingGroup(const bool creating) { creatingGroup = creating; }
     CustomLineEdit* getGroupNameEdit(void) const { return groupNameEdit; }
-    QLabel* getGroupNameLabel(void) const { return groupNameLabel; }
+    CustomLabel* getGroupNameLabel(void) const { return groupNameLabel; }
     QString getLastCheckedButton(void) const { return lastCheckedButton; }
 
     void setLastCheckedButton(const QString textButton) { lastCheckedButton = textButton; }
@@ -125,7 +125,7 @@ private:
 
     QHBoxLayout* creationLayout;
     CustomScrollArea* scrollArea;
-    QLabel* groupNameLabel;
+    CustomLabel* groupNameLabel;
 
     CustomLineEdit* groupNameEdit;
     QSharedPointer<Paths> paths;

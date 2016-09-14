@@ -397,8 +397,9 @@ void MainWindow::initializeRobots(){
     robot1->setPath(path);
     robot1->setGroupPathName("first group");
     */
-    bool flag(false);
     /*
+    bool flag(false);
+
     robot1->setPath(paths->getPath("wednesday", "wed path", flag));
     robot1->setGroupPathName("wednesday");
     robot1->setPathName("wed path");
@@ -751,6 +752,21 @@ void MainWindow::editSelectedRobot(RobotView* robotView){
 
     editSelectedRobotWidget->setAssignedPath(selectedRobot->getRobot()->getPathName());
     editSelectedRobotWidget->setGroupPath(selectedRobot->getRobot()->getGroupPathName());
+
+    /// message to explain the user how to assign a path or a home to his robot
+    setMessageTop(TEXT_COLOR_NORMAL, "");
+    if(selectedRobot->getRobot()->getPath().size() == 0){
+        setMessageTop(TEXT_COLOR_INFO, "You can assign a path to your robot by clicking the button labeled \"Assign a path\"");
+        if(!selectedRobot->getRobot()->getHome())
+        setMessageTop(TEXT_COLOR_INFO, topLayout->getLabel()->text() + "\nYou can assign a home to your robot by clicking the button "
+                                                                       "labeled \"Assign a home point\"");
+    }
+    else
+        if(!selectedRobot->getRobot()->getHome())
+            setMessageTop(TEXT_COLOR_INFO, topLayout->getLabel()->text() + "You can assign a home to your robot by clicking the button "
+                                                                       "labeled \"Assign a home point\"");
+
+
 
     editSelectedRobotWidget->setSelectedRobot(selectedRobot);
     robotPathPainter->setPathDeleted(false);
@@ -1173,8 +1189,6 @@ void MainWindow::robotSavedEvent(){
                         points->addPoint(NO_GROUP_NAME, points->getGroups()->value(TMP_GROUP_NAME)->takeFirst());
                         points->addTmpPoint(mapPixmapItem, this);
 
-
-
                         XMLParser parserPoints(XML_PATH);
                         parserPoints.save(*points);
                         done = true;
@@ -1410,6 +1424,7 @@ void MainWindow::savePathSlot(GraphicItemState state){
         }
         pointViewsToDisplay.clear();
     } else {
+        noRobotPathCreationWidget->setCurrentPathName(noRobotPathCreationWidget->getNameEdit()->text().simplified());
         /// we hide the points that we displayed for the edition of the path
         for(int i = 0; i < pointViewsToDisplay.size(); i++){
             bool hidePointView(true);
@@ -2187,7 +2202,7 @@ void MainWindow::closeSlot(){
 void MainWindow::initializePoints(){
     //qDebug() << "initializePoints called";
     /// retrieves the points from the xml file and stores them in the model
-    XMLParser pParser(":/xml/points.xml");
+    XMLParser pParser(XML_PATH);
     pParser.readPoints(points, mapPixmapItem, this);
 
     points->addTmpPoint(mapPixmapItem, this);
@@ -2278,20 +2293,24 @@ void MainWindow::plusGroupBtnEvent(){
     /// uncheck and disable the buttons
     pointsLeftWidget->getActionButtons()->uncheckAll();
 
-    pointsLeftWidget->getActionButtons()->enableAll();
+    pointsLeftWidget->getActionButtons()->disableAll();
 
     pointsLeftWidget->getActionButtons()->getPlusButton()->setToolTip("Enter a name for your group and click \"save\" or click \"cancel\" to cancel");
 
     /// to prevent the user from clicking on the buttons
     pointsLeftWidget->getGroupButtonGroup()->setEnabled(false);
-    leftMenu->getReturnButton()->setEnabled(false);
-    leftMenu->getCloseButton()->setEnabled(false);
+    //leftMenu->getReturnButton()->setEnabled(false);
+    //leftMenu->getCloseButton()->setEnabled(false);
 
     /// here we allow a user to create a new group
-    pointsLeftWidget->getGroupNameEdit()->show();
+
     pointsLeftWidget->getGroupNameLabel()->show();
+
+    pointsLeftWidget->getGroupNameEdit()->show();
+
     pointsLeftWidget->getCancelButton()->show();
     pointsLeftWidget->getSaveButton()->show();
+
 }
 
 /**
@@ -2332,10 +2351,8 @@ void MainWindow::minusGroupBtnEvent(){
 void MainWindow::editPointButtonEvent(){
     setMessageTop(TEXT_COLOR_INFO, "Click the map or drag the point to change its position");
     qDebug() << "MainWindow::editPointButtonEvent called";
-    leftMenu->getReturnButton()->setEnabled(false);
-    leftMenu->getReturnButton()->setToolTip("Please save or discard your modifications before navigating the menu again.");
-
-    leftMenu->getCloseButton()->setEnabled(false);
+    leftMenu->getDisplaySelectedPoint()->getNameEdit()->show();
+    leftMenu->getDisplaySelectedPoint()->getNameLabel()->hide();
 
     /// update buttons enable attribute and tool tips
     leftMenu->getDisplaySelectedPoint()->getActionButtons()->getMapButton()->setChecked(true);
@@ -2401,8 +2418,8 @@ void MainWindow::editGroupBtnEvent(){
 
     if(pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->checkedButton()){
         qDebug() << "editGroupBtnEvent called" << pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->checkedButton()->text();
-        topLayout->setEnabled(false);
-        setEnableAll(false);
+        //topLayout->setEnabled(false);
+        //setEnableAll(false);
         int btnIndex = pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->checkedId();
         qDebug() << "btnIndex" << btnIndex;
         pointsLeftWidget->setLastCheckedId(static_cast<CustomPushButton*>(pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->checkedButton())->text());
@@ -2455,9 +2472,9 @@ void MainWindow::editGroupBtnEvent(){
             switchFocus("point", leftMenu->getDisplaySelectedPoint(), MainWindow::WidgetType::POINT);
         } else if(checkedId.compare("") != 0 && points->isAGroup(checkedId)){
             qDebug() << "gotta update a group";
-            leftMenu->getReturnButton()->setEnabled(false);
-            leftMenu->getCloseButton()->setEnabled(false);
-            topLayout->setEnable(false);
+            //leftMenu->getReturnButton()->setEnabled(false);
+            //leftMenu->getCloseButton()->setEnabled(false);
+            //topLayout->setEnable(false);
 
             pointsLeftWidget->getActionButtons()->getEditButton()->setToolTip("Type a new name for your group and press ENTER");
             /// disables the plus button
@@ -3269,8 +3286,6 @@ void MainWindow::removePointFromInformationMenu(void){
  */
 void MainWindow::editPointFromGroupMenu(void){
     qDebug() << "editgroupfrommenuevent";
-    leftMenu->getCloseButton()->setEnabled(false);
-    leftMenu->getReturnButton()->setEnabled(false);
     setMessageTop(TEXT_COLOR_INFO, "Click the map or drag the point to change its position");
     QString groupName = leftMenu->getDisplaySelectedGroup()->getNameLabel()->text();
 
@@ -3338,6 +3353,8 @@ void MainWindow::editPointFromGroupMenu(void){
             leftMenu->getDisplaySelectedPoint()->getNameEdit()->setFocusPolicy(Qt::FocusPolicy::StrongFocus);
             leftMenu->getDisplaySelectedPoint()->getCancelButton()->show();
             leftMenu->getDisplaySelectedPoint()->getSaveButton()->show();
+            leftMenu->getDisplaySelectedPoint()->getNameEdit()->show();
+            leftMenu->getDisplaySelectedPoint()->getNameLabel()->hide();
             leftMenu->getDisplaySelectedPoint()->show();
             leftMenu->getDisplaySelectedGroup()->hide();
             switchFocus(leftMenu->getDisplaySelectedPoint()->getPointName(),leftMenu->getDisplaySelectedPoint(), MainWindow::WidgetType::POINT);
@@ -3392,8 +3409,9 @@ void MainWindow::displayPointInfoFromGroupMenu(void){
  * called when a user edits a point and save the changes either by pressing the enter key or clicking the save button
  */
 void MainWindow::updatePoint(void){
-    leftMenu->getCloseButton()->setEnabled(true);
-    topLayout->setEnabled(true);
+
+    qDebug() << "MainWindow::updatePoint";
+
     ///resets the tooltip of the edit button and the minus button
     leftMenu->getDisplaySelectedPoint()->getActionButtons()->getEditButton()->setToolTip("Click here and then choose between clicking on the map or drag the point to change its position");
     leftMenu->getDisplaySelectedPoint()->getActionButtons()->getMinusButton()->setToolTip("Click here to remove the point");
@@ -3402,20 +3420,26 @@ void MainWindow::updatePoint(void){
     leftMenu->getDisplaySelectedPoint()->getActionButtons()->getMapButton()->setToolTip("Click to hide this point");
 
     DisplaySelectedPoint* selectedPoint = leftMenu->getDisplaySelectedPoint();
-    qDebug() << "MainWindow::updatePoint updating point" << selectedPoint->getPointName();
+
     QSharedPointer<PointView> displaySelectedPointView = points->findPointView(selectedPoint->getPointName());
     //selectedPoint->setPointName(leftMenu->getDisplaySelectedPoint()->getNameEdit()->text());
 
     /// resets the color of the pointView
     if(displaySelectedPointView){
-        displaySelectedPointView->setPixmap(PointView::PixmapType::NORMAL);
         points->getTmpPointView()->setPixmap(PointView::PixmapType::NORMAL);
 
         /// notifies the map that the point's name has changed and that the hover has to be updated
-        emit nameChanged(displaySelectedPointView->getPoint()->getName(), leftMenu->getDisplaySelectedPoint()->getNameEdit()->text());
+        /// if the field has been left empty we keep the old name
+        if(leftMenu->getDisplaySelectedPoint()->getNameEdit()->text().simplified().compare("")){
+            emit nameChanged(displaySelectedPointView->getPoint()->getName(), leftMenu->getDisplaySelectedPoint()->getNameLabel()->text());
+            leftMenu->getDisplaySelectedPoint()->getNameLabel()->setText(leftMenu->getDisplaySelectedPoint()->getNameEdit()->text().simplified());
+        }
+        else
+            emit nameChanged(displaySelectedPointView->getPoint()->getName(), displaySelectedPointView->getPoint()->getName());
 
         /// updates the name in the label
-        displaySelectedPointView->getPoint()->setName(leftMenu->getDisplaySelectedPoint()->getNameEdit()->text());
+        if(leftMenu->getDisplaySelectedPoint()->getNameEdit()->text().simplified().compare(""))
+            displaySelectedPointView->getPoint()->setName(leftMenu->getDisplaySelectedPoint()->getNameEdit()->text());
 
         /// updates the position of the point
         /// to determine wheter the coordinate is 2 digits long or 3 digits long in order to parse them correctly
@@ -3435,9 +3459,6 @@ void MainWindow::updatePoint(void){
     leftMenu->getDisplaySelectedPoint()->getNameEdit()->setAutoFillBackground(true);
     leftMenu->getDisplaySelectedPoint()->getNameEdit()->setFrame(false);
 
-    /// so that the name cannot be changed anymore unless you click the edit button again
-    selectedPoint->getNameEdit()->setReadOnly(true);
-
     /// so that you cannot edit a new name unless you click the edit button again
     selectedPoint->getActionButtons()->getEditButton()->setChecked(false);
 
@@ -3448,14 +3469,12 @@ void MainWindow::updatePoint(void){
     /// reset the state of the map so we can click it again
     setGraphicItemsState(GraphicItemState::NO_STATE);
 
-
     /// enable the edit button and the minus button again
     leftMenu->getDisplaySelectedPoint()->getActionButtons()->getEditButton()->setEnabled(true);
     leftMenu->getDisplaySelectedPoint()->getActionButtons()->getMinusButton()->setEnabled(true);
 
     /// updates the isolated points in the group menus
     pointsLeftWidget->getGroupButtonGroup()->updateButtons();
-
 
     /// we enable the "back" button again
     leftMenu->getReturnButton()->setEnabled(true);
@@ -3464,11 +3483,10 @@ void MainWindow::updatePoint(void){
     /// We update the path as this point might have been used in a path
     updateAllPaths();
 
-    setMessageTop(TEXT_COLOR_SUCCESS, "Your point has been modified");
-    delay(1500);
-    setMessageTop(TEXT_COLOR_NORMAL, "");
-    topLayout->setLabelDelay(TEXT_COLOR_SUCCESS, "Your point has been modified", 1500);
+    leftMenu->getDisplaySelectedPoint()->getNameEdit()->hide();
+    leftMenu->getDisplaySelectedPoint()->getNameLabel()->show();
 
+    topLayout->setLabelDelay(TEXT_COLOR_SUCCESS, "Your point has been successfully updated", 2500);
 }
 
 /**
@@ -3477,6 +3495,8 @@ void MainWindow::updatePoint(void){
  */
 void MainWindow::cancelEvent(void){
     qDebug() << "cancel edit point event called";
+    leftMenu->getDisplaySelectedPoint()->getNameEdit()->hide();
+    leftMenu->getDisplaySelectedPoint()->getNameLabel()->show();
     leftMenu->getCloseButton()->setEnabled(true);
     leftMenu->getReturnButton()->setEnabled(true);
     topLayout->setEnabled(true);
@@ -3863,6 +3883,7 @@ void MainWindow::modifyGroupWithEnter(QString name){
 
     topLayout->setEnabled(true);
     setEnableAll(true);
+    QString oldGroupName = pointsLeftWidget->getLastCheckedId();
     if(pointsLeftWidget->checkGroupName(name) == 0){
 
 
@@ -3886,11 +3907,11 @@ void MainWindow::modifyGroupWithEnter(QString name){
         int checkedId = pointsLeftWidget->getGroupButtonGroup()->getButtonIdByName(pointsLeftWidget->getGroupButtonGroup()->getEditedGroupName());
 
         pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(checkedId)->show();
-        pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(checkedId)->setText(name);
+        static_cast<CustomPushButton*> (pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(checkedId))->setText(name);
         pointsLeftWidget->getGroupButtonGroup()->getModifyEdit()->hide();
 
         pointsLeftWidget->setLastCheckedId("");
-        topLayout->setLabelDelay(TEXT_COLOR_SUCCESS, "You have successfully modified the name of your group", 1500);
+        topLayout->setLabelDelay(TEXT_COLOR_SUCCESS, "You have successfully changed the name of your group from \"" + oldGroupName + "\" to \"" + name + "\"", 2500);
 
     } else if(pointsLeftWidget->checkGroupName(name) == 1){
         /// enables the buttons
@@ -4076,7 +4097,6 @@ void MainWindow::editPathSlot(QString groupName, QString pathName){
 
     /// when we edit a path we set the name in the edit field the current name
     noRobotPathCreationWidget->getNameEdit()->setText(pathName);
-
     /// stop displaying the currently displayed path if it exists
 
     emit resetPathCreationWidget(GraphicItemState::ROBOT_CREATING_PATH);
@@ -4439,6 +4459,9 @@ void MainWindow::editPath(){
                  "\nYou can re-order the points in the list by dragging them");
 
     setEnableAll(false, GraphicItemState::NO_ROBOT_CREATING_PATH, true);
+
+    /// to be able to know if the path name is different from the old one
+    noRobotPathCreationWidget->setCurrentPathName(leftMenu->getPathGroupDisplayed()->getPathButtonGroup()->getButtonGroup()->checkedButton()->text());
 
     /// when we edit a path we set the name in the edit field the current name
     noRobotPathCreationWidget->getNameEdit()->setText(leftMenu->getPathGroupDisplayed()->getPathButtonGroup()->getButtonGroup()->checkedButton()->text());

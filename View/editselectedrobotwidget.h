@@ -12,6 +12,7 @@ class CustomLineEdit;
 class QProgressBar;
 class PathWidget;
 class Points;
+class CustomLabel;
 
 #include "pathpoint.h"
 #include <QWidget>
@@ -40,7 +41,7 @@ public:
     PathWidget* getPathWidget(void) const { return pathWidget; }
     CustomPushButton* getAddPathBtn(void) const { return addPathBtn; }
     bool getPathChanged() const { return pathChanged; }
-    QLabel* getHomeLabel(void) const { return homeLabel; }
+    CustomLabel* getHomeLabel(void) const { return homeLabel; }
     CustomPushButton* getSaveButton(void) const { return saveBtn; }
     CustomPushButton* getCancelButton(void) const { return cancelBtn; }
     bool isEditing(void) const { return editing; }
@@ -125,7 +126,7 @@ private:
     CustomPushButton* deletePathBtn;
     PathWidget* pathWidget;
     bool pathChanged;
-    QLabel* homeLabel;
+    CustomLabel* homeLabel;
     bool editing;
     QMenu* pathsMenu;
     QMenu* homeMenu;

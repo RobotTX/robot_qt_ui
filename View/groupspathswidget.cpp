@@ -2,7 +2,7 @@
 #include "Controller/mainwindow.h"
 #include "View/topleftmenu.h"
 #include <QDebug>
-#include <QLabel>
+#include "View/customlabel.h"
 #include <QVBoxLayout>
 #include "Model/point.h"
 #include "View/groupspathsbuttongroup.h"
@@ -29,7 +29,7 @@ GroupsPathsWidget::GroupsPathsWidget(QWidget* parent, MainWindow* _mainWindow, c
 
     QVBoxLayout* downLayout = new QVBoxLayout();
 
-    groupNameLabel = new QLabel("New group's name : ", this);
+    groupNameLabel = new CustomLabel("New group's name : ", this, false);
     groupNameLabel->hide();
     groupNameEdit = new CustomLineEdit(this);
     groupNameEdit->hide();
@@ -292,6 +292,11 @@ void GroupsPathsWidget::hideCreationWidgets(){
     groupNameLabel->hide();
     saveButton->hide();
     cancelButton->hide();
+    /// disables buttons except the plus button
+    actionButtons->getEditButton()->setEnabled(false);
+    actionButtons->getGoButton()->setEnabled(false);
+    actionButtons->getMapButton()->setEnabled(false);
+    actionButtons->getMinusButton()->setEnabled(false);
 }
 
 void GroupsPathsWidget::resetWidget(){

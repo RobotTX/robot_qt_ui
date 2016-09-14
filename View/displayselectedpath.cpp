@@ -6,7 +6,7 @@
 #include "View/custompushbutton.h"
 #include "View/customscrollarea.h"
 #include <QKeyEvent>
-#include <QLabel>
+#include "View/customlabel.h"
 #include <QVBoxLayout>
 #include <QDebug>
 
@@ -34,13 +34,14 @@ DisplaySelectedPath::DisplaySelectedPath(QWidget *parent, const MainWindow *main
     layout->addWidget(actionButtons);
 
     /// Label with the name of the path
-    nameLabel = new QLabel("", this);
-    nameLabel->setAlignment(Qt::AlignCenter);
-    nameLabel->setStyleSheet("font-weight: bold");
+    nameLabel = new CustomLabel("", this, true);
     layout->addWidget(nameLabel);
 
     /// Widget displaying the path
     pathWidget = new PathWidget(this);
+
+    /// increases space between name of path and description of the path
+    pathWidget->setContentsMargins(0, 10, 0, 0);
     scrollArea->setWidget(pathWidget);
     layout->addWidget(scrollArea);
 

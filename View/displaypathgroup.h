@@ -12,7 +12,7 @@ class TopLeftMenu;
 class Paths;
 class QAbstractButton;
 class MainWindow;
-class QLabel;
+class CustomLabel;
 
 /**
  * @brief The DisplayPathGroup class
@@ -29,7 +29,7 @@ public:
     TopLeftMenu* getActionButtons(void) const { return actionButtons; }
     QString getLastCheckedButton(void) const { return lastCheckedButton; }
     void setLastCheckedButton(const QString checkedButton) { lastCheckedButton = checkedButton; }
-    QLabel* getGroupNameLabel(void) const { return groupNameLabel; }
+    CustomLabel* getGroupNameLabel(void) const { return groupNameLabel; }
 
 public:
     /**
@@ -80,7 +80,7 @@ private:
     TopLeftMenu* actionButtons;
     QVBoxLayout* layout;
     QString lastCheckedButton;
-    QLabel* groupNameLabel;
+    CustomLabel* groupNameLabel;
 };
 
 #endif // DISPLAYPATHGROUP_H

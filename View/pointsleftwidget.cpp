@@ -345,6 +345,12 @@ void PointsLeftWidget::showEvent(QShowEvent *event){
     resetWidget();
     points->setPixmapAll(PointView::PixmapType::NORMAL);
     emit resetPathPointViews();
+    groupNameEdit->hide();
+    groupNameLabel->hide();
+    actionButtons->getPlusButton()->setEnabled(true);
+    saveButton->hide();
+    cancelButton->hide();
+    groupButtonGroup->updateButtons();
     QWidget::showEvent(event);
 }
 

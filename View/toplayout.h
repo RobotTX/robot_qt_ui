@@ -21,6 +21,8 @@ public:
 
     TopLayout(QMainWindow* parent);
 
+    QLabel* getLabel(void) const { return label; }
+
     QPair<QString, QString> getLastMessage(void) const { return lastMessage; }
     void setLastMessage(const QString msgType, const QString message) { lastMessage.first = msgType; lastMessage.second = message; }
 

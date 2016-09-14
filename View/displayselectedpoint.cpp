@@ -21,6 +21,7 @@
 #include "View/custompushbutton.h"
 #include "View/customlabel.h"
 #include "View/customlineedit.h"
+#include "View/stylesettings.h"
 
 DisplaySelectedPoint::DisplaySelectedPoint(QWidget* _parent, QSharedPointer<Robots> const _robots, QSharedPointer<Points> const& _points, QSharedPointer<Map> const& _map, QSharedPointer<PointView> _pointView):
     QWidget(_parent), map(_map), pointView(_pointView), points(_points){
@@ -50,7 +51,12 @@ DisplaySelectedPoint::DisplaySelectedPoint(QWidget* _parent, QSharedPointer<Robo
 
     nameEdit = new CustomLineEdit(this);
     nameEdit->setReadOnly(true);
-    nameEdit->setAlignment(Qt::AlignLeft);
+    //nameEdit->setAlignment(Qt::AlignCenter);
+    nameEdit->hide();
+
+    nameLabel = new CustomLabel("OKay", this, true);
+    infoLayout->addWidget(nameLabel);
+    //nameLabel->setAlignment(Qt::AlignCenter);
 
     infoLayout->addWidget(nameEdit);
     nameEdit->setContentsMargins(0, 0, 0, 10);
@@ -97,7 +103,8 @@ void DisplaySelectedPoint::displayPointInfo(void) {
             actionButtons->getMapButton()->setToolTip("Click to display this point");
         posXLabel->setText("X : " + QString::number(pointView->getPoint()->getPosition().getX(), 'f', 1));
         posYLabel->setText("Y : " + QString::number(pointView->getPoint()->getPosition().getY(), 'f', 1));
-        nameEdit->setText(pointView->getPoint()->getName());
+        //nameEdit->setText(pointView->getPoint()->getName());
+        nameLabel->setText(pointView->getPoint()->getName());
 
         //robotsWidget->setRobotsWidget(pointView, robots);
     }
@@ -105,7 +112,9 @@ void DisplaySelectedPoint::displayPointInfo(void) {
 
 void DisplaySelectedPoint::mousePressEvent(QEvent* /* unused */){
     qDebug() << "mouse pressed";
-    nameEdit->setReadOnly(true);
+    //nameEdit->setReadOnly(true);
+    nameLabel->show();
+    nameEdit->hide();
 }
 
 void DisplaySelectedPoint::keyPressEvent(QKeyEvent* event){
@@ -117,7 +126,7 @@ void DisplaySelectedPoint::keyPressEvent(QKeyEvent* event){
             emit invalidName(TEXT_COLOR_DANGER, CreatePointWidget::Error::ContainsSemicolon);
             break;
         case 1:
-            emit invalidName(TEXT_COLOR_DANGER, CreatePointWidget::Error::EmptyName);
+            emit nameChanged(pointView->getPoint()->getName(), pointView->getPoint()->getName());
             break;
         case 2:
             emit invalidName(TEXT_COLOR_DANGER, CreatePointWidget::Error::AlreadyExists);
@@ -139,20 +148,24 @@ void DisplaySelectedPoint::resetWidget(){
     qDebug() << "DisplaySelectedPoint::resetWidget called";
 
     /// we hide the buttons relative to the edit option and make sure the points properties are not longer modifiable
-    nameEdit->setReadOnly(true);
+    //nameEdit->setReadOnly(true);
+    nameLabel->show();
+    nameEdit->hide();
     actionButtons->getEditButton()->setChecked(false);
 
     cancelButton->hide();
     saveButton->hide();
 
     actionButtons->getEditButton()->setEnabled(true);
-    actionButtons->getEditButton()->setToolTip("You can click on this button and then choose between clicking on the map or drag the point to change its position");
+    actionButtons->getEditButton()->setToolTip("You can click this button and then choose between clicking on the map or drag the point to change its position");
 
     emit resetState(GraphicItemState::NO_STATE);
 }
 
 void DisplaySelectedPoint::hideEvent(QHideEvent *event){
     resetWidget();
+    nameLabel->show();
+    nameEdit->hide();
     QWidget::hideEvent(event);
 }
 
@@ -235,6 +248,7 @@ void DisplaySelectedPoint::resizeEvent(QResizeEvent *event){
     QWidget* widget = static_cast<QWidget*>(parent());
     int maxWidth = widget->width() - 18;
     setFixedWidth(maxWidth);
+    nameLabel->setFixedWidth(maxWidth - 10);
 
     QWidget::resizeEvent(event);
 }

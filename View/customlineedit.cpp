@@ -28,23 +28,25 @@ void CustomLineEdit::initialize(void){
 void CustomLineEdit::focusOutEvent(QFocusEvent* e){
     if(e->reason() == Qt::MouseFocusReason){
         qDebug() << "clicked somewhere";
-        emit clickSomewhere(text());
+        //emit clickSomewhere(text());
     }
 }
 
 void CustomLineEdit::hideEvent(QHideEvent *event){
     Q_UNUSED(event)
-    //qDebug() << "LineEdit::hideEvent called";
+    qDebug() << "LineEdit::hideEvent called";
     /// enables the edition of a group
     emit enableGroupEdit(true);
+    QLineEdit::hideEvent(event);
 }
 
 void CustomLineEdit::showEvent(QShowEvent *event){
     Q_UNUSED(event)
-    //qDebug() << "LineEdit::showEvent called";
+    qDebug() << "LineEdit::showEvent called";
     /// disables the edition of a group
-    emit enableGroupEdit(false);
+    //emit enableGroupEdit(false);
     updateStyle();
+    QLineEdit::showEvent(event);
 }
 
 void CustomLineEdit::resizeEvent(QResizeEvent *event){

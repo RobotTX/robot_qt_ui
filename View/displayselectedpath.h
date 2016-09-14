@@ -4,7 +4,7 @@
 class TopLeftMenu;
 class PathWidget;
 class QVBoxLayout;
-class QLabel;
+class CustomLabel;
 class PathPoint;
 class MainWindow;
 class CustomScrollArea;
@@ -60,7 +60,7 @@ private:
     QSharedPointer<Paths> paths;
     QVBoxLayout* layout;
     TopLeftMenu* actionButtons;
-    QLabel* nameLabel;
+    CustomLabel* nameLabel;
     PathWidget* pathWidget;
     PathInfos currentPath;
     CustomScrollArea* scrollArea;

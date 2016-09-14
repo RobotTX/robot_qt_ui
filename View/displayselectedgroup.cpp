@@ -50,7 +50,6 @@ DisplaySelectedGroup::DisplaySelectedGroup(QWidget* parent, QSharedPointer<Point
 
 void DisplaySelectedGroup::setName(const QString _name){
     name->setText(_name);
-    name->setWordWrap(true);
 }
 
 void DisplaySelectedGroup::disableButtons(){
@@ -76,7 +75,6 @@ void DisplaySelectedGroup::buttonClickedSlot(QAbstractButton* button){
 
     points->setPixmapAll(PointView::PixmapType::NORMAL);
     emit resetPathPointViews();
-
 
     if(button->text().compare(lastCheckedButton) == 0){
         disableButtons();
@@ -131,7 +129,6 @@ void DisplaySelectedGroup::resizeEvent(QResizeEvent *event){
     QWidget* widget = static_cast<QWidget*>(parent());
     int maxWidth = widget->width() - 18;
     setFixedWidth(maxWidth);
-
     QWidget::resizeEvent(event);
 }
 

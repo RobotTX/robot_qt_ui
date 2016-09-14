@@ -21,7 +21,7 @@
 #include "View/customlineedit.h"
 
 PathCreationWidget::PathCreationWidget(QWidget* parent, const QSharedPointer<Points> &_points, const QSharedPointer<Paths>& _paths, const bool associatedToRobot, const GraphicItemState _state):
-    QWidget(parent), points(_points), paths(_paths), currentGroupName(""), state(_state)
+    QWidget(parent), points(_points), paths(_paths), currentGroupName(""), currentPathName(""), state(_state)
 {
     layout = new QVBoxLayout(this);
 
@@ -390,7 +390,14 @@ void PathCreationWidget::checkPathName(const QString name){
     if(!name.simplified().compare("")){
         emit codeEditPath(0);
         //qDebug() << "PathCreatioNWidget::checkPathName The name of your path cannot be empty";
-    } else {
+    }
+    else if(!currentPathName.compare(name.simplified())){
+        qDebug() << "same name";
+        /// if the name simply has not changed the user can still save his path
+         emit codeEditPath(2);
+    }
+
+    else {
         bool foundFlag(false);
         /// the found flag will have the value true after the call if the path has been found which means it already exists
         paths->getPath(currentGroupName, name.simplified(), foundFlag);
@@ -405,8 +412,34 @@ void PathCreationWidget::checkPathName(const QString name){
 }
 
 void PathCreationWidget::keyPressEvent(QKeyEvent *event){
-    if(!event->text().compare("\r"))
+    /// if the name has not changed we valid (this is the job of the next function to check whether there is at least one point
+    /// in the path and whether waiting times are filled
+
+    if(!event->text().compare("\r")){
+        qDebug() << "old path" << currentPathName << " new path" << nameEdit->text().simplified();
+        if(!currentPathName.compare(nameEdit->text().simplified())){
+            savePathClicked();
+            return;
+        }
+        if(!nameEdit->text().simplified().compare(""))
+            return;
+
+        /// we check that the path name is valid (not taken and not empty)
+        auto it = paths->getGroups()->find(currentGroupName);
+        if(it != paths->getGroups()->end()){
+            QSharedPointer<Paths::CollectionPaths> paths_ptr = it.value();
+            QMapIterator<QString, QSharedPointer<Paths::Path> > it_paths(*paths_ptr);
+            while(it_paths.hasNext()){
+                it_paths.next();
+                qDebug() << "pathCreationWidget::keyPressEvent, checking whether or not you can add this path" << it_paths.key();
+                if(!it_paths.key().compare(nameEdit->text().simplified())){
+                    qDebug() << "already a path named" << it_paths.key();
+                    return;
+                }
+            }
+        }
         savePathClicked();
+    }
 }
 
 void PathCreationWidget::resetWidgetRelaySlot(){

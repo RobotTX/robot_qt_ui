@@ -4,7 +4,6 @@
 #include "Model/robot.h"
 #include "Model/point.h"
 #include <QVBoxLayout>
-#include <QLabel>
 #include "Controller/mainwindow.h"
 #include <QHBoxLayout>
 #include <QProgressBar>
@@ -21,6 +20,7 @@
 #include "View/customlineedit.h"
 #include "Model/points.h"
 #include <QProgressBar>
+#include "View/customlabel.h"
 
 
 EditSelectedRobotWidget::EditSelectedRobotWidget(QWidget* parent, MainWindow* mainWindow, const QSharedPointer<Points> &_points, const QSharedPointer<Robots> _robots, const QSharedPointer<Paths> &_paths):
@@ -86,7 +86,7 @@ EditSelectedRobotWidget::EditSelectedRobotWidget(QWidget* parent, MainWindow* ma
     inLayout->addWidget(spaceWidget2);
 
     /// Home layout with the button to select the home
-    homeLabel = new QLabel("Home : ", this);
+    homeLabel = new CustomLabel("Home : ", this);
     homeBtn = new CustomPushButton(QIcon(":/icons/home.png"), "Assign a home point", this);
     homeBtn->setIconSize(s_icon_size);
     connect(homeBtn, SIGNAL(clicked(bool)), this, SLOT(openHomeMenu()));

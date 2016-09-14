@@ -5,8 +5,8 @@ class Points;
 class QButtonGroup;
 class QVBoxLayout;
 class QMouseEvent;
-class CustomLineEdit;
 
+#include "View/customlineedit.h"
 #include <QButtonGroup>
 #include <QWidget>
 #include <QSharedPointer>
@@ -35,6 +35,7 @@ public:
 
     /// removes useless spaces
     QString formatName(const QString name) const;
+    void hideModifyEdit(void) { modifyEdit->hide(); }
 
 public:
     /**

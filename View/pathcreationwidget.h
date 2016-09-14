@@ -51,6 +51,7 @@ public:
     CustomLineEdit* getNameEdit(void) const { return nameEdit; }
     CustomPushButton* getSaveButton(void) const { return saveBtn; }
     TopLeftMenu* getActionButtons(void) const { return actionButtons; }
+    void setCurrentPathName(const QString name) { currentPathName = name; }
 
 protected:
     void showEvent(QShowEvent* event);
@@ -118,6 +119,7 @@ private:
     QLabel* nameLabel;
     CustomLineEdit* nameEdit;
     QString currentGroupName;
+    QString currentPathName;
     CustomPushButton* cleanBtn;
     CustomPushButton* cancelBtn;
     CustomPushButton* saveBtn;

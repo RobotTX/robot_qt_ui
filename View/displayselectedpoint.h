@@ -43,6 +43,7 @@ public:
     void setPointView(QSharedPointer<PointView> _pointView, const QString robotName);
     CustomLabel* getXLabel(void) const { return posXLabel; }
     CustomLabel* getYLabel(void) const { return posYLabel; }
+    CustomLabel* getNameLabel(void) const { return nameLabel; }
     QSharedPointer<PointView> getPointView(void) const { return pointView; }
     DisplaySelectedPointRobots* getDisplaySelectedPointRobots(void) { return robotsWidget; }
 
@@ -94,6 +95,7 @@ private slots:
 private:
     QSharedPointer<Map> map;
     CustomLineEdit* nameEdit;
+    CustomLabel* nameLabel;
     QVBoxLayout* layout;
     QHBoxLayout* editLayout;
 
