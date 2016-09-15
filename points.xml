@@ -20,27 +20,45 @@
             <y>843</y>
             <displayed>1</displayed>
         </point>
-        <point>
-            <name>Just another point</name>
-            <x>955.5</x>
-            <y>1111.4</y>
-            <displayed>1</displayed>
-        </point>
-    </group>
-    <group>
-        <name>PathPoints</name>
     </group>
     <group>
         <name>TmpPoint</name>
         <point>
             <name>tmpPoint</name>
-            <x>1301.38</x>
-            <y>1079.59</y>
+            <x>1112.94</x>
+            <y>937.573</y>
+            <displayed>0</displayed>
+        </point>
+        <point>
+            <name>tmpPoint</name>
+            <x>0</x>
+            <y>0</y>
+            <displayed>0</displayed>
+        </point>
+        <point>
+            <name>tmpPoint</name>
+            <x>0</x>
+            <y>0</y>
             <displayed>0</displayed>
         </point>
     </group>
     <group>
         <name>first group</name>
+        <point>
+            <name>Fanny</name>
+            <x>1126</x>
+            <y>943</y>
+            <displayed>0</displayed>
+        </point>
+        <point>
+            <name>Michel</name>
+            <x>1086</x>
+            <y>1019</y>
+            <displayed>0</displayed>
+        </point>
+    </group>
+    <group>
+        <name>second group</name>
         <point>
             <name>A</name>
             <x>1130</x>
@@ -57,21 +75,6 @@
             <name>A new point</name>
             <x>946</x>
             <y>983</y>
-            <displayed>1</displayed>
-        </point>
-    </group>
-    <group>
-        <name>second group</name>
-        <point>
-            <name>Fanny</name>
-            <x>1126</x>
-            <y>943</y>
-            <displayed>1</displayed>
-        </point>
-        <point>
-            <name>Michel</name>
-            <x>1086</x>
-            <y>1019</y>
             <displayed>1</displayed>
         </point>
     </group>
