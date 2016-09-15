@@ -196,3 +196,16 @@ void PathPointCreationWidget::removePathPoint(){
     emit removePathPoint(this);
 }
 
+void PathPointCreationWidget::setActionWidget(const PathPoint::Action action, const int waitTime){
+    actionBtn->setCurrentIndex(action);
+
+    if(action == 0){
+        timeWidget->show();
+        timeEdit->setText(QString::number(waitTime));
+    } else {
+        timeWidget->hide();
+        timeEdit->setText("0");
+    }
+
+    emit actionChanged(id, static_cast<int>(action), timeEdit->text());
+}

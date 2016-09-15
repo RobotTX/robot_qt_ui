@@ -1419,7 +1419,6 @@ void MainWindow::editTmpPathPointSlot(int id, QString name, double x, double y, 
 
 void MainWindow::savePathSlot(GraphicItemState state){
     qDebug() << "MainWindow::savePath called";
-    backEvent();
 
     if(state == GraphicItemState::ROBOT_CREATING_PATH){
         robotPathPainter->setPathDeleted(false);
@@ -1481,12 +1480,18 @@ void MainWindow::savePathSlot(GraphicItemState state){
         /// updates the path of the pathcreation widget
         noRobotPathCreationWidget->setCurrentPathName(noRobotPathCreationWidget->getNameEdit()->text().simplified());
 
+        leftMenu->getDisplaySelectedPath()->updatePath(noRobotPathCreationWidget->getCurrentGroupName(),
+                                                       noRobotPathCreationWidget->getNameEdit()->text().simplified(),
+                                                       noRobotPathPainter->getCurrentPath());
+
+
         setTemporaryMessageTop(TEXT_COLOR_SUCCESS, "You have successfully modified the path \"" + pathName + "\"", 2500);
     }
 
     leftMenu->setEnableReturnCloseButtons(true);
 
     emit updatePathPainter(state, true);
+    backEvent();
 }
 
 void MainWindow::cancelPathSlot(){

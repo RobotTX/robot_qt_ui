@@ -11,6 +11,7 @@ class QGridLayout;
 
 #include "Model/points.h"
 #include "Model/point.h"
+#include "Model/pathpoint.h"
 #include <QWidget>
 
 /**
@@ -34,6 +35,7 @@ public:
     void setName(const QString name);
     void setId(const int id);
     void setPos(const float _posX, const float y);
+    void setActionWidget(const PathPoint::Action action, const int waitTime);
 
     /// Getters
     QString getName(void) const { return name; }
