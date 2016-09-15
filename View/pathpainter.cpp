@@ -36,7 +36,7 @@ void PathPainter::resetPathSlot(GraphicItemState _state){
 }
 
 void PathPainter::displayPath(void){
-    qDebug() << "\nPathPainter::displayPath called";
+    /*qDebug() << "\nPathPainter::displayPath called";
 
     for(int i = 0; i < currentPath.size(); i++){
         qDebug() << i << ":" << currentPath.at(i)->getPoint().getName()
@@ -46,7 +46,7 @@ void PathPainter::displayPath(void){
                  << currentPath.at(i)->getWaitTime();
     }
 
-    qDebug() << "\n";
+    qDebug() << "\n";*/
 }
 
 void PathPainter::addPathPointSlot(QString name, double x, double y, int action, int waitTime){
