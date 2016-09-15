@@ -13,6 +13,8 @@ class QProgressBar;
 class PathWidget;
 class Points;
 class CustomLabel;
+class CustomRobotDialog;
+class MainWindow;
 
 #include "pathpoint.h"
 #include <QWidget>
@@ -22,7 +24,6 @@ class CustomLabel;
 #include "mainwindow.h"
 #include "Model/paths.h"
 
-
 /**
  * @brief The EditSelectedRobotWidget class
  * The class which display the menu to edit a robot
@@ -30,7 +31,7 @@ class CustomLabel;
 class EditSelectedRobotWidget: public QWidget{
     Q_OBJECT
 public:
-    EditSelectedRobotWidget(QWidget* parent, MainWindow* mainWindow, const QSharedPointer<Points>& _points, QSharedPointer<Robots> const robots, const QSharedPointer<Paths>& _paths);
+    EditSelectedRobotWidget(QWidget* parent, MainWindow* _mainWindow, const QSharedPointer<Points>& _points, QSharedPointer<Robots> const robots, const QSharedPointer<Paths>& _paths);
 
     CustomLineEdit* getNameEdit(void){ return nameEdit; }
     CustomPushButton* getHomeBtn(void){ return homeBtn; }
@@ -48,10 +49,11 @@ public:
     QString getAssignedPath(void) const { return assignedPath; }
     void setAssignedPath(const QString path) { assignedPath = path; }
     void setGroupPath(const QString group) { groupAssignedPath = group; }
-    QString getPathName(void) { return assignedPath; }
-    QString getGroupPathName(void) { return groupAssignedPath; }
-    CustomPushButton* getDeleteHomeBtn(void) { return deleteHomeBtn; }
-    CustomPushButton* getDeletePathBtn(void) { return deletePathBtn; }
+    QString getPathName(void) const { return assignedPath; }
+    QString getGroupPathName(void) const { return groupAssignedPath; }
+    CustomPushButton* getDeleteHomeBtn(void) const { return deleteHomeBtn; }
+    CustomPushButton* getDeletePathBtn(void) const { return deletePathBtn; }
+    CustomRobotDialog* getRobotInfoDialog(void) const { return robotDialog; }
 
     void setRobots(QSharedPointer<Robots> const _robots) { robots = _robots; }
     void setEditing(bool const _editing) { editing = _editing; }
@@ -82,6 +84,8 @@ signals:
     void clearMapOfPaths();
     /// to notify that a new home has been assigned
     void newHome(QString);
+    void robotNameChanged(QString);
+    void robotWifiChanged(QString, QString);
 
 protected:
     void showEvent(QShowEvent *event);
@@ -105,8 +109,16 @@ private slots:
     void deletePwd(void);
     void assignPath(QAction* action);
     void assignHome(QAction* action);
+    /**
+     * @brief editRobot
+     * Opens a page to change the name and/or the wifi information
+     */
+    void editRobot();
+    void cancelRobotModifications();
+    void saveRobotModifications();
 
 private:
+    MainWindow* mainWindow;
     QVBoxLayout* layout;
     QVBoxLayout* pathLayout;
     RobotView* robotView;
@@ -137,6 +149,8 @@ private:
     CustomPushButton* scanBtn;
     QProgressBar* batteryLevel;
     CustomPushButton* deleteHomeBtn;
+    CustomPushButton* editRobotInfoBtn;
+    CustomRobotDialog* robotDialog;
 
 };
 

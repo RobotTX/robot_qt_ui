@@ -25,6 +25,7 @@ MapLeftWidget::MapLeftWidget(QWidget* parent, const MainWindow *mainWindow): QWi
 
     QLabel* label = new QLabel("To scan a Map,\nselect a robot\nand click the button\n\"Scan a map\"", this);
     label->setStyleSheet ("text-align: left");
+    label->setMargin(10);
     layout->addWidget(label);
 
     connect(saveBtn, SIGNAL(clicked()), mainWindow, SLOT(saveMapBtnEvent()));
