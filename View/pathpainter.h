@@ -83,7 +83,7 @@ private slots:
      * @param y
      * Add a path point to the current path
      */
-    void addPathPointSlot(QString name, double x, double y);
+    void addPathPointSlot(QString name, double x, double y, int action = 0, int waitTime = 0);
 
     /**
      * @brief deletePathPointSlot

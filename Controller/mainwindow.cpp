@@ -1420,7 +1420,7 @@ void MainWindow::editTmpPathPointSlot(int id, QString name, double x, double y, 
 
 void MainWindow::savePathSlot(GraphicItemState state){
     qDebug() << "MainWindow::savePath called";
-    backEvent();
+    QString pathName("");
 
     if(state == GraphicItemState::ROBOT_CREATING_PATH){
         robotPathPainter->setPathDeleted(false);
@@ -1460,7 +1460,7 @@ void MainWindow::savePathSlot(GraphicItemState state){
 
         /// gotta update the model and serialize the paths
         const QString groupName = noRobotPathCreationWidget->getCurrentGroupName();
-        const QString pathName = noRobotPathCreationWidget->getNameEdit()->text().simplified();
+        pathName = noRobotPathCreationWidget->getNameEdit()->text().simplified();
         qDebug() << groupName << pathName;
 
         /// if the path existed before we destroy it and reconstruct it
@@ -1482,12 +1482,19 @@ void MainWindow::savePathSlot(GraphicItemState state){
         /// updates the path of the pathcreation widget
         noRobotPathCreationWidget->setCurrentPathName(noRobotPathCreationWidget->getNameEdit()->text().simplified());
 
-        setTemporaryMessageTop(TEXT_COLOR_SUCCESS, "You have successfully modified the path \"" + pathName + "\"", 2500);
+        leftMenu->getDisplaySelectedPath()->updatePath(noRobotPathCreationWidget->getCurrentGroupName(),
+                                                       noRobotPathCreationWidget->getNameEdit()->text().simplified(),
+                                                       noRobotPathPainter->getCurrentPath());
     }
 
     leftMenu->setEnableReturnCloseButtons(true);
 
     emit updatePathPainter(state, true);
+    backEvent();
+
+    if(!state == GraphicItemState::ROBOT_CREATING_PATH){
+        setTemporaryMessageTop(TEXT_COLOR_SUCCESS, "You have successfully modified the path \"" + pathName + "\"", 2500);
+    }
 }
 
 void MainWindow::cancelPathSlot(){

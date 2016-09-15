@@ -19,6 +19,7 @@ class CustomPushButton;
 #include <QVBoxLayout>
 #include "Model/paths.h"
 #include "Model/graphicitemstate.h"
+#include "Model/pathpoint.h"
 
 #define WIDGET_HEIGHT 120
 
@@ -62,7 +63,7 @@ signals:
     /// emitted when the waiting times of points have not been set properly so that a message is displayed to the user
     void setMessage(QString, QString );
     /// emitted when a new path point is added to the list
-    void addPathPoint(QString, double, double);
+    void addPathPoint(QString, double, double, int, int);
     /// emitted when a path point is deleted
     void deletePathPoint(int, GraphicItemState);
     /// emitted when the order of the path has changed
@@ -96,7 +97,7 @@ private slots:
     void savePathClicked(void);
     void clicked(void);
     void pointClicked(QAction *action);
-    void addPathPointSlot(QString name, double x, double y, GraphicItemState _state);
+    void addPathPointSlot(QString name, double x, double y, GraphicItemState _state, PathPoint::Action action = PathPoint::Action::WAIT, int waitTime = 0);
     void saveEditSlot(PathPointCreationWidget* pathPointCreationWidget);
     void cancelEditSlot(PathPointCreationWidget* pathPointCreationWidget);
     void actionChangedSlot(int id, int action, QString waitTime);

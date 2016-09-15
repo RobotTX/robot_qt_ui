@@ -131,7 +131,7 @@ LeftMenu::LeftMenu(MainWindow* _mainWindow, QSharedPointer<Points> const& _point
     displaySelectedPath->hide();
     leftLayout->addWidget(displaySelectedPath);
 
-    connect(robotPathCreationWidget, SIGNAL(addPathPoint(QString, double, double)), robotPathPainter, SLOT(addPathPointSlot(QString, double, double)));
+    connect(robotPathCreationWidget, SIGNAL(addPathPoint(QString, double, double, int, int)), robotPathPainter, SLOT(addPathPointSlot(QString, double, double, int, int)));
     connect(robotPathCreationWidget, SIGNAL(deletePathPoint(int, GraphicItemState)), robotPathPainter, SLOT(deletePathPointSlot(int, GraphicItemState)));
     connect(robotPathCreationWidget, SIGNAL(orderPathPointChanged(int, int)), robotPathPainter, SLOT(orderPathPointChangedSlot(int, int)));
     connect(robotPathCreationWidget, SIGNAL(resetPath(GraphicItemState)), robotPathPainter, SLOT(resetPathSlot(GraphicItemState)));
@@ -188,7 +188,7 @@ LeftMenu::LeftMenu(MainWindow* _mainWindow, QSharedPointer<Points> const& _point
     connect(pathGroup->getPathButtonGroup()->getButtonGroup(), SIGNAL(buttonToggled(int, bool)), pathGroup, SLOT(resetMapButton()));
 
     noRobotPathCreationWidget = new PathCreationWidget(this, points, paths, false, GraphicItemState::NO_ROBOT_CREATING_PATH);
-    connect(noRobotPathCreationWidget, SIGNAL(addPathPoint(QString, double, double)), noRobotPathPainter, SLOT(addPathPointSlot(QString, double, double)));
+    connect(noRobotPathCreationWidget, SIGNAL(addPathPoint(QString, double, double, int, int)), noRobotPathPainter, SLOT(addPathPointSlot(QString, double, double, int, int)));
     connect(noRobotPathCreationWidget, SIGNAL(deletePathPoint(int, GraphicItemState)), noRobotPathPainter, SLOT(deletePathPointSlot(int, GraphicItemState)));
     connect(noRobotPathCreationWidget, SIGNAL(orderPathPointChanged(int, int)), noRobotPathPainter, SLOT(orderPathPointChangedSlot(int, int)));
     connect(noRobotPathCreationWidget, SIGNAL(resetPath(GraphicItemState)), noRobotPathPainter, SLOT(resetPathSlot(GraphicItemState)));

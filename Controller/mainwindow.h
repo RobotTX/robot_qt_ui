@@ -52,6 +52,7 @@ class QMoveEvent;
 #define MAP_PATH "/home/joan/Gobot/gobot-software/realMap.dat"
 #define PATHS_PATH "/home/joan/Gobot/gobot-software/savedPaths.dat"
 
+
 #define PI 3.14159265
 #define PORT_ROBOT_UPDATE 6000
 
