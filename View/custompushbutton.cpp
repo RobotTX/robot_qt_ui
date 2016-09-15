@@ -4,17 +4,20 @@
 #include <QLabel>
 
 
-CustomPushButton::CustomPushButton(const QIcon &icon, const QString &text, QWidget *parent, const ButtonType &type, const QString &align,
-        const bool &checkable, const bool &enable) : QPushButton(icon, text, parent), buttonType(type){
+CustomPushButton::CustomPushButton(const QIcon& icon, const QString text, QWidget *parent, const bool _customTooltipEnable, const ButtonType type, const QString align,
+        const bool checkable, const bool enable) :
+    QPushButton(icon, text, parent), buttonType(type), customTooltipEnable(_customTooltipEnable)
+{
     initialize(checkable, enable, align);
 }
 
-CustomPushButton::CustomPushButton(const QString &text, QWidget *parent, const ButtonType &type, const QString &align, const bool &checkable,
-        const bool &enable) : QPushButton(text, parent), buttonType(type){
+CustomPushButton::CustomPushButton(const QString text, QWidget *parent, const bool _customTooltipEnable, const ButtonType type, const QString align, const bool checkable,
+        const bool enable) : QPushButton(text, parent), buttonType(type), customTooltipEnable(_customTooltipEnable)
+{
     initialize(checkable, enable, align);
 }
 
-void CustomPushButton::initialize(const bool &checkable, const bool &enable, const QString &align){
+void CustomPushButton::initialize(const bool checkable, const bool enable, const QString align){
 
     /// Set the style of the label "..." which is used when a text is too long for the button to display "text..." without modifying the text
     label = new QLabel("...", this);
@@ -179,6 +182,7 @@ void CustomPushButton::showEvent(QShowEvent* event){
 }
 
 void CustomPushButton::moveLabel(){
+    if(customTooltipEnable) qDebug() << "enabletooltip is" << customTooltipEnable<< text();
     if(!text().isEmpty()){
         QFontMetrics fm(font());
         int strWidth = fm.width(text());
@@ -211,7 +215,9 @@ void CustomPushButton::moveLabel(){
             setToolTip(text());
             label->show();
         } else {
-            setToolTip("");
+            if(!customTooltipEnable){
+                setToolTip("");
+            }
             label->hide();
         }
     }

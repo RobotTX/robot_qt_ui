@@ -165,11 +165,9 @@ void Robot::ping(){
 }
 
 QDataStream& operator>>(QDataStream& in, Robot& robot){
-    qDebug() << "Robot operator >> called";
     QString _pathName("");
     QString _groupName("");
     in >> _pathName >> _groupName;
-    qDebug() << "assigning path" << _pathName << _groupName << "from file";
     robot.setPathName(_pathName);
     robot.setGroupPathName(_groupName);
     bool flag(false);
@@ -192,7 +190,6 @@ QDataStream& operator>>(QDataStream& in, Robot& robot){
 }
 
 QDataStream& operator<<(QDataStream& out, const Robot& robot){
-    qDebug() << "saving path" << robot.getPathName() << robot.getGroupPathName() << "associated to robot" << robot.getName();
     out << robot.getPathName() << robot.getGroupPathName();
     return out;
     /*

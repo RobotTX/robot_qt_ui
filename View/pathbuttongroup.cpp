@@ -32,4 +32,3 @@ void PathButtonGroup::setCheckable(const bool checkable){
     foreach(QAbstractButton* button, buttonGroup->buttons())
         button->setCheckable(checkable);
 }
-

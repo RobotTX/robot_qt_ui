@@ -28,7 +28,7 @@ void GroupsPathsButtonGroup::createButtons(){
     QMapIterator<QString, QSharedPointer<Paths::CollectionPaths>> it_paths_groups(*(paths->getGroups()));
     while(it_paths_groups.hasNext()){
         it_paths_groups.next();
-        CustomPushButton* groupButton = new CustomPushButton(it_paths_groups.key(), this, CustomPushButton::ButtonType::LEFT_MENU, "left", true);
+        CustomPushButton* groupButton = new CustomPushButton(it_paths_groups.key(), this, false, CustomPushButton::ButtonType::LEFT_MENU, "left", true);
 
         buttonGroup->addButton(groupButton, i++);
         layout->addWidget(groupButton);

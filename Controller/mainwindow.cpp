@@ -709,8 +709,10 @@ void MainWindow::viewPathSelectedRobot(int robotNb, bool checked){
     if(checked){
         /// in case we were displaying a path from the menu we make sure the eye button as well as the eye icon are unchecked and hidden respectively
         leftMenu->getPathGroupDisplayed()->getActionButtons()->getMapButton()->setChecked(false);
-        leftMenu->getPathGroupDisplayed()->getPathButtonGroup()->uncheck();
+        if(leftMenu->getPathGroupDisplayed()->getPathButtonGroup()->getButtonGroup()->checkedButton())
+            leftMenu->getPathGroupDisplayed()->enableButtons(leftMenu->getPathGroupDisplayed()->getPathButtonGroup()->getButtonGroup()->checkedButton());
         displayPathOnMap(false);
+
         QSharedPointer<Robot> robot = robots->getRobotsVector().at(robotNb)->getRobot();
         qDebug() << "viewPathSelectedRobot called on" << robot->getName();
         bottomLayout->uncheckViewPathSelectedRobot(robotNb);
@@ -1482,8 +1484,6 @@ void MainWindow::savePathSlot(GraphicItemState state){
         setTemporaryMessageTop(TEXT_COLOR_SUCCESS, "You have successfully modified the path \"" + pathName + "\"", 2500);
     }
 
-    setEnableAll(false, GraphicItemState::NO_EVENT);
-
     leftMenu->setEnableReturnCloseButtons(true);
 
     emit updatePathPainter(state, true);
@@ -2068,6 +2068,8 @@ void MainWindow::deleteHome(){
     selectedRobot->getRobot()->setHome(QSharedPointer<PointView> ());
     editSelectedRobotWidget->getHomeLabel()->setText("Home : ");
     editSelectedRobotWidget->updateHomeMenu();
+    /// to remove the home pixmap
+    robotPathPainter->setCurrentPath(robotPathPainter->getCurrentPath());
 }
 
 /**********************************************************************************************************************************/
@@ -3900,10 +3902,11 @@ void MainWindow::modifyGroupWithEnter(QString name){
     setEnableAll(true);
     QString oldGroupName = pointsLeftWidget->getLastCheckedId();
     if(pointsLeftWidget->checkGroupName(name) == 0){
-
+        qDebug() << "this name is ok";
 
         /// Update the model
         points->getGroups()->insert(name, points->getGroups()->take(pointsLeftWidget->getLastCheckedId()));
+
         /// updates the group box to create a point
         createPointWidget->updateGroupBox();
 
@@ -4571,7 +4574,6 @@ void MainWindow::cancelEditNoRobotPathPointSlot(){
 void MainWindow::cancelNoRobotPathSlot(){
     qDebug() << "MainWindow::cancelNoRobotPathSlot called";
 
-
     leftMenu->getPathGroupDisplayed()->setPathsGroup(noRobotPathCreationWidget->getCurrentGroupName());
 
     QVector<QSharedPointer<PathPoint>> oldPath = noRobotPathPainter->getOldPath();
@@ -4585,10 +4587,12 @@ void MainWindow::cancelNoRobotPathSlot(){
     noRobotPathCreationWidget->updatePath(oldPath);
 
     backEvent();
+
     noRobotPathPainter->setOldPath(oldPath);
     setEnableAll(false, GraphicItemState::NO_EVENT);
     leftMenu->setEnableReturnCloseButtons(true);
     topLayout->setEnable(true);
+    bottomLayout->setEnable(true);
 
     setTemporaryMessageTop(TEXT_COLOR_INFO, "You have cancelled the modifications of the path \"" + noRobotPathCreationWidget->getCurrentPathName() + "\"", 2500);
 }

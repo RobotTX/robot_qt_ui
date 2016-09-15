@@ -13,34 +13,34 @@
 TopLayout::TopLayout(QMainWindow* parent): QWidget(parent), lastMessage(TEXT_COLOR_NORMAL, ""){
     layout = new QHBoxLayout(this);
 
-    menuBtn = new CustomPushButton(QIcon(":/icons/list.png"), "", this, CustomPushButton::ButtonType::TOP);
+    menuBtn = new CustomPushButton(QIcon(":/icons/list.png"), "", this, false, CustomPushButton::ButtonType::TOP);
     menuBtn->setIconSize(xs_icon_size);
     menuBtn->setFocusPolicy(Qt::FocusPolicy::NoFocus);
 
     layout->addWidget(menuBtn);
     connect(menuBtn, SIGNAL(clicked()), parent, SLOT(openLeftMenu()));
 
-    connectBtn = new CustomPushButton(QIcon(":/icons/wifi.png"), "", this, CustomPushButton::ButtonType::TOP);
+    connectBtn = new CustomPushButton(QIcon(":/icons/wifi.png"), "", this, false, CustomPushButton::ButtonType::TOP);
     connectBtn->setIconSize(s_icon_size);
     connectBtn->setFocusPolicy(Qt::FocusPolicy::NoFocus);
     layout->addWidget(connectBtn);
     connect(connectBtn, SIGNAL(clicked()), parent, SLOT(connectToRobot()));
 
-    saveMapBtn = new CustomPushButton(QIcon(":/icons/load_map.png"), "", this, CustomPushButton::ButtonType::TOP);
+    saveMapBtn = new CustomPushButton(QIcon(":/icons/load_map.png"), "", this, false, CustomPushButton::ButtonType::TOP);
     saveMapBtn->setIconSize(s_icon_size);
     saveMapBtn->setFocusPolicy(Qt::FocusPolicy::NoFocus);
     layout->addWidget(saveMapBtn);
     saveMapBtn->setToolTip("Save the state of the map");
     connect(saveMapBtn, SIGNAL(clicked()), parent, SLOT(saveMapState()));
 
-    centerBtn = new CustomPushButton(QIcon(":/icons/save_map.png"), "", this, CustomPushButton::ButtonType::TOP);
+    centerBtn = new CustomPushButton(QIcon(":/icons/save_map.png"), "", this, false, CustomPushButton::ButtonType::TOP);
     centerBtn->setToolTip("Restore the state of the map");
     centerBtn->setIconSize(s_icon_size);
     centerBtn->setFocusPolicy(Qt::FocusPolicy::NoFocus);
     layout->addWidget(centerBtn);
     connect(centerBtn, SIGNAL(clicked()), parent, SLOT(centerMap()));
 
-    settingBtn = new CustomPushButton(QIcon(":/icons/setting.png"), "", this, CustomPushButton::ButtonType::TOP);
+    settingBtn = new CustomPushButton(QIcon(":/icons/setting.png"), "", this, false, CustomPushButton::ButtonType::TOP);
     settingBtn->setToolTip("Click to view/edit the settings");
     settingBtn->setIconSize(s_icon_size);
     settingBtn->setFocusPolicy(Qt::FocusPolicy::NoFocus);

@@ -11,7 +11,7 @@ RobotBtnGroup::RobotBtnGroup(const QVector<RobotView*>& vector, QWidget* parent)
 
 
     for(int i = 0; i < vector.length(); i++){
-        CustomPushButton* robotBtn = new CustomPushButton(vector[i]->getRobot()->getName(), this, CustomPushButton::ButtonType::LEFT_MENU, "left", true);
+        CustomPushButton* robotBtn = new CustomPushButton(vector[i]->getRobot()->getName(), this, false, CustomPushButton::ButtonType::LEFT_MENU, "left", true);
         connect(robotBtn, SIGNAL(doubleClick(QString)), parent, SLOT(doubleClickOnRobot(QString)));
 
         btnGroup->addButton(robotBtn, i);

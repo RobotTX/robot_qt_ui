@@ -74,10 +74,10 @@ DisplaySelectedPoint::DisplaySelectedPoint(QWidget* _parent, QSharedPointer<Robo
     robotsWidget = new DisplaySelectedPointRobots(this);
     scrollLayout->addWidget(robotsWidget);
 
-    cancelButton = new CustomPushButton("Cancel", this, CustomPushButton::ButtonType::LEFT_MENU, "center");
+    cancelButton = new CustomPushButton("Cancel", this, true, CustomPushButton::ButtonType::LEFT_MENU, "center");
     cancelButton->hide();
 
-    saveButton = new CustomPushButton("Save", this, CustomPushButton::ButtonType::LEFT_MENU, "center");
+    saveButton = new CustomPushButton("Save", this, true, CustomPushButton::ButtonType::LEFT_MENU, "center");
     saveButton->hide();
 
     editLayout = new QHBoxLayout();

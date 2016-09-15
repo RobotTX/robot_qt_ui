@@ -63,14 +63,16 @@ PathCreationWidget::PathCreationWidget(QWidget* parent, const QSharedPointer<Poi
 
     /// Clean, cancel & save buttons
     QGridLayout* grid = new QGridLayout();
-    cleanBtn = new CustomPushButton("Clean", this, CustomPushButton::ButtonType::LEFT_MENU, "center");
+    cleanBtn = new CustomPushButton("Clean", this, true, CustomPushButton::ButtonType::LEFT_MENU, "center");
+    cleanBtn->setToolTip("Click to remove all points from the path");
     grid->addWidget(cleanBtn, 0, 0);
 
-    cancelBtn = new CustomPushButton("Cancel", this, CustomPushButton::ButtonType::LEFT_MENU, "center");
-
-    saveBtn = new CustomPushButton("Save", this, CustomPushButton::ButtonType::LEFT_MENU, "center");
-
+    cancelBtn = new CustomPushButton("Cancel", this, true, CustomPushButton::ButtonType::LEFT_MENU, "center");
+    cancelBtn->setToolTip("Click to cancel the modifications made to this path and return to the previous menu");
     grid->addWidget(cancelBtn, 1, 0);
+
+    saveBtn = new CustomPushButton("Save", this, true, CustomPushButton::ButtonType::LEFT_MENU, "center");
+    saveBtn->setToolTip("Click to save your current modifications and return to the previous menu");
     grid->addWidget(saveBtn, 1, 1);
 
     layout->addLayout(grid);

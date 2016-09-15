@@ -57,12 +57,12 @@ PointsLeftWidget::PointsLeftWidget(QWidget* _parent, MainWindow* const mainWindo
     layout->addWidget(scrollArea);
 
     creationLayout = new QHBoxLayout();
-    saveButton = new CustomPushButton("Save", this, CustomPushButton::ButtonType::LEFT_MENU, "center", false, false);
+    saveButton = new CustomPushButton("Save", this, true, CustomPushButton::ButtonType::LEFT_MENU, "center", false, false);
     //saveButton->setAutoDefault(true);
     saveButton->hide();
     //saveButton->setEnabled(false);
 
-    cancelButton = new CustomPushButton("Cancel", this, CustomPushButton::ButtonType::LEFT_MENU, "center");
+    cancelButton = new CustomPushButton("Cancel", this, true, CustomPushButton::ButtonType::LEFT_MENU, "center");
     //cancelButton->setAutoDefault(true);
     cancelButton->hide();
     creationLayout->addWidget(cancelButton);

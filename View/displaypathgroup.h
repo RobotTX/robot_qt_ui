@@ -50,19 +50,23 @@ public:
      */
     void updateDisplayedPath(void);
 
+
 private slots:
-    /**
-     * @brief enableButtons
-     * @param button
-     * called when a user select a path to allow him to perform different operations on the selected paths
-     */
-    void enableButtons(QAbstractButton* button);
+
     /**
      * @brief resetMapButton
      * checks or unchecks the eye button appropriately when a new path is selected,
      * the button is checked if the path is visible, unchecked otherwise
      */
     void resetMapButton();
+
+public slots:
+    /**
+     * @brief enableButtons
+     * @param button
+     * called when a user select a path to allow him to perform different operations on the selected paths
+     */
+    void enableButtons(QAbstractButton* button);
 
 protected:
     void showEvent(QShowEvent* event);
