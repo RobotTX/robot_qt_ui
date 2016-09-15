@@ -175,6 +175,9 @@ EditSelectedRobotWidget::EditSelectedRobotWidget(QWidget* parent, MainWindow* _m
 
     connect(this, SIGNAL(newHome(QString)), mainWindow, SLOT(setNewHome(QString)));
 
+    connect(this, SIGNAL(robotNameChanged(QString)), mainWindow, SLOT(changeRobotName(QString)));
+    connect(this, SIGNAL(robotWifiChanged(QString,QString)), mainWindow, SLOT(changeRobotWifi(QString, QString)));
+
     hide();
     /*setMaximumWidth(mainWindow->width()*4/10);
     setMinimumWidth(mainWindow->width()*4/10);
@@ -431,4 +434,6 @@ void EditSelectedRobotWidget::saveRobotModifications(){
     /// we check if the SSID has changed, in which case we emit the new SSID and password to change
     if(robotDialog->getSSIDEdit()->text().simplified().compare(robotView->getRobot()->getWifi(), Qt::CaseSensitive))
         emit robotWifiChanged(robotDialog->getSSIDEdit()->text().simplified(), robotDialog->getPasswordEdit()->text().simplified());
+
+    robotDialog->close();
 }

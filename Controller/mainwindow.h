@@ -225,6 +225,8 @@ private slots:
     void displayPathSlot(QString groupName, QString pathName, bool display);
     void setNewHome(QString homeName);
     void deleteHome();
+    void changeRobotName(QString name);
+    void changeRobotWifi(QString ssid, QString password);
 
     /// for menu paths
     void displayGroupPaths();

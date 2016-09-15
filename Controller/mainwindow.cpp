@@ -2073,6 +2073,40 @@ void MainWindow::deleteHome(){
     robotPathPainter->setCurrentPath(robotPathPainter->getCurrentPath());
 }
 
+void MainWindow::changeRobotName(QString name){
+    qDebug() << "mainWindow::changeRobotName called";
+
+    selectedRobot->getRobot()->resetCommandAnswer();
+    if(selectedRobot->getRobot()->sendCommand(QString("a \"") + name + "\"")){
+        QString answer = selectedRobot->getRobot()->waitAnswer();
+        QStringList answerList = answer.split(QRegExp("[ ]"), QString::SkipEmptyParts);
+        if(answerList.size() > 1){
+            QString cmd = answerList.at(0);
+            bool success = (answerList.at(1).compare("done") == 0);
+            if((cmd.compare("a") == 0 && success) || answerList.at(0).compare("1") == 0){
+                QMap<QString, QString> tmp = robots->getRobotsNameMap();
+                tmp[selectedRobot->getRobot()->getIp()] = name;
+                selectedRobot->getRobot()->setName(name);
+                robots->setRobotsNameMap(tmp);
+                QFile fileWrite(ROBOTS_NAME_PATH);
+                fileWrite.resize(0);
+                fileWrite.open(QIODevice::WriteOnly);
+                QDataStream out(&fileWrite);
+                out << robots->getRobotsNameMap();
+                fileWrite.close();
+                qDebug() << "MainWindow::robotSavedEvent RobotsNameMap updated" << robots->getRobotsNameMap();
+            } else {
+                setMessageTop(TEXT_COLOR_DANGER, "Failed to edit the name of the robot");
+            }
+        }
+        selectedRobot->getRobot()->resetCommandAnswer();
+    }
+}
+
+void MainWindow::changeRobotWifi(QString ssid, QString password){
+    qDebug() << "mainWindow::changeWifi called";
+}
+
 /**********************************************************************************************************************************/
 
 //                                          MAPS
