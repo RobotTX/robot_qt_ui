@@ -69,7 +69,8 @@ HEADERS += Controller/cmdrobotthread.h \
            View/custompushbutton.h \
     View/stylesettings.h \
     View/customlabel.h \
-    View/customlineedit.h
+    View/customlineedit.h \
+    View/customrobotdialog.h
 
 FORMS += Controller/mainwindow.ui
 
@@ -125,7 +126,8 @@ SOURCES += main.cpp \
            View/displaypathgroup.cpp \
            View/custompushbutton.cpp \
     View/customlabel.cpp \
-    View/customlineedit.cpp
+    View/customlineedit.cpp \
+    View/customrobotdialog.cpp
 
 RESOURCES += Resources/resources.qrc
 

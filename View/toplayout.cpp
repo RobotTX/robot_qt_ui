@@ -66,7 +66,7 @@ TopLayout::TopLayout(QMainWindow* parent): QWidget(parent), lastMessage(TEXT_COL
     spaceWidget2->setColor("lightgrey");
     layout->addWidget(spaceWidget2);
 
-    closeBtn = new CustomPushButton(QIcon(":/icons/close.png"), "", this, CustomPushButton::ButtonType::TOP);
+    closeBtn = new CustomPushButton(QIcon(":/icons/close.png"), "", this, true, CustomPushButton::ButtonType::TOP);
     closeBtn->setIconSize(xxs_icon_size);
     closeBtn->setFocusPolicy(Qt::FocusPolicy::NoFocus);
 

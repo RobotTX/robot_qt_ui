@@ -182,7 +182,6 @@ void CustomPushButton::showEvent(QShowEvent* event){
 }
 
 void CustomPushButton::moveLabel(){
-    if(customTooltipEnable) qDebug() << "enabletooltip is" << customTooltipEnable<< text();
     if(!text().isEmpty()){
         QFontMetrics fm(font());
         int strWidth = fm.width(text());

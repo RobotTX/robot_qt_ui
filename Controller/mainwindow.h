@@ -24,6 +24,7 @@ class QVBoxLayout;
 class PathPainter;
 class CustomPushButton;
 class GroupsPathsWidget;
+class QMoveEvent;
 
 #include "Model/paths.h"
 #include "View/createpointwidget.h"
@@ -246,6 +247,9 @@ private slots:
     void displayAssignedPath(QString groupName, QString pathName);
     /// to clear paths on the map
     void clearMapOfPaths();
+
+protected:
+    void moveEvent(QMoveEvent* event);
 
 private:
     Ui::MainWindow* ui;

@@ -48,6 +48,7 @@
 #include "View/groupspathsbuttongroup.h"
 #include "View/custompushbutton.h"
 #include <assert.h>
+#include "View/customrobotdialog.h"
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow) {
     ui->setupUi(this);
@@ -4948,4 +4949,11 @@ void MainWindow::showSelectedRobotHomeOnly(){
             }
         }
     }
+}
+
+void MainWindow::moveEvent(QMoveEvent *event){
+    const QPoint global = this->mapToGlobal(rect().center());
+    editSelectedRobotWidget->getRobotInfoDialog()->move(global.x()-editSelectedRobotWidget->getRobotInfoDialog()->width()/2,
+                                                        global.y()-editSelectedRobotWidget->getRobotInfoDialog()->height()/2);
+    QMainWindow::moveEvent(event);
 }

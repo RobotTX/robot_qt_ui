@@ -21,11 +21,18 @@
 #include "Model/points.h"
 #include <QProgressBar>
 #include "View/customlabel.h"
+#include "View/customrobotdialog.h"
 
 
-EditSelectedRobotWidget::EditSelectedRobotWidget(QWidget* parent, MainWindow* mainWindow, const QSharedPointer<Points> &_points, const QSharedPointer<Robots> _robots, const QSharedPointer<Paths> &_paths):
-    QWidget(parent), points(_points), robots(_robots), paths(_paths), assignedPath("")
+EditSelectedRobotWidget::EditSelectedRobotWidget(QWidget* parent, MainWindow* _mainWindow, const QSharedPointer<Points> &_points, const QSharedPointer<Robots> _robots, const QSharedPointer<Paths> &_paths):
+    QWidget(parent), mainWindow(_mainWindow), points(_points), robots(_robots), paths(_paths), assignedPath("")
 {
+    /// creates a dialog widget to modify the robot's info and centers it on the main window
+    robotDialog = new CustomRobotDialog(this);
+
+    connect(robotDialog->getCancelButton(), SIGNAL(clicked()), this, SLOT(cancelRobotModifications()));
+    connect(robotDialog->getSaveButton(), SIGNAL(clicked()), this, SLOT(saveRobotModifications()));
+
     layout = new QVBoxLayout(this);
     robotView = NULL;
     home = QSharedPointer<PointView>();
@@ -81,6 +88,11 @@ EditSelectedRobotWidget::EditSelectedRobotWidget(QWidget* parent, MainWindow* ma
     batteryLevel = new QProgressBar(this);
     batteryLevel->setValue(50);
     inLayout->addWidget(batteryLevel);
+
+    editRobotInfoBtn = new CustomPushButton(QIcon(":/icons/edit.png") , "Edit information", this, true);
+    editRobotInfoBtn->setIconSize(xs_icon_size);
+    inLayout->addWidget(editRobotInfoBtn);
+    connect(editRobotInfoBtn, SIGNAL(clicked(bool)), this, SLOT(editRobot()));
 
     SpaceWidget* spaceWidget2 = new SpaceWidget(SpaceWidget::SpaceOrientation::HORIZONTAL, this);
     inLayout->addWidget(spaceWidget2);
@@ -393,4 +405,30 @@ void EditSelectedRobotWidget::updateHomeMenu(){
             }
         }
     }
+}
+
+void EditSelectedRobotWidget::editRobot(){
+    qDebug() << "EditSelectedRobotWidget::editRobot called";
+    robotDialog->move(mainWindow->pos().x() + mainWindow->width()/2-robotDialog->width()/2,
+                      mainWindow->pos().y() + mainWindow->height()/2-robotDialog->height()/2);
+    robotDialog->getNameEdit()->setText(robotView->getRobot()->getName());
+    robotDialog->getSSIDEdit()->setText(robotView->getRobot()->getWifi());
+    if(robotDialog->exec() == QDialog::Accepted)
+        qDebug() << "awesome";
+}
+
+void EditSelectedRobotWidget::cancelRobotModifications(){
+    qDebug() << "cancelling robot modifications";
+    robotDialog->close();
+}
+
+void EditSelectedRobotWidget::saveRobotModifications(){
+    qDebug() << "saving robot modifications";
+    /// we check if the name has been changed
+    if(robotDialog->getNameEdit()->text().simplified().compare(robotView->getRobot()->getName(), Qt::CaseSensitive))
+        emit robotNameChanged(robotDialog->getNameEdit()->text().simplified());
+
+    /// we check if the SSID has changed, in which case we emit the new SSID and password to change
+    if(robotDialog->getSSIDEdit()->text().simplified().compare(robotView->getRobot()->getWifi(), Qt::CaseSensitive))
+        emit robotWifiChanged(robotDialog->getSSIDEdit()->text().simplified(), robotDialog->getPasswordEdit()->text().simplified());
 }
