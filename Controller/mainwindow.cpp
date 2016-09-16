@@ -1420,7 +1420,7 @@ void MainWindow::editTmpPathPointSlot(int id, QString name, double x, double y, 
 
 void MainWindow::savePathSlot(GraphicItemState state){
     qDebug() << "MainWindow::savePath called";
-    QString pathName("");
+    backEvent();
 
     if(state == GraphicItemState::ROBOT_CREATING_PATH){
         robotPathPainter->setPathDeleted(false);
@@ -1460,7 +1460,7 @@ void MainWindow::savePathSlot(GraphicItemState state){
 
         /// gotta update the model and serialize the paths
         const QString groupName = noRobotPathCreationWidget->getCurrentGroupName();
-        pathName = noRobotPathCreationWidget->getNameEdit()->text().simplified();
+        const QString pathName = noRobotPathCreationWidget->getNameEdit()->text().simplified();
         qDebug() << groupName << pathName;
 
         /// if the path existed before we destroy it and reconstruct it
@@ -1482,19 +1482,12 @@ void MainWindow::savePathSlot(GraphicItemState state){
         /// updates the path of the pathcreation widget
         noRobotPathCreationWidget->setCurrentPathName(noRobotPathCreationWidget->getNameEdit()->text().simplified());
 
-        leftMenu->getDisplaySelectedPath()->updatePath(noRobotPathCreationWidget->getCurrentGroupName(),
-                                                       noRobotPathCreationWidget->getNameEdit()->text().simplified(),
-                                                       noRobotPathPainter->getCurrentPath());
+        setTemporaryMessageTop(TEXT_COLOR_SUCCESS, "You have successfully modified the path \"" + pathName + "\"", 2500);
     }
 
     leftMenu->setEnableReturnCloseButtons(true);
 
     emit updatePathPainter(state, true);
-    backEvent();
-
-    if(!state == GraphicItemState::ROBOT_CREATING_PATH){
-        setTemporaryMessageTop(TEXT_COLOR_SUCCESS, "You have successfully modified the path \"" + pathName + "\"", 2500);
-    }
 }
 
 void MainWindow::cancelPathSlot(){
@@ -2102,6 +2095,10 @@ void MainWindow::changeRobotName(QString name){
                 out << robots->getRobotsNameMap();
                 fileWrite.close();
                 qDebug() << "MainWindow::robotSavedEvent RobotsNameMap updated" << robots->getRobotsNameMap();
+                bottomLayout->updateRobot(robots->getRobotId(selectedRobot->getRobot()->getName()), selectedRobot);
+                editSelectedRobotWidget->getNameEdit()->setText(name);
+                robotsLeftWidget->updateRobots(robots);
+                setMessageTop(TEXT_COLOR_INFO, "You have successfully updated the name of your robot to " + name);
             } else {
                 setMessageTop(TEXT_COLOR_DANGER, "Failed to edit the name of the robot");
             }
@@ -4502,7 +4499,7 @@ void MainWindow::displayPathOnMap(const bool display){
         bottomLayout->uncheckViewPathSelectedRobot(bottomLayout->getLastCheckedId());
         bool foundFlag = false;
         noRobotPathPainter->setCurrentPath(paths->getPath(lastWidgets.at(lastWidgets.size()-1).first.second, leftMenu->getPathGroupDisplayed()->getLastCheckedButton(), foundFlag));
-        paths->setVisiblePath(leftMenu->getPathGroupDisplayed()->getLastCheckedButton());     
+        paths->setVisiblePath(leftMenu->getPathGroupDisplayed()->getLastCheckedButton());
     }
     else {
         paths->setVisiblePath("");

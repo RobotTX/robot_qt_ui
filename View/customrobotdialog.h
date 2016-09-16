@@ -5,7 +5,7 @@
 #include <QObject>
 
 class QFormLayout;
-class QLineEdit;
+class CustomLineEdit;
 class QLabel;
 class QVBoxLayout;
 class QPushButton;
@@ -18,16 +18,16 @@ public:
 
     QPushButton* getCancelButton(void) const { return cancelButton; }
     QPushButton* getSaveButton(void) const { return saveButton; }
-    QLineEdit* getNameEdit(void) const { return nameEdit; }
-    QLineEdit* getPasswordEdit(void) const { return passwordEdit; }
-    QLineEdit* getSSIDEdit(void) const { return ssidEdit; }
+    CustomLineEdit* getNameEdit(void) const { return nameEdit; }
+    CustomLineEdit* getPasswordEdit(void) const { return passwordEdit; }
+    CustomLineEdit* getSSIDEdit(void) const { return ssidEdit; }
 
 private:
     QFormLayout* form;
 
-    QLineEdit* nameEdit;
-    QLineEdit* passwordEdit;
-    QLineEdit* ssidEdit;
+    CustomLineEdit* nameEdit;
+    CustomLineEdit* passwordEdit;
+    CustomLineEdit* ssidEdit;
     QVBoxLayout* grid;
 
     QPushButton* cancelButton;

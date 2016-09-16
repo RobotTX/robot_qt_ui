@@ -1,6 +1,6 @@
 #include "customrobotdialog.h"
 #include <QLabel>
-#include <QLineEdit>
+#include "View/customlineedit.h"
 #include <QFormLayout>
 #include <QVBoxLayout>
 #include <QPushButton>
@@ -18,15 +18,15 @@ CustomRobotDialog::CustomRobotDialog(QWidget *parent): QDialog(parent)
 
     form = new QFormLayout();
     QLabel* nameLabel = new QLabel("Name :", this);
-    nameEdit = new QLineEdit(this);
+    nameEdit = new CustomLineEdit(this);
     form->addRow(nameLabel, nameEdit);
 
     QLabel* SSIDLabel = new QLabel("Wifi SSID : ", this);
-    ssidEdit = new QLineEdit(this);
+    ssidEdit = new CustomLineEdit(this);
     form->addRow(SSIDLabel, ssidEdit);
 
     QLabel* passwordLabel = new QLabel("Wifi Password :", this);
-    passwordEdit = new QLineEdit(this);
+    passwordEdit = new CustomLineEdit(this);
     form->addRow(passwordLabel, passwordEdit);
 
     cancelButton = new QPushButton("Cancel", this);
