@@ -29,7 +29,7 @@ PointsLeftWidget::PointsLeftWidget(QWidget* _parent, MainWindow* const mainWindo
     layout = new QVBoxLayout(this);
 
     actionButtons = new TopLeftMenu(this);
-    actionButtons->setAllCheckable();
+    actionButtons->setCheckable(true);
 
     actionButtons->getMapButton()->setEnabled(false);
     actionButtons->getEditButton()->setEnabled(false);

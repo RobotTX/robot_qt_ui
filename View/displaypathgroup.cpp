@@ -57,7 +57,7 @@ void DisplayPathGroup::showEvent(QShowEvent *event){
 }
 
 void DisplayPathGroup::initializeActionButtons(){
-    actionButtons->disableAll();
+    actionButtons->enableAll(false);
     actionButtons->getPlusButton()->setEnabled(true);
     actionButtons->getMinusButton()->setCheckable(false);
     actionButtons->getEditButton()->setCheckable(false);

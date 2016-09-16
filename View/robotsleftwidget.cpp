@@ -16,7 +16,7 @@ RobotsLeftWidget::RobotsLeftWidget(QWidget* parent, MainWindow* _mainWindow, QSh
     scrollArea = new CustomScrollArea(this);
 
     actionButtons = new TopLeftMenu(this);
-    actionButtons->disableAll();
+    actionButtons->enableAll(false);
 
     connect(actionButtons->getEditButton(), SIGNAL(clicked()), mainWindow, SLOT(editRobotBtnEvent()));
     connect(actionButtons->getMapButton(), SIGNAL(clicked()), mainWindow, SLOT(checkRobotBtnEventMenu()));
@@ -63,8 +63,8 @@ void RobotsLeftWidget::unSelectAllRobots(){
 
 void RobotsLeftWidget::showEvent(QShowEvent *){
     lastCheckedId = -1;
-    actionButtons->disableAll();
-    actionButtons->uncheckAll();
+    actionButtons->enableAll(false);
+    actionButtons->checkAll(false);
     robots->deselect();
     unSelectAllRobots();
 }

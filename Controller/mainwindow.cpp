@@ -2275,9 +2275,9 @@ void MainWindow::plusGroupBtnEvent(){
     /// stops a user from creating a new group with no name
     pointsLeftWidget->getSaveButton()->setEnabled(false);
     /// uncheck and disable the buttons
-    pointsLeftWidget->getActionButtons()->uncheckAll();
+    pointsLeftWidget->getActionButtons()->checkAll(false);
 
-    pointsLeftWidget->getActionButtons()->disableAll();
+    pointsLeftWidget->getActionButtons()->enableAll(false);
 
     pointsLeftWidget->getActionButtons()->getPlusButton()->setToolTip("Enter a name for your group and click \"save\" or click \"cancel\" to cancel");
 
@@ -4174,7 +4174,7 @@ void MainWindow::editGroupPaths(){
     leftMenu->getGroupsPathsWidget()->getButtonGroup()->getButtonGroup()->button(btnIndex)->hide();
 
     /// disables the buttons
-    leftMenu->getGroupsPathsWidget()->getActionButtons()->disableAll();
+    leftMenu->getGroupsPathsWidget()->getActionButtons()->enableAll(false);
 
     /// disables the QButtonGroup
     leftMenu->getGroupsPathsWidget()->getButtonGroup()->setEnabledGroup(false);
@@ -4210,8 +4210,8 @@ void MainWindow::createGroupPaths(){
     leftMenu->getGroupsPathsWidget()->getSaveButton()->setEnabled(false);
 
     /// uncheck and disable the buttons
-    leftMenu->getGroupsPathsWidget()->getActionButtons()->uncheckAll();
-    leftMenu->getGroupsPathsWidget()->getActionButtons()->disableAll();
+    leftMenu->getGroupsPathsWidget()->getActionButtons()->checkAll(false);
+    leftMenu->getGroupsPathsWidget()->getActionButtons()->enableAll(false);
 
     leftMenu->getGroupsPathsWidget()->getActionButtons()->getPlusButton()->setToolTip("Enter a name for your group and click \"save\" or click \"cancel\" to cancel");
 

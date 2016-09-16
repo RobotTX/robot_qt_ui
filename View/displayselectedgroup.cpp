@@ -23,7 +23,7 @@ DisplaySelectedGroup::DisplaySelectedGroup(QWidget* parent, QSharedPointer<Point
 
     actionButtons = new TopLeftMenu(this);
 
-    actionButtons->disableAll();
+    actionButtons->enableAll(false);
     actionButtons->getMinusButton()->setCheckable(false);
     actionButtons->getEditButton()->setCheckable(false);
     actionButtons->getMapButton()->setCheckable(false);

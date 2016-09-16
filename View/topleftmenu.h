@@ -22,12 +22,9 @@ public:
     CustomPushButton* getMapButton(void) const {return mapButton;}
     CustomPushButton* getGoButton(void) const {return goButton;}
 
-    void disableAll();
-    void enableAll();
-    void uncheckAll();
-    void checkAll();
-    void setAllCheckable();
-    void setAllNonCheckable();
+    void enableAll(const bool enable);
+    void checkAll(const bool check);
+    void setCheckable(const bool checkable);
     void setEnable(const bool enable);
 
 private:

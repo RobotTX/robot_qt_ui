@@ -23,7 +23,7 @@ CreatePointWidget::CreatePointWidget(QWidget *parent, MainWindow *mainWindow, QS
     layout = new QVBoxLayout(this);
 
     actionButtons = new TopLeftMenu(this);
-    actionButtons->disableAll();
+    actionButtons->enableAll(false);
     layout->addWidget(actionButtons);
 
     QVBoxLayout* infosLayout = new QVBoxLayout();

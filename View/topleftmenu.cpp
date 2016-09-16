@@ -50,50 +50,28 @@ TopLeftMenu::TopLeftMenu(QWidget * parent): QWidget(parent){
     setMaximumHeight(top_left_menu_height);
 }
 
-void TopLeftMenu::disableAll(){
-    plusButton->setEnabled(false);
-    minusButton->setEnabled(false);
-    editButton->setEnabled(false);
-    goButton->setEnabled(false);
-    mapButton->setEnabled(false);
-}
-void TopLeftMenu::enableAll(){
-    plusButton->setEnabled(true);
-    minusButton->setEnabled(true);
-    editButton->setEnabled(true);
-    goButton->setEnabled(true);
-    mapButton->setEnabled(true);
-}
-void TopLeftMenu::uncheckAll(){
-    plusButton->setChecked(false);
-    minusButton->setChecked(false);
-    editButton->setChecked(false);
-    goButton->setChecked(false);
-    mapButton->setChecked(false);
+void TopLeftMenu::enableAll(const bool enable){
+    plusButton->setEnabled(enable);
+    minusButton->setEnabled(enable);
+    editButton->setEnabled(enable);
+    goButton->setEnabled(enable);
+    mapButton->setEnabled(enable);
 }
 
-void TopLeftMenu::checkAll(){
-    plusButton->setChecked(true);
-    minusButton->setChecked(true);
-    editButton->setChecked(true);
-    goButton->setChecked(true);
-    mapButton->setChecked(true);
+void TopLeftMenu::checkAll(const bool check){
+    plusButton->setChecked(check);
+    minusButton->setChecked(check);
+    editButton->setChecked(check);
+    goButton->setChecked(check);
+    mapButton->setChecked(check);
 }
 
-void TopLeftMenu::setAllCheckable(){
-    plusButton->setCheckable(true);
-    minusButton->setCheckable(true);
-    editButton->setCheckable(true);
-    goButton->setCheckable(true);
-    mapButton->setCheckable(true);
-}
-
-void TopLeftMenu::setAllNonCheckable(){
-    plusButton->setCheckable(false);
-    minusButton->setCheckable(false);
-    editButton->setCheckable(false);
-    goButton->setCheckable(false);
-    mapButton->setCheckable(false);
+void TopLeftMenu::setCheckable(const bool checkable){
+    plusButton->setCheckable(checkable);
+    minusButton->setCheckable(checkable);
+    editButton->setCheckable(checkable);
+    goButton->setCheckable(checkable);
+    mapButton->setCheckable(checkable);
 }
 
 void TopLeftMenu::setEnable(const bool enable){
