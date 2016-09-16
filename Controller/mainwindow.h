@@ -39,6 +39,7 @@ class QMoveEvent;
 #include "Model/point.h"
 #include <QSettings>
 
+
 #define GOBOT_PATH "/home/m-a/Documents/QtProject/gobot-software/"
 //#define GOBOT_PATH "/home/joan/Gobot/gobot-software/"
 
@@ -46,6 +47,7 @@ class QMoveEvent;
 #define ROBOTS_NAME_FILE "robotsName.dat"
 #define MAP_FILE "realMap.dat"
 #define PATHS_FILE "savedPaths.dat"
+
 
 #define PI 3.14159265
 #define PORT_ROBOT_UPDATE 6000

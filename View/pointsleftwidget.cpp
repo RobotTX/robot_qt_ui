@@ -58,12 +58,9 @@ PointsLeftWidget::PointsLeftWidget(QWidget* _parent, MainWindow* const mainWindo
 
     creationLayout = new QHBoxLayout();
     saveButton = new CustomPushButton("Save", this, true, CustomPushButton::ButtonType::LEFT_MENU, "center", false, false);
-    //saveButton->setAutoDefault(true);
     saveButton->hide();
-    //saveButton->setEnabled(false);
 
     cancelButton = new CustomPushButton("Cancel", this, true, CustomPushButton::ButtonType::LEFT_MENU, "center");
-    //cancelButton->setAutoDefault(true);
     cancelButton->hide();
     creationLayout->addWidget(cancelButton);
     creationLayout->addWidget(saveButton);
@@ -114,13 +111,6 @@ PointsLeftWidget::PointsLeftWidget(QWidget* _parent, MainWindow* const mainWindo
 
     connect(this, SIGNAL(deleteGroup()), mainWindow, SLOT(minusGroupBtnEvent()));
 
-    /*setMaximumWidth(mainWindow->width()*4/10);
-    setMinimumWidth(mainWindow->width()*4/10);*/
-    //downLayout->setAlignment(Qt::AlignBottom);
-    //downLayout->setContentsMargins(10, 0, 30, 0);
-
-    /*layout->setContentsMargins(0,0,0,0);
-    creationLayout->setContentsMargins(0, 0, 0, 20);*/
     layout->setContentsMargins(0,0,0,0);
     setAutoFillBackground(true);
 }
@@ -139,7 +129,6 @@ void PointsLeftWidget::enableButtons(QString button){
     points->setPixmapAll(PointView::PixmapType::NORMAL);
     emit resetPathPointViews();
     if(button.compare(lastCheckedId) == 0){
-
         groupButtonGroup->uncheck();
         lastCheckedId = "";
         disableButtons();
@@ -280,7 +269,6 @@ int PointsLeftWidget::checkGroupName(QString name){
 }
 
 void PointsLeftWidget::cancelCreationGroup(){
-    qDebug() << "PointsLeftWidget::cancelCreationGroup called";
     setLastCheckedId("");
     /// hides everything that's related to the creation of a group
     groupNameEdit->hide();
@@ -297,12 +285,10 @@ void PointsLeftWidget::cancelCreationGroup(){
 }
 
 void PointsLeftWidget::emitNewGroupSignal(){
-    qDebug() << "PointsLeftWidget::emitNewGroupSignal called";
     emit newGroup(groupNameEdit->text().simplified());
 }
 
 void PointsLeftWidget::keyPressEvent(QKeyEvent* event){
-    qDebug() << "PointsLeftWidget::keyPressEvent called";
     /// this is the enter key
     if(!event->text().compare("\r")){
         if(creatingGroup)
@@ -326,8 +312,8 @@ void PointsLeftWidget::keyPressEvent(QKeyEvent* event){
             }
         }
     }
-    /// this is the escape key, in this case we simply cancel the creation / edition
-    else if(!event->text().compare("\u001B")){
+    /// in this case we simply cancel the creation / edition
+    else if(event->key() == Qt::Key_Escape){
         if(creatingGroup)
             emit newGroup("");
         else {

@@ -13,6 +13,14 @@ class PathPointList : public QListWidget{
 
 public:
     PathPointList(QWidget *parent);
+
+    /**
+     * @brief update
+     * @param indexNb
+     * @param action
+     * @param time
+     * updates the action of the path point at index indexNb
+     */
     void update(const int indexNb, const int action, const int time = 0);
 
     /**
@@ -34,6 +42,7 @@ private slots:
     void itemMoved(QModelIndex parent, int start, int end, QModelIndex destination, int row);
 
 signals:
+    /// emitted when a point is moved in the list
     void itemMovedSignal(QModelIndex, int, int, QModelIndex, int);
 };
 

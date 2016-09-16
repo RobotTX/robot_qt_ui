@@ -20,27 +20,22 @@ PathPointList::PathPointList(QWidget* parent): QListWidget(parent){
     connect(model(), SIGNAL(rowsMoved(QModelIndex, int, int, QModelIndex, int)), this, SLOT(itemMoved(QModelIndex, int, int, QModelIndex, int)));
 }
 
-void PathPointList::itemMoved(QModelIndex parent, int first, int end,
-                                 QModelIndex destination, int row){
-
-    qDebug() << "itemMoved from" << first << "to" << row;
+void PathPointList::itemMoved(QModelIndex parent, int first, int end, QModelIndex destination, int row){
     if(row >= 0){
         int itemNb = row;
         if(itemNb >= count())
             itemNb = count()-1;
-        qDebug() << "item " << ((PathPointCreationWidget*) itemWidget(item(itemNb)))->getName() << "moved to row" << row;
         refresh();
     }
-
     emit itemMovedSignal(parent, first, end, destination, row);
 }
 
 void PathPointList::refresh(void){
     for(int i = 0; i < count(); i++){
         static_cast<PathPointCreationWidget*> (itemWidget(item(i)))->setId(i);
-        if(i < count()-1){
+        if(i < count()-1)
             static_cast<PathPointCreationWidget*> (itemWidget(item(i)))->displayActionWidget(true);
-        } else {
+        else {
             static_cast<PathPointCreationWidget*> (itemWidget(item(i)))->displayActionWidget(false);
             static_cast<PathPointCreationWidget*> (itemWidget(item(i)))->resetAction();
         }
@@ -50,10 +45,9 @@ void PathPointList::refresh(void){
 
 void PathPointList::update(const int indexNb, const int action, const int time){
     static_cast<PathPointCreationWidget*> (itemWidget(item(indexNb)))->getAction()->setCurrentIndex(action);
-    if(action==0 && time != 0){
+    if(action == 0 && time != 0){
         static_cast<PathPointCreationWidget*> (itemWidget(item(indexNb)))->getTimeEdit()->setText( QString::number(time));
         static_cast<PathPointCreationWidget*> (itemWidget(item(indexNb)))->getTimeWidget()->show();
     } else
         static_cast<PathPointCreationWidget*> (itemWidget(item(indexNb)))->getTimeWidget()->hide();
-
 }

@@ -32,23 +32,23 @@ void XMLParser::save(const Points& points) const {
         while (i.hasNext()) {
             i.next();
 
-            xmlWriter.writeStartElement("group");
-            xmlWriter.writeTextElement("name", i.key());
+            if(i.key().compare(PATH_GROUP_NAME) && i.key().compare(TMP_GROUP_NAME)){
+                xmlWriter.writeStartElement("group");
+                xmlWriter.writeTextElement("name", i.key());
 
-            /// For each point of the group
-            for(int j = 0; j < i.value()->size(); j++){
-                xmlWriter.writeStartElement("point");
-                xmlWriter.writeTextElement("name", i.value()->at(j)->getPoint()->getName());
-                xmlWriter.writeTextElement("x", QString::number(i.value()->at(j)->getPoint()->getPosition().getX()));
-                xmlWriter.writeTextElement("y", QString::number(i.value()->at(j)->getPoint()->getPosition().getY()));
-                xmlWriter.writeTextElement("displayed", QString::number(i.value()->at(j)->isVisible()));
+                /// For each point of the group
+                for(int j = 0; j < i.value()->size(); j++){
+                    xmlWriter.writeStartElement("point");
+                    xmlWriter.writeTextElement("name", i.value()->at(j)->getPoint()->getName());
+                    xmlWriter.writeTextElement("x", QString::number(i.value()->at(j)->getPoint()->getPosition().getX()));
+                    xmlWriter.writeTextElement("y", QString::number(i.value()->at(j)->getPoint()->getPosition().getY()));
+                    xmlWriter.writeTextElement("displayed", QString::number(i.value()->at(j)->isVisible()));
+                    xmlWriter.writeEndElement();
+                }
                 xmlWriter.writeEndElement();
             }
-
-            xmlWriter.writeEndElement();
         }
         xmlWriter.writeEndElement();
-
         file->close();
 
     } catch(std::exception e) {

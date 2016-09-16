@@ -14,14 +14,12 @@
 PathPointCreationWidget::PathPointCreationWidget(const int _id, const QString _name, const double x, const double y, QWidget* parent):
     QWidget(parent), id(_id), name(_name), posX(x), posY(y)
 {
-    qDebug() << "id pathpointcreationwidget" << id << name;
     layout = new QHBoxLayout(this);
 
     pathWidget = new QWidget(this);
     editWidget = new QWidget(this);
     QVBoxLayout* pathLayout = new QVBoxLayout(pathWidget);
     QVBoxLayout* editLayout = new QVBoxLayout(editWidget);
-
 
     topLayout = new QGridLayout();
     /// Label for the name of the point
@@ -35,7 +33,6 @@ PathPointCreationWidget::PathPointCreationWidget(const int _id, const QString _n
 
     topLayout->setColumnStretch(0, 1);
     pathLayout->addLayout(topLayout);
-
 
     /// The widget that contain the layout for the button to select the
     /// action the robot need to do (wait for X sec or wait for human action)

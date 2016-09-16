@@ -30,7 +30,6 @@ void PointButtonGroup::setGroup(const QString _groupName){
 }
 
 void PointButtonGroup::createButtons(){
-    //qDebug() << "PointButtonGroup::createButtons called";
 
     if(points->isAGroup(groupName) && points->getGroups()->value(groupName) && points->getGroups()->value(groupName)->size() > 0){
         QSharedPointer<QVector<QSharedPointer<PointView>>> group = points->getGroups()->value(groupName);
@@ -38,7 +37,6 @@ void PointButtonGroup::createButtons(){
             QSharedPointer<Point> currentPoint = group->at(j)->getPoint();
 
             CustomPushButton* pointButton = new CustomPushButton(currentPoint->getName(), this);
-            //pointButton->setAutoDefault(true);
 
             buttonGroup->addButton(pointButton);
             layout->addWidget(pointButton);
@@ -60,13 +58,11 @@ void PointButtonGroup::deleteButtons(void){
 }
 
 void PointButtonGroup::setCheckable(const bool checkable){
-    qDebug() << "PointButtonGroup::setCheckable called";
     foreach(QAbstractButton* button, buttonGroup->buttons())
         button->setCheckable(checkable);
 }
 
 void PointButtonGroup::uncheck(void){
-    //qDebug() << "PointButtonGroup::uncheck called";
     /// little trick to uncheck all buttons because the class doesn't provide a function to do it
     buttonGroup->setExclusive(false);
     if(buttonGroup->checkedButton())
@@ -83,8 +79,6 @@ QAbstractButton* PointButtonGroup::getButtonByName(const QString name) const {
 }
 
 int PointButtonGroup::getButtonIdByName(const QString name) const {
-    qDebug() << "PointButtonGroup::getButtonIdByName" << getButtonGroup()->buttons().size();
-
     for(int i = 0; i < getButtonGroup()->buttons().size(); i++){
         if(getButtonGroup()->buttons().at(i)->text().compare(name) == 0)
             return i;
@@ -96,6 +90,5 @@ void PointButtonGroup::resizeEvent(QResizeEvent *event){
     QWidget* widget = static_cast<QWidget*>(parent()->parent());
     int maxWidth = widget->width();
     setMaximumWidth(maxWidth);
-
     QWidget::resizeEvent(event);
 }
