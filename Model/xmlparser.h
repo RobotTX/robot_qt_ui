@@ -39,7 +39,7 @@ public:
      * @param points
      * Imports a list of points from an xml file to the model
      */
-    void readPoints(QSharedPointer<Points>& points, MapView* mapView, MainWindow *mainWindow);
+    void readPoints(QSharedPointer<Points>& points);
 
     /**
      * @brief readNameElement

@@ -353,3 +353,12 @@ void GroupsPathsWidget::initializeActionButtons(void){
     actionButtons->getMapButton()->setEnabled(false);
     actionButtons->getGoButton()->setEnabled(false);
 }
+
+void GroupsPathsWidget::resizeEvent(QResizeEvent *event){
+    QWidget* widget = static_cast<QWidget*>(parent());
+    int maxWidth = widget->width() - 18;
+    setFixedWidth(maxWidth);
+
+    QWidget::resizeEvent(event);
+}
+

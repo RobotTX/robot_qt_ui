@@ -36,7 +36,6 @@ private:
     QHBoxLayout* layout;
     QLabel* label;
     CustomPushButton* menuBtn;
-    CustomPushButton* connectBtn;
     CustomPushButton* closeBtn;
     CustomPushButton* centerBtn;
     CustomPushButton* settingBtn;

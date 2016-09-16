@@ -8,7 +8,7 @@ class QGridLayout;
 class CustomPushButton;
 class QLabel;
 class MainWindow;
-class CustomLineEdit;
+class CustomLabel;
 class QProgressBar;
 class PathWidget;
 class Points;
@@ -33,14 +33,14 @@ class EditSelectedRobotWidget: public QWidget{
 public:
     EditSelectedRobotWidget(QWidget* parent, MainWindow* _mainWindow, const QSharedPointer<Points>& _points, QSharedPointer<Robots> const robots, const QSharedPointer<Paths>& _paths);
 
-    CustomLineEdit* getNameEdit(void){ return nameEdit; }
+    CustomLabel* getNameLabel(void){ return nameLabel; }
     CustomPushButton* getHomeBtn(void){ return homeBtn; }
     QSharedPointer<PointView> getHome() const { return home; }
     bool isFirstConnection() const { return firstConnection; }
-    CustomLineEdit* getWifiNameEdit(void) const { return wifiNameEdit; }
-    CustomLineEdit* getWifiPwdEdit(void) const { return wifiPwdEdit; }
+    CustomLabel* getWifiNameLabel(void) const { return wifiNameLabel; }
     PathWidget* getPathWidget(void) const { return pathWidget; }
     CustomPushButton* getAddPathBtn(void) const { return addPathBtn; }
+    CustomPushButton* getScanBtn(void) const {return scanBtn;}
     bool getPathChanged() const { return pathChanged; }
     CustomLabel* getHomeLabel(void) const { return homeLabel; }
     CustomPushButton* getSaveButton(void) const { return saveBtn; }
@@ -97,16 +97,8 @@ private slots:
      * Called when the save button if clicked
      */
     void saveEditSelecRobotBtnEvent(void);
-
-    /**
-    * @brief checkRobotName
-    * Check if the robot name is already taken
-    */
-    void checkRobotName(void);
-    void checkWifiName(void);
     void openMenu();
     void openHomeMenu();
-    void deletePwd(void);
     void assignPath(QAction* action);
     void assignHome(QAction* action);
     /**
@@ -122,9 +114,8 @@ private:
     QVBoxLayout* layout;
     QVBoxLayout* pathLayout;
     RobotView* robotView;
-    CustomLineEdit* nameEdit;
-    CustomLineEdit* wifiNameEdit;
-    CustomLineEdit* wifiPwdEdit;
+    CustomLabel* nameLabel;
+    CustomLabel* wifiNameLabel;
     QLabel* ipAddressLabel;
     QSharedPointer<Points> points;
     QSharedPointer<Robots> robots;

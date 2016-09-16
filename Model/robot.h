@@ -119,11 +119,31 @@ public:
     void clearPath();
 
 signals:
+    /**
+     * @brief pingSignal
+     * When a robot connect to the update socket in mainwindow, we tell the command thread that the robot is still alive
+     */
     void pingSignal();
+
+    /**
+     * @brief sendCommandSignal
+     * @param cmd
+     * To tell to the command thread to send a command
+     */
     void sendCommandSignal(QString cmd);
+
+    /**
+     * @brief sendNewMapSignal
+     * @param cmd
+     * To tell the map thread to send a new map to the robot
+     */
     void sendNewMapSignal(QByteArray cmd);
 
 private slots:
+    /**
+     * @brief doneSendingNewMapSlot
+     * Called when we finished sending the map
+     */
     void doneSendingNewMapSlot();
 
 private:

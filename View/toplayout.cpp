@@ -20,12 +20,6 @@ TopLayout::TopLayout(QMainWindow* parent): QWidget(parent), lastMessage(TEXT_COL
     layout->addWidget(menuBtn);
     connect(menuBtn, SIGNAL(clicked()), parent, SLOT(openLeftMenu()));
 
-    connectBtn = new CustomPushButton(QIcon(":/icons/wifi.png"), "", this, false, CustomPushButton::ButtonType::TOP);
-    connectBtn->setIconSize(s_icon_size);
-    connectBtn->setFocusPolicy(Qt::FocusPolicy::NoFocus);
-    layout->addWidget(connectBtn);
-    connect(connectBtn, SIGNAL(clicked()), parent, SLOT(connectToRobot()));
-
     saveMapBtn = new CustomPushButton(QIcon(":/icons/load_map.png"), "", this, false, CustomPushButton::ButtonType::TOP);
     saveMapBtn->setIconSize(s_icon_size);
     saveMapBtn->setFocusPolicy(Qt::FocusPolicy::NoFocus);
@@ -91,7 +85,6 @@ void TopLayout::setLabel(const QString msgType, const QString msg){
 
 void TopLayout::setEnable(const bool enable){
     menuBtn->setEnabled(enable);
-    connectBtn->setEnabled(enable);
     centerBtn->setEnabled(enable);
     closeBtn->setEnabled(enable);
     settingBtn->setEnabled(enable);

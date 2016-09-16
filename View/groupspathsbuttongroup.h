@@ -46,6 +46,9 @@ public:
      */
     void setEnabledGroup(const bool enable);
 
+protected:
+    void resizeEvent(QResizeEvent *event);
+
 private:
     QVBoxLayout* layout;
     QButtonGroup* buttonGroup;

@@ -9,8 +9,8 @@
 #include <QPixmap>
 #include "Controller/mainwindow.h"
 
-PathPainter::PathPainter(MainWindow* const &mainWindow, MapView* const &mapPixmapItem, const QSharedPointer<Points> _points, const GraphicItemState _state)
-    : QGraphicsPathItem(mapPixmapItem), points(_points), mainWindow(mainWindow), mapView(mapPixmapItem), pathDeleted(false), state(_state)
+PathPainter::PathPainter(MainWindow* const &mainWindow, const QSharedPointer<Points> _points, const GraphicItemState _state)
+    : QGraphicsPathItem(mainWindow->getMapView()), points(_points), mainWindow(mainWindow), pathDeleted(false), state(_state)
 {
     setPen(QPen(Qt::red));
 
@@ -70,10 +70,10 @@ void PathPainter::addPathPointSlot(QString name, double x, double y, int action,
                     || (mainWindow->getSelectedRobot() == NULL && points->isAHome(name, x, y)))
                 type = Point::PointType::HOME;
 
-            points->addPoint(PATH_GROUP_NAME, name, x, y, true, type, mapView, mainWindow);
+            points->addPoint(PATH_GROUP_NAME, name, x, y, true, type);
         }
 
-        points->getGroups()->value(PATH_GROUP_NAME)->last()->setState(mapView->getState());
+        points->getGroups()->value(PATH_GROUP_NAME)->last()->setState(mainWindow->getMapView()->getState());
         Point point = *(points->getGroups()->value(PATH_GROUP_NAME)->last()->getPoint());
 
         currentPath.push_back(QSharedPointer<PathPoint>(new PathPoint(point, static_cast<PathPoint::Action>(action), waitTime)));

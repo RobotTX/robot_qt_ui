@@ -40,7 +40,7 @@ SelectedRobotWidget::SelectedRobotWidget(QWidget* parent, MainWindow* mainWindow
     scanBtn = new CustomPushButton(QIcon(":/icons/map.png"),"Scan a map", this, false, CustomPushButton::ButtonType::LEFT_MENU, "center", true);
     scanBtn->setIconSize(s_icon_size);
     inLayout->addWidget(scanBtn);
-    connect(scanBtn, SIGNAL(clicked()), mainWindow, SLOT(connectToRobot()));
+    connect(scanBtn, SIGNAL(clicked(bool)), mainWindow, SLOT(connectToRobot(bool)));
 
     /// Label which display the Ip of the robot
     ipAddressLabel = new CustomLabel("Ip : ", this);

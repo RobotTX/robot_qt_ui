@@ -179,10 +179,10 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     initializePoints();
 
     /// to draw the paths associated to robots
-    robotPathPainter = new PathPainter(this, mapPixmapItem, points, GraphicItemState::ROBOT_CREATING_PATH);
+    robotPathPainter = new PathPainter(this, points, GraphicItemState::ROBOT_CREATING_PATH);
 
     /// to draw stand-alone paths
-    noRobotPathPainter = new PathPainter(this, mapPixmapItem, points, GraphicItemState::NO_ROBOT_CREATING_PATH);
+    noRobotPathPainter = new PathPainter(this, points, GraphicItemState::NO_ROBOT_CREATING_PATH);
 
     initializeRobots();
 
@@ -468,16 +468,16 @@ void MainWindow::updateRobot(const QString ipAddress, const float posX, const fl
     }
 }
 
-void MainWindow::connectToRobot(){
-    bool checked = selectedRobotWidget->getScanBtn()->isChecked();
-    qDebug() << "connectToRobot called" << checked;
+void MainWindow::connectToRobot(bool checked){
+    qDebug() << "MainWindow::connectToRobot called" << checked;
     if(selectedRobot != NULL){
         if(checked){
             int ret = openConfirmMessage("Warning, scanning a new map will erase all previously created points, paths and selected home of robots");
             switch(ret){
                 case QMessageBox::Cancel :
                     qDebug() << "clicked no";
-                    selectedRobotWidget->getScanBtn()->setChecked(false);
+                    editSelectedRobotWidget->getScanBtn()->setChecked(false);
+                    editSelectedRobotWidget->setEnableAll(true);
                 break;
                 case QMessageBox::Ok :{
                     QString ip = selectedRobot->getRobot()->getIp();
@@ -486,10 +486,9 @@ void MainWindow::connectToRobot(){
                     selectedRobot->getRobot()->resetCommandAnswer();
                     if(selectedRobot->getRobot()->sendCommand(QString("e"))){
 
-                        selectedRobotWidget->getScanBtn()->setText("Stop to scan");
+                        editSelectedRobotWidget->getScanBtn()->setText("Stop to scan");
                         clearNewMap();
-                        selectedRobotWidget->enable(false);
-                        selectedRobotWidget->getScanBtn()->setEnabled(true);
+                        editSelectedRobotWidget->getScanBtn()->setEnabled(true);
                         setEnableAll(false, GraphicItemState::NO_EVENT);
                         scanningRobot = selectedRobot;
 
@@ -500,12 +499,13 @@ void MainWindow::connectToRobot(){
                                 this , SLOT(sendNewMapToRobots(QString)));
                         mapThread->start();
                         mapThread->moveToThread(mapThread);
+                        editSelectedRobotWidget->setEnableAll(false);
 
                         topLayout->setLabel(TEXT_COLOR_SUCCESS, "Scanning a new map");
 
                         selectedRobot->getRobot()->resetCommandAnswer();
                     } else {
-                        selectedRobotWidget->getScanBtn()->setChecked(false);
+                        editSelectedRobotWidget->getScanBtn()->setChecked(false);
                         topLayout->setLabel(TEXT_COLOR_DANGER, "Failed to start to scan a map, please try again");
                     }
                 }
@@ -517,7 +517,7 @@ void MainWindow::connectToRobot(){
         } else {
             selectedRobot->getRobot()->resetCommandAnswer();
             if(selectedRobot->getRobot()->sendCommand(QString("f"))){
-                qDebug() << "Need to wait for the last map ?";
+                // TODO Need to wait for the last map ?
 
                 QString answer = selectedRobot->getRobot()->waitAnswer();
                 QStringList answerList = answer.split(QRegExp("[ ]"), QString::SkipEmptyParts);
@@ -526,17 +526,20 @@ void MainWindow::connectToRobot(){
                     bool success = (answerList.at(1).compare("done") == 0);
                     if((cmd.compare("f") == 0 && success) || answerList.at(0).compare("1") == 0){
                         qDebug() << "Stopped scanning the map";
-                        selectedRobotWidget->getScanBtn()->setText("Scan a map");
-                        selectedRobotWidget->enable(true);
+                        editSelectedRobotWidget->getScanBtn()->setText("Scan a map");
 
-                        selectedRobotWidget->setSelectedRobot(selectedRobot);
+                        RobotView* _tmpRobot = selectedRobot;
                         hideAllWidgets();
-                        selectedRobotWidget->show();
+                        selectedRobot = _tmpRobot;
+
+                        editSelectedRobotWidget->setSelectedRobot(selectedRobot);
+                        editSelectedRobotWidget->setEnableAll(true);
+                        editSelectedRobotWidget->show();
 
                         setEnableAll(true);
                         topLayout->setLabel(TEXT_COLOR_SUCCESS, "Stopped scanning the map");
                     } else {
-                        selectedRobotWidget->getScanBtn()->setChecked(true);
+                        editSelectedRobotWidget->getScanBtn()->setChecked(true);
                         topLayout->setLabel(TEXT_COLOR_DANGER, "Failed to stop the scanning, please try again");
                     }
                 }
@@ -544,7 +547,7 @@ void MainWindow::connectToRobot(){
 
             } else {
                 qDebug() << "Could not disconnect";
-                selectedRobotWidget->getScanBtn()->setChecked(true);
+                editSelectedRobotWidget->getScanBtn()->setChecked(true);
                 topLayout->setLabel(TEXT_COLOR_DANGER, "Failed to stop the scanning, please try again");
             }
         }
@@ -877,7 +880,10 @@ void MainWindow::addPathSelecRobotBtnEvent(){
         }
     }
 
+    RobotView* tmpRobot = selectedRobot;
     hideAllWidgets();
+    selectedRobot = tmpRobot;
+
     robotPathCreationWidget->show();
     robotPathPainter->setOldPath(robotPathPainter->getCurrentPath());
 
@@ -1124,10 +1130,10 @@ void MainWindow::robotSavedEvent(){
     }
 
     /// if we changed the name
-    if(selectedRobot->getRobot()->getName().compare(editSelectedRobotWidget->getNameEdit()->text()) != 0){
+    if(selectedRobot->getRobot()->getName().compare(editSelectedRobotWidget->getRobotInfoDialog()->getNameEdit()->text()) != 0){
         qDebug() << "MainWindow::robotSavedEvent Name has been modified";
         selectedRobot->getRobot()->resetCommandAnswer();
-        if(selectedRobot->getRobot()->sendCommand(QString("a \"") + editSelectedRobotWidget->getNameEdit()->text() + "\"")){
+        if(selectedRobot->getRobot()->sendCommand(QString("a \"") + editSelectedRobotWidget->getRobotInfoDialog()->getNameEdit()->text() + "\"")){
             QString answer = selectedRobot->getRobot()->waitAnswer();
             QStringList answerList = answer.split(QRegExp("[ ]"), QString::SkipEmptyParts);
             if(answerList.size() > 1){
@@ -1138,8 +1144,8 @@ void MainWindow::robotSavedEvent(){
                     change++;
 
                     QMap<QString, QString> tmp = robots->getRobotsNameMap();
-                    tmp[selectedRobot->getRobot()->getIp()] = editSelectedRobotWidget->getNameEdit()->text();
-                    emit changeCmdThreadRobotName(editSelectedRobotWidget->getNameEdit()->text());
+                    tmp[selectedRobot->getRobot()->getIp()] = editSelectedRobotWidget->getRobotInfoDialog()->getNameEdit()->text();
+                    emit changeCmdThreadRobotName(editSelectedRobotWidget->getRobotInfoDialog()->getNameEdit()->text());
                     robots->setRobotsNameMap(tmp);
 
                     QFile fileWrite(ROBOTS_NAME_PATH);
@@ -1159,12 +1165,12 @@ void MainWindow::robotSavedEvent(){
     }
 
     /// if we changed the wifi
-    if (editSelectedRobotWidget->getWifiPwdEdit()->text() != "......"){
+    if (editSelectedRobotWidget->getRobotInfoDialog()->getPasswordEdit()->text() != "......"){
         qDebug() << "MainWindow::robotSavedEvent Wifi has been modified";
         selectedRobot->getRobot()->resetCommandAnswer();
         if(selectedRobot->getRobot()->sendCommand(QString("b \"")
-                  + editSelectedRobotWidget->getWifiNameEdit()->text() + "\" \""
-                  + editSelectedRobotWidget->getWifiPwdEdit()->text() + "\"")){
+                  + editSelectedRobotWidget->getRobotInfoDialog()->getNameEdit()->text() + "\" \""
+                  + editSelectedRobotWidget->getRobotInfoDialog()->getPasswordEdit()->text() + "\"")){
 
             QString answer2 = selectedRobot->getRobot()->waitAnswer();
             QStringList answerList2 = answer2.split(QRegExp("[ ]"), QString::SkipEmptyParts);
@@ -1204,7 +1210,7 @@ void MainWindow::robotSavedEvent(){
                         pointView->getPoint()->setRobotName(selectedRobot->getRobot()->getName());
 
                         points->addPoint(NO_GROUP_NAME, points->getGroups()->value(TMP_GROUP_NAME)->takeFirst());
-                        points->addTmpPoint(mapPixmapItem, this);
+                        points->addTmpPoint();
 
                         XMLParser parserPoints(XML_PATH);
                         parserPoints.save(*points);
@@ -1401,8 +1407,7 @@ void MainWindow::editTmpPathPointSlot(int id, QString name, double x, double y, 
                     editedPointView->getPoint()->getName(),
                     editedPointView->getPoint()->getPosition().getX(),
                     editedPointView->getPoint()->getPosition().getY(),
-                    true, Point::PointType::PATH,
-                    mapPixmapItem, this);
+                    true, Point::PointType::PATH);
         points->getGroups()->value(PATH_GROUP_NAME)->remove(id);
         points->insertPoint(PATH_GROUP_NAME, id, editedPointView);
     }
@@ -1420,7 +1425,7 @@ void MainWindow::editTmpPathPointSlot(int id, QString name, double x, double y, 
 
 void MainWindow::savePathSlot(GraphicItemState state){
     qDebug() << "MainWindow::savePath called";
-    backEvent();
+    QString pathName("");
 
     if(state == GraphicItemState::ROBOT_CREATING_PATH){
         robotPathPainter->setPathDeleted(false);
@@ -1460,7 +1465,7 @@ void MainWindow::savePathSlot(GraphicItemState state){
 
         /// gotta update the model and serialize the paths
         const QString groupName = noRobotPathCreationWidget->getCurrentGroupName();
-        const QString pathName = noRobotPathCreationWidget->getNameEdit()->text().simplified();
+        pathName = noRobotPathCreationWidget->getNameEdit()->text().simplified();
         qDebug() << groupName << pathName;
 
         /// if the path existed before we destroy it and reconstruct it
@@ -1482,12 +1487,19 @@ void MainWindow::savePathSlot(GraphicItemState state){
         /// updates the path of the pathcreation widget
         noRobotPathCreationWidget->setCurrentPathName(noRobotPathCreationWidget->getNameEdit()->text().simplified());
 
-        setTemporaryMessageTop(TEXT_COLOR_SUCCESS, "You have successfully modified the path \"" + pathName + "\"", 2500);
+        leftMenu->getDisplaySelectedPath()->updatePath(noRobotPathCreationWidget->getCurrentGroupName(),
+                                                       noRobotPathCreationWidget->getNameEdit()->text().simplified(),
+                                                       noRobotPathPainter->getCurrentPath());
     }
 
     leftMenu->setEnableReturnCloseButtons(true);
 
     emit updatePathPainter(state, true);
+    backEvent();
+
+    if(!state == GraphicItemState::ROBOT_CREATING_PATH){
+        setTemporaryMessageTop(TEXT_COLOR_SUCCESS, "You have successfully modified the path \"" + pathName + "\"", 2500);
+    }
 }
 
 void MainWindow::cancelPathSlot(){
@@ -1561,39 +1573,6 @@ void MainWindow::cancelEditPathPointSlot(GraphicItemState state){
 void MainWindow::updatePathPainterPointViewSlot(){
     /// Relay to pathPainter::updatePathPainterSlot()
     emit updatePathPainterPointView(GraphicItemState::ROBOT_CREATING_PATH);
-}
-
-void MainWindow::editHomeEvent(){
-    qDebug() << "editHomeEvent called";
-
-    if(selectedRobot->getRobot()->getHome()){/*
-        points->getTmpPointView()->setPos(selectedRobot->getRobot()->getHome()->getPoint()->getPosition().getX(),
-                                          selectedRobot->getRobot()->getHome()->getPoint()->getPosition().getY());
-        points->getTmpPointView()->setPixmap(PointView::PixmapType::SELECTED);
-        points->getTmpPointView()->show();
-        selectedRobot->getRobot()->getHome()->hide();
-        */
-        //selectedRobot->getRobot()->getHome()->setPixmap(PointView::PixmapType::SELECTED);
-    }
-
-    if(editSelectedRobotWidget->getNameEdit()->isEnabled()){
-        setMessageTop(TEXT_COLOR_INFO, "Click on the map or on a point to select a home for the robot " + selectedRobot->getRobot()->getName());
-        editSelectedRobotWidget->getHomeBtn()->setText("Cancel");
-        editSelectedRobotWidget->setEnableAll(false);
-        editSelectedRobotWidget->getHomeBtn()->setEnabled(true);
-        setEnableAll(false, GraphicItemState::EDITING_HOME);
-
-    } else {
-        setMessageTop(TEXT_COLOR_NORMAL,"");
-        if(selectedRobot->getRobot()->getHome() != NULL){
-            editSelectedRobotWidget->getHomeBtn()->setText(selectedRobot->getRobot()->getHome()->getPoint()->getName());
-        } else {
-            editSelectedRobotWidget->getHomeBtn()->setText("Add Home");
-        }
-        editSelectedRobotWidget->setEnableAll(true);
-        setEnableAll(false);
-    }
-    points->getTmpPointView()->setFlag(QGraphicsItem::ItemIsMovable);
 }
 
 void MainWindow::showHome(){
@@ -1733,10 +1712,10 @@ void MainWindow::robotIsAliveSlot(QString hostname, QString ip, QString mapId, Q
 
         /// Check if connection by usb
         if(ip.endsWith(".7.1") || ip.endsWith(".7.2") || ip.endsWith(".7.3")){
+            hideAllWidgets();
             selectedRobot = rv;
             switchFocus(hostname, editSelectedRobotWidget, MainWindow::WidgetType::ROBOT);
             editSelectedRobotWidget->setSelectedRobot(selectedRobot, true);
-            hideAllWidgets();
             editSelectedRobotWidget->show();
             leftMenu->show();
             setEnableAll(false, GraphicItemState::NO_EVENT);
@@ -1817,7 +1796,10 @@ void MainWindow::robotIsDeadSlot(QString hostname,QString ip){
                 qDebug() << "No msgBox to clean";
             }
 
+            RobotView* tmpRobot = selectedRobot;
             hideAllWidgets();
+            selectedRobot = tmpRobot;
+
             leftMenu->hide();
             qDebug() << "selectedRobot cleaned";
         }
@@ -1828,7 +1810,10 @@ void MainWindow::robotIsDeadSlot(QString hostname,QString ip){
             selectedRobotWidget->getScanBtn()->setText("Scan a map");
             selectedRobotWidget->enable(true);
 
+            RobotView* tmpRobot = selectedRobot;
             hideAllWidgets();
+            selectedRobot = tmpRobot;
+
             setEnableAll(true);
             qDebug() << "scanningRobot cleaned";
         }
@@ -2096,7 +2081,9 @@ void MainWindow::changeRobotName(QString name){
                 fileWrite.close();
                 qDebug() << "MainWindow::robotSavedEvent RobotsNameMap updated" << robots->getRobotsNameMap();
                 bottomLayout->updateRobot(robots->getRobotId(selectedRobot->getRobot()->getName()), selectedRobot);
-                editSelectedRobotWidget->getNameEdit()->setText(name);
+                editSelectedRobotWidget->getNameLabel()->setText(name);
+                editSelectedRobotWidget->getRobotInfoDialog()->getNameEdit()->setText(name);
+
                 robotsLeftWidget->updateRobots(robots);
                 setMessageTop(TEXT_COLOR_INFO, "You have successfully updated the name of your robot to " + name);
             } else {
@@ -2259,9 +2246,9 @@ void MainWindow::initializePoints(){
     //qDebug() << "initializePoints called";
     /// retrieves the points from the xml file and stores them in the model
     XMLParser pParser(XML_PATH);
-    pParser.readPoints(points, mapPixmapItem, this);
+    pParser.readPoints(points);
 
-    points->addTmpPoint(mapPixmapItem, this);
+    points->addTmpPoint();
     //qDebug() << "Nb points after init :" << points->count();
     mapPixmapItem->setPoints(points);
 }
@@ -2655,7 +2642,7 @@ void MainWindow::pointSavedEvent(QString groupName, double x, double y, QString 
     /// hides widgets relative to the choice of a group
     createPointWidget->hideGroupLayout(true);
 
-    points->addPoint(groupName, name, x, y, true, Point::PointType::TEMP, mapPixmapItem, this);
+    points->addPoint(groupName, name, x, y, true, Point::PointType::TEMP);
 
     /// saves it to the file
     XMLParser parser(XML_PATH);
@@ -4871,10 +4858,7 @@ void MainWindow::clearNewMap(){
     pointsLeftWidget->updateGroupButtonGroup();
 
     for(int i = 0; i < robots->getRobotsVector().size(); i++){
-        robots->getRobotsVector().at(i)->getRobot()->setPathName("");
-        robots->getRobotsVector().at(i)->getRobot()->setGroupPathName("");
-        QSharedPointer<Paths::Path> path;
-        robots->getRobotsVector().at(i)->getRobot()->setPath(*path);
+        robots->getRobotsVector().at(i)->getRobot()->clearPath();
     }
 }
 
