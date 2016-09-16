@@ -167,14 +167,15 @@ BottomLayout::BottomLayout(QMainWindow* parent, const QSharedPointer<Robots> &ro
                                                      "background-color: transparent; "
                                                      "margin-top : 40px}");
 */
-    pathScroll2->move(pathScroll->pos().x() + 10, pathScroll->pos().y()
-                      + pathScroll->height() - 45);
+    pathScroll2->move(pathScroll->pos().x() + 9, pathScroll->pos().y()
+                      + pathScroll->height() - 41);
     pathScroll2->setMinimum(pathScroll->verticalScrollBar()->minimum());
     pathScroll2->setMaximum(pathScroll->verticalScrollBar()->maximum());
     pathScroll2->setValue(pathScroll->verticalScrollBar()->value());
     pathScroll2->setPageStep(pathScroll->verticalScrollBar()->pageStep());
     connect(pathScroll2, SIGNAL(valueChanged(int)), pathScroll->horizontalScrollBar(), SLOT(setValue(int)));
     pathScroll2->resize(pathScroll->width(), 15);
+    //pathScroll2->setStyleSheet("* { padding-bottom: 10px; }");
     //actionLayout->setSpacing(0);
 
     QPalette pal;
