@@ -343,8 +343,12 @@ void Points::setPixmapAll(const PointView::PixmapType type, RobotView* selectedR
 }
 
 void Points::addTmpPoint(){
-    if(groups->value(TMP_GROUP_NAME) && groups->value(TMP_GROUP_NAME)->size() < 1)
+    if(groups->value(TMP_GROUP_NAME)){
+        if(groups->value(TMP_GROUP_NAME)->size() < 1)
+            addPoint(TMP_GROUP_NAME, TMP_POINT_NAME, 0, 0, false, Point::PointType::TEMP);
+    } else {
         addPoint(TMP_GROUP_NAME, TMP_POINT_NAME, 0, 0, false, Point::PointType::TEMP);
+    }
 }
 
 void Points::updatePointViews(void){
