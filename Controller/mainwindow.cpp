@@ -1,4 +1,11 @@
 #include "mainwindow.h"
+#include <QMap>
+#include <QVBoxLayout>
+#include <QAbstractButton>
+#include <QString>
+#include <QStringList>
+#include <QVector>
+#include <assert.h>
 #include "ui_mainwindow.h"
 #include "Controller/scanmapthread.h"
 #include "Controller/updaterobotsthread.h"
@@ -16,7 +23,6 @@
 #include "View/editselectedrobotwidget.h"
 #include "View/bottomlayout.h"
 #include "View/pointsleftwidget.h"
-#include "View/selectedrobotwidget.h"
 #include "View/robotsleftwidget.h"
 #include "View/mapleftwidget.h"
 #include "View/displayselectedpoint.h"
@@ -32,13 +38,7 @@
 #include "View/pathpointcreationwidget.h"
 #include "View/pathpointlist.h"
 #include "View/pathwidget.h"
-#include "stylesettings.h"
-#include <QMap>
-#include <QVBoxLayout>
-#include <QAbstractButton>
-#include <QString>
-#include <QStringList>
-#include <QVector>
+#include "View/stylesettings.h"
 #include "View/displayselectedpointrobots.h"
 #include "View/displayselectedpath.h"
 #include "View/groupspathswidget.h"
@@ -47,8 +47,8 @@
 #include "View/custompushbutton.h"
 #include "View/groupspathsbuttongroup.h"
 #include "View/custompushbutton.h"
-#include <assert.h>
 #include "View/customrobotdialog.h"
+#include "View/customlabel.h"
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow) {
     ui->setupUi(this);
@@ -734,7 +734,7 @@ void MainWindow::viewPathSelectedRobot(int robotNb, bool checked){
     }
 }
 
-void MainWindow::editSelectedRobot(RobotView* robotView){
+void MainWindow::setSelectedRobot(RobotView* robotView){
     qDebug() << "MainWindow::editselectedrobot robotview" << robotView->getRobot()->getName();
     /// resets the home
     editSelectedRobotWidget->setHome(robotView->getRobot()->getHome());
@@ -803,54 +803,11 @@ void MainWindow::editSelectedRobot(RobotView* robotView){
     bottomLayout->getRobotBtnGroup()->button(robots->getRobotId(robotView->getRobot()->getName()))->setChecked(true);
 }
 
-
-void MainWindow::setSelectedRobot(RobotView* robotView){
-    editSelectedRobot(robotView);
-/*
-    emit resetPath(GraphicItemState::NO_ROBOT_CREATING_PATH);
-    emit resetPath(GraphicItemState::ROBOT_CREATING_PATH);
-
-    qDebug() << "setSelectedRobot(RobotView* robotView)";
-    leftMenu->show();
-
-    hideAllWidgets();
-    selectedRobot = robotView;
-    points->setPixmapAll(PointView::PixmapType::NORMAL, robotView);
-    robots->setSelected(robotView);
-    selectedRobotWidget->setSelectedRobot(selectedRobot);
-    selectedRobotWidget->show();
-    int id = bottomLayout->getViewPathRobotBtnGroup()->checkedId();
-    if(id > 0)
-        robotPathPainter->setCurrentPath(robots->getRobotsVector().at(id)->getRobot()->getPath());
-
-    //if(!bottomLayout->getRobotBtnGroup()->button(robots->getRobotId(robotView->getRobot()->getName()))->isChecked())
-        bottomLayout->getRobotBtnGroup()->button(robots->getRobotId(robotView->getRobot()->getName()))->setChecked(true);
-        bottomLayout->setLastCheckedId(robots->getRobotId(robotView->getRobot()->getName()));
-    //else
-
-    showHomes();
-
-    switchFocus(robotView->getRobot()->getName(), selectedRobotWidget, MainWindow::WidgetType::ROBOT);
-    */
-
-}
-
 void MainWindow::robotBtnEvent(void){
     qDebug() << "robotBtnEvent called";
     leftMenuWidget->hide();
     robotsLeftWidget->show();
     switchFocus("Robots", robotsLeftWidget, MainWindow::WidgetType::ROBOTS);
-}
-
-
-
-void MainWindow::backSelecRobotBtnEvent(){
-    qDebug() << "backSelecRobotBtnEvent called";
-}
-
-void MainWindow::editSelecRobotBtnEvent(){
-    qDebug() << "editSelecRobotBtnEvent called";
-    editSelectedRobot(selectedRobot);
 }
 
 void MainWindow::addPathSelecRobotBtnEvent(){
@@ -1044,7 +1001,7 @@ void MainWindow::editRobotBtnEvent(){
     /// hides a previously shown stand-alone path
     emit resetPath(GraphicItemState::ROBOT_CREATING_PATH);
     emit resetPath(GraphicItemState::NO_ROBOT_CREATING_PATH);
-    editSelectedRobot(robots->getRobotViewByName(static_cast<CustomPushButton*> (robotsLeftWidget->getBtnGroup()->getBtnGroup()->checkedButton())->text()));
+    setSelectedRobot(robots->getRobotViewByName(static_cast<CustomPushButton*> (robotsLeftWidget->getBtnGroup()->getBtnGroup()->checkedButton())->text()));
 }
 
 void MainWindow::checkRobotBtnEventMenu(){
@@ -1053,14 +1010,6 @@ void MainWindow::checkRobotBtnEventMenu(){
 
     checkRobotBtnEvent(name);
 }
-
-void MainWindow::checkRobotBtnEventSelect(){
-    qDebug() << "checkRobotBtnEventMenu called";
-    QString name = selectedRobotWidget->getName();
-
-    checkRobotBtnEvent(name);
-}
-
 
 void MainWindow::checkRobotBtnEvent(QString name){
     qDebug() << "checkRobotBtnEvent called" << name;
@@ -1363,8 +1312,6 @@ void MainWindow::robotSavedEvent(){
                 robotsLeftWidget->updateRobots(robots);
                 bottomLayout->updateRobot(robots->getRobotId(selectedRobot->getRobot()->getName()), selectedRobot);
 
-                selectedRobotWidget->setSelectedRobot(selectedRobot);
-                //editSelectedRobotWidget->setSelectedRobot(selectedRobot);
                 editSelectedRobotWidget->setEditing(false);
 
                 setTemporaryMessageTop(TEXT_COLOR_SUCCESS, "The information of the robot " + selectedRobot->getRobot()->getName() + " have been successfully updated", 2500);
@@ -1608,15 +1555,13 @@ void MainWindow::showHome(){
                 //setEnableAll(false,);
 
                 //qDebug() << "MainWindow::showHome I have a path !";
-                selectedRobotWidget->getPathWidget()->setPath(robotView->getRobot()->getPath());
-                selectedRobotWidget->getPathWidget()->show();
-                selectedRobotWidget->getNoPath()->hide();
+                editSelectedRobotWidget->getPathWidget()->setPath(robotView->getRobot()->getPath());
+                editSelectedRobotWidget->getPathWidget()->show();
 
                 editSelectedRobotWidget->setPath(robotView->getRobot()->getPath());
             } else {
                 qDebug() << "MainWindow::showHome I don't have a path !";
-                selectedRobotWidget->getPathWidget()->hide();
-                selectedRobotWidget->getNoPath()->show();
+                editSelectedRobotWidget->getPathWidget()->hide();
 
                 editSelectedRobotWidget->clearPath();
             }
@@ -1806,9 +1751,9 @@ void MainWindow::robotIsDeadSlot(QString hostname,QString ip){
 
         /// if the robot is scanning
         if(scanningRobot != NULL && scanningRobot->getRobot()->getIp().compare(ip) == 0){
-            selectedRobotWidget->getScanBtn()->setChecked(false);
-            selectedRobotWidget->getScanBtn()->setText("Scan a map");
-            selectedRobotWidget->enable(true);
+            editSelectedRobotWidget->getScanBtn()->setChecked(false);
+            editSelectedRobotWidget->getScanBtn()->setText("Scan a map");
+            editSelectedRobotWidget->setEnableAll(true);
 
             RobotView* tmpRobot = selectedRobot;
             hideAllWidgets();
@@ -2202,7 +2147,6 @@ void MainWindow::initializeLeftMenu(){
     lastWidgets =  QList<QPair<QPair<QWidget*,QString>, MainWindow::WidgetType>>();
     leftMenuWidget = leftMenu->getLeftMenuWidget();
     pointsLeftWidget = leftMenu->getPointsLeftWidget();
-    selectedRobotWidget = leftMenu->getSelectedRobotWidget();
     robotsLeftWidget = leftMenu->getRobotsLeftWidget();
     mapLeftWidget = leftMenu->getMapLeftWidget();
     editSelectedRobotWidget = leftMenu->getEditSelectedRobotWidget();
@@ -4824,7 +4768,6 @@ void MainWindow::setGraphicItemsState(const GraphicItemState state){
 void MainWindow::hideAllWidgets(){
     leftMenuWidget->hide();
     pointsLeftWidget->hide();
-    selectedRobotWidget->hide();
     robotsLeftWidget->hide();
     mapLeftWidget->hide();
     editSelectedRobotWidget->hide();

@@ -11,7 +11,6 @@ class Robots;
 class MapView;
 class LeftMenuWidget;
 class PointsLeftWidget;
-class SelectedRobotWidget;
 class RobotsLeftWidget;
 class MapLeftWidget;
 class EditSelectedRobotWidget;
@@ -121,7 +120,6 @@ private slots:
     void connectToRobot(bool checked);
     void quit();
     void setSelectedRobot(RobotView* robotView);
-    void editSelectedRobot(RobotView* robotView);
     void setSelectedRobot(QAbstractButton* button);
     void setSelectedRobotNoParent(QAbstractButton *button);
     void setSelectedRobotFromPointSlot(QString robotName);
@@ -133,13 +131,10 @@ private slots:
     void minusGroupBtnEvent();
     void editGroupBtnEvent();
     void openLeftMenu();
-    void backSelecRobotBtnEvent();
-    void editSelecRobotBtnEvent();
     void addPathSelecRobotBtnEvent();
     void backRobotBtnEvent();
     void editRobotBtnEvent();
     void checkRobotBtnEventMenu();
-    void checkRobotBtnEventSelect();
     void checkRobotBtnEvent(QString name);
     void saveMapBtnEvent();
     void loadMapBtnEvent();
@@ -279,7 +274,6 @@ private:
     QList<QPair<QPair<QWidget*, QString>, MainWindow::WidgetType>> lastWidgets;
     LeftMenuWidget* leftMenuWidget;
     PointsLeftWidget* pointsLeftWidget;
-    SelectedRobotWidget* selectedRobotWidget;
     RobotsLeftWidget* robotsLeftWidget;
     MapLeftWidget* mapLeftWidget;
     EditSelectedRobotWidget* editSelectedRobotWidget;
