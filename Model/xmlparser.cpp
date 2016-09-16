@@ -120,7 +120,7 @@ float XMLParser::readCoordinateElement(QXmlStreamReader &xmlReader){
     return coordinate;
 }
 
-void XMLParser::readPoints(QSharedPointer<Points>& points, MapView* mapView, MainWindow* mainWindow){
+void XMLParser::readPoints(QSharedPointer<Points>& points){
     QXmlStreamReader xmlReader;
 
     try {
@@ -185,7 +185,7 @@ void XMLParser::readPoints(QSharedPointer<Points>& points, MapView* mapView, Mai
                                     }
                                     else xmlReader.readNext();
                                 }
-                                points->addPoint(groupName, name, x, y, displayed, type, mapView, mainWindow);
+                                points->addPoint(groupName, name, x, y, displayed, type);
                             }
 
                             xmlReader.readNext();

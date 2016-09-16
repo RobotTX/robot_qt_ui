@@ -203,6 +203,8 @@ QDataStream& operator<<(QDataStream& out, const Robot& robot){
 }
 
 void Robot::clearPath(){
+    pathName = "";
+    groupName = "";
     path.clear();
     //path = QVector<QSharedPointer<PathPoint>>();
 }

@@ -5,7 +5,6 @@
 #include "View/bottomlayout.h"
 #include "View/leftmenuwidget.h"
 #include "View/pointsleftwidget.h"
-#include "View/selectedrobotwidget.h"
 #include "View/robotsleftwidget.h"
 #include "View/mapleftwidget.h"
 #include "View/displayselectedpoint.h"
@@ -88,14 +87,6 @@ LeftMenu::LeftMenu(MainWindow* _mainWindow, QSharedPointer<Points> const& _point
     pointsLeftWidget = new PointsLeftWidget(this, mainWindow, _points);
     pointsLeftWidget->hide();
     leftLayout->addWidget(pointsLeftWidget);
-
-    /// Menu which display the selected robot infos
-    selectedRobotWidget = new SelectedRobotWidget(this, mainWindow);
-
-    connect(selectedRobotWidget, SIGNAL(showSelectedRobotWidget()), mainWindow, SLOT(showHome()));
-    connect(selectedRobotWidget, SIGNAL(hideSelectedRobotWidget()), mainWindow, SLOT(showAllHomes()));
-    selectedRobotWidget->hide();
-    leftLayout->addWidget(selectedRobotWidget);
 
     /// Menu which display the list of robots
     robotsLeftWidget = new RobotsLeftWidget(this, mainWindow, robots);

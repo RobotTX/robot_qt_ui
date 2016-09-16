@@ -147,7 +147,7 @@ public:
      * @param mainWindow
      * Add a point with the given informations to the group groupName
      */
-    void addPoint(const QString groupName, const QString pointName, const double x, const double y, const bool displayed, const Point::PointType type, MapView *mapView, MainWindow *mainWindow);
+    void addPoint(const QString groupName, const QString pointName, const double x, const double y, const bool displayed, const Point::PointType type);
 
     /**
      * @brief displayTmpPoint
@@ -167,7 +167,7 @@ public:
      * @brief getTmpPointView
      * @return the tmpPoint pointview
      */
-    QSharedPointer<PointView> getTmpPointView() const;
+    QSharedPointer<PointView> getTmpPointView();
 
     /**
      * @brief isDisplayed
@@ -228,7 +228,7 @@ public:
      * @param mainWindow
      * Add the tmpPoint
      */
-    void addTmpPoint(MapView *mapView, MainWindow *mainWindow);
+    void addTmpPoint();
 
     /**
      * @brief addPoint
@@ -256,12 +256,9 @@ public:
      * @param y
      * @param displayed
      * @param type
-     * @param mapView
-     * @param mainWindow
      * Create and insert a PointView at the position id in groupName
      */
-    void insertPoint(const QString groupName, const int id, const QString pointName, const double x, const double y, const bool displayed,
-                     const Point::PointType type, MapView *mapView, const MainWindow *mainWindow);
+    void insertPoint(const QString groupName, const int id, const QString pointName, const double x, const double y, const bool displayed, const Point::PointType type);
 
     /**
      * @brief replacePoint
@@ -291,7 +288,7 @@ public:
      * @param mainWindow
      * @return a pointView created with the given informations
      */
-    QSharedPointer<PointView> createPoint(const QString pointName, const double x, const double y, const bool displayed, const Point::PointType type, MapView* mapView, const MainWindow* mainWindow);
+    QSharedPointer<PointView> createPoint(const QString pointName, const double x, const double y, const bool displayed, const Point::PointType type);
 
     /**
      * @brief updatePointViews

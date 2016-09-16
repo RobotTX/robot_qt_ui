@@ -11,7 +11,6 @@ class Robots;
 class MapView;
 class LeftMenuWidget;
 class PointsLeftWidget;
-class SelectedRobotWidget;
 class RobotsLeftWidget;
 class MapLeftWidget;
 class EditSelectedRobotWidget;
@@ -40,18 +39,18 @@ class QMoveEvent;
 #include "Model/point.h"
 #include <QSettings>
 
-/*
+
 #define XML_PATH "/home/m-a/Documents/QtProject/gobot-software/points.xml"
 #define ROBOTS_NAME_PATH "/home/m-a/Documents/QtProject/gobot-software/robotsName.dat"
 #define MAP_PATH "/home/m-a/Documents/QtProject/gobot-software/realMap.dat"
 #define PATHS_PATH "/home/m-a/Documents/QtProject/gobot-software/savedPaths.dat"
-*/
 
+/*
 #define XML_PATH "/home/joan/Gobot/gobot-software/points.xml"
 #define ROBOTS_NAME_PATH "/home/joan/Gobot/gobot-software/robotsName.dat"
 #define MAP_PATH "/home/joan/Gobot/gobot-software/realMap.dat"
 #define PATHS_PATH "/home/joan/Gobot/gobot-software/savedPaths.dat"
-
+*/
 
 #define PI 3.14159265
 #define PORT_ROBOT_UPDATE 6000
@@ -96,6 +95,7 @@ public:
     void updateAllPaths(void);
     void clearPath(const int robotNb);
     RobotView* getSelectedRobot(void) const { return selectedRobot; }
+    MapView* getMapView(void) const { return mapPixmapItem; }
     void serializePaths(void);
     void deserializePaths(void);
     void showHomes();
@@ -117,10 +117,9 @@ private slots:
     void updateRobot(const QString ipAddress, const float posX, const float posY, const float ori);
     void updateMetadata(const int width, const int height, const float resolution, const float originX, const float originY);
     void updateMap(const QByteArray mapArray);
-    void connectToRobot();
+    void connectToRobot(bool checked);
     void quit();
     void setSelectedRobot(RobotView* robotView);
-    void editSelectedRobot(RobotView* robotView);
     void setSelectedRobot(QAbstractButton* button);
     void setSelectedRobotNoParent(QAbstractButton *button);
     void setSelectedRobotFromPointSlot(QString robotName);
@@ -132,13 +131,10 @@ private slots:
     void minusGroupBtnEvent();
     void editGroupBtnEvent();
     void openLeftMenu();
-    void backSelecRobotBtnEvent();
-    void editSelecRobotBtnEvent();
     void addPathSelecRobotBtnEvent();
     void backRobotBtnEvent();
     void editRobotBtnEvent();
     void checkRobotBtnEventMenu();
-    void checkRobotBtnEventSelect();
     void checkRobotBtnEvent(QString name);
 
 
@@ -200,7 +196,6 @@ private slots:
     void setMessageCreationGroup(QString type, QString message);
     void goHomeBtnEvent();
     void viewPathSelectedRobot(int robotNb, bool checked);
-    void editHomeEvent();
     void closeSlot();
     void setGraphicItemsState(const GraphicItemState state);
     void showHome();
@@ -282,7 +277,6 @@ private:
     QList<QPair<QPair<QWidget*, QString>, MainWindow::WidgetType>> lastWidgets;
     LeftMenuWidget* leftMenuWidget;
     PointsLeftWidget* pointsLeftWidget;
-    SelectedRobotWidget* selectedRobotWidget;
     RobotsLeftWidget* robotsLeftWidget;
     MapLeftWidget* mapLeftWidget;
     EditSelectedRobotWidget* editSelectedRobotWidget;

@@ -23,7 +23,7 @@ class PathPainter : public QObject, public QGraphicsPathItem{
     Q_OBJECT
 
 public:
-    PathPainter(MainWindow* const &mainWindow, MapView* const &mapPixmapItem, const QSharedPointer<Points> _points, const GraphicItemState _state);
+    PathPainter(MainWindow* const &mainWindow, const QSharedPointer<Points> _points, const GraphicItemState _state);
 
     /// Getters
     QVector<QSharedPointer<PathPoint>> getCurrentPath(void) const { return currentPath; }
@@ -145,7 +145,6 @@ private:
     QVector<QSharedPointer<PathPoint>> currentPath;
     QVector<QSharedPointer<PathPoint>> oldPath;
     MainWindow* mainWindow;
-    MapView* mapView;
     bool pathDeleted;
     /// to hold whether one instance is drawing paths related to robots or not
     const GraphicItemState state;

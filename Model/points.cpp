@@ -142,27 +142,25 @@ void Points::clear(){
     groups->clear();
 }
 
-QSharedPointer<PointView> Points::createPoint(const QString pointName, const double x, const double y, const bool displayed, const Point::PointType type,
-                                               MapView* mapView, const MainWindow *mainWindow){
+QSharedPointer<PointView> Points::createPoint(const QString pointName, const double x, const double y, const bool displayed, const Point::PointType type){
     QSharedPointer<Point> point = QSharedPointer<Point>(new Point(pointName, x, y, type));
-    QSharedPointer<PointView> pointView = QSharedPointer<PointView>(new PointView(point, mapView));
+    QSharedPointer<PointView> pointView = QSharedPointer<PointView>(new PointView(point, parent->getMapView()));
     if(!displayed)
         pointView->hide();
 
-    connect(&(*pointView), SIGNAL(pointLeftClicked(QString, double, double)), mainWindow, SLOT(displayPointEvent(QString, double, double)));
-    connect(&(*pointView), SIGNAL(editedPointPositionChanged(double, double)), mainWindow, SLOT(updateCoordinates(double, double)));
-    connect(&(*pointView), SIGNAL(moveEditedPathPoint(GraphicItemState)), mainWindow, SLOT(moveEditedPathPointSlot(GraphicItemState)));
-    connect(&(*pointView), SIGNAL(addPointPath(QString, double, double, GraphicItemState)), mainWindow, SLOT(addPointPathSlot(QString, double, double, GraphicItemState)));
+    connect(&(*pointView), SIGNAL(pointLeftClicked(QString, double, double)), parent, SLOT(displayPointEvent(QString, double, double)));
+    connect(&(*pointView), SIGNAL(editedPointPositionChanged(double, double)), parent, SLOT(updateCoordinates(double, double)));
+    connect(&(*pointView), SIGNAL(moveEditedPathPoint(GraphicItemState)), parent, SLOT(moveEditedPathPointSlot(GraphicItemState)));
+    connect(&(*pointView), SIGNAL(addPointPath(QString, double, double, GraphicItemState)), parent, SLOT(addPointPathSlot(QString, double, double, GraphicItemState)));
 
-    connect(&(*pointView), SIGNAL(updatePathPainterPointView()), mainWindow, SLOT(updatePathPainterPointViewSlot()));
+    connect(&(*pointView), SIGNAL(updatePathPainterPointView()), parent, SLOT(updatePathPainterPointViewSlot()));
 
     return pointView;
 }
 
-void Points::addPoint(const QString groupName, const QString pointName, const double x, const double y, const bool displayed, const Point::PointType type,
-                      MapView* mapView, MainWindow* mainWindow){
+void Points::addPoint(const QString groupName, const QString pointName, const double x, const double y, const bool displayed, const Point::PointType type){
 
-    QSharedPointer<PointView> pointView = createPoint(pointName, x, y , displayed, type, mapView, mainWindow);
+    QSharedPointer<PointView> pointView = createPoint(pointName, x, y , displayed, type);
     addPoint(groupName, pointView);
 }
 
@@ -204,10 +202,9 @@ void Points::replacePoint(const QString groupName, const int id, const QSharedPo
     }
 }
 
-void Points::insertPoint(const QString groupName, const int id, const QString pointName, const double x, const double y, const bool displayed, const Point::PointType type,
-                      MapView* mapView, const MainWindow *mainWindow){
+void Points::insertPoint(const QString groupName, const int id, const QString pointName, const double x, const double y, const bool displayed, const Point::PointType type){
     qDebug() << "Points::insertPoint called";
-    QSharedPointer<PointView> pointView = createPoint(pointName, x, y , displayed, type, mapView, mainWindow);
+    QSharedPointer<PointView> pointView = createPoint(pointName, x, y , displayed, type);
     insertPoint(groupName, id, pointView);
 }
 
@@ -238,11 +235,12 @@ void Points::setPointViewsState(const GraphicItemState state){
     }
 }
 
-QSharedPointer<PointView> Points::getTmpPointView() const{
+QSharedPointer<PointView> Points::getTmpPointView(){
     //qDebug() << "Points::getTmpPointView called" << this->count();
-    if(groups->value(TMP_GROUP_NAME)->count() > 0 && groups->value(TMP_GROUP_NAME)->at(0) != NULL)
-        return groups->value(TMP_GROUP_NAME)->at(0);
-    return QSharedPointer<PointView>();
+    if(!groups->value(TMP_GROUP_NAME) || groups->value(TMP_GROUP_NAME)->count() < 1)
+        addTmpPoint();
+
+    return groups->value(TMP_GROUP_NAME)->at(0);
 }
 
 bool Points::isDisplayed(const QString key) const {
@@ -344,9 +342,9 @@ void Points::setPixmapAll(const PointView::PixmapType type, RobotView* selectedR
     }
 }
 
-void Points::addTmpPoint(MapView *mapView, MainWindow *mainWindow){
+void Points::addTmpPoint(){
     if(groups->value(TMP_GROUP_NAME) && groups->value(TMP_GROUP_NAME)->size() < 1)
-        addPoint(TMP_GROUP_NAME, TMP_POINT_NAME, 0, 0, false, Point::PointType::TEMP, mapView, mainWindow);
+        addPoint(TMP_GROUP_NAME, TMP_POINT_NAME, 0, 0, false, Point::PointType::TEMP);
 }
 
 void Points::updatePointViews(void){

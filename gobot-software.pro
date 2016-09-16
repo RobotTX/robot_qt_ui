@@ -50,7 +50,6 @@ HEADERS += Controller/cmdrobotthread.h \
            View/robotbtngroup.h \
            View/robotsleftwidget.h \
            View/robotview.h \
-           View/selectedrobotwidget.h \
            View/spacewidget.h \
            View/toplayout.h \
            View/topleftmenu.h \
@@ -109,7 +108,6 @@ SOURCES += main.cpp \
            View/robotbtngroup.cpp \
            View/robotsleftwidget.cpp \
            View/robotview.cpp \
-           View/selectedrobotwidget.cpp \
            View/spacewidget.cpp \
            View/toplayout.cpp \
            Controller/updaterobotsthread.cpp \

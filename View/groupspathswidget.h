@@ -76,6 +76,7 @@ protected:
     void keyPressEvent(QKeyEvent* event);
     void hideEvent(QHideEvent *event);
     void showEvent(QShowEvent *event);
+    void resizeEvent(QResizeEvent *event);
 
 signals:
     void newPathGroup(QString);

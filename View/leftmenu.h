@@ -7,7 +7,6 @@ class Points;
 class Robots;
 class LeftMenuWidget;
 class PointsLeftWidget;
-class SelectedRobotWidget;
 class RobotsLeftWidget;
 class MapLeftWidget;
 class EditSelectedRobotWidget;
@@ -42,7 +41,6 @@ public:
     /// Getters
     LeftMenuWidget* getLeftMenuWidget(void) const {return leftMenuWidget;}
     PointsLeftWidget* getPointsLeftWidget(void) const {return pointsLeftWidget;}
-    SelectedRobotWidget* getSelectedRobotWidget(void) const {return selectedRobotWidget;}
     RobotsLeftWidget* getRobotsLeftWidget(void) const {return robotsLeftWidget;}
     MapLeftWidget* getMapLeftWidget(void) const {return mapLeftWidget;}
     EditSelectedRobotWidget* getEditSelectedRobotWidget(void) const {return editSelectedRobotWidget;}
@@ -91,7 +89,6 @@ private:
     QWidget* lastWidget;
     LeftMenuWidget* leftMenuWidget;
     PointsLeftWidget* pointsLeftWidget;
-    SelectedRobotWidget* selectedRobotWidget;
     RobotsLeftWidget* robotsLeftWidget;
     MapLeftWidget* mapLeftWidget;
     GroupsPathsWidget* groupsPathsWidget;

@@ -17,11 +17,12 @@
 #include "View/stylesettings.h"
 #include <QMenu>
 #include <assert.h>
-#include "View/customlineedit.h"
+#include "View/customlabel.h"
 #include "Model/points.h"
 #include <QProgressBar>
 #include "View/customlabel.h"
 #include "View/customrobotdialog.h"
+#include "View/customlineedit.h"
 
 
 EditSelectedRobotWidget::EditSelectedRobotWidget(QWidget* parent, MainWindow* _mainWindow, const QSharedPointer<Points> &_points, const QSharedPointer<Robots> _robots, const QSharedPointer<Paths> &_paths):
@@ -46,14 +47,14 @@ EditSelectedRobotWidget::EditSelectedRobotWidget(QWidget* parent, MainWindow* _m
     inWidget->setLayout(inLayout);
 
     /// Name editable label
-    nameEdit = new CustomLineEdit(this);
-    inLayout->addWidget(nameEdit);
+    nameLabel = new CustomLabel(this, true);
+    inLayout->addWidget(nameLabel);
 
     /// Button which allow the user to scan the map from a robot
-    scanBtn = new CustomPushButton(QIcon(":/icons/map.png"),"Scan a map", this, true, CustomPushButton::ButtonType::LEFT_MENU, "center");
+    scanBtn = new CustomPushButton(QIcon(":/icons/map.png"),"Scan a map", this, true, CustomPushButton::ButtonType::LEFT_MENU, "center", true);
     scanBtn->setIconSize(s_icon_size);
     inLayout->addWidget(scanBtn);
-    connect(scanBtn, SIGNAL(clicked()), mainWindow, SLOT(connectToRobot()));
+    connect(scanBtn, SIGNAL(clicked(bool)), mainWindow, SLOT(connectToRobot(bool)));
 
     SpaceWidget* spaceWidget = new SpaceWidget(SpaceWidget::SpaceOrientation::HORIZONTAL, this);
     inLayout->addWidget(spaceWidget);
@@ -70,19 +71,13 @@ EditSelectedRobotWidget::EditSelectedRobotWidget(QWidget* parent, MainWindow* _m
     wifiTitle->setAlignment(Qt::AlignLeft);
     inLayout->addWidget(wifiTitle);
 
-    wifiNameEdit = new CustomLineEdit(this);
-    inLayout->addWidget(wifiNameEdit);
+    wifiNameLabel = new CustomLabel(this);
+    inLayout->addWidget(wifiNameLabel);
 
     QLabel* wifiPwd = new QLabel("Wifi pwd :", this);
     wifiPwd->setAlignment(Qt::AlignLeft);
 
-    /// Wifi password label
-    wifiPwdEdit = new CustomLineEdit(this);
-    wifiPwdEdit->setText("......");
-    wifiPwdEdit->setEchoMode(QLineEdit::Password);
-
     inLayout->addWidget(wifiPwd);
-    inLayout->addWidget(wifiPwdEdit);
 
     /// ProgressBar which display the level of battery
     batteryLevel = new QProgressBar(this);
@@ -102,7 +97,6 @@ EditSelectedRobotWidget::EditSelectedRobotWidget(QWidget* parent, MainWindow* _m
     homeBtn = new CustomPushButton(QIcon(":/icons/home.png"), "Assign a home point", this);
     homeBtn->setIconSize(s_icon_size);
     connect(homeBtn, SIGNAL(clicked(bool)), this, SLOT(openHomeMenu()));
-    //connect(homeBtn, SIGNAL(clicked()), mainWindow, SLOT(editHomeEvent()));
     inLayout->addWidget(homeLabel);
     inLayout->addWidget(homeBtn);
 
@@ -165,10 +159,6 @@ EditSelectedRobotWidget::EditSelectedRobotWidget(QWidget* parent, MainWindow* _m
 
     */
 
-    connect(nameEdit, SIGNAL(textEdited(QString)), this, SLOT(checkRobotName()));
-    connect(wifiNameEdit, SIGNAL(textEdited(QString)), this, SLOT(checkWifiName()));
-    connect(wifiNameEdit, SIGNAL(textEdited(QString)), this, SLOT(deletePwd()));
-
     /// to display a path that's assigned to the robot after clearing the map of other path(s)
     connect(this, SIGNAL(clearMapOfPaths()), mainWindow, SLOT(clearMapOfPaths()));
     connect(this, SIGNAL(showPath(QString, QString)), mainWindow, SLOT(displayAssignedPath(QString, QString)));
@@ -207,9 +197,9 @@ void EditSelectedRobotWidget::setSelectedRobot(RobotView* const _robotView, bool
     robotView = _robotView;
 
     /// When a robot is selected, the informations are updated
-    nameEdit->setText(robotView->getRobot()->getName());
+    nameLabel->setText(robotView->getRobot()->getName());
     ipAddressLabel->setText("Ip : "+robotView->getRobot()->getIp());
-    wifiNameEdit->setText(robotView->getRobot()->getWifi());
+    wifiNameLabel->setText(robotView->getRobot()->getWifi());
 
     /// If the robot has a home, we display the name of the point, otherwise a default text
     if(robotView->getRobot()->getHome() != NULL){
@@ -232,48 +222,13 @@ void EditSelectedRobotWidget::saveEditSelecRobotBtnEvent(void){
     }
 }
 
-void EditSelectedRobotWidget::checkRobotName(void){
-    qDebug() << "checkRobotName called";
-    /*
-    if(nameEdit->text() == ""){
-        saveBtn->setEnabled(false);
-        qDebug() << "Error : this name is not valid," << nameEdit->text() << "can not be empty";
-    } else if(robots->existRobotName(nameEdit->text()) && nameEdit->text() != robotView->getRobot()->getName()){
-        saveBtn->setEnabled(false);
-        qDebug() << "Error : this name is not valid," << nameEdit->text() << "already exist";
-    } else {
-        saveBtn->setEnabled(true);
-        qDebug() << "This name is valid";
-    }
-    */
-}
-
-void EditSelectedRobotWidget::checkWifiName(void){
-    //qDebug() << "checkWifiName called";
-    /*
-    if(wifiNameEdit->text() == ""){
-        saveBtn->setEnabled(false);
-        qDebug() << "Save btn not enabled : " << wifiNameEdit->text() << "can not be empty";
-    } else {
-        saveBtn->setEnabled(true);
-        qDebug() << "Save btn enabled";
-    }
-    */
-}
-
-void EditSelectedRobotWidget::deletePwd(void){
-    qDebug() << "deletePwd";
-
-    wifiPwdEdit->setText("");
-}
-
 void EditSelectedRobotWidget::editName(void){
-    robotView->getRobot()->setName(nameEdit->text());
-    robotView->getRobot()->setWifi(wifiNameEdit->text());
+    robotView->getRobot()->setName(nameLabel->text());
+    robotView->getRobot()->setWifi(wifiNameLabel->text());
     RobotView* rv = robots->getRobotViewByName(robotView->getRobot()->getName());
     if(rv != NULL){
-        rv->getRobot()->setName(nameEdit->text());
-        rv->getRobot()->setWifi(wifiNameEdit->text());
+        rv->getRobot()->setName(nameLabel->text());
+        rv->getRobot()->setWifi(wifiNameLabel->text());
     } else {
         qDebug() << "editName : something unexpected happened";
     }
@@ -281,15 +236,11 @@ void EditSelectedRobotWidget::editName(void){
 
 void EditSelectedRobotWidget::setEnableAll(const bool enable){
     qDebug() << "editselectedrobotwidget::setenableall called" << enable;
-    nameEdit->setEnabled(enable);
     homeBtn->setEnabled(enable);
-    //saveBtn->setEnabled(enable);
     deletePathBtn->setEnabled(enable);
-    wifiNameEdit->setEnabled(enable);
-    wifiPwdEdit->setEnabled(enable);
-    nameEdit->setEnabled(enable);
-    //addPathBtn->setEnabled(enable);
     assignPathButton->setEnabled(enable);
+    editRobotInfoBtn->setEnabled(enable);
+    deleteHomeBtn->setEnabled(enable);
 }
 
 void EditSelectedRobotWidget::showEvent(QShowEvent *event){

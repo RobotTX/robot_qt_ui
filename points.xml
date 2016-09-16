@@ -22,11 +22,26 @@
         </point>
     </group>
     <group>
+        <name>PathPoints</name>
+        <point>
+            <name>PathPoint1</name>
+            <x>933.607</x>
+            <y>1076.85</y>
+            <displayed>1</displayed>
+        </point>
+        <point>
+            <name>PathPoint2</name>
+            <x>907.207</x>
+            <y>1138.76</y>
+            <displayed>1</displayed>
+        </point>
+    </group>
+    <group>
         <name>TmpPoint</name>
         <point>
             <name>tmpPoint</name>
-            <x>1112.94</x>
-            <y>937.573</y>
+            <x>968.199</x>
+            <y>1092.33</y>
             <displayed>0</displayed>
         </point>
         <point>
@@ -73,8 +88,8 @@
         </point>
         <point>
             <name>A new point</name>
-            <x>946</x>
-            <y>983</y>
+            <x>1133</x>
+            <y>927.6</y>
             <displayed>1</displayed>
         </point>
     </group>

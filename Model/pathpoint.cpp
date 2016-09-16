@@ -11,14 +11,16 @@ PathPoint::PathPoint(void): point(Point("DefaultPoint", -1.0, -1.0)), action(Act
 
 QDataStream& operator>>(QDataStream& in, PathPoint& pathPoint){
     Point _point;
+    qint32 _action;
     qint32 _waitTime;
-    in >> _point >> _waitTime;
+    in >> _point >> _action >> _waitTime;
     pathPoint.setPoint(_point);
+    pathPoint.setAction(static_cast<PathPoint::Action>(_action));
     pathPoint.setWaitTime(static_cast<int>(_waitTime));
     return in;
 }
 
 QDataStream& operator<<(QDataStream& out, const PathPoint& pathPoint){
-    out << pathPoint.getPoint() << static_cast<qint32>(pathPoint.getWaitTime());
+    out << pathPoint.getPoint() << static_cast<qint32>(pathPoint.getAction()) << static_cast<qint32>(pathPoint.getWaitTime());
     return out;
 }

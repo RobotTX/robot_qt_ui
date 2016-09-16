@@ -27,11 +27,10 @@ void GroupsPathsButtonGroup::createButtons(){
     QMapIterator<QString, QSharedPointer<Paths::CollectionPaths>> it_paths_groups(*(paths->getGroups()));
     while(it_paths_groups.hasNext()){
         it_paths_groups.next();
-        CustomPushButton* groupButton = new CustomPushButton(it_paths_groups.key(), this, false, CustomPushButton::ButtonType::LEFT_MENU, "left", true);
+        CustomPushButton* groupButton = new CustomPushButton(QIcon(":/icons/folder.png"), it_paths_groups.key(), this, false, CustomPushButton::ButtonType::LEFT_MENU, "left", true);
 
         buttonGroup->addButton(groupButton, i++);
         layout->addWidget(groupButton);
-        groupButton->setIcon(QIcon(":/icons/folder.png"));
         groupButton->setIconSize(s_icon_size);
     }
 }
@@ -63,4 +62,12 @@ void GroupsPathsButtonGroup::setEnabledGroup(const bool enable){
     qDebug() << "GroupButtonGroup::setEnabled called";
     foreach(QAbstractButton* button, buttonGroup->buttons())
         button->setEnabled(enable);
+}
+
+void GroupsPathsButtonGroup::resizeEvent(QResizeEvent *event){
+    QWidget* widget = static_cast<QWidget*>(parent()->parent());
+    int maxWidth = widget->width();
+    setMaximumWidth(maxWidth);
+
+    QWidget::resizeEvent(event);
 }
