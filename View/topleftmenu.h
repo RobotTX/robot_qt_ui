@@ -28,8 +28,7 @@ public:
     void checkAll();
     void setAllCheckable();
     void setAllNonCheckable();
-    void setEnable(bool enable);
-
+    void setEnable(const bool enable);
 
 private:
    QVBoxLayout* layout ;

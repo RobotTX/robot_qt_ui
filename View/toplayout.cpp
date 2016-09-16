@@ -67,8 +67,6 @@ TopLayout::TopLayout(QMainWindow* parent): QWidget(parent), lastMessage(TEXT_COL
     layout->addWidget(closeBtn);
     connect(closeBtn, SIGNAL(clicked()), parent, SLOT(quit()));
 
-
-
     this->setMaximumHeight(top_layout_height);
     QPalette pal;
     pal.setColor(QPalette::Background, top_layout_color);
@@ -114,7 +112,7 @@ void TopLayout::setLabelDelay(const QString msgType, const QString msg, int dela
 }
 
 void TopLayout::delay(const int ms){
-    QTime dieTime= QTime::currentTime().addMSecs(ms);
+    QTime dieTime = QTime::currentTime().addMSecs(ms);
     while (QTime::currentTime() < dieTime)
         QCoreApplication::processEvents(QEventLoop::AllEvents, 100);
 }

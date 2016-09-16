@@ -6,7 +6,6 @@
 SpaceWidget::SpaceWidget(const SpaceOrientation orientation, QWidget* parent) : QWidget(parent){
     QVBoxLayout* layout = new QVBoxLayout(this);
     spaceFrame = new QFrame(this);
-
     spaceFrame->setStyleSheet("QFrame {color: grey}");
 
     if(orientation == SpaceOrientation::HORIZONTAL)

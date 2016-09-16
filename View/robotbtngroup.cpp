@@ -9,11 +9,9 @@ RobotBtnGroup::RobotBtnGroup(const QVector<RobotView*>& vector, QWidget* parent)
     btnGroup = new QButtonGroup(this);
     layout = new QVBoxLayout(this);
 
-
     for(int i = 0; i < vector.length(); i++){
         CustomPushButton* robotBtn = new CustomPushButton(vector[i]->getRobot()->getName(), this, false, CustomPushButton::ButtonType::LEFT_MENU, "left", true);
         connect(robotBtn, SIGNAL(doubleClick(QString)), parent, SLOT(doubleClickOnRobot(QString)));
-
         btnGroup->addButton(robotBtn, i);
         layout->addWidget(robotBtn);
     }

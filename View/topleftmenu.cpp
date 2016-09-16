@@ -32,18 +32,16 @@ TopLeftMenu::TopLeftMenu(QWidget * parent): QWidget(parent){
     goButton = new CustomPushButton(QIcon(":/icons/go_inside.png"), "", this, true, CustomPushButton::ButtonType::TOP_LEFT_MENU);
     goButton->setIconSize(s_icon_size);
 
-
     /// to force the user to choose first
-
     eyeMapLayout = new QHBoxLayout();
     eyeMapLayout->addWidget(goButton);
     eyeMapLayout->addWidget(mapButton);
     layout->addLayout(eyeMapLayout);
 
-
     spaceWidget = new SpaceWidget(SpaceWidget::SpaceOrientation::HORIZONTAL, this);
     layout->addWidget(spaceWidget);
 
+    /// defines an order for jumping from buttons using the tab key
     setTabOrder(plusButton, minusButton);
     setTabOrder(minusButton, editButton);
     setTabOrder(editButton, goButton);
@@ -98,11 +96,10 @@ void TopLeftMenu::setAllNonCheckable(){
     mapButton->setCheckable(false);
 }
 
-void TopLeftMenu::setEnable(bool enable){
+void TopLeftMenu::setEnable(const bool enable){
     if(enable){
-        for(int i =0; i < enabledBtns.size(); i++){
+        for(int i =0; i < enabledBtns.size(); i++)
             enabledBtns.at(i)->setEnabled(true);
-        }
         enabledBtns.clear();
 
     } else {

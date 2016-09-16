@@ -40,6 +40,8 @@ public:
     void updateRobots(QSharedPointer<Robots> const& robots);
     void unSelectAllRobots();
 
+protected:
+    void showEvent(QShowEvent *);
 
 private:
     MainWindow* mainWindow;
@@ -50,9 +52,6 @@ private:
     CustomScrollArea* scrollArea;
     TopLeftMenu* actionButtons;
     int lastCheckedId;
-
-protected:
-    void showEvent(QShowEvent *);
 
 };
 

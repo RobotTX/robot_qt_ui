@@ -42,23 +42,33 @@ public:
     enum PixmapType { NORMAL, MID, START, STOP, HOVER, START_STOP, SELECTED };
 
     void setState(const GraphicItemState _state) { state = _state; }//  qDebug()<< "change state here" << point->getPosition().getX() << point->getPosition().getY() << _state;}
-    GraphicItemState getState(void) const { return state; }
     void setPos(const qreal x, const qreal y);
     void setAddedToPath(const bool _addedToPath) { addedToPath = _addedToPath; }
     void setPixmap(const PixmapType pixType, RobotView *selectedRobot = 0);
-    //void setPixmap(const QPixmap &pixmap);
     void setPoint(QSharedPointer<Point> const& _point) { point = _point; }
-    QSharedPointer<Point> getPoint(void) const { return point; }
     void setWasShown(const bool _wasShown) { wasShown = _wasShown; }
-    bool getWasShown() const { return wasShown; }
     PixmapType getType(void) const { return type; }
     void setType(const PixmapType _type) { type = _type; }
-    PixmapType getLastType(void) const { return lastType; }
     void setLastType(const PixmapType _last) { lastType = _last; }
     void setOriginalPosition(const Position position) { originalPosition = position; }
+
+    GraphicItemState getState(void) const { return state; }
+    QSharedPointer<Point> getPoint(void) const { return point; }
+    bool getWasShown() const { return wasShown; }
+    PixmapType getLastType(void) const { return lastType; }
     Position getOriginalPosition(void) const { return originalPosition; }
+
+    /**
+     * @brief updatePos
+     * to update the position of the pixmap when the position of the point changes
+     */
     void updatePos(void);
-    void setToolTip(const QString &toolTip);
+    /**
+     * @brief setToolTip
+     * @param toolTip
+     * sets a tooltip on the pointview
+     */
+    void setToolTip(const QString toolTip);
 
 protected:
     void mousePressEvent(QGraphicsSceneMouseEvent *event);
@@ -69,17 +79,19 @@ protected:
     void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
 
 signals:
+    /// emitted when the point view catches a right click
     void pointRightClicked(QString);
+    /// emitted when the point view catches a left click
     void pointLeftClicked(QString name, double x, double y);
+    /// emitted when a path is being created so that a permanent point (corresponding to this point view) is to be added to the path
     void addPointPath(QString name, double x, double y, GraphicItemState);
-    void addNoRobotPointPath(QString name, double x, double y);
-    void homeEdited(QString);
     /// when an edited path point is dragged
     void moveEditedPathPoint(GraphicItemState);
+    /// when an edited permanent point is dragged
     void editedPointPositionChanged(double, double);
+    // might not be used anymore
     void editedHomePositionChanged(float, float, QString);
-    void pathPointChanged(double, double);
-    void hoverEventSignal(PointView::PixmapType, QString);
+    /// emitted after a hover leave event to reset the path point view color
     void updatePathPainterPointView();
 
 private:

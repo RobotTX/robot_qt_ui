@@ -46,7 +46,6 @@ void PointView::mousePressEvent(QGraphicsSceneMouseEvent *event){
         qDebug() << "PointView::mousePressEvent CREATING_PATH";
         addedToPath = true;
         emit addPointPath(getPoint()->getName(), getPoint()->getPosition().getX(), getPoint()->getPosition().getY(), GraphicItemState::ROBOT_CREATING_PATH);
-
     } else if(state == GraphicItemState::NO_ROBOT_CREATING_PATH){
         qDebug() << "PointView::mousePressEvent NO_ROBOT_CREATING_PATH";
         emit addPointPath(getPoint()->getName(), getPoint()->getPosition().getX(), getPoint()->getPosition().getY(), GraphicItemState::NO_ROBOT_CREATING_PATH);
@@ -144,15 +143,9 @@ void PointView::setPos(const qreal x, const qreal y){
 }
 
 void PointView::updatePos(void){
-    /*qDebug() << "PointView::updatePos called"
-             << getPoint()->getName() << "from"
-             << getPoint()->getPosition().getX()
-             << "to" << getPoint()->getPosition().getY();*/
-
     float x = getPoint()->getPosition().getX();
     float y = getPoint()->getPosition().getY();
-    QGraphicsPixmapItem::setPos(x - pixmap().width()*SCALE/2,
-           y - pixmap().height()*SCALE);
+    QGraphicsPixmapItem::setPos(x - pixmap().width() * SCALE/2, y - pixmap().height() * SCALE);
 }
 
 void PointView::setPixmap(const PixmapType pixType, RobotView* _selectedRobot){
@@ -226,7 +219,7 @@ void PointView::setPixmap(const PixmapType pixType, RobotView* _selectedRobot){
 }
 
 
-void PointView::setToolTip(const QString &toolTip){
+void PointView::setToolTip(const QString toolTip){
     QString name = toolTip;
     if(name.indexOf(PATH_POINT_NAME) == 0){
         name.remove(PATH_POINT_NAME);

@@ -12,14 +12,12 @@
 RobotsLeftWidget::RobotsLeftWidget(QWidget* parent, MainWindow* _mainWindow, QSharedPointer<Robots> const &_robots):
     QWidget(parent), mainWindow(_mainWindow), lastCheckedId(-1)
 {
-
     layout = new QVBoxLayout(this);
     scrollArea = new CustomScrollArea(this);
 
     actionButtons = new TopLeftMenu(this);
     actionButtons->disableAll();
 
-    //connect(actionButtons->getGoButton(), SIGNAL(clicked()), mainWindow, SLOT(selectViewRobot()));
     connect(actionButtons->getEditButton(), SIGNAL(clicked()), mainWindow, SLOT(editRobotBtnEvent()));
     connect(actionButtons->getMapButton(), SIGNAL(clicked()), mainWindow, SLOT(checkRobotBtnEventMenu()));
 
@@ -31,7 +29,7 @@ RobotsLeftWidget::RobotsLeftWidget(QWidget* parent, MainWindow* _mainWindow, QSh
 
     layout->addWidget(scrollArea);
     layout->setAlignment(Qt::AlignTop);
-    layout->setContentsMargins(0,0,0,0);
+    layout->setContentsMargins(0, 0, 0, 0);
 }
 
 void RobotsLeftWidget::setRobots(QSharedPointer<Robots> const &_robots){
@@ -39,7 +37,6 @@ void RobotsLeftWidget::setRobots(QSharedPointer<Robots> const &_robots){
 
     /// Clickable buttons group to select/edit a robot
     btnGroup = new RobotBtnGroup(robots->getRobotsVector(), mainWindow);
-    //btnGroup->setMaximumWidth(width());
 
     /// Checkable buttons group to show/hide a robot
     btnGroup->show();
@@ -58,7 +55,7 @@ void RobotsLeftWidget::updateRobots(QSharedPointer<Robots> const& _robots){
 void RobotsLeftWidget::unSelectAllRobots(){
     btnGroup->getBtnGroup()->setExclusive(false);
 
-    for (int i=0;i<  btnGroup->getBtnGroup()->buttons().size() ;i++){
+    for (int i = 0; i < btnGroup->getBtnGroup()->buttons().size() ;i++){
             btnGroup->getBtnGroup()->buttons().at(i)->setChecked(false);
     }
     btnGroup->getBtnGroup()->setExclusive(true);
