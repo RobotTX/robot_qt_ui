@@ -51,7 +51,6 @@ private:
     QButtonGroup* buttonGroup;
     QSharedPointer<Paths> paths;
     CustomLineEdit* modifyEdit;
-    const QSize BUTTON_SIZE;
 };
 
 #endif // PATHBUTTONGROUP_H

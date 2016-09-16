@@ -6,11 +6,13 @@
 
 
 
-Point::Point(void): name(""), position(Position(0.0, 0.0)), type(PERM){
+Point::Point(void): name(""), position(Position(0.0, 0.0)), type(PERM)
+{
 }
 
 Point::Point(const QString name, const double x, const double y, const PointType _type):
-    name(name), position(Position(x, y)), type(_type) {
+    name(name), position(Position(x, y)), type(_type)
+{
 }
 
 Point::Point(const QString name, const Position position, const PointType _type) : name(name), position(position), type(_type), robotName(""){
@@ -85,12 +87,12 @@ bool Point::operator==(const Point& point) const {
  }
 
  bool Point::setHome(const PointType _type){
-    if(_type != HOME){
+    if(_type != HOME)
         type = _type;
-    } else if((_type == HOME) && (type != HOME)){
+    else if((_type == HOME) && (type != HOME)){
         type = _type;
         if (!name.compare(TMP_POINT_NAME))
-            name = QString::number(position.getX(),'f', 1) + "; " + QString::number(position.getY(),'f', 1);
+            name = QString::number(position.getX(),'f', 1) + "; " + QString::number(position.getY(), 'f', 1);
         return true;
     }
     return false;

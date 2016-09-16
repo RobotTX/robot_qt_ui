@@ -30,10 +30,10 @@ public:
     QVector<QSharedPointer<PathPoint>> getOldPath(void) const { return oldPath; }
     bool getPathDeleted(void) const { return pathDeleted; }
 
-    ///Setters
+    /// Setters
     void setCurrentPath(const QVector<QSharedPointer<PathPoint> > &_currentPath);
     void setOldPath(const QVector<QSharedPointer<PathPoint> > _oldPath);
-    void setPathDeleted(bool _pathDeleted){ pathDeleted = _pathDeleted; }
+    void setPathDeleted(const bool _pathDeleted){ pathDeleted = _pathDeleted; }
 
     /**
      * @brief displayPath

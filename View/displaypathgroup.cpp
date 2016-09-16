@@ -38,8 +38,6 @@ DisplayPathGroup::DisplayPathGroup(QWidget* _parent, MainWindow* _mainWindow, co
 
     layout->addWidget(scrollArea);
 
-    /*setMaximumWidth(_parent->width()*4/10);
-    setMinimumWidth(_parent->width()*4/10);*/
     layout->setContentsMargins(0,0,0,0);
 
     /// to handle double clicks
@@ -103,16 +101,13 @@ void DisplayPathGroup::enableButtons(QAbstractButton *button){
 }
 
 void DisplayPathGroup::resetMapButton(){
-    //qDebug() << "DisplayPathGroup::resetMapButton called";
     actionButtons->getMapButton()->setChecked(false);
 }
 
 void DisplayPathGroup::setPathsGroup(const QString groupName){
-    //qDebug() << "DsplayGroup::setPathsGroup called";
     pathButtonGroup->deleteButtons();
     /// if the group of paths exists
     if(paths->getGroups()->find(groupName) != paths->getGroups()->end()){
-        //qDebug() << "found" << groupName;
         /// we iterate over it to create the buttons
         QSharedPointer<Paths::CollectionPaths> current_group = paths->getGroups()->value(groupName);
         QMapIterator<QString, QSharedPointer<Paths::Path>> it_paths(*current_group);
@@ -128,16 +123,16 @@ void DisplayPathGroup::setPathsGroup(const QString groupName){
             else
                 groupButton->setIcon(QIcon(":/icons/blank.png"));
 
-            //groupButton->setAutoDefault(true);
             pathButtonGroup->getButtonGroup()->addButton(groupButton, i++);
+            /// connects the button to the main window to handle double clicks on the button
             connect(groupButton, SIGNAL(doubleClick(QString)), mainWindow, SLOT(doubleClickOnPath(QString)));
             groupButton->setCheckable(true);
             pathButtonGroup->getLayout()->addWidget(groupButton);
-
         }
     }
 }
 
+/// sets the eye icon properly in front of the displayed path if such path exists
 void DisplayPathGroup::updateDisplayedPath(){
     foreach(QAbstractButton* button, pathButtonGroup->getButtonGroup()->buttons()){
         if(!button->text().compare(paths->getVisiblePath()))
@@ -148,6 +143,7 @@ void DisplayPathGroup::updateDisplayedPath(){
     }
 }
 
+/// allows a user to delete a path with the delete key
 void DisplayPathGroup::keyPressEvent(QKeyEvent *event){
     if(event->key() == Qt::Key_Delete){
         if(pathButtonGroup->getButtonGroup()->checkedButton())

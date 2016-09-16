@@ -9,7 +9,7 @@
  * @brief The PathPoint class
  * Represent a point on a robot path
  */
-class PathPoint{
+class PathPoint {
 public:
     /**
      * @brief The Action enum
@@ -17,7 +17,7 @@ public:
      * or for a human action when the robot reach the point
      */
     enum Action { WAIT, HUMAN_ACTION };
-    PathPoint(const Point& point, const Action& action, const int waitTime = 0);
+    PathPoint(const Point& point, const Action action, const int waitTime = 0);
     PathPoint(void);
 
     /// Getters

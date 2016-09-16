@@ -94,7 +94,7 @@ public:
     Path getPath(const QString groupName, const QString pathName, bool& foundFlag);
 
     /// Setters
-    void setVisiblePath(const QString path) { visiblePath = path; qDebug() << path << "path displayed"; }
+    void setVisiblePath(const QString path) { visiblePath = path; }
     void setGroups(QSharedPointer<Groups> _groups) { groups = _groups; }
 
 

@@ -40,13 +40,26 @@ public:
 
     void setLastCheckedId(const int id) { lastCheckedId = id; }
 
+    /// unchecks the buttons with the robots names
     void uncheckRobots(void);
+
+    /// updates the robot's information of the robot with Id <id> and robotView <robotView>
+    /// which consists in updating name and path, disabling some buttons if path is empty
     void updateRobot(const int id, RobotView* const robotView);
+
+    /// enables or disables the button
     void setEnable(const bool enable);
+
+    /// adds a robot using its robotview
     void addRobot(RobotView * const robotView);
+
+    /// removes the robot with Id <id>
     void removeRobot(const int id);
+
     /// to stop displaying the path of the robot whose id is given as a parameter
     void uncheckViewPathSelectedRobot(const int robotNb = -1);
+
+    /// uncheck all view path buttons
     void uncheckAll();
 
     /// to create a QString to display from the path
@@ -85,10 +98,14 @@ private:
 
     /**
      * @brief pathRobotBtnGroup
-     * Group of buttons with to view the path
+     * Group of buttons to display paths
      */
     QButtonGroup* viewPathRobotBtnGroup;
 
+    /**
+     * @brief deletePathBtnGroup
+     * Group of buttons to delete paths
+     */
     QButtonGroup* deletePathBtnGroup;
 
     /**

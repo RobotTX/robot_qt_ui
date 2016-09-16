@@ -3,16 +3,18 @@
 
 #include "Model/position.h"
 #include <QImage>
+#include <QObject>
 
 /**
  * @brief The Map class
  * The model class for the Map,
  * contains the map as a QImage and its width, height, resolution and the origin
  */
-class Map {
-
+class Map : public QObject
+{
+    Q_OBJECT
 public:
-    Map();
+    explicit Map();
 
     /// Getters
     QImage getMapImage(void) const { return mapImage; }
@@ -51,6 +53,11 @@ public:
     void saveToFile(const QString fileName);
 
     void setRectangle(void);
+
+signals:
+    /// emitted when a user make an attempt at saving the map, the status holds the status regarding the operation (true = success, false = failure)
+    void saveStatus(bool);
+
 private:
     /**
      * @brief mapImage
@@ -62,7 +69,7 @@ private:
      * @brief resolution
      * The resolution of the map used to calculate the position of the robot
      * (the resolution of our map being different from the resolution of the map sent
-     * affecting the robot position)
+     * affecting the robot's position)
      */
     float resolution;
     int width;

@@ -159,7 +159,6 @@ LeftMenu::LeftMenu(MainWindow* _mainWindow, QSharedPointer<Points> const& _point
 
     /// Menu which displays the groups of paths
     groupsPathsWidget = new GroupsPathsWidget(this, _mainWindow, paths);
-    //groupsPathsWidget->setMaximumWidth(mainWindow->width()*4/10);
     groupsPathsWidget->hide();
     leftLayout->addWidget(groupsPathsWidget);
 
@@ -172,8 +171,6 @@ LeftMenu::LeftMenu(MainWindow* _mainWindow, QSharedPointer<Points> const& _point
 
     /// Menu which displays a particular group of paths
     pathGroup = new DisplayPathGroup(this, _mainWindow, paths);
-    //pathGroup->setMaximumWidth(parent->width()*4/10);
-
     pathGroup->hide();
     leftLayout->addWidget(pathGroup);
 
@@ -201,20 +198,9 @@ LeftMenu::LeftMenu(MainWindow* _mainWindow, QSharedPointer<Points> const& _point
     hide();
 
     globalLayout->addLayout(leftLayout);
-    /*globalLayout->setContentsMargins(0, 10, 0, 0);
-    topLayout->setContentsMargins(0, 0, 0, 0);
-    globalLayout->setSpacing(0);*/
-
 
     leftLayout->setAlignment(Qt::AlignTop);
     leftLayout->setAlignment(closeBtn, Qt::AlignTop | Qt::AlignRight);
-/*
-   for (int i = 0; i < leftLayout->count(); ++i) {
-        QWidget *widget = leftLayout->itemAt(i)->widget();
-        if (widget != NULL) {
-            widget->setMinimumWidth(1);
-        }
-    }*/
 
     setMaximumWidth(_mainWindow->width()/2);
     setMinimumWidth(_mainWindow->width()/2);

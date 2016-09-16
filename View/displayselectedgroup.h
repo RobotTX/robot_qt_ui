@@ -62,7 +62,6 @@ protected:
     void resizeEvent(QResizeEvent *event);
     void keyPressEvent(QKeyEvent* event);
 
-
 signals:
     /// emitted when a button is clicked to reset the colors of the path points
     void resetPathPointViews();
@@ -81,6 +80,7 @@ private:
 
     QLabel* name;
     QSharedPointer<Points> points;
+    /// to remember which group is selected
     QString lastCheckedButton;
 };
 

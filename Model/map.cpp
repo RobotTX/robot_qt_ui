@@ -1,11 +1,8 @@
 #include "map.h"
 #include <QDebug>
 
-Map::Map(){
-    resolution = 0;
-    width = 0;
-    height = 0;
-    origin = Position();
+Map::Map(): resolution(0), width(0), height(0), origin(Position())
+{
 }
 
 void Map::setMapFromFile(const QString fileName){
@@ -42,7 +39,6 @@ void Map::setRectangle(void){
 }
 
 void Map::setMapFromArray(const QByteArray& mapArrays){
-    // if breaks check casts
     qDebug() << "Map::setMapFromArray called" << mapArrays.size();
     mapImage = QImage(width, height, QImage::Format_Grayscale8);
     uint32_t index = 0;
@@ -64,8 +60,5 @@ void Map::setMapFromArray(const QByteArray& mapArrays){
 void Map::saveToFile(const QString fileName){
     /// Qt has is own function to save the QImage to a PGM file
     bool status = mapImage.save(fileName, "PGM");
-    if(status)
-        qDebug() << "Map::saveToFile Map saved";
-    else
-        qDebug() << "Map::saveToFile Error : map not saved";
+    emit saveStatus(status);
 }

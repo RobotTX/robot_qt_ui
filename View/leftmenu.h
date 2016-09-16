@@ -109,7 +109,6 @@ private:
     DisplayPathGroup* pathGroup;
     QString lastCheckedId;
     PathCreationWidget* noRobotPathCreationWidget;
-
 };
 
 #endif // LEFTMENU_H

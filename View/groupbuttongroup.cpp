@@ -36,18 +36,17 @@ GroupButtonGroup::GroupButtonGroup(const QSharedPointer<Points> &_points, QWidge
                 && i.key().compare(PATH_GROUP_NAME)!= 0){
             CustomPushButton* groupButton = new CustomPushButton(i.key(), this, false, CustomPushButton::ButtonType::LEFT_MENU, "left", true);
             buttonGroup->addButton(groupButton, index);
-            //groupButton->setAutoExclusive(true);
-
             layout->addWidget(groupButton);
+
             if(points->isDisplayed(i.key()))
                 groupButton->setIcon(QIcon(":/icons/folder_eye.png"));
             else
                 groupButton->setIcon(QIcon(":/icons/folder_space.png"));
+
             groupButton->setIconSize(xl_icon_size);
             index++;
         }
     }
-
 
     /// for the last group we just want to show the points and not "no group"
     if(points->getGroups()->value(NO_GROUP_NAME)){
@@ -64,9 +63,8 @@ GroupButtonGroup::GroupButtonGroup(const QSharedPointer<Points> &_points, QWidge
             pointButton->setIconSize(xl_icon_size);
         }
     }
-
+    /// to make sure that when the name of a group is being edited, this name is valid (not empty or taken)
     connect(modifyEdit, SIGNAL(textEdited(QString)), this, SLOT(checkEditGroupName(QString)));
-    //layout->setContentsMargins(0,0,30,0);
 
 }
 
@@ -93,10 +91,11 @@ void GroupButtonGroup::updateButtons(){
     QMapIterator<QString, QSharedPointer<QVector<QSharedPointer<PointView>>>> i(*(points->getGroups()));
     while (i.hasNext()) {
         i.next();
-        if(i.key().compare(NO_GROUP_NAME)!= 0
-                && i.key().compare(TMP_GROUP_NAME)!= 0
-                && i.key().compare(PATH_GROUP_NAME)!= 0){
-
+        /// this keeps only the group of points
+        if(i.key().compare(NO_GROUP_NAME) != 0
+                && i.key().compare(TMP_GROUP_NAME) != 0
+                && i.key().compare(PATH_GROUP_NAME) != 0){
+            /// sets the modifyEdit at the position of the selected group so that we can show it at the same position if the user wants to update its name
             if(i.key().compare(editedGroupName) == 0){
                 modifyEdit = new CustomLineEdit(this);
                 modifyEdit->setFixedWidth(1.29*modifyEdit->width());
@@ -139,7 +138,6 @@ void GroupButtonGroup::updateButtons(){
 }
 
 void GroupButtonGroup::uncheck(void){
-    //qDebug() << "GroupButtonGroup::uncheck called";
     /// little trick to uncheck all buttons because the class doesn't provide a function to do it
     buttonGroup->setExclusive(false);
     if(buttonGroup->checkedButton())
@@ -164,11 +162,13 @@ int GroupButtonGroup::checkEditGroupName(QString name){
     qDebug() << "GroupButtonGroup::checkEditGroupName called";
     modifyEdit->setText(formatName(modifyEdit->text()));
     name = modifyEdit->text().simplified();
+    /// if the group has not changed we allow saving it
     if(!name.compare(editedGroupName, Qt::CaseInsensitive)){
         qDebug() << "same name";
         emit codeEditGroup(0);
         return 0;
     }
+    /// if the name is empty we forbid it
     if(!name.compare("")){
         emit codeEditGroup(1);
         return 1;
@@ -177,6 +177,7 @@ int GroupButtonGroup::checkEditGroupName(QString name){
     QMapIterator<QString, QSharedPointer<QVector<QSharedPointer<PointView>>>> i(*(points->getGroups()));
     while (i.hasNext()) {
         i.next();
+        /// if the name is already taken we also forbid it
         if(!name.compare(i.key(), Qt::CaseInsensitive)){
             qDebug() << "GroupButtonGroup::checkEditGroupName" << i.key();
             emit codeEditGroup(2);
@@ -187,6 +188,7 @@ int GroupButtonGroup::checkEditGroupName(QString name){
     return 0;
 }
 
+/// removes extra spaces like in " a  name with   extra spaces "
 QString GroupButtonGroup::formatName(const QString name) const {
     qDebug() << "GroupButtonGroup::formatName called";
 
@@ -202,7 +204,7 @@ QString GroupButtonGroup::formatName(const QString name) const {
     return ret;
 }
 
-
+/// returns the id of the edited group
 int GroupButtonGroup::getEditedGroupId(void) const{
     for(int i = 0; i < getButtonGroup()->buttons().size(); i++){
         if(getButtonGroup()->buttons().at(i)->text().compare(editedGroupName) == 0){
@@ -219,6 +221,8 @@ QAbstractButton* GroupButtonGroup::getButtonByName(const QString name) const {
     }
     return NULL;
 }
+
+/// returns the id of the button whose text is <name>
 int GroupButtonGroup::getButtonIdByName(const QString name) const {
     for(int i = 0; i < getButtonGroup()->buttons().size(); i++){
         if(getButtonGroup()->buttons().at(i)->text().compare(name) == 0)

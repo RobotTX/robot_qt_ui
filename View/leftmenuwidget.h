@@ -17,10 +17,17 @@ class LeftMenuWidget: public QWidget{
     Q_OBJECT
 public:
     LeftMenuWidget(QWidget* parent, QSharedPointer<Points> const& _points);
-    CustomPushButton* getRobotBtn(void) const {return robotBtn; }
-    CustomPushButton* getPointBtn(void) const {return pointBtn; }
-    CustomPushButton* getMapBtn(void) const {return mapBtn; }
-    CustomPushButton* getPathBtn(void) const {return pathBtn; }
+    CustomPushButton* getRobotBtn(void) const { return robotBtn; }
+    CustomPushButton* getPointBtn(void) const { return pointBtn; }
+    CustomPushButton* getMapBtn(void) const { return mapBtn; }
+    CustomPushButton* getPathBtn(void) const { return pathBtn; }
+
+protected:
+    void showEvent(QShowEvent *event);
+
+signals:
+    /// when showing this widget the application resets the colors of the path points on the map
+    void resetPathPointViews();
 
 private:
     QVBoxLayout* layout;
@@ -29,13 +36,6 @@ private:
     CustomPushButton* pointBtn;
     CustomPushButton* mapBtn;
     CustomPushButton* pathBtn;
-
-protected:
-    void showEvent(QShowEvent *event);
-
-signals:
-    /// when showing this widget the application resets the colors of the path points on the map
-    void resetPathPointViews();
 };
 
 #endif // LEFTMENUWIDGET_H

@@ -34,10 +34,12 @@ public:
     QLabel* getPosXLabel(void) const { return posXLabel; }
     QLabel* getPosYLabel(void) const { return posYLabel; }
     CustomLineEdit* getNameEdit(void) const { return nameEdit; }
-    void updateGroupBox();
     TopLeftMenu* getActionButtons(void) const { return actionButtons; }
     QComboBox* getGroupBox(void) const { return groupBox; }
     QLabel* getGroupLabel(void) const { return groupLabel; }
+
+    /// called when a new group is created to add it to the box
+    void updateGroupBox();
 
 private:
     /// this prevents a user to type names like " a                stupidname       " by removing extra spaces

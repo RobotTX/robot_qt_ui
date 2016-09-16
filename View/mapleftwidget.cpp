@@ -9,8 +9,8 @@ MapLeftWidget::MapLeftWidget(QWidget* parent, const MainWindow *mainWindow): QWi
     layout = new QVBoxLayout(this);
 
     /// Save & load buttons
-    CustomPushButton* saveBtn = new CustomPushButton(QIcon(":/icons/upload.png"),"Save this map", this);
-    CustomPushButton* loadBtn = new CustomPushButton(QIcon(":/icons/download.png"),"Load a map", this);
+    CustomPushButton* saveBtn = new CustomPushButton(QIcon(":/icons/upload.png"), "Save this map", this);
+    CustomPushButton* loadBtn = new CustomPushButton(QIcon(":/icons/download.png"), "Load a map", this);
 
     /// this button allows a user to save a particular state for the map (point in the center of its screen and zoom)
     CustomPushButton* saveStateBtn = new CustomPushButton(QIcon(":/icons/save_map.png"), "Save the state of the map", this);
@@ -33,8 +33,5 @@ MapLeftWidget::MapLeftWidget(QWidget* parent, const MainWindow *mainWindow): QWi
     connect(saveStateBtn, SIGNAL(clicked()), mainWindow, SLOT(saveMapState()));
 
     hide();
-    /*setMaximumWidth(mainWindow->width()*4/10);
-    setMinimumWidth(mainWindow->width()*4/10);*/
     layout->setAlignment(Qt::AlignTop);
-    //layout->setContentsMargins(0,0,0,0);
 }

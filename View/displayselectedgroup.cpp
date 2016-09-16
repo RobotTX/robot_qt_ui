@@ -45,7 +45,7 @@ DisplaySelectedGroup::DisplaySelectedGroup(QWidget* parent, QSharedPointer<Point
 
     connect(pointButtonGroup->getButtonGroup(), SIGNAL(buttonClicked(QAbstractButton*)), this, SLOT(buttonClickedSlot(QAbstractButton*)));
 
-    layout->setContentsMargins(0,0,0,0);
+    layout->setContentsMargins(0, 0, 0, 0);
 }
 
 void DisplaySelectedGroup::setName(const QString _name){
@@ -132,6 +132,7 @@ void DisplaySelectedGroup::resizeEvent(QResizeEvent *event){
     QWidget::resizeEvent(event);
 }
 
+/// to delete an point with the delete key
 void DisplaySelectedGroup::keyPressEvent(QKeyEvent *event){
     if(pointButtonGroup->getButtonGroup()->checkedButton()){
         if(event->key() == Qt::Key_Delete)

@@ -59,7 +59,6 @@ public:
     bool comparePos(const double x, const double y) const;
     bool comparePos(const Position pos) const;
 
-
 private:
     QString name;
     Position position;
@@ -78,6 +77,5 @@ QDataStream& operator<<(QDataStream& out, const Point& point);
 QDataStream& operator>>(QDataStream& in, Point& point);
 
 std::ostream& operator <<(std::ostream& stream, const Point& point);
-
 
 #endif // POINT_H

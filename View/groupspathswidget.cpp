@@ -67,7 +67,6 @@ GroupsPathsWidget::GroupsPathsWidget(QWidget* parent, MainWindow* _mainWindow, c
     connect(buttonGroup->getModifyEdit(), SIGNAL(textEdited(QString)), this, SLOT(checkEditGroupName(QString)));
     connect(this, SIGNAL(codeEditGroup(int)), _mainWindow, SLOT(setMessageModifGroupPaths(int)));
 
-
     /// to save a group of paths if the name is valid
     connect(saveButton, SIGNAL(clicked()), this, SLOT(newGroupPaths()));
 
@@ -94,15 +93,12 @@ void GroupsPathsWidget::enableButtons(QAbstractButton* button){
     } else {
     /// if the button was not selected before we enable the appropriate action buttons and update the tooltips
     /// we also update the last checked button to the button just clicked
-        //qDebug() << "GroupsPathsWidget::enableButtons enabling buttons";
         lastCheckedButton = button->text();
 
         disableButtons();
         /// enables the minus button
         actionButtons->getMinusButton()->setEnabled(true);
-
         actionButtons->getMinusButton()->setToolTip("Click to remove the selected group");
-
 
         /// enables the eye button
         actionButtons->getGoButton()->setEnabled(true);
@@ -116,7 +112,6 @@ void GroupsPathsWidget::enableButtons(QAbstractButton* button){
 
 /// disables the buttons and resets the tooltips
 void GroupsPathsWidget::disableButtons(){
-    //qDebug() << "GroupsPathsWidget disableButtons called";
     actionButtons->getMinusButton()->setEnabled(false);
     actionButtons->getMinusButton()->setToolTip("Select a group of paths and click here to delete it");
 
@@ -129,7 +124,6 @@ void GroupsPathsWidget::disableButtons(){
 
 /// called when the Enter key is pressed
 void GroupsPathsWidget::keyPressEvent(QKeyEvent* event){
-    qDebug() << "GroupsPathsWidget::keyPressEvent called, creating a group ?" << creatingGroup << event->text();
     /// this is the enter key
     if(!event->text().compare("\r")){
         /// if a group is being created

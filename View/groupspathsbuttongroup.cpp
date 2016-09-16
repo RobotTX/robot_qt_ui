@@ -5,7 +5,7 @@
 #include "View/stylesettings.h"
 #include "View/customlineedit.h"
 
-GroupsPathsButtonGroup::GroupsPathsButtonGroup(QWidget *_parent, const QSharedPointer<Paths> &_paths): QWidget(_parent), paths(_paths), BUTTON_SIZE(parentWidget()->size()/20)
+GroupsPathsButtonGroup::GroupsPathsButtonGroup(QWidget *_parent, const QSharedPointer<Paths> &_paths): QWidget(_parent), paths(_paths)
 {
     layout = new QVBoxLayout(this);
     buttonGroup = new QButtonGroup(this);
@@ -22,7 +22,6 @@ GroupsPathsButtonGroup::GroupsPathsButtonGroup(QWidget *_parent, const QSharedPo
 }
 
 void GroupsPathsButtonGroup::createButtons(){
-    //qDebug() << "GroupsPathsButtonGroup::createButtons called";
     /// to give a different id to each button
     int i(0);
     QMapIterator<QString, QSharedPointer<Paths::CollectionPaths>> it_paths_groups(*(paths->getGroups()));

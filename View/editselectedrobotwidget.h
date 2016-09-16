@@ -47,8 +47,6 @@ public:
     CustomPushButton* getCancelButton(void) const { return cancelBtn; }
     bool isEditing(void) const { return editing; }
     QString getAssignedPath(void) const { return assignedPath; }
-    void setAssignedPath(const QString path) { assignedPath = path; }
-    void setGroupPath(const QString group) { groupAssignedPath = group; }
     QString getPathName(void) const { return assignedPath; }
     QString getGroupPathName(void) const { return groupAssignedPath; }
     CustomPushButton* getDeleteHomeBtn(void) const { return deleteHomeBtn; }
@@ -60,6 +58,9 @@ public:
     void setHome(QSharedPointer<PointView> const _home) { home = _home; }
     void setPathChanged(const bool change) { pathChanged = change; }
     void setPathWidget(PathWidget* pw) { pathWidget = pw; }
+    void setAssignedPath(const QString path) { assignedPath = path; }
+    void setGroupPath(const QString group) { groupAssignedPath = group; }
+    void setSelectedRobot(RobotView * const robotView, bool firstConnection = false);
 
     /// updates the name and wifi or the robot
     void editName(void);
@@ -67,24 +68,33 @@ public:
     void disableAll(void);
     /// enables the buttons and line edits
     void setEnableAll(const bool enable);
-    void setSelectedRobot(RobotView * const robotView, bool firstConnection = false);
+    /// updates the path description of the robot
     void setPath(const QVector<QSharedPointer<PathPoint> > &path);
+    /// hides the path description of the robot
     void clearPath();
 
 public slots:
+    /// to update the home menu to tick the point corresponding to the home and prevent other robots to have the same home
     void updateHomeMenu();
+    /// to update the path menu to tick the path assigned to the current robot
     void updatePathsMenu();
 
 signals:
     /// Signal emitted when a robot has been edited & saved
     void robotSaved(void);
+    /// called by the show event to set the homes properly add the delete buttons if they are needed
     void showEditSelectedRobotWidget(void);
+    /// called by the hide event to set the homes pointviews and reset the bottom layout properly
     void hideEditSelectedRobotWidget(void);
+    /// to display the path whose groupname and pathname are propagated by the signal
     void showPath(QString, QString);
+    /// to stop displaying all paths on the map
     void clearMapOfPaths();
     /// to notify that a new home has been assigned
     void newHome(QString);
+    /// to notify that the name of the robot needs to be updated
     void robotNameChanged(QString);
+    /// to notify that the wifi network of the robot needs to be changed
     void robotWifiChanged(QString, QString);
 
 protected:
@@ -114,7 +124,15 @@ private slots:
      * Opens a page to change the name and/or the wifi information
      */
     void editRobot();
+    /**
+     * @brief cancelRobotModifications
+     * called when a user cancels the modifications on the edition page
+     */
     void cancelRobotModifications();
+    /**
+     * @brief saveRobotModifications
+     * called when a user saves the modifications on the edition page
+     */
     void saveRobotModifications();
 
 private:
@@ -151,7 +169,6 @@ private:
     CustomPushButton* deleteHomeBtn;
     CustomPushButton* editRobotInfoBtn;
     CustomRobotDialog* robotDialog;
-
 };
 
 #endif // EDITSELECTEDROBOTWIDGET_H

@@ -44,7 +44,6 @@ private:
     QVBoxLayout* layout;
     QButtonGroup* buttonGroup;
     QSharedPointer<Paths> paths;
-    const QSize BUTTON_SIZE;
 };
 
 #endif // PATHBUTTONGROUP_H

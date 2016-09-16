@@ -314,19 +314,12 @@ void EditSelectedRobotWidget::setPath(const QVector<QSharedPointer<PathPoint> >&
     if(path.size() > 0){
         pathWidget->show();
         pathSpaceWidget->show();
-        //addPathBtn->setText("Edit Path");
-        //addPathBtn->setIcon(QIcon(":/icons/edit.png"));
         deletePathBtn->show();
         pathWidget->setPath(path);
     }
 }
 
 void EditSelectedRobotWidget::clearPath(){
-    /*
-    addPathBtn->setText("Add Path");
-    addPathBtn->setIcon(QIcon(":/icons/plus.png"));
-    addPathBtn->setIconSize(xs_icon_size);
-    */
     pathWidget->hide();
     pathSpaceWidget->hide();
     deletePathBtn->hide();

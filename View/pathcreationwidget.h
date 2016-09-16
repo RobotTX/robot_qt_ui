@@ -41,19 +41,44 @@ public:
     };
 
     PathCreationWidget(QWidget *parent, const QSharedPointer<Points>& points, const QSharedPointer<Paths>& _paths, const bool associatedToRobot, const GraphicItemState _state);
-    void updatePath(const QVector<QSharedPointer<PathPoint> >& _currentPath);
-    void updatePointsList(void);
-    void deleteItem(QListWidgetItem* item);
-    void editPathPoint(const QString name, const double x, const double y);
+
+    QString getCurrentPathName(void) const { return currentPathName; }
     PathPointList* getPathPointList(void) const { return pathPointsList; }
-    void setCurrentGroupName(const QString name) { currentGroupName = name; }
     QString getCurrentGroupName(void) const { return currentGroupName; }
     CustomPushButton* getCancelButton(void) const { return cancelBtn; }
     CustomLineEdit* getNameEdit(void) const { return nameEdit; }
     CustomPushButton* getSaveButton(void) const { return saveBtn; }
     TopLeftMenu* getActionButtons(void) const { return actionButtons; }
+
     void setCurrentPathName(const QString name) { currentPathName = name; }
-    QString getCurrentPathName(void) const { return currentPathName; }
+    void setCurrentGroupName(const QString name) { currentGroupName = name; }
+
+public:
+    /**
+     * @brief updatePath
+     * @param _currentPath
+     * recreates the path points list from scratch using <_currentPath>
+     */
+    void updatePath(const QVector<QSharedPointer<PathPoint> >& _currentPath);
+    /**
+     * @brief updatePointsList
+     * updates the menu from which we can choose permanent points to add to a path
+     */
+    void updatePointsList(void);
+    /**
+     * @brief deleteItem
+     * @param item
+     * to remove a point from the path point list
+     */
+    void deleteItem(QListWidgetItem* item);
+    /**
+     * @brief editPathPoint
+     * @param name
+     * @param x
+     * @param y
+     * updates the currently selected path point in the list
+     */
+    void editPathPoint(const QString name, const double x, const double y);
 
 protected:
     void showEvent(QShowEvent* event);
@@ -75,32 +100,109 @@ signals:
     /// emitted when a path point is edited
     void editPathPoint(int, QString, double, double);
     void editTmpPathPoint(int, QString, double, double, GraphicItemState);
+    /// emitted when the path is saved
     void saveEditPathPoint(GraphicItemState);
+    /// emitted when the cancel button is clicked
     void cancelEditPathPoint(GraphicItemState);
+    /// emitted when the save button is clicked
     void savePath(GraphicItemState);
+    /// emitted when the name of a path is being edited to notify whether or not this is a valid name
     void codeEditPath(int codeError);
-    void editPathPointSignal(GraphicItemState);
+    /// emitted when the button clean is clicked to clear the temporary path of all its points
     void resetWidgetSignal(GraphicItemState);
 
 private slots:
+    /**
+     * @brief resetWidgetRelaySlot
+     * relays a signal through the click of the clean button (because the button signal can only provide a bool and we need to send a state)
+     */
     void resetWidgetRelaySlot();
+    /**
+     * @brief resetWidget
+     * @param _state
+     * clear the path point lists of all its path points upon clicking the clean button
+     */
     void resetWidget(GraphicItemState _state);
+    /**
+     * @brief addPathPointByMenuSlot
+     * adds a permanent point to the path
+     */
     void addPathPointByMenuSlot(void);
     /**
      * @brief deletePathPointSlot
      * deletes the path point using the minus button
      */
     void deletePathPointSlot();
+    /**
+     * @brief editPathPointSlot
+     * Prepares the edition of the selected path point
+     */
     void editPathPointSlot();
+    /**
+     * @brief itemClicked
+     * @param item
+     * Called when an item of the path point list is called
+     */
     void itemClicked(QListWidgetItem* item);
+    /**
+     * @brief itemMovedSlot
+     * @param start
+     * @param row
+     * when a path point is moved within the path points list
+     */
     void itemMovedSlot(const QModelIndex& , int start, int , const QModelIndex& , int row);
+    /**
+     * @brief savePathClicked
+     * called when the save button is called
+     */
     void savePathClicked(void);
+    /**
+     * @brief clicked
+     * called to open the menu of points
+     */
     void clicked(void);
+    /**
+     * @brief pointClicked
+     * @param action
+     * called when a point is clicked in the menu
+     */
     void pointClicked(QAction *action);
+    /**
+     * @brief addPathPointSlot
+     * @param name
+     * @param x
+     * @param y
+     * @param _state
+     * @param action
+     * @param waitTime
+     * adds a slot in the path point list
+     */
     void addPathPointSlot(QString name, double x, double y, GraphicItemState _state, PathPoint::Action action = PathPoint::Action::WAIT, int waitTime = 0);
+    /**
+     * @brief saveEditSlot
+     * @param
+     * called when changes must be applied to an edited path point
+     */
     void saveEditSlot(PathPointCreationWidget* pathPointCreationWidget);
+    /**
+     * @brief cancelEditSlot
+     * @param pathPointCreationWidget
+     * called when changes made to a path point must be cancelled
+     */
     void cancelEditSlot(PathPointCreationWidget* pathPointCreationWidget);
+    /**
+     * @brief actionChangedSlot
+     * @param id
+     * @param action
+     * @param waitTime
+     * called when the waiting time of a path point is updated
+     */
     void actionChangedSlot(int id, int action, QString waitTime);
+    /**
+     * @brief checkPathName
+     * @param name
+     * checks that the name of a path point is valid (not already taken or empty
+     */
     void checkPathName(const QString name);
     /**
      * @brief deletePathPointWithCross

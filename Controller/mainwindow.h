@@ -140,9 +140,8 @@ private slots:
     void checkRobotBtnEventMenu();
     void checkRobotBtnEventSelect();
     void checkRobotBtnEvent(QString name);
-    void saveMapBtnEvent();
-    void loadMapBtnEvent();
-   // void backMapBtnEvent();
+
+
     //void setCheckedRobot(QString name);
     void cancelEditSelecRobotBtnEvent();
     void robotSavedEvent();
@@ -250,6 +249,10 @@ private slots:
     void displayAssignedPath(QString groupName, QString pathName);
     /// to clear paths on the map
     void clearMapOfPaths();
+
+    void messageMapSaved(bool status);
+    void saveMapBtnEvent();
+    void loadMapBtnEvent();
 
 protected:
     void moveEvent(QMoveEvent* event);

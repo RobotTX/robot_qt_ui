@@ -39,6 +39,7 @@ LeftMenuWidget::LeftMenuWidget(QWidget *_parent, QSharedPointer<Points> const& _
 }
 
 void LeftMenuWidget::showEvent(QShowEvent *event){
+    /// to reset the colors of the points on the map
     points->setPixmapAll(PointView::PixmapType::NORMAL);
     emit resetPathPointViews();
     QWidget::showEvent(event);

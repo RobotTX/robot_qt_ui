@@ -51,12 +51,10 @@ DisplaySelectedPoint::DisplaySelectedPoint(QWidget* _parent, QSharedPointer<Robo
 
     nameEdit = new CustomLineEdit(this);
     nameEdit->setReadOnly(true);
-    //nameEdit->setAlignment(Qt::AlignCenter);
     nameEdit->hide();
 
     nameLabel = new CustomLabel("OKay", this, true);
     infoLayout->addWidget(nameLabel);
-    //nameLabel->setAlignment(Qt::AlignCenter);
 
     infoLayout->addWidget(nameEdit);
     nameEdit->setContentsMargins(0, 0, 0, 10);
@@ -89,7 +87,6 @@ DisplaySelectedPoint::DisplaySelectedPoint(QWidget* _parent, QSharedPointer<Robo
     /// to check that a point that's being edited does not get a new name that's already used in the database
     connect(nameEdit, SIGNAL(textEdited(QString)), this, SLOT(checkPointName(QString)));
 
-
     layout->addWidget(scrollArea);
     layout->setContentsMargins(0, 0, 0, 0);
 }
@@ -103,10 +100,7 @@ void DisplaySelectedPoint::displayPointInfo(void) {
             actionButtons->getMapButton()->setToolTip("Click to display this point");
         posXLabel->setText("X : " + QString::number(pointView->getPoint()->getPosition().getX(), 'f', 1));
         posYLabel->setText("Y : " + QString::number(pointView->getPoint()->getPosition().getY(), 'f', 1));
-        //nameEdit->setText(pointView->getPoint()->getName());
         nameLabel->setText(pointView->getPoint()->getName());
-
-        //robotsWidget->setRobotsWidget(pointView, robots);
     }
 }
 
@@ -126,6 +120,7 @@ void DisplaySelectedPoint::keyPressEvent(QKeyEvent* event){
             emit invalidName(TEXT_COLOR_DANGER, CreatePointWidget::Error::ContainsSemicolon);
             break;
         case 1:
+            /// that is the case where the name of the point has not actually changed
             emit nameChanged(pointView->getPoint()->getName(), pointView->getPoint()->getName());
             break;
         case 2:
@@ -148,7 +143,6 @@ void DisplaySelectedPoint::resetWidget(){
     qDebug() << "DisplaySelectedPoint::resetWidget called";
 
     /// we hide the buttons relative to the edit option and make sure the points properties are not longer modifiable
-    //nameEdit->setReadOnly(true);
     nameLabel->show();
     nameEdit->hide();
     actionButtons->getEditButton()->setChecked(false);
@@ -181,6 +175,7 @@ int DisplaySelectedPoint::checkPointName(QString name) {
         return 3;
     }
 
+    /// if the name contains semicolons or curly brackets we forbid it
     if(nameEdit->text().simplified().contains(QRegularExpression("[;{}]"))){
         qDebug() << " I contain a ; or }";
         saveButton->setToolTip("The name of your point cannot contain the characters \";\" and }");
@@ -229,6 +224,7 @@ void DisplaySelectedPoint::setPointView(QSharedPointer<PointView> _pointView, co
     }
 }
 
+/// removes extra useless spaces like in " a name    with extra   useless spaces  "
 QString DisplaySelectedPoint::formatName(const QString name) const {
     qDebug() << "DisplaySelectedPoint::formatName called";
 
@@ -249,7 +245,6 @@ void DisplaySelectedPoint::resizeEvent(QResizeEvent *event){
     int maxWidth = widget->width() - 18;
     setFixedWidth(maxWidth);
     nameLabel->setFixedWidth(maxWidth - 10);
-
     QWidget::resizeEvent(event);
 }
 

@@ -236,7 +236,7 @@ public:
      * @param pointView
      * Add a given PointView to a group
      */
-    void addPoint(const QString groupName, QSharedPointer<PointView>pointView);
+    void addPoint(const QString groupName, QSharedPointer<PointView> pointView);
 
     /**
      * @brief insertPoint
@@ -245,7 +245,7 @@ public:
      * @param pointView
      * Insert the given PointView at the position id in groupName
      */
-    void insertPoint(const QString groupName, const int id, QSharedPointer<PointView>pointView);
+    void insertPoint(const QString groupName, const int id, QSharedPointer<PointView> pointView);
 
     /**
      * @brief insertPoint
@@ -260,7 +260,8 @@ public:
      * @param mainWindow
      * Create and insert a PointView at the position id in groupName
      */
-    void insertPoint(const QString groupName, const int id, const QString pointName, const double x, const double y, const bool displayed, const Point::PointType type, MapView *mapView, const MainWindow *mainWindow);
+    void insertPoint(const QString groupName, const int id, const QString pointName, const double x, const double y, const bool displayed,
+                     const Point::PointType type, MapView *mapView, const MainWindow *mainWindow);
 
     /**
      * @brief replacePoint

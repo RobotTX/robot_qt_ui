@@ -1668,10 +1668,8 @@ void MainWindow::clearPath(const int robotNb){
 void MainWindow::showAllHomes(void){
     qDebug() << "MainWindow::showAllHomes called after editselectrobot went hidden";
     /// shows the home of each robot
-    //points->setPixmapAll(PointView::PixmapType::NORMAL);
     selectedRobot = 0;
     robotPathPainter->setCurrentPath(robotPathPainter->getCurrentPath());
-
     bottomLayout->uncheckRobots();
 }
 
@@ -2167,15 +2165,13 @@ void MainWindow::loadMapBtnEvent(){
         case QMessageBox::Cancel :
             qDebug() << "clicked no";
         break;
-        case QMessageBox::Ok :{
-            QString fileName = QFileDialog::getOpenFileName(this,
+        case QMessageBox::Ok :
+        {
+            const QString fileName = QFileDialog::getOpenFileName(this,
                 tr("Open Image"), "", tr("Image Files (*.pgm)"));
-            qDebug() << "File name :" << fileName;
-
-            if(fileName != ""){
+            if(fileName.compare("")){
                 QSettings settings;
                 settings.setValue("mapFile", fileName);
-
                 clearNewMap();
                 map->setMapFromFile(fileName);
                 QPixmap pixmap = QPixmap::fromImage(map->getMapImage());
@@ -2190,18 +2186,19 @@ void MainWindow::loadMapBtnEvent(){
         break;
     }
 }
-/*
-void MainWindow::backMapBtnEvent(){
-    qDebug() << "backMapBtnEvent called";
-    mapLeftWidget->hide();
-    leftMenuWidget->show();
-}
-*/
+
 void MainWindow::mapBtnEvent(){
     qDebug() << "mapBtnEvent called";
     leftMenuWidget->hide();
     mapLeftWidget->show();
-    switchFocus("Menu",mapLeftWidget,MainWindow::WidgetType::MAP);
+    switchFocus("Menu", mapLeftWidget, MainWindow::WidgetType::MAP);
+}
+
+void MainWindow::messageMapSaved(bool status){
+    if(status)
+        setTemporaryMessageTop(TEXT_COLOR_SUCCESS, "You have successfully saved the map", 2500);
+    else
+        setTemporaryMessageTop(TEXT_COLOR_DANGER, "Attempt to save the map failed", 2500);
 }
 
 /**********************************************************************************************************************************/

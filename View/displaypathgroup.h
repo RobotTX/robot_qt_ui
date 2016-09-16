@@ -28,8 +28,9 @@ public:
     PathButtonGroup* getPathButtonGroup(void) const { return pathButtonGroup; }
     TopLeftMenu* getActionButtons(void) const { return actionButtons; }
     QString getLastCheckedButton(void) const { return lastCheckedButton; }
-    void setLastCheckedButton(const QString checkedButton) { lastCheckedButton = checkedButton; }
     CustomLabel* getGroupNameLabel(void) const { return groupNameLabel; }
+
+    void setLastCheckedButton(const QString checkedButton) { lastCheckedButton = checkedButton; }
 
 public:
     /**
