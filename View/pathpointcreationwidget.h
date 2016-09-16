@@ -51,7 +51,6 @@ public:
     QWidget* getEditWidget(void) const { return editWidget; }
     QWidget* getPathWidget(void) const { return pathWidget; }
 
-
 public:
 
     /**
@@ -124,9 +123,13 @@ private slots:
     void removePathPoint();
 
 signals:
+    /// emitted when changes must be saved
     void saveEditSignal(PathPointCreationWidget*);
+    /// emitted when changes must be canceled
     void cancelEditSignal(PathPointCreationWidget*);
+    /// emitted when action has changed
     void actionChanged(int, int, QString);
+    /// emitted when the cross button is clicked and the point must be removed
     void removePathPoint(PathPointCreationWidget*);
 
 private:

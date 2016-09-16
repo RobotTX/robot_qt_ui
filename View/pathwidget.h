@@ -11,7 +11,7 @@ class QLabel;
 
 /**
  * @brief The PathWidget class
- * Class which display the path of a robot
+ * Class which display the path of a robot (description as a text)
  */
 class PathWidget: public QWidget{
 public:

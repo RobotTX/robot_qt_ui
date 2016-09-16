@@ -42,7 +42,15 @@ public:
      * sets the QButtonGroup to be checkable
      */
     void setCheckable(const bool checkable);
+    /**
+     * @brief uncheck
+     * unchecks all buttons
+     */
     void uncheck(void);
+    /**
+     * @brief createButtons
+     * creates the buttons
+     */
     void createButtons();
 
 private:
@@ -52,6 +60,7 @@ private:
     QSharedPointer<Points> points;
 
 signals:
+    /// emitted when the group is recreated and connections must be reestablished
     void updateConnectionsRequest();
 
 protected:

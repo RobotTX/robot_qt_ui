@@ -156,37 +156,12 @@ void PointView::updatePos(void){
 }
 
 void PointView::setPixmap(const PixmapType pixType, RobotView* _selectedRobot){
-    //qDebug() << "PointView::setPixmap called" << getPoint()->getName() << pixType;
 
     lastType = type;
     selectedRobot = _selectedRobot;
 
     if(pixType != PixmapType::HOVER)
         type = pixType;
-
-    /*if(getPoint()->getName().compare(TMP_POINT_NAME) == 0){
-        qDebug() << "lol";
-    }*/
-
-    /*if(_selectedRobot){
-        qDebug() << "Got a selected robot";
-        if(_selectedRobot->getRobot()->getHome()){
-            qDebug() << "has a home";
-            if(_selectedRobot->getRobot()->getHome()->getPoint()->getName().compare(point->getName()) == 0)
-                qDebug() << "which is this point";
-            else
-                qDebug() << "which is not this point";
-
-        } else {
-            qDebug() << "which has no home";
-        }
-    } else {
-        qDebug() << "Got no selected robot and the point";
-        if(point->isHome())
-            qDebug() << "is a home";
-        else
-            qDebug() << "is not a home";
-    }*/
 
     QPixmap pixmap2;
     if(((_selectedRobot && _selectedRobot->getRobot()->getHome() && _selectedRobot->getRobot()->getHome()->getPoint()->getName().compare(point->getName()) == 0)
