@@ -22,54 +22,18 @@
         </point>
     </group>
     <group>
-        <name>PathPoints</name>
-        <point>
-            <name>PathPoint1</name>
-            <x>933.607</x>
-            <y>1076.85</y>
-            <displayed>1</displayed>
-        </point>
-        <point>
-            <name>PathPoint2</name>
-            <x>907.207</x>
-            <y>1138.76</y>
-            <displayed>1</displayed>
-        </point>
-    </group>
-    <group>
-        <name>TmpPoint</name>
-        <point>
-            <name>tmpPoint</name>
-            <x>968.199</x>
-            <y>1092.33</y>
-            <displayed>0</displayed>
-        </point>
-        <point>
-            <name>tmpPoint</name>
-            <x>0</x>
-            <y>0</y>
-            <displayed>0</displayed>
-        </point>
-        <point>
-            <name>tmpPoint</name>
-            <x>0</x>
-            <y>0</y>
-            <displayed>0</displayed>
-        </point>
-    </group>
-    <group>
-        <name>first group</name>
+        <name>first group la</name>
         <point>
             <name>Fanny</name>
             <x>1126</x>
             <y>943</y>
-            <displayed>0</displayed>
+            <displayed>1</displayed>
         </point>
         <point>
             <name>Michel</name>
             <x>1086</x>
             <y>1019</y>
-            <displayed>0</displayed>
+            <displayed>1</displayed>
         </point>
     </group>
     <group>
