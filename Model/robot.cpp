@@ -5,7 +5,7 @@
 #include "Controller/scanrobotthread.h"
 #include "Controller/scanmetadatathread.h"
 #include "Controller/sendnewmapthread.h"
-#include <QMainWindow>
+#include "Controller/mainwindow.h"
 #include <iostream>
 #include <QFile>
 
@@ -16,7 +16,7 @@ Robot::Robot(const QSharedPointer<Paths>& _paths, const QString _name, const QSt
 
     /// we try to open the path file of the robot, if it works we do nothing otherwise we create it and put "" and ""
     /// as path name and group name for the robot
-    QFile robotPathFile("/home/joan/Gobot/gobot-software/robots_paths/" + _name + "_path.dat");
+    QFile robotPathFile(QString(GOBOT_PATH) + "robots_paths/" + _name + "_path.dat");
     try {
         robotPathFile.open(QIODevice::ReadOnly);
 

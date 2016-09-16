@@ -18,13 +18,13 @@ CustomScrollArea::CustomScrollArea(QWidget *parent, bool _vertical, QScrollBar* 
 }
 
 bool CustomScrollArea::eventFilter(QObject *o, QEvent *e){
-    /*if(o && o == widget() && e->type() == QEvent::Resize){
+    if(o && o == widget() && e->type() == QEvent::Resize){
         if(vertical){
             setMinimumWidth(widget()->minimumSizeHint().width() + verticalScrollBar()->width());
         } else {
             setMinimumHeight(widget()->minimumSizeHint().height() + horizontalScrollBar()->height());
         }
-    }*/
+    }
 
     if(childBar != NULL && e->type() == QEvent::Resize){
         if(vertical){
@@ -40,8 +40,8 @@ bool CustomScrollArea::eventFilter(QObject *o, QEvent *e){
             childBar->setPageStep(horizontalScrollBar()->pageStep());
             childBar->resize(width(), 15);
         }
+
         if(childBar->maximum() <= 0){
-            
             childBar->hide();
         } else {
             childBar->show();
