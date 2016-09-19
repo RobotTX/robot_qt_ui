@@ -22,6 +22,7 @@ public:
     CustomLineEdit* getPasswordEdit(void) const { return passwordEdit; }
     CustomLineEdit* getSSIDEdit(void) const { return ssidEdit; }
 
+
 private:
     QFormLayout* form;
 

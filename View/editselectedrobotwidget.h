@@ -92,21 +92,13 @@ signals:
     void clearMapOfPaths();
     /// to notify that a new home has been assigned
     void newHome(QString);
-    /// to notify that the name of the robot needs to be updated
-    void robotNameChanged(QString);
-    /// to notify that the wifi network of the robot needs to be changed
-    void robotWifiChanged(QString, QString);
 
 protected:
     void showEvent(QShowEvent *event);
     void hideEvent(QHideEvent *event);
+    void resizeEvent(QResizeEvent *event);
 
 private slots:
-    /**
-     * @brief saveEditSelecRobotBtnEvent
-     * Called when the save button if clicked
-     */
-    void saveEditSelecRobotBtnEvent(void);
     void openMenu();
     void openHomeMenu();
     void assignPath(QAction* action);
@@ -121,11 +113,6 @@ private slots:
      * called when a user cancels the modifications on the edition page
      */
     void cancelRobotModifications();
-    /**
-     * @brief saveRobotModifications
-     * called when a user saves the modifications on the edition page
-     */
-    void saveRobotModifications();
 
 private:
     MainWindow* mainWindow;

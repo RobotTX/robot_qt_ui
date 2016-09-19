@@ -13,6 +13,7 @@ CustomRobotDialog::CustomRobotDialog(QWidget *parent): QDialog(parent)
 
     QLabel* iconLabel = new QLabel(this);
     iconLabel->setPixmap(QPixmap(":/icons/setting.png").scaled(s_icon_size));
+    iconLabel->setAlignment(Qt::AlignCenter);
     grid->addWidget(iconLabel);
     iconLabel->show();
 
@@ -26,8 +27,10 @@ CustomRobotDialog::CustomRobotDialog(QWidget *parent): QDialog(parent)
     form->addRow(SSIDLabel, ssidEdit);
 
     QLabel* passwordLabel = new QLabel("Wifi Password :", this);
-    passwordEdit = new CustomLineEdit(this);
+    passwordEdit = new CustomLineEdit("......", this);
+    passwordEdit->setEchoMode(QLineEdit::Password);
     form->addRow(passwordLabel, passwordEdit);
+    //connect(passwordEdit, SIGNAL(clickSomewhere(QString))
 
     cancelButton = new QPushButton("Cancel", this);
     saveButton = new QPushButton("Save", this);
@@ -40,4 +43,3 @@ CustomRobotDialog::CustomRobotDialog(QWidget *parent): QDialog(parent)
     grid->addLayout(buttonLayout);
 
 }
-

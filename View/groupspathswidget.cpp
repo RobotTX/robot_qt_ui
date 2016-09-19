@@ -12,6 +12,7 @@
 #include "View/customscrollarea.h"
 #include <QHBoxLayout>
 #include "View/custompushbutton.h"
+#include "View/stylesettings.h"
 
 
 GroupsPathsWidget::GroupsPathsWidget(QWidget* parent, MainWindow* _mainWindow, const QSharedPointer<Paths> &_paths): QWidget(parent), mainWindow(_mainWindow), paths(_paths), lastCheckedButton("")

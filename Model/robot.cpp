@@ -17,16 +17,10 @@ Robot::Robot(const QSharedPointer<Paths>& _paths, const QString _name, const QSt
     /// we try to open the path file of the robot, if it works we do nothing otherwise we create it and put "" and ""
     /// as path name and group name for the robot
     QFile robotPathFile(QString(GOBOT_PATH) + "robots_paths/" + _name + "_path.dat");
-    try {
-        robotPathFile.open(QIODevice::ReadOnly);
-
-    } catch(std::exception e) {
-        robotPathFile.resize(0);
+    if(!robotPathFile.exists()){
         robotPathFile.open(QIODevice::WriteOnly);
-        QDataStream out(&robotPathFile);
-        out << *this;
+        robotPathFile.close();
     }
-    robotPathFile.close();
     //qDebug() << "Robot" << name << "at ip" << ip << " launching its cmd thread";
 /*
     cmdThread = new CmdRobotThread(ip, PORT_CMD, PORT_MAP_METADATA, PORT_ROBOT_POS, PORT_MAP, name, parent);

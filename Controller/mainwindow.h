@@ -138,6 +138,7 @@ private slots:
     //void setCheckedRobot(QString name);
     void cancelEditSelecRobotBtnEvent();
     void robotSavedEvent();
+    void saveRobotModifications();
     void minusSelecPointBtnEvent();
     void editSelecPointBtnEvent();
     void setSelectedPoint();
@@ -217,8 +218,6 @@ private slots:
     void displayPathSlot(QString groupName, QString pathName, bool display);
     void setNewHome(QString homeName);
     void deleteHome();
-    void changeRobotName(QString name);
-    void changeRobotWifi(QString ssid, QString password);
 
     /// for menu paths
     void displayGroupPaths();
@@ -248,6 +247,8 @@ private slots:
 
 protected:
     void moveEvent(QMoveEvent* event);
+    bool changeRobotName(QString name);
+    void changeRobotWifi(QString ssid, QString password);
 
 private:
     Ui::MainWindow* ui;

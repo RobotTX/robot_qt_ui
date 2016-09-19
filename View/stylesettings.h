@@ -20,29 +20,23 @@ const int l_button_height = 40;
 const int top_layout_height = 60;
 const int top_left_menu_height = 110;
 
+#define TEXT_COLOR_NORMAL "#333333"
+#define TEXT_COLOR_INFO "#31708f"
+#define TEXT_COLOR_SUCCESS "#3c763d"
+#define TEXT_COLOR_WARNING "#8a6d3b"
+#define TEXT_COLOR_DANGER "#a94442"
 
 /// color theme, if you change colors you may have to clean and rebuild for it to be effective
 /// for "no color" ( the default grey) , put transparent
-// grey
-
-/*
-  const QString button_hover_color="#d3d3d3";
-  const QString button_checked_color="#c6c6c6";
-*/
- // blue theme
 
 const QString button_hover_color = "#e4f3fd";
 const QString button_checked_color = "#9bccef";
-//const QString color_backgroud_main = "white";
 const QString top_layout_color = "#6ea9d7";
 const QString left_menu_background_color = "#e0e0e0";
 const QString bottom_menu_background_color = "#e0e0e0";
 const QString background_map_view = "white";
 const QString text_color = "#306893";
 const QString menu_button_color = "transparent";
-
-//light grey "#F4F4F4";
-//dark grey : #404244
 
 // green theme
 /*

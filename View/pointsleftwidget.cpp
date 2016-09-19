@@ -20,6 +20,7 @@
 #include "View/pointview.h"
 #include <QAbstractButton>
 #include "View/custompushbutton.h"
+#include "View/stylesettings.h"
 
 PointsLeftWidget::PointsLeftWidget(QWidget* _parent, MainWindow* const mainWindow, QSharedPointer<Points> const& _points, bool _groupDisplayed)
     : QWidget(_parent), groupDisplayed(_groupDisplayed), points(_points), creatingGroup(true), lastCheckedId("")
