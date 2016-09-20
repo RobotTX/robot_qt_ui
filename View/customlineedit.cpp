@@ -30,6 +30,7 @@ void CustomLineEdit::focusOutEvent(QFocusEvent* e){
         qDebug() << "clicked somewhere";
         //emit clickSomewhere(text());
     }
+    QLineEdit::focusOutEvent(e);
 }
 
 void CustomLineEdit::hideEvent(QHideEvent *event){
@@ -60,12 +61,6 @@ void CustomLineEdit::resizeEvent(QResizeEvent *event){
     updateStyle();
 }
 
-void CustomLineEdit::enterEvent(QEvent *event){
-    QFontMetrics fm(font());
-    //qDebug() << "CustomLabel::enterEvent" << text() << size() << fm.width(text()) << fm.height();
-    QLineEdit::enterEvent(event);
-}
-
 void CustomLineEdit::setText(const QString &str){
     QLineEdit::setText(str);
 }
@@ -84,4 +79,11 @@ void CustomLineEdit::updateStyle(){
         home(false);
         setToolTip("");
     }
+}
+
+void CustomLineEdit::mousePressEvent(QMouseEvent *e){
+    qDebug() << "CustomLineEdit::mousePressEvent" << text();
+    QLineEdit::mousePressEvent(e);
+    if(echoMode() == QLineEdit::Password)
+        selectAll();
 }

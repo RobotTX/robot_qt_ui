@@ -18,12 +18,12 @@ public:
     void updateStyle();
     void setText(const QString &text);
 
-public:
+protected:
+    void mousePressEvent(QMouseEvent *e);
     void focusOutEvent(QFocusEvent* e);
     void hideEvent(QHideEvent* event);
     void showEvent(QShowEvent *event);
     void resizeEvent(QResizeEvent *event);
-    void enterEvent(QEvent *event);
 
 signals:
     /// emitted when the QLineEdit loses the focus

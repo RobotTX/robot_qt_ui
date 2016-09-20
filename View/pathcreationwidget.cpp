@@ -19,6 +19,7 @@
 #include <QGridLayout>
 #include <QKeyEvent>
 #include "View/customlineedit.h"
+#include "View/stylesettings.h"
 
 PathCreationWidget::PathCreationWidget(QWidget* parent, const QSharedPointer<Points> &_points, const QSharedPointer<Paths>& _paths, const bool associatedToRobot, const GraphicItemState _state):
     QWidget(parent), points(_points), paths(_paths), currentGroupName(""), currentPathName(""), state(_state)

@@ -32,7 +32,7 @@ EditSelectedRobotWidget::EditSelectedRobotWidget(QWidget* parent, MainWindow* _m
     robotDialog = new CustomRobotDialog(this);
 
     connect(robotDialog->getCancelButton(), SIGNAL(clicked()), this, SLOT(cancelRobotModifications()));
-    connect(robotDialog->getSaveButton(), SIGNAL(clicked()), this, SLOT(saveRobotModifications()));
+    connect(robotDialog->getSaveButton(), SIGNAL(clicked()), mainWindow, SLOT(saveRobotModifications()));
 
     layout = new QVBoxLayout(this);
     robotView = NULL;
@@ -94,7 +94,7 @@ EditSelectedRobotWidget::EditSelectedRobotWidget(QWidget* parent, MainWindow* _m
 
     /// Home layout with the button to select the home
     homeLabel = new CustomLabel("Home : ", this);
-    homeBtn = new CustomPushButton(QIcon(":/icons/home.png"), "Assign a home point", this);
+    homeBtn = new CustomPushButton(QIcon(":/icons/home.png"), "Assign a home", this);
     homeBtn->setIconSize(s_icon_size);
     connect(homeBtn, SIGNAL(clicked(bool)), this, SLOT(openHomeMenu()));
     inLayout->addWidget(homeLabel);
@@ -105,13 +105,6 @@ EditSelectedRobotWidget::EditSelectedRobotWidget(QWidget* parent, MainWindow* _m
     updateHomeMenu();
     connect(homeMenu, SIGNAL(triggered(QAction*)), this, SLOT(assignHome(QAction*)));
 
-    /*
-    /// Button to add a path
-    addPathBtn = new CustomPushButton(QIcon(":/icons/plus.png"),"Create Path", this);
-    addPathBtn->setIconSize(xs_icon_size);
-    connect(addPathBtn, SIGNAL(clicked()), mainWindow, SLOT(addPathSelecRobotBtnEvent()));
-    inLayout->addWidget(addPathBtn);
-    */
     deleteHomeBtn = new CustomPushButton(QIcon(":/icons/empty.png"), "Delete home", this);
     deleteHomeBtn->setToolTip("Clicking this button will not delete the point but this point won't be this robot's home anymore");
     deleteHomeBtn->setIconSize(s_icon_size);
@@ -143,21 +136,6 @@ EditSelectedRobotWidget::EditSelectedRobotWidget(QWidget* parent, MainWindow* _m
 
 
     QHBoxLayout* grid = new QHBoxLayout();
-/*
-    /// Cancel & save buttons
-    cancelBtn = new CustomPushButton("Cancel", this, CustomPushButton::ButtonType::LEFT_MENU, "center");
-    cancelBtn->setToolTip("This will discard all changes made since the last time you saved");
-    saveBtn = new CustomPushButton("Save", this, CustomPushButton::ButtonType::LEFT_MENU, "center");
-    saveBtn->setToolTip("This will apply the your changes to the robot");
-
-    grid->addWidget(cancelBtn);
-    grid->addWidget(saveBtn);
-
-
-    connect(cancelBtn, SIGNAL(clicked()), mainWindow, SLOT(cancelEditSelecRobotBtnEvent()));
-    connect(saveBtn, SIGNAL(clicked()), this, SLOT(saveEditSelecRobotBtnEvent()));
-
-    */
 
     /// to display a path that's assigned to the robot after clearing the map of other path(s)
     connect(this, SIGNAL(clearMapOfPaths()), mainWindow, SLOT(clearMapOfPaths()));
@@ -165,15 +143,10 @@ EditSelectedRobotWidget::EditSelectedRobotWidget(QWidget* parent, MainWindow* _m
 
     connect(this, SIGNAL(newHome(QString)), mainWindow, SLOT(setNewHome(QString)));
 
-    connect(this, SIGNAL(robotNameChanged(QString)), mainWindow, SLOT(changeRobotName(QString)));
-    connect(this, SIGNAL(robotWifiChanged(QString,QString)), mainWindow, SLOT(changeRobotWifi(QString, QString)));
-
     hide();
-    /*setMaximumWidth(mainWindow->width()*4/10);
-    setMinimumWidth(mainWindow->width()*4/10);
-    inWidget->setMaximumWidth(mainWindow->width()*4/10);
-    inWidget->setMinimumWidth(mainWindow->width()*4/10);*/
+
     inLayout->setAlignment(Qt::AlignTop);
+    inLayout->setContentsMargins(0,0,0,0);
     layout->setAlignment(Qt::AlignTop);
     layout->setContentsMargins(0,0,0,0);
 
@@ -213,15 +186,6 @@ void EditSelectedRobotWidget::setSelectedRobot(RobotView* const _robotView, bool
     }
 }
 
-void EditSelectedRobotWidget::saveEditSelecRobotBtnEvent(void){
-    qDebug() << "saveEditSelecRobotBtnEvent called";
-    if(firstConnection && home == NULL){
-        qDebug() << "You need to select a home";
-    } else {
-        emit robotSaved();
-    }
-}
-
 void EditSelectedRobotWidget::editName(void){
     robotView->getRobot()->setName(nameLabel->text());
     robotView->getRobot()->setWifi(wifiNameLabel->text());
@@ -235,7 +199,7 @@ void EditSelectedRobotWidget::editName(void){
 }
 
 void EditSelectedRobotWidget::setEnableAll(const bool enable){
-    qDebug() << "editselectedrobotwidget::setenableall called" << enable;
+    qDebug() << "EditSelectedRobotWidget::setEnableAll called" << enable;
     homeBtn->setEnabled(enable);
     deletePathBtn->setEnabled(enable);
     assignPathButton->setEnabled(enable);
@@ -293,7 +257,6 @@ void EditSelectedRobotWidget::updatePathsMenu(){
                     group->actions().last()->setChecked(true);
                 }
             }
-
         }
     }
 }
@@ -360,24 +323,22 @@ void EditSelectedRobotWidget::editRobot(){
                       mainWindow->pos().y() + mainWindow->height()/2-robotDialog->height()/2);
     robotDialog->getNameEdit()->setText(robotView->getRobot()->getName());
     robotDialog->getSSIDEdit()->setText(robotView->getRobot()->getWifi());
-    if(robotDialog->exec() == QDialog::Accepted)
-        qDebug() << "awesome";
+    robotDialog->getPasswordEdit()->setText("......");
+    robotDialog->exec();
 }
 
 void EditSelectedRobotWidget::cancelRobotModifications(){
-    qDebug() << "cancelling robot modifications";
+    qDebug() << "EditSelectedRobotWidget::cancelRobotModifications called";
+    robotDialog->getNameEdit()->setText(robotView->getRobot()->getName());
+    robotDialog->getSSIDEdit()->setText(robotView->getRobot()->getWifi());
+    robotDialog->getPasswordEdit()->setText("......");
     robotDialog->close();
 }
 
-void EditSelectedRobotWidget::saveRobotModifications(){
-    qDebug() << "saving robot modifications";
-    /// we check if the name has been changed
-    if(robotDialog->getNameEdit()->text().simplified().compare(robotView->getRobot()->getName(), Qt::CaseSensitive))
-        emit robotNameChanged(robotDialog->getNameEdit()->text().simplified());
-
-    /// we check if the SSID has changed, in which case we emit the new SSID and password to change
-    if(robotDialog->getSSIDEdit()->text().simplified().compare(robotView->getRobot()->getWifi(), Qt::CaseSensitive))
-        emit robotWifiChanged(robotDialog->getSSIDEdit()->text().simplified(), robotDialog->getPasswordEdit()->text().simplified());
-
-    robotDialog->close();
+void EditSelectedRobotWidget::resizeEvent(QResizeEvent *event){
+    QWidget* widget = static_cast<QWidget*>(parent());
+    int maxWidth = widget->width() - 18;
+    setFixedWidth(maxWidth);
+    QWidget::resizeEvent(event);
+    batteryLevel->setFixedWidth(this->width() - 18);
 }
