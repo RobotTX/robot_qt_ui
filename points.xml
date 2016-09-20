@@ -22,7 +22,7 @@
         </point>
     </group>
     <group>
-        <name>first group la</name>
+        <name>first group</name>
         <point>
             <name>Fanny</name>
             <x>1126</x>
@@ -35,6 +35,9 @@
             <y>1019</y>
             <displayed>1</displayed>
         </point>
+    </group>
+    <group>
+        <name>new group</name>
     </group>
     <group>
         <name>second group</name>

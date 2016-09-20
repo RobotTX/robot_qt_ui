@@ -40,8 +40,8 @@ class QMoveEvent;
 #include <QSettings>
 
 
-#define GOBOT_PATH "/home/m-a/Documents/QtProject/gobot-software/"
-//#define GOBOT_PATH "/home/joan/Gobot/gobot-software/"
+//#define GOBOT_PATH "/home/m-a/Documents/QtProject/gobot-software/"
+#define GOBOT_PATH "/home/joan/Gobot/gobot-software/"
 
 #define XML_FILE "points.xml"
 #define ROBOTS_NAME_FILE "robotsName.dat"
