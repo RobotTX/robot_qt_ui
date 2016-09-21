@@ -42,7 +42,7 @@ void CustomPushButton::initialize(const bool checkable, const bool enable, const
 
     setStyleSheet("QPushButton {"
                       "color: " + text_color + ";"
- //                     "border: 1px;"
+                      "border: 1px;"
                       + style +
                       "background-position: center center;"
                   "}"
@@ -147,23 +147,7 @@ void CustomPushButton::resizeEvent(QResizeEvent *event){
     if(buttonType == LEFT_MENU || buttonType == TOP_LEFT_MENU){
         QWidget* widget = static_cast<QWidget*>(parent());
         int maxWidth = widget->width();
-        /*if(widget->width() > static_cast<QWidget*>(widget->parent())->width()){
-            maxWidth = static_cast<QWidget*>(widget->parent())->width()-20;
-        }*/
-
         setMaximumWidth(maxWidth);
-
-        if(static_cast<QWidget*>(widget->parent()->parent())){
-            qDebug() << "CustomPushButton::resizeEvent" << text() << "max" << maxWidth
-                     << "from" << event->oldSize().width() << "to" << event->size().width()
-                     << "this" << width() << "parent" << widget->width()
-                     << "grand parent" << static_cast<QWidget*>(widget->parent())->width()
-                     << "grand grand parent" << static_cast<QWidget*>(widget->parent()->parent())->width();;
-        } else
-            qDebug() << "CustomPushButton::resizeEvent" << text() << "max" << maxWidth
-                     << "from" << event->oldSize().width() << "to" << event->size().width()
-                     << "this" << width() << "parent" << widget->width()
-                     << "grand parent" << static_cast<QWidget*>(widget->parent())->width();
     }
 
     QPushButton::resizeEvent(event);

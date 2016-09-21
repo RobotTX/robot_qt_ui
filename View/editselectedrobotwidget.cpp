@@ -68,14 +68,14 @@ EditSelectedRobotWidget::EditSelectedRobotWidget(QWidget* parent, MainWindow* _m
 
     QLabel* wifiTitle = new QLabel("Wifi name :", this);
     wifiTitle->setWordWrap(true);
-    wifiTitle->setAlignment(Qt::AlignLeft);
+    //wifiTitle->setAlignment(Qt::AlignLeft);
     inLayout->addWidget(wifiTitle);
 
     wifiNameLabel = new CustomLabel(this);
     inLayout->addWidget(wifiNameLabel);
 
     QLabel* wifiPwd = new QLabel("Wifi pwd :", this);
-    wifiPwd->setAlignment(Qt::AlignLeft);
+    //wifiPwd->setAlignment(Qt::AlignLeft);
 
     inLayout->addWidget(wifiPwd);
 
@@ -143,9 +143,9 @@ EditSelectedRobotWidget::EditSelectedRobotWidget(QWidget* parent, MainWindow* _m
 
     hide();
 
-    inLayout->setAlignment(Qt::AlignTop);
+    //inLayout->setAlignment(Qt::AlignTop);
     inLayout->setContentsMargins(0, 0, 10, 0);
-    layout->setAlignment(Qt::AlignTop);
+    //layout->setAlignment(Qt::AlignTop);
     layout->setContentsMargins(0, 0, 0, 0);
 
     scrollArea->setWidget(inWidget);
@@ -331,3 +331,10 @@ void EditSelectedRobotWidget::cancelRobotModifications(){
     robotDialog->close();
 }
 
+void EditSelectedRobotWidget::resizeEvent(QResizeEvent *event){
+    QWidget* widget = static_cast<QWidget*>(parent());
+    int maxWidth = widget->width() - 10;
+    setFixedWidth(maxWidth);
+
+    QWidget::resizeEvent(event);
+}

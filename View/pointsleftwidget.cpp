@@ -401,16 +401,5 @@ void PointsLeftWidget::resizeEvent(QResizeEvent *event){
     int maxWidth = widget->width() - 10;
     setMaximumWidth(maxWidth);
 
-
-    if(static_cast<QWidget*>(widget->parent()->parent())){
-        qDebug() << "PointsLeftWidget::resizeEvent" << "max" << maxWidth
-                 << "from" << event->oldSize().width() << "to" << event->size().width()
-                 << "this" << width() << "parent" << widget->width() << "grand parent" << static_cast<QWidget*>(widget->parent())->width()
-                 << "grand grand parent" << static_cast<QWidget*>(widget->parent()->parent())->width();;
-    } else
-        qDebug() << "PointsLeftWidget::resizeEvent" << "max" << maxWidth
-                 << "from" << event->oldSize().width() << "to" << event->size().width()
-                 << "this" << width() << "parent" << widget->width() << "grand parent" << static_cast<QWidget*>(widget->parent())->width();
-
     QWidget::resizeEvent(event);
 }

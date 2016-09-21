@@ -59,15 +59,6 @@ void CustomScrollArea::resizeEvent(QResizeEvent *event){
         setFixedWidth(maxWidth);
 
 
-        if(static_cast<QWidget*>(widget->parent()->parent())){
-            qDebug() << "CustomScrollArea::resizeEvent" << "max" << maxWidth
-                     << "from" << event->oldSize().width() << "to" << event->size().width()
-                     << "this" << width() << "parent" << widget->width() << "grand parent" << static_cast<QWidget*>(widget->parent())->width()
-                     << "grand grand parent" << static_cast<QWidget*>(widget->parent()->parent())->width();;
-        } else
-            qDebug() << "CustomScrollArea::resizeEvent" << "max" << maxWidth
-                     << "from" << event->oldSize().width() << "to" << event->size().width()
-                     << "this" << width() << "parent" << widget->width() << "grand parent" << static_cast<QWidget*>(widget->parent())->width();
     }
     QWidget::resizeEvent(event);
 }

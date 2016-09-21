@@ -235,17 +235,6 @@ void DisplaySelectedPoint::resizeEvent(QResizeEvent *event){
     int maxWidth = widget->width() - 10;
     setFixedWidth(maxWidth);
 
-
-    if(static_cast<QWidget*>(widget->parent()->parent())){
-        qDebug() << "DisplaySelectedPoint::resizeEvent" << "max" << maxWidth
-                 << "from" << event->oldSize().width() << "to" << event->size().width()
-                 << "this" << width() << "parent" << widget->width() << "grand parent" << static_cast<QWidget*>(widget->parent())->width()
-                 << "grand grand parent" << static_cast<QWidget*>(widget->parent()->parent())->width();;
-    } else
-        qDebug() << "DisplaySelectedPoint::resizeEvent" << "max" << maxWidth
-                 << "from" << event->oldSize().width() << "to" << event->size().width()
-                 << "this" << width() << "parent" << widget->width() << "grand parent" << static_cast<QWidget*>(widget->parent())->width();
-
     QWidget::resizeEvent(event);
 }
 

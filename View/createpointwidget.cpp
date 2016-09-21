@@ -95,8 +95,8 @@ CreatePointWidget::CreatePointWidget(QWidget *parent, MainWindow *mainWindow, QS
 
     connect(this, SIGNAL(resetMessageTop(QString, QString)), mainWindow, SLOT(setMessageTop(QString, QString)));
 
-    /*layout->setAlignment(Qt::AlignTop | Qt::AlignHCenter);*/
-    cancelSaveLayout->setAlignment(Qt::AlignBottom);
+    //layout->setAlignment(Qt::AlignTop | Qt::AlignHCenter);
+    //cancelSaveLayout->setAlignment(Qt::AlignBottom);
     cancelSaveLayout->setContentsMargins(0, 0, 0, 0);
     layout->setContentsMargins(0, 0, 10, 0);
 
@@ -292,17 +292,6 @@ void CreatePointWidget::resizeEvent(QResizeEvent *event){
     QWidget* widget = static_cast<QWidget*>(parent());
     int maxWidth = widget->width() - 10;
     setMaximumWidth(maxWidth);
-
-
-    if(static_cast<QWidget*>(widget->parent()->parent())){
-        qDebug() << "CreatePointWidget::resizeEvent" << "max" << maxWidth
-                 << "from" << event->oldSize().width() << "to" << event->size().width()
-                 << "this" << width() << "parent" << widget->width() << "grand parent" << static_cast<QWidget*>(widget->parent())->width()
-                 << "grand grand parent" << static_cast<QWidget*>(widget->parent()->parent())->width();;
-    } else
-        qDebug() << "CreatePointWidget::resizeEvent" << "max" << maxWidth
-                 << "from" << event->oldSize().width() << "to" << event->size().width()
-                 << "this" << width() << "parent" << widget->width() << "grand parent" << static_cast<QWidget*>(widget->parent())->width();
 
     QWidget::resizeEvent(event);
 }

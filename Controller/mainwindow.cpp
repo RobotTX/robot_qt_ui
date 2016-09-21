@@ -317,12 +317,12 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
     /// Some style
 
-
+/*
     setStyleSheet("QWidget {border: 1px solid red}"
                   "QPushButton {border: 1px solid green}"
                   "QLabel {border: 1px solid blue}"
                   "QScrollArea {border: 1px solid yellow}");
-
+*/
 
     this->setAutoFillBackground(true);
 
