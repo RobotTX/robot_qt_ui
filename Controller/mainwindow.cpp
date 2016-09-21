@@ -2082,7 +2082,6 @@ void MainWindow::setNewHome(QString homeName){
     /// this call makes the home
     robotPathPainter->setCurrentPath(selectedRobot->getRobot()->getPath());
 
-
     showSelectedRobotHomeOnly();
 
     home->setPixmap(PointView::PixmapType::SELECTED);
@@ -2091,15 +2090,21 @@ void MainWindow::setNewHome(QString homeName){
 
 void MainWindow::deleteHome(){
     qDebug() << "MainWindow::deleteHome called";
-    editSelectedRobotWidget->getDeleteHomeBtn()->hide();
-    editSelectedRobotWidget->getHome()->getPoint()->setHome(Point::PERM);
-    editSelectedRobotWidget->getHome()->setPixmap(PointView::PixmapType::NORMAL);
-    editSelectedRobotWidget->setHome(QSharedPointer<PointView> ());
-    selectedRobot->getRobot()->setHome(QSharedPointer<PointView> ());
-    editSelectedRobotWidget->getHomeLabel()->setText("Home : ");
-    editSelectedRobotWidget->updateHomeMenu();
-    /// to remove the home pixmap
-    robotPathPainter->setCurrentPath(robotPathPainter->getCurrentPath());
+    int answer = openConfirmMessage("Are you sure you want to delete the home of " + selectedRobot->getRobot()->getName());
+    switch(answer){
+    case QMessageBox::Cancel:
+        break;
+    case QMessageBox::Ok:
+        editSelectedRobotWidget->getDeleteHomeBtn()->hide();
+        editSelectedRobotWidget->getHome()->getPoint()->setHome(Point::PERM);
+        editSelectedRobotWidget->getHome()->setPixmap(PointView::PixmapType::NORMAL);
+        editSelectedRobotWidget->setHome(QSharedPointer<PointView> ());
+        selectedRobot->getRobot()->setHome(QSharedPointer<PointView> ());
+        editSelectedRobotWidget->getHomeLabel()->setText("Home : ");
+        editSelectedRobotWidget->updateHomeMenu();
+        /// to remove the home pixmap
+        robotPathPainter->setCurrentPath(robotPathPainter->getCurrentPath());
+    }
 }
 
 /**********************************************************************************************************************************/
@@ -2787,6 +2792,7 @@ void MainWindow::askForDeletePointConfirmation(QString pointName){
                         qDebug() << "askForDeletePointConfirmation : something unexpected happened";
                     }
                 }
+                points->setPixmapAll(PointView::PixmapType::NORMAL);
                 leftMenu->getDisplaySelectedGroup()->disableButtons();
                 if(point && !point->getPoint()->isHome())
                     setTemporaryMessageTop(TEXT_COLOR_SUCCESS, "You have successfully deleted the point \"" + pointName + "\"", 2500);
@@ -2859,6 +2865,8 @@ void MainWindow::askForDeleteGroupConfirmation(QString groupName){
                 msgBox.setInformativeText("To modify the home point of a robot you can either click on the menu > Robots, choose a robot and Add Home or simply click a robot on the map and Add Home");
                 msgBox.exec();
                 qDebug() << "Sorry this point is the home of a robot and therefore cannot be removed";
+                /// resets the color of the home
+                points->setPixmapAll(PointView::PixmapType::NORMAL);
             }
              pointsLeftWidget->disableButtons();
 
@@ -3630,7 +3638,6 @@ void MainWindow::removePointFromGroupMenu(void){
         askForDeletePointConfirmation(checkedId);
     else
         qDebug() << "can't remove point without name";
-    leftMenu->getDisplaySelectedGroup()->getActionButtons()->getMinusButton()->setChecked(false);
 }
 
 /**

@@ -176,9 +176,9 @@ int DisplaySelectedPoint::checkPointName(QString name) {
     }
 
     /// if the name contains semicolons or curly brackets we forbid it
-    if(nameEdit->text().simplified().contains(QRegularExpression("[;{}]"))){
+    if(nameEdit->text().simplified().contains(QRegularExpression("[;{}]")) || nameEdit->text().contains("pathpoint", Qt::CaseInsensitive)){
         qDebug() << " I contain a ; or }";
-        saveButton->setToolTip("The name of your point cannot contain the characters \";\" and }");
+        saveButton->setToolTip("The name of your point cannot contain the characters \";\" and } or the pattern <pathpoint> ");
         saveButton->setEnabled(false);
         emit invalidName(TEXT_COLOR_WARNING, CreatePointWidget::Error::ContainsSemicolon);
         return 0;

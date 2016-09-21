@@ -148,6 +148,7 @@ void XMLParser::readPoints(QSharedPointer<Points>& points){
                         else if(xmlReader.isStartElement()){
                             if(xmlReader.name() == "name"){
                                 groupName = readNameElement(xmlReader);
+                                points->addGroup(groupName);
                             }
                             else if(xmlReader.name() == "point"){
                                 double x(0.0);
