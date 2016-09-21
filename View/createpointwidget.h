@@ -91,7 +91,6 @@ private:
     CustomPushButton* saveBtn;
     CustomPushButton* cancelBtn;
     QComboBox* groupBox;
-    QHBoxLayout* groupLayout;
     QLabel* groupLabel;
     SpaceWidget* separator;
     TopLeftMenu* actionButtons;

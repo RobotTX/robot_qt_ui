@@ -25,9 +25,10 @@
 PointsLeftWidget::PointsLeftWidget(QWidget* _parent, MainWindow* const mainWindow, QSharedPointer<Points> const& _points, bool _groupDisplayed)
     : QWidget(_parent), groupDisplayed(_groupDisplayed), points(_points), creatingGroup(true), lastCheckedId("")
 {
-    scrollArea = new CustomScrollArea(this);
+    scrollArea = new CustomScrollArea(this, true);
 
     layout = new QVBoxLayout(this);
+    QVBoxLayout* topLayout = new QVBoxLayout();
 
     actionButtons = new TopLeftMenu(this);
     actionButtons->setCheckable(true);
@@ -43,15 +44,16 @@ PointsLeftWidget::PointsLeftWidget(QWidget* _parent, MainWindow* const mainWindo
     actionButtons->getMapButton()->setToolTip("Select a group or a point and click here to display or hide it on the map");
     actionButtons->getGoButton()->setToolTip("Select a group or a point and click here to display its information");
 
-    layout->addWidget(actionButtons);
+    topLayout->addWidget(actionButtons);
 
     groupNameLabel = new QLabel("New group's name : ", this);
     groupNameLabel->hide();
     groupNameEdit = new CustomLineEdit(this);
     groupNameEdit->hide();
 
-    layout->addWidget(groupNameLabel);
-    layout->addWidget(groupNameEdit);
+    topLayout->addWidget(groupNameLabel);
+    topLayout->addWidget(groupNameEdit);
+    layout->addLayout(topLayout);
 
     groupButtonGroup = new GroupButtonGroup(points, this);
     scrollArea->setWidget(groupButtonGroup);
@@ -112,7 +114,9 @@ PointsLeftWidget::PointsLeftWidget(QWidget* _parent, MainWindow* const mainWindo
 
     connect(this, SIGNAL(deleteGroup()), mainWindow, SLOT(minusGroupBtnEvent()));
 
-    layout->setContentsMargins(0,0,0,0);
+    creationLayout->setContentsMargins(0, 0, 10, 0);
+    topLayout->setContentsMargins(0, 0, 10, 0);
+    layout->setContentsMargins(0, 0, 0, 0);
     setAutoFillBackground(true);
 }
 
@@ -394,8 +398,19 @@ void PointsLeftWidget::sendMessageEditGroup(int code){
 
 void PointsLeftWidget::resizeEvent(QResizeEvent *event){
     QWidget* widget = static_cast<QWidget*>(parent());
-    int maxWidth = widget->width() - 18;
-    setFixedWidth(maxWidth);
+    int maxWidth = widget->width() - 10;
+    setMaximumWidth(maxWidth);
+
+
+    if(static_cast<QWidget*>(widget->parent()->parent())){
+        qDebug() << "PointsLeftWidget::resizeEvent" << "max" << maxWidth
+                 << "from" << event->oldSize().width() << "to" << event->size().width()
+                 << "this" << width() << "parent" << widget->width() << "grand parent" << static_cast<QWidget*>(widget->parent())->width()
+                 << "grand grand parent" << static_cast<QWidget*>(widget->parent()->parent())->width();;
+    } else
+        qDebug() << "PointsLeftWidget::resizeEvent" << "max" << maxWidth
+                 << "from" << event->oldSize().width() << "to" << event->size().width()
+                 << "this" << width() << "parent" << widget->width() << "grand parent" << static_cast<QWidget*>(widget->parent())->width();
 
     QWidget::resizeEvent(event);
 }

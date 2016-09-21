@@ -14,12 +14,16 @@ class CustomScrollArea : public QScrollArea {
     Q_OBJECT
 
 public:
-    explicit CustomScrollArea(QWidget *parent, bool vertical = true, QScrollBar* childBar = NULL);
+    explicit CustomScrollArea(QWidget *parent, bool leftMenu = false, bool vertical = true, QScrollBar* childBar = NULL);
 
     virtual bool eventFilter(QObject *o, QEvent *e);
 
+protected:
+    void resizeEvent(QResizeEvent *event);
+
 private:
     bool vertical;
+    bool leftMenu;
     QScrollBar* childBar;
 };
 

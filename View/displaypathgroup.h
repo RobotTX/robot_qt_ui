@@ -72,6 +72,7 @@ public slots:
 protected:
     void showEvent(QShowEvent* event);
     void keyPressEvent(QKeyEvent* event);
+    void resizeEvent(QResizeEvent *event);
 
 signals:
     /// to delete a path with the delete key

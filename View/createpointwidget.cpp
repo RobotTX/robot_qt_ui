@@ -26,30 +26,25 @@ CreatePointWidget::CreatePointWidget(QWidget *parent, MainWindow *mainWindow, QS
     actionButtons->enableAll(false);
     layout->addWidget(actionButtons);
 
-    QVBoxLayout* infosLayout = new QVBoxLayout();
-    infosLayout->setContentsMargins(10, 0, 10, 0);
     /// to explain the user what to do with his temporary point
     messageCreationLabel = new QLabel("Click \"+\" to save", this);
     messageCreationLabel->setWordWrap(true);
-    infosLayout->addWidget(messageCreationLabel);
+    layout->addWidget(messageCreationLabel);
 
     nameEdit = new CustomLineEdit(this);
     nameEdit->setReadOnly(true);
     nameEdit->setFrame(false);
-    infosLayout->addWidget(nameEdit);
+    layout->addWidget(nameEdit);
     nameEdit->hide();
 
     posXLabel = new QLabel("X : ", this);
-    infosLayout->addWidget(posXLabel);
+    layout->addWidget(posXLabel);
 
     posYLabel = new QLabel("Y : ", this);
-    infosLayout->addWidget(posYLabel);
+    layout->addWidget(posYLabel);
 
 
     /// Add QLabel and QComboBox
-
-    groupLayout = new QHBoxLayout();
-
     groupLabel = new QLabel("Group : ", this);
     groupLabel->hide();
     groupBox = new QComboBox(this);
@@ -67,11 +62,8 @@ CreatePointWidget::CreatePointWidget(QWidget *parent, MainWindow *mainWindow, QS
     groupBox->setCurrentIndex(0);
     groupBox->hide();
 
-    groupLayout->setContentsMargins(0, 0, 0, 0);
-    groupLayout->addWidget(groupLabel);
-    groupLayout->addWidget(groupBox);
-    infosLayout->addLayout(groupLayout);
-    layout->addLayout(infosLayout);
+    layout->addWidget(groupLabel);
+    layout->addWidget(groupBox);
 
 
     /// Add Cancel and Save buttons
@@ -84,7 +76,6 @@ CreatePointWidget::CreatePointWidget(QWidget *parent, MainWindow *mainWindow, QS
     cancelSaveLayout->addWidget(saveBtn);
     saveBtn->hide();
     cancelBtn->hide();
-    cancelSaveLayout->setAlignment(Qt::AlignBottom);
 
     layout->addLayout(cancelSaveLayout);
 
@@ -104,9 +95,10 @@ CreatePointWidget::CreatePointWidget(QWidget *parent, MainWindow *mainWindow, QS
 
     connect(this, SIGNAL(resetMessageTop(QString, QString)), mainWindow, SLOT(setMessageTop(QString, QString)));
 
-    infosLayout->setAlignment(Qt::AlignTop);
-    //layout->setAlignment(Qt::AlignBottom);
-    layout->setContentsMargins(0,0,0,0);
+    /*layout->setAlignment(Qt::AlignTop | Qt::AlignHCenter);*/
+    cancelSaveLayout->setAlignment(Qt::AlignBottom);
+    cancelSaveLayout->setContentsMargins(0, 0, 0, 0);
+    layout->setContentsMargins(0, 0, 10, 0);
 
     hide();
 }
@@ -298,9 +290,19 @@ void CreatePointWidget::showEvent(QShowEvent* event){
 
 void CreatePointWidget::resizeEvent(QResizeEvent *event){
     QWidget* widget = static_cast<QWidget*>(parent());
-    int maxWidth = widget->width()-18;
-    messageCreationLabel->setFixedWidth(maxWidth);
-    setFixedHeight(widget->height() - 30 - l_button_height);
+    int maxWidth = widget->width() - 10;
+    setMaximumWidth(maxWidth);
+
+
+    if(static_cast<QWidget*>(widget->parent()->parent())){
+        qDebug() << "CreatePointWidget::resizeEvent" << "max" << maxWidth
+                 << "from" << event->oldSize().width() << "to" << event->size().width()
+                 << "this" << width() << "parent" << widget->width() << "grand parent" << static_cast<QWidget*>(widget->parent())->width()
+                 << "grand grand parent" << static_cast<QWidget*>(widget->parent()->parent())->width();;
+    } else
+        qDebug() << "CreatePointWidget::resizeEvent" << "max" << maxWidth
+                 << "from" << event->oldSize().width() << "to" << event->size().width()
+                 << "this" << width() << "parent" << widget->width() << "grand parent" << static_cast<QWidget*>(widget->parent())->width();
 
     QWidget::resizeEvent(event);
 }

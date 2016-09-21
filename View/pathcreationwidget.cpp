@@ -25,6 +25,7 @@ PathCreationWidget::PathCreationWidget(QWidget* parent, const QSharedPointer<Poi
     QWidget(parent), points(_points), paths(_paths), currentGroupName(""), currentPathName(""), state(_state)
 {
     layout = new QVBoxLayout(this);
+    QVBoxLayout* topLayout = new QVBoxLayout(this);
 
     checkState = NO_STATE;
 
@@ -33,7 +34,7 @@ PathCreationWidget::PathCreationWidget(QWidget* parent, const QSharedPointer<Poi
     actionButtons->getMapButton()->setEnabled(false);
     actionButtons->getMinusButton()->setEnabled(false);
     actionButtons->getEditButton()->setEnabled(false);
-    layout->addWidget(actionButtons);
+    topLayout->addWidget(actionButtons);
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
     /// to edit the name of a path if it is not a path associated to a robot
@@ -46,8 +47,9 @@ PathCreationWidget::PathCreationWidget(QWidget* parent, const QSharedPointer<Poi
        nameLabel->hide();
     }
 
-    layout->addWidget(nameLabel);
-    layout->addWidget(nameEdit);
+    topLayout->addWidget(nameLabel);
+    topLayout->addWidget(nameEdit);
+    layout->addLayout(topLayout);
 
     /// to check that the name given to the path is valid
     connect(nameEdit, SIGNAL(textEdited(QString)), this, SLOT(checkPathName(QString)));
@@ -94,6 +96,7 @@ PathCreationWidget::PathCreationWidget(QWidget* parent, const QSharedPointer<Poi
 
     hide();
     layout->setAlignment(Qt::AlignTop);
+    topLayout->setContentsMargins(0, 0, 10, 0);
     layout->setContentsMargins(0, 0, 0, 0);
 }
 

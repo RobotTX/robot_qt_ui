@@ -40,7 +40,7 @@ EditSelectedRobotWidget::EditSelectedRobotWidget(QWidget* parent, MainWindow* _m
     pathChanged = false;
     editing = false;
 
-    CustomScrollArea* scrollArea = new CustomScrollArea(this);
+    CustomScrollArea* scrollArea = new CustomScrollArea(this, true);
     QVBoxLayout * inLayout = new QVBoxLayout(scrollArea);
     QWidget * inWidget = new QWidget(scrollArea);
 
@@ -135,8 +135,6 @@ EditSelectedRobotWidget::EditSelectedRobotWidget(QWidget* parent, MainWindow* _m
     inLayout->addWidget(pathWidget);
 
 
-    QHBoxLayout* grid = new QHBoxLayout();
-
     /// to display a path that's assigned to the robot after clearing the map of other path(s)
     connect(this, SIGNAL(clearMapOfPaths()), mainWindow, SLOT(clearMapOfPaths()));
     connect(this, SIGNAL(showPath(QString, QString)), mainWindow, SLOT(displayAssignedPath(QString, QString)));
@@ -146,14 +144,12 @@ EditSelectedRobotWidget::EditSelectedRobotWidget(QWidget* parent, MainWindow* _m
     hide();
 
     inLayout->setAlignment(Qt::AlignTop);
-    inLayout->setContentsMargins(0,0,0,0);
+    inLayout->setContentsMargins(0, 0, 10, 0);
     layout->setAlignment(Qt::AlignTop);
-    layout->setContentsMargins(0,0,0,0);
+    layout->setContentsMargins(0, 0, 0, 0);
 
     scrollArea->setWidget(inWidget);
     layout->addWidget(scrollArea);
-    layout->addLayout(grid);
-
 }
 
 void EditSelectedRobotWidget::setSelectedRobot(RobotView* const _robotView, bool _firstConnection){
@@ -335,10 +331,3 @@ void EditSelectedRobotWidget::cancelRobotModifications(){
     robotDialog->close();
 }
 
-void EditSelectedRobotWidget::resizeEvent(QResizeEvent *event){
-    QWidget* widget = static_cast<QWidget*>(parent());
-    int maxWidth = widget->width() - 18;
-    setFixedWidth(maxWidth);
-    QWidget::resizeEvent(event);
-    batteryLevel->setFixedWidth(this->width() - 18);
-}

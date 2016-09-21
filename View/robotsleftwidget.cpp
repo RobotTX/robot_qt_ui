@@ -13,7 +13,7 @@ RobotsLeftWidget::RobotsLeftWidget(QWidget* parent, MainWindow* _mainWindow, QSh
     QWidget(parent), mainWindow(_mainWindow), lastCheckedId(-1)
 {
     layout = new QVBoxLayout(this);
-    scrollArea = new CustomScrollArea(this);
+    scrollArea = new CustomScrollArea(this, true);
 
     actionButtons = new TopLeftMenu(this);
     actionButtons->enableAll(false);
@@ -29,7 +29,7 @@ RobotsLeftWidget::RobotsLeftWidget(QWidget* parent, MainWindow* _mainWindow, QSh
 
     layout->addWidget(scrollArea);
     layout->setAlignment(Qt::AlignTop);
-    layout->setContentsMargins(0, 0, 0, 0);
+    layout->setContentsMargins(0, 0, 10, 0);
 }
 
 void RobotsLeftWidget::setRobots(QSharedPointer<Robots> const &_robots){

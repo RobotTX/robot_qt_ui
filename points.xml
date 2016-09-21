@@ -56,5 +56,41 @@
             <y>927.6</y>
             <displayed>1</displayed>
         </point>
+        <point>
+            <name>y</name>
+            <x>941</x>
+            <y>1035.1</y>
+            <displayed>1</displayed>
+        </point>
+        <point>
+            <name>yy</name>
+            <x>1013.1</x>
+            <y>1144</y>
+            <displayed>1</displayed>
+        </point>
+        <point>
+            <name>yyy</name>
+            <x>1077</x>
+            <y>1093.1</y>
+            <displayed>1</displayed>
+        </point>
+        <point>
+            <name>yyyy</name>
+            <x>1085.3</x>
+            <y>1121.5</y>
+            <displayed>1</displayed>
+        </point>
+        <point>
+            <name>yyyyy</name>
+            <x>1087.7</x>
+            <y>1165.3</y>
+            <displayed>1</displayed>
+        </point>
+        <point>
+            <name>yyyyyy</name>
+            <x>1026.2</x>
+            <y>1168.8</y>
+            <displayed>1</displayed>
+        </point>
     </group>
 </points>

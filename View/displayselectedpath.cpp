@@ -13,9 +13,10 @@
 DisplaySelectedPath::DisplaySelectedPath(QWidget *parent, const MainWindow *mainWindow,  const QSharedPointer<Paths>& _paths):
     QWidget(parent), paths(_paths)
 {
-    scrollArea = new CustomScrollArea(this);
+    scrollArea = new CustomScrollArea(this, true);
 
     layout = new QVBoxLayout(this);
+    QVBoxLayout* topLayout = new QVBoxLayout(this);
 
     /// Top menu with the 5 buttons
     actionButtons = new TopLeftMenu(this);
@@ -31,11 +32,12 @@ DisplaySelectedPath::DisplaySelectedPath(QWidget *parent, const MainWindow *main
     connect(actionButtons->getEditButton(), SIGNAL(clicked(bool)), this, SLOT(editBtnSlot(bool)));
     connect(actionButtons->getMapButton(), SIGNAL(clicked(bool)), this, SLOT(mapBtnSlot(bool)));
 
-    layout->addWidget(actionButtons);
+    topLayout->addWidget(actionButtons);
 
     /// Label with the name of the path
     nameLabel = new CustomLabel("", this, true);
-    layout->addWidget(nameLabel);
+    topLayout->addWidget(nameLabel);
+    layout->addLayout(topLayout);
 
     /// Widget displaying the path
     pathWidget = new PathWidget(this);
@@ -50,7 +52,8 @@ DisplaySelectedPath::DisplaySelectedPath(QWidget *parent, const MainWindow *main
     connect(this, SIGNAL(displayPath(QString, QString, bool)), mainWindow, SLOT(displayPathSlot(QString, QString, bool)));
 
     layout->setAlignment(Qt::AlignTop);
-    //layout->setContentsMargins(0, 0, 0, 0);
+    topLayout->setContentsMargins(0, 0, 10, 0);
+    layout->setContentsMargins(0, 0, 0, 0);
 }
 
 void DisplaySelectedPath::updatePath(const QString groupName, const QString pathName, const QVector<QSharedPointer<PathPoint>>& path){

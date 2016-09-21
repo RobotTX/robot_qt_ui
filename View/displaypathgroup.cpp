@@ -15,19 +15,21 @@ DisplayPathGroup::DisplayPathGroup(QWidget* _parent, MainWindow* _mainWindow, co
     QWidget(_parent), mainWindow(_mainWindow), paths(_paths), lastCheckedButton("")
 {
     /// to scroll the button group if there is a lot of paths
-    CustomScrollArea* scrollArea = new CustomScrollArea(this);
+    CustomScrollArea* scrollArea = new CustomScrollArea(this, true);
 
     layout = new QVBoxLayout(this);
+    QVBoxLayout* topLayout = new QVBoxLayout();
 
     /// 5 buttons displayed at the top
     actionButtons = new TopLeftMenu(this);
 
     initializeActionButtons();
 
-    layout->addWidget(actionButtons);
+    topLayout->addWidget(actionButtons);
 
-    groupNameLabel = new CustomLabel(this, true);
-    layout->addWidget(groupNameLabel);
+    groupNameLabel = new CustomLabel("Group Name", this, true);
+    topLayout->addWidget(groupNameLabel);
+    layout->addLayout(topLayout);
 
     pathButtonGroup = new PathButtonGroup(this, paths);
 
@@ -38,7 +40,8 @@ DisplayPathGroup::DisplayPathGroup(QWidget* _parent, MainWindow* _mainWindow, co
 
     layout->addWidget(scrollArea);
 
-    layout->setContentsMargins(0,0,0,0);
+    topLayout->setContentsMargins(0, 0, 10, 0);
+    layout->setContentsMargins(0, 0, 0, 0);
 
     /// to handle double clicks
     foreach(QAbstractButton *button, pathButtonGroup->getButtonGroup()->buttons())
@@ -149,4 +152,23 @@ void DisplayPathGroup::keyPressEvent(QKeyEvent *event){
         if(pathButtonGroup->getButtonGroup()->checkedButton())
             emit deletePath();
     }
+}
+
+void DisplayPathGroup::resizeEvent(QResizeEvent *event){
+    QWidget* widget = static_cast<QWidget*>(parent());
+    int maxWidth = widget->width() - 10;
+    setMaximumWidth(maxWidth);
+
+
+    if(static_cast<QWidget*>(widget->parent()->parent())){
+        qDebug() << "GroupsPathsWidget::resizeEvent" << "max" << maxWidth
+                 << "from" << event->oldSize().width() << "to" << event->size().width()
+                 << "this" << width() << "parent" << widget->width() << "grand parent" << static_cast<QWidget*>(widget->parent())->width()
+                 << "grand grand parent" << static_cast<QWidget*>(widget->parent()->parent())->width();;
+    } else
+        qDebug() << "GroupsPathsWidget::resizeEvent" << "max" << maxWidth
+                 << "from" << event->oldSize().width() << "to" << event->size().width()
+                 << "this" << width() << "parent" << widget->width() << "grand parent" << static_cast<QWidget*>(widget->parent())->width();
+
+    QWidget::resizeEvent(event);
 }
