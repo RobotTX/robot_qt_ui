@@ -28,7 +28,7 @@ DisplaySelectedPoint::DisplaySelectedPoint(QWidget* _parent, QSharedPointer<Robo
 
     robots = QSharedPointer<Robots>(_robots);
     layout = new QVBoxLayout(this);
-    QVBoxLayout* topLayout = new QVBoxLayout(this);
+    QVBoxLayout* topLayout = new QVBoxLayout();
 
 
     actionButtons = new TopLeftMenu(this);

@@ -44,7 +44,7 @@ BottomLayout::BottomLayout(QMainWindow* parent, const QSharedPointer<Robots> &ro
 
     /// to scroll a path when there are two many points to display
     QScrollBar* pathScroll2 = new QScrollBar(Qt::Orientation::Horizontal, this);
-    pathScroll = new CustomScrollArea(this, false, false, pathScroll2);
+    pathScroll = new CustomScrollArea(this, false, false, false, pathScroll2);
 
     /// The layout of the three columns
     widgetName = new QWidget(this);

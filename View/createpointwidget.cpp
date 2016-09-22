@@ -21,7 +21,7 @@
 CreatePointWidget::CreatePointWidget(QWidget *parent, MainWindow *mainWindow, QSharedPointer<Points> _points): QWidget(parent), points(_points){
 
     layout = new QVBoxLayout(this);
-    QVBoxLayout* topLayout = new QVBoxLayout(this);
+    QVBoxLayout* topLayout = new QVBoxLayout();
 
 
     actionButtons = new TopLeftMenu(this);

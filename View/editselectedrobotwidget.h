@@ -147,6 +147,7 @@ private:
     CustomPushButton* deleteHomeBtn;
     CustomPushButton* editRobotInfoBtn;
     CustomRobotDialog* robotDialog;
+    QWidget* inWidget;
 };
 
 #endif // EDITSELECTEDROBOTWIDGET_H

@@ -40,9 +40,9 @@ EditSelectedRobotWidget::EditSelectedRobotWidget(QWidget* parent, MainWindow* _m
     pathChanged = false;
     editing = false;
 
-    CustomScrollArea* scrollArea = new CustomScrollArea(this, true);
+    CustomScrollArea* scrollArea = new CustomScrollArea(this, true, true);
     QVBoxLayout * inLayout = new QVBoxLayout(scrollArea);
-    QWidget * inWidget = new QWidget(scrollArea);
+    inWidget = new QWidget(scrollArea);
 
     inWidget->setLayout(inLayout);
 
@@ -143,13 +143,13 @@ EditSelectedRobotWidget::EditSelectedRobotWidget(QWidget* parent, MainWindow* _m
 
     hide();
 
-    //inLayout->setAlignment(Qt::AlignTop);
+    inLayout->setAlignment(Qt::AlignTop);
     inLayout->setContentsMargins(0, 0, 10, 0);
-    //layout->setAlignment(Qt::AlignTop);
     layout->setContentsMargins(0, 0, 0, 0);
 
     scrollArea->setWidget(inWidget);
     layout->addWidget(scrollArea);
+    setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
 }
 
 void EditSelectedRobotWidget::setSelectedRobot(RobotView* const _robotView, bool _firstConnection){
@@ -332,9 +332,9 @@ void EditSelectedRobotWidget::cancelRobotModifications(){
 }
 
 void EditSelectedRobotWidget::resizeEvent(QResizeEvent *event){
-    /*QWidget* widget = static_cast<QWidget*>(parent());
+    QWidget* widget = static_cast<QWidget*>(parent());
     int maxWidth = widget->width() - 10;
-    setFixedWidth(maxWidth);*/
+    setMaximumWidth(maxWidth);
 
     QWidget::resizeEvent(event);
 }

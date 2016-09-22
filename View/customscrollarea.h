@@ -14,7 +14,7 @@ class CustomScrollArea : public QScrollArea {
     Q_OBJECT
 
 public:
-    explicit CustomScrollArea(QWidget *parent, bool leftMenu = false, bool vertical = true, QScrollBar* childBar = NULL);
+    explicit CustomScrollArea(QWidget *parent, bool leftMenu = false, bool _editRobotWidget = false, bool vertical = true, QScrollBar* childBar = NULL);
 
     virtual bool eventFilter(QObject *o, QEvent *e);
 
@@ -22,9 +22,10 @@ protected:
     void resizeEvent(QResizeEvent *event);
 
 private:
+    QScrollBar* childBar;
     bool vertical;
     bool leftMenu;
-    QScrollBar* childBar;
+    bool editRobotWidget;
 };
 
 #endif
