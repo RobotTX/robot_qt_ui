@@ -19,6 +19,7 @@ GroupsPathsButtonGroup::GroupsPathsButtonGroup(QWidget *_parent, const QSharedPo
 
     /// we are going to make this widget visible when a user wants to modify the name of a group
     layout->addWidget(modifyEdit);
+    layout->setContentsMargins(0, 0, 10, 0);
 }
 
 void GroupsPathsButtonGroup::createButtons(){
@@ -65,8 +66,8 @@ void GroupsPathsButtonGroup::setEnabledGroup(const bool enable){
 }
 
 void GroupsPathsButtonGroup::resizeEvent(QResizeEvent *event){
-    QWidget* widget = static_cast<QWidget*>(parent()->parent());
-    int maxWidth = widget->width();
+    QWidget* widget = static_cast<QWidget*>(parent()->parent()->parent());
+    int maxWidth = widget->width() - 10;
     setMaximumWidth(maxWidth);
 
     QWidget::resizeEvent(event);

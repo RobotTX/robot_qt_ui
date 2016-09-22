@@ -3,9 +3,10 @@
 #include <QScrollBar>
 #include <QDebug>
 #include <QLayout>
+#include <QResizeEvent>
 
-CustomScrollArea::CustomScrollArea(QWidget *parent, bool _vertical, QScrollBar* _childBar):
-    QScrollArea(parent), vertical(_vertical), childBar(_childBar){
+CustomScrollArea::CustomScrollArea(QWidget *parent, bool _leftMenu, bool _vertical, QScrollBar* _childBar):
+    QScrollArea(parent), vertical(_vertical), childBar(_childBar), leftMenu(_leftMenu){
     setWidgetResizable(true);
     if(vertical){
         setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
@@ -49,4 +50,15 @@ bool CustomScrollArea::eventFilter(QObject *o, QEvent *e){
     }
 
     return QScrollArea::eventFilter(o, e);
+}
+
+void CustomScrollArea::resizeEvent(QResizeEvent *event){
+    if(leftMenu){
+        QWidget* widget = static_cast<QWidget*>(parent());
+        int maxWidth = widget->width();
+        setFixedWidth(maxWidth);
+
+
+    }
+    QWidget::resizeEvent(event);
 }

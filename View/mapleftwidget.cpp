@@ -34,4 +34,5 @@ MapLeftWidget::MapLeftWidget(QWidget* parent, const MainWindow *mainWindow): QWi
 
     hide();
     layout->setAlignment(Qt::AlignTop);
+    layout->setContentsMargins(0, 0, 10, 0);
 }

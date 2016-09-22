@@ -18,29 +18,30 @@
 GroupsPathsWidget::GroupsPathsWidget(QWidget* parent, MainWindow* _mainWindow, const QSharedPointer<Paths> &_paths): QWidget(parent), mainWindow(_mainWindow), paths(_paths), lastCheckedButton("")
 {
     /// to scroll the QButtonGroup if there is a lot of groups of paths
-    scrollArea = new CustomScrollArea(this);
+    scrollArea = new CustomScrollArea(this, true);
 
     layout = new QVBoxLayout(this);
+    QVBoxLayout* topLayout = new QVBoxLayout();
 
     actionButtons = new TopLeftMenu(this);
 
     initializeActionButtons();
 
-    layout->addWidget(actionButtons);
+    topLayout->addWidget(actionButtons);
 
-    QVBoxLayout* downLayout = new QVBoxLayout();
 
     groupNameLabel = new CustomLabel("New group's name : ", this, false);
     groupNameLabel->hide();
     groupNameEdit = new CustomLineEdit(this);
     groupNameEdit->hide();
 
-    downLayout->addWidget(groupNameLabel);
-    downLayout->addWidget(groupNameEdit);
+    topLayout->addWidget(groupNameLabel);
+    topLayout->addWidget(groupNameEdit);
+    layout->addLayout(topLayout);
 
     buttonGroup = new GroupsPathsButtonGroup(this, paths);
     scrollArea->setWidget(buttonGroup);
-    downLayout->addWidget(scrollArea);
+    layout->addWidget(scrollArea);
 
     /// to enable the action buttons when a group is selected
     connect(buttonGroup->getButtonGroup(), SIGNAL(buttonClicked(QAbstractButton*)), this, SLOT(enableButtons(QAbstractButton*)));    
@@ -55,11 +56,9 @@ GroupsPathsWidget::GroupsPathsWidget(QWidget* parent, MainWindow* _mainWindow, c
     creationLayout->addWidget(cancelButton);
     creationLayout->addWidget(saveButton);
 
-    downLayout->addLayout(creationLayout);
-
-    downLayout->setAlignment(Qt::AlignBottom);
+    layout->addLayout(creationLayout);
     layout->setAlignment(Qt::AlignTop);
-    layout->addLayout(downLayout);
+    creationLayout->setAlignment(Qt::AlignBottom);
 
     /// to make sure the name chosen for a new group is valid
     connect(groupNameEdit, SIGNAL(textEdited(QString)), this, SLOT(checkGroupName(QString)));
@@ -79,6 +78,8 @@ GroupsPathsWidget::GroupsPathsWidget(QWidget* parent, MainWindow* _mainWindow, c
         connect(button, SIGNAL(doubleClick(QString)), mainWindow, SLOT(doubleClickOnPathsGroup(QString)));
 
     hide();
+    creationLayout->setContentsMargins(0, 0, 10, 0);
+    topLayout->setContentsMargins(0, 0, 10, 0);
     layout->setContentsMargins(0, 0, 0, 0);
 }
 
@@ -351,8 +352,8 @@ void GroupsPathsWidget::initializeActionButtons(void){
 
 void GroupsPathsWidget::resizeEvent(QResizeEvent *event){
     QWidget* widget = static_cast<QWidget*>(parent());
-    int maxWidth = widget->width() - 18;
-    setFixedWidth(maxWidth);
+    int maxWidth = widget->width() - 10;
+    setMaximumWidth(maxWidth);
 
     QWidget::resizeEvent(event);
 }

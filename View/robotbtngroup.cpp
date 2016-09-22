@@ -17,11 +17,12 @@ RobotBtnGroup::RobotBtnGroup(const QVector<RobotView*>& vector, QWidget* parent)
     }
     hide();
     layout->setAlignment(Qt::AlignTop);
+    layout->setContentsMargins(0, 0, 0, 0);
 }
 
 void RobotBtnGroup::resizeEvent(QResizeEvent *event){
     QWidget* widget = static_cast<QWidget*>(parent());
-    int maxWidth = widget->width()-widget->contentsMargins().right()-widget->contentsMargins().left();
+    int maxWidth = widget->width() - 18;
     setMaximumWidth(maxWidth);
     QWidget::resizeEvent(event);
 }

@@ -34,7 +34,7 @@ LeftMenuWidget::LeftMenuWidget(QWidget *_parent, QSharedPointer<Points> const& _
 
     hide();
 
-    layout->setContentsMargins(0, 0, 0, 0);
+    layout->setContentsMargins(0, 0, 10, 0);
     layout->setAlignment(Qt::AlignTop);
 }
 

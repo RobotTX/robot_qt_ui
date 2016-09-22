@@ -51,12 +51,10 @@ void CustomLineEdit::showEvent(QShowEvent *event){
 }
 
 void CustomLineEdit::resizeEvent(QResizeEvent *event){
-    QWidget* widget = static_cast<QWidget*> (parent());
-    int maxWidth = widget->width()-widget->contentsMargins().right()-widget->contentsMargins().left();
-    if(widget->width() > static_cast<QWidget*> (widget->parent())->width()){
-        maxWidth = static_cast<QWidget*> (widget->parent())->width() - 15 - static_cast<QWidget*>(widget->parent())->contentsMargins().right() - static_cast<QWidget*>(widget->parent())->contentsMargins().left();
-    }
+    QWidget* widget = static_cast<QWidget*>(parent());
+    int maxWidth = widget->width();
     setMaximumWidth(maxWidth);
+
     QLineEdit::resizeEvent(event);
     updateStyle();
 }

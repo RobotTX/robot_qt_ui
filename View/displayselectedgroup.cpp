@@ -17,12 +17,12 @@
 
 DisplaySelectedGroup::DisplaySelectedGroup(QWidget* parent, QSharedPointer<Points> const& _points) : QWidget(parent), points(_points), lastCheckedButton(""){
     /// to be able to display a lot of groups and points2
-    CustomScrollArea* scrollArea = new CustomScrollArea(this);
+    CustomScrollArea* scrollArea = new CustomScrollArea(this, true);
 
     layout = new QVBoxLayout(this);
+    QVBoxLayout* topLayout = new QVBoxLayout(this);
 
     actionButtons = new TopLeftMenu(this);
-
     actionButtons->enableAll(false);
     actionButtons->getMinusButton()->setCheckable(false);
     actionButtons->getEditButton()->setCheckable(false);
@@ -34,10 +34,11 @@ DisplaySelectedGroup::DisplaySelectedGroup(QWidget* parent, QSharedPointer<Point
     actionButtons->getGoButton()->setToolTip("Select a point and click here to access its information");
     actionButtons->getMapButton()->setToolTip("Select a point and click here to display or hide it on the map");
 
-    layout->addWidget(actionButtons);
+    topLayout->addWidget(actionButtons);
 
-    name = new CustomLabel("\nName : ", this, true);
-    layout->addWidget(name);
+    name = new CustomLabel("Name : ", this, true);
+    topLayout->addWidget(name);
+    layout->addLayout(topLayout);
 
     pointButtonGroup = new PointButtonGroup(points, 0, this);
     scrollArea->setWidget(pointButtonGroup);
@@ -45,6 +46,7 @@ DisplaySelectedGroup::DisplaySelectedGroup(QWidget* parent, QSharedPointer<Point
 
     connect(pointButtonGroup->getButtonGroup(), SIGNAL(buttonClicked(QAbstractButton*)), this, SLOT(buttonClickedSlot(QAbstractButton*)));
 
+    topLayout->setContentsMargins(0, 0, 10, 0);
     layout->setContentsMargins(0, 0, 0, 0);
 }
 
@@ -127,10 +129,12 @@ void DisplaySelectedGroup::showEvent(QShowEvent* event){
 
 void DisplaySelectedGroup::resizeEvent(QResizeEvent *event){
     QWidget* widget = static_cast<QWidget*>(parent());
-    int maxWidth = widget->width() - 18;
+    int maxWidth = widget->width() - 10;
     setFixedWidth(maxWidth);
+
     QWidget::resizeEvent(event);
 }
+
 
 /// to delete an point with the delete key
 void DisplaySelectedGroup::keyPressEvent(QKeyEvent *event){

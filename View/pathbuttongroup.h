@@ -40,6 +40,9 @@ public:
      */
     void setCheckable(const bool checkable);
 
+protected:
+    void resizeEvent(QResizeEvent *event);
+
 private:
     QVBoxLayout* layout;
     QButtonGroup* buttonGroup;

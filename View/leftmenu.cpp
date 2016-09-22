@@ -63,14 +63,12 @@ LeftMenu::LeftMenu(MainWindow* _mainWindow, QSharedPointer<Points> const& _point
     connect(displaySelectedPoint->getDisplaySelectedPointRobots(), SIGNAL(setSelectedRobotFromPoint(QString)), mainWindow, SLOT(setSelectedRobotFromPointSlot(QString)));
     displaySelectedPoint->hide();
     leftLayout->addWidget(displaySelectedPoint);
-    leftLayout->setAlignment(displaySelectedPoint, Qt::AlignLeft);
 
     /// to display the information relative to a group of points
     displaySelectedGroup = new DisplaySelectedGroup(this, _points);
     connect(displaySelectedGroup, SIGNAL(resetPathPointViews()), mainWindow, SLOT(resetPathPointViewsSlot()));
     displaySelectedGroup->hide();
     leftLayout->addWidget(displaySelectedGroup);
-    leftLayout->setAlignment(displaySelectedGroup, Qt::AlignLeft);
 
     /// The first menu with 3 buttons : Robots, Points, Map
     leftMenuWidget = new LeftMenuWidget(this, points);
@@ -191,6 +189,10 @@ LeftMenu::LeftMenu(MainWindow* _mainWindow, QSharedPointer<Points> const& _point
 
     leftLayout->setAlignment(Qt::AlignTop);
     leftLayout->setAlignment(closeBtn, Qt::AlignTop | Qt::AlignRight);
+
+    topLayout->setContentsMargins(10, 10, 10, 10);
+    leftLayout->setContentsMargins(10, 10, 0, 10);
+    globalLayout->setContentsMargins(0, 0, 0, 0);
 
     setMaximumWidth(_mainWindow->width()/2);
     setMinimumWidth(_mainWindow->width()/2);

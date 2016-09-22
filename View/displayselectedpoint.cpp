@@ -28,13 +28,6 @@ DisplaySelectedPoint::DisplaySelectedPoint(QWidget* _parent, QSharedPointer<Robo
 
     robots = QSharedPointer<Robots>(_robots);
     layout = new QVBoxLayout(this);
-    layout->setAlignment(Qt::AlignTop);
-
-    CustomScrollArea* scrollArea = new CustomScrollArea(this);
-
-    QVBoxLayout * scrollLayout = new QVBoxLayout(scrollArea);
-    scrollLayout->setAlignment(Qt::AlignTop);
-    QVBoxLayout * infoLayout = new QVBoxLayout();
 
     actionButtons = new TopLeftMenu(this);
     actionButtons->getPlusButton()->setEnabled(false);
@@ -54,23 +47,20 @@ DisplaySelectedPoint::DisplaySelectedPoint(QWidget* _parent, QSharedPointer<Robo
     nameEdit->hide();
 
     nameLabel = new CustomLabel("OKay", this, true);
-    infoLayout->addWidget(nameLabel);
+    layout->addWidget(nameLabel);
 
-    infoLayout->addWidget(nameEdit);
-    nameEdit->setContentsMargins(0, 0, 0, 10);
+    layout->addWidget(nameEdit);
 
     posXLabel = new CustomLabel("X : ", this);
     posXLabel->setWordWrap(true);
-    infoLayout->addWidget(posXLabel);
+    layout->addWidget(posXLabel);
 
     posYLabel = new CustomLabel("Y : ", this);
     posYLabel->setWordWrap(true);
-    infoLayout->addWidget(posYLabel);
-
-    scrollLayout->addLayout(infoLayout);
+    layout->addWidget(posYLabel);
 
     robotsWidget = new DisplaySelectedPointRobots(this);
-    scrollLayout->addWidget(robotsWidget);
+    layout->addWidget(robotsWidget);
 
     cancelButton = new CustomPushButton("Cancel", this, true, CustomPushButton::ButtonType::LEFT_MENU, "center");
     cancelButton->hide();
@@ -81,14 +71,14 @@ DisplaySelectedPoint::DisplaySelectedPoint(QWidget* _parent, QSharedPointer<Robo
     editLayout = new QHBoxLayout();
     editLayout->addWidget(cancelButton);
     editLayout->addWidget(saveButton);
+    layout->addLayout(editLayout);
 
-    scrollLayout->addLayout(editLayout);
 
     /// to check that a point that's being edited does not get a new name that's already used in the database
     connect(nameEdit, SIGNAL(textEdited(QString)), this, SLOT(checkPointName(QString)));
 
-    layout->addWidget(scrollArea);
-    layout->setContentsMargins(0, 0, 0, 0);
+    editLayout->setContentsMargins(0, 0, 0, 0);
+    layout->setContentsMargins(0, 0, 10, 0);
 }
 
 void DisplaySelectedPoint::displayPointInfo(void) {
@@ -242,9 +232,9 @@ QString DisplaySelectedPoint::formatName(const QString name) const {
 
 void DisplaySelectedPoint::resizeEvent(QResizeEvent *event){
     QWidget* widget = static_cast<QWidget*>(parent());
-    int maxWidth = widget->width() - 18;
+    int maxWidth = widget->width() - 10;
     setFixedWidth(maxWidth);
-    nameLabel->setFixedWidth(maxWidth - 10);
+
     QWidget::resizeEvent(event);
 }
 
