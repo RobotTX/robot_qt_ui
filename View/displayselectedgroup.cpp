@@ -20,7 +20,7 @@ DisplaySelectedGroup::DisplaySelectedGroup(QWidget* parent, QSharedPointer<Point
     CustomScrollArea* scrollArea = new CustomScrollArea(this, true);
 
     layout = new QVBoxLayout(this);
-    QVBoxLayout* topLayout = new QVBoxLayout(this);
+    QVBoxLayout* topLayout = new QVBoxLayout();
 
     actionButtons = new TopLeftMenu(this);
     actionButtons->enableAll(false);

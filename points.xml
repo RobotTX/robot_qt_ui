@@ -1,6 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <points>
     <group>
+        <name>561</name>
+        <point>
+            <name>Fanny</name>
+            <x>1126</x>
+            <y>943</y>
+            <displayed>1</displayed>
+        </point>
+        <point>
+            <name>Michel</name>
+            <x>1086</x>
+            <y>1019</y>
+            <displayed>1</displayed>
+        </point>
+    </group>
+    <group>
         <name>No Group</name>
         <point>
             <name>Un point avec un nom beaucoup trop looooooooooooong</name>
@@ -22,6 +37,7 @@
         </point>
     </group>
     <group>
+<<<<<<< HEAD
         <name>first group</name>
         <point>
             <name>Fanny</name>
@@ -40,6 +56,8 @@
         <name>new group</name>
     </group>
     <group>
+=======
+>>>>>>> 812cd5dd976aa34f161a21e8fa0928ceeb80371e
         <name>second group</name>
         <point>
             <name>A</name>
@@ -93,6 +111,36 @@
             <name>yyyyyy</name>
             <x>1026.2</x>
             <y>1168.8</y>
+            <displayed>1</displayed>
+        </point>
+        <point>
+            <name>yyyyyyy</name>
+            <x>968.2</x>
+            <y>1083.6</y>
+            <displayed>1</displayed>
+        </point>
+        <point>
+            <name>yyyyyyyy</name>
+            <x>954</x>
+            <y>1161.7</y>
+            <displayed>1</displayed>
+        </point>
+        <point>
+            <name>yyyyyyyyy</name>
+            <x>881.8</x>
+            <y>1133.3</y>
+            <displayed>1</displayed>
+        </point>
+        <point>
+            <name>yyyyyyyyyy</name>
+            <x>942.1</x>
+            <y>1095.5</y>
+            <displayed>1</displayed>
+        </point>
+        <point>
+            <name>yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy</name>
+            <x>911.4</x>
+            <y>1069.4</y>
             <displayed>1</displayed>
         </point>
     </group>

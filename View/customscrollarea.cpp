@@ -5,8 +5,8 @@
 #include <QLayout>
 #include <QResizeEvent>
 
-CustomScrollArea::CustomScrollArea(QWidget *parent, bool _leftMenu, bool _vertical, QScrollBar* _childBar):
-    QScrollArea(parent), vertical(_vertical), childBar(_childBar), leftMenu(_leftMenu){
+CustomScrollArea::CustomScrollArea(QWidget *parent, bool _leftMenu, bool _editRobotWidget, bool _vertical, QScrollBar* _childBar):
+    QScrollArea(parent), vertical(_vertical), childBar(_childBar), leftMenu(_leftMenu), editRobotWidget(_editRobotWidget){
     setWidgetResizable(true);
     if(vertical){
         setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
@@ -54,9 +54,12 @@ bool CustomScrollArea::eventFilter(QObject *o, QEvent *e){
 
 void CustomScrollArea::resizeEvent(QResizeEvent *event){
     if(leftMenu){
-        QWidget* widget = static_cast<QWidget*>(parent());
-        int maxWidth = widget->width();
+        QWidget* parentWidget = static_cast<QWidget*>(parent());
+        int maxWidth = parentWidget->width();
         setFixedWidth(maxWidth);
+        if(editRobotWidget)
+            widget()->setMaximumWidth(maxWidth);
+
     }
     QScrollArea::resizeEvent(event);
 }

@@ -16,7 +16,7 @@ DisplaySelectedPath::DisplaySelectedPath(QWidget *parent, const MainWindow *main
     scrollArea = new CustomScrollArea(this, true);
 
     layout = new QVBoxLayout(this);
-    QVBoxLayout* topLayout = new QVBoxLayout(this);
+    QVBoxLayout* topLayout = new QVBoxLayout();
 
     /// Top menu with the 5 buttons
     actionButtons = new TopLeftMenu(this);

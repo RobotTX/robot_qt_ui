@@ -25,7 +25,7 @@ PathCreationWidget::PathCreationWidget(QWidget* parent, const QSharedPointer<Poi
     QWidget(parent), points(_points), paths(_paths), currentGroupName(""), currentPathName(""), state(_state)
 {
     layout = new QVBoxLayout(this);
-    QVBoxLayout* topLayout = new QVBoxLayout(this);
+    QVBoxLayout* topLayout = new QVBoxLayout();
 
     checkState = NO_STATE;
 
