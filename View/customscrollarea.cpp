@@ -57,8 +57,7 @@ void CustomScrollArea::resizeEvent(QResizeEvent *event){
         QWidget* widget = static_cast<QWidget*>(parent());
         int maxWidth = widget->width();
         setFixedWidth(maxWidth);
-
-
     }
-    QWidget::resizeEvent(event);
+    QScrollArea::resizeEvent(event);
 }
+
