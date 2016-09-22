@@ -21,27 +21,29 @@
 CreatePointWidget::CreatePointWidget(QWidget *parent, MainWindow *mainWindow, QSharedPointer<Points> _points): QWidget(parent), points(_points){
 
     layout = new QVBoxLayout(this);
+    QVBoxLayout* topLayout = new QVBoxLayout(this);
+
 
     actionButtons = new TopLeftMenu(this);
     actionButtons->enableAll(false);
-    layout->addWidget(actionButtons);
+    topLayout->addWidget(actionButtons);
 
     /// to explain the user what to do with his temporary point
     messageCreationLabel = new QLabel("Click \"+\" to save", this);
     messageCreationLabel->setWordWrap(true);
-    layout->addWidget(messageCreationLabel);
+    topLayout->addWidget(messageCreationLabel);
 
     nameEdit = new CustomLineEdit(this);
     nameEdit->setReadOnly(true);
     nameEdit->setFrame(false);
-    layout->addWidget(nameEdit);
+    topLayout->addWidget(nameEdit);
     nameEdit->hide();
 
     posXLabel = new QLabel("X : ", this);
-    layout->addWidget(posXLabel);
+    topLayout->addWidget(posXLabel);
 
     posYLabel = new QLabel("Y : ", this);
-    layout->addWidget(posYLabel);
+    topLayout->addWidget(posYLabel);
 
 
     /// Add QLabel and QComboBox
@@ -62,8 +64,9 @@ CreatePointWidget::CreatePointWidget(QWidget *parent, MainWindow *mainWindow, QS
     groupBox->setCurrentIndex(0);
     groupBox->hide();
 
-    layout->addWidget(groupLabel);
-    layout->addWidget(groupBox);
+    topLayout->addWidget(groupLabel);
+    topLayout->addWidget(groupBox);
+    layout->addLayout(topLayout);
 
 
     /// Add Cancel and Save buttons
@@ -95,11 +98,12 @@ CreatePointWidget::CreatePointWidget(QWidget *parent, MainWindow *mainWindow, QS
 
     connect(this, SIGNAL(resetMessageTop(QString, QString)), mainWindow, SLOT(setMessageTop(QString, QString)));
 
-    //layout->setAlignment(Qt::AlignTop | Qt::AlignHCenter);
-    //cancelSaveLayout->setAlignment(Qt::AlignBottom);
+    topLayout->setAlignment(Qt::AlignTop);
+    cancelSaveLayout->setAlignment(Qt::AlignBottom);
+    topLayout->setContentsMargins(0, 0, 0, 0);
     cancelSaveLayout->setContentsMargins(0, 0, 0, 0);
     layout->setContentsMargins(0, 0, 10, 0);
-
+    setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
     hide();
 }
 

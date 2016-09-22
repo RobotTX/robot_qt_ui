@@ -28,6 +28,8 @@ DisplaySelectedPoint::DisplaySelectedPoint(QWidget* _parent, QSharedPointer<Robo
 
     robots = QSharedPointer<Robots>(_robots);
     layout = new QVBoxLayout(this);
+    QVBoxLayout* topLayout = new QVBoxLayout(this);
+
 
     actionButtons = new TopLeftMenu(this);
     actionButtons->getPlusButton()->setEnabled(false);
@@ -40,27 +42,28 @@ DisplaySelectedPoint::DisplaySelectedPoint(QWidget* _parent, QSharedPointer<Robo
     actionButtons->getEditButton()->setToolTip("You can click on this button and then choose between clicking on the map or drag the point to change its position");
     actionButtons->getEditButton()->setCheckable(false);
 
-    layout->addWidget(actionButtons);
+    topLayout->addWidget(actionButtons);
 
     nameEdit = new CustomLineEdit(this);
     nameEdit->setReadOnly(true);
     nameEdit->hide();
 
     nameLabel = new CustomLabel("OKay", this, true);
-    layout->addWidget(nameLabel);
+    topLayout->addWidget(nameLabel);
 
-    layout->addWidget(nameEdit);
+    topLayout->addWidget(nameEdit);
 
     posXLabel = new CustomLabel("X : ", this);
     posXLabel->setWordWrap(true);
-    layout->addWidget(posXLabel);
+    topLayout->addWidget(posXLabel);
 
     posYLabel = new CustomLabel("Y : ", this);
     posYLabel->setWordWrap(true);
-    layout->addWidget(posYLabel);
+    topLayout->addWidget(posYLabel);
+    layout->addLayout(topLayout);
 
     robotsWidget = new DisplaySelectedPointRobots(this);
-    layout->addWidget(robotsWidget);
+    topLayout->addWidget(robotsWidget);
 
     cancelButton = new CustomPushButton("Cancel", this, true, CustomPushButton::ButtonType::LEFT_MENU, "center");
     cancelButton->hide();
@@ -79,6 +82,9 @@ DisplaySelectedPoint::DisplaySelectedPoint(QWidget* _parent, QSharedPointer<Robo
 
     editLayout->setContentsMargins(0, 0, 0, 0);
     layout->setContentsMargins(0, 0, 10, 0);
+    topLayout->setAlignment(Qt::AlignTop);
+    editLayout->setAlignment(Qt::AlignBottom);
+    setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
 }
 
 void DisplaySelectedPoint::displayPointInfo(void) {

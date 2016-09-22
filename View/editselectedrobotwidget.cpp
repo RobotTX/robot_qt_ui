@@ -332,8 +332,13 @@ void EditSelectedRobotWidget::cancelRobotModifications(){
 }
 
 void EditSelectedRobotWidget::resizeEvent(QResizeEvent *event){
-    QWidget* widget = static_cast<QWidget*>(parent());
+    /*QWidget* widget = static_cast<QWidget*>(parent());
     int maxWidth = widget->width() - 10;
+<<<<<<< HEAD
     setFixedWidth(maxWidth);
+=======
+    setFixedWidth(maxWidth);*/
+
+>>>>>>> b463639fbf38ddeeecea0052a92b7487acf1802a
     QWidget::resizeEvent(event);
 }
