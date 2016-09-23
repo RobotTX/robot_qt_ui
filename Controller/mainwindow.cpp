@@ -49,6 +49,7 @@
 #include "View/custompushbutton.h"
 #include "View/customrobotdialog.h"
 #include "View/customlabel.h"
+#include <QtGlobal>
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow) {
     ui->setupUi(this);
@@ -1561,8 +1562,8 @@ void MainWindow::savePathSlot(GraphicItemState state){
     emit updatePathPainter(state, true);
     backEvent();
 
-    if(!state == GraphicItemState::ROBOT_CREATING_PATH){
-        setTemporaryMessageTop(TEXT_COLOR_SUCCESS, "You have successfully modified the path \"" + pathName + "\"", 2500);
+    if(!(state == GraphicItemState::ROBOT_CREATING_PATH)){
+        setTemporaryMessageTop(TEXT_COLOR_SUCCESS, "You have successfully saved the path \"" + pathName + "\"", 2500);
     }
 }
 
@@ -2816,9 +2817,11 @@ void MainWindow::askForDeleteGroupConfirmation(QString groupName){
     int ret = openConfirmMessage("Do you really want to remove this group ? All the points in this group would also be removed.");
     switch(ret){
         case QMessageBox::Cancel :
-            qDebug() << "clicked no";
+            qDebug() << "clicked no ici la tt suite";
             pointsLeftWidget->getActionButtons()->getMinusButton()->setChecked(false);
+            pointsLeftWidget->setLastCheckedId("");
             pointsLeftWidget->disableButtons();
+            points->setPixmapAll(PointView::PixmapType::NORMAL);
         break;
         case QMessageBox::Ok : {
             /// we have to check that none of the points is the home of a robot
@@ -2837,14 +2840,8 @@ void MainWindow::askForDeleteGroupConfirmation(QString groupName){
                 XMLParser parserPoints(QString(GOBOT_PATH) + QString(XML_FILE));
                 parserPoints.save(*points);
 
-                /// updates the menu
-                pointsLeftWidget->getGroupButtonGroup()->updateButtons();
-                pointsLeftWidget->getActionButtons()->getMinusButton()->setChecked(false);
-                pointsLeftWidget->setLastCheckedId("");
-
                 /// updates the group box so that the user cannot create a point in this group anymore
                 createPointWidget->updateGroupBox();
-
 
             } else {
                 /// this group contains the home point of a robot and cannot be removed,
@@ -2865,19 +2862,23 @@ void MainWindow::askForDeleteGroupConfirmation(QString groupName){
                 msgBox.setInformativeText("To modify the home point of a robot you can either click on the menu > Robots, choose a robot and Add Home or simply click a robot on the map and Add Home");
                 msgBox.exec();
                 qDebug() << "Sorry this point is the home of a robot and therefore cannot be removed";
-                /// resets the color of the home
-                points->setPixmapAll(PointView::PixmapType::NORMAL);
+
             }
-             pointsLeftWidget->disableButtons();
+
+            /// updates the menu
+            pointsLeftWidget->getGroupButtonGroup()->updateButtons();
+            pointsLeftWidget->getActionButtons()->getMinusButton()->setChecked(false);
+            pointsLeftWidget->setLastCheckedId("");
+            pointsLeftWidget->disableButtons();
+            points->setPixmapAll(PointView::PixmapType::NORMAL);
 
             if(homePointNames.size() <= 0)
                 setTemporaryMessageTop(TEXT_COLOR_SUCCESS, "You have successfully deleted the group \"" + groupName + "\"", 2500);
-
         }
-
         break;
         default:
             /// should never be here
+            Q_UNREACHABLE();
             qDebug() << " dafuk ?";
         break;
     }

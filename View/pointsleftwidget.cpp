@@ -403,3 +403,4 @@ void PointsLeftWidget::resizeEvent(QResizeEvent *event){
 
     QWidget::resizeEvent(event);
 }
+
