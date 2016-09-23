@@ -7,6 +7,7 @@ class QHBoxLayout;
 class QMainWindow;
 class QLabel;
 class Points;
+class CustomLabel;
 
 #include "Model/points.h"
 #include <QWidget>
@@ -26,7 +27,7 @@ public:
 
     PointButtonGroup* getPointButtonGroup(void) const { return pointButtonGroup; }
     TopLeftMenu* getActionButtons(void) const { return actionButtons; }
-    QLabel* getNameLabel(void) const { return name; }
+    CustomLabel* getNameLabel(void) const { return name; }
     QSharedPointer<Points> getPoints(void) const { return points; }
 
     /**
@@ -78,7 +79,7 @@ private:
     QVBoxLayout* layout;
     TopLeftMenu* actionButtons;
 
-    QLabel* name;
+    CustomLabel* name;
     QSharedPointer<Points> points;
     /// to remember which group is selected
     QString lastCheckedButton;
