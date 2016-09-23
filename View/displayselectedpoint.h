@@ -87,6 +87,8 @@ signals:
     void setSelectedRobotFromPoint(QString);
     /// to remove the point when pressing the delete key
     void removePoint();
+    /// emitted on hideEvent to cancel the edition of a point
+    void cancelEditionPoint();
 
 private slots:
     /// to check that a name is available before we proceed to the update

@@ -153,6 +153,8 @@ void DisplaySelectedPoint::resetWidget(){
 }
 
 void DisplaySelectedPoint::hideEvent(QHideEvent *event){
+    if(saveButton->isVisible())
+        emit cancelEditionPoint();
     resetWidget();
     nameLabel->show();
     nameEdit->hide();

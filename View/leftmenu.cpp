@@ -133,6 +133,9 @@ LeftMenu::LeftMenu(MainWindow* _mainWindow, QSharedPointer<Points> const& _point
     /// to remove the point by pressing the delete key
     connect(displaySelectedPoint, SIGNAL(removePoint()), mainWindow, SLOT(removePointFromInformationMenu()));
 
+    /// to cancel edition of a point on hide event
+    connect(displaySelectedPoint, SIGNAL(cancelEditionPoint()), mainWindow, SLOT(cancelEvent()));
+
     connect(displaySelectedGroup->getActionButtons()->getMinusButton(), SIGNAL(clicked(bool)), mainWindow, SLOT(removePointFromGroupMenu()));
     connect(displaySelectedGroup->getActionButtons()->getEditButton(), SIGNAL(clicked(bool)), mainWindow, SLOT(editPointFromGroupMenu()));
     connect(displaySelectedGroup->getActionButtons()->getGoButton(), SIGNAL(clicked(bool)), mainWindow, SLOT(displayPointInfoFromGroupMenu()));
