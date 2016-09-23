@@ -711,6 +711,7 @@ void MainWindow::viewPathSelectedRobot(int robotNb, bool checked){
         bottomLayout->uncheckViewPathSelectedRobot(robotNb);
         pathPainter->setCurrentPath(robot->getPath());
         bottomLayout->updateRobot(robotNb, robots->getRobotsVector().at(robotNb));
+
     } else {
         if(leftMenu->getDisplaySelectedPoint() && leftMenu->getDisplaySelectedPoint()->isVisible() && leftMenu->getDisplaySelectedPoint()->getPointView()->getPoint()->isPath()){
             leftMenu->getDisplaySelectedPoint()->getPointView()->hide();
@@ -721,17 +722,14 @@ void MainWindow::viewPathSelectedRobot(int robotNb, bool checked){
         paths->setVisiblePath("");
         emit resetPath();
     }
+    if(selectedRobot && selectedRobot->getRobot()->getHome())
+        selectedRobot->getRobot()->getHome()->setPixmap(PointView::PixmapType::SELECTED);
 }
 
 void MainWindow::setSelectedRobot(RobotView* robotView){
     qDebug() << "MainWindow::editselectedrobot robotview" << robotView->getRobot()->getName();
     /// resets the home
     editSelectedRobotWidget->setHome(robotView->getRobot()->getHome());
-    /// if the robot has a home we show the delete home button otherwise we hide it
-    if(!robotView->getRobot()->getHome())
-        editSelectedRobotWidget->getDeleteHomeBtn()->hide();
-    else
-        editSelectedRobotWidget->getDeleteHomeBtn()->show();
 
     /// same thing for path
     if(!robotView->getRobot()->getPathName().compare("")){
@@ -740,7 +738,6 @@ void MainWindow::setSelectedRobot(RobotView* robotView){
     else {
         editSelectedRobotWidget->getDeletePathBtn()->show();
         qDebug() << robotView->getRobot()->getPathName();
-
     }
 
     robots->setSelected(robotView);
@@ -763,7 +760,6 @@ void MainWindow::setSelectedRobot(RobotView* robotView){
         if(!selectedRobot->getRobot()->getHome())
             setMessageTop(TEXT_COLOR_INFO, topLayout->getLabel()->text() + "You can assign a home to your robot by clicking the button "
                                                                        "labeled \"Assign a home point\"");
-
 
     editSelectedRobotWidget->setSelectedRobot(selectedRobot);
     pathPainter->setPathDeleted(false);
@@ -792,6 +788,13 @@ void MainWindow::setSelectedRobot(RobotView* robotView){
 
     bottomLayout->getRobotBtnGroup()->button(robots->getRobotId(robotView->getRobot()->getName()))->setChecked(true);
 
+    /// if the robot has a home we show the delete home button otherwise we hide it
+    if(!robotView->getRobot()->getHome())
+        editSelectedRobotWidget->getDeleteHomeBtn()->hide();
+    else {
+        editSelectedRobotWidget->getDeleteHomeBtn()->show();
+        selectedRobot->getRobot()->getHome()->setPixmap(PointView::PixmapType::SELECTED);
+    }
 }
 
 void MainWindow::robotBtnEvent(void){
@@ -876,7 +879,8 @@ void MainWindow::setSelectedRobotNoParent(QAbstractButton *button){
         editSelectedRobotWidget->show();
         /// show only the home of the selected robot
         showHomes();
-
+        if(selectedRobot->getRobot()->getHome())
+            selectedRobot->getRobot()->getHome()->setPixmap(PointView::PixmapType::SELECTED);
     }
 }
 
@@ -4524,7 +4528,6 @@ void MainWindow::displayAssignedPath(QString groupName, QString pathName){
 
     paths->setVisiblePath(pathName);
     bool foundFlag(true);
-    //if(pathPainter->getCurrentPath().size() > 0)
     pathPainter->setCurrentPath(paths->getPath(groupName, pathName, foundFlag));
     editSelectedRobotWidget->updatePathsMenu();
     assert(foundFlag);
@@ -4551,27 +4554,6 @@ void MainWindow::displayAssignedPath(QString groupName, QString pathName){
     } else {
         qDebug() << "MainWindow::displayAssignedPath no path file found for :" << selectedRobot->getRobot()->getName();
     }
-
-
-    //setTemporaryMessageTop(TEXT_COLOR_SUCCESS, "You have successfully assigned the path \"" + pathName + "\" to the robot " + selectedRobot->getRobot()->getName(), 2500);
-    //selectedRobot->getRobot()->setPath(pathPainter->getCurrentPath());
-    /*
-    int id = robots->getRobotId(selectedRobot->getRobot()->getName());
-    bottomLayout->updateRobot(id, selectedRobot);
-    if(pathPainter->getCurrentPath().size() > 0){
-        bottomLayout->getViewPathRobotBtnGroup()->button(id)->setChecked(true);
-        viewPathSelectedRobot(id, true);
-    }
-
-    robotsLeftWidget->updateRobots(robots);
-
-    bottomLayout->updateRobot(robots->getRobotId(selectedRobot->getRobot()->getName()), selectedRobot);
-
-    selectedRobotWidget->setSelectedRobot(selectedRobot);
-    editSelectedRobotWidget->setSelectedRobot(selectedRobot);
-    editSelectedRobotWidget->setEditing(false);
-    */
-
 }
 
 void MainWindow::clearMapOfPaths(){
