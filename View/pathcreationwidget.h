@@ -50,7 +50,7 @@ public:
     CustomPushButton* getSaveButton(void) const { return saveBtn; }
     TopLeftMenu* getActionButtons(void) const { return actionButtons; }
 
-    void setCurrentPathName(const QString name) { currentPathName = name; }
+    void setCurrentPathName(const QString name);
     void setCurrentGroupName(const QString name) { currentGroupName = name; }
 
 public:

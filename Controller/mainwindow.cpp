@@ -1533,7 +1533,10 @@ void MainWindow::savePathSlot(GraphicItemState state){
         pathName = noRobotPathCreationWidget->getNameEdit()->text().simplified();
 
         /// if the path existed before we destroy it and reconstruct it
-        paths->deletePath(groupName, noRobotPathCreationWidget->getCurrentPathName());
+
+        if(noRobotPathCreationWidget->getCurrentPathName().compare("") != 0)
+            paths->deletePath(groupName, noRobotPathCreationWidget->getCurrentPathName());
+
         paths->createPath(groupName, pathName);
         for(int i = 0; i < noRobotPathPainter->getCurrentPath().size(); i++)
             paths->addPathPoint(groupName, pathName, noRobotPathPainter->getCurrentPath().at(i));
@@ -1547,9 +1550,6 @@ void MainWindow::savePathSlot(GraphicItemState state){
 
         /// add this path to the file
         serializePaths();
-
-        /// updates the path of the pathcreation widget
-        noRobotPathCreationWidget->setCurrentPathName(noRobotPathCreationWidget->getNameEdit()->text().simplified());
 
         leftMenu->getDisplaySelectedPath()->updatePath(noRobotPathCreationWidget->getCurrentGroupName(),
                                                        noRobotPathCreationWidget->getNameEdit()->text().simplified(),
@@ -4134,30 +4134,10 @@ void MainWindow::deletePathSlot(QString groupName, QString pathName){
 
 void MainWindow::editPathSlot(QString groupName, QString pathName){
     qDebug() << "MainWindow::editPathSlot called on group :" << groupName << ", path :" << pathName;
-    qDebug() << "MainWindow::editPath called";
     setMessageTop(TEXT_COLOR_INFO, "Click white points of the map to add new points to the path of "
                  "\nAlternatively you can click the \"+\" button to add an existing point to your path"
                  "\nYou can re-order the points in the list by dragging them");
 
-    noRobotPathCreationWidget->setCurrentPathName(pathName);
-
-    setEnableAll(false, GraphicItemState::NO_ROBOT_CREATING_PATH, true);
-
-    /// when we edit a path we set the name in the edit field the current name
-    noRobotPathCreationWidget->getNameEdit()->setText(pathName);
-    /// stop displaying the currently displayed path if it exists
-
-    emit resetPathCreationWidget(GraphicItemState::ROBOT_CREATING_PATH);
-    emit resetPathCreationWidget(GraphicItemState::NO_ROBOT_CREATING_PATH);
-
-    bool foundFlag(false);
-
-
-    leftMenu->getPathGroupDisplayed()->setLastCheckedButton(pathName);
-    paths->setVisiblePath(pathName);
-
-    qDebug() << "will edit" <<  groupName << pathName;
-    noRobotPathCreationWidget->updatePath(paths->getPath(groupName, pathName, foundFlag));
 
     hideAllWidgets();
     noRobotPathCreationWidget->show();
@@ -4165,6 +4145,23 @@ void MainWindow::editPathSlot(QString groupName, QString pathName){
 
     switchFocus(pathName, noRobotPathCreationWidget, MainWindow::WidgetType::PATH);
 
+
+    setEnableAll(false, GraphicItemState::NO_ROBOT_CREATING_PATH, true);
+
+    /// stop displaying the currently displayed path if it exists
+    emit resetPathCreationWidget(GraphicItemState::ROBOT_CREATING_PATH);
+    emit resetPathCreationWidget(GraphicItemState::NO_ROBOT_CREATING_PATH);
+
+    noRobotPathCreationWidget->setCurrentPathName(pathName);
+    noRobotPathCreationWidget->setCurrentGroupName(groupName);
+
+    bool foundFlag(false);
+
+    leftMenu->getPathGroupDisplayed()->setLastCheckedButton(pathName);
+    paths->setVisiblePath(pathName);
+
+    qDebug() << "will edit" <<  groupName << pathName;
+    noRobotPathCreationWidget->updatePath(paths->getPath(groupName, pathName, foundFlag));
 
     /// hides the temporary pointview
     points->getTmpPointView()->hide();
@@ -4505,30 +4502,9 @@ void MainWindow::editPath(){
                  "\nAlternatively you can click the \"+\" button to add an existing point to your path"
                  "\nYou can re-order the points in the list by dragging them");
 
-    setEnableAll(false, GraphicItemState::NO_ROBOT_CREATING_PATH, true);
-
-    /// to be able to know if the path name is different from the old one
-    qDebug() << "setting the current path name to" << leftMenu->getPathGroupDisplayed()->getPathButtonGroup()->getButtonGroup()->checkedButton()->text();
-    noRobotPathCreationWidget->setCurrentPathName(leftMenu->getPathGroupDisplayed()->getPathButtonGroup()->getButtonGroup()->checkedButton()->text());
-
-    /// when we edit a path we set the name in the edit field the current name
-    noRobotPathCreationWidget->getNameEdit()->setText(leftMenu->getPathGroupDisplayed()->getPathButtonGroup()->getButtonGroup()->checkedButton()->text());
-
-    /// stop displaying the currently displayed path if it exists
-
-    emit resetPathCreationWidget(GraphicItemState::ROBOT_CREATING_PATH);
-    emit resetPathCreationWidget(GraphicItemState::NO_ROBOT_CREATING_PATH);
-
     bool foundFlag(false);
     const QString pathName = leftMenu->getPathGroupDisplayed()->getPathButtonGroup()->getButtonGroup()->checkedButton()->text();
     const QString groupName = leftMenu->getPathGroupDisplayed()->getGroupNameLabel()->text();
-
-    leftMenu->getPathGroupDisplayed()->setLastCheckedButton(pathName);
-    paths->setVisiblePath(pathName);
-
-    qDebug() << "will edit" <<  groupName << pathName;
-    noRobotPathCreationWidget->updatePath(paths->getPath(leftMenu->getPathGroupDisplayed()->getGroupNameLabel()->text(),
-                                                         leftMenu->getPathGroupDisplayed()->getPathButtonGroup()->getButtonGroup()->checkedButton()->text(), foundFlag));
 
     hideAllWidgets();
     noRobotPathCreationWidget->show();
@@ -4536,6 +4512,24 @@ void MainWindow::editPath(){
 
     switchFocus(pathName, noRobotPathCreationWidget, MainWindow::WidgetType::PATH);
 
+    /// stop displaying the currently displayed path if it exists
+
+    emit resetPathCreationWidget(GraphicItemState::ROBOT_CREATING_PATH);
+    emit resetPathCreationWidget(GraphicItemState::NO_ROBOT_CREATING_PATH);
+
+    setEnableAll(false, GraphicItemState::NO_ROBOT_CREATING_PATH, true);
+
+    /// to be able to know if the path name is different from the old one
+    qDebug() << "setting the current path name to" << pathName;
+    noRobotPathCreationWidget->setCurrentPathName(pathName);
+    noRobotPathCreationWidget->setCurrentGroupName(groupName);
+
+    leftMenu->getPathGroupDisplayed()->setLastCheckedButton(pathName);
+    paths->setVisiblePath(pathName);
+
+    qDebug() << "will edit" <<  groupName << pathName;
+    noRobotPathCreationWidget->updatePath(paths->getPath(leftMenu->getPathGroupDisplayed()->getGroupNameLabel()->text(),
+                                                         leftMenu->getPathGroupDisplayed()->getPathButtonGroup()->getButtonGroup()->checkedButton()->text(), foundFlag));
 
     /// hides the temporary pointview
     points->getTmpPointView()->hide();
