@@ -500,6 +500,7 @@ void MainWindow::connectToRobot(bool checked){
                 }
                 break;
                 default:
+                    Q_UNREACHABLE();
                     qDebug() << "MainWindow::connectToRobot should not be here";
                 break;
             }
@@ -585,6 +586,7 @@ void MainWindow::deletePath(int robotNb){
                     qDebug() << "Cancel was clicked";
                 break;
                 default:
+                    Q_UNREACHABLE();
                     qDebug() << "Should never be reached";
                 break;
             }
@@ -840,6 +842,7 @@ void MainWindow::deletePathSelecRobotBtnEvent(){
         break;
     }
     default:
+        Q_UNREACHABLE();
         qDebug() << "MainWindow::deletePathSelecRobotBtnEvent you should never reach this point, you probably forgot to implement the behavior for" << answer;
     }
 }
@@ -2026,6 +2029,7 @@ void MainWindow::loadMapBtnEvent(){
         }
         break;
         default:
+            Q_UNREACHABLE();
             qDebug() << "MainWindow::loadMapBtnEvent should never be here";
         break;
     }
@@ -2196,8 +2200,6 @@ void MainWindow::plusGroupBtnEvent(){
 
     /// to prevent the user from clicking on the buttons
     pointsLeftWidget->getGroupButtonGroup()->setEnabled(false);
-    //leftMenu->getReturnButton()->setEnabled(false);
-    //leftMenu->getCloseButton()->setEnabled(false);
 
     /// here we allow a user to create a new group
 
@@ -2208,6 +2210,7 @@ void MainWindow::plusGroupBtnEvent(){
     pointsLeftWidget->getCancelButton()->show();
     pointsLeftWidget->getSaveButton()->show();
 
+    pointsLeftWidget->getGroupNameEdit()->setFocus();
 }
 
 /**
@@ -2369,9 +2372,6 @@ void MainWindow::editGroupBtnEvent(){
             switchFocus("point", leftMenu->getDisplaySelectedPoint(), MainWindow::WidgetType::POINT);
         } else if(checkedId.compare("") != 0 && points->isAGroup(checkedId)){
             qDebug() << "gotta update a group";
-            //leftMenu->getReturnButton()->setEnabled(false);
-            //leftMenu->getCloseButton()->setEnabled(false);
-            //topLayout->setEnable(false);
 
             pointsLeftWidget->getActionButtons()->getEditButton()->setToolTip("Type a new name for your group and press ENTER");
             /// disables the plus button
@@ -2560,6 +2560,7 @@ void MainWindow::askForDeleteDefaultGroupPointConfirmation(QString pointName){
         pointsLeftWidget->disableButtons();
         break;
         default:
+            Q_UNREACHABLE();
         /// should never be here
             qDebug() << "MainWindow::askForDeleteDefaultGroupPointConfirmation should not be here";
         break;
@@ -2647,6 +2648,7 @@ void MainWindow::askForDeletePointConfirmation(QString pointName){
 
         break;
         default:
+            Q_UNREACHABLE();
         /// should never be here
             qDebug() << "MainWindow::askForDeletePointConfirmation should not be here";
         break;
@@ -2723,6 +2725,7 @@ void MainWindow::askForDeleteGroupConfirmation(QString groupName){
         }
         break;
         default:
+            Q_UNREACHABLE();
             /// should never be here
             Q_UNREACHABLE();
             qDebug() << " dafuk ?";
@@ -3175,6 +3178,7 @@ void MainWindow::removePointFromInformationMenu(void){
         }
         break;
         default:
+            Q_UNREACHABLE();
         /// should never be here
             qDebug() << "MainWindow::removePointFromInformationMenu should not be here";
         break;
@@ -3908,6 +3912,7 @@ void MainWindow::setMessageCreationPoint(QString type, CreatePointWidget::Error 
         setMessageTop(type, "You cannot create a point with this name because a point with the same name already exists");
         break;
     default:
+        Q_UNREACHABLE();
         qDebug() << "Should never be here, if you do get here however, check that you have not added a new error code and forgotten to add it in the cases afterwards";
         break;
     }
@@ -3984,6 +3989,7 @@ void MainWindow::deletePathSlot(QString groupName, QString pathName){
         leftMenu->getPathGroupDisplayed()->setLastCheckedButton("");
     break;
     default:
+        Q_UNREACHABLE();
         qDebug() << "MainWindow::deletePath you should not be here, you probably forgot to implement the behavior for one of your buttons";
     break;
     }
@@ -4159,6 +4165,7 @@ void MainWindow::deleteGroupPaths(){
         leftMenu->getGroupsPathsWidget()->uncheck();
         break;
     default:
+        Q_UNREACHABLE();
         qDebug() << "MainWindow::deleteGroupPaths ended up in the default case which suggests that you forgot to implement the behavior relative to a particular button";
         break;
     }
@@ -4327,6 +4334,7 @@ void MainWindow::deletePath(){
         leftMenu->getPathGroupDisplayed()->setLastCheckedButton("");
     break;
     default:
+        Q_UNREACHABLE();
         qDebug() << "MainWindow::deletePath you should not be here, you probably forgot to implement the behavior for one of your buttons";
     break;
     }
@@ -4430,6 +4438,7 @@ void MainWindow::setMessageNoRobotPath(const int code){
         leftMenu->getpathCreationWidget()->getSaveButton()->setEnabled(true);
     break;
     default:
+        Q_UNREACHABLE();
         qDebug() << "MainWindow::setMessageNoRobotPath you should not be here you probably forgot to implement the behavior for the error code" << code;
     break;
     }
@@ -4516,10 +4525,12 @@ void MainWindow::setMessageModifGroupPaths(int code){
     case 1:
         setMessageTop(TEXT_COLOR_INFO, "You cannot have an empty name for your group");
         break;
+
     case 2:
         setMessageTop(TEXT_COLOR_INFO, "You cannot save this name for your group as it is already the name of another group");
         break;
     default:
+        Q_UNREACHABLE();
         qDebug() << "MainWindow::setMessageModifGroupPaths You should not be here you probably forgot to implement the behavior for the code" << code;
     }
 }

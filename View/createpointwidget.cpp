@@ -261,6 +261,7 @@ void CreatePointWidget::keyPressEvent(QKeyEvent* event){
             emit pointSaved(groupBox->currentText(), posXLabel->text().right(posXLabel->text().length()-4).toDouble(), posYLabel->text().right(posYLabel->text().length()-4).toDouble(), nameEdit->text().simplified());
             break;
         default:
+            Q_UNREACHABLE();
             qDebug() << "if you got here it's probably that u forgot to implement the behavior for one or more error codes";
             break;
         }

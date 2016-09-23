@@ -150,6 +150,7 @@ void UpdateRobotsThread::errorConnectionSlot(QAbstractSocket::SocketError error)
         qDebug() << "(UpdateRobotsThread) An unidentified error occurred.";
         break;
     default:
+        Q_UNREACHABLE();
         qDebug() << "(UpdateRobotsThread) Not supposed to be here.";
         break;
     }

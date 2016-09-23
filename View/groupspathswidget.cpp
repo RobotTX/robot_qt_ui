@@ -147,6 +147,7 @@ void GroupsPathsWidget::keyPressEvent(QKeyEvent* event){
                 emit messageCreationGroup(TEXT_COLOR_DANGER, "A group with the same name already exists, please choose another name for your group");
                 break;
             default:
+                Q_UNREACHABLE();
                 qDebug() << "if you get here you probably forgot to implement the behavior for one or more error codes";
                 break;
             }

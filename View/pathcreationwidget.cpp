@@ -115,6 +115,7 @@ void PathCreationWidget::updatePath(const QVector<QSharedPointer<PathPoint>>& _p
 void PathCreationWidget::showEvent(QShowEvent* event){
     Q_UNUSED(event)
     updatePointsList();
+    nameEdit->setFocus();
     show();
 }
 
@@ -303,6 +304,7 @@ void PathCreationWidget::deleteItem(QListWidgetItem* item){
             qDebug() << "PathCreationWidget::deleteItem Cancel was clicked";
         break;
         default:
+            Q_UNREACHABLE();
             qDebug() << "PathCreationWidget::deleteItem Should never be reached";
         break;
     }

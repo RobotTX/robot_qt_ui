@@ -126,6 +126,7 @@ void DisplaySelectedPoint::keyPressEvent(QKeyEvent* event){
             emit nameChanged(pointView->getPoint()->getName(), nameEdit->text());
             break;
         default:
+            Q_UNREACHABLE();
             qDebug() << "if you got here, it's probably that you forgot to define the behavior for one or more error codes";
             break;
         }
