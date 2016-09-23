@@ -49,7 +49,7 @@ void CustomPushButton::initialize(const bool checkable, const bool enable, const
                   "QPushButton:hover {"
                       "background-color: " + button_hover_color + ";"
                   "}"
-                  "QPushButton:checked{"
+                  "QPushButton:checked {"
                       "background-color: " + button_checked_color + ";"
                   "}"
                   "QPushButton:disabled{"

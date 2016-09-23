@@ -152,10 +152,18 @@ void PathCreationWidget::resetWidget(GraphicItemState _state){
 
         pathPointsList->clear();
         checkState = NO_STATE;
+        nameEdit->setText("");
+        currentGroupName = "";
+        currentPathName = "";
 
         updatePointsList();
         emit resetPath(state);
     }
+}
+
+void PathCreationWidget::setCurrentPathName(const QString name){
+    currentPathName = name;
+    nameEdit->setText(name);
 }
 
 void PathCreationWidget::itemClicked(QListWidgetItem* item){

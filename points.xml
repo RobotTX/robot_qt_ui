@@ -144,4 +144,37 @@
             <displayed>1</displayed>
         </point>
     </group>
+    <group>
+        <name>vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv</name>
+        <point>
+            <name>w</name>
+            <x>883</x>
+            <y>1071.8</y>
+            <displayed>1</displayed>
+        </point>
+        <point>
+            <name>ww</name>
+            <x>925.6</x>
+            <y>1164.1</y>
+            <displayed>1</displayed>
+        </point>
+        <point>
+            <name>www</name>
+            <x>954</x>
+            <y>1119.1</y>
+            <displayed>1</displayed>
+        </point>
+        <point>
+            <name>wwww</name>
+            <x>887.7</x>
+            <y>1162.9</y>
+            <displayed>1</displayed>
+        </point>
+        <point>
+            <name>wwwww</name>
+            <x>977.6</x>
+            <y>1168.8</y>
+            <displayed>1</displayed>
+        </point>
+    </group>
 </points>
