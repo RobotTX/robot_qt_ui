@@ -40,13 +40,13 @@ signals:
     /// emitted when a user left clicks the map
     void leftClick();
     /// emitted when a user is constructing a path for a robot
-    void addPathPoint(QString, double, double, GraphicItemState);
+    void addPathPoint(QString, double, double);
     /// emitted when a user is constructing a path without a robot
     void addNoRobotPathPoint(QString, double, double);
     /// emitted when a user is editing a permanent point
     void newCoordinates(double, double);
     /// emitted when a user is editing a path point
-    void newCoordinatesPathPoint(double, double, GraphicItemState);
+    void newCoordinatesPathPoint(double, double);
     /// emitted when a user clicks an unknown part of the map to show him a message saying that he cannot create a point there
     void newMessage(QString);
 

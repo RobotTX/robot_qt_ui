@@ -179,11 +179,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
     initializePoints();
 
-    /// to draw the paths associated to robots
-    robotPathPainter = new PathPainter(this, points, GraphicItemState::ROBOT_CREATING_PATH);
-
     /// to draw stand-alone paths
-    noRobotPathPainter = new PathPainter(this, points, GraphicItemState::NO_ROBOT_CREATING_PATH);
+    pathPainter = new PathPainter(this, points);
 
     initializeRobots();
 
@@ -199,7 +196,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     graphicsView->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     graphicsView->setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding));
 
-    leftMenu = new LeftMenu(this, points, paths, robots, map, robotPathPainter, noRobotPathPainter);
+    leftMenu = new LeftMenu(this, points, paths, robots, map, pathPainter);
 
     resetFocus();
     initializeLeftMenu();
@@ -256,51 +253,40 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     ///  ------------------------------------------------------- PATHS CONNECTS ----------------------------------------------------------
 
     /// to link the map and the path information when a path point is being edited (associated to a robot or not)
-    connect(mapPixmapItem, SIGNAL(newCoordinatesPathPoint(double, double, GraphicItemState)), this, SLOT(updateEditedPathPoint(double, double, GraphicItemState)));
+    connect(mapPixmapItem, SIGNAL(newCoordinatesPathPoint(double, double)), this, SLOT(updateEditedPathPoint(double, double)));
 
     /// to know what message to display when a user is creating a path
     connect(mapPixmapItem, SIGNAL(newMessage(QString)), this, SLOT(setMessageCreationPath(QString)));
 
     /// to add a path point when we click on the map
-    connect(mapPixmapItem, SIGNAL(addPathPoint(QString, double, double, GraphicItemState)), robotPathCreationWidget, SLOT(addPathPointSlot(QString, double, double, GraphicItemState)));
-    connect(mapPixmapItem, SIGNAL(addPathPoint(QString, double, double, GraphicItemState)), noRobotPathCreationWidget, SLOT(addPathPointSlot(QString, double, double, GraphicItemState)));
+    connect(mapPixmapItem, SIGNAL(addPathPoint(QString, double, double)), pathCreationWidget, SLOT(addPathPointSlot(QString, double, double)));
 
     /// to add a path point when we click on a pointView (which is relayed by the mainWindow)
-    connect(this, SIGNAL(addPathPoint(QString, double, double, GraphicItemState)), robotPathCreationWidget, SLOT(addPathPointSlot(QString, double, double, GraphicItemState)));
-    connect(this, SIGNAL(addPathPoint(QString, double, double, GraphicItemState)), noRobotPathCreationWidget, SLOT(addPathPointSlot(QString, double, double, GraphicItemState)));
+    connect(this, SIGNAL(addPathPoint(QString, double, double)), pathCreationWidget, SLOT(addPathPointSlot(QString, double, double)));
 
-    connect(this, SIGNAL(updatePathPainter(GraphicItemState, bool)), noRobotPathPainter, SLOT(updatePathPainterSlot(GraphicItemState, bool)));
-    connect(this, SIGNAL(updatePathPainter(GraphicItemState, bool)), robotPathPainter, SLOT(updatePathPainterSlot(GraphicItemState, bool)));
+    connect(this, SIGNAL(updatePathPainter(bool)), pathPainter, SLOT(updatePathPainterSlot(bool)));
 
-    connect(robotPathCreationWidget, SIGNAL(editTmpPathPoint(int, QString, double, double, GraphicItemState)), this, SLOT(editTmpPathPointSlot(int, QString, double, double, GraphicItemState)));
-    connect(noRobotPathCreationWidget, SIGNAL(editTmpPathPoint(int, QString, double, double, GraphicItemState)), this, SLOT(editTmpPathPointSlot(int, QString, double, double, GraphicItemState)));
+    connect(pathCreationWidget, SIGNAL(editTmpPathPoint(int, QString, double, double)), this, SLOT(editTmpPathPointSlot(int, QString, double, double)));
 
-    connect(this, SIGNAL(updatePathPainterPointView(GraphicItemState)), robotPathPainter, SLOT(updatePathPainterPointViewSlot(GraphicItemState)));
-    connect(this, SIGNAL(updatePathPainterPointView(GraphicItemState)), noRobotPathPainter, SLOT(updatePathPainterPointViewSlot(GraphicItemState)));
+    connect(this, SIGNAL(updatePathPainterPointView()), pathPainter, SLOT(updatePathPainterPointViewSlot()));
 
-    connect(robotPathCreationWidget, SIGNAL(saveEditPathPoint(GraphicItemState)), this, SLOT(saveEditPathPointSlot(GraphicItemState)));
-    connect(noRobotPathCreationWidget, SIGNAL(saveEditPathPoint(GraphicItemState)), this, SLOT(saveEditPathPointSlot(GraphicItemState)));
+    connect(pathCreationWidget, SIGNAL(saveEditPathPoint()), this, SLOT(saveEditPathPointSlot()));
 
-    connect(robotPathCreationWidget, SIGNAL(cancelEditPathPoint(GraphicItemState)), this, SLOT(cancelEditPathPointSlot(GraphicItemState)));
-    connect(noRobotPathCreationWidget, SIGNAL(cancelEditPathPoint(GraphicItemState)), this, SLOT(cancelEditPathPointSlot(GraphicItemState)));
+    connect(pathCreationWidget, SIGNAL(cancelEditPathPoint()), this, SLOT(cancelEditPathPointSlot()));
 
-    connect(robotPathCreationWidget, SIGNAL(savePath(GraphicItemState)), this, SLOT(savePathSlot(GraphicItemState)));
-    connect(noRobotPathCreationWidget, SIGNAL(savePath(GraphicItemState)), this, SLOT(savePathSlot(GraphicItemState)));
+    connect(pathCreationWidget, SIGNAL(savePath()), this, SLOT(savePathSlot()));
 
-    connect(this, SIGNAL(resetPath(GraphicItemState)), robotPathPainter, SLOT(resetPathSlot(GraphicItemState)));
-    connect(this, SIGNAL(resetPath(GraphicItemState)), noRobotPathPainter, SLOT(resetPathSlot(GraphicItemState)));
+    connect(this, SIGNAL(resetPath()), pathPainter, SLOT(resetPathSlot()));
 
-    connect(this, SIGNAL(resetPathCreationWidget(GraphicItemState)), robotPathCreationWidget, SLOT(resetWidget(GraphicItemState)));
-    connect(this, SIGNAL(resetPathCreationWidget(GraphicItemState)), noRobotPathCreationWidget, SLOT(resetWidget(GraphicItemState)));
+    connect(this, SIGNAL(resetPathCreationWidget()), pathCreationWidget, SLOT(resetWidget()));
 
     connect(leftMenu->getGroupsPathsWidget(), SIGNAL(newPathGroup(QString)), this, SLOT(saveGroupPaths(QString)));
     connect(leftMenu->getGroupsPathsWidget(), SIGNAL(messageCreationGroup(QString,QString)), this, SLOT(setMessageCreationGroup(QString,QString)));
     connect(leftMenu->getGroupsPathsWidget(), SIGNAL(modifiedGroup(QString)), this, SLOT(modifyGroupPathsWithEnter(QString)));
 
-    connect(robotPathCreationWidget->getCancelButton(), SIGNAL(clicked()), this, SLOT(cancelPathSlot()));
-    connect(noRobotPathCreationWidget->getCancelButton(), SIGNAL(clicked()), this, SLOT(cancelNoRobotPathSlot()));
+    connect(pathCreationWidget->getCancelButton(), SIGNAL(clicked()), this, SLOT(cancelNoRobotPathSlot()));
 
-    connect(leftMenu->getNoRobotPathCreationWidget(), SIGNAL(codeEditPath(int)), this, SLOT(setMessageNoRobotPath(int)));
+    connect(leftMenu->getpathCreationWidget(), SIGNAL(codeEditPath(int)), this, SLOT(setMessageNoRobotPath(int)));
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -723,7 +709,7 @@ void MainWindow::viewPathSelectedRobot(int robotNb, bool checked){
         QSharedPointer<Robot> robot = robots->getRobotsVector().at(robotNb)->getRobot();
         qDebug() << "viewPathSelectedRobot called on" << robot->getName();
         bottomLayout->uncheckViewPathSelectedRobot(robotNb);
-        robotPathPainter->setCurrentPath(robot->getPath());
+        pathPainter->setCurrentPath(robot->getPath());
         bottomLayout->updateRobot(robotNb, robots->getRobotsVector().at(robotNb));
     } else {
         if(leftMenu->getDisplaySelectedPoint() && leftMenu->getDisplaySelectedPoint()->isVisible() && leftMenu->getDisplaySelectedPoint()->getPointView()->getPoint()->isPath()){
@@ -733,7 +719,7 @@ void MainWindow::viewPathSelectedRobot(int robotNb, bool checked){
             backEvent();
         }
         paths->setVisiblePath("");
-        emit resetPath(GraphicItemState::ROBOT_CREATING_PATH);
+        emit resetPath();
     }
 }
 
@@ -780,7 +766,7 @@ void MainWindow::setSelectedRobot(RobotView* robotView){
 
 
     editSelectedRobotWidget->setSelectedRobot(selectedRobot);
-    robotPathPainter->setPathDeleted(false);
+    pathPainter->setPathDeleted(false);
 
     viewPathSelectedRobot(robots->getRobotId(robotView->getRobot()->getName()), true);
     switchFocus(selectedRobot->getRobot()->getName(), editSelectedRobotWidget, MainWindow::WidgetType::ROBOT);
@@ -788,8 +774,8 @@ void MainWindow::setSelectedRobot(RobotView* robotView){
     /// it was disable by setEnableAll
     leftMenu->getReturnButton()->setEnabled(true);
 
-    emit resetPathCreationWidget(GraphicItemState::NO_ROBOT_CREATING_PATH);
-    robotPathPainter->setCurrentPath(robotView->getRobot()->getPath());
+    emit resetPathCreationWidget();
+    pathPainter->setCurrentPath(robotView->getRobot()->getPath());
 
     showHomes();
     leftMenu->show();
@@ -815,61 +801,6 @@ void MainWindow::robotBtnEvent(void){
     switchFocus("Robots", robotsLeftWidget, MainWindow::WidgetType::ROBOTS);
 }
 
-void MainWindow::addPathSelecRobotBtnEvent(){
-    qDebug() << "MainWindow::addPathSelecRobotBtnEvent called on robot " << selectedRobot->getRobot()->getName();
-    setMessageTop(TEXT_COLOR_INFO, "Click white points of the map to add new points to the path of " +
-                  selectedRobot->getRobot()->getName() + "\nAlternatively you can click the \"+\" button to add an existing point to your path"
-                  "\nYou can re-order the points in the list by dragging them");
-
-    setEnableAll(false, GraphicItemState::ROBOT_CREATING_PATH, true);
-
-    /// stop displaying the currently displayed path if it exists
-
-    /*int id = bottomLayout->getViewPathRobotBtnGroup()->checkedId();
-    if(id != -1){
-        viewPathSelectedRobot(id, false);
-    }*/
-
-    if(bottomLayout->getViewPathRobotBtnGroup()->checkedButton()){
-        bottomLayout->getViewPathRobotBtnGroup()->checkedButton()->setChecked(false);
-        robotPathCreationWidget->getPathPointList()->clear();
-    }
-
-    if(!robotPathPainter->getPathDeleted()){
-        if(editSelectedRobotWidget->getAddPathBtn()->text().compare("Add Path") == 0 || robotPathPainter->getOldPath().size() <= 0){
-            emit resetPathCreationWidget(GraphicItemState::ROBOT_CREATING_PATH);
-            robotPathCreationWidget->updatePath(selectedRobot->getRobot()->getPath());
-        }
-    }
-
-    RobotView* tmpRobot = selectedRobot;
-    hideAllWidgets();
-    selectedRobot = tmpRobot;
-
-    robotPathCreationWidget->show();
-    robotPathPainter->setOldPath(robotPathPainter->getCurrentPath());
-
-    switchFocus(selectedRobot->getRobot()->getName(), robotPathCreationWidget, MainWindow::WidgetType::ROBOT);
-
-    /// hides the temporary pointview
-    points->getTmpPointView()->hide();
-
-    /// displays the points in order to make them available for the edition of the path,
-    ///  we have to keep track of those which were hidden so we can hide them again once the edition is finished
-    QMapIterator<QString, QSharedPointer<QVector<QSharedPointer<PointView>>>> i(*(points->getGroups()));
-    while (i.hasNext()) {
-        i.next();
-        if(i.value() && i.key().compare(PATH_GROUP_NAME) != 0){
-            for(int j = 0; j < i.value()->count(); j++){
-                if(!i.value()->at(j)->isVisible() && i.value()->at(j)->getPoint()->getName().compare(TMP_POINT_NAME)){
-                    i.value()->at(j)->show();
-                    pointViewsToDisplay.push_back(i.value()->at(j));
-                }
-            }
-        }
-    }
-}
-
 void MainWindow::deletePathSelecRobotBtnEvent(){
     qDebug() << "MainWindow::deletePathSelecRobotBtnEvent called on robot " << selectedRobot->getRobot()->getName();
     int answer = openConfirmMessage("Are you sure you want to delete the path of your robot ? This action is irreversible");
@@ -879,14 +810,13 @@ void MainWindow::deletePathSelecRobotBtnEvent(){
     case QMessageBox::Ok:
     {
         paths->setVisiblePath("");
-        emit resetPath(GraphicItemState::ROBOT_CREATING_PATH);
-        emit resetPath(GraphicItemState::NO_ROBOT_CREATING_PATH);
-        emit resetPathCreationWidget(GraphicItemState::ROBOT_CREATING_PATH);
+        emit resetPath();
+        emit resetPathCreationWidget();
         selectedRobot->getRobot()->clearPath();
         editSelectedRobotWidget->setPathChanged(true);
         editSelectedRobotWidget->clearPath();
         bottomLayout->uncheckAll();
-        robotPathPainter->setPathDeleted(true);
+        pathPainter->setPathDeleted(true);
 
         /// to uncheck the previously checked path
         editSelectedRobotWidget->updatePathsMenu();
@@ -1006,8 +936,7 @@ void MainWindow::backRobotBtnEvent(){
 void MainWindow::editRobotBtnEvent(){
     qDebug() << "editRobotBtnEvent called";
     /// hides a previously shown stand-alone path
-    emit resetPath(GraphicItemState::ROBOT_CREATING_PATH);
-    emit resetPath(GraphicItemState::NO_ROBOT_CREATING_PATH);
+    emit resetPath();
     setSelectedRobot(robots->getRobotViewByName(static_cast<CustomPushButton*> (robotsLeftWidget->getBtnGroup()->getBtnGroup()->checkedButton())->text()));
 }
 
@@ -1047,17 +976,13 @@ void MainWindow::cancelEditSelecRobotBtnEvent(){
 
     editSelectedRobotWidget->updateHomeMenu();
     /// if the path has been changed, reset the path
-    emit resetPathCreationWidget(GraphicItemState::ROBOT_CREATING_PATH);
+    emit resetPathCreationWidget();
     displayAssignedPath(selectedRobot->getRobot()->getGroupPathName(), selectedRobot->getRobot()->getPathName());
 
     editSelectedRobotWidget->setGroupPath(selectedRobot->getRobot()->getGroupPathName());
     editSelectedRobotWidget->setAssignedPath(selectedRobot->getRobot()->getPathName());
     editSelectedRobotWidget->setHome(editSelectedRobotWidget->getHome());
     editSelectedRobotWidget->updatePathsMenu();
-    //paths->setVisiblePath("");
-    //emit resetPath(GraphicItemState::ROBOT_CREATING_PATH);
-    //editSelectedRobotWidget->setEditing(false);
-    //robotPathPainter->clearOldPath();
 
     /// the user may have done a mistake regarding which parameter he wants to modify but he still wants to modify something
     /// so it might be better to stay on the same page
@@ -1221,9 +1146,9 @@ void MainWindow::robotSavedEvent(){
         QSharedPointer<Robot> robot = selectedRobot->getRobot();
         QString pathStr = "";
         /// prepares the cmd to send to the robot
-        qDebug() << "MainWindow::robotSavedEvent" << robotPathPainter->getCurrentPath().size();
-        for(int i = 0; i < robotPathPainter->getCurrentPath().size(); i++){
-            QSharedPointer<PathPoint> pathPoint = robotPathPainter->getCurrentPath().at(i);
+        qDebug() << "MainWindow::robotSavedEvent" << pathPainter->getCurrentPath().size();
+        for(int i = 0; i < pathPainter->getCurrentPath().size(); i++){
+            QSharedPointer<PathPoint> pathPoint = pathPainter->getCurrentPath().at(i);
             float oldPosX = pathPoint->getPoint().getPosition().getX();
             float oldPosY = pathPoint->getPoint().getPosition().getY();
 
@@ -1262,12 +1187,12 @@ void MainWindow::robotSavedEvent(){
             //if (isOK){
                 qDebug() << "can update";
                 if(editSelectedRobotWidget->getPathChanged()){
-                    selectedRobot->getRobot()->setPath(robotPathPainter->getCurrentPath());
+                    selectedRobot->getRobot()->setPath(pathPainter->getCurrentPath());
                     selectedRobot->getRobot()->setGroupPathName(editSelectedRobotWidget->getGroupPathName());
                     selectedRobot->getRobot()->setPathName(editSelectedRobotWidget->getPathName());
                     int id = robots->getRobotId(selectedRobot->getRobot()->getName());
                     bottomLayout->updateRobot(id, selectedRobot);
-                    if(robotPathPainter->getCurrentPath().size() > 0){
+                    if(pathPainter->getCurrentPath().size() > 0){
                         bottomLayout->getViewPathRobotBtnGroup()->button(id)->setChecked(true);
                         viewPathSelectedRobot(id, true);
                     }
@@ -1306,7 +1231,7 @@ void MainWindow::robotSavedEvent(){
                     qDebug() << "no pointview";
 
 
-                robotPathPainter->clearOldPath();
+                pathPainter->clearOldPath();
                 editSelectedRobotWidget->setPathChanged(false);
 
                 //backEvent();
@@ -1444,26 +1369,20 @@ void MainWindow::changeRobotWifi(QString ssid, QString password){
 }
 
 
-void MainWindow::editTmpPathPointSlot(int id, QString name, double x, double y, GraphicItemState state){
-    qDebug() << "MainWindow::editTmpPathPointSlot called : " << id << name << x << y << "with state" << state;
+void MainWindow::editTmpPathPointSlot(int id, QString name, double x, double y){
+    qDebug() << "MainWindow::editTmpPathPointSlot called : " << id << name << x << y;
     editedPointView = points->getGroups()->value(PATH_GROUP_NAME)->at(id);
     setGraphicItemsState(GraphicItemState::NO_EVENT);
     if(editedPointView == NULL)
         qDebug() << "MainWindow::editTmpPathPointSlot Error : No pointview found to edit";
     leftMenu->setEnableReturnCloseButtons(false);
     int nbWidget(-1);
-    if(state == GraphicItemState::ROBOT_CREATING_PATH){
-        setMessageTop(TEXT_COLOR_INFO, "Drag the selected point or click the map and click \"Save changes\" to modify the path of your robot");
-        qDebug() << "MainWindow::editTmpPathPointSlot Pointview found";
-        nbWidget = robotPathPainter->nbUsedPointView(name, x ,y);
-        mapPixmapItem->setState(GraphicItemState::ROBOT_EDITING_PATH);
-        editedPointView->setState(GraphicItemState::ROBOT_EDITING_PATH);
-    } else {
-        setMessageTop(TEXT_COLOR_INFO, "Drag the selected point or click the map and click \"Save changes\" to modify the path");
-        nbWidget = noRobotPathPainter->nbUsedPointView(name, x ,y);
-        mapPixmapItem->setState(GraphicItemState::NO_ROBOT_EDITING_PATH);
-        editedPointView->setState(GraphicItemState::NO_ROBOT_EDITING_PATH);
-    }
+
+    setMessageTop(TEXT_COLOR_INFO, "Drag the selected point or click the map and click \"Save changes\" to modify the path");
+    nbWidget = pathPainter->nbUsedPointView(name, x ,y);
+    mapPixmapItem->setState(GraphicItemState::EDITING_PATH);
+    editedPointView->setState(GraphicItemState::EDITING_PATH);
+
 
     qDebug() << "MainWindow::editTmpPathPointSlot number of widget with the same pointView : " << nbWidget;
     /// if 2 path points have the same pointView, we need to create a copy to only
@@ -1478,10 +1397,7 @@ void MainWindow::editTmpPathPointSlot(int id, QString name, double x, double y, 
         points->insertPoint(PATH_GROUP_NAME, id, editedPointView);
     }
 
-    if(state == GraphicItemState::ROBOT_CREATING_PATH)
-        editedPointView->setState(GraphicItemState::ROBOT_EDITING_PATH);
-    else
-        editedPointView->setState(GraphicItemState::NO_ROBOT_EDITING_PATH);
+    editedPointView->setState(GraphicItemState::EDITING_PATH);
 
     editedPointView->setFlag(QGraphicsItem::ItemIsMovable);
     /// set by hand in order to keep the colors consistent while editing the point and after
@@ -1489,147 +1405,91 @@ void MainWindow::editTmpPathPointSlot(int id, QString name, double x, double y, 
 
 }
 
-void MainWindow::savePathSlot(GraphicItemState state){
+void MainWindow::savePathSlot(){
     qDebug() << "MainWindow::savePath called";
     QString pathName("");
-
-    if(state == GraphicItemState::ROBOT_CREATING_PATH){
-        robotPathPainter->setPathDeleted(false);
-        robotPathPainter->setOldPath(robotPathPainter->getCurrentPath());
-        editSelectedRobotWidget->setPathChanged(true);
-        editSelectedRobotWidget->setPath(robotPathPainter->getCurrentPath());
-        /// we hide the points that we displayed for the edition of the path
-        for(int i = 0; i < pointViewsToDisplay.size(); i++){
-            bool hidePointView(true);
-            for(int j = 0; j < robotPathPainter->getCurrentPath().size(); j++){
-                if(robotPathPainter->getCurrentPath().at(j)->getPoint() == *(pointViewsToDisplay.at(i)->getPoint())){
-                    hidePointView = false;
-                    break;
-                }
+    /// we hide the points that we displayed for the edition of the path
+    for(int i = 0; i < pointViewsToDisplay.size(); i++){
+        bool hidePointView(true);
+        for(int j = 0; j < pathPainter->getCurrentPath().size(); j++){
+            if(pathPainter->getCurrentPath().at(j)->getPoint() == *(pointViewsToDisplay.at(i)->getPoint())){
+                hidePointView = false;
+                break;
             }
-            if(hidePointView)
-                pointViewsToDisplay.at(i)->hide();
         }
-        pointViewsToDisplay.clear();
-    } else {
-        /// we hide the points that we displayed for the edition of the path
-        for(int i = 0; i < pointViewsToDisplay.size(); i++){
-            bool hidePointView(true);
-            for(int j = 0; j < noRobotPathPainter->getCurrentPath().size(); j++){
-                if(noRobotPathPainter->getCurrentPath().at(j)->getPoint() == *(pointViewsToDisplay.at(i)->getPoint())){
-                    hidePointView = false;
-                    break;
-                }
-            }
-            if(hidePointView)
-                pointViewsToDisplay.at(i)->hide();
-        }
-        pointViewsToDisplay.clear();
-
-        noRobotPathPainter->setPathDeleted(false);
-        noRobotPathPainter->setOldPath(noRobotPathPainter->getCurrentPath());
-
-        /// gotta update the model and serialize the paths
-        const QString groupName = noRobotPathCreationWidget->getCurrentGroupName();
-        pathName = noRobotPathCreationWidget->getNameEdit()->text().simplified();
-
-        /// if the path existed before we destroy it and reconstruct it
-
-        if(noRobotPathCreationWidget->getCurrentPathName().compare("") != 0)
-            paths->deletePath(groupName, noRobotPathCreationWidget->getCurrentPathName());
-
-        paths->createPath(groupName, pathName);
-        for(int i = 0; i < noRobotPathPainter->getCurrentPath().size(); i++)
-            paths->addPathPoint(groupName, pathName, noRobotPathPainter->getCurrentPath().at(i));
-
-
-        /// updates the visible path
-        paths->setVisiblePath(pathName);
-
-        /// resets the menu so that it reflects the creation of this new path
-        leftMenu->getPathGroupDisplayed()->setPathsGroup(noRobotPathCreationWidget->getCurrentGroupName());
-
-        /// add this path to the file
-        serializePaths();
-
-        leftMenu->getDisplaySelectedPath()->updatePath(noRobotPathCreationWidget->getCurrentGroupName(),
-                                                       noRobotPathCreationWidget->getNameEdit()->text().simplified(),
-                                                       noRobotPathPainter->getCurrentPath());
+        if(hidePointView)
+            pointViewsToDisplay.at(i)->hide();
     }
+    pointViewsToDisplay.clear();
+
+    pathPainter->setPathDeleted(false);
+    pathPainter->setOldPath(pathPainter->getCurrentPath());
+
+    /// gotta update the model and serialize the paths
+    const QString groupName = pathCreationWidget->getCurrentGroupName();
+    pathName = pathCreationWidget->getNameEdit()->text().simplified();
+
+    /// if the path existed before we destroy it and reconstruct it
+
+    if(pathCreationWidget->getCurrentPathName().compare("") != 0)
+        paths->deletePath(groupName, pathCreationWidget->getCurrentPathName());
+
+    paths->createPath(groupName, pathName);
+    for(int i = 0; i < pathPainter->getCurrentPath().size(); i++)
+        paths->addPathPoint(groupName, pathName, pathPainter->getCurrentPath().at(i));
+
+
+    /// updates the visible path
+    paths->setVisiblePath(pathName);
+
+    /// resets the menu so that it reflects the creation of this new path
+    leftMenu->getPathGroupDisplayed()->setPathsGroup(pathCreationWidget->getCurrentGroupName());
+
+    /// add this path to the file
+    serializePaths();
+
+    leftMenu->getDisplaySelectedPath()->updatePath(pathCreationWidget->getCurrentGroupName(),
+                                                   pathCreationWidget->getNameEdit()->text().simplified(),
+                                                   pathPainter->getCurrentPath());
 
     leftMenu->setEnableReturnCloseButtons(true);
 
-    emit updatePathPainter(state, true);
+    emit updatePathPainter(true);
     backEvent();
-
-    if(!(state == GraphicItemState::ROBOT_CREATING_PATH)){
-        setTemporaryMessageTop(TEXT_COLOR_SUCCESS, "You have successfully saved the path \"" + pathName + "\"", 2500);
-    }
-}
-
-void MainWindow::cancelPathSlot(){
-    qDebug() << "MainWindow::cancelPathSlot called";
-
-    QVector<QSharedPointer<PathPoint>> oldPath = robotPathPainter->getOldPath();
-    /// we hide the points that we displayed just for the edition of the path
-    for(int i = 0; i < pointViewsToDisplay.size(); i++)
-        pointViewsToDisplay.at(i)->hide();
-    pointViewsToDisplay.clear();
-
-    emit resetPathCreationWidget(GraphicItemState::ROBOT_CREATING_PATH);
-    //robotPathPainter->setCurrentPath(robotPathPainter->getOldPath());
-    robotPathCreationWidget->updatePath(oldPath);
-
-    //selectedRobot->getRobot()->setPath(robotPathPainter->getCurrentPath());
-    //bottomLayout->updateRobot(robots->getRobotId(selectedRobot->getRobot()->getName()), selectedRobot);
-
-    backEvent();
-    robotPathPainter->setOldPath(oldPath);
-    setEnableAll(false, GraphicItemState::NO_EVENT);
-
-    setTemporaryMessageTop(TEXT_COLOR_INFO, "You have cancelled the edition of a path for the robot " + selectedRobot->getRobot()->getName(), 2500);
 }
 
 void MainWindow::addPointPathSlot(QString name, double x, double y, GraphicItemState state){
     qDebug() << "addPathPoint called on point via * point" << x << y;
     /// Relay to pathPainter::addPathPointSlot()
-    emit addPathPoint(name, x, y, state);
+    emit addPathPoint(name, x, y);
 }
 
-void MainWindow::saveEditPathPointSlot(GraphicItemState state){
+void MainWindow::saveEditPathPointSlot(){
     qDebug() << "MainWindow::saveEditPathPointSlot called";
 
-    setEnableAll(false, state, true);
+    setEnableAll(false, GraphicItemState::CREATING_PATH, true);
 
-    if(state == GraphicItemState::ROBOT_CREATING_PATH)
-        robotPathPainter->updateCurrentPath();
-    else
-        noRobotPathPainter->updateCurrentPath();
+    pathPainter->updateCurrentPath();
 
     editedPointView->setFlag(QGraphicsItem::ItemIsMovable, false);
     editedPointView = QSharedPointer<PointView>();
-    emit updatePathPainter(state, true);
+    emit updatePathPainter(true);
 }
 
-void MainWindow::cancelEditPathPointSlot(GraphicItemState state){
+void MainWindow::cancelEditPathPointSlot(){
     qDebug() << "MainWindow::cancelEditPathPointSlot called";
 
-    setEnableAll(false, state, true);
+    setEnableAll(false, GraphicItemState::CREATING_PATH, true);
 
     Position pos;
     int id(-1);
 
-    if(state == GraphicItemState::ROBOT_CREATING_PATH){
-        id = robotPathCreationWidget->getPathPointList()->row(robotPathCreationWidget->getPathPointList()->currentItem());
-        pos = robotPathPainter->getCurrentPath().at(id)->getPoint().getPosition();
-    } else {
-        id = noRobotPathCreationWidget->getPathPointList()->row(noRobotPathCreationWidget->getPathPointList()->currentItem());
-        pos = noRobotPathPainter->getCurrentPath().at(id)->getPoint().getPosition();
-    }
+    id = pathCreationWidget->getPathPointList()->row(pathCreationWidget->getPathPointList()->currentItem());
+    pos = pathPainter->getCurrentPath().at(id)->getPoint().getPosition();
 
     editedPointView->setPos(pos.getX(), pos.getY());
 
-    emit updatePathPainter(state, true);
+    emit updatePathPainter(true);
 
     editedPointView->setFlag(QGraphicsItem::ItemIsMovable, false);
     editedPointView = QSharedPointer<PointView>();
@@ -1637,7 +1497,7 @@ void MainWindow::cancelEditPathPointSlot(GraphicItemState state){
 
 void MainWindow::updatePathPainterPointViewSlot(){
     /// Relay to pathPainter::updatePathPainterSlot()
-    emit updatePathPainterPointView(GraphicItemState::ROBOT_CREATING_PATH);
+    emit updatePathPainterPointView();
 }
 
 void MainWindow::showHome(){
@@ -1660,10 +1520,10 @@ void MainWindow::showHome(){
 
     if(!editSelectedRobotWidget->isEditing()){
         bottomLayout->uncheckAll();
-        if(robotPathPainter->getOldPath().size() > 0){
-            editSelectedRobotWidget->setPath(robotPathPainter->getOldPath());
+        if(pathPainter->getOldPath().size() > 0){
+            editSelectedRobotWidget->setPath(pathPainter->getOldPath());
 
-            robotPathPainter->clearOldPath();
+            pathPainter->clearOldPath();
         } else {
             RobotView* robotView =  robots->getRobotViewByName(selectedRobot->getRobot()->getName());
             /// If the robot has a path, we display it, otherwise we show the button to add the path
@@ -1711,7 +1571,7 @@ void MainWindow::showAllHomes(void){
     qDebug() << "MainWindow::showAllHomes called after editselectrobot went hidden";
     /// shows the home of each robot
     selectedRobot = 0;
-    robotPathPainter->setCurrentPath(robotPathPainter->getCurrentPath());
+    pathPainter->setCurrentPath(pathPainter->getCurrentPath());
     bottomLayout->uncheckRobots();
 }
 
@@ -1901,8 +1761,8 @@ void MainWindow::setMessageCreationPath(QString message){
                                        "\nYou can re-order the points in the list by dragging them");
 }
 
-void MainWindow::updateEditedPathPoint(double x, double y, GraphicItemState state){
-    qDebug() << "MainWindow::updateEditedPathPoint called with state" << state;
+void MainWindow::updateEditedPathPoint(double x, double y){
+    qDebug() << "MainWindow::updateEditedPathPoint called";
 
     if(editedPointView)
         editedPointView->setPos(x, y);
@@ -1910,61 +1770,32 @@ void MainWindow::updateEditedPathPoint(double x, double y, GraphicItemState stat
         qDebug() << "MainWindow::updateEditedPathPoint Could not find the pointView to edit";
 
 
-    emit updatePathPainter(state, false);
+    emit updatePathPainter(false);
 
-    if(state == GraphicItemState::ROBOT_CREATING_PATH){
-        if(map->getMapImage().pixelColor(x, y).red() >= 254){
-            setMessageTop(TEXT_COLOR_INFO, "You can click either \"Save changes\" to modify your path permanently or \"Cancel\" to keep the original path. If you want you can keep editing your point");
+    if(map->getMapImage().pixelColor(x, y).red() >= 254){
+        setMessageTop(TEXT_COLOR_INFO, "You can click either \"Save changes\" to modify your path permanently or \"Cancel\" to keep the original path. If you want you can keep editing your point");
 
-                static_cast<PathPointCreationWidget*> (robotPathCreationWidget->getPathPointList()->
-                                                   itemWidget(robotPathCreationWidget->getPathPointList()->currentItem()))
-                                                   -> getSaveEditBtn()->setEnabled(true);
-        } else {
-            setMessageTop(TEXT_COLOR_DANGER, "You cannot save the current path because the point that you are editing is not in a known area of the map");
-
-            static_cast<PathPointCreationWidget*> (robotPathCreationWidget->getPathPointList()->
-                                                   itemWidget(robotPathCreationWidget->getPathPointList()->currentItem()))
-                                                   -> getSaveEditBtn()->setEnabled(false);
-        }
+            static_cast<PathPointCreationWidget*> (pathCreationWidget->getPathPointList()->
+                                               itemWidget(pathCreationWidget->getPathPointList()->currentItem()))
+                                               -> getSaveEditBtn()->setEnabled(true);
     } else {
-        if(map->getMapImage().pixelColor(x, y).red() >= 254){
-            setMessageTop(TEXT_COLOR_INFO, "You can click either \"Save changes\" to modify your path permanently or \"Cancel\" to keep the original path. If you want you can keep editing your point");
+        setMessageTop(TEXT_COLOR_DANGER, "You cannot save the current path because the point that you are editing is not in a known area of the map");
 
-                static_cast<PathPointCreationWidget*> (noRobotPathCreationWidget->getPathPointList()->
-                                                   itemWidget(noRobotPathCreationWidget->getPathPointList()->currentItem()))
-                                                   -> getSaveEditBtn()->setEnabled(true);
-        } else {
-            setMessageTop(TEXT_COLOR_DANGER, "You cannot save the current path because the point that you are editing is not in a known area of the map");
-
-            static_cast<PathPointCreationWidget*> (noRobotPathCreationWidget->getPathPointList()->
-                                                   itemWidget(noRobotPathCreationWidget->getPathPointList()->currentItem()))
-                                                   -> getSaveEditBtn()->setEnabled(false);
-        }
+        static_cast<PathPointCreationWidget*> (pathCreationWidget->getPathPointList()->
+                                               itemWidget(pathCreationWidget->getPathPointList()->currentItem()))
+                                               -> getSaveEditBtn()->setEnabled(false);
     }
 }
 
-void MainWindow::moveEditedPathPointSlot(GraphicItemState state){
-
-    if(state == GraphicItemState::ROBOT_EDITING_PATH){
-        emit updatePathPainter(GraphicItemState::ROBOT_CREATING_PATH, false);
-        qDebug() << "MainWindow::moveEditedPathPointSlot called with state" << state;
-        if(map->getMapImage().pixelColor(editedPointView->getPoint()->getPosition().getX(), editedPointView->getPoint()->getPosition().getY()).red() >= 254){
-            setMessageTop(TEXT_COLOR_INFO, "You can click either \"Save changes\" to modify your path permanently or \"Cancel\" to keep the original path. If you want you can keep editing your point");
-            static_cast<PathPointCreationWidget*> (robotPathCreationWidget->getPathPointList()->itemWidget(robotPathCreationWidget->getPathPointList()->currentItem()))->getSaveEditBtn()->setEnabled(true);
-        } else {
-            setMessageTop(TEXT_COLOR_DANGER, "You cannot save the current path because the point that you are editing is not in a known area of the map");
-            static_cast<PathPointCreationWidget*> (robotPathCreationWidget->getPathPointList()->itemWidget(robotPathCreationWidget->getPathPointList()->currentItem()))->getSaveEditBtn()->setEnabled(false);
-        }
+void MainWindow::moveEditedPathPointSlot(){
+    emit updatePathPainter(false);
+    qDebug() << "MainWindow::moveEditedPathPointSlot";
+    if(map->getMapImage().pixelColor(editedPointView->getPoint()->getPosition().getX(), editedPointView->getPoint()->getPosition().getY()).red() >= 254){
+        setMessageTop(TEXT_COLOR_INFO, "You can click either \"Save changes\" to modify your path permanently or \"Cancel\" to keep the original path. If you want you can keep editing your point");
+        static_cast<PathPointCreationWidget*> (pathCreationWidget->getPathPointList()->itemWidget(pathCreationWidget->getPathPointList()->currentItem()))->getSaveEditBtn()->setEnabled(true);
     } else {
-        emit updatePathPainter(GraphicItemState::NO_ROBOT_CREATING_PATH, false);
-        qDebug() << "MainWindow::moveEditedPathPointSlot no robot called with state" << state;
-        if(map->getMapImage().pixelColor(editedPointView->getPoint()->getPosition().getX(), editedPointView->getPoint()->getPosition().getY()).red() >= 254){
-            setMessageTop(TEXT_COLOR_INFO, "You can click either \"Save changes\" to modify your path permanently or \"Cancel\" to keep the original path. If you want you can keep editing your point");
-            static_cast<PathPointCreationWidget*> (noRobotPathCreationWidget->getPathPointList()->itemWidget(noRobotPathCreationWidget->getPathPointList()->currentItem()))->getSaveEditBtn()->setEnabled(true);
-        } else {
-            setMessageTop(TEXT_COLOR_DANGER, "You cannot save the current path because the point that you are editing is not in a known area of the map");
-            static_cast<PathPointCreationWidget*> (noRobotPathCreationWidget->getPathPointList()->itemWidget(noRobotPathCreationWidget->getPathPointList()->currentItem()))->getSaveEditBtn()->setEnabled(false);
-        }
+        setMessageTop(TEXT_COLOR_DANGER, "You cannot save the current path because the point that you are editing is not in a known area of the map");
+        static_cast<PathPointCreationWidget*> (pathCreationWidget->getPathPointList()->itemWidget(pathCreationWidget->getPathPointList()->currentItem()))->getSaveEditBtn()->setEnabled(false);
     }
 }
 
@@ -2047,7 +1878,7 @@ void MainWindow::updateAllPaths(void){
 }
 
 void MainWindow::resetPathPointViewsSlot(){
-    emit updatePathPainter(GraphicItemState::ROBOT_CREATING_PATH, false);
+    emit updatePathPainter(false);
 }
 
 void MainWindow::replacePoint(int id, QString name){
@@ -2081,7 +1912,7 @@ void MainWindow::setNewHome(QString homeName){
 
     /// so that if the new home if part of the path it displays the path correctly (not a house on top of a normal point)
     /// this call makes the home
-    robotPathPainter->setCurrentPath(selectedRobot->getRobot()->getPath());
+    pathPainter->setCurrentPath(selectedRobot->getRobot()->getPath());
 
     showSelectedRobotHomeOnly();
 
@@ -2104,7 +1935,7 @@ void MainWindow::deleteHome(){
         editSelectedRobotWidget->getHomeLabel()->setText("Home : ");
         editSelectedRobotWidget->updateHomeMenu();
         /// to remove the home pixmap
-        robotPathPainter->setCurrentPath(robotPathPainter->getCurrentPath());
+        pathPainter->setCurrentPath(pathPainter->getCurrentPath());
     }
 }
 
@@ -2216,8 +2047,7 @@ void MainWindow::initializeLeftMenu(){
     editSelectedRobotWidget = leftMenu->getEditSelectedRobotWidget();
     selectedPointWidget = leftMenu->getSelectedPointWidget();
     createPointWidget = leftMenu->getEditSelectedPointWidget();
-    robotPathCreationWidget = leftMenu->getRobotPathCreationWidget();
-    noRobotPathCreationWidget = leftMenu->getNoRobotPathCreationWidget();
+    pathCreationWidget = leftMenu->getpathCreationWidget();
 }
 
 void MainWindow::initializeBottomPanel(){
@@ -2286,7 +2116,7 @@ void MainWindow::setSelectedPoint(){
 
     int id = bottomLayout->getViewPathRobotBtnGroup()->checkedId();
     if(id > 0)
-        robotPathPainter->setCurrentPath(robots->getRobotsVector().at(id)->getRobot()->getPath());
+        pathPainter->setCurrentPath(robots->getRobotsVector().at(id)->getRobot()->getPath());
 
     leftMenu->show();
 
@@ -4148,20 +3978,19 @@ void MainWindow::editPathSlot(QString groupName, QString pathName){
 
 
     hideAllWidgets();
-    noRobotPathCreationWidget->show();
-    noRobotPathPainter->setOldPath(noRobotPathPainter->getCurrentPath());
+    pathCreationWidget->show();
+    pathPainter->setOldPath(pathPainter->getCurrentPath());
 
-    switchFocus(pathName, noRobotPathCreationWidget, MainWindow::WidgetType::PATH);
+    switchFocus(pathName, pathCreationWidget, MainWindow::WidgetType::PATH);
 
 
-    setEnableAll(false, GraphicItemState::NO_ROBOT_CREATING_PATH, true);
+    setEnableAll(false, GraphicItemState::CREATING_PATH, true);
 
     /// stop displaying the currently displayed path if it exists
-    emit resetPathCreationWidget(GraphicItemState::ROBOT_CREATING_PATH);
-    emit resetPathCreationWidget(GraphicItemState::NO_ROBOT_CREATING_PATH);
+    emit resetPathCreationWidget();
 
-    noRobotPathCreationWidget->setCurrentPathName(pathName);
-    noRobotPathCreationWidget->setCurrentGroupName(groupName);
+    pathCreationWidget->setCurrentPathName(pathName);
+    pathCreationWidget->setCurrentGroupName(groupName);
 
     bool foundFlag(false);
 
@@ -4169,7 +3998,7 @@ void MainWindow::editPathSlot(QString groupName, QString pathName){
     paths->setVisiblePath(pathName);
 
     qDebug() << "will edit" <<  groupName << pathName;
-    noRobotPathCreationWidget->updatePath(paths->getPath(groupName, pathName, foundFlag));
+    pathCreationWidget->updatePath(paths->getPath(groupName, pathName, foundFlag));
 
     /// hides the temporary pointview
     points->getTmpPointView()->hide();
@@ -4196,7 +4025,7 @@ void MainWindow::displayPathSlot(QString groupName, QString pathName, bool displ
         bool foundFlag = false;
         Paths::Path path = paths->getPath(groupName, pathName, foundFlag);
         if(foundFlag) {
-            noRobotPathPainter->setCurrentPath(path);
+            pathPainter->setCurrentPath(path);
             paths->setVisiblePath(pathName);
         }
         else
@@ -4204,7 +4033,7 @@ void MainWindow::displayPathSlot(QString groupName, QString pathName, bool displ
     }
     else {
         paths->setVisiblePath("");
-        emit resetPath(GraphicItemState::NO_ROBOT_CREATING_PATH);
+        emit resetPath();
     }
 }
 
@@ -4214,7 +4043,7 @@ void MainWindow::displayGroupPaths(){
                 leftMenu->getPathGroupDisplayed(), MainWindow::WidgetType::GROUP_OF_PATHS);
 
     /// updates the currentGroup displayed
-    leftMenu->getNoRobotPathCreationWidget()->setCurrentGroupName(leftMenu->getGroupsPathsWidget()->getButtonGroup()->getButtonGroup()->checkedButton()->text());
+    leftMenu->getpathCreationWidget()->setCurrentGroupName(leftMenu->getGroupsPathsWidget()->getButtonGroup()->getButtonGroup()->checkedButton()->text());
 
     /// updates the label to display the name of the group
     leftMenu->getPathGroupDisplayed()->getGroupNameLabel()->setText(leftMenu->getGroupsPathsWidget()->getButtonGroup()->getButtonGroup()->checkedButton()->text());
@@ -4397,7 +4226,7 @@ void MainWindow::modifyGroupPathsWithEnter(QString name){
 void MainWindow::doubleClickOnPathsGroup(QString checkedButton){
     leftMenu->getPathGroupDisplayed()->setPathsGroup(checkedButton);
     switchFocus(checkedButton, leftMenu->getPathGroupDisplayed(), MainWindow::WidgetType::GROUP_OF_PATHS);
-    leftMenu->getNoRobotPathCreationWidget()->setCurrentGroupName(checkedButton);
+    leftMenu->getpathCreationWidget()->setCurrentGroupName(checkedButton);
     leftMenu->getPathGroupDisplayed()->getGroupNameLabel()->setText(checkedButton);
     leftMenu->getGroupsPathsWidget()->hide();
     leftMenu->getPathGroupDisplayed()->show();
@@ -4422,23 +4251,22 @@ void MainWindow::displayPath(){
 void MainWindow::createPath(){
     qDebug() << "MainWindow::createPath called";
     /// to prevent a path to be saved with an empty name
-    leftMenu->getNoRobotPathCreationWidget()->getNameEdit()->setText("");
-    leftMenu->getNoRobotPathCreationWidget()->getSaveButton()->setEnabled(false);
+    leftMenu->getpathCreationWidget()->getNameEdit()->setText("");
+    leftMenu->getpathCreationWidget()->getSaveButton()->setEnabled(false);
 
-    switchFocus("newPath", noRobotPathCreationWidget, MainWindow::WidgetType::PATH);
+    switchFocus("newPath", pathCreationWidget, MainWindow::WidgetType::PATH);
 
     /// to clear the map of any path
-    emit resetPath(GraphicItemState::ROBOT_CREATING_PATH);
-    emit resetPath(GraphicItemState::NO_ROBOT_CREATING_PATH);
+    emit resetPath();
 
     setMessageTop(TEXT_COLOR_INFO, "The name of your path cannot be empty, fill up the corresponding field to give your path a name");
     hideAllWidgets();
-    setEnableAll(false, GraphicItemState::NO_ROBOT_CREATING_PATH, true);
-    leftMenu->getNoRobotPathCreationWidget()->show();
+    setEnableAll(false, GraphicItemState::CREATING_PATH, true);
+    leftMenu->getpathCreationWidget()->show();
 
     /// stop displaying the currently displayed path if it exists
 
-    noRobotPathCreationWidget->getPathPointList()->clear();
+    pathCreationWidget->getPathPointList()->clear();
 
     /// hides the temporary pointview
     points->getTmpPointView()->hide();
@@ -4469,7 +4297,7 @@ void MainWindow::deletePath(){
         qDebug() << "deleting path" << leftMenu->getPathGroupDisplayed()->getLastCheckedButton();
         if(!paths->getVisiblePath().compare(leftMenu->getPathGroupDisplayed()->getLastCheckedButton())){
             qDebug() << "hey i have to stop displaying this path that was destroyed";
-            emit resetPath(GraphicItemState::NO_ROBOT_CREATING_PATH);
+            emit resetPath();
         } else qDebug() << "dont have to stop displaying this path" << paths->getVisiblePath() << "because the last one checked is" << leftMenu->getPathGroupDisplayed()->getLastCheckedButton();
         paths->deletePath(lastWidgets.at(lastWidgets.size()-1).first.second, leftMenu->getPathGroupDisplayed()->getLastCheckedButton());
         serializePaths();
@@ -4488,17 +4316,15 @@ void MainWindow::deletePath(){
 void MainWindow::displayPathOnMap(const bool display){
     qDebug() << "MainWindow::displayPathOnMap called";
     /// to hide the path drawn by the robot path painter
-    emit resetPath(GraphicItemState::ROBOT_CREATING_PATH);
+    emit resetPath();
     if(display){
         bottomLayout->uncheckViewPathSelectedRobot(bottomLayout->getLastCheckedId());
         bool foundFlag = false;
-        noRobotPathPainter->setCurrentPath(paths->getPath(lastWidgets.at(lastWidgets.size()-1).first.second, leftMenu->getPathGroupDisplayed()->getLastCheckedButton(), foundFlag));
+        pathPainter->setCurrentPath(paths->getPath(lastWidgets.at(lastWidgets.size()-1).first.second, leftMenu->getPathGroupDisplayed()->getLastCheckedButton(), foundFlag));
         paths->setVisiblePath(leftMenu->getPathGroupDisplayed()->getLastCheckedButton());
-    }
-    else {
+    } else {
         paths->setVisiblePath("");
         qDebug() << "no path visible !";
-        emit resetPath(GraphicItemState::NO_ROBOT_CREATING_PATH);
     }
     /// to set the 'eye' icon appropriately
     leftMenu->getPathGroupDisplayed()->updateDisplayedPath();
@@ -4515,28 +4341,27 @@ void MainWindow::editPath(){
     const QString groupName = leftMenu->getPathGroupDisplayed()->getGroupNameLabel()->text();
 
     hideAllWidgets();
-    noRobotPathCreationWidget->show();
-    noRobotPathPainter->setOldPath(noRobotPathPainter->getCurrentPath());
+    pathCreationWidget->show();
+    pathPainter->setOldPath(pathPainter->getCurrentPath());
 
-    switchFocus(pathName, noRobotPathCreationWidget, MainWindow::WidgetType::PATH);
+    switchFocus(pathName, pathCreationWidget, MainWindow::WidgetType::PATH);
 
     /// stop displaying the currently displayed path if it exists
 
-    emit resetPathCreationWidget(GraphicItemState::ROBOT_CREATING_PATH);
-    emit resetPathCreationWidget(GraphicItemState::NO_ROBOT_CREATING_PATH);
+    emit resetPathCreationWidget();
 
-    setEnableAll(false, GraphicItemState::NO_ROBOT_CREATING_PATH, true);
+    setEnableAll(false, GraphicItemState::CREATING_PATH, true);
 
     /// to be able to know if the path name is different from the old one
     qDebug() << "setting the current path name to" << pathName;
-    noRobotPathCreationWidget->setCurrentPathName(pathName);
-    noRobotPathCreationWidget->setCurrentGroupName(groupName);
+    pathCreationWidget->setCurrentPathName(pathName);
+    pathCreationWidget->setCurrentGroupName(groupName);
 
     leftMenu->getPathGroupDisplayed()->setLastCheckedButton(pathName);
     paths->setVisiblePath(pathName);
 
     qDebug() << "will edit" <<  groupName << pathName;
-    noRobotPathCreationWidget->updatePath(paths->getPath(leftMenu->getPathGroupDisplayed()->getGroupNameLabel()->text(),
+    pathCreationWidget->updatePath(paths->getPath(leftMenu->getPathGroupDisplayed()->getGroupNameLabel()->text(),
                                                          leftMenu->getPathGroupDisplayed()->getPathButtonGroup()->getButtonGroup()->checkedButton()->text(), foundFlag));
 
     /// hides the temporary pointview
@@ -4575,15 +4400,15 @@ void MainWindow::setMessageNoRobotPath(const int code){
     switch(code){
     case 0:
         setMessageTop(TEXT_COLOR_INFO, "You cannot save your path because its name is still empty");
-        leftMenu->getNoRobotPathCreationWidget()->getSaveButton()->setEnabled(false);
+        leftMenu->getpathCreationWidget()->getSaveButton()->setEnabled(false);
     break;
     case 1:
         setMessageTop(TEXT_COLOR_INFO, "You cannot save your path because the name you chose is already taken by another path in the same group");
-        leftMenu->getNoRobotPathCreationWidget()->getSaveButton()->setEnabled(false);
+        leftMenu->getpathCreationWidget()->getSaveButton()->setEnabled(false);
     break;
     case 2:
         setMessageTop(TEXT_COLOR_INFO, "You can save your path any time you want by clicking the \"Save\" button");
-        leftMenu->getNoRobotPathCreationWidget()->getSaveButton()->setEnabled(true);
+        leftMenu->getpathCreationWidget()->getSaveButton()->setEnabled(true);
     break;
     default:
         qDebug() << "MainWindow::setMessageNoRobotPath you should not be here you probably forgot to implement the behavior for the error code" << code;
@@ -4591,40 +4416,30 @@ void MainWindow::setMessageNoRobotPath(const int code){
     }
 }
 
-void MainWindow::cancelEditNoRobotPathPointSlot(){
-    /*setEnableAll(false, GraphicItemState::NO_ROBOT_CREATING_PATH, true);
-
-
-    emit updatePathPainter();
-
-    editedPointView->setFlag(QGraphicsItem::ItemIsMovable, false);
-    editedPointView = QSharedPointer<PointView>();*/
-}
-
 void MainWindow::cancelNoRobotPathSlot(){
     qDebug() << "MainWindow::cancelNoRobotPathSlot called";
 
-    leftMenu->getPathGroupDisplayed()->setPathsGroup(noRobotPathCreationWidget->getCurrentGroupName());
+    leftMenu->getPathGroupDisplayed()->setPathsGroup(pathCreationWidget->getCurrentGroupName());
 
-    QVector<QSharedPointer<PathPoint>> oldPath = noRobotPathPainter->getOldPath();
+    QVector<QSharedPointer<PathPoint>> oldPath = pathPainter->getOldPath();
     /// we hide the points that we displayed just for the edition of the path
     for(int i = 0; i < pointViewsToDisplay.size(); i++)
         pointViewsToDisplay.at(i)->hide();
     pointViewsToDisplay.clear();
 
-    emit resetPathCreationWidget(GraphicItemState::NO_ROBOT_CREATING_PATH);
+    emit resetPathCreationWidget();
 
-    noRobotPathCreationWidget->updatePath(oldPath);
+    pathCreationWidget->updatePath(oldPath);
 
     backEvent();
 
-    noRobotPathPainter->setOldPath(oldPath);
+    pathPainter->setOldPath(oldPath);
     setEnableAll(false, GraphicItemState::NO_EVENT);
     leftMenu->setEnableReturnCloseButtons(true);
     topLayout->setEnable(true);
     bottomLayout->setEnable(true);
 
-    setTemporaryMessageTop(TEXT_COLOR_INFO, "You have cancelled the modifications of the path \"" + noRobotPathCreationWidget->getCurrentPathName() + "\"", 2500);
+    setTemporaryMessageTop(TEXT_COLOR_INFO, "You have cancelled the modifications of the path \"" + pathCreationWidget->getCurrentPathName() + "\"", 2500);
 }
 
 void MainWindow::saveNoRobotPathSlot(){
@@ -4632,18 +4447,18 @@ void MainWindow::saveNoRobotPathSlot(){
     backEvent();
 
     /// gotta update the model and serialize the paths
-    const QString groupName = noRobotPathCreationWidget->getCurrentGroupName();
-    const QString pathName = noRobotPathCreationWidget->getNameEdit()->text().simplified();
+    const QString groupName = pathCreationWidget->getCurrentGroupName();
+    const QString pathName = pathCreationWidget->getNameEdit()->text().simplified();
     qDebug() << groupName << pathName;
     paths->createPath(groupName, pathName);
-    for(int i = 0; i < noRobotPathPainter->getCurrentPath().size(); i++)
-        paths->addPathPoint(groupName, pathName, noRobotPathPainter->getCurrentPath().at(i));
+    for(int i = 0; i < pathPainter->getCurrentPath().size(); i++)
+        paths->addPathPoint(groupName, pathName, pathPainter->getCurrentPath().at(i));
 
     /// we hide the points that we displayed for the edition of the path
     for(int i = 0; i < pointViewsToDisplay.size(); i++){
         bool hidePointView(true);
-        for(int j = 0; j < noRobotPathPainter->getCurrentPath().size(); j++){
-            if(noRobotPathPainter->getCurrentPath().at(j)->getPoint() == *(pointViewsToDisplay.at(i)->getPoint())){
+        for(int j = 0; j < pathPainter->getCurrentPath().size(); j++){
+            if(pathPainter->getCurrentPath().at(j)->getPoint() == *(pointViewsToDisplay.at(i)->getPoint())){
                 hidePointView = false;
                 break;
             }
@@ -4653,8 +4468,8 @@ void MainWindow::saveNoRobotPathSlot(){
     }
     pointViewsToDisplay.clear();
 
-    noRobotPathPainter->setPathDeleted(false);
-    noRobotPathPainter->setOldPath(noRobotPathPainter->getCurrentPath());
+    pathPainter->setPathDeleted(false);
+    pathPainter->setOldPath(pathPainter->getCurrentPath());
 
     setEnableAll(false, GraphicItemState::NO_EVENT);
 
@@ -4664,13 +4479,13 @@ void MainWindow::saveNoRobotPathSlot(){
     paths->setVisiblePath(pathName);
 
     /// resets the menu so that it reflects the creation of this new path
-    leftMenu->getPathGroupDisplayed()->setPathsGroup(noRobotPathCreationWidget->getCurrentGroupName());
+    leftMenu->getPathGroupDisplayed()->setPathsGroup(pathCreationWidget->getCurrentGroupName());
 
     /// add this path to the file
     serializePaths();
 
     //editSelectedRobotWidget->setPathChanged(true);
-    //editSelectedRobotWidget->setPath(robotPathPainter->getCurrentPath());
+    //editSelectedRobotWidget->setPath(pathPainter->getCurrentPath());
     //emit updatePathPainter();
 }
 
@@ -4694,23 +4509,22 @@ void MainWindow::displayAssignedPath(QString groupName, QString pathName){
 
     paths->setVisiblePath(pathName);
     bool foundFlag(true);
-    //if(robotPathPainter->getCurrentPath().size() > 0)
-    robotPathPainter->setCurrentPath(paths->getPath(groupName, pathName, foundFlag));
+    //if(pathPainter->getCurrentPath().size() > 0)
+    pathPainter->setCurrentPath(paths->getPath(groupName, pathName, foundFlag));
     editSelectedRobotWidget->updatePathsMenu();
     assert(foundFlag);
-    robotPathCreationWidget->setCurrentGroupName(groupName);
 
-    selectedRobot->getRobot()->setPath(robotPathPainter->getCurrentPath());
+    selectedRobot->getRobot()->setPath(pathPainter->getCurrentPath());
     selectedRobot->getRobot()->setGroupPathName(editSelectedRobotWidget->getGroupPathName());
     selectedRobot->getRobot()->setPathName(editSelectedRobotWidget->getPathName());
     int id = robots->getRobotId(selectedRobot->getRobot()->getName());
     bottomLayout->updateRobot(id, selectedRobot);
-    if(robotPathPainter->getCurrentPath().size() > 0){
+    if(pathPainter->getCurrentPath().size() > 0){
         bottomLayout->getViewPathRobotBtnGroup()->button(id)->setChecked(true);
         viewPathSelectedRobot(id, true);
     }
 
-    robotPathPainter->setCurrentPath(selectedRobot->getRobot()->getPath());
+    pathPainter->setCurrentPath(selectedRobot->getRobot()->getPath());
 
     QFile robotPathFile(QString(GOBOT_PATH) + "robots_paths/" + selectedRobot->getRobot()->getName() + "_path.dat");
     if(robotPathFile.exists()){
@@ -4725,11 +4539,11 @@ void MainWindow::displayAssignedPath(QString groupName, QString pathName){
 
 
     //setTemporaryMessageTop(TEXT_COLOR_SUCCESS, "You have successfully assigned the path \"" + pathName + "\" to the robot " + selectedRobot->getRobot()->getName(), 2500);
-    //selectedRobot->getRobot()->setPath(robotPathPainter->getCurrentPath());
+    //selectedRobot->getRobot()->setPath(pathPainter->getCurrentPath());
     /*
     int id = robots->getRobotId(selectedRobot->getRobot()->getName());
     bottomLayout->updateRobot(id, selectedRobot);
-    if(robotPathPainter->getCurrentPath().size() > 0){
+    if(pathPainter->getCurrentPath().size() > 0){
         bottomLayout->getViewPathRobotBtnGroup()->button(id)->setChecked(true);
         viewPathSelectedRobot(id, true);
     }
@@ -4746,8 +4560,7 @@ void MainWindow::displayAssignedPath(QString groupName, QString pathName){
 }
 
 void MainWindow::clearMapOfPaths(){
-    emit resetPath(GraphicItemState::ROBOT_CREATING_PATH);
-    emit resetPath(GraphicItemState::NO_ROBOT_CREATING_PATH);
+    emit resetPath();
 }
 
 /**********************************************************************************************************************************/
@@ -4837,8 +4650,7 @@ void MainWindow::hideAllWidgets(){
     editSelectedRobotWidget->hide();
     createPointWidget->hide();
     leftMenu->getDisplaySelectedPoint()->hide();
-    robotPathCreationWidget->hide();
-    noRobotPathCreationWidget->hide();
+    pathCreationWidget->hide();
     leftMenu->getDisplaySelectedGroup()->hide();
     leftMenu->getGroupsPathsWidget()->hide();
     leftMenu->getDisplaySelectedPath()->hide();
@@ -4852,7 +4664,7 @@ void MainWindow::clearNewMap(){
     editedPointView = QSharedPointer<PointView>();
 
     paths->setVisiblePath("");
-    emit resetPath(GraphicItemState::NO_ROBOT_CREATING_PATH);
+    emit resetPath();
 
     /// Clear the list of points
     points->clear();

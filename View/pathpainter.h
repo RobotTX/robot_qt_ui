@@ -13,7 +13,6 @@ class MainWindow;
 #include <QSharedPointer>
 #include "Model/point.h"
 #include "Model/pathpoint.h"
-#include "Model/graphicitemstate.h"
 
 /**
  * @brief The PathPainter class
@@ -23,7 +22,7 @@ class PathPainter : public QObject, public QGraphicsPathItem{
     Q_OBJECT
 
 public:
-    PathPainter(MainWindow* const &mainWindow, const QSharedPointer<Points> _points, const GraphicItemState _state);
+    PathPainter(MainWindow* const &mainWindow, const QSharedPointer<Points> _points);
 
     /// Getters
     QVector<QSharedPointer<PathPoint>> getCurrentPath(void) const { return currentPath; }
@@ -71,10 +70,9 @@ public:
 private slots:
     /**
      * @brief resetPathSlot
-     * @param _state
      * Reset the path painter
      */
-    void resetPathSlot(GraphicItemState _state);
+    void resetPathSlot();
 
     /**
      * @brief addPathPointSlot
@@ -88,25 +86,22 @@ private slots:
     /**
      * @brief deletePathPointSlot
      * @param id
-     * @param _state
      * Delete a path point from the current path
      */
-    void deletePathPointSlot(int id, GraphicItemState _state);
+    void deletePathPointSlot(int ide);
 
     /**
      * @brief updatePathPainterSlot
-     * @param _state
      * @param savePath
      * Redraw the whole path
      */
-    void updatePathPainterSlot(GraphicItemState _state, const bool savePath);
+    void updatePathPainterSlot(const bool savePath);
 
     /**
      * @brief updatePathPainterPointViewSlot
-     * @param _state
      * Only redraw the pointViews of the path
      */
-    void updatePathPainterPointViewSlot(GraphicItemState _state);
+    void updatePathPainterPointViewSlot();
 
     /**
      * @brief orderPathPointChangedSlot
@@ -146,8 +141,6 @@ private:
     QVector<QSharedPointer<PathPoint>> oldPath;
     MainWindow* mainWindow;
     bool pathDeleted;
-    /// to hold whether one instance is drawing paths related to robots or not
-    const GraphicItemState state;
 };
 
 #endif // PATHPAINTER_H

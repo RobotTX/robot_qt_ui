@@ -21,8 +21,8 @@
 #include "View/customlineedit.h"
 #include "View/stylesettings.h"
 
-PathCreationWidget::PathCreationWidget(QWidget* parent, const QSharedPointer<Points> &_points, const QSharedPointer<Paths>& _paths, const bool associatedToRobot, const GraphicItemState _state):
-    QWidget(parent), points(_points), paths(_paths), currentGroupName(""), currentPathName(""), state(_state)
+PathCreationWidget::PathCreationWidget(QWidget* parent, const QSharedPointer<Points> &_points, const QSharedPointer<Paths>& _paths, const bool associatedToRobot):
+    QWidget(parent), points(_points), paths(_paths), currentGroupName(""), currentPathName("")
 {
     layout = new QVBoxLayout(this);
     QVBoxLayout* topLayout = new QVBoxLayout();
@@ -92,7 +92,7 @@ PathCreationWidget::PathCreationWidget(QWidget* parent, const QSharedPointer<Poi
 
     connect(cleanBtn, SIGNAL(clicked()), this, SLOT(resetWidgetRelaySlot()));
 
-    connect(this, SIGNAL(resetWidgetSignal(GraphicItemState)), this, SLOT(resetWidget(GraphicItemState)));
+    connect(this, SIGNAL(resetWidgetSignal()), this, SLOT(resetWidget()));
 
     hide();
     layout->setAlignment(Qt::AlignTop);
@@ -101,12 +101,12 @@ PathCreationWidget::PathCreationWidget(QWidget* parent, const QSharedPointer<Poi
 }
 
 void PathCreationWidget::updatePath(const QVector<QSharedPointer<PathPoint>>& _path){
-    qDebug() << "PathCreationWidget::updatePath called with state" << state << "pathsize" << _path.size();
+    qDebug() << "PathCreationWidget::updatePath called pathsize :" << _path.size();
     pathPointsList->clear();
     for(int i = 0; i < _path.size(); i++){
         addPathPointSlot(_path.at(i)->getPoint().getName(),
                          _path.at(i)->getPoint().getPosition().getX(),
-                         _path.at(i)->getPoint().getPosition().getY(), state,
+                         _path.at(i)->getPoint().getPosition().getY(),
                          _path.at(i)->getAction(),
                          _path.at(i)->getWaitTime());
     }
@@ -144,21 +144,18 @@ void PathCreationWidget::updatePointsList(void){
     }
 }
 
-void PathCreationWidget::resetWidget(GraphicItemState _state){
-    if(state == _state){
+void PathCreationWidget::resetWidget(){
+    actionButtons->getMinusButton()->setEnabled(false);
+    actionButtons->getEditButton()->setEnabled(false);
 
-        actionButtons->getMinusButton()->setEnabled(false);
-        actionButtons->getEditButton()->setEnabled(false);
+    pathPointsList->clear();
+    checkState = NO_STATE;
+    nameEdit->setText("");
+    currentGroupName = "";
+    currentPathName = "";
 
-        pathPointsList->clear();
-        checkState = NO_STATE;
-        nameEdit->setText("");
-        currentGroupName = "";
-        currentPathName = "";
-
-        updatePointsList();
-        emit resetPath(state);
-    }
+    updatePointsList();
+    emit resetPath();
 }
 
 void PathCreationWidget::setCurrentPathName(const QString name){
@@ -213,7 +210,7 @@ void PathCreationWidget::savePathClicked(void){
         emit setMessage(TEXT_COLOR_DANGER, msg);
     } else {
         qDebug() << "PathCreationWidget::savePathClicked No error, ready to save";
-        emit savePath(state);
+        emit savePath();
     }
 }
 
@@ -234,7 +231,7 @@ void PathCreationWidget::pointClicked(QAction *action){
     Position pos = points->findPoint(action->text())->getPosition();
     if(checkState == CREATE){
        qDebug() << "PathCreationWidget::pointClicked called to create a new path point" << action->text();
-       addPathPointSlot(action->text(), pos.getX(), pos.getY(), state);
+       addPathPointSlot(action->text(), pos.getX(), pos.getY());
     } else if(checkState == EDIT){
        qDebug() << "PathCreationWidget::pointClicked called to edit a path point into" << action->text();
        editPathPoint(action->text(), pos.getX(), pos.getY());
@@ -242,48 +239,45 @@ void PathCreationWidget::pointClicked(QAction *action){
         qDebug() << "PathCreationWidget::pointClicked called while in NO_STATE" << action->text();
 }
 
-void PathCreationWidget::addPathPointSlot(QString name, double x, double y, GraphicItemState _state, PathPoint::Action action, int waitTime){
-    if(state == _state){
-        /// If we add the same point as the previous one, we return and doesn't add the point (to avoid duplication)
-        if(pathPointsList->count() > 0){
-            PathPointCreationWidget* tmpPathPoint = static_cast<PathPointCreationWidget*> (pathPointsList->itemWidget(pathPointsList->item(pathPointsList->count()-1)));
-            Point helperPoint = Point(name, x, y);
-            if(helperPoint.comparePos(tmpPathPoint->getPosX(), tmpPathPoint->getPosY())){
-                qDebug() << "same point";
-                return;
-            }
+void PathCreationWidget::addPathPointSlot(QString name, double x, double y, PathPoint::Action action, int waitTime){
+    /// If we add the same point as the previous one, we return and doesn't add the point (to avoid duplication)
+    if(pathPointsList->count() > 0){
+        PathPointCreationWidget* tmpPathPoint = static_cast<PathPointCreationWidget*> (pathPointsList->itemWidget(pathPointsList->item(pathPointsList->count()-1)));
+        Point helperPoint = Point(name, x, y);
+        if(helperPoint.comparePos(tmpPathPoint->getPosX(), tmpPathPoint->getPosY())){
+            qDebug() << "same point";
+            return;
         }
-
-        PathPointCreationWidget* pathPoint = new PathPointCreationWidget(pathPointsList->count(), name, x, y, this);
-        pathPoint->setActionWidget(action, waitTime);
-        connect(pathPoint, SIGNAL(removePathPoint(PathPointCreationWidget*)), this, SLOT(deletePathPointWithCross(PathPointCreationWidget*)));
-        connect(pathPoint, SIGNAL(saveEditSignal(PathPointCreationWidget*)), this, SLOT(saveEditSlot(PathPointCreationWidget*)));
-        connect(pathPoint, SIGNAL(cancelEditSignal(PathPointCreationWidget*)), this, SLOT(cancelEditSlot(PathPointCreationWidget*)));
-        connect(pathPoint, SIGNAL(actionChanged(int, int, QString)), this, SLOT(actionChangedSlot(int, int, QString)));
-
-        /// We add the path point widget to the list
-        QListWidgetItem* listWidgetItem = new QListWidgetItem(pathPointsList);
-        listWidgetItem->setSizeHint(QSize(listWidgetItem->sizeHint().width(), WIDGET_HEIGHT));
-        listWidgetItem->setBackgroundColor(QColor(255, 255, 255, 10));
-
-        pathPointsList->addItem(listWidgetItem);
-        pathPointsList->setItemWidget(listWidgetItem, pathPoint);
-
-        if(pathPointsList->count() > 1)
-            static_cast<PathPointCreationWidget*> (pathPointsList->itemWidget(pathPointsList->item(pathPointsList->count() - 2)))->displayActionWidget(true);
-
-        emit addPathPoint(name, x, y, static_cast<int>(action), waitTime);
-        checkState = NO_STATE;
     }
+
+    PathPointCreationWidget* pathPoint = new PathPointCreationWidget(pathPointsList->count(), name, x, y, this);
+    pathPoint->setActionWidget(action, waitTime);
+    connect(pathPoint, SIGNAL(removePathPoint(PathPointCreationWidget*)), this, SLOT(deletePathPointWithCross(PathPointCreationWidget*)));
+    connect(pathPoint, SIGNAL(saveEditSignal(PathPointCreationWidget*)), this, SLOT(saveEditSlot(PathPointCreationWidget*)));
+    connect(pathPoint, SIGNAL(cancelEditSignal(PathPointCreationWidget*)), this, SLOT(cancelEditSlot(PathPointCreationWidget*)));
+    connect(pathPoint, SIGNAL(actionChanged(int, int, QString)), this, SLOT(actionChangedSlot(int, int, QString)));
+
+    /// We add the path point widget to the list
+    QListWidgetItem* listWidgetItem = new QListWidgetItem(pathPointsList);
+    listWidgetItem->setSizeHint(QSize(listWidgetItem->sizeHint().width(), WIDGET_HEIGHT));
+    listWidgetItem->setBackgroundColor(QColor(255, 255, 255, 10));
+
+    pathPointsList->addItem(listWidgetItem);
+    pathPointsList->setItemWidget(listWidgetItem, pathPoint);
+
+    if(pathPointsList->count() > 1)
+        static_cast<PathPointCreationWidget*> (pathPointsList->itemWidget(pathPointsList->item(pathPointsList->count() - 2)))->displayActionWidget(true);
+
+    emit addPathPoint(name, x, y, static_cast<int>(action), waitTime);
+    checkState = NO_STATE;
 }
 
 void PathCreationWidget::deletePathPointSlot(){
-    //qDebug() << "PathCreationWidget::deletePathPointSlot called with state" << state;
 
     /// Delete the item and reset the widget
     deleteItem(pathPointsList->currentItem());
     if (pathPointsList->count() == 0)
-        resetWidget(state);
+        resetWidget();
 
 }
 void PathCreationWidget::deleteItem(QListWidgetItem* item){
@@ -302,7 +296,7 @@ void PathCreationWidget::deleteItem(QListWidgetItem* item){
 
             delete item;
             pathPointsList->refresh();
-            emit deletePathPoint(id, state);
+            emit deletePathPoint(id);
         }
         break;
         case QMessageBox::Cancel:
@@ -341,7 +335,7 @@ void PathCreationWidget::editPathPointSlot(){
 
 
             emit editTmpPathPoint(id, pointView->getPoint()->getName(),
-                                  pointView->getPoint()->getPosition().getX(), pointView->getPoint()->getPosition().getY(), state);
+                                  pointView->getPoint()->getPosition().getX(), pointView->getPoint()->getPosition().getY());
         } else {
             qDebug() << "PathCreationWidget::editPathPointSlot This is a permanent point";
             clicked();
@@ -376,7 +370,7 @@ void PathCreationWidget::saveEditSlot(PathPointCreationWidget* pathPointCreation
 
     checkState = NO_STATE;
 
-    emit saveEditPathPoint(state);
+    emit saveEditPathPoint();
 }
 
 void PathCreationWidget::cancelEditSlot(PathPointCreationWidget* pathPointCreationWidget){
@@ -398,7 +392,7 @@ void PathCreationWidget::cancelEditSlot(PathPointCreationWidget* pathPointCreati
 
     checkState = NO_STATE;
 
-    emit cancelEditPathPoint(state);
+    emit cancelEditPathPoint();
 }
 
 void PathCreationWidget::actionChangedSlot(int id, int action, QString waitTime){
@@ -470,7 +464,7 @@ void PathCreationWidget::keyPressEvent(QKeyEvent *event){
 
 void PathCreationWidget::resetWidgetRelaySlot(){
     qDebug() << "resetwidgetsignal emitted";
-    emit resetWidgetSignal(state);
+    emit resetWidgetSignal();
 }
 
 void PathCreationWidget::deletePathPointWithCross(PathPointCreationWidget *pathPointCreationWidget){
@@ -478,5 +472,5 @@ void PathCreationWidget::deletePathPointWithCross(PathPointCreationWidget *pathP
     /// Delete the item and reset the widget
     deleteItem(pathPointsList->item(pathPointCreationWidget->getId()));
     if(pathPointsList->count() == 0)
-        resetWidget(state);
+        resetWidget();
 }

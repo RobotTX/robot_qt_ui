@@ -40,8 +40,8 @@ class QMoveEvent;
 #include <QSettings>
 
 
-//#define GOBOT_PATH "/home/m-a/Documents/QtProject/gobot-software/"
-#define GOBOT_PATH "/home/joan/Gobot/gobot-software/"
+#define GOBOT_PATH "/home/m-a/Documents/QtProject/gobot-software/"
+//#define GOBOT_PATH "/home/joan/Gobot/gobot-software/"
 
 #define XML_FILE "points.xml"
 #define ROBOTS_NAME_FILE "robotsName.dat"
@@ -103,12 +103,12 @@ signals:
     void sendCommand(QString);
     void nameChanged(QString, QString);
     void changeCmdThreadRobotName(QString);
-    void addPathPoint(QString name, double x, double y, GraphicItemState);
+    void addPathPoint(QString name, double x, double y);
     void addNoRobotPathPoint(QString name, double x, double y);
-    void updatePathPainter(GraphicItemState, bool);
-    void updatePathPainterPointView(GraphicItemState);
-    void resetPath(GraphicItemState);
-    void resetPathCreationWidget(GraphicItemState);
+    void updatePathPainter(bool);
+    void updatePathPainterPointView();
+    void resetPath();
+    void resetPathCreationWidget();
 
 private slots:
     void updateRobot(const QString ipAddress, const float posX, const float posY, const float ori);
@@ -128,7 +128,6 @@ private slots:
     void minusGroupBtnEvent();
     void editGroupBtnEvent();
     void openLeftMenu();
-    void addPathSelecRobotBtnEvent();
     void backRobotBtnEvent();
     void editRobotBtnEvent();
     void checkRobotBtnEventMenu();
@@ -150,18 +149,17 @@ private slots:
     void displayPointEvent(QString name, double x, double y);
     void askForDeleteDefaultGroupPointConfirmation(const QString index);
     void displayGroupMapEvent(void);
-    void savePathSlot(GraphicItemState state);
-    void cancelPathSlot();
+    void savePathSlot();
     void addPointPathSlot(QString name, double x, double y, GraphicItemState state);
     void displayPointsInGroup(void);
     void removePointFromInformationMenu(void);
     void displayPointMapEvent(void);
     void editPointButtonEvent();
-    void editTmpPathPointSlot(int id, QString name, double x, double y, GraphicItemState state);
+    void editTmpPathPointSlot(int id, QString name, double x, double y);
     void editPointFromGroupMenu(void);
-    void saveEditPathPointSlot(GraphicItemState state);
-    void cancelEditPathPointSlot(GraphicItemState state);
-    void moveEditedPathPointSlot(GraphicItemState state);
+    void saveEditPathPointSlot();
+    void cancelEditPathPointSlot();
+    void moveEditedPathPointSlot();
     void displayPointInfoFromGroupMenu(void);
     void updatePoint(void);
     void updateCoordinates(double x, double y);
@@ -178,7 +176,7 @@ private slots:
     void enableReturnAndCloseButtons(void);
     void doubleClickOnRobot(QString checkedId);
     void setMessageCreationPath(QString message);
-    void updateEditedPathPoint(double x, double y, GraphicItemState state);
+    void updateEditedPathPoint(double x, double y);
     void centerMap();
     void setMessageCreationPoint(QString type, CreatePointWidget::Error error);
     void choosePointName(QString message);
@@ -233,7 +231,6 @@ private slots:
     void editPath();
     void doubleClickOnPath(QString pathName);
     void setMessageNoRobotPath(const int code);
-    void cancelEditNoRobotPathPointSlot();
     void cancelNoRobotPathSlot();
     void saveNoRobotPathSlot();
     void setMessageModifGroupPaths(int code);
@@ -266,8 +263,7 @@ private:
     QSharedPointer<Points> points;
     QSharedPointer<PointView> editedPointView;
     QVector<QSharedPointer<PointView>> pointViewsToDisplay;
-    PathPainter* robotPathPainter;
-    PathPainter* noRobotPathPainter;
+    PathPainter* pathPainter;
 
     TopLayout* topLayout;
     QMessageBox msgBox;
@@ -283,7 +279,7 @@ private:
     LeftMenu* leftMenu;
     BottomLayout* bottomLayout;
     PathCreationWidget* robotPathCreationWidget;
-    PathCreationWidget* noRobotPathCreationWidget;
+    PathCreationWidget* pathCreationWidget;
 
     QPair<QPointF, float> mapState;
 

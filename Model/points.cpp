@@ -150,7 +150,7 @@ QSharedPointer<PointView> Points::createPoint(const QString pointName, const dou
 
     connect(&(*pointView), SIGNAL(pointLeftClicked(QString, double, double)), parent, SLOT(displayPointEvent(QString, double, double)));
     connect(&(*pointView), SIGNAL(editedPointPositionChanged(double, double)), parent, SLOT(updateCoordinates(double, double)));
-    connect(&(*pointView), SIGNAL(moveEditedPathPoint(GraphicItemState)), parent, SLOT(moveEditedPathPointSlot(GraphicItemState)));
+    connect(&(*pointView), SIGNAL(moveEditedPathPoint()), parent, SLOT(moveEditedPathPointSlot()));
     connect(&(*pointView), SIGNAL(addPointPath(QString, double, double, GraphicItemState)), parent, SLOT(addPointPathSlot(QString, double, double, GraphicItemState)));
 
     connect(&(*pointView), SIGNAL(updatePathPainterPointView()), parent, SLOT(updatePathPainterPointViewSlot()));

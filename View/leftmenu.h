@@ -36,7 +36,7 @@ class LeftMenu: public QWidget{
     Q_OBJECT
 public:
     LeftMenu(MainWindow* _mainWindow, const QSharedPointer<Points> &_points, QSharedPointer<Paths> const& _paths, QSharedPointer<Robots> const& robots,
-             QSharedPointer<Map> const& _map, const PathPainter* robotPathPainter, const PathPainter* noRobotPathPainter);
+             QSharedPointer<Map> const& _map, const PathPainter* pathPainter);
 
     /// Getters
     LeftMenuWidget* getLeftMenuWidget(void) const {return leftMenuWidget;}
@@ -48,14 +48,13 @@ public:
     CreatePointWidget* getEditSelectedPointWidget(void) const {return createPointWidget;}
     DisplaySelectedPoint* getDisplaySelectedPoint(void) const { return displaySelectedPoint; }
     DisplaySelectedGroup* getDisplaySelectedGroup(void) const { return displaySelectedGroup; }
-    PathCreationWidget* getRobotPathCreationWidget(void) const { return robotPathCreationWidget; }
     CustomPushButton* getReturnButton(void) const { return returnButton; }
     CustomPushButton* getCloseButton(void) const { return closeBtn; }
     QWidget* getLastWidget() const {return lastWidget; }
     DisplaySelectedPath* getDisplaySelectedPath(void) const { return displaySelectedPath; }
     GroupsPathsWidget* getGroupsPathsWidget(void) const { return groupsPathsWidget; }
     DisplayPathGroup* getPathGroupDisplayed(void) const { return pathGroup; }
-    PathCreationWidget* getNoRobotPathCreationWidget(void) const { return noRobotPathCreationWidget; }
+    PathCreationWidget* getpathCreationWidget(void) const { return pathCreationWidget; }
 
     /**
      * @brief showBackButton
@@ -97,7 +96,6 @@ private:
     CreatePointWidget* createPointWidget;
     DisplaySelectedPoint* displaySelectedPoint;
     DisplaySelectedGroup* displaySelectedGroup;
-    PathCreationWidget* robotPathCreationWidget;
     CustomPushButton * returnButton;
     MainWindow* mainWindow;
     QSharedPointer<Points> points;
@@ -105,7 +103,7 @@ private:
     DisplaySelectedPath* displaySelectedPath;
     DisplayPathGroup* pathGroup;
     QString lastCheckedId;
-    PathCreationWidget* noRobotPathCreationWidget;
+    PathCreationWidget* pathCreationWidget;
 };
 
 #endif // LEFTMENU_H

@@ -9,30 +9,27 @@
 #include <QPixmap>
 #include "Controller/mainwindow.h"
 
-PathPainter::PathPainter(MainWindow* const &mainWindow, const QSharedPointer<Points> _points, const GraphicItemState _state)
-    : QGraphicsPathItem(mainWindow->getMapView()), points(_points), mainWindow(mainWindow), pathDeleted(false), state(_state)
+PathPainter::PathPainter(MainWindow* const &mainWindow, const QSharedPointer<Points> _points)
+    : QGraphicsPathItem(mainWindow->getMapView()), points(_points), mainWindow(mainWindow), pathDeleted(false)
 {
     setPen(QPen(Qt::red));
 
     connect(this, SIGNAL(updatePoints(int, QString)), mainWindow, SLOT(replacePoint(int, QString)));
 }
 
-void PathPainter::resetPathSlot(GraphicItemState _state){
-    if(state == _state){
-        //qDebug() << "PathPainter::resetPathSlot called with state !!" << state;
-        path = QPainterPath();
-        points->setPixmapAll(PointView::PixmapType::NORMAL, mainWindow->getSelectedRobot());
+void PathPainter::resetPathSlot(){
+    path = QPainterPath();
+    points->setPixmapAll(PointView::PixmapType::NORMAL, mainWindow->getSelectedRobot());
 
-        if(QSharedPointer<QVector<QSharedPointer<PointView>>> group = points->getGroups()->value(PATH_GROUP_NAME)){
-            for(int i = 0; i < group->size(); i++){
-                group->at(i)->deleteLater();
-            }
-            group->clear();
+    if(QSharedPointer<QVector<QSharedPointer<PointView>>> group = points->getGroups()->value(PATH_GROUP_NAME)){
+        for(int i = 0; i < group->size(); i++){
+            group->at(i)->deleteLater();
         }
-
-        currentPath.clear();
-        setPath(path);
+        group->clear();
     }
+
+    currentPath.clear();
+    setPath(path);
 }
 
 void PathPainter::displayPath(void){
@@ -79,7 +76,7 @@ void PathPainter::addPathPointSlot(QString name, double x, double y, int action,
         currentPath.push_back(QSharedPointer<PathPoint>(new PathPoint(point, static_cast<PathPoint::Action>(action), waitTime)));
 
         /// Updates the path painter
-        updatePathPainterSlot(state, false);
+        updatePathPainterSlot(false);
     }
 }
 
@@ -107,7 +104,7 @@ void PathPainter::orderPathPointChangedSlot(int from, int to){
 
     updatePathPainterName();
     /// Update the path painter
-    updatePathPainterSlot(state, false);
+    updatePathPainterSlot(false);
 }
 
 void PathPainter::updatePathPainterName(void){
@@ -123,16 +120,14 @@ void PathPainter::updatePathPainterName(void){
 }
 
 
-void PathPainter::deletePathPointSlot(int id, GraphicItemState _state){
+void PathPainter::deletePathPointSlot(int id){
     //qDebug() << "PathPainter::deletePathPointSlot called with id" << id << "current path size" << currentPath.size();
-    if(state == _state){
-        /// Remove the item from the model
-        currentPath.remove(id);
-        points->getGroups()->value(PATH_GROUP_NAME)->remove(id);
+    /// Remove the item from the model
+    currentPath.remove(id);
+    points->getGroups()->value(PATH_GROUP_NAME)->remove(id);
 
-        /// Update the path painter
-        updatePathPainterSlot(state, false);
-    }
+    /// Update the path painter
+    updatePathPainterSlot(false);
 }
 
 void PathPainter::editPathPointSlot(int id, QString name, double x, double y){
@@ -161,7 +156,7 @@ void PathPainter::editPathPointSlot(int id, QString name, double x, double y){
         qDebug() << "PathPainter::editPathPointSlot editing a tmpPoint";
 
     /// Update the path painter
-    updatePathPainterSlot(state, false);
+    updatePathPainterSlot(false);
 }
 
 void PathPainter::actionChangedSlot(int id, int action, QString waitTimeStr){
@@ -180,95 +175,88 @@ void PathPainter::updateCurrentPath(void){
     displayPath();
 }
 
-void PathPainter::updatePathPainterSlot(GraphicItemState _state, const bool savePath /* to deal with pv selected after save */){
-    /// we only update if the state given as parameter is the same as ours (the signal is intended for us)
-    if(state == _state){
-        //qDebug() << "PathPainter::updatePathPainter called" << state;
-        points->setPixmapAll(PointView::PixmapType::NORMAL, mainWindow->getSelectedRobot());
-        QSharedPointer<QVector<QSharedPointer<PointView>>> group = points->getGroups()->value(PATH_GROUP_NAME);
+void PathPainter::updatePathPainterSlot(const bool savePath /* to deal with pv selected after save */){
+    points->setPixmapAll(PointView::PixmapType::NORMAL, mainWindow->getSelectedRobot());
+    QSharedPointer<QVector<QSharedPointer<PointView>>> group = points->getGroups()->value(PATH_GROUP_NAME);
 
-        QSharedPointer<PointView> startPointView(0);
-        QSharedPointer<PointView> endPointView(0);
-        QSharedPointer<PointView> currentPointView(0);
+    QSharedPointer<PointView> startPointView(0);
+    QSharedPointer<PointView> endPointView(0);
+    QSharedPointer<PointView> currentPointView(0);
 
-        if(group && group->size() > 0){
-            for(int i = 0; i < group->size(); i++){
-                currentPointView = group->at(i);
-                //qDebug() << "current pv" << currentPointView->getPoint()->getName() << currentPointView->getType();
-                QPointF pointCoord = QPointF(currentPointView->getPoint()->getPosition().getX(),
-                                             currentPointView->getPoint()->getPosition().getY());
+    if(group && group->size() > 0){
+        for(int i = 0; i < group->size(); i++){
+            currentPointView = group->at(i);
+            //qDebug() << "current pv" << currentPointView->getPoint()->getName() << currentPointView->getType();
+            QPointF pointCoord = QPointF(currentPointView->getPoint()->getPosition().getX(),
+                                         currentPointView->getPoint()->getPosition().getY());
 
-                /// TODO if the original point is displaying a home => display home else no display home
-                /// ( changer type ? home -> path et path -> home ? )
+            /// TODO if the original point is displaying a home => display home else no display home
+            /// ( changer type ? home -> path et path -> home ? )
 
-                if(i == 0){
-                    path = QPainterPath(pointCoord);
-                    startPointView = currentPointView;
-                } else {
-                    path.lineTo(pointCoord);
-                    if(currentPointView->getType() != PointView::PixmapType::SELECTED || savePath)
-                        currentPointView->setPixmap(PointView::PixmapType::MID);
-                }
-
-                if(i == group->size()-1)
-                    endPointView = currentPointView;
-            }
-
-            setPath(path);
-
-            if(*(startPointView->getPoint()) == *(endPointView->getPoint())){
-                if(startPointView->getType() != PointView::PixmapType::SELECTED || savePath)
-                    startPointView->setPixmap(PointView::PixmapType::START_STOP);
-
+            if(i == 0){
+                path = QPainterPath(pointCoord);
+                startPointView = currentPointView;
             } else {
-                if(startPointView->getType() != PointView::PixmapType::SELECTED || savePath)
-                    startPointView->setPixmap(PointView::PixmapType::START);
-
-                if(endPointView->getType() != PointView::PixmapType::SELECTED || savePath)
-                    endPointView->setPixmap(PointView::PixmapType::STOP);
+                path.lineTo(pointCoord);
+                if(currentPointView->getType() != PointView::PixmapType::SELECTED || savePath)
+                    currentPointView->setPixmap(PointView::PixmapType::MID);
             }
-        } else {
-            qDebug() << "resetting with state" << state;
-            resetPathSlot(_state);
+
+            if(i == group->size()-1)
+                endPointView = currentPointView;
         }
-        displayPath();
+
+        setPath(path);
+
+        if(*(startPointView->getPoint()) == *(endPointView->getPoint())){
+            if(startPointView->getType() != PointView::PixmapType::SELECTED || savePath)
+                startPointView->setPixmap(PointView::PixmapType::START_STOP);
+
+        } else {
+            if(startPointView->getType() != PointView::PixmapType::SELECTED || savePath)
+                startPointView->setPixmap(PointView::PixmapType::START);
+
+            if(endPointView->getType() != PointView::PixmapType::SELECTED || savePath)
+                endPointView->setPixmap(PointView::PixmapType::STOP);
+        }
+    } else {
+        resetPathSlot();
     }
+    displayPath();
 }
 
-void PathPainter::updatePathPainterPointViewSlot(GraphicItemState _state){
-    if(state == _state){
-        //qDebug() << "PathPainter::updatePathPainterPointViewSlot called";
-        QSharedPointer<QVector<QSharedPointer<PointView>>> group = points->getGroups()->value(PATH_GROUP_NAME);
+void PathPainter::updatePathPainterPointViewSlot(){
+    //qDebug() << "PathPainter::updatePathPainterPointViewSlot called";
+    QSharedPointer<QVector<QSharedPointer<PointView>>> group = points->getGroups()->value(PATH_GROUP_NAME);
 
-        QSharedPointer<PointView> startPointView(0);
-        QSharedPointer<PointView> endPointView(0);
-        QSharedPointer<PointView> currentPointView(0);
+    QSharedPointer<PointView> startPointView(0);
+    QSharedPointer<PointView> endPointView(0);
+    QSharedPointer<PointView> currentPointView(0);
 
-        if(group && group->size() > 0){
-            for(int i = 0; i < group->size(); i++){
-                currentPointView = group->at(i);
+    if(group && group->size() > 0){
+        for(int i = 0; i < group->size(); i++){
+            currentPointView = group->at(i);
 
-                if(i == 0){
-                    startPointView = currentPointView;
-                } else {
-                    if(currentPointView->getType() != PointView::PixmapType::SELECTED)
-                        currentPointView->setPixmap(PointView::PixmapType::MID);
-                }
-
-                if(i == group->size()-1)
-                    endPointView = currentPointView;
-            }
-
-            if(*(startPointView->getPoint()) == *(endPointView->getPoint())){
-                if(startPointView->getType() != PointView::PixmapType::SELECTED)
-                    startPointView->setPixmap(PointView::PixmapType::START_STOP);
+            if(i == 0){
+                startPointView = currentPointView;
             } else {
-                if(startPointView->getType() != PointView::PixmapType::SELECTED)
-                    startPointView->setPixmap(PointView::PixmapType::START);
-
-                if(endPointView->getType() != PointView::PixmapType::SELECTED)
-                    endPointView->setPixmap(PointView::PixmapType::STOP);
+                if(currentPointView->getType() != PointView::PixmapType::SELECTED)
+                    currentPointView->setPixmap(PointView::PixmapType::MID);
             }
+
+            if(i == group->size()-1)
+                endPointView = currentPointView;
+        }
+
+        if(*(startPointView->getPoint()) == *(endPointView->getPoint())){
+            if(startPointView->getType() != PointView::PixmapType::SELECTED)
+                startPointView->setPixmap(PointView::PixmapType::START_STOP);
+        } else {
+            if(startPointView->getType() != PointView::PixmapType::SELECTED)
+                startPointView->setPixmap(PointView::PixmapType::START);
+
+            if(endPointView->getType() != PointView::PixmapType::SELECTED)
+                endPointView->setPixmap(PointView::PixmapType::STOP);
         }
     }
 }
@@ -291,7 +279,7 @@ int PathPainter::nbUsedPointView(QString name, double x, double y){
 }
 
 void PathPainter::setCurrentPath(const QVector<QSharedPointer<PathPoint>>& _currentPath){
-    resetPathSlot(state);
+    resetPathSlot();
     for(int i = 0; i < _currentPath.size(); i++){
         Point point = _currentPath.at(i)->getPoint();
         addPathPointSlot(point.getName(), point.getPosition().getX(), point.getPosition().getY(), _currentPath.at(i)->getAction(), _currentPath.at(i)->getWaitTime());

@@ -33,7 +33,7 @@
 #include "View/pathbuttongroup.h"
 
 LeftMenu::LeftMenu(MainWindow* _mainWindow, QSharedPointer<Points> const& _points, QSharedPointer<Paths> const& _paths,
-                   const QSharedPointer<Robots> &robots, const QSharedPointer<Map> &_map, const PathPainter *robotPathPainter, const PathPainter *noRobotPathPainter)
+                   const QSharedPointer<Robots> &robots, const QSharedPointer<Map> &_map, const PathPainter *pathPainter)
     : QWidget(_mainWindow), mainWindow(_mainWindow), points(_points), paths(_paths), lastCheckedId("s"){
 
     QVBoxLayout* leftLayout  = new QVBoxLayout();
@@ -109,23 +109,10 @@ LeftMenu::LeftMenu(MainWindow* _mainWindow, QSharedPointer<Points> const& _point
     leftLayout->addWidget(createPointWidget);
     connect(createPointWidget, SIGNAL(pointSaved(QString, double, double, QString)), mainWindow, SLOT(pointSavedEvent(QString, double, double, QString)));
 
-    /// Menu which displays the widget for the creation of a path for a robot
-    robotPathCreationWidget = new PathCreationWidget(this, _points, paths, true, GraphicItemState::ROBOT_CREATING_PATH);
-    robotPathCreationWidget->hide();
-    leftLayout->addWidget(robotPathCreationWidget);
-
     /// Menu which display the informations of a path
     displaySelectedPath = new DisplaySelectedPath(this, mainWindow, paths);
     displaySelectedPath->hide();
     leftLayout->addWidget(displaySelectedPath);
-
-    connect(robotPathCreationWidget, SIGNAL(addPathPoint(QString, double, double, int, int)), robotPathPainter, SLOT(addPathPointSlot(QString, double, double, int, int)));
-    connect(robotPathCreationWidget, SIGNAL(deletePathPoint(int, GraphicItemState)), robotPathPainter, SLOT(deletePathPointSlot(int, GraphicItemState)));
-    connect(robotPathCreationWidget, SIGNAL(orderPathPointChanged(int, int)), robotPathPainter, SLOT(orderPathPointChangedSlot(int, int)));
-    connect(robotPathCreationWidget, SIGNAL(resetPath(GraphicItemState)), robotPathPainter, SLOT(resetPathSlot(GraphicItemState)));
-    connect(robotPathCreationWidget, SIGNAL(setMessage(QString, QString)), mainWindow, SLOT(setMessageTop(QString, QString)));
-    connect(robotPathCreationWidget, SIGNAL(actionChanged(int, int, QString)), robotPathPainter, SLOT(actionChangedSlot(int, int, QString)));
-    connect(robotPathCreationWidget, SIGNAL(editPathPoint(int, QString, double, double)), robotPathPainter, SLOT(editPathPointSlot(int, QString, double, double)));
 
     connect(displaySelectedPoint->getActionButtons()->getMinusButton(), SIGNAL(clicked(bool)), mainWindow, SLOT(removePointFromInformationMenu()));
     connect(displaySelectedPoint->getActionButtons()->getMapButton(), SIGNAL(clicked(bool)), mainWindow, SLOT(displayPointMapEvent()));
@@ -172,17 +159,17 @@ LeftMenu::LeftMenu(MainWindow* _mainWindow, QSharedPointer<Points> const& _point
 
     connect(pathGroup->getPathButtonGroup()->getButtonGroup(), SIGNAL(buttonToggled(int, bool)), pathGroup, SLOT(resetMapButton()));
 
-    noRobotPathCreationWidget = new PathCreationWidget(this, points, paths, false, GraphicItemState::NO_ROBOT_CREATING_PATH);
-    connect(noRobotPathCreationWidget, SIGNAL(addPathPoint(QString, double, double, int, int)), noRobotPathPainter, SLOT(addPathPointSlot(QString, double, double, int, int)));
-    connect(noRobotPathCreationWidget, SIGNAL(deletePathPoint(int, GraphicItemState)), noRobotPathPainter, SLOT(deletePathPointSlot(int, GraphicItemState)));
-    connect(noRobotPathCreationWidget, SIGNAL(orderPathPointChanged(int, int)), noRobotPathPainter, SLOT(orderPathPointChangedSlot(int, int)));
-    connect(noRobotPathCreationWidget, SIGNAL(resetPath(GraphicItemState)), noRobotPathPainter, SLOT(resetPathSlot(GraphicItemState)));
-    connect(noRobotPathCreationWidget, SIGNAL(setMessage(QString, QString)), mainWindow, SLOT(setMessageTop(QString, QString)));
-    connect(noRobotPathCreationWidget, SIGNAL(actionChanged(int, int, QString)), noRobotPathPainter, SLOT(actionChangedSlot(int, int, QString)));
-    connect(noRobotPathCreationWidget, SIGNAL(editPathPoint(int, QString, double, double)), noRobotPathPainter, SLOT(editPathPointSlot(int, QString, double, double)));
+    pathCreationWidget = new PathCreationWidget(this, points, paths, false);
+    connect(pathCreationWidget, SIGNAL(addPathPoint(QString, double, double, int, int)), pathPainter, SLOT(addPathPointSlot(QString, double, double, int, int)));
+    connect(pathCreationWidget, SIGNAL(deletePathPoint(int)), pathPainter, SLOT(deletePathPointSlot(int)));
+    connect(pathCreationWidget, SIGNAL(orderPathPointChanged(int, int)), pathPainter, SLOT(orderPathPointChangedSlot(int, int)));
+    connect(pathCreationWidget, SIGNAL(resetPath()), pathPainter, SLOT(resetPathSlot()));
+    connect(pathCreationWidget, SIGNAL(setMessage(QString, QString)), mainWindow, SLOT(setMessageTop(QString, QString)));
+    connect(pathCreationWidget, SIGNAL(actionChanged(int, int, QString)), pathPainter, SLOT(actionChangedSlot(int, int, QString)));
+    connect(pathCreationWidget, SIGNAL(editPathPoint(int, QString, double, double)), pathPainter, SLOT(editPathPointSlot(int, QString, double, double)));
 
-    noRobotPathCreationWidget->hide();
-    leftLayout->addWidget(noRobotPathCreationWidget);
+    pathCreationWidget->hide();
+    leftLayout->addWidget(pathCreationWidget);
     hide();
 
     globalLayout->addLayout(leftLayout);

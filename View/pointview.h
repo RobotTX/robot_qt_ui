@@ -43,7 +43,6 @@ public:
 
     void setState(const GraphicItemState _state) { state = _state; }//  qDebug()<< "change state here" << point->getPosition().getX() << point->getPosition().getY() << _state;}
     void setPos(const qreal x, const qreal y);
-    void setAddedToPath(const bool _addedToPath) { addedToPath = _addedToPath; }
     void setPixmap(const PixmapType pixType, RobotView *selectedRobot = 0);
     void setPoint(QSharedPointer<Point> const& _point) { point = _point; }
     void setWasShown(const bool _wasShown) { wasShown = _wasShown; }
@@ -86,7 +85,7 @@ signals:
     /// emitted when a path is being created so that a permanent point (corresponding to this point view) is to be added to the path
     void addPointPath(QString name, double x, double y, GraphicItemState);
     /// when an edited path point is dragged
-    void moveEditedPathPoint(GraphicItemState);
+    void moveEditedPathPoint();
     /// when an edited permanent point is dragged
     void editedPointPositionChanged(double, double);
     // might not be used anymore
@@ -97,7 +96,6 @@ signals:
 private:
     QSharedPointer<Point> point;
     GraphicItemState state;
-    bool addedToPath;
     bool wasShown;
     PixmapType type;
     PixmapType lastType;

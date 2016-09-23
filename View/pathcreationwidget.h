@@ -40,7 +40,7 @@ public:
         float posY;
     };
 
-    PathCreationWidget(QWidget *parent, const QSharedPointer<Points>& points, const QSharedPointer<Paths>& _paths, const bool associatedToRobot, const GraphicItemState _state);
+    PathCreationWidget(QWidget *parent, const QSharedPointer<Points>& points, const QSharedPointer<Paths>& _paths, const bool associatedToRobot);
 
     QString getCurrentPathName(void) const { return currentPathName; }
     PathPointList* getPathPointList(void) const { return pathPointsList; }
@@ -90,26 +90,26 @@ signals:
     /// emitted when a new path point is added to the list
     void addPathPoint(QString, double, double, int, int);
     /// emitted when a path point is deleted
-    void deletePathPoint(int, GraphicItemState);
+    void deletePathPoint(int);
     /// emitted when the order of the path has changed
     void orderPathPointChanged(int, int);
     /// emitted when the widget is reset
-    void resetPath(GraphicItemState);
+    void resetPath();
     /// emitted when a waiting time is changed
     void actionChanged(int, int, QString);
     /// emitted when a path point is edited
     void editPathPoint(int, QString, double, double);
-    void editTmpPathPoint(int, QString, double, double, GraphicItemState);
+    void editTmpPathPoint(int, QString, double, double);
     /// emitted when the path is saved
-    void saveEditPathPoint(GraphicItemState);
+    void saveEditPathPoint();
     /// emitted when the cancel button is clicked
-    void cancelEditPathPoint(GraphicItemState);
+    void cancelEditPathPoint();
     /// emitted when the save button is clicked
-    void savePath(GraphicItemState);
+    void savePath();
     /// emitted when the name of a path is being edited to notify whether or not this is a valid name
     void codeEditPath(int codeError);
     /// emitted when the button clean is clicked to clear the temporary path of all its points
-    void resetWidgetSignal(GraphicItemState);
+    void resetWidgetSignal();
 
 private slots:
     /**
@@ -119,10 +119,9 @@ private slots:
     void resetWidgetRelaySlot();
     /**
      * @brief resetWidget
-     * @param _state
      * clear the path point lists of all its path points upon clicking the clean button
      */
-    void resetWidget(GraphicItemState _state);
+    void resetWidget();
     /**
      * @brief addPathPointByMenuSlot
      * adds a permanent point to the path
@@ -172,12 +171,11 @@ private slots:
      * @param name
      * @param x
      * @param y
-     * @param _state
      * @param action
      * @param waitTime
      * adds a slot in the path point list
      */
-    void addPathPointSlot(QString name, double x, double y, GraphicItemState _state, PathPoint::Action action = PathPoint::Action::WAIT, int waitTime = 0);
+    void addPathPointSlot(QString name, double x, double y, PathPoint::Action action = PathPoint::Action::WAIT, int waitTime = 0);
     /**
      * @brief saveEditSlot
      * @param
@@ -226,7 +224,6 @@ private:
     CustomPushButton* cleanBtn;
     CustomPushButton* cancelBtn;
     CustomPushButton* saveBtn;
-    const GraphicItemState state;
 };
 
 #endif // PATHCREATIONWIDGET_H
