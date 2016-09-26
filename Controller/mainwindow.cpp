@@ -2289,7 +2289,6 @@ void MainWindow::editPointButtonEvent(){
     /// makes it obvious what the user has to do to change the name of his point
     leftMenu->getDisplaySelectedPoint()->getNameEdit()->setAutoFillBackground(false);
 
-
     /// if the point is a home point any modification of its name is forbidden
     /// not anymore since its name is no longer imposed by the application
     leftMenu->getDisplaySelectedPoint()->getNameEdit()->setReadOnly(false);
@@ -2303,7 +2302,7 @@ void MainWindow::editPointButtonEvent(){
     displaySelectedPointView->setFlag(QGraphicsItem::ItemIsMovable, true);
 
     leftMenu->getDisplaySelectedPoint()->getNameEdit()->setText("");
-    leftMenu->getDisplaySelectedPoint()->setFocus();
+    leftMenu->getDisplaySelectedPoint()->getNameEdit()->setFocus();
     leftMenu->getDisplaySelectedPoint()->getNameEdit()->setPlaceholderText(displaySelectedPointView->getPoint()->getName());
     leftMenu->getDisplaySelectedPoint()->getNameEdit()->setFrame(true);
     leftMenu->getDisplaySelectedPoint()->setFocusPolicy(Qt::FocusPolicy::StrongFocus);
@@ -2527,6 +2526,9 @@ void MainWindow::askForDeleteDefaultGroupPointConfirmation(QString pointName){
     switch(ret){
         case QMessageBox::Cancel :
             pointsLeftWidget->getActionButtons()->getMinusButton()->setChecked(false);
+            pointsLeftWidget->setLastCheckedId("");
+            pointsLeftWidget->disableButtons();
+            points->setPixmapAll(PointView::PixmapType::NORMAL);
         break;
         case QMessageBox::Ok : {
             /// we first check that our point is not the home of a robot
@@ -2555,6 +2557,7 @@ void MainWindow::askForDeleteDefaultGroupPointConfirmation(QString pointName){
                 } else {
                     qDebug() << "setSelectedRobotFromPoint : something unexpected happened";
                 }
+                points->setPixmapAll(PointView::PixmapType::NORMAL);
             }
         }
         pointsLeftWidget->disableButtons();
@@ -3785,7 +3788,7 @@ void MainWindow::createGroup(QString groupName){
 
 void MainWindow::modifyGroupWithEnter(QString name){
     name = name.simplified();
-    qDebug() << "modifying group after enter key pressed from" << pointsLeftWidget->getLastCheckedId() << "to" << name;
+    qDebug() << "MainWindow::modifyGroupWithEnter called : modifying group after enter key pressed from" << pointsLeftWidget->getLastCheckedId() << "to" << name;
 
     topLayout->setEnabled(true);
     setEnableAll(true);
@@ -3818,6 +3821,10 @@ void MainWindow::modifyGroupWithEnter(QString name){
         pointsLeftWidget->getGroupButtonGroup()->getModifyEdit()->hide();
 
         pointsLeftWidget->setLastCheckedId("");
+
+        /// resets the pixmaps
+        points->setPixmapAll(PointView::PixmapType::NORMAL);
+
         topLayout->setLabelDelay(TEXT_COLOR_SUCCESS, "You have successfully changed the name of your group from \"" + oldGroupName + "\" to \"" + name + "\"", 2500);
 
     } else if(pointsLeftWidget->checkGroupName(name) == 1){
@@ -3833,6 +3840,9 @@ void MainWindow::modifyGroupWithEnter(QString name){
 
         /// enables the plus button
         pointsLeftWidget->getActionButtons()->getPlusButton()->setEnabled(true);
+
+        /// resets the pixmaps
+        points->setPixmapAll(PointView::PixmapType::NORMAL);
     }
     else
         topLayout->setLabelDelay(TEXT_COLOR_DANGER, "You cannot choose : " + name + " as a new name for your group because another group already has this name", 2500);
