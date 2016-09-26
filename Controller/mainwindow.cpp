@@ -2285,7 +2285,6 @@ void MainWindow::editPointButtonEvent(){
     leftMenu->getDisplaySelectedPoint()->getCancelButton()->show();
     leftMenu->getDisplaySelectedPoint()->getSaveButton()->show();
 
-
     /// sets the state of the map and the other widgets to prevent other concurrent actions
     setGraphicItemsState(GraphicItemState::NO_EVENT);
     mapPixmapItem->setState(GraphicItemState::EDITING_PERM);
@@ -2517,6 +2516,9 @@ void MainWindow::askForDeleteDefaultGroupPointConfirmation(QString pointName){
     switch(ret){
         case QMessageBox::Cancel :
             pointsLeftWidget->getActionButtons()->getMinusButton()->setChecked(false);
+            pointsLeftWidget->setLastCheckedId("");
+            pointsLeftWidget->disableButtons();
+            points->setPixmapAll(PointView::PixmapType::NORMAL);
         break;
         case QMessageBox::Ok : {
             /// we first check that our point is not the home of a robot
@@ -2545,6 +2547,7 @@ void MainWindow::askForDeleteDefaultGroupPointConfirmation(QString pointName){
                 } else {
                     qDebug() << "setSelectedRobotFromPoint : something unexpected happened";
                 }
+                points->setPixmapAll(PointView::PixmapType::NORMAL);
             }
         }
         pointsLeftWidget->disableButtons();
@@ -3758,7 +3761,7 @@ void MainWindow::createGroup(QString groupName){
 
 void MainWindow::modifyGroupWithEnter(QString name){
     name = name.simplified();
-    qDebug() << "modifying group after enter key pressed from" << pointsLeftWidget->getLastCheckedId() << "to" << name;
+    qDebug() << "MainWindow::modifyGroupWithEnter called : modifying group after enter key pressed from" << pointsLeftWidget->getLastCheckedId() << "to" << name;
 
     topLayout->setEnabled(true);
     setEnableAll(true);
@@ -3791,6 +3794,10 @@ void MainWindow::modifyGroupWithEnter(QString name){
         pointsLeftWidget->getGroupButtonGroup()->getModifyEdit()->hide();
 
         pointsLeftWidget->setLastCheckedId("");
+
+        /// resets the pixmaps
+        points->setPixmapAll(PointView::PixmapType::NORMAL);
+
         topLayout->setLabelDelay(TEXT_COLOR_SUCCESS, "You have successfully changed the name of your group from \"" + oldGroupName + "\" to \"" + name + "\"", 4000);
 
     } else if(pointsLeftWidget->checkGroupName(name) == 1){
@@ -3806,6 +3813,9 @@ void MainWindow::modifyGroupWithEnter(QString name){
 
         /// enables the plus button
         pointsLeftWidget->getActionButtons()->getPlusButton()->setEnabled(true);
+
+        /// resets the pixmaps
+        points->setPixmapAll(PointView::PixmapType::NORMAL);
     }
     else
         topLayout->setLabelDelay(TEXT_COLOR_DANGER, "You cannot choose : " + name + " as a new name for your group because another group already has this name", 4000);
