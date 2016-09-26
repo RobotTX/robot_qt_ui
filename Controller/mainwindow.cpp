@@ -711,7 +711,7 @@ void MainWindow::viewPathSelectedRobot(int robotNb, bool checked){
         QSharedPointer<Robot> robot = robots->getRobotsVector().at(robotNb)->getRobot();
         qDebug() << "viewPathSelectedRobot called on" << robot->getName();
         bottomLayout->uncheckViewPathSelectedRobot(robotNb);
-        pathPainter->setCurrentPath(robot->getPath());
+        pathPainter->setCurrentPath(robot->getPath(), "");
         bottomLayout->updateRobot(robotNb, robots->getRobotsVector().at(robotNb));
 
     } else {
@@ -721,7 +721,6 @@ void MainWindow::viewPathSelectedRobot(int robotNb, bool checked){
             leftMenu->getDisplaySelectedPoint()->setPointView(selectedPoint, "");
             backEvent();
         }
-        paths->setVisiblePath("");
         emit resetPath();
     }
     if(selectedRobot && selectedRobot->getRobot()->getHome())
@@ -773,7 +772,7 @@ void MainWindow::setSelectedRobot(RobotView* robotView){
     leftMenu->getReturnButton()->setEnabled(true);
 
     emit resetPathCreationWidget();
-    pathPainter->setCurrentPath(robotView->getRobot()->getPath());
+    pathPainter->setCurrentPath(robotView->getRobot()->getPath(), "");
 
     showHomes();
     leftMenu->show();
@@ -814,7 +813,6 @@ void MainWindow::deletePathSelecRobotBtnEvent(){
         break;
     case QMessageBox::Ok:
     {
-        paths->setVisiblePath("");
         emit resetPath();
         emit resetPathCreationWidget();
         selectedRobot->getRobot()->clearPath();
@@ -1447,7 +1445,7 @@ void MainWindow::savePathSlot(){
 
 
     /// updates the visible path
-    paths->setVisiblePath(pathName);
+    pathPainter->setVisiblePath(pathName);
 
     /// resets the menu so that it reflects the creation of this new path
     leftMenu->getPathGroupDisplayed()->setPathsGroup(pathCreationWidget->getCurrentGroupName());
@@ -1457,7 +1455,8 @@ void MainWindow::savePathSlot(){
 
     leftMenu->getDisplaySelectedPath()->updatePath(pathCreationWidget->getCurrentGroupName(),
                                                    pathCreationWidget->getNameEdit()->text().simplified(),
-                                                   pathPainter->getCurrentPath());
+                                                   pathPainter->getCurrentPath(),
+                                                   pathPainter->getVisiblePath());
 
     leftMenu->setEnableReturnCloseButtons(true);
 
@@ -1510,7 +1509,7 @@ void MainWindow::updatePathPainterPointViewSlot(){
 void MainWindow::showHome(){
     //qDebug() << "MainWindow::showHome called" << (selectedRobot->getRobot()->getHome()==NULL);
 
-    points->setPixmapAll(PointView::PixmapType::NORMAL, selectedRobot);
+    points->setPixmapAll(PointView::PixmapType::NORMAL);
 
     if(selectedRobot->getRobot()->getHome() != NULL){
         QSharedPointer<PointView> pointView = selectedRobot->getRobot()->getHome();
@@ -1578,7 +1577,7 @@ void MainWindow::showAllHomes(void){
     qDebug() << "MainWindow::showAllHomes called after editselectrobot went hidden";
     /// shows the home of each robot
     selectedRobot = 0;
-    pathPainter->setCurrentPath(pathPainter->getCurrentPath());
+    pathPainter->setCurrentPath(pathPainter->getCurrentPath(), pathPainter->getVisiblePath());
     bottomLayout->uncheckRobots();
 }
 
@@ -1920,7 +1919,7 @@ void MainWindow::setNewHome(QString homeName){
     /// so that if the new home if part of the path it displays the path correctly (not a house on top of a normal point)
     /// this call makes the home
 
-    pathPainter->setCurrentPath(selectedRobot->getRobot()->getPath());
+    pathPainter->setCurrentPath(selectedRobot->getRobot()->getPath(), "");
 
     /// setCurrentPath is displaying the path so if it was not displayed we hide it
     if(!bottomLayout->getViewPathRobotBtnGroup()->button(robots->getRobotId(selectedRobot->getRobot()->getName()))->isChecked())
@@ -1948,7 +1947,7 @@ void MainWindow::deleteHome(){
         editSelectedRobotWidget->updateHomeMenu();
         /// to remove the home pixmap
 
-        pathPainter->setCurrentPath(pathPainter->getCurrentPath());
+        pathPainter->setCurrentPath(pathPainter->getCurrentPath(), pathPainter->getVisiblePath());
 
         /// setCurrentPath is displaying the path so if it was not displayed we hide it
         if(!bottomLayout->getViewPathRobotBtnGroup()->button(robots->getRobotId(selectedRobot->getRobot()->getName()))->isChecked())
@@ -2136,7 +2135,7 @@ void MainWindow::setSelectedPoint(){
 
     int id = bottomLayout->getViewPathRobotBtnGroup()->checkedId();
     if(id > 0)
-        pathPainter->setCurrentPath(robots->getRobotsVector().at(id)->getRobot()->getPath());
+        pathPainter->setCurrentPath(robots->getRobotsVector().at(id)->getRobot()->getPath(), "");
 
     leftMenu->show();
 
@@ -4020,7 +4019,7 @@ void MainWindow::editPathSlot(QString groupName, QString pathName){
     bool foundFlag(false);
 
     leftMenu->getPathGroupDisplayed()->setLastCheckedButton(pathName);
-    paths->setVisiblePath(pathName);
+    pathPainter->setVisiblePath(pathName);
 
     qDebug() << "will edit" <<  groupName << pathName;
     pathCreationWidget->updatePath(paths->getPath(groupName, pathName, foundFlag));
@@ -4050,14 +4049,12 @@ void MainWindow::displayPathSlot(QString groupName, QString pathName, bool displ
         bool foundFlag = false;
         Paths::Path path = paths->getPath(groupName, pathName, foundFlag);
         if(foundFlag) {
-            pathPainter->setCurrentPath(path);
-            paths->setVisiblePath(pathName);
+            pathPainter->setCurrentPath(path, pathName);
         }
         else
             qDebug() << "MainWindow::displayPathSlot Sorry could not find the path";
     }
     else {
-        paths->setVisiblePath("");
         emit resetPath();
     }
 }
@@ -4266,7 +4263,8 @@ void MainWindow::displayPath(){
     bool foundFlag = false;
     leftMenu->getDisplaySelectedPath()->updatePath(groupName,
                                                    pathName,
-                                                   paths->getPath(groupName, pathName, foundFlag));
+                                                   paths->getPath(groupName, pathName, foundFlag),
+                                                   pathPainter->getVisiblePath());
     switchFocus(leftMenu->getPathGroupDisplayed()->getLastCheckedButton(), leftMenu->getDisplaySelectedPath(), MainWindow::WidgetType::PATH);
     leftMenu->getPathGroupDisplayed()->hide();
     leftMenu->getDisplaySelectedPath()->show();
@@ -4291,8 +4289,8 @@ void MainWindow::createPath(){
     leftMenu->getpathCreationWidget()->show();
 
     /// stop displaying the currently displayed path if it exists
-
     pathCreationWidget->getPathPointList()->clear();
+    bottomLayout->uncheckAll();
 
     /// hides the temporary pointview
     points->getTmpPointView()->hide();
@@ -4321,10 +4319,13 @@ void MainWindow::deletePath(){
         leftMenu->getPathGroupDisplayed()->initializeActionButtons();
         /// resets the path painter if the path displayed is the one we just destroyed
         qDebug() << "deleting path" << leftMenu->getPathGroupDisplayed()->getLastCheckedButton();
-        if(!paths->getVisiblePath().compare(leftMenu->getPathGroupDisplayed()->getLastCheckedButton())){
+
+        if(!pathPainter->getVisiblePath().compare(leftMenu->getPathGroupDisplayed()->getLastCheckedButton())){
             qDebug() << "hey i have to stop displaying this path that was destroyed";
             emit resetPath();
-        } else qDebug() << "dont have to stop displaying this path" << paths->getVisiblePath() << "because the last one checked is" << leftMenu->getPathGroupDisplayed()->getLastCheckedButton();
+        } else
+            qDebug() << "dont have to stop displaying this path" << pathPainter->getVisiblePath() << "because the last one checked is" << leftMenu->getPathGroupDisplayed()->getLastCheckedButton();
+
         paths->deletePath(lastWidgets.at(lastWidgets.size()-1).first.second, leftMenu->getPathGroupDisplayed()->getLastCheckedButton());
         serializePaths();
         leftMenu->getPathGroupDisplayed()->setPathsGroup(lastWidgets.at(lastWidgets.size()-1).first.second);
@@ -4347,10 +4348,9 @@ void MainWindow::displayPathOnMap(const bool display){
     if(display){
         bottomLayout->uncheckViewPathSelectedRobot(bottomLayout->getLastCheckedId());
         bool foundFlag = false;
-        pathPainter->setCurrentPath(paths->getPath(lastWidgets.at(lastWidgets.size()-1).first.second, leftMenu->getPathGroupDisplayed()->getLastCheckedButton(), foundFlag));
-        paths->setVisiblePath(leftMenu->getPathGroupDisplayed()->getLastCheckedButton());
+        pathPainter->setCurrentPath(paths->getPath(lastWidgets.at(lastWidgets.size()-1).first.second, leftMenu->getPathGroupDisplayed()->getLastCheckedButton(), foundFlag), leftMenu->getPathGroupDisplayed()->getLastCheckedButton());
     } else {
-        paths->setVisiblePath("");
+        pathPainter->setVisiblePath("");
         qDebug() << "no path visible !";
     }
     /// to set the 'eye' icon appropriately
@@ -4369,13 +4369,12 @@ void MainWindow::editPath(){
 
     hideAllWidgets();
     pathCreationWidget->show();
-    pathPainter->setOldPath(pathPainter->getCurrentPath());
 
     switchFocus(pathName, pathCreationWidget, MainWindow::WidgetType::PATH);
 
     /// stop displaying the currently displayed path if it exists
-
-    emit resetPathCreationWidget();
+    pathCreationWidget->getPathPointList()->clear();
+    bottomLayout->uncheckAll();
 
     setEnableAll(false, GraphicItemState::CREATING_PATH, true);
 
@@ -4385,7 +4384,7 @@ void MainWindow::editPath(){
     pathCreationWidget->setCurrentGroupName(groupName);
 
     leftMenu->getPathGroupDisplayed()->setLastCheckedButton(pathName);
-    paths->setVisiblePath(pathName);
+    pathPainter->setVisiblePath(pathName);
 
     qDebug() << "will edit" <<  groupName << pathName;
     pathCreationWidget->updatePath(paths->getPath(leftMenu->getPathGroupDisplayed()->getGroupNameLabel()->text(),
@@ -4416,7 +4415,8 @@ void MainWindow::doubleClickOnPath(QString pathName){
     bool foundFlag = false;
     leftMenu->getDisplaySelectedPath()->updatePath(groupName,
                                                    pathName,
-                                                   paths->getPath(groupName, pathName, foundFlag));
+                                                   paths->getPath(groupName, pathName, foundFlag),
+                                                   pathPainter->getVisiblePath());
     switchFocus(pathName, leftMenu->getDisplaySelectedPath(), MainWindow::WidgetType::PATH);
     leftMenu->getPathGroupDisplayed()->hide();
     leftMenu->getDisplaySelectedPath()->show();
@@ -4504,7 +4504,7 @@ void MainWindow::saveNoRobotPathSlot(){
     leftMenu->setEnableReturnCloseButtons(true);
 
     /// updates the visible path
-    paths->setVisiblePath(pathName);
+    pathPainter->setVisiblePath(pathName);
 
     /// resets the menu so that it reflects the creation of this new path
     leftMenu->getPathGroupDisplayed()->setPathsGroup(pathCreationWidget->getCurrentGroupName());
@@ -4537,9 +4537,8 @@ void MainWindow::setMessageModifGroupPaths(int code){
 
 void MainWindow::displayAssignedPath(QString groupName, QString pathName){
 
-    paths->setVisiblePath(pathName);
     bool foundFlag(true);
-    pathPainter->setCurrentPath(paths->getPath(groupName, pathName, foundFlag));
+    pathPainter->setCurrentPath(paths->getPath(groupName, pathName, foundFlag), pathName);
     editSelectedRobotWidget->updatePathsMenu();
     assert(foundFlag);
 
@@ -4552,8 +4551,6 @@ void MainWindow::displayAssignedPath(QString groupName, QString pathName){
         bottomLayout->getViewPathRobotBtnGroup()->button(id)->setChecked(true);
         viewPathSelectedRobot(id, true);
     }
-
-    pathPainter->setCurrentPath(selectedRobot->getRobot()->getPath());
 
     QFile robotPathFile(QString(GOBOT_PATH) + "robots_paths/" + selectedRobot->getRobot()->getName() + "_path.dat");
     if(robotPathFile.exists()){
@@ -4671,7 +4668,7 @@ void MainWindow::clearNewMap(){
     selectedPoint = QSharedPointer<PointView>();
     editedPointView = QSharedPointer<PointView>();
 
-    paths->setVisiblePath("");
+    pathPainter->setVisiblePath("");
     emit resetPath();
 
     /// Clear the list of points

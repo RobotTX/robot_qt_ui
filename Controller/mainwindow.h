@@ -40,8 +40,8 @@ class QMoveEvent;
 #include <QSettings>
 
 
-//#define GOBOT_PATH "/home/m-a/Documents/QtProject/gobot-software/"
-#define GOBOT_PATH "/home/joan/Gobot/gobot-software/"
+#define GOBOT_PATH "/home/m-a/Documents/QtProject/gobot-software/"
+//#define GOBOT_PATH "/home/joan/Gobot/gobot-software/"
 
 #define XML_FILE "points.xml"
 #define ROBOTS_NAME_FILE "robotsName.dat"
@@ -72,6 +72,7 @@ public:
 
     QSharedPointer<Points> getPoints(void) const { return points; }
     QList<QPair<QPair<QWidget*, QString>, MainWindow::WidgetType>> getLastWidgets() const { return lastWidgets; }
+    PathPainter* getPathPainter(void) const { return pathPainter; }
 
     void initializeMenu();
     void initializeRobots();
@@ -115,32 +116,32 @@ private slots:
     void updateMetadata(const int width, const int height, const float resolution, const float originX, const float originY);
     void updateMap(const QByteArray mapArray);
     void connectToRobot(bool checked);
-    void quit();
+    void quit(void);
     void setSelectedRobot(RobotView* robotView);
     void setSelectedRobot(QAbstractButton* button);
     void setSelectedRobotNoParent(QAbstractButton *button);
     void setSelectedRobotFromPointSlot(QString robotName);
-    void robotBtnEvent();
-    void pointBtnEvent();
-    void mapBtnEvent();
-    void pathBtnEvent();
-    void plusGroupBtnEvent();
-    void minusGroupBtnEvent();
-    void editGroupBtnEvent();
-    void openLeftMenu();
-    void backRobotBtnEvent();
-    void editRobotBtnEvent();
+    void robotBtnEvent(void);
+    void pointBtnEvent(void);
+    void mapBtnEvent(void);
+    void pathBtnEvent(void);
+    void plusGroupBtnEvent(void);
+    void minusGroupBtnEvent(void);
+    void editGroupBtnEvent(void);
+    void openLeftMenu(void);
+    void backRobotBtnEvent(void);
+    void editRobotBtnEvent(void);
     void checkRobotBtnEventMenu();
     void checkRobotBtnEvent(QString name);
 
 
     //void setCheckedRobot(QString name);
-    void cancelEditSelecRobotBtnEvent();
-    void robotSavedEvent();
-    void saveRobotModifications();
-    void minusSelecPointBtnEvent();
-    void editSelecPointBtnEvent();
-    void setSelectedPoint();
+    void cancelEditSelecRobotBtnEvent(void);
+    void robotSavedEvent(void);
+    void saveRobotModifications(void);
+    void minusSelecPointBtnEvent(void);
+    void editSelecPointBtnEvent(void);
+    void setSelectedPoint(void);
     void pointSavedEvent(QString groupName, double x, double y, QString name);
     void deletePath(int robotNb);
     void playSelectedRobot(int robotNb);
@@ -149,22 +150,22 @@ private slots:
     void displayPointEvent(QString name, double x, double y);
     void askForDeleteDefaultGroupPointConfirmation(const QString index);
     void displayGroupMapEvent(void);
-    void savePathSlot();
+    void savePathSlot(void);
     void addPointPathSlot(QString name, double x, double y, GraphicItemState state);
     void displayPointsInGroup(void);
     void removePointFromInformationMenu(void);
     void displayPointMapEvent(void);
-    void editPointButtonEvent();
+    void editPointButtonEvent(void);
     void editTmpPathPointSlot(int id, QString name, double x, double y);
     void editPointFromGroupMenu(void);
-    void saveEditPathPointSlot();
-    void cancelEditPathPointSlot();
-    void moveEditedPathPointSlot();
+    void saveEditPathPointSlot(void);
+    void cancelEditPathPointSlot(void);
+    void moveEditedPathPointSlot(void);
     void displayPointInfoFromGroupMenu(void);
     void updatePoint(void);
     void updateCoordinates(double x, double y);
     void removePointFromGroupMenu(void);
-    void displayPointFromGroupMenu();
+    void displayPointFromGroupMenu(void);
     void doubleClickOnPoint(QString checkedId);
     void doubleClickOnGroup(QString checkedId);
     void doubleClickOnPathsGroup(QString checkedButton);
@@ -177,10 +178,10 @@ private slots:
     void doubleClickOnRobot(QString checkedId);
     void setMessageCreationPath(QString message);
     void updateEditedPathPoint(double x, double y);
-    void centerMap();
+    void centerMap(void);
     void setMessageCreationPoint(QString type, CreatePointWidget::Error error);
     void choosePointName(QString message);
-    void saveMapState();
+    void saveMapState(void);
 
     /**
      * @brief cancelEvent

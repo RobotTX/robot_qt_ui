@@ -197,14 +197,12 @@ void LeftMenu::updateGroupDisplayed(const QString groupName){
     displaySelectedGroup->getPointButtonGroup()->setGroup(groupName);
 }
 
-void LeftMenu::hideBackButton(void)
-{
+void LeftMenu::hideBackButton(void){
     if(returnButton != NULL)
         returnButton->hide();
 }
 
-void LeftMenu::showBackButton(const QString name)
-{
+void LeftMenu::showBackButton(const QString name){
     if(returnButton){
         returnButton->setText(name);
         returnButton->show();

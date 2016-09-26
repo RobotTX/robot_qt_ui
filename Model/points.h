@@ -275,7 +275,7 @@ public:
      * @param selectedRobot
      * Set the pixmap of all pointViews
      */
-    void setPixmapAll(const PointView::PixmapType type, RobotView *selectedRobot = 0);
+    void setPixmapAll(const PointView::PixmapType type);
 
     /**
      * @brief createPoint

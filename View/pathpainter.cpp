@@ -10,7 +10,7 @@
 #include "Controller/mainwindow.h"
 
 PathPainter::PathPainter(MainWindow* const &mainWindow, const QSharedPointer<Points> _points)
-    : QGraphicsPathItem(mainWindow->getMapView()), points(_points), mainWindow(mainWindow), pathDeleted(false)
+    : QGraphicsPathItem(mainWindow->getMapView()), points(_points), mainWindow(mainWindow), pathDeleted(false), visiblePath("")
 {
     setPen(QPen(Qt::red));
 
@@ -19,7 +19,8 @@ PathPainter::PathPainter(MainWindow* const &mainWindow, const QSharedPointer<Poi
 
 void PathPainter::resetPathSlot(){
     path = QPainterPath();
-    points->setPixmapAll(PointView::PixmapType::NORMAL, mainWindow->getSelectedRobot());
+    visiblePath = "";
+    points->setPixmapAll(PointView::PixmapType::NORMAL);
 
     if(QSharedPointer<QVector<QSharedPointer<PointView>>> group = points->getGroups()->value(PATH_GROUP_NAME)){
         for(int i = 0; i < group->size(); i++){
@@ -125,31 +126,20 @@ void PathPainter::deletePathPointSlot(int id){
     /// Remove the item from the model
     currentPath.remove(id);
     points->getGroups()->value(PATH_GROUP_NAME)->remove(id);
+    visiblePath = "";
 
     /// Update the path painter
     updatePathPainterSlot(false);
 }
 
-void PathPainter::editPathPointSlot(int id, QString name, double x, double y){
-    Q_UNUSED(x)
-    Q_UNUSED(y)
-    //qDebug() << "PathPainter::editPathPointSlot called" << id << name << x << y;
+void PathPainter::editPathPointSlot(int id, QString name, double, double){
 
     QSharedPointer<PointView> newPointView = points->getGroups()->value(points->findPointIndexes(name).first)->
             takeAt(points->findPointIndexes(name).second);
-    //QSharedPointer<PointView> newPointView = points->findPointView(name);
-    //QSharedPointer<PointView> newPointView = points->getGroups()->value(PATH_GROUP_NAME)->takeAt(id);
-    //qDebug() << "the point im about to insert" << newPointView->getPoint()->getName() <<
-          //      newPointView->getPoint()->getPosition().getX() <<
-           //     newPointView->getPoint()->getPosition().getY();
     /// If found, it's a permanent point else it's a temporary point
     if(newPointView){
-        //qDebug() << "PathPainter::editPathPointSlot editing a permanent point";
-        // gotta change next line
-        //emit updatePoints(id, name);
         points->getGroups()->value(PATH_GROUP_NAME)->remove(id);
         points->insertPoint(PATH_GROUP_NAME, id, newPointView);
-        //points->getGroups()->value(PATH_GROUP_NAME)->push_back(newPointView);
 
         currentPath.at(id)->setPoint(*(newPointView->getPoint()));
     } else
@@ -176,7 +166,7 @@ void PathPainter::updateCurrentPath(void){
 }
 
 void PathPainter::updatePathPainterSlot(const bool savePath /* to deal with pv selected after save */){
-    points->setPixmapAll(PointView::PixmapType::NORMAL, mainWindow->getSelectedRobot());
+    points->setPixmapAll(PointView::PixmapType::NORMAL);
     QSharedPointer<QVector<QSharedPointer<PointView>>> group = points->getGroups()->value(PATH_GROUP_NAME);
 
     QSharedPointer<PointView> startPointView(0);
@@ -278,8 +268,9 @@ int PathPainter::nbUsedPointView(QString name, double x, double y){
     return nbUsed;
 }
 
-void PathPainter::setCurrentPath(const QVector<QSharedPointer<PathPoint>>& _currentPath){
+void PathPainter::setCurrentPath(const QVector<QSharedPointer<PathPoint>>& _currentPath, QString pathName){
     resetPathSlot();
+    visiblePath = pathName;
     for(int i = 0; i < _currentPath.size(); i++){
         Point point = _currentPath.at(i)->getPoint();
         addPathPointSlot(point.getName(), point.getPosition().getX(), point.getPosition().getY(), _currentPath.at(i)->getAction(), _currentPath.at(i)->getWaitTime());

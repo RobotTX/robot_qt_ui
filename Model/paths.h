@@ -89,17 +89,14 @@ public:
 
     /// Getters
     QSharedPointer<Groups> getGroups(void) const { return groups; }
-    QString getVisiblePath(void) const { return visiblePath; }
     /// the foundFlag is set within the function, after the function returns it holds true if the path has been found and false otherwise
     Path getPath(const QString groupName, const QString pathName, bool& foundFlag);
 
     /// Setters
-    void setVisiblePath(const QString path) { visiblePath = path; }
     void setGroups(QSharedPointer<Groups> _groups) { groups = _groups; }
 
 
 private:
-    QString visiblePath;
     QSharedPointer<Groups> groups;
 };
 
