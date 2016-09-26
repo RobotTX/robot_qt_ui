@@ -5,6 +5,7 @@ class QGraphicsSceneMouseEvent;
 class QMouseEvent;
 class QDropEvent;
 class RobotView;
+class MainWindow;
 
 #include "Model/point.h"
 #include <QObject>
@@ -37,13 +38,13 @@ class PointView : public QObject, public QGraphicsPixmapItem {
     Q_OBJECT
 
 public:
-    PointView(QSharedPointer<Point> const& point, QGraphicsItem *parent);
+    PointView(QSharedPointer<Point> const& point, MainWindow *_mainWindow);
 
     enum PixmapType { NORMAL, MID, START, STOP, HOVER, START_STOP, SELECTED };
 
     void setState(const GraphicItemState _state) { state = _state; }//  qDebug()<< "change state here" << point->getPosition().getX() << point->getPosition().getY() << _state;}
     void setPos(const qreal x, const qreal y);
-    void setPixmap(const PixmapType pixType, RobotView *selectedRobot = 0);
+    void setPixmap(const PixmapType pixType);
     void setPoint(QSharedPointer<Point> const& _point) { point = _point; }
     void setWasShown(const bool _wasShown) { wasShown = _wasShown; }
     PixmapType getType(void) const { return type; }
@@ -100,7 +101,7 @@ private:
     PixmapType type;
     PixmapType lastType;
     Position originalPosition;
-    RobotView* selectedRobot;
+    MainWindow* mainWindow;
 };
 
 #endif // POINTVIEW_H

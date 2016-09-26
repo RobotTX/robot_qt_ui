@@ -56,14 +56,14 @@ DisplaySelectedPath::DisplaySelectedPath(QWidget *parent, const MainWindow *main
     layout->setContentsMargins(0, 0, 0, 0);
 }
 
-void DisplaySelectedPath::updatePath(const QString groupName, const QString pathName, const QVector<QSharedPointer<PathPoint>>& path){
+void DisplaySelectedPath::updatePath(const QString groupName, const QString pathName, const QVector<QSharedPointer<PathPoint>>& path, const QString visiblePath){
     qDebug() << "DisplaySelectedPath::updatePath called";
     currentPath.groupName = groupName;
     currentPath.pathName = pathName;
     currentPath.path = path;
     nameLabel->setText(pathName);
     pathWidget->setPath(path);
-    if(!paths->getVisiblePath().compare(currentPath.pathName))
+    if(!visiblePath.compare(currentPath.pathName))
         actionButtons->getMapButton()->setChecked(true);
     else
         actionButtons->getMapButton()->setChecked(false);

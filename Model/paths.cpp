@@ -1,7 +1,7 @@
 #include "paths.h"
 #include "Controller/mainwindow.h"
 
-Paths::Paths(MainWindow *parent): QObject(parent), visiblePath("")
+Paths::Paths(MainWindow *parent): QObject(parent)
 {
     groups = QSharedPointer<Groups>(new Groups());
 }

@@ -10,6 +10,7 @@
 #include "View/stylesettings.h"
 #include "View/customlabel.h"
 #include <QKeyEvent>
+#include "View/pathpainter.h"
 
 DisplayPathGroup::DisplayPathGroup(QWidget* _parent, MainWindow* _mainWindow, const QSharedPointer<Paths>& _paths):
     QWidget(_parent), mainWindow(_mainWindow), paths(_paths), lastCheckedButton("")
@@ -51,6 +52,7 @@ DisplayPathGroup::DisplayPathGroup(QWidget* _parent, MainWindow* _mainWindow, co
 
 /// we reset the action buttons everytime we show the widget
 void DisplayPathGroup::showEvent(QShowEvent *event){
+    setPathsGroup(groupNameLabel->text());
     initializeActionButtons();
     updateDisplayedPath();
     /// for some reason the buttongroup sometimes becomes uncheckable after some operations, this just makes sure it does not happen
@@ -80,7 +82,7 @@ void DisplayPathGroup::initializeActionButtons(){
 void DisplayPathGroup::enableButtons(QAbstractButton *button){
     if(button->text().compare(lastCheckedButton)){
         /// if the path is visible on the map the eye button is checked
-        if(!paths->getVisiblePath().compare(button->text()))
+        if(!mainWindow->getPathPainter()->getVisiblePath().compare(button->text()))
             actionButtons->getMapButton()->setChecked(true);
 
         /// updates the last checked button to be the one the user has just checked
@@ -121,7 +123,7 @@ void DisplayPathGroup::setPathsGroup(const QString groupName){
             CustomPushButton* groupButton = new CustomPushButton(it_paths.key(), this);
             groupButton->setIconSize(s_icon_size);
             /// if this path is displayed on the map we also add an icon to show it on the button
-            if(!it_paths.key().compare(paths->getVisiblePath()))
+            if(!it_paths.key().compare(mainWindow->getPathPainter()->getVisiblePath()))
                 groupButton->setIcon(QIcon(":/icons/eye.png"));
             else
                 groupButton->setIcon(QIcon(":/icons/blank.png"));
@@ -138,7 +140,7 @@ void DisplayPathGroup::setPathsGroup(const QString groupName){
 /// sets the eye icon properly in front of the displayed path if such path exists
 void DisplayPathGroup::updateDisplayedPath(){
     foreach(QAbstractButton* button, pathButtonGroup->getButtonGroup()->buttons()){
-        if(!button->text().compare(paths->getVisiblePath()))
+        if(!button->text().compare(mainWindow->getPathPainter()->getVisiblePath()))
             button->setIcon(QIcon(":/icons/eye.png"));
         else
             button->setIcon(QIcon(":/icons/blank.png"));

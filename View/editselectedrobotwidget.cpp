@@ -272,7 +272,6 @@ void EditSelectedRobotWidget::assignPath(QAction *action){
     groupAssignedPath = groupName;
     setPath(paths->getPath(groupName, action->text(), foundFlag));
     assert(foundFlag);
-    paths->setVisiblePath(action->text());
     emit showPath(groupName, action->text());
 }
 

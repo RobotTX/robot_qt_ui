@@ -144,7 +144,7 @@ void Points::clear(){
 
 QSharedPointer<PointView> Points::createPoint(const QString pointName, const double x, const double y, const bool displayed, const Point::PointType type){
     QSharedPointer<Point> point = QSharedPointer<Point>(new Point(pointName, x, y, type));
-    QSharedPointer<PointView> pointView = QSharedPointer<PointView>(new PointView(point, parent->getMapView()));
+    QSharedPointer<PointView> pointView = QSharedPointer<PointView>(new PointView(point, parent));
     if(!displayed)
         pointView->hide();
 
@@ -327,16 +327,17 @@ QString Points::getGroupNameFromPointName(const QString pointName) const{
     return "";
 }
 
-void Points::setPixmapAll(const PointView::PixmapType type, RobotView* selectedRobot){
+void Points::setPixmapAll(const PointView::PixmapType type){
     QMapIterator<QString, QSharedPointer<QVector<QSharedPointer<PointView>>>> i(*groups);
     //qDebug() << "Points::setPixmapAll with PixmapType called";
     while(i.hasNext()) {
         i.next();
         if(i.key().compare(PATH_GROUP_NAME) != 0){
             for(int j = 0; j < i.value()->count(); j++){
-                if(i.value()->at(j)->getPoint()->isHome())
-                    qDebug() << i.value()->at(j)->getPoint()->getName();
-                i.value()->at(j)->setPixmap(type, selectedRobot);
+                QSharedPointer<PointView> pointView = i.value()->at(j);
+                if(pointView->getPoint()->isHome())
+                    qDebug() << pointView->getPoint()->getName();
+                pointView->setPixmap(type);
             }
         }
     }

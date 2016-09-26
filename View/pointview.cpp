@@ -6,10 +6,13 @@
 #include <QMouseEvent>
 #include "View/robotview.h"
 #include "Model/robot.h"
+#include "Controller/mainwindow.h"
+#include "View/mapview.h"
 
+PointView::PointView(const QSharedPointer<Point> &_point, MainWindow *_mainWindow)
+    : QGraphicsPixmapItem(QPixmap(PIXMAP_NORMAL), static_cast<QGraphicsPixmapItem*>(_mainWindow->getMapView())), state(GraphicItemState::NO_STATE), type(PixmapType::NORMAL),
+        lastType(PixmapType::NORMAL), mainWindow(_mainWindow){
 
-PointView::PointView(const QSharedPointer<Point> &_point, QGraphicsItem *parent) :
-    QGraphicsPixmapItem(QPixmap(PIXMAP_NORMAL), parent), state(GraphicItemState::NO_STATE), type(PixmapType::NORMAL), lastType(PixmapType::NORMAL){
     setScale(SCALE);
     point = _point;
     setAcceptedMouseButtons(Qt::RightButton | Qt::LeftButton);
@@ -21,8 +24,6 @@ PointView::PointView(const QSharedPointer<Point> &_point, QGraphicsItem *parent)
 
     wasShown = true;
     setShapeMode(QGraphicsPixmapItem::BoundingRectShape);
-
-    selectedRobot = NULL;
 }
 
 void PointView::mousePressEvent(QGraphicsSceneMouseEvent *event){
@@ -108,12 +109,12 @@ void PointView::hoverEnterEvent(QGraphicsSceneHoverEvent * /* unused */){
         setToolTip(point->getName());
     } else
         setToolTip("This point is only temporary,\nto save it permanently click a valid spot\non the map and click the \"+\" button");
-    setPixmap(PointView::PixmapType::HOVER, selectedRobot);
+    setPixmap(PointView::PixmapType::HOVER);
     //qDebug() << "hoverEnterEvent : " << lastPixmap
 }
 
 void PointView::hoverLeaveEvent(QGraphicsSceneHoverEvent * /* unused */){
-    setPixmap(lastType, selectedRobot);
+    setPixmap(lastType);
     updatePos();
     if(state == GraphicItemState::CREATING_PATH || state == GraphicItemState::EDITING_PATH)
         emit updatePathPainterPointView();
@@ -137,17 +138,24 @@ void PointView::updatePos(void){
     QGraphicsPixmapItem::setPos(x - pixmap().width() * SCALE/2, y - pixmap().height() * SCALE);
 }
 
-void PointView::setPixmap(const PixmapType pixType, RobotView* _selectedRobot){
+void PointView::setPixmap(const PixmapType pixType){
 
     lastType = type;
-    selectedRobot = _selectedRobot;
 
     if(pixType != PixmapType::HOVER)
         type = pixType;
+    bool homePixmap = false;
 
     QPixmap pixmap2;
-    if(((_selectedRobot && _selectedRobot->getRobot()->getHome() && _selectedRobot->getRobot()->getHome()->getPoint()->getName().compare(point->getName()) == 0)
-            || (!_selectedRobot && point->isHome()))){
+    if(mainWindow->getSelectedRobot()){
+        if(mainWindow->getSelectedRobot()->getRobot()->getHome() && mainWindow->getSelectedRobot()->getRobot()->getHome()->getPoint()->getName().compare(point->getName()) == 0)
+            homePixmap = true;
+    } else {
+        if(!mainWindow->getSelectedRobot() && point->isHome())
+            homePixmap = true;
+    }
+
+    if(homePixmap){
         qDebug() << "pixmap home set for" << point->getName();
         switch(pixType){
             case NORMAL:

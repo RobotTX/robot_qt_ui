@@ -28,11 +28,13 @@ public:
     QVector<QSharedPointer<PathPoint>> getCurrentPath(void) const { return currentPath; }
     QVector<QSharedPointer<PathPoint>> getOldPath(void) const { return oldPath; }
     bool getPathDeleted(void) const { return pathDeleted; }
+    QString getVisiblePath(void) const { return visiblePath; }
 
     /// Setters
-    void setCurrentPath(const QVector<QSharedPointer<PathPoint> > &_currentPath);
+    void setCurrentPath(const QVector<QSharedPointer<PathPoint> > &_currentPath, QString pathName);
     void setOldPath(const QVector<QSharedPointer<PathPoint> > _oldPath);
     void setPathDeleted(const bool _pathDeleted){ pathDeleted = _pathDeleted; }
+    void setVisiblePath(const QString path) { visiblePath = path; }
 
     /**
      * @brief displayPath
@@ -66,6 +68,8 @@ public:
      * Delete the content of the old path
      */
     void clearOldPath();
+
+    void resetAllPixmap();
 
 private slots:
     /**
@@ -128,7 +132,7 @@ private slots:
      * @param y
      * Move the path point with the given name to its new id position
      */
-    void editPathPointSlot(int id, QString name, double x, double y);
+    void editPathPointSlot(int id, QString name, double, double);
 
 signals:
     void updatePoints(int id, QString name);
@@ -141,6 +145,7 @@ private:
     QVector<QSharedPointer<PathPoint>> oldPath;
     MainWindow* mainWindow;
     bool pathDeleted;
+    QString visiblePath;
 };
 
 #endif // PATHPAINTER_H

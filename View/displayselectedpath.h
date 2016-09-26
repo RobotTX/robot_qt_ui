@@ -30,7 +30,7 @@ public:
     };
 
     DisplaySelectedPath(QWidget* parent, const MainWindow* mainWindow, const QSharedPointer<Paths>& _paths);
-    void updatePath(const QString groupName, const QString pathName, const QVector<QSharedPointer<PathPoint> > &path);
+    void updatePath(const QString groupName, const QString pathName, const QVector<QSharedPointer<PathPoint> > &path, const QString visiblePath);
 
 protected:
     void keyPressEvent(QKeyEvent* event);

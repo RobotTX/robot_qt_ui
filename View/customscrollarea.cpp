@@ -6,7 +6,7 @@
 #include <QResizeEvent>
 
 CustomScrollArea::CustomScrollArea(QWidget *parent, bool _leftMenu, bool _editRobotWidget, bool _vertical, QScrollBar* _childBar):
-    QScrollArea(parent), vertical(_vertical), childBar(_childBar), leftMenu(_leftMenu), editRobotWidget(_editRobotWidget){
+    QScrollArea(parent), childBar(_childBar), vertical(_vertical), leftMenu(_leftMenu), editRobotWidget(_editRobotWidget){
     setWidgetResizable(true);
     if(vertical){
         setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
