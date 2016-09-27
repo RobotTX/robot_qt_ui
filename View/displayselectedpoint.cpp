@@ -45,7 +45,7 @@ DisplaySelectedPoint::DisplaySelectedPoint(QWidget* _parent, QSharedPointer<Robo
     topLayout->addWidget(actionButtons);
 
     nameEdit = new CustomLineEdit(this);
-    nameEdit->setReadOnly(true);
+    nameEdit->setFocusPolicy(Qt::FocusPolicy::StrongFocus);
     nameEdit->hide();
 
     nameLabel = new CustomLabel("OKay", this, true);
@@ -102,7 +102,6 @@ void DisplaySelectedPoint::displayPointInfo(void) {
 
 void DisplaySelectedPoint::mousePressEvent(QEvent* /* unused */){
     qDebug() << "mouse pressed";
-    //nameEdit->setReadOnly(true);
     nameLabel->show();
     nameEdit->hide();
 }

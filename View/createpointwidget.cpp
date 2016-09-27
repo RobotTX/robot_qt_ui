@@ -189,10 +189,10 @@ void CreatePointWidget::showGroupLayout(void) {
     actionButtons->getPlusButton()->setEnabled(false);
     actionButtons->getPlusButton()->setToolTip("");
     nameEdit->setReadOnly(false);
+    nameEdit->setFocus();
     nameEdit->setText("");
     nameEdit->show();
     messageCreationLabel->hide();
-    setFocus();
     nameEdit->setPlaceholderText("type your name");
     nameEdit->setFrame(true);
 

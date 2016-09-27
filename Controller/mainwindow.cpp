@@ -543,7 +543,7 @@ void MainWindow::connectToRobot(bool checked){
         }
     } else {
 
-        topLayout->setLabelDelay(TEXT_COLOR_DANGER, "You must first click a robot on the map to establish a connection",2500);
+        topLayout->setLabelDelay(TEXT_COLOR_DANGER, "You must first click a robot on the map to establish a connection",4000);
 
         qDebug() << "Select a robot first";
     }
@@ -570,10 +570,7 @@ void MainWindow::deletePath(int robotNb){
                             bool success = (answerList.at(1).compare("done") == 0);
                             if((cmd.compare("k") == 0 && success) || answerList.at(0).compare("1") == 0){
                                 clearPath(robotNb);
-                                bottomLayout->getViewPathRobotBtnGroup()->button(robotNb)->setChecked(false);
-                                bottomLayout->getViewPathRobotBtnGroup()->button(robotNb)->click();
                                 topLayout->setLabel(TEXT_COLOR_SUCCESS, "Path deleted");
-
                             } else {
                                 topLayout->setLabel(TEXT_COLOR_DANGER, "Failed to delete the path, please try again");
                             }
@@ -608,9 +605,6 @@ void MainWindow::deletePath(int robotNb){
                             bool success = (answerList.at(1).compare("done") == 0);
                             if((cmd.compare("m") == 0 && success) || answerList.at(0).compare("1") == 0){
                                 clearPath(robotNb);
-                                hideAllWidgets();
-                                bottomLayout->getViewPathRobotBtnGroup()->button(robotNb)->setChecked(false);
-                                bottomLayout->getViewPathRobotBtnGroup()->button(robotNb)->click();
                                 topLayout->setLabel(TEXT_COLOR_SUCCESS, "Path deleted");
                             } else {
                                 topLayout->setLabel(TEXT_COLOR_DANGER, "Failed to delete the path, please try again");
@@ -813,29 +807,7 @@ void MainWindow::deletePathSelecRobotBtnEvent(){
         break;
     case QMessageBox::Ok:
     {
-        emit resetPath();
-        emit resetPathCreationWidget();
-        selectedRobot->getRobot()->clearPath();
-        editSelectedRobotWidget->setPathChanged(true);
-        editSelectedRobotWidget->clearPath();
-        bottomLayout->uncheckAll();
-        pathPainter->setPathDeleted(true);
-
-        /// to uncheck the previously checked path
-        editSelectedRobotWidget->updatePathsMenu();
-        editSelectedRobotWidget->getPathWidget()->hide();
-        bottomLayout->updateRobot(robots->getRobotId(selectedRobot->getRobot()->getName()), selectedRobot);
-        selectedRobot->getRobot()->setPathName("");
-        selectedRobot->getRobot()->setGroupPathName("");
-
-        /// serializes the new path (which is actually an empty path)
-        QFile robotPathFile(QString(GOBOT_PATH) + "robots_paths/" + selectedRobot->getRobot()->getName() + "_path.dat");
-        robotPathFile.resize(0);
-        robotPathFile.open(QIODevice::WriteOnly);
-        QDataStream out(&robotPathFile);
-        out << *(selectedRobot->getRobot());
-        robotPathFile.close();
-
+        clearPath(robots->getRobotId(selectedRobot->getRobot()->getName()));
         setTemporaryMessageTop(TEXT_COLOR_SUCCESS, "You have successfully deleted the path of the robot " + selectedRobot->getRobot()->getName(), 2500);
         break;
     }
@@ -1562,13 +1534,40 @@ void MainWindow::showEditHome(){
 
 void MainWindow::clearPath(const int robotNb){
     qDebug() << "MainWindow::clearPath called";
+
+    emit resetPath();
+    emit resetPathCreationWidget();
+    robots->getRobotsVector().at(robotNb)->getRobot()->clearPath();
+    bottomLayout->uncheckAll();
+    pathPainter->setPathDeleted(true);
+
+
+    /// to uncheck the previously checked path
+    robots->getRobotsVector().at(robotNb)->getRobot()->setPathName("");
+    robots->getRobotsVector().at(robotNb)->getRobot()->setGroupPathName("");
+
+    /// serializes the new path (which is actually an empty path)
+    QFile robotPathFile(QString(GOBOT_PATH) + "robots_paths/" + robots->getRobotsVector().at(robotNb)->getRobot()->getName() + "_path.dat");
+    robotPathFile.resize(0);
+    robotPathFile.open(QIODevice::WriteOnly);
+    QDataStream out(&robotPathFile);
+    out << *(robots->getRobotsVector().at(robotNb)->getRobot());
+    robotPathFile.close();
+
     if(robots->getRobotsVector().at(robotNb)->getRobot()->isPlayingPath()){
         qDebug() << "MainWindow::clearPath pause path on robot before supp " << robotNb << " : " << robots->getRobotsVector().at(robotNb)->getRobot()->getName();
         robots->getRobotsVector().at(robotNb)->getRobot()->setPlayingPath(0);
         bottomLayout->getPlayRobotBtnGroup()->button(robotNb)->setIcon(QIcon(":/icons/play.png"));
     }
 
-    robots->getRobotsVector().at(robotNb)->getRobot()->clearPath();
+
+    if(editSelectedRobotWidget->isVisible()){
+        editSelectedRobotWidget->setSelectedRobot(robots->getRobotsVector().at(robotNb));
+        editSelectedRobotWidget->setPathChanged(true);
+        editSelectedRobotWidget->clearPath();
+        editSelectedRobotWidget->updatePathsMenu();
+        editSelectedRobotWidget->getPathWidget()->hide();
+    }
 
     bottomLayout->updateRobot(robotNb, robots->getRobotsVector().at(robotNb));
 }
@@ -2285,13 +2284,6 @@ void MainWindow::editPointButtonEvent(){
     leftMenu->getDisplaySelectedPoint()->getCancelButton()->show();
     leftMenu->getDisplaySelectedPoint()->getSaveButton()->show();
 
-    /// makes it obvious what the user has to do to change the name of his point
-    leftMenu->getDisplaySelectedPoint()->getNameEdit()->setAutoFillBackground(false);
-
-    /// if the point is a home point any modification of its name is forbidden
-    /// not anymore since its name is no longer imposed by the application
-    leftMenu->getDisplaySelectedPoint()->getNameEdit()->setReadOnly(false);
-
     /// sets the state of the map and the other widgets to prevent other concurrent actions
     setGraphicItemsState(GraphicItemState::NO_EVENT);
     mapPixmapItem->setState(GraphicItemState::EDITING_PERM);
@@ -2301,10 +2293,8 @@ void MainWindow::editPointButtonEvent(){
     displaySelectedPointView->setFlag(QGraphicsItem::ItemIsMovable, true);
 
     leftMenu->getDisplaySelectedPoint()->getNameEdit()->setText("");
-    leftMenu->getDisplaySelectedPoint()->getNameEdit()->setFocus();
     leftMenu->getDisplaySelectedPoint()->getNameEdit()->setPlaceholderText(displaySelectedPointView->getPoint()->getName());
-    leftMenu->getDisplaySelectedPoint()->getNameEdit()->setFrame(true);
-    leftMenu->getDisplaySelectedPoint()->setFocusPolicy(Qt::FocusPolicy::StrongFocus);
+    leftMenu->getDisplaySelectedPoint()->getNameEdit()->setFocus();
 }
 
 /**
@@ -2847,7 +2837,7 @@ void MainWindow::displayGroupMapEvent(void){
                     parserPoints.save(*points);
                 } else if(points->getGroups()->value(checkedName)->size() == 0) {
                     pointsLeftWidget->getActionButtons()->getMapButton()->setChecked(false);
-                    topLayout->setLabelDelay(TEXT_COLOR_WARNING, "This group is empty. There is no points to display", 2000);
+                    topLayout->setLabelDelay(TEXT_COLOR_WARNING, "This group is empty. There is no points to display", 4000);
                 } else {
                     /// updates the tooltip of the map button
                     pointsLeftWidget->getActionButtons()->getMapButton()->setToolTip("Click here to hide the selected group on the map");
@@ -3224,11 +3214,6 @@ void MainWindow::editPointFromGroupMenu(void){
             XMLParser parser(QString(GOBOT_PATH) + QString(XML_FILE));
             parser.save(*points);
 
-            leftMenu->getDisplaySelectedPoint()->getNameEdit()->setAutoFillBackground(false);
-            leftMenu->getDisplaySelectedPoint()->getNameEdit()->setFrame(true);
-
-            leftMenu->getDisplaySelectedPoint()->getNameEdit()->setReadOnly(false);
-
             /// sets the state of the map and the other widgets to prevent other concurrent actions
             setGraphicItemsState(GraphicItemState::NO_EVENT);
             mapPixmapItem->setState(GraphicItemState::EDITING_PERM);
@@ -3250,15 +3235,12 @@ void MainWindow::editPointFromGroupMenu(void){
             leftMenu->getDisplaySelectedPoint()->displayPointInfo();
 
             leftMenu->getDisplaySelectedPoint()->getActionButtons()->getEditButton()->setChecked(true);
-            leftMenu->getDisplaySelectedPoint()->getNameEdit()->setReadOnly(false);
-            leftMenu->getDisplaySelectedPoint()->getNameEdit()->setFrame(true);
             leftMenu->getDisplaySelectedPoint()->getNameEdit()->setText("");
             leftMenu->getDisplaySelectedPoint()->getNameEdit()->setPlaceholderText(pointName);
-            leftMenu->getDisplaySelectedPoint()->getNameEdit()->setFocus();
-            leftMenu->getDisplaySelectedPoint()->getNameEdit()->setFocusPolicy(Qt::FocusPolicy::StrongFocus);
             leftMenu->getDisplaySelectedPoint()->getCancelButton()->show();
             leftMenu->getDisplaySelectedPoint()->getSaveButton()->show();
             leftMenu->getDisplaySelectedPoint()->getNameEdit()->show();
+            leftMenu->getDisplaySelectedPoint()->getNameEdit()->setFocus();
             leftMenu->getDisplaySelectedPoint()->getNameLabel()->hide();
             leftMenu->getDisplaySelectedPoint()->show();
             leftMenu->getDisplaySelectedGroup()->hide();
@@ -3360,10 +3342,6 @@ void MainWindow::updatePoint(void){
         XMLParser parserPoints(QString(GOBOT_PATH) + QString(XML_FILE));
         parserPoints.save(*points);
 
-        /// to change the aspect of the point name
-        leftMenu->getDisplaySelectedPoint()->getNameEdit()->setAutoFillBackground(true);
-        leftMenu->getDisplaySelectedPoint()->getNameEdit()->setFrame(false);
-
         /// so that you cannot edit a new name unless you click the edit button again
         selectedPoint->getActionButtons()->getEditButton()->setChecked(false);
 
@@ -3391,7 +3369,7 @@ void MainWindow::updatePoint(void){
         leftMenu->getDisplaySelectedPoint()->getNameEdit()->hide();
         leftMenu->getDisplaySelectedPoint()->getNameLabel()->show();
 
-        topLayout->setLabelDelay(TEXT_COLOR_SUCCESS, "Your point has been successfully updated", 2500);
+        topLayout->setLabelDelay(TEXT_COLOR_SUCCESS, "Your point has been successfully updated", 4000);
     } /// otherwise the point is not saved and an error message is displayed at the top
     else
         setTemporaryMessageTop(TEXT_COLOR_DANGER, "You cannot save your point \"" +
@@ -3419,12 +3397,7 @@ void MainWindow::cancelEvent(void){
 
         displaySelectedPointView->getPoint()->setPosition(displaySelectedPointView->getOriginalPosition());
 
-        /// to change the aspect of the point name
-        leftMenu->getDisplaySelectedPoint()->getNameEdit()->setAutoFillBackground(true);
-        leftMenu->getDisplaySelectedPoint()->getNameEdit()->setFrame(false);
-
         /// we hide the buttons relative to the edit option and make sure the points properties are not longer modifiable
-        leftMenu->getDisplaySelectedPoint()->getNameEdit()->setReadOnly(true);
         leftMenu->getDisplaySelectedPoint()->getActionButtons()->getEditButton()->setChecked(false);
         leftMenu->getDisplaySelectedPoint()->getCancelButton()->hide();
         leftMenu->getDisplaySelectedPoint()->getSaveButton()->hide();
@@ -3758,7 +3731,7 @@ void MainWindow::createGroup(QString groupName){
         pointsLeftWidget->getActionButtons()->getPlusButton()->setToolTip("Click here to add a new group");
         topLayout->setEnabled(true);
 
-        topLayout->setLabelDelay(TEXT_COLOR_SUCCESS, "You have created a new group",2500);
+        topLayout->setLabelDelay(TEXT_COLOR_SUCCESS, "You have created a new group",4000);
     } else if(pointsLeftWidget->checkGroupName(groupName) == 1){
         pointsLeftWidget->setLastCheckedId("");
 
@@ -3780,7 +3753,7 @@ void MainWindow::createGroup(QString groupName){
         pointsLeftWidget->getActionButtons()->getPlusButton()->setToolTip("Click here to add a new group");
         topLayout->setEnabled(true);
     } else {
-        topLayout->setLabelDelay(TEXT_COLOR_DANGER, "You cannot choose : " + groupName + " as a new name for your group because another group already has this name",2500);
+        topLayout->setLabelDelay(TEXT_COLOR_DANGER, "You cannot choose : " + groupName + " as a new name for your group because another group already has this name",4000);
     }
 }
 
@@ -3823,7 +3796,7 @@ void MainWindow::modifyGroupWithEnter(QString name){
         /// resets the pixmaps
         points->setPixmapAll(PointView::PixmapType::NORMAL);
 
-        topLayout->setLabelDelay(TEXT_COLOR_SUCCESS, "You have successfully changed the name of your group from \"" + oldGroupName + "\" to \"" + name + "\"", 2500);
+        topLayout->setLabelDelay(TEXT_COLOR_SUCCESS, "You have successfully changed the name of your group from \"" + oldGroupName + "\" to \"" + name + "\"", 4000);
 
     } else if(pointsLeftWidget->checkGroupName(name) == 1){
         /// enables the buttons
@@ -3843,7 +3816,7 @@ void MainWindow::modifyGroupWithEnter(QString name){
         points->setPixmapAll(PointView::PixmapType::NORMAL);
     }
     else
-        topLayout->setLabelDelay(TEXT_COLOR_DANGER, "You cannot choose : " + name + " as a new name for your group because another group already has this name", 2500);
+        topLayout->setLabelDelay(TEXT_COLOR_DANGER, "You cannot choose : " + name + " as a new name for your group because another group already has this name", 4000);
 }
 
 void MainWindow::modifyGroupAfterClick(QString name){
@@ -3863,7 +3836,6 @@ void MainWindow::modifyGroupAfterClick(QString name){
         int checkedId = pointsLeftWidget->getGroupButtonGroup()->getButtonIdByName(pointsLeftWidget->getGroupButtonGroup()->getEditedGroupName());
            QString color ="";
            QString msg = "";
-           int time = 1500;
         if(pointsLeftWidget->checkGroupName(name) == 0){
             /// Update the model
             qDebug() <<   pointsLeftWidget->getLastCheckedId();
@@ -3877,20 +3849,17 @@ void MainWindow::modifyGroupAfterClick(QString name){
 
             color= TEXT_COLOR_SUCCESS;
             msg = "You have successfully modified the name of your group";
-            time = 1500;
         } else if(pointsLeftWidget->checkGroupName(name) == 1){
             color = TEXT_COLOR_DANGER;
             msg= "The name of your group cannot be empty. Please choose a name for your group";
-            time = 2500;
         } else {
             color=TEXT_COLOR_DANGER;
             msg = "You cannot choose : " + name.simplified() + " as a new name for your group because another group already has this name";
-            time = 2500;
         }
 
         pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(checkedId)->show();
         pointsLeftWidget->setLastCheckedId("");
-        topLayout->setLabelDelay(color, msg, time);
+        topLayout->setLabelDelay(color, msg, 4000);
     }
 }
 
@@ -4205,7 +4174,7 @@ void MainWindow::saveGroupPaths(QString name){
         leftMenu->getGroupsPathsWidget()->getActionButtons()->getPlusButton()->setToolTip("Click here to add a new group of paths");
         topLayout->setEnabled(true);
         leftMenu->getGroupsPathsWidget()->getActionButtons()->getPlusButton()->setEnabled(true);
-        topLayout->setLabelDelay(TEXT_COLOR_SUCCESS, "You have created a new group of paths", 2500);
+        topLayout->setLabelDelay(TEXT_COLOR_SUCCESS, "You have created a new group of paths", 4000);
         serializePaths();
     } else if(leftMenu->getGroupsPathsWidget()->checkGroupName(name) == 1){
         /// enables the return button again
@@ -4225,7 +4194,7 @@ void MainWindow::saveGroupPaths(QString name){
         leftMenu->getGroupsPathsWidget()->getActionButtons()->getPlusButton()->setEnabled(true);
     }
     else
-        topLayout->setLabelDelay(TEXT_COLOR_DANGER, "You cannot choose : " + name + " as a new name for your group because another group already has this name", 2500);
+        topLayout->setLabelDelay(TEXT_COLOR_DANGER, "You cannot choose : " + name + " as a new name for your group because another group already has this name", 4000);
 }
 
 void MainWindow::modifyGroupPathsWithEnter(QString name){
@@ -4246,7 +4215,7 @@ void MainWindow::modifyGroupPathsWithEnter(QString name){
         paths->getGroups()->remove(leftMenu->getGroupsPathsWidget()->getButtonGroup()->getButtonGroup()->checkedButton()->text());
         paths->getGroups()->insert(name, value);
         leftMenu->getGroupsPathsWidget()->updateGroupsPaths();
-        topLayout->setLabelDelay(TEXT_COLOR_SUCCESS, "You have successfully modified the name of your group", 1500);
+        topLayout->setLabelDelay(TEXT_COLOR_SUCCESS, "You have successfully modified the name of your group", 4000);
     } else {
         leftMenu->getGroupsPathsWidget()->updateGroupsPaths();
         setMessageTop(TEXT_COLOR_NORMAL, "");
