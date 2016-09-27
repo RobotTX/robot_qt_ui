@@ -234,6 +234,8 @@ void EditSelectedRobotWidget::clearPath(){
     pathWidget->hide();
     pathSpaceWidget->hide();
     deletePathBtn->hide();
+    assignedPath = "";
+    groupAssignedPath = "";
 }
 
 void EditSelectedRobotWidget::updatePathsMenu(){

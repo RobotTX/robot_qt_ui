@@ -44,7 +44,8 @@ BottomLayout::BottomLayout(QMainWindow* parent, const QSharedPointer<Robots> &ro
 
     /// to scroll a path when there are two many points to display
     QScrollBar* pathScroll2 = new QScrollBar(Qt::Orientation::Horizontal, this);
-    pathScroll = new CustomScrollArea(this, false, false, false, pathScroll2);
+    QWidget* hidingWidget = new QWidget(this);
+    pathScroll = new CustomScrollArea(this, false, false, false, pathScroll2, hidingWidget);
 
     /// The layout of the three columns
     widgetName = new QWidget(this);
@@ -161,12 +162,7 @@ BottomLayout::BottomLayout(QMainWindow* parent, const QSharedPointer<Robots> &ro
 
     layout->addWidget(scrollArea);
 
-    /*
-    pathScroll->horizontalScrollBar()->setStyleSheet(" * { color: transparent; "
-                                                     "border: none; "
-                                                     "background-color: transparent; "
-                                                     "margin-top : 40px}");
-*/
+
     pathScroll2->move(pathScroll->pos().x() + 9, pathScroll->pos().y()
                       + pathScroll->height() - 41);
     pathScroll2->setMinimum(pathScroll->verticalScrollBar()->minimum());
@@ -174,14 +170,15 @@ BottomLayout::BottomLayout(QMainWindow* parent, const QSharedPointer<Robots> &ro
     pathScroll2->setValue(pathScroll->verticalScrollBar()->value());
     pathScroll2->setPageStep(pathScroll->verticalScrollBar()->pageStep());
     connect(pathScroll2, SIGNAL(valueChanged(int)), pathScroll->horizontalScrollBar(), SLOT(setValue(int)));
-    pathScroll2->resize(pathScroll->width(), 15);
-    //pathScroll2->setStyleSheet("* { padding-bottom: 10px; }");
-    //actionLayout->setSpacing(0);
+
+    hidingWidget->move(pathScroll->pos().x() + 9, pathScroll->pos().y()
+                 + pathScroll->height() - 26);
+    hidingWidget->setStyleSheet("* { background-color: " + bottom_menu_background_color + "; }");
 
     QPalette pal;
     pal.setColor(QPalette::Background, bottom_menu_background_color);
 
-    this->setPalette( pal);
+    this->setPalette(pal);
     this->setAutoFillBackground(true);
 }
 

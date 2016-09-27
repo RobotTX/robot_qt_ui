@@ -570,10 +570,7 @@ void MainWindow::deletePath(int robotNb){
                             bool success = (answerList.at(1).compare("done") == 0);
                             if((cmd.compare("k") == 0 && success) || answerList.at(0).compare("1") == 0){
                                 clearPath(robotNb);
-                                bottomLayout->getViewPathRobotBtnGroup()->button(robotNb)->setChecked(false);
-                                bottomLayout->getViewPathRobotBtnGroup()->button(robotNb)->click();
                                 topLayout->setLabel(TEXT_COLOR_SUCCESS, "Path deleted");
-
                             } else {
                                 topLayout->setLabel(TEXT_COLOR_DANGER, "Failed to delete the path, please try again");
                             }
@@ -608,9 +605,6 @@ void MainWindow::deletePath(int robotNb){
                             bool success = (answerList.at(1).compare("done") == 0);
                             if((cmd.compare("m") == 0 && success) || answerList.at(0).compare("1") == 0){
                                 clearPath(robotNb);
-                                hideAllWidgets();
-                                bottomLayout->getViewPathRobotBtnGroup()->button(robotNb)->setChecked(false);
-                                bottomLayout->getViewPathRobotBtnGroup()->button(robotNb)->click();
                                 topLayout->setLabel(TEXT_COLOR_SUCCESS, "Path deleted");
                             } else {
                                 topLayout->setLabel(TEXT_COLOR_DANGER, "Failed to delete the path, please try again");
@@ -813,29 +807,7 @@ void MainWindow::deletePathSelecRobotBtnEvent(){
         break;
     case QMessageBox::Ok:
     {
-        emit resetPath();
-        emit resetPathCreationWidget();
-        selectedRobot->getRobot()->clearPath();
-        editSelectedRobotWidget->setPathChanged(true);
-        editSelectedRobotWidget->clearPath();
-        bottomLayout->uncheckAll();
-        pathPainter->setPathDeleted(true);
-
-        /// to uncheck the previously checked path
-        editSelectedRobotWidget->updatePathsMenu();
-        editSelectedRobotWidget->getPathWidget()->hide();
-        bottomLayout->updateRobot(robots->getRobotId(selectedRobot->getRobot()->getName()), selectedRobot);
-        selectedRobot->getRobot()->setPathName("");
-        selectedRobot->getRobot()->setGroupPathName("");
-
-        /// serializes the new path (which is actually an empty path)
-        QFile robotPathFile(QString(GOBOT_PATH) + "robots_paths/" + selectedRobot->getRobot()->getName() + "_path.dat");
-        robotPathFile.resize(0);
-        robotPathFile.open(QIODevice::WriteOnly);
-        QDataStream out(&robotPathFile);
-        out << *(selectedRobot->getRobot());
-        robotPathFile.close();
-
+        clearPath(robots->getRobotId(selectedRobot->getRobot()->getName()));
         setTemporaryMessageTop(TEXT_COLOR_SUCCESS, "You have successfully deleted the path of the robot " + selectedRobot->getRobot()->getName(), 2500);
         break;
     }
@@ -1562,13 +1534,40 @@ void MainWindow::showEditHome(){
 
 void MainWindow::clearPath(const int robotNb){
     qDebug() << "MainWindow::clearPath called";
+
+    emit resetPath();
+    emit resetPathCreationWidget();
+    robots->getRobotsVector().at(robotNb)->getRobot()->clearPath();
+    bottomLayout->uncheckAll();
+    pathPainter->setPathDeleted(true);
+
+
+    /// to uncheck the previously checked path
+    robots->getRobotsVector().at(robotNb)->getRobot()->setPathName("");
+    robots->getRobotsVector().at(robotNb)->getRobot()->setGroupPathName("");
+
+    /// serializes the new path (which is actually an empty path)
+    QFile robotPathFile(QString(GOBOT_PATH) + "robots_paths/" + robots->getRobotsVector().at(robotNb)->getRobot()->getName() + "_path.dat");
+    robotPathFile.resize(0);
+    robotPathFile.open(QIODevice::WriteOnly);
+    QDataStream out(&robotPathFile);
+    out << *(robots->getRobotsVector().at(robotNb)->getRobot());
+    robotPathFile.close();
+
     if(robots->getRobotsVector().at(robotNb)->getRobot()->isPlayingPath()){
         qDebug() << "MainWindow::clearPath pause path on robot before supp " << robotNb << " : " << robots->getRobotsVector().at(robotNb)->getRobot()->getName();
         robots->getRobotsVector().at(robotNb)->getRobot()->setPlayingPath(0);
         bottomLayout->getPlayRobotBtnGroup()->button(robotNb)->setIcon(QIcon(":/icons/play.png"));
     }
 
-    robots->getRobotsVector().at(robotNb)->getRobot()->clearPath();
+
+    if(editSelectedRobotWidget->isVisible()){
+        editSelectedRobotWidget->setSelectedRobot(robots->getRobotsVector().at(robotNb));
+        editSelectedRobotWidget->setPathChanged(true);
+        editSelectedRobotWidget->clearPath();
+        editSelectedRobotWidget->updatePathsMenu();
+        editSelectedRobotWidget->getPathWidget()->hide();
+    }
 
     bottomLayout->updateRobot(robotNb, robots->getRobotsVector().at(robotNb));
 }
