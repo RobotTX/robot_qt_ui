@@ -32,7 +32,7 @@ class SendNewMapThread;
 class Robot : public QObject{
     Q_OBJECT
 public:
-    Robot(const QSharedPointer<Paths> &_paths, const QString name, const QString addressIp);
+    Robot(MainWindow* mainWindow, const QSharedPointer<Paths> &_paths, const QString name, const QString addressIp);
     Robot();
     ~Robot();
 

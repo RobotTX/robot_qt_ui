@@ -357,8 +357,8 @@ void MainWindow::initializeRobots(){
     connect(updateRobotsThread, SIGNAL(robotIsAlive(QString, QString, QString, QString, int)), this, SLOT(robotIsAliveSlot(QString, QString, QString, QString, int)));
     updateRobotsThread->start();
     updateRobotsThread->moveToThread(updateRobotsThread);
-
 */
+
 
     QFile fileWrite(QString(GOBOT_PATH) + QString(ROBOTS_NAME_FILE));
     fileWrite.resize(0);
@@ -369,29 +369,9 @@ void MainWindow::initializeRobots(){
     QString robotIp1 = "localhost";
     QString robotName1 = tmpMap.value(robotIp1, "Roboty");
 
-    QSharedPointer<Robot> robot1(new Robot(paths, robotName1, robotIp1));
+    QSharedPointer<Robot> robot1(new Robot(this, paths, robotName1, robotIp1));
     robot1->setWifi("Swaghetti Yolognaise");
     RobotView* robotView1 = new RobotView(robot1, mapPixmapItem);
-
-    /*
-    QVector<QSharedPointer<PathPoint>> path;
-    if(points->getGroups()->value("first group")->size() > 2){
-        //robot1->setPathName();
-        for(int i = 0; i < points->getGroups()->value("first group")->size(); i++){
-            QSharedPointer<PathPoint> pathPoint = QSharedPointer<PathPoint>(new PathPoint(*(points->getGroups()->value("first group")->at(i)->getPoint()), PathPoint::Action::WAIT, 0));
-            path.push_back(pathPoint);
-        }
-    }
-    robot1->setPath(path);
-    robot1->setGroupPathName("first group");
-    */
-    /*
-    bool flag(false);
-
-    robot1->setPath(paths->getPath("wednesday", "wed path", flag));
-    robot1->setGroupPathName("wednesday");
-    robot1->setPathName("wed path");
-    */
     robotView1->setLastStage(2);
 
 
@@ -403,7 +383,7 @@ void MainWindow::initializeRobots(){
 
     QString robotIp2 = "192.168.4.12";
     QString robotName2 = tmpMap.value(robotIp2, "Roboto");
-    QSharedPointer<Robot> robot2(new Robot(paths, robotName2, robotIp2));
+    QSharedPointer<Robot> robot2(new Robot(this, paths, robotName2, robotIp2));
     robot2->setWifi("Swaghetti Yolognaise");
     RobotView* robotView2 = new RobotView(robot2, mapPixmapItem);
     connect(robotView2, SIGNAL(setSelectedSignal(RobotView*)), this, SLOT(setSelectedRobot(RobotView*)));
@@ -414,7 +394,7 @@ void MainWindow::initializeRobots(){
 
     QString robotIp3 = "192.168.4.13";
     QString robotName3 = tmpMap.value(robotIp3, "Robota");
-    QSharedPointer<Robot> robot3(new Robot(paths, robotName3, robotIp3));
+    QSharedPointer<Robot> robot3(new Robot(this, paths, robotName3, robotIp3));
     robot3->setWifi("Swaghetti Yolognaise");
     RobotView* robotView3 = new RobotView(robot3, mapPixmapItem);
     connect(robotView3, SIGNAL(setSelectedSignal(RobotView*)), this, SLOT(setSelectedRobot(RobotView*)));
@@ -427,6 +407,7 @@ void MainWindow::initializeRobots(){
     out << robots->getRobotsNameMap();
     fileWrite.close();
 
+
     for(int i = 0; i < robots->getRobotsVector().size(); i++){
         QFile robotPathFile(QString(GOBOT_PATH) + "robots_paths/" + robots->getRobotsVector().at(i)->getRobot()->getName() + "_path.dat");
         if(robotPathFile.exists()){
@@ -436,7 +417,6 @@ void MainWindow::initializeRobots(){
             robotPathFile.close();
         }
     }
-
 
     //qDebug() << "RobotsNameMap on init" << robots->getRobotsNameMap();
 
@@ -1626,7 +1606,7 @@ void MainWindow::robotIsAliveSlot(QString hostname, QString ip, QString mapId, Q
     } else {
         qDebug() << "Robot" << hostname << "at ip" << ip << "just connected and has the map id :" << mapId;
 
-        QSharedPointer<Robot> robot(new Robot(paths, hostname, ip));
+        QSharedPointer<Robot> robot(new Robot(this, paths, hostname, ip));
         robot->setWifi(ssid);
         rv = new RobotView(robot, mapPixmapItem);
         connect(rv, SIGNAL(setSelectedSignal(RobotView*)), this, SLOT(setSelectedRobot(RobotView*)));
@@ -2654,7 +2634,7 @@ void MainWindow::askForDeletePointConfirmation(QString pointName){
  */
 void MainWindow::askForDeleteGroupConfirmation(QString groupName){
     qDebug() << "askForDeleteGroupConfirmation called";
-    int ret = openConfirmMessage("Do you really want to remove this group ? All the points in this group would also be removed.");
+    int ret = openConfirmMessage("Do you really want to remove this group ? All the points in this group will also be removed.");
     switch(ret){
         case QMessageBox::Cancel :
             qDebug() << "clicked no ici la tt suite";
@@ -4128,7 +4108,7 @@ void MainWindow::createGroupPaths(){
 
 void MainWindow::deleteGroupPaths(){
     qDebug() << "MainWindow::deleteGroupPaths called";
-    int answer = openConfirmMessage("Are you sure you want to delete this group of path, all the paths inside would be deleted as well ?");
+    int answer = openConfirmMessage("Are you sure you want to delete this group of path, all the paths inside will be deleted as well ?");
     leftMenu->getGroupsPathsWidget()->resetWidget();
     switch(answer){
     case QMessageBox::StandardButton::Ok:
