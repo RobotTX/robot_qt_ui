@@ -352,14 +352,14 @@ void MainWindow::initializeRobots(){
     robots->setRobotsNameMap(tmp);
     fileRead.close();
 
-/*
+
     updateRobotsThread = new UpdateRobotsThread(PORT_ROBOT_UPDATE);
     connect(updateRobotsThread, SIGNAL(robotIsAlive(QString, QString, QString, QString, int)), this, SLOT(robotIsAliveSlot(QString, QString, QString, QString, int)));
     updateRobotsThread->start();
     updateRobotsThread->moveToThread(updateRobotsThread);
-*/
 
 
+/*
     QFile fileWrite(QString(GOBOT_PATH) + QString(ROBOTS_NAME_FILE));
     fileWrite.resize(0);
     fileWrite.open(QIODevice::WriteOnly);
@@ -406,7 +406,7 @@ void MainWindow::initializeRobots(){
     robots->setRobotsNameMap(tmpMap);
     out << robots->getRobotsNameMap();
     fileWrite.close();
-
+*/
 
     for(int i = 0; i < robots->getRobotsVector().size(); i++){
         QFile robotPathFile(QString(GOBOT_PATH) + "robots_paths/" + robots->getRobotsVector().at(i)->getRobot()->getName() + "_path.dat");
@@ -4379,6 +4379,47 @@ void MainWindow::doubleClickOnPath(QString pathName){
     leftMenu->getPathGroupDisplayed()->hide();
     leftMenu->getDisplaySelectedPath()->show();
     leftMenu->getPathGroupDisplayed()->getPathButtonGroup()->uncheck();
+}
+
+void MainWindow::sendPathSelectedRobotSlot(){
+
+    qDebug() << "MainWindow::sendPathSelectedRobotSlot path changed";
+    QSharedPointer<Robot> robot = selectedRobot->getRobot();
+    QString pathStr = "";
+    /// prepares the cmd to send to the robot
+    qDebug() << "MainWindow::sendPathSelectedRobotSlot" << pathPainter->getCurrentPath().size();
+    for(int i = 0; i < pathPainter->getCurrentPath().size(); i++){
+        QSharedPointer<PathPoint> pathPoint = pathPainter->getCurrentPath().at(i);
+        float oldPosX = pathPoint->getPoint().getPosition().getX();
+        float oldPosY = pathPoint->getPoint().getPosition().getY();
+
+        float newPosX = (oldPosX - ROBOT_WIDTH) * map->getResolution() + map->getOrigin().getX();
+        float newPosY = (-oldPosY + map->getHeight() - ROBOT_WIDTH/2) * map->getResolution() + map->getOrigin().getY();
+        int waitTime = -1;
+        if(pathPoint->getAction() == PathPoint::WAIT){
+            waitTime = pathPoint->getWaitTime();
+        }
+        pathStr += + "\"" + QString::number(newPosX) + "\" \"" + QString::number(newPosY) + "\" \"" + QString::number(waitTime)+ "\" ";
+    }
+
+    /// if the command is succesfully sent to the robot, we apply the change
+    robot->resetCommandAnswer();
+    // TODO check if pathStr empty, means deleting the path => cmd send without parem => check robotFiles/command.cpp
+    if(robot->sendCommand(QString("i ") + pathStr)){
+        QString answer = robot->waitAnswer();
+        QStringList answerList = answer.split(QRegExp("[ ]"), QString::SkipEmptyParts);
+        if(answerList.size() > 1){
+            QString cmd = answerList.at(0);
+            bool success = (answerList.at(1).compare("done") == 0);
+            if((cmd.compare("i") == 0 && success) || answerList.at(0).compare("1") == 0){
+                /// we update the path on the application side by serializing the path
+
+                qDebug() << "MainWindow::robotSavedEvent Path saved for robot" << robot->getIp();
+            } else {
+                qDebug() << "MainWindow::robotSavedEvent Path failed to be saved, please try again";
+            }
+        }
+    }
 }
 
 void MainWindow::setMessageNoRobotPath(const int code){

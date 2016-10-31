@@ -39,8 +39,8 @@ class QMoveEvent;
 #include "Model/point.h"
 #include <QSettings>
 
-//#define GOBOT_PATH "/home/m-a/Documents/QtProject/gobot-software/"
-#define GOBOT_PATH "/home/joan/Gobot/gobot-software/"
+#define GOBOT_PATH "/home/m-a/Documents/QtProject/gobot-software/"
+//#define GOBOT_PATH "/home/joan/Gobot/gobot-software/"
 //#define GOBOT_PATH "/home/gtdollar/gobot-software/"
 
 #define XML_FILE "points.xml"
@@ -112,6 +112,7 @@ signals:
     void resetPathCreationWidget();
 
 private slots:
+    void sendPathSelectedRobotSlot();
     void updateRobot(const QString ipAddress, const float posX, const float posY, const float ori);
     void updateMetadata(const int width, const int height, const float resolution, const float originX, const float originY);
     void updateMap(const QByteArray mapArray);

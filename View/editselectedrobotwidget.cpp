@@ -33,6 +33,7 @@ EditSelectedRobotWidget::EditSelectedRobotWidget(QWidget* parent, MainWindow* _m
 
     connect(robotDialog->getCancelButton(), SIGNAL(clicked()), this, SLOT(cancelRobotModifications()));
     connect(robotDialog->getSaveButton(), SIGNAL(clicked()), mainWindow, SLOT(saveRobotModifications()));
+    connect(this, SIGNAL(sendPathSelectedRobot()), mainWindow, SLOT(sendPathSelectedRobotSlot()));
 
     layout = new QVBoxLayout(this);
     robotView = NULL;
@@ -275,6 +276,7 @@ void EditSelectedRobotWidget::assignPath(QAction *action){
     setPath(paths->getPath(groupName, action->text(), foundFlag));
     assert(foundFlag);
     emit showPath(groupName, action->text());
+    emit sendPathSelectedRobot();
 }
 
 void EditSelectedRobotWidget::openHomeMenu(){
