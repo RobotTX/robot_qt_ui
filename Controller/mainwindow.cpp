@@ -352,14 +352,14 @@ void MainWindow::initializeRobots(){
     robots->setRobotsNameMap(tmp);
     fileRead.close();
 
-
+/*
     updateRobotsThread = new UpdateRobotsThread(PORT_ROBOT_UPDATE);
     connect(updateRobotsThread, SIGNAL(robotIsAlive(QString, QString, QString, QString, int)), this, SLOT(robotIsAliveSlot(QString, QString, QString, QString, int)));
     updateRobotsThread->start();
     updateRobotsThread->moveToThread(updateRobotsThread);
+*/
 
 
-/*
     QFile fileWrite(QString(GOBOT_PATH) + QString(ROBOTS_NAME_FILE));
     fileWrite.resize(0);
     fileWrite.open(QIODevice::WriteOnly);
@@ -416,7 +416,7 @@ void MainWindow::initializeRobots(){
         }
     }
 
-*/
+
 
     //qDebug() << "RobotsNameMap on init" << robots->getRobotsNameMap();
 
@@ -4645,7 +4645,8 @@ void MainWindow::backEvent(){
     leftMenu->getDisplaySelectedGroup()->disableButtons();
     leftMenu->getDisplaySelectedGroup()->uncheck();
 
-    lastWidgets.last().first.first->hide();
+    if(lastWidgets.size() > 0)
+        lastWidgets.last().first.first->hide();
 
     if (lastWidgets.size() > 1){
         lastWidgets.removeLast();

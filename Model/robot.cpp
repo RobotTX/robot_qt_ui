@@ -23,7 +23,7 @@ Robot::Robot(MainWindow* mainWindow, const QSharedPointer<Paths>& _paths, const 
         in >> *this;
         robotPathFile.close();
     }
-
+/*
     qDebug() << "Robot" << name << "at ip" << ip << " launching its cmd thread";
 
     cmdThread = new CmdRobotThread(ip, PORT_CMD, PORT_MAP_METADATA, PORT_ROBOT_POS, PORT_MAP, name, mainWindow);
@@ -58,7 +58,7 @@ Robot::Robot(MainWindow* mainWindow, const QSharedPointer<Paths>& _paths, const 
                      mainWindow , SLOT(updateMetadata(int, int, float, float, float)));
     metadataThread->start();
     metadataThread->moveToThread(metadataThread);
-
+*/
 
 }
 
@@ -67,7 +67,7 @@ Robot::Robot(): name("Default name"), ip("no Ip"), position(Position()),
 }
 
 Robot::~Robot(){
-
+/*
     if (cmdThread != 0 && cmdThread->isRunning() ) {
         cmdThread->requestInterruption();
         cmdThread->wait();
@@ -84,7 +84,7 @@ Robot::~Robot(){
         newMapThread->requestInterruption();
         newMapThread->wait();
     }
-
+*/
 }
 
 std::ostream& operator <<(std::ostream& stream, Robot const& robot){
@@ -100,14 +100,14 @@ void Robot::display(std::ostream& stream) const {
 
 bool Robot::sendCommand(const QString cmd) {
     qDebug() << "(Robot) Send command called" << cmd;
-    emit sendCommandSignal(cmd);
-    return cmdThread->isConnected();
-    //return true;
+    //emit sendCommandSignal(cmd);
+    //return cmdThread->isConnected();
+    return true;
 }
 
 void Robot::sendNewMap(QByteArray cmd) {
     Q_UNUSED(cmd)
-
+/*
     if(newMapThread->isConnected()){
         if(sendingMap){
             qDebug() << "(Robot) Send new map called but the map is already being sent";
@@ -119,25 +119,25 @@ void Robot::sendNewMap(QByteArray cmd) {
     } else {
         qDebug() << "(Robot) The new map socket is not connected yet";
     }
-
+*/
 }
 
 void Robot::doneSendingNewMapSlot(){
     qDebug() << "(Robot) doneSendingNewMapSlot called";
-    sendingMap = false;
+    //sendingMap = false;
 }
 
 QString Robot::waitAnswer() {
-    return cmdThread->waitAnswer();
-    //return "1 1";
+    //return cmdThread->waitAnswer();
+    return "1 1";
 }
 
 void Robot::resetCommandAnswer() {
-    cmdThread->resetCommandAnswer();
+    //cmdThread->resetCommandAnswer();
 }
 
 void Robot::stopThreads() {
-    if (cmdThread != 0 && cmdThread->isRunning()){
+    /*if (cmdThread != 0 && cmdThread->isRunning()){
         cmdThread->requestInterruption();
         cmdThread->wait();
     }
@@ -152,7 +152,7 @@ void Robot::stopThreads() {
     if (newMapThread != NULL && newMapThread->isRunning()){
         newMapThread->requestInterruption();
         newMapThread->wait();
-    }
+    }*/
 }
 
 void Robot::ping(){
