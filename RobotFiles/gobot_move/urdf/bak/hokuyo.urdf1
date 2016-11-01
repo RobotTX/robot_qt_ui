@@ -1,0 +1,94 @@
+<?xml version="1.0"?>  
+<robot name="gobot">  
+  <link name="base_link">  
+    <visual>  
+      <geometry>  
+        <box size="0.629 .500 .097"/>  
+      </geometry>  
+      <material name="white">  
+         <color rgba="1 1 1 .5"/>  
+    </material>  
+    </visual>  
+  </link>  
+
+  <link name="base_laser">
+    <visual>
+      <geometry>
+        <box size="0.00 0.05 0.06" />
+      </geometry>
+      <material name="Green" />
+    </visual>
+    <inertial>
+      <mass value="0.000001" />
+      <origin xyz="0 0 0" />
+      <inertia ixx="0.0001" ixy="0.0" ixz="0.0" iyy="0.0001" iyz="0.0" izz="0.0001" />
+    </inertial>
+  </link>
+
+  <joint name="laser_to_link" type="fixed">
+    <origin xyz="0.0 0.00 0.0" rpy="0 0 0" />
+    <parent link="base_link" />
+    <child link="base_laser" />
+  </joint>
+
+  <link name="rear_ir_ranger">
+    <visual>
+      <geometry>
+        <box size="0.00 0.05 0.06" />
+      </geometry>
+      <material name="Green" />
+    </visual>
+    <inertial>
+      <mass value="0.000001" />
+      <origin xyz="0 0 0" />
+      <inertia ixx="0.0001" ixy="0.0" ixz="0.0" iyy="0.0001" iyz="0.0" izz="0.0001" />
+    </inertial>
+  </link>
+
+  <joint name="rear_ir_to_link" type="fixed">
+    <origin xyz="-0.35 0.00 0.0" rpy="0 0 3.14" />
+    <parent link="base_link" />
+    <child link="rear_ir_ranger" />
+  </joint>
+  
+  <link name="left_ir_ranger">
+    <visual>
+      <geometry>
+        <box size="0.00 0.05 0.06" />
+      </geometry>
+      <material name="Green" />
+    </visual>
+    <inertial>
+      <mass value="0.000001" />
+      <origin xyz="0 0 0" />
+      <inertia ixx="0.0001" ixy="0.0" ixz="0.0" iyy="0.0001" iyz="0.0" izz="0.0001" />
+    </inertial>
+  </link>
+
+  <joint name="left_ir_to_link" type="fixed">
+    <origin xyz="0.30 0.12 0.0" rpy="0 0 0" />
+    <parent link="base_link" />
+    <child link="left_ir_ranger" />
+  </joint>
+
+  <link name="right_ir_ranger">
+    <visual>
+      <geometry>
+        <box size="0.00 0.05 0.06" />
+      </geometry>
+      <material name="Green" />
+    </visual>
+    <inertial>
+      <mass value="0.000001" />
+      <origin xyz="0 0 0" />
+      <inertia ixx="0.0001" ixy="0.0" ixz="0.0" iyy="0.0001" iyz="0.0" izz="0.0001" />
+    </inertial>
+  </link>
+
+  <joint name="right_ir_to_link" type="fixed">
+    <origin xyz="0.30 -0.12 0.0" rpy="0 0 0" />
+    <parent link="base_link" />
+    <child link="right_ir_ranger" />
+  </joint>
+ 
+</robot> 

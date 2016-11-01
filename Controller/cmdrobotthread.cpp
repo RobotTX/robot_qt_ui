@@ -147,7 +147,7 @@ void CmdRobotThread::onStateChanged(QAbstractSocket::SocketState socketState ){
 }
 
 void CmdRobotThread::delay(const int ms) const{
-    QTime dieTime= QTime::currentTime().addMSecs(ms);
+    QTime dieTime = QTime::currentTime().addMSecs(ms);
     while (QTime::currentTime() < dieTime)
         QCoreApplication::processEvents(QEventLoop::AllEvents, 100);
 }

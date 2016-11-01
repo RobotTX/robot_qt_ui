@@ -52,10 +52,11 @@ def isServer(IP) :
             stage = 0
             with open(file_path_stage, 'r') as file_path:
                 stage = file_path.readline()
+                print "stage ", stage
                 file_path.close()
 
             # Send everything to the software
-            toSend = "%s\"%s\"%s\"%s" % (hostname, map_id, ssid, stage)
+            toSend = "%s\"%s\"%s \"%s" % (hostname, map_id, ssid, stage)
             s.send(toSend)
 
     except : 

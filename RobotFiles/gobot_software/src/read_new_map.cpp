@@ -10,7 +10,7 @@ boost::asio::io_service io_service;
 tcp::socket socket_new_map(io_service);
 tcp::acceptor m_acceptor(io_service);
 
-std::string path_computer_software = "/home/ubuntu/computer_software/";
+std::string path_computer_software = "/home/gtdollar/computer_software/";
 ros::Publisher map_pub;
 
 
