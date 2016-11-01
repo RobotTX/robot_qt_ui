@@ -106,12 +106,12 @@ EditSelectedRobotWidget::EditSelectedRobotWidget(QWidget* parent, MainWindow* _m
     updateHomeMenu();
     connect(homeMenu, SIGNAL(triggered(QAction*)), this, SLOT(assignHome(QAction*)));
 
-    deleteHomeBtn = new CustomPushButton(QIcon(":/icons/empty.png"), "Delete home", this);
-    deleteHomeBtn->setToolTip("Clicking this button will not delete the point but this point won't be this robot's home anymore");
-    deleteHomeBtn->setIconSize(s_icon_size);
-    deleteHomeBtn->hide();
-    connect(deleteHomeBtn, SIGNAL(clicked()), mainWindow, SLOT(deleteHome()));
-    inLayout->addWidget(deleteHomeBtn);
+    goHomeBtn = new CustomPushButton(QIcon(":/icons/play.png"), "Go home", this);
+    goHomeBtn->setToolTip("Clicking this button will send the robot to its home");
+    goHomeBtn->setIconSize(s_icon_size);
+    goHomeBtn->hide();
+    connect(goHomeBtn, SIGNAL(clicked()), mainWindow, SLOT(goHome()));
+    inLayout->addWidget(goHomeBtn);
 
     /// to assign an existing path to the robot
     assignPathButton = new CustomPushButton(QIcon(":/icons/path.png"), "Assign a path", this);
@@ -201,7 +201,7 @@ void EditSelectedRobotWidget::setEnableAll(const bool enable){
     deletePathBtn->setEnabled(enable);
     assignPathButton->setEnabled(enable);
     editRobotInfoBtn->setEnabled(enable);
-    deleteHomeBtn->setEnabled(enable);
+    goHomeBtn->setEnabled(enable);
 }
 
 void EditSelectedRobotWidget::showEvent(QShowEvent *event){

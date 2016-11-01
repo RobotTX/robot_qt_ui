@@ -352,14 +352,14 @@ void MainWindow::initializeRobots(){
     robots->setRobotsNameMap(tmp);
     fileRead.close();
 
-/*
+
     updateRobotsThread = new UpdateRobotsThread(PORT_ROBOT_UPDATE);
     connect(updateRobotsThread, SIGNAL(robotIsAlive(QString, QString, QString, QString, int)), this, SLOT(robotIsAliveSlot(QString, QString, QString, QString, int)));
     updateRobotsThread->start();
     updateRobotsThread->moveToThread(updateRobotsThread);
-*/
 
 
+/*
     QFile fileWrite(QString(GOBOT_PATH) + QString(ROBOTS_NAME_FILE));
     fileWrite.resize(0);
     fileWrite.open(QIODevice::WriteOnly);
@@ -406,8 +406,6 @@ void MainWindow::initializeRobots(){
     robots->setRobotsNameMap(tmpMap);
     out << robots->getRobotsNameMap();
     fileWrite.close();
-
-
     for(int i = 0; i < robots->getRobotsVector().size(); i++){
         QFile robotPathFile(QString(GOBOT_PATH) + "robots_paths/" + robots->getRobotsVector().at(i)->getRobot()->getName() + "_path.dat");
         if(robotPathFile.exists()){
@@ -417,6 +415,8 @@ void MainWindow::initializeRobots(){
             robotPathFile.close();
         }
     }
+
+*/
 
     //qDebug() << "RobotsNameMap on init" << robots->getRobotsNameMap();
 
@@ -763,11 +763,11 @@ void MainWindow::setSelectedRobot(RobotView* robotView){
 
     bottomLayout->getRobotBtnGroup()->button(robots->getRobotId(robotView->getRobot()->getName()))->setChecked(true);
 
-    /// if the robot has a home we show the delete home button otherwise we hide it
+    /// if the robot has a home we show the go home button otherwise we hide it
     if(!robotView->getRobot()->getHome())
-        editSelectedRobotWidget->getDeleteHomeBtn()->hide();
+        editSelectedRobotWidget->getGoHomeBtn()->hide();
     else {
-        editSelectedRobotWidget->getDeleteHomeBtn()->show();
+        editSelectedRobotWidget->getGoHomeBtn()->show();
         selectedRobot->getRobot()->getHome()->setPixmap(PointView::PixmapType::SELECTED);
     }
 }
@@ -1416,7 +1416,7 @@ void MainWindow::savePathSlot(){
     backEvent();
 }
 
-void MainWindow::addPointPathSlot(QString name, double x, double y, GraphicItemState state){
+void MainWindow::addPointPathSlot(QString name, double x, double y, GraphicItemState){
     qDebug() << "addPathPoint called on point via * point" << x << y;
     /// Relay to pathPainter::addPathPointSlot()
     emit addPathPoint(name, x, y);
@@ -1558,38 +1558,6 @@ void MainWindow::showAllHomes(void){
     selectedRobot = 0;
     pathPainter->setCurrentPath(pathPainter->getCurrentPath(), pathPainter->getVisiblePath());
     bottomLayout->uncheckRobots();
-}
-
-void MainWindow::goHomeBtnEvent(){
-    qDebug() << "go home robot " << selectedRobot->getRobot()->getName() << (selectedRobot->getRobot()->getHome() == NULL);
-    /*
-    /// TODO change to go from the point saved in the robot files
-    float oldPosX = selectedRobot->getRobot()->getHome()->getPoint()->getPosition().getX();
-    float oldPosY = selectedRobot->getRobot()->getHome()->getPoint()->getPosition().getY();
-
-    float newPosX = (oldPosX - ROBOT_WIDTH) * map->getResolution() + map->getOrigin().getX();
-    float newPosY = (-oldPosY + map->getHeight() - ROBOT_WIDTH/2) * map->getResolution() + map->getOrigin().getY();
-    qDebug() << "Go to next point :" << newPosX << newPosY;
-    int waitTime = -1;
-    */
-
-    /// if the command is succesfully sent to the robot, we apply the change
-    selectedRobot->getRobot()->resetCommandAnswer();
-    if(selectedRobot->getRobot()->sendCommand(QString("o \""))){// + QString::number(newPosX) + "\" \""  + QString::number(newPosY) + "\" \""  + QString::number(waitTime) + "\"")){
-        QString answer = selectedRobot->getRobot()->waitAnswer();
-        QStringList answerList = answer.split(QRegExp("[ ]"), QString::SkipEmptyParts);
-        if(answerList.size() > 1){
-            QString cmd = answerList.at(0);
-            bool success = (answerList.at(1).compare("done") == 0);
-            if((cmd.compare("o") == 0 && success) || answerList.at(0).compare("1") == 0){
-                qDebug() << "Going home";
-                topLayout->setLabel(TEXT_COLOR_SUCCESS, "Robot going home");
-            } else {
-                topLayout->setLabel(TEXT_COLOR_DANGER, "Failed to tell the robot to go home, please try again");
-            }
-        }
-        selectedRobot->getRobot()->resetCommandAnswer();
-    }
 }
 
 void MainWindow::robotIsAliveSlot(QString hostname, QString ip, QString mapId, QString ssid, int stage){
@@ -1902,8 +1870,10 @@ void MainWindow::replacePoint(int id, QString name){
 
 void MainWindow::setNewHome(QString homeName){
 
-    editSelectedRobotWidget->getDeleteHomeBtn()->show();
+    editSelectedRobotWidget->getGoHomeBtn()->show();
 
+
+    /// Remove the previous home
     if(editSelectedRobotWidget->getHome()){
         editSelectedRobotWidget->getHome()->getPoint()->setHome(Point::PERM);
         editSelectedRobotWidget->getHome()->setPixmap(PointView::PixmapType::NORMAL);
@@ -1911,55 +1881,69 @@ void MainWindow::setNewHome(QString homeName){
 
     /// retrieves the pointview which name has been clicked in the menu
     QSharedPointer<PointView> home = points->findPointView(homeName);
-    editSelectedRobotWidget->setHome(home);
 
-    /// associates the robot to the point
-    home->getPoint()->setRobotName(selectedRobot->getRobot()->getName());
+    if(home->getPoint()->setHome(Point::PointType::HOME)){
 
-    home->getPoint()->setHome(Point::HOME);
-    home->setPixmap(PointView::PixmapType::SELECTED);
-    home->show();
+        if(selectedRobot->getRobot()->sendCommand(QString("n \"") + QString::number(home->getPoint()->getPosition().getX()) + "\" \""
+                                                          + QString::number(home->getPoint()->getPosition().getY()) + "\"")){
+            QString answerHome = selectedRobot->getRobot()->waitAnswer();
+            QStringList answerList2 = answerHome.split(QRegExp("[ ]"), QString::SkipEmptyParts);
+            if(answerList2.size() > 1){
+                QString cmd2 = answerList2.at(0);
+                bool success2 = (answerList2.at(1).compare("done") == 0);
+                if((cmd2.compare("n") == 0 && success2) || answerList2.at(0).compare("1") == 0){
+                    XMLParser parserPoints(QString(GOBOT_PATH) + QString(XML_FILE));
+                    parserPoints.save(*points);
 
-    selectedRobot->getRobot()->setHome(home);
+                    /// associates the robot to the point
+                    home->getPoint()->setRobotName(selectedRobot->getRobot()->getName());
+                    home->setPixmap(PointView::PixmapType::SELECTED);
+                    home->show();
 
-    editSelectedRobotWidget->updateHomeMenu();
+                    editSelectedRobotWidget->setHome(home);
+                    selectedRobot->getRobot()->setHome(home);
+                    editSelectedRobotWidget->updateHomeMenu();
 
-    /// so that if the new home if part of the path it displays the path correctly (not a house on top of a normal point)
-    /// this call makes the home
+                    /// so that if the new home if part of the path it displays the path correctly (not a house on top of a normal point)
+                    /// this call makes the home
 
-    pathPainter->setCurrentPath(selectedRobot->getRobot()->getPath(), "");
+                    pathPainter->setCurrentPath(selectedRobot->getRobot()->getPath(), "");
 
-    /// setCurrentPath is displaying the path so if it was not displayed we hide it
-    if(!bottomLayout->getViewPathRobotBtnGroup()->button(robots->getRobotId(selectedRobot->getRobot()->getName()))->isChecked())
-        emit resetPath();
+                    /// setCurrentPath is displaying the path so if it was not displayed we hide it
+                    if(!bottomLayout->getViewPathRobotBtnGroup()->button(robots->getRobotId(selectedRobot->getRobot()->getName()))->isChecked())
+                        emit resetPath();
 
-    showSelectedRobotHomeOnly();
+                    showSelectedRobotHomeOnly();
 
-    home->setPixmap(PointView::PixmapType::SELECTED);
-    home->show();
+                    home->setPixmap(PointView::PixmapType::SELECTED);
+                    home->show();
+
+                    setMessageTop(TEXT_COLOR_SUCCESS, selectedRobot->getRobot()->getName() + " successfully saved its home point");
+                } else
+                    setMessageTop(TEXT_COLOR_DANGER, selectedRobot->getRobot()->getName() + " failed to save its home point, please try again");
+            }
+        }
+    } else
+        setMessageTop(TEXT_COLOR_DANGER, "Sorry, this point is already a home\nPlease select another");
+    selectedRobot->getRobot()->resetCommandAnswer();
+
 }
 
-void MainWindow::deleteHome(){
-    qDebug() << "MainWindow::deleteHome called";
-    int answer = openConfirmMessage("Are you sure you want to delete the home of " + selectedRobot->getRobot()->getName());
-    switch(answer){
-    case QMessageBox::Cancel:
-        break;
-    case QMessageBox::Ok:
-        editSelectedRobotWidget->getDeleteHomeBtn()->hide();
-        editSelectedRobotWidget->getHome()->getPoint()->setHome(Point::PERM);
-        editSelectedRobotWidget->getHome()->setPixmap(PointView::PixmapType::NORMAL);
-        editSelectedRobotWidget->setHome(QSharedPointer<PointView> ());
-        selectedRobot->getRobot()->setHome(QSharedPointer<PointView> ());
-        editSelectedRobotWidget->getHomeLabel()->setText("Home : ");
-        editSelectedRobotWidget->updateHomeMenu();
-        /// to remove the home pixmap
-
-        pathPainter->setCurrentPath(pathPainter->getCurrentPath(), pathPainter->getVisiblePath());
-
-        /// setCurrentPath is displaying the path so if it was not displayed we hide it
-        if(!bottomLayout->getViewPathRobotBtnGroup()->button(robots->getRobotId(selectedRobot->getRobot()->getName()))->isChecked())
-            emit resetPath();
+void MainWindow::goHome(){
+    qDebug() << "MainWindow::goHome called (soon soon working)";
+    if(selectedRobot->getRobot()->sendCommand(QString("o"))){
+        QString answer = selectedRobot->getRobot()->waitAnswer();
+        QStringList answerList = answer.split(QRegExp("[ ]"), QString::SkipEmptyParts);
+        if(answerList.size() > 1){
+            QString cmd = answerList.at(0);
+            bool success = (answerList.at(1).compare("done") == 0);
+            if((cmd.compare("o") == 0 && success) || answerList.at(0).compare("1") == 0){
+                //TODO change btn to pause the home (like for the path button)
+                qDebug() << "MainWindow::goHome The robot" << selectedRobot->getRobot()->getName() << "is going home";
+            } else {
+                qDebug() << "MainWindow::goHome Failed to send the robot" << selectedRobot->getRobot()->getName() << "home, please try again";
+            }
+        }
     }
 }
 
@@ -3356,6 +3340,31 @@ void MainWindow::updatePoint(void){
         /// save changes to the file
         XMLParser parserPoints(QString(GOBOT_PATH) + QString(XML_FILE));
         parserPoints.save(*points);
+
+
+        /// if the point is the home of a robot, we update the file containing the home on the robot
+        // TODO rework home
+        qDebug() << "MainWindow::updatePoint need to update if home";
+        /*if(displaySelectedPointView->getPoint()->isHome()){
+            RobotView* robotView = robots->getRobotViewByName(displaySelectedPointView->getPoint()->getRobotName());
+
+            if(robotView && robotView->getRobot()->sendCommand(QString("n \"") + QString::number(displaySelectedPointView->getPoint()->getPosition().getX()) + "\" \""
+                                                              + QString::number(displaySelectedPointView->getPoint()->getPosition().getY()) + "\"")){
+                QString answerHome = robotView->getRobot()->waitAnswer();
+                QStringList answerList2 = answerHome.split(QRegExp("[ ]"), QString::SkipEmptyParts);
+                if(answerList2.size() > 1){
+                    QString cmd2 = answerList2.at(0);
+                    bool success2 = (answerList2.at(1).compare("done") == 0);
+                    if((cmd2.compare("n") == 0 && success2) || answerList2.at(0).compare("1") == 0){
+                        setMessageTop(TEXT_COLOR_SUCCESS, robotView->getRobot()->getName() + " successfully saved its home point");
+                    } else
+                        setMessageTop(TEXT_COLOR_DANGER, robotView->getRobot()->getName() + " failed to save its home point, please try again");
+                }
+                robotView->getRobot()->resetCommandAnswer();
+            } else {
+                qDebug() << "MainWindow::updatePoint could not find the robot named" << displaySelectedPointView->getPoint()->getRobotName();
+            }
+        }*/
 
         /// so that you cannot edit a new name unless you click the edit button again
         selectedPoint->getActionButtons()->getEditButton()->setChecked(false);

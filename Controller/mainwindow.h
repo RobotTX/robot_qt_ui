@@ -39,8 +39,8 @@ class QMoveEvent;
 #include "Model/point.h"
 #include <QSettings>
 
-//#define GOBOT_PATH "/home/m-a/Documents/QtProject/gobot-software/"
-#define GOBOT_PATH "/home/joan/Gobot/gobot-software/"
+#define GOBOT_PATH "/home/m-a/Documents/QtProject/gobot-software/"
+//#define GOBOT_PATH "/home/joan/Gobot/gobot-software/"
 //#define GOBOT_PATH "/home/gtdollar/gobot-software/"
 
 #define XML_FILE "points.xml"
@@ -153,7 +153,7 @@ private slots:
     void askForDeleteDefaultGroupPointConfirmation(const QString index);
     void displayGroupMapEvent(void);
     void savePathSlot(void);
-    void addPointPathSlot(QString name, double x, double y, GraphicItemState state);
+    void addPointPathSlot(QString name, double x, double y, GraphicItemState);
     void displayPointsInGroup(void);
     void removePointFromInformationMenu(void);
     void displayPointMapEvent(void);
@@ -193,7 +193,6 @@ private slots:
     void setMessageTop(const QString msgType, const QString msg);
     void setLastMessage(void) { setMessageTop(topLayout->getLastMessage().first, topLayout->getLastMessage().second); }
     void setMessageCreationGroup(QString type, QString message);
-    void goHomeBtnEvent();
     void viewPathSelectedRobot(int robotNb, bool checked);
     void closeSlot();
     void setGraphicItemsState(const GraphicItemState state);
@@ -218,7 +217,7 @@ private slots:
     void editPathSlot(QString groupName, QString pathName);
     void displayPathSlot(QString groupName, QString pathName, bool display);
     void setNewHome(QString homeName);
-    void deleteHome();
+    void goHome();
 
     /// for menu paths
     void displayGroupPaths();
