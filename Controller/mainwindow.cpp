@@ -1843,8 +1843,7 @@ void MainWindow::sendNewMapToRobot(QSharedPointer<Robot> robot, QString mapId){
     qDebug() << "Done sending the new map";
 }
 
-
-void MainWindow::updateAllPaths(const Point& _point){
+void MainWindow::updateAllPaths(const Point& old_point, const Point& new_point){
 
     RobotView* currentRobot = editSelectedRobotWidget->getRobot();
     for(int i = 0; i < robots->getRobotsVector().size(); i++){
@@ -1854,17 +1853,18 @@ void MainWindow::updateAllPaths(const Point& _point){
         QVector<QSharedPointer<PathPoint>> path = robot->getPath();
         for(int j = 0; j < path.size(); j++){
             Point point = path.at(j)->getPoint();
-            //qDebug() << "MainWindow::updatePoint Before" << point.getName();
-            //if(!points->isAPoint(point.getName(), point.getPosition().getX(), point.getPosition().getY())){
-            if(!point.comparePos(_point.getPosition())){
-                point.setName(PATH_POINT_NAME + QString::number(j+1));    
+            /// if the point is the old point we make the necessary changes
+            if(point.comparePos(old_point.getPosition())){
+
+                if(!point.comparePos(new_point.getPosition())){
+                    point.setName(PATH_POINT_NAME + QString::number(j+1));
+                }
+                else {
+                    qDebug() << new_point.getName() << " name has been edited";
+                    point.setName(new_point.getName());
+                }
+                path.at(j)->setPoint(point);
             }
-            else {
-                qDebug() << _point.getName() << " name has been edited";
-                point.setName(_point.getName());
-            }
-            path.at(j)->setPoint(point);
-            //qDebug() << "MainWindow::updatePoint After" << point.getName();
         }
         robot->setPath(path);
         /// updates the list of path points (in case it was containing a permanent point which has been modified)
@@ -1873,12 +1873,23 @@ void MainWindow::updateAllPaths(const Point& _point){
         if(pathPainter->getVisiblePath().compare(""))
             pathPainter->setCurrentPath(pathPainter->getCurrentPath(), pathPainter->getVisiblePath());
     }
-    if(currentRobot)
+
+    if(currentRobot){
         editSelectedRobotWidget->setSelectedRobot(currentRobot);
+        /// to reset the tooltip of the edited point !
+        int robotId = robots->getRobotId(currentRobot->getRobot()->getName());
+        if(bottomLayout->getViewPathRobotBtnGroup()->button(robotId)->isChecked()){
+            qDebug() << " i am displayed " << robotId;
+            viewPathSelectedRobot(robotId, false);
+            viewPathSelectedRobot(robotId, true);
+        }
+    }
 
     /// updates the paths of the model
-    updateModelPaths(_point);
+    updateModelPaths(old_point, new_point);
 }
+
+
 
 void MainWindow::resetPathPointViewsSlot(){
     emit updatePathPainter(false);
@@ -2079,9 +2090,10 @@ void MainWindow::closeSlot(){
     leftMenu->hide();
     setEnableAll(true);
     if(leftMenu->getDisplaySelectedPoint()->getPointView()){
-        QSharedPointer<PointView> displaySelectedPointView = points->findPointView(leftMenu->getDisplaySelectedPoint()->getPointName());
-        if(displaySelectedPointView)
-           displaySelectedPointView->setPixmap(PointView::PixmapType::NORMAL);
+        //QSharedPointer<PointView> displaySelectedPointView = points->findPointView(leftMenu->getDisplaySelectedPoint()->getPointName());
+        //if(displaySelectedPointView)
+        //displaySelectedPointView->setPixmap(PointView::PixmapType::NORMAL);
+        leftMenu->getDisplaySelectedPoint()->getPointView()->setPixmap(PointView::PixmapType::NORMAL);
 
     }
 }
@@ -3148,7 +3160,7 @@ void MainWindow::removePointFromInformationMenu(void){
                                 backEvent();
                             }
                         }
-                        updateAllPaths(*pointView->getPoint());
+                        updateAllPaths(*pointView->getPoint(), Point());
                         setTemporaryMessageTop(TEXT_COLOR_SUCCESS, "You have deleted the point : " + pointName + " from the group : " + pointIndexes.first, 2500);
                     }
                 } else {
@@ -3298,6 +3310,11 @@ void MainWindow::updatePoint(void){
     qDebug() << "MainWindow::updatePoint";
     DisplaySelectedPoint* selectedPoint = leftMenu->getDisplaySelectedPoint();
     QSharedPointer<PointView> displaySelectedPointView = points->findPointView(selectedPoint->getPointName());
+    /// to update the paths
+    Point copy = *displaySelectedPointView->getPoint();
+    /// the position of the point before edition, it is needed to give the paths the old point (name and pos) and the new point
+    copy.setPosition(displaySelectedPointView->getOriginalPosition().getX(),
+                     displaySelectedPointView->getOriginalPosition().getY());
 
     /// if it is a valid point on the map
     if(map->getMapImage().pixelColor(displaySelectedPointView->getPoint()->getPosition().getX(),
@@ -3362,7 +3379,9 @@ void MainWindow::updatePoint(void){
         leftMenu->getReturnButton()->setToolTip("");
 
         /// We update the path as this point might have been used in a path
-        updateAllPaths(*displaySelectedPointView->getPoint());
+        updateAllPaths(copy, *displaySelectedPointView->getPoint());
+        qDebug() << "copy" << copy.getName() << copy.getPosition().getX() << copy.getPosition().getY();
+        qDebug() << " new" << displaySelectedPointView->getPoint()->getName() << displaySelectedPointView->getPoint()->getPosition().getX() << displaySelectedPointView->getPoint()->getPosition().getY();
 
         leftMenu->getDisplaySelectedPoint()->getNameEdit()->hide();
         leftMenu->getDisplaySelectedPoint()->getNameLabel()->show();
@@ -4591,9 +4610,9 @@ void MainWindow::clearMapOfPaths(){
     emit resetPath();
 }
 
-void MainWindow::updateModelPaths(const Point& point){
-    qDebug() << "name of the point which caused the paths to be updated" << point.getName();
-    paths->updatePaths(point);
+void MainWindow::updateModelPaths(const Point& old_point, const Point& new_point){
+    qDebug() << "name of the point which caused the paths to be updated" << old_point.getName() << "new name" << new_point.getName();
+    paths->updatePaths(old_point, new_point);
     serializePaths();
 }
 

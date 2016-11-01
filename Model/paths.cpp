@@ -179,7 +179,7 @@ bool Paths::containsPoint(const QString groupName, const QString pathName, const
     return false;
 }
 
-void Paths::updatePaths(const Point& point){
+void Paths::updatePaths(const Point& old_point, const Point& new_point){
     QMapIterator<QString, QSharedPointer<CollectionPaths>> it(*(groups));
     while(it.hasNext()){
         it.next();
@@ -189,21 +189,31 @@ void Paths::updatePaths(const Point& point){
             it_paths.next();
             if(it_paths.value()){
                 for(int i = 0; i < it_paths.value()->size(); i++){
-                    /// when the position of a point has changed we give it a name constructed using its coordinates
-                    if(!it_paths.value()->at(i)->getPoint().getName().compare(point.getName())){
-                        qDebug() << "going to replace" << point.getName() << "by " << QString::number(it_paths.value()->at(i)->getPoint().getPosition().getX()) + "; " +
-                                    QString::number(it_paths.value()->at(i)->getPoint().getPosition().getY());
-                        Point newPoint(QString::number(it_paths.value()->at(i)->getPoint().getPosition().getX()) + "; " +
-                                       QString::number(it_paths.value()->at(i)->getPoint().getPosition().getY()),
-                                       it_paths.value()->at(i)->getPoint().getPosition());
-                        it_paths.value()->at(i)->setPoint(newPoint);
-                        qDebug() << "this point has been modified and therefore the path has changed" << point.getName();
-                    }
-                    /// if the name of a point has changed we find it using its position and update its name in the path
-                    if(it_paths.value()->at(i)->getPoint().comparePos(point.getPosition())){
-                        qDebug() << it_paths.value()->at(i)->getPoint().getName() << " and" << point.getName() << " have the same position so im gonna update the name";
-                        Point newPoint(point);
-                        it_paths.value()->at(i)->setPoint(newPoint);
+                    if(it_paths.value()->at(i)->getPoint().comparePos(old_point.getPosition())){
+                        qDebug() << "looking at the point " << it_paths.value()->at(i)->getPoint().getName();
+                        /// this point is the old one
+                        if(!it_paths.value()->at(i)->getPoint().getName().compare(new_point.getName())){
+                            qDebug() << "only the position has changed";
+                            /// if the position has been modified but not the name
+                            Point newPoint(QString::number(it_paths.value()->at(i)->getPoint().getPosition().getX()) + "; " +
+                                           QString::number(it_paths.value()->at(i)->getPoint().getPosition().getY()),
+                                           it_paths.value()->at(i)->getPoint().getPosition());
+                            it_paths.value()->at(i)->setPoint(newPoint);
+                        }
+                        /// if the name has been modified but not the position
+                        else if(it_paths.value()->at(i)->getPoint().getName().compare(new_point.getName()) && it_paths.value()->at(i)->getPoint().comparePos(new_point.getPosition())){
+                            qDebug() <<  "only the name has changed";
+                            Point newPoint(new_point);
+                            it_paths.value()->at(i)->setPoint(newPoint);
+                        }
+                        /// if both the name and the position has been modified we do the same thing as if only the position has been modified
+                        else {
+                            Point newPoint(QString::number(it_paths.value()->at(i)->getPoint().getPosition().getX()) + "; " +
+                                           QString::number(it_paths.value()->at(i)->getPoint().getPosition().getY()),
+                                           it_paths.value()->at(i)->getPoint().getPosition());
+                            it_paths.value()->at(i)->setPoint(newPoint);
+                            qDebug() << "Everything has changed" << old_point.getName();
+                        }
                     }
                 }
             }

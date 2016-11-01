@@ -292,9 +292,17 @@ public:
 
     /**
      * @brief updatePointViews
-     * Update all the pointViews
+     * Update all the pointViews positions
      */
     void updatePointViews(void);
+
+    /**
+     * @brief findPointViewByPos
+     * @param pos
+     * @return QSharedPointer<PointView>
+     * finds the pointview whose position is <pos>
+     */
+    QSharedPointer<PointView> findPointViewByPos(const Position& pos);
 
 private:
     MainWindow* parent;

@@ -361,3 +361,16 @@ void Points::updatePointViews(void){
         }
     }
 }
+
+QSharedPointer<PointView> Points::findPointViewByPos(const Position &pos){
+    QSharedPointer<PointView> pv(0);
+    QMapIterator<QString, QSharedPointer<QVector<QSharedPointer<PointView>>>> i(*groups);
+    while (i.hasNext()) {
+        i.next();
+        for(int j = 0; j < i.value()->count(); j++){
+            if(i.value()->at(j)->getPoint()->comparePos(pos))
+                return i.value()->at(j);
+        }
+    }
+    return pv;
+}

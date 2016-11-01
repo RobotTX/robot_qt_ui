@@ -90,7 +90,7 @@ public:
     /// to sleep for ms milliseconds
     void delay(const int ms) const;
     void setTemporaryMessageTop(const QString type, const QString message, const int ms);
-    void updateAllPaths(const Point &_point);
+    void updateAllPaths(const Point &old_point, const Point &new_point);
     void clearPath(const int robotNb);
     RobotView* getSelectedRobot(void) const { return selectedRobot; }
     MapView* getMapView(void) const { return mapPixmapItem; }
@@ -99,7 +99,7 @@ public:
     void showHomes();
     void showHomes(QSharedPointer<Robot> robot);
     void showSelectedRobotHomeOnly();
-    void updateModelPaths(const Point &point);
+    void updateModelPaths(const Point &old_point, const Point &new_point);
 
 signals:
     void sendCommand(QString);
