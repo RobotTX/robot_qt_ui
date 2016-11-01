@@ -49,7 +49,7 @@ public:
     QString getAssignedPath(void) const { return assignedPath; }
     QString getPathName(void) const { return assignedPath; }
     QString getGroupPathName(void) const { return groupAssignedPath; }
-    CustomPushButton* getDeleteHomeBtn(void) const { return deleteHomeBtn; }
+    CustomPushButton* getGoHomeBtn(void) const { return goHomeBtn; }
     CustomPushButton* getDeletePathBtn(void) const { return deletePathBtn; }
     CustomRobotDialog* getRobotInfoDialog(void) const { return robotDialog; }
     RobotView* getRobot(void) const { return robotView; }
@@ -146,7 +146,7 @@ private:
     QString groupAssignedPath;
     CustomPushButton* scanBtn;
     QProgressBar* batteryLevel;
-    CustomPushButton* deleteHomeBtn;
+    CustomPushButton* goHomeBtn;
     CustomPushButton* editRobotInfoBtn;
     CustomRobotDialog* robotDialog;
     QWidget* inWidget;
