@@ -95,6 +95,10 @@ public:
     /// Setters
     void setGroups(QSharedPointer<Groups> _groups) { groups = _groups; }
 
+    /// updates the paths which contains the pathpoint whose name is pointName to change the name to the points coordinates
+    /// instead. Has to be done when the original point has been modified (edition of a point)
+    void updatePaths(const Point &point);
+
 
 private:
     QSharedPointer<Groups> groups;

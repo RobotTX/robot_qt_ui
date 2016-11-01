@@ -137,11 +137,11 @@ void GroupsPathsWidget::keyPressEvent(QKeyEvent* event){
             switch(checkEditGroupName(buttonGroup->getModifyEdit()->text())){
             case 0:
                 emit modifiedGroup(buttonGroup->getModifyEdit()->text());
-                setLastCheckedButton("");
+                //setLastCheckedButton("");
                 break;
             case 1:
                 emit modifiedGroup(lastCheckedButton);
-                setLastCheckedButton("");
+                //setLastCheckedButton("");
                 break;
             case 2:
                 emit messageCreationGroup(TEXT_COLOR_DANGER, "A group with the same name already exists, please choose another name for your group");

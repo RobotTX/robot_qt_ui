@@ -352,14 +352,14 @@ void MainWindow::initializeRobots(){
     robots->setRobotsNameMap(tmp);
     fileRead.close();
 
-
+/*
     updateRobotsThread = new UpdateRobotsThread(PORT_ROBOT_UPDATE);
     connect(updateRobotsThread, SIGNAL(robotIsAlive(QString, QString, QString, QString, int)), this, SLOT(robotIsAliveSlot(QString, QString, QString, QString, int)));
     updateRobotsThread->start();
     updateRobotsThread->moveToThread(updateRobotsThread);
+*/
 
 
-/*
     QFile fileWrite(QString(GOBOT_PATH) + QString(ROBOTS_NAME_FILE));
     fileWrite.resize(0);
     fileWrite.open(QIODevice::WriteOnly);
@@ -406,7 +406,7 @@ void MainWindow::initializeRobots(){
     robots->setRobotsNameMap(tmpMap);
     out << robots->getRobotsNameMap();
     fileWrite.close();
-*/
+
 
     for(int i = 0; i < robots->getRobotsVector().size(); i++){
         QFile robotPathFile(QString(GOBOT_PATH) + "robots_paths/" + robots->getRobotsVector().at(i)->getRobot()->getName() + "_path.dat");
@@ -729,7 +729,7 @@ void MainWindow::setSelectedRobot(RobotView* robotView){
     if(selectedRobot->getRobot()->getPath().size() == 0){
         setMessageTop(TEXT_COLOR_INFO, "You can assign a path to your robot by clicking the button labeled \"Assign a path\"");
         if(!selectedRobot->getRobot()->getHome())
-        setMessageTop(TEXT_COLOR_INFO, topLayout->getLabel()->text() + "\nYou can assign a home to your robot by clicking the button "
+            setMessageTop(TEXT_COLOR_INFO, topLayout->getLabel()->text() + "\nYou can assign a home to your robot by clicking the button "
                                                                        "labeled \"Assign a home point\"");
     } else
         if(!selectedRobot->getRobot()->getHome())
@@ -1463,7 +1463,7 @@ void MainWindow::showHome(){
 
     points->setPixmapAll(PointView::PixmapType::NORMAL);
 
-    if(selectedRobot->getRobot()->getHome() != NULL){
+    if(selectedRobot->getRobot() && selectedRobot->getRobot()->getHome() != NULL){
         QSharedPointer<PointView> pointView = selectedRobot->getRobot()->getHome();
         if(pointView->isVisible()){
             qDebug() << "home is visible";
@@ -1844,22 +1844,40 @@ void MainWindow::sendNewMapToRobot(QSharedPointer<Robot> robot, QString mapId){
 }
 
 
-void MainWindow::updateAllPaths(void){
+void MainWindow::updateAllPaths(const Point& _point){
+
+    RobotView* currentRobot = editSelectedRobotWidget->getRobot();
     for(int i = 0; i < robots->getRobotsVector().size(); i++){
         QSharedPointer<Robot> robot = robots->getRobotsVector().at(i)->getRobot();
+        /// to update the description of the path of each robot
+        editSelectedRobotWidget->setSelectedRobot(robots->getRobotViewByName(robot->getName()));
         QVector<QSharedPointer<PathPoint>> path = robot->getPath();
         for(int j = 0; j < path.size(); j++){
             Point point = path.at(j)->getPoint();
-            qDebug() << "MainWindow::updatePoint Before" << point.getName();
-            if(!points->isAPoint(point.getName(), point.getPosition().getX(), point.getPosition().getY())){
-                point.setName(PATH_POINT_NAME + QString::number(j+1));
-                path.at(j)->setPoint(point);
+            //qDebug() << "MainWindow::updatePoint Before" << point.getName();
+            //if(!points->isAPoint(point.getName(), point.getPosition().getX(), point.getPosition().getY())){
+            if(!point.comparePos(_point.getPosition())){
+                point.setName(PATH_POINT_NAME + QString::number(j+1));    
             }
-            qDebug() << "MainWindow::updatePoint After" << point.getName();
+            else {
+                qDebug() << _point.getName() << " name has been edited";
+                point.setName(_point.getName());
+            }
+            path.at(j)->setPoint(point);
+            //qDebug() << "MainWindow::updatePoint After" << point.getName();
         }
         robot->setPath(path);
+        /// updates the list of path points (in case it was containing a permanent point which has been modified)
+        editSelectedRobotWidget->setAssignedPath(editSelectedRobotWidget->getAssignedPath());
         bottomLayout->updateRobot(robots->getRobotId(robot->getName()), robots->getRobotsVector().at(i));
+        if(pathPainter->getVisiblePath().compare(""))
+            pathPainter->setCurrentPath(pathPainter->getCurrentPath(), pathPainter->getVisiblePath());
     }
+    if(currentRobot)
+        editSelectedRobotWidget->setSelectedRobot(currentRobot);
+
+    /// updates the paths of the model
+    updateModelPaths(_point);
 }
 
 void MainWindow::resetPathPointViewsSlot(){
@@ -2290,7 +2308,7 @@ void MainWindow::editGroupBtnEvent(){
         int btnIndex = pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->checkedId();
 
         pointsLeftWidget->setLastCheckedId(static_cast<CustomPushButton*>(pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->checkedButton())->text());
-
+        assert(pointsLeftWidget->getLastCheckedId().compare(""));
         pointsLeftWidget->setCreatingGroup(false);
 
         /// uncheck the other buttons
@@ -3130,7 +3148,7 @@ void MainWindow::removePointFromInformationMenu(void){
                                 backEvent();
                             }
                         }
-                        updateAllPaths();
+                        updateAllPaths(*pointView->getPoint());
                         setTemporaryMessageTop(TEXT_COLOR_SUCCESS, "You have deleted the point : " + pointName + " from the group : " + pointIndexes.first, 2500);
                     }
                 } else {
@@ -3344,7 +3362,7 @@ void MainWindow::updatePoint(void){
         leftMenu->getReturnButton()->setToolTip("");
 
         /// We update the path as this point might have been used in a path
-        updateAllPaths();
+        updateAllPaths(*displaySelectedPointView->getPoint());
 
         leftMenu->getDisplaySelectedPoint()->getNameEdit()->hide();
         leftMenu->getDisplaySelectedPoint()->getNameLabel()->show();
@@ -3744,11 +3762,15 @@ void MainWindow::modifyGroupWithEnter(QString name){
     topLayout->setEnabled(true);
     setEnableAll(true);
     QString oldGroupName = pointsLeftWidget->getLastCheckedId();
+    qDebug() << "checkgroupname result is" << pointsLeftWidget->checkGroupName(name);
     if(pointsLeftWidget->checkGroupName(name) == 0){
         qDebug() << "this name is ok";
 
-        /// Update the model
-        points->getGroups()->insert(name, points->getGroups()->take(pointsLeftWidget->getLastCheckedId()));
+        /// Updates the model
+        qDebug() << pointsLeftWidget->getLastCheckedId();
+        //assert(points->getGroups()->value(pointsLeftWidget->getLastCheckedId()));
+        points->getGroups()->insert(name, points->getGroups()->value(pointsLeftWidget->getLastCheckedId()));
+        qDebug() << "I have removed " << points->getGroups()->remove(pointsLeftWidget->getLastCheckedId()) << "item(s)";
 
         /// updates the group box to create a point
         createPointWidget->updateGroupBox();
@@ -3794,6 +3816,8 @@ void MainWindow::modifyGroupWithEnter(QString name){
 
         /// resets the pixmaps
         points->setPixmapAll(PointView::PixmapType::NORMAL);
+
+        pointsLeftWidget->setLastCheckedId("");
     }
     else
         topLayout->setLabelDelay(TEXT_COLOR_DANGER, "You cannot choose : " + name + " as a new name for your group because another group already has this name", 4000);
@@ -4567,6 +4591,12 @@ void MainWindow::clearMapOfPaths(){
     emit resetPath();
 }
 
+void MainWindow::updateModelPaths(const Point& point){
+    qDebug() << "name of the point which caused the paths to be updated" << point.getName();
+    paths->updatePaths(point);
+    serializePaths();
+}
+
 /**********************************************************************************************************************************/
 
 //                                          ODDS AND ENDS
@@ -4800,3 +4830,6 @@ void MainWindow::moveEvent(QMoveEvent *event){
                                                         global.y()-editSelectedRobotWidget->getRobotInfoDialog()->height()/2);
     QMainWindow::moveEvent(event);
 }
+
+
+

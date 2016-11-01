@@ -43,7 +43,7 @@ public:
     QString getLastCheckedId() const { return lastCheckedId;}
 
     void setCreatingGroup(const bool create) { creatingGroup = create; }
-    void setLastCheckedId(const QString  id) {lastCheckedId = id;}
+    void setLastCheckedId(const QString  id) { lastCheckedId = id; }
 
 public:
     /**

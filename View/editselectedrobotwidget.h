@@ -52,6 +52,7 @@ public:
     CustomPushButton* getDeleteHomeBtn(void) const { return deleteHomeBtn; }
     CustomPushButton* getDeletePathBtn(void) const { return deletePathBtn; }
     CustomRobotDialog* getRobotInfoDialog(void) const { return robotDialog; }
+    RobotView* getRobot(void) const { return robotView; }
 
     void setRobots(QSharedPointer<Robots> const _robots) { robots = _robots; }
     void setEditing(bool const _editing) { editing = _editing; }

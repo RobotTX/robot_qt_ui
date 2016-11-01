@@ -232,9 +232,10 @@ int PointsLeftWidget::checkGroupName(QString name){
     qDebug() << "checking while creating" << name;
     groupNameEdit->setText(formatName(name));
     name = name.simplified();
+    qDebug() << "name im testing" << name;
     if(!creatingGroup && !name.compare(groupButtonGroup->getEditedGroupName(), Qt::CaseInsensitive)){
         saveButton->setToolTip("");
-        qDebug() << "same name";
+        qDebug() << "same name" << name;
         connect(groupNameEdit, SIGNAL(clickSomewhere(QString)), this, SLOT(cancelCreationGroup()));
         return 0;
     }
@@ -302,11 +303,11 @@ void PointsLeftWidget::keyPressEvent(QKeyEvent* event){
             switch(groupButtonGroup->checkEditGroupName(groupButtonGroup->getModifyEdit()->text())){
             case 0:
                 emit modifiedGroup(groupButtonGroup->getModifyEdit()->text());
-                setLastCheckedId("");
+                //setLastCheckedId("");
                 break;
             case 1:
                 emit modifiedGroup("");
-                setLastCheckedId("");
+                //setLastCheckedId("");
                 break;
             case 2:
                 emit messageCreationGroup(TEXT_COLOR_DANGER, "A group with the same name already exists, please choose another name for your group");

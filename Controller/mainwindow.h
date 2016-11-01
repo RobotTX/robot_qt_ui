@@ -39,8 +39,8 @@ class QMoveEvent;
 #include "Model/point.h"
 #include <QSettings>
 
-#define GOBOT_PATH "/home/m-a/Documents/QtProject/gobot-software/"
-//#define GOBOT_PATH "/home/joan/Gobot/gobot-software/"
+//#define GOBOT_PATH "/home/m-a/Documents/QtProject/gobot-software/"
+#define GOBOT_PATH "/home/joan/Gobot/gobot-software/"
 //#define GOBOT_PATH "/home/gtdollar/gobot-software/"
 
 #define XML_FILE "points.xml"
@@ -90,7 +90,7 @@ public:
     /// to sleep for ms milliseconds
     void delay(const int ms) const;
     void setTemporaryMessageTop(const QString type, const QString message, const int ms);
-    void updateAllPaths(void);
+    void updateAllPaths(const Point &_point);
     void clearPath(const int robotNb);
     RobotView* getSelectedRobot(void) const { return selectedRobot; }
     MapView* getMapView(void) const { return mapPixmapItem; }
@@ -99,6 +99,7 @@ public:
     void showHomes();
     void showHomes(QSharedPointer<Robot> robot);
     void showSelectedRobotHomeOnly();
+    void updateModelPaths(const Point &point);
 
 signals:
     void sendCommand(QString);

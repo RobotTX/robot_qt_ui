@@ -4,15 +4,15 @@
         <name>No Group</name>
         <point>
             <name>Un point avec un nom beaucoup trop looooooooooooong</name>
-            <x>950</x>
-            <y>1145</y>
+            <x>892.4</x>
+            <y>1160.4</y>
             <displayed>1</displayed>
         </point>
         <point>
-            <name>Another point</name>
-            <x>1148</x>
-            <y>1203</y>
-            <displayed>0</displayed>
+            <name>Used to be another point</name>
+            <x>958</x>
+            <y>1175.9</y>
+            <displayed>1</displayed>
         </point>
         <point>
             <name>A final point</name>
@@ -22,22 +22,7 @@
         </point>
     </group>
     <group>
-        <name>Second group</name>
-        <point>
-            <name>Fanny</name>
-            <x>917.3</x>
-            <y>1059.2</y>
-            <displayed>1</displayed>
-        </point>
-        <point>
-            <name>Michel</name>
-            <x>1086</x>
-            <y>1019</y>
-            <displayed>0</displayed>
-        </point>
-    </group>
-    <group>
-        <name>first group</name>
+        <name>first</name>
         <point>
             <name>A</name>
             <x>1130</x>
@@ -46,15 +31,27 @@
         </point>
         <point>
             <name>Ma point</name>
-            <x>1145</x>
-            <y>890</y>
+            <x>930.7</x>
+            <y>1151.3</y>
             <displayed>1</displayed>
         </point>
         <point>
-            <name>A new point</name>
-            <x>946</x>
-            <y>983</y>
-            <displayed>0</displayed>
+            <name>new point</name>
+            <x>1129.1</x>
+            <y>881.8</y>
+            <displayed>1</displayed>
+        </point>
+    </group>
+    <group>
+        <name>prout</name>
+    </group>
+    <group>
+        <name>second</name>
+        <point>
+            <name>Fanny tu es gentille</name>
+            <x>1144.6</x>
+            <y>1198.6</y>
+            <displayed>1</displayed>
         </point>
     </group>
 </points>
