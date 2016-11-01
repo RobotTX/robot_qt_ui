@@ -9,6 +9,8 @@ find_package(catkin REQUIRED COMPONENTS
   rospy
   nav_msgs
   std_msgs
+  actionlib
+  actionlib_msgs
   message_generation
 )
 
@@ -81,3 +83,7 @@ target_link_libraries(read_new_map ${catkin_LIBRARIES})
 target_link_libraries(read_new_map ${gobot_software} ${Boost_FILESYSTEM_LIBRARY} ${Boost_SYSTEM_LIBRARY} )
 add_dependencies(read_new_map gobot_software_generate_messages_cpp)
 
+add_executable(play_path src/playPath.cpp)
+target_link_libraries(play_path ${catkin_LIBRARIES})
+target_link_libraries(play_path ${gobot_software} ${Boost_FILESYSTEM_LIBRARY} ${Boost_SYSTEM_LIBRARY} )
+add_dependencies(play_path gobot_software_generate_messages_cpp)

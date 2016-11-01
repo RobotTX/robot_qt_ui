@@ -28,6 +28,7 @@ std::string path_computer_software = "/home/gtdollar/computer_software/";
 static const boost::regex cmd_regex("\"(.*?)\"");
 
 bool execCommand(ros::NodeHandle n, std::vector<std::string> command){
+
 	std::string commandStr = command.at(0);
 	switch (commandStr.at(0)) {
 
@@ -42,9 +43,8 @@ bool execCommand(ros::NodeHandle n, std::vector<std::string> command){
 				ofs.close();
 
 				return true;
-			} else {
+			} else 
 				std::cout << "(Command system) Name missing" << std::endl;
-			}
 		break;
 
 		/// Command for changing the wifi of the robot
@@ -57,10 +57,10 @@ bool execCommand(ros::NodeHandle n, std::vector<std::string> command){
 
 				system(cmd.c_str());
 				return true;
-			} else {
+			} else 
 				std::cout << "(Command system) Parameter missing" << std::endl;
-			}
 		break;
+		
 
 		/// Command for the robot to move to a point
 		case 'c':
@@ -97,7 +97,8 @@ bool execCommand(ros::NodeHandle n, std::vector<std::string> command){
 		break;
 
 		/// Command for the robot to pause the path
-		case 'd':{
+		case 'd':
+		{
 			std::cout << "(Command system) Pausing the path" << std::endl;
 			std_srvs::Empty arg;
 			if(ros::service::call("pause_path", arg))
@@ -144,8 +145,10 @@ bool execCommand(ros::NodeHandle n, std::vector<std::string> command){
 			}
 		break;
 
+
 		/// Command for the robot to save a new path
 		case 'i':
+		{
 			if(command.size() >= 4 && command.size()%3 == 1){
 
 				std::cout << "(Command system) Path received :" << std::endl;
@@ -165,7 +168,7 @@ bool execCommand(ros::NodeHandle n, std::vector<std::string> command){
 
 			} else 
 				std::cout << "(Command system) Parameter missing" << std::endl;
-			
+		}
 		break;
 
 		/// Command for the robot to play the saved path
@@ -192,7 +195,8 @@ bool execCommand(ros::NodeHandle n, std::vector<std::string> command){
 		break;
 
 		/// Command to stop the robot while following its path
-		case 'l':{
+		case 'l':
+		{
 			std::cout << "(Command system) Stopping the path" << std::endl;
 			std_srvs::Empty arg;
 			if(ros::service::call("stop_path", arg))
@@ -205,22 +209,22 @@ bool execCommand(ros::NodeHandle n, std::vector<std::string> command){
 
 		// command to stop the robot and then delete its path
 		case 'm':
-			{
-				std::cout << "(Command system) Stopping the robot and deleting its path" << std::endl;
-				std_srvs::Empty arg;
-				if(ros::service::call("stop_path", arg)){
-					std::cout << "Stop path service called with success";
-					std::ofstream ofs;
-					ofs.open(path_computer_software + "Robot_Infos/path.txt", std::ofstream::out | std::ofstream::trunc);
-					ofs.close();
-				}
-				else {
-					std::cout << "Stop path service call failed";
-					return false;
-				}
-				return true;
+		{
+			std::cout << "(Command system) Stopping the robot and deleting its path" << std::endl;
+			std_srvs::Empty arg;
+			if(ros::service::call("stop_path", arg)){
+				std::cout << "Stop path service called with success";
+				std::ofstream ofs;
+				ofs.open(path_computer_software + "Robot_Infos/path.txt", std::ofstream::out | std::ofstream::trunc);
+				ofs.close();
 			}
-			break;
+			else {
+				std::cout << "Stop path service call failed";
+				return false;
+			}
+			return true;
+		}
+		break;
 
 		// command to save the home of the robot
 		case 'n':
@@ -252,7 +256,7 @@ bool execCommand(ros::NodeHandle n, std::vector<std::string> command){
 
 		// command to send the robot home
 		case 'o':
-			
+		{
 			std::cout << "(Command system) Sending the robot home" << std::endl;
 			std_srvs::Empty arg;
 			if(ros::service::call("go_home", arg)){
@@ -263,11 +267,12 @@ bool execCommand(ros::NodeHandle n, std::vector<std::string> command){
 				std::cout << "Stop path service call failed" << std::endl;
 				return false;
 			}
-
-			break;
+		}
+		break;
 
 		// command so that the robot stops on its way home
 		case 'p':
+		{
 			std::cout << "(Command system) Stopping the robot on its way home" << std::endl;
 			std_srvs::Empty arg;
 			if(ros::service::call("stop_going_home", arg)){
@@ -278,6 +283,8 @@ bool execCommand(ros::NodeHandle n, std::vector<std::string> command){
 				std::cout << "Stop going home service call failed" << std::endl;
 				return false;
 			}
+		}
+		break;
 
 		/// Default/Unknown command
 		default:
@@ -286,10 +293,8 @@ bool execCommand(ros::NodeHandle n, std::vector<std::string> command){
 				for(int i = 0; i < command.size(); i++){
 					std::cerr << command.at(i) << " ";
 				}
-			} else {
+			} else 
 				std::cout << "(Command system) Too many arguments to display (" << command.size() << ")" << std::endl;
-			}
-			std::cout << std::endl;
 		break;
 	}
 	return false;
