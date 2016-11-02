@@ -39,8 +39,8 @@ class QMoveEvent;
 #include "Model/point.h"
 #include <QSettings>
 
-//#define GOBOT_PATH "/home/m-a/Documents/QtProject/gobot-software/"
-#define GOBOT_PATH "/home/joan/Gobot/gobot-software/"
+#define GOBOT_PATH "/home/m-a/Documents/QtProject/gobot-software/"
+//#define GOBOT_PATH "/home/joan/Gobot/gobot-software/"
 //#define GOBOT_PATH "/home/gtdollar/gobot-software/"
 
 #define XML_FILE "points.xml"
@@ -100,6 +100,8 @@ public:
     void showHomes(QSharedPointer<Robot> robot);
     void showSelectedRobotHomeOnly();
     void updateModelPaths(const Point &old_point, const Point &new_point);
+    bool sendHomeToRobot(RobotView* robot, QSharedPointer<PointView> home);
+    void robotWaitForAnswer(QString title, QString msg);
 
 signals:
     void sendCommand(QString);
@@ -287,6 +289,7 @@ private:
 
     QSharedPointer<Paths> paths;
     QSettings settings;
+    QMessageBox* robotCommandBox;
 };
 
 #endif // MAINWINDOW_H

@@ -10,68 +10,41 @@ UpdateRobotsThread::UpdateRobotsThread(const int newPort){
     server = new QTcpServer(this);
     connect(server, SIGNAL(newConnection()), this, SLOT(newConnectionSlot()));
     connect(server, SIGNAL(acceptError(QAbstractSocket::SocketError)), this, SLOT(errorConnectionSlot(QAbstractSocket::SocketError)));
-
-    socket = new QTcpSocket(server);
-    connect(socket, SIGNAL(disconnected()), this, SLOT(disconnectedSlot()));
-    connect(socket, SIGNAL(readyRead()), this, SLOT(readTcpDataSlot()));
 }
 
 UpdateRobotsThread::~UpdateRobotsThread(){
-    delete socket;
     delete server;
 }
 
 void UpdateRobotsThread::run(){
-    //qDebug() << "(UpdateRobotsThread) Waiting on port" << port;
-    while(!this->isInterruptionRequested()){
-        if(!server->isListening())
-            server->listen(QHostAddress::Any, port);
-        delay(200);
-    }
+    if(server->listen(QHostAddress::Any, port) == 0)
+        qDebug() << "(UpdateRobotsThread) Server listen failed";
+    else
+        exec();
 }
 
 void UpdateRobotsThread::newConnectionSlot(){
-    socket = server->nextPendingConnection();
-    //connect(socket, SIGNAL(disconnected()), this, SLOT(disconnectedSlot()));
-    connect(socket, SIGNAL(readyRead()), this, SLOT(readTcpDataSlot()));
+    QTcpSocket* socket = server->nextPendingConnection();
 
     if(socket->state() == QTcpSocket::ConnectedState){
-        //qDebug() << "\n(UpdateRobotsThread) New connection established :" << socket->peerAddress().toString();
+        //qDebug() << "\n\n(UpdateRobotsThread) New connection established :" << socket->peerAddress().toString();
 
-        int nbDataSend = socket->write("OK");
+        socket->write("OK");
+        socket->waitForReadyRead();
+        QString str = socket->readAll();
 
-        socket->waitForBytesWritten();
+        QStringList strList = str.split("\"", QString::SkipEmptyParts);
 
-        if(nbDataSend == -1){
-            qDebug() << "(UpdateRobotsThread) An error occured while sending data";
+        if(strList.size() > 1){
+            //qDebug() << "(UpdateRobotsThread)" << strList;
+            emit robotIsAlive(strList.at(0), socket->peerAddress().toString(), strList.at(1), strList.at(2), std::stoi(strList.at(3).toStdString()));
         } else {
-            socket->waitForReadyRead();
+            qDebug() << "(UpdateRobotsThread) Not enough param received for robotIsAlive";
         }
+
     }
+
     socket->close();
-}
-
-void UpdateRobotsThread::disconnectedSlot(){
-    //qDebug() << "(UpdateRobotsThread) Disconnected from :" << socket->peerAddress().toString();
-}
-
-void UpdateRobotsThread::readTcpDataSlot(){
-
-    QString str = socket->readAll();
-
-    QStringList strList = str.split("\"", QString::SkipEmptyParts);
-
-    if(strList.size() > 1){
-        emit robotIsAlive(strList.at(0), socket->peerAddress().toString(), strList.at(1), strList.at(2), std::stoi(strList.at(3).toStdString()));
-    } else {
-        qDebug() << "(UpdateRobotsThread) Not enough param received for robotIsAlive";
-    }
-}
-
-void UpdateRobotsThread::delay(const int ms) const{
-    QTime dieTime= QTime::currentTime().addMSecs(ms);
-    while (QTime::currentTime() < dieTime)
-        QCoreApplication::processEvents(QEventLoop::AllEvents, 100);
 }
 
 void UpdateRobotsThread::errorConnectionSlot(QAbstractSocket::SocketError error){

@@ -23,9 +23,9 @@ Robot::Robot(MainWindow* mainWindow, const QSharedPointer<Paths>& _paths, const 
         in >> *this;
         robotPathFile.close();
     }
-/*
-    qDebug() << "Robot" << name << "at ip" << ip << " launching its cmd thread";
 
+    qDebug() << "Robot" << name << "at ip" << ip << " launching its cmd thread";
+/*
     cmdThread = new CmdRobotThread(ip, PORT_CMD, PORT_MAP_METADATA, PORT_ROBOT_POS, PORT_MAP, name, mainWindow);
     connect(cmdThread, SIGNAL(robotIsDead(QString,QString)), mainWindow, SLOT(robotIsDeadSlot(QString,QString)));
     connect(this, SIGNAL(sendCommandSignal(QString)), cmdThread, SLOT(sendCommand(QString)));
@@ -100,8 +100,8 @@ void Robot::display(std::ostream& stream) const {
 
 bool Robot::sendCommand(const QString cmd) {
     qDebug() << "(Robot) Send command called" << cmd;
-    //emit sendCommandSignal(cmd);
-    //return cmdThread->isConnected();
+    /*emit sendCommandSignal(cmd);
+    return cmdThread->isConnected();*/
     return true;
 }
 

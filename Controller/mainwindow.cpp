@@ -60,6 +60,13 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
     points = QSharedPointer<Points>(new Points(this));
     QWidget* mainWidget = new QWidget(this);
+    robotCommandBox = new QMessageBox(this);
+    /// makes sure the msgbox is deleted automatically when closed
+    robotCommandBox->setAttribute(Qt::WA_DeleteOnClose);
+    robotCommandBox->setStandardButtons(QMessageBox::Ok);
+    /// non-modal means it won't block other widgets from receiving slots while the msg box is opened
+    robotCommandBox->setModal(false);
+
 
     QVBoxLayout* mainLayout = new QVBoxLayout(mainWidget);
     map = QSharedPointer<Map>(new Map());
@@ -352,14 +359,14 @@ void MainWindow::initializeRobots(){
     robots->setRobotsNameMap(tmp);
     fileRead.close();
 
-/*
+
     updateRobotsThread = new UpdateRobotsThread(PORT_ROBOT_UPDATE);
     connect(updateRobotsThread, SIGNAL(robotIsAlive(QString, QString, QString, QString, int)), this, SLOT(robotIsAliveSlot(QString, QString, QString, QString, int)));
     updateRobotsThread->start();
     updateRobotsThread->moveToThread(updateRobotsThread);
-*/
 
 
+/*
     QFile fileWrite(QString(GOBOT_PATH) + QString(ROBOTS_NAME_FILE));
     fileWrite.resize(0);
     fileWrite.open(QIODevice::WriteOnly);
@@ -415,7 +422,7 @@ void MainWindow::initializeRobots(){
             robotPathFile.close();
         }
     }
-
+*/
 
 
     //qDebug() << "RobotsNameMap on init" << robots->getRobotsNameMap();
@@ -959,7 +966,7 @@ void MainWindow::cancelEditSelecRobotBtnEvent(){
 /// TO DELETE
 void MainWindow::robotSavedEvent(){
     qDebug() << "MainWindow::robotSavedEvent called";
-
+/*
     bool isOK = false;
     int change = 0;
 
@@ -1086,13 +1093,13 @@ void MainWindow::robotSavedEvent(){
         }
         pointsLeftWidget->updateGroupButtonGroup();
 
-/*
+
         if(done){
             if(selectedRobot->getRobot()->getHome() != NULL)
                 selectedRobot->getRobot()->getHome()->getPoint()->setHome(Point::PointType::PERM);
             selectedRobot->getRobot()->setHome(editSelectedRobotWidget->getHome());
         }
-        */
+
         isOK = true;
         change++;
     }
@@ -1205,12 +1212,12 @@ void MainWindow::robotSavedEvent(){
 
                 setTemporaryMessageTop(TEXT_COLOR_SUCCESS, "The information of the robot " + selectedRobot->getRobot()->getName() + " have been successfully updated", 2500);
            // }
-                /*
+
         } else {
             setMessageTop(TEXT_COLOR_INFO, "Nothing has been modified because this point was already the home point of the robot " + selectedRobot->getRobot()->getName());
             qDebug() << "Nothing has been modified because this point was already the home point of the robot " + selectedRobot->getRobot()->getName();
-        }*/
-    }
+        }
+    }*/
 }
 
 
@@ -1884,7 +1891,39 @@ void MainWindow::setNewHome(QString homeName){
 
     if(home->getPoint()->setHome(Point::PointType::HOME)){
 
-        if(selectedRobot->getRobot()->sendCommand(QString("n \"") + QString::number(home->getPoint()->getPosition().getX()) + "\" \""
+        if(sendHomeToRobot(selectedRobot, home)){
+            XMLParser parserPoints(QString(GOBOT_PATH) + QString(XML_FILE));
+            parserPoints.save(*points);
+
+            /// associates the robot to the point
+            home->getPoint()->setRobotName(selectedRobot->getRobot()->getName());
+            home->setPixmap(PointView::PixmapType::SELECTED);
+            home->show();
+
+            editSelectedRobotWidget->setHome(home);
+            selectedRobot->getRobot()->setHome(home);
+            editSelectedRobotWidget->updateHomeMenu();
+
+            /// so that if the new home if part of the path it displays the path correctly (not a house on top of a normal point)
+            /// this call makes the home
+
+            pathPainter->setCurrentPath(selectedRobot->getRobot()->getPath(), "");
+
+            /// setCurrentPath is displaying the path so if it was not displayed we hide it
+            if(!bottomLayout->getViewPathRobotBtnGroup()->button(robots->getRobotId(selectedRobot->getRobot()->getName()))->isChecked())
+                emit resetPath();
+
+            showSelectedRobotHomeOnly();
+
+            home->setPixmap(PointView::PixmapType::SELECTED);
+            home->show();
+
+            setMessageTop(TEXT_COLOR_SUCCESS, selectedRobot->getRobot()->getName() + " successfully saved its home point");
+        } else
+            setMessageTop(TEXT_COLOR_DANGER, selectedRobot->getRobot()->getName() + " failed to save its home point, please try again");
+
+
+        /*if(selectedRobot->getRobot()->sendCommand(QString("n \"") + QString::number(home->getPoint()->getPosition().getX()) + "\" \""
                                                           + QString::number(home->getPoint()->getPosition().getY()) + "\"")){
             QString answerHome = selectedRobot->getRobot()->waitAnswer();
             QStringList answerList2 = answerHome.split(QRegExp("[ ]"), QString::SkipEmptyParts);
@@ -1922,11 +1961,29 @@ void MainWindow::setNewHome(QString homeName){
                 } else
                     setMessageTop(TEXT_COLOR_DANGER, selectedRobot->getRobot()->getName() + " failed to save its home point, please try again");
             }
-        }
+        }*/
     } else
         setMessageTop(TEXT_COLOR_DANGER, "Sorry, this point is already a home\nPlease select another");
     selectedRobot->getRobot()->resetCommandAnswer();
 
+}
+
+bool MainWindow::sendHomeToRobot(RobotView* robot, QSharedPointer<PointView> home){
+    robot->getRobot()->resetCommandAnswer();
+    if(robot->getRobot()->sendCommand(QString("n \"") + QString::number(home->getPoint()->getPosition().getX()) + "\" \""
+                                                      + QString::number(home->getPoint()->getPosition().getY()) + "\"")){
+        QString answerHome = robot->getRobot()->waitAnswer();
+        QStringList answerList2 = answerHome.split(QRegExp("[ ]"), QString::SkipEmptyParts);
+        if(answerList2.size() > 1){
+            QString cmd2 = answerList2.at(0);
+            bool success2 = (answerList2.at(1).compare("done") == 0);
+            if((cmd2.compare("n") == 0 && success2) || answerList2.at(0).compare("1") == 0)
+                return true;
+            else
+                return false;
+        }
+    }
+    return false;
 }
 
 void MainWindow::goHome(){
@@ -4769,6 +4826,7 @@ void MainWindow::centerMap(){
 
 void MainWindow::settingBtnSlot(){
     qDebug() << "MainWindow::settingBtnSlot called";
+    robotWaitForAnswer("Title", "This is the core message");
 }
 
 void MainWindow::setTemporaryMessageTop(const QString type, const QString message, const int ms){
@@ -4860,5 +4918,9 @@ void MainWindow::moveEvent(QMoveEvent *event){
     QMainWindow::moveEvent(event);
 }
 
-
+void MainWindow::robotWaitForAnswer(QString title, QString msg){
+    robotCommandBox->setWindowTitle(title);
+    robotCommandBox->setText(msg);
+    robotCommandBox->open();
+}
 

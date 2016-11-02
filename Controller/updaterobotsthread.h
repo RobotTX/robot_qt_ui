@@ -22,8 +22,6 @@ public:
 
 private slots:
     void newConnectionSlot();
-    void disconnectedSlot();
-    void readTcpDataSlot();
     void errorConnectionSlot(QAbstractSocket::SocketError error);
 
 signals:
@@ -32,7 +30,6 @@ signals:
 private:
     int port;
     QTcpServer* server;
-    QTcpSocket* socket;
 
 
 };
