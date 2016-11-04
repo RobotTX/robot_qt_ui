@@ -1,21 +1,30 @@
-#include "cmdrobotthread.h"
+#include "cmdrobotworker.h"
 #include <QTime>
 #include <QCoreApplication>
 
 
-CmdRobotThread::CmdRobotThread(const QString _ipAddress, const int cmdPort, const int _metadataPort, const int _robotPort, const int _mapPort, const QString _robotName, QObject* parent) : QThread(parent){
+CmdRobotWorker::CmdRobotWorker(const QString _ipAddress, const int cmdPort, const int _metadataPort, const int _robotPort, const int _mapPort, const QString _robotName){
     ipAddress = _ipAddress;
     port = cmdPort;
     robotName = _robotName;
-    connected = false;
-    commandAnswer = "";
     missedPing = MISSED_PING_TIMER;
     metadataPort = _metadataPort;
     robotPort = _robotPort;
     mapPort = _mapPort;
 }
 
-void CmdRobotThread::run(){
+CmdRobotWorker::~CmdRobotWorker(){
+    stopCmdRobotWorkerSlot();
+}
+
+void CmdRobotWorker::stopCmdRobotWorkerSlot(){
+    if(socket->isOpen())
+        socket->close();
+    //exit();
+}
+
+void CmdRobotWorker::connectSocket(){
+
     qDebug() << "(Robot" << robotName << ") Command Thread launched";
 
     socket = QSharedPointer<QTcpSocket>(new QTcpSocket());
@@ -31,25 +40,17 @@ void CmdRobotThread::run(){
     /// Connect to the host
     socket->connectToHost(ipAddress, port);
 
-    int i = 1;
-    while(!socket->waitForConnected(5000) && !isInterruptionRequested()){
-        socket->connectToHost(ipAddress, port);
-        sleep(1);
-        if(i++ > 100){
-            qDebug() << "(Robot" << robotName << ") Too much connection attempts";
-            socket -> close();
-            exit();
-            return;
-        }
-    }
-
     QString portStr = "h \"" + QString::number(metadataPort) + "\" \"" + QString::number(robotPort) + "\" \"" + QString::number(mapPort) + "\" } ";
     qDebug() << "(Robot" << robotName << ") Sending ports : " << portStr;
     socket->write(portStr.toUtf8());
+    if(socket->waitForBytesWritten(100)){
+        qDebug() << "(Robot" << robotName << ") Ports sent";
+    } else {
+        qDebug() << "(Robot" << robotName << ") Ports could not be send";
+    };
 
-    socket->waitForBytesWritten(1000);
 
-
+/*
     qDebug() << "(Robot" << robotName << ") Done";
     while(!isInterruptionRequested()){
         if(!socket->isOpen()){
@@ -70,10 +71,11 @@ void CmdRobotThread::run(){
     }
     socket->close();
     exit();
-    return;
+    return;*/
+    //exec();
 }
 
-void CmdRobotThread::sendCommand(const QString cmd){
+void CmdRobotWorker::sendCommand(const QString cmd){
     qDebug() << "(Robot" << robotName << ") Command to send :" << cmd << "to" << ipAddress << "at port " << port;
     int nbDataSend = socket->write(QString(cmd + " } ").toUtf8());
 
@@ -84,80 +86,51 @@ void CmdRobotThread::sendCommand(const QString cmd){
     } else {
         qDebug() << "(Robot" << robotName << ") " << nbDataSend << " bytes sent";
 
-        if(QString(cmd.at(0)).compare("e")){
+        /*if(QString(cmd.at(0)).compare("e")){
             socket->waitForReadyRead(100);
         } else {
             qDebug() << "No wait";
             delay(2000);
-        }
+        }*/
     }
     qDebug() << "(Robot" << robotName << ") Command sent successfully";
 }
 
-void CmdRobotThread::readTcpDataSlot(){
-    commandAnswer = socket->readAll();
-    missedPing = MISSED_PING_TIMER;
+void CmdRobotWorker::readTcpDataSlot(){
+    QString commandAnswer = socket->readAll();
     qDebug() << "(Robot" << robotName << ") readTcpDataSlot :" << commandAnswer;
+    emit cmdAnswer(commandAnswer);
+    missedPing = MISSED_PING_TIMER;
 }
 
-QString CmdRobotThread::waitAnswer(){
-    qDebug() << "waiting for an answer";
-    int waitTime = 0;
-    while(!commandAnswer.compare("") && waitTime < 20){
-        delay(500);
-        waitTime++;
-    }
-
-    if(waitTime >= 20){
-        qDebug() << "Waited for an answer for too long";
-    } else {
-        qDebug() << "Got answer and waited for" << (waitTime/2) << "seconds :" << commandAnswer;
-    }
-
-    return commandAnswer;
-}
-
-void CmdRobotThread::connectedSlot(){
+void CmdRobotWorker::connectedSlot(){
     qDebug() << "(Robot" << robotName << ") Connected";
-    connected = true;
 }
 
-void CmdRobotThread::disconnectedSlot(){
+void CmdRobotWorker::disconnectedSlot(){
     qDebug() << "(Robot" << robotName << ") Disconnected at ip" << ipAddress;
-    connected = false;
-    if(!socket->isOpen()){
-        exit();
-        return;
-    }
     if(robotName.compare("") != 0){
-        qDebug() << "Disconnected slot robotIsDead";
+        qDebug() << "(Robot" << robotName << ") Emitting robotIsDead";
         emit robotIsDead(robotName, ipAddress);
-        socket->close();
-        exit();
-        return;
+        if(socket->isOpen())
+            socket->close();
     }
 }
 
-void CmdRobotThread::errorSlot(QAbstractSocket::SocketError error){
+void CmdRobotWorker::errorSlot(QAbstractSocket::SocketError error){
     qDebug() << "(Robot" << robotName << ") Catched a connection error : " << error;
 }
 
-void CmdRobotThread::onStateChanged(QAbstractSocket::SocketState socketState ){
+void CmdRobotWorker::onStateChanged(QAbstractSocket::SocketState socketState ){
     qDebug()<< "(Robot" << robotName << ") The state of the socket changed :" << socketState;
 }
 
-void CmdRobotThread::delay(const int ms) const{
-    QTime dieTime = QTime::currentTime().addMSecs(ms);
-    while (QTime::currentTime() < dieTime)
-        QCoreApplication::processEvents(QEventLoop::AllEvents, 100);
-}
-
-void CmdRobotThread::pingSlot(){
+void CmdRobotWorker::pingSlot(){
     missedPing = MISSED_PING_TIMER;
 }
 
 
-void CmdRobotThread::changeRobotNameSlot(QString name){
+void CmdRobotWorker::changeRobotNameSlot(QString name){
     qDebug()<< "(Robot" << robotName << ") Changed the name of the robot to" << name;
     robotName = name;
 }

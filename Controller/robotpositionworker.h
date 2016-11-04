@@ -1,39 +1,27 @@
-#ifndef SCANROBOTTHREAD_H
-#define SCANROBOTTHREAD_H
+#ifndef ROBOTPOSITIONWORKER_H
+#define ROBOTPOSITIONWORKER_H
 
-#include <QThread>
 #include <QString>
 #include <QtNetwork/QTcpSocket>
 #include <QSharedPointer>
 
 /**
  * @brief The RobotThread class
- * The thread connect to the robot at the given ipAddress & port to receive
+ * The threadScan connect to the robot at the given ipAddress & port to receive
  * the robot position & orientation
  */
-class ScanRobotThread : public QThread {
+class RobotPositionWorker : public QObject {
     Q_OBJECT
 public:
     /**
-     * @brief ScanRobotThread
+     * @brief RobotPositionWorker
      * @param ipAddress
      * @param port
      */
-    ScanRobotThread(const QString ipAddress, const int port);
-
-    /**
-     * @brief run
-     * Function called when we start a Thread
-     */
-    void run();
+    RobotPositionWorker(const QString ipAddress, const int port);
+    ~RobotPositionWorker();
 
 private slots:
-    /**
-     * @brief connectedSlot
-     * Slot called when we are connected to the host
-     */
-    void connectedSlot();
-
     /**
      * @brief errorSlot
      * @param error
@@ -46,6 +34,10 @@ private slots:
      * Slot called when we are disconnected from the host
      */
     void disconnectedSlot();
+    void readTcpDataSlot();
+    void stopThread();
+    void connectSocket();
+
 
 signals:
     /**
@@ -65,4 +57,4 @@ private :
 };
 
 
-#endif // SCANROBOTTHREAD_H
+#endif // ROBOTPOSITIONWORKER_H

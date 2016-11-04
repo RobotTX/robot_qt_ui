@@ -50,6 +50,7 @@
 #include "View/customrobotdialog.h"
 #include "View/customlabel.h"
 #include <QtGlobal>
+#include <QStringList>
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow) {
     ui->setupUi(this);
@@ -60,12 +61,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
     points = QSharedPointer<Points>(new Points(this));
     QWidget* mainWidget = new QWidget(this);
-    robotCommandBox = new QMessageBox(this);
-    /// makes sure the msgbox is deleted automatically when closed
-    robotCommandBox->setAttribute(Qt::WA_DeleteOnClose);
-    robotCommandBox->setStandardButtons(QMessageBox::Ok);
-    /// non-modal means it won't block other widgets from receiving slots while the msg box is opened
-    robotCommandBox->setModal(false);
+    initRobotCommandBox();
 
 
     QVBoxLayout* mainLayout = new QVBoxLayout(mainWidget);
@@ -98,6 +94,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     editedPointView = QSharedPointer<PointView>();
     updateRobotsThread = NULL;
     mapThread = NULL;
+    cmdAnswer = "";
 
     /// Create the graphic item of the map
     QPixmap pixmap = QPixmap::fromImage(map->getMapImage());
@@ -330,10 +327,11 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
 MainWindow::~MainWindow(){
     delete ui;
-    if (updateRobotsThread != NULL && updateRobotsThread->isRunning() ) {
-        updateRobotsThread->requestInterruption();
-        updateRobotsThread->wait();
+
+    if (updateRobotsThread != NULL && updateRobotsThread->isRunning()){
+        emit stopUpdateRobotsThread();
     }
+
     if (mapThread != NULL && mapThread->isRunning() ) {
         mapThread->requestInterruption();
         mapThread->wait();
@@ -362,6 +360,7 @@ void MainWindow::initializeRobots(){
 
     updateRobotsThread = new UpdateRobotsThread(PORT_ROBOT_UPDATE);
     connect(updateRobotsThread, SIGNAL(robotIsAlive(QString, QString, QString, QString, int)), this, SLOT(robotIsAliveSlot(QString, QString, QString, QString, int)));
+    connect(this, SIGNAL(stopUpdateRobotsThread()), updateRobotsThread, SLOT(stopThread()));
     updateRobotsThread->start();
     updateRobotsThread->moveToThread(updateRobotsThread);
 
@@ -376,7 +375,7 @@ void MainWindow::initializeRobots(){
     QString robotIp1 = "localhost";
     QString robotName1 = tmpMap.value(robotIp1, "Roboty");
 
-    QSharedPointer<Robot> robot1(new Robot(this, paths, robotName1, robotIp1));
+    Robot* robot1(new Robot(this, paths, robotName1, robotIp1));
     robot1->setWifi("Swaghetti Yolognaise");
     RobotView* robotView1 = new RobotView(robot1, mapPixmapItem);
     robotView1->setLastStage(2);
@@ -390,7 +389,7 @@ void MainWindow::initializeRobots(){
 
     QString robotIp2 = "192.168.4.12";
     QString robotName2 = tmpMap.value(robotIp2, "Roboto");
-    QSharedPointer<Robot> robot2(new Robot(this, paths, robotName2, robotIp2));
+    Robot* robot2(new Robot(this, paths, robotName2, robotIp2));
     robot2->setWifi("Swaghetti Yolognaise");
     RobotView* robotView2 = new RobotView(robot2, mapPixmapItem);
     connect(robotView2, SIGNAL(setSelectedSignal(RobotView*)), this, SLOT(setSelectedRobot(RobotView*)));
@@ -401,7 +400,7 @@ void MainWindow::initializeRobots(){
 
     QString robotIp3 = "192.168.4.13";
     QString robotName3 = tmpMap.value(robotIp3, "Robota");
-    QSharedPointer<Robot> robot3(new Robot(this, paths, robotName3, robotIp3));
+    Robot* robot3(new Robot(this, paths, robotName3, robotIp3));
     robot3->setWifi("Swaghetti Yolognaise");
     RobotView* robotView3 = new RobotView(robot3, mapPixmapItem);
     connect(robotView3, SIGNAL(setSelectedSignal(RobotView*)), this, SLOT(setSelectedRobot(RobotView*)));
@@ -459,8 +458,7 @@ void MainWindow::connectToRobot(bool checked){
                     QString ip = selectedRobot->getRobot()->getIp();
                     qDebug() << "Trying to connect to : " << ip;
 
-                    selectedRobot->getRobot()->resetCommandAnswer();
-                    if(selectedRobot->getRobot()->sendCommand(QString("e"))){
+                    if(sendCommand(selectedRobot->getRobot(), QString("e"))){
 
                         editSelectedRobotWidget->getScanBtn()->setText("Stop to scan");
                         clearNewMap();
@@ -479,7 +477,6 @@ void MainWindow::connectToRobot(bool checked){
 
                         topLayout->setLabel(TEXT_COLOR_SUCCESS, "Scanning a new map");
 
-                        selectedRobot->getRobot()->resetCommandAnswer();
                     } else {
                         editSelectedRobotWidget->getScanBtn()->setChecked(false);
                         topLayout->setLabel(TEXT_COLOR_DANGER, "Failed to start to scan a map, please try again");
@@ -492,38 +489,22 @@ void MainWindow::connectToRobot(bool checked){
                 break;
             }
         } else {
-            selectedRobot->getRobot()->resetCommandAnswer();
-            if(selectedRobot->getRobot()->sendCommand(QString("f"))){
+            if(sendCommand(selectedRobot->getRobot(), QString("f"))){
                 // TODO Need to wait for the last map ?
+                qDebug() << "Stopped scanning the map";
+                editSelectedRobotWidget->getScanBtn()->setText("Scan a map");
 
-                QString answer = selectedRobot->getRobot()->waitAnswer();
-                QStringList answerList = answer.split(QRegExp("[ ]"), QString::SkipEmptyParts);
-                if(answerList.size() > 1){
-                    QString cmd = answerList.at(0);
-                    bool success = (answerList.at(1).compare("done") == 0);
-                    if((cmd.compare("f") == 0 && success) || answerList.at(0).compare("1") == 0){
-                        qDebug() << "Stopped scanning the map";
-                        editSelectedRobotWidget->getScanBtn()->setText("Scan a map");
+                RobotView* _tmpRobot = selectedRobot;
+                hideAllWidgets();
+                selectedRobot = _tmpRobot;
 
-                        RobotView* _tmpRobot = selectedRobot;
-                        hideAllWidgets();
-                        selectedRobot = _tmpRobot;
+                editSelectedRobotWidget->setSelectedRobot(selectedRobot);
+                editSelectedRobotWidget->setEnableAll(true);
+                editSelectedRobotWidget->show();
 
-                        editSelectedRobotWidget->setSelectedRobot(selectedRobot);
-                        editSelectedRobotWidget->setEnableAll(true);
-                        editSelectedRobotWidget->show();
-
-                        setEnableAll(true);
-                        topLayout->setLabel(TEXT_COLOR_SUCCESS, "Stopped scanning the map");
-                    } else {
-                        editSelectedRobotWidget->getScanBtn()->setChecked(true);
-                        topLayout->setLabel(TEXT_COLOR_DANGER, "Failed to stop the scanning, please try again");
-                    }
-                }
-                selectedRobot->getRobot()->resetCommandAnswer();
-
+                setEnableAll(true);
+                topLayout->setLabel(TEXT_COLOR_SUCCESS, "Stopped scanning the map");
             } else {
-                qDebug() << "Could not disconnect";
                 editSelectedRobotWidget->getScanBtn()->setChecked(true);
                 topLayout->setLabel(TEXT_COLOR_DANGER, "Failed to stop the scanning, please try again");
             }
@@ -538,7 +519,7 @@ void MainWindow::connectToRobot(bool checked){
 
 void MainWindow::deletePath(int robotNb){
     qDebug() << "MainWindow::deletepath called on robot :" << robots->getRobotsVector().at(robotNb)->getRobot()->getName();
-    QSharedPointer<Robot> robot = robots->getRobotsVector().at(robotNb)->getRobot();
+    Robot* robot = robots->getRobotsVector().at(robotNb)->getRobot();
     if(robot->getPath().size() > 0){
         /// if the robot is not playing its path
         if(!robot->isPlayingPath()){
@@ -548,21 +529,11 @@ void MainWindow::deletePath(int robotNb){
                 case QMessageBox::Ok:
                 {
                     /// if the command is succesfully sent to the robot, we apply the change
-                    robot->resetCommandAnswer();
-                    if(robot->sendCommand(QString("k"))){
-                        QString answer = robot->waitAnswer();
-                        QStringList answerList = answer.split(QRegExp("[ ]"), QString::SkipEmptyParts);
-                        if(answerList.size() > 1){
-                            QString cmd = answerList.at(0);
-                            bool success = (answerList.at(1).compare("done") == 0);
-                            if((cmd.compare("k") == 0 && success) || answerList.at(0).compare("1") == 0){
-                                clearPath(robotNb);
-                                topLayout->setLabel(TEXT_COLOR_SUCCESS, "Path deleted");
-                            } else {
-                                topLayout->setLabel(TEXT_COLOR_DANGER, "Failed to delete the path, please try again");
-                            }
-                        }
-                        robot->resetCommandAnswer();
+                    if(sendCommand(robot, QString("k"))){
+                        clearPath(robotNb);
+                        topLayout->setLabel(TEXT_COLOR_SUCCESS, "Path deleted");
+                    } else {
+                        topLayout->setLabel(TEXT_COLOR_DANGER, "Failed to delete the path, please try again");
                     }
                 }
                 break;
@@ -582,22 +553,12 @@ void MainWindow::deletePath(int robotNb){
                 case QMessageBox::Ok:
                 {
                     /// if the command is succesfully sent to the robot, we apply the change
-                    QSharedPointer<Robot> robot = robots->getRobotsVector().at(robotNb)->getRobot();
-                    robot->resetCommandAnswer();
-                    if(robot->sendCommand(QString("m"))){
-                        QString answer = robot->waitAnswer();
-                        QStringList answerList = answer.split(QRegExp("[ ]"), QString::SkipEmptyParts);
-                        if(answerList.size() > 1){
-                            QString cmd = answerList.at(0);
-                            bool success = (answerList.at(1).compare("done") == 0);
-                            if((cmd.compare("m") == 0 && success) || answerList.at(0).compare("1") == 0){
-                                clearPath(robotNb);
-                                topLayout->setLabel(TEXT_COLOR_SUCCESS, "Path deleted");
-                            } else {
-                                topLayout->setLabel(TEXT_COLOR_DANGER, "Failed to delete the path, please try again");
-                            }
-                        }
-                        robot->resetCommandAnswer();
+                    Robot* robot = robots->getRobotsVector().at(robotNb)->getRobot();
+                    if(sendCommand(robot, QString("m"))){
+                        clearPath(robotNb);
+                        topLayout->setLabel(TEXT_COLOR_SUCCESS, "Path deleted");
+                    } else {
+                        topLayout->setLabel(TEXT_COLOR_DANGER, "Failed to delete the path, please try again");
                     }
                 }
             }
@@ -609,72 +570,41 @@ void MainWindow::deletePath(int robotNb){
 
 void MainWindow::stopPath(int robotNb){
     qDebug() << "MainWindow::StopPath called";
-    QSharedPointer<Robot> robot = robots->getRobotsVector().at(robotNb)->getRobot();
-    robot->resetCommandAnswer();
-    if(robot->sendCommand(QString("l"))){
-        QString answer = robot->waitAnswer();
-        QStringList answerList = answer.split(QRegExp("[ ]"), QString::SkipEmptyParts);
-        if(answerList.size() > 1){
-            QString cmd = answerList.at(0);
-            bool success = (answerList.at(1).compare("done") == 0);
-            if((cmd.compare("l") == 0 && success) || answerList.at(0).compare("1") == 0){
-                robot->setPlayingPath(false);
-                bottomLayout->getPlayRobotBtnGroup()->button(robotNb)->setIcon(QIcon(":/icons/play.png"));
-                bottomLayout->getStopRobotBtnGroup()->button(robotNb)->setEnabled(false);
-                topLayout->setLabel(TEXT_COLOR_SUCCESS, "Path stopped");
-            } else {
-                topLayout->setLabel(TEXT_COLOR_DANGER, "Path failed to be stopped, please try again");
-            }
-        }
-        robot->resetCommandAnswer();
+    Robot* robot = robots->getRobotsVector().at(robotNb)->getRobot();
+    if(sendCommand(robot, QString("l"))){
+        robot->setPlayingPath(false);
+        bottomLayout->getPlayRobotBtnGroup()->button(robotNb)->setIcon(QIcon(":/icons/play.png"));
+        bottomLayout->getStopRobotBtnGroup()->button(robotNb)->setEnabled(false);
+        topLayout->setLabel(TEXT_COLOR_SUCCESS, "Path stopped");
+    } else {
+        topLayout->setLabel(TEXT_COLOR_DANGER, "Path failed to be stopped, please try again");
     }
 }
 
 void MainWindow::playSelectedRobot(int robotNb){
-    QSharedPointer<Robot> robot = robots->getRobotsVector().at(robotNb)->getRobot();
+    Robot* robot = robots->getRobotsVector().at(robotNb)->getRobot();
     if(robot->isPlayingPath()){
         qDebug() << "pause path on robot " << robotNb << " : " << robot->getName();
         /// if the command is succesfully sent to the robot, we apply the change
-        robot->resetCommandAnswer();
-        if(robot->sendCommand(QString("d"))){
-            QString answer = robot->waitAnswer();
-            QStringList answerList = answer.split(QRegExp("[ ]"), QString::SkipEmptyParts);
-            if(answerList.size() > 1){
-                QString cmd = answerList.at(0);
-                bool success = (answerList.at(1).compare("done") == 0);
-                if((cmd.compare("d") == 0 && success) || answerList.at(0).compare("1") == 0){
-                    robot->setPlayingPath(0);
-                    bottomLayout->getPlayRobotBtnGroup()->button(robotNb)->setIcon(QIcon(":/icons/play.png"));
-                    bottomLayout->getStopRobotBtnGroup()->button(robotNb)->setEnabled(true);
-                    topLayout->setLabel(TEXT_COLOR_SUCCESS, "Path stopped");
-                } else {
-                    topLayout->setLabel(TEXT_COLOR_DANGER, "Path failed to be stopped, please try again");
-                }
-            }
-            robot->resetCommandAnswer();
+        if(sendCommand(robot, QString("d"))){
+            robot->setPlayingPath(0);
+            bottomLayout->getPlayRobotBtnGroup()->button(robotNb)->setIcon(QIcon(":/icons/play.png"));
+            bottomLayout->getStopRobotBtnGroup()->button(robotNb)->setEnabled(true);
+            topLayout->setLabel(TEXT_COLOR_SUCCESS, "Path stopped");
+        } else {
+            topLayout->setLabel(TEXT_COLOR_DANGER, "Path failed to be stopped, please try again");
         }
     } else {
         qDebug() << "play path on robot " << robotNb << " : " << robot->getName();
 
         /// if the command is succesfully sent to the robot, we apply the change
-        robot->resetCommandAnswer();
-        if(robot->sendCommand(QString("j"))){
-            qDebug() << "Let's wait";
-            QString answer = robot->waitAnswer();
-            qDebug() << "Done waiting";
-            QStringList answerList = answer.split(QRegExp("[ ]"), QString::SkipEmptyParts);
-            if(answerList.size() > 1){
-                QString cmd = answerList.at(0);
-                bool success = (answerList.at(1).compare("done") == 0);
-                if((cmd.compare("j") == 0 && success) || answerList.at(0).compare("1") == 0){
-                    robot->setPlayingPath(1);
-                    bottomLayout->getPlayRobotBtnGroup()->button(robotNb)->setIcon(QIcon(":/icons/pause.png"));
-                    bottomLayout->getStopRobotBtnGroup()->button(robotNb)->setEnabled(true);
-                    topLayout->setLabel(TEXT_COLOR_SUCCESS, "Path playing");
-                } else {
-                    topLayout->setLabel(TEXT_COLOR_DANGER, "Path failed to start, please try again");
-                }
-            }
+        if(sendCommand(robot, QString("j"))){
+            robot->setPlayingPath(1);
+            bottomLayout->getPlayRobotBtnGroup()->button(robotNb)->setIcon(QIcon(":/icons/pause.png"));
+            bottomLayout->getStopRobotBtnGroup()->button(robotNb)->setEnabled(true);
+            topLayout->setLabel(TEXT_COLOR_SUCCESS, "Path playing");
+        } else {
+            topLayout->setLabel(TEXT_COLOR_DANGER, "Path failed to start, please try again");
         }
     }
 }
@@ -689,7 +619,7 @@ void MainWindow::viewPathSelectedRobot(int robotNb, bool checked){
             leftMenu->getPathGroupDisplayed()->enableButtons(leftMenu->getPathGroupDisplayed()->getPathButtonGroup()->getButtonGroup()->checkedButton());
         displayPathOnMap(false);
 
-        QSharedPointer<Robot> robot = robots->getRobotsVector().at(robotNb)->getRobot();
+        Robot* robot = robots->getRobotsVector().at(robotNb)->getRobot();
         qDebug() << "viewPathSelectedRobot called on" << robot->getName();
         bottomLayout->uncheckViewPathSelectedRobot(robotNb);
         pathPainter->setCurrentPath(robot->getPath(), "");
@@ -978,7 +908,6 @@ void MainWindow::robotSavedEvent(){
     /// if we changed the name
     if(selectedRobot->getRobot()->getName().compare(editSelectedRobotWidget->getRobotInfoDialog()->getNameEdit()->text()) != 0){
         qDebug() << "MainWindow::robotSavedEvent Name has been modified";
-        selectedRobot->getRobot()->resetCommandAnswer();
         if(selectedRobot->getRobot()->sendCommand(QString("a \"") + editSelectedRobotWidget->getRobotInfoDialog()->getNameEdit()->text() + "\"")){
             QString answer = selectedRobot->getRobot()->waitAnswer();
             QStringList answerList = answer.split(QRegExp("[ ]"), QString::SkipEmptyParts);
@@ -1006,14 +935,12 @@ void MainWindow::robotSavedEvent(){
                     setMessageTop(TEXT_COLOR_DANGER, "Failed to edit the name of the robot");
                 }
             }
-            selectedRobot->getRobot()->resetCommandAnswer();
         }
     }
 
     /// if we changed the wifi
     if (editSelectedRobotWidget->getRobotInfoDialog()->getPasswordEdit()->text() != "......"){
         qDebug() << "MainWindow::robotSavedEvent Wifi has been modified";
-        selectedRobot->getRobot()->resetCommandAnswer();
         if(selectedRobot->getRobot()->sendCommand(QString("b \"")
                   + editSelectedRobotWidget->getRobotInfoDialog()->getNameEdit()->text() + "\" \""
                   + editSelectedRobotWidget->getRobotInfoDialog()->getPasswordEdit()->text() + "\"")){
@@ -1031,7 +958,6 @@ void MainWindow::robotSavedEvent(){
                     setMessageTop(TEXT_COLOR_DANGER, "Failed to edit the wifi");
                 }
             }
-            selectedRobot->getRobot()->resetCommandAnswer();
         }
     }
 
@@ -1066,7 +992,6 @@ void MainWindow::robotSavedEvent(){
                         setMessageTop(TEXT_COLOR_DANGER, selectedRobot->getRobot()->getName() + " failed to save its home point, please try again");
                 }
             }
-            selectedRobot->getRobot()->resetCommandAnswer();
         } else {
             qDebug() << "MainWindow::robotSavedEvent Permanent point";
             if(pointView->getPoint()->setHome(Point::PointType::HOME)){
@@ -1089,7 +1014,6 @@ void MainWindow::robotSavedEvent(){
                 }
             } else
                 setMessageTop(TEXT_COLOR_DANGER, "Sorry, this point is already a home\nPlease select another");
-            selectedRobot->getRobot()->resetCommandAnswer();
         }
         pointsLeftWidget->updateGroupButtonGroup();
 
@@ -1107,7 +1031,7 @@ void MainWindow::robotSavedEvent(){
     /// if we changed the path
     if(editSelectedRobotWidget->getPathChanged()){
         qDebug() << "MainWindow::robotSavedEvent path changed";
-        QSharedPointer<Robot> robot = selectedRobot->getRobot();
+        Robot* robot = selectedRobot->getRobot();
         QString pathStr = "";
         /// prepares the cmd to send to the robot
         qDebug() << "MainWindow::robotSavedEvent" << pathPainter->getCurrentPath().size();
@@ -1126,7 +1050,6 @@ void MainWindow::robotSavedEvent(){
         }
 
         /// if the command is succesfully sent to the robot, we apply the change
-        robot->resetCommandAnswer();
         // TODO check if pathStr empty, means deleting the path => cmd send without parem => check robotFiles/command.cpp
         if(robot->sendCommand(QString("i ") + pathStr)){
             QString answer = robot->waitAnswer();
@@ -1266,50 +1189,41 @@ void MainWindow::saveRobotModifications(){
 bool MainWindow::changeRobotName(QString name){
     qDebug() << "MainWindow::changeRobotName called";
 
-    selectedRobot->getRobot()->resetCommandAnswer();
-    if(selectedRobot->getRobot()->sendCommand(QString("a \"") + name + "\"")){
-        QString answer = selectedRobot->getRobot()->waitAnswer();
-        QStringList answerList = answer.split(QRegExp("[ ]"), QString::SkipEmptyParts);
-        if(answerList.size() > 1){
-            QString cmd = answerList.at(0);
-            bool success = (answerList.at(1).compare("done") == 0);
-            if((cmd.compare("a") == 0 && success) || answerList.at(0).compare("1") == 0){
+    if(sendCommand(selectedRobot->getRobot(), QString("a \"") + name + "\"")){
 
-                QFile robotPathFile(QString(GOBOT_PATH) + "robots_paths/" + selectedRobot->getRobot()->getName() + "_path.dat");
-                if(robotPathFile.exists())
-                    robotPathFile.rename(QString(GOBOT_PATH) + "robots_paths/" + name + "_path.dat");
+        QFile robotPathFile(QString(GOBOT_PATH) + "robots_paths/" + selectedRobot->getRobot()->getName() + "_path.dat");
+        if(robotPathFile.exists())
+            robotPathFile.rename(QString(GOBOT_PATH) + "robots_paths/" + name + "_path.dat");
 
-                QMap<QString, QString> tmp = robots->getRobotsNameMap();
-                tmp[selectedRobot->getRobot()->getIp()] = name;
-                selectedRobot->getRobot()->setName(name);
-                robots->setRobotsNameMap(tmp);
+        QMap<QString, QString> tmp = robots->getRobotsNameMap();
+        tmp[selectedRobot->getRobot()->getIp()] = name;
+        selectedRobot->getRobot()->setName(name);
+        robots->setRobotsNameMap(tmp);
 
-                QFile fileWrite(QString(GOBOT_PATH) + QString(ROBOTS_NAME_FILE));
-                fileWrite.resize(0);
-                fileWrite.open(QIODevice::WriteOnly);
-                QDataStream out(&fileWrite);
-                out << robots->getRobotsNameMap();
-                fileWrite.close();
+        emit changeCmdThreadRobotName(name);
+
+        QFile fileWrite(QString(GOBOT_PATH) + QString(ROBOTS_NAME_FILE));
+        fileWrite.resize(0);
+        fileWrite.open(QIODevice::WriteOnly);
+        QDataStream out(&fileWrite);
+        out << robots->getRobotsNameMap();
+        fileWrite.close();
 
 
-                qDebug() << "MainWindow::robotSavedEvent RobotsNameMap updated" << robots->getRobotsNameMap();
-                bottomLayout->updateRobot(robots->getRobotId(selectedRobot->getRobot()->getName()), selectedRobot);
-                editSelectedRobotWidget->getNameLabel()->setText(name);
-                editSelectedRobotWidget->getRobotInfoDialog()->getNameEdit()->setText(name);
+        qDebug() << "MainWindow::robotSavedEvent RobotsNameMap updated" << robots->getRobotsNameMap();
+        bottomLayout->updateRobot(robots->getRobotId(selectedRobot->getRobot()->getName()), selectedRobot);
+        editSelectedRobotWidget->getNameLabel()->setText(name);
+        editSelectedRobotWidget->getRobotInfoDialog()->getNameEdit()->setText(name);
 
-                robotsLeftWidget->updateRobots(robots);
-                return true;
-            } else
-                return false;
-        }
+        robotsLeftWidget->updateRobots(robots);
+        return true;
     }
     return false;
 }
 
 void MainWindow::changeRobotWifi(QString ssid, QString password){
     qDebug() << "MainWindow::changeRobotWifi called";
-    selectedRobot->getRobot()->resetCommandAnswer();
-    if(selectedRobot->getRobot()->sendCommand(QString("b \"")
+    if(sendCommand(selectedRobot->getRobot(), QString("b \"")
               + ssid + "\" \""
               + password + "\"")){
         editSelectedRobotWidget->getWifiNameLabel()->setText(ssid);
@@ -1327,8 +1241,7 @@ void MainWindow::changeRobotWifi(QString ssid, QString password){
                 isOK = false;
                 setMessageTop(TEXT_COLOR_DANGER, "Failed to edit the wifi");
             }
-        }
-        selectedRobot->getRobot()->resetCommandAnswer();*/
+        }*/
     }
 }
 
@@ -1581,7 +1494,7 @@ void MainWindow::robotIsAliveSlot(QString hostname, QString ip, QString mapId, Q
     } else {
         qDebug() << "Robot" << hostname << "at ip" << ip << "just connected and has the map id :" << mapId;
 
-        QSharedPointer<Robot> robot(new Robot(this, paths, hostname, ip));
+        Robot* robot = new Robot(this, paths, hostname, ip);
         robot->setWifi(ssid);
         rv = new RobotView(robot, mapPixmapItem);
         connect(rv, SIGNAL(setSelectedSignal(RobotView*)), this, SLOT(setSelectedRobot(RobotView*)));
@@ -1653,8 +1566,6 @@ void MainWindow::robotIsDeadSlot(QString hostname,QString ip){
     int id = robots->getRobotId(hostname);
 
     if(rv != NULL && rv->getRobot() != NULL){
-        /// we stop the robots threads
-        rv->getRobot()->stopThreads();
 
         /// if the robot had a home, make the point a normal point
         if(rv->getRobot()->getHome() != NULL)
@@ -1689,6 +1600,8 @@ void MainWindow::robotIsDeadSlot(QString hostname,QString ip){
 
             setEnableAll(true);
         }
+        /// we stop the robots threads
+        rv->getRobot()->deleteLater();
 
         /// delete robotview
         scene->removeItem(rv);
@@ -1772,11 +1685,9 @@ void MainWindow::sendNewMapToRobots(QString ipAddress){
 
     /// We send the map to each robot
     for(int i = 0; i < robotsVector.size(); i++){
-        QSharedPointer<Robot> robot = robotsVector.at(i)->getRobot();
+        Robot* robot = robotsVector.at(i)->getRobot();
 
         /// No need to send the map to the robot that scanned it
-        // TODO remettre/enlever comment
-
         if(robot->getIp().compare(ipAddress) != 0){
             qDebug() << "Sending the map to" << robot->getName() << "at ip" << robot->getIp();
             sendNewMapToRobot(robot, mapId.toString());
@@ -1787,42 +1698,64 @@ void MainWindow::sendNewMapToRobots(QString ipAddress){
     qDebug() << "Sent the map to the robots";
 }
 
-void MainWindow::sendNewMapToRobot(QSharedPointer<Robot> robot, QString mapId){
+void MainWindow::sendNewMapToRobot(Robot* robot, QString mapId){
     qDebug() << "sendNewMapToRobot called on" << robot->getName() << "at ip" << robot->getIp() << "sending map id :" << mapId;
 
-    qDebug() << "Setting the map ID to the robot" << robot->getName();
-    robot->setMapId(QUuid(mapId));
+    bool alreadySendingMap = 0;
+    for(int i = 0; i < robots->getRobotsVector().size(); i++){
+        if(robots->getRobotsVector().at(i)->getRobot()->isSendingMap())
+            alreadySendingMap = 1;
+    }
 
-    qDebug() << "Sending the new map id to the robot" << robot->getName();
-    /// Push the map id to send
-    QByteArray byteArray;
-    byteArray.push_back(mapId.toUtf8());
-    byteArray.push_back(';');
+    if(!alreadySendingMap){
+        cmdAnswer = "";
 
-    /// Push the map metadata to send
-    QString mapMetadata = QString::number(map->getWidth()) + ' ' + QString::number(map->getHeight()) +
-            ' ' + QString::number(map->getResolution()) + ' ' + QString::number(map->getOrigin().getX()) +
-            ' ' + QString::number(map->getOrigin().getY());
+        qDebug() << "Sending the new map id to the robot" << robot->getName();
+        /// Push the map id to send
+        QByteArray byteArray;
+        byteArray.push_back(mapId.toUtf8());
+        byteArray.push_back(';');
 
-    byteArray.push_back(mapMetadata.toUtf8());
-    byteArray.push_back(';');
+        /// Push the map metadata to send
+        QString mapMetadata = QString::number(map->getWidth()) + ' ' + QString::number(map->getHeight()) +
+                ' ' + QString::number(map->getResolution()) + ' ' + QString::number(map->getOrigin().getX()) +
+                ' ' + QString::number(map->getOrigin().getY());
 
-    /// Push the map to send
-    QFile file(QString(GOBOT_PATH) + QString(MAP_FILE));
-    if (!file.open(QIODevice::ReadOnly)) return;
-    QByteArray blob = file.readAll();
-    qDebug() << "Followed by the new map of size" << blob.size();
-    byteArray.push_back(blob);
+        byteArray.push_back(mapMetadata.toUtf8());
+        byteArray.push_back(';');
 
-    robot->sendNewMap(byteArray);
-    qDebug() << "Done sending the new map";
+        /// Push the map to send
+        QFile file(QString(GOBOT_PATH) + QString(MAP_FILE));
+        if (!file.open(QIODevice::ReadOnly)) return;
+        QByteArray blob = file.readAll();
+        byteArray.push_back(blob);
+
+
+        qDebug() << "Setting the map ID to the robot" << robot->getName();
+        robot->setMapId(QUuid(mapId));
+
+        robot->sendNewMap(byteArray);
+
+        robotWaitForAnswer("Title", "Tmp Message");
+
+        qDebug() << "MainWindow::sendNewMapToRobot Going to wait while sending the map";
+        while(cmdAnswer.compare("") == 0){
+            qDebug() << "MainWindow::sendNewMapToRobot waiting to finish to send the map";
+            delay(1000);
+        }
+        qDebug() << "The answer is :" << cmdAnswer;
+
+        cmdAnswer = "";
+    } else {
+        qDebug() << "MainWindow::sendNewMapToRobot Already sending a map";
+    }
 }
 
 void MainWindow::updateAllPaths(const Point& old_point, const Point& new_point){
 
     RobotView* currentRobot = editSelectedRobotWidget->getRobot();
     for(int i = 0; i < robots->getRobotsVector().size(); i++){
-        QSharedPointer<Robot> robot = robots->getRobotsVector().at(i)->getRobot();
+        Robot* robot = robots->getRobotsVector().at(i)->getRobot();
         /// to update the description of the path of each robot
         editSelectedRobotWidget->setSelectedRobot(robots->getRobotViewByName(robot->getName()));
         QVector<QSharedPointer<PathPoint>> path = robot->getPath();
@@ -1964,43 +1897,23 @@ void MainWindow::setNewHome(QString homeName){
         }*/
     } else
         setMessageTop(TEXT_COLOR_DANGER, "Sorry, this point is already a home\nPlease select another");
-    selectedRobot->getRobot()->resetCommandAnswer();
 
 }
 
 bool MainWindow::sendHomeToRobot(RobotView* robot, QSharedPointer<PointView> home){
-    robot->getRobot()->resetCommandAnswer();
-    if(robot->getRobot()->sendCommand(QString("n \"") + QString::number(home->getPoint()->getPosition().getX()) + "\" \""
-                                                      + QString::number(home->getPoint()->getPosition().getY()) + "\"")){
-        QString answerHome = robot->getRobot()->waitAnswer();
-        QStringList answerList2 = answerHome.split(QRegExp("[ ]"), QString::SkipEmptyParts);
-        if(answerList2.size() > 1){
-            QString cmd2 = answerList2.at(0);
-            bool success2 = (answerList2.at(1).compare("done") == 0);
-            if((cmd2.compare("n") == 0 && success2) || answerList2.at(0).compare("1") == 0)
-                return true;
-            else
-                return false;
-        }
-    }
+    if(sendCommand(robot->getRobot(), QString("n \"") + QString::number(home->getPoint()->getPosition().getX()) + "\" \""
+                                                      + QString::number(home->getPoint()->getPosition().getY()) + "\""))
+        return true;
     return false;
 }
 
 void MainWindow::goHome(){
     qDebug() << "MainWindow::goHome called (soon soon working)";
-    if(selectedRobot->getRobot()->sendCommand(QString("o"))){
-        QString answer = selectedRobot->getRobot()->waitAnswer();
-        QStringList answerList = answer.split(QRegExp("[ ]"), QString::SkipEmptyParts);
-        if(answerList.size() > 1){
-            QString cmd = answerList.at(0);
-            bool success = (answerList.at(1).compare("done") == 0);
-            if((cmd.compare("o") == 0 && success) || answerList.at(0).compare("1") == 0){
-                //TODO change btn to pause the home (like for the path button)
-                qDebug() << "MainWindow::goHome The robot" << selectedRobot->getRobot()->getName() << "is going home";
-            } else {
-                qDebug() << "MainWindow::goHome Failed to send the robot" << selectedRobot->getRobot()->getName() << "home, please try again";
-            }
-        }
+    if(sendCommand(selectedRobot->getRobot(), QString("o"))){
+        //TODO change btn to pause the home (like for the path button)
+        qDebug() << "MainWindow::goHome The robot" << selectedRobot->getRobot()->getName() << "is going home";
+    } else {
+        qDebug() << "MainWindow::goHome Failed to send the robot" << selectedRobot->getRobot()->getName() << "home, please try again";
     }
 }
 
@@ -2024,8 +1937,9 @@ void MainWindow::updateMetadata(const int width, const int height, const float r
     if(originX != map->getOrigin().getX() || originY != map->getOrigin().getY())
         map->setOrigin(Position(originX, originY));
 
-    qDebug() << "Map metadata updated : " << map->getWidth() << " " << map->getHeight() << " "
+   /* qDebug() << "Map metadata updated : " << map->getWidth() << " " << map->getHeight() << " "
              << map->getResolution() << " " << map->getOrigin().getX()  << " " << map->getOrigin().getY() ;
+*/
 }
 
 void MainWindow::updateMap(const QByteArray mapArray){
@@ -3417,7 +3331,6 @@ void MainWindow::updatePoint(void){
                     } else
                         setMessageTop(TEXT_COLOR_DANGER, robotView->getRobot()->getName() + " failed to save its home point, please try again");
                 }
-                robotView->getRobot()->resetCommandAnswer();
             } else {
                 qDebug() << "MainWindow::updatePoint could not find the robot named" << displaySelectedPointView->getPoint()->getRobotName();
             }
@@ -4493,7 +4406,7 @@ void MainWindow::doubleClickOnPath(QString pathName){
 void MainWindow::sendPathSelectedRobotSlot(){
 
     qDebug() << "MainWindow::sendPathSelectedRobotSlot path changed";
-    QSharedPointer<Robot> robot = selectedRobot->getRobot();
+    Robot* robot = selectedRobot->getRobot();
     QString pathStr = "";
     /// prepares the cmd to send to the robot
     qDebug() << "MainWindow::sendPathSelectedRobotSlot" << pathPainter->getCurrentPath().size();
@@ -4512,22 +4425,13 @@ void MainWindow::sendPathSelectedRobotSlot(){
     }
 
     /// if the command is succesfully sent to the robot, we apply the change
-    robot->resetCommandAnswer();
     // TODO check if pathStr empty, means deleting the path => cmd send without parem => check robotFiles/command.cpp
-    if(robot->sendCommand(QString("i ") + pathStr)){
-        QString answer = robot->waitAnswer();
-        QStringList answerList = answer.split(QRegExp("[ ]"), QString::SkipEmptyParts);
-        if(answerList.size() > 1){
-            QString cmd = answerList.at(0);
-            bool success = (answerList.at(1).compare("done") == 0);
-            if((cmd.compare("i") == 0 && success) || answerList.at(0).compare("1") == 0){
-                /// we update the path on the application side by serializing the path
+    if(sendCommand(robot, QString("i ") + pathStr)){
+        /// we update the path on the application side by serializing the path
 
-                qDebug() << "MainWindow::robotSavedEvent Path saved for robot" << robot->getIp();
-            } else {
-                qDebug() << "MainWindow::robotSavedEvent Path failed to be saved, please try again";
-            }
-        }
+        qDebug() << "MainWindow::robotSavedEvent Path saved for robot" << robot->getIp();
+    } else {
+        qDebug() << "MainWindow::robotSavedEvent Path failed to be saved, please try again";
     }
 }
 
@@ -4867,7 +4771,7 @@ void MainWindow::showHomes(){
     }
 }
 
-void MainWindow::showHomes(QSharedPointer<Robot> robot){
+void MainWindow::showHomes(Robot* robot){
     QMapIterator<QString, QSharedPointer<QVector<QSharedPointer<PointView>>>> i(*(points->getGroups()));
     while (i.hasNext()) {
         i.next();
@@ -4918,9 +4822,59 @@ void MainWindow::moveEvent(QMoveEvent *event){
     QMainWindow::moveEvent(event);
 }
 
+bool MainWindow::sendCommand(Robot* robot, QString cmd){
+    cmdAnswer = "";
+    robot->sendCommand(cmd);
+
+    /// TODO customize message
+    robotWaitForAnswer("Title", "Tmp Message");
+
+    qDebug() << "MainWindow::sendCommand Going to wait for an answer";
+    while(cmdAnswer.compare("") == 0){
+        qDebug() << "MainWindow::sendCommand waiting for an answer";
+        delay(1000);
+    }
+
+    qDebug() << "The answer is :" << cmdAnswer;
+
+    /// React accordingly to the answer : return true or false
+    QRegExp rx("[ ]");
+
+    /// Data are received as a string separated by a space ("cmd done" or "cmd failed")
+    QStringList list = cmdAnswer.split(rx, QString::SkipEmptyParts);
+    cmdAnswer = "";
+
+    /// TODO what if wrong message ? No done or failed ?
+    if(list.size() == 2){
+        if(list.at(1).compare("done") == 0)
+            return true;
+    }
+    return false;
+}
+
 void MainWindow::robotWaitForAnswer(QString title, QString msg){
+    initRobotCommandBox();
     robotCommandBox->setWindowTitle(title);
     robotCommandBox->setText(msg);
     robotCommandBox->open();
 }
 
+void MainWindow::cmdAnswerSlot(QString answer){
+    qDebug() << "MainWindow::cmdAnswerSlot received answer :" << answer;
+    /// If the message box is opened, we were expecting an answer
+    if(robotCommandBox->isVisible()){
+        cmdAnswer = answer;
+        robotCommandBox->close();
+    } else {
+        qDebug() << "MainWindow::cmdAnswerSlot received a message that is not from a command";
+    }
+}
+
+void MainWindow::initRobotCommandBox(void){
+    robotCommandBox = new QMessageBox(this);
+    /// makes sure the msgbox is deleted automatically when closed
+    robotCommandBox->setAttribute(Qt::WA_DeleteOnClose);
+    robotCommandBox->setStandardButtons(QMessageBox::Ok);
+    /// non-modal means it won't block other widgets from receiving slots while the msg box is opened
+    robotCommandBox->setModal(false);
+}

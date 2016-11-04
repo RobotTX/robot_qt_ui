@@ -19,15 +19,20 @@ UpdateRobotsThread::~UpdateRobotsThread(){
 void UpdateRobotsThread::run(){
     if(server->listen(QHostAddress::Any, port) == 0)
         qDebug() << "(UpdateRobotsThread) Server listen failed";
-    else
-        exec();
+    exec();
+}
+
+void UpdateRobotsThread::stopThread(){
+    if(server->isListening())
+        server->close();
+    exit();
 }
 
 void UpdateRobotsThread::newConnectionSlot(){
     QTcpSocket* socket = server->nextPendingConnection();
 
     if(socket->state() == QTcpSocket::ConnectedState){
-        //qDebug() << "\n\n(UpdateRobotsThread) New connection established :" << socket->peerAddress().toString();
+        qDebug() << "\n\n(UpdateRobotsThread) New connection established :" << socket->peerAddress().toString();
 
         socket->write("OK");
         socket->waitForReadyRead();
@@ -41,7 +46,6 @@ void UpdateRobotsThread::newConnectionSlot(){
         } else {
             qDebug() << "(UpdateRobotsThread) Not enough param received for robotIsAlive";
         }
-
     }
 
     socket->close();

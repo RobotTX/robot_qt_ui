@@ -23,15 +23,15 @@ class RobotView: public QObject, public QGraphicsPixmapItem {
     Q_OBJECT
 
 public:
-    RobotView(const QSharedPointer<Robot> &_robot, QGraphicsItem *parent);
+    RobotView(Robot* _robot, QGraphicsItem *parent);
     RobotView(QGraphicsItem* parent);
 
     /// Getters
-    QSharedPointer<Robot> getRobot(void) { return robot; }
+    Robot* getRobot(void) { return robot; }
     int getLastStage(void) const { return lastStage; }
 
     /// Setters
-    void setRobot(QSharedPointer<Robot> const& _robot) { robot = _robot; }
+    void setRobot(Robot* const& _robot) { robot = _robot; }
     void setPosition(const Position _position);
     void setPosition(const float x, const float y);
     void setOrientation(const float ori);
@@ -53,7 +53,7 @@ protected:
     void hoverLeaveEvent(QGraphicsSceneHoverEvent *);
 
 private:
-    QSharedPointer<Robot> robot;
+    Robot* robot;
     bool selected;
     GraphicItemState state;
     bool shown;

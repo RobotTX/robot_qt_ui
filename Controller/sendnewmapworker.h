@@ -1,27 +1,20 @@
-#ifndef SENDNEWMAPTHREAD_H
-#define SENDNEWMAPTHREAD_H
+#ifndef SENDNEWMAPWORKER_H
+#define SENDNEWMAPWORKER_H
 
-#include <QThread>
 #include <QString>
 #include <QtNetwork/QTcpSocket>
 #include <QSharedPointer>
 
-class SendNewMapThread : public QThread {
+class SendNewMapWorker : public QObject {
     Q_OBJECT
 public:
-    SendNewMapThread(const QString _ipAddress, const int _port);
-    void run();
-    bool isConnected() const {return connected;}
+    SendNewMapWorker(const QString _ipAddress, const int _port);
+    ~SendNewMapWorker();
 
 signals:
     void doneSendingNewMapSignal();
 
 private slots:
-    /**
-     * @brief connectedSlot
-     * Slot called when we are connected to the host
-     */
-    void connectedSlot();
 
     /**
      * @brief disconnectedSlot
@@ -29,7 +22,10 @@ private slots:
      */
     void disconnectedSlot();
 
+    void readTcpDataSlot();
     void writeTcpDataSlot(QByteArray cmd);
+    void connectSocket();
+    void stopThread();
 
 private :
     QSharedPointer<QTcpSocket> socket;
@@ -38,4 +34,4 @@ private :
     bool connected;
 };
 
-#endif // SENDNEWMAPTHREAD_H
+#endif // SENDNEWMAPWORKER_H

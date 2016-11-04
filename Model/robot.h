@@ -2,11 +2,11 @@
 #define ROBOT_H
 
 class PathPoint;
-class CmdRobotThread;
+class CmdRobotWorker;
 class QMainWindow;
-class ScanRobotThread;
-class ScanMetadataThread;
-class SendNewMapThread;
+class RobotPositionWorker;
+class MetadataWorker;
+class SendNewMapWorker;
 
 #include "Model/position.h"
 #include <QString>
@@ -17,6 +17,7 @@ class SendNewMapThread;
 #include <QDataStream>
 #include "View/pointview.h"
 #include "Model/paths.h"
+#include <QThread>
 
 #define PORT_MAP_METADATA 4000
 #define PORT_ROBOT_POS 4001
@@ -48,7 +49,8 @@ public:
     bool isPlayingPath(void) const { return playingPath; }
     QString getPathName(void) const { return pathName; }
     QString getGroupPathName(void) const { return groupName; }
-    QSharedPointer<Paths> getPaths(void) const { return paths; }
+    //QSharedPointer<Paths> getPaths(void) const { return paths; }
+    bool isSendingMap(void) const { return sendingMap; }
 
     /// Setters
     void setPlayingPath(const bool playPath) { playingPath = playPath; }
@@ -76,10 +78,9 @@ public:
     /**
      * @brief sendCommand
      * @param cmd
-     * @return
      * Called to send a command to the robot
      */
-    bool sendCommand(const QString cmd);
+    void sendCommand(const QString cmd);
 
     /**
      * @brief sendNewMap
@@ -87,18 +88,6 @@ public:
      * To send the new map to the robot
      */
     void sendNewMap(QByteArray cmd);
-
-    /**
-     * @brief waitAnswer
-     * @return the answer returned by the robot after sending a command (success or fail)
-     */
-    QString waitAnswer();
-
-    /**
-     * @brief resetCommandAnswer
-     * to reset the answer
-     */
-    void resetCommandAnswer();
 
     /**
      * @brief stopThreads
@@ -139,32 +128,45 @@ signals:
      */
     void sendNewMapSignal(QByteArray cmd);
 
+    void stopCmdRobotWorker();
+    void stopRobotWorker();
+    void stopMetadataWorker();
+    void stopNewMapWorker();
+
+    void startCmdRobotWorker();
+    void startRobotWorker();
+    void startMetadataWorker();
+    void startNewMapWorker();
+
+    void cmdAnswer(QString);
+
 private slots:
-    /**
-     * @brief doneSendingNewMapSlot
-     * Called when we finished sending the map
-     */
-    void doneSendingNewMapSlot();
+    void doneSendingMapSlot();
 
 private:
-    QSharedPointer<Paths> paths;
+    //QSharedPointer<Paths> paths;
     QString name;
     QString ip;
     Position position;
     float orientation;
     unsigned int batteryLevel;
     QString wifi;
-    CmdRobotThread* cmdThread;
     QSharedPointer<PointView> home;
     QVector<QSharedPointer<PathPoint>> path;
     bool playingPath;
-    ScanRobotThread* robotThread;
-    ScanMetadataThread* metadataThread;
-    SendNewMapThread* newMapThread;
     QUuid mapId;
-    bool sendingMap;
     QString pathName;
     QString groupName;
+    bool sendingMap;
+
+    CmdRobotWorker* cmdRobotWorker;
+    RobotPositionWorker* robotWorker;
+    MetadataWorker* metadataWorker;
+    SendNewMapWorker* newMapWorker;
+    QThread cmdThread;
+    QThread robotThread;
+    QThread metadataThread;
+    QThread newMapThread;
 };
 
 /**

@@ -97,14 +97,16 @@ public:
     void serializePaths(void);
     void deserializePaths(void);
     void showHomes();
-    void showHomes(QSharedPointer<Robot> robot);
+    void showHomes(Robot* robot);
     void showSelectedRobotHomeOnly();
     void updateModelPaths(const Point &old_point, const Point &new_point);
     bool sendHomeToRobot(RobotView* robot, QSharedPointer<PointView> home);
     void robotWaitForAnswer(QString title, QString msg);
+    bool sendCommand(Robot* robotView, QString cmd);
+    void initRobotCommandBox(void);
 
 signals:
-    void sendCommand(QString);
+    //void sendCommand(QString);
     void nameChanged(QString, QString);
     void changeCmdThreadRobotName(QString);
     void addPathPoint(QString name, double x, double y);
@@ -113,6 +115,7 @@ signals:
     void updatePathPainterPointView();
     void resetPath();
     void resetPathCreationWidget();
+    void stopUpdateRobotsThread();
 
 private slots:
     void sendPathSelectedRobotSlot();
@@ -207,7 +210,7 @@ private slots:
     void robotIsDeadSlot(QString hostname, QString ip);
     void selectViewRobot();
     void sendNewMapToRobots(QString ipAddress);
-    void sendNewMapToRobot(QSharedPointer<Robot> robot, QString mapId);
+    void sendNewMapToRobot(Robot* robot, QString mapId);
     void settingBtnSlot();
     void updatePathPainterPointViewSlot();
     void stopPath(int robotNb);
@@ -245,6 +248,7 @@ private slots:
     void messageMapSaved(bool status);
     void saveMapBtnEvent();
     void loadMapBtnEvent();
+    void cmdAnswerSlot(QString);
 
 protected:
     void moveEvent(QMoveEvent* event);
@@ -290,6 +294,7 @@ private:
     QSharedPointer<Paths> paths;
     QSettings settings;
     QMessageBox* robotCommandBox;
+    QString cmdAnswer;
 };
 
 #endif // MAINWINDOW_H

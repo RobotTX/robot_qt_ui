@@ -1,39 +1,27 @@
-﻿#ifndef SCANMETADATATHREAD_H
-#define SCANMETADATATHREAD_H
+﻿#ifndef METADATAWORKER_H
+#define METADATAWORKER_H
 
-#include <QThread>
 #include <QString>
 #include <QtNetwork/QTcpSocket>
 #include <QSharedPointer>
 
 /**
- * @brief The ScanMetadataThread class
+ * @brief The MetadataWorker class
  * The thread connect to the robot at the given ipAddress & port to receive the metadata
  * data of the map we want to display
  */
-class ScanMetadataThread : public QThread {
+class MetadataWorker : public QObject {
     Q_OBJECT
 public:
     /**
-     * @brief ScanMetadataThread
+     * @brief MetadataWorker
      * @param ipAddress
      * @param port
      */
-    ScanMetadataThread(const QString ipAddress, const int port);
-
-    /**
-     * @brief run
-     * Function called when we start a Thread
-     */
-    void run();
+    MetadataWorker(const QString ipAddress, const int port);
+    ~MetadataWorker();
 
 private slots:
-    /**
-     * @brief connectedSlot
-     * Slot called when we are connected to the host
-     */
-    void connectedSlot();
-
     /**
      * @brief errorSlot
      * @param error
@@ -46,6 +34,10 @@ private slots:
      * Slot called when we are disconnected from the host
      */
     void disconnectedSlot();
+    void readTcpDataSlot();
+    void stopThread();
+    void connectSocket();
+
 
 signals:
     /**
@@ -67,5 +59,5 @@ private :
 };
 
 
-#endif // SCANMETADATATHREAD_H
+#endif // METADATAWORKER_H
 

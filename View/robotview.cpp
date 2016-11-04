@@ -9,7 +9,7 @@
 #include <QGraphicsWidget>
 #include "mapview.h"
 
-RobotView::RobotView (QSharedPointer<Robot> const &_robot, QGraphicsItem* parent):
+RobotView::RobotView (Robot* _robot, QGraphicsItem* parent):
     QGraphicsPixmapItem(QPixmap(":/icons/robot_icon.png"), parent), robot(_robot), selected(false), state(GraphicItemState::NO_STATE), shown(true), lastStage(0)
 {
     setScale(0.07);

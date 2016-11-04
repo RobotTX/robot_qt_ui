@@ -1,7 +1,6 @@
-#ifndef CMDROBOTTHREAD_H
-#define CMDROBOTTHREAD_H
+#ifndef CMDROBOTWORKER_H
+#define CMDROBOTWORKER_H
 
-#include <QThread>
 #include <QString>
 #include <QtNetwork/QTcpSocket>
 #include <QSharedPointer>
@@ -9,35 +8,27 @@
 #define MISSED_PING_TIMER 20
 
 /**
- * @brief The CmdRobotThread class
+ * @brief The CmdRobotWorker class
  * The thread connects to the robot at the given ipAddress & port to receive the map the robot
  * is scanning
  */
-class CmdRobotThread : public QThread {
+class CmdRobotWorker : public QObject {
     Q_OBJECT
 public:
     /**
-     * @brief CmdRobotThread
+     * @brief CmdRobotWorker
      * @param ipAddress
      * @param port
      */
-    CmdRobotThread(const QString ipAddress, const int cmdPort, const int metadataPort, const int robotPort, const int mapPort, const QString _robotName, QObject *parent);
-
-    /**
-     * @brief run
-     * Function called when we start a Thread
-     */
-    void run();
-    QString waitAnswer();
-    void resetCommandAnswer(){ commandAnswer = ""; }
-
-    void delay(const int ms) const;
-    bool isConnected() const {return connected;}
+    CmdRobotWorker(const QString ipAddress, const int cmdPort, const int metadataPort, const int robotPort, const int mapPort, const QString _robotName);
+    ~CmdRobotWorker();
 
 signals:
     void robotIsDead(QString hostname, QString ip);
+    void cmdAnswer(QString answer);
 
 private slots:
+    void connectSocket();
     /**
      * @brief connectedSlot
      * Slot called when we are connected to the host
@@ -73,6 +64,7 @@ private slots:
      */
     void sendCommand(const QString cmd);
     void pingSlot();
+    void stopCmdRobotWorkerSlot();
 
 private :
     QSharedPointer<QTcpSocket> socket;
@@ -80,11 +72,10 @@ private :
     int port;
     QString robotName;
     bool connected;
-    QString commandAnswer;
     int missedPing;
     int metadataPort;
     int robotPort;
     int mapPort;
 };
 
-#endif // CMDROBOTTHREAD_H
+#endif // CMDROBOTWORKER_H

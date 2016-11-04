@@ -17,12 +17,12 @@ public:
      * Function called when we start a Thread
      */
     void run();
-    void delay(const int ms) const;
 
 
 private slots:
     void newConnectionSlot();
     void errorConnectionSlot(QAbstractSocket::SocketError error);
+    void stopThread();
 
 signals:
     void robotIsAlive(QString hostname, QString ip, QString mapId, QString ssid, int stage);
