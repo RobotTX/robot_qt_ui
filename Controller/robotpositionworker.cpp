@@ -11,7 +11,7 @@ RobotPositionWorker::~RobotPositionWorker(){
 }
 
 void RobotPositionWorker::stopThread(){
-    if(socket->isOpen())
+    if(socket && socket->isOpen())
         socket->close();
 }
 

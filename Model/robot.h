@@ -142,6 +142,7 @@ signals:
 
 private slots:
     void doneSendingMapSlot();
+    void portSentSlot();
 
 private:
     //QSharedPointer<Paths> paths;

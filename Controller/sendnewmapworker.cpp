@@ -10,7 +10,7 @@ SendNewMapWorker::~SendNewMapWorker(){
 }
 
 void SendNewMapWorker::stopThread(){
-    if(socket->isOpen())
+    if(socket && socket->isOpen())
         socket->close();
 }
 

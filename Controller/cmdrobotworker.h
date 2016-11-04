@@ -26,6 +26,7 @@ public:
 signals:
     void robotIsDead(QString hostname, QString ip);
     void cmdAnswer(QString answer);
+    void portSent();
 
 private slots:
     void connectSocket();

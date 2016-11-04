@@ -11,7 +11,7 @@ MetadataWorker::~MetadataWorker(){
 }
 
 void MetadataWorker::stopThread(){
-    if(socket->isOpen())
+    if(socket && socket->isOpen())
         socket->close();
 }
 

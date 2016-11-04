@@ -30,6 +30,7 @@ Robot::Robot(MainWindow* mainWindow, const QSharedPointer<Paths>& _paths, const 
     cmdRobotWorker = new CmdRobotWorker(ip, PORT_CMD, PORT_MAP_METADATA, PORT_ROBOT_POS, PORT_MAP, name);
     connect(cmdRobotWorker, SIGNAL(robotIsDead(QString,QString)), mainWindow, SLOT(robotIsDeadSlot(QString,QString)));
     connect(cmdRobotWorker, SIGNAL(cmdAnswer(QString)), mainWindow, SLOT(cmdAnswerSlot(QString)));
+    connect(cmdRobotWorker, SIGNAL(portSent()), this, SLOT(portSentSlot()));
     connect(this, SIGNAL(sendCommandSignal(QString)), cmdRobotWorker, SLOT(sendCommand(QString)));
     connect(this, SIGNAL(pingSignal()), cmdRobotWorker, SLOT(pingSlot()));
     connect(mainWindow, SIGNAL(changeCmdThreadRobotName(QString)), cmdRobotWorker, SLOT(changeRobotNameSlot(QString)));
@@ -78,10 +79,12 @@ Robot::Robot(MainWindow* mainWindow, const QSharedPointer<Paths>& _paths, const 
 */
 
     emit startCmdRobotWorker();
-    emit startMetadataWorker();
-    emit startRobotWorker();
-    emit startNewMapWorker();
 }
+
+Robot::Robot(): name("Default name"), ip("no Ip"), position(Position()),
+    orientation(0), batteryLevel(100), wifi(""), home(NULL), playingPath(0), mapId(), sendingMap(false){
+}
+
 
 Robot::~Robot(){
     stopThreads();
@@ -105,8 +108,10 @@ void Robot::stopThreads() {
     newMapThread.wait();*/
 }
 
-Robot::Robot(): name("Default name"), ip("no Ip"), position(Position()),
-    orientation(0), batteryLevel(100), wifi(""), home(NULL), playingPath(0), mapId(), sendingMap(false){
+void Robot::portSentSlot(){
+    emit startMetadataWorker();
+    emit startRobotWorker();
+    emit startNewMapWorker();
 }
 
 std::ostream& operator <<(std::ostream& stream, Robot const& robot){

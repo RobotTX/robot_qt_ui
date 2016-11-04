@@ -18,7 +18,7 @@ CmdRobotWorker::~CmdRobotWorker(){
 }
 
 void CmdRobotWorker::stopCmdRobotWorkerSlot(){
-    if(socket->isOpen())
+    if(socket && socket->isOpen())
         socket->close();
     //exit();
 }
@@ -42,12 +42,17 @@ void CmdRobotWorker::connectSocket(){
 
     QString portStr = "h \"" + QString::number(metadataPort) + "\" \"" + QString::number(robotPort) + "\" \"" + QString::number(mapPort) + "\" } ";
     qDebug() << "(Robot" << robotName << ") Sending ports : " << portStr;
-    socket->write(portStr.toUtf8());
-    if(socket->waitForBytesWritten(100)){
-        qDebug() << "(Robot" << robotName << ") Ports sent";
-    } else {
-        qDebug() << "(Robot" << robotName << ") Ports could not be send";
-    };
+    bool tmpBool = 0;
+    while(!tmpBool){
+        socket->write(portStr.toUtf8());
+        if(socket->waitForBytesWritten(100)){
+            qDebug() << "(Robot" << robotName << ") Ports sent";
+            tmpBool = 1;
+            emit portSent();
+        } else {
+            qDebug() << "(Robot" << robotName << ") Ports could not be sent";
+        };
+    }
 
 
 /*
