@@ -1,5 +1,5 @@
-#ifndef SCANMAPTHREAD_H
-#define SCANMAPTHREAD_H
+#ifndef SCANMAPWORKER_H
+#define SCANMAPWORKER_H
 
 #include <QThread>
 #include <QString>
@@ -8,34 +8,23 @@
 
 
 /**
- * @brief The ScanMapThread class
+ * @brief The ScanMapWorker class
  * The thread connect to the robot at the given ipAddress & port to receive the map the robot
  * is scanning
  */
-class ScanMapThread : public QThread {
+class ScanMapWorker : public QObject {
     Q_OBJECT
 public:
     /**
-     * @brief ScanMapThread::MapThread
+     * @brief ScanMapWorker::MapThread
      * @param newipAddress
      * @param newPort
      */
-    ScanMapThread(const QString ipAddress, const int port, const QString MapPath);
-
-    /**
-     * @brief run
-     * Function called when we start a Thread
-     */
-    void run();
+    ScanMapWorker(const QString ipAddress, const int port, const QString MapPath);
+    ~ScanMapWorker();
 
 
 private slots:
-
-    /**
-     * @brief connectedSlot
-     * Slot called when we are connected to the host
-     */
-    void connectedSlot();
 
     /**
      * @brief errorSlot
@@ -49,6 +38,9 @@ private slots:
      * Slot called when we are disconnected from the host
      */
     void disconnectedSlot();
+    void readTcpDataSlot();
+    void stopThread();
+    void connectSocket();
 
 signals:
     /**
@@ -73,4 +65,4 @@ private :
 };
 
 
-#endif // SCANMAPTHREAD_H
+#endif // SCANMAPWORKER_H

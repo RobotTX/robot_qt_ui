@@ -7,7 +7,7 @@
 #include <QVector>
 #include <assert.h>
 #include "ui_mainwindow.h"
-#include "Controller/scanmapthread.h"
+#include "Controller/scanmapworker.h"
 #include "Controller/updaterobotsthread.h"
 #include "Model/pathpoint.h"
 #include "Model/map.h"
@@ -93,7 +93,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     selectedPoint = QSharedPointer<PointView>();
     editedPointView = QSharedPointer<PointView>();
     updateRobotsThread = NULL;
-    mapThread = NULL;
+    mapWorker = NULL;
     cmdAnswer = "";
 
     /// Create the graphic item of the map
@@ -332,10 +332,7 @@ MainWindow::~MainWindow(){
         emit stopUpdateRobotsThread();
     }
 
-    if (mapThread != NULL && mapThread->isRunning() ) {
-        mapThread->requestInterruption();
-        mapThread->wait();
-    }
+    stopMapThread();
 }
 
 /**********************************************************************************************************************************/
@@ -466,13 +463,17 @@ void MainWindow::connectToRobot(bool checked){
                         setEnableAll(false, GraphicItemState::NO_EVENT);
                         scanningRobot = selectedRobot;
 
-                        mapThread = new ScanMapThread(ip, PORT_MAP, QString(GOBOT_PATH) + QString(MAP_FILE));
-                        connect(mapThread, SIGNAL(valueChangedMap(QByteArray)),
+                        mapWorker = new ScanMapWorker(ip, PORT_MAP, QString(GOBOT_PATH) + QString(MAP_FILE));
+                        connect(mapWorker, SIGNAL(valueChangedMap(QByteArray)),
                                 this , SLOT(updateMap(QByteArray)));
-                        connect(mapThread, SIGNAL(newScanSaved(QString)),
+                        connect(mapWorker, SIGNAL(newScanSaved(QString)),
                                 this , SLOT(sendNewMapToRobots(QString)));
-                        mapThread->start();
-                        mapThread->moveToThread(mapThread);
+                        connect(&mapThread, SIGNAL(finished()), mapWorker, SLOT(deleteLater()));
+                        connect(this, SIGNAL(startMapWorker()), mapWorker, SLOT(connectSocket()));
+                        connect(this, SIGNAL(stopMapWorker()), mapWorker, SLOT(stopThread()));
+                        mapWorker->moveToThread(&mapThread);
+                        mapThread.start();
+                        emit startMapWorker();
                         editSelectedRobotWidget->setEnableAll(false);
 
                         topLayout->setLabel(TEXT_COLOR_SUCCESS, "Scanning a new map");
@@ -498,6 +499,8 @@ void MainWindow::connectToRobot(bool checked){
                 hideAllWidgets();
                 selectedRobot = _tmpRobot;
 
+                stopMapThread();
+
                 editSelectedRobotWidget->setSelectedRobot(selectedRobot);
                 editSelectedRobotWidget->setEnableAll(true);
                 editSelectedRobotWidget->show();
@@ -515,6 +518,12 @@ void MainWindow::connectToRobot(bool checked){
 
         qDebug() << "Select a robot first";
     }
+}
+
+void MainWindow::stopMapThread(){
+    emit stopMapWorker();
+    mapThread.quit();
+    mapThread.wait();
 }
 
 void MainWindow::deletePath(int robotNb){

@@ -3,7 +3,7 @@
 
 class RobotView;
 class PointView;
-class ScanMapThread;
+class ScanMapWorker;
 class UpdateRobotsThread;
 class CustomQGraphicsView;
 class Map;
@@ -38,6 +38,7 @@ class QMoveEvent;
 #include <QMessageBox>
 #include "Model/point.h"
 #include <QSettings>
+#include <QThread>
 
 #define GOBOT_PATH "/home/m-a/Documents/QtProject/gobot-software/"
 //#define GOBOT_PATH "/home/joan/Gobot/gobot-software/"
@@ -116,6 +117,8 @@ signals:
     void resetPath();
     void resetPathCreationWidget();
     void stopUpdateRobotsThread();
+    void startMapWorker();
+    void stopMapWorker();
 
 private slots:
     void sendPathSelectedRobotSlot();
@@ -254,10 +257,12 @@ protected:
     void moveEvent(QMoveEvent* event);
     bool changeRobotName(QString name);
     void changeRobotWifi(QString ssid, QString password);
+    void stopMapThread();
 
 private:
     Ui::MainWindow* ui;
-    ScanMapThread* mapThread;
+    QThread mapThread;
+    ScanMapWorker* mapWorker;
     UpdateRobotsThread* updateRobotsThread;
     QVBoxLayout* rightLayout;
     CustomQGraphicsView* graphicsView;
