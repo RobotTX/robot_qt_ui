@@ -15,11 +15,8 @@ INCLUDEPATH += . Controller Model View
 QMAKE_CXXFLAGS += -std=c++11 -Wall
 
 # Input
-HEADERS += Controller/cmdrobotthread.h \
+HEADERS += \
            Controller/mainwindow.h \
-           Controller/scanmapthread.h \
-           Controller/scanmetadatathread.h \
-           Controller/scanrobotthread.h \
            Model/graphicitemstate.h \
            Model/map.h \
            Model/pathpoint.h \
@@ -56,7 +53,6 @@ HEADERS += Controller/cmdrobotthread.h \
            Model/origin.h \
            Controller/updaterobotsthread.h \
            View/createpointwidget.h \
-           Controller/sendnewmapthread.h \
            View/customscrollarea.h \
            View/displayselectedpointrobots.h \
            View/displayselectedpath.h \
@@ -69,16 +65,17 @@ HEADERS += Controller/cmdrobotthread.h \
     View/stylesettings.h \
     View/customlabel.h \
     View/customlineedit.h \
-    View/customrobotdialog.h
+    View/customrobotdialog.h \
+    Controller/cmdrobotworker.h \
+    Controller/metadataworker.h \
+    Controller/robotpositionworker.h \
+    Controller/sendnewmapworker.h \
+    Controller/scanmapworker.h
 
 FORMS += Controller/mainwindow.ui
 
 SOURCES += main.cpp \
-           Controller/cmdrobotthread.cpp \
            Controller/mainwindow.cpp \
-           Controller/scanmapthread.cpp \
-           Controller/scanmetadatathread.cpp \
-           Controller/scanrobotthread.cpp \
            Model/map.cpp \
            Model/pathpoint.cpp \
            Model/point.cpp \
@@ -113,7 +110,6 @@ SOURCES += main.cpp \
            Controller/updaterobotsthread.cpp \
            View/createpointwidget.cpp \
            View/topleftmenu.cpp \
-           Controller/sendnewmapthread.cpp \
            View/customscrollarea.cpp \
            View/displayselectedpointrobots.cpp \
            View/displayselectedpath.cpp \
@@ -125,7 +121,12 @@ SOURCES += main.cpp \
            View/custompushbutton.cpp \
     View/customlabel.cpp \
     View/customlineedit.cpp \
-    View/customrobotdialog.cpp
+    View/customrobotdialog.cpp \
+    Controller/cmdrobotworker.cpp \
+    Controller/robotpositionworker.cpp \
+    Controller/metadataworker.cpp \
+    Controller/sendnewmapworker.cpp \
+    Controller/scanmapworker.cpp
 
 RESOURCES += Resources/resources.qrc
 
