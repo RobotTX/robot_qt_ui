@@ -124,6 +124,16 @@ Paths::Path Paths::getPath(const QString groupName, const QString pathName, bool
     return Path();
 }
 
+Paths::CollectionPaths Paths::getGroup(const QString groupName){
+    auto it_group = groups->find(groupName);
+    if(it_group == groups->end()){
+        qDebug() << "Paths::getPath the group of paths" << groupName << "does not exist";
+        return CollectionPaths();
+    }
+    else
+        return *it_group.value();
+}
+
 QDataStream& operator>>(QDataStream& in, Paths& paths){
     QMap<QString, QMap<QString, QVector<PathPoint>>> tmpPaths;
     in >> tmpPaths;
@@ -218,7 +228,7 @@ void Paths::updatePaths(const Point& old_point, const Point& new_point){
                                 Point newPoint(new_point);
                                 it_paths.value()->at(i)->setPoint(newPoint);
                             }
-                            /// if both the name and the position has been modified we do the same thing as if only the position has been modified
+                            /// if both the name and the position has been modified we do the same thing as if only the position had been modified
                             else {
                                 Point newPoint(QString::number(it_paths.value()->at(i)->getPoint().getPosition().getX()) + "; " +
                                                QString::number(it_paths.value()->at(i)->getPoint().getPosition().getY()),

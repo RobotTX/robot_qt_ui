@@ -354,15 +354,15 @@ void MainWindow::initializeRobots(){
     robots->setRobotsNameMap(tmp);
     fileRead.close();
 
-
+/*
     updateRobotsThread = new UpdateRobotsThread(PORT_ROBOT_UPDATE);
     connect(updateRobotsThread, SIGNAL(robotIsAlive(QString, QString, QString, QString, int)), this, SLOT(robotIsAliveSlot(QString, QString, QString, QString, int)));
     connect(this, SIGNAL(stopUpdateRobotsThread()), updateRobotsThread, SLOT(stopThread()));
     updateRobotsThread->start();
     updateRobotsThread->moveToThread(updateRobotsThread);
+*/
 
 
-/*
     QFile fileWrite(QString(GOBOT_PATH) + QString(ROBOTS_NAME_FILE));
     fileWrite.resize(0);
     fileWrite.open(QIODevice::WriteOnly);
@@ -418,7 +418,7 @@ void MainWindow::initializeRobots(){
             robotPathFile.close();
         }
     }
-*/
+
 
 
     //qDebug() << "RobotsNameMap on init" << robots->getRobotsNameMap();
@@ -1761,7 +1761,7 @@ void MainWindow::sendNewMapToRobot(Robot* robot, QString mapId){
 }
 
 void MainWindow::updateAllPaths(const Point& old_point, const Point& new_point){
-
+    qDebug() << "MainWindow::updateAllPaths called";
     RobotView* currentRobot = editSelectedRobotWidget->getRobot();
     for(int i = 0; i < robots->getRobotsVector().size(); i++){
         Robot* robot = robots->getRobotsVector().at(i)->getRobot();
@@ -1772,8 +1772,9 @@ void MainWindow::updateAllPaths(const Point& old_point, const Point& new_point){
             Point point = path.at(j)->getPoint();
             /// if the point is the old point we make the necessary changes
             if(point.comparePos(old_point.getPosition())){
-
+                qDebug() << "New point position: " << new_point.getPosition().getX() << new_point.getPosition().getY();
                 if(!point.comparePos(new_point.getPosition())){
+                    qDebug() << "Will replace name by path point name + number ";
                     point.setName(PATH_POINT_NAME + QString::number(j+1));
                 }
                 else {
@@ -1787,8 +1788,6 @@ void MainWindow::updateAllPaths(const Point& old_point, const Point& new_point){
         /// updates the list of path points (in case it was containing a permanent point which has been modified)
         editSelectedRobotWidget->setAssignedPath(editSelectedRobotWidget->getAssignedPath());
         bottomLayout->updateRobot(robots->getRobotId(robot->getName()), robots->getRobotsVector().at(i));
-        if(pathPainter->getVisiblePath().compare(""))
-            pathPainter->setCurrentPath(pathPainter->getCurrentPath(), pathPainter->getVisiblePath());
     }
 
     if(currentRobot){
@@ -1804,9 +1803,19 @@ void MainWindow::updateAllPaths(const Point& old_point, const Point& new_point){
 
     /// updates the paths of the model
     updateModelPaths(old_point, new_point);
+
+    if(pathPainter->getVisiblePath().compare("")){
+        /// to set the tooltip of the modified point
+        for(int i = 0; i < pathPainter->getCurrentPath().size(); i++){
+            Point currPoint = pathPainter->getCurrentPath().at(i)->getPoint();
+            if(currPoint.comparePos(old_point.getPosition())){
+                if(currPoint.comparePos(new_point.getPosition()))
+                    currPoint.setName(new_point.getName());
+            }
+        }
+        pathPainter->setCurrentPath(pathPainter->getCurrentPath(), pathPainter->getVisiblePath());
+    }
 }
-
-
 
 void MainWindow::resetPathPointViewsSlot(){
     emit updatePathPainter(false);
@@ -1820,7 +1829,6 @@ void MainWindow::replacePoint(int id, QString name){
 void MainWindow::setNewHome(QString homeName){
 
     editSelectedRobotWidget->getGoHomeBtn()->show();
-
 
     /// Remove the previous home
     if(editSelectedRobotWidget->getHome()){
@@ -2473,7 +2481,7 @@ void MainWindow::pointSavedEvent(QString groupName, double x, double y, QString 
     hideAllWidgets();
     leftMenu->hide();
 
-    setMessageTop(TEXT_COLOR_SUCCESS, "You have created a new point");
+    setMessageTop(TEXT_COLOR_SUCCESS, "You have successfully added the new point \"" + name + "\" to the group : \"" + groupName + "\"");
 }
 
 /**
@@ -3736,7 +3744,7 @@ void MainWindow::createGroup(QString groupName){
         pointsLeftWidget->getActionButtons()->getPlusButton()->setToolTip("Click here to add a new group");
         topLayout->setEnabled(true);
 
-        topLayout->setLabelDelay(TEXT_COLOR_SUCCESS, "You have created a new group",4000);
+        topLayout->setLabelDelay(TEXT_COLOR_SUCCESS, "You have successfully created a new group : \"" + groupName + "\"", 4000);
     } else if(pointsLeftWidget->checkGroupName(groupName) == 1){
         pointsLeftWidget->setLastCheckedId("");
 
@@ -3757,9 +3765,8 @@ void MainWindow::createGroup(QString groupName){
         pointsLeftWidget->getActionButtons()->getPlusButton()->setEnabled(true);
         pointsLeftWidget->getActionButtons()->getPlusButton()->setToolTip("Click here to add a new group");
         topLayout->setEnabled(true);
-    } else {
-        topLayout->setLabelDelay(TEXT_COLOR_DANGER, "You cannot choose : " + groupName + " as a new name for your group because another group already has this name",4000);
-    }
+    } else
+        topLayout->setLabelDelay(TEXT_COLOR_DANGER, "You cannot choose : " + groupName + " as a new name for your group because another group already has this name", 4000);
 }
 
 void MainWindow::modifyGroupWithEnter(QString name){
@@ -3989,13 +3996,11 @@ void MainWindow::editPathSlot(QString groupName, QString pathName){
                  "\nAlternatively you can click the \"+\" button to add an existing point to your path"
                  "\nYou can re-order the points in the list by dragging them");
 
-
     hideAllWidgets();
     pathCreationWidget->show();
     pathPainter->setOldPath(pathPainter->getCurrentPath());
 
     switchFocus(pathName, pathCreationWidget, MainWindow::WidgetType::PATH);
-
 
     setEnableAll(false, GraphicItemState::CREATING_PATH, true);
 
@@ -4003,7 +4008,10 @@ void MainWindow::editPathSlot(QString groupName, QString pathName){
     emit resetPathCreationWidget();
 
     pathCreationWidget->setCurrentPathName(pathName);
-    pathCreationWidget->setCurrentGroupName(groupName);
+    if(groupName.compare(""))
+        pathCreationWidget->setCurrentGroupName(groupName);
+    else
+        pathCreationWidget->setCurrentGroupName(pathCreationWidget->getCurrentGroupName());
 
     bool foundFlag(false);
 
@@ -4138,16 +4146,50 @@ void MainWindow::createGroupPaths(){
 
 void MainWindow::deleteGroupPaths(){
     qDebug() << "MainWindow::deleteGroupPaths called";
-    int answer = openConfirmMessage("Are you sure you want to delete this group of path, all the paths inside will be deleted as well ?");
+    QString groupPaths(leftMenu->getGroupsPathsWidget()->getButtonGroup()->getButtonGroup()->checkedButton()->text());
+    QString message("This group of paths contains the following paths which are assigned to one or more or your robots : ");
+    QList<int> robotsIds;
+    /// to form a proper sentence
+    bool first(true);
+    /// we check for each robot whether or not one path of the group has been assigned to it
+    for(int i = 0; i < robots->getRobotsVector().size(); i++){
+        QString currentRobotPath = robots->getRobotsVector().at(i)->getRobot()->getPathName();
+        QMapIterator<QString, QSharedPointer<Paths::Path> > it_paths(paths->getGroup(groupPaths));
+        while(it_paths.hasNext()){
+            it_paths.next();
+            if(!it_paths.key().compare(currentRobotPath)){
+                if(first){
+                    first = false;
+                    message += currentRobotPath;
+                } else
+                    message += ", " + currentRobotPath;
+
+                robotsIds.push_back(i);
+            }
+        }
+    }
+    qDebug() << "message" << message;
+    message += ". If you delete this group, these robots will lose their paths. If you wish to continue click \"Ok\". ";
+    int answer;
+    /// if none of the paths of this group has been assigned to a robot
+    if(first)
+        answer = openConfirmMessage("Are you sure you want to delete this group of path, all the paths inside will be deleted as well ?");
+    else
+        answer = openConfirmMessage(message);
     leftMenu->getGroupsPathsWidget()->resetWidget();
     switch(answer){
     case QMessageBox::StandardButton::Ok:
-        paths->deleteGroup(leftMenu->getGroupsPathsWidget()->getButtonGroup()->getButtonGroup()->checkedButton()->text());
+        /// to delete the paths of the robots whose paths are contained in the group which is about to be deleted
+        while(!robotsIds.empty()){
+            clearPath(robotsIds.front());
+            robotsIds.pop_front();
+        }
+        paths->deleteGroup(groupPaths);
         serializePaths();
         leftMenu->getGroupsPathsWidget()->updateGroupsPaths();
         break;
     case QMessageBox::StandardButton::Cancel:
-        /// unchecks the group button (prettier imo but not necessary on the logic level)
+        /// unchecks the group button (prettier imo but not necessary on the logical level)
         leftMenu->getGroupsPathsWidget()->uncheck();
         break;
     default:
@@ -4302,7 +4344,31 @@ void MainWindow::createPath(){
 
 void MainWindow::deletePath(){
     qDebug() << "MainWindow::deletePath called";
-    int answer = openConfirmMessage("Are you sure you want to delete this path, this action is irreversible ?");
+    QString message("This path has been assigned to the robot(s) : ");
+    /// the ids of the robots whose path is the one being deleted
+    QList<int> robotsIds;
+    /// to write a well formed sentence
+    bool first(true);
+    /// we check if this path has been assigned to a robot
+    for(int i = 0; i < robots->getRobotsVector().size(); i++){
+        if(!robots->getRobotsVector().at(i)->getRobot()->getPathName().compare(leftMenu->getPathGroupDisplayed()->getLastCheckedButton())){
+            qDebug() << "The path" << leftMenu->getPathGroupDisplayed()->getLastCheckedButton() <<
+                        "has been assigned to the robot" << robots->getRobotsVector().at(i)->getRobot()->getName();
+            robotsIds.push_back(i);
+            if(first){
+                message += robots->getRobotsVector().at(i)->getRobot()->getName();
+                first = false;
+            } else
+                message += ", " + robots->getRobotsVector().at(i)->getRobot()->getName();
+        }
+    }
+    message += ". If you delete this path, these robots will lose their path. Click \"ok\" if you wish to continue.";
+    int answer;
+    if(first)
+        answer  = openConfirmMessage("Are you sure you want to delete this path, this action is irreversible ?");
+    else
+        answer = openConfirmMessage(message);
+
     switch(answer){
     case QMessageBox::StandardButton::Ok:
         leftMenu->getPathGroupDisplayed()->initializeActionButtons();
@@ -4314,6 +4380,13 @@ void MainWindow::deletePath(){
             emit resetPath();
         } else
             qDebug() << "dont have to stop displaying this path" << pathPainter->getVisiblePath() << "because the last one checked is" << leftMenu->getPathGroupDisplayed()->getLastCheckedButton();
+
+        /// remove the paths of the robots
+        while(!robotsIds.empty()){
+            qDebug() << "id : " << robotsIds.front();
+            clearPath(robotsIds.front());
+            robotsIds.pop_front();
+        }
 
         paths->deletePath(lastWidgets.at(lastWidgets.size()-1).first.second, leftMenu->getPathGroupDisplayed()->getLastCheckedButton());
         serializePaths();
@@ -4352,17 +4425,19 @@ void MainWindow::editPath(){
                  "\nAlternatively you can click the \"+\" button to add an existing point to your path"
                  "\nYou can re-order the points in the list by dragging them");
 
-    bool foundFlag(false);
-    const QString pathName = leftMenu->getPathGroupDisplayed()->getPathButtonGroup()->getButtonGroup()->checkedButton()->text();
-    const QString groupName = leftMenu->getPathGroupDisplayed()->getGroupNameLabel()->text();
-
     hideAllWidgets();
     pathCreationWidget->show();
+    pathPainter->setOldPath(pathPainter->getCurrentPath());
+
+    const QString pathName = leftMenu->getPathGroupDisplayed()->getPathButtonGroup()->getButtonGroup()->checkedButton()->text();
+    const QString groupName = leftMenu->getPathGroupDisplayed()->getGroupNameLabel()->text();
 
     switchFocus(pathName, pathCreationWidget, MainWindow::WidgetType::PATH);
 
     /// stop displaying the currently displayed path if it exists
-    pathCreationWidget->getPathPointList()->clear();
+    //pathCreationWidget->getPathPointList()->clear();
+    emit resetPathCreationWidget();
+
     bottomLayout->uncheckAll();
 
     setEnableAll(false, GraphicItemState::CREATING_PATH, true);
@@ -4376,6 +4451,7 @@ void MainWindow::editPath(){
     pathPainter->setVisiblePath(pathName);
 
     qDebug() << "will edit" <<  groupName << pathName;
+    bool foundFlag(false);
     pathCreationWidget->updatePath(paths->getPath(leftMenu->getPathGroupDisplayed()->getGroupNameLabel()->text(),
                                                          leftMenu->getPathGroupDisplayed()->getPathButtonGroup()->getButtonGroup()->checkedButton()->text(), foundFlag));
 
@@ -4738,7 +4814,7 @@ void MainWindow::centerMap(){
 }
 
 void MainWindow::settingBtnSlot(){
-    qDebug() << "MainWindow::settingBtnSlot called";
+    //qDebug() << "MainWindow::settingBtnSlot called";
     robotWaitForAnswer("Title", "This is the core message");
 }
 
@@ -4839,7 +4915,7 @@ bool MainWindow::sendCommand(Robot* robot, QString cmd){
     robotWaitForAnswer("Title", "Tmp Message");
 
     qDebug() << "MainWindow::sendCommand Going to wait for an answer";
-    while(cmdAnswer.compare("") == 0){
+    /*while(cmdAnswer.compare("") == 0){
         qDebug() << "MainWindow::sendCommand waiting for an answer";
         delay(1000);
     }
@@ -4858,7 +4934,8 @@ bool MainWindow::sendCommand(Robot* robot, QString cmd){
         if(list.at(1).compare("done") == 0)
             return true;
     }
-    return false;
+    return false;*/
+    return true;
 }
 
 void MainWindow::robotWaitForAnswer(QString title, QString msg){

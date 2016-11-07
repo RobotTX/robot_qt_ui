@@ -24,7 +24,7 @@ Robot::Robot(MainWindow* mainWindow, const QSharedPointer<Paths>& _paths, const 
     }
 
     connect(this, SIGNAL(cmdAnswer(QString)), mainWindow, SLOT(cmdAnswerSlot(QString)));
-
+/*
     qDebug() << "Robot" << name << "at ip" << ip << " launching its cmd thread";
 
     cmdRobotWorker = new CmdRobotWorker(ip, PORT_CMD, PORT_MAP_METADATA, PORT_ROBOT_POS, PORT_MAP, name);
@@ -90,7 +90,7 @@ Robot::~Robot(){
     stopThreads();
 }
 
-void Robot::stopThreads() {
+void Robot::stopThreads() {/*
     emit stopCmdRobotWorker();
     cmdThread.quit();
     cmdThread.wait();

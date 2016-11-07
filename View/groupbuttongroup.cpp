@@ -69,7 +69,7 @@ GroupButtonGroup::GroupButtonGroup(const QSharedPointer<Points> &_points, QWidge
 }
 
 void GroupButtonGroup::deleteButtons(void){
-    qDebug() << "GroupButtonGroup::deleteButtons called";
+    //qDebug() << "GroupButtonGroup::deleteButtons called";
     layout->removeWidget(modifyEdit);
     while(QLayoutItem* item = layout->takeAt(0)){
         if(item){
@@ -83,7 +83,7 @@ void GroupButtonGroup::deleteButtons(void){
 }
 
 void GroupButtonGroup::updateButtons(){
-    qDebug() << "GroupButtonGroup::update called";
+    //qDebug() << "GroupButtonGroup::update called";
 
     deleteButtons();
 
@@ -146,7 +146,7 @@ void GroupButtonGroup::uncheck(void){
 }
 
 void GroupButtonGroup::mouseDoubleClickEvent(QMouseEvent * /* unused */){
-    qDebug() << "GroupButtonGroup::mouseDoubleClickEvent called";
+    //qDebug() << "GroupButtonGroup::mouseDoubleClickEvent called";
     if(buttonGroup->checkedButton())
         emit doubleClick(buttonGroup->checkedButton()->text());
 

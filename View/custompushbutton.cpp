@@ -113,7 +113,7 @@ void CustomPushButton::addStyleSheet(const QString style){
 
 void CustomPushButton::setText(const QString &str){
     QPushButton::setText(str);
-    qDebug() << "CustomPushButton::setText" << str << text();
+    //qDebug() << "CustomPushButton::setText" << str << text();
     moveLabel();
 }
 

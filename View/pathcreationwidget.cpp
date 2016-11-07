@@ -66,7 +66,7 @@ PathCreationWidget::PathCreationWidget(QWidget* parent, const QSharedPointer<Poi
 
     /// Clean, cancel & save buttons
     QGridLayout* grid = new QGridLayout();
-    cleanBtn = new CustomPushButton("Clean", this, true, CustomPushButton::ButtonType::LEFT_MENU, "center");
+    cleanBtn = new CustomPushButton("Clear", this, true, CustomPushButton::ButtonType::LEFT_MENU, "center");
     cleanBtn->setToolTip("Click to remove all points from the path");
     grid->addWidget(cleanBtn, 0, 0);
 
@@ -151,9 +151,9 @@ void PathCreationWidget::resetWidget(){
 
     pathPointsList->clear();
     checkState = NO_STATE;
-    nameEdit->setText("");
-    currentGroupName = "";
-    currentPathName = "";
+    //nameEdit->setText("");
+    //currentGroupName = "";
+    //currentPathName = "";
 
     updatePointsList();
     emit resetPath();
@@ -419,7 +419,7 @@ void PathCreationWidget::checkPathName(const QString name){
         /// the found flag will have the value true after the call if the path has been found which means it already exists
         paths->getPath(currentGroupName, name.simplified(), foundFlag);
         if(foundFlag){
-            //qDebug() << "PathCreatioNWidget::checkPathName Sorry there is already a path with the same name";
+            //qDebug() << "PathCreationWidget::checkPathName Sorry there is already a path with the same name";
             emit codeEditPath(1);
         } else {
             //qDebug() << "PathCreatioNWidget::checkPathName nice this path does not exist yet !";

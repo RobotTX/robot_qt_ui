@@ -3,7 +3,6 @@
 MetadataWorker::MetadataWorker(const QString newipAddress, const int newPort){
     ipAddress = newipAddress;
     port = newPort;
-
 }
 
 MetadataWorker::~MetadataWorker(){
@@ -38,7 +37,6 @@ void MetadataWorker::connectSocket(){
         }
     }
     qDebug() << "(Robot Metadata thread" << ipAddress << ") We should be connected";
-
 }
 
 void MetadataWorker::readTcpDataSlot(){

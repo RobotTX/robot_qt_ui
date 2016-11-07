@@ -229,10 +229,10 @@ void PointsLeftWidget::disableButtons(void){
 }
 
 int PointsLeftWidget::checkGroupName(QString name){
-    qDebug() << "checking while creating" << name;
+    //qDebug() << "checking while creating" << name;
     groupNameEdit->setText(formatName(name));
     name = name.simplified();
-    qDebug() << "name im testing" << name;
+    //qDebug() << "name im testing" << name;
     if(!creatingGroup && !name.compare(groupButtonGroup->getEditedGroupName(), Qt::CaseInsensitive)){
         saveButton->setToolTip("");
         qDebug() << "same name" << name;
@@ -348,7 +348,7 @@ void PointsLeftWidget::showEvent(QShowEvent *event){
 }
 
 void PointsLeftWidget::resetWidget(void){
-    qDebug() << "PointsLeftWidget::resetWidget called";
+    //qDebug() << "PointsLeftWidget::resetWidget called";
     groupButtonGroup->updateButtons();
     groupButtonGroup->uncheck();
     lastCheckedId=-1;
@@ -356,18 +356,18 @@ void PointsLeftWidget::resetWidget(void){
 }
 
 void PointsLeftWidget::modifyGroupAfterClick(QString name){
-    qDebug() << "PointsLeftWidget::modifyGroupAfterClick called";
+    //qDebug() << "PointsLeftWidget::modifyGroupAfterClick called";
     emit modifiedGroupAfterClick(name);
 }
 
 void PointsLeftWidget::reconnectModifyEdit(){
-    qDebug() << "PointsLeftWidget::reconnectModifyEdit called";
+    //qDebug() << "PointsLeftWidget::reconnectModifyEdit called";
     connect(groupButtonGroup->getModifyEdit(), SIGNAL(clickSomewhere(QString)), this, SLOT(modifyGroupAfterClick(QString)));
     connect(groupButtonGroup->getModifyEdit(), SIGNAL(textEdited(QString)), groupButtonGroup, SLOT(checkEditGroupName(QString)));
 }
 
 QString PointsLeftWidget::formatName(const QString name) const {
-    qDebug() << "PointsLeftWidget::formatName called" << name;
+    //qDebug() << "PointsLeftWidget::formatName called" << name;
 
     QString ret("");
     QStringList nameStrList = name.split(" ", QString::SkipEmptyParts);
@@ -382,7 +382,7 @@ QString PointsLeftWidget::formatName(const QString name) const {
 }
 
 void PointsLeftWidget::sendMessageEditGroup(int code){
-    qDebug() << "PointsLeftWidget::sendMessageEditGroup called";
+    //qDebug() << "PointsLeftWidget::sendMessageEditGroup called";
     switch(code){
     case 0:
         emit messageCreationGroup(TEXT_COLOR_INFO, "To save this group press Enter or click the \"Save button\"");

@@ -92,6 +92,8 @@ public:
     /// the foundFlag is set within the function, after the function returns it holds true if the path has been found and false otherwise
     Path getPath(const QString groupName, const QString pathName, bool& foundFlag);
 
+    CollectionPaths getGroup(const QString groupName);
+
     /// Setters
     void setGroups(QSharedPointer<Groups> _groups) { groups = _groups; }
 

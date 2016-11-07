@@ -35,7 +35,7 @@ void CustomLineEdit::focusOutEvent(QFocusEvent* e){
 
 void CustomLineEdit::hideEvent(QHideEvent *event){
     Q_UNUSED(event)
-    qDebug() << "LineEdit::hideEvent called";
+   // qDebug() << "LineEdit::hideEvent called";
     /// enables the edition of a group
     emit enableGroupEdit(true);
     QLineEdit::hideEvent(event);
@@ -43,7 +43,7 @@ void CustomLineEdit::hideEvent(QHideEvent *event){
 
 void CustomLineEdit::showEvent(QShowEvent *event){
     Q_UNUSED(event)
-    qDebug() << "LineEdit::showEvent called";
+    //qDebug() << "LineEdit::showEvent called";
     /// disables the edition of a group
     //emit enableGroupEdit(false);
     updateStyle();

@@ -134,6 +134,7 @@ void PathPainter::deletePathPointSlot(int id){
 
 void PathPainter::editPathPointSlot(int id, QString name, double, double){
 
+    qDebug() << "size before edit" << currentPath.size();
     QSharedPointer<PointView> newPointView = points->getGroups()->value(points->findPointIndexes(name).first)->
             takeAt(points->findPointIndexes(name).second);
     /// If found, it's a permanent point else it's a temporary point
@@ -147,6 +148,7 @@ void PathPainter::editPathPointSlot(int id, QString name, double, double){
 
     /// Update the path painter
     updatePathPainterSlot(false);
+    qDebug() << "size after edit" << currentPath.size();
 }
 
 void PathPainter::actionChangedSlot(int id, int action, QString waitTimeStr){

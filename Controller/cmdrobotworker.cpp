@@ -42,12 +42,12 @@ void CmdRobotWorker::connectSocket(){
 
     QString portStr = "h \"" + QString::number(metadataPort) + "\" \"" + QString::number(robotPort) + "\" \"" + QString::number(mapPort) + "\" } ";
     qDebug() << "(Robot" << robotName << ") Sending ports : " << portStr;
-    bool tmpBool = 0;
+    bool tmpBool(false);
     while(!tmpBool){
         socket->write(portStr.toUtf8());
         if(socket->waitForBytesWritten(100)){
             qDebug() << "(Robot" << robotName << ") Ports sent";
-            tmpBool = 1;
+            tmpBool = true;
             emit portSent();
         } else {
             qDebug() << "(Robot" << robotName << ") Ports could not be sent";
