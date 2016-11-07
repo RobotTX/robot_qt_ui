@@ -1315,9 +1315,8 @@ void MainWindow::savePathSlot(){
     pathName = pathCreationWidget->getNameEdit()->text().simplified();
 
     /// if the path existed before we destroy it and reconstruct it
-
     if(pathCreationWidget->getCurrentPathName().compare("") != 0)
-        paths->deletePath(groupName, pathCreationWidget->getCurrentPathName());
+        paths->deletePath(groupName, pathName);
 
     paths->createPath(groupName, pathName);
     for(int i = 0; i < pathPainter->getCurrentPath().size(); i++)
