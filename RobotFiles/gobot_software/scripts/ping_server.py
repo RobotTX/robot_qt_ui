@@ -13,7 +13,7 @@ import subprocess
 computer_software = "/home/gtdollar/computer_software/"
 file_server = computer_software + "IP/serverIP.txt"
 file_IPs = computer_software + "IP/isAlive.txt"
-ping_script = "sh " + computer_software + "IP/ping.sh"
+ping_script = "sudo sh " + computer_software + "IP/ping.sh"
 file_hostname = computer_software + "Robot_Infos/name.txt"
 file_map_id = computer_software + "Robot_Infos/mapId.txt"
 file_path_stage = computer_software + "Robot_Infos/path_stage.txt"
