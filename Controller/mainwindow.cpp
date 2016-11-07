@@ -540,10 +540,9 @@ void MainWindow::deletePath(int robotNb){
                     /// if the command is succesfully sent to the robot, we apply the change
                     if(sendCommand(robot, QString("k"))){
                         clearPath(robotNb);
-                        topLayout->setLabel(TEXT_COLOR_SUCCESS, "Path deleted");
-                    } else {
-                        topLayout->setLabel(TEXT_COLOR_DANGER, "Failed to delete the path, please try again");
-                    }
+                        topLayout->setLabel(TEXT_COLOR_SUCCESS, "The path of " + robot->getName() + " has been successfully deleted");
+                    } else
+                        topLayout->setLabel(TEXT_COLOR_DANGER, "Failed to delete the path of " + robot->getName() + ", please try again");
                 }
                 break;
                 case QMessageBox::Cancel:
@@ -565,9 +564,9 @@ void MainWindow::deletePath(int robotNb){
                     Robot* robot = robots->getRobotsVector().at(robotNb)->getRobot();
                     if(sendCommand(robot, QString("m"))){
                         clearPath(robotNb);
-                        topLayout->setLabel(TEXT_COLOR_SUCCESS, "Path deleted");
+                        topLayout->setLabel(TEXT_COLOR_SUCCESS, "The path of " + robot->getName() + " has been successfully deleted");
                     } else {
-                        topLayout->setLabel(TEXT_COLOR_DANGER, "Failed to delete the path, please try again");
+                        topLayout->setLabel(TEXT_COLOR_DANGER, "Failed to delete the path of " + robot->getName() + ", please try again");
                     }
                 }
             }
