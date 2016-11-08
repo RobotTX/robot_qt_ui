@@ -78,7 +78,7 @@ public:
     void initializeMenu();
     void initializeRobots();
     void initializePoints();
-    void savePoints();
+    void savePoints(const QString fileName);
     void initializeBottomPanel();
     void initializeLeftMenu();
     void initializePaths();
