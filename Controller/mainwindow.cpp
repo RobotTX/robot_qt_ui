@@ -1909,7 +1909,10 @@ void MainWindow::saveMapBtnEvent(){
 
     if(fileName != ""){
         QSettings settings;
-        fileName = fileName.mid(0, fileName.length()-4);
+        if(fileName.indexOf(".pgm", fileName.length()-4) != -1)
+            fileName = fileName.mid(0, fileName.length()-4);
+
+
         qDebug() << "saving points in" << fileName + "_points.xml";
 
         /// adds the files of the points and paths associated to the map to the settings
