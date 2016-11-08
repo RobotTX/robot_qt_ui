@@ -1911,13 +1911,21 @@ void MainWindow::saveMapBtnEvent(){
         QSettings settings;
         fileName = fileName.mid(0, fileName.length()-4);
         qDebug() << "saving points in" << fileName + "_points.xml";
+
+        /// adds the files of the points and paths associated to the map to the settings
         settings.setValue("pointsFile", fileName + "_points.xml");
-
-        savePoints(settings.value("pointsFile").toString());
-
         settings.setValue("mapFile", fileName + ".pgm");
         settings.setValue("pathsFile", fileName + "_paths.dat");
+
+        /// saves the current configuration for the points (this configuration will be associated to the map
+        /// when you load the map in the future
+        savePoints(settings.value("pointsFile").toString());
+
+        /// saves the map
         map->saveToFile(fileName + ".pgm");
+
+        /// saves the current configuration for the paths (this configuration will be associated to the map
+        /// when you load the map in the future
         serializePaths(settings.value("pathsFile").toString());
     } else {
         qDebug() << "Please select a file";
@@ -1936,24 +1944,40 @@ void MainWindow::loadMapBtnEvent(){
             const QString fileName = QFileDialog::getOpenFileName(this,
                 tr("Open Image"), "", tr("Image Files (*.pgm)"));
             if(fileName.compare("")){
+                /// stores the path of the map file in the settings
                 QSettings settings;
                 settings.setValue("mapFile", fileName);
-                /// to store the names of the files where paths and points are saved in the settings
+
+                /// stores the names of the files where paths and points are saved in the settings
                 QString file = fileName.mid(0, fileName.length()-4);
                 settings.setValue("pointsFile", file + "_points.xml");
                 settings.setValue("pathsFile", file + "_paths.dat");
+
+                /// clears the map of all paths and points
                 clearNewMap();
+
+                /// imports the new map from the given file
                 map->setMapFromFile(fileName);
                 QPixmap pixmap = QPixmap::fromImage(map->getMapImage());
                 mapPixmapItem->setPixmap(pixmap);
                 scene->update();
+
+                /// centers the map
                 centerMap();
+
+                /// imports points associated to the map and save them in the current file
                 XMLParser parser(file + "_points.xml");
                 parser.readPoints(points);
                 savePoints(QString(GOBOT_PATH) + QString(XML_FILE));
+
+                /// updates the group box so that new points can be added
                 createPointWidget->updateGroupBox();
+
+                /// imports paths associated to the map and save them in the current file
                 deserializePaths(file + "_paths.dat");
                 serializePaths(QString(GOBOT_PATH) + QString(PATHS_FILE));
+
+                /// updates the groups of paths menu using the paths that have just been imported
                 leftMenu->getGroupsPathsWidget()->updateGroupsPaths();
             }
         }
