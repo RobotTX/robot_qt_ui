@@ -49,7 +49,7 @@ public:
     bool isPlayingPath(void) const { return playingPath; }
     QString getPathName(void) const { return pathName; }
     QString getGroupPathName(void) const { return groupName; }
-    //QSharedPointer<Paths> getPaths(void) const { return paths; }
+    QSharedPointer<Paths> getPaths(void) const { return paths; }
     bool isSendingMap(void) const { return sendingMap; }
 
     /// Setters
@@ -145,7 +145,7 @@ private slots:
     void portSentSlot();
 
 private:
-    //QSharedPointer<Paths> paths;
+    QSharedPointer<Paths> paths;
     QString name;
     QString ip;
     Position position;

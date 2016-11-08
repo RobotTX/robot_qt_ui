@@ -10,7 +10,7 @@
 #include <QFile>
 
 
-Robot::Robot(MainWindow* mainWindow, const QSharedPointer<Paths>& _paths, const QString _name, const QString _ip) : QObject(mainWindow), name(_name), ip(_ip), position(Position()),
+Robot::Robot(MainWindow* mainWindow, const QSharedPointer<Paths>& _paths, const QString _name, const QString _ip) : QObject(mainWindow), paths(_paths), name(_name), ip(_ip), position(Position()),
     orientation(0), batteryLevel(100), wifi(""), home(NULL), playingPath(0), mapId(), pathName(""), groupName(""), sendingMap(false){
 
     /// we try to open the path file of the robot, if it works we do nothing otherwise we create it and put "" and ""
@@ -149,18 +149,18 @@ void Robot::ping(){
 }
 
 QDataStream& operator>>(QDataStream& in, Robot& robot){
-    /*QString _pathName("");
+    QString _pathName("");
     QString _groupName("");
     in >> _pathName >> _groupName;
     robot.setPathName(_pathName);
     robot.setGroupPathName(_groupName);
     bool flag(false);
-    robot.setPath(robot.getPaths()->getPath(_groupName, _pathName, flag));*/
+    robot.setPath(robot.getPaths()->getPath(_groupName, _pathName, flag));
     return in;
 }
 
 QDataStream& operator<<(QDataStream& out, const Robot& robot){
-    //out << robot.getPathName() << robot.getGroupPathName();
+    out << robot.getPathName() << robot.getGroupPathName();
     return out;
 }
 

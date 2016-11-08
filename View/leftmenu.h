@@ -83,6 +83,7 @@ public:
     void setEnableReturnCloseButtons(const bool enable);
 
 private:
+    PathCreationWidget* pathCreationWidget;
     CustomPushButton* closeBtn;
     QVBoxLayout* leftLayout;
     QWidget* lastWidget;
@@ -103,7 +104,7 @@ private:
     DisplaySelectedPath* displaySelectedPath;
     DisplayPathGroup* pathGroup;
     QString lastCheckedId;
-    PathCreationWidget* pathCreationWidget;
+
 };
 
 #endif // LEFTMENU_H

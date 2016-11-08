@@ -59,22 +59,26 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     msgBox.move(mapToGlobal(QPoint(QApplication::desktop()->screenGeometry().width()/2,
                                    QApplication::desktop()->screenGeometry().height()/2) ));
 
+    /// initializes the paths and points used in the application
     points = QSharedPointer<Points>(new Points(this));
-    paths = QSharedPointer<Paths>(new Paths(this));
+    paths = QSharedPointer<Paths>(new Paths());
+
     QWidget* mainWidget = new QWidget(this);
     initRobotCommandBox();
 
-
     QVBoxLayout* mainLayout = new QVBoxLayout(mainWidget);
-    map = QSharedPointer<Map>(new Map());
 
+    /// initializes the map used by the application
+    map = QSharedPointer<Map>(new Map());
     map->setMapFromFile(settings.value("mapFile", ":/maps/map.pgm").toString());
 
+    /// retrieves the configuration of the map from the settings file
+    /// if the parameters are not there, .0f, .0f and 1.0f serve as the
+    /// default parameters
     mapState.first.setX(settings.value("mapState/point/x", .0f).toFloat());
     mapState.first.setY(settings.value("mapState/point/y", .0f).toFloat());
     mapState.second = settings.value("mapState/zoom", 1.0f).toFloat();
 
-    qDebug() << settings.fileName();
     /*************************** TODO GET FROM A SAVE FILE/MAP SETTINGS ***********************************/
 
     map->setWidth(320);
@@ -101,7 +105,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     QPixmap pixmap = QPixmap::fromImage(map->getMapImage());
     mapPixmapItem = new MapView(pixmap, QSize(geometry().width(), geometry().height()), map, this);
 
-
     /// Create the toolbar
     topLayout = new TopLayout(this);
     mainLayout->addWidget(topLayout);
@@ -109,76 +112,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     QHBoxLayout* bottom = new QHBoxLayout();
 
 
-    /************************** NO NEED AFTER FIRST TIME INIT **************************/
-
-/*
-    QSharedPointer<Paths> tmpPaths = QSharedPointer<Paths>(new Paths(this));
-
-
-    tmpPaths->createGroup("monday");
-    tmpPaths->createGroup("tuesday");
-    tmpPaths->createPath("monday", "room1");
-    tmpPaths->createPath("tuesday", "room2");
-    tmpPaths->createPath("tuesday", "room3");
-    Point point("First point", 400, 300);
-    Point point2("Second point", 800, 600);
-    Point point3("Third point", 1200, 1200);
-    Point point5("4th point", 1500, 700);
-    Point point6("5th point", 1300, 1450);
-    Point point7("6th point", 1100, 1450);
-    Point point8("7th point", 800, 1180);
-    Point point9("8th point", 900, 1250);
-    Point point10("9th point", 1600, 1000);
-    Point point11("10th point", 1050, 1500);
-    Point point12("11th point", 1200, 950);
-    Point point13("12th point", 600, 850);
-    Point point14("13th point", 1300, 1040);
-    Point point15("14th point", 500, 1260);
-    Point point16("15th point", 255, 480);
-    Point point17("16th point", 380, 1100);
-    Point point18("17th point", 1240, 1000);
-    Point point19("18th point", 1300, 890);
-    Point point20("19th point", 1851, 640);
-    Point point21("20th point", 1100, 870);
-    Point point22("21th point", 260, 1500);
-    Point point23("22th point", 1420, 480);
-    tmpPaths->addPathPoint("monday", "room1", QSharedPointer<PathPoint>(new PathPoint(point, PathPoint::Action::HUMAN_ACTION, 2)));
-    tmpPaths->addPathPoint("wednesday", "room1", QSharedPointer<PathPoint>(new PathPoint(point, PathPoint::Action::HUMAN_ACTION, 2)));
-    tmpPaths->addPathPoint("monday", "room1", QSharedPointer<PathPoint>(new PathPoint(point2, PathPoint::Action::HUMAN_ACTION, 2)));
-    tmpPaths->addPathPoint("tuesday", "room2", QSharedPointer<PathPoint>(new PathPoint(point, PathPoint::Action::HUMAN_ACTION, 2)));
-    tmpPaths->addPathPoint("tuesday", "room2", QSharedPointer<PathPoint>(new PathPoint(point3, PathPoint::Action::HUMAN_ACTION, 2)));
-
-    tmpPaths->addPathPoint("tuesday", "room3", QSharedPointer<PathPoint>(new PathPoint(point3, PathPoint::Action::HUMAN_ACTION, 2)));
-    tmpPaths->addPathPoint("tuesday", "room3", QSharedPointer<PathPoint>(new PathPoint(point5, PathPoint::Action::HUMAN_ACTION, 2)));
-    tmpPaths->addPathPoint("tuesday", "room3", QSharedPointer<PathPoint>(new PathPoint(point6, PathPoint::Action::HUMAN_ACTION, 2)));
-    tmpPaths->addPathPoint("tuesday", "room3", QSharedPointer<PathPoint>(new PathPoint(point7, PathPoint::Action::HUMAN_ACTION, 2)));
-    tmpPaths->addPathPoint("tuesday", "room3", QSharedPointer<PathPoint>(new PathPoint(point8, PathPoint::Action::HUMAN_ACTION, 2)));
-    tmpPaths->addPathPoint("tuesday", "room3", QSharedPointer<PathPoint>(new PathPoint(point9, PathPoint::Action::HUMAN_ACTION, 2)));
-    tmpPaths->addPathPoint("tuesday", "room3", QSharedPointer<PathPoint>(new PathPoint(point10, PathPoint::Action::HUMAN_ACTION, 2)));
-    tmpPaths->addPathPoint("tuesday", "room3", QSharedPointer<PathPoint>(new PathPoint(point11, PathPoint::Action::HUMAN_ACTION, 2)));
-    tmpPaths->addPathPoint("tuesday", "room3", QSharedPointer<PathPoint>(new PathPoint(point12, PathPoint::Action::HUMAN_ACTION, 2)));
-    tmpPaths->addPathPoint("tuesday", "room3", QSharedPointer<PathPoint>(new PathPoint(point13, PathPoint::Action::HUMAN_ACTION, 2)));
-    tmpPaths->addPathPoint("tuesday", "room3", QSharedPointer<PathPoint>(new PathPoint(point14, PathPoint::Action::HUMAN_ACTION, 2)));
-    tmpPaths->addPathPoint("tuesday", "room3", QSharedPointer<PathPoint>(new PathPoint(point15, PathPoint::Action::HUMAN_ACTION, 2)));
-    tmpPaths->addPathPoint("tuesday", "room3", QSharedPointer<PathPoint>(new PathPoint(point16, PathPoint::Action::HUMAN_ACTION, 2)));
-    tmpPaths->addPathPoint("tuesday", "room3", QSharedPointer<PathPoint>(new PathPoint(point17, PathPoint::Action::HUMAN_ACTION, 2)));
-    tmpPaths->addPathPoint("tuesday", "room3", QSharedPointer<PathPoint>(new PathPoint(point18, PathPoint::Action::HUMAN_ACTION, 2)));
-    tmpPaths->addPathPoint("tuesday", "room3", QSharedPointer<PathPoint>(new PathPoint(point19, PathPoint::Action::HUMAN_ACTION, 2)));
-    tmpPaths->addPathPoint("tuesday", "room3", QSharedPointer<PathPoint>(new PathPoint(point20, PathPoint::Action::HUMAN_ACTION, 2)));
-    tmpPaths->addPathPoint("tuesday", "room3", QSharedPointer<PathPoint>(new PathPoint(point21, PathPoint::Action::HUMAN_ACTION, 2)));
-    tmpPaths->addPathPoint("tuesday", "room3", QSharedPointer<PathPoint>(new PathPoint(point22, PathPoint::Action::HUMAN_ACTION, 2)));
-    tmpPaths->addPathPoint("tuesday", "room3", QSharedPointer<PathPoint>(new PathPoint(point23, PathPoint::Action::HUMAN_ACTION, 2)));
-
-
-    QFile pathFile(GOBOT_PATH + PATHS_FILE);
-    pathFile.resize(0);
-    pathFile.open(QIODevice::WriteOnly);
-    QDataStream out(&pathFile);
-    out << *tmpPaths;
-    pathFile.close();
-
-*/
-    /*****************************************************/
 
     initializePaths();
 
