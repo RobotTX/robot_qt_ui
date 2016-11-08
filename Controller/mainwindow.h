@@ -78,6 +78,7 @@ public:
     void initializeMenu();
     void initializeRobots();
     void initializePoints();
+    void savePoints();
     void initializeBottomPanel();
     void initializeLeftMenu();
     void initializePaths();

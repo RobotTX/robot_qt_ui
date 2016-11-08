@@ -243,3 +243,12 @@ void Paths::updatePaths(const Point& old_point, const Point& new_point){
         }
     }
 }
+
+void Paths::clear(){
+    QMapIterator<QString, QSharedPointer<CollectionPaths>> it(*(groups));
+    while(it.hasNext()){
+        it.next();
+        it.value()->clear();
+    }
+    groups->clear();
+}

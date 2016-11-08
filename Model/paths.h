@@ -101,6 +101,8 @@ public:
     /// instead. Has to be done when the original point has been modified (edition of a point)
     void updatePaths(const Point& old_point, const Point& new_point);
 
+    /// clears the paths
+    void clear(void);
 
 private:
     QSharedPointer<Groups> groups;
