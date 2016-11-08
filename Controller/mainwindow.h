@@ -96,8 +96,8 @@ public:
     void clearPath(const int robotNb);
     RobotView* getSelectedRobot(void) const { return selectedRobot; }
     MapView* getMapView(void) const { return mapPixmapItem; }
-    void serializePaths(void);
-    void deserializePaths(void);
+    void serializePaths(const QString fileName);
+    void deserializePaths(const QString fileName);
     void showHomes();
     void showHomes(Robot* robot);
     void showSelectedRobotHomeOnly();
