@@ -1887,10 +1887,6 @@ void MainWindow::updateMetadata(const int width, const int height, const float r
 
     if(originX != map->getOrigin().getX() || originY != map->getOrigin().getY())
         map->setOrigin(Position(originX, originY));
-
-   /* qDebug() << "Map metadata updated : " << map->getWidth() << " " << map->getHeight() << " "
-             << map->getResolution() << " " << map->getOrigin().getX()  << " " << map->getOrigin().getY() ;
-*/
 }
 
 void MainWindow::updateMap(const QByteArray mapArray){
@@ -2036,13 +2032,8 @@ void MainWindow::closeSlot(){
     leftMenu->getDisplaySelectedPoint()->hide();
     leftMenu->hide();
     setEnableAll(true);
-    if(leftMenu->getDisplaySelectedPoint()->getPointView()){
-        //QSharedPointer<PointView> displaySelectedPointView = points->findPointView(leftMenu->getDisplaySelectedPoint()->getPointName());
-        //if(displaySelectedPointView)
-        //displaySelectedPointView->setPixmap(PointView::PixmapType::NORMAL);
+    if(leftMenu->getDisplaySelectedPoint()->getPointView())
         leftMenu->getDisplaySelectedPoint()->getPointView()->setPixmap(PointView::PixmapType::NORMAL);
-
-    }
 }
 
 /**********************************************************************************************************************************/
@@ -2077,7 +2068,6 @@ void MainWindow::setSelectedPoint(){
 
     resetFocus();
 
-
     createPointWidget->getGroupBox()->hide();
     createPointWidget->getGroupLabel()->hide();
 
@@ -2087,7 +2077,6 @@ void MainWindow::setSelectedPoint(){
     points->setPixmapAll(PointView::NORMAL);
 
     displaySelectedPointView->setPixmap(PointView::MID);
-
 
     int id = bottomLayout->getViewPathRobotBtnGroup()->checkedId();
     if(id > 0)
@@ -2356,7 +2345,6 @@ void MainWindow::switchFocus(const QString name, QWidget* widget, const MainWind
         qDebug() << lastWidgets.at(i).first.second;
 
     qDebug() << "_________________";
-
 }
 
 void MainWindow::resetFocus()

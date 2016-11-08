@@ -3,24 +3,21 @@
     <group>
         <name>No Group</name>
         <point>
-            <name>A final point</name>
-            <x>1153</x>
-            <y>843</y>
+            <name>Lolita</name>
+            <x>963.8</x>
+            <y>1110.5</y>
             <displayed>1</displayed>
         </point>
     </group>
     <group>
-        <name>first group</name>
+        <name>first</name>
+    </group>
+    <group>
+        <name>second</name>
         <point>
-            <name>A</name>
-            <x>1130</x>
-            <y>820</y>
-            <displayed>0</displayed>
-        </point>
-        <point>
-            <name>Ma pointo</name>
-            <x>1145</x>
-            <y>890</y>
+            <name>Michel</name>
+            <x>943.7</x>
+            <y>959.6</y>
             <displayed>1</displayed>
         </point>
     </group>
