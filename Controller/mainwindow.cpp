@@ -288,15 +288,15 @@ void MainWindow::initializeRobots(){
     robots->setRobotsNameMap(tmp);
     fileRead.close();
 
-/*
+
     updateRobotsThread = new UpdateRobotsThread(PORT_ROBOT_UPDATE);
     connect(updateRobotsThread, SIGNAL(robotIsAlive(QString, QString, QString, QString, int)), this, SLOT(robotIsAliveSlot(QString, QString, QString, QString, int)));
     connect(this, SIGNAL(stopUpdateRobotsThread()), updateRobotsThread, SLOT(stopThread()));
     updateRobotsThread->start();
     updateRobotsThread->moveToThread(updateRobotsThread);
-*/
 
 
+/*
     QFile fileWrite(QString(GOBOT_PATH) + QString(ROBOTS_NAME_FILE));
     fileWrite.resize(0);
     fileWrite.open(QIODevice::WriteOnly);
@@ -352,7 +352,7 @@ void MainWindow::initializeRobots(){
             robotPathFile.close();
         }
     }
-
+*/
 
 
     //qDebug() << "RobotsNameMap on init" << robots->getRobotsNameMap();
@@ -4799,8 +4799,11 @@ void MainWindow::centerMap(){
 }
 
 void MainWindow::settingBtnSlot(){
-    //qDebug() << "MainWindow::settingBtnSlot called";
-    robotWaitForAnswer("Title", "This is the core message");
+    qDebug() << "MainWindow::settingBtnSlot called";
+    //robotWaitForAnswer("Title", "This is the core message");
+    if(robots->getRobotsVector().size() > 0){
+        robotIsDeadSlot(robots->getRobotsVector().at(0)->getRobot()->getName(), robots->getRobotsVector().at(0)->getRobot()->getIp());
+    }
 }
 
 void MainWindow::setTemporaryMessageTop(const QString type, const QString message, const int ms){
