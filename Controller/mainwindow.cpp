@@ -4809,6 +4809,9 @@ void MainWindow::centerMap(){
 void MainWindow::settingBtnSlot(){
     //qDebug() << "MainWindow::settingBtnSlot called";
     robotWaitForAnswer("Title", "This is the core message");
+    JlCompress::compressFile("/home/joan/Desktop/testMap.zip", "/home/joan/Desktop/testMap.pgm");
+    JlCompress::extractDir("/home/joan/Desktop/testMap.zip", "/home/joan/Desktop");
+
 }
 
 void MainWindow::setTemporaryMessageTop(const QString type, const QString message, const int ms){

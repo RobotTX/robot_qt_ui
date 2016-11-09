@@ -160,8 +160,6 @@ void PathPainter::actionChangedSlot(int id, int action, QString waitTimeStr){
     int waitTime = waitTimeStr.toInt();
     currentPath.at(id)->setAction(static_cast<PathPoint::Action>(action));
     currentPath.at(id)->setWaitTime(waitTime);
-
-    displayPath();
 }
 
 void PathPainter::updateCurrentPath(void){
@@ -182,12 +180,9 @@ void PathPainter::updateCurrentPath(void){
             points->findPathPointView(currentPath.at(i)->getPoint().getPosition().getX(),
                                       currentPath.at(i)->getPoint().getPosition().getY())
                     ->setToolTip("PathPoint" + QString::number(number));
-            qDebug() << "setting name" << "PathPoint" + QString::number(number);
             number++;
         }
-        qDebug() << "point " << i << currentPath.at(i)->getPoint().getName();
     }
-    displayPath();
 }
 
 void PathPainter::updatePathPainterSlot(const bool savePath /* to deal with pv selected after save */){

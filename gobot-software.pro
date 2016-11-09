@@ -136,3 +136,16 @@ DISTFILES += README \
     Resources/robot_ori.png \
     Resources/gtrobot-1.pgm \
     Resources/gtrobot-1.pgm.pgm
+
+QUAZIPCODEDIR = "/home/joan/Qt/quazip-0.7/quazip"
+ZLIBCODEDIR = "/home/joan/Qt/zlib-1.2.8"
+LIBDIR = "home/joan/Qt/Libs"
+
+#include the compiled code from the libs for linking
+LIBS += -L$${LIBDIR} -lquazip
+LIBS += -L$${LIBDIR} -lz
+
+INCLUDEPATH += $${LIBDIR}
+INCLUDEPATH += $${QUAZIPCODEDIR}
+
+HEADERS += $${QUAZIPCODEDIR}/*.h
