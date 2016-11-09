@@ -547,6 +547,7 @@ void server(unsigned short port, ros::NodeHandle n){
 
 	m_acceptor->set_option(tcp::acceptor::reuse_address(true));
 
+	ros::Rate r(10);
 	while(ros::ok()){
 		if(!connected && !waiting){
 			std::cout << "(Command system) Ready to connect" << std::endl;
@@ -555,6 +556,7 @@ void server(unsigned short port, ros::NodeHandle n){
 			waiting = true;
 		}
 		ros::spinOnce();
+		r.sleep();
 	}
 }
 
@@ -589,7 +591,6 @@ int main(int argc, char* argv[]){
 		go_pub = n.advertise<geometry_msgs::PoseStamped>("/move_base_simple/goal", 1000);
 
 		server(CMD_PORT, n);
-		ros::spin();
 	} catch (std::exception& e) {
 		std::cerr << "(Command system) Exception: " << e.what() << std::endl;
 	}

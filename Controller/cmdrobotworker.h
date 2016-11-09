@@ -1,11 +1,11 @@
 #ifndef CMDROBOTWORKER_H
 #define CMDROBOTWORKER_H
 
+class QTimer;
+
 #include <QString>
 #include <QtNetwork/QTcpSocket>
 #include <QSharedPointer>
-
-#define MISSED_PING_TIMER 20
 
 /**
  * @brief The CmdRobotWorker class
@@ -65,6 +65,7 @@ private slots:
      */
     void sendCommand(const QString cmd);
     void pingSlot();
+    void isDeadSlot();
     void stopCmdRobotWorkerSlot();
 
 private :
@@ -73,10 +74,11 @@ private :
     int port;
     QString robotName;
     bool connected;
-    int missedPing;
     int metadataPort;
     int robotPort;
     int mapPort;
+    bool stop;
+    QTimer* timer;
 };
 
 #endif // CMDROBOTWORKER_H
