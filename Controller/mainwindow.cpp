@@ -1557,9 +1557,10 @@ void MainWindow::robotIsDeadSlot(QString hostname,QString ip){
         /// bottomLayout
         bottomLayout->removeRobot(id);
 
+        qDebug() << "Done removing robot" << hostname << "at ip" << ip;
         setMessageTop(TEXT_COLOR_DANGER, QString("Robot " + hostname + " at ip " + ip +" disconnected."));
     } else {
-        qDebug() << "(robotIsDeadSlot) A problem occured, the RobotView or its Robot are NULL";
+        qDebug() << "(robotIsDeadSlot) A problem occured, the RobotView or its Robot are NULL, I have been kill twice ?";
     }
 }
 

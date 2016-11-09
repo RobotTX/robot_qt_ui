@@ -190,6 +190,7 @@ int main(int argc, char **argv){
 
     m_acceptor->set_option(tcp::acceptor::reuse_address(true));
 
+    ros::Rate r(10);
     while(ros::ok()){
         if(!connected && !waiting){
             std::cout << "(New Map) Ready to connect" << std::endl;
@@ -198,6 +199,7 @@ int main(int argc, char **argv){
             waiting = true;
         }
         ros::spinOnce();
+        r.sleep();
     }
 
     return 0;

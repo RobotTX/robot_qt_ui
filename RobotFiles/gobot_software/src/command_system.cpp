@@ -439,7 +439,7 @@ void session(boost::shared_ptr<tcp::socket> sock, ros::NodeHandle n){
 		getPorts(sock, n);
 
 		std::cout << "(Command system) Starting Robot pos and Metadata services" << std::endl;
-		/*startRobotPos(n);
+		startRobotPos(n);
 		startMetadata(n);
 
 		while(ros::ok() && connected){
@@ -500,7 +500,7 @@ void session(boost::shared_ptr<tcp::socket> sock, ros::NodeHandle n){
 				finishedCmd = 0;
 				commandStr = "";
 			}
-		}*/
+		}
 	} catch (std::exception& e) {
 		std::cerr << "(Command system) Exception in thread: " << e.what() << "\n";
 	}
@@ -547,16 +547,16 @@ void server(unsigned short port, ros::NodeHandle n){
 
 	m_acceptor->set_option(tcp::acceptor::reuse_address(true));
 
-	//ros::Rate r(100);
+	ros::Rate r(10);
 	while(ros::ok()){
 		if(!connected && !waiting){
 			std::cout << "(Command system) Ready to connect" << std::endl;
-			//boost::thread t(boost::bind(asyncAccept, io_service, m_acceptor, n));
+			boost::thread t(boost::bind(asyncAccept, io_service, m_acceptor, n));
 
 			waiting = true;
 		}
 		ros::spinOnce();
-		//r.sleep();
+		r.sleep();
 	}
 }
 
@@ -591,7 +591,6 @@ int main(int argc, char* argv[]){
 		go_pub = n.advertise<geometry_msgs::PoseStamped>("/move_base_simple/goal", 1000);
 
 		server(CMD_PORT, n);
-		ros::spin();
 	} catch (std::exception& e) {
 		std::cerr << "(Command system) Exception: " << e.what() << std::endl;
 	}

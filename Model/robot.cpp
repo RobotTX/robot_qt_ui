@@ -39,7 +39,7 @@ Robot::Robot(MainWindow* mainWindow, const QSharedPointer<Paths>& _paths, const 
     connect(this, SIGNAL(startCmdRobotWorker()), cmdRobotWorker, SLOT(connectSocket()));
     cmdRobotWorker->moveToThread(&cmdThread);
     cmdThread.start();
-/*
+
 
     qDebug() << "Robot" << name << "at ip" << ip << " launching its robot pos thread at port" << PORT_ROBOT_POS;
 
@@ -64,7 +64,7 @@ Robot::Robot(MainWindow* mainWindow, const QSharedPointer<Paths>& _paths, const 
     metadataWorker->moveToThread(&metadataThread);
     metadataThread.start();
 
-/*
+
     qDebug() << "Robot" << name << "at ip" << ip << " launching its new map thread at port" << PORT_NEW_MAP;
 
     newMapWorker = new SendNewMapWorker(ip, PORT_NEW_MAP);
@@ -76,7 +76,7 @@ Robot::Robot(MainWindow* mainWindow, const QSharedPointer<Paths>& _paths, const 
     connect(&newMapThread, SIGNAL(finished()), newMapWorker, SLOT(deleteLater()));
     newMapWorker->moveToThread(&newMapThread);
     newMapThread.start();
-*/
+
 
     emit startCmdRobotWorker();
 }
@@ -94,7 +94,7 @@ void Robot::stopThreads() {
     emit stopCmdRobotWorker();
     cmdThread.quit();
     cmdThread.wait();
-/*
+
     emit stopRobotWorker();
     robotThread.quit();
     robotThread.wait();
@@ -102,10 +102,10 @@ void Robot::stopThreads() {
     emit stopMetadataWorker();
     metadataThread.quit();
     metadataThread.wait();
-/*
+
     emit stopNewMapWorker();
     newMapThread.quit();
-    newMapThread.wait();*/
+    newMapThread.wait();
 }
 
 void Robot::portSentSlot(){
@@ -145,6 +145,7 @@ void Robot::doneSendingMapSlot(){
 }
 
 void Robot::ping(){
+    qDebug() << "Robot::ping" << name;
     emit pingSignal();
 }
 

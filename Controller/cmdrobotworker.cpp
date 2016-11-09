@@ -1,13 +1,11 @@
 #include "cmdrobotworker.h"
-#include <QTime>
-#include <QCoreApplication>
+#include <QTimer>
 
 
 CmdRobotWorker::CmdRobotWorker(const QString _ipAddress, const int cmdPort, const int _metadataPort, const int _robotPort, const int _mapPort, const QString _robotName){
     ipAddress = _ipAddress;
     port = cmdPort;
     robotName = _robotName;
-    missedPing = MISSED_PING_TIMER;
     metadataPort = _metadataPort;
     robotPort = _robotPort;
     mapPort = _mapPort;
@@ -20,7 +18,6 @@ CmdRobotWorker::~CmdRobotWorker(){
 void CmdRobotWorker::stopCmdRobotWorkerSlot(){
     if(socket && socket->isOpen())
         socket->close();
-    //exit();
 }
 
 void CmdRobotWorker::connectSocket(){
@@ -39,45 +36,6 @@ void CmdRobotWorker::connectSocket(){
 
     /// Connect to the host
     socket->connectToHost(ipAddress, port);
-
-    QString portStr = "h \"" + QString::number(metadataPort) + "\" \"" + QString::number(robotPort) + "\" \"" + QString::number(mapPort) + "\" } ";
-    qDebug() << "(Robot" << robotName << ") Sending ports : " << portStr;
-    bool tmpBool(false);
-    while(!tmpBool){
-        socket->write(portStr.toUtf8());
-        if(socket->waitForBytesWritten(100)){
-            qDebug() << "(Robot" << robotName << ") Ports sent";
-            tmpBool = true;
-            emit portSent();
-        } else {
-            qDebug() << "(Robot" << robotName << ") Ports could not be sent";
-        };
-    }
-
-
-/*
-    qDebug() << "(Robot" << robotName << ") Done";
-    while(!isInterruptionRequested()){
-        if(!socket->isOpen()){
-            exit();
-            return;
-        }
-        if(missedPing <= 0){
-            qDebug() << "missedPing robotIsDead";
-            emit robotIsDead(robotName, ipAddress);
-            socket -> close();
-            exit();
-            return;
-        }
-        delay(500);
-        missedPing--;
-        if(missedPing <= 4)
-            qDebug() << "Received no ping during the last :" << (float) ((MISSED_PING_TIMER - missedPing)/2) << " seconds.";
-    }
-    socket->close();
-    exit();
-    return;*/
-    //exec();
 }
 
 void CmdRobotWorker::sendCommand(const QString cmd){
@@ -105,11 +63,29 @@ void CmdRobotWorker::readTcpDataSlot(){
     QString commandAnswer = socket->readAll();
     qDebug() << "(Robot" << robotName << ") readTcpDataSlot :" << commandAnswer;
     emit cmdAnswer(commandAnswer);
-    missedPing = MISSED_PING_TIMER;
 }
 
 void CmdRobotWorker::connectedSlot(){
     qDebug() << "(Robot" << robotName << ") Connected";
+
+    QString portStr = "h \"" + QString::number(metadataPort) + "\" \"" + QString::number(robotPort) + "\" \"" + QString::number(mapPort) + "\" } ";
+    qDebug() << "(Robot" << robotName << ") Sending ports : " << portStr;
+    bool tmpBool(false);
+    while(!tmpBool){
+        socket->write(portStr.toUtf8());
+        if(socket->waitForBytesWritten(100)){
+            qDebug() << "(Robot" << robotName << ") Ports sent";
+            tmpBool = true;
+            emit portSent();
+        } else {
+            qDebug() << "(Robot" << robotName << ") Ports could not be sent";
+        };
+    }
+
+    timer = new QTimer(this);
+    timer->setInterval(10000);
+    connect(timer, SIGNAL(timeout()), this, SLOT(isDeadSlot()));
+    timer->start();
 }
 
 void CmdRobotWorker::disconnectedSlot(){
@@ -127,15 +103,22 @@ void CmdRobotWorker::errorSlot(QAbstractSocket::SocketError error){
 }
 
 void CmdRobotWorker::onStateChanged(QAbstractSocket::SocketState socketState ){
-    qDebug()<< "(Robot" << robotName << ") The state of the socket changed :" << socketState;
+    qDebug() << "(Robot" << robotName << ") The state of the socket changed :" << socketState;
 }
 
 void CmdRobotWorker::pingSlot(){
-    missedPing = MISSED_PING_TIMER;
+    qDebug()<< "(Robot" << robotName << ") Received the ping";
+    timer->start();
 }
 
+void CmdRobotWorker::isDeadSlot(){
+    qDebug()<< "(Robot" << robotName << ") Did not receive any ping from this robot for 10 seconds";
+    if(socket->isOpen())
+        socket->close();
+}
 
 void CmdRobotWorker::changeRobotNameSlot(QString name){
     qDebug()<< "(Robot" << robotName << ") Changed the name of the robot to" << name;
     robotName = name;
 }
+
