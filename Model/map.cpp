@@ -60,5 +60,5 @@ void Map::setMapFromArray(const QByteArray& mapArrays){
 void Map::saveToFile(const QString fileName){
     /// Qt has is own function to save the QImage to a PGM file
     bool status = mapImage.save(fileName, "PGM");
-    emit saveStatus(status);
+    //emit saveStatus(status);
 }
