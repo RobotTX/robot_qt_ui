@@ -1618,6 +1618,7 @@ void MainWindow::sendNewMapToRobots(QString ipAddress){
     qDebug() << "sendNewMapToRobots called";
     /// We create a unique ID for the map
     QUuid mapId = QUuid::createUuid();
+
     qDebug() << "New map id :" << mapId.toString();
     QVector<RobotView*> robotsVector = robots->getRobotsVector();
 
@@ -1917,6 +1918,7 @@ void MainWindow::saveMapBtnEvent(){
     settings.setValue(fileName + "/mapState/center/x", mapState.first.x());
     settings.setValue(fileName + "/mapState/center/y", mapState.first.y());
     settings.setValue(fileName + "/mapState/zoom/", mapState.second);
+    settings.setValue(fileName + "/id", settings.value("mapId", QUuid::createUuid().toString()));
 
     qDebug() << "mapS" << mapState.first.x() << mapState.first.y() << mapState.second << map->getHeight() << map->getWidth();
 
@@ -1973,8 +1975,11 @@ void MainWindow::loadMapBtnEvent(){
     mapState.first.setX(settings.value(fileName + "/mapState/center/x").toFloat());
     mapState.first.setY(settings.value(fileName + "/mapState/center/y").toFloat());
     mapState.second = settings.value(fileName + "/mapState/zoom", 1.0f).toFloat();
+    settings.setValue("mapId", settings.value(fileName + "/id", QUuid::createUuid().toString()));
 
-    qDebug() << "loaded mapS" << mapState.first.x() << mapState.first.y() << mapState.second << map->getHeight() << map->getWidth();
+    qDebug() << "loaded mapS" << mapState.first.x() << mapState.first.y() << mapState.second <<
+                map->getHeight() << map->getWidth() <<
+                "map id" << settings.value(fileName + "/id", QUuid().toString());
 
     /// imports the new map from the given file
     map->setMapFromFile(settings.value("mapFile").toString());
