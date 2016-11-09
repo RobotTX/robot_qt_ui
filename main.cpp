@@ -3,9 +3,6 @@
 #include <QStyle>
 #include <QDesktopWidget>
 
-#include <JlCompress.h>
-
-
 int main(int argc, char *argv[]){
 
     QApplication app(argc, argv);

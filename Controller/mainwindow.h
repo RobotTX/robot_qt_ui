@@ -25,6 +25,8 @@ class CustomPushButton;
 class GroupsPathsWidget;
 class QMoveEvent;
 
+#include <JlCompress.h>
+
 #include "Model/paths.h"
 #include "View/createpointwidget.h"
 #include "View/toplayout.h"
