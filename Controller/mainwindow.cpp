@@ -1902,41 +1902,35 @@ void MainWindow::saveMapBtnEvent(){
 
     QString fileName = QFileDialog::getSaveFileName(this, tr("Save File"),
             "", tr("Images (*.pgm)"));
-    qDebug() << "FileName :" <<  fileName;
 
-    if(fileName != ""){
-        QSettings settings;
-        if(fileName.indexOf(".pgm", fileName.length()-4) != -1)
-            fileName = fileName.mid(0, fileName.length()-4);
+    QSettings settings;
+    if(fileName.indexOf(".pgm", fileName.length()-4) != -1)
+        fileName = fileName.mid(0, fileName.length()-4);
 
-        qDebug() << "saving points in" << fileName + "_points.xml";
+    saveMapState();
 
-        saveMapState();
+    /// stores the parameters and state of the map in the settings file
+    settings.setValue(fileName + "/width", map->getWidth());        settings.setValue(fileName + "/height", map->getHeight());
+    settings.setValue(fileName + "/resolution", map->getResolution());
+    settings.setValue(fileName + "/origin/x", map->getOrigin().getX());
+    settings.setValue(fileName + "/origin/y", map->getOrigin().getY());
+    settings.setValue(fileName + "/mapState/center/x", mapState.first.x());
+    settings.setValue(fileName + "/mapState/center/y", mapState.first.y());
+    settings.setValue(fileName + "/mapState/zoom/", mapState.second);
 
-        settings.setValue(fileName + "/width", map->getWidth());        settings.setValue(fileName + "/height", map->getHeight());
-        settings.setValue(fileName + "/resolution", map->getResolution());
-        settings.setValue(fileName + "/origin/x", map->getOrigin().getX());
-        settings.setValue(fileName + "/origin/y", map->getOrigin().getY());
-        settings.setValue(fileName + "/mapState/center/x", mapState.first.x());
-        settings.setValue(fileName + "/mapState/center/y", mapState.first.y());
-        settings.setValue(fileName + "/mapState/zoom/", mapState.second);
+    qDebug() << "mapS" << mapState.first.x() << mapState.first.y() << mapState.second << map->getHeight() << map->getWidth();
 
-        qDebug() << "mapS" << mapState.first.x() << mapState.first.y() << mapState.second;
+    const QString pointsFile = fileName + "_points.xml";
+    savePoints(pointsFile);
 
-        const QString pointsFile = fileName + "_points.xml";
-        savePoints(pointsFile);
+    /// saves the map
+    map->saveToFile(fileName + ".pgm");
 
-        /// saves the map
-        map->saveToFile(fileName + ".pgm");
+    const QString pathsFile = fileName + "_paths.dat";
 
-        const QString pathsFile = fileName + "_paths.dat";
-
-        /// saves the current configuration for the paths (this configuration will be associated to the map
-        /// when you load the map in the future
-        serializePaths(pathsFile);
-    } else {
-        qDebug() << "Please select a file";
-    }
+    /// saves the current configuration for the paths (this configuration will be associated to the map
+    /// when you load the map in the future
+    serializePaths(pathsFile);
 }
 
 void MainWindow::loadMapBtnEvent(){
@@ -1958,55 +1952,54 @@ void MainWindow::loadMapBtnEvent(){
     QString fileName = QFileDialog::getOpenFileName(this,
         tr("Open Image"), "", tr("Image Files (*.pgm)"));
 
-    if(fileName.compare("")){
-        /// defines the imported map as the last loaded map
-        settings.setValue("mapFile", fileName);
+    /// defines the imported map as the last loaded map
+    settings.setValue("mapFile", fileName);
 
-        /// clears the map of all paths and points
-        clearNewMap();
+    /// clears the map of all paths and points
+    clearNewMap();
 
-        /// gets ride of ".pgm"
-        if(fileName.indexOf(".pgm", fileName.length()-4) != -1)
-            fileName = fileName.mid(0, fileName.length()-4);
+    /// gets ride of ".pgm"
+    if(fileName.indexOf(".pgm", fileName.length()-4) != -1)
+        fileName = fileName.mid(0, fileName.length()-4);
 
-        qDebug() << "fileName is" << fileName;
+    qDebug() << "fileName is" << fileName;
 
-        map->setWidth(settings.value(fileName + "/width").toInt());
-        map->setHeight(settings.value(fileName + "/height").toInt());
-        map->setResolution(settings.value(fileName + "/resolution").toFloat());
-        map->setOrigin(Position(settings.value(fileName + "/origin/x").toFloat(),
-                                settings.value(fileName + "/origin/y").toFloat()));
-        mapState.first.setX(settings.value(fileName + "/mapState/center/x").toFloat());
-        mapState.first.setY(settings.value(fileName + "/mapState/center/y").toFloat());
-        mapState.second = settings.value(fileName + "/mapState/zoom", 1.0f).toFloat();
+    /// restores the parameters and state of the map
+    map->setWidth(settings.value(fileName + "/width").toInt());
+    map->setHeight(settings.value(fileName + "/height").toInt());
+    map->setResolution(settings.value(fileName + "/resolution").toFloat());
+    map->setOrigin(Position(settings.value(fileName + "/origin/x").toFloat(),
+                            settings.value(fileName + "/origin/y").toFloat()));
+    mapState.first.setX(settings.value(fileName + "/mapState/center/x").toFloat());
+    mapState.first.setY(settings.value(fileName + "/mapState/center/y").toFloat());
+    mapState.second = settings.value(fileName + "/mapState/zoom", 1.0f).toFloat();
 
-         qDebug() << "loaded mapS" << mapState.first.x() << mapState.first.y() << mapState.second;
+    qDebug() << "loaded mapS" << mapState.first.x() << mapState.first.y() << mapState.second << map->getHeight() << map->getWidth();
 
-        /// imports the new map from the given file
-        map->setMapFromFile(settings.value("mapFile").toString());
-        setWindowTitle(settings.value("mapFile").toString());
-        QPixmap pixmap = QPixmap::fromImage(map->getMapImage());
-        mapPixmapItem->setPixmap(pixmap);
-        scene->update();
+    /// imports the new map from the given file
+    map->setMapFromFile(settings.value("mapFile").toString());
+    setWindowTitle(settings.value("mapFile").toString());
+    QPixmap pixmap = QPixmap::fromImage(map->getMapImage());
+    mapPixmapItem->setPixmap(pixmap);
+    scene->update();
 
-        /// centers the map
-        centerMap();
+    /// centers the map
+    centerMap();
 
-        /// imports points associated to the map and save them in the current file
-        XMLParser parser(fileName + "_points.xml");
-        parser.readPoints(points);
-        savePoints(QString(GOBOT_PATH) + QString(XML_FILE));
+    /// imports points associated to the map and save them in the current file
+    XMLParser parser(fileName + "_points.xml");
+    parser.readPoints(points);
+    savePoints(QString(GOBOT_PATH) + QString(XML_FILE));
 
-        /// updates the group box so that new points can be added
-        createPointWidget->updateGroupBox();
+    /// updates the group box so that new points can be added
+    createPointWidget->updateGroupBox();
 
-        /// imports paths associated to the map and save them in the current file
-        deserializePaths(fileName + "_paths.dat");
-        serializePaths(QString(GOBOT_PATH) + QString(PATHS_FILE));
+    /// imports paths associated to the map and save them in the current file
+    deserializePaths(fileName + "_paths.dat");
+    serializePaths(QString(GOBOT_PATH) + QString(PATHS_FILE));
 
-        /// updates the groups of paths menu using the paths that have just been imported
-        leftMenu->getGroupsPathsWidget()->updateGroupsPaths();
-    }
+    /// updates the groups of paths menu using the paths that have just been imported
+    leftMenu->getGroupsPathsWidget()->updateGroupsPaths();
 }
 
 void MainWindow::mapBtnEvent(){
