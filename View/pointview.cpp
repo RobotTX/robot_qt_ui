@@ -217,6 +217,7 @@ void PointView::setPixmap(const PixmapType pixType){
 
 
 void PointView::setToolTip(const QString toolTip){
+    //qDebug() << "settooltip called" << toolTip;
     QString name = toolTip;
     if(name.indexOf(PATH_POINT_NAME) == 0){
         name.remove(PATH_POINT_NAME);
