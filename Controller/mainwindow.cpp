@@ -3959,7 +3959,7 @@ void MainWindow::deletePathSlot(QString groupName, QString pathName){
         leftMenu->getPathGroupDisplayed()->setPathsGroup(groupName);
         leftMenu->getPathGroupDisplayed()->show();
         leftMenu->getDisplaySelectedPath()->hide();
-        if(!pathPainter->getVisiblePath().compare(leftMenu->getPathGroupDisplayed()->getLastCheckedButton())){
+        if(!pathPainter->getVisiblePath().compare(pathName)){
             qDebug() << "hey i have to stop displaying this path that was destroyed";
             emit resetPath();
         } else
