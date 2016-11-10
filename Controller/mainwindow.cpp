@@ -114,13 +114,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
     qDebug() << "Settings file" << settings.fileName();
 
-    QDir::setCurrent(QDir::currentPath() + "/Configuration");
-
     initializePaths();
 
     initializePoints();
-
-
 
     /// to draw stand-alone paths
     pathPainter = new PathPainter(this, points);
