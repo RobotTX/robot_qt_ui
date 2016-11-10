@@ -9,6 +9,7 @@ CmdRobotWorker::CmdRobotWorker(const QString _ipAddress, const int cmdPort, cons
     metadataPort = _metadataPort;
     robotPort = _robotPort;
     mapPort = _mapPort;
+    timeCounter = 0;
 }
 
 CmdRobotWorker::~CmdRobotWorker(){
@@ -83,8 +84,8 @@ void CmdRobotWorker::connectedSlot(){
     }
 
     timer = new QTimer(this);
-    timer->setInterval(10000);
-    connect(timer, SIGNAL(timeout()), this, SLOT(isDeadSlot()));
+    timer->setInterval(1000);
+    connect(timer, SIGNAL(timeout()), this, SLOT(timerSlot()));
     timer->start();
 }
 
@@ -109,11 +110,13 @@ void CmdRobotWorker::onStateChanged(QAbstractSocket::SocketState socketState ){
 void CmdRobotWorker::pingSlot(){
     qDebug()<< "(Robot" << robotName << ") Received the ping";
     timer->start();
+    timeCounter = 0;
 }
 
-void CmdRobotWorker::isDeadSlot(){
-    qDebug()<< "(Robot" << robotName << ") Did not receive any ping from this robot for 10 seconds";
-    if(socket->isOpen())
+void CmdRobotWorker::timerSlot(){
+    timeCounter++;
+    qDebug()<< "(Robot" << robotName << ") Did not receive any ping from this robot for" << timeCounter << "seconds";
+    if(timeCounter >= 10 && socket->isOpen())
         socket->close();
 }
 

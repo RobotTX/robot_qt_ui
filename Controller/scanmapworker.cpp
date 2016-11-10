@@ -20,7 +20,7 @@ void ScanMapWorker::stopThread(){
 
 
 void ScanMapWorker::connectSocket(){
-    qDebug() << "Map Thread";
+    qDebug() << "(Map Thread) Trying to connect to" << ipAddress << "at port" << port;
 
     socket = QSharedPointer<QTcpSocket>(new QTcpSocket());
 
@@ -31,8 +31,6 @@ void ScanMapWorker::connectSocket(){
     connect(&(*socket), SIGNAL(disconnected()),this, SLOT(disconnectedSlot()));
     connect(&(*socket), SIGNAL(readyRead()), this, SLOT(readTcpDataSlot()));
 
-    /// Connect to the host
-    socket->connectToHost(ipAddress, port);
 
     while(socket->state() != QAbstractSocket::ConnectedState){
         if(socket->state() == QAbstractSocket::UnconnectedState){

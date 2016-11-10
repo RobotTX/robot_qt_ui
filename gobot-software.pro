@@ -61,19 +61,21 @@ HEADERS += \
            View/pathbuttongroup.h \
            View/displaypathgroup.h \
            View/custompushbutton.h \
-    View/stylesettings.h \
-    View/customlabel.h \
-    View/customlineedit.h \
-    View/customrobotdialog.h \
-    Controller/cmdrobotworker.h \
-    Controller/metadataworker.h \
-    Controller/robotpositionworker.h \
-    Controller/sendnewmapworker.h \
-    Controller/scanmapworker.h \
-    zconf.h \
-    zipreader.h \
-    zipwriter.h \
-    zlib.h \
+           View/stylesettings.h \
+           View/customlabel.h \
+           View/customlineedit.h \
+           View/customrobotdialog.h \
+           Controller/cmdrobotworker.h \
+           Controller/metadataworker.h \
+           Controller/robotpositionworker.h \
+           Controller/sendnewmapworker.h \
+           Controller/scanmapworker.h \
+           Controller/commandcontroller.h \
+           View/commandmessagebox.h \
+           zconf.h \
+           zipreader.h \
+           zipwriter.h \
+           zlib.h \
 
 FORMS += Controller/mainwindow.ui
 
@@ -122,15 +124,17 @@ SOURCES += main.cpp \
            View/pathbuttongroup.cpp \
            View/displaypathgroup.cpp \
            View/custompushbutton.cpp \
-    View/customlabel.cpp \
-    View/customlineedit.cpp \
-    View/customrobotdialog.cpp \
-    Controller/cmdrobotworker.cpp \
-    Controller/robotpositionworker.cpp \
-    Controller/metadataworker.cpp \
-    Controller/sendnewmapworker.cpp \
-    Controller/scanmapworker.cpp \
-    zip.cpp
+           View/customlabel.cpp \
+           View/customlineedit.cpp \
+           View/customrobotdialog.cpp \
+           Controller/cmdrobotworker.cpp \
+           Controller/robotpositionworker.cpp \
+           Controller/metadataworker.cpp \
+           Controller/sendnewmapworker.cpp \
+           Controller/scanmapworker.cpp \
+           Controller/commandcontroller.cpp \
+           View/commandmessagebox.cpp \
+           zip.cpp
 
 RESOURCES += Resources/resources.qrc
 

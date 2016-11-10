@@ -28,7 +28,12 @@ bool startRobotPos(gobot_software::Port::Request &req,
 	std::cout << "(Robot Pos) Starting robot_pos_sender" << std::endl;
 	ros::NodeHandle n;
 
-	int robotPort = req.port;	
+	int robotPort = req.port;
+
+	if(socket_robot.is_open())
+		socket_robot.close();
+	if(m_acceptor.is_open())
+		m_acceptor.close();
 
 	socket_robot = tcp::socket(io_service);
 	m_acceptor = tcp::acceptor(io_service, tcp::endpoint(tcp::v4(), robotPort));
