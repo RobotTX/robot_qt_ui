@@ -41,7 +41,7 @@ Robot::Robot(MainWindow* mainWindow, const QSharedPointer<Paths>& _paths, const 
     cmdThread.start();
 
 
-    qDebug() << "Robot" << name << "at ip" << ip << " launching its robot pos thread at port" << PORT_ROBOT_POS;
+    //qDebug() << "Robot" << name << "at ip" << ip << " launching its robot pos thread at port" << PORT_ROBOT_POS;
 
     robotWorker = new RobotPositionWorker(ip, PORT_ROBOT_POS);
     connect(robotWorker, SIGNAL(valueChangedRobot(QString, float, float, float)),
@@ -53,7 +53,7 @@ Robot::Robot(MainWindow* mainWindow, const QSharedPointer<Paths>& _paths, const 
     robotThread.start();
 
 
-    qDebug() << "Robot" << name << "at ip" << ip << " launching its metadata thread at port" << PORT_ROBOT_POS;
+    //qDebug() << "Robot" << name << "at ip" << ip << " launching its metadata thread at port" << PORT_ROBOT_POS;
 
     metadataWorker = new MetadataWorker(ip, PORT_MAP_METADATA);
     connect(metadataWorker, SIGNAL(valueChangedMetadata(int, int, float, float, float)),
@@ -65,7 +65,7 @@ Robot::Robot(MainWindow* mainWindow, const QSharedPointer<Paths>& _paths, const 
     metadataThread.start();
 
 
-    qDebug() << "Robot" << name << "at ip" << ip << " launching its new map thread at port" << PORT_NEW_MAP;
+    //qDebug() << "Robot" << name << "at ip" << ip << " launching its new map thread at port" << PORT_NEW_MAP;
 
     newMapWorker = new SendNewMapWorker(ip, PORT_NEW_MAP);
     connect(this, SIGNAL(sendNewMapSignal(QByteArray)), newMapWorker, SLOT(writeTcpDataSlot(QByteArray)));
