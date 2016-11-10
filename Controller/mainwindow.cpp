@@ -4804,8 +4804,7 @@ void MainWindow::settingBtnSlot(){
         robotIsDeadSlot(robots->getRobotsVector().at(0)->getRobot()->getName(), robots->getRobotsVector().at(0)->getRobot()->getIp());
     }
 */
-    //const QString ZipFile(QString(DESKTOP_PATH) + QString("map.zip"));
-    const QString ZipFile(QString("C:\\Users\\User\\Desktop\\map.zip"));
+    const QString ZipFile(QStandardPaths::writableLocation(QStandardPaths::DesktopLocation) + QDir::separator() + QString("map.zip"));
     compress(ZipFile);
     decompress(ZipFile);
 }
@@ -4964,8 +4963,7 @@ void MainWindow::savePoints(const QString fileName){
 
 void MainWindow::compress(const QString zipFile){
     ZipWriter cZip(zipFile);
-    //const QString SingleFile = QString(DESKTOP_PATH) + QString("lolilol.pgm");
-    const QString SingleFile = QString("C:\\Users\\User\\Desktop\\lolilol.pgm");
+    const QString SingleFile = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation) + QDir::separator() + QString("lolilol.pgm");
     QFile file(SingleFile);
     file.open(QIODevice::ReadOnly);
     qDebug() << file.isOpen();
@@ -4976,15 +4974,10 @@ void MainWindow::compress(const QString zipFile){
 
 void MainWindow::decompress(const QString fileName){
     ZipReader cZip(fileName);
-    foreach(ZipReader::FileInfo item, cZip.fileInfoList())
-        qDebug() << item.filePath;
-
     ZipReader::FileInfo fInfo = cZip.entryInfoAt(0);
-    //QFile file(QString(DESKTOP_PATH) + QString("lolilol2.pgm"));
-    QFile file(QString("C:\\Users\\User\\Desktop\\lolilol2.pgm"));
+    QFile file(QStandardPaths::writableLocation(QStandardPaths::DesktopLocation) + QDir::separator() + QString("lolilol2.pgm"));
     file.open(QIODevice::WriteOnly);
     file.write(cZip.fileData(fInfo.filePath));
-
     file.close();
     cZip.close();
 }
