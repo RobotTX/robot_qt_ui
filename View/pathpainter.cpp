@@ -126,9 +126,13 @@ void PathPainter::deletePathPointSlot(int id){
     /// Remove the item from the model
     currentPath.remove(id);
     points->getGroups()->value(PATH_GROUP_NAME)->remove(id);
+
+    /// updates the tooltips
+    updateCurrentPath();
+
     visiblePath = "";
 
-    /// Update the path painter
+    /// Updates the path painter
     updatePathPainterSlot(false);
 }
 
@@ -156,15 +160,29 @@ void PathPainter::actionChangedSlot(int id, int action, QString waitTimeStr){
     int waitTime = waitTimeStr.toInt();
     currentPath.at(id)->setAction(static_cast<PathPoint::Action>(action));
     currentPath.at(id)->setWaitTime(waitTime);
-
-    displayPath();
 }
 
 void PathPainter::updateCurrentPath(void){
-    for(int i = 0; i < currentPath.size(); i++)
+    qDebug() << "updatecurrentpath called";
+    /// to update correctly the tooltips of path points which are not permanent points
+    /// for example if one point is deleted or if a point which used to be traversed twice is now only used once
+    unsigned int number(1);
+    for(int i = 0; i < currentPath.size(); i++){
         currentPath.at(i)->setPoint(*(points->getGroups()->value(PATH_GROUP_NAME)->at(i)->getPoint()));
-
-    displayPath();
+        if(currentPath.at(i)->getPoint().getName().contains("PathPoint")){
+            /// updates the name of the points of the path known to the path painter
+            currentPath.at(i)->getPoint().setName("PathPoint" + QString::number(number));
+            /// updates the name of the points inside the model in order to be consistent with the path
+            points->findPathPointView(currentPath.at(i)->getPoint().getPosition().getX(),
+                                      currentPath.at(i)->getPoint().getPosition().getY())
+                    ->getPoint()->setName("PathPoint" + QString::number(number));
+            /// updates the tooltips using the updated names
+            points->findPathPointView(currentPath.at(i)->getPoint().getPosition().getX(),
+                                      currentPath.at(i)->getPoint().getPosition().getY())
+                    ->setToolTip("PathPoint" + QString::number(number));
+            number++;
+        }
+    }
 }
 
 void PathPainter::updatePathPainterSlot(const bool savePath /* to deal with pv selected after save */){

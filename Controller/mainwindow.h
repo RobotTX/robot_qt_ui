@@ -26,6 +26,9 @@ class GroupsPathsWidget;
 class QMoveEvent;
 class CommandController;
 
+#include "zipreader.h"
+#include "zipwriter.h"
+
 #include "Model/paths.h"
 #include "View/createpointwidget.h"
 #include "View/toplayout.h"
@@ -35,16 +38,16 @@ class CommandController;
 #include <QModelIndex>
 #include "Model/graphicitemstate.h"
 #include <QPair>
-#include "Model/origin.h"
 #include <QMessageBox>
 #include "Model/point.h"
 #include <QSettings>
 #include <QThread>
 
+//#define DESKTOP_PATH "/home/m-a/Desktop/"
+//#define GOBOT_PATH "/home/m-a/Documents/QtProject/gobot-software/"
 
-#define GOBOT_PATH "/home/m-a/Documents/QtProject/gobot-software/"
-//#define GOBOT_PATH "/home/joan/Gobot/gobot-software/"
-//#define GOBOT_PATH "/home/gtdollar/gobot-software/"
+#define DESKTOP_PATH "/home/joan/Desktop/"
+#define GOBOT_PATH "/home/joan/Gobot/gobot-software/"
 
 #define XML_FILE "points.xml"
 #define ROBOTS_NAME_FILE "robotsName.dat"
@@ -106,6 +109,9 @@ public:
     void showSelectedRobotHomeOnly();
     void updateModelPaths(const Point &old_point, const Point &new_point);
     bool sendHomeToRobot(RobotView* robot, QSharedPointer<PointView> home);
+
+    void compress(const QString zipFile);
+    void decompress(const QString fileName);
 
 signals:
     void nameChanged(QString, QString);
