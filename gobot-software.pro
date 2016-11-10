@@ -142,7 +142,7 @@ DISTFILES += README \
     Resources/gtrobot-1.pgm \
     Resources/gtrobot-1.pgm.pgm
 
-ZLIBCODEDIR = "/home/joan/Gobot/QtZipTest/zlib"
+ZLIBCODEDIR = "$$PWD/QtZipTest/zlib"
 
 INCLUDEPATH += $$ZLIBCODEDIR
 
