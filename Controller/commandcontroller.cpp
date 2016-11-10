@@ -4,12 +4,9 @@
 #include "Controller/mainwindow.h"
 #include <QFile>
 
-CommandController::CommandController(QWidget *parent) : QObject(parent){
-    messageBox = new CommandMessageBox(parent);
+CommandController::CommandController(QWidget *parent) : QObject(parent), messageBox(new CommandMessageBox(parent)), robotName(""){
     messageBox->setWindowTitle("Processing a command");
     connect(messageBox, SIGNAL(hideBox()), this, SLOT(userStopped()));
-
-    robotName = "";
 }
 
 bool CommandController::sendCommand(Robot* robot, QString cmd){
