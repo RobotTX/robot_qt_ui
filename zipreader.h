@@ -42,28 +42,13 @@
 #ifndef ZipReader_H
 #define ZipReader_H
 
-#ifndef QT_NO_TEXTODFWRITER
-
-//
-//  W A R N I N G
-//  -------------
-//
-// This file is not part of the Qt API.  It exists for the convenience
-// of the ZipReader class.  This header file may change from
-// version to version without notice, or even be removed.
-//
-// We mean it.
-//
-
 #include <QtCore/qdatetime.h>
 #include <QtCore/qfile.h>
 #include <QtCore/qstring.h>
 
-QT_BEGIN_NAMESPACE
-
 class ZipReaderPrivate;
 
-class Q_GUI_EXPORT ZipReader
+class ZipReader
 {
 public:
     ZipReader(const QString &fileName, QIODevice::OpenMode mode = QIODevice::ReadOnly );
@@ -76,7 +61,7 @@ public:
     bool isReadable() const;
     bool exists() const;
 
-    struct Q_GUI_EXPORT FileInfo
+    struct FileInfo
     {
         FileInfo();
         FileInfo(const FileInfo &other);
@@ -118,7 +103,4 @@ private:
     Q_DISABLE_COPY(ZipReader)
 };
 
-QT_END_NAMESPACE
-
-#endif // QT_NO_TEXTODFWRITER
 #endif // ZipReader_H

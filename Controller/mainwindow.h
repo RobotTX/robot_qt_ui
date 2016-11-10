@@ -37,7 +37,6 @@ class QMoveEvent;
 #include <QModelIndex>
 #include "Model/graphicitemstate.h"
 #include <QPair>
-#include "Model/origin.h"
 #include <QMessageBox>
 #include "Model/point.h"
 #include <QSettings>

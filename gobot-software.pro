@@ -50,7 +50,6 @@ HEADERS += \
            View/spacewidget.h \
            View/toplayout.h \
            View/topleftmenu.h \
-           Model/origin.h \
            Controller/updaterobotsthread.h \
            View/createpointwidget.h \
            View/customscrollarea.h \

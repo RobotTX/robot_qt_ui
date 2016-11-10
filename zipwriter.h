@@ -40,18 +40,6 @@
 ****************************************************************************/
 #ifndef ZipWriter_H
 #define ZipWriter_H
-#ifndef QT_NO_TEXTODFWRITER
-
-//
-//  W A R N I N G
-//  -------------
-//
-// This file is not part of the Qt API.  It exists for the convenience
-// of the ZipWriter class.  This header file may change from
-// version to version without notice, or even be removed.
-//
-// We mean it.
-//
 
 #include <QtCore/qstring.h>
 #include <QtCore/qfile.h>
@@ -61,7 +49,7 @@ QT_BEGIN_NAMESPACE
 class ZipWriterPrivate;
 
 
-class Q_GUI_EXPORT ZipWriter
+class ZipWriter
 {
 public:
     ZipWriter(const QString &fileName, QIODevice::OpenMode mode = (QIODevice::WriteOnly | QIODevice::Truncate) );
@@ -110,7 +98,4 @@ private:
     Q_DISABLE_COPY(ZipWriter)
 };
 
-QT_END_NAMESPACE
-
-#endif // QT_NO_TEXTODFWRITER
 #endif // ZipWriter_H
