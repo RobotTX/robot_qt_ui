@@ -53,7 +53,7 @@
 #include <QStringList>
 #include "Controller/commandcontroller.h"
 
-MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow) {
+MainWindow::MainWindow(QSettings *_settings, QWidget *parent) : settings(_settings), QMainWindow(parent), ui(new Ui::MainWindow) {
     ui->setupUi(this);
 
     /// centers the msgBox on the middle of the screen
