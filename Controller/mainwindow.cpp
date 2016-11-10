@@ -4810,9 +4810,8 @@ void MainWindow::centerMap(){
 void MainWindow::settingBtnSlot(){
 
     //qDebug() << "MainWindow::settingBtnSlot called";
-    robotWaitForAnswer("Title", "This is the core message");
-    JlCompress::compressFile("/home/joan/Desktop/testMap.zip", "/home/joan/Desktop/testMap.pgm");
-    JlCompress::extractDir("/home/joan/Desktop/testMap.zip", "/home/joan/Desktop");
+    //robotWaitForAnswer("Title", "This is the core message");
+
 
 /*
     qDebug() << "MainWindow::settingBtnSlot called";
@@ -4821,6 +4820,9 @@ void MainWindow::settingBtnSlot(){
         robotIsDeadSlot(robots->getRobotsVector().at(0)->getRobot()->getName(), robots->getRobotsVector().at(0)->getRobot()->getIp());
     }
 */
+    const QString ZipFile("/home/joan/Desktop/map.zip");
+    compress(ZipFile);
+    decompress(ZipFile);
 }
 
 void MainWindow::setTemporaryMessageTop(const QString type, const QString message, const int ms){
@@ -4973,4 +4975,28 @@ void MainWindow::initRobotCommandBox(void){
 void MainWindow::savePoints(const QString fileName){
     XMLParser parser(fileName);
     parser.save(*points);
+}
+
+void MainWindow::compress(const QString zipFile){
+    ZipWriter cZip(zipFile);
+    const QString SingleFile = "/home/joan/Desktop/lolilol.pgm";
+    QFile file(SingleFile);
+    file.open(QIODevice::ReadOnly);
+    cZip.addFile("test.pgm", file.readAll());
+    file.close();
+    cZip.close();
+}
+
+void MainWindow::decompress(const QString fileName){
+    ZipReader cZip(fileName);
+    foreach(ZipReader::FileInfo item, cZip.fileInfoList())
+        qDebug() << item.filePath;
+
+    ZipReader::FileInfo fInfo = cZip.entryInfoAt(0);
+    QFile file("/home/joan/Desktop/lolilol2.pgm");
+    file.open(QIODevice::WriteOnly);
+    file.write(cZip.fileData(fInfo.filePath));
+
+    file.close();
+    cZip.close();
 }

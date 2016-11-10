@@ -25,7 +25,8 @@ class CustomPushButton;
 class GroupsPathsWidget;
 class QMoveEvent;
 
-#include <JlCompress.h>
+#include "QtZipTest/zipreader.h"
+#include "QtZipTest/zipwriter.h"
 
 #include "Model/paths.h"
 #include "View/createpointwidget.h"
@@ -42,8 +43,8 @@ class QMoveEvent;
 #include <QSettings>
 #include <QThread>
 
-#define GOBOT_PATH "/home/m-a/Documents/QtProject/gobot-software/"
-//#define GOBOT_PATH "/home/joan/Gobot/gobot-software/"
+//#define GOBOT_PATH "/home/m-a/Documents/QtProject/gobot-software/"
+#define GOBOT_PATH "/home/joan/Gobot/gobot-software/"
 //#define GOBOT_PATH "/home/gtdollar/gobot-software/"
 
 #define XML_FILE "points.xml"
@@ -108,6 +109,9 @@ public:
     void robotWaitForAnswer(QString title, QString msg);
     bool sendCommand(Robot* robotView, QString cmd);
     void initRobotCommandBox(void);
+
+    void compress(const QString zipFile);
+    void decompress(const QString fileName);
 
 signals:
     //void sendCommand(QString);

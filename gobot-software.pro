@@ -70,7 +70,11 @@ HEADERS += \
     Controller/metadataworker.h \
     Controller/robotpositionworker.h \
     Controller/sendnewmapworker.h \
-    Controller/scanmapworker.h
+    Controller/scanmapworker.h \
+    zconf.h \
+    zipreader.h \
+    zipwriter.h \
+    zlib.h \
 
 FORMS += Controller/mainwindow.ui
 
@@ -126,7 +130,8 @@ SOURCES += main.cpp \
     Controller/robotpositionworker.cpp \
     Controller/metadataworker.cpp \
     Controller/sendnewmapworker.cpp \
-    Controller/scanmapworker.cpp
+    Controller/scanmapworker.cpp \
+    zip.cpp
 
 RESOURCES += Resources/resources.qrc
 
@@ -137,15 +142,16 @@ DISTFILES += README \
     Resources/gtrobot-1.pgm \
     Resources/gtrobot-1.pgm.pgm
 
-QUAZIPCODEDIR = "/home/joan/Qt/quazip-0.7/quazip"
-ZLIBCODEDIR = "/home/joan/Qt/zlib-1.2.8"
-LIBDIR = "home/joan/Qt/Libs"
+ZLIBCODEDIR = "/home/joan/Gobot/QtZipTest/zlib"
 
-#include the compiled code from the libs for linking
-LIBS += -L$${LIBDIR} -lquazip
-LIBS += -L$${LIBDIR} -lz
+INCLUDEPATH += $$ZLIBCODEDIR
 
-INCLUDEPATH += $${LIBDIR}
-INCLUDEPATH += $${QUAZIPCODEDIR}
+unix {
+    LIBS += -L$${ZLIBCODEDIR} -lz
+}
 
-HEADERS += $${QUAZIPCODEDIR}/*.h
+win32 {
+    LIBS += -L$${ZLIBCODEDIR}/Windows -lzdll
+}
+
+
