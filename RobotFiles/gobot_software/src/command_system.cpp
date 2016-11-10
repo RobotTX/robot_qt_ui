@@ -112,16 +112,13 @@ bool execCommand(ros::NodeHandle n, std::vector<std::string> command){
 		/// Command for the robot to start to scan the map
 		case 'e':
 			std::cout << "(Command system) Gobot scan the map" << std::endl;
-			startMap(n);
-			return true;
-
+			return startMap(n);
 		break;
 
 		/// Command for the robot to stop to scan the map
 		case 'f':
 			std::cout << "(Command system) Gobot stop scanning the map" << std::endl;
-			stopMap();
-			return true;
+			return stopMap();
 		break;
 
 		/// Command for the robot to receive the map
@@ -346,7 +343,7 @@ void stopMetadata(){
 	
 }
 
-void startMap(ros::NodeHandle n){
+bool startMap(ros::NodeHandle n){
 	std::cout << "(Command system) Launching the service to get the map" << std::endl;
 
 	gobot_software::Port srv;
@@ -354,18 +351,22 @@ void startMap(ros::NodeHandle n){
 
 	if (startMapClient.call(srv)) {
 		std::cout << "(Command system) start_map_sender service started" << std::endl;
+		return true;
 	} else {
 		std::cerr << "(Command system) Failed to call service start_map_sender" << std::endl;
+		return false;
 	}
 }
 
-void stopMap(){
+bool stopMap(){
 	gobot_software::Port srv;
 
 	if (stopMapClient.call(srv)) {
 		std::cout << "(Command system) stop_map_sender service started" << std::endl;
+		return true;
 	} else {
 		std::cerr << "(Command system) Failed to call service stop_map_sender" << std::endl;
+		return false;
 	}
 }
 

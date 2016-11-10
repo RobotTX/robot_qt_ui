@@ -65,7 +65,7 @@ private slots:
      */
     void sendCommand(const QString cmd);
     void pingSlot();
-    void isDeadSlot();
+    void timerSlot();
     void stopCmdRobotWorkerSlot();
 
 private :
@@ -79,6 +79,7 @@ private :
     int mapPort;
     bool stop;
     QTimer* timer;
+    int timeCounter;
 };
 
 #endif // CMDROBOTWORKER_H

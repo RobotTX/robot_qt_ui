@@ -70,7 +70,9 @@ HEADERS += \
     Controller/metadataworker.h \
     Controller/robotpositionworker.h \
     Controller/sendnewmapworker.h \
-    Controller/scanmapworker.h
+    Controller/scanmapworker.h \
+    Controller/commandcontroller.h \
+    View/commandmessagebox.h
 
 FORMS += Controller/mainwindow.ui
 
@@ -126,7 +128,9 @@ SOURCES += main.cpp \
     Controller/robotpositionworker.cpp \
     Controller/metadataworker.cpp \
     Controller/sendnewmapworker.cpp \
-    Controller/scanmapworker.cpp
+    Controller/scanmapworker.cpp \
+    Controller/commandcontroller.cpp \
+    View/commandmessagebox.cpp
 
 RESOURCES += Resources/resources.qrc
 

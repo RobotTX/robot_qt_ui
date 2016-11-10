@@ -24,6 +24,7 @@ class PathPainter;
 class CustomPushButton;
 class GroupsPathsWidget;
 class QMoveEvent;
+class CommandController;
 
 #include "Model/paths.h"
 #include "View/createpointwidget.h"
@@ -39,6 +40,7 @@ class QMoveEvent;
 #include "Model/point.h"
 #include <QSettings>
 #include <QThread>
+
 
 #define GOBOT_PATH "/home/m-a/Documents/QtProject/gobot-software/"
 //#define GOBOT_PATH "/home/joan/Gobot/gobot-software/"
@@ -74,6 +76,7 @@ public:
     QSharedPointer<Points> getPoints(void) const { return points; }
     QList<QPair<QPair<QWidget*, QString>, MainWindow::WidgetType>> getLastWidgets() const { return lastWidgets; }
     PathPainter* getPathPainter(void) const { return pathPainter; }
+    CommandController* getCommandController() const { return commandController; }
 
     void initializeMenu();
     void initializeRobots();
@@ -90,7 +93,7 @@ public:
     void resetFocus();
     void switchFocus(const QString name, QWidget* widget, const WidgetType type);
     /// to sleep for ms milliseconds
-    void delay(const int ms) const;
+    static void delay(const int ms);
     void setTemporaryMessageTop(const QString type, const QString message, const int ms);
     void updateAllPaths(const Point &old_point, const Point &new_point);
     void clearPath(const int robotNb);
@@ -103,12 +106,8 @@ public:
     void showSelectedRobotHomeOnly();
     void updateModelPaths(const Point &old_point, const Point &new_point);
     bool sendHomeToRobot(RobotView* robot, QSharedPointer<PointView> home);
-    void robotWaitForAnswer(QString title, QString msg);
-    bool sendCommand(Robot* robotView, QString cmd);
-    void initRobotCommandBox(void);
 
 signals:
-    //void sendCommand(QString);
     void nameChanged(QString, QString);
     void changeCmdThreadRobotName(QString);
     void addPathPoint(QString name, double x, double y);
@@ -214,7 +213,6 @@ private slots:
     void robotIsDeadSlot(QString hostname, QString ip);
     void selectViewRobot();
     void sendNewMapToRobots(QString ipAddress);
-    void sendNewMapToRobot(Robot* robot, QString mapId);
     void settingBtnSlot();
     void updatePathPainterPointViewSlot();
     void stopPath(int robotNb);
@@ -252,7 +250,6 @@ private slots:
     void messageMapSaved(bool status);
     void saveMapBtnEvent();
     void loadMapBtnEvent();
-    void cmdAnswerSlot(QString);
 
 protected:
     void moveEvent(QMoveEvent* event);
@@ -299,8 +296,7 @@ private:
 
     QSharedPointer<Paths> paths;
     QSettings settings;
-    QMessageBox* robotCommandBox;
-    QString cmdAnswer;
+    CommandController* commandController;
 };
 
 #endif // MAINWINDOW_H

@@ -9,9 +9,11 @@ tcp::acceptor m_acceptor(io_service);
 
 
 void sendMetaData(const std::string& metadata_string){
+	//std::cout << "(Map Metadata) Trying to send map_metadata : " << metadata_string << std::endl;
 	try {
 		boost::system::error_code ignored_error;
-		boost::asio::write(socket_meta, boost::asio::buffer(metadata_string, metadata_string.length()), boost::asio::transfer_all(), ignored_error);
+		int sizeSent = boost::asio::write(socket_meta, boost::asio::buffer(metadata_string, metadata_string.length()), boost::asio::transfer_all(), ignored_error);
+		//std::cout << "(Map Metadata) Sent metadata of size :" << sizeSent << std::endl;
 	} catch (std::exception& e) {
 		std::cerr << "(Map Metadata) " << e.what() << std::endl;
 	}
@@ -30,6 +32,10 @@ bool startMeta(gobot_software::Port::Request &req,
 
 	int metaPort = req.port;	
 
+	if(socket_meta.is_open())
+		socket_meta.close();
+	if(m_acceptor.is_open())
+		m_acceptor.close();
 
 	socket_meta = tcp::socket(io_service);
 	m_acceptor = tcp::acceptor(io_service, tcp::endpoint(tcp::v4(), metaPort));

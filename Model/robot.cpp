@@ -8,6 +8,7 @@
 #include "Controller/mainwindow.h"
 #include <iostream>
 #include <QFile>
+#include "Controller/commandcontroller.h"
 
 
 Robot::Robot(MainWindow* mainWindow, const QSharedPointer<Paths>& _paths, const QString _name, const QString _ip) : QObject(mainWindow), paths(_paths), name(_name), ip(_ip), position(Position()),
@@ -23,13 +24,13 @@ Robot::Robot(MainWindow* mainWindow, const QSharedPointer<Paths>& _paths, const 
         robotPathFile.close();
     }
 
-    connect(this, SIGNAL(cmdAnswer(QString)), mainWindow, SLOT(cmdAnswerSlot(QString)));
+    connect(this, SIGNAL(cmdAnswer(QString)), mainWindow->getCommandController(), SLOT(cmdAnswerSlot(QString)));
 
     qDebug() << "Robot" << name << "at ip" << ip << " launching its cmd thread";
 
     cmdRobotWorker = new CmdRobotWorker(ip, PORT_CMD, PORT_MAP_METADATA, PORT_ROBOT_POS, PORT_MAP, name);
     connect(cmdRobotWorker, SIGNAL(robotIsDead(QString,QString)), mainWindow, SLOT(robotIsDeadSlot(QString,QString)));
-    connect(cmdRobotWorker, SIGNAL(cmdAnswer(QString)), mainWindow, SLOT(cmdAnswerSlot(QString)));
+    connect(cmdRobotWorker, SIGNAL(cmdAnswer(QString)), mainWindow->getCommandController(), SLOT(cmdAnswerSlot(QString)));
     connect(cmdRobotWorker, SIGNAL(portSent()), this, SLOT(portSentSlot()));
     connect(this, SIGNAL(sendCommandSignal(QString)), cmdRobotWorker, SLOT(sendCommand(QString)));
     connect(this, SIGNAL(pingSignal()), cmdRobotWorker, SLOT(pingSlot()));
@@ -69,10 +70,10 @@ Robot::Robot(MainWindow* mainWindow, const QSharedPointer<Paths>& _paths, const 
 
     newMapWorker = new SendNewMapWorker(ip, PORT_NEW_MAP);
     connect(this, SIGNAL(sendNewMapSignal(QByteArray)), newMapWorker, SLOT(writeTcpDataSlot(QByteArray)));
-    connect(this, SIGNAL(cmdAnswer(QString)), mainWindow, SLOT(cmdAnswerSlot(QString)));
+    connect(this, SIGNAL(cmdAnswer(QString)), mainWindow->getCommandController(), SLOT(cmdAnswerSlot(QString)));
     connect(newMapWorker, SIGNAL(doneSendingNewMapSignal()), this, SLOT(doneSendingMapSlot()));
     connect(this, SIGNAL(stopNewMapWorker()), newMapWorker, SLOT(stopThread()));
-    connect(this, SIGNAL(startNewMapWorker()), metadataWorker, SLOT(connectSocket()));
+    connect(this, SIGNAL(startNewMapWorker()), newMapWorker, SLOT(connectSocket()));
     connect(&newMapThread, SIGNAL(finished()), newMapWorker, SLOT(deleteLater()));
     newMapWorker->moveToThread(&newMapThread);
     newMapThread.start();

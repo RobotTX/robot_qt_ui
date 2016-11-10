@@ -125,8 +125,11 @@ bool stopMap(gobot_software::Port::Request &req,
 
 	std::cout << "(Map) Waiting to send the last map" << std::endl;
 	lastMap = true;
+	
+    ros::Rate r(10);
 	while(ros::ok() && lastMap){
 		ros::spinOnce();
+        r.sleep();
 	}
 
 	std::cout << "(Map) Stopping map_sender" << std::endl;
