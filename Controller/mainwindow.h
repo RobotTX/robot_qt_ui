@@ -25,8 +25,8 @@ class CustomPushButton;
 class GroupsPathsWidget;
 class QMoveEvent;
 
-#include "QtZipTest/zipreader.h"
-#include "QtZipTest/zipwriter.h"
+#include "zipreader.h"
+#include "zipwriter.h"
 
 #include "Model/paths.h"
 #include "View/createpointwidget.h"
@@ -43,6 +43,8 @@ class QMoveEvent;
 #include <QSettings>
 #include <QThread>
 
+//#define DESKTOP_PATH "/home/m-a/Desktop/"
+#define DESKTOP_PATH "/home/joan/Desktop/"
 //#define GOBOT_PATH "/home/m-a/Documents/QtProject/gobot-software/"
 #define GOBOT_PATH "/home/joan/Gobot/gobot-software/"
 //#define GOBOT_PATH "/home/gtdollar/gobot-software/"

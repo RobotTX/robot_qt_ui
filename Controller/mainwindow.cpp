@@ -289,15 +289,15 @@ void MainWindow::initializeRobots(){
     robots->setRobotsNameMap(tmp);
     fileRead.close();
 
-
+/*
     updateRobotsThread = new UpdateRobotsThread(PORT_ROBOT_UPDATE);
     connect(updateRobotsThread, SIGNAL(robotIsAlive(QString, QString, QString, QString, int)), this, SLOT(robotIsAliveSlot(QString, QString, QString, QString, int)));
     connect(this, SIGNAL(stopUpdateRobotsThread()), updateRobotsThread, SLOT(stopThread()));
     updateRobotsThread->start();
     updateRobotsThread->moveToThread(updateRobotsThread);
+*/
 
 
-/*
     QFile fileWrite(QString(GOBOT_PATH) + QString(ROBOTS_NAME_FILE));
     fileWrite.resize(0);
     fileWrite.open(QIODevice::WriteOnly);
@@ -353,7 +353,7 @@ void MainWindow::initializeRobots(){
             robotPathFile.close();
         }
     }
-*/
+
 
 
     //qDebug() << "RobotsNameMap on init" << robots->getRobotsNameMap();
@@ -4820,7 +4820,7 @@ void MainWindow::settingBtnSlot(){
         robotIsDeadSlot(robots->getRobotsVector().at(0)->getRobot()->getName(), robots->getRobotsVector().at(0)->getRobot()->getIp());
     }
 */
-    const QString ZipFile("/home/joan/Desktop/map.zip");
+    const QString ZipFile(QString(DESKTOP_PATH) + QString("map.zip"));
     compress(ZipFile);
     decompress(ZipFile);
 }
@@ -4979,7 +4979,7 @@ void MainWindow::savePoints(const QString fileName){
 
 void MainWindow::compress(const QString zipFile){
     ZipWriter cZip(zipFile);
-    const QString SingleFile = "/home/joan/Desktop/lolilol.pgm";
+    const QString SingleFile = QString(DESKTOP_PATH) + QString("lolilol.pgm");
     QFile file(SingleFile);
     file.open(QIODevice::ReadOnly);
     cZip.addFile("test.pgm", file.readAll());
@@ -4993,7 +4993,7 @@ void MainWindow::decompress(const QString fileName){
         qDebug() << item.filePath;
 
     ZipReader::FileInfo fInfo = cZip.entryInfoAt(0);
-    QFile file("/home/joan/Desktop/lolilol2.pgm");
+    QFile file(QString(DESKTOP_PATH) + QString("lolilol2.pgm"));
     file.open(QIODevice::WriteOnly);
     file.write(cZip.fileData(fInfo.filePath));
 
