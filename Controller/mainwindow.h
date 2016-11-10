@@ -70,7 +70,7 @@ class MainWindow : public QMainWindow{
     Q_OBJECT
 
 public:
-    explicit MainWindow(QWidget *parent = 0);
+    explicit MainWindow(QSettings* _settings, QWidget *parent = 0);
     ~MainWindow();
 
     enum WidgetType { MENU, GROUPS, GROUP, POINT, ROBOTS, ROBOT , MAP, GROUPS_PATHS, GROUP_OF_PATHS, PATH };
