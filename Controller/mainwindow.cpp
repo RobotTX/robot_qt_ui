@@ -114,9 +114,13 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
     qDebug() << "Settings file" << settings.fileName();
 
+    QDir::setCurrent(QDir::currentPath() + "/Configuration");
+
     initializePaths();
 
     initializePoints();
+
+
 
     /// to draw stand-alone paths
     pathPainter = new PathPainter(this, points);
@@ -927,7 +931,7 @@ void MainWindow::robotSavedEvent(){
                         points->addPoint(NO_GROUP_NAME, points->getGroups()->value(TMP_GROUP_NAME)->takeFirst());
                         points->addTmpPoint();
 
-                        XMLParser parserPoints(QString(GOBOT_PATH) + QString(XML_FILE));
+                        XMLParser parserPoints(QDir::currentPath());
                         parserPoints.save(*points);
                         done = true;
                         setMessageTop(TEXT_COLOR_SUCCESS, selectedRobot->getRobot()->getName() + " successfully saved its home point");
@@ -946,7 +950,7 @@ void MainWindow::robotSavedEvent(){
                         QString cmd2 = answerList2.at(0);
                         bool success2 = (answerList2.at(1).compare("done") == 0);
                         if((cmd2.compare("n") == 0 && success2) || answerList2.at(0).compare("1") == 0){
-                            XMLParser parserPoints(QString(GOBOT_PATH) + QString(XML_FILE));
+                            XMLParser parserPoints(QDir::currentPath());
                             parserPoints.save(*points);
                             done = true;
 
@@ -1265,7 +1269,7 @@ void MainWindow::savePathSlot(){
     leftMenu->getPathGroupDisplayed()->setPathsGroup(pathCreationWidget->getCurrentGroupName());
 
     /// add this path to the file
-    serializePaths(QString(GOBOT_PATH) + QString(PATHS_FILE));
+    serializePaths(QDir::currentPath() + QString("/paths.dat"));
 
     leftMenu->getDisplaySelectedPath()->updatePath(pathCreationWidget->getCurrentGroupName(),
                                                    pathCreationWidget->getNameEdit()->text().simplified(),
@@ -1777,9 +1781,9 @@ void MainWindow::setNewHome(QString homeName){
     if(home->getPoint()->setHome(Point::PointType::HOME)){
 
         if(sendHomeToRobot(selectedRobot, home)){
-            savePoints(QString(GOBOT_PATH) + QString(XML_FILE));
+            savePoints(QDir::currentPath() + QString("/points.xml"));
             /*
-            XMLParser parserPoints(QString(GOBOT_PATH) + QString(XML_FILE));
+            XMLParser parserPoints(QDir::currentPath());
             parserPoints.save(*points);
             */
             /// associates the robot to the point
@@ -1818,7 +1822,7 @@ void MainWindow::setNewHome(QString homeName){
                 QString cmd2 = answerList2.at(0);
                 bool success2 = (answerList2.at(1).compare("done") == 0);
                 if((cmd2.compare("n") == 0 && success2) || answerList2.at(0).compare("1") == 0){
-                    XMLParser parserPoints(QString(GOBOT_PATH) + QString(XML_FILE));
+                    XMLParser parserPoints(QDir::currentPath());
                     parserPoints.save(*points);
 
                     /// associates the robot to the point
@@ -1934,6 +1938,7 @@ void MainWindow::saveMapBtnEvent(){
     /// saves the current configuration for the paths (this configuration will be associated to the map
     /// when you load the map in the future
     serializePaths(pathsFile);
+
 }
 
 void MainWindow::loadMapBtnEvent(){
@@ -1995,14 +2000,14 @@ void MainWindow::loadMapBtnEvent(){
     /// imports points associated to the map and save them in the current file
     XMLParser parser(fileName + "_points.xml");
     parser.readPoints(points);
-    savePoints(QString(GOBOT_PATH) + QString(XML_FILE));
+    savePoints(QDir::currentPath() + QString("/points.xml"));
 
     /// updates the group box so that new points can be added
     createPointWidget->updateGroupBox();
 
     /// imports paths associated to the map and save them in the current file
     deserializePaths(fileName + "_paths.dat");
-    serializePaths(QString(GOBOT_PATH) + QString(PATHS_FILE));
+    serializePaths(QDir::currentPath() + QString("/paths.dat"));
 
     /// updates the groups of paths menu using the paths that have just been imported
     leftMenu->getGroupsPathsWidget()->updateGroupsPaths();
@@ -2072,7 +2077,7 @@ void MainWindow::closeSlot(){
 void MainWindow::initializePoints(){
     //qDebug() << "initializePoints called";
     /// retrieves the points from the xml file and stores them in the model
-    QString fileName = QString(GOBOT_PATH) + QString(XML_FILE);
+    QString fileName = QDir::currentPath() + QString("/points.xml");
     XMLParser pParser(fileName);
     qDebug() << "initializing points from" << fileName;
     pParser.readPoints(points);
@@ -2455,10 +2460,10 @@ void MainWindow::pointSavedEvent(QString groupName, double x, double y, QString 
 
     /// saves it to the file
     /*
-     * XMLParser parser(QString(GOBOT_PATH) + QString(XML_FILE));
+     * XMLParser parser(QDir::currentPath());
     parser.save(*points);
     */
-    savePoints(QString(GOBOT_PATH) + QString(XML_FILE));
+    savePoints(QDir::currentPath() + "/points.xml");
 
     /// updates the menu
     pointsLeftWidget->updateGroupButtonGroup();
@@ -2500,10 +2505,10 @@ void MainWindow::askForDeleteDefaultGroupPointConfirmation(QString pointName){
 
                 /// save changes in the file
                 /*
-                XMLParser parserPoints(QString(GOBOT_PATH) + QString(XML_FILE));
+                XMLParser parserPoints(QDir::currentPath());
                 parserPoints.save(*points);
                 */
-                savePoints(QString(GOBOT_PATH) + QString(XML_FILE));
+                savePoints(QDir::currentPath() + QString("/points.xml"));
 
                 /// updates the menu
                 pointsLeftWidget->getGroupButtonGroup()->updateButtons();
@@ -2566,7 +2571,7 @@ void MainWindow::askForDeletePointConfirmation(QString pointName){
                     leftMenu->getDisplaySelectedGroup()->getPointButtonGroup()->setGroup(pointsLeftWidget->getLastCheckedId());
 
                     /// save the changes to the file
-                    savePoints(QString(GOBOT_PATH) + QString(XML_FILE));
+                    savePoints(QDir::currentPath() + QString("/points.xml"));
 
                     /// makes the buttons checkable again
                     leftMenu->getDisplaySelectedGroup()->getPointButtonGroup()->setCheckable(true);
@@ -2579,9 +2584,9 @@ void MainWindow::askForDeletePointConfirmation(QString pointName){
                             points->removeGroup(pointsLeftWidget->getLastCheckedId());
 
                             /// updates file
-                            savePoints(QString(GOBOT_PATH) + QString(XML_FILE));
+                            savePoints(QDir::currentPath() + QString("/points.xml"));
                             /*
-                            XMLParser parser(QString(GOBOT_PATH) + QString(XML_FILE));
+                            XMLParser parser(QDir::currentPath());
                             parser.save(*points);
                             */
 
@@ -2652,9 +2657,9 @@ void MainWindow::askForDeleteGroupConfirmation(QString groupName){
                 points->removeGroup(groupName);
 
                 /// updates the file
-                savePoints(QString(GOBOT_PATH) + QString(XML_FILE));
+                savePoints(QDir::currentPath() + QString("/points.xml"));
                 /*
-                XMLParser parserPoints(QString(GOBOT_PATH) + QString(XML_FILE));
+                XMLParser parserPoints(QDir::currentPath());
                 parserPoints.save(*points);
                 */
                 /// updates the group box so that the user cannot create a point in this group anymore
@@ -2811,9 +2816,9 @@ void MainWindow::displayGroupMapEvent(void){
 
                     }
                     /// update the file
-                    savePoints(QString(GOBOT_PATH) + QString(XML_FILE));
+                    savePoints(QDir::currentPath() + QString("/points.xml"));
                     /*
-                    XMLParser parserPoints(QString(GOBOT_PATH) + QString(XML_FILE));
+                    XMLParser parserPoints(QDir::currentPath());
                     parserPoints.save(*points);
                     */
                 } else if(points->getGroups()->value(checkedName)->size() == 0) {
@@ -2830,9 +2835,9 @@ void MainWindow::displayGroupMapEvent(void){
                         point->show();
                         point->setPixmap(PointView::PixmapType::SELECTED);
                         /// update the file
-                        savePoints(QString(GOBOT_PATH) + QString(XML_FILE));
+                        savePoints(QDir::currentPath() + QString("/points.xml"));
                         /*
-                        XMLParser parserPoints(QString(GOBOT_PATH) + QString(XML_FILE));
+                        XMLParser parserPoints(QDir::currentPath());
                         parserPoints.save(*points);
                         */
                     }
@@ -2850,9 +2855,9 @@ void MainWindow::displayGroupMapEvent(void){
                 point->hide();
 
                 /// update the file
-                savePoints(QString(GOBOT_PATH) + QString(XML_FILE));
+                savePoints(QDir::currentPath() + QString("/points.xml"));
                 /*
-                XMLParser parserPoints(QString(GOBOT_PATH) + QString(XML_FILE));
+                XMLParser parserPoints(QDir::currentPath());
                 parserPoints.save(*points);
                 */
 
@@ -2865,9 +2870,9 @@ void MainWindow::displayGroupMapEvent(void){
                 point->show();
 
                 /// update the file
-                savePoints(QString(GOBOT_PATH) + QString(XML_FILE));
+                savePoints(QDir::currentPath() + QString("/points.xml"));
                 /*
-                XMLParser parserPoints(QString(GOBOT_PATH) + QString(XML_FILE));
+                XMLParser parserPoints(QDir::currentPath());
                 parserPoints.save(*points);
                 */
 
@@ -2892,9 +2897,9 @@ void MainWindow::displayPointMapEvent(){
             pointView->hide();
 
             /// update the file
-            savePoints(QString(GOBOT_PATH) + QString(XML_FILE));
+            savePoints(QDir::currentPath() + QString("/points.xml"));
             /*
-            XMLParser parserPoints(QString(GOBOT_PATH) + QString(XML_FILE));
+            XMLParser parserPoints(QDir::currentPath());
             parserPoints.save(*points);
             */
             /// we update the group menu
@@ -2916,9 +2921,9 @@ void MainWindow::displayPointMapEvent(){
             pointView->show();
 
             /// update the file
-            savePoints(QString(GOBOT_PATH) + QString(XML_FILE));
+            savePoints(QDir::currentPath() + QString("/points.xml"));
             /*
-            XMLParser parserPoints(QString(GOBOT_PATH) + QString(XML_FILE));
+            XMLParser parserPoints(QDir::currentPath());
             parserPoints.save(*points);
             */
 
@@ -3035,9 +3040,9 @@ void MainWindow::removePointFromInformationMenu(void){
                         points->removePoint(pointName);
 
                         /// updates the file containing containing points info
-                        savePoints(QString(GOBOT_PATH) + QString(XML_FILE));
+                        savePoints(QDir::currentPath() + QString("/points.xml"));
                         /*
-                        XMLParser parserPoints(QString(GOBOT_PATH) + QString(XML_FILE));
+                        XMLParser parserPoints(QDir::currentPath());
                         parserPoints.save(*points);
                         */
                         /// updates the list of points
@@ -3054,10 +3059,10 @@ void MainWindow::removePointFromInformationMenu(void){
 
                         /// updates the file containing containing points info
                         /*
-                        XMLParser parserPoints(QString(GOBOT_PATH) + QString(XML_FILE));
+                        XMLParser parserPoints(QDir::currentPath());
                         parserPoints.save(*points);
                         */
-                        savePoints(QString(GOBOT_PATH) + QString(XML_FILE));
+                        savePoints(QDir::currentPath() + QString("/points.xml"));
                         /// updates the group menu
                         leftMenu->getDisplaySelectedGroup()->getPointButtonGroup()->setGroup(pointsLeftWidget->getLastCheckedId());
 
@@ -3074,9 +3079,9 @@ void MainWindow::removePointFromInformationMenu(void){
                                 points->removeGroup(pointIndexes.first);
 
                                 /// updates file
-                                savePoints(QString(GOBOT_PATH) + QString(XML_FILE));
+                                savePoints(QDir::currentPath() + QString("/points.xml"));
                                 /*
-                                XMLParser parser(QString(GOBOT_PATH) + QString(XML_FILE));
+                                XMLParser parser(QDir::currentPath());
                                 parser.save(*points);
                                 */
                                 /// updates menu
@@ -3146,9 +3151,9 @@ void MainWindow::editPointFromGroupMenu(void){
             displaySelectedPointView->show();
 
             /// update the file
-            savePoints(QString(GOBOT_PATH) + QString(XML_FILE));
+            savePoints(QDir::currentPath() + QString("/points.xml"));
             /*
-            XMLParser parser(QString(GOBOT_PATH) + QString(XML_FILE));
+            XMLParser parser(QDir::currentPath());
             parser.save(*points);
             */
             /// sets the state of the map and the other widgets to prevent other concurrent actions
@@ -3281,9 +3286,9 @@ void MainWindow::updatePoint(void){
 
 
         /// save changes to the file
-        savePoints(QString(GOBOT_PATH) + QString(XML_FILE));
+        savePoints(QDir::currentPath() + QString("/points.xml"));
         /*
-        XMLParser parserPoints(QString(GOBOT_PATH) + QString(XML_FILE));
+        XMLParser parserPoints(QDir::currentPath());
         parserPoints.save(*points);
         */
 
@@ -3463,9 +3468,9 @@ void MainWindow::displayPointFromGroupMenu(){
             leftMenu->getDisplaySelectedGroup()->getPointButtonGroup()->getButtonGroup()->buttons()[checkedId]->setIcon(QIcon(":/icons/space_point.png"));
 
             /// updates the file
-            savePoints(QString(GOBOT_PATH) + QString(XML_FILE));
+            savePoints(QDir::currentPath() + QString("/points.xml"));
             /*
-            XMLParser parserPoints(QString(GOBOT_PATH) + QString(XML_FILE));
+            XMLParser parserPoints(QDir::currentPath());
             parserPoints.save(*points);
             */
             /// if the entire group was displayed it is not the case anymore
@@ -3484,9 +3489,9 @@ void MainWindow::displayPointFromGroupMenu(){
             leftMenu->getDisplaySelectedGroup()->getPointButtonGroup()->getButtonGroup()->buttons()[checkedId]->setIcon(QIcon(":/icons/eye_point.png"));
 
             /// saves changes to the file
-            savePoints(QString(GOBOT_PATH) + QString(XML_FILE));
+            savePoints(QDir::currentPath() + QString("/points.xml"));
             /*
-            XMLParser parserPoints(QString(GOBOT_PATH) + QString(XML_FILE));
+            XMLParser parserPoints(QDir::currentPath());
             parserPoints.save(*points);
             */
             /// we check whether or not the entire group is displayed and update the points left widget accordingly by adding a tick Icon or not
@@ -3681,9 +3686,9 @@ void MainWindow::createGroup(QString groupName){
         points->addGroup(groupName);
 
         /// updates the file
-        savePoints(QString(GOBOT_PATH) + QString(XML_FILE));
+        savePoints(QDir::currentPath() + QString("/points.xml"));
         /*
-        XMLParser parser(QString(GOBOT_PATH) + QString(XML_FILE));
+        XMLParser parser(QDir::currentPath());
         parser.save(*points);
         */
         /// updates list of groups in menu
@@ -3756,9 +3761,9 @@ void MainWindow::modifyGroupWithEnter(QString name){
         pointsLeftWidget->getActionButtons()->getPlusButton()->setEnabled(true);
 
         /// saves to file
-        savePoints(QString(GOBOT_PATH) + QString(XML_FILE));
+        savePoints(QDir::currentPath() + QString("/points.xml"));
         /*
-        XMLParser parser(QString(GOBOT_PATH) + QString(XML_FILE));
+        XMLParser parser(QDir::currentPath());
         parser.save(*points);
         */
         /// enables the buttons
@@ -3825,9 +3830,9 @@ void MainWindow::modifyGroupAfterClick(QString name){
             points->getGroups()->insert(name, points->getGroups()->take(pointsLeftWidget->getLastCheckedId()));
 
             /// saves to file
-            savePoints(QString(GOBOT_PATH) + QString(XML_FILE));
+            savePoints(QDir::currentPath() + QString("/points.xml"));
             /*
-            XMLParser parser(QString(GOBOT_PATH) + QString(XML_FILE));
+            XMLParser parser(QDir::currentPath());
             parser.save(*points);
             */
             /// updates view
@@ -3891,19 +3896,11 @@ void MainWindow::choosePointName(QString message){
 /**********************************************************************************************************************************/
 
 void MainWindow::initializePaths(){
-    qDebug() << "initializing paths from" << QString(GOBOT_PATH) + QString(PATHS_FILE);
-    deserializePaths(QString(GOBOT_PATH) + QString(PATHS_FILE));
+    qDebug() << "initializing paths from" << QDir::currentPath() + QString("/paths.dat");
+    deserializePaths(QDir::currentPath() + QString("/paths.dat"));
 }
 
 void MainWindow::serializePaths(const QString fileName){
-    /*
-    QFile pathFile(QString(GOBOT_PATH) + QString(PATHS_FILE));
-    pathFile.resize(0);
-    pathFile.open(QIODevice::WriteOnly);
-    QDataStream out(&pathFile);
-    out << *paths;
-    pathFile.close();
-    */
     QFile pathFile(fileName);
     pathFile.resize(0);
     pathFile.open(QIODevice::WriteOnly);
@@ -3920,15 +3917,6 @@ void MainWindow::deserializePaths(const QString fileName){
     in >> tmpPaths;
     pathFile.close();
     paths->setGroups(tmpPaths.getGroups());
-    /*
-    QFile pathFile(QString(GOBOT_PATH) + QString(PATHS_FILE));
-    pathFile.open(QIODevice::ReadOnly);
-    QDataStream in(&pathFile);
-    Paths tmpPaths;
-    in >> tmpPaths;
-    pathFile.close();
-    paths->setGroups(tmpPaths.getGroups());
-    */
 }
 
 void MainWindow::pathBtnEvent(){
@@ -3954,7 +3942,7 @@ void MainWindow::deletePathSlot(QString groupName, QString pathName){
     switch(answer){
     case QMessageBox::StandardButton::Ok:
         paths->deletePath(groupName, pathName);
-        serializePaths(QString(GOBOT_PATH) + QString(PATHS_FILE));
+        serializePaths(QDir::currentPath() + QString("/paths.dat"));
         leftMenu->getPathGroupDisplayed()->setPathsGroup(groupName);
         leftMenu->getPathGroupDisplayed()->show();
         leftMenu->getDisplaySelectedPath()->hide();
@@ -4174,7 +4162,7 @@ void MainWindow::deleteGroupPaths(){
             robotsIds.pop_front();
         }
         paths->deleteGroup(groupPaths);
-        serializePaths(QString(GOBOT_PATH) + QString(PATHS_FILE));
+        serializePaths(QDir::currentPath() + QString("/paths.dat"));
         leftMenu->getGroupsPathsWidget()->updateGroupsPaths();
         break;
     case QMessageBox::StandardButton::Cancel:
@@ -4217,7 +4205,7 @@ void MainWindow::saveGroupPaths(QString name){
         topLayout->setEnabled(true);
         leftMenu->getGroupsPathsWidget()->getActionButtons()->getPlusButton()->setEnabled(true);
         topLayout->setLabelDelay(TEXT_COLOR_SUCCESS, "You have created a new group of paths", 4000);
-        serializePaths(QString(GOBOT_PATH) + QString(PATHS_FILE));
+        serializePaths(QDir::currentPath() + QString("/paths.dat"));
     } else if(leftMenu->getGroupsPathsWidget()->checkGroupName(name) == 1){
         /// enables the return button again
         leftMenu->getReturnButton()->setEnabled(true);
@@ -4378,7 +4366,7 @@ void MainWindow::deletePath(){
         }
 
         paths->deletePath(lastWidgets.at(lastWidgets.size()-1).first.second, leftMenu->getPathGroupDisplayed()->getLastCheckedButton());
-        serializePaths(QString(GOBOT_PATH) + QString(PATHS_FILE));
+        serializePaths(QDir::currentPath() + QString("/paths.dat"));
         leftMenu->getPathGroupDisplayed()->setPathsGroup(lastWidgets.at(lastWidgets.size()-1).first.second);
     break;
     case QMessageBox::StandardButton::Cancel:
@@ -4596,7 +4584,7 @@ void MainWindow::saveNoRobotPathSlot(){
     leftMenu->getPathGroupDisplayed()->setPathsGroup(pathCreationWidget->getCurrentGroupName());
 
     /// add this path to the file
-    serializePaths(QString(GOBOT_PATH) + QString(PATHS_FILE));
+    serializePaths(QDir::currentPath() + QString("/paths.dat"));
 
     //editSelectedRobotWidget->setPathChanged(true);
     //editSelectedRobotWidget->setPath(pathPainter->getCurrentPath());
@@ -4657,7 +4645,7 @@ void MainWindow::clearMapOfPaths(){
 void MainWindow::updateModelPaths(const Point& old_point, const Point& new_point){
     qDebug() << "name of the point which caused the paths to be updated" << old_point.getName() << "new name" << new_point.getName();
     paths->updatePaths(old_point, new_point);
-    serializePaths(QString(GOBOT_PATH) + QString(PATHS_FILE));
+    serializePaths(QDir::currentPath() + QString("/paths.dat"));
 }
 
 /**********************************************************************************************************************************/
@@ -4773,7 +4761,7 @@ void MainWindow::clearNewMap(){
     /// Save the new list in the XML
     //savePoints();
     /*
-    XMLParser parserPoints(QString(GOBOT_PATH) + QString(XML_FILE));
+    XMLParser parserPoints(QDir::currentPath());
     parserPoints.save(*points);
     */
     /// Update the left menu displaying the list of groups and buttons

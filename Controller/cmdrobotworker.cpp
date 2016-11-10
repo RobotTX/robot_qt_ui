@@ -22,7 +22,7 @@ void CmdRobotWorker::stopCmdRobotWorkerSlot(){
 
 void CmdRobotWorker::connectSocket(){
 
-    qDebug() << "(Robot" << robotName << ") Command Thread launched";
+    //qDebug() << "(Robot" << robotName << ") Command Thread launched";
 
     socket = QSharedPointer<QTcpSocket>(new QTcpSocket());
 
