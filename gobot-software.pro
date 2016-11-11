@@ -30,7 +30,6 @@ HEADERS += \
            View/customqgraphicsview.h \
            View/displayselectedgroup.h \
            View/displayselectedpoint.h \
-           View/editselectedrobotwidget.h \
            View/groupbuttongroup.h \
            View/leftmenu.h \
            View/leftmenuwidget.h \
@@ -76,6 +75,7 @@ HEADERS += \
            zipreader.h \
            zipwriter.h \
            zlib.h \
+    View/editselectedrobotwidget.h
 
 FORMS += Controller/mainwindow.ui
 
@@ -93,7 +93,6 @@ SOURCES += main.cpp \
            View/customqgraphicsview.cpp \
            View/displayselectedgroup.cpp \
            View/displayselectedpoint.cpp \
-           View/editselectedrobotwidget.cpp \
            View/groupbuttongroup.cpp \
            View/leftmenu.cpp \
            View/leftmenuwidget.cpp \
@@ -134,7 +133,8 @@ SOURCES += main.cpp \
            Controller/scanmapworker.cpp \
            Controller/commandcontroller.cpp \
            View/commandmessagebox.cpp \
-           zip.cpp
+           zip.cpp \
+    View/editselectedrobotwidget.cpp
 
 RESOURCES += Resources/resources.qrc
 

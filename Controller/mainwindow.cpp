@@ -289,15 +289,15 @@ void MainWindow::initializeRobots(){
     robots->setRobotsNameMap(tmp);
     fileRead.close();
 
-/*
+
     updateRobotsThread = new UpdateRobotsThread(PORT_ROBOT_UPDATE);
     connect(updateRobotsThread, SIGNAL(robotIsAlive(QString, QString, QString, QString, int)), this, SLOT(robotIsAliveSlot(QString, QString, QString, QString, int)));
     connect(this, SIGNAL(stopUpdateRobotsThread()), updateRobotsThread, SLOT(stopThread()));
     updateRobotsThread->start();
     updateRobotsThread->moveToThread(updateRobotsThread);
-*/
 
 
+/*
     QFile fileWrite(QString(GOBOT_PATH) + QString(ROBOTS_NAME_FILE));
     fileWrite.resize(0);
     fileWrite.open(QIODevice::WriteOnly);
@@ -353,7 +353,7 @@ void MainWindow::initializeRobots(){
             robotPathFile.close();
         }
     }
-
+*/
 
 
     //qDebug() << "RobotsNameMap on init" << robots->getRobotsNameMap();
@@ -664,20 +664,7 @@ void MainWindow::robotBtnEvent(void){
 
 void MainWindow::deletePathSelecRobotBtnEvent(){
     qDebug() << "MainWindow::deletePathSelecRobotBtnEvent called on robot " << selectedRobot->getRobot()->getName();
-    int answer = openConfirmMessage("Are you sure you want to delete the path of your robot ? This action is irreversible");
-    switch(answer){
-    case QMessageBox::Cancel:
-        break;
-    case QMessageBox::Ok:
-    {
-        clearPath(robots->getRobotId(selectedRobot->getRobot()->getName()));
-        setTemporaryMessageTop(TEXT_COLOR_SUCCESS, "You have successfully deleted the path of the robot " + selectedRobot->getRobot()->getName(), 2500);
-        break;
-    }
-    default:
-        Q_UNREACHABLE();
-        qDebug() << "MainWindow::deletePathSelecRobotBtnEvent you should never reach this point, you probably forgot to implement the behavior for" << answer;
-    }
+    deletePath(robots->getRobotId(selectedRobot->getRobot()->getName()));
 }
 
 void MainWindow::setSelectedRobotNoParent(QAbstractButton *button){
@@ -1169,26 +1156,9 @@ bool MainWindow::changeRobotName(QString name){
 
 void MainWindow::changeRobotWifi(QString ssid, QString password){
     qDebug() << "MainWindow::changeRobotWifi called";
-    if(commandController->sendCommand(selectedRobot->getRobot(), QString("b \"")
-              + ssid + "\" \""
-              + password + "\"")){
-        editSelectedRobotWidget->getWifiNameLabel()->setText(ssid);
-        selectedRobot->getRobot()->setWifi(ssid);
-        // TODO check if useful (sending a command before changing the wifi ?)
-        /*QString answer2 = selectedRobot->getRobot()->waitAnswer();
-        QStringList answerList2 = answer2.split(QRegExp("[ ]"), QString::SkipEmptyParts);
-        if(answerList2.size() > 1){
-            QString cmd2 = answerList2.at(0);
-            bool success2 = (answerList2.at(1).compare("done") == 0);
-            if((cmd2.compare("b") == 0 && success2) || answerList2.at(0).compare("1") == 0){
-                isOK = true;
-                change++;
-            } else {
-                isOK = false;
-                setMessageTop(TEXT_COLOR_DANGER, "Failed to edit the wifi");
-            }
-        }*/
-    }
+    commandController->sendCommand(selectedRobot->getRobot(), QString("b \"") + ssid + "\" \"" + password + "\"");
+    editSelectedRobotWidget->getWifiNameLabel()->setText(ssid);
+    selectedRobot->getRobot()->setWifi(ssid);
 }
 
 
@@ -1518,8 +1488,11 @@ void MainWindow::robotIsDeadSlot(QString hostname,QString ip){
 
         /// if selected => if one of this robot related menu is open
         if(selectedRobot != NULL && selectedRobot->getRobot()->getIp().compare(ip) == 0){
-            if(editSelectedRobotWidget->isVisible())
+            if(editSelectedRobotWidget->isVisible()){
                 setGraphicItemsState(GraphicItemState::NO_STATE);
+                if(editSelectedRobotWidget->getRobotInfoDialog()->isVisible())
+                    emit cancelRobotModifications();
+            }
 
 
             /// if a box to save/edit this robot is open
@@ -1553,6 +1526,12 @@ void MainWindow::robotIsDeadSlot(QString hostname,QString ip){
 
         /// remove from the model
         robots->remove(rv);
+
+        rv->deleteLater();
+        scanningRobot->deleteLater();
+        selectedRobot->deleteLater();
+        scanningRobot = NULL;
+        selectedRobot = NULL;
 
         /// update robotsLeftWidget
         robotsLeftWidget->updateRobots(robots);

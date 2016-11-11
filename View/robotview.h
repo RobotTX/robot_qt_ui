@@ -1,7 +1,6 @@
 #ifndef ROBOTVIEW_H
 #define ROBOTVIEW_H
 
-class Robot;
 class QGraphicsSceneMouseEvent;
 class MapView;
 
@@ -10,6 +9,7 @@ class MapView;
 #include "Model/position.h"
 #include <QObject>
 #include "Model/graphicitemstate.h"
+#include "Model/robot.h"
 
 #define ROBOT_HEIGHT_LOW 9
 #define ROBOT_HEIGHT_HIGH 12

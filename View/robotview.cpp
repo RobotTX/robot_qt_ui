@@ -1,5 +1,4 @@
 #include "robotview.h"
-#include "Model/robot.h"
 #include <QBrush>
 #include <QPen>
 #include <QGraphicsPolygonItem>

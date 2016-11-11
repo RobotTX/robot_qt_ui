@@ -7,6 +7,8 @@ class QTimer;
 #include <QtNetwork/QTcpSocket>
 #include <QSharedPointer>
 
+#define ROBOT_TIMER 15
+
 /**
  * @brief The CmdRobotWorker class
  * The thread connects to the robot at the given ipAddress & port to receive the map the robot
@@ -64,9 +66,10 @@ private slots:
      * Called when we want to send a command
      */
     void sendCommand(const QString cmd);
-    void pingSlot();
-    void timerSlot();
+    void pingSlot(void);
+    void timerSlot(void);
     void stopCmdRobotWorkerSlot();
+
 
 private :
     QSharedPointer<QTcpSocket> socket;
