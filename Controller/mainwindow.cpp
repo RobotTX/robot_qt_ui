@@ -289,15 +289,15 @@ void MainWindow::initializeRobots(){
     robots->setRobotsNameMap(tmp);
     fileRead.close();
 
-
+/*
     updateRobotsThread = new UpdateRobotsThread(PORT_ROBOT_UPDATE);
     connect(updateRobotsThread, SIGNAL(robotIsAlive(QString, QString, QString, QString, int)), this, SLOT(robotIsAliveSlot(QString, QString, QString, QString, int)));
     connect(this, SIGNAL(stopUpdateRobotsThread()), updateRobotsThread, SLOT(stopThread()));
     updateRobotsThread->start();
     updateRobotsThread->moveToThread(updateRobotsThread);
+*/
 
 
-/*
     QFile fileWrite(QString(GOBOT_PATH) + QString(ROBOTS_NAME_FILE));
     fileWrite.resize(0);
     fileWrite.open(QIODevice::WriteOnly);
@@ -353,7 +353,7 @@ void MainWindow::initializeRobots(){
             robotPathFile.close();
         }
     }
-*/
+
 
 
     //qDebug() << "RobotsNameMap on init" << robots->getRobotsNameMap();
@@ -390,8 +390,8 @@ void MainWindow::connectToRobot(bool checked){
                     QString ip = selectedRobot->getRobot()->getIp();
                     qDebug() << "Trying to connect to : " << ip << ", starting the map worker and thread";
 
-
-                    mapWorker = new ScanMapWorker(ip, PORT_MAP, QString(GOBOT_PATH) + QString(MAP_FILE));
+                    mapWorker = new ScanMapWorker(ip, PORT_MAP, QDir::currentPath() + QDir::separator() + QString(MAP_FILE));
+                    //mapWorker = new ScanMapWorker(ip, PORT_MAP, QString(GOBOT_PATH) + QString(MAP_FILE));
                     connect(mapWorker, SIGNAL(valueChangedMap(QByteArray)),
                             this , SLOT(updateMap(QByteArray)));
                     connect(mapWorker, SIGNAL(newScanSaved(QString)),
@@ -1123,10 +1123,12 @@ bool MainWindow::changeRobotName(QString name){
     qDebug() << "MainWindow::changeRobotName called";
 
     if(commandController->sendCommand(selectedRobot->getRobot(), QString("a \"") + name + "\"")){
-
-        QFile robotPathFile(QString(GOBOT_PATH) + "robots_paths/" + selectedRobot->getRobot()->getName() + "_path.dat");
+        QFile robotPathFile(QDir::currentPath() + QDir::separator() + "robots_paths" + QDir::separator() +
+                            selectedRobot->getRobot()->getName() + "_path.dat");
+        //QFile robotPathFile(QString(GOBOT_PATH) + "robots_paths/" + selectedRobot->getRobot()->getName() + "_path.dat");
         if(robotPathFile.exists())
-            robotPathFile.rename(QString(GOBOT_PATH) + "robots_paths/" + name + "_path.dat");
+            robotPathFile.rename(QDir::currentPath() + QDir::separator() + "robots_paths" + QDir::separator() + name + "_path.dat");
+            //robotPathFile.rename(QString(GOBOT_PATH) + "robots_paths/" + name + "_path.dat");
 
         QMap<QString, QString> tmp = robots->getRobotsNameMap();
         tmp[selectedRobot->getRobot()->getIp()] = name;
@@ -1134,8 +1136,8 @@ bool MainWindow::changeRobotName(QString name){
         robots->setRobotsNameMap(tmp);
 
         emit changeCmdThreadRobotName(name);
-
-        QFile fileWrite(QString(GOBOT_PATH) + QString(ROBOTS_NAME_FILE));
+        QFile fileWrite(QDir::currentPath() + QDir::separator() + QString(ROBOTS_NAME_FILE));
+        //QFile fileWrite(QString(GOBOT_PATH) + QString(ROBOTS_NAME_FILE));
         fileWrite.resize(0);
         fileWrite.open(QIODevice::WriteOnly);
         QDataStream out(&fileWrite);
@@ -1238,7 +1240,8 @@ void MainWindow::savePathSlot(){
     leftMenu->getPathGroupDisplayed()->setPathsGroup(pathCreationWidget->getCurrentGroupName());
 
     /// add this path to the file
-    serializePaths(QDir::currentPath() + QString("/paths.dat"));
+    QFileInfo fileinfo(QDir::currentPath(), "../gobot-software/paths.dat");
+    serializePaths(fileinfo.absoluteFilePath());
 
     leftMenu->getDisplaySelectedPath()->updatePath(pathCreationWidget->getCurrentGroupName(),
                                                    pathCreationWidget->getNameEdit()->text().simplified(),
@@ -1362,7 +1365,9 @@ void MainWindow::clearPath(const int robotNb){
     robots->getRobotsVector().at(robotNb)->getRobot()->setGroupPathName("");
 
     /// serializes the new path (which is actually an empty path)
-    QFile robotPathFile(QString(GOBOT_PATH) + "robots_paths/" + robots->getRobotsVector().at(robotNb)->getRobot()->getName() + "_path.dat");
+    QFileInfo fileinfo(QDir::currentPath(), "../gobot-software/robots_paths/" +
+                       robots->getRobotsVector().at(robotNb)->getRobot()->getName() + "_path.dat");
+    QFile robotPathFile(fileinfo.absoluteFilePath());
     robotPathFile.resize(0);
     robotPathFile.open(QIODevice::WriteOnly);
     QDataStream out(&robotPathFile);
@@ -1374,7 +1379,6 @@ void MainWindow::clearPath(const int robotNb){
         robots->getRobotsVector().at(robotNb)->getRobot()->setPlayingPath(0);
         bottomLayout->getPlayRobotBtnGroup()->button(robotNb)->setIcon(QIcon(":/icons/play.png"));
     }
-
 
     if(editSelectedRobotWidget->isVisible()){
         editSelectedRobotWidget->setSelectedRobot(robots->getRobotsVector().at(robotNb));
@@ -1432,8 +1436,8 @@ void MainWindow::robotIsAliveSlot(QString hostname, QString ip, QString mapId, Q
             QMap<QString, QString> tmp = robots->getRobotsNameMap();
             tmp[ip] = hostname;
             robots->setRobotsNameMap(tmp);
-
-            QFile fileWrite(QString(GOBOT_PATH) + QString(ROBOTS_NAME_FILE));
+            QFile fileWrite(QDir::currentPath() + QDir::separator() + QString(ROBOTS_NAME_FILE));
+            //QFile fileWrite(QString(GOBOT_PATH) + QString(ROBOTS_NAME_FILE));
             fileWrite.resize(0);
             fileWrite.open(QIODevice::WriteOnly);
             QDataStream out(&fileWrite);
@@ -1706,7 +1710,9 @@ void MainWindow::setNewHome(QString homeName){
     if(home->getPoint()->setHome(Point::PointType::HOME)){
 
         if(sendHomeToRobot(selectedRobot, home)){
-            savePoints(QDir::currentPath() + QString("/points.xml"));
+            QFileInfo fileinfo(QDir::currentPath(), "../gobot-software/points.xml");
+            savePoints(fileinfo.absoluteFilePath());
+            //savePoints(QDir::currentPath() + QString("/points.xml"));
             /*
             XMLParser parserPoints(QDir::currentPath());
             parserPoints.save(*points);
@@ -1863,7 +1869,6 @@ void MainWindow::saveMapBtnEvent(){
     /// saves the current configuration for the paths (this configuration will be associated to the map
     /// when you load the map in the future
     serializePaths(pathsFile);
-
 }
 
 void MainWindow::loadMapBtnEvent(){
@@ -1925,14 +1930,16 @@ void MainWindow::loadMapBtnEvent(){
     /// imports points associated to the map and save them in the current file
     XMLParser parser(fileName + "_points.xml");
     parser.readPoints(points);
-    savePoints(QDir::currentPath() + QString("/points.xml"));
+    QFileInfo fileinfo(QDir::currentPath(), "../gobot-software/points.xml");;
+    savePoints(fileinfo.absoluteFilePath());
 
     /// updates the group box so that new points can be added
     createPointWidget->updateGroupBox();
 
     /// imports paths associated to the map and save them in the current file
     deserializePaths(fileName + "_paths.dat");
-    serializePaths(QDir::currentPath() + QString("/paths.dat"));
+    QFileInfo fileinfoPaths(QDir::currentPath(), "../gobot-software/paths.dat");
+    serializePaths(fileinfoPaths.absoluteFilePath());
 
     /// updates the groups of paths menu using the paths that have just been imported
     leftMenu->getGroupsPathsWidget()->updateGroupsPaths();
@@ -2000,9 +2007,9 @@ void MainWindow::closeSlot(){
  * initialize the points on the map and in the model
  */
 void MainWindow::initializePoints(){
-    //qDebug() << "initializePoints called";
     /// retrieves the points from the xml file and stores them in the model
-    QString fileName = QDir::currentPath() + QString("/points.xml");
+    QFileInfo fileinfo(QDir::currentPath(), "../gobot-software/points.xml");;
+    QString fileName = fileinfo.absoluteFilePath();
     XMLParser pParser(fileName);
     qDebug() << "initializing points from" << fileName;
     pParser.readPoints(points);
@@ -2388,7 +2395,9 @@ void MainWindow::pointSavedEvent(QString groupName, double x, double y, QString 
      * XMLParser parser(QDir::currentPath());
     parser.save(*points);
     */
-    savePoints(QDir::currentPath() + "/points.xml");
+    QFileInfo fileinfo(QDir::currentPath(), "../gobot-software/points.xml");;
+    savePoints(fileinfo.absoluteFilePath());
+    //savePoints(QDir::currentPath() + "/points.xml");
 
     /// updates the menu
     pointsLeftWidget->updateGroupButtonGroup();
@@ -2433,7 +2442,9 @@ void MainWindow::askForDeleteDefaultGroupPointConfirmation(QString pointName){
                 XMLParser parserPoints(QDir::currentPath());
                 parserPoints.save(*points);
                 */
-                savePoints(QDir::currentPath() + QString("/points.xml"));
+                QFileInfo fileinfo(QDir::currentPath(), "../gobot-software/points.xml");;
+                savePoints(fileinfo.absoluteFilePath());
+                //savePoints(QDir::currentPath() + QString("/points.xml"));
 
                 /// updates the menu
                 pointsLeftWidget->getGroupButtonGroup()->updateButtons();
@@ -2496,7 +2507,9 @@ void MainWindow::askForDeletePointConfirmation(QString pointName){
                     leftMenu->getDisplaySelectedGroup()->getPointButtonGroup()->setGroup(pointsLeftWidget->getLastCheckedId());
 
                     /// save the changes to the file
-                    savePoints(QDir::currentPath() + QString("/points.xml"));
+                    QFileInfo fileinfo(QDir::currentPath(), "../gobot-software/points.xml");;
+                    savePoints(fileinfo.absoluteFilePath());
+                    //savePoints(QDir::currentPath() + QString("/points.xml"));
 
                     /// makes the buttons checkable again
                     leftMenu->getDisplaySelectedGroup()->getPointButtonGroup()->setCheckable(true);
@@ -2509,7 +2522,9 @@ void MainWindow::askForDeletePointConfirmation(QString pointName){
                             points->removeGroup(pointsLeftWidget->getLastCheckedId());
 
                             /// updates file
-                            savePoints(QDir::currentPath() + QString("/points.xml"));
+                            QFileInfo fileinfo(QDir::currentPath(), "../gobot-software/points.xml");;
+                            savePoints(fileinfo.absoluteFilePath());
+                            //savePoints(QDir::currentPath() + QString("/points.xml"));
                             /*
                             XMLParser parser(QDir::currentPath());
                             parser.save(*points);
@@ -2582,7 +2597,9 @@ void MainWindow::askForDeleteGroupConfirmation(QString groupName){
                 points->removeGroup(groupName);
 
                 /// updates the file
-                savePoints(QDir::currentPath() + QString("/points.xml"));
+                QFileInfo fileinfo(QDir::currentPath(), "../gobot-software/points.xml");;
+                savePoints(fileinfo.absoluteFilePath());
+                //savePoints(QDir::currentPath() + QString("/points.xml"));
                 /*
                 XMLParser parserPoints(QDir::currentPath());
                 parserPoints.save(*points);
@@ -2741,7 +2758,9 @@ void MainWindow::displayGroupMapEvent(void){
 
                     }
                     /// update the file
-                    savePoints(QDir::currentPath() + QString("/points.xml"));
+                    QFileInfo fileinfo(QDir::currentPath(), "../gobot-software/points.xml");;
+                    savePoints(fileinfo.absoluteFilePath());
+                    //savePoints(QDir::currentPath() + QString("/points.xml"));
                     /*
                     XMLParser parserPoints(QDir::currentPath());
                     parserPoints.save(*points);
@@ -2760,7 +2779,9 @@ void MainWindow::displayGroupMapEvent(void){
                         point->show();
                         point->setPixmap(PointView::PixmapType::SELECTED);
                         /// update the file
-                        savePoints(QDir::currentPath() + QString("/points.xml"));
+                        QFileInfo fileinfo(QDir::currentPath(), "../gobot-software/points.xml");;
+                        savePoints(fileinfo.absoluteFilePath());
+                        //savePoints(QDir::currentPath() + QString("/points.xml"));
                         /*
                         XMLParser parserPoints(QDir::currentPath());
                         parserPoints.save(*points);
@@ -2780,7 +2801,9 @@ void MainWindow::displayGroupMapEvent(void){
                 point->hide();
 
                 /// update the file
-                savePoints(QDir::currentPath() + QString("/points.xml"));
+                QFileInfo fileinfo(QDir::currentPath(), "../gobot-software/points.xml");;
+                savePoints(fileinfo.absoluteFilePath());
+                //savePoints(QDir::currentPath() + QString("/points.xml"));
                 /*
                 XMLParser parserPoints(QDir::currentPath());
                 parserPoints.save(*points);
@@ -2795,7 +2818,9 @@ void MainWindow::displayGroupMapEvent(void){
                 point->show();
 
                 /// update the file
-                savePoints(QDir::currentPath() + QString("/points.xml"));
+                QFileInfo fileinfo(QDir::currentPath(), "../gobot-software/points.xml");;
+                savePoints(fileinfo.absoluteFilePath());
+                //savePoints(QDir::currentPath() + QString("/points.xml"));
                 /*
                 XMLParser parserPoints(QDir::currentPath());
                 parserPoints.save(*points);
@@ -2822,7 +2847,9 @@ void MainWindow::displayPointMapEvent(){
             pointView->hide();
 
             /// update the file
-            savePoints(QDir::currentPath() + QString("/points.xml"));
+            QFileInfo fileinfo(QDir::currentPath(), "../gobot-software/points.xml");;
+            savePoints(fileinfo.absoluteFilePath());
+            //savePoints(QDir::currentPath() + QString("/points.xml"));
             /*
             XMLParser parserPoints(QDir::currentPath());
             parserPoints.save(*points);
@@ -2846,7 +2873,9 @@ void MainWindow::displayPointMapEvent(){
             pointView->show();
 
             /// update the file
-            savePoints(QDir::currentPath() + QString("/points.xml"));
+            QFileInfo fileinfo(QDir::currentPath(), "../gobot-software/points.xml");;
+            savePoints(fileinfo.absoluteFilePath());
+            //savePoints(QDir::currentPath() + QString("/points.xml"));
             /*
             XMLParser parserPoints(QDir::currentPath());
             parserPoints.save(*points);
@@ -2965,7 +2994,9 @@ void MainWindow::removePointFromInformationMenu(void){
                         points->removePoint(pointName);
 
                         /// updates the file containing containing points info
-                        savePoints(QDir::currentPath() + QString("/points.xml"));
+                        QFileInfo fileinfo(QDir::currentPath(), "../gobot-software/points.xml");;
+                        savePoints(fileinfo.absoluteFilePath());
+                        //savePoints(QDir::currentPath() + QString("/points.xml"));
                         /*
                         XMLParser parserPoints(QDir::currentPath());
                         parserPoints.save(*points);
@@ -2987,7 +3018,9 @@ void MainWindow::removePointFromInformationMenu(void){
                         XMLParser parserPoints(QDir::currentPath());
                         parserPoints.save(*points);
                         */
-                        savePoints(QDir::currentPath() + QString("/points.xml"));
+                        QFileInfo fileinfo(QDir::currentPath(), "../gobot-software/points.xml");;
+                        savePoints(fileinfo.absoluteFilePath());
+                        //savePoints(QDir::currentPath() + QString("/points.xml"));
                         /// updates the group menu
                         leftMenu->getDisplaySelectedGroup()->getPointButtonGroup()->setGroup(pointsLeftWidget->getLastCheckedId());
 
@@ -3004,7 +3037,9 @@ void MainWindow::removePointFromInformationMenu(void){
                                 points->removeGroup(pointIndexes.first);
 
                                 /// updates file
-                                savePoints(QDir::currentPath() + QString("/points.xml"));
+                                QFileInfo fileinfo(QDir::currentPath(), "../gobot-software/points.xml");;
+                                savePoints(fileinfo.absoluteFilePath());
+                                //savePoints(QDir::currentPath() + QString("/points.xml"));
                                 /*
                                 XMLParser parser(QDir::currentPath());
                                 parser.save(*points);
@@ -3076,11 +3111,10 @@ void MainWindow::editPointFromGroupMenu(void){
             displaySelectedPointView->show();
 
             /// update the file
-            savePoints(QDir::currentPath() + QString("/points.xml"));
-            /*
-            XMLParser parser(QDir::currentPath());
-            parser.save(*points);
-            */
+            QFileInfo fileinfo(QDir::currentPath(), "../gobot-software/points.xml");;
+            savePoints(fileinfo.absoluteFilePath());
+            //savePoints(QDir::currentPath() + QString("/points.xml"));
+
             /// sets the state of the map and the other widgets to prevent other concurrent actions
             setGraphicItemsState(GraphicItemState::NO_EVENT);
             mapPixmapItem->setState(GraphicItemState::EDITING_PERM);
@@ -3211,11 +3245,9 @@ void MainWindow::updatePoint(void){
 
 
         /// save changes to the file
-        savePoints(QDir::currentPath() + QString("/points.xml"));
-        /*
-        XMLParser parserPoints(QDir::currentPath());
-        parserPoints.save(*points);
-        */
+        QFileInfo fileinfo(QDir::currentPath(), "../gobot-software/points.xml");;
+        savePoints(fileinfo.absoluteFilePath());
+        //savePoints(QDir::currentPath() + QString("/points.xml"));
 
         /// if the point is the home of a robot, we update the file containing the home on the robot
         // TODO rework home
@@ -3393,11 +3425,10 @@ void MainWindow::displayPointFromGroupMenu(){
             leftMenu->getDisplaySelectedGroup()->getPointButtonGroup()->getButtonGroup()->buttons()[checkedId]->setIcon(QIcon(":/icons/space_point.png"));
 
             /// updates the file
-            savePoints(QDir::currentPath() + QString("/points.xml"));
-            /*
-            XMLParser parserPoints(QDir::currentPath());
-            parserPoints.save(*points);
-            */
+            QFileInfo fileinfo(QDir::currentPath(), "../gobot-software/points.xml");;
+            savePoints(fileinfo.absoluteFilePath());
+            //savePoints(QDir::currentPath() + QString("/points.xml"));
+
             /// if the entire group was displayed it is not the case anymore
             if(pointsLeftWidget->getGroupButtonGroup()->getButtonByName(pointsLeftWidget->getLastCheckedId()) != NULL)
                 pointsLeftWidget->getGroupButtonGroup()->getButtonByName(pointsLeftWidget->getLastCheckedId())->setIcon(QIcon(":/icons/folder_space.png"));
@@ -3414,11 +3445,10 @@ void MainWindow::displayPointFromGroupMenu(){
             leftMenu->getDisplaySelectedGroup()->getPointButtonGroup()->getButtonGroup()->buttons()[checkedId]->setIcon(QIcon(":/icons/eye_point.png"));
 
             /// saves changes to the file
-            savePoints(QDir::currentPath() + QString("/points.xml"));
-            /*
-            XMLParser parserPoints(QDir::currentPath());
-            parserPoints.save(*points);
-            */
+            QFileInfo fileinfo(QDir::currentPath(), "../gobot-software/points.xml");;
+            savePoints(fileinfo.absoluteFilePath());
+            //savePoints(QDir::currentPath() + QString("/points.xml"));
+
             /// we check whether or not the entire group is displayed and update the points left widget accordingly by adding a tick Icon or not
             if(points->isDisplayed(pointsLeftWidget->getLastCheckedId())){
                 if(pointsLeftWidget->getGroupButtonGroup()->getButtonByName(pointsLeftWidget->getLastCheckedId()) != NULL)
@@ -3611,11 +3641,10 @@ void MainWindow::createGroup(QString groupName){
         points->addGroup(groupName);
 
         /// updates the file
-        savePoints(QDir::currentPath() + QString("/points.xml"));
-        /*
-        XMLParser parser(QDir::currentPath());
-        parser.save(*points);
-        */
+        QFileInfo fileinfo(QDir::currentPath(), "../gobot-software/points.xml");;
+        savePoints(fileinfo.absoluteFilePath());
+        //savePoints(QDir::currentPath() + QString("/points.xml"));
+
         /// updates list of groups in menu
         pointsLeftWidget->updateGroupButtonGroup();
 
@@ -3686,11 +3715,10 @@ void MainWindow::modifyGroupWithEnter(QString name){
         pointsLeftWidget->getActionButtons()->getPlusButton()->setEnabled(true);
 
         /// saves to file
-        savePoints(QDir::currentPath() + QString("/points.xml"));
-        /*
-        XMLParser parser(QDir::currentPath());
-        parser.save(*points);
-        */
+        QFileInfo fileinfo(QDir::currentPath(), "../gobot-software/points.xml");;
+        savePoints(fileinfo.absoluteFilePath());
+        //savePoints(QDir::currentPath() + QString("/points.xml"));
+
         /// enables the buttons
         pointsLeftWidget->getGroupButtonGroup()->setEnabled(true);
         pointsLeftWidget->disableButtons();
@@ -3755,12 +3783,9 @@ void MainWindow::modifyGroupAfterClick(QString name){
             points->getGroups()->insert(name, points->getGroups()->take(pointsLeftWidget->getLastCheckedId()));
 
             /// saves to file
-            savePoints(QDir::currentPath() + QString("/points.xml"));
-            /*
-            XMLParser parser(QDir::currentPath());
-            parser.save(*points);
-            */
-            /// updates view
+            QFileInfo fileinfo(QDir::currentPath(), "../gobot-software/points.xml");;
+            savePoints(fileinfo.absoluteFilePath());
+            //savePoints(QDir::currentPath() + QString("/points.xml"));
 
             color= TEXT_COLOR_SUCCESS;
             msg = "You have successfully modified the name of your group";
@@ -3821,8 +3846,9 @@ void MainWindow::choosePointName(QString message){
 /**********************************************************************************************************************************/
 
 void MainWindow::initializePaths(){
-    qDebug() << "initializing paths from" << QDir::currentPath() + QString("/paths.dat");
-    deserializePaths(QDir::currentPath() + QString("/paths.dat"));
+    QFileInfo fileinfo(QDir::currentPath(), "../gobot-software/paths.dat");
+    qDebug() << "initializing paths from" << fileinfo.absoluteFilePath();
+    deserializePaths(fileinfo.absoluteFilePath());
 }
 
 void MainWindow::serializePaths(const QString fileName){
@@ -3866,8 +3892,10 @@ void MainWindow::deletePathSlot(QString groupName, QString pathName){
     int answer = openConfirmMessage("Are you sure you want to delete this path, this action is irreversible ?");
     switch(answer){
     case QMessageBox::StandardButton::Ok:
+    {
         paths->deletePath(groupName, pathName);
-        serializePaths(QDir::currentPath() + QString("/paths.dat"));
+        QFileInfo fileinfo(QDir::currentPath(), "../gobot-software/paths.dat");
+        serializePaths(fileinfo.absoluteFilePath());
         leftMenu->getPathGroupDisplayed()->setPathsGroup(groupName);
         leftMenu->getPathGroupDisplayed()->show();
         leftMenu->getDisplaySelectedPath()->hide();
@@ -3880,6 +3908,7 @@ void MainWindow::deletePathSlot(QString groupName, QString pathName){
                         "because the last one checked is"
                      << leftMenu->getPathGroupDisplayed()->getLastCheckedButton();
         backEvent();
+    }
     break;
     case QMessageBox::StandardButton::Cancel:
         leftMenu->getPathGroupDisplayed()->getPathButtonGroup()->uncheck();
@@ -4081,15 +4110,18 @@ void MainWindow::deleteGroupPaths(){
     leftMenu->getGroupsPathsWidget()->resetWidget();
     switch(answer){
     case QMessageBox::StandardButton::Ok:
+    {
         /// to delete the paths of the robots whose paths are contained in the group which is about to be deleted
         while(!robotsIds.empty()){
             clearPath(robotsIds.front());
             robotsIds.pop_front();
         }
         paths->deleteGroup(groupPaths);
-        serializePaths(QDir::currentPath() + QString("/paths.dat"));
+        QFileInfo fileinfo(QDir::currentPath(), "../gobot-software/paths.dat");
+        serializePaths(fileinfo.absoluteFilePath());
         leftMenu->getGroupsPathsWidget()->updateGroupsPaths();
         break;
+    }
     case QMessageBox::StandardButton::Cancel:
         /// unchecks the group button (prettier imo but not necessary on the logical level)
         leftMenu->getGroupsPathsWidget()->uncheck();
@@ -4130,7 +4162,8 @@ void MainWindow::saveGroupPaths(QString name){
         topLayout->setEnabled(true);
         leftMenu->getGroupsPathsWidget()->getActionButtons()->getPlusButton()->setEnabled(true);
         topLayout->setLabelDelay(TEXT_COLOR_SUCCESS, "You have created a new group of paths", 4000);
-        serializePaths(QDir::currentPath() + QString("/paths.dat"));
+        QFileInfo fileinfo(QDir::currentPath(), "../gobot-software/paths.dat");
+        serializePaths(fileinfo.absoluteFilePath());
     } else if(leftMenu->getGroupsPathsWidget()->checkGroupName(name) == 1){
         /// enables the return button again
         leftMenu->getReturnButton()->setEnabled(true);
@@ -4273,6 +4306,7 @@ void MainWindow::deletePath(){
 
     switch(answer){
     case QMessageBox::StandardButton::Ok:
+    {
         leftMenu->getPathGroupDisplayed()->initializeActionButtons();
         /// resets the path painter if the path displayed is the one we just destroyed
         qDebug() << "deleting path" << leftMenu->getPathGroupDisplayed()->getLastCheckedButton();
@@ -4291,8 +4325,10 @@ void MainWindow::deletePath(){
         }
 
         paths->deletePath(lastWidgets.at(lastWidgets.size()-1).first.second, leftMenu->getPathGroupDisplayed()->getLastCheckedButton());
-        serializePaths(QDir::currentPath() + QString("/paths.dat"));
+        QFileInfo fileinfo(QDir::currentPath(), "../gobot-software/paths.dat");
+        serializePaths(fileinfo.absoluteFilePath());
         leftMenu->getPathGroupDisplayed()->setPathsGroup(lastWidgets.at(lastWidgets.size()-1).first.second);
+    }
     break;
     case QMessageBox::StandardButton::Cancel:
         leftMenu->getPathGroupDisplayed()->getPathButtonGroup()->uncheck();
@@ -4509,7 +4545,8 @@ void MainWindow::saveNoRobotPathSlot(){
     leftMenu->getPathGroupDisplayed()->setPathsGroup(pathCreationWidget->getCurrentGroupName());
 
     /// add this path to the file
-    serializePaths(QDir::currentPath() + QString("/paths.dat"));
+    QFileInfo fileinfo(QDir::currentPath(), "../gobot-software/paths.dat");
+    serializePaths(fileinfo.absoluteFilePath());
 
     //editSelectedRobotWidget->setPathChanged(true);
     //editSelectedRobotWidget->setPath(pathPainter->getCurrentPath());
@@ -4550,8 +4587,10 @@ void MainWindow::displayAssignedPath(QString groupName, QString pathName){
         bottomLayout->getViewPathRobotBtnGroup()->button(id)->setChecked(true);
         viewPathSelectedRobot(id, true);
     }
-
-    QFile robotPathFile(QString(GOBOT_PATH) + "robots_paths/" + selectedRobot->getRobot()->getName() + "_path.dat");
+    QFileInfo fileinfo(QDir::currentPath(), "../gobot-software/robots_paths/" +
+                       selectedRobot->getRobot()->getName() + "_path.dat");
+    QFile robotPathFile(fileinfo.absoluteFilePath());
+    qDebug() << robotPathFile.exists() << robotPathFile.fileName();
     if(robotPathFile.exists()){
         robotPathFile.resize(0);
         robotPathFile.open(QIODevice::WriteOnly);
@@ -4570,7 +4609,8 @@ void MainWindow::clearMapOfPaths(){
 void MainWindow::updateModelPaths(const Point& old_point, const Point& new_point){
     qDebug() << "name of the point which caused the paths to be updated" << old_point.getName() << "new name" << new_point.getName();
     paths->updatePaths(old_point, new_point);
-    serializePaths(QDir::currentPath() + QString("/paths.dat"));
+    QFileInfo fileinfo(QDir::currentPath(), "../gobot-software/paths.dat");
+    serializePaths(fileinfo.absoluteFilePath());
 }
 
 /**********************************************************************************************************************************/
@@ -4683,12 +4723,6 @@ void MainWindow::clearNewMap(){
     /// clears the list of paths
     paths->clear();
 
-    /// Save the new list in the XML
-    //savePoints();
-    /*
-    XMLParser parserPoints(QDir::currentPath());
-    parserPoints.save(*points);
-    */
     /// Update the left menu displaying the list of groups and buttons
     pointsLeftWidget->updateGroupButtonGroup();
 
@@ -4837,7 +4871,6 @@ void MainWindow::compress(const QString zipFile){
     const QString SingleFile = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation) + QDir::separator() + QString("lolilol.pgm");
     QFile file(SingleFile);
     file.open(QIODevice::ReadOnly);
-    qDebug() << file.isOpen();
     cZip.addFile("test.pgm", file.readAll());
     file.close();
     cZip.close();

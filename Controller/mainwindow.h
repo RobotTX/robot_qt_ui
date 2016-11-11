@@ -265,6 +265,7 @@ protected:
     void stopMapThread();
 
 private:
+    QSettings settings;
     Ui::MainWindow* ui;
     QThread mapThread;
     ScanMapWorker* mapWorker;
@@ -302,7 +303,7 @@ private:
     QPair<QPointF, float> mapState;
 
     QSharedPointer<Paths> paths;
-    QSettings settings;
+
     CommandController* commandController;
 };
 
