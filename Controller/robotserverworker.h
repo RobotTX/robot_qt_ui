@@ -1,22 +1,17 @@
-#ifndef UPDATEROBOTSTHREAD_H
-#define UPDATEROBOTSTHREAD_H
+#ifndef ROBOT_SERVER_WORKER_H
+#define ROBOT_SERVER_WORKER_H
 
 #include <QTime>
-#include <QThread>
 #include <QtNetwork/QTcpServer>
 #include <QtNetwork/QTcpSocket>
+#include <QDebug>
 
-class UpdateRobotsThread : public QThread {
+class RobotServerWorker : public QTcpServer {
     Q_OBJECT
 public:
-    UpdateRobotsThread(const int port);
-    ~UpdateRobotsThread();
+    explicit RobotServerWorker(const int port, QObject* parent = 0);
 
-    /**
-     * @brief run
-     * Function called when we start a Thread
-     */
-    void run();
+    void startServer();
 
 
 private slots:
@@ -29,9 +24,7 @@ signals:
 
 private:
     int port;
-    QTcpServer* server;
-
-
+    //QTcpServer* server;
 };
 
-#endif // UPDATEROBOTSTHREAD_H
+#endif /// ROBOT_SERVER_WORKER_H

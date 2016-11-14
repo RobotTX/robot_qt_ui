@@ -4,7 +4,7 @@
 class RobotView;
 class PointView;
 class ScanMapWorker;
-class UpdateRobotsThread;
+class RobotServerWorker;
 class CustomQGraphicsView;
 class Map;
 class Robots;
@@ -42,6 +42,7 @@ class CommandController;
 #include "Model/point.h"
 #include <QSettings>
 #include <QThread>
+#include <QUuid>
 
 //#define DESKTOP_PATH "/home/m-a/Desktop/"
 //#define GOBOT_PATH "/home/m-a/Documents/QtProject/gobot-software/"
@@ -71,7 +72,7 @@ class MainWindow : public QMainWindow{
     Q_OBJECT
 
 public:
-    explicit MainWindow(QSettings* _settings, QWidget *parent = 0);
+    explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
     enum WidgetType { MENU, GROUPS, GROUP, POINT, ROBOTS, ROBOT , MAP, GROUPS_PATHS, GROUP_OF_PATHS, PATH };
@@ -112,6 +113,9 @@ public:
 
     void compress(const QString zipFile);
     void decompress(const QString fileName);
+
+    bool saveMapConfig(const std::string fileName);
+    bool loadMapConfig(const std::string fileName);
 
 signals:
     void nameChanged(QString, QString);
@@ -264,11 +268,11 @@ protected:
     void stopMapThread();
 
 private:
-    QSettings settings;
     Ui::MainWindow* ui;
+    QThread serverThread;
     QThread mapThread;
     ScanMapWorker* mapWorker;
-    UpdateRobotsThread* updateRobotsThread;
+    RobotServerWorker* robotServerWorker;
     QVBoxLayout* rightLayout;
     CustomQGraphicsView* graphicsView;
     QSharedPointer<Map> map;
@@ -304,6 +308,7 @@ private:
     QSharedPointer<Paths> paths;
 
     CommandController* commandController;
+    std::string mapFile;
 };
 
 #endif // MAINWINDOW_H

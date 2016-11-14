@@ -8,7 +8,7 @@
 #include <assert.h>
 #include "ui_mainwindow.h"
 #include "Controller/scanmapworker.h"
-#include "Controller/updaterobotsthread.h"
+#include "Controller/robotserverworker.h"
 #include "Model/pathpoint.h"
 #include "Model/map.h"
 #include "Model/robots.h"
@@ -52,8 +52,9 @@
 #include <QtGlobal>
 #include <QStringList>
 #include "Controller/commandcontroller.h"
+#include <fstream>
 
-MainWindow::MainWindow(QSettings *_settings, QWidget *parent) : settings(_settings), QMainWindow(parent), ui(new Ui::MainWindow) {
+MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow) {
     ui->setupUi(this);
 
     /// centers the msgBox on the middle of the screen
@@ -70,24 +71,40 @@ MainWindow::MainWindow(QSettings *_settings, QWidget *parent) : settings(_settin
 
     /// initializes the map used by the application
     map = QSharedPointer<Map>(new Map());
-    map->setMapFromFile(settings.value("mapFile", ":/maps/map.pgm").toString());
-    setWindowTitle(settings.value("mapFile", ":/maps/map.pgm").toString());
+
+    QFileInfo fileInfo(QDir::currentPath(), "../gobot-software/currentMap.txt");
+    qDebug() << fileInfo.fileName();
+    std::ifstream file(fileInfo.absoluteFilePath().toStdString(), std::ios::in);
+
+    if(file){
+        int _height, _width;
+        double centerX, centerY, originX, originY, resolution;
+        file >> mapFile >> _height >> _width >> centerX >> centerY >> mapState.second >> originX >> originY;
+        map->setHeight(_height);
+        map->setWidth(_width);
+        mapState.first.setX(centerX);
+        mapState.first.setY(centerY);
+        map->setOrigin(Position(originX, originY));
+        map->setResolution(0.05);
+        qDebug() << "1:" << QString::fromStdString(mapFile) << _height << _width << centerX << centerY << originX << originY;
+        file.close();
+    }
+
+    setWindowTitle(":/maps/map.pgm");
+    map->setMapFromFile(":/maps/map.pgm");
+
+
+    if(!mapFile.compare("")){
+        setWindowTitle(":/maps/map.pgm");
+        map->setMapFromFile(":/maps/map.pgm");
+    } else {
+        setWindowTitle(QString::fromStdString(mapFile));
+        map->setMapFromFile(QString::fromStdString(mapFile));
+    }
 
     /// retrieves the configuration of the map from the settings file
     /// if the parameters are not there, .0f, .0f and 1.0f serve as the
     /// default parameters
-    mapState.first.setX(settings.value("mapState/point/x", .0f).toFloat());
-    mapState.first.setY(settings.value("mapState/point/y", .0f).toFloat());
-    mapState.second = settings.value("mapState/zoom", 1.0f).toFloat();
-
-    /*************************** TODO GET FROM A SAVE FILE/MAP SETTINGS ***********************************/
-
-    map->setWidth(320);
-    map->setHeight(608);
-    map->setResolution(0.050000);
-    map->setOrigin(Position(-1, -15.4));
-
-    /**************************************************************/
 
     robots = QSharedPointer<Robots>(new Robots());
     scene = new QGraphicsScene();
@@ -98,7 +115,7 @@ MainWindow::MainWindow(QSettings *_settings, QWidget *parent) : settings(_settin
     scanningRobot = NULL;
     selectedPoint = QSharedPointer<PointView>();
     editedPointView = QSharedPointer<PointView>();
-    updateRobotsThread = NULL;
+    robotServerWorker = NULL;
     mapWorker = NULL;
     commandController = new CommandController(this);
 
@@ -111,8 +128,6 @@ MainWindow::MainWindow(QSettings *_settings, QWidget *parent) : settings(_settin
     mainLayout->addWidget(topLayout);
 
     QHBoxLayout* bottom = new QHBoxLayout();
-
-    qDebug() << "Settings file" << settings.fileName();
 
     initializePaths();
 
@@ -134,6 +149,8 @@ MainWindow::MainWindow(QSettings *_settings, QWidget *parent) : settings(_settin
     graphicsView->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     graphicsView->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     graphicsView->setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding));
+
+
 
     leftMenu = new LeftMenu(this, points, paths, robots, map, pathPainter);
 
@@ -252,18 +269,20 @@ MainWindow::MainWindow(QSettings *_settings, QWidget *parent) : settings(_settin
 
     this->setAutoFillBackground(true);
 
+
     rightLayout->setContentsMargins(0, 0, 0, 0);
     bottom->setContentsMargins(0, 0, 0, 0);
     mainLayout->setContentsMargins(0, 0, 0, 0);
     topLayout->setContentsMargins(0, 0, 0, 0);
     bottomLayout->setContentsMargins(0, 0, 0, 0);
     mainLayout->setSpacing(0);
+
 }
 
 MainWindow::~MainWindow(){
     delete ui;
 
-    if (updateRobotsThread != NULL && updateRobotsThread->isRunning()){
+    if (robotServerWorker != NULL && serverThread.isRunning()){
         emit stopUpdateRobotsThread();
     }
 
@@ -282,7 +301,7 @@ void MainWindow::initializeRobots(){
     /// Get the list of taken robot's name from the file
     QFileInfo fileinfo(QDir::currentPath(), "../gobot-software/robotsName.dat");
     //QFile fileRead(QDir::currentPath() + QDir::separator() + QString(ROBOTS_NAME_FILE));
-QFile fileRead(fileinfo.absoluteFilePath());
+    QFile fileRead(fileinfo.absoluteFilePath());
     qDebug() << "file" << fileinfo.absolutePath() << fileinfo.absoluteFilePath();
 
     //QFile fileRead(QString(GOBOT_PATH) + QString(ROBOTS_NAME_FILE));
@@ -293,15 +312,16 @@ QFile fileRead(fileinfo.absoluteFilePath());
     in >> tmp;
     robots->setRobotsNameMap(tmp);
     fileRead.close();
+
+
+    robotServerWorker = new RobotServerWorker(PORT_ROBOT_UPDATE);
+    connect(robotServerWorker, SIGNAL(robotIsAlive(QString, QString, QString, QString, int)), this, SLOT(robotIsAliveSlot(QString, QString, QString, QString, int)));
+    connect(this, SIGNAL(stopUpdateRobotsThread()), robotServerWorker, SLOT(stopThread()));
+    connect(&serverThread, SIGNAL(finished()), robotServerWorker, SLOT(deleteLater()));
+    serverThread.start();
+    robotServerWorker->moveToThread(&serverThread);
+
 /*
-
-    updateRobotsThread = new UpdateRobotsThread(PORT_ROBOT_UPDATE);
-    connect(updateRobotsThread, SIGNAL(robotIsAlive(QString, QString, QString, QString, int)), this, SLOT(robotIsAliveSlot(QString, QString, QString, QString, int)));
-    connect(this, SIGNAL(stopUpdateRobotsThread()), updateRobotsThread, SLOT(stopThread()));
-    updateRobotsThread->start();
-    updateRobotsThread->moveToThread(updateRobotsThread);
-    */
-
     QFile fileWrite(QDir::currentPath() + QDir::separator() + QString(ROBOTS_NAME_FILE));
     //QFile fileWrite(QString(GOBOT_PATH) + QString(ROBOTS_NAME_FILE));
     fileWrite.resize(0);
@@ -358,7 +378,7 @@ QFile fileRead(fileinfo.absoluteFilePath());
             in >> *(robots->getRobotsVector().at(i)->getRobot());
             robotPathFile.close();
         }
-    }
+    }*/
 }
 
 void MainWindow::updateRobot(const QString ipAddress, const float posX, const float posY, const float oriZ){
@@ -1479,8 +1499,11 @@ void MainWindow::robotIsAliveSlot(QString hostname, QString ip, QString mapId, Q
     }
 
     /// Check if the robot has the current map
+    /*
     QSettings settings;
     QString currMapId = settings.value("mapId", "{00000000-0000-0000-0000-000000000000}").toString();
+    */
+    QString currMapId("");
     if(mapId.compare(currMapId) == 0){
         qDebug() << "Which is the current map";
     } else {
@@ -1632,9 +1655,9 @@ void MainWindow::sendNewMapToRobots(QString ipAddress){
     QVector<RobotView*> robotsVector = robots->getRobotsVector();
 
     /// Save the map id in settings
-    QSettings settings;
+    /*QSettings settings;
     settings.setValue("mapId", mapId.toString());
-
+*/
     /// We send the map to each robot
     for(int i = 0; i < robotsVector.size(); i++){
         Robot* robot = robotsVector.at(i)->getRobot();
@@ -1862,21 +1885,16 @@ void MainWindow::saveMapBtnEvent(){
     QString fileName = QFileDialog::getSaveFileName(this, tr("Save File"),
             "", tr("Images (*.pgm)"));
 
-    QSettings settings;
     if(fileName.indexOf(".pgm", fileName.length()-4) != -1)
         fileName = fileName.mid(0, fileName.length()-4);
 
     saveMapState();
 
-    /// stores the parameters and state of the map in the settings file
-    settings.setValue(fileName + "/width", map->getWidth());        settings.setValue(fileName + "/height", map->getHeight());
-    settings.setValue(fileName + "/resolution", map->getResolution());
-    settings.setValue(fileName + "/origin/x", map->getOrigin().getX());
-    settings.setValue(fileName + "/origin/y", map->getOrigin().getY());
-    settings.setValue(fileName + "/mapState/center/x", mapState.first.x());
-    settings.setValue(fileName + "/mapState/center/y", mapState.first.y());
-    settings.setValue(fileName + "/mapState/zoom/", mapState.second);
-    settings.setValue(fileName + "/id", settings.value("mapId", QUuid::createUuid().toString()));
+    QFileInfo mapFileInfo(static_cast<QDir> (fileName), "");
+    QFileInfo fileInfo(QDir::currentPath(), "../gobot-software/mapConfigs/" + mapFileInfo.fileName() + ".config");
+    qDebug() << fileInfo.absoluteFilePath();
+
+    assert(saveMapConfig(fileInfo.absoluteFilePath().toStdString()));
 
     qDebug() << "mapS" << mapState.first.x() << mapState.first.y() << mapState.second << map->getHeight() << map->getWidth();
 
@@ -1912,36 +1930,22 @@ void MainWindow::loadMapBtnEvent(){
     QString fileName = QFileDialog::getOpenFileName(this,
         tr("Open Image"), "", tr("Image Files (*.pgm)"));
 
-    /// defines the imported map as the last loaded map
-    settings.setValue("mapFile", fileName);
+    QString fileNameWithoutExtension;
+    if(fileName.indexOf(".pgm", fileName.length()-4) != -1)
+        fileNameWithoutExtension = fileName.mid(0, fileName.length()-4);
+
+    QFileInfo mapFileInfo(static_cast<QDir> (fileNameWithoutExtension), "");
+    QFileInfo fileInfo(QDir::currentPath(), "../gobot-software/mapConfigs/" + mapFileInfo.fileName() + ".config");
+    qDebug() << fileInfo.absoluteFilePath() << "map to load";
+    assert(loadMapConfig(fileInfo.absoluteFilePath().toStdString()));
 
     /// clears the map of all paths and points
     clearNewMap();
 
-    /// gets ride of ".pgm"
-    if(fileName.indexOf(".pgm", fileName.length()-4) != -1)
-        fileName = fileName.mid(0, fileName.length()-4);
+    qDebug() << "about to load map from" << QString::fromStdString(mapFile);
+    map->setMapFromFile(QString::fromStdString(mapFile));
+    setWindowTitle(QString::fromStdString(mapFile));
 
-    qDebug() << "fileName is" << fileName;
-
-    /// restores the parameters and state of the map
-    map->setWidth(settings.value(fileName + "/width").toInt());
-    map->setHeight(settings.value(fileName + "/height").toInt());
-    map->setResolution(settings.value(fileName + "/resolution").toFloat());
-    map->setOrigin(Position(settings.value(fileName + "/origin/x").toFloat(),
-                            settings.value(fileName + "/origin/y").toFloat()));
-    mapState.first.setX(settings.value(fileName + "/mapState/center/x").toFloat());
-    mapState.first.setY(settings.value(fileName + "/mapState/center/y").toFloat());
-    mapState.second = settings.value(fileName + "/mapState/zoom", 1.0f).toFloat();
-    settings.setValue("mapId", settings.value(fileName + "/id", QUuid::createUuid().toString()));
-
-    qDebug() << "loaded mapS" << mapState.first.x() << mapState.first.y() << mapState.second <<
-                map->getHeight() << map->getWidth() <<
-                "map id" << settings.value(fileName + "/id", QUuid().toString());
-
-    /// imports the new map from the given file
-    map->setMapFromFile(settings.value("mapFile").toString());
-    setWindowTitle(settings.value("mapFile").toString());
     QPixmap pixmap = QPixmap::fromImage(map->getMapImage());
     mapPixmapItem->setPixmap(pixmap);
     scene->update();
@@ -1949,17 +1953,20 @@ void MainWindow::loadMapBtnEvent(){
     /// centers the map
     centerMap();
 
-    /// imports points associated to the map and save them in the current file
-    XMLParser parser(fileName + "_points.xml");
-    parser.readPoints(points);
     QFileInfo fileinfo(QDir::currentPath(), "../gobot-software/points.xml");;
     savePoints(fileinfo.absoluteFilePath());
+
+    /// imports paths associated to the map and save them in the current file
+    deserializePaths(fileNameWithoutExtension + "_paths.dat");
+
+    /// imports points associated to the map and save them in the current file
+    XMLParser parser(fileNameWithoutExtension + "_points.xml");
+    parser.readPoints(points);
 
     /// updates the group box so that new points can be added
     createPointWidget->updateGroupBox();
 
-    /// imports paths associated to the map and save them in the current file
-    deserializePaths(fileName + "_paths.dat");
+
     QFileInfo fileinfoPaths(QDir::currentPath(), "../gobot-software/paths.dat");
     serializePaths(fileinfoPaths.absoluteFilePath());
 
@@ -4804,9 +4811,18 @@ void MainWindow::saveMapState(){
     mapState.first = mapPixmapItem->pos();
     mapState.second = graphicsView->getZoomCoeff();
     qDebug() << "Zoom saved" << mapState.second;
-    settings.setValue("mapState/point/x", mapState.first.x());
-    settings.setValue("mapState/point/y", mapState.first.y());
-    settings.setValue("mapState/zoom", mapState.second);
+
+    QFileInfo newMapInfo(QDir::currentPath(), "../gobot-software/currentMap.txt");
+    std::ofstream file(newMapInfo.absoluteFilePath().toStdString(), std::ios::out | std::ios::trunc);
+
+    if(file){
+        file << mapFile << " " << std::endl <<
+                map->getHeight() << " " << map->getWidth() << std::endl
+             << mapState.first.x() << " " << mapState.first.y() << std::endl
+             << mapState.second << std::endl
+             << map->getOrigin().getX() << " " << map->getOrigin().getY();
+        file.close();
+    }
 }
 
 void MainWindow::showHomes(){
@@ -4878,8 +4894,8 @@ void MainWindow::showSelectedRobotHomeOnly(){
 
 void MainWindow::moveEvent(QMoveEvent *event){
     const QPoint global = this->mapToGlobal(rect().center());
-    editSelectedRobotWidget->getRobotInfoDialog()->move(global.x()-editSelectedRobotWidget->getRobotInfoDialog()->width()/2,
-                                                        global.y()-editSelectedRobotWidget->getRobotInfoDialog()->height()/2);
+    //editSelectedRobotWidget->getRobotInfoDialog()->move(global.x()-editSelectedRobotWidget->getRobotInfoDialog()->width()/2,
+                                                       // global.y()-editSelectedRobotWidget->getRobotInfoDialog()->height()/2);
     QMainWindow::moveEvent(event);
 }
 
@@ -4906,4 +4922,49 @@ void MainWindow::decompress(const QString fileName){
     file.write(cZip.fileData(fInfo.filePath));
     file.close();
     cZip.close();
+}
+
+bool MainWindow::saveMapConfig(const std::string fileName){
+    qDebug() << "saving map to " << QString::fromStdString(fileName);
+    std::ofstream file(fileName, std::ios::out | std::ios::trunc);
+    if(file){
+        file << mapFile << " " << std::endl <<
+                map->getHeight() << " " << map->getWidth() << std::endl
+             << mapState.first.x() << " " << mapState.first.y() << std::endl
+             << mapState.second << std::endl
+             << map->getOrigin().getX() << " " << map->getOrigin().getY();
+        file.close();
+        return true;
+    } else
+        return false;
+}
+
+bool MainWindow::loadMapConfig(const std::string fileName){
+    std::ifstream file(fileName, std::ios::in);
+    if(file){
+        int _height, _width;
+        double centerX, centerY, originX, originY, resolution;
+        file >> mapFile >> _height >> _width >> centerX >> centerY >> mapState.second >> originX >> originY;
+        map->setHeight(_height);
+        map->setWidth(_width);
+        mapState.first.setX(centerX);
+        mapState.first.setY(centerY);
+        map->setOrigin(Position(originX, originY));
+        map->setResolution(resolution);
+        qDebug() << QString::fromStdString(mapFile) << _height << _width << centerX << centerY << originX << originY;
+        file.close();
+    } else
+        return false;
+    QFileInfo fileInfo(QDir::currentPath(), "../gobot-software/currentMap.txt");
+    std::ofstream currentConfigFile(fileInfo.absoluteFilePath().toStdString(), std::ios::out | std::ios::trunc);
+    if(currentConfigFile){
+        currentConfigFile << mapFile << " " << std::endl <<
+                map->getHeight() << " " << map->getWidth() << std::endl
+             << mapState.first.x() << " " << mapState.first.y() << std::endl
+             << mapState.second << std::endl
+             << map->getOrigin().getX() << " " << map->getOrigin().getY();
+        currentConfigFile.close();
+        return true;
+    } else
+        return false;
 }
