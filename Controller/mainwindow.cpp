@@ -312,15 +312,15 @@ void MainWindow::initializeRobots(){
     in >> tmp;
     robots->setRobotsNameMap(tmp);
     fileRead.close();
-
+/*
     robotServerWorker = new RobotServerWorker(PORT_ROBOT_UPDATE);
     connect(robotServerWorker, SIGNAL(robotIsAlive(QString, QString, QString, QString, int)), this, SLOT(robotIsAliveSlot(QString, QString, QString, QString, int)));
     connect(this, SIGNAL(stopUpdateRobotsThread()), robotServerWorker, SLOT(stopThread()));
     connect(&serverThread, SIGNAL(finished()), robotServerWorker, SLOT(deleteLater()));
     serverThread.start();
     robotServerWorker->moveToThread(&serverThread);
+*/
 
-/*
     QFile fileWrite(QDir::currentPath() + QDir::separator() + QString(ROBOTS_NAME_FILE));
     //QFile fileWrite(QString(GOBOT_PATH) + QString(ROBOTS_NAME_FILE));
 
@@ -378,8 +378,7 @@ void MainWindow::initializeRobots(){
             in >> *(robots->getRobotsVector().at(i)->getRobot());
             robotPathFile.close();
         }
-<<<<<<< HEAD
-    }*/
+    }
 
     //qDebug() << "RobotsNameMap on init" << robots->getRobotsNameMap();
 }
@@ -4169,10 +4168,10 @@ void MainWindow::saveGroupPaths(QString name){
         leftMenu->getGroupsPathsWidget()->getActionButtons()->getPlusButton()->setEnabled(true);
         leftMenu->getGroupsPathsWidget()->getActionButtons()->getPlusButton()->setToolTip("Click here to add a new group of paths");
         topLayout->setEnabled(true);
-        leftMenu->getGroupsPathsWidget()->getActionButtons()->getPlusButton()->setEnabled(true);
-        topLayout->setLabelDelay(TEXT_COLOR_SUCCESS, "You have created a new group of paths", 4000);
+        leftMenu->getGroupsPathsWidget()->getActionButtons()->getPlusButton()->setEnabled(true);  
         QFileInfo fileinfo(QDir::currentPath(), "../gobot-software/paths.dat");
         serializePaths(fileinfo.absoluteFilePath());
+        topLayout->setLabelDelay(TEXT_COLOR_SUCCESS, "You have created a new group of paths", 4000);
     } else if(leftMenu->getGroupsPathsWidget()->checkGroupName(name) == 1){
         /// enables the return button again
         leftMenu->getReturnButton()->setEnabled(true);
