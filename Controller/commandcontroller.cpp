@@ -10,7 +10,7 @@ CommandController::CommandController(QWidget *parent) : QObject(parent), message
     connect(messageBox, SIGNAL(hideBox()), this, SLOT(userStopped()));
 }
 
-bool CommandController::sendCommand(Robot* robot, QString cmd){
+bool CommandController::sendCommand(QPointer<Robot> robot, QString cmd){
     if(robotName.isEmpty() && !cmd.isEmpty()){
         cmdAnswer = "";
         robot->sendCommand(cmd);
@@ -87,7 +87,7 @@ void CommandController::cmdAnswerSlot(QString answer){
 }
 
 
-void CommandController::sendNewMapToRobot(Robot* robot, QString mapId, QSharedPointer<Map> map){
+void CommandController::sendNewMapToRobot(QPointer<Robot> robot, QString mapId, QSharedPointer<Map> map){
     qDebug() << "sendNewMapToRobot called on" << robot->getName() << "at ip" << robot->getIp() << "sending map id :" << mapId;
 /*
     if(robotName.isEmpty()){

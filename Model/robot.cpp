@@ -107,6 +107,7 @@ void Robot::stopThreads() {
     emit stopNewMapWorker();
     newMapThread.quit();
     newMapThread.wait();
+
 }
 
 void Robot::portSentSlot(){

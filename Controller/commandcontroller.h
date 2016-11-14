@@ -13,8 +13,8 @@ class CommandController : public QObject{
 public:
     CommandController(QWidget *parent);
     void robotWaitForAnswer(QString msg);
-    bool sendCommand(Robot* robot, QString cmd);
-    void sendNewMapToRobot(Robot* robot, QString mapId, QSharedPointer<Map> map);
+    bool sendCommand(QPointer<Robot> robot, QString cmd);
+    void sendNewMapToRobot(QPointer<Robot> robot, QString mapId, QSharedPointer<Map> map);
     void robotDisconnected(QString _robotName);
 
 private slots:

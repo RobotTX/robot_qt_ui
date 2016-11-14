@@ -5,7 +5,7 @@
 #include "View/custompushbutton.h"
 #include <QAbstractButton>
 
-RobotBtnGroup::RobotBtnGroup(const QVector<RobotView*>& vector, QWidget* parent):QWidget(parent){
+RobotBtnGroup::RobotBtnGroup(const QVector<QPointer<RobotView>>& vector, QWidget* parent):QWidget(parent){
     btnGroup = new QButtonGroup(this);
     layout = new QVBoxLayout(this);
 

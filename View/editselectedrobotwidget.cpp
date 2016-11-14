@@ -154,7 +154,7 @@ EditSelectedRobotWidget::EditSelectedRobotWidget(QWidget* parent, MainWindow* _m
     setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
 }
 
-void EditSelectedRobotWidget::setSelectedRobot(RobotView* const _robotView, bool _firstConnection){
+void EditSelectedRobotWidget::setSelectedRobot(QPointer<RobotView> const _robotView, bool _firstConnection){
     qDebug() << _robotView->getRobot()->getName();
 
     pathChanged = false;
@@ -187,7 +187,7 @@ void EditSelectedRobotWidget::setSelectedRobot(RobotView* const _robotView, bool
 void EditSelectedRobotWidget::editName(void){
     robotView->getRobot()->setName(nameLabel->text());
     robotView->getRobot()->setWifi(wifiNameLabel->text());
-    RobotView* rv = robots->getRobotViewByName(robotView->getRobot()->getName());
+    QPointer<RobotView> rv = robots->getRobotViewByName(robotView->getRobot()->getName());
     if(rv != NULL){
         rv->getRobot()->setName(nameLabel->text());
         rv->getRobot()->setWifi(wifiNameLabel->text());

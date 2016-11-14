@@ -24,7 +24,7 @@ BottomLayout::BottomLayout(QMainWindow* parent, const QSharedPointer<Robots> &ro
     QWidget* widget = new QWidget(scrollArea);
     QHBoxLayout* scrollLayout = new QHBoxLayout(widget);
 
-    QVector<RobotView*> robotsVector = robots->getRobotsVector();
+    QVector<QPointer<RobotView>> robotsVector = robots->getRobotsVector();
 
     /// The button group for the column with the robots' name
     robotBtnGroup = new QButtonGroup(this);
@@ -182,7 +182,7 @@ BottomLayout::BottomLayout(QMainWindow* parent, const QSharedPointer<Robots> &ro
     this->setAutoFillBackground(true);
 }
 
-void BottomLayout::updateRobot(const int id, RobotView * const robotView){
+void BottomLayout::updateRobot(const int id, QPointer<RobotView> const robotView){
     qDebug() << "(BottomLayout) updateRobot called" << id << robotBtnGroup->buttons().size();
     static_cast<CustomPushButton*> (robotBtnGroup->button(id))->setText(robotView->getRobot()->getName());
     if(robotView->getRobot()->getPath().size() < 1){
@@ -204,13 +204,13 @@ void BottomLayout::updateRobot(const int id, RobotView * const robotView){
     }
 }
 
-void BottomLayout::updateStageRobot(const int id, RobotView* robotView, const int stage){
+void BottomLayout::updateStageRobot(const int id, QPointer<RobotView> robotView, const int stage){
     if(robotView->getRobot()->getPath().size() > 0){
         vectorPathLabel.at(id)->setText(pathToStr(robotView->getRobot()->getPath(), stage));
     }
 }
 
-void BottomLayout::addRobot(RobotView * const robotView){
+void BottomLayout::addRobot(QPointer<RobotView> const robotView){
     qDebug() << "(BottomLayout) addRobot called";
     int i = robotBtnGroup->buttons().size();
     /// Creation of the first column, with the button containing the name of the robots

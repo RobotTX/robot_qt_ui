@@ -81,7 +81,7 @@ private :
     int robotPort;
     int mapPort;
     bool stop;
-    QTimer* timer;
+    QTimer timer;
     int timeCounter;
 };
 

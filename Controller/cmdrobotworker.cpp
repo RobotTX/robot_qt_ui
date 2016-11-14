@@ -85,17 +85,16 @@ void CmdRobotWorker::connectedSlot(){
         };
     }
 
-    timer = new QTimer(this);
-    timer->setInterval(1000);
+    timer.setInterval(1000);
     connect(timer, SIGNAL(timeout()), this, SLOT(timerSlot()));
-    timer->start();
+    timer.start();
 }
 
 void CmdRobotWorker::disconnectedSlot(){
     qDebug() << "(Robot" << robotName << ") Disconnected at ip" << ipAddress;
     if(robotName.compare("") != 0){
         qDebug() << "(Robot" << robotName << ") Emitting robotIsDead";
-        timer->stop();
+        timer.stop();
         timeCounter = 0;
         emit robotIsDead(robotName, ipAddress);
         if(socket->isOpen())
@@ -113,7 +112,7 @@ void CmdRobotWorker::onStateChanged(QAbstractSocket::SocketState socketState ){
 
 void CmdRobotWorker::pingSlot(void){
     qDebug()<< "(Robot" << robotName << ") Received the ping";
-    timer->start();
+    timer.start();
     timeCounter = 0;
 }
 

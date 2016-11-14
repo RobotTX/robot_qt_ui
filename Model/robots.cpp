@@ -7,16 +7,16 @@
 #include "View/pointview.h"
 
 Robots::Robots(){
-    robotsVector = QVector<RobotView*>();
+    robotsVector = QVector<QPointer<RobotView>>();
     robotsNameMap = QMap<QString, QString>();
 }
 
-void Robots::add(RobotView* const robotView){
+void Robots::add(QPointer<RobotView> const robotView){
     robotsVector.append(robotView);
     //qDebug() << "Added the robot : " << robotView->getRobot()->getName() << " to the list of robots";
 }
 
-void Robots::remove(RobotView* robotView){
+void Robots::remove(QPointer<RobotView> robotView){
     int nb = 0;
     for(int i = 0; i < robotsVector.length(); i++){
         if(robotsVector[i]->getRobot()->getName() == robotView->getRobot()->getName() && robotsVector[i]->getRobot()->getIp() == robotView->getRobot()->getIp()){
@@ -49,7 +49,7 @@ void Robots::removeByIp(const QString ip){
     qDebug() << nb << " robot(s) with ip address " << ip << " removed";
 }
 
-RobotView* Robots::getRobotViewByName(const QString name) const {
+QPointer<RobotView> Robots::getRobotViewByName(const QString name) const {
     for(int i = 0; i < robotsVector.length(); i++){
         if(robotsVector[i]->getRobot()->getName() == name){
             return robotsVector[i];
@@ -58,7 +58,7 @@ RobotView* Robots::getRobotViewByName(const QString name) const {
     return NULL;
 }
 
-RobotView* Robots::getRobotViewByIp(const QString ip) const {
+QPointer<RobotView> Robots::getRobotViewByIp(const QString ip) const {
     for(int i = 0; i < robotsVector.length(); i++){
         if(robotsVector[i]->getRobot()->getIp() == ip){
             return robotsVector[i];
@@ -67,7 +67,7 @@ RobotView* Robots::getRobotViewByIp(const QString ip) const {
     return NULL;
 }
 
-void Robots::setSelected(RobotView * const robotView){
+void Robots::setSelected(QPointer<RobotView> const robotView){
     qDebug() << "Selected robot : " << robotView->getRobot()->getName();
     for(int i = 0; i < robotsVector.length(); i++){
         if(robotsVector[i]->getRobot()->getName() == robotView->getRobot()->getName() &&
@@ -100,7 +100,7 @@ int Robots::getRobotId(const QString name) const{
     return -1;
 }
 
-RobotView* Robots::findRobotUsingHome(const QString name) const {
+QPointer<RobotView> Robots::findRobotUsingHome(const QString name) const {
     for(int i = 0; i < robotsVector.size(); i++){
         QSharedPointer<PointView> home = robotsVector.at(i)->getRobot()->getHome();
         /// we first check that this robot has a home point, if it does then we compare the names
@@ -110,7 +110,7 @@ RobotView* Robots::findRobotUsingHome(const QString name) const {
     return NULL;
 }
 
-RobotView* Robots::findRobotUsingTmpPointInPath(const QSharedPointer<Point> point) const {
+QPointer<RobotView> Robots::findRobotUsingTmpPointInPath(const QSharedPointer<Point> point) const {
     for(int i = 0; i < robotsVector.size(); i++){
         QVector<QSharedPointer<PathPoint>> path = robotsVector.at(i)->getRobot()->getPath();
         for(int j = 0; j < path.size(); j++){
