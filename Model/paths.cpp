@@ -141,6 +141,7 @@ QDataStream& operator>>(QDataStream& in, Paths& paths){
     QMapIterator<QString, QMap<QString, QVector<PathPoint>>> it(tmpPaths);
     while(it.hasNext()){
         it.next();
+        qDebug() << " saving group" << it.key();
         paths.createGroup(it.key());
         QMapIterator<QString, QVector<PathPoint>> it_paths(it.value());
         while(it_paths.hasNext()){
@@ -163,6 +164,7 @@ QDataStream& operator<<(QDataStream& out, const Paths& paths){
         it.next();
         QMap<QString, QVector<PathPoint>> tmpGroup;
         QMapIterator<QString, QSharedPointer<Paths::Path> > it_paths(*(it.value()));
+        qDebug() << "new group" << it.key();
         while(it_paths.hasNext()){
             it_paths.next();
             QVector<PathPoint> tmpPath;

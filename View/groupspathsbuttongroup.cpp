@@ -45,7 +45,7 @@ void GroupsPathsButtonGroup::uncheck(){
 
 /// delete the buttons so they can be reconstructed (for example after a group of paths has been added)
 void GroupsPathsButtonGroup::deleteButtons(){
-    qDebug() << "GroupButtonGroup::deleteButtons called";
+    qDebug() << "GroupPathsButtonGroup::deleteButtons called";
     layout->removeWidget(modifyEdit);
     while(QLayoutItem* item = layout->takeAt(0)){
         if(item){
