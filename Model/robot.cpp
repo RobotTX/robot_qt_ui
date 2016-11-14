@@ -1,10 +1,6 @@
 #include "robot.h"
 #include "Model/point.h"
 #include "Model/pathpoint.h"
-#include "Controller/cmdrobotworker.h"
-#include "Controller/robotpositionworker.h"
-#include "Controller/metadataworker.h"
-#include "Controller/sendnewmapworker.h"
 #include "Controller/mainwindow.h"
 #include <iostream>
 #include <QFile>
@@ -28,7 +24,7 @@ Robot::Robot(MainWindow* mainWindow, const QSharedPointer<Paths>& _paths, const 
 
     qDebug() << "Robot" << name << "at ip" << ip << " launching its cmd thread";
 
-    cmdRobotWorker = new CmdRobotWorker(ip, PORT_CMD, PORT_MAP_METADATA, PORT_ROBOT_POS, PORT_MAP, name);
+    cmdRobotWorker = QPointer<CmdRobotWorker>(new CmdRobotWorker(ip, PORT_CMD, PORT_MAP_METADATA, PORT_ROBOT_POS, PORT_MAP, name));
     connect(cmdRobotWorker, SIGNAL(robotIsDead(QString,QString)), mainWindow, SLOT(robotIsDeadSlot(QString,QString)));
     connect(cmdRobotWorker, SIGNAL(cmdAnswer(QString)), mainWindow->getCommandController(), SLOT(cmdAnswerSlot(QString)));
     connect(cmdRobotWorker, SIGNAL(portSent()), this, SLOT(portSentSlot()));
@@ -44,7 +40,7 @@ Robot::Robot(MainWindow* mainWindow, const QSharedPointer<Paths>& _paths, const 
 
     //qDebug() << "Robot" << name << "at ip" << ip << " launching its robot pos thread at port" << PORT_ROBOT_POS;
 
-    robotWorker = new RobotPositionWorker(ip, PORT_ROBOT_POS);
+    robotWorker = QPointer<RobotPositionWorker>(new RobotPositionWorker(ip, PORT_ROBOT_POS));
     connect(robotWorker, SIGNAL(valueChangedRobot(QString, float, float, float)),
                      mainWindow ,SLOT(updateRobot(QString, float, float, float)));
     connect(this, SIGNAL(stopRobotWorker()), robotWorker, SLOT(stopThread()));
@@ -56,7 +52,7 @@ Robot::Robot(MainWindow* mainWindow, const QSharedPointer<Paths>& _paths, const 
 
     //qDebug() << "Robot" << name << "at ip" << ip << " launching its metadata thread at port" << PORT_ROBOT_POS;
 
-    metadataWorker = new MetadataWorker(ip, PORT_MAP_METADATA);
+    metadataWorker = QPointer<MetadataWorker>(new MetadataWorker(ip, PORT_MAP_METADATA));
     connect(metadataWorker, SIGNAL(valueChangedMetadata(int, int, float, float, float)),
                      mainWindow , SLOT(updateMetadata(int, int, float, float, float)));
     connect(this, SIGNAL(stopMetadataWorker()), metadataWorker, SLOT(stopThread()));
@@ -68,7 +64,7 @@ Robot::Robot(MainWindow* mainWindow, const QSharedPointer<Paths>& _paths, const 
 
     //qDebug() << "Robot" << name << "at ip" << ip << " launching its new map thread at port" << PORT_NEW_MAP;
 
-    newMapWorker = new SendNewMapWorker(ip, PORT_NEW_MAP);
+    newMapWorker = QPointer<SendNewMapWorker>(new SendNewMapWorker(ip, PORT_NEW_MAP));
     connect(this, SIGNAL(sendNewMapSignal(QByteArray)), newMapWorker, SLOT(writeTcpDataSlot(QByteArray)));
     connect(this, SIGNAL(cmdAnswer(QString)), mainWindow->getCommandController(), SLOT(cmdAnswerSlot(QString)));
     connect(newMapWorker, SIGNAL(doneSendingNewMapSignal()), this, SLOT(doneSendingMapSlot()));

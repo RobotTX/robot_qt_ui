@@ -22,7 +22,7 @@ void ScanMapWorker::stopThread(){
 void ScanMapWorker::connectSocket(){
     qDebug() << "(Map Thread) Trying to connect to" << ipAddress << "at port" << port;
 
-    socket = QSharedPointer<QTcpSocket>(new QTcpSocket());
+    socket = QPointer<QTcpSocket>(new QTcpSocket());
 
     /// Connect the signal connected which trigger when we are connected to the host
     //connect(&(*socket), SIGNAL(connected()), SLOT(connectedSlot()) );

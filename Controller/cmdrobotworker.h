@@ -1,11 +1,11 @@
 #ifndef CMDROBOTWORKER_H
 #define CMDROBOTWORKER_H
 
-class QTimer;
 
 #include <QString>
 #include <QtNetwork/QTcpSocket>
-#include <QSharedPointer>
+#include <QPointer>
+#include <QTimer>
 
 #define ROBOT_TIMER 15
 
@@ -72,7 +72,7 @@ private slots:
 
 
 private :
-    QSharedPointer<QTcpSocket> socket;
+    QPointer<QTcpSocket> socket;
     QString ipAddress;
     int port;
     QString robotName;

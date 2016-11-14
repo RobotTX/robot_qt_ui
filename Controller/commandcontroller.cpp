@@ -5,12 +5,13 @@
 #include <QStringList>
 #include <QFile>
 
-CommandController::CommandController(QWidget *parent) : QObject(parent), messageBox(new CommandMessageBox(parent)), robotName(""){
+CommandController::CommandController(QWidget *parent) : QObject(parent), messageBox(QPointer<CommandMessageBox>(new CommandMessageBox(parent))), robotName(""){
     messageBox->setWindowTitle("Processing a command");
     connect(messageBox, SIGNAL(hideBox()), this, SLOT(userStopped()));
 }
 
 bool CommandController::sendCommand(QPointer<Robot> robot, QString cmd){
+
     if(robotName.isEmpty() && !cmd.isEmpty()){
         cmdAnswer = "";
         robot->sendCommand(cmd);

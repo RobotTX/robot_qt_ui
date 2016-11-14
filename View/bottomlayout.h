@@ -3,19 +3,19 @@
 
 class Robots;
 class RobotView;
-class QHBoxLayout;
-class QLabel;
-class QButtonGroup;
 class QMainWindow;
+class PathPoint;
+class QButtonGroup;
+class QLabel;
+class QHBoxLayout;
+class QAbstractButton;
 class QScrollArea;
 class QVBoxLayout;
-class PathPoint;
 
 #include <QSharedPointer>
 #include <QWidget>
 #include <QVector>
 #include <QList>
-#include <QAbstractButton>
 
 /**
  * @brief The BottomLayout class

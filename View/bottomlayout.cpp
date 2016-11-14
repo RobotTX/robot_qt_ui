@@ -4,15 +4,17 @@
 #include "View/robotview.h"
 #include "Model/robot.h"
 #include "Model/pathpoint.h"
-#include <QHBoxLayout>
-#include <QLabel>
 #include <QMainWindow>
-#include <QButtonGroup>
 #include <QDebug>
-#include <QScrollBar>
 #include "Model/points.h"
 #include "View/stylesettings.h"
 #include "View/custompushbutton.h"
+#include <QButtonGroup>
+#include <QLabel>
+#include <QHBoxLayout>
+#include <QAbstractButton>
+#include <QScrollBar>
+#include <QVBoxLayout>
 
 BottomLayout::BottomLayout(QMainWindow* parent, const QSharedPointer<Robots> &robots) : QWidget(parent), lastCheckedId(-1){
 

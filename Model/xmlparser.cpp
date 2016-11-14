@@ -1,7 +1,6 @@
 #include "xmlparser.h"
 #include "points.h"
 #include "point.h"
-#include <QFile>
 #include <QXmlStreamWriter>
 #include <QDebug>
 #include "View/mapview.h"
@@ -9,7 +8,7 @@
 #include "View/pathcreationwidget.h"
 
 XMLParser::XMLParser(const QString filename){
-    file = new QFile(filename);
+    file = QPointer<QFile>(new QFile(filename));
 }
 
 XMLParser::~XMLParser(){

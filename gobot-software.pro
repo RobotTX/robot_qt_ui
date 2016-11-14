@@ -49,7 +49,6 @@ HEADERS += \
            View/spacewidget.h \
            View/toplayout.h \
            View/topleftmenu.h \
-           Controller/updaterobotsthread.h \
            View/createpointwidget.h \
            View/customscrollarea.h \
            View/displayselectedpointrobots.h \
@@ -75,7 +74,9 @@ HEADERS += \
            zipreader.h \
            zipwriter.h \
            zlib.h \
-    View/editselectedrobotwidget.h
+           Controller/robotserverworker.h \
+           View/editselectedrobotwidget.h
+
 
 FORMS += Controller/mainwindow.ui
 
@@ -111,7 +112,6 @@ SOURCES += main.cpp \
            View/robotview.cpp \
            View/spacewidget.cpp \
            View/toplayout.cpp \
-           Controller/updaterobotsthread.cpp \
            View/createpointwidget.cpp \
            View/topleftmenu.cpp \
            View/customscrollarea.cpp \
@@ -134,7 +134,9 @@ SOURCES += main.cpp \
            Controller/commandcontroller.cpp \
            View/commandmessagebox.cpp \
            zip.cpp \
-    View/editselectedrobotwidget.cpp
+           Controller/robotserverworker.cpp \
+           View/editselectedrobotwidget.cpp
+
 
 RESOURCES += Resources/resources.qrc
 

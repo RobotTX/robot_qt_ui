@@ -6,7 +6,7 @@ class Map;
 
 #include <QObject>
 #include "View/commandmessagebox.h"
-#include <QSharedPointer>
+#include <QPointer>
 
 class CommandController : public QObject{
     Q_OBJECT
@@ -22,7 +22,7 @@ private slots:
     void userStopped();
 
 private:
-    CommandMessageBox* messageBox;
+    QPointer<CommandMessageBox> messageBox;
     QString cmdAnswer;
     QString robotName;
 };
