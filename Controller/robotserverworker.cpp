@@ -6,10 +6,9 @@
 
 RobotServerWorker::RobotServerWorker(const int newPort, QObject* parent): port(newPort), QTcpServer(parent){
     //qDebug() << "(RobotServerWorker) Thread launched";
-    //server = new QTcpServer(this);
     connect(this, SIGNAL(newConnection()), this, SLOT(newConnectionSlot()));
     connect(this, SIGNAL(acceptError(QAbstractSocket::SocketError)), this, SLOT(errorConnectionSlot(QAbstractSocket::SocketError)));
-    startServer();
+    //startServer();
 }
 
 void RobotServerWorker::startServer(){
