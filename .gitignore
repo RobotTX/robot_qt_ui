@@ -9,3 +9,6 @@ Resources/points.*
 Build/*
 robot_paths/*
 savedPaths.dat
+mapConfigs/*
+paths.dat
+currentMap.txt
