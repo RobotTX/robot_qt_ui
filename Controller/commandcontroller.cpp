@@ -11,7 +11,7 @@ CommandController::CommandController(QWidget *parent) : QObject(parent), message
 }
 
 bool CommandController::sendCommand(Robot* robot, QString cmd){
-    /*if(robotName.isEmpty() && !cmd.isEmpty()){
+    if(robotName.isEmpty() && !cmd.isEmpty()){
         cmdAnswer = "";
         robot->sendCommand(cmd);
 
@@ -53,9 +53,9 @@ bool CommandController::sendCommand(Robot* robot, QString cmd){
     } else {
         qDebug() << "CommandController::sendCommand Robot" << robotName << "is already processing a command";
     }
-    return false;*/
+    return false;
 
-    return true;
+    //return true;
 }
 
 void CommandController::robotWaitForAnswer(QString msg){

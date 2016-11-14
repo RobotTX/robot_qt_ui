@@ -2,6 +2,8 @@
 
 const int max_length = 1024;
 
+const std::string PATH_STAGE_FILE = "/home/gtdollar/computer_software/Robot_Infos/path_stage.txt";
+
 bool waiting = false;
 bool connected = false;
 ros::ServiceClient startRobotPosClient;
@@ -158,8 +160,19 @@ bool execCommand(ros::NodeHandle n, std::vector<std::string> command){
 						ofs << command.at(i) << " " << command.at(i+1) << " " << command.at(i+2) << "\n";
 
 					ofs.close();
+					
+					// reset the path stage in the file
+					std::ofstream path_stage_file(PATH_STAGE_FILE, std::ofstream::out | std::ofstream::trunc);
 
-				} else std::cout << "sorry could nt open the file " << path_computer_software + "Robot_Infos/path.txt";
+					if(path_stage_file){
+						path_stage_file << "0";
+						path_stage_file.close();
+					} else {
+						std::cout << "Sorry we were not able to find the file play_path.txt in order to keep track of the stage of the path to be played" << std::endl;
+						return false;	
+					}
+
+				} else std::cout << "sorry could not open the file " << path_computer_software + "Robot_Infos/path.txt";
 
 				return true;
 

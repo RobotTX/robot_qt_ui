@@ -289,15 +289,15 @@ void MainWindow::initializeRobots(){
     robots->setRobotsNameMap(tmp);
     fileRead.close();
 
-/*
+
     updateRobotsThread = new UpdateRobotsThread(PORT_ROBOT_UPDATE);
     connect(updateRobotsThread, SIGNAL(robotIsAlive(QString, QString, QString, QString, int)), this, SLOT(robotIsAliveSlot(QString, QString, QString, QString, int)));
     connect(this, SIGNAL(stopUpdateRobotsThread()), updateRobotsThread, SLOT(stopThread()));
     updateRobotsThread->start();
     updateRobotsThread->moveToThread(updateRobotsThread);
-*/
 
 
+/*
     QFile fileWrite(QString(GOBOT_PATH) + QString(ROBOTS_NAME_FILE));
     fileWrite.resize(0);
     fileWrite.open(QIODevice::WriteOnly);
@@ -353,7 +353,7 @@ void MainWindow::initializeRobots(){
             robotPathFile.close();
         }
     }
-
+*/
 
 
     //qDebug() << "RobotsNameMap on init" << robots->getRobotsNameMap();
@@ -1630,7 +1630,6 @@ void MainWindow::sendNewMapToRobots(QString ipAddress){
 
 void MainWindow::updateAllPaths(const Point& old_point, const Point& new_point){
     qDebug() << "MainWindow::updateAllPaths called";
-    RobotView* currentRobot = editSelectedRobotWidget->getRobot();
     for(int i = 0; i < robots->getRobotsVector().size(); i++){
         Robot* robot = robots->getRobotsVector().at(i)->getRobot();
         /// to update the description of the path of each robot
@@ -1658,10 +1657,9 @@ void MainWindow::updateAllPaths(const Point& old_point, const Point& new_point){
         bottomLayout->updateRobot(robots->getRobotId(robot->getName()), robots->getRobotsVector().at(i));
     }
 
-    if(currentRobot){
-        editSelectedRobotWidget->setSelectedRobot(currentRobot);
+    if(editSelectedRobotWidget->getRobot()){
         /// to reset the tooltip of the edited point !
-        int robotId = robots->getRobotId(currentRobot->getRobot()->getName());
+        int robotId = robots->getRobotId(editSelectedRobotWidget->getRobot()->getRobot()->getName());
         if(bottomLayout->getViewPathRobotBtnGroup()->button(robotId)->isChecked()){
             qDebug() << " i am displayed " << robotId;
             viewPathSelectedRobot(robotId, false);

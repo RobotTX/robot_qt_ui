@@ -273,6 +273,15 @@ void BottomLayout::addRobot(RobotView * const robotView){
 void BottomLayout::removeRobot(const int id){
     qDebug() << "(BottomLayout) removeRobot called" << id;
     if(id >= 0){
+
+        for(int i =0; i < listEnabled.size(); i++){
+            if(listEnabled.at(i) == playRobotBtnGroup->buttons().at(id)
+                    || listEnabled.at(i) == stopRobotBtnGroup->buttons().at(id)
+                    || listEnabled.at(i) == robotBtnGroup->buttons().at(id)
+                    || listEnabled.at(i) == viewPathRobotBtnGroup->buttons().at(id))
+                listEnabled.removeAt(i);
+        }
+
         playRobotBtnGroup->removeButton(playRobotBtnGroup->buttons().at(id));
         stopRobotBtnGroup->removeButton(stopRobotBtnGroup->buttons().at(id));
         robotBtnGroup->removeButton(robotBtnGroup->buttons().at(id));
@@ -314,7 +323,8 @@ void BottomLayout::setEnable(const bool enable){
     //qDebug() << "BottomLayout::setEnable called";
     if(enable){
         for(int i =0; i < listEnabled.size(); i++){
-            listEnabled.at(i)->setEnabled(true);
+            if(listEnabled.at(i))
+                listEnabled.at(i)->setEnabled(true);
         }
         listEnabled.clear();
     } else {
