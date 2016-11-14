@@ -3,7 +3,6 @@
 
 class Points;
 class Robots;
-class QFile;
 class QXmlStreamReader;
 class MapView;
 class MainWindow;
@@ -11,6 +10,7 @@ class MainWindow;
 #include <QVector>
 #include <QGraphicsItem>
 #include <QSharedPointer>
+#include <QFile>
 
 
 /**

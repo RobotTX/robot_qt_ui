@@ -319,8 +319,9 @@ void MainWindow::initializeRobots(){
     robotServerWorker->moveToThread(&serverThread);
 */
 
-    QFile fileWrite(QDir::currentPath() + QDir::separator() + QString(ROBOTS_NAME_FILE));
-
+    //QFile fileWrite(QDir::currentPath() + QDir::separator() + QString(ROBOTS_NAME_FILE));
+    QFileInfo fileInfo(QDir::currentPath(), "../gobot-software/" + QString(ROBOTS_NAME_FILE));
+    QFile fileWrite(fileInfo.absoluteFilePath());
     fileWrite.resize(0);
     fileWrite.open(QIODevice::WriteOnly);
     QDataStream out(&fileWrite);
@@ -329,12 +330,13 @@ void MainWindow::initializeRobots(){
     QString robotIp1 = "localhost";
     QString robotName1 = tmpMap.value(robotIp1, "Roboty");
 
-    Robot* robot1(new Robot(this, paths, robotName1, robotIp1));
+    QPointer<Robot> robot1(QPointer<Robot>(new Robot(this, paths, robotName1, robotIp1)));
     robot1->setWifi("Swaghetti Yolognaise");
-    RobotView* robotView1 = new RobotView(robot1, mapPixmapItem);
+    QPointer<RobotView> robotView1 = QPointer<RobotView>(new RobotView(robot1, mapPixmapItem));
     robotView1->setLastStage(2);
 
-    connect(robotView1, SIGNAL(setSelectedSignal(RobotView*)), this, SLOT(setSelectedRobot(RobotView*)));
+    connect(robotView1, SIGNAL(setSelectedSignal(QPointer<RobotView>)), this, SLOT(setSelectedRobot(QPointer<RobotView>)));
+
     robotView1->setPosition(896, 1094);
     robotView1->setParentItem(mapPixmapItem);
     robots->add(robotView1);
@@ -342,10 +344,10 @@ void MainWindow::initializeRobots(){
 
     QString robotIp2 = "192.168.4.12";
     QString robotName2 = tmpMap.value(robotIp2, "Roboto");
-    Robot* robot2(new Robot(this, paths, robotName2, robotIp2));
+    QPointer<Robot> robot2(QPointer<Robot>(new Robot(this, paths, robotName2, robotIp2)));
     robot2->setWifi("Swaghetti Yolognaise");
-    RobotView* robotView2 = new RobotView(robot2, mapPixmapItem);
-    connect(robotView2, SIGNAL(setSelectedSignal(RobotView*)), this, SLOT(setSelectedRobot(RobotView*)));
+    QPointer<RobotView> robotView2 = QPointer<RobotView>(new RobotView(robot2, mapPixmapItem));
+    connect(robotView2, SIGNAL(setSelectedSignal(QPointer<RobotView>)), this, SLOT(setSelectedRobot(QPointer<RobotView>)));
     robotView2->setPosition(907, 1175);
     robotView2->setParentItem(mapPixmapItem);
     robots->add(robotView2);
@@ -353,10 +355,10 @@ void MainWindow::initializeRobots(){
 
     QString robotIp3 = "192.168.4.13";
     QString robotName3 = tmpMap.value(robotIp3, "Robota");
-    Robot* robot3(new Robot(this, paths, robotName3, robotIp3));
+    QPointer<Robot> robot3(QPointer<Robot>(new Robot(this, paths, robotName3, robotIp3)));
     robot3->setWifi("Swaghetti Yolognaise");
-    RobotView* robotView3 = new RobotView(robot3, mapPixmapItem);
-    connect(robotView3, SIGNAL(setSelectedSignal(RobotView*)), this, SLOT(setSelectedRobot(RobotView*)));
+    QPointer<RobotView> robotView3 = QPointer<RobotView>(new RobotView(robot3, mapPixmapItem));
+    connect(robotView3, SIGNAL(setSelectedSignal(QPointer<RobotView>)), this, SLOT(setSelectedRobot(QPointer<RobotView>)));
     robotView3->setPosition(1148, 915);
     robotView3->setParentItem(mapPixmapItem);
     robots->add(robotView3);
@@ -365,11 +367,12 @@ void MainWindow::initializeRobots(){
     robots->setRobotsNameMap(tmpMap);
     out << robots->getRobotsNameMap();
     fileWrite.close();
+
+
     for(int i = 0; i < robots->getRobotsVector().size(); i++){
         QFileInfo fileinfo(QDir::currentPath(), "../gobot-software/robots_paths/" + robots->getRobotsVector().at(i)->getRobot()->getName() + "_path.dat");
         QFile robotPathFile(fileinfo.absoluteFilePath());
         qDebug() << "robot file" << fileinfo.absoluteFilePath();
-        //QFile robotPathFile(QString(GOBOT_PATH) + "robots_paths/" + robots->getRobotsVector().at(i)->getRobot()->getName() + "_path.dat");
         if(robotPathFile.exists()){
             robotPathFile.open(QIODevice::ReadOnly);
             QDataStream in(&robotPathFile);
@@ -387,7 +390,7 @@ void MainWindow::updateRobot(const QString ipAddress, const float posX, const fl
     float newPosY = map->getHeight()-(-map->getOrigin().getY()+posY)/map->getResolution()-ROBOT_WIDTH/2;
     float ori = asin(-oriZ) * 360.0 / PI + 90;
 
-    RobotView* rv = robots->getRobotViewByIp(ipAddress);
+    QPointer<RobotView> rv = robots->getRobotViewByIp(ipAddress);
     if(rv != NULL){
         rv->setPosition(newPosX, newPosY);
         rv->setOrientation(ori);
@@ -454,7 +457,7 @@ void MainWindow::connectToRobot(bool checked){
                 qDebug() << "Stopped scanning the map";
                 editSelectedRobotWidget->getScanBtn()->setText("Scan a map");
 
-                RobotView* _tmpRobot = selectedRobot;
+                QPointer<RobotView> _tmpRobot = selectedRobot;
                 hideAllWidgets();
                 selectedRobot = _tmpRobot;
 
@@ -487,7 +490,7 @@ void MainWindow::stopMapThread(){
 
 void MainWindow::deletePath(int robotNb){
     qDebug() << "MainWindow::deletepath called on robot :" << robots->getRobotsVector().at(robotNb)->getRobot()->getName();
-    Robot* robot = robots->getRobotsVector().at(robotNb)->getRobot();
+    QPointer<Robot> robot = robots->getRobotsVector().at(robotNb)->getRobot();
     if(robot->getPath().size() > 0){
         /// if the robot is not playing its path
         if(!robot->isPlayingPath()){
@@ -520,7 +523,7 @@ void MainWindow::deletePath(int robotNb){
                 case QMessageBox::Ok:
                 {
                     /// if the command is succesfully sent to the robot, we apply the change
-                    Robot* robot = robots->getRobotsVector().at(robotNb)->getRobot();
+                    QPointer<Robot> robot = robots->getRobotsVector().at(robotNb)->getRobot();
                     if(commandController->sendCommand(robot, QString("m"))){
                         clearPath(robotNb);
                         topLayout->setLabel(TEXT_COLOR_SUCCESS, "The path of " + robot->getName() + " has been successfully deleted");
@@ -537,7 +540,7 @@ void MainWindow::deletePath(int robotNb){
 
 void MainWindow::stopPath(int robotNb){
     qDebug() << "MainWindow::StopPath called";
-    Robot* robot = robots->getRobotsVector().at(robotNb)->getRobot();
+    QPointer<Robot> robot = robots->getRobotsVector().at(robotNb)->getRobot();
     if(commandController->sendCommand(robot, QString("l"))){
         robot->setPlayingPath(false);
         bottomLayout->getPlayRobotBtnGroup()->button(robotNb)->setIcon(QIcon(":/icons/play.png"));
@@ -549,7 +552,7 @@ void MainWindow::stopPath(int robotNb){
 }
 
 void MainWindow::playSelectedRobot(int robotNb){
-    Robot* robot = robots->getRobotsVector().at(robotNb)->getRobot();
+    QPointer<Robot> robot = robots->getRobotsVector().at(robotNb)->getRobot();
     if(robot->isPlayingPath()){
         qDebug() << "pause path on robot " << robotNb << " : " << robot->getName();
         /// if the command is succesfully sent to the robot, we apply the change
@@ -586,7 +589,7 @@ void MainWindow::viewPathSelectedRobot(int robotNb, bool checked){
             leftMenu->getPathGroupDisplayed()->enableButtons(leftMenu->getPathGroupDisplayed()->getPathButtonGroup()->getButtonGroup()->checkedButton());
         displayPathOnMap(false);
 
-        Robot* robot = robots->getRobotsVector().at(robotNb)->getRobot();
+        QPointer<Robot> robot = robots->getRobotsVector().at(robotNb)->getRobot();
         qDebug() << "viewPathSelectedRobot called on" << robot->getName();
         bottomLayout->uncheckViewPathSelectedRobot(robotNb);
         pathPainter->setCurrentPath(robot->getPath(), "");
@@ -605,7 +608,7 @@ void MainWindow::viewPathSelectedRobot(int robotNb, bool checked){
         selectedRobot->getRobot()->getHome()->setPixmap(PointView::PixmapType::SELECTED);
 }
 
-void MainWindow::setSelectedRobot(RobotView* robotView){
+void MainWindow::setSelectedRobot(QPointer<RobotView> robotView){
     qDebug() << "MainWindow::editselectedrobot robotview" << robotView->getRobot()->getName();
     /// resets the home
     editSelectedRobotWidget->setHome(robotView->getRobot()->getHome());
@@ -736,7 +739,7 @@ void MainWindow::setSelectedRobot(QAbstractButton *button){
         robotsLeftWidget->setLastCheckedId(robotsLeftWidget->getBtnGroup()->getBtnGroup()->id(button));
         robotsLeftWidget->getActionButtons()->getEditButton()->setEnabled(true);
         robotsLeftWidget->getActionButtons()->getMapButton()->setEnabled(true);
-        RobotView* mySelectedRobot = robots->getRobotViewByName(static_cast<CustomPushButton *> (robotsLeftWidget->getBtnGroup()->getBtnGroup()->checkedButton())->text());
+        QPointer<RobotView> mySelectedRobot = robots->getRobotViewByName(static_cast<CustomPushButton *> (robotsLeftWidget->getBtnGroup()->getBtnGroup()->checkedButton())->text());
         editSelectedRobotWidget->setGroupPath(mySelectedRobot->getRobot()->getGroupPathName());
         editSelectedRobotWidget->setAssignedPath(mySelectedRobot->getRobot()->getPathName());
 
@@ -768,7 +771,7 @@ void MainWindow::selectViewRobot(){
 
 void MainWindow::setSelectedRobotFromPointSlot(QString robotName){
     qDebug() << "MainWindow::setSelectedRobotFromPointSlot called :" << robotName;
-    RobotView* rv = robots->getRobotViewByName(robotName);
+    QPointer<RobotView> rv = robots->getRobotViewByName(robotName);
     if(rv != NULL)
         setSelectedRobot(rv);
     else
@@ -799,7 +802,7 @@ void MainWindow::checkRobotBtnEvent(QString name){
     qDebug() << "checkRobotBtnEvent called" << name;
 
 
-   RobotView* robotView =  robots->getRobotViewByName(name);
+   QPointer<RobotView> robotView =  robots->getRobotViewByName(name);
      robotView->display(!robotView->isVisible());
 }
 
@@ -985,7 +988,7 @@ void MainWindow::robotSavedEvent(){
     /// if we changed the path
     if(editSelectedRobotWidget->getPathChanged()){
         qDebug() << "MainWindow::robotSavedEvent path changed";
-        Robot* robot = selectedRobot->getRobot();
+        QPointer<Robot> robot = selectedRobot->getRobot();
         QString pathStr = "";
         /// prepares the cmd to send to the robot
         qDebug() << "MainWindow::robotSavedEvent" << pathPainter->getCurrentPath().size();
@@ -1342,7 +1345,7 @@ void MainWindow::showHome(){
 
             pathPainter->clearOldPath();
         } else {
-            RobotView* robotView =  robots->getRobotViewByName(selectedRobot->getRobot()->getName());
+            QPointer<RobotView> robotView =  robots->getRobotViewByName(selectedRobot->getRobot()->getName());
             /// If the robot has a path, we display it, otherwise we show the button to add the path
             if(robotView->getRobot()->getPath().size() > 0){
                 //setEnableAll(true);
@@ -1424,7 +1427,7 @@ void MainWindow::robotIsAliveSlot(QString hostname, QString ip, QString mapId, Q
     QRegExp rx("[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}");
     rx.indexIn(ip);
     ip = rx.cap(0);
-    RobotView* rv = robots->getRobotViewByIp(ip);
+    QPointer<RobotView> rv = robots->getRobotViewByIp(ip);
 
     if(rv != NULL){
         qDebug() << "Robot" << hostname << "at ip" << ip << "is still alive and has the map id :" << mapId;
@@ -1434,10 +1437,10 @@ void MainWindow::robotIsAliveSlot(QString hostname, QString ip, QString mapId, Q
     } else {
         qDebug() << "Robot" << hostname << "at ip" << ip << "just connected and has the map id :" << mapId;
 
-        Robot* robot = new Robot(this, paths, hostname, ip);
+        QPointer<Robot> robot = QPointer<Robot>(new Robot(this, paths, hostname, ip));
         robot->setWifi(ssid);
-        rv = new RobotView(robot, mapPixmapItem);
-        connect(rv, SIGNAL(setSelectedSignal(RobotView*)), this, SLOT(setSelectedRobot(RobotView*)));
+        rv = QPointer<RobotView>(new RobotView(robot, mapPixmapItem));
+        connect(rv, SIGNAL(setSelectedSignal(QPointer<RobotView>)), this, SLOT(setSelectedRobot(QPointer<RobotView>)));
         rv->setPosition(robots->getRobotsVector().count()*100+100, robots->getRobotsVector().count()*100+100);
         rv->setParentItem(mapPixmapItem);
         robots->add(rv);
@@ -1505,7 +1508,7 @@ void MainWindow::robotIsDeadSlot(QString hostname,QString ip){
         qDebug() << robots->getRobotsVector().at(i)->getRobot()->getIp();
     }
 
-    RobotView* rv = robots->getRobotViewByIp(ip);
+    QPointer<RobotView> rv = robots->getRobotViewByIp(ip);
     int id = robots->getRobotId(hostname);
 
     if(rv != NULL && rv->getRobot() != NULL){
@@ -1527,7 +1530,7 @@ void MainWindow::robotIsDeadSlot(QString hostname,QString ip){
             if(msgBox.isVisible())
                 msgBox.close();
 
-            RobotView* tmpRobot = selectedRobot;
+            QPointer<RobotView> tmpRobot = selectedRobot;
             hideAllWidgets();
             selectedRobot = tmpRobot;
 
@@ -1540,7 +1543,7 @@ void MainWindow::robotIsDeadSlot(QString hostname,QString ip){
             editSelectedRobotWidget->getScanBtn()->setText("Scan a map");
             editSelectedRobotWidget->setEnableAll(true);
 
-            RobotView* tmpRobot = selectedRobot;
+            QPointer<RobotView> tmpRobot = selectedRobot;
             hideAllWidgets();
             selectedRobot = tmpRobot;
 
@@ -1631,7 +1634,7 @@ void MainWindow::sendNewMapToRobots(QString ipAddress){
     QUuid mapId = QUuid::createUuid();
 
     qDebug() << "New map id :" << mapId.toString();
-    QVector<RobotView*> robotsVector = robots->getRobotsVector();
+    QVector<QPointer<RobotView>> robotsVector = robots->getRobotsVector();
 
     /// Save the map id in settings
     /*QSettings settings;
@@ -1639,7 +1642,7 @@ void MainWindow::sendNewMapToRobots(QString ipAddress){
 */
     /// We send the map to each robot
     for(int i = 0; i < robotsVector.size(); i++){
-        Robot* robot = robotsVector.at(i)->getRobot();
+        QPointer<Robot> robot = robotsVector.at(i)->getRobot();
 
         /// No need to send the map to the robot that scanned it
         if(robot->getIp().compare(ipAddress) != 0){
@@ -1655,7 +1658,7 @@ void MainWindow::sendNewMapToRobots(QString ipAddress){
 void MainWindow::updateAllPaths(const Point& old_point, const Point& new_point){
     qDebug() << "MainWindow::updateAllPaths called";
     for(int i = 0; i < robots->getRobotsVector().size(); i++){
-        Robot* robot = robots->getRobotsVector().at(i)->getRobot();
+        QPointer<Robot> robot = robots->getRobotsVector().at(i)->getRobot();
         /// to update the description of the path of each robot
         editSelectedRobotWidget->setSelectedRobot(robots->getRobotViewByName(robot->getName()));
         QVector<QSharedPointer<PathPoint>> path = robot->getPath();
@@ -1811,7 +1814,7 @@ void MainWindow::setNewHome(QString homeName){
 
 }
 
-bool MainWindow::sendHomeToRobot(RobotView* robot, QSharedPointer<PointView> home){
+bool MainWindow::sendHomeToRobot(QPointer<RobotView> robot, QSharedPointer<PointView> home){
     if(commandController->sendCommand(robot->getRobot(), QString("n \"") + QString::number(home->getPoint()->getPosition().getX()) + "\" \""
                                                       + QString::number(home->getPoint()->getPosition().getY()) + "\""))
         return true;
@@ -2249,7 +2252,7 @@ void MainWindow::editGroupBtnEvent(){
                 pointView->show();
                 QString robotName = "";
                 if(pointView->getPoint()->isHome()){
-                    RobotView* rv = robots->findRobotUsingHome(pointView->getPoint()->getName());
+                    QPointer<RobotView> rv = robots->findRobotUsingHome(pointView->getPoint()->getName());
                     if(rv != NULL)
                         robotName = rv->getRobot()->getName();
                     else
@@ -2459,7 +2462,7 @@ void MainWindow::askForDeleteDefaultGroupPointConfirmation(QString pointName){
                 pointsLeftWidget->setLastCheckedId("");
             } else {
                 /// this is in fact the home point of a robot, we prompt a customized message to the end user
-                RobotView* robot = robots->findRobotUsingHome(pointName);
+                QPointer<RobotView> robot = robots->findRobotUsingHome(pointName);
                 if(robot != NULL){
                     openInterdictionOfPointRemovalMessage(pointName, robot->getRobot()->getName());
                     qDebug() << "Sorry this point is the home of a robot and therefore cannot be removed";
@@ -2549,7 +2552,7 @@ void MainWindow::askForDeletePointConfirmation(QString pointName){
 
                 } else {
                     /// this is in fact the home point of a robot, we prompt a customized message to the end user
-                    RobotView* robot = robots->findRobotUsingHome(pointName);
+                    QPointer<RobotView> robot = robots->findRobotUsingHome(pointName);
                     if(robot != NULL){
                         qDebug() << robot->getRobot()->getName();
                         openInterdictionOfPointRemovalMessage(pointName, robot->getRobot()->getName());
@@ -2673,7 +2676,7 @@ void MainWindow::displayPointEvent(QString name, double x, double y){
 
                 QString robotName = "";
                 if(pointView->getPoint()->isHome()){
-                    RobotView* rv = robots->findRobotUsingHome(pointView->getPoint()->getName());
+                    QPointer<RobotView> rv = robots->findRobotUsingHome(pointView->getPoint()->getName());
                     if(rv != NULL)
                         robotName = rv->getRobot()->getName();
                     else
@@ -2699,7 +2702,7 @@ void MainWindow::displayPointEvent(QString name, double x, double y){
 
                 qDebug() << "MainWindow::displayPointEvent  : is this point a path ?" << (pointView->getPoint()->isPath()) << pointView->getPoint()->getType();
                 if(pointView->getPoint()->isHome()){
-                    RobotView* rv = robots->findRobotUsingHome(pointView->getPoint()->getName());
+                    QPointer<RobotView> rv = robots->findRobotUsingHome(pointView->getPoint()->getName());
                     if(rv != NULL)
                         robotName = rv->getRobot()->getName();
                     else
@@ -2714,7 +2717,7 @@ void MainWindow::displayPointEvent(QString name, double x, double y){
 
             } else {
                 /// The point is a path' point from a temporary point so we display the page of the robot in which this pathpoint is used
-                RobotView* robot = robots->findRobotUsingTmpPointInPath(pointView->getPoint());
+                QPointer<RobotView> robot = robots->findRobotUsingTmpPointInPath(pointView->getPoint());
                 if(robot){
                     qDebug() << "MainWindow::displayPointEvent  At least, I found the robot" << robot->getRobot()->getName();
                     resetFocus();
@@ -2948,7 +2951,7 @@ void MainWindow::displayPointsInGroup(void){
         QString robotName = "";
 
         if(pointView && pointView->getPoint()->isHome()){
-            RobotView* rv = robots->findRobotUsingHome(checkedName);
+            QPointer<RobotView> rv = robots->findRobotUsingHome(checkedName);
             if(rv != NULL)
                 robotName = rv->getRobot()->getName();
             else
@@ -3064,7 +3067,7 @@ void MainWindow::removePointFromInformationMenu(void){
                 }
             } else {
                 /// this point is actually the home point of a robot and therefore cannot be removed
-                RobotView* robot = robots->findRobotUsingHome(pointView->getPoint()->getName());
+                QPointer<RobotView> robot = robots->findRobotUsingHome(pointView->getPoint()->getName());
                 if(robot != NULL){
                     openInterdictionOfPointRemovalMessage(pointView->getPoint()->getName(), robot->getRobot()->getName());
                     qDebug() << "Sorry this point is the home of a robot and therefore cannot be removed";
@@ -3098,7 +3101,7 @@ void MainWindow::editPointFromGroupMenu(void){
         /// update the pointview and show the point on the map with hover color
         QString robotName = "";
         if(points->findPointView(pointName)->getPoint()->isHome()){
-            RobotView* rv = robots->findRobotUsingHome(pointName);
+            QPointer<RobotView> rv = robots->findRobotUsingHome(pointName);
             if(rv != NULL)
                 robotName = rv->getRobot()->getName();
             else
@@ -3174,7 +3177,7 @@ void MainWindow::displayPointInfoFromGroupMenu(void){
 
         QString robotName = "";
         if(pointView->getPoint()->isHome()){
-            RobotView* rv = robots->findRobotUsingHome(pointName);
+            QPointer<RobotView> rv = robots->findRobotUsingHome(pointName);
             if(rv != NULL)
                 robotName = rv->getRobot()->getName();
             else
@@ -3259,7 +3262,7 @@ void MainWindow::updatePoint(void){
         // TODO rework home
         qDebug() << "MainWindow::updatePoint need to update if home";
         /*if(displaySelectedPointView->getPoint()->isHome()){
-            RobotView* robotView = robots->getRobotViewByName(displaySelectedPointView->getPoint()->getRobotName());
+            QPointer<RobotView> robotView = robots->getRobotViewByName(displaySelectedPointView->getPoint()->getRobotName());
 
             if(robotView && robotView->getRobot()->commandController->sendCommand(QString("n \"") + QString::number(displaySelectedPointView->getPoint()->getPosition().getX()) + "\" \""
                                                               + QString::number(displaySelectedPointView->getPoint()->getPosition().getY()) + "\"")){
@@ -3515,7 +3518,7 @@ void MainWindow::doubleClickOnPoint(QString pointName){
         DisplaySelectedPoint* selectedPoint = leftMenu->getDisplaySelectedPoint();
         QString robotName = "";
         if(pointView->getPoint()->isHome()){
-            RobotView* rv = robots->findRobotUsingHome(pointName);
+            QPointer<RobotView> rv = robots->findRobotUsingHome(pointName);
             if(rv != NULL)
                 robotName = rv->getRobot()->getName();
             else
@@ -3580,7 +3583,7 @@ void MainWindow::doubleClickOnGroup(QString checkedName){
 
         QString robotName = "";
         if(pointView->getPoint()->isHome()){
-            RobotView* rv = robots->findRobotUsingHome(pointView->getPoint()->getName());
+            QPointer<RobotView> rv = robots->findRobotUsingHome(pointView->getPoint()->getName());
             if(rv != NULL)
                 robotName = rv->getRobot()->getName();
             else
@@ -4435,7 +4438,7 @@ void MainWindow::doubleClickOnPath(QString pathName){
 void MainWindow::sendPathSelectedRobotSlot(){
 
     qDebug() << "MainWindow::sendPathSelectedRobotSlot path changed";
-    Robot* robot = selectedRobot->getRobot();
+    QPointer<Robot> robot = selectedRobot->getRobot();
     QString pathStr = "";
     /// prepares the cmd to send to the robot
     qDebug() << "MainWindow::sendPathSelectedRobotSlot" << pathPainter->getCurrentPath().size();
@@ -4825,7 +4828,7 @@ void MainWindow::showHomes(){
     }
 }
 
-void MainWindow::showHomes(Robot* robot){
+void MainWindow::showHomes(QPointer<Robot> robot){
     QMapIterator<QString, QSharedPointer<QVector<QSharedPointer<PointView>>>> i(*(points->getGroups()));
     while (i.hasNext()) {
         i.next();

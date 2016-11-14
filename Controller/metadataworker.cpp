@@ -17,7 +17,7 @@ void MetadataWorker::stopThread(){
 void MetadataWorker::connectSocket(){
     qDebug() << "(Robot Metadata thread" << ipAddress << ") Running";
 
-    socket = QSharedPointer<QTcpSocket>(new QTcpSocket());
+    socket = QPointer<QTcpSocket>(new QTcpSocket());
 
     /// Connect the signal connected which trigger when we are connected to the host
     //connect(&(*socket), SIGNAL(connected()), SLOT(connectedSlot()) );

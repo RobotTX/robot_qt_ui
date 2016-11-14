@@ -17,11 +17,11 @@ public:
     Robots();
 
     /// Getters
-    QVector<RobotView*> getRobotsVector() const { return robotsVector; }
+    QVector<QPointer<RobotView>> getRobotsVector() const { return robotsVector; }
     QMap<QString, QString> getRobotsNameMap() const {return robotsNameMap;}
 
     /// Setters
-    void setRobotsVector(const QVector<RobotView*>& _robotsVector) { robotsVector = _robotsVector; }
+    void setRobotsVector(const QVector<QPointer<RobotView>>& _robotsVector) { robotsVector = _robotsVector; }
     void setRobotsNameMap(const QMap<QString, QString> &_robotsNameMap) {robotsNameMap = _robotsNameMap;}
 
     /**
@@ -29,14 +29,14 @@ public:
      * @param robot
      * Add the robot in param to the Vector of robots
      */
-    void add(RobotView* const robot);
+    void add(QPointer<RobotView> const robot);
 
     /**
      * @brief remove
      * @param robot
      * Remove the robot in param from the Vector of robots
      */
-    void remove(RobotView *robot);
+    void remove(QPointer<RobotView> robot);
 
     /**
      * @brief removeByName
@@ -58,7 +58,7 @@ public:
      * @return
      * Get a robotView from the name of its robot
      */
-    RobotView* getRobotViewByName(const QString name) const;
+    QPointer<RobotView> getRobotViewByName(const QString name) const;
 
     /**
      * @brief getRobotViewByIp
@@ -67,7 +67,7 @@ public:
      * Same as above but with the ip
      * Gets a robotView from the ip of its robot
      */
-    RobotView* getRobotViewByIp(const QString ip) const;
+    QPointer<RobotView> getRobotViewByIp(const QString ip) const;
 
     /**
      * @brief setSelected
@@ -75,7 +75,7 @@ public:
      * Setz which robot is currently selected, to highlight it and know
      * on which robot some functions need to be applied
      */
-    void setSelected(RobotView* const robotView);
+    void setSelected(QPointer<RobotView> const robotView);
 
     /**
      * @brief existRobotName
@@ -98,14 +98,14 @@ public:
      * @param name
      * @return returns the RobotView whose home point's name is passed as an argument
      */
-    RobotView* findRobotUsingHome(const QString name) const;
+    QPointer<RobotView> findRobotUsingHome(const QString name) const;
 
     /**
      * @brief findRobotUsingTmpPointInPath
      * @param point
      * @return the RobotView using the given temporary point in its path
      */
-    RobotView* findRobotUsingTmpPointInPath(const QSharedPointer<Point> point) const;
+    QPointer<RobotView> findRobotUsingTmpPointInPath(const QSharedPointer<Point> point) const;
 
     /**
      * @brief insertRobotsNameMap
@@ -142,7 +142,7 @@ public:
 
 private:
 
-    QVector<RobotView*> robotsVector;
+    QVector<QPointer<RobotView>> robotsVector;
 
     /**
      * @brief robotsNameMap

@@ -52,7 +52,7 @@ public:
     CustomPushButton* getGoHomeBtn(void) const { return goHomeBtn; }
     CustomPushButton* getDeletePathBtn(void) const { return deletePathBtn; }
     CustomRobotDialog* getRobotInfoDialog(void) const { return robotDialog; }
-    RobotView* getRobot(void) const { return robotView; }
+    QPointer<RobotView> getRobot(void) const { return robotView; }
 
     void setRobots(QSharedPointer<Robots> const _robots) { robots = _robots; }
     void setEditing(bool const _editing) { editing = _editing; }
@@ -61,7 +61,7 @@ public:
     void setPathWidget(PathWidget* pw) { pathWidget = pw; }
     void setAssignedPath(const QString path) { assignedPath = path; }
     void setGroupPath(const QString group) { groupAssignedPath = group; }
-    void setSelectedRobot(RobotView * const robotView, bool firstConnection = false);
+    void setSelectedRobot(QPointer<RobotView> const robotView, bool firstConnection = false);
 
     /// updates the name and wifi or the robot
     void editName(void);
@@ -120,7 +120,7 @@ private:
     MainWindow* mainWindow;
     QVBoxLayout* layout;
     QVBoxLayout* pathLayout;
-    RobotView* robotView;
+    QPointer<RobotView> robotView;
     CustomLabel* nameLabel;
     CustomLabel* wifiNameLabel;
     QLabel* ipAddressLabel;

@@ -101,15 +101,15 @@ public:
     void setTemporaryMessageTop(const QString type, const QString message, const int ms);
     void updateAllPaths(const Point &old_point, const Point &new_point);
     void clearPath(const int robotNb);
-    RobotView* getSelectedRobot(void) const { return selectedRobot; }
-    MapView* getMapView(void) const { return mapPixmapItem; }
+    QPointer<RobotView> getSelectedRobot(void) const { return selectedRobot; }
+    QPointer<MapView> getMapView(void) const { return mapPixmapItem; }
     void serializePaths(const QString fileName);
     void deserializePaths(const QString fileName);
     void showHomes();
-    void showHomes(Robot* robot);
+    void showHomes(QPointer<Robot> robot);
     void showSelectedRobotHomeOnly();
     void updateModelPaths(const Point &old_point, const Point &new_point);
-    bool sendHomeToRobot(RobotView* robot, QSharedPointer<PointView> home);
+    bool sendHomeToRobot(QPointer<RobotView> robot, QSharedPointer<PointView> home);
 
     void compress(const QString zipFile);
     void decompress(const QString fileName);
@@ -138,7 +138,7 @@ private slots:
     void updateMap(const QByteArray mapArray);
     void connectToRobot(bool checked);
     void quit(void);
-    void setSelectedRobot(RobotView* robotView);
+    void setSelectedRobot(QPointer<RobotView> robotView);
     void setSelectedRobot(QAbstractButton* button);
     void setSelectedRobotNoParent(QAbstractButton *button);
     void setSelectedRobotFromPointSlot(QString robotName);
@@ -279,9 +279,9 @@ private:
     QSharedPointer<Map> map;
     QSharedPointer<Robots> robots;
     QGraphicsScene* scene;
-    MapView* mapPixmapItem;
-    RobotView* selectedRobot;
-    RobotView* scanningRobot;
+    QPointer<MapView> mapPixmapItem;
+    QPointer<RobotView> selectedRobot;
+    QPointer<RobotView> scanningRobot;
     QSharedPointer<PointView> selectedPoint;
     QSharedPointer<Points> points;
     QSharedPointer<PointView> editedPointView;

@@ -6,9 +6,8 @@
 #include <QDebug>
 #include "mainwindow.h"
 #include <QGraphicsWidget>
-#include "mapview.h"
 
-RobotView::RobotView (Robot* _robot, QGraphicsItem* parent):
+RobotView::RobotView (QPointer<Robot> _robot, QPointer<MapView> parent):
     QGraphicsPixmapItem(QPixmap(":/icons/robot_icon.png"), parent), robot(_robot), selected(false), state(GraphicItemState::NO_STATE), shown(true), lastStage(0)
 {
     setScale(0.07);
@@ -16,10 +15,10 @@ RobotView::RobotView (Robot* _robot, QGraphicsItem* parent):
     setAcceptedMouseButtons(Qt::LeftButton);
     setToolTip(robot->getName());
 
-    mapView = static_cast<MapView*> (parent);
+    mapView = parent;
 }
 
-RobotView::RobotView (QGraphicsItem* parent): QGraphicsPixmapItem(parent), selected(false), state(GraphicItemState::NO_STATE), shown(true), lastStage(0)
+RobotView::RobotView (QPointer<MapView> parent): QGraphicsPixmapItem(parent), selected(false), state(GraphicItemState::NO_STATE), shown(true), lastStage(0)
 {
 }
 

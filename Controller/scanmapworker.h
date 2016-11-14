@@ -4,7 +4,7 @@
 #include <QThread>
 #include <QString>
 #include <QtNetwork/QTcpSocket>
-#include <QSharedPointer>
+#include <QPointer>
 
 
 /**
@@ -52,7 +52,7 @@ signals:
     void newScanSaved(QString ipAddress);
 
 private :
-    QSharedPointer<QTcpSocket>socket;
+    QPointer<QTcpSocket>socket;
     QString ipAddress;
     int port;
     /**

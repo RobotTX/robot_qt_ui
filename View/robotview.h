@@ -2,7 +2,7 @@
 #define ROBOTVIEW_H
 
 class QGraphicsSceneMouseEvent;
-class MapView;
+
 
 #include <QGraphicsPixmapItem>
 #include <QSharedPointer>
@@ -10,6 +10,8 @@ class MapView;
 #include <QObject>
 #include "Model/graphicitemstate.h"
 #include "Model/robot.h"
+#include <QPointer>
+#include "View/mapview.h"
 
 #define ROBOT_HEIGHT_LOW 9
 #define ROBOT_HEIGHT_HIGH 12
@@ -23,15 +25,15 @@ class RobotView: public QObject, public QGraphicsPixmapItem {
     Q_OBJECT
 
 public:
-    RobotView(Robot* _robot, QGraphicsItem *parent);
-    RobotView(QGraphicsItem* parent);
+    RobotView(QPointer<Robot> _robot, QPointer<MapView> parent);
+    RobotView(QPointer<MapView> parent);
 
     /// Getters
-    Robot* getRobot(void) { return robot; }
+    QPointer<Robot> getRobot(void) { return robot; }
     int getLastStage(void) const { return lastStage; }
 
     /// Setters
-    void setRobot(Robot* const& _robot) { robot = _robot; }
+    void setRobot(QPointer<Robot> const& _robot) { robot = _robot; }
     void setPosition(const Position _position);
     void setPosition(const float x, const float y);
     void setOrientation(const float ori);
@@ -45,7 +47,7 @@ signals:
      * @brief setSelectedSignal
      * Signal emitted when a robot is clicked on/selected
      */
-    void setSelectedSignal(RobotView*);
+    void setSelectedSignal(QPointer<RobotView>);
 
 protected:
     void mousePressEvent(QGraphicsSceneMouseEvent *);
@@ -53,11 +55,11 @@ protected:
     void hoverLeaveEvent(QGraphicsSceneHoverEvent *);
 
 private:
-    Robot* robot;
+    QPointer<Robot> robot;
     bool selected;
     GraphicItemState state;
     bool shown;
-    MapView* mapView;
+    QPointer<MapView> mapView;
     int lastStage;
 };
 

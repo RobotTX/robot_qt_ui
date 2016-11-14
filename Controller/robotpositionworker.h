@@ -3,7 +3,7 @@
 
 #include <QString>
 #include <QtNetwork/QTcpSocket>
-#include <QSharedPointer>
+#include <QPointer>
 
 /**
  * @brief The RobotThread class
@@ -50,7 +50,7 @@ signals:
     void valueChangedRobot(QString ipAddress, float posX, float posY, float ori);
 
 private :
-    QSharedPointer<QTcpSocket> socket;
+    QPointer<QTcpSocket> socket;
     QString ipAddress;
     int port;
 

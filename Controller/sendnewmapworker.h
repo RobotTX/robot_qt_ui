@@ -3,7 +3,7 @@
 
 #include <QString>
 #include <QtNetwork/QTcpSocket>
-#include <QSharedPointer>
+#include <QPointer>
 
 class SendNewMapWorker : public QObject {
     Q_OBJECT
@@ -28,7 +28,7 @@ private slots:
     void stopThread();
 
 private :
-    QSharedPointer<QTcpSocket> socket;
+    QPointer<QTcpSocket> socket;
     QString ipAddress;
     int port;
     bool connected;

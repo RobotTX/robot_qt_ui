@@ -1,5 +1,4 @@
 #include "cmdrobotworker.h"
-#include <QTimer>
 
 
 CmdRobotWorker::CmdRobotWorker(const QString _ipAddress, const int cmdPort, const int _metadataPort, const int _robotPort, const int _mapPort, const QString _robotName){
@@ -25,7 +24,7 @@ void CmdRobotWorker::connectSocket(){
 
     //qDebug() << "(Robot" << robotName << ") Command Thread launched";
 
-    socket = QSharedPointer<QTcpSocket>(new QTcpSocket());
+    socket = QPointer<QTcpSocket>(new QTcpSocket());
 
     /// Connect the signal readyRead which tell us when data arrived to the function that treat them
     connect(&(*socket), SIGNAL(readyRead()), this, SLOT(readTcpDataSlot()));
@@ -85,17 +84,16 @@ void CmdRobotWorker::connectedSlot(){
         };
     }
 
-    timer = new QTimer(this);
-    timer->setInterval(1000);
-    connect(timer, SIGNAL(timeout()), this, SLOT(timerSlot()));
-    timer->start();
+    timer.setInterval(1000);
+    connect(&timer, SIGNAL(timeout()), this, SLOT(timerSlot()));
+    timer.start();
 }
 
 void CmdRobotWorker::disconnectedSlot(){
     qDebug() << "(Robot" << robotName << ") Disconnected at ip" << ipAddress;
     if(robotName.compare("") != 0){
         qDebug() << "(Robot" << robotName << ") Emitting robotIsDead";
-        timer->stop();
+        timer.stop();
         timeCounter = 0;
         emit robotIsDead(robotName, ipAddress);
         if(socket->isOpen())
@@ -113,7 +111,7 @@ void CmdRobotWorker::onStateChanged(QAbstractSocket::SocketState socketState ){
 
 void CmdRobotWorker::pingSlot(void){
     qDebug()<< "(Robot" << robotName << ") Received the ping";
-    timer->start();
+    timer.start();
     timeCounter = 0;
 }
 

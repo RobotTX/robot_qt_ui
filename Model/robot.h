@@ -2,11 +2,7 @@
 #define ROBOT_H
 
 class PathPoint;
-class CmdRobotWorker;
 class QMainWindow;
-class RobotPositionWorker;
-class MetadataWorker;
-class SendNewMapWorker;
 
 #include "Model/position.h"
 #include <QString>
@@ -18,6 +14,10 @@ class SendNewMapWorker;
 #include "View/pointview.h"
 #include "Model/paths.h"
 #include <QThread>
+#include "Controller/cmdrobotworker.h"
+#include "Controller/robotpositionworker.h"
+#include "Controller/metadataworker.h"
+#include "Controller/sendnewmapworker.h"
 
 #define PORT_MAP_METADATA 4000
 #define PORT_ROBOT_POS 4001
@@ -160,10 +160,10 @@ private:
     QString groupName;
     bool sendingMap;
 
-    CmdRobotWorker* cmdRobotWorker;
-    RobotPositionWorker* robotWorker;
-    MetadataWorker* metadataWorker;
-    SendNewMapWorker* newMapWorker;
+    QPointer<CmdRobotWorker> cmdRobotWorker;
+    QPointer<RobotPositionWorker> robotWorker;
+    QPointer<MetadataWorker> metadataWorker;
+    QPointer<SendNewMapWorker> newMapWorker;
     QThread cmdThread;
     QThread robotThread;
     QThread metadataThread;

@@ -3,7 +3,7 @@
 
 #include <QString>
 #include <QtNetwork/QTcpSocket>
-#include <QSharedPointer>
+#include <QPointer>
 
 /**
  * @brief The MetadataWorker class
@@ -52,7 +52,7 @@ signals:
     void valueChangedMetadata(int width, int height, float resolution, float originX, float originY);
 
 private :
-    QSharedPointer<QTcpSocket> socket;
+    QPointer<QTcpSocket> socket;
     QString ipAddress;
     int port;
 

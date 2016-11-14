@@ -73,7 +73,7 @@ void DisplaySelectedPointRobots::setRobotsWidget(QSharedPointer<PointView> point
 
     QSet<QString> robotNameSet;
     for(int i = 0; i < robots->getRobotsVector().size(); i++){
-        Robot* robot = robots->getRobotsVector().at(i)->getRobot();
+        QPointer<Robot> robot = robots->getRobotsVector().at(i)->getRobot();
         for(int j = 0; j < robot->getPath().size(); j++){
             if(robot->getPath().at(j)->getPoint().getName().compare(pointView->getPoint()->getName()) == 0){
                 robotNameSet.insert(robot->getName());

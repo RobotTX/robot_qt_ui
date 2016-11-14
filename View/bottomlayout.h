@@ -3,19 +3,19 @@
 
 class Robots;
 class RobotView;
-class QHBoxLayout;
-class QLabel;
-class QButtonGroup;
 class QMainWindow;
+class PathPoint;
+class QButtonGroup;
+class QLabel;
+class QHBoxLayout;
+class QAbstractButton;
 class QScrollArea;
 class QVBoxLayout;
-class PathPoint;
 
 #include <QSharedPointer>
 #include <QWidget>
 #include <QVector>
 #include <QList>
-#include <QAbstractButton>
 
 /**
  * @brief The BottomLayout class
@@ -45,13 +45,13 @@ public:
 
     /// updates the robot's information of the robot with Id <id> and robotView <robotView>
     /// which consists in updating name and path, disabling some buttons if path is empty
-    void updateRobot(const int id, RobotView* const robotView);
+    void updateRobot(const int id, QPointer<RobotView> const robotView);
 
     /// enables or disables the button
     void setEnable(const bool enable);
 
     /// adds a robot using its robotview
-    void addRobot(RobotView * const robotView);
+    void addRobot(QPointer<RobotView> const robotView);
 
     /// removes the robot with Id <id>
     void removeRobot(const int id);
@@ -66,7 +66,7 @@ public:
     QString pathToStr(const QVector<QSharedPointer<PathPoint> > &path, const int stage = 0);
 
     /// to display at which stage of the path the robot is in the label itself (with a different color)
-    void updateStageRobot(const int id, RobotView *robotView, const int stage);
+    void updateStageRobot(const int id, QPointer<RobotView>robotView, const int stage);
 
 private:
     /**
