@@ -12,6 +12,9 @@ public:
     CommandMessageBox(QWidget *parent);
     void show();
 
+protected:
+    void closeEvent(QCloseEvent *e);
+
 private slots:
     void timerSlot();
     void done(int r);

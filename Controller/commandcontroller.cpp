@@ -2,6 +2,7 @@
 #include "Model/robot.h"
 #include "Model/map.h"
 #include "Controller/mainwindow.h"
+#include <QStringList>
 #include <QFile>
 
 CommandController::CommandController(QWidget *parent) : QObject(parent), messageBox(new CommandMessageBox(parent)), robotName(""){
@@ -10,13 +11,26 @@ CommandController::CommandController(QWidget *parent) : QObject(parent), message
 }
 
 bool CommandController::sendCommand(Robot* robot, QString cmd){
-    if(robotName.isEmpty()){
+
+    if(robotName.isEmpty() && !cmd.isEmpty()){
         cmdAnswer = "";
         robot->sendCommand(cmd);
-        robotName = robot->getName();
+
+
+        /// React accordingly to the answer : return true or false
+        QRegExp rx("[ ]");
+
+        /// Data are received as a string separated by a space ("cmd done" or "cmd failed")
+        QStringList listCmd = cmd.split(rx, QString::SkipEmptyParts);
+
+
+        if(listCmd.at(0).compare("b") == 0)
+            return true;
+        else
+            robotName = robot->getName();
 
         /// TODO customize message
-        robotWaitForAnswer("Tmp Message");
+        robotWaitForAnswer(listCmd.at(0));
 
         qDebug() << "CommandController::sendCommand Going to wait for an answer";
         while(cmdAnswer.compare("") == 0){
@@ -25,9 +39,6 @@ bool CommandController::sendCommand(Robot* robot, QString cmd){
         }
 
         qDebug() << "The answer is :" << cmdAnswer;
-
-        /// React accordingly to the answer : return true or false
-        QRegExp rx("[ ]");
 
         /// Data are received as a string separated by a space ("cmd done" or "cmd failed")
         QStringList list = cmdAnswer.split(rx, QString::SkipEmptyParts);
@@ -45,7 +56,7 @@ bool CommandController::sendCommand(Robot* robot, QString cmd){
     }
     return false;
 
-    return true;
+    //return true;
 }
 
 void CommandController::robotWaitForAnswer(QString msg){

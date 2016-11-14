@@ -313,7 +313,6 @@ void MainWindow::initializeRobots(){
     robots->setRobotsNameMap(tmp);
     fileRead.close();
 
-
     robotServerWorker = new RobotServerWorker(PORT_ROBOT_UPDATE);
     connect(robotServerWorker, SIGNAL(robotIsAlive(QString, QString, QString, QString, int)), this, SLOT(robotIsAliveSlot(QString, QString, QString, QString, int)));
     connect(this, SIGNAL(stopUpdateRobotsThread()), robotServerWorker, SLOT(stopThread()));
@@ -324,6 +323,8 @@ void MainWindow::initializeRobots(){
 /*
     QFile fileWrite(QDir::currentPath() + QDir::separator() + QString(ROBOTS_NAME_FILE));
     //QFile fileWrite(QString(GOBOT_PATH) + QString(ROBOTS_NAME_FILE));
+
+
     fileWrite.resize(0);
     fileWrite.open(QIODevice::WriteOnly);
     QDataStream out(&fileWrite);
@@ -336,6 +337,7 @@ void MainWindow::initializeRobots(){
     robot1->setWifi("Swaghetti Yolognaise");
     RobotView* robotView1 = new RobotView(robot1, mapPixmapItem);
     robotView1->setLastStage(2);
+
 
     connect(robotView1, SIGNAL(setSelectedSignal(RobotView*)), this, SLOT(setSelectedRobot(RobotView*)));
     robotView1->setPosition(896, 1094);
@@ -369,16 +371,17 @@ void MainWindow::initializeRobots(){
     out << robots->getRobotsNameMap();
     fileWrite.close();
     for(int i = 0; i < robots->getRobotsVector().size(); i++){
-        QFileInfo fileinfo(QDir::currentPath(), "../gobot-software/robots_paths/" +
-                           robots->getRobotsVector().at(i)->getRobot()->getName() + "_path.dat");
-        QFile robotPathFile(fileinfo.absoluteFilePath());
+        QFile robotPathFile(QString(GOBOT_PATH) + "robots_paths/" + robots->getRobotsVector().at(i)->getRobot()->getName() + "_path.dat");
         if(robotPathFile.exists()){
             robotPathFile.open(QIODevice::ReadOnly);
             QDataStream in(&robotPathFile);
             in >> *(robots->getRobotsVector().at(i)->getRobot());
             robotPathFile.close();
         }
+<<<<<<< HEAD
     }*/
+
+    //qDebug() << "RobotsNameMap on init" << robots->getRobotsNameMap();
 }
 
 void MainWindow::updateRobot(const QString ipAddress, const float posX, const float posY, const float oriZ){
@@ -685,20 +688,7 @@ void MainWindow::robotBtnEvent(void){
 
 void MainWindow::deletePathSelecRobotBtnEvent(){
     qDebug() << "MainWindow::deletePathSelecRobotBtnEvent called on robot " << selectedRobot->getRobot()->getName();
-    int answer = openConfirmMessage("Are you sure you want to delete the path of your robot ? This action is irreversible");
-    switch(answer){
-    case QMessageBox::Cancel:
-        break;
-    case QMessageBox::Ok:
-    {
-        clearPath(robots->getRobotId(selectedRobot->getRobot()->getName()));
-        setTemporaryMessageTop(TEXT_COLOR_SUCCESS, "You have successfully deleted the path of the robot " + selectedRobot->getRobot()->getName(), 2500);
-        break;
-    }
-    default:
-        Q_UNREACHABLE();
-        qDebug() << "MainWindow::deletePathSelecRobotBtnEvent you should never reach this point, you probably forgot to implement the behavior for" << answer;
-    }
+    deletePath(robots->getRobotId(selectedRobot->getRobot()->getName()));
 }
 
 void MainWindow::setSelectedRobotNoParent(QAbstractButton *button){
@@ -1192,26 +1182,9 @@ bool MainWindow::changeRobotName(QString name){
 
 void MainWindow::changeRobotWifi(QString ssid, QString password){
     qDebug() << "MainWindow::changeRobotWifi called";
-    if(commandController->sendCommand(selectedRobot->getRobot(), QString("b \"")
-              + ssid + "\" \""
-              + password + "\"")){
-        editSelectedRobotWidget->getWifiNameLabel()->setText(ssid);
-        selectedRobot->getRobot()->setWifi(ssid);
-        // TODO check if useful (sending a command before changing the wifi ?)
-        /*QString answer2 = selectedRobot->getRobot()->waitAnswer();
-        QStringList answerList2 = answer2.split(QRegExp("[ ]"), QString::SkipEmptyParts);
-        if(answerList2.size() > 1){
-            QString cmd2 = answerList2.at(0);
-            bool success2 = (answerList2.at(1).compare("done") == 0);
-            if((cmd2.compare("b") == 0 && success2) || answerList2.at(0).compare("1") == 0){
-                isOK = true;
-                change++;
-            } else {
-                isOK = false;
-                setMessageTop(TEXT_COLOR_DANGER, "Failed to edit the wifi");
-            }
-        }*/
-    }
+    commandController->sendCommand(selectedRobot->getRobot(), QString("b \"") + ssid + "\" \"" + password + "\"");
+    editSelectedRobotWidget->getWifiNameLabel()->setText(ssid);
+    selectedRobot->getRobot()->setWifi(ssid);
 }
 
 
@@ -1546,8 +1519,11 @@ void MainWindow::robotIsDeadSlot(QString hostname,QString ip){
 
         /// if selected => if one of this robot related menu is open
         if(selectedRobot != NULL && selectedRobot->getRobot()->getIp().compare(ip) == 0){
-            if(editSelectedRobotWidget->isVisible())
+            if(editSelectedRobotWidget->isVisible()){
                 setGraphicItemsState(GraphicItemState::NO_STATE);
+                if(editSelectedRobotWidget->getRobotInfoDialog()->isVisible())
+                    emit cancelRobotModifications();
+            }
 
 
             /// if a box to save/edit this robot is open
@@ -1581,6 +1557,12 @@ void MainWindow::robotIsDeadSlot(QString hostname,QString ip){
 
         /// remove from the model
         robots->remove(rv);
+
+        rv->deleteLater();
+        scanningRobot->deleteLater();
+        selectedRobot->deleteLater();
+        scanningRobot = NULL;
+        selectedRobot = NULL;
 
         /// update robotsLeftWidget
         robotsLeftWidget->updateRobots(robots);
@@ -1675,7 +1657,6 @@ void MainWindow::sendNewMapToRobots(QString ipAddress){
 
 void MainWindow::updateAllPaths(const Point& old_point, const Point& new_point){
     qDebug() << "MainWindow::updateAllPaths called";
-    RobotView* currentRobot = editSelectedRobotWidget->getRobot();
     for(int i = 0; i < robots->getRobotsVector().size(); i++){
         Robot* robot = robots->getRobotsVector().at(i)->getRobot();
         /// to update the description of the path of each robot
@@ -1703,10 +1684,9 @@ void MainWindow::updateAllPaths(const Point& old_point, const Point& new_point){
         bottomLayout->updateRobot(robots->getRobotId(robot->getName()), robots->getRobotsVector().at(i));
     }
 
-    if(currentRobot){
-        editSelectedRobotWidget->setSelectedRobot(currentRobot);
+    if(editSelectedRobotWidget->getRobot()){
         /// to reset the tooltip of the edited point !
-        int robotId = robots->getRobotId(currentRobot->getRobot()->getName());
+        int robotId = robots->getRobotId(editSelectedRobotWidget->getRobot()->getRobot()->getName());
         if(bottomLayout->getViewPathRobotBtnGroup()->button(robotId)->isChecked()){
             qDebug() << " i am displayed " << robotId;
             viewPathSelectedRobot(robotId, false);

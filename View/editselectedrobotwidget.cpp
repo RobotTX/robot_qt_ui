@@ -31,7 +31,8 @@ EditSelectedRobotWidget::EditSelectedRobotWidget(QWidget* parent, MainWindow* _m
     /// creates a dialog widget to modify the robot's info and centers it on the main window
     robotDialog = new CustomRobotDialog(this);
 
-    connect(robotDialog->getCancelButton(), SIGNAL(clicked()), this, SLOT(cancelRobotModifications()));
+    connect(mainWindow, SIGNAL(cancelRobotModifications()), this, SLOT(cancelRobotModificationsSlot()));
+    connect(robotDialog->getCancelButton(), SIGNAL(clicked()), this, SLOT(cancelRobotModificationsSlot()));
     connect(robotDialog->getSaveButton(), SIGNAL(clicked()), mainWindow, SLOT(saveRobotModifications()));
     connect(this, SIGNAL(sendPathSelectedRobot()), mainWindow, SLOT(sendPathSelectedRobotSlot()));
 
@@ -326,8 +327,8 @@ void EditSelectedRobotWidget::editRobot(){
     robotDialog->exec();
 }
 
-void EditSelectedRobotWidget::cancelRobotModifications(){
-    qDebug() << "EditSelectedRobotWidget::cancelRobotModifications called";
+void EditSelectedRobotWidget::cancelRobotModificationsSlot(){
+    qDebug() << "EditSelectedRobotWidget::cancelRobotModificationsSlot called";
     robotDialog->getNameEdit()->setText(robotView->getRobot()->getName());
     robotDialog->getSSIDEdit()->setText(robotView->getRobot()->getWifi());
     robotDialog->getPasswordEdit()->setText("......");

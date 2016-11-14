@@ -1,24 +1,2 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<points>
-    <group>
-        <name>No Group</name>
-        <point>
-            <name>Lolita</name>
-            <x>963.8</x>
-            <y>1110.5</y>
-            <displayed>1</displayed>
-        </point>
-    </group>
-    <group>
-        <name>first</name>
-    </group>
-    <group>
-        <name>second</name>
-        <point>
-            <name>Michel</name>
-            <x>943.7</x>
-            <y>959.6</y>
-            <displayed>1</displayed>
-        </point>
-    </group>
-</points>
+<points/>

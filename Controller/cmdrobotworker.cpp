@@ -35,8 +35,17 @@ void CmdRobotWorker::connectSocket(){
     /// Connect the signal disconnected which trigger when we are disconnected from the host
     connect(&(*socket), SIGNAL(disconnected()), this, SLOT(disconnectedSlot()));
 
-    /// Connect to the host
-    socket->connectToHost(ipAddress, port);
+
+    while(socket->state() != QAbstractSocket::ConnectedState){
+        if(socket->state() == QAbstractSocket::UnconnectedState){
+            socket->connectToHost(ipAddress, port);
+            socket->waitForConnected(10000);
+            /*if(!socket->waitForConnected(10000)){
+                qDebug() << "(Robot" << robotName << ") Connecting error : " << socket->errorString() << " Trying again.";
+            }*/
+        }
+    }
+    qDebug() << "(Robot" << robotName << ") We should be connected";
 }
 
 void CmdRobotWorker::sendCommand(const QString cmd){
@@ -49,13 +58,6 @@ void CmdRobotWorker::sendCommand(const QString cmd){
         qDebug() << "(Robot" << robotName << ") An error occured while sending data";
     } else {
         qDebug() << "(Robot" << robotName << ") " << nbDataSend << " bytes sent";
-
-        /*if(QString(cmd.at(0)).compare("e")){
-            socket->waitForReadyRead(100);
-        } else {
-            qDebug() << "No wait";
-            delay(2000);
-        }*/
     }
     qDebug() << "(Robot" << robotName << ") Command sent successfully";
 }
@@ -93,6 +95,8 @@ void CmdRobotWorker::disconnectedSlot(){
     qDebug() << "(Robot" << robotName << ") Disconnected at ip" << ipAddress;
     if(robotName.compare("") != 0){
         qDebug() << "(Robot" << robotName << ") Emitting robotIsDead";
+        timer->stop();
+        timeCounter = 0;
         emit robotIsDead(robotName, ipAddress);
         if(socket->isOpen())
             socket->close();
@@ -107,16 +111,16 @@ void CmdRobotWorker::onStateChanged(QAbstractSocket::SocketState socketState ){
     qDebug() << "(Robot" << robotName << ") The state of the socket changed :" << socketState;
 }
 
-void CmdRobotWorker::pingSlot(){
+void CmdRobotWorker::pingSlot(void){
     qDebug()<< "(Robot" << robotName << ") Received the ping";
     timer->start();
     timeCounter = 0;
 }
 
-void CmdRobotWorker::timerSlot(){
+void CmdRobotWorker::timerSlot(void){
     timeCounter++;
     qDebug()<< "(Robot" << robotName << ") Did not receive any ping from this robot for" << timeCounter << "seconds";
-    if(timeCounter >= 10 && socket->isOpen())
+    if(timeCounter >= ROBOT_TIMER && socket->isOpen())
         socket->close();
 }
 
@@ -124,4 +128,3 @@ void CmdRobotWorker::changeRobotNameSlot(QString name){
     qDebug()<< "(Robot" << robotName << ") Changed the name of the robot to" << name;
     robotName = name;
 }
-

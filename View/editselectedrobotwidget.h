@@ -111,10 +111,10 @@ private slots:
      */
     void editRobot();
     /**
-     * @brief cancelRobotModifications
+     * @brief cancelRobotModificationsSlot
      * called when a user cancels the modifications on the edition page
      */
-    void cancelRobotModifications();
+    void cancelRobotModificationsSlot();
 
 private:
     MainWindow* mainWindow;
