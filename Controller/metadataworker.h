@@ -23,11 +23,11 @@ public:
 
 private slots:
     /**
-     * @brief errorSlot
+     * @brief errorConnectionSlot
      * @param error
      * (Not connected) Slot called when there is an error
      */
-    void errorSlot(QAbstractSocket::SocketError error);
+    void errorConnectionSlot(QAbstractSocket::SocketError error);
 
     /**
      * @brief disconnectedSlot

@@ -305,7 +305,8 @@ void BottomLayout::removeRobot(const int id){
             if(listEnabled.at(i) == playRobotBtnGroup->buttons().at(id)
                     || listEnabled.at(i) == stopRobotBtnGroup->buttons().at(id)
                     || listEnabled.at(i) == robotBtnGroup->buttons().at(id)
-                    || listEnabled.at(i) == viewPathRobotBtnGroup->buttons().at(id))
+                    || listEnabled.at(i) == viewPathRobotBtnGroup->buttons().at(id)
+                    || listEnabled.at(i) == HomeBtnGroup->buttons().at(id))
                 listEnabled.removeAt(i);
         }
 
@@ -334,13 +335,17 @@ void BottomLayout::removeRobot(const int id){
         QLayoutItem* item6 = columnDelete->takeAt(id);
         delete item6->widget();
         delete item6;
+        QLayoutItem* item7 = columnHome->takeAt(id);
+        delete item7->widget();
+        delete item7;
 
-        for(int i =0; i < playRobotBtnGroup->buttons().size(); i++){
+        for(int i = 0; i < playRobotBtnGroup->buttons().size(); i++){
             playRobotBtnGroup->setId(playRobotBtnGroup->buttons().at(i), i);
             stopRobotBtnGroup->setId(stopRobotBtnGroup->buttons().at(i), i);
             robotBtnGroup->setId(robotBtnGroup->buttons().at(i), i);
             viewPathRobotBtnGroup->setId(viewPathRobotBtnGroup->buttons().at(i), i);
             deletePathBtnGroup->setId(deletePathBtnGroup->buttons().at(i), i);
+            HomeBtnGroup->setId(HomeBtnGroup->buttons().at(i), i);
         }
     } else {
         qDebug() << "(BottomLayout) Wrong id to remove" << id;
@@ -389,6 +394,13 @@ void BottomLayout::setEnable(const bool enable){
         }
 
         list = deletePathBtnGroup->buttons();
+        for(int i = 0; i < list.size(); i++){
+            if(list.at(i)->isEnabled()){
+                list.at(i)->setEnabled(false);
+                listEnabled.push_back(list.at(i));
+            }
+        }
+        list = HomeBtnGroup->buttons();
         for(int i = 0; i < list.size(); i++){
             if(list.at(i)->isEnabled()){
                 list.at(i)->setEnabled(false);

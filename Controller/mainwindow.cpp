@@ -321,10 +321,11 @@ void MainWindow::initializeRobots(){
     connect(&serverThread, SIGNAL(finished()), robotServerWorker, SLOT(deleteLater()));
     serverThread.start();
     robotServerWorker->moveToThread(&serverThread);
-/*
 
+/*
     QFileInfo fileInfo(QDir::currentPath(), "../gobot-software/" + QString(ROBOTS_NAME_FILE));
     QFile fileWrite(fileInfo.absoluteFilePath());
+
     fileWrite.resize(0);
     fileWrite.open(QIODevice::WriteOnly);
     QDataStream out(&fileWrite);
@@ -382,8 +383,8 @@ void MainWindow::initializeRobots(){
             in >> *(robots->getRobotsVector().at(i)->getRobot());
             robotPathFile.close();
         }
-    }
-*/
+    }*/
+
     //qDebug() << "RobotsNameMap on init" << robots->getRobotsNameMap();
 }
 
@@ -1959,15 +1960,16 @@ void MainWindow::loadMapBtnEvent(){
     /// centers the map
     centerMap();
 
-    QFileInfo fileinfo(QDir::currentPath(), "../gobot-software/points.xml");;
-    savePoints(fileinfo.absoluteFilePath());
-
     /// imports paths associated to the map and save them in the current file
     deserializePaths(fileNameWithoutExtension + "_paths.dat");
 
     /// imports points associated to the map and save them in the current file
     XMLParser parser(fileNameWithoutExtension + "_points.xml");
     parser.readPoints(points);
+
+    /// savesthe new configuration to the current configuration file
+    QFileInfo fileinfo(QDir::currentPath(), "../gobot-software/points.xml");;
+    savePoints(fileinfo.absoluteFilePath());
 
     /// updates the group box so that new points can be added
     createPointWidget->updateGroupBox();
@@ -4856,7 +4858,8 @@ bool MainWindow::saveMapConfig(const std::string fileName){
                 map->getHeight() << " " << map->getWidth() << std::endl
              << mapState.first.x() << " " << mapState.first.y() << std::endl
              << mapState.second << std::endl
-             << map->getOrigin().getX() << " " << map->getOrigin().getY() << " " << map->getResolution();
+             << map->getOrigin().getX() << " " << map->getOrigin().getY() << std::endl
+             << map->getResolution();
         file.close();
         return true;
     } else
