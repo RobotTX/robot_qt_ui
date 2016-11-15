@@ -93,7 +93,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     setWindowTitle(":/maps/map.pgm");
     map->setMapFromFile(":/maps/map.pgm");
 
-
     if(!mapFile.compare("")){
         setWindowTitle(":/maps/map.pgm");
         map->setMapFromFile(":/maps/map.pgm");
@@ -300,11 +299,10 @@ void MainWindow::initializeRobots(){
 
     /// Get the list of taken robot's name from the file
     QFileInfo fileinfo(QDir::currentPath(), "../gobot-software/robotsName.dat");
-    //QFile fileRead(QDir::currentPath() + QDir::separator() + QString(ROBOTS_NAME_FILE));
+
     QFile fileRead(fileinfo.absoluteFilePath());
     qDebug() << "file" << fileinfo.absolutePath() << fileinfo.absoluteFilePath();
 
-    //QFile fileRead(QString(GOBOT_PATH) + QString(ROBOTS_NAME_FILE));
     fileRead.open(QIODevice::ReadOnly);
     /// read the data serialized from the file
     QDataStream in(&fileRead);
@@ -321,9 +319,9 @@ void MainWindow::initializeRobots(){
     robotServerWorker->moveToThread(&serverThread);
 
 /*
-    QFile fileWrite(QDir::currentPath() + QDir::separator() + QString(ROBOTS_NAME_FILE));
-    //QFile fileWrite(QString(GOBOT_PATH) + QString(ROBOTS_NAME_FILE));
-
+    //QFile fileWrite(QDir::currentPath() + QDir::separator() + QString(ROBOTS_NAME_FILE));
+    QFileInfo fileInfo(QDir::currentPath(), "../gobot-software/" + QString(ROBOTS_NAME_FILE));
+    QFile fileWrite(fileInfo.absoluteFilePath());
 
     fileWrite.resize(0);
     fileWrite.open(QIODevice::WriteOnly);
@@ -338,8 +336,8 @@ void MainWindow::initializeRobots(){
     QPointer<RobotView> robotView1 = QPointer<RobotView>(new RobotView(robot1, mapPixmapItem));
     robotView1->setLastStage(2);
 
-
     connect(robotView1, SIGNAL(setSelectedSignal(QPointer<RobotView>)), this, SLOT(setSelectedRobot(QPointer<RobotView>)));
+
     robotView1->setPosition(896, 1094);
     robotView1->setParentItem(mapPixmapItem);
     robots->add(robotView1);
@@ -370,8 +368,12 @@ void MainWindow::initializeRobots(){
     robots->setRobotsNameMap(tmpMap);
     out << robots->getRobotsNameMap();
     fileWrite.close();
+
+
     for(int i = 0; i < robots->getRobotsVector().size(); i++){
-        QFile robotPathFile(QString(GOBOT_PATH) + "robots_paths/" + robots->getRobotsVector().at(i)->getRobot()->getName() + "_path.dat");
+        QFileInfo fileinfo(QDir::currentPath(), "../gobot-software/robots_paths/" + robots->getRobotsVector().at(i)->getRobot()->getName() + "_path.dat");
+        QFile robotPathFile(fileinfo.absoluteFilePath());
+        qDebug() << "robot file" << fileinfo.absoluteFilePath();
         if(robotPathFile.exists()){
             robotPathFile.open(QIODevice::ReadOnly);
             QDataStream in(&robotPathFile);
