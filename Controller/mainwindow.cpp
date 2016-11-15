@@ -79,23 +79,27 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     if(file){
         int _height, _width;
         double centerX, centerY, originX, originY, resolution;
-        file >> mapFile >> _height >> _width >> centerX >> centerY >> mapState.second >> originX >> originY;
+        file >> mapFile >> _height >> _width >> centerX >> centerY >> mapState.second >> originX >> originY >> resolution;
         map->setHeight(_height);
         map->setWidth(_width);
         mapState.first.setX(centerX);
         mapState.first.setY(centerY);
         map->setOrigin(Position(originX, originY));
-        map->setResolution(0.05);
+        map->setResolution(resolution);
         qDebug() << "1:" << QString::fromStdString(mapFile) << _height << _width << centerX << centerY << originX << originY;
         file.close();
     }
 
-    setWindowTitle(":/maps/map.pgm");
-    map->setMapFromFile(":/maps/map.pgm");
-
     if(!mapFile.compare("")){
         setWindowTitle(":/maps/map.pgm");
         map->setMapFromFile(":/maps/map.pgm");
+        mapState.second = 1;
+        map->setHeight(608);
+        map->setWidth(320);
+        mapState.first.setX(0);
+        mapState.first.setY(0);
+        map->setResolution(0.05);
+        map->setOrigin(Position(0, 0));
     } else {
         setWindowTitle(QString::fromStdString(mapFile));
         map->setMapFromFile(QString::fromStdString(mapFile));
@@ -1945,7 +1949,6 @@ void MainWindow::loadMapBtnEvent(){
 
     /// updates the group box so that new points can be added
     createPointWidget->updateGroupBox();
-
 
     QFileInfo fileinfoPaths(QDir::currentPath(), "../gobot-software/paths.dat");
     serializePaths(fileinfoPaths.absoluteFilePath());
@@ -4912,7 +4915,7 @@ bool MainWindow::saveMapConfig(const std::string fileName){
                 map->getHeight() << " " << map->getWidth() << std::endl
              << mapState.first.x() << " " << mapState.first.y() << std::endl
              << mapState.second << std::endl
-             << map->getOrigin().getX() << " " << map->getOrigin().getY();
+             << map->getOrigin().getX() << " " << map->getOrigin().getY() << " " << map->getResolution();
         file.close();
         return true;
     } else
@@ -4920,31 +4923,25 @@ bool MainWindow::saveMapConfig(const std::string fileName){
 }
 
 bool MainWindow::loadMapConfig(const std::string fileName){
+    /// loads the configuration contained in the file <fileName> into the application
     std::ifstream file(fileName, std::ios::in);
     if(file){
         int _height, _width;
         double centerX, centerY, originX, originY, resolution;
-        file >> mapFile >> _height >> _width >> centerX >> centerY >> mapState.second >> originX >> originY;
+        file >> mapFile >> _height >> _width >> centerX >> centerY >> mapState.second >> originX >> originY >> resolution;
         map->setHeight(_height);
         map->setWidth(_width);
         mapState.first.setX(centerX);
         mapState.first.setY(centerY);
         map->setOrigin(Position(originX, originY));
         map->setResolution(resolution);
-        qDebug() << QString::fromStdString(mapFile) << _height << _width << centerX << centerY << originX << originY;
+        qDebug() << QString::fromStdString(mapFile) << _height << _width << centerX << centerY << originX << originY << resolution;
+        setWindowTitle(QString::fromStdString(mapFile));
         file.close();
     } else
         return false;
+
+    /// saves the configuration contained in the file <fileName> as the current configuration
     QFileInfo fileInfo(QDir::currentPath(), "../gobot-software/currentMap.txt");
-    std::ofstream currentConfigFile(fileInfo.absoluteFilePath().toStdString(), std::ios::out | std::ios::trunc);
-    if(currentConfigFile){
-        currentConfigFile << mapFile << " " << std::endl <<
-                map->getHeight() << " " << map->getWidth() << std::endl
-             << mapState.first.x() << " " << mapState.first.y() << std::endl
-             << mapState.second << std::endl
-             << map->getOrigin().getX() << " " << map->getOrigin().getY();
-        currentConfigFile.close();
-        return true;
-    } else
-        return false;
+    return saveMapConfig(fileInfo.absoluteFilePath().toStdString());
 }
