@@ -37,13 +37,6 @@ private slots:
      * Slot called when we are connected to the host
      */
     void connectedSlot();
-
-    /**
-     * @brief errorSlot
-     * @param error
-     * (Not connected) Slot called when there is an error
-     */
-    void errorSlot(QAbstractSocket::SocketError error);
     void onStateChanged(QAbstractSocket::SocketState error);
 
     /**
@@ -69,6 +62,7 @@ private slots:
     void pingSlot(void);
     void timerSlot(void);
     void stopCmdRobotWorkerSlot();
+    void errorConnectionSlot(QAbstractSocket::SocketError error);
 
 
 private :
@@ -76,12 +70,10 @@ private :
     QString ipAddress;
     int port;
     QString robotName;
-    bool connected;
     int metadataPort;
     int robotPort;
     int mapPort;
-    bool stop;
-    QTimer timer;
+    QTimer* timer;
     int timeCounter;
 };
 

@@ -312,15 +312,15 @@ void MainWindow::initializeRobots(){
     in >> tmp;
     robots->setRobotsNameMap(tmp);
     fileRead.close();
-/*
+
     robotServerWorker = new RobotServerWorker(PORT_ROBOT_UPDATE);
     connect(robotServerWorker, SIGNAL(robotIsAlive(QString, QString, QString, QString, int)), this, SLOT(robotIsAliveSlot(QString, QString, QString, QString, int)));
     connect(this, SIGNAL(stopUpdateRobotsThread()), robotServerWorker, SLOT(stopThread()));
     connect(&serverThread, SIGNAL(finished()), robotServerWorker, SLOT(deleteLater()));
     serverThread.start();
     robotServerWorker->moveToThread(&serverThread);
-*/
 
+/*
     QFile fileWrite(QDir::currentPath() + QDir::separator() + QString(ROBOTS_NAME_FILE));
     //QFile fileWrite(QString(GOBOT_PATH) + QString(ROBOTS_NAME_FILE));
 
@@ -379,7 +379,7 @@ void MainWindow::initializeRobots(){
             robotPathFile.close();
         }
     }
-
+*/
     //qDebug() << "RobotsNameMap on init" << robots->getRobotsNameMap();
 }
 

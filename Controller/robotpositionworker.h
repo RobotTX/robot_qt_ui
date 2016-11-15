@@ -22,12 +22,6 @@ public:
     ~RobotPositionWorker();
 
 private slots:
-    /**
-     * @brief errorSlot
-     * @param error
-     * (Not connected) Slot called when there is an error
-     */
-    void errorSlot(QAbstractSocket::SocketError error);
 
     /**
      * @brief disconnectedSlot
@@ -37,6 +31,7 @@ private slots:
     void readTcpDataSlot();
     void stopThread();
     void connectSocket();
+    void errorConnectionSlot(QAbstractSocket::SocketError error);
 
 
 signals:

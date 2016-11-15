@@ -26,12 +26,12 @@ private slots:
     void writeTcpDataSlot(QByteArray cmd);
     void connectSocket();
     void stopThread();
+    void errorConnectionSlot(QAbstractSocket::SocketError error);
 
 private :
     QPointer<QTcpSocket> socket;
     QString ipAddress;
     int port;
-    bool connected;
 };
 
 #endif // SENDNEWMAPWORKER_H
