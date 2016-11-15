@@ -75,6 +75,8 @@ private:
      */
     QHBoxLayout* layout;
 
+    QButtonGroup* HomeBtnGroup;
+
     /**
      * @brief playRobotBtnGroup
      * Group of the play buttons to play/pause the robot in its path
@@ -119,6 +121,7 @@ private:
     QScrollArea* pathScroll;
     QVBoxLayout* columnName;
     QVBoxLayout* columnPath;
+    QVBoxLayout* columnHome;
     QVBoxLayout* columnPlay;
     QVBoxLayout* columnViewPath;
     QVBoxLayout* columnStop;

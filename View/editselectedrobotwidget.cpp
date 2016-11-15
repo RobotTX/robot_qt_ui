@@ -110,7 +110,6 @@ EditSelectedRobotWidget::EditSelectedRobotWidget(QWidget* parent, MainWindow* _m
     goHomeBtn = new CustomPushButton(QIcon(":/icons/play.png"), "Go home", this);
     goHomeBtn->setToolTip("Clicking this button will send the robot to its home");
     goHomeBtn->setIconSize(s_icon_size);
-    goHomeBtn->hide();
     connect(goHomeBtn, SIGNAL(clicked()), mainWindow, SLOT(goHome()));
     inLayout->addWidget(goHomeBtn);
 
@@ -140,7 +139,6 @@ EditSelectedRobotWidget::EditSelectedRobotWidget(QWidget* parent, MainWindow* _m
     /// to display a path that's assigned to the robot after clearing the map of other path(s)
     connect(this, SIGNAL(clearMapOfPaths()), mainWindow, SLOT(clearMapOfPaths()));
     connect(this, SIGNAL(showPath(QString, QString)), mainWindow, SLOT(displayAssignedPath(QString, QString)));
-
     connect(this, SIGNAL(newHome(QString)), mainWindow, SLOT(setNewHome(QString)));
 
     hide();
