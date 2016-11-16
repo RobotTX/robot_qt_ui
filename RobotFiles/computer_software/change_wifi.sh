@@ -16,8 +16,11 @@ mv tmp.txt /etc/network/interfaces
 
 #use : ./change_wifi.sh "wifi_name" pwd
 
-ifdown wlan0 
-ifup wlan0 &
+wlan=$(ip link show | grep wlan | cut -d: -f2 | awk '{print $1}')
+echo $wlan
+
+ifdown $wlan
+ifup $wlan &
 
 start=$(date +%s);
 
@@ -32,8 +35,8 @@ done
 
 if !(echo `fping www.google.com` | grep -q "alive") ; then
 
-val=`ps -ef | grep "ifup wlan0" | head -n 1| cut -d " " -f 6`
-echo `ps -ef | grep "ifup wlan0" | head -n 1`
+val=`ps -ef | grep "ifup $wlan" | head -n 1| cut -d " " -f 6`
+echo `ps -ef | grep "ifup $wlan" | head -n 1`
 echo $val
 kill -9 $val
 

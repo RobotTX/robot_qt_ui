@@ -12,19 +12,22 @@ CmdRobotWorker::CmdRobotWorker(const QString _ipAddress, const int cmdPort, cons
 }
 
 CmdRobotWorker::~CmdRobotWorker(){
-    stopCmdRobotWorkerSlot();
+    stopWorker();
 }
 
-void CmdRobotWorker::stopCmdRobotWorkerSlot(){
+void CmdRobotWorker::stopWorker(){
     if(socket && socket->isOpen())
         socket->close();
 }
 
 void CmdRobotWorker::connectSocket(){
 
-    //qDebug() << "(Robot" << robotName << ") Command Thread launched";
+    qDebug() << "(Robot" << robotName << ") Command Thread launched";
 
     socket = QPointer<QTcpSocket>(new QTcpSocket());
+
+    /// We create the timer used to know for how long we haven't receive any ping
+    timer = new QTimer(this);
 
     /// Connect the signal readyRead which tell us when data arrived to the function that treat them
     connect(&(*socket), SIGNAL(readyRead()), this, SLOT(readTcpDataSlot()));
@@ -32,12 +35,14 @@ void CmdRobotWorker::connectSocket(){
     connect(&(*socket), SIGNAL(connected()), this, SLOT(connectedSlot()));
     /// Connect the signal disconnected which trigger when we are disconnected from the host
     connect(&(*socket), SIGNAL(disconnected()), this, SLOT(disconnectedSlot()));
+    /// Connect the signal when an error occurs with the socket, to react accordingly
     connect(&(*socket), SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(errorConnectionSlot(QAbstractSocket::SocketError)));
 
-
+    /// We try to connect to the robot, if an error occur,
+    /// the errorConnectionSlot will try to reconnect
     socket->connectToHost(ipAddress, port);
-    qDebug() << "(Robot" << robotName << ") connectSocket done";
 
+    qDebug() << "(Robot" << robotName << ") connectSocket done";
 }
 
 void CmdRobotWorker::sendCommand(const QString cmd){
@@ -62,8 +67,8 @@ void CmdRobotWorker::readTcpDataSlot(){
 
 void CmdRobotWorker::connectedSlot(){
     qDebug() << "(Robot" << robotName << ") Connected";
-    timer = new QTimer(this);
 
+    /// When we are connected, we send the ports to use for the other workers
     QString portStr = "h \"" + QString::number(metadataPort) + "\" \"" + QString::number(robotPort) + "\" \"" + QString::number(mapPort) + "\" } ";
     qDebug() << "(Robot" << robotName << ") Sending ports : " << portStr;
     bool tmpBool(false);
@@ -74,7 +79,7 @@ void CmdRobotWorker::connectedSlot(){
             tmpBool = true;
             emit portSent();
         } else {
-            qDebug() << "(Robot" << robotName << ") Ports could not be sent";
+            qDebug() << "(Robot" << robotName << ") Ports could not be sent, trying again";
         };
     }
 
@@ -85,6 +90,7 @@ void CmdRobotWorker::connectedSlot(){
 
 void CmdRobotWorker::disconnectedSlot(){
     qDebug() << "(Robot" << robotName << ") Disconnected at ip" << ipAddress;
+    /// On disconnection, we want to tell the MainWindow that we disconnected
     if(robotName.compare("") != 0){
         qDebug() << "(Robot" << robotName << ") Emitting robotIsDead";
         timer->stop();
@@ -93,10 +99,6 @@ void CmdRobotWorker::disconnectedSlot(){
         if(socket->isOpen())
             socket->close();
     }
-}
-
-void CmdRobotWorker::onStateChanged(QAbstractSocket::SocketState socketState ){
-    qDebug() << "(Robot" << robotName << ") The state of the socket changed :" << socketState;
 }
 
 void CmdRobotWorker::pingSlot(void){

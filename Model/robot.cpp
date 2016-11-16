@@ -31,7 +31,7 @@ Robot::Robot(MainWindow* mainWindow, const QSharedPointer<Paths>& _paths, const 
     connect(this, SIGNAL(sendCommandSignal(QString)), cmdRobotWorker, SLOT(sendCommand(QString)));
     connect(this, SIGNAL(pingSignal()), cmdRobotWorker, SLOT(pingSlot()));
     connect(mainWindow, SIGNAL(changeCmdThreadRobotName(QString)), cmdRobotWorker, SLOT(changeRobotNameSlot(QString)));
-    connect(this, SIGNAL(stopCmdRobotWorker()), cmdRobotWorker, SLOT(stopCmdRobotWorkerSlot()));
+    connect(this, SIGNAL(stopCmdRobotWorker()), cmdRobotWorker, SLOT(stopWorker()));
     connect(&cmdThread, SIGNAL(finished()), cmdRobotWorker, SLOT(deleteLater()));
     connect(this, SIGNAL(startCmdRobotWorker()), cmdRobotWorker, SLOT(connectSocket()));
     cmdRobotWorker->moveToThread(&cmdThread);
@@ -43,7 +43,7 @@ Robot::Robot(MainWindow* mainWindow, const QSharedPointer<Paths>& _paths, const 
     robotWorker = QPointer<RobotPositionWorker>(new RobotPositionWorker(ip, PORT_ROBOT_POS));
     connect(robotWorker, SIGNAL(valueChangedRobot(QString, float, float, float)),
                      mainWindow ,SLOT(updateRobot(QString, float, float, float)));
-    connect(this, SIGNAL(stopRobotWorker()), robotWorker, SLOT(stopThread()));
+    connect(this, SIGNAL(stopRobotWorker()), robotWorker, SLOT(stopWorker()));
     connect(&robotThread, SIGNAL(finished()), robotWorker, SLOT(deleteLater()));
     connect(this, SIGNAL(startRobotWorker()), robotWorker, SLOT(connectSocket()));
     robotWorker->moveToThread(&robotThread);
@@ -55,7 +55,7 @@ Robot::Robot(MainWindow* mainWindow, const QSharedPointer<Paths>& _paths, const 
     metadataWorker = QPointer<MetadataWorker>(new MetadataWorker(ip, PORT_MAP_METADATA));
     connect(metadataWorker, SIGNAL(valueChangedMetadata(int, int, float, float, float)),
                      mainWindow , SLOT(updateMetadata(int, int, float, float, float)));
-    connect(this, SIGNAL(stopMetadataWorker()), metadataWorker, SLOT(stopThread()));
+    connect(this, SIGNAL(stopMetadataWorker()), metadataWorker, SLOT(stopWorker()));
     connect(this, SIGNAL(startMetadataWorker()), metadataWorker, SLOT(connectSocket()));
     connect(&metadataThread, SIGNAL(finished()), metadataWorker, SLOT(deleteLater()));
     metadataWorker->moveToThread(&metadataThread);
@@ -68,7 +68,7 @@ Robot::Robot(MainWindow* mainWindow, const QSharedPointer<Paths>& _paths, const 
     connect(this, SIGNAL(sendNewMapSignal(QByteArray)), newMapWorker, SLOT(writeTcpDataSlot(QByteArray)));
     connect(this, SIGNAL(cmdAnswer(QString)), mainWindow->getCommandController(), SLOT(cmdAnswerSlot(QString)));
     connect(newMapWorker, SIGNAL(doneSendingNewMapSignal()), this, SLOT(doneSendingMapSlot()));
-    connect(this, SIGNAL(stopNewMapWorker()), newMapWorker, SLOT(stopThread()));
+    connect(this, SIGNAL(stopNewMapWorker()), newMapWorker, SLOT(stopWorker()));
     connect(this, SIGNAL(startNewMapWorker()), newMapWorker, SLOT(connectSocket()));
     connect(&newMapThread, SIGNAL(finished()), newMapWorker, SLOT(deleteLater()));
     newMapWorker->moveToThread(&newMapThread);

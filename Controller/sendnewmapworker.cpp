@@ -7,10 +7,10 @@ SendNewMapWorker::SendNewMapWorker(const QString _ipAddress, const int _port){
 }
 
 SendNewMapWorker::~SendNewMapWorker(){
-    stopThread();
+    stopWorker();
 }
 
-void SendNewMapWorker::stopThread(){
+void SendNewMapWorker::stopWorker(){
     if(socket && socket->isOpen())
         socket->close();
 }
@@ -20,14 +20,17 @@ void SendNewMapWorker::connectSocket(){
 
     socket = QPointer<QTcpSocket>(new QTcpSocket());
 
-    /// Connect the signal connected which trigger when we are connected to the host
-    //connect(&(*socket), SIGNAL(connected()), this, SLOT(connectedSlot()));
     /// Connect the signal disconnected which trigger when we are disconnected from the host
     connect(&(*socket), SIGNAL(disconnected()), this, SLOT(disconnectedSlot()));
+    /// Connect the signal readyRead which tell us when data arrived to the function that treat them
     connect(&(*socket), SIGNAL(readyRead()), this, SLOT(readTcpDataSlot()));
+    /// Connect the signal when an error occurs with the socket, to react accordingly
     connect(&(*socket), SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(errorConnectionSlot(QAbstractSocket::SocketError)));
 
+    /// We try to connect to the robot, if an error occur,
+    /// the errorConnectionSlot will try to reconnect
     socket->connectToHost(ipAddress, port);
+
     qDebug() << "(New Map) connectSocket done";
 }
 

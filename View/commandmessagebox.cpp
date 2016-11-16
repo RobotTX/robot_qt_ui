@@ -5,8 +5,6 @@
 #include <QCloseEvent>
 
 CommandMessageBox::CommandMessageBox(QWidget *parent) : QMessageBox(parent){
-    /// makes sure the msgbox is deleted automatically when closed
-    setAttribute(Qt::WA_DeleteOnClose);
     /// non-modal means it won't block other widgets from receiving slots while the msg box is opened
     setModal(false);
     abortButton = addButton(QMessageBox::Abort);
@@ -15,6 +13,7 @@ CommandMessageBox::CommandMessageBox(QWidget *parent) : QMessageBox(parent){
 void CommandMessageBox::show(){
     abortButton->hide();
 
+    /// Timer used to show the abort button when we wait for too long for an answer
     QTimer* timer = new QTimer(this);
     timer->setInterval(15000);
     timer->setSingleShot(true);
@@ -36,6 +35,7 @@ void CommandMessageBox::done(int r){
 
 void CommandMessageBox::closeEvent(QCloseEvent *e){
     done(-2);
+    /// On close we don't want to destroy the box but just hide it so we ignore the close event
     e->ignore();
     //QMessageBox::closeEvent(e);
 }

@@ -22,10 +22,38 @@ private slots:
      */
     void disconnectedSlot();
 
+    /**
+     * @brief readTcpDataSlot
+     * Read the data we receive
+     */
     void readTcpDataSlot();
+
+    /**
+     * @brief writeTcpDataSlot
+     * @param cmd
+     * Send the map to the robot
+     */
     void writeTcpDataSlot(QByteArray cmd);
+
+    /**
+     * @brief connectSocket
+     * Called to start the connection with the robot
+     */
     void connectSocket();
-    void stopThread();
+
+    /**
+     * @brief stopWorker
+     * Slot to stop the worker
+     */
+    void stopWorker();
+
+    /**
+     * @brief errorConnectionSlot
+     * @param error
+     * Called when an error occurs with the socket
+     * When we try to connectToHost, if the socket on the robot is not open yet (or other problem),
+     * we'll try to connect again in this slot
+     */
     void errorConnectionSlot(QAbstractSocket::SocketError error);
 
 private :
