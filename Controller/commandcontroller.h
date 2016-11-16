@@ -29,11 +29,11 @@ public:
     bool sendCommand(QPointer<Robot> robot, QString cmd);
 
     /**
-     * @brief robotWaitForAnswer
-     * @param msg
+     * @brief openMessageBox
+     * @param listCmd
      * Open the message box to tell the user we are processing the command
      */
-    void robotWaitForAnswer(QStringList listCmd);
+    void openMessageBox(QStringList listCmd);
 
     /**
      * @brief sendNewMapToRobot
@@ -51,6 +51,13 @@ public:
      * we stop the message box and sendCommand will return false
      */
     void robotDisconnected(QString _robotName);
+
+    /**
+     * @brief robotWaitForAnswer
+     * @param listCmd
+     * @return if the command succeeded or failed
+     */
+    bool robotWaitForAnswer(QStringList listCmd);
 
 private slots:
     /**
@@ -70,6 +77,7 @@ private:
     QPointer<CommandMessageBox> messageBox;
     QString cmdAnswer;
     QString robotName;
+    QString cmdName;
 };
 
 #endif // COMMANDCONTROLLER_H

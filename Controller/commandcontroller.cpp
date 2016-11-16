@@ -26,49 +26,33 @@ bool CommandController::sendCommand(QPointer<Robot> robot, QString cmd){
 
         if(listCmd.at(0).compare("b") == 0)
             return true;
-        else
+        else {
             robotName = robot->getName();
-
-        robotWaitForAnswer(listCmd);
-
-        qDebug() << "CommandController::sendCommand Going to wait for an answer";
-        while(cmdAnswer.compare("") == 0){
-            qDebug() << "CommandController::sendCommand waiting for an answer";
-            MainWindow::delay(1000);
+            cmdName = listCmd.at(0);
         }
 
-        qDebug() << "The answer is :" << cmdAnswer;
+        return robotWaitForAnswer(listCmd);
 
-        /// Data are received as a string separated by a space ("cmd done" or "cmd failed")
-        QStringList list = cmdAnswer.split(rx, QString::SkipEmptyParts);
-        cmdAnswer = "";
-        robotName = "";
-
-        /// TODO message if failed + depends on which cmd failed (is it the right command ?), or received another msg
-        if(list.size() == 2){
-            if(list.at(1).compare("done") == 0)
-                return true;
-        }
-        qDebug() << "CommandController::sendCommand Got a wrong answer or a fail (need to custom msg)";
     } else {
-        qDebug() << "CommandController::sendCommand Robot" << robotName << "is already processing a command";
+        qDebug() << "CommandController::sendCommand Robot" << robotName << "is already processing the command" << cmdName;
     }
     return false;
 
     //return true;
 }
 
-void CommandController::robotWaitForAnswer(QStringList listCmd){
+void CommandController::openMessageBox(QStringList listCmd){
     QString msg("");
-    switch (listCmd.at(0)) {
+    QString cmd = listCmd.at(0);
+    switch (cmd.at(0).unicode()) {
     case 'a':
-        msg = "Sending the new name : " + listCmd(1) + " to the robot";
+        msg = "Sending the new name : " + listCmd.at(1) + " to the robot";
         break;
     case 'b':
-        msg = "Sending the new wifi : " + listCmd(1) + " to the robot";
+        msg = "Sending the new wifi : " + listCmd.at(1) + " to the robot";
         break;
     case 'c':
-        msg = "Sending the robot to a new destination : " + listCmd(1) + ", " + listCmd(2);
+        msg = "Sending the robot to a new destination : " + listCmd.at(1) + ", " + listCmd.at(2);
         break;
     case 'd':
         msg = "Pausing the path of the robot";
@@ -118,6 +102,55 @@ void CommandController::robotWaitForAnswer(QStringList listCmd){
     messageBox->show();
 }
 
+bool CommandController::robotWaitForAnswer(QStringList listCmd){
+
+    QRegExp rx("[ ]");
+    openMessageBox(listCmd);
+
+    qDebug() << "CommandController::robotWaitForAnswer Going to wait for an answer";
+    while(cmdAnswer.compare("") == 0){
+        qDebug() << "CommandController::robotWaitForAnswer waiting for an answer";
+        MainWindow::delay(1000);
+    }
+
+    qDebug() << "The answer is :" << cmdAnswer;
+
+    /// Data are received as a string separated by a space ("cmd done" or "cmd failed")
+    QStringList list = cmdAnswer.split(rx, QString::SkipEmptyParts);
+    cmdAnswer = "";
+
+
+    /// TODO message if failed + depends on which cmd failed (is it the right command ?), or received another msg
+    if(list.size() == 2){
+        if(list.at(0).compare(cmdName) == 0){
+            if(list.at(1).compare("done") == 0){
+                qDebug() << "CommandController::robotWaitForAnswer The command" << cmdName << "succeeded";
+                robotName = "";
+                cmdName = "";
+                return true;
+            } else if(list.at(1).compare("failed") == 0){
+                qDebug() << "CommandController::robotWaitForAnswer The command" << cmdName << "failed";
+                robotName = "";
+                cmdName = "";
+                return false;
+            } else {
+                qDebug() << "CommandController::robotWaitForAnswer Got an answer to the right command but with an unknwon result :" << list;
+                robotName = "";
+                cmdName = "";
+                return false;
+            }
+        } else {
+            /// Should be catch by cmdAnswerSlot
+            qDebug() << "CommandController::robotWaitForAnswer Got an answer to the wrong command :" << list << "\nListening again...";
+            return robotWaitForAnswer(listCmd);
+        }
+    } else {
+        /// Should be catch by cmdAnswerSlot
+        qDebug() << "CommandController::robotWaitForAnswer Got a wrong answer :" << list << "\nListening again...";
+        return robotWaitForAnswer(listCmd);
+    }
+}
+
 void CommandController::cmdAnswerSlot(QString answer){
     qDebug() << "CommandController::cmdAnswerSlot received answer :" << answer;
     cmdAnswer = "";
@@ -129,21 +162,25 @@ void CommandController::cmdAnswerSlot(QString answer){
     QStringList list = answer.split(rx, QString::SkipEmptyParts);
 
     if(list.size() == 2){
-        /// If the message box is opened, we were expecting an answer
-        if(messageBox && !robotName.isEmpty()){
+        if(list.at(0).compare(cmdName) == 0){
             cmdAnswer = answer;
             messageBox->hide();
         } else {
-            qDebug() << "CommandController::cmdAnswerSlot received a message that is not from a command";
+            qDebug() << "CommandController::robotWaitForAnswer Got an answer to the wrong command :" << list;
         }
+    } else if(list.at(0).contains("Connected")) {
+        /// along with connected, send position and date for home
+        qDebug() << list;
+
     } else {
-        qDebug() << "CommandController::cmdAnswerSlot received a message that is not from a command";
+       qDebug() << "CommandController::robotWaitForAnswer Got a wrong answer :" << list;
     }
 }
 
 
 void CommandController::sendNewMapToRobot(QPointer<Robot> robot, QString mapId, QSharedPointer<Map> map){
     qDebug() << "sendNewMapToRobot called on" << robot->getName() << "at ip" << robot->getIp() << "sending map id :" << mapId;
+
 /*
     if(robotName.isEmpty()){
         cmdAnswer = "";
@@ -174,7 +211,7 @@ void CommandController::sendNewMapToRobot(QPointer<Robot> robot, QString mapId, 
 
         robot->sendNewMap(byteArray);
 
-        robotWaitForAnswer("Tmp Message");
+        openMessageBox("Tmp Message");
 
         qDebug() << "CommandController::sendNewMapToRobot Going to wait while sending the map";
         while(cmdAnswer.compare("") == 0){
@@ -191,7 +228,7 @@ void CommandController::sendNewMapToRobot(QPointer<Robot> robot, QString mapId, 
 
 void CommandController::robotDisconnected(QString _robotName){
     if(_robotName.compare(robotName)){
-        qDebug() << "The robot we sent a command to, just disconnected";
+        qDebug() << "The robot" << robotName << " was waiting for an answer to the command" << cmdName << "but disconnected";
         cmdAnswer = "cmd failed";
     }
 }

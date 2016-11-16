@@ -1014,7 +1014,7 @@ void MainWindow::robotSavedEvent(){
         }
 
         /// if the command is succesfully sent to the robot, we apply the change
-        // TODO check if pathStr empty, means deleting the path => cmd send without parem => check robotFiles/command.cpp
+        // check if pathStr empty, means deleting the path => cmd send without parem => check robotFiles/command.cpp
         if(robot->commandController->sendCommand(QString("i ") + pathStr)){
             QString answer = robot->waitAnswer();
             QStringList answerList = answer.split(QRegExp("[ ]"), QString::SkipEmptyParts);
@@ -1599,6 +1599,7 @@ void MainWindow::robotIsAliveSlot(QString hostname, QString ip, QString mapId, Q
         } else
             qDebug() << "could not find the point described as its home by the robot";
     }
+
 
     /// updates the text in the bottom layout to make the stage appear
     if(rv->getLastStage() != stage){
