@@ -36,19 +36,6 @@ void CmdRobotWorker::connectSocket(){
 
 
     socket->connectToHost(ipAddress, port);
-    /*
-    int i = 0;
-    while(socket->state() != QAbstractSocket::ConnectedState){
-        if(socket->state() == QAbstractSocket::UnconnectedState){
-            socket->connectToHost(ipAddress, port);
-            socket->waitForConnected(1000);
-            /*if(!socket->waitForConnected(1000)){
-                qDebug() << "(Robot" << robotName << ") Connecting error : " << socket->errorString() << " Trying again.";
-            }*
-            qDebug() << "i : " << i;
-        }
-        i++;
-    }*/
     qDebug() << "(Robot" << robotName << ") connectSocket done";
 
 }
@@ -75,6 +62,7 @@ void CmdRobotWorker::readTcpDataSlot(){
 
 void CmdRobotWorker::connectedSlot(){
     qDebug() << "(Robot" << robotName << ") Connected";
+    timer = new QTimer(this);
 
     QString portStr = "h \"" + QString::number(metadataPort) + "\" \"" + QString::number(robotPort) + "\" \"" + QString::number(mapPort) + "\" } ";
     qDebug() << "(Robot" << robotName << ") Sending ports : " << portStr;
@@ -90,7 +78,6 @@ void CmdRobotWorker::connectedSlot(){
         };
     }
 
-    timer = new QTimer();
     timer->setInterval(1000);
     connect(timer, SIGNAL(timeout()), this, SLOT(timerSlot()));
     timer->start();

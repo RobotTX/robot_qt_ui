@@ -28,17 +28,6 @@ void MetadataWorker::connectSocket(){
     connect(&(*socket), SIGNAL(readyRead()), this, SLOT(readTcpDataSlot()));
 
     socket->connectToHost(ipAddress, port);
-/*
-    while(socket->state() != QAbstractSocket::ConnectedState){
-        if(socket->state() == QAbstractSocket::UnconnectedState){
-            socket->connectToHost(ipAddress, port);
-            if(socket->waitForConnected(10000)){
-                qDebug() << "(Robot Metadata thread" << ipAddress << ") Connected";
-            } else {
-                qDebug() << "(Robot Metadata thread" << ipAddress << ") Connecting error : " << socket->errorString() << " Trying again.";
-            }
-        }
-    }*/
     qDebug() << "(Robot Metadata thread" << ipAddress << ") connectSocket done";
 }
 
