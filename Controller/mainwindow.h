@@ -236,6 +236,7 @@ private slots:
     void displayPathSlot(QString groupName, QString pathName, bool display);
     void setNewHome(QString homeName);
     void goHome();
+    void goHome(int nbRobot);
 
     /// for menu paths
     void displayGroupPaths();
