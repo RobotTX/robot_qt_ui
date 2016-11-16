@@ -62,6 +62,7 @@ void CmdRobotWorker::readTcpDataSlot(){
 
 void CmdRobotWorker::connectedSlot(){
     qDebug() << "(Robot" << robotName << ") Connected";
+    timer = new QTimer(this);
 
     QString portStr = "h \"" + QString::number(metadataPort) + "\" \"" + QString::number(robotPort) + "\" \"" + QString::number(mapPort) + "\" } ";
     qDebug() << "(Robot" << robotName << ") Sending ports : " << portStr;
@@ -77,7 +78,6 @@ void CmdRobotWorker::connectedSlot(){
         };
     }
 
-    timer = new QTimer(this);
     timer->setInterval(1000);
     connect(timer, SIGNAL(timeout()), this, SLOT(timerSlot()));
     timer->start();
