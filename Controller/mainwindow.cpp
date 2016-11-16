@@ -1014,7 +1014,7 @@ void MainWindow::robotSavedEvent(){
         }
 
         /// if the command is succesfully sent to the robot, we apply the change
-        // TODO check if pathStr empty, means deleting the path => cmd send without parem => check robotFiles/command.cpp
+        // check if pathStr empty, means deleting the path => cmd send without parem => check robotFiles/command.cpp
         if(robot->commandController->sendCommand(QString("i ") + pathStr)){
             QString answer = robot->waitAnswer();
             QStringList answerList = answer.split(QRegExp("[ ]"), QString::SkipEmptyParts);
@@ -1496,7 +1496,7 @@ void MainWindow::robotIsAliveSlot(QString hostname, QString ip, QString mapId, Q
     fileRead.close();
 
     /// retrives the home point of the robot if the robot has one
-    QFileInfo fileInfoHome(QDir::currentPath(), "../gobot-software/robots_homes/" + rv->getRobot()->getName());
+    /*QFileInfo fileInfoHome(QDir::currentPath(), "../gobot-software/robots_homes/" + rv->getRobot()->getName());
     QFile fileReadHome(fileInfoHome.absoluteFilePath());
     fileReadHome.open(QIODevice::ReadOnly);
     Position p;
@@ -1520,7 +1520,7 @@ void MainWindow::robotIsAliveSlot(QString hostname, QString ip, QString mapId, Q
         home->show();
 
     } else
-        qDebug() << "no home found to" << rv->getRobot()->getName();
+        qDebug() << "no home found to" << rv->getRobot()->getName();*/
 
     /// updates the text in the bottom layout to make the stage appear
     if(rv->getLastStage() != stage){
