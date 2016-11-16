@@ -28,18 +28,7 @@ void SendNewMapWorker::connectSocket(){
     connect(&(*socket), SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(errorConnectionSlot(QAbstractSocket::SocketError)));
 
     socket->connectToHost(ipAddress, port);
-    /*
-    /// Connect to the host
-    while(socket->state() != QAbstractSocket::ConnectedState){
-        if(socket->state() == QAbstractSocket::UnconnectedState){
-            socket->connectToHost(ipAddress, port);
-            if(socket->waitForConnected(10000)){
-                qDebug() << "(Robot new map thread" << ipAddress << ") Connected";
-            } else {
-                qDebug() << "(Robot new map thread" << ipAddress << ") Connecting error : " << socket->errorString() << " Trying again.";
-            }
-        }
-    }*/
+    qDebug() << "(New Map) connectSocket done";
 }
 
 void SendNewMapWorker::readTcpDataSlot(){

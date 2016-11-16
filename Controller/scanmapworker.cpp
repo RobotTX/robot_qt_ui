@@ -33,18 +33,6 @@ void ScanMapWorker::connectSocket(){
     connect(&(*socket), SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(errorConnectionSlot(QAbstractSocket::SocketError)));
 
     socket->connectToHost(ipAddress, port);
-
-/*
-    while(socket->state() != QAbstractSocket::ConnectedState){
-        if(socket->state() == QAbstractSocket::UnconnectedState){
-            socket->connectToHost(ipAddress, port);
-            if(socket->waitForConnected(10000)){
-                qDebug() << "(Robot pos thread" << ipAddress << ") Connected";
-            } else {
-                qDebug() << "(Robot pos thread" << ipAddress << ") Connecting error : " << socket->errorString() << " Trying again.";
-            }
-        }
-    }*/
     qDebug() << "(Map Thread) connectSocket done";
 }
 
