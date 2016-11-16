@@ -1014,7 +1014,7 @@ void MainWindow::robotSavedEvent(){
         }
 
         /// if the command is succesfully sent to the robot, we apply the change
-        // TODO check if pathStr empty, means deleting the path => cmd send without parem => check robotFiles/command.cpp
+        // check if pathStr empty, means deleting the path => cmd send without parem => check robotFiles/command.cpp
         if(robot->commandController->sendCommand(QString("i ") + pathStr)){
             QString answer = robot->waitAnswer();
             QStringList answerList = answer.split(QRegExp("[ ]"), QString::SkipEmptyParts);

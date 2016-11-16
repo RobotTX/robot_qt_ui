@@ -1,4 +1,4 @@
-#include "commandcontroller.h"
+﻿#include "commandcontroller.h"
 #include "Model/robot.h"
 #include "Model/map.h"
 #include "Controller/mainwindow.h"
@@ -29,8 +29,7 @@ bool CommandController::sendCommand(QPointer<Robot> robot, QString cmd){
         else
             robotName = robot->getName();
 
-        /// TODO customize message
-        robotWaitForAnswer(listCmd.at(0));
+        robotWaitForAnswer(listCmd);
 
         qDebug() << "CommandController::sendCommand Going to wait for an answer";
         while(cmdAnswer.compare("") == 0){
@@ -45,7 +44,7 @@ bool CommandController::sendCommand(QPointer<Robot> robot, QString cmd){
         cmdAnswer = "";
         robotName = "";
 
-        /// TODO message if failed + depends on which cmd failed, or received another msg
+        /// TODO message if failed + depends on which cmd failed (is it the right command ?), or received another msg
         if(list.size() == 2){
             if(list.at(1).compare("done") == 0)
                 return true;
@@ -59,7 +58,62 @@ bool CommandController::sendCommand(QPointer<Robot> robot, QString cmd){
     //return true;
 }
 
-void CommandController::robotWaitForAnswer(QString msg){
+void CommandController::robotWaitForAnswer(QStringList listCmd){
+    QString msg("");
+    switch (listCmd.at(0)) {
+    case 'a':
+        msg = "Sending the new name : " + listCmd(1) + " to the robot";
+        break;
+    case 'b':
+        msg = "Sending the new wifi : " + listCmd(1) + " to the robot";
+        break;
+    case 'c':
+        msg = "Sending the robot to a new destination : " + listCmd(1) + ", " + listCmd(2);
+        break;
+    case 'd':
+        msg = "Pausing the path of the robot";
+        break;
+    case 'e':
+        msg = "Starting the scan of the map";
+        break;
+    case 'f':
+        msg = "Stopping the scan of the map";
+        break;
+    case 'g':
+        msg = "Sending the map to the robot";
+        break;
+    case 'h':
+        msg = "Sending the ports to the robot";
+        break;
+    case 'i':
+        msg = "Sending a new path to the robot";
+        break;
+    case 'j':
+        msg = "Playing the path of the robot";
+        break;
+    case 'k':
+        msg = "Deleting the path of the robot";
+        break;
+    case 'l':
+        msg = "Stopping the path of the robot";
+        break;
+    case 'm':
+        msg = "Stopping and deleting the path of the robot";
+        break;
+    case 'n':
+        msg = "Sending the new home to the robot";
+        break;
+    case 'o':
+        msg = "Sending the robot to its home";
+        break;
+    case 'p':
+        msg = "Stopping the robot to go home";
+        break;
+    default:
+        msg = "Unknown command";
+        break;
+    }
+
     messageBox->setText(msg);
     messageBox->show();
 }
@@ -144,6 +198,6 @@ void CommandController::robotDisconnected(QString _robotName){
 
 void CommandController::userStopped(){
     qDebug() << "The user pressed a button to stop to wait";
-    /// TODO send to the robot to stop ?
+    /// TODO send a command to the robot to stop ?
     cmdAnswer = "cmd failed";
 }

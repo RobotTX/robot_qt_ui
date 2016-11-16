@@ -17,7 +17,7 @@ public:
 private slots:
     void newConnectionSlot();
     void errorConnectionSlot(QAbstractSocket::SocketError error);
-    void stopThread();
+    void stopWorker();
 
 signals:
     void robotIsAlive(QString hostname, QString ip, QString mapId, QString ssid, int stage);
