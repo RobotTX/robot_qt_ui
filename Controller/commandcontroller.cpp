@@ -120,33 +120,28 @@ bool CommandController::robotWaitForAnswer(QStringList listCmd){
     cmdAnswer = "";
 
 
-    /// TODO message if failed + depends on which cmd failed (is it the right command ?), or received another msg
     if(list.size() == 2){
         if(list.at(0).compare(cmdName) == 0){
+            robotName = "";
+            cmdName = "";
             if(list.at(1).compare("done") == 0){
                 qDebug() << "CommandController::robotWaitForAnswer The command" << cmdName << "succeeded";
-                robotName = "";
-                cmdName = "";
                 return true;
             } else if(list.at(1).compare("failed") == 0){
                 qDebug() << "CommandController::robotWaitForAnswer The command" << cmdName << "failed";
-                robotName = "";
-                cmdName = "";
                 return false;
             } else {
                 qDebug() << "CommandController::robotWaitForAnswer Got an answer to the right command but with an unknwon result :" << list;
-                robotName = "";
-                cmdName = "";
                 return false;
             }
         } else {
             /// Should be catch by cmdAnswerSlot
-            qDebug() << "CommandController::robotWaitForAnswer Got an answer to the wrong command :" << list << "\nListening again...";
+            qDebug() << "CommandController::robotWaitForAnswer Got an answer to the wrong command :" << list;
             return robotWaitForAnswer(listCmd);
         }
     } else {
         /// Should be catch by cmdAnswerSlot
-        qDebug() << "CommandController::robotWaitForAnswer Got a wrong answer :" << list << "\nListening again...";
+        qDebug() << "CommandController::robotWaitForAnswer Got a wrong answer :" << list;
         return robotWaitForAnswer(listCmd);
     }
 }
@@ -166,10 +161,10 @@ void CommandController::cmdAnswerSlot(QString answer){
             cmdAnswer = answer;
             messageBox->hide();
         } else {
-            qDebug() << "CommandController::robotWaitForAnswer Got an answer to the wrong command :" << list << "\nListening again...";
+            qDebug() << "CommandController::robotWaitForAnswer Got an answer to the wrong command :" << list;
         }
     } else {
-        qDebug() << "CommandController::robotWaitForAnswer Got a wrong answer :" << list << "\nListening again...";
+        qDebug() << "CommandController::robotWaitForAnswer Got a wrong answer :" << list;
     }
 }
 
@@ -231,6 +226,5 @@ void CommandController::robotDisconnected(QString _robotName){
 
 void CommandController::userStopped(){
     qDebug() << "The user pressed a button to stop to wait";
-    /// TODO send a command to the robot to stop ?
     cmdAnswer = "cmd failed";
 }
