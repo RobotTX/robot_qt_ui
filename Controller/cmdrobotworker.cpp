@@ -62,7 +62,10 @@ void CmdRobotWorker::sendCommand(const QString cmd){
 void CmdRobotWorker::readTcpDataSlot(){
     QString commandAnswer = socket->readAll();
     qDebug() << "(Robot" << robotName << ") readTcpDataSlot :" << commandAnswer;
-    emit cmdAnswer(commandAnswer);
+    if(commandAnswer.contains("Connected"))
+        emit newConnection(robotName, commandAnswer);
+    else
+        emit cmdAnswer(commandAnswer);
 }
 
 void CmdRobotWorker::connectedSlot(){

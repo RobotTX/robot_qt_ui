@@ -117,6 +117,9 @@ public:
     bool saveMapConfig(const std::string fileName);
     bool loadMapConfig(const std::string fileName);
 
+    /// returns true if the first date is later to the second date
+    bool isLater(const QStringList date, const QStringList otherDate);
+
 signals:
     void nameChanged(QString, QString);
     void changeCmdThreadRobotName(QString);
@@ -262,6 +265,8 @@ private slots:
     void messageMapSaved(bool status);
     void saveMapBtnEvent();
     void loadMapBtnEvent();
+
+    void updateHomes(QString robot_name, QString home_pos);
 
 protected:
     void moveEvent(QMoveEvent* event);

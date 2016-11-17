@@ -28,6 +28,9 @@ Robot::Robot(MainWindow* mainWindow, const QSharedPointer<Paths>& _paths, const 
     connect(cmdRobotWorker, SIGNAL(robotIsDead(QString,QString)), mainWindow, SLOT(robotIsDeadSlot(QString,QString)));
     connect(cmdRobotWorker, SIGNAL(cmdAnswer(QString)), mainWindow->getCommandController(), SLOT(cmdAnswerSlot(QString)));
     connect(cmdRobotWorker, SIGNAL(portSent()), this, SLOT(portSentSlot()));
+    /// so that the first time the robot connects its home position and the last modification of its file are sent to
+    /// the application in order to update the homes on both the robot and the application side correctly
+    connect(cmdRobotWorker, SIGNAL(newConnection(QString, QString)), mainWindow, SLOT(updateHomes(QString, QString)));
     connect(this, SIGNAL(sendCommandSignal(QString)), cmdRobotWorker, SLOT(sendCommand(QString)));
     connect(this, SIGNAL(pingSignal()), cmdRobotWorker, SLOT(pingSlot()));
     connect(mainWindow, SIGNAL(changeCmdThreadRobotName(QString)), cmdRobotWorker, SLOT(changeRobotNameSlot(QString)));

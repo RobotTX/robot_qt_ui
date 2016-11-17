@@ -34,10 +34,11 @@ void RobotServerWorker::newConnectionSlot(){
         QString str = socket->readAll();
 
         QStringList strList = str.split("\"", QString::SkipEmptyParts);
-
+        qDebug() << strList;
         if(strList.size() > 1){
             //qDebug() << "(RobotServerWorker)" << strList;
             emit robotIsAlive(strList.at(0), socket->peerAddress().toString(), strList.at(1), strList.at(2), std::stoi(strList.at(3).toStdString()));
+
         } else {
             qDebug() << "(RobotServerWorker) Not enough param received for robotIsAlive";
         }
