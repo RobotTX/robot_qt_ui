@@ -300,6 +300,10 @@ void BottomLayout::addRobot(QPointer<RobotView> const robotView){
 void BottomLayout::removeRobot(const int id){
     qDebug() << "(BottomLayout) removeRobot called" << id;
     if(id >= 0){
+        if(lastCheckedId == id)
+            lastCheckedId = -1;
+        else if(lastCheckedId > id)
+            lastCheckedId--;
 
         for(int i =0; i < listEnabled.size(); i++){
             if(listEnabled.at(i) == playRobotBtnGroup->buttons().at(id)

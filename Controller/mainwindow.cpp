@@ -1486,7 +1486,7 @@ void MainWindow::robotIsAliveSlot(QString hostname, QString ip, QString mapId, Q
     }
 
     int robotId = robots->getRobotId(rv->getRobot()->getName());
-
+/*
     /// retrieves the robot's path if the robot has one
     QFileInfo fileInfoPath(QDir::currentPath(), "../gobot-software/robots_paths/" + rv->getRobot()->getName() + "_path.dat");
     QFile fileRead(fileInfoPath.absoluteFilePath());
@@ -1494,7 +1494,7 @@ void MainWindow::robotIsAliveSlot(QString hostname, QString ip, QString mapId, Q
     QDataStream in(&fileRead);
     in >> *(robots->getRobotsVector().at(robotId)->getRobot());
     fileRead.close();
-
+*/
 
 
     /// updates the text in the bottom layout to make the stage appear
@@ -1532,11 +1532,13 @@ void MainWindow::robotIsDeadSlot(QString hostname,QString ip){
             rv->getRobot()->getHome()->getPoint()->setHome(Point::PointType::PERM);
 
         /// if selected => if one of this robot related menu is open
-        if(selectedRobot != NULL && selectedRobot->getRobot()->getIp().compare(ip) == 0){
+        if(selectedRobot && selectedRobot->getRobot()->getIp().compare(ip) == 0){
             if(editSelectedRobotWidget->isVisible()){
                 setGraphicItemsState(GraphicItemState::NO_STATE);
                 if(editSelectedRobotWidget->getRobotInfoDialog()->isVisible())
                     emit cancelRobotModifications();
+                hideAllWidgets();
+                leftMenu->hide();
             }
 
 
@@ -1544,11 +1546,7 @@ void MainWindow::robotIsDeadSlot(QString hostname,QString ip){
             if(msgBox.isVisible())
                 msgBox.close();
 
-            QPointer<RobotView> tmpRobot = selectedRobot;
-            hideAllWidgets();
-            selectedRobot = tmpRobot;
-
-            leftMenu->hide();
+            selectedRobot = NULL;
         }
 
         /// if the robot is scanning
@@ -1557,12 +1555,12 @@ void MainWindow::robotIsDeadSlot(QString hostname,QString ip){
             editSelectedRobotWidget->getScanBtn()->setText("Scan a map");
             editSelectedRobotWidget->setEnableAll(true);
 
-            QPointer<RobotView> tmpRobot = selectedRobot;
             hideAllWidgets();
-            selectedRobot = tmpRobot;
-
             setEnableAll(true);
+
+            scanningRobot = NULL;
         }
+
         /// we stop the robots threads
         rv->getRobot()->deleteLater();
 
@@ -1573,10 +1571,6 @@ void MainWindow::robotIsDeadSlot(QString hostname,QString ip){
         robots->remove(rv);
 
         rv->deleteLater();
-        scanningRobot->deleteLater();
-        selectedRobot->deleteLater();
-        scanningRobot = NULL;
-        selectedRobot = NULL;
 
         /// update robotsLeftWidget
         robotsLeftWidget->updateRobots(robots);
@@ -4869,7 +4863,7 @@ bool MainWindow::loadMapConfig(const std::string fileName){
 }
 
 void MainWindow::updateHomes(QString robot_name, QString home_pos){
-    QPointer<RobotView> robotView = robots->getRobotViewByName(robot_name);
+    /*QPointer<RobotView> robotView = robots->getRobotViewByName(robot_name);
     assert(robotView);
     qDebug() << robotView->getRobot()->getName();
     /// retrives the home point of the robot if the robot has one

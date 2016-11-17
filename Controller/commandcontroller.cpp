@@ -134,6 +134,11 @@ bool CommandController::robotWaitForAnswer(QStringList listCmd){
                 qDebug() << "CommandController::robotWaitForAnswer Got an answer to the right command but with an unknwon result :" << list;
                 return false;
             }
+        } else if(list.at(0).compare("cmd") == 0 && list.at(1).compare("failed") == 0){
+            qDebug() << "CommandController::robotWaitForAnswer The user stopped the command";
+            robotName = "";
+            cmdName = "";
+            return false;
         } else {
             /// Should be catch by cmdAnswerSlot
             qDebug() << "CommandController::robotWaitForAnswer Got an answer to the wrong command :" << list;
