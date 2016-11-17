@@ -73,6 +73,9 @@ private slots:
      */
     void userStopped();
 
+signals:
+    void newConnection(QString home_position);
+
 private:
     QPointer<CommandMessageBox> messageBox;
     QString cmdAnswer;

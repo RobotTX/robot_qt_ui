@@ -318,8 +318,8 @@ void MainWindow::initializeRobots(){
 
     robotServerWorker = new RobotServerWorker(PORT_ROBOT_UPDATE);
 
-    connect(robotServerWorker, SIGNAL(robotIsAlive(QString, QString, QString, QString, int, double, double, double)), this, SLOT(robotIsAliveSlot(QString, QString, QString, QString, int, double, double, double)));
-    connect(this, SIGNAL(stopUpdateRobotsThread()), robotServerWorker, SLOT(stopThread()));
+    connect(robotServerWorker, SIGNAL(robotIsAlive(QString, QString, QString, QString, int)), this, SLOT(robotIsAliveSlot(QString, QString, QString, QString, int)));
+    connect(this, SIGNAL(stopUpdateRobotsThread()), robotServerWorker, SLOT(stopWorker()));
 
     connect(&serverThread, SIGNAL(finished()), robotServerWorker, SLOT(deleteLater()));
     serverThread.start();
@@ -1424,8 +1424,7 @@ void MainWindow::showAllHomes(void){
     bottomLayout->uncheckRobots();
 }
 
-void MainWindow::robotIsAliveSlot(QString hostname, QString ip, QString mapId, QString ssid, int stage, double home_x, double home_y, double date){
-    qDebug() << "MainWindow::robotIsAliveSlot called" << home_x << home_y << date;
+void MainWindow::robotIsAliveSlot(QString hostname, QString ip, QString mapId, QString ssid, int stage){
     QRegExp rx("[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}");
     rx.indexIn(ip);
     ip = rx.cap(0);
@@ -1496,109 +1495,6 @@ void MainWindow::robotIsAliveSlot(QString hostname, QString ip, QString mapId, Q
     in >> *(robots->getRobotsVector().at(robotId)->getRobot());
     fileRead.close();
 
-    /// retrives the home point of the robot if the robot has one
-    QFileInfo fileInfoHome(QDir::currentPath(), "../gobot-software/robots_homes/" + rv->getRobot()->getName());
-    QFile fileReadHome(fileInfoHome.absoluteFilePath());
-    fileReadHome.open(QIODevice::ReadOnly);
-    Position p;
-    QList<QByteArray> l = fileReadHome.readLine().split(' ');
-    p.setX(l.at(0).toDouble());
-    p.setY(l.at(1).mid(0, l.at(1).length()-1).toDouble());
-    fileReadHome.close();
-
-    QSharedPointer<PointView> home = points->findPointViewByPos(p);
-
-    if(home){
-        qDebug() << "the application has a home !";
-        /// the application has a home, we need to compare with the robot's home if one exists
-        QSharedPointer<PointView> home_sent_by_robot = points->findPointViewByPos(Position(home_x, home_y));
-        if(home_sent_by_robot){
-            /// if the robot's file is more recent we update on the application side and we look for the pointview corresponding to
-            /// the coordinates given by the robot
-            qDebug() << "robot" << date << "app" << fileInfoHome.lastModified().toMSecsSinceEpoch();
-            if(date * 1000 > fileInfoHome.lastModified().toMSecsSinceEpoch()){
-                qDebug() << "the robot's home point is more recent";
-                home_sent_by_robot->getPoint()->setRobotName(rv->getRobot()->getName());
-                home_sent_by_robot->setPixmap(PointView::PixmapType::SELECTED);
-                home_sent_by_robot->show();
-
-                rv->getRobot()->setHome(home_sent_by_robot);
-
-                /// updates the home on the application side
-                QFileInfo fileInfoHome(QDir::currentPath(), "../gobot-software/robots_homes/" + rv->getRobot()->getName());
-                QFile fileWriteHome1(fileInfoHome.absoluteFilePath());
-                if(fileWriteHome1.open(QIODevice::WriteOnly)){
-                    QTextStream out(&fileWriteHome1);
-                    out << home_x << " " << home_y;
-                    fileWriteHome1.close();
-                } else
-                    qDebug() << "could not update the home of" << rv->getRobot()->getName();
-            } else {
-                qDebug() << "the application's home point is the most recent" ;
-                /// the application has the most recent file, we send the updated coordinates to the robot
-                if(sendHomeToRobot(rv, home)){
-
-                    /// Remove the previous home
-                    if(rv->getRobot()->getHome()){
-                        rv->getRobot()->getHome()->getPoint()->setHome(Point::PERM);
-                        rv->getRobot()->getHome()->setPixmap(PointView::PixmapType::NORMAL);
-                    }
-
-                    QFileInfo fileinfo(QDir::currentPath(), "../gobot-software/points.xml");
-                    savePoints(fileinfo.absoluteFilePath());
-
-                    /// associates the robot to the point
-                    home->getPoint()->setRobotName(rv->getRobot()->getName());
-                    home->setPixmap(PointView::PixmapType::SELECTED);
-                    home->show();
-
-                    rv->getRobot()->setHome(home);
-
-                    /// setCurrentPath is displaying the path so if it was not displayed we hide it
-                    if(!bottomLayout->getViewPathRobotBtnGroup()->button(robots->getRobotId(rv->getRobot()->getName()))->isChecked())
-                        emit resetPath();
-
-                    home->setPixmap(PointView::PixmapType::SELECTED);
-                    home->show();
-                }
-            }
-        } else {
-            qDebug() << "the application has a home point but not the robot";
-            /// not able to find the point view corresponding to the coordinates sent by the robot
-            /// normally it means there is no home on the robot at all
-            /// in this case we use the application's one
-            qDebug() << "home found:" << points->findPointViewByPos(p)->getPoint()->getName();
-            /// associates the robot to the point
-            home->getPoint()->setRobotName(rv->getRobot()->getName());
-            home->setPixmap(PointView::PixmapType::SELECTED);
-            home->show();
-            rv->getRobot()->setHome(home);
-        }
-
-    } else {
-        qDebug() << " the robot is sending its home and the application does not have one";
-        /// if the application does not have a home stored on its side but the robot is sending one
-        /// that we are able to find
-        QSharedPointer<PointView> home_sent_by_robot = points->findPointViewByPos(Position(home_x, home_y));
-        if(home_sent_by_robot){
-            home_sent_by_robot->getPoint()->setRobotName(rv->getRobot()->getName());
-            home_sent_by_robot->setPixmap(PointView::PixmapType::SELECTED);
-            home_sent_by_robot->show();
-
-            rv->getRobot()->setHome(home_sent_by_robot);
-
-            /// updates the home on the application side
-            QFileInfo fileInfoHome(QDir::currentPath(), "../gobot-software/robots_homes/" + rv->getRobot()->getName());
-            QFile fileWriteHome(fileInfoHome.absoluteFilePath());
-            if(fileWriteHome.open(QIODevice::WriteOnly)){
-                QTextStream out(&fileWriteHome);
-                out << home_x << " " << home_y;
-                fileWriteHome.close();
-            } else
-                qDebug() << "could not update the home of" << rv->getRobot()->getName();
-        } else
-            qDebug() << "could not find the point described as its home by the robot";
-    }
 
 
     /// updates the text in the bottom layout to make the stage appear
@@ -4970,4 +4866,136 @@ bool MainWindow::loadMapConfig(const std::string fileName){
     /// saves the configuration contained in the file <fileName> as the current configuration
     QFileInfo fileInfo(QDir::currentPath(), "../gobot-software/currentMap.txt");
     return saveMapConfig(fileInfo.absoluteFilePath().toStdString());
+}
+
+void MainWindow::updateHomes(QString robot_name, QString home_pos){
+    QPointer<RobotView> robotView = robots->getRobotViewByName(robot_name);
+    assert(robotView);
+    qDebug() << robotView->getRobot()->getName();
+    /// retrives the home point of the robot if the robot has one
+    QFileInfo fileInfoHome(QDir::currentPath(), "../gobot-software/robots_homes/" + robotView->getRobot()->getName());
+    QFile fileReadHome(fileInfoHome.absoluteFilePath());
+    fileReadHome.open(QIODevice::ReadOnly);
+    Position p;
+    QList<QByteArray> l = fileReadHome.readLine().split(' ');
+    p.setX(l.at(0).toDouble());
+    p.setY(l.at(1).mid(0, l.at(1).length()-1).toDouble());
+    fileReadHome.close();
+
+    QSharedPointer<PointView> home = points->findPointViewByPos(p);
+
+    QStringList list = home_pos.split(" ");
+    Position robot_home_position(list.at(1).toDouble(), list.at(2).toDouble());
+
+    qDebug() << "MainWindow::updateHomes" << list;
+    qDebug() << "robot home position" << robot_home_position.getX() << robot_home_position.getY();
+    QStringList date = list.at(3).split("-");
+    qDebug() << "date ! : " << date;
+    QStringList date1 = QString("19-10-5-20-05-3").split("-");
+    QStringList date2 = QString("19-10-5-20-05-3").split("-");
+    qDebug() << isLater(date1, date2);
+/*
+    if(home){
+        qDebug() << "the application has a home !";
+        /// the application has a home, we need to compare with the robot's home if one exists
+        QSharedPointer<PointView> home_sent_by_robot = points->findPointViewByPos(robot_home_position);
+
+        if(home_sent_by_robot){
+            /// if the robot's file is more recent we update on the application side and we look for the pointview corresponding to
+            /// the coordinates given by the robot
+            qDebug() << "robot" << date << "app" << fileInfoHome.lastModified().toMSecsSinceEpoch();
+
+            if(date * 1000 > fileInfoHome.lastModified().toMSecsSinceEpoch()){
+                qDebug() << "the robot's home point is more recent";
+                home_sent_by_robot->getPoint()->setRobotName(rv->getRobot()->getName());
+                home_sent_by_robot->setPixmap(PointView::PixmapType::SELECTED);
+                home_sent_by_robot->show();
+
+                rv->getRobot()->setHome(home_sent_by_robot);
+
+                /// updates the home on the application side
+                QFileInfo fileInfoHome(QDir::currentPath(), "../gobot-software/robots_homes/" + rv->getRobot()->getName());
+                QFile fileWriteHome1(fileInfoHome.absoluteFilePath());
+                if(fileWriteHome1.open(QIODevice::WriteOnly)){
+                    QTextStream out(&fileWriteHome1);
+                    out << home_x << " " << home_y;
+                    fileWriteHome1.close();
+                } else
+                    qDebug() << "could not update the home of" << rv->getRobot()->getName();
+            } else {
+                qDebug() << "the application's home point is the most recent" ;
+                /// the application has the most recent file, we send the updated coordinates to the robot
+                if(sendHomeToRobot(rv, home)){
+
+                    /// Remove the previous home
+                    if(rv->getRobot()->getHome()){
+                        rv->getRobot()->getHome()->getPoint()->setHome(Point::PERM);
+                        rv->getRobot()->getHome()->setPixmap(PointView::PixmapType::NORMAL);
+                    }
+
+                    QFileInfo fileinfo(QDir::currentPath(), "../gobot-software/points.xml");
+                    savePoints(fileinfo.absoluteFilePath());
+
+                    /// associates the robot to the point
+                    home->getPoint()->setRobotName(rv->getRobot()->getName());
+                    home->setPixmap(PointView::PixmapType::SELECTED);
+                    home->show();
+
+                    rv->getRobot()->setHome(home);
+
+                    /// setCurrentPath is displaying the path so if it was not displayed we hide it
+                    if(!bottomLayout->getViewPathRobotBtnGroup()->button(robots->getRobotId(rv->getRobot()->getName()))->isChecked())
+                        emit resetPath();
+
+                    home->setPixmap(PointView::PixmapType::SELECTED);
+                    home->show();
+                }
+            }
+        } else {
+            qDebug() << "the application has a home point but not the robot";
+            /// not able to find the point view corresponding to the coordinates sent by the robot
+            /// normally it means there is no home on the robot at all
+            /// in this case we use the application's one
+            qDebug() << "home found:" << points->findPointViewByPos(p)->getPoint()->getName();
+            /// associates the robot to the point
+            home->getPoint()->setRobotName(rv->getRobot()->getName());
+            home->setPixmap(PointView::PixmapType::SELECTED);
+            home->show();
+            rv->getRobot()->setHome(home);
+        }
+
+    } else {
+        qDebug() << " the robot is sending its home and the application does not have one";
+        /// if the application does not have a home stored on its side but the robot is sending one
+        /// that we are able to find
+        QSharedPointer<PointView> home_sent_by_robot = points->findPointViewByPos(Position(home_x, home_y));
+        if(home_sent_by_robot){
+            home_sent_by_robot->getPoint()->setRobotName(rv->getRobot()->getName());
+            home_sent_by_robot->setPixmap(PointView::PixmapType::SELECTED);
+            home_sent_by_robot->show();
+
+            rv->getRobot()->setHome(home_sent_by_robot);
+
+            /// updates the home on the application side
+            QFileInfo fileInfoHome(QDir::currentPath(), "../gobot-software/robots_homes/" + rv->getRobot()->getName());
+            QFile fileWriteHome(fileInfoHome.absoluteFilePath());
+            if(fileWriteHome.open(QIODevice::WriteOnly)){
+                QTextStream out(&fileWriteHome);
+                out << home_x << " " << home_y;
+                fileWriteHome.close();
+            } else
+                qDebug() << "could not update the home of" << rv->getRobot()->getName();
+        } else
+            qDebug() << "could not find the point described as its home by the robot";
+    }*/
+}
+
+bool MainWindow::isLater(const QStringList date, const QStringList otherDate){
+    for(int i = 0; i < date.size(); i++){
+        if(date.at(i).toInt() > otherDate.at(i).toInt())
+            return true;
+        else if(date.at(i).toInt() < otherDate.at(i).toInt())
+            return false;
+    }
+    return false;
 }

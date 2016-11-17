@@ -168,10 +168,6 @@ void CommandController::cmdAnswerSlot(QString answer){
         } else {
             qDebug() << "CommandController::robotWaitForAnswer Got an answer to the wrong command :" << list;
         }
-    } else if(list.at(0).contains("Connected")) {
-        /// along with connected, send position and date for home
-        qDebug() << list;
-
     } else {
        qDebug() << "CommandController::robotWaitForAnswer Got a wrong answer :" << list;
     }

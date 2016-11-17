@@ -48,6 +48,8 @@ signals:
      */
     void portSent();
 
+    void newConnection(QString robotName, QString home_pos);
+
 private slots:
     /**
      * @brief connectSocket
