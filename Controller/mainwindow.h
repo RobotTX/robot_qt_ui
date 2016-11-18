@@ -122,6 +122,8 @@ public:
     /// returns true if the first date is later to the second date
     bool isLater(const QStringList date, const QStringList otherDate);
 
+    QPair<Position, QStringList> getHomeFromFile(const QString robot_name);
+
 signals:
     void nameChanged(QString, QString);
     void changeCmdThreadRobotName(QString);
@@ -268,7 +270,7 @@ private slots:
     void saveMapBtnEvent();
     void loadMapBtnEvent();
 
-    void updateHomes(QString robot_name, QString home_pos);
+    void updateHomes(QString robot_name, QString robotInfo);
 
 protected:
     void moveEvent(QMoveEvent* event);

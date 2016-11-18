@@ -104,6 +104,11 @@ public:
     /// clears the paths
     void clear(void);
 
+    /// given a vector of PathPoints, finds to which path it corresponds (pathName and pathGroup)
+    /// used to recover the path given by the robot when it connects to the application
+    /// if it does not correspond to any path we return ("", "")
+    QPair<QString, QString> findPath(const QVector<PathPoint>& path) const;
+
 private:
     QSharedPointer<Groups> groups;
 };

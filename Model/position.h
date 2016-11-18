@@ -24,4 +24,7 @@ private:
     double y;
 };
 
+bool operator==(const Position& pos, const Position& otherPos);
+bool operator!=(const Position& pos, const Position& otherPos);
+
 #endif // POSITION_H

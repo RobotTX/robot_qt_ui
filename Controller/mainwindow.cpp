@@ -57,8 +57,6 @@
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow) {
     ui->setupUi(this);
 
-    qDebug() << QDir::currentPath();
-
     /// centers the msgBox on the middle of the screen
     msgBox.move(mapToGlobal(QPoint(QApplication::desktop()->screenGeometry().width()/2,
                                    QApplication::desktop()->screenGeometry().height()/2) ));
@@ -133,6 +131,10 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     QHBoxLayout* bottom = new QHBoxLayout();
 
     initializePaths();
+
+    QPair<QString, QString> match = paths->findPath(pathv);
+
+    qDebug() << "match : " << match.first << match.second;
 
     initializePoints();
 
@@ -4807,44 +4809,34 @@ bool MainWindow::loadMapConfig(const std::string fileName){
     return saveMapConfig((QDir::currentPath() + QDir::separator() + "currentMap.txt").toStdString());
 }
 
-void MainWindow::updateHomes(QString robot_name, QString home_pos){
+void MainWindow::updateHomes(QString robot_name, QString robotInfo){
     QPointer<RobotView> robotView = robots->getRobotViewByName(robot_name);
     assert(robotView);
 
     /// retrives the home point of the robot if the robot has one
-    QFileInfo fileInfoHome(QDir::currentPath(), "../gobot-software/robots_homes/" + robotView->getRobot()->getName());
-    QFile fileReadHome(fileInfoHome.absoluteFilePath());
-    Position p;
-    QStringList dateLastModification;
-    if(fileReadHome.open(QIODevice::ReadWrite)){
-        QRegExp regex("[-\n ]");
-        QString content = fileReadHome.readAll();
-        QStringList l = content.split(regex, QString::SkipEmptyParts);
-        qDebug() << "app list" << l;
-        if(l.size() > 0){
-            p.setX(l.at(0).toDouble());
-            p.setY(l.at(1).toDouble());
-            for(int i = 2; i < l.size(); i++)
-                dateLastModification.push_back(l.at(i));
-        }
-        qDebug() << "updatehomes" << l;
-        qDebug() << "date last modif" << dateLastModification;
-    }
-
-    fileReadHome.close();
+    QPair<Position, QStringList> appHome = getHomeFromFile(robot_name);
+    Position p = appHome.first;
+    QStringList dateLastModification = appHome.second;
 
     qDebug() << "my position is" << p.getX() << p.getY();
 
-
-
-    QStringList list = home_pos.split(" ");
+    robotInfo.replace("\n", " ");
+    qDebug() << "CONTENT IS" << robotInfo;
+    QStringList list = robotInfo.split(" ", QString::SkipEmptyParts);
     Position robot_home_position(list.at(1).toDouble(), list.at(2).toDouble());
+    QStringList dateHomeOnRobot = list.at(3).split("-");
+    QStringList datePathOnRobot = list.at(5).split("-");
 
+    QFileInfo fo(QDir::currentPath() + QDir::separator() + "robots_paths" + QDir::separator() + robot_name + "_path.dat");
+    QStringList dateLastPathModification = fo.lastModified().toString("yy.MM.dd.hh.mm.ss").split(".");
+    qDebug() << "datelastpathmodif" << dateLastPathModification;
+    //QFile fi(QDir::currentPath() + QDir::separator() + "robots_paths" + QDir::separator() + robot_name + "_path.dat");
+    qDebug() << "last modified" << fo.lastModified().toString("yy.MM.dd.hh.mm.ss");
+    qDebug() << "dateOnRobot ! : " << dateHomeOnRobot;
+    qDebug() << "home file is more recent on robot" << isLater(dateHomeOnRobot, dateLastModification);
+    qDebug() << "path file is more recent on robot" << isLater(datePathOnRobot, dateLastPathModification);
     qDebug() << "MainWindow::updateHomes" << list;
     qDebug() << "robot home position" << robot_home_position.getX() << robot_home_position.getY();
-    QStringList dateOnRobot = list.at(3).split("-");
-    qDebug() << "dateOnRobot ! : " << dateOnRobot;
-    qDebug() << "file is more recent on robot" << isLater(dateOnRobot, dateLastModification);
 
     /// if the robot and the application have the same home we don't do anything besides setting the point in the application (no need to change any files)
     if(robot_home_position.getX() != p.getX() || robot_home_position.getY() != p.getY()){
@@ -4860,7 +4852,7 @@ void MainWindow::updateHomes(QString robot_name, QString home_pos){
 
                 /// if the robot's file is more recent we update on the application side and we look for the pointview corresponding to
                 /// the coordinates given by the robot
-                if(isLater(dateOnRobot, dateLastModification)){
+                if(isLater(dateHomeOnRobot, dateLastModification)){
                     qDebug() << "the robot's home point is more recent";
                     home_sent_by_robot->getPoint()->setRobotName(robotView->getRobot()->getName());
                     home_sent_by_robot->setPixmap(PointView::PixmapType::SELECTED);
@@ -4871,12 +4863,12 @@ void MainWindow::updateHomes(QString robot_name, QString home_pos){
                     /// updates the home on the application side
                     QFileInfo fileInfoHome(QDir::currentPath(), "../gobot-software/robots_homes/" + robotView->getRobot()->getName());
                     QFile fileWriteHome1(fileInfoHome.absoluteFilePath());
-                    if(fileWriteHome1.open(QIODevice::WriteOnly)){
+                    if(fileWriteHome1.open(QIODevice::ReadWrite)){
                         QTextStream out(&fileWriteHome1);
                         out << robot_home_position.getX() << " " << robot_home_position.getY() << "\n";
-                        for(int i = 0; i < dateOnRobot.size()-1; i++)
-                            out << dateOnRobot.at(i) << "-";
-                        out << dateOnRobot.at(dateOnRobot.size()-1);
+                        for(int i = 0; i < dateHomeOnRobot.size()-1; i++)
+                            out << dateHomeOnRobot.at(i) << "-";
+                        out << dateHomeOnRobot.at(dateHomeOnRobot.size()-1);
                         fileWriteHome1.close();
                     } else
                         qDebug() << "could not update the home of" << robotView->getRobot()->getName();
@@ -4938,9 +4930,9 @@ void MainWindow::updateHomes(QString robot_name, QString home_pos){
                 if(fileWriteHome.open(QIODevice::WriteOnly)){
                     QTextStream out(&fileWriteHome);
                     out << robot_home_position.getX() << " " << robot_home_position.getY() << "\n";
-                    for(int i = 0; i < dateOnRobot.size()-1; i++)
-                        out << dateOnRobot.at(i) << "-";
-                    out << dateOnRobot.at(dateOnRobot.size()-1);
+                    for(int i = 0; i < dateHomeOnRobot.size()-1; i++)
+                        out << dateHomeOnRobot.at(i) << "-";
+                    out << dateHomeOnRobot.at(dateHomeOnRobot.size()-1);
                     fileWriteHome.close();
                 } else
                     qDebug() << "could not update the home of" << robotView->getRobot()->getName();
@@ -4948,6 +4940,8 @@ void MainWindow::updateHomes(QString robot_name, QString home_pos){
                 qDebug() << "could not find the point described as its home by the robot";
         }
     }
+
+
 }
 
 bool MainWindow::isLater(const QStringList date, const QStringList otherDate){
@@ -4958,4 +4952,28 @@ bool MainWindow::isLater(const QStringList date, const QStringList otherDate){
             return false;
     }
     return false;
+}
+
+QPair<Position, QStringList> MainWindow::getHomeFromFile(const QString robot_name){
+    /// retrives the home point of the robot if the robot has one
+    QFile fileInfo(QDir::currentPath() + QDir::separator() + "robots_homes" + QDir::separator() + robot_name);
+    Position p;
+    QStringList dateLastModification;
+    if(fileInfo.open(QIODevice::ReadWrite)){
+        QRegExp regex("[-\n ]");
+        QString content = fileInfo.readAll();
+        content.replace("\n", " ");
+        QStringList l = content.split(regex, QString::SkipEmptyParts);
+        qDebug() << "app list" << l;
+        if(l.size() > 0){
+            p.setX(l.at(0).toDouble());
+            p.setY(l.at(1).toDouble());
+            for(int i = 2; i < l.size(); i++)
+                dateLastModification.push_back(l.at(i));
+        }
+        qDebug() << "updatehomes" << l;
+        qDebug() << "date last modif" << dateLastModification;
+    }
+    fileInfo.close();
+    return QPair<Position, QStringList> (p, dateLastModification);
 }
