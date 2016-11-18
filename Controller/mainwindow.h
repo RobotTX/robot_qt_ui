@@ -25,6 +25,7 @@ class CustomPushButton;
 class GroupsPathsWidget;
 class QMoveEvent;
 class CommandController;
+class EditMapWidget;
 
 #include "zipreader.h"
 #include "zipwriter.h"
@@ -320,6 +321,7 @@ private:
 
     CommandController* commandController;
     std::string mapFile;
+    QPointer<EditMapWidget> editMapWidget;
 };
 
 #endif // MAINWINDOW_H

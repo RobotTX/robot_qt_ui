@@ -53,6 +53,7 @@
 #include <QStringList>
 #include "Controller/commandcontroller.h"
 #include <fstream>
+#include "View/editmapwidget.h"
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow) {
     ui->setupUi(this);
@@ -271,7 +272,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
                   "QScrollArea {border: 1px solid yellow}");
 */
 
-    this->setAutoFillBackground(true);
+    setAutoFillBackground(true);
 
 
     rightLayout->setContentsMargins(0, 0, 0, 0);
@@ -285,6 +286,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
 MainWindow::~MainWindow(){
     delete ui;
+    if(editMapWidget)
+        delete editMapWidget;
 
     if(robotServerWorker){
         emit stopUpdateRobotsThread();
@@ -1954,7 +1957,9 @@ void MainWindow::messageMapSaved(bool status){
         setTemporaryMessageTop(TEXT_COLOR_DANGER, "Attempt to save the map failed", 2500);
 }
 
-void MainWindow::editMapSlot
+void MainWindow::editMapSlot(){
+    editMapWidget = QPointer<EditMapWidget>(new EditMapWidget(map->getMapImage(), map->getWidth(), map->getHeight()));
+}
 
 /**********************************************************************************************************************************/
 
@@ -4652,9 +4657,14 @@ void MainWindow::settingBtnSlot(){
         robotIsDeadSlot(robots->getRobotsVector().at(0)->getRobot()->getName(), robots->getRobotsVector().at(0)->getRobot()->getIp());
     }
 */
+
+    /*
     const QString ZipFile(QStandardPaths::writableLocation(QStandardPaths::DesktopLocation) + QDir::separator() + QString("map.zip"));
     compress(ZipFile);
     decompress(ZipFile);
+    */
+
+    editMapSlot();
 }
 
 void MainWindow::setTemporaryMessageTop(const QString type, const QString message, const int ms){
