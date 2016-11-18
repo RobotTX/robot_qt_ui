@@ -44,6 +44,8 @@ class CommandController;
 #include <QThread>
 #include <QUuid>
 
+#include <ctime>
+
 #define DESKTOP_PATH "/home/m-a/Desktop/"
 #define GOBOT_PATH "/home/m-a/Documents/QtProject/gobot-software/"
 /*
