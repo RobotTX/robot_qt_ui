@@ -253,3 +253,38 @@ void Paths::clear(){
     }
     groups->clear();
 }
+
+QPair<QString, QString> Paths::findPath(const QVector<PathPoint>& path) const {
+    QMapIterator<QString, QSharedPointer<Paths::CollectionPaths>> it(*(groups));
+    while(it.hasNext()){
+        it.next();
+        QMapIterator<QString, QSharedPointer<Paths::Path> > it_paths(*(it.value()));
+        qDebug() << "new group" << it.key();
+        while(it_paths.hasNext()){
+            it_paths.next();
+            qDebug() << "new path" << it_paths.key();
+            bool right_path(true);
+            if(it_paths.value()){
+                /// if the paths don't have the same number of points no need to check
+                if(it_paths.value()->size() != path.size())
+                    continue;
+                for(int i = 0; i < it_paths.value()->size(); i++){
+                    /// if one pathPoint is not the same we jump to the next path
+                    if(*(it_paths.value()->at(i)) != path.at(i)){
+                        std::cout << "these two points are different" << *(it_paths.value()->at(i)) <<
+                                    path.at(i);
+                        right_path = false;
+                    }
+                }
+                /// but if all points match then we return the name of the group and the name of the path
+                if(right_path)
+                    return QPair<QString, QString> (it.key(), it_paths.key());
+                else
+                    break;
+            }
+        }
+    }
+    /// if after trying all paths we haven't found any that matched the path given we return ("", "")
+    return QPair<QString, QString> ("", "");
+}
+

@@ -30,6 +30,8 @@ public:
     void setAction(const Action& _action) { action = _action; }
     void setWaitTime(const int _waitTime) { waitTime = _waitTime; }
 
+    void display(std::ostream& stream) const;
+
 private:
     /**
      * @brief point
@@ -69,6 +71,12 @@ QDataStream& operator<<(QDataStream& out, const PathPoint& robot);
  * Deserialization of a pathpoint
  */
 QDataStream& operator>>(QDataStream& in, PathPoint& robot);
+
+bool operator==(const PathPoint& pathPoint, const PathPoint& otherPathPoint);
+
+bool operator!=(const PathPoint& pathPoint, const PathPoint& otherPathPoint);
+
+std::ostream& operator <<(std::ostream& stream, const PathPoint& point);
 
 #endif // PATHPOINT_H
 

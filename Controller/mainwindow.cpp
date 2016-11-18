@@ -58,8 +58,6 @@
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow) {
     ui->setupUi(this);
 
-    qDebug() << QDir::currentPath();
-
     /// centers the msgBox on the middle of the screen
     msgBox.move(mapToGlobal(QPoint(QApplication::desktop()->screenGeometry().width()/2,
                                    QApplication::desktop()->screenGeometry().height()/2) ));
@@ -4826,117 +4824,57 @@ bool MainWindow::loadMapConfig(const std::string fileName){
     return saveMapConfig((QDir::currentPath() + QDir::separator() + "currentMap.txt").toStdString());
 }
 
-void MainWindow::updateHomes(QString robot_name, QString home_pos){
+void MainWindow::updateRobotInfo(QString robot_name, QString robotInfo){
     QPointer<RobotView> robotView = robots->getRobotViewByName(robot_name);
     assert(robotView);
 
-    /// retrives the home point of the robot if the robot has one
-    QFileInfo fileInfoHome(QDir::currentPath(), "../gobot-software/robots_homes/" + robotView->getRobot()->getName());
-    QFile fileReadHome(fileInfoHome.absoluteFilePath());
-    Position p;
-    QStringList dateLastModification;
-    if(fileReadHome.open(QIODevice::ReadWrite)){
-        QRegExp regex("[-\n ]");
-        QString content = fileReadHome.readAll();
-        QStringList l = content.split(regex, QString::SkipEmptyParts);
-        qDebug() << "app list" << l;
-        if(l.size() > 0){
-            p.setX(l.at(0).toDouble());
-            p.setY(l.at(1).toDouble());
-            for(int i = 2; i < l.size(); i++)
-                dateLastModification.push_back(l.at(i));
-        }
-        qDebug() << "updatehomes" << l;
-        qDebug() << "date last modif" << dateLastModification;
-    }
+    /// retrieves the home point of the robot if the robot has one
+    QPair<Position, QStringList> appHome = getHomeFromFile(robot_name);
+    Position p = appHome.first;
+    QStringList dateLastModification = appHome.second;
 
-    fileReadHome.close();
+    robotInfo.replace("\n", " ");
 
-    qDebug() << "my position is" << p.getX() << p.getY();
-
-
-
-    QStringList list = home_pos.split(" ");
+    QStringList list = robotInfo.split(" ", QString::SkipEmptyParts);
     Position robot_home_position(list.at(1).toDouble(), list.at(2).toDouble());
+    QStringList dateHomeOnRobot = list.at(3).split("-");
+    QStringList datePathOnRobot = list.at(4).split("-");
 
-    qDebug() << "MainWindow::updateHomes" << list;
+    QFileInfo fo(QDir::currentPath() + QDir::separator() + "robots_paths" + QDir::separator() + robot_name + "_path.dat");
+    QStringList dateLastPathModification = fo.lastModified().toString("yyyy.MM.dd.hh.mm.ss").split(".");
+    qDebug() << "datelasthomemodif" << dateLastModification;
+    qDebug() << "dateHomeOnRobot ! : " << dateHomeOnRobot;
+    qDebug() << "datePathOnRobot" << datePathOnRobot;
+    qDebug() << "datelastpathmodif" << dateLastPathModification;
+    qDebug() << "home file is more recent on robot" << isLater(dateHomeOnRobot, dateLastModification);
+    qDebug() << "path file is more recent on robot" << isLater(datePathOnRobot, dateLastPathModification);
+    qDebug() << "MainWindow::updateRobotInfo" << list;
+    qDebug() << "my position is" << p.getX() << p.getY();
     qDebug() << "robot home position" << robot_home_position.getX() << robot_home_position.getY();
-    QStringList dateOnRobot = list.at(3).split("-");
-    qDebug() << "dateOnRobot ! : " << dateOnRobot;
-    qDebug() << "file is more recent on robot" << isLater(dateOnRobot, dateLastModification);
+    qDebug() << "CONTENT IS" << robotInfo;
 
     /// if the robot and the application have the same home we don't do anything besides setting the point in the application (no need to change any files)
-    if(robot_home_position.getX() != p.getX() || robot_home_position.getY() != p.getY()){
+    if(robot_home_position != p){
 
          QSharedPointer<PointView> home = points->findPointViewByPos(p);
 
          if(home){
-            qDebug() << "the application has a home !";
             /// the application has a home, we need to compare with the robot's home if one exists
             QSharedPointer<PointView> home_sent_by_robot = points->findPointViewByPos(robot_home_position);
-
             if(home_sent_by_robot){
-
                 /// if the robot's file is more recent we update on the application side and we look for the pointview corresponding to
                 /// the coordinates given by the robot
-                if(isLater(dateOnRobot, dateLastModification)){
-                    qDebug() << "the robot's home point is more recent";
-                    home_sent_by_robot->getPoint()->setRobotName(robotView->getRobot()->getName());
-                    home_sent_by_robot->setPixmap(PointView::PixmapType::SELECTED);
-                    home_sent_by_robot->show();
-
-                    robotView->getRobot()->setHome(home_sent_by_robot);
-
-                    /// updates the home on the application side
-                    QFileInfo fileInfoHome(QDir::currentPath(), "../gobot-software/robots_homes/" + robotView->getRobot()->getName());
-                    QFile fileWriteHome1(fileInfoHome.absoluteFilePath());
-                    if(fileWriteHome1.open(QIODevice::WriteOnly)){
-                        QTextStream out(&fileWriteHome1);
-                        out << robot_home_position.getX() << " " << robot_home_position.getY() << "\n";
-                        for(int i = 0; i < dateOnRobot.size()-1; i++)
-                            out << dateOnRobot.at(i) << "-";
-                        out << dateOnRobot.at(dateOnRobot.size()-1);
-                        fileWriteHome1.close();
-                    } else
-                        qDebug() << "could not update the home of" << robotView->getRobot()->getName();
+                if(isLater(dateHomeOnRobot, dateLastModification)){
+                    setHomeAtConnection(robot_name, robot_home_position);
+                    updateHomeFile(robot_name, robot_home_position, dateHomeOnRobot);
                 } else {
-                    qDebug() << "the application's home point is the most recent" ;
                     /// the application has the most recent file, we send the updated coordinates to the robot
-                    if(sendHomeToRobot(robotView, home)){
-
-                        /// Remove the previous home
-                        if(robotView->getRobot()->getHome()){
-                            robotView->getRobot()->getHome()->getPoint()->setHome(Point::PERM);
-                            robotView->getRobot()->getHome()->setPixmap(PointView::PixmapType::NORMAL);
-                        }
-                        savePoints(QDir::currentPath() + QDir::separator() + "points.xml");
-
-                        /// associates the robot to the point
-                        home->getPoint()->setRobotName(robotView->getRobot()->getName());
-                        home->setPixmap(PointView::PixmapType::SELECTED);
-                        home->show();
-
-                        robotView->getRobot()->setHome(home);
-
-                        /// setCurrentPath is displaying the path so if it was not displayed we hide it
-                        if(!bottomLayout->getViewPathRobotBtnGroup()->button(robots->getRobotId(robotView->getRobot()->getName()))->isChecked())
-                            emit resetPath();
-
-                        home->setPixmap(PointView::PixmapType::SELECTED);
-                        home->show();
-                    }
+                    if(sendHomeToRobot(robotView, home))
+                        setHomeAtConnection(robot_name, p);
                 }
             } else {
-                qDebug() << "the application has a home point but not the robot";
-                /// not able to find the point view corresponding to the coordinates sent by the robot
-                /// normally it means there is no home on the robot at all
-                /// in this case we use the application's one
-                qDebug() << "home found:" << points->findPointViewByPos(p)->getPoint()->getName();
-                /// associates the robot to the point
-                home->getPoint()->setRobotName(robotView->getRobot()->getName());
-                home->setPixmap(PointView::PixmapType::SELECTED);
-                home->show();
-                robotView->getRobot()->setHome(home);
+                if(sendHomeToRobot(robotView, home))
+                        setHomeAtConnection(robot_name, p);
             }
 
         } else {
@@ -4945,27 +4883,21 @@ void MainWindow::updateHomes(QString robot_name, QString home_pos){
             /// that we are able to find
             QSharedPointer<PointView> home_sent_by_robot = points->findPointViewByPos(robot_home_position);
             if(home_sent_by_robot){
-                home_sent_by_robot->getPoint()->setRobotName(robotView->getRobot()->getName());
-                home_sent_by_robot->setPixmap(PointView::PixmapType::SELECTED);
-                home_sent_by_robot->show();
+                /// sets the home inside the application (house icon, extra buttons etc...)
+                setHomeAtConnection(robot_name, robot_home_position);
 
-                robotView->getRobot()->setHome(home_sent_by_robot);
+                /// updates the home file on the application side
+                updateHomeFile(robot_name, robot_home_position, dateHomeOnRobot);
 
-                /// updates the home on the application side
-                QFileInfo fileInfoHome(QDir::currentPath(), "../gobot-software/robots_homes/" + robotView->getRobot()->getName());
-                QFile fileWriteHome(fileInfoHome.absoluteFilePath());
-                if(fileWriteHome.open(QIODevice::WriteOnly)){
-                    QTextStream out(&fileWriteHome);
-                    out << robot_home_position.getX() << " " << robot_home_position.getY() << "\n";
-                    for(int i = 0; i < dateOnRobot.size()-1; i++)
-                        out << dateOnRobot.at(i) << "-";
-                    out << dateOnRobot.at(dateOnRobot.size()-1);
-                    fileWriteHome.close();
-                } else
-                    qDebug() << "could not update the home of" << robotView->getRobot()->getName();
             } else
                 qDebug() << "could not find the point described as its home by the robot";
         }
+    } else {
+        /// the robot and the application have the same point so we set this one as the home of the robot
+        /// no need to modify any files
+        QSharedPointer<PointView> home_app = points->findPointViewByPos(p);
+        if(home_app)
+            setHomeAtConnection(robot_name, p);
     }
 }
 
@@ -4977,4 +4909,63 @@ bool MainWindow::isLater(const QStringList date, const QStringList otherDate){
             return false;
     }
     return false;
+}
+
+QPair<Position, QStringList> MainWindow::getHomeFromFile(const QString robot_name){
+    /// retrives the home point of the robot if the robot has one
+    QFile fileInfo(QDir::currentPath() + QDir::separator() + "robots_homes" + QDir::separator() + robot_name);
+    Position p;
+    QStringList dateLastModification;
+    if(fileInfo.open(QIODevice::ReadWrite)){
+        QRegExp regex("[-\n ]");
+        QString content = fileInfo.readAll();
+        content.replace("\n", " ");
+        QStringList l = content.split(regex, QString::SkipEmptyParts);
+        qDebug() << "app list" << l;
+        if(l.size() > 0){
+            p.setX(l.at(0).toDouble());
+            p.setY(l.at(1).toDouble());
+            for(int i = 2; i < l.size(); i++)
+                dateLastModification.push_back(l.at(i));
+        }
+    }
+    fileInfo.close();
+    return QPair<Position, QStringList> (p, dateLastModification);
+}
+
+void MainWindow::setHomeAtConnection(const QString robot_name, const Position &pos_home){
+    /// the robot and the application have the same point so we set this one as the home of the robot
+    QSharedPointer<PointView> home = points->findPointViewByPos(pos_home);
+    QPointer<RobotView> robotView = robots->getRobotViewByName(robot_name);
+    /// Remove the previous home
+    if(robotView->getRobot()->getHome()){
+        robotView->getRobot()->getHome()->getPoint()->setHome(Point::PERM);
+        robotView->getRobot()->getHome()->setPixmap(PointView::PixmapType::NORMAL);
+    }
+
+    /// associates the robot to the point
+    home->getPoint()->setRobotName(robotView->getRobot()->getName());
+    robotView->getRobot()->setHome(home);
+
+    /// setCurrentPath is displaying the path so if it was not displayed we hide it
+    if(!bottomLayout->getViewPathRobotBtnGroup()->button(robots->getRobotId(robotView->getRobot()->getName()))->isChecked())
+        emit resetPath();
+
+    savePoints(QDir::currentPath() + QDir::separator() + "points.xml");
+}
+
+bool MainWindow::updateHomeFile(const QString robot_name, const Position& robot_home_position, const QStringList date){
+    QFile fileWriteHome(QDir::currentPath() + QDir::separator() + "robots_homes" + robot_name);
+    if(fileWriteHome.open(QIODevice::ReadWrite)){
+        QTextStream out(&fileWriteHome);
+        out << robot_home_position.getX() << " " << robot_home_position.getY() << "\n";
+        for(int i = 0; i < date.size()-1; i++)
+            out << date.at(i) << "-";
+        out << date.at(date.size()-1);
+        fileWriteHome.close();
+        return true;
+    } else {
+        qDebug() << "could not update the home of" << robot_name;
+        return false;
+    }
 }

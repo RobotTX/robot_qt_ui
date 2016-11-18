@@ -24,3 +24,25 @@ QDataStream& operator<<(QDataStream& out, const PathPoint& pathPoint){
     out << pathPoint.getPoint() << static_cast<qint32>(pathPoint.getAction()) << static_cast<qint32>(pathPoint.getWaitTime());
     return out;
 }
+
+bool operator==(const PathPoint& pathPoint, const PathPoint& otherPathPoint){
+    return pathPoint.getPoint().getPosition() == otherPathPoint.getPoint().getPosition() &&
+            pathPoint.getWaitTime() == otherPathPoint.getWaitTime();
+}
+
+bool operator!=(const PathPoint& pathPoint, const PathPoint& otherPathPoint){
+    return !(pathPoint == otherPathPoint);
+}
+
+std::ostream& operator <<(std::ostream& stream, const PathPoint& point){
+    point.display(stream);
+    return stream;
+}
+
+void PathPoint::display(std::ostream& stream) const {
+    stream << point.getPosition().getX() << " " <<
+              point.getPosition().getY() << " " <<
+              waitTime;
+}
+
+
