@@ -25,7 +25,6 @@ public:
     Point(const QString name, const double x, const double y, const PointType type = PERM);
     Point(const QString name, const Position position, const PointType type = PERM);
 
-    /// Getters
     Position getPosition(void) const { return position; }
     QString getName(void) const { return name; }
     bool isPermanent(void) const { return (type == PERM); }
@@ -35,14 +34,12 @@ public:
     PointType getType(void) const { return type; }
     QString getRobotName(void) const { return robotName; }
 
-    /// Setters
     void setPosition(const double x, const double y) { position.setX(x); position.setY(y); }
     void setPosition(const Position _position) { position = _position; }
     void setName(const QString _name) { name = _name; }
     void setType(const PointType _type) { type = _type; }
     bool setHome(const PointType _type);
     void setRobotName(const QString name) { robotName = name; }
-
 
     /// a helper function to overload the << operator
     void display(std::ostream& stream) const;
@@ -78,4 +75,4 @@ QDataStream& operator>>(QDataStream& in, Point& point);
 
 std::ostream& operator <<(std::ostream& stream, const Point& point);
 
-#endif // POINT_H
+#endif /// POINT_H

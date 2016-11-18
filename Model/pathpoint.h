@@ -20,12 +20,10 @@ public:
     PathPoint(const Point& point, const Action action, const int waitTime = 0);
     PathPoint(void);
 
-    /// Getters
     Point getPoint(void) const { return point; }
     Action getAction(void) const { return action; }
     int getWaitTime(void) const { return waitTime; }
 
-    /// Setters
     void setPoint(const Point& _point) { point = _point; }
     void setAction(const Action& _action) { action = _action; }
     void setWaitTime(const int _waitTime) { waitTime = _waitTime; }
@@ -78,5 +76,5 @@ bool operator!=(const PathPoint& pathPoint, const PathPoint& otherPathPoint);
 
 std::ostream& operator <<(std::ostream& stream, const PathPoint& point);
 
-#endif // PATHPOINT_H
+#endif /// PATHPOINT_H
 

@@ -5,16 +5,13 @@
 #include "Controller/mainwindow.h"
 #include "View/mapview.h"
 
-Points::Points(MainWindow *_parent) : QObject(_parent), parent(_parent){
-    groups = QSharedPointer<Groups>(new Groups());
-}
+Points::Points(MainWindow *_parent) : QObject(_parent), parent(_parent), groups(QSharedPointer<Groups>(new Groups())) {}
 
 void Points::addGroup(const QString groupName, QSharedPointer<QVector<QSharedPointer<PointView>>> points){
     groups->insert(groupName, points);
 }
 
 void Points::display(std::ostream& stream) const {
-    std::cout << "This list of points contains " << groups->size() << " groups :" << std::endl;
     QMapIterator<QString, QSharedPointer<QVector<QSharedPointer<PointView>>>> i(*groups);
     while (i.hasNext()) {
         i.next();
@@ -37,12 +34,12 @@ void Points::removeGroup(const QString groupName) {
         groups->remove(groupName);
 }
 
-/// looks in every group but the path group for the pointview whose point's name is <pointName> and delete it if it exists
+/// looks in every group but the path group for the pointview whose point's name is <pointName>
+/// and delete it if it exists
 void Points::removePoint(const QString pointName) {
-    qDebug() << "RemovePoint called" << pointName;
     QMapIterator<QString, QSharedPointer<QVector<QSharedPointer<PointView>>>> i(*groups);
-    QString key = "";
-    int index = -1;
+    QString key("");
+    int index(-1);
     while (i.hasNext()) {
         i.next();
         if(i.key().compare(PATH_GROUP_NAME) != 0){
@@ -132,8 +129,6 @@ QPair<QString, int> Points::findPointIndexes(const QString pointName) const {
 
 /// clears all the groups
 void Points::clear(){
-    qDebug() << "Points::clear called";
-
     QMapIterator<QString, QSharedPointer<QVector<QSharedPointer<PointView>>>> i(*groups);
     while (i.hasNext()) {
         i.next();
@@ -166,10 +161,10 @@ void Points::addPoint(const QString groupName, const QString pointName, const do
 }
 
 void Points::addPoint(const QString groupName, QSharedPointer<PointView> pointView){
-    //qDebug() << "Points::addPoint called with pointView";
 
     if(!groups->empty() && groups->contains(groupName))
         groups->value(groupName)->push_back(pointView);
+
     else {
         QSharedPointer<QVector<QSharedPointer<PointView>>> vector = QSharedPointer<QVector<QSharedPointer<PointView>>>(new QVector<QSharedPointer<PointView>>());
         vector->push_back(pointView);
@@ -179,15 +174,12 @@ void Points::addPoint(const QString groupName, QSharedPointer<PointView> pointVi
 
 void Points::insertPoint(const QString groupName, const int id, QSharedPointer<PointView> pointView){
     qDebug() << "Points::insertPoint called with pointView, groupname" << groupName;
-
     if(!groups->empty() && groups->contains(groupName)){
-        qDebug() << "found the group";
         if(groups->value(groupName)->size() > 0)
             groups->value(groupName)->insert(id, pointView);
         else
             groups->value(groupName)->push_back(pointView);
     } else {
-        qDebug() << "could not find the group";
         QSharedPointer<QVector<QSharedPointer<PointView>>> vector = QSharedPointer<QVector<QSharedPointer<PointView>>>(new QVector<QSharedPointer<PointView>>());
         vector->push_back(pointView);
         groups->insert(groupName, vector);
@@ -210,7 +202,7 @@ void Points::insertPoint(const QString groupName, const int id, const QString po
 }
 
 int Points::count() const {
-    int nbPoints = 0;
+    int nbPoints(0);
     QMapIterator<QString, QSharedPointer<QVector<QSharedPointer<PointView>>>> i(*groups);
     while (i.hasNext()) {
         i.next();
@@ -230,17 +222,14 @@ void Points::setPointViewsState(const GraphicItemState state){
     QMapIterator<QString, QSharedPointer<QVector<QSharedPointer<PointView>>>> i(*groups);
     while (i.hasNext()) {
         i.next();
-        for(int j = 0; j < i.value()->size(); j++){
+        for(int j = 0; j < i.value()->size(); j++)
             i.value()->at(j)->setState(state);
-        }
     }
 }
 
 QSharedPointer<PointView> Points::getTmpPointView(){
-    //qDebug() << "Points::getTmpPointView called" << this->count();
     if(!groups->value(TMP_GROUP_NAME) || groups->value(TMP_GROUP_NAME)->count() < 1)
         addTmpPoint();
-
     return groups->value(TMP_GROUP_NAME)->at(0);
 }
 

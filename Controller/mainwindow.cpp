@@ -4874,7 +4874,7 @@ void MainWindow::updateRobotInfo(QString robot_name, QString robotInfo){
                 }
             } else {
                 if(sendHomeToRobot(robotView, home))
-                        setHomeAtConnection(robot_name, p);
+                    setHomeAtConnection(robot_name, p);
             }
 
         } else {

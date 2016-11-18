@@ -229,7 +229,6 @@ bool XMLParser::readDisplayedElement(QXmlStreamReader &xmlReader){
 
 /// resets the file, only writting an empty default group
 void XMLParser::clear(void){
-    //qDebug() << "XMLParser::clear called";
     try {
         file->open(QIODevice::WriteOnly);
 

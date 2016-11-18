@@ -11,11 +11,9 @@ public:
     Position();
     Position(const double x, const double y);
 
-    /// Getters
     double getX(void) const { return x; }
     double getY(void) const { return y; }
 
-    ///Setters
     void setX(const double _x) { x = _x; }
     void setY(const double _y) { y = _y; }
 
@@ -24,7 +22,8 @@ private:
     double y;
 };
 
+/// to easily compare two positions
 bool operator==(const Position& pos, const Position& otherPos);
 bool operator!=(const Position& pos, const Position& otherPos);
 
-#endif // POSITION_H
+#endif /// POSITION_H
