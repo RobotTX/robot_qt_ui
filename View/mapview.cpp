@@ -57,6 +57,9 @@ void MapView::mouseReleaseEvent(QGraphicsSceneMouseEvent *event){
         else if(state == GraphicItemState::EDITING_PATH)
             /// to notify that a point which belongs to the path of a robot has been changed
             emit newCoordinatesPathPoint(event->pos().x(), event->pos().y());
+        else if(state == GraphicItemState::SCANNING)
+            /// to notify that a point which belongs to the path of a robot has been changed
+            emit newScanningGoal(event->pos().x(), event->pos().y());
     }
     /// else drag
     QGraphicsPixmapItem::mouseReleaseEvent(event);

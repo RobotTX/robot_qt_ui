@@ -212,6 +212,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     /// to link the map and the path information when a path point is being edited (associated to a robot or not)
     connect(mapPixmapItem, SIGNAL(newCoordinatesPathPoint(double, double)), this, SLOT(updateEditedPathPoint(double, double)));
 
+    /// to link the map and the coordinates where we want to send the robot
+    connect(mapPixmapItem, SIGNAL(newScanningGoal(double, double)), this, SLOT(newScanningGoalSlot(double, double)));
+
     /// to know what message to display when a user is creating a path
     connect(mapPixmapItem, SIGNAL(newMessage(QString)), this, SLOT(setMessageCreationPath(QString)));
 
@@ -406,8 +409,8 @@ void MainWindow::updateRobot(const QString ipAddress, const float posX, const fl
     }
 }
 
-void MainWindow::connectToRobot(bool checked){
-    qDebug() << "MainWindow::connectToRobot called" << checked;
+void MainWindow::launchScan(bool checked){
+    qDebug() << "MainWindow::launchScan called" << checked;
     if(selectedRobot != NULL){
         if(checked){
             int ret = openConfirmMessage("Warning, scanning a new map will erase all previously created points, paths and selected home of robots");
@@ -439,7 +442,7 @@ void MainWindow::connectToRobot(bool checked){
                         editSelectedRobotWidget->getScanBtn()->setText("Stop to scan");
                         clearNewMap();
                         editSelectedRobotWidget->getScanBtn()->setEnabled(true);
-                        setEnableAll(false, GraphicItemState::NO_EVENT);
+                        setEnableAll(false, GraphicItemState::SCANNING);
                         scanningRobot = selectedRobot;
 
                         editSelectedRobotWidget->setEnableAll(false);
@@ -455,7 +458,7 @@ void MainWindow::connectToRobot(bool checked){
                 break;
                 default:
                     Q_UNREACHABLE();
-                    qDebug() << "MainWindow::connectToRobot should not be here";
+                    qDebug() << "MainWindow::launchScan should not be here";
                 break;
             }
         } else {
@@ -487,6 +490,10 @@ void MainWindow::connectToRobot(bool checked){
 
         qDebug() << "Select a robot first";
     }
+}
+
+void MainWindow::newScanningGoalSlot(double x, double y){
+    qDebug() << "MainWindow::newScanningGoalSlot Trying to go to" << x << y;
 }
 
 void MainWindow::stopMapThread(){
@@ -1966,6 +1973,8 @@ void MainWindow::messageMapSaved(bool status){
     else
         setTemporaryMessageTop(TEXT_COLOR_DANGER, "Attempt to save the map failed", 2500);
 }
+
+void MainWindow::editMapSlot
 
 /**********************************************************************************************************************************/
 

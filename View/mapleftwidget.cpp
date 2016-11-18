@@ -14,14 +14,17 @@ MapLeftWidget::MapLeftWidget(QWidget* parent, const MainWindow *mainWindow): QWi
 
     /// this button allows a user to save a particular state for the map (point in the center of its screen and zoom)
     CustomPushButton* saveStateBtn = new CustomPushButton(QIcon(":/icons/save_map.png"), "Save the state of the map", this);
+    CustomPushButton* editBtn = new CustomPushButton(QIcon(":/icons/edit.png"), "Edit the map", this);
 
     saveBtn->setIconSize(s_icon_size);
     loadBtn->setIconSize(s_icon_size);
     saveStateBtn->setIconSize(s_icon_size);
+    editBtn->setIconSize(s_icon_size);
 
     layout->addWidget(saveBtn);
     layout->addWidget(loadBtn);
     layout->addWidget(saveStateBtn);
+    layout->addWidget(editBtn);
 
     QLabel* label = new QLabel("To scan a Map,\nselect a robot\nand click the button\n\"Scan a map\"", this);
     label->setStyleSheet ("text-align: left");
@@ -31,6 +34,7 @@ MapLeftWidget::MapLeftWidget(QWidget* parent, const MainWindow *mainWindow): QWi
     connect(saveBtn, SIGNAL(clicked()), mainWindow, SLOT(saveMapBtnEvent()));
     connect(loadBtn, SIGNAL(clicked()), mainWindow, SLOT(loadMapBtnEvent()));
     connect(saveStateBtn, SIGNAL(clicked()), mainWindow, SLOT(saveMapState()));
+    connect(editBtn, SIGNAL(clicked()), mainWindow, SLOT(editMapSlot()));
 
     hide();
     layout->setAlignment(Qt::AlignTop);

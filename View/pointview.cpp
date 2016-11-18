@@ -56,6 +56,12 @@ void PointView::mousePressEvent(QGraphicsSceneMouseEvent *event){
         float y = pos().y() + pixmap().height()*SCALE;
         emit editedHomePositionChanged(x, y, point->getName());
 
+    } else if(state == GraphicItemState::SCANNING){
+        qDebug() << "PointView::mousePressEvent SCANNING";
+        float x = pos().x() + pixmap().width()*SCALE/2;
+        float y = pos().y() + pixmap().height()*SCALE;
+        emit newScanningGoal(x, y);
+
     } else {
         qDebug() << "PointView::mousePressEvent NO_EVENT";
     }

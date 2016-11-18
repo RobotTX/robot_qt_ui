@@ -56,7 +56,7 @@ EditSelectedRobotWidget::EditSelectedRobotWidget(QWidget* parent, MainWindow* _m
     scanBtn = new CustomPushButton(QIcon(":/icons/map.png"),"Scan a map", this, true, CustomPushButton::ButtonType::LEFT_MENU, "center", true);
     scanBtn->setIconSize(s_icon_size);
     inLayout->addWidget(scanBtn);
-    connect(scanBtn, SIGNAL(clicked(bool)), mainWindow, SLOT(connectToRobot(bool)));
+    connect(scanBtn, SIGNAL(clicked(bool)), mainWindow, SLOT(launchScan(bool)));
 
     SpaceWidget* spaceWidget = new SpaceWidget(SpaceWidget::SpaceOrientation::HORIZONTAL, this);
     inLayout->addWidget(spaceWidget);

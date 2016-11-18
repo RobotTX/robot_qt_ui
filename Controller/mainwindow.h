@@ -139,7 +139,7 @@ private slots:
     void updateRobot(const QString ipAddress, const float posX, const float posY, const float ori);
     void updateMetadata(const int width, const int height, const float resolution, const float originX, const float originY);
     void updateMap(const QByteArray mapArray);
-    void connectToRobot(bool checked);
+    void launchScan(bool checked);
     void quit(void);
     void setSelectedRobot(QPointer<RobotView> robotView);
     void setSelectedRobot(QAbstractButton* button);
@@ -267,6 +267,8 @@ private slots:
     void loadMapBtnEvent();
 
     void updateHomes(QString robot_name, QString home_pos);
+    void newScanningGoalSlot(double x, double y);
+    void editMapSlot();
 
 protected:
     void moveEvent(QMoveEvent* event);
