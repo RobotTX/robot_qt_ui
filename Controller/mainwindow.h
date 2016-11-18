@@ -270,7 +270,10 @@ private slots:
     void saveMapBtnEvent();
     void loadMapBtnEvent();
 
-    void updateHomes(QString robot_name, QString robotInfo);
+    void updateRobotInfo(QString robot_name, QString robotInfo);
+
+    void setHomeAtConnection(const QString robot_name, const Position& pos_home);
+    bool updateHomeFile(const QString robot_name, const Position& robot_home_position, const QStringList date);
 
 protected:
     void moveEvent(QMoveEvent* event);
