@@ -29,6 +29,7 @@ class Points : public QObject {
     Q_OBJECT
 
     typedef QMap<QString, QSharedPointer<QVector<QSharedPointer<PointView>>>> Groups;
+
 public:
     Points(MainWindow *parent);
 
@@ -36,7 +37,7 @@ public:
     void display(std::ostream& stream) const;
 
 public:
-    /// Getter
+
     QSharedPointer<Groups> getGroups(void) const { return groups; }
     /**
      * @brief getDefaultGroup
@@ -309,7 +310,6 @@ private:
     QSharedPointer<Groups> groups;
 };
 
-
 std::ostream& operator <<(std::ostream& stream, Points const& points);
 
-#endif // POINTS_H
+#endif /// POINTS_H

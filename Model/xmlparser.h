@@ -85,4 +85,4 @@ private:
     QFile* file;
 };
 
-#endif // XMLPARSER_H
+#endif /// XMLPARSER_H

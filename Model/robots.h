@@ -16,11 +16,9 @@ class Robots{
 public:
     Robots();
 
-    /// Getters
     QVector<QPointer<RobotView>> getRobotsVector() const { return robotsVector; }
     QMap<QString, QString> getRobotsNameMap() const {return robotsNameMap;}
 
-    /// Setters
     void setRobotsVector(const QVector<QPointer<RobotView>>& _robotsVector) { robotsVector = _robotsVector; }
     void setRobotsNameMap(const QMap<QString, QString> &_robotsNameMap) {robotsNameMap = _robotsNameMap;}
 
@@ -151,4 +149,4 @@ private:
     QMap<QString, QString> robotsNameMap;
 };
 
-#endif // ROBOTS_H
+#endif /// ROBOTS_H

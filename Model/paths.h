@@ -86,15 +86,13 @@ public:
      */
     bool containsPoint(const QString groupName, const QString pathName, const Point& point);
 
-
-    /// Getters
     QSharedPointer<Groups> getGroups(void) const { return groups; }
+
     /// the foundFlag is set within the function, after the function returns it holds true if the path has been found and false otherwise
     Path getPath(const QString groupName, const QString pathName, bool& foundFlag);
 
     CollectionPaths getGroup(const QString groupName);
 
-    /// Setters
     void setGroups(QSharedPointer<Groups> _groups) { groups = _groups; }
 
     /// updates the paths which contains the pathpoint whose name is pointName to change the name to the points coordinates
@@ -132,4 +130,4 @@ QDataStream& operator<<(QDataStream& out, const Paths& paths);
  */
 QDataStream& operator>>(QDataStream& in, Paths& paths);
 
-#endif // PATHS_H
+#endif /// PATHS_H

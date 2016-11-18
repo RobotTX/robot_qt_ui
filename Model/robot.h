@@ -37,7 +37,6 @@ public:
     Robot();
     ~Robot();
 
-    /// Getters
     Position getPosition(void) const { return position; }
     float getOrientation(void) const { return orientation; }
     QString getName(void) const { return name; }
@@ -52,7 +51,6 @@ public:
     QSharedPointer<Paths> getPaths(void) const { return paths; }
     bool isSendingMap(void) const { return sendingMap; }
 
-    /// Setters
     void setPlayingPath(const bool playPath) { playingPath = playPath; }
     void setPath(const QVector<QSharedPointer<PathPoint>>& _path) { path = _path; }
     void setHome(QSharedPointer<PointView> _home) { home = _home; }
@@ -188,4 +186,4 @@ QDataStream& operator>>(QDataStream& in, Robot& robot);
  */
 std::ostream& operator <<(std::ostream& stream, Robot const& robot);
 
-#endif // ROBOT_H
+#endif /// ROBOT_H

@@ -2,9 +2,7 @@
 #include <QDebug>
 
 
-PathPoint::PathPoint(const Point &_point, const Action _action, const int _waitTime): point(_point), action(_action), waitTime(_waitTime)
-{
-}
+PathPoint::PathPoint(const Point &_point, const Action _action, const int _waitTime): point(_point), action(_action), waitTime(_waitTime) {}
 
 /// the main purpose of this constructor is the deserialization of a path point
 PathPoint::PathPoint(void): point(Point("DefaultPoint", -1.0, -1.0)), action(Action::HUMAN_ACTION), waitTime(0) {}
@@ -40,9 +38,7 @@ std::ostream& operator <<(std::ostream& stream, const PathPoint& point){
 }
 
 void PathPoint::display(std::ostream& stream) const {
-    stream << point.getPosition().getX() << " " <<
-              point.getPosition().getY() << " " <<
-              waitTime;
+    stream << point.getPosition().getX() << " " << point.getPosition().getY() << " " << waitTime;
 }
 
 

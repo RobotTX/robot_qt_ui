@@ -52,8 +52,6 @@ public:
      */
     void saveToFile(const QString fileName);
 
-    void setRectangle(void);
-
 signals:
     /// emitted when a user make an attempt at saving the map, the status holds the status regarding the operation (true = success, false = failure)
     void saveStatus(bool);
@@ -90,4 +88,4 @@ private:
     QPointF center;
 };
 
-#endif // MAP_H
+#endif /// MAP_H

@@ -13,7 +13,6 @@ Robots::Robots(){
 
 void Robots::add(QPointer<RobotView> const robotView){
     robotsVector.append(robotView);
-    //qDebug() << "Added the robot : " << robotView->getRobot()->getName() << " to the list of robots";
 }
 
 void Robots::remove(QPointer<RobotView> robotView){
@@ -51,9 +50,8 @@ void Robots::removeByIp(const QString ip){
 
 QPointer<RobotView> Robots::getRobotViewByName(const QString name) const {
     for(int i = 0; i < robotsVector.length(); i++){
-        if(robotsVector[i]->getRobot()->getName() == name){
+        if(robotsVector[i]->getRobot()->getName() == name)
             return robotsVector[i];
-        }
     }
     return NULL;
 }
@@ -71,11 +69,10 @@ void Robots::setSelected(QPointer<RobotView> const robotView){
     qDebug() << "Selected robot : " << robotView->getRobot()->getName();
     for(int i = 0; i < robotsVector.length(); i++){
         if(robotsVector[i]->getRobot()->getName() == robotView->getRobot()->getName() &&
-                robotsVector[i]->getRobot()->getIp() == robotView->getRobot()->getIp()){
+                robotsVector[i]->getRobot()->getIp() == robotView->getRobot()->getIp())
             robotsVector[i]->setSelected(true);
-        } else {
+        else
             robotsVector[i]->setSelected(false);
-        }
     }
 }
 
@@ -93,9 +90,8 @@ bool Robots::existRobotName(const QString name) const {
 int Robots::getRobotId(const QString name) const{
     //qDebug() << "(getRobotId) Checking robot name : " << name;
     for(int i = 0; i < robotsVector.length(); i++){
-        if(robotsVector[i]->getRobot()->getName() == name){
+        if(robotsVector[i]->getRobot()->getName() == name)
             return i;
-        }
     }
     return -1;
 }
