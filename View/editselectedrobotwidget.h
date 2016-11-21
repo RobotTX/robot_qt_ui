@@ -93,7 +93,7 @@ signals:
     void clearMapOfPaths();
     /// to notify that a new home has been assigned
     void newHome(QString);
-    void sendPathSelectedRobot();
+    void sendPathSelectedRobot(QString, QString);
 
 protected:
     void showEvent(QShowEvent *event);

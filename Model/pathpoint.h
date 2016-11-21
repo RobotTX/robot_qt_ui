@@ -16,16 +16,13 @@ public:
      * Used to know if we should wait for a certain amount of time
      * or for a human action when the robot reach the point
      */
-    enum Action { WAIT, HUMAN_ACTION };
-    PathPoint(const Point& point, const Action action, const int waitTime = 0);
+    PathPoint(const Point& point, const int waitTime = 0);
     PathPoint(void);
 
     Point getPoint(void) const { return point; }
-    Action getAction(void) const { return action; }
     int getWaitTime(void) const { return waitTime; }
 
     void setPoint(const Point& _point) { point = _point; }
-    void setAction(const Action& _action) { action = _action; }
     void setWaitTime(const int _waitTime) { waitTime = _waitTime; }
 
     void display(std::ostream& stream) const;
@@ -36,12 +33,6 @@ private:
      * The point where the robot goes
      */
     Point point;
-
-    /**
-     * @brief action
-     * The action the robot needs to do after arriving to the point
-     */
-    Action action;
 
     /**
      * @brief waitTime

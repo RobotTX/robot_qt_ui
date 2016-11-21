@@ -15,15 +15,6 @@ public:
     PathPointList(QWidget *parent);
 
     /**
-     * @brief update
-     * @param indexNb
-     * @param action
-     * @param time
-     * updates the action of the path point at index indexNb
-     */
-    void update(const int indexNb, const int action, const int time = 0);
-
-    /**
      * @brief refresh
      * Refresh the id of every PathpointCreationWidget in the list
      */

@@ -85,7 +85,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
         mapState.first.setY(centerY);
         map->setOrigin(Position(originX, originY));
         map->setResolution(resolution);
-        qDebug() << "1:" << QString::fromStdString(mapFile) << _height << _width << centerX << centerY << originX << originY;
+        qDebug() << "1:" << QString::fromStdString(mapFile) << _height << _width << centerX << centerY << originX << originY << resolution;
         file.close();
     }
 
@@ -272,14 +272,12 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
     setAutoFillBackground(true);
 
-
     rightLayout->setContentsMargins(0, 0, 0, 0);
     bottom->setContentsMargins(0, 0, 0, 0);
     mainLayout->setContentsMargins(0, 0, 0, 0);
     topLayout->setContentsMargins(0, 0, 0, 0);
     bottomLayout->setContentsMargins(0, 0, 0, 0);
     mainLayout->setSpacing(0);
-
 }
 
 MainWindow::~MainWindow(){
@@ -4315,22 +4313,24 @@ void MainWindow::doubleClickOnPath(QString pathName){
     leftMenu->getPathGroupDisplayed()->getPathButtonGroup()->uncheck();
 }
 
-void MainWindow::sendPathSelectedRobotSlot(){
+void MainWindow::sendPathSelectedRobotSlot(const QString groupName, const QString pathName){
 
     qDebug() << "MainWindow::sendPathSelectedRobotSlot path changed";
     QPointer<Robot> robot = selectedRobot->getRobot();
     QString pathStr = "";
     /// prepares the cmd to send to the robot
     qDebug() << "MainWindow::sendPathSelectedRobotSlot" << pathPainter->getCurrentPath().size();
-    for(int i = 0; i < pathPainter->getCurrentPath().size(); i++){
-        QSharedPointer<PathPoint> pathPoint = pathPainter->getCurrentPath().at(i);
+    bool flag;
+    Paths::Path currPath = paths->getPath(groupName, pathName, flag);
+    for(int i = 0; i < currPath.size(); i++){
+        QSharedPointer<PathPoint> pathPoint = currPath.at(i);
         float oldPosX = pathPoint->getPoint().getPosition().getX();
         float oldPosY = pathPoint->getPoint().getPosition().getY();
 
         float newPosX = (oldPosX - ROBOT_WIDTH) * map->getResolution() + map->getOrigin().getX();
         float newPosY = (-oldPosY + map->getHeight() - ROBOT_WIDTH/2) * map->getResolution() + map->getOrigin().getY();
         int waitTime = -1;
-        if(pathPoint->getAction() == PathPoint::WAIT){
+        if(pathPoint->getWaitTime() > -1){
             waitTime = pathPoint->getWaitTime();
         }
         pathStr += + "\"" + QString::number(newPosX) + "\" \"" + QString::number(newPosY) + "\" \"" + QString::number(waitTime)+ "\" ";
@@ -4849,6 +4849,16 @@ void MainWindow::updateRobotInfo(QString robot_name, QString robotInfo){
     qDebug() << "home file is more recent on robot" << isLater(dateHomeOnRobot, dateLastModification);
     qDebug() << "path file is more recent on robot" << isLater(datePathOnRobot, dateLastPathModification);
     qDebug() << "MainWindow::updateRobotInfo" << list;
+    QVector<PathPoint> pathounet = extractPathFromInfo(list);
+    qDebug()<< "here comes pathounet";
+    for(int i = 0; i < pathounet.size(); i++)
+        qDebug() << pathounet.at(i).getPoint().getPosition().getX()
+                 << pathounet.at(i).getPoint().getPosition().getY()
+                 << pathounet.at(i).getWaitTime();
+
+    QPair<QString, QString> pathInfo = paths->findPath(pathounet);
+    qDebug() << "have found path" << pathInfo.first << pathInfo.second;
+
     qDebug() << "my position is" << p.getX() << p.getY();
     qDebug() << "robot home position" << robot_home_position.getX() << robot_home_position.getY();
     qDebug() << "CONTENT IS" << robotInfo;
@@ -4901,7 +4911,7 @@ void MainWindow::updateRobotInfo(QString robot_name, QString robotInfo){
     }
 }
 
-bool MainWindow::isLater(const QStringList date, const QStringList otherDate){
+bool MainWindow::isLater(const QStringList& date, const QStringList& otherDate){
     for(int i = 0; i < date.size(); i++){
         if(date.at(i).toInt() > otherDate.at(i).toInt())
             return true;
@@ -4969,3 +4979,23 @@ bool MainWindow::updateHomeFile(const QString robot_name, const Position& robot_
         return false;
     }
 }
+
+QVector<PathPoint> MainWindow::extractPathFromInfo(const QStringList &robotInfo){
+    QVector<PathPoint> path;
+    for(int i = 5; i < robotInfo.size(); i += 3){
+        double xOnRobot = robotInfo.at(i).toDouble();
+        double xInApp = (xOnRobot - map->getOrigin().getX()) / map->getResolution() + ROBOT_WIDTH;
+        qDebug() << "xInapp after CONVERSION" << xInApp;
+        double yOnRobot = robotInfo.at(i+1).toDouble();
+        double yInApp = ((yOnRobot - map->getOrigin().getY()) / map->getResolution() + ROBOT_WIDTH/2 - map->getHeight()) * -1;
+        qDebug() << "yInapp after CONVERSION" << yInApp;
+        path.push_back(PathPoint(Point(" ", xInApp, yInApp), robotInfo.at(i+2).toDouble()));
+    }
+    return path;
+}
+/*
+float oldPosX = pathPoint->getPoint().getPosition().getX();
+float oldPosY = pathPoint->getPoint().getPosition().getY();
+
+float newPosX = (oldPosX - ROBOT_WIDTH) * map->getResolution() + map->getOrigin().getX();
+float newPosY = (-oldPosY + map->getHeight() - ROBOT_WIDTH/2) * map->getResolution() + map->getOrigin().getY();*/

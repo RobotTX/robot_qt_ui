@@ -88,7 +88,7 @@ signals:
     /// emitted when the waiting times of points have not been set properly so that a message is displayed to the user
     void setMessage(QString, QString );
     /// emitted when a new path point is added to the list
-    void addPathPoint(QString, double, double, int, int);
+    void addPathPoint(QString, double, double, int);
     /// emitted when a path point is deleted
     void deletePathPoint(int);
     /// emitted when the order of the path has changed
@@ -96,7 +96,7 @@ signals:
     /// emitted when the widget is reset
     void resetPath();
     /// emitted when a waiting time is changed
-    void actionChanged(int, int, QString);
+    void actionChanged(int, QString);
     /// emitted when a path point is edited
     void editPathPoint(int, QString, double, double);
     void editTmpPathPoint(int, QString, double, double);
@@ -175,7 +175,7 @@ private slots:
      * @param waitTime
      * adds a slot in the path point list
      */
-    void addPathPointSlot(QString name, double x, double y, PathPoint::Action action = PathPoint::Action::WAIT, int waitTime = 0);
+    void addPathPointSlot(QString name, double x, double y, int waitTime = 0);
     /**
      * @brief saveEditSlot
      * @param
@@ -195,7 +195,7 @@ private slots:
      * @param waitTime
      * called when the waiting time of a path point is updated
      */
-    void actionChangedSlot(int id, int action, QString waitTime);
+    void actionChangedSlot(int id, QString waitTime);
     /**
      * @brief checkPathName
      * @param name

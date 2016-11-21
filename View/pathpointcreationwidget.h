@@ -35,7 +35,7 @@ public:
     void setName(const QString name);
     void setId(const int id);
     void setPos(const float _posX, const float y);
-    void setActionWidget(const PathPoint::Action action, const int waitTime);
+    void setActionWidget(const int waitTime);
 
     /// Getters
     QString getName(void) const { return name; }
@@ -128,7 +128,7 @@ signals:
     /// emitted when changes must be canceled
     void cancelEditSignal(PathPointCreationWidget*);
     /// emitted when action has changed
-    void actionChanged(int, int, QString);
+    void actionChanged(int, QString);
     /// emitted when the cross button is clicked and the point must be removed
     void removePathPoint(PathPointCreationWidget*);
 

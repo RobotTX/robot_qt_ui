@@ -85,7 +85,7 @@ private slots:
      * @param y
      * Add a path point to the current path
      */
-    void addPathPointSlot(QString name, double x, double y, int action = 0, int waitTime = 0);
+    void addPathPointSlot(QString name, double x, double y, int waitTime = 0);
 
     /**
      * @brief deletePathPointSlot
@@ -122,7 +122,7 @@ private slots:
      * @param waitTime
      * Update the current path when an action changed (wait for human action or wait for some time)
      */
-    void actionChangedSlot(int id, int action, QString waitTime);
+    void actionChangedSlot(int id, QString waitTime);
 
     /**
      * @brief editPathPointSlot
