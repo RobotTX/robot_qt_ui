@@ -12,6 +12,7 @@
 #include "View/stylesettings.h"
 #include "View/spacewidget.h"
 #include <QButtonGroup>
+#include "View/customlineedit.h"
 
 EditMapWidget::EditMapWidget(QImage _mapImage, int _width, int _height, QWidget* parent):
     QWidget(parent), mapImage(_mapImage), mapWidth(_width), mapHeight(_height){
@@ -62,7 +63,6 @@ void EditMapWidget::initializeMenu(){
 
 
     /// Color layout
-    /// black grey white
     QHBoxLayout* colorLayout = new QHBoxLayout();
     QLabel* colorLabel = new QLabel("Select a color :", this);
     topMenuLayout->addWidget(colorLabel);
@@ -86,7 +86,6 @@ void EditMapWidget::initializeMenu(){
 
 
     /// Shape layout
-    /// hand bucket point line rectangle filled rectangle
     QGridLayout* shapeLayout = new QGridLayout();
     QLabel* shapeLabel = new QLabel("Select a shape :", this);
     topMenuLayout->addWidget(shapeLabel);
@@ -101,7 +100,7 @@ void EditMapWidget::initializeMenu(){
     shapeGroup->addButton(bucketBtn, 1);
     shapeLayout->addWidget(bucketBtn, 0, 1);
 
-    CustomPushButton* dotBtn = new CustomPushButton(QIcon(":/icons/dot.png"), "", this, false, CustomPushButton::ButtonType::LEFT_MENU, "center", true);
+    CustomPushButton* dotBtn = new CustomPushButton(QIcon(":/icons/dot_l.png"), "", this, false, CustomPushButton::ButtonType::LEFT_MENU, "center", true);
     shapeGroup->addButton(dotBtn, 2);
     shapeLayout->addWidget(dotBtn, 1, 0);
 
@@ -122,7 +121,40 @@ void EditMapWidget::initializeMenu(){
 
 
     /// Size layout
-    /// small medium big + lineedit
+    QLabel* sizeLabel = new QLabel("Select a size :", this);
+    topMenuLayout->addWidget(sizeLabel);
+
+
+    QHBoxLayout* sizeBtnLayout = new QHBoxLayout();
+
+    QButtonGroup* sizeGroup = new QButtonGroup(this);
+    CustomPushButton* sizeSBtn = new CustomPushButton(QIcon(":/icons/dot_s.png"), "", this, false, CustomPushButton::ButtonType::TOP, "center", true);
+    sizeSBtn->setChecked(true);
+    sizeGroup->addButton(sizeSBtn, 0);
+    sizeBtnLayout->addWidget(sizeSBtn);
+
+    CustomPushButton* sizeMBtn = new CustomPushButton(QIcon(":/icons/dot_m.png"), "", this, false, CustomPushButton::ButtonType::TOP, "center", true);
+    sizeGroup->addButton(sizeMBtn, 1);
+    sizeBtnLayout->addWidget(sizeMBtn);
+
+    CustomPushButton* sizeLBtn = new CustomPushButton(QIcon(":/icons/dot_l.png"), "", this, false, CustomPushButton::ButtonType::LEFT_MENU, "center", true);
+    sizeGroup->addButton(sizeLBtn, 2);
+    sizeBtnLayout->addWidget(sizeLBtn);
+
+    connect(sizeGroup, SIGNAL(buttonClicked(int)), this, SLOT(changeSizeSlot(int)));
+    topMenuLayout->addLayout(sizeBtnLayout);
+
+
+    QHBoxLayout* sizeEditLayout = new QHBoxLayout();
+    sizeLineEdit = new CustomLineEdit("1", this);
+    sizeLineEdit->setAlignment(Qt::AlignCenter);
+    sizeLineEdit->setValidator(new QIntValidator(1, 200, this));
+    sizeEditLayout->addWidget(sizeLineEdit);
+    connect(sizeLineEdit, SIGNAL(editingFinished()), this, SLOT(changeSizeEditSlot()));
+
+    QLabel* pxLabel = new QLabel("px", this);
+    sizeEditLayout->addWidget(pxLabel);
+    topMenuLayout->addLayout(sizeEditLayout);
 
 
 
@@ -168,18 +200,25 @@ void EditMapWidget::initializeMap(){
     graphicsView->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     graphicsView->setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding));
 
+
+    canvas = new EditMapView(mapImage.width(), mapImage.height());
+    connect(canvas, SIGNAL(draw(int,int)), this, SLOT(drawSlot(int, int)));
+    scene->addItem(canvas);
+
+
     /// Create the graphic item of the map
     QPixmap pixmap = QPixmap::fromImage(mapImage);
-    pixmapItem = new EditMapView(pixmap);
-
+    pixmapItem = new QGraphicsPixmapItem(pixmap, canvas);
+    pixmapItem->setZValue(0);
+    pixmapItem->setFlag(QGraphicsItem::ItemStacksBehindParent);
     scene->addItem(pixmapItem);
+
 
     layout->addWidget(graphicsView);
 }
 
 void EditMapWidget::centerMap(){
     /// centers the map on the point chosen by the user and not on the center of the map
-    //pixmapItem->setPos(mapState.first);
     graphicsView->centerOn(pixmapItem->boundingRect().width()/2, pixmapItem->boundingRect().height()/2);
 }
 
@@ -206,4 +245,16 @@ void EditMapWidget::changeColorSlot(int color){
 
 void EditMapWidget::changeShapeSlot(int shape){
     qDebug() << "EditMapWidget::changeShapeSlot called" << shape;
+}
+
+void EditMapWidget::changeSizeSlot(int size){
+    qDebug() << "EditMapWidget::changeSizeSlot called" << size;
+}
+
+void EditMapWidget::changeSizeEditSlot(){
+    qDebug() << "EditMapWidget::changeSizeEditSlot called" << sizeLineEdit->text();
+}
+
+void EditMapWidget::drawSlot(int x, int y){
+    qDebug() << "EditMapWidget::drawSlot called" << x << y;
 }

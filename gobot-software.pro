@@ -75,7 +75,9 @@ HEADERS += \
            zipwriter.h \
            zlib.h \
            Controller/robotserverworker.h \
-           View/editselectedrobotwidget.h
+           View/editselectedrobotwidget.h \
+    View/editmapwidget.h \
+    View/editmapview.h
 
 FORMS += Controller/mainwindow.ui
 
@@ -134,7 +136,9 @@ SOURCES += main.cpp \
            View/commandmessagebox.cpp \
            zip.cpp \
            Controller/robotserverworker.cpp \
-           View/editselectedrobotwidget.cpp
+           View/editselectedrobotwidget.cpp \
+    View/editmapwidget.cpp \
+    View/editmapview.cpp
 
 
 RESOURCES += Resources/resources.qrc
