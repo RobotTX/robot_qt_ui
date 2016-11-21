@@ -149,6 +149,7 @@ QSharedPointer<PointView> Points::createPoint(const QString pointName, const dou
     connect(&(*pointView), SIGNAL(addPointPath(QString, double, double, GraphicItemState)), parent, SLOT(addPointPathSlot(QString, double, double, GraphicItemState)));
 
     connect(&(*pointView), SIGNAL(updatePathPainterPointView()), parent, SLOT(updatePathPainterPointViewSlot()));
+    connect(&(*pointView), SIGNAL(newScanningGoal(double, double)), parent, SLOT(newScanningGoalSlot(double, double)));
 
     return pointView;
 }

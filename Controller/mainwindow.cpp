@@ -53,6 +53,7 @@
 #include <QStringList>
 #include "Controller/commandcontroller.h"
 #include <fstream>
+#include "View/editmapwidget.h"
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow) {
     ui->setupUi(this);
@@ -210,6 +211,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     /// to link the map and the path information when a path point is being edited (associated to a robot or not)
     connect(mapPixmapItem, SIGNAL(newCoordinatesPathPoint(double, double)), this, SLOT(updateEditedPathPoint(double, double)));
 
+    /// to link the map and the coordinates where we want to send the robot
+    connect(mapPixmapItem, SIGNAL(newScanningGoal(double, double)), this, SLOT(newScanningGoalSlot(double, double)));
+
     /// to know what message to display when a user is creating a path
     connect(mapPixmapItem, SIGNAL(newMessage(QString)), this, SLOT(setMessageCreationPath(QString)));
 
@@ -266,7 +270,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
                   "QScrollArea {border: 1px solid yellow}");
 */
 
-    this->setAutoFillBackground(true);
+    setAutoFillBackground(true);
 
     rightLayout->setContentsMargins(0, 0, 0, 0);
     bottom->setContentsMargins(0, 0, 0, 0);
@@ -278,6 +282,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
 MainWindow::~MainWindow(){
     delete ui;
+    if(editMapWidget)
+        delete editMapWidget;
 
     if(robotServerWorker){
         emit stopUpdateRobotsThread();
@@ -398,8 +404,8 @@ void MainWindow::updateRobot(const QString ipAddress, const float posX, const fl
     }
 }
 
-void MainWindow::connectToRobot(bool checked){
-    qDebug() << "MainWindow::connectToRobot called" << checked;
+void MainWindow::launchScan(bool checked){
+    qDebug() << "MainWindow::launchScan called" << checked;
     if(selectedRobot != NULL){
         if(checked){
             int ret = openConfirmMessage("Warning, scanning a new map will erase all previously created points, paths and selected home of robots");
@@ -431,7 +437,7 @@ void MainWindow::connectToRobot(bool checked){
                         editSelectedRobotWidget->getScanBtn()->setText("Stop to scan");
                         clearNewMap();
                         editSelectedRobotWidget->getScanBtn()->setEnabled(true);
-                        setEnableAll(false, GraphicItemState::NO_EVENT);
+                        setEnableAll(false, GraphicItemState::SCANNING);
                         scanningRobot = selectedRobot;
 
                         editSelectedRobotWidget->setEnableAll(false);
@@ -447,7 +453,7 @@ void MainWindow::connectToRobot(bool checked){
                 break;
                 default:
                     Q_UNREACHABLE();
-                    qDebug() << "MainWindow::connectToRobot should not be here";
+                    qDebug() << "MainWindow::launchScan should not be here";
                 break;
             }
         } else {
@@ -479,6 +485,10 @@ void MainWindow::connectToRobot(bool checked){
 
         qDebug() << "Select a robot first";
     }
+}
+
+void MainWindow::newScanningGoalSlot(double x, double y){
+    qDebug() << "MainWindow::newScanningGoalSlot Trying to go to" << x << y;
 }
 
 void MainWindow::stopMapThread(){
@@ -1941,6 +1951,10 @@ void MainWindow::messageMapSaved(bool status){
         setTemporaryMessageTop(TEXT_COLOR_SUCCESS, "You have successfully saved the map", 2500);
     else
         setTemporaryMessageTop(TEXT_COLOR_DANGER, "Attempt to save the map failed", 2500);
+}
+
+void MainWindow::editMapSlot(){
+    editMapWidget = QPointer<EditMapWidget>(new EditMapWidget(map->getMapImage(), map->getWidth(), map->getHeight()));
 }
 
 /**********************************************************************************************************************************/
@@ -4641,9 +4655,14 @@ void MainWindow::settingBtnSlot(){
         robotIsDeadSlot(robots->getRobotsVector().at(0)->getRobot()->getName(), robots->getRobotsVector().at(0)->getRobot()->getIp());
     }
 */
+
+    /*
     const QString ZipFile(QStandardPaths::writableLocation(QStandardPaths::DesktopLocation) + QDir::separator() + QString("map.zip"));
     compress(ZipFile);
     decompress(ZipFile);
+    */
+
+    editMapSlot();
 }
 
 void MainWindow::setTemporaryMessageTop(const QString type, const QString message, const int ms){

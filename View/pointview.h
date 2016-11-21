@@ -93,6 +93,8 @@ signals:
     void editedHomePositionChanged(float, float, QString);
     /// emitted after a hover leave event to reset the path point view color
     void updatePathPainterPointView();
+    /// emitted when a user is scanning a map and want to send the robot to this point
+    void newScanningGoal(double, double);
 
 private:
     QSharedPointer<Point> point;

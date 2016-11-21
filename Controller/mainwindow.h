@@ -25,6 +25,7 @@ class CustomPushButton;
 class GroupsPathsWidget;
 class QMoveEvent;
 class CommandController;
+class EditMapWidget;
 
 #include "zipreader.h"
 #include "zipwriter.h"
@@ -145,7 +146,7 @@ private slots:
     void updateRobot(const QString ipAddress, const float posX, const float posY, const float ori);
     void updateMetadata(const int width, const int height, const float resolution, const float originX, const float originY);
     void updateMap(const QByteArray mapArray);
-    void connectToRobot(bool checked);
+    void launchScan(bool checked);
     void quit(void);
     void setSelectedRobot(QPointer<RobotView> robotView);
     void setSelectedRobot(QAbstractButton* button);
@@ -272,8 +273,9 @@ private slots:
     void saveMapBtnEvent();
     void loadMapBtnEvent();
 
+    void newScanningGoalSlot(double x, double y);
+    void editMapSlot();
     void updateRobotInfo(QString robot_name, QString robotInfo);
-
     void setHomeAtConnection(const QString robot_name, const Position& pos_home);
     bool updateHomeFile(const QString robot_name, const Position& robot_home_position, const QStringList date);
 
@@ -325,6 +327,7 @@ private:
 
     CommandController* commandController;
     std::string mapFile;
+    QPointer<EditMapWidget> editMapWidget;
 };
 
 #endif // MAINWINDOW_H

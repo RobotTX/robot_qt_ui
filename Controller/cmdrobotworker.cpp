@@ -21,13 +21,16 @@ void CmdRobotWorker::stopWorker(){
 }
 
 void CmdRobotWorker::connectSocket(){
-
     qDebug() << "(Robot" << robotName << ") Command Thread launched";
 
     socket = QPointer<QTcpSocket>(new QTcpSocket());
 
     /// We create the timer used to know for how long we haven't receive any ping
     timer = new QTimer(this);
+
+    timer->setInterval(1000);
+    connect(timer, SIGNAL(timeout()), this, SLOT(timerSlot()));
+    timer->start();
 
     /// Connect the signal readyRead which tell us when data arrived to the function that treat them
     connect(&(*socket), SIGNAL(readyRead()), this, SLOT(readTcpDataSlot()));
@@ -85,10 +88,6 @@ void CmdRobotWorker::connectedSlot(){
             qDebug() << "(Robot" << robotName << ") Ports could not be sent, trying again";
         };
     }
-
-    timer->setInterval(1000);
-    connect(timer, SIGNAL(timeout()), this, SLOT(timerSlot()));
-    timer->start();
 }
 
 void CmdRobotWorker::disconnectedSlot(){
