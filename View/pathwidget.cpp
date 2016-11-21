@@ -55,7 +55,7 @@ void PathWidget::setPath(const QVector<QSharedPointer<PathPoint> > &path){
 
         /// Action to do (wait for human or a certain amount of time)
         QLabel* actionLabel = new QLabel(this);
-        if(path.at(i)->getAction() == PathPoint::HUMAN_ACTION){
+        if(path.at(i)->getWaitTime() < 0){
             actionLabel->setText("Wait for Human Action");
         } else {
             actionLabel->setText("Wait for " + QString::number(path.at(i)->getWaitTime()) + QString(" s"));

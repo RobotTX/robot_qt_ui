@@ -47,7 +47,7 @@ void PathPainter::displayPath(void){
     qDebug() << "\n";*/
 }
 
-void PathPainter::addPathPointSlot(QString name, double x, double y, int action, int waitTime){
+void PathPainter::addPathPointSlot(QString name, double x, double y, int waitTime){
     //qDebug() << "PathPainter::addPathPointSlot called" << name << x << y;
 
     if(currentPath.size() == 0 || (currentPath.size() > 0 && !currentPath.last()->getPoint().comparePos(x, y))){
@@ -74,7 +74,7 @@ void PathPainter::addPathPointSlot(QString name, double x, double y, int action,
         points->getGroups()->value(PATH_GROUP_NAME)->last()->setState(mainWindow->getMapView()->getState());
         Point point = *(points->getGroups()->value(PATH_GROUP_NAME)->last()->getPoint());
 
-        currentPath.push_back(QSharedPointer<PathPoint>(new PathPoint(point, static_cast<PathPoint::Action>(action), waitTime)));
+        currentPath.push_back(QSharedPointer<PathPoint>(new PathPoint(point, waitTime)));
 
         /// Updates the path painter
         updatePathPainterSlot(false);
@@ -155,10 +155,9 @@ void PathPainter::editPathPointSlot(int id, QString name, double, double){
     qDebug() << "size after edit" << currentPath.size();
 }
 
-void PathPainter::actionChangedSlot(int id, int action, QString waitTimeStr){
+void PathPainter::actionChangedSlot(int id, QString waitTimeStr){
     //qDebug() << "PathPainter::actionChangedSlot called" << id << waitTimeStr;
     int waitTime = waitTimeStr.toInt();
-    currentPath.at(id)->setAction(static_cast<PathPoint::Action>(action));
     currentPath.at(id)->setWaitTime(waitTime);
 }
 
@@ -293,14 +292,14 @@ void PathPainter::setCurrentPath(const QVector<QSharedPointer<PathPoint>>& _curr
     visiblePath = pathName;
     for(int i = 0; i < _currentPath.size(); i++){
         Point point = _currentPath.at(i)->getPoint();
-        addPathPointSlot(point.getName(), point.getPosition().getX(), point.getPosition().getY(), _currentPath.at(i)->getAction(), _currentPath.at(i)->getWaitTime());
+        addPathPointSlot(point.getName(), point.getPosition().getX(), point.getPosition().getY(), _currentPath.at(i)->getWaitTime());
     }
 }
 
 void PathPainter::setOldPath(const QVector<QSharedPointer<PathPoint> > _oldPath){
     oldPath.clear();
     for(int i = 0; i < _oldPath.size(); i++){
-        QSharedPointer<PathPoint> pathPoint = QSharedPointer<PathPoint>(new PathPoint(_oldPath.at(i)->getPoint(), _oldPath.at(i)->getAction(), _oldPath.at(i)->getWaitTime()));
+        QSharedPointer<PathPoint> pathPoint = QSharedPointer<PathPoint>(new PathPoint(_oldPath.at(i)->getPoint(), _oldPath.at(i)->getWaitTime()));
         oldPath.push_back(pathPoint);
     }
 }

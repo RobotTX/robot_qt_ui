@@ -163,12 +163,12 @@ LeftMenu::LeftMenu(MainWindow* _mainWindow, QSharedPointer<Points> const& _point
     connect(pathGroup->getPathButtonGroup()->getButtonGroup(), SIGNAL(buttonToggled(int, bool)), pathGroup, SLOT(resetMapButton()));
 
     pathCreationWidget = new PathCreationWidget(this, points, paths, false);
-    connect(pathCreationWidget, SIGNAL(addPathPoint(QString, double, double, int, int)), pathPainter, SLOT(addPathPointSlot(QString, double, double, int, int)));
+    connect(pathCreationWidget, SIGNAL(addPathPoint(QString, double, double, int)), pathPainter, SLOT(addPathPointSlot(QString, double, double, int)));
     connect(pathCreationWidget, SIGNAL(deletePathPoint(int)), pathPainter, SLOT(deletePathPointSlot(int)));
     connect(pathCreationWidget, SIGNAL(orderPathPointChanged(int, int)), pathPainter, SLOT(orderPathPointChangedSlot(int, int)));
     connect(pathCreationWidget, SIGNAL(resetPath()), pathPainter, SLOT(resetPathSlot()));
     connect(pathCreationWidget, SIGNAL(setMessage(QString, QString)), mainWindow, SLOT(setMessageTop(QString, QString)));
-    connect(pathCreationWidget, SIGNAL(actionChanged(int, int, QString)), pathPainter, SLOT(actionChangedSlot(int, int, QString)));
+    connect(pathCreationWidget, SIGNAL(actionChanged(int, QString)), pathPainter, SLOT(actionChangedSlot(int, QString)));
     connect(pathCreationWidget, SIGNAL(editPathPoint(int, QString, double, double)), pathPainter, SLOT(editPathPointSlot(int, QString, double, double)));
 
     pathCreationWidget->hide();

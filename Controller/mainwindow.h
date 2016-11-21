@@ -120,9 +120,11 @@ public:
     bool loadMapConfig(const std::string fileName);
 
     /// returns true if the first date is later to the second date
-    bool isLater(const QStringList date, const QStringList otherDate);
+    bool isLater(const QStringList& date, const QStringList& otherDate);
 
     QPair<Position, QStringList> getHomeFromFile(const QString robot_name);
+
+    QVector<PathPoint> extractPathFromInfo(const QStringList& robotInfo);
 
 signals:
     void nameChanged(QString, QString);
@@ -139,7 +141,7 @@ signals:
     void cancelRobotModifications();
 
 private slots:
-    void sendPathSelectedRobotSlot();
+    void sendPathSelectedRobotSlot(const QString groupName, const QString pathName);
     void updateRobot(const QString ipAddress, const float posX, const float posY, const float ori);
     void updateMetadata(const int width, const int height, const float resolution, const float originX, const float originY);
     void updateMap(const QByteArray mapArray);

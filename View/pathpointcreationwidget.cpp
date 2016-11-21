@@ -114,21 +114,18 @@ void PathPointCreationWidget::setId(const int _id){
 
 void PathPointCreationWidget::actionClicked(QString action){
     //qDebug() << "PathPointCreationWidget::actionClicked called" << action;
-    PathPoint::Action _action;
     if(action.compare("Wait for") == 0){
         timeWidget->show();
-        _action = PathPoint::Action::WAIT;
     } else {
         timeWidget->hide();
-        timeEdit->setText("0");
-        _action = PathPoint::Action::HUMAN_ACTION;
+        timeEdit->setText("-1");
     }
-    emit actionChanged(id, static_cast<int>(_action), timeEdit->text());
+    emit actionChanged(id, timeEdit->text());
 }
 
 void PathPointCreationWidget::timeChanged(QString){
     //qDebug() << "PathPointCreationWidget::timeChanged called";
-    emit actionChanged(id, static_cast<int>(PathPoint::Action::WAIT), timeEdit->text());
+    emit actionChanged(id, timeEdit->text());
 }
 
 void PathPointCreationWidget::displayActionWidget(const bool show){
@@ -184,7 +181,7 @@ void PathPointCreationWidget::updatePointLabel(const float x, const float y){
 void PathPointCreationWidget::setPointLabel(const float _posX, const float _posY){
     //qDebug() << "PathPointCreationWidget::setPointLabel called";
     if(name.contains(PATH_POINT_NAME)){
-        pointLabel->setText(QString::number(id+1)+". "+QString::number(_posX,'f', 1) + "; " + QString::number(_posY,'f', 1));
+        pointLabel->setText(QString::number(id+1) + ". " + QString::number(_posX,'f', 1) + "; " + QString::number(_posY, 'f', 1));
     }
 }
 
@@ -193,16 +190,16 @@ void PathPointCreationWidget::removePathPoint(){
     emit removePathPoint(this);
 }
 
-void PathPointCreationWidget::setActionWidget(const PathPoint::Action action, const int waitTime){
-    actionBtn->setCurrentIndex(action);
+void PathPointCreationWidget::setActionWidget(const int waitTime){
 
-    if(action == 0){
+    if(waitTime >= 0){
         timeWidget->show();
         timeEdit->setText(QString::number(waitTime));
     } else {
         timeWidget->hide();
         timeEdit->setText("0");
+        actionBtn->setCurrentIndex(1);
     }
 
-    emit actionChanged(id, static_cast<int>(action), timeEdit->text());
+    emit actionChanged(id, timeEdit->text());
 }

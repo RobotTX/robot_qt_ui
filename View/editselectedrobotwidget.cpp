@@ -34,7 +34,7 @@ EditSelectedRobotWidget::EditSelectedRobotWidget(QWidget* parent, MainWindow* _m
     connect(mainWindow, SIGNAL(cancelRobotModifications()), this, SLOT(cancelRobotModificationsSlot()));
     connect(robotDialog->getCancelButton(), SIGNAL(clicked()), this, SLOT(cancelRobotModificationsSlot()));
     connect(robotDialog->getSaveButton(), SIGNAL(clicked()), mainWindow, SLOT(saveRobotModifications()));
-    connect(this, SIGNAL(sendPathSelectedRobot()), mainWindow, SLOT(sendPathSelectedRobotSlot()));
+    connect(this, SIGNAL(sendPathSelectedRobot(QString, QString)), mainWindow, SLOT(sendPathSelectedRobotSlot(QString, QString)));
 
     layout = new QVBoxLayout(this);
     robotView = NULL;
@@ -173,7 +173,7 @@ void EditSelectedRobotWidget::setSelectedRobot(QPointer<RobotView> const _robotV
     /// If the robot has a home, we display the name of the point, otherwise a default text
     if(robotView->getRobot()->getHome() != NULL){
         home = robotView->getRobot()->getHome();
-        homeLabel->setText("Home : "+robotView->getRobot()->getHome()->getPoint()->getName());
+        homeLabel->setText("Home : " + robotView->getRobot()->getHome()->getPoint()->getName());
 
     } else {
         homeBtn->setText("Assign a home point");
@@ -275,7 +275,7 @@ void EditSelectedRobotWidget::assignPath(QAction *action){
     setPath(paths->getPath(groupName, action->text(), foundFlag));
     assert(foundFlag);
     emit showPath(groupName, action->text());
-    emit sendPathSelectedRobot();
+    emit sendPathSelectedRobot(groupName, action->text());
 }
 
 void EditSelectedRobotWidget::openHomeMenu(){
