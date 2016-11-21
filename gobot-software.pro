@@ -77,7 +77,6 @@ HEADERS += \
            Controller/robotserverworker.h \
            View/editselectedrobotwidget.h
 
-
 FORMS += Controller/mainwindow.ui
 
 SOURCES += main.cpp \
