@@ -315,7 +315,7 @@ void MainWindow::initializeRobots(){
     in >> tmp;
     robots->setRobotsNameMap(tmp);
     fileRead.close();
-
+/*
     robotServerWorker = new RobotServerWorker(PORT_ROBOT_UPDATE);
 
     connect(robotServerWorker, SIGNAL(robotIsAlive(QString, QString, QString, QString, int)), this, SLOT(robotIsAliveSlot(QString, QString, QString, QString, int)));
@@ -324,7 +324,7 @@ void MainWindow::initializeRobots(){
     connect(&serverThread, SIGNAL(finished()), robotServerWorker, SLOT(deleteLater()));
     serverThread.start();
     robotServerWorker->moveToThread(&serverThread);
-
+*/
 /*
     QFileInfo fileInfo(QDir::currentPath(), "../gobot-software/" + QString(ROBOTS_NAME_FILE));
     QFile fileWrite(fileInfo.absoluteFilePath());

@@ -57,7 +57,9 @@
         <file alias="selected_robot_icon.png">orange_robot_icon.png</file>
         <file alias="hand.png">hand.png</file>
         <file alias="bucket.png">bucket.png</file>
-        <file alias="dot.png">dot.png</file>
+        <file alias="dot_l.png">dot_l.png</file>
+        <file alias="dot_m.png">dot_m.png</file>
+        <file alias="dot_s.png">dot_s.png</file>
         <file alias="line.png">line.png</file>
         <file alias="rectangle.png">rectangle.png</file>
         <file alias="filled_rectangle.png">filled_rectangle.png</file>
