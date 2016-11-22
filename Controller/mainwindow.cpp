@@ -313,7 +313,7 @@ void MainWindow::initializeRobots(){
     in >> tmp;
     robots->setRobotsNameMap(tmp);
     fileRead.close();
-/*
+
     robotServerWorker = new RobotServerWorker(PORT_ROBOT_UPDATE);
 
     connect(robotServerWorker, SIGNAL(robotIsAlive(QString, QString, QString, QString, int)), this, SLOT(robotIsAliveSlot(QString, QString, QString, QString, int)));
@@ -322,8 +322,10 @@ void MainWindow::initializeRobots(){
     connect(&serverThread, SIGNAL(finished()), robotServerWorker, SLOT(deleteLater()));
     serverThread.start();
     robotServerWorker->moveToThread(&serverThread);
-*/
-/*
+
+   /*
+
+
     QFileInfo fileInfo(QDir::currentPath(), "../gobot-software/" + QString(ROBOTS_NAME_FILE));
     QFile fileWrite(fileInfo.absoluteFilePath());
 
@@ -375,7 +377,7 @@ void MainWindow::initializeRobots(){
 
 
     for(int i = 0; i < robots->getRobotsVector().size(); i++){
-        QFileInfo fileinfo(QDir::currentPath(), "../gobot-software/robots_paths/" + robots->getRobotsVector().at(i)->getRobot()->getName() + "_path.dat");
+        QFileInfo fileinfo(QDir::currentPath(), "../gobot-software/robots_paths/" + robots->getRobotsVector().at(i)->getRobot()->getName() + "_path");
         QFile robotPathFile(fileinfo.absoluteFilePath());
         qDebug() << "robot file" << fileinfo.absoluteFilePath();
         if(robotPathFile.exists()){
@@ -384,8 +386,8 @@ void MainWindow::initializeRobots(){
             in >> *(robots->getRobotsVector().at(i)->getRobot());
             robotPathFile.close();
         }
-    }*/
-
+    }
+*/
     //qDebug() << "RobotsNameMap on init" << robots->getRobotsNameMap();
 }
 
@@ -510,6 +512,7 @@ void MainWindow::deletePath(int robotNb){
                 {
                     /// if the command is succesfully sent to the robot, we apply the change
                     if(commandController->sendCommand(robot, QString("k"))){
+
                         clearPath(robotNb);
                         topLayout->setLabel(TEXT_COLOR_SUCCESS, "The path of " + robot->getName() + " has been successfully deleted");
                     } else
@@ -1157,9 +1160,9 @@ bool MainWindow::changeRobotName(QString name){
 
     if(commandController->sendCommand(selectedRobot->getRobot(), QString("a \"") + name + "\"")){
         /// updates the name of the file which stores the path of the robot
-        QFile robotPathFile(QDir::currentPath() + QDir::separator() + "robots_paths" + QDir::separator() + selectedRobot->getRobot()->getName() + "_path.dat");
+        QFile robotPathFile(QDir::currentPath() + QDir::separator() + "robots_paths" + QDir::separator() + selectedRobot->getRobot()->getName() + "_path");
         if(robotPathFile.exists())
-            robotPathFile.rename(QDir::currentPath() + QDir::separator() + "robots_paths" + QDir::separator() + name + "_path.dat");
+            robotPathFile.rename(QDir::currentPath() + QDir::separator() + "robots_paths" + QDir::separator() + name + "_path");
 
         /// updates the name of the file which stores the home of the robot
         QFile robotHomeFile(QDir::currentPath() + QDir::separator() + "robots_homes" + QDir::separator() + selectedRobot->getRobot()->getName());
@@ -1393,14 +1396,17 @@ void MainWindow::clearPath(const int robotNb){
     robots->getRobotsVector().at(robotNb)->getRobot()->setGroupPathName("");
 
     /// serializes the new path (which is actually an empty path)
-    QFileInfo fileinfo(QDir::currentPath(), "../gobot-software/robots_paths/" +
-                       robots->getRobotsVector().at(robotNb)->getRobot()->getName() + "_path.dat");
-    QFile robotPathFile(fileinfo.absoluteFilePath());
-    robotPathFile.resize(0);
-    robotPathFile.open(QIODevice::WriteOnly);
-    QDataStream out(&robotPathFile);
-    out << *(robots->getRobotsVector().at(robotNb)->getRobot());
-    robotPathFile.close();
+    QFile fileInfo(QDir::currentPath() + QDir::separator() + "robots_paths" + QDir::separator()
+                   + robots->getRobotsVector().at(robotNb)->getRobot()->getName() + "_path");
+    if(fileInfo.open(QIODevice::ReadWrite)){
+        fileInfo.resize(0);
+        QTextStream out(&fileInfo);
+        QString currentDateTime = QDateTime::currentDateTime().toString("yyyy-MM-dd-hh-mm-ss");
+        out << currentDateTime;
+        out << "%" << " " << "%" << " ";
+        qDebug() << "date now is" << currentDateTime;
+        fileInfo.close();
+    }
 
     if(robots->getRobotsVector().at(robotNb)->getRobot()->isPlayingPath()){
         qDebug() << "MainWindow::clearPath pause path on robot before supp " << robotNb << " : " << robots->getRobotsVector().at(robotNb)->getRobot()->getName();
@@ -1464,8 +1470,7 @@ void MainWindow::robotIsAliveSlot(QString hostname, QString ip, QString mapId, Q
             QMap<QString, QString> tmp = robots->getRobotsNameMap();
             tmp[ip] = hostname;
             robots->setRobotsNameMap(tmp);
-            QFileInfo fileInfo(QDir::currentPath(), "../gobot-software/" + QString(ROBOTS_NAME_FILE));
-            QFile fileWrite(fileInfo.absoluteFilePath());
+            QFile fileWrite(QDir::currentPath() + QDir::separator() + "gobot-software" + QDir::separator() + QString(ROBOTS_NAME_FILE));
             fileWrite.resize(0);
             fileWrite.open(QIODevice::WriteOnly);
             QDataStream out(&fileWrite);
@@ -4340,7 +4345,17 @@ void MainWindow::sendPathSelectedRobotSlot(const QString groupName, const QStrin
     // TODO check if pathStr empty, means deleting the path => cmd send without parem => check robotFiles/command.cpp
     if(commandController->sendCommand(robot, QString("i ") + pathStr)){
         /// we update the path on the application side by serializing the path
-
+        QFile fileInfo(QDir::currentPath() + QDir::separator() + "robots_paths" + QDir::separator() + robot->getName() + "_path");
+        if(fileInfo.open(QIODevice::ReadWrite)){
+            fileInfo.resize(0);
+            QTextStream out(&fileInfo);
+            QString currentDateTime = QDateTime::currentDateTime().toString("yyyy-MM-dd-hh-mm-ss");
+            out << currentDateTime;
+            out << "%" << groupName << "%" << pathName;
+            qDebug() << "date now is" << currentDateTime;
+            fileInfo.close();
+            editSelectedRobotWidget->setPath(currPath);
+        }
         qDebug() << "MainWindow::robotSavedEvent Path saved for robot" << robot->getIp();
     } else {
         qDebug() << "MainWindow::robotSavedEvent Path failed to be saved, please try again";
@@ -4436,7 +4451,6 @@ void MainWindow::saveNoRobotPathSlot(){
     /// add this path to the file
     serializePaths(QDir::currentPath() + QDir::separator() + "paths.dat");
 
-
     //editSelectedRobotWidget->setPathChanged(true);
     //editSelectedRobotWidget->setPath(pathPainter->getCurrentPath());
     //emit updatePathPainter();
@@ -4476,15 +4490,17 @@ void MainWindow::displayAssignedPath(QString groupName, QString pathName){
         bottomLayout->getViewPathRobotBtnGroup()->button(id)->setChecked(true);
         viewPathSelectedRobot(id, true);
     }
-    QFileInfo fileinfo(QDir::currentPath(), "../gobot-software/robots_paths/" +
-                       selectedRobot->getRobot()->getName() + "_path.dat");
-    QFile robotPathFile(fileinfo.absoluteFilePath());
-    qDebug() << robotPathFile.exists() << robotPathFile.fileName();
-    robotPathFile.resize(0);
-    if(robotPathFile.open(QIODevice::WriteOnly)){
-        QDataStream out(&robotPathFile);
-        out << *selectedRobot->getRobot();
-        robotPathFile.close();
+
+    /// we update the path on the application side by serializing the path
+    QFile fileInfo(QDir::currentPath() + QDir::separator() + "robots_paths" + QDir::separator() + selectedRobot->getRobot()->getName() + "_path");
+    if(fileInfo.open(QIODevice::ReadWrite)){
+        fileInfo.resize(0);
+        QTextStream out(&fileInfo);
+        QString currentDateTime = QDateTime::currentDateTime().toString("yyyy-MM-dd-hh-mm-ss");
+        out << currentDateTime;
+        out << "%" << groupName << "%" << pathName;
+        qDebug() << "date now is" << currentDateTime;
+        fileInfo.close();
     }
 }
 
@@ -4675,7 +4691,6 @@ void MainWindow::saveMapState(){
     /// saves the current configuration in the model
     mapState.first = mapPixmapItem->pos();
     mapState.second = graphicsView->getZoomCoeff();
-    qDebug() << "Zoom saved" << mapState.second;
 
     QFileInfo newMapInfo(QDir::currentPath(), "../gobot-software/currentMap.txt");
     std::ofstream file(newMapInfo.absoluteFilePath().toStdString(), std::ios::out | std::ios::trunc);
@@ -4728,8 +4743,6 @@ void MainWindow::showHomes(QPointer<Robot> robot){
                         i.value()->at(j)->setPixmap(PointView::PixmapType::NORMAL);
                         i.value()->at(j)->getPoint()->setHome(Point::HOME);
                     }
-                    //} else
-                        //qDebug() << "robot's home" << robot->getName() << i.value()->at(j)->getPoint()->getName();
                 }
             }
         }
@@ -4814,7 +4827,6 @@ bool MainWindow::loadMapConfig(const std::string fileName){
         mapState.first.setY(centerY);
         map->setOrigin(Position(originX, originY));
         map->setResolution(resolution);
-        qDebug() << QString::fromStdString(mapFile) << _height << _width << centerX << centerY << originX << originY << resolution;
         setWindowTitle(QString::fromStdString(mapFile));
         file.close();
     } else
@@ -4825,90 +4837,10 @@ bool MainWindow::loadMapConfig(const std::string fileName){
 }
 
 void MainWindow::updateRobotInfo(QString robot_name, QString robotInfo){
-    QPointer<RobotView> robotView = robots->getRobotViewByName(robot_name);
-    assert(robotView);
 
-    /// retrieves the home point of the robot if the robot has one
-    QPair<Position, QStringList> appHome = getHomeFromFile(robot_name);
-    Position p = appHome.first;
-    QStringList dateLastModification = appHome.second;
+    updateHomeInfo(robot_name, robotInfo);
 
-    robotInfo.replace("\n", " ");
-
-    QStringList list = robotInfo.split(" ", QString::SkipEmptyParts);
-    Position robot_home_position(list.at(1).toDouble(), list.at(2).toDouble());
-    QStringList dateHomeOnRobot = list.at(3).split("-");
-    QStringList datePathOnRobot = list.at(4).split("-");
-
-    QFileInfo fo(QDir::currentPath() + QDir::separator() + "robots_paths" + QDir::separator() + robot_name + "_path.dat");
-    QStringList dateLastPathModification = fo.lastModified().toString("yyyy.MM.dd.hh.mm.ss").split(".");
-    qDebug() << "datelasthomemodif" << dateLastModification;
-    qDebug() << "dateHomeOnRobot ! : " << dateHomeOnRobot;
-    qDebug() << "datePathOnRobot" << datePathOnRobot;
-    qDebug() << "datelastpathmodif" << dateLastPathModification;
-    qDebug() << "home file is more recent on robot" << isLater(dateHomeOnRobot, dateLastModification);
-    qDebug() << "path file is more recent on robot" << isLater(datePathOnRobot, dateLastPathModification);
-    qDebug() << "MainWindow::updateRobotInfo" << list;
-    QVector<PathPoint> pathounet = extractPathFromInfo(list);
-    qDebug()<< "here comes pathounet";
-    for(int i = 0; i < pathounet.size(); i++)
-        qDebug() << pathounet.at(i).getPoint().getPosition().getX()
-                 << pathounet.at(i).getPoint().getPosition().getY()
-                 << pathounet.at(i).getWaitTime();
-
-    QPair<QString, QString> pathInfo = paths->findPath(pathounet);
-    qDebug() << "have found path" << pathInfo.first << pathInfo.second;
-
-    qDebug() << "my position is" << p.getX() << p.getY();
-    qDebug() << "robot home position" << robot_home_position.getX() << robot_home_position.getY();
-    qDebug() << "CONTENT IS" << robotInfo;
-
-    /// if the robot and the application have the same home we don't do anything besides setting the point in the application (no need to change any files)
-    if(robot_home_position != p){
-
-         QSharedPointer<PointView> home = points->findPointViewByPos(p);
-
-         if(home){
-            /// the application has a home, we need to compare with the robot's home if one exists
-            QSharedPointer<PointView> home_sent_by_robot = points->findPointViewByPos(robot_home_position);
-            if(home_sent_by_robot){
-                /// if the robot's file is more recent we update on the application side and we look for the pointview corresponding to
-                /// the coordinates given by the robot
-                if(isLater(dateHomeOnRobot, dateLastModification)){
-                    setHomeAtConnection(robot_name, robot_home_position);
-                    updateHomeFile(robot_name, robot_home_position, dateHomeOnRobot);
-                } else {
-                    /// the application has the most recent file, we send the updated coordinates to the robot
-                    if(sendHomeToRobot(robotView, home))
-                        setHomeAtConnection(robot_name, p);
-                }
-            } else {
-                if(sendHomeToRobot(robotView, home))
-                    setHomeAtConnection(robot_name, p);
-            }
-
-        } else {
-            qDebug() << " the robot is sending its home and the application does not have one";
-            /// if the application does not have a home stored on its side but the robot is sending one
-            /// that we are able to find
-            QSharedPointer<PointView> home_sent_by_robot = points->findPointViewByPos(robot_home_position);
-            if(home_sent_by_robot){
-                /// sets the home inside the application (house icon, extra buttons etc...)
-                setHomeAtConnection(robot_name, robot_home_position);
-
-                /// updates the home file on the application side
-                updateHomeFile(robot_name, robot_home_position, dateHomeOnRobot);
-
-            } else
-                qDebug() << "could not find the point described as its home by the robot";
-        }
-    } else {
-        /// the robot and the application have the same point so we set this one as the home of the robot
-        /// no need to modify any files
-        QSharedPointer<PointView> home_app = points->findPointViewByPos(p);
-        if(home_app)
-            setHomeAtConnection(robot_name, p);
-    }
+    updatePathInfo(robot_name, robotInfo);
 }
 
 bool MainWindow::isLater(const QStringList& date, const QStringList& otherDate){
@@ -4922,7 +4854,7 @@ bool MainWindow::isLater(const QStringList& date, const QStringList& otherDate){
 }
 
 QPair<Position, QStringList> MainWindow::getHomeFromFile(const QString robot_name){
-    /// retrives the home point of the robot if the robot has one
+    /// retrieves the home point of the robot if the robot has one
     QFile fileInfo(QDir::currentPath() + QDir::separator() + "robots_homes" + QDir::separator() + robot_name);
     Position p;
     QStringList dateLastModification;
@@ -4985,17 +4917,271 @@ QVector<PathPoint> MainWindow::extractPathFromInfo(const QStringList &robotInfo)
     for(int i = 5; i < robotInfo.size(); i += 3){
         double xOnRobot = robotInfo.at(i).toDouble();
         double xInApp = (xOnRobot - map->getOrigin().getX()) / map->getResolution() + ROBOT_WIDTH;
-        qDebug() << "xInapp after CONVERSION" << xInApp;
         double yOnRobot = robotInfo.at(i+1).toDouble();
         double yInApp = ((yOnRobot - map->getOrigin().getY()) / map->getResolution() + ROBOT_WIDTH/2 - map->getHeight()) * -1;
-        qDebug() << "yInapp after CONVERSION" << yInApp;
         path.push_back(PathPoint(Point(" ", xInApp, yInApp), robotInfo.at(i+2).toDouble()));
     }
     return path;
 }
-/*
-float oldPosX = pathPoint->getPoint().getPosition().getX();
-float oldPosY = pathPoint->getPoint().getPosition().getY();
 
-float newPosX = (oldPosX - ROBOT_WIDTH) * map->getResolution() + map->getOrigin().getX();
-float newPosY = (-oldPosY + map->getHeight() - ROBOT_WIDTH/2) * map->getResolution() + map->getOrigin().getY();*/
+void MainWindow::updateHomeInfo(const QString robot_name, QString robotInfo){
+    QPointer<RobotView> robotView = robots->getRobotViewByName(robot_name);
+
+    /// retrieves the home point of the robot if the robot has one
+    QPair<Position, QStringList> appHome = getHomeFromFile(robot_name);
+    Position p = appHome.first;
+    QStringList dateLastModification = appHome.second;
+
+    robotInfo.replace("\n", " ");
+
+    QStringList list = robotInfo.split(" ", QString::SkipEmptyParts);
+    Position robot_home_position(list.at(1).toDouble(), list.at(2).toDouble());
+    QStringList dateHomeOnRobot = list.at(3).split("-");
+
+    /// if the robot and the application have the same home we don't do anything besides setting the point in the application (no need to change any files)
+    if(robot_home_position != p){
+
+         QSharedPointer<PointView> home = points->findPointViewByPos(p);
+
+         if(home){
+            /// the application has a home, we need to compare with the robot's home if one exists
+            QSharedPointer<PointView> home_sent_by_robot = points->findPointViewByPos(robot_home_position);
+            if(home_sent_by_robot){
+                /// if the robot's file is more recent we update on the application side and we look for the pointview corresponding to
+                /// the coordinates given by the robot
+                if(isLater(dateHomeOnRobot, dateLastModification)){
+                    setHomeAtConnection(robot_name, robot_home_position);
+                    updateHomeFile(robot_name, robot_home_position, dateHomeOnRobot);
+                } else {
+                    /// the application has the most recent file, we send the updated coordinates to the robot
+                    if(sendHomeToRobot(robotView, home))
+                        setHomeAtConnection(robot_name, p);
+                }
+            } else {
+                if(sendHomeToRobot(robotView, home))
+                    setHomeAtConnection(robot_name, p);
+            }
+
+        } else {
+            qDebug() << " the robot is sending its home and the application does not have one";
+            /// if the application does not have a home stored on its side but the robot is sending one
+            /// that we are able to find
+            QSharedPointer<PointView> home_sent_by_robot = points->findPointViewByPos(robot_home_position);
+            if(home_sent_by_robot){
+                /// sets the home inside the application (house icon, extra buttons etc...)
+                setHomeAtConnection(robot_name, robot_home_position);
+
+                /// updates the home file on the application side
+                updateHomeFile(robot_name, robot_home_position, dateHomeOnRobot);
+
+            } else
+                qDebug() << "could not find the point described as its home by the robot";
+        }
+    } else {
+        /// the robot and the application have the same point so we set this one as the home of the robot
+        /// no need to modify any files
+        QSharedPointer<PointView> home_app = points->findPointViewByPos(p);
+        if(home_app)
+            setHomeAtConnection(robot_name, p);
+    }
+}
+
+void MainWindow::updatePathInfo(const QString robot_name, QString robotInfo){
+    QPointer<RobotView> robotView = robots->getRobotViewByName(robot_name);
+
+    /// retrieves the path of the robot on the application side if the robot has one
+    QPair<QPair<QString, QString>, QStringList> appPathInfo = getPathFromFile(robot_name);
+
+    robotInfo.replace("\n", " ");
+
+    QStringList l = robotInfo.split(" ", QString::SkipEmptyParts);
+
+    qDebug() << "updatepathinfo list" << l;
+
+    QVector<PathPoint> robotPath = extractPathFromInfo(l);
+
+    /// contains the groupname and pathname of the path described by the robot
+    QPair<QString, QString> robotPathInApp = paths->findPath(robotPath);
+
+    /// if the robot has a path
+    if(robotPathInApp.first.compare("")){
+
+        bool flag(false);
+        paths->getPath(appPathInfo.first.first, appPathInfo.first.second, flag);
+
+        /// the application also has a path for this robot
+        if(flag){
+            /// they have different paths so we keep the most recent one
+            if(robotPathInApp.first.compare(appPathInfo.first.first) || robotPathInApp.second.compare(appPathInfo.first.second)){
+                qDebug() << "mainWindow::updatepathinfo DIFFERENT PATHS";
+                /// the file is more recent on the robot
+                /// we do as if the application did not have a path at all
+                if(isLater(l.at(4).split("-", QString::SkipEmptyParts), appPathInfo.second)){
+                    qDebug() << " BUT ROBOT MORE RECENT";
+                    /// the application does not have a path so we use the path sent by the robot and update the file on the app side
+                    bool foundFlag(true);
+                    pathPainter->setCurrentPath(paths->getPath(robotPathInApp.first, robotPathInApp.second, foundFlag), robotPathInApp.second);
+                    editSelectedRobotWidget->setAssignedPath(robotPathInApp.second);
+                    editSelectedRobotWidget->setGroupPath(robotPathInApp.first);
+                    robotView->getRobot()->setPath(pathPainter->getCurrentPath());
+                    robotView->getRobot()->setGroupPathName(robotPathInApp.first);
+                    robotView->getRobot()->setPathName(robotPathInApp.second);
+                    int id = robots->getRobotId(robotView->getRobot()->getName());
+                    bottomLayout->updateRobot(id, robotView);
+                    if(pathPainter->getCurrentPath().size() > 0){
+                        bottomLayout->getViewPathRobotBtnGroup()->button(id)->setChecked(true);
+                        viewPathSelectedRobot(id, true);
+                    }
+                    QFile fileInfo(QDir::currentPath() + QDir::separator() + "robots_paths" + QDir::separator()
+                                   + robot_name + "_path");
+                    if(fileInfo.open(QIODevice::ReadWrite)){
+                        fileInfo.resize(0);
+                        QTextStream out(&fileInfo);
+                        QString currentDateTime = QDateTime::currentDateTime().toString("yyyy-MM-dd-hh-mm-ss");
+                        /// contains the date of the last modification of the path file on the robot
+                        out << l.at(4);
+                        out << "%" << robotPathInApp.first << "%" << robotPathInApp.second;
+                        qDebug() << "date now is" << l.at(4);
+                        fileInfo.close();
+                    }
+
+                } else {
+                    qDebug() << "BUT APP MORE RECENT";
+                    /// the file is more recent on the application side
+                    /// we sent the path to the robot
+                    /// but the application has one
+                    bool flag(false);
+                    Paths::Path currPath = paths->getPath(appPathInfo.first.first, appPathInfo.first.second, flag);
+                    QString pathStr = prepareCommandPath(currPath);
+                    if(flag){
+                        if(commandController->sendCommand(robotView->getRobot(), QString("i ") + pathStr)){
+                            bool foundFlag(false);
+                            pathPainter->setCurrentPath(paths->getPath(appPathInfo.first.first, appPathInfo.first.second, foundFlag), appPathInfo.first.second);
+                            editSelectedRobotWidget->setAssignedPath(appPathInfo.first.second);
+                            editSelectedRobotWidget->setGroupPath(appPathInfo.first.first);
+                            robotView->getRobot()->setPath(pathPainter->getCurrentPath());
+                            robotView->getRobot()->setGroupPathName(appPathInfo.first.first);
+                            robotView->getRobot()->setPathName(appPathInfo.first.second);
+                            int id = robots->getRobotId(robot_name);
+                            bottomLayout->updateRobot(id, robotView);
+                            if(pathPainter->getCurrentPath().size() > 0){
+                                bottomLayout->getViewPathRobotBtnGroup()->button(id)->setChecked(true);
+                                viewPathSelectedRobot(id, true);
+                            }
+                        }
+                    }
+                }
+            }
+            /// they have the same path
+            else {
+                qDebug() << "mainWindow::updatepathinfo SAME PATH";
+                bool foundFlag(true);
+                pathPainter->setCurrentPath(paths->getPath(robotPathInApp.first, robotPathInApp.second, foundFlag), robotPathInApp.second);
+                editSelectedRobotWidget->setAssignedPath(robotPathInApp.second);
+                editSelectedRobotWidget->setGroupPath(robotPathInApp.first);
+                robotView->getRobot()->setPath(pathPainter->getCurrentPath());
+                robotView->getRobot()->setGroupPathName(robotPathInApp.first);
+                robotView->getRobot()->setPathName(robotPathInApp.second);
+                int id = robots->getRobotId(robotView->getRobot()->getName());
+                bottomLayout->updateRobot(id, robotView);
+                if(pathPainter->getCurrentPath().size() > 0){
+                    bottomLayout->getViewPathRobotBtnGroup()->button(id)->setChecked(true);
+                    viewPathSelectedRobot(id, true);
+                }
+            }
+        } else {
+            qDebug() << "mainWindow::updatepathinfo ONLY ROBOT HAS A PATH";
+            /// the application does not have a path so we use the path sent by the robot and update the file on the app side
+            bool foundFlag(true);
+            pathPainter->setCurrentPath(paths->getPath(robotPathInApp.first, robotPathInApp.second, foundFlag), robotPathInApp.second);
+            editSelectedRobotWidget->setAssignedPath(robotPathInApp.second);
+            editSelectedRobotWidget->setGroupPath(robotPathInApp.first);
+            robotView->getRobot()->setPath(pathPainter->getCurrentPath());
+            robotView->getRobot()->setGroupPathName(robotPathInApp.first);
+            robotView->getRobot()->setPathName(robotPathInApp.second);
+            int id = robots->getRobotId(robotView->getRobot()->getName());
+            bottomLayout->updateRobot(id, robotView);
+            if(pathPainter->getCurrentPath().size() > 0){
+                bottomLayout->getViewPathRobotBtnGroup()->button(id)->setChecked(true);
+                viewPathSelectedRobot(id, true);
+            }
+            QFile fileInfo(QDir::currentPath() + QDir::separator() + "robots_paths" + QDir::separator()
+                           + robot_name + "_path");
+            if(fileInfo.open(QIODevice::ReadWrite)){
+                fileInfo.resize(0);
+                QTextStream out(&fileInfo);
+                QString currentDateTime = QDateTime::currentDateTime().toString("yyyy-MM-dd-hh-mm-ss");
+                /// contains the date of the last modification of the path file on the robot
+                out << l.at(4);
+                out << "%" << robotPathInApp.first << "%" << robotPathInApp.second;
+                qDebug() << "date now is" << l.at(4);
+                fileInfo.close();
+            }
+        }
+    } else {
+        /// the robot does not have a path
+        bool flag(false);
+        Paths::Path currPath = paths->getPath(appPathInfo.first.first, appPathInfo.first.second, flag);
+        if(flag){
+            qDebug() << "mainWindow::updatepathinfo ONLY APP HAS A PATH";
+            /// but the application has one
+            /// prepares the cmd to send to the robot
+            QString pathStr = prepareCommandPath(currPath);
+
+            if(commandController->sendCommand(robotView->getRobot(), QString("i ") + pathStr)){
+                bool foundFlag(false);
+                pathPainter->setCurrentPath(paths->getPath(appPathInfo.first.first, appPathInfo.first.second, foundFlag), appPathInfo.first.second);
+                editSelectedRobotWidget->setAssignedPath(appPathInfo.first.second);
+                editSelectedRobotWidget->setGroupPath(appPathInfo.first.first);
+                robotView->getRobot()->setPath(pathPainter->getCurrentPath());
+                robotView->getRobot()->setGroupPathName(appPathInfo.first.first);
+                robotView->getRobot()->setPathName(appPathInfo.first.second);
+                int id = robots->getRobotId(robot_name);
+                bottomLayout->updateRobot(id, robotView);
+                if(pathPainter->getCurrentPath().size() > 0){
+                    bottomLayout->getViewPathRobotBtnGroup()->button(id)->setChecked(true);
+                    viewPathSelectedRobot(id, true);
+                }
+            }
+        }
+        else qDebug() << "mainWindow::updatepathinfo NO PATH ON EITHER SIDE";
+    }
+}
+
+QPair<QPair<QString, QString>, QStringList> MainWindow::getPathFromFile(const QString robot_name){
+    /// QPair<QPair<groupName, pathName>, date>
+    QPair<QPair<QString, QString>, QStringList> pathInfo;
+    QFile fileInfo(QDir::currentPath() + QDir::separator() + "robots_paths" + QDir::separator() + robot_name + "_path");
+    if(fileInfo.open(QIODevice::ReadWrite)){
+        QRegExp regex("[-\n%]");
+        QString content = fileInfo.readAll();
+        QStringList l = content.split(regex, QString::SkipEmptyParts);
+        qDebug() << "path QStringlist" << l;
+        if(l.size() == 8){
+            for(int i = 0; i < 6; i++)
+                pathInfo.second.push_back(l.at(i));
+            pathInfo.first.first = l.at(6);
+            pathInfo.first.second = l.at(7);
+        }
+    }
+    fileInfo.close();
+    return pathInfo;
+}
+
+QString MainWindow::prepareCommandPath(const Paths::Path &path) const {
+    QString pathStr("");
+    for(int i = 0; i < path.size(); i++){
+        QSharedPointer<PathPoint> pathPoint = path.at(i);
+        float oldPosX = pathPoint->getPoint().getPosition().getX();
+        float oldPosY = pathPoint->getPoint().getPosition().getY();
+
+        float newPosX = (oldPosX - ROBOT_WIDTH) * map->getResolution() + map->getOrigin().getX();
+        float newPosY = (-oldPosY + map->getHeight() - ROBOT_WIDTH/2) * map->getResolution() + map->getOrigin().getY();
+        int waitTime = -1;
+        if(pathPoint->getWaitTime() > -1){
+            waitTime = pathPoint->getWaitTime();
+        }
+        pathStr += + "\"" + QString::number(newPosX) + "\" \"" + QString::number(newPosY) + "\" \"" + QString::number(waitTime)+ "\" ";
+    }
+    return pathStr;
+}

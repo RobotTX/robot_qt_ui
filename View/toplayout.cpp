@@ -73,7 +73,6 @@ TopLayout::TopLayout(QMainWindow* parent): QWidget(parent), lastMessage(TEXT_COL
 
     this->setPalette( pal);
     this->setAutoFillBackground(true);
-
 }
 
 void TopLayout::setLabel(const QString msgType, const QString msg){

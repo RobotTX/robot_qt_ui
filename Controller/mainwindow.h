@@ -124,8 +124,14 @@ public:
     bool isLater(const QStringList& date, const QStringList& otherDate);
 
     QPair<Position, QStringList> getHomeFromFile(const QString robot_name);
+    QPair<QPair<QString, QString>, QStringList> getPathFromFile(const QString robot_name);
 
     QVector<PathPoint> extractPathFromInfo(const QStringList& robotInfo);
+
+    void updateHomeInfo(const QString robot_name, QString robotInfo);
+    void updatePathInfo(const QString robot_name, QString robotInfo);
+
+    QString prepareCommandPath(const Paths::Path& path) const;
 
 signals:
     void nameChanged(QString, QString);

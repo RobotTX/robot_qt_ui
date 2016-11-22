@@ -121,8 +121,6 @@ void GroupButtonGroup::updateButtons(){
         for(int i = 0; i < points->getGroups()->value(NO_GROUP_NAME)->size(); i++){
             QSharedPointer<Point> currentPoint = points->getGroups()->value(NO_GROUP_NAME)->at(i)->getPoint();
             CustomPushButton* pointButton = new CustomPushButton(currentPoint->getName(), this, false, CustomPushButton::ButtonType::LEFT_MENU, "left", true);
-            //pointButton->setAutoDefault(true);
-
             buttonGroup->addButton(pointButton, index + i);
             layout->addWidget(pointButton);
             if(points->findPointView(currentPoint->getName())->isVisible())
@@ -146,10 +144,8 @@ void GroupButtonGroup::uncheck(void){
 }
 
 void GroupButtonGroup::mouseDoubleClickEvent(QMouseEvent * /* unused */){
-    //qDebug() << "GroupButtonGroup::mouseDoubleClickEvent called";
     if(buttonGroup->checkedButton())
         emit doubleClick(buttonGroup->checkedButton()->text());
-
 }
 
 void GroupButtonGroup::setEnabled(const bool enable){
@@ -235,6 +231,5 @@ void GroupButtonGroup::resizeEvent(QResizeEvent *event){
     QWidget* widget = static_cast<QWidget*>(parent()->parent()->parent());
     int maxWidth = widget->width() - 10;
     setMaximumWidth(maxWidth);
-
     QWidget::resizeEvent(event);
 }

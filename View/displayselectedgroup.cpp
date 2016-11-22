@@ -135,7 +135,6 @@ void DisplaySelectedGroup::resizeEvent(QResizeEvent *event){
     QWidget::resizeEvent(event);
 }
 
-
 /// to delete an point with the delete key
 void DisplaySelectedGroup::keyPressEvent(QKeyEvent *event){
     if(pointButtonGroup->getButtonGroup()->checkedButton()){

@@ -24,7 +24,6 @@ signals:
 
 private:
     int port;
-    //QTcpServer* server;
 };
 
 #endif /// ROBOT_SERVER_WORKER_H

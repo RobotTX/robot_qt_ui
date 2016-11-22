@@ -265,7 +265,7 @@ void BottomLayout::addRobot(QPointer<RobotView> const robotView){
     HomeBtnGroup->addButton(goHomeBtn, i);
     columnHome->addWidget(goHomeBtn);
 
-    /// Creation of the fourth column, with the button to play/pause the robot
+    /// Creation of the fifth column, with the button to play/pause the robot
     CustomPushButton* playRobotBtn = new CustomPushButton(QIcon(":/icons/play.png"),"", this, false, CustomPushButton::ButtonType::BOTTOM);
     playRobotBtn->setMaximumWidth(((QWidget*)parent())->width()/20);
     playRobotBtn->setMinimumWidth(((QWidget*)parent())->width()/20);
@@ -275,7 +275,7 @@ void BottomLayout::addRobot(QPointer<RobotView> const robotView){
     playRobotBtnGroup->addButton(playRobotBtn, i);
     columnPlay->addWidget(playRobotBtn);
 
-    ///  Creation of the fifth column to stop playing the path (new !)
+    ///  Creation of the sixth column to stop playing the path (new !)
     CustomPushButton* stopRobotBtn = new CustomPushButton(QIcon(":/icons/stop.png"),"", this, false, CustomPushButton::ButtonType::BOTTOM);
     stopRobotBtn->setMaximumWidth(static_cast<QWidget*>(parent())->width()/20);
     stopRobotBtn->setMinimumWidth(static_cast<QWidget*>(parent())->width()/20);
@@ -286,7 +286,7 @@ void BottomLayout::addRobot(QPointer<RobotView> const robotView){
     stopRobotBtnGroup->addButton(stopRobotBtn, i);
     columnStop->addWidget(stopRobotBtn);
 
-    /// Creation of the sixth column, with the button to delete the path of the robot
+    /// Creation of the seventh column, with the button to delete the path of the robot
     CustomPushButton* deletePathButton = new CustomPushButton(QIcon(":/icons/empty.png"),"", this, false, CustomPushButton::ButtonType::BOTTOM);
     deletePathButton->setMaximumWidth(static_cast<QWidget*>(parent())->width()/20);
     deletePathButton->setMinimumWidth(static_cast<QWidget*>(parent())->width()/20);
@@ -435,25 +435,21 @@ void BottomLayout::uncheckAll(){
 QString BottomLayout::pathToStr(const QVector<QSharedPointer<PathPoint> >& path, const int stage){
     QString pathStr = QString("");
     for(int i = 0; i < path.size(); i++){
-        if(stage > 0 && i < stage){
+        if(stage > 0 && i < stage)
             pathStr += "<font color=\"green\">";
-        }
 
-        if(i != 0){
+        if(i != 0)
             pathStr += " - ";
-        }
 
-        if(path.at(i)->getPoint().getName().contains(PATH_POINT_NAME)){
+        if(path.at(i)->getPoint().getName().contains(PATH_POINT_NAME))
             pathStr += QString::number(path.at(i)->getPoint().getPosition().getX(),'f', 1)
                     + "; "
                     + QString::number(path.at(i)->getPoint().getPosition().getY(),'f', 1);
-        } else {
+        else
             pathStr += path.at(i)->getPoint().getName();
-        }
 
-        if(stage >0 && i <= stage){
+        if(stage >0 && i <= stage)
             pathStr += "</font>";
-        }
     }
     return pathStr;
 }

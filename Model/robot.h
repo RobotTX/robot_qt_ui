@@ -18,19 +18,21 @@ class QMainWindow;
 #include "Controller/robotpositionworker.h"
 #include "Controller/metadataworker.h"
 #include "Controller/sendnewmapworker.h"
+#include "Controller/localmapworker.h"
 
 #define PORT_MAP_METADATA 4000
 #define PORT_ROBOT_POS 4001
 #define PORT_MAP 4002
 #define PORT_CMD 5600
 #define PORT_NEW_MAP 5601
+#define PORT_LOCAL_MAP 5602
 
 /**
  * @brief The Robot class
  * Represent a Robot
  */
 
-class Robot : public QObject{
+class Robot : public QObject {
     Q_OBJECT
 public:
     Robot(MainWindow* mainWindow, const QSharedPointer<Paths> &_paths, const QString name, const QString addressIp);
@@ -130,11 +132,13 @@ signals:
     void stopRobotWorker();
     void stopMetadataWorker();
     void stopNewMapWorker();
+    void stopLocalMapWorker();
 
     void startCmdRobotWorker();
     void startRobotWorker();
     void startMetadataWorker();
     void startNewMapWorker();
+    void startLocalMapWorker();
 
     void cmdAnswer(QString);
 
@@ -162,10 +166,13 @@ private:
     QPointer<RobotPositionWorker> robotWorker;
     QPointer<MetadataWorker> metadataWorker;
     QPointer<SendNewMapWorker> newMapWorker;
+    QPointer<LocalMapWorker> localMapWorker;
+
     QThread cmdThread;
     QThread robotThread;
     QThread metadataThread;
     QThread newMapThread;
+    QThread localMapThread;
 };
 
 /**

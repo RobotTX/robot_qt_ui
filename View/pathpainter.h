@@ -24,23 +24,15 @@ class PathPainter : public QObject, public QGraphicsPathItem{
 public:
     PathPainter(MainWindow* const &mainWindow, const QSharedPointer<Points> _points);
 
-    /// Getters
     QVector<QSharedPointer<PathPoint>> getCurrentPath(void) const { return currentPath; }
     QVector<QSharedPointer<PathPoint>> getOldPath(void) const { return oldPath; }
     bool getPathDeleted(void) const { return pathDeleted; }
     QString getVisiblePath(void) const { return visiblePath; }
 
-    /// Setters
     void setCurrentPath(const QVector<QSharedPointer<PathPoint> > &_currentPath, QString pathName);
     void setOldPath(const QVector<QSharedPointer<PathPoint> > _oldPath);
     void setPathDeleted(const bool _pathDeleted){ pathDeleted = _pathDeleted; }
     void setVisiblePath(const QString path) { visiblePath = path; }
-
-    /**
-     * @brief displayPath
-     * Display the current path
-     */
-    void displayPath(void);
 
     /**
      * @brief nbUsedPointView

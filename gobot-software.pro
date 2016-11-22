@@ -79,7 +79,6 @@ HEADERS += \
     View/editmapwidget.h \
     View/editmapview.h
 
-
 FORMS += Controller/mainwindow.ui
 
 SOURCES += main.cpp \

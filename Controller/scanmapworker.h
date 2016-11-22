@@ -23,7 +23,6 @@ public:
     ScanMapWorker(const QString ipAddress, const int port, const QString MapPath);
     ~ScanMapWorker();
 
-
 private slots:
 
     /**
@@ -69,7 +68,7 @@ signals:
     void newScanSaved(QString ipAddress);
 
 private :
-    QPointer<QTcpSocket>socket;
+    QPointer<QTcpSocket> socket;
     QString ipAddress;
     int port;
     /**
@@ -78,7 +77,6 @@ private :
      */
     QByteArray data;
     QString mapPath;
-
 };
 
 

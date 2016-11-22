@@ -29,7 +29,6 @@ GroupsPathsWidget::GroupsPathsWidget(QWidget* parent, MainWindow* _mainWindow, c
 
     topLayout->addWidget(actionButtons);
 
-
     groupNameLabel = new CustomLabel("New group's name : ", this, false);
     groupNameLabel->hide();
     groupNameEdit = new CustomLineEdit(this);
@@ -355,7 +354,6 @@ void GroupsPathsWidget::resizeEvent(QResizeEvent *event){
     QWidget* widget = static_cast<QWidget*>(parent());
     int maxWidth = widget->width() - 10;
     setMaximumWidth(maxWidth);
-
     QWidget::resizeEvent(event);
 }
 

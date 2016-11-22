@@ -73,42 +73,38 @@ void Paths::addPathPoint(const QString groupName, const QString pathName, const 
 }
 
 /// attempts to create a group of paths called <name>, if the group already exists the function does not do anything
-void Paths::createGroup(const QString name){
-    if(groups->find(name) == groups->end())
-        groups->insert(name,
-                       QSharedPointer<CollectionPaths>(new CollectionPaths));
+bool Paths::createGroup(const QString name){
+    if(groups->find(name) == groups->end()){
+        groups->insert(name, QSharedPointer<CollectionPaths>(new CollectionPaths));
+        return true;
+    }
     else
-        qDebug() << "A group named" << name << "already exists";
+        return false;
 }
 
-/// attempts to delete a group of paths called <name>, if the group does not exist, the function does not do anything
-void Paths::deleteGroup(const QString groupName){
+/// attempts to delete a group of paths called <name>, if the group does not exist, the function only returns 0
+int Paths::deleteGroup(const QString groupName){
     qDebug() << "Paths::deleteGroup called";
-    if(groups->find(groupName) != groups->end()){
-        int r = groups->remove(groupName);
-        qDebug() << "removed" << r << "value(s) with key" << groupName;
-    } else
-        qDebug() << groupName << "is not in the map";
+    if(groups->find(groupName) != groups->end())
+        return groups->remove(groupName);
+    else
+        return 0;
 }
 
 /// attempts to delete a path with name <pathName> in the group <groupName>, does not
 /// do anything if such path does not exist
-void Paths::deletePath(const QString groupName, const QString pathName){
-
+int Paths::deletePath(const QString groupName, const QString pathName){
     qDebug() << "Paths::deletePath called";
     auto it_group = groups->find(groupName);
     if(it_group == groups->end())
-        qDebug() << "Paths::deletePath the group of paths" << groupName << "does not exist";
+        return 0;
     else {
         QSharedPointer<QMap<QString, QSharedPointer<Path>> > current_paths = (*groups)[groupName];
-        int rem = current_paths->remove(pathName);
-        if(rem == 0)
-            qDebug() << "Paths::deletePath the path" << pathName << "does not exist within the group" << groupName;
+        return current_paths->remove(pathName);
     }
 }
 
 Paths::Path Paths::getPath(const QString groupName, const QString pathName, bool& foundFlag){
-    //qDebug() << "Paths::getPath called";
     auto it_group = groups->find(groupName);
     if(it_group == groups->end()){
         qDebug() << "Paths::getPath the group of paths" << groupName << "does not exist";
@@ -163,7 +159,6 @@ QDataStream& operator<<(QDataStream& out, const Paths& paths){
         it.next();
         QMap<QString, QVector<PathPoint>> tmpGroup;
         QMapIterator<QString, QSharedPointer<Paths::Path> > it_paths(*(it.value()));
-        qDebug() << "new group" << it.key();
         while(it_paths.hasNext()){
             it_paths.next();
             QVector<PathPoint> tmpPath;
@@ -192,21 +187,16 @@ bool Paths::containsPoint(const QString groupName, const QString pathName, const
 
 void Paths::updatePaths(const Point& old_point, const Point& new_point){
     QMapIterator<QString, QSharedPointer<CollectionPaths>> it(*(groups));
-    qDebug() << "new point" << new_point.getName();
     while(it.hasNext()){
         it.next();
-        qDebug() << "Group of paths:" << it.key();
         QMapIterator<QString, QSharedPointer<Path> > it_paths(*(it.value()));
         while(it_paths.hasNext()){
             it_paths.next();
             if(it_paths.value()){
                 for(int i = 0; i < it_paths.value()->size(); i++){
                     if(it_paths.value()->at(i)->getPoint().comparePos(old_point.getPosition())){
-
-                        qDebug() << "looking at the point " << it_paths.value()->at(i)->getPoint().getName();
                         /// if the point has been deleted we delete it from the path
                         if(!new_point.getName().compare("")){
-                            qDebug() << "gotta delete";
                             Point newPoint(QString::number(it_paths.value()->at(i)->getPoint().getPosition().getX()) + "; " +
                                            QString::number(it_paths.value()->at(i)->getPoint().getPosition().getY()),
                                            it_paths.value()->at(i)->getPoint().getPosition());
@@ -216,7 +206,6 @@ void Paths::updatePaths(const Point& old_point, const Point& new_point){
                         else {
                             /// this point is the old one
                             if(!it_paths.value()->at(i)->getPoint().getName().compare(new_point.getName())){
-                                qDebug() << "only the position has changed";
                                 /// if the position has been modified but not the name
                                 Point newPoint(QString::number(it_paths.value()->at(i)->getPoint().getPosition().getX()) + "; " +
                                                QString::number(it_paths.value()->at(i)->getPoint().getPosition().getY()),
@@ -225,7 +214,6 @@ void Paths::updatePaths(const Point& old_point, const Point& new_point){
                             }
                             /// if the name has been modified but not the position
                             else if(it_paths.value()->at(i)->getPoint().getName().compare(new_point.getName()) && it_paths.value()->at(i)->getPoint().comparePos(new_point.getPosition())){
-                                qDebug() <<  "only the name has changed";
                                 Point newPoint(new_point);
                                 it_paths.value()->at(i)->setPoint(newPoint);
                             }
@@ -235,7 +223,6 @@ void Paths::updatePaths(const Point& old_point, const Point& new_point){
                                                QString::number(it_paths.value()->at(i)->getPoint().getPosition().getY()),
                                                it_paths.value()->at(i)->getPoint().getPosition());
                                 it_paths.value()->at(i)->setPoint(newPoint);
-                                qDebug() << "Everything has changed" << old_point.getName();
                             }
                         }
                     }
@@ -259,28 +246,23 @@ QPair<QString, QString> Paths::findPath(const QVector<PathPoint>& path) const {
     while(it.hasNext()){
         it.next();
         QMapIterator<QString, QSharedPointer<Paths::Path> > it_paths(*(it.value()));
-        qDebug() << "new group" << it.key();
         while(it_paths.hasNext()){
             it_paths.next();
-            qDebug() << "new path" << it_paths.key();
             bool right_path(true);
             if(it_paths.value()){
                 /// if the paths don't have the same number of points no need to check
                 if(it_paths.value()->size() != path.size())
                     continue;
+
                 for(int i = 0; i < it_paths.value()->size(); i++){
                     /// if one pathPoint is not the same we jump to the next path
-                    if(*(it_paths.value()->at(i)) != path.at(i)){
-                        std::cout << "these two points are different" << *(it_paths.value()->at(i)) <<
-                                    path.at(i);
+                    if(*(it_paths.value()->at(i)) != path.at(i))
                         right_path = false;
-                    }
                 }
+
                 /// but if all points match then we return the name of the group and the name of the path
                 if(right_path)
                     return QPair<QString, QString> (it.key(), it_paths.key());
-                else
-                    break;
             }
         }
     }

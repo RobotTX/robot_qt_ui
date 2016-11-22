@@ -33,20 +33,6 @@ void PathPainter::resetPathSlot(){
     setPath(path);
 }
 
-void PathPainter::displayPath(void){
-    /*qDebug() << "\nPathPainter::displayPath called";
-
-    for(int i = 0; i < currentPath.size(); i++){
-        qDebug() << i << ":" << currentPath.at(i)->getPoint().getName()
-                 << currentPath.at(i)->getPoint().getPosition().getX()
-                 << currentPath.at(i)->getPoint().getPosition().getY()
-                 << (int) currentPath.at(i)->getAction()
-                 << currentPath.at(i)->getWaitTime();
-    }
-
-    qDebug() << "\n";*/
-}
-
 void PathPainter::addPathPointSlot(QString name, double x, double y, int waitTime){
     //qDebug() << "PathPainter::addPathPointSlot called" << name << x << y;
 
@@ -231,7 +217,6 @@ void PathPainter::updatePathPainterSlot(const bool savePath /* to deal with pv s
     } else {
         resetPathSlot();
     }
-    displayPath();
 }
 
 void PathPainter::updatePathPainterPointViewSlot(){

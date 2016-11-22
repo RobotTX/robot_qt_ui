@@ -87,7 +87,6 @@ PathPointCreationWidget::PathPointCreationWidget(const int _id, const QString _n
     layout->addWidget(pathWidget);
     layout->addWidget(editWidget);
     layout->setContentsMargins(0, 0, 0, 0);
-    //pathLayout->setContentsMargins(0,0,0,0);
 }
 
 void PathPointCreationWidget::setName(const QString _name){
@@ -191,7 +190,6 @@ void PathPointCreationWidget::removePathPoint(){
 }
 
 void PathPointCreationWidget::setActionWidget(const int waitTime){
-
     if(waitTime >= 0){
         timeWidget->show();
         timeEdit->setText(QString::number(waitTime));
@@ -200,6 +198,5 @@ void PathPointCreationWidget::setActionWidget(const int waitTime){
         timeEdit->setText("0");
         actionBtn->setCurrentIndex(1);
     }
-
     emit actionChanged(id, timeEdit->text());
 }

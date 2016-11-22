@@ -30,7 +30,6 @@ DisplaySelectedPoint::DisplaySelectedPoint(QWidget* _parent, QSharedPointer<Robo
     layout = new QVBoxLayout(this);
     QVBoxLayout* topLayout = new QVBoxLayout();
 
-
     actionButtons = new TopLeftMenu(this);
     actionButtons->getPlusButton()->setEnabled(false);
     actionButtons->getMinusButton()->setCheckable(true);
@@ -94,6 +93,7 @@ void DisplaySelectedPoint::displayPointInfo(void) {
             actionButtons->getMapButton()->setToolTip("Click to hide this point");
         else
             actionButtons->getMapButton()->setToolTip("Click to display this point");
+
         posXLabel->setText("X : " + QString::number(pointView->getPoint()->getPosition().getX(), 'f', 1));
         posYLabel->setText("Y : " + QString::number(pointView->getPoint()->getPosition().getY(), 'f', 1));
         nameLabel->setText(pointView->getPoint()->getName());
@@ -242,7 +242,6 @@ void DisplaySelectedPoint::resizeEvent(QResizeEvent *event){
     QWidget* widget = static_cast<QWidget*>(parent());
     int maxWidth = widget->width() - 10;
     setFixedWidth(maxWidth);
-
     QWidget::resizeEvent(event);
 }
 
