@@ -81,6 +81,7 @@ void DisplayPathGroup::initializeActionButtons(){
 /// lastCheckButton is updated to keep track of the last checked button
 void DisplayPathGroup::enableButtons(QAbstractButton *button){
     if(button->text().compare(lastCheckedButton)){
+
         /// if the path is visible on the map the eye button is checked
         if(!mainWindow->getPathPainter()->getVisiblePath().compare(button->text()))
             actionButtons->getMapButton()->setChecked(true);
@@ -97,7 +98,9 @@ void DisplayPathGroup::enableButtons(QAbstractButton *button){
         actionButtons->getEditButton()->setToolTip("Click to edit the selected path");
         actionButtons->getGoButton()->setEnabled(true);
         actionButtons->getGoButton()->setToolTip("Click to access the information of the selected path");
-    } else { /// the path was already selected so we deselect it
+
+    } else {
+        /// the path was already selected so we deselect it
         lastCheckedButton = "";
         initializeActionButtons();
         pathButtonGroup->uncheck();
@@ -122,6 +125,7 @@ void DisplayPathGroup::setPathsGroup(const QString groupName){
             qDebug() << "found this path" << it_paths.key();
             CustomPushButton* groupButton = new CustomPushButton(it_paths.key(), this);
             groupButton->setIconSize(s_icon_size);
+
             /// if this path is displayed on the map we also add an icon to show it on the button
             if(!it_paths.key().compare(mainWindow->getPathPainter()->getVisiblePath()))
                 groupButton->setIcon(QIcon(":/icons/eye.png"));
@@ -160,6 +164,5 @@ void DisplayPathGroup::resizeEvent(QResizeEvent *event){
     QWidget* widget = static_cast<QWidget*>(parent());
     int maxWidth = widget->width() - 10;
     setMaximumWidth(maxWidth);
-
     QWidget::resizeEvent(event);
 }

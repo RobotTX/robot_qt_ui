@@ -29,7 +29,6 @@ class BottomLayout: public QWidget
 public:
     BottomLayout(QMainWindow* parent, QSharedPointer<Robots> const& robots);
 
-    /// Getters
     QButtonGroup* getPlayRobotBtnGroup(void) const { return playRobotBtnGroup; }
     QButtonGroup* getStopRobotBtnGroup(void) const { return stopRobotBtnGroup; }
     QButtonGroup* getRobotBtnGroup(void) const { return robotBtnGroup; }
@@ -133,4 +132,4 @@ private:
     int lastCheckedId;
 };
 
-#endif // BOTTOMLAYOUT_H
+#endif /// BOTTOMLAYOUT_H

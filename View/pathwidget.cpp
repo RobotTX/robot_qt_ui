@@ -38,12 +38,11 @@ void PathWidget::clearLayout(QLayout* _layout){
 }
 
 void PathWidget::setPath(const QVector<QSharedPointer<PathPoint> > &path){
-
     clearLayout(layout);
     for(int i = 0; i < path.size(); i++){
         /// Index & name of the point
-
         QLabel* nameLabel = new QLabel(this);
+
         if(path.at(i)->getPoint().getName().contains(PATH_POINT_NAME))
             nameLabel->setText(QString::number(i+1)+". "+QString::number(path.at(i)->getPoint().getPosition().getX(),'f', 1) + "; " + QString::number(path.at(i)->getPoint().getPosition().getY(),'f', 1));
         else
@@ -65,8 +64,7 @@ void PathWidget::setPath(const QVector<QSharedPointer<PathPoint> > &path){
         actionLabel->setMinimumWidth(1);
         layout->addWidget(actionLabel);
 
-        if(i == path.size()-1){
+        if(i == path.size()-1)
             actionLabel->hide();
-        }
     }
 }

@@ -213,5 +213,3 @@ void LeftMenu::setEnableReturnCloseButtons(const bool enable){
     returnButton->setEnabled(enable);
     closeBtn->setEnabled(enable);
 }
-
-

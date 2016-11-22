@@ -23,7 +23,6 @@ CreatePointWidget::CreatePointWidget(QWidget *parent, MainWindow *mainWindow, QS
     layout = new QVBoxLayout(this);
     QVBoxLayout* topLayout = new QVBoxLayout();
 
-
     actionButtons = new TopLeftMenu(this);
     actionButtons->enableAll(false);
     topLayout->addWidget(actionButtons);
@@ -44,7 +43,6 @@ CreatePointWidget::CreatePointWidget(QWidget *parent, MainWindow *mainWindow, QS
 
     posYLabel = new QLabel("Y : ", this);
     topLayout->addWidget(posYLabel);
-
 
     /// Add QLabel and QComboBox
     groupLabel = new QLabel("Group : ", this);
@@ -68,7 +66,6 @@ CreatePointWidget::CreatePointWidget(QWidget *parent, MainWindow *mainWindow, QS
     topLayout->addWidget(groupBox);
     layout->addLayout(topLayout);
 
-
     /// Add Cancel and Save buttons
 
     cancelSaveLayout = new QHBoxLayout();
@@ -81,7 +78,6 @@ CreatePointWidget::CreatePointWidget(QWidget *parent, MainWindow *mainWindow, QS
     cancelBtn->hide();
 
     layout->addLayout(cancelSaveLayout);
-
 
     /// when the plus button is clicked we display the groupBox
     connect(actionButtons->getPlusButton(), SIGNAL(clicked(bool)), this, SLOT(showGroupLayout()));
@@ -110,12 +106,12 @@ CreatePointWidget::CreatePointWidget(QWidget *parent, MainWindow *mainWindow, QS
 void CreatePointWidget::setSelectedPoint(QSharedPointer<PointView> _pointView){
     qDebug() << "CreatePointWidget setSelectedPoint called";
     pointView = _pointView;
-    if(_pointView->getPoint()->getName().compare("tmpPoint")){
+
+    if(_pointView->getPoint()->getName().compare("tmpPoint"))
         nameEdit->setText(pointView->getPoint()->getName());
-    }
-    else {
+
+    else
         messageCreationLabel->show();
-    }
 
     posXLabel->setText("X : " + QString::number(pointView->getPoint()->getPosition().getX(), 'f', 1));
     posYLabel->setText("Y : " + QString::number(pointView->getPoint()->getPosition().getY(), 'f', 1));
@@ -195,8 +191,8 @@ void CreatePointWidget::showGroupLayout(void) {
     messageCreationLabel->hide();
     nameEdit->setPlaceholderText("type your name");
     nameEdit->setFrame(true);
-
     nameEdit->setFocusPolicy(Qt::FocusPolicy::StrongFocus);
+
     /// so that the main window sets a message to help the user figuring out what to do
     emit displayMessageCreation("Choose a name for your point by filling up the corresponding field");
 }
@@ -227,12 +223,11 @@ void CreatePointWidget::updateGroupBox(){
     //qDebug() << "updateGroupBox called";
     groupBox->clear();
     int index(0);
+
     QMapIterator<QString, QSharedPointer<QVector<QSharedPointer<PointView>>>> i(*(points->getGroups()));
 
     while (i.hasNext()) {
         i.next();
-        //qDebug() << "updategroupBox group key" << i.key();
-
         if(i.key().compare(TMP_GROUP_NAME) != 0 && i.key().compare(PATH_GROUP_NAME) != 0){
             groupBox->insertItem(index, i.key());
             index++;
@@ -240,7 +235,6 @@ void CreatePointWidget::updateGroupBox(){
     }
     /// to set the default group as default
     groupBox->setCurrentIndex(0);
-
 }
 
 void CreatePointWidget::keyPressEvent(QKeyEvent* event){
@@ -270,7 +264,6 @@ void CreatePointWidget::keyPressEvent(QKeyEvent* event){
 
 QString CreatePointWidget::formatName(const QString name) const {
     qDebug() << "formatName called";
-
     QString ret("");
     QStringList nameStrList = name.split(" ", QString::SkipEmptyParts);
     for(int i = 0; i < nameStrList.size(); i++){
@@ -297,6 +290,5 @@ void CreatePointWidget::resizeEvent(QResizeEvent *event){
     QWidget* widget = static_cast<QWidget*>(parent());
     int maxWidth = widget->width() - 10;
     setMaximumWidth(maxWidth);
-
     QWidget::resizeEvent(event);
 }

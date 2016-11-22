@@ -39,6 +39,5 @@ void PathButtonGroup::resizeEvent(QResizeEvent *event){
     QWidget* widget = static_cast<QWidget*>(parent()->parent()->parent());
     int maxWidth = widget->width() - 10;
     setMaximumWidth(maxWidth);
-
     QWidget::resizeEvent(event);
 }

@@ -31,7 +31,6 @@ DisplaySelectedPointRobots::DisplaySelectedPointRobots(QWidget *parent):QWidget(
     homeWidget->hide();
     layout->addWidget(homeWidget);
 
-
     pathWidget = new QWidget(this);
     QVBoxLayout* pathLayout = new QVBoxLayout(pathWidget);
 
@@ -70,31 +69,26 @@ void DisplaySelectedPointRobots::setRobotsWidget(QSharedPointer<PointView> point
         robotBtn->setText("");
     }
 
-
     QSet<QString> robotNameSet;
     for(int i = 0; i < robots->getRobotsVector().size(); i++){
         QPointer<Robot> robot = robots->getRobotsVector().at(i)->getRobot();
         for(int j = 0; j < robot->getPath().size(); j++){
-            if(robot->getPath().at(j)->getPoint().getName().compare(pointView->getPoint()->getName()) == 0){
+            if(robot->getPath().at(j)->getPoint().getName().compare(pointView->getPoint()->getName()) == 0)
                 robotNameSet.insert(robot->getName());
-            }
         }
     }
 
-    qDebug() << "DisplaySelectedPoint::setRobotsWidget " << robotNameSet;
     if(robotNameSet.count() > 0){
         QSetIterator<QString> k(robotNameSet);
         while (k.hasNext()){
             CustomPushButton* btn = new CustomPushButton(k.next(), this);
-            //btn->setMinimumHeight(30);
-            //btn->setMaximumHeight(30);
             pathBtnGroup->addButton(btn);
             pathBtnLayout->addWidget(btn);
         }
         pathWidget->show();
-    } else {
+    } else
         pathWidget->hide();
-    }
+
     qDebug() << "DisplaySelectedPointRobots::setRobotsWidget yo" << pathBtnGroup->buttons().size() << pathBtnLayout->children().size();
 }
 
