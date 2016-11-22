@@ -36,7 +36,7 @@ public:
      * @param groupName
      * Create the group of paths groupName
      */
-    void createGroup(const QString groupName);
+    bool createGroup(const QString groupName);
 
     /**
      * @brief createPath
@@ -61,7 +61,7 @@ public:
      * @param groupName
      * Delete the group of paths groupName
      */
-    void deleteGroup(const QString groupName);
+    int deleteGroup(const QString groupName);
 
     /**
      * @brief displayGroups
@@ -75,7 +75,7 @@ public:
      * @param pathName
      * Delete pathName in the given group
      */
-    void deletePath(const QString groupName, const QString pathName);
+    int deletePath(const QString groupName, const QString pathName);
 
     /**
      * @brief containsPoint

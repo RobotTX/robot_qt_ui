@@ -13,7 +13,7 @@ RobotServerWorker::RobotServerWorker(const int newPort, QObject* parent): port(n
 
 void RobotServerWorker::startServer(){
     if(listen(QHostAddress::Any, port) == 0)
-        qDebug() << "(RobotServerWorker) Server listen failed";
+        qDebug() << "(RobotServerWorker) Server listen failed" << port;
     else
         qDebug() << "Server is listening";
 }

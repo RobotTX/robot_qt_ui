@@ -6,6 +6,7 @@
 
 class EditMapView: public QObject, public QGraphicsItem {
     Q_OBJECT
+    Q_INTERFACES(QGraphicsItem)
 public:
     EditMapView(int _width, int _height, QGraphicsItem *parent = Q_NULLPTR);
     QRectF boundingRect() const Q_DECL_OVERRIDE;

@@ -12,7 +12,7 @@ Robot::Robot(MainWindow* mainWindow, const QSharedPointer<Paths>& _paths, const 
 
     /// we try to open the path file of the robot, if it works we do nothing otherwise we create it and put "" and ""
     /// as path name and group name for the robot
-    QFile robotPathFile(QString(GOBOT_PATH) + "robots_paths/" + _name + "_path.dat");
+    QFile robotPathFile(QString(GOBOT_PATH) + "robots_paths/" + _name + "_path");
     if(robotPathFile.exists()){
         robotPathFile.open(QIODevice::ReadOnly);
         QDataStream in(&robotPathFile);
