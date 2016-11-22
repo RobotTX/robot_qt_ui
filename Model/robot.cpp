@@ -77,6 +77,16 @@ Robot::Robot(MainWindow* mainWindow, const QSharedPointer<Paths>& _paths, const 
     newMapWorker->moveToThread(&newMapThread);
     newMapThread.start();
 
+    localMapWorker = QPointer<LocalMapWorker>(new LocalMapWorker(ip, PORT_LOCAL_MAP));
+    connect(this, SIGNAL(stopLocalMapWorker()), localMapWorker, SLOT(stopWorker()));
+    connect(this, SIGNAL(startLocalMapWorker()), localMapWorker, SLOT(connectSocket()));
+    connect(&localMapThread, SIGNAL(finished()), localMapWorker, SLOT(deleteLater()));
+    localMapWorker->moveToThread(&localMapThread);
+    localMapThread.start();
+
+    emit startLocalMapWorker();
+    /// to ask the robot to send the laser data
+    emit sendCommand("q");
 
     emit startCmdRobotWorker();
 }
@@ -106,6 +116,10 @@ void Robot::stopThreads() {
     emit stopNewMapWorker();
     newMapThread.quit();
     newMapThread.wait();
+
+    emit stopLocalMapWorker();
+    localMapThread.quit();
+    localMapThread.wait();
 }
 
 void Robot::portSentSlot(){

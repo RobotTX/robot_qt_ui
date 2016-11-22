@@ -449,7 +449,7 @@ QString BottomLayout::pathToStr(const QVector<QSharedPointer<PathPoint> >& path,
             pathStr += path.at(i)->getPoint().getName();
 
         if(stage >0 && i <= stage)
-            pathStr += "</font>"
+            pathStr += "</font>";
     }
     return pathStr;
 }

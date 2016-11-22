@@ -1,7 +1,6 @@
 #include "scanmapworker.h"
 #include <QDataStream>
 #include <QFile>
-#include <QThread>
 
 ScanMapWorker::ScanMapWorker(const QString newipAddress, const int newPort, const QString _mapPath){
     ipAddress = newipAddress;
@@ -18,7 +17,6 @@ void ScanMapWorker::stopWorker(){
     if(socket && socket->isOpen())
         socket->close();
 }
-
 
 void ScanMapWorker::connectSocket(){
     qDebug() << "(Map Thread) Trying to connect to" << ipAddress << "at port" << port;
@@ -46,12 +44,12 @@ void ScanMapWorker::readTcpDataSlot(){
     /// The TCP protocol sending blocks of data, a map is defined by a random number
     /// of blocks, so we wait till the last byte of a block is -2, meaning we have received
     /// a complete map
-    if(data.size() >= 5 && ((int) data.at(data.size()-5) == 0  && (int) data.at(data.size()-4) == 0  && (int) data.at(data.size()-3) == 0
-            && (int) data.at(data.size()-2) == 0  && (int) data.at(data.size()-1) == -2)){
+    if(data.size() >= 5 && static_cast<int>(data.at(data.size()-5)) == 0  && static_cast<int>(data.at(data.size()-4)) == 0  && static_cast<int>(data.at(data.size()-3)) == 0
+            && static_cast<int>(data.at(data.size()-2)) == 0  && static_cast<int>(data.at(data.size()-1)) == -2){
 
         qDebug() << "(Map) Map of" << data.size() << "bytes received";
-        /// Remove the end bytes 0 0 0 0 -2 as we no longer need it
-        data.remove(data.size()-5,5);
+        /// Remove the end bytes 0 0 0 0 -2 as we no longer need them
+        data.remove(data.size()-5, 5);
         /// Emit the signal valueChangedMap, meaning that we finished to receive a whole map
         /// and we can display it
         emit valueChangedMap(data);
@@ -59,7 +57,7 @@ void ScanMapWorker::readTcpDataSlot(){
         data.clear();
     } else if(data.at(data.size()-1) == -3){
         ///We are receiving the real map
-        data.remove(data.size()-1,1);
+        data.remove(data.size()-1, 1);
         qDebug() << "(Map) Real map of" << data.size() << "bytes received <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<";
         QFile file(mapPath);
         file.resize(0);
