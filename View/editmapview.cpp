@@ -109,8 +109,6 @@ void EditMapView::paint(QPainter* painter, const QStyleOptionGraphicsItem*, QWid
             int _size = items.at(i).first.at(2);
             QVector<QPointF> points = items.at(i).second;
 
-            //painter->setBrush(Qt::SolidPattern);
-
             switch(_shape){
                 case 0:
                     qDebug() << "EditMapView::paint should not be here (case 0)";
@@ -140,7 +138,7 @@ void EditMapView::paint(QPainter* painter, const QStyleOptionGraphicsItem*, QWid
                                                 QPoint(static_cast<int>(points.at(1).x()), static_cast<int>(points.at(1).y()))));
                 break;
                 case 4:
-                    //qDebug() << "EditMapView::paint Drawing a filled rectange";
+                    //qDebug() << "EditMapView::paint Drawing a filled rectangle";
                     if(points.size() > 1){
                         QRect rect = QRect(QPoint(static_cast<int>(points.at(0).x()), static_cast<int>(points.at(0).y())),
                                            QPoint(static_cast<int>(points.at(1).x()), static_cast<int>(points.at(1).y())));
@@ -210,7 +208,6 @@ void EditMapView::changeShapeSlot(int _shape){
 void EditMapView::changeSizeSlot(int _size){
     qDebug() << "EditMapView::changeSizeSlot called" << _size;
     size = _size;
-
     resetLastPoint();
 }
 

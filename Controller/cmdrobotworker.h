@@ -21,7 +21,7 @@ public:
      * @param ipAddress
      * @param port
      */
-    CmdRobotWorker(const QString ipAddress, const int cmdPort, const int metadataPort, const int robotPort, const int mapPort, const QString _robotName);
+    CmdRobotWorker(const QString ipAddress, const int cmdPort, const int metadataPort, const int robotPort, const int mapPort, const int _laserPort, const QString _robotName);
     ~CmdRobotWorker();
 
 signals:
@@ -126,6 +126,7 @@ private :
     int metadataPort;
     int robotPort;
     int mapPort;
+    int laserPort;
     QTimer* timer;
     int timeCounter;
 };

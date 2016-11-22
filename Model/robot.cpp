@@ -24,7 +24,7 @@ Robot::Robot(MainWindow* mainWindow, const QSharedPointer<Paths>& _paths, const 
 
     qDebug() << "Robot" << name << "at ip" << ip << " launching its cmd thread";
 
-    cmdRobotWorker = QPointer<CmdRobotWorker>(new CmdRobotWorker(ip, PORT_CMD, PORT_MAP_METADATA, PORT_ROBOT_POS, PORT_MAP, name));
+    cmdRobotWorker = QPointer<CmdRobotWorker>(new CmdRobotWorker(ip, PORT_CMD, PORT_MAP_METADATA, PORT_ROBOT_POS, PORT_MAP, PORT_LOCAL_MAP, name));
     connect(cmdRobotWorker, SIGNAL(robotIsDead(QString,QString)), mainWindow, SLOT(robotIsDeadSlot(QString,QString)));
     connect(cmdRobotWorker, SIGNAL(cmdAnswer(QString)), mainWindow->getCommandController(), SLOT(cmdAnswerSlot(QString)));
     connect(cmdRobotWorker, SIGNAL(portSent()), this, SLOT(portSentSlot()));
@@ -84,10 +84,6 @@ Robot::Robot(MainWindow* mainWindow, const QSharedPointer<Paths>& _paths, const 
     localMapWorker->moveToThread(&localMapThread);
     localMapThread.start();
 
-    emit startLocalMapWorker();
-    /// to ask the robot to send the laser data
-    emit sendCommand("q");
-
     emit startCmdRobotWorker();
 }
 
@@ -126,6 +122,8 @@ void Robot::portSentSlot(){
     emit startMetadataWorker();
     emit startRobotWorker();
     emit startNewMapWorker();
+    emit startLocalMapWorker();
+    sendCommand(QString("q"));
 }
 
 std::ostream& operator <<(std::ostream& stream, Robot const& robot){

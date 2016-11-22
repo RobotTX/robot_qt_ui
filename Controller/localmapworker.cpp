@@ -32,9 +32,11 @@ void LocalMapWorker::stopWorker(){
 }
 
 void LocalMapWorker::readTcpDataSlot(){
-
-
+    data.append(socket->readAll());
+    qDebug() << "RECEIVED" << data.size() << "BYTES FROM LASER";
+    data = QByteArray();
 }
+
 
 void LocalMapWorker::disconnectedSlot(){
     qDebug() << "(Map) Disconnected";

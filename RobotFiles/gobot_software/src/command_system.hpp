@@ -22,6 +22,14 @@
 #include <fstream>
 #include "std_srvs/Empty.h"
 
+#include <ctime>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <time.h>
+#include <stdio.h>
+#include <stdlib.h>
+
+
 #define CMD_PORT 5600
 
 using boost::asio::ip::tcp;
@@ -40,5 +48,7 @@ bool stopMap();
 void server(unsigned short port, ros::NodeHandle n);
 void getPorts(boost::shared_ptr<tcp::socket> sock, ros::NodeHandle n);
 bool sendMessageToPc(boost::shared_ptr<tcp::socket> sock, std::string message);
+bool sendLaserData(ros::NodeHandle n);
+bool stopSendingLaserData();
 
 #endif

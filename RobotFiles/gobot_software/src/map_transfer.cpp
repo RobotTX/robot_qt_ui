@@ -15,7 +15,6 @@ void sendMap(const std::vector<uint8_t>& my_map){
 	try {
 		boost::system::error_code ignored_error;
 		std::cout << "(Map) Map size to send in uint8_t : " << my_map.size() << std::endl;
-
 		boost::asio::write(socket_map, boost::asio::buffer(my_map), boost::asio::transfer_all(), ignored_error);
 	} catch (std::exception& e) {
 		e.what();
@@ -42,9 +41,8 @@ void getMap(const nav_msgs::OccupancyGrid::ConstPtr& msg){
 		std::cout << "(Map) Sending the last map" << std::endl;
 		std::vector<int8_t> my_map;
 
-		for(size_t i = 0; i < map_size; i++){
-			my_map.push_back((int8_t) msg->data[i]);
-		}
+		for(size_t i = 0; i < map_size; i++)
+			my_map.push_back(static_cast<int8_t>(msg->data[i]));
 
 		my_map.push_back(-3);
 		sendMap(my_map);
@@ -70,7 +68,7 @@ void getMap(const nav_msgs::OccupancyGrid::ConstPtr& msg){
 	            curr = 0;
 
 			if(curr != last){
-				my_map.push_back((uint8_t) last);
+				my_map.push_back(static_cast<uint8_t>(last));
 				my_map.push_back((count & 0xff000000) >> 24);
 				my_map.push_back((count & 0x00ff0000) >> 16);
 				my_map.push_back((count & 0x0000ff00) >> 8);
@@ -83,7 +81,7 @@ void getMap(const nav_msgs::OccupancyGrid::ConstPtr& msg){
 			index++;
 		}
 
-		my_map.push_back((uint8_t) last);
+		my_map.push_back(static_cast<uint8_t>(last));
 		my_map.push_back((count & 0xff000000) >> 24);
 		my_map.push_back((count & 0x00ff0000) >> 16);
 		my_map.push_back((count & 0x0000ff00) >> 8);
@@ -105,7 +103,6 @@ bool startMap(gobot_software::Port::Request &req,
 	ros::NodeHandle n;
 
 	int mapPort = req.port;	
-
 
 	socket_map = tcp::socket(io_service);
 	m_acceptor = tcp::acceptor(io_service, tcp::endpoint(tcp::v4(), mapPort));
@@ -151,7 +148,6 @@ int main(int argc, char **argv){
 	ros::ServiceServer stop_service = n.advertiseService("stop_map_sender", stopMap);
 
 	ros::spin();
-
 
 	return 0;
 }

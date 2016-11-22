@@ -17,6 +17,7 @@ ping_script = "sudo sh " + computer_software + "IP/ping.sh"
 file_hostname = computer_software + "Robot_Infos/name.txt"
 file_map_id = computer_software + "Robot_Infos/mapId.txt"
 file_path_stage = computer_software + "Robot_Infos/path_stage.txt"
+file_home = "/home/gtdollar/computer_software/Robot_Infos/home.txt"
 
 def isServer(IP) :
     s = socket.socket()
@@ -54,8 +55,8 @@ def isServer(IP) :
                 stage = file_path.readline()
                 print "stage ", stage
                 file_path.close()
-
-            # Send everything to the software
+            
+            # Send everything to the application
             toSend = "%s\"%s\"%s \"%s" % (hostname, map_id, ssid, stage)
             s.send(toSend)
 
@@ -89,7 +90,7 @@ def client (pub, checkOldIP):
 		found = False
 		if os.path.exists(file_server):
 			file = open(file_server)
-			IP= file.readline()
+			IP = file.readline()
 			found = isServer(IP)
 		if not found and not rospy.is_shutdown(): 
 			print "scanning for a new server"

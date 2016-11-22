@@ -181,7 +181,6 @@ int main(int argc, char **argv){
     /// Advertise that we are going to publish to /map
     map_pub = n.advertise<nav_msgs::OccupancyGrid>("/map", 1000);
 
-
     boost::shared_ptr<boost::asio::io_service> io_service = boost::shared_ptr<boost::asio::io_service>(new boost::asio::io_service());
     io_service->run();
 

@@ -19,11 +19,15 @@ ros::ServiceClient playPathClient;
 ros::ServiceClient pausePathClient;
 ros::ServiceClient stopPathClient;
 
+ros::ServiceClient startLaserClient;
+ros::ServiceClient stopLaserClient;
+
 ros::Publisher go_pub;
 
 int metadata_port = 4000;
 int robot_pos_port = 4001;
 int map_port = 4002;
+int laser_port = 4003;
 
 std::string path_computer_software = "/home/gtdollar/computer_software/";
 
@@ -131,12 +135,13 @@ bool execCommand(ros::NodeHandle n, std::vector<std::string> command){
 
 		/// Command for the robot to receive the ports needed for the map, metadata and robot pos services
 		case 'h':
-			if(command.size() > 3){
+			if(command.size() > 4){
 
 				metadata_port = std::stoi(command.at(1));
 				robot_pos_port = std::stoi(command.at(2));
 				map_port = std::stoi(command.at(3));
-				std::cout << "(Command system) Gobot here are the ports " << metadata_port << ", " << robot_pos_port << ", " << map_port << std::endl;
+				laser_port = std::stoi(command.at(4));
+				std::cout << "(Command system) Gobot here are the ports " << metadata_port << ", " << robot_pos_port << ", " << map_port << ", " << laser_port << std::endl;
 				
 				return true;
 			} else {
@@ -296,6 +301,18 @@ bool execCommand(ros::NodeHandle n, std::vector<std::string> command){
 		}
 		break;
 
+		case 'q':
+		{
+			std::cout << "(Command system) Gobot sends laser data" << std::endl;
+			return sendLaserData(n);
+		}
+
+		case 'r':
+		{
+			std::cout << "(Command system) Gobot stops sending laser data" << std::endl;
+			return stopSendingLaserData();
+		}
+
 		/// Default/Unknown command
 		default:
 			std::cerr << "(Command system) Unknown command '" << command.at(0) << "' with " << command.size()-1 << " arguments : ";
@@ -379,6 +396,31 @@ bool stopMap(){
 		return true;
 	} else {
 		std::cerr << "(Command system) Failed to call service stop_map_sender" << std::endl;
+		return false;
+	}
+}
+
+bool sendLaserData(ros::NodeHandle n){
+	std::cout << "(Command system) Launching the service to get the laser data using port " << laser_port << std::endl;
+	gobot_software::Port srv;
+	srv.request.port = laser_port;
+
+	if(startLaserClient.call(srv)) {
+		std::cout << "(Command system) start_laser_data_sender service started" << std::endl;
+		return true;
+	} else {
+		std::cerr << "(Command system) Failed to call service start_laser_data_sender" << std::endl;
+		return false;
+	}
+}
+
+bool stopSendingLaserData(){
+	gobot_software::Port srv;
+	if(stopLaserClient.call(srv)){
+		std::cout << "Command system stop_sending_laser_data started" << std::endl;
+		return true;
+	} else {
+		std::cerr << "(Command system) failed to call service stop_sending_laser_data" << std::endl;
 		return false;
 	}
 }
@@ -548,7 +590,37 @@ void asyncAccept(boost::shared_ptr<boost::asio::io_service> io_service, boost::s
 	boost::thread t(boost::bind(session, sock, n));
 
 	/// Send a message to the PC to tell we are connected
-	sendMessageToPc(sock, "Connected");
+	/// send home position and timestamp
+	std::ifstream ifs(path_computer_software + "Robot_Infos/home.txt", std::ifstream::in);
+	std::string home_x("");
+	std::string home_y("");
+	if(ifs){
+		ifs >> home_x >> home_y;
+		std::cout << home_x << " " << home_y << std::endl;
+		ifs.close();
+	}
+
+    struct stat attrib;
+    stat("/home/gtdollar/computer_software/Robot_Infos/home.txt", &attrib);
+    char dateHome[30];
+    strftime(dateHome, 30, "%Y-%m-%d-%H-%M-%S", localtime(&(attrib.st_mtime)));
+
+    /// we also send the path along with the time of the last modification of its file
+   	std::ifstream ifPath(path_computer_software + "Robot_Infos/path.txt", std::ifstream::in);
+   	std::string path("");
+   	if(ifPath){
+   		std::string line("");
+   		while(getline(ifPath, line))
+   			path += line + " ";
+   		ifPath.close();
+   	}
+
+   	struct stat attr;
+   	stat("/home/gtdollar/computer_software/Robot_Infos/path.txt", &attr);
+   	char datePath[30];
+   	strftime(datePath, 30, "%Y-%m-%d-%H-%M-%S", localtime(&(attr.st_mtime)));
+
+	sendMessageToPc(sock, "Connected " + home_x + " " + home_y + " " + dateHome + " " + datePath + " " + path);
 }
 
 void server(unsigned short port, ros::NodeHandle n){
@@ -581,7 +653,6 @@ void serverDisconnected(const std_msgs::String::ConstPtr& msg){
 	stopMetadata();
 }
 
-
 int main(int argc, char* argv[]){
 
 	try{
@@ -601,6 +672,9 @@ int main(int argc, char* argv[]){
 		playPathClient = n.serviceClient<std_srvs::Empty>("play_path");
 		pausePathClient = n.serviceClient<std_srvs::Empty>("pause_path");
 		stopPathClient = n.serviceClient<std_srvs::Empty>("stop_path");
+
+		startLaserClient = n.serviceClient<gobot_software::Port>("start_laser_data_sender");
+		stopLaserClient = n.serviceClient<gobot_software::Port>("stop_laser_data_sender");
 
 		go_pub = n.advertise<geometry_msgs::PoseStamped>("/move_base_simple/goal", 1000);
 
