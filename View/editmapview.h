@@ -3,25 +3,46 @@
 
 #include <QObject>
 #include <QGraphicsItem>
+#include <QPainter>
+#include <QList>
+#include <QVector>
 
 class EditMapView: public QObject, public QGraphicsItem {
     Q_OBJECT
+    Q_INTERFACES(QGraphicsItem)
 public:
     EditMapView(int _width, int _height, QGraphicsItem *parent = Q_NULLPTR);
     QRectF boundingRect() const Q_DECL_OVERRIDE;
-    void paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *) Q_DECL_OVERRIDE;
+    void paint(QPainter *_painter, const QStyleOptionGraphicsItem *, QWidget *) Q_DECL_OVERRIDE;
 
 protected:
-    void mousePressEvent(QGraphicsSceneMouseEvent *event) Q_DECL_OVERRIDE;
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *event) Q_DECL_OVERRIDE;
+    void mouseMoveEvent(QGraphicsSceneMouseEvent *event) Q_DECL_OVERRIDE;
+    void mousePressEvent(QGraphicsSceneMouseEvent *event) Q_DECL_OVERRIDE;
+    void resetLastPoint();
+    QPointF getPoint(float x, float y);
+    QVector<QPointF> getLine(QPointF p1, QPointF p2);
 
-signals:
-    void draw(int, int);
+private slots:
+    void undoSlot();
+    void redoSlot();
+    void changeColorSlot(int);
+    void changeShapeSlot(int);
+    void changeSizeSlot(int);
 
 private:
     QPointF dragStartPosition;
     int width;
     int height;
+    int color;
+    int shape;
+    int size;
+    int lastX;
+    int lastY;
+    int lastSize;
+    QVector<QPair<QVector<int>, QVector<QPointF>>> items;
+    bool released;
+    QVector<QPair<QVector<int>, QVector<QPointF>>> undoItems;
 };
 
 #endif // EDITMAPVIEW_H

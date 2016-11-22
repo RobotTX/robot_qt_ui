@@ -6,6 +6,7 @@ class QHBoxLayout;
 class CustomQGraphicsView;
 class EditMapView;
 class CustomLineEdit;
+class QButtonGroup;
 
 #include <QWidget>
 #include <QGraphicsScene>
@@ -23,13 +24,11 @@ protected:
 private slots:
     void cancelSlot();
     void saveSlot();
-    void undoSlot();
-    void redoSlot();
-    void changeColorSlot(int);
-    void changeShapeSlot(int);
-    void changeSizeSlot(int);
     void changeSizeEditSlot();
-    void drawSlot(int, int);
+    void changeLineEditSlot(int);
+
+signals:
+    void changeSizeEdit(int size);
 
 private:
     QHBoxLayout* layout;
@@ -43,6 +42,7 @@ private:
     QGraphicsPixmapItem* pixmapItem;
     EditMapView* canvas;
     CustomLineEdit* sizeLineEdit;
+    QButtonGroup* sizeGroup;
 };
 
 #endif // EDITMAPWIDGET_H

@@ -18,10 +18,13 @@ EditMapWidget::EditMapWidget(QImage _mapImage, int _width, int _height, QWidget*
     QWidget(parent), mapImage(_mapImage), mapWidth(_width), mapHeight(_height){
     qDebug() << "EditMapWidget::EditMapWidget constructor";
     setAttribute(Qt::WA_DeleteOnClose);
+    setMouseTracking(true);
     layout = new QHBoxLayout(this);
 
-    initializeMenu();
     initializeMap();
+    initializeMenu();
+
+    layout->addWidget(graphicsView);
 
     show();
 
@@ -54,11 +57,11 @@ void EditMapWidget::initializeMenu(){
     QHBoxLayout* undoRedoLayout = new QHBoxLayout();
     CustomPushButton* undoBtn = new CustomPushButton(QIcon(":/icons/undo.png"), "", this);
     undoRedoLayout->addWidget(undoBtn);
-    connect(undoBtn, SIGNAL(clicked()), this, SLOT(undoSlot()));
+    connect(undoBtn, SIGNAL(clicked()), canvas, SLOT(undoSlot()));
 
     CustomPushButton* redoBtn = new CustomPushButton(QIcon(":/icons/redo.png"), "", this);
     undoRedoLayout->addWidget(redoBtn);
-    connect(redoBtn, SIGNAL(clicked()), this, SLOT(redoSlot()));
+    connect(redoBtn, SIGNAL(clicked()), canvas, SLOT(redoSlot()));
     topMenuLayout->addLayout(undoRedoLayout);
 
 
@@ -81,7 +84,7 @@ void EditMapWidget::initializeMenu(){
     colorGroup->addButton(whiteBtn, 2);
     colorLayout->addWidget(whiteBtn);
 
-    connect(colorGroup, SIGNAL(buttonClicked(int)), this, SLOT(changeColorSlot(int)));
+    connect(colorGroup, SIGNAL(buttonClicked(int)), canvas, SLOT(changeColorSlot(int)));
     topMenuLayout->addLayout(colorLayout);
 
 
@@ -91,32 +94,28 @@ void EditMapWidget::initializeMenu(){
     topMenuLayout->addWidget(shapeLabel);
 
     QButtonGroup* shapeGroup = new QButtonGroup(this);
-    CustomPushButton* handBtn = new CustomPushButton(QIcon(":/icons/hand.png"), "", this, false, CustomPushButton::ButtonType::TOP, "center", true);
+    CustomPushButton* handBtn = new CustomPushButton(QIcon(":/icons/hand.png"), "", this, false, CustomPushButton::ButtonType::LEFT_MENU, "center", true);
     handBtn->setChecked(true);
     shapeGroup->addButton(handBtn, 0);
-    shapeLayout->addWidget(handBtn, 0, 0);
-
-    CustomPushButton* bucketBtn = new CustomPushButton(QIcon(":/icons/bucket.png"), "", this, false, CustomPushButton::ButtonType::TOP, "center", true);
-    shapeGroup->addButton(bucketBtn, 1);
-    shapeLayout->addWidget(bucketBtn, 0, 1);
+    topMenuLayout->addWidget(handBtn);
 
     CustomPushButton* dotBtn = new CustomPushButton(QIcon(":/icons/dot_l.png"), "", this, false, CustomPushButton::ButtonType::LEFT_MENU, "center", true);
-    shapeGroup->addButton(dotBtn, 2);
-    shapeLayout->addWidget(dotBtn, 1, 0);
+    shapeGroup->addButton(dotBtn, 1);
+    shapeLayout->addWidget(dotBtn, 0, 0);
 
-    CustomPushButton* lineBtn = new CustomPushButton(QIcon(":/icons/line.png"), "", this, false, CustomPushButton::ButtonType::TOP, "center", true);
-    shapeGroup->addButton(lineBtn, 3);
-    shapeLayout->addWidget(lineBtn, 1, 1);
+    CustomPushButton* lineBtn = new CustomPushButton(QIcon(":/icons/line.png"), "", this, false, CustomPushButton::ButtonType::LEFT_MENU, "center", true);
+    shapeGroup->addButton(lineBtn, 2);
+    shapeLayout->addWidget(lineBtn, 0, 1);
 
-    CustomPushButton* rectangleBtn = new CustomPushButton(QIcon(":/icons/rectangle.png"), "", this, false, CustomPushButton::ButtonType::TOP, "center", true);
-    shapeGroup->addButton(rectangleBtn, 4);
-    shapeLayout->addWidget(rectangleBtn, 2, 0);
+    CustomPushButton* rectangleBtn = new CustomPushButton(QIcon(":/icons/rectangle.png"), "", this, false, CustomPushButton::ButtonType::LEFT_MENU, "center", true);
+    shapeGroup->addButton(rectangleBtn, 3);
+    shapeLayout->addWidget(rectangleBtn, 1, 0);
 
-    CustomPushButton* filledRectangleBtn = new CustomPushButton(QIcon(":/icons/filled_rectangle.png"), "", this, false, CustomPushButton::ButtonType::TOP, "center", true);
-    shapeGroup->addButton(filledRectangleBtn, 5);
-    shapeLayout->addWidget(filledRectangleBtn, 2, 1);
+    CustomPushButton* filledRectangleBtn = new CustomPushButton(QIcon(":/icons/filled_rectangle.png"), "", this, false, CustomPushButton::ButtonType::LEFT_MENU, "center", true);
+    shapeGroup->addButton(filledRectangleBtn, 4);
+    shapeLayout->addWidget(filledRectangleBtn, 1, 1);
 
-    connect(shapeGroup, SIGNAL(buttonClicked(int)), this, SLOT(changeShapeSlot(int)));
+    connect(shapeGroup, SIGNAL(buttonClicked(int)), canvas, SLOT(changeShapeSlot(int)));
     topMenuLayout->addLayout(shapeLayout);
 
 
@@ -127,21 +126,22 @@ void EditMapWidget::initializeMenu(){
 
     QHBoxLayout* sizeBtnLayout = new QHBoxLayout();
 
-    QButtonGroup* sizeGroup = new QButtonGroup(this);
+    sizeGroup = new QButtonGroup(this);
     CustomPushButton* sizeSBtn = new CustomPushButton(QIcon(":/icons/dot_s.png"), "", this, false, CustomPushButton::ButtonType::TOP, "center", true);
     sizeSBtn->setChecked(true);
-    sizeGroup->addButton(sizeSBtn, 0);
+    sizeGroup->addButton(sizeSBtn, 1);
     sizeBtnLayout->addWidget(sizeSBtn);
 
     CustomPushButton* sizeMBtn = new CustomPushButton(QIcon(":/icons/dot_m.png"), "", this, false, CustomPushButton::ButtonType::TOP, "center", true);
-    sizeGroup->addButton(sizeMBtn, 1);
+    sizeGroup->addButton(sizeMBtn, 3);
     sizeBtnLayout->addWidget(sizeMBtn);
 
     CustomPushButton* sizeLBtn = new CustomPushButton(QIcon(":/icons/dot_l.png"), "", this, false, CustomPushButton::ButtonType::LEFT_MENU, "center", true);
-    sizeGroup->addButton(sizeLBtn, 2);
+    sizeGroup->addButton(sizeLBtn, 7);
     sizeBtnLayout->addWidget(sizeLBtn);
 
-    connect(sizeGroup, SIGNAL(buttonClicked(int)), this, SLOT(changeSizeSlot(int)));
+    connect(sizeGroup, SIGNAL(buttonClicked(int)), canvas, SLOT(changeSizeSlot(int)));
+    connect(sizeGroup, SIGNAL(buttonClicked(int)), this, SLOT(changeLineEditSlot(int)));
     topMenuLayout->addLayout(sizeBtnLayout);
 
 
@@ -151,6 +151,8 @@ void EditMapWidget::initializeMenu(){
     sizeLineEdit->setValidator(new QIntValidator(1, 200, this));
     sizeEditLayout->addWidget(sizeLineEdit);
     connect(sizeLineEdit, SIGNAL(editingFinished()), this, SLOT(changeSizeEditSlot()));
+    connect(this, SIGNAL(changeSizeEdit(int)), canvas, SLOT(changeSizeSlot(int)));
+
 
     QLabel* pxLabel = new QLabel("px", this);
     sizeEditLayout->addWidget(pxLabel);
@@ -174,8 +176,8 @@ void EditMapWidget::initializeMenu(){
 
 
     layout->addWidget(menuWidget);
-    menuWidget->setFixedWidth(150);
 
+    menuWidget->setFixedWidth(150);
     colorLayout->setContentsMargins(0, 0, 0, 0);
     shapeLayout->setContentsMargins(0, 0, 0, 0);
     undoRedoLayout->setContentsMargins(0, 0, 0, 0);
@@ -202,7 +204,6 @@ void EditMapWidget::initializeMap(){
 
 
     canvas = new EditMapView(mapImage.width(), mapImage.height());
-    connect(canvas, SIGNAL(draw(int,int)), this, SLOT(drawSlot(int, int)));
     scene->addItem(canvas);
 
 
@@ -212,9 +213,6 @@ void EditMapWidget::initializeMap(){
     pixmapItem->setZValue(0);
     pixmapItem->setFlag(QGraphicsItem::ItemStacksBehindParent);
     scene->addItem(pixmapItem);
-
-
-    layout->addWidget(graphicsView);
 }
 
 void EditMapWidget::centerMap(){
@@ -231,30 +229,17 @@ void EditMapWidget::saveSlot(){
     qDebug() << "EditMapWidget::saveSlot called";
 }
 
-void EditMapWidget::undoSlot(){
-    qDebug() << "EditMapWidget::undoSlot called";
-}
-
-void EditMapWidget::redoSlot(){
-    qDebug() << "EditMapWidget::redoSlot called";
-}
-
-void EditMapWidget::changeColorSlot(int color){
-    qDebug() << "EditMapWidget::changeColorSlot called" << color;
-}
-
-void EditMapWidget::changeShapeSlot(int shape){
-    qDebug() << "EditMapWidget::changeShapeSlot called" << shape;
-}
-
-void EditMapWidget::changeSizeSlot(int size){
-    qDebug() << "EditMapWidget::changeSizeSlot called" << size;
-}
-
 void EditMapWidget::changeSizeEditSlot(){
     qDebug() << "EditMapWidget::changeSizeEditSlot called" << sizeLineEdit->text();
+    int size = sizeLineEdit->text().toInt();
+
+    if(size == 1 || size == 3 || size == 7)
+        sizeGroup->button(size)->setChecked(true);
+
+    emit changeSizeEdit(size);
 }
 
-void EditMapWidget::drawSlot(int x, int y){
-    qDebug() << "EditMapWidget::drawSlot called" << x << y;
+void EditMapWidget::changeLineEditSlot(int size){
+    qDebug() << "EditMapWidget::changeLineEditSlot called" << size;
+    sizeLineEdit->setText(QString::number(size));
 }
