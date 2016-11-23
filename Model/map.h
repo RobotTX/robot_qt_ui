@@ -30,6 +30,7 @@ public:
     void setWidth(const int _width) { width = _width; }
     void setHeight(const int _height) { height = _height; }
     void setOrigin(const Position _origin) { origin = _origin; }
+    void setMapImage(const QImage _mapImage) { mapImage = _mapImage; }
 
     /**
      * @brief setMapFromArray
