@@ -13,9 +13,10 @@
 #include "View/spacewidget.h"
 #include <QButtonGroup>
 #include "View/customlineedit.h"
+#include "Model/map.h"
 
-EditMapWidget::EditMapWidget(QImage _mapImage, int _width, int _height, QWidget* parent):
-    QWidget(parent), mapImage(_mapImage), mapWidth(_width), mapHeight(_height){
+EditMapWidget::EditMapWidget(QImage _mapImage, int _width, int _height, float _mapResolution, Position _mapOrigin, QWidget* parent):
+    QWidget(parent), mapImage(_mapImage), mapWidth(_width), mapHeight(_height), mapResolution(_mapResolution), mapOrigin(_mapOrigin){
     qDebug() << "EditMapWidget::EditMapWidget constructor";
     setAttribute(Qt::WA_DeleteOnClose);
     setMouseTracking(true);

@@ -8,16 +8,21 @@ class EditMapView;
 class CustomLineEdit;
 class QButtonGroup;
 
+#include "Model/map.h"
 #include <QWidget>
 #include <QGraphicsScene>
 
 class EditMapWidget : public QWidget {
     Q_OBJECT
 public:
-    EditMapWidget(QImage _mapImage, int _width, int _height, QWidget *parent = Q_NULLPTR);
+    EditMapWidget(QImage _mapImage, int _width, int _height, float _mapResolution, Position _mapOrigin, QWidget* parent = Q_NULLPTR);
     ~EditMapWidget();
 
-    QImage getImage(void) const { return mapImage; }
+    QImage getMapImage(void) const { return mapImage; }
+    float getResolution(void) const { return mapResolution; }
+    int getWidth(void) const { return mapWidth; }
+    int getHeight(void) const { return mapHeight; }
+    Position getOrigin(void) const { return mapOrigin; }
 
 protected:
     void initializeMenu();
@@ -36,10 +41,11 @@ signals:
 
 private:
     QHBoxLayout* layout;
-
     QImage mapImage;
     int mapWidth;
     int mapHeight;
+    float mapResolution;
+    Position mapOrigin;
 
     QGraphicsScene* scene;
     CustomQGraphicsView* graphicsView;
