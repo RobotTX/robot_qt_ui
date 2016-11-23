@@ -77,7 +77,8 @@ HEADERS += \
            Controller/robotserverworker.h \
            View/editselectedrobotwidget.h \
     View/editmapwidget.h \
-    View/editmapview.h
+    View/editmapview.h \
+    Controller/localmapworker.h
 
 FORMS += Controller/mainwindow.ui
 
@@ -138,7 +139,8 @@ SOURCES += main.cpp \
            Controller/robotserverworker.cpp \
            View/editselectedrobotwidget.cpp \
     View/editmapwidget.cpp \
-    View/editmapview.cpp
+    View/editmapview.cpp \
+    Controller/localmapworker.cpp
 
 
 RESOURCES += Resources/resources.qrc
