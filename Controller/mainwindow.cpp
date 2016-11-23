@@ -1864,7 +1864,6 @@ void MainWindow::saveMapBtnEvent(){
     saveMap(fileName);
 }
 
-
 void MainWindow::saveMap(QString fileName){
     if(!fileName.isEmpty()){
         if(fileName.indexOf(".pgm", fileName.length()-4) != -1)
@@ -1875,6 +1874,8 @@ void MainWindow::saveMap(QString fileName){
         QFileInfo mapFileInfo(static_cast<QDir> (fileName), "");
         QFileInfo fileInfo(QDir::currentPath(), "../gobot-software/mapConfigs/" + mapFileInfo.fileName() + ".config");
         qDebug() << fileInfo.absoluteFilePath();
+
+        mapFile = fileName.toStdString() + ".pgm";
 
         assert(saveMapConfig(fileInfo.absoluteFilePath().toStdString()));
 
