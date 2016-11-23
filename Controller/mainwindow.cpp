@@ -1785,10 +1785,8 @@ void MainWindow::setNewHome(QString homeName){
 }
 
 bool MainWindow::sendHomeToRobot(QPointer<RobotView> robot, QSharedPointer<PointView> home){
-    if(commandController->sendCommand(robot->getRobot(), QString("n \"") + QString::number(home->getPoint()->getPosition().getX()) + "\" \""
-                                                      + QString::number(home->getPoint()->getPosition().getY()) + "\""))
-        return true;
-    return false;
+    return commandController->sendCommand(robot->getRobot(), QString("n \"") + QString::number(home->getPoint()->getPosition().getX()) + "\" \""
+                                                      + QString::number(home->getPoint()->getPosition().getY()) + "\"");
 }
 
 void MainWindow::goHome(){
@@ -1972,16 +1970,13 @@ void MainWindow::messageMapSaved(bool status){
 }
 
 void MainWindow::editMapSlot(){
-    editMapWidget = QPointer<EditMapWidget>(new EditMapWidget(map->getMapImage(), map->getWidth(), map->getHeight()));
+    editMapWidget = QPointer<EditMapWidget>(new EditMapWidget(map->getMapImage(), map->getWidth(), map->getHeight(), map->getResolution(), map->getOrigin()));
     connect(editMapWidget, SIGNAL(saveEditMap()), this, SLOT(saveEditMapSlot()));
 }
 
 void MainWindow::saveEditMapSlot(){
     qDebug() << "MainWindow::saveEditMapSlot called";
     if(editMapWidget){
-        QImage image = editMapWidget->getImage();
-
-
         QString fileName = QFileDialog::getSaveFileName(this, tr("Save File"),
                 "", tr("Images (*.pgm)"));
 
@@ -1990,22 +1985,19 @@ void MainWindow::saveEditMapSlot(){
             // TODO Do the modifications then save
 
             qDebug() << "MainWindow::saveEditMapSlot called with filename" << fileName;
-            /// Clear the paths
-            /*pathPainter->setVisiblePath("");
-            emit resetPath();
-            paths->clear();
-            for(int i = 0; i < robots->getRobotsVector().size(); i++)
-                robots->getRobotsVector().at(i)->getRobot()->clearPath();*/
 
             /// Set the new map
-            //mapFile = fileName.toStdString();
-            map->setMapImage(image);
-            QPixmap pixmap = QPixmap::fromImage(image);
+            map->setResolution(editMapWidget->getResolution());
+            map->setWidth(editMapWidget->getWidth());
+            map->setHeight(editMapWidget->getHeight());
+            map->setOrigin(editMapWidget->getOrigin());
+            map->setMapImage(editMapWidget->getMapImage());
+            QPixmap pixmap = QPixmap::fromImage(editMapWidget->getMapImage());
             mapPixmapItem->setPixmap(pixmap);
             scene->update();
-/*
+
+
             saveMap(fileName);
-            loadMapConfig(fileName.toStdString());*/
             editMapWidget->close();
         }
     } else {
