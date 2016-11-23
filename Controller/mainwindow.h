@@ -285,6 +285,8 @@ private slots:
     void setHomeAtConnection(const QString robot_name, const Position& pos_home);
     bool updateHomeFile(const QString robot_name, const Position& robot_home_position, const QStringList date);
 
+    void drawObstacles(float angle_min, float angle_max, float angle_increment, QVector<float> *ranges);
+
 protected:
     void moveEvent(QMoveEvent* event);
     bool changeRobotName(QString name);

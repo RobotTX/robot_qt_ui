@@ -28,7 +28,7 @@ bool startLaser(gobot_software::Port::Request &req, gobot_software::Port::Respon
 
 void getLaserData(const sensor_msgs::LaserScan::ConstPtr& msg){
     std::vector<float> scan;
-    std::cout << "received a laser scan !" << std::endl;
+    //std::cout << "received a laser scan !" << std::endl;
     scan.push_back(msg->angle_min);
     scan.push_back(msg->angle_max);
     scan.push_back(msg->angle_increment);
@@ -41,7 +41,7 @@ void getLaserData(const sensor_msgs::LaserScan::ConstPtr& msg){
 void sendLaserData(const std::vector<float>& scan){
     try { 
         boost::system::error_code ignored_error;
-        std::cout << "(Laser) LaserData " << scan.size() * 4 << std::endl;
+        //std::cout << "(Laser) LaserData " << scan.size() * 4 << std::endl;
         boost::asio::write(socket_laser, boost::asio::buffer(scan), boost::asio::transfer_all(), ignored_error);
     } catch (std::exception& e) {
         e.what();

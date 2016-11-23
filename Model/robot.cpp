@@ -81,6 +81,7 @@ Robot::Robot(MainWindow* mainWindow, const QSharedPointer<Paths>& _paths, const 
     connect(this, SIGNAL(stopLocalMapWorker()), localMapWorker, SLOT(stopWorker()));
     connect(this, SIGNAL(startLocalMapWorker()), localMapWorker, SLOT(connectSocket()));
     connect(&localMapThread, SIGNAL(finished()), localMapWorker, SLOT(deleteLater()));
+    connect(localMapWorker, SIGNAL(laserValues(float, float, float, QVector<float>*)), mainWindow, SLOT(drawObstacles(float, float, float, QVector<float>*)));
     localMapWorker->moveToThread(&localMapThread);
     localMapThread.start();
 

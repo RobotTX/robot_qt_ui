@@ -45,6 +45,9 @@ private slots:
      */
     void connectSocket();
 
+signals:
+    void laserValues(float angle_min, float angle_max, float angle_increment, QVector<float> *ranges);
+
 private:
     QPointer<QTcpSocket> socket;
     QString ipAddress;

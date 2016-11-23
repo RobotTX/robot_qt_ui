@@ -334,11 +334,12 @@ void Points::setPixmapAll(const PointView::PixmapType type){
 }
 
 void Points::addTmpPoint(){
+    /// we initialize the tmp point in -1 -1 and not 0, 0 to avoid conflicts with coordinates sent by the robot
     if(groups->value(TMP_GROUP_NAME)){
         if(groups->value(TMP_GROUP_NAME)->size() < 1)
-            addPoint(TMP_GROUP_NAME, TMP_POINT_NAME, 0, 0, false, Point::PointType::TEMP);
+            addPoint(TMP_GROUP_NAME, TMP_POINT_NAME, -1, 0, false, Point::PointType::TEMP);
     } else {
-        addPoint(TMP_GROUP_NAME, TMP_POINT_NAME, 0, 0, false, Point::PointType::TEMP);
+        addPoint(TMP_GROUP_NAME, TMP_POINT_NAME, -1, 0, false, Point::PointType::TEMP);
     }
 }
 

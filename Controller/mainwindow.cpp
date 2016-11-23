@@ -55,6 +55,9 @@
 #include <fstream>
 #include "View/editmapwidget.h"
 
+#include <chrono>
+#include <thread>
+
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow) {
     ui->setupUi(this);
 
@@ -1470,7 +1473,7 @@ void MainWindow::robotIsAliveSlot(QString hostname, QString ip, QString mapId, Q
             QMap<QString, QString> tmp = robots->getRobotsNameMap();
             tmp[ip] = hostname;
             robots->setRobotsNameMap(tmp);
-            QFile fileWrite(QDir::currentPath() + QDir::separator() + "gobot-software" + QDir::separator() + QString(ROBOTS_NAME_FILE));
+            QFile fileWrite(QDir::currentPath() + QDir::separator() + QString(ROBOTS_NAME_FILE));
             fileWrite.resize(0);
             fileWrite.open(QIODevice::WriteOnly);
             QDataStream out(&fileWrite);
@@ -4838,9 +4841,10 @@ bool MainWindow::loadMapConfig(const std::string fileName){
 
 void MainWindow::updateRobotInfo(QString robot_name, QString robotInfo){
 
+    updatePathInfo(robot_name, robotInfo);
+
     updateHomeInfo(robot_name, robotInfo);
 
-    updatePathInfo(robot_name, robotInfo);
 }
 
 bool MainWindow::isLater(const QStringList& date, const QStringList& otherDate){
@@ -4914,7 +4918,7 @@ bool MainWindow::updateHomeFile(const QString robot_name, const Position& robot_
 
 QVector<PathPoint> MainWindow::extractPathFromInfo(const QStringList &robotInfo){
     QVector<PathPoint> path;
-    for(int i = 5; i < robotInfo.size(); i += 3){
+    for(int i = 3; i < robotInfo.size(); i += 3){
         double xOnRobot = robotInfo.at(i).toDouble();
         double xInApp = (xOnRobot - map->getOrigin().getX()) / map->getResolution() + ROBOT_WIDTH;
         double yOnRobot = robotInfo.at(i+1).toDouble();
@@ -4944,9 +4948,11 @@ void MainWindow::updateHomeInfo(const QString robot_name, QString robotInfo){
          QSharedPointer<PointView> home = points->findPointViewByPos(p);
 
          if(home){
+
             /// the application has a home, we need to compare with the robot's home if one exists
             QSharedPointer<PointView> home_sent_by_robot = points->findPointViewByPos(robot_home_position);
             if(home_sent_by_robot){
+                qDebug() << "HOME ROBOT" << home->getPoint()->getName();
                 /// if the robot's file is more recent we update on the application side and we look for the pointview corresponding to
                 /// the coordinates given by the robot
                 if(isLater(dateHomeOnRobot, dateLastModification)){
@@ -4958,6 +4964,7 @@ void MainWindow::updateHomeInfo(const QString robot_name, QString robotInfo){
                         setHomeAtConnection(robot_name, p);
                 }
             } else {
+                qDebug() << "HOME APP" << home->getPoint()->getName();
                 if(sendHomeToRobot(robotView, home))
                     setHomeAtConnection(robot_name, p);
             }
@@ -4968,6 +4975,7 @@ void MainWindow::updateHomeInfo(const QString robot_name, QString robotInfo){
             /// that we are able to find
             QSharedPointer<PointView> home_sent_by_robot = points->findPointViewByPos(robot_home_position);
             if(home_sent_by_robot){
+                qDebug() << "HOME ROBOT" << home_sent_by_robot->getPoint()->getName();
                 /// sets the home inside the application (house icon, extra buttons etc...)
                 setHomeAtConnection(robot_name, robot_home_position);
 
@@ -4975,14 +4983,17 @@ void MainWindow::updateHomeInfo(const QString robot_name, QString robotInfo){
                 updateHomeFile(robot_name, robot_home_position, dateHomeOnRobot);
 
             } else
-                qDebug() << "could not find the point described as its home by the robot";
+                qDebug() << "HOME ROBOT NO HOME AT ALL";
         }
     } else {
         /// the robot and the application have the same point so we set this one as the home of the robot
         /// no need to modify any files
         QSharedPointer<PointView> home_app = points->findPointViewByPos(p);
-        if(home_app)
+        if(home_app){
             setHomeAtConnection(robot_name, p);
+            qDebug() << "HOME APP" << home_app->getPoint()->getName();
+        } else
+            qDebug() << "HOME APP NO HOME AT ALL";
     }
 }
 
@@ -5184,4 +5195,9 @@ QString MainWindow::prepareCommandPath(const Paths::Path &path) const {
         pathStr += + "\"" + QString::number(newPosX) + "\" \"" + QString::number(newPosY) + "\" \"" + QString::number(waitTime)+ "\" ";
     }
     return pathStr;
+}
+
+void MainWindow::drawObstacles(float angle_min, float angle_max, float angle_increment, QVector<float>* ranges){
+    qDebug() << "MainWindow::drawObstacles called" << angle_min << angle_max << angle_increment;
+    qDebug() << "Number of values received" << ranges->size();
 }
