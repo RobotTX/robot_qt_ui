@@ -36,6 +36,11 @@ EditMapWidget::EditMapWidget(QImage _mapImage, int _width, int _height, QWidget*
     centerMap();
 }
 
+
+EditMapWidget::~EditMapWidget(){
+    delete canvas;
+}
+
 void EditMapWidget::initializeMenu(){
     QWidget* menuWidget = new QWidget(this);
     QVBoxLayout* menuLayout = new QVBoxLayout(menuWidget);
@@ -52,6 +57,10 @@ void EditMapWidget::initializeMenu(){
 
     SpaceWidget* spaceWidget = new SpaceWidget(SpaceWidget::SpaceOrientation::HORIZONTAL, this);
     topMenuLayout->addWidget(spaceWidget);
+
+    CustomPushButton* resetBtn = new CustomPushButton(QIcon(":/icons/empty.png"), "Reset", this, false, CustomPushButton::ButtonType::LEFT_MENU, "center");
+    topMenuLayout->addWidget(resetBtn);
+    connect(resetBtn, SIGNAL(clicked()), canvas, SLOT(resetSlot()));
 
     /// Undo redo layout
     QHBoxLayout* undoRedoLayout = new QHBoxLayout();
@@ -175,6 +184,14 @@ void EditMapWidget::initializeMenu(){
     menuLayout->addLayout(cancelSaveLayout);
 
 
+    /// Some shortcuts to undo and redo
+    QShortcut* undoShortcut = new QShortcut(QKeySequence(tr("Ctrl+Z", "Undo")), this);
+    connect(undoShortcut, SIGNAL(activated()), canvas, SLOT(undoSlot()));
+
+    QShortcut* redoShortcut = new QShortcut(QKeySequence(tr("Ctrl+Y", "Redo")), this);
+    connect(redoShortcut, SIGNAL(activated()), canvas, SLOT(redoSlot()));
+
+
     layout->addWidget(menuWidget);
 
     menuWidget->setFixedWidth(150);
@@ -227,6 +244,68 @@ void EditMapWidget::cancelSlot(){
 
 void EditMapWidget::saveSlot(){
     qDebug() << "EditMapWidget::saveSlot called";
+
+    QVector<QPair<QVector<int>, QVector<QPointF>>> items = canvas->getItems();
+
+    QPainter painter;
+    painter.begin(&mapImage);
+
+    for(int i = 0; i < items.size(); i++){
+        if(items.at(i).first.size() > 2){
+            int _color = items.at(i).first.at(0);
+            int _shape = items.at(i).first.at(1);
+            int _size = items.at(i).first.at(2);
+            QVector<QPointF> points = items.at(i).second;
+
+            switch(_shape){
+                case 0:
+                    qDebug() << "EditMapWidget::saveSlot should not be here (case 0)";
+                break;
+                case 1:
+                    //qDebug() << "EditMapView::paint Drawing points";
+                    painter.setPen(QPen(QColor(_color, _color, _color), _size));
+                    for(int j = 0; j < points.size(); j++)
+                        painter.drawPoint(points.at(j));
+
+                break;
+                case 2:{
+                    //qDebug() << "EditMapWidget::saveSlot Drawing a line";
+                    painter.setPen(QPen(QColor(_color, _color, _color), _size));
+                    if(points.size() > 1){
+                        QVector<QPointF> newPoints = canvas->getLine(points.at(0), points.at(1));
+                        for(int j = 0; j < newPoints.size(); j++)
+                            painter.drawPoint(newPoints.at(j));
+                    }
+                }
+                break;
+                case 3:
+                    //qDebug() << "EditMapWidget::saveSlot Drawing an empty rectangle";
+                    painter.setPen(QPen(QColor(_color, _color, _color), _size, Qt::SolidLine, Qt::SquareCap, Qt::MiterJoin));
+                    if(points.size() > 1)
+                        painter.drawRect(QRect(QPoint(static_cast<int>(points.at(0).x()), static_cast<int>(points.at(0).y())),
+                                                QPoint(static_cast<int>(points.at(1).x()), static_cast<int>(points.at(1).y()))));
+                break;
+                case 4:
+                    //qDebug() << "EditMapWidget::saveSlot Drawing a filled rectangle";
+                    if(points.size() > 1){
+                        QRect rect = QRect(QPoint(static_cast<int>(points.at(0).x()), static_cast<int>(points.at(0).y())),
+                                           QPoint(static_cast<int>(points.at(1).x()), static_cast<int>(points.at(1).y())));
+                        painter.setPen(QPen(QColor(_color, _color, _color), qMax(rect.width(), rect.height()), Qt::SolidLine, Qt::SquareCap, Qt::MiterJoin));
+                        painter.fillRect(rect, QColor(_color, _color, _color));
+                    }
+                break;
+                default:
+                    qDebug() << "EditMapWidget::saveSlot should not be here (default)";
+                break;
+            }
+        } else {
+            qDebug() << "EditMapWidget::saveSlot should not be here (items.first < 3)";
+        }
+    }
+
+    painter.end();
+
+    emit saveEditMap();
 }
 
 void EditMapWidget::changeSizeEditSlot(){

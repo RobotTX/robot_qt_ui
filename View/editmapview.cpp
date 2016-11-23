@@ -211,6 +211,15 @@ void EditMapView::changeSizeSlot(int _size){
     resetLastPoint();
 }
 
+void EditMapView::resetSlot(){
+    qDebug() << "EditMapView::resetSlot called";
+
+    undoItems.clear();
+    items.clear();
+    resetLastPoint();
+    update();
+}
+
 QPointF EditMapView::getPoint(float x, float y){
     return QPointF(static_cast<int>(x) + 0.5, static_cast<int>(y) + 0.5);
 }
