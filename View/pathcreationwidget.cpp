@@ -20,6 +20,7 @@
 #include <QKeyEvent>
 #include "View/customlineedit.h"
 #include "View/stylesettings.h"
+#include "View/leftmenu.h"
 
 PathCreationWidget::PathCreationWidget(QWidget* parent, const QSharedPointer<Points> &_points, const QSharedPointer<Paths>& _paths, const bool associatedToRobot):
     QWidget(parent), points(_points), paths(_paths), currentGroupName(""), currentPathName("")
@@ -115,7 +116,12 @@ void PathCreationWidget::showEvent(QShowEvent* event){
     Q_UNUSED(event)
     updatePointsList();
     nameEdit->setFocus();
+    static_cast<LeftMenu*>(parent())->getCloseButton()->hide();
     show();
+}
+
+void PathCreationWidget::hideEvent(QHideEvent *event){
+    static_cast<LeftMenu*>(parent())->getCloseButton()->show();
 }
 
 void PathCreationWidget::updatePointsList(void){

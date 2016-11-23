@@ -24,9 +24,8 @@
 #include "View/customrobotdialog.h"
 #include "View/customlineedit.h"
 
-
-EditSelectedRobotWidget::EditSelectedRobotWidget(QWidget* parent, MainWindow* _mainWindow, const QSharedPointer<Points> &_points, const QSharedPointer<Robots> _robots, const QSharedPointer<Paths> &_paths):
-    QWidget(parent), mainWindow(_mainWindow), points(_points), robots(_robots), paths(_paths), assignedPath("")
+EditSelectedRobotWidget::EditSelectedRobotWidget(QWidget* _parent, MainWindow* _mainWindow, const QSharedPointer<Points> &_points, const QSharedPointer<Robots> _robots, const QSharedPointer<Paths> &_paths):
+    QWidget(_parent), mainWindow(_mainWindow), points(_points), robots(_robots), paths(_paths), assignedPath("")
 {
     /// creates a dialog widget to modify the robot's info and centers it on the main window
     robotDialog = new CustomRobotDialog(this);
@@ -150,6 +149,7 @@ EditSelectedRobotWidget::EditSelectedRobotWidget(QWidget* parent, MainWindow* _m
     scrollArea->setWidget(inWidget);
     layout->addWidget(scrollArea);
     setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
+
 }
 
 void EditSelectedRobotWidget::setSelectedRobot(QPointer<RobotView> const _robotView, bool _firstConnection){

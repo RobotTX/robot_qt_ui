@@ -43,8 +43,8 @@ void PathWidget::setPath(const QVector<QSharedPointer<PathPoint> > &path){
         /// Index & name of the point
         QLabel* nameLabel = new QLabel(this);
 
-        if(path.at(i)->getPoint().getName().contains(PATH_POINT_NAME))
-            nameLabel->setText(QString::number(i+1)+". "+QString::number(path.at(i)->getPoint().getPosition().getX(),'f', 1) + "; " + QString::number(path.at(i)->getPoint().getPosition().getY(),'f', 1));
+        if(path.at(i)->getPoint().getName().contains(PATH_POINT_NAME) || !path.at(i)->getPoint().getName().compare(""))
+            nameLabel->setText(QString::number(i+1) + ". " + QString::number(path.at(i)->getPoint().getPosition().getX(),'f', 1) + "; " + QString::number(path.at(i)->getPoint().getPosition().getY(),'f', 1));
         else
             nameLabel->setText(QString::number(i+1) + ". " + path.at(i)->getPoint().getName());
 

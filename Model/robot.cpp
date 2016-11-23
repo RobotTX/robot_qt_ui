@@ -124,7 +124,6 @@ void Robot::portSentSlot(){
     emit startRobotWorker();
     emit startNewMapWorker();
     emit startLocalMapWorker();
-    sendCommand(QString("q"));
 }
 
 std::ostream& operator <<(std::ostream& stream, Robot const& robot){

@@ -317,7 +317,6 @@ void MainWindow::initializeRobots(){
     robots->setRobotsNameMap(tmp);
     fileRead.close();
 
-    /*
     robotServerWorker = new RobotServerWorker(PORT_ROBOT_UPDATE);
 
     connect(robotServerWorker, SIGNAL(robotIsAlive(QString, QString, QString, QString, int)), this, SLOT(robotIsAliveSlot(QString, QString, QString, QString, int)));
@@ -326,7 +325,7 @@ void MainWindow::initializeRobots(){
     connect(&serverThread, SIGNAL(finished()), robotServerWorker, SLOT(deleteLater()));
     serverThread.start();
     robotServerWorker->moveToThread(&serverThread);
-*/
+
    /*
 
 
@@ -4966,7 +4965,7 @@ bool MainWindow::updateHomeFile(const QString robot_name, const Position& robot_
 
 QVector<PathPoint> MainWindow::extractPathFromInfo(const QStringList &robotInfo){
     QVector<PathPoint> path;
-    for(int i = 3; i < robotInfo.size(); i += 3){
+    for(int i = 5; i < robotInfo.size(); i += 3){
         double xOnRobot = robotInfo.at(i).toDouble();
         double xInApp = (xOnRobot - map->getOrigin().getX()) / map->getResolution() + ROBOT_WIDTH;
         double yOnRobot = robotInfo.at(i+1).toDouble();
@@ -5082,6 +5081,7 @@ void MainWindow::updatePathInfo(const QString robot_name, QString robotInfo){
                     pathPainter->setCurrentPath(paths->getPath(robotPathInApp.first, robotPathInApp.second, foundFlag), robotPathInApp.second);
                     editSelectedRobotWidget->setAssignedPath(robotPathInApp.second);
                     editSelectedRobotWidget->setGroupPath(robotPathInApp.first);
+                    pathPainter->setVisiblePath(robotPathInApp.second);
                     robotView->getRobot()->setPath(pathPainter->getCurrentPath());
                     robotView->getRobot()->setGroupPathName(robotPathInApp.first);
                     robotView->getRobot()->setPathName(robotPathInApp.second);
@@ -5117,6 +5117,7 @@ void MainWindow::updatePathInfo(const QString robot_name, QString robotInfo){
                             bool foundFlag(false);
                             pathPainter->setCurrentPath(paths->getPath(appPathInfo.first.first, appPathInfo.first.second, foundFlag), appPathInfo.first.second);
                             editSelectedRobotWidget->setAssignedPath(appPathInfo.first.second);
+                            pathPainter->setVisiblePath(robotPathInApp.second);
                             editSelectedRobotWidget->setGroupPath(appPathInfo.first.first);
                             robotView->getRobot()->setPath(pathPainter->getCurrentPath());
                             robotView->getRobot()->setGroupPathName(appPathInfo.first.first);
@@ -5137,6 +5138,7 @@ void MainWindow::updatePathInfo(const QString robot_name, QString robotInfo){
                 bool foundFlag(true);
                 pathPainter->setCurrentPath(paths->getPath(robotPathInApp.first, robotPathInApp.second, foundFlag), robotPathInApp.second);
                 editSelectedRobotWidget->setAssignedPath(robotPathInApp.second);
+                pathPainter->setVisiblePath(robotPathInApp.second);
                 editSelectedRobotWidget->setGroupPath(robotPathInApp.first);
                 robotView->getRobot()->setPath(pathPainter->getCurrentPath());
                 robotView->getRobot()->setGroupPathName(robotPathInApp.first);
@@ -5154,6 +5156,7 @@ void MainWindow::updatePathInfo(const QString robot_name, QString robotInfo){
             bool foundFlag(true);
             pathPainter->setCurrentPath(paths->getPath(robotPathInApp.first, robotPathInApp.second, foundFlag), robotPathInApp.second);
             editSelectedRobotWidget->setAssignedPath(robotPathInApp.second);
+            pathPainter->setVisiblePath(robotPathInApp.second);
             editSelectedRobotWidget->setGroupPath(robotPathInApp.first);
             robotView->getRobot()->setPath(pathPainter->getCurrentPath());
             robotView->getRobot()->setGroupPathName(robotPathInApp.first);
@@ -5191,6 +5194,7 @@ void MainWindow::updatePathInfo(const QString robot_name, QString robotInfo){
                 bool foundFlag(false);
                 pathPainter->setCurrentPath(paths->getPath(appPathInfo.first.first, appPathInfo.first.second, foundFlag), appPathInfo.first.second);
                 editSelectedRobotWidget->setAssignedPath(appPathInfo.first.second);
+                pathPainter->setVisiblePath(robotPathInApp.second);
                 editSelectedRobotWidget->setGroupPath(appPathInfo.first.first);
                 robotView->getRobot()->setPath(pathPainter->getCurrentPath());
                 robotView->getRobot()->setGroupPathName(appPathInfo.first.first);
@@ -5247,5 +5251,6 @@ QString MainWindow::prepareCommandPath(const Paths::Path &path) const {
 
 void MainWindow::drawObstacles(float angle_min, float angle_max, float angle_increment, QVector<float>* ranges){
     qDebug() << "MainWindow::drawObstacles called" << angle_min << angle_max << angle_increment;
-    qDebug() << "Number of values received" << ranges->size();
+    if(ranges)
+        qDebug() << "Number of values received" << ranges->size();
 }

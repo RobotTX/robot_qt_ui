@@ -25,7 +25,7 @@ class QMainWindow;
 #define PORT_MAP 4002
 #define PORT_CMD 5600
 #define PORT_NEW_MAP 5601
-#define PORT_LOCAL_MAP 5602
+#define PORT_LOCAL_MAP 5605
 
 /**
  * @brief The Robot class

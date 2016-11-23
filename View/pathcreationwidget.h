@@ -83,6 +83,7 @@ public:
 protected:
     void showEvent(QShowEvent* event);
     void keyPressEvent(QKeyEvent* event);
+    void hideEvent(QHideEvent *event);
 
 signals:
     /// emitted when the waiting times of points have not been set properly so that a message is displayed to the user

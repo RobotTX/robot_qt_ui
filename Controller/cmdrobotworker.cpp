@@ -1,5 +1,7 @@
 #include "cmdrobotworker.h"
 #include <QThread>
+#include <QDir>
+#include <fstream>
 
 CmdRobotWorker::CmdRobotWorker(const QString _ipAddress, const int cmdPort, const int _metadataPort, const int _robotPort, const int _mapPort, const int _laserPort, const QString _robotName):
     ipAddress(_ipAddress), port(cmdPort), robotName(_robotName), metadataPort(_metadataPort), robotPort(_robotPort), mapPort(_mapPort), laserPort(_laserPort), timeCounter(0)
@@ -67,9 +69,13 @@ void CmdRobotWorker::readTcpDataSlot(){
 
 void CmdRobotWorker::connectedSlot(){
     qDebug() << "(Robot" << robotName << ") Connected";
+    std::ifstream laserFile((QDir::currentPath() + QDir::separator() + "laserActivated.txt").toStdString(), std::ios::in);
+    std::string activateLaser;
+    laserFile >> activateLaser;
 
     /// When we are connected, we send the ports to use for the other workers
-    QString portStr = "h \"" + QString::number(metadataPort) + "\" \"" + QString::number(robotPort) + "\" \"" + QString::number(mapPort) + "\" \"" + QString::number(laserPort) + "\" } ";
+    QString portStr = "h \"" + QString::number(metadataPort) + "\" \"" + QString::number(robotPort) + "\" \"" +
+            QString::number(mapPort) + "\" \"" + QString::number(laserPort) + "\" \"" + QString::fromStdString(activateLaser) + "\" } ";
     qDebug() << "(Robot" << robotName << ") Sending ports : " << portStr;
     bool tmpBool(false);
     while(!tmpBool){
