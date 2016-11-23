@@ -132,6 +132,7 @@ public:
     void updatePathInfo(const QString robot_name, QString robotInfo);
 
     QString prepareCommandPath(const Paths::Path& path) const;
+    void saveMap(QString fileName);
 
 signals:
     void nameChanged(QString, QString);
@@ -284,6 +285,7 @@ private slots:
     void updateRobotInfo(QString robot_name, QString robotInfo);
     void setHomeAtConnection(const QString robot_name, const Position& pos_home);
     bool updateHomeFile(const QString robot_name, const Position& robot_home_position, const QStringList date);
+    void saveEditMapSlot();
 
 protected:
     void moveEvent(QMoveEvent* event);

@@ -15,13 +15,15 @@ public:
     QRectF boundingRect() const Q_DECL_OVERRIDE;
     void paint(QPainter *_painter, const QStyleOptionGraphicsItem *, QWidget *) Q_DECL_OVERRIDE;
 
+    QVector<QPair<QVector<int>, QVector<QPointF>>> getItems(void) const { return items; }
+    QVector<QPointF> getLine(QPointF p1, QPointF p2);
+
 protected:
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *event) Q_DECL_OVERRIDE;
     void mouseMoveEvent(QGraphicsSceneMouseEvent *event) Q_DECL_OVERRIDE;
     void mousePressEvent(QGraphicsSceneMouseEvent *event) Q_DECL_OVERRIDE;
     void resetLastPoint();
     QPointF getPoint(float x, float y);
-    QVector<QPointF> getLine(QPointF p1, QPointF p2);
 
 private slots:
     void undoSlot();
@@ -29,6 +31,7 @@ private slots:
     void changeColorSlot(int);
     void changeShapeSlot(int);
     void changeSizeSlot(int);
+    void resetSlot();
 
 private:
     QPointF dragStartPosition;

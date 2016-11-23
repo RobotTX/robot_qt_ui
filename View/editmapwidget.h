@@ -15,6 +15,9 @@ class EditMapWidget : public QWidget {
     Q_OBJECT
 public:
     EditMapWidget(QImage _mapImage, int _width, int _height, QWidget *parent = Q_NULLPTR);
+    ~EditMapWidget();
+
+    QImage getImage(void) const { return mapImage; }
 
 protected:
     void initializeMenu();
@@ -29,6 +32,7 @@ private slots:
 
 signals:
     void changeSizeEdit(int size);
+    void saveEditMap();
 
 private:
     QHBoxLayout* layout;

@@ -314,6 +314,7 @@ void MainWindow::initializeRobots(){
     robots->setRobotsNameMap(tmp);
     fileRead.close();
 
+    /*
     robotServerWorker = new RobotServerWorker(PORT_ROBOT_UPDATE);
 
     connect(robotServerWorker, SIGNAL(robotIsAlive(QString, QString, QString, QString, int)), this, SLOT(robotIsAliveSlot(QString, QString, QString, QString, int)));
@@ -322,7 +323,7 @@ void MainWindow::initializeRobots(){
     connect(&serverThread, SIGNAL(finished()), robotServerWorker, SLOT(deleteLater()));
     serverThread.start();
     robotServerWorker->moveToThread(&serverThread);
-
+*/
    /*
 
 
@@ -1857,30 +1858,37 @@ void MainWindow::saveMapBtnEvent(){
     QString fileName = QFileDialog::getSaveFileName(this, tr("Save File"),
             "", tr("Images (*.pgm)"));
 
-    if(fileName.indexOf(".pgm", fileName.length()-4) != -1)
-        fileName = fileName.mid(0, fileName.length()-4);
+    saveMap(fileName);
+}
 
-    saveMapState();
 
-    QFileInfo mapFileInfo(static_cast<QDir> (fileName), "");
-    QFileInfo fileInfo(QDir::currentPath(), "../gobot-software/mapConfigs/" + mapFileInfo.fileName() + ".config");
-    qDebug() << fileInfo.absoluteFilePath();
+void MainWindow::saveMap(QString fileName){
+    if(!fileName.isEmpty()){
+        if(fileName.indexOf(".pgm", fileName.length()-4) != -1)
+            fileName = fileName.mid(0, fileName.length()-4);
 
-    assert(saveMapConfig(fileInfo.absoluteFilePath().toStdString()));
+        saveMapState();
 
-    qDebug() << "mapS" << mapState.first.x() << mapState.first.y() << mapState.second << map->getHeight() << map->getWidth();
+        QFileInfo mapFileInfo(static_cast<QDir> (fileName), "");
+        QFileInfo fileInfo(QDir::currentPath(), "../gobot-software/mapConfigs/" + mapFileInfo.fileName() + ".config");
+        qDebug() << fileInfo.absoluteFilePath();
 
-    const QString pointsFile = fileName + "_points.xml";
-    savePoints(pointsFile);
+        assert(saveMapConfig(fileInfo.absoluteFilePath().toStdString()));
 
-    /// saves the map
-    map->saveToFile(fileName + ".pgm");
+        qDebug() << "mapS" << mapState.first.x() << mapState.first.y() << mapState.second << map->getHeight() << map->getWidth();
 
-    const QString pathsFile = fileName + "_paths.dat";
+        const QString pointsFile = fileName + "_points.xml";
+        savePoints(pointsFile);
 
-    /// saves the current configuration for the paths (this configuration will be associated to the map
-    /// when you load the map in the future
-    serializePaths(pathsFile);
+        /// saves the map
+        map->saveToFile(fileName + ".pgm");
+
+        const QString pathsFile = fileName + "_paths.dat";
+
+        /// saves the current configuration for the paths (this configuration will be associated to the map
+        /// when you load the map in the future
+        serializePaths(pathsFile);
+    }
 }
 
 void MainWindow::loadMapBtnEvent(){
@@ -1902,50 +1910,52 @@ void MainWindow::loadMapBtnEvent(){
     QString fileName = QFileDialog::getOpenFileName(this,
         tr("Open Image"), "", tr("Image Files (*.pgm)"));
 
-    QString fileNameWithoutExtension;
-    if(fileName.indexOf(".pgm", fileName.length()-4) != -1)
-        fileNameWithoutExtension = fileName.mid(0, fileName.length()-4);
+    if(!fileName.isEmpty()){
+        QString fileNameWithoutExtension;
+        if(fileName.indexOf(".pgm", fileName.length()-4) != -1)
+            fileNameWithoutExtension = fileName.mid(0, fileName.length()-4);
 
-    QFileInfo mapFileInfo(static_cast<QDir> (fileNameWithoutExtension), "");
-    QFileInfo fileInfo(QDir::currentPath(), "../gobot-software/mapConfigs/" + mapFileInfo.fileName() + ".config");
-    qDebug() << fileInfo.absoluteFilePath() << "map to load";
-    assert(loadMapConfig(fileInfo.absoluteFilePath().toStdString()));
+        QFileInfo mapFileInfo(static_cast<QDir> (fileNameWithoutExtension), "");
+        QFileInfo fileInfo(QDir::currentPath(), "../gobot-software/mapConfigs/" + mapFileInfo.fileName() + ".config");
+        qDebug() << fileInfo.absoluteFilePath() << "map to load";
+        assert(loadMapConfig(fileInfo.absoluteFilePath().toStdString()));
 
-    /// clears the map of all paths and points
-    clearNewMap();
+        /// clears the map of all paths and points
+        clearNewMap();
 
-    qDebug() << "about to load map from" << QString::fromStdString(mapFile);
-    map->setMapFromFile(QString::fromStdString(mapFile));
-    setWindowTitle(QString::fromStdString(mapFile));
+        qDebug() << "about to load map from" << QString::fromStdString(mapFile);
+        map->setMapFromFile(QString::fromStdString(mapFile));
+        setWindowTitle(QString::fromStdString(mapFile));
 
-    QPixmap pixmap = QPixmap::fromImage(map->getMapImage());
-    mapPixmapItem->setPixmap(pixmap);
-    scene->update();
+        QPixmap pixmap = QPixmap::fromImage(map->getMapImage());
+        mapPixmapItem->setPixmap(pixmap);
+        scene->update();
 
-    /// centers the map
-    centerMap();
+        /// centers the map
+        centerMap();
 
-    /// imports paths associated to the map and save them in the current file
-    deserializePaths(fileNameWithoutExtension + "_paths.dat");
+        /// imports paths associated to the map and save them in the current file
+        deserializePaths(fileNameWithoutExtension + "_paths.dat");
 
-    /// imports points associated to the map and save them in the current file
-    XMLParser parser(fileNameWithoutExtension + "_points.xml");
-    parser.readPoints(points);
+        /// imports points associated to the map and save them in the current file
+        XMLParser parser(fileNameWithoutExtension + "_points.xml");
+        parser.readPoints(points);
 
-    /// savesthe new configuration to the current configuration file
-    savePoints(QDir::currentPath() + QDir::separator() + "points.xml");
+        /// savesthe new configuration to the current configuration file
+        savePoints(QDir::currentPath() + QDir::separator() + "points.xml");
 
-    /// updates the group box so that new points can be added
-    createPointWidget->updateGroupBox();
+        /// updates the group box so that new points can be added
+        createPointWidget->updateGroupBox();
 
-    serializePaths(QDir::currentPath() + QDir::separator() + "paths.dat");
+        serializePaths(QDir::currentPath() + QDir::separator() + "paths.dat");
 
-    /// updates the groups of paths menu using the paths that have just been imported
-    leftMenu->getGroupsPathsWidget()->updateGroupsPaths();
+        /// updates the groups of paths menu using the paths that have just been imported
+        leftMenu->getGroupsPathsWidget()->updateGroupsPaths();
+    }
 }
 
 void MainWindow::mapBtnEvent(){
-    qDebug() << "mapBtnEvent called";
+    qDebug() << "MainWindow::mapBtnEvent called";
     leftMenuWidget->hide();
     mapLeftWidget->show();
     switchFocus("Menu", mapLeftWidget, MainWindow::WidgetType::MAP);
@@ -1960,6 +1970,44 @@ void MainWindow::messageMapSaved(bool status){
 
 void MainWindow::editMapSlot(){
     editMapWidget = QPointer<EditMapWidget>(new EditMapWidget(map->getMapImage(), map->getWidth(), map->getHeight()));
+    connect(editMapWidget, SIGNAL(saveEditMap()), this, SLOT(saveEditMapSlot()));
+}
+
+void MainWindow::saveEditMapSlot(){
+    qDebug() << "MainWindow::saveEditMapSlot called";
+    if(editMapWidget){
+        QImage image = editMapWidget->getImage();
+
+
+        QString fileName = QFileDialog::getSaveFileName(this, tr("Save File"),
+                "", tr("Images (*.pgm)"));
+
+        /// If the user perss cancel on the box, the filename fill be empty
+        if(!fileName.isEmpty()){
+            // TODO Do the modifications then save
+
+            qDebug() << "MainWindow::saveEditMapSlot called with filename" << fileName;
+            /// Clear the paths
+            /*pathPainter->setVisiblePath("");
+            emit resetPath();
+            paths->clear();
+            for(int i = 0; i < robots->getRobotsVector().size(); i++)
+                robots->getRobotsVector().at(i)->getRobot()->clearPath();*/
+
+            /// Set the new map
+            //mapFile = fileName.toStdString();
+            map->setMapImage(image);
+            QPixmap pixmap = QPixmap::fromImage(image);
+            mapPixmapItem->setPixmap(pixmap);
+            scene->update();
+/*
+            saveMap(fileName);
+            loadMapConfig(fileName.toStdString());*/
+            editMapWidget->close();
+        }
+    } else {
+        qDebug() << "MainWindow::saveEditMapSlot called while editMapWidget is not set, duh ?";
+    }
 }
 
 /**********************************************************************************************************************************/
@@ -4629,9 +4677,8 @@ void MainWindow::clearNewMap(){
     /// Update the left menu displaying the list of groups and buttons
     pointsLeftWidget->updateGroupButtonGroup();
 
-    for(int i = 0; i < robots->getRobotsVector().size(); i++){
+    for(int i = 0; i < robots->getRobotsVector().size(); i++)
         robots->getRobotsVector().at(i)->getRobot()->clearPath();
-    }
 }
 
 void MainWindow::delay(const int ms){
