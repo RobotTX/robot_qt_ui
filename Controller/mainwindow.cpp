@@ -109,9 +109,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
     /// retrieves the configuration of the map from the settings file
     /// if the parameters are not there, .0f, .0f and 1.0f serve as the
-    /// default parameters
+    /// default parameter
 
-    robots = QSharedPointer<Robots>(new Robots());
     scene = new QGraphicsScene();
 
     graphicsView = new CustomQGraphicsView(scene, this);
@@ -124,13 +123,17 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     mapWorker = NULL;
     commandController = new CommandController(this);
 
+    robots = QSharedPointer<Robots>(new Robots());
+
     /// Create the graphic item of the map
     QPixmap pixmap = QPixmap::fromImage(map->getMapImage());
-    mapPixmapItem = new MapView(pixmap, QSize(geometry().width(), geometry().height()), map, this);
+    mapPixmapItem = new MapView(pixmap, QSize(geometry().width(), geometry().height()), map, this, robots);
 
     /// Create the toolbar
     topLayout = new TopLayout(this);
     mainLayout->addWidget(topLayout);
+
+
 
     QHBoxLayout* bottom = new QHBoxLayout();
 
@@ -1457,6 +1460,7 @@ void MainWindow::robotIsAliveSlot(QString hostname, QString ip, QString mapId, Q
         rv->setPosition(robots->getRobotsVector().count()*100+100, robots->getRobotsVector().count()*100+100);
         rv->setParentItem(mapPixmapItem);
         robots->add(rv);
+        robot->launchWorkers(this);
         bottomLayout->addRobot(rv);
         robotsLeftWidget->updateRobots(robots);
 
@@ -1576,6 +1580,9 @@ void MainWindow::robotIsDeadSlot(QString hostname,QString ip){
 
         /// bottomLayout
         bottomLayout->removeRobot(id);
+
+        /// we remove the obstacles for this robot
+        mapPixmapItem->getObstaclesPainter()->removeRobotObstacles(ip);
 
         qDebug() << "Done removing robot" << hostname << "at ip" << ip;
         setMessageTop(TEXT_COLOR_DANGER, QString("Robot " + hostname + " at ip " + ip +" disconnected."));
@@ -1832,17 +1839,34 @@ void MainWindow::goHome(int nbRobot){
 
 void MainWindow::updateMetadata(const int width, const int height, const float resolution,
                                 const float originX, const float originY){
-    if(width != map->getWidth())
+
+    bool modif = false;
+
+    if(width != map->getWidth()){
         map->setWidth(width);
+        modif = true;
+    }
 
-    if(height != map->getHeight())
+    if(height != map->getHeight()){
         map->setHeight(height);
+        modif = true;
+    }
 
-    if(resolution != map->getResolution())
+    if(resolution != map->getResolution()){
         map->setResolution(resolution);
+        modif = true;
+    }
 
-    if(originX != map->getOrigin().getX() || originY != map->getOrigin().getY())
+    if(originX != map->getOrigin().getX() || originY != map->getOrigin().getY()){
         map->setOrigin(Position(originX, originY));
+        modif = true;
+    }
+
+    if(modif){
+        qDebug() << "new path de la mort" << QDir::currentPath() + QDir::separator() + "mapConfigs" + QDir::separator() + QString::fromStdString(mapFile);
+        saveMapConfig((QDir::currentPath() + QDir::separator() + "mapConfigs" + QDir::separator() + QString::fromStdString(mapFile)).toStdString());
+        saveMapState();
+    }
 }
 
 void MainWindow::updateMap(const QByteArray mapArray){
@@ -4365,24 +4389,11 @@ void MainWindow::sendPathSelectedRobotSlot(const QString groupName, const QStrin
 
     qDebug() << "MainWindow::sendPathSelectedRobotSlot path changed";
     QPointer<Robot> robot = selectedRobot->getRobot();
-    QString pathStr = "";
     /// prepares the cmd to send to the robot
     qDebug() << "MainWindow::sendPathSelectedRobotSlot" << pathPainter->getCurrentPath().size();
     bool flag;
     Paths::Path currPath = paths->getPath(groupName, pathName, flag);
-    for(int i = 0; i < currPath.size(); i++){
-        QSharedPointer<PathPoint> pathPoint = currPath.at(i);
-        float oldPosX = pathPoint->getPoint().getPosition().getX();
-        float oldPosY = pathPoint->getPoint().getPosition().getY();
-
-        float newPosX = (oldPosX - ROBOT_WIDTH) * map->getResolution() + map->getOrigin().getX();
-        float newPosY = (-oldPosY + map->getHeight() - ROBOT_WIDTH/2) * map->getResolution() + map->getOrigin().getY();
-        int waitTime = -1;
-        if(pathPoint->getWaitTime() > -1){
-            waitTime = pathPoint->getWaitTime();
-        }
-        pathStr += + "\"" + QString::number(newPosX) + "\" \"" + QString::number(newPosY) + "\" \"" + QString::number(waitTime)+ "\" ";
-    }
+    QString pathStr = prepareCommandPath(currPath);
 
     /// if the command is succesfully sent to the robot, we apply the change
     // TODO check if pathStr empty, means deleting the path => cmd send without parem => check robotFiles/command.cpp
@@ -4721,6 +4732,7 @@ void MainWindow::settingBtnSlot(){
     */
 
     editMapSlot();
+
 }
 
 void MainWindow::setTemporaryMessageTop(const QString type, const QString message, const int ms){
@@ -4959,10 +4971,14 @@ QVector<PathPoint> MainWindow::extractPathFromInfo(const QStringList &robotInfo)
     QVector<PathPoint> path;
     for(int i = 5; i < robotInfo.size(); i += 3){
         double xOnRobot = robotInfo.at(i).toDouble();
-        double xInApp = (xOnRobot - map->getOrigin().getX()) / map->getResolution() + ROBOT_WIDTH;
+
+        // float newPosX = (oldPosX - ROBOT_WIDTH) * map->getResolution() + map->getOrigin().getX();
+
+        double xInApp = (-map->getOrigin().getX()+xOnRobot)/map->getResolution() + ROBOT_WIDTH;
         double yOnRobot = robotInfo.at(i+1).toDouble();
-        double yInApp = ((yOnRobot - map->getOrigin().getY()) / map->getResolution() + ROBOT_WIDTH/2 - map->getHeight()) * -1;
+        double yInApp = map->getHeight()-(-map->getOrigin().getY()+yOnRobot)/map->getResolution()-ROBOT_WIDTH/2;
         path.push_back(PathPoint(Point(" ", xInApp, yInApp), robotInfo.at(i+2).toDouble()));
+
     }
     return path;
 }
@@ -5232,17 +5248,12 @@ QString MainWindow::prepareCommandPath(const Paths::Path &path) const {
 
         float newPosX = (oldPosX - ROBOT_WIDTH) * map->getResolution() + map->getOrigin().getX();
         float newPosY = (-oldPosY + map->getHeight() - ROBOT_WIDTH/2) * map->getResolution() + map->getOrigin().getY();
-        int waitTime = -1;
-        if(pathPoint->getWaitTime() > -1){
-            waitTime = pathPoint->getWaitTime();
-        }
-        pathStr += + "\"" + QString::number(newPosX) + "\" \"" + QString::number(newPosY) + "\" \"" + QString::number(waitTime)+ "\" ";
+        //int waitTime = -1;
+        //if(pathPoint->getWaitTime() > -1){
+        int waitTime = pathPoint->getWaitTime();
+        //}
+        pathStr += + "\"" + QString::number(newPosX) + "\" \"" + QString::number(newPosY) + "\" \"" + QString::number(waitTime)+ "\" ";   
     }
+    qDebug() << "pathstr yo" << pathStr;
     return pathStr;
-}
-
-void MainWindow::drawObstacles(float angle_min, float angle_max, float angle_increment, QVector<float>* ranges){
-    qDebug() << "MainWindow::drawObstacles called" << angle_min << angle_max << angle_increment;
-    if(ranges)
-        qDebug() << "Number of values received" << ranges->size();
 }

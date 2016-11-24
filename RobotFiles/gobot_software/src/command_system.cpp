@@ -135,14 +135,15 @@ bool execCommand(ros::NodeHandle n, std::vector<std::string> command){
 
 		/// Command for the robot to receive the ports needed for the map, metadata and robot pos services
 		case 'h':
-			if(command.size() > 4){
+			if(command.size() == 6){
 
 				metadata_port = std::stoi(command.at(1));
 				robot_pos_port = std::stoi(command.at(2));
 				map_port = std::stoi(command.at(3));
 				laser_port = std::stoi(command.at(4));
 				std::cout << "(Command system) Gobot here are the ports " << metadata_port << ", " << robot_pos_port << ", " << map_port << ", " << laser_port << std::endl;
-				
+				if(!command.at(5).compare("1"))
+					return sendLaserData(n);
 				return true;
 			} else {
 				std::cout << "(Command system) Parameter missing" << std::endl;
@@ -600,6 +601,11 @@ void asyncAccept(boost::shared_ptr<boost::asio::io_service> io_service, boost::s
 		ifs.close();
 	}
 
+	if(!home_x.compare("") && !home_y.compare("")){
+		home_x = "-1";
+		home_y = "-1";
+	}
+
     struct stat attrib;
     stat("/home/gtdollar/computer_software/Robot_Infos/home.txt", &attrib);
     char dateHome[30];
@@ -651,6 +657,7 @@ void serverDisconnected(const std_msgs::String::ConstPtr& msg){
 	connected = false;
 	stopRobotPos();
 	stopMetadata();
+	stopSendingLaserData();
 }
 
 int main(int argc, char* argv[]){

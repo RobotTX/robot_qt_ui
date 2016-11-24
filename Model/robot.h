@@ -68,6 +68,8 @@ public:
     void setPathName(const QString name) { pathName = name; }
     void setGroupPathName(const QString name) { groupName = name; }
 
+    void launchWorkers(MainWindow* mainWindow);
+
     /**
      * @brief display
      * @param stream

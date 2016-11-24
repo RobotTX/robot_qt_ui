@@ -256,8 +256,14 @@ QPair<QString, QString> Paths::findPath(const QVector<PathPoint>& path) const {
 
                 for(int i = 0; i < it_paths.value()->size(); i++){
                     /// if one pathPoint is not the same we jump to the next path
-                    if(*(it_paths.value()->at(i)) != path.at(i))
+                    if(*(it_paths.value()->at(i)) != path.at(i)){
+                        qDebug() << "these points are different" << path.at(i).getPoint().getPosition().getX() <<
+                                    path.at(i).getPoint().getPosition().getY() << "and" <<
+                                    it_paths.value()->at(i)->getPoint().getPosition().getX() <<
+                                    it_paths.value()->at(i)->getPoint().getPosition().getY();
                         right_path = false;
+                        break;
+                    }
                 }
 
                 /// but if all points match then we return the name of the group and the name of the path

@@ -46,7 +46,8 @@ private slots:
     void connectSocket();
 
 signals:
-    void laserValues(float angle_min, float angle_max, float angle_increment, QVector<float> *ranges);
+    void laserValues(float angle_min, float angle_max, float angle_increment, const QVector<float>& ranges, QString ipAddress);
+    void addNewRobotObstacles(QString ip);
 
 private:
     QPointer<QTcpSocket> socket;

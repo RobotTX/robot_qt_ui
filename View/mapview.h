@@ -15,7 +15,8 @@ class Map;
 #include "Model/points.h"
 #include "mainwindow.h"
 #include "Model/point.h"
-
+#include <QPainter>
+#include "View/drawobstacles.h"
 
 /**
  * @brief The MapView class
@@ -25,16 +26,18 @@ class MapView: public QObject, public QGraphicsPixmapItem {
     Q_OBJECT
 
 public:
-    MapView (const QPixmap& pixmap, const QSize size, QSharedPointer<Map> _map, QMainWindow *_mainWindow);
+    MapView (const QPixmap& pixmap, const QSize size, QSharedPointer<Map> _map, QMainWindow *_mainWindow, QSharedPointer<Robots> _robots);
 
     QSize getSize(void) const { return size; }
     int getWidth(void) const { return size.width(); }
     int getHeight(void) const { return size.height(); }
     GraphicItemState getState(void) const { return state; }
     QMainWindow* getMainWindow(void) const { return mainWindow; }
+    DrawObstacles* getObstaclesPainter(void) const { return obstaclesPainter; }
 
     void setState(const GraphicItemState _state) { state = _state; }
     void setPoints(QSharedPointer<Points> _points) { points = _points; }
+
 
 signals:
     /// emitted when a user left clicks the map
@@ -65,6 +68,8 @@ private:
     QMainWindow* mainWindow;
     QSharedPointer<Map> map;
     int idTmp;
+    DrawObstacles* obstaclesPainter;
+    QSharedPointer<Robots> robots;
 };
 
 #endif // MAPVIEW_H

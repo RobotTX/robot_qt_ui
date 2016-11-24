@@ -11,8 +11,8 @@
 #include <QSharedPointer>
 
 
-MapView::MapView (const QPixmap& pixmap, const QSize _size, QSharedPointer<Map> _map, QMainWindow* _mainWindow) :
-    QGraphicsPixmapItem(pixmap), size(_size), state(GraphicItemState::NO_STATE), mainWindow(_mainWindow), map(_map), idTmp(0)
+MapView::MapView (const QPixmap& pixmap, const QSize _size, QSharedPointer<Map> _map, QMainWindow* _mainWindow, QSharedPointer<Robots> _robots) :
+    QGraphicsPixmapItem(pixmap), size(_size), state(GraphicItemState::NO_STATE), mainWindow(_mainWindow), map(_map), idTmp(0), robots(_robots)
 {
     /// Tell the class which mouse button to accept
     setAcceptedMouseButtons(Qt::LeftButton);
@@ -21,6 +21,8 @@ MapView::MapView (const QPixmap& pixmap, const QSize _size, QSharedPointer<Map> 
     connect(this, SIGNAL(leftClick()), mainWindow, SLOT(setSelectedPoint()));
     /// to notify the main window that the file has been successfully saved or not
     connect(_map.data(), SIGNAL(saveStatus(bool)), mainWindow, SLOT(messageMapSaved(bool)));
+
+    obstaclesPainter = new DrawObstacles(size, _robots, this);
 }
 
 void MapView::mousePressEvent(QGraphicsSceneMouseEvent *event){

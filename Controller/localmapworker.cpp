@@ -24,6 +24,8 @@ void LocalMapWorker::connectSocket(){
     /// the errorConnectionSlot will try to reconnect
     socket->connectToHost(ipAddress, port);
 
+    emit addNewRobotObstacles(ipAddress);
+
     qDebug() << "(Local Map Thread) connectSocket done";
 }
 
@@ -73,7 +75,7 @@ void LocalMapWorker::readTcpDataSlot(){
 
     data = QByteArray();
 
-    emit laserValues(angle_min, angle_max, angle_increment, &ranges);
+    emit laserValues(angle_min, angle_max, angle_increment, ranges, ipAddress);
 }
 
 void LocalMapWorker::disconnectedSlot(){

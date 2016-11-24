@@ -19,73 +19,6 @@ Robot::Robot(MainWindow* mainWindow, const QSharedPointer<Paths>& _paths, const 
         in >> *this;
         robotPathFile.close();
     }
-
-    connect(this, SIGNAL(cmdAnswer(QString)), mainWindow->getCommandController(), SLOT(cmdAnswerSlot(QString)));
-
-    qDebug() << "Robot" << name << "at ip" << ip << " launching its cmd thread";
-
-    cmdRobotWorker = QPointer<CmdRobotWorker>(new CmdRobotWorker(ip, PORT_CMD, PORT_MAP_METADATA, PORT_ROBOT_POS, PORT_MAP, PORT_LOCAL_MAP, name));
-    connect(cmdRobotWorker, SIGNAL(robotIsDead(QString,QString)), mainWindow, SLOT(robotIsDeadSlot(QString,QString)));
-    connect(cmdRobotWorker, SIGNAL(cmdAnswer(QString)), mainWindow->getCommandController(), SLOT(cmdAnswerSlot(QString)));
-    connect(cmdRobotWorker, SIGNAL(portSent()), this, SLOT(portSentSlot()));
-    /// so that the first time the robot connects its home position and the last modification of its file are sent to
-    /// the application in order to update the homes on both the robot and the application side correctly
-    connect(cmdRobotWorker, SIGNAL(newConnection(QString, QString)), mainWindow, SLOT(updateRobotInfo(QString, QString)));
-    connect(this, SIGNAL(sendCommandSignal(QString)), cmdRobotWorker, SLOT(sendCommand(QString)));
-    connect(this, SIGNAL(pingSignal()), cmdRobotWorker, SLOT(pingSlot()));
-    connect(mainWindow, SIGNAL(changeCmdThreadRobotName(QString)), cmdRobotWorker, SLOT(changeRobotNameSlot(QString)));
-    connect(this, SIGNAL(stopCmdRobotWorker()), cmdRobotWorker, SLOT(stopWorker()));
-    connect(&cmdThread, SIGNAL(finished()), cmdRobotWorker, SLOT(deleteLater()));
-    connect(this, SIGNAL(startCmdRobotWorker()), cmdRobotWorker, SLOT(connectSocket()));
-    cmdRobotWorker->moveToThread(&cmdThread);
-    cmdThread.start();
-
-
-    //qDebug() << "Robot" << name << "at ip" << ip << " launching its robot pos thread at port" << PORT_ROBOT_POS;
-
-    robotWorker = QPointer<RobotPositionWorker>(new RobotPositionWorker(ip, PORT_ROBOT_POS));
-    connect(robotWorker, SIGNAL(valueChangedRobot(QString, float, float, float)),
-                     mainWindow ,SLOT(updateRobot(QString, float, float, float)));
-    connect(this, SIGNAL(stopRobotWorker()), robotWorker, SLOT(stopWorker()));
-    connect(&robotThread, SIGNAL(finished()), robotWorker, SLOT(deleteLater()));
-    connect(this, SIGNAL(startRobotWorker()), robotWorker, SLOT(connectSocket()));
-    robotWorker->moveToThread(&robotThread);
-    robotThread.start();
-
-
-    //qDebug() << "Robot" << name << "at ip" << ip << " launching its metadata thread at port" << PORT_ROBOT_POS;
-
-    metadataWorker = QPointer<MetadataWorker>(new MetadataWorker(ip, PORT_MAP_METADATA));
-    connect(metadataWorker, SIGNAL(valueChangedMetadata(int, int, float, float, float)),
-                     mainWindow , SLOT(updateMetadata(int, int, float, float, float)));
-    connect(this, SIGNAL(stopMetadataWorker()), metadataWorker, SLOT(stopWorker()));
-    connect(this, SIGNAL(startMetadataWorker()), metadataWorker, SLOT(connectSocket()));
-    connect(&metadataThread, SIGNAL(finished()), metadataWorker, SLOT(deleteLater()));
-    metadataWorker->moveToThread(&metadataThread);
-    metadataThread.start();
-
-
-    //qDebug() << "Robot" << name << "at ip" << ip << " launching its new map thread at port" << PORT_NEW_MAP;
-
-    newMapWorker = QPointer<SendNewMapWorker>(new SendNewMapWorker(ip, PORT_NEW_MAP));
-    connect(this, SIGNAL(sendNewMapSignal(QByteArray)), newMapWorker, SLOT(writeTcpDataSlot(QByteArray)));
-    connect(this, SIGNAL(cmdAnswer(QString)), mainWindow->getCommandController(), SLOT(cmdAnswerSlot(QString)));
-    connect(newMapWorker, SIGNAL(doneSendingNewMapSignal()), this, SLOT(doneSendingMapSlot()));
-    connect(this, SIGNAL(stopNewMapWorker()), newMapWorker, SLOT(stopWorker()));
-    connect(this, SIGNAL(startNewMapWorker()), newMapWorker, SLOT(connectSocket()));
-    connect(&newMapThread, SIGNAL(finished()), newMapWorker, SLOT(deleteLater()));
-    newMapWorker->moveToThread(&newMapThread);
-    newMapThread.start();
-
-    localMapWorker = QPointer<LocalMapWorker>(new LocalMapWorker(ip, PORT_LOCAL_MAP));
-    connect(this, SIGNAL(stopLocalMapWorker()), localMapWorker, SLOT(stopWorker()));
-    connect(this, SIGNAL(startLocalMapWorker()), localMapWorker, SLOT(connectSocket()));
-    connect(&localMapThread, SIGNAL(finished()), localMapWorker, SLOT(deleteLater()));
-    connect(localMapWorker, SIGNAL(laserValues(float, float, float, QVector<float>*)), mainWindow, SLOT(drawObstacles(float, float, float, QVector<float>*)));
-    localMapWorker->moveToThread(&localMapThread);
-    localMapThread.start();
-
-    emit startCmdRobotWorker();
 }
 
 Robot::Robot(): name("Default name"), ip("no Ip"), position(Position()),
@@ -181,4 +114,75 @@ void Robot::clearPath(){
     pathName = "";
     groupName = "";
     path.clear();
+}
+
+void Robot::launchWorkers(MainWindow* mainWindow){
+
+    connect(this, SIGNAL(cmdAnswer(QString)), mainWindow->getCommandController(), SLOT(cmdAnswerSlot(QString)));
+
+    qDebug() << "Robot" << name << "at ip" << ip << " launching its cmd thread";
+
+    cmdRobotWorker = QPointer<CmdRobotWorker>(new CmdRobotWorker(ip, PORT_CMD, PORT_MAP_METADATA, PORT_ROBOT_POS, PORT_MAP, PORT_LOCAL_MAP, name));
+    connect(cmdRobotWorker, SIGNAL(robotIsDead(QString,QString)), mainWindow, SLOT(robotIsDeadSlot(QString,QString)));
+    connect(cmdRobotWorker, SIGNAL(cmdAnswer(QString)), mainWindow->getCommandController(), SLOT(cmdAnswerSlot(QString)));
+    connect(cmdRobotWorker, SIGNAL(portSent()), this, SLOT(portSentSlot()));
+    /// so that the first time the robot connects its home position and the last modification of its file are sent to
+    /// the application in order to update the homes on both the robot and the application side correctly
+    connect(cmdRobotWorker, SIGNAL(newConnection(QString, QString)), mainWindow, SLOT(updateRobotInfo(QString, QString)));
+    connect(this, SIGNAL(sendCommandSignal(QString)), cmdRobotWorker, SLOT(sendCommand(QString)));
+    connect(this, SIGNAL(pingSignal()), cmdRobotWorker, SLOT(pingSlot()));
+    connect(mainWindow, SIGNAL(changeCmdThreadRobotName(QString)), cmdRobotWorker, SLOT(changeRobotNameSlot(QString)));
+    connect(this, SIGNAL(stopCmdRobotWorker()), cmdRobotWorker, SLOT(stopWorker()));
+    connect(&cmdThread, SIGNAL(finished()), cmdRobotWorker, SLOT(deleteLater()));
+    connect(this, SIGNAL(startCmdRobotWorker()), cmdRobotWorker, SLOT(connectSocket()));
+    cmdRobotWorker->moveToThread(&cmdThread);
+    cmdThread.start();
+
+    //qDebug() << "Robot" << name << "at ip" << ip << " launching its robot pos thread at port" << PORT_ROBOT_POS;
+
+    robotWorker = QPointer<RobotPositionWorker>(new RobotPositionWorker(ip, PORT_ROBOT_POS));
+    connect(robotWorker, SIGNAL(valueChangedRobot(QString, float, float, float)),
+                     mainWindow ,SLOT(updateRobot(QString, float, float, float)));
+    connect(this, SIGNAL(stopRobotWorker()), robotWorker, SLOT(stopWorker()));
+    connect(&robotThread, SIGNAL(finished()), robotWorker, SLOT(deleteLater()));
+    connect(this, SIGNAL(startRobotWorker()), robotWorker, SLOT(connectSocket()));
+    robotWorker->moveToThread(&robotThread);
+    robotThread.start();
+
+
+    //qDebug() << "Robot" << name << "at ip" << ip << " launching its metadata thread at port" << PORT_ROBOT_POS;
+
+    metadataWorker = QPointer<MetadataWorker>(new MetadataWorker(ip, PORT_MAP_METADATA));
+    connect(metadataWorker, SIGNAL(valueChangedMetadata(int, int, float, float, float)),
+                     mainWindow , SLOT(updateMetadata(int, int, float, float, float)));
+    connect(this, SIGNAL(stopMetadataWorker()), metadataWorker, SLOT(stopWorker()));
+    connect(this, SIGNAL(startMetadataWorker()), metadataWorker, SLOT(connectSocket()));
+    connect(&metadataThread, SIGNAL(finished()), metadataWorker, SLOT(deleteLater()));
+    metadataWorker->moveToThread(&metadataThread);
+    metadataThread.start();
+
+
+    //qDebug() << "Robot" << name << "at ip" << ip << " launching its new map thread at port" << PORT_NEW_MAP;
+
+    newMapWorker = QPointer<SendNewMapWorker>(new SendNewMapWorker(ip, PORT_NEW_MAP));
+    connect(this, SIGNAL(sendNewMapSignal(QByteArray)), newMapWorker, SLOT(writeTcpDataSlot(QByteArray)));
+    connect(this, SIGNAL(cmdAnswer(QString)), mainWindow->getCommandController(), SLOT(cmdAnswerSlot(QString)));
+    connect(newMapWorker, SIGNAL(doneSendingNewMapSignal()), this, SLOT(doneSendingMapSlot()));
+    connect(this, SIGNAL(stopNewMapWorker()), newMapWorker, SLOT(stopWorker()));
+    connect(this, SIGNAL(startNewMapWorker()), newMapWorker, SLOT(connectSocket()));
+    connect(&newMapThread, SIGNAL(finished()), newMapWorker, SLOT(deleteLater()));
+    newMapWorker->moveToThread(&newMapThread);
+    newMapThread.start();
+
+    localMapWorker = QPointer<LocalMapWorker>(new LocalMapWorker(ip, PORT_LOCAL_MAP));
+    connect(this, SIGNAL(stopLocalMapWorker()), localMapWorker, SLOT(stopWorker()));
+    connect(this, SIGNAL(startLocalMapWorker()), localMapWorker, SLOT(connectSocket()));
+    connect(&localMapThread, SIGNAL(finished()), localMapWorker, SLOT(deleteLater()));
+    connect(localMapWorker, SIGNAL(addNewRobotObstacles(QString)), mainWindow->getMapView()->getObstaclesPainter(), SLOT(addNewRobotObstacles(QString)));
+    qRegisterMetaType<QVector<float>>("QVector<float>");
+    connect(localMapWorker, SIGNAL(laserValues(float, float, float, const QVector<float>&, QString)), mainWindow->getMapView()->getObstaclesPainter(), SLOT(drawObstacles(float, float, float, const QVector<float>&, QString)));
+    localMapWorker->moveToThread(&localMapThread);
+    localMapThread.start();
+
+    emit startCmdRobotWorker();
 }

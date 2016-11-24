@@ -81,9 +81,10 @@ public:
     enum WidgetType { MENU, GROUPS, GROUP, POINT, ROBOTS, ROBOT , MAP, GROUPS_PATHS, GROUP_OF_PATHS, PATH };
 
     QSharedPointer<Points> getPoints(void) const { return points; }
-    QList<QPair<QPair<QWidget*, QString>, MainWindow::WidgetType>> getLastWidgets() const { return lastWidgets; }
+    QList<QPair<QPair<QWidget*, QString>, MainWindow::WidgetType>> getLastWidgets(void) const { return lastWidgets; }
     PathPainter* getPathPainter(void) const { return pathPainter; }
-    CommandController* getCommandController() const { return commandController; }
+    CommandController* getCommandController(void) const { return commandController; }
+    QSharedPointer<Robots> getRobots(void) const { return robots; }
 
     void initializeMenu();
     void initializeRobots();
@@ -286,8 +287,6 @@ private slots:
     void setHomeAtConnection(const QString robot_name, const Position& pos_home);
     bool updateHomeFile(const QString robot_name, const Position& robot_home_position, const QStringList date);
     void saveEditMapSlot();
-
-    void drawObstacles(float angle_min, float angle_max, float angle_increment, QVector<float> *ranges);
 
 protected:
     void moveEvent(QMoveEvent* event);

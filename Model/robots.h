@@ -4,6 +4,7 @@
 class RobotView;
 class Point;
 
+#include <QPointer>
 #include <QVector>
 #include <QMap>
 #include <QSharedPointer>

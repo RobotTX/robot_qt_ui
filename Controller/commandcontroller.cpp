@@ -11,7 +11,7 @@ CommandController::CommandController(QWidget *parent) : QObject(parent), message
 }
 
 bool CommandController::sendCommand(QPointer<Robot> robot, QString cmd){
-
+    qDebug() << "sending command" << cmd;
     if(robotName.isEmpty() && !cmd.isEmpty()){
         cmdAnswer = "";
         robot->sendCommand(cmd);

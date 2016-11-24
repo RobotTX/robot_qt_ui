@@ -78,7 +78,8 @@ HEADERS += \
            View/editselectedrobotwidget.h \
     View/editmapwidget.h \
     View/editmapview.h \
-    Controller/localmapworker.h
+    Controller/localmapworker.h \
+    View/drawobstacles.h
 
 FORMS += Controller/mainwindow.ui
 
@@ -140,7 +141,8 @@ SOURCES += main.cpp \
            View/editselectedrobotwidget.cpp \
     View/editmapwidget.cpp \
     View/editmapview.cpp \
-    Controller/localmapworker.cpp
+    Controller/localmapworker.cpp \
+    View/drawobstacles.cpp
 
 
 RESOURCES += Resources/resources.qrc

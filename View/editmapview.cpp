@@ -271,7 +271,7 @@ QVector<QPointF> EditMapView::getLine(QPointF p1, QPointF p2){
             }
             y += sy;
         }
-    }else{
+    } else {
         incE = 2 * dy;
         incNE = 2 * dy - 2 * dx;
         decision = 2 * dy - dx;
