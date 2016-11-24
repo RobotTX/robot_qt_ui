@@ -1,5 +1,6 @@
 #include "map.h"
 #include <QDebug>
+#include <assert.h>
 
 Map::Map(): resolution(0), width(0), height(0), origin(Position())
 {
@@ -35,4 +36,11 @@ void Map::saveToFile(const QString fileName){
     /// Qt has is own function to save the QImage to a PGM file
     bool status = mapImage.save(fileName, "PGM");
     //emit saveStatus(status);
+}
+
+void Map::setDateTime(const QDateTime _dateTime) {
+    if(_dateTime.isValid())
+        dateTime = _dateTime;
+    else
+        dateTime = QDateTime::currentDateTime();
 }

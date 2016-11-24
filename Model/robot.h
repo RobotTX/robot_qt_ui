@@ -87,7 +87,7 @@ public:
      * @param cmd
      * To send the new map to the robot
      */
-    void sendNewMap(QByteArray cmd);
+    void sendNewMap(QString mapId, QString date, QString metadata, QImage map);
 
     /**
      * @brief stopThreads
@@ -123,10 +123,13 @@ signals:
 
     /**
      * @brief sendNewMapSignal
-     * @param cmd
+     * @param mapId
+     * @param date
+     * @param metadata
+     * @param map
      * To tell the map thread to send a new map to the robot
      */
-    void sendNewMapSignal(QByteArray cmd);
+    void sendNewMapSignal(QString mapId, QString date, QString metadata, QImage map);
 
     void stopCmdRobotWorker();
     void stopRobotWorker();

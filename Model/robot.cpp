@@ -68,7 +68,7 @@ Robot::Robot(MainWindow* mainWindow, const QSharedPointer<Paths>& _paths, const 
     //qDebug() << "Robot" << name << "at ip" << ip << " launching its new map thread at port" << PORT_NEW_MAP;
 
     newMapWorker = QPointer<SendNewMapWorker>(new SendNewMapWorker(ip, PORT_NEW_MAP));
-    connect(this, SIGNAL(sendNewMapSignal(QByteArray)), newMapWorker, SLOT(writeTcpDataSlot(QByteArray)));
+    connect(this, SIGNAL(sendNewMapSignal(QString, QString, QString, QImage)), newMapWorker, SLOT(writeTcpDataSlot(QString, QString, QString, QImage)));
     connect(this, SIGNAL(cmdAnswer(QString)), mainWindow->getCommandController(), SLOT(cmdAnswerSlot(QString)));
     connect(newMapWorker, SIGNAL(doneSendingNewMapSignal()), this, SLOT(doneSendingMapSlot()));
     connect(this, SIGNAL(stopNewMapWorker()), newMapWorker, SLOT(stopWorker()));
@@ -142,12 +142,11 @@ void Robot::sendCommand(const QString cmd) {
     emit sendCommandSignal(cmd);
 }
 
-void Robot::sendNewMap(QByteArray cmd) {
-    Q_UNUSED(cmd)
+void Robot::sendNewMap(QString mapId, QString date, QString metadata, QImage map) {
     qDebug() << "Robot::sendNewMap to" << name;
     if(!sendingMap){
         sendingMap = 1;
-        emit sendNewMapSignal(cmd);
+        emit sendNewMapSignal(mapId, date, metadata, map);
     }
 }
 
