@@ -139,8 +139,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     topLayout = new TopLayout(this);
     mainLayout->addWidget(topLayout);
 
-
-
     QHBoxLayout* bottom = new QHBoxLayout();
 
     initializePaths();
@@ -325,7 +323,7 @@ void MainWindow::initializeRobots(){
     in >> tmp;
     robots->setRobotsNameMap(tmp);
     fileRead.close();
-/*
+
     robotServerWorker = new RobotServerWorker(PORT_ROBOT_UPDATE);
 
     connect(robotServerWorker, SIGNAL(robotIsAlive(QString, QString, QString, QString, int)), this, SLOT(robotIsAliveSlot(QString, QString, QString, QString, int)));
@@ -334,7 +332,7 @@ void MainWindow::initializeRobots(){
     connect(&serverThread, SIGNAL(finished()), robotServerWorker, SLOT(deleteLater()));
     serverThread.start();
     robotServerWorker->moveToThread(&serverThread);
-*/
+
    /*
 
 
@@ -1279,7 +1277,6 @@ void MainWindow::savePathSlot(){
     paths->createPath(groupName, pathName);
     for(int i = 0; i < pathPainter->getCurrentPath().size(); i++)
         paths->addPathPoint(groupName, pathName, pathPainter->getCurrentPath().at(i));
-
 
     /// updates the visible path
     pathPainter->setVisiblePath(pathName);
