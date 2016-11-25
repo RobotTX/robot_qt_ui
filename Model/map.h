@@ -5,6 +5,7 @@
 #include <QImage>
 #include <QObject>
 #include <QDateTime>
+#include <QUuid>
 
 /**
  * @brief The Map class
@@ -26,6 +27,7 @@ public:
     QRect getRect(void) const { return rect; }
     QPointF getCenter(void) const { return center; }
     QDateTime getDateTime(void) const { return dateTime; }
+    QUuid getMapId(void) const { return mapId; }
 
     /// Setters
     void setResolution(const float _resolution) { resolution = _resolution; }
@@ -34,6 +36,7 @@ public:
     void setOrigin(const Position _origin) { origin = _origin; }
     void setMapImage(const QImage _mapImage) { mapImage = _mapImage; }
     void setDateTime(const QDateTime _dateTime);
+    void setMapId(const QUuid _mapId) { mapId = _mapId; }
 
 
     /**
@@ -92,6 +95,7 @@ private:
     QRect rect;
     QPointF center;
     QDateTime dateTime;
+    QUuid mapId;
 };
 
 #endif /// MAP_H

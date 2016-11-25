@@ -238,10 +238,10 @@ private slots:
     void showAllHomes(void);
     void backEvent();
     void updateView();
-    void robotIsAliveSlot(QString hostname, QString ip, QString mapId, QString ssid, int stage);
+    void robotIsAliveSlot(QString hostname, QString ip, QString mapId, QString mapDate, QString ssid, int stage);
     void robotIsDeadSlot(QString hostname, QString ip);
     void selectViewRobot();
-    void sendNewMapToRobots(QString ipAddress);
+    void sendNewMapToRobots(QString ipAddress = "");
     void settingBtnSlot();
     void updatePathPainterPointViewSlot();
     void stopPath(int robotNb);

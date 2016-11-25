@@ -66,25 +66,42 @@ void SendNewMapWorker::writeTcpDataSlot(QString mapId, QString date, QString met
             int curr = map.pixelColor(j, i).red();
             if(last != curr && count != 0){
                 //qDebug() << "MainWindow::settingBtnSlot got" << count << " pixel" << last;
-                byteArray.push_back(static_cast<uint8_t>(last));
-                byteArray.push_back((count & 0xff000000) >> 24);
-                byteArray.push_back((count & 0x00ff0000) >> 16);
-                byteArray.push_back((count & 0x0000ff00) >> 8);
-                byteArray.push_back((count & 0x000000ff));
+                uint8_t color = 0;
+                if(last == 205)
+                    color = 1;
+                else if(last == 55)
+                    color = 2;
+
+                byteArray.push_back(color);
+                byteArray.push_back(static_cast<uint8_t>((count & 0xff000000) >> 24));
+                byteArray.push_back(static_cast<uint8_t>((count & 0x00ff0000) >> 16));
+                byteArray.push_back(static_cast<uint8_t>((count & 0x0000ff00) >> 8));
+                byteArray.push_back(static_cast<uint8_t>(count & 0x000000ff));
                 last = curr;
                 count = 0;
             }
             count++;
         }
     }
+    uint8_t color2 = 0;
+    if(last == 205)
+        color2 = 1;
+    else if(last == 55)
+        color2 = 2;
+    byteArray.push_back(color2);
+    byteArray.push_back(static_cast<uint8_t>((count & 0xff000000) >> 24));
+    byteArray.push_back(static_cast<uint8_t>((count & 0x00ff0000) >> 16));
+    byteArray.push_back(static_cast<uint8_t>((count & 0x0000ff00) >> 8));
+    byteArray.push_back(static_cast<uint8_t>(count & 0x000000ff));
 
-    byteArray.push_back(static_cast<uint8_t>(last));
-    byteArray.push_back((count & 0xff000000) >> 24);
-    byteArray.push_back((count & 0x00ff0000) >> 16);
-    byteArray.push_back((count & 0x0000ff00) >> 8);
-    byteArray.push_back((count & 0x000000ff));
+    byteArray.push_back(static_cast<uint8_t>(-2));
+    byteArray.push_back(static_cast<uint8_t>(-2));
+    byteArray.push_back(static_cast<uint8_t>(-2));
+    byteArray.push_back(static_cast<uint8_t>(-2));
+    byteArray.push_back(static_cast<uint8_t>(-2));
 
-    byteArray.push_back((int8_t) -2);
+
+    //qDebug() << "(New Map) Sending :" << QString(mapId+';'+date+';'+metadata+';') << "\n" << byteArray;
 
     int nbDataSend = socket->write(byteArray);
 

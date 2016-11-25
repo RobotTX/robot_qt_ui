@@ -8,7 +8,7 @@
 
 
 Robot::Robot(MainWindow* mainWindow, const QSharedPointer<Paths>& _paths, const QString _name, const QString _ip) : QObject(mainWindow), paths(_paths), name(_name), ip(_ip), position(Position()),
-    orientation(0), batteryLevel(100), wifi(""), home(NULL), playingPath(0), mapId(), pathName(""), groupName(""), sendingMap(false){
+    orientation(0), batteryLevel(100), wifi(""), home(NULL), playingPath(0), pathName(""), groupName(""), sendingMap(false){
 
     /// we try to open the path file of the robot, if it works we do nothing otherwise we create it and put "" and ""
     /// as path name and group name for the robot
@@ -22,7 +22,7 @@ Robot::Robot(MainWindow* mainWindow, const QSharedPointer<Paths>& _paths, const 
 }
 
 Robot::Robot(): name("Default name"), ip("no Ip"), position(Position()),
-    orientation(0), batteryLevel(100), wifi(""), home(NULL), playingPath(0), mapId(), sendingMap(false)
+    orientation(0), batteryLevel(100), wifi(""), home(NULL), playingPath(0), sendingMap(false)
 {}
 
 
@@ -85,7 +85,6 @@ void Robot::sendNewMap(QString mapId, QString date, QString metadata, QImage map
 
 void Robot::doneSendingMapSlot(){
     sendingMap = 0;
-    emit cmdAnswer("Map done");
 }
 
 void Robot::ping(){
@@ -164,7 +163,7 @@ void Robot::launchWorkers(MainWindow* mainWindow){
     //qDebug() << "Robot" << name << "at ip" << ip << " launching its new map thread at port" << PORT_NEW_MAP;
 
     newMapWorker = QPointer<SendNewMapWorker>(new SendNewMapWorker(ip, PORT_NEW_MAP));
-    connect(this, SIGNAL(sendNewMapSignal(QByteArray)), newMapWorker, SLOT(writeTcpDataSlot(QByteArray)));
+    connect(this, SIGNAL(sendNewMapSignal(QString, QString, QString, QImage)), newMapWorker, SLOT(writeTcpDataSlot(QString, QString, QString, QImage)));
     connect(this, SIGNAL(cmdAnswer(QString)), mainWindow->getCommandController(), SLOT(cmdAnswerSlot(QString)));
     connect(newMapWorker, SIGNAL(doneSendingNewMapSignal()), this, SLOT(doneSendingMapSlot()));
     connect(this, SIGNAL(stopNewMapWorker()), newMapWorker, SLOT(stopWorker()));
