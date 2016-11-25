@@ -40,20 +40,81 @@ void SendNewMapWorker::readTcpDataSlot(){
     emit doneSendingNewMapSignal();
 }
 
-void SendNewMapWorker::writeTcpDataSlot(QByteArray cmd){
+void SendNewMapWorker::writeTcpDataSlot(QString mapId, QString date, QString metadata, QImage map){
     qDebug() << "(New Map) Sending the new map to" << ipAddress << "at port " << port;
 
-    cmd.push_back((int8_t) -2);
+    QByteArray byteArray;
 
-    int nbDataSend = socket->write(cmd);
+    /// Push the map id to send
+    byteArray.push_back(mapId.toUtf8());
+    byteArray.push_back(';');
+
+    /// Push the date to send
+    byteArray.push_back(date.toUtf8());
+    byteArray.push_back(';');
+
+    /// Push the map metadata to send
+    byteArray.push_back(metadata.toUtf8());
+    byteArray.push_back(';');
+
+
+    /// Compress and push the map to send
+    int last = 205;
+    uint32_t count = 0;
+    for(int i = 0; i < map.width(); i++){
+        for(int j = 0; j < map.height(); j++){
+            int curr = map.pixelColor(j, i).red();
+            if(last != curr && count != 0){
+                //qDebug() << "MainWindow::settingBtnSlot got" << count << " pixel" << last;
+                byteArray.push_back(static_cast<uint8_t>(last));
+                byteArray.push_back((count & 0xff000000) >> 24);
+                byteArray.push_back((count & 0x00ff0000) >> 16);
+                byteArray.push_back((count & 0x0000ff00) >> 8);
+                byteArray.push_back((count & 0x000000ff));
+                last = curr;
+                count = 0;
+            }
+            count++;
+        }
+    }
+
+    byteArray.push_back(static_cast<uint8_t>(last));
+    byteArray.push_back((count & 0xff000000) >> 24);
+    byteArray.push_back((count & 0x00ff0000) >> 16);
+    byteArray.push_back((count & 0x0000ff00) >> 8);
+    byteArray.push_back((count & 0x000000ff));
+
+    byteArray.push_back((int8_t) -2);
+
+    int nbDataSend = socket->write(byteArray);
 
     socket->waitForBytesWritten();
 
-    if(nbDataSend == -1){
+    if(nbDataSend == -1)
         qDebug() << "(New Map) An error occured while sending data";
-    } else {
-        qDebug() << "(New Map) " << nbDataSend << "bytes sent out of" << cmd.size();
+    else
+        qDebug() << "(New Map) " << nbDataSend << "bytes sent out of" << byteArray.size();
+
+    /*
+    QImage map2 = QImage(map.width(), map.height(), QImage::Format_Grayscale8);
+    uint32_t index = 0;
+
+    /// We set each pixel of the image, the data received being
+    for(int i = 0; i < byteArray.size(); i+=5){
+        int color = static_cast<int> (static_cast<uint8_t> (byteArray.at(i)));
+
+        uint32_t count2 = static_cast<uint32_t> (static_cast<uint8_t> (byteArray.at(i+1)) << 24) + static_cast<uint32_t> (static_cast<uint8_t> (byteArray.at(i+2)) << 16)
+                        + static_cast<uint32_t> (static_cast<uint8_t> (byteArray.at(i+3)) << 8) + static_cast<uint32_t> (static_cast<uint8_t> (byteArray.at(i+4)));
+
+        for(int j = 0; j < (int) count2; j++){
+            //qDebug() << index%map2.width() << (int) (index/map2.width());
+            map2.setPixelColor(QPoint((int) (index%map2.width()), (int) (index/map2.width())), QColor((int) color, color, color));
+            index++;
+        }
     }
+    qDebug() << "(New Map) Going to save the map" << map2.save("/home/m-a/Desktop/map.pgm", "PGM");
+    */
+
 }
 
 void SendNewMapWorker::disconnectedSlot(){

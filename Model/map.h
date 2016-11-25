@@ -4,6 +4,7 @@
 #include "Model/position.h"
 #include <QImage>
 #include <QObject>
+#include <QDateTime>
 
 /**
  * @brief The Map class
@@ -24,6 +25,7 @@ public:
     Position getOrigin(void) const { return origin; }
     QRect getRect(void) const { return rect; }
     QPointF getCenter(void) const { return center; }
+    QDateTime getDateTime(void) const { return dateTime; }
 
     /// Setters
     void setResolution(const float _resolution) { resolution = _resolution; }
@@ -31,6 +33,8 @@ public:
     void setHeight(const int _height) { height = _height; }
     void setOrigin(const Position _origin) { origin = _origin; }
     void setMapImage(const QImage _mapImage) { mapImage = _mapImage; }
+    void setDateTime(const QDateTime _dateTime);
+
 
     /**
      * @brief setMapFromArray
@@ -87,6 +91,7 @@ private:
      */
     QRect rect;
     QPointF center;
+    QDateTime dateTime;
 };
 
 #endif /// MAP_H

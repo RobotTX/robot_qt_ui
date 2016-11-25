@@ -4,6 +4,7 @@
 #include <QString>
 #include <QtNetwork/QTcpSocket>
 #include <QPointer>
+#include <QImage>
 
 class SendNewMapWorker : public QObject {
     Q_OBJECT
@@ -30,10 +31,13 @@ private slots:
 
     /**
      * @brief writeTcpDataSlot
-     * @param cmd
+     * @param mapId
+     * @param date
+     * @param metadata
+     * @param map
      * Send the map to the robot
      */
-    void writeTcpDataSlot(QByteArray cmd);
+    void writeTcpDataSlot(QString mapId, QString date, QString metadata, QImage map);
 
     /**
      * @brief connectSocket

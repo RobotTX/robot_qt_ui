@@ -75,12 +75,11 @@ void Robot::sendCommand(const QString cmd) {
     emit sendCommandSignal(cmd);
 }
 
-void Robot::sendNewMap(QByteArray cmd) {
-    Q_UNUSED(cmd)
+void Robot::sendNewMap(QString mapId, QString date, QString metadata, QImage map) {
     qDebug() << "Robot::sendNewMap to" << name;
     if(!sendingMap){
         sendingMap = 1;
-        emit sendNewMapSignal(cmd);
+        emit sendNewMapSignal(mapId, date, metadata, map);
     }
 }
 

@@ -230,7 +230,7 @@ void EditMapWidget::initializeMap(){
     pixmapItem = new QGraphicsPixmapItem(pixmap, canvas);
     pixmapItem->setZValue(0);
     pixmapItem->setFlag(QGraphicsItem::ItemStacksBehindParent);
-    scene->addItem(pixmapItem);
+    //scene->addItem(pixmapItem);
 }
 
 void EditMapWidget::centerMap(){
