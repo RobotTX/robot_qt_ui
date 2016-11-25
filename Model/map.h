@@ -17,7 +17,6 @@ class Map : public QObject
 public:
     explicit Map();
 
-    /// Getters
     QImage getMapImage(void) const { return mapImage; }
     float getResolution(void) const { return resolution; }
     int getWidth(void) const { return width; }
@@ -27,14 +26,12 @@ public:
     QPointF getCenter(void) const { return center; }
     QDateTime getDateTime(void) const { return dateTime; }
 
-    /// Setters
     void setResolution(const float _resolution) { resolution = _resolution; }
     void setWidth(const int _width) { width = _width; }
     void setHeight(const int _height) { height = _height; }
     void setOrigin(const Position _origin) { origin = _origin; }
     void setMapImage(const QImage _mapImage) { mapImage = _mapImage; }
     void setDateTime(const QDateTime _dateTime);
-
 
     /**
      * @brief setMapFromArray

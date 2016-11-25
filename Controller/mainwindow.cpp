@@ -4814,13 +4814,6 @@ void MainWindow::showSelectedRobotHomeOnly(){
     }
 }
 
-void MainWindow::moveEvent(QMoveEvent *event){
-    const QPoint global = this->mapToGlobal(rect().center());
-    //editSelectedRobotWidget->getRobotInfoDialog()->move(global.x()-editSelectedRobotWidget->getRobotInfoDialog()->width()/2,
-                                                       // global.y()-editSelectedRobotWidget->getRobotInfoDialog()->height()/2);
-    QMainWindow::moveEvent(event);
-}
-
 void MainWindow::compress(const QString zipFile){
     ZipWriter cZip(zipFile);
     const QString SingleFile = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation) + QDir::separator() + QString("lolilol.pgm");
@@ -4842,7 +4835,7 @@ void MainWindow::decompress(const QString fileName){
 }
 
 bool MainWindow::saveMapConfig(const std::string fileName){
-    qDebug() << "saving map to " << QString::fromStdString(fileName);
+    qDebug() << "MainWindow::saveMapConfig saving map to " << QString::fromStdString(fileName);
     std::ofstream file(fileName, std::ios::out | std::ios::trunc);
     if(file){
         file << mapFile << " " << std::endl <<
@@ -4960,14 +4953,10 @@ QVector<PathPoint> MainWindow::extractPathFromInfo(const QStringList &robotInfo)
     QVector<PathPoint> path;
     for(int i = 5; i < robotInfo.size(); i += 3){
         double xOnRobot = robotInfo.at(i).toDouble();
-
-        // float newPosX = (oldPosX - ROBOT_WIDTH) * map->getResolution() + map->getOrigin().getX();
-
-        double xInApp = (-map->getOrigin().getX()+xOnRobot)/map->getResolution() + ROBOT_WIDTH;
+        double xInApp = (-map->getOrigin().getX() + xOnRobot) / map->getResolution() + ROBOT_WIDTH;
         double yOnRobot = robotInfo.at(i+1).toDouble();
-        double yInApp = map->getHeight()-(-map->getOrigin().getY()+yOnRobot)/map->getResolution()-ROBOT_WIDTH/2;
+        double yInApp = map->getHeight()-(-map->getOrigin().getY()+yOnRobot) / map->getResolution()-ROBOT_WIDTH/2;
         path.push_back(PathPoint(Point(" ", xInApp, yInApp), robotInfo.at(i+2).toDouble()));
-
     }
     return path;
 }
@@ -5237,12 +5226,11 @@ QString MainWindow::prepareCommandPath(const Paths::Path &path) const {
 
         float newPosX = (oldPosX - ROBOT_WIDTH) * map->getResolution() + map->getOrigin().getX();
         float newPosY = (-oldPosY + map->getHeight() - ROBOT_WIDTH/2) * map->getResolution() + map->getOrigin().getY();
-        //int waitTime = -1;
-        //if(pathPoint->getWaitTime() > -1){
+
         int waitTime = pathPoint->getWaitTime();
-        //}
+
         pathStr += + "\"" + QString::number(newPosX) + "\" \"" + QString::number(newPosY) + "\" \"" + QString::number(waitTime)+ "\" ";   
     }
-    qDebug() << "pathstr yo" << pathStr;
+    //qDebug() << "pathstr yo" << pathStr;
     return pathStr;
 }

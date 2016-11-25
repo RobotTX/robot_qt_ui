@@ -73,9 +73,8 @@ private :
     QPointer<QTcpSocket> socket;
     QString ipAddress;
     int port;
-
 };
 
 
-#endif // METADATAWORKER_H
+#endif /// METADATAWORKER_H
 

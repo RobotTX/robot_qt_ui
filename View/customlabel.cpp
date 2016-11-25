@@ -22,9 +22,8 @@ void CustomLabel::initialize(){
         setFont(tmpFont);
         label->setFont(tmpFont);
         style += "text-align: center;";
-    } else {
+    } else
         style += "text-align: left;";
-    }
 
     /// Style of the label
     setStyleSheet(
@@ -97,6 +96,7 @@ void CustomLabel::moveLabel(){
 
             if(title)
                 setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
+
         } else {
             setToolTip("");
             label->hide();

@@ -48,6 +48,14 @@ signals:
      */
     void portSent();
 
+    /**
+     * @brief newConnection
+     * @param robotName
+     * @param home_pos
+     * emitted when a robot just connected, the signal is caught in the main window
+     * and calls a slot that will make sure the robot and the application have
+     * the same paths and same home points
+     */
     void newConnection(QString robotName, QString home_pos);
 
 private slots:
@@ -131,4 +139,4 @@ private :
     int timeCounter;
 };
 
-#endif // CMDROBOTWORKER_H
+#endif /// CMDROBOTWORKER_H

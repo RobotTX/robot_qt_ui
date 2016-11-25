@@ -97,4 +97,4 @@ private:
     QLabel* messageCreationLabel;
 };
 
-#endif // CreatePointWidget_H
+#endif /// CreatePointWidget_H

@@ -5,7 +5,6 @@
 
 
 RobotServerWorker::RobotServerWorker(const int newPort, QObject* parent): port(newPort), QTcpServer(parent){
-    //qDebug() << "(RobotServerWorker) Thread launched";
     connect(this, SIGNAL(newConnection()), this, SLOT(newConnectionSlot()));
     connect(this, SIGNAL(acceptError(QAbstractSocket::SocketError)), this, SLOT(errorConnectionSlot(QAbstractSocket::SocketError)));
     startServer();
@@ -13,9 +12,9 @@ RobotServerWorker::RobotServerWorker(const int newPort, QObject* parent): port(n
 
 void RobotServerWorker::startServer(){
     if(listen(QHostAddress::Any, port) == 0)
-        qDebug() << "(RobotServerWorker) Server listen failed" << port;
+        qDebug() << "(RobotServerWorker) Server failed to listen on port" << port;
     else
-        qDebug() << "Server is listening";
+        qDebug() << "Server is listening on port" << port;
 }
 
 void RobotServerWorker::stopWorker(){
@@ -35,13 +34,11 @@ void RobotServerWorker::newConnectionSlot(){
 
         QStringList strList = str.split("\"", QString::SkipEmptyParts);
         qDebug() << strList;
-        if(strList.size() > 1){
-            //qDebug() << "(RobotServerWorker)" << strList;
+        if(strList.size() > 1)
             emit robotIsAlive(strList.at(0), socket->peerAddress().toString(), strList.at(1), strList.at(2), std::stoi(strList.at(3).toStdString()));
 
-        } else {
+        else
             qDebug() << "(RobotServerWorker) Not enough param received for robotIsAlive";
-        }
     }
 
     socket->close();

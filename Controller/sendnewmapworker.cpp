@@ -1,10 +1,7 @@
 #include "sendnewmapworker.h"
 #include <QThread>
 
-SendNewMapWorker::SendNewMapWorker(const QString _ipAddress, const int _port){
-    ipAddress = _ipAddress;
-    port = _port;
-}
+SendNewMapWorker::SendNewMapWorker(const QString _ipAddress, const int _port): ipAddress(_ipAddress), port(_port) {}
 
 SendNewMapWorker::~SendNewMapWorker(){
     stopWorker();

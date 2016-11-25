@@ -38,9 +38,9 @@ void MetadataWorker::readTcpDataSlot(){
     QString data = socket->readAll();
     QRegExp rx("[ ]");
 
-    /// Data are received as a string separated by a space ("width height resolution originX originY")
+    /// Data is received as a string with values separated by a space ("width height resolution originX originY")
     QStringList list = data.split(rx, QString::SkipEmptyParts);
-    //qDebug() << "(Robot Metadata thread" << ipAddress << ") Metadata : " << list;
+
     emit valueChangedMetadata(list.at(0).toInt(), list.at(1).toInt(),
                               list.at(2).toFloat(), list.at(3).toFloat(),
                               list.at(4).toFloat());
@@ -55,7 +55,6 @@ void MetadataWorker::errorConnectionSlot(QAbstractSocket::SocketError error){
     //qDebug() << "(MetadataWorker) Error while connecting :" << error;
     switch (error) {
     case(QAbstractSocket::ConnectionRefusedError):
-        //qDebug() << "(MetadataWorker) The connection was refused by the peer (or timed out).";
         QThread::sleep(1);
         socket->connectToHost(ipAddress, port);
         break;

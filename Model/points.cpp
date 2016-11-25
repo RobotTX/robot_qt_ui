@@ -234,10 +234,9 @@ QSharedPointer<PointView> Points::getTmpPointView(){
 }
 
 bool Points::isDisplayed(const QString key) const {
-    //qDebug() << "Points::isDisplayed called" << key;
-    if(!groups->value(key) || groups->value(key)->size() <= 0) {
+    if(!groups->value(key) || groups->value(key)->size() <= 0)
         return false;
-    } else {
+    else {
         for(int i = 0; i < groups->value(key)->size(); i++){
             if(!groups->value(key)->at(i)->isVisible())
                 return false;
@@ -319,7 +318,6 @@ QString Points::getGroupNameFromPointName(const QString pointName) const{
 
 void Points::setPixmapAll(const PointView::PixmapType type){
     QMapIterator<QString, QSharedPointer<QVector<QSharedPointer<PointView>>>> i(*groups);
-    //qDebug() << "Points::setPixmapAll with PixmapType called";
     while(i.hasNext()) {
         i.next();
         if(i.key().compare(PATH_GROUP_NAME) != 0){
@@ -334,22 +332,20 @@ void Points::setPixmapAll(const PointView::PixmapType type){
 }
 
 void Points::addTmpPoint(){
-    /// we initialize the tmp point in -1 -1 and not 0, 0 to avoid conflicts with coordinates sent by the robot
+    /// we initialize the tmp point in -1 0 and not 0, 0 to avoid conflicts with coordinates sent by the robot
     if(groups->value(TMP_GROUP_NAME)){
         if(groups->value(TMP_GROUP_NAME)->size() < 1)
             addPoint(TMP_GROUP_NAME, TMP_POINT_NAME, -1, 0, false, Point::PointType::TEMP);
-    } else {
+    } else
         addPoint(TMP_GROUP_NAME, TMP_POINT_NAME, -1, 0, false, Point::PointType::TEMP);
-    }
 }
 
 void Points::updatePointViews(void){
     QMapIterator<QString, QSharedPointer<QVector<QSharedPointer<PointView>>>> i(*groups);
     while (i.hasNext()) {
         i.next();
-        for(int j = 0; j < i.value()->count(); j++){
+        for(int j = 0; j < i.value()->count(); j++)
             i.value()->at(j)->updatePos();
-        }
     }
 }
 
