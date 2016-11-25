@@ -78,15 +78,18 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
 
     //qDebug() << "Current time :" << QDateTime::currentDateTime().toString("yyyy-MM-dd-hh-mm-ss");
+    //qDebug() << "Map Id :" << QUuid::createUuid().toString();
 
     std::ifstream file((QDir::currentPath() + QDir::separator() + "currentMap.txt").toStdString(), std::ios::in);
 
     if(file){
         int _height, _width;
         double centerX, centerY, originX, originY, resolution;
-        std::string dateTime;
-        file >> mapFile >> _height >> _width >> centerX >> centerY >> mapState.second >> originX >> originY >> resolution >> dateTime;
-        qDebug() << "CurrentMap.txt :" << QString::fromStdString(mapFile) << _height << _width << centerX << centerY << originX << originY << resolution << QString::fromStdString(dateTime);
+        std::string dateTime, mapId;
+        file >> mapFile >> _height >> _width >> centerX >> centerY >> mapState.second >> originX >> originY >> resolution >> dateTime >> mapId;
+        qDebug() << "CurrentMap.txt :" << QString::fromStdString(mapFile) << _height << _width
+                 << centerX << centerY << originX << originY << resolution
+                 << QString::fromStdString(dateTime) << QString::fromStdString(mapId);
         map->setHeight(_height);
         map->setWidth(_width);
         mapState.first.setX(centerX);
@@ -94,6 +97,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
         map->setOrigin(Position(originX, originY));
         map->setResolution(resolution);
         map->setDateTime(QDateTime::fromString(QString::fromStdString(dateTime), "yyyy-MM-dd-hh-mm-ss"));
+        map->setMapId(QUuid(QString::fromStdString(mapId)));
         file.close();
     }
 
@@ -108,6 +112,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
         map->setResolution(0.05);
         map->setOrigin(Position(0, 0));
         map->setDateTime(QDateTime(QDate::fromString("1970-01-01", "yyyy-mm-dd")));
+        map->setMapId(QUuid());
     } else {
         setWindowTitle(QString::fromStdString(mapFile));
         map->setMapFromFile(QString::fromStdString(mapFile));
@@ -326,7 +331,7 @@ void MainWindow::initializeRobots(){
 
     robotServerWorker = new RobotServerWorker(PORT_ROBOT_UPDATE);
 
-    connect(robotServerWorker, SIGNAL(robotIsAlive(QString, QString, QString, QString, int)), this, SLOT(robotIsAliveSlot(QString, QString, QString, QString, int)));
+    connect(robotServerWorker, SIGNAL(robotIsAlive(QString, QString, QString, QString, QString, int)), this, SLOT(robotIsAliveSlot(QString, QString, QString, QString, QString, int)));
     connect(this, SIGNAL(stopUpdateRobotsThread()), robotServerWorker, SLOT(stopWorker()));
 
     connect(&serverThread, SIGNAL(finished()), robotServerWorker, SLOT(deleteLater()));
@@ -1442,7 +1447,7 @@ void MainWindow::showAllHomes(void){
     bottomLayout->uncheckRobots();
 }
 
-void MainWindow::robotIsAliveSlot(QString hostname, QString ip, QString mapId, QString ssid, int stage){
+void MainWindow::robotIsAliveSlot(QString hostname, QString ip, QString mapId, QString mapDate, QString ssid, int stage){
     QRegExp rx("[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}");
     rx.indexIn(ip);
     ip = rx.cap(0);
@@ -1495,13 +1500,13 @@ void MainWindow::robotIsAliveSlot(QString hostname, QString ip, QString mapId, Q
     QSettings settings;
     QString currMapId = settings.value("mapId", "{00000000-0000-0000-0000-000000000000}").toString();
     */
-    QString currMapId("");
+    /*QString currMapId("");
     if(mapId.compare(currMapId) == 0){
         qDebug() << "Which is the current map";
     } else {
         qDebug() << "Which is an old map";
         //commandController->sendNewMapToRobot(rv->getRobot(), currMapId, map);
-    }
+    }*/
 
     int robotId = robots->getRobotId(rv->getRobot()->getName());
 
@@ -1646,14 +1651,9 @@ void MainWindow::moveEditedPathPointSlot(){
 }
 
 void MainWindow::sendNewMapToRobots(QString ipAddress){
-    qDebug() << "sendNewMapToRobots called";
-    /// We create a unique ID for the map
-    /*QUuid mapId = QUuid::createUuid();
+    qDebug() << "sendNewMapToRobots Map id and date :" << map->getMapId() << map->getDateTime().toString("yyyy-MM-dd-hh-mm-ss");
 
-    qDebug() << "New map id :" << mapId.toString();
     QVector<QPointer<RobotView>> robotsVector = robots->getRobotsVector();
-
-    // TODO Save the map id in settings
 
     /// We send the map to each robot
     for(int i = 0; i < robotsVector.size(); i++){
@@ -1662,11 +1662,11 @@ void MainWindow::sendNewMapToRobots(QString ipAddress){
         /// No need to send the map to the robot that scanned it
         if(robot->getIp().compare(ipAddress) != 0){
             qDebug() << "Sending the map to" << robot->getName() << "at ip" << robot->getIp();
-            commandController->sendNewMapToRobot(robot, mapId.toString(), map);
+            commandController->sendNewMapToRobot(robot, map);
         } else {
             qDebug() << "The robot" << robot->getName() << "at ip" << robot->getIp() << "already has the current map";
         }
-    }*/
+    }
     qDebug() << "Sent the map to the robots";
 }
 
@@ -1903,7 +1903,7 @@ void MainWindow::saveMap(QString fileName){
 
         assert(saveMapConfig(fileInfo.absoluteFilePath().toStdString()));
 
-        qDebug() << "mapS" << mapState.first.x() << mapState.first.y() << mapState.second << map->getHeight() << map->getWidth();
+        qDebug() << "MainWindow::saveMap" << mapState.first.x() << mapState.first.y() << mapState.second << map->getWidth() << map->getHeight();
 
         const QString pointsFile = fileName + "_points.xml";
         savePoints(pointsFile);
@@ -2014,21 +2014,25 @@ void MainWindow::saveEditMapSlot(){
         if(!fileName.isEmpty()){
             qDebug() << "MainWindow::saveEditMapSlot called with filename" << fileName;
 
+            mapFile = fileName.toStdString();
+
             /// Set the new map
             map->setResolution(editMapWidget->getResolution());
             map->setWidth(editMapWidget->getWidth());
             map->setHeight(editMapWidget->getHeight());
             map->setOrigin(editMapWidget->getOrigin());
             map->setMapImage(editMapWidget->getMapImage());
+            map->setMapId(QUuid::createUuid());
             map->setDateTime(QDateTime::currentDateTime());
-            saveMapState();
+
             QPixmap pixmap = QPixmap::fromImage(editMapWidget->getMapImage());
             mapPixmapItem->setPixmap(pixmap);
             scene->update();
 
-
             saveMap(fileName);
             editMapWidget->close();
+
+            sendNewMapToRobots();
         }
     } else {
         qDebug() << "MainWindow::saveEditMapSlot called while editMapWidget is not set, duh ?";
@@ -4730,6 +4734,7 @@ void MainWindow::setTemporaryMessageTop(const QString type, const QString messag
 }
 
 void MainWindow::saveMapState(){
+    qDebug() << "MainWindow::saveMapState saving map" << QString::fromStdString(mapFile);
     /// saves the current configuration in the model
     mapState.first = mapPixmapItem->pos();
     mapState.second = graphicsView->getZoomCoeff();
@@ -4743,8 +4748,9 @@ void MainWindow::saveMapState(){
                 map->getHeight() << " " << map->getWidth() << std::endl
              << mapState.first.x() << " " << mapState.first.y() << std::endl
              << mapState.second << std::endl
-             << map->getOrigin().getX() << " " << map->getOrigin().getY() << map->getResolution() << std::endl
-             << map->getDateTime().toString("yyyy-MM-dd-hh-mm-ss").toStdString();
+             << map->getOrigin().getX() << " " << map->getOrigin().getY() << std::endl << map->getResolution() << std::endl
+             << map->getDateTime().toString("yyyy-MM-dd-hh-mm-ss").toStdString() << std::endl
+             << map->getMapId().toString().toStdString();
         file.close();
     }
 }
@@ -4843,7 +4849,8 @@ bool MainWindow::saveMapConfig(const std::string fileName){
              << mapState.first.x() << " " << mapState.first.y() << std::endl
              << mapState.second << std::endl
              << map->getOrigin().getX() << " " << map->getOrigin().getY() << std::endl
-             << map->getResolution();
+             << map->getResolution() << std::endl
+             << map->getMapId().toString().toStdString();
         file.close();
         return true;
     } else
@@ -4856,13 +4863,15 @@ bool MainWindow::loadMapConfig(const std::string fileName){
     if(file){
         int _height, _width;
         double centerX, centerY, originX, originY, resolution;
-        file >> mapFile >> _height >> _width >> centerX >> centerY >> mapState.second >> originX >> originY >> resolution;
+        std::string mapId;
+        file >> mapFile >> _height >> _width >> centerX >> centerY >> mapState.second >> originX >> originY >> resolution >> mapId;
         map->setHeight(_height);
         map->setWidth(_width);
         mapState.first.setX(centerX);
         mapState.first.setY(centerY);
         map->setOrigin(Position(originX, originY));
         map->setResolution(resolution);
+        map->setMapId(QUuid(QString::fromStdString(mapId)));
         setWindowTitle(QString::fromStdString(mapFile));
         file.close();
     } else

@@ -42,7 +42,7 @@ public:
      * @param map
      * Send the given map to the robot
      */
-    void sendNewMapToRobot(QPointer<Robot> robot, QString mapId, QSharedPointer<Map> map);
+    void sendNewMapToRobot(QPointer<Robot> robot, QSharedPointer<Map> map);
 
     /**
      * @brief robotDisconnected

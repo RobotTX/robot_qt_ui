@@ -63,8 +63,6 @@ public:
     void setOrientation(const float _orientation) { orientation = _orientation; }
     void setPosition(const Position _position) { position = _position; }
     void setPosition(const float _x, const float _y) { position = Position(_x,_y); }
-    void setMapId(const QUuid _mapId) { mapId = _mapId; }
-    QUuid getMapId(void) const { return mapId; }
     void setPathName(const QString name) { pathName = name; }
     void setGroupPathName(const QString name) { groupName = name; }
 
@@ -162,7 +160,6 @@ private:
     QSharedPointer<PointView> home;
     QVector<QSharedPointer<PathPoint>> path;
     bool playingPath;
-    QUuid mapId;
     QString pathName;
     QString groupName;
     bool sendingMap;

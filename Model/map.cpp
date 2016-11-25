@@ -2,7 +2,9 @@
 #include <QDebug>
 #include <assert.h>
 
-Map::Map(): resolution(0), width(0), height(0), origin(Position()) {}
+
+Map::Map(): resolution(0), width(0), height(0), origin(Position()), mapId(QUuid()) {}
+
 
 void Map::setMapFromFile(const QString fileName){
     /// Qt has is own function to create a QImage from a PGM file

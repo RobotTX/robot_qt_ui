@@ -174,9 +174,19 @@ void CommandController::cmdAnswerSlot(QString answer){
 }
 
 
-void CommandController::sendNewMapToRobot(QPointer<Robot> robot, QString mapId, QSharedPointer<Map> map){
-    qDebug() << "sendNewMapToRobot called on" << robot->getName() << "at ip" << robot->getIp() << "sending map id :" << mapId;
+void CommandController::sendNewMapToRobot(QPointer<Robot> robot, QSharedPointer<Map> map){
+    qDebug() << "sendNewMapToRobot called on" << robot->getName() << "at ip" << robot->getIp() << "sending map id :" << map->getMapId();
 
+    QString mapId = map->getMapId().toString();
+
+    QString date = map->getDateTime().toString("yyyy-MM-dd-hh-mm-ss");
+
+    QString mapMetadata = QString::number(map->getWidth()) + ' ' + QString::number(map->getHeight()) +
+            ' ' + QString::number(map->getResolution()) + ' ' + QString::number(map->getOrigin().getX()) +
+            ' ' + QString::number(map->getOrigin().getY());
+
+
+    robot->sendNewMap(mapId, date, mapMetadata, map->getMapImage());
 /*
     if(robotName.isEmpty()){
         cmdAnswer = "";
