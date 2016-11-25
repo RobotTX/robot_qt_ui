@@ -144,8 +144,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     topLayout = new TopLayout(this);
     mainLayout->addWidget(topLayout);
 
-
-
     QHBoxLayout* bottom = new QHBoxLayout();
 
     initializePaths();
@@ -1284,7 +1282,6 @@ void MainWindow::savePathSlot(){
     paths->createPath(groupName, pathName);
     for(int i = 0; i < pathPainter->getCurrentPath().size(); i++)
         paths->addPathPoint(groupName, pathName, pathPainter->getCurrentPath().at(i));
-
 
     /// updates the visible path
     pathPainter->setVisiblePath(pathName);

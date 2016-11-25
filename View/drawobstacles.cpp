@@ -9,11 +9,7 @@
 #include <QtMath>
 
 DrawObstacles::DrawObstacles(const QSize _size, QSharedPointer<Robots> _robots, QGraphicsItem *parent) : QGraphicsItem(parent), size(_size), robots(_robots)
-{
-    /// To have this QGraphicsLayer above the map
-    //sepixmapItem->setFlag(QGraphicsItem::ItemStacksBehindParent);tZValue(2);
-
-}
+{}
 
 
 /// the event that is called when calling update() and which is drawing on the map
@@ -33,12 +29,13 @@ void DrawObstacles::paint(QPainter *_painter, const QStyleOptionGraphicsItem *, 
 
 void DrawObstacles::drawObstacles(float angle_min, float angle_max, float angle_increment, const QVector<float>& ranges, QString ipAddress){
     qDebug() << "MainWindow::drawObstacles called" << angle_min << angle_max << angle_increment;
-    qDebug() << "Number of values received from the laser" << ranges.size() << "at" << ipAddress;
     /// if the IP address is in the map we update the obstacles corresponding to this entry
-    if(obstacles.find(ipAddress) != obstacles.end()){
+    /// the second condition checks that the full scan has been received
+    if(obstacles.find(ipAddress) != obstacles.end() && static_cast<int>((angle_max-angle_min)/angle_increment) <= ranges.size()){
         QVector<QPointF> points = convertRangesToPoints(angle_min, angle_increment, ranges, ipAddress);
         obstacles.insert(ipAddress, points);
     }
+    /// draws on the map by calling paint
     update();
 }
 
@@ -51,12 +48,8 @@ QVector<QPointF> DrawObstacles::convertRangesToPoints(const float angle_min /* r
     qDebug() << "MainWindow::convertRangesToPoints called with" << ranges.size() << "values";
     QVector<QPointF> points;
     QPointer<Robot> robot = robots->getRobotViewByIp(ipAddress)->getRobot();
-    qDebug() << "Robot position " << robot->getPosition().getX() <<
-                robot->getPosition().getY() <<
-                robot->getOrientation();
     for(int i = 0; i < ranges.size(); i++){
         ///  / by 0.05 = resolution -> * 20 is faster
-        /// don't forget orientation of the robot given in degrees qDegreesToRadians(robot->getOrientation())
         points.push_back(QPointF(robot->getPosition().getX() + (ranges.at(i) * cos(angle_min + i*angle_increment)) * 20 ,
                                  robot->getPosition().getY() + (ranges.at(i) * sin(angle_min + i*angle_increment)) * 20));
     }
@@ -65,6 +58,7 @@ QVector<QPointF> DrawObstacles::convertRangesToPoints(const float angle_min /* r
 
 void DrawObstacles::removeRobotObstacles(const QString ipAddress){
     assert(obstacles.remove(ipAddress));
+    /// have to repaint after removing the obstacles
     update();
 }
 

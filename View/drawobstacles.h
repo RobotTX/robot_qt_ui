@@ -19,6 +19,12 @@ public:
     void paint(QPainter *_painter, const QStyleOptionGraphicsItem *, QWidget *) Q_DECL_OVERRIDE;
 
 protected:
+    /**
+     * @brief boundingRect
+     * @return the size of the rectangle in which the items will be drawn
+     * if the rectangle returned is too small the items might disappear
+     * have to redefine this one correctly in order not to lose the items you draw (for example when you zoom)
+     */
     QRectF boundingRect() const Q_DECL_OVERRIDE;
 
 public:

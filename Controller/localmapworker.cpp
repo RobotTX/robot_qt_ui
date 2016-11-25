@@ -24,6 +24,7 @@ void LocalMapWorker::connectSocket(){
     /// the errorConnectionSlot will try to reconnect
     socket->connectToHost(ipAddress, port);
 
+    /// to add an entry for this robot in the obstacles map
     emit addNewRobotObstacles(ipAddress);
 
     qDebug() << "(Local Map Thread) connectSocket done";
@@ -67,15 +68,22 @@ void LocalMapWorker::readTcpDataSlot(){
         *(reinterpret_cast<uchar*>(&range) + 1) = currentValue.at(1);
         *(reinterpret_cast<uchar*>(&range) + 0) = currentValue.at(0);
 
+        /// the appended -1.0f at the end of the batch so when we reach it we ignore everything else we have
+        if(range < 0)
+            break;
+
         ranges.push_back(range);
 
     }
 
-    qDebug() << "ready to emit" << ranges.size() << "values from the laser";
-
     data = QByteArray();
 
-    emit laserValues(angle_min, angle_max, angle_increment, ranges, ipAddress);
+    /// sometimes we don't receive a complete scan and the first values do not correspond to the values of angle_min
+    /// angle_max and angle_increment in which case we receive positive values instead which correspond to ranges
+    /// that's why we check that the angle_min is negative before transmitting the data
+    if(angle_min < 0)
+
+        emit laserValues(angle_min, angle_max, angle_increment, ranges, ipAddress);
 }
 
 void LocalMapWorker::disconnectedSlot(){
