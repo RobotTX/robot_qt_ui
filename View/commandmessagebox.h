@@ -9,14 +9,14 @@ class QPushButton;
 class CommandMessageBox : public QMessageBox {
     Q_OBJECT
 public:
-    CommandMessageBox(QWidget *parent);
+    CommandMessageBox(QWidget *parent = 0);
     void show();
 
 protected:
     void closeEvent(QCloseEvent *e);
-
-private slots:
     void timerSlot();
+
+public slots:
     void done(int r);
 
 signals:

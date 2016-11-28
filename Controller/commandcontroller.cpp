@@ -4,10 +4,13 @@
 #include "Controller/mainwindow.h"
 #include <QStringList>
 #include <QFile>
+#include <QFocusEvent>
+#include <QApplication>
 
-CommandController::CommandController(QWidget *parent) : QObject(parent), messageBox(QPointer<CommandMessageBox>(new CommandMessageBox(parent))), robotName(""){
+CommandController::CommandController(QWidget *parent) : QObject(parent), robotName(""){
+    messageBox = QSharedPointer<CommandMessageBox> (new CommandMessageBox());
     messageBox->setWindowTitle("Processing a command");
-    connect(messageBox, SIGNAL(hideBox()), this, SLOT(userStopped()));
+    connect(messageBox.data(), SIGNAL(hideBox()), this, SLOT(userStopped()));
 }
 
 bool CommandController::sendCommand(QPointer<Robot> robot, QString cmd){
@@ -16,13 +19,11 @@ bool CommandController::sendCommand(QPointer<Robot> robot, QString cmd){
         cmdAnswer = "";
         robot->sendCommand(cmd);
 
-
         /// React accordingly to the answer : return true or false
         QRegExp rx("[ ]");
 
         /// Data are received as a string separated by a space ("cmd done" or "cmd failed")
         QStringList listCmd = cmd.split(rx, QString::SkipEmptyParts);
-
 
         if(listCmd.at(0).compare("b") == 0)
             return true;
@@ -97,9 +98,9 @@ void CommandController::openMessageBox(QStringList listCmd){
         msg = "Unknown command";
         break;
     }
-
+    messageBox.reset(new CommandMessageBox());
     messageBox->setText(msg);
-    messageBox->show();
+    messageBox->exec();
 }
 
 bool CommandController::robotWaitForAnswer(QStringList listCmd){
@@ -118,7 +119,6 @@ bool CommandController::robotWaitForAnswer(QStringList listCmd){
     /// Data are received as a string separated by a space ("cmd done" or "cmd failed")
     QStringList list = cmdAnswer.split(rx, QString::SkipEmptyParts);
     cmdAnswer = "";
-
 
     if(list.size() == 2){
         if(list.at(0).compare(cmdName) == 0){
@@ -164,7 +164,7 @@ void CommandController::cmdAnswerSlot(QString answer){
     if(list.size() == 2){
         if(list.at(0).compare(cmdName) == 0){
             cmdAnswer = answer;
-            messageBox->hide();
+            messageBox->close();
         } else {
             qDebug() << "CommandController::robotWaitForAnswer Got an answer to the wrong command :" << list;
         }

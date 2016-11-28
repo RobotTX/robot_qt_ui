@@ -31,8 +31,10 @@ void LocalMapWorker::connectSocket(){
 }
 
 void LocalMapWorker::stopWorker(){
-    if(socket && socket->isOpen())
+    if(socket && socket->isOpen()){
         socket->close();
+        delete socket;
+    }
 }
 
 void LocalMapWorker::readTcpDataSlot(){

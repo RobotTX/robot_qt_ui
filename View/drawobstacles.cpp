@@ -11,7 +11,6 @@
 DrawObstacles::DrawObstacles(const QSize _size, QSharedPointer<Robots> _robots, QGraphicsItem *parent) : QGraphicsItem(parent), size(_size), robots(_robots)
 {}
 
-
 /// the event that is called when calling update() and which is drawing on the map
 void DrawObstacles::paint(QPainter *_painter, const QStyleOptionGraphicsItem *, QWidget *){
     _painter->setPen(Qt::red);
