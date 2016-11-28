@@ -35,6 +35,5 @@ void CommandMessageBox::done(int r){
 
 void CommandMessageBox::closeEvent(QCloseEvent *e){
     done(-2);
-    /// On close we don't want to destroy the box but just hide it so we ignore the close event
-    e->ignore();
 }
+

@@ -12,8 +12,10 @@ CmdRobotWorker::~CmdRobotWorker(){
 }
 
 void CmdRobotWorker::stopWorker(){
-    if(socket && socket->isOpen())
+    if(socket && socket->isOpen()){
         socket->close();
+        delete socket;
+    }
 }
 
 void CmdRobotWorker::connectSocket(){

@@ -527,7 +527,6 @@ void MainWindow::deletePath(int robotNb){
                 {
                     /// if the command is succesfully sent to the robot, we apply the change
                     if(commandController->sendCommand(robot, QString("k"))){
-
                         clearPath(robotNb);
                         topLayout->setLabel(TEXT_COLOR_SUCCESS, "The path of " + robot->getName() + " has been successfully deleted");
                     } else
@@ -1753,8 +1752,6 @@ void MainWindow::setNewHome(QString homeName){
 
             /// associates the robot to the point
             home->getPoint()->setRobotName(selectedRobot->getRobot()->getName());
-            home->setPixmap(PointView::PixmapType::SELECTED);
-            home->show();
 
             /// saves the position of the new home in the corresponding file
             QFileInfo homeFileInfo(QDir::currentPath(), "../gobot-software/robots_homes/" + selectedRobot->getRobot()->getName());
@@ -4990,7 +4987,8 @@ void MainWindow::updateHomeInfo(const QString robot_name, QString robotInfo){
 
     /// if the robot and the application have the same home we don't do anything besides setting the point in the application (no need to change any files)
     if(robot_home_position != p){
-
+         qDebug() << "HEY HOMES ARE DIFFERENT" << robot_home_position.getX() << robot_home_position.getY()
+                  << p.getX() << p.getY();
          QSharedPointer<PointView> home = points->findPointViewByPos(p);
 
          if(home){
