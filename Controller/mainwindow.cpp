@@ -1893,6 +1893,9 @@ void MainWindow::saveMap(QString fileName){
         if(fileName.indexOf(".pgm", fileName.length()-4) != -1)
             fileName = fileName.mid(0, fileName.length()-4);
 
+        mapState.first = mapPixmapItem->pos();
+        mapState.second = graphicsView->getZoomCoeff();
+
         saveMapState();
 
         QFileInfo mapFileInfo(static_cast<QDir> (fileName), "");
@@ -1903,7 +1906,8 @@ void MainWindow::saveMap(QString fileName){
 
         assert(saveMapConfig(fileInfo.absoluteFilePath().toStdString()));
 
-        qDebug() << "MainWindow::saveMap" << mapState.first.x() << mapState.first.y() << mapState.second << map->getWidth() << map->getHeight();
+        qDebug() << "MainWindow::saveMap" << mapState.first.x() << mapState.first.y() << mapState.second << map->getWidth() << map->getHeight()
+                 << map->getOrigin().getX() << map->getOrigin().getY();
 
         const QString pointsFile = fileName + "_points.xml";
         savePoints(pointsFile);
@@ -4736,8 +4740,8 @@ void MainWindow::setTemporaryMessageTop(const QString type, const QString messag
 void MainWindow::saveMapState(){
     qDebug() << "MainWindow::saveMapState saving map" << QString::fromStdString(mapFile);
     /// saves the current configuration in the model
-    mapState.first = mapPixmapItem->pos();
-    mapState.second = graphicsView->getZoomCoeff();
+    //mapState.first = mapPixmapItem->pos();
+    //mapState.second = graphicsView->getZoomCoeff();
 
     QFileInfo newMapInfo(QDir::currentPath(), "../gobot-software/currentMap.txt");
     std::ofstream file(newMapInfo.absoluteFilePath().toStdString(), std::ios::out | std::ios::trunc);
