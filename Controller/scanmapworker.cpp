@@ -2,12 +2,9 @@
 #include <QDataStream>
 #include <QFile>
 
-ScanMapWorker::ScanMapWorker(const QString newipAddress, const int newPort, const QString _mapPath){
-    ipAddress = newipAddress;
-    port = newPort;
-    data = QByteArray();
-    mapPath = _mapPath;
-}
+ScanMapWorker::ScanMapWorker(const QString newipAddress, const int newPort, const QString _mapPath):
+    ipAddress(newipAddress), port(newPort), data(QByteArray()), mapPath(_mapPath)
+{}
 
 ScanMapWorker::~ScanMapWorker(){
     stopWorker();
@@ -30,7 +27,7 @@ void ScanMapWorker::connectSocket(){
     /// Connect the signal when an error occurs with the socket, to react accordingly
     connect(&(*socket), SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(errorConnectionSlot(QAbstractSocket::SocketError)));
 
-    /// We try to connect to the robot, if an error occur,
+    /// We try to connect to the robot, if an error occurs,
     /// the errorConnectionSlot will try to reconnect
     socket->connectToHost(ipAddress, port);
 
@@ -77,7 +74,6 @@ void ScanMapWorker::errorConnectionSlot(QAbstractSocket::SocketError error){
     //qDebug() << "(ScanMapWorker) Error while connecting :" << error;
     switch (error) {
     case(QAbstractSocket::ConnectionRefusedError):
-        //qDebug() << "(ScanMapWorker) The connection was refused by the peer (or timed out).";
         QThread::sleep(1);
         socket->connectToHost(ipAddress, port);
         break;

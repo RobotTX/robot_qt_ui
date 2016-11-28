@@ -31,4 +31,4 @@ signals:
     void enableGroupEdit(bool);
 };
 
-#endif // CUSTOM_LINE_EDIT_H
+#endif /// CUSTOM_LINE_EDIT_H

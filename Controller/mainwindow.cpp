@@ -1895,6 +1895,9 @@ void MainWindow::saveMap(QString fileName){
         if(fileName.indexOf(".pgm", fileName.length()-4) != -1)
             fileName = fileName.mid(0, fileName.length()-4);
 
+        mapState.first = mapPixmapItem->pos();
+        mapState.second = graphicsView->getZoomCoeff();
+
         saveMapState();
 
         QFileInfo mapFileInfo(static_cast<QDir> (fileName), "");
@@ -1905,7 +1908,8 @@ void MainWindow::saveMap(QString fileName){
 
         assert(saveMapConfig(fileInfo.absoluteFilePath().toStdString()));
 
-        qDebug() << "MainWindow::saveMap" << mapState.first.x() << mapState.first.y() << mapState.second << map->getWidth() << map->getHeight();
+        qDebug() << "MainWindow::saveMap" << mapState.first.x() << mapState.first.y() << mapState.second << map->getWidth() << map->getHeight()
+                 << map->getOrigin().getX() << map->getOrigin().getY();
 
         const QString pointsFile = fileName + "_points.xml";
         savePoints(pointsFile);
@@ -4738,8 +4742,8 @@ void MainWindow::setTemporaryMessageTop(const QString type, const QString messag
 void MainWindow::saveMapState(){
     qDebug() << "MainWindow::saveMapState saving map" << QString::fromStdString(mapFile);
     /// saves the current configuration in the model
-    mapState.first = mapPixmapItem->pos();
-    mapState.second = graphicsView->getZoomCoeff();
+    //mapState.first = mapPixmapItem->pos();
+    //mapState.second = graphicsView->getZoomCoeff();
 
     QFileInfo newMapInfo(QDir::currentPath(), "../gobot-software/currentMap.txt");
     std::ofstream file(newMapInfo.absoluteFilePath().toStdString(), std::ios::out | std::ios::trunc);
@@ -4820,13 +4824,6 @@ void MainWindow::showSelectedRobotHomeOnly(){
             }
         }
     }
-}
-
-void MainWindow::moveEvent(QMoveEvent *event){
-    const QPoint global = this->mapToGlobal(rect().center());
-    //editSelectedRobotWidget->getRobotInfoDialog()->move(global.x()-editSelectedRobotWidget->getRobotInfoDialog()->width()/2,
-                                                       // global.y()-editSelectedRobotWidget->getRobotInfoDialog()->height()/2);
-    QMainWindow::moveEvent(event);
 }
 
 void MainWindow::compress(const QString zipFile){
@@ -4971,14 +4968,10 @@ QVector<PathPoint> MainWindow::extractPathFromInfo(const QStringList &robotInfo)
     QVector<PathPoint> path;
     for(int i = 5; i < robotInfo.size(); i += 3){
         double xOnRobot = robotInfo.at(i).toDouble();
-
-        // float newPosX = (oldPosX - ROBOT_WIDTH) * map->getResolution() + map->getOrigin().getX();
-
-        double xInApp = (-map->getOrigin().getX()+xOnRobot)/map->getResolution() + ROBOT_WIDTH;
+        double xInApp = (-map->getOrigin().getX() + xOnRobot) / map->getResolution() + ROBOT_WIDTH;
         double yOnRobot = robotInfo.at(i+1).toDouble();
-        double yInApp = map->getHeight()-(-map->getOrigin().getY()+yOnRobot)/map->getResolution()-ROBOT_WIDTH/2;
+        double yInApp = map->getHeight()-(-map->getOrigin().getY()+yOnRobot) / map->getResolution()-ROBOT_WIDTH/2;
         path.push_back(PathPoint(Point(" ", xInApp, yInApp), robotInfo.at(i+2).toDouble()));
-
     }
     return path;
 }
@@ -5248,12 +5241,11 @@ QString MainWindow::prepareCommandPath(const Paths::Path &path) const {
 
         float newPosX = (oldPosX - ROBOT_WIDTH) * map->getResolution() + map->getOrigin().getX();
         float newPosY = (-oldPosY + map->getHeight() - ROBOT_WIDTH/2) * map->getResolution() + map->getOrigin().getY();
-        //int waitTime = -1;
-        //if(pathPoint->getWaitTime() > -1){
+
         int waitTime = pathPoint->getWaitTime();
-        //}
+
         pathStr += + "\"" + QString::number(newPosX) + "\" \"" + QString::number(newPosY) + "\" \"" + QString::number(waitTime)+ "\" ";   
     }
-    qDebug() << "pathstr yo" << pathStr;
+    //qDebug() << "pathstr yo" << pathStr;
     return pathStr;
 }

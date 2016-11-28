@@ -95,4 +95,4 @@ private:
     bool customTooltipEnable;
 };
 
-#endif // CUSTOMPUSHBUTTON_H
+#endif /// CUSTOMPUSHBUTTON_H

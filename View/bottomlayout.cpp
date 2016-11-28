@@ -171,7 +171,6 @@ BottomLayout::BottomLayout(QMainWindow* parent, const QSharedPointer<Robots> &ro
     connect(viewPathRobotBtnGroup, SIGNAL(buttonToggled(int, bool)), parent, SLOT(viewPathSelectedRobot(int, bool)));
     connect(deletePathBtnGroup, SIGNAL(buttonClicked(int)), parent, SLOT(deletePath(int)));
 
-
     setMaximumHeight(parent->height()*4/10);
     setMinimumHeight(parent->height()*4/10);
 
@@ -224,9 +223,8 @@ void BottomLayout::updateRobot(const int id, QPointer<RobotView> const robotView
 }
 
 void BottomLayout::updateStageRobot(const int id, QPointer<RobotView> robotView, const int stage){
-    if(robotView->getRobot()->getPath().size() > 0){
+    if(robotView->getRobot()->getPath().size() > 0)
         vectorPathLabel.at(id)->setText(pathToStr(robotView->getRobot()->getPath(), stage));
-    }
 }
 
 void BottomLayout::addRobot(QPointer<RobotView> const robotView){

@@ -26,4 +26,4 @@ private:
      QPushButton *abortButton;
 };
 
-#endif // COMMANDMESSAGEBOX_H
+#endif /// COMMANDMESSAGEBOX_H

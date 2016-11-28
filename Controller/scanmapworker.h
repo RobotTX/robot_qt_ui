@@ -73,11 +73,11 @@ private :
     int port;
     /**
      * @brief data
-     * The array on which we stack all the data we receive
+     * The array in which we stack all the data we receive
      */
     QByteArray data;
     QString mapPath;
 };
 
 
-#endif // SCANMAPWORKER_H
+#endif /// SCANMAPWORKER_H

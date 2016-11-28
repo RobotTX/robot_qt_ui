@@ -16,7 +16,7 @@ void Robots::add(QPointer<RobotView> const robotView){
 }
 
 void Robots::remove(QPointer<RobotView> robotView){
-    int nb = 0;
+    int nb(0);
     for(int i = 0; i < robotsVector.length(); i++){
         if(robotsVector[i]->getRobot()->getName() == robotView->getRobot()->getName() && robotsVector[i]->getRobot()->getIp() == robotView->getRobot()->getIp()){
             robotsVector.remove(i);

@@ -39,9 +39,9 @@ void RobotPositionWorker::readTcpDataSlot(){
     QString data = socket->readAll();
     QRegExp rx("[ ]");
 
-    /// Data are received as a string separated by a space ("width height resolution originX originY")
+    /// Data is received as a string containing values separated by a space ("width height resolution originX originY")
     QStringList list = data.split(rx, QString::SkipEmptyParts);
-    //qDebug() << "(Robot pos thread" << ipAddress << ") Position : " << list;
+
     emit valueChangedRobot(ipAddress, list.at(0).toDouble(), list.at(1).toDouble(), list.at(2).toDouble());
 }
 
@@ -53,7 +53,6 @@ void RobotPositionWorker::errorConnectionSlot(QAbstractSocket::SocketError error
     //qDebug() << "(RobotPositionWorker) Error while connecting :" << error;
     switch (error) {
     case(QAbstractSocket::ConnectionRefusedError):
-        //qDebug() << "(RobotPositionWorker) The connection was refused by the peer (or timed out).";
         QThread::sleep(1);
         socket->connectToHost(ipAddress, port);
         break;

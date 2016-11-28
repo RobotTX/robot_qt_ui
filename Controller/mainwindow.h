@@ -23,7 +23,6 @@ class QVBoxLayout;
 class PathPainter;
 class CustomPushButton;
 class GroupsPathsWidget;
-class QMoveEvent;
 class CommandController;
 class EditMapWidget;
 
@@ -289,7 +288,6 @@ private slots:
     void saveEditMapSlot();
 
 protected:
-    void moveEvent(QMoveEvent* event);
     bool changeRobotName(QString name);
     void changeRobotWifi(QString ssid, QString password);
     void stopMapThread();
@@ -339,4 +337,4 @@ private:
     QPointer<EditMapWidget> editMapWidget;
 };
 
-#endif // MAINWINDOW_H
+#endif /// MAINWINDOW_H

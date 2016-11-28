@@ -64,14 +64,12 @@ private slots:
      */
     void userStopped();
 
-signals:
-    void newConnection(QString home_position);
-
 private:
+    /// the message box that's prompted to the user when a command is sent
     QPointer<CommandMessageBox> messageBox;
     QString cmdAnswer;
     QString robotName;
     QString cmdName;
 };
 
-#endif // COMMANDCONTROLLER_H
+#endif /// COMMANDCONTROLLER_H

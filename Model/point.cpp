@@ -6,17 +6,14 @@
 
 
 
-Point::Point(void): name(""), position(Position(0.0, 0.0)), type(PERM)
-{
-}
+Point::Point(void): name(""), position(Position(0.0, 0.0)), type(PERM) {}
 
 Point::Point(const QString name, const double x, const double y, const PointType _type):
     name(name), position(Position(x, y)), type(_type)
-{
-}
+{}
 
-Point::Point(const QString name, const Position position, const PointType _type) : name(name), position(position), type(_type), robotName(""){
-}
+Point::Point(const QString name, const Position position, const PointType _type) : name(name), position(position), type(_type), robotName("")
+{}
 
 void Point::display(std::ostream& stream) const {
     stream << name.toStdString() << " (" << position.getX() << ", " << position.getY() << ") ";
@@ -66,19 +63,13 @@ bool Point::operator==(const Point& point) const {
 }
 
  bool Point::comparePos(const double x, const double y) const {
-     if(abs(x - this->getPosition().getX()) < 0.01 &&
-             abs(y - this->getPosition().getY()) < 0.01)
-         return true;
-     else
-         return false;
+     return (abs(x - this->getPosition().getX()) < 0.01 &&
+             abs(y - this->getPosition().getY()) < 0.01);
  }
 
  bool Point::comparePos(const Position pos) const {
-     if(abs(pos.getX() - this->getPosition().getX()) < 0.01 &&
-             abs(pos.getY() - this->getPosition().getY()) < 0.01)
-         return true;
-     else
-         return false;
+     return (abs(pos.getX() - this->getPosition().getX()) < 0.01 &&
+             abs(pos.getY() - this->getPosition().getY()) < 0.01);
  }
 
  bool Point::setHome(const PointType _type){

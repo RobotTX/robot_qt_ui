@@ -75,4 +75,4 @@ private :
 };
 
 
-#endif // ROBOTPOSITIONWORKER_H
+#endif /// ROBOTPOSITIONWORKER_H

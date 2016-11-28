@@ -211,10 +211,11 @@ void CustomPushButton::moveLabel(){
             label->move(moveTo);
             setToolTip(text());
             label->show();
+
         } else {
-            if(!customTooltipEnable){
+            if(!customTooltipEnable)
                 setToolTip("");
-            }
+
             label->hide();
         }
     }

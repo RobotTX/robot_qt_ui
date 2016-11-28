@@ -39,8 +39,6 @@ private:
      * How long the robot needs to wait if its action is to wait
      */
     int waitTime;
-
-
 };
 
 /**
