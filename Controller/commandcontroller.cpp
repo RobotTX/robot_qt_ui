@@ -174,64 +174,6 @@ void CommandController::cmdAnswerSlot(QString answer){
 }
 
 
-void CommandController::sendNewMapToRobot(QPointer<Robot> robot, QSharedPointer<Map> map){
-    qDebug() << "sendNewMapToRobot called on" << robot->getName() << "at ip" << robot->getIp() << "sending map id :" << map->getMapId();
-
-    QString mapId = map->getMapId().toString();
-
-    QString date = map->getDateTime().toString("yyyy-MM-dd-hh-mm-ss");
-
-    QString mapMetadata = QString::number(map->getWidth()) + ' ' + QString::number(map->getHeight()) +
-            ' ' + QString::number(map->getResolution()) + ' ' + QString::number(map->getOrigin().getX()) +
-            ' ' + QString::number(map->getOrigin().getY());
-
-
-    robot->sendNewMap(mapId, date, mapMetadata, map->getMapImage());
-/*
-    if(robotName.isEmpty()){
-        cmdAnswer = "";
-
-        qDebug() << "Sending the new map id to the robot" << robot->getName();
-        /// Push the map id to send
-        QByteArray byteArray;
-        byteArray.push_back(mapId.toUtf8());
-        byteArray.push_back(';');
-
-        /// Push the map metadata to send
-        QString mapMetadata = QString::number(map->getWidth()) + ' ' + QString::number(map->getHeight()) +
-                ' ' + QString::number(map->getResolution()) + ' ' + QString::number(map->getOrigin().getX()) +
-                ' ' + QString::number(map->getOrigin().getY());
-
-        byteArray.push_back(mapMetadata.toUtf8());
-        byteArray.push_back(';');
-
-        /// Push the map to send
-        QFile file(QString(GOBOT_PATH) + QString(MAP_FILE));
-        if (!file.open(QIODevice::ReadOnly)) return;
-        QByteArray blob = file.readAll();
-        byteArray.push_back(blob);
-
-
-        qDebug() << "Setting the map ID to the robot" << robot->getName();
-        robot->setMapId(QUuid(mapId));
-
-        robot->sendNewMap(byteArray);
-
-        openMessageBox("Tmp Message");
-
-        qDebug() << "CommandController::sendNewMapToRobot Going to wait while sending the map";
-        while(cmdAnswer.compare("") == 0){
-            qDebug() << "CommandController::sendNewMapToRobot waiting to finish to send the map";
-            MainWindow::delay(1000);
-        }
-        qDebug() << "The answer is :" << cmdAnswer;
-
-        cmdAnswer = "";
-    } else {
-        qDebug() << "CommandController::sendNewMapToRobot Already processing a command";
-    }*/
-}
-
 void CommandController::robotDisconnected(QString _robotName){
     if(_robotName.compare(robotName)){
         qDebug() << "The robot" << robotName << " was waiting for an answer to the command" << cmdName << "but disconnected";

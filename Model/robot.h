@@ -3,6 +3,7 @@
 
 class PathPoint;
 class QMainWindow;
+class Map;
 
 #include "Model/position.h"
 #include <QString>
@@ -87,7 +88,7 @@ public:
      * @param cmd
      * To send the new map to the robot
      */
-    void sendNewMap(QString mapId, QString date, QString metadata, QImage map);
+    void sendNewMap(QSharedPointer<Map> map);
 
     /**
      * @brief stopThreads

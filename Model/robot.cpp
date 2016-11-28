@@ -5,6 +5,7 @@
 #include <iostream>
 #include <QFile>
 #include "Controller/commandcontroller.h"
+#include "Model/map.h"
 
 
 Robot::Robot(MainWindow* mainWindow, const QSharedPointer<Paths>& _paths, const QString _name, const QString _ip) : QObject(mainWindow), paths(_paths), name(_name), ip(_ip), position(Position()),
@@ -75,11 +76,22 @@ void Robot::sendCommand(const QString cmd) {
     emit sendCommandSignal(cmd);
 }
 
-void Robot::sendNewMap(QString mapId, QString date, QString metadata, QImage map) {
+void Robot::sendNewMap(QSharedPointer<Map> map) {
     qDebug() << "Robot::sendNewMap to" << name;
     if(!sendingMap){
+
+        QString mapId = map->getMapId().toString();
+
+        QString date = map->getDateTime().toString("yyyy-MM-dd-hh-mm-ss");
+
+        QString mapMetadata = QString::number(map->getWidth()) + ' ' + QString::number(map->getHeight()) +
+                ' ' + QString::number(map->getResolution()) + ' ' + QString::number(map->getOrigin().getX()) +
+                ' ' + QString::number(map->getOrigin().getY());
+
         sendingMap = 1;
-        emit sendNewMapSignal(mapId, date, metadata, map);
+        emit sendNewMapSignal(mapId, date, mapMetadata, map->getMapImage());
+    } else {
+        qDebug() << "Robot::sendNewMap already sending a map" << name;
     }
 }
 

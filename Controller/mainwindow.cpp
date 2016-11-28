@@ -1496,17 +1496,19 @@ void MainWindow::robotIsAliveSlot(QString hostname, QString ip, QString mapId, Q
     }
 
     /// Check if the robot has the current map
-    /*
-    QSettings settings;
-    QString currMapId = settings.value("mapId", "{00000000-0000-0000-0000-000000000000}").toString();
-    */
-    /*QString currMapId("");
-    if(mapId.compare(currMapId) == 0){
-        qDebug() << "Which is the current map";
+    //qDebug() << "Robot" << hostname << "comparing ids" << mapId << "and" << map->getMapId().toString();
+    if(mapId.compare(map->getMapId().toString()) == 0){
+        qDebug() << "Robot" << hostname << "has the current map";
     } else {
-        qDebug() << "Which is an old map";
-        //commandController->sendNewMapToRobot(rv->getRobot(), currMapId, map);
-    }*/
+        // TODO Send or receive the map depending on settings
+        QDateTime mapDateTime = QDateTime::fromString(mapDate, "yyyy-MM-dd-hh-mm-ss");
+        //qDebug() << "Robot" << hostname << "comparing date" << mapDateTime << "and" << map->getDateTime();
+        if(mapDateTime <= map->getDateTime()){
+            qDebug() << "Robot" << hostname << "has an older map";
+        } else {
+            qDebug() << "Robot" << hostname << "has a newer map";
+        }
+    }
 
     int robotId = robots->getRobotId(rv->getRobot()->getName());
 
@@ -1662,7 +1664,7 @@ void MainWindow::sendNewMapToRobots(QString ipAddress){
         /// No need to send the map to the robot that scanned it
         if(robot->getIp().compare(ipAddress) != 0){
             qDebug() << "Sending the map to" << robot->getName() << "at ip" << robot->getIp();
-            commandController->sendNewMapToRobot(robot, map);
+            robot->sendNewMap(map);
         } else {
             qDebug() << "The robot" << robot->getName() << "at ip" << robot->getIp() << "already has the current map";
         }

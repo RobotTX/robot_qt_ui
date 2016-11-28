@@ -36,15 +36,6 @@ public:
     void openMessageBox(QStringList listCmd);
 
     /**
-     * @brief sendNewMapToRobot
-     * @param robot
-     * @param mapId
-     * @param map
-     * Send the given map to the robot
-     */
-    void sendNewMapToRobot(QPointer<Robot> robot, QSharedPointer<Map> map);
-
-    /**
      * @brief robotDisconnected
      * @param _robotName
      * If the robot disconnect while we send a command,
