@@ -37,12 +37,16 @@ private slots:
     /// by the IP address are stored
     void addNewRobotObstacles(QString ipAddress);
 
+    /// to turn on / off the laser feedback of the given robot (ipAddress)
+    void turnOnLaserFeedBack(const QString ipAddress, const bool activate);
+
 private:
     QSize size;
     QSharedPointer<Robots> robots;
     /// keys are ip addresses of robots
-    /// each robot has its own obstacles to draw represented by a vector of QPointF
-    QMap<QString, QVector<QPointF>> obstacles;
+    /// each robot has its own obstacles to draw represented by a vector of QPointF and a bool value (whether or not
+    /// the user actually wants to display the obstacles
+    QMap<QString, QPair<QVector<QPointF>, bool>> obstacles;
 };
 
-#endif // DRAWOBSTACLES_H
+#endif /// DRAWOBSTACLES_H

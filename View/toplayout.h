@@ -57,6 +57,7 @@ private:
     CustomPushButton* centerBtn;
     CustomPushButton* settingBtn;
     CustomPushButton* saveMapBtn;
+    CustomPushButton* testButton;
     QPair<QString, QString> lastMessage;
 };
 

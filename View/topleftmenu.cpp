@@ -76,7 +76,7 @@ void TopLeftMenu::setCheckable(const bool checkable){
 
 void TopLeftMenu::setEnable(const bool enable){
     if(enable){
-        for(int i =0; i < enabledBtns.size(); i++)
+        for(int i = 0; i < enabledBtns.size(); i++)
             enabledBtns.at(i)->setEnabled(true);
         enabledBtns.clear();
 

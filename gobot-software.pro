@@ -79,7 +79,8 @@ HEADERS += \
     View/editmapwidget.h \
     View/editmapview.h \
     Controller/localmapworker.h \
-    View/drawobstacles.h
+    View/drawobstacles.h \
+    View/settingswidget.h
 
 FORMS += Controller/mainwindow.ui
 
@@ -142,7 +143,8 @@ SOURCES += main.cpp \
     View/editmapwidget.cpp \
     View/editmapview.cpp \
     Controller/localmapworker.cpp \
-    View/drawobstacles.cpp
+    View/drawobstacles.cpp \
+    View/settingswidget.cpp
 
 
 RESOURCES += Resources/resources.qrc
