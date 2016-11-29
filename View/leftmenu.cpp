@@ -133,8 +133,6 @@ LeftMenu::LeftMenu(MainWindow* _mainWindow, QSharedPointer<Points> const& _point
     /// to check the name of a point being edited
     connect(displaySelectedPoint, SIGNAL(invalidName(QString, CreatePointWidget::Error)), mainWindow, SLOT(setMessageCreationPoint(QString,CreatePointWidget::Error)));
 
-
-
     /// Menu which displays the groups of paths
     groupsPathsWidget = new GroupsPathsWidget(this, _mainWindow, paths);
     groupsPathsWidget->hide();

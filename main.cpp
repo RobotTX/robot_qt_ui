@@ -11,6 +11,7 @@ int main(int argc, char *argv[]){
 
     MainWindow w;
     w.setMinimumSize(1000, 800);
+
     /// to center the application on the screen
     w.setGeometry(
         QStyle::alignedRect(
@@ -20,6 +21,7 @@ int main(int argc, char *argv[]){
             qApp->desktop()->availableGeometry()
         )
     );
+
     w.show();
 
     return app.exec();

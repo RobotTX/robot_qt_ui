@@ -53,7 +53,6 @@ void CustomScrollArea::resizeEvent(QResizeEvent *event){
         setFixedWidth(maxWidth);
         if(editRobotWidget)
             widget()->setMaximumWidth(maxWidth);
-
     }
     QScrollArea::resizeEvent(event);
 }

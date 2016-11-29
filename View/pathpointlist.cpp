@@ -16,7 +16,6 @@ PathPointList::PathPointList(QWidget* parent): QListWidget(parent){
                       QListWidget::item:hover {background-color:"+button_hover_color+";}\
                       QListWidget::item:selected {background-color:"+button_checked_color+";}");
 
-
     connect(model(), SIGNAL(rowsMoved(QModelIndex, int, int, QModelIndex, int)), this, SLOT(itemMoved(QModelIndex, int, int, QModelIndex, int)));
 }
 

@@ -221,18 +221,12 @@ void PointView::setPixmap(const PixmapType pixType){
     updatePos();
 }
 
-
 void PointView::setToolTip(const QString toolTip){
     //qDebug() << "settooltip called" << toolTip;
     QString name = toolTip;
     if(name.indexOf(PATH_POINT_NAME) == 0){
         name.remove(PATH_POINT_NAME);
-        if(name.toInt()){
-            QGraphicsPixmapItem::setToolTip("Point number " + name);
-        } else {
-            QGraphicsPixmapItem::setToolTip(toolTip);
-        }
-    } else {
+        (name.toInt()) ? QGraphicsPixmapItem::setToolTip("Point number " + name) : QGraphicsPixmapItem::setToolTip(toolTip);
+    } else
         QGraphicsPixmapItem::setToolTip(toolTip);
-    }
 }

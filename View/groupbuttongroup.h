@@ -23,6 +23,7 @@ class GroupButtonGroup: public QWidget
     Q_OBJECT
 public:
     GroupButtonGroup(QSharedPointer<Points> const& _points, QWidget *_parent);
+    ~GroupButtonGroup();
 
     QButtonGroup* getButtonGroup(void) const { return buttonGroup; }
     CustomLineEdit* getModifyEdit(void) const { return modifyEdit; }

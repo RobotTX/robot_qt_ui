@@ -58,9 +58,8 @@ QPointer<RobotView> Robots::getRobotViewByName(const QString name) const {
 
 QPointer<RobotView> Robots::getRobotViewByIp(const QString ip) const {
     for(int i = 0; i < robotsVector.length(); i++){
-        if(robotsVector[i]->getRobot()->getIp() == ip){
+        if(robotsVector[i]->getRobot()->getIp() == ip)
             return robotsVector[i];
-        }
     }
     return NULL;
 }

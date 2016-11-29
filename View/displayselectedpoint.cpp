@@ -22,6 +22,7 @@
 #include "View/customlabel.h"
 #include "View/customlineedit.h"
 #include "View/stylesettings.h"
+#include <assert.h>
 
 DisplaySelectedPoint::DisplaySelectedPoint(QWidget* _parent, QSharedPointer<Robots> const _robots, QSharedPointer<Points> const& _points, QSharedPointer<Map> const& _map, QSharedPointer<PointView> _pointView):
     QWidget(_parent), map(_map), pointView(_pointView), points(_points){
@@ -212,7 +213,10 @@ int DisplaySelectedPoint::checkPointName(QString name) {
 
 void DisplaySelectedPoint::setPointView(QSharedPointer<PointView> _pointView, const QString robotName) {
     qDebug() << "DisplaySelectedPoint::setPointView called";
-
+    assert(_pointView);
+    pointView = _pointView;
+    robotsWidget->setRobotsWidget(pointView, robots, robotName);
+    /*
     if(_pointView){
         pointView = _pointView;
 
@@ -220,6 +224,7 @@ void DisplaySelectedPoint::setPointView(QSharedPointer<PointView> _pointView, co
     } else {
         qDebug() << "Displayselectedpoint::setpointview pointview null pointer";
     }
+    */
 }
 
 /// removes extra useless spaces like in " a name    with extra   useless spaces  "

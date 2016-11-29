@@ -84,24 +84,13 @@ bool Paths::createGroup(const QString name){
 
 /// attempts to delete a group of paths called <name>, if the group does not exist, the function only returns 0
 int Paths::deleteGroup(const QString groupName){
-    qDebug() << "Paths::deleteGroup called";
-    if(groups->find(groupName) != groups->end())
-        return groups->remove(groupName);
-    else
-        return 0;
+    return (groups->find(groupName) != groups->end()) ? groups->remove(groupName) : 0;
 }
 
 /// attempts to delete a path with name <pathName> in the group <groupName>, does not
-/// do anything if such path does not exist
+/// do anything if such path does not exist, returns the number of paths removed (should be one)
 int Paths::deletePath(const QString groupName, const QString pathName){
-    qDebug() << "Paths::deletePath called";
-    auto it_group = groups->find(groupName);
-    if(it_group == groups->end())
-        return 0;
-    else {
-        QSharedPointer<QMap<QString, QSharedPointer<Path>> > current_paths = (*groups)[groupName];
-        return current_paths->remove(pathName);
-    }
+    return (groups->find(groupName) == groups->end()) ? 0 : (*groups)[groupName]->remove(pathName);
 }
 
 Paths::Path Paths::getPath(const QString groupName, const QString pathName, bool& foundFlag){
@@ -122,12 +111,7 @@ Paths::Path Paths::getPath(const QString groupName, const QString pathName, bool
 
 Paths::CollectionPaths Paths::getGroup(const QString groupName){
     auto it_group = groups->find(groupName);
-    if(it_group == groups->end()){
-        qDebug() << "Paths::getPath the group of paths" << groupName << "does not exist";
-        return CollectionPaths();
-    }
-    else
-        return *it_group.value();
+    return (it_group == groups->end()) ? CollectionPaths() : *it_group.value();
 }
 
 QDataStream& operator>>(QDataStream& in, Paths& paths){
@@ -142,9 +126,8 @@ QDataStream& operator>>(QDataStream& in, Paths& paths){
         while(it_paths.hasNext()){
             it_paths.next();
             paths.createPath(it.key(), it_paths.key());
-            for(int i = 0; i < it_paths.value().size(); i++){
+            for(int i = 0; i < it_paths.value().size(); i++)
                 paths.addPathPoint(it.key(), it_paths.key(), QSharedPointer<PathPoint>(new PathPoint(it_paths.value().at(i))));
-            }
         }
     }
 
@@ -163,9 +146,8 @@ QDataStream& operator<<(QDataStream& out, const Paths& paths){
             it_paths.next();
             QVector<PathPoint> tmpPath;
             if(it_paths.value()){
-                for(int i = 0; i < it_paths.value()->size(); i++){
+                for(int i = 0; i < it_paths.value()->size(); i++)
                     tmpPath.push_back(*(it_paths.value()->at(i)));
-                }
             }
             tmpGroup.insert(it_paths.key(), tmpPath);
         }

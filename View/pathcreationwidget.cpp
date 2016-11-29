@@ -104,12 +104,11 @@ PathCreationWidget::PathCreationWidget(QWidget* parent, const QSharedPointer<Poi
 void PathCreationWidget::updatePath(const QVector<QSharedPointer<PathPoint>>& _path){
     qDebug() << "PathCreationWidget::updatePath called pathsize :" << _path.size();
     pathPointsList->clear();
-    for(int i = 0; i < _path.size(); i++){
+    for(int i = 0; i < _path.size(); i++)
         addPathPointSlot(_path.at(i)->getPoint().getName(),
                          _path.at(i)->getPoint().getPosition().getX(),
                          _path.at(i)->getPoint().getPosition().getY(),
                          _path.at(i)->getWaitTime());
-    }
 }
 
 void PathCreationWidget::showEvent(QShowEvent* event){
@@ -207,14 +206,8 @@ void PathCreationWidget::savePathClicked(void){
         error = true;
     }
 
-    ///if there is no error, we can save the path
-    if(error){
-        QString msg = "Please make sure all the following error(s) have been fixed :\n" + errorMsg;
-        emit setMessage(TEXT_COLOR_DANGER, msg);
-    } else {
-        qDebug() << "PathCreationWidget::savePathClicked No error, ready to save";
-        emit savePath();
-    }
+    /// if there is no error, we can save the path
+    (error) ? emit setMessage(TEXT_COLOR_DANGER, "Please make sure all the following error(s) have been fixed :\n" + errorMsg) : emit savePath();
 }
 
 void PathCreationWidget::addPathPointByMenuSlot(void){

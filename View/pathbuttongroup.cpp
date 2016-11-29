@@ -15,10 +15,13 @@ PathButtonGroup::PathButtonGroup(QWidget *_parent, const QSharedPointer<Paths> &
 
 /// delete the buttons so they can be reconstructed (to update the QButtonGroup in the event of a creating or edition)
 void PathButtonGroup::deleteButtons(void){
-    //qDebug() << "PathButtonGroup::deleteButtons called";
     while(QLayoutItem* item = layout->takeAt(0)){
-        if(QWidget* button = item->widget())
+        if(QWidget* button = item->widget()){
             delete button;
+            button = 0;
+        }
+        delete item;
+        item = 0;
     }
 }
 
@@ -30,7 +33,6 @@ void PathButtonGroup::uncheck(){
 }
 
 void PathButtonGroup::setCheckable(const bool checkable){
-    //qDebug() << "GroupButtonGroup::setEnabled called";
     foreach(QAbstractButton* button, buttonGroup->buttons())
         button->setCheckable(checkable);
 }

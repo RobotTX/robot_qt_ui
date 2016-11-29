@@ -8,7 +8,7 @@
 #include "View/pathcreationwidget.h"
 
 XMLParser::XMLParser(const QString filename){
-    file = QPointer<QFile>(new QFile(filename));
+    file = new QFile(filename);
 }
 
 XMLParser::~XMLParser(){

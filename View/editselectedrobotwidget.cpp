@@ -149,7 +149,6 @@ EditSelectedRobotWidget::EditSelectedRobotWidget(QWidget* _parent, MainWindow* _
     scrollArea->setWidget(inWidget);
     layout->addWidget(scrollArea);
     setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
-
 }
 
 void EditSelectedRobotWidget::setSelectedRobot(QPointer<RobotView> const _robotView, bool _firstConnection){
@@ -209,10 +208,8 @@ void EditSelectedRobotWidget::showEvent(QShowEvent *event){
     updatePathsMenu();
     updateHomeMenu();
     pathWidget->setPath(robotView->getRobot()->getPath());
-    if(robotView->getRobot()->getPath().size() < 1)
-        pathWidget->hide();
-    else
-        pathWidget->show();
+    /// we show the pathWidget if the robot has a path
+    (robotView->getRobot()->getPath().size() < 1) ? pathWidget->hide() : pathWidget->show();
     QWidget::showEvent(event);
 }
 

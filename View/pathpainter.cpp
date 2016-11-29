@@ -95,7 +95,6 @@ void PathPainter::orderPathPointChangedSlot(int from, int to){
 }
 
 void PathPainter::updatePathPainterName(void){
-    //qDebug() << "PathPainter::updatePathPainterName called";
     for(int i = 0; i < currentPath.size(); i++){
         if(currentPath.at(i)->getPoint().getName().contains(PATH_POINT_NAME)){
             Point point = currentPath.at(i)->getPoint();
@@ -131,7 +130,6 @@ void PathPainter::editPathPointSlot(int id, QString name, double, double){
     if(newPointView){
         points->getGroups()->value(PATH_GROUP_NAME)->remove(id);
         points->insertPoint(PATH_GROUP_NAME, id, newPointView);
-
         currentPath.at(id)->setPoint(*(newPointView->getPoint()));
     } else
         qDebug() << "PathPainter::editPathPointSlot editing a tmpPoint";
@@ -181,7 +179,6 @@ void PathPainter::updatePathPainterSlot(const bool savePath /* to deal with pv s
     if(group && group->size() > 0){
         for(int i = 0; i < group->size(); i++){
             currentPointView = group->at(i);
-            //qDebug() << "current pv" << currentPointView->getPoint()->getName() << currentPointView->getType();
             QPointF pointCoord = QPointF(currentPointView->getPoint()->getPosition().getX(),
                                          currentPointView->getPoint()->getPosition().getY());
 

@@ -68,15 +68,24 @@ GroupButtonGroup::GroupButtonGroup(const QSharedPointer<Points> &_points, QWidge
 
 }
 
+GroupButtonGroup::~GroupButtonGroup(){
+    delete layout;
+    layout = Q_NULLPTR;
+}
+
 void GroupButtonGroup::deleteButtons(void){
     //qDebug() << "GroupButtonGroup::deleteButtons called";
     layout->removeWidget(modifyEdit);
     while(QLayoutItem* item = layout->takeAt(0)){
         if(item){
-            if(QWidget* button = item->widget())
+            if(QWidget* button = item->widget()){
                 delete button;
+                button = 0;
+            }
+            delete item;
+            item = 0;
         } else {
-            qDebug() << "oops";
+            qDebug() << "groupbuttongroup::deletebuttons oops";
         }
     }
     layout->addWidget(modifyEdit);
@@ -203,9 +212,8 @@ QString GroupButtonGroup::formatName(const QString name) const {
 /// returns the id of the edited group
 int GroupButtonGroup::getEditedGroupId(void) const{
     for(int i = 0; i < getButtonGroup()->buttons().size(); i++){
-        if(getButtonGroup()->buttons().at(i)->text().compare(editedGroupName) == 0){
+        if(getButtonGroup()->buttons().at(i)->text().compare(editedGroupName) == 0)
             return i;
-        }
     }
     return -1;
 }

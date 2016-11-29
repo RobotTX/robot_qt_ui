@@ -85,8 +85,6 @@ void DisplaySelectedPath::mapBtnSlot(bool checked){
 }
 
 void DisplaySelectedPath::keyPressEvent(QKeyEvent *event){
-    if(event->key() == Qt::Key_Delete){
+    if(event->key() == Qt::Key_Delete)
         emit deletePath(currentPath.groupName, currentPath.pathName);
-        qDebug() << "event delete";
-    }
 }

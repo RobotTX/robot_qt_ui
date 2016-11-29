@@ -18,9 +18,7 @@ RobotView::RobotView (QPointer<Robot> _robot, QPointer<MapView> parent):
     mapView = parent;
 }
 
-RobotView::RobotView (QPointer<MapView> parent): QGraphicsPixmapItem(parent), selected(false), state(GraphicItemState::NO_STATE), shown(true), lastStage(0)
-{
-}
+RobotView::RobotView (QPointer<MapView> parent): QGraphicsPixmapItem(parent), selected(false), state(GraphicItemState::NO_STATE), shown(true), lastStage(0) {}
 
 void RobotView::mousePressEvent(QGraphicsSceneMouseEvent * /* unused */){
 
@@ -30,11 +28,10 @@ void RobotView::mousePressEvent(QGraphicsSceneMouseEvent * /* unused */){
         mw->resetFocus();
         qDebug() << "robot map pressed";
         emit setSelectedSignal(this);
-    } else if(state == GraphicItemState::CREATING_PATH){
+    } else if(state == GraphicItemState::CREATING_PATH)
         qDebug() << "Clicked on a robot while creating a path";
-    } else {
+    else
         qDebug() << "(RobotView) NO EVENT";
-    }
 }
 
 void RobotView::hoverEnterEvent(QGraphicsSceneHoverEvent * /* unused */){
@@ -62,10 +59,7 @@ void RobotView::setPosition(const float x, const float y) {
 
 void RobotView::setSelected(const bool _selected){
     selected = _selected;
-    if(selected)
-        setPixmap(QPixmap(":/icons/selected_robot_icon.png"));
-    else
-        setPixmap(QPixmap(":/icons/robot_icon.png"));
+    (selected) ? setPixmap(QPixmap(":/icons/selected_robot_icon.png")) : setPixmap(QPixmap(":/icons/robot_icon.png"));
 }
 
 void RobotView::display(const bool _show){
