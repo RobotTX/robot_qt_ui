@@ -415,18 +415,16 @@ void BottomLayout::setEnable(const bool enable){
 void BottomLayout::uncheckViewPathSelectedRobot(const int robotNb){
     QList<QAbstractButton*> list = viewPathRobotBtnGroup->buttons();
     for(int i =0; i < list.size(); i++){
-        if(list.at(i)->isChecked() && i != robotNb){
+        if(list.at(i)->isChecked() && i != robotNb)
             list.at(i)->setChecked(false);
-        }
     }
 }
 
 void BottomLayout::uncheckAll(){
     QList<QAbstractButton*> list = viewPathRobotBtnGroup->buttons();
      for(int i =0; i < list.size(); i++){
-         if(list.at(i)->isChecked()){
+         if(list.at(i)->isChecked())
              list.at(i)->setChecked(false);
-         }
      }
  }
 

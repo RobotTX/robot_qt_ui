@@ -81,6 +81,7 @@ void TopLeftMenu::setEnable(const bool enable){
         enabledBtns.clear();
 
     } else {
+
         if(plusButton->isEnabled()){
             plusButton->setEnabled(false);
             enabledBtns.push_back(plusButton);

@@ -54,6 +54,7 @@ void PointButtonGroup::deleteButtons(void){
     while(QLayoutItem* item = layout->takeAt(0)){
         if(QWidget* button = item->widget())
             delete button;
+        delete item;
     }
 }
 

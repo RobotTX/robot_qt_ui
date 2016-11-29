@@ -245,7 +245,6 @@ void GroupsPathsWidget::cancelCreationGroup(){
     /// the widgets to create a group are no longer necessary so we hide them
     hideCreationWidgets();
 
-
     actionButtons->getPlusButton()->setEnabled(true);
 
     emit messageCreationGroup(TEXT_COLOR_NORMAL, "");

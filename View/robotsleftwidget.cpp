@@ -55,9 +55,9 @@ void RobotsLeftWidget::updateRobots(QSharedPointer<Robots> const& _robots){
 void RobotsLeftWidget::unSelectAllRobots(){
     btnGroup->getBtnGroup()->setExclusive(false);
 
-    for (int i = 0; i < btnGroup->getBtnGroup()->buttons().size() ;i++){
+    for (int i = 0; i < btnGroup->getBtnGroup()->buttons().size() ;i++)
             btnGroup->getBtnGroup()->buttons().at(i)->setChecked(false);
-    }
+
     btnGroup->getBtnGroup()->setExclusive(true);
 }
 

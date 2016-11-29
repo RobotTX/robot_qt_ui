@@ -8,10 +8,7 @@ SpaceWidget::SpaceWidget(const SpaceOrientation orientation, QWidget* parent) : 
     spaceFrame = new QFrame(this);
     spaceFrame->setStyleSheet("QFrame {color: grey}");
 
-    if(orientation == SpaceOrientation::HORIZONTAL)
-        spaceFrame->setFrameShape(QFrame::HLine);
-    else
-        spaceFrame->setFrameShape(QFrame::VLine);
+    (orientation == SpaceOrientation::HORIZONTAL) ? spaceFrame->setFrameShape(QFrame::HLine) : spaceFrame->setFrameShape(QFrame::VLine);
 
     layout->addWidget(spaceFrame);
 }

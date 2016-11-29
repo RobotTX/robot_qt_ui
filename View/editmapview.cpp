@@ -68,9 +68,8 @@ void EditMapView::mouseMoveEvent(QGraphicsSceneMouseEvent *event){
                 QPair<QVector<int>, QVector<QPointF>> pair = items.takeLast();
 
                 /// If we are drawing a line or a rectangle, we only need 2 points so if we already have a second point, we remove it for the new one
-                if(shape > 1 && pair.second.size() > 1){
+                if(shape > 1 && pair.second.size() > 1)
                     pair.second.removeLast();
-                }
 
                 pair.second.push_back(getPoint(event->pos().x(), event->pos().y()));
                 items.push_back(pair);

@@ -12,8 +12,8 @@
 #include <QAbstractButton>
 
 DisplaySelectedPointRobots::DisplaySelectedPointRobots(QWidget *parent):QWidget(parent){
-    layout = new QVBoxLayout(this);
 
+    layout = new QVBoxLayout(this);
 
     homeWidget = new QWidget(this);
     QVBoxLayout* homeLayout = new QVBoxLayout(homeWidget);

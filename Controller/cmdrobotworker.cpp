@@ -127,7 +127,6 @@ void CmdRobotWorker::errorConnectionSlot(QAbstractSocket::SocketError error){
     //qDebug() << "(CmdRobotWorker) Error while connecting :" << error;
     switch (error) {
     case(QAbstractSocket::ConnectionRefusedError):
-        //qDebug() << "(CmdRobotWorker) The connection was refused by the peer (or timed out).";
         QThread::sleep(1);
         socket->connectToHost(ipAddress, port);
         break;

@@ -91,12 +91,11 @@ void TopLayout::setEnable(const bool enable){
 void TopLayout::setLabelDelay(const QString msgType, const QString msg, int delayTime){
 
     /// if it is an error make sure the person have seen it
-    if (msgType == TEXT_COLOR_DANGER)
-       {
+    if (msgType == TEXT_COLOR_DANGER){
         label->setText("");
         label->setStyleSheet("QLabel { color: " + QString(TEXT_COLOR_NORMAL) +";background:transparent}");
         delay(300);
-        }
+    }
 
     /// display message
     label->setText(msg);

@@ -133,7 +133,6 @@ void SendNewMapWorker::errorConnectionSlot(QAbstractSocket::SocketError error){
     //qDebug() << "(SendNewMapWorker) Error while connecting :" << error;
     switch (error) {
     case(QAbstractSocket::ConnectionRefusedError):
-        //qDebug() << "(SendNewMapWorker) The connection was refused by the peer (or timed out).";
         QThread::sleep(1);
         socket->connectToHost(ipAddress, port);
         break;

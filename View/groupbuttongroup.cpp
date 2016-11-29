@@ -212,9 +212,8 @@ QString GroupButtonGroup::formatName(const QString name) const {
 /// returns the id of the edited group
 int GroupButtonGroup::getEditedGroupId(void) const{
     for(int i = 0; i < getButtonGroup()->buttons().size(); i++){
-        if(getButtonGroup()->buttons().at(i)->text().compare(editedGroupName) == 0){
+        if(getButtonGroup()->buttons().at(i)->text().compare(editedGroupName) == 0)
             return i;
-        }
     }
     return -1;
 }

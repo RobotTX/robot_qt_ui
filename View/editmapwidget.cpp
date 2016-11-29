@@ -47,7 +47,6 @@ void EditMapWidget::initializeMenu(){
     QVBoxLayout* menuLayout = new QVBoxLayout(menuWidget);
     QVBoxLayout* topMenuLayout = new QVBoxLayout();
 
-
     QLabel* titleLabel = new QLabel("Edit a Map", this);
     QFont tmpFont = font();
     tmpFont.setPointSize(13);
@@ -74,7 +73,6 @@ void EditMapWidget::initializeMenu(){
     connect(redoBtn, SIGNAL(clicked()), canvas, SLOT(redoSlot()));
     topMenuLayout->addLayout(undoRedoLayout);
 
-
     /// Color layout
     QHBoxLayout* colorLayout = new QHBoxLayout();
     QLabel* colorLabel = new QLabel("Select a color :", this);
@@ -96,7 +94,6 @@ void EditMapWidget::initializeMenu(){
 
     connect(colorGroup, SIGNAL(buttonClicked(int)), canvas, SLOT(changeColorSlot(int)));
     topMenuLayout->addLayout(colorLayout);
-
 
     /// Shape layout
     QGridLayout* shapeLayout = new QGridLayout();
@@ -128,11 +125,9 @@ void EditMapWidget::initializeMenu(){
     connect(shapeGroup, SIGNAL(buttonClicked(int)), canvas, SLOT(changeShapeSlot(int)));
     topMenuLayout->addLayout(shapeLayout);
 
-
     /// Size layout
     QLabel* sizeLabel = new QLabel("Select a size :", this);
     topMenuLayout->addWidget(sizeLabel);
-
 
     QHBoxLayout* sizeBtnLayout = new QHBoxLayout();
 
@@ -154,7 +149,6 @@ void EditMapWidget::initializeMenu(){
     connect(sizeGroup, SIGNAL(buttonClicked(int)), this, SLOT(changeLineEditSlot(int)));
     topMenuLayout->addLayout(sizeBtnLayout);
 
-
     QHBoxLayout* sizeEditLayout = new QHBoxLayout();
     sizeLineEdit = new CustomLineEdit("1", this);
     sizeLineEdit->setAlignment(Qt::AlignCenter);
@@ -163,15 +157,11 @@ void EditMapWidget::initializeMenu(){
     connect(sizeLineEdit, SIGNAL(editingFinished()), this, SLOT(changeSizeEditSlot()));
     connect(this, SIGNAL(changeSizeEdit(int)), canvas, SLOT(changeSizeSlot(int)));
 
-
     QLabel* pxLabel = new QLabel("px", this);
     sizeEditLayout->addWidget(pxLabel);
     topMenuLayout->addLayout(sizeEditLayout);
 
-
-
     menuLayout->addLayout(topMenuLayout);
-
 
     /// Save cancel layout
     QHBoxLayout* cancelSaveLayout = new QHBoxLayout();
@@ -184,14 +174,12 @@ void EditMapWidget::initializeMenu(){
     connect(saveBtn, SIGNAL(clicked()), this, SLOT(saveSlot()));
     menuLayout->addLayout(cancelSaveLayout);
 
-
     /// Some shortcuts to undo and redo
     QShortcut* undoShortcut = new QShortcut(QKeySequence(tr("Ctrl+Z", "Undo")), this);
     connect(undoShortcut, SIGNAL(activated()), canvas, SLOT(undoSlot()));
 
     QShortcut* redoShortcut = new QShortcut(QKeySequence(tr("Ctrl+Y", "Redo")), this);
     connect(redoShortcut, SIGNAL(activated()), canvas, SLOT(redoSlot()));
-
 
     layout->addWidget(menuWidget);
 
@@ -223,7 +211,6 @@ void EditMapWidget::initializeMap(){
 
     canvas = new EditMapView(mapImage.width(), mapImage.height());
     scene->addItem(canvas);
-
 
     /// Create the graphic item of the map
     QPixmap pixmap = QPixmap::fromImage(mapImage);
