@@ -26,7 +26,8 @@ void Map::setMapFromArray(const QByteArray& mapArrays){
                         + static_cast<uint32_t> (static_cast<uint8_t> (mapArrays.at(i+3)) << 8) + static_cast<uint32_t> (static_cast<uint8_t> (mapArrays.at(i+4)));
 
         for(int j = 0; j < (int) count; j++){
-            mapImage.setPixelColor(QPoint((int) (index%width), height-1-((int) (index/width))), QColor((int) color, color, color));
+            //mapImage.setPixelColor(QPoint((int) (index%width), height-1-((int) (index/width))), QColor((int) color, color, color));
+            mapImage.setPixelColor(QPoint((int) (index%width), (int) (index/width)), QColor((int) color, color, color));
             index++;
         }
     }

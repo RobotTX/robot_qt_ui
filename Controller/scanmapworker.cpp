@@ -16,7 +16,7 @@ void ScanMapWorker::stopWorker(){
 }
 
 void ScanMapWorker::connectSocket(){
-    qDebug() << "(Map Thread) Trying to connect to" << ipAddress << "at port" << port;
+    qDebug() << "(ScanMapWorker) Trying to connect to" << ipAddress << "at port" << port;
 
     socket = QPointer<QTcpSocket>(new QTcpSocket());
 
@@ -31,18 +31,18 @@ void ScanMapWorker::connectSocket(){
     /// the errorConnectionSlot will try to reconnect
     socket->connectToHost(ipAddress, port);
 
-    qDebug() << "(Map Thread) connectSocket done";
+    qDebug() << "(ScanMapWorker) connectSocket done";
 }
 
 void ScanMapWorker::readTcpDataSlot(){
     data.append(socket->readAll());
-    qDebug() << "(Map) Received data" << data.size();
+    qDebug() << "(ScanMapWorker) Received data" << data.size();
 
     /// The TCP protocol sending blocks of data, a map is defined by a random number
     /// of blocks, so we wait till the last byte of a block is -2, meaning we have received
     /// a complete map
-    if(data.size() >= 5 && static_cast<uint8_t>(data.at(data.size()-5)) == 254  && static_cast<uint8_t>(data.at(data.size()-4)) == 254  && static_cast<uint8_t>(data.at(data.size()-3)) == 254
-            && static_cast<uint8_t>(data.at(data.size()-2)) == 254  && static_cast<uint8_t>(data.at(data.size()-1)) == 254){
+    if(data.size() >= 5 && static_cast<uint8_t>(data.at(data.size()-5)) == 254 && static_cast<uint8_t>(data.at(data.size()-4)) == 254 && static_cast<uint8_t>(data.at(data.size()-3)) == 254
+            && static_cast<uint8_t>(data.at(data.size()-2)) == 254 && static_cast<uint8_t>(data.at(data.size()-1)) == 254){
 
         //qDebug() << "(Map) Map of" << data.size() << "bytes received";
 
@@ -59,7 +59,7 @@ void ScanMapWorker::readTcpDataSlot(){
 }
 
 void ScanMapWorker::disconnectedSlot(){
-    qDebug() << "(Map) Disconnected";
+    qDebug() << "(ScanMapWorker) Disconnected";
 }
 
 void ScanMapWorker::errorConnectionSlot(QAbstractSocket::SocketError error){

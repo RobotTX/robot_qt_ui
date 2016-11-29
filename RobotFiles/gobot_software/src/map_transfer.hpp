@@ -62,6 +62,6 @@ bool stopAutoMap(gobot_software::Port::Request &req, gobot_software::Port::Respo
  */
 bool sendOnceMap(gobot_software::Port::Request &req, gobot_software::Port::Response &res);
 
-std::vector<uint8_t> compress(std::vector<int8_t> map, int map_size);
+std::vector<uint8_t> compress(std::vector<int8_t> map, int map_size, bool fromPgm);
 
 #endif

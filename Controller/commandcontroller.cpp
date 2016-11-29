@@ -92,8 +92,17 @@ void CommandController::openMessageBox(QStringList listCmd){
     case 'p':
         msg = "Stopping the robot to go home";
         break;
+    case 'q':
+        msg = "Starting the laser of the robot";
+        break;
+    case 'r':
+        msg = "Stoping the laser of the robot";
+        break;
+    case 's':
+        msg = "Receiving the map from the robot";
+        break;
     default:
-        msg = "Unknown command";
+        msg = "Unknown command " + cmd.at(0).unicode();
         break;
     }
 

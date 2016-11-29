@@ -37,26 +37,27 @@ void getMap(const nav_msgs::OccupancyGrid::ConstPtr& msg){
 	int map_size = msg->info.width * msg->info.height;
 	std::cout << "(Map) Just received a new map" << std::endl;
 
-	sendMap(compress(msg->data, map_size));
+	sendMap(compress(msg->data, map_size, false));
 }
 
-std::vector<uint8_t> compress(std::vector<int8_t> map, int map_size){
+std::vector<uint8_t> compress(std::vector<int8_t> map, int map_size, bool fromPgm){
 	std::vector<uint8_t> my_map;
 	int last = 205;
 	uint32_t count = 0;
-	int index = 0;
 
 	for(size_t i = 0; i < map_size; i++){
 		int curr = map.at(i);
 
-	    if(curr < 0)
-            curr = 205;
-        else if(curr < LOW_THRESHOLD)
-            curr = 255;
-        else if(curr < HIGH_THRESHOLD)
-            curr = 205;
-        else 
-            curr = 0;
+		if(!fromPgm){
+		    if(curr < 0)
+	            curr = 205;
+	        else if(curr < LOW_THRESHOLD)
+	            curr = 255;
+	        else if(curr < HIGH_THRESHOLD)
+	            curr = 205;
+	        else 
+	            curr = 0;
+	    }
 
 		if(curr != last){
 			my_map.push_back(static_cast<uint8_t>(last));
@@ -69,7 +70,6 @@ std::vector<uint8_t> compress(std::vector<int8_t> map, int map_size){
 			count = 0;
 		}
 		count++;
-		index++;
 	}
 
 	my_map.push_back(static_cast<uint8_t>(last));
@@ -162,7 +162,7 @@ bool sendOnceMap(gobot_software::Port::Request &req,
 		}
 		mapFile.close();
 		std::cout << "(Map) Got the whole map from file, about to compress and send it" << std::endl;
-		sendMap(compress(my_map, map_size));
+		sendMap(compress(my_map, map_size, true));
 
 		return true;
 	} else
