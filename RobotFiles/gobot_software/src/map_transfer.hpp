@@ -6,6 +6,7 @@
 #include "nav_msgs/OccupancyGrid.h"
 #include "std_msgs/String.h"
 #include <iostream>
+#include <fstream>
 #include <string>
 #include <unistd.h>
 #include <cstdint>
@@ -60,5 +61,7 @@ bool stopAutoMap(gobot_software::Port::Request &req, gobot_software::Port::Respo
  * Service called to send the map once to the app
  */
 bool sendOnceMap(gobot_software::Port::Request &req, gobot_software::Port::Response &res);
+
+std::vector<uint8_t> compress(std::vector<int8_t> map, int map_size);
 
 #endif

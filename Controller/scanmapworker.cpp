@@ -35,35 +35,27 @@ void ScanMapWorker::connectSocket(){
 }
 
 void ScanMapWorker::readTcpDataSlot(){
-    qDebug() << "(Map) Received data";
     data.append(socket->readAll());
+    qDebug() << "(Map) Received data" << data.size();
 
     /// The TCP protocol sending blocks of data, a map is defined by a random number
     /// of blocks, so we wait till the last byte of a block is -2, meaning we have received
     /// a complete map
-    /*if(data.size() >= 5 && static_cast<int>(data.at(data.size()-5)) == 0  && static_cast<int>(data.at(data.size()-4)) == 0  && static_cast<int>(data.at(data.size()-3)) == 0
-            && static_cast<int>(data.at(data.size()-2)) == 0  && static_cast<int>(data.at(data.size()-1)) == -2){
+    if(data.size() >= 5 && static_cast<uint8_t>(data.at(data.size()-5)) == 254  && static_cast<uint8_t>(data.at(data.size()-4)) == 254  && static_cast<uint8_t>(data.at(data.size()-3)) == 254
+            && static_cast<uint8_t>(data.at(data.size()-2)) == 254  && static_cast<uint8_t>(data.at(data.size()-1)) == 254){
 
-        qDebug() << "(Map) Map of" << data.size() << "bytes received";
-        /// Remove the end bytes 0 0 0 0 -2 as we no longer need them
+        //qDebug() << "(Map) Map of" << data.size() << "bytes received";
+
+        /// Remove the end bytes 254 254 254 254 254 as we no longer need them
         data.remove(data.size()-5, 5);
+
         /// Emit the signal valueChangedMap, meaning that we finished to receive a whole map
         /// and we can display it
         emit valueChangedMap(data);
+
         /// Clear the Vector that contain the map, once it has been treated
         data.clear();
-    } else if(data.at(data.size()-1) == -3){
-        ///We are receiving the real map
-        data.remove(data.size()-1, 1);
-        qDebug() << "(Map) Real map of" << data.size() << "bytes received <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<";
-        QFile file(mapPath);
-        file.resize(0);
-        file.open(QIODevice::WriteOnly);
-        file.write(data);
-        file.close();
-        data.clear();
-        emit newScanSaved(ipAddress);
-    }*/
+    }
 }
 
 void ScanMapWorker::disconnectedSlot(){

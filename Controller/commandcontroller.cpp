@@ -115,7 +115,7 @@ bool CommandController::robotWaitForAnswer(QStringList listCmd){
         MainWindow::delay(1000);
     }
 
-    qDebug() << "The answer is :" << cmdAnswer;
+    qDebug() << "CommandController::robotWaitForAnswer The answer is :" << cmdAnswer;
 
     /// Data are received as a string separated by a space ("cmd done" or "cmd failed")
     QStringList list = cmdAnswer.split(rx, QString::SkipEmptyParts);

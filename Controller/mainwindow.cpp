@@ -1861,11 +1861,14 @@ void MainWindow::updateMetadata(const int width, const int height, const float r
 }
 
 void MainWindow::updateMap(const QByteArray mapArray){
+    /// TODO check if scanning or not and act accordingly
     map->setMapFromArray(mapArray);
     QPixmap pixmap = QPixmap::fromImage(map->getMapImage());
     mapPixmapItem->setPixmap(pixmap);
+    /// WARNING might make the app to send the map to every connected robot everytime we receive one while scanning
     map->setDateTime(QDateTime::currentDateTime());
     saveMapState();
+    ///***************///
     scene->update();
 }
 
