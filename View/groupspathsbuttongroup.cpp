@@ -49,8 +49,12 @@ void GroupsPathsButtonGroup::deleteButtons(){
     layout->removeWidget(modifyEdit);
     while(QLayoutItem* item = layout->takeAt(0)){
         if(item){
-            if(QWidget* button = item->widget())
+            if(QWidget* button = item->widget()){
                 delete button;
+                button = 0;
+            }
+            delete item;
+            item = 0;
         } else
             qDebug() << "GroupButtonGroup::deleButtons item is null";
     }

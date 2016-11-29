@@ -68,15 +68,24 @@ GroupButtonGroup::GroupButtonGroup(const QSharedPointer<Points> &_points, QWidge
 
 }
 
+GroupButtonGroup::~GroupButtonGroup(){
+    delete layout;
+    layout = Q_NULLPTR;
+}
+
 void GroupButtonGroup::deleteButtons(void){
     //qDebug() << "GroupButtonGroup::deleteButtons called";
     layout->removeWidget(modifyEdit);
     while(QLayoutItem* item = layout->takeAt(0)){
         if(item){
-            if(QWidget* button = item->widget())
+            if(QWidget* button = item->widget()){
                 delete button;
+                button = 0;
+            }
+            delete item;
+            item = 0;
         } else {
-            qDebug() << "oops";
+            qDebug() << "groupbuttongroup::deletebuttons oops";
         }
     }
     layout->addWidget(modifyEdit);

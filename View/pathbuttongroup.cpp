@@ -17,8 +17,12 @@ PathButtonGroup::PathButtonGroup(QWidget *_parent, const QSharedPointer<Paths> &
 void PathButtonGroup::deleteButtons(void){
     //qDebug() << "PathButtonGroup::deleteButtons called";
     while(QLayoutItem* item = layout->takeAt(0)){
-        if(QWidget* button = item->widget())
+        if(QWidget* button = item->widget()){
             delete button;
+            button = 0;
+        }
+        delete item;
+        item = 0;
     }
 }
 
