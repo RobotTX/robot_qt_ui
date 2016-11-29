@@ -13,6 +13,9 @@ ros::ServiceClient startMetadataClient;
 ros::ServiceClient stopMetadataClient;
 
 ros::ServiceClient startMapClient;
+ros::ServiceClient sendOnceMapClient;
+ros::ServiceClient sendAutoMapClient;
+ros::ServiceClient stopAutoMapClient;
 ros::ServiceClient stopMapClient;
 
 ros::ServiceClient playPathClient;
@@ -118,13 +121,13 @@ bool execCommand(ros::NodeHandle n, std::vector<std::string> command){
 		/// Command for the robot to start to scan the map
 		case 'e':
 			std::cout << "(Command system) Gobot scan the map" << std::endl;
-			return startMap(n);
+			return sendAutoMap();
 		break;
 
 		/// Command for the robot to stop to scan the map
 		case 'f':
 			std::cout << "(Command system) Gobot stop scanning the map" << std::endl;
-			return stopMap();
+			return stopAutoMap();
 		break;
 
 		/// Command for the robot to receive the map
@@ -143,7 +146,7 @@ bool execCommand(ros::NodeHandle n, std::vector<std::string> command){
 				laser_port = std::stoi(command.at(4));
 				std::cout << "(Command system) Gobot here are the ports " << metadata_port << ", " << robot_pos_port << ", " << map_port << ", " << laser_port << std::endl;
 				if(!command.at(5).compare("1"))
-					return sendLaserData(n);
+					return sendLaserData();
 				return true;
 			} else {
 				std::cout << "(Command system) Parameter missing" << std::endl;
@@ -305,7 +308,7 @@ bool execCommand(ros::NodeHandle n, std::vector<std::string> command){
 		case 'q':
 		{
 			std::cout << "(Command system) Gobot sends laser data" << std::endl;
-			return sendLaserData(n);
+			return sendLaserData();
 		}
 
 		case 'r':
@@ -313,6 +316,12 @@ bool execCommand(ros::NodeHandle n, std::vector<std::string> command){
 			std::cout << "(Command system) Gobot stops sending laser data" << std::endl;
 			return stopSendingLaserData();
 		}
+
+		/// Command for the robot to start to scan the map
+		case 's':
+			std::cout << "(Command system) Gobot send the map once" << std::endl;
+			return sendOnceMap();
+		break;
 
 		/// Default/Unknown command
 		default:
@@ -328,7 +337,7 @@ bool execCommand(ros::NodeHandle n, std::vector<std::string> command){
 	return false;
 }
 
-void startRobotPos(ros::NodeHandle n){
+void startRobotPos(){
 	std::cout << "(Command system) Launching the service to get the robot position" << std::endl;
 
 	gobot_software::Port srv;
@@ -351,7 +360,7 @@ void stopRobotPos(){
 	}
 }
 
-void startMetadata(ros::NodeHandle n){
+void startMetadata(){
 	std::cout << "(Command system) Launching the service to get the metadata" << std::endl;
 
 	gobot_software::Port srv;
@@ -374,8 +383,8 @@ void stopMetadata(){
 	
 }
 
-bool startMap(ros::NodeHandle n){
-	std::cout << "(Command system) Launching the service to get the map" << std::endl;
+bool startMap(){
+	std::cout << "(Command system) Launching the service to start the map socket" << std::endl;
 
 	gobot_software::Port srv;
 	srv.request.port = map_port;
@@ -385,6 +394,48 @@ bool startMap(ros::NodeHandle n){
 		return true;
 	} else {
 		std::cerr << "(Command system) Failed to call service start_map_sender" << std::endl;
+		return false;
+	}
+}
+
+bool sendOnceMap(){
+	std::cout << "(Command system) Launching the service to get the map once" << std::endl;
+
+	gobot_software::Port srv;
+
+	if (sendOnceMapClient.call(srv)) {
+		std::cout << "(Command system) send_once_map_sender service started" << std::endl;
+		return true;
+	} else {
+		std::cerr << "(Command system) Failed to call service send_once_map_sender" << std::endl;
+		return false;
+	}
+}
+
+bool sendAutoMap(){
+	std::cout << "(Command system) Launching the service to get the map auto" << std::endl;
+
+	gobot_software::Port srv;
+
+	if (sendAutoMapClient.call(srv)) {
+		std::cout << "(Command system) send_auto_map_sender service started" << std::endl;
+		return true;
+	} else {
+		std::cerr << "(Command system) Failed to call service send_auto_map_sender" << std::endl;
+		return false;
+	}
+}
+
+bool stopAutoMap(){
+	std::cout << "(Command system) Launching the service to stop the map auto" << std::endl;
+
+	gobot_software::Port srv;
+
+	if (stopAutoMapClient.call(srv)) {
+		std::cout << "(Command system) stop_auto_map_sender service started" << std::endl;
+		return true;
+	} else {
+		std::cerr << "(Command system) Failed to call service stop_auto_map_sender" << std::endl;
 		return false;
 	}
 }
@@ -401,7 +452,7 @@ bool stopMap(){
 	}
 }
 
-bool sendLaserData(ros::NodeHandle n){
+bool sendLaserData(){
 	std::cout << "(Command system) Launching the service to get the laser data using port " << laser_port << std::endl;
 	gobot_software::Port srv;
 	srv.request.port = laser_port;
@@ -496,8 +547,9 @@ void session(boost::shared_ptr<tcp::socket> sock, ros::NodeHandle n){
 		getPorts(sock, n);
 
 		std::cout << "(Command system) Starting Robot pos and Metadata services" << std::endl;
-		startRobotPos(n);
-		startMetadata(n);
+		startRobotPos();
+		startMetadata();
+		startMap();
 
 		while(ros::ok() && connected){
 			char data[max_length];
@@ -656,6 +708,7 @@ void serverDisconnected(const std_msgs::String::ConstPtr& msg){
 	std::cout << "(Command system) I heard " << std::endl;
 	connected = false;
 	stopRobotPos();
+	stopMap();
 	stopMetadata();
 	stopSendingLaserData();
 }
@@ -674,6 +727,9 @@ int main(int argc, char* argv[]){
 		stopMetadataClient = n.serviceClient<gobot_software::Port>("stop_map_metadata_sender");
 		
 		startMapClient = n.serviceClient<gobot_software::Port>("start_map_sender");
+		sendOnceMapClient = n.serviceClient<gobot_software::Port>("send_once_map_sender");
+		sendAutoMapClient = n.serviceClient<gobot_software::Port>("send_auto_map_sender");
+		stopAutoMapClient = n.serviceClient<gobot_software::Port>("stop_auto_map_sender");
 		stopMapClient = n.serviceClient<gobot_software::Port>("stop_map_sender");
 
 		playPathClient = n.serviceClient<std_srvs::Empty>("play_path");

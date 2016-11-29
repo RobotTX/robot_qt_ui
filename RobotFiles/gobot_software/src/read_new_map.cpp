@@ -183,8 +183,10 @@ void asyncAccept(boost::shared_ptr<boost::asio::io_service> io_service, boost::s
 }
 
 void serverDisconnected(const std_msgs::String::ConstPtr& msg){
-    std::cout << "(New Map) I heard " << std::endl;
-    connected = false;
+    if(connected){
+        std::cout << "(New Map) I heard " << std::endl;
+        connected = false;
+    }
 }
 
 int main(int argc, char **argv){

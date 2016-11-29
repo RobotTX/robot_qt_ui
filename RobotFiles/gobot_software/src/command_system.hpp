@@ -39,16 +39,19 @@ void session(boost::shared_ptr<tcp::socket> sock, ros::NodeHandle n);
 void asyncAccept(boost::shared_ptr<boost::asio::io_service> io_service, 
 	boost::shared_ptr<tcp::acceptor> m_acceptor, 
 	ros::NodeHandle n);
-void startRobotPos(ros::NodeHandle n);
+void startRobotPos();
 void stopRobotPos();
-void startMetadata(ros::NodeHandle n);
+void startMetadata();
 void stopMetadata();
-bool startMap(ros::NodeHandle n);
+bool startMap();
+bool sendOnceMap();
+bool sendAutoMap();
+bool stopAutoMap();
 bool stopMap();
 void server(unsigned short port, ros::NodeHandle n);
 void getPorts(boost::shared_ptr<tcp::socket> sock, ros::NodeHandle n);
 bool sendMessageToPc(boost::shared_ptr<tcp::socket> sock, std::string message);
-bool sendLaserData(ros::NodeHandle n);
+bool sendLaserData();
 bool stopSendingLaserData();
 
 #endif

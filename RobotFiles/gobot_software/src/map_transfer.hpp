@@ -37,14 +37,28 @@ void sendMap(const std::vector<int8_t>& my_map);
 void getMap(const nav_msgs::OccupancyGrid::ConstPtr& msg);
 
 /**
- * Service called to start the listening to the map topic and transfer to the software
+ * Service called to start the socket connection
  */
 bool startMap(gobot_software::Port::Request &req, gobot_software::Port::Response &res);
 
 /**
- * Service called to stop the listening to the map topic and transfer to the software
+ * Service called to stop everything
  */
 bool stopMap(gobot_software::Port::Request &req, gobot_software::Port::Response &res);
 
+/**
+ * Service called to start sending the map to the app
+ */
+bool sendAutoMap(gobot_software::Port::Request &req, gobot_software::Port::Response &res);
+
+/**
+ * Service called to stop sending the map to the app
+ */
+bool stopAutoMap(gobot_software::Port::Request &req, gobot_software::Port::Response &res);
+
+/**
+ * Service called to send the map once to the app
+ */
+bool sendOnceMap(gobot_software::Port::Request &req, gobot_software::Port::Response &res);
 
 #endif

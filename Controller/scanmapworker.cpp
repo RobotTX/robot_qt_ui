@@ -41,7 +41,7 @@ void ScanMapWorker::readTcpDataSlot(){
     /// The TCP protocol sending blocks of data, a map is defined by a random number
     /// of blocks, so we wait till the last byte of a block is -2, meaning we have received
     /// a complete map
-    if(data.size() >= 5 && static_cast<int>(data.at(data.size()-5)) == 0  && static_cast<int>(data.at(data.size()-4)) == 0  && static_cast<int>(data.at(data.size()-3)) == 0
+    /*if(data.size() >= 5 && static_cast<int>(data.at(data.size()-5)) == 0  && static_cast<int>(data.at(data.size()-4)) == 0  && static_cast<int>(data.at(data.size()-3)) == 0
             && static_cast<int>(data.at(data.size()-2)) == 0  && static_cast<int>(data.at(data.size()-1)) == -2){
 
         qDebug() << "(Map) Map of" << data.size() << "bytes received";
@@ -63,7 +63,7 @@ void ScanMapWorker::readTcpDataSlot(){
         file.close();
         data.clear();
         emit newScanSaved(ipAddress);
-    }
+    }*/
 }
 
 void ScanMapWorker::disconnectedSlot(){

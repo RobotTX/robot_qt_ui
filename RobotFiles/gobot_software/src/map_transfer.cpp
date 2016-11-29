@@ -7,7 +7,6 @@ tcp::socket socket_map(io_service);
 ros::Subscriber sub_map;
 tcp::acceptor m_acceptor(io_service);
 
-bool lastMap = false;
 #define HIGH_THRESHOLD 0.65*100
 #define LOW_THRESHOLD 0.196*100
 
@@ -36,73 +35,64 @@ void getMap(const nav_msgs::OccupancyGrid::ConstPtr& msg){
 	int map_size = msg->info.width * msg->info.height;
 	std::cout << "(Map) Just received a new map" << std::endl;
 
-	/// We want to send the last map as % so we can save it and the software can send it to the other robots
-	if(lastMap){
-		std::cout << "(Map) Sending the last map" << std::endl;
-		std::vector<int8_t> my_map;
+	/// The map we send to the software for display
+	std::vector<uint8_t> my_map;
+	int last = 205;
+	uint32_t count = 0;
+	int index = 0;
 
-		for(size_t i = 0; i < map_size; i++)
-			my_map.push_back(static_cast<int8_t>(msg->data[i]));
+	for(size_t i = 0; i < map_size; i++){
+		int curr = msg->data[i];
 
-		my_map.push_back(-3);
-		sendMap(my_map);
-		lastMap = false;
+	    if(curr < 0)
+            curr = 205;
+        else if(curr < LOW_THRESHOLD)
+            curr = 255;
+        else if(curr < HIGH_THRESHOLD)
+            curr = 205;
+        else 
+            curr = 0;
 
-	} else {
-		/// The map we send to the software for display
-		std::vector<uint8_t> my_map;
-		int last = 205;
-		uint32_t count = 0;
-		int index = 0;
+		if(curr != last){
+			my_map.push_back(static_cast<uint8_t>(last));
+			my_map.push_back((count & 0xff000000) >> 24);
+			my_map.push_back((count & 0x00ff0000) >> 16);
+			my_map.push_back((count & 0x0000ff00) >> 8);
+			my_map.push_back((count & 0x000000ff));
 
-		for(size_t i = 0; i < map_size; i++){
-			int curr = msg->data[i];
-
-		    if(curr < 0)
-	            curr = 205;
-	        else if(curr < LOW_THRESHOLD)
-	            curr = 255;
-	        else if(curr < HIGH_THRESHOLD)
-	            curr = 205;
-	        else 
-	            curr = 0;
-
-			if(curr != last){
-				my_map.push_back(static_cast<uint8_t>(last));
-				my_map.push_back((count & 0xff000000) >> 24);
-				my_map.push_back((count & 0x00ff0000) >> 16);
-				my_map.push_back((count & 0x0000ff00) >> 8);
-				my_map.push_back((count & 0x000000ff));
-
-				last = curr;
-				count = 0;
-			}
-			count++;
-			index++;
+			last = curr;
+			count = 0;
 		}
-
-		my_map.push_back(static_cast<uint8_t>(last));
-		my_map.push_back((count & 0xff000000) >> 24);
-		my_map.push_back((count & 0x00ff0000) >> 16);
-		my_map.push_back((count & 0x0000ff00) >> 8);
-		my_map.push_back((count & 0x000000ff));
-
-		// the user knows that when -2 is encountered a map has entirely been received
-		my_map.push_back(0);
-		my_map.push_back(0);
-		my_map.push_back(0);
-		my_map.push_back(0);
-		my_map.push_back(-2);
-		sendMap(my_map);
+		count++;
+		index++;
 	}
+
+	my_map.push_back(static_cast<uint8_t>(last));
+	my_map.push_back((count & 0xff000000) >> 24);
+	my_map.push_back((count & 0x00ff0000) >> 16);
+	my_map.push_back((count & 0x0000ff00) >> 8);
+	my_map.push_back((count & 0x000000ff));
+
+	// the user knows that when 254 is encountered a map has entirely been received
+	my_map.push_back(254);
+	my_map.push_back(254);
+	my_map.push_back(254);
+	my_map.push_back(254);
+	my_map.push_back(254);
+
+	sendMap(my_map);
 }
 
 bool startMap(gobot_software::Port::Request &req,
     gobot_software::Port::Response &res){
 	std::cout << "(Map) Starting map_sender" << std::endl;
-	ros::NodeHandle n;
 
 	int mapPort = req.port;	
+	
+	if(socket_map.is_open())
+		socket_map.close();
+	if(m_acceptor.is_open())
+		m_acceptor.close();
 
 	socket_map = tcp::socket(io_service);
 	m_acceptor = tcp::acceptor(io_service, tcp::endpoint(tcp::v4(), mapPort));
@@ -112,22 +102,37 @@ bool startMap(gobot_software::Port::Request &req,
 	m_acceptor.accept(socket_map);
 	std::cout << "(Map) We are connected " << std::endl;
 
+	return true;
+}
+
+bool sendAutoMap(gobot_software::Port::Request &req,
+    gobot_software::Port::Response &res){
+	std::cout << "(Map) SendAutoMap " << std::endl;
+
+	ros::NodeHandle n;
 	sub_map = n.subscribe("/map", 1, getMap);
 
 	return true;
 }
 
+bool stopAutoMap(gobot_software::Port::Request &req,
+    gobot_software::Port::Response &res){
+	std::cout << "(Map) StopAutoMap " << std::endl;
+
+	sub_map.shutdown();
+
+	return true;
+}
+
+bool sendOnceMap(gobot_software::Port::Request &req,
+    gobot_software::Port::Response &res){
+	std::cout << "(Map) SendOnceMap doing nothing for now" << std::endl;
+	
+	return true;
+}
+
 bool stopMap(gobot_software::Port::Request &req,
     gobot_software::Port::Response &res){
-
-	std::cout << "(Map) Waiting to send the last map" << std::endl;
-	lastMap = true;
-	
-    ros::Rate r(10);
-	while(ros::ok() && lastMap){
-		ros::spinOnce();
-        r.sleep();
-	}
 
 	std::cout << "(Map) Stopping map_sender" << std::endl;
 	sub_map.shutdown();
@@ -145,9 +150,15 @@ int main(int argc, char **argv){
 	ros::NodeHandle n;
 
 	ros::ServiceServer start_service = n.advertiseService("start_map_sender", startMap);
+	ros::ServiceServer send_once_service = n.advertiseService("send_once_map_sender", sendOnceMap);
+	ros::ServiceServer send_auto_service = n.advertiseService("send_auto_map_sender", sendAutoMap);
+	ros::ServiceServer stop_auto_service = n.advertiseService("stop_auto_map_sender", stopAutoMap);
 	ros::ServiceServer stop_service = n.advertiseService("stop_map_sender", stopMap);
 
-	ros::spin();
-
+	ros::Rate loop_rate(20);
+	while(ros::ok()){
+		ros::spinOnce();
+		loop_rate.sleep();
+	}
 	return 0;
 }

@@ -6,6 +6,7 @@
 #include <QFile>
 #include "Controller/commandcontroller.h"
 #include "Model/map.h"
+#include <QDir>
 
 
 Robot::Robot(MainWindow* mainWindow, const QSharedPointer<Paths>& _paths, const QString _name, const QString _ip) : QObject(mainWindow), paths(_paths), name(_name), ip(_ip), position(Position()),
@@ -51,6 +52,10 @@ void Robot::stopThreads() {
     emit stopLocalMapWorker();
     localMapThread.quit();
     localMapThread.wait();
+
+    emit stopMapWorker();
+    mapThread.quit();
+    mapThread.wait();
 }
 
 void Robot::portSentSlot(){
@@ -58,6 +63,7 @@ void Robot::portSentSlot(){
     emit startRobotWorker();
     emit startNewMapWorker();
     emit startLocalMapWorker();
+    emit startMapWorker();
 }
 
 std::ostream& operator <<(std::ostream& stream, Robot const& robot){
@@ -193,6 +199,16 @@ void Robot::launchWorkers(MainWindow* mainWindow){
     connect(localMapWorker, SIGNAL(laserValues(float, float, float, const QVector<float>&, QString)), mainWindow->getMapView()->getObstaclesPainter(), SLOT(drawObstacles(float, float, float, const QVector<float>&, QString)));
     localMapWorker->moveToThread(&localMapThread);
     localMapThread.start();
+
+    mapWorker = QPointer<ScanMapWorker>(new ScanMapWorker(ip, PORT_MAP, QDir::currentPath() + QDir::separator() + QString(MAP_FILE)));
+
+    connect(mapWorker, SIGNAL(valueChangedMap(QByteArray)), mainWindow , SLOT(updateMap(QByteArray)));
+    connect(mapWorker, SIGNAL(newScanSaved(QString)), mainWindow , SLOT(sendNewMapToRobots(QString)));
+    connect(&mapThread, SIGNAL(finished()), mapWorker, SLOT(deleteLater()));
+    connect(this, SIGNAL(startMapWorker()), mapWorker, SLOT(connectSocket()));
+    connect(this, SIGNAL(stopMapWorker()), mapWorker, SLOT(stopWorker()));
+    mapWorker->moveToThread(&mapThread);
+    mapThread.start();
 
     emit startCmdRobotWorker();
 }

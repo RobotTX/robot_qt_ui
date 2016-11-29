@@ -3,7 +3,6 @@
 
 class RobotView;
 class PointView;
-class ScanMapWorker;
 class RobotServerWorker;
 class CustomQGraphicsView;
 class Map;
@@ -144,8 +143,6 @@ signals:
     void resetPath();
     void resetPathCreationWidget();
     void stopUpdateRobotsThread();
-    void startMapWorker();
-    void stopMapWorker();
     void cancelRobotModifications();
 
 private slots:
@@ -296,7 +293,6 @@ private:
     Ui::MainWindow* ui;
     QThread serverThread;
     QThread mapThread;
-    ScanMapWorker* mapWorker;
     RobotServerWorker* robotServerWorker;
     QVBoxLayout* rightLayout;
     CustomQGraphicsView* graphicsView;

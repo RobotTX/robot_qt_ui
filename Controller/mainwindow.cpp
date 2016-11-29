@@ -7,7 +7,6 @@
 #include <QVector>
 #include <assert.h>
 #include "ui_mainwindow.h"
-#include "Controller/scanmapworker.h"
 #include "Controller/robotserverworker.h"
 #include "Model/pathpoint.h"
 #include "Model/map.h"
@@ -131,7 +130,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     selectedPoint = QSharedPointer<PointView>();
     editedPointView = QSharedPointer<PointView>();
     robotServerWorker = NULL;
-    mapWorker = NULL;
     commandController = new CommandController(this);
 
     robots = QSharedPointer<Robots>(new Robots());
@@ -305,8 +303,6 @@ MainWindow::~MainWindow(){
         serverThread.quit();
         serverThread.wait();
     }
-
-    stopMapThread();
 }
 
 /**********************************************************************************************************************************/
@@ -506,12 +502,6 @@ void MainWindow::launchScan(bool checked){
 
 void MainWindow::newScanningGoalSlot(double x, double y){
     qDebug() << "MainWindow::newScanningGoalSlot Trying to go to" << x << y;
-}
-
-void MainWindow::stopMapThread(){
-    emit stopMapWorker();
-    mapThread.quit();
-    mapThread.wait();
 }
 
 void MainWindow::deletePath(int robotNb){
@@ -4726,8 +4716,10 @@ void MainWindow::centerMap(){
 
 void MainWindow::settingBtnSlot(){
     qDebug() << "MainWindow::settingBtnSlot called";
-    editMapSlot();
+    //editMapSlot();
 
+    if(robots->getRobotsVector().size() > 0)
+        commandController->sendCommand(robots->getRobotsVector().at(0)->getRobot(), QString("s"));
 }
 
 void MainWindow::setTemporaryMessageTop(const QString type, const QString message, const int ms){
