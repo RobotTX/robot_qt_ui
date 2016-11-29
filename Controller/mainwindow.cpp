@@ -7,7 +7,6 @@
 #include <QVector>
 #include <assert.h>
 #include "ui_mainwindow.h"
-#include "Controller/scanmapworker.h"
 #include "Controller/robotserverworker.h"
 #include "Model/pathpoint.h"
 #include "Model/map.h"
@@ -132,7 +131,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     selectedPoint = QSharedPointer<PointView>();
     editedPointView = QSharedPointer<PointView>();
     robotServerWorker = NULL;
-    mapWorker = NULL;
     commandController = new CommandController(this);
 
     robots = QSharedPointer<Robots>(new Robots());
@@ -313,8 +311,6 @@ MainWindow::~MainWindow(){
         serverThread.quit();
         serverThread.wait();
     }
-
-    stopMapThread();
 }
 
 /**********************************************************************************************************************************/
@@ -514,12 +510,6 @@ void MainWindow::launchScan(bool checked){
 
 void MainWindow::newScanningGoalSlot(double x, double y){
     qDebug() << "MainWindow::newScanningGoalSlot Trying to go to" << x << y;
-}
-
-void MainWindow::stopMapThread(){
-    emit stopMapWorker();
-    mapThread.quit();
-    mapThread.wait();
 }
 
 void MainWindow::deletePath(int robotNb){
@@ -1880,11 +1870,14 @@ void MainWindow::updateMetadata(const int width, const int height, const float r
 }
 
 void MainWindow::updateMap(const QByteArray mapArray){
+    /// TODO check if scanning or not and act accordingly
     map->setMapFromArray(mapArray);
     QPixmap pixmap = QPixmap::fromImage(map->getMapImage());
     mapPixmapItem->setPixmap(pixmap);
-    map->setDateTime(QDateTime::currentDateTime());
-    saveMapState();
+    /// WARNING might make the app send the map to every connected robot everytime we receive one while scanning
+    /*map->setDateTime(QDateTime::currentDateTime());
+    saveMapState();*/
+    ///***************///
     scene->update();
 }
 
@@ -5259,6 +5252,7 @@ QString MainWindow::prepareCommandPath(const Paths::Path &path) const {
 }
 
 void MainWindow::testFunctionSlot(){
-    qDebug() << "MainWindow::settingBtnSlot called";
-    editMapSlot();
+    qDebug() << "MainWindow::testFunctionSlot called";
+    if(robots->getRobotsVector().size() > 0)
+        commandController->sendCommand(robots->getRobotsVector().at(0)->getRobot(), QString("s"));
 }

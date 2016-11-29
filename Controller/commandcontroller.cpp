@@ -9,8 +9,6 @@
 
 CommandController::CommandController(QWidget *parent) : QObject(parent), robotName(""){
     messageBox = QSharedPointer<CommandMessageBox> (new CommandMessageBox());
-    messageBox->setWindowTitle("Processing a command");
-    connect(messageBox.data(), SIGNAL(hideBox()), this, SLOT(userStopped()));
 }
 
 bool CommandController::sendCommand(QPointer<Robot> robot, QString cmd){
@@ -94,12 +92,24 @@ void CommandController::openMessageBox(QStringList listCmd){
     case 'p':
         msg = "Stopping the robot to go home";
         break;
+    case 'q':
+        msg = "Starting the laser of the robot";
+        break;
+    case 'r':
+        msg = "Stoping the laser of the robot";
+        break;
+    case 's':
+        msg = "Receiving the map from the robot";
+        break;
     default:
-        msg = "Unknown command";
+        msg = "Unknown command " + cmd.at(0).unicode();
         break;
     }
+
     messageBox.reset(new CommandMessageBox());
+    messageBox->setWindowTitle("Processing a command");
     messageBox->setText(msg);
+    connect(messageBox.data(), SIGNAL(hideBox()), this, SLOT(userStopped()));
     messageBox->exec();
 }
 
@@ -114,7 +124,7 @@ bool CommandController::robotWaitForAnswer(QStringList listCmd){
         MainWindow::delay(1000);
     }
 
-    qDebug() << "The answer is :" << cmdAnswer;
+    qDebug() << "CommandController::robotWaitForAnswer The answer is :" << cmdAnswer;
 
     /// Data are received as a string separated by a space ("cmd done" or "cmd failed")
     QStringList list = cmdAnswer.split(rx, QString::SkipEmptyParts);
@@ -176,12 +186,14 @@ void CommandController::cmdAnswerSlot(QString answer){
 
 void CommandController::robotDisconnected(QString _robotName){
     if(_robotName.compare(robotName)){
-        qDebug() << "The robot" << robotName << " was waiting for an answer to the command" << cmdName << "but disconnected";
+        qDebug() << "CommandController::robotDisconnected The robot" << robotName << " was waiting for an answer to the command" << cmdName << "but disconnected";
         cmdAnswer = "cmd failed";
+        messageBox->close();
     }
 }
 
 void CommandController::userStopped(){
-    qDebug() << "The user pressed a button to stop to wait";
+    qDebug() << "CommandController::userStopped The user pressed a button to stop to wait";
     cmdAnswer = "cmd failed";
+    messageBox->close();
 }

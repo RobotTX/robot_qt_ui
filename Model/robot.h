@@ -20,6 +20,7 @@ class Map;
 #include "Controller/metadataworker.h"
 #include "Controller/sendnewmapworker.h"
 #include "Controller/localmapworker.h"
+#include "Controller/scanmapworker.h"
 
 #define PORT_MAP_METADATA 4000
 #define PORT_ROBOT_POS 4001
@@ -137,12 +138,14 @@ signals:
     void stopMetadataWorker();
     void stopNewMapWorker();
     void stopLocalMapWorker();
+    void stopMapWorker();
 
     void startCmdRobotWorker();
     void startRobotWorker();
     void startMetadataWorker();
     void startNewMapWorker();
     void startLocalMapWorker();
+    void startMapWorker();
 
     void cmdAnswer(QString);
 
@@ -170,12 +173,14 @@ private:
     QPointer<MetadataWorker> metadataWorker;
     QPointer<SendNewMapWorker> newMapWorker;
     QPointer<LocalMapWorker> localMapWorker;
+    QPointer<ScanMapWorker> mapWorker;
 
     QThread cmdThread;
     QThread robotThread;
     QThread metadataThread;
     QThread newMapThread;
     QThread localMapThread;
+    QThread mapThread;
 };
 
 /**
