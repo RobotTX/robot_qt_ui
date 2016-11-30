@@ -41,6 +41,13 @@ TopLayout::TopLayout(QMainWindow* parent): QWidget(parent), lastMessage(TEXT_COL
     layout->addWidget(settingBtn);
     connect(settingBtn, SIGNAL(clicked()), parent, SLOT(settingBtnSlot()));
 
+    testButton = new CustomPushButton(QIcon(":/icons/T_icon.png"), "", this, false, CustomPushButton::ButtonType::TOP);
+    testButton->setToolTip("Click to try your new function");
+    testButton->setIconSize(s_icon_size);
+    testButton->setFocusPolicy(Qt::FocusPolicy::NoFocus);
+    layout->addWidget(testButton);
+    connect(testButton, SIGNAL(clicked()), parent, SLOT(testFunctionSlot()));
+
     SpaceWidget* spaceWidget = new SpaceWidget(SpaceWidget::SpaceOrientation::VERTICAL, this);
     spaceWidget->setColor("lightgrey");
     layout->addWidget(spaceWidget);

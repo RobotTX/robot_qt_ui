@@ -25,6 +25,7 @@
         <file>space_point.png</file>
         <file>eye_point.png</file>
         <file>blank.png</file>
+        <file>T_icon.png</file>
 
         <file alias="arrowLeft.png">cropped_left_arrow.png</file>
         <file alias="close.png">cropped_close.png</file>

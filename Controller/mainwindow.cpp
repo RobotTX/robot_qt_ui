@@ -53,6 +53,7 @@
 #include "Controller/commandcontroller.h"
 #include <fstream>
 #include "View/editmapwidget.h"
+#include "View/settingswidget.h"
 
 #include <chrono>
 #include <thread>
@@ -148,10 +149,14 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
     initializePoints();
 
+
     /// to draw stand-alone paths
     pathPainter = new PathPainter(this, points);
 
     initializeRobots();
+
+    /// our settings page
+    settingsWidget = new SettingsWidget(robots);
 
     scene->setSceneRect(0, 0, 800, 600);
 
@@ -215,7 +220,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     /// to know what message to display when a user is creating a group
     connect(pointsLeftWidget, SIGNAL(messageCreationGroup(QString, QString)), this, SLOT(setMessageCreationGroup(QString, QString)));
 
-
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -263,12 +267,14 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+    ///  ------------------------------------------------------- ROBOTS CONNECTS ----------------------------------------------------------
+
+    /// to turn on the laser feedback or not ( to display obstacles in real time )
+    connect(settingsWidget, SIGNAL(laserFeedBack(QString, bool)), mapPixmapItem->getObstaclesPainter(), SLOT(turnOnLaserFeedBack(QString, bool)));
+
     mainLayout->addLayout(bottom);
     //graphicsView->setStyleSheet("CustomQGraphicsView {background-color: " + background_map_view + "}");
     setCentralWidget(mainWidget);
-
-    /// to navigate with the tab key
-    setTabOrder(leftMenu->getReturnButton(), pointsLeftWidget->getActionButtons()->getPlusButton());
 
     /// Centers the map and initialize the map state
 
@@ -295,6 +301,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
 MainWindow::~MainWindow(){
     delete ui;
+    delete settingsWidget;
 
     if(editMapWidget)
         delete editMapWidget;
@@ -1248,7 +1255,7 @@ void MainWindow::savePathSlot(){
 
     /// if the path existed before we destroy it and reconstruct it
     if(pathCreationWidget->getCurrentPathName().compare("") != 0)
-        paths->deletePath(groupName, pathName);
+        paths->deletePath(groupName, pathPainter->getVisiblePath());
 
     paths->createPath(groupName, pathName);
     for(int i = 0; i < pathPainter->getCurrentPath().size(); i++)
@@ -1497,9 +1504,11 @@ void MainWindow::robotIsAliveSlot(QString hostname, QString ip, QString mapId, Q
     }
 }
 
-void MainWindow::robotIsDeadSlot(QString hostname,QString ip){
+void MainWindow::robotIsDeadSlot(QString hostname, QString ip){
     qDebug() << "Robot" << hostname << "at ip" << ip << "... He is dead, Jim!!";
     setMessageTop(TEXT_COLOR_DANGER, QString("Robot " + hostname + " at ip " + ip +" disconnected."));
+
+    settingsWidget->removeRobot(ip);
 
     qDebug() << "Robots IPs : ";
     for(int i = 0; i < robots->getRobotsVector().size(); i++){
@@ -4701,10 +4710,7 @@ void MainWindow::centerMap(){
 
 void MainWindow::settingBtnSlot(){
     qDebug() << "MainWindow::settingBtnSlot called";
-    //editMapSlot();
-
-    if(robots->getRobotsVector().size() > 0)
-        commandController->sendCommand(robots->getRobotsVector().at(0)->getRobot(), QString("s"));
+    settingsWidget->show();
 }
 
 void MainWindow::setTemporaryMessageTop(const QString type, const QString message, const int ms){
@@ -4867,6 +4873,7 @@ void MainWindow::updateRobotInfo(QString robot_name, QString robotInfo){
 
     updateHomeInfo(robot_name, robotInfo);
 
+    settingsWidget->addRobot(robots->getRobotViewByName(robot_name)->getRobot()->getIp(), robot_name);
 }
 
 bool MainWindow::isLater(const QStringList& date, const QStringList& otherDate){
@@ -5223,4 +5230,10 @@ QString MainWindow::prepareCommandPath(const Paths::Path &path) const {
     }
     //qDebug() << "pathstr yo" << pathStr;
     return pathStr;
+}
+
+void MainWindow::testFunctionSlot(){
+    qDebug() << "MainWindow::testFunctionSlot called";
+    if(robots->getRobotsVector().size() > 0)
+        commandController->sendCommand(robots->getRobotsVector().at(0)->getRobot(), QString("s"));
 }

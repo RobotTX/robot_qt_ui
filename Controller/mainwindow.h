@@ -24,6 +24,7 @@ class CustomPushButton;
 class GroupsPathsWidget;
 class CommandController;
 class EditMapWidget;
+class SettingsWidget;
 
 #include "zipreader.h"
 #include "zipwriter.h"
@@ -284,6 +285,8 @@ private slots:
     bool updateHomeFile(const QString robot_name, const Position& robot_home_position, const QStringList date);
     void saveEditMapSlot();
 
+    void testFunctionSlot();
+
 protected:
     bool changeRobotName(QString name);
     void changeRobotWifi(QString ssid, QString password);
@@ -331,6 +334,8 @@ private:
     CommandController* commandController;
     std::string mapFile;
     QPointer<EditMapWidget> editMapWidget;
+
+    SettingsWidget* settingsWidget;
 };
 
 #endif /// MAINWINDOW_H

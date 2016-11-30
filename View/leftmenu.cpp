@@ -58,6 +58,7 @@ LeftMenu::LeftMenu(MainWindow* _mainWindow, QSharedPointer<Points> const& _point
     globalLayout->addLayout(topLayout);
     connect(closeBtn, SIGNAL(clicked()), mainWindow, SLOT(closeSlot()));
 
+    // the 4 next lines of codes are causing a warning about the layout
     /// to display the information relative to a point
     displaySelectedPoint = new DisplaySelectedPoint(this, robots, _points, _map);
     connect(displaySelectedPoint->getDisplaySelectedPointRobots(), SIGNAL(setSelectedRobotFromPoint(QString)), mainWindow, SLOT(setSelectedRobotFromPointSlot(QString)));
