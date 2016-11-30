@@ -70,10 +70,6 @@ HEADERS += \
            Controller/scanmapworker.h \
            Controller/commandcontroller.h \
            View/commandmessagebox.h \
-           zconf.h \
-           zipreader.h \
-           zipwriter.h \
-           zlib.h \
            Controller/robotserverworker.h \
            View/editselectedrobotwidget.h \
     View/editmapwidget.h \
@@ -137,7 +133,6 @@ SOURCES += main.cpp \
            Controller/scanmapworker.cpp \
            Controller/commandcontroller.cpp \
            View/commandmessagebox.cpp \
-           zip.cpp \
            Controller/robotserverworker.cpp \
            View/editselectedrobotwidget.cpp \
     View/editmapwidget.cpp \
@@ -155,17 +150,5 @@ DISTFILES += README \
     Resources/robot_ori.png \
     Resources/gtrobot-1.pgm \
     Resources/gtrobot-1.pgm.pgm
-
-ZLIBCODEDIR = "$$PWD/QtZipTest/zlib"
-
-INCLUDEPATH += $$ZLIBCODEDIR
-
-unix {
-    LIBS += -L$${ZLIBCODEDIR} -lz
-}
-
-win32 {
-    LIBS += -L$${ZLIBCODEDIR}/Windows -lzdll
-}
 
 

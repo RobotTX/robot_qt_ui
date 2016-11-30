@@ -4716,26 +4716,6 @@ void MainWindow::showSelectedRobotHomeOnly(){
     }
 }
 
-void MainWindow::compress(const QString zipFile){
-    ZipWriter cZip(zipFile);
-    const QString SingleFile = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation) + QDir::separator() + QString("lolilol.pgm");
-    QFile file(SingleFile);
-    file.open(QIODevice::ReadOnly);
-    cZip.addFile("test.pgm", file.readAll());
-    file.close();
-    cZip.close();
-}
-
-void MainWindow::decompress(const QString fileName){
-    ZipReader cZip(fileName);
-    ZipReader::FileInfo fInfo = cZip.entryInfoAt(0);
-    QFile file(QStandardPaths::writableLocation(QStandardPaths::DesktopLocation) + QDir::separator() + QString("lolilol2.pgm"));
-    file.open(QIODevice::WriteOnly);
-    file.write(cZip.fileData(fInfo.filePath));
-    file.close();
-    cZip.close();
-}
-
 bool MainWindow::saveMapConfig(const std::string fileName){
     qDebug() << "MainWindow::saveMapConfig saving map to " << QString::fromStdString(fileName);
     std::ofstream file(fileName, std::ios::out | std::ios::trunc);
@@ -4787,6 +4767,7 @@ void MainWindow::updateRobotInfo(QString robot_name, QString robotInfo){
 }
 
 bool MainWindow::isLater(const QStringList& date, const QStringList& otherDate){
+    assert(date.size() == otherDate.size());
     for(int i = 0; i < date.size(); i++){
         if(date.at(i).toInt() > otherDate.at(i).toInt())
             return true;
@@ -4805,7 +4786,7 @@ QPair<Position, QStringList> MainWindow::getHomeFromFile(const QString robot_nam
         QRegExp regex("[-\n ]");
         QString content = fileInfo.readAll();
         if(!content.compare(""))
-            content = "1970-01-01-00-00-00";
+            content = "0-0-1970-01-01-00-00-00";
         content.replace("\n", " ");
         QStringList l = content.split(regex, QString::SkipEmptyParts);
         qDebug() << "app list" << l;
@@ -4842,7 +4823,8 @@ void MainWindow::setHomeAtConnection(const QString robot_name, const Position &p
 }
 
 bool MainWindow::updateHomeFile(const QString robot_name, const Position& robot_home_position, const QStringList date){
-    QFile fileWriteHome(QDir::currentPath() + QDir::separator() + "robots_homes" + robot_name);
+    qDebug() << "updatehomefile" << robot_name << date.size();
+    QFile fileWriteHome(QDir::currentPath() + QDir::separator() + "robots_homes" + QDir::separator() + robot_name);
     if(fileWriteHome.open(QIODevice::ReadWrite)){
         QTextStream out(&fileWriteHome);
         out << robot_home_position.getX() << " " << robot_home_position.getY() << "\n";

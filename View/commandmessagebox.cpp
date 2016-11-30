@@ -37,4 +37,3 @@ void CommandMessageBox::done(int r){
 void CommandMessageBox::closeEvent(QCloseEvent *e){
     //QMessageBox::closeEvent(e);
 }
-

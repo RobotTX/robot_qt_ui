@@ -26,9 +26,6 @@ class CommandController;
 class EditMapWidget;
 class SettingsWidget;
 
-#include "zipreader.h"
-#include "zipwriter.h"
-
 #include "Model/paths.h"
 #include "View/createpointwidget.h"
 #include "View/toplayout.h"
@@ -113,9 +110,6 @@ public:
     void showSelectedRobotHomeOnly();
     void updateModelPaths(const Point &old_point, const Point &new_point);
     bool sendHomeToRobot(QPointer<RobotView> robot, QSharedPointer<PointView> home);
-
-    void compress(const QString zipFile);
-    void decompress(const QString fileName);
 
     bool saveMapConfig(const std::string fileName);
     bool loadMapConfig(const std::string fileName);
