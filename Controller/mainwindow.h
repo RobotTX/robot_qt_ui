@@ -45,15 +45,11 @@ class SettingsWidget;
 
 #define DESKTOP_PATH "/home/m-a/Desktop/"
 #define GOBOT_PATH "/home/m-a/Documents/QtProject/gobot-software/"
-/*
-#define DESKTOP_PATH "/home/joan/Desktop/"
-#define GOBOT_PATH "/home/joan/Gobot/gobot-software/"
-*/
+
 #define XML_FILE "points.xml"
 #define ROBOTS_NAME_FILE "robotsName.dat"
 #define MAP_FILE "realMap.dat"
 #define PATHS_FILE "savedPaths.dat"
-
 
 #define PI 3.14159265
 #define PORT_ROBOT_UPDATE 6000

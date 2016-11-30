@@ -7,9 +7,7 @@
 #include "Controller/mainwindow.h"
 #include "View/pathcreationwidget.h"
 
-XMLParser::XMLParser(const QString filename){
-    file = new QFile(filename);
-}
+XMLParser::XMLParser(const QString filename): file(new QFile(filename)) {}
 
 XMLParser::~XMLParser(){
     delete file;
@@ -68,11 +66,10 @@ QString XMLParser::readNameElement(QXmlStreamReader& xmlReader){
             xmlReader.readNext();
             break;
         }
-        else if(xmlReader.isCharacters()){
+        else if(xmlReader.isCharacters())
             xmlReader.readNext();
-        } else {
+        else
             xmlReader.readNext();
-        }
     }
     return nameElement;
 }
@@ -89,11 +86,10 @@ QString XMLParser::readIPElement(QXmlStreamReader& xmlReader){
             xmlReader.readNext();
             break;
         }
-        else if(xmlReader.isCharacters()){
+        else if(xmlReader.isCharacters())
             xmlReader.readNext();
-        } else {
+        else
             xmlReader.readNext();
-        }
     }
     return IPElement;
 }
@@ -110,11 +106,10 @@ float XMLParser::readCoordinateElement(QXmlStreamReader &xmlReader){
             xmlReader.readNext();
             break;
         }
-        else if(xmlReader.isCharacters()){
+        else if(xmlReader.isCharacters())
             xmlReader.readNext();
-        } else {
+        else
             xmlReader.readNext();
-        }
     }
     return coordinate;
 }
@@ -131,9 +126,9 @@ void XMLParser::readPoints(QSharedPointer<Points>& points){
 
         while(!xmlReader.atEnd()){
             if(xmlReader.isStartElement()){
-                if(xmlReader.name() == "points"){
+                if(xmlReader.name() == "points")
                     xmlReader.readNext();
-                }
+
                 else if(xmlReader.name() == "group"){
                     QString groupName("");
                     while(!xmlReader.atEnd()){
@@ -141,9 +136,9 @@ void XMLParser::readPoints(QSharedPointer<Points>& points){
                             xmlReader.readNext();
                             break;
                         }
-                        else if(xmlReader.isCharacters()){
+                        else if(xmlReader.isCharacters())
                             xmlReader.readNext();
-                        }
+
                         else if(xmlReader.isStartElement()){
                             if(xmlReader.name() == "name"){
                                 groupName = readNameElement(xmlReader);
@@ -218,11 +213,10 @@ bool XMLParser::readDisplayedElement(QXmlStreamReader &xmlReader){
             xmlReader.readNext();
             break;
         }
-        else if(xmlReader.isCharacters()){
+        else if(xmlReader.isCharacters())
             xmlReader.readNext();
-        } else {
+        else
             xmlReader.readNext();
-        }
     }
     return displayed;
 }
