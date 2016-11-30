@@ -8,11 +8,18 @@
 #include "View/robotview.h"
 #include <QApplication>
 #include <QDesktopWidget>
+#include <View/spacewidget.h>
+#include <View/stylesettings.h>
 
 int SettingsWidget::currentId = 0;
 
 SettingsWidget::SettingsWidget(QSharedPointer<Robots> robots, QWidget *parent): QWidget(parent)
 {
+
+    setWindowTitle("Settings");
+    // does not work :(
+    setWindowIcon(QPixmap(":/icons/setting.png").scaled(s_icon_size));
+
     /// moves the page at the center of the screen
     move(QApplication::desktop()->screen()->rect().center() - rect().center());
 
@@ -39,16 +46,21 @@ SettingsWidget::SettingsWidget(QSharedPointer<Robots> robots, QWidget *parent): 
 
     connect(robotsLaserButtonGroup, SIGNAL(buttonToggled(int, bool)), this, SLOT(emitLaserSettingChange(int, bool)));
 
+    SpaceWidget* space = new SpaceWidget(SpaceWidget::SpaceOrientation::HORIZONTAL, this);
+    menuLayout->addWidget(space);
+
     /**
      * MAP CHOICE
      * when a robot connects, if it already contains a map the application user has
      * to decide if he wants to use the map stored on the robot or on the application
      * */
+    chooseMapLabel = new QLabel("Choice of the map");
     chooseMapBox = new QComboBox(this);
     chooseMapBox->insertItem(0, "When a robot connects, always choose to use its map");
     chooseMapBox->insertItem(1, "When a robot connects, always use the map of the application");
     chooseMapBox->insertItem(2, "when a robot connects, always ask which map I want to use");
 
+    menuLayout->addWidget(chooseMapLabel);
     menuLayout->addWidget(chooseMapBox);
 }
 

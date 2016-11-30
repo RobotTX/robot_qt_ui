@@ -175,8 +175,6 @@ private slots:
     void cancelEditSelecRobotBtnEvent(void);
     void robotSavedEvent(void);
     void saveRobotModifications(void);
-    void minusSelecPointBtnEvent(void);
-    void editSelecPointBtnEvent(void);
     void setSelectedPoint(void);
     void pointSavedEvent(QString groupName, double x, double y, QString name);
     void deletePath(int robotNb);

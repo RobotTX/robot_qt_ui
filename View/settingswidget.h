@@ -36,6 +36,7 @@ private:
     QLabel* feedBackLabel;
     /// to map robot IP addresses and their checkboxes ids
     QMap<int, QString> iDtoIPMap;
+    QLabel* chooseMapLabel;
     QComboBox* chooseMapBox;
 };
 

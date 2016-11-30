@@ -67,11 +67,9 @@ QPointer<RobotView> Robots::getRobotViewByIp(const QString ip) const {
 void Robots::setSelected(QPointer<RobotView> const robotView){
     qDebug() << "Selected robot : " << robotView->getRobot()->getName();
     for(int i = 0; i < robotsVector.length(); i++){
-        if(robotsVector[i]->getRobot()->getName() == robotView->getRobot()->getName() &&
-                robotsVector[i]->getRobot()->getIp() == robotView->getRobot()->getIp())
-            robotsVector[i]->setSelected(true);
-        else
-            robotsVector[i]->setSelected(false);
+        bool sameName = robotsVector[i]->getRobot()->getName() == robotView->getRobot()->getName() &&
+                robotsVector[i]->getRobot()->getIp() == robotView->getRobot()->getIp();
+        robotsVector[i]->setSelected(sameName);
     }
 }
 

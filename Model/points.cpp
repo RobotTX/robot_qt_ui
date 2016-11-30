@@ -174,12 +174,11 @@ void Points::addPoint(const QString groupName, QSharedPointer<PointView> pointVi
 
 void Points::insertPoint(const QString groupName, const int id, QSharedPointer<PointView> pointView){
     qDebug() << "Points::insertPoint called with pointView, groupname" << groupName;
-    if(!groups->empty() && groups->contains(groupName)){
-        if(groups->value(groupName)->size() > 0)
-            groups->value(groupName)->insert(id, pointView);
-        else
-            groups->value(groupName)->push_back(pointView);
-    } else {
+    if(!groups->empty() && groups->contains(groupName))
+
+        (groups->value(groupName)->size() > 0) ? groups->value(groupName)->insert(id, pointView) : groups->value(groupName)->push_back(pointView);
+
+    else {
         QSharedPointer<QVector<QSharedPointer<PointView>>> vector = QSharedPointer<QVector<QSharedPointer<PointView>>>(new QVector<QSharedPointer<PointView>>());
         vector->push_back(pointView);
         groups->insert(groupName, vector);
