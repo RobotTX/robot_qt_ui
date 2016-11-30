@@ -149,8 +149,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
     initializePoints();
 
-
-    /// to draw stand-alone paths
     pathPainter = new PathPainter(this, points);
 
     initializeRobots();
@@ -620,9 +618,9 @@ void MainWindow::setSelectedRobot(QPointer<RobotView> robotView){
     editSelectedRobotWidget->setHome(robotView->getRobot()->getHome());
 
     /// same thing for path
-    if(!robotView->getRobot()->getPathName().compare("")){
+    if(!robotView->getRobot()->getPathName().compare(""))
         editSelectedRobotWidget->getDeletePathBtn()->hide();
-    }
+
     else {
         editSelectedRobotWidget->getDeletePathBtn()->show();
         qDebug() << robotView->getRobot()->getPathName();
@@ -800,16 +798,13 @@ void MainWindow::editRobotBtnEvent(){
 void MainWindow::checkRobotBtnEventMenu(){
     qDebug() << "checkRobotBtnEventMenu called";
     QString name = robotsLeftWidget->getBtnGroup()->getBtnGroup()->checkedButton()->text();
-
     checkRobotBtnEvent(name);
 }
 
 void MainWindow::checkRobotBtnEvent(QString name){
     qDebug() << "checkRobotBtnEvent called" << name;
-
-
-   QPointer<RobotView> robotView =  robots->getRobotViewByName(name);
-     robotView->display(!robotView->isVisible());
+    QPointer<RobotView> robotView =  robots->getRobotViewByName(name);
+    robotView->display(!robotView->isVisible());
 }
 
 void MainWindow::cancelEditSelecRobotBtnEvent(){
@@ -826,10 +821,7 @@ void MainWindow::cancelEditSelecRobotBtnEvent(){
         editSelectedRobotWidget->getHome()->setPixmap(PointView::PixmapType::NORMAL);
     }
 
-    if(editSelectedRobotWidget->getHome())
-        editSelectedRobotWidget->setHome(editSelectedRobotWidget->getHome());
-    else
-        editSelectedRobotWidget->setHome(static_cast<QSharedPointer<PointView>> (0));
+    editSelectedRobotWidget->setHome((editSelectedRobotWidget->getHome()) ? editSelectedRobotWidget->getHome() : static_cast<QSharedPointer<PointView>> (0));
 
     editSelectedRobotWidget->updateHomeMenu();
     /// if the path has been changed, reset the path
@@ -1115,9 +1107,9 @@ void MainWindow::saveRobotModifications(){
     /// we check if the name has been changed
     if(!robotDialog->getNameEdit()->text().isEmpty() &&
             robotDialog->getNameEdit()->text().simplified().compare(selectedRobot->getRobot()->getName(), Qt::CaseSensitive)){
-        if(changeRobotName(robotDialog->getNameEdit()->text().simplified())){
+        if(changeRobotName(robotDialog->getNameEdit()->text().simplified()))
             nameChanged = true;
-        } else {
+        else {
             setMessageTop(TEXT_COLOR_DANGER, "Failed to edit the name of the robot, please try again");
             return;
         }
@@ -1134,10 +1126,9 @@ void MainWindow::saveRobotModifications(){
         wifiChanged = true;
     }
 
-
-    if(nameChanged && wifiChanged){
+    if(nameChanged && wifiChanged)
         setMessageTop(TEXT_COLOR_SUCCESS, "You have successfully updated the name and the wifi of " + robotDialog->getNameEdit()->text().simplified());
-    } else {
+    else {
         if(nameChanged)
             setMessageTop(TEXT_COLOR_SUCCESS, "You have successfully updated the name of " + robotDialog->getNameEdit()->text().simplified());
         else if(wifiChanged)
@@ -1334,7 +1325,7 @@ void MainWindow::showHome(){
         if(pointView->isVisible()){
             qDebug() << "home is visible";
             pointView->setWasShown(true);
-        }else{
+        } else {
             qDebug() << "home is not visible";
             pointView->setWasShown(false);
         }
@@ -1439,7 +1430,6 @@ void MainWindow::robotIsAliveSlot(QString hostname, QString ip, QString mapId, Q
 
     } else {
         qDebug() << "Robot" << hostname << "at ip" << ip << "just connected and has the map id :" << mapId;
-
         QPointer<Robot> robot = QPointer<Robot>(new Robot(this, paths, hostname, ip));
         robot->setWifi(ssid);
         rv = QPointer<RobotView>(new RobotView(robot, mapPixmapItem));
@@ -1562,7 +1552,7 @@ void MainWindow::robotIsAliveSlot(QString hostname, QString ip, QString mapId, Q
 
 void MainWindow::robotIsDeadSlot(QString hostname, QString ip){
     qDebug() << "Robot" << hostname << "at ip" << ip << "... He is dead, Jim!!";
-    setMessageTop(TEXT_COLOR_DANGER, QString("Robot " + hostname + " at ip " + ip +" disconnected."));
+    setMessageTop(TEXT_COLOR_DANGER, QString("Robot " + hostname + " at ip " + ip + " disconnected."));
 
     settingsWidget->removeRobot(ip);
 
@@ -1847,20 +1837,16 @@ void MainWindow::goHome(int nbRobot){
     QPointer<Robot> currRobot = robots->getRobotsVector().at(nbRobot)->getRobot();
     if(!currRobot->isPlayingPath()){
         qDebug() <<"MainWindow::GoHome (bottomlayout) called";
-        if(commandController->sendCommand(currRobot, QString("o"))){
-            qDebug() << "MainWindow::goHome" << currRobot->getName() << "is going home";
-        } else
-            qDebug() << "MainWindow::goHome failed to send" << currRobot->getName() << "home";
+        (commandController->sendCommand(currRobot, QString("o"))) ? setMessageTop(TEXT_COLOR_INFO, currRobot->getName() + " is going home") :
+                                                                    setMessageTop(TEXT_COLOR_DANGER, "Something went wrong when trying to send " + currRobot->getName() + " home");
     } else {
         int answer = openConfirmMessage("The robot " + currRobot->getName() + " is currently playing its path. Do you want to stop it and send it home anyway ?");
         switch(answer){
         case QMessageBox::Cancel:
             break;
         case QMessageBox::Yes:
-            if(commandController->sendCommand(currRobot, QString("o"))){
-                qDebug() << "MainWindow::goHome" << currRobot->getName() << "is going home";
-            } else
-                qDebug() << "MainWindow::goHome failed to send" << currRobot->getName() << "home";
+            (commandController->sendCommand(currRobot, QString("o"))) ? setMessageTop(TEXT_COLOR_INFO, currRobot->getName() + " is going home") :
+                                                                        setMessageTop(TEXT_COLOR_DANGER, "Something went wrong when trying to send " + currRobot->getName() + " home");
             break;
         default:
             break;
@@ -1912,8 +1898,6 @@ void MainWindow::updateMap(const QByteArray mapArray, bool fromPgm){
     QPixmap pixmap = QPixmap::fromImage(map->getMapImage());
     mapPixmapItem->setPixmap(pixmap);
     /// WARNING might make the app send the map to every connected robot everytime we receive one while scanning
-    /*map->setDateTime(QDateTime::currentDateTime());
-    saveMapState();*/
     ///***************///
     scene->update();
 }
@@ -2036,10 +2020,8 @@ void MainWindow::mapBtnEvent(){
 }
 
 void MainWindow::messageMapSaved(bool status){
-    if(status)
-        setTemporaryMessageTop(TEXT_COLOR_SUCCESS, "You have successfully saved the map", 2500);
-    else
-        setTemporaryMessageTop(TEXT_COLOR_DANGER, "Attempt to save the map failed", 2500);
+    (status) ? setTemporaryMessageTop(TEXT_COLOR_SUCCESS, "You have successfully saved the map", 2500) :
+               setTemporaryMessageTop(TEXT_COLOR_DANGER, "Attempt to save the map failed", 2500);
 }
 
 void MainWindow::editMapSlot(){
@@ -2420,17 +2402,8 @@ void MainWindow::switchFocus(const QString name, QWidget* widget, const MainWind
 {
     lastWidgets.append(QPair<QPair<QWidget*, QString>, MainWindow::WidgetType>(QPair<QWidget*, QString>(widget,name), type));
 
-    if(lastWidgets.size() > 1)
-        leftMenu->showBackButton(lastWidgets.at(lastWidgets.size()-2).first.second);
-    else
-        leftMenu->hideBackButton();
-
-    qDebug() << "__________________";
-
-    for(int i = 0; i < lastWidgets.size(); i++)
-        qDebug() << lastWidgets.at(i).first.second;
-
-    qDebug() << "_________________";
+    (lastWidgets.size() > 1) ? leftMenu->showBackButton(lastWidgets.at(lastWidgets.size()-2).first.second) :
+                               leftMenu->hideBackButton();
 }
 
 void MainWindow::resetFocus()
@@ -2441,15 +2414,8 @@ void MainWindow::resetFocus()
 
 void MainWindow::updateView()
 {
-    if (leftMenu != NULL)
-    {
-        if(lastWidgets.size() <= 1){
-            leftMenu->hideBackButton();
-        }
-        else {
-            leftMenu->showBackButton(lastWidgets.last().first.second);
-        }
-    }
+    if(leftMenu != NULL)
+        (lastWidgets.size() <= 1) ? leftMenu->hideBackButton() : leftMenu->showBackButton(lastWidgets.last().first.second);
 }
 
 void MainWindow::openLeftMenu(){
@@ -2479,18 +2445,9 @@ void MainWindow::openLeftMenu(){
             leftMenuWidget->show();
             leftMenu->show();
             switchFocus("Menu",leftMenuWidget, MainWindow::WidgetType::MENU);
-        } else {
-                closeSlot();
-        }
+        } else
+            closeSlot();
     }
-}
-
-void MainWindow::minusSelecPointBtnEvent(){
-    qDebug() << "minusSelecPointBtnEvent called";
-}
-
-void MainWindow::editSelecPointBtnEvent(){
-    qDebug() << "editSelecPointBtnEvent called";
 }
 
 /**
@@ -2694,9 +2651,8 @@ void MainWindow::askForDeleteGroupConfirmation(QString groupName){
             if(homePointNames.size() <= 0){
 
                 /// removes all the points of the group on the map
-                for(int i = 0; i < points->getGroups()->value(groupName)->size(); i++){
+                for(int i = 0; i < points->getGroups()->value(groupName)->size(); i++)
                     points->getGroups()->value(groupName)->at(i)->hide();
-                }
 
                 /// removes the group from the model
                 points->removeGroup(groupName);
@@ -3016,10 +2972,8 @@ void MainWindow::displayPointsInGroup(void){
         selectedPoint->displayPointInfo();
         selectedPoint->show();
 
-        if(pointView->isVisible())
-            selectedPoint->getActionButtons()->getMapButton()->setChecked(true);
-        else
-            selectedPoint->getActionButtons()->getMapButton()->setChecked(false);
+        selectedPoint->getActionButtons()->getMapButton()->setChecked((pointView->isVisible() ? true : false));
+
         switchFocus("Point", selectedPoint, MainWindow::WidgetType::POINT);
         pointsLeftWidget->getActionButtons()->getGoButton()->setChecked(false);
         pointsLeftWidget->hide();
@@ -3207,7 +3161,6 @@ void MainWindow::displayPointInfoFromGroupMenu(void){
     QString pointName = static_cast<CustomPushButton*>(leftMenu->getDisplaySelectedGroup()->getPointButtonGroup()->getButtonGroup()->checkedButton())->text();
     QSharedPointer<PointView> pointView = points->findPointView(pointName);
 
-
     if(pointName.compare("") != 0 && pointView){
         setMessageTop(TEXT_COLOR_NORMAL, "");
         DisplaySelectedPoint* selectedPoint = leftMenu->getDisplaySelectedPoint();
@@ -3225,11 +3178,7 @@ void MainWindow::displayPointInfoFromGroupMenu(void){
         selectedPoint->displayPointInfo();
 
         /// map is checked if the point is displayed
-        if(pointView->isVisible())
-            selectedPoint->getActionButtons()->getMapButton()->setChecked(true);
-        else
-            selectedPoint->getActionButtons()->getMapButton()->setChecked(false);
-
+        selectedPoint->getActionButtons()->getMapButton()->setChecked((pointView->isVisible()) ? true : false);
         selectedPoint->show();
         leftMenu->getDisplaySelectedGroup()->hide();
         switchFocus(selectedPoint->getPointName(), selectedPoint, MainWindow::WidgetType::POINT);
@@ -3905,13 +3854,6 @@ void MainWindow::pathBtnEvent(){
     /// resets the list of groups menu
     switchFocus("Paths", leftMenu->getGroupsPathsWidget(), MainWindow::WidgetType::GROUPS_PATHS);
     leftMenu->getGroupsPathsWidget()->show();
-    /*
-    qDebug() << "pointBtnEvent called ";
-    /// we uncheck all buttons from all menus
-    leftMenu->getDisplaySelectedGroup()->uncheck();
-    hideAllWidgets();
-    pointsLeftWidget->show();
-    setMessageTop(TEXT_COLOR_INFO, "Click the map to add a permanent point");*/
 }
 
 void MainWindow::deletePathSlot(QString groupName, QString pathName){
@@ -3929,11 +3871,7 @@ void MainWindow::deletePathSlot(QString groupName, QString pathName){
         if(!pathPainter->getVisiblePath().compare(pathName)){
             qDebug() << "hey i have to stop displaying this path that was destroyed";
             emit resetPath();
-        } else
-            qDebug() << "dont have to stop displaying this path" <<
-                        pathPainter->getVisiblePath() <<
-                        "because the last one checked is"
-                     << leftMenu->getPathGroupDisplayed()->getLastCheckedButton();
+        }
         backEvent();
     }
     break;
@@ -3966,10 +3904,7 @@ void MainWindow::editPathSlot(QString groupName, QString pathName){
     emit resetPathCreationWidget();
 
     pathCreationWidget->setCurrentPathName(pathName);
-    if(groupName.compare(""))
-        pathCreationWidget->setCurrentGroupName(groupName);
-    else
-        pathCreationWidget->setCurrentGroupName(pathCreationWidget->getCurrentGroupName());
+    pathCreationWidget->setCurrentGroupName((groupName.compare("")) ? groupName : pathCreationWidget->getCurrentGroupName());
 
     bool foundFlag(false);
 
@@ -4114,12 +4049,11 @@ void MainWindow::deleteGroupPaths(){
     }
     qDebug() << "message" << message;
     message += ". If you delete this group, these robots will lose their paths. If you wish to continue click \"Ok\". ";
-    int answer;
+
     /// if none of the paths of this group has been assigned to a robot
-    if(first)
-        answer = openConfirmMessage("Are you sure you want to delete this group of path, all the paths inside will be deleted as well ?");
-    else
-        answer = openConfirmMessage(message);
+    int answer = openConfirmMessage((first) ? "Are you sure you want to delete this group of path, all the paths inside will be deleted as well ?" :
+                                          message);
+
     leftMenu->getGroupsPathsWidget()->resetWidget();
     switch(answer){
     case QMessageBox::StandardButton::Ok:
@@ -4131,7 +4065,6 @@ void MainWindow::deleteGroupPaths(){
         }
         paths->deleteGroup(groupPaths);
         serializePaths(QDir::currentPath() + QDir::separator() + "paths.dat");
-
         leftMenu->getGroupsPathsWidget()->updateGroupsPaths();
         break;
     }
@@ -4177,6 +4110,7 @@ void MainWindow::saveGroupPaths(QString name){
         serializePaths(QDir::currentPath() + QDir::separator() + "paths.dat");
 
         topLayout->setLabelDelay(TEXT_COLOR_SUCCESS, "You have created a new group of paths", 4000);
+
     } else if(leftMenu->getGroupsPathsWidget()->checkGroupName(name) == 1){
         /// enables the return button again
         leftMenu->getReturnButton()->setEnabled(true);
@@ -4311,11 +4245,8 @@ void MainWindow::deletePath(){
         }
     }
     message += ". If you delete this path, these robots will lose their path. Click \"ok\" if you wish to continue.";
-    int answer;
-    if(first)
-        answer  = openConfirmMessage("Are you sure you want to delete this path, this action is irreversible ?");
-    else
-        answer = openConfirmMessage(message);
+    int answer = openConfirmMessage((first) ? "Are you sure you want to delete this path, this action is irreversible ?" :
+                                              message);
 
     switch(answer){
     case QMessageBox::StandardButton::Ok:
@@ -4634,8 +4565,6 @@ void MainWindow::quit(){
 }
 
 void MainWindow::backEvent(){
-    //qDebug() << "back event called";
-
     setEnableAll(true);
     /// resets the menus
     pointsLeftWidget->disableButtons();
@@ -4653,24 +4582,13 @@ void MainWindow::backEvent(){
 
         lastWidgets.last().first.first->show();
 
-        if (lastWidgets.size() >1){
-            leftMenu->showBackButton(lastWidgets.at(lastWidgets.size()-2).first.second);
-        } else {
-            leftMenu->hideBackButton();
-        }
+        (lastWidgets.size() > 1) ? leftMenu->showBackButton(lastWidgets.at(lastWidgets.size()-2).first.second) :
+                                   leftMenu->hideBackButton();
+
     } else {
         resetFocus();
         leftMenu->hide();
     }
-
-    //debug
-    qDebug() << "_________________";
-
-    for(int i=0;i<lastWidgets.size();i++) {
-        qDebug() << lastWidgets.at(i).first.second;
-    }
-    qDebug() << "_________________";
-
 }
 
 /**
@@ -4696,9 +4614,8 @@ void MainWindow::setGraphicItemsState(const GraphicItemState state){
     qDebug() << "MainWindow::setGraphicItemsState called" << state << robots->getRobotsVector().size();
     mapPixmapItem->setState(state);
 
-    for(int i = 0; i < robots->getRobotsVector().size(); i++){
+    for(int i = 0; i < robots->getRobotsVector().size(); i++)
         robots->getRobotsVector().at(i)->setState(state);
-    }
 
     points->setPointViewsState(state);
 }
@@ -4750,10 +4667,7 @@ void MainWindow::setEnableAll(bool enable, GraphicItemState state, int noReturn)
     setGraphicItemsState(state);
     bottomLayout->setEnable(enable);
     topLayout->setEnable(enable);
-    if(noReturn == -1)
-        leftMenu->setEnableReturnCloseButtons(enable);
-    else
-        leftMenu->setEnableReturnCloseButtons(noReturn);
+    leftMenu->setEnableReturnCloseButtons((noReturn == -1) ? enable : noReturn);
 }
 
 void MainWindow::centerMap(){
@@ -4782,10 +4696,6 @@ void MainWindow::setTemporaryMessageTop(const QString type, const QString messag
 
 void MainWindow::saveMapState(){
     qDebug() << "MainWindow::saveMapState saving map" << QString::fromStdString(mapFile);
-    /// saves the current configuration in the model
-    //mapState.first = mapPixmapItem->pos();
-    //mapState.second = graphicsView->getZoomCoeff();
-
     QFileInfo newMapInfo(QDir::currentPath(), "../gobot-software/currentMap.txt");
     std::ofstream file(newMapInfo.absoluteFilePath().toStdString(), std::ios::out | std::ios::trunc);
 
@@ -4955,6 +4865,8 @@ QPair<Position, QStringList> MainWindow::getHomeFromFile(const QString robot_nam
     if(fileInfo.open(QIODevice::ReadWrite)){
         QRegExp regex("[-\n ]");
         QString content = fileInfo.readAll();
+        if(!content.compare(""))
+            content = "1970-01-01-00-00-00";
         content.replace("\n", " ");
         QStringList l = content.split(regex, QString::SkipEmptyParts);
         qDebug() << "app list" << l;
@@ -5289,7 +5201,7 @@ QString MainWindow::prepareCommandPath(const Paths::Path &path) const {
 
         pathStr += + "\"" + QString::number(newPosX) + "\" \"" + QString::number(newPosY) + "\" \"" + QString::number(waitTime)+ "\" ";   
     }
-    //qDebug() << "pathstr yo" << pathStr;
+
     return pathStr;
 }
 

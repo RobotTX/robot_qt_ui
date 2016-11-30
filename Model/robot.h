@@ -68,9 +68,14 @@ public:
     void setPathName(const QString name) { pathName = name; }
     void setGroupPathName(const QString name) { groupName = name; }
 
+    /**
+     * @brief launchWorkers
+     * @param mainWindow
+     * connects the workers in order to receive map, robot position and laser data
+     */
     void launchWorkers(MainWindow* mainWindow);
 
-    /**
+     /**
      * @brief display
      * @param stream
      * Displays the robot information
@@ -146,8 +151,6 @@ signals:
     void startNewMapWorker();
     void startLocalMapWorker();
     void startMapWorker();
-
-    void cmdAnswer(QString);
 
 private slots:
     void doneSendingMapSlot();

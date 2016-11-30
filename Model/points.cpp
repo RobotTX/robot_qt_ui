@@ -62,7 +62,7 @@ QSharedPointer<QVector<QSharedPointer<PointView>>> Points::findGroup(const QStri
     return groups->value(groupName);
 }
 
-/// finds a pointview that does not belong to a path
+/// finds a pointview that does not belong to a path (using the name of its point)
 QSharedPointer<PointView> Points::findPointView(const QString pointName) const {
     QMapIterator<QString, QSharedPointer<QVector<QSharedPointer<PointView>>>> i(*groups);
     while (i.hasNext()) {
@@ -77,7 +77,7 @@ QSharedPointer<PointView> Points::findPointView(const QString pointName) const {
     return QSharedPointer<PointView>();
 }
 
-/// finds a pointview that belongs to a path
+/// finds a pointview that belongs to a path (using the position of its point)
 QSharedPointer<PointView> Points::findPathPointView(const double x, const double y) const {
     if(groups->value(PATH_GROUP_NAME)){
         for(int j = 0; j < groups->value(PATH_GROUP_NAME)->size(); j++){
@@ -88,6 +88,7 @@ QSharedPointer<PointView> Points::findPathPointView(const double x, const double
     return QSharedPointer<PointView>();
 }
 
+/// sames as findPointView but returns the point instead
 QSharedPointer<Point> Points::findPoint(const QString pointName) const {
     qDebug() << "Points::findPoint called" << pointName;
     QMapIterator<QString, QSharedPointer<QVector<QSharedPointer<PointView>>>> i(*groups);
@@ -143,23 +144,33 @@ QSharedPointer<PointView> Points::createPoint(const QString pointName, const dou
     if(!displayed)
         pointView->hide();
 
+    /// to display the information of the point
     connect(&(*pointView), SIGNAL(pointLeftClicked(QString, double, double)), parent, SLOT(displayPointEvent(QString, double, double)));
+
+    /// to update the coordinates of point that's being edited
     connect(&(*pointView), SIGNAL(editedPointPositionChanged(double, double)), parent, SLOT(updateCoordinates(double, double)));
+
+    /// to update a path point
     connect(&(*pointView), SIGNAL(moveEditedPathPoint()), parent, SLOT(moveEditedPathPointSlot()));
+
+    /// to add a path point to a path
     connect(&(*pointView), SIGNAL(addPointPath(QString, double, double, GraphicItemState)), parent, SLOT(addPointPathSlot(QString, double, double, GraphicItemState)));
 
+    /// to update the path painter
     connect(&(*pointView), SIGNAL(updatePathPainterPointView()), parent, SLOT(updatePathPainterPointViewSlot()));
+
+    /// to plan a scanning goal
     connect(&(*pointView), SIGNAL(newScanningGoal(double, double)), parent, SLOT(newScanningGoalSlot(double, double)));
 
     return pointView;
 }
 
 void Points::addPoint(const QString groupName, const QString pointName, const double x, const double y, const bool displayed, const Point::PointType type){
-
     QSharedPointer<PointView> pointView = createPoint(pointName, x, y , displayed, type);
     addPoint(groupName, pointView);
 }
 
+/// add the pointview <pointview> to the group <groupName>
 void Points::addPoint(const QString groupName, QSharedPointer<PointView> pointView){
 
     if(!groups->empty() && groups->contains(groupName))
@@ -172,35 +183,37 @@ void Points::addPoint(const QString groupName, QSharedPointer<PointView> pointVi
     }
 }
 
+/// like addPoint but inserts the point at a particular position given by <id>
 void Points::insertPoint(const QString groupName, const int id, QSharedPointer<PointView> pointView){
     qDebug() << "Points::insertPoint called with pointView, groupname" << groupName;
-    if(!groups->empty() && groups->contains(groupName)){
-        if(groups->value(groupName)->size() > 0)
-            groups->value(groupName)->insert(id, pointView);
-        else
-            groups->value(groupName)->push_back(pointView);
-    } else {
+    if(!groups->empty() && groups->contains(groupName))
+
+        (groups->value(groupName)->size() > 0) ? groups->value(groupName)->insert(id, pointView) : groups->value(groupName)->push_back(pointView);
+
+    else {
         QSharedPointer<QVector<QSharedPointer<PointView>>> vector = QSharedPointer<QVector<QSharedPointer<PointView>>>(new QVector<QSharedPointer<PointView>>());
         vector->push_back(pointView);
         groups->insert(groupName, vector);
     }
 }
 
-void Points::replacePoint(const QString groupName, const int id, const QSharedPointer<PointView>& pointView){
-    qDebug() << "Points::replacePoint called with pointview, groupName and id" << groupName << id;
-
-    if(id >= 0 && id < groups->value(groupName)->size()){
-        groups->value(groupName)->removeAt(id);
-        groups->value(groupName)->insert(id, pointView);
-    }
-}
-
+/// same but the point is created on the fly
 void Points::insertPoint(const QString groupName, const int id, const QString pointName, const double x, const double y, const bool displayed, const Point::PointType type){
     qDebug() << "Points::insertPoint called";
     QSharedPointer<PointView> pointView = createPoint(pointName, x, y , displayed, type);
     insertPoint(groupName, id, pointView);
 }
 
+/// replaces the pointView at position given by <id> in the group <groupName> by the pointview <pointView>
+void Points::replacePoint(const QString groupName, const int id, const QSharedPointer<PointView>& pointView){
+    qDebug() << "Points::replacePoint called with pointview, groupName and id" << groupName << id;
+    if(id >= 0 && id < groups->value(groupName)->size()){
+        groups->value(groupName)->removeAt(id);
+        groups->value(groupName)->insert(id, pointView);
+    }
+}
+
+/// counts how many points there are but does not include path points
 int Points::count() const {
     int nbPoints(0);
     QMapIterator<QString, QSharedPointer<QVector<QSharedPointer<PointView>>>> i(*groups);
@@ -213,11 +226,13 @@ int Points::count() const {
     return nbPoints;
 }
 
+/// shows or displays the temporary point on the map
 void Points::displayTmpPoint(const bool display){
     if(groups->value(TMP_GROUP_NAME)->count() > 0 && groups->value(TMP_GROUP_NAME)->at(0) != NULL)
         groups->value(TMP_GROUP_NAME)->at(0)->setVisible(display);
 }
 
+/// sets the state <state> for all pointViews
 void Points::setPointViewsState(const GraphicItemState state){
     QMapIterator<QString, QSharedPointer<QVector<QSharedPointer<PointView>>>> i(*groups);
     while (i.hasNext()) {

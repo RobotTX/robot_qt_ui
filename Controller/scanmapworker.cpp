@@ -20,10 +20,9 @@ void ScanMapWorker::connectSocket(){
 
     socket = QPointer<QTcpSocket>(new QTcpSocket());
 
-    /// Connect the signal disconnected which trigger when we are disconnected from the host
-    connect(&(*socket), SIGNAL(disconnected()),this, SLOT(disconnectedSlot()));
     /// Connect the signal readyRead which tell us when data arrived to the function that treat them
     connect(&(*socket), SIGNAL(readyRead()), this, SLOT(readTcpDataSlot()));
+
     /// Connect the signal when an error occurs with the socket, to react accordingly
     connect(&(*socket), SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(errorConnectionSlot(QAbstractSocket::SocketError)));
 
@@ -47,7 +46,6 @@ void ScanMapWorker::readTcpDataSlot(){
 
         //qDebug() << "(ScanMapWorker) Map of" << data.size() << "bytes received";
 
-
         /// Emit the signal valueChangedMap, meaning that we finished to receive a whole map
         /// and we can display it
         bool fromPgm = false;
@@ -64,12 +62,7 @@ void ScanMapWorker::readTcpDataSlot(){
     }
 }
 
-void ScanMapWorker::disconnectedSlot(){
-    qDebug() << "(ScanMapWorker) Disconnected";
-}
-
 void ScanMapWorker::errorConnectionSlot(QAbstractSocket::SocketError error){
-    //qDebug() << "(ScanMapWorker) Error while connecting :" << error;
     switch (error) {
     case(QAbstractSocket::ConnectionRefusedError):
         QThread::sleep(1);

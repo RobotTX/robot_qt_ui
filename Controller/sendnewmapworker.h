@@ -18,12 +18,6 @@ signals:
 private slots:
 
     /**
-     * @brief disconnectedSlot
-     * Slot called when we are disconnected from the host
-     */
-    void disconnectedSlot();
-
-    /**
      * @brief readTcpDataSlot
      * Read the data we receive
      */

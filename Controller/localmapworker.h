@@ -23,11 +23,7 @@ private slots:
      * we'll try to connect again in this slot
      */
     void errorConnectionSlot(QAbstractSocket::SocketError error);
-    /**
-     * @brief disconnectedSlot
-     * Slot called when we are disconnected from the host
-     */
-    void disconnectedSlot();
+
     /**
      * @brief stopWorker
      * Slot to stop the worker

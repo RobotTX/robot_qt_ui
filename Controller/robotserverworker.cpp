@@ -19,12 +19,13 @@ void RobotServerWorker::startServer(){
 
 void RobotServerWorker::stopWorker(){
     close();
-    //exit();
 }
 
 void RobotServerWorker::newConnectionSlot(){
+    /// server awaits for a new connection
     QTcpSocket* socket = this->nextPendingConnection();
 
+    /// if the server gets a new connection
     if(socket->state() == QTcpSocket::ConnectedState){
         qDebug() << "\n\n(RobotServerWorker) New connection established :" << socket->peerAddress().toString();
 
@@ -37,6 +38,7 @@ void RobotServerWorker::newConnectionSlot(){
         qDebug() << "(RobotServerWorker) Data from the new robot :" << strList;
         if(strList.size() == 5){
             //qDebug() << "(RobotServerWorker)" << strList;
+            /// hostname, IP address, mapID, map date, wifi SSID and stage of the path
             emit robotIsAlive(strList.at(0), socket->peerAddress().toString(), strList.at(1), strList.at(2), strList.at(3), std::stoi(strList.at(4).toStdString()));
         }
         else
