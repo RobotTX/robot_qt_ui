@@ -13,16 +13,19 @@ CommandController::CommandController(QWidget *parent) : QObject(parent), robotNa
 
 bool CommandController::sendCommand(QPointer<Robot> robot, QString cmd){
     qDebug() << "sending command" << cmd;
+    /// if the command is not already being processed
     if(robotName.isEmpty() && !cmd.isEmpty()){
+        /// reinitializes the QString containing the answer to the command
         cmdAnswer = "";
         robot->sendCommand(cmd);
 
         /// React accordingly to the answer : return true or false
         QRegExp rx("[ ]");
 
-        /// Data are received as a string separated by a space ("cmd done" or "cmd failed")
+        /// Data is received as a string separated by a space ("cmd done" or "cmd failed")
         QStringList listCmd = cmd.split(rx, QString::SkipEmptyParts);
 
+        /// command to change the wifi ssid and password
         if(listCmd.at(0).compare("b") == 0)
             return true;
         else {
@@ -150,12 +153,12 @@ bool CommandController::robotWaitForAnswer(QStringList listCmd){
             cmdName = "";
             return false;
         } else {
-            /// Should be catch by cmdAnswerSlot
+            /// Should be caught by cmdAnswerSlot
             qDebug() << "CommandController::robotWaitForAnswer Got an answer to the wrong command :" << list;
             return robotWaitForAnswer(listCmd);
         }
     } else {
-        /// Should be catch by cmdAnswerSlot
+        /// Should be caught by cmdAnswerSlot
         qDebug() << "CommandController::robotWaitForAnswer Got a wrong answer :" << list;
         return robotWaitForAnswer(listCmd);
     }

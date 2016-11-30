@@ -31,6 +31,10 @@ public:
 public:
     Paths(MainWindow *parent = Q_NULLPTR);
 
+    QSharedPointer<Groups> getGroups(void) const { return groups; }
+
+    void setGroups(QSharedPointer<Groups> _groups) { groups = _groups; }
+
     /**
      * @brief createGroup
      * @param groupName
@@ -86,25 +90,48 @@ public:
      */
     bool containsPoint(const QString groupName, const QString pathName, const Point& point);
 
-    QSharedPointer<Groups> getGroups(void) const { return groups; }
-
-    /// the foundFlag is set within the function, after the function returns it holds true if the path has been found and false otherwise
+    /**
+     * @brief getPath
+     * @param groupName
+     * @param pathName
+     * @param foundFlag
+     * @return Path aka QVector<QSharedPointer<PathPoint>>
+     * returns the path identified by <groupName> and <pathName>
+     * foundFlag is set to true if the path has been found and false
+     * if it does not exist
+     */
     Path getPath(const QString groupName, const QString pathName, bool& foundFlag);
 
+    /**
+     * @brief getGroup
+     * @param groupName
+     * @return CollectionPaths aka QMap<QString, QSharedPointer<Path>>
+     * returns the group of paths identified by the name <groupName>
+     * returns an empty group if it does not exist
+     */
     CollectionPaths getGroup(const QString groupName);
 
-    void setGroups(QSharedPointer<Groups> _groups) { groups = _groups; }
-
-    /// updates the paths which contains the pathpoint whose name is pointName to change the name to the points coordinates
-    /// instead. Has to be done when the original point has been modified (edition of a point)
+    /**
+     * @brief updatePaths
+     * @param old_point
+     * @param new_point
+     * Updates all paths which contain <old_point>
+     */
     void updatePaths(const Point& old_point, const Point& new_point);
 
-    /// clears the paths
+    /**
+     * @brief clear
+     * clears all paths and groups
+     */
     void clear(void);
 
-    /// given a vector of PathPoints, finds to which path it corresponds (pathName and pathGroup)
-    /// used to recover the path given by the robot when it connects to the application
-    /// if it does not correspond to any path we return ("", "")
+    /**
+     * @brief findPath
+     * @param path
+     * @return QPair<QString, QString>
+     * returns a pair <groupName, pathName> corresponding to the path
+     * given as a parameter
+     */
     QPair<QString, QString> findPath(const QVector<PathPoint>& path) const;
 
 private:

@@ -134,8 +134,6 @@ void Robot::clearPath(){
 
 void Robot::launchWorkers(MainWindow* mainWindow){
 
-    connect(this, SIGNAL(cmdAnswer(QString)), mainWindow->getCommandController(), SLOT(cmdAnswerSlot(QString)));
-
     qDebug() << "Robot" << name << "at ip" << ip << " launching its cmd thread";
 
     cmdRobotWorker = QPointer<CmdRobotWorker>(new CmdRobotWorker(ip, PORT_CMD, PORT_MAP_METADATA, PORT_ROBOT_POS, PORT_MAP, PORT_LOCAL_MAP, name));

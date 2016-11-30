@@ -95,6 +95,8 @@ int Paths::deletePath(const QString groupName, const QString pathName){
     return (groups->find(groupName) == groups->end()) ? 0 : (*groups)[groupName]->remove(pathName);
 }
 
+/// returns the path which is identified by the name <pathName> inside the group <groupName>
+/// if it does not exist the function returns an empty path
 Paths::Path Paths::getPath(const QString groupName, const QString pathName, bool& foundFlag){
     auto it_group = groups->find(groupName);
     if(it_group == groups->end()){
@@ -111,11 +113,14 @@ Paths::Path Paths::getPath(const QString groupName, const QString pathName, bool
     return Path();
 }
 
+/// returns either the group of paths named <groupName> if it exists or
+/// an empty group of paths otherwise
 Paths::CollectionPaths Paths::getGroup(const QString groupName){
     auto it_group = groups->find(groupName);
     return (it_group == groups->end()) ? CollectionPaths() : *it_group.value();
 }
 
+/// deserialization
 QDataStream& operator>>(QDataStream& in, Paths& paths){
     QMap<QString, QMap<QString, QVector<PathPoint>>> tmpPaths;
     in >> tmpPaths;
@@ -136,6 +141,7 @@ QDataStream& operator>>(QDataStream& in, Paths& paths){
     return in;
 }
 
+/// serialization
 QDataStream& operator<<(QDataStream& out, const Paths& paths){
     QMap<QString, QMap<QString, QVector<PathPoint>>> tmpPaths;
 
@@ -159,6 +165,8 @@ QDataStream& operator<<(QDataStream& out, const Paths& paths){
     return out;
 }
 
+/// returns true if the path identified by <groupName> and <pathName> contains the point
+/// <point>. Uses the == operator for the class Point
 bool Paths::containsPoint(const QString groupName, const QString pathName, const Point &point){
     bool foundFlag(false);
     Path path = getPath(groupName, pathName, foundFlag);
@@ -169,6 +177,8 @@ bool Paths::containsPoint(const QString groupName, const QString pathName, const
     return false;
 }
 
+/// when <old_point> is updated to <new_point>
+/// the paths which contain <old_point> must be updated
 void Paths::updatePaths(const Point& old_point, const Point& new_point){
     QMapIterator<QString, QSharedPointer<CollectionPaths>> it(*(groups));
     while(it.hasNext()){
@@ -225,6 +235,9 @@ void Paths::clear(){
     groups->clear();
 }
 
+/// given a vector of PathPoints, finds to which path it corresponds (pathName and pathGroup)
+/// used to recover the path given by the robot when it connects to the application
+/// if it does not correspond to any path we return ("", "")
 QPair<QString, QString> Paths::findPath(const QVector<PathPoint>& path) const {
     QMapIterator<QString, QSharedPointer<Paths::CollectionPaths>> it(*(groups));
     while(it.hasNext()){
@@ -234,7 +247,7 @@ QPair<QString, QString> Paths::findPath(const QVector<PathPoint>& path) const {
             it_paths.next();
             bool right_path(true);
             if(it_paths.value()){
-                /// if the paths don't have the same number of points no need to check
+                /// if the path doesn't have the same number of points no need to check
                 if(it_paths.value()->size() != path.size())
                     continue;
 

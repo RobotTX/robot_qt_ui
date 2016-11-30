@@ -18,6 +18,8 @@ void Map::setMapFromArray(const QByteArray& mapArrays, bool fromPgm){
     mapImage = QImage(width, height, QImage::Format_Grayscale8);
     uint32_t index = 0;
 
+    /// depending on where we get the map from the system of coordinates is not the same
+    /// so the formula is adjusted using <shift> and <sign>
     int shift = 0;
     int sign = 1;
     if(!fromPgm){
@@ -41,7 +43,7 @@ void Map::setMapFromArray(const QByteArray& mapArrays, bool fromPgm){
 
 void Map::saveToFile(const QString fileName){
     /// Qt has is own function to save the QImage to a PGM file
-    bool status = mapImage.save(fileName, "PGM");
+    mapImage.save(fileName, "PGM");
 }
 
 void Map::setDateTime(const QDateTime _dateTime) {

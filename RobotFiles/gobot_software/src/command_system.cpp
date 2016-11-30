@@ -138,16 +138,14 @@ bool execCommand(ros::NodeHandle n, std::vector<std::string> command){
 
 		/// Command for the robot to receive the ports needed for the map, metadata and robot pos services
 		case 'h':
-			if(command.size() == 6){
+			if(command.size() == 5){
 
 				metadata_port = std::stoi(command.at(1));
 				robot_pos_port = std::stoi(command.at(2));
 				map_port = std::stoi(command.at(3));
 				laser_port = std::stoi(command.at(4));
 				std::cout << "(Command system) Gobot here are the ports " << metadata_port << ", " << robot_pos_port << ", " << map_port << ", " << laser_port << std::endl;
-				if(!command.at(5).compare("1"))
-					return sendLaserData();
-				return true;
+				return sendLaserData();
 			} else {
 				std::cout << "(Command system) Parameter missing" << std::endl;
 			}

@@ -4804,6 +4804,8 @@ QPair<Position, QStringList> MainWindow::getHomeFromFile(const QString robot_nam
     if(fileInfo.open(QIODevice::ReadWrite)){
         QRegExp regex("[-\n ]");
         QString content = fileInfo.readAll();
+        if(!content.compare(""))
+            content = "1970-01-01-00-00-00";
         content.replace("\n", " ");
         QStringList l = content.split(regex, QString::SkipEmptyParts);
         qDebug() << "app list" << l;

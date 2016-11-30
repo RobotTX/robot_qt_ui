@@ -39,14 +39,14 @@ void RobotPositionWorker::readTcpDataSlot(){
     QString data = socket->readAll();
     QRegExp rx("[ ]");
 
-    /// Data is received as a string containing values separated by a space ("width height resolution originX originY")
+    /// Data is received as a string containing values separated by a space ("posX posY orientationZ")
     QStringList list = data.split(rx, QString::SkipEmptyParts);
 
+    /// the IP address is send along to identify the robot
     emit valueChangedRobot(ipAddress, list.at(0).toDouble(), list.at(1).toDouble(), list.at(2).toDouble());
 }
 
 void RobotPositionWorker::errorConnectionSlot(QAbstractSocket::SocketError error){
-    //qDebug() << "(RobotPositionWorker) Error while connecting :" << error;
     switch (error) {
     case(QAbstractSocket::ConnectionRefusedError):
         QThread::sleep(1);

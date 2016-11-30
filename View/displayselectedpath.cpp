@@ -63,10 +63,7 @@ void DisplaySelectedPath::updatePath(const QString groupName, const QString path
     currentPath.path = path;
     nameLabel->setText(pathName);
     pathWidget->setPath(path);
-    if(!visiblePath.compare(currentPath.pathName))
-        actionButtons->getMapButton()->setChecked(true);
-    else
-        actionButtons->getMapButton()->setChecked(false);
+    actionButtons->getMapButton()->setChecked((!visiblePath.compare(currentPath.pathName)) ? true : false);
 }
 
 void DisplaySelectedPath::minusBtnSlot(bool){

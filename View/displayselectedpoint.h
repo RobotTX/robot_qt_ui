@@ -113,4 +113,4 @@ private:
     QSharedPointer<Robots> robots;
 };
 
-#endif // DISPLAYSELECTEDPOINT_H
+#endif /// DISPLAYSELECTEDPOINT_H

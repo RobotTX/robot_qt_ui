@@ -32,10 +32,13 @@ void CmdRobotWorker::connectSocket(){
 
     /// Connect the signal readyRead which tell us when data arrived to the function that treat them
     connect(&(*socket), SIGNAL(readyRead()), this, SLOT(readTcpDataSlot()));
+
     /// Connect the signal connected which trigger when we are connected to the host
     connect(&(*socket), SIGNAL(connected()), this, SLOT(connectedSlot()));
+
     /// Connect the signal disconnected which trigger when we are disconnected from the host
     connect(&(*socket), SIGNAL(disconnected()), this, SLOT(disconnectedSlot()));
+
     /// Connect the signal when an error occurs with the socket, to react accordingly
     connect(&(*socket), SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(errorConnectionSlot(QAbstractSocket::SocketError)));
 
@@ -63,6 +66,8 @@ void CmdRobotWorker::sendCommand(const QString cmd){
 void CmdRobotWorker::readTcpDataSlot(){
     QString commandAnswer = socket->readAll();
     qDebug() << "(Robot" << robotName << ") readTcpDataSlot :" << commandAnswer;
+    /// if the command contains "Connected" it means the robot has just connected in which case
+    /// we proceed a little differently (need to exchange home and path, modify settings page)
     if(commandAnswer.contains("Connected"))
         emit newConnection(robotName, commandAnswer);
     else
@@ -71,13 +76,11 @@ void CmdRobotWorker::readTcpDataSlot(){
 
 void CmdRobotWorker::connectedSlot(){
     qDebug() << "(Robot" << robotName << ") Connected";
-    std::ifstream laserFile((QDir::currentPath() + QDir::separator() + "laserActivated.txt").toStdString(), std::ios::in);
-    std::string activateLaser;
-    laserFile >> activateLaser;
 
     /// When we are connected, we send the ports to use for the other workers
+    /// in order to get laser feedback, robot position, map and map metadata
     QString portStr = "h \"" + QString::number(metadataPort) + "\" \"" + QString::number(robotPort) + "\" \"" +
-            QString::number(mapPort) + "\" \"" + QString::number(laserPort) + "\" \"" + QString::fromStdString(activateLaser) + "\" } ";
+            QString::number(mapPort) + "\" \"" + QString::number(laserPort) + "\" } ";
     qDebug() << "(Robot" << robotName << ") Sending ports : " << portStr;
     bool tmpBool(false);
     while(!tmpBool){
@@ -95,6 +98,7 @@ void CmdRobotWorker::connectedSlot(){
 void CmdRobotWorker::disconnectedSlot(){
     qDebug() << "(Robot" << robotName << ") Disconnected at ip" << ipAddress;
     /// On disconnection, we want to tell the MainWindow that we disconnected
+    /// and close the socket
     if(robotName.compare("") != 0){
         qDebug() << "(Robot" << robotName << ") Emitting robotIsDead";
         timer->stop();
@@ -107,6 +111,8 @@ void CmdRobotWorker::disconnectedSlot(){
 
 void CmdRobotWorker::pingSlot(void){
     qDebug()<< "(Robot" << robotName << ") Received the ping";
+    /// the timer starts, if the next ping does not arrive before the timer equals a certain value
+    /// the communication with the robot will be considered lost and the connection will close
     timer->start();
     timeCounter = 0;
 }
@@ -114,6 +120,8 @@ void CmdRobotWorker::pingSlot(void){
 void CmdRobotWorker::timerSlot(void){
     timeCounter++;
     qDebug()<< "(Robot" << robotName << ") Did not receive any ping from this robot for" << timeCounter << "seconds";
+    /// if the application has lost the connection with the robot for a time > ROBOT_TIMER
+    /// the socket is closed
     if(timeCounter >= ROBOT_TIMER && socket->isOpen())
         socket->close();
 }

@@ -37,6 +37,7 @@ void LocalMapWorker::stopWorker(){
 void LocalMapWorker::readTcpDataSlot(){
     data.append(socket->readAll());
 
+    /// parameters of the laser scans
     float angle_min, angle_max, angle_increment;
     QVector<float> ranges;
 

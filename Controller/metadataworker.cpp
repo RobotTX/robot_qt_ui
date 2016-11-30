@@ -1,10 +1,7 @@
 #include "metadataworker.h"
 #include <QThread>
 
-MetadataWorker::MetadataWorker(const QString newipAddress, const int newPort){
-    ipAddress = newipAddress;
-    port = newPort;
-}
+MetadataWorker::MetadataWorker(const QString newipAddress, const int newPort): ipAddress(newipAddress), port(newPort) {}
 
 MetadataWorker::~MetadataWorker(){
     stopWorker();
@@ -47,7 +44,6 @@ void MetadataWorker::readTcpDataSlot(){
 }
 
 void MetadataWorker::errorConnectionSlot(QAbstractSocket::SocketError error){
-    //qDebug() << "(MetadataWorker) Error while connecting :" << error;
     switch (error) {
     case(QAbstractSocket::ConnectionRefusedError):
         QThread::sleep(1);

@@ -105,8 +105,6 @@ void DisplaySelectedPointRobots::removeAllPathButtons(){
         delete child->widget();
         delete child;
     }
-
-    qDebug() << "DisplaySelectedPointRobots::removeAllPathButtons yo" << pathBtnGroup->buttons().size() << pathBtnLayout->children().size();
 }
 
 void DisplaySelectedPointRobots::robotBtnClicked(){
