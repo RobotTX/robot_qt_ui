@@ -41,7 +41,7 @@ public:
      * @param mapArrays
      * Create the QImage mapImage from an array of byte
      */
-    void setMapFromArray(const QByteArray& mapArrays);
+    void setMapFromArray(const QByteArray& mapArrays, bool fromPgm);
 
     /**
      * @brief setMapFromFile

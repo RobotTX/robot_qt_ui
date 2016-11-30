@@ -13,10 +13,17 @@ void Map::setMapFromFile(const QString fileName){
     height = mapImage.height();
 }
 
-void Map::setMapFromArray(const QByteArray& mapArrays){
+void Map::setMapFromArray(const QByteArray& mapArrays, bool fromPgm){
     qDebug() << "Map::setMapFromArray called" << mapArrays.size();
     mapImage = QImage(width, height, QImage::Format_Grayscale8);
     uint32_t index = 0;
+
+    int shift = 0;
+    int sign = 1;
+    if(!fromPgm){
+        shift = height-1;
+        sign = -1;
+    }
 
     /// We set each pixel of the image, the data received being
     for(int i = 0; i < mapArrays.size(); i+=5){
@@ -26,8 +33,7 @@ void Map::setMapFromArray(const QByteArray& mapArrays){
                         + static_cast<uint32_t> (static_cast<uint8_t> (mapArrays.at(i+3)) << 8) + static_cast<uint32_t> (static_cast<uint8_t> (mapArrays.at(i+4)));
 
         for(int j = 0; j < (int) count; j++){
-            //mapImage.setPixelColor(QPoint((int) (index%width), height-1-((int) (index/width))), QColor((int) color, color, color));
-            mapImage.setPixelColor(QPoint((int) (index%width), (int) (index/width)), QColor((int) color, color, color));
+            mapImage.setPixelColor(QPoint(static_cast<int>(index%width), shift + sign * (static_cast<int>(index/width))), QColor(color, color, color));
             index++;
         }
     }

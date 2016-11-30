@@ -78,12 +78,17 @@ std::vector<uint8_t> compress(std::vector<int8_t> map, int map_size, bool fromPg
 	my_map.push_back((count & 0x0000ff00) >> 8);
 	my_map.push_back((count & 0x000000ff));
 
+
 	// the user knows that when 254 is encountered a map has entirely been received
 	my_map.push_back(254);
 	my_map.push_back(254);
 	my_map.push_back(254);
 	my_map.push_back(254);
-	my_map.push_back(254);
+	
+	if(fromPgm)
+		my_map.push_back(254);
+	else
+		my_map.push_back(253);
 
 	return my_map;
 }
@@ -160,6 +165,7 @@ bool sendOnceMap(gobot_software::Port::Request &req,
 				my_map.push_back(static_cast<int8_t>(line.at(i)));
 			}
 		}
+
 		mapFile.close();
 		std::cout << "(Map) Got the whole map from file, about to compress and send it" << std::endl;
 		sendMap(compress(my_map, map_size, true));

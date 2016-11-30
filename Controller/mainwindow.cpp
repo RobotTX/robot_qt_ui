@@ -420,31 +420,18 @@ void MainWindow::updateRobot(const QString ipAddress, const float posX, const fl
 
 void MainWindow::launchScan(bool checked){
     qDebug() << "MainWindow::launchScan called" << checked;
-    /*if(selectedRobot != NULL){
+    if(selectedRobot != NULL){
         if(checked){
             int ret = openConfirmMessage("Warning, scanning a new map will erase all previously created points, paths and selected home of robots");
             switch(ret){
                 case QMessageBox::Cancel :
-                    qDebug() << "clicked no";
+                    qDebug() << "MainWindow::launchScan clicked cancel";
                     editSelectedRobotWidget->getScanBtn()->setChecked(false);
                     editSelectedRobotWidget->setEnableAll(true);
                 break;
                 case QMessageBox::Ok :{
                     QString ip = selectedRobot->getRobot()->getIp();
-                    qDebug() << "Trying to connect to : " << ip << ", starting the map worker and thread";
-
-                    mapWorker = new ScanMapWorker(ip, PORT_MAP, QDir::currentPath() + QDir::separator() + QString(MAP_FILE));
-
-                    connect(mapWorker, SIGNAL(valueChangedMap(QByteArray)),
-                            this , SLOT(updateMap(QByteArray)));
-                    connect(mapWorker, SIGNAL(newScanSaved(QString)),
-                            this , SLOT(sendNewMapToRobots(QString)));
-                    connect(&mapThread, SIGNAL(finished()), mapWorker, SLOT(deleteLater()));
-                    connect(this, SIGNAL(startMapWorker()), mapWorker, SLOT(connectSocket()));
-                    connect(this, SIGNAL(stopMapWorker()), mapWorker, SLOT(stopWorker()));
-                    mapWorker->moveToThread(&mapThread);
-                    mapThread.start();
-                    emit startMapWorker();
+                    qDebug() << "MainWindow::launchScan Trying to connect to : " << ip << ", starting the map worker and thread";
 
                     if(commandController->sendCommand(selectedRobot->getRobot(), QString("e"))){
 
@@ -461,7 +448,6 @@ void MainWindow::launchScan(bool checked){
                     } else {
                         editSelectedRobotWidget->getScanBtn()->setChecked(false);
                         topLayout->setLabel(TEXT_COLOR_DANGER, "Failed to start to scan a map, please try again");
-                        stopMapThread();
                     }
                 }
                 break;
@@ -472,15 +458,12 @@ void MainWindow::launchScan(bool checked){
             }
         } else {
             if(commandController->sendCommand(selectedRobot->getRobot(), QString("f"))){
-                // TODO Need to wait for the last map ?
-                qDebug() << "Stopped scanning the map";
+                qDebug() << "MainWindow::launchScan Stopped scanning the map";
                 editSelectedRobotWidget->getScanBtn()->setText("Scan a map");
 
                 QPointer<RobotView> _tmpRobot = selectedRobot;
                 hideAllWidgets();
                 selectedRobot = _tmpRobot;
-
-                stopMapThread();
 
                 editSelectedRobotWidget->setSelectedRobot(selectedRobot);
                 editSelectedRobotWidget->setEnableAll(true);
@@ -494,11 +477,9 @@ void MainWindow::launchScan(bool checked){
             }
         }
     } else {
-
         topLayout->setLabelDelay(TEXT_COLOR_DANGER, "You must first click a robot on the map to establish a connection",4000);
-
-        qDebug() << "Select a robot first";
-    }*/
+        qDebug() << "MainWindow::launchScan You need to select a robot first";
+    }
 }
 
 void MainWindow::newScanningGoalSlot(double x, double y){
@@ -1860,9 +1841,9 @@ void MainWindow::updateMetadata(const int width, const int height, const float r
     }
 }
 
-void MainWindow::updateMap(const QByteArray mapArray){
+void MainWindow::updateMap(const QByteArray mapArray, bool fromPgm){
     /// TODO check if scanning or not and act accordingly
-    map->setMapFromArray(mapArray);
+    map->setMapFromArray(mapArray, fromPgm);
     QPixmap pixmap = QPixmap::fromImage(map->getMapImage());
     mapPixmapItem->setPixmap(pixmap);
     /// WARNING might make the app send the map to every connected robot everytime we receive one while scanning

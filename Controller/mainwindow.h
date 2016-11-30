@@ -149,7 +149,7 @@ private slots:
     void sendPathSelectedRobotSlot(const QString groupName, const QString pathName);
     void updateRobot(const QString ipAddress, const float posX, const float posY, const float ori);
     void updateMetadata(const int width, const int height, const float resolution, const float originX, const float originY);
-    void updateMap(const QByteArray mapArray);
+    void updateMap(const QByteArray mapArray, bool fromPgm);
     void launchScan(bool checked);
     void quit(void);
     void setSelectedRobot(QPointer<RobotView> robotView);
