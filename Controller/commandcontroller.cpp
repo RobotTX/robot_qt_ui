@@ -7,8 +7,8 @@
 #include <QFocusEvent>
 #include <QApplication>
 
-CommandController::CommandController(QWidget *parent) : QObject(parent), robotName(""){
-    messageBox = QSharedPointer<CommandMessageBox> (new CommandMessageBox());
+CommandController::CommandController(QWidget *parent) : QObject(parent), robotName(""), messageBox(){
+    messageBox.setWindowTitle("Processing a command");
 }
 
 bool CommandController::sendCommand(QPointer<Robot> robot, QString cmd){
@@ -105,12 +105,13 @@ void CommandController::openMessageBox(QStringList listCmd){
         msg = "Unknown command " + cmd.at(0).unicode();
         break;
     }
-
-    messageBox.reset(new CommandMessageBox());
-    messageBox->setWindowTitle("Processing a command");
-    messageBox->setText(msg);
-    connect(messageBox.data(), SIGNAL(hideBox()), this, SLOT(userStopped()));
-    messageBox->exec();
+/*
+    if(messageBox)
+        messageBox.reset(new CommandMessageBox());
+*/
+    messageBox.setText(msg);
+    connect(&messageBox, SIGNAL(hideBox()), this, SLOT(userStopped()));
+    messageBox.show();
 }
 
 bool CommandController::robotWaitForAnswer(QStringList listCmd){
@@ -174,7 +175,7 @@ void CommandController::cmdAnswerSlot(QString answer){
     if(list.size() == 2){
         if(list.at(0).compare(cmdName) == 0){
             cmdAnswer = answer;
-            messageBox->close();
+            messageBox.hide();
         } else {
             qDebug() << "CommandController::robotWaitForAnswer Got an answer to the wrong command :" << list;
         }
@@ -188,12 +189,12 @@ void CommandController::robotDisconnected(QString _robotName){
     if(_robotName.compare(robotName)){
         qDebug() << "CommandController::robotDisconnected The robot" << robotName << " was waiting for an answer to the command" << cmdName << "but disconnected";
         cmdAnswer = "cmd failed";
-        messageBox->close();
+        messageBox.hide();
     }
 }
 
 void CommandController::userStopped(){
     qDebug() << "CommandController::userStopped The user pressed a button to stop to wait";
     cmdAnswer = "cmd failed";
-    messageBox->close();
+    messageBox.hide();
 }

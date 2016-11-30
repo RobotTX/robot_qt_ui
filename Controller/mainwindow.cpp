@@ -271,6 +271,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
     /// to turn on the laser feedback or not ( to display obstacles in real time )
     connect(settingsWidget, SIGNAL(laserFeedBack(QString, bool)), mapPixmapItem->getObstaclesPainter(), SLOT(turnOnLaserFeedBack(QString, bool)));
+    connect(settingsWidget->getChooseMapBox(), SIGNAL(currentIndexChanged(int)), this, SLOT(settingMapChoiceSlot(int)));
 
     mainLayout->addLayout(bottom);
     //graphicsView->setStyleSheet("CustomQGraphicsView {background-color: " + background_map_view + "}");
@@ -1471,20 +1472,75 @@ void MainWindow::robotIsAliveSlot(QString hostname, QString ip, QString mapId, Q
             fileWrite.close();
             qDebug() << "RobotsNameMap updated" << robots->getRobotsNameMap();
         }
-    }
 
-    /// Check if the robot has the current map
-    //qDebug() << "Robot" << hostname << "comparing ids" << mapId << "and" << map->getMapId().toString();
-    if(mapId.compare(map->getMapId().toString()) == 0){
-        qDebug() << "Robot" << hostname << "has the current map";
-    } else {
-        // TODO Send or receive the map depending on settings
-        QDateTime mapDateTime = QDateTime::fromString(mapDate, "yyyy-MM-dd-hh-mm-ss");
-        //qDebug() << "Robot" << hostname << "comparing date" << mapDateTime << "and" << map->getDateTime();
-        if(mapDateTime <= map->getDateTime()){
-            qDebug() << "Robot" << hostname << "has an older map";
+
+        /// Check if the robot has the current map
+        //qDebug() << "Robot" << hostname << "comparing ids" << mapId << "and" << map->getMapId().toString();
+        if(mapId.compare(map->getMapId().toString()) == 0){
+            qDebug() << "Robot" << hostname << "has the current map";
         } else {
-            qDebug() << "Robot" << hostname << "has a newer map";
+            QDateTime mapDateTime = QDateTime::fromString(mapDate, "yyyy-MM-dd-hh-mm-ss");
+            //qDebug() << "Robot" << hostname << "comparing date" << mapDateTime << "and" << map->getDateTime();
+
+            bool robotOlder = (mapDateTime <= map->getDateTime());
+            if(robotOlder){
+                qDebug() << "Robot" << hostname << "has a different and older map" << settingMapChoice;
+            } else {
+                qDebug() << "Robot" << hostname << "has a different and newer map" << settingMapChoice;
+            }
+
+            switch(settingMapChoice){
+                case SettingsWidget::ALWAYS_NEW:
+                    if(robotOlder){
+                        robot->sendNewMap(map);
+                    } else {
+                        commandController->sendCommand(robot, QString("s"));
+                    }
+                break;
+                case SettingsWidget::ALWAYS_OLD:
+                    if(robotOlder){
+                        commandController->sendCommand(robot, QString("s"));
+                    } else {
+                        robot->sendNewMap(map);
+                    }
+                break;
+                case SettingsWidget::ALWAYS_ROBOT:
+                    commandController->sendCommand(robot, QString("s"));
+                break;
+                case SettingsWidget::ALWAYS_APPLICATION:
+                    robot->sendNewMap(map);
+                break;
+                default:
+                    QMessageBox msgBox;
+                    QPushButton* robotButton;
+                    QPushButton* appButton;
+
+                    if(robotOlder)
+                        msgBox.setText("The robot " + hostname + " has a new map.");
+                    else
+                        msgBox.setText("The robot " + hostname + " has an old map.");
+
+                    msgBox.setInformativeText("Which map do you want to use ?");
+                    robotButton = msgBox.addButton(tr("Robot"), QMessageBox::AcceptRole);
+                    appButton = msgBox.addButton(tr("Application"), QMessageBox::RejectRole);
+
+                    msgBox.exec();
+
+                    if (msgBox.clickedButton() == robotButton) {
+                        qDebug() << "Robot" << hostname << "using the map from the robot";
+                        commandController->sendCommand(robot, QString("s"));
+                    } else if (msgBox.clickedButton() == appButton) {
+                        qDebug() << "Robot" << hostname << "using the map from the app";
+                        robot->sendNewMap(map);
+                    }
+                    delete robotButton;
+                    robotButton = 0;
+                    delete appButton;
+                    appButton = 0;
+                break;
+            }
+
+
         }
     }
 
@@ -4711,6 +4767,11 @@ void MainWindow::centerMap(){
 void MainWindow::settingBtnSlot(){
     qDebug() << "MainWindow::settingBtnSlot called";
     settingsWidget->show();
+}
+
+void MainWindow::settingMapChoiceSlot(int choice){
+    qDebug() << "MainWindow::settingMapChoiceSlot called";
+    settingMapChoice = choice;
 }
 
 void MainWindow::setTemporaryMessageTop(const QString type, const QString message, const int ms){

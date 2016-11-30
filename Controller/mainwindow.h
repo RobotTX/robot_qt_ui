@@ -286,6 +286,7 @@ private slots:
     void saveEditMapSlot();
 
     void testFunctionSlot();
+    void settingMapChoiceSlot(int);
 
 protected:
     bool changeRobotName(QString name);
@@ -336,6 +337,7 @@ private:
     QPointer<EditMapWidget> editMapWidget;
 
     SettingsWidget* settingsWidget;
+    int settingMapChoice;
 };
 
 #endif /// MAINWINDOW_H

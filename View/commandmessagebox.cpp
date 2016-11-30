@@ -8,7 +8,7 @@ CommandMessageBox::CommandMessageBox(QWidget *parent) : QMessageBox(parent){
     /// non-modal means it won't block other widgets from receiving slots while the msg box is opened
     setModal(false);
     abortButton = addButton(QMessageBox::Abort);
-    //setAttribute(Qt::WA_DeleteOnClose);
+    setAttribute(Qt::WA_DeleteOnClose);
 }
 
 void CommandMessageBox::show(){
@@ -37,4 +37,3 @@ void CommandMessageBox::done(int r){
 void CommandMessageBox::closeEvent(QCloseEvent *e){
     //QMessageBox::closeEvent(e);
 }
-

@@ -45,9 +45,11 @@ SettingsWidget::SettingsWidget(QSharedPointer<Robots> robots, QWidget *parent): 
      * to decide if he wants to use the map stored on the robot or on the application
      * */
     chooseMapBox = new QComboBox(this);
-    chooseMapBox->insertItem(0, "When a robot connects, always choose to use its map");
-    chooseMapBox->insertItem(1, "When a robot connects, always use the map of the application");
-    chooseMapBox->insertItem(2, "when a robot connects, always ask which map I want to use");
+    chooseMapBox->insertItem(ALWAYS_ASK, "Always ask which map I want to use");
+    chooseMapBox->insertItem(ALWAYS_NEW, "Always use the newest map");
+    chooseMapBox->insertItem(ALWAYS_OLD, "Always use the oldest map");
+    chooseMapBox->insertItem(ALWAYS_ROBOT, "Always use the map of the robot");
+    chooseMapBox->insertItem(ALWAYS_APPLICATION, "Always use the map of this application");
 
     menuLayout->addWidget(chooseMapBox);
 }

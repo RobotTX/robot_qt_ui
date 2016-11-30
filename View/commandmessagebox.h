@@ -14,9 +14,9 @@ public:
 
 protected:
     void closeEvent(QCloseEvent *e);
-    void timerSlot();
 
 public slots:
+    void timerSlot();
     void done(int r);
 
 signals:
