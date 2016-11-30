@@ -41,17 +41,23 @@ void ScanMapWorker::readTcpDataSlot(){
     /// The TCP protocol sending blocks of data, a map is defined by a random number
     /// of blocks, so we wait till the last byte of a block is -2, meaning we have received
     /// a complete map
-    if(data.size() >= 5 && static_cast<uint8_t>(data.at(data.size()-5)) == 254 && static_cast<uint8_t>(data.at(data.size()-4)) == 254 && static_cast<uint8_t>(data.at(data.size()-3)) == 254
-            && static_cast<uint8_t>(data.at(data.size()-2)) == 254 && static_cast<uint8_t>(data.at(data.size()-1)) == 254){
+    if(data.size() >= 5 && static_cast<uint8_t>(data.at(data.size()-5)) == 254 && static_cast<uint8_t>(data.at(data.size()-4)) == 254
+            && static_cast<uint8_t>(data.at(data.size()-3)) == 254 && static_cast<uint8_t>(data.at(data.size()-2)) == 254 &&
+            (static_cast<uint8_t>(data.at(data.size()-1)) == 253 || static_cast<uint8_t>(data.at(data.size()-1)) == 254)){
 
-        //qDebug() << "(Map) Map of" << data.size() << "bytes received";
+        //qDebug() << "(ScanMapWorker) Map of" << data.size() << "bytes received";
+
+
+        /// Emit the signal valueChangedMap, meaning that we finished to receive a whole map
+        /// and we can display it
+        bool fromPgm = false;
+        if(static_cast<uint8_t>(data.at(data.size()-1)) == 254)
+            fromPgm = true;
 
         /// Remove the end bytes 254 254 254 254 254 as we no longer need them
         data.remove(data.size()-5, 5);
 
-        /// Emit the signal valueChangedMap, meaning that we finished to receive a whole map
-        /// and we can display it
-        emit valueChangedMap(data);
+        emit valueChangedMap(data, fromPgm);
 
         /// Clear the Vector that contain the map, once it has been treated
         data.clear();
