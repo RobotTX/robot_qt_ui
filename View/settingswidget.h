@@ -4,6 +4,8 @@
 class QVBoxLayout;
 class QCheckBox;
 class QButtonGroup;
+class QLabel;
+class QComboBox;
 
 #include "Model/robots.h"
 #include <QMap>
@@ -13,6 +15,9 @@ class SettingsWidget: public QWidget
 {
     Q_OBJECT
 public:
+
+    enum CHOICE { ALWAYS_ROBOT, ALWAYS_APPLICATION, ALWAYS_ASK };
+
     SettingsWidget(QSharedPointer<Robots> robots, QWidget *parent = 0);
 
     void addRobot(const QString robotIPAddress, const QString robot_name);
@@ -28,9 +33,10 @@ private:
     static int currentId;
     QVBoxLayout* menuLayout;
     QButtonGroup* robotsLaserButtonGroup;
-
+    QLabel* feedBackLabel;
     /// to map robot IP addresses and their checkboxes ids
     QMap<int, QString> iDtoIPMap;
+    QComboBox* chooseMapBox;
 };
 
 #endif /// SETTINGSWIDGET_H
