@@ -11,9 +11,6 @@ void LocalMapWorker::connectSocket(){
 
     socket = QPointer<QTcpSocket>(new QTcpSocket());
 
-    /// Connect the signal <disconnected> which is triggered when we disconnect from the host
-    connect(&(*socket), SIGNAL(disconnected()), this, SLOT(disconnectedSlot()));
-
     /// Connect the signal <readyRead> which tells us when data arrived to the function that process it
     connect(&(*socket), SIGNAL(readyRead()), this, SLOT(readTcpDataSlot()));
 
@@ -84,12 +81,7 @@ void LocalMapWorker::readTcpDataSlot(){
     /// angle_max and angle_increment in which case we receive positive values instead which correspond to ranges
     /// that's why we check that the angle_min is negative before transmitting the data
     if(angle_min < 0)
-
         emit laserValues(angle_min, angle_max, angle_increment, ranges, ipAddress);
-}
-
-void LocalMapWorker::disconnectedSlot(){
-    qDebug() << "(Map) Disconnected";
 }
 
 void LocalMapWorker::errorConnectionSlot(QAbstractSocket::SocketError error){

@@ -47,7 +47,6 @@ void ScanMapWorker::readTcpDataSlot(){
 
         //qDebug() << "(ScanMapWorker) Map of" << data.size() << "bytes received";
 
-
         /// Emit the signal valueChangedMap, meaning that we finished to receive a whole map
         /// and we can display it
         bool fromPgm = false;
@@ -69,7 +68,6 @@ void ScanMapWorker::disconnectedSlot(){
 }
 
 void ScanMapWorker::errorConnectionSlot(QAbstractSocket::SocketError error){
-    //qDebug() << "(ScanMapWorker) Error while connecting :" << error;
     switch (error) {
     case(QAbstractSocket::ConnectionRefusedError):
         QThread::sleep(1);

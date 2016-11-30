@@ -24,8 +24,6 @@ void MetadataWorker::connectSocket(){
 
     /// Connect the signal when an error occurs with the socket, to react accordingly
     connect(&(*socket), SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(errorConnectionSlot(QAbstractSocket::SocketError)));
-    /// Connect the signal disconnected which trigger when we are disconnected from the host
-    connect(&(*socket), SIGNAL(disconnected()),this, SLOT(disconnectedSlot()));
     /// Connect the signal readyRead which tell us when data arrived to the function that treat them
     connect(&(*socket), SIGNAL(readyRead()), this, SLOT(readTcpDataSlot()));
 
@@ -47,11 +45,6 @@ void MetadataWorker::readTcpDataSlot(){
                               list.at(2).toFloat(), list.at(3).toFloat(),
                               list.at(4).toFloat());
 }
-
-void MetadataWorker::disconnectedSlot(){
-    qDebug() << "(Robot Metadata thread" << ipAddress << ") Disconnected";
-}
-
 
 void MetadataWorker::errorConnectionSlot(QAbstractSocket::SocketError error){
     //qDebug() << "(MetadataWorker) Error while connecting :" << error;

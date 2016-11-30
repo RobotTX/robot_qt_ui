@@ -23,8 +23,6 @@ void RobotPositionWorker::connectSocket(){
 
     socket = QPointer<QTcpSocket>(new QTcpSocket());
 
-    /// Connect the signal disconnected which trigger when we are disconnected from the host
-    connect(&(*socket), SIGNAL(disconnected()),this, SLOT(disconnectedSlot()));
     /// Connect the signal readyRead which tell us when data arrived to the function that treat them
     connect(&(*socket), SIGNAL(readyRead()), this, SLOT(readTcpDataSlot()));
     /// Connect the signal when an error occurs with the socket, to react accordingly
@@ -45,10 +43,6 @@ void RobotPositionWorker::readTcpDataSlot(){
     QStringList list = data.split(rx, QString::SkipEmptyParts);
 
     emit valueChangedRobot(ipAddress, list.at(0).toDouble(), list.at(1).toDouble(), list.at(2).toDouble());
-}
-
-void RobotPositionWorker::disconnectedSlot(){
-    qDebug() << "(Robot pos thread" << ipAddress << ") Disconnected";
 }
 
 void RobotPositionWorker::errorConnectionSlot(QAbstractSocket::SocketError error){

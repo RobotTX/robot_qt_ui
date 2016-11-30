@@ -124,7 +124,6 @@ void CmdRobotWorker::changeRobotNameSlot(QString name){
 }
 
 void CmdRobotWorker::errorConnectionSlot(QAbstractSocket::SocketError error){
-    //qDebug() << "(CmdRobotWorker) Error while connecting :" << error;
     switch (error) {
     case(QAbstractSocket::ConnectionRefusedError):
         QThread::sleep(1);

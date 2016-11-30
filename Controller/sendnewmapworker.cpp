@@ -19,8 +19,6 @@ void SendNewMapWorker::connectSocket(){
 
     socket = QPointer<QTcpSocket>(new QTcpSocket());
 
-    /// Connect the signal disconnected which trigger when we are disconnected from the host
-    connect(&(*socket), SIGNAL(disconnected()), this, SLOT(disconnectedSlot()));
     /// Connect the signal readyRead which tell us when data arrived to the function that treat them
     connect(&(*socket), SIGNAL(readyRead()), this, SLOT(readTcpDataSlot()));
     /// Connect the signal when an error occurs with the socket, to react accordingly
@@ -125,12 +123,7 @@ void SendNewMapWorker::writeTcpDataSlot(QString mapId, QString date, QString met
 
 }
 
-void SendNewMapWorker::disconnectedSlot(){
-    qDebug() << "(New Map) Disconnected at ip" << ipAddress;
-}
-
 void SendNewMapWorker::errorConnectionSlot(QAbstractSocket::SocketError error){
-    //qDebug() << "(SendNewMapWorker) Error while connecting :" << error;
     switch (error) {
     case(QAbstractSocket::ConnectionRefusedError):
         QThread::sleep(1);
