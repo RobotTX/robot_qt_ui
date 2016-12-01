@@ -24,23 +24,27 @@ public:
     void removeRobot(const QString robotIPAddress);
 
     QComboBox* getChooseMapBox(void) const { return chooseMapBox; }
-
-
-private slots:
-    void emitLaserSettingChange(int robotId, bool turnOnLaserFeedBack);
+    int getSettingMapChoice(void) const { return settingMapChoice; }
+    QMap<int, QPair<QString, bool>> getIDtoIPMap(void) const { return idToIpMap; }
 
 signals:
-    void laserFeedBack(QString, bool);
+    void activateLaser(QString, bool);
+
+private slots:
+    void applySlot();
+    void cancelSlot();
+    void saveSlot();
 
 private:
     static int currentId;
-    QVBoxLayout* menuLayout;
+    QVBoxLayout* robotsLaserLayout;
     QButtonGroup* robotsLaserButtonGroup;
     QLabel* feedBackLabel;
     /// to map robot IP addresses and their checkboxes ids
-    QMap<int, QString> iDtoIPMap;
+    QMap<int, QPair<QString, bool>> idToIpMap;
     QLabel* chooseMapLabel;
     QComboBox* chooseMapBox;
+    int settingMapChoice;
 };
 
 #endif /// SETTINGSWIDGET_H

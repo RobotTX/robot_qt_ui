@@ -51,7 +51,9 @@ bool stopMap();
 void server(unsigned short port, ros::NodeHandle n);
 void getPorts(boost::shared_ptr<tcp::socket> sock, ros::NodeHandle n);
 bool sendMessageToPc(boost::shared_ptr<tcp::socket> sock, std::string message);
+bool startLaserData();
 bool sendLaserData();
-bool stopSendingLaserData();
+bool stopSendLaserData();
+bool stopLaserData();
 
 #endif

@@ -132,10 +132,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     editedPointView = QSharedPointer<PointView>();
     robotServerWorker = NULL;
     commandController = new CommandController(this);
-
-    // TODO get this param from a file
-    settingMapChoice = SettingsWidget::ALWAYS_ASK;
-
     robots = QSharedPointer<Robots>(new Robots());
 
     /// Create the graphic item of the map
@@ -157,7 +153,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     initializeRobots();
 
     /// our settings page
-    settingsWidget = new SettingsWidget(robots, settingMapChoice);
+    settingsWidget = new SettingsWidget(robots, SettingsWidget::ALWAYS_ASK);
 
     scene->setSceneRect(0, 0, 800, 600);
 
@@ -271,8 +267,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     ///  ------------------------------------------------------- ROBOTS CONNECTS ----------------------------------------------------------
 
     /// to turn on the laser feedback or not ( to display obstacles in real time )
-    connect(settingsWidget, SIGNAL(laserFeedBack(QString, bool)), mapPixmapItem->getObstaclesPainter(), SLOT(turnOnLaserFeedBack(QString, bool)));
-    connect(settingsWidget->getChooseMapBox(), SIGNAL(currentIndexChanged(int)), this, SLOT(settingMapChoiceSlot(int)));
+    //connect(settingsWidget, SIGNAL(laserFeedBack(QString, bool)), mapPixmapItem->getObstaclesPainter(), SLOT(turnOnLaserFeedBack(QString, bool)));
+    connect(settingsWidget, SIGNAL(activateLaser(QString, bool)), this, SLOT(activateLaserSlot(QString, bool)));
 
     mainLayout->addLayout(bottom);
     //graphicsView->setStyleSheet("CustomQGraphicsView {background-color: " + background_map_view + "}");
@@ -4365,11 +4361,6 @@ void MainWindow::settingBtnSlot(){
     settingsWidget->show();
 }
 
-void MainWindow::settingMapChoiceSlot(int choice){
-    qDebug() << "MainWindow::settingMapChoiceSlot called";
-    settingMapChoice = choice;
-}
-
 void MainWindow::setTemporaryMessageTop(const QString type, const QString message, const int ms){
     setMessageTop(type, message);
     delay(ms);
@@ -4546,14 +4537,14 @@ void MainWindow::updateMapInfo(const QString robot_name, QString mapId, QString 
 
         bool robotOlder = (mapDateTime <= map->getDateTime());
         if(robotOlder){
-            qDebug() << "Robot" << robot_name << "has a different and older map" << settingMapChoice;
+            qDebug() << "Robot" << robot_name << "has a different and older map";
         } else {
-            qDebug() << "Robot" << robot_name << "has a different and newer map" << settingMapChoice;
+            qDebug() << "Robot" << robot_name << "has a different and newer map";
         }
 
         QPointer<Robot> robot = robots->getRobotViewByName(robot_name)->getRobot();
 
-        switch(settingMapChoice){
+        switch(settingsWidget->getSettingMapChoice()){
             case SettingsWidget::ALWAYS_NEW:
                 if(robotOlder){
                     robot->sendNewMap(map);
@@ -4965,4 +4956,20 @@ void MainWindow::testFunctionSlot(){
     qDebug() << "MainWindow::testFunctionSlot called";
     if(robots->getRobotsVector().size() > 0)
         commandController->sendCommand(robots->getRobotsVector().at(0)->getRobot(), QString("s"));
+}
+
+void MainWindow::activateLaserSlot(QString ipAddress, bool activate){
+    QPointer<RobotView> robotView = robots->getRobotViewByIp(ipAddress);
+    if(robotView && robotView->getRobot()){
+        if(activate){
+            commandController->sendCommand(robotView->getRobot(), QString("q"));
+        } else {
+            commandController->sendCommand(robotView->getRobot(), QString("r"));
+            mapPixmapItem->getObstaclesPainter()->clearRobotObstacles(ipAddress);
+        }
+
+    } else {
+        qDebug() << "MainWindow::activateLaserSlot wants to activate the laser of an unknown robot on ip" << ipAddress;
+        assert(false);
+    }
 }

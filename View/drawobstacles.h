@@ -6,8 +6,7 @@
 #include <QGraphicsSceneMouseEvent>
 #include "Model/robots.h"
 
-class DrawObstacles : public QObject, public QGraphicsItem
-{
+class DrawObstacles : public QObject, public QGraphicsItem {
     Q_OBJECT
     Q_INTERFACES(QGraphicsItem)
 
@@ -29,6 +28,7 @@ protected:
 
 public:
     void removeRobotObstacles(const QString ipAddress);
+    void clearRobotObstacles(const QString ipAddress);
 
 private slots:
     void drawObstacles(float angle_min, float angle_max, float angle_increment, const QVector<float> &ranges, QString ipAddress);
@@ -37,16 +37,12 @@ private slots:
     /// by the IP address are stored
     void addNewRobotObstacles(QString ipAddress);
 
-    /// to turn on / off the laser feedback of the given robot (ipAddress)
-    void turnOnLaserFeedBack(const QString ipAddress, const bool activate);
-
 private:
     QSize size;
     QSharedPointer<Robots> robots;
     /// keys are ip addresses of robots
-    /// each robot has its own obstacles to draw represented by a vector of QPointF and a bool value (whether or not
-    /// the user actually wants to display the obstacles
-    QMap<QString, QPair<QVector<QPointF>, bool>> obstacles;
+    /// each robot has its own obstacles to draw represented by a vector of QPointF
+    QMap<QString, QVector<QPointF>> obstacles;
 };
 
 #endif /// DRAWOBSTACLES_H

@@ -272,7 +272,7 @@ private slots:
     void saveEditMapSlot();
 
     void testFunctionSlot();
-    void settingMapChoiceSlot(int);
+    void activateLaserSlot(QString, bool);
 
 protected:
     bool changeRobotName(QString name);
@@ -323,7 +323,6 @@ private:
     QPointer<EditMapWidget> editMapWidget;
 
     SettingsWidget* settingsWidget;
-    int settingMapChoice;
 };
 
 #endif /// MAINWINDOW_H

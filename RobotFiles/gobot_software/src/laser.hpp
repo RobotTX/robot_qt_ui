@@ -29,4 +29,9 @@ void sendLaserData(const std::vector<float>& scan);
 
 bool stopSendingLaserData(gobot_software::Port::Request &req, gobot_software::Port::Response &res);
 
+bool sendLaser(gobot_software::Port::Request &req, gobot_software::Port::Response &res);
+
+bool stopSendLaser(gobot_software::Port::Request &req, gobot_software::Port::Response &res);
+
+
 #endif
