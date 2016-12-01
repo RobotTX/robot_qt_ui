@@ -1458,11 +1458,14 @@ void MainWindow::setNewHome(QString homeName){
             if(editSelectedRobotWidget->getHome()){
                 editSelectedRobotWidget->getHome()->getPoint()->setHome(Point::PERM);
                 editSelectedRobotWidget->getHome()->setPixmap(PointView::PixmapType::NORMAL);
+                editSelectedRobotWidget->getHome()->getPoint()->setRobotName("");
             }
+
             savePoints(QDir::currentPath() + QDir::separator() + "points.xml");
 
             /// associates the robot to the point
             home->getPoint()->setRobotName(selectedRobot->getRobot()->getName());
+            home->getPoint()->setHome(Point::HOME);
 
             /// saves the position of the new home in the corresponding file
             QFileInfo homeFileInfo(QDir::currentPath(), "../gobot-software/robots_homes/" + selectedRobot->getRobot()->getName());
@@ -2395,6 +2398,7 @@ void MainWindow::displayPointEvent(QString name, double x, double y){
         pointView = points->findPathPointView(x, y);
 
     if(pointView){
+        qDebug() << "this point is a home" << pointView->getPoint()->isHome();
         if(!(*(pointView->getPoint()) == *(points->getTmpPointView()->getPoint()))){
             /// If the point is not a path or is a path but from a permanent point, we display the menu with informations on the point
             if(!(pointView->getPoint()->isPath() && pointView->getPoint()->getName().contains(PATH_POINT_NAME))){
@@ -2928,16 +2932,19 @@ void MainWindow::updatePoint(void){
         if(displaySelectedPointView->getPoint()->isHome()){
             /// if the point is the home of a robot, we update the file containing the home on the robot
             qDebug() << "MainWindow::updatePoint need to update if home";
-            if(sendHomeToRobot(robots->getRobotViewByName(displaySelectedPointView->getPoint()->getRobotName()),
+            if(robots->getRobotViewByName(displaySelectedPointView->getPoint()->getRobotName()) &&
+                    sendHomeToRobot(robots->getRobotViewByName(displaySelectedPointView->getPoint()->getRobotName()),
                             displaySelectedPointView)){
 
                 updateHomeFile(displaySelectedPointView->getPoint()->getRobotName(),
                                displaySelectedPointView->getPoint()->getPosition(),
                                QDateTime::currentDateTime().toString("yyyy-MM-dd-hh-mm-ss").split("-"));
 
-            } else
+            } else {
+                cancelEvent();
                 setMessageTop(TEXT_COLOR_DANGER, displaySelectedPointView->getPoint()->getRobotName() + " did not receive the updated coordinates of its new home. You may want to use the \"Assign a home\" button"
                                                                                                         "to send your robot its home again.");
+            }
         }
 
         /// so that you cannot edit a new name unless you click the edit button again
