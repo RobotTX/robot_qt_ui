@@ -410,14 +410,14 @@ void MainWindow::initializeRobots(){
 
 void MainWindow::updateRobot(const QString ipAddress, const float posX, const float posY, const float oriZ){
 
-    float newPosX = (-map->getOrigin().getX()+posX)/map->getResolution() + ROBOT_WIDTH;
-    float newPosY = map->getHeight()-(-map->getOrigin().getY()+posY)/map->getResolution()-ROBOT_WIDTH/2;
-    float ori = asin(-oriZ) * 360.0 / PI + 90;
+    /// need to first convert the coordinates that we receive from the robot
+    Position robotPositionInPixelCoordinates(convertRobotCoordinatesToPixelCoordinates(Position(posX, posY)));
+    float orientation = asin(-oriZ) * 360.0 / PI + 90;
 
     QPointer<RobotView> rv = robots->getRobotViewByIp(ipAddress);
     if(rv != NULL){
-        rv->setPosition(newPosX, newPosY);
-        rv->setOrientation(ori);
+        rv->setPosition(robotPositionInPixelCoordinates.getX(), robotPositionInPixelCoordinates.getY());
+        rv->setOrientation(orientation);
     } else {
         //qDebug() << "(updateRobot) Could not find a RobotView for the robot at ip" << ipAddress;
     }
@@ -1454,11 +1454,14 @@ void MainWindow::setNewHome(QString homeName){
             if(editSelectedRobotWidget->getHome()){
                 editSelectedRobotWidget->getHome()->getPoint()->setHome(Point::PERM);
                 editSelectedRobotWidget->getHome()->setPixmap(PointView::PixmapType::NORMAL);
+                editSelectedRobotWidget->getHome()->getPoint()->setRobotName("");
             }
+
             savePoints(QDir::currentPath() + QDir::separator() + "points.xml");
 
             /// associates the robot to the point
             home->getPoint()->setRobotName(selectedRobot->getRobot()->getName());
+            home->getPoint()->setHome(Point::HOME);
 
             /// saves the position of the new home in the corresponding file
             QFileInfo homeFileInfo(QDir::currentPath(), "../gobot-software/robots_homes/" + selectedRobot->getRobot()->getName());
@@ -1497,8 +1500,9 @@ void MainWindow::setNewHome(QString homeName){
 }
 
 bool MainWindow::sendHomeToRobot(QPointer<RobotView> robot, QSharedPointer<PointView> home){
-    return commandController->sendCommand(robot->getRobot(), QString("n \"") + QString::number(home->getPoint()->getPosition().getX()) + "\" \""
-                                                      + QString::number(home->getPoint()->getPosition().getY()) + "\"");
+    Position posInRobotCoordinates(convertPixelCoordinatesToRobotCoordinates(home->getPoint()->getPosition()));
+    return commandController->sendCommand(robot->getRobot(), QString("n \"") + QString::number(posInRobotCoordinates.getX()) + "\" \""
+                                                      + QString::number(posInRobotCoordinates.getY()) + "\"");
 }
 
 void MainWindow::goHome(){
@@ -2390,6 +2394,7 @@ void MainWindow::displayPointEvent(QString name, double x, double y){
         pointView = points->findPathPointView(x, y);
 
     if(pointView){
+        qDebug() << "this point is a home" << pointView->getPoint()->isHome();
         if(!(*(pointView->getPoint()) == *(points->getTmpPointView()->getPoint()))){
             /// If the point is not a path or is a path but from a permanent point, we display the menu with informations on the point
             if(!(pointView->getPoint()->isPath() && pointView->getPoint()->getName().contains(PATH_POINT_NAME))){
@@ -2920,28 +2925,23 @@ void MainWindow::updatePoint(void){
         /// save changes to the file
         savePoints(QDir::currentPath() + QDir::separator() + "points.xml");
 
-        /// if the point is the home of a robot, we update the file containing the home on the robot
-        // TODO rework home
-        qDebug() << "MainWindow::updatePoint need to update if home";
-        /*if(displaySelectedPointView->getPoint()->isHome()){
-            QPointer<RobotView> robotView = robots->getRobotViewByName(displaySelectedPointView->getPoint()->getRobotName());
+        if(displaySelectedPointView->getPoint()->isHome()){
+            /// if the point is the home of a robot, we update the file containing the home on the robot
+            qDebug() << "MainWindow::updatePoint need to update if home";
+            if(robots->getRobotViewByName(displaySelectedPointView->getPoint()->getRobotName()) &&
+                    sendHomeToRobot(robots->getRobotViewByName(displaySelectedPointView->getPoint()->getRobotName()),
+                            displaySelectedPointView)){
 
-            if(robotView && robotView->getRobot()->commandController->sendCommand(QString("n \"") + QString::number(displaySelectedPointView->getPoint()->getPosition().getX()) + "\" \""
-                                                              + QString::number(displaySelectedPointView->getPoint()->getPosition().getY()) + "\"")){
-                QString answerHome = robotView->getRobot()->waitAnswer();
-                QStringList answerList2 = answerHome.split(QRegExp("[ ]"), QString::SkipEmptyParts);
-                if(answerList2.size() > 1){
-                    QString cmd2 = answerList2.at(0);
-                    bool success2 = (answerList2.at(1).compare("done") == 0);
-                    if((cmd2.compare("n") == 0 && success2) || answerList2.at(0).compare("1") == 0){
-                        setMessageTop(TEXT_COLOR_SUCCESS, robotView->getRobot()->getName() + " successfully saved its home point");
-                    } else
-                        setMessageTop(TEXT_COLOR_DANGER, robotView->getRobot()->getName() + " failed to save its home point, please try again");
-                }
+                updateHomeFile(displaySelectedPointView->getPoint()->getRobotName(),
+                               displaySelectedPointView->getPoint()->getPosition(),
+                               QDateTime::currentDateTime().toString("yyyy-MM-dd-hh-mm-ss").split("-"));
+
             } else {
-                qDebug() << "MainWindow::updatePoint could not find the robot named" << displaySelectedPointView->getPoint()->getRobotName();
+                cancelEvent();
+                setMessageTop(TEXT_COLOR_DANGER, displaySelectedPointView->getPoint()->getRobotName() + " did not receive the updated coordinates of its new home. You may want to use the \"Assign a home\" button"
+                                                                                                        "to send your robot its home again.");
             }
-        }*/
+        }
 
         /// so that you cannot edit a new name unless you click the edit button again
         selectedPoint->getActionButtons()->getEditButton()->setChecked(false);
@@ -2964,7 +2964,7 @@ void MainWindow::updatePoint(void){
         leftMenu->getReturnButton()->setEnabled(true);
         leftMenu->getReturnButton()->setToolTip("");
 
-        /// We update the path as this point might have been used in a path
+        /// We update the paths as this point might have been used in a path
         updateAllPaths(copy, *displaySelectedPointView->getPoint());
         qDebug() << "copy" << copy.getName() << copy.getPosition().getX() << copy.getPosition().getY();
         qDebug() << " new" << displaySelectedPointView->getPoint()->getName() << displaySelectedPointView->getPoint()->getPosition().getX() << displaySelectedPointView->getPoint()->getPosition().getY();
@@ -4692,7 +4692,8 @@ void MainWindow::updateHomeInfo(const QString robot_name, QString posX, QString 
     Position p = appHome.first;
     QStringList dateLastModification = appHome.second;
 
-    Position robot_home_position(posX.toDouble(), posY.toDouble());
+    /// we gotta convert the coordinates first
+    Position robot_home_position = convertRobotCoordinatesToPixelCoordinates(Position(posX.toDouble(), posY.toDouble()));
     QStringList dateHomeOnRobot = homeDate.split("-");
 
     /// if the robot and the application have the same home we don't do anything besides setting the point in the application (no need to change any files)
@@ -4941,12 +4942,11 @@ QString MainWindow::prepareCommandPath(const Paths::Path &path) const {
         float oldPosX = pathPoint->getPoint().getPosition().getX();
         float oldPosY = pathPoint->getPoint().getPosition().getY();
 
-        float newPosX = (oldPosX - ROBOT_WIDTH) * map->getResolution() + map->getOrigin().getX();
-        float newPosY = (-oldPosY + map->getHeight() - ROBOT_WIDTH/2) * map->getResolution() + map->getOrigin().getY();
+        Position posInRobotCoordinates(convertPixelCoordinatesToRobotCoordinates(Position(oldPosX, oldPosY)));
 
         int waitTime = pathPoint->getWaitTime();
 
-        pathStr += + "\"" + QString::number(newPosX) + "\" \"" + QString::number(newPosY) + "\" \"" + QString::number(waitTime)+ "\" ";   
+        pathStr += + "\"" + QString::number(posInRobotCoordinates.getX()) + "\" \"" + QString::number(posInRobotCoordinates.getY()) + "\" \"" + QString::number(waitTime)+ "\" ";
     }
 
     return pathStr;
@@ -4957,6 +4957,7 @@ void MainWindow::testFunctionSlot(){
     if(robots->getRobotsVector().size() > 0)
         commandController->sendCommand(robots->getRobotsVector().at(0)->getRobot(), QString("s"));
 }
+
 
 void MainWindow::activateLaserSlot(QString ipAddress, bool activate){
     QPointer<RobotView> robotView = robots->getRobotViewByIp(ipAddress);
@@ -4973,3 +4974,43 @@ void MainWindow::activateLaserSlot(QString ipAddress, bool activate){
         assert(false);
     }
 }
+
+Position MainWindow::convertPixelCoordinatesToRobotCoordinates(const Position positionInPixels) const {
+    float xInRobotCoordinates = (positionInPixels.getX() - ROBOT_WIDTH) * map->getResolution() + map->getOrigin().getX();
+    float yInRobotCoordinates = (-positionInPixels.getY() + map->getHeight() - ROBOT_WIDTH/2) * map->getResolution() + map->getOrigin().getY();
+    return Position(xInRobotCoordinates, yInRobotCoordinates);
+}
+
+Position MainWindow::convertRobotCoordinatesToPixelCoordinates(const Position positionInRobotCoordinates) const {
+    float xInPixelCoordinates = (-map->getOrigin().getX()+ positionInRobotCoordinates.getX())/map->getResolution() + ROBOT_WIDTH;
+    float yInPixelCoordinates = map->getHeight()-(-map->getOrigin().getY()+ positionInRobotCoordinates.getY())/map->getResolution()-ROBOT_WIDTH/2;
+    qDebug() << " got that after conv " << xInPixelCoordinates << yInPixelCoordinates;
+    return Position(xInPixelCoordinates, yInPixelCoordinates);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+>>>>>>> 1892e41ede1c8b07d713eb2c0cd90051cb3175e6
