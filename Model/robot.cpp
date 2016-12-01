@@ -180,7 +180,6 @@ void Robot::launchWorkers(MainWindow* mainWindow){
 
     newMapWorker = QPointer<SendNewMapWorker>(new SendNewMapWorker(ip, PORT_NEW_MAP));
     connect(this, SIGNAL(sendNewMapSignal(QString, QString, QString, QImage)), newMapWorker, SLOT(writeTcpDataSlot(QString, QString, QString, QImage)));
-    connect(this, SIGNAL(cmdAnswer(QString)), mainWindow->getCommandController(), SLOT(cmdAnswerSlot(QString)));
     connect(newMapWorker, SIGNAL(doneSendingNewMapSignal()), this, SLOT(doneSendingMapSlot()));
     connect(this, SIGNAL(stopNewMapWorker()), newMapWorker, SLOT(stopWorker()));
     connect(this, SIGNAL(startNewMapWorker()), newMapWorker, SLOT(connectSocket()));

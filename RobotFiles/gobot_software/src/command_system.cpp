@@ -676,7 +676,30 @@ void asyncAccept(boost::shared_ptr<boost::asio::io_service> io_service, boost::s
    	char datePath[30];
    	strftime(datePath, 30, "%Y-%m-%d-%H-%M-%S", localtime(&(attr.st_mtime)));
 
-	sendMessageToPc(sock, "Connected " + home_x + " " + home_y + " " + dateHome + " " + datePath + " " + path);
+    /// we also send the path along with the time of the last modification of its file
+   	std::ifstream ifMap(path_computer_software + "Robot_Infos/mapId.txt", std::ifstream::in);
+   	std::string mapId("");
+   	std::string mapDate("");
+   	if(ifMap){
+   		getline(ifMap, mapId);
+   		getline(ifMap, mapDate);
+   		ifPath.close();
+   	}
+
+   	if(mapId.empty())
+   		mapId = "{00000000-0000-0000-0000-000000000000}";
+   	if(mapDate.empty())
+   		mapDate = "1970-05-21-00-00-00";
+   	if(home_x.empty())
+   		home_x = "-1";
+   	if(home_y.empty())
+   		home_y = "-1";
+   	if(dateHome.empty())
+   		dateHome = "1970-05-21-00-00-00";
+   	if(datePath.empty())
+   		datePath = "1970-05-21-00-00-00";
+
+	sendMessageToPc(sock, "Connected " + mapId + " " + mapDate + " " + home_x + " " + home_y + " " + dateHome + " " + datePath + " " + path);
 }
 
 void server(unsigned short port, ros::NodeHandle n){

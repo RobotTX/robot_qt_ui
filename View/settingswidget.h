@@ -18,7 +18,7 @@ public:
 
     enum SETTING_MAP_CHOICE { ALWAYS_ROBOT, ALWAYS_APPLICATION, ALWAYS_ASK , ALWAYS_NEW , ALWAYS_OLD };
 
-    SettingsWidget(QSharedPointer<Robots> robots, QWidget *parent = 0);
+    SettingsWidget(QSharedPointer<Robots> robots, int settingMapChoice, QWidget *parent = 0);
 
     void addRobot(const QString robotIPAddress, const QString robot_name);
     void removeRobot(const QString robotIPAddress);
