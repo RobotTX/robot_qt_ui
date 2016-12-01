@@ -658,8 +658,9 @@ void asyncAccept(boost::shared_ptr<boost::asio::io_service> io_service, boost::s
 
     struct stat attrib;
     stat("/home/gtdollar/computer_software/Robot_Infos/home.txt", &attrib);
-    char dateHome[30];
-    strftime(dateHome, 30, "%Y-%m-%d-%H-%M-%S", localtime(&(attrib.st_mtime)));
+    char dateHomeChar[30];
+    strftime(dateHomeChar, 30, "%Y-%m-%d-%H-%M-%S", localtime(&(attrib.st_mtime)));
+    std::string dateHome(dateHomeChar);
 
     /// we also send the path along with the time of the last modification of its file
    	std::ifstream ifPath(path_computer_software + "Robot_Infos/path.txt", std::ifstream::in);
@@ -673,8 +674,9 @@ void asyncAccept(boost::shared_ptr<boost::asio::io_service> io_service, boost::s
 
    	struct stat attr;
    	stat("/home/gtdollar/computer_software/Robot_Infos/path.txt", &attr);
-   	char datePath[30];
-   	strftime(datePath, 30, "%Y-%m-%d-%H-%M-%S", localtime(&(attr.st_mtime)));
+   	char datePathChar[30];
+   	strftime(datePathChar, 30, "%Y-%m-%d-%H-%M-%S", localtime(&(attr.st_mtime)));
+    std::string datePath(datePathChar);
 
     /// we also send the path along with the time of the last modification of its file
    	std::ifstream ifMap(path_computer_software + "Robot_Infos/mapId.txt", std::ifstream::in);
