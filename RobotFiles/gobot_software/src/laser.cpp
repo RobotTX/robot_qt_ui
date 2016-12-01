@@ -47,6 +47,12 @@ void sendLaserData(const std::vector<float>& scan){
     }
 }
 
+bool stopSendingLaserDataTemporarily(gobot_software::Port::Request &req, gobot_software::Port::Response &res){
+    std::cout << "(Laser) Stopping laser_sender_temporarily" << std::endl;
+    sub_laser.shutdown();
+    return true;
+}
+
 bool stopSendingLaserData(gobot_software::Port::Request &req, gobot_software::Port::Response &res){
     std::cout << "(Laser) Stopping laser_sender" << std::endl;
     sub_laser.shutdown();
@@ -63,6 +69,7 @@ int main(int argc, char **argv){
     ros::NodeHandle n;
 
     ros::ServiceServer start_service = n.advertiseService("start_laser_data_sender", startLaser);
+    ros::ServiceServer stop_service_temporarily = n.advertiseService("stop_sending_laser_data_temporarily", stopSendingLaserDataTemporarily);
     ros::ServiceServer stop_service = n.advertiseService("stop_laser_data_sender", stopSendingLaserData);
 
     ros::Rate r(1);

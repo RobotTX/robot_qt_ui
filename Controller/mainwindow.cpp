@@ -2928,7 +2928,15 @@ void MainWindow::updatePoint(void){
 
         /// save changes to the file
         savePoints(QDir::currentPath() + QDir::separator() + "points.xml");
+/**
 
+  COULD CHECK IF ROBOT IS CONNECTED
+
+  IF YES SEND -> IF NOT RECEIVED -> CANCEL
+
+  IF NO -> UPDATE -> ROBOT WILL RECEIVE UPON CONNECTION
+
+  **/
         if(displaySelectedPointView->getPoint()->isHome()){
             /// if the point is the home of a robot, we update the file containing the home on the robot
             qDebug() << "MainWindow::updatePoint need to update if home";

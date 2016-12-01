@@ -23,6 +23,7 @@ ros::ServiceClient pausePathClient;
 ros::ServiceClient stopPathClient;
 
 ros::ServiceClient startLaserClient;
+ros::ServiceClient stoplaserTemporarilyClient;
 ros::ServiceClient stopLaserClient;
 
 ros::Publisher go_pub;
@@ -464,6 +465,17 @@ bool sendLaserData(){
 	}
 }
 
+bool stopSendingLaserDataTemporarily(){
+	gobot_software::Port srv;
+	if(stopLaserClient.call(srv)){
+		std::cout << "Command system stop_sending_laser_data_temporarily started" << std::endl;
+		return true;
+	} else {
+		std::cerr << "(Command system) failed to call service stop_sending_laser_data_temporarily" << std::endl;
+		return false;
+	}
+}
+
 bool stopSendingLaserData(){
 	gobot_software::Port srv;
 	if(stopLaserClient.call(srv)){
@@ -760,6 +772,7 @@ int main(int argc, char* argv[]){
 		stopPathClient = n.serviceClient<std_srvs::Empty>("stop_path");
 
 		startLaserClient = n.serviceClient<gobot_software::Port>("start_laser_data_sender");
+		stoplaserTemporarilyClient = n.serviceClient<gobot_software::Port>("stop_sending_laser_data_temporarily");
 		stopLaserClient = n.serviceClient<gobot_software::Port>("stop_laser_data_sender");
 
 		go_pub = n.advertise<geometry_msgs::PoseStamped>("/move_base_simple/goal", 1000);

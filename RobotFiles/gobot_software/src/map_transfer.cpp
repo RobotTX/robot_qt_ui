@@ -78,17 +78,13 @@ std::vector<uint8_t> compress(std::vector<int8_t> map, int map_size, bool fromPg
 	my_map.push_back((count & 0x0000ff00) >> 8);
 	my_map.push_back((count & 0x000000ff));
 
-
 	// the user knows that when 254 is encountered a map has entirely been received
 	my_map.push_back(254);
 	my_map.push_back(254);
 	my_map.push_back(254);
 	my_map.push_back(254);
-	
-	if(fromPgm)
-		my_map.push_back(254);
-	else
-		my_map.push_back(253);
+
+	my_map.push_back((fromPgm) ? 254 : 253);
 
 	return my_map;
 }
@@ -171,6 +167,7 @@ bool sendOnceMap(gobot_software::Port::Request &req,
 		sendMap(compress(my_map, map_size, true));
 
 		return true;
+		
 	} else
 		return false;
 }
