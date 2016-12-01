@@ -125,6 +125,9 @@ public:
     QString prepareCommandPath(const Paths::Path& path) const;
     void saveMap(QString fileName);
 
+    Position convertPixelCoordinatesToRobotCoordinates(const Position positionInPixels) const ;
+    Position convertRobotCoordinatesToPixelCoordinates(const Position positionInRobotCoordinates) const ;
+
 signals:
     void nameChanged(QString, QString);
     void changeCmdThreadRobotName(QString);
