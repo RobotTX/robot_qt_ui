@@ -40,17 +40,6 @@ def isServer(IP) :
             if hostname == "" :
                 hostname = "Default Name"
 
-            # Get the map id of the map we use
-            file_id = open(file_map_id)
-            map_id = file_id.readline()
-            map_id = map_id.split('\n')[0]
-            map_date = file_id.readline()
-            map_date = map_date.split('\n')[0]
-            if map_id == "" :
-                map_id = "0"
-            if map_date == "" :
-                map_date = "1970-01-01"
-
             # Get the SSID of the robot
             ssid = subprocess.Popen(["iwgetid", "-r"], stdout = subprocess.PIPE).communicate()[0]
 
@@ -62,7 +51,7 @@ def isServer(IP) :
                 file_path.close()
             
             # Send everything to the application
-            toSend = "%s\"%s\"%s\"%s\"%s" % (hostname, map_id, map_date, ssid, stage)
+            toSend = "%s\"%s\"%s" % (hostname, ssid, stage)
             #print "ping_server sending :",toSend
             s.send(toSend)
 

@@ -118,8 +118,9 @@ public:
 
     QVector<PathPoint> extractPathFromInfo(const QStringList& robotInfo);
 
-    void updateHomeInfo(const QString robot_name, QString robotInfo);
-    void updatePathInfo(const QString robot_name, QString robotInfo);
+    void updateHomeInfo(const QString robot_name, QString posX, QString posY, QString homeDate);
+    void updatePathInfo(const QString robot_name, QString pathDate, QStringList path);
+    void updateMapInfo(const QString robot_name, QString mapId, QString mapDate);
 
     QString prepareCommandPath(const Paths::Path& path) const;
     void saveMap(QString fileName);
@@ -220,7 +221,7 @@ private slots:
     void showAllHomes(void);
     void backEvent();
     void updateView();
-    void robotIsAliveSlot(QString hostname, QString ip, QString mapId, QString mapDate, QString ssid, int stage);
+    void robotIsAliveSlot(QString hostname, QString ip, QString ssid, int stage);
     void robotIsDeadSlot(QString hostname, QString ip);
     void selectViewRobot();
     void sendNewMapToRobots(QString ipAddress = "");

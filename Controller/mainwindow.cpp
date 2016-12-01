@@ -133,6 +133,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     robotServerWorker = NULL;
     commandController = new CommandController(this);
 
+    // TODO get this param from a file
+    settingMapChoice = SettingsWidget::ALWAYS_ASK;
+
     robots = QSharedPointer<Robots>(new Robots());
 
     /// Create the graphic item of the map
@@ -154,7 +157,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     initializeRobots();
 
     /// our settings page
-    settingsWidget = new SettingsWidget(robots);
+    settingsWidget = new SettingsWidget(robots, settingMapChoice);
 
     scene->setSceneRect(0, 0, 800, 600);
 
@@ -334,7 +337,7 @@ void MainWindow::initializeRobots(){
 
     robotServerWorker = new RobotServerWorker(PORT_ROBOT_UPDATE);
 
-    connect(robotServerWorker, SIGNAL(robotIsAlive(QString, QString, QString, QString, QString, int)), this, SLOT(robotIsAliveSlot(QString, QString, QString, QString, QString, int)));
+    connect(robotServerWorker, SIGNAL(robotIsAlive(QString, QString, QString, int)), this, SLOT(robotIsAliveSlot(QString, QString, QString, int)));
     connect(this, SIGNAL(stopUpdateRobotsThread()), robotServerWorker, SLOT(stopWorker()));
 
     connect(&serverThread, SIGNAL(finished()), robotServerWorker, SLOT(deleteLater()));
@@ -1166,19 +1169,19 @@ void MainWindow::showAllHomes(void){
     bottomLayout->uncheckRobots();
 }
 
-void MainWindow::robotIsAliveSlot(QString hostname, QString ip, QString mapId, QString mapDate, QString ssid, int stage){
+void MainWindow::robotIsAliveSlot(QString hostname, QString ip, QString ssid, int stage){
     QRegExp rx("[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}");
     rx.indexIn(ip);
     ip = rx.cap(0);
     QPointer<RobotView> rv = robots->getRobotViewByIp(ip);
 
     if(rv != NULL){
-        qDebug() << "Robot" << hostname << "at ip" << ip << "is still alive and has the map id :" << mapId;
+        qDebug() << "Robot" << hostname << "at ip" << ip << "is still alive";
         rv->getRobot()->ping();
         /// TODO see for changes (battery)
 
     } else {
-        qDebug() << "Robot" << hostname << "at ip" << ip << "just connected and has the map id :" << mapId;
+        qDebug() << "Robot" << hostname << "at ip" << ip << "just connected";
         QPointer<Robot> robot = QPointer<Robot>(new Robot(this, paths, hostname, ip));
         robot->setWifi(ssid);
         rv = QPointer<RobotView>(new RobotView(robot, mapPixmapItem));
@@ -1210,76 +1213,6 @@ void MainWindow::robotIsAliveSlot(QString hostname, QString ip, QString mapId, Q
             out << robots->getRobotsNameMap();
             fileWrite.close();
             qDebug() << "RobotsNameMap updated" << robots->getRobotsNameMap();
-        }
-
-
-        /// Check if the robot has the current map
-        //qDebug() << "Robot" << hostname << "comparing ids" << mapId << "and" << map->getMapId().toString();
-        if(mapId.compare(map->getMapId().toString()) == 0){
-            qDebug() << "Robot" << hostname << "has the current map";
-        } else {
-            QDateTime mapDateTime = QDateTime::fromString(mapDate, "yyyy-MM-dd-hh-mm-ss");
-            //qDebug() << "Robot" << hostname << "comparing date" << mapDateTime << "and" << map->getDateTime();
-
-            bool robotOlder = (mapDateTime <= map->getDateTime());
-            if(robotOlder){
-                qDebug() << "Robot" << hostname << "has a different and older map" << settingMapChoice;
-            } else {
-                qDebug() << "Robot" << hostname << "has a different and newer map" << settingMapChoice;
-            }
-
-            switch(settingMapChoice){
-                case SettingsWidget::ALWAYS_NEW:
-                    if(robotOlder){
-                        robot->sendNewMap(map);
-                    } else {
-                        commandController->sendCommand(robot, QString("s"));
-                    }
-                break;
-                case SettingsWidget::ALWAYS_OLD:
-                    if(robotOlder){
-                        commandController->sendCommand(robot, QString("s"));
-                    } else {
-                        robot->sendNewMap(map);
-                    }
-                break;
-                case SettingsWidget::ALWAYS_ROBOT:
-                    commandController->sendCommand(robot, QString("s"));
-                break;
-                case SettingsWidget::ALWAYS_APPLICATION:
-                    robot->sendNewMap(map);
-                break;
-                default:
-                    QMessageBox msgBox;
-                    QPushButton* robotButton;
-                    QPushButton* appButton;
-
-                    if(robotOlder)
-                        msgBox.setText("The robot " + hostname + " has a new map.");
-                    else
-                        msgBox.setText("The robot " + hostname + " has an old map.");
-
-                    msgBox.setInformativeText("Which map do you want to use ?");
-                    robotButton = msgBox.addButton(tr("Robot"), QMessageBox::AcceptRole);
-                    appButton = msgBox.addButton(tr("Application"), QMessageBox::RejectRole);
-
-                    msgBox.exec();
-
-                    if (msgBox.clickedButton() == robotButton) {
-                        qDebug() << "Robot" << hostname << "using the map from the robot";
-                        commandController->sendCommand(robot, QString("s"));
-                    } else if (msgBox.clickedButton() == appButton) {
-                        qDebug() << "Robot" << hostname << "using the map from the app";
-                        robot->sendNewMap(map);
-                    }
-                    delete robotButton;
-                    robotButton = 0;
-                    delete appButton;
-                    appButton = 0;
-                break;
-            }
-
-
         }
     }
 
@@ -4572,11 +4505,105 @@ bool MainWindow::loadMapConfig(const std::string fileName){
 
 void MainWindow::updateRobotInfo(QString robot_name, QString robotInfo){
 
-    updatePathInfo(robot_name, robotInfo);
+    //"Connected " + mapId + " " + mapDate + " " + home_x + " " + home_y + " " + dateHome + " " + datePath + " " + path
+    QStringList strList = robotInfo.split(" ", QString::SkipEmptyParts);
+    qDebug() << "MainWindow::updateRobotInfo" << robotInfo << "to" << strList;
 
-    updateHomeInfo(robot_name, robotInfo);
+    if(strList.size() > 6){
+        /// Remove the "Connected"
+        strList.removeFirst();
+        QString mapId = strList.takeFirst();
+        QString mapDate = strList.takeFirst();
+        QString home_x = strList.takeFirst();
+        QString home_y = strList.takeFirst();
+        QString homeDate = strList.takeFirst();
+        QString pathDate = strList.takeFirst();
+        /// What remains in the list is the path
+
+        updatePathInfo(robot_name, pathDate, strList);
+
+        updateHomeInfo(robot_name, home_x, home_y, homeDate);
+
+        updateMapInfo(robot_name, mapId, mapDate);
+
+    } else {
+        qDebug() << "MainWindow::updateRobotInfo Connected received without enough parameters :" << strList;
+    }
 
     settingsWidget->addRobot(robots->getRobotViewByName(robot_name)->getRobot()->getIp(), robot_name);
+}
+
+
+void MainWindow::updateMapInfo(const QString robot_name, QString mapId, QString mapDate){
+
+    /// Check if the robot has the current map
+    //qDebug() << "Robot" << robot_name << "comparing ids" << mapId << "and" << map->getMapId().toString();
+    if(mapId.compare(map->getMapId().toString()) == 0){
+        qDebug() << "Robot" << robot_name << "has the current map";
+    } else {
+        QDateTime mapDateTime = QDateTime::fromString(mapDate, "yyyy-MM-dd-hh-mm-ss");
+        //qDebug() << "Robot" << robot_name << "comparing date" << mapDateTime << "and" << map->getDateTime();
+
+        bool robotOlder = (mapDateTime <= map->getDateTime());
+        if(robotOlder){
+            qDebug() << "Robot" << robot_name << "has a different and older map" << settingMapChoice;
+        } else {
+            qDebug() << "Robot" << robot_name << "has a different and newer map" << settingMapChoice;
+        }
+
+        QPointer<Robot> robot = robots->getRobotViewByName(robot_name)->getRobot();
+
+        switch(settingMapChoice){
+            case SettingsWidget::ALWAYS_NEW:
+                if(robotOlder){
+                    robot->sendNewMap(map);
+                } else {
+                    commandController->sendCommand(robot, QString("s"));
+                }
+            break;
+            case SettingsWidget::ALWAYS_OLD:
+                if(robotOlder){
+                    commandController->sendCommand(robot, QString("s"));
+                } else {
+                    robot->sendNewMap(map);
+                }
+            break;
+            case SettingsWidget::ALWAYS_ROBOT:
+                commandController->sendCommand(robot, QString("s"));
+            break;
+            case SettingsWidget::ALWAYS_APPLICATION:
+                robot->sendNewMap(map);
+            break;
+            default:
+                QMessageBox msgBox;
+                QPushButton* robotButton;
+                QPushButton* appButton;
+
+                if(robotOlder)
+                    msgBox.setText("The robot " + robot_name + " has a new map.");
+                else
+                    msgBox.setText("The robot " + robot_name + " has an old map.");
+
+                msgBox.setInformativeText("Which map do you want to use ?");
+                robotButton = msgBox.addButton(tr("Robot"), QMessageBox::AcceptRole);
+                appButton = msgBox.addButton(tr("Application"), QMessageBox::RejectRole);
+
+                msgBox.exec();
+
+                if (msgBox.clickedButton() == robotButton) {
+                    qDebug() << "Robot" << robot_name << "using the map from the robot";
+                    commandController->sendCommand(robot, QString("s"));
+                } else if (msgBox.clickedButton() == appButton) {
+                    qDebug() << "Robot" << robot_name << "using the map from the app";
+                    robot->sendNewMap(map);
+                }
+                delete robotButton;
+                robotButton = 0;
+                delete appButton;
+                appButton = 0;
+            break;
+        }
+    }
 }
 
 bool MainWindow::isLater(const QStringList& date, const QStringList& otherDate){
@@ -4656,7 +4683,7 @@ bool MainWindow::updateHomeFile(const QString robot_name, const Position& robot_
 
 QVector<PathPoint> MainWindow::extractPathFromInfo(const QStringList &robotInfo){
     QVector<PathPoint> path;
-    for(int i = 5; i < robotInfo.size(); i += 3){
+    for(int i = 0; i < robotInfo.size(); i += 3){
         double xOnRobot = robotInfo.at(i).toDouble();
         double xInApp = (-map->getOrigin().getX() + xOnRobot) / map->getResolution() + ROBOT_WIDTH;
         double yOnRobot = robotInfo.at(i+1).toDouble();
@@ -4666,7 +4693,7 @@ QVector<PathPoint> MainWindow::extractPathFromInfo(const QStringList &robotInfo)
     return path;
 }
 
-void MainWindow::updateHomeInfo(const QString robot_name, QString robotInfo){
+void MainWindow::updateHomeInfo(const QString robot_name, QString posX, QString posY, QString homeDate){
     QPointer<RobotView> robotView = robots->getRobotViewByName(robot_name);
 
     /// retrieves the home point of the robot if the robot has one
@@ -4674,11 +4701,8 @@ void MainWindow::updateHomeInfo(const QString robot_name, QString robotInfo){
     Position p = appHome.first;
     QStringList dateLastModification = appHome.second;
 
-    robotInfo.replace("\n", " ");
-
-    QStringList list = robotInfo.split(" ", QString::SkipEmptyParts);
-    Position robot_home_position(list.at(1).toDouble(), list.at(2).toDouble());
-    QStringList dateHomeOnRobot = list.at(3).split("-");
+    Position robot_home_position(posX.toDouble(), posY.toDouble());
+    QStringList dateHomeOnRobot = homeDate.split("-");
 
     /// if the robot and the application have the same home we don't do anything besides setting the point in the application (no need to change any files)
     if(robot_home_position != p){
@@ -4738,19 +4762,13 @@ void MainWindow::updateHomeInfo(const QString robot_name, QString robotInfo){
     editSelectedRobotWidget->updateHomeMenu();
 }
 
-void MainWindow::updatePathInfo(const QString robot_name, QString robotInfo){
+void MainWindow::updatePathInfo(const QString robot_name, QString pathDate, QStringList path){
     QPointer<RobotView> robotView = robots->getRobotViewByName(robot_name);
 
     /// retrieves the path of the robot on the application side if the robot has one
     QPair<QPair<QString, QString>, QStringList> appPathInfo = getPathFromFile(robot_name);
 
-    robotInfo.replace("\n", " ");
-
-    QStringList l = robotInfo.split(" ", QString::SkipEmptyParts);
-
-    qDebug() << "updatepathinfo list" << l;
-
-    QVector<PathPoint> robotPath = extractPathFromInfo(l);
+    QVector<PathPoint> robotPath = extractPathFromInfo(path);
 
     /// contains the groupname and pathname of the path described by the robot
     QPair<QString, QString> robotPathInApp = paths->findPath(robotPath);
@@ -4768,7 +4786,7 @@ void MainWindow::updatePathInfo(const QString robot_name, QString robotInfo){
                 qDebug() << "mainWindow::updatepathinfo DIFFERENT PATHS";
                 /// the file is more recent on the robot
                 /// we do as if the application did not have a path at all
-                if(isLater(l.at(4).split("-", QString::SkipEmptyParts), appPathInfo.second)){
+                if(isLater(pathDate.split("-", QString::SkipEmptyParts), appPathInfo.second)){
                     qDebug() << " BUT ROBOT MORE RECENT";
                     /// the application does not have a path so we use the path sent by the robot and update the file on the app side
                     bool foundFlag(true);
@@ -4792,9 +4810,9 @@ void MainWindow::updatePathInfo(const QString robot_name, QString robotInfo){
                         QTextStream out(&fileInfo);
                         QString currentDateTime = QDateTime::currentDateTime().toString("yyyy-MM-dd-hh-mm-ss");
                         /// contains the date of the last modification of the path file on the robot
-                        out << l.at(4);
+                        out << pathDate;
                         out << "%" << robotPathInApp.first << "%" << robotPathInApp.second;
-                        qDebug() << "date now is" << l.at(4);
+                        qDebug() << "date now is" << pathDate;
                         fileInfo.close();
                     }
 
@@ -4868,9 +4886,9 @@ void MainWindow::updatePathInfo(const QString robot_name, QString robotInfo){
                 QTextStream out(&fileInfo);
                 QString currentDateTime = QDateTime::currentDateTime().toString("yyyy-MM-dd-hh-mm-ss");
                 /// contains the date of the last modification of the path file on the robot
-                out << l.at(4);
+                out << pathDate;
                 out << "%" << robotPathInApp.first << "%" << robotPathInApp.second;
-                qDebug() << "date now is" << l.at(4);
+                qDebug() << "date now is" << pathDate;
                 fileInfo.close();
             }
         }

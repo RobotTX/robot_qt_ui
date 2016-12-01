@@ -13,7 +13,7 @@
 
 int SettingsWidget::currentId = 0;
 
-SettingsWidget::SettingsWidget(QSharedPointer<Robots> robots, QWidget *parent): QWidget(parent)
+SettingsWidget::SettingsWidget(QSharedPointer<Robots> robots, int settingMapChoice, QWidget *parent): QWidget(parent)
 {
 
     setWindowTitle("Settings");
@@ -61,6 +61,7 @@ SettingsWidget::SettingsWidget(QSharedPointer<Robots> robots, QWidget *parent): 
     chooseMapBox->insertItem(ALWAYS_OLD, "Always use the oldest map");
     chooseMapBox->insertItem(ALWAYS_ROBOT, "Always use the map of the robot");
     chooseMapBox->insertItem(ALWAYS_APPLICATION, "Always use the map of this application");
+    chooseMapBox->setCurrentIndex(settingMapChoice);
 
     menuLayout->addWidget(chooseMapLabel);
     menuLayout->addWidget(chooseMapBox);

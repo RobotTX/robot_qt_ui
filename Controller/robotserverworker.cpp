@@ -36,10 +36,10 @@ void RobotServerWorker::newConnectionSlot(){
         QStringList strList = str.split("\"", QString::SkipEmptyParts);
 
         qDebug() << "(RobotServerWorker) Data from the new robot :" << strList;
-        if(strList.size() == 5){
+        if(strList.size() == 3){
             //qDebug() << "(RobotServerWorker)" << strList;
             /// hostname, IP address, mapID, map date, wifi SSID and stage of the path
-            emit robotIsAlive(strList.at(0), socket->peerAddress().toString(), strList.at(1), strList.at(2), strList.at(3), std::stoi(strList.at(4).toStdString()));
+            emit robotIsAlive(strList.at(0), socket->peerAddress().toString(), strList.at(1), std::stoi(strList.at(2).toStdString()));
         }
         else
             qDebug() << "(RobotServerWorker) Not enough param received for robotIsAlive";
