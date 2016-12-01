@@ -92,7 +92,9 @@ void SettingsWidget::removeRobot(const QString robotIPAddress){
         }
     }
     qDebug() << "SettingsWidget::removeRobot" << robotsLaserButtonGroup->buttons().size();
-    robotsLaserButtonGroup->button(robotId)->hide();
-    robotsLaserButtonGroup->removeButton(robotsLaserButtonGroup->button(robotId));
-    delete robotsLaserButtonGroup->button(robotId);
+    if(robotId != -1){
+        robotsLaserButtonGroup->button(robotId)->hide();
+        robotsLaserButtonGroup->removeButton(robotsLaserButtonGroup->button(robotId));
+        delete robotsLaserButtonGroup->button(robotId);
+    }
 }

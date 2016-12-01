@@ -160,10 +160,7 @@ private slots:
     void checkRobotBtnEventMenu();
     void checkRobotBtnEvent(QString name);
 
-
-    //void setCheckedRobot(QString name);
     void cancelEditSelecRobotBtnEvent(void);
-    void robotSavedEvent(void);
     void saveRobotModifications(void);
     void setSelectedPoint(void);
     void pointSavedEvent(QString groupName, double x, double y, QString name);

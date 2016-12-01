@@ -151,17 +151,11 @@ EditSelectedRobotWidget::EditSelectedRobotWidget(QWidget* _parent, MainWindow* _
     setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
 }
 
-void EditSelectedRobotWidget::setSelectedRobot(QPointer<RobotView> const _robotView, bool _firstConnection){
+void EditSelectedRobotWidget::setSelectedRobot(QPointer<RobotView> const _robotView){
     qDebug() << _robotView->getRobot()->getName();
 
     pathChanged = false;
-    firstConnection = _firstConnection;
-    /*
-    if(firstConnection)
-        cancelBtn->setEnabled(false);
-    else
-        cancelBtn->setEnabled(true);
-*/
+
     robotView = _robotView;
 
     /// When a robot is selected, the informations are updated
