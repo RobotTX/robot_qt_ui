@@ -23,7 +23,12 @@ ros::ServiceClient pausePathClient;
 ros::ServiceClient stopPathClient;
 
 ros::ServiceClient startLaserClient;
+<<<<<<< HEAD
 ros::ServiceClient stoplaserTemporarilyClient;
+=======
+ros::ServiceClient sendLaserClient;
+ros::ServiceClient stopSendLaserClient;
+>>>>>>> f594fd6b896ed6238f6febf79b185b28e2b8572d
 ros::ServiceClient stopLaserClient;
 
 ros::Publisher go_pub;
@@ -146,7 +151,11 @@ bool execCommand(ros::NodeHandle n, std::vector<std::string> command){
 				map_port = std::stoi(command.at(3));
 				laser_port = std::stoi(command.at(4));
 				std::cout << "(Command system) Gobot here are the ports " << metadata_port << ", " << robot_pos_port << ", " << map_port << ", " << laser_port << std::endl;
-				return sendLaserData();
+				startRobotPos();
+				startMetadata();
+				startMap();
+				startLaserData();
+				return true;
 			} else {
 				std::cout << "(Command system) Parameter missing" << std::endl;
 			}
@@ -313,7 +322,7 @@ bool execCommand(ros::NodeHandle n, std::vector<std::string> command){
 		case 'r':
 		{
 			std::cout << "(Command system) Gobot stops sending laser data" << std::endl;
-			return stopSendingLaserData();
+			return stopSendLaserData();
 		}
 
 		/// Command for the robot to start to scan the map
@@ -451,8 +460,8 @@ bool stopMap(){
 	}
 }
 
-bool sendLaserData(){
-	std::cout << "(Command system) Launching the service to get the laser data using port " << laser_port << std::endl;
+bool startLaserData(){
+	std::cout << "(Command system) Launching the service which will send the lasers's data using port " << laser_port << std::endl;
 	gobot_software::Port srv;
 	srv.request.port = laser_port;
 
@@ -465,18 +474,33 @@ bool sendLaserData(){
 	}
 }
 
-bool stopSendingLaserDataTemporarily(){
+bool sendLaserData(){
+	std::cout << "(Command system) Launching the service to get the laser data" << std::endl;
 	gobot_software::Port srv;
-	if(stopLaserClient.call(srv)){
-		std::cout << "Command system stop_sending_laser_data_temporarily started" << std::endl;
+
+	if(sendLaserClient.call(srv)) {
+		std::cout << "(Command system) send_laser_data_sender service started" << std::endl;
 		return true;
 	} else {
-		std::cerr << "(Command system) failed to call service stop_sending_laser_data_temporarily" << std::endl;
+		std::cerr << "(Command system) Failed to call service send_laser_data_sender" << std::endl;
 		return false;
 	}
 }
 
-bool stopSendingLaserData(){
+bool stopSendLaserData(){
+	std::cout << "(Command system) Launching the service to stop receiving the laser data" << std::endl;
+	gobot_software::Port srv;
+
+	if(stopSendLaserClient.call(srv)) {
+		std::cout << "(Command system) stop_send_laser_data_sender service started" << std::endl;
+		return true;
+	} else {
+		std::cerr << "(Command system) Failed to call service stop_send_laser_data_sender" << std::endl;
+		return false;
+	}
+}
+
+bool stopLaserData(){
 	gobot_software::Port srv;
 	if(stopLaserClient.call(srv)){
 		std::cout << "Command system stop_sending_laser_data started" << std::endl;
@@ -555,11 +579,6 @@ void session(boost::shared_ptr<tcp::socket> sock, ros::NodeHandle n){
 		bool finishedCmd = 0;
 
 		getPorts(sock, n);
-
-		std::cout << "(Command system) Starting Robot pos and Metadata services" << std::endl;
-		startRobotPos();
-		startMetadata();
-		startMap();
 
 		while(ros::ok() && connected){
 			char data[max_length];
@@ -745,7 +764,7 @@ void serverDisconnected(const std_msgs::String::ConstPtr& msg){
 	stopRobotPos();
 	stopMap();
 	stopMetadata();
-	stopSendingLaserData();
+	stopLaserData();
 }
 
 int main(int argc, char* argv[]){
@@ -772,7 +791,12 @@ int main(int argc, char* argv[]){
 		stopPathClient = n.serviceClient<std_srvs::Empty>("stop_path");
 
 		startLaserClient = n.serviceClient<gobot_software::Port>("start_laser_data_sender");
+<<<<<<< HEAD
 		stoplaserTemporarilyClient = n.serviceClient<gobot_software::Port>("stop_sending_laser_data_temporarily");
+=======
+		sendLaserClient = n.serviceClient<gobot_software::Port>("send_laser_data_sender");
+		stopSendLaserClient = n.serviceClient<gobot_software::Port>("stop_send_laser_data_sender");
+>>>>>>> f594fd6b896ed6238f6febf79b185b28e2b8572d
 		stopLaserClient = n.serviceClient<gobot_software::Port>("stop_laser_data_sender");
 
 		go_pub = n.advertise<geometry_msgs::PoseStamped>("/move_base_simple/goal", 1000);

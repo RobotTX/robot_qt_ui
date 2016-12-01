@@ -116,6 +116,7 @@ bool sendAutoMap(gobot_software::Port::Request &req,
 	std::cout << "(Map) SendAutoMap " << std::endl;
 
 	ros::NodeHandle n;
+	sub_map.shutdown();
 	sub_map = n.subscribe("/map", 1, getMap);
 
 	return true;
