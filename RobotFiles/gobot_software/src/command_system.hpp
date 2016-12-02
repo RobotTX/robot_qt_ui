@@ -37,9 +37,7 @@ using boost::asio::ip::tcp;
 
 bool execCommand(ros::NodeHandle n, std::vector<std::string> command);
 void session(boost::shared_ptr<tcp::socket> sock, ros::NodeHandle n);
-void asyncAccept(boost::shared_ptr<boost::asio::io_service> io_service, 
-	boost::shared_ptr<tcp::acceptor> m_acceptor, 
-	ros::NodeHandle n);
+void asyncAccept(boost::shared_ptr<boost::asio::io_service> io_service, boost::shared_ptr<tcp::acceptor> m_acceptor, ros::NodeHandle n);
 void startRobotPos();
 void stopRobotPos();
 void startMetadata();

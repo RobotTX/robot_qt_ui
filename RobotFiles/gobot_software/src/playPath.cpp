@@ -139,9 +139,8 @@ void startPath(ros::NodeHandle n, std::shared_ptr<MoveBaseClient> ac){
 			if(path_stage_file){
 				path_stage_file << stage;
 				path_stage_file.close();
-			} else {
+			} else 
 				std::cout << "Sorry we were not able to find the file play_path.txt in order to keep track of the stage of the path to be played" << std::endl;	
-			}
 	    }
 	    else
 	    	ROS_INFO("The base failed to reach target %d", stage+1);
@@ -330,6 +329,7 @@ int main(int argc, char* argv[]){
 
 	return 0;
 }
+
 /*
 uint8 PENDING         = 0   # The goal has yet to be processed by the action server
 uint8 ACTIVE          = 1   # The goal is currently being processed by the action server

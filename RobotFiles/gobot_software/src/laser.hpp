@@ -34,5 +34,4 @@ bool sendLaser(std_srvs::Empty::Request &req, std_srvs::Empty::Response &res);
 
 bool stopSendLaser(std_srvs::Empty::Request &req, std_srvs::Empty::Response &res);
 
-
 #endif
