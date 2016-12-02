@@ -60,7 +60,7 @@
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow) {
     ui->setupUi(this);
-
+qDebug() << "MainWIndow:: Inside thread" << QThread::currentThreadId();
     /// centers the msgBox on the middle of the screen
     msgBox.move(mapToGlobal(QPoint(QApplication::desktop()->screenGeometry().width()/2,
                                    QApplication::desktop()->screenGeometry().height()/2) ));
@@ -75,7 +75,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
     /// initializes the map used by the application
     map = QSharedPointer<Map>(new Map());
-
 
     //qDebug() << "Current time :" << QDateTime::currentDateTime().toString("yyyy-MM-dd-hh-mm-ss");
     //qDebug() << "Map Id :" << QUuid::createUuid().toString();
