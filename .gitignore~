@@ -1,0 +1,15 @@
+gobot-software.pro.*
+gobot-software.pro.user
+GobotSoftware.pro.*
+GobotSoftware.pro.user
+robotsName.dat
+points.xml
+Resources/points.xml
+Resources/points.*
+Build/*
+robot_paths/*
+savedPaths.dat
+mapConfigs/*
+paths.dat
+currentMap.txt
+settings/*

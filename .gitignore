@@ -13,3 +13,6 @@ mapConfigs/*
 paths.dat
 currentMap.txt
 settings/*
+robots_homes/*
+robots_paths/*
+Resources/qt-*
