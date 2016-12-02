@@ -111,8 +111,8 @@ bool startMap(gobot_software::Port::Request &req,
 	return true;
 }
 
-bool sendAutoMap(gobot_software::Port::Request &req,
-    gobot_software::Port::Response &res){
+bool sendAutoMap(std_srvs::Empty::Request &req,
+    std_srvs::Empty::Response &res){
 	std::cout << "(Map) SendAutoMap " << std::endl;
 
 	ros::NodeHandle n;
@@ -122,8 +122,8 @@ bool sendAutoMap(gobot_software::Port::Request &req,
 	return true;
 }
 
-bool stopAutoMap(gobot_software::Port::Request &req,
-    gobot_software::Port::Response &res){
+bool stopAutoMap(std_srvs::Empty::Request &req,
+    std_srvs::Empty::Response &res){
 	std::cout << "(Map) StopAutoMap " << std::endl;
 
 	sub_map.shutdown();
@@ -131,8 +131,8 @@ bool stopAutoMap(gobot_software::Port::Request &req,
 	return true;
 }
 
-bool sendOnceMap(gobot_software::Port::Request &req,
-    gobot_software::Port::Response &res){
+bool sendOnceMap(std_srvs::Empty::Request &req,
+    std_srvs::Empty::Response &res){
 	std::cout << "(Map) SendOnceMap doing nothing for now" << std::endl;
 
 
@@ -173,8 +173,8 @@ bool sendOnceMap(gobot_software::Port::Request &req,
 		return false;
 }
 
-bool stopMap(gobot_software::Port::Request &req,
-    gobot_software::Port::Response &res){
+bool stopMap(std_srvs::Empty::Request &req,
+    std_srvs::Empty::Response &res){
 
 	std::cout << "(Map) Stopping map_sender" << std::endl;
 	sub_map.shutdown();

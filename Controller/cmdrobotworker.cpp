@@ -77,10 +77,23 @@ void CmdRobotWorker::readTcpDataSlot(){
 void CmdRobotWorker::connectedSlot(){
     qDebug() << "(Robot" << robotName << ") Connected";
 
+    bool startLaser = 1;
+
+    QString fileStr = QDir::currentPath() + QDir::separator() + "settings" + QDir::separator() + ipAddress + ".txt";
+    std::ifstream file(fileStr.toStdString(), std::ios::in);
+
+    if(file){
+        file >> startLaser;
+        qDebug() << "CmdRobotWorker::connectedSlot startLaser :" << startLaser;
+        file.close();
+    } else {
+        qDebug() << "CmdRobotWorker::connectedSlot could not open the setting file at" << fileStr;
+    }
+
     /// When we are connected, we send the ports to use for the other workers
     /// in order to get laser feedback, robot position, map and map metadata
     QString portStr = "h \"" + QString::number(metadataPort) + "\" \"" + QString::number(robotPort) + "\" \"" +
-            QString::number(mapPort) + "\" \"" + QString::number(laserPort) + "\" } ";
+            QString::number(mapPort) + "\" \"" + QString::number(laserPort) + "\" \"" + QString::number(startLaser) + "\" } ";
     qDebug() << "(Robot" << robotName << ") Sending ports : " << portStr;
     bool tmpBool(false);
     while(!tmpBool){
@@ -91,7 +104,7 @@ void CmdRobotWorker::connectedSlot(){
             emit portSent();
         } else {
             qDebug() << "(Robot" << robotName << ") Ports could not be sent, trying again";
-        };
+        }
     }
 }
 

@@ -7,11 +7,12 @@ tcp::socket socket_laser(io_service);
 ros::Subscriber sub_laser;
 tcp::acceptor l_acceptor(io_service);
 
-bool startLaser(gobot_software::Port::Request &req, gobot_software::Port::Response &res){
+bool startLaser(gobot_software::PortLaser::Request &req, gobot_software::PortLaser::Response &res){
     std::cout << "(Laser) Starting laser_sender" << std::endl;
     ros::NodeHandle n;
 
     int laserPort = req.port; 
+    bool startLaser = req.startLaser;
 
     socket_laser = tcp::socket(io_service);
     l_acceptor = tcp::acceptor(io_service, tcp::endpoint(tcp::v4(), laserPort));
@@ -21,7 +22,8 @@ bool startLaser(gobot_software::Port::Request &req, gobot_software::Port::Respon
     l_acceptor.accept(socket_laser);
     std::cout << "(Laser) We are connected " << std::endl;
 
-    sub_laser = n.subscribe("/scan", 1, getLaserData);
+    if(startLaser)
+        sub_laser = n.subscribe("/scan", 1, getLaserData);
     
     return true;
 }
@@ -47,7 +49,7 @@ void sendLaserData(const std::vector<float>& scan){
     }
 }
 
-bool sendLaser(gobot_software::Port::Request &req, gobot_software::Port::Response &res){
+bool sendLaser(std_srvs::Empty::Request &req, std_srvs::Empty::Response &res){
     std::cout << "(Laser) send_laser_data_sender " << std::endl;
 
     ros::NodeHandle n;
@@ -56,14 +58,14 @@ bool sendLaser(gobot_software::Port::Request &req, gobot_software::Port::Respons
     return true;
 }
 
-bool stopSendLaser(gobot_software::Port::Request &req, gobot_software::Port::Response &res){
+bool stopSendLaser(std_srvs::Empty::Request &req, std_srvs::Empty::Response &res){
     std::cout << "(Laser) stop_send_laser_data_sender " << std::endl;
 
     sub_laser.shutdown();
     return true;
 }
 
-bool stopSendingLaserData(gobot_software::Port::Request &req, gobot_software::Port::Response &res){
+bool stopSendingLaserData(std_srvs::Empty::Request &req, std_srvs::Empty::Response &res){
     std::cout << "(Laser) Stopping laser_sender" << std::endl;
     sub_laser.shutdown();
     socket_laser.close();

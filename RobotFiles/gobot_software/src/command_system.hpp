@@ -3,6 +3,7 @@
 
 #include "ros/ros.h"
 #include "gobot_software/Port.h"
+#include "gobot_software/PortLaser.h"
 #include "gobot_software/SendMessageToPc.h"
 #include "geometry_msgs/PoseStamped.h"
 #include "std_msgs/String.h"
@@ -51,7 +52,7 @@ bool stopMap();
 void server(unsigned short port, ros::NodeHandle n);
 void getPorts(boost::shared_ptr<tcp::socket> sock, ros::NodeHandle n);
 bool sendMessageToPc(boost::shared_ptr<tcp::socket> sock, std::string message);
-bool startLaserData();
+bool startLaserData(bool startLaser);
 bool sendLaserData();
 bool stopSendLaserData();
 bool stopLaserData();

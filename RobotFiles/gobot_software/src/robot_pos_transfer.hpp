@@ -16,6 +16,7 @@
 #include <boost/smart_ptr.hpp>
 #include <boost/asio.hpp>
 #include <boost/thread.hpp>
+#include "std_srvs/Empty.h"
 
 using boost::asio::ip::tcp;
 
@@ -37,6 +38,6 @@ bool startRobotPos(gobot_software::Port::Request &req, gobot_software::Port::Res
 /**
  * Service called to stop the listening to the robot pos topic and transfer to the software
  */
-bool stopRobotPos(gobot_software::Port::Request &req, gobot_software::Port::Response &res);
+bool stopRobotPos(std_srvs::Empty::Request &req, std_srvs::Empty::Response &res);
 
 #endif

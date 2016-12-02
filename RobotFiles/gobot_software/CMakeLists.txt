@@ -17,6 +17,7 @@ find_package(catkin REQUIRED COMPONENTS
 add_service_files(
   FILES
   Port.srv
+  PortLaser.srv
   SendMessageToPc.srv
 )
 

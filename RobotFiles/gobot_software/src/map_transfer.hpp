@@ -19,6 +19,7 @@
 #include <boost/thread.hpp>
 #include <chrono>
 #include <thread>
+#include "std_srvs/Empty.h"
 
 using boost::asio::ip::tcp;
 
@@ -45,22 +46,22 @@ bool startMap(gobot_software::Port::Request &req, gobot_software::Port::Response
 /**
  * Service called to stop everything
  */
-bool stopMap(gobot_software::Port::Request &req, gobot_software::Port::Response &res);
+bool stopMap(std_srvs::Empty::Request &req, std_srvs::Empty::Response &res);
 
 /**
  * Service called to start sending the map to the app
  */
-bool sendAutoMap(gobot_software::Port::Request &req, gobot_software::Port::Response &res);
+bool sendAutoMap(std_srvs::Empty::Request &req, std_srvs::Empty::Response &res);
 
 /**
  * Service called to stop sending the map to the app
  */
-bool stopAutoMap(gobot_software::Port::Request &req, gobot_software::Port::Response &res);
+bool stopAutoMap(std_srvs::Empty::Request &req, std_srvs::Empty::Response &res);
 
 /**
  * Service called to send the map once to the app
  */
-bool sendOnceMap(gobot_software::Port::Request &req, gobot_software::Port::Response &res);
+bool sendOnceMap(std_srvs::Empty::Request &req, std_srvs::Empty::Response &res);
 
 std::vector<uint8_t> compress(std::vector<int8_t> map, int map_size, bool fromPgm);
 
