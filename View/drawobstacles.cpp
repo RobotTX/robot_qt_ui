@@ -48,13 +48,11 @@ QVector<QPointF> DrawObstacles::convertRangesToPoints(const float angle_min /* r
     qDebug() << "MainWindow::convertRangesToPoints called with" << ranges.size() << "values";
     QVector<QPointF> points;
     QPointer<Robot> robot = robots->getRobotViewByIp(ipAddress)->getRobot();
-    //int i(ranges.size()-1);
-    auto begin = std::chrono::high_resolution_clock::now();
+    int i(ranges.size()-1);
 
     /// for improved performance
     std::for_each(ranges.begin(), ranges.end(), [&](const float range) { points.push_back(QPointF(robot->getPosition().getX() + (range * cos(angle_min + i*angle_increment)) * 20 ,
                                                                                                   robot->getPosition().getY() + (range* sin(angle_min + i*angle_increment)) * 20)); i--; });
-
     return points;
 }
 
