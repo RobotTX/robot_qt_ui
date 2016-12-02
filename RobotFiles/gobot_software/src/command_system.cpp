@@ -700,7 +700,7 @@ void asyncAccept(boost::shared_ptr<boost::asio::io_service> io_service, boost::s
    	if(ifMap){
    		getline(ifMap, mapId);
    		getline(ifMap, mapDate);
-   		ifPath.close();
+   		ifMap.close();
    	}
 
    	if(mapId.empty())

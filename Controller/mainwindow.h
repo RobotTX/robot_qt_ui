@@ -144,7 +144,7 @@ private slots:
     void sendPathSelectedRobotSlot(const QString groupName, const QString pathName);
     void updateRobot(const QString ipAddress, const float posX, const float posY, const float ori);
     void updateMetadata(const int width, const int height, const float resolution, const float originX, const float originY);
-    void updateMap(const QByteArray mapArray, bool fromPgm);
+    void updateMap(const QByteArray mapArray, bool fromPgm, QString mapId, QString mapDate);
     void launchScan(bool checked);
     void quit(void);
     void setSelectedRobot(QPointer<RobotView> robotView);
@@ -281,6 +281,7 @@ protected:
     bool changeRobotName(QString name);
     void changeRobotWifi(QString ssid, QString password);
     void stopMapThread();
+    void closeEvent(QCloseEvent *event);
 
 private:
     Ui::MainWindow* ui;

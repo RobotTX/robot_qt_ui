@@ -27,14 +27,16 @@ public:
     QPointF getCenter(void) const { return center; }
     QDateTime getDateTime(void) const { return dateTime; }
     QUuid getMapId(void) const { return mapId; }
+    bool getModified(void) const { return modified; }
 
     void setResolution(const float _resolution) { resolution = _resolution; }
     void setWidth(const int _width) { width = _width; }
     void setHeight(const int _height) { height = _height; }
     void setOrigin(const Position _origin) { origin = _origin; }
-    void setMapImage(const QImage _mapImage) { mapImage = _mapImage; }
+    void setMapImage(const QImage _mapImage) { mapImage = _mapImage; modified = true; }
     void setDateTime(const QDateTime _dateTime);
     void setMapId(const QUuid _mapId) { mapId = _mapId; }
+    void setModified(const bool _modified) { modified = _modified; }
 
     /**
      * @brief setMapFromArray
@@ -93,6 +95,7 @@ private:
     QPointF center;
     QDateTime dateTime;
     QUuid mapId;
+    bool modified;
 };
 
 #endif /// MAP_H

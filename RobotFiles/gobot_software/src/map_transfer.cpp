@@ -10,6 +10,7 @@ tcp::acceptor m_acceptor(io_service);
 #define HIGH_THRESHOLD 0.65*100
 #define LOW_THRESHOLD 0.196*100
 
+std::string path_computer_software = "/home/gtdollar/computer_software/";
 std::string path_gobot_move = "/home/gtdollar/catkin_ws/src/gobot_move/";
 
 void sendMap(const std::vector<uint8_t>& my_map){
@@ -44,6 +45,30 @@ std::vector<uint8_t> compress(std::vector<int8_t> map, int map_size, bool fromPg
 	std::vector<uint8_t> my_map;
 	int last = 205;
 	uint32_t count = 0;
+
+	/// If the map comes from a pgm, we send the mapId and mapDate with it
+	if(fromPgm){
+	   	std::ifstream ifMap(path_computer_software + "Robot_Infos/mapId.txt", std::ifstream::in);
+	   	std::string mapId("{0}");
+	   	std::string mapDate("0");
+	   	if(ifMap){
+	   		getline(ifMap, mapId);
+	   		getline(ifMap, mapDate);
+	   		ifMap.close();
+	   	}
+
+	   	std::string str = mapId + " " + mapDate;
+	   	for(int i = 0; i < str.size(); i++){
+	   		my_map.push_back(static_cast<uint8_t>(str.at(i)));
+	   	}
+
+		my_map.push_back(252);
+		my_map.push_back(252);
+		my_map.push_back(252);
+		my_map.push_back(252);
+		my_map.push_back(252);
+	}
+
 
 	for(size_t i = 0; i < map_size; i++){
 		int curr = map.at(i);

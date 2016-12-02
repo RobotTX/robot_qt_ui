@@ -1574,13 +1574,16 @@ void MainWindow::updateMetadata(const int width, const int height, const float r
     }
 }
 
-void MainWindow::updateMap(const QByteArray mapArray, bool fromPgm){
+void MainWindow::updateMap(const QByteArray mapArray, bool fromPgm, QString mapId, QString mapDate){
     /// TODO check if scanning or not and act accordingly
     map->setMapFromArray(mapArray, fromPgm);
     QPixmap pixmap = QPixmap::fromImage(map->getMapImage());
     mapPixmapItem->setPixmap(pixmap);
-    /// WARNING might make the app send the map to every connected robot everytime we receive one while scanning
-    ///***************///
+    if(fromPgm && !mapId.isEmpty() && !mapDate.isEmpty()){
+        map->setMapId(QUuid(mapId));
+        map->setDateTime(QDateTime::fromString(mapDate, "yyyy-MM-dd-hh-mm-ss"));
+    }
+
     scene->update();
 }
 
@@ -4993,4 +4996,30 @@ Position MainWindow::convertRobotCoordinatesToPixelCoordinates(const Position po
     float xInPixelCoordinates = (-map->getOrigin().getX()+ positionInRobotCoordinates.getX())/map->getResolution() + ROBOT_WIDTH;
     float yInPixelCoordinates = map->getHeight()-(-map->getOrigin().getY()+ positionInRobotCoordinates.getY())/map->getResolution()-ROBOT_WIDTH/2;
     return Position(xInPixelCoordinates, yInPixelCoordinates);
+}
+
+void MainWindow::closeEvent(QCloseEvent *event){
+    qDebug() << "MainWindow::closeEvent";
+    if(map->getModified()){
+        QMessageBox msgBox;
+        msgBox.setText("The map has been modified.");
+        msgBox.setInformativeText("Do you want to save your changes ?");
+        msgBox.setStandardButtons(QMessageBox::Save | QMessageBox::Cancel | QMessageBox::Discard);
+        msgBox.setDefaultButton(QMessageBox::Save);
+        int ret = msgBox.exec();
+        switch (ret) {
+            case QMessageBox::Save:
+                saveMapBtnEvent();
+            break;
+            case QMessageBox::Discard:
+                QMainWindow::closeEvent(event);
+            break;
+            case QMessageBox::Cancel:
+                event->ignore();
+            break;
+            default:
+                QMainWindow::closeEvent(event);
+            break;
+        }
+    }
 }

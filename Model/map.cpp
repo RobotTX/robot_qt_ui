@@ -3,7 +3,7 @@
 #include <assert.h>
 
 
-Map::Map(): resolution(0), width(0), height(0), origin(Position()), mapId(QUuid()) {}
+Map::Map(): resolution(0), width(0), height(0), origin(Position()), mapId(QUuid()), modified(false) {}
 
 
 void Map::setMapFromFile(const QString fileName){
@@ -11,11 +11,17 @@ void Map::setMapFromFile(const QString fileName){
     mapImage = QImage(fileName,"PGM");
     width = mapImage.width();
     height = mapImage.height();
+    /// Doesn't count as a modification to save as we load the map from a file
+    modified = false;
 }
 
 void Map::setMapFromArray(const QByteArray& mapArrays, bool fromPgm){
     qDebug() << "Map::setMapFromArray called" << mapArrays.size();
     mapImage = QImage(width, height, QImage::Format_Grayscale8);
+
+    /// This map comes from a robot so we want to tell the user to save when closing the app
+    modified = true;
+
     uint32_t index = 0;
 
     /// depending on where we get the map from the system of coordinates is not the same
@@ -44,6 +50,9 @@ void Map::setMapFromArray(const QByteArray& mapArrays, bool fromPgm){
 void Map::saveToFile(const QString fileName){
     /// Qt has is own function to save the QImage to a PGM file
     mapImage.save(fileName, "PGM");
+
+    /// When the map is saved, no need to tell the user to save it again when closing the app
+    modified = false;
 }
 
 void Map::setDateTime(const QDateTime _dateTime) {
