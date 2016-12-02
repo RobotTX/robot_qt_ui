@@ -97,6 +97,7 @@ bool startMap(gobot_software::Port::Request &req,
 
 	if(socket_map.is_open())
 		socket_map.close();
+
 	if(m_acceptor.is_open())
 		m_acceptor.close();
 
@@ -134,7 +135,6 @@ bool stopAutoMap(gobot_software::Port::Request &req,
 bool sendOnceMap(gobot_software::Port::Request &req,
     gobot_software::Port::Response &res){
 	std::cout << "(Map) SendOnceMap doing nothing for now" << std::endl;
-
 
 	std::vector<int8_t> my_map;
     std::string mapFileStr = path_gobot_move + "maps/new_map.pgm";

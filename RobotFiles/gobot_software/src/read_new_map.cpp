@@ -14,7 +14,6 @@ std::string path_computer_software = "/home/gtdollar/computer_software/";
 std::string path_gobot_move = "/home/gtdollar/catkin_ws/src/gobot_move/";
 ros::Publisher map_pub;
 
-
 void session(boost::shared_ptr<tcp::socket> sock, ros::NodeHandle n){
     std::cout << "(New Map) session launched" << std::endl;
     int gotMapData = 0;
@@ -51,15 +50,14 @@ void session(boost::shared_ptr<tcp::socket> sock, ros::NodeHandle n){
                 std::cout << "(New Map) ';' found" << std::endl;
                 gotMapData++;
             } else {
-                if(gotMapData > 2){
+                if(gotMapData > 2)
                     map.push_back((uint8_t) data[i]);
-                } else if(gotMapData == 0){
+                else if(gotMapData == 0)
                     mapId += data[i];
-                } else if(gotMapData == 1){
+                else if(gotMapData == 1)
                     mapDate += data[i];
-                } else {
+                else 
                     mapMetadata += data[i];
-                }
             }
         }
 
@@ -92,10 +90,9 @@ void session(boost::shared_ptr<tcp::socket> sock, ros::NodeHandle n){
                 iss >> width >> height >> resolution >> originX >> originY;
                 std::cout << "(New Map) Map metadata after split : " << width << " " << height << " " << resolution << " " << originX << " " << originY << std::endl;
 
-                /// We remove the 5 last byte as they are only there to identify the end of the map
+                /// We remove the 5 last bytes as they are only there to identify the end of the map
                 map.erase(map.end() - 5, map.end());
                 std::cout << "(New Map) Size of the map received : " << map.size() << std::endl;
-
 
                 /// We save the file in a the pgm file used by amcl
                 std::string mapFile = path_gobot_move + "maps/new_map.pgm";
@@ -104,17 +101,17 @@ void session(boost::shared_ptr<tcp::socket> sock, ros::NodeHandle n){
                 if(ofs.is_open()){
                     ofs << "P5" << std::endl << width << " " << height << std::endl << "255" << std::endl;
 
-                    /// We set each pixel of the image, the data received being
+                    /// writes every single pixel to the pgm file
                     for(int i = 0; i < map.size(); i+=5){
                         uint8_t color = static_cast<uint8_t> (map.at(i));
 
                         uint32_t count2 = static_cast<uint32_t> (static_cast<uint8_t> (map.at(i+1)) << 24) + static_cast<uint32_t> (static_cast<uint8_t> (map.at(i+2)) << 16)
                                         + static_cast<uint32_t> (static_cast<uint8_t> (map.at(i+3)) << 8) + static_cast<uint32_t> (static_cast<uint8_t> (map.at(i+4)));
 
-                        for(int j = 0; j < (int) count2; j++){
+                        for(int j = 0; j < count2; j++)
                             ofs << color;
-                        }
                     }
+
                     ofs << std::endl;
                     ofs.close();
 
@@ -158,14 +155,13 @@ void session(boost::shared_ptr<tcp::socket> sock, ros::NodeHandle n){
             map.clear();
 
 
-            /// Send a message to the software to tell we finished
+            /// Send a message to the application to tell we finished
             boost::asio::write(*sock, boost::asio::buffer(message, message.length()), boost::asio::transfer_all(), error);
 
-            if(error) {
+            if(error) 
                 std::cout << "(New Map) Error : " << error.message() << std::endl;
-            } else {
+            else 
                 std::cout << "(New Map) Message sent succesfully : " << message.length() << " bytes sent" << std::endl;
-            }
         }
     }
 }

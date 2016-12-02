@@ -33,5 +33,4 @@ bool sendLaser(gobot_software::Port::Request &req, gobot_software::Port::Respons
 
 bool stopSendLaser(gobot_software::Port::Request &req, gobot_software::Port::Response &res);
 
-
 #endif

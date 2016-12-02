@@ -7,6 +7,7 @@
 #include "Controller/mainwindow.h"
 #include "Model/robot.h"
 #include <QtMath>
+#include <chrono>
 
 DrawObstacles::DrawObstacles(const QSize _size, QSharedPointer<Robots> _robots, QGraphicsItem *parent) : QGraphicsItem(parent), size(_size), robots(_robots)
 {}
@@ -47,10 +48,12 @@ QVector<QPointF> DrawObstacles::convertRangesToPoints(const float angle_min /* r
     qDebug() << "MainWindow::convertRangesToPoints called with" << ranges.size() << "values";
     QVector<QPointF> points;
     QPointer<Robot> robot = robots->getRobotViewByIp(ipAddress)->getRobot();
-    for(int i = 0; i < ranges.size(); i++)
-        ///  / by 0.05 = resolution -> * 20 is faster
-        points.push_back(QPointF(robot->getPosition().getX() + (ranges.at(i) * cos(angle_min + i*angle_increment)) * 20 ,
-                                 robot->getPosition().getY() + (ranges.at(i) * sin(angle_min + i*angle_increment)) * 20));
+    //int i(ranges.size()-1);
+    auto begin = std::chrono::high_resolution_clock::now();
+
+    /// for improved performance
+    std::for_each(ranges.begin(), ranges.end(), [&](const float range) { points.push_back(QPointF(robot->getPosition().getX() + (range * cos(angle_min + i*angle_increment)) * 20 ,
+                                                                                                  robot->getPosition().getY() + (range* sin(angle_min + i*angle_increment)) * 20)); i--; });
 
     return points;
 }

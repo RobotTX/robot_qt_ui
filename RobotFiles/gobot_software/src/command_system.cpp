@@ -23,12 +23,8 @@ ros::ServiceClient pausePathClient;
 ros::ServiceClient stopPathClient;
 
 ros::ServiceClient startLaserClient;
-<<<<<<< HEAD
-ros::ServiceClient stoplaserTemporarilyClient;
-=======
 ros::ServiceClient sendLaserClient;
 ros::ServiceClient stopSendLaserClient;
->>>>>>> f594fd6b896ed6238f6febf79b185b28e2b8572d
 ros::ServiceClient stopLaserClient;
 
 ros::Publisher go_pub;
@@ -100,15 +96,15 @@ bool execCommand(ros::NodeHandle n, std::vector<std::string> command){
 				
 				go_pub.publish(msg);
 			
-				if(waitTime >= 0){
+				if(waitTime >= 0)
 					std::cout << "(Command system) Then wait for : " << waitTime << std::endl;
-				} else {
+				else 
 					std::cout << "(Command system) Then wait for : Human Action" << std::endl;
-				}
+
 				return true;
-			} else {
+			} else 
 				std::cout << "(Command system) Parameter missing" << std::endl;
-			}
+		
 		break;
 
 		/// Command for the robot to pause the path
@@ -335,9 +331,8 @@ bool execCommand(ros::NodeHandle n, std::vector<std::string> command){
 		default:
 			std::cerr << "(Command system) Unknown command '" << command.at(0) << "' with " << command.size()-1 << " arguments : ";
 			if(command.size() < 10){
-				for(int i = 0; i < command.size(); i++){
+				for(int i = 0; i < command.size(); i++)
 					std::cerr << command.at(i) << " ";
-				}
 			} else 
 				std::cout << "(Command system) Too many arguments to display (" << command.size() << ")" << std::endl;
 		break;
@@ -351,21 +346,19 @@ void startRobotPos(){
 	gobot_software::Port srv;
 	srv.request.port = robot_pos_port;
 
-	if (startRobotPosClient.call(srv)) {
+	if (startRobotPosClient.call(srv)) 
 		std::cout << "(Command system) start_robot_pos_sender service started" << std::endl;
-	} else {
+	else 
 		std::cerr << "(Command system) Failed to call service start_robot_pos_sender" << std::endl;
-	}
 }
 
 void stopRobotPos(){
 	gobot_software::Port srv;
 
-	if (stopRobotPosClient.call(srv)) {
+	if (stopRobotPosClient.call(srv)) 
 		std::cout << "(Command system) stop_robot_pos_sender service started" << std::endl;
-	} else {
+	else 
 		std::cerr << "(Command system) Failed to call service stop_robot_pos_sender" << std::endl;
-	}
 }
 
 void startMetadata(){
@@ -374,11 +367,10 @@ void startMetadata(){
 	gobot_software::Port srv;
 	srv.request.port = metadata_port;
 
-	if (startMetadataClient.call(srv)) {
+	if (startMetadataClient.call(srv)) 
 		std::cout << "(Command system) start_map_metadata_sender service started" << std::endl;
-	} else {
+	else 
 		std::cerr << "(Command system) Failed to call service start_map_metadata_sender" << std::endl;
-	}
 }
 
 void stopMetadata(){
@@ -388,7 +380,6 @@ void stopMetadata(){
 		std::cout << "(Command system) stop_map_metadata_sender service started" << std::endl;
 	else 
 		std::cerr << "(Command system) Failed to call service stop_map_metadata_sender" << std::endl;
-	
 }
 
 bool startMap(){
@@ -526,9 +517,8 @@ void getPorts(boost::shared_ptr<tcp::socket> sock, ros::NodeHandle n){
 		std::cout << "(Command system) Connection closed" << std::endl;
 		connected = false;
 		return;
-	} else if (error) {
+	} else if (error) 
 		throw boost::system::system_error(error); // Some other error.
-	}
 
 	std::istringstream iss(data);
 
@@ -538,9 +528,8 @@ void getPorts(boost::shared_ptr<tcp::socket> sock, ros::NodeHandle n){
 		if(sub.compare("}") == 0){
 			std::cout << "(Command system) Command complete" << std::endl;
 			finishedCmd = 1;
-		} else {
+		} else 
 			commandStr += sub + " ";
-		}
 	}
 	std::cout << "Received :" << commandStr << std::endl;
 
@@ -557,16 +546,13 @@ void getPorts(boost::shared_ptr<tcp::socket> sock, ros::NodeHandle n){
 	if(finishedCmd){
 		std::cout << "(Command system) Executing command : " << std::endl;
 		if(command.size() < 10){
-			for(int i = 0; i < command.size(); i++){
+			for(int i = 0; i < command.size(); i++)
 				std::cout << "'" << command.at(i) << "'" << std::endl;
-			}
-		} else {
+		} else 
 			std::cout << "(Command system) Too many arguments to display (" << command.size() << ")" << std::endl;
-		}
 
 		execCommand(n, command);
 		std::cout << "getPorts done" << std::endl;
-	
 	}
 }
 
@@ -590,9 +576,8 @@ void session(boost::shared_ptr<tcp::socket> sock, ros::NodeHandle n){
 				std::cout << "(Command system) Connection closed" << std::endl;
 				connected = false;
 				return;
-        	} else if (error) {
+        	} else if (error) 
 				throw boost::system::system_error(error); // Some other error.
-        	}
 
 			std::istringstream iss(data);
 
@@ -602,9 +587,8 @@ void session(boost::shared_ptr<tcp::socket> sock, ros::NodeHandle n){
 				if(sub.compare("}") == 0){
 					std::cout << "(Command system) Command complete" << std::endl;
 					finishedCmd = 1;
-				} else {
+				} else 
 					commandStr += sub + " ";
-				}
 			}
 
 			command.push_back(std::string(1, commandStr.at(0)));
@@ -620,19 +604,17 @@ void session(boost::shared_ptr<tcp::socket> sock, ros::NodeHandle n){
 			if(finishedCmd){
 				std::cout << "(Command system) Executing command : " << std::endl;
 				if(command.size() < 10){
-					for(int i = 0; i < command.size(); i++){
+					for(int i = 0; i < command.size(); i++)
 						std::cout << "'" << command.at(i) << "'" << std::endl;
-					}
-				} else {
+				} else 
 					std::cout << "(Command system) Too many arguments to display (" << command.size() << ")" << std::endl;
-				}
 
 				std::string msg = command.at(0);
-				if(execCommand(n, command)){
+				if(execCommand(n, command))
 					msg += " done";
-				} else {
+				else 
 					msg += " failed";
-				}
+
 				sendMessageToPc(sock, msg);
 				command.clear();
 				finishedCmd = 0;
@@ -791,17 +773,14 @@ int main(int argc, char* argv[]){
 		stopPathClient = n.serviceClient<std_srvs::Empty>("stop_path");
 
 		startLaserClient = n.serviceClient<gobot_software::Port>("start_laser_data_sender");
-<<<<<<< HEAD
-		stoplaserTemporarilyClient = n.serviceClient<gobot_software::Port>("stop_sending_laser_data_temporarily");
-=======
 		sendLaserClient = n.serviceClient<gobot_software::Port>("send_laser_data_sender");
 		stopSendLaserClient = n.serviceClient<gobot_software::Port>("stop_send_laser_data_sender");
->>>>>>> f594fd6b896ed6238f6febf79b185b28e2b8572d
 		stopLaserClient = n.serviceClient<gobot_software::Port>("stop_laser_data_sender");
 
 		go_pub = n.advertise<geometry_msgs::PoseStamped>("/move_base_simple/goal", 1000);
 
 		server(CMD_PORT, n);
+		
 	} catch (std::exception& e) {
 		std::cerr << "(Command system) Exception: " << e.what() << std::endl;
 	}
