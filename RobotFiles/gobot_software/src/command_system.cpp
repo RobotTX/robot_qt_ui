@@ -140,17 +140,18 @@ bool execCommand(ros::NodeHandle n, std::vector<std::string> command){
 
 		/// Command for the robot to receive the ports needed for the map, metadata and robot pos services
 		case 'h':
-			if(command.size() == 5){
+			if(command.size() == 6){
 
 				metadata_port = std::stoi(command.at(1));
 				robot_pos_port = std::stoi(command.at(2));
 				map_port = std::stoi(command.at(3));
 				laser_port = std::stoi(command.at(4));
+				bool startLaser = std::stoi(command.at(5));
 				std::cout << "(Command system) Gobot here are the ports " << metadata_port << ", " << robot_pos_port << ", " << map_port << ", " << laser_port << std::endl;
 				startRobotPos();
 				startMetadata();
 				startMap();
-				startLaserData();
+				startLaserData(startLaser);
 				return true;
 			} else {
 				std::cout << "(Command system) Parameter missing" << std::endl;
@@ -353,7 +354,7 @@ void startRobotPos(){
 }
 
 void stopRobotPos(){
-	gobot_software::Port srv;
+	std_srvs::Empty srv;
 
 	if (stopRobotPosClient.call(srv)) 
 		std::cout << "(Command system) stop_robot_pos_sender service started" << std::endl;
@@ -374,7 +375,7 @@ void startMetadata(){
 }
 
 void stopMetadata(){
-	gobot_software::Port srv;
+	std_srvs::Empty srv;
 
 	if (stopMetadataClient.call(srv)) 
 		std::cout << "(Command system) stop_map_metadata_sender service started" << std::endl;
@@ -400,7 +401,7 @@ bool startMap(){
 bool sendOnceMap(){
 	std::cout << "(Command system) Launching the service to get the map once" << std::endl;
 
-	gobot_software::Port srv;
+	std_srvs::Empty srv;
 
 	if (sendOnceMapClient.call(srv)) {
 		std::cout << "(Command system) send_once_map_sender service started" << std::endl;
@@ -414,7 +415,7 @@ bool sendOnceMap(){
 bool sendAutoMap(){
 	std::cout << "(Command system) Launching the service to get the map auto" << std::endl;
 
-	gobot_software::Port srv;
+	std_srvs::Empty srv;
 
 	if (sendAutoMapClient.call(srv)) {
 		std::cout << "(Command system) send_auto_map_sender service started" << std::endl;
@@ -428,7 +429,7 @@ bool sendAutoMap(){
 bool stopAutoMap(){
 	std::cout << "(Command system) Launching the service to stop the map auto" << std::endl;
 
-	gobot_software::Port srv;
+	std_srvs::Empty srv;
 
 	if (stopAutoMapClient.call(srv)) {
 		std::cout << "(Command system) stop_auto_map_sender service started" << std::endl;
@@ -440,7 +441,7 @@ bool stopAutoMap(){
 }
 
 bool stopMap(){
-	gobot_software::Port srv;
+	std_srvs::Empty srv;
 
 	if (stopMapClient.call(srv)) {
 		std::cout << "(Command system) stop_map_sender service started" << std::endl;
@@ -451,10 +452,11 @@ bool stopMap(){
 	}
 }
 
-bool startLaserData(){
+bool startLaserData(bool startLaser){
 	std::cout << "(Command system) Launching the service which will send the lasers's data using port " << laser_port << std::endl;
-	gobot_software::Port srv;
+	gobot_software::PortLaser srv;
 	srv.request.port = laser_port;
+	srv.request.startLaser = startLaser;
 
 	if(startLaserClient.call(srv)) {
 		std::cout << "(Command system) start_laser_data_sender service started" << std::endl;
@@ -467,7 +469,7 @@ bool startLaserData(){
 
 bool sendLaserData(){
 	std::cout << "(Command system) Launching the service to get the laser data" << std::endl;
-	gobot_software::Port srv;
+	std_srvs::Empty srv;
 
 	if(sendLaserClient.call(srv)) {
 		std::cout << "(Command system) send_laser_data_sender service started" << std::endl;
@@ -480,7 +482,7 @@ bool sendLaserData(){
 
 bool stopSendLaserData(){
 	std::cout << "(Command system) Launching the service to stop receiving the laser data" << std::endl;
-	gobot_software::Port srv;
+	std_srvs::Empty srv;
 
 	if(stopSendLaserClient.call(srv)) {
 		std::cout << "(Command system) stop_send_laser_data_sender service started" << std::endl;
@@ -492,7 +494,7 @@ bool stopSendLaserData(){
 }
 
 bool stopLaserData(){
-	gobot_software::Port srv;
+	std_srvs::Empty srv;
 	if(stopLaserClient.call(srv)){
 		std::cout << "Command system stop_sending_laser_data started" << std::endl;
 		return true;
@@ -757,25 +759,25 @@ int main(int argc, char* argv[]){
   		ros::Subscriber sub = n.subscribe("server_disconnected", 1000, serverDisconnected);
 		
 		startRobotPosClient = n.serviceClient<gobot_software::Port>("start_robot_pos_sender");
-		stopRobotPosClient = n.serviceClient<gobot_software::Port>("stop_robot_pos_sender");
+		stopRobotPosClient = n.serviceClient<std_srvs::Empty>("stop_robot_pos_sender");
 		
 		startMetadataClient = n.serviceClient<gobot_software::Port>("start_map_metadata_sender");
-		stopMetadataClient = n.serviceClient<gobot_software::Port>("stop_map_metadata_sender");
+		stopMetadataClient = n.serviceClient<std_srvs::Empty>("stop_map_metadata_sender");
 		
 		startMapClient = n.serviceClient<gobot_software::Port>("start_map_sender");
-		sendOnceMapClient = n.serviceClient<gobot_software::Port>("send_once_map_sender");
-		sendAutoMapClient = n.serviceClient<gobot_software::Port>("send_auto_map_sender");
-		stopAutoMapClient = n.serviceClient<gobot_software::Port>("stop_auto_map_sender");
-		stopMapClient = n.serviceClient<gobot_software::Port>("stop_map_sender");
+		sendOnceMapClient = n.serviceClient<std_srvs::Empty>("send_once_map_sender");
+		sendAutoMapClient = n.serviceClient<std_srvs::Empty>("send_auto_map_sender");
+		stopAutoMapClient = n.serviceClient<std_srvs::Empty>("stop_auto_map_sender");
+		stopMapClient = n.serviceClient<std_srvs::Empty>("stop_map_sender");
 
 		playPathClient = n.serviceClient<std_srvs::Empty>("play_path");
 		pausePathClient = n.serviceClient<std_srvs::Empty>("pause_path");
 		stopPathClient = n.serviceClient<std_srvs::Empty>("stop_path");
 
-		startLaserClient = n.serviceClient<gobot_software::Port>("start_laser_data_sender");
-		sendLaserClient = n.serviceClient<gobot_software::Port>("send_laser_data_sender");
-		stopSendLaserClient = n.serviceClient<gobot_software::Port>("stop_send_laser_data_sender");
-		stopLaserClient = n.serviceClient<gobot_software::Port>("stop_laser_data_sender");
+		startLaserClient = n.serviceClient<gobot_software::PortLaser>("start_laser_data_sender");
+		sendLaserClient = n.serviceClient<std_srvs::Empty>("send_laser_data_sender");
+		stopSendLaserClient = n.serviceClient<std_srvs::Empty>("stop_send_laser_data_sender");
+		stopLaserClient = n.serviceClient<std_srvs::Empty>("stop_laser_data_sender");
 
 		go_pub = n.advertise<geometry_msgs::PoseStamped>("/move_base_simple/goal", 1000);
 

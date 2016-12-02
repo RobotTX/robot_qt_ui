@@ -153,7 +153,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     initializeRobots();
 
     /// our settings page
-    settingsWidget = new SettingsWidget(robots, SettingsWidget::ALWAYS_ASK);
+    settingsWidget = new SettingsWidget();
 
     scene->setSceneRect(0, 0, 800, 600);
 

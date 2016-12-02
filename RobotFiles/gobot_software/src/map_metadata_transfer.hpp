@@ -16,6 +16,7 @@
 #include <boost/smart_ptr.hpp>
 #include <boost/asio.hpp>
 #include <boost/thread.hpp>
+#include "std_srvs/Empty.h"
 
 using boost::asio::ip::tcp;
 
@@ -37,6 +38,6 @@ bool startMeta(gobot_software::Port::Request &req, gobot_software::Port::Respons
 /**
  * Service called to stop the listening to the metadata topic and transfer to the software
  */
-bool stopMeta(gobot_software::Port::Request &req, gobot_software::Port::Response &res);
+bool stopMeta(std_srvs::Empty::Request &req, std_srvs::Empty::Response &res);
 
 #endif

@@ -48,8 +48,8 @@ bool startRobotPos(gobot_software::Port::Request &req,
 	return true;
 }
 
-bool stopRobotPos(gobot_software::Port::Request &req,
-    gobot_software::Port::Response &res){
+bool stopRobotPos(std_srvs::Empty::Request &req,
+    std_srvs::Empty::Response &res){
 	std::cout << "(Robot Pos) Stopping robot_pos_sender" << std::endl;
 
 	sub_robot.shutdown();

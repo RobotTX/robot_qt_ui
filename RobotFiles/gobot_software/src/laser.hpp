@@ -2,7 +2,7 @@
 #define LASER_TRANSFER
 
 #include "ros/ros.h"
-#include "gobot_software/Port.h"
+#include "gobot_software/PortLaser.h"
 #include "sensor_msgs/LaserScan.h"
 #include "std_msgs/String.h"
 #include <iostream>
@@ -18,19 +18,20 @@
 #include <boost/thread.hpp>
 #include <chrono>
 #include <thread>
+#include "std_srvs/Empty.h"
 
 using boost::asio::ip::tcp;
 
-bool startLaser(gobot_software::Port::Request &req, gobot_software::Port::Response &res);
+bool startLaser(gobot_software::PortLaser::Request &req, gobot_software::PortLaser::Response &res);
 
 void getLaserData(const sensor_msgs::LaserScan::ConstPtr& msg);
 
 void sendLaserData(const std::vector<float>& scan);
 
-bool stopSendingLaserData(gobot_software::Port::Request &req, gobot_software::Port::Response &res);
+bool stopSendingLaserData(std_srvs::Empty::Request &req, std_srvs::Empty::Response &res);
 
-bool sendLaser(gobot_software::Port::Request &req, gobot_software::Port::Response &res);
+bool sendLaser(std_srvs::Empty::Request &req, std_srvs::Empty::Response &res);
 
-bool stopSendLaser(gobot_software::Port::Request &req, gobot_software::Port::Response &res);
+bool stopSendLaser(std_srvs::Empty::Request &req, std_srvs::Empty::Response &res);
 
 #endif

@@ -11,11 +11,26 @@
 #include <View/spacewidget.h>
 #include <View/stylesettings.h>
 #include "View/custompushbutton.h"
+#include <QDir>
+#include <fstream>
 
 int SettingsWidget::currentId = 0;
 
-SettingsWidget::SettingsWidget(QSharedPointer<Robots> robots, int _settingMapChoice, QWidget *parent)
-    : QWidget(parent), settingMapChoice(_settingMapChoice){
+SettingsWidget::SettingsWidget(QWidget *parent)
+    : QWidget(parent){
+
+
+    settingMapChoice = ALWAYS_ASK;
+    QString fileStr = QDir::currentPath() + QDir::separator() + "settings" + QDir::separator() + "mapChoice.txt";
+    std::ifstream file(fileStr.toStdString(), std::ios::in);
+
+    if(file){
+        file >> settingMapChoice;
+        qDebug() << "SettingsWidget::SettingsWidget settingMapChoice :" << settingMapChoice;
+        file.close();
+    } else {
+        qDebug() << "SettingsWidget::SettingsWidget could not open the map setting file at" << fileStr;
+    }
 
     setWindowTitle("Settings");
     // does not work :(
@@ -39,13 +54,6 @@ SettingsWidget::SettingsWidget(QSharedPointer<Robots> robots, int _settingMapCho
 
     robotsLaserButtonGroup = new QButtonGroup(this);
     robotsLaserButtonGroup->setExclusive(false);
-
-    for(int i = 0; i < robots->getRobotsVector().size(); i++){
-        QCheckBox* activateLaserButton = new QCheckBox(robots->getRobotsVector().at(i)->getRobot()->getName(), this);
-        robotsLaserButtonGroup->addButton(activateLaserButton, currentId++);
-        activateLaserButton->setChecked(true);
-        robotsLaserLayout->addWidget(activateLaserButton);
-    }
     topLayout->addLayout(robotsLaserLayout);
 
 
@@ -97,11 +105,21 @@ SettingsWidget::SettingsWidget(QSharedPointer<Robots> robots, int _settingMapCho
 void SettingsWidget::addRobot(const QString robotIPAddress, const QString robot_name){
     qDebug() << "SettingsWidget::addRobot" << robotIPAddress << "id" << currentId;
 
-    // TODO get bool from settings file or something else
-    idToIpMap.insert(currentId, QPair<QString, bool>(robotIPAddress, true));
+    QString fileStr = QDir::currentPath() + QDir::separator() + "settings" + QDir::separator() + robotIPAddress + ".txt";
+    std::ifstream fileRobot(fileStr.toStdString(), std::ios::in);
+
+    bool laser = true;
+    if(fileRobot){
+        fileRobot >> laser;
+        fileRobot.close();
+    } else {
+        qDebug() << "SettingsWidget::addRobot could not open the robot setting file at" << fileStr;
+    }
+
+    idToIpMap.insert(currentId, QPair<QString, bool>(robotIPAddress, laser));
     QCheckBox* activateLaserButton = new QCheckBox(robot_name, this);
     robotsLaserButtonGroup->addButton(activateLaserButton, currentId++);
-    activateLaserButton->setChecked(true);
+    activateLaserButton->setChecked(laser);
     robotsLaserLayout->addWidget(activateLaserButton);
 }
 
@@ -133,9 +151,30 @@ void SettingsWidget::applySlot(){
         if(idToIpMap.value(index).second != isChecked){
             idToIpMap.insert(index, QPair<QString, bool>(robotId, isChecked));
             emit activateLaser(idToIpMap.value(index).first, isChecked);
+
+            QString fileStr = QDir::currentPath() + QDir::separator() + "settings" + QDir::separator() + robotId + ".txt";
+            std::ofstream fileRobot(fileStr.toStdString(), std::ios::out);
+
+            if(fileRobot){
+                fileRobot << isChecked;
+                fileRobot.close();
+            } else {
+                qDebug() << "SettingsWidget::applySlot could not open the robot setting file at" << fileStr;
+            }
         }
     }
+
     settingMapChoice = chooseMapBox->currentIndex();
+
+    QString fileStr2 = QDir::currentPath() + QDir::separator() + "settings" + QDir::separator() + "mapChoice.txt";
+    std::ofstream file(fileStr2.toStdString(), std::ios::out);
+
+    if(file){
+        file << settingMapChoice;
+        file.close();
+    } else {
+        qDebug() << "SettingsWidget::applySlot could not open the map setting file at" << fileStr2;
+    }
 
     qDebug() << "SettingsWidget::applySlot" << settingMapChoice << " : " << idToIpMap;
 }

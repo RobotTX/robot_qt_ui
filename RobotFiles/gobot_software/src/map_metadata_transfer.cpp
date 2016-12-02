@@ -50,8 +50,8 @@ bool startMeta(gobot_software::Port::Request &req,
 	return true;
 }
 
-bool stopMeta(gobot_software::Port::Request &req,
-    gobot_software::Port::Response &res){
+bool stopMeta(std_srvs::Empty::Request &req,
+    std_srvs::Empty::Response &res){
 	std::cout << "(Map Metadata) Stopping map_metadata_sender" << std::endl;
 
 	sub_meta.shutdown();
