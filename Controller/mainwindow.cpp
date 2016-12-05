@@ -595,11 +595,11 @@ void MainWindow::setSelectedRobot(QPointer<RobotView> robotView){
     if(selectedRobot->getRobot()->getPath().size() == 0){
         setMessageTop(TEXT_COLOR_INFO, "You can assign a path to your robot by clicking the button labeled \"Assign a path\"");
         if(!selectedRobot->getRobot()->getHome())
-            setMessageTop(TEXT_COLOR_INFO, topLayout->getLabel()->text() + "\nYou can assign a home to your robot by clicking the button "
+            setMessageTop(TEXT_COLOR_INFO, topLayout->getLabelText() + "\nYou can assign a home to your robot by clicking the button "
                                                                        "labeled \"Assign a home point\"");
     } else
         if(!selectedRobot->getRobot()->getHome())
-            setMessageTop(TEXT_COLOR_INFO, topLayout->getLabel()->text() + "You can assign a home to your robot by clicking the button "
+            setMessageTop(TEXT_COLOR_INFO, topLayout->getLabelText() + "You can assign a home to your robot by clicking the button "
                                                                        "labeled \"Assign a home point\"");
 
     editSelectedRobotWidget->setSelectedRobot(selectedRobot);
@@ -1260,6 +1260,8 @@ void MainWindow::robotIsDeadSlot(QString hostname, QString ip){
         /// we remove the obstacles for this robot
         mapPixmapItem->getObstaclesPainter()->removeRobotObstacles(ip);
 
+        topLayout->removeRobotWithoutHome(hostname);
+
         qDebug() << "Done removing robot" << hostname << "at ip" << ip;
         setMessageTop(TEXT_COLOR_DANGER, QString("Robot " + hostname + " at ip " + ip +" disconnected."));
     } else {
@@ -1438,6 +1440,8 @@ void MainWindow::setNewHome(QString homeName){
             editSelectedRobotWidget->setHome(home);
             selectedRobot->getRobot()->setHome(home);
             editSelectedRobotWidget->updateHomeMenu();
+
+            topLayout->removeRobotWithoutHome(selectedRobot->getRobot()->getName());
 
             /// so that if the new home if part of the path it displays the path correctly (not a house on top of a normal point)
             /// this call makes the home
@@ -4727,11 +4731,7 @@ void MainWindow::updateHomeInfo(const QString robot_name, QString posX, QString 
                 updateHomeFile(robot_name, robot_home_position, dateHomeOnRobot);
 
             } else {
-                QMessageBox chooseHomeMessageBox;
-                chooseHomeMessageBox.setStandardButtons(QMessageBox::Ok);
-                chooseHomeMessageBox.setText("\"" + robotView->getRobot()->getName() + "\" does not have a home point yet. You must choose one either by clicking the map or an existing point");
-                chooseHomeMessageBox.exec();
-                qDebug() << "HOME ROBOT NO HOME AT ALL";
+                robotHasNoHome(robotView->getRobot()->getName());
             }
         }
     } else {
@@ -4742,15 +4742,20 @@ void MainWindow::updateHomeInfo(const QString robot_name, QString posX, QString 
             setHomeAtConnection(robot_name, p);
             qDebug() << "HOME APP" << home_app->getPoint()->getName();
         } else {
-            QMessageBox chooseHomeMessageBox;
-            chooseHomeMessageBox.setStandardButtons(QMessageBox::Ok);
-            chooseHomeMessageBox.setText("\"" + robotView->getRobot()->getName() + "\" does not have a home point yet. You must choose one either by clicking the map or an existing point");
-            chooseHomeMessageBox.exec();
-            qDebug() << "HOME ROBOT NO HOME AT ALL";
+            robotHasNoHome(robotView->getRobot()->getName());
         }
     }
 
     editSelectedRobotWidget->updateHomeMenu();
+}
+
+void MainWindow::robotHasNoHome(QString robotName){
+    QMessageBox chooseHomeMessageBox;
+    chooseHomeMessageBox.setStandardButtons(QMessageBox::Ok);
+    chooseHomeMessageBox.setText("\"" + robotName + "\" does not have a home point yet.\n Please choose a home for the robot in the robot menu.");
+    chooseHomeMessageBox.exec();
+    qDebug() << "HOME ROBOT NO HOME AT ALL";
+    topLayout->addRobotWithoutHome(robotName);
 }
 
 void MainWindow::updatePathInfo(const QString robot_name, QString pathDate, QStringList path){
