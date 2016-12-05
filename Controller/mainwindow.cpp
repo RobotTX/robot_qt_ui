@@ -461,7 +461,7 @@ void MainWindow::deletePath(int robotNb){
                     /// if the command is succesfully sent to the robot, we apply the change
                     if(commandController->sendCommand(robot, QString("k"))){
                         clearPath(robotNb);
-                        topLayout->setLabel(TEXT_COLOR_SUCCESS, "The path of " + robot->getName() + " has been successfully deleted");
+                        topLayout->setLabel(TEXT_COLOR_SUCCESS, "The path of \"" + robot->getName() + "\" has been successfully deleted");
                     } else
                         topLayout->setLabel(TEXT_COLOR_DANGER, "Failed to delete the path of " + robot->getName() + ", please try again");
                 }
@@ -949,9 +949,12 @@ void MainWindow::savePathSlot(){
     const QString groupName = pathCreationWidget->getCurrentGroupName();
     pathName = pathCreationWidget->getNameEdit()->text().simplified();
 
+    bool already_existed(false);
     /// if the path existed before we destroy it and reconstruct it
-    if(pathCreationWidget->getCurrentPathName().compare("") != 0)
+    if(pathCreationWidget->getCurrentPathName().compare("") != 0){
         paths->deletePath(groupName, pathPainter->getVisiblePath());
+        already_existed = true;
+    }
 
     paths->createPath(groupName, pathName);
     for(int i = 0; i < pathPainter->getCurrentPath().size(); i++)
@@ -975,6 +978,9 @@ void MainWindow::savePathSlot(){
 
     emit updatePathPainter(true);
     backEvent();
+
+    (already_existed) ? setMessageTop(TEXT_COLOR_SUCCESS, "You have successfully updated the path \"" + pathName + "\" within the group \"" + groupName + "\"") :
+                        setMessageTop(TEXT_COLOR_SUCCESS, "You have successfully created the path \"" + pathName + "\" within the group \"" + groupName + "\"");
 }
 
 void MainWindow::addPointPathSlot(QString name, double x, double y, GraphicItemState){
@@ -1447,7 +1453,7 @@ void MainWindow::setNewHome(QString homeName){
             home->setPixmap(PointView::PixmapType::SELECTED);
             home->show();
 
-            setMessageTop(TEXT_COLOR_SUCCESS, selectedRobot->getRobot()->getName() + " successfully saved its home point");
+            setMessageTop(TEXT_COLOR_SUCCESS, selectedRobot->getRobot()->getName() + " successfully updated its home point");
         } else
             setMessageTop(TEXT_COLOR_DANGER, selectedRobot->getRobot()->getName() + " failed to save its home point, please try again");
     } else
@@ -3714,6 +3720,9 @@ void MainWindow::deleteGroupPaths(){
         paths->deleteGroup(groupPaths);
         serializePaths(QDir::currentPath() + QDir::separator() + "paths.dat");
         leftMenu->getGroupsPathsWidget()->updateGroupsPaths();
+        setMessageTop(TEXT_COLOR_SUCCESS, "You have successfully deleted the group of paths \"" + groupPaths + "\"");
+        delay(4000);
+        setMessageTop(TEXT_COLOR_NORMAL, "");
         break;
     }
     case QMessageBox::StandardButton::Cancel:
@@ -4046,8 +4055,10 @@ void MainWindow::sendPathSelectedRobotSlot(const QString groupName, const QStrin
             fileInfo.close();
             editSelectedRobotWidget->setPath(currPath);
         }
+        setMessageTop(TEXT_COLOR_SUCCESS, "the path of \"" + robot->getName() + "\" has been successfully updated");
         qDebug() << "MainWindow::robotSavedEvent Path saved for robot" << robot->getIp();
     } else {
+        setMessageTop(TEXT_COLOR_DANGER, "The path of " + robot->getName() + "\" could not be updated, please try again");
         qDebug() << "MainWindow::robotSavedEvent Path failed to be saved, please try again";
     }
 }
@@ -4511,7 +4522,7 @@ void MainWindow::updateMapInfo(const QString robot_name, QString mapId, QString 
         QDateTime mapDateTime = QDateTime::fromString(mapDate, "yyyy-MM-dd-hh-mm-ss");
         //qDebug() << "Robot" << robot_name << "comparing date" << mapDateTime << "and" << map->getDateTime();
 
-        bool robotOlder = (mapDateTime <= map->getDateTime());
+        bool robotOlder = mapDateTime <= map->getDateTime();
         if(robotOlder){
             qDebug() << "Robot" << robot_name << "has a different and older map";
         } else {
@@ -4522,18 +4533,10 @@ void MainWindow::updateMapInfo(const QString robot_name, QString mapId, QString 
 
         switch(settingsWidget->getSettingMapChoice()){
             case SettingsWidget::ALWAYS_NEW:
-                if(robotOlder){
-                    robot->sendNewMap(map);
-                } else {
-                    commandController->sendCommand(robot, QString("s"));
-                }
+                (robotOlder) ? robot->sendNewMap(map) : commandController->sendCommand(robot, QString("s"));
             break;
             case SettingsWidget::ALWAYS_OLD:
-                if(robotOlder){
-                    commandController->sendCommand(robot, QString("s"));
-                } else {
-                    robot->sendNewMap(map);
-                }
+                (robotOlder) ? commandController->sendCommand(robot, QString("s")) : robot->sendNewMap(map);
             break;
             case SettingsWidget::ALWAYS_ROBOT:
                 commandController->sendCommand(robot, QString("s"));
@@ -4546,10 +4549,7 @@ void MainWindow::updateMapInfo(const QString robot_name, QString mapId, QString 
                 QPushButton* robotButton;
                 QPushButton* appButton;
 
-                if(robotOlder)
-                    msgBox.setText("The robot " + robot_name + " has a new map.");
-                else
-                    msgBox.setText("The robot " + robot_name + " has an old map.");
+                (robotOlder) ? msgBox.setText("The robot " + robot_name + " has a new map.") : msgBox.setText("The robot " + robot_name + " has an old map.");
 
                 msgBox.setInformativeText("Which map do you want to use ?");
                 robotButton = msgBox.addButton(tr("Robot"), QMessageBox::AcceptRole);
