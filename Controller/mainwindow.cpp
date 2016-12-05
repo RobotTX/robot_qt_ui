@@ -3546,6 +3546,7 @@ void MainWindow::editPathSlot(QString groupName, QString pathName){
                  "\nAlternatively you can click the \"+\" button to add an existing point to your path"
                  "\nYou can re-order the points in the list by dragging them");
 
+
     hideAllWidgets();
     pathCreationWidget->show();
     pathPainter->setOldPath(pathPainter->getCurrentPath());
@@ -3585,6 +3586,8 @@ void MainWindow::editPathSlot(QString groupName, QString pathName){
             }
         }
     }
+
+    leftMenu->getReturnButton()->setDisabled(true);
 }
 
 void MainWindow::displayPathSlot(QString groupName, QString pathName, bool display){
@@ -4015,6 +4018,8 @@ void MainWindow::editPath(){
             }
         }
     }
+
+    leftMenu->getReturnButton()->setEnabled(false);
 }
 
 void MainWindow::doubleClickOnPath(QString pathName){
