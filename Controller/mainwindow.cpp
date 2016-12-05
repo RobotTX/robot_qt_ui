@@ -1464,7 +1464,6 @@ bool MainWindow::sendHomeToRobot(QPointer<RobotView> robot, QSharedPointer<Point
 void MainWindow::goHome(){
     qDebug() << "MainWindow::goHome called (soon soon working)";
     if(commandController->sendCommand(selectedRobot->getRobot(), QString("o"))){
-        //TODO change btn to pause the home (like for the path button)
         qDebug() << "MainWindow::goHome The robot" << selectedRobot->getRobot()->getName() << "is going home";
     } else {
         qDebug() << "MainWindow::goHome Failed to send the robot" << selectedRobot->getRobot()->getName() << "home, please try again";
@@ -1472,9 +1471,9 @@ void MainWindow::goHome(){
 }
 
 void MainWindow::goHome(int nbRobot){
+    qDebug() <<"MainWindow::GoHome (bottomlayout) called";
     QPointer<Robot> currRobot = robots->getRobotsVector().at(nbRobot)->getRobot();
     if(!currRobot->isPlayingPath()){
-        qDebug() <<"MainWindow::GoHome (bottomlayout) called";
         (commandController->sendCommand(currRobot, QString("o"))) ? setMessageTop(TEXT_COLOR_INFO, currRobot->getName() + " is going home") :
                                                                     setMessageTop(TEXT_COLOR_DANGER, "Something went wrong when trying to send " + currRobot->getName() + " home");
     } else {
@@ -1531,7 +1530,6 @@ void MainWindow::updateMetadata(const int width, const int height, const float r
 }
 
 void MainWindow::updateMap(const QByteArray mapArray, bool fromPgm, QString mapId, QString mapDate){
-    /// TODO check if scanning or not and act accordingly
     map->setMapFromArray(mapArray, fromPgm);
     QPixmap pixmap = QPixmap::fromImage(map->getMapImage());
     mapPixmapItem->setPixmap(pixmap);
@@ -4035,7 +4033,6 @@ void MainWindow::sendPathSelectedRobotSlot(const QString groupName, const QStrin
     QString pathStr = prepareCommandPath(currPath);
 
     /// if the command is succesfully sent to the robot, we apply the change
-    // TODO check if pathStr empty, means deleting the path => cmd send without parem => check robotFiles/command.cpp
     if(commandController->sendCommand(robot, QString("i ") + pathStr)){
         /// we update the path on the application side by serializing the path
         QFile fileInfo(QDir::currentPath() + QDir::separator() + "robots_paths" + QDir::separator() + robot->getName() + "_path");
