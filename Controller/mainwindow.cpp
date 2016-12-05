@@ -76,50 +76,7 @@ qDebug() << "MainWIndow:: Inside thread" << QThread::currentThreadId();
     /// initializes the map used by the application
     map = QSharedPointer<Map>(new Map());
 
-    //qDebug() << "Current time :" << QDateTime::currentDateTime().toString("yyyy-MM-dd-hh-mm-ss");
-    //qDebug() << "Map Id :" << QUuid::createUuid().toString();
-
-    std::ifstream file((QDir::currentPath() + QDir::separator() + "currentMap.txt").toStdString(), std::ios::in);
-
-    if(file){
-        int _height, _width;
-        double centerX, centerY, originX, originY, resolution;
-        std::string dateTime, mapId;
-        file >> mapFile >> _height >> _width >> centerX >> centerY >> mapState.second >> originX >> originY >> resolution >> dateTime >> mapId;
-        qDebug() << "CurrentMap.txt :" << QString::fromStdString(mapFile) << _height << _width
-                 << centerX << centerY << originX << originY << resolution
-                 << QString::fromStdString(dateTime) << QString::fromStdString(mapId);
-        map->setHeight(_height);
-        map->setWidth(_width);
-        mapState.first.setX(centerX);
-        mapState.first.setY(centerY);
-        map->setOrigin(Position(originX, originY));
-        map->setResolution(resolution);
-        map->setDateTime(QDateTime::fromString(QString::fromStdString(dateTime), "yyyy-MM-dd-hh-mm-ss"));
-        map->setMapId(QUuid(QString::fromStdString(mapId)));
-        file.close();
-    }
-
-    if(!mapFile.compare("")){
-        setWindowTitle(":/maps/map.pgm");
-        map->setMapFromFile(":/maps/map.pgm");
-        mapState.second = 1;
-        map->setHeight(608);
-        map->setWidth(320);
-        mapState.first.setX(0);
-        mapState.first.setY(0);
-        map->setResolution(0.05);
-        map->setOrigin(Position(0, 0));
-        map->setDateTime(QDateTime(QDate::fromString("1970-01-01", "yyyy-mm-dd")));
-        map->setMapId(QUuid());
-    } else {
-        setWindowTitle(QString::fromStdString(mapFile));
-        map->setMapFromFile(QString::fromStdString(mapFile));
-    }
-
-    /// retrieves the configuration of the map from the settings file
-    /// if the parameters are not there, .0f, .0f and 1.0f serve as the
-    /// default parameter
+    initializeMap();
 
     scene = new QGraphicsScene();
 
@@ -1611,6 +1568,8 @@ void MainWindow::saveMap(QString fileName){
 
         mapFile = fileName.toStdString() + ".pgm";
 
+        saveMapConfig((QDir::currentPath() + QDir::separator() + "currentMap.txt").toStdString());
+
         assert(saveMapConfig(fileInfo.absoluteFilePath().toStdString()));
 
         qDebug() << "MainWindow::saveMap" << mapState.first.x() << mapState.first.y() << mapState.second << map->getWidth() << map->getHeight()
@@ -2205,6 +2164,8 @@ void MainWindow::askForDeleteDefaultGroupPointConfirmation(QString pointName){
 
                 /// need to remove the point from the map
                 pointsLeftWidget->setLastCheckedId("");
+
+                setMessageTop(TEXT_COLOR_SUCCESS, "You have successfully deleted the point \"" + pointName + "\" that used to belong to the default group");
             } else {
                 /// this is in fact the home point of a robot, we prompt a customized message to the end user
                 QPointer<RobotView> robot = robots->findRobotUsingHome(pointName);
@@ -3404,7 +3365,7 @@ void MainWindow::modifyGroupWithEnter(QString name){
         /// resets the pixmaps
         points->setPixmapAll(PointView::PixmapType::NORMAL);
 
-        topLayout->setLabelDelay(TEXT_COLOR_SUCCESS, "You have successfully changed the name of your group from \"" + oldGroupName + "\" to \"" + name + "\"", 4000);
+        topLayout->setLabelDelay(TEXT_COLOR_SUCCESS, "You have successfully updated the name of your group from \"" + oldGroupName + "\" to \"" + name + "\"", 4000);
 
     } else if(pointsLeftWidget->checkGroupName(name) == 1){
         /// enables the buttons
@@ -3561,6 +3522,7 @@ void MainWindow::deletePathSlot(QString groupName, QString pathName){
             emit resetPath();
         }
         backEvent();
+        setMessageTop(TEXT_COLOR_SUCCESS, "You have successfully deleted the path \"" + pathName + "\" which belonged to the group \"" + groupName + "\"");
     }
     break;
     case QMessageBox::StandardButton::Cancel:
@@ -3914,6 +3876,8 @@ void MainWindow::createPath(){
 
 void MainWindow::deletePath(){
     qDebug() << "MainWindow::deletePath called";
+    deletePathSlot(lastWidgets.at(lastWidgets.size()-1).first.second, leftMenu->getPathGroupDisplayed()->getLastCheckedButton());
+    /*
     QString message("This path has been assigned to the robot(s) : ");
     /// the ids of the robots whose path is the one being deleted
     QList<int> robotsIds;
@@ -3960,6 +3924,8 @@ void MainWindow::deletePath(){
         serializePaths(QDir::currentPath() + QDir::separator() + "paths.dat");
 
         leftMenu->getPathGroupDisplayed()->setPathsGroup(lastWidgets.at(lastWidgets.size()-1).first.second);
+
+        setMessageTop(TEXT_COLOR_SUCCESS, "You have successfully deleted the path " + leftMenu->getPathGroupDisplayed()->getLastCheckedButton());
     }
     break;
     case QMessageBox::StandardButton::Cancel:
@@ -3971,6 +3937,7 @@ void MainWindow::deletePath(){
         qDebug() << "MainWindow::deletePath you should not be here, you probably forgot to implement the behavior for one of your buttons";
     break;
     }
+    */
 }
 
 void MainWindow::displayPathOnMap(const bool display){
@@ -4396,6 +4363,8 @@ void MainWindow::saveMapState(){
              << map->getMapId().toString().toStdString();
         file.close();
     }
+
+    setMessageTop(TEXT_COLOR_INFO, "The current configuration of the map has been saved");
 }
 
 void MainWindow::showHomes(){
@@ -5020,5 +4989,45 @@ void MainWindow::closeEvent(QCloseEvent *event){
                 QMainWindow::closeEvent(event);
             break;
         }
+    }
+}
+
+void MainWindow::initializeMap(){
+    std::ifstream file((QDir::currentPath() + QDir::separator() + "currentMap.txt").toStdString(), std::ios::in);
+
+    if(file){
+        int _height, _width;
+        double centerX, centerY, originX, originY, resolution;
+        std::string dateTime, mapId;
+        file >> mapFile >> _height >> _width >> centerX >> centerY >> mapState.second >> originX >> originY >> resolution >> dateTime >> mapId;
+        qDebug() << "CurrentMap.txt :" << QString::fromStdString(mapFile) << _height << _width
+                 << centerX << centerY << originX << originY << resolution
+                 << QString::fromStdString(dateTime) << QString::fromStdString(mapId);
+        map->setHeight(_height);
+        map->setWidth(_width);
+        mapState.first.setX(centerX);
+        mapState.first.setY(centerY);
+        map->setOrigin(Position(originX, originY));
+        map->setResolution(resolution);
+        map->setDateTime(QDateTime::fromString(QString::fromStdString(dateTime), "yyyy-MM-dd-hh-mm-ss"));
+        map->setMapId(QUuid(QString::fromStdString(mapId)));
+        file.close();
+    }
+
+    if(!mapFile.compare("")){
+        setWindowTitle(":/maps/map.pgm");
+        map->setMapFromFile(":/maps/map.pgm");
+        mapState.second = 1;
+        map->setHeight(608);
+        map->setWidth(320);
+        mapState.first.setX(0);
+        mapState.first.setY(0);
+        map->setResolution(0.05);
+        map->setOrigin(Position(0, 0));
+        map->setDateTime(QDateTime(QDate::fromString("1970-01-01", "yyyy-mm-dd")));
+        map->setMapId(QUuid());
+    } else {
+        setWindowTitle(QString::fromStdString(mapFile));
+        map->setMapFromFile(QString::fromStdString(mapFile));
     }
 }

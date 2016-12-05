@@ -107,11 +107,9 @@ void CreatePointWidget::setSelectedPoint(QSharedPointer<PointView> _pointView){
     qDebug() << "CreatePointWidget setSelectedPoint called";
     pointView = _pointView;
 
-    if(_pointView->getPoint()->getName().compare("tmpPoint"))
-        nameEdit->setText(pointView->getPoint()->getName());
-
-    else
-        messageCreationLabel->show();
+    /// if that's the temporary point we show the label to create a new point otherwise
+    /// we simply display the name of the point
+    (_pointView->getPoint()->getName().compare("tmpPoint")) ? nameEdit->setText(pointView->getPoint()->getName()) : messageCreationLabel->show();
 
     posXLabel->setText("X : " + QString::number(pointView->getPoint()->getPosition().getX(), 'f', 1));
     posYLabel->setText("Y : " + QString::number(pointView->getPoint()->getPosition().getY(), 'f', 1));

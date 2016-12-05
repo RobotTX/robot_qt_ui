@@ -24,11 +24,11 @@ TopLayout::TopLayout(QMainWindow* parent): QWidget(parent), lastMessage(TEXT_COL
     saveMapBtn->setIconSize(s_icon_size);
     saveMapBtn->setFocusPolicy(Qt::FocusPolicy::NoFocus);
     layout->addWidget(saveMapBtn);
-    saveMapBtn->setToolTip("Save the state of the map");
+    saveMapBtn->setToolTip("Save the configuration of the map");
     connect(saveMapBtn, SIGNAL(clicked()), parent, SLOT(saveMapState()));
 
     centerBtn = new CustomPushButton(QIcon(":/icons/save_map.png"), "", this, false, CustomPushButton::ButtonType::TOP);
-    centerBtn->setToolTip("Restore the state of the map");
+    centerBtn->setToolTip("Restore the configuration of the map");
     centerBtn->setIconSize(s_icon_size);
     centerBtn->setFocusPolicy(Qt::FocusPolicy::NoFocus);
     layout->addWidget(centerBtn);
