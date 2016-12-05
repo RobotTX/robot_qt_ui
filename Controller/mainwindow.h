@@ -215,7 +215,6 @@ private slots:
      */
     void cancelEvent(void);
     void setMessageTop(const QString msgType, const QString msg);
-    void setLastMessage(void) { setMessageTop(topLayout->getLastMessage().first, topLayout->getLastMessage().second); }
     void setMessageCreationGroup(QString type, QString message);
     void viewPathSelectedRobot(int robotNb, bool checked);
     void closeSlot();
@@ -283,6 +282,7 @@ protected:
     void changeRobotWifi(QString ssid, QString password);
     void stopMapThread();
     void closeEvent(QCloseEvent *event);
+    void robotHasNoHome(QString robotName);
 
 private:
     Ui::MainWindow* ui;

@@ -515,6 +515,7 @@ void getPorts(boost::shared_ptr<tcp::socket> sock, ros::NodeHandle n){
 	boost::system::error_code error;
 	size_t length = sock->read_some(boost::asio::buffer(data), error);
 	std::cout << length << " byte(s) received" << std::endl;
+
 	if ((error == boost::asio::error::eof) || (error == boost::asio::error::connection_reset)){
 		std::cout << "(Command system) Connection closed" << std::endl;
 		connected = false;

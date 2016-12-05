@@ -2,11 +2,11 @@
 #define TOPLAYOUT_H
 
 class QHBoxLayout;
-class QLabel;
 class CustomPushButton;
 
 #include <QWidget>
 #include <QMainWindow>
+#include <QLabel>
 
 class TopLayout : public QWidget{
     Q_OBJECT
@@ -15,10 +15,9 @@ public:
 
     TopLayout(QMainWindow* parent);
 
-    QLabel* getLabel(void) const { return label; }
-    QPair<QString, QString> getLastMessage(void) const { return lastMessage; }
+    QString getLabelText(void) const { return label->text(); }
+    QString getLabelPerm(void) const { return labelPerm->text(); }
 
-    void setLastMessage(const QString msgType, const QString message) { lastMessage.first = msgType; lastMessage.second = message; }
 
 public:
     /**
@@ -28,12 +27,22 @@ public:
      * sets message at the top of the application
      */
     void setLabel(const QString msgType, const QString msg);
+
+    /**
+     * @brief setLabelPerm
+     * @param msgType
+     * @param msg
+     * sets the bottom message at the top of the application
+     */
+    void setLabelPerm(const QString msgType, const QString msg);
+
     /**
      * @brief setEnable
      * @param enable
      * enables or disables the buttons at the top of the application
      */
     void setEnable(const bool enable);
+
     /**
      * @brief setLabelDelay
      * @param msgType
@@ -42,6 +51,7 @@ public:
      * sets a message with a delay
      */
     void setLabelDelay(const QString msgType, const QString msg, int delayTime);
+
     /**
      * @brief delay
      * @param ms
@@ -49,16 +59,21 @@ public:
      */
     void delay(const int ms);
 
+    void addRobotWithoutHome(QString robotName);
+    void removeRobotWithoutHome(QString robotName);
+    void setRobotNoHomeLabel();
+
 private:
     QHBoxLayout* layout;
     QLabel* label;
+    QLabel* labelPerm;
     CustomPushButton* menuBtn;
     CustomPushButton* closeBtn;
     CustomPushButton* centerBtn;
     CustomPushButton* settingBtn;
     CustomPushButton* saveMapBtn;
     CustomPushButton* testButton;
-    QPair<QString, QString> lastMessage;
+    QVector<QString> robotsWithoutHome;
 };
 
 #endif // TOPLAYOUT_H
