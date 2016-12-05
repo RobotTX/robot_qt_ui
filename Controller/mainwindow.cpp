@@ -4533,10 +4533,18 @@ void MainWindow::updateMapInfo(const QString robot_name, QString mapId, QString 
 
         switch(settingsWidget->getSettingMapChoice()){
             case SettingsWidget::ALWAYS_NEW:
-                (robotOlder) ? robot->sendNewMap(map) : commandController->sendCommand(robot, QString("s"));
+               if(robotOlder){
+                   robot->sendNewMap(map);
+               } else {
+                   commandController->sendCommand(robot, QString("s"));
+               }
             break;
             case SettingsWidget::ALWAYS_OLD:
-                (robotOlder) ? commandController->sendCommand(robot, QString("s")) : robot->sendNewMap(map);
+                if(robotOlder){
+                    commandController->sendCommand(robot, QString("s"));
+                } else {
+                    robot->sendNewMap(map);
+                }
             break;
             case SettingsWidget::ALWAYS_ROBOT:
                 commandController->sendCommand(robot, QString("s"));
