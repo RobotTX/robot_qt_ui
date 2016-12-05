@@ -13,7 +13,7 @@ CustomLabel::CustomLabel(const QString &text, QWidget *parent, bool _title) : QL
 void CustomLabel::initialize(){
 
     /// Set the style of the label "..." which is used when a text is too long for the button to display "text..." without modifying the text
-    label = new QLabel("...", this);
+    label = new QLabel("...  ", this);
 
     QString style = "";
     if(title){
