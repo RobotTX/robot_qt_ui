@@ -4721,8 +4721,13 @@ void MainWindow::updateHomeInfo(const QString robot_name, QString posX, QString 
                 /// updates the home file on the application side
                 updateHomeFile(robot_name, robot_home_position, dateHomeOnRobot);
 
-            } else
+            } else {
+                QMessageBox chooseHomeMessageBox;
+                chooseHomeMessageBox.setStandardButtons(QMessageBox::Ok);
+                chooseHomeMessageBox.setText("\"" + robotView->getRobot()->getName() + "\" does not have a home point yet. You must choose one either by clicking the map or an existing point");
+                chooseHomeMessageBox.exec();
                 qDebug() << "HOME ROBOT NO HOME AT ALL";
+            }
         }
     } else {
         /// the robot and the application have the same point so we set this one as the home of the robot
@@ -4731,8 +4736,13 @@ void MainWindow::updateHomeInfo(const QString robot_name, QString posX, QString 
         if(home_app){
             setHomeAtConnection(robot_name, p);
             qDebug() << "HOME APP" << home_app->getPoint()->getName();
-        } else
-            qDebug() << "HOME APP NO HOME AT ALL";
+        } else {
+            QMessageBox chooseHomeMessageBox;
+            chooseHomeMessageBox.setStandardButtons(QMessageBox::Ok);
+            chooseHomeMessageBox.setText("\"" + robotView->getRobot()->getName() + "\" does not have a home point yet. You must choose one either by clicking the map or an existing point");
+            chooseHomeMessageBox.exec();
+            qDebug() << "HOME ROBOT NO HOME AT ALL";
+        }
     }
 
     editSelectedRobotWidget->updateHomeMenu();
