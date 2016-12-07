@@ -64,6 +64,8 @@
         <file alias="line.png">line.png</file>
         <file alias="rectangle.png">rectangle.png</file>
         <file alias="filled_rectangle.png">filled_rectangle.png</file>
+        <file alias="move.png">move.png</file>
+        <file alias="rotate.png">rotate.png</file>
     </qresource>
     <qresource prefix="/xml">
         <file>points.xml</file>

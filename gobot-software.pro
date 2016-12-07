@@ -82,7 +82,9 @@ HEADERS += \
     Controller/localmapworker.h \
     View/drawobstacles.h \
     View/settingswidget.h \
-    drawobstaclestask.h
+    drawobstaclestask.h \
+    View/mergemapwidget.h \
+    View/mergemaplistitemwidget.h
 
 FORMS += Controller/mainwindow.ui
 
@@ -146,7 +148,9 @@ SOURCES += main.cpp \
     Controller/localmapworker.cpp \
     View/drawobstacles.cpp \
     View/settingswidget.cpp \
-    drawobstaclestask.cpp
+    drawobstaclestask.cpp \
+    View/mergemapwidget.cpp \
+    View/mergemaplistitemwidget.cpp
 
 
 RESOURCES += Resources/resources.qrc

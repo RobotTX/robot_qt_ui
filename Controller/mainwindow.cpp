@@ -53,6 +53,7 @@
 #include "Controller/commandcontroller.h"
 #include <fstream>
 #include "View/editmapwidget.h"
+#include "View/mergemapwidget.h"
 #include "View/settingswidget.h"
 
 #include <opencv2/opencv.hpp>
@@ -1720,6 +1721,13 @@ void MainWindow::saveEditMapSlot(){
     } else {
         qDebug() << "MainWindow::saveEditMapSlot called while editMapWidget is not set, duh ?";
     }
+}
+
+
+void MainWindow::mergeMapSlot(){
+    qDebug() << "MainWindow::mergeMapSlot called";
+    mergeMapWidget = QPointer<MergeMapWidget>(new MergeMapWidget());
+    //connect(mergeMapWidget, SIGNAL(saveMergeMap()), this, SLOT(saveMergeMapSlot()));
 }
 
 /**********************************************************************************************************************************/
@@ -4965,6 +4973,8 @@ QString MainWindow::prepareCommandPath(const Paths::Path &path) const {
 
 void MainWindow::testFunctionSlot(){
 
+    qDebug() << "MainWindow::testFunctionSlot called";
+    //mergeMapSlot();
 
 using namespace cv;
 /*

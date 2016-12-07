@@ -17,7 +17,6 @@
 
 EditMapWidget::EditMapWidget(QImage _mapImage, int _width, int _height, float _mapResolution, Position _mapOrigin, QWidget* parent):
     QWidget(parent), mapImage(_mapImage), mapWidth(_width), mapHeight(_height), mapResolution(_mapResolution), mapOrigin(_mapOrigin){
-    qDebug() << "EditMapWidget::EditMapWidget constructor";
     setAttribute(Qt::WA_DeleteOnClose);
     setMouseTracking(true);
     layout = new QHBoxLayout(this);
@@ -36,7 +35,6 @@ EditMapWidget::EditMapWidget(QImage _mapImage, int _width, int _height, float _m
     move(x, y);
     centerMap();
 }
-
 
 EditMapWidget::~EditMapWidget(){
     delete canvas;
@@ -201,9 +199,6 @@ void EditMapWidget::initializeMap(){
     graphicsView = new CustomQGraphicsView(scene, this);
     scene->setSceneRect(0, 0, mapWidth, mapHeight);
 
-    /*graphicsView->scale(std::max(graphicsView->parentWidget()->width()/scene->width(), graphicsView->parentWidget()->height()/scene->height()),
-                        std::max(graphicsView->parentWidget()->width()/scene->width(), graphicsView->parentWidget()->height()/scene->height()));
-*/
     graphicsView->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     graphicsView->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     graphicsView->setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding));
