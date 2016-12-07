@@ -55,12 +55,19 @@
 #include "View/editmapwidget.h"
 #include "View/settingswidget.h"
 
+#include <opencv2/opencv.hpp>
+#include <opencv2/features2d.hpp>
+
+#include "opencv2/xfeatures2d.hpp"
+
+
 #include <chrono>
 #include <thread>
 
+
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow) {
     ui->setupUi(this);
-qDebug() << "MainWIndow:: Inside thread" << QThread::currentThreadId();
+    qDebug() << "MainWIndow:: Inside thread" << QThread::currentThreadId();
     /// centers the msgBox on the middle of the screen
     msgBox.move(mapToGlobal(QPoint(QApplication::desktop()->screenGeometry().width()/2,
                                    QApplication::desktop()->screenGeometry().height()/2) ));
@@ -4745,7 +4752,7 @@ void MainWindow::updateHomeInfo(const QString robot_name, QString posX, QString 
             robotHasNoHome(robotView->getRobot()->getName());
         }
     }
-
+    editSelectedRobotWidget->setSelectedRobot(robots->getRobotViewByName(robot_name));
     editSelectedRobotWidget->updateHomeMenu();
 }
 
@@ -4957,11 +4964,131 @@ QString MainWindow::prepareCommandPath(const Paths::Path &path) const {
 }
 
 void MainWindow::testFunctionSlot(){
-    qDebug() << "MainWindow::testFunctionSlot called";
-    if(robots->getRobotsVector().size() > 0)
-        commandController->sendCommand(robots->getRobotsVector().at(0)->getRobot(), QString("s"));
-}
 
+
+using namespace cv;
+/*
+    QImage image = QImage("/home/joan/Desktop/map3_cropped.pgm","PGM");
+    for(int i = 0; i < image.width(); i++){
+        for(int j = 0; j < image.height(); j++){
+            if(image.pixelColor(i, j).red() > 250 &&
+               image.pixelColor(i, j).blue() > 250 &&
+               image.pixelColor(i, j).green() > 250)
+                image.setPixelColor(i, j, QColor(205, 205, 205));
+        }
+    }
+
+    image.save("/home/joan/Desktop/map3_cropped_modified.pgm", "PGM");
+
+    Mat img = imread("/home/joan/Desktop/map3_cropped_modified.pgm");
+
+    std::vector<KeyPoint> descriptors_1;
+
+    // Default parameters of ORB
+    int nfeatures=500;
+    float scaleFactor=1.2f;
+    int nlevels=8;
+    int edgeThreshold=31; // Changed default (31);
+    int firstLevel=0;
+    int WTA_K=2;
+    int scoreType=ORB::HARRIS_SCORE;
+    int patchSize=31;
+    int fastThreshold=20;
+
+    Ptr<ORB> detector = ORB::create(
+    nfeatures,
+    scaleFactor,
+    nlevels,
+    edgeThreshold,
+    firstLevel,
+    WTA_K,
+    scoreType,
+    patchSize,
+    fastThreshold );
+
+    detector->detect(img, descriptors_1);
+    std::cout << "Found " << descriptors_1.size() << " Keypoints " << std::endl;
+
+    Mat out;
+    drawKeypoints(img, descriptors_1, out, Scalar::all(125));
+
+    //imshow("Kpts", out);
+
+    QImage image2 = QImage("/home/joan/Desktop/map1_cropped.pgm","PGM");
+    for(int i = 0; i < image2.width(); i++){
+        for(int j = 0; j < image2.height(); j++){
+            if(image2.pixelColor(i, j).red() > 250 &&
+               image2.pixelColor(i, j).blue() > 250 &&
+               image2.pixelColor(i, j).green() > 250)
+                image2.setPixelColor(i, j, QColor(205, 205, 205));
+        }
+    }
+
+
+    image.save("/home/joan/Desktop/map1_cropped_modified.pgm", "PGM");
+
+    Mat img2 = imread("/home/joan/Desktop/map1_cropped_modified.pgm");
+
+    std::vector<KeyPoint> descriptors_2;
+
+    Ptr<ORB> detector2 = ORB::create(
+    nfeatures,
+    scaleFactor,
+    nlevels,
+    edgeThreshold,
+    firstLevel,
+    WTA_K,
+    scoreType,
+    patchSize,
+    fastThreshold );
+
+    detector2->detect(img, descriptors_2);
+    std::cout << "Found " << descriptors_2.size() << " Keypoints " << std::endl;
+
+    Mat out2;
+    drawKeypoints(img2, descriptors_2, out2, Scalar::all(125));
+
+
+
+    std::vector< std::vector<DMatch> > matches;
+    //using either FLANN or BruteForce
+    Ptr<DescriptorMatcher> matcher = DescriptorMatcher::create("BruteForce");
+    matcher->knnMatch( descriptors_1, descriptors_2, matches, 1 );
+
+    //just some temporarily code to have the right data structure
+    std::vector< DMatch > good_matches2;
+    good_matches2.reserve(matches.size());
+    for (size_t i = 0; i < matches.size(); ++i)
+    {
+        good_matches2.push_back(matches[i][0]);
+    }
+*/
+    Mat img1 = imread("/home/joan/Desktop/map3_cropped_modified.pgm");
+    Mat img2 = imread("/home/joan/Desktop/map1_cropped_modified.pgm");
+
+
+    // detecting keypoints
+    Ptr<xfeatures2d::SURF> surf = xfeatures2d::SURF::create(); // note extra namespace
+    std::vector<KeyPoint> keypoints1, keypoints2;
+    surf->detect(img1, keypoints1);
+    surf->detect(img2, keypoints2);
+
+    Mat descriptors1, descriptors2;
+    surf->compute(img1, keypoints1, descriptors1);
+    surf->compute(img2, keypoints2, descriptors2);
+
+    // matching descriptors
+    DescriptorMatcher* l1Matcher = new BFMatcher(NORM_L1);
+    std::vector<DMatch> matches;
+    l1Matcher->match(descriptors1, descriptors2, matches);
+
+    // drawing the results
+    namedWindow("matches", 1);
+    Mat img_matches;
+    drawMatches(img1, keypoints1, img2, keypoints2, matches, img_matches);
+    imshow("matches", img_matches);
+    waitKey(0);
+}
 
 void MainWindow::activateLaserSlot(QString ipAddress, bool activate){
     QPointer<RobotView> robotView = robots->getRobotViewByIp(ipAddress);
