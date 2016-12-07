@@ -53,10 +53,12 @@
 #include "Controller/commandcontroller.h"
 #include <fstream>
 #include "View/editmapwidget.h"
+#include "View/mergemapwidget.h"
 #include "View/settingswidget.h"
 
 #include <chrono>
 #include <thread>
+
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow) {
     ui->setupUi(this);
@@ -1713,6 +1715,13 @@ void MainWindow::saveEditMapSlot(){
     } else {
         qDebug() << "MainWindow::saveEditMapSlot called while editMapWidget is not set, duh ?";
     }
+}
+
+
+void MainWindow::mergeMapSlot(){
+    qDebug() << "MainWindow::mergeMapSlot called";
+    mergeMapWidget = QPointer<MergeMapWidget>(new MergeMapWidget());
+    //connect(mergeMapWidget, SIGNAL(saveMergeMap()), this, SLOT(saveMergeMapSlot()));
 }
 
 /**********************************************************************************************************************************/
@@ -4953,8 +4962,62 @@ QString MainWindow::prepareCommandPath(const Paths::Path &path) const {
 
 void MainWindow::testFunctionSlot(){
     qDebug() << "MainWindow::testFunctionSlot called";
-    if(robots->getRobotsVector().size() > 0)
-        commandController->sendCommand(robots->getRobotsVector().at(0)->getRobot(), QString("s"));
+    mergeMapSlot();
+
+    /*cv::Mat inputImage = cv::imread("/home/m-a/Documents/QtProject/gobot-software/mapConfigs/edited_map.pgm");
+    if(!inputImage.empty()) cv::imshow("Display Image", inputImage);
+    */
+/*
+    // Read the images to be aligned
+    cv::Mat im1 = cv::imread("/home/m-a/Documents/QtProject/gobot-software/mapConfigs/edited_map.pgm");
+    cv::Mat im2 = cv::imread("/home/m-a/Documents/QtProject/gobot-software/mapConfigs/yolo.pgm");
+
+    // Convert images to gray scale;
+    cv::Mat im1_gray, im2_gray;
+    cv::cvtColor(im1, im1_gray, CV_BGR2GRAY);
+    cv::cvtColor(im2, im2_gray, CV_BGR2GRAY);
+
+    // Define the motion model
+    const int warp_mode = cv::MOTION_EUCLIDEAN;
+
+    // Set a 2x3 or 3x3 warp matrix depending on the motion model.
+    cv::Mat warp_matrix;
+
+    // Initialize the matrix to identity
+    if ( warp_mode ==cv::MOTION_HOMOGRAPHY )
+        warp_matrix = cv::Mat::eye(3, 3, CV_32F);
+    else
+        warp_matrix = cv::Mat::eye(2, 3, CV_32F);
+
+    // Specify the number of iterations.
+    int number_of_iterations = 5000;
+
+    // Specify the threshold of the increment
+    // in the correlation coefficient between two iterations
+    double termination_eps = 1e-10;
+
+    // Define termination criteria
+    cv::TermCriteria criteria (cv::TermCriteria::COUNT+cv::TermCriteria::EPS, number_of_iterations, termination_eps);
+
+    // Run the ECC algorithm. The results are stored in warp_matrix.
+    cv::findTransformECC(im1_gray, im2_gray, warp_matrix, warp_mode, criteria, cv::noArray());
+
+
+    // Storage for warped image.
+    cv::Mat im2_aligned;
+
+    if (warp_mode != cv::MOTION_HOMOGRAPHY)
+        // Use warpAffine for Translation, Euclidean and Affine
+        cv::warpAffine(im2, im2_aligned, warp_matrix, im1.size(), cv::INTER_LINEAR + cv::WARP_INVERSE_MAP);
+    else
+        // Use warpPerspective for Homography
+        cv::warpPerspective (im2, im2_aligned, warp_matrix, im1.size(),cv::INTER_LINEAR + cv::WARP_INVERSE_MAP);
+
+    // Show final result
+    cv::imshow("Image 1", im1);
+    cv::imshow("Image 2", im2);
+    cv::imshow("Image 2 Aligned", im2_aligned);
+    cv::waitKey(0);*/
 }
 
 

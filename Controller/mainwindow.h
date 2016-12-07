@@ -24,6 +24,7 @@ class CustomPushButton;
 class GroupsPathsWidget;
 class CommandController;
 class EditMapWidget;
+class MergeMapWidget;
 class SettingsWidget;
 
 #include "Model/paths.h"
@@ -40,7 +41,6 @@ class SettingsWidget;
 #include <QSettings>
 #include <QThread>
 #include <QUuid>
-
 #include <ctime>
 
 #define DESKTOP_PATH "/home/m-a/Desktop/"
@@ -273,6 +273,7 @@ private slots:
     void setHomeAtConnection(const QString robot_name, const Position& pos_home);
     bool updateHomeFile(const QString robot_name, const Position& robot_home_position, const QStringList date);
     void saveEditMapSlot();
+    void mergeMapSlot();
 
     void testFunctionSlot();
     void activateLaserSlot(QString, bool);
@@ -326,6 +327,7 @@ private:
     CommandController* commandController;
     std::string mapFile;
     QPointer<EditMapWidget> editMapWidget;
+    QPointer<MergeMapWidget> mergeMapWidget;
 
     SettingsWidget* settingsWidget;
 };

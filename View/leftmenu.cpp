@@ -51,7 +51,7 @@ LeftMenu::LeftMenu(MainWindow* _mainWindow, QSharedPointer<Points> const& _point
     closeBtn->addStyleSheet("QPushButton {padding-top: 15px; padding-bottom: 15px;}");
 
     returnButton->hide();
-    topLayout->addWidget(returnButton,Qt::AlignLeft);
+    topLayout->addWidget(returnButton, Qt::AlignLeft);
 
     topLayout->addWidget(closeBtn);
 
