@@ -4976,128 +4976,107 @@ void MainWindow::testFunctionSlot(){
     qDebug() << "MainWindow::testFunctionSlot called";
     //mergeMapSlot();
 
-using namespace cv;
-/*
-    QImage image = QImage("/home/joan/Desktop/map3_cropped.pgm","PGM");
-    for(int i = 0; i < image.width(); i++){
-        for(int j = 0; j < image.height(); j++){
-            if(image.pixelColor(i, j).red() > 250 &&
-               image.pixelColor(i, j).blue() > 250 &&
-               image.pixelColor(i, j).green() > 250)
-                image.setPixelColor(i, j, QColor(205, 205, 205));
+    using namespace cv;
+
+    QString fileName = QFileDialog::getOpenFileName(this,
+        tr("Open Image"), "", tr("Image Files (*.pgm)"));
+
+    if(!fileName.isEmpty()){
+        QString fileName2 = QFileDialog::getOpenFileName(this,
+            tr("Open Image"), "", tr("Image Files (*.pgm)"));
+        if(!fileName2.isEmpty()){
+            Mat image2 = imread(fileName.toStdString());
+            Mat image1 = imread(fileName2.toStdString());
+            Mat image3 = imread("home/joan/Desktop/map2.pgm");
+
+            if(!image1.empty() && !image2.empty()){
+
+                qDebug() << "FOUND BOTH IMAGES";
+
+                /// create feature detector set.
+                Ptr<FeatureDetector> detector = ORB::create(120);
+                std::vector<KeyPoint> keypoints1, keypoints2, keypoints3;
+
+                BFMatcher dematc(NORM_HAMMING, false);
+
+                /// extract keypoints
+                detector->detect(image1, keypoints1);
+                detector->detect(image2, keypoints2);
+                detector->detect(image3, keypoints3);
+
+                Ptr<DescriptorExtractor> extractor = ORB::create();
+
+                /// extract descriptors
+                Mat dscv1, dscv2, dscv3;
+                extractor->compute(image1, keypoints1, dscv1);
+                extractor->compute(image2, keypoints2, dscv2);
+                extractor->compute(image3, keypoints3, dscv3);
+
+                /// match keypoints
+                std::vector<DMatch> matches;
+                dematc.match(dscv1, dscv2, matches);
+
+                std::vector<KeyPoint> fil1, fil2, fil3;
+                std::vector<Point2f> coord1, coord2, coord3;
+
+                /// find matching point pairs with same distance in both images
+                for (size_t i = 0; i < matches.size(); i++) {
+                    KeyPoint a1 = keypoints1[matches[i].queryIdx],
+                             b1 = keypoints2[matches[i].trainIdx];
+
+                    if (matches[i].distance > 30)
+                    continue;
+
+                    for (size_t j = 0; j < matches.size(); j++) {
+                        KeyPoint a2 = keypoints1[matches[j].queryIdx],
+                                 b2 = keypoints2[matches[j].trainIdx];
+
+                        if (matches[j].distance > 70)
+                            continue;
+
+                        /// 30 can be configured !!!
+                        if ( fabs(norm(a1.pt-a2.pt) - norm(b1.pt-b2.pt)) > 30 ||
+                            fabs(norm(a1.pt-a2.pt) - norm(b1.pt-b2.pt)) == 0)
+                            continue;
+
+                        coord1.push_back(a1.pt);
+                        coord1.push_back(a2.pt);
+                        coord2.push_back(b1.pt);
+                        coord2.push_back(b2.pt);
+
+                        fil1.push_back(a1);
+                        fil1.push_back(a2);
+                        fil2.push_back(b1);
+                        fil2.push_back(b2);
+
+                    }
+                }
+
+              /// find homography
+              Mat H = estimateRigidTransform(coord2, coord1, false);
+
+              /// calculate for information
+
+              double rotation = 180./M_PI*atan2(H.at<double>(0, 1), H.at<double>(1, 1));
+              double transx   = H.at<double>(0,2);
+              double transy   = H.at<double>(1,2);
+              double scalex   = sqrt(pow(H.at<double>(0,0),2)+pow(H.at<double>(0,1),2));
+              double scaley   = sqrt(pow(H.at<double>(1,0),2)+pow(H.at<double>(1,1),2));
+
+              qDebug() << rotation << transx << transy << scalex << scaley;
+
+              /// create storage for new image and get transformations
+              Mat image(image1.size(), image1.type());
+              warpAffine(image2,image, H, image.size());
+
+              /// blend image1 onto the transformed image2
+              addWeighted(image, 0.55, image1, 0.55, 0.0, image);
+
+              imwrite("/home/joan/Desktop/result.pgm", image);
+
+            }
         }
     }
-
-    image.save("/home/joan/Desktop/map3_cropped_modified.pgm", "PGM");
-
-    Mat img = imread("/home/joan/Desktop/map3_cropped_modified.pgm");
-
-    std::vector<KeyPoint> descriptors_1;
-
-    // Default parameters of ORB
-    int nfeatures=500;
-    float scaleFactor=1.2f;
-    int nlevels=8;
-    int edgeThreshold=31; // Changed default (31);
-    int firstLevel=0;
-    int WTA_K=2;
-    int scoreType=ORB::HARRIS_SCORE;
-    int patchSize=31;
-    int fastThreshold=20;
-
-    Ptr<ORB> detector = ORB::create(
-    nfeatures,
-    scaleFactor,
-    nlevels,
-    edgeThreshold,
-    firstLevel,
-    WTA_K,
-    scoreType,
-    patchSize,
-    fastThreshold );
-
-    detector->detect(img, descriptors_1);
-    std::cout << "Found " << descriptors_1.size() << " Keypoints " << std::endl;
-
-    Mat out;
-    drawKeypoints(img, descriptors_1, out, Scalar::all(125));
-
-    //imshow("Kpts", out);
-
-    QImage image2 = QImage("/home/joan/Desktop/map1_cropped.pgm","PGM");
-    for(int i = 0; i < image2.width(); i++){
-        for(int j = 0; j < image2.height(); j++){
-            if(image2.pixelColor(i, j).red() > 250 &&
-               image2.pixelColor(i, j).blue() > 250 &&
-               image2.pixelColor(i, j).green() > 250)
-                image2.setPixelColor(i, j, QColor(205, 205, 205));
-        }
-    }
-
-
-    image.save("/home/joan/Desktop/map1_cropped_modified.pgm", "PGM");
-
-    Mat img2 = imread("/home/joan/Desktop/map1_cropped_modified.pgm");
-
-    std::vector<KeyPoint> descriptors_2;
-
-    Ptr<ORB> detector2 = ORB::create(
-    nfeatures,
-    scaleFactor,
-    nlevels,
-    edgeThreshold,
-    firstLevel,
-    WTA_K,
-    scoreType,
-    patchSize,
-    fastThreshold );
-
-    detector2->detect(img, descriptors_2);
-    std::cout << "Found " << descriptors_2.size() << " Keypoints " << std::endl;
-
-    Mat out2;
-    drawKeypoints(img2, descriptors_2, out2, Scalar::all(125));
-
-
-
-    std::vector< std::vector<DMatch> > matches;
-    //using either FLANN or BruteForce
-    Ptr<DescriptorMatcher> matcher = DescriptorMatcher::create("BruteForce");
-    matcher->knnMatch( descriptors_1, descriptors_2, matches, 1 );
-
-    //just some temporarily code to have the right data structure
-    std::vector< DMatch > good_matches2;
-    good_matches2.reserve(matches.size());
-    for (size_t i = 0; i < matches.size(); ++i)
-    {
-        good_matches2.push_back(matches[i][0]);
-    }
-*/
-    Mat img1 = imread("/home/joan/Desktop/map3_cropped_modified.pgm");
-    Mat img2 = imread("/home/joan/Desktop/map1_cropped_modified.pgm");
-
-
-    // detecting keypoints
-    Ptr<xfeatures2d::SURF> surf = xfeatures2d::SURF::create(); // note extra namespace
-    std::vector<KeyPoint> keypoints1, keypoints2;
-    surf->detect(img1, keypoints1);
-    surf->detect(img2, keypoints2);
-
-    Mat descriptors1, descriptors2;
-    surf->compute(img1, keypoints1, descriptors1);
-    surf->compute(img2, keypoints2, descriptors2);
-
-    // matching descriptors
-    DescriptorMatcher* l1Matcher = new BFMatcher(NORM_L1);
-    std::vector<DMatch> matches;
-    l1Matcher->match(descriptors1, descriptors2, matches);
-
-    // drawing the results
-    namedWindow("matches", 1);
-    Mat img_matches;
-    drawMatches(img1, keypoints1, img2, keypoints2, matches, img_matches);
-    imshow("matches", img_matches);
-    waitKey(0);
 }
 
 void MainWindow::activateLaserSlot(QString ipAddress, bool activate){
