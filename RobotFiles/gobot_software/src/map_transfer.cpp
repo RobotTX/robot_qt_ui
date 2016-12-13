@@ -41,13 +41,14 @@ void getMap(const nav_msgs::OccupancyGrid::ConstPtr& msg){
 	sendMap(compress(msg->data, map_size, false));
 }
 
-std::vector<uint8_t> compress(std::vector<int8_t> map, int map_size, bool fromPgm){
+std::vector<uint8_t> compress(std::vector<int8_t> map, int map_size, int who){
 	std::vector<uint8_t> my_map;
 	int last = 205;
 	uint32_t count = 0;
 
-	/// If the map comes from a pgm, we send the mapId and mapDate with it
-	if(fromPgm){
+	/// If the map comes from a pgm, we send the mapId, the mapDate,
+	/// the resolution and the origin with it
+	if(who > 0){
 	   	std::ifstream ifMap(path_computer_software + "Robot_Infos/mapId.txt", std::ifstream::in);
 	   	std::string mapId("{0}");
 	   	std::string mapDate("0");
@@ -57,7 +58,25 @@ std::vector<uint8_t> compress(std::vector<int8_t> map, int map_size, bool fromPg
 	   		ifMap.close();
 	   	}
 
-	   	std::string str = mapId + " " + mapDate;
+
+	   	std::ifstream ifYaml(path_gobot_move + "maps/used_map.yaml", std::ifstream::in);
+	   	std::string resolution("resolution: 0.050000");
+	   	std::string origin("origin: [-51.224998, -51.224998, 0.000000]");
+	   	if(ifYaml){
+	   		getline(ifYaml, resolution);
+	   		getline(ifYaml, resolution);
+	   		getline(ifYaml, origin);
+	   		ifYaml.close();
+	   	}
+	   	std::cout << "(Map) Resolution & origin before parsing : " << resolution << " & " << origin << std::endl;
+
+	   	resolution = resolution.substr(12);
+	   	origin = origin.substr(9);
+		std::size_t found = origin.find_last_of(",");
+		origin = origin.substr(0,found);
+
+	   	std::string str = mapId + " " + mapDate + " " + resolution + " " + origin;
+	   	std::cout << "(Map) Map metadata : " << str << std::endl;
 	   	for(int i = 0; i < str.size(); i++){
 	   		my_map.push_back(static_cast<uint8_t>(str.at(i)));
 	   	}
@@ -73,7 +92,7 @@ std::vector<uint8_t> compress(std::vector<int8_t> map, int map_size, bool fromPg
 	for(size_t i = 0; i < map_size; i++){
 		int curr = map.at(i);
 
-		if(!fromPgm){
+		if(who == 0){
 		    if(curr < 0)
 	            curr = 205;
 	        else if(curr < LOW_THRESHOLD)
@@ -109,7 +128,12 @@ std::vector<uint8_t> compress(std::vector<int8_t> map, int map_size, bool fromPg
 	my_map.push_back(254);
 	my_map.push_back(254);
 
-	my_map.push_back((fromPgm) ? 254 : 253);
+	if(who == 1)
+		my_map.push_back(254);
+	else if(who == 2)
+		my_map.push_back(252);
+	else
+		my_map.push_back(253);
 
 	return my_map;
 }
@@ -157,12 +181,14 @@ bool stopAutoMap(std_srvs::Empty::Request &req,
 	return true;
 }
 
-bool sendOnceMap(std_srvs::Empty::Request &req,
-    std_srvs::Empty::Response &res){
+bool sendOnceMap(gobot_software::Port::Request &req,
+    gobot_software::Port::Response &res){
 	std::cout << "(Map) SendOnceMap doing nothing for now" << std::endl;
 
+	int who = req.port;	
+
 	std::vector<int8_t> my_map;
-    std::string mapFileStr = path_gobot_move + "maps/new_map.pgm";
+    std::string mapFileStr = path_gobot_move + "maps/used_map.pgm";
 
 	std::string line;
 	std::ifstream mapFile;
@@ -190,7 +216,7 @@ bool sendOnceMap(std_srvs::Empty::Request &req,
 
 		mapFile.close();
 		std::cout << "(Map) Got the whole map from file, about to compress and send it" << std::endl;
-		sendMap(compress(my_map, map_size, true));
+		sendMap(compress(my_map, map_size, who));
 
 		return true;
 		

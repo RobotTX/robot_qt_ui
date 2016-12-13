@@ -1,6 +1,7 @@
 #include "scanmapworker.h"
 #include <QDataStream>
 #include <QFile>
+#include <QStringList>
 
 ScanMapWorker::ScanMapWorker(const QString newipAddress, const int newPort, const QString _mapPath):
     ipAddress(newipAddress), port(newPort), data(QByteArray()), mapPath(_mapPath)
@@ -39,22 +40,32 @@ void ScanMapWorker::readTcpDataSlot(){
 
     QString mapId("");
     QString mapDate("");
+    QString resolution("");
+    QString originX("");
+    QString originY("");
+
 
     /// The TCP protocol sending blocks of data, a map is defined by a random number
     /// of blocks, so we wait till the last byte of a block is -2, meaning we have received
     /// a complete map
     if(data.size() >= 5 && static_cast<uint8_t>(data.at(data.size()-5)) == 254 && static_cast<uint8_t>(data.at(data.size()-4)) == 254
             && static_cast<uint8_t>(data.at(data.size()-3)) == 254 && static_cast<uint8_t>(data.at(data.size()-2)) == 254 &&
-            (static_cast<uint8_t>(data.at(data.size()-1)) == 253 || static_cast<uint8_t>(data.at(data.size()-1)) == 254)){
+            (static_cast<uint8_t>(data.at(data.size()-1)) == 252 ||static_cast<uint8_t>(data.at(data.size()-1)) == 253 || static_cast<uint8_t>(data.at(data.size()-1)) == 254)){
 
         //qDebug() << "(ScanMapWorker) Map of" << data.size() << "bytes received";
 
         /// Emit the signal valueChangedMap, meaning that we finished to receive a whole map
         /// and we can display it
-        bool fromPgm = false;
+        int who = 0;
+        if(static_cast<uint8_t>(data.at(data.size()-1)) == 254)
+            who = 1;
+        else if(static_cast<uint8_t>(data.at(data.size()-1)) == 252)
+            who = 2;
+
+        qDebug() << "(ScanMapWorker) Who :" << who;
+
         QString mapInfo("");
-        if(static_cast<uint8_t>(data.at(data.size()-1)) == 254){
-            fromPgm = true;
+        if(who > 0){
             /// If the map comes from a pgm, we get the mapId and mapDate associated to it
             int i = 0;
             bool gotMapInfo = false;
@@ -73,9 +84,13 @@ void ScanMapWorker::readTcpDataSlot(){
 
             qDebug() << "(ScanMapWorker) Got mapInfo :" << mapInfo;
             QStringList strList = mapInfo.split(" ", QString::SkipEmptyParts);
-            if(strList.size() > 1){
+            if(strList.size() > 4){
                 mapId = strList.at(0);
                 mapDate = strList.at(1);
+                resolution = strList.at(2);
+                originX = strList.at(3);
+                originX.remove(originX.size()-1, 1);
+                originY = strList.at(4);
             } else {
                 qDebug() << "(ScanMapWorker) Could not parse mapInfo :" << mapInfo;
             }
@@ -84,7 +99,7 @@ void ScanMapWorker::readTcpDataSlot(){
         /// Remove the end bytes 254 254 254 254 254 as we no longer need them
         data.remove(data.size()-5, 5);
 
-        emit valueChangedMap(data, fromPgm, mapId, mapDate);
+        emit valueChangedMap(data, who, mapId, mapDate, resolution, originX, originY, ipAddress);
 
         /// Clear the Vector that contain the map, once it has been treated
         data.clear();

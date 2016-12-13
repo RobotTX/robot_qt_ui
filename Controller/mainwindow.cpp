@@ -369,7 +369,7 @@ void MainWindow::initializeRobots(){
 void MainWindow::updateRobot(const QString ipAddress, const float posX, const float posY, const float oriZ){
 
     /// need to first convert the coordinates that we receive from the robot
-    Position robotPositionInPixelCoordinates(convertRobotCoordinatesToPixelCoordinates(Position(posX, posY)));
+    Position robotPositionInPixelCoordinates(convertRobotCoordinatesToPixelCoordinates(Position(posX, posY), map->getOrigin().getX(), map->getOrigin().getY(), map->getResolution(), map->getHeight(), ROBOT_WIDTH));
     float orientation = asin(-oriZ) * 360.0 / PI + 90;
 
     QPointer<RobotView> rv = robots->getRobotViewByIp(ipAddress);
@@ -1468,7 +1468,7 @@ void MainWindow::setNewHome(QString homeName){
 }
 
 bool MainWindow::sendHomeToRobot(QPointer<RobotView> robot, QSharedPointer<PointView> home){
-    Position posInRobotCoordinates(convertPixelCoordinatesToRobotCoordinates(home->getPoint()->getPosition()));
+    Position posInRobotCoordinates(convertPixelCoordinatesToRobotCoordinates(home->getPoint()->getPosition(), map->getOrigin().getX(), map->getOrigin().getY(), map->getResolution(), map->getHeight(), ROBOT_WIDTH));
     return commandController->sendCommand(robot->getRobot(), QString("n \"") + QString::number(posInRobotCoordinates.getX()) + "\" \""
                                                       + QString::number(posInRobotCoordinates.getY()) + "\"");
 }
@@ -1541,16 +1541,23 @@ void MainWindow::updateMetadata(const int width, const int height, const float r
     }
 }
 
-void MainWindow::updateMap(const QByteArray mapArray, bool fromPgm, QString mapId, QString mapDate){
-    map->setMapFromArray(mapArray, fromPgm);
-    QPixmap pixmap = QPixmap::fromImage(map->getMapImage());
-    mapPixmapItem->setPixmap(pixmap);
-    if(fromPgm && !mapId.isEmpty() && !mapDate.isEmpty()){
-        map->setMapId(QUuid(mapId));
-        map->setDateTime(QDateTime::fromString(mapDate, "yyyy-MM-dd-hh-mm-ss"));
-    }
+void MainWindow::updateMap(const QByteArray mapArray, int who, QString mapId, QString mapDate, QString resolution, QString originX, QString originY, QString ipAddress){
+    qDebug() << "MainWindow::updateMap received a map" << who;
+    if(who == 2){
+        qDebug() << "MainWindow::updateMap received a map from a robot to merge" << ipAddress << resolution << originX << originY;
+        // TODO send to mergeMapWidget
 
-    scene->update();
+    } else {
+        map->setMapFromArray(mapArray, who);
+        QPixmap pixmap = QPixmap::fromImage(map->getMapImage());
+        mapPixmapItem->setPixmap(pixmap);
+        if(who && !mapId.isEmpty() && !mapDate.isEmpty()){
+            map->setMapId(QUuid(mapId));
+            map->setDateTime(QDateTime::fromString(mapDate, "yyyy-MM-dd-hh-mm-ss"));
+        }
+
+        scene->update();
+    }
 }
 
 void MainWindow::saveMapBtnEvent(){
@@ -1582,11 +1589,16 @@ void MainWindow::saveMap(QString fileName){
 
         assert(saveMapConfig(fileInfo.absoluteFilePath().toStdString()));
 
+
         qDebug() << "MainWindow::saveMap" << mapState.first.x() << mapState.first.y() << mapState.second << map->getWidth() << map->getHeight()
                  << map->getOrigin().getX() << map->getOrigin().getY();
 
+        /// saves the new configurat;ion to the map configuration file
         const QString pointsFile = fileName + "_points.xml";
         savePoints(pointsFile);
+
+        /// saves the new configuration to the current configuration file
+        savePoints(QDir::currentPath() + QDir::separator() + "points.xml");
 
         /// saves the map
         map->saveToFile(fileName + ".pgm");
@@ -1688,7 +1700,7 @@ void MainWindow::saveEditMapSlot(){
         QString fileName = QFileDialog::getSaveFileName(this, tr("Save File"),
                 "", tr("Images (*.pgm)"));
 
-        /// If the user perss cancel on the box, the filename fill be empty
+        /// If the user press cancel on the box, the filename fill be empty
         if(!fileName.isEmpty()){
             qDebug() << "MainWindow::saveEditMapSlot called with filename" << fileName;
 
@@ -1720,8 +1732,33 @@ void MainWindow::saveEditMapSlot(){
 
 void MainWindow::mergeMapSlot(){
     qDebug() << "MainWindow::mergeMapSlot called";
-    mergeMapWidget = QPointer<MergeMapWidget>(new MergeMapWidget());
-    //connect(mergeMapWidget, SIGNAL(saveMergeMap()), this, SLOT(saveMergeMapSlot()));
+    mergeMapWidget = QPointer<MergeMapWidget>(new MergeMapWidget(robots));
+    connect(mergeMapWidget, SIGNAL(saveMergeMap(double, Position, QImage, QString)), this, SLOT(saveMergeMapSlot(double, Position, QImage, QString)));
+    connect(mergeMapWidget, SIGNAL(getMapForMerging(QString)), this, SLOT(getMapForMergingSlot(QString)));
+}
+
+void MainWindow::saveMergeMapSlot(double resolution, Position origin, QImage image, QString fileName){
+    qDebug() << "MainWindow::saveMergeMapSlot called with filename" << fileName;
+
+    clearNewMap();
+    mapFile = fileName.toStdString();
+
+    /// Set the new map
+    map->setResolution(resolution);
+    map->setWidth(image.width());
+    map->setHeight(image.height());
+    map->setOrigin(origin);
+    map->setMapImage(image);
+    map->setMapId(QUuid::createUuid());
+    map->setDateTime(QDateTime::currentDateTime());
+
+    QPixmap pixmap = QPixmap::fromImage(image);
+    mapPixmapItem->setPixmap(pixmap);
+    scene->update();
+
+    saveMap(fileName);
+
+    sendNewMapToRobots();
 }
 
 /**********************************************************************************************************************************/
@@ -4549,18 +4586,18 @@ void MainWindow::updateMapInfo(const QString robot_name, QString mapId, QString 
                if(robotOlder){
                    robot->sendNewMap(map);
                } else {
-                   commandController->sendCommand(robot, QString("s"));
+                   commandController->sendCommand(robot, QString("s \"1\""));
                }
             break;
             case SettingsWidget::ALWAYS_OLD:
                 if(robotOlder){
-                    commandController->sendCommand(robot, QString("s"));
+                    commandController->sendCommand(robot, QString("s \"1\""));
                 } else {
                     robot->sendNewMap(map);
                 }
             break;
             case SettingsWidget::ALWAYS_ROBOT:
-                commandController->sendCommand(robot, QString("s"));
+                commandController->sendCommand(robot, QString("s \"1\""));
             break;
             case SettingsWidget::ALWAYS_APPLICATION:
                 robot->sendNewMap(map);
@@ -4580,7 +4617,7 @@ void MainWindow::updateMapInfo(const QString robot_name, QString mapId, QString 
 
                 if (msgBox.clickedButton() == robotButton) {
                     qDebug() << "Robot" << robot_name << "using the map from the robot";
-                    commandController->sendCommand(robot, QString("s"));
+                    commandController->sendCommand(robot, QString("s \"1\""));
                 } else if (msgBox.clickedButton() == appButton) {
                     qDebug() << "Robot" << robot_name << "using the map from the app";
                     robot->sendNewMap(map);
@@ -4690,7 +4727,7 @@ void MainWindow::updateHomeInfo(const QString robot_name, QString posX, QString 
     QStringList dateLastModification = appHome.second;
 
     /// we gotta convert the coordinates first
-    Position robot_home_position = convertRobotCoordinatesToPixelCoordinates(Position(posX.toDouble(), posY.toDouble()));
+    Position robot_home_position = convertRobotCoordinatesToPixelCoordinates(Position(posX.toDouble(), posY.toDouble()), map->getOrigin().getX(), map->getOrigin().getY(), map->getResolution(), map->getHeight(), ROBOT_WIDTH);
     QStringList dateHomeOnRobot = homeDate.split("-");
 
     /// if the robot and the application have the same home we don't do anything besides setting the point in the application (no need to change any files)
@@ -4950,7 +4987,7 @@ QString MainWindow::prepareCommandPath(const Paths::Path &path) const {
         float oldPosX = pathPoint->getPoint().getPosition().getX();
         float oldPosY = pathPoint->getPoint().getPosition().getY();
 
-        Position posInRobotCoordinates(convertPixelCoordinatesToRobotCoordinates(Position(oldPosX, oldPosY)));
+        Position posInRobotCoordinates(convertPixelCoordinatesToRobotCoordinates(Position(oldPosX, oldPosY), map->getOrigin().getX(), map->getOrigin().getY(), map->getResolution(), map->getHeight(), ROBOT_WIDTH));
 
         int waitTime = pathPoint->getWaitTime();
 
@@ -4962,62 +4999,12 @@ QString MainWindow::prepareCommandPath(const Paths::Path &path) const {
 
 void MainWindow::testFunctionSlot(){
     qDebug() << "MainWindow::testFunctionSlot called";
+
+    /*if(robots->getRobotsVector().size() > 0)
+        commandController->sendCommand(robots->getRobotsVector().at(0)->getRobot(), QString("s"));*/
+
+
     mergeMapSlot();
-
-    /*cv::Mat inputImage = cv::imread("/home/m-a/Documents/QtProject/gobot-software/mapConfigs/edited_map.pgm");
-    if(!inputImage.empty()) cv::imshow("Display Image", inputImage);
-    */
-/*
-    // Read the images to be aligned
-    cv::Mat im1 = cv::imread("/home/m-a/Documents/QtProject/gobot-software/mapConfigs/edited_map.pgm");
-    cv::Mat im2 = cv::imread("/home/m-a/Documents/QtProject/gobot-software/mapConfigs/yolo.pgm");
-
-    // Convert images to gray scale;
-    cv::Mat im1_gray, im2_gray;
-    cv::cvtColor(im1, im1_gray, CV_BGR2GRAY);
-    cv::cvtColor(im2, im2_gray, CV_BGR2GRAY);
-
-    // Define the motion model
-    const int warp_mode = cv::MOTION_EUCLIDEAN;
-
-    // Set a 2x3 or 3x3 warp matrix depending on the motion model.
-    cv::Mat warp_matrix;
-
-    // Initialize the matrix to identity
-    if ( warp_mode ==cv::MOTION_HOMOGRAPHY )
-        warp_matrix = cv::Mat::eye(3, 3, CV_32F);
-    else
-        warp_matrix = cv::Mat::eye(2, 3, CV_32F);
-
-    // Specify the number of iterations.
-    int number_of_iterations = 5000;
-
-    // Specify the threshold of the increment
-    // in the correlation coefficient between two iterations
-    double termination_eps = 1e-10;
-
-    // Define termination criteria
-    cv::TermCriteria criteria (cv::TermCriteria::COUNT+cv::TermCriteria::EPS, number_of_iterations, termination_eps);
-
-    // Run the ECC algorithm. The results are stored in warp_matrix.
-    cv::findTransformECC(im1_gray, im2_gray, warp_matrix, warp_mode, criteria, cv::noArray());
-
-
-    // Storage for warped image.
-    cv::Mat im2_aligned;
-
-    if (warp_mode != cv::MOTION_HOMOGRAPHY)
-        // Use warpAffine for Translation, Euclidean and Affine
-        cv::warpAffine(im2, im2_aligned, warp_matrix, im1.size(), cv::INTER_LINEAR + cv::WARP_INVERSE_MAP);
-    else
-        // Use warpPerspective for Homography
-        cv::warpPerspective (im2, im2_aligned, warp_matrix, im1.size(),cv::INTER_LINEAR + cv::WARP_INVERSE_MAP);
-
-    // Show final result
-    cv::imshow("Image 1", im1);
-    cv::imshow("Image 2", im2);
-    cv::imshow("Image 2 Aligned", im2_aligned);
-    cv::waitKey(0);*/
 }
 
 
@@ -5037,15 +5024,15 @@ void MainWindow::activateLaserSlot(QString ipAddress, bool activate){
     }
 }
 
-Position MainWindow::convertPixelCoordinatesToRobotCoordinates(const Position positionInPixels) const {
-    float xInRobotCoordinates = (positionInPixels.getX() - ROBOT_WIDTH) * map->getResolution() + map->getOrigin().getX();
-    float yInRobotCoordinates = (-positionInPixels.getY() + map->getHeight() - ROBOT_WIDTH/2) * map->getResolution() + map->getOrigin().getY();
+Position MainWindow::convertPixelCoordinatesToRobotCoordinates(const Position positionInPixels, double originX, double originY, double resolution, int height, int robotWidth) {
+    float xInRobotCoordinates = (positionInPixels.getX() - robotWidth) * resolution + originX;
+    float yInRobotCoordinates = (-positionInPixels.getY() + height - robotWidth/2) * resolution + originY;
     return Position(xInRobotCoordinates, yInRobotCoordinates);
 }
 
-Position MainWindow::convertRobotCoordinatesToPixelCoordinates(const Position positionInRobotCoordinates) const {
-    float xInPixelCoordinates = (-map->getOrigin().getX()+ positionInRobotCoordinates.getX())/map->getResolution() + ROBOT_WIDTH;
-    float yInPixelCoordinates = map->getHeight()-(-map->getOrigin().getY()+ positionInRobotCoordinates.getY())/map->getResolution()-ROBOT_WIDTH/2;
+Position MainWindow::convertRobotCoordinatesToPixelCoordinates(const Position positionInRobotCoordinates, double originX, double originY, double resolution, int height, int robotWidth) {
+    float xInPixelCoordinates = (-originX+ positionInRobotCoordinates.getX())/resolution + robotWidth;
+    float yInPixelCoordinates = height - (-originY + positionInRobotCoordinates.getY()) / resolution - robotWidth/2;
     return Position(xInPixelCoordinates, yInPixelCoordinates);
 }
 
@@ -5113,4 +5100,10 @@ void MainWindow::initializeMap(){
         setWindowTitle(QString::fromStdString(mapFile));
         map->setMapFromFile(QString::fromStdString(mapFile));
     }
+}
+
+void MainWindow::getMapForMergingSlot(QString robotName){
+    QPointer<RobotView> robotView = robots->getRobotViewByName(robotName);
+    if(robotView && robotView->getRobot())
+        commandController->sendCommand(robotView->getRobot(), QString("s \"2\""));
 }

@@ -8,8 +8,13 @@
 #include "View/mergemaplistitemwidget.h"
 #include <QListWidgetItem>
 #include "stylesettings.h"
+#include "View/mergemaplistwidget.h"
+#include <fstream>
+#include "Controller/mainwindow.h"
+#include "View/mergemapgraphicsitem.h"
+#include <QMenu>
 
-MergeMapWidget::MergeMapWidget(QWidget *parent) : QWidget(parent){
+MergeMapWidget::MergeMapWidget(QSharedPointer<Robots> _robots, QWidget *parent) : QWidget(parent), robots(_robots){
     setAttribute(Qt::WA_DeleteOnClose);
     setMouseTracking(true);
     layout = new QHBoxLayout(this);
@@ -27,9 +32,6 @@ MergeMapWidget::MergeMapWidget(QWidget *parent) : QWidget(parent){
     int x = (screenGeometry.width() - width()) / 2;
     int y = (screenGeometry.height() - height()) / 2;
     move(x, y);
-}
-
-MergeMapWidget::~MergeMapWidget(){
 }
 
 void MergeMapWidget::initializeMenu(){
@@ -52,37 +54,17 @@ void MergeMapWidget::initializeMenu(){
     topMenuLayout->addWidget(resetBtn);
     connect(resetBtn, SIGNAL(clicked()), this, SLOT(resetSlot()));
 
-    /// Undo redo layout
-    QHBoxLayout* undoRedoLayout = new QHBoxLayout();
-    CustomPushButton* undoBtn = new CustomPushButton(QIcon(":/icons/undo.png"), "", this);
-    undoRedoLayout->addWidget(undoBtn);
-    connect(undoBtn, SIGNAL(clicked()), this, SLOT(undoSlot()));
-
-    CustomPushButton* redoBtn = new CustomPushButton(QIcon(":/icons/redo.png"), "", this);
-    undoRedoLayout->addWidget(redoBtn);
-    connect(redoBtn, SIGNAL(clicked()), this, SLOT(redoSlot()));
-    topMenuLayout->addLayout(undoRedoLayout);
-
-    CustomPushButton* addImageFileBtn = new CustomPushButton("Add image from file", this);
+    CustomPushButton* addImageFileBtn = new CustomPushButton("Add map from file", this);
     connect(addImageFileBtn, SIGNAL(clicked()), this, SLOT(addImageFileSlot()));
     topMenuLayout->addWidget(addImageFileBtn);
 
-    CustomPushButton* addImageRobotBtn = new CustomPushButton("Add image from robot", this);
+    CustomPushButton* addImageRobotBtn = new CustomPushButton("Add map from robot", this);
     connect(addImageRobotBtn, SIGNAL(clicked()), this, SLOT(addImageRobotSlot()));
     topMenuLayout->addWidget(addImageRobotBtn);
 
 
-    listWidget = new QListWidget(this);
-
-    //listWidget->setDragDropMode(QAbstractItemView::InternalMove);
-    listWidget->setFrameShape(QFrame::NoFrame);
-    listWidget->viewport()->setAutoFillBackground(false);
-    listWidget->setAttribute(Qt::WA_MacShowFocusRect, false);
-    listWidget->setStyleSheet(" QListWidget {color: red;}\
-                  QListWidget::item {border-bottom: 1px solid; border-bottom-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, x3: 0, y3: 0, stop: 0 transparent, stop: 0.5 #949494, stop: 1 transparent); }\
-                      QListWidget::item:hover {background-color:"+button_hover_color+";}\
-                      QListWidget::item:selected {background-color:"+button_checked_color+";}");
-
+    listWidget = new MergeMapListWidget(this);
+    connect(listWidget, SIGNAL(dirKeyPressed(int)), this, SLOT(dirKeyEventSlot(int)));
     topMenuLayout->addWidget(listWidget);
 
     menuLayout->addLayout(topMenuLayout);
@@ -98,17 +80,9 @@ void MergeMapWidget::initializeMenu(){
     connect(saveBtn, SIGNAL(clicked()), this, SLOT(saveSlot()));
     menuLayout->addLayout(cancelSaveLayout);
 
-    /// Some shortcuts to undo and redo
-    QShortcut* undoShortcut = new QShortcut(QKeySequence(tr("Ctrl+Z", "Undo")), this);
-    connect(undoShortcut, SIGNAL(activated()), this, SLOT(undoSlot()));
-
-    QShortcut* redoShortcut = new QShortcut(QKeySequence(tr("Ctrl+Y", "Redo")), this);
-    connect(redoShortcut, SIGNAL(activated()), this, SLOT(redoSlot()));
-
     layout->addWidget(menuWidget);
 
     menuWidget->setFixedWidth(150);
-    undoRedoLayout->setContentsMargins(0, 0, 0, 0);
     topMenuLayout->setContentsMargins(0, 0, 0, 0);
     cancelSaveLayout->setContentsMargins(0, 0, 0, 0);
     menuLayout->setContentsMargins(0, 0, 5, 0);
@@ -121,23 +95,15 @@ void MergeMapWidget::initializeMap(){
     scene = new QGraphicsScene(this);
     scene->setBackgroundBrush(QBrush(QColor(205, 205, 205)));
     graphicsView = new CustomQGraphicsView(scene, this);
-
-    graphicsView->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    graphicsView->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    graphicsView->setCatchKeyEvent(true);
     graphicsView->setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding));
+    connect(graphicsView, SIGNAL(dirKeyPressed(int)), this, SLOT(dirKeyEventSlot(int)));
 }
-
 
 void MergeMapWidget::resetSlot(){
     qDebug() << "MergeMapWidget::resetSlot called";
-}
-
-void MergeMapWidget::undoSlot(){
-    qDebug() << "MergeMapWidget::undoSlot called";
-}
-
-void MergeMapWidget::redoSlot(){
-    qDebug() << "MergeMapWidget::redoSlot called";
+    while(listWidget->count() != 0)
+        deleteMapSlot(0);
 }
 
 void MergeMapWidget::addImageFileSlot(){
@@ -147,8 +113,14 @@ void MergeMapWidget::addImageFileSlot(){
         tr("Open Image"), "", tr("Image Files (*.pgm)"));
 
     if(!fileName.isEmpty()){
+
+        if(listWidget->count() == 0)
+            originalSize = QImage(fileName,"PGM").size();
+
+
         MergeMapListItemWidget* listItem = new MergeMapListItemWidget(listWidget->count(), fileName, scene);
         connect(listItem, SIGNAL(deleteMap(int)), this, SLOT(deleteMapSlot(int)));
+        connect(listItem, SIGNAL(pixmapClicked(int)), this, SLOT(selectPixmap(int)));
 
         /// We add the path point widget to the list
         QListWidgetItem* listWidgetItem = new QListWidgetItem(listWidget);
@@ -162,6 +134,27 @@ void MergeMapWidget::addImageFileSlot(){
 
 void MergeMapWidget::addImageRobotSlot(){
     qDebug() << "MergeMapWidget::addImageRobotSlot called";
+
+    if(robots->getRobotsVector().size() > 0){
+        QMenu menu(this);
+        for(int i = 0; i < robots->getRobotsVector().size(); i++)
+            menu.addAction(robots->getRobotsVector().at(i)->getRobot()->getName());
+
+        connect(&menu, SIGNAL(triggered(QAction*)), this, SLOT(robotMenuSlot(QAction*)));
+        menu.exec(QCursor::pos());
+
+    } else {
+        QMessageBox msgBox;
+        msgBox.setText("No robots connected.");
+        msgBox.setStandardButtons(QMessageBox::Cancel);
+        msgBox.setDefaultButton(QMessageBox::Cancel);
+        msgBox.exec();
+    }
+}
+
+void MergeMapWidget::robotMenuSlot(QAction* action){
+    qDebug() << "MergeMapWidget::robotMenuSlot called" << action->text();
+    emit getMapForMerging(action->text());
 }
 
 void MergeMapWidget::cancelSlot(){
@@ -170,7 +163,210 @@ void MergeMapWidget::cancelSlot(){
 }
 
 void MergeMapWidget::saveSlot(){
-    qDebug() << "MergeMapWidget::saveSlot called";
+    qDebug() << "\nMergeMapWidget::saveSlot called";
+    /// We want the origin to be reset when saving
+    originInPixel = QPoint(-1, -1);
+    croppedOriginInPixel = QPoint(-1, -1);
+    if(listWidget->count() > 1){
+
+        QImage image = sceneToImage();
+        image.save("/home/m-a/Desktop/1.pgm");
+
+        if(checkImageSize(image.size())){
+            image = croppedImageToMapImage(image);
+            image.save("/home/m-a/Desktop/2.pgm");
+
+            resolution = getResolution();
+
+            if(resolution != -1){
+                qDebug() << "MergeMapWidget::saveSlot final origin in pixel :" << originInPixel << resolution << -image.width()*resolution/2;
+
+                //Position pos = MainWindow::convertPixelCoordinatesToRobotCoordinates(Position(originInPixel.x(), originInPixel.y()), 0, 0, resolution, image.height(), 0);
+                Position pos = MainWindow::convertPixelCoordinatesToRobotCoordinates(Position(originInPixel.x(), originInPixel.y()), -image.width()*resolution, -image.height()*resolution, resolution, image.height(), 0);
+
+                qDebug() << "MergeMapWidget::saveSlot final origin for the robot :" << pos.getX() << pos.getY();
+
+                QString fileName = QFileDialog::getSaveFileName(this, tr("Save File"), "", tr("Images (*.pgm)"));
+
+                if(!fileName.isEmpty()){
+                    image.save(fileName);
+
+                    // TODO ask if the user want to edit/clean the map
+                    emit saveMergeMap(resolution, pos, image, fileName);
+                    close();
+                }
+            }
+        }
+    } else {
+        qDebug() << "MergeMapWidget::saveSlot You need to merge at least 2 maps";
+
+        QMessageBox msgBox;
+        msgBox.setText("You need at least 2 maps to merge.");
+        msgBox.setStandardButtons(QMessageBox::Cancel);
+        msgBox.setDefaultButton(QMessageBox::Cancel);
+        msgBox.exec();
+    }
+}
+
+QImage MergeMapWidget::sceneToImage(){
+    qDebug() << "MergeMapWidget::sceneToImage called";
+    scene->clearSelection();
+    scene->setSceneRect(scene->itemsBoundingRect());
+    QImage image(scene->sceneRect().size().toSize(), QImage::Format_ARGB32);
+    image.fill(QColor(205, 205, 205));
+
+    QPainter painter(&image);
+    scene->render(&painter);
+    image.save("/home/m-a/Desktop/0.png");
+
+
+    for(int i = 0; i < image.width(); i++){
+        for(int j = 0; j < image.height(); j++){
+            QColor color = image.pixelColor(i, j);
+            if(!(color.red() == 205 && color.green() == 205 && color.blue() == 205)){
+                if(color.red() == color.green() && color.blue() > color.red()){
+                    image.setPixelColor(i, j, Qt::white);
+                    croppedOriginInPixel = QPoint(i, j);
+                    qDebug() << "Got an origin :" << croppedOriginInPixel;
+                } else if(color.red() == color.green() && color.green() == color.blue())
+                    image.setPixelColor(i, j, Qt::white);
+                else
+                    image.setPixelColor(i, j, Qt::black);
+            }
+        }
+    }
+
+    return image;
+}
+
+QImage MergeMapWidget::croppedImageToMapImage(QImage croppedImage){
+    qDebug() << "MergeMapWidget::croppedImageToMapImage called";
+
+    if(croppedOriginInPixel.x() == -1){
+        croppedOriginInPixel.setX(croppedImage.width()/2);
+        croppedOriginInPixel.setY(croppedImage.height()/2);
+    }
+
+    QImage image(originalSize, QImage::Format_ARGB32);
+    image.fill(QColor(205, 205, 205));
+
+    int leftDiff = qAbs((originalSize.width() - croppedImage.width())/2);
+    int topDiff = qAbs((originalSize.height() - croppedImage.height())/2);
+
+    int leftSign = 1;
+    int topSign = 1;
+
+    if(croppedImage.width() > originalSize.width() && croppedImage.height() > originalSize.height()){
+        qDebug() << "MergeMapWidget::croppedImageToMapImage width & height are bigger";
+        QImage tmpImage = croppedImage.copy(leftDiff, topDiff, originalSize.width(), originalSize.height());
+
+        QPainter painter(&image);
+        painter.drawImage(0, 0, tmpImage);
+        painter.end();
+
+        leftSign = -1;
+        topSign = -1;
+
+    } else if(croppedImage.width() > originalSize.width()){
+        qDebug() << "MergeMapWidget::croppedImageToMapImage width is bigger";
+        QImage tmpImage = croppedImage.copy(leftDiff, 0, originalSize.width(), originalSize.height());
+
+        QPainter painter(&image);
+        painter.drawImage(0, 0, tmpImage);
+        painter.end();
+
+        leftSign = -1;
+
+    } else if(croppedImage.height() > originalSize.height()){
+        qDebug() << "MergeMapWidget::croppedImageToMapImage height is bigger";
+        QImage tmpImage = croppedImage.copy(0, topDiff, originalSize.width(), originalSize.height());
+
+        QPainter painter(&image);
+        painter.drawImage(0, 0, tmpImage);
+        painter.end();
+
+        topSign = -1;
+
+    } else {
+        qDebug() << "MergeMapWidget::croppedImageToMapImage everything is fine";
+        for(int i = 0; i < croppedImage.width(); i++)
+            for(int j = 0; j < croppedImage.height(); j++)
+                image.setPixelColor(i + leftDiff, j + topDiff, croppedImage.pixelColor(i, j));
+    }
+
+    originInPixel.setX(croppedOriginInPixel.x() + leftDiff * leftSign);
+    originInPixel.setY(croppedOriginInPixel.y() + topDiff * topSign);
+
+    if(originInPixel.x() < 0 || originInPixel.y() < 0 || originInPixel.x() >= image.width() || originInPixel.y() >= image.height()){
+        originInPixel.setX(image.width()/2);
+        originInPixel.setY(image.height()/2);
+    }
+
+    return image;
+}
+
+bool MergeMapWidget::checkImageSize(QSize sizeCropped){
+    qDebug() << "MergeMapWidget::checkImageSize called original size :"<< originalSize << "compared to new size :" << sizeCropped;
+
+    if(sizeCropped.width() > originalSize.width() || sizeCropped.height() > originalSize.height()){
+        QMessageBox msgBox;
+        msgBox.setText("The new image is bigger than the input one, some data may be lost.");
+        msgBox.setInformativeText("Do you wish to proceed ?");
+        msgBox.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
+        msgBox.setDefaultButton(QMessageBox::Cancel);
+        int ret = msgBox.exec();
+
+        switch(ret){
+            case QMessageBox::Cancel :
+                return false;
+            break;
+            case QMessageBox::Ok :
+                return true;
+            break;
+            default:
+                Q_UNREACHABLE();
+                /// should never be here
+                qDebug() << "MergeMapWidget::saveSlot should not be here";
+            break;
+        }
+        return false;
+    }
+    return true;
+}
+
+double MergeMapWidget::getResolution(){
+    qDebug() << "MergeMapWidget::getResolution called";
+
+    resolution = -1;
+    for(int i = 0; i < listWidget->count(); i++){
+        MergeMapListItemWidget* item = static_cast<MergeMapListItemWidget*>(listWidget->itemWidget(listWidget->item(i)));
+        if(item->getResolution() != -1){
+            resolution = item->getResolution();
+            break;
+        }
+    }
+
+    if(resolution == -1){
+        qDebug() << "MergeMapWidget::getResolution Trying to get a config from the current map" << resolution;
+        std::ifstream currentMapConfig((QDir::currentPath() + QDir::separator() + "currentMap.txt").toStdString(), std::ios::in);
+
+        if(currentMapConfig.is_open()){
+            std::string osef;
+            currentMapConfig >> osef >> osef >> osef >> osef >> osef >> osef >> osef >> osef >> resolution;
+            currentMapConfig.close();
+
+            qDebug() << "MergeMapWidget::getMapConfig Got a resolution and origin from the current map" << resolution;
+        } else {
+            qDebug() << "MergeMapWidget::getMapConfig no config file found for the current map";
+            QMessageBox msgBox;
+            msgBox.setText("A config file for the maps you selected or for the current map could not be found, please select a map with a valid config file.");
+            msgBox.setStandardButtons(QMessageBox::Cancel);
+            msgBox.setDefaultButton(QMessageBox::Cancel);
+            msgBox.exec();
+        }
+    }
+
+    return resolution;
 }
 
 void MergeMapWidget::deleteMapSlot(int itemId){
@@ -192,4 +388,29 @@ void MergeMapWidget::deleteMapSlot(int itemId){
 void MergeMapWidget::refreshIds(){
     for(int i = 0; i < listWidget->count(); i++)
         static_cast<MergeMapListItemWidget*>(listWidget->itemWidget(listWidget->item(i)))->setId(i);
+}
+
+void MergeMapWidget::dirKeyEventSlot(int key){
+    if(listWidget->currentItem() != NULL){
+        MergeMapListItemWidget* widget = static_cast<MergeMapListItemWidget*>(listWidget->itemWidget(listWidget->currentItem()));
+        switch (key) {
+            case Qt::Key_Up:
+                widget->getPixmapItem()->moveBy(0, -0.1);
+            break;
+            case Qt::Key_Down:
+                widget->getPixmapItem()->moveBy(0, 0.1);
+            break;
+            case Qt::Key_Left:
+                widget->getPixmapItem()->moveBy(-0.1, 0);
+            break;
+            case Qt::Key_Right:
+                widget->getPixmapItem()->moveBy(0.1, 0);
+            break;
+        }
+    }
+}
+
+void MergeMapWidget::selectPixmap(int id){
+    qDebug() << "MergeMapWidget::selectPixmap" << id;
+    listWidget->setCurrentRow(id);
 }

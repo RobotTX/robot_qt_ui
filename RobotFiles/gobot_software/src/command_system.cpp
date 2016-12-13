@@ -325,7 +325,10 @@ bool execCommand(ros::NodeHandle n, std::vector<std::string> command){
 		/// Command for the robot to start to scan the map
 		case 's':
 			std::cout << "(Command system) Gobot send the map once" << std::endl;
-			return sendOnceMap();
+			if(command.size() == 2)
+				return sendOnceMap(std::stoi(command.at(1)));
+			 else 
+				std::cout << "Not enough arguments, received " << command.size() << " arguments, 2 arguments expected" << std::endl; 
 		break;
 
 		/// Default/Unknown command
@@ -398,10 +401,11 @@ bool startMap(){
 	}
 }
 
-bool sendOnceMap(){
+bool sendOnceMap(int who){
 	std::cout << "(Command system) Launching the service to get the map once" << std::endl;
 
-	std_srvs::Empty srv;
+	gobot_software::Port srv;
+	srv.request.port = who;
 
 	if (sendOnceMapClient.call(srv)) {
 		std::cout << "(Command system) send_once_map_sender service started" << std::endl;
@@ -766,7 +770,7 @@ int main(int argc, char* argv[]){
 		stopMetadataClient = n.serviceClient<std_srvs::Empty>("stop_map_metadata_sender");
 		
 		startMapClient = n.serviceClient<gobot_software::Port>("start_map_sender");
-		sendOnceMapClient = n.serviceClient<std_srvs::Empty>("send_once_map_sender");
+		sendOnceMapClient = n.serviceClient<gobot_software::Port>("send_once_map_sender");
 		sendAutoMapClient = n.serviceClient<std_srvs::Empty>("send_auto_map_sender");
 		stopAutoMapClient = n.serviceClient<std_srvs::Empty>("stop_auto_map_sender");
 		stopMapClient = n.serviceClient<std_srvs::Empty>("stop_map_sender");

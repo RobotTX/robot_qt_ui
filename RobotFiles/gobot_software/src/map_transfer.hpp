@@ -61,8 +61,8 @@ bool stopAutoMap(std_srvs::Empty::Request &req, std_srvs::Empty::Response &res);
 /**
  * Service called to send the map once to the app
  */
-bool sendOnceMap(std_srvs::Empty::Request &req, std_srvs::Empty::Response &res);
+bool sendOnceMap(gobot_software::Port::Request &req, gobot_software::Port::Response &res);
 
-std::vector<uint8_t> compress(std::vector<int8_t> map, int map_size, bool fromPgm);
+std::vector<uint8_t> compress(std::vector<int8_t> map, int map_size, int who);
 
 #endif
