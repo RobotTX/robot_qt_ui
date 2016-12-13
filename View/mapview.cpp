@@ -12,8 +12,8 @@
 
 
 MapView::MapView (const QPixmap& pixmap, const QSize _size, QSharedPointer<Map> _map, QMainWindow* _mainWindow, QSharedPointer<Robots> _robots) :
-    QGraphicsPixmapItem(pixmap), size(_size), state(GraphicItemState::NO_STATE), mainWindow(_mainWindow), map(_map), idTmp(0), robots(_robots)
-{
+    QGraphicsPixmapItem(pixmap), size(_size), state(GraphicItemState::NO_STATE), mainWindow(_mainWindow), map(_map), idTmp(0), robots(_robots){
+
     /// Tell the class which mouse button to accept
     setAcceptedMouseButtons(Qt::LeftButton);
     /// To drag & drop the map

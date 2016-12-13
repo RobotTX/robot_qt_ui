@@ -5,21 +5,27 @@
 #include <QGraphicsScene>
 #include <QLabel>
 #include <QPushButton>
-#include <QSlider>
 #include "stylesettings.h"
 #include <QDir>
 #include <QLineEdit>
 #include <QIntValidator>
 #include <QDebug>
 #include <QGraphicsPixmapItem>
+#include <fstream>
+#include "Controller/mainwindow.h"
+#include "View/mergemapgraphicsitem.h"
 
-MergeMapListItemWidget::MergeMapListItemWidget(int _id, QString fileName, QGraphicsScene* scene):id(_id){
+MergeMapListItemWidget::MergeMapListItemWidget(int _id, QString fileName, QGraphicsScene* scene):
+    id(_id), origin(QPointF(-1, -1)), resolution(-1), originInPixel(QPoint(-1, -1)), pixmapItem(new MergeMapGraphicsItem()){
+
+    connect(pixmapItem, SIGNAL(pixmapClicked()), this, SLOT(pixmapClickedSlot()));
     initializeMenu(fileName);
     initializeMap(fileName, scene);
 }
 
 void MergeMapListItemWidget::initializeMap(QString fileName, QGraphicsScene* scene){
     QImage image = QImage(fileName,"PGM");
+
 
     int top = image.height();
     int bottom = 0;
@@ -42,28 +48,39 @@ void MergeMapListItemWidget::initializeMap(QString fileName, QGraphicsScene* sce
         }
     }
 
+    if(resolution != -1){
+        Position pos = MainWindow::convertRobotCoordinatesToPixelCoordinates(Position(0, 0), origin.x(), origin.y(), resolution, image.height(), 0);
+        originInPixel = QPoint(pos.getX(), pos.getY());
+        pixmapItem->setZValue(id+1);
+        qDebug() << "MergeMapListItemWidget::initializeMap origin vs originInPixel :" << origin << "vs" << originInPixel;
+    } else
+        pixmapItem->setZValue(0);
+
+
     QImage croppedImage = image.copy(top, left, bottom - top + 1, right - left + 1);
     QImage newImage = QImage(croppedImage.size(), QImage::Format_ARGB32);
+    newImage.fill(qRgba(205, 205, 205, 0));
 
+    QRgb wallColor = (id % 2 == 0) ? qRgba(255, 0, 0, 170) : qRgba(0, 255, 0, 170);
     for(int i = 0; i < croppedImage.width(); i++){
         for(int j = 0; j < croppedImage.height(); j++){
             int color = croppedImage.pixelColor(i, j).red();
 
             if(color < 205)
-                newImage.setPixel(i, j, qRgba(0, 0, 0, 170));
+                newImage.setPixel(i, j, wallColor);
             else if(color > 205)
                 newImage.setPixel(i, j, qRgba(255, 255, 255, 170));
-            else {
-                newImage.setPixel(i, j, qRgba(205, 205, 205, 0));
-            }
         }
     }
 
+    if(resolution != -1)
+        newImage.setPixel(originInPixel.x() - top, originInPixel.y() - left, qRgba(0, 0, 255, 170));
+
+
     /// Create the graphic item of the map
     QPixmap pixmap = QPixmap::fromImage(newImage);
-    pixmapItem = new QGraphicsPixmapItem(pixmap);
-    /// To drag & drop the map
-    pixmapItem->setFlag(QGraphicsItem::ItemIsMovable);
+    pixmapItem->setPixmap(pixmap);
+
     scene->addItem(pixmapItem);
 }
 
@@ -73,10 +90,29 @@ void MergeMapListItemWidget::initializeMenu(QString fileName){
     QHBoxLayout* topLayout = new QHBoxLayout();
 
     int index = fileName.lastIndexOf(QDir::separator());
-    QString fileName2 = fileName.remove(0, index+1);
+    if(index != -1)
+        fileName = fileName.remove(0, index+1);
 
-    fileNameLabel = new QLabel(fileName2, this);
-    fileNameLabel->setToolTip(fileName2);
+    QString str = QDir::currentPath() + QDir::separator() + "mapConfigs" + QDir::separator() + fileName.remove(fileName.size()-4, 4) + ".config";
+    qDebug() << "MergeMapListItemWidget::initializeMenu Trying to find a map config at" << str;
+    std::ifstream mapConfig(str.toStdString(), std::ios::in);
+    if(mapConfig.is_open()){
+        double originX, originY;
+        std::string osef;
+
+        mapConfig >> osef >> osef >> osef >> osef >> osef >> osef >> originX >> originY >> resolution;
+
+        origin = QPointF(originX, originY);
+
+        mapConfig.close();
+
+        qDebug() << "MergeMapListItemWidget::initializeMenu Got a resolution and origin" << resolution << origin;
+    } else {
+        qDebug() << "MergeMapListItemWidget::initializeMenu no config file found for the map" << fileName;
+    }
+
+    fileNameLabel = new QLabel(fileName, this);
+    fileNameLabel->setToolTip(fileName);
     topLayout->addWidget(fileNameLabel, Qt::AlignLeft);
 
     closeBtn = new QPushButton(QIcon(":/icons/close.png"), "", this);
@@ -130,4 +166,9 @@ void MergeMapListItemWidget::rotLineEditSlot(QString text){
 void MergeMapListItemWidget::sliderSlot(int value){
     rotLineEdit->setText(QString::number(value));
     pixmapItem->setRotation(value);
+}
+
+
+void MergeMapListItemWidget::pixmapClickedSlot(){
+    emit pixmapClicked(id);
 }

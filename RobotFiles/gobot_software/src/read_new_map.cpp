@@ -94,53 +94,71 @@ void session(boost::shared_ptr<tcp::socket> sock, ros::NodeHandle n){
                 map.erase(map.end() - 5, map.end());
                 std::cout << "(New Map) Size of the map received : " << map.size() << std::endl;
 
-                /// We save the file in a the pgm file used by amcl
-                std::string mapFile = path_gobot_move + "maps/new_map.pgm";
-                ofs.open(mapFile, std::ofstream::out | std::ofstream::trunc);
 
+                std::string yamlFile = path_gobot_move + "maps/used_map.yaml";
+                ofs.open(yamlFile, std::ofstream::out | std::ofstream::trunc);
                 if(ofs.is_open()){
-                    ofs << "P5" << std::endl << width << " " << height << std::endl << "255" << std::endl;
 
-                    /// writes every single pixel to the pgm file
-                    for(int i = 0; i < map.size(); i+=5){
-                        uint8_t color = static_cast<uint8_t> (map.at(i));
+                    ofs << "image: used_map.pgm" << std::endl
+                        << "resolution: " << resolution << std::endl
+                        << "origin: [" << originX << ", " << originY << ", 0.000000]" << std::endl
+                        << "negate: 0" << std::endl
+                        << "occupied_thresh: 0.65" << std::endl
+                        << "free_thresh: 0.196" << std::endl;
 
-                        uint32_t count2 = static_cast<uint32_t> (static_cast<uint8_t> (map.at(i+1)) << 24) + static_cast<uint32_t> (static_cast<uint8_t> (map.at(i+2)) << 16)
-                                        + static_cast<uint32_t> (static_cast<uint8_t> (map.at(i+3)) << 8) + static_cast<uint32_t> (static_cast<uint8_t> (map.at(i+4)));
+                    ofs.close();
 
-                        for(int j = 0; j < count2; j++)
-                            ofs << color;
+                    /// We save the file in a the pgm file used by amcl
+                    std::string mapFile = path_gobot_move + "maps/used_map.pgm";
+                    ofs.open(mapFile, std::ofstream::out | std::ofstream::trunc);
+
+                    if(ofs.is_open()){
+                        ofs << "P5" << std::endl << width << " " << height << std::endl << "255" << std::endl;
+
+                        /// writes every single pixel to the pgm file
+                        for(int i = 0; i < map.size(); i+=5){
+                            uint8_t color = static_cast<uint8_t> (map.at(i));
+
+                            uint32_t count2 = static_cast<uint32_t> (static_cast<uint8_t> (map.at(i+1)) << 24) + static_cast<uint32_t> (static_cast<uint8_t> (map.at(i+2)) << 16)
+                                            + static_cast<uint32_t> (static_cast<uint8_t> (map.at(i+3)) << 8) + static_cast<uint32_t> (static_cast<uint8_t> (map.at(i+4)));
+
+                            for(int j = 0; j < count2; j++)
+                                ofs << color;
+                        }
+
+                        ofs << std::endl;
+                        ofs.close();
+
+                        std::cout << "(New Map) New map pgm file created in " << mapFile << std::endl;
+
+                        /// Kill gobot move so that we'll restart it with the new map
+                        std::string cmd = "rosnode kill /move_base";
+                        system(cmd.c_str());
+
+                        sleep(5);
+                        std::cout << "(New Map) We killed gobot_move" << std::endl;
+
+                        /// We delete the old path
+                        ofs.open(path_computer_software + "Robot_Infos/path.txt", std::ofstream::out | std::ofstream::trunc);
+                        ofs.close();
+                        std::cout << "(New Map) Path deleted" << std::endl;
+
+                        /// We delete the old home
+                        ofs.open(path_computer_software + "Robot_Infos/home.txt", std::ofstream::out | std::ofstream::trunc);
+                        ofs.close();
+                        std::cout << "(New Map) Home deleted" << std::endl;
+
+                        /// Relaunch gobot_move
+                        cmd = "roslaunch gobot_move slam.launch &";
+                        system(cmd.c_str());
+                        std::cout << "(New Map) We relaunched gobot_move" << std::endl;
+
+                    } else {
+                        std::cout << "(New Map) Could not open the file to create a new pgm file " << mapFile << std::endl;
+                        message = "failed";
                     }
-
-                    ofs << std::endl;
-                    ofs.close();
-
-                    std::cout << "(New Map) New map pgm file created in " << mapFile << std::endl;
-
-                    /// Kill gobot move so that we'll restart it with the new map
-                    std::string cmd = "rosnode kill /move_base";
-                    system(cmd.c_str());
-
-                    sleep(5);
-                    std::cout << "(New Map) We killed gobot_move" << std::endl;
-
-                    /// We delete the old path
-                    ofs.open(path_computer_software + "Robot_Infos/path.txt", std::ofstream::out | std::ofstream::trunc);
-                    ofs.close();
-                    std::cout << "(New Map) Path deleted" << std::endl;
-
-                    /// We delete the old home
-                    ofs.open(path_computer_software + "Robot_Infos/home.txt", std::ofstream::out | std::ofstream::trunc);
-                    ofs.close();
-                    std::cout << "(New Map) Home deleted" << std::endl;
-
-                    /// Relaunch gobot_move
-                    cmd = "roslaunch gobot_move slam.launch &";
-                    system(cmd.c_str());
-                    std::cout << "(New Map) We relaunched gobot_move" << std::endl;
-
                 } else {
-                    std::cout << "(New Map) Could not open the file to create a new pgm file " << mapFile << std::endl;
+                    std::cout << "(New Map) Could not open the file to create a new yaml file " << yamlFile << std::endl;
                     message = "failed";
                 }
             } else {

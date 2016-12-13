@@ -16,6 +16,10 @@ public:
     CustomQGraphicsView(QGraphicsScene *scene, QWidget *parent = 0);
     float getZoomCoeff(void) const { return zoomCoeff; }
     void setZoomCoeff(const float _zoom);
+    void setCatchKeyEvent(const bool _catchKeyEvent) { catchKeyEvent = _catchKeyEvent; }
+
+signals:
+    void dirKeyPressed(int key);
 
 protected:
     /**
@@ -24,9 +28,11 @@ protected:
      * Overload of the wheelEvent to zoom in and out of the map with the wheel
      */
     void wheelEvent(QWheelEvent *event);
+    void keyPressEvent(QKeyEvent* event);
 
 private:
     float zoomCoeff;
+    bool catchKeyEvent;
 };
 
 /// to set a particular zoom on the map

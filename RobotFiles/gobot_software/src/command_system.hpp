@@ -43,7 +43,7 @@ void stopRobotPos();
 void startMetadata();
 void stopMetadata();
 bool startMap();
-bool sendOnceMap();
+bool sendOnceMap(int who);
 bool sendAutoMap();
 bool stopAutoMap();
 bool stopMap();

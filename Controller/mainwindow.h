@@ -126,8 +126,8 @@ public:
     QString prepareCommandPath(const Paths::Path& path) const;
     void saveMap(QString fileName);
 
-    Position convertPixelCoordinatesToRobotCoordinates(const Position positionInPixels) const ;
-    Position convertRobotCoordinatesToPixelCoordinates(const Position positionInRobotCoordinates) const ;
+    static Position convertPixelCoordinatesToRobotCoordinates(const Position positionInPixels, double originX, double originY, double resolution, int height, int robotWidth);
+    static Position convertRobotCoordinatesToPixelCoordinates(const Position positionInRobotCoordinates, double originX, double originY, double resolution, int height, int robotWidth);
 
 signals:
     void nameChanged(QString, QString);
@@ -145,7 +145,7 @@ private slots:
     void sendPathSelectedRobotSlot(const QString groupName, const QString pathName);
     void updateRobot(const QString ipAddress, const float posX, const float posY, const float ori);
     void updateMetadata(const int width, const int height, const float resolution, const float originX, const float originY);
-    void updateMap(const QByteArray mapArray, bool fromPgm, QString mapId, QString mapDate);
+    void updateMap(const QByteArray mapArray, int who, QString mapId, QString mapDate, QString resolution, QString originX, QString originY, QString ipAddress);
     void launchScan(bool checked);
     void quit(void);
     void setSelectedRobot(QPointer<RobotView> robotView);
@@ -274,9 +274,11 @@ private slots:
     bool updateHomeFile(const QString robot_name, const Position& robot_home_position, const QStringList date);
     void saveEditMapSlot();
     void mergeMapSlot();
+    void saveMergeMapSlot(double resolution, Position origin, QImage image, QString fileName);
 
     void testFunctionSlot();
     void activateLaserSlot(QString, bool);
+    void getMapForMergingSlot(QString robotName);
 
 protected:
     bool changeRobotName(QString name);

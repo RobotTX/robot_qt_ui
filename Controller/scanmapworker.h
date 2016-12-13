@@ -58,7 +58,7 @@ signals:
      * Signal emmited when we finished to receive a whole map
      * and we can display it
      */
-    void valueChangedMap(QByteArray, bool, QString, QString);
+    void valueChangedMap(QByteArray, int, QString, QString, QString, QString, QString, QString);
     void newScanSaved(QString ipAddress);
 
 private :
