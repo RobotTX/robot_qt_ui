@@ -28,6 +28,7 @@ protected:
     QImage croppedImageToMapImage(QImage croppedImage);
     bool checkImageSize(QSize sizeCropped);
     double getResolution();
+    void addMap(QString fileName, bool fromRobot, QImage image = QImage(), double _resolution = -1, double _originX = -1, double _originY = -1);
 
 private slots:
     void cancelSlot();
@@ -39,6 +40,7 @@ private slots:
     void dirKeyEventSlot(int key);
     void selectPixmap(int id);
     void robotMenuSlot(QAction*);
+    void receivedMapToMergeSlot(QString robotName, QImage image, double _resolution, double _originX, double _originY);
 
 signals:
     void saveMergeMap(double, Position, QImage, QString);

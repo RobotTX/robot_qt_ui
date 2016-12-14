@@ -1545,7 +1545,10 @@ void MainWindow::updateMap(const QByteArray mapArray, int who, QString mapId, QS
     qDebug() << "MainWindow::updateMap received a map" << who;
     if(who == 2){
         qDebug() << "MainWindow::updateMap received a map from a robot to merge" << ipAddress << resolution << originX << originY;
-        // TODO send to mergeMapWidget
+        QString robotName = robots->getRobotViewByIp(ipAddress)->getRobot()->getName();
+        QImage image = map->getImageFromArray(mapArray, true);
+
+        emit receivedMapToMerge(robotName, image, resolution.toDouble(), originX.toDouble(), originY.toDouble());
 
     } else {
         map->setMapFromArray(mapArray, who);
@@ -1735,6 +1738,7 @@ void MainWindow::mergeMapSlot(){
     mergeMapWidget = QPointer<MergeMapWidget>(new MergeMapWidget(robots));
     connect(mergeMapWidget, SIGNAL(saveMergeMap(double, Position, QImage, QString)), this, SLOT(saveMergeMapSlot(double, Position, QImage, QString)));
     connect(mergeMapWidget, SIGNAL(getMapForMerging(QString)), this, SLOT(getMapForMergingSlot(QString)));
+    connect(this, SIGNAL(receivedMapToMerge(QString, QImage, double, double, double)), mergeMapWidget, SLOT(receivedMapToMergeSlot(QString, QImage, double, double, double)));
 }
 
 void MainWindow::saveMergeMapSlot(double resolution, Position origin, QImage image, QString fileName){

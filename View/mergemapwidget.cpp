@@ -112,24 +112,8 @@ void MergeMapWidget::addImageFileSlot(){
     QString fileName = QFileDialog::getOpenFileName(this,
         tr("Open Image"), "", tr("Image Files (*.pgm)"));
 
-    if(!fileName.isEmpty()){
-
-        if(listWidget->count() == 0)
-            originalSize = QImage(fileName,"PGM").size();
-
-
-        MergeMapListItemWidget* listItem = new MergeMapListItemWidget(listWidget->count(), fileName, scene);
-        connect(listItem, SIGNAL(deleteMap(int)), this, SLOT(deleteMapSlot(int)));
-        connect(listItem, SIGNAL(pixmapClicked(int)), this, SLOT(selectPixmap(int)));
-
-        /// We add the path point widget to the list
-        QListWidgetItem* listWidgetItem = new QListWidgetItem(listWidget);
-        listWidgetItem->setSizeHint(QSize(listWidgetItem->sizeHint().width(), MERGE_WIDGET_HEIGHT));
-        listWidgetItem->setBackgroundColor(QColor(255, 255, 255, 10));
-
-        listWidget->addItem(listWidgetItem);
-        listWidget->setItemWidget(listWidgetItem, listItem);
-    }
+    if(!fileName.isEmpty())
+        addMap(fileName, false);
 }
 
 void MergeMapWidget::addImageRobotSlot(){
@@ -150,6 +134,36 @@ void MergeMapWidget::addImageRobotSlot(){
         msgBox.setDefaultButton(QMessageBox::Cancel);
         msgBox.exec();
     }
+}
+
+void MergeMapWidget::receivedMapToMergeSlot(QString robotName, QImage image, double _resolution, double _originX, double _originY){
+    addMap(robotName, true, image, _resolution, _originX, _originY);
+}
+
+void MergeMapWidget::addMap(QString fileName, bool fromRobot, QImage image, double _resolution, double _originX, double _originY){
+    MergeMapListItemWidget* listItem;
+
+
+    if(fromRobot){
+        listItem = new MergeMapListItemWidget(listWidget->count(), fileName, scene, fromRobot, image, _resolution, _originX, _originY);
+        if(listWidget->count() == 0)
+            originalSize = image.size();
+    } else {
+        listItem = new MergeMapListItemWidget(listWidget->count(), fileName, scene, fromRobot);
+        if(listWidget->count() == 0)
+            originalSize = QImage(fileName,"PGM").size();
+    }
+
+    connect(listItem, SIGNAL(deleteMap(int)), this, SLOT(deleteMapSlot(int)));
+    connect(listItem, SIGNAL(pixmapClicked(int)), this, SLOT(selectPixmap(int)));
+
+    /// We add the path point widget to the list
+    QListWidgetItem* listWidgetItem = new QListWidgetItem(listWidget);
+    listWidgetItem->setSizeHint(QSize(listWidgetItem->sizeHint().width(), MERGE_WIDGET_HEIGHT));
+    listWidgetItem->setBackgroundColor(QColor(255, 255, 255, 10));
+
+    listWidget->addItem(listWidgetItem);
+    listWidget->setItemWidget(listWidgetItem, listItem);
 }
 
 void MergeMapWidget::robotMenuSlot(QAction* action){
@@ -181,18 +195,15 @@ void MergeMapWidget::saveSlot(){
             if(resolution != -1){
                 qDebug() << "MergeMapWidget::saveSlot final origin in pixel :" << originInPixel << resolution << -image.width()*resolution/2;
 
-                //Position pos = MainWindow::convertPixelCoordinatesToRobotCoordinates(Position(originInPixel.x(), originInPixel.y()), 0, 0, resolution, image.height(), 0);
-                Position pos = MainWindow::convertPixelCoordinatesToRobotCoordinates(Position(originInPixel.x(), originInPixel.y()), -image.width()*resolution, -image.height()*resolution, resolution, image.height(), 0);
-
-                qDebug() << "MergeMapWidget::saveSlot final origin for the robot :" << pos.getX() << pos.getY();
+                Position pos1 = MainWindow::convertPixelCoordinatesToRobotCoordinates(Position(originInPixel.x(), originInPixel.y()), 0, 0, resolution, image.height(), 0);
+                pos1.setX(-pos1.getX());
+                pos1.setY(-pos1.getY());
 
                 QString fileName = QFileDialog::getSaveFileName(this, tr("Save File"), "", tr("Images (*.pgm)"));
 
                 if(!fileName.isEmpty()){
                     image.save(fileName);
-
-                    // TODO ask if the user want to edit/clean the map
-                    emit saveMergeMap(resolution, pos, image, fileName);
+                    emit saveMergeMap(resolution, pos1, image, fileName);
                     close();
                 }
             }
@@ -306,7 +317,7 @@ QImage MergeMapWidget::croppedImageToMapImage(QImage croppedImage){
 }
 
 bool MergeMapWidget::checkImageSize(QSize sizeCropped){
-    qDebug() << "MergeMapWidget::checkImageSize called original size :"<< originalSize << "compared to new size :" << sizeCropped;
+    qDebug() << "MergeMapWidget::checkImageSize called original size :" << originalSize << "compared to new size :" << sizeCropped;
 
     if(sizeCropped.width() > originalSize.width() || sizeCropped.height() > originalSize.height()){
         QMessageBox msgBox;

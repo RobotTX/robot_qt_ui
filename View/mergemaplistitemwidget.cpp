@@ -15,16 +15,88 @@
 #include "Controller/mainwindow.h"
 #include "View/mergemapgraphicsitem.h"
 
-MergeMapListItemWidget::MergeMapListItemWidget(int _id, QString fileName, QGraphicsScene* scene):
-    id(_id), origin(QPointF(-1, -1)), resolution(-1), originInPixel(QPoint(-1, -1)), pixmapItem(new MergeMapGraphicsItem()){
+MergeMapListItemWidget::MergeMapListItemWidget(int _id, QString fileName, QGraphicsScene* scene, bool _fromRobot, QImage image, double _resolution, double _originX, double _originY):
+    id(_id), origin(QPointF(_originX, _originY)), resolution(_resolution), originInPixel(QPoint(-1, -1)), fromRobot(_fromRobot), pixmapItem(new MergeMapGraphicsItem()){
 
     connect(pixmapItem, SIGNAL(pixmapClicked()), this, SLOT(pixmapClickedSlot()));
     initializeMenu(fileName);
-    initializeMap(fileName, scene);
+    initializeMap(fileName, scene, image);
 }
 
-void MergeMapListItemWidget::initializeMap(QString fileName, QGraphicsScene* scene){
-    QImage image = QImage(fileName,"PGM");
+void MergeMapListItemWidget::initializeMenu(QString fileName){
+    QVBoxLayout* layout = new QVBoxLayout(this);
+
+    QHBoxLayout* topLayout = new QHBoxLayout();
+
+    if(!fromRobot){
+        int index = fileName.lastIndexOf(QDir::separator());
+        if(index != -1)
+            fileName = fileName.remove(0, index+1);
+
+        QString str = QDir::currentPath() + QDir::separator() + "mapConfigs" + QDir::separator() + fileName.remove(fileName.size()-4, 4) + ".config";
+        qDebug() << "MergeMapListItemWidget::initializeMenu Trying to find a map config at" << str;
+        std::ifstream mapConfig(str.toStdString(), std::ios::in);
+        if(mapConfig.is_open()){
+            double originX, originY;
+            std::string osef;
+
+            mapConfig >> osef >> osef >> osef >> osef >> osef >> osef >> originX >> originY >> resolution;
+
+            origin = QPointF(originX, originY);
+
+            mapConfig.close();
+
+            qDebug() << "MergeMapListItemWidget::initializeMenu Got a resolution and origin" << resolution << origin;
+        } else
+            qDebug() << "MergeMapListItemWidget::initializeMenu no config file found for the map" << fileName;
+    } else
+        qDebug() << "MergeMapListItemWidget::initializeMenu Got a resolution and origin from the robot" << resolution << origin;
+
+    fileNameLabel = new QLabel(fileName, this);
+    fileNameLabel->setToolTip(fileName);
+    topLayout->addWidget(fileNameLabel, Qt::AlignLeft);
+
+    closeBtn = new QPushButton(QIcon(":/icons/close.png"), "", this);
+    closeBtn->setFlat(true);
+    closeBtn->setIconSize(xxs_icon_size);
+    closeBtn->setStyleSheet(closeBtn->styleSheet() + "QPushButton {padding-top: 15px; padding-bottom: 15px;}");
+    closeBtn->setMaximumWidth(xxs_icon_size.width() + 7);
+    topLayout->addWidget(closeBtn, Qt::AlignRight);
+
+    layout->addLayout(topLayout);
+
+
+    QVBoxLayout* bottomLayout = new QVBoxLayout();
+    QHBoxLayout* midLayout = new QHBoxLayout();
+
+    QLabel* labelRot = new QLabel("Rotation :", this);
+    midLayout->addWidget(labelRot, Qt::AlignLeft);
+
+    rotLineEdit = new QLineEdit("0", this);
+    rotLineEdit->setValidator(new QIntValidator(0, 360, this));
+    midLayout->addWidget(rotLineEdit, Qt::AlignRight);
+
+    bottomLayout->addLayout(midLayout);
+    slider = new QSlider(Qt::Orientation::Horizontal, this);
+    slider->setMinimum(0);
+    slider->setMaximum(360);
+    slider->setTracking(true);
+    bottomLayout->addWidget(slider);
+    layout->addLayout(bottomLayout);
+
+    topLayout->setContentsMargins(10, 10, 10, 5);
+    midLayout->setContentsMargins(0, 0, 0, 0);
+    bottomLayout->setContentsMargins(10, 5, 10, 10);
+    layout->setContentsMargins(0, 0, 0, 0);
+
+    connect(closeBtn, SIGNAL(clicked()), this, SLOT(closeBtnSlot()));
+    connect(rotLineEdit, SIGNAL(textEdited(QString)), this, SLOT(rotLineEditSlot(QString)));
+    connect(slider, SIGNAL(valueChanged(int)), this, SLOT(sliderSlot(int)));
+}
+
+void MergeMapListItemWidget::initializeMap(QString fileName, QGraphicsScene* scene, QImage image){
+    if(!fromRobot)
+        image = QImage(fileName,"PGM");
 
 
     int top = image.height();
@@ -82,75 +154,6 @@ void MergeMapListItemWidget::initializeMap(QString fileName, QGraphicsScene* sce
     pixmapItem->setPixmap(pixmap);
 
     scene->addItem(pixmapItem);
-}
-
-void MergeMapListItemWidget::initializeMenu(QString fileName){
-    QVBoxLayout* layout = new QVBoxLayout(this);
-
-    QHBoxLayout* topLayout = new QHBoxLayout();
-
-    int index = fileName.lastIndexOf(QDir::separator());
-    if(index != -1)
-        fileName = fileName.remove(0, index+1);
-
-    QString str = QDir::currentPath() + QDir::separator() + "mapConfigs" + QDir::separator() + fileName.remove(fileName.size()-4, 4) + ".config";
-    qDebug() << "MergeMapListItemWidget::initializeMenu Trying to find a map config at" << str;
-    std::ifstream mapConfig(str.toStdString(), std::ios::in);
-    if(mapConfig.is_open()){
-        double originX, originY;
-        std::string osef;
-
-        mapConfig >> osef >> osef >> osef >> osef >> osef >> osef >> originX >> originY >> resolution;
-
-        origin = QPointF(originX, originY);
-
-        mapConfig.close();
-
-        qDebug() << "MergeMapListItemWidget::initializeMenu Got a resolution and origin" << resolution << origin;
-    } else {
-        qDebug() << "MergeMapListItemWidget::initializeMenu no config file found for the map" << fileName;
-    }
-
-    fileNameLabel = new QLabel(fileName, this);
-    fileNameLabel->setToolTip(fileName);
-    topLayout->addWidget(fileNameLabel, Qt::AlignLeft);
-
-    closeBtn = new QPushButton(QIcon(":/icons/close.png"), "", this);
-    closeBtn->setFlat(true);
-    closeBtn->setIconSize(xxs_icon_size);
-    closeBtn->setStyleSheet(closeBtn->styleSheet() + "QPushButton {padding-top: 15px; padding-bottom: 15px;}");
-    closeBtn->setMaximumWidth(xxs_icon_size.width() + 7);
-    topLayout->addWidget(closeBtn, Qt::AlignRight);
-
-    layout->addLayout(topLayout);
-
-
-    QVBoxLayout* bottomLayout = new QVBoxLayout();
-    QHBoxLayout* midLayout = new QHBoxLayout();
-
-    QLabel* labelRot = new QLabel("Rotation :", this);
-    midLayout->addWidget(labelRot, Qt::AlignLeft);
-
-    rotLineEdit = new QLineEdit("0", this);
-    rotLineEdit->setValidator(new QIntValidator(0, 360, this));
-    midLayout->addWidget(rotLineEdit, Qt::AlignRight);
-
-    bottomLayout->addLayout(midLayout);
-    slider = new QSlider(Qt::Orientation::Horizontal, this);
-    slider->setMinimum(0);
-    slider->setMaximum(360);
-    slider->setTracking(true);
-    bottomLayout->addWidget(slider);
-    layout->addLayout(bottomLayout);
-
-    topLayout->setContentsMargins(10, 10, 10, 5);
-    midLayout->setContentsMargins(0, 0, 0, 0);
-    bottomLayout->setContentsMargins(10, 5, 10, 10);
-    layout->setContentsMargins(0, 0, 0, 0);
-
-    connect(closeBtn, SIGNAL(clicked()), this, SLOT(closeBtnSlot()));
-    connect(rotLineEdit, SIGNAL(textEdited(QString)), this, SLOT(rotLineEditSlot(QString)));
-    connect(slider, SIGNAL(valueChanged(int)), this, SLOT(sliderSlot(int)));
 }
 
 void MergeMapListItemWidget::closeBtnSlot(){
