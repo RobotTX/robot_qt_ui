@@ -69,7 +69,6 @@ void MergeMapWidget::initializeMenu(){
 
     menuLayout->addLayout(topMenuLayout);
 
-    /// Save cancel layout
     QHBoxLayout* cancelSaveLayout = new QHBoxLayout();
     CustomPushButton* cancelBtn = new CustomPushButton("Cancel", this, true, CustomPushButton::ButtonType::LEFT_MENU, "center");
     cancelSaveLayout->addWidget(cancelBtn);
@@ -93,7 +92,10 @@ void MergeMapWidget::initializeMenu(){
 
 void MergeMapWidget::initializeMap(){
     scene = new QGraphicsScene(this);
+
+    /// Set the background of the scene as the same grey used in the map
     scene->setBackgroundBrush(QBrush(QColor(205, 205, 205)));
+
     graphicsView = new CustomQGraphicsView(scene, this);
     graphicsView->setCatchKeyEvent(true);
     graphicsView->setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding));
@@ -109,6 +111,7 @@ void MergeMapWidget::resetSlot(){
 void MergeMapWidget::addImageFileSlot(){
     qDebug() << "MergeMapWidget::addImageFileSlot called";
 
+    /// Get the file name of the map we want to use
     QString fileName = QFileDialog::getOpenFileName(this,
         tr("Open Image"), "", tr("Image Files (*.pgm)"));
 
@@ -119,6 +122,7 @@ void MergeMapWidget::addImageFileSlot(){
 void MergeMapWidget::addImageRobotSlot(){
     qDebug() << "MergeMapWidget::addImageRobotSlot called";
 
+    /// If we have robots, open a menu to select from which robot we want the map
     if(robots->getRobotsVector().size() > 0){
         QMenu menu(this);
         for(int i = 0; i < robots->getRobotsVector().size(); i++)
@@ -143,7 +147,7 @@ void MergeMapWidget::receivedMapToMergeSlot(QString robotName, QImage image, dou
 void MergeMapWidget::addMap(QString fileName, bool fromRobot, QImage image, double _resolution, double _originX, double _originY){
     MergeMapListItemWidget* listItem;
 
-
+    /// If we got the map from a robot, we already have an image, a resolution and an origin
     if(fromRobot){
         listItem = new MergeMapListItemWidget(listWidget->count(), fileName, scene, fromRobot, image, _resolution, _originX, _originY);
         if(listWidget->count() == 0)
@@ -183,22 +187,27 @@ void MergeMapWidget::saveSlot(){
     croppedOriginInPixel = QPoint(-1, -1);
     if(listWidget->count() > 1){
 
+        /// Get an image from the scene
         QImage image = sceneToImage();
-        image.save("/home/m-a/Desktop/1.pgm");
+        //image.save("/home/m-a/Desktop/1.pgm");
 
+        /// Check if the size of the image is bigger than expected, and if so, alert the user that we might lose data if using it
         if(checkImageSize(image.size())){
             image = croppedImageToMapImage(image);
-            image.save("/home/m-a/Desktop/2.pgm");
+            //image.save("/home/m-a/Desktop/2.pgm");
 
-            resolution = getResolution();
+            getResolution();
 
+            /// If we got a resolution proceed, else we don't save
             if(resolution != -1){
                 qDebug() << "MergeMapWidget::saveSlot final origin in pixel :" << originInPixel << resolution << -image.width()*resolution/2;
 
+                /// Reconvert the new origin from pixel coordinates to the system used by the robot
                 Position pos1 = MainWindow::convertPixelCoordinatesToRobotCoordinates(Position(originInPixel.x(), originInPixel.y()), 0, 0, resolution, image.height(), 0);
                 pos1.setX(-pos1.getX());
                 pos1.setY(-pos1.getY());
 
+                /// Where to save the new map
                 QString fileName = QFileDialog::getSaveFileName(this, tr("Save File"), "", tr("Images (*.pgm)"));
 
                 if(!fileName.isEmpty()){
@@ -221,20 +230,28 @@ void MergeMapWidget::saveSlot(){
 
 QImage MergeMapWidget::sceneToImage(){
     qDebug() << "MergeMapWidget::sceneToImage called";
+
+    /// Center the scene on the images
     scene->clearSelection();
     scene->setSceneRect(scene->itemsBoundingRect());
+
+    /// Create an image with the size the images are taking in the scene
     QImage image(scene->sceneRect().size().toSize(), QImage::Format_ARGB32);
+    /// Fill the image with grey
     image.fill(QColor(205, 205, 205));
 
+    /// We use a painter to copy the scene into the image
     QPainter painter(&image);
     scene->render(&painter);
-    image.save("/home/m-a/Desktop/0.png");
+    //image.save("/home/m-a/Desktop/0.png");
 
 
+    /// The image is still in green and red color so we set the pixel to white and black
     for(int i = 0; i < image.width(); i++){
         for(int j = 0; j < image.height(); j++){
             QColor color = image.pixelColor(i, j);
             if(!(color.red() == 205 && color.green() == 205 && color.blue() == 205)){
+                /// If we find a pixel with more blue than the rest, it is our origin pixel
                 if(color.red() == color.green() && color.blue() > color.red()){
                     image.setPixelColor(i, j, Qt::white);
                     croppedOriginInPixel = QPoint(i, j);
@@ -253,20 +270,25 @@ QImage MergeMapWidget::sceneToImage(){
 QImage MergeMapWidget::croppedImageToMapImage(QImage croppedImage){
     qDebug() << "MergeMapWidget::croppedImageToMapImage called";
 
+    /// If we don't have an origin, we set the origin in the middle of the map
     if(croppedOriginInPixel.x() == -1){
         croppedOriginInPixel.setX(croppedImage.width()/2);
         croppedOriginInPixel.setY(croppedImage.height()/2);
     }
 
+    /// Create the new image on the desired size
     QImage image(originalSize, QImage::Format_ARGB32);
+    /// Fille the image with grey
     image.fill(QColor(205, 205, 205));
 
+    /// Calculate the size difference between the given image and the output image
     int leftDiff = qAbs((originalSize.width() - croppedImage.width())/2);
     int topDiff = qAbs((originalSize.height() - croppedImage.height())/2);
 
     int leftSign = 1;
     int topSign = 1;
 
+    /// If the input image is bigger on any side, we crop the image
     if(croppedImage.width() > originalSize.width() && croppedImage.height() > originalSize.height()){
         qDebug() << "MergeMapWidget::croppedImageToMapImage width & height are bigger";
         QImage tmpImage = croppedImage.copy(leftDiff, topDiff, originalSize.width(), originalSize.height());
@@ -305,9 +327,11 @@ QImage MergeMapWidget::croppedImageToMapImage(QImage croppedImage){
                 image.setPixelColor(i + leftDiff, j + topDiff, croppedImage.pixelColor(i, j));
     }
 
+    /// Calculate the position of the origin in the output image
     originInPixel.setX(croppedOriginInPixel.x() + leftDiff * leftSign);
     originInPixel.setY(croppedOriginInPixel.y() + topDiff * topSign);
 
+    /// If the origin is out of the map (because we cropped it), we set it in the middle of the map
     if(originInPixel.x() < 0 || originInPixel.y() < 0 || originInPixel.x() >= image.width() || originInPixel.y() >= image.height()){
         originInPixel.setX(image.width()/2);
         originInPixel.setY(image.height()/2);
@@ -319,6 +343,7 @@ QImage MergeMapWidget::croppedImageToMapImage(QImage croppedImage){
 bool MergeMapWidget::checkImageSize(QSize sizeCropped){
     qDebug() << "MergeMapWidget::checkImageSize called original size :" << originalSize << "compared to new size :" << sizeCropped;
 
+    /// If the cropped image is bigger than the ouput one, we display a message to the user
     if(sizeCropped.width() > originalSize.width() || sizeCropped.height() > originalSize.height()){
         QMessageBox msgBox;
         msgBox.setText("The new image is bigger than the input one, some data may be lost.");
@@ -345,10 +370,12 @@ bool MergeMapWidget::checkImageSize(QSize sizeCropped){
     return true;
 }
 
-double MergeMapWidget::getResolution(){
+void MergeMapWidget::getResolution(){
     qDebug() << "MergeMapWidget::getResolution called";
 
     resolution = -1;
+
+    /// We try to get the resolution from the widgets containing the maps
     for(int i = 0; i < listWidget->count(); i++){
         MergeMapListItemWidget* item = static_cast<MergeMapListItemWidget*>(listWidget->itemWidget(listWidget->item(i)));
         if(item->getResolution() != -1){
@@ -357,6 +384,7 @@ double MergeMapWidget::getResolution(){
         }
     }
 
+    /// If we failed getting it from the maps, we try to get it from the currentMap used in the mainWindow
     if(resolution == -1){
         qDebug() << "MergeMapWidget::getResolution Trying to get a config from the current map" << resolution;
         std::ifstream currentMapConfig((QDir::currentPath() + QDir::separator() + "currentMap.txt").toStdString(), std::ios::in);
@@ -370,14 +398,12 @@ double MergeMapWidget::getResolution(){
         } else {
             qDebug() << "MergeMapWidget::getMapConfig no config file found for the current map";
             QMessageBox msgBox;
-            msgBox.setText("A config file for the maps you selected or for the current map could not be found, please select a map with a valid config file.");
+            msgBox.setText("A config file for the maps you selected or for the current map could not be found, please select a map with a valid config file or import one from a robot.");
             msgBox.setStandardButtons(QMessageBox::Cancel);
             msgBox.setDefaultButton(QMessageBox::Cancel);
             msgBox.exec();
         }
     }
-
-    return resolution;
 }
 
 void MergeMapWidget::deleteMapSlot(int itemId){

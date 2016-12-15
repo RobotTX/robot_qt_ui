@@ -3,6 +3,10 @@
 
 #include <QListWidget>
 
+/**
+ * @brief The MergeMapListWidget class
+ * The list widget containing the list of map in the mergeMapWidget
+ */
 class MergeMapListWidget : public QListWidget {
         Q_OBJECT
 public:

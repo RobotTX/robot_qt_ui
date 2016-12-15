@@ -28,6 +28,8 @@ void MergeMapListItemWidget::initializeMenu(QString fileName){
 
     QHBoxLayout* topLayout = new QHBoxLayout();
 
+    /// If we received the map from a robot, we already have a resolution and origin
+    /// but if add a map from a file, we need to find a .config file to have this data
     if(!fromRobot){
         int index = fileName.lastIndexOf(QDir::separator());
         if(index != -1)
@@ -52,10 +54,12 @@ void MergeMapListItemWidget::initializeMenu(QString fileName){
     } else
         qDebug() << "MergeMapListItemWidget::initializeMenu Got a resolution and origin from the robot" << resolution << origin;
 
+    /// Label with the name of the map imported
     fileNameLabel = new QLabel(fileName, this);
     fileNameLabel->setToolTip(fileName);
     topLayout->addWidget(fileNameLabel, Qt::AlignLeft);
 
+    /// Btn to remove the map from the list
     closeBtn = new QPushButton(QIcon(":/icons/close.png"), "", this);
     closeBtn->setFlat(true);
     closeBtn->setIconSize(xxs_icon_size);
@@ -104,6 +108,7 @@ void MergeMapListItemWidget::initializeMap(QString fileName, QGraphicsScene* sce
     int left = image.width();
     int right = 0;
 
+    /// We want to find the smallest rectangle containing the map (white and black) to crop it and use a small image
     for(int i = 0; i < image.height(); i++){
         for(int j = 0; j < image.width(); j++){
             int color = image.pixelColor(i, j).red();
@@ -120,6 +125,8 @@ void MergeMapListItemWidget::initializeMap(QString fileName, QGraphicsScene* sce
         }
     }
 
+    /// If we have a resolution (and so an origin), we want to convert it into coordinates in pixel
+    /// to later display the origin as a blue point and be able to find it at the end after all the transformations
     if(resolution != -1){
         Position pos = MainWindow::convertRobotCoordinatesToPixelCoordinates(Position(0, 0), origin.x(), origin.y(), resolution, image.height(), 0);
         originInPixel = QPoint(pos.getX(), pos.getY());
@@ -129,10 +136,13 @@ void MergeMapListItemWidget::initializeMap(QString fileName, QGraphicsScene* sce
         pixmapItem->setZValue(0);
 
 
+    /// We crop the image
     QImage croppedImage = image.copy(top, left, bottom - top + 1, right - left + 1);
+    /// Create a new image filled with invisible grey
     QImage newImage = QImage(croppedImage.size(), QImage::Format_ARGB32);
     newImage.fill(qRgba(205, 205, 205, 0));
 
+    /// 1 out of 2 map will have red wall and the other one green wall to better distinguish them
     QRgb wallColor = (id % 2 == 0) ? qRgba(255, 0, 0, 170) : qRgba(0, 255, 0, 170);
     for(int i = 0; i < croppedImage.width(); i++){
         for(int j = 0; j < croppedImage.height(); j++){
@@ -145,6 +155,7 @@ void MergeMapListItemWidget::initializeMap(QString fileName, QGraphicsScene* sce
         }
     }
 
+    /// Set the pixel (at the origin coordinates) blue
     if(resolution != -1)
         newImage.setPixel(originInPixel.x() - top, originInPixel.y() - left, qRgba(0, 0, 255, 170));
 
@@ -162,12 +173,13 @@ void MergeMapListItemWidget::closeBtnSlot(){
 }
 
 void MergeMapListItemWidget::rotLineEditSlot(QString text){
-    /// will call the slot of the slider
+    /// will call the sliderSlot and rotate the map
     slider->setValue(text.toInt());
 }
 
 void MergeMapListItemWidget::sliderSlot(int value){
     rotLineEdit->setText(QString::number(value));
+    /// rotate the map
     pixmapItem->setRotation(value);
 }
 

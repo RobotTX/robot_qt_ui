@@ -16,8 +16,10 @@ class MergeMapListItemWidget : public QWidget {
 public:
     MergeMapListItemWidget(int _id, QString fileName, QGraphicsScene *scene, bool _fromRobot, QImage image = QImage(), double _resolution = -1, double _originX = -1, double _originY = -1);
 
+    /// Setter
     void setId(const int _id){ id = _id; }
 
+    /// Getters
     MergeMapGraphicsItem* getPixmapItem(void) const { return pixmapItem; }
     int getRotation(void) const { return slider->value(); }
     double getResolution(void) const { return resolution; }
