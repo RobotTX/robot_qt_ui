@@ -14,17 +14,19 @@ class MergeMapGraphicsItem;
 class MergeMapListItemWidget : public QWidget {
     Q_OBJECT
 public:
-    MergeMapListItemWidget(int _id, QString fileName, QGraphicsScene *scene);
+    MergeMapListItemWidget(int _id, QString fileName, QGraphicsScene *scene, bool _fromRobot, QImage image = QImage(), double _resolution = -1, double _originX = -1, double _originY = -1);
 
+    /// Setter
     void setId(const int _id){ id = _id; }
 
+    /// Getters
     MergeMapGraphicsItem* getPixmapItem(void) const { return pixmapItem; }
     int getRotation(void) const { return slider->value(); }
     double getResolution(void) const { return resolution; }
     QPointF getOrigin(void) const { return origin; }
 
 protected:
-    void initializeMap(QString fileName, QGraphicsScene* scene);
+    void initializeMap(QString fileName, QGraphicsScene* scene, QImage image);
     void initializeMenu(QString fileName);
 
 private slots:
@@ -48,6 +50,7 @@ private :
     QPointF origin;
     QPoint originInPixel;
     double resolution;
+    bool fromRobot;
 };
 
 #endif // MERGEMAPLISTITEMWIDGET_H

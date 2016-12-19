@@ -140,6 +140,7 @@ signals:
     void resetPathCreationWidget();
     void stopUpdateRobotsThread();
     void cancelRobotModifications();
+    void receivedMapToMerge(QString, QImage, double, double, double);
 
 private slots:
     void sendPathSelectedRobotSlot(const QString groupName, const QString pathName);

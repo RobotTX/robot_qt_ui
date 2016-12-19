@@ -1551,7 +1551,10 @@ void MainWindow::updateMap(const QByteArray mapArray, int who, QString mapId, QS
     qDebug() << "MainWindow::updateMap received a map" << who;
     if(who == 2){
         qDebug() << "MainWindow::updateMap received a map from a robot to merge" << ipAddress << resolution << originX << originY;
-        // TODO send to mergeMapWidget
+        QString robotName = robots->getRobotViewByIp(ipAddress)->getRobot()->getName();
+        QImage image = map->getImageFromArray(mapArray, true);
+
+        emit receivedMapToMerge(robotName, image, resolution.toDouble(), originX.toDouble(), originY.toDouble());
 
     } else {
         map->setMapFromArray(mapArray, who);
@@ -1738,9 +1741,14 @@ void MainWindow::saveEditMapSlot(){
 
 void MainWindow::mergeMapSlot(){
     qDebug() << "MainWindow::mergeMapSlot called";
+    // TODO Joan check text
+    topLayout->setLabel(TEXT_COLOR_INFO, "You can select a map by clicking on it or by clicking on the list in the menu."
+                                         "\nYou can move a map by dragging and dropping it or by using the directional keys."
+                                         "\nYou can change the rotation of the map in the menu using the text block or the slider.");
     mergeMapWidget = QPointer<MergeMapWidget>(new MergeMapWidget(robots));
     connect(mergeMapWidget, SIGNAL(saveMergeMap(double, Position, QImage, QString)), this, SLOT(saveMergeMapSlot(double, Position, QImage, QString)));
     connect(mergeMapWidget, SIGNAL(getMapForMerging(QString)), this, SLOT(getMapForMergingSlot(QString)));
+    connect(this, SIGNAL(receivedMapToMerge(QString, QImage, double, double, double)), mergeMapWidget, SLOT(receivedMapToMergeSlot(QString, QImage, double, double, double)));
 }
 
 void MainWindow::saveMergeMapSlot(double resolution, Position origin, QImage image, QString fileName){
@@ -1765,6 +1773,7 @@ void MainWindow::saveMergeMapSlot(double resolution, Position origin, QImage ima
     saveMap(fileName);
 
     sendNewMapToRobots();
+    topLayout->setLabel(TEXT_COLOR_SUCCESS, "The new merged map has been save successfully");
 }
 
 /**********************************************************************************************************************************/

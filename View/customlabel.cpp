@@ -92,14 +92,14 @@ void CustomLabel::moveLabel(){
             }
 
             label->move(moveTo);
-            setToolTip(text());
+            if(toolTip().compare("") == 0)
+                setToolTip(text());
             label->show();
 
             if(title)
                 setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
 
         } else {
-            setToolTip("");
             label->hide();
 
             if(title)

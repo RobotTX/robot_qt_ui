@@ -27,6 +27,6 @@ void MergeMapGraphicsItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event){
         /// click
         emit pixmapClicked();
     }
-    /// else drag
+    /// drag and drop
     QGraphicsPixmapItem::mouseReleaseEvent(event);
 }

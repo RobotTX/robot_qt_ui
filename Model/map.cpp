@@ -17,14 +17,19 @@ void Map::setMapFromFile(const QString fileName){
 
 void Map::setMapFromArray(const QByteArray& mapArrays, bool fromPgm){
     qDebug() << "Map::setMapFromArray called" << mapArrays.size();
-    mapImage = QImage(width, height, QImage::Format_Grayscale8);
 
-    /// This map comes from a robot so we want to tell the user to save when closing the app
+    /// This map comes from a robot so we want to tell the user to save the new map when closing the app
     modified = true;
+
+    mapImage = getImageFromArray(mapArrays, fromPgm);
+}
+
+QImage Map::getImageFromArray(const QByteArray& mapArrays, bool fromPgm){
+    QImage image = QImage(width, height, QImage::Format_Grayscale8);
 
     uint32_t index = 0;
 
-    /// depending on where we get the map from the system of coordinates is not the same
+    /// depending on where we get the map from, the system of coordinates is not the same
     /// so the formula is adjusted using <shift> and <sign>
     int shift = 0;
     int sign = 1;
@@ -33,7 +38,7 @@ void Map::setMapFromArray(const QByteArray& mapArrays, bool fromPgm){
         sign = -1;
     }
 
-    /// We set each pixel of the image, the data received being
+    /// We set each pixel of the image
     for(int i = 0; i < mapArrays.size(); i+=5){
         int color = static_cast<int> (static_cast<uint8_t> (mapArrays.at(i)));
 
@@ -41,10 +46,12 @@ void Map::setMapFromArray(const QByteArray& mapArrays, bool fromPgm){
                         + static_cast<uint32_t> (static_cast<uint8_t> (mapArrays.at(i+3)) << 8) + static_cast<uint32_t> (static_cast<uint8_t> (mapArrays.at(i+4)));
 
         for(int j = 0; j < (int) count; j++){
-            mapImage.setPixelColor(QPoint(static_cast<int>(index%width), shift + sign * (static_cast<int>(index/width))), QColor(color, color, color));
+            image.setPixelColor(QPoint(static_cast<int>(index%width), shift + sign * (static_cast<int>(index/width))), QColor(color, color, color));
             index++;
         }
     }
+
+    return image;
 }
 
 void Map::saveToFile(const QString fileName){

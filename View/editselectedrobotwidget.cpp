@@ -52,7 +52,7 @@ EditSelectedRobotWidget::EditSelectedRobotWidget(QWidget* _parent, MainWindow* _
     inLayout->addWidget(nameLabel);
 
     /// Button which allow the user to scan the map from a robot
-    scanBtn = new CustomPushButton(QIcon(":/icons/map.png"),"Scan a map", this, true, CustomPushButton::ButtonType::LEFT_MENU, "center", true);
+    scanBtn = new CustomPushButton(QIcon(":/icons/map.png"),"Scan a map", this, CustomPushButton::ButtonType::LEFT_MENU, "center", true);
     scanBtn->setIconSize(s_icon_size);
     inLayout->addWidget(scanBtn);
     connect(scanBtn, SIGNAL(clicked(bool)), mainWindow, SLOT(launchScan(bool)));
@@ -85,7 +85,7 @@ EditSelectedRobotWidget::EditSelectedRobotWidget(QWidget* _parent, MainWindow* _
     batteryLevel->setValue(50);
     inLayout->addWidget(batteryLevel);
 
-    editRobotInfoBtn = new CustomPushButton(QIcon(":/icons/edit.png") , "Edit information", this, true);
+    editRobotInfoBtn = new CustomPushButton(QIcon(":/icons/edit.png") , "Edit information", this);
     editRobotInfoBtn->setIconSize(xs_icon_size);
     inLayout->addWidget(editRobotInfoBtn);
     connect(editRobotInfoBtn, SIGNAL(clicked(bool)), this, SLOT(editRobot()));

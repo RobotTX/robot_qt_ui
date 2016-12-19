@@ -5,15 +5,15 @@
 #include <QResizeEvent>
 
 
-CustomPushButton::CustomPushButton(const QIcon& icon, const QString text, QWidget *parent, const bool _customTooltipEnable, const ButtonType type, const QString align,
+CustomPushButton::CustomPushButton(const QIcon& icon, const QString text, QWidget *parent, const ButtonType type, const QString align,
         const bool checkable, const bool enable) :
-    QPushButton(icon, text, parent), buttonType(type), customTooltipEnable(_customTooltipEnable)
+    QPushButton(icon, text, parent), buttonType(type)
 {
     initialize(checkable, enable, align);
 }
 
-CustomPushButton::CustomPushButton(const QString text, QWidget *parent, const bool _customTooltipEnable, const ButtonType type, const QString align, const bool checkable,
-        const bool enable) : QPushButton(text, parent), buttonType(type), customTooltipEnable(_customTooltipEnable)
+CustomPushButton::CustomPushButton(const QString text, QWidget *parent, const ButtonType type, const QString align, const bool checkable,
+        const bool enable) : QPushButton(text, parent), buttonType(type)
 {
     initialize(checkable, enable, align);
 }
@@ -209,14 +209,11 @@ void CustomPushButton::moveLabel(){
             }
 
             label->move(moveTo);
-            setToolTip(text());
+            if(toolTip().compare("") == 0)
+                setToolTip(text());
             label->show();
 
-        } else {
-            if(!customTooltipEnable)
-                setToolTip("");
-
+        } else
             label->hide();
-        }
     }
 }

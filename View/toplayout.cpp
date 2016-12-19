@@ -14,35 +14,35 @@ TopLayout::TopLayout(QMainWindow* parent): QWidget(parent){
     layout = new QHBoxLayout(this);
     robotsWithoutHome = QVector<QString>();
 
-    menuBtn = new CustomPushButton(QIcon(":/icons/list.png"), "", this, false, CustomPushButton::ButtonType::TOP);
+    menuBtn = new CustomPushButton(QIcon(":/icons/list.png"), "", this, CustomPushButton::ButtonType::TOP);
     menuBtn->setIconSize(xs_icon_size);
     menuBtn->setFocusPolicy(Qt::FocusPolicy::NoFocus);
 
     layout->addWidget(menuBtn);
     connect(menuBtn, SIGNAL(clicked()), parent, SLOT(openLeftMenu()));
 
-    saveMapBtn = new CustomPushButton(QIcon(":/icons/load_map.png"), "", this, false, CustomPushButton::ButtonType::TOP);
+    saveMapBtn = new CustomPushButton(QIcon(":/icons/load_map.png"), "", this, CustomPushButton::ButtonType::TOP);
     saveMapBtn->setIconSize(s_icon_size);
     saveMapBtn->setFocusPolicy(Qt::FocusPolicy::NoFocus);
     layout->addWidget(saveMapBtn);
     saveMapBtn->setToolTip("Save the configuration of the map");
     connect(saveMapBtn, SIGNAL(clicked()), parent, SLOT(saveMapState()));
 
-    centerBtn = new CustomPushButton(QIcon(":/icons/save_map.png"), "", this, false, CustomPushButton::ButtonType::TOP);
+    centerBtn = new CustomPushButton(QIcon(":/icons/save_map.png"), "", this, CustomPushButton::ButtonType::TOP);
     centerBtn->setToolTip("Restore the configuration of the map");
     centerBtn->setIconSize(s_icon_size);
     centerBtn->setFocusPolicy(Qt::FocusPolicy::NoFocus);
     layout->addWidget(centerBtn);
     connect(centerBtn, SIGNAL(clicked()), parent, SLOT(centerMap()));
 
-    settingBtn = new CustomPushButton(QIcon(":/icons/setting.png"), "", this, false, CustomPushButton::ButtonType::TOP);
+    settingBtn = new CustomPushButton(QIcon(":/icons/setting.png"), "", this, CustomPushButton::ButtonType::TOP);
     settingBtn->setToolTip("Click to view/edit the settings");
     settingBtn->setIconSize(s_icon_size);
     settingBtn->setFocusPolicy(Qt::FocusPolicy::NoFocus);
     layout->addWidget(settingBtn);
     connect(settingBtn, SIGNAL(clicked()), parent, SLOT(settingBtnSlot()));
 
-    testButton = new CustomPushButton(QIcon(":/icons/T_icon.png"), "", this, false, CustomPushButton::ButtonType::TOP);
+    testButton = new CustomPushButton(QIcon(":/icons/T_icon.png"), "", this, CustomPushButton::ButtonType::TOP);
     testButton->setToolTip("Click to try your new function");
     testButton->setIconSize(s_icon_size);
     testButton->setFocusPolicy(Qt::FocusPolicy::NoFocus);
@@ -77,7 +77,7 @@ TopLayout::TopLayout(QMainWindow* parent): QWidget(parent){
     spaceWidget2->setColor("lightgrey");
     layout->addWidget(spaceWidget2);
 
-    closeBtn = new CustomPushButton(QIcon(":/icons/close.png"), "", this, true, CustomPushButton::ButtonType::TOP);
+    closeBtn = new CustomPushButton(QIcon(":/icons/close.png"), "", this, CustomPushButton::ButtonType::TOP);
     closeBtn->setIconSize(xxs_icon_size);
     closeBtn->setFocusPolicy(Qt::FocusPolicy::NoFocus);
 
