@@ -64,6 +64,7 @@ void MergeMapListItemWidget::initializeMenu(QString fileName){
     closeBtn->setFlat(true);
     closeBtn->setIconSize(xxs_icon_size);
     closeBtn->setStyleSheet(closeBtn->styleSheet() + "QPushButton {padding-top: 15px; padding-bottom: 15px;}");
+    closeBtn->setToolTip("Delete this map");
     closeBtn->setMaximumWidth(xxs_icon_size.width() + 7);
     topLayout->addWidget(closeBtn, Qt::AlignRight);
 

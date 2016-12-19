@@ -56,7 +56,7 @@ void EditMapWidget::initializeMenu(){
     SpaceWidget* spaceWidget = new SpaceWidget(SpaceWidget::SpaceOrientation::HORIZONTAL, this);
     topMenuLayout->addWidget(spaceWidget);
 
-    CustomPushButton* resetBtn = new CustomPushButton(QIcon(":/icons/empty.png"), "Reset", this, false, CustomPushButton::ButtonType::LEFT_MENU, "center");
+    CustomPushButton* resetBtn = new CustomPushButton(QIcon(":/icons/empty.png"), "Reset", this, CustomPushButton::ButtonType::LEFT_MENU, "center");
     topMenuLayout->addWidget(resetBtn);
     connect(resetBtn, SIGNAL(clicked()), canvas, SLOT(resetSlot()));
 
@@ -77,16 +77,16 @@ void EditMapWidget::initializeMenu(){
     topMenuLayout->addWidget(colorLabel);
 
     QButtonGroup* colorGroup = new QButtonGroup(this);
-    CustomPushButton* blackBtn = new CustomPushButton(QIcon(":/icons/black_square.png"), "", this, false, CustomPushButton::ButtonType::LEFT_MENU, "center", true);
+    CustomPushButton* blackBtn = new CustomPushButton(QIcon(":/icons/black_square.png"), "", this, CustomPushButton::ButtonType::LEFT_MENU, "center", true);
     blackBtn->setChecked(true);
     colorGroup->addButton(blackBtn, 0);
     colorLayout->addWidget(blackBtn);
 
-    CustomPushButton* greyBtn = new CustomPushButton(QIcon(":/icons/grey_square.png"), "", this, false, CustomPushButton::ButtonType::LEFT_MENU, "center", true);
+    CustomPushButton* greyBtn = new CustomPushButton(QIcon(":/icons/grey_square.png"), "", this, CustomPushButton::ButtonType::LEFT_MENU, "center", true);
     colorGroup->addButton(greyBtn, 1);
     colorLayout->addWidget(greyBtn);
 
-    CustomPushButton* whiteBtn = new CustomPushButton(QIcon(":/icons/white_square.png"), "", this, false, CustomPushButton::ButtonType::LEFT_MENU, "center", true);
+    CustomPushButton* whiteBtn = new CustomPushButton(QIcon(":/icons/white_square.png"), "", this, CustomPushButton::ButtonType::LEFT_MENU, "center", true);
     colorGroup->addButton(whiteBtn, 2);
     colorLayout->addWidget(whiteBtn);
 
@@ -99,24 +99,24 @@ void EditMapWidget::initializeMenu(){
     topMenuLayout->addWidget(shapeLabel);
 
     QButtonGroup* shapeGroup = new QButtonGroup(this);
-    CustomPushButton* handBtn = new CustomPushButton(QIcon(":/icons/hand.png"), "", this, false, CustomPushButton::ButtonType::LEFT_MENU, "center", true);
+    CustomPushButton* handBtn = new CustomPushButton(QIcon(":/icons/hand.png"), "", this, CustomPushButton::ButtonType::LEFT_MENU, "center", true);
     handBtn->setChecked(true);
     shapeGroup->addButton(handBtn, 0);
     topMenuLayout->addWidget(handBtn);
 
-    CustomPushButton* dotBtn = new CustomPushButton(QIcon(":/icons/dot_l.png"), "", this, false, CustomPushButton::ButtonType::LEFT_MENU, "center", true);
+    CustomPushButton* dotBtn = new CustomPushButton(QIcon(":/icons/dot_l.png"), "", this, CustomPushButton::ButtonType::LEFT_MENU, "center", true);
     shapeGroup->addButton(dotBtn, 1);
     shapeLayout->addWidget(dotBtn, 0, 0);
 
-    CustomPushButton* lineBtn = new CustomPushButton(QIcon(":/icons/line.png"), "", this, false, CustomPushButton::ButtonType::LEFT_MENU, "center", true);
+    CustomPushButton* lineBtn = new CustomPushButton(QIcon(":/icons/line.png"), "", this, CustomPushButton::ButtonType::LEFT_MENU, "center", true);
     shapeGroup->addButton(lineBtn, 2);
     shapeLayout->addWidget(lineBtn, 0, 1);
 
-    CustomPushButton* rectangleBtn = new CustomPushButton(QIcon(":/icons/rectangle.png"), "", this, false, CustomPushButton::ButtonType::LEFT_MENU, "center", true);
+    CustomPushButton* rectangleBtn = new CustomPushButton(QIcon(":/icons/rectangle.png"), "", this, CustomPushButton::ButtonType::LEFT_MENU, "center", true);
     shapeGroup->addButton(rectangleBtn, 3);
     shapeLayout->addWidget(rectangleBtn, 1, 0);
 
-    CustomPushButton* filledRectangleBtn = new CustomPushButton(QIcon(":/icons/filled_rectangle.png"), "", this, false, CustomPushButton::ButtonType::LEFT_MENU, "center", true);
+    CustomPushButton* filledRectangleBtn = new CustomPushButton(QIcon(":/icons/filled_rectangle.png"), "", this, CustomPushButton::ButtonType::LEFT_MENU, "center", true);
     shapeGroup->addButton(filledRectangleBtn, 4);
     shapeLayout->addWidget(filledRectangleBtn, 1, 1);
 
@@ -130,16 +130,16 @@ void EditMapWidget::initializeMenu(){
     QHBoxLayout* sizeBtnLayout = new QHBoxLayout();
 
     sizeGroup = new QButtonGroup(this);
-    CustomPushButton* sizeSBtn = new CustomPushButton(QIcon(":/icons/dot_s.png"), "", this, false, CustomPushButton::ButtonType::TOP, "center", true);
+    CustomPushButton* sizeSBtn = new CustomPushButton(QIcon(":/icons/dot_s.png"), "", this, CustomPushButton::ButtonType::TOP, "center", true);
     sizeSBtn->setChecked(true);
     sizeGroup->addButton(sizeSBtn, 1);
     sizeBtnLayout->addWidget(sizeSBtn);
 
-    CustomPushButton* sizeMBtn = new CustomPushButton(QIcon(":/icons/dot_m.png"), "", this, false, CustomPushButton::ButtonType::TOP, "center", true);
+    CustomPushButton* sizeMBtn = new CustomPushButton(QIcon(":/icons/dot_m.png"), "", this, CustomPushButton::ButtonType::TOP, "center", true);
     sizeGroup->addButton(sizeMBtn, 3);
     sizeBtnLayout->addWidget(sizeMBtn);
 
-    CustomPushButton* sizeLBtn = new CustomPushButton(QIcon(":/icons/dot_l.png"), "", this, false, CustomPushButton::ButtonType::LEFT_MENU, "center", true);
+    CustomPushButton* sizeLBtn = new CustomPushButton(QIcon(":/icons/dot_l.png"), "", this, CustomPushButton::ButtonType::LEFT_MENU, "center", true);
     sizeGroup->addButton(sizeLBtn, 7);
     sizeBtnLayout->addWidget(sizeLBtn);
 
@@ -163,11 +163,11 @@ void EditMapWidget::initializeMenu(){
 
     /// Save cancel layout
     QHBoxLayout* cancelSaveLayout = new QHBoxLayout();
-    CustomPushButton* cancelBtn = new CustomPushButton("Cancel", this, true, CustomPushButton::ButtonType::LEFT_MENU, "center");
+    CustomPushButton* cancelBtn = new CustomPushButton("Cancel", this, CustomPushButton::ButtonType::LEFT_MENU, "center");
     cancelSaveLayout->addWidget(cancelBtn);
     connect(cancelBtn, SIGNAL(clicked()), this, SLOT(cancelSlot()));
 
-    CustomPushButton* saveBtn = new CustomPushButton("Save", this, true, CustomPushButton::ButtonType::LEFT_MENU, "center");
+    CustomPushButton* saveBtn = new CustomPushButton("Save", this, CustomPushButton::ButtonType::LEFT_MENU, "center");
     cancelSaveLayout->addWidget(saveBtn);
     connect(saveBtn, SIGNAL(clicked()), this, SLOT(saveSlot()));
     menuLayout->addLayout(cancelSaveLayout);

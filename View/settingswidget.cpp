@@ -81,15 +81,15 @@ SettingsWidget::SettingsWidget(QWidget *parent)
 
 
     QHBoxLayout* cancelSaveLayout = new QHBoxLayout();
-    CustomPushButton* applyBtn = new CustomPushButton("Apply", this, true, CustomPushButton::ButtonType::LEFT_MENU, "center");
+    CustomPushButton* applyBtn = new CustomPushButton("Apply", this, CustomPushButton::ButtonType::LEFT_MENU, "center");
     cancelSaveLayout->addWidget(applyBtn);
     connect(applyBtn, SIGNAL(clicked()), this, SLOT(applySlot()));
 
-    CustomPushButton* cancelBtn = new CustomPushButton("Cancel", this, true, CustomPushButton::ButtonType::LEFT_MENU, "center");
+    CustomPushButton* cancelBtn = new CustomPushButton("Cancel", this, CustomPushButton::ButtonType::LEFT_MENU, "center");
     cancelSaveLayout->addWidget(cancelBtn);
     connect(cancelBtn, SIGNAL(clicked()), this, SLOT(cancelSlot()));
 
-    CustomPushButton* saveBtn = new CustomPushButton("Save", this, true, CustomPushButton::ButtonType::LEFT_MENU, "center");
+    CustomPushButton* saveBtn = new CustomPushButton("Save", this, CustomPushButton::ButtonType::LEFT_MENU, "center");
     cancelSaveLayout->addWidget(saveBtn);
     connect(saveBtn, SIGNAL(clicked()), this, SLOT(saveSlot()));
     layout->addLayout(cancelSaveLayout);

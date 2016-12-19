@@ -50,15 +50,18 @@ void MergeMapWidget::initializeMenu(){
     SpaceWidget* spaceWidget = new SpaceWidget(SpaceWidget::SpaceOrientation::HORIZONTAL, this);
     topMenuLayout->addWidget(spaceWidget);
 
-    CustomPushButton* resetBtn = new CustomPushButton(QIcon(":/icons/empty.png"), "Reset", this, false, CustomPushButton::ButtonType::LEFT_MENU, "center");
+    CustomPushButton* resetBtn = new CustomPushButton(QIcon(":/icons/empty.png"), "Reset", this, CustomPushButton::ButtonType::LEFT_MENU, "center");
+    resetBtn->setToolTip("Remove all maps");
     topMenuLayout->addWidget(resetBtn);
     connect(resetBtn, SIGNAL(clicked()), this, SLOT(resetSlot()));
 
     CustomPushButton* addImageFileBtn = new CustomPushButton("Add map from file", this);
+    addImageFileBtn->setToolTip("Add a map from a pgm file");
     connect(addImageFileBtn, SIGNAL(clicked()), this, SLOT(addImageFileSlot()));
     topMenuLayout->addWidget(addImageFileBtn);
 
     CustomPushButton* addImageRobotBtn = new CustomPushButton("Add map from robot", this);
+    addImageRobotBtn->setToolTip("Add a robot is currently using");
     connect(addImageRobotBtn, SIGNAL(clicked()), this, SLOT(addImageRobotSlot()));
     topMenuLayout->addWidget(addImageRobotBtn);
 
@@ -70,11 +73,11 @@ void MergeMapWidget::initializeMenu(){
     menuLayout->addLayout(topMenuLayout);
 
     QHBoxLayout* cancelSaveLayout = new QHBoxLayout();
-    CustomPushButton* cancelBtn = new CustomPushButton("Cancel", this, true, CustomPushButton::ButtonType::LEFT_MENU, "center");
+    CustomPushButton* cancelBtn = new CustomPushButton("Cancel", this, CustomPushButton::ButtonType::LEFT_MENU, "center");
     cancelSaveLayout->addWidget(cancelBtn);
     connect(cancelBtn, SIGNAL(clicked()), this, SLOT(cancelSlot()));
 
-    CustomPushButton* saveBtn = new CustomPushButton("Save", this, true, CustomPushButton::ButtonType::LEFT_MENU, "center");
+    CustomPushButton* saveBtn = new CustomPushButton("Save", this, CustomPushButton::ButtonType::LEFT_MENU, "center");
     cancelSaveLayout->addWidget(saveBtn);
     connect(saveBtn, SIGNAL(clicked()), this, SLOT(saveSlot()));
     menuLayout->addLayout(cancelSaveLayout);

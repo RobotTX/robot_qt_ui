@@ -1735,6 +1735,10 @@ void MainWindow::saveEditMapSlot(){
 
 void MainWindow::mergeMapSlot(){
     qDebug() << "MainWindow::mergeMapSlot called";
+    // TODO Joan check text
+    topLayout->setLabel(TEXT_COLOR_INFO, "You can select a map by clicking on it or by clicking on the list in the menu."
+                                         "\nYou can move a map by dragging and dropping it or by using the directional keys."
+                                         "\nYou can change the rotation of the map in the menu using the text block or the slider.");
     mergeMapWidget = QPointer<MergeMapWidget>(new MergeMapWidget(robots));
     connect(mergeMapWidget, SIGNAL(saveMergeMap(double, Position, QImage, QString)), this, SLOT(saveMergeMapSlot(double, Position, QImage, QString)));
     connect(mergeMapWidget, SIGNAL(getMapForMerging(QString)), this, SLOT(getMapForMergingSlot(QString)));
@@ -1763,6 +1767,7 @@ void MainWindow::saveMergeMapSlot(double resolution, Position origin, QImage ima
     saveMap(fileName);
 
     sendNewMapToRobots();
+    topLayout->setLabel(TEXT_COLOR_SUCCESS, "The new merged map has been save successfully");
 }
 
 /**********************************************************************************************************************************/

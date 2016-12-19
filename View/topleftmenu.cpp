@@ -9,14 +9,14 @@
 TopLeftMenu::TopLeftMenu(QWidget * parent): QWidget(parent){
     layout = new QVBoxLayout(this);
 
-    plusButton = new CustomPushButton(QIcon(":/icons/plus.png"), "", this, true, CustomPushButton::ButtonType::TOP_LEFT_MENU);
+    plusButton = new CustomPushButton(QIcon(":/icons/plus.png"), "", this, CustomPushButton::ButtonType::TOP_LEFT_MENU);
     plusButton->setIconSize(xs_icon_size);
 
-    minusButton = new CustomPushButton(QIcon(":/icons/minus.png"),"", this, true, CustomPushButton::ButtonType::TOP_LEFT_MENU);
+    minusButton = new CustomPushButton(QIcon(":/icons/minus.png"),"", this, CustomPushButton::ButtonType::TOP_LEFT_MENU);
     minusButton->setIconSize(xs_icon_size);
 
     /// to force the user to choose a group or point first
-    editButton = new CustomPushButton(QIcon(":/icons/edit.png"),"", this, true, CustomPushButton::ButtonType::TOP_LEFT_MENU);
+    editButton = new CustomPushButton(QIcon(":/icons/edit.png"),"", this, CustomPushButton::ButtonType::TOP_LEFT_MENU);
     editButton->setIconSize(xs_icon_size);
 
     /// to force the user to choose a group or point first
@@ -26,10 +26,10 @@ TopLeftMenu::TopLeftMenu(QWidget * parent): QWidget(parent){
     grid->addWidget(editButton);
     layout->addLayout(grid);
 
-    mapButton = new CustomPushButton(QIcon(":/icons/eye.png"),"", this, true, CustomPushButton::ButtonType::TOP_LEFT_MENU);
+    mapButton = new CustomPushButton(QIcon(":/icons/eye.png"),"", this, CustomPushButton::ButtonType::TOP_LEFT_MENU);
     mapButton->setIconSize(s_icon_size);
 
-    goButton = new CustomPushButton(QIcon(":/icons/go_inside.png"), "", this, true, CustomPushButton::ButtonType::TOP_LEFT_MENU);
+    goButton = new CustomPushButton(QIcon(":/icons/go_inside.png"), "", this, CustomPushButton::ButtonType::TOP_LEFT_MENU);
     goButton->setIconSize(s_icon_size);
 
     /// to force the user to choose first
