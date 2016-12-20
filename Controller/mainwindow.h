@@ -336,6 +336,7 @@ private:
     QPointer<ScanMapWidget> scanMapWidget;
 
     SettingsWidget* settingsWidget;
+
 };
 
 #endif /// MAINWINDOW_H

@@ -4,14 +4,23 @@
 class QHBoxLayout;
 class CustomQGraphicsView;
 class QButtonGroup;
-class MergeMapListWidget;
 class MergeMapListItemWidget;
+class QComboBox;
+class QVBoxLayout;
+class MergeDialog;
 
-
+#include "View/custompushbutton.h"
+#include <QGridLayout>
 #include <QWidget>
 #include <QGraphicsScene>
 #include "Model/robots.h"
 #include "Model/position.h"
+#include "View/mergemaplistwidget.h"
+#include <QDialog>
+#include <iostream>
+#include <QDebug>
+#include "View/mergemaplistitemwidget.h"
+
 
 #define MERGE_WIDGET_HEIGHT 120
 
@@ -19,6 +28,9 @@ class MergeMapWidget : public QWidget {
     Q_OBJECT
 public:
     MergeMapWidget(QSharedPointer<Robots> _robots, QWidget* parent = Q_NULLPTR);
+
+public:
+    MergeMapListWidget* getListWidget(void) const { return listWidget; }
 
 protected:
     void initializeMenu();
@@ -143,6 +155,10 @@ private slots:
      */
     void receivedMapToMergeSlot(QString robotName, QImage image, double _resolution, double _originX, double _originY);
 
+    void openMergeDialog();
+
+    void mergeAutomatically();
+
 signals:
     /**
      * @brief saveMergeMap
@@ -157,6 +173,8 @@ signals:
     void getMapForMerging(QString);
 
 private:
+    MergeDialog* dialog;
+    CustomPushButton* button;
     MergeMapListWidget* listWidget;
     QHBoxLayout* layout;
     QGraphicsScene* scene;
@@ -167,6 +185,7 @@ private:
     QPoint croppedOriginInPixel;
     QPoint originInPixel;
     QSharedPointer<Robots> robots;
+    unsigned int nbMaps;
 };
 
 #endif // MERGEMAPWIDGET_H

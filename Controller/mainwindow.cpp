@@ -57,13 +57,19 @@
 #include "View/settingswidget.h"
 #include "View/scanmapwidget.h"
 
+#include <opencv2/opencv.hpp>
+#include <opencv2/features2d.hpp>
+
+//#include "opencv2/xfeatures2d.hpp"
+
+
 #include <chrono>
 #include <thread>
 
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow) {
     ui->setupUi(this);
-qDebug() << "MainWIndow:: Inside thread" << QThread::currentThreadId();
+    qDebug() << "MainWIndow:: Inside thread" << QThread::currentThreadId();
     /// centers the msgBox on the middle of the screen
     msgBox.move(mapToGlobal(QPoint(QApplication::desktop()->screenGeometry().width()/2,
                                    QApplication::desktop()->screenGeometry().height()/2) ));
@@ -1645,42 +1651,51 @@ void MainWindow::loadMapBtnEvent(){
         QFileInfo mapFileInfo(static_cast<QDir> (fileNameWithoutExtension), "");
         QFileInfo fileInfo(QDir::currentPath(), "../gobot-software/mapConfigs/" + mapFileInfo.fileName() + ".config");
         qDebug() << fileInfo.absoluteFilePath() << "map to load";
-        assert(loadMapConfig(fileInfo.absoluteFilePath().toStdString()));
+        /// if we are able to find the configuration then we load the map
+        if(loadMapConfig(fileInfo.absoluteFilePath().toStdString())){
 
-        /// clears the map of all paths and points
-        clearNewMap();
+            /// clears the map of all paths and points
+            clearNewMap();
 
-        qDebug() << "about to load map from" << QString::fromStdString(mapFile);
-        map->setMapFromFile(QString::fromStdString(mapFile));
-        setWindowTitle(QString::fromStdString(mapFile));
+            qDebug() << "about to load map from" << QString::fromStdString(mapFile);
+            map->setMapFromFile(QString::fromStdString(mapFile));
+            setWindowTitle(QString::fromStdString(mapFile));
 
-        map->setDateTime(QDateTime::currentDateTime());
-        saveMapState();
+            map->setDateTime(QDateTime::currentDateTime());
+            saveMapState();
 
-        QPixmap pixmap = QPixmap::fromImage(map->getMapImage());
-        mapPixmapItem->setPixmap(pixmap);
-        scene->update();
+            QPixmap pixmap = QPixmap::fromImage(map->getMapImage());
+            mapPixmapItem->setPixmap(pixmap);
+            scene->update();
 
-        /// centers the map
-        centerMap();
+            /// centers the map
+            centerMap();
 
-        /// imports paths associated to the map and save them in the current file
-        deserializePaths(fileNameWithoutExtension + "_paths.dat");
+            /// imports paths associated to the map and save them in the current file
+            deserializePaths(fileNameWithoutExtension + "_paths.dat");
 
-        /// imports points associated to the map and save them in the current file
-        XMLParser parser(fileNameWithoutExtension + "_points.xml");
-        parser.readPoints(points);
+            /// imports points associated to the map and save them in the current file
+            XMLParser parser(fileNameWithoutExtension + "_points.xml");
+            parser.readPoints(points);
 
-        /// savesthe new configuration to the current configuration file
-        savePoints(QDir::currentPath() + QDir::separator() + "points.xml");
+            /// savesthe new configuration to the current configuration file
+            savePoints(QDir::currentPath() + QDir::separator() + "points.xml");
 
-        /// updates the group box so that new points can be added
-        createPointWidget->updateGroupBox();
+            /// updates the group box so that new points can be added
+            createPointWidget->updateGroupBox();
 
-        serializePaths(QDir::currentPath() + QDir::separator() + "paths.dat");
+            serializePaths(QDir::currentPath() + QDir::separator() + "paths.dat");
 
-        /// updates the groups of paths menu using the paths that have just been imported
-        leftMenu->getGroupsPathsWidget()->updateGroupsPaths();
+            /// updates the groups of paths menu using the paths that have just been imported
+            leftMenu->getGroupsPathsWidget()->updateGroupsPaths();
+
+        } else {
+            QMessageBox warningBox;
+            warningBox.setText("No configuration found for this map.");
+            warningBox.setStandardButtons(QMessageBox::Ok);
+            warningBox.setDefaultButton(QMessageBox::Ok);
+            warningBox.exec();
+        }
     }
 }
 
@@ -1738,10 +1753,10 @@ void MainWindow::saveEditMapSlot(){
 
 void MainWindow::mergeMapSlot(){
     qDebug() << "MainWindow::mergeMapSlot called";
-    // TODO Joan check text
-    topLayout->setLabel(TEXT_COLOR_INFO, "You can select a map by clicking on it or by clicking on the list in the menu."
+
+    topLayout->setLabel(TEXT_COLOR_INFO, "You can select a map by clicking it or by clicking the list in the menu."
                                          "\nYou can move a map by dragging and dropping it or by using the directional keys."
-                                         "\nYou can change the rotation of the map in the menu using the text block or the slider.");
+                                         "\nYou can rotate the map in the menu using the text block or the slider.");
     mergeMapWidget = QPointer<MergeMapWidget>(new MergeMapWidget(robots));
     connect(mergeMapWidget, SIGNAL(saveMergeMap(double, Position, QImage, QString)), this, SLOT(saveMergeMapSlot(double, Position, QImage, QString)));
     connect(mergeMapWidget, SIGNAL(getMapForMerging(QString)), this, SLOT(getMapForMergingSlot(QString)));
@@ -3613,6 +3628,7 @@ void MainWindow::editPathSlot(QString groupName, QString pathName){
                  "\nAlternatively you can click the \"+\" button to add an existing point to your path"
                  "\nYou can re-order the points in the list by dragging them");
 
+
     hideAllWidgets();
     pathCreationWidget->show();
     pathPainter->setOldPath(pathPainter->getCurrentPath());
@@ -3652,6 +3668,8 @@ void MainWindow::editPathSlot(QString groupName, QString pathName){
             }
         }
     }
+
+    leftMenu->getReturnButton()->setDisabled(true);
 }
 
 void MainWindow::displayPathSlot(QString groupName, QString pathName, bool display){
@@ -4082,6 +4100,8 @@ void MainWindow::editPath(){
             }
         }
     }
+
+    leftMenu->getReturnButton()->setEnabled(false);
 }
 
 void MainWindow::doubleClickOnPath(QString pathName){
@@ -4383,8 +4403,13 @@ void MainWindow::clearNewMap(){
     /// Update the left menu displaying the list of groups and buttons
     pointsLeftWidget->updateGroupButtonGroup();
 
-    for(int i = 0; i < robots->getRobotsVector().size(); i++)
+    for(int i = 0; i < robots->getRobotsVector().size(); i++){
         robots->getRobotsVector().at(i)->getRobot()->clearPath();
+        if(robots->getRobotsVector().at(i)->getRobot()->getHome()){
+            robots->getRobotsVector().at(i)->getRobot()->getHome()->hide();
+            robots->getRobotsVector().at(i)->getRobot()->setHome(QSharedPointer<PointView>());
+        }
+    }
 }
 
 void MainWindow::delay(const int ms){
@@ -4798,12 +4823,12 @@ void MainWindow::updateHomeInfo(const QString robot_name, QString posX, QString 
         QSharedPointer<PointView> home_app = points->findPointViewByPos(p);
         if(home_app){
             setHomeAtConnection(robot_name, p);
-            qDebug() << "HOME APP" << home_app->getPoint()->getName();
+            qDebug() << "HOME APP same on both side" << home_app->getPoint()->getName();
         } else {
             robotHasNoHome(robotView->getRobot()->getName());
         }
     }
-
+    editSelectedRobotWidget->setSelectedRobot(robots->getRobotViewByName(robot_name));
     editSelectedRobotWidget->updateHomeMenu();
 }
 
@@ -5017,8 +5042,111 @@ QString MainWindow::prepareCommandPath(const Paths::Path &path) const {
 void MainWindow::testFunctionSlot(){
     qDebug() << "MainWindow::testFunctionSlot called";
     scanMapSlot();
-}
 
+/*
+    using namespace cv;
+
+    QString fileName = QFileDialog::getOpenFileName(this,
+        tr("Open Image"), "", tr("Image Files (*.pgm)"));
+
+    if(!fileName.isEmpty()){
+        QString fileName2 = QFileDialog::getOpenFileName(this,
+            tr("Open Image"), "", tr("Image Files (*.pgm)"));
+        if(!fileName2.isEmpty()){
+            Mat image2 = imread(fileName.toStdString());
+            Mat image1 = imread(fileName2.toStdString());
+            Mat image3 = imread("home/joan/Desktop/map2.pgm");
+
+            if(!image1.empty() && !image2.empty()){
+
+                qDebug() << "FOUND BOTH IMAGES";
+
+                /// create feature detector set.
+                Ptr<FeatureDetector> detector = ORB::create(120);
+                std::vector<KeyPoint> keypoints1, keypoints2, keypoints3;
+
+                BFMatcher dematc(NORM_HAMMING, false);
+
+                /// extract keypoints
+                detector->detect(image1, keypoints1);
+                detector->detect(image2, keypoints2);
+                detector->detect(image3, keypoints3);
+
+                Ptr<DescriptorExtractor> extractor = ORB::create();
+
+                /// extract descriptors
+                Mat dscv1, dscv2, dscv3;
+                extractor->compute(image1, keypoints1, dscv1);
+                extractor->compute(image2, keypoints2, dscv2);
+                extractor->compute(image3, keypoints3, dscv3);
+
+                /// match keypoints
+                std::vector<DMatch> matches;
+                dematc.match(dscv1, dscv2, matches);
+
+                std::vector<KeyPoint> fil1, fil2, fil3;
+                std::vector<Point2f> coord1, coord2, coord3;
+
+                /// find matching point pairs with same distance in both images
+                for (size_t i = 0; i < matches.size(); i++) {
+                    KeyPoint a1 = keypoints1[matches[i].queryIdx],
+                             b1 = keypoints2[matches[i].trainIdx];
+
+                    if (matches[i].distance > 30)
+                    continue;
+
+                    for (size_t j = 0; j < matches.size(); j++) {
+                        KeyPoint a2 = keypoints1[matches[j].queryIdx],
+                                 b2 = keypoints2[matches[j].trainIdx];
+
+
+                        if (matches[j].distance > 70)
+                            continue;
+
+                        /// 30 can be configured !!!
+                        if ( fabs(norm(a1.pt-a2.pt) - norm(b1.pt-b2.pt)) > 30 ||
+                            fabs(norm(a1.pt-a2.pt) - norm(b1.pt-b2.pt)) == 0)
+                            continue;
+
+                        coord1.push_back(a1.pt);
+                        coord1.push_back(a2.pt);
+                        coord2.push_back(b1.pt);
+                        coord2.push_back(b2.pt);
+
+                        fil1.push_back(a1);
+                        fil1.push_back(a2);
+                        fil2.push_back(b1);
+                        fil2.push_back(b2);
+
+                    }
+                }
+
+              /// find homography
+              Mat H = estimateRigidTransform(coord2, coord1, false);
+
+              /// calculate for information
+
+              double rotation = 180./M_PI*atan2(H.at<double>(0, 1), H.at<double>(1, 1));
+              double transx   = H.at<double>(0,2);
+              double transy   = H.at<double>(1,2);
+              double scalex   = sqrt(pow(H.at<double>(0,0),2)+pow(H.at<double>(0,1),2));
+              double scaley   = sqrt(pow(H.at<double>(1,0),2)+pow(H.at<double>(1,1),2));
+
+              qDebug() << rotation << transx << transy << scalex << scaley;
+
+              /// create storage for new image and get transformations
+              Mat image(image1.size(), image1.type());
+              warpAffine(image2,image, H, image.size());
+
+              /// blend image1 onto the transformed image2
+              addWeighted(image, 0.55, image1, 0.55, 0.0, image);
+
+              imwrite("/home/joan/Desktop/result.pgm", image);
+
+            }
+        }
+    }*/
+}
 
 void MainWindow::activateLaserSlot(QString ipAddress, bool activate){
     QPointer<RobotView> robotView = robots->getRobotViewByIp(ipAddress);

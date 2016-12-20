@@ -4,11 +4,12 @@
 class QGraphicsScene;
 class QPushButton;
 class QLineEdit;
-class QLabel;
 class MergeMapGraphicsItem;
+class QCheckBox;
 
 #include <QWidget>
 #include <QSlider>
+#include <QLabel>
 
 class MergeMapListItemWidget : public QWidget {
     Q_OBJECT
@@ -23,6 +24,7 @@ public:
     int getRotation(void) const { return slider->value(); }
     double getResolution(void) const { return resolution; }
     QPointF getOrigin(void) const { return origin; }
+    QString getFileNameLabel(void) const { return fileNameLabel->text(); }
 
 protected:
     void initializeMap(QString fileName, QGraphicsScene* scene, QImage image);
@@ -40,6 +42,7 @@ signals:
     void pixmapClicked(int);
 
 private :
+    QCheckBox* box;
     QPushButton* closeBtn;
     QSlider* slider;
     QLineEdit* rotLineEdit;
