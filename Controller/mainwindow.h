@@ -26,6 +26,7 @@ class CommandController;
 class EditMapWidget;
 class MergeMapWidget;
 class SettingsWidget;
+class ScanMapWidget;
 
 #include "Model/paths.h"
 #include "View/createpointwidget.h"
@@ -146,7 +147,7 @@ private slots:
     void sendPathSelectedRobotSlot(const QString groupName, const QString pathName);
     void updateRobot(const QString ipAddress, const float posX, const float posY, const float ori);
     void updateMetadata(const int width, const int height, const float resolution, const float originX, const float originY);
-    void updateMap(const QByteArray mapArray, int who, QString mapId, QString mapDate, QString resolution, QString originX, QString originY, QString ipAddress);
+    void mapReceivedSlot(const QByteArray mapArray, int who, QString mapId, QString mapDate, QString resolution, QString originX, QString originY, QString ipAddress);
     void launchScan(bool checked);
     void quit(void);
     void setSelectedRobot(QPointer<RobotView> robotView);
@@ -280,6 +281,7 @@ private slots:
     void testFunctionSlot();
     void activateLaserSlot(QString, bool);
     void getMapForMergingSlot(QString robotName);
+    void scanMapSlot();
 
 protected:
     bool changeRobotName(QString name);
@@ -331,6 +333,7 @@ private:
     std::string mapFile;
     QPointer<EditMapWidget> editMapWidget;
     QPointer<MergeMapWidget> mergeMapWidget;
+    QPointer<ScanMapWidget> scanMapWidget;
 
     SettingsWidget* settingsWidget;
 };

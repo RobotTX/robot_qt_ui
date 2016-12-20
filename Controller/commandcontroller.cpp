@@ -179,12 +179,10 @@ void CommandController::cmdAnswerSlot(QString answer){
         if(list.at(0).compare(cmdName) == 0){
             cmdAnswer = answer;
             messageBox.hide();
-        } else {
+        } else
             qDebug() << "CommandController::robotWaitForAnswer Got an answer to the wrong command :" << list;
-        }
-    } else {
+    } else
         qDebug() << "CommandController::robotWaitForAnswer Got a wrong answer :" << list;
-    }
 }
 
 

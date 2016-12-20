@@ -84,7 +84,9 @@ HEADERS += \
     View/mergemapwidget.h \
     View/mergemaplistitemwidget.h \
     View/mergemaplistwidget.h \
-    View/mergemapgraphicsitem.h
+    View/mergemapgraphicsitem.h \
+    View/scanmapwidget.h \
+    View/scanmaplistitemwidget.h
 
 FORMS += Controller/mainwindow.ui
 
@@ -152,7 +154,9 @@ SOURCES += main.cpp \
     View/mergemapwidget.cpp \
     View/mergemaplistitemwidget.cpp \
     View/mergemaplistwidget.cpp \
-    View/mergemapgraphicsitem.cpp
+    View/mergemapgraphicsitem.cpp \
+    View/scanmapwidget.cpp \
+    View/scanmaplistitemwidget.cpp
 
 
 RESOURCES += Resources/resources.qrc

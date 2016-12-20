@@ -10,13 +10,12 @@
 #include <QLineEdit>
 #include <QIntValidator>
 #include <QDebug>
-#include <QGraphicsPixmapItem>
 #include <fstream>
 #include "Controller/mainwindow.h"
 #include "View/mergemapgraphicsitem.h"
 
 MergeMapListItemWidget::MergeMapListItemWidget(int _id, QString fileName, QGraphicsScene* scene, bool _fromRobot, QImage image, double _resolution, double _originX, double _originY):
-    id(_id), origin(QPointF(_originX, _originY)), resolution(_resolution), originInPixel(QPoint(-1, -1)), fromRobot(_fromRobot), pixmapItem(new MergeMapGraphicsItem()){
+    QWidget(), id(_id), origin(QPointF(_originX, _originY)), resolution(_resolution), originInPixel(QPoint(-1, -1)), fromRobot(_fromRobot), pixmapItem(new MergeMapGraphicsItem()){
 
     connect(pixmapItem, SIGNAL(pixmapClicked()), this, SLOT(pixmapClickedSlot()));
     initializeMenu(fileName);

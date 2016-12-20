@@ -5,7 +5,7 @@
 
 /**
  * @brief The MergeMapListWidget class
- * The list widget containing the list of map in the mergeMapWidget
+ * The list widget containing the list of map in the MergeMapWidget and ScanMapWidget
  */
 class MergeMapListWidget : public QListWidget {
         Q_OBJECT

@@ -5,7 +5,7 @@
 
 /**
  * @brief The MergeMapGraphicsItem class
- * The QGraphicsPixmapItem used in the mergeMapWidget,
+ * The QGraphicsPixmapItem used in the MergeMapWidget and ScanMapWidget,
  * reimplemented so that we can distinguish a click from a drag and drop
  */
 class MergeMapGraphicsItem : public QObject, public QGraphicsPixmapItem {

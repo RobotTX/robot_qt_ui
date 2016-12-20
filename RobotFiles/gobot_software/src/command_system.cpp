@@ -123,12 +123,14 @@ bool execCommand(ros::NodeHandle n, std::vector<std::string> command){
 		/// Command for the robot to start to scan the map
 		case 'e':
 			std::cout << "(Command system) Gobot scan the map" << std::endl;
+			return true;
 			return sendAutoMap();
 		break;
 
 		/// Command for the robot to stop to scan the map
 		case 'f':
 			std::cout << "(Command system) Gobot stop scanning the map" << std::endl;
+			return true;
 			return stopAutoMap();
 		break;
 

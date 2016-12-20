@@ -4,7 +4,6 @@
 class QGraphicsScene;
 class QPushButton;
 class QLineEdit;
-class QGraphicsPixmapItem;
 class QLabel;
 class MergeMapGraphicsItem;
 

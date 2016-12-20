@@ -55,6 +55,7 @@
 #include "View/editmapwidget.h"
 #include "View/mergemapwidget.h"
 #include "View/settingswidget.h"
+#include "View/scanmapwidget.h"
 
 #include <chrono>
 #include <thread>
@@ -369,7 +370,7 @@ void MainWindow::initializeRobots(){
 void MainWindow::updateRobot(const QString ipAddress, const float posX, const float posY, const float oriZ){
 
     /// need to first convert the coordinates that we receive from the robot
-    Position robotPositionInPixelCoordinates(convertRobotCoordinatesToPixelCoordinates(Position(posX, posY), map->getOrigin().getX(), map->getOrigin().getY(), map->getResolution(), map->getHeight(), ROBOT_WIDTH));
+    Position robotPositionInPixelCoordinates = convertRobotCoordinatesToPixelCoordinates(Position(posX, posY), map->getOrigin().getX(), map->getOrigin().getY(), map->getResolution(), map->getHeight(), ROBOT_WIDTH);
     float orientation = asin(-oriZ) * 360.0 / PI + 90;
 
     QPointer<RobotView> rv = robots->getRobotViewByIp(ipAddress);
@@ -447,6 +448,8 @@ void MainWindow::launchScan(bool checked){
 
 void MainWindow::newScanningGoalSlot(double x, double y){
     qDebug() << "MainWindow::newScanningGoalSlot Trying to go to" << x << y;
+    Position posInRobotCoordinates = convertPixelCoordinatesToRobotCoordinates(Position(x, y), map->getOrigin().getX(), map->getOrigin().getY(), map->getResolution(), map->getHeight(), ROBOT_WIDTH);
+    qDebug() << "MainWindow::newScanningGoalSlot converted in robot coord to" << posInRobotCoordinates.getX() << posInRobotCoordinates.getY();
 }
 
 void MainWindow::deletePath(int robotNb){
@@ -494,9 +497,8 @@ void MainWindow::deletePath(int robotNb){
                 }
             }
         }
-    } else {
+    } else
         qDebug() << "This robot has no path";
-    }
 }
 
 void MainWindow::stopPath(int robotNb){
@@ -507,9 +509,8 @@ void MainWindow::stopPath(int robotNb){
         bottomLayout->getPlayRobotBtnGroup()->button(robotNb)->setIcon(QIcon(":/icons/play.png"));
         bottomLayout->getStopRobotBtnGroup()->button(robotNb)->setEnabled(false);
         topLayout->setLabel(TEXT_COLOR_SUCCESS, "Path stopped");
-    } else {
+    } else
         topLayout->setLabel(TEXT_COLOR_DANGER, "Path failed to be stopped, please try again");
-    }
 }
 
 void MainWindow::playSelectedRobot(int robotNb){
@@ -1468,7 +1469,7 @@ void MainWindow::setNewHome(QString homeName){
 }
 
 bool MainWindow::sendHomeToRobot(QPointer<RobotView> robot, QSharedPointer<PointView> home){
-    Position posInRobotCoordinates(convertPixelCoordinatesToRobotCoordinates(home->getPoint()->getPosition(), map->getOrigin().getX(), map->getOrigin().getY(), map->getResolution(), map->getHeight(), ROBOT_WIDTH));
+    Position posInRobotCoordinates = convertPixelCoordinatesToRobotCoordinates(home->getPoint()->getPosition(), map->getOrigin().getX(), map->getOrigin().getY(), map->getResolution(), map->getHeight(), ROBOT_WIDTH);
     return commandController->sendCommand(robot->getRobot(), QString("n \"") + QString::number(posInRobotCoordinates.getX()) + "\" \""
                                                       + QString::number(posInRobotCoordinates.getY()) + "\"");
 }
@@ -1541,16 +1542,17 @@ void MainWindow::updateMetadata(const int width, const int height, const float r
     }
 }
 
-void MainWindow::updateMap(const QByteArray mapArray, int who, QString mapId, QString mapDate, QString resolution, QString originX, QString originY, QString ipAddress){
-    qDebug() << "MainWindow::updateMap received a map" << who;
+void MainWindow::mapReceivedSlot(const QByteArray mapArray, int who, QString mapId, QString mapDate, QString resolution, QString originX, QString originY, QString ipAddress){
+    qDebug() << "MainWindow::mapReceivedSlot received a map" << who;
+
     if(who == 2){
-        qDebug() << "MainWindow::updateMap received a map from a robot to merge" << ipAddress << resolution << originX << originY;
+        qDebug() << "MainWindow::mapReceivedSlot received a map from a robot to merge" << ipAddress << resolution << originX << originY;
         QString robotName = robots->getRobotViewByIp(ipAddress)->getRobot()->getName();
         QImage image = map->getImageFromArray(mapArray, true);
 
         emit receivedMapToMerge(robotName, image, resolution.toDouble(), originX.toDouble(), originY.toDouble());
 
-    } else {
+    } else if(who == 1){
         map->setMapFromArray(mapArray, who);
         QPixmap pixmap = QPixmap::fromImage(map->getMapImage());
         mapPixmapItem->setPixmap(pixmap);
@@ -1560,6 +1562,8 @@ void MainWindow::updateMap(const QByteArray mapArray, int who, QString mapId, QS
         }
 
         scene->update();
+    } else {
+        qDebug() << "MainWindow::mapReceivedSlot received a map while scanning";
     }
 }
 
@@ -1732,7 +1736,6 @@ void MainWindow::saveEditMapSlot(){
     }
 }
 
-
 void MainWindow::mergeMapSlot(){
     qDebug() << "MainWindow::mergeMapSlot called";
     // TODO Joan check text
@@ -1768,6 +1771,11 @@ void MainWindow::saveMergeMapSlot(double resolution, Position origin, QImage ima
 
     sendNewMapToRobots();
     topLayout->setLabel(TEXT_COLOR_SUCCESS, "The new merged map has been save successfully");
+}
+
+void MainWindow::scanMapSlot(){
+    qDebug() << "MainWindow::scanMapSlot called";
+    scanMapWidget = QPointer<ScanMapWidget>(new ScanMapWidget(robots));
 }
 
 /**********************************************************************************************************************************/
@@ -4996,7 +5004,7 @@ QString MainWindow::prepareCommandPath(const Paths::Path &path) const {
         float oldPosX = pathPoint->getPoint().getPosition().getX();
         float oldPosY = pathPoint->getPoint().getPosition().getY();
 
-        Position posInRobotCoordinates(convertPixelCoordinatesToRobotCoordinates(Position(oldPosX, oldPosY), map->getOrigin().getX(), map->getOrigin().getY(), map->getResolution(), map->getHeight(), ROBOT_WIDTH));
+        Position posInRobotCoordinates = convertPixelCoordinatesToRobotCoordinates(Position(oldPosX, oldPosY), map->getOrigin().getX(), map->getOrigin().getY(), map->getResolution(), map->getHeight(), ROBOT_WIDTH);
 
         int waitTime = pathPoint->getWaitTime();
 
@@ -5008,12 +5016,7 @@ QString MainWindow::prepareCommandPath(const Paths::Path &path) const {
 
 void MainWindow::testFunctionSlot(){
     qDebug() << "MainWindow::testFunctionSlot called";
-
-    /*if(robots->getRobotsVector().size() > 0)
-        commandController->sendCommand(robots->getRobotsVector().at(0)->getRobot(), QString("s"));*/
-
-
-    mergeMapSlot();
+    scanMapSlot();
 }
 
 
