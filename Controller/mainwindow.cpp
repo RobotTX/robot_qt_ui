@@ -1647,42 +1647,51 @@ void MainWindow::loadMapBtnEvent(){
         QFileInfo mapFileInfo(static_cast<QDir> (fileNameWithoutExtension), "");
         QFileInfo fileInfo(QDir::currentPath(), "../gobot-software/mapConfigs/" + mapFileInfo.fileName() + ".config");
         qDebug() << fileInfo.absoluteFilePath() << "map to load";
-        assert(loadMapConfig(fileInfo.absoluteFilePath().toStdString()));
+        /// if we are able to find the configuration then we load the map
+        if(loadMapConfig(fileInfo.absoluteFilePath().toStdString())){
 
-        /// clears the map of all paths and points
-        clearNewMap();
+            /// clears the map of all paths and points
+            clearNewMap();
 
-        qDebug() << "about to load map from" << QString::fromStdString(mapFile);
-        map->setMapFromFile(QString::fromStdString(mapFile));
-        setWindowTitle(QString::fromStdString(mapFile));
+            qDebug() << "about to load map from" << QString::fromStdString(mapFile);
+            map->setMapFromFile(QString::fromStdString(mapFile));
+            setWindowTitle(QString::fromStdString(mapFile));
 
-        map->setDateTime(QDateTime::currentDateTime());
-        saveMapState();
+            map->setDateTime(QDateTime::currentDateTime());
+            saveMapState();
 
-        QPixmap pixmap = QPixmap::fromImage(map->getMapImage());
-        mapPixmapItem->setPixmap(pixmap);
-        scene->update();
+            QPixmap pixmap = QPixmap::fromImage(map->getMapImage());
+            mapPixmapItem->setPixmap(pixmap);
+            scene->update();
 
-        /// centers the map
-        centerMap();
+            /// centers the map
+            centerMap();
 
-        /// imports paths associated to the map and save them in the current file
-        deserializePaths(fileNameWithoutExtension + "_paths.dat");
+            /// imports paths associated to the map and save them in the current file
+            deserializePaths(fileNameWithoutExtension + "_paths.dat");
 
-        /// imports points associated to the map and save them in the current file
-        XMLParser parser(fileNameWithoutExtension + "_points.xml");
-        parser.readPoints(points);
+            /// imports points associated to the map and save them in the current file
+            XMLParser parser(fileNameWithoutExtension + "_points.xml");
+            parser.readPoints(points);
 
-        /// savesthe new configuration to the current configuration file
-        savePoints(QDir::currentPath() + QDir::separator() + "points.xml");
+            /// savesthe new configuration to the current configuration file
+            savePoints(QDir::currentPath() + QDir::separator() + "points.xml");
 
-        /// updates the group box so that new points can be added
-        createPointWidget->updateGroupBox();
+            /// updates the group box so that new points can be added
+            createPointWidget->updateGroupBox();
 
-        serializePaths(QDir::currentPath() + QDir::separator() + "paths.dat");
+            serializePaths(QDir::currentPath() + QDir::separator() + "paths.dat");
 
-        /// updates the groups of paths menu using the paths that have just been imported
-        leftMenu->getGroupsPathsWidget()->updateGroupsPaths();
+            /// updates the groups of paths menu using the paths that have just been imported
+            leftMenu->getGroupsPathsWidget()->updateGroupsPaths();
+
+        } else {
+            QMessageBox warningBox;
+            warningBox.setText("No configuration found for this map.");
+            warningBox.setStandardButtons(QMessageBox::Ok);
+            warningBox.setDefaultButton(QMessageBox::Ok);
+            warningBox.exec();
+        }
     }
 }
 
@@ -1741,10 +1750,10 @@ void MainWindow::saveEditMapSlot(){
 
 void MainWindow::mergeMapSlot(){
     qDebug() << "MainWindow::mergeMapSlot called";
-    // TODO Joan check text
-    topLayout->setLabel(TEXT_COLOR_INFO, "You can select a map by clicking on it or by clicking on the list in the menu."
+
+    topLayout->setLabel(TEXT_COLOR_INFO, "You can select a map by clicking it or by clicking the list in the menu."
                                          "\nYou can move a map by dragging and dropping it or by using the directional keys."
-                                         "\nYou can change the rotation of the map in the menu using the text block or the slider.");
+                                         "\nYou can rotate the map in the menu using the text block or the slider.");
     mergeMapWidget = QPointer<MergeMapWidget>(new MergeMapWidget(robots));
     connect(mergeMapWidget, SIGNAL(saveMergeMap(double, Position, QImage, QString)), this, SLOT(saveMergeMapSlot(double, Position, QImage, QString)));
     connect(mergeMapWidget, SIGNAL(getMapForMerging(QString)), this, SLOT(getMapForMergingSlot(QString)));
@@ -4386,8 +4395,13 @@ void MainWindow::clearNewMap(){
     /// Update the left menu displaying the list of groups and buttons
     pointsLeftWidget->updateGroupButtonGroup();
 
-    for(int i = 0; i < robots->getRobotsVector().size(); i++)
+    for(int i = 0; i < robots->getRobotsVector().size(); i++){
         robots->getRobotsVector().at(i)->getRobot()->clearPath();
+        if(robots->getRobotsVector().at(i)->getRobot()->getHome()){
+            robots->getRobotsVector().at(i)->getRobot()->getHome()->hide();
+            robots->getRobotsVector().at(i)->getRobot()->setHome(QSharedPointer<PointView>());
+        }
+    }
 }
 
 void MainWindow::delay(const int ms){
@@ -4801,7 +4815,7 @@ void MainWindow::updateHomeInfo(const QString robot_name, QString posX, QString 
         QSharedPointer<PointView> home_app = points->findPointViewByPos(p);
         if(home_app){
             setHomeAtConnection(robot_name, p);
-            qDebug() << "HOME APP" << home_app->getPoint()->getName();
+            qDebug() << "HOME APP same on both side" << home_app->getPoint()->getName();
         } else {
             robotHasNoHome(robotView->getRobot()->getName());
         }

@@ -333,6 +333,7 @@ private:
     QPointer<MergeMapWidget> mergeMapWidget;
 
     SettingsWidget* settingsWidget;
+
 };
 
 #endif /// MAINWINDOW_H

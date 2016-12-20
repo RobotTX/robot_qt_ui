@@ -1,9 +1,7 @@
 #include "mergemaplistitemwidget.h"
 #include <QHBoxLayout>
 #include <QVBoxLayout>
-#include <QLabel>
 #include <QGraphicsScene>
-#include <QLabel>
 #include <QPushButton>
 #include "stylesettings.h"
 #include <QDir>
@@ -14,6 +12,7 @@
 #include <fstream>
 #include "Controller/mainwindow.h"
 #include "View/mergemapgraphicsitem.h"
+#include <QCheckBox>
 
 MergeMapListItemWidget::MergeMapListItemWidget(int _id, QString fileName, QGraphicsScene* scene, bool _fromRobot, QImage image, double _resolution, double _originX, double _originY):
     id(_id), origin(QPointF(_originX, _originY)), resolution(_resolution), originInPixel(QPoint(-1, -1)), fromRobot(_fromRobot), pixmapItem(new MergeMapGraphicsItem()){
@@ -42,6 +41,7 @@ void MergeMapListItemWidget::initializeMenu(QString fileName){
             double originX, originY;
             std::string osef;
 
+            /// easier to read everything and only use the variables that we need
             mapConfig >> osef >> osef >> osef >> osef >> osef >> osef >> originX >> originY >> resolution;
 
             origin = QPointF(originX, originY);
@@ -69,7 +69,6 @@ void MergeMapListItemWidget::initializeMenu(QString fileName){
     topLayout->addWidget(closeBtn, Qt::AlignRight);
 
     layout->addLayout(topLayout);
-
 
     QVBoxLayout* bottomLayout = new QVBoxLayout();
     QHBoxLayout* midLayout = new QHBoxLayout();

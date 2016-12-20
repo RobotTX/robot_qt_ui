@@ -27,6 +27,9 @@ public:
     int getSettingMapChoice(void) const { return settingMapChoice; }
     QMap<int, QPair<QString, bool>> getIDtoIPMap(void) const { return idToIpMap; }
 
+protected:
+    void showEvent(QShowEvent* event);
+
 signals:
     void activateLaser(QString, bool);
 

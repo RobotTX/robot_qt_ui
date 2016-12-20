@@ -189,3 +189,13 @@ void SettingsWidget::saveSlot(){
     applySlot();
     close();
 }
+
+void SettingsWidget::showEvent(QShowEvent *event){
+    chooseMapBox->setCurrentIndex(settingMapChoice);
+    foreach(QAbstractButton* button, robotsLaserButtonGroup->buttons()){
+        int index = robotsLaserButtonGroup->id(button);
+        /// contains the bool value which stores whether or not the laser data should be activated for this robot
+        if(idToIpMap.value(index).second)
+            button->setChecked(true);
+    }
+}
