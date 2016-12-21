@@ -157,7 +157,7 @@ private slots:
 
     void openMergeDialog();
 
-    void mergeAutomatically();
+    void mergeAutomatically(unsigned int map_1_id, unsigned int map_2_id);
 
 signals:
     /**

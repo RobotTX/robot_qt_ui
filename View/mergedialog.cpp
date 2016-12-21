@@ -4,6 +4,7 @@
 #include <QHBoxLayout>
 #include "mergemapwidget.h"
 #include "View/custompushbutton.h"
+#include "assert.h"
 
 MergeDialog::MergeDialog(QWidget* parent): nbMapsChecked(0) {
 
@@ -25,6 +26,7 @@ MergeDialog::MergeDialog(QWidget* parent): nbMapsChecked(0) {
     }
     CustomPushButton* cancelButton = new CustomPushButton("Cancel", this);
     mergeButton = new CustomPushButton("Merge", this);
+    mergeButton->setToolTip("Select exactly two maps and click to merge them");
     mergeButton->setEnabled(false);
     buttonsLayout->addWidget(cancelButton);
     buttonsLayout->addWidget(mergeButton);
@@ -35,11 +37,29 @@ MergeDialog::MergeDialog(QWidget* parent): nbMapsChecked(0) {
     setGeometry(500, 500, 150, 150);
 
     connect(cancelButton, SIGNAL(clicked()), this, SLOT(close()));
-    connect(mergeButton, SIGNAL(clicked()), parent, SLOT(mergeAutomatically()));
+    connect(mergeButton, SIGNAL(clicked()), this, SLOT(emitMapsToMerge()));
 }
 
 void MergeDialog::updateNbMapsChecked(bool checked){
     (checked) ? nbMapsChecked++ : nbMapsChecked-- ;
     /// if two maps exactly are chosen then we allow the merge
     mergeButton->setEnabled((nbMapsChecked == 2) ? true : false);
+}
+
+void MergeDialog::emitMapsToMerge(){
+    unsigned int first_map_id(-1);
+    unsigned int second_map_id(-1);
+    bool found_first(false);
+    for(int idx = 0; idx < layout->count(); idx++){
+        QWidget * const item = layout->itemAt(idx)->widget();
+        if(item && static_cast<QAbstractButton *>(item)->isChecked()){
+            if(!found_first){
+                first_map_id = idx;
+                found_first = true;
+            } else
+                second_map_id = idx;
+        }
+    }
+    assert(first_map_id != -1u && second_map_id != -1u);
+    emit mapsToMerge(first_map_id, second_map_id);
 }

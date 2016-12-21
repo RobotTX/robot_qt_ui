@@ -14,7 +14,7 @@ class QCheckBox;
 class MergeMapListItemWidget : public QWidget {
     Q_OBJECT
 public:
-    MergeMapListItemWidget(int _id, QString fileName, QGraphicsScene *scene, bool _fromRobot, QImage image = QImage(), double _resolution = -1, double _originX = -1, double _originY = -1);
+    MergeMapListItemWidget(int _id, QString _fileName, QGraphicsScene *scene, bool _fromRobot, QImage image = QImage(), double _resolution = -1, double _originX = -1, double _originY = -1);
 
     /// Setter
     void setId(const int _id){ id = _id; }
@@ -25,6 +25,7 @@ public:
     double getResolution(void) const { return resolution; }
     QPointF getOrigin(void) const { return origin; }
     QString getFileNameLabel(void) const { return fileNameLabel->text(); }
+    QString getFileName(void) const { return fileName; }
 
 protected:
     void initializeMap(QString fileName, QGraphicsScene* scene, QImage image);
@@ -33,8 +34,10 @@ protected:
 private slots:
     void closeBtnSlot();
     void rotLineEditSlot(QString text);
-    void sliderSlot(int value);
     void pixmapClickedSlot();
+
+public slots:
+    void sliderSlot(int value);
 
 signals:
     void deleteMap(int);
@@ -46,13 +49,16 @@ private :
     QPushButton* closeBtn;
     QSlider* slider;
     QLineEdit* rotLineEdit;
-    MergeMapGraphicsItem* pixmapItem;
     int id;
     QLabel* fileNameLabel;
-    QPointF origin;
-    QPoint originInPixel;
-    double resolution;
     bool fromRobot;
+    QPointF origin;
+    double resolution;
+    MergeMapGraphicsItem* pixmapItem;
+    QPoint originInPixel;
+    QString fileName;
 };
 
-#endif // MERGEMAPLISTITEMWIDGET_H
+int mod(const int a, const int b);
+
+#endif /// MERGEMAPLISTITEMWIDGET_H

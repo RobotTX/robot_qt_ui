@@ -19,7 +19,9 @@
 #include <opencv2/opencv.hpp>
 #include <opencv2/features2d.hpp>
 
-//#include "opencv2/xfeatures2d.hpp"
+#include "opencv2/xfeatures2d.hpp"
+
+#include "Model/opencvqttransform.h"
 
 MergeMapWidget::MergeMapWidget(QSharedPointer<Robots> _robots, QWidget *parent) : QWidget(parent), robots(_robots), nbMaps(0) {
     setAttribute(Qt::WA_DeleteOnClose);
@@ -79,6 +81,7 @@ void MergeMapWidget::initializeMenu(){
     topMenuLayout->addWidget(listWidget);
 
     button = new CustomPushButton("Merge automatically", this);
+    button->setToolTip("You need at least two maps to merge them automatically");
     button->setEnabled(false);
     connect(button, SIGNAL(clicked()), this, SLOT(openMergeDialog()));
     topMenuLayout->addWidget(button);
@@ -188,7 +191,6 @@ void MergeMapWidget::addMap(QString fileName, bool fromRobot, QImage image, doub
 
     listWidget->addItem(listWidgetItem);
     listWidget->setItemWidget(listWidgetItem, listItem);
-
 }
 
 void MergeMapWidget::robotMenuSlot(QAction* action){
@@ -445,6 +447,8 @@ void MergeMapWidget::deleteMapSlot(int itemId){
     button->setEnabled((--nbMaps < 2) ? false : true);
 
     refreshIds();
+
+
 }
 
 void MergeMapWidget::refreshIds(){
@@ -479,112 +483,100 @@ void MergeMapWidget::selectPixmap(int id){
 
 void MergeMapWidget::openMergeDialog(){
     dialog = new MergeDialog(this);
+    connect(dialog, SIGNAL(mapsToMerge(unsigned int, unsigned int)), this, SLOT(mergeAutomatically(unsigned int, unsigned int)));
     dialog->exec();
 }
 
-void MergeMapWidget::mergeAutomatically(){
+void MergeMapWidget::mergeAutomatically(unsigned int map_1_id, unsigned int map_2_id){
     qDebug() << "MergeMapWidget::mergeAutomatically called";
-/*
+
     using namespace cv;
 
-    QString fileName = QFileDialog::getOpenFileName(this,
-        tr("Open Image"), "", tr("Image Files (*.pgm)"));
+    MergeMapListItemWidget* map_1 = static_cast<MergeMapListItemWidget*> ( listWidget->itemWidget(listWidget->item(map_1_id)) );
+    MergeMapListItemWidget* map_2 = static_cast<MergeMapListItemWidget*> ( listWidget->itemWidget(listWidget->item(map_2_id)) );
 
-    if(!fileName.isEmpty()){
-        QString fileName2 = QFileDialog::getOpenFileName(this,
-            tr("Open Image"), "", tr("Image Files (*.pgm)"));
-        if(!fileName2.isEmpty()){
-            Mat image2 = imread(fileName.toStdString());
-            Mat image1 = imread(fileName2.toStdString());
-            Mat image3 = imread("home/joan/Desktop/map2.pgm");
+    Mat image2 = imread(map_1->getFileName().toStdString());
+    Mat image1 = imread(map_2->getFileName().toStdString());
 
-            if(!image1.empty() && !image2.empty()){
+    if(!image1.empty() && !image2.empty()){
 
-                qDebug() << "FOUND BOTH IMAGES";
+        qDebug() << "FOUND BOTH IMAGES";
 
-                /// create feature detector set.
-                Ptr<FeatureDetector> detector = ORB::create(120);
-                std::vector<KeyPoint> keypoints1, keypoints2, keypoints3;
+        /// create feature detector set.
+        Ptr<FeatureDetector> detector = ORB::create(120);
+        std::vector<KeyPoint> keypoints1, keypoints2;
 
-                BFMatcher dematc(NORM_HAMMING, false);
+        BFMatcher dematc(NORM_HAMMING, false);
 
-                /// extract keypoints
-                detector->detect(image1, keypoints1);
-                detector->detect(image2, keypoints2);
-                detector->detect(image3, keypoints3);
+        /// extract keypoints
+        detector->detect(image1, keypoints1);
+        detector->detect(image2, keypoints2);
 
-                Ptr<DescriptorExtractor> extractor = ORB::create();
+        Ptr<DescriptorExtractor> extractor = ORB::create();
 
-                /// extract descriptors
-                Mat dscv1, dscv2, dscv3;
-                extractor->compute(image1, keypoints1, dscv1);
-                extractor->compute(image2, keypoints2, dscv2);
-                extractor->compute(image3, keypoints3, dscv3);
+        /// extract descriptors
+        Mat dscv1, dscv2;
+        extractor->compute(image1, keypoints1, dscv1);
+        extractor->compute(image2, keypoints2, dscv2);
 
-                /// match keypoints
-                std::vector<DMatch> matches;
-                dematc.match(dscv1, dscv2, matches);
+        /// match keypoints
+        std::vector<DMatch> matches;
+        dematc.match(dscv1, dscv2, matches);
 
-                std::vector<KeyPoint> fil1, fil2, fil3;
-                std::vector<Point2f> coord1, coord2, coord3;
+        std::vector<KeyPoint> fil1, fil2;
+        std::vector<Point2f> coord1, coord2;
 
-                /// find matching point pairs with same distance in both images
-                for (size_t i = 0; i < matches.size(); i++) {
-                    KeyPoint a1 = keypoints1[matches[i].queryIdx],
-                             b1 = keypoints2[matches[i].trainIdx];
+        /// find matching point pairs with same distance in both images
+        for (size_t i = 0; i < matches.size(); i++) {
+            KeyPoint a1 = keypoints1[matches[i].queryIdx],
+                     b1 = keypoints2[matches[i].trainIdx];
 
-                    if (matches[i].distance > 30)
+            if (matches[i].distance > 30)
+            continue;
+
+            for (size_t j = 0; j < matches.size(); j++) {
+                KeyPoint a2 = keypoints1[matches[j].queryIdx],
+                         b2 = keypoints2[matches[j].trainIdx];
+
+
+                if (matches[j].distance > 70)
                     continue;
 
-                    for (size_t j = 0; j < matches.size(); j++) {
-                        KeyPoint a2 = keypoints1[matches[j].queryIdx],
-                                 b2 = keypoints2[matches[j].trainIdx];
+                /// 30 can be configured !!!
+                if ( fabs(norm(a1.pt-a2.pt) - norm(b1.pt-b2.pt)) > 30 ||
+                    fabs(norm(a1.pt-a2.pt) - norm(b1.pt-b2.pt)) == 0)
+                    continue;
 
+                coord1.push_back(a1.pt);
+                coord1.push_back(a2.pt);
+                coord2.push_back(b1.pt);
+                coord2.push_back(b2.pt);
 
-                        if (matches[j].distance > 70)
-                            continue;
-
-                        /// 30 can be configured !!!
-                        if ( fabs(norm(a1.pt-a2.pt) - norm(b1.pt-b2.pt)) > 30 ||
-                            fabs(norm(a1.pt-a2.pt) - norm(b1.pt-b2.pt)) == 0)
-                            continue;
-
-                        coord1.push_back(a1.pt);
-                        coord1.push_back(a2.pt);
-                        coord2.push_back(b1.pt);
-                        coord2.push_back(b2.pt);
-
-                        fil1.push_back(a1);
-                        fil1.push_back(a2);
-                        fil2.push_back(b1);
-                        fil2.push_back(b2);
-
-                    }
-                }
-
-              /// find homography
-              Mat H = estimateRigidTransform(coord2, coord1, false);
-
-              /// calculate for information
-
-              double rotation = 180./M_PI*atan2(H.at<double>(0, 1), H.at<double>(1, 1));
-              double transx   = H.at<double>(0,2);
-              double transy   = H.at<double>(1,2);
-              double scalex   = sqrt(pow(H.at<double>(0,0),2)+pow(H.at<double>(0,1),2));
-              double scaley   = sqrt(pow(H.at<double>(1,0),2)+pow(H.at<double>(1,1),2));
-
-              qDebug() << rotation << transx << transy << scalex << scaley;
-
-              /// create storage for new image and get transformations
-              Mat image(image1.size(), image1.type());
-              warpAffine(image2,image, H, image.size());
-
-              /// blend image1 onto the transformed image2
-              addWeighted(image, 0.55, image1, 0.55, 0.0, image);
-
-              imwrite("/home/joan/Desktop/result.pgm", image);
+                fil1.push_back(a1);
+                fil1.push_back(a2);
+                fil2.push_back(b1);
+                fil2.push_back(b2);
 
             }
         }
-    }*/
+
+      /// find homography
+      Mat H = estimateRigidTransform(coord2, coord1, false);
+
+      /// calculate for information
+      double rotation = 180./M_PI * atan2(H.at<double>(0, 1), H.at<double>(1, 1));
+      double transx   = H.at<double>(0, 2);
+      double transy   = H.at<double>(1, 2);
+      double scalex   = sqrt(pow(H.at<double>(0, 0), 2) + pow(H.at<double>(0, 1), 2));
+      double scaley   = sqrt(pow(H.at<double>(1, 0), 2) + pow(H.at<double>(1, 1), 2));
+
+      qDebug() << rotation << transx << transy << scalex << scaley << image1.rows << image1.cols ;
+
+      map_2->sliderSlot(qRound(rotation));
+      map_2->getPixmapItem()->setScale(scalex);
+
+    }
+
+    dialog->close();
 }
+

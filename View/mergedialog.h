@@ -16,6 +16,11 @@ public :
 private slots:
     void updateNbMapsChecked(bool checked);
 
+    void emitMapsToMerge();
+
+signals:
+    void mapsToMerge(unsigned int, unsigned int);
+
 private:
     CustomPushButton* mergeButton;
     QVBoxLayout* mainLayout;

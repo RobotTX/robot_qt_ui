@@ -16,16 +16,16 @@ INCLUDEPATH += /usr/local/include/opencv
 INCLUDEPATH += /usr/local/include/opencv2
 INCLUDEPATH += /usr/lib/x86_64-linux-gnu/opencv_contrib/modules/
 LIBS += -L/usr/local/lib \
-#-lopencv_stitching -lopencv_legacy -lopencv_superres \
-#-lopencv_videostab -lopencv_aruco -lopencv_bgsegm -lopencv_bioinspired \
-#-lopencv_ccalib -lopencv_dnn -lopencv_dpm -lopencv_fuzzy -lopencv_hdf \
-#-lopencv_line_descriptor -lopencv_optflow -lopencv_reg -lopencv_saliency \
-#-lopencv_stereo -lopencv_structured_light -lopencv_phase_unwrapping -lopencv_rgbd \
-#-lopencv_viz -lopencv_surface_matching -lopencv_tracking -lopencv_datasets \
-#-lopencv_text -lopencv_face -lopencv_plot -lopencv_xfeatures2d -lopencv_shape \
-#-lopencv_video -lopencv_ximgproc -lopencv_calib3d -lopencv_features2d -lopencv_flann \
-#-lopencv_xobjdetect -lopencv_objdetect -lopencv_ml -lopencv_xphoto -lopencv_highgui \
-#-lopencv_videoio -lopencv_imgcodecs -lopencv_photo -lopencv_imgproc -lopencv_core
+-lopencv_stitching -lopencv_legacy -lopencv_superres \
+-lopencv_videostab -lopencv_aruco -lopencv_bgsegm -lopencv_bioinspired \
+-lopencv_ccalib -lopencv_dnn -lopencv_dpm -lopencv_fuzzy -lopencv_hdf \
+-lopencv_line_descriptor -lopencv_optflow -lopencv_reg -lopencv_saliency \
+-lopencv_stereo -lopencv_structured_light -lopencv_phase_unwrapping -lopencv_rgbd \
+-lopencv_viz -lopencv_surface_matching -lopencv_tracking -lopencv_datasets \
+-lopencv_text -lopencv_face -lopencv_plot -lopencv_xfeatures2d -lopencv_shape \
+-lopencv_video -lopencv_ximgproc -lopencv_calib3d -lopencv_features2d -lopencv_flann \
+-lopencv_xobjdetect -lopencv_objdetect -lopencv_ml -lopencv_xphoto -lopencv_highgui \
+-lopencv_videoio -lopencv_imgcodecs -lopencv_photo -lopencv_imgproc -lopencv_core
 
 QMAKE_CXXFLAGS += -std=c++11 -Wall -lz
 
@@ -99,7 +99,8 @@ HEADERS += \
     View/mergemapgraphicsitem.h \
     View/scanmapwidget.h \
     View/scanmaplistitemwidget.h \
-    View/mergedialog.h
+    View/mergedialog.h \
+    Model/opencvqttransform.h
 
 FORMS += Controller/mainwindow.ui
 

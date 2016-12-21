@@ -13,15 +13,22 @@
 #include "View/mergemapgraphicsitem.h"
 #include <QCheckBox>
 
-MergeMapListItemWidget::MergeMapListItemWidget(int _id, QString fileName, QGraphicsScene* scene, bool _fromRobot, QImage image, double _resolution, double _originX, double _originY):
-    QWidget(), id(_id), origin(QPointF(_originX, _originY)), resolution(_resolution), originInPixel(QPoint(-1, -1)), fromRobot(_fromRobot), pixmapItem(new MergeMapGraphicsItem()){
+MergeMapListItemWidget::MergeMapListItemWidget(int _id, QString _fileName, QGraphicsScene* scene, bool _fromRobot, QImage image, double _resolution, double _originX, double _originY):
+    QWidget(), id(_id),  fromRobot(_fromRobot), origin(QPointF(_originX, _originY)), resolution(_resolution), pixmapItem(new MergeMapGraphicsItem()), originInPixel(QPoint(-1, -1)) {
 
     connect(pixmapItem, SIGNAL(pixmapClicked()), this, SLOT(pixmapClickedSlot()));
-    initializeMenu(fileName);
-    initializeMap(fileName, scene, image);
+
+    if(fromRobot){
+        fileName = QDir::currentPath() + QDir::separator() + "robotsmapFile.pgm";
+        image.save(fileName, "PGM");
+    } else
+        fileName = _fileName;
+
+    initializeMenu(_fileName);
+    initializeMap(_fileName, scene, image);
 }
 
-void MergeMapListItemWidget::initializeMenu(QString fileName){
+void MergeMapListItemWidget::initializeMenu(QString _fileName){
     QVBoxLayout* layout = new QVBoxLayout(this);
 
     QHBoxLayout* topLayout = new QHBoxLayout();
@@ -29,11 +36,11 @@ void MergeMapListItemWidget::initializeMenu(QString fileName){
     /// If we received the map from a robot, we already have a resolution and origin
     /// but if add a map from a file, we need to find a .config file to have this data
     if(!fromRobot){
-        int index = fileName.lastIndexOf(QDir::separator());
+        int index = _fileName.lastIndexOf(QDir::separator());
         if(index != -1)
-            fileName = fileName.remove(0, index+1);
+            _fileName = _fileName.remove(0, index+1);
 
-        QString str = QDir::currentPath() + QDir::separator() + "mapConfigs" + QDir::separator() + fileName.remove(fileName.size()-4, 4) + ".config";
+        QString str = QDir::currentPath() + QDir::separator() + "mapConfigs" + QDir::separator() + _fileName.remove(_fileName.size()-4, 4) + ".config";
         qDebug() << "MergeMapListItemWidget::initializeMenu Trying to find a map config at" << str;
         std::ifstream mapConfig(str.toStdString(), std::ios::in);
         if(mapConfig.is_open()){
@@ -49,13 +56,13 @@ void MergeMapListItemWidget::initializeMenu(QString fileName){
 
             qDebug() << "MergeMapListItemWidget::initializeMenu Got a resolution and origin" << resolution << origin;
         } else
-            qDebug() << "MergeMapListItemWidget::initializeMenu no config file found for the map" << fileName;
+            qDebug() << "MergeMapListItemWidget::initializeMenu no config file found for the map" << _fileName;
     } else
         qDebug() << "MergeMapListItemWidget::initializeMenu Got a resolution and origin from the robot" << resolution << origin;
 
     /// Label with the name of the map imported
-    fileNameLabel = new QLabel(fileName, this);
-    fileNameLabel->setToolTip(fileName);
+    fileNameLabel = new QLabel(_fileName, this);
+    fileNameLabel->setToolTip(_fileName);
     topLayout->addWidget(fileNameLabel, Qt::AlignLeft);
 
     /// Btn to remove the map from the list
@@ -97,9 +104,9 @@ void MergeMapListItemWidget::initializeMenu(QString fileName){
     connect(slider, SIGNAL(valueChanged(int)), this, SLOT(sliderSlot(int)));
 }
 
-void MergeMapListItemWidget::initializeMap(QString fileName, QGraphicsScene* scene, QImage image){
+void MergeMapListItemWidget::initializeMap(QString _fileName, QGraphicsScene* scene, QImage image){
     if(!fromRobot)
-        image = QImage(fileName,"PGM");
+        image = QImage(_fileName,"PGM");
 
 
     int top = image.height();
@@ -177,7 +184,8 @@ void MergeMapListItemWidget::rotLineEditSlot(QString text){
 }
 
 void MergeMapListItemWidget::sliderSlot(int value){
-    rotLineEdit->setText(QString::number(value));
+    qDebug() << value%360 << value;
+    rotLineEdit->setText(QString::number(mod(value, 360)));
     /// rotate the map
     pixmapItem->setRotation(value);
 }
@@ -185,4 +193,13 @@ void MergeMapListItemWidget::sliderSlot(int value){
 
 void MergeMapListItemWidget::pixmapClickedSlot(){
     emit pixmapClicked(id);
+}
+
+int mod (const int a, const int b) {
+   if(b < 0)
+     return mod(a, -b);
+   int ret = a % b;
+   if(ret < 0)
+     ret += b;
+   return ret;
 }

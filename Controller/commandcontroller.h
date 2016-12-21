@@ -67,8 +67,8 @@ private slots:
 private:
     /// the message box that's prompted to the user when a command is sent
     CommandMessageBox messageBox;
-    QString cmdAnswer;
     QString robotName;
+    QString cmdAnswer;
     QString cmdName;
 };
 

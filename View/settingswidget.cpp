@@ -191,6 +191,7 @@ void SettingsWidget::saveSlot(){
 }
 
 void SettingsWidget::showEvent(QShowEvent *event){
+    Q_UNUSED(event);
     chooseMapBox->setCurrentIndex(settingMapChoice);
     foreach(QAbstractButton* button, robotsLaserButtonGroup->buttons()){
         int index = robotsLaserButtonGroup->id(button);
