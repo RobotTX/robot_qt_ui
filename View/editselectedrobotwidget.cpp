@@ -251,7 +251,15 @@ void EditSelectedRobotWidget::updatePathsMenu(){
 }
 
 void EditSelectedRobotWidget::openMenu(){
-    pathsMenu->exec(QCursor::pos());
+    if(!pathsMenu->actions().empty())
+        pathsMenu->exec(QCursor::pos());
+    else {
+        QMessageBox msgBox;
+        msgBox.setText("You don't have any paths yet, you can create paths by going to the paths menu");
+        msgBox.setStandardButtons(QMessageBox::Cancel);
+        msgBox.setDefaultButton(QMessageBox::Cancel);
+        msgBox.exec();
+    }
 }
 
 void EditSelectedRobotWidget::assignPath(QAction *action){
@@ -270,7 +278,15 @@ void EditSelectedRobotWidget::assignPath(QAction *action){
 }
 
 void EditSelectedRobotWidget::openHomeMenu(){
-    homeMenu->exec(QCursor::pos());
+    if(!homeMenu->actions().empty())
+        homeMenu->exec(QCursor::pos());
+    else {
+        QMessageBox msgBox;
+        msgBox.setText("You don't have any potential home to assign your robot yet, to create one click the map");
+        msgBox.setStandardButtons(QMessageBox::Cancel);
+        msgBox.setDefaultButton(QMessageBox::Cancel);
+        msgBox.exec();
+    }
 }
 
 void EditSelectedRobotWidget::assignHome(QAction *action){

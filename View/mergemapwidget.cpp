@@ -94,6 +94,7 @@ void MergeMapWidget::initializeMenu(){
     connect(cancelBtn, SIGNAL(clicked()), this, SLOT(cancelSlot()));
 
     CustomPushButton* saveBtn = new CustomPushButton("Save", this, CustomPushButton::ButtonType::LEFT_MENU, "center");
+    saveBtn->setToolTip("You need at least two maps to save");
     cancelSaveLayout->addWidget(saveBtn);
     connect(saveBtn, SIGNAL(clicked()), this, SLOT(saveSlot()));
     menuLayout->addLayout(cancelSaveLayout);
@@ -560,20 +561,19 @@ void MergeMapWidget::mergeAutomatically(unsigned int map_1_id, unsigned int map_
             }
         }
 
-      /// find homography
-      Mat H = estimateRigidTransform(coord2, coord1, false);
+        /// find homography
+        Mat H = estimateRigidTransform(coord2, coord1, false);
 
-      /// calculate for information
-      double rotation = 180./M_PI * atan2(H.at<double>(0, 1), H.at<double>(1, 1));
-      double transx   = H.at<double>(0, 2);
-      double transy   = H.at<double>(1, 2);
-      double scalex   = sqrt(pow(H.at<double>(0, 0), 2) + pow(H.at<double>(0, 1), 2));
-      double scaley   = sqrt(pow(H.at<double>(1, 0), 2) + pow(H.at<double>(1, 1), 2));
+        /// calculate for information
+        double rotation = 180./M_PI * atan2(H.at<double>(0, 1), H.at<double>(1, 1));
+        double transx   = H.at<double>(0, 2);
+        double transy   = H.at<double>(1, 2);
+        double scalex   = sqrt(pow(H.at<double>(0, 0), 2) + pow(H.at<double>(0, 1), 2));
+        double scaley   = sqrt(pow(H.at<double>(1, 0), 2) + pow(H.at<double>(1, 1), 2));
 
-      qDebug() << rotation << transx << transy << scalex << scaley << image1.rows << image1.cols ;
+        qDebug() << rotation << transx << transy << scalex << scaley << image1.rows << image1.cols ;
 
-      map_2->sliderSlot(qRound(rotation));
-      map_2->getPixmapItem()->setScale(scalex);
+        map_2->sliderSlot(qRound(rotation));
 
     }
 

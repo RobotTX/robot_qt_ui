@@ -219,8 +219,17 @@ void PathCreationWidget::addPathPointByMenuSlot(void){
 
 void PathCreationWidget::clicked(void){
     /// We triger the QMenu to display the list of permanent points
-    if(pointsMenu != NULL)
-        pointsMenu->exec(QCursor::pos());
+    if(pointsMenu != NULL){
+        if(!pointsMenu->actions().empty())
+            pointsMenu->exec(QCursor::pos());
+        else {
+            QMessageBox msgBox;
+            msgBox.setText("You don't have any points yet, create points by clicking the map");
+            msgBox.setStandardButtons(QMessageBox::Cancel);
+            msgBox.setDefaultButton(QMessageBox::Cancel);
+            msgBox.exec();
+        }
+    }
 }
 
 void PathCreationWidget::pointClicked(QAction *action){

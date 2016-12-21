@@ -10,7 +10,11 @@ MergeDialog::MergeDialog(QWidget* parent): nbMapsChecked(0) {
 
     setWindowTitle("Merge two maps automatically");
     mainLayout = new QVBoxLayout(this);
+
+    /// the layout for the cancel and merge buttons
     buttonsLayout = new QHBoxLayout();
+
+    /// the layout containing the buttons used to select the different maps
     layout = new QGridLayout();
 
     QLabel* label = new QLabel("Select exactly two maps and click \"merge\" to merge them", this);
@@ -21,16 +25,18 @@ MergeDialog::MergeDialog(QWidget* parent): nbMapsChecked(0) {
         qDebug() << "MergeDialog" << item->getFileNameLabel();
         CustomPushButton* button = new CustomPushButton(item->getFileNameLabel(), this);
         connect(button, SIGNAL(clicked(bool)), this, SLOT(updateNbMapsChecked(bool)));
+        /// those buttons can be selected to perform a merge operation on the corresponding maps
         button->setCheckable(true);
+        /// we group the buttons by columns of 2 like in elementary school
         layout->addWidget(button, i/2, i%2);
     }
+
     CustomPushButton* cancelButton = new CustomPushButton("Cancel", this);
     mergeButton = new CustomPushButton("Merge", this);
     mergeButton->setToolTip("Select exactly two maps and click to merge them");
     mergeButton->setEnabled(false);
     buttonsLayout->addWidget(cancelButton);
     buttonsLayout->addWidget(mergeButton);
-
 
     mainLayout->addLayout(layout);
     mainLayout->addLayout(buttonsLayout);
