@@ -152,7 +152,7 @@ EditSelectedRobotWidget::EditSelectedRobotWidget(QWidget* _parent, MainWindow* _
 }
 
 void EditSelectedRobotWidget::setSelectedRobot(QPointer<RobotView> const _robotView){
-    qDebug() << _robotView->getRobot()->getName();
+    qDebug() << "EditSelectedRobotWidget::setSelectedRobot" << _robotView->getRobot()->getName();
 
     pathChanged = false;
 
@@ -162,12 +162,12 @@ void EditSelectedRobotWidget::setSelectedRobot(QPointer<RobotView> const _robotV
     nameLabel->setText(robotView->getRobot()->getName());
     ipAddressLabel->setText("Ip : "+robotView->getRobot()->getIp());
     wifiNameLabel->setText(robotView->getRobot()->getWifi());
+    batteryLevel->setValue(robotView->getRobot()->getBatteryLevel());
 
     /// If the robot has a home, we display the name of the point, otherwise a default text
     if(robotView->getRobot()->getHome() != NULL){
         home = robotView->getRobot()->getHome();
         homeLabel->setText("Home : " + robotView->getRobot()->getHome()->getPoint()->getName());
-
     } else {
         homeBtn->setText("Assign a home point");
         homeLabel->setText("Home : ");
@@ -183,7 +183,7 @@ void EditSelectedRobotWidget::editName(void){
         rv->getRobot()->setName(nameLabel->text());
         rv->getRobot()->setWifi(wifiNameLabel->text());
     } else {
-        qDebug() << "editName : something unexpected happened";
+        qDebug() << "EditSelectedRobotWidget::editName something unexpected happened";
     }
 }
 

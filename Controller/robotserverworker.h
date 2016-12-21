@@ -20,7 +20,7 @@ private slots:
     void stopWorker();
 
 signals:
-    void robotIsAlive(QString hostname, QString ip, QString ssid, int stage);
+    void robotIsAlive(QString hostname, QString ip, QString ssid, int stage, int battery);
 
 private:
     int port;
