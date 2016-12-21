@@ -16,49 +16,59 @@ file_IPs = computer_software + "IP/serverIP.txt"
 #file_IPs = computer_software + "IP/isAlive.txt"
 ping_script = "sudo sh " + computer_software + "IP/ping.sh"
 file_hostname = computer_software + "Robot_Infos/name.txt"
+file_battery = computer_software + "Robot_Infos/battery.txt"
 file_map_id = computer_software + "Robot_Infos/mapId.txt"
 file_path_stage = computer_software + "Robot_Infos/path_stage.txt"
 file_home = "/home/gtdollar/computer_software/Robot_Infos/home.txt"
 
 def isServer(IP) :
-    s = socket.socket()
-    host= IP
-    port = 6000
-    find = False
-    try : 
-        s.setsockopt(socket.SOL_SOCKET,socket.SO_REUSEADDR,1)
-        # blocking operations of the socket time out after 5 seconds
-        s.settimeout(5)
-        s.connect((host,port))
-        res = s.recv(1024)
-        if res == "OK" :
-            find = True
-            # Get the hostname of the robot
-            file = open(file_hostname)
-            hostname = file.readline()
-            hostname = hostname.split('\n')[0]
-            if hostname == "" :
-                hostname = "Default Name"
+	s = socket.socket()
+	host= IP
+	port = 6000
+	find = False
+	try : 
+		s.setsockopt(socket.SOL_SOCKET,socket.SO_REUSEADDR,1)
+		# blocking operations of the socket time out after 5 seconds
+		s.settimeout(5)
+		s.connect((host,port))
+		res = s.recv(1024)
+		if res == "OK" :
+			find = True
+			# Get the hostname of the robot
+			with open(file_hostname, 'r') as file_name:
+				hostname = file_name.readline()
+				file_name.close()
 
-            # Get the SSID of the robot
-            ssid = subprocess.Popen(["iwgetid", "-r"], stdout = subprocess.PIPE).communicate()[0]
+			hostname = hostname.split('\n')[0]
 
-            # sends the path stage
-            stage = 0
-            with open(file_path_stage, 'r') as file_path:
-                stage = file_path.readline()
-                print "stage ", stage
-                file_path.close()
-            
-            # Send everything to the application
-            toSend = "%s\"%s\"%s" % (hostname, ssid, stage)
-            #print "ping_server sending :",toSend
-            s.send(toSend)
+			if hostname == "" :
+				hostname = "Default Name"
 
-    except : 
-        find = False
-    return find
-    #s.close
+			# Get the battery level
+			battery = 50
+			with open(file_battery, 'r') as file_name:
+				battery = file_name.readline()
+				file_name.close()
+
+			# Get the SSID of the robot
+			ssid = subprocess.Popen(["iwgetid", "-r"], stdout = subprocess.PIPE).communicate()[0]
+
+			# Get the path stage
+			stage = 0
+			with open(file_path_stage, 'r') as file_path:
+				stage = file_path.readline()
+				print "stage ", stage
+				file_path.close()
+
+			# Send everything to the application
+			toSend = "%s\"%s\"%s\"%s" % (hostname, ssid, stage, battery)
+			#print "ping_server sending :",toSend
+			s.send(toSend)
+
+	except : 
+		find = False
+	return find
+	#s.close
 
 
 

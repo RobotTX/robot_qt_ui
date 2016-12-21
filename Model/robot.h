@@ -45,7 +45,7 @@ public:
     float getOrientation(void) const { return orientation; }
     QString getName(void) const { return name; }
     QString getIp(void) const { return ip; }
-    unsigned int getBatteryLevel(void) const { return batteryLevel; }
+    int getBatteryLevel(void) const { return batteryLevel; }
     QString getWifi(void) const { return wifi; }
     QSharedPointer<PointView> getHome(void) const { return home; }
     QVector<QSharedPointer<PathPoint>> getPath(void) const { return path; }
@@ -162,7 +162,7 @@ private:
     QString ip;
     Position position;
     float orientation;
-    unsigned int batteryLevel;
+    int batteryLevel;
     QString wifi;
     QSharedPointer<PointView> home;
     QVector<QSharedPointer<PathPoint>> path;

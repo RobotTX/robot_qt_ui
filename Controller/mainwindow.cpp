@@ -298,7 +298,7 @@ void MainWindow::initializeRobots(){
 
     robotServerWorker = new RobotServerWorker(PORT_ROBOT_UPDATE);
 
-    connect(robotServerWorker, SIGNAL(robotIsAlive(QString, QString, QString, int)), this, SLOT(robotIsAliveSlot(QString, QString, QString, int)));
+    connect(robotServerWorker, SIGNAL(robotIsAlive(QString, QString, QString, int, int)), this, SLOT(robotIsAliveSlot(QString, QString, QString, int, int)));
     connect(this, SIGNAL(stopUpdateRobotsThread()), robotServerWorker, SLOT(stopWorker()));
 
     connect(&serverThread, SIGNAL(finished()), robotServerWorker, SLOT(deleteLater()));
@@ -1136,7 +1136,7 @@ void MainWindow::showAllHomes(void){
     bottomLayout->uncheckRobots();
 }
 
-void MainWindow::robotIsAliveSlot(QString hostname, QString ip, QString ssid, int stage){
+void MainWindow::robotIsAliveSlot(QString hostname, QString ip, QString ssid, int stage, int battery){
     QRegExp rx("[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}");
     rx.indexIn(ip);
     ip = rx.cap(0);
@@ -1144,8 +1144,8 @@ void MainWindow::robotIsAliveSlot(QString hostname, QString ip, QString ssid, in
 
     if(rv != NULL){
         qDebug() << "Robot" << hostname << "at ip" << ip << "is still alive";
+        rv->getRobot()->setBatteryLevel(battery);
         rv->getRobot()->ping();
-        /// TODO see for changes (battery)
 
     } else {
         qDebug() << "Robot" << hostname << "at ip" << ip << "just connected";
@@ -1190,6 +1190,8 @@ void MainWindow::robotIsAliveSlot(QString hostname, QString ip, QString ssid, in
         rv->setLastStage(stage);
         bottomLayout->updateStageRobot(robotId, rv, stage);
     }
+
+    rv->getRobot()->setBatteryLevel(battery);
 
     /// Check the current stage of the robot
     if(rv->getRobot()->isPlayingPath() && rv->getRobot()->getPath().size() == stage){
