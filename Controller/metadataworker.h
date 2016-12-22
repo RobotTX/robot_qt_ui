@@ -50,7 +50,6 @@ private slots:
      */
     void connectSocket();
 
-
 signals:
     /**
      * @brief valueChangedMetadata

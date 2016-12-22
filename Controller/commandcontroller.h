@@ -65,9 +65,9 @@ private slots:
     void userStopped();
 
 private:
+    QString robotName;
     /// the message box that's prompted to the user when a command is sent
     CommandMessageBox messageBox;
-    QString robotName;
     QString cmdAnswer;
     QString cmdName;
 };

@@ -122,7 +122,6 @@ bool CommandController::robotWaitForAnswer(QStringList listCmd){
     QRegExp rx("[ ]");
     openMessageBox(listCmd);
 
-    qDebug() << "CommandController::robotWaitForAnswer Going to wait for an answer";
     while(cmdAnswer.compare("") == 0){
         qDebug() << "CommandController::robotWaitForAnswer waiting for an answer";
         MainWindow::delay(1000);
@@ -130,7 +129,7 @@ bool CommandController::robotWaitForAnswer(QStringList listCmd){
 
     qDebug() << "CommandController::robotWaitForAnswer The answer is :" << cmdAnswer;
 
-    /// Data are received as a string separated by a space ("cmd done" or "cmd failed")
+    /// Data is received as a string separated by a space ("cmd done" or "cmd failed")
     QStringList list = cmdAnswer.split(rx, QString::SkipEmptyParts);
     cmdAnswer = "";
 
@@ -172,7 +171,7 @@ void CommandController::cmdAnswerSlot(QString answer){
     /// React accordingly to the answer : return true or false
     QRegExp rx("[ ]");
 
-    /// Data are received as a string separated by a space ("cmd done" or "cmd failed")
+    /// Data is received as a string separated by a space ("cmd done" or "cmd failed")
     QStringList list = answer.split(rx, QString::SkipEmptyParts);
 
     if(list.size() == 2){

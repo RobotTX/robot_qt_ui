@@ -4,7 +4,6 @@
 
 MergeMapListWidget::MergeMapListWidget(QWidget *parent) : QListWidget(parent){
 
-    //setDragDropMode(QAbstractItemView::InternalMove);
     setFrameShape(QFrame::NoFrame);
     viewport()->setAutoFillBackground(false);
     setAttribute(Qt::WA_MacShowFocusRect, false);
@@ -13,7 +12,6 @@ MergeMapListWidget::MergeMapListWidget(QWidget *parent) : QListWidget(parent){
                       QListWidget::item:hover {background-color:"+button_hover_color+";}\
                       QListWidget::item:selected {background-color:"+button_checked_color+";}");
 }
-
 
 void MergeMapListWidget::keyPressEvent(QKeyEvent* event){
     /// We want to use the directional keys to move the map on the scene and not to navigate in the list

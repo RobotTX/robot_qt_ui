@@ -59,7 +59,16 @@ public:
      */
     void saveToFile(const QString fileName);
 
-    QImage getImageFromArray(const QByteArray& mapArrays, bool fromPgm);
+    // TO DO
+    // COMPLETE HERE
+    /**
+     * @brief getImageFromArray
+     * @param mapArrays
+     * @param fromPgm
+     * @return QImage
+     * returns a QImage constructed from a QByteArray,
+     */
+    QImage getImageFromArray(const QByteArray& mapArrays, const bool fromPgm);
 
 signals:
     /// emitted when a user make an attempt at saving the map, the status holds the status regarding the operation (true = success, false = failure)

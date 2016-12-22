@@ -57,11 +57,14 @@
 #include "View/settingswidget.h"
 #include "View/scanmapwidget.h"
 
+
 #include <opencv2/opencv.hpp>
 #include <opencv2/features2d.hpp>
 
 //#include "opencv2/xfeatures2d.hpp"
-
+#include <QMediaPlayer>
+#include <QMediaPlaylist>
+#include <QVideoWidget>
 
 #include <chrono>
 #include <thread>
@@ -70,6 +73,20 @@
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow) {
     ui->setupUi(this);
     qDebug() << "MainWIndow:: Inside thread" << QThread::currentThreadId();
+
+    /*
+
+    QMediaPlayer* player = new QMediaPlayer;
+    QVideoWidget* videoWidget = new QVideoWidget;
+    player->setVideoOutput(videoWidget);
+
+    videoWidget->setGeometry(250, 250, 500, 500);
+    videoWidget->show();
+    player->setMedia(QUrl::fromLocalFile("/home/joan/Videos/getting_started/awesome.wmv"));
+    player->play();
+
+    */
+
     /// centers the msgBox on the middle of the screen
     msgBox.move(mapToGlobal(QPoint(QApplication::desktop()->screenGeometry().width()/2,
                                    QApplication::desktop()->screenGeometry().height()/2) ));

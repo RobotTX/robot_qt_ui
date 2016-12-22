@@ -52,6 +52,7 @@ void MergeDialog::updateNbMapsChecked(bool checked){
     mergeButton->setEnabled((nbMapsChecked == 2) ? true : false);
 }
 
+/// Check the two checked buttons in order to merge the corresponding maps
 void MergeDialog::emitMapsToMerge(){
     unsigned int first_map_id(-1);
     unsigned int second_map_id(-1);

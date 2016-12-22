@@ -90,6 +90,7 @@ void LocalMapWorker::readTcpDataSlot(){
 void LocalMapWorker::errorConnectionSlot(QAbstractSocket::SocketError error){
     switch (error) {
     case(QAbstractSocket::ConnectionRefusedError):
+        /// if the connection has been refused we symply try again
         QThread::sleep(1);
         socket->connectToHost(ipAddress, port);
         break;

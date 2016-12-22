@@ -21,6 +21,8 @@ QDataStream& operator<<(QDataStream& out, const PathPoint& pathPoint){
     return out;
 }
 
+/// two path points are equal if their position are equal (check the definition of equal for a position)
+/// and if their waiting time are equal
 bool operator==(const PathPoint& pathPoint, const PathPoint& otherPathPoint){
     return pathPoint.getPoint().getPosition() == otherPathPoint.getPoint().getPosition() &&
             pathPoint.getWaitTime() == otherPathPoint.getWaitTime();

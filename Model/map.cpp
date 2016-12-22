@@ -2,9 +2,8 @@
 #include <QDebug>
 #include <assert.h>
 
-
+/// attributes are set to 0 because they will be updated later
 Map::Map(): resolution(0), width(0), height(0), origin(Position()), mapId(QUuid()), modified(false) {}
-
 
 void Map::setMapFromFile(const QString fileName){
     /// Qt has is own function to create a QImage from a PGM file
@@ -24,7 +23,8 @@ void Map::setMapFromArray(const QByteArray& mapArrays, bool fromPgm){
     mapImage = getImageFromArray(mapArrays, fromPgm);
 }
 
-QImage Map::getImageFromArray(const QByteArray& mapArrays, bool fromPgm){
+QImage Map::getImageFromArray(const QByteArray& mapArrays, const bool fromPgm){
+
     QImage image = QImage(width, height, QImage::Format_Grayscale8);
 
     uint32_t index = 0;
@@ -63,5 +63,6 @@ void Map::saveToFile(const QString fileName){
 }
 
 void Map::setDateTime(const QDateTime _dateTime) {
+    /// if the time is not valid we use the current date
     dateTime = (_dateTime.isValid()) ? _dateTime : QDateTime::currentDateTime();
 }

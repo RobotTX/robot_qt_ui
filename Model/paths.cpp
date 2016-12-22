@@ -2,10 +2,7 @@
 #include "Controller/mainwindow.h"
 #include <assert.h>
 
-Paths::Paths(MainWindow *parent): QObject(parent)
-{
-    groups = QSharedPointer<Groups>(new Groups());
-}
+Paths::Paths(MainWindow *parent): QObject(parent), groups(QSharedPointer<Groups>(new Groups())) {}
 
 /// Simple function to display the content of a path object
 void Paths::displayGroups() const {

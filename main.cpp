@@ -8,7 +8,6 @@ int main(int argc, char *argv[]){
     QApplication app(argc, argv);
     app.setAttribute(Qt::AA_DontShowIconsInMenus, false);
 
-
     MainWindow w;
     w.setMinimumSize(1000, 800);
 

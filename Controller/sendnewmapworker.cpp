@@ -55,6 +55,8 @@ void SendNewMapWorker::writeTcpDataSlot(QString mapId, QString date, QString met
     byteArray.push_back(metadata.toUtf8());
     byteArray.push_back(';');
 
+    // TO DO
+    // MORE COMS PLEASE BRO
 
     QByteArray mapArray;
     /// Compress and push the map to send
@@ -64,7 +66,6 @@ void SendNewMapWorker::writeTcpDataSlot(QString mapId, QString date, QString met
         for(int j = 0; j < map.height(); j++){
             int curr = map.pixelColor(j, i).red();
             if(last != curr && count != 0){
-                //qDebug() << "MainWindow::settingBtnSlot got" << count << " pixel" << last;
                 mapArray.push_back(last);
                 mapArray.push_back(static_cast<uint8_t>((count & 0xff000000) >> 24));
                 mapArray.push_back(static_cast<uint8_t>((count & 0x00ff0000) >> 16));
@@ -104,13 +105,14 @@ void SendNewMapWorker::writeTcpDataSlot(QString mapId, QString date, QString met
             qDebug() << "(New Map) " << nbDataSend << "bytes sent out of" << byteArray.size();
     } else {
         qDebug() << "(New Map) Trying to write on a socket that is not created or connected yet";
-        assert(false);
+        Q_UNREACHABLE();
     }
 }
 
 void SendNewMapWorker::errorConnectionSlot(QAbstractSocket::SocketError error){
     switch (error) {
     case(QAbstractSocket::ConnectionRefusedError):
+        /// if the connection has been refused we symply try again
         QThread::sleep(1);
         socket->connectToHost(ipAddress, port);
         break;

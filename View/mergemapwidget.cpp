@@ -41,8 +41,6 @@ MergeMapWidget::MergeMapWidget(QSharedPointer<Robots> _robots, QWidget *parent) 
     int x = (screenGeometry.width() - width()) / 2;
     int y = (screenGeometry.height() - height()) / 2;
     move(x, y);
-
-
 }
 
 void MergeMapWidget::initializeMenu(){

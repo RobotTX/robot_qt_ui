@@ -108,7 +108,6 @@ void MergeMapListItemWidget::initializeMap(QString _fileName, QGraphicsScene* sc
     if(!fromRobot)
         image = QImage(_fileName,"PGM");
 
-
     int top = image.height();
     int bottom = 0;
     int left = image.width();
@@ -153,7 +152,6 @@ void MergeMapListItemWidget::initializeMap(QString _fileName, QGraphicsScene* sc
     for(int i = 0; i < croppedImage.width(); i++){
         for(int j = 0; j < croppedImage.height(); j++){
             int color = croppedImage.pixelColor(i, j).red();
-
             if(color < 205)
                 newImage.setPixel(i, j, wallColor);
             else if(color > 205)

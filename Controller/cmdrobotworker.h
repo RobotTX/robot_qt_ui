@@ -1,7 +1,6 @@
 #ifndef CMDROBOTWORKER_H
 #define CMDROBOTWORKER_H
 
-
 #include <QString>
 #include <QtNetwork/QTcpSocket>
 #include <QPointer>

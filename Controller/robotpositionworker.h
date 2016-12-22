@@ -50,7 +50,6 @@ private slots:
      */
     void errorConnectionSlot(QAbstractSocket::SocketError error);
 
-
 signals:
     /**
      * @brief valueChangedRobot

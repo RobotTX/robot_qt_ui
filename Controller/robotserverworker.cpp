@@ -15,6 +15,8 @@ void RobotServerWorker::startServer(){
         qDebug() << "(RobotServerWorker) Server failed to listen on port" << port;
     else
         qDebug() << "Server is listening on port" << port;
+    // TO DO
+    // open a msgBox ?
 }
 
 void RobotServerWorker::stopWorker(){
@@ -27,7 +29,6 @@ void RobotServerWorker::newConnectionSlot(){
 
     /// if the server gets a new connection
     if(socket->state() == QTcpSocket::ConnectedState){
-        qDebug() << "\n\n(RobotServerWorker) New connection established :" << socket->peerAddress().toString();
 
         socket->write("OK");
         socket->waitForReadyRead();
@@ -37,7 +38,6 @@ void RobotServerWorker::newConnectionSlot(){
 
         qDebug() << "(RobotServerWorker) Data from the new robot :" << strList;
         if(strList.size() == 4){
-            //qDebug() << "(RobotServerWorker)" << strList;
             /// hostname, IP address, mapID, map date, wifi SSID and stage of the path
             emit robotIsAlive(strList.at(0), socket->peerAddress().toString(), strList.at(1), std::stoi(strList.at(2).toStdString()), std::stoi(strList.at(3).toStdString()));
         }
@@ -52,6 +52,7 @@ void RobotServerWorker::errorConnectionSlot(QAbstractSocket::SocketError error){
     qDebug() << "(RobotServerWorker) Error while connecting :" << error;
     switch (error) {
     case(QAbstractSocket::ConnectionRefusedError):
+        /// if the connection has been refused we symply try again
         qDebug() << "(RobotServerWorker) The connection was refused by the peer (or timed out).";
         break;
     case(QAbstractSocket::RemoteHostClosedError):

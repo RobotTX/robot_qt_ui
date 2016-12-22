@@ -56,6 +56,9 @@ void Points::removePoint(const QString pointName) {
         qDebug() << "Points::removePoint" << pointName << "done";
     } else
         qDebug() << "Points::removePoint could not find the point to delete";
+
+    // TO DO
+    // MsgBox ?
 }
 
 QSharedPointer<QVector<QSharedPointer<PointView>>> Points::findGroup(const QString groupName) const {
@@ -331,6 +334,7 @@ QString Points::getGroupNameFromPointName(const QString pointName) const{
     return "";
 }
 
+/// Update all the pixmaps to the given type except for the path points
 void Points::setPixmapAll(const PointView::PixmapType type){
     QMapIterator<QString, QSharedPointer<QVector<QSharedPointer<PointView>>>> i(*groups);
     while(i.hasNext()) {

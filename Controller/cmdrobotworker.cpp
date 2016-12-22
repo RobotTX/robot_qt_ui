@@ -19,8 +19,6 @@ void CmdRobotWorker::stopWorker(){
 }
 
 void CmdRobotWorker::connectSocket(){
-    qDebug() << "(Robot" << robotName << ") Command Thread launched";
-
     socket = QPointer<QTcpSocket>(new QTcpSocket());
 
     /// We create the timer used to know for how long we haven't receive any ping
@@ -60,7 +58,6 @@ void CmdRobotWorker::sendCommand(const QString cmd){
     } else {
         qDebug() << "(Robot" << robotName << ") " << nbDataSend << " bytes sent";
     }
-    qDebug() << "(Robot" << robotName << ") Command sent successfully";
 }
 
 void CmdRobotWorker::readTcpDataSlot(){
@@ -77,11 +74,14 @@ void CmdRobotWorker::readTcpDataSlot(){
 void CmdRobotWorker::connectedSlot(){
     qDebug() << "(Robot" << robotName << ") Connected";
 
+    /// if true activates the feedback from the laser, otherwise doesn't
     bool startLaser = 1;
 
     QString fileStr = QDir::currentPath() + QDir::separator() + "settings" + QDir::separator() + ipAddress + ".txt";
     std::ifstream file(fileStr.toStdString(), std::ios::in);
 
+    /// stored in a file, so we can fetch it when each new session starts and activate or deactivate the laser
+    /// according to the user's preference
     if(file){
         file >> startLaser;
         qDebug() << "CmdRobotWorker::connectedSlot startLaser :" << startLaser;
@@ -94,7 +94,7 @@ void CmdRobotWorker::connectedSlot(){
     /// in order to get laser feedback, robot position, map and map metadata
     QString portStr = "h \"" + QString::number(metadataPort) + "\" \"" + QString::number(robotPort) + "\" \"" +
             QString::number(mapPort) + "\" \"" + QString::number(laserPort) + "\" \"" + QString::number(startLaser) + "\" } ";
-    qDebug() << "(Robot" << robotName << ") Sending ports : " << portStr;
+
     bool tmpBool(false);
     while(!tmpBool){
         socket->write(portStr.toUtf8());
@@ -110,10 +110,9 @@ void CmdRobotWorker::connectedSlot(){
 
 void CmdRobotWorker::disconnectedSlot(){
     qDebug() << "(Robot" << robotName << ") Disconnected at ip" << ipAddress;
-    /// On disconnection, we want to tell the MainWindow that we disconnected
+    /// Upon disconnection, we want to tell the MainWindow that we disconnected
     /// and close the socket
     if(robotName.compare("") != 0){
-        qDebug() << "(Robot" << robotName << ") Emitting robotIsDead";
         timer->stop();
         timeCounter = 0;
         emit robotIsDead(robotName, ipAddress);
@@ -123,7 +122,7 @@ void CmdRobotWorker::disconnectedSlot(){
 }
 
 void CmdRobotWorker::pingSlot(void){
-    qDebug()<< "(Robot" << robotName << ") Received the ping";
+    //qDebug()<< "(Robot" << robotName << ") Received the ping";
     /// the timer starts, if the next ping does not arrive before the timer equals a certain value
     /// the communication with the robot will be considered lost and the connection will close
     timer->start();
@@ -132,7 +131,7 @@ void CmdRobotWorker::pingSlot(void){
 
 void CmdRobotWorker::timerSlot(void){
     timeCounter++;
-    qDebug()<< "(Robot" << robotName << ") Did not receive any ping from this robot for" << timeCounter << "seconds";
+    //qDebug()<< "(Robot" << robotName << ") Did not receive any ping from this robot for" << timeCounter << "seconds";
     /// if the application has lost the connection with the robot for a time > ROBOT_TIMER
     /// the socket is closed
     if(timeCounter >= ROBOT_TIMER && socket->isOpen())
@@ -140,13 +139,14 @@ void CmdRobotWorker::timerSlot(void){
 }
 
 void CmdRobotWorker::changeRobotNameSlot(QString name){
-    qDebug()<< "(Robot" << robotName << ") Changed the name of the robot to" << name;
+    //qDebug()<< "(Robot" << robotName << ") Changed the name of the robot to" << name;
     robotName = name;
 }
 
 void CmdRobotWorker::errorConnectionSlot(QAbstractSocket::SocketError error){
     switch (error) {
     case(QAbstractSocket::ConnectionRefusedError):
+        /// if the connection has been refused we symply try again
         QThread::sleep(1);
         socket->connectToHost(ipAddress, port);
         break;
