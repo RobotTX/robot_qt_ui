@@ -15,6 +15,7 @@ weight_scale = serial.Serial(
     bytesize = serial.EIGHTBITS,
     timeout = 1
 )
+
 weight_scale.close()
 weight_scale.open()
 
@@ -25,7 +26,7 @@ if weight_scale.isOpen():
     res = weight_scale.read(5)
     print "weight_scale read len calibration : ",len(res)
     if len(res) == 5:
-        print "weight_scale calibration : ",ord(res[0]),ord(res[1]),ord(res[2]),ord(res[3]),ord(res[4])
+        print "weight_scale calibration : ", ord(res[0]), ord(res[1]), ord(res[2]), ord(res[3]), ord(res[4])
     time.sleep(1)   
 
     while True:
@@ -33,6 +34,6 @@ if weight_scale.isOpen():
         res = weight_scale.read(7)
         print "weight_scale read len : ",len(res)
         if len(res) == 7:
-            print ord(res[0]),ord(res[1]),ord(res[2]),ord(res[3]),ord(res[4]),ord(res[5]),ord(res[6])
-            print "weight_scale : ",(ord(res[3]) * 256 * 256 + ord(res[4]) * 256 + ord(res[5]))
+            print ord(res[0]), ord(res[1]), ord(res[2]), ord(res[3]), ord(res[4]), ord(res[5]), ord(res[6])
+            print "weight_scale : ", (ord(res[3]) * 256 * 256 + ord(res[4]) * 256 + ord(res[5]))
         time.sleep(1)    

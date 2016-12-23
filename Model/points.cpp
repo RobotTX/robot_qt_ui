@@ -54,11 +54,13 @@ void Points::removePoint(const QString pointName) {
     if(key.compare("") != 0 && index != -1){
         groups->value(key)->remove(index);
         qDebug() << "Points::removePoint" << pointName << "done";
-    } else
-        qDebug() << "Points::removePoint could not find the point to delete";
-
-    // TO DO
-    // MsgBox ?
+    } else {
+        QMessageBox msgBox;
+        msgBox.setText(pointName + " could not be found");
+        msgBox.setStandardButtons(QMessageBox::Cancel);
+        msgBox.setDefaultButton(QMessageBox::Cancel);
+        msgBox.exec();
+    }
 }
 
 QSharedPointer<QVector<QSharedPointer<PointView>>> Points::findGroup(const QString groupName) const {

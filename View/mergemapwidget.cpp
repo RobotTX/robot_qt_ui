@@ -70,7 +70,7 @@ void MergeMapWidget::initializeMenu(){
     topMenuLayout->addWidget(addImageFileBtn);
 
     CustomPushButton* addImageRobotBtn = new CustomPushButton("Add map from robot", this);
-    addImageRobotBtn->setToolTip("Add a robot is currently using");
+    addImageRobotBtn->setToolTip("Add a map a robot is currently using");
     connect(addImageRobotBtn, SIGNAL(clicked()), this, SLOT(addImageRobotSlot()));
     topMenuLayout->addWidget(addImageRobotBtn);
 
@@ -88,6 +88,7 @@ void MergeMapWidget::initializeMenu(){
 
     QHBoxLayout* cancelSaveLayout = new QHBoxLayout();
     CustomPushButton* cancelBtn = new CustomPushButton("Cancel", this, CustomPushButton::ButtonType::LEFT_MENU, "center");
+    cancelBtn->setToolTip("Click to resume the previous menu");
     cancelSaveLayout->addWidget(cancelBtn);
     connect(cancelBtn, SIGNAL(clicked()), this, SLOT(cancelSlot()));
 

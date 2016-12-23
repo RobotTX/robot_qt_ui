@@ -164,6 +164,7 @@ void EditMapWidget::initializeMenu(){
     /// Save cancel layout
     QHBoxLayout* cancelSaveLayout = new QHBoxLayout();
     CustomPushButton* cancelBtn = new CustomPushButton("Cancel", this, CustomPushButton::ButtonType::LEFT_MENU, "center");
+    cancelBtn->setToolTip("Click to cancel your modifications and resume the previous menu");
     cancelSaveLayout->addWidget(cancelBtn);
     connect(cancelBtn, SIGNAL(clicked()), this, SLOT(cancelSlot()));
 
