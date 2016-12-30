@@ -95,6 +95,7 @@ void ScanMapWidget::initializeMap(){
 
     graphicsView = new CustomQGraphicsView(scene, this);
     graphicsView->setCatchKeyEvent(true);
+
     graphicsView->setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding));
 
 }

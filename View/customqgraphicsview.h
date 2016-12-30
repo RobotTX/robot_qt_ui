@@ -28,11 +28,22 @@ protected:
      * Overload of the wheelEvent to zoom in and out of the map with the wheel
      */
     void wheelEvent(QWheelEvent *event);
+
+    /**
+     * @brief keyPressEvent
+     * @param event
+     * when a directional key is pressed, we send a signal to whoever need it
+     */
     void keyPressEvent(QKeyEvent* event);
+
+    void mousePressEvent(QMouseEvent *event);
+    void mouseMoveEvent(QMouseEvent *event);
+    void mouseReleaseEvent(QMouseEvent *event);
 
 private:
     float zoomCoeff;
     bool catchKeyEvent;
+    QPointF dragStartPosition;
 };
 
 /// to set a particular zoom on the map

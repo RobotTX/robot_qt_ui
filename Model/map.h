@@ -66,7 +66,7 @@ public:
      * @param mapArrays
      * @param fromPgm
      * @return QImage
-     * returns a QImage constructed from a QByteArray,
+     * returns a QImage constructed from a QByteArray
      */
     QImage getImageFromArray(const QByteArray& mapArrays, const bool fromPgm);
 

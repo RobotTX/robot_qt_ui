@@ -32,7 +32,7 @@ void CustomQGraphicsView::keyPressEvent(QKeyEvent* event){
 }
 
 void CustomQGraphicsView::mousePressEvent(QMouseEvent *event){
-    /// Reset dragStartPosition so that when mouseMoveEvent, we only move if dragStartPosition has been init before
+    /// The starting position when we want to move the view
     if(catchKeyEvent && !itemAt(event->pos()))
         dragStartPosition = event->pos();
 
@@ -42,6 +42,7 @@ void CustomQGraphicsView::mousePressEvent(QMouseEvent *event){
 void CustomQGraphicsView::mouseMoveEvent(QMouseEvent *event){
     if(catchKeyEvent && dragStartPosition != QPointF(0, 0)){
         QList<QGraphicsItem *> itemList = items();
+        /// Make it looks like we move the view but we actually move every item in the view
         for(int i = 0; i < itemList.count(); i++)
             itemList.at(i)->moveBy(event->pos().x() - dragStartPosition.x(), event->pos().y() - dragStartPosition.y());
         dragStartPosition = event->pos();
