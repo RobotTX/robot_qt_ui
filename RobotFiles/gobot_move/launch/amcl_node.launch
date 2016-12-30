@@ -1,8 +1,7 @@
 <?xml version="1.0"?>
 <launch>
-  <node pkg="map_server" type="map_server" name="map_server" args="$(find gobot_move)/maps/map_ma.yaml" />
-  <node pkg="amcl" type="amcl" name="amcl">
-	<param name="tf_broadcast" value="true" />
+    <node pkg="amcl" type="amcl" name="amcl">
+	    <param name="tf_broadcast" value="true" />
         <param name="base_frame_id" value="/base_link" />
         <param name="global_frame_id" value="/map" />
         <param name="odom_frame_id" value="/odom" />
@@ -23,5 +22,5 @@
         <param name="transform_tolerance" value="0.1"/>
         <param name="recovery_alpha_slow" value="0.0"/>
         <param name="recovery_alpha_fast" value="0.0"/>
-  </node>
+    </node>
 </launch>

@@ -55,8 +55,7 @@ void SendNewMapWorker::writeTcpDataSlot(QString mapId, QString date, QString met
     byteArray.push_back(metadata.toUtf8());
     byteArray.push_back(';');
 
-    // TO DO
-    // MORE COMS PLEASE BRO
+    // TODO MORE COMS PLEASE BRO
 
     QByteArray mapArray;
     /// Compress and push the map to send

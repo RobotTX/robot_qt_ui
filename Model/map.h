@@ -59,7 +59,7 @@ public:
      */
     void saveToFile(const QString fileName);
 
-    // TO DO
+    // TODO
     // COMPLETE HERE
     /**
      * @brief getImageFromArray
