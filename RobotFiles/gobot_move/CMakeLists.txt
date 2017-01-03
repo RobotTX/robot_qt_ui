@@ -12,6 +12,7 @@ find_package(catkin REQUIRED COMPONENTS
   genmsg
   tf 
   message_generation
+  map_msgs
 )
 
 ## System dependencies are found with CMake's conventions
@@ -60,7 +61,14 @@ set(CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_CXX_FLAGS}")
  add_service_files(
    FILES
    FindNextPoint.srv
-   RestartSmallMap.srv
+   RestartSmallMap.srv       
+   GetEncoder.srv
+   GetEncoders.srv
+   GetSpeed.srv
+   SetMotor.srv
+   SetSpeed.srv
+   SetSpeedDirection.srv
+   SetSpeeds.srv
 #   Service1.srv
 #   Service2.srv
  )
@@ -111,7 +119,7 @@ set(CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_CXX_FLAGS}")
 catkin_package(
   INCLUDE_DIRS include
 #  LIBRARIES gobot_move
-  CATKIN_DEPENDS nav_msgs roscpp rospy std_msgs tf
+  CATKIN_DEPENDS nav_msgs roscpp rospy std_msgs tf map_msgs
 #  DEPENDS system_lib
 )
 
@@ -140,6 +148,10 @@ include_directories(
 add_executable(gobot_move_odom src/odom.cpp)
 target_link_libraries(gobot_move_odom ${catkin_LIBRARIES})
 add_dependencies(gobot_move_odom gobot_move_generate_messages_cpp)
+
+add_executable(gobot_move_odom_multi src/odom_multi.cpp)
+target_link_libraries(gobot_move_odom_multi ${catkin_LIBRARIES})
+add_dependencies(gobot_move_odom_multi gobot_move_generate_messages_cpp)
 
 add_executable(findPoint src/findFurthestPoint.cpp)
 target_link_libraries(findPoint ${catkin_LIBRARIES})
