@@ -12,6 +12,7 @@ find_package(catkin REQUIRED COMPONENTS
   genmsg
   tf 
   message_generation
+  map_msgs
 )
 
 ## System dependencies are found with CMake's conventions
@@ -60,12 +61,12 @@ set(CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_CXX_FLAGS}")
  add_service_files(
    FILES
    FindNextPoint.srv
-   RestartSmallMap.srv
+   RestartSmallMap.srv       
    GetEncoder.srv
    GetEncoders.srv
-   SetSpeed.srv
    GetSpeed.srv
    SetMotor.srv
+   SetSpeed.srv
    SetSpeedDirection.srv
    SetSpeeds.srv
 #   Service1.srv
@@ -118,7 +119,7 @@ set(CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_CXX_FLAGS}")
 catkin_package(
   INCLUDE_DIRS include
 #  LIBRARIES gobot_move
-  CATKIN_DEPENDS nav_msgs roscpp rospy std_msgs tf
+  CATKIN_DEPENDS nav_msgs roscpp rospy std_msgs tf map_msgs
 #  DEPENDS system_lib
 )
 

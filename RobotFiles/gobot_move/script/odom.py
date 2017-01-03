@@ -115,8 +115,8 @@ def talker():
         br.sendTransform( odomTrans)
 
         odomMsg.header.stamp = currentTime
-        odomMsg.header.frame_id = "odom"
-        odomMsg.child_frame_id = "base_link"
+        odomMsg.header.frame_id = "/odom"
+        odomMsg.child_frame_id = "/base_link"
         odomMsg.pose.pose.position.x = x_x
         odomMsg.pose.pose.position.y = y_y
         odomMsg.pose.pose.position.z = 0.0

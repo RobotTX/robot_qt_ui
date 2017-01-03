@@ -5,14 +5,21 @@
 #include <sensor_msgs/JointState.h>
 #include <tf/transform_broadcaster.h>
 #include <nav_msgs/Odometry.h>
-#include <wheel/GetEncoders.h>
+#include <gobot_move/GetEncoders.h>
+#include "std_srvs/Empty.h"
 
 int main(int argc, char** argv){
   ros::init(argc, argv, "odometry_publisher");
 
   ros::NodeHandle n;
-  ros::ServiceClient client = n.serviceClient<wheel::GetEncoders>("getSpeeds");
-  wheel::GetEncoders srv;
+  ros::service::waitForService("resetEncoders");
+  ros::service::waitForService("getEncoders");
+  ros::ServiceClient resetEncodersClient = n.serviceClient<std_srvs::Empty>("resetEncoders", false);
+  std_srvs::Empty arg;
+  resetEncodersClient.call(arg);
+  ros::ServiceClient client = n.serviceClient<gobot_move::GetEncoders>("getEncoders", true);
+  gobot_move::GetEncoders srv;
+  
   double currentLSpeed = 0.0;
   double currentRSpeed = 0.0;
   
@@ -37,24 +44,27 @@ int main(int argc, char** argv){
   
   tf::TransformBroadcaster broadcaster;
 
-  ros::Rate r(10);
+  ros::Rate r(20);
 
   geometry_msgs::TransformStamped odom_trans;
-  odom_trans.header.frame_id = "odom"; 
-  odom_trans.child_frame_id = "base_link";
+  odom_trans.header.frame_id = "/odom"; 
+  odom_trans.child_frame_id = "/base_link";
 
   while(n.ok()){
 
-    //ros::spinOnce();               // check for incoming messages
+    ros::spinOnce();               // check for incoming messages
     current_time = ros::Time::now();
+
     if ( client.call(srv))
     {
-      currentLSpeed = (double)srv.response.values[0];
-      currentRSpeed = (double)srv.response.values[1];
+      
+      currentLSpeed = static_cast<double> (srv.response.values[0]);
+      currentRSpeed = static_cast<double> (srv.response.values[1]);
+      //ROS_INFO("Got speed  : %f / %f", currentLSpeed, currentRSpeed);
     }
     else
     {
-      ROS_ERROR("Failed to call service getSpeeds");
+      ROS_ERROR("Failed to call service getSpeed");
     }
 
     if ( abs(currentRSpeed) < 50  && abs(currentLSpeed) < 50 )
@@ -130,8 +140,8 @@ int main(int argc, char** argv){
     //next, we'll publish the odometry message over ROS
     nav_msgs::Odometry odom;
     odom.header.stamp = current_time;
-    odom.header.frame_id = "odom";
-    odom.child_frame_id = "base_link";
+    odom.header.frame_id = "/odom";
+    odom.child_frame_id = "/base_link";
 
     //set the position
     odom.pose.pose.position.x = x;

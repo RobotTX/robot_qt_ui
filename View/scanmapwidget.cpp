@@ -9,6 +9,7 @@
 #include "View/mergemaplistwidget.h"
 #include "View/scanmaplistitemwidget.h"
 #include <QMenu>
+#include "View/robotview.h"
 
 
 ScanMapWidget::ScanMapWidget(QSharedPointer<Robots> _robots, QWidget* parent) : QWidget(parent), robots(_robots){
@@ -36,7 +37,7 @@ void ScanMapWidget::initializeMenu(){
     QVBoxLayout* menuLayout = new QVBoxLayout(menuWidget);
     QVBoxLayout* topMenuLayout = new QVBoxLayout();
 
-    QLabel* titleLabel = new QLabel("Merge Maps", this);
+    QLabel* titleLabel = new QLabel("Scan a new map", this);
     QFont tmpFont = font();
     tmpFont.setPointSize(13);
     setFont(tmpFont);
@@ -47,13 +48,8 @@ void ScanMapWidget::initializeMenu(){
     SpaceWidget* spaceWidget = new SpaceWidget(SpaceWidget::SpaceOrientation::HORIZONTAL, this);
     topMenuLayout->addWidget(spaceWidget);
 
-    CustomPushButton* addImageFileBtn = new CustomPushButton("Add map from file", this);
-    addImageFileBtn->setToolTip("Add a map from a pre-existing file");
-    connect(addImageFileBtn, SIGNAL(clicked()), this, SLOT(addImageFileSlot()));
-    topMenuLayout->addWidget(addImageFileBtn);
-
-    CustomPushButton* addImageRobotBtn = new CustomPushButton("Start a scan with another robot", this);
-    addImageRobotBtn->setToolTip("Start to scan with another robot");
+    CustomPushButton* addImageRobotBtn = new CustomPushButton("Start a scan", this);
+    addImageRobotBtn->setToolTip("Start to scan with a robot");
     connect(addImageRobotBtn, SIGNAL(clicked()), this, SLOT(addImageRobotSlot()));
     topMenuLayout->addWidget(addImageRobotBtn);
 
@@ -100,25 +96,44 @@ void ScanMapWidget::initializeMap(){
 
 }
 
-void ScanMapWidget::addImageFileSlot(){
-    qDebug() << "ScanMapWidget::addImageFileSlot called";
-
-    /// Get the file name of the map we want to use
-    QString fileName = QFileDialog::getOpenFileName(this,
-        tr("Open Image"), "", tr("Image Files (*.pgm)"));
-
-    if(!fileName.isEmpty())
-        addMap(fileName, false);
-}
-
 void ScanMapWidget::addImageRobotSlot(){
-    qDebug() << "MergeMapWidget::addImageRobotSlot called";
+    qDebug() << "ScanMapWidget::addImageRobotSlot called";
+
+    /// If we have robots, open a menu to select from which robot we want the map
+    if(robots->getRobotsVector().size() > 0){
+        QMenu menu(this);
+        for(int i = 0; i < robots->getRobotsVector().size(); i++)
+            menu.addAction(robots->getRobotsVector().at(i)->getRobot()->getName());
+
+        connect(&menu, SIGNAL(triggered(QAction*)), this, SLOT(robotMenuSlot(QAction*)));
+        menu.exec(QCursor::pos());
+
+    } else {
+        QMessageBox msgBox;
+        msgBox.setText("No robots connected.");
+        msgBox.setStandardButtons(QMessageBox::Cancel);
+        msgBox.setDefaultButton(QMessageBox::Cancel);
+        msgBox.exec();
+    }
 }
 
-void ScanMapWidget::addMap(QString fileName, bool fromRobot){
-    ScanMapListItemWidget* listItem;
+void ScanMapWidget::robotMenuSlot(QAction* action){
+    qDebug() << "ScanMapWidget::robotMenuSlot called" << action->text();
+    emit startScanning(action->text());
+}
 
-    listItem = new ScanMapListItemWidget(listWidget->count(), fileName, scene, fromRobot);
+void ScanMapWidget::startedScanningSlot(QString robotName, bool scanning){
+    qDebug() << "ScanMapWidget::startedScanningSlot called" << robotName << scanning;
+    if(scanning)
+        addMap(robotName);
+    else {
+        /// TODO msg in QMessageBox
+        qDebug() << "ScanMapWidget::startedScanningSlot" << robotName << "could not start scanning, please try again";
+    }
+}
+
+void ScanMapWidget::addMap(QString name){
+    ScanMapListItemWidget* listItem = new ScanMapListItemWidget(listWidget->count(), name, scene);
 
     /*
     if(fromRobot){
@@ -149,3 +164,5 @@ void ScanMapWidget::cancelSlot(){
 void ScanMapWidget::saveSlot(){
     qDebug() << "ScanMapWidget::saveSlot called";
 }
+
+/// TODO on close, stop scanning

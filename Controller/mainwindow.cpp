@@ -109,7 +109,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     graphicsView = new CustomQGraphicsView(scene, this);
 
     selectedRobot = NULL;
-    scanningRobot = NULL;
     selectedPoint = QSharedPointer<PointView>();
     editedPointView = QSharedPointer<PointView>();
     robotServerWorker = NULL;
@@ -208,7 +207,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     connect(mapPixmapItem, SIGNAL(newCoordinatesPathPoint(double, double)), this, SLOT(updateEditedPathPoint(double, double)));
 
     /// to link the map and the coordinates where we want to send the robot
-    connect(mapPixmapItem, SIGNAL(newScanningGoal(double, double)), this, SLOT(newScanningGoalSlot(double, double)));
+    connect(mapPixmapItem, SIGNAL(testCoord(double, double)), this, SLOT(testCoordSlot(double, double)));
 
     /// to know what message to display when a user is creating a path
     connect(mapPixmapItem, SIGNAL(newMessage(QString)), this, SLOT(setMessageCreationPath(QString)));
@@ -405,9 +404,10 @@ void MainWindow::updateRobot(const QString ipAddress, const float posX, const fl
     }
 }
 
-void MainWindow::launchScan(bool checked){
-    qDebug() << "MainWindow::launchScan called" << checked;
-    if(selectedRobot != NULL){
+void MainWindow::startScanningSlot(QString robotName){
+    qDebug() << "MainWindow::startScanningSlot called" << robotName;
+    /// TODO launch scan from robot name -> ScanMapWidget -> startScanning(QString robotName)
+    /*if(selectedRobot != NULL){
         if(checked){
             int ret = openConfirmMessage("Warning, scanning a new map will erase all previously created points, paths and selected home of robots");
             switch(ret){
@@ -466,13 +466,17 @@ void MainWindow::launchScan(bool checked){
     } else {
         topLayout->setLabelDelay(TEXT_COLOR_DANGER, "You must first click a robot on the map to establish a connection",4000);
         qDebug() << "MainWindow::launchScan You need to select a robot first";
-    }
+    }*/
 }
 
-void MainWindow::newScanningGoalSlot(double x, double y){
-    qDebug() << "MainWindow::newScanningGoalSlot Trying to go to" << x << y;
+void MainWindow::stopScanningSlot(){
+    qDebug() << "MainWindow::stopScanningSlot";
+}
+
+void MainWindow::testCoordSlot(double x, double y){
+    qDebug() << "MainWindow::testCoordSlot Trying to go to" << x << y;
     Position posInRobotCoordinates = convertPixelCoordinatesToRobotCoordinates(Position(x, y), map->getOrigin().getX(), map->getOrigin().getY(), map->getResolution(), map->getHeight(), ROBOT_WIDTH);
-    qDebug() << "MainWindow::newScanningGoalSlot converted in robot coord to" << posInRobotCoordinates.getX() << posInRobotCoordinates.getY();
+    qDebug() << "MainWindow::testCoordSlot converted in robot coord to" << posInRobotCoordinates.getX() << posInRobotCoordinates.getY();
 }
 
 void MainWindow::deletePath(int robotNb){
@@ -1257,7 +1261,8 @@ void MainWindow::robotIsDeadSlot(QString hostname, QString ip){
         }
 
         /// if the robot is scanning
-        if(scanningRobot != NULL && scanningRobot->getRobot()->getIp().compare(ip) == 0){
+        /// TODO send signal to ScanMapWidget if opened
+        /*if(scanningRobot != NULL && scanningRobot->getRobot()->getIp().compare(ip) == 0){
             editSelectedRobotWidget->getScanBtn()->setChecked(false);
             editSelectedRobotWidget->getScanBtn()->setText("Scan a map");
             editSelectedRobotWidget->setEnableAll(true);
@@ -1266,7 +1271,7 @@ void MainWindow::robotIsDeadSlot(QString hostname, QString ip){
             setEnableAll(true);
 
             scanningRobot = NULL;
-        }
+        }*/
 
         /// we stop the robots threads
         rv->getRobot()->deleteLater();
@@ -1589,6 +1594,7 @@ void MainWindow::mapReceivedSlot(const QByteArray mapArray, int who, QString map
         scene->update();
     } else {
         qDebug() << "MainWindow::mapReceivedSlot received a map while scanning";
+        /// TODO send to ScanMapWidget
     }
 }
 
@@ -1810,6 +1816,8 @@ void MainWindow::saveMergeMapSlot(double resolution, Position origin, QImage ima
 void MainWindow::scanMapSlot(){
     qDebug() << "MainWindow::scanMapSlot called";
     scanMapWidget = QPointer<ScanMapWidget>(new ScanMapWidget(robots));
+    connect(scanMapWidget, SIGNAL(startScanning(QString)), this, SLOT(startScanningSlot(QString)));
+    connect(this, SIGNAL(startedScanning(QString, bool)), scanMapWidget, SLOT(startedScanningSlot(QString, bool)));
 }
 
 /**********************************************************************************************************************************/
