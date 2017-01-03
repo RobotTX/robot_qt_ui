@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <launch>
-
+  <node pkg="map_server" type="map_server" name="map_server" args="$(find gobot_move)/maps/map_ma.yaml" />
   <node pkg="amcl" type="amcl" name="amcl">
 	<param name="tf_broadcast" value="true" />
         <param name="base_frame_id" value="/base_link" />
