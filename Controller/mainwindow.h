@@ -142,13 +142,15 @@ signals:
     void stopUpdateRobotsThread();
     void cancelRobotModifications();
     void receivedMapToMerge(QString, QImage, double, double, double);
+    void startedScanning(QString, bool);
 
 private slots:
     void sendPathSelectedRobotSlot(const QString groupName, const QString pathName);
     void updateRobot(const QString ipAddress, const float posX, const float posY, const float ori);
     void updateMetadata(const int width, const int height, const float resolution, const float originX, const float originY);
     void mapReceivedSlot(const QByteArray mapArray, int who, QString mapId, QString mapDate, QString resolution, QString originX, QString originY, QString ipAddress);
-    void launchScan(bool checked);
+    void startScanningSlot(QString robotName);
+    void stopScanningSlot();
     void quit(void);
     void setSelectedRobot(QPointer<RobotView> robotView);
     void setSelectedRobot(QAbstractButton* button);
@@ -269,7 +271,7 @@ private slots:
     void saveMapBtnEvent();
     void loadMapBtnEvent();
 
-    void newScanningGoalSlot(double x, double y);
+    void testCoordSlot(double x, double y);
     void editMapSlot();
     void updateRobotInfo(QString robot_name, QString robotInfo);
     void setHomeAtConnection(const QString robot_name, const Position& pos_home);
@@ -285,7 +287,7 @@ private slots:
 
 protected:
     bool changeRobotName(QString name);
-    void changeRobotWifi(QString ssid, std::string password);
+    void changeRobotWifi(QString ssid, QString password);
     void stopMapThread();
     void closeEvent(QCloseEvent *event);
     void robotHasNoHome(QString robotName);
@@ -302,7 +304,6 @@ private:
     QGraphicsScene* scene;
     QPointer<MapView> mapPixmapItem;
     QPointer<RobotView> selectedRobot;
-    QPointer<RobotView> scanningRobot;
     QSharedPointer<PointView> selectedPoint;
     QSharedPointer<Points> points;
     QSharedPointer<PointView> editedPointView;

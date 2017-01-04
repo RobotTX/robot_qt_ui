@@ -52,8 +52,7 @@ signals:
     void newCoordinatesPathPoint(double, double);
     /// emitted when a user clicks an unknown part of the map to show him a message saying that he cannot create a point there
     void newMessage(QString);
-    /// emitted when a user is scanning a map and want to send the robot somewhere
-    void newScanningGoal(double, double);
+    void testCoord(double, double);
 
 protected:
     void mousePressEvent(QGraphicsSceneMouseEvent *event);

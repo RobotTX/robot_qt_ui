@@ -20,13 +20,17 @@ public:
 protected:
     void initializeMenu();
     void initializeMap();
-    void addMap(QString fileName, bool fromRobot);
+    void addMap(QString name);
 
 private slots:
     void cancelSlot();
     void saveSlot();
-    void addImageFileSlot();
     void addImageRobotSlot();
+    void robotMenuSlot(QAction* action);
+    void startedScanningSlot(QString robotName, bool scanning);
+
+signals:
+    void startScanning(QString);
 
 private:
     QSharedPointer<Robots> robots;

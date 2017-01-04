@@ -13,18 +13,18 @@ class MergeMapGraphicsItem;
 class ScanMapListItemWidget : public QWidget {
     Q_OBJECT
 public:
-    ScanMapListItemWidget(int _id, QString fileName, QGraphicsScene *scene, bool _fromRobot);
+    ScanMapListItemWidget(int _id, QString name, QGraphicsScene *scene);
 
     /// Setter
     void setId(const int _id){ id = _id; }
 
     /// Getters
     //ScanMapGraphicsItem* getPixmapItem(void) const { return pixmapItem; }
-    int getRotation(void) const { return slider->value(); }
+    //int getRotation(void) const { return slider->value(); }
 
 protected:
-    void initializeMap(QString fileName, QGraphicsScene* scene);
-    void initializeMenu(QString fileName);
+    void initializeMap(QGraphicsScene* scene);
+    void initializeMenu();
 
 private slots:
     /*void closeBtnSlot();
@@ -38,13 +38,9 @@ signals:
     void pixmapClicked(int);*/
 
 private:
-    QPushButton* closeBtn;
-    QSlider* slider;
-    QLineEdit* rotLineEdit;
     int id;
-    QLabel* fileNameLabel;
-    bool fromRobot;
     MergeMapGraphicsItem* pixmapItem;
+    QString robotName;
 };
 
 #endif // SCANMAPLISTITEMWIDGET_H

@@ -9,18 +9,13 @@
 #include <QListWidgetItem>
 #include "View/mergedialog.h"
 #include "stylesettings.h"
-
 #include <fstream>
 #include "Controller/mainwindow.h"
 #include "View/mergemapgraphicsitem.h"
 #include <QMenu>
-
-
 #include <opencv2/opencv.hpp>
 #include <opencv2/features2d.hpp>
-
 #include "opencv2/xfeatures2d.hpp"
-
 #include "Model/opencvqttransform.h"
 
 MergeMapWidget::MergeMapWidget(QSharedPointer<Robots> _robots, QWidget *parent) : QWidget(parent), robots(_robots), nbMaps(0) {

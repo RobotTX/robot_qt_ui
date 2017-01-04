@@ -12,16 +12,16 @@
 #include "Controller/mainwindow.h"
 #include "View/mergemapgraphicsitem.h"
 
-ScanMapListItemWidget::ScanMapListItemWidget(int _id, QString fileName, QGraphicsScene *scene, bool _fromRobot) : QWidget(), id(_id), fromRobot(_fromRobot){
-    initializeMenu(fileName);
-    initializeMap(fileName, scene);
+ScanMapListItemWidget::ScanMapListItemWidget(int _id, QString name, QGraphicsScene *scene) : QWidget(), id(_id), robotName(name){
+    initializeMenu();
+    initializeMap(scene);
 }
 
-void ScanMapListItemWidget::initializeMap(QString fileName, QGraphicsScene* scene){
-    qDebug() << "ScanMapListItemWidget::initializeMap received a map or robot :" << fileName;
-}
-
-void ScanMapListItemWidget::initializeMenu(QString fileName){
+void ScanMapListItemWidget::initializeMenu(){
     QVBoxLayout* layout = new QVBoxLayout(this);
-    layout->addWidget(new QPushButton(fileName, this));
+    layout->addWidget(new QPushButton(robotName, this));
+}
+
+void ScanMapListItemWidget::initializeMap(QGraphicsScene* scene){
+    qDebug() << "ScanMapListItemWidget::initializeMap robot :" << robotName;
 }
