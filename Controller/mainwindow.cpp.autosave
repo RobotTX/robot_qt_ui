@@ -915,9 +915,7 @@ bool MainWindow::changeRobotName(QString name){
 
 void MainWindow::changeRobotWifi(QString ssid, std::string password){
     qDebug() << "MainWindow::changeRobotWifi called";
-    QCryptographicHash hashObject(QCryptographicHash::Sha256);
-    hashObject.addData(password.c_str(), password.length());
-    QString res(hashObject.result());
+    SimpleCrypt crypto(Q_UINT64_C(0x0c2ad4a4acb9f023)); //some random number
     std::string hashPassword = SHA256::sha256(password);
     qDebug() << res;
     qDebug() << QString::fromStdString(hashPassword);

@@ -285,7 +285,7 @@ private slots:
 
 protected:
     bool changeRobotName(QString name);
-    void changeRobotWifi(QString ssid, QString password);
+    void changeRobotWifi(QString ssid, std::string password);
     void stopMapThread();
     void closeEvent(QCloseEvent *event);
     void robotHasNoHome(QString robotName);
