@@ -57,8 +57,10 @@
 #include "View/settingswidget.h"
 #include "View/scanmapwidget.h"
 
+/*
 #include <opencv2/opencv.hpp>
 #include <opencv2/features2d.hpp>
+*/
 
 //#include "opencv2/xfeatures2d.hpp"
 #include <QMediaPlayer>
@@ -67,10 +69,6 @@
 
 #include <chrono>
 #include <thread>
-
-#include <openssl/sha.h>
-
-
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow) {
     ui->setupUi(this);
@@ -985,11 +983,11 @@ void MainWindow::savePathSlot(){
     bool already_existed(false);
     /// if the path existed before we destroy it and reconstruct it
     if(pathCreationWidget->getCurrentPathName().compare("") != 0){
-        paths->deletePath(groupName, pathPainter->getVisiblePath());
+        paths->deletePath(groupName, pathCreationWidget->getCurrentPathName());
         already_existed = true;
     }
 
-    paths->createPath(groupName, pathName);
+    assert(paths->createPath(groupName, pathName));
     for(int i = 0; i < pathPainter->getCurrentPath().size(); i++)
         paths->addPathPoint(groupName, pathName, pathPainter->getCurrentPath().at(i));
 

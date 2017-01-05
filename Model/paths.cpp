@@ -88,8 +88,8 @@ int Paths::deleteGroup(const QString groupName){
 /// attempts to delete a path with name <pathName> in the group <groupName>, does not
 /// do anything if such path does not exist, returns the number of paths removed (should be one)
 int Paths::deletePath(const QString groupName, const QString pathName){
-    assert(groups->find(groupName) != groups->end());
-    return (groups->find(groupName) == groups->end()) ? 0 : (*groups)[groupName]->remove(pathName);
+    assert((*groups)[groupName]->find(pathName) != (*groups)[groupName]->end());
+    return (*groups)[groupName]->remove(pathName);
 }
 
 /// returns the path which is identified by the name <pathName> inside the group <groupName>
