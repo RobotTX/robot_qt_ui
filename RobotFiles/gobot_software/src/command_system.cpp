@@ -465,8 +465,8 @@ bool stopAutoMap(){
 }
 
 bool stopMap(){
-	std_srvs::Empty srv;
 
+	std_srvs::Empty srv;
 	if (stopMapClient.call(srv)) {
 		std::cout << "(Command system) stop_map_sender service started" << std::endl;
 		return true;
