@@ -35,6 +35,9 @@ private slots:
     void robotReconnectedSlot(QString robotName);
     void playScanSlot(bool scan, QString robotName);
     void robotScanningSlot(bool scan, QString robotName, bool success);
+    void receivedScanMapSlot(QString robotName, QImage map);
+    void robotGoToSlot(QString robotName, double x, double y);
+    void scanRobotPosSlot(QString robotName, double x, double y, double ori);
 
 signals:
     /**
@@ -54,6 +57,7 @@ signals:
      * To play/pause a scan that is already launched
      */
     void playScan(bool, QString);
+    void robotGoTo(QString, double, double);
 
 private:
     QSharedPointer<Robots> robots;

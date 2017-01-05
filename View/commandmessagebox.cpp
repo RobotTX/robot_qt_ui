@@ -35,6 +35,7 @@ void CommandMessageBox::done(int r){
 }
 
 void CommandMessageBox::closeEvent(QCloseEvent *e){
+    qDebug() << "CommandMessageBox::closeEvent called" << e;
     //QMessageBox::closeEvent(e);
     e->ignore();
     show();

@@ -5,7 +5,7 @@ class QGraphicsScene;
 class QPushButton;
 class QLabel;
 class QLineEdit;
-class MergeMapGraphicsItem;
+class ScanMapGraphicsItem;
 class CustomPushButton;
 
 #include <QWidget>
@@ -24,8 +24,10 @@ public:
     //int getRotation(void) const { return slider->value(); }
     QString getRobotName(void) const { return robotName; }
     void robotConnected(bool connected);
-    MergeMapGraphicsItem* getPixmapItem(void) const { return pixmapItem; }
+    ScanMapGraphicsItem* getPixmapItem(void) const { return pixmapItem; }
     void robotScanning(bool scanning);
+    void updateMap(QImage map);
+    void updateRobotPos(double x, double y, double ori);
 
 protected:
     void initializeMenu();
@@ -35,14 +37,16 @@ private slots:
     void closeBtnSlot();
     void rotLineEditSlot(QString text);
     void scanningBtnSlot(bool checked);
+    void robotGoToSlot(double x, double y);
 
 signals:
     void deleteMap(int, QString);
     void playScan(bool, QString);
+    void robotGoTo(QString, double, double);
 
 private:
     int id;
-    MergeMapGraphicsItem* pixmapItem;
+    ScanMapGraphicsItem* pixmapItem;
     QString robotName;
     QPushButton* closeBtn;
     QSlider* slider;

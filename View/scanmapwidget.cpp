@@ -8,7 +8,7 @@
 #include "stylesettings.h"
 #include "View/mergemaplistwidget.h"
 #include "View/scanmaplistitemwidget.h"
-#include "View/mergemapgraphicsitem.h"
+#include "View/scanmapgraphicsitem.h"
 #include <QMenu>
 #include "View/robotview.h"
 
@@ -150,6 +150,8 @@ void ScanMapWidget::addMap(QString name){
     connect(listItem, SIGNAL(pixmapClicked(int)), this, SLOT(selectPixmap(int)));*/
     connect(listItem, SIGNAL(deleteMap(int, QString)), this, SLOT(deleteMapSlot(int, QString)));
     connect(listItem, SIGNAL(playScan(bool, QString)), this, SLOT(playScanSlot(bool, QString)));
+    connect(listItem, SIGNAL(robotGoTo(QString, double, double)), this, SLOT(robotGoToSlot(QString, double, double)));
+
 
     /// We add the path point widget to the list
     QListWidgetItem* listWidgetItem = new QListWidgetItem(listWidget);
@@ -243,4 +245,25 @@ void ScanMapWidget::robotScanningSlot(bool scan, QString robotName, bool success
         }
     }
     /// TODO if the cmd failed => msg
+}
+
+void ScanMapWidget::receivedScanMapSlot(QString robotName, QImage map){
+    for(int i = 0; i < listWidget->count(); i++){
+        ScanMapListItemWidget* item = static_cast<ScanMapListItemWidget*>(listWidget->itemWidget(listWidget->item(i)));
+        if(item->getRobotName() == robotName)
+            item->updateMap(map);
+    }
+}
+
+void ScanMapWidget::robotGoToSlot(QString robotName, double x, double y){
+    /// Emit to give it to the mainWindow
+    emit robotGoTo(robotName, x, y);
+}
+
+void ScanMapWidget::scanRobotPosSlot(QString robotName, double x, double y, double ori){
+    for(int i = 0; i < listWidget->count(); i++){
+        ScanMapListItemWidget* item = static_cast<ScanMapListItemWidget*>(listWidget->itemWidget(listWidget->item(i)));
+        if(item->getRobotName() == robotName)
+            item->updateRobotPos(x, y, ori);
+    }
 }

@@ -10,13 +10,19 @@
 #include <QIntValidator>
 #include <QDebug>
 #include "Controller/mainwindow.h"
-#include "View/mergemapgraphicsitem.h"
+#include "View/scanmapgraphicsitem.h"
 #include "View/mergemaplistitemwidget.h"
 #include <QFile>
 #include "View/custompushbutton.h"
 
-ScanMapListItemWidget::ScanMapListItemWidget(int _id, QString name, QGraphicsScene* _scene) : QWidget(), id(_id), robotName(name), scene(_scene), pixmapItem(NULL){
+ScanMapListItemWidget::ScanMapListItemWidget(int _id, QString name, QGraphicsScene* _scene) : QWidget(), id(_id), robotName(name), scene(_scene), pixmapItem(new ScanMapGraphicsItem(name)){
     initializeMenu();
+
+    QPixmap pixmap;
+    pixmapItem->setPixmap(pixmap);
+    connect(pixmapItem, SIGNAL(robotGoTo(double,double)), this, SLOT(robotGoToSlot(double,double)));
+
+    scene->addItem(pixmapItem);
 }
 
 void ScanMapListItemWidget::initializeMenu(){
@@ -122,6 +128,13 @@ void ScanMapListItemWidget::sliderSlot(int value){
 }
 
 void ScanMapListItemWidget::scanningBtnSlot(bool checked){
+    if(checked){
+        scanningBtn->setIcon(QIcon(":/icons/pause.png"));
+        scanningLabel->setText("Scanning");
+    } else {
+        scanningBtn->setIcon(QIcon(":/icons/play.png"));
+        scanningLabel->setText("Not scanning");
+    }
     emit playScan(checked, robotName);
 }
 
@@ -133,4 +146,24 @@ void ScanMapListItemWidget::robotScanning(bool scanning){
         scanningBtn->setIcon(QIcon(":/icons/play.png"));
         scanningLabel->setText("Not scanning");
     }
+}
+
+void ScanMapListItemWidget::updateMap(QImage map){
+    qDebug() << "ScanMapListItemWidget::updateMap" << robotName;
+    if(!warningIcon->isHidden())
+        warningIcon->hide();
+
+    QPixmap pixmap = QPixmap::fromImage(map);
+    pixmapItem->setPixmap(pixmap);
+}
+
+void ScanMapListItemWidget::robotGoToSlot(double x, double y){
+    /// TODO transform coord according to the cropped -> normal image
+    emit robotGoTo(robotName, x, y);
+}
+
+
+void ScanMapListItemWidget::updateRobotPos(double x, double y, double ori){
+    /// TODO calculate x and y normal -> cropped image
+    pixmapItem->updateRobotPos(x, y, ori);
 }

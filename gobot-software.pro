@@ -102,7 +102,8 @@ HEADERS += \
     View/scanmapwidget.h \
     View/scanmaplistitemwidget.h \
     View/mergedialog.h \
-    Model/opencvqttransform.h
+    Model/opencvqttransform.h \
+    View/scanmapgraphicsitem.h
 
 FORMS += Controller/mainwindow.ui
 
@@ -173,7 +174,8 @@ SOURCES += main.cpp \
            View/mergemapgraphicsitem.cpp \
            View/scanmapwidget.cpp \
            View/scanmaplistitemwidget.cpp \
-           View/mergedialog.cpp
+           View/mergedialog.cpp \
+    View/scanmapgraphicsitem.cpp
 
 
 RESOURCES += Resources/resources.qrc

@@ -401,6 +401,8 @@ void MainWindow::updateRobot(const QString ipAddress, const float posX, const fl
     if(rv != NULL){
         rv->setPosition(robotPositionInPixelCoordinates.getX(), robotPositionInPixelCoordinates.getY());
         rv->setOrientation(orientation);
+
+        emit scanRobotPos(rv->getRobot()->getName(), robotPositionInPixelCoordinates.getX(), robotPositionInPixelCoordinates.getY(), orientation);
     } else {
         //qDebug() << "(updateRobot) Could not find a RobotView for the robot at ip" << ipAddress;
     }
@@ -459,6 +461,17 @@ void MainWindow::playScanSlot(bool scan, QString robotName){
         }
     } else
         emit robotScanning(scan, robotName, false);
+}
+
+void MainWindow::robotGoToSlot(QString robotName, double x, double y){
+    qDebug() << "MainWindow::testCoordSlot" << robotName << "trying to go to" << x << y;
+    Position posInRobotCoordinates = convertPixelCoordinatesToRobotCoordinates(Position(x, y), map->getOrigin().getX(), map->getOrigin().getY(), map->getResolution(), map->getHeight(), ROBOT_WIDTH);
+    qDebug() << "MainWindow::testCoordSlot converted in robot coord to" << posInRobotCoordinates.getX() << posInRobotCoordinates.getY();
+    /// TODO send command "c posX posY waitingTime"
+    QPointer<RobotView> robotView = robots->getRobotViewByName(robotName);
+    if(robotView)
+        commandController->sendCommand(robotView->getRobot(), QString("c \"") + QString::number(posInRobotCoordinates.getX()) + "\" \"" + QString::number(posInRobotCoordinates.getY()) + "\" \"0\"");
+
 }
 
 void MainWindow::testCoordSlot(double x, double y){
@@ -1572,7 +1585,10 @@ void MainWindow::mapReceivedSlot(const QByteArray mapArray, int who, QString map
         scene->update();
     } else {
         qDebug() << "MainWindow::mapReceivedSlot received a map while scanning";
-        /// TODO send to ScanMapWidget
+        QString robotName = robots->getRobotViewByIp(ipAddress)->getRobot()->getName();
+        QImage image = map->getImageFromArray(mapArray, false);
+
+        emit receivedScanMap(robotName, image);
     }
 }
 
@@ -1794,13 +1810,18 @@ void MainWindow::saveMergeMapSlot(double resolution, Position origin, QImage ima
 void MainWindow::scanMapSlot(){
     qDebug() << "MainWindow::scanMapSlot called";
     scanMapWidget = QPointer<ScanMapWidget>(new ScanMapWidget(robots));
+
     connect(scanMapWidget, SIGNAL(startScanning(QString)), this, SLOT(startScanningSlot(QString)));
     connect(scanMapWidget, SIGNAL(stopScanning(QStringList)), this, SLOT(stopScanningSlot(QStringList)));
     connect(scanMapWidget, SIGNAL(playScan(bool, QString)), this, SLOT(playScanSlot(bool, QString)));
+    connect(scanMapWidget, SIGNAL(robotGoTo(QString, double, double)), this, SLOT(robotGoToSlot(QString, double, double)));
+
     connect(this, SIGNAL(startedScanning(QString, bool)), scanMapWidget, SLOT(startedScanningSlot(QString, bool)));
     connect(this, SIGNAL(robotDisconnected(QString)), scanMapWidget, SLOT(robotDisconnectedSlot(QString)));
     connect(this, SIGNAL(robotReconnected(QString)), scanMapWidget, SLOT(robotReconnectedSlot(QString)));
     connect(this, SIGNAL(robotScanning(bool,QString,bool)), scanMapWidget, SLOT(robotScanningSlot(bool,QString,bool)));
+    connect(this, SIGNAL(receivedScanMap(QString,QImage)), scanMapWidget, SLOT(receivedScanMapSlot(QString,QImage)));
+    connect(this, SIGNAL(scanRobotPos(QString, double, double, double)), scanMapWidget, SLOT(scanRobotPosSlot(QString, double, double, double)));
 
     /// TODO can only click and open the widget once => if already open, just show the widget above the others
 

@@ -124,7 +124,7 @@ bool CommandController::robotWaitForAnswer(QStringList listCmd){
 
     while(cmdAnswer.compare("") == 0){
         qDebug() << "CommandController::robotWaitForAnswer waiting for an answer";
-        MainWindow::delay(1000);
+        MainWindow::delay(100);
     }
 
     qDebug() << "CommandController::robotWaitForAnswer The answer is :" << cmdAnswer;
