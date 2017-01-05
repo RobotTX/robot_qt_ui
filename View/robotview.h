@@ -21,7 +21,7 @@ class QGraphicsSceneMouseEvent;
  * @brief The RobotView class
  * A view that display one robot on the map
  */
-class RobotView: public QObject, public QGraphicsPixmapItem {
+class RobotView : public QObject, public QGraphicsPixmapItem {
     Q_OBJECT
 
 public:

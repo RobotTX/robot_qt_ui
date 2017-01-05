@@ -164,9 +164,6 @@ QSharedPointer<PointView> Points::createPoint(const QString pointName, const dou
     /// to update the path painter
     connect(&(*pointView), SIGNAL(updatePathPainterPointView()), parent, SLOT(updatePathPainterPointViewSlot()));
 
-    /// to plan a scanning goal
-    connect(&(*pointView), SIGNAL(newScanningGoal(double, double)), parent, SLOT(newScanningGoalSlot(double, double)));
-
     return pointView;
 }
 

@@ -1,5 +1,6 @@
 #include "mergemapgraphicsitem.h"
 #include <QDebug>
+#include <QGraphicsSceneMouseEvent>
 
 MergeMapGraphicsItem::MergeMapGraphicsItem() : QGraphicsPixmapItem(){
 
@@ -16,7 +17,6 @@ void MergeMapGraphicsItem::mousePressEvent(QGraphicsSceneMouseEvent *event){
 }
 
 void MergeMapGraphicsItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event){
-
     float x = dragStartPosition.x() - this->pos().x();
     float y = dragStartPosition.y() - this->pos().y();
 

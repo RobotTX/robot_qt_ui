@@ -8,6 +8,7 @@
 #include "stylesettings.h"
 #include "View/mergemaplistwidget.h"
 #include "View/scanmaplistitemwidget.h"
+#include "View/scanmapgraphicsitem.h"
 #include <QMenu>
 #include "View/robotview.h"
 
@@ -55,7 +56,7 @@ void ScanMapWidget::initializeMenu(){
 
 
     listWidget = new MergeMapListWidget(this);
-    connect(listWidget, SIGNAL(dirKeyPressed(int)), this, SLOT(dirKeyEventSlot(int)));
+    //connect(listWidget, SIGNAL(dirKeyPressed(int)), this, SLOT(dirKeyEventSlot(int)));
     topMenuLayout->addWidget(listWidget);
 
 
@@ -100,6 +101,7 @@ void ScanMapWidget::addImageRobotSlot(){
     qDebug() << "ScanMapWidget::addImageRobotSlot called";
 
     /// If we have robots, open a menu to select from which robot we want the map
+    /// TODO check if already added this robot
     if(robots->getRobotsVector().size() > 0){
         QMenu menu(this);
         for(int i = 0; i < robots->getRobotsVector().size(); i++)
@@ -142,10 +144,14 @@ void ScanMapWidget::addMap(QString name){
     } else {
         if(listWidget->count() == 0)
             originalSize = QImage(fileName,"PGM").size();
-    }*/
+    }
 
     connect(listItem, SIGNAL(deleteMap(int)), this, SLOT(deleteMapSlot(int)));
-    connect(listItem, SIGNAL(pixmapClicked(int)), this, SLOT(selectPixmap(int)));
+    connect(listItem, SIGNAL(pixmapClicked(int)), this, SLOT(selectPixmap(int)));*/
+    connect(listItem, SIGNAL(deleteMap(int, QString)), this, SLOT(deleteMapSlot(int, QString)));
+    connect(listItem, SIGNAL(playScan(bool, QString)), this, SLOT(playScanSlot(bool, QString)));
+    connect(listItem, SIGNAL(robotGoTo(QString, double, double)), this, SLOT(robotGoToSlot(QString, double, double)));
+
 
     /// We add the path point widget to the list
     QListWidgetItem* listWidgetItem = new QListWidgetItem(listWidget);
@@ -165,4 +171,99 @@ void ScanMapWidget::saveSlot(){
     qDebug() << "ScanMapWidget::saveSlot called";
 }
 
-/// TODO on close, stop scanning
+void ScanMapWidget::closeEvent(QCloseEvent *event){
+    qDebug() << "ScanMapWidget::closeEvent";
+    QStringList list;
+
+    for(int i = 0; i < listWidget->count(); i++){
+        ScanMapListItemWidget* item = static_cast<ScanMapListItemWidget*>(listWidget->itemWidget(listWidget->item(i)));
+        list.push_back(item->getRobotName());
+    }
+
+    qDebug() << "ScanMapWidget::closeEvent" << list.count() << "robot(s) to stop scanning :" << list;
+    if(list.count() > 0)
+        emit stopScanning(list);
+    QWidget::closeEvent(event);
+}
+
+void ScanMapWidget::robotDisconnectedSlot(QString robotName){
+    for(int i = 0; i < listWidget->count(); i++){
+        ScanMapListItemWidget* item = static_cast<ScanMapListItemWidget*>(listWidget->itemWidget(listWidget->item(i)));
+        if(item->getRobotName() == robotName)
+            item->robotConnected(false);
+    }
+}
+
+void ScanMapWidget::deleteMapSlot(int id, QString robotName){
+    qDebug() << "MergeMapWidget::deleteMapSlot Removing map" << id << "coming from robot" << robotName;
+    /// Tell the robot to stop scanning
+    QStringList list;
+    list.push_back(robotName);
+    emit stopScanning(list);
+
+
+    /// Remove the QGraphicsPixmapItem from the scene
+    QListWidgetItem* listWidgetItem = listWidget->item(id);
+    QGraphicsPixmapItem* pixmap = static_cast<ScanMapListItemWidget*>(listWidget->itemWidget(listWidgetItem))->getPixmapItem();
+    if(pixmap)
+        scene->removeItem(pixmap);
+
+    /// Delete the widget in the QListWidgetItem
+    delete listWidget->itemWidget(listWidgetItem);
+
+    /// Delete the QListWidgetItem
+    delete listWidget->takeItem(id);
+
+    refreshIds();
+}
+
+void ScanMapWidget::refreshIds(){
+    for(int i = 0; i < listWidget->count(); i++)
+        static_cast<ScanMapListItemWidget*>(listWidget->itemWidget(listWidget->item(i)))->setId(i);
+}
+
+void ScanMapWidget::robotReconnectedSlot(QString robotName){
+    for(int i = 0; i < listWidget->count(); i++){
+        ScanMapListItemWidget* item = static_cast<ScanMapListItemWidget*>(listWidget->itemWidget(listWidget->item(i)));
+        if(item->getRobotName() == robotName)
+            item->robotConnected(true);
+    }
+}
+
+void ScanMapWidget::playScanSlot(bool scan, QString robotName){
+    /// Emit to give it to the mainWindow
+    emit playScan(scan, robotName);
+}
+
+void ScanMapWidget::robotScanningSlot(bool scan, QString robotName, bool success){
+    /// TODO send to the right item to change the playBtn icon + label
+    if(success){
+        for(int i = 0; i < listWidget->count(); i++){
+            ScanMapListItemWidget* item = static_cast<ScanMapListItemWidget*>(listWidget->itemWidget(listWidget->item(i)));
+            if(item->getRobotName() == robotName)
+                item->robotScanning(scan);
+        }
+    }
+    /// TODO if the cmd failed => msg
+}
+
+void ScanMapWidget::receivedScanMapSlot(QString robotName, QImage map){
+    for(int i = 0; i < listWidget->count(); i++){
+        ScanMapListItemWidget* item = static_cast<ScanMapListItemWidget*>(listWidget->itemWidget(listWidget->item(i)));
+        if(item->getRobotName() == robotName)
+            item->updateMap(map);
+    }
+}
+
+void ScanMapWidget::robotGoToSlot(QString robotName, double x, double y){
+    /// Emit to give it to the mainWindow
+    emit robotGoTo(robotName, x, y);
+}
+
+void ScanMapWidget::scanRobotPosSlot(QString robotName, double x, double y, double ori){
+    for(int i = 0; i < listWidget->count(); i++){
+        ScanMapListItemWidget* item = static_cast<ScanMapListItemWidget*>(listWidget->itemWidget(listWidget->item(i)));
+        if(item->getRobotName() == robotName)
+            item->updateRobotPos(x, y, ori);
+    }
+}

@@ -1,0 +1,49 @@
+#include "scanmapgraphicsitem.h"
+#include <QGraphicsSceneMouseEvent>
+
+ScanMapGraphicsItem::ScanMapGraphicsItem(QString robotName) : QGraphicsPixmapItem(){
+
+    /// Tell the class which mouse button to accept
+    setAcceptedMouseButtons(Qt::LeftButton | Qt::MidButton);
+    /// To drag & drop the map
+    setFlag(QGraphicsItem::ItemIsMovable);
+
+    scanRobotView = new QGraphicsPixmapItem(QPixmap(":/icons/robot_icon.png"), this);
+    scanRobotView->setScale(0.07);
+    scanRobotView->setToolTip(robotName);
+}
+
+void ScanMapGraphicsItem::mousePressEvent(QGraphicsSceneMouseEvent *event){
+    if(event->button() == Qt::LeftButton){
+        /// On mouse press event, we set the drag start position
+        dragStartPosition = this->pos();
+        QGraphicsPixmapItem::mousePressEvent(event);
+
+    } else if(event->button() == Qt::MidButton){
+        /// TODO to remove after tests
+        emit robotGoTo(event->pos().x(), event->pos().y());
+    }
+}
+
+void ScanMapGraphicsItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event){
+
+    if(event->button() == Qt::LeftButton){
+        float x = dragStartPosition.x() - this->pos().x();
+        float y = dragStartPosition.y() - this->pos().y();
+
+        /// we compare the start position of the drag event & the drop position
+        /// if we have moved for more than 1 pixel, it's a drag, else it's a click
+        /// and we create a temporary point
+        if (abs(x) <= 1 && abs(y) <= 1){
+            /// click
+            emit pixmapClicked();
+        }
+        /// drag and drop
+        QGraphicsPixmapItem::mouseReleaseEvent(event);
+    }
+}
+
+void ScanMapGraphicsItem::updateRobotPos(double x, double y, double ori){
+    scanRobotView->setRotation(ori);
+    scanRobotView->setPos(x, y);
+}

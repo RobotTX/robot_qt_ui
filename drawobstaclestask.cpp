@@ -12,7 +12,6 @@ DrawObstaclesTask::~DrawObstaclesTask(){
 }
 
 void DrawObstaclesTask::run(){
-    qDebug() << "MainWindow::drawObstacles called inside thread" << QThread::currentThreadId() << angle_min << angle_max << angle_increment;
     /// if the IP address is in the map we update the obstacles corresponding to this entry
     /// the second condition checks that the full scan has been received
     if(obstacles->find(ipAddress) != obstacles->end() && static_cast<int>((angle_max-angle_min)/angle_increment) <= ranges.size()){
@@ -25,7 +24,6 @@ QVector<QPointF> DrawObstaclesTask::convertRangesToPoints(const float angle_min 
     qDebug() << "MainWindow::convertRangesToPoints called with" << ranges.size() << "values";
     QVector<QPointF> points;
     int i(ranges.size()-1);
-    qDebug() << "Inside thread" << QThread::currentThreadId();
     /// for improved performance
     std::for_each(ranges.begin(), ranges.end(), [&](const float range) { points.push_back(QPointF(robot->getPosition().getX() + (range * cos(angle_min + i*angle_increment)) * 20 ,
                                                                                                   robot->getPosition().getY() + (range  * sin(angle_min + i*angle_increment)) * 20)); i--; });

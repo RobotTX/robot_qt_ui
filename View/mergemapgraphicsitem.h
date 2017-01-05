@@ -19,6 +19,7 @@ protected:
 
 signals:
     void pixmapClicked();
+    void robotGoTo(double, double);
 
 private:
     QPointF dragStartPosition;

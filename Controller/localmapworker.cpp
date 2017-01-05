@@ -78,8 +78,6 @@ void LocalMapWorker::readTcpDataSlot(){
 
     data = QByteArray();
 
-    qDebug() << "local map worker inside thread" << QThread::currentThreadId();
-
     /// sometimes we don't receive a complete scan and the first values do not correspond to the values of angle_min
     /// angle_max and angle_increment in which case we receive positive values instead which correspond to ranges
     /// that's why we check that the angle_min is negative before transmitting the data
