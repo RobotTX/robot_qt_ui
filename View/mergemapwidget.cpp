@@ -13,9 +13,11 @@
 #include "Controller/mainwindow.h"
 #include "View/mergemapgraphicsitem.h"
 #include <QMenu>
+/*
 #include <opencv2/opencv.hpp>
 #include <opencv2/features2d.hpp>
 #include "opencv2/xfeatures2d.hpp"
+*/
 #include "Model/opencvqttransform.h"
 
 MergeMapWidget::MergeMapWidget(QSharedPointer<Robots> _robots, QWidget *parent) : QWidget(parent), robots(_robots), nbMaps(0) {
@@ -484,7 +486,7 @@ void MergeMapWidget::openMergeDialog(){
 
 void MergeMapWidget::mergeAutomatically(unsigned int map_1_id, unsigned int map_2_id){
     qDebug() << "MergeMapWidget::mergeAutomatically called";
-
+/*
     using namespace cv;
 
     MergeMapListItemWidget* map_1 = static_cast<MergeMapListItemWidget*> ( listWidget->itemWidget(listWidget->item(map_1_id)) );
@@ -572,5 +574,6 @@ void MergeMapWidget::mergeAutomatically(unsigned int map_1_id, unsigned int map_
     }
 
     dialog->close();
+    */
 }
 
