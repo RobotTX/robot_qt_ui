@@ -36,7 +36,7 @@ void DrawObstacles::drawObstacles(float angle_min, float angle_max, float angle_
     QThreadPool::globalInstance()->start(t, QThread::LowestPriority);
     */
 
-    qDebug() << "MainWindow::drawObstacles called" << angle_min << angle_max << angle_increment;
+    //qDebug() << "DrawObstacles::drawObstacles called" << angle_min << angle_max << angle_increment;
     /// if the IP address is in the map we update the obstacles corresponding to this entry
     /// the second condition checks that the full scan has been received
     if(obstacles.find(ipAddress) != obstacles.end() && static_cast<int>((angle_max-angle_min)/angle_increment) <= ranges.size()){
@@ -49,17 +49,16 @@ void DrawObstacles::drawObstacles(float angle_min, float angle_max, float angle_
 }
 
 void DrawObstacles::addNewRobotObstacles(QString ipAddress){
-    qDebug() << "MainWindow::addNewRobotObstacles called with IP" << ipAddress;
+    qDebug() << "DrawObstacles::addNewRobotObstacles called with IP" << ipAddress;
     obstacles.insert(ipAddress, QVector<QPointF>());
 }
 
 QVector<QPointF> DrawObstacles::convertRangesToPoints(const float angle_min /* rad */, const float angle_increment /* rad */, const QVector<float> ranges, const QString ipAddress) const {
-    qDebug() << "MainWindow::convertRangesToPoints called with" << ranges.size() << "values";
+    qDebug() << "DrawObstacles::convertRangesToPoints called with" << ranges.size() << "values";
     QVector<QPointF> points;
     QPointer<Robot> robot = robots->getRobotViewByIp(ipAddress)->getRobot();
     int i(ranges.size()-1);
 
-    qDebug() << "Inside thread" << QThread::currentThreadId();
     /// for improved performance
     std::for_each(ranges.begin(), ranges.end(), [&](const float range) { points.push_back(QPointF(robot->getPosition().getX() + (range * cos(angle_min + i*angle_increment)) * 20 ,
                                                                                                   robot->getPosition().getY() + (range* sin(angle_min + i*angle_increment)) * 20)); i--; });

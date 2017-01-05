@@ -21,6 +21,8 @@ protected:
     void initializeMenu();
     void initializeMap();
     void addMap(QString name);
+    void closeEvent(QCloseEvent *event);
+    void refreshIds();
 
 private slots:
     void cancelSlot();
@@ -28,9 +30,30 @@ private slots:
     void addImageRobotSlot();
     void robotMenuSlot(QAction* action);
     void startedScanningSlot(QString robotName, bool scanning);
+    void robotDisconnectedSlot(QString robotName);
+    void deleteMapSlot(int id, QString robotName);
+    void robotReconnectedSlot(QString robotName);
+    void playScanSlot(bool scan, QString robotName);
+    void robotScanningSlot(bool scan, QString robotName, bool success);
 
 signals:
+    /**
+     * @brief startScanning
+     * To Start from the beggining a scan
+     */
     void startScanning(QString);
+
+    /**
+     * @brief stopScanning
+     * To completely stop a scan
+     */
+    void stopScanning(QStringList);
+
+    /**
+     * @brief playScan
+     * To play/pause a scan that is already launched
+     */
+    void playScan(bool, QString);
 
 private:
     QSharedPointer<Robots> robots;

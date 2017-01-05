@@ -40,8 +40,7 @@ void RobotServerWorker::newConnectionSlot(){
         if(strList.size() == 4){
             /// hostname, IP address, mapID, map date, wifi SSID and stage of the path
             emit robotIsAlive(strList.at(0), socket->peerAddress().toString(), strList.at(1), std::stoi(strList.at(2).toStdString()), std::stoi(strList.at(3).toStdString()));
-        }
-        else
+        } else
             qDebug() << "(RobotServerWorker) Not enough param received for robotIsAlive";
     }
 

@@ -182,7 +182,6 @@ void MergeMapListItemWidget::rotLineEditSlot(QString text){
 }
 
 void MergeMapListItemWidget::sliderSlot(int value){
-    qDebug() << value%360 << value;
     rotLineEdit->setText(QString::number(mod(value, 360)));
     /// rotate the map
     pixmapItem->setRotation(value);
@@ -193,11 +192,11 @@ void MergeMapListItemWidget::pixmapClickedSlot(){
     emit pixmapClicked(id);
 }
 
-int mod (const int a, const int b) {
-   if(b < 0)
-     return mod(a, -b);
-   int ret = a % b;
-   if(ret < 0)
-     ret += b;
-   return ret;
+int MergeMapListItemWidget::mod (const int a, const int b) {
+    if(b < 0)
+        return mod(a, -b);
+    int ret = a % b;
+    if(ret < 0)
+        ret += b;
+    return ret;
 }

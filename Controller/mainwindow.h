@@ -143,6 +143,9 @@ signals:
     void cancelRobotModifications();
     void receivedMapToMerge(QString, QImage, double, double, double);
     void startedScanning(QString, bool);
+    void robotDisconnected(QString);
+    void robotReconnected(QString);
+    void robotScanning(bool, QString, bool);
 
 private slots:
     void sendPathSelectedRobotSlot(const QString groupName, const QString pathName);
@@ -150,7 +153,8 @@ private slots:
     void updateMetadata(const int width, const int height, const float resolution, const float originX, const float originY);
     void mapReceivedSlot(const QByteArray mapArray, int who, QString mapId, QString mapDate, QString resolution, QString originX, QString originY, QString ipAddress);
     void startScanningSlot(QString robotName);
-    void stopScanningSlot();
+    void stopScanningSlot(QStringList listRobot);
+    void playScanSlot(bool scan, QString robotName);
     void quit(void);
     void setSelectedRobot(QPointer<RobotView> robotView);
     void setSelectedRobot(QAbstractButton* button);

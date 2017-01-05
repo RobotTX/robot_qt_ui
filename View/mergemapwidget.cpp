@@ -430,8 +430,6 @@ void MergeMapWidget::deleteMapSlot(int itemId){
     /// Remove the QGraphicsPixmapItem from the scene
     scene->removeItem(static_cast<MergeMapListItemWidget*>(listWidget->itemWidget(listWidgetItem))->getPixmapItem());
 
-    const QString mapName = listWidgetItem->text();
-
     /// Delete the widget in the QListWidgetItem
     delete listWidget->itemWidget(listWidgetItem);
 
@@ -442,8 +440,6 @@ void MergeMapWidget::deleteMapSlot(int itemId){
     button->setEnabled((--nbMaps < 2) ? false : true);
 
     refreshIds();
-
-
 }
 
 void MergeMapWidget::refreshIds(){

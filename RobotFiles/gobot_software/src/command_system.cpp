@@ -6,6 +6,8 @@ const std::string PATH_STAGE_FILE = "/home/gtdollar/computer_software/Robot_Info
 
 bool waiting = false;
 bool connected = false;
+bool scanning = false;
+
 ros::ServiceClient startRobotPosClient;
 ros::ServiceClient stopRobotPosClient;
 
@@ -120,17 +122,17 @@ bool execCommand(ros::NodeHandle n, std::vector<std::string> command){
 		}
 		break;
 
-		/// Command for the robot to start to scan the map
+		/// Command for the robot to play the ongoing scan
 		case 'e':
-			std::cout << "(Command system) Gobot scan the map" << std::endl;
-			return true;
+			std::cout << "(Command system) Gobot play the ongoing scan" << std::endl;
+			scanning = true;
 			return sendAutoMap();
 		break;
 
-		/// Command for the robot to stop to scan the map
+		/// Command for the robot to pause the ongoing scan
 		case 'f':
-			std::cout << "(Command system) Gobot stop scanning the map" << std::endl;
-			return true;
+			std::cout << "(Command system) Gobot pause the ongoing scan" << std::endl;
+			scanning = false;
 			return stopAutoMap();
 		break;
 
@@ -331,6 +333,22 @@ bool execCommand(ros::NodeHandle n, std::vector<std::string> command){
 				return sendOnceMap(std::stoi(command.at(1)));
 			 else 
 				std::cout << "Not enough arguments, received " << command.size() << " arguments, 2 arguments expected" << std::endl; 
+		break;
+
+		/// Command for the robot to start a scan from the beggining
+		case 't':
+			std::cout << "(Command system) Gobot start to scan a new map" << std::endl;
+			scanning = true;
+			/// TODO actually start a scan from the beggining
+			return sendAutoMap();
+		break;
+
+		/// Command for the robot to stop a scan
+		case 'u':
+			std::cout << "(Command system) Gobot stop the scan of the new map" << std::endl;
+			scanning = false;
+			/// TODO actually stop the scan
+			return stopAutoMap();
 		break;
 
 		/// Default/Unknown command
@@ -723,7 +741,9 @@ void asyncAccept(boost::shared_ptr<boost::asio::io_service> io_service, boost::s
    	if(datePath.empty())
    		datePath = "1970-05-21-00-00-00";
 
-	sendMessageToPc(sock, "Connected " + mapId + " " + mapDate + " " + home_x + " " + home_y + " " + dateHome + " " + datePath + " " + path);
+   	std::string scan = (scanning) ? "1" : "0";
+
+	sendMessageToPc(sock, "Connected " + mapId + " " + mapDate + " " + home_x + " " + home_y + " " + dateHome + " " + datePath + " " + scan + " " + path);
 }
 
 void server(unsigned short port, ros::NodeHandle n){

@@ -72,7 +72,6 @@
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow) {
     ui->setupUi(this);
-    qDebug() << "MainWIndow:: Inside thread" << QThread::currentThreadId();
 
     /*
 
@@ -406,71 +405,57 @@ void MainWindow::updateRobot(const QString ipAddress, const float posX, const fl
 
 void MainWindow::startScanningSlot(QString robotName){
     qDebug() << "MainWindow::startScanningSlot called" << robotName;
-    /// TODO launch scan from robot name -> ScanMapWidget -> startScanning(QString robotName)
-    /*if(selectedRobot != NULL){
-        if(checked){
-            int ret = openConfirmMessage("Warning, scanning a new map will erase all previously created points, paths and selected home of robots");
-            switch(ret){
-                case QMessageBox::Cancel :
-                    qDebug() << "MainWindow::launchScan clicked cancel";
-                    editSelectedRobotWidget->getScanBtn()->setChecked(false);
-                    editSelectedRobotWidget->setEnableAll(true);
-                break;
-                case QMessageBox::Ok :{
-                    QString ip = selectedRobot->getRobot()->getIp();
-                    qDebug() << "MainWindow::launchScan Trying to connect to : " << ip << ", starting the map worker and thread";
 
-                    if(commandController->sendCommand(selectedRobot->getRobot(), QString("e"))){
-
-                        editSelectedRobotWidget->getScanBtn()->setText("Stop to scan");
-                        clearNewMap();
-                        editSelectedRobotWidget->getScanBtn()->setEnabled(true);
-                        setEnableAll(false, GraphicItemState::SCANNING);
-                        scanningRobot = selectedRobot;
-
-                        editSelectedRobotWidget->setEnableAll(false);
-
-                        topLayout->setLabel(TEXT_COLOR_SUCCESS, "Scanning a new map");
-
-                    } else {
-                        editSelectedRobotWidget->getScanBtn()->setChecked(false);
-                        topLayout->setLabel(TEXT_COLOR_DANGER, "Failed to start to scan a map, please try again");
-                    }
-                }
-                break;
-                default:
-                    Q_UNREACHABLE();
-                    qDebug() << "MainWindow::launchScan should not be here";
-                break;
-            }
-        } else {
-            if(commandController->sendCommand(selectedRobot->getRobot(), QString("f"))){
-                qDebug() << "MainWindow::launchScan Stopped scanning the map";
-                editSelectedRobotWidget->getScanBtn()->setText("Scan a map");
-
-                QPointer<RobotView> _tmpRobot = selectedRobot;
-                hideAllWidgets();
-                selectedRobot = _tmpRobot;
-
-                editSelectedRobotWidget->setSelectedRobot(selectedRobot);
-                editSelectedRobotWidget->setEnableAll(true);
-                editSelectedRobotWidget->show();
-
-                setEnableAll(true);
-                topLayout->setLabel(TEXT_COLOR_SUCCESS, "Stopped scanning the map");
-            } else {
-                editSelectedRobotWidget->getScanBtn()->setChecked(true);
-                topLayout->setLabel(TEXT_COLOR_DANGER, "Failed to stop the scanning, please try again");
-            }
-        }
-    } else {
-        topLayout->setLabelDelay(TEXT_COLOR_DANGER, "You must first click a robot on the map to establish a connection",4000);
-        qDebug() << "MainWindow::launchScan You need to select a robot first";
-    }*/
+    QPointer<RobotView> robotView = robots->getRobotViewByName(robotName);
+    if(robotView){
+        if(commandController->sendCommand(robotView->getRobot(), QString("t")))
+            emit startedScanning(robotName, true);
+        else
+            emit startedScanning(robotName, false);
+    } else
+        emit startedScanning(robotName, false);
 }
 
-void MainWindow::stopScanningSlot(){
+void MainWindow::stopScanningSlot(QStringList listRobot){
     qDebug() << "MainWindow::stopScanningSlot";
+
+    for(int i = 0; i < listRobot.count(); i++){
+        QPointer<RobotView> robotView = robots->getRobotViewByName(listRobot.at(i));
+        if(robotView){
+            int attempt = 0;
+            while(attempt != -1 && attempt < 5){
+                if(commandController->sendCommand(robotView->getRobot(), QString("u")))
+                    attempt = -1;
+                else
+                    attempt++;
+            }
+            if(attempt == -1)
+                qDebug() << "MainWindow::stopScanningSlot Successfully stopped the robot" << listRobot.at(i) << "to scan";
+            else
+                qDebug() << "MainWindow::stopScanningSlot Could not stop the robot" << listRobot.at(i) << "to scan, stopped trying after 5 attempts";
+        } else
+            qDebug() << "MainWindow::stopScanningSlot Trying to stop the robot" << listRobot.at(i) << "to scan, but the RobotView could not be found, the robot is probably disconnected";
+    }
+}
+
+void MainWindow::playScanSlot(bool scan, QString robotName){
+    qDebug() << "MainWindow::playScanSlot called" << robotName << scan;
+
+    QPointer<RobotView> robotView = robots->getRobotViewByName(robotName);
+    if(robotView){
+        if(scan){
+            if(commandController->sendCommand(robotView->getRobot(), QString("e")))
+                emit robotScanning(scan, robotName, true);
+            else
+                emit robotScanning(scan, robotName, false);
+        } else {
+            if(commandController->sendCommand(robotView->getRobot(), QString("f")))
+                emit robotScanning(scan, robotName, true);
+            else
+                emit robotScanning(scan, robotName, false);
+        }
+    } else
+        emit robotScanning(scan, robotName, false);
 }
 
 void MainWindow::testCoordSlot(double x, double y){
@@ -1260,18 +1245,8 @@ void MainWindow::robotIsDeadSlot(QString hostname, QString ip){
             selectedRobot = NULL;
         }
 
-        /// if the robot is scanning
-        /// TODO send signal to ScanMapWidget if opened
-        /*if(scanningRobot != NULL && scanningRobot->getRobot()->getIp().compare(ip) == 0){
-            editSelectedRobotWidget->getScanBtn()->setChecked(false);
-            editSelectedRobotWidget->getScanBtn()->setText("Scan a map");
-            editSelectedRobotWidget->setEnableAll(true);
-
-            hideAllWidgets();
-            setEnableAll(true);
-
-            scanningRobot = NULL;
-        }*/
+        /// if the robot is scanning send signal to ScanMapWidget
+        emit robotDisconnected(hostname);
 
         /// we stop the robots threads
         rv->getRobot()->deleteLater();
@@ -1817,7 +1792,75 @@ void MainWindow::scanMapSlot(){
     qDebug() << "MainWindow::scanMapSlot called";
     scanMapWidget = QPointer<ScanMapWidget>(new ScanMapWidget(robots));
     connect(scanMapWidget, SIGNAL(startScanning(QString)), this, SLOT(startScanningSlot(QString)));
+    connect(scanMapWidget, SIGNAL(stopScanning(QStringList)), this, SLOT(stopScanningSlot(QStringList)));
+    connect(scanMapWidget, SIGNAL(playScan(bool, QString)), this, SLOT(playScanSlot(bool, QString)));
     connect(this, SIGNAL(startedScanning(QString, bool)), scanMapWidget, SLOT(startedScanningSlot(QString, bool)));
+    connect(this, SIGNAL(robotDisconnected(QString)), scanMapWidget, SLOT(robotDisconnectedSlot(QString)));
+    connect(this, SIGNAL(robotReconnected(QString)), scanMapWidget, SLOT(robotReconnectedSlot(QString)));
+    connect(this, SIGNAL(robotScanning(bool,QString,bool)), scanMapWidget, SLOT(robotScanningSlot(bool,QString,bool)));
+
+    /// TODO can only click and open the widget once => if already open, just show the widget above the others
+
+    /*if(selectedRobot != NULL){
+        if(checked){
+            int ret = openConfirmMessage("Warning, scanning a new map will erase all previously created points, paths and selected home of robots");
+            switch(ret){
+                case QMessageBox::Cancel :
+                    qDebug() << "MainWindow::launchScan clicked cancel";
+                    editSelectedRobotWidget->getScanBtn()->setChecked(false);
+                    editSelectedRobotWidget->setEnableAll(true);
+                break;
+                case QMessageBox::Ok :{
+                    QString ip = selectedRobot->getRobot()->getIp();
+                    qDebug() << "MainWindow::launchScan Trying to connect to : " << ip << ", starting the map worker and thread";
+
+                    if(commandController->sendCommand(selectedRobot->getRobot(), QString("e"))){
+
+                        editSelectedRobotWidget->getScanBtn()->setText("Stop to scan");
+                        clearNewMap();
+                        editSelectedRobotWidget->getScanBtn()->setEnabled(true);
+                        setEnableAll(false, GraphicItemState::SCANNING);
+                        scanningRobot = selectedRobot;
+
+                        editSelectedRobotWidget->setEnableAll(false);
+
+                        topLayout->setLabel(TEXT_COLOR_SUCCESS, "Scanning a new map");
+
+                    } else {
+                        editSelectedRobotWidget->getScanBtn()->setChecked(false);
+                        topLayout->setLabel(TEXT_COLOR_DANGER, "Failed to start to scan a map, please try again");
+                    }
+                }
+                break;
+                default:
+                    Q_UNREACHABLE();
+                    qDebug() << "MainWindow::launchScan should not be here";
+                break;
+            }
+        } else {
+            if(commandController->sendCommand(selectedRobot->getRobot(), QString("f"))){
+                qDebug() << "MainWindow::launchScan Stopped scanning the map";
+                editSelectedRobotWidget->getScanBtn()->setText("Scan a map");
+
+                QPointer<RobotView> _tmpRobot = selectedRobot;
+                hideAllWidgets();
+                selectedRobot = _tmpRobot;
+
+                editSelectedRobotWidget->setSelectedRobot(selectedRobot);
+                editSelectedRobotWidget->setEnableAll(true);
+                editSelectedRobotWidget->show();
+
+                setEnableAll(true);
+                topLayout->setLabel(TEXT_COLOR_SUCCESS, "Stopped scanning the map");
+            } else {
+                editSelectedRobotWidget->getScanBtn()->setChecked(true);
+                topLayout->setLabel(TEXT_COLOR_DANGER, "Failed to stop the scanning, please try again");
+            }
+        }
+    } else {
+        topLayout->setLabelDelay(TEXT_COLOR_DANGER, "You must first click a robot on the map to establish a connection",4000);
+        qDebug() << "MainWindow::launchScan You need to select a robot first";
+    }*/
 }
 
 /**********************************************************************************************************************************/
@@ -4602,11 +4645,10 @@ bool MainWindow::loadMapConfig(const std::string fileName){
 
 void MainWindow::updateRobotInfo(QString robot_name, QString robotInfo){
 
-    //"Connected " + mapId + " " + mapDate + " " + home_x + " " + home_y + " " + dateHome + " " + datePath + " " + path
     QStringList strList = robotInfo.split(" ", QString::SkipEmptyParts);
     qDebug() << "MainWindow::updateRobotInfo" << robotInfo << "to" << strList;
 
-    if(strList.size() > 6){
+    if(strList.size() > 7){
         /// Remove the "Connected"
         strList.removeFirst();
         QString mapId = strList.takeFirst();
@@ -4615,6 +4657,7 @@ void MainWindow::updateRobotInfo(QString robot_name, QString robotInfo){
         QString home_y = strList.takeFirst();
         QString homeDate = strList.takeFirst();
         QString pathDate = strList.takeFirst();
+        bool scanning = static_cast<QString>(strList.takeFirst()).toInt();
         /// What remains in the list is the path
 
         updatePathInfo(robot_name, pathDate, strList);
@@ -4622,6 +4665,14 @@ void MainWindow::updateRobotInfo(QString robot_name, QString robotInfo){
         updateHomeInfo(robot_name, home_x, home_y, homeDate);
 
         updateMapInfo(robot_name, mapId, mapDate);
+
+
+        if(scanning){
+            emit robotReconnected(robot_name);
+            playScanSlot(true, robot_name);
+        } else {
+            /// TODO if in the scanMapWidget => means we rebooted => start the scan from the beggining again
+        }
 
     } else {
         qDebug() << "MainWindow::updateRobotInfo Connected received without enough parameters :" << strList;
