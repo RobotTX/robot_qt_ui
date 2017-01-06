@@ -2,6 +2,7 @@
 #include <QTcpServer>
 #include <QCoreApplication>
 #include <QRegExp>
+#include <string>
 
 
 RobotServerWorker::RobotServerWorker(const int newPort, QObject* parent): port(newPort), QTcpServer(parent){
@@ -38,8 +39,10 @@ void RobotServerWorker::newConnectionSlot(){
         qDebug() << "(RobotServerWorker) Data from the new robot :" << strList;
         if(strList.size() == 4){
             /// hostname, IP address, mapID, map date, wifi SSID and stage of the path
-            emit robotIsAlive(strList.at(0), socket->peerAddress().toString(), strList.at(1), std::stoi(strList.at(2).toStdString()), std::stoi(strList.at(3).toStdString()));
-        } else
+            emit robotIsAlive(strList.at(0), socket->peerAddress().toString(), strList.at(1), static_cast<QString> (strList.at(2)).toInt(),
+                              static_cast<QString> (strList.at(3)).toInt());
+        }
+        else
             qDebug() << "(RobotServerWorker) Not enough param received for robotIsAlive";
     }
 

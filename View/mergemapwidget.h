@@ -155,10 +155,6 @@ private slots:
      */
     void receivedMapToMergeSlot(QString robotName, QImage image, double _resolution, double _originX, double _originY);
 
-    void openMergeDialog();
-
-    void mergeAutomatically(unsigned int map_1_id, unsigned int map_2_id);
-
 signals:
     /**
      * @brief saveMergeMap
@@ -173,7 +169,6 @@ signals:
     void getMapForMerging(QString);
 
 private:
-    MergeDialog* dialog;
     CustomPushButton* button;
     MergeMapListWidget* listWidget;
     QHBoxLayout* layout;
