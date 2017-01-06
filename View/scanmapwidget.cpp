@@ -59,8 +59,26 @@ void ScanMapWidget::initializeMenu(){
     //connect(listWidget, SIGNAL(dirKeyPressed(int)), this, SLOT(dirKeyEventSlot(int)));
     topMenuLayout->addWidget(listWidget);
 
-
     menuLayout->addLayout(topMenuLayout);
+
+
+    QGridLayout* manualLayout = new QGridLayout();
+
+    QPushButton* upBtn = new QPushButton(QIcon(":/icons/up.png"),"", this);
+    upBtn->setFlat(true);
+    QPushButton* rightBtn = new QPushButton(QIcon(":/icons/right.png"),"", this);
+    rightBtn->setFlat(true);
+    QPushButton* downBtn = new QPushButton(QIcon(":/icons/down.png"),"", this);
+    downBtn->setFlat(true);
+    QPushButton* leftBtn = new QPushButton(QIcon(":/icons/left.png"),"", this);
+    leftBtn->setFlat(true);
+
+    manualLayout->addWidget(upBtn, 0, 1);
+    manualLayout->addWidget(leftBtn, 1, 0);
+    manualLayout->addWidget(downBtn, 2, 1);
+    manualLayout->addWidget(rightBtn, 1, 2);
+    menuLayout->addLayout(manualLayout);
+
 
     QHBoxLayout* cancelSaveLayout = new QHBoxLayout();
     CustomPushButton* cancelBtn = new CustomPushButton("Cancel", this, CustomPushButton::ButtonType::LEFT_MENU, "center");
@@ -80,6 +98,7 @@ void ScanMapWidget::initializeMenu(){
     menuLayout->setContentsMargins(0, 0, 5, 0);
 
     topMenuLayout->setAlignment(Qt::AlignTop);
+    manualLayout->setAlignment(Qt::AlignBottom);
     cancelSaveLayout->setAlignment(Qt::AlignBottom);
 }
 
@@ -101,11 +120,19 @@ void ScanMapWidget::addImageRobotSlot(){
     qDebug() << "ScanMapWidget::addImageRobotSlot called";
 
     /// If we have robots, open a menu to select from which robot we want the map
-    /// TODO check if already added this robot
     if(robots->getRobotsVector().size() > 0){
         QMenu menu(this);
-        for(int i = 0; i < robots->getRobotsVector().size(); i++)
+        QStringList list;
+        for(int i = 0; i < listWidget->count(); i++)
+            list.push_back(static_cast<ScanMapListItemWidget*>(listWidget->itemWidget(listWidget->item(i)))->getRobotName());
+
+        for(int i = 0; i < robots->getRobotsVector().size(); i++){
             menu.addAction(robots->getRobotsVector().at(i)->getRobot()->getName());
+            if(list.contains(robots->getRobotsVector().at(i)->getRobot()->getName())){
+                menu.actions().last()->setEnabled(false);
+                menu.actions().last()->setToolTip(menu.actions().last()->text() + " is already scanning");
+            }
+        }
 
         connect(&menu, SIGNAL(triggered(QAction*)), this, SLOT(robotMenuSlot(QAction*)));
         menu.exec(QCursor::pos());
@@ -129,8 +156,11 @@ void ScanMapWidget::startedScanningSlot(QString robotName, bool scanning){
     if(scanning)
         addMap(robotName);
     else {
-        /// TODO msg in QMessageBox
-        qDebug() << "ScanMapWidget::startedScanningSlot" << robotName << "could not start scanning, please try again";
+        QMessageBox msgBox;
+        msgBox.setText(robotName + "could not start scanning, please try again");
+        msgBox.setStandardButtons(QMessageBox::Cancel);
+        msgBox.setDefaultButton(QMessageBox::Cancel);
+        msgBox.exec();
     }
 }
 
@@ -236,15 +266,26 @@ void ScanMapWidget::playScanSlot(bool scan, QString robotName){
 }
 
 void ScanMapWidget::robotScanningSlot(bool scan, QString robotName, bool success){
-    /// TODO send to the right item to change the playBtn icon + label
-    if(success){
-        for(int i = 0; i < listWidget->count(); i++){
-            ScanMapListItemWidget* item = static_cast<ScanMapListItemWidget*>(listWidget->itemWidget(listWidget->item(i)));
-            if(item->getRobotName() == robotName)
-                item->robotScanning(scan);
+    for(int i = 0; i < listWidget->count(); i++){
+        ScanMapListItemWidget* item = static_cast<ScanMapListItemWidget*>(listWidget->itemWidget(listWidget->item(i)));
+        if(item->getRobotName() == robotName){
+            item->robotScanning(scan == success);
         }
     }
-    /// TODO if the cmd failed => msg
+
+    if(!success){
+        QString msg;
+        if(scan)
+            msg = "Failed to launch the scan for the robot : " + robotName + "\nPlease try again.";
+        else
+            msg = "Failed to stop the scan for the robot : " + robotName + "\nPlease try again.";
+
+        QMessageBox msgBox;
+        msgBox.setText(msg);
+        msgBox.setStandardButtons(QMessageBox::Cancel);
+        msgBox.setDefaultButton(QMessageBox::Cancel);
+        msgBox.exec();
+    }
 }
 
 void ScanMapWidget::receivedScanMapSlot(QString robotName, QImage map){

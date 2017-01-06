@@ -1,6 +1,7 @@
 #include "scanmaplistitemwidget.h"
 #include <QHBoxLayout>
 #include <QVBoxLayout>
+#include <QGridLayout>
 #include <QLabel>
 #include <QGraphicsScene>
 #include <QLabel>
@@ -13,9 +14,11 @@
 #include "View/scanmapgraphicsitem.h"
 #include "View/mergemaplistitemwidget.h"
 #include <QFile>
-#include "View/custompushbutton.h"
 
-ScanMapListItemWidget::ScanMapListItemWidget(int _id, QString name, QGraphicsScene* _scene) : QWidget(), id(_id), robotName(name), scene(_scene), pixmapItem(new ScanMapGraphicsItem(name)){
+ScanMapListItemWidget::ScanMapListItemWidget(int _id, QString name, QGraphicsScene* _scene)
+    : QWidget(), id(_id), robotName(name), scene(_scene), pixmapItem(new ScanMapGraphicsItem(name)),
+      oriWidth(0), oriHeight(0), newWidth(0), newHeight(0), top(0), left(0){
+
     initializeMenu();
 
     QPixmap pixmap;
@@ -67,7 +70,8 @@ void ScanMapListItemWidget::initializeMenu(){
     layout->addLayout(topLayout);
 
     QHBoxLayout* scanningLayout = new QHBoxLayout();
-    scanningBtn = new CustomPushButton(QIcon(":/icons/pause.png"),"", this, CustomPushButton::ButtonType::BOTTOM);
+    scanningBtn = new QPushButton(QIcon(":/icons/pause.png"),"", this);
+    scanningBtn->setFlat(true);
     scanningLayout->addWidget(scanningBtn, Qt::AlignLeft);
     scanningLabel = new QLabel("Scanning");
     scanningLayout->addWidget(scanningLabel, Qt::AlignLeft);
@@ -85,6 +89,7 @@ void ScanMapListItemWidget::initializeMenu(){
     midLayout->addWidget(rotLineEdit, Qt::AlignRight);
 
     bottomLayout->addLayout(midLayout);
+
     slider = new QSlider(Qt::Orientation::Horizontal, this);
     slider->setMinimum(0);
     slider->setMaximum(360);
@@ -92,15 +97,17 @@ void ScanMapListItemWidget::initializeMenu(){
     bottomLayout->addWidget(slider);
     layout->addLayout(bottomLayout);
 
-    topLayout->setContentsMargins(10, 10, 10, 5);
+
+    topLayout->setContentsMargins(10, 0, 10, 0);
+    scanningLayout->setContentsMargins(10, 0, 10, 5);
     midLayout->setContentsMargins(0, 0, 0, 0);
-    bottomLayout->setContentsMargins(10, 5, 10, 10);
+    bottomLayout->setContentsMargins(10, 0, 10, 10);
     layout->setContentsMargins(0, 0, 0, 0);
 
     connect(closeBtn, SIGNAL(clicked()), this, SLOT(closeBtnSlot()));
     connect(rotLineEdit, SIGNAL(textEdited(QString)), this, SLOT(rotLineEditSlot(QString)));
     connect(slider, SIGNAL(valueChanged(int)), this, SLOT(sliderSlot(int)));
-    connect(scanningBtn, SIGNAL(clicked(bool)), this, SLOT(scanningBtnSlot(bool)));
+    connect(scanningBtn, SIGNAL(clicked()), this, SLOT(scanningBtnSlot()));
 }
 
 void ScanMapListItemWidget::robotConnected(bool connected){
@@ -127,15 +134,9 @@ void ScanMapListItemWidget::sliderSlot(int value){
         pixmapItem->setRotation(value);
 }
 
-void ScanMapListItemWidget::scanningBtnSlot(bool checked){
-    if(checked){
-        scanningBtn->setIcon(QIcon(":/icons/pause.png"));
-        scanningLabel->setText("Scanning");
-    } else {
-        scanningBtn->setIcon(QIcon(":/icons/play.png"));
-        scanningLabel->setText("Not scanning");
-    }
-    emit playScan(checked, robotName);
+void ScanMapListItemWidget::scanningBtnSlot(){
+    bool startingToScan = scanningLabel->text() == "Not scanning";
+    emit playScan(startingToScan, robotName);
 }
 
 void ScanMapListItemWidget::robotScanning(bool scanning){
@@ -149,21 +150,66 @@ void ScanMapListItemWidget::robotScanning(bool scanning){
 }
 
 void ScanMapListItemWidget::updateMap(QImage map){
-    qDebug() << "ScanMapListItemWidget::updateMap" << robotName;
     if(!warningIcon->isHidden())
         warningIcon->hide();
 
-    QPixmap pixmap = QPixmap::fromImage(map);
+    QPixmap pixmap = QPixmap::fromImage(cropImage(map));
     pixmapItem->setPixmap(pixmap);
 }
 
 void ScanMapListItemWidget::robotGoToSlot(double x, double y){
-    /// TODO transform coord according to the cropped -> normal image
-    emit robotGoTo(robotName, x, y);
+    emit robotGoTo(robotName, x + left, y + top);
 }
 
-
 void ScanMapListItemWidget::updateRobotPos(double x, double y, double ori){
-    /// TODO calculate x and y normal -> cropped image
-    pixmapItem->updateRobotPos(x, y, ori);
+    pixmapItem->updateRobotPos(x - left, y - top, ori);
+}
+
+QImage ScanMapListItemWidget::cropImage(QImage image){
+    oriWidth = image.width();
+    oriHeight = image.height();
+    left = image.width();
+    int right = 0;
+    top = image.height();
+    int bottom = 0;
+
+    /// We want to find the smallest rectangle containing the map (white and black) to crop it and use a small image
+    for(int i = 0; i < image.height(); i++){
+        for(int j = 0; j < image.width(); j++){
+            int color = image.pixelColor(i, j).red();
+            if(color == 255 || color == 0){
+                if(left > i)
+                    left = i;
+                if(top > j)
+                    top = j;
+                if(right < i)
+                    right = i;
+                if(bottom < j)
+                    bottom = j;
+            }
+        }
+    }
+
+    /// We crop the image
+    QImage croppedImage = image.copy(left, top, right - left + 1, bottom - top + 1);
+    /// Create a new image filled with invisible grey
+    QImage newImage = QImage(croppedImage.size(), QImage::Format_ARGB32);
+    newImage.fill(qRgba(205, 205, 205, 0));
+
+    /// 1 out of 2 map will have red wall and the other one green wall to better distinguish them
+    QRgb wallColor = (id % 2 == 0) ? qRgba(255, 0, 0, 170) : qRgba(0, 255, 0, 170);
+    for(int i = 0; i < croppedImage.width(); i++){
+        for(int j = 0; j < croppedImage.height(); j++){
+            int color = croppedImage.pixelColor(i, j).red();
+            if(color < 205)
+                newImage.setPixel(i, j, wallColor);
+            else if(color > 205)
+                newImage.setPixel(i, j, qRgba(255, 255, 255, 170));
+        }
+    }
+
+    newWidth = newImage.width();
+    newHeight = newImage.height();
+
+    return newImage;
 }
