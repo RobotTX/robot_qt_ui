@@ -8,6 +8,7 @@ class ScanMapGraphicsItem: public QObject, public QGraphicsPixmapItem {
 public:
     ScanMapGraphicsItem(QString robotName);
     void updateRobotPos(double x, double y, double ori);
+    QGraphicsPixmapItem* getRobotView(void) const { return scanRobotView; }
 
 protected:
     void mousePressEvent(QGraphicsSceneMouseEvent *event);

@@ -213,3 +213,8 @@ QImage ScanMapListItemWidget::cropImage(QImage image){
 
     return newImage;
 }
+
+void ScanMapListItemWidget::mouseDoubleClickEvent(QMouseEvent*){
+    qDebug() << "ScanMapListItemWidget::mouseDoubleClickEvent";
+    emit centerOn(pixmapItem->getRobotView());
+}

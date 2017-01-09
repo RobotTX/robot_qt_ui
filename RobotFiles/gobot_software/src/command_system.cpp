@@ -125,14 +125,12 @@ bool execCommand(ros::NodeHandle n, std::vector<std::string> command){
 		/// Command for the robot to play the ongoing scan
 		case 'e':
 			std::cout << "(Command system) Gobot play the ongoing scan" << std::endl;
-			scanning = true;
 			return sendAutoMap();
 		break;
 
 		/// Command for the robot to pause the ongoing scan
 		case 'f':
 			std::cout << "(Command system) Gobot pause the ongoing scan" << std::endl;
-			scanning = false;
 			return stopAutoMap();
 		break;
 

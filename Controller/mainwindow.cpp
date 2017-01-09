@@ -405,9 +405,10 @@ void MainWindow::startScanningSlot(QString robotName){
 
     QPointer<RobotView> robotView = robots->getRobotViewByName(robotName);
     if(robotView){
-        if(commandController->sendCommand(robotView->getRobot(), QString("t")))
+        if(commandController->sendCommand(robotView->getRobot(), QString("t"))){
             emit startedScanning(robotName, true);
-        else
+            robotView->getRobot()->setScanning(true);
+        } else
             emit startedScanning(robotName, false);
     } else
         emit startedScanning(robotName, false);
@@ -420,9 +421,10 @@ void MainWindow::stopScanningSlot(QStringList listRobot){
         if(robotView){
             int attempt = 0;
             while(attempt != -1 && attempt < 5){
-                if(commandController->sendCommand(robotView->getRobot(), QString("u")))
+                if(commandController->sendCommand(robotView->getRobot(), QString("u"))){
+                    robotView->getRobot()->setScanning(false);
                     attempt = -1;
-                else
+                } else
                     attempt++;
             }
             if(attempt == -1)
@@ -440,10 +442,36 @@ void MainWindow::playScanSlot(bool scan, QString robotName){
     QPointer<RobotView> robotView = robots->getRobotViewByName(robotName);
     if(robotView){
         if(scan){
-            if(commandController->sendCommand(robotView->getRobot(), QString("e")))
-                emit robotScanning(scan, robotName, true);
-            else
-                emit robotScanning(scan, robotName, false);
+            /// If the robot is scanning or was scanning, gmapping is launched so we just want to subscribe to get the map
+            /// else we ask if we want to relaunch gmapping and start the scan again
+            if(robotView->getRobot()->isScanning()){
+                if(commandController->sendCommand(robotView->getRobot(), QString("e")))
+                    emit robotScanning(scan, robotName, true);
+                else
+                    emit robotScanning(scan, robotName, false);
+            } else {
+                QMessageBox msgBox;
+                msgBox.setText("The robot rebooted, do you wish to restart the scan ?");
+                msgBox.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
+                msgBox.setDefaultButton(QMessageBox::Ok);
+                int ret = msgBox.exec();
+                switch (ret) {
+                    case QMessageBox::Ok:
+                        if(commandController->sendCommand(robotView->getRobot(), QString("t"))){
+                            emit robotScanning(scan, robotName, true);
+                            robotView->getRobot()->setScanning(true);
+                        } else
+                            emit robotScanning(scan, robotName, false);
+                    break;
+                    case QMessageBox::Cancel:
+                        // Cancel was clicked
+                        emit robotScanning(scan, robotName, false);
+                    break;
+                    default:
+                        // should never be reached
+                    break;
+                }
+            }
         } else {
             if(commandController->sendCommand(robotView->getRobot(), QString("f")))
                 emit robotScanning(scan, robotName, true);
@@ -1580,7 +1608,7 @@ void MainWindow::mapReceivedSlot(const QByteArray mapArray, int who, QString map
         QString robotName = robots->getRobotViewByIp(ipAddress)->getRobot()->getName();
         QImage image = map->getImageFromArray(mapArray, false);
 
-        emit receivedScanMap(robotName, image);
+        emit receivedScanMap(robotName, image, resolution.toDouble());
     }
 }
 
@@ -1799,6 +1827,31 @@ void MainWindow::saveMergeMapSlot(double resolution, Position origin, QImage ima
     topLayout->setLabel(TEXT_COLOR_SUCCESS, "The new merged map has been save successfully");
 }
 
+void MainWindow::saveScanMapSlot(double resolution, Position origin, QImage image, QString fileName){
+    qDebug() << "MainWindow::saveScanMapSlot called with filename" << fileName;
+
+    clearNewMap();
+    mapFile = fileName.toStdString();
+
+    /// Set the new map
+    map->setResolution(resolution);
+    map->setWidth(image.width());
+    map->setHeight(image.height());
+    map->setOrigin(origin);
+    map->setMapImage(image);
+    map->setMapId(QUuid::createUuid());
+    map->setDateTime(QDateTime::currentDateTime());
+
+    QPixmap pixmap = QPixmap::fromImage(image);
+    mapPixmapItem->setPixmap(pixmap);
+    scene->update();
+
+    saveMap(fileName);
+
+    sendNewMapToRobots();
+    topLayout->setLabel(TEXT_COLOR_SUCCESS, "The new scanned map has been save successfully");
+}
+
 void MainWindow::scanMapSlot(){
     qDebug() << "MainWindow::scanMapSlot called";
 
@@ -1809,17 +1862,18 @@ void MainWindow::scanMapSlot(){
         connect(scanMapWidget, SIGNAL(stopScanning(QStringList)), this, SLOT(stopScanningSlot(QStringList)));
         connect(scanMapWidget, SIGNAL(playScan(bool, QString)), this, SLOT(playScanSlot(bool, QString)));
         connect(scanMapWidget, SIGNAL(robotGoTo(QString, double, double)), this, SLOT(robotGoToSlot(QString, double, double)));
+        connect(scanMapWidget, SIGNAL(saveScanMap(double, Position, QImage, QString)), this, SLOT(saveScanMapSlot(double, Position, QImage, QString)));
 
         connect(this, SIGNAL(startedScanning(QString, bool)), scanMapWidget, SLOT(startedScanningSlot(QString, bool)));
         connect(this, SIGNAL(robotDisconnected(QString)), scanMapWidget, SLOT(robotDisconnectedSlot(QString)));
         connect(this, SIGNAL(robotReconnected(QString)), scanMapWidget, SLOT(robotReconnectedSlot(QString)));
         connect(this, SIGNAL(robotScanning(bool,QString,bool)), scanMapWidget, SLOT(robotScanningSlot(bool,QString,bool)));
-        connect(this, SIGNAL(receivedScanMap(QString,QImage)), scanMapWidget, SLOT(receivedScanMapSlot(QString,QImage)));
+        connect(this, SIGNAL(receivedScanMap(QString,QImage,double)), scanMapWidget, SLOT(receivedScanMapSlot(QString,QImage,double)));
         connect(this, SIGNAL(scanRobotPos(QString, double, double, double)), scanMapWidget, SLOT(scanRobotPosSlot(QString, double, double, double)));
+
     } else {
         scanMapWidget->activateWindow();
     }
-    /// TODO can only click and open the widget once => if already open, just show the widget above the others
 }
 
 /**********************************************************************************************************************************/
@@ -4602,7 +4656,7 @@ bool MainWindow::loadMapConfig(const std::string fileName){
     return saveMapConfig((QDir::currentPath() + QDir::separator() + "currentMap.txt").toStdString());
 }
 
-void MainWindow::updateRobotInfo(QString robot_name, QString robotInfo){
+void MainWindow::updateRobotInfo(QString robotName, QString robotInfo){
 
     QStringList strList = robotInfo.split(" ", QString::SkipEmptyParts);
     qDebug() << "MainWindow::updateRobotInfo" << robotInfo << "to" << strList;
@@ -4619,46 +4673,56 @@ void MainWindow::updateRobotInfo(QString robot_name, QString robotInfo){
         bool scanning = static_cast<QString>(strList.takeFirst()).toInt();
         /// What remains in the list is the path
 
-        updatePathInfo(robot_name, pathDate, strList);
+        updatePathInfo(robotName, pathDate, strList);
 
-        updateHomeInfo(robot_name, home_x, home_y, homeDate);
+        updateHomeInfo(robotName, home_x, home_y, homeDate);
 
-        updateMapInfo(robot_name, mapId, mapDate);
+        updateMapInfo(robotName, mapId, mapDate);
 
+
+        robots->getRobotViewByName(robotName)->getRobot()->setScanning(scanning);
 
         if(scanning){
-            emit robotReconnected(robot_name);
-            playScanSlot(true, robot_name);
+            emit robotReconnected(robotName);
+            playScanSlot(true, robotName);
         } else {
-            /// TODO if in the scanMapWidget => means we rebooted => start the scan from the beggining again
+            if(scanMapWidget){
+                QStringList robotScanningList = scanMapWidget->getAllScanningRobots();
+                for(int i = 0; i < robotScanningList.count(); i++){
+                    if(static_cast<QString>(robotScanningList.at(i)) == robotName){
+                        emit robotReconnected(robotName);
+                        emit robotScanning(false, robotName, true);
+                    }
+                }
+            }
         }
 
     } else {
         qDebug() << "MainWindow::updateRobotInfo Connected received without enough parameters :" << strList;
     }
 
-    settingsWidget->addRobot(robots->getRobotViewByName(robot_name)->getRobot()->getIp(), robot_name);
+    settingsWidget->addRobot(robots->getRobotViewByName(robotName)->getRobot()->getIp(), robotName);
 }
 
 
-void MainWindow::updateMapInfo(const QString robot_name, QString mapId, QString mapDate){
+void MainWindow::updateMapInfo(const QString robotName, QString mapId, QString mapDate){
 
     /// Check if the robot has the current map
-    //qDebug() << "Robot" << robot_name << "comparing ids" << mapId << "and" << map->getMapId().toString();
+    //qDebug() << "Robot" << robotName << "comparing ids" << mapId << "and" << map->getMapId().toString();
     if(mapId.compare(map->getMapId().toString()) == 0){
-        qDebug() << "Robot" << robot_name << "has the current map";
+        qDebug() << "Robot" << robotName << "has the current map";
     } else {
         QDateTime mapDateTime = QDateTime::fromString(mapDate, "yyyy-MM-dd-hh-mm-ss");
-        //qDebug() << "Robot" << robot_name << "comparing date" << mapDateTime << "and" << map->getDateTime();
+        //qDebug() << "Robot" << robotName << "comparing date" << mapDateTime << "and" << map->getDateTime();
 
         bool robotOlder = mapDateTime <= map->getDateTime();
         if(robotOlder){
-            qDebug() << "Robot" << robot_name << "has a different and older map";
+            qDebug() << "Robot" << robotName << "has a different and older map";
         } else {
-            qDebug() << "Robot" << robot_name << "has a different and newer map";
+            qDebug() << "Robot" << robotName << "has a different and newer map";
         }
 
-        QPointer<Robot> robot = robots->getRobotViewByName(robot_name)->getRobot();
+        QPointer<Robot> robot = robots->getRobotViewByName(robotName)->getRobot();
 
         switch(settingsWidget->getSettingMapChoice()){
             case SettingsWidget::ALWAYS_NEW:
@@ -4686,7 +4750,7 @@ void MainWindow::updateMapInfo(const QString robot_name, QString mapId, QString 
                 QPushButton* robotButton;
                 QPushButton* appButton;
 
-                (robotOlder) ? msgBox.setText("The robot " + robot_name + " has a new map.") : msgBox.setText("The robot " + robot_name + " has an old map.");
+                (robotOlder) ? msgBox.setText("The robot " + robotName + " has a new map.") : msgBox.setText("The robot " + robotName + " has an old map.");
 
                 msgBox.setInformativeText("Which map do you want to use ?");
                 robotButton = msgBox.addButton(tr("Robot"), QMessageBox::AcceptRole);
@@ -4695,10 +4759,10 @@ void MainWindow::updateMapInfo(const QString robot_name, QString mapId, QString 
                 msgBox.exec();
 
                 if (msgBox.clickedButton() == robotButton) {
-                    qDebug() << "Robot" << robot_name << "using the map from the robot";
+                    qDebug() << "Robot" << robotName << "using the map from the robot";
                     commandController->sendCommand(robot, QString("s \"1\""));
                 } else if (msgBox.clickedButton() == appButton) {
-                    qDebug() << "Robot" << robot_name << "using the map from the app";
+                    qDebug() << "Robot" << robotName << "using the map from the app";
                     robot->sendNewMap(map);
                 }
                 delete robotButton;
@@ -4721,9 +4785,9 @@ bool MainWindow::isLater(const QStringList& date, const QStringList& otherDate){
     return false;
 }
 
-QPair<Position, QStringList> MainWindow::getHomeFromFile(const QString robot_name){
+QPair<Position, QStringList> MainWindow::getHomeFromFile(const QString robotName){
     /// retrieves the home point of the robot if the robot has one
-    QFile fileInfo(QDir::currentPath() + QDir::separator() + "robots_homes" + QDir::separator() + robot_name);
+    QFile fileInfo(QDir::currentPath() + QDir::separator() + "robots_homes" + QDir::separator() + robotName);
     Position p;
     QStringList dateLastModification;
     if(fileInfo.open(QIODevice::ReadWrite)){
@@ -4745,10 +4809,10 @@ QPair<Position, QStringList> MainWindow::getHomeFromFile(const QString robot_nam
     return QPair<Position, QStringList> (p, dateLastModification);
 }
 
-void MainWindow::setHomeAtConnection(const QString robot_name, const Position &pos_home){
+void MainWindow::setHomeAtConnection(const QString robotName, const Position &pos_home){
     /// the robot and the application have the same point so we set this one as the home of the robot
     QSharedPointer<PointView> home = points->findPointViewByPos(pos_home);
-    QPointer<RobotView> robotView = robots->getRobotViewByName(robot_name);
+    QPointer<RobotView> robotView = robots->getRobotViewByName(robotName);
     /// Remove the previous home
     if(robotView->getRobot()->getHome()){
         robotView->getRobot()->getHome()->getPoint()->setHome(Point::PERM);
@@ -4768,9 +4832,9 @@ void MainWindow::setHomeAtConnection(const QString robot_name, const Position &p
     savePoints(QDir::currentPath() + QDir::separator() + "points.xml");
 }
 
-bool MainWindow::updateHomeFile(const QString robot_name, const Position& robot_home_position, const QStringList date){
-    qDebug() << "updatehomefile" << robot_name << date.size();
-    QFile fileWriteHome(QDir::currentPath() + QDir::separator() + "robots_homes" + QDir::separator() + robot_name);
+bool MainWindow::updateHomeFile(const QString robotName, const Position& robot_home_position, const QStringList date){
+    qDebug() << "updatehomefile" << robotName << date.size();
+    QFile fileWriteHome(QDir::currentPath() + QDir::separator() + "robots_homes" + QDir::separator() + robotName);
     if(fileWriteHome.open(QIODevice::ReadWrite)){
         QTextStream out(&fileWriteHome);
         out << robot_home_position.getX() << " " << robot_home_position.getY() << "\n";
@@ -4780,7 +4844,7 @@ bool MainWindow::updateHomeFile(const QString robot_name, const Position& robot_
         fileWriteHome.close();
         return true;
     } else {
-        qDebug() << "could not update the home of" << robot_name;
+        qDebug() << "could not update the home of" << robotName;
         return false;
     }
 }
@@ -4797,11 +4861,11 @@ QVector<PathPoint> MainWindow::extractPathFromInfo(const QStringList &robotInfo)
     return path;
 }
 
-void MainWindow::updateHomeInfo(const QString robot_name, QString posX, QString posY, QString homeDate){
-    QPointer<RobotView> robotView = robots->getRobotViewByName(robot_name);
+void MainWindow::updateHomeInfo(const QString robotName, QString posX, QString posY, QString homeDate){
+    QPointer<RobotView> robotView = robots->getRobotViewByName(robotName);
 
     /// retrieves the home point of the robot if the robot has one
-    QPair<Position, QStringList> appHome = getHomeFromFile(robot_name);
+    QPair<Position, QStringList> appHome = getHomeFromFile(robotName);
     Position p = appHome.first;
     QStringList dateLastModification = appHome.second;
 
@@ -4824,17 +4888,17 @@ void MainWindow::updateHomeInfo(const QString robot_name, QString posX, QString 
                 /// if the robot's file is more recent we update on the application side and we look for the pointview corresponding to
                 /// the coordinates given by the robot
                 if(isLater(dateHomeOnRobot, dateLastModification)){
-                    setHomeAtConnection(robot_name, robot_home_position);
-                    updateHomeFile(robot_name, robot_home_position, dateHomeOnRobot);
+                    setHomeAtConnection(robotName, robot_home_position);
+                    updateHomeFile(robotName, robot_home_position, dateHomeOnRobot);
                 } else {
                     /// the application has the most recent file, we send the updated coordinates to the robot
                     if(sendHomeToRobot(robotView, home))
-                        setHomeAtConnection(robot_name, p);
+                        setHomeAtConnection(robotName, p);
                 }
             } else {
                 qDebug() << "HOME APP" << home->getPoint()->getName();
                 if(sendHomeToRobot(robotView, home))
-                    setHomeAtConnection(robot_name, p);
+                    setHomeAtConnection(robotName, p);
             }
 
         } else {
@@ -4845,10 +4909,10 @@ void MainWindow::updateHomeInfo(const QString robot_name, QString posX, QString 
             if(home_sent_by_robot){
                 qDebug() << "HOME ROBOT" << home_sent_by_robot->getPoint()->getName();
                 /// sets the home inside the application (house icon, extra buttons etc...)
-                setHomeAtConnection(robot_name, robot_home_position);
+                setHomeAtConnection(robotName, robot_home_position);
 
                 /// updates the home file on the application side
-                updateHomeFile(robot_name, robot_home_position, dateHomeOnRobot);
+                updateHomeFile(robotName, robot_home_position, dateHomeOnRobot);
 
             } else {
                 robotHasNoHome(robotView->getRobot()->getName());
@@ -4859,13 +4923,13 @@ void MainWindow::updateHomeInfo(const QString robot_name, QString posX, QString 
         /// no need to modify any files
         QSharedPointer<PointView> home_app = points->findPointViewByPos(p);
         if(home_app){
-            setHomeAtConnection(robot_name, p);
+            setHomeAtConnection(robotName, p);
             qDebug() << "HOME APP same on both side" << home_app->getPoint()->getName();
         } else {
             robotHasNoHome(robotView->getRobot()->getName());
         }
     }
-    editSelectedRobotWidget->setSelectedRobot(robots->getRobotViewByName(robot_name));
+    editSelectedRobotWidget->setSelectedRobot(robots->getRobotViewByName(robotName));
     editSelectedRobotWidget->updateHomeMenu();
 }
 
@@ -4878,11 +4942,11 @@ void MainWindow::robotHasNoHome(QString robotName){
     topLayout->addRobotWithoutHome(robotName);
 }
 
-void MainWindow::updatePathInfo(const QString robot_name, QString pathDate, QStringList path){
-    QPointer<RobotView> robotView = robots->getRobotViewByName(robot_name);
+void MainWindow::updatePathInfo(const QString robotName, QString pathDate, QStringList path){
+    QPointer<RobotView> robotView = robots->getRobotViewByName(robotName);
 
     /// retrieves the path of the robot on the application side if the robot has one
-    QPair<QPair<QString, QString>, QStringList> appPathInfo = getPathFromFile(robot_name);
+    QPair<QPair<QString, QString>, QStringList> appPathInfo = getPathFromFile(robotName);
 
     QVector<PathPoint> robotPath = extractPathFromInfo(path);
 
@@ -4920,7 +4984,7 @@ void MainWindow::updatePathInfo(const QString robot_name, QString pathDate, QStr
                         viewPathSelectedRobot(id, true);
                     }
                     QFile fileInfo(QDir::currentPath() + QDir::separator() + "robots_paths" + QDir::separator()
-                                   + robot_name + "_path");
+                                   + robotName + "_path");
                     if(fileInfo.open(QIODevice::ReadWrite)){
                         fileInfo.resize(0);
                         QTextStream out(&fileInfo);
@@ -4950,7 +5014,7 @@ void MainWindow::updatePathInfo(const QString robot_name, QString pathDate, QStr
                             robotView->getRobot()->setPath(pathPainter->getCurrentPath());
                             robotView->getRobot()->setGroupPathName(appPathInfo.first.first);
                             robotView->getRobot()->setPathName(appPathInfo.first.second);
-                            int id = robots->getRobotId(robot_name);
+                            int id = robots->getRobotId(robotName);
                             bottomLayout->updateRobot(id, robotView);
                             if(pathPainter->getCurrentPath().size() > 0){
                                 bottomLayout->getViewPathRobotBtnGroup()->button(id)->setChecked(true);
@@ -4996,7 +5060,7 @@ void MainWindow::updatePathInfo(const QString robot_name, QString pathDate, QStr
                 viewPathSelectedRobot(id, true);
             }
             QFile fileInfo(QDir::currentPath() + QDir::separator() + "robots_paths" + QDir::separator()
-                           + robot_name + "_path");
+                           + robotName + "_path");
             if(fileInfo.open(QIODevice::ReadWrite)){
                 fileInfo.resize(0);
                 QTextStream out(&fileInfo);
@@ -5027,7 +5091,7 @@ void MainWindow::updatePathInfo(const QString robot_name, QString pathDate, QStr
                 robotView->getRobot()->setPath(pathPainter->getCurrentPath());
                 robotView->getRobot()->setGroupPathName(appPathInfo.first.first);
                 robotView->getRobot()->setPathName(appPathInfo.first.second);
-                int id = robots->getRobotId(robot_name);
+                int id = robots->getRobotId(robotName);
                 bottomLayout->updateRobot(id, robotView);
                 if(pathPainter->getCurrentPath().size() > 0){
                     bottomLayout->getViewPathRobotBtnGroup()->button(id)->setChecked(true);
@@ -5039,10 +5103,10 @@ void MainWindow::updatePathInfo(const QString robot_name, QString pathDate, QStr
     }
 }
 
-QPair<QPair<QString, QString>, QStringList> MainWindow::getPathFromFile(const QString robot_name){
+QPair<QPair<QString, QString>, QStringList> MainWindow::getPathFromFile(const QString robotName){
     /// QPair<QPair<groupName, pathName>, date>
     QPair<QPair<QString, QString>, QStringList> pathInfo;
-    QFile fileInfo(QDir::currentPath() + QDir::separator() + "robots_paths" + QDir::separator() + robot_name + "_path");
+    QFile fileInfo(QDir::currentPath() + QDir::separator() + "robots_paths" + QDir::separator() + robotName + "_path");
     if(fileInfo.open(QIODevice::ReadWrite)){
         QRegExp regex("[-\n%]");
         QString content = fileInfo.readAll();

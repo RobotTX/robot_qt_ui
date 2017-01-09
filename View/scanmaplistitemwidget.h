@@ -6,6 +6,7 @@ class QPushButton;
 class QLabel;
 class QLineEdit;
 class ScanMapGraphicsItem;
+class QGraphicsItem;
 
 #include <QWidget>
 #include <QSlider>
@@ -31,6 +32,7 @@ public:
 protected:
     void initializeMenu();
     QImage cropImage(QImage image);
+    void mouseDoubleClickEvent(QMouseEvent *);
 
 private slots:
     void sliderSlot(int value);
@@ -43,6 +45,7 @@ signals:
     void deleteMap(int, QString);
     void playScan(bool, QString);
     void robotGoTo(QString, double, double);
+    void centerOn(QGraphicsItem*);
 
 private:
     int id;

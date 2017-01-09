@@ -25,6 +25,7 @@ void Map::setMapFromArray(const QByteArray& mapArrays, bool fromPgm){
 
 QImage Map::getImageFromArray(const QByteArray& mapArrays, const bool fromPgm){
 
+    qDebug() << "Map::getImageFromArray" << width << height << fromPgm;
     QImage image = QImage(width, height, QImage::Format_Grayscale8);
 
     uint32_t index = 0;

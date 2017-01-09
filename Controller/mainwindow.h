@@ -142,7 +142,7 @@ signals:
     void stopUpdateRobotsThread();
     void cancelRobotModifications();
     void receivedMapToMerge(QString, QImage, double, double, double);
-    void receivedScanMap(QString, QImage);
+    void receivedScanMap(QString, QImage, double);
     void startedScanning(QString, bool);
     void robotDisconnected(QString);
     void robotReconnected(QString);
@@ -158,6 +158,7 @@ private slots:
     void stopScanningSlot(QStringList listRobot);
     void playScanSlot(bool scan, QString robotName);
     void robotGoToSlot(QString robotName, double x, double y);
+    void saveScanMapSlot(double resolution, Position origin, QImage image, QString fileName);
     void quit(void);
     void setSelectedRobot(QPointer<RobotView> robotView);
     void setSelectedRobot(QAbstractButton* button);
