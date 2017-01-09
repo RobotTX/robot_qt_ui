@@ -6,7 +6,6 @@ class QPushButton;
 class QLabel;
 class QLineEdit;
 class ScanMapGraphicsItem;
-class CustomPushButton;
 
 #include <QWidget>
 #include <QSlider>
@@ -31,12 +30,13 @@ public:
 
 protected:
     void initializeMenu();
+    QImage cropImage(QImage image);
 
 private slots:
     void sliderSlot(int value);
     void closeBtnSlot();
     void rotLineEditSlot(QString text);
-    void scanningBtnSlot(bool checked);
+    void scanningBtnSlot();
     void robotGoToSlot(double x, double y);
 
 signals:
@@ -46,18 +46,23 @@ signals:
 
 private:
     int id;
-    ScanMapGraphicsItem* pixmapItem;
     QString robotName;
+    QGraphicsScene* scene;
+    ScanMapGraphicsItem* pixmapItem;
     QPushButton* closeBtn;
     QSlider* slider;
     QLineEdit* rotLineEdit;
     QLabel* fileNameLabel;
-    QGraphicsScene* scene;
     QPushButton* discoIcon;
     QPushButton* warningIcon;
-    CustomPushButton* scanningBtn;
+    QPushButton* scanningBtn;
     QLabel* scanningLabel;
-
+    int oriWidth;
+    int oriHeight;
+    int newWidth;
+    int newHeight;
+    int top;
+    int left;
 };
 
 

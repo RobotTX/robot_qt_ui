@@ -42,9 +42,11 @@ void CustomQGraphicsView::mousePressEvent(QMouseEvent *event){
 void CustomQGraphicsView::mouseMoveEvent(QMouseEvent *event){
     if(catchKeyEvent && dragStartPosition != QPointF(0, 0)){
         QList<QGraphicsItem *> itemList = items();
-        /// Make it looks like we move the view but we actually move every item in the view
+        /// Make it looks like we move the view but we actually move ths items in the view
+        /// Only move the items without a parent as if they have a parent, they will be moved when their parent is moved
         for(int i = 0; i < itemList.count(); i++)
-            itemList.at(i)->moveBy(event->pos().x() - dragStartPosition.x(), event->pos().y() - dragStartPosition.y());
+            if(itemList.at(i)->parentItem() == NULL)
+                itemList.at(i)->moveBy((event->pos().x() - dragStartPosition.x())/zoomCoeff, (event->pos().y() - dragStartPosition.y())/zoomCoeff);
         dragStartPosition = event->pos();
     }
     QGraphicsView::mouseMoveEvent(event);

@@ -32,7 +32,6 @@ void MapView::mousePressEvent(QGraphicsSceneMouseEvent *event){
         QGraphicsPixmapItem::mousePressEvent(event);
 
     } else if(event->button() == Qt::MidButton){
-        /// TODO to remove after tests
         emit testCoord(event->pos().x(), event->pos().y());
     }
 }

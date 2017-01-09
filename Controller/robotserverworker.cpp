@@ -16,8 +16,7 @@ void RobotServerWorker::startServer(){
         qDebug() << "(RobotServerWorker) Server failed to listen on port" << port;
     else
         qDebug() << "Server is listening on port" << port;
-    // TODO
-    // open a msgBox ?
+    // TODO open a msgBox ?
 }
 
 void RobotServerWorker::stopWorker(){

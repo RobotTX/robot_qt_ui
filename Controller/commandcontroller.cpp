@@ -123,6 +123,8 @@ bool CommandController::robotWaitForAnswer(QStringList listCmd){
     openMessageBox(listCmd);
 
     while(cmdAnswer.compare("") == 0){
+        if(messageBox.isHidden())
+            userStopped();
         qDebug() << "CommandController::robotWaitForAnswer waiting for an answer";
         MainWindow::delay(100);
     }

@@ -10,7 +10,7 @@ class MergeMapListWidget;
 #include "Model/robots.h"
 #include "Model/position.h"
 
-#define LIST_WIDGET_HEIGHT 120
+#define LIST_WIDGET_HEIGHT 140
 
 class ScanMapWidget : public QWidget {
     Q_OBJECT

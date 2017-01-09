@@ -319,12 +319,14 @@ bool execCommand(ros::NodeHandle n, std::vector<std::string> command){
 			std::cout << "(Command system) Gobot sends laser data" << std::endl;
 			return sendLaserData();
 		}
+		break;
 
 		case 'r':
 		{
 			std::cout << "(Command system) Gobot stops sending laser data" << std::endl;
 			return stopSendLaserData();
 		}
+		break;
 
 		/// Command for the robot to start to scan the map
 		case 's':
@@ -337,18 +339,44 @@ bool execCommand(ros::NodeHandle n, std::vector<std::string> command){
 
 		/// Command for the robot to start a scan from the beggining
 		case 't':
+		{
 			std::cout << "(Command system) Gobot start to scan a new map" << std::endl;
 			scanning = true;
-			/// TODO actually start a scan from the beggining
+
+            /// Kill gobot move so that we'll restart it with the new map
+            std::string cmd = "rosnode kill /move_base";
+            system(cmd.c_str());
+
+            sleep(5);
+
+            /// Relaunch gobot_move
+            cmd = "roslaunch gobot_move scan.launch &";
+            system(cmd.c_str());
+            std::cout << "(New Map) We relaunched gobot_move" << std::endl;
+
 			return sendAutoMap();
+		}
 		break;
 
 		/// Command for the robot to stop a scan
 		case 'u':
+		{
 			std::cout << "(Command system) Gobot stop the scan of the new map" << std::endl;
 			scanning = false;
-			/// TODO actually stop the scan
+
+            /// Kill gobot move so that we'll restart it with the new map
+            std::string cmd = "rosnode kill /move_base";
+            system(cmd.c_str());
+
+            sleep(5);
+
+            /// Relaunch gobot_move
+            cmd = "roslaunch gobot_move slam.launch &";
+            system(cmd.c_str());
+            std::cout << "(New Map) We relaunched gobot_move" << std::endl;
+
 			return stopAutoMap();
+		}
 		break;
 
 		/// Default/Unknown command
