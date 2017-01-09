@@ -20,5 +20,5 @@ obstacle_layer:
 
 sonar_sensor_layer:
    ns: /sensors/sonar_sensor
-   topics: ["sonar_one_range","sonar_two_range","sonar_three_range","sonar_four_range"]
+   topics: ["sonar_two_range","sonar_four_range"]
    no_readings_timeout: 2.0

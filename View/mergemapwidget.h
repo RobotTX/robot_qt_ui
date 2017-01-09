@@ -169,7 +169,6 @@ signals:
     void getMapForMerging(QString);
 
 private:
-    CustomPushButton* button;
     MergeMapListWidget* listWidget;
     QHBoxLayout* layout;
     QGraphicsScene* scene;
