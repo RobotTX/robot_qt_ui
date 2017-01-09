@@ -60,8 +60,10 @@ QVector<QPointF> DrawObstacles::convertRangesToPoints(const float angle_min /* r
     int i(ranges.size()-1);
 
     /// for improved performance
-    std::for_each(ranges.begin(), ranges.end(), [&](const float range) { points.push_back(QPointF(robot->getPosition().getX() + (range * cos(angle_min + i*angle_increment)) * 20 ,
-                                                                                                  robot->getPosition().getY() + (range* sin(angle_min + i*angle_increment)) * 20)); i--; });
+    qDebug() << "MainWindow::convertRangesToPoints called with robot orientation " << robot->getOrientation();
+    std::for_each(ranges.begin(), ranges.end(), [&](const float range) {
+        points.push_back(QPointF(robot->getPosition().getX() + (range * cos(robot->getOrientation()*3.14159/180 - 3.14159/2 + angle_min + i*angle_increment)) * 20 ,
+                                 robot->getPosition().getY() + (range * sin(robot->getOrientation()*3.14159/180 - 3.14159/2 + angle_min + i*angle_increment)) * 20)); i--; });
     return points;
 }
 

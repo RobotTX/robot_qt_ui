@@ -150,7 +150,6 @@ SOURCES += main.cpp \
            Controller/localmapworker.cpp \
            View/drawobstacles.cpp \
            View/settingswidget.cpp \
-           drawobstaclestask.cpp \
            View/mergemapwidget.cpp \
            View/mergemaplistitemwidget.cpp \
            View/mergemaplistwidget.cpp \
