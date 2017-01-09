@@ -7,7 +7,6 @@
 #include <QButtonGroup>
 #include "View/mergemaplistitemwidget.h"
 #include <QListWidgetItem>
-#include "View/mergedialog.h"
 #include "stylesettings.h"
 #include <fstream>
 #include "Controller/mainwindow.h"
@@ -69,12 +68,6 @@ void MergeMapWidget::initializeMenu(){
     connect(listWidget, SIGNAL(dirKeyPressed(int)), this, SLOT(dirKeyEventSlot(int)));
     topMenuLayout->addWidget(listWidget);
 
-    button = new CustomPushButton("Merge automatically", this);
-    button->setToolTip("You need at least two maps to merge them automatically");
-    button->setEnabled(false);
-    connect(button, SIGNAL(clicked()), this, SLOT(openMergeDialog()));
-    topMenuLayout->addWidget(button);
-
     menuLayout->addLayout(topMenuLayout);
 
     QHBoxLayout* cancelSaveLayout = new QHBoxLayout();
@@ -116,7 +109,6 @@ void MergeMapWidget::resetSlot(){
     qDebug() << "MergeMapWidget::resetSlot called";
     while(listWidget->count() != 0)
         deleteMapSlot(0);
-    button->setEnabled(false);
 }
 
 void MergeMapWidget::addImageFileSlot(){
@@ -126,11 +118,8 @@ void MergeMapWidget::addImageFileSlot(){
     QString fileName = QFileDialog::getOpenFileName(this,
         tr("Open Image"), "", tr("Image Files (*.pgm)"));
 
-    if(!fileName.isEmpty()){
+    if(!fileName.isEmpty())
         addMap(fileName, false);
-        /// if there are at least 2 maps we enable the automatic merge button
-        button->setEnabled((++nbMaps > 1) ? true : false);
-    }
 }
 
 void MergeMapWidget::addImageRobotSlot(){
@@ -431,9 +420,6 @@ void MergeMapWidget::deleteMapSlot(int itemId){
 
     /// Delete the QListWidgetItem
     delete listWidget->takeItem(itemId);
-
-    /// if there are less than 2 maps remaining we disable the automatic merge button
-    button->setEnabled((--nbMaps < 2) ? false : true);
 
     refreshIds();
 }
