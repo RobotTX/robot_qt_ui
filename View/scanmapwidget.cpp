@@ -13,7 +13,8 @@
 #include "View/robotview.h"
 
 
-ScanMapWidget::ScanMapWidget(QSharedPointer<Robots> _robots, QWidget* parent) : QWidget(parent), robots(_robots){
+ScanMapWidget::ScanMapWidget(QSharedPointer<Robots> _robots, QWidget* parent)
+    : QWidget(parent), robots(_robots), mapSize(QSize()), resolution(-1){
     setAttribute(Qt::WA_DeleteOnClose);
     setMouseTracking(true);
     layout = new QHBoxLayout(this);
@@ -167,20 +168,10 @@ void ScanMapWidget::startedScanningSlot(QString robotName, bool scanning){
 void ScanMapWidget::addMap(QString name){
     ScanMapListItemWidget* listItem = new ScanMapListItemWidget(listWidget->count(), name, scene);
 
-    /*
-    if(fromRobot){
-        if(listWidget->count() == 0)
-            originalSize = image.size();
-    } else {
-        if(listWidget->count() == 0)
-            originalSize = QImage(fileName,"PGM").size();
-    }
-
-    connect(listItem, SIGNAL(deleteMap(int)), this, SLOT(deleteMapSlot(int)));
-    connect(listItem, SIGNAL(pixmapClicked(int)), this, SLOT(selectPixmap(int)));*/
     connect(listItem, SIGNAL(deleteMap(int, QString)), this, SLOT(deleteMapSlot(int, QString)));
     connect(listItem, SIGNAL(playScan(bool, QString)), this, SLOT(playScanSlot(bool, QString)));
     connect(listItem, SIGNAL(robotGoTo(QString, double, double)), this, SLOT(robotGoToSlot(QString, double, double)));
+    connect(listItem, SIGNAL(centerOn(QGraphicsItem*)), this, SLOT(centerOnSlot(QGraphicsItem*)));
 
 
     /// We add the path point widget to the list
@@ -199,10 +190,63 @@ void ScanMapWidget::cancelSlot(){
 
 void ScanMapWidget::saveSlot(){
     qDebug() << "ScanMapWidget::saveSlot called";
+    if(listWidget->count() > 0){
+
+        /// We hide the robotViews
+        for(int i = 0; i < listWidget->count(); i++){
+            ScanMapListItemWidget* item = static_cast<ScanMapListItemWidget*>(listWidget->itemWidget(listWidget->item(i)));
+            item->getPixmapItem()->getRobotView()->hide();
+        }
+
+        /// Get an image from the scene
+        QImage image = sceneToImage();
+        image.save("/home/m-a/Desktop/1.pgm");
+
+        /// Check if the size of the image is bigger than expected, and if so, alert the user that we might lose data if using it
+        if(checkImageSize(image.size())){
+            image = croppedImageToMapImage(image);
+            image.save("/home/m-a/Desktop/2.pgm");
+
+
+            /// If we got a resolution proceed, else we don't save
+            if(resolution != -1){
+                qDebug() << "ScanMapWidget::saveSlot final origin in pixel :" << resolution << -image.width()*resolution/2;
+
+                /// Reconvert the new origin from pixel coordinates to the system used by the robot
+                Position newOrigin = MainWindow::convertPixelCoordinatesToRobotCoordinates(Position(image.width()/2, image.height()/2), 0, 0, resolution, image.height(), 0);
+                newOrigin.setX(-newOrigin.getX());
+                newOrigin.setY(-newOrigin.getY());
+
+                /// Where to save the new map
+                QString fileName = QFileDialog::getSaveFileName(this, tr("Save File"), "", tr("Images (*.pgm)"));
+
+                if(!fileName.isEmpty()){
+                    image.save(fileName);
+                    emit saveScanMap(resolution, newOrigin, image, fileName);
+                    close();
+                }
+            }
+        }
+    } else {
+        QMessageBox msgBox;
+        msgBox.setText("You have no map to save.");
+        msgBox.setStandardButtons(QMessageBox::Cancel);
+        msgBox.setDefaultButton(QMessageBox::Cancel);
+        msgBox.exec();
+    }
 }
 
 void ScanMapWidget::closeEvent(QCloseEvent *event){
     qDebug() << "ScanMapWidget::closeEvent";
+    QStringList list = getAllScanningRobots();
+
+    qDebug() << "ScanMapWidget::closeEvent" << list.count() << "robot(s) to stop scanning :" << list;
+    if(list.count() > 0)
+        emit stopScanning(list);
+    QWidget::closeEvent(event);
+}
+
+QStringList ScanMapWidget::getAllScanningRobots(){
     QStringList list;
 
     for(int i = 0; i < listWidget->count(); i++){
@@ -210,10 +254,7 @@ void ScanMapWidget::closeEvent(QCloseEvent *event){
         list.push_back(item->getRobotName());
     }
 
-    qDebug() << "ScanMapWidget::closeEvent" << list.count() << "robot(s) to stop scanning :" << list;
-    if(list.count() > 0)
-        emit stopScanning(list);
-    QWidget::closeEvent(event);
+    return list;
 }
 
 void ScanMapWidget::robotDisconnectedSlot(QString robotName){
@@ -288,7 +329,11 @@ void ScanMapWidget::robotScanningSlot(bool scan, QString robotName, bool success
     }
 }
 
-void ScanMapWidget::receivedScanMapSlot(QString robotName, QImage map){
+void ScanMapWidget::receivedScanMapSlot(QString robotName, QImage map, double _resolution){
+    mapSize = map.size();
+    if(_resolution != -1)
+        resolution = _resolution;
+
     for(int i = 0; i < listWidget->count(); i++){
         ScanMapListItemWidget* item = static_cast<ScanMapListItemWidget*>(listWidget->itemWidget(listWidget->item(i)));
         if(item->getRobotName() == robotName)
@@ -307,4 +352,130 @@ void ScanMapWidget::scanRobotPosSlot(QString robotName, double x, double y, doub
         if(item->getRobotName() == robotName)
             item->updateRobotPos(x, y, ori);
     }
+}
+
+void ScanMapWidget::centerOnSlot(QGraphicsItem* pixmap){
+    graphicsView->centerOn(pixmap);
+}
+
+QImage ScanMapWidget::sceneToImage(){
+    qDebug() << "ScanMapWidget::sceneToImage called";
+
+    /// Center the scene on the images
+    scene->clearSelection();
+    scene->setSceneRect(scene->itemsBoundingRect());
+
+    /// Create an image with the size the images are taking in the scene
+    QImage image(scene->sceneRect().size().toSize(), QImage::Format_ARGB32);
+    /// Fill the image with grey
+    image.fill(QColor(205, 205, 205));
+
+    /// We use a painter to copy the scene into the image
+    QPainter painter(&image);
+    scene->render(&painter);
+    image.save("/home/m-a/Desktop/0.png");
+
+
+    /// The image is still in green and red color so we set the pixel to white and black
+    for(int i = 0; i < image.width(); i++){
+        for(int j = 0; j < image.height(); j++){
+            QColor color = image.pixelColor(i, j);
+            if(!(color.red() == 205 && color.green() == 205 && color.blue() == 205)){
+                if(color.red() == color.green() && color.green() == color.blue())
+                    image.setPixelColor(i, j, Qt::white);
+                else
+                    image.setPixelColor(i, j, Qt::black);
+            }
+        }
+    }
+
+    return image;
+}
+
+QImage ScanMapWidget::croppedImageToMapImage(QImage croppedImage){
+    qDebug() << "ScanMapWidget::croppedImageToMapImage called";
+
+
+    /// Create the new image on the desired size
+    QImage image(mapSize, QImage::Format_ARGB32);
+    /// Fille the image with grey
+    image.fill(QColor(205, 205, 205));
+
+    /// Calculate the size difference between the given image and the output image
+    int leftDiff = qAbs((mapSize.width() - croppedImage.width())/2);
+    int topDiff = qAbs((mapSize.height() - croppedImage.height())/2);
+
+    int leftSign = 1;
+    int topSign = 1;
+
+    /// If the input image is bigger on any side, we crop the image
+    if(croppedImage.width() > mapSize.width() && croppedImage.height() > mapSize.height()){
+        qDebug() << "ScanMapWidget::croppedImageToMapImage width & height are bigger";
+        QImage tmpImage = croppedImage.copy(leftDiff, topDiff, mapSize.width(), mapSize.height());
+
+        QPainter painter(&image);
+        painter.drawImage(0, 0, tmpImage);
+        painter.end();
+
+        leftSign = -1;
+        topSign = -1;
+
+    } else if(croppedImage.width() > mapSize.width()){
+        qDebug() << "ScanMapWidget::croppedImageToMapImage width is bigger";
+        QImage tmpImage = croppedImage.copy(leftDiff, 0, mapSize.width(), mapSize.height());
+
+        QPainter painter(&image);
+        painter.drawImage(0, 0, tmpImage);
+        painter.end();
+
+        leftSign = -1;
+
+    } else if(croppedImage.height() > mapSize.height()){
+        qDebug() << "ScanMapWidget::croppedImageToMapImage height is bigger";
+        QImage tmpImage = croppedImage.copy(0, topDiff, mapSize.width(), mapSize.height());
+
+        QPainter painter(&image);
+        painter.drawImage(0, 0, tmpImage);
+        painter.end();
+
+        topSign = -1;
+
+    } else {
+        qDebug() << "ScanMapWidget::croppedImageToMapImage everything is fine";
+        for(int i = 0; i < croppedImage.width(); i++)
+            for(int j = 0; j < croppedImage.height(); j++)
+                image.setPixelColor(i + leftDiff, j + topDiff, croppedImage.pixelColor(i, j));
+    }
+
+    return image;
+}
+
+bool ScanMapWidget::checkImageSize(QSize sizeCropped){
+    qDebug() << "ScanMapWidget::checkImageSize called original size :" << mapSize << "compared to new size :" << sizeCropped;
+
+    /// If the cropped image is bigger than the ouput one, we display a message to the user
+    if(sizeCropped.width() > mapSize.width() || sizeCropped.height() > mapSize.height()){
+        QMessageBox msgBox;
+        msgBox.setText("The new image is bigger than the input one, some data may be lost.");
+        msgBox.setInformativeText("Do you wish to proceed ?");
+        msgBox.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
+        msgBox.setDefaultButton(QMessageBox::Cancel);
+        int ret = msgBox.exec();
+
+        switch(ret){
+            case QMessageBox::Cancel :
+                return false;
+            break;
+            case QMessageBox::Ok :
+                return true;
+            break;
+            default:
+                Q_UNREACHABLE();
+                /// should never be here
+                qDebug() << "ScanMapWidget::saveSlot should not be here";
+            break;
+        }
+        return false;
+    }
+    return true;
 }

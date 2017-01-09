@@ -16,6 +16,7 @@ class ScanMapWidget : public QWidget {
     Q_OBJECT
 public:
     ScanMapWidget(QSharedPointer<Robots> _robots, QWidget* parent = Q_NULLPTR);
+    QStringList getAllScanningRobots();
 
 protected:
     void initializeMenu();
@@ -23,6 +24,9 @@ protected:
     void addMap(QString name);
     void closeEvent(QCloseEvent *event);
     void refreshIds();
+    QImage sceneToImage();
+    QImage croppedImageToMapImage(QImage croppedImage);
+    bool checkImageSize(QSize sizeCropped);
 
 private slots:
     void cancelSlot();
@@ -35,9 +39,10 @@ private slots:
     void robotReconnectedSlot(QString robotName);
     void playScanSlot(bool scan, QString robotName);
     void robotScanningSlot(bool scan, QString robotName, bool success);
-    void receivedScanMapSlot(QString robotName, QImage map);
+    void receivedScanMapSlot(QString robotName, QImage map, double _resolution);
     void robotGoToSlot(QString robotName, double x, double y);
     void scanRobotPosSlot(QString robotName, double x, double y, double ori);
+    void centerOnSlot(QGraphicsItem* pixmap);
 
 signals:
     /**
@@ -58,6 +63,7 @@ signals:
      */
     void playScan(bool, QString);
     void robotGoTo(QString, double, double);
+    void saveScanMap(double, Position, QImage, QString);
 
 private:
     QSharedPointer<Robots> robots;
@@ -65,6 +71,8 @@ private:
     QGraphicsScene* scene;
     CustomQGraphicsView* graphicsView;
     MergeMapListWidget* listWidget;
+    QSize mapSize;
+    double resolution;
 };
 
 #endif // SCANMAPWIDGET_H
