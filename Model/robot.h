@@ -21,12 +21,14 @@ class Map;
 #include "Controller/sendnewmapworker.h"
 #include "Controller/localmapworker.h"
 #include "Controller/scanmapworker.h"
+#include "Controller/teleopworker.h"
 
 #define PORT_MAP_METADATA 4000
 #define PORT_ROBOT_POS 4001
 #define PORT_MAP 4002
 #define PORT_CMD 5600
 #define PORT_NEW_MAP 5601
+#define PORT_TELEOP 5602
 #define PORT_LOCAL_MAP 5605
 
 /**
@@ -115,6 +117,7 @@ public:
      * Delete the path of this robot
      */
     void clearPath();
+    void sendTeleopCmd(const QString cmd);
 
 signals:
     /**
@@ -140,12 +143,15 @@ signals:
      */
     void sendNewMapSignal(QString mapId, QString date, QString metadata, QImage map);
 
+    void teleopCmd(QString);
+
     void stopCmdRobotWorker();
     void stopRobotWorker();
     void stopMetadataWorker();
     void stopNewMapWorker();
     void stopLocalMapWorker();
     void stopMapWorker();
+    void stopTeleopWorker();
 
     void startCmdRobotWorker();
     void startRobotWorker();
@@ -153,6 +159,8 @@ signals:
     void startNewMapWorker();
     void startLocalMapWorker();
     void startMapWorker();
+    void startTeleopWorker();
+
 
 private slots:
     void doneSendingMapSlot();
@@ -180,6 +188,8 @@ private:
     QPointer<SendNewMapWorker> newMapWorker;
     QPointer<LocalMapWorker> localMapWorker;
     QPointer<ScanMapWorker> mapWorker;
+    QPointer<TeleopWorker> teleopWorker;
+
 
     QThread cmdThread;
     QThread robotThread;
@@ -187,6 +197,7 @@ private:
     QThread newMapThread;
     QThread localMapThread;
     QThread mapThread;
+    QThread teleopThread;
 };
 
 /**

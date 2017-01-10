@@ -56,6 +56,10 @@ void Robot::stopThreads() {
     emit stopMapWorker();
     mapThread.quit();
     mapThread.wait();
+
+    emit stopTeleopWorker();
+    teleopThread.quit();
+    teleopThread.wait();
 }
 
 void Robot::portSentSlot(){
@@ -64,6 +68,7 @@ void Robot::portSentSlot(){
     emit startNewMapWorker();
     emit startLocalMapWorker();
     emit startMapWorker();
+    emit startTeleopWorker();
 }
 
 std::ostream& operator <<(std::ostream& stream, Robot const& robot){
@@ -80,6 +85,11 @@ void Robot::display(std::ostream& stream) const {
 void Robot::sendCommand(const QString cmd) {
     qDebug() << "(Robot) Send command called" << cmd;
     emit sendCommandSignal(cmd);
+}
+
+void Robot::sendTeleopCmd(const QString cmd) {
+    qDebug() << "(Robot) sendTeleopCmd" << cmd;
+    emit teleopCmd(cmd);
 }
 
 void Robot::sendNewMap(QSharedPointer<Map> map) {
@@ -198,7 +208,6 @@ void Robot::launchWorkers(MainWindow* mainWindow){
     localMapThread.start();
 
     mapWorker = QPointer<ScanMapWorker>(new ScanMapWorker(ip, PORT_MAP, QDir::currentPath() + QDir::separator() + QString(MAP_FILE)));
-
     connect(mapWorker, SIGNAL(valueChangedMap(QByteArray, int, QString, QString, QString, QString, QString, QString)),
             mainWindow , SLOT(mapReceivedSlot(QByteArray, int, QString, QString, QString, QString, QString, QString)));
     connect(mapWorker, SIGNAL(newScanSaved(QString)), mainWindow , SLOT(sendNewMapToRobots(QString)));
@@ -206,6 +215,14 @@ void Robot::launchWorkers(MainWindow* mainWindow){
     connect(this, SIGNAL(startMapWorker()), mapWorker, SLOT(connectSocket()));
     connect(this, SIGNAL(stopMapWorker()), mapWorker, SLOT(stopWorker()));
     mapWorker->moveToThread(&mapThread);
+    mapThread.start();
+
+    teleopWorker = QPointer<TeleopWorker>(new TeleopWorker(ip, PORT_TELEOP));
+    connect(&mapThread, SIGNAL(finished()), teleopWorker, SLOT(deleteLater()));
+    connect(this, SIGNAL(startTeleopWorker()), teleopWorker, SLOT(connectSocket()));
+    connect(this, SIGNAL(stopTeleopWorker()), teleopWorker, SLOT(stopWorker()));
+    connect(this, SIGNAL(teleopCmd(QString)), newMapWorker, SLOT(writeTcpDataSlot(QString)));
+    teleopWorker->moveToThread(&mapThread);
     mapThread.start();
 
     emit startCmdRobotWorker();
