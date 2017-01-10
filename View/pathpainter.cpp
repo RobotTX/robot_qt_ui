@@ -182,9 +182,6 @@ void PathPainter::updatePathPainterSlot(const bool savePath /* to deal with pv s
             QPointF pointCoord = QPointF(currentPointView->getPoint()->getPosition().getX(),
                                          currentPointView->getPoint()->getPosition().getY());
 
-            /// TODO if the original point is displaying a home => display home else no display home
-            /// ( changer type ? home -> path et path -> home ? )
-
             if(i == 0){
                 path = QPainterPath(pointCoord);
                 startPointView = currentPointView;

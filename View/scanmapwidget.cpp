@@ -81,6 +81,7 @@ void ScanMapWidget::initializeMenu(){
     menuLayout->addLayout(manualLayout);
 
 
+
     QHBoxLayout* cancelSaveLayout = new QHBoxLayout();
     CustomPushButton* cancelBtn = new CustomPushButton("Cancel", this, CustomPushButton::ButtonType::LEFT_MENU, "center");
     cancelSaveLayout->addWidget(cancelBtn);

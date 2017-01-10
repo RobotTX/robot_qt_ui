@@ -4696,14 +4696,11 @@ void MainWindow::updateRobotInfo(QString robotName, QString robotInfo){
                 }
             }
         }
-
-    } else {
+    } else
         qDebug() << "MainWindow::updateRobotInfo Connected received without enough parameters :" << strList;
-    }
 
     settingsWidget->addRobot(robots->getRobotViewByName(robotName)->getRobot()->getIp(), robotName);
 }
-
 
 void MainWindow::updateMapInfo(const QString robotName, QString mapId, QString mapDate){
 
