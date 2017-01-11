@@ -8,7 +8,7 @@ ScanMapGraphicsItem::ScanMapGraphicsItem(QString robotName) : QGraphicsPixmapIte
     /// To drag & drop the map
     setFlag(QGraphicsItem::ItemIsMovable);
 
-    scanRobotView = new QGraphicsPixmapItem(QPixmap(":/icons/robot_icon.png"), this);
+    scanRobotView = new QGraphicsPixmapItem(QPixmap(":/icons/final_robot.png"), this);
     scanRobotView->setScale(0.07);
     scanRobotView->setToolTip(robotName);
 }

@@ -15,7 +15,7 @@ class QGraphicsSceneMouseEvent;
 
 #define ROBOT_HEIGHT_LOW 9
 #define ROBOT_HEIGHT_HIGH 12
-#define ROBOT_WIDTH 6
+#define ROBOT_WIDTH 28
 
 /**
  * @brief The RobotView class

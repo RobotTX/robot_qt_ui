@@ -8,9 +8,11 @@
 #include <QGraphicsWidget>
 
 RobotView::RobotView (QPointer<Robot> _robot, QPointer<MapView> parent):
-    QGraphicsPixmapItem(QPixmap(":/icons/robot_icon.png"), parent), robot(_robot), selected(false), state(GraphicItemState::NO_STATE), shown(true), lastStage(0)
+    QGraphicsPixmapItem(QPixmap(":/icons/final_robot"), parent), robot(_robot), selected(false), state(GraphicItemState::NO_STATE), shown(true), lastStage(0)
 {
     setScale(0.07);
+    /// so that the pixmap rotates around its center and not about its top left corner
+    setTransformOriginPoint(pixmap().width()/2, pixmap().height()/2);
     setAcceptHoverEvents(true);
     setAcceptedMouseButtons(Qt::LeftButton);
     setToolTip(robot->getName());
@@ -37,29 +39,31 @@ void RobotView::mousePressEvent(QGraphicsSceneMouseEvent * /* unused */){
 void RobotView::hoverEnterEvent(QGraphicsSceneHoverEvent * /* unused */){
 
     setToolTip(robot->getName());
-    setPixmap(QPixmap(":/icons/hover_robot_icon.png"));
+    setPixmap(QPixmap(":/icons/hover_robot_icon"));
 }
 
 void RobotView::hoverLeaveEvent(QGraphicsSceneHoverEvent * /* unused */){
     if(selected)
-        setPixmap(QPixmap(":/icons/selected_robot_icon.png"));
+        setPixmap(QPixmap(":/icons/final_robot_selected"));
     else
-        setPixmap(QPixmap(":/icons/robot_icon.png"));
+        setPixmap(QPixmap(":/icons/final_robot"));
 }
 
 void RobotView::setPosition(const Position _position) {
-    setPos(_position.getX(), _position.getY());
+    /// we have to substract half the size of the pixmap because of setTransformOriginPoint(pixmap().width()/2, pixmap().height()/2);
+    /// don't really know why
+    setPos(_position.getX()-pixmap().width()/2, _position.getY()-pixmap().height()/2);
     robot->setPosition(_position.getX(), _position.getY());
 }
 
 void RobotView::setPosition(const float x, const float y) {
-    setPos(x, y);
+    setPos(x-pixmap().width()/2, y-pixmap().height()/2);
     robot->setPosition(x, y);
 }
 
 void RobotView::setSelected(const bool _selected){
     selected = _selected;
-    (selected) ? setPixmap(QPixmap(":/icons/selected_robot_icon.png")) : setPixmap(QPixmap(":/icons/robot_icon.png"));
+    (selected) ? setPixmap(QPixmap(":/icons/final_robot_selected")) : setPixmap(QPixmap(":/icons/final_robot"));
 }
 
 void RobotView::display(const bool _show){
