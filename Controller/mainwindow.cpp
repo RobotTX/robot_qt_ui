@@ -392,6 +392,7 @@ void MainWindow::updateRobot(const QString ipAddress, const float posX, const fl
     QPointer<RobotView> rv = robots->getRobotViewByIp(ipAddress);
     if(rv != NULL){
         rv->setPosition(robotPositionInPixelCoordinates.getX(), robotPositionInPixelCoordinates.getY());
+
         rv->setOrientation(orientation);
 
         emit scanRobotPos(rv->getRobot()->getName(), robotPositionInPixelCoordinates.getX(), robotPositionInPixelCoordinates.getY(), orientation);
@@ -5162,13 +5163,13 @@ void MainWindow::activateLaserSlot(QString ipAddress, bool activate){
 }
 
 Position MainWindow::convertPixelCoordinatesToRobotCoordinates(const Position positionInPixels, double originX, double originY, double resolution, int height, int robotWidth) {
-    float xInRobotCoordinates = (positionInPixels.getX() - robotWidth) * resolution + originX;
+    float xInRobotCoordinates = (positionInPixels.getX() - robotWidth/2) * resolution + originX;
     float yInRobotCoordinates = (-positionInPixels.getY() + height - robotWidth/2) * resolution + originY;
     return Position(xInRobotCoordinates, yInRobotCoordinates);
 }
 
 Position MainWindow::convertRobotCoordinatesToPixelCoordinates(const Position positionInRobotCoordinates, double originX, double originY, double resolution, int height, int robotWidth) {
-    float xInPixelCoordinates = (-originX+ positionInRobotCoordinates.getX())/resolution + robotWidth;
+    float xInPixelCoordinates = (-originX+ positionInRobotCoordinates.getX())/resolution + robotWidth/2;
     float yInPixelCoordinates = height - (-originY + positionInRobotCoordinates.getY()) / resolution - robotWidth/2;
     return Position(xInPixelCoordinates, yInPixelCoordinates);
 }
