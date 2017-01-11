@@ -27,6 +27,7 @@ protected:
     QImage sceneToImage();
     QImage croppedImageToMapImage(QImage croppedImage);
     bool checkImageSize(QSize sizeCropped);
+    void keyPressEvent(QKeyEvent *event);
 
 private slots:
     void cancelSlot();
@@ -43,6 +44,8 @@ private slots:
     void robotGoToSlot(QString robotName, double x, double y);
     void scanRobotPosSlot(QString robotName, double x, double y, double ori);
     void centerOnSlot(QGraphicsItem* pixmap);
+    void teleopCmdSlot(int);
+    void dirKeyEventSlot(int key);
 
 signals:
     /**
@@ -64,6 +67,7 @@ signals:
     void playScan(bool, QString);
     void robotGoTo(QString, double, double);
     void saveScanMap(double, Position, QImage, QString);
+    void teleopCmd(QString, int);
 
 private:
     QSharedPointer<Robots> robots;

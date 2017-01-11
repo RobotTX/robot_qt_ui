@@ -117,7 +117,7 @@ public:
      * Delete the path of this robot
      */
     void clearPath();
-    void sendTeleopCmd(const QString cmd);
+    void sendTeleopCmd(const int cmd);
 
 signals:
     /**
@@ -143,7 +143,7 @@ signals:
      */
     void sendNewMapSignal(QString mapId, QString date, QString metadata, QImage map);
 
-    void teleopCmd(QString);
+    void teleopCmd(int);
 
     void stopCmdRobotWorker();
     void stopRobotWorker();
