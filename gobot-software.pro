@@ -86,7 +86,8 @@ HEADERS += \
     View/mergemapgraphicsitem.h \
     View/scanmapwidget.h \
     View/scanmaplistitemwidget.h \
-    View/scanmapgraphicsitem.h
+    View/scanmapgraphicsitem.h \
+    Controller/teleopworker.h
 
 FORMS += Controller/mainwindow.ui
 
@@ -156,7 +157,8 @@ SOURCES += main.cpp \
            View/mergemapgraphicsitem.cpp \
            View/scanmapwidget.cpp \
            View/scanmaplistitemwidget.cpp \
-    View/scanmapgraphicsitem.cpp
+    View/scanmapgraphicsitem.cpp \
+    Controller/teleopworker.cpp
 
 
 RESOURCES += Resources/resources.qrc
