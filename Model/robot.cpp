@@ -87,7 +87,7 @@ void Robot::sendCommand(const QString cmd) {
     emit sendCommandSignal(cmd);
 }
 
-void Robot::sendTeleopCmd(const QString cmd) {
+void Robot::sendTeleopCmd(const int cmd) {
     qDebug() << "(Robot) sendTeleopCmd" << cmd;
     emit teleopCmd(cmd);
 }
@@ -221,7 +221,7 @@ void Robot::launchWorkers(MainWindow* mainWindow){
     connect(&mapThread, SIGNAL(finished()), teleopWorker, SLOT(deleteLater()));
     connect(this, SIGNAL(startTeleopWorker()), teleopWorker, SLOT(connectSocket()));
     connect(this, SIGNAL(stopTeleopWorker()), teleopWorker, SLOT(stopWorker()));
-    connect(this, SIGNAL(teleopCmd(QString)), newMapWorker, SLOT(writeTcpDataSlot(QString)));
+    connect(this, SIGNAL(teleopCmd(int)), teleopWorker, SLOT(writeTcpDataSlot(int)));
     teleopWorker->moveToThread(&mapThread);
     mapThread.start();
 

@@ -423,7 +423,7 @@ void MainWindow::stopScanningSlot(QStringList listRobot){
         if(robotView){
             int attempt = 0;
             while(attempt != -1 && attempt < 5){
-                if(commandController->sendCommand(robotView->getRobot(), QString("u"))){
+                if(robotView && robotView->getRobot() && commandController->sendCommand(robotView->getRobot(), QString("u"))){
                     robotView->getRobot()->setScanning(false);
                     attempt = -1;
                 } else
@@ -1854,6 +1854,13 @@ void MainWindow::saveScanMapSlot(double resolution, Position origin, QImage imag
     topLayout->setLabel(TEXT_COLOR_SUCCESS, "The new scanned map has been save successfully");
 }
 
+void MainWindow::teleopCmdSlot(QString robotName, int id){
+    qDebug() << "MainWindow::teleopCmdSlot called" << robotName << id;
+    QPointer<RobotView> robotView = robots->getRobotViewByName(robotName);
+    if(robotView && robotView->getRobot())
+        robotView->getRobot()->sendTeleopCmd(id);
+}
+
 void MainWindow::scanMapSlot(){
     qDebug() << "MainWindow::scanMapSlot called";
 
@@ -1865,6 +1872,7 @@ void MainWindow::scanMapSlot(){
         connect(scanMapWidget, SIGNAL(playScan(bool, QString)), this, SLOT(playScanSlot(bool, QString)));
         connect(scanMapWidget, SIGNAL(robotGoTo(QString, double, double)), this, SLOT(robotGoToSlot(QString, double, double)));
         connect(scanMapWidget, SIGNAL(saveScanMap(double, Position, QImage, QString)), this, SLOT(saveScanMapSlot(double, Position, QImage, QString)));
+        connect(scanMapWidget, SIGNAL(teleopCmd(QString, int)), this, SLOT(teleopCmdSlot(QString, int)));
 
         connect(this, SIGNAL(startedScanning(QString, bool)), scanMapWidget, SLOT(startedScanningSlot(QString, bool)));
         connect(this, SIGNAL(robotDisconnected(QString)), scanMapWidget, SLOT(robotDisconnectedSlot(QString)));

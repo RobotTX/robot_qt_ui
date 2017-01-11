@@ -33,5 +33,11 @@ void asyncAccept(boost::shared_ptr<boost::asio::io_service> io_service, boost::s
  */
 void serverDisconnected(const std_msgs::String::ConstPtr& msg);
 
+
+/**
+ * To teleoperate the robot, will publish on cmd_vel to make the robot move according to the given val
+ */
+void teleop(const int8_t val);
+
 #endif
 

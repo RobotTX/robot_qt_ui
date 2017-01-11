@@ -1,4 +1,5 @@
 #include "teleop.hpp"
+#include <utility>
 
 using boost::asio::ip::tcp;
 
@@ -28,8 +29,7 @@ void session(boost::shared_ptr<tcp::socket> sock, ros::NodeHandle n){
             throw boost::system::system_error(error); // Some other error.
             return;
         }
-
-        std::cout << "(Teleop) got data" << std::endl;
+        teleop(static_cast<int8_t>(data[0]));
    /// data[i]
 
     }
@@ -50,7 +50,74 @@ void asyncAccept(boost::shared_ptr<boost::asio::io_service> io_service, boost::s
 void serverDisconnected(const std_msgs::String::ConstPtr& msg){
     if(connected){
         std::cout << "(Teleop) I heard " << std::endl;
+        teleop(4);
         connected = false;
+    }
+}
+
+void teleop(const int8_t val){
+    std::cout << "(Teleop) got data " << (int) val << std::endl;
+    if(connected){
+/*
+0:std::pair<int8_t, int8_t>(1,1);
+1:std::pair<int8_t, int8_t>(1,0);
+2:std::pair<int8_t, int8_t>(1,-1);
+3:std::pair<int8_t, int8_t>(0,1);
+5:std::pair<int8_t, int8_t>(0,-1);
+6:std::pair<int8_t, int8_t>(-1,-1);
+7:std::pair<int8_t, int8_t>(-1,0);
+8:std::pair<int8_t, int8_t>(-1,1);*/
+        float speed = 0.2;
+        float turnSpeed = 1.0;
+        int x, th;
+        switch(val){
+            case 0:
+                x = 1;
+                th = 1;
+            break;
+            case 1:
+                x = 1;
+                th = 0;
+            break;
+            case 2:
+                x = 1;
+                th = -1;
+            break;
+            case 3:
+                x = 0;
+                th = 1;
+            break;
+            case 5:
+                x = 0;
+                th = -1;
+            break;
+            case 6:
+                x = -1;
+                th = -1;
+            break;
+            case 7:
+                x = -1;
+                th = 0;
+            break;
+            case 8:
+                x = -1;
+                th = 1;
+            break;
+            default:
+                x = 0;
+                th = 0;
+            break;
+        }
+        
+        geometry_msgs::Twist twist;
+        twist.linear.x = x*speed;
+        twist.linear.y = 0;
+        twist.linear.z = 0;
+        twist.angular.x = 0;
+        twist.angular.y = 0;
+        twist.angular.z = th*turnSpeed;
+
+        teleop_pub.publish(twist);
     }
 }
 

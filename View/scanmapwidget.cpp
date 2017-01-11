@@ -11,6 +11,7 @@
 #include "View/scanmapgraphicsitem.h"
 #include <QMenu>
 #include "View/robotview.h"
+#include "View/teleopwidget.h"
 
 
 ScanMapWidget::ScanMapWidget(QSharedPointer<Robots> _robots, QWidget* parent)
@@ -57,29 +58,17 @@ void ScanMapWidget::initializeMenu(){
 
 
     listWidget = new MergeMapListWidget(this);
-    //connect(listWidget, SIGNAL(dirKeyPressed(int)), this, SLOT(dirKeyEventSlot(int)));
+    connect(listWidget, SIGNAL(dirKeyPressed(int)), this, SLOT(dirKeyEventSlot(int)));
     topMenuLayout->addWidget(listWidget);
 
     menuLayout->addLayout(topMenuLayout);
 
 
-    QGridLayout* manualLayout = new QGridLayout();
-
-    QPushButton* upBtn = new QPushButton(QIcon(":/icons/up.png"),"", this);
-    upBtn->setFlat(true);
-    QPushButton* rightBtn = new QPushButton(QIcon(":/icons/right.png"),"", this);
-    rightBtn->setFlat(true);
-    QPushButton* downBtn = new QPushButton(QIcon(":/icons/down.png"),"", this);
-    downBtn->setFlat(true);
-    QPushButton* leftBtn = new QPushButton(QIcon(":/icons/left.png"),"", this);
-    leftBtn->setFlat(true);
-
-    manualLayout->addWidget(upBtn, 0, 1);
-    manualLayout->addWidget(leftBtn, 1, 0);
-    manualLayout->addWidget(downBtn, 2, 1);
-    manualLayout->addWidget(rightBtn, 1, 2);
-    menuLayout->addLayout(manualLayout);
-
+    QVBoxLayout* teleopLayout = new QVBoxLayout();
+    TeleopWidget* teleopWidget = new TeleopWidget(this);
+    connect(teleopWidget->getBtnGroup(), SIGNAL(buttonClicked(int)), this, SLOT(teleopCmdSlot(int)));
+    teleopLayout->addWidget(teleopWidget);
+    menuLayout->addLayout(teleopLayout);
 
 
     QHBoxLayout* cancelSaveLayout = new QHBoxLayout();
@@ -95,13 +84,14 @@ void ScanMapWidget::initializeMenu(){
     layout->addWidget(menuWidget);
 
     menuWidget->setFixedWidth(150);
+    teleopLayout->setContentsMargins(0, 0, 0, 0);
     topMenuLayout->setContentsMargins(0, 0, 0, 0);
     cancelSaveLayout->setContentsMargins(0, 0, 0, 0);
     menuLayout->setContentsMargins(0, 0, 5, 0);
 
     topMenuLayout->setAlignment(Qt::AlignTop);
-    manualLayout->setAlignment(Qt::AlignBottom);
     cancelSaveLayout->setAlignment(Qt::AlignBottom);
+    teleopLayout->setAlignment(Qt::AlignBottom);
 }
 
 
@@ -113,9 +103,7 @@ void ScanMapWidget::initializeMap(){
 
     graphicsView = new CustomQGraphicsView(scene, this);
     graphicsView->setCatchKeyEvent(true);
-
     graphicsView->setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding));
-
 }
 
 void ScanMapWidget::addImageRobotSlot(){
@@ -406,9 +394,6 @@ QImage ScanMapWidget::croppedImageToMapImage(QImage croppedImage){
     int leftDiff = qAbs((mapSize.width() - croppedImage.width())/2);
     int topDiff = qAbs((mapSize.height() - croppedImage.height())/2);
 
-    int leftSign = 1;
-    int topSign = 1;
-
     /// If the input image is bigger on any side, we crop the image
     if(croppedImage.width() > mapSize.width() && croppedImage.height() > mapSize.height()){
         qDebug() << "ScanMapWidget::croppedImageToMapImage width & height are bigger";
@@ -418,9 +403,6 @@ QImage ScanMapWidget::croppedImageToMapImage(QImage croppedImage){
         painter.drawImage(0, 0, tmpImage);
         painter.end();
 
-        leftSign = -1;
-        topSign = -1;
-
     } else if(croppedImage.width() > mapSize.width()){
         qDebug() << "ScanMapWidget::croppedImageToMapImage width is bigger";
         QImage tmpImage = croppedImage.copy(leftDiff, 0, mapSize.width(), mapSize.height());
@@ -429,8 +411,6 @@ QImage ScanMapWidget::croppedImageToMapImage(QImage croppedImage){
         painter.drawImage(0, 0, tmpImage);
         painter.end();
 
-        leftSign = -1;
-
     } else if(croppedImage.height() > mapSize.height()){
         qDebug() << "ScanMapWidget::croppedImageToMapImage height is bigger";
         QImage tmpImage = croppedImage.copy(0, topDiff, mapSize.width(), mapSize.height());
@@ -438,8 +418,6 @@ QImage ScanMapWidget::croppedImageToMapImage(QImage croppedImage){
         QPainter painter(&image);
         painter.drawImage(0, 0, tmpImage);
         painter.end();
-
-        topSign = -1;
 
     } else {
         qDebug() << "ScanMapWidget::croppedImageToMapImage everything is fine";
@@ -479,4 +457,64 @@ bool ScanMapWidget::checkImageSize(QSize sizeCropped){
         return false;
     }
     return true;
+}
+
+void ScanMapWidget::teleopCmdSlot(int id){
+    qDebug() << "ScanMapWidget::teleopCmd" << id;
+    if(listWidget->currentItem() != NULL){
+        QString robotName = static_cast<ScanMapListItemWidget*>(listWidget->itemWidget(listWidget->currentItem()))->getRobotName();
+        qDebug() << "ScanMapWidget::teleopCmd" << robotName;
+        emit teleopCmd(robotName, id);
+    }
+}
+
+void ScanMapWidget::keyPressEvent(QKeyEvent *event){
+    dirKeyEventSlot(event->key());
+}
+
+void ScanMapWidget::dirKeyEventSlot(int key){
+    if(listWidget->currentItem() != NULL){
+        ScanMapListItemWidget* widget = static_cast<ScanMapListItemWidget*>(listWidget->itemWidget(listWidget->currentItem()));
+        switch(key){
+            case Qt::Key_Up:
+                widget->getPixmapItem()->moveBy(0, -0.1);
+            break;
+            case Qt::Key_Down:
+                widget->getPixmapItem()->moveBy(0, 0.1);
+            break;
+            case Qt::Key_Left:
+                widget->getPixmapItem()->moveBy(-0.1, 0);
+            break;
+            case Qt::Key_Right:
+                widget->getPixmapItem()->moveBy(0.1, 0);
+            break;
+            case Qt::Key_U:
+                teleopCmdSlot(0);
+            break;
+            case Qt::Key_I:
+                teleopCmdSlot(1);
+            break;
+            case Qt::Key_O:
+                teleopCmdSlot(2);
+            break;
+            case Qt::Key_J:
+                teleopCmdSlot(3);
+            break;
+            case Qt::Key_L:
+                teleopCmdSlot(5);
+            break;
+            case Qt::Key_M:
+                teleopCmdSlot(6);
+            break;
+            case Qt::Key_Comma:
+                teleopCmdSlot(7);
+            break;
+            case Qt::Key_Period:
+                teleopCmdSlot(8);
+            break;
+            default:
+                teleopCmdSlot(4);
+            break;
+        }
+    }
 }

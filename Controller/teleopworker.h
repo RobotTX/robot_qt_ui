@@ -18,7 +18,7 @@ private slots:
      * @param cmd
      * Send the map to the robot
      */
-    void writeTcpDataSlot(QString cmd);
+    void writeTcpDataSlot(int cmd);
 
     /**
      * @brief connectSocket

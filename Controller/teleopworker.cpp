@@ -20,8 +20,6 @@ void TeleopWorker::connectSocket(){
 
     socket = QPointer<QTcpSocket>(new QTcpSocket());
 
-    /// Connect the signal readyRead which tell us when data arrived to the function that treat them
-    connect(&(*socket), SIGNAL(readyRead()), this, SLOT(readTcpDataSlot()));
     /// Connect the signal when an error occurs with the socket, to react accordingly
     connect(&(*socket), SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(errorConnectionSlot(QAbstractSocket::SocketError)));
 
@@ -32,18 +30,19 @@ void TeleopWorker::connectSocket(){
     qDebug() << "(Teleop) connectSocket done";
 }
 
-void TeleopWorker::writeTcpDataSlot(QString cmd){
-    qDebug() << "(Teleop) Sending" << cmd << "to" << ipAddress << "at port " << port;
+void TeleopWorker::writeTcpDataSlot(int cmd){
+    QByteArray toSend = QByteArray().append(static_cast<char>(cmd));
+    qDebug() << "(Teleop) Sending" << toSend << "to" << ipAddress << "at port " << port;
 
     if(socket && socket->isOpen()){
-        int nbDataSend = socket->write(cmd.toLocal8Bit());
+        int nbDataSend = socket->write(toSend);
 
         socket->waitForBytesWritten();
 
         if(nbDataSend == -1)
             qDebug() << "(Teleop) An error occured while sending data";
         else
-            qDebug() << "(Teleop) " << nbDataSend << "bytes sent out of" << cmd.size();
+            qDebug() << "(Teleop) " << nbDataSend << "bytes sent out of" << toSend.size();
     } else {
         qDebug() << "(Teleop) Trying to write on a socket that is not created or connected yet";
         Q_UNREACHABLE();

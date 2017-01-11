@@ -159,6 +159,7 @@ private slots:
     void playScanSlot(bool scan, QString robotName);
     void robotGoToSlot(QString robotName, double x, double y);
     void saveScanMapSlot(double resolution, Position origin, QImage image, QString fileName);
+    void teleopCmdSlot(QString robotName, int id);
     void quit(void);
     void setSelectedRobot(QPointer<RobotView> robotView);
     void setSelectedRobot(QAbstractButton* button);

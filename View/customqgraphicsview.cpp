@@ -24,11 +24,8 @@ void CustomQGraphicsView::wheelEvent(QWheelEvent *event){
 }
 
 void CustomQGraphicsView::keyPressEvent(QKeyEvent* event){
-    if(catchKeyEvent && (event->key() == Qt::Key_Up || event->key() == Qt::Key_Down
-                         || event->key() == Qt::Key_Left || event->key() == Qt::Key_Right))
-        emit dirKeyPressed(event->key());
-    else
-        QGraphicsView::keyPressEvent(event);
+    emit dirKeyPressed(event->key());
+    QGraphicsView::keyPressEvent(event);
 }
 
 void CustomQGraphicsView::mousePressEvent(QMouseEvent *event){
