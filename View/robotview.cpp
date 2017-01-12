@@ -39,7 +39,7 @@ void RobotView::mousePressEvent(QGraphicsSceneMouseEvent * /* unused */){
 void RobotView::hoverEnterEvent(QGraphicsSceneHoverEvent * /* unused */){
 
     setToolTip(robot->getName());
-    setPixmap(QPixmap(":/icons/hover_robot_icon"));
+    setPixmap(QPixmap(":/icons/final_robot_hover"));
 }
 
 void RobotView::hoverLeaveEvent(QGraphicsSceneHoverEvent * /* unused */){
