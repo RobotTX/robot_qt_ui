@@ -1082,7 +1082,7 @@ void MainWindow::showHome(){
 
     points->setPixmapAll(PointView::PixmapType::NORMAL);
 
-    if(selectedRobot->getRobot() && selectedRobot->getRobot()->getHome() != NULL){
+    if(selectedRobot && selectedRobot->getRobot() && selectedRobot->getRobot()->getHome() != NULL){
         QSharedPointer<PointView> pointView = selectedRobot->getRobot()->getHome();
         if(pointView->isVisible()){
             qDebug() << "home is visible";
