@@ -17,6 +17,7 @@ TopLayout::TopLayout(QMainWindow* parent): QWidget(parent){
     menuBtn = new CustomPushButton(QIcon(":/icons/list.png"), "", this, CustomPushButton::ButtonType::TOP);
     menuBtn->setIconSize(xs_icon_size);
     menuBtn->setFocusPolicy(Qt::FocusPolicy::NoFocus);
+    menuBtn->setShortcut(QKeySequence("Ctrl+M"));
 
     layout->addWidget(menuBtn);
     connect(menuBtn, SIGNAL(clicked()), parent, SLOT(openLeftMenu()));
@@ -26,6 +27,7 @@ TopLayout::TopLayout(QMainWindow* parent): QWidget(parent){
     saveMapBtn->setFocusPolicy(Qt::FocusPolicy::NoFocus);
     layout->addWidget(saveMapBtn);
     saveMapBtn->setToolTip("Save the configuration of the map");
+    saveMapBtn->setShortcut(QKeySequence("Ctrl+K"));
     connect(saveMapBtn, SIGNAL(clicked()), parent, SLOT(saveMapState()));
 
     centerBtn = new CustomPushButton(QIcon(":/icons/save_map.png"), "", this, CustomPushButton::ButtonType::TOP);
@@ -33,6 +35,7 @@ TopLayout::TopLayout(QMainWindow* parent): QWidget(parent){
     centerBtn->setIconSize(s_icon_size);
     centerBtn->setFocusPolicy(Qt::FocusPolicy::NoFocus);
     layout->addWidget(centerBtn);
+    centerBtn->setShortcut(QKeySequence("Ctrl+R"));
     connect(centerBtn, SIGNAL(clicked()), parent, SLOT(centerMap()));
 
     settingBtn = new CustomPushButton(QIcon(":/icons/setting.png"), "", this, CustomPushButton::ButtonType::TOP);
@@ -40,6 +43,7 @@ TopLayout::TopLayout(QMainWindow* parent): QWidget(parent){
     settingBtn->setIconSize(s_icon_size);
     settingBtn->setFocusPolicy(Qt::FocusPolicy::NoFocus);
     layout->addWidget(settingBtn);
+    settingBtn->setShortcut(QKeySequence("Ctrl+I"));
     connect(settingBtn, SIGNAL(clicked()), parent, SLOT(settingBtnSlot()));
 
     testButton = new CustomPushButton(QIcon(":/icons/T_icon.png"), "", this, CustomPushButton::ButtonType::TOP);
@@ -47,6 +51,7 @@ TopLayout::TopLayout(QMainWindow* parent): QWidget(parent){
     testButton->setIconSize(s_icon_size);
     testButton->setFocusPolicy(Qt::FocusPolicy::NoFocus);
     layout->addWidget(testButton);
+    testButton->setShortcut(QKeySequence("Ctrl+T"));
     connect(testButton, SIGNAL(clicked()), parent, SLOT(testFunctionSlot()));
 
     SpaceWidget* spaceWidget = new SpaceWidget(SpaceWidget::SpaceOrientation::VERTICAL, this);
