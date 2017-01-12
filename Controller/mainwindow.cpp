@@ -389,8 +389,6 @@ void MainWindow::updateRobot(const QString ipAddress, const float posX, const fl
     Position robotPositionInPixelCoordinates = convertRobotCoordinatesToPixelCoordinates(Position(posX, posY), map->getOrigin().getX(), map->getOrigin().getY(), map->getResolution(), map->getHeight(), ROBOT_WIDTH);
     float orientation = asin(-oriZ) * 360.0 / PI + 90;
 
-    qDebug() << "New pos" << robotPositionInPixelCoordinates.getX() << " " << robotPositionInPixelCoordinates.getY();
-
     QPointer<RobotView> rv = robots->getRobotViewByIp(ipAddress);
     if(rv != NULL){
         rv->setPosition(robotPositionInPixelCoordinates.getX(), robotPositionInPixelCoordinates.getY());
