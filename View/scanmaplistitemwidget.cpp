@@ -150,11 +150,13 @@ void ScanMapListItemWidget::robotScanning(bool scanning){
 }
 
 void ScanMapListItemWidget::updateMap(QImage map){
-    if(!warningIcon->isHidden())
-        warningIcon->hide();
-
     QPixmap pixmap = QPixmap::fromImage(cropImage(map));
     pixmapItem->setPixmap(pixmap);
+
+    if(!warningIcon->isHidden()){
+        warningIcon->hide();
+        emit centerOn(pixmapItem->getRobotView());
+    }
 }
 
 void ScanMapListItemWidget::robotGoToSlot(double x, double y){

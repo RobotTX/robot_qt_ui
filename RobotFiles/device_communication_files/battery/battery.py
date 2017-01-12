@@ -48,8 +48,8 @@ if sonar.isOpen():
 			print 'Battery Voltage :', batteryVolt, 'mV'
 			print 'Charging Current :', chargingCurrent, 'mA'
 			print 'Temperature on battery :', temp/100, 'C'
-			print 'Remaining Capacity of battery voltage :', remainCapacity/100, '%'
-			print 'Full Capacity of battery voltage :', fullCapacity/100, '%'
+			print 'Remaining Capacity of battery :', remainCapacity, 'mAh'
+			print 'Full Capacity of battery :', fullCapacity, 'mAh'
 		else:
 			print "Length read :", len(res)
 		time.sleep(2)

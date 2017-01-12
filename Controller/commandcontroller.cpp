@@ -12,12 +12,9 @@ CommandController::CommandController(QWidget *parent) : QObject(parent), robotNa
 }
 
 bool CommandController::sendCommand(QPointer<Robot> robot, QString cmd){
-    qDebug() << "sending command" << cmd;
+    qDebug() << "CommandController::sendCommand" << cmd << "to" << robot->getName();
     /// if the command is not already being processed
     if(robotName.isEmpty() && !cmd.isEmpty()){
-        /// reinitializes the QString containing the answer to the command
-        cmdAnswer = "";
-        robot->sendCommand(cmd);
 
         /// React accordingly to the answer : return true or false
         QRegExp rx("[ ]");
@@ -25,19 +22,35 @@ bool CommandController::sendCommand(QPointer<Robot> robot, QString cmd){
         /// Data is received as a string separated by a space ("cmd done" or "cmd failed")
         QStringList listCmd = cmd.split(rx, QString::SkipEmptyParts);
 
-        /// command to change the wifi ssid and password
-        if(listCmd.at(0).compare("b") == 0)
+        qDebug() << "CommandController::sendCommand" << robot->isScanning() << (listCmd.at(0).compare("c") != 0 && listCmd.at(0).compare("e") != 0 && listCmd.at(0).compare("f") != 0 &&
+                listCmd.at(0).compare("t") != 0 && listCmd.at(0).compare("u") != 0);
+
+        if(robot->isScanning() && listCmd.at(0).compare("c") != 0 && listCmd.at(0).compare("e") != 0 && listCmd.at(0).compare("f") != 0 &&
+                    listCmd.at(0).compare("t") != 0 && listCmd.at(0).compare("u") != 0){
+            qDebug() << "CommandController::sendCommand Robot" << robot->getName() << "is already scanning and can not perform command" << cmd;
+            return false;
+        }
+
+        /// reinitializes the QString containing the answer to the command
+        cmdAnswer = "";
+        robot->sendCommand(cmd);
+
+        qDebug() << "CommandController::sendCommand"  << robot->isScanning() << listCmd.at(0);
+        /// If the robot is scanning, we only allow the commands to start/stop/play/pause the scan & to go to a point
+        if(listCmd.at(0).compare("b") == 0){
+            /// command to change the wifi ssid and password
             return true;
-        else {
+        } else {
             robotName = robot->getName();
             cmdName = listCmd.at(0);
         }
 
+
         return robotWaitForAnswer(listCmd);
 
-    } else {
+    } else
         qDebug() << "CommandController::sendCommand Robot" << robotName << "is already processing the command" << cmdName;
-    }
+
     return false;
 
     //return true;

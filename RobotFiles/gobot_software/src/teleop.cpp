@@ -12,6 +12,7 @@ tcp::socket socket_teleop(io_service);
 tcp::acceptor m_acceptor(io_service);
 
 ros::Publisher teleop_pub;
+ros::Publisher stop_pub;
 
 void session(boost::shared_ptr<tcp::socket> sock, ros::NodeHandle n){
     std::cout << "(Teleop) session launched" << std::endl;
@@ -108,7 +109,16 @@ void teleop(const int8_t val){
                 th = 0;
             break;
         }
+
+        actionlib_msgs::GoalID cancel;
+        cancel.stamp = ros::Time::now();
+        cancel.id = "map";
+
+        stop_pub.publish(cancel);
+
+        ros::spinOnce();
         
+
         geometry_msgs::Twist twist;
         twist.linear.x = x*speed;
         twist.linear.y = 0;
@@ -133,6 +143,7 @@ int main(int argc, char **argv){
 
     /// Advertise that we are going to publish to /cmd_vel
     teleop_pub = n.advertise<geometry_msgs::Twist>("/cmd_vel", 1000);
+    stop_pub = n.advertise<actionlib_msgs::GoalID>("/move_base/cancel", 1000);
 
     boost::shared_ptr<boost::asio::io_service> io_service = boost::shared_ptr<boost::asio::io_service>(new boost::asio::io_service());
     io_service->run();

@@ -30,6 +30,7 @@ ros::ServiceClient stopSendLaserClient;
 ros::ServiceClient stopLaserClient;
 
 ros::Publisher go_pub;
+ros::Publisher teleop_pub;
 
 int metadata_port = 4000;
 int robot_pos_port = 4001;
@@ -84,6 +85,18 @@ bool execCommand(ros::NodeHandle n, std::vector<std::string> command){
 				int waitTime = std::stoi(command.at(3));
 
 //rostopic pub /move_base_simple/goal geometry_msgs/PoseStamped '{ header: { frame_id: "map" }, pose: { position: { x: 2.7, y: -1.5, z: 0 }, orientation: { x: 0, y: 0, z: 0, w: 1 } } }'
+
+				geometry_msgs::Twist twist;
+				twist.linear.x = 0;
+				twist.linear.y = 0;
+				twist.linear.z = 0;
+				twist.angular.x = 0;
+				twist.angular.y = 0;
+				twist.angular.z = 0;
+
+				teleop_pub.publish(twist);
+
+				ros::spinOnce();
 
 				geometry_msgs::PoseStamped msg;
 				msg.header.frame_id = "map";
@@ -833,6 +846,7 @@ int main(int argc, char* argv[]){
 		stopLaserClient = n.serviceClient<std_srvs::Empty>("stop_laser_data_sender");
 
 		go_pub = n.advertise<geometry_msgs::PoseStamped>("/move_base_simple/goal", 1000);
+    teleop_pub = n.advertise<geometry_msgs::Twist>("/cmd_vel", 1000);
 
 		server(CMD_PORT, n);
 		

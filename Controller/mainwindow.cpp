@@ -413,6 +413,7 @@ void MainWindow::startScanningSlot(QString robotName){
     } else
         emit startedScanning(robotName, false);
 }
+
 void MainWindow::stopScanningSlot(QStringList listRobot){
     qDebug() << "MainWindow::stopScanningSlot";
 
@@ -4234,10 +4235,10 @@ void MainWindow::sendPathSelectedRobotSlot(const QString groupName, const QStrin
             editSelectedRobotWidget->setPath(currPath);
         }
         setMessageTop(TEXT_COLOR_SUCCESS, "the path of \"" + robot->getName() + "\" has been successfully updated");
-        qDebug() << "MainWindow::robotSavedEvent Path saved for robot" << robot->getIp();
+        qDebug() << "MainWindow::sendPathSelectedRobotSlot Path saved for robot" << robot->getIp();
     } else {
         setMessageTop(TEXT_COLOR_DANGER, "The path of " + robot->getName() + "\" could not be updated, please try again");
-        qDebug() << "MainWindow::robotSavedEvent Path failed to be saved, please try again";
+        qDebug() << "MainWindow::sendPathSelectedRobotSlot Path failed to be saved, please try again";
     }
 }
 
@@ -4691,8 +4692,11 @@ void MainWindow::updateRobotInfo(QString robotName, QString robotInfo){
         robots->getRobotViewByName(robotName)->getRobot()->setScanning(scanning);
 
         if(scanning){
-            emit robotReconnected(robotName);
-            playScanSlot(true, robotName);
+            if(scanMapWidget){
+                emit robotReconnected(robotName);
+                playScanSlot(true, robotName);
+            } else
+                stopScanningSlot(QStringList(robotName));
         } else {
             if(scanMapWidget){
                 QStringList robotScanningList = scanMapWidget->getAllScanningRobots();
@@ -5190,8 +5194,22 @@ void MainWindow::closeEvent(QCloseEvent *event){
         switch (ret) {
             case QMessageBox::Save:
                 saveMapBtnEvent();
+
+                if(mergeMapWidget)
+                    mergeMapWidget->close();
+
+                if(scanMapWidget)
+                    scanMapWidget->close();
+
+                QMainWindow::closeEvent(event);
             break;
             case QMessageBox::Discard:
+                if(mergeMapWidget)
+                    mergeMapWidget->close();
+
+                if(scanMapWidget)
+                    scanMapWidget->close();
+
                 QMainWindow::closeEvent(event);
             break;
             case QMessageBox::Cancel:
@@ -5201,6 +5219,12 @@ void MainWindow::closeEvent(QCloseEvent *event){
                 QMainWindow::closeEvent(event);
             break;
         }
+    } else {
+        if(mergeMapWidget)
+            mergeMapWidget->close();
+
+        if(scanMapWidget)
+            scanMapWidget->close();
     }
 }
 

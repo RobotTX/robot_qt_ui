@@ -252,6 +252,7 @@ void EditSelectedRobotWidget::updatePathsMenu(){
 }
 
 void EditSelectedRobotWidget::openMenu(){
+    updatePathsMenu();
     if(!pathsMenu->actions().empty())
         pathsMenu->exec(QCursor::pos());
     else {
@@ -264,6 +265,7 @@ void EditSelectedRobotWidget::openMenu(){
 }
 
 void EditSelectedRobotWidget::assignPath(QAction *action){
+    /// TODO emit sendPathSelectedRobot => wait for an answer/signal then change the path in the model
     emit clearMapOfPaths();
     setPathChanged(true);
     action->setCheckable(true);

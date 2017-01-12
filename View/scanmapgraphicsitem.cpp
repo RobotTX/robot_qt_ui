@@ -46,6 +46,5 @@ void ScanMapGraphicsItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event){
 
 void ScanMapGraphicsItem::updateRobotPos(double x, double y, double ori){
     scanRobotView->setRotation(ori);
-    //qDebug() << "ScanMapGraphicsItem::updateRobotPos" << x << y << scanRobotView->pixmap().width()/2 << scanRobotView->pixmap().height()/2 << x-scanRobotView->pixmap().width()/2 << y-scanRobotView->pixmap().height()/2;
     scanRobotView->setPos(x-scanRobotView->pixmap().width()/2, y-scanRobotView->pixmap().height()/2);
 }

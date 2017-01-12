@@ -12,6 +12,7 @@
 #include "std_msgs/String.h"
 #include <fstream>
 #include "geometry_msgs/Twist.h"
+#include "actionlib_msgs/GoalID.h"
 
 
 #define PORT 5602
@@ -32,7 +33,6 @@ void asyncAccept(boost::shared_ptr<boost::asio::io_service> io_service, boost::s
  * Called when we have been disconnected to the server
  */
 void serverDisconnected(const std_msgs::String::ConstPtr& msg);
-
 
 /**
  * To teleoperate the robot, will publish on cmd_vel to make the robot move according to the given val
