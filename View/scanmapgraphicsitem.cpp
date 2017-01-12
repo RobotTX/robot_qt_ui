@@ -1,5 +1,6 @@
 #include "scanmapgraphicsitem.h"
 #include <QGraphicsSceneMouseEvent>
+#include <QDebug>
 
 ScanMapGraphicsItem::ScanMapGraphicsItem(QString robotName) : QGraphicsPixmapItem(){
 
@@ -10,6 +11,7 @@ ScanMapGraphicsItem::ScanMapGraphicsItem(QString robotName) : QGraphicsPixmapIte
 
     scanRobotView = new QGraphicsPixmapItem(QPixmap(":/icons/final_robot.png"), this);
     scanRobotView->setScale(0.07);
+    scanRobotView->setTransformOriginPoint(scanRobotView->pixmap().width()/2, scanRobotView->pixmap().height()/2);
     scanRobotView->setToolTip(robotName);
 }
 
@@ -44,5 +46,6 @@ void ScanMapGraphicsItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event){
 
 void ScanMapGraphicsItem::updateRobotPos(double x, double y, double ori){
     scanRobotView->setRotation(ori);
-    scanRobotView->setPos(x, y);
+    //qDebug() << "ScanMapGraphicsItem::updateRobotPos" << x << y << scanRobotView->pixmap().width()/2 << scanRobotView->pixmap().height()/2 << x-scanRobotView->pixmap().width()/2 << y-scanRobotView->pixmap().height()/2;
+    scanRobotView->setPos(x-scanRobotView->pixmap().width()/2, y-scanRobotView->pixmap().height()/2);
 }

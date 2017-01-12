@@ -73,9 +73,10 @@
         <file alias="left.png">left.png</file>
         <file alias="down.png">down.png</file>
         <file alias="right.png">right.png</file>
-        <file alias="final_robot">final_robot_icon.png</file>
-        <file alias="final_robot_selected">final_robot_icon_selected.png</file>
-        <file alias="final_robot_hover">final_robot_hover_icon.png</file>
+        <file alias="final_robot.png">final_robot_icon.png</file>
+        <file alias="final_robot_selected.png">final_robot_icon_selected.png</file>
+        <file alias="final_robot_hover.png">final_robot_hover_icon.png</file>
+
     </qresource>
     <qresource prefix="/xml">
         <file>points.xml</file>
