@@ -9,7 +9,6 @@ class CustomPushButton;
 class QLabel;
 class MainWindow;
 class CustomLabel;
-class QProgressBar;
 class PathWidget;
 class Points;
 class CustomLabel;
@@ -23,6 +22,7 @@ class MainWindow;
 #include "View/pointview.h"
 #include "mainwindow.h"
 #include "Model/paths.h"
+#include <QProgressBar>
 
 /**
  * @brief The EditSelectedRobotWidget class
@@ -61,6 +61,7 @@ public:
     void setAssignedPath(const QString path) { assignedPath = path; }
     void setGroupPath(const QString group) { groupAssignedPath = group; }
     void setSelectedRobot(QPointer<RobotView> const robotView);
+    void setBatteryLevel(const int level) { batteryLevel->setValue(level); }
 
     /// updates the name and wifi or the robot
     void editName(void);

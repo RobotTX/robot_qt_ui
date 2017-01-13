@@ -127,8 +127,8 @@ public:
     QString prepareCommandPath(const Paths::Path& path) const;
     void saveMap(QString fileName);
 
-    static Position convertPixelCoordinatesToRobotCoordinates(const Position positionInPixels, double originX, double originY, double resolution, int height, int robotWidth);
-    static Position convertRobotCoordinatesToPixelCoordinates(const Position positionInRobotCoordinates, double originX, double originY, double resolution, int height, int robotWidth);
+    static Position convertPixelCoordinatesToRobotCoordinates(const Position positionInPixels, double originX, double originY, double resolution, int height);
+    static Position convertRobotCoordinatesToPixelCoordinates(const Position positionInRobotCoordinates, double originX, double originY, double resolution, int height);
 
 signals:
     void nameChanged(QString, QString);
@@ -148,6 +148,7 @@ signals:
     void robotReconnected(QString);
     void robotScanning(bool, QString, bool);
     void scanRobotPos(QString, double, double, double);
+    void newBatteryLevel(int);
 
 private slots:
     void sendPathSelectedRobotSlot(const QString groupName, const QString pathName);
@@ -293,6 +294,8 @@ private slots:
     void activateLaserSlot(QString, bool);
     void getMapForMergingSlot(QString robotName);
     void scanMapSlot();
+
+    void updateBatteryLevel(const int level);
 
 protected:
     bool changeRobotName(QString name);

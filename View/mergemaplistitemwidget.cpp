@@ -133,7 +133,7 @@ void MergeMapListItemWidget::initializeMap(QString _fileName, QGraphicsScene* sc
     /// If we have a resolution (and so an origin), we want to convert it into coordinates in pixel
     /// to later display the origin as a blue point and be able to find it at the end after all the transformations
     if(resolution != -1){
-        Position pos = MainWindow::convertRobotCoordinatesToPixelCoordinates(Position(0, 0), origin.x(), origin.y(), resolution, image.height(), 0);
+        Position pos = MainWindow::convertRobotCoordinatesToPixelCoordinates(Position(0, 0), origin.x(), origin.y(), resolution, image.height());
         originInPixel = QPoint(pos.getX(), pos.getY());
         pixmapItem->setZValue(id+1);
         qDebug() << "MergeMapListItemWidget::initializeMap origin vs originInPixel :" << origin << "vs" << originInPixel;

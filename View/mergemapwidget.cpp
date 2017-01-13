@@ -206,7 +206,7 @@ void MergeMapWidget::saveSlot(){
                 qDebug() << "MergeMapWidget::saveSlot final origin in pixel :" << originInPixel << resolution << -image.width()*resolution/2;
 
                 /// Reconvert the new origin from pixel coordinates to the system used by the robot
-                Position pos1 = MainWindow::convertPixelCoordinatesToRobotCoordinates(Position(originInPixel.x(), originInPixel.y()), 0, 0, resolution, image.height(), 0);
+                Position pos1 = MainWindow::convertPixelCoordinatesToRobotCoordinates(Position(originInPixel.x(), originInPixel.y()), 0, 0, resolution, image.height());
                 pos1.setX(-pos1.getX());
                 pos1.setY(-pos1.getY());
 

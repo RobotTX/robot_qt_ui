@@ -17,7 +17,7 @@
 int SettingsWidget::currentId = 0;
 
 SettingsWidget::SettingsWidget(QWidget *parent)
-    : QWidget(parent){
+    : QWidget(parent), batteryWarningThreshHold(50) {
 
 
     settingMapChoice = ALWAYS_ASK;
@@ -74,8 +74,18 @@ SettingsWidget::SettingsWidget(QWidget *parent)
     chooseMapBox->insertItem(ALWAYS_APPLICATION, "Always use the map of this application");
     chooseMapBox->setCurrentIndex(settingMapChoice);
 
+    batteryThresholdLabel = new QLabel("Battery level warning trigger (value of the remaining battery in % under which you receive a warning)", this);
+    batteryThresholdSlider = new QSlider(Qt::Horizontal, this);
+    batteryThresholdSlider->setRange(0, 100);
+    batteryThresholdSlider->setTickPosition(QSlider::TicksBelow);
+    batteryThresholdSlider->setTickInterval(5);
+    batteryThresholdSlider->setValue(20);
+    connect(batteryThresholdSlider, SIGNAL(valueChanged(int)), SLOT(setBatteryWarningThreshold(int)));
+
     topLayout->addWidget(chooseMapLabel);
     topLayout->addWidget(chooseMapBox);
+    topLayout->addWidget(batteryThresholdLabel);
+    topLayout->addWidget(batteryThresholdSlider);
 
     layout->addLayout(topLayout);
 

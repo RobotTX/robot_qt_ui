@@ -135,7 +135,7 @@ void ScanMapListItemWidget::sliderSlot(int value){
 }
 
 void ScanMapListItemWidget::scanningBtnSlot(){
-    bool startingToScan = scanningLabel->text() == "Not scanning";
+    bool startingToScan = !scanningLabel->text().compare("Not scanning");
     emit playScan(startingToScan, robotName);
 }
 
