@@ -247,6 +247,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     /// to turn on the laser feedback or not ( to display obstacles in real time )
     connect(settingsWidget, SIGNAL(activateLaser(QString, bool)), this, SLOT(activateLaserSlot(QString, bool)));
 
+    connect(this, SIGNAL(newBatteryLevel(int)), this, SLOT(updateBatteryLevel(int)));
+
     mainLayout->addLayout(bottom);
     //graphicsView->setStyleSheet("CustomQGraphicsView {background-color: " + background_map_view + "}");
     setCentralWidget(mainWidget);
@@ -388,7 +390,7 @@ void MainWindow::initializeRobots(){
 void MainWindow::updateRobot(const QString ipAddress, const float posX, const float posY, const float oriZ){
 
     /// need to first convert the coordinates that we receive from the robot
-    Position robotPositionInPixelCoordinates = convertRobotCoordinatesToPixelCoordinates(Position(posX, posY), map->getOrigin().getX(), map->getOrigin().getY(), map->getResolution(), map->getHeight(), ROBOT_WIDTH);
+    Position robotPositionInPixelCoordinates = convertRobotCoordinatesToPixelCoordinates(Position(posX, posY), map->getOrigin().getX(), map->getOrigin().getY(), map->getResolution(), map->getHeight());
     float orientation = asin(-oriZ) * 360.0 / PI + 90;
 
     QPointer<RobotView> rv = robots->getRobotViewByIp(ipAddress);
@@ -487,7 +489,7 @@ void MainWindow::playScanSlot(bool scan, QString robotName){
 
 void MainWindow::robotGoToSlot(QString robotName, double x, double y){
     qDebug() << "MainWindow::robotGoToSlot" << robotName << "trying to go to" << x << y;
-    Position posInRobotCoordinates = convertPixelCoordinatesToRobotCoordinates(Position(x, y), map->getOrigin().getX(), map->getOrigin().getY(), map->getResolution(), map->getHeight(), ROBOT_WIDTH);
+    Position posInRobotCoordinates = convertPixelCoordinatesToRobotCoordinates(Position(x, y), map->getOrigin().getX(), map->getOrigin().getY(), map->getResolution(), map->getHeight());
     qDebug() << "MainWindow::robotGoToSlot converted in robot coord to" << posInRobotCoordinates.getX() << posInRobotCoordinates.getY();
 
     QPointer<RobotView> robotView = robots->getRobotViewByName(robotName);
@@ -499,7 +501,7 @@ void MainWindow::robotGoToSlot(QString robotName, double x, double y){
 
 void MainWindow::testCoordSlot(double x, double y){
     qDebug() << "MainWindow::testCoordSlot Trying to go to" << x << y;
-    Position posInRobotCoordinates = convertPixelCoordinatesToRobotCoordinates(Position(x, y), map->getOrigin().getX(), map->getOrigin().getY(), map->getResolution(), map->getHeight(), ROBOT_WIDTH);
+    Position posInRobotCoordinates = convertPixelCoordinatesToRobotCoordinates(Position(x, y), map->getOrigin().getX(), map->getOrigin().getY(), map->getResolution(), map->getHeight());
     qDebug() << "MainWindow::testCoordSlot converted in robot coord to" << posInRobotCoordinates.getX() << posInRobotCoordinates.getY();
 }
 
@@ -1236,6 +1238,17 @@ void MainWindow::robotIsAliveSlot(QString hostname, QString ip, QString ssid, in
         bottomLayout->updateStageRobot(robotId, rv, stage);
     }
 
+    /// if the robot's page is open the progress bar is refreshed to reflect the battery level
+    if(selectedRobot && selectedRobot->getRobot()->getIp() == ip)
+        emit newBatteryLevel(battery);
+
+    /// if the battery runs low we send a warning to the user (only when the threshold is just reached so that we don't send
+    /// the warning repeatedly
+    if(battery < settingsWidget->getBatteryWarningThreshold() && rv->getRobot()->getBatteryLevel() == settingsWidget->getBatteryWarningThreshold()) {
+        QMessageBox msgBox;
+        msgBox.warning(this, "Running low on battery", rv->getRobot()->getName() + " is running low on battery, perhaps you should think about charging it soon");
+    }
+
     rv->getRobot()->setBatteryLevel(battery);
 
     /// Check the current stage of the robot
@@ -1510,7 +1523,7 @@ void MainWindow::setNewHome(QString homeName){
 }
 
 bool MainWindow::sendHomeToRobot(QPointer<RobotView> robot, QSharedPointer<PointView> home){
-    Position posInRobotCoordinates = convertPixelCoordinatesToRobotCoordinates(home->getPoint()->getPosition(), map->getOrigin().getX(), map->getOrigin().getY(), map->getResolution(), map->getHeight(), ROBOT_WIDTH);
+    Position posInRobotCoordinates = convertPixelCoordinatesToRobotCoordinates(home->getPoint()->getPosition(), map->getOrigin().getX(), map->getOrigin().getY(), map->getResolution(), map->getHeight());
     return commandController->sendCommand(robot->getRobot(), QString("n \"") + QString::number(posInRobotCoordinates.getX()) + "\" \""
                                                       + QString::number(posInRobotCoordinates.getY()) + "\"");
 }
@@ -1543,6 +1556,11 @@ void MainWindow::goHome(int nbRobot){
             break;
         }
     }
+}
+
+void MainWindow::updateBatteryLevel(const int level){
+    if(editSelectedRobotWidget)
+        editSelectedRobotWidget->setBatteryLevel(level);
 }
 
 /**********************************************************************************************************************************/
@@ -1660,6 +1678,10 @@ void MainWindow::saveMap(QString fileName){
         /// saves the current configuration for the paths (this configuration will be associated to the map
         /// when you load the map in the future
         serializePaths(pathsFile);
+
+        for(int i = 0; i < robots->getRobotsVector().size(); i++)
+            robots->getRobotsVector().at(i)->getRobot()->sendNewMap(map);
+
     }
 }
 
@@ -1692,6 +1714,9 @@ void MainWindow::loadMapBtnEvent(){
         qDebug() << fileInfo.absoluteFilePath() << "map to load";
         /// if we are able to find the configuration then we load the map
         if(loadMapConfig(fileInfo.absoluteFilePath().toStdString())){
+
+            for(int i = 0; i < robots->getRobotsVector().size(); i++)
+                robots->getRobotsVector().at(i)->getRobot()->sendNewMap(map);
 
             /// clears the map of all paths and points
             clearNewMap();
@@ -1836,13 +1861,13 @@ void MainWindow::saveScanMapSlot(double resolution, Position origin, QImage imag
     /// Set the new map
     map->setResolution(resolution);
     map->setWidth(image.width());
+    map->setDateTime(QDateTime::currentDateTime());
+
+    QPixmap pixmap = QPixmap::fromImage(image);
     map->setHeight(image.height());
     map->setOrigin(origin);
     map->setMapImage(image);
     map->setMapId(QUuid::createUuid());
-    map->setDateTime(QDateTime::currentDateTime());
-
-    QPixmap pixmap = QPixmap::fromImage(image);
     mapPixmapItem->setPixmap(pixmap);
     scene->update();
 
@@ -4648,6 +4673,17 @@ bool MainWindow::loadMapConfig(const std::string fileName){
         double centerX, centerY, originX, originY, resolution;
         std::string mapId;
         file >> mapFile >> _height >> _width >> centerX >> centerY >> mapState.second >> originX >> originY >> resolution >> mapId;
+        qDebug() << "Loading map with config : \n\t" <<
+                    "Height:" << _height << "\n\t" <<
+                    "Width:" << _width << "\n\t" <<
+                    "center X:" << centerX << "\n\t" <<
+                    "center Y:" << centerY << "\n\t" <<
+                    "zoom:" << mapState.second << "\n\t" <<
+                    "originX:" << originX << "\n\t" <<
+                    "originY:" << originY << "\n\t" <<
+                    "resolution:" << resolution << "\n\t" <<
+                    "map ID:" << QString::fromStdString(mapId);
+
         map->setHeight(_height);
         map->setWidth(_width);
         mapState.first.setX(centerX);
@@ -4716,6 +4752,7 @@ void MainWindow::updateRobotInfo(QString robotName, QString robotInfo){
 void MainWindow::updateMapInfo(const QString robotName, QString mapId, QString mapDate){
 
     /// Check if the robot has the current map
+    // TODO don't forget to clean those qDebugs at some point
     //qDebug() << "Robot" << robotName << "comparing ids" << mapId << "and" << map->getMapId().toString();
     if(mapId.compare(map->getMapId().toString()) == 0){
         qDebug() << "Robot" << robotName << "has the current map";
@@ -4878,7 +4915,7 @@ void MainWindow::updateHomeInfo(const QString robotName, QString posX, QString p
     QStringList dateLastModification = appHome.second;
 
     /// we gotta convert the coordinates first
-    Position robot_home_position = convertRobotCoordinatesToPixelCoordinates(Position(posX.toDouble(), posY.toDouble()), map->getOrigin().getX(), map->getOrigin().getY(), map->getResolution(), map->getHeight(), ROBOT_WIDTH);
+    Position robot_home_position = convertRobotCoordinatesToPixelCoordinates(Position(posX.toDouble(), posY.toDouble()), map->getOrigin().getX(), map->getOrigin().getY(), map->getResolution(), map->getHeight());
     QStringList dateHomeOnRobot = homeDate.split("-");
 
     /// if the robot and the application have the same home we don't do anything besides setting the point in the application (no need to change any files)
@@ -5138,7 +5175,7 @@ QString MainWindow::prepareCommandPath(const Paths::Path &path) const {
         float oldPosX = pathPoint->getPoint().getPosition().getX();
         float oldPosY = pathPoint->getPoint().getPosition().getY();
 
-        Position posInRobotCoordinates = convertPixelCoordinatesToRobotCoordinates(Position(oldPosX, oldPosY), map->getOrigin().getX(), map->getOrigin().getY(), map->getResolution(), map->getHeight(), ROBOT_WIDTH);
+        Position posInRobotCoordinates = convertPixelCoordinatesToRobotCoordinates(Position(oldPosX, oldPosY), map->getOrigin().getX(), map->getOrigin().getY(), map->getResolution(), map->getHeight());
 
         int waitTime = pathPoint->getWaitTime();
 
@@ -5169,13 +5206,13 @@ void MainWindow::activateLaserSlot(QString ipAddress, bool activate){
     }
 }
 
-Position MainWindow::convertPixelCoordinatesToRobotCoordinates(const Position positionInPixels, double originX, double originY, double resolution, int height, int robotWidth) {
+Position MainWindow::convertPixelCoordinatesToRobotCoordinates(const Position positionInPixels, double originX, double originY, double resolution, int height) {
     float xInRobotCoordinates = (positionInPixels.getX()) * resolution + originX;
     float yInRobotCoordinates = (-positionInPixels.getY() + height) * resolution + originY;
     return Position(xInRobotCoordinates, yInRobotCoordinates);
 }
 
-Position MainWindow::convertRobotCoordinatesToPixelCoordinates(const Position positionInRobotCoordinates, double originX, double originY, double resolution, int height, int robotWidth) {
+Position MainWindow::convertRobotCoordinatesToPixelCoordinates(const Position positionInRobotCoordinates, double originX, double originY, double resolution, int height) {
     float xInPixelCoordinates = (-originX+ positionInRobotCoordinates.getX())/resolution;
     float yInPixelCoordinates = height - (-originY + positionInRobotCoordinates.getY()) / resolution;
     return Position(xInPixelCoordinates, yInPixelCoordinates);

@@ -136,8 +136,7 @@ void ScanMapListItemWidget::sliderSlot(int value){
 }
 
 void ScanMapListItemWidget::scanningBtnSlot(){
-    /// Clicked on the button to play/pause a scan so we use the label next to it to know if we were scanning or not
-    bool startingToScan = (scanningLabel->text() == "Not scanning");
+    bool startingToScan = !scanningLabel->text().compare("Not scanning");
     emit playScan(startingToScan, robotName);
 }
 

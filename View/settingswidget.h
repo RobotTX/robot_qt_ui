@@ -7,9 +7,11 @@ class QButtonGroup;
 class QLabel;
 class QComboBox;
 
+#include <QSlider>
 #include "Model/robots.h"
 #include <QMap>
 #include <QWidget>
+#include <QDebug>
 
 class SettingsWidget: public QWidget
 {
@@ -26,6 +28,8 @@ public:
     QComboBox* getChooseMapBox(void) const { return chooseMapBox; }
     int getSettingMapChoice(void) const { return settingMapChoice; }
     QMap<int, QPair<QString, bool>> getIDtoIPMap(void) const { return idToIpMap; }
+    int getBatteryWarningThreshold(void) const { return batteryWarningThreshHold; }
+
 
 protected:
     void showEvent(QShowEvent* event);
@@ -37,6 +41,7 @@ private slots:
     void applySlot();
     void cancelSlot();
     void saveSlot();
+    void setBatteryWarningThreshold(const int threshold) { qDebug() << "SettingsWidget.h setbatterylevelthresh called"; batteryWarningThreshHold = threshold; }
 
 private:
     static int currentId;
@@ -48,6 +53,9 @@ private:
     QLabel* chooseMapLabel;
     QComboBox* chooseMapBox;
     int settingMapChoice;
+    int batteryWarningThreshHold;
+    QSlider* batteryThresholdSlider;
+    QLabel* batteryThresholdLabel;
 };
 
 #endif /// SETTINGSWIDGET_H

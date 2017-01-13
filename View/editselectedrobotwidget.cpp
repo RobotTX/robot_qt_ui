@@ -19,7 +19,6 @@
 #include <assert.h>
 #include "View/customlabel.h"
 #include "Model/points.h"
-#include <QProgressBar>
 #include "View/customlabel.h"
 #include "View/customrobotdialog.h"
 #include "View/customlineedit.h"
