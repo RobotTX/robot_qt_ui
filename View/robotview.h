@@ -41,6 +41,9 @@ public:
     void display(const bool show) ;
     void setState(const GraphicItemState _state) { state = _state; }
     void setLastStage(const int _stage) { lastStage = _stage; }
+    void setObstacles(const QVector<QPointF> _obstacles) { obstacles = _obstacles; }
+
+    void paint(QPainter *_painter, const QStyleOptionGraphicsItem *option, QWidget *widget) Q_DECL_OVERRIDE;
 
 signals:
     /**
@@ -61,6 +64,7 @@ private:
     bool shown;
     QPointer<MapView> mapView;
     int lastStage;
+    QVector<QPointF> obstacles;
 };
 
 #endif // ROBOTVIEW_H

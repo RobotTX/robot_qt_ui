@@ -56,6 +56,7 @@
 #include "View/mergemapwidget.h"
 #include "View/settingswidget.h"
 #include "View/scanmapwidget.h"
+#include "View/drawobstacles.h"
 
 #include <QMediaPlayer>
 #include <QMediaPlaylist>
@@ -109,9 +110,11 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     commandController = new CommandController(this);
     robots = QSharedPointer<Robots>(new Robots());
 
+    obstaclesPainter = new DrawObstacles(robots, this);
+
     /// Create the graphic item of the map
     QPixmap pixmap = QPixmap::fromImage(map->getMapImage());
-    mapPixmapItem = new MapView(pixmap, QSize(geometry().width(), geometry().height()), map, this, robots);
+    mapPixmapItem = new MapView(pixmap, QSize(geometry().width(), geometry().height()), map, this);
 
     /// Create the toolbar
     topLayout = new TopLayout(this);
@@ -242,7 +245,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     ///  ------------------------------------------------------- ROBOTS CONNECTS ----------------------------------------------------------
 
     /// to turn on the laser feedback or not ( to display obstacles in real time )
-    //connect(settingsWidget, SIGNAL(laserFeedBack(QString, bool)), mapPixmapItem->getObstaclesPainter(), SLOT(turnOnLaserFeedBack(QString, bool)));
     connect(settingsWidget, SIGNAL(activateLaser(QString, bool)), this, SLOT(activateLaserSlot(QString, bool)));
 
     mainLayout->addLayout(bottom);
@@ -1301,9 +1303,6 @@ void MainWindow::robotIsDeadSlot(QString hostname, QString ip){
 
         /// bottomLayout
         bottomLayout->removeRobot(id);
-
-        /// we remove the obstacles for this robot
-        mapPixmapItem->getObstaclesPainter()->removeRobotObstacles(ip);
 
         topLayout->removeRobotWithoutHome(hostname);
 
@@ -5161,7 +5160,7 @@ void MainWindow::activateLaserSlot(QString ipAddress, bool activate){
             commandController->sendCommand(robotView->getRobot(), QString("q"));
         } else {
             commandController->sendCommand(robotView->getRobot(), QString("r"));
-            mapPixmapItem->getObstaclesPainter()->clearRobotObstacles(ipAddress);
+            robotView->setObstacles(QVector<QPointF>());
         }
 
     } else {
@@ -5184,6 +5183,7 @@ Position MainWindow::convertRobotCoordinatesToPixelCoordinates(const Position po
 
 void MainWindow::closeEvent(QCloseEvent *event){
     qDebug() << "MainWindow::closeEvent";
+    /// TODO Kill the command msg box
     if(map->getModified()){
         QMessageBox msgBox;
         msgBox.setText("The map has been modified.");

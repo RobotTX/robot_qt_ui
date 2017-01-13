@@ -27,6 +27,7 @@ class EditMapWidget;
 class MergeMapWidget;
 class SettingsWidget;
 class ScanMapWidget;
+class DrawObstacles;
 
 #include "Model/paths.h"
 #include "View/createpointwidget.h"
@@ -129,6 +130,8 @@ public:
 
     static Position convertPixelCoordinatesToRobotCoordinates(const Position positionInPixels, double originX, double originY, double resolution, int height, int robotWidth);
     static Position convertRobotCoordinatesToPixelCoordinates(const Position positionInRobotCoordinates, double originX, double originY, double resolution, int height, int robotWidth);
+
+    DrawObstacles* getObstaclesPainter(void) const { return obstaclesPainter; }
 
 signals:
     void nameChanged(QString, QString);
@@ -346,6 +349,7 @@ private:
     QPointer<ScanMapWidget> scanMapWidget;
 
     SettingsWidget* settingsWidget;
+    DrawObstacles* obstaclesPainter;
 
 };
 

@@ -30,9 +30,8 @@ void session(boost::shared_ptr<tcp::socket> sock, ros::NodeHandle n){
             throw boost::system::system_error(error); // Some other error.
             return;
         }
-        teleop(static_cast<int8_t>(data[0]));
-   /// data[i]
 
+        teleop(static_cast<int8_t>(data[0]));
     }
 }
 
@@ -59,57 +58,50 @@ void serverDisconnected(const std_msgs::String::ConstPtr& msg){
 void teleop(const int8_t val){
     std::cout << "(Teleop) got data " << (int) val << std::endl;
     if(connected){
-/*
-0:std::pair<int8_t, int8_t>(1,1);
-1:std::pair<int8_t, int8_t>(1,0);
-2:std::pair<int8_t, int8_t>(1,-1);
-3:std::pair<int8_t, int8_t>(0,1);
-5:std::pair<int8_t, int8_t>(0,-1);
-6:std::pair<int8_t, int8_t>(-1,-1);
-7:std::pair<int8_t, int8_t>(-1,0);
-8:std::pair<int8_t, int8_t>(-1,1);*/
         float speed = 0.2;
         float turnSpeed = 1.0;
         int x, th;
+        /// the value we got determine which way we go
         switch(val){
-            case 0:
+            case 0: /// Forward + Left
                 x = 1;
                 th = 1;
             break;
-            case 1:
+            case 1: /// Forward
                 x = 1;
                 th = 0;
             break;
-            case 2:
+            case 2: /// Forward + right
                 x = 1;
                 th = -1;
             break;
-            case 3:
+            case 3: /// Left
                 x = 0;
                 th = 1;
             break;
-            case 5:
+            case 5: /// Right
                 x = 0;
                 th = -1;
             break;
-            case 6:
+            case 6: /// Backward + left
                 x = -1;
                 th = -1;
             break;
-            case 7:
+            case 7: /// Backward
                 x = -1;
                 th = 0;
             break;
-            case 8:
+            case 8: /// Backward + right
                 x = -1;
                 th = 1;
             break;
-            default:
+            default: /// Stop
                 x = 0;
                 th = 0;
             break;
         }
 
+        /// Before sending the teleoperation command, we stop any goal
         actionlib_msgs::GoalID cancel;
         cancel.stamp = ros::Time::now();
         cancel.id = "map";
@@ -118,7 +110,7 @@ void teleop(const int8_t val){
 
         ros::spinOnce();
         
-
+        /// Send the teleoperation command
         geometry_msgs::Twist twist;
         twist.linear.x = x*speed;
         twist.linear.y = 0;
@@ -138,10 +130,10 @@ int main(int argc, char **argv){
     
     std::cout << "(Teleop) Ready to be launched." << std::endl;
 
-    /// Subscribe to know when we disconnected from the server
+    /// Subscribe to know when we disconnect from the server
     ros::Subscriber sub = n.subscribe("server_disconnected", 1000, serverDisconnected);
 
-    /// Advertise that we are going to publish to /cmd_vel
+    /// Advertise that we are going to publish to /cmd_vel & /move_base/cancel
     teleop_pub = n.advertise<geometry_msgs::Twist>("/cmd_vel", 1000);
     stop_pub = n.advertise<actionlib_msgs::GoalID>("/move_base/cancel", 1000);
 

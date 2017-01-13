@@ -40,6 +40,7 @@ void ScanMapWidget::initializeMenu(){
     QVBoxLayout* menuLayout = new QVBoxLayout(menuWidget);
     QVBoxLayout* topMenuLayout = new QVBoxLayout();
 
+    /// Title
     QLabel* titleLabel = new QLabel("Scan a new map", this);
     QFont tmpFont = font();
     tmpFont.setPointSize(13);
@@ -51,12 +52,14 @@ void ScanMapWidget::initializeMenu(){
     SpaceWidget* spaceWidget = new SpaceWidget(SpaceWidget::SpaceOrientation::HORIZONTAL, this);
     topMenuLayout->addWidget(spaceWidget);
 
+    /// Button to start to scan
     CustomPushButton* addImageRobotBtn = new CustomPushButton("Start a scan", this);
     addImageRobotBtn->setToolTip("Start to scan with a robot");
     connect(addImageRobotBtn, SIGNAL(clicked()), this, SLOT(addImageRobotSlot()));
     topMenuLayout->addWidget(addImageRobotBtn);
 
 
+    /// The widget that lists every scanning robot
     listWidget = new MergeMapListWidget(this);
     connect(listWidget, SIGNAL(dirKeyPressed(int)), this, SLOT(dirKeyEventSlot(int)));
     topMenuLayout->addWidget(listWidget);
@@ -64,6 +67,7 @@ void ScanMapWidget::initializeMenu(){
     menuLayout->addLayout(topMenuLayout);
 
 
+    /// Teleoperation widget
     QVBoxLayout* teleopLayout = new QVBoxLayout();
     TeleopWidget* teleopWidget = new TeleopWidget(this);
     connect(teleopWidget->getBtnGroup(), SIGNAL(buttonClicked(int)), this, SLOT(teleopCmdSlot(int)));
@@ -71,6 +75,7 @@ void ScanMapWidget::initializeMenu(){
     menuLayout->addLayout(teleopLayout);
 
 
+    /// Cancel + Svae button
     QHBoxLayout* cancelSaveLayout = new QHBoxLayout();
     CustomPushButton* cancelBtn = new CustomPushButton("Cancel", this, CustomPushButton::ButtonType::LEFT_MENU, "center");
     cancelSaveLayout->addWidget(cancelBtn);
@@ -113,9 +118,11 @@ void ScanMapWidget::addImageRobotSlot(){
     if(robots->getRobotsVector().size() > 0){
         QMenu menu(this);
         QStringList list;
+        /// Create a list of already scanning robots so we can't add them twice
         for(int i = 0; i < listWidget->count(); i++)
             list.push_back(static_cast<ScanMapListItemWidget*>(listWidget->itemWidget(listWidget->item(i)))->getRobotName());
 
+        /// Add the available robots to the list + disable the one already scanning
         for(int i = 0; i < robots->getRobotsVector().size(); i++){
             menu.addAction(robots->getRobotsVector().at(i)->getRobot()->getName());
             if(list.contains(robots->getRobotsVector().at(i)->getRobot()->getName())){
@@ -144,7 +151,7 @@ void ScanMapWidget::robotMenuSlot(QAction* action){
 void ScanMapWidget::startedScanningSlot(QString robotName, bool scanning){
     qDebug() << "ScanMapWidget::startedScanningSlot called" << robotName << scanning;
     if(scanning)
-        addMap(robotName);
+        addMapWidget(robotName);
     else {
         QMessageBox msgBox;
         msgBox.setText(robotName + "could not start scanning, please try again");
@@ -154,7 +161,7 @@ void ScanMapWidget::startedScanningSlot(QString robotName, bool scanning){
     }
 }
 
-void ScanMapWidget::addMap(QString name){
+void ScanMapWidget::addMapWidget(QString name){
     ScanMapListItemWidget* listItem = new ScanMapListItemWidget(listWidget->count(), name, scene);
 
     connect(listItem, SIGNAL(deleteMap(int, QString)), this, SLOT(deleteMapSlot(int, QString)));
@@ -298,9 +305,8 @@ void ScanMapWidget::playScanSlot(bool scan, QString robotName){
 void ScanMapWidget::robotScanningSlot(bool scan, QString robotName, bool success){
     for(int i = 0; i < listWidget->count(); i++){
         ScanMapListItemWidget* item = static_cast<ScanMapListItemWidget*>(listWidget->itemWidget(listWidget->item(i)));
-        if(item->getRobotName() == robotName){
+        if(item->getRobotName() == robotName)
             item->robotScanning(scan == success);
-        }
     }
 
     if(!success){
@@ -449,9 +455,9 @@ bool ScanMapWidget::checkImageSize(QSize sizeCropped){
                 return true;
             break;
             default:
-                Q_UNREACHABLE();
                 /// should never be here
                 qDebug() << "ScanMapWidget::saveSlot should not be here";
+                Q_UNREACHABLE();
             break;
         }
         return false;

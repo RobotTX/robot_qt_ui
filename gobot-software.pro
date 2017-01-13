@@ -79,7 +79,6 @@ HEADERS += \
     Controller/localmapworker.h \
     View/drawobstacles.h \
     View/settingswidget.h \
-    drawobstaclestask.h \
     View/mergemapwidget.h \
     View/mergemaplistitemwidget.h \
     View/mergemaplistwidget.h \
