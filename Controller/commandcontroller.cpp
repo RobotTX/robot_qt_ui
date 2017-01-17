@@ -12,6 +12,7 @@ CommandController::CommandController(QWidget *parent) : QObject(parent), robotNa
 }
 
 bool CommandController::sendCommand(QPointer<Robot> robot, QString cmd){
+
     qDebug() << "CommandController::sendCommand" << cmd << "to" << robot->getName();
     /// if the command is not already being processed
     if(robotName.isEmpty() && !cmd.isEmpty()){
@@ -121,12 +122,13 @@ void CommandController::openMessageBox(QStringList listCmd){
         msg = "Unknown command " + cmd.at(0).unicode();
         break;
     }
-/*
-    if(messageBox)
-        messageBox.reset(new CommandMessageBox());
-*/
+
     messageBox.setText(msg);
     connect(&messageBox, SIGNAL(hideBox()), this, SLOT(userStopped()));
+    /**
+    /// is supposed to reset the timer
+    messageBox.hide();
+    */
     messageBox.show();
 }
 

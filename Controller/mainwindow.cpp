@@ -1189,7 +1189,6 @@ void MainWindow::robotIsAliveSlot(QString hostname, QString ip, QString ssid, in
 
     if(rv != NULL){
         qDebug() << "Robot" << hostname << "at ip" << ip << "is still alive";
-        rv->getRobot()->setBatteryLevel(battery);
         rv->getRobot()->ping();
 
     } else {
