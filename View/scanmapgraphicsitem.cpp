@@ -9,6 +9,7 @@ ScanMapGraphicsItem::ScanMapGraphicsItem(QString robotName) : QGraphicsPixmapIte
     /// To drag & drop the map
     setFlag(QGraphicsItem::ItemIsMovable);
 
+    /// The view of the robot on the map
     scanRobotView = new QGraphicsPixmapItem(QPixmap(":/icons/final_robot.png"), this);
     scanRobotView->setScale(0.07);
     scanRobotView->setTransformOriginPoint(scanRobotView->pixmap().width()/2, scanRobotView->pixmap().height()/2);
@@ -21,9 +22,8 @@ void ScanMapGraphicsItem::mousePressEvent(QGraphicsSceneMouseEvent *event){
         dragStartPosition = this->pos();
         QGraphicsPixmapItem::mousePressEvent(event);
 
-    } else if(event->button() == Qt::MidButton){
+    } else if(event->button() == Qt::MidButton)
         emit robotGoTo(event->pos().x(), event->pos().y());
-    }
 }
 
 void ScanMapGraphicsItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event){
@@ -35,10 +35,9 @@ void ScanMapGraphicsItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event){
         /// we compare the start position of the drag event & the drop position
         /// if we have moved for more than 1 pixel, it's a drag, else it's a click
         /// and we create a temporary point
-        if (abs(x) <= 1 && abs(y) <= 1){
-            /// click
+        if (abs(x) <= 1 && abs(y) <= 1)
             emit pixmapClicked();
-        }
+
         /// drag and drop
         QGraphicsPixmapItem::mouseReleaseEvent(event);
     }

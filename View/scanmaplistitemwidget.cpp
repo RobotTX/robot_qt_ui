@@ -21,8 +21,7 @@ ScanMapListItemWidget::ScanMapListItemWidget(int _id, QString name, QGraphicsSce
 
     initializeMenu();
 
-    QPixmap pixmap;
-    pixmapItem->setPixmap(pixmap);
+    //pixmapItem->setPixmap(QPixmap());
     connect(pixmapItem, SIGNAL(robotGoTo(double,double)), this, SLOT(robotGoToSlot(double,double)));
 
     scene->addItem(pixmapItem);
@@ -69,6 +68,7 @@ void ScanMapListItemWidget::initializeMenu(){
 
     layout->addLayout(topLayout);
 
+    /// Btn to play/pause a scan
     QHBoxLayout* scanningLayout = new QHBoxLayout();
     scanningBtn = new QPushButton(QIcon(":/icons/pause.png"),"", this);
     scanningBtn->setFlat(true);
@@ -81,6 +81,7 @@ void ScanMapListItemWidget::initializeMenu(){
     QVBoxLayout* bottomLayout = new QVBoxLayout();
     QHBoxLayout* midLayout = new QHBoxLayout();
 
+    /// Label, editLine + slider for the rotation
     QLabel* labelRot = new QLabel("Rotation :", this);
     midLayout->addWidget(labelRot, Qt::AlignLeft);
 
@@ -160,10 +161,12 @@ void ScanMapListItemWidget::updateMap(QImage map){
 }
 
 void ScanMapListItemWidget::robotGoToSlot(double x, double y){
+    /// Tell the robot where to go, we add left and top as they are the padding we removed when cropping the map
     emit robotGoTo(robotName, x + left, y + top);
 }
 
 void ScanMapListItemWidget::updateRobotPos(double x, double y, double ori){
+    /// Got the new position of the robot, minus the padding we removed when cropping the map
     pixmapItem->updateRobotPos(x - left, y - top, ori);
 }
 
@@ -199,7 +202,7 @@ QImage ScanMapListItemWidget::cropImage(QImage image){
     newImage.fill(qRgba(205, 205, 205, 0));
 
     /// 1 out of 2 map will have red wall and the other one green wall to better distinguish them
-    QRgb wallColor = (id % 2 == 0) ? qRgba(255, 0, 0, 170) : qRgba(0, 255, 0, 170);
+    QRgb wallColor = (id % 2 == 0) ? qRgba(0, 0, 255, 170) : qRgba(0, 255, 0, 170);
     for(int i = 0; i < croppedImage.width(); i++){
         for(int j = 0; j < croppedImage.height(); j++){
             int color = croppedImage.pixelColor(i, j).red();

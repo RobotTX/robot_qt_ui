@@ -8,8 +8,10 @@
 #include <QGraphicsWidget>
 
 RobotView::RobotView (QPointer<Robot> _robot, QPointer<MapView> parent):
-    QGraphicsPixmapItem(QPixmap(":/icons/final_robot.png"), parent), robot(_robot), selected(false), state(GraphicItemState::NO_STATE), shown(true), lastStage(0)
-{
+    QGraphicsPixmapItem(QPixmap(":/icons/final_robot.png"), parent), robot(_robot),
+    selected(false), state(GraphicItemState::NO_STATE), shown(true), lastStage(0),
+    obstacles(QVector<QPointF>()){
+
     setScale(0.07);
     /// so that the pixmap rotates around its center and not about its top left corner
     setTransformOriginPoint(pixmap().width()/2, pixmap().height()/2);
@@ -20,7 +22,9 @@ RobotView::RobotView (QPointer<Robot> _robot, QPointer<MapView> parent):
     mapView = parent;
 }
 
-RobotView::RobotView (QPointer<MapView> parent): QGraphicsPixmapItem(parent), selected(false), state(GraphicItemState::NO_STATE), shown(true), lastStage(0) {}
+RobotView::RobotView (QPointer<MapView> parent): QGraphicsPixmapItem(parent),
+    selected(false), state(GraphicItemState::NO_STATE), shown(true), lastStage(0),
+    obstacles(QVector<QPointF>()){}
 
 void RobotView::mousePressEvent(QGraphicsSceneMouseEvent * /* unused */){
 
@@ -74,4 +78,10 @@ void RobotView::display(const bool _show){
 void RobotView::setOrientation(const float ori){
     setRotation(ori);
     robot->setOrientation(ori);
+}
+
+
+void RobotView::setObstacles(const QVector<QPointF> _obstacles) {
+    obstacles = _obstacles;
+    emit updateLaser();
 }

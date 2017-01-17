@@ -7,7 +7,6 @@ class RobotServerWorker;
 class CustomQGraphicsView;
 class Map;
 class Robots;
-class MapView;
 class LeftMenuWidget;
 class PointsLeftWidget;
 class RobotsLeftWidget;
@@ -27,6 +26,9 @@ class EditMapWidget;
 class MergeMapWidget;
 class SettingsWidget;
 class ScanMapWidget;
+class DrawObstacles;
+class MapView;
+class LaserController;
 
 #include "Model/paths.h"
 #include "View/createpointwidget.h"
@@ -78,6 +80,7 @@ public:
     PathPainter* getPathPainter(void) const { return pathPainter; }
     CommandController* getCommandController(void) const { return commandController; }
     QSharedPointer<Robots> getRobots(void) const { return robots; }
+    LaserController* getLaserController(void) const { return laserController; }
 
     void initializeMenu();
     void initializeRobots();
@@ -296,6 +299,7 @@ private slots:
     void scanMapSlot();
 
     void updateBatteryLevel(const int level);
+    void updateLaserSlot();
 
 protected:
     bool changeRobotName(QString name);
@@ -349,7 +353,7 @@ private:
     QPointer<ScanMapWidget> scanMapWidget;
 
     SettingsWidget* settingsWidget;
-
+    LaserController* laserController;
 };
 
 #endif /// MAINWINDOW_H

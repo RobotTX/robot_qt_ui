@@ -56,6 +56,8 @@
 #include "View/mergemapwidget.h"
 #include "View/settingswidget.h"
 #include "View/scanmapwidget.h"
+#include "View/drawobstacles.h"
+#include "Controller/lasercontroller.h"
 
 #include <QMediaPlayer>
 #include <QMediaPlaylist>
@@ -109,9 +111,12 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     commandController = new CommandController(this);
     robots = QSharedPointer<Robots>(new Robots());
 
+    laserController = new LaserController(robots, this);
+
     /// Create the graphic item of the map
     QPixmap pixmap = QPixmap::fromImage(map->getMapImage());
     mapPixmapItem = new MapView(pixmap, QSize(geometry().width(), geometry().height()), map, this, robots);
+
 
     /// Create the toolbar
     topLayout = new TopLayout(this);
@@ -242,7 +247,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     ///  ------------------------------------------------------- ROBOTS CONNECTS ----------------------------------------------------------
 
     /// to turn on the laser feedback or not ( to display obstacles in real time )
-    //connect(settingsWidget, SIGNAL(laserFeedBack(QString, bool)), mapPixmapItem->getObstaclesPainter(), SLOT(turnOnLaserFeedBack(QString, bool)));
     connect(settingsWidget, SIGNAL(activateLaser(QString, bool)), this, SLOT(activateLaserSlot(QString, bool)));
 
     connect(this, SIGNAL(newBatteryLevel(int)), this, SLOT(updateBatteryLevel(int)));
@@ -1192,17 +1196,19 @@ void MainWindow::robotIsAliveSlot(QString hostname, QString ip, QString ssid, in
         rv->getRobot()->ping();
 
     } else {
-        qDebug() << "Robot" << hostname << "at ip" << ip << "just connected";
+        qDebug() << "MainWindow::robotIsAliveSlot Robot" << hostname << "at ip" << ip << "just connected";
         QPointer<Robot> robot = QPointer<Robot>(new Robot(this, paths, hostname, ip));
         robot->setWifi(ssid);
         rv = QPointer<RobotView>(new RobotView(robot, mapPixmapItem));
         connect(rv, SIGNAL(setSelectedSignal(QPointer<RobotView>)), this, SLOT(setSelectedRobot(QPointer<RobotView>)));
+        connect(rv, SIGNAL(updateLaser()), this, SLOT(updateLaserSlot()));
         rv->setPosition(robots->getRobotsVector().count()*100+100, robots->getRobotsVector().count()*100+100);
         rv->setParentItem(mapPixmapItem);
         robots->add(rv);
         robot->launchWorkers(this);
         bottomLayout->addRobot(rv);
         robotsLeftWidget->updateRobots(robots);
+
 
         /// Check if connection by usb
         if(ip.endsWith(".7.1") || ip.endsWith(".7.2") || ip.endsWith(".7.3")){
@@ -1223,7 +1229,7 @@ void MainWindow::robotIsAliveSlot(QString hostname, QString ip, QString ssid, in
             QDataStream out(&fileWrite);
             out << robots->getRobotsNameMap();
             fileWrite.close();
-            qDebug() << "RobotsNameMap updated" << robots->getRobotsNameMap();
+            qDebug() << "MainWindow::robotIsAliveSlot RobotsNameMap updated" << robots->getRobotsNameMap();
         }
     }
 
@@ -1257,12 +1263,12 @@ void MainWindow::robotIsAliveSlot(QString hostname, QString ip, QString ssid, in
 }
 
 void MainWindow::robotIsDeadSlot(QString hostname, QString ip){
-    qDebug() << "Robot" << hostname << "at ip" << ip << "... He is dead, Jim!!";
+    qDebug() << "MainWindow::robotIsDeadSlot Robot" << hostname << "at ip" << ip << "... He is dead, Jim!!";
     setMessageTop(TEXT_COLOR_DANGER, QString("Robot " + hostname + " at ip " + ip + " disconnected."));
 
     settingsWidget->removeRobot(ip);
 
-    qDebug() << "Robots IPs : ";
+    qDebug() << "MainWindow::robotIsDeadSlot Robots IPs : ";
     for(int i = 0; i < robots->getRobotsVector().size(); i++){
         qDebug() << robots->getRobotsVector().at(i)->getRobot()->getIp();
     }
@@ -1314,15 +1320,14 @@ void MainWindow::robotIsDeadSlot(QString hostname, QString ip){
         /// bottomLayout
         bottomLayout->removeRobot(id);
 
-        /// we remove the obstacles for this robot
-        mapPixmapItem->getObstaclesPainter()->removeRobotObstacles(ip);
-
         topLayout->removeRobotWithoutHome(hostname);
 
-        qDebug() << "Done removing robot" << hostname << "at ip" << ip;
+        mapPixmapItem->update();
+
+        qDebug() << "MainWindow::robotIsDeadSlot Done removing robot" << hostname << "at ip" << ip;
         setMessageTop(TEXT_COLOR_DANGER, QString("Robot " + hostname + " at ip " + ip +" disconnected."));
     } else {
-        qDebug() << "(robotIsDeadSlot) A problem occured, the RobotView or its Robot are NULL, I have been kill twice ?";
+        qDebug() << "MainWindow::robotIsDeadSlot A problem occured, the RobotView or its Robot are NULL, I have been kill twice ?";
     }
 }
 
@@ -1904,9 +1909,12 @@ void MainWindow::scanMapSlot(){
         connect(this, SIGNAL(receivedScanMap(QString,QImage,double)), scanMapWidget, SLOT(receivedScanMapSlot(QString,QImage,double)));
         connect(this, SIGNAL(scanRobotPos(QString, double, double, double)), scanMapWidget, SLOT(scanRobotPosSlot(QString, double, double, double)));
 
-    } else {
+    } else
         scanMapWidget->activateWindow();
-    }
+}
+
+void MainWindow::updateLaserSlot(){
+    mapPixmapItem->getObstaclesPainter()->update();
 }
 
 /**********************************************************************************************************************************/
@@ -5197,7 +5205,7 @@ void MainWindow::activateLaserSlot(QString ipAddress, bool activate){
             commandController->sendCommand(robotView->getRobot(), QString("q"));
         } else {
             commandController->sendCommand(robotView->getRobot(), QString("r"));
-            mapPixmapItem->getObstaclesPainter()->clearRobotObstacles(ipAddress);
+            robotView->setObstacles(QVector<QPointF>());
         }
 
     } else {
@@ -5220,6 +5228,7 @@ Position MainWindow::convertRobotCoordinatesToPixelCoordinates(const Position po
 
 void MainWindow::closeEvent(QCloseEvent *event){
     qDebug() << "MainWindow::closeEvent";
+    /// TODO Kill the command msg box
     if(map->getModified()){
         QMessageBox msgBox;
         msgBox.setText("The map has been modified.");

@@ -7,15 +7,34 @@ class ScanMapGraphicsItem: public QObject, public QGraphicsPixmapItem {
     Q_OBJECT
 public:
     ScanMapGraphicsItem(QString robotName);
-    void updateRobotPos(double x, double y, double ori);
+
+    /// Getter
     QGraphicsPixmapItem* getRobotView(void) const { return scanRobotView; }
+
+    /**
+     * @brief updateRobotPos
+     * @param x
+     * @param y
+     * @param ori
+     * Update the position of the robot on the map
+     */
+    void updateRobotPos(double x, double y, double ori);
 
 protected:
     void mousePressEvent(QGraphicsSceneMouseEvent *event);
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
 
 signals:
+    /**
+     * @brief pixmapClicked
+     * When the pixmap is clicked
+     */
     void pixmapClicked();
+
+    /**
+     * @brief robotGoTo
+     * When using the middle mouse, we tell the robot where to go
+     */
     void robotGoTo(double, double);
 
 private:

@@ -84,8 +84,7 @@ bool execCommand(ros::NodeHandle n, std::vector<std::string> command){
 				float posY = std::stof(command.at(2));
 				int waitTime = std::stoi(command.at(3));
 
-//rostopic pub /move_base_simple/goal geometry_msgs/PoseStamped '{ header: { frame_id: "map" }, pose: { position: { x: 2.7, y: -1.5, z: 0 }, orientation: { x: 0, y: 0, z: 0, w: 1 } } }'
-
+				/// Before setting a new goal, we stop any teleoperation command
 				geometry_msgs::Twist twist;
 				twist.linear.x = 0;
 				twist.linear.y = 0;
@@ -98,6 +97,7 @@ bool execCommand(ros::NodeHandle n, std::vector<std::string> command){
 
 				ros::spinOnce();
 
+				/// Send a goal
 				geometry_msgs::PoseStamped msg;
 				msg.header.frame_id = "map";
 				msg.header.stamp = ros::Time::now();

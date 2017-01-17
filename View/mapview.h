@@ -6,6 +6,7 @@ class QMainWindow;
 class QMouseEvent;
 class QGraphicsSceneMouseEvent;
 class Map;
+class DrawObstacles;
 
 #include "View/pointview.h"
 #include <QObject>
@@ -16,7 +17,6 @@ class Map;
 #include "mainwindow.h"
 #include "Model/point.h"
 #include <QPainter>
-#include "View/drawobstacles.h"
 
 /**
  * @brief The MapView class

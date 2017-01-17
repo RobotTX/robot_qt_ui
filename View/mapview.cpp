@@ -9,6 +9,7 @@
 #include "mainwindow.h"
 #include "Model/map.h"
 #include <QSharedPointer>
+#include "View/drawobstacles.h"
 
 
 MapView::MapView (const QPixmap& pixmap, const QSize _size, QSharedPointer<Map> _map, QMainWindow* _mainWindow, QSharedPointer<Robots> _robots) :
