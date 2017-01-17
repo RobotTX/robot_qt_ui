@@ -87,7 +87,8 @@ HEADERS += \
     View/scanmaplistitemwidget.h \
     View/scanmapgraphicsitem.h \
     Controller/teleopworker.h \
-    View/teleopwidget.h
+    View/teleopwidget.h \
+    Controller/lasercontroller.h
 
 FORMS += Controller/mainwindow.ui
 
@@ -159,7 +160,8 @@ SOURCES += main.cpp \
            View/scanmaplistitemwidget.cpp \
     View/scanmapgraphicsitem.cpp \
     Controller/teleopworker.cpp \
-    View/teleopwidget.cpp
+    View/teleopwidget.cpp \
+    Controller/lasercontroller.cpp
 
 
 RESOURCES += Resources/resources.qrc

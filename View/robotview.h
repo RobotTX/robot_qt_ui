@@ -31,6 +31,7 @@ public:
     /// Getters
     QPointer<Robot> getRobot(void) { return robot; }
     int getLastStage(void) const { return lastStage; }
+    QVector<QPointF> getObstacles(void) const { return obstacles; }
 
     /// Setters
     void setRobot(QPointer<Robot> const& _robot) { robot = _robot; }
@@ -41,9 +42,8 @@ public:
     void display(const bool show) ;
     void setState(const GraphicItemState _state) { state = _state; }
     void setLastStage(const int _stage) { lastStage = _stage; }
-    void setObstacles(const QVector<QPointF> _obstacles) { obstacles = _obstacles; }
+    void setObstacles(const QVector<QPointF> _obstacles);
 
-    void paint(QPainter *_painter, const QStyleOptionGraphicsItem *option, QWidget *widget) Q_DECL_OVERRIDE;
 
 signals:
     /**
@@ -51,6 +51,7 @@ signals:
      * Signal emitted when a robot is clicked on/selected
      */
     void setSelectedSignal(QPointer<RobotView>);
+    void updateLaser();
 
 protected:
     void mousePressEvent(QGraphicsSceneMouseEvent *);

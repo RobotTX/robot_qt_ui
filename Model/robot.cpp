@@ -7,7 +7,7 @@
 #include "Controller/commandcontroller.h"
 #include "Model/map.h"
 #include <QDir>
-#include "View/drawobstacles.h"
+#include "Controller/lasercontroller.h"
 
 
 Robot::Robot(MainWindow* mainWindow, const QSharedPointer<Paths>& _paths, const QString _name, const QString _ip) : QObject(mainWindow), paths(_paths), name(_name), ip(_ip), position(Position()),
@@ -203,7 +203,7 @@ void Robot::launchWorkers(MainWindow* mainWindow){
     connect(this, SIGNAL(startLocalMapWorker()), localMapWorker, SLOT(connectSocket()));
     connect(&localMapThread, SIGNAL(finished()), localMapWorker, SLOT(deleteLater()));
     qRegisterMetaType<QVector<float>>("QVector<float>");
-    connect(localMapWorker, SIGNAL(laserValues(float, float, float, QVector<float>, QString)), mainWindow->getObstaclesPainter(), SLOT(drawObstacles(float,float,float,QVector<float>,QString)));
+    connect(localMapWorker, SIGNAL(laserValues(float, float, float, QVector<float>, QString)), mainWindow->getLaserController(), SLOT(drawObstacles(float,float,float,QVector<float>,QString)));
     localMapWorker->moveToThread(&localMapThread);
     localMapThread.start();
 

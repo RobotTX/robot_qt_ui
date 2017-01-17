@@ -7,7 +7,6 @@ class RobotServerWorker;
 class CustomQGraphicsView;
 class Map;
 class Robots;
-class MapView;
 class LeftMenuWidget;
 class PointsLeftWidget;
 class RobotsLeftWidget;
@@ -28,6 +27,8 @@ class MergeMapWidget;
 class SettingsWidget;
 class ScanMapWidget;
 class DrawObstacles;
+class MapView;
+class LaserController;
 
 #include "Model/paths.h"
 #include "View/createpointwidget.h"
@@ -79,6 +80,7 @@ public:
     PathPainter* getPathPainter(void) const { return pathPainter; }
     CommandController* getCommandController(void) const { return commandController; }
     QSharedPointer<Robots> getRobots(void) const { return robots; }
+    LaserController* getLaserController(void) const { return laserController; }
 
     void initializeMenu();
     void initializeRobots();
@@ -130,8 +132,6 @@ public:
 
     static Position convertPixelCoordinatesToRobotCoordinates(const Position positionInPixels, double originX, double originY, double resolution, int height);
     static Position convertRobotCoordinatesToPixelCoordinates(const Position positionInRobotCoordinates, double originX, double originY, double resolution, int height);
-
-    DrawObstacles* getObstaclesPainter(void) const { return obstaclesPainter; }
 
 signals:
     void nameChanged(QString, QString);
@@ -299,6 +299,7 @@ private slots:
     void scanMapSlot();
 
     void updateBatteryLevel(const int level);
+    void updateLaserSlot();
 
 protected:
     bool changeRobotName(QString name);
@@ -352,8 +353,7 @@ private:
     QPointer<ScanMapWidget> scanMapWidget;
 
     SettingsWidget* settingsWidget;
-    DrawObstacles* obstaclesPainter;
-
+    LaserController* laserController;
 };
 
 #endif /// MAINWINDOW_H

@@ -80,12 +80,8 @@ void RobotView::setOrientation(const float ori){
     robot->setOrientation(ori);
 }
 
-void RobotView::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget){
-    //QPen oldPen = painter->pen();
-    painter->setPen(Qt::red);
 
-    for(int i = 0; i < obstacles.size(); i++)
-        painter->drawPoint(obstacles.at(i));
-    //painter->setPen(oldPen);
-    QGraphicsPixmapItem::paint(painter, option, widget);
+void RobotView::setObstacles(const QVector<QPointF> _obstacles) {
+    obstacles = _obstacles;
+    emit updateLaser();
 }
