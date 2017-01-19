@@ -33,6 +33,7 @@ EditSelectedRobotWidget::EditSelectedRobotWidget(QWidget* _parent, MainWindow* _
     connect(robotDialog->getCancelButton(), SIGNAL(clicked()), this, SLOT(cancelRobotModificationsSlot()));
     connect(robotDialog->getSaveButton(), SIGNAL(clicked()), mainWindow, SLOT(saveRobotModifications()));
     connect(this, SIGNAL(sendPathSelectedRobot(QString, QString)), mainWindow, SLOT(sendPathSelectedRobotSlot(QString, QString)));
+    connect(_mainWindow, SIGNAL(updatePath(QString, QString)), this, SLOT(applyNewPath(QString, QString)));
 
     layout = new QVBoxLayout(this);
     robotView = NULL;
@@ -242,6 +243,7 @@ void EditSelectedRobotWidget::updatePathsMenu(){
             if(it_paths.value()){
                 group->addAction(it_paths.key());
                 if(!assignedPath.compare(it_paths.key()) && !groupAssignedPath.compare(i.key())){
+                    qDebug() << "editselectedRobotWidget::updatepathsmenu " << it_paths.key();
                     group->actions().last()->setCheckable(true);
                     group->actions().last()->setChecked(true);
                 }
@@ -265,18 +267,19 @@ void EditSelectedRobotWidget::openMenu(){
 
 void EditSelectedRobotWidget::assignPath(QAction *action){
     /// TODO emit sendPathSelectedRobot => wait for an answer/signal then change the path in the model
+    QString groupName = static_cast<QMenu*> (action->associatedWidgets().at(0))->title().mid(1);
+    emit sendPathSelectedRobot(groupName, action->text());
+}
+
+void EditSelectedRobotWidget::applyNewPath(const QString groupName, const QString pathName){
+    qDebug() << "EditSelectedRobotWidget::applyNewPath " << pathName;
+    /// Once we know for sure (from the main window) that the command has been received, we proceed to the update here
     emit clearMapOfPaths();
     setPathChanged(true);
-    action->setCheckable(true);
-    action->setChecked(true);
     bool foundFlag(false);
-    QString groupName = static_cast<QMenu*> (action->associatedWidgets().at(0))->title().mid(1);
-    assignedPath = action->text();
-    groupAssignedPath = groupName;
-    setPath(paths->getPath(groupName, action->text(), foundFlag));
+    setPath(paths->getPath(groupName, pathName, foundFlag));
     assert(foundFlag);
-    emit showPath(groupName, action->text());
-    emit sendPathSelectedRobot(groupName, action->text());
+    emit showPath(groupName, pathName);
 }
 
 void EditSelectedRobotWidget::openHomeMenu(){

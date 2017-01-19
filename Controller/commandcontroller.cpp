@@ -7,7 +7,7 @@
 #include <QFocusEvent>
 #include <QApplication>
 
-CommandController::CommandController(QWidget *parent) : QObject(parent), robotName(""), messageBox(){
+CommandController::CommandController(QWidget *parent) : QObject(parent), robotName(""), messageBox(parent) {
     messageBox.setWindowTitle("Processing a command");
 }
 

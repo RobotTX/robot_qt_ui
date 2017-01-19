@@ -15,12 +15,10 @@ void CommandMessageBox::show(){
     abortButton->hide();
 
     /// Timer used to show the abort button when we wait for too long for an answer
-    if(!timer) {
-        timer = new QTimer(this);
-        timer->setInterval(15000);
-        timer->setSingleShot(true);
-        connect(timer, SIGNAL(timeout()), this, SLOT(timerSlot()));
-    }
+    QTimer* timer = new QTimer(this);
+    timer->setInterval(15000);
+    timer->setSingleShot(true);
+    connect(timer, SIGNAL(timeout()), this, SLOT(timerSlot()));
     timer->start();
 
     QMessageBox::show();
