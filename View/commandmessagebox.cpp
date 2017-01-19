@@ -44,6 +44,3 @@ void CommandMessageBox::closeEvent(QCloseEvent *e){
     hide();
 }
 
-void CommandMessageBox::hide(){
-
-}
