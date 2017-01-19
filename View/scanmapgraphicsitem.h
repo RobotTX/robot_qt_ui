@@ -1,12 +1,14 @@
 #ifndef SCANMAPGRAPHICSITEM_H
 #define SCANMAPGRAPHICSITEM_H
 
+class Robots;
+
 #include <QGraphicsPixmapItem>
 
 class ScanMapGraphicsItem: public QObject, public QGraphicsPixmapItem {
     Q_OBJECT
 public:
-    ScanMapGraphicsItem(QString robotName);
+    ScanMapGraphicsItem(QString robotName, QSharedPointer<Robots> _robots);
 
     /// Getter
     QGraphicsPixmapItem* getRobotView(void) const { return scanRobotView; }
@@ -37,9 +39,15 @@ signals:
      */
     void robotGoTo(double, double);
 
+private slots:
+    void updateLaserSLot();
+
 private:
     QPointF dragStartPosition;
     QGraphicsPixmapItem* scanRobotView;
+    QGraphicsPixmapItem* laserView;
+    QString robotName;
+    QSharedPointer<Robots> robots;
 };
 
 #endif // SCANMAPGRAPHICSITEM_H

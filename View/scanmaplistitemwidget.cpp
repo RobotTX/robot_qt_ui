@@ -15,19 +15,10 @@
 #include "View/mergemaplistitemwidget.h"
 #include <QFile>
 
-ScanMapListItemWidget::ScanMapListItemWidget(int _id, QString name, QGraphicsScene* _scene)
-    : QWidget(), id(_id), robotName(name), scene(_scene), pixmapItem(new ScanMapGraphicsItem(name)),
+ScanMapListItemWidget::ScanMapListItemWidget(int _id, QString name, QSharedPointer<Robots> robots, QGraphicsScene* _scene)
+    : QWidget(), id(_id), robotName(name), scene(_scene), pixmapItem(new ScanMapGraphicsItem(name, robots)),
       oriWidth(0), oriHeight(0), newWidth(0), newHeight(0), top(0), left(0){
 
-    initializeMenu();
-
-    //pixmapItem->setPixmap(QPixmap());
-    connect(pixmapItem, SIGNAL(robotGoTo(double,double)), this, SLOT(robotGoToSlot(double,double)));
-
-    scene->addItem(pixmapItem);
-}
-
-void ScanMapListItemWidget::initializeMenu(){
     QVBoxLayout* layout = new QVBoxLayout(this);
 
     QHBoxLayout* topLayout = new QHBoxLayout();
@@ -109,6 +100,9 @@ void ScanMapListItemWidget::initializeMenu(){
     connect(rotLineEdit, SIGNAL(textEdited(QString)), this, SLOT(rotLineEditSlot(QString)));
     connect(slider, SIGNAL(valueChanged(int)), this, SLOT(sliderSlot(int)));
     connect(scanningBtn, SIGNAL(clicked()), this, SLOT(scanningBtnSlot()));
+    connect(pixmapItem, SIGNAL(robotGoTo(double,double)), this, SLOT(robotGoToSlot(double,double)));
+
+    scene->addItem(pixmapItem);
 }
 
 void ScanMapListItemWidget::robotConnected(bool connected){

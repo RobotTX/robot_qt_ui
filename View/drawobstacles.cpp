@@ -21,7 +21,8 @@ void DrawObstacles::paint(QPainter *painter, const QStyleOptionGraphicsItem *, Q
         if(robotView){
             QVector<QPointF> obstacles = robotView->getObstacles();
             for(int j = 0; j < obstacles.size(); j++)
-                painter->drawPoint(obstacles.at(j));
+                painter->drawPoint(QPointF(robotView->getRobot()->getPosition().getX() + obstacles.at(j).x(),
+                                           robotView->getRobot()->getPosition().getY() + obstacles.at(j).y()));
         }
     }
 }

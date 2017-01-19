@@ -80,7 +80,6 @@ void RobotView::setOrientation(const float ori){
     robot->setOrientation(ori);
 }
 
-
 void RobotView::setObstacles(const QVector<QPointF> _obstacles) {
     obstacles = _obstacles;
     emit updateLaser();

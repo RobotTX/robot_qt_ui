@@ -7,6 +7,7 @@ class QLabel;
 class QLineEdit;
 class ScanMapGraphicsItem;
 class QGraphicsItem;
+class Robots;
 
 #include <QWidget>
 #include <QSlider>
@@ -14,7 +15,7 @@ class QGraphicsItem;
 class ScanMapListItemWidget : public QWidget {
     Q_OBJECT
 public:
-    ScanMapListItemWidget(int _id, QString name, QGraphicsScene *_scene);
+    ScanMapListItemWidget(int _id, QString name, QSharedPointer<Robots> robots, QGraphicsScene *_scene);
 
     /// Setter
     void setId(const int _id){ id = _id; }
@@ -54,12 +55,6 @@ public:
     void updateRobotPos(double x, double y, double ori);
 
 protected:
-    /**
-     * @brief initializeMenu
-     * Initialize the menu
-     */
-    void initializeMenu();
-
     /**
      * @brief cropImage
      * @param image

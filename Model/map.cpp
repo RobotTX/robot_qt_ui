@@ -39,6 +39,9 @@ QImage Map::getImageFromArray(const QByteArray& mapArrays, const bool fromPgm){
         sign = -1;
     }
 
+    QVector<int> countVector;
+    int countSum = 0;
+
     /// We set each pixel of the image
     for(int i = 0; i < mapArrays.size(); i+=5){
         int color = static_cast<int> (static_cast<uint8_t> (mapArrays.at(i)));
@@ -46,7 +49,15 @@ QImage Map::getImageFromArray(const QByteArray& mapArrays, const bool fromPgm){
         uint32_t count = static_cast<uint32_t> (static_cast<uint8_t> (mapArrays.at(i+1)) << 24) + static_cast<uint32_t> (static_cast<uint8_t> (mapArrays.at(i+2)) << 16)
                         + static_cast<uint32_t> (static_cast<uint8_t> (mapArrays.at(i+3)) << 8) + static_cast<uint32_t> (static_cast<uint8_t> (mapArrays.at(i+4)));
 
+        countVector.push_back(count);
+        countSum += count;
+
         for(int j = 0; j < (int) count; j++){
+            if(index > width*width){
+                qDebug() << "Map::getImageFromArray GOT A PROBLEM TO CHECK" << countVector << countSum << count;
+                Q_UNREACHABLE();
+                return image;
+            }
             image.setPixelColor(QPoint(static_cast<int>(index%width), shift + sign * (static_cast<int>(index/width))), QColor(color, color, color));
             index++;
         }

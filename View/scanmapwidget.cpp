@@ -162,7 +162,7 @@ void ScanMapWidget::startedScanningSlot(QString robotName, bool scanning){
 }
 
 void ScanMapWidget::addMapWidget(QString name){
-    ScanMapListItemWidget* listItem = new ScanMapListItemWidget(listWidget->count(), name, scene);
+    ScanMapListItemWidget* listItem = new ScanMapListItemWidget(listWidget->count(), name, robots, scene);
 
     connect(listItem, SIGNAL(deleteMap(int, QString)), this, SLOT(deleteMapSlot(int, QString)));
     connect(listItem, SIGNAL(playScan(bool, QString)), this, SLOT(playScanSlot(bool, QString)));

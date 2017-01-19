@@ -85,7 +85,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
     /// centers the msgBox on the middle of the screen
     msgBox.move(mapToGlobal(QPoint(QApplication::desktop()->screenGeometry().width()/2,
-                                   QApplication::desktop()->screenGeometry().height()/2) ));
+                                   QApplication::desktop()->screenGeometry().height()/2)));
 
     /// initializes the paths and points used in the application
     points = QSharedPointer<Points>(new Points(this));
