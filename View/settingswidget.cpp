@@ -17,7 +17,7 @@
 int SettingsWidget::currentId = 0;
 
 SettingsWidget::SettingsWidget(QWidget *parent)
-    : QWidget(parent), batteryWarningThreshHold(50) {
+    : QWidget(parent), batteryWarningThreshHold(20) {
 
 
     settingMapChoice = ALWAYS_ASK;

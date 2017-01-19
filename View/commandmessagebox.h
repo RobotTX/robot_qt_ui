@@ -2,6 +2,7 @@
 #define COMMANDMESSAGEBOX_H
 
 class QPushButton;
+class QTimer;
 
 #include <QMessageBox>
 
@@ -24,6 +25,7 @@ signals:
 
 private:
      QPushButton *abortButton;
+     QTimer* timer;
 };
 
 #endif /// COMMANDMESSAGEBOX_H
