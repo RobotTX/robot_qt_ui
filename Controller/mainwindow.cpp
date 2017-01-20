@@ -393,7 +393,11 @@ void MainWindow::updateRobot(const QString ipAddress, const float posX, const fl
 
     /// need to first convert the coordinates that we receive from the robot
     Position robotPositionInPixelCoordinates = convertRobotCoordinatesToPixelCoordinates(Position(posX, posY), map->getOrigin().getX(), map->getOrigin().getY(), map->getResolution(), map->getHeight());
+    /// Rotation from (x, y, z, w) to (x, y, z) => z = sin(theta/2) and w = cos(theto/2)
+    /// 2 * asin(-oriZ) * 180.0 / PI + 90
     float orientation = asin(-oriZ) * 360.0 / PI + 90;
+
+    qDebug() << "MainWindow::updateRobot" << oriZ  << oriZ*180/PI << orientation << asin(-oriZ) * 180.0 / PI << asin(-oriZ) * 180.0 / PI + 90;
 
     QPointer<RobotView> rv = robots->getRobotViewByIp(ipAddress);
     if(rv != NULL){
@@ -401,8 +405,6 @@ void MainWindow::updateRobot(const QString ipAddress, const float posX, const fl
         rv->setOrientation(orientation);
 
         emit scanRobotPos(rv->getRobot()->getName(), robotPositionInPixelCoordinates.getX(), robotPositionInPixelCoordinates.getY(), orientation);
-    } else {
-        //qDebug() << "(updateRobot) Could not find a RobotView for the robot at ip" << ipAddress;
     }
 }
 
@@ -4712,6 +4714,7 @@ void MainWindow::updateRobotInfo(QString robotName, QString robotInfo){
 
     QStringList strList = robotInfo.split(" ", QString::SkipEmptyParts);
     qDebug() << "MainWindow::updateRobotInfo" << robotInfo << "to" << strList;
+    QPointer<RobotView> robotView = robots->getRobotViewByName(robotName);
 
     if(strList.size() > 7){
         /// Remove the "Connected"
@@ -4732,7 +4735,10 @@ void MainWindow::updateRobotInfo(QString robotName, QString robotInfo){
         updateMapInfo(robotName, mapId, mapDate);
 
 
-        robots->getRobotViewByName(robotName)->getRobot()->setScanning(scanning);
+        if(robotView && robotView->getRobot())
+            robotView->getRobot()->setScanning(scanning);
+        else
+            return;
 
         if(scanning){
             if(scanMapWidget){
@@ -4754,7 +4760,8 @@ void MainWindow::updateRobotInfo(QString robotName, QString robotInfo){
     } else
         qDebug() << "MainWindow::updateRobotInfo Connected received without enough parameters :" << strList;
 
-    settingsWidget->addRobot(robots->getRobotViewByName(robotName)->getRobot()->getIp(), robotName);
+    if(robotView && robotView->getRobot())
+        settingsWidget->addRobot(robotView->getRobot()->getIp(), robotName);
 }
 
 void MainWindow::updateMapInfo(const QString robotName, QString mapId, QString mapDate){

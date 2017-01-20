@@ -6,6 +6,7 @@
 #include "Model/robot.h"
 #include "View/robotview.h"
 #include <QImage>
+#include <QtMath>
 
 ScanMapGraphicsItem::ScanMapGraphicsItem(QString _robotName, QSharedPointer<Robots> _robots)
     : QGraphicsPixmapItem(), robotName(_robotName), robots(_robots){
@@ -23,8 +24,8 @@ ScanMapGraphicsItem::ScanMapGraphicsItem(QString _robotName, QSharedPointer<Robo
     scanRobotView->setZValue(2);
 
     laserView = new QGraphicsPixmapItem(this);
-    laserView->setZValue(1);
-    //laserView->setPos(4, 4);
+    laserView->setZValue(3);
+
     QPointer<RobotView> robotView = robots->getRobotViewByName(robotName);
     if(robotView)
         connect(robotView, SIGNAL(updateLaser()), this, SLOT(updateLaserSLot()));
@@ -83,9 +84,6 @@ void ScanMapGraphicsItem::updateLaserSLot(){
                     minY = point.y();
             }
         }
-        qDebug() << "ScanMapGraphicsItem::updateLaserSLot"
-                 << minX << maxX << minY << maxY
-                 << maxX - minX << maxY - minY;
 
         QImage laserImage = QImage(maxX - minX + 1, maxY - minY + 1, QImage::Format_ARGB32);
         laserImage.fill(qRgba(205, 205, 205, 0));
@@ -95,23 +93,33 @@ void ScanMapGraphicsItem::updateLaserSLot(){
                 laserImage.setPixel(obstacles.at(j).x() - minX,
                                          obstacles.at(j).y() - minY, qRgba(255, 0, 0, 255));
 
+        double posX = sqrt(37) * cos(atan(-1.0/6.0) + (scanRobotView->rotation() - 90)/180.0*3.14159);
+        double posY = sqrt(37) * sin(atan(-1.0/6.0) + (scanRobotView->rotation() - 90)/180.0*3.14159);
+
+
+        laserImage.setPixel(-minX + posX, -minY + posY, qRgba(0, 255, 0, 255));
+
         laserView->setPixmap(QPixmap::fromImage(laserImage));
         laserView->setTransformOriginPoint(-minX, -minY);
-        laserView->setPos(laserView->mapFromItem(scanRobotView, 0, 0));
-
+/*
         qDebug() << "ScanMapGraphicsItem::updateLaserSLot"
-                 << scanRobotView->pos()
-                 << scanRobotView->mapFromItem(laserView, 0, 0)
-                 << scanRobotView->mapFromItem(laserView, 0, 0) * 0.07
-                 << laserView->mapFromItem(scanRobotView, 0, 0);
-        /*for(int j = 0; j < obstacles.size(); j++){
-            qDebug() << "ScanMapGraphicsItem::updateLaserSLot"
-                     << scanRobotView->pos()
-                     << scanRobotView->pixmap().size()
-                     << obstacles.at(j)
-                     << QPointF(robotView->getRobot()->getPosition().getX(), robotView->getRobot()->getPosition().getY());
-            laserImage.setPixelColor(scanRobotView->pos().x() + obstacles.at(j).x(),
-                                     scanRobotView->pos().y() + obstacles.at(j).y(), Qt::red);
-        }*/
+                 << "\n1:" << minX << maxX << minY << maxY
+                 << "\n2:" << maxX - minX << maxY - minY
+                 << "\n3:" << this->boundingRect()
+                 << "\n4:" << this->pos()
+                 << "\n5:" << scanRobotView->pos()
+                 << "\n6:" << laserView->pos()
+                 << "\n7:" << laserView->mapFromItem(scanRobotView, 0, 0)
+                 << "\n8:" << scanRobotView->rotation()
+                 << "\n9:" << atan(-1.0/6.0)
+                 << "\n10:" << cos(atan(-1.0/6.0))
+                 << "\n11:" << sin(atan(-1.0/6.0))
+                 << "\n12:" << sin(-9.46233)
+                 << "\n13:" << posX << posY;
+*/
+        /*laserView->setPos(laserView->pos().x() + laserView->mapFromItem(scanRobotView, 0, 0).x() - (maxX - minX)/2,
+                          laserView->pos().y() + laserView->mapFromItem(scanRobotView, 0, 0).y() - (maxY - minY)/2);*/
+        laserView->setPos(scanRobotView->pos().x() + scanRobotView->pixmap().size().width()/2 + minX + posX,
+                          scanRobotView->pos().y() + scanRobotView->pixmap().size().height()/2 + minY + posY);
     }
 }
