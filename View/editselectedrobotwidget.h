@@ -80,6 +80,8 @@ public slots:
     /// to update the path menu to tick the path assigned to the current robot
     void updatePathsMenu();
 
+    void applyNewPath(const QString groupName, const QString pathName);
+
 signals:
     /// Signal emitted when a robot has been edited & saved
     void robotSaved(void);

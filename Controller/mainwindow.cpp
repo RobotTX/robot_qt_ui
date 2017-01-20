@@ -4267,6 +4267,9 @@ void MainWindow::sendPathSelectedRobotSlot(const QString groupName, const QStrin
             qDebug() << "date now is" << currentDateTime;
             fileInfo.close();
             editSelectedRobotWidget->setPath(currPath);
+            editSelectedRobotWidget->setGroupPath(groupName);
+            editSelectedRobotWidget->setAssignedPath(pathName);
+            emit updatePath(groupName, pathName);
         }
         setMessageTop(TEXT_COLOR_SUCCESS, "the path of \"" + robot->getName() + "\" has been successfully updated");
         qDebug() << "MainWindow::sendPathSelectedRobotSlot Path saved for robot" << robot->getIp();
@@ -4912,11 +4915,9 @@ bool MainWindow::updateHomeFile(const QString robotName, const Position& robot_h
 QVector<PathPoint> MainWindow::extractPathFromInfo(const QStringList &robotInfo){
     QVector<PathPoint> path;
     for(int i = 0; i < robotInfo.size(); i += 3){
-        double xOnRobot = robotInfo.at(i).toDouble();
-        double xInApp = (-map->getOrigin().getX() + xOnRobot) / map->getResolution() + ROBOT_WIDTH;
-        double yOnRobot = robotInfo.at(i+1).toDouble();
-        double yInApp = map->getHeight()-(-map->getOrigin().getY()+yOnRobot) / map->getResolution()-ROBOT_WIDTH/2;
-        path.push_back(PathPoint(Point(" ", xInApp, yInApp), robotInfo.at(i+2).toDouble()));
+        Position in_app = convertRobotCoordinatesToPixelCoordinates(Position(robotInfo.at(i).toDouble(), robotInfo.at(i+1).toDouble()),
+                                                                    map->getOrigin().getX(), map->getOrigin().getY(), map->getResolution(), map->getHeight());
+        path.push_back(PathPoint(Point(" ", in_app.getX(),in_app.getY()), robotInfo.at(i+2).toDouble()));
     }
     return path;
 }
@@ -5007,7 +5008,7 @@ void MainWindow::updatePathInfo(const QString robotName, QString pathDate, QStri
 
     /// retrieves the path of the robot on the application side if the robot has one
     QPair<QPair<QString, QString>, QStringList> appPathInfo = getPathFromFile(robotName);
-
+    qDebug() << "appPathinfo" << appPathInfo;
     QVector<PathPoint> robotPath = extractPathFromInfo(path);
 
     /// contains the groupname and pathname of the path described by the robot

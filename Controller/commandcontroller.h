@@ -13,7 +13,7 @@ class Map;
  * This class process the command to send to the given robot and wait for an answer
  * while popping a message box to the user
  */
-class CommandController : public QObject{
+class CommandController : public QObject {
     Q_OBJECT
 public:
     CommandController(QWidget *parent);

@@ -152,6 +152,7 @@ signals:
     void robotScanning(bool, QString, bool);
     void scanRobotPos(QString, double, double, double);
     void newBatteryLevel(int);
+    void updatePath(const QString groupName, const QString pathName);
 
 private slots:
     void sendPathSelectedRobotSlot(const QString groupName, const QString pathName);
