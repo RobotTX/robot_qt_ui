@@ -24,6 +24,7 @@
 <!--
   	<node pkg="gobot_move" type="gobot_move_odom" name="publish_odom" output="screen"/>
 -->
+
 	<node pkg="gobot_move" type="odom.py" name="publish_odom" />
   	<node pkg="gobot_move" type="twist.py" name="control_wheel" />
 </launch>

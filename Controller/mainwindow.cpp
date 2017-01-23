@@ -393,11 +393,9 @@ void MainWindow::updateRobot(const QString ipAddress, const float posX, const fl
 
     /// need to first convert the coordinates that we receive from the robot
     Position robotPositionInPixelCoordinates = convertRobotCoordinatesToPixelCoordinates(Position(posX, posY), map->getOrigin().getX(), map->getOrigin().getY(), map->getResolution(), map->getHeight());
-    /// Rotation from (x, y, z, w) to (x, y, z) => z = sin(theta/2) and w = cos(theto/2)
-    /// 2 * asin(-oriZ) * 180.0 / PI + 90
-    float orientation = asin(-oriZ) * 360.0 / PI + 90;
+    float orientation = -oriZ * 180.0 / PI + 90;
 
-    qDebug() << "MainWindow::updateRobot" << oriZ  << oriZ*180/PI << orientation << asin(-oriZ) * 180.0 / PI << asin(-oriZ) * 180.0 / PI + 90;
+    qDebug() << "MainWindow::updateRobot" << oriZ << orientation;
 
     QPointer<RobotView> rv = robots->getRobotViewByIp(ipAddress);
     if(rv != NULL){

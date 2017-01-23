@@ -7,6 +7,7 @@ project(gobot_software)
 find_package(catkin REQUIRED COMPONENTS
   roscpp
   rospy
+  tf
   nav_msgs
   std_msgs
   actionlib
@@ -38,7 +39,7 @@ generate_messages(
 set(CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_CXX_FLAGS}")
 catkin_package(
   INCLUDE_DIRS include
-  CATKIN_DEPENDS roscpp rospy std_msgs
+  CATKIN_DEPENDS roscpp rospy std_msgs tf
 )
 
 ###########

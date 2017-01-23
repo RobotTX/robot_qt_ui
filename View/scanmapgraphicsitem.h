@@ -12,6 +12,7 @@ public:
 
     /// Getter
     QGraphicsPixmapItem* getRobotView(void) const { return scanRobotView; }
+    QGraphicsPixmapItem* getLaserView(void) const { return laserView; }
 
     /**
      * @brief updateRobotPos
