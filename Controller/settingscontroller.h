@@ -38,6 +38,7 @@ public slots:
     void updateBatteryThreshold(const int value);
     void setMapChoice(const int choice);
     void updateLaserStatus(const int id, const bool status);
+    void hideTutorial();
 
 signals:
     void activateLaser(QString, bool);

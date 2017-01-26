@@ -134,6 +134,8 @@ public:
     static Position convertPixelCoordinatesToRobotCoordinates(const Position positionInPixels, double originX, double originY, double resolution, int height);
     static Position convertRobotCoordinatesToPixelCoordinates(const Position positionInRobotCoordinates, double originX, double originY, double resolution, int height);
 
+    void openHelpMessage(const QString message);
+
 signals:
     void nameChanged(QString, QString);
     void changeCmdThreadRobotName(QString);
@@ -357,8 +359,6 @@ private:
     QPointer<ScanMapWidget> scanMapWidget;
 
     LaserController* laserController;
-
-
 
 };
 

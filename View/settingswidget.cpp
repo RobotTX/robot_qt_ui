@@ -22,6 +22,7 @@ SettingsWidget::SettingsWidget(const Settings& settings, QWidget *parent): QWidg
     setWindowTitle("Settings");
 
     // does not work :( <- jcrois cparce que sa maman cest la main window mais sinon ca marchait me semble
+    // ( ca semble marcher si la mainwindow est fermee )
     setWindowIcon(QPixmap(":/icons/setting.png").scaled(s_icon_size));
 
     /// moves the page at the center of the screen
@@ -83,6 +84,7 @@ SettingsWidget::SettingsWidget(const Settings& settings, QWidget *parent): QWidg
     topLayout->addWidget(batteryThresholdLabel);
     topLayout->addWidget(batteryThresholdSlider);
 
+    /// button to reset the display of help messages in the application
     helpButton = new CustomPushButton("Reset tutorial");
     topLayout->addWidget(helpButton);
 

@@ -1905,6 +1905,8 @@ void MainWindow::teleopCmdSlot(QString robotName, int id){
 void MainWindow::scanMapSlot(){
     qDebug() << "MainWindow::scanMapSlot called";
 
+    openHelpMessage("You are about to scan the map. This is how to proceed...");
+
     if(!scanMapWidget){
         scanMapWidget = QPointer<ScanMapWidget>(new ScanMapWidget(robots));
 
@@ -5331,4 +5333,16 @@ void MainWindow::getMapForMergingSlot(QString robotName){
     QPointer<RobotView> robotView = robots->getRobotViewByName(robotName);
     if(robotView && robotView->getRobot())
         commandController->sendCommand(robotView->getRobot(), QString("s \"2\""));
+}
+
+void MainWindow::openHelpMessage(const QString message){
+    if(settingsController->getSettings()->getHelpNeeded()) {
+        QMessageBox box;
+        QCheckBox* checkbox = new QCheckBox("Never show this again (can be reset in settings)");
+        connect(checkbox, SIGNAL(toggled(bool)), settingsController, SLOT(hideTutorial()));
+        box.setText(message);
+        box.addButton(QMessageBox::Ok);
+        box.setCheckBox(checkbox);
+        box.exec();
+    }
 }

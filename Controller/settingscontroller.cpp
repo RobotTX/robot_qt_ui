@@ -158,3 +158,14 @@ void SettingsController::removeRobot(const QString name){
             view->removeRobot(it.key());
     }
 }
+
+/// called when a user does not want to see the help messages
+void SettingsController::hideTutorial(){
+    settings->setHelpNeeded(false);
+    QString helpFile = QDir::currentPath() + QDir::separator() + "settings" + QDir::separator() + "help.txt";
+    std::ofstream fileHelp(helpFile.toStdString(), std::ios::out | std::ios::trunc);
+    if(fileHelp) {
+        fileHelp << "0";
+        fileHelp.close();
+    }
+}
