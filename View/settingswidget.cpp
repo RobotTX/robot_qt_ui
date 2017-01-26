@@ -14,6 +14,7 @@
 #include <QDir>
 #include <fstream>
 #include <QCheckBox>
+#include "View/custompushbutton.h"
 
 
 SettingsWidget::SettingsWidget(const Settings& settings, QWidget *parent): QWidget(parent){
@@ -82,9 +83,8 @@ SettingsWidget::SettingsWidget(const Settings& settings, QWidget *parent): QWidg
     topLayout->addWidget(batteryThresholdLabel);
     topLayout->addWidget(batteryThresholdSlider);
 
-    helpBox = new QCheckBox("Display help messages");
-    helpBox->setChecked(settings.getHelpNeeded());
-    topLayout->addWidget(helpBox);
+    helpButton = new CustomPushButton("Reset tutorial");
+    topLayout->addWidget(helpButton);
 
     layout->addLayout(topLayout);
 
@@ -124,7 +124,6 @@ void SettingsWidget::removeRobot(const int robotId){
 void SettingsWidget::applySlot(){
     qDebug() << "SettingsWidget::applySlot called";
     emit updateMapChoice(chooseMapBox->currentIndex());
-    emit updateHelpNeeded(helpBox->isChecked());
 }
 
 void SettingsWidget::cancelSlot(){

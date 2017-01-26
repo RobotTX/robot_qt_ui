@@ -7,6 +7,7 @@ class QButtonGroup;
 class QLabel;
 class QComboBox;
 class QCheckBox;
+class CustomPushButton;
 
 #include <QSlider>
 #include "Model/robots.h"
@@ -32,10 +33,10 @@ public:
     QComboBox* getChooseMapBox(void) const { return chooseMapBox; }
     QSlider* getBatterySlider(void) const { return batteryThresholdSlider; }
     QButtonGroup* getRobotLaserButtonGroup(void) { return robotsLaserButtonGroup; }
+    CustomPushButton* getHelpButton(void) const { return helpButton; }
 
 signals:
     void updateMapChoice(int);
-    void updateHelpNeeded(bool);
 
 private slots:
     void applySlot();
@@ -51,7 +52,7 @@ private:
     QComboBox* chooseMapBox;
     QSlider* batteryThresholdSlider;
     QLabel* batteryThresholdLabel;
-    QCheckBox* helpBox;
+    CustomPushButton* helpButton;
 };
 
 #endif /// SETTINGSWIDGET_H

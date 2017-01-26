@@ -34,7 +34,7 @@ public:
     void showView(void);
 
 public slots:
-    void setHelpNeeded(const bool needed);
+    void setHelpNeeded();
     void updateBatteryThreshold(const int value);
     void setMapChoice(const int choice);
     void updateLaserStatus(const int id, const bool status);

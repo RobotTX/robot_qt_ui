@@ -5,6 +5,7 @@
 #include <QDir>
 #include <fstream>
 #include <Controller/mainwindow.h>
+#include "View/custompushbutton.h"
 
 SettingsController::SettingsController(QWidget* parent): QObject(parent)
 {
@@ -59,7 +60,7 @@ void SettingsController::createSettingsView(void){
 
     view = new SettingsWidget(*settings);
 
-    /// set up the connects to propagate the changes in the view to the model
+    /// set up the connects to propagate the changes in the view to the model ///
 
     connect(view->getBatterySlider(), SIGNAL(valueChanged(int)), this, SLOT(updateBatteryThreshold(int)));
 
@@ -68,7 +69,7 @@ void SettingsController::createSettingsView(void){
 
     connect(view, SIGNAL(updateMapChoice(int)), this, SLOT(setMapChoice(int)));
 
-    connect(view, SIGNAL(updateHelpNeeded(bool)), this, SLOT(setHelpNeeded(bool)));
+    connect(view->getHelpButton(), SIGNAL(clicked()), this, SLOT(setHelpNeeded()));
 }
 
 void SettingsController::hideView(){
@@ -80,18 +81,18 @@ void SettingsController::showView(){
     view->show();
 }
 
-void SettingsController::setHelpNeeded(const bool needed){
-    qDebug() << "SettingsController::setHelpNeeded" << needed;
+void SettingsController::setHelpNeeded(){
+    qDebug() << "SettingsController::setHelpNeeded";
     QString helpFile = QDir::currentPath() + QDir::separator() + "settings" + QDir::separator() + "help.txt";
     std::ofstream fileHelp(helpFile.toStdString(), std::ios::out | std::ios::trunc);
 
     if(fileHelp) {
-        (needed) ? fileHelp << "1" : fileHelp << "0";
+        fileHelp << "1";
         fileHelp.close();
     }
     /// we update no matter what because we always want the model and the view to be
     /// consistent with each other
-    settings->setHelpNeeded(needed);
+    settings->setHelpNeeded(true);
 }
 
 void SettingsController::updateBatteryThreshold(const int value){
