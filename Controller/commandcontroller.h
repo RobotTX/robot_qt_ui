@@ -22,18 +22,12 @@ public:
      * @brief sendCommand
      * @param robot
      * @param cmd
-     * @return if the command succeeded or failed
-     * Send the given command to the given robot,
-     * wait for an answer and return whether or not the command was succesfully executed
+     * Send the given command to the given robot
      */
-    bool sendCommand(QPointer<Robot> robot, QString cmd);
-
-    /**
-     * @brief openMessageBox
-     * @param listCmd
-     * Open the message box to tell the user we are processing the command
-     */
-    void openMessageBox(QStringList listCmd);
+    bool sendCommand(QPointer<Robot> robot, QString cmd,
+                     QString newRobotName = "", QString groupName = "",
+                     QString pathName = "", bool scan = false,
+                     int robotNumber = -1, QStringList path = QStringList());
 
     /**
      * @brief robotDisconnected
@@ -43,12 +37,14 @@ public:
      */
     void robotDisconnected(QString _robotName);
 
+protected:
     /**
-     * @brief robotWaitForAnswer
+     * @brief openMessageBox
      * @param listCmd
-     * @return if the command succeeded or failed
+     * Open the message box to tell the user we are processing the command
      */
-    bool robotWaitForAnswer(QStringList listCmd);
+    void openMessageBox(QStringList listCmd);
+    void resetParams();
 
 private slots:
     /**
@@ -56,20 +52,24 @@ private slots:
      * When we receive a message from a robot
      */
     void cmdAnswerSlot(QString);
+    void commandFailed();
+    void stopAllCommand();
 
-    /**
-     * @brief userStopped
-     * If we sent the command but the robot can not process it, the user can press a
-     * button to close the message box, and we sendCommand will return false
-     */
-    void userStopped();
+signals:
+    void commandDone(QString cmdName, bool success, QString robotName, QString newRobotName, QString groupName, QString pathName, bool scan, int robotNumber, QStringList path);
 
 private:
     QString robotName;
     /// the message box that's prompted to the user when a command is sent
     CommandMessageBox messageBox;
-    QString cmdAnswer;
     QString cmdName;
+    bool stop;
+    QString newRobotName;
+    QString groupName;
+    QString pathName;
+    bool scan;
+    int robotNumber;
+    QStringList path;
 };
 
 #endif /// COMMANDCONTROLLER_H

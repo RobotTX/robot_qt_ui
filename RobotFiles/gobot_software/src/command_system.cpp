@@ -127,11 +127,11 @@ bool execCommand(ros::NodeHandle n, std::vector<std::string> command){
 		{
 			std::cout << "(Command system) Pausing the path" << std::endl;
 			std_srvs::Empty arg;
-			if(ros::service::call("pause_path", arg))
+			if(ros::service::call("pause_path", arg)){
 				std::cout << "Pause path service called with success";
-			else
+				return true;
+			} else
 				std::cout << "Pause path service call failed";
-			return true;
 		}
 		break;
 
@@ -147,10 +147,25 @@ bool execCommand(ros::NodeHandle n, std::vector<std::string> command){
 			return stopAutoMap();
 		break;
 
-		/// Command for the robot to receive the map
 		case 'g':
-			std::cout << "(Command system) Gobot here is the map" << std::endl;
-			return true;
+			if(command.size() > 3){
+				std::cout << "(Command system) New name : " << command.at(1) << std::endl;
+
+				std::ofstream ofs;
+				ofs.open(path_computer_software + "Robot_Infos/name.txt", std::ofstream::out | std::ofstream::trunc);
+				ofs << command.at(1);
+				ofs.close();
+
+				std::cout << "(Command system) New wifi : " << command.at(2) << std::endl;
+				std::cout << "(Command system) New wifi password : " << command.at(3) << std::endl;
+				std::string cmd = "sudo bash " + path_computer_software + "change_wifi.sh \"" + command.at(2) + "\" \""+ command.at(3) + "\"";
+				std::cout << "(Command system) Cmd : " << cmd << std::endl;
+
+				system(cmd.c_str());
+
+				return true;
+			} else 
+				std::cout << "(Command system) Name missing" << std::endl;
 		break;
 
 		/// Command for the robot to receive the ports needed for the map, metadata and robot pos services
@@ -168,9 +183,8 @@ bool execCommand(ros::NodeHandle n, std::vector<std::string> command){
 				startMap();
 				startLaserData(startLaser);
 				return true;
-			} else {
+			} else
 				std::cout << "(Command system) Parameter missing" << std::endl;
-			}
 		break;
 
 
@@ -196,15 +210,11 @@ bool execCommand(ros::NodeHandle n, std::vector<std::string> command){
 					if(path_stage_file){
 						path_stage_file << "0";
 						path_stage_file.close();
-					} else {
+						return true;
+					} else
 						std::cout << "Sorry we were not able to find the file play_path.txt in order to keep track of the stage of the path to be played" << std::endl;
-						return false;	
-					}
-
-				} else std::cout << "sorry could not open the file " << path_computer_software + "Robot_Infos/path.txt";
-
-				return true;
-
+				} else 
+					std::cout << "sorry could not open the file " << path_computer_software + "Robot_Infos/path.txt";
 			} else 
 				std::cout << "(Command system) Parameter missing" << std::endl;
 		}
@@ -214,11 +224,11 @@ bool execCommand(ros::NodeHandle n, std::vector<std::string> command){
 		case 'j':{
 			std::cout << "(Command system) Playing the path" << std::endl;
 			std_srvs::Empty arg;
-			if(ros::service::call("play_path", arg))
+			if(ros::service::call("play_path", arg)){
 				std::cout << "Play path service called with success";
-			else
+				return true;
+			} else
 				std::cout << "Play path service call failed";
-			return true;
 		}
 		break;
 
@@ -238,11 +248,11 @@ bool execCommand(ros::NodeHandle n, std::vector<std::string> command){
 		{
 			std::cout << "(Command system) Stopping the path" << std::endl;
 			std_srvs::Empty arg;
-			if(ros::service::call("stop_path", arg))
+			if(ros::service::call("stop_path", arg)){
 				std::cout << "Stop path service called with success";
-			else
+				return true;
+			} else
 				std::cout << "Stop path service call failed";
-			return true;
 		}
 		break;
 
@@ -256,12 +266,9 @@ bool execCommand(ros::NodeHandle n, std::vector<std::string> command){
 				std::ofstream ofs;
 				ofs.open(path_computer_software + "Robot_Infos/path.txt", std::ofstream::out | std::ofstream::trunc);
 				ofs.close();
-			}
-			else {
+				return true;
+			} else
 				std::cout << "Stop path service call failed";
-				return false;
-			}
-			return true;
 		}
 		break;
 
@@ -278,19 +285,12 @@ bool execCommand(ros::NodeHandle n, std::vector<std::string> command){
 					ofs << command.at(1) << " " << command.at(2) << " ";
 
 					ofs.close();
+					return true;
 
-				} else {
-
+				} else
 					std::cout << "sorry could nt open the file " << path_computer_software + "Robot_Infos/path.txt";
-					return false;
-				}
-
-				return true;
-
-			} else {
-				std::cout << "Not enough arguments, received " << command.size() << " arguments, 3 arguments expected" << std::endl; 
-				return false;
-			}
+			} else
+				std::cout << "Not enough arguments, received " << command.size() << " arguments, 3 arguments expected" << std::endl;
 		break;
 
 		// command to send the robot home
@@ -301,11 +301,8 @@ bool execCommand(ros::NodeHandle n, std::vector<std::string> command){
 			if(ros::service::call("go_home", arg)){
 				std::cout << "Go home service called with success" << std::endl;
 				return true;
-			}
-			else {
+			} else
 				std::cout << "Stop path service call failed" << std::endl;
-				return false;
-			}
 		}
 		break;
 
@@ -317,11 +314,8 @@ bool execCommand(ros::NodeHandle n, std::vector<std::string> command){
 			if(ros::service::call("stop_going_home", arg)){
 				std::cout << "Stop going home service called with success" << std::endl;
 				return true;
-			}
-			else {
+			} else
 				std::cout << "Stop going home service call failed" << std::endl;
-				return false;
-			}
 		}
 		break;
 

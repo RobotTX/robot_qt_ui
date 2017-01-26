@@ -266,7 +266,6 @@ void EditSelectedRobotWidget::openMenu(){
 }
 
 void EditSelectedRobotWidget::assignPath(QAction *action){
-    /// TODO emit sendPathSelectedRobot => wait for an answer/signal then change the path in the model
     QString groupName = static_cast<QMenu*> (action->associatedWidgets().at(0))->title().mid(1);
     emit sendPathSelectedRobot(groupName, action->text());
 }
