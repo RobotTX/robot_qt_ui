@@ -29,6 +29,7 @@ class ScanMapWidget;
 class DrawObstacles;
 class MapView;
 class LaserController;
+class SettingsController;
 
 #include "Model/paths.h"
 #include "View/createpointwidget.h"
@@ -66,7 +67,7 @@ namespace Ui {
  * @param parent
  * The main controller of the application
  */
-class MainWindow : public QMainWindow{
+class MainWindow : public QMainWindow {
     Q_OBJECT
 
 public:
@@ -295,7 +296,7 @@ private slots:
     void saveMergeMapSlot(double resolution, Position origin, QImage image, QString fileName);
 
     void testFunctionSlot();
-    void activateLaserSlot(QString, bool);
+    void activateLaserSlot(QString name, bool);
     void getMapForMergingSlot(QString robotName);
     void scanMapSlot();
 
@@ -348,13 +349,17 @@ private:
     QSharedPointer<Paths> paths;
 
     CommandController* commandController;
+    SettingsController* settingsController;
+
     std::string mapFile;
     QPointer<EditMapWidget> editMapWidget;
     QPointer<MergeMapWidget> mergeMapWidget;
     QPointer<ScanMapWidget> scanMapWidget;
 
-    SettingsWidget* settingsWidget;
     LaserController* laserController;
+
+
+
 };
 
 #endif /// MAINWINDOW_H

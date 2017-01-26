@@ -52,7 +52,7 @@ QImage Map::getImageFromArray(const QByteArray& mapArrays, const bool fromPgm){
         countVector.push_back(count);
         countSum += count;
 
-        for(int j = 0; j < (int) count; j++){
+        for(int j = 0; j < static_cast<int> (count); j++){
             if(index > width*width){
                 qDebug() << "Map::getImageFromArray GOT A PROBLEM TO CHECK" << countVector << countSum << count;
                 Q_UNREACHABLE();

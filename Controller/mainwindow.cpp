@@ -58,6 +58,7 @@
 #include "View/scanmapwidget.h"
 #include "View/drawobstacles.h"
 #include "Controller/lasercontroller.h"
+#include "Controller/settingscontroller.h"
 
 #include <QMediaPlayer>
 #include <QMediaPlaylist>
@@ -68,6 +69,23 @@
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow) {
     ui->setupUi(this);
+/*
+    helpBoxes["scan"] = true;
+    helpBoxes["merge"] = true;
+
+    QMapIterator<QString, bool> it(helpBoxes);
+    while(it.hasNext()){
+        it.next();
+        qDebug() << it.key() << it.value();
+    }
+
+    serializeHelpBoxes();
+
+    helpBoxes["scan"] = false;
+    helpBoxes["merge"] = false;
+*/
+    //deserializeHelpBoxes();
+
 
 
     /*
@@ -132,8 +150,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
     initializeRobots();
 
-    /// our settings page
-    settingsWidget = new SettingsWidget();
+    settingsController = new SettingsController(this);
 
     scene->setSceneRect(0, 0, 800, 600);
 
@@ -246,9 +263,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
     ///  ------------------------------------------------------- ROBOTS CONNECTS ----------------------------------------------------------
 
-    /// to turn on the laser feedback or not ( to display obstacles in real time )
-    connect(settingsWidget, SIGNAL(activateLaser(QString, bool)), this, SLOT(activateLaserSlot(QString, bool)));
-
     connect(this, SIGNAL(newBatteryLevel(int)), this, SLOT(updateBatteryLevel(int)));
 
     mainLayout->addLayout(bottom);
@@ -280,7 +294,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
 MainWindow::~MainWindow(){
     delete ui;
-    delete settingsWidget;
 
     if(editMapWidget)
         delete editMapWidget;
@@ -1247,7 +1260,7 @@ void MainWindow::robotIsAliveSlot(QString hostname, QString ip, QString ssid, in
 
     /// if the battery runs low we send a warning to the user (only when the threshold is just reached so that we don't send
     /// the warning repeatedly
-    if(battery < settingsWidget->getBatteryWarningThreshold() && rv->getRobot()->getBatteryLevel() == settingsWidget->getBatteryWarningThreshold()) {
+    if(battery < settingsController->getSettings()->getBatteryWarningThreshold() && rv->getRobot()->getBatteryLevel() == settingsController->getSettings()->getBatteryWarningThreshold()) {
         QMessageBox msgBox;
         msgBox.warning(this, "Running low on battery", rv->getRobot()->getName() + " is running low on battery, perhaps you should think about charging it soon");
     }
@@ -1266,7 +1279,7 @@ void MainWindow::robotIsDeadSlot(QString hostname, QString ip){
     qDebug() << "MainWindow::robotIsDeadSlot Robot" << hostname << "at ip" << ip << "... He is dead, Jim!!";
     setMessageTop(TEXT_COLOR_DANGER, QString("Robot " + hostname + " at ip " + ip + " disconnected."));
 
-    settingsWidget->removeRobot(ip);
+    settingsController->removeRobot(robots->getRobotViewByIp(ip)->getRobot()->getName());
 
     qDebug() << "MainWindow::robotIsDeadSlot Robots IPs : ";
     for(int i = 0; i < robots->getRobotsVector().size(); i++){
@@ -4562,7 +4575,7 @@ void MainWindow::centerMap(){
 
 void MainWindow::settingBtnSlot(){
     qDebug() << "MainWindow::settingBtnSlot called";
-    settingsWidget->show();
+    settingsController->showView();
 }
 
 void MainWindow::setTemporaryMessageTop(const QString type, const QString message, const int ms){
@@ -4757,7 +4770,7 @@ void MainWindow::updateRobotInfo(QString robotName, QString robotInfo){
     } else
         qDebug() << "MainWindow::updateRobotInfo Connected received without enough parameters :" << strList;
 
-    settingsWidget->addRobot(robots->getRobotViewByName(robotName)->getRobot()->getIp(), robotName);
+    settingsController->addRobot(robotName);
 }
 
 void MainWindow::updateMapInfo(const QString robotName, QString mapId, QString mapDate){
@@ -4780,7 +4793,7 @@ void MainWindow::updateMapInfo(const QString robotName, QString mapId, QString m
 
         QPointer<Robot> robot = robots->getRobotViewByName(robotName)->getRobot();
 
-        switch(settingsWidget->getSettingMapChoice()){
+        switch(settingsController->getSettings()->getSettingMapChoice()){
             case SettingsWidget::ALWAYS_NEW:
                if(robotOlder){
                    robot->sendNewMap(map);
@@ -5199,8 +5212,8 @@ void MainWindow::testFunctionSlot(){
     scanMapSlot();
 }
 
-void MainWindow::activateLaserSlot(QString ipAddress, bool activate){
-    QPointer<RobotView> robotView = robots->getRobotViewByIp(ipAddress);
+void MainWindow::activateLaserSlot(QString name, bool activate){
+    QPointer<RobotView> robotView = robots->getRobotViewByName(name);
     if(robotView && robotView->getRobot()){
         if(activate){
             commandController->sendCommand(robotView->getRobot(), QString("q"));
@@ -5210,7 +5223,7 @@ void MainWindow::activateLaserSlot(QString ipAddress, bool activate){
         }
 
     } else {
-        qDebug() << "MainWindow::activateLaserSlot wants to activate the laser of an unknown robot on ip" << ipAddress;
+        qDebug() << "MainWindow::activateLaserSlot wants to activate the laser of an unknown robot on ip" << name;
         assert(false);
     }
 }

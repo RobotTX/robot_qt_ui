@@ -196,7 +196,7 @@ void CustomPushButton::moveLabel(){
                 tmpStr += str.at(i);
                 if(fm.width(tmpStr) >= maxStrWidth){
                     tmpStr.remove(tmpStr.size()-1, 1);
-                    if(tmpStr.at(tmpStr.size()-1) == ' ')
+                    if(tmpStr.compare("") && tmpStr.at(tmpStr.size()-1) == ' ')
                         tmpStr.remove(tmpStr.size()-1, 1);
 
                     moveTo = QPoint(fm.width(tmpStr) + 10 + iconWidth, 0);

@@ -180,9 +180,9 @@ void TopLayout::setRobotNoHomeLabel(){
         robotsName += robotsWithoutHome.at(i);
     }
 
-    if(robotsName.isEmpty()){
+    if(robotsName.isEmpty())
         labelPerm->hide();
-    } else {
+    else {
         labelPerm->show();
         setLabelPerm(TEXT_COLOR_WARNING, "\"" + robotsName + "\" do(es) not have a home point yet.\n Please choose a home for the robot(s) in the robot menu.");
     }
