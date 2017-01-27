@@ -742,7 +742,7 @@ void MainWindow::setSelectedRobot(QAbstractButton *button){
 }
 
 void MainWindow::selectViewRobot(){
-    qDebug() << "select view robot  " <<robotsLeftWidget->getSelectedRobotName();
+    qDebug() << "MainWindow::selectViewRobo" <<robotsLeftWidget->getSelectedRobotName();
     setSelectedRobot(robots->getRobotViewByName(robotsLeftWidget->getSelectedRobotName()));
 }
 
@@ -756,32 +756,32 @@ void MainWindow::setSelectedRobotFromPointSlot(QString robotName){
 }
 
 void MainWindow::backRobotBtnEvent(){
-    qDebug() << "backRobotBtnEvent called";
+    qDebug() << "MainWindow::backRobotBtnEvent called";
     robotsLeftWidget->hide();
     leftMenuWidget->show();
 }
 
 void MainWindow::editRobotBtnEvent(){
-    qDebug() << "editRobotBtnEvent called";
+    qDebug() << "MainWindow::editRobotBtnEvent called";
     /// hides a previously shown stand-alone path
     emit resetPath();
     setSelectedRobot(robots->getRobotViewByName(static_cast<CustomPushButton*> (robotsLeftWidget->getBtnGroup()->getBtnGroup()->checkedButton())->text()));
 }
 
 void MainWindow::checkRobotBtnEventMenu(){
-    qDebug() << "checkRobotBtnEventMenu called";
+    qDebug() << "MainWindow::checkRobotBtnEventMenu called";
     QString name = robotsLeftWidget->getBtnGroup()->getBtnGroup()->checkedButton()->text();
     checkRobotBtnEvent(name);
 }
 
 void MainWindow::checkRobotBtnEvent(QString name){
-    qDebug() << "checkRobotBtnEvent called" << name;
+    qDebug() << "MainWindow::checkRobotBtnEvent called" << name;
     QPointer<RobotView> robotView =  robots->getRobotViewByName(name);
     robotView->display(!robotView->isVisible());
 }
 
 void MainWindow::cancelEditSelecRobotBtnEvent(){
-    qDebug() << "cancelEditSelecRobotBtnEvent called";
+    qDebug() << "MainWindow::cancelEditSelecRobotBtnEvent called";
     /// resets the name
     if(editSelectedRobotWidget->getHome())
         editSelectedRobotWidget->getHomeLabel()->setText("Home : " + editSelectedRobotWidget->getHome()->getPoint()->getName());
@@ -789,7 +789,7 @@ void MainWindow::cancelEditSelecRobotBtnEvent(){
         editSelectedRobotWidget->getHomeLabel()->setText("Home : ");
     /// if a home has been edited we reset it to its old value which might be a null pointer
     if(editSelectedRobotWidget->getHome()){
-        qDebug() << "my home is" << editSelectedRobotWidget->getHome()->getPoint()->getName();
+        qDebug() << "MainWindow::cancelEditSelecRobotBtnEvent my home is" << editSelectedRobotWidget->getHome()->getPoint()->getName();
         editSelectedRobotWidget->getHome()->getPoint()->setHome(Point::PERM);
         editSelectedRobotWidget->getHome()->setPixmap(PointView::PixmapType::NORMAL);
     }
@@ -854,19 +854,15 @@ void MainWindow::saveRobotModifications(){
         }
     } else {
         /// we check if the name has been changed
-        if(!name.isEmpty() &&
-                name.compare(selectedRobot->getRobot()->getName(), Qt::CaseSensitive)){
-
+        if(!name.isEmpty() && name.compare(selectedRobot->getRobot()->getName(), Qt::CaseSensitive)){
             if(!commandController->sendCommand(selectedRobot->getRobot(), QString("a \"") + name + "\"", name)){
                 setMessageTop(TEXT_COLOR_DANGER, "Failed to edit the name of the robot, please try again");
                 return;
             }
 
         /// we check if the SSID or the password have changed
-        } else if((!password.isEmpty() &&
-                password.compare("......")) ||
-                (!ssid.isEmpty() &&
-                ssid.compare(selectedRobot->getRobot()->getWifi(), Qt::CaseSensitive))){
+        } else if((!password.isEmpty() && password.compare("......")) ||
+                (!ssid.isEmpty() && ssid.compare(selectedRobot->getRobot()->getWifi(), Qt::CaseSensitive))){
 
             if(commandController->sendCommand(selectedRobot->getRobot(), QString("b \"") + ssid + "\" \"" + password + "\"")){
                 editSelectedRobotWidget->getWifiNameLabel()->setText(ssid);
@@ -4630,7 +4626,6 @@ void MainWindow::updateRobotInfo(QString robotName, QString robotInfo){
 void MainWindow::updateMapInfo(const QString robotName, QString mapId, QString mapDate){
 
     /// Check if the robot has the current map
-    // TODO don't forget to clean those qDebugs at some point
     //qDebug() << "Robot" << robotName << "comparing ids" << mapId << "and" << map->getMapId().toString();
     if(mapId.compare(map->getMapId().toString()) == 0){
         qDebug() << "Robot" << robotName << "has the current map";
@@ -5060,7 +5055,7 @@ Position MainWindow::convertRobotCoordinatesToPixelCoordinates(const Position po
 
 void MainWindow::closeEvent(QCloseEvent *event){
     qDebug() << "MainWindow::closeEvent";
-    /// TODO Kill the command msg box
+
     if(map->getModified()){
         QMessageBox msgBox;
         msgBox.setText("The map has been modified.");
@@ -5096,10 +5091,6 @@ void MainWindow::closeEvent(QCloseEvent *event){
 void MainWindow::closeWidgets(){
     qDebug() << "MainWindow::closeWidgets";
     emit stopAllCmd();
-    delete commandController;
-    commandController = Q_NULLPTR;
-
-    qDebug() << "MainWindow::closeWidgets commandController deleted";
 
     if(mergeMapWidget)
         mergeMapWidget->close();
@@ -5161,92 +5152,92 @@ void MainWindow::commandDoneSlot(QString cmdName, bool success, QString robotNam
     if(!cmdName.isEmpty()){
         switch (cmdName.at(0).unicode()) {
             case 'a':
-                //"Sending the new name : " + listCmd.at(1) + " to the robot";
+                /// Changed the name of the robot
                 commandDoneNewName(success, newRobotName);
             break;
             case 'b':
-                //"Sending the new wifi : " + listCmd.at(1) + " to the robot";
+                /// Changed the wifi informations of a robot
                 /// OSEF
             break;
             case 'c':
-                //"Sending the robot to a new destination : " + listCmd.at(1) + ", " + listCmd.at(2);
+                /// Sent the robot to a new goal
                 /// OSEF
             break;
             case 'd':
-                //"Pausing the path of the robot";
+                /// Paused the path of the robot
                 commandDonePausePath(success, robotNb);
             break;
             case 'e':
-                //"Playing the scan of the map";
+                /// Played the scan of the map
                 commandDonePlayScan(success, scan, robotName);
             break;
             case 'f':
-                //"Pausing the scan of the map";
+                /// Paused the scan of the map
                 commandDonePauseScan(success, scan, robotName);
             break;
             case 'g':
-                // Updated the name & the wifi of the robot
+                /// Updated the name & wifi of the robot
                 /// OSEF
             break;
             case 'h':
-                //"Sending the ports to the robot";
-                /// TODO in case of fail retry ?
+                /// Sent the ports to the robot
+                /// OSEF
             break;
             case 'i':
-                //"Sending a new path to the robot";
+                /// Sent a new path to the robot
                 commandDoneSendPath(success, scan, robotName, groupName, pathName, path);
             break;
             case 'j':
-                //"Playing the path of the robot";
+                /// Played the path of the robot
                 commandDonePlayPath(success, robotNb);
             break;
             case 'k':
-                //"Deleting the path of the robot";
+                /// Deleted the path of the robot
                 commandDoneDeletePath(success, robotNb);
             break;
             case 'l':
-                //"Stoppind the path of the robot";
+                /// Stopped the path of the robot
                 commandDoneStopPath(success, robotNb);
             break;
             case 'm':
-                //"Stopping and deleting the path of the robot";
+                /// Stopped and deleted the path of the robot
                 commandDoneStopDeletePath(success, robotNb);
             break;
             case 'n':
-                //"Sending the new home to the robot";
+                /// Sent the new home to the robot
                 commandDoneNewHome(success, robotName, robotNb, newRobotName);
             break;
             case 'o':
-                //"Sending the robot to its home";
+                /// Sent the robot to its home
                 commandDoneGoHome(success, robotName);
             break;
             case 'p':
                 /// NOT USED
-                //"Stopping the robot to go home";
+                /// Stopped the robot to go home
                 Q_UNREACHABLE();
             break;
             case 'q':
-                //"Starting the laser of the robot";
+                /// Started the laser of the robot
                 /// OSEF
             break;
             case 'r':
-                //"Stoping the laser of the robot";
+                /// Stopped the laser of the robot
                 /// OSEF
             break;
             case 's':
-                //"Receiving the map from the robot";
+                /// Received the map from the robot
                 /// OSEF
             break;
             case 't':
-                //"Starting a new scan";
+                /// Started a new scan
                 commandDoneStartScan(success, scan, robotName);
             break;
             case 'u':
-                //"Stopping the current scan";
+                /// Stopped the current scan
                 commandDoneStopScan(success, robotName);
             break;
             default:
-                //"Unknown command " + cmd.at(0).unicode();
+                /// Unknown/unused command or we simply don't care
             break;
         }
     }

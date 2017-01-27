@@ -16,7 +16,6 @@ void RobotServerWorker::startServer(){
         qDebug() << "(RobotServerWorker) Server failed to listen on port" << port;
     else
         qDebug() << "Server is listening on port" << port;
-    // TODO open a msgBox ? start again ?
 }
 
 void RobotServerWorker::stopWorker(){
@@ -39,10 +38,10 @@ void RobotServerWorker::newConnectionSlot(){
         qDebug() << "(RobotServerWorker) Data from the new robot :" << strList;
         if(strList.size() == 4){
             /// hostname, IP address, mapID, map date, wifi SSID and stage of the path
-            emit robotIsAlive(strList.at(0), socket->peerAddress().toString(), strList.at(1), static_cast<QString> (strList.at(2)).toInt(),
+            emit robotIsAlive(strList.at(0), socket->peerAddress().toString(), strList.at(1),
+                              static_cast<QString> (strList.at(2)).toInt(),
                               static_cast<QString> (strList.at(3)).toInt());
-        }
-        else
+        } else
             qDebug() << "(RobotServerWorker) Not enough param received for robotIsAlive";
     }
 

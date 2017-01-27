@@ -9,25 +9,19 @@
 
 CommandController::CommandController(QWidget *parent)
     : QObject(parent), robotName(""), messageBox(parent), stop(false), newRobotName(""),
-      groupName(""), pathName(""), scan(false), robotNumber(-1), path(QStringList()) {
+      groupName(""), pathName(""), scan(false), robotNb(-1), path(QStringList()) {
     messageBox.setWindowTitle("Processing a command");
 }
 
 bool CommandController::sendCommand(QPointer<Robot> robot, QString cmd,
                                     QString _newRobotName, QString _groupName,
                                     QString _pathName, bool _scan,
-                                    int _robotNumber, QStringList _path){
-
-    groupName = _groupName;
-    pathName = _pathName;
-    scan = _scan;
-    robotNumber = _robotNumber;
-    newRobotName = _newRobotName;
-    path = _path;
+                                    int _robotNb, QStringList _path){
 
     qDebug() << "CommandController::sendCommand" << cmd << "to" << robot->getName();
     /// if the command is not already being processed
     if(robotName.isEmpty() && !cmd.isEmpty() && !stop){
+
 
         /// React accordingly to the answer : return true or false
         QRegExp rx("[ ]");
@@ -45,6 +39,13 @@ bool CommandController::sendCommand(QPointer<Robot> robot, QString cmd,
 
         robotName = robot->getName();
         cmdName = listCmd.at(0);
+        groupName = _groupName;
+        pathName = _pathName;
+        scan = _scan;
+        robotNb = _robotNb;
+        newRobotName = _newRobotName;
+        path = _path;
+        qDebug() << "CommandController::sendCommand" << robotName << cmdName << newRobotName << groupName << pathName << scan << robotNb << path;
 
         openMessageBox(listCmd);
         return true;
@@ -90,7 +91,7 @@ void CommandController::cmdAnswerSlot(QString answer){
         Q_UNREACHABLE();
     }
 
-    emit commandDone(cmdName, success, robotName, newRobotName, groupName, pathName, scan, robotNumber, path);
+    emit commandDone(cmdName, success, robotName, newRobotName, groupName, pathName, scan, robotNb, path);
     resetParams();
 }
 
@@ -100,7 +101,7 @@ void CommandController::resetParams(){
     groupName = "";
     pathName = "";
     scan = false;
-    robotNumber = -1;
+    robotNb = -1;
     newRobotName = "";
     path = QStringList();
 }
@@ -114,7 +115,7 @@ void CommandController::robotDisconnected(QString _robotName){
 
 void CommandController::commandFailed(){
     messageBox.hide();
-    emit commandDone(cmdName, false, robotName, newRobotName, groupName, pathName, scan, robotNumber, path);
+    emit commandDone(cmdName, false, robotName, newRobotName, groupName, pathName, scan, robotNb, path);
     resetParams();
 }
 
