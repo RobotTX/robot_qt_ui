@@ -27,7 +27,7 @@ public:
     bool sendCommand(QPointer<Robot> robot, QString cmd,
                      QString newRobotName = "", QString groupName = "",
                      QString pathName = "", bool scan = false,
-                     int robotNumber = -1, QStringList path = QStringList());
+                     int robotNb = -1, QStringList path = QStringList());
 
     /**
      * @brief robotDisconnected
@@ -56,7 +56,7 @@ private slots:
     void stopAllCommand();
 
 signals:
-    void commandDone(QString cmdName, bool success, QString robotName, QString newRobotName, QString groupName, QString pathName, bool scan, int robotNumber, QStringList path);
+    void commandDone(QString cmdName, bool success, QString robotName, QString newRobotName, QString groupName, QString pathName, bool scan, int robotNb, QStringList path);
 
 private:
     QString robotName;
@@ -68,7 +68,7 @@ private:
     QString groupName;
     QString pathName;
     bool scan;
-    int robotNumber;
+    int robotNb;
     QStringList path;
 };
 

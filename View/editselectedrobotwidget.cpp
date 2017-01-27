@@ -51,13 +51,6 @@ EditSelectedRobotWidget::EditSelectedRobotWidget(QWidget* _parent, MainWindow* _
     nameLabel = new CustomLabel(this, true);
     inLayout->addWidget(nameLabel);
 
-    /// Button which allow the user to scan the map from a robot
-    scanBtn = new CustomPushButton(QIcon(":/icons/map.png"),"Scan a map", this, CustomPushButton::ButtonType::LEFT_MENU, "center", true);
-    scanBtn->setIconSize(s_icon_size);
-    inLayout->addWidget(scanBtn);
-    /// TODO connect the scan button to scanMapSlot + give it the robot's name
-    //connect(scanBtn, SIGNAL(clicked(bool)), mainWindow, SLOT(launchScan(bool)));
-
     SpaceWidget* spaceWidget = new SpaceWidget(SpaceWidget::SpaceOrientation::HORIZONTAL, this);
     inLayout->addWidget(spaceWidget);
 
@@ -75,11 +68,6 @@ EditSelectedRobotWidget::EditSelectedRobotWidget(QWidget* _parent, MainWindow* _
 
     wifiNameLabel = new CustomLabel(this);
     inLayout->addWidget(wifiNameLabel);
-
-    QLabel* wifiPwd = new QLabel("Wifi pwd :", this);
-    //wifiPwd->setAlignment(Qt::AlignLeft);
-
-    inLayout->addWidget(wifiPwd);
 
     /// ProgressBar which display the level of battery
     batteryLevel = new QProgressBar(this);

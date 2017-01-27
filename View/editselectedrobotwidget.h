@@ -39,7 +39,6 @@ public:
     CustomLabel* getWifiNameLabel(void) const { return wifiNameLabel; }
     PathWidget* getPathWidget(void) const { return pathWidget; }
     CustomPushButton* getAddPathBtn(void) const { return addPathBtn; }
-    CustomPushButton* getScanBtn(void) const {return scanBtn;}
     bool getPathChanged() const { return pathChanged; }
     CustomLabel* getHomeLabel(void) const { return homeLabel; }
     CustomPushButton* getSaveButton(void) const { return saveBtn; }
@@ -146,7 +145,6 @@ private:
     CustomPushButton* assignPathButton;
     QString assignedPath;
     QString groupAssignedPath;
-    CustomPushButton* scanBtn;
     QProgressBar* batteryLevel;
     CustomPushButton* goHomeBtn;
     CustomPushButton* editRobotInfoBtn;

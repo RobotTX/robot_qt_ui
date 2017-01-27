@@ -71,6 +71,7 @@ void ScanMapGraphicsItem::updateLaserSLot(){
         int maxX = 0;
         int minY = 0;
         int maxY = 0;
+        /// We get the width and height of the  area covered by the obstacles
         for(int i = 0; i < obstacles.size(); i++){
             QPointF point = obstacles.at(i);
             if(point.x() < 1000 && point.x() > -1000 && point.y() < 1000 && point.y() > -1000){
@@ -85,40 +86,29 @@ void ScanMapGraphicsItem::updateLaserSLot(){
             }
         }
 
+        /// Create an image that contians the obstacles
         QImage laserImage = QImage(maxX - minX + 1, maxY - minY + 1, QImage::Format_ARGB32);
         laserImage.fill(qRgba(205, 205, 205, 0));
 
+        /// Fill the image with the obstacles
         for(int j = 0; j < obstacles.size(); j++)
             if(obstacles.at(j).x() < 1000 && obstacles.at(j).x() > -1000 && obstacles.at(j).y() < 1000 && obstacles.at(j).y() > -1000)
                 laserImage.setPixel(obstacles.at(j).x() - minX,
-                                         obstacles.at(j).y() - minY, qRgba(255, 0, 0, 255));
+                                    obstacles.at(j).y() - minY,
+                                    qRgba(255, 0, 0, 255));
 
+        /// Get the position of the laser depending on the rotation of the robot (the laser is not in the middle of the image)
         double posX = sqrt(37) * cos(atan(-1.0/6.0) + (scanRobotView->rotation() - 90)/180.0*3.14159);
         double posY = sqrt(37) * sin(atan(-1.0/6.0) + (scanRobotView->rotation() - 90)/180.0*3.14159);
 
 
-        laserImage.setPixel(-minX + posX, -minY + posY, qRgba(0, 255, 0, 255));
+        /// Position of the laser
+        //laserImage.setPixel(-minX + posX, -minY + posY, qRgba(0, 255, 0, 255));
 
         laserView->setPixmap(QPixmap::fromImage(laserImage));
         laserView->setTransformOriginPoint(-minX, -minY);
-/*
-        qDebug() << "ScanMapGraphicsItem::updateLaserSLot"
-                 << "\n1:" << minX << maxX << minY << maxY
-                 << "\n2:" << maxX - minX << maxY - minY
-                 << "\n3:" << this->boundingRect()
-                 << "\n4:" << this->pos()
-                 << "\n5:" << scanRobotView->pos()
-                 << "\n6:" << laserView->pos()
-                 << "\n7:" << laserView->mapFromItem(scanRobotView, 0, 0)
-                 << "\n8:" << scanRobotView->rotation()
-                 << "\n9:" << atan(-1.0/6.0)
-                 << "\n10:" << cos(atan(-1.0/6.0))
-                 << "\n11:" << sin(atan(-1.0/6.0))
-                 << "\n12:" << sin(-9.46233)
-                 << "\n13:" << posX << posY;
-*/
-        /*laserView->setPos(laserView->pos().x() + laserView->mapFromItem(scanRobotView, 0, 0).x() - (maxX - minX)/2,
-                          laserView->pos().y() + laserView->mapFromItem(scanRobotView, 0, 0).y() - (maxY - minY)/2);*/
+
+        /// Move the position of the laser image according to the position of the robot + the position of its laser
         laserView->setPos(scanRobotView->pos().x() + scanRobotView->pixmap().size().width()/2 + minX + posX,
                           scanRobotView->pos().y() + scanRobotView->pixmap().size().height()/2 + minY + posY);
     }
