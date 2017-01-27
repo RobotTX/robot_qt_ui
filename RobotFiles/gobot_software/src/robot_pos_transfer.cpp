@@ -18,7 +18,13 @@ void sendRobotPos(const std::string& robot_string){
 }
 
 void getRobotPos(const geometry_msgs::Pose::ConstPtr& msg){
-	std::string robot_string = std::to_string(msg->position.x) + " " + std::to_string(msg->position.y) + " " + std::to_string(msg->orientation.z) + " ";
+	tf::Matrix3x3 matrix = tf::Matrix3x3(tf::Quaternion(msg->orientation.x, msg->orientation.y, msg->orientation.z, msg->orientation.w));
+ 	tfScalar roll;
+	tfScalar pitch;
+	tfScalar yaw;
+	matrix.getRPY(roll, pitch, yaw);
+	//std::cout << "(Robot Pos) Orientation : " << yaw << std::endl;
+	std::string robot_string = std::to_string(msg->position.x) + " " + std::to_string(msg->position.y) + " " + std::to_string(yaw) + " ";
 	sendRobotPos(robot_string);
 	sleep(0.5);
 }

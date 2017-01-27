@@ -17,6 +17,7 @@
 #include <boost/asio.hpp>
 #include <boost/thread.hpp>
 #include "std_srvs/Empty.h"
+#include <tf/transform_broadcaster.h>
 
 using boost::asio::ip::tcp;
 

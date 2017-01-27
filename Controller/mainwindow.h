@@ -111,7 +111,6 @@ public:
     void showHomes(QPointer<Robot> robot);
     void showSelectedRobotHomeOnly();
     void updateModelPaths(const Point &old_point, const Point &new_point);
-    bool sendHomeToRobot(QPointer<RobotView> robot, QSharedPointer<PointView> home);
 
     bool saveMapConfig(const std::string fileName);
     bool loadMapConfig(const std::string fileName);
@@ -156,6 +155,7 @@ signals:
     void scanRobotPos(QString, double, double, double);
     void newBatteryLevel(int);
     void updatePath(const QString groupName, const QString pathName);
+    void stopAllCmd();
 
 private slots:
     void sendPathSelectedRobotSlot(const QString groupName, const QString pathName);
@@ -304,13 +304,33 @@ private slots:
 
     void updateBatteryLevel(const int level);
     void updateLaserSlot();
+    void commandDoneSlot(QString cmdName, bool success, QString robotName, QString newRobotName, QString groupName, QString pathName, bool scan, int robotNumber, QStringList path);
 
 protected:
-    bool changeRobotName(QString name);
-    void changeRobotWifi(QString ssid, QString password);
     void stopMapThread();
     void closeEvent(QCloseEvent *event);
     void robotHasNoHome(QString robotName);
+    void closeWidgets();
+    void commandDoneNewName(bool success, QString name);
+    void commandDonePausePath(bool success, int robotNb);
+    void commandDonePlayScan(bool success, bool scan, QString robotName);
+    void commandDonePauseScan(bool success, bool scan, QString robotName);
+    void commandDoneSendMap(bool success);
+    void commandDoneSendPorts(bool success);
+    void commandDoneSendPath(bool success, bool boolean, QString robotName, QString groupName, QString pathName, QStringList path);
+    void commandDonePlayPath(bool success, int robotNb);
+    void commandDoneDeletePath(bool success, int robotNb);
+    void commandDoneStopPath(bool success, int robotNb);
+    void commandDoneStopDeletePath(bool success, int robotNb);
+    void commandDoneNewHome(bool success, QString robotName, int id, QString homeName);
+    void commandDoneGoHome(bool success, QString robotName);
+    void commandDoneStopGoHome(bool success);
+    void commandDoneStartLaser(bool success);
+    void commandDoneStopLaser(bool success);
+    void commandDoneReceiveMap(bool success);
+    void commandDoneStartScan(bool success, bool scan, QString robotName);
+    void commandDoneStopScan(bool success, QString robotName);
+
 
 private:
     Ui::MainWindow* ui;

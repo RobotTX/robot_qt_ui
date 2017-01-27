@@ -53,11 +53,10 @@ QImage Map::getImageFromArray(const QByteArray& mapArrays, const bool fromPgm){
         countSum += count;
 
         for(int j = 0; j < static_cast<int> (count); j++){
-            if(index > width*width){
-                qDebug() << "Map::getImageFromArray GOT A PROBLEM TO CHECK" << countVector << countSum << count;
-                Q_UNREACHABLE();
+            /// Sometimes we receive too much informations so we need to check
+            if(index > width*height)
                 return image;
-            }
+
             image.setPixelColor(QPoint(static_cast<int>(index%width), shift + sign * (static_cast<int>(index/width))), QColor(color, color, color));
             index++;
         }

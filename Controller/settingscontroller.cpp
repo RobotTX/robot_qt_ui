@@ -92,7 +92,7 @@ void SettingsController::setHelpNeeded(){
     }
     /// we update no matter what because we always want the model and the view to be
     /// consistent with each other
-    settings->setHelpNeeded(true);
+    settings->resetSettings();
 }
 
 void SettingsController::updateBatteryThreshold(const int value){

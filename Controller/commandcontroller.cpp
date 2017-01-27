@@ -7,15 +7,27 @@
 #include <QFocusEvent>
 #include <QApplication>
 
-CommandController::CommandController(QWidget *parent) : QObject(parent), robotName(""), messageBox(parent) {
+CommandController::CommandController(QWidget *parent)
+    : QObject(parent), robotName(""), messageBox(parent), stop(false), newRobotName(""),
+      groupName(""), pathName(""), scan(false), robotNumber(-1), path(QStringList()) {
     messageBox.setWindowTitle("Processing a command");
 }
 
-bool CommandController::sendCommand(QPointer<Robot> robot, QString cmd){
+bool CommandController::sendCommand(QPointer<Robot> robot, QString cmd,
+                                    QString _newRobotName, QString _groupName,
+                                    QString _pathName, bool _scan,
+                                    int _robotNumber, QStringList _path){
+
+    groupName = _groupName;
+    pathName = _pathName;
+    scan = _scan;
+    robotNumber = _robotNumber;
+    newRobotName = _newRobotName;
+    path = _path;
 
     qDebug() << "CommandController::sendCommand" << cmd << "to" << robot->getName();
     /// if the command is not already being processed
-    if(robotName.isEmpty() && !cmd.isEmpty()){
+    if(robotName.isEmpty() && !cmd.isEmpty() && !stop){
 
         /// React accordingly to the answer : return true or false
         QRegExp rx("[ ]");
@@ -23,38 +35,92 @@ bool CommandController::sendCommand(QPointer<Robot> robot, QString cmd){
         /// Data is received as a string separated by a space ("cmd done" or "cmd failed")
         QStringList listCmd = cmd.split(rx, QString::SkipEmptyParts);
 
-        qDebug() << "CommandController::sendCommand" << robot->isScanning() << (listCmd.at(0).compare("c") != 0 && listCmd.at(0).compare("e") != 0 && listCmd.at(0).compare("f") != 0 &&
-                listCmd.at(0).compare("t") != 0 && listCmd.at(0).compare("u") != 0);
-
         if(robot->isScanning() && listCmd.at(0).compare("c") != 0 && listCmd.at(0).compare("e") != 0 && listCmd.at(0).compare("f") != 0 &&
                     listCmd.at(0).compare("t") != 0 && listCmd.at(0).compare("u") != 0){
             qDebug() << "CommandController::sendCommand Robot" << robot->getName() << "is already scanning and can not perform command" << cmd;
             return false;
         }
 
-        /// reinitializes the QString containing the answer to the command
-        cmdAnswer = "";
         robot->sendCommand(cmd);
 
-        qDebug() << "CommandController::sendCommand"  << robot->isScanning() << listCmd.at(0);
-        /// If the robot is scanning, we only allow the commands to start/stop/play/pause the scan & to go to a point
-        if(listCmd.at(0).compare("b") == 0){
-            /// command to change the wifi ssid and password
-            return true;
-        } else {
-            robotName = robot->getName();
-            cmdName = listCmd.at(0);
-        }
+        robotName = robot->getName();
+        cmdName = listCmd.at(0);
 
+        openMessageBox(listCmd);
+        return true;
 
-        return robotWaitForAnswer(listCmd);
-
-    } else
+    } else {
         qDebug() << "CommandController::sendCommand Robot" << robotName << "is already processing the command" << cmdName;
+        return false;
+    }
+}
 
-    return false;
+void CommandController::cmdAnswerSlot(QString answer){
+    qDebug() << "CommandController::cmdAnswerSlot received answer :" << answer;
 
-    //return true;
+    /// React accordingly to the answer : return true or false
+    QRegExp rx("[ ]");
+
+    /// Data is received as a string separated by a space ("cmd done" or "cmd failed")
+    QStringList list = answer.split(rx, QString::SkipEmptyParts);
+
+    bool success = false;
+
+    if(list.size() == 2){
+        if(list.at(0).compare(cmdName) == 0){
+            messageBox.hide();
+            if(list.at(1).compare("done") == 0){
+                qDebug() << "CommandController::cmdAnswerSlot The command" << cmdName << "succeeded";
+                success = true;
+            } else if(list.at(1).compare("failed") == 0){
+                qDebug() << "CommandController::cmdAnswerSlot The command" << cmdName << "failed";
+            } else {
+                qDebug() << "CommandController::cmdAnswerSlot Got an answer to the right command but with an unknwon result :" << list;
+            }
+        } else if(list.at(0).compare("cmd") == 0 && list.at(1).compare("failed") == 0){
+            qDebug() << "CommandController::cmdAnswerSlot The user stopped the command";
+        } else {
+            /// Should be caught by cmdAnswerSlot
+            qDebug() << "CommandController::cmdAnswerSlot Got an answer to the wrong command :" << list;
+            Q_UNREACHABLE();
+        }
+    } else {
+        /// Should be caught by cmdAnswerSlot
+        qDebug() << "CommandController::cmdAnswerSlot Got a wrong answer :" << list;
+        Q_UNREACHABLE();
+    }
+
+    emit commandDone(cmdName, success, robotName, newRobotName, groupName, pathName, scan, robotNumber, path);
+    resetParams();
+}
+
+void CommandController::resetParams(){
+    robotName = "";
+    cmdName = "";
+    groupName = "";
+    pathName = "";
+    scan = false;
+    robotNumber = -1;
+    newRobotName = "";
+    path = QStringList();
+}
+
+void CommandController::robotDisconnected(QString _robotName){
+    if(_robotName.compare(robotName)){
+        qDebug() << "CommandController::robotDisconnected The robot" << robotName << " was waiting for an answer to the command" << cmdName << "but disconnected";
+        commandFailed();
+    }
+}
+
+void CommandController::commandFailed(){
+    messageBox.hide();
+    emit commandDone(cmdName, false, robotName, newRobotName, groupName, pathName, scan, robotNumber, path);
+    resetParams();
+}
+
+void CommandController::stopAllCommand(){
+    stop = true;
+    commandFailed();
 }
 
 void CommandController::openMessageBox(QStringList listCmd){
@@ -74,13 +140,13 @@ void CommandController::openMessageBox(QStringList listCmd){
         msg = "Pausing the path of the robot";
         break;
     case 'e':
-        msg = "Starting the scan of the map";
+        msg = "Playing the scan of the map";
         break;
     case 'f':
-        msg = "Stopping the scan of the map";
+        msg = "Pausing the scan of the map";
         break;
     case 'g':
-        msg = "Sending the map to the robot";
+        msg = "Sending the new name : " + listCmd.at(1) + " to the robot and the new wifi : " + listCmd.at(2) + " to the robot";
         break;
     case 'h':
         msg = "Sending the ports to the robot";
@@ -107,7 +173,9 @@ void CommandController::openMessageBox(QStringList listCmd){
         msg = "Sending the robot to its home";
         break;
     case 'p':
+        /// NOT USED
         msg = "Stopping the robot to go home";
+        Q_UNREACHABLE();
         break;
     case 'q':
         msg = "Starting the laser of the robot";
@@ -118,100 +186,22 @@ void CommandController::openMessageBox(QStringList listCmd){
     case 's':
         msg = "Receiving the map from the robot";
         break;
+    case 't':
+        msg = "Starting a new scan";
+        break;
+    case 'u':
+        msg = "Stopping the current scan";
+        break;
     default:
         msg = "Unknown command " + cmd.at(0).unicode();
         break;
     }
 
     messageBox.setText(msg);
-    connect(&messageBox, SIGNAL(hideBox()), this, SLOT(userStopped()));
+    connect(&messageBox, SIGNAL(hideBox()), this, SLOT(commandFailed()));
     /**
     /// is supposed to reset the timer
     messageBox.hide();
     */
     messageBox.show();
-}
-
-bool CommandController::robotWaitForAnswer(QStringList listCmd){
-
-    QRegExp rx("[ ]");
-    openMessageBox(listCmd);
-
-    while(cmdAnswer.compare("") == 0){
-        if(messageBox.isHidden())
-            userStopped();
-        qDebug() << "CommandController::robotWaitForAnswer waiting for an answer";
-        MainWindow::delay(100);
-    }
-
-    qDebug() << "CommandController::robotWaitForAnswer The answer is :" << cmdAnswer;
-
-    /// Data is received as a string separated by a space ("cmd done" or "cmd failed")
-    QStringList list = cmdAnswer.split(rx, QString::SkipEmptyParts);
-    cmdAnswer = "";
-
-    if(list.size() == 2){
-        if(list.at(0).compare(cmdName) == 0){
-            robotName = "";
-            cmdName = "";
-            if(list.at(1).compare("done") == 0){
-                qDebug() << "CommandController::robotWaitForAnswer The command" << cmdName << "succeeded";
-                return true;
-            } else if(list.at(1).compare("failed") == 0){
-                qDebug() << "CommandController::robotWaitForAnswer The command" << cmdName << "failed";
-                return false;
-            } else {
-                qDebug() << "CommandController::robotWaitForAnswer Got an answer to the right command but with an unknwon result :" << list;
-                return false;
-            }
-        } else if(list.at(0).compare("cmd") == 0 && list.at(1).compare("failed") == 0){
-            qDebug() << "CommandController::robotWaitForAnswer The user stopped the command";
-            robotName = "";
-            cmdName = "";
-            return false;
-        } else {
-            /// Should be caught by cmdAnswerSlot
-            qDebug() << "CommandController::robotWaitForAnswer Got an answer to the wrong command :" << list;
-            return robotWaitForAnswer(listCmd);
-        }
-    } else {
-        /// Should be caught by cmdAnswerSlot
-        qDebug() << "CommandController::robotWaitForAnswer Got a wrong answer :" << list;
-        return robotWaitForAnswer(listCmd);
-    }
-}
-
-void CommandController::cmdAnswerSlot(QString answer){
-    qDebug() << "CommandController::cmdAnswerSlot received answer :" << answer;
-    cmdAnswer = "";
-
-    /// React accordingly to the answer : return true or false
-    QRegExp rx("[ ]");
-
-    /// Data is received as a string separated by a space ("cmd done" or "cmd failed")
-    QStringList list = answer.split(rx, QString::SkipEmptyParts);
-
-    if(list.size() == 2){
-        if(list.at(0).compare(cmdName) == 0){
-            cmdAnswer = answer;
-            messageBox.hide();
-        } else
-            qDebug() << "CommandController::robotWaitForAnswer Got an answer to the wrong command :" << list;
-    } else
-        qDebug() << "CommandController::robotWaitForAnswer Got a wrong answer :" << list;
-}
-
-
-void CommandController::robotDisconnected(QString _robotName){
-    if(_robotName.compare(robotName)){
-        qDebug() << "CommandController::robotDisconnected The robot" << robotName << " was waiting for an answer to the command" << cmdName << "but disconnected";
-        cmdAnswer = "cmd failed";
-        messageBox.hide();
-    }
-}
-
-void CommandController::userStopped(){
-    qDebug() << "CommandController::userStopped The user pressed a button to stop to wait";
-    cmdAnswer = "cmd failed";
-    messageBox.hide();
 }

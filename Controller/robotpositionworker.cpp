@@ -43,7 +43,8 @@ void RobotPositionWorker::readTcpDataSlot(){
     QStringList list = data.split(rx, QString::SkipEmptyParts);
 
     /// the IP address is send along to identify the robot
-    emit valueChangedRobot(ipAddress, list.at(0).toDouble(), list.at(1).toDouble(), list.at(2).toDouble());
+    if(list.count() > 2)
+        emit valueChangedRobot(ipAddress, list.at(0).toDouble(), list.at(1).toDouble(), list.at(2).toDouble());
 }
 
 void RobotPositionWorker::errorConnectionSlot(QAbstractSocket::SocketError error){

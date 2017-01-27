@@ -192,6 +192,7 @@ void ScanMapWidget::saveSlot(){
         for(int i = 0; i < listWidget->count(); i++){
             ScanMapListItemWidget* item = static_cast<ScanMapListItemWidget*>(listWidget->itemWidget(listWidget->item(i)));
             item->getPixmapItem()->getRobotView()->hide();
+            item->getPixmapItem()->getLaserView()->hide();
         }
 
         /// Get an image from the scene
@@ -331,7 +332,7 @@ void ScanMapWidget::receivedScanMapSlot(QString robotName, QImage map, double _r
 
     for(int i = 0; i < listWidget->count(); i++){
         ScanMapListItemWidget* item = static_cast<ScanMapListItemWidget*>(listWidget->itemWidget(listWidget->item(i)));
-        if(item->getRobotName() == robotName)
+        if(item->getRobotName().compare(robotName) == 0)
             item->updateMap(map);
     }
 }
@@ -344,7 +345,7 @@ void ScanMapWidget::robotGoToSlot(QString robotName, double x, double y){
 void ScanMapWidget::scanRobotPosSlot(QString robotName, double x, double y, double ori){
     for(int i = 0; i < listWidget->count(); i++){
         ScanMapListItemWidget* item = static_cast<ScanMapListItemWidget*>(listWidget->itemWidget(listWidget->item(i)));
-        if(item->getRobotName() == robotName)
+        if(item->getRobotName().compare(robotName) == 0)
             item->updateRobotPos(x, y, ori);
     }
 }

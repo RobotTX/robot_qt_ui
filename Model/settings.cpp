@@ -6,7 +6,12 @@
 
 Settings::Settings(const int _settingMapChoice, const int _batteryWarningThreshHold, const bool _helpNeeded):
     settingMapChoice(_settingMapChoice), batteryWarningThreshHold(_batteryWarningThreshHold), helpNeeded(_helpNeeded)
-{}
+{
+    /// TODO add all the functions for which a message is needed
+    activated_messages["merge_maps"] = true;
+    activated_messages["scan"] = true;
+    activated_messages["edit_map"] = true;
+}
 
 int Settings::currentId = 0;
 
@@ -15,7 +20,7 @@ void Settings::addRobot(const QString robot_name){
     QString fileStr = QDir::currentPath() + QDir::separator() + "settings" + QDir::separator() + robot_name + "_laser.txt";
     std::ifstream fileRobot(fileStr.toStdString(), std::ios::in);
 
-    bool laser = true;
+    bool laser(true);
 
     if(fileRobot){
         fileRobot >> laser;
@@ -70,3 +75,12 @@ bool Settings::setLaserStatus(const int id, const bool status){
     return false;
 }
 
+/// resets the tutorial
+void Settings::resetSettings(){
+    /// to modify the map on the fly
+    QMutableMapIterator<QString, bool> it(activated_messages);
+    while(it.hasNext()){
+        it.next();
+        it.setValue(true);
+    }
+}
