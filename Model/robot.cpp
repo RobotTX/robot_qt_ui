@@ -28,7 +28,6 @@ Robot::Robot(): name("Default name"), ip("no Ip"), position(Position()),
     orientation(0), batteryLevel(100), wifi(""), home(NULL), playingPath(0), sendingMap(false)
 {}
 
-
 Robot::~Robot(){
     stopThreads();
 }

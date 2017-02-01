@@ -58,6 +58,7 @@
 #include "View/scanmapwidget.h"
 #include "View/drawobstacles.h"
 #include "Controller/lasercontroller.h"
+#include "Controller/settingscontroller.h"
 
 #include <QMediaPlayer>
 #include <QMediaPlaylist>
@@ -68,7 +69,6 @@
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow) {
     ui->setupUi(this);
-
 
     /*
 
@@ -134,8 +134,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
     initializeRobots();
 
-    /// our settings page
-    settingsWidget = new SettingsWidget();
+    settingsController = new SettingsController(this);
 
     scene->setSceneRect(0, 0, 800, 600);
 
@@ -248,9 +247,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
     ///  ------------------------------------------------------- ROBOTS CONNECTS ----------------------------------------------------------
 
-    /// to turn on the laser feedback or not ( to display obstacles in real time )
-    connect(settingsWidget, SIGNAL(activateLaser(QString, bool)), this, SLOT(activateLaserSlot(QString, bool)));
-
     connect(this, SIGNAL(newBatteryLevel(int)), this, SLOT(updateBatteryLevel(int)));
 
     mainLayout->addLayout(bottom);
@@ -282,7 +278,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
 MainWindow::~MainWindow(){
     delete ui;
-    delete settingsWidget;
 
     if(editMapWidget)
         delete editMapWidget;
@@ -324,7 +319,6 @@ void MainWindow::initializeRobots(){
     robotServerWorker->moveToThread(&serverThread);
 
    /*
-
 
     QFileInfo fileInfo(QDir::currentPath(), "../gobot-software/" + QString(ROBOTS_NAME_FILE));
     QFile fileWrite(fileInfo.absoluteFilePath());
@@ -1180,7 +1174,7 @@ void MainWindow::robotIsAliveSlot(QString hostname, QString ip, QString ssid, in
 
     /// if the battery runs low we send a warning to the user (only when the threshold is just reached so that we don't send
     /// the warning repeatedly
-    if(battery < settingsWidget->getBatteryWarningThreshold() && rv->getRobot()->getBatteryLevel() == settingsWidget->getBatteryWarningThreshold()) {
+    if(battery < settingsController->getSettings()->getBatteryWarningThreshold() && rv->getRobot()->getBatteryLevel() == settingsController->getSettings()->getBatteryWarningThreshold()) {
         QMessageBox msgBox;
         msgBox.warning(this, "Running low on battery", rv->getRobot()->getName() + " is running low on battery, perhaps you should think about charging it soon");
     }
@@ -1199,7 +1193,7 @@ void MainWindow::robotIsDeadSlot(QString hostname, QString ip){
     qDebug() << "MainWindow::robotIsDeadSlot Robot" << hostname << "at ip" << ip << "... He is dead, Jim!!";
     setMessageTop(TEXT_COLOR_DANGER, QString("Robot " + hostname + " at ip " + ip + " disconnected."));
 
-    settingsWidget->removeRobot(ip);
+    settingsController->removeRobot(robots->getRobotViewByIp(ip)->getRobot()->getName());
 
     qDebug() << "MainWindow::robotIsDeadSlot Robots IPs : ";
     for(int i = 0; i < robots->getRobotsVector().size(); i++){
@@ -1661,6 +1655,15 @@ void MainWindow::messageMapSaved(bool status){
 
 void MainWindow::editMapSlot(){
     editMapWidget = QPointer<EditMapWidget>(new EditMapWidget(map->getMapImage(), map->getWidth(), map->getHeight(), map->getResolution(), map->getOrigin()));
+    openHelpMessage("You are about to edit a map, here is how to proceed...\n\n\t"
+                    "* Select a color\n\n\t"
+                    "* Select a a shape\n\n\t"
+                    "* Select a size\n\n\t"
+                    "* Undo (Ctrl+Z) or redo (Ctrl+Y) "
+                    "your actions using the arrows\n\n\t"
+                    "* Click reset to start from scratch\n\n\t"
+                    "* Don't forget to either cancel or save your modifications\n",
+                    "edit_map");
     connect(editMapWidget, SIGNAL(saveEditMap()), this, SLOT(saveEditMapSlot()));
 }
 
@@ -1701,11 +1704,17 @@ void MainWindow::saveEditMapSlot(){
 
 void MainWindow::mergeMapSlot(){
     qDebug() << "MainWindow::mergeMapSlot called";
-
     topLayout->setLabel(TEXT_COLOR_INFO, "You can select a map by clicking it or by clicking the list in the menu."
                                          "\nYou can move a map by dragging and dropping it or by using the directional keys."
                                          "\nYou can rotate the map in the menu using the text block or the slider.");
+
     mergeMapWidget = QPointer<MergeMapWidget>(new MergeMapWidget(robots));
+    openHelpMessage("You are about to merge two or more maps together, here is how to proceed...\n\n\t"
+                    "* Import two or more maps from the robot or from any folder\n\n\t"
+                    "* Drag and rotate your maps until you are satisfied\n\n\t"
+                    "* Click reset to start from scratch\n\n\t"
+                    "* Don't forget to save or cancel your modifications\n", "merge_maps");
+
     connect(mergeMapWidget, SIGNAL(saveMergeMap(double, Position, QImage, QString)), this, SLOT(saveMergeMapSlot(double, Position, QImage, QString)));
     connect(mergeMapWidget, SIGNAL(getMapForMerging(QString)), this, SLOT(getMapForMergingSlot(QString)));
     connect(this, SIGNAL(receivedMapToMerge(QString, QImage, double, double, double)), mergeMapWidget, SLOT(receivedMapToMergeSlot(QString, QImage, double, double, double)));
@@ -1773,6 +1782,9 @@ void MainWindow::scanMapSlot(){
 
     if(!scanMapWidget){
         scanMapWidget = QPointer<ScanMapWidget>(new ScanMapWidget(robots));
+        openHelpMessage("You are about to scan the map. This is how to proceed...\n\n\t"
+                        "* Use the teleop keys to make the robot\n\n\t"
+                        "* Click the map to set goals from the robot", "scan");
 
         connect(scanMapWidget, SIGNAL(startScanning(QString)), this, SLOT(startScanningSlot(QString)));
         connect(scanMapWidget, SIGNAL(stopScanning(QStringList)), this, SLOT(stopScanningSlot(QStringList)));
@@ -4422,7 +4434,7 @@ void MainWindow::centerMap(){
 
 void MainWindow::settingBtnSlot(){
     qDebug() << "MainWindow::settingBtnSlot called";
-    settingsWidget->show();
+    settingsController->showView();
 }
 
 void MainWindow::setTemporaryMessageTop(const QString type, const QString message, const int ms){
@@ -4621,8 +4633,8 @@ void MainWindow::updateRobotInfo(QString robotName, QString robotInfo){
     } else
         qDebug() << "MainWindow::updateRobotInfo Connected received without enough parameters :" << strList;
 
-    if(robotView && robotView->getRobot())
-        settingsWidget->addRobot(robotView->getRobot()->getIp(), robotName);
+    settingsController->addRobot(robotName);
+
 }
 
 void MainWindow::updateMapInfo(const QString robotName, QString mapId, QString mapDate){
@@ -4644,7 +4656,7 @@ void MainWindow::updateMapInfo(const QString robotName, QString mapId, QString m
 
         QPointer<Robot> robot = robots->getRobotViewByName(robotName)->getRobot();
 
-        switch(settingsWidget->getSettingMapChoice()){
+        switch(settingsController->getSettings()->getSettingMapChoice()){
             case SettingsWidget::ALWAYS_NEW:
                if(robotOlder)
                    robot->sendNewMap(map);
@@ -5029,8 +5041,8 @@ void MainWindow::testFunctionSlot(){
     scanMapSlot();
 }
 
-void MainWindow::activateLaserSlot(QString ipAddress, bool activate){
-    QPointer<RobotView> robotView = robots->getRobotViewByIp(ipAddress);
+void MainWindow::activateLaserSlot(QString name, bool activate){
+    QPointer<RobotView> robotView = robots->getRobotViewByName(name);
     if(robotView && robotView->getRobot()){
         robotView->setObstacles(QVector<QPointF>());
         if(activate)
@@ -5038,7 +5050,7 @@ void MainWindow::activateLaserSlot(QString ipAddress, bool activate){
         else
             commandController->sendCommand(robotView->getRobot(), QString("r"));
     } else {
-        qDebug() << "MainWindow::activateLaserSlot wants to activate the laser of an unknown robot on ip" << ipAddress;
+        qDebug() << "MainWindow::activateLaserSlot wants to activate the laser of an unknown robot on ip" << name;
         Q_UNREACHABLE();
     }
 }
@@ -5146,6 +5158,31 @@ void MainWindow::getMapForMergingSlot(QString robotName){
     QPointer<RobotView> robotView = robots->getRobotViewByName(robotName);
     if(robotView && robotView->getRobot())
         commandController->sendCommand(robotView->getRobot(), QString("s \"2\""));
+}
+
+void MainWindow::openHelpMessage(const QString message, const QString feature){
+    qDebug() << "MainWindow::openHelpMessage called with feature" << feature;
+    currentFeature = feature;
+    if(settingsController->getSettings()->getHelpNeeded(feature)) {
+        QMessageBox box;
+        QCheckBox* checkbox = new QCheckBox("Never show this again (can be reset in settings)");
+
+        /// sends a signal to the settings controller to enable or disable a message for a particular feature
+        connect(checkbox, SIGNAL(toggled(bool)), this, SLOT(relayTutorialSignal(bool)));
+
+        /// SLOT that is actually going to modify the current settings
+        connect(this, SIGNAL(tutorialSignal(bool, QString)), settingsController, SLOT(hideTutorial(bool, QString)));
+
+        box.setText(message);
+        box.addButton(QMessageBox::Ok);
+        box.setCheckBox(checkbox);
+        box.exec();
+    }
+}
+
+void MainWindow::relayTutorialSignal(const bool messageNeeded){
+    qDebug() << "emitting tuto signal for feature " << currentFeature;
+    emit tutorialSignal(messageNeeded, currentFeature);
 }
 
 void MainWindow::commandDoneSlot(QString cmdName, bool success, QString robotName, QString newRobotName, QString groupName, QString pathName, bool scan, int robotNb, QStringList path){

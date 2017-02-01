@@ -13,27 +13,16 @@
 #include "View/custompushbutton.h"
 #include <QDir>
 #include <fstream>
-
-int SettingsWidget::currentId = 0;
-
-SettingsWidget::SettingsWidget(QWidget *parent)
-    : QWidget(parent), batteryWarningThreshHold(20) {
+#include <QCheckBox>
+#include "View/custompushbutton.h"
 
 
-    settingMapChoice = ALWAYS_ASK;
-    QString fileStr = QDir::currentPath() + QDir::separator() + "settings" + QDir::separator() + "mapChoice.txt";
-    std::ifstream file(fileStr.toStdString(), std::ios::in);
-
-    if(file){
-        file >> settingMapChoice;
-        qDebug() << "SettingsWidget::SettingsWidget settingMapChoice :" << settingMapChoice;
-        file.close();
-    } else {
-        qDebug() << "SettingsWidget::SettingsWidget could not open the map setting file at" << fileStr;
-    }
+SettingsWidget::SettingsWidget(const Settings& settings, QWidget *parent): QWidget(parent){
 
     setWindowTitle("Settings");
-    // does not work :(
+
+    // does not work :( <- jcrois cparce que sa maman cest la main window mais sinon ca marchait me semble
+    // ( ca semble marcher si la mainwindow est fermee )
     setWindowIcon(QPixmap(":/icons/setting.png").scaled(s_icon_size));
 
     /// moves the page at the center of the screen
@@ -56,6 +45,15 @@ SettingsWidget::SettingsWidget(QWidget *parent)
     robotsLaserButtonGroup->setExclusive(false);
     topLayout->addLayout(robotsLaserLayout);
 
+    QMapIterator<int, QPair<QString, bool> > it(settings.getIDtoNameMap());
+    while(it.hasNext()){
+        it.next();
+        QCheckBox* activateLaserButton = new QCheckBox(it.value().first, this);
+        robotsLaserButtonGroup->addButton(activateLaserButton, settings.getCurrentId());
+        activateLaserButton->setChecked(it.value().second);
+        robotsLaserLayout->addWidget(activateLaserButton);
+    }
+
 
     SpaceWidget* space = new SpaceWidget(SpaceWidget::SpaceOrientation::HORIZONTAL, this);
     topLayout->addWidget(space);
@@ -72,23 +70,25 @@ SettingsWidget::SettingsWidget(QWidget *parent)
     chooseMapBox->insertItem(ALWAYS_OLD, "Always use the oldest map");
     chooseMapBox->insertItem(ALWAYS_ROBOT, "Always use the map of the robot");
     chooseMapBox->insertItem(ALWAYS_APPLICATION, "Always use the map of this application");
-    chooseMapBox->setCurrentIndex(settingMapChoice);
+    chooseMapBox->setCurrentIndex(settings.getSettingMapChoice());
 
     batteryThresholdLabel = new QLabel("Battery level warning trigger (value of the remaining battery in % under which you receive a warning)", this);
     batteryThresholdSlider = new QSlider(Qt::Horizontal, this);
     batteryThresholdSlider->setRange(0, 100);
     batteryThresholdSlider->setTickPosition(QSlider::TicksBelow);
     batteryThresholdSlider->setTickInterval(5);
-    batteryThresholdSlider->setValue(20);
-    connect(batteryThresholdSlider, SIGNAL(valueChanged(int)), SLOT(setBatteryWarningThreshold(int)));
+    batteryThresholdSlider->setValue(settings.getBatteryWarningThreshold());
 
     topLayout->addWidget(chooseMapLabel);
     topLayout->addWidget(chooseMapBox);
     topLayout->addWidget(batteryThresholdLabel);
     topLayout->addWidget(batteryThresholdSlider);
 
-    layout->addLayout(topLayout);
+    /// button to reset the display of help messages in the application
+    helpButton = new CustomPushButton("Reset tutorial");
+    topLayout->addWidget(helpButton);
 
+    layout->addLayout(topLayout);
 
     QHBoxLayout* cancelSaveLayout = new QHBoxLayout();
     CustomPushButton* applyBtn = new CustomPushButton("Apply", this, CustomPushButton::ButtonType::LEFT_MENU, "center");
@@ -104,7 +104,6 @@ SettingsWidget::SettingsWidget(QWidget *parent)
     connect(saveBtn, SIGNAL(clicked()), this, SLOT(saveSlot()));
     layout->addLayout(cancelSaveLayout);
 
-
     topLayout->setContentsMargins(0, 0, 0, 0);
     cancelSaveLayout->setContentsMargins(0, 0, 0, 0);
 
@@ -112,81 +111,21 @@ SettingsWidget::SettingsWidget(QWidget *parent)
     cancelSaveLayout->setAlignment(Qt::AlignBottom);
 }
 
-void SettingsWidget::addRobot(const QString robotIPAddress, const QString robot_name){
-    qDebug() << "SettingsWidget::addRobot" << robotIPAddress << "id" << currentId;
-
-    QString fileStr = QDir::currentPath() + QDir::separator() + "settings" + QDir::separator() + robotIPAddress + ".txt";
-    std::ifstream fileRobot(fileStr.toStdString(), std::ios::in);
-
-    bool laser = true;
-    if(fileRobot){
-        fileRobot >> laser;
-        fileRobot.close();
-    } else {
-        qDebug() << "SettingsWidget::addRobot could not open the robot setting file at" << fileStr;
-    }
-
-    idToIpMap.insert(currentId, QPair<QString, bool>(robotIPAddress, laser));
+void SettingsWidget::addRobot(const QString robot_name, const int currentId, const bool laser){
     QCheckBox* activateLaserButton = new QCheckBox(robot_name, this);
-    robotsLaserButtonGroup->addButton(activateLaserButton, currentId++);
+    robotsLaserButtonGroup->addButton(activateLaserButton, currentId);
     activateLaserButton->setChecked(laser);
     robotsLaserLayout->addWidget(activateLaserButton);
 }
 
-void SettingsWidget::removeRobot(const QString robotIPAddress){
-    int robotId(-1);
-    QMapIterator<int, QPair<QString, bool>> it(idToIpMap);
-    while(it.hasNext()){
-        it.next();
-        if(!it.value().first.compare(robotIPAddress)){
-            robotId = it.key();
-            idToIpMap.remove(it.key());
-            break;
-        }
-    }
-    qDebug() << "SettingsWidget::removeRobot" << robotsLaserButtonGroup->buttons().size();
-    if(robotId != -1){
-        robotsLaserButtonGroup->button(robotId)->hide();
-        robotsLaserButtonGroup->removeButton(robotsLaserButtonGroup->button(robotId));
-        delete robotsLaserButtonGroup->button(robotId);
-    }
+void SettingsWidget::removeRobot(const int robotId){
+    robotsLaserButtonGroup->button(robotId)->hide();
+    robotsLaserButtonGroup->removeButton(robotsLaserButtonGroup->button(robotId));
 }
 
 void SettingsWidget::applySlot(){
     qDebug() << "SettingsWidget::applySlot called";
-    for(int i = 0; i < robotsLaserButtonGroup->buttons().size(); i++){
-        int index = robotsLaserButtonGroup->id(robotsLaserButtonGroup->buttons().at(i));
-        QString robotId = idToIpMap.value(index).first;
-        bool isChecked = robotsLaserButtonGroup->buttons().at(i)->isChecked();
-        if(idToIpMap.value(index).second != isChecked){
-            idToIpMap.insert(index, QPair<QString, bool>(robotId, isChecked));
-            emit activateLaser(idToIpMap.value(index).first, isChecked);
-
-            QString fileStr = QDir::currentPath() + QDir::separator() + "settings" + QDir::separator() + robotId + ".txt";
-            std::ofstream fileRobot(fileStr.toStdString(), std::ios::out);
-
-            if(fileRobot){
-                fileRobot << isChecked;
-                fileRobot.close();
-            } else {
-                qDebug() << "SettingsWidget::applySlot could not open the robot setting file at" << fileStr;
-            }
-        }
-    }
-
-    settingMapChoice = chooseMapBox->currentIndex();
-
-    QString fileStr2 = QDir::currentPath() + QDir::separator() + "settings" + QDir::separator() + "mapChoice.txt";
-    std::ofstream file(fileStr2.toStdString(), std::ios::out);
-
-    if(file){
-        file << settingMapChoice;
-        file.close();
-    } else {
-        qDebug() << "SettingsWidget::applySlot could not open the map setting file at" << fileStr2;
-    }
-
-    qDebug() << "SettingsWidget::applySlot" << settingMapChoice << " : " << idToIpMap;
+    emit updateMapChoice(chooseMapBox->currentIndex());
 }
 
 void SettingsWidget::cancelSlot(){
@@ -200,13 +139,3 @@ void SettingsWidget::saveSlot(){
     close();
 }
 
-void SettingsWidget::showEvent(QShowEvent *event){
-    Q_UNUSED(event);
-    chooseMapBox->setCurrentIndex(settingMapChoice);
-    foreach(QAbstractButton* button, robotsLaserButtonGroup->buttons()){
-        int index = robotsLaserButtonGroup->id(button);
-        /// contains the bool value which stores whether or not the laser data should be activated for this robot
-        if(idToIpMap.value(index).second)
-            button->setChecked(true);
-    }
-}

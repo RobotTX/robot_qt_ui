@@ -219,7 +219,6 @@ void EditSelectedRobotWidget::clearPath(){
 }
 
 void EditSelectedRobotWidget::updatePathsMenu(){
-    //qDebug() << "updatePathsMenu called";
     pathsMenu->clear();
     QMapIterator<QString, QSharedPointer<Paths::CollectionPaths>> i(*(paths->getGroups()));
     while (i.hasNext()) {

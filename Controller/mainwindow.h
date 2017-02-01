@@ -29,6 +29,7 @@ class ScanMapWidget;
 class DrawObstacles;
 class MapView;
 class LaserController;
+class SettingsController;
 
 #include "Model/paths.h"
 #include "View/createpointwidget.h"
@@ -66,7 +67,7 @@ namespace Ui {
  * @param parent
  * The main controller of the application
  */
-class MainWindow : public QMainWindow{
+class MainWindow : public QMainWindow {
     Q_OBJECT
 
 public:
@@ -132,6 +133,8 @@ public:
     static Position convertPixelCoordinatesToRobotCoordinates(const Position positionInPixels, double originX, double originY, double resolution, int height);
     static Position convertRobotCoordinatesToPixelCoordinates(const Position positionInRobotCoordinates, double originX, double originY, double resolution, int height);
 
+    void openHelpMessage(const QString message, const QString feature);
+
 signals:
     void nameChanged(QString, QString);
     void changeCmdThreadRobotName(QString);
@@ -153,6 +156,7 @@ signals:
     void newBatteryLevel(int);
     void updatePath(const QString groupName, const QString pathName);
     void stopAllCmd();
+    void tutorialSignal(const bool, const QString);
 
 private slots:
     void sendPathSelectedRobotSlot(const QString groupName, const QString pathName);
@@ -295,13 +299,16 @@ private slots:
     void saveMergeMapSlot(double resolution, Position origin, QImage image, QString fileName);
 
     void testFunctionSlot();
-    void activateLaserSlot(QString, bool);
+    void activateLaserSlot(QString name, bool);
     void getMapForMergingSlot(QString robotName);
     void scanMapSlot();
 
     void updateBatteryLevel(const int level);
     void updateLaserSlot();
     void commandDoneSlot(QString cmdName, bool success, QString robotName, QString newRobotName, QString groupName, QString pathName, bool scan, int robotNumber, QStringList path);
+
+    /// sends a signal to the settings controller in order to keep track of the messages we need to show the user
+    void relayTutorialSignal(const bool messageNeeded);
 
 protected:
     void stopMapThread();
@@ -368,13 +375,18 @@ private:
     QSharedPointer<Paths> paths;
 
     CommandController* commandController;
+    SettingsController* settingsController;
+
     std::string mapFile;
     QPointer<EditMapWidget> editMapWidget;
     QPointer<MergeMapWidget> mergeMapWidget;
     QPointer<ScanMapWidget> scanMapWidget;
 
-    SettingsWidget* settingsWidget;
     LaserController* laserController;
+
+    /// feature that we are currently using, useful to determine which tutorial message to enable / disable
+    QString currentFeature;
+
 };
 
 #endif /// MAINWINDOW_H

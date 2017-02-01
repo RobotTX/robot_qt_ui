@@ -78,7 +78,7 @@ public slots:
     void updateHomeMenu();
     /// to update the path menu to tick the path assigned to the current robot
     void updatePathsMenu();
-
+    /// called after the main window has received ackownledgement from the robot (update path)
     void applyNewPath(const QString groupName, const QString pathName);
 
 signals:
@@ -94,6 +94,7 @@ signals:
     void clearMapOfPaths();
     /// to notify that a new home has been assigned
     void newHome(QString);
+    /// the new path of the robot to be sent to it by the main window
     void sendPathSelectedRobot(QString, QString);
 
 protected:

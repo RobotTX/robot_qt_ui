@@ -6,12 +6,17 @@ class QCheckBox;
 class QButtonGroup;
 class QLabel;
 class QComboBox;
+class QCheckBox;
+class CustomPushButton;
 
 #include <QSlider>
 #include "Model/robots.h"
+#include "Model/settings.h"
 #include <QMap>
 #include <QWidget>
 #include <QDebug>
+#include <QObject>
+
 
 class SettingsWidget: public QWidget
 {
@@ -20,42 +25,34 @@ public:
 
     enum SETTING_MAP_CHOICE { ALWAYS_ROBOT, ALWAYS_APPLICATION, ALWAYS_ASK , ALWAYS_NEW , ALWAYS_OLD };
 
-    SettingsWidget(QWidget *parent = 0);
+    SettingsWidget(const Settings &settings, QWidget* parent = 0);
 
-    void addRobot(const QString robotIPAddress, const QString robot_name);
-    void removeRobot(const QString robotIPAddress);
+    void addRobot(const QString robot_name, const int currentId, const bool laser);
+    void removeRobot(const int robotId);
 
     QComboBox* getChooseMapBox(void) const { return chooseMapBox; }
-    int getSettingMapChoice(void) const { return settingMapChoice; }
-    QMap<int, QPair<QString, bool>> getIDtoIPMap(void) const { return idToIpMap; }
-    int getBatteryWarningThreshold(void) const { return batteryWarningThreshHold; }
-
-
-protected:
-    void showEvent(QShowEvent* event);
+    QSlider* getBatterySlider(void) const { return batteryThresholdSlider; }
+    QButtonGroup* getRobotLaserButtonGroup(void) { return robotsLaserButtonGroup; }
+    CustomPushButton* getHelpButton(void) const { return helpButton; }
 
 signals:
-    void activateLaser(QString, bool);
+    void updateMapChoice(int);
 
 private slots:
     void applySlot();
     void cancelSlot();
     void saveSlot();
-    void setBatteryWarningThreshold(const int threshold) { qDebug() << "SettingsWidget.h setbatterylevelthresh called"; batteryWarningThreshHold = threshold; }
 
 private:
     static int currentId;
     QVBoxLayout* robotsLaserLayout;
     QButtonGroup* robotsLaserButtonGroup;
     QLabel* feedBackLabel;
-    /// to map robot IP addresses and their checkboxes ids
-    QMap<int, QPair<QString, bool>> idToIpMap;
     QLabel* chooseMapLabel;
     QComboBox* chooseMapBox;
-    int settingMapChoice;
-    int batteryWarningThreshHold;
     QSlider* batteryThresholdSlider;
     QLabel* batteryThresholdLabel;
+    CustomPushButton* helpButton;
 };
 
 #endif /// SETTINGSWIDGET_H
