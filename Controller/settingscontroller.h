@@ -33,12 +33,15 @@ public:
     void hideView(void);
     void showView(void);
 
+    void serializeSettings(void) const;
+    void deserializeSettings(void);
+
 public slots:
     void setHelpNeeded();
     void updateBatteryThreshold(const int value);
     void setMapChoice(const int choice);
     void updateLaserStatus(const int id, const bool status);
-    void hideTutorial();
+    void hideTutorial(const bool messageNeeded, const QString feature);
 
 signals:
     void activateLaser(QString, bool);

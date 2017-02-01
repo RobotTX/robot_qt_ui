@@ -12,36 +12,8 @@ SettingsController::SettingsController(QWidget* parent): QObject(parent)
     /// Model, contains the actual information
     settings = QPointer<Settings> (new Settings());
 
-    /// **                    UPDATES THE MODEL WITH THE SETTINGS CONTAINED IN THE FILES ** ///
-    QString helpFile = QDir::currentPath() + QDir::separator() + "settings" + QDir::separator() + "help.txt";
-    std::ifstream fileHelp(helpFile.toStdString(), std::ios::in);
-    if(fileHelp) {
-        int helpNeeded;
-        fileHelp >> helpNeeded;
-        settings->setHelpNeeded(helpNeeded);
-        fileHelp.close();
-    } else
-        settings->setHelpNeeded(true);
-
-    QString fileStr = QDir::currentPath() + QDir::separator() + "settings" + QDir::separator() + "mapChoice.txt";
-    std::ifstream file(fileStr.toStdString(), std::ios::in);
-    if(file) {
-        int settingMapChoice;
-        file >> settingMapChoice;
-        settings->setMapChoice(settingMapChoice);
-        file.close();
-    } else
-        settings->setMapChoice(0);
-
-    QString file_battery = QDir::currentPath() + QDir::separator() + "settings" + QDir::separator() + "battery_threshold.txt";
-    std::ifstream battery_file(file_battery.toStdString(), std::ios::in);
-    if(battery_file) {
-        int battery_thresh;
-        battery_file >> battery_thresh;
-        settings->setBatteryThreshold(battery_thresh);
-        battery_file.close();
-    } else
-        settings->setBatteryThreshold(20);
+    /// Get the settings from the file
+    deserializeSettings();
 
     /// Creates the graphical object where a user can change the settings to his preferences
     createSettingsView();
@@ -61,7 +33,6 @@ void SettingsController::createSettingsView(void){
     view = new SettingsWidget(*settings);
 
     /// set up the connects to propagate the changes in the view to the model ///
-
     connect(view->getBatterySlider(), SIGNAL(valueChanged(int)), this, SLOT(updateBatteryThreshold(int)));
 
     /// to turn on the laser feedback or not ( to display obstacles in real time )
@@ -83,44 +54,26 @@ void SettingsController::showView(){
 
 void SettingsController::setHelpNeeded(){
     qDebug() << "SettingsController::setHelpNeeded";
-    QString helpFile = QDir::currentPath() + QDir::separator() + "settings" + QDir::separator() + "help.txt";
-    std::ofstream fileHelp(helpFile.toStdString(), std::ios::out | std::ios::trunc);
-
-    if(fileHelp) {
-        fileHelp << "1";
-        fileHelp.close();
-    }
     /// we update no matter what because we always want the model and the view to be
     /// consistent with each other
     settings->resetSettings();
+    serializeSettings();
 }
 
 void SettingsController::updateBatteryThreshold(const int value){
     qDebug() << "SettingsController::updateBatteryThreshold called" << value;
-    QString file_battery = QDir::currentPath() + QDir::separator() + "settings" + QDir::separator() + "battery_threshold.txt";
-    std::ofstream battery_file(file_battery.toStdString(), std::ios::out | std::ios::trunc);
-
-    if(battery_file) {
-        battery_file << value;
-        battery_file.close();
-    }
     /// we update no matter what because we always want the model and the view to be
     /// consistent with each other
     settings->setBatteryThreshold(value);
+    serializeSettings();
 }
 
 void SettingsController::setMapChoice(const int choice){
     qDebug() << "SettingsController::setMapChoice called" << choice;
-    QString fileStr = QDir::currentPath() + QDir::separator() + "settings" + QDir::separator() + "mapChoice.txt";
-    std::ofstream file(fileStr.toStdString(), std::ios::out | std::ios::trunc);
-
-    if(file) {
-        file << choice;
-        file.close();
-    }
     /// we update no matter what because we always want the model and the view to be
     /// consistent with each other
     settings->setMapChoice(choice);
+    serializeSettings();
 }
 
 void SettingsController::updateLaserStatus(const int id, const bool status){
@@ -137,6 +90,7 @@ void SettingsController::updateLaserStatus(const int id, const bool status){
 }
 
 void SettingsController::addRobot(const QString name){
+    /// enables the laser feedback for a particular robot
     settings->addRobot(name);
     QMapIterator<int, QPair<QString, bool> > it(settings->getIDtoNameMap());
     /// this seems a little repetitive but it ensures that the model and the view are consistent with each other
@@ -150,6 +104,7 @@ void SettingsController::addRobot(const QString name){
 }
 
 void SettingsController::removeRobot(const QString name){
+    /// disables the laser feedback for a particular robot
     settings->removeRobot(name);
     QMapIterator<int, QPair<QString, bool> > it(settings->getIDtoNameMap());
     while(it.hasNext()){
@@ -160,12 +115,26 @@ void SettingsController::removeRobot(const QString name){
 }
 
 /// called when a user does not want to see the help messages
-void SettingsController::hideTutorial(){
-    settings->setHelpNeeded(false);
-    QString helpFile = QDir::currentPath() + QDir::separator() + "settings" + QDir::separator() + "help.txt";
-    std::ofstream fileHelp(helpFile.toStdString(), std::ios::out | std::ios::trunc);
-    if(fileHelp) {
-        fileHelp << "0";
-        fileHelp.close();
+void SettingsController::hideTutorial(const bool messageNeeded, const QString feature){
+    settings->setHelpNeeded(messageNeeded, feature);
+    serializeSettings();
+}
+
+void SettingsController::serializeSettings() const {
+    QFile settingsFile(QDir::currentPath() + QDir::separator() + "settings.dat");
+    settingsFile.resize(0);
+    settingsFile.open(QIODevice::ReadWrite);
+    QDataStream out(&settingsFile);
+    out << *settings;
+    settingsFile.close();
+}
+
+void SettingsController::deserializeSettings(){
+    QFile fileRead(QDir::currentPath() + QDir::separator() + "settings.dat");
+    if(fileRead.open(QIODevice::ReadOnly)){
+        /// read the data serialized from the file
+        QDataStream in(&fileRead);
+        in >> *settings;
+        fileRead.close();
     }
 }

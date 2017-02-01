@@ -3,13 +3,14 @@
 
 #include <QMap>
 #include <QObject>
+#include <QDebug>
 
 class Settings: public QObject
 {
     Q_OBJECT
 
 public:
-    Settings(const int _settingMapChoice = 0, const int _batteryWarningThreshHold = 20, const bool _helpNeeded = true);
+    Settings(const int _settingMapChoice = 0, const int _batteryWarningThreshHold = 20);
 
     int getSettingMapChoice(void) const { return settingMapChoice; }
     QMap<int, QPair<QString, bool>> getIDtoNameMap(void) const { return idToNameMap; }
@@ -17,10 +18,12 @@ public:
     void setMapChoice(const int choice) { settingMapChoice = choice; }
     void setBatteryThreshold(const int thresh) { batteryWarningThreshHold = thresh; }
     bool setLaserStatus(const int id, const bool status);
-    void setHelpNeeded(const bool help) { helpNeeded = help; }
+    void setHelpNeeded(const bool help, const QString feature) { activated_messages[feature] = !help; qDebug() << "Settings setHelpNeeded" << feature << !help; }
 
     static int getCurrentId(void) { return currentId; }
-    bool getHelpNeeded(void) const { return helpNeeded; }
+    bool getHelpNeeded(const QString feature) const { return activated_messages[feature]; }
+    QMap<QString, bool> getTutorialMap(void) const { return activated_messages; }
+    void setTutorialMap(const QMap<QString, bool>& tuto) { activated_messages = tuto; }
 
     void resetSettings(void);
 
@@ -37,8 +40,12 @@ private:
     int settingMapChoice;
     int batteryWarningThreshHold;
     /// indicates whether or not we give help messages to the user
-    bool helpNeeded;
     QMap<QString, bool> activated_messages;
 };
+
+QDataStream& operator>>(QDataStream& in, Settings& settings);
+
+QDataStream& operator<<(QDataStream& out, const Settings& settings);
+
 
 #endif /// SETTINGS_H

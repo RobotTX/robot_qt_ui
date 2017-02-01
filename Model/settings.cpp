@@ -3,11 +3,12 @@
 #include <QDir>
 #include <fstream>
 #include <assert.h>
+#include <QDataStream>
 
-Settings::Settings(const int _settingMapChoice, const int _batteryWarningThreshHold, const bool _helpNeeded):
-    settingMapChoice(_settingMapChoice), batteryWarningThreshHold(_batteryWarningThreshHold), helpNeeded(_helpNeeded)
+Settings::Settings(const int _settingMapChoice, const int _batteryWarningThreshHold):
+    settingMapChoice(_settingMapChoice), batteryWarningThreshHold(_batteryWarningThreshHold)
 {
-    /// TODO add all the functions for which a message is needed
+    /// TODO add all the functions for which a message is needed and call openHelpMessage where the function to enable the feature is called
     activated_messages["merge_maps"] = true;
     activated_messages["scan"] = true;
     activated_messages["edit_map"] = true;
@@ -83,4 +84,20 @@ void Settings::resetSettings(){
         it.next();
         it.setValue(true);
     }
+}
+
+QDataStream& operator>>(QDataStream& in, Settings& settings){
+    qint32 mapChoice(-1);
+    int batteryThresh(0);
+    QMap<QString, bool> tutorialMessages;
+    in >> mapChoice >> batteryThresh >> tutorialMessages;
+    settings.setMapChoice(mapChoice);
+    settings.setBatteryThreshold(batteryThresh);
+    settings.setTutorialMap(tutorialMessages);
+    return in;
+}
+
+QDataStream& operator<<(QDataStream& out, const Settings& settings){
+    out << settings.getSettingMapChoice() << settings.getBatteryWarningThreshold() << settings.getTutorialMap();
+    return out;
 }

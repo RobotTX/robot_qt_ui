@@ -69,24 +69,6 @@
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow) {
     ui->setupUi(this);
-/*
-    helpBoxes["scan"] = true;
-    helpBoxes["merge"] = true;
-
-    QMapIterator<QString, bool> it(helpBoxes);
-    while(it.hasNext()){
-        it.next();
-        qDebug() << it.key() << it.value();
-    }
-
-    serializeHelpBoxes();
-
-    helpBoxes["scan"] = false;
-    helpBoxes["merge"] = false;
-*/
-    //deserializeHelpBoxes();
-
-
 
     /*
 
@@ -337,7 +319,6 @@ void MainWindow::initializeRobots(){
     robotServerWorker->moveToThread(&serverThread);
 
    /*
-
 
     QFileInfo fileInfo(QDir::currentPath(), "../gobot-software/" + QString(ROBOTS_NAME_FILE));
     QFile fileWrite(fileInfo.absoluteFilePath());
@@ -1674,6 +1655,7 @@ void MainWindow::messageMapSaved(bool status){
 
 void MainWindow::editMapSlot(){
     editMapWidget = QPointer<EditMapWidget>(new EditMapWidget(map->getMapImage(), map->getWidth(), map->getHeight(), map->getResolution(), map->getOrigin()));
+    openHelpMessage("You are about to edit a map, here is how to proceed...", "edit_map");
     connect(editMapWidget, SIGNAL(saveEditMap()), this, SLOT(saveEditMapSlot()));
 }
 
@@ -1714,11 +1696,13 @@ void MainWindow::saveEditMapSlot(){
 
 void MainWindow::mergeMapSlot(){
     qDebug() << "MainWindow::mergeMapSlot called";
-
     topLayout->setLabel(TEXT_COLOR_INFO, "You can select a map by clicking it or by clicking the list in the menu."
                                          "\nYou can move a map by dragging and dropping it or by using the directional keys."
                                          "\nYou can rotate the map in the menu using the text block or the slider.");
+
     mergeMapWidget = QPointer<MergeMapWidget>(new MergeMapWidget(robots));
+    openHelpMessage("You are about to merge two or more maps together, here is how to proceed...", "merge_maps");
+
     connect(mergeMapWidget, SIGNAL(saveMergeMap(double, Position, QImage, QString)), this, SLOT(saveMergeMapSlot(double, Position, QImage, QString)));
     connect(mergeMapWidget, SIGNAL(getMapForMerging(QString)), this, SLOT(getMapForMergingSlot(QString)));
     connect(this, SIGNAL(receivedMapToMerge(QString, QImage, double, double, double)), mergeMapWidget, SLOT(receivedMapToMergeSlot(QString, QImage, double, double, double)));
@@ -1784,10 +1768,9 @@ void MainWindow::teleopCmdSlot(QString robotName, int id){
 void MainWindow::scanMapSlot(){
     qDebug() << "MainWindow::scanMapSlot called";
 
-    openHelpMessage("You are about to scan the map. This is how to proceed...");
-
     if(!scanMapWidget){
         scanMapWidget = QPointer<ScanMapWidget>(new ScanMapWidget(robots));
+        openHelpMessage("You are about to scan the map. This is how to proceed...", "scan");
 
         connect(scanMapWidget, SIGNAL(startScanning(QString)), this, SLOT(startScanningSlot(QString)));
         connect(scanMapWidget, SIGNAL(stopScanning(QStringList)), this, SLOT(stopScanningSlot(QStringList)));
@@ -5161,17 +5144,29 @@ void MainWindow::getMapForMergingSlot(QString robotName){
         commandController->sendCommand(robotView->getRobot(), QString("s \"2\""));
 }
 
-void MainWindow::openHelpMessage(const QString message){
-    if(settingsController->getSettings()->getHelpNeeded()) {
+void MainWindow::openHelpMessage(const QString message, const QString feature){
+    qDebug() << "MainWindow::openHelpMessage called with feature" << feature;
+    currentFeature = feature;
+    if(settingsController->getSettings()->getHelpNeeded(feature)) {
         QMessageBox box;
         QCheckBox* checkbox = new QCheckBox("Never show this again (can be reset in settings)");
-        /// TODO find an elegant way to emit the message that we dont want anymore
-        connect(checkbox, SIGNAL(toggled(bool)), settingsController, SLOT(hideTutorial()));
+
+        /// sends a signal to the settings controller to enable or disable a message for a particular feature
+        connect(checkbox, SIGNAL(toggled(bool)), this, SLOT(relayTutorialSignal(bool)));
+
+        /// SLOT that is actually going to modify the current settings
+        connect(this, SIGNAL(tutorialSignal(bool, QString)), settingsController, SLOT(hideTutorial(bool, QString)));
+
         box.setText(message);
         box.addButton(QMessageBox::Ok);
         box.setCheckBox(checkbox);
         box.exec();
     }
+}
+
+void MainWindow::relayTutorialSignal(const bool messageNeeded){
+    qDebug() << "emitting tuto signal for feature " << currentFeature;
+    emit tutorialSignal(messageNeeded, currentFeature);
 }
 
 void MainWindow::commandDoneSlot(QString cmdName, bool success, QString robotName, QString newRobotName, QString groupName, QString pathName, bool scan, int robotNb, QStringList path){

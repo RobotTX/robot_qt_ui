@@ -133,7 +133,7 @@ public:
     static Position convertPixelCoordinatesToRobotCoordinates(const Position positionInPixels, double originX, double originY, double resolution, int height);
     static Position convertRobotCoordinatesToPixelCoordinates(const Position positionInRobotCoordinates, double originX, double originY, double resolution, int height);
 
-    void openHelpMessage(const QString message);
+    void openHelpMessage(const QString message, const QString feature);
 
 signals:
     void nameChanged(QString, QString);
@@ -156,6 +156,7 @@ signals:
     void newBatteryLevel(int);
     void updatePath(const QString groupName, const QString pathName);
     void stopAllCmd();
+    void tutorialSignal(const bool, const QString);
 
 private slots:
     void sendPathSelectedRobotSlot(const QString groupName, const QString pathName);
@@ -306,6 +307,9 @@ private slots:
     void updateLaserSlot();
     void commandDoneSlot(QString cmdName, bool success, QString robotName, QString newRobotName, QString groupName, QString pathName, bool scan, int robotNumber, QStringList path);
 
+    /// sends a signal to the settings controller in order to keep track of the messages we need to show the user
+    void relayTutorialSignal(const bool messageNeeded);
+
 protected:
     void stopMapThread();
     void closeEvent(QCloseEvent *event);
@@ -379,6 +383,9 @@ private:
     QPointer<ScanMapWidget> scanMapWidget;
 
     LaserController* laserController;
+
+    /// feature that we are currently using, useful to determine which tutorial message to enable / disable
+    QString currentFeature;
 
 };
 
