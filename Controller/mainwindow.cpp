@@ -1655,7 +1655,15 @@ void MainWindow::messageMapSaved(bool status){
 
 void MainWindow::editMapSlot(){
     editMapWidget = QPointer<EditMapWidget>(new EditMapWidget(map->getMapImage(), map->getWidth(), map->getHeight(), map->getResolution(), map->getOrigin()));
-    openHelpMessage("You are about to edit a map, here is how to proceed...", "edit_map");
+    openHelpMessage("You are about to edit a map, here is how to proceed...\n\n\t"
+                    "* Select a color\n\n\t"
+                    "* Select a a shape\n\n\t"
+                    "* Select a size\n\n\t"
+                    "* Undo (Ctrl+Z) or redo (Ctrl+Y) "
+                    "your actions using the arrows\n\n\t"
+                    "* Click reset to start from scratch\n\n\t"
+                    "* Don't forget to either cancel or save your modifications\n",
+                    "edit_map");
     connect(editMapWidget, SIGNAL(saveEditMap()), this, SLOT(saveEditMapSlot()));
 }
 
@@ -1701,7 +1709,11 @@ void MainWindow::mergeMapSlot(){
                                          "\nYou can rotate the map in the menu using the text block or the slider.");
 
     mergeMapWidget = QPointer<MergeMapWidget>(new MergeMapWidget(robots));
-    openHelpMessage("You are about to merge two or more maps together, here is how to proceed...", "merge_maps");
+    openHelpMessage("You are about to merge two or more maps together, here is how to proceed...\n\n\t"
+                    "* Import two or more maps from the robot or from any folder\n\n\t"
+                    "* Drag and rotate your maps until you are satisfied\n\n\t"
+                    "* Click reset to start from scratch\n\n\t"
+                    "* Don't forget to save or cancel your modifications\n", "merge_maps");
 
     connect(mergeMapWidget, SIGNAL(saveMergeMap(double, Position, QImage, QString)), this, SLOT(saveMergeMapSlot(double, Position, QImage, QString)));
     connect(mergeMapWidget, SIGNAL(getMapForMerging(QString)), this, SLOT(getMapForMergingSlot(QString)));
@@ -1770,7 +1782,9 @@ void MainWindow::scanMapSlot(){
 
     if(!scanMapWidget){
         scanMapWidget = QPointer<ScanMapWidget>(new ScanMapWidget(robots));
-        openHelpMessage("You are about to scan the map. This is how to proceed...", "scan");
+        openHelpMessage("You are about to scan the map. This is how to proceed...\n\n\t"
+                        "* Use the teleop keys to make the robot\n\n\t"
+                        "* Click the map to set goals from the robot", "scan");
 
         connect(scanMapWidget, SIGNAL(startScanning(QString)), this, SLOT(startScanningSlot(QString)));
         connect(scanMapWidget, SIGNAL(stopScanning(QStringList)), this, SLOT(stopScanningSlot(QStringList)));
