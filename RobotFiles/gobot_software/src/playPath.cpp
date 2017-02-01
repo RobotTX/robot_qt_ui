@@ -18,6 +18,7 @@ ros::Publisher nextPoint;
 ros::Publisher cancelPublisher;
 
 ros::Subscriber statusSuscriber;
+ros::Subscriber sub_robot;
 
 ros::ServiceServer _playPathService;
 ros::ServiceServer _pausePathService;
@@ -25,140 +26,59 @@ ros::ServiceServer _stopPathService;
 ros::ServiceServer _goHomeService;
 ros::ServiceServer _stopGoingHomeService;
 
-bool greenLight = false;
 
 int counter = 0;
 
+void getRobotPos(const geometry_msgs::Pose::ConstPtr& msg){
+	std::cout << "getRobotPos called" << std::endl;
+}
+
 // to get the status of the robot (completion of the path towards its next goal, SUCCEEDED = reached its goal, ACTIVE = currently moving towards its goal)
 void getStatus(const actionlib_msgs::GoalStatusArray::ConstPtr& _status){
-	if(! _status->status_list.empty()){
-		/// if our status changed from something to SUCCEEDED it means we have reached another point
-		if(_status->status_list[0].status != status){
-			std::cout << "New status : " << _status->status_list[0].text << " whose code is : " << std::to_string(static_cast<int>(_status->status_list[0].status)) << std::endl;
-			status = _status->status_list[0].status;
-		}
-	}
+	std::cout << "getStatus called" << std::endl;
 }
 
 bool stopPathService(std_srvs::Empty::Request &req, std_srvs::Empty::Response &res){
-	std::cout << "stop path service called" << std::endl;
-
-	ros::NodeHandle n;
-
-	// the thread executes the service so that true can be returned to the command system
-	boost::thread _thread(boost::bind(stopPath, n, ac));
-
+	std::cout << "stopPathService called" << std::endl;
 	return true;
 }
 
-bool stopPath(ros::NodeHandle n, std::shared_ptr<MoveBaseClient> ac){
-	
-	// notifies the robot that it cannot move anymore
-	greenLight = false;
-
-	stage = 0;
-
-	status = 0;
-	
-	// reset the path stage in the file
-	std::ofstream path_stage_file(PATH_STAGE_FILE, std::ios::out | std::ios::trunc);
-
-	if(path_stage_file){
-		path_stage_file << "0";
-		path_stage_file.close();
-	} else {
-		std::cout << "Sorry we were not able to find the file play_path.txt in order to keep track of the stage of the path to be played" << std::endl;
-		return false;	
-	}
-
-	ac->cancelGoal();
-	return true;
+void stopPath(){
+	std::cout << "stopPath called" << std::endl;
 }
 
 bool pausePathService(std_srvs::Empty::Request &req, std_srvs::Empty::Response &res){
-	std::cout << "pause path service called" << std::endl;
-	
-	ros::NodeHandle n;
-
-	// the thread executes the service so that true can be returned to the command system
-	boost::thread _thread(boost::bind(pausePath, n, ac));
-
+	std::cout << "pausePathService called" << std::endl;
 	return true;
 }
 
-void pausePath(ros::NodeHandle n, std::shared_ptr<MoveBaseClient> ac){
-	// notifies the robot that it cannot move anymore
-	std::cout << "Ready to cancel the next goal !" << std::endl;
-	greenLight = false;
-	ac->cancelGoal();
-}
+void goNextPoint(){
+	std::cout << "goNextPoint called" << std::endl;
 
-void startPath(ros::NodeHandle n, std::shared_ptr<MoveBaseClient> ac){
+	/*if(path.size()-1 == stage)
+		ROS_INFO("This is my final destination");
 
-	// notifies the robot that it can go 
-	greenLight = true;
+	move_base_msgs::MoveBaseGoal goal;
 
-	statusSuscriber = n.subscribe("/move_base/status", 1, getStatus);
+	goal.target_pose.header.frame_id = "map";
+    goal.target_pose.header.stamp = ros::Time::now();
 
-	while(ros::ok() && (stage != path.size()) && greenLight){
+    goal.target_pose.pose.position.x = path.at(stage).x;
+    goal.target_pose.pose.position.y = path.at(stage).y;
+    goal.target_pose.pose.orientation.x = 0;
+    goal.target_pose.pose.orientation.y = 0;
+    goal.target_pose.pose.orientation.z = 0;
+    goal.target_pose.pose.orientation.w = 1;
 
-		ROS_INFO("Heading towards target %d", stage+1);
 
-		if(path.size()-1 == stage)
-			ROS_INFO("This is my final destination");
-
-		move_base_msgs::MoveBaseGoal goal;
-
-		goal.target_pose.header.frame_id = "map";
-	    goal.target_pose.header.stamp = ros::Time::now();
-
-	    goal.target_pose.pose.position.x = path.at(stage).x;
-	    goal.target_pose.pose.position.y = path.at(stage).y;
-	    goal.target_pose.pose.orientation.x = 0;
-	    goal.target_pose.pose.orientation.y = 0;
-	    goal.target_pose.pose.orientation.z = 0;
-	    goal.target_pose.pose.orientation.w = 1;
-
-	    if(stage > 0 && path.at(stage-1).waitingTime >= 0){
-	    	std::cout << "Hey I gotta wait for " << path.at(stage-1).waitingTime << std::endl;
-			sleep(path.at(stage-1).waitingTime);
-	    }
-
-		// sends the robot's goal to the server 
-	    ac->sendGoal(goal);
-
-	    // waits for the answer of the server regarding the status of the robot
-	    ac->waitForResult();
-
-	    if(ac->getState() == actionlib::SimpleClientGoalState::SUCCEEDED){
-	    	ROS_INFO("Hooray, the base reached target %d", stage+1);
-	    	stage++;
-	    	// updates the path stage in the file
-			std::ofstream path_stage_file(PATH_STAGE_FILE, std::ios::out | std::ios::trunc);
-
-			if(path_stage_file){
-				path_stage_file << stage;
-				path_stage_file.close();
-			} else 
-				std::cout << "Sorry we were not able to find the file play_path.txt in order to keep track of the stage of the path to be played" << std::endl;	
-	    }
-	    else
-	    	ROS_INFO("The base failed to reach target %d", stage+1);
-	}
-	if(stage == path.size() && ac->getState() == actionlib::SimpleClientGoalState::SUCCEEDED){
-		// the robot successfully reached all its goals in order 
-		std::cout << "I have completed my journey Master Joda, what will you have me do ?" << std::endl;
-		// resets the stage of the path to be able to play the path from the start again
-		stage = 0;
-	}
-	else
-		std::cout << "I was stopped trying to reach " << path.at(stage).x << " " << path.at(stage).y << std::endl;
+	// sends the robot's goal to the server 
+    ac->sendGoal(goal);*/
 }
 
 bool playPathService(std_srvs::Empty::Request &req, std_srvs::Empty::Response &res){
-	
-	std::cout << "play path service called" << std::endl;
+	std::cout << "playPathService called" << std::endl;
 
+/*
 	path = std::vector<PathPoint>();
 
 	ros::NodeHandle n;
@@ -201,85 +121,22 @@ bool playPathService(std_srvs::Empty::Request &req, std_srvs::Empty::Response &r
 		return false;	
 	}
 
-	// the thread executes the service so that true can be returned to the command system
-	boost::thread _thread(boost::bind(startPath, n, ac));
+	// another thread executes the service so that true can be returned to the command system
+	boost::thread _thread(boost::bind(startPath, n, ac));*/
 
 	return true;	
 }
 
 bool goHomeService(std_srvs::Empty::Request &req, std_srvs::Empty::Response &res){
-	std::cout << "Go Home service called" << std::endl;
-
-	ros::NodeHandle n;
-
-	std::ifstream file("/home/gtdollar/computer_software/Robot_Infos/path.txt", std::ios::in);
-
-	PathPoint home;
-
-	// we recreate the path to follow from the file
-	if(file){
-
-        std::string line;
-
-        while(getline(file, line)){
-        	std::istringstream iss(line);
-            iss >> home.x >> home.y;
-       		home.waitingTime = 0;
-        }
-
-	} else {
-		std::cerr << "sorry could not find the home file on the robot, returning false to the cmd system";
-		return false;
-	}
-	
-	boost::thread _thread(boost::bind(goHome, n, ac, home));
+	std::cout << "goHomeService called" << std::endl;
 
 	return true; 
 }
 
-void goHome(ros::NodeHandle n, std::shared_ptr<MoveBaseClient> ac, const PathPoint& home){
-	move_base_msgs::MoveBaseGoal goal;
-
-	goal.target_pose.header.frame_id = "map";
-    goal.target_pose.header.stamp = ros::Time::now();
-    goal.target_pose.pose.position.x = home.x;
-    goal.target_pose.pose.position.y = home.y;
-    goal.target_pose.pose.orientation.x = 0;
-    goal.target_pose.pose.orientation.y = 0;
-    goal.target_pose.pose.orientation.z = 0;
-    goal.target_pose.pose.orientation.w = 1;
-
-    // sends the robot home
-    ac->sendGoal(goal);
-
-    // waits for the answer of the server regarding the status of the robot
-    ac->waitForResult();
-
-    if(ac->getState() == actionlib::SimpleClientGoalState::SUCCEEDED){
-    	std::ofstream ofs(IS_HOME_FILE);
-
-    	(ofs) ? ofs << 1 : std::cout << "Sorry could not update my status in is_home.txt" << std::endl;
-
-    	ROS_INFO("Awesome we are finally home !");
-    }
-    else
-    	ROS_INFO("Oh noooo, I was not able to go home !");
-}
-
 bool stopGoingHomeService(std_srvs::Empty::Request &req, std_srvs::Empty::Response &res){
-	std::cout << "Stop going home service called" << std::endl;
-
-	ros::NodeHandle n;
-
-	boost::thread _thread(boost::bind(stopGoingHome, n, ac));
+	std::cout << "stopGoingHomeService called" << std::endl;
 
 	return true;
-}
-
-void stopGoingHome(ros::NodeHandle n, std::shared_ptr<MoveBaseClient> ac){
-	ac->cancelGoal();
-	if(ac->getState() == actionlib::SimpleClientGoalState::PREEMPTED)
-		ROS_INFO("Successfully cancelled my trip home");
 }
 
 int main(int argc, char* argv[]){
@@ -313,13 +170,18 @@ int main(int argc, char* argv[]){
 		// to publish the goals as the robot plays its path
 		nextPoint = n.advertise<move_base_msgs::MoveBaseActionGoal>("/move_base/goal", 1000);
 
-		//tell the action client that we want to spin a thread by default
+		// tell the action client that we want to spin a thread by default
 		ac = std::shared_ptr<MoveBaseClient> (new MoveBaseClient("move_base", true));
 
-		//wait for the action server to come up
-		while(!ac->waitForServer(ros::Duration(5.0))){
+		// get the current status of the goal 
+		statusSuscriber = n.subscribe("/move_base/status", 1, getStatus);
+
+		// get the position of the robot to compare with the goal
+		sub_robot = n.subscribe("/robot_pose", 1, getRobotPos);
+
+		// wait for the action server to come up
+		while(!ac->waitForServer(ros::Duration(5.0)))
 			ROS_INFO("Waiting for the move_base action server to come up");
-		}
 
 		ros::spin();
 

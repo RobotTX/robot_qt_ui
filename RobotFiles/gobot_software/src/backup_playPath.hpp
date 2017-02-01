@@ -25,14 +25,26 @@ struct PathPoint {
 	double waitingTime;
 };
 
-void getRobotPos(const geometry_msgs::Pose::ConstPtr& msg);
+bool startPathService(std_srvs::Empty::Request &req, std_srvs::Empty::Response &res);
+
+void startPath(ros::NodeHandle n, std::shared_ptr<MoveBaseClient> ac);
+
 void getStatus(const actionlib_msgs::GoalStatusArray::ConstPtr& _status);
-bool stopPathService(std_srvs::Empty::Request &req, std_srvs::Empty::Response &res);
-void stopPath();
+
 bool pausePathService(std_srvs::Empty::Request &req, std_srvs::Empty::Response &res);
-void goNextPoint();
-bool playPathService(std_srvs::Empty::Request &req, std_srvs::Empty::Response &res);
+
+void pausePath(ros::NodeHandle n, std::shared_ptr<MoveBaseClient> ac);
+
+bool stopPathService(std_srvs::Empty::Request &req, std_srvs::Empty::Response &res);
+
+bool stopPath(ros::NodeHandle n, std::shared_ptr<MoveBaseClient> ac);
+
 bool goHomeService(std_srvs::Empty::Request &req, std_srvs::Empty::Response &res);
+
+void goHome(ros::NodeHandle n, std::shared_ptr<MoveBaseClient> ac, const PathPoint& home);
+
 bool stopGoingHomeService(std_srvs::Empty::Request &req, std_srvs::Empty::Response &res);
+
+void stopGoingHome(ros::NodeHandle n, std::shared_ptr<MoveBaseClient> ac);
 
 #endif

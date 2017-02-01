@@ -4254,26 +4254,28 @@ void MainWindow::displayAssignedPath(QString groupName, QString pathName){
     editSelectedRobotWidget->updatePathsMenu();
     assert(foundFlag);
 
-    selectedRobot->getRobot()->setPath(pathPainter->getCurrentPath());
-    selectedRobot->getRobot()->setGroupPathName(editSelectedRobotWidget->getGroupPathName());
-    selectedRobot->getRobot()->setPathName(editSelectedRobotWidget->getPathName());
-    int id = robots->getRobotId(selectedRobot->getRobot()->getName());
-    bottomLayout->updateRobot(id, selectedRobot);
-    if(pathPainter->getCurrentPath().size() > 0){
-        bottomLayout->getViewPathRobotBtnGroup()->button(id)->setChecked(true);
-        viewPathSelectedRobot(id, true);
-    }
+    if(selectedRobot && selectedRobot->getRobot()){
+        selectedRobot->getRobot()->setPath(pathPainter->getCurrentPath());
+        selectedRobot->getRobot()->setGroupPathName(editSelectedRobotWidget->getGroupPathName());
+        selectedRobot->getRobot()->setPathName(editSelectedRobotWidget->getPathName());
+        int id = robots->getRobotId(selectedRobot->getRobot()->getName());
+        bottomLayout->updateRobot(id, selectedRobot);
+        if(pathPainter->getCurrentPath().size() > 0){
+            bottomLayout->getViewPathRobotBtnGroup()->button(id)->setChecked(true);
+            viewPathSelectedRobot(id, true);
+        }
 
-    /// we update the path on the application side by serializing the path
-    QFile fileInfo(QDir::currentPath() + QDir::separator() + "robots_paths" + QDir::separator() + selectedRobot->getRobot()->getName() + "_path");
-    if(fileInfo.open(QIODevice::ReadWrite)){
-        fileInfo.resize(0);
-        QTextStream out(&fileInfo);
-        QString currentDateTime = QDateTime::currentDateTime().toString("yyyy-MM-dd-hh-mm-ss");
-        out << currentDateTime;
-        out << "%" << groupName << "%" << pathName;
-        qDebug() << "date now is" << currentDateTime;
-        fileInfo.close();
+        /// we update the path on the application side by serializing the path
+        QFile fileInfo(QDir::currentPath() + QDir::separator() + "robots_paths" + QDir::separator() + selectedRobot->getRobot()->getName() + "_path");
+        if(fileInfo.open(QIODevice::ReadWrite)){
+            fileInfo.resize(0);
+            QTextStream out(&fileInfo);
+            QString currentDateTime = QDateTime::currentDateTime().toString("yyyy-MM-dd-hh-mm-ss");
+            out << currentDateTime;
+            out << "%" << groupName << "%" << pathName;
+            qDebug() << "date now is" << currentDateTime;
+            fileInfo.close();
+        }
     }
 }
 
