@@ -49,7 +49,6 @@ HEADERS += \
            View/robotsleftwidget.h \
            View/robotview.h \
            View/spacewidget.h \
-           View/toplayout.h \
            View/topleftmenu.h \
            View/createpointwidget.h \
            View/customscrollarea.h \
@@ -90,7 +89,10 @@ HEADERS += \
     View/teleopwidget.h \
     Controller/lasercontroller.h \
     Model/settings.h \
-    Controller/settingscontroller.h
+    Controller/settingscontroller.h \
+    Controller/toplayoutcontroller.h \
+    View/toplayoutwidget.h \
+    Model/toplayout.h
 
 FORMS += Controller/mainwindow.ui
 
@@ -125,7 +127,6 @@ SOURCES += main.cpp \
            View/robotsleftwidget.cpp \
            View/robotview.cpp \
            View/spacewidget.cpp \
-           View/toplayout.cpp \
            View/createpointwidget.cpp \
            View/topleftmenu.cpp \
            View/customscrollarea.cpp \
@@ -165,7 +166,10 @@ SOURCES += main.cpp \
     View/teleopwidget.cpp \
     Controller/lasercontroller.cpp \
     Model/settings.cpp \
-    Controller/settingscontroller.cpp
+    Controller/settingscontroller.cpp \
+    Controller/toplayoutcontroller.cpp \
+    View/toplayoutwidget.cpp \
+    Model/toplayout.cpp
 
 
 RESOURCES += Resources/resources.qrc

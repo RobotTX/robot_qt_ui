@@ -1,4 +1,4 @@
-#include "toplayout.h"
+#include "toplayoutwidget.h"
 #include <QHBoxLayout>
 #include <QLabel>
 #include <QIcon>
@@ -10,9 +10,8 @@
 #include "stylesettings.h"
 #include "View/custompushbutton.h"
 
-TopLayout::TopLayout(QMainWindow* parent): QWidget(parent){
+TopLayoutWidget::TopLayoutWidget(const TopLayout& topLayout, QMainWindow* parent): QWidget(parent){
     layout = new QHBoxLayout(this);
-    robotsWithoutHome = QVector<QString>();
 
     menuBtn = new CustomPushButton(QIcon(":/icons/list.png"), "", this, CustomPushButton::ButtonType::TOP);
     menuBtn->setIconSize(xs_icon_size);
@@ -97,7 +96,7 @@ TopLayout::TopLayout(QMainWindow* parent): QWidget(parent){
     this->setAutoFillBackground(true);
 }
 
-void TopLayout::setLabel(const QString msgType, const QString msg){
+void TopLayoutWidget::setLabel(const QString msgType, const QString msg){
     label->setText(msg);
     if(msg.isEmpty())
         label->hide();
@@ -106,7 +105,7 @@ void TopLayout::setLabel(const QString msgType, const QString msg){
     label->setStyleSheet("QLabel { color: " + QString(msgType) +"; background:transparent}");
 }
 
-void TopLayout::setLabelPerm(const QString msgType, const QString msg){
+void TopLayoutWidget::setLabelPerm(const QString msgType, const QString msg){
     labelPerm->setText(msg);
     if(msg.isEmpty())
         labelPerm->hide();
@@ -115,7 +114,7 @@ void TopLayout::setLabelPerm(const QString msgType, const QString msg){
     labelPerm->setStyleSheet("QLabel { color: " + QString(msgType) +"; background:transparent}");
 }
 
-void TopLayout::setEnable(const bool enable){
+void TopLayoutWidget::setEnable(const bool enable){
     menuBtn->setEnabled(enable);
     centerBtn->setEnabled(enable);
     closeBtn->setEnabled(enable);
@@ -123,7 +122,7 @@ void TopLayout::setEnable(const bool enable){
     saveMapBtn->setEnabled(enable);
 }
 
-void TopLayout::setLabelDelay(const QString msgType, const QString msg, int delayTime){
+void TopLayoutWidget::setLabelDelay(const QString msgType, const QString msg, int delayTime){
 
     if(msg.isEmpty())
         label->hide();
@@ -150,40 +149,19 @@ void TopLayout::setLabelDelay(const QString msgType, const QString msg, int dela
     label->setStyleSheet("QLabel { color: " + QString(TEXT_COLOR_NORMAL) +";background:transparent}");
 }
 
-void TopLayout::delay(const int ms){
+void TopLayoutWidget::delay(const int ms){
     QTime dieTime = QTime::currentTime().addMSecs(ms);
     while (QTime::currentTime() < dieTime)
         QCoreApplication::processEvents(QEventLoop::AllEvents, 100);
 }
 
+void TopLayoutWidget::setRobotNoHomeLabel(const QString robots_string){
 
-void TopLayout::addRobotWithoutHome(QString robotName){
-    robotsWithoutHome.push_back(robotName);
-    setRobotNoHomeLabel();
-}
-
-void TopLayout::removeRobotWithoutHome(QString robotName){
-    for(int i = 0; i < robotsWithoutHome.size(); i++){
-        if(robotsWithoutHome.at(i).compare(robotName) == 0){
-            robotsWithoutHome.remove(i);
-            setRobotNoHomeLabel();
-            return;
-        }
-    }
-}
-
-void TopLayout::setRobotNoHomeLabel(){
-    QString robotsName("");
-    for(int i = 0; i < robotsWithoutHome.size(); i++){
-        if(!robotsName.isEmpty())
-            robotsName += ", ";
-        robotsName += robotsWithoutHome.at(i);
-    }
-
-    if(robotsName.isEmpty())
+    if(robots_string.isEmpty())
         labelPerm->hide();
+
     else {
         labelPerm->show();
-        setLabelPerm(TEXT_COLOR_WARNING, "\"" + robotsName + "\" do(es) not have a home point yet.\n Please choose a home for the robot(s) in the robot menu.");
+        setLabelPerm(TEXT_COLOR_WARNING, "\"" + robots_string + "\" do(es) not have a home point yet.\n Please choose a home for the robot(s) in the robot menu.");
     }
 }
