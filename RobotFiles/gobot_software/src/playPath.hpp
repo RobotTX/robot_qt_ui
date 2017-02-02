@@ -19,20 +19,23 @@
 
 typedef actionlib::SimpleActionClient<move_base_msgs::MoveBaseAction> MoveBaseClient;
 
-struct PathPoint {
+struct Point {
 	double x;
 	double y;
 	double waitingTime;
+    bool isHome;
 };
 
 void getRobotPos(const geometry_msgs::Pose::ConstPtr& msg);
 void getStatus(const actionlib_msgs::GoalStatusArray::ConstPtr& _status);
 bool stopPathService(std_srvs::Empty::Request &req, std_srvs::Empty::Response &res);
-void stopPath();
 bool pausePathService(std_srvs::Empty::Request &req, std_srvs::Empty::Response &res);
 void goNextPoint();
 bool playPathService(std_srvs::Empty::Request &req, std_srvs::Empty::Response &res);
 bool goHomeService(std_srvs::Empty::Request &req, std_srvs::Empty::Response &res);
 bool stopGoingHomeService(std_srvs::Empty::Request &req, std_srvs::Empty::Response &res);
+void goToPoint(Point point);
+void goalReached();
+void setStageInFile();
 
 #endif

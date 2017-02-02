@@ -107,10 +107,10 @@ void CommandController::resetParams(){
 }
 
 void CommandController::robotDisconnected(QString _robotName){
-    if(_robotName.compare(robotName)){
-        qDebug() << "CommandController::robotDisconnected The robot" << robotName << " was waiting for an answer to the command" << cmdName << "but disconnected";
+    qDebug() << "CommandController::robotDisconnected The robot" << _robotName << "disconnected but the robot" << robotName << "was waiting";
+
+    if(_robotName.compare(robotName))
         commandFailed();
-    }
 }
 
 void CommandController::commandFailed(){

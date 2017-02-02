@@ -55,5 +55,6 @@ bool startLaserData(bool startLaser);
 bool sendLaserData();
 bool stopSendLaserData();
 bool stopLaserData();
+void stopTwist();
 
 #endif

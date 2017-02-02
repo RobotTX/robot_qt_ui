@@ -1426,7 +1426,7 @@ void MainWindow::goHome(int nbRobot){
         switch(answer){
             case QMessageBox::Cancel:
             break;
-            case QMessageBox::Yes:
+            case QMessageBox::Ok:
                 if(!commandController->sendCommand(currRobot, QString("o")))
                     setMessageTop(TEXT_COLOR_DANGER, "Failed to send the robot " + currRobot->getName() + " home, please try again");
             break;
@@ -5186,7 +5186,7 @@ void MainWindow::relayTutorialSignal(const bool messageNeeded){
 }
 
 void MainWindow::commandDoneSlot(QString cmdName, bool success, QString robotName, QString newRobotName, QString groupName, QString pathName, bool scan, int robotNb, QStringList path){
-    qDebug() << "MainWindow::commandDoneSlot" << cmdName << success << newRobotName << groupName << pathName << scan << robotNb << path;
+    //qDebug() << "MainWindow::commandDoneSlot" << cmdName << success << newRobotName << groupName << pathName << scan << robotNb << path;
 
     if(!cmdName.isEmpty()){
         switch (cmdName.at(0).unicode()) {
@@ -5399,6 +5399,8 @@ void MainWindow::commandDoneSendPath(bool success, bool boolean, QString robotNa
 }
 
 void MainWindow::commandDonePlayPath(bool success, int robotNb){
+    /// TODO fix all robots->getRobotsVector().at(robotNb) ro try to get the name before instead
+    /// for example when we click the bottom layout, check for the name there then emit the name instead
     QPointer<RobotView> robotView = robots->getRobotsVector().at(robotNb);
     if(robotView){
         if(success){

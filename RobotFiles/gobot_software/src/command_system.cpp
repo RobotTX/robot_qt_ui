@@ -85,17 +85,7 @@ bool execCommand(ros::NodeHandle n, std::vector<std::string> command){
 				int waitTime = std::stoi(command.at(3));
 
 				/// Before setting a new goal, we stop any teleoperation command
-				geometry_msgs::Twist twist;
-				twist.linear.x = 0;
-				twist.linear.y = 0;
-				twist.linear.z = 0;
-				twist.angular.x = 0;
-				twist.angular.y = 0;
-				twist.angular.z = 0;
-
-				teleop_pub.publish(twist);
-
-				ros::spinOnce();
+				stopTwist();
 
 				/// Send a goal
 				geometry_msgs::PoseStamped msg;
@@ -210,6 +200,13 @@ bool execCommand(ros::NodeHandle n, std::vector<std::string> command){
 					if(path_stage_file){
 						path_stage_file << "0";
 						path_stage_file.close();
+
+						std_srvs::Empty arg;
+						if(ros::service::call("stop_path", arg))
+							std::cout << "Stop path service called with success";
+						else
+							std::cout << "Stop path service call failed";
+
 						return true;
 					} else
 						std::cout << "Sorry we were not able to find the file play_path.txt in order to keep track of the stage of the path to be played" << std::endl;
@@ -395,6 +392,20 @@ bool execCommand(ros::NodeHandle n, std::vector<std::string> command){
 		break;
 	}
 	return false;
+}
+
+void stopTwist(){
+	geometry_msgs::Twist twist;
+	twist.linear.x = 0;
+	twist.linear.y = 0;
+	twist.linear.z = 0;
+	twist.angular.x = 0;
+	twist.angular.y = 0;
+	twist.angular.z = 0;
+
+	teleop_pub.publish(twist);
+
+	ros::spinOnce();
 }
 
 void startRobotPos(){
@@ -612,7 +623,7 @@ void getPorts(boost::shared_ptr<tcp::socket> sock, ros::NodeHandle n){
 			std::cout << "(Command system) Too many arguments to display (" << command.size() << ")" << std::endl;
 
 		execCommand(n, command);
-		std::cout << "getPorts done" << std::endl;
+		std::cout << "(Command system) GetPorts done" << std::endl;
 	}
 }
 
@@ -631,7 +642,7 @@ void session(boost::shared_ptr<tcp::socket> sock, ros::NodeHandle n){
 
 			boost::system::error_code error;
 			size_t length = sock->read_some(boost::asio::buffer(data), error);
-			std::cout << length << " byte(s) received" << std::endl;
+			std::cout << "(Command system) " << length << " byte(s) received" << std::endl;
 			if ((error == boost::asio::error::eof) || (error == boost::asio::error::connection_reset)){
 				std::cout << "(Command system) Connection closed" << std::endl;
 				connected = false;
@@ -651,34 +662,55 @@ void session(boost::shared_ptr<tcp::socket> sock, ros::NodeHandle n){
 					commandStr += sub + " ";
 			}
 
-			command.push_back(std::string(1, commandStr.at(0)));
+			if(commandStr.length() > 0){
+				command.push_back(std::string(1, commandStr.at(0)));
+			
+	   			std::list<std::string> l;
+				boost::regex_split(std::back_inserter(l), commandStr, cmd_regex);
+				while(l.size()) {
+					std::string s = *(l.begin());
+					l.pop_front();
+					command.push_back(s);
+				}
 
-   			std::list<std::string> l;
-			boost::regex_split(std::back_inserter(l), commandStr, cmd_regex);
-			while(l.size()) {
-				std::string s = *(l.begin());
-				l.pop_front();
-				command.push_back(s);
-			}
+				if(finishedCmd){
+					std::cout << "(Command system) Executing command : " << std::endl;
+					if(command.size() < 10){
+						for(int i = 0; i < command.size(); i++)
+							std::cout << "'" << command.at(i) << "'" << std::endl;
+					} else 
+						std::cout << "(Command system) Too many arguments to display (" << command.size() << ")" << std::endl;
 
-			if(finishedCmd){
-				std::cout << "(Command system) Executing command : " << std::endl;
-				if(command.size() < 10){
-					for(int i = 0; i < command.size(); i++)
-						std::cout << "'" << command.at(i) << "'" << std::endl;
-				} else 
-					std::cout << "(Command system) Too many arguments to display (" << command.size() << ")" << std::endl;
+					std::string msg = command.at(0);
+					if(execCommand(n, command))
+						msg += " done";
+					else 
+						msg += " failed";
 
-				std::string msg = command.at(0);
-				if(execCommand(n, command))
-					msg += " done";
-				else 
-					msg += " failed";
+					sendMessageToPc(sock, msg);
+					command.clear();
+					finishedCmd = 0;
+					commandStr = "";
+				}
+			} else {
+					std::cout << "\n******************\n(Command system) Got a bad command to debug :" << std::endl;
+					std::istringstream iss2(data);
 
-				sendMessageToPc(sock, msg);
-				command.clear();
-				finishedCmd = 0;
-				commandStr = "";
+					std::string sub;
+					while (iss2){
+						iss2 >> sub;
+					}
+
+					std::cout << "(Command system) data received : " << sub.length() << "byte(s) in str : " << sub << std::endl;
+					std::cout << "(Command system) data received raw : " << sub << std::endl;
+					for(int i = 0; i < max_length; i++){
+						std::cout << i << ": " << static_cast<int>(data[i]) << " or " << data[i] << std::endl;
+					}
+
+
+					std::cout << "(Command system) Stopping the function\n******************\n" << std::endl;
+
+					return;
 			}
 		}
 	} catch (std::exception& e) {
@@ -840,7 +872,7 @@ int main(int argc, char* argv[]){
 		stopLaserClient = n.serviceClient<std_srvs::Empty>("stop_laser_data_sender");
 
 		go_pub = n.advertise<geometry_msgs::PoseStamped>("/move_base_simple/goal", 1000);
-    teleop_pub = n.advertise<geometry_msgs::Twist>("/cmd_vel", 1000);
+    	teleop_pub = n.advertise<geometry_msgs::Twist>("/cmd_vel", 1000);
 
 		server(CMD_PORT, n);
 		
