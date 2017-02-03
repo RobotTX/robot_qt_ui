@@ -11,7 +11,7 @@
 #include "View/spacewidget.h"
 #include <QKeyEvent>
 #include "topleftmenu.h"
-#include "toplayout.h"
+#include "toplayoutwidget.h"
 #include "View/custompushbutton.h"
 #include "View/customlabel.h"
 #include "View/customlineedit.h"

@@ -1,5 +1,5 @@
-#ifndef TOPLAYOUT_H
-#define TOPLAYOUT_H
+#ifndef TOPLAYOUTWIDGET_H
+#define TOPLAYOUTWIDGET_H
 
 class QHBoxLayout;
 class CustomPushButton;
@@ -7,13 +7,14 @@ class CustomPushButton;
 #include <QWidget>
 #include <QMainWindow>
 #include <QLabel>
+#include "Model/toplayout.h"
 
-class TopLayout : public QWidget{
+class TopLayoutWidget : public QWidget{
     Q_OBJECT
 
 public:
 
-    TopLayout(QMainWindow* parent);
+    TopLayoutWidget(const TopLayout &topLayout, QMainWindow* parent = 0);
 
     QString getLabelText(void) const { return label->text(); }
     QString getLabelPerm(void) const { return labelPerm->text(); }
@@ -61,7 +62,7 @@ public:
 
     void addRobotWithoutHome(QString robotName);
     void removeRobotWithoutHome(QString robotName);
-    void setRobotNoHomeLabel();
+    void setRobotNoHomeLabel(const QString robots_string);
 
 private:
     QHBoxLayout* layout;
@@ -73,7 +74,6 @@ private:
     CustomPushButton* settingBtn;
     CustomPushButton* saveMapBtn;
     CustomPushButton* testButton;
-    QVector<QString> robotsWithoutHome;
 };
 
 #endif // TOPLAYOUT_H

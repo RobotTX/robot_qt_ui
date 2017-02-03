@@ -16,7 +16,7 @@
 #include <QKeyEvent>
 #include <QDebug>
 #include "View/customlineedit.h"
-#include "View/toplayout.h"
+#include "View/toplayoutwidget.h"
 #include "View/pointview.h"
 #include <QAbstractButton>
 #include "View/custompushbutton.h"

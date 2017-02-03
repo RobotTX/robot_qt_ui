@@ -11,7 +11,7 @@
 #include "Model/xmlparser.h"
 #include "View/spacewidget.h"
 #include "Model/map.h"
-#include "toplayout.h"
+#include "toplayoutwidget.h"
 #include "Model/robots.h"
 #include "Model/robot.h"
 #include "View/robotview.h"

@@ -30,10 +30,11 @@ class DrawObstacles;
 class MapView;
 class LaserController;
 class SettingsController;
+class TopLayoutController;
 
 #include "Model/paths.h"
 #include "View/createpointwidget.h"
-#include "View/toplayout.h"
+#include "View/toplayoutwidget.h"
 #include "Model/points.h"
 #include "View/robotview.h"
 #include <QMainWindow>
@@ -354,7 +355,6 @@ private:
     QVector<QSharedPointer<PointView>> pointViewsToDisplay;
     PathPainter* pathPainter;
 
-    TopLayout* topLayout;
     QMessageBox msgBox;
 
     QList<QPair<QPair<QWidget*, QString>, MainWindow::WidgetType>> lastWidgets;
@@ -386,6 +386,8 @@ private:
 
     /// feature that we are currently using, useful to determine which tutorial message to enable / disable
     QString currentFeature;
+
+    TopLayoutController* topLayoutController;
 
 };
 

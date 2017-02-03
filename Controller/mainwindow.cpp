@@ -32,7 +32,7 @@
 #include "View/pathpainter.h"
 #include "View/pointbuttongroup.h"
 #include "View/customscrollarea.h"
-#include "View/toplayout.h"
+#include "View/toplayoutwidget.h"
 #include "View/customlineedit.h"
 #include "View/pathpointcreationwidget.h"
 #include "View/pathpointlist.h"
@@ -59,6 +59,7 @@
 #include "View/drawobstacles.h"
 #include "Controller/lasercontroller.h"
 #include "Controller/settingscontroller.h"
+#include "Controller/toplayoutcontroller.h"
 
 #include <QMediaPlayer>
 #include <QMediaPlaylist>
@@ -69,19 +70,6 @@
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow) {
     ui->setupUi(this);
-
-    /*
-
-    QMediaPlayer* player = new QMediaPlayer;
-    QVideoWidget* videoWidget = new QVideoWidget;
-    player->setVideoOutput(videoWidget);
-
-    videoWidget->setGeometry(250, 250, 500, 500);
-    videoWidget->show();
-    player->setMedia(QUrl::fromLocalFile("/home/joan/Videos/getting_started/awesome.wmv"));
-    player->play();
-
-    */
 
     /// centers the msgBox on the middle of the screen
     msgBox.move(mapToGlobal(QPoint(QApplication::desktop()->screenGeometry().width()/2,
@@ -121,8 +109,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
 
     /// Create the toolbar
-    topLayout = new TopLayout(this);
-    mainLayout->addWidget(topLayout);
+    topLayoutController = new TopLayoutController(this);
+    mainLayout->addWidget(topLayoutController->getTopLayout());
 
     QHBoxLayout* bottom = new QHBoxLayout();
 
@@ -271,7 +259,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     rightLayout->setContentsMargins(0, 0, 0, 0);
     bottom->setContentsMargins(0, 0, 0, 0);
     mainLayout->setContentsMargins(0, 0, 0, 0);
-    topLayout->setContentsMargins(0, 0, 0, 0);
     bottomLayout->setContentsMargins(0, 0, 0, 0);
     mainLayout->setSpacing(0);
 }
@@ -317,72 +304,6 @@ void MainWindow::initializeRobots(){
     connect(&serverThread, SIGNAL(finished()), robotServerWorker, SLOT(deleteLater()));
     serverThread.start();
     robotServerWorker->moveToThread(&serverThread);
-
-   /*
-
-    QFileInfo fileInfo(QDir::currentPath(), "../gobot-software/" + QString(ROBOTS_NAME_FILE));
-    QFile fileWrite(fileInfo.absoluteFilePath());
-
-    fileWrite.resize(0);
-    fileWrite.open(QIODevice::WriteOnly);
-    QDataStream out(&fileWrite);
-    QMap<QString, QString> tmpMap = robots->getRobotsNameMap();
-
-    QString robotIp1 = "localhost";
-    QString robotName1 = tmpMap.value(robotIp1, "Roboty");
-
-    QPointer<Robot> robot1(QPointer<Robot>(new Robot(this, paths, robotName1, robotIp1)));
-    robot1->setWifi("Swaghetti Yolognaise");
-    QPointer<RobotView> robotView1 = QPointer<RobotView>(new RobotView(robot1, mapPixmapItem));
-    robotView1->setLastStage(2);
-
-    connect(robotView1, SIGNAL(setSelectedSignal(QPointer<RobotView>)), this, SLOT(setSelectedRobot(QPointer<RobotView>)));
-
-    robotView1->setPosition(896, 1094);
-    robotView1->setParentItem(mapPixmapItem);
-    robots->add(robotView1);
-    tmpMap[robot1->getIp()] = robot1->getName();
-
-    QString robotIp2 = "192.168.4.12";
-    QString robotName2 = tmpMap.value(robotIp2, "Roboto");
-    QPointer<Robot> robot2(QPointer<Robot>(new Robot(this, paths, robotName2, robotIp2)));
-    robot2->setWifi("Swaghetti Yolognaise");
-    QPointer<RobotView> robotView2 = QPointer<RobotView>(new RobotView(robot2, mapPixmapItem));
-    connect(robotView2, SIGNAL(setSelectedSignal(QPointer<RobotView>)), this, SLOT(setSelectedRobot(QPointer<RobotView>)));
-    robotView2->setPosition(907, 1175);
-    robotView2->setParentItem(mapPixmapItem);
-    robots->add(robotView2);
-    tmpMap[robot2->getIp()] = robot2->getName();
-
-    QString robotIp3 = "192.168.4.13";
-    QString robotName3 = tmpMap.value(robotIp3, "Robota");
-    QPointer<Robot> robot3(QPointer<Robot>(new Robot(this, paths, robotName3, robotIp3)));
-    robot3->setWifi("Swaghetti Yolognaise");
-    QPointer<RobotView> robotView3 = QPointer<RobotView>(new RobotView(robot3, mapPixmapItem));
-    connect(robotView3, SIGNAL(setSelectedSignal(QPointer<RobotView>)), this, SLOT(setSelectedRobot(QPointer<RobotView>)));
-    robotView3->setPosition(1148, 915);
-    robotView3->setParentItem(mapPixmapItem);
-    robots->add(robotView3);
-    tmpMap[robot3->getIp()] = robot3->getName();
-
-    robots->setRobotsNameMap(tmpMap);
-    out << robots->getRobotsNameMap();
-    fileWrite.close();
-
-
-    for(int i = 0; i < robots->getRobotsVector().size(); i++){
-        QFileInfo fileinfo(QDir::currentPath(), "../gobot-software/robots_paths/" + robots->getRobotsVector().at(i)->getRobot()->getName() + "_path");
-        QFile robotPathFile(fileinfo.absoluteFilePath());
-        qDebug() << "robot file" << fileinfo.absoluteFilePath();
-        if(robotPathFile.exists()){
-            robotPathFile.open(QIODevice::ReadOnly);
-            QDataStream in(&robotPathFile);
-            in >> *(robots->getRobotsVector().at(i)->getRobot());
-            robotPathFile.close();
-        }
-    }
-*/
-    //qDebug() << "RobotsNameMap on init" << robots->getRobotsNameMap();
 }
 
 void MainWindow::updateRobot(const QString ipAddress, const float posX, const float posY, const float oriZ){
@@ -493,7 +414,7 @@ void MainWindow::deletePath(int robotNb){
                 case QMessageBox::Ok:
                     /// if the command is succesfully sent to the robot, we apply the change
                     if(!commandController->sendCommand(robot, QString("k"), "", "", "", false, robotNb))
-                        topLayout->setLabel(TEXT_COLOR_DANGER, "Failed to delete the path of " + robot->getName() + ", please try again");
+                        topLayoutController->setLabel(TEXT_COLOR_DANGER, "Failed to delete the path of " + robot->getName() + ", please try again");
                 break;
                 case QMessageBox::Cancel:
                     qDebug() << "Cancel was clicked";
@@ -511,7 +432,7 @@ void MainWindow::deletePath(int robotNb){
                 case QMessageBox::Ok:
                     /// if the command is succesfully sent to the robot, we apply the change
                     if(!commandController->sendCommand(robot, QString("m"), "", "", "", false, robotNb))
-                        topLayout->setLabel(TEXT_COLOR_DANGER, "Failed to delete the path of " + robot->getName() + ", please try again");
+                        topLayoutController->setLabel(TEXT_COLOR_DANGER, "Failed to delete the path of " + robot->getName() + ", please try again");
                 break;
                 case QMessageBox::Cancel:
                     qDebug() << "Cancel was clicked";
@@ -530,7 +451,7 @@ void MainWindow::stopPath(int robotNb){
     qDebug() << "MainWindow::StopPath called";
     QPointer<Robot> robot = robots->getRobotsVector().at(robotNb)->getRobot();
     if(!commandController->sendCommand(robot, QString("l"), "", "", "", false, robotNb))
-        topLayout->setLabel(TEXT_COLOR_DANGER, "Path failed to be stopped, please try again");
+        topLayoutController->setLabel(TEXT_COLOR_DANGER, "Path failed to be stopped, please try again");
 }
 
 void MainWindow::playSelectedRobot(int robotNb){
@@ -539,14 +460,14 @@ void MainWindow::playSelectedRobot(int robotNb){
         qDebug() << "pause path on robot " << robotNb << " : " << robot->getName();
         /// if the command is succesfully sent to the robot, we apply the change
         if(!commandController->sendCommand(robot, QString("d"), "", "", "", false, robotNb))
-            topLayout->setLabel(TEXT_COLOR_DANGER, "Path failed to be stopped, please try again");
+            topLayoutController->setLabel(TEXT_COLOR_DANGER, "Path failed to be stopped, please try again");
 
     } else {
         qDebug() << "play path on robot " << robotNb << " : " << robot->getName();
 
         /// if the command is succesfully sent to the robot, we apply the change
         if(!commandController->sendCommand(robot, QString("j"), "", "", "", false, robotNb))
-            topLayout->setLabel(TEXT_COLOR_DANGER, "Path failed to start, please try again");
+            topLayoutController->setLabel(TEXT_COLOR_DANGER, "Path failed to start, please try again");
     }
 }
 
@@ -607,11 +528,11 @@ void MainWindow::setSelectedRobot(QPointer<RobotView> robotView){
     if(selectedRobot->getRobot()->getPath().size() == 0){
         setMessageTop(TEXT_COLOR_INFO, "You can assign a path to your robot by clicking the button labeled \"Assign a path\"");
         if(!selectedRobot->getRobot()->getHome())
-            setMessageTop(TEXT_COLOR_INFO, topLayout->getLabelText() + "\nYou can assign a home to your robot by clicking the button "
-                                                                       "labeled \"Assign a home point\"");
+            topLayoutController->setLabel(TEXT_COLOR_INFO, topLayoutController->getLabelText() + "\nYou can assign a home to your robot by clicking the button "
+                                                                                                 "labeled \"Assign a home point\"");
     } else
         if(!selectedRobot->getRobot()->getHome())
-            setMessageTop(TEXT_COLOR_INFO, topLayout->getLabelText() + "You can assign a home to your robot by clicking the button "
+            topLayoutController->setLabel(TEXT_COLOR_INFO, topLayoutController->getLabelText() + "You can assign a home to your robot by clicking the button "
                                                                        "labeled \"Assign a home point\"");
 
     editSelectedRobotWidget->setSelectedRobot(selectedRobot);
@@ -1248,7 +1169,7 @@ void MainWindow::robotIsDeadSlot(QString hostname, QString ip){
         /// bottomLayout
         bottomLayout->removeRobot(id);
 
-        topLayout->removeRobotWithoutHome(hostname);
+        topLayoutController->removeRobotWithoutHome(hostname);
 
         mapPixmapItem->update();
 
@@ -1705,7 +1626,7 @@ void MainWindow::saveEditMapSlot(){
 
 void MainWindow::mergeMapSlot(){
     qDebug() << "MainWindow::mergeMapSlot called";
-    topLayout->setLabel(TEXT_COLOR_INFO, "You can select a map by clicking it or by clicking the list in the menu."
+    topLayoutController->setLabel(TEXT_COLOR_INFO, "You can select a map by clicking it or by clicking the list in the menu."
                                          "\nYou can move a map by dragging and dropping it or by using the directional keys."
                                          "\nYou can rotate the map in the menu using the text block or the slider.");
 
@@ -1743,7 +1664,7 @@ void MainWindow::saveMergeMapSlot(double resolution, Position origin, QImage ima
     saveMap(fileName);
 
     sendNewMapToRobots();
-    topLayout->setLabel(TEXT_COLOR_SUCCESS, "The new merged map has been save successfully");
+    topLayoutController->setLabel(TEXT_COLOR_SUCCESS, "The new merged map has been save successfully");
 }
 
 void MainWindow::saveScanMapSlot(double resolution, Position origin, QImage image, QString fileName){
@@ -1768,7 +1689,7 @@ void MainWindow::saveScanMapSlot(double resolution, Position origin, QImage imag
     saveMap(fileName);
 
     sendNewMapToRobots();
-    topLayout->setLabel(TEXT_COLOR_SUCCESS, "The new scanned map has been save successfully");
+    topLayoutController->setLabel(TEXT_COLOR_SUCCESS, "The new scanned map has been save successfully");
 }
 
 void MainWindow::teleopCmdSlot(QString robotName, int id){
@@ -1834,7 +1755,7 @@ void MainWindow::initializeBottomPanel(){
 }
 
 void MainWindow::setMessageTop(const QString msgType, const QString msg){
-    topLayout->setLabel(msgType, msg);
+    topLayoutController->setLabel(msgType, msg);
 }
 
 void MainWindow::closeSlot(){
@@ -2564,7 +2485,7 @@ void MainWindow::displayGroupMapEvent(void){
 
                 } else if(points->getGroups()->value(checkedName)->size() == 0) {
                     pointsLeftWidget->getActionButtons()->getMapButton()->setChecked(false);
-                    topLayout->setLabelDelay(TEXT_COLOR_WARNING, "This group is empty. There is no points to display", 4000);
+                    topLayoutController->setLabelDelay(TEXT_COLOR_WARNING, "This group is empty. There is no points to display", 4000);
                 } else {
                     /// updates the tooltip of the map button
                     pointsLeftWidget->getActionButtons()->getMapButton()->setToolTip("Click here to hide the selected group on the map");
@@ -3042,7 +2963,7 @@ void MainWindow::updatePoint(void){
         leftMenu->getDisplaySelectedPoint()->getNameEdit()->hide();
         leftMenu->getDisplaySelectedPoint()->getNameLabel()->show();
 
-        topLayout->setLabelDelay(TEXT_COLOR_SUCCESS, "Your point has been successfully updated", 4000);
+        topLayoutController->setLabelDelay(TEXT_COLOR_SUCCESS, "Your point has been successfully updated", 4000);
     } /// otherwise the point is not saved and an error message is displayed at the top
     else
         setTemporaryMessageTop(TEXT_COLOR_DANGER, "You cannot save your point \"" +
@@ -3060,7 +2981,7 @@ void MainWindow::cancelEvent(void){
     leftMenu->getDisplaySelectedPoint()->getNameLabel()->show();
     leftMenu->getCloseButton()->setEnabled(true);
     leftMenu->getReturnButton()->setEnabled(true);
-    topLayout->setEnabled(true);
+    topLayoutController->enableLayout(true);
     /// reset the color of the pointView
     QSharedPointer<PointView> displaySelectedPointView = points->findPointView(leftMenu->getDisplaySelectedPoint()->getPointName());
     if(displaySelectedPointView){
@@ -3396,9 +3317,9 @@ void MainWindow::createGroup(QString groupName){
         pointsLeftWidget->disableButtons();
         pointsLeftWidget->getActionButtons()->getPlusButton()->setEnabled(true);
         pointsLeftWidget->getActionButtons()->getPlusButton()->setToolTip("Click here to add a new group");
-        topLayout->setEnabled(true);
+        topLayoutController->enableLayout(true);
 
-        topLayout->setLabelDelay(TEXT_COLOR_SUCCESS, "You have successfully created a new group : \"" + groupName + "\"", 4000);
+        topLayoutController->setLabelDelay(TEXT_COLOR_SUCCESS, "You have successfully created a new group : \"" + groupName + "\"", 4000);
     } else if(pointsLeftWidget->checkGroupName(groupName) == 1){
         pointsLeftWidget->setLastCheckedId("");
 
@@ -3418,16 +3339,16 @@ void MainWindow::createGroup(QString groupName){
         pointsLeftWidget->disableButtons();
         pointsLeftWidget->getActionButtons()->getPlusButton()->setEnabled(true);
         pointsLeftWidget->getActionButtons()->getPlusButton()->setToolTip("Click here to add a new group");
-        topLayout->setEnabled(true);
+        topLayoutController->enableLayout(true);
     } else
-        topLayout->setLabelDelay(TEXT_COLOR_DANGER, "You cannot choose : " + groupName + " as a new name for your group because another group already has this name", 4000);
+        topLayoutController->setLabelDelay(TEXT_COLOR_DANGER, "You cannot choose : " + groupName + " as a new name for your group because another group already has this name", 4000);
 }
 
 void MainWindow::modifyGroupWithEnter(QString name){
     name = name.simplified();
     qDebug() << "MainWindow::modifyGroupWithEnter called : modifying group after enter key pressed from" << pointsLeftWidget->getLastCheckedId() << "to" << name;
 
-    topLayout->setEnabled(true);
+    topLayoutController->enableLayout(true);
     setEnableAll(true);
     QString oldGroupName = pointsLeftWidget->getLastCheckedId();
     qDebug() << "checkgroupname result is" << pointsLeftWidget->checkGroupName(name);
@@ -3464,7 +3385,7 @@ void MainWindow::modifyGroupWithEnter(QString name){
         /// resets the pixmaps
         points->setPixmapAll(PointView::PixmapType::NORMAL);
 
-        topLayout->setLabelDelay(TEXT_COLOR_SUCCESS, "You have successfully updated the name of your group from \"" + oldGroupName + "\" to \"" + name + "\"", 4000);
+        topLayoutController->setLabelDelay(TEXT_COLOR_SUCCESS, "You have successfully updated the name of your group from \"" + oldGroupName + "\" to \"" + name + "\"", 4000);
 
     } else if(pointsLeftWidget->checkGroupName(name) == 1){
         /// enables the buttons
@@ -3486,13 +3407,13 @@ void MainWindow::modifyGroupWithEnter(QString name){
         pointsLeftWidget->setLastCheckedId("");
     }
     else
-        topLayout->setLabelDelay(TEXT_COLOR_DANGER, "You cannot choose : " + name + " as a new name for your group because another group already has this name", 4000);
+        topLayoutController->setLabelDelay(TEXT_COLOR_DANGER, "You cannot choose : " + name + " as a new name for your group because another group already has this name", 4000);
 }
 
 void MainWindow::modifyGroupAfterClick(QString name){
     name = name.simplified();
     qDebug() << "modifyGroupAfterClick called from" << pointsLeftWidget->getLastCheckedId() << "to" << name;
-    topLayout->setEnabled(true);
+    topLayoutController->enableLayout(true);
 
     if (pointsLeftWidget->getLastCheckedId() != "")
      {
@@ -3525,14 +3446,14 @@ void MainWindow::modifyGroupAfterClick(QString name){
 
         pointsLeftWidget->getGroupButtonGroup()->getButtonGroup()->button(checkedId)->show();
         pointsLeftWidget->setLastCheckedId("");
-        topLayout->setLabelDelay(color, msg, 4000);
+        topLayoutController->setLabelDelay(color, msg, 4000);
     }
 }
 
 void MainWindow::enableReturnAndCloseButtons(){
     leftMenu->getReturnButton()->setEnabled(true);
     leftMenu->getCloseButton()->setEnabled(true);
-    topLayout->setEnabled(true);
+    topLayoutController->enableLayout(true);
 }
 
 void MainWindow::setMessageCreationGroup(QString type, QString message){
@@ -3860,11 +3781,11 @@ void MainWindow::saveGroupPaths(QString name){
         leftMenu->getGroupsPathsWidget()->disableButtons();
         leftMenu->getGroupsPathsWidget()->getActionButtons()->getPlusButton()->setEnabled(true);
         leftMenu->getGroupsPathsWidget()->getActionButtons()->getPlusButton()->setToolTip("Click here to add a new group of paths");
-        topLayout->setEnabled(true);
+        topLayoutController->enableLayout(true);
         leftMenu->getGroupsPathsWidget()->getActionButtons()->getPlusButton()->setEnabled(true);  
         serializePaths(QDir::currentPath() + QDir::separator() + "paths.dat");
 
-        topLayout->setLabelDelay(TEXT_COLOR_SUCCESS, "You have created a new group of paths", 4000);
+        topLayoutController->setLabelDelay(TEXT_COLOR_SUCCESS, "You have created a new group of paths", 4000);
 
     } else if(leftMenu->getGroupsPathsWidget()->checkGroupName(name) == 1){
         /// enables the return button again
@@ -3880,11 +3801,11 @@ void MainWindow::saveGroupPaths(QString name){
         leftMenu->getGroupsPathsWidget()->disableButtons();
         leftMenu->getGroupsPathsWidget()->getActionButtons()->getPlusButton()->setEnabled(true);
         leftMenu->getGroupsPathsWidget()->getActionButtons()->getPlusButton()->setToolTip("Click here to add a new group of paths");
-        topLayout->setEnabled(true);
+        topLayoutController->enableLayout(true);
         leftMenu->getGroupsPathsWidget()->getActionButtons()->getPlusButton()->setEnabled(true);
     }
     else
-        topLayout->setLabelDelay(TEXT_COLOR_DANGER, "You cannot choose : " + name + " as a new name for your group because another group already has this name", 4000);
+        topLayoutController->setLabelDelay(TEXT_COLOR_DANGER, "You cannot choose : " + name + " as a new name for your group because another group already has this name", 4000);
 }
 
 void MainWindow::modifyGroupPathsWithEnter(QString name){
@@ -3905,7 +3826,7 @@ void MainWindow::modifyGroupPathsWithEnter(QString name){
         paths->getGroups()->remove(leftMenu->getGroupsPathsWidget()->getButtonGroup()->getButtonGroup()->checkedButton()->text());
         paths->getGroups()->insert(name, value);
         leftMenu->getGroupsPathsWidget()->updateGroupsPaths();
-        topLayout->setLabelDelay(TEXT_COLOR_SUCCESS, "You have successfully modified the name of your group", 4000);
+        topLayoutController->setLabelDelay(TEXT_COLOR_SUCCESS, "You have successfully modified the name of your group", 4000);
     } else {
         leftMenu->getGroupsPathsWidget()->updateGroupsPaths();
         setMessageTop(TEXT_COLOR_NORMAL, "");
@@ -3982,67 +3903,6 @@ void MainWindow::createPath(){
 void MainWindow::deletePath(){
     qDebug() << "MainWindow::deletePath called";
     deletePathSlot(lastWidgets.at(lastWidgets.size()-1).first.second, leftMenu->getPathGroupDisplayed()->getLastCheckedButton());
-    /*
-    QString message("This path has been assigned to the robot(s) : ");
-    /// the ids of the robots whose path is the one being deleted
-    QList<int> robotsIds;
-    /// to write a well formed sentence
-    bool first(true);
-    /// we check if this path has been assigned to a robot
-    for(int i = 0; i < robots->getRobotsVector().size(); i++){
-        if(!robots->getRobotsVector().at(i)->getRobot()->getPathName().compare(leftMenu->getPathGroupDisplayed()->getLastCheckedButton())){
-            qDebug() << "The path" << leftMenu->getPathGroupDisplayed()->getLastCheckedButton() <<
-                        "has been assigned to the robot" << robots->getRobotsVector().at(i)->getRobot()->getName();
-            robotsIds.push_back(i);
-            if(first){
-                message += robots->getRobotsVector().at(i)->getRobot()->getName();
-                first = false;
-            } else
-                message += ", " + robots->getRobotsVector().at(i)->getRobot()->getName();
-        }
-    }
-    message += ". If you delete this path, these robots will lose their path. Click \"ok\" if you wish to continue.";
-    int answer = openConfirmMessage((first) ? "Are you sure you want to delete this path, this action is irreversible ?" :
-                                              message);
-
-    switch(answer){
-    case QMessageBox::StandardButton::Ok:
-    {
-        leftMenu->getPathGroupDisplayed()->initializeActionButtons();
-        /// resets the path painter if the path displayed is the one we just destroyed
-        qDebug() << "deleting path" << leftMenu->getPathGroupDisplayed()->getLastCheckedButton();
-
-        if(!pathPainter->getVisiblePath().compare(leftMenu->getPathGroupDisplayed()->getLastCheckedButton())){
-            qDebug() << "hey i have to stop displaying this path that was destroyed";
-            emit resetPath();
-        } else
-            qDebug() << "dont have to stop displaying this path" << pathPainter->getVisiblePath() << "because the last one checked is" << leftMenu->getPathGroupDisplayed()->getLastCheckedButton();
-
-        /// remove the paths of the robots
-        while(!robotsIds.empty()){
-            qDebug() << "id : " << robotsIds.front();
-            clearPath(robotsIds.front());
-            robotsIds.pop_front();
-        }
-
-        paths->deletePath(lastWidgets.at(lastWidgets.size()-1).first.second, leftMenu->getPathGroupDisplayed()->getLastCheckedButton());
-        serializePaths(QDir::currentPath() + QDir::separator() + "paths.dat");
-
-        leftMenu->getPathGroupDisplayed()->setPathsGroup(lastWidgets.at(lastWidgets.size()-1).first.second);
-
-        setMessageTop(TEXT_COLOR_SUCCESS, "You have successfully deleted the path " + leftMenu->getPathGroupDisplayed()->getLastCheckedButton());
-    }
-    break;
-    case QMessageBox::StandardButton::Cancel:
-        leftMenu->getPathGroupDisplayed()->getPathButtonGroup()->uncheck();
-        leftMenu->getPathGroupDisplayed()->setLastCheckedButton("");
-    break;
-    default:
-        Q_UNREACHABLE();
-        qDebug() << "MainWindow::deletePath you should not be here, you probably forgot to implement the behavior for one of your buttons";
-    break;
-    }
-    */
 }
 
 void MainWindow::displayPathOnMap(const bool display){
@@ -4189,7 +4049,7 @@ void MainWindow::cancelNoRobotPathSlot(){
     pathPainter->setOldPath(oldPath);
     setEnableAll(false, GraphicItemState::NO_EVENT);
     leftMenu->setEnableReturnCloseButtons(true);
-    topLayout->setEnable(true);
+    topLayoutController->enableLayout(true);
     bottomLayout->setEnable(true);
 
     setTemporaryMessageTop(TEXT_COLOR_INFO, "You have cancelled the modifications of the path \"" + pathCreationWidget->getCurrentPathName() + "\"", 2500);
@@ -4421,7 +4281,7 @@ void MainWindow::delay(const int ms){
 void MainWindow::setEnableAll(bool enable, GraphicItemState state, int noReturn){
     setGraphicItemsState(state);
     bottomLayout->setEnable(enable);
-    topLayout->setEnable(enable);
+    topLayoutController->enableLayout(enable);
     leftMenu->setEnableReturnCloseButtons((noReturn == -1) ? enable : noReturn);
 }
 
@@ -4870,7 +4730,7 @@ void MainWindow::robotHasNoHome(QString robotName){
     chooseHomeMessageBox.setText("\"" + robotName + "\" does not have a home point yet.\n Please choose a home for the robot in the robot menu.");
     chooseHomeMessageBox.exec();
     qDebug() << "HOME ROBOT NO HOME AT ALL";
-    topLayout->addRobotWithoutHome(robotName);
+    topLayoutController->addRobotWithoutHome(robotName);
 }
 
 void MainWindow::updatePathInfo(const QString robotName, QString pathDate, QStringList path){
@@ -5333,9 +5193,9 @@ void MainWindow::commandDonePausePath(bool success, int robotNb){
                 bottomLayout->getStopRobotBtnGroup()->button(robotNb)->setEnabled(true);
             else
                 bottomLayout->getStopRobotBtnGroup()->button(robotNb)->setEnabled(false);
-            topLayout->setLabel(TEXT_COLOR_SUCCESS, "Path paused");
+            topLayoutController->setLabel(TEXT_COLOR_SUCCESS, "Path paused");
         } else
-            topLayout->setLabel(TEXT_COLOR_DANGER, "Path failed to be paused, please try again");
+            topLayoutController->setLabel(TEXT_COLOR_DANGER, "Path failed to be paused, please try again");
     }
 }
 
@@ -5412,9 +5272,9 @@ void MainWindow::commandDonePlayPath(bool success, int robotNb){
             robotView->getRobot()->setPlayingPath(true);
             bottomLayout->getPlayRobotBtnGroup()->button(robotNb)->setIcon(QIcon(":/icons/pause.png"));
             bottomLayout->getStopRobotBtnGroup()->button(robotNb)->setEnabled(true);
-            topLayout->setLabel(TEXT_COLOR_SUCCESS, "Path playing");
+            topLayoutController->setLabel(TEXT_COLOR_SUCCESS, "Path playing");
         } else
-            topLayout->setLabel(TEXT_COLOR_DANGER, "Path failed to start, please try again");
+            topLayoutController->setLabel(TEXT_COLOR_DANGER, "Path failed to start, please try again");
     }
 }
 
@@ -5423,9 +5283,9 @@ void MainWindow::commandDoneDeletePath(bool success, int robotNb){
     if(robotView){
         if(success){
             clearPath(robotNb);
-            topLayout->setLabel(TEXT_COLOR_SUCCESS, "The path of \"" + robotView->getRobot()->getName() + "\" has been successfully deleted");
+            topLayoutController->setLabel(TEXT_COLOR_SUCCESS, "The path of \"" + robotView->getRobot()->getName() + "\" has been successfully deleted");
         } else
-            topLayout->setLabel(TEXT_COLOR_DANGER, "Failed to delete the path of " + robotView->getRobot()->getName() + ", please try again");
+            topLayoutController->setLabel(TEXT_COLOR_DANGER, "Failed to delete the path of " + robotView->getRobot()->getName() + ", please try again");
     }
 }
 
@@ -5436,9 +5296,9 @@ void MainWindow::commandDoneStopPath(bool success, int robotNb){
             robotView->getRobot()->setPlayingPath(false);
             bottomLayout->getPlayRobotBtnGroup()->button(robotNb)->setIcon(QIcon(":/icons/play.png"));
             bottomLayout->getStopRobotBtnGroup()->button(robotNb)->setEnabled(false);
-            topLayout->setLabel(TEXT_COLOR_SUCCESS, "Path stopped");
+            topLayoutController->setLabel(TEXT_COLOR_SUCCESS, "Path stopped");
         } else
-            topLayout->setLabel(TEXT_COLOR_DANGER, "Path failed to be stopped, please try again");
+            topLayoutController->setLabel(TEXT_COLOR_DANGER, "Path failed to be stopped, please try again");
     }
 }
 
@@ -5447,9 +5307,9 @@ void MainWindow::commandDoneStopDeletePath(bool success, int robotNb){
     if(robotView){
         if(success){
             clearPath(robotNb);
-            topLayout->setLabel(TEXT_COLOR_SUCCESS, "The path of " + robotView->getRobot()->getName() + " has been successfully deleted");
+            topLayoutController->setLabel(TEXT_COLOR_SUCCESS, "The path of " + robotView->getRobot()->getName() + " has been successfully deleted");
         } else
-            topLayout->setLabel(TEXT_COLOR_DANGER, "Failed to delete the path of " + robotView->getRobot()->getName() + ", please try again");
+            topLayoutController->setLabel(TEXT_COLOR_DANGER, "Failed to delete the path of " + robotView->getRobot()->getName() + ", please try again");
     }
 }
 
@@ -5488,7 +5348,7 @@ void MainWindow::commandDoneNewHome(bool success, QString robotName, int id, QSt
                 selectedRobot->getRobot()->setHome(home);
                 editSelectedRobotWidget->updateHomeMenu();
 
-                topLayout->removeRobotWithoutHome(selectedRobot->getRobot()->getName());
+                topLayoutController->removeRobotWithoutHome(selectedRobot->getRobot()->getName());
 
                 /// so that if the new home if part of the path it displays the path correctly (not a house on top of a normal point)
                 /// this call makes the home
