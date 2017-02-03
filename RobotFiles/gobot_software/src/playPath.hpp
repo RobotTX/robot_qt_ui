@@ -16,6 +16,7 @@
 #include <string>
 #include <actionlib/client/simple_action_client.h>
 #include <memory>
+#include <cmath>
 
 typedef actionlib::SimpleActionClient<move_base_msgs::MoveBaseAction> MoveBaseClient;
 
@@ -36,6 +37,6 @@ bool goHomeService(std_srvs::Empty::Request &req, std_srvs::Empty::Response &res
 bool stopGoingHomeService(std_srvs::Empty::Request &req, std_srvs::Empty::Response &res);
 void goToPoint(Point point);
 void goalReached();
-void setStageInFile();
+void setStageInFile(int _stage);
 
 #endif

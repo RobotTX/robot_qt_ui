@@ -1164,6 +1164,7 @@ void MainWindow::robotIsAliveSlot(QString hostname, QString ip, QString ssid, in
 
     /// updates the text in the bottom layout to make the stage appear
     if(rv->getLastStage() != stage){
+        /// TODO if (stage < 0) => message to tell the robot is blocked
         rv->setLastStage(stage);
         bottomLayout->updateStageRobot(robotId, rv, stage);
     }
@@ -5325,9 +5326,13 @@ void MainWindow::commandDonePausePath(bool success, int robotNb){
     QPointer<RobotView> robotView = robots->getRobotsVector().at(robotNb);
     if(robotView){
         if(success){
-            robotView->getRobot()->setPlayingPath(0);
+            robotView->getRobot()->setPlayingPath(false);
             bottomLayout->getPlayRobotBtnGroup()->button(robotNb)->setIcon(QIcon(":/icons/play.png"));
-            bottomLayout->getStopRobotBtnGroup()->button(robotNb)->setEnabled(true);
+
+            if(abs(robotView->getLastStage()) > 0)
+                bottomLayout->getStopRobotBtnGroup()->button(robotNb)->setEnabled(true);
+            else
+                bottomLayout->getStopRobotBtnGroup()->button(robotNb)->setEnabled(false);
             topLayout->setLabel(TEXT_COLOR_SUCCESS, "Path paused");
         } else
             topLayout->setLabel(TEXT_COLOR_DANGER, "Path failed to be paused, please try again");

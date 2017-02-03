@@ -29,35 +29,38 @@ ros::ServiceServer _stopGoingHomeService;
 
 
 void getRobotPos(const geometry_msgs::Pose::ConstPtr& msg){
+	// if there is a currentGoal
 	if(currentGoal.x != -1){
-		/*std::cout << "(PlayPath) robot position " << msg->position.x << " " << msg->position.y 
-		<< "\n(PlayPath) robot goal " << currentGoal.x << " " << currentGoal.y
-		<< std::endl;*/
-		if(msg->position.x - currentGoal.x < 0.5 && msg->position.y - currentGoal.y < 0.5){
+		/// we check if the robot is close enough to its goal
+		if(std::abs(msg->position.x - currentGoal.x) < ROBOT_POS_TOLERANCE && std::abs(msg->position.y - currentGoal.y) < ROBOT_POS_TOLERANCE){
+			/// if the robotalready arrived, we want to wait for the next goal instead of repeat the same "success" functions
 			if(!waitingForNextGoal){
 				std::cout << "(PlayPath) getRobotPos robot close enough to the goal" << std::endl;
-				std::cout << "(PlayPath) getRobotPos cancel goal" << std::endl;
-				ac->cancelAllGoals();
+				std::cout << "(PlayPath) robot position " << msg->position.x << " " << msg->position.y 
+				<< "\n(PlayPath) robot goal " << currentGoal.x << " " << currentGoal.y
+				<< std::endl;
 				waitingForNextGoal = true;
 				goalReached();
 			}
-		} else {
-			waitingForNextGoal = false;
 		}
 	}
 }
 
 // to get the status of the robot (completion of the path towards its next goal, SUCCEEDED = reached its goal, ACTIVE = currently moving towards its goal)
 void getStatus(const actionlib_msgs::GoalStatusArray::ConstPtr& goalStatusArray){
-	//std::cout << "(PlayPath) getStatus called" << std::endl;
-
 	if(currentGoal.x != -1){
-		/*std::cout << "(PlayPath) getStatus called with status : " 
-		<< static_cast<int>(goalStatusArray->status_list[0].status) << std::endl;*/
 		if(goalStatusArray->status_list[0].status == 3){
+			// if we reached the goal
 			if(!waitingForNextGoal){
 				waitingForNextGoal = true;
 				goalReached();
+			}
+		} else if(goalStatusArray->status_list[0].status == 4 || goalStatusArray->status_list[0].status == 5){
+			// if the goal could not be reached
+			if(!waitingForNextGoal){
+				waitingForNextGoal = true;
+				// we use -stage to tell where on the path we blocked
+				setStageInFile(-stage);
 			}
 		} else {
 			waitingForNextGoal = false;
@@ -72,35 +75,34 @@ void goalReached(){
 		std::cout << "(PlayPath) path point reached" << std::endl;
 		stage++;
 		if(stage >= path.size()){
-			// the robot successfully reached all its goals in order 
+			// the robot successfully reached all its goals
 			std::cout << "I have completed my journey Master Joda, what will you have me do ?" << std::endl;
 			// resets the stage of the path to be able to play the path from the start again
 			stage = 0;
 			currentGoal.x = -1;
 		} else {
+			// reached a normal/path goal so we sleep the given time
 			if(currentGoal.waitingTime > 0){
 				std::cout << "(PlayPath) goalReached going to sleep for " << currentGoal.waitingTime << " seconds" << std::endl;
 				sleep(currentGoal.waitingTime);
 			}
 			goNextPoint();
 		}
-		setStageInFile();
+		setStageInFile(stage);
 	}
 }
 
 bool stopPathService(std_srvs::Empty::Request &req, std_srvs::Empty::Response &res){
 	std::cout << "(PlayPath) stopPathService called" << std::endl;
-	std::cout << "(PlayPath) stopPathService cancel goal" << std::endl;
 	ac->cancelAllGoals();
 	currentGoal.x = -1;
 	stage = 0;
-	setStageInFile();
+	setStageInFile(stage);
 	return true;
 }
 
 bool pausePathService(std_srvs::Empty::Request &req, std_srvs::Empty::Response &res){
 	std::cout << "(PlayPath) pausePathService called" << std::endl;
-	std::cout << "(PlayPath) pausePathService cancel goal" << std::endl;
 	ac->cancelAllGoals();
 	currentGoal.x = -1;
 	return true;
@@ -108,6 +110,7 @@ bool pausePathService(std_srvs::Empty::Request &req, std_srvs::Empty::Response &
 
 void goNextPoint(){
 	std::cout << "(PlayPath) goNextPoint called" << std::endl;
+	// get the next point in the path list and tell to go there
 
 	if(path.size()-1 == stage)
 		std::cout << "(PlayPath) This is my final destination" << std::endl;
@@ -139,13 +142,13 @@ void goToPoint(Point point){
     ac->sendGoal(goal);
 }
 
-void setStageInFile(){
+void setStageInFile(int _stage){
 
 	std::ofstream path_stage_file(PATH_STAGE_FILE, std::ios::out | std::ios::trunc);
 
 	if(path_stage_file){
-		std::cout << "(PlayPath) setStageInFile " << stage << std::endl;
-		path_stage_file << stage;
+		std::cout << "(PlayPath) setStageInFile " << _stage << std::endl;
+		path_stage_file << _stage;
 		path_stage_file.close();
 	} else {
 		std::cout << "(PlayPath) Sorry we were not able to find the file play_path.txt in order to keep track of the stage of the path to be played" << std::endl;
@@ -190,7 +193,7 @@ bool playPathService(std_srvs::Empty::Request &req, std_srvs::Empty::Response &r
 
 	if(currentGoal.x == -1){
 		stage = 0;
-		setStageInFile();
+		setStageInFile(stage);
 	}
 
 	goNextPoint();
@@ -229,8 +232,6 @@ bool goHomeService(std_srvs::Empty::Request &req, std_srvs::Empty::Response &res
 
 bool stopGoingHomeService(std_srvs::Empty::Request &req, std_srvs::Empty::Response &res){
 	std::cout << "(PlayPath) stopGoingHomeService called" << std::endl;
-
-	std::cout << "(PlayPath) stopGoingHomeService cancel goal" << std::endl;
 	ac->cancelAllGoals();
 	currentGoal.x = -1;
 

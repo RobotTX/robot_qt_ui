@@ -3,6 +3,7 @@
 const int max_length = 1024;
 
 const std::string PATH_STAGE_FILE = "/home/gtdollar/computer_software/Robot_Infos/path_stage.txt";
+const std::string DEBUG_CMD_FILE = "/home/gtdollar/computer_software/debug_cmd.txt";
 
 bool waiting = false;
 bool connected = false;
@@ -632,13 +633,12 @@ void session(boost::shared_ptr<tcp::socket> sock, ros::NodeHandle n){
 	try{
 		std::vector<std::string> command;
 		std::string commandStr = "";
-		char data[max_length];
 		bool finishedCmd = 0;
 
 		getPorts(sock, n);
 
 		while(ros::ok() && connected){
-			char data[max_length];
+			char data[max_length] = {0};
 
 			boost::system::error_code error;
 			size_t length = sock->read_some(boost::asio::buffer(data), error);
@@ -701,13 +701,18 @@ void session(boost::shared_ptr<tcp::socket> sock, ros::NodeHandle n){
 						iss2 >> sub;
 					}
 
-					std::cout << "(Command system) data received : " << sub.length() << "byte(s) in str : " << sub << std::endl;
-					std::cout << "(Command system) data received raw : " << sub << std::endl;
-					for(int i = 0; i < max_length; i++){
-						std::cout << i << ": " << static_cast<int>(data[i]) << " or " << data[i] << std::endl;
+					std::ofstream debug_file(DEBUG_CMD_FILE, std::ofstream::out | std::ofstream::trunc);
+
+					if(debug_file){
+						debug_file << "(Command system) data received : " << sub.length() << "byte(s) in str : " << sub << std::endl;
+						debug_file << "(Command system) data received raw : " << sub << std::endl;
+						for(int i = 0; i < max_length; i++){
+							debug_file << i << ": " << static_cast<int>(data[i]) << " or " << data[i] << std::endl;
+						}
+						debug_file.close();
 					}
 
-
+					std::cout << "(Command system) data received : " << sub.length() << "byte(s) in str : " << sub << std::endl;
 					std::cout << "(Command system) Stopping the function\n******************\n" << std::endl;
 
 					return;
