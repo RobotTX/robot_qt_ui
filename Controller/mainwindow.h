@@ -306,7 +306,7 @@ private slots:
 
     void updateBatteryLevel(const int level);
     void updateLaserSlot();
-    void commandDoneSlot(QString cmdName, bool success, QString robotName, QString newRobotName, QString groupName, QString pathName, bool scan, int robotNumber, QStringList path);
+    void commandDoneSlot(QString cmdName, bool success, QString robotName, QString newRobotName, QString groupName, QString pathName, bool scan, int nb, QStringList path);
 
     /// sends a signal to the settings controller in order to keep track of the messages we need to show the user
     void relayTutorialSignal(const bool messageNeeded);
@@ -317,16 +317,16 @@ protected:
     void robotHasNoHome(QString robotName);
     void closeWidgets();
     void commandDoneNewName(bool success, QString name);
-    void commandDonePausePath(bool success, int robotNb);
+    void commandDonePausePath(bool success, QString robotName);
     void commandDonePlayScan(bool success, bool scan, QString robotName);
     void commandDonePauseScan(bool success, bool scan, QString robotName);
     void commandDoneSendMap(bool success);
     void commandDoneSendPorts(bool success);
     void commandDoneSendPath(bool success, bool boolean, QString robotName, QString groupName, QString pathName, QStringList path);
-    void commandDonePlayPath(bool success, int robotNb);
-    void commandDoneDeletePath(bool success, int robotNb);
-    void commandDoneStopPath(bool success, int robotNb);
-    void commandDoneStopDeletePath(bool success, int robotNb);
+    void commandDonePlayPath(bool success, QString robotName);
+    void commandDoneDeletePath(bool success, QString robotName);
+    void commandDoneStopPath(bool success, QString robotName);
+    void commandDoneStopDeletePath(bool success, QString robotName);
     void commandDoneNewHome(bool success, QString robotName, int id, QString homeName);
     void commandDoneGoHome(bool success, QString robotName);
     void commandDoneStopGoHome(bool success);
