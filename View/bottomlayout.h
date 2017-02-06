@@ -74,7 +74,7 @@ private:
      */
     QHBoxLayout* layout;
 
-    QButtonGroup* HomeBtnGroup;
+    QButtonGroup* homeBtnGroup;
 
     /**
      * @brief playRobotBtnGroup

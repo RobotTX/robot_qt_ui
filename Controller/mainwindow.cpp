@@ -90,8 +90,11 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     robotServerWorker = Q_NULLPTR;
 
     commandController = new CommandController(this);
+
     connect(this, SIGNAL(stopAllCmd()), commandController, SLOT(stopAllCommand()));
-    connect(commandController, SIGNAL(commandDone(QString, bool, QString, QString, QString, QString, bool, int, QStringList)), this, SLOT(commandDoneSlot(QString, bool, QString, QString, QString, QString, bool, int, QStringList)));
+
+    connect(commandController, SIGNAL(commandDone(QString, bool, QString, QString, QString, QString, bool, int, QStringList)),
+            this, SLOT(commandDoneSlot(QString, bool, QString, QString, QString, QString, bool, int, QStringList)));
 
     robots = QSharedPointer<Robots>(new Robots());
 
@@ -421,22 +424,21 @@ void MainWindow::deletePath(int robotNb){
 void MainWindow::stopPath(int robotNb){
     qDebug() << "MainWindow::StopPath called";
     QPointer<Robot> robot = robots->getRobotsVector().at(robotNb)->getRobot();
-    if(!commandController->sendCommand(robot, QString("l"), "", "", "", false, robotNb))
+    if(!commandController->sendCommand(robot, QString("l"), "", "", "", false))
         topLayoutController->setLabel(TEXT_COLOR_DANGER, "Path failed to be stopped, please try again");
 }
 
 void MainWindow::playSelectedRobot(int robotNb){
     QPointer<Robot> robot = robots->getRobotsVector().at(robotNb)->getRobot();
     if(robot->isPlayingPath()){
-        qDebug() << "pause path on robot " << robotNb << " : " << robot->getName();
-        /// if the command is succesfully sent to the robot, we apply the change
+        qDebug() << "MainWindow::playSelectedRobot pause path on robot " << robotNb << " : " << robot->getName();
+
         if(!commandController->sendCommand(robot, QString("d"), "", "", "", false, robotNb))
             topLayoutController->setLabel(TEXT_COLOR_DANGER, "Path failed to be stopped, please try again");
 
     } else {
-        qDebug() << "play path on robot " << robotNb << " : " << robot->getName();
+        qDebug() << "MainWindow::playSelectedRobot play path on robot " << robotNb << " : " << robot->getName();
 
-        /// if the command is succesfully sent to the robot, we apply the change
         if(!commandController->sendCommand(robot, QString("j"), "", "", "", false, robotNb))
             topLayoutController->setLabel(TEXT_COLOR_DANGER, "Path failed to start, please try again");
     }
@@ -453,7 +455,7 @@ void MainWindow::viewPathSelectedRobot(int robotNb, bool checked){
         displayPathOnMap(false);
 
         QPointer<Robot> robot = robots->getRobotsVector().at(robotNb)->getRobot();
-        qDebug() << "viewPathSelectedRobot called on" << robot->getName();
+        qDebug() << "MainWindow::viewPathSelectedRobot called on robot" << robot->getName();
         bottomLayout->uncheckViewPathSelectedRobot(robotNb);
         pathsController->getPathPainter()->setCurrentPath(robot->getPath(), "");
         bottomLayout->updateRobot(robotNb, robots->getRobotsVector().at(robotNb));
@@ -1029,6 +1031,10 @@ void MainWindow::robotIsAliveSlot(QString hostname, QString ip, QString ssid, in
     if(rv->getLastStage() != stage){
         rv->setLastStage(stage);
         bottomLayout->updateStageRobot(robotId, rv, stage);
+        if(stage < 0){
+            commandController->sendCommand(rv->getRobot(), QString("d"), "", "", "", false, robotId);
+            QMessageBox::warning(this, "An element is blocking a robot", "An element is blocking the robot " + rv->getRobot()->getName() + ", please try moving again once the path is cleared.");
+        }
     }
 
     /// if the robot's page is open the progress bar is refreshed to reflect the battery level
@@ -1038,8 +1044,7 @@ void MainWindow::robotIsAliveSlot(QString hostname, QString ip, QString ssid, in
     /// if the battery runs low we send a warning to the user (only when the threshold is just reached so that we don't send
     /// the warning repeatedly
     if(battery < settingsController->getSettings()->getBatteryWarningThreshold() && rv->getRobot()->getBatteryLevel() == settingsController->getSettings()->getBatteryWarningThreshold()) {
-        QMessageBox msgBox;
-        msgBox.warning(this, "Running low on battery", rv->getRobot()->getName() + " is running low on battery, perhaps you should think about charging it soon");
+        QMessageBox::warning(this, "Running low on battery", rv->getRobot()->getName() + " is running low on battery, perhaps you should think about charging it soon");
     }
 
     rv->getRobot()->setBatteryLevel(battery);
@@ -1283,7 +1288,7 @@ void MainWindow::goHome(int nbRobot){
         switch(answer){
             case QMessageBox::Cancel:
             break;
-            case QMessageBox::Yes:
+            case QMessageBox::Ok:
                 if(!commandController->sendCommand(currRobot, QString("o")))
                     setMessageTop(TEXT_COLOR_DANGER, "Failed to send the robot " + currRobot->getName() + " home, please try again");
             break;
@@ -4625,8 +4630,8 @@ void MainWindow::relayTutorialSignal(const bool messageNeeded){
     emit tutorialSignal(messageNeeded, currentFeature);
 }
 
-void MainWindow::commandDoneSlot(QString cmdName, bool success, QString robotName, QString newRobotName, QString groupName, QString pathName, bool scan, int robotNb, QStringList path){
-    qDebug() << "MainWindow::commandDoneSlot" << cmdName << success << newRobotName << groupName << pathName << scan << robotNb << path;
+void MainWindow::commandDoneSlot(QString cmdName, bool success, QString robotName, QString newRobotName, QString groupName, QString pathName, bool scan, int nb, QStringList path){
+    //qDebug() << "MainWindow::commandDoneSlot" << cmdName << success << newRobotName << groupName << pathName << scan << nb << path;
 
     if(!cmdName.isEmpty()){
         switch (cmdName.at(0).unicode()) {
@@ -4644,7 +4649,7 @@ void MainWindow::commandDoneSlot(QString cmdName, bool success, QString robotNam
             break;
             case 'd':
                 /// Paused the path of the robot
-                commandDonePausePath(success, robotNb);
+                commandDonePausePath(success, robotName);
             break;
             case 'e':
                 /// Played the scan of the map
@@ -4668,23 +4673,23 @@ void MainWindow::commandDoneSlot(QString cmdName, bool success, QString robotNam
             break;
             case 'j':
                 /// Played the path of the robot
-                commandDonePlayPath(success, robotNb);
+                commandDonePlayPath(success, robotName);
             break;
             case 'k':
                 /// Deleted the path of the robot
-                commandDoneDeletePath(success, robotNb);
+                commandDoneDeletePath(success, robotName);
             break;
             case 'l':
                 /// Stopped the path of the robot
-                commandDoneStopPath(success, robotNb);
+                commandDoneStopPath(success, robotName);
             break;
             case 'm':
                 /// Stopped and deleted the path of the robot
-                commandDoneStopDeletePath(success, robotNb);
+                commandDoneStopDeletePath(success, robotName);
             break;
             case 'n':
                 /// Sent the new home to the robot
-                commandDoneNewHome(success, robotName, robotNb, newRobotName);
+                commandDoneNewHome(success, robotName, nb, newRobotName);
             break;
             case 'o':
                 /// Sent the robot to its home
@@ -4761,13 +4766,18 @@ void MainWindow::commandDoneNewName(bool success, QString name){
         setMessageTop(TEXT_COLOR_DANGER, "Failed to edit the name of the robot, please try again");
 }
 
-void MainWindow::commandDonePausePath(bool success, int robotNb){
-    QPointer<RobotView> robotView = robots->getRobotsVector().at(robotNb);
-    if(robotView){
+void MainWindow::commandDonePausePath(bool success, QString robotName){
+    QPointer<RobotView> robotView = robots->getRobotViewByName(robotName);
+    int robotNb = robots->getRobotId(robotName);
+    if(robotView && robotNb >= 0){
         if(success){
-            robotView->getRobot()->setPlayingPath(0);
+            robotView->getRobot()->setPlayingPath(false);
             bottomLayout->getPlayRobotBtnGroup()->button(robotNb)->setIcon(QIcon(":/icons/play.png"));
-            bottomLayout->getStopRobotBtnGroup()->button(robotNb)->setEnabled(true);
+
+            if(abs(robotView->getLastStage()) > 0)
+                bottomLayout->getStopRobotBtnGroup()->button(robotNb)->setEnabled(true);
+            else
+                bottomLayout->getStopRobotBtnGroup()->button(robotNb)->setEnabled(false);
             topLayoutController->setLabel(TEXT_COLOR_SUCCESS, "Path paused");
         } else
             topLayoutController->setLabel(TEXT_COLOR_DANGER, "Path failed to be paused, please try again");
@@ -4838,9 +4848,10 @@ void MainWindow::commandDoneSendPath(bool success, bool boolean, QString robotNa
     }
 }
 
-void MainWindow::commandDonePlayPath(bool success, int robotNb){
-    QPointer<RobotView> robotView = robots->getRobotsVector().at(robotNb);
-    if(robotView){
+void MainWindow::commandDonePlayPath(bool success, QString robotName){
+    QPointer<RobotView> robotView = robots->getRobotViewByName(robotName);
+    int robotNb = robots->getRobotId(robotName);
+    if(robotView && robotNb >= 0){
         if(success){
             robotView->getRobot()->setPlayingPath(true);
             bottomLayout->getPlayRobotBtnGroup()->button(robotNb)->setIcon(QIcon(":/icons/pause.png"));
@@ -4851,9 +4862,10 @@ void MainWindow::commandDonePlayPath(bool success, int robotNb){
     }
 }
 
-void MainWindow::commandDoneDeletePath(bool success, int robotNb){
-    QPointer<RobotView> robotView = robots->getRobotsVector().at(robotNb);
-    if(robotView){
+void MainWindow::commandDoneDeletePath(bool success, QString robotName){
+    QPointer<RobotView> robotView = robots->getRobotViewByName(robotName);
+    int robotNb = robots->getRobotId(robotName);
+    if(robotView && robotNb >= 0){
         if(success){
             clearPath(robotNb);
             topLayoutController->setLabel(TEXT_COLOR_SUCCESS, "The path of \"" + robotView->getRobot()->getName() + "\" has been successfully deleted");
@@ -4862,9 +4874,10 @@ void MainWindow::commandDoneDeletePath(bool success, int robotNb){
     }
 }
 
-void MainWindow::commandDoneStopPath(bool success, int robotNb){
-    QPointer<RobotView> robotView = robots->getRobotsVector().at(robotNb);
-    if(robotView){
+void MainWindow::commandDoneStopPath(bool success, QString robotName){
+    QPointer<RobotView> robotView = robots->getRobotViewByName(robotName);
+    int robotNb = robots->getRobotId(robotName);
+    if(robotView && robotNb >= 0){
         if(success){
             robotView->getRobot()->setPlayingPath(false);
             bottomLayout->getPlayRobotBtnGroup()->button(robotNb)->setIcon(QIcon(":/icons/play.png"));
@@ -4875,9 +4888,10 @@ void MainWindow::commandDoneStopPath(bool success, int robotNb){
     }
 }
 
-void MainWindow::commandDoneStopDeletePath(bool success, int robotNb){
-    QPointer<RobotView> robotView = robots->getRobotsVector().at(robotNb);
-    if(robotView){
+void MainWindow::commandDoneStopDeletePath(bool success, QString robotName){
+    QPointer<RobotView> robotView = robots->getRobotViewByName(robotName);
+    int robotNb = robots->getRobotId(robotName);
+    if(robotView && robotNb >= 0){
         if(success){
             clearPath(robotNb);
             topLayoutController->setLabel(TEXT_COLOR_SUCCESS, "The path of " + robotView->getRobot()->getName() + " has been successfully deleted");

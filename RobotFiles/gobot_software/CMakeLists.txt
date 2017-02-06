@@ -103,8 +103,3 @@ target_link_libraries(send_laser_data ${catkin_LIBRARIES})
 target_link_libraries(send_laser_data ${gobot_software} ${Boost_FILESYSTEM_LIBRARY} ${Boost_SYSTEM_LIBRARY} )
 add_dependencies(send_laser_data gobot_software_generate_messages_cpp)
 
-
-add_executable(play_path_new src/play_path_new.cpp)
-target_link_libraries(play_path_new ${catkin_LIBRARIES})
-target_link_libraries(play_path_new ${gobot_software} ${Boost_FILESYSTEM_LIBRARY} ${Boost_SYSTEM_LIBRARY} )
-add_dependencies(play_path_new gobot_software_generate_messages_cpp)

@@ -38,7 +38,7 @@ BottomLayout::BottomLayout(QMainWindow* parent, const QSharedPointer<Robots> &ro
     /// The button group for the column with the stop/delete path buttons
     stopRobotBtnGroup = new QButtonGroup(this);
 
-    HomeBtnGroup = new QButtonGroup(this);
+    homeBtnGroup = new QButtonGroup(this);
 
     /// The button group for the column with the play/pause path buttons
     playRobotBtnGroup = new QButtonGroup(this);
@@ -118,7 +118,7 @@ BottomLayout::BottomLayout(QMainWindow* parent, const QSharedPointer<Robots> &ro
         goHomeBtn->setMinimumWidth(parent->width()/10);
         goHomeBtn->setIconSize(s_icon_size);
         goHomeBtn->setToolTip("Click to go home");
-        HomeBtnGroup->addButton(goHomeBtn, i);
+        homeBtnGroup->addButton(goHomeBtn, i);
         columnHome->addWidget(goHomeBtn);
         goHomeBtn->setCheckable(false);
     }
@@ -165,7 +165,7 @@ BottomLayout::BottomLayout(QMainWindow* parent, const QSharedPointer<Robots> &ro
 
     /// We connect the groups of buttons to their respective slot in the main window
     connect(robotBtnGroup, SIGNAL(buttonClicked(QAbstractButton*)), parent, SLOT(setSelectedRobotNoParent(QAbstractButton*)));
-    connect(HomeBtnGroup, SIGNAL(buttonClicked(int)), parent, SLOT(goHome(int)));
+    connect(homeBtnGroup, SIGNAL(buttonClicked(int)), parent, SLOT(goHome(int)));
     connect(stopRobotBtnGroup, SIGNAL(buttonClicked(int)), parent, SLOT(stopPath(int)));
     connect(playRobotBtnGroup, SIGNAL(buttonClicked(int)), parent, SLOT(playSelectedRobot(int)));
     connect(viewPathRobotBtnGroup, SIGNAL(buttonToggled(int, bool)), parent, SLOT(viewPathSelectedRobot(int, bool)));
@@ -201,20 +201,25 @@ BottomLayout::BottomLayout(QMainWindow* parent, const QSharedPointer<Robots> &ro
 void BottomLayout::updateRobot(const int id, QPointer<RobotView> const robotView){
     qDebug() << "(BottomLayout) updateRobot called" << id << robotBtnGroup->buttons().size();
     static_cast<CustomPushButton*> (robotBtnGroup->button(id))->setText(robotView->getRobot()->getName());
-    if(robotView->getRobot()->getPath().size() < 1){
+
+    updateStageRobot(id, robotView, robotView->getLastStage());
+
+    if(robotView->getRobot()->getPath().size() > 0){
+        deletePathBtnGroup->button(id)->setEnabled(true);
+        playRobotBtnGroup->button(id)->setEnabled(true);
+        viewPathRobotBtnGroup->button(id)->setEnabled(true);
+        if(abs(robotView->getLastStage()) > 0 || robotView->getRobot()->isPlayingPath())
+            stopRobotBtnGroup->button(id)->setEnabled(true);
+        else
+            stopRobotBtnGroup->button(id)->setEnabled(false);
+    } else {
         deletePathBtnGroup->button(id)->setEnabled(false);
         playRobotBtnGroup->button(id)->setEnabled(false);
         viewPathRobotBtnGroup->button(id)->setEnabled(false);
         stopRobotBtnGroup->button(id)->setEnabled(false);
-        vectorPathLabel.at(id)->setText("");
-     } else {
-        deletePathBtnGroup->button(id)->setEnabled(true);
-        playRobotBtnGroup->button(id)->setEnabled(true);
-        viewPathRobotBtnGroup->button(id)->setEnabled(true);
-        vectorPathLabel.at(id)->setText(pathToStr(robotView->getRobot()->getPath(), robotView->getLastStage()));
     }
 
-    HomeBtnGroup->button(id)->setEnabled(true);
+    homeBtnGroup->button(id)->setEnabled(true);
 
     if(listEnabled.size() > 0){
         setEnable(true);
@@ -225,6 +230,9 @@ void BottomLayout::updateRobot(const int id, QPointer<RobotView> const robotView
 void BottomLayout::updateStageRobot(const int id, QPointer<RobotView> robotView, const int stage){
     if(robotView->getRobot()->getPath().size() > 0)
         vectorPathLabel.at(id)->setText(pathToStr(robotView->getRobot()->getPath(), stage));
+    else
+        vectorPathLabel.at(id)->setText("");
+
 }
 
 void BottomLayout::addRobot(QPointer<RobotView> const robotView){
@@ -260,7 +268,7 @@ void BottomLayout::addRobot(QPointer<RobotView> const robotView){
     goHomeBtn->setMaximumWidth(static_cast<QWidget*>(parent())->width()/20);
     goHomeBtn->setMinimumWidth(static_cast<QWidget*>(parent())->width()/20);
     goHomeBtn->setCheckable(false);
-    HomeBtnGroup->addButton(goHomeBtn, i);
+    homeBtnGroup->addButton(goHomeBtn, i);
     columnHome->addWidget(goHomeBtn);
 
     /// Creation of the fifth column, with the button to play/pause the robot
@@ -308,7 +316,7 @@ void BottomLayout::removeRobot(const int id){
                     || listEnabled.at(i) == stopRobotBtnGroup->buttons().at(id)
                     || listEnabled.at(i) == robotBtnGroup->buttons().at(id)
                     || listEnabled.at(i) == viewPathRobotBtnGroup->buttons().at(id)
-                    || listEnabled.at(i) == HomeBtnGroup->buttons().at(id))
+                    || listEnabled.at(i) == homeBtnGroup->buttons().at(id))
                 listEnabled.removeAt(i);
         }
 
@@ -316,7 +324,7 @@ void BottomLayout::removeRobot(const int id){
         stopRobotBtnGroup->removeButton(stopRobotBtnGroup->buttons().at(id));
         robotBtnGroup->removeButton(robotBtnGroup->buttons().at(id));
         viewPathRobotBtnGroup->removeButton(viewPathRobotBtnGroup->buttons().at(id));
-        HomeBtnGroup->removeButton(HomeBtnGroup->buttons().at(id));
+        homeBtnGroup->removeButton(homeBtnGroup->buttons().at(id));
         vectorPathLabel.remove(id);
 
         QLayoutItem* item1 = columnName->takeAt(id);
@@ -347,7 +355,7 @@ void BottomLayout::removeRobot(const int id){
             robotBtnGroup->setId(robotBtnGroup->buttons().at(i), i);
             viewPathRobotBtnGroup->setId(viewPathRobotBtnGroup->buttons().at(i), i);
             deletePathBtnGroup->setId(deletePathBtnGroup->buttons().at(i), i);
-            HomeBtnGroup->setId(HomeBtnGroup->buttons().at(i), i);
+            homeBtnGroup->setId(homeBtnGroup->buttons().at(i), i);
         }
     } else {
         qDebug() << "(BottomLayout) Wrong id to remove" << id;
@@ -402,7 +410,7 @@ void BottomLayout::setEnable(const bool enable){
                 listEnabled.push_back(list.at(i));
             }
         }
-        list = HomeBtnGroup->buttons();
+        list = homeBtnGroup->buttons();
         for(int i = 0; i < list.size(); i++){
             if(list.at(i)->isEnabled()){
                 list.at(i)->setEnabled(false);
@@ -431,8 +439,12 @@ void BottomLayout::uncheckAll(){
 QString BottomLayout::pathToStr(const QVector<QSharedPointer<PathPoint> >& path, const int stage){
     QString pathStr = QString("");
     for(int i = 0; i < path.size(); i++){
-        if(stage > 0 && i < stage)
-            pathStr += "<font color=\"green\">";
+        if(i < abs(stage)){
+            if(stage > 0)
+                pathStr += "<font color=\"green\">";
+            else if(stage < 0)
+                pathStr += "<font color=\"red\">";
+        }
 
         if(i != 0)
             pathStr += " - ";
@@ -444,7 +456,7 @@ QString BottomLayout::pathToStr(const QVector<QSharedPointer<PathPoint> >& path,
         else
             pathStr += path.at(i)->getPoint().getName();
 
-        if(stage >0 && i <= stage)
+        if(stage != 0 && i <= abs(stage))
             pathStr += "</font>";
     }
     return pathStr;
