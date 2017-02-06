@@ -29,7 +29,7 @@ public:
       QVector<QSharedPointer<PathPoint>> path;
     };
 
-    DisplaySelectedPath(QWidget* parent, const MainWindow* mainWindow, const QSharedPointer<Paths>& _paths);
+    DisplaySelectedPath(MainWindow* mainWindow, const QSharedPointer<Paths>& _paths);
     void updatePath(const QString groupName, const QString pathName, const QVector<QSharedPointer<PathPoint> > &path, const QString visiblePath);
 
 protected:

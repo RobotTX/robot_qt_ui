@@ -30,8 +30,6 @@ void RobotView::mousePressEvent(QGraphicsSceneMouseEvent * /* unused */){
 
     if(state == GraphicItemState::NO_STATE){
         qDebug() << "map robot clicked";
-        MainWindow* mw = static_cast<MainWindow*> (mapView->getMainWindow());
-        mw->resetFocus();
         qDebug() << "robot map pressed";
         emit setSelectedSignal(this);
     } else if(state == GraphicItemState::CREATING_PATH)

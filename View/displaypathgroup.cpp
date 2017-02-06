@@ -12,8 +12,8 @@
 #include <QKeyEvent>
 #include "View/pathpainter.h"
 
-DisplayPathGroup::DisplayPathGroup(QWidget* _parent, MainWindow* _mainWindow, const QSharedPointer<Paths>& _paths):
-    QWidget(_parent), mainWindow(_mainWindow), paths(_paths), lastCheckedButton("")
+DisplayPathGroup::DisplayPathGroup(MainWindow *_parent, const QSharedPointer<Paths>& _paths):
+    QWidget(_parent), paths(_paths), lastCheckedButton("")
 {
     /// to scroll the button group if there is a lot of paths
     CustomScrollArea* scrollArea = new CustomScrollArea(this, true);
@@ -43,18 +43,13 @@ DisplayPathGroup::DisplayPathGroup(QWidget* _parent, MainWindow* _mainWindow, co
 
     topLayout->setContentsMargins(0, 0, 10, 0);
     layout->setContentsMargins(0, 0, 0, 0);
-
-    /// to handle double clicks
-    foreach(QAbstractButton *button, pathButtonGroup->getButtonGroup()->buttons())
-        connect(button, SIGNAL(doubleClick(QString)), _mainWindow, SLOT(doubleClickOnPath(QString)));
-
 }
 
 /// we reset the action buttons everytime we show the widget
 void DisplayPathGroup::showEvent(QShowEvent *event){
-    setPathsGroup(groupNameLabel->text());
+    emit setPathsGroup(groupNameLabel->text());
     initializeActionButtons();
-    updateDisplayedPath();
+    emit updateDisplayedPath();
     /// for some reason the buttongroup sometimes becomes uncheckable after some operations, this just makes sure it does not happen
     setEnabled(true);
     pathButtonGroup->uncheck();
@@ -83,8 +78,7 @@ void DisplayPathGroup::enableButtons(QAbstractButton *button){
     if(button->text().compare(lastCheckedButton)){
 
         /// if the path is visible on the map the eye button is checked
-        if(!mainWindow->getPathPainter()->getVisiblePath().compare(button->text()))
-            actionButtons->getMapButton()->setChecked(true);
+        emit checkEyeButton(button->text());
 
         /// updates the last checked button to be the one the user has just checked
         lastCheckedButton = button->text();
@@ -110,46 +104,6 @@ void DisplayPathGroup::enableButtons(QAbstractButton *button){
 
 void DisplayPathGroup::resetMapButton(){
     actionButtons->getMapButton()->setChecked(false);
-}
-
-void DisplayPathGroup::setPathsGroup(const QString groupName){
-    pathButtonGroup->deleteButtons();
-    /// if the group of paths exists
-    if(paths->getGroups()->find(groupName) != paths->getGroups()->end()){
-        /// we iterate over it to create the buttons
-        QSharedPointer<Paths::CollectionPaths> current_group = paths->getGroups()->value(groupName);
-        QMapIterator<QString, QSharedPointer<Paths::Path>> it_paths(*current_group);
-        int i(0);
-        while(it_paths.hasNext()){
-            it_paths.next();
-            qDebug() << "found this path" << it_paths.key();
-            CustomPushButton* groupButton = new CustomPushButton(it_paths.key(), this);
-            groupButton->setIconSize(s_icon_size);
-
-            /// if this path is displayed on the map we also add an icon to show it on the button
-            if(!it_paths.key().compare(mainWindow->getPathPainter()->getVisiblePath()))
-                groupButton->setIcon(QIcon(":/icons/eye.png"));
-            else
-                groupButton->setIcon(QIcon(":/icons/blank.png"));
-
-            pathButtonGroup->getButtonGroup()->addButton(groupButton, i++);
-            /// connects the button to the main window to handle double clicks on the button
-            connect(groupButton, SIGNAL(doubleClick(QString)), mainWindow, SLOT(doubleClickOnPath(QString)));
-            groupButton->setCheckable(true);
-            pathButtonGroup->getLayout()->addWidget(groupButton);
-        }
-    }
-}
-
-/// sets the eye icon properly in front of the displayed path if such path exists
-void DisplayPathGroup::updateDisplayedPath(){
-    foreach(QAbstractButton* button, pathButtonGroup->getButtonGroup()->buttons()){
-        if(!button->text().compare(mainWindow->getPathPainter()->getVisiblePath()))
-            button->setIcon(QIcon(":/icons/eye.png"));
-        else
-            button->setIcon(QIcon(":/icons/blank.png"));
-        button->setIconSize(s_icon_size);
-    }
 }
 
 /// allows a user to delete a path with the delete key

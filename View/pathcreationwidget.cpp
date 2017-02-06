@@ -122,6 +122,7 @@ void PathCreationWidget::showEvent(QShowEvent* event){
 void PathCreationWidget::hideEvent(QHideEvent *event){
     Q_UNUSED(event)
     static_cast<LeftMenu*>(parent())->getCloseButton()->show();
+    currentPathName = "";
 }
 
 void PathCreationWidget::updatePointsList(void){

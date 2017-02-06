@@ -6,7 +6,6 @@ class Points;
 class Robot;
 class TopLeftMenu;
 class QMenu;
-class PathPointList;
 class QListWidgetItem;
 class PathPointCreationWidget;
 class PathPoint;
@@ -20,6 +19,7 @@ class CustomPushButton;
 #include "Model/paths.h"
 #include "Model/graphicitemstate.h"
 #include "Model/pathpoint.h"
+#include "View/pathpointlist.h"
 
 #define WIDGET_HEIGHT 120
 
@@ -118,11 +118,7 @@ private slots:
      * relays a signal through the click of the clean button (because the button signal can only provide a bool and we need to send a state)
      */
     void resetWidgetRelaySlot();
-    /**
-     * @brief resetWidget
-     * clear the path point lists of all its path points upon clicking the clean button
-     */
-    void resetWidget();
+
     /**
      * @brief addPathPointByMenuSlot
      * adds a permanent point to the path
@@ -209,6 +205,13 @@ private slots:
      * deletes a path point using the cross button to the right of the label describing the point
      */
     void deletePathPointWithCross(PathPointCreationWidget* pathPointCreationWidget);
+
+public slots:
+    /**
+     * @brief resetWidget
+     * clear the path point lists of all its path points upon clicking the clean button
+     */
+    void resetWidget();
 
 private:
     QSharedPointer<Points> points;

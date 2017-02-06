@@ -9,6 +9,7 @@
 #include <QCoreApplication>
 #include "stylesettings.h"
 #include "View/custompushbutton.h"
+#include "Controller/mainwindow.h"
 
 TopLayoutWidget::TopLayoutWidget(const TopLayout& topLayout, QMainWindow* parent): QWidget(parent){
     layout = new QHBoxLayout(this);
@@ -27,7 +28,6 @@ TopLayoutWidget::TopLayoutWidget(const TopLayout& topLayout, QMainWindow* parent
     layout->addWidget(saveMapBtn);
     saveMapBtn->setToolTip("Save the configuration of the map");
     saveMapBtn->setShortcut(QKeySequence("Ctrl+K"));
-    connect(saveMapBtn, SIGNAL(clicked()), parent, SLOT(saveMapState()));
 
     centerBtn = new CustomPushButton(QIcon(":/icons/save_map.png"), "", this, CustomPushButton::ButtonType::TOP);
     centerBtn->setToolTip("Restore the configuration of the map");

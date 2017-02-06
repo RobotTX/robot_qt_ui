@@ -14,16 +14,12 @@ class SelectedPointWidget;
 class CreatePointWidget;
 class DisplaySelectedPoint;
 class DisplaySelectedGroup;
-class PathCreationWidget;
-class DisplaySelectedPath;
 class QVBoxLayout;
 class MainWindow;
 class Map;
 class PathPainter;
-class GroupsPathsWidget;
-class DisplayPathGroup;
 class CustomPushButton;
-class Paths;
+
 
 #include <QWidget>
 #include <QSharedPointer>
@@ -35,8 +31,8 @@ class Paths;
 class LeftMenu: public QWidget{
     Q_OBJECT
 public:
-    LeftMenu(MainWindow* _mainWindow, const QSharedPointer<Points> &_points, QSharedPointer<Paths> const& _paths, QSharedPointer<Robots> const& robots,
-             QSharedPointer<Map> const& _map, const PathPainter* pathPainter);
+    LeftMenu(MainWindow* mainWindow, const QSharedPointer<Points> &_points, QSharedPointer<Robots> const& robots,
+             QSharedPointer<Map> const& _map);
 
     /// Getters
     LeftMenuWidget* getLeftMenuWidget(void) const {return leftMenuWidget;}
@@ -51,10 +47,7 @@ public:
     CustomPushButton* getReturnButton(void) const { return returnButton; }
     CustomPushButton* getCloseButton(void) const { return closeBtn; }
     QWidget* getLastWidget() const {return lastWidget; }
-    DisplaySelectedPath* getDisplaySelectedPath(void) const { return displaySelectedPath; }
-    GroupsPathsWidget* getGroupsPathsWidget(void) const { return groupsPathsWidget; }
-    DisplayPathGroup* getPathGroupDisplayed(void) const { return pathGroup; }
-    PathCreationWidget* getpathCreationWidget(void) const { return pathCreationWidget; }
+
 
     /**
      * @brief showBackButton
@@ -83,7 +76,6 @@ public:
     void setEnableReturnCloseButtons(const bool enable);
 
 private:
-    PathCreationWidget* pathCreationWidget;
     CustomPushButton* closeBtn;
     QVBoxLayout* leftLayout;
     QWidget* lastWidget;
@@ -91,21 +83,14 @@ private:
     PointsLeftWidget* pointsLeftWidget;
     RobotsLeftWidget* robotsLeftWidget;
     MapLeftWidget* mapLeftWidget;
-    GroupsPathsWidget* groupsPathsWidget;
     EditSelectedRobotWidget* editSelectedRobotWidget;
     SelectedPointWidget* selectedPointWidget;
     CreatePointWidget* createPointWidget;
     DisplaySelectedPoint* displaySelectedPoint;
     DisplaySelectedGroup* displaySelectedGroup;
     CustomPushButton * returnButton;
-    MainWindow* mainWindow;
     QSharedPointer<Points> points;
-    QSharedPointer<Paths> paths;
-    DisplaySelectedPath* displaySelectedPath;
-    DisplayPathGroup* pathGroup;
-    QString lastCheckedId;
-
 };
 
-#endif // LEFTMENU_H
+#endif /// LEFTMENU_H
 

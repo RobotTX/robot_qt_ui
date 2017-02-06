@@ -12,9 +12,7 @@ TopLayoutController::TopLayoutController(QWidget *parent): QObject(parent)
 }
 
 void TopLayoutController::createTopLayoutView(QWidget* parent){
-
     view = new TopLayoutWidget(*topLayout, static_cast<QMainWindow*> (parent));
-
 }
 
 void TopLayoutController::removeRobotWithoutHome(const QString name){

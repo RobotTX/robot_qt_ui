@@ -15,7 +15,7 @@
 #include "View/stylesettings.h"
 
 
-GroupsPathsWidget::GroupsPathsWidget(QWidget* parent, MainWindow* _mainWindow, const QSharedPointer<Paths> &_paths): QWidget(parent), mainWindow(_mainWindow), paths(_paths), lastCheckedButton("")
+GroupsPathsWidget::GroupsPathsWidget(MainWindow* _mainWindow, const QSharedPointer<Paths> &_paths): QWidget(_mainWindow), mainWindow(_mainWindow), paths(_paths), lastCheckedButton("")
 {
     /// to scroll the QButtonGroup if there is a lot of groups of paths
     scrollArea = new CustomScrollArea(this, true);

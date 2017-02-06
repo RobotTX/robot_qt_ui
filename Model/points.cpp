@@ -146,6 +146,7 @@ void Points::clear(){
 QSharedPointer<PointView> Points::createPoint(const QString pointName, const double x, const double y, const bool displayed, const Point::PointType type){
     QSharedPointer<Point> point = QSharedPointer<Point>(new Point(pointName, x, y, type));
     QSharedPointer<PointView> pointView = QSharedPointer<PointView>(new PointView(point, parent));
+
     if(!displayed)
         pointView->hide();
 

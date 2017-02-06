@@ -6,6 +6,7 @@
 #include <QObject>
 #include <QDateTime>
 #include <QUuid>
+#include <QSharedPointer>
 
 /**
  * @brief The Map class
@@ -28,6 +29,8 @@ public:
     QDateTime getDateTime(void) const { return dateTime; }
     QUuid getMapId(void) const { return mapId; }
     bool getModified(void) const { return modified; }
+    std::string getMapFile(void) const { return mapFile; }
+    QPair<QPointF, float> getMapState(void) const { return mapState; }
 
     void setResolution(const float _resolution) { resolution = _resolution; }
     void setWidth(const int _width) { width = _width; }
@@ -37,6 +40,10 @@ public:
     void setDateTime(const QDateTime _dateTime);
     void setMapId(const QUuid _mapId) { mapId = _mapId; }
     void setModified(const bool _modified) { modified = _modified; }
+    void setZoomCoeff(const double coeff) { mapState.second = coeff; }
+    void setMapPosition(const QPointF& pos) { mapState.first = pos; }
+    void setMapFile(const std::string file) { mapFile = file; }
+    void setCoeff(const float coeff) { mapState.second = coeff; }
 
     /**
      * @brief setMapFromArray
@@ -68,11 +75,8 @@ public:
      */
     QImage getImageFromArray(const QByteArray& mapArrays, const bool fromPgm);
 
-signals:
-    /// emitted when a user make an attempt at saving the map, the status holds the status regarding the operation (true = success, false = failure)
-    void saveStatus(bool);
-
 private:
+
     /**
      * @brief mapImage
      * The current displayed image
@@ -105,6 +109,12 @@ private:
     QDateTime dateTime;
     QUuid mapId;
     bool modified;
+
+    std::string mapFile;
+
+
+
+    QPair<QPointF, float> mapState;
 };
 
 #endif /// MAP_H

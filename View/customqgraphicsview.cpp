@@ -3,7 +3,6 @@
 
 CustomQGraphicsView::CustomQGraphicsView ( QGraphicsScene * scene, QWidget * parent)
     : QGraphicsView(scene, parent), zoomCoeff(1.0), dragStartPosition(QPointF(0, 0)){
-    //setDragMode(QGraphicsView::ScrollHandDrag);
 }
 
 /// to implement a zoom on the map

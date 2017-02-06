@@ -19,7 +19,7 @@ class GroupsPathsWidget: public QWidget
 {
     Q_OBJECT
 public:
-    GroupsPathsWidget(QWidget* parent, MainWindow* _mainWindow, const QSharedPointer<Paths> &_paths);
+    GroupsPathsWidget(MainWindow* _mainWindow, const QSharedPointer<Paths> &_paths);
 
     GroupsPathsButtonGroup* getButtonGroup(void) const { return buttonGroup; }
     TopLeftMenu* getActionButtons(void) const { return actionButtons; }

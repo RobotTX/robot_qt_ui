@@ -13,6 +13,7 @@ class Paths;
 class QAbstractButton;
 class MainWindow;
 class CustomLabel;
+class CustomPushButton;
 
 /**
  * @brief The DisplayPathGroup class
@@ -23,7 +24,7 @@ class DisplayPathGroup: public QWidget {
     Q_OBJECT
 
 public:
-    DisplayPathGroup(QWidget *_parent, MainWindow *_mainWindow, const QSharedPointer<Paths> &_paths);
+    DisplayPathGroup(MainWindow *_parent, const QSharedPointer<Paths> &_paths);
 
     PathButtonGroup* getPathButtonGroup(void) const { return pathButtonGroup; }
     TopLeftMenu* getActionButtons(void) const { return actionButtons; }
@@ -38,19 +39,6 @@ public:
      * sets enability, checkability and tooltips of buttons
      */
     void initializeActionButtons(void);
-    /**
-     * @brief setPathsGroup
-     * @param groupName
-     * display the list of paths contained in the group with an eye icon before the name if the path is displayed
-     */
-    void setPathsGroup(const QString groupName);
-    /// to update the icons to show which path is displayed
-    /**
-     * @brief updateDisplayedPath
-     * updates the icons so that the visible path has the "eye" icon
-     */
-    void updateDisplayedPath(void);
-
 
 private slots:
 
@@ -69,6 +57,7 @@ public slots:
      */
     void enableButtons(QAbstractButton* button);
 
+
 protected:
     void showEvent(QShowEvent* event);
     void keyPressEvent(QKeyEvent* event);
@@ -77,9 +66,12 @@ protected:
 signals:
     /// to delete a path with the delete key
     void deletePath();
+    void displayEyeIcon(const QString, CustomPushButton*);
+    void checkEyeButton(const QString);
+    void updateDisplayedPath();
+    void setPathsGroup(const QString);
 
 private:
-    MainWindow* mainWindow;
     QSharedPointer<Paths> paths;
     CustomScrollArea* scrollArea;
     PathButtonGroup* pathButtonGroup;
