@@ -313,12 +313,12 @@ void MainWindow::updateRobot(const QString ipAddress, const float posX, const fl
     Position robotPositionInPixelCoordinates = convertRobotCoordinatesToPixelCoordinates(Position(posX, posY), map->getOrigin().getX(), map->getOrigin().getY(), map->getResolution(), map->getHeight());
     float orientation = -oriZ * 180.0 / PI + 90;
 
-    QPointer<RobotView> rv = robots->getRobotViewByIp(ipAddress);
-    if(rv != NULL){
-        rv->setPosition(robotPositionInPixelCoordinates.getX(), robotPositionInPixelCoordinates.getY());
-        rv->setOrientation(orientation);
+    QPointer<RobotView> robotView = robots->getRobotViewByIp(ipAddress);
+    if(robotView){
+        robotView->setPosition(robotPositionInPixelCoordinates.getX(), robotPositionInPixelCoordinates.getY());
+        robotView->setOrientation(orientation);
 
-        emit scanRobotPos(rv->getRobot()->getName(), robotPositionInPixelCoordinates.getX(), robotPositionInPixelCoordinates.getY(), orientation);
+        emit scanRobotPos(robotView->getRobot()->getName(), robotPositionInPixelCoordinates.getX(), robotPositionInPixelCoordinates.getY(), orientation);
     }
 }
 
@@ -663,9 +663,9 @@ void MainWindow::selectViewRobot(){
 
 void MainWindow::setSelectedRobotFromPointSlot(QString robotName){
     qDebug() << "MainWindow::setSelectedRobotFromPointSlot called :" << robotName;
-    QPointer<RobotView> rv = robots->getRobotViewByName(robotName);
-    if(rv != NULL)
-        setSelectedRobot(rv);
+    QPointer<RobotView> robotView = robots->getRobotViewByName(robotName);
+    if(robotView)
+        setSelectedRobot(robotView);
     else
         qDebug() << "MainWindow::setSelectedRobotFromPointSlot : Error could not find the robot named :" << robotName;
 }
@@ -1037,31 +1037,31 @@ void MainWindow::robotIsAliveSlot(QString hostname, QString ip, QString ssid, in
     QRegExp rx("[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}");
     rx.indexIn(ip);
     ip = rx.cap(0);
-    QPointer<RobotView> rv = robots->getRobotViewByIp(ip);
+    QPointer<RobotView> robotView = robots->getRobotViewByIp(ip);
 
-    if(rv != NULL){
+    if(robotView){
         qDebug() << "Robot" << hostname << "at ip" << ip << "is still alive";
-        rv->getRobot()->ping();
+        robotView->getRobot()->ping();
 
     } else {
         qDebug() << "MainWindow::robotIsAliveSlot Robot" << hostname << "at ip" << ip << "just connected";
         QPointer<Robot> robot = QPointer<Robot>(new Robot(this, paths, hostname, ip));
         robot->setWifi(ssid);
-        rv = QPointer<RobotView>(new RobotView(robot, mapPixmapItem));
-        connect(rv, SIGNAL(setSelectedSignal(QPointer<RobotView>)), this, SLOT(setSelectedRobot(QPointer<RobotView>)));
-        connect(rv, SIGNAL(updateLaser()), this, SLOT(updateLaserSlot()));
-        rv->setPosition(robots->getRobotsVector().count()*100+100, robots->getRobotsVector().count()*100+100);
-        rv->setParentItem(mapPixmapItem);
-        robots->add(rv);
+        robotView = QPointer<RobotView>(new RobotView(robot, mapPixmapItem));
+        connect(robotView, SIGNAL(setSelectedSignal(QPointer<RobotView>)), this, SLOT(setSelectedRobot(QPointer<RobotView>)));
+        connect(robotView, SIGNAL(updateLaser()), this, SLOT(updateLaserSlot()));
+        robotView->setPosition(robots->getRobotsVector().count()*100+100, robots->getRobotsVector().count()*100+100);
+        robotView->setParentItem(mapPixmapItem);
+        robots->add(robotView);
         robot->launchWorkers(this);
-        bottomLayout->addRobot(rv);
+        bottomLayout->addRobot(robotView);
         robotsLeftWidget->updateRobots(robots);
 
 
         /// Check if connection by usb
         if(ip.endsWith(".7.1") || ip.endsWith(".7.2") || ip.endsWith(".7.3")){
             hideAllWidgets();
-            selectedRobot = rv;
+            selectedRobot = robotView;
             switchFocus(hostname, editSelectedRobotWidget, MainWindow::WidgetType::ROBOT);
             editSelectedRobotWidget->setSelectedRobot(selectedRobot);
             editSelectedRobotWidget->show();
@@ -1081,15 +1081,15 @@ void MainWindow::robotIsAliveSlot(QString hostname, QString ip, QString ssid, in
         }
     }
 
-    int robotId = robots->getRobotId(rv->getRobot()->getName());
+    int robotId = robots->getRobotId(robotView->getRobot()->getName());
 
     /// updates the text in the bottom layout to make the stage appear
-    if(rv->getLastStage() != stage){
-        rv->setLastStage(stage);
-        bottomLayout->updateStageRobot(robotId, rv, stage);
+    if(robotView->getLastStage() != stage){
+        robotView->setLastStage(stage);
+        bottomLayout->updateStageRobot(robotId, robotView, stage);
         if(stage < 0){
-            commandController->sendCommand(rv->getRobot(), QString("d"), "", "", "", false, robotId);
-            QMessageBox::warning(this, "An element is blocking a robot", "An element is blocking the robot " + rv->getRobot()->getName() + ", please try moving again once the path is cleared.");
+            commandController->sendCommand(robotView->getRobot(), QString("d"), "", "", "", false, robotId);
+            QMessageBox::warning(this, "An element is blocking a robot", "An element is blocking the robot " + robotView->getRobot()->getName() + ", please try moving again once the path is cleared.");
         }
     }
 
@@ -1099,15 +1099,15 @@ void MainWindow::robotIsAliveSlot(QString hostname, QString ip, QString ssid, in
 
     /// if the battery runs low we send a warning to the user (only when the threshold is just reached so that we don't send
     /// the warning repeatedly
-    if(battery < settingsController->getSettings()->getBatteryWarningThreshold() && rv->getRobot()->getBatteryLevel() == settingsController->getSettings()->getBatteryWarningThreshold()) {
-        QMessageBox::warning(this, "Running low on battery", rv->getRobot()->getName() + " is running low on battery, perhaps you should think about charging it soon");
+    if(battery < settingsController->getSettings()->getBatteryWarningThreshold() && robotView->getRobot()->getBatteryLevel() == settingsController->getSettings()->getBatteryWarningThreshold()) {
+        QMessageBox::warning(this, "Running low on battery", robotView->getRobot()->getName() + " is running low on battery, perhaps you should think about charging it soon");
     }
 
-    rv->getRobot()->setBatteryLevel(battery);
+    robotView->getRobot()->setBatteryLevel(battery);
 
     /// Check the current stage of the robot
-    if(rv->getRobot()->isPlayingPath() && rv->getRobot()->getPath().size() == stage){
-        setMessageTop(TEXT_COLOR_SUCCESS, "The robot " + rv->getRobot()->getName() + " has successfully reached its destination");
+    if(robotView->getRobot()->isPlayingPath() && robotView->getRobot()->getPath().size() == stage){
+        setMessageTop(TEXT_COLOR_SUCCESS, "The robot " + robotView->getRobot()->getName() + " has successfully reached its destination");
         bottomLayout->getPlayRobotBtnGroup()->button(robotId)->setIcon(QIcon(":/icons/play.png"));
         bottomLayout->getStopRobotBtnGroup()->button(robotId)->setEnabled(false);
     }
@@ -1124,14 +1124,14 @@ void MainWindow::robotIsDeadSlot(QString hostname, QString ip){
         qDebug() << robots->getRobotsVector().at(i)->getRobot()->getIp();
     }
 
-    QPointer<RobotView> rv = robots->getRobotViewByIp(ip);
+    QPointer<RobotView> robotView = robots->getRobotViewByIp(ip);
     int id = robots->getRobotId(hostname);
 
-    if(rv != NULL && rv->getRobot() != NULL){
+    if(robotView && robotView->getRobot() != NULL){
 
         /// if the robot had a home, make the point a normal point
-        if(rv->getRobot()->getHome() != NULL)
-            rv->getRobot()->getHome()->getPoint()->setHome(Point::PointType::PERM);
+        if(robotView->getRobot()->getHome() != NULL)
+            robotView->getRobot()->getHome()->getPoint()->setHome(Point::PointType::PERM);
 
         /// if selected => if one of this robot related menu is open
         if(selectedRobot && selectedRobot->getRobot()->getIp().compare(ip) == 0){
@@ -1155,15 +1155,15 @@ void MainWindow::robotIsDeadSlot(QString hostname, QString ip){
         emit robotDisconnected(hostname);
 
         /// we stop the robots threads
-        rv->getRobot()->deleteLater();
+        robotView->getRobot()->deleteLater();
 
         /// delete robotview
-        scene->removeItem(rv);
+        scene->removeItem(robotView);
 
         /// remove from the model
-        robots->remove(rv);
+        robots->remove(robotView);
 
-        rv->deleteLater();
+        robotView->deleteLater();
 
         /// update robotsLeftWidget
         robotsLeftWidget->updateRobots(robots);
@@ -2019,9 +2019,9 @@ void MainWindow::editGroupBtnEvent(){
                 pointView->show();
                 QString robotName = "";
                 if(pointView->getPoint()->isHome()){
-                    QPointer<RobotView> rv = robots->findRobotUsingHome(pointView->getPoint()->getName());
-                    if(rv != NULL)
-                        robotName = rv->getRobot()->getName();
+                    QPointer<RobotView> robotView = robots->findRobotUsingHome(pointView->getPoint()->getName());
+                    if(robotView)
+                        robotName = robotView->getRobot()->getName();
                     else
                         qDebug() << "editGroupBtnEvent : something unexpected happened";
                 }
@@ -2393,9 +2393,9 @@ void MainWindow::displayPointEvent(QString name, double x, double y){
 
                 QString robotName = "";
                 if(pointView->getPoint()->isHome()){
-                    QPointer<RobotView> rv = robots->findRobotUsingHome(pointView->getPoint()->getName());
-                    if(rv != NULL)
-                        robotName = rv->getRobot()->getName();
+                    QPointer<RobotView> robotView = robots->findRobotUsingHome(pointView->getPoint()->getName());
+                    if(robotView)
+                        robotName = robotView->getRobot()->getName();
                     else
                         qDebug() << "MainWindow::displayPointEvent : something unexpected happened";
                 }
@@ -2419,9 +2419,9 @@ void MainWindow::displayPointEvent(QString name, double x, double y){
 
                 qDebug() << "MainWindow::displayPointEvent  : is this point a path ?" << (pointView->getPoint()->isPath()) << pointView->getPoint()->getType();
                 if(pointView->getPoint()->isHome()){
-                    QPointer<RobotView> rv = robots->findRobotUsingHome(pointView->getPoint()->getName());
-                    if(rv != NULL)
-                        robotName = rv->getRobot()->getName();
+                    QPointer<RobotView> robotView = robots->findRobotUsingHome(pointView->getPoint()->getName());
+                    if(robotView)
+                        robotName = robotView->getRobot()->getName();
                     else
                         qDebug() << "MainWindow::displayPointEvent  : something unexpected happened";
                 }
@@ -2632,9 +2632,9 @@ void MainWindow::displayPointsInGroup(void){
         QString robotName = "";
 
         if(pointView && pointView->getPoint()->isHome()){
-            QPointer<RobotView> rv = robots->findRobotUsingHome(checkedName);
-            if(rv != NULL)
-                robotName = rv->getRobot()->getName();
+            QPointer<RobotView> robotView = robots->findRobotUsingHome(checkedName);
+            if(robotView)
+                robotName = robotView->getRobot()->getName();
             else
                 qDebug() << "MainWindow::displayPointsInGroup something unexpected happened";
         }
@@ -2765,9 +2765,9 @@ void MainWindow::editPointFromGroupMenu(void){
         /// update the pointview and show the point on the map with hover color
         QString robotName = "";
         if(points->findPointView(pointName)->getPoint()->isHome()){
-            QPointer<RobotView> rv = robots->findRobotUsingHome(pointName);
-            if(rv != NULL)
-                robotName = rv->getRobot()->getName();
+            QPointer<RobotView> robotView = robots->findRobotUsingHome(pointName);
+            if(robotView)
+                robotName = robotView->getRobot()->getName();
             else
                 qDebug() << "editPointFromGroupMenu : something unexpected happened";
         }
@@ -2838,9 +2838,9 @@ void MainWindow::displayPointInfoFromGroupMenu(void){
 
         QString robotName = "";
         if(pointView->getPoint()->isHome()){
-            QPointer<RobotView> rv = robots->findRobotUsingHome(pointName);
-            if(rv != NULL)
-                robotName = rv->getRobot()->getName();
+            QPointer<RobotView> robotView = robots->findRobotUsingHome(pointName);
+            if(robotView)
+                robotName = robotView->getRobot()->getName();
             else
                 qDebug() << "setSelectedRobotFromPoint : something unexpected happened";
         }
@@ -3166,9 +3166,9 @@ void MainWindow::doubleClickOnPoint(QString pointName){
         DisplaySelectedPoint* selectedPoint = leftMenu->getDisplaySelectedPoint();
         QString robotName = "";
         if(pointView->getPoint()->isHome()){
-            QPointer<RobotView> rv = robots->findRobotUsingHome(pointName);
-            if(rv != NULL)
-                robotName = rv->getRobot()->getName();
+            QPointer<RobotView> robotView = robots->findRobotUsingHome(pointName);
+            if(robotView)
+                robotName = robotView->getRobot()->getName();
             else
                 qDebug() << "doubleClickOnPoint : something unexpected happened";
         }
@@ -3231,9 +3231,9 @@ void MainWindow::doubleClickOnGroup(QString checkedName){
 
         QString robotName = "";
         if(pointView->getPoint()->isHome()){
-            QPointer<RobotView> rv = robots->findRobotUsingHome(pointView->getPoint()->getName());
-            if(rv != NULL)
-                robotName = rv->getRobot()->getName();
+            QPointer<RobotView> robotView = robots->findRobotUsingHome(pointView->getPoint()->getName());
+            if(robotView)
+                robotName = robotView->getRobot()->getName();
             else
                 qDebug() << "doubleClickOnGroup : something unexpected happened";
         }
