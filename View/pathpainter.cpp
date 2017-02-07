@@ -8,9 +8,10 @@
 #include <QPainterPath>
 #include <QPixmap>
 #include "Controller/mainwindow.h"
+#include "Controller/mapcontroller.h"
 
 PathPainter::PathPainter(MainWindow* const &mainWindow, const QSharedPointer<Points> _points)
-    : QGraphicsPathItem(mainWindow->getMapView()), points(_points), mainWindow(mainWindow), pathDeleted(false), visiblePath("")
+    : QGraphicsPathItem(mainWindow->getMapController()->getMapView()), points(_points), mainWindow(mainWindow), pathDeleted(false), visiblePath("")
 {
     setPen(QPen(Qt::red));
 
@@ -57,7 +58,7 @@ void PathPainter::addPathPointSlot(QString name, double x, double y, int waitTim
             points->addPoint(PATH_GROUP_NAME, name, x, y, true, type);
         }
 
-        points->getGroups()->value(PATH_GROUP_NAME)->last()->setState(mainWindow->getMapView()->getState());
+        points->getGroups()->value(PATH_GROUP_NAME)->last()->setState(mainWindow->getMapController()->getMapView()->getState());
         Point point = *(points->getGroups()->value(PATH_GROUP_NAME)->last()->getPoint());
 
         currentPath.push_back(QSharedPointer<PathPoint>(new PathPoint(point, waitTime)));

@@ -9,7 +9,6 @@
 #include "View/mapleftwidget.h"
 #include "View/displayselectedpoint.h"
 #include "View/displayselectedgroup.h"
-#include "View/pathcreationwidget.h"
 #include "Controller/mainwindow.h"
 #include <QVBoxLayout>
 #include <QLabel>
@@ -24,17 +23,14 @@
 #include "Controller/mainwindow.h"
 #include "stylesettings.h"
 #include "View/pathpainter.h"
-#include "View/displayselectedpath.h"
-#include "View/groupspathswidget.h"
-#include "Model/paths.h"
-#include "View/displaypathgroup.h"
 #include "View/custompushbutton.h"
 #include "View/displayselectedpointrobots.h"
 #include "View/pathbuttongroup.h"
+#include "Controller/pathscontroller.h"
 
-LeftMenu::LeftMenu(MainWindow* _mainWindow, QSharedPointer<Points> const& _points, QSharedPointer<Paths> const& _paths,
-                   const QSharedPointer<Robots> &robots, const QSharedPointer<Map> &_map, const PathPainter *pathPainter)
-    : QWidget(_mainWindow), mainWindow(_mainWindow), points(_points), paths(_paths), lastCheckedId("s"){
+LeftMenu::LeftMenu(MainWindow* mainWindow, QSharedPointer<Points> const& _points,
+                   const QSharedPointer<Robots> &robots, const QSharedPointer<Map> &_map)
+    : QWidget(mainWindow), points(_points){
 
     QVBoxLayout* leftLayout  = new QVBoxLayout();
 
@@ -98,7 +94,7 @@ LeftMenu::LeftMenu(MainWindow* _mainWindow, QSharedPointer<Points> const& _point
     leftLayout->addWidget(mapLeftWidget);
 
     /// Menu to edit the selected robot
-    editSelectedRobotWidget = new EditSelectedRobotWidget(this, mainWindow, points, robots, paths);
+    editSelectedRobotWidget = new EditSelectedRobotWidget(this, mainWindow, points, robots, mainWindow->getPathsController()->getPaths());
     editSelectedRobotWidget->hide();
     leftLayout->addWidget(editSelectedRobotWidget);
     connect(editSelectedRobotWidget, SIGNAL(showEditSelectedRobotWidget()), mainWindow, SLOT(showEditHome()));
@@ -111,9 +107,8 @@ LeftMenu::LeftMenu(MainWindow* _mainWindow, QSharedPointer<Points> const& _point
     connect(createPointWidget, SIGNAL(pointSaved(QString, double, double, QString)), mainWindow, SLOT(pointSavedEvent(QString, double, double, QString)));
 
     /// Menu which display the informations of a path
-    displaySelectedPath = new DisplaySelectedPath(this, mainWindow, paths);
-    displaySelectedPath->hide();
-    leftLayout->addWidget(displaySelectedPath);
+
+    leftLayout->addWidget(mainWindow->getPathsController()->getDisplaySelectedPath());
 
     connect(displaySelectedPoint->getActionButtons()->getMinusButton(), SIGNAL(clicked(bool)), mainWindow, SLOT(removePointFromInformationMenu()));
     connect(displaySelectedPoint->getActionButtons()->getMapButton(), SIGNAL(clicked(bool)), mainWindow, SLOT(displayPointMapEvent()));
@@ -135,43 +130,12 @@ LeftMenu::LeftMenu(MainWindow* _mainWindow, QSharedPointer<Points> const& _point
     connect(displaySelectedPoint, SIGNAL(invalidName(QString, CreatePointWidget::Error)), mainWindow, SLOT(setMessageCreationPoint(QString,CreatePointWidget::Error)));
 
     /// Menu which displays the groups of paths
-    groupsPathsWidget = new GroupsPathsWidget(this, _mainWindow, paths);
-    groupsPathsWidget->hide();
-    leftLayout->addWidget(groupsPathsWidget);
-
-    connect(groupsPathsWidget->getActionButtons()->getGoButton(), SIGNAL(clicked()), mainWindow, SLOT(displayGroupPaths()));
-    connect(groupsPathsWidget->getActionButtons()->getEditButton(), SIGNAL(clicked()), mainWindow, SLOT(editGroupPaths()));
-    connect(groupsPathsWidget->getActionButtons()->getPlusButton(), SIGNAL(clicked()), mainWindow, SLOT(createGroupPaths()));
-    connect(groupsPathsWidget->getActionButtons()->getMinusButton(), SIGNAL(clicked()), mainWindow, SLOT(deleteGroupPaths()));
-    /// to delete a group with the delete key
-    connect(groupsPathsWidget, SIGNAL(deleteGroup()), mainWindow, SLOT(deleteGroupPaths()));
+    leftLayout->addWidget(mainWindow->getPathsController()->getGroupsPathsWidget());
 
     /// Menu which displays a particular group of paths
-    pathGroup = new DisplayPathGroup(this, _mainWindow, paths);
-    pathGroup->hide();
-    leftLayout->addWidget(pathGroup);
+    leftLayout->addWidget(mainWindow->getPathsController()->getPathGroupDisplayed());
 
-    connect(pathGroup->getActionButtons()->getGoButton(), SIGNAL(clicked()), mainWindow, SLOT(displayPath()));
-    connect(pathGroup->getActionButtons()->getPlusButton(), SIGNAL(clicked()), mainWindow, SLOT(createPath()));
-    connect(pathGroup->getActionButtons()->getMinusButton(), SIGNAL(clicked()), mainWindow, SLOT(deletePath()));
-    connect(pathGroup->getActionButtons()->getMapButton(), SIGNAL(clicked(bool)), mainWindow, SLOT(displayPathOnMap(bool)));
-    connect(pathGroup->getActionButtons()->getEditButton(), SIGNAL(clicked()), mainWindow, SLOT(editPath()));
-    /// to delete a path with the delete key
-    connect(pathGroup, SIGNAL(deletePath()), mainWindow, SLOT(deletePath()));
-
-    connect(pathGroup->getPathButtonGroup()->getButtonGroup(), SIGNAL(buttonToggled(int, bool)), pathGroup, SLOT(resetMapButton()));
-
-    pathCreationWidget = new PathCreationWidget(this, points, paths, false);
-    connect(pathCreationWidget, SIGNAL(addPathPoint(QString, double, double, int)), pathPainter, SLOT(addPathPointSlot(QString, double, double, int)));
-    connect(pathCreationWidget, SIGNAL(deletePathPoint(int)), pathPainter, SLOT(deletePathPointSlot(int)));
-    connect(pathCreationWidget, SIGNAL(orderPathPointChanged(int, int)), pathPainter, SLOT(orderPathPointChangedSlot(int, int)));
-    connect(pathCreationWidget, SIGNAL(resetPath()), pathPainter, SLOT(resetPathSlot()));
-    connect(pathCreationWidget, SIGNAL(setMessage(QString, QString)), mainWindow, SLOT(setMessageTop(QString, QString)));
-    connect(pathCreationWidget, SIGNAL(actionChanged(int, QString)), pathPainter, SLOT(actionChangedSlot(int, QString)));
-    connect(pathCreationWidget, SIGNAL(editPathPoint(int, QString, double, double)), pathPainter, SLOT(editPathPointSlot(int, QString, double, double)));
-
-    pathCreationWidget->hide();
-    leftLayout->addWidget(pathCreationWidget);
+    leftLayout->addWidget(mainWindow->getPathsController()->getpathCreationWidget());
     hide();
 
     globalLayout->addLayout(leftLayout);
@@ -183,8 +147,8 @@ LeftMenu::LeftMenu(MainWindow* _mainWindow, QSharedPointer<Points> const& _point
     leftLayout->setContentsMargins(10, 10, 0, 10);
     globalLayout->setContentsMargins(0, 0, 0, 0);
 
-    setMaximumWidth(_mainWindow->width()/2);
-    setMinimumWidth(_mainWindow->width()/2);
+    setMaximumWidth(mainWindow->width()/2);
+    setMinimumWidth(mainWindow->width()/2);
 
     QPalette Pal(palette());
     Pal.setColor(QPalette::Background, left_menu_background_color);

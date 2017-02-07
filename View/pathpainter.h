@@ -63,12 +63,22 @@ public:
 
     void resetAllPixmap();
 
-private slots:
+public slots:
+    /**
+     * @brief updatePathPainterSlot
+     * @param savePath
+     * Redraw the whole path
+     */
+    void updatePathPainterSlot(const bool savePath);
+
     /**
      * @brief resetPathSlot
      * Reset the path painter
      */
     void resetPathSlot();
+
+private slots:
+
 
     /**
      * @brief addPathPointSlot
@@ -85,13 +95,6 @@ private slots:
      * Delete a path point from the current path
      */
     void deletePathPointSlot(int ide);
-
-    /**
-     * @brief updatePathPainterSlot
-     * @param savePath
-     * Redraw the whole path
-     */
-    void updatePathPainterSlot(const bool savePath);
 
     /**
      * @brief updatePathPainterPointViewSlot

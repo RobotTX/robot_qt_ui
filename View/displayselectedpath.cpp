@@ -10,8 +10,8 @@
 #include <QVBoxLayout>
 #include <QDebug>
 
-DisplaySelectedPath::DisplaySelectedPath(QWidget *parent, const MainWindow *mainWindow,  const QSharedPointer<Paths>& _paths):
-    QWidget(parent), paths(_paths)
+DisplaySelectedPath::DisplaySelectedPath(MainWindow *mainWindow,  const QSharedPointer<Paths>& _paths):
+    QWidget(mainWindow), paths(_paths)
 {
     scrollArea = new CustomScrollArea(this, true);
 
@@ -49,8 +49,6 @@ DisplaySelectedPath::DisplaySelectedPath(QWidget *parent, const MainWindow *main
 
     connect(this, SIGNAL(deletePath(QString, QString)), mainWindow, SLOT(deletePathSlot(QString, QString)));
     connect(this, SIGNAL(editPath(QString, QString)), mainWindow, SLOT(editPathSlot(QString, QString)));
-    connect(this, SIGNAL(displayPath(QString, QString, bool)), mainWindow, SLOT(displayPathSlot(QString, QString, bool)));
-
     layout->setAlignment(Qt::AlignTop);
     topLayout->setContentsMargins(0, 0, 10, 0);
     layout->setContentsMargins(0, 0, 0, 0);

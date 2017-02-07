@@ -31,6 +31,8 @@ class MapView;
 class LaserController;
 class SettingsController;
 class TopLayoutController;
+class MapController;
+class PathsController;
 
 #include "Model/paths.h"
 #include "View/createpointwidget.h"
@@ -79,19 +81,18 @@ public:
 
     QSharedPointer<Points> getPoints(void) const { return points; }
     QList<QPair<QPair<QWidget*, QString>, MainWindow::WidgetType>> getLastWidgets(void) const { return lastWidgets; }
-    PathPainter* getPathPainter(void) const { return pathPainter; }
     CommandController* getCommandController(void) const { return commandController; }
     QSharedPointer<Robots> getRobots(void) const { return robots; }
     LaserController* getLaserController(void) const { return laserController; }
+    MapController* getMapController(void) const { return mapController; }
+    PathsController* getPathsController(void) const { return pathsController; }
 
     void initializeMenu();
     void initializeRobots();
     void initializePoints();
-    void initializeMap();
     void savePoints(const QString fileName);
     void initializeBottomPanel();
     void initializeLeftMenu();
-    void initializePaths();
     void hideAllWidgets();
     int openConfirmMessage(const QString);
     void openInterdictionOfPointRemovalMessage(const QString pointName, const QString robotName);
@@ -105,16 +106,10 @@ public:
     void updateAllPaths(const Point &old_point, const Point &new_point);
     void clearPath(const int robotNb);
     QPointer<RobotView> getSelectedRobot(void) const { return selectedRobot; }
-    QPointer<MapView> getMapView(void) const { return mapPixmapItem; }
-    void serializePaths(const QString fileName);
-    void deserializePaths(const QString fileName);
     void showHomes();
     void showHomes(QPointer<Robot> robot);
     void showSelectedRobotHomeOnly();
     void updateModelPaths(const Point &old_point, const Point &new_point);
-
-    bool saveMapConfig(const std::string fileName);
-    bool loadMapConfig(const std::string fileName);
 
     /// returns true if the first date is later to the second date
     bool isLater(const QStringList& date, const QStringList& otherDate);
@@ -230,7 +225,6 @@ private slots:
     void centerMap(void);
     void setMessageCreationPoint(QString type, CreatePointWidget::Error error);
     void choosePointName(QString message);
-    void saveMapState(void);
 
     /**
      * @brief cancelEvent
@@ -260,14 +254,12 @@ private slots:
     void replacePoint(int id, QString name);
     void deletePathSlot(QString groupName, QString pathName);
     void editPathSlot(QString groupName, QString pathName);
-    void displayPathSlot(QString groupName, QString pathName, bool display);
     void setNewHome(QString homeName);
     void goHome();
     void goHome(int nbRobot);
 
     /// for menu paths
     void displayGroupPaths();
-    void editGroupPaths();
     void createGroupPaths();
     void deleteGroupPaths();
     void saveGroupPaths(QString name);
@@ -336,28 +328,30 @@ protected:
     void commandDoneStartScan(bool success, bool scan, QString robotName);
     void commandDoneStopScan(bool success, QString robotName);
 
-
 private:
     Ui::MainWindow* ui;
+
     QThread serverThread;
     QThread mapThread;
+
     RobotServerWorker* robotServerWorker;
+
     QVBoxLayout* rightLayout;
-    CustomQGraphicsView* graphicsView;
-    QSharedPointer<Map> map;
+    BottomLayout* bottomLayout;
+
     QSharedPointer<Robots> robots;
-    QGraphicsScene* scene;
-    QPointer<MapView> mapPixmapItem;
     QPointer<RobotView> selectedRobot;
     QSharedPointer<PointView> selectedPoint;
     QSharedPointer<Points> points;
     QSharedPointer<PointView> editedPointView;
     QVector<QSharedPointer<PointView>> pointViewsToDisplay;
-    PathPainter* pathPainter;
+
+
 
     QMessageBox msgBox;
 
     QList<QPair<QPair<QWidget*, QString>, MainWindow::WidgetType>> lastWidgets;
+
     LeftMenuWidget* leftMenuWidget;
     PointsLeftWidget* pointsLeftWidget;
     RobotsLeftWidget* robotsLeftWidget;
@@ -365,30 +359,21 @@ private:
     EditSelectedRobotWidget* editSelectedRobotWidget;
     SelectedPointWidget* selectedPointWidget;
     CreatePointWidget* createPointWidget;
-    LeftMenu* leftMenu;
-    BottomLayout* bottomLayout;
-    PathCreationWidget* robotPathCreationWidget;
-    PathCreationWidget* pathCreationWidget;
-
-    QPair<QPointF, float> mapState;
-
-    QSharedPointer<Paths> paths;
-
-    CommandController* commandController;
-    SettingsController* settingsController;
-
-    std::string mapFile;
     QPointer<EditMapWidget> editMapWidget;
     QPointer<MergeMapWidget> mergeMapWidget;
     QPointer<ScanMapWidget> scanMapWidget;
 
-    LaserController* laserController;
+    LeftMenu* leftMenu;
 
     /// feature that we are currently using, useful to determine which tutorial message to enable / disable
     QString currentFeature;
 
     TopLayoutController* topLayoutController;
-
+    MapController* mapController;
+    CommandController* commandController;
+    SettingsController* settingsController;
+    LaserController* laserController;
+    PathsController* pathsController;
 };
 
 #endif /// MAINWINDOW_H

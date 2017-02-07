@@ -10,20 +10,14 @@
 #include "Model/map.h"
 #include <QSharedPointer>
 #include "View/drawobstacles.h"
+#include "View/pointview.h"
 
 
-MapView::MapView (const QPixmap& pixmap, const QSize _size, QSharedPointer<Map> _map, QMainWindow* _mainWindow, QSharedPointer<Robots> _robots) :
-    QGraphicsPixmapItem(pixmap), size(_size), state(GraphicItemState::NO_STATE), mainWindow(_mainWindow), map(_map), idTmp(0), robots(_robots){
-
+MapView::MapView (const QPixmap& pixmap, const QSize _size) : QGraphicsPixmapItem(pixmap), size(_size), tmpPointView(Q_NULLPTR), state(GraphicItemState::NO_STATE) {
     /// Tell the class which mouse button to accept
     setAcceptedMouseButtons(Qt::LeftButton | Qt::MidButton);
     /// To drag & drop the map
     setFlag(QGraphicsItem::ItemIsMovable);
-    connect(this, SIGNAL(leftClick()), mainWindow, SLOT(setSelectedPoint()));
-    /// to notify the main window that the file has been successfully saved or not
-    connect(_map.data(), SIGNAL(saveStatus(bool)), mainWindow, SLOT(messageMapSaved(bool)));
-
-    obstaclesPainter = new DrawObstacles(size, _robots, this);
 }
 
 void MapView::mousePressEvent(QGraphicsSceneMouseEvent *event){
@@ -48,27 +42,24 @@ void MapView::mouseReleaseEvent(QGraphicsSceneMouseEvent *event){
         if (abs(x) <= 10 && abs(y) <= 10){
             /// click
             if(state == GraphicItemState::NO_STATE){
-                QSharedPointer<PointView> tmpPointView = points->getTmpPointView();
                 tmpPointView->show();
                 tmpPointView->setPos(event->pos().x(), event->pos().y());
                 emit leftClick();
-            } else if(state == GraphicItemState::CREATING_PATH){
-                /// if it's not a white point of the map we cannot add it to the path
-               if(map->getMapImage().pixelColor(event->pos().x()-tmpPointPixmap.width()/2, event->pos().y()-tmpPointPixmap.height()).red() >= 254)
-                    emit addPathPoint(PATH_POINT_NAME, event->pos().x(), event->pos().y());
-               else
-                    emit newMessage("You cannot create a point here because your robot cannot go there. You must click known areas of the map");
+            }
 
-            } else if(state == GraphicItemState::EDITING_PERM)
+            else if(state == GraphicItemState::CREATING_PATH)
+                emit addPathPoint(PATH_POINT_NAME, event->pos().x(), event->pos().y());
+
+            else if(state == GraphicItemState::EDITING_PERM)
                 /// to notify the point information menu that the position has changed and so the point can be displayed at its new position
                 emit newCoordinates(event->pos().x(), event->pos().y());
+
             else if(state == GraphicItemState::EDITING_PATH)
                 /// to notify that a point which belongs to the path of a robot has been changed
                 emit newCoordinatesPathPoint(event->pos().x(), event->pos().y());
         }
         /// else drag
         QGraphicsPixmapItem::mouseReleaseEvent(event);
-
     }
 }
 

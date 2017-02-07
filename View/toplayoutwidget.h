@@ -18,7 +18,7 @@ public:
 
     QString getLabelText(void) const { return label->text(); }
     QString getLabelPerm(void) const { return labelPerm->text(); }
-
+    CustomPushButton* getSaveButton(void) const { return saveMapBtn; }
 
 public:
     /**

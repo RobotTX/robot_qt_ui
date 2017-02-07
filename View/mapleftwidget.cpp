@@ -9,7 +9,7 @@ MapLeftWidget::MapLeftWidget(QWidget* parent, const MainWindow *mainWindow): QWi
     layout = new QVBoxLayout(this);
 
     /// Save & load buttons
-    CustomPushButton* saveBtn = new CustomPushButton(QIcon(":/icons/upload.png"), "Save this map", this);
+    saveBtn = new CustomPushButton(QIcon(":/icons/upload.png"), "Save this map", this);
     CustomPushButton* loadBtn = new CustomPushButton(QIcon(":/icons/download.png"), "Load a map", this);
 
     /// this button allows a user to save a particular state for the map (point in the center of its screen and zoom)
@@ -38,7 +38,6 @@ MapLeftWidget::MapLeftWidget(QWidget* parent, const MainWindow *mainWindow): QWi
 
     connect(saveBtn, SIGNAL(clicked()), mainWindow, SLOT(saveMapBtnEvent()));
     connect(loadBtn, SIGNAL(clicked()), mainWindow, SLOT(loadMapBtnEvent()));
-    connect(saveStateBtn, SIGNAL(clicked()), mainWindow, SLOT(saveMapState()));
     connect(editBtn, SIGNAL(clicked()), mainWindow, SLOT(editMapSlot()));
     connect(mergeBtn, SIGNAL(clicked()), mainWindow, SLOT(mergeMapSlot()));
 

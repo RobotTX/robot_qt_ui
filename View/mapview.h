@@ -7,6 +7,7 @@ class QMouseEvent;
 class QGraphicsSceneMouseEvent;
 class Map;
 class DrawObstacles;
+class PointView;
 
 #include "View/pointview.h"
 #include <QObject>
@@ -26,17 +27,15 @@ class MapView: public QObject, public QGraphicsPixmapItem {
     Q_OBJECT
 
 public:
-    MapView (const QPixmap& pixmap, const QSize size, QSharedPointer<Map> _map, QMainWindow *_mainWindow, QSharedPointer<Robots> _robots);
+    MapView (const QPixmap& pixmap, const QSize size);
 
     QSize getSize(void) const { return size; }
     int getWidth(void) const { return size.width(); }
     int getHeight(void) const { return size.height(); }
     GraphicItemState getState(void) const { return state; }
-    QMainWindow* getMainWindow(void) const { return mainWindow; }
-    DrawObstacles* getObstaclesPainter(void) const { return obstaclesPainter; }
 
     void setState(const GraphicItemState _state) { state = _state; }
-    void setPoints(QSharedPointer<Points> _points) { points = _points; }
+    void setTmpPointView(QSharedPointer<PointView> pv) { tmpPointView = pv; }
 
 
 signals:
@@ -59,17 +58,12 @@ protected:
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
 
 private:
+    QSharedPointer<PointView> tmpPointView;
     QPointF dragStartPosition;
     QSize size;
     QPixmap tmpPointPixmap;
-    QSharedPointer<Points> points;
     GraphicItemState state;
-    QMainWindow* mainWindow;
-    QSharedPointer<Map> map;
-    int idTmp;
-    DrawObstacles* obstaclesPainter;
-    QSharedPointer<Robots> robots;
 };
 
-#endif // MAPVIEW_H
+#endif /// MAPVIEW_H
 

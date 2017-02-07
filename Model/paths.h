@@ -11,6 +11,7 @@ class MainWindow;
 #include <QDebug>
 
 #include "Model/pathpoint.h"
+#include "View/pointview.h"
 
 /**
  * @brief The Paths class
@@ -156,5 +157,6 @@ QDataStream& operator<<(QDataStream& out, const Paths& paths);
  * Deserialization of the paths
  */
 QDataStream& operator>>(QDataStream& in, Paths& paths);
+
 
 #endif /// PATHS_H

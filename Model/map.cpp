@@ -1,9 +1,42 @@
 #include "map.h"
 #include <QDebug>
 #include <assert.h>
+#include <fstream>
+#include <QDir>
 
 /// attributes are set to 0 because they will be updated later
-Map::Map(): resolution(0), width(0), height(0), origin(Position()), mapId(QUuid()), modified(false) {}
+Map::Map(): modified(false) {
+
+    std::ifstream file((QDir::currentPath() + QDir::separator() + "currentMap.txt").toStdString(), std::ios::in);
+
+    if(file){
+        double centerX, centerY, originX, originY;
+        std::string _dateTime, mapId;
+        file >> mapFile >> height >> width >> centerX >> centerY >> mapState.second >> originX >> originY >> resolution >> _dateTime >> mapId;
+        qDebug() << "CurrentMap.txt :" << QString::fromStdString(mapFile) << height << width
+                 << centerX << centerY << originX << originY << resolution
+                 << QString::fromStdString(_dateTime) << QString::fromStdString(mapId);
+        mapState.first.setX(centerX);
+        mapState.first.setY(centerY);
+        origin = Position(originX, originY);
+        dateTime = QDateTime::fromString(QString::fromStdString(_dateTime), "yyyy-MM-dd-hh-mm-ss");
+        file.close();
+    }
+
+    if(!mapFile.compare("")){
+        setMapFromFile(":/maps/map.pgm");
+        mapState.second = 1;
+        height = 608;
+        width = 320;
+        mapState.first.setX(0);
+        mapState.first.setY(0);
+        resolution = 0.05;
+        origin = Position(0, 0);
+        dateTime = QDateTime(QDate::fromString("1970-01-01", "yyyy-mm-dd"));
+        mapId = QUuid();
+    } else
+        setMapFromFile(QString::fromStdString(mapFile));
+}
 
 void Map::setMapFromFile(const QString fileName){
     /// Qt has is own function to create a QImage from a PGM file
@@ -43,7 +76,7 @@ QImage Map::getImageFromArray(const QByteArray& mapArrays, const bool fromPgm){
     int countSum = 0;
 
     /// We set each pixel of the image
-    for(int i = 0; i < mapArrays.size(); i+=5){
+    for(int i = 0; i < mapArrays.size(); i += 5){
         int color = static_cast<int> (static_cast<uint8_t> (mapArrays.at(i)));
 
         uint32_t count = static_cast<uint32_t> (static_cast<uint8_t> (mapArrays.at(i+1)) << 24) + static_cast<uint32_t> (static_cast<uint8_t> (mapArrays.at(i+2)) << 16)
@@ -54,7 +87,7 @@ QImage Map::getImageFromArray(const QByteArray& mapArrays, const bool fromPgm){
 
         for(int j = 0; j < static_cast<int> (count); j++){
             /// Sometimes we receive too much informations so we need to check
-            if(index > width*height)
+            if(index > static_cast<uint>(width*height))
                 return image;
 
             image.setPixelColor(QPoint(static_cast<int>(index%width), shift + sign * (static_cast<int>(index/width))), QColor(color, color, color));

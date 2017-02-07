@@ -8,9 +8,10 @@
 #include "Model/robot.h"
 #include "Controller/mainwindow.h"
 #include "View/mapview.h"
+#include "Controller/mapcontroller.h"
 
 PointView::PointView(const QSharedPointer<Point> &_point, MainWindow *_mainWindow)
-    : QGraphicsPixmapItem(QPixmap(PIXMAP_NORMAL), static_cast<QGraphicsPixmapItem*>(_mainWindow->getMapView())), state(GraphicItemState::NO_STATE), type(PixmapType::NORMAL),
+    : QGraphicsPixmapItem(QPixmap(PIXMAP_NORMAL), static_cast<QGraphicsPixmapItem*>(_mainWindow->getMapController()->getMapView())), state(GraphicItemState::NO_STATE), type(PixmapType::NORMAL),
         lastType(PixmapType::NORMAL), mainWindow(_mainWindow){
 
     setScale(SCALE);
