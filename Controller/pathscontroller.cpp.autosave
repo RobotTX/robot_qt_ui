@@ -214,7 +214,7 @@ bool PathsController::deletePath(){
 }
 
 void PathsController::displayPathSlot(const QString groupName, const QString pathName, const bool display){
-    /// TODO check if can be done inside paths controller
+
     qDebug() << "PathsController::displayPathSlot called on group :" << groupName << ", path :" << pathName << ", display :" << display;
     if(display){
         bool foundFlag = false;
@@ -243,7 +243,7 @@ void PathsController::displayGroupPaths(){
 
 void PathsController::editGroupPaths(){
     qDebug() << "PathsController::editGroupPaths called";
-    /// TODO check if can be done inside controller
+
     /// resets the line edit
     groupsPathsWidget->getButtonGroup()->getModifyEdit()->setText("");
 
@@ -322,7 +322,6 @@ bool PathsController::modifyGroupPathsWithEnter(QString name){
 }
 
 void PathsController::doubleClickOnPathsGroup(const QString checkedButton){
-    /// TODO check if can be done inside controller
     setPathsGroup(checkedButton);
     pathCreationWidget->setCurrentGroupName(checkedButton);
     pathGroup->getGroupNameLabel()->setText(checkedButton);

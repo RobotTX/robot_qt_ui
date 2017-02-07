@@ -95,7 +95,7 @@ public:
 
     bool modifyGroupPathsWithEnter(QString name);
 
-    void updatePaths(const Point& old_point, const Point& new_point) { paths->updatePaths(old_point, new_point); }
+    void updatePaths(const Point& old_point, const Point& new_point);
 
     void displayPath(const QString groupName);
 

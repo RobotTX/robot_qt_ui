@@ -182,36 +182,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     /// to add a path point when we click on the map
     connect(mapController, SIGNAL(pathPointSignal(QString,double,double)), pathsController->getpathCreationWidget(), SLOT(addPathPointSlot(QString, double, double)));
 
-    /// to add a path point when we click on a pointView (which is relayed by the mainWindow)
-    connect(this, SIGNAL(addPathPoint(QString, double, double)), pathsController->getpathCreationWidget(), SLOT(addPathPointSlot(QString, double, double)));
-
-    connect(this, SIGNAL(updatePathPainter(bool)), pathsController->getPathPainter(), SLOT(updatePathPainterSlot(bool)));
-
-    connect(pathsController->getpathCreationWidget(), SIGNAL(editTmpPathPoint(int, QString, double, double)), this, SLOT(editTmpPathPointSlot(int, QString, double, double)));
-
-    connect(this, SIGNAL(updatePathPainterPointView()), pathsController->getPathPainter(), SLOT(updatePathPainterPointViewSlot()));
-
-    connect(pathsController->getpathCreationWidget(), SIGNAL(saveEditPathPoint()), this, SLOT(saveEditPathPointSlot()));
-
-    connect(pathsController->getpathCreationWidget(), SIGNAL(cancelEditPathPoint()), this, SLOT(cancelEditPathPointSlot()));
-
-    connect(pathsController->getpathCreationWidget(), SIGNAL(savePath()), this, SLOT(savePathSlot()));
-
-    connect(this, SIGNAL(resetPath()), pathsController->getPathPainter(), SLOT(resetPathSlot()));
-
-    connect(this, SIGNAL(resetPathCreationWidget()), pathsController->getpathCreationWidget(), SLOT(resetWidget()));
-
-    connect(pathsController->getGroupsPathsWidget(), SIGNAL(newPathGroup(QString)), this, SLOT(saveGroupPaths(QString)));
-    connect(pathsController->getGroupsPathsWidget(), SIGNAL(messageCreationGroup(QString,QString)), this, SLOT(setMessageCreationGroup(QString,QString)));
-    connect(pathsController->getGroupsPathsWidget(), SIGNAL(modifiedGroup(QString)), this, SLOT(modifyGroupPathsWithEnter(QString)));
-
-    connect(pathsController->getpathCreationWidget()->getCancelButton(), SIGNAL(clicked()), this, SLOT(cancelNoRobotPathSlot()));
-
-    connect(pathsController->getpathCreationWidget(), SIGNAL(codeEditPath(int)), this, SLOT(setMessageNoRobotPath(int)));
-
-    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
     ///  ------------------------------------------------------- ROBOTS CONNECTS ----------------------------------------------------------
 
     connect(mapLeftWidget->getSaveBtn(), SIGNAL(clicked()), mapController, SLOT(saveMapState()));
@@ -255,7 +225,6 @@ MainWindow::~MainWindow(){
 //                                          ROBOTS and PATHS
 
 /**********************************************************************************************************************************/
-
 
 void MainWindow::initializeRobots(){
 
@@ -446,7 +415,6 @@ void MainWindow::playSelectedRobot(int robotNb){
 
 void MainWindow::viewPathSelectedRobot(int robotNb, bool checked){
     qDebug() << "MainWindow::viewPathSelectedRobot called" << robotNb << checked;
-
     if(checked){
         /// in case we were displaying a path from the menu we make sure the eye button as well as the eye icon are unchecked and hidden respectively
        pathsController->getPathGroupDisplayed()->getActionButtons()->getMapButton()->setChecked(false);
@@ -1231,7 +1199,7 @@ void MainWindow::updateAllPaths(const Point& old_point, const Point& new_point){
     }
 
     /// updates the paths of the model
-    updateModelPaths(old_point, new_point);
+    pathsController->updatePaths(old_point, new_point);
 
     if(pathsController->getVisiblePath().compare("")){
         /// to set the tooltip of the modified point
@@ -1446,6 +1414,7 @@ void MainWindow::loadMapBtnEvent(){
             /// updates the group box so that new points can be added
             createPointWidget->updateGroupBox();
 
+            /// saves the imported paths in the current paths file
             pathsController->serializePaths(QDir::currentPath() + QDir::separator() + "paths.dat");
 
             /// updates the groups of paths menu using the paths that have just been imported
@@ -3496,6 +3465,7 @@ void MainWindow::deleteGroupPaths(){
         pathsController->deleteGroup(groupPaths);
         pathsController->serializePaths(QDir::currentPath() + QDir::separator() + "paths.dat");
         pathsController->updateGroupsPaths();
+        /// if the displayed path was among the paths of this group, we hide it as we delete it
         emit resetPath();
         setMessageTop(TEXT_COLOR_SUCCESS, "You have successfully deleted the group of paths \"" + groupPaths + "\"");
         delay(4000);
@@ -3852,15 +3822,6 @@ void MainWindow::displayAssignedPath(QString groupName, QString pathName){
 
 void MainWindow::clearMapOfPaths(){
     emit resetPath();
-}
-
-void MainWindow::updateModelPaths(const Point& old_point, const Point& new_point){
-    /// TODO check if can be done inside controller
-    qDebug() << "name of the point which caused the paths to be updated" << old_point.getName() << "new name" << new_point.getName();
-    pathsController->updatePaths(old_point, new_point);
-    /// saves the paths as the paths of the current configuration
-    /// for paths to be saved permanently "save map" must be clicked (map menu)
-    pathsController->serializePaths(QDir::currentPath() + QDir::separator() + "paths.dat");
 }
 
 /**********************************************************************************************************************************/
