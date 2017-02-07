@@ -109,7 +109,6 @@ public:
     void showHomes();
     void showHomes(QPointer<Robot> robot);
     void showSelectedRobotHomeOnly();
-    void updateModelPaths(const Point &old_point, const Point &new_point);
 
     /// returns true if the first date is later to the second date
     bool isLater(const QStringList& date, const QStringList& otherDate);
@@ -345,8 +344,6 @@ private:
     QSharedPointer<Points> points;
     QSharedPointer<PointView> editedPointView;
     QVector<QSharedPointer<PointView>> pointViewsToDisplay;
-
-
 
     QMessageBox msgBox;
 
