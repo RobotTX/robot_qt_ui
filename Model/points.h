@@ -31,7 +31,7 @@ class Points : public QObject {
     typedef QMap<QString, QSharedPointer<QVector<QSharedPointer<PointView>>>> Groups;
 
 public:
-    Points(MainWindow *parent);
+    Points(QObject *parent, MainWindow *_mainWindow);
 
     /// a helper class to overload the << operator
     void display(std::ostream& stream) const;
@@ -306,7 +306,7 @@ public:
     QSharedPointer<PointView> findPointViewByPos(const Position& pos);
 
 private:
-    MainWindow* parent;
+    MainWindow* mainWindow;
     QSharedPointer<Groups> groups;
 };
 

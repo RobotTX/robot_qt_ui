@@ -73,29 +73,31 @@ HEADERS += \
            View/commandmessagebox.h \
            Controller/robotserverworker.h \
            View/editselectedrobotwidget.h \
-    View/editmapwidget.h \
-    View/editmapview.h \
-    Controller/localmapworker.h \
-    View/drawobstacles.h \
-    View/settingswidget.h \
-    View/mergemapwidget.h \
-    View/mergemaplistitemwidget.h \
-    View/mergemaplistwidget.h \
-    View/mergemapgraphicsitem.h \
-    View/scanmapwidget.h \
-    View/scanmaplistitemwidget.h \
-    View/scanmapgraphicsitem.h \
-    Controller/teleopworker.h \
-    View/teleopwidget.h \
-    Controller/lasercontroller.h \
-    Model/settings.h \
-    Controller/settingscontroller.h \
-    Controller/toplayoutcontroller.h \
-    View/toplayoutwidget.h \
-    Model/toplayout.h \
-    Controller/mapcontroller.h \
-    Controller/pathscontroller.h \
-    View/robotpositionrecovery.h
+           View/editmapwidget.h \
+           View/editmapview.h \
+           Controller/localmapworker.h \
+           View/drawobstacles.h \
+           View/settingswidget.h \
+           View/mergemapwidget.h \
+           View/mergemaplistitemwidget.h \
+           View/mergemaplistwidget.h \
+           View/mergemapgraphicsitem.h \
+           View/scanmapwidget.h \
+           View/scanmaplistitemwidget.h \
+           View/scanmapgraphicsitem.h \
+           Controller/teleopworker.h \
+           View/teleopwidget.h \
+           Controller/lasercontroller.h \
+           Model/settings.h \
+           Controller/settingscontroller.h \
+           Controller/toplayoutcontroller.h \
+           View/toplayoutwidget.h \
+           Model/toplayout.h \
+           Controller/mapcontroller.h \
+           Controller/pathscontroller.h \
+           View/robotpositionrecovery.h \
+           Controller/pointscontroller.h
+
 
 FORMS += Controller/mainwindow.ui
 
@@ -175,7 +177,11 @@ SOURCES += main.cpp \
     Model/toplayout.cpp \
     Controller/mapcontroller.cpp \
     Controller/pathscontroller.cpp \
+<<<<<<< HEAD
     View/robotpositionrecovery.cpp
+=======
+    Controller/pointscontroller.cpp
+>>>>>>> 48cb991b9c8551d82c0589ce1360cb63ea085e25
 
 
 RESOURCES += Resources/resources.qrc

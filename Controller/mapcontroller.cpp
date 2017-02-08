@@ -6,8 +6,10 @@
 #include <QFileInfo>
 #include <QDir>
 #include <fstream>
+#include "Controller/mainwindow.h"
+#include "Controller/pointscontroller.h"
 
-MapController::MapController(QSharedPointer<Robots> _robots, QWidget *parent): QObject(parent)
+MapController::MapController(QSharedPointer<Robots> _robots, MainWindow *parent): QObject(parent)
 {
     map = QSharedPointer<Map> (new Map());
 
@@ -37,16 +39,16 @@ void MapController::createMapView(QWidget *parent, QSharedPointer<Robots> _robot
 
     view = new MapView(QPixmap::fromImage(map->getMapImage()), parent->geometry().size());
 
-    connect(view, SIGNAL(leftClick()), parent, SLOT(setSelectedPoint()));
+    connect(view, SIGNAL(leftClick()), parent, SLOT(setSelectedTmpPoint()));
 
     /// to link the map and the point information menu when a point is being edited
-    connect(view, SIGNAL(newCoordinates(double, double)), static_cast<QMainWindow*> (parent), SLOT(updateCoordinates(double, double)));
+    connect(view, SIGNAL(newCoordinates(double, double)), static_cast<MainWindow*> (parent)->getPointsController(), SLOT(updateCoordinates(double, double)));
 
     /// to link the map and the path information when a path point is being edited (associated to a robot or not)
     connect(view, SIGNAL(newCoordinatesPathPoint(double, double)), static_cast<QMainWindow*> (parent), SLOT(updateEditedPathPoint(double, double)));
 
     /// to link the map and the coordinates where we want to send the robot
-    connect(view, SIGNAL(testCoord(double, double)), static_cast<QMainWindow*> (parent), SLOT(testCoordSlot(double, double)));
+    connect(view, SIGNAL(testCoord(double, double)), static_cast<MainWindow*> (parent), SLOT(testCoordSlot(double, double)));
 
     /// to create a path
     connect(view, SIGNAL(addPathPoint(QString, double, double)), this, SLOT(relayPathPoint(QString, double, double)));

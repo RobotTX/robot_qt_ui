@@ -1,63 +1,64 @@
 #include "pathscontroller.h"
-#include "View/pathcreationwidget.h"
+#include <QLineEdit>
+#include <QDir>
+#include "Controller/toplayoutcontroller.h"
 #include "Model/paths.h"
+#include "Model/points.h"
+#include "View/pathcreationwidget.h"
 #include "View/displaypathgroup.h"
 #include "View/displayselectedpath.h"
 #include "View/groupspathswidget.h"
 #include "View/pathpainter.h"
-#include "Model/points.h"
 #include "View/topleftmenu.h"
 #include "View/pointview.h"
-#include <QLineEdit>
-#include <QDir>
 #include "View/pathbuttongroup.h"
 #include "View/pathpointcreationwidget.h"
 #include "View/customlineedit.h"
 #include "View/customlabel.h"
 #include "View/stylesettings.h"
 
-PathsController::PathsController(MainWindow *parent, const QSharedPointer<Points> points): QObject(parent)
+PathsController::PathsController(MainWindow *mainWindow, const QSharedPointer<Points> points): QObject(mainWindow)
 {
     paths = QSharedPointer<Paths>(new Paths());
 
-    pathPainter = new PathPainter(parent, points);
+    pathPainter = new PathPainter(mainWindow, points);
 
     initializePaths();
 
     /// Menu which displays the groups of paths
-    groupsPathsWidget = new GroupsPathsWidget(parent, paths);
+    groupsPathsWidget = new GroupsPathsWidget(mainWindow, paths);
     groupsPathsWidget->hide();
 
-    displaySelectedPath = new DisplaySelectedPath(parent, paths);
+    displaySelectedPath = new DisplaySelectedPath(mainWindow, paths);
     displaySelectedPath->hide();
     connect(displaySelectedPath, SIGNAL(displayPath(QString, QString, bool)), this, SLOT(displayPathSlot(QString, QString, bool)));
 
-    connect(groupsPathsWidget->getActionButtons()->getGoButton(), SIGNAL(clicked()), parent, SLOT(displayGroupPaths()));
+    connect(groupsPathsWidget->getActionButtons()->getGoButton(), SIGNAL(clicked()), mainWindow, SLOT(displayGroupPaths()));
     connect(groupsPathsWidget->getActionButtons()->getEditButton(), SIGNAL(clicked()), this, SLOT(editGroupPaths()));
-    connect(groupsPathsWidget->getActionButtons()->getPlusButton(), SIGNAL(clicked()), parent, SLOT(createGroupPaths()));
-    connect(groupsPathsWidget->getActionButtons()->getMinusButton(), SIGNAL(clicked()), parent, SLOT(deleteGroupPaths()));
+    connect(groupsPathsWidget->getActionButtons()->getPlusButton(), SIGNAL(clicked()), mainWindow, SLOT(createGroupPaths()));
+    connect(groupsPathsWidget->getActionButtons()->getMinusButton(), SIGNAL(clicked()), mainWindow, SLOT(deleteGroupPaths()));
     /// to delete a group with the delete key
-    connect(groupsPathsWidget, SIGNAL(deleteGroup()), parent, SLOT(deleteGroupPaths()));
+    connect(groupsPathsWidget, SIGNAL(deleteGroup()), mainWindow, SLOT(deleteGroupPaths()));
 
-    pathGroup = new DisplayPathGroup(parent, paths);
+    pathGroup = new DisplayPathGroup(mainWindow, paths);
     pathGroup->hide();
 
-    connect(pathGroup->getActionButtons()->getGoButton(), SIGNAL(clicked()), parent, SLOT(displayPath()));
-    connect(pathGroup->getActionButtons()->getPlusButton(), SIGNAL(clicked()), parent, SLOT(createPath()));
-    connect(pathGroup->getActionButtons()->getMinusButton(), SIGNAL(clicked()), parent, SLOT(deletePath()));
-    connect(pathGroup->getActionButtons()->getMapButton(), SIGNAL(clicked(bool)), parent, SLOT(displayPathOnMap(bool)));
-    connect(pathGroup->getActionButtons()->getEditButton(), SIGNAL(clicked()), parent, SLOT(editPath()));
+    connect(pathGroup->getActionButtons()->getGoButton(), SIGNAL(clicked()), mainWindow, SLOT(displayPath()));
+    connect(pathGroup->getActionButtons()->getPlusButton(), SIGNAL(clicked()), mainWindow, SLOT(createPath()));
+    connect(pathGroup->getActionButtons()->getMinusButton(), SIGNAL(clicked()), mainWindow, SLOT(deletePath()));
+    connect(pathGroup->getActionButtons()->getMapButton(), SIGNAL(clicked(bool)), mainWindow, SLOT(displayPathOnMap(bool)));
+    connect(pathGroup->getActionButtons()->getEditButton(), SIGNAL(clicked()), mainWindow, SLOT(editPath()));
     /// to delete a path with the delete key
-    connect(pathGroup, SIGNAL(deletePath()), parent, SLOT(deletePath()));
+    connect(pathGroup, SIGNAL(deletePath()), mainWindow, SLOT(deletePath()));
 
     connect(pathGroup->getPathButtonGroup()->getButtonGroup(), SIGNAL(buttonToggled(int, bool)), pathGroup, SLOT(resetMapButton()));
 
-    pathCreationWidget = new PathCreationWidget(parent, points, paths, false);
+    pathCreationWidget = new PathCreationWidget(mainWindow, points, paths, false);
     connect(pathCreationWidget, SIGNAL(addPathPoint(QString, double, double, int)), pathPainter, SLOT(addPathPointSlot(QString, double, double, int)));
     connect(pathCreationWidget, SIGNAL(deletePathPoint(int)), pathPainter, SLOT(deletePathPointSlot(int)));
     connect(pathCreationWidget, SIGNAL(orderPathPointChanged(int, int)), pathPainter, SLOT(orderPathPointChangedSlot(int, int)));
     connect(pathCreationWidget, SIGNAL(resetPath()), pathPainter, SLOT(resetPathSlot()));
-    connect(pathCreationWidget, SIGNAL(setMessage(QString, QString)), parent, SLOT(setMessageTop(QString, QString)));
+    connect(pathCreationWidget, SIGNAL(setMessage(QString, QString)), mainWindow->getTopLayoutController(), SLOT(setLabel(QString, QString)));
     connect(pathCreationWidget, SIGNAL(actionChanged(int, QString)), pathPainter, SLOT(actionChangedSlot(int, QString)));
     connect(pathCreationWidget, SIGNAL(editPathPoint(int, QString, double, double)), pathPainter, SLOT(editPathPointSlot(int, QString, double, double)));
 
@@ -66,37 +67,37 @@ PathsController::PathsController(MainWindow *parent, const QSharedPointer<Points
     connect(pathGroup, SIGNAL(checkEyeButton(QString)), this, SLOT(checkEyeButtonSlot(QString)));
     /// to handle double clicks
     foreach(QAbstractButton *button, pathGroup->getPathButtonGroup()->getButtonGroup()->buttons())
-        connect(button, SIGNAL(doubleClick(QString)), parent, SLOT(doubleClickOnPath(QString)));
+        connect(button, SIGNAL(doubleClick(QString)), mainWindow, SLOT(doubleClickOnPath(QString)));
 
     connect(pathGroup, SIGNAL(updateDisplayedPath()), this, SLOT(updateDisplayedPath()));
     connect(pathGroup, SIGNAL(setPathsGroup(QString)), this, SLOT(setPathsGroup(QString)));
 
     /// to add a path point when we click on a pointView (which is relayed by the mainWindow)
-    connect(parent, SIGNAL(addPathPoint(QString, double, double)), pathCreationWidget, SLOT(addPathPointSlot(QString, double, double)));
+    connect(mainWindow, SIGNAL(addPathPoint(QString, double, double)), pathCreationWidget, SLOT(addPathPointSlot(QString, double, double)));
 
-    connect(parent, SIGNAL(updatePathPainter(bool)), pathPainter, SLOT(updatePathPainterSlot(bool)));
+    connect(mainWindow, SIGNAL(updatePathPainter(bool)), pathPainter, SLOT(updatePathPainterSlot(bool)));
 
-    connect(pathCreationWidget, SIGNAL(editTmpPathPoint(int, QString, double, double)), parent, SLOT(editTmpPathPointSlot(int, QString, double, double)));
+    connect(pathCreationWidget, SIGNAL(editTmpPathPoint(int, QString, double, double)), mainWindow, SLOT(editTmpPathPointSlot(int, QString, double, double)));
 
-    connect(parent, SIGNAL(updatePathPainterPointView()), pathPainter, SLOT(updatePathPainterPointViewSlot()));
+    connect(mainWindow, SIGNAL(updatePathPainterPointView()), pathPainter, SLOT(updatePathPainterPointViewSlot()));
 
-    connect(pathCreationWidget, SIGNAL(saveEditPathPoint()), parent, SLOT(saveEditPathPointSlot()));
+    connect(pathCreationWidget, SIGNAL(saveEditPathPoint()), mainWindow, SLOT(saveEditPathPointSlot()));
 
-    connect(pathCreationWidget, SIGNAL(cancelEditPathPoint()), parent, SLOT(cancelEditPathPointSlot()));
+    connect(pathCreationWidget, SIGNAL(cancelEditPathPoint()), mainWindow, SLOT(cancelEditPathPointSlot()));
 
-    connect(pathCreationWidget, SIGNAL(savePath()), parent, SLOT(savePathSlot()));
+    connect(pathCreationWidget, SIGNAL(savePath()), mainWindow, SLOT(savePathSlot()));
 
-    connect(parent, SIGNAL(resetPath()), pathPainter, SLOT(resetPathSlot()));
+    connect(mainWindow, SIGNAL(resetPath()), pathPainter, SLOT(resetPathSlot()));
 
-    connect(parent, SIGNAL(resetPathCreationWidget()), pathCreationWidget, SLOT(resetWidget()));
+    connect(mainWindow, SIGNAL(resetPathCreationWidget()), pathCreationWidget, SLOT(resetWidget()));
 
-    connect(groupsPathsWidget, SIGNAL(newPathGroup(QString)), parent, SLOT(saveGroupPaths(QString)));
-    connect(groupsPathsWidget, SIGNAL(messageCreationGroup(QString, QString)), parent, SLOT(setMessageCreationGroup(QString,QString)));
-    connect(groupsPathsWidget, SIGNAL(modifiedGroup(QString)), parent, SLOT(modifyGroupPathsWithEnter(QString)));
+    connect(groupsPathsWidget, SIGNAL(newPathGroup(QString)), mainWindow, SLOT(saveGroupPaths(QString)));
+    connect(groupsPathsWidget, SIGNAL(messageCreationGroup(QString, QString)), mainWindow->getTopLayoutController(), SLOT(setLabel(QString,QString)));
+    connect(groupsPathsWidget, SIGNAL(modifiedGroup(QString)), mainWindow, SLOT(modifyGroupPathsWithEnter(QString)));
 
-    connect(pathCreationWidget->getCancelButton(), SIGNAL(clicked()), parent, SLOT(cancelNoRobotPathSlot()));
+    connect(pathCreationWidget->getCancelButton(), SIGNAL(clicked()), mainWindow, SLOT(cancelNoRobotPathSlot()));
 
-    connect(pathCreationWidget, SIGNAL(codeEditPath(int)), parent, SLOT(setMessageNoRobotPath(int)));
+    connect(pathCreationWidget, SIGNAL(codeEditPath(int)), mainWindow, SLOT(setMessageNoRobotPath(int)));
 
 }
 

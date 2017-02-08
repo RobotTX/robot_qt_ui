@@ -8,11 +8,9 @@ class CustomQGraphicsView;
 class Map;
 class Robots;
 class LeftMenuWidget;
-class PointsLeftWidget;
 class RobotsLeftWidget;
 class MapLeftWidget;
 class EditSelectedRobotWidget;
-class SelectedPointWidget;
 class LeftMenu;
 class BottomLayout;
 class PathCreationWidget;
@@ -33,6 +31,7 @@ class SettingsController;
 class TopLayoutController;
 class MapController;
 class PathsController;
+class PointsController;
 
 #include "Model/paths.h"
 #include "View/createpointwidget.h"
@@ -79,36 +78,29 @@ public:
 
     enum WidgetType { MENU, GROUPS, GROUP, POINT, ROBOTS, ROBOT , MAP, GROUPS_PATHS, GROUP_OF_PATHS, PATH };
 
-    QSharedPointer<Points> getPoints(void) const { return points; }
     QList<QPair<QPair<QWidget*, QString>, MainWindow::WidgetType>> getLastWidgets(void) const { return lastWidgets; }
     CommandController* getCommandController(void) const { return commandController; }
     QSharedPointer<Robots> getRobots(void) const { return robots; }
+    LeftMenu* getLeftMenu(void) const { return leftMenu; }
     LaserController* getLaserController(void) const { return laserController; }
     MapController* getMapController(void) const { return mapController; }
     PathsController* getPathsController(void) const { return pathsController; }
+    PointsController* getPointsController(void) const { return pointsController; }
+    TopLayoutController* getTopLayoutController(void) const { return topLayoutController; }
 
     void initializeMenu();
     void initializeRobots();
-    void initializePoints();
-    void savePoints(const QString fileName);
     void initializeBottomPanel();
     void initializeLeftMenu();
     void hideAllWidgets();
     int openConfirmMessage(const QString);
-    void openInterdictionOfPointRemovalMessage(const QString pointName, const QString robotName);
-    int openEmptyGroupMessage(const QString groupName);
     void clearNewMap();
     void resetFocus();
-    void switchFocus(const QString name, QWidget* widget, const WidgetType type);
     /// to sleep for ms milliseconds
     static void delay(const int ms);
-    void setTemporaryMessageTop(const QString type, const QString message, const int ms);
     void updateAllPaths(const Point &old_point, const Point &new_point);
     void clearPath(const int robotNb);
     QPointer<RobotView> getSelectedRobot(void) const { return selectedRobot; }
-    void showHomes();
-    void showHomes(QPointer<Robot> robot);
-    void showSelectedRobotHomeOnly();
 
     /// returns true if the first date is later to the second date
     bool isLater(const QStringList& date, const QStringList& otherDate);
@@ -131,7 +123,6 @@ public:
     void openHelpMessage(const QString message, const QString feature);
 
 signals:
-    void nameChanged(QString, QString);
     void changeCmdThreadRobotName(QString);
     void addPathPoint(QString name, double x, double y);
     void addNoRobotPathPoint(QString name, double x, double y);
@@ -153,7 +144,13 @@ signals:
     void stopAllCmd();
     void tutorialSignal(const bool, const QString);
 
+public slots:
+    void setGraphicItemsState(const GraphicItemState state);
+    void switchFocus(const QString name, QWidget* widget, const MainWindow::WidgetType type);
+    void setEnableAll(bool enable, GraphicItemState state = GraphicItemState::NO_STATE, int noReturn = -1);
+
 private slots:
+    void setTemporaryMessageTop(const QString type, const QString message, const int ms);
     void sendPathSelectedRobotSlot(const QString groupName, const QString pathName);
     void updateRobot(const QString ipAddress, const float posX, const float posY, const float ori);
     void updateMetadata(const int width, const int height, const float resolution, const float originX, const float originY);
@@ -173,68 +170,32 @@ private slots:
     void pointBtnEvent(void);
     void mapBtnEvent(void);
     void pathBtnEvent(void);
-    void plusGroupBtnEvent(void);
-    void minusGroupBtnEvent(void);
-    void editGroupBtnEvent(void);
     void openLeftMenu(void);
     void backRobotBtnEvent(void);
     void editRobotBtnEvent(void);
     void checkRobotBtnEventMenu();
     void checkRobotBtnEvent(QString name);
-
     void cancelEditSelecRobotBtnEvent(void);
     void saveRobotModifications(void);
-    void setSelectedPoint(void);
+    void setSelectedTmpPoint(void);
     void pointSavedEvent(QString groupName, double x, double y, QString name);
     void deletePath(int robotNb);
     void playSelectedRobot(int robotNb);
-    void askForDeleteGroupConfirmation(const QString group);
-    void askForDeletePointConfirmation(const QString index);
-    void displayPointEvent(QString name, double x, double y);
-    void askForDeleteDefaultGroupPointConfirmation(const QString index);
-    void displayGroupMapEvent(void);
     void savePathSlot(void);
     void addPointPathSlot(QString name, double x, double y, GraphicItemState);
-    void displayPointsInGroup(void);
-    void removePointFromInformationMenu(void);
-    void displayPointMapEvent(void);
-    void editPointButtonEvent(void);
     void editTmpPathPointSlot(int id, QString name, double x, double y);
-    void editPointFromGroupMenu(void);
     void saveEditPathPointSlot(void);
     void cancelEditPathPointSlot(void);
     void moveEditedPathPointSlot(void);
-    void displayPointInfoFromGroupMenu(void);
-    void updatePoint(void);
-    void updateCoordinates(double x, double y);
-    void removePointFromGroupMenu(void);
-    void displayPointFromGroupMenu(void);
-    void doubleClickOnPoint(QString checkedId);
-    void doubleClickOnGroup(QString checkedId);
     void doubleClickOnPathsGroup(QString checkedButton);
-    void reestablishConnectionsGroups();
-    void reestablishConnectionsPoints();
-    void createGroup(QString name);
-    void modifyGroupWithEnter(QString name);
-    void modifyGroupAfterClick(QString name);
     void enableReturnAndCloseButtons(void);
     void doubleClickOnRobot(QString checkedId);
     void setMessageCreationPath(QString message);
     void updateEditedPathPoint(double x, double y);
     void centerMap(void);
     void setMessageCreationPoint(QString type, CreatePointWidget::Error error);
-    void choosePointName(QString message);
-
-    /**
-     * @brief cancelEvent
-     * Called when a user doesn't want to keep the modifications he's made on a point
-     */
-    void cancelEvent(void);
-    void setMessageTop(const QString msgType, const QString msg);
-    void setMessageCreationGroup(QString type, QString message);
     void viewPathSelectedRobot(int robotNb, bool checked);
     void closeSlot();
-    void setGraphicItemsState(const GraphicItemState state);
     void showHome();
     void showEditHome();
     void showAllHomes(void);
@@ -248,9 +209,7 @@ private slots:
     void updatePathPainterPointViewSlot();
     void stopPath(int robotNb);
     void resetPathPointViewsSlot();
-    void setEnableAll(bool enable, GraphicItemState state = GraphicItemState::NO_STATE, int noReturn = -1);
     void deletePathSelecRobotBtnEvent();
-    void replacePoint(int id, QString name);
     void deletePathSlot(QString groupName, QString pathName);
     void editPathSlot(QString groupName, QString pathName);
     void setNewHome(QString homeName);
@@ -340,22 +299,15 @@ private:
 
     QSharedPointer<Robots> robots;
     QPointer<RobotView> selectedRobot;
-    QSharedPointer<PointView> selectedPoint;
-    QSharedPointer<Points> points;
-    QSharedPointer<PointView> editedPointView;
-    QVector<QSharedPointer<PointView>> pointViewsToDisplay;
 
     QMessageBox msgBox;
 
     QList<QPair<QPair<QWidget*, QString>, MainWindow::WidgetType>> lastWidgets;
 
     LeftMenuWidget* leftMenuWidget;
-    PointsLeftWidget* pointsLeftWidget;
     RobotsLeftWidget* robotsLeftWidget;
-    MapLeftWidget* mapLeftWidget;
     EditSelectedRobotWidget* editSelectedRobotWidget;
-    SelectedPointWidget* selectedPointWidget;
-    CreatePointWidget* createPointWidget;
+    MapLeftWidget* mapLeftWidget;
     QPointer<EditMapWidget> editMapWidget;
     QPointer<MergeMapWidget> mergeMapWidget;
     QPointer<ScanMapWidget> scanMapWidget;
@@ -371,6 +323,7 @@ private:
     SettingsController* settingsController;
     LaserController* laserController;
     PathsController* pathsController;
+    PointsController* pointsController;
 };
 
 #endif /// MAINWINDOW_H

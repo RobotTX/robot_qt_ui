@@ -27,7 +27,7 @@ public:
     /// to display an appropriate message to the end user when he tries to create a point
     enum Error { ContainsSemicolon, EmptyName, AlreadyExists, NoError };
 
-    CreatePointWidget(QWidget* parent, MainWindow* mainWindow, QSharedPointer<Points> points);
+    CreatePointWidget(MainWindow* mainWindow, QSharedPointer<Points> points);
 
     void setSelectedPoint(QSharedPointer<PointView> _pointView);
 
@@ -56,9 +56,7 @@ signals:
     /// emitted every time the input field changes to allow (no error) or not the creation of the point with the indicated name
     void invalidName(QString, CreatePointWidget::Error);
     /// emitted after the user clicks the plus button to explain him what to do to create his point
-    void displayMessageCreation(QString);
-    /// to signify the mainWindow that it has to display "Click the + button to save the point" in the top layout
-    void resetMessageTop(QString, QString);
+    void setMessageTop(QString, QString);
 
 private slots:
     /**

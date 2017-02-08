@@ -20,7 +20,7 @@ class PathsController: public QObject
 
 public:
 
-    PathsController(MainWindow *parent, const QSharedPointer<Points> points);
+    PathsController(MainWindow *mainWindow, const QSharedPointer<Points> points);
 
     QSharedPointer<Paths> getPaths(void) const { return paths; }
 

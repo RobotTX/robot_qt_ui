@@ -2,7 +2,7 @@
 #define DISPLAYSELECTEDPOINT_H
 
 class Point;
-class QMainWindow;
+class MainWindow;
 class QVBoxLayout;
 class QHBoxLayout;
 class CustomPushButton;
@@ -33,7 +33,7 @@ class DisplaySelectedPoint: public QWidget
         Q_OBJECT
 public:
 
-    DisplaySelectedPoint(QWidget* _parent, QSharedPointer<Robots> const robots, const QSharedPointer<Points> &_points, QSharedPointer<Map> const& _map, QSharedPointer<PointView> _point = QSharedPointer<PointView>());
+    DisplaySelectedPoint(MainWindow* mainWindow, QSharedPointer<Robots> const robots, const QSharedPointer<Points> &_points, QSharedPointer<Map> const& _map, QSharedPointer<PointView> _point = QSharedPointer<PointView>());
 
     TopLeftMenu* getActionButtons(void) const { return actionButtons; }
     CustomPushButton* getSaveButton(void) const { return saveButton; }

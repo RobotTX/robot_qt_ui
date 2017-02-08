@@ -16,6 +16,7 @@ class Points;
 class QAbstractButton;
 class CustomLineEdit;
 class MainWindow;
+class PointsController;
 
 #include <QWidget>
 #include <QSharedPointer>
@@ -28,7 +29,7 @@ class MainWindow;
 class PointsLeftWidget: public QWidget{
     Q_OBJECT
 public:
-    PointsLeftWidget(QWidget* parent, MainWindow* const mainWindow, QSharedPointer<Points> const& _points, bool _groupDisplayed = true);
+    PointsLeftWidget(MainWindow* const mainWindow, QSharedPointer<Points> const& _points, bool _groupDisplayed = true);
 
     bool getGroupDisplayed(void) const { return groupDisplayed; }
     void setGroupDisplayed(const bool _groupDisplayed) { groupDisplayed = _groupDisplayed; }

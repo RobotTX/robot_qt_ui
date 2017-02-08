@@ -8,8 +8,7 @@
 
 class TopLayout;
 
-class TopLayoutController: public QObject
-{
+class TopLayoutController: public QObject {
     Q_OBJECT
 
 public:
@@ -23,12 +22,14 @@ public:
     void removeRobotWithoutHome(const QString name);
     void addRobotWithoutHome(const QString name);
 
-    void setLabel(const QString msgType, const QString label);
     void setLabelDelay(const QString msgType, const QString label, int delay);
 
     QString getLabelText(void) const { return view->getLabelText(); }
 
     void enableLayout(const bool enable) { view->setEnable(enable); }
+
+public slots:
+    void setLabel(const QString msgType, const QString label);
 
 private:
     QPointer<TopLayout> topLayout;

@@ -9,13 +9,14 @@
 #include <QPixmap>
 #include "Controller/mainwindow.h"
 #include "Controller/mapcontroller.h"
+#include "Controller/pointscontroller.h"
 
 PathPainter::PathPainter(MainWindow* const &mainWindow, const QSharedPointer<Points> _points)
     : QGraphicsPathItem(mainWindow->getMapController()->getMapView()), points(_points), mainWindow(mainWindow), pathDeleted(false), visiblePath("")
 {
     setPen(QPen(Qt::red));
 
-    connect(this, SIGNAL(updatePoints(int, QString)), mainWindow, SLOT(replacePoint(int, QString)));
+    connect(this, SIGNAL(updatePoints(int, QString)), mainWindow->getPointsController(), SLOT(replacePoint(int, QString)));
 }
 
 void PathPainter::resetPathSlot(){

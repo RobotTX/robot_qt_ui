@@ -12,6 +12,7 @@
 class DrawObstacles;
 class Robots;
 class PointView;
+class MainWindow;
 
 class MapController: public QObject
 {
@@ -19,7 +20,7 @@ class MapController: public QObject
 
 public:
 
-    MapController(QSharedPointer<Robots> _robots, QWidget* parent = 0);
+    MapController(QSharedPointer<Robots> _robots, MainWindow *parent = 0);
 
     QSharedPointer<Map> getMap(void) const { return map; }
     MapView* getMapView(void) const { return view; }

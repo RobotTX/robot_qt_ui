@@ -1,7 +1,4 @@
 #include "displayselectedgroup.h"
-#include <View/customscrollarea.h>
-#include <View/pointbuttongroup.h>
-#include "View/spacewidget.h"
 #include <QVBoxLayout>
 #include <QDebug>
 #include <QIcon>
@@ -9,13 +6,17 @@
 #include <QMainWindow>
 #include <QButtonGroup>
 #include <QLabel>
-#include "customscrollarea.h"
+#include <QKeyEvent>
+#include "Controller/mainwindow.h"
+#include "Controller/pointscontroller.h"
+#include "View/customscrollarea.h"
 #include "View/pointview.h"
 #include "View/custompushbutton.h"
 #include "View/customlabel.h"
-#include <QKeyEvent>
+#include "View/customscrollarea.h"
+#include "View/spacewidget.h"
 
-DisplaySelectedGroup::DisplaySelectedGroup(QWidget* parent, QSharedPointer<Points> const& _points) : QWidget(parent), points(_points), lastCheckedButton(""){
+DisplaySelectedGroup::DisplaySelectedGroup(MainWindow* mainWindow, QSharedPointer<Points> const& _points) : QWidget(mainWindow), points(_points), lastCheckedButton(""){
     /// to be able to display a lot of groups and points2
     CustomScrollArea* scrollArea = new CustomScrollArea(this, true);
 
@@ -45,6 +46,16 @@ DisplaySelectedGroup::DisplaySelectedGroup(QWidget* parent, QSharedPointer<Point
     layout->addWidget(scrollArea);
 
     connect(pointButtonGroup->getButtonGroup(), SIGNAL(buttonClicked(QAbstractButton*)), this, SLOT(buttonClickedSlot(QAbstractButton*)));
+
+    connect(this, SIGNAL(resetPathPointViews()), mainWindow, SLOT(resetPathPointViewsSlot()));
+    connect(actionButtons->getMinusButton(), SIGNAL(clicked(bool)), mainWindow->getPointsController(), SLOT(removePointFromGroupMenu()));
+    connect(actionButtons->getEditButton(), SIGNAL(clicked(bool)), mainWindow->getPointsController(), SLOT(editPointFromGroupMenu()));
+    connect(actionButtons->getGoButton(), SIGNAL(clicked(bool)), mainWindow->getPointsController(), SLOT(displayPointInfoFromGroupMenu()));
+    connect(actionButtons->getMapButton(), SIGNAL(clicked(bool)), mainWindow->getPointsController(), SLOT(displayPointFromGroupMenu()));
+    /// to remove the point by pressing the delete key
+    connect(this, SIGNAL(removePoint()), mainWindow->getPointsController(), SLOT(removePointFromGroupMenu()));
+    /// to connect the buttons in the group menu so they can be double clicked after they were updated
+    connect(pointButtonGroup, SIGNAL(updateConnectionsRequest()), mainWindow->getPointsController(), SLOT(reestablishConnectionsPoints()));
 
     topLayout->setContentsMargins(0, 0, 10, 0);
     layout->setContentsMargins(0, 0, 0, 0);

@@ -1,24 +1,26 @@
 #include "View/createpointwidget.h"
-#include "View/pointview.h"
-#include "Model/point.h"
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 #include <QLabel>
-#include "Controller/mainwindow.h"
 #include <QLineEdit>
 #include <QDebug>
 #include <QComboBox>
-#include "View/spacewidget.h"
 #include <QKeyEvent>
-#include "topleftmenu.h"
-#include "toplayoutwidget.h"
+#include "Controller/mainwindow.h"
+#include "Controller/toplayoutcontroller.h"
+#include "Model/point.h"
+#include "View/spacewidget.h"
+#include "View/topleftmenu.h"
+#include "View/toplayoutwidget.h"
 #include "View/custompushbutton.h"
 #include "View/customlabel.h"
 #include "View/customlineedit.h"
 #include "View/stylesettings.h"
+#include "View/pointview.h"
 
 
-CreatePointWidget::CreatePointWidget(QWidget *parent, MainWindow *mainWindow, QSharedPointer<Points> _points): QWidget(parent), points(_points){
+CreatePointWidget::CreatePointWidget(MainWindow *mainWindow, QSharedPointer<Points> _points):
+    QWidget(mainWindow), points(_points){
 
     layout = new QVBoxLayout(this);
     QVBoxLayout* topLayout = new QVBoxLayout();
@@ -90,9 +92,9 @@ CreatePointWidget::CreatePointWidget(QWidget *parent, MainWindow *mainWindow, QS
     /// to display appropriate messages when a user attemps to create a point
     connect(this, SIGNAL(invalidName(QString, CreatePointWidget::Error)), mainWindow, SLOT(setMessageCreationPoint(QString, CreatePointWidget::Error)));
 
-    connect(this, SIGNAL(displayMessageCreation(QString)), mainWindow, SLOT(choosePointName(QString)));
+    connect(this, SIGNAL(setMessageTop(QString, QString)), mainWindow->getTopLayoutController(), SLOT(setLabel(QString, QString)));
 
-    connect(this, SIGNAL(resetMessageTop(QString, QString)), mainWindow, SLOT(setMessageTop(QString, QString)));
+    connect(this, SIGNAL(pointSaved(QString, double, double, QString)), mainWindow, SLOT(pointSavedEvent(QString, double, double, QString)));
 
     topLayout->setAlignment(Qt::AlignTop);
     cancelSaveLayout->setAlignment(Qt::AlignBottom);
@@ -192,7 +194,7 @@ void CreatePointWidget::showGroupLayout(void) {
     nameEdit->setFocusPolicy(Qt::FocusPolicy::StrongFocus);
 
     /// so that the main window sets a message to help the user figuring out what to do
-    emit displayMessageCreation("Choose a name for your point by filling up the corresponding field");
+    emit setMessageTop(TEXT_COLOR_INFO, "Choose a name for your point by filling up the corresponding field");
 }
 
 /// hides everything that's related to the creation of a point
@@ -213,7 +215,7 @@ void CreatePointWidget::hideGroupLayout(const bool pointAdded) {
     nameEdit->hide();
     messageCreationLabel->show();
     if(!pointAdded)
-        emit resetMessageTop(TEXT_COLOR_INFO, "To save this point permanently click the \"+\" button");
+        emit setMessageTop(TEXT_COLOR_INFO, "To save this point permanently click the \"+\" button");
 }
 
 /// updates the group box when a new group is created
@@ -290,3 +292,4 @@ void CreatePointWidget::resizeEvent(QResizeEvent *event){
     setMaximumWidth(maxWidth);
     QWidget::resizeEvent(event);
 }
+

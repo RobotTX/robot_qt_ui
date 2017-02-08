@@ -1,31 +1,32 @@
 #include "displayselectedpoint.h"
-#include "Model/point.h"
-#include "View/pointview.h"
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QLabel>
-#include <QMainWindow>
 #include <QLineEdit>
 #include <QDebug>
 #include <QKeyEvent>
+#include <assert.h>
+#include "Controller/mainwindow.h"
+#include "Controller/pointscontroller.h"
 #include "Model/xmlparser.h"
-#include "View/spacewidget.h"
 #include "Model/map.h"
-#include "toplayoutwidget.h"
 #include "Model/robots.h"
 #include "Model/robot.h"
-#include "View/robotview.h"
 #include "Model/pathpoint.h"
+#include "Model/point.h"
+#include "View/robotview.h"
+#include "View/toplayoutwidget.h"
+#include "View/pointview.h"
 #include "View/displayselectedpointrobots.h"
 #include "View/customscrollarea.h"
 #include "View/custompushbutton.h"
 #include "View/customlabel.h"
 #include "View/customlineedit.h"
 #include "View/stylesettings.h"
-#include <assert.h>
+#include "View/spacewidget.h"
 
-DisplaySelectedPoint::DisplaySelectedPoint(QWidget* _parent, QSharedPointer<Robots> const _robots, QSharedPointer<Points> const& _points, QSharedPointer<Map> const& _map, QSharedPointer<PointView> _pointView):
-    QWidget(_parent), map(_map), pointView(_pointView), points(_points){
+DisplaySelectedPoint::DisplaySelectedPoint(MainWindow* mainWindow, QSharedPointer<Robots> const _robots, QSharedPointer<Points> const& _points, QSharedPointer<Map> const& _map, QSharedPointer<PointView> _pointView):
+    QWidget(mainWindow), map(_map), pointView(_pointView), points(_points){
 
     robots = QSharedPointer<Robots>(_robots);
     layout = new QVBoxLayout(this);
@@ -79,6 +80,25 @@ DisplaySelectedPoint::DisplaySelectedPoint(QWidget* _parent, QSharedPointer<Robo
 
     /// to check that a point that's being edited does not get a new name that's already used in the database
     connect(nameEdit, SIGNAL(textEdited(QString)), this, SLOT(checkPointName(QString)));
+    connect(robotsWidget, SIGNAL(setSelectedRobotFromPoint(QString)), mainWindow, SLOT(setSelectedRobotFromPointSlot(QString)));
+    connect(actionButtons->getMinusButton(), SIGNAL(clicked(bool)), mainWindow->getPointsController(), SLOT(removePointFromInformationMenu()));
+    connect(actionButtons->getMapButton(), SIGNAL(clicked(bool)), mainWindow->getPointsController(), SLOT(displayPointMapEvent()));
+    connect(actionButtons->getEditButton(), SIGNAL(clicked(bool)), mainWindow->getPointsController(), SLOT(editPointButtonEvent()));
+    /// to remove the point by pressing the delete key
+    connect(this, SIGNAL(removePoint()), mainWindow->getPointsController(), SLOT(removePointFromInformationMenu()));
+    /// to cancel edition of a point on hide event
+    connect(this, SIGNAL(cancelEditionPoint()), mainWindow->getPointsController(), SLOT(cancelUpdatePoint()));
+    /// to check the name of a point being edited
+    connect(this, SIGNAL(invalidName(QString, CreatePointWidget::Error)), mainWindow, SLOT(setMessageCreationPoint(QString,CreatePointWidget::Error)));
+    /// to cancel the modifications on an edited point
+    connect(cancelButton, SIGNAL(clicked(bool)), mainWindow->getPointsController(), SLOT(cancelUpdatePoint()));
+    /// to save the modifications on an edited point
+    connect(saveButton, SIGNAL(clicked(bool)), mainWindow->getPointsController(), SLOT(updatePoint()));
+    /// the purpose of mainWindow connection is just to propagate the signal to the map view through the main window
+    connect(this, SIGNAL(nameChanged(QString, QString)), mainWindow->getPointsController(), SLOT(updatePoint()));
+    /// to reset the state of everybody when a user click on a random button while he was editing a point
+    connect(this, SIGNAL(resetState(GraphicItemState)),  mainWindow, SLOT(setGraphicItemsState(GraphicItemState)));
+
 
     editLayout->setContentsMargins(0, 0, 0, 0);
     layout->setContentsMargins(0, 0, 10, 0);
