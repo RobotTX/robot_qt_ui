@@ -3,9 +3,10 @@
 #include <QDebug>
 #include <QMapIterator>
 #include "Controller/mainwindow.h"
+#include "Controller/pointscontroller.h"
 #include "View/mapview.h"
 
-Points::Points(MainWindow *_parent) : QObject(_parent), parent(_parent), groups(QSharedPointer<Groups>(new Groups())) {}
+Points::Points(QObject* parent, MainWindow *_mainWindow) : QObject(parent), mainWindow(_mainWindow), groups(QSharedPointer<Groups>(new Groups())) {}
 
 void Points::addGroup(const QString groupName, QSharedPointer<QVector<QSharedPointer<PointView>>> points){
     groups->insert(groupName, points);
@@ -145,25 +146,25 @@ void Points::clear(){
 
 QSharedPointer<PointView> Points::createPoint(const QString pointName, const double x, const double y, const bool displayed, const Point::PointType type){
     QSharedPointer<Point> point = QSharedPointer<Point>(new Point(pointName, x, y, type));
-    QSharedPointer<PointView> pointView = QSharedPointer<PointView>(new PointView(point, parent));
+    QSharedPointer<PointView> pointView = QSharedPointer<PointView>(new PointView(point, mainWindow));
 
     if(!displayed)
         pointView->hide();
 
     /// to display the information of the point
-    connect(&(*pointView), SIGNAL(pointLeftClicked(QString, double, double)), parent, SLOT(displayPointEvent(QString, double, double)));
+    connect(&(*pointView), SIGNAL(pointLeftClicked(QString, double, double)), mainWindow->getPointsController(), SLOT(displayPointEvent(QString, double, double)));
 
     /// to update the coordinates of point that's being edited
-    connect(&(*pointView), SIGNAL(editedPointPositionChanged(double, double)), parent, SLOT(updateCoordinates(double, double)));
+    connect(&(*pointView), SIGNAL(editedPointPositionChanged(double, double)), mainWindow->getPointsController(), SLOT(updateCoordinates(double, double)));
 
     /// to update a path point
-    connect(&(*pointView), SIGNAL(moveEditedPathPoint()), parent, SLOT(moveEditedPathPointSlot()));
+    connect(&(*pointView), SIGNAL(moveEditedPathPoint()), mainWindow, SLOT(moveEditedPathPointSlot()));
 
     /// to add a path point to a path
-    connect(&(*pointView), SIGNAL(addPointPath(QString, double, double, GraphicItemState)), parent, SLOT(addPointPathSlot(QString, double, double, GraphicItemState)));
+    connect(&(*pointView), SIGNAL(addPointPath(QString, double, double, GraphicItemState)), mainWindow, SLOT(addPointPathSlot(QString, double, double, GraphicItemState)));
 
     /// to update the path painter
-    connect(&(*pointView), SIGNAL(updatePathPainterPointView()), parent, SLOT(updatePathPainterPointViewSlot()));
+    connect(&(*pointView), SIGNAL(updatePathPainterPointView()), mainWindow, SLOT(updatePathPainterPointViewSlot()));
 
     return pointView;
 }

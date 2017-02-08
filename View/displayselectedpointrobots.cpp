@@ -1,15 +1,15 @@
 #include "displayselectedpointrobots.h"
-#include "View/pointview.h"
 #include <QLabel>
+#include <QLayoutItem>
+#include <QButtonGroup>
+#include <QAbstractButton>
 #include "Model/robots.h"
 #include "Model/robot.h"
-#include "View/robotview.h"
 #include "Model/pathpoint.h"
-#include <QLayoutItem>
 #include "View/spacewidget.h"
-#include <QButtonGroup>
 #include "View/custompushbutton.h"
-#include <QAbstractButton>
+#include "View/pointview.h"
+#include "View/robotview.h"
 
 DisplaySelectedPointRobots::DisplaySelectedPointRobots(QWidget *parent):QWidget(parent){
 

@@ -27,10 +27,11 @@
 #include "View/displayselectedpointrobots.h"
 #include "View/pathbuttongroup.h"
 #include "Controller/pathscontroller.h"
+#include "Controller/pointscontroller.h"
 
-LeftMenu::LeftMenu(MainWindow* mainWindow, QSharedPointer<Points> const& _points,
+LeftMenu::LeftMenu(MainWindow* mainWindow, QSharedPointer<Points> const& points,
                    const QSharedPointer<Robots> &robots, const QSharedPointer<Map> &_map)
-    : QWidget(mainWindow), points(_points){
+    : QWidget(mainWindow){
 
     QVBoxLayout* leftLayout  = new QVBoxLayout();
 
@@ -54,18 +55,11 @@ LeftMenu::LeftMenu(MainWindow* mainWindow, QSharedPointer<Points> const& _points
     globalLayout->addLayout(topLayout);
     connect(closeBtn, SIGNAL(clicked()), mainWindow, SLOT(closeSlot()));
 
-    // the 4 next lines of codes are causing a warning about the layout
     /// to display the information relative to a point
-    displaySelectedPoint = new DisplaySelectedPoint(this, robots, _points, _map);
-    connect(displaySelectedPoint->getDisplaySelectedPointRobots(), SIGNAL(setSelectedRobotFromPoint(QString)), mainWindow, SLOT(setSelectedRobotFromPointSlot(QString)));
-    displaySelectedPoint->hide();
-    leftLayout->addWidget(displaySelectedPoint);
+    leftLayout->addWidget(mainWindow->getPointsController()->getDisplaySelectedPoint());
 
     /// to display the information relative to a group of points
-    displaySelectedGroup = new DisplaySelectedGroup(this, _points);
-    connect(displaySelectedGroup, SIGNAL(resetPathPointViews()), mainWindow, SLOT(resetPathPointViewsSlot()));
-    displaySelectedGroup->hide();
-    leftLayout->addWidget(displaySelectedGroup);
+    leftLayout->addWidget(mainWindow->getPointsController()->getDisplaySelectedGroup());
 
     /// The first menu with 3 buttons : Robots, Points, Map
     leftMenuWidget = new LeftMenuWidget(this, points);
@@ -79,9 +73,7 @@ LeftMenu::LeftMenu(MainWindow* mainWindow, QSharedPointer<Points> const& _points
     leftLayout->addWidget(leftMenuWidget);
 
     /// Menu which display the list of points
-    pointsLeftWidget = new PointsLeftWidget(this, mainWindow, _points);
-    pointsLeftWidget->hide();
-    leftLayout->addWidget(pointsLeftWidget);
+    leftLayout->addWidget(mainWindow->getPointsController()->getPointsLeftWidget());
 
     /// Menu which display the list of robots
     robotsLeftWidget = new RobotsLeftWidget(this, mainWindow, robots);
@@ -101,33 +93,11 @@ LeftMenu::LeftMenu(MainWindow* mainWindow, QSharedPointer<Points> const& _points
     connect(editSelectedRobotWidget, SIGNAL(hideEditSelectedRobotWidget()), mainWindow, SLOT(showAllHomes()));
 
     /// Menu to edit the selected point
-    createPointWidget = new CreatePointWidget(this, mainWindow, points);
-    createPointWidget->hide();
-    leftLayout->addWidget(createPointWidget);
-    connect(createPointWidget, SIGNAL(pointSaved(QString, double, double, QString)), mainWindow, SLOT(pointSavedEvent(QString, double, double, QString)));
+    leftLayout->addWidget(mainWindow->getPointsController()->getCreatePointWidget());
 
     /// Menu which display the informations of a path
 
     leftLayout->addWidget(mainWindow->getPathsController()->getDisplaySelectedPath());
-
-    connect(displaySelectedPoint->getActionButtons()->getMinusButton(), SIGNAL(clicked(bool)), mainWindow, SLOT(removePointFromInformationMenu()));
-    connect(displaySelectedPoint->getActionButtons()->getMapButton(), SIGNAL(clicked(bool)), mainWindow, SLOT(displayPointMapEvent()));
-    connect(displaySelectedPoint->getActionButtons()->getEditButton(), SIGNAL(clicked(bool)), mainWindow, SLOT(editPointButtonEvent()));
-    /// to remove the point by pressing the delete key
-    connect(displaySelectedPoint, SIGNAL(removePoint()), mainWindow, SLOT(removePointFromInformationMenu()));
-
-    /// to cancel edition of a point on hide event
-    connect(displaySelectedPoint, SIGNAL(cancelEditionPoint()), mainWindow, SLOT(cancelEvent()));
-
-    connect(displaySelectedGroup->getActionButtons()->getMinusButton(), SIGNAL(clicked(bool)), mainWindow, SLOT(removePointFromGroupMenu()));
-    connect(displaySelectedGroup->getActionButtons()->getEditButton(), SIGNAL(clicked(bool)), mainWindow, SLOT(editPointFromGroupMenu()));
-    connect(displaySelectedGroup->getActionButtons()->getGoButton(), SIGNAL(clicked(bool)), mainWindow, SLOT(displayPointInfoFromGroupMenu()));
-    connect(displaySelectedGroup->getActionButtons()->getMapButton(), SIGNAL(clicked(bool)), mainWindow, SLOT(displayPointFromGroupMenu()));
-    /// to remove the point by pressing the delete key
-    connect(displaySelectedGroup, SIGNAL(removePoint()), mainWindow, SLOT(removePointFromGroupMenu()));
-
-    /// to check the name of a point being edited
-    connect(displaySelectedPoint, SIGNAL(invalidName(QString, CreatePointWidget::Error)), mainWindow, SLOT(setMessageCreationPoint(QString,CreatePointWidget::Error)));
 
     /// Menu which displays the groups of paths
     leftLayout->addWidget(mainWindow->getPathsController()->getGroupsPathsWidget());
@@ -154,10 +124,6 @@ LeftMenu::LeftMenu(MainWindow* mainWindow, QSharedPointer<Points> const& _points
     Pal.setColor(QPalette::Background, left_menu_background_color);
     this->setAutoFillBackground(true);
     this->setPalette(Pal);
-}
-
-void LeftMenu::updateGroupDisplayed(const QString groupName){
-    displaySelectedGroup->getPointButtonGroup()->setGroup(groupName);
 }
 
 void LeftMenu::hideBackButton(void){

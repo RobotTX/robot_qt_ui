@@ -1,29 +1,31 @@
 #include "pointsleftwidget.h"
-#include "pointbuttongroup.h"
-#include "customscrollarea.h"
-#include "groupbuttongroup.h"
 #include <QVBoxLayout>
 #include <QLabel>
 #include <QMainWindow>
 #include <QHBoxLayout>
 #include <QLineEdit>
 #include <QHBoxLayout>
-#include "View/spacewidget.h"
-#include "Model/points.h"
-#include "Model/point.h"
-#include "Controller/mainwindow.h"
-#include "View/leftmenu.h"
 #include <QKeyEvent>
 #include <QDebug>
+#include <QAbstractButton>
+#include "Controller/mainwindow.h"
+#include "Controller/pointscontroller.h"
+#include "Controller/toplayoutcontroller.h"
+#include "Model/points.h"
+#include "Model/point.h"
+#include "View/spacewidget.h"
+#include "View/leftmenu.h"
 #include "View/customlineedit.h"
 #include "View/toplayoutwidget.h"
 #include "View/pointview.h"
-#include <QAbstractButton>
 #include "View/custompushbutton.h"
 #include "View/stylesettings.h"
+#include "View/pointbuttongroup.h"
+#include "View/customscrollarea.h"
+#include "View/groupbuttongroup.h"
 
-PointsLeftWidget::PointsLeftWidget(QWidget* _parent, MainWindow* const mainWindow, QSharedPointer<Points> const& _points, bool _groupDisplayed)
-    : QWidget(_parent), groupDisplayed(_groupDisplayed), points(_points), creatingGroup(true), lastCheckedId("")
+PointsLeftWidget::PointsLeftWidget(MainWindow* const mainWindow, QSharedPointer<Points> const& _points, bool _groupDisplayed)
+    : QWidget(mainWindow), groupDisplayed(_groupDisplayed), points(_points), creatingGroup(true), lastCheckedId("")
 {
     scrollArea = new CustomScrollArea(this, true);
 
@@ -70,15 +72,15 @@ PointsLeftWidget::PointsLeftWidget(QWidget* _parent, MainWindow* const mainWindo
 
     layout->addLayout(creationLayout);
 
-    connect(actionButtons->getPlusButton(), SIGNAL(clicked(bool)), mainWindow, SLOT(plusGroupBtnEvent()));
-    connect(actionButtons->getMinusButton(), SIGNAL(clicked(bool)), mainWindow, SLOT(minusGroupBtnEvent()));
-    connect(actionButtons->getEditButton(), SIGNAL(clicked(bool)), mainWindow, SLOT(editGroupBtnEvent()));
-    connect(actionButtons->getGoButton(), SIGNAL(clicked()), mainWindow, SLOT(displayPointsInGroup()));
-    connect(actionButtons->getMapButton(), SIGNAL(clicked()), mainWindow, SLOT(displayGroupMapEvent()));
+    connect(actionButtons->getPlusButton(), SIGNAL(clicked(bool)), mainWindow->getPointsController(), SLOT(plusGroupBtnEvent()));
+    connect(actionButtons->getMinusButton(), SIGNAL(clicked(bool)), mainWindow->getPointsController(), SLOT(minusGroupBtnEvent()));
+    connect(actionButtons->getEditButton(), SIGNAL(clicked(bool)), mainWindow->getPointsController(), SLOT(editGroupBtnEvent()));
+    connect(actionButtons->getGoButton(), SIGNAL(clicked()), mainWindow->getPointsController(), SLOT(displayPointsInGroup()));
+    connect(actionButtons->getMapButton(), SIGNAL(clicked()), mainWindow->getPointsController(), SLOT(displayGroupMapEvent()));
 
     /// to handle double clicks
     foreach(QAbstractButton *button, groupButtonGroup->getButtonGroup()->buttons())
-        connect(button, SIGNAL(doubleClick(QString)), mainWindow, SLOT(doubleClickOnGroup(QString)));
+        connect(button, SIGNAL(doubleClick(QString)), mainWindow->getPointsController(), SLOT(doubleClickOnGroup(QString)));
 
     /// to enable the buttons
     connect(groupButtonGroup->getButtonGroup(), SIGNAL(buttonClicked(QAbstractButton*)), this, SLOT(enableButtons(QAbstractButton*)));
@@ -112,7 +114,18 @@ PointsLeftWidget::PointsLeftWidget(QWidget* _parent, MainWindow* const mainWindo
     connect(groupNameEdit, SIGNAL(enableGroupEdit(bool)), mainWindow, SLOT(setEnableAll(bool)));
     connect(groupButtonGroup->getModifyEdit(), SIGNAL(enableGroupEdit(bool)), mainWindow, SLOT(setEnableAll(bool)));
 
-    connect(this, SIGNAL(deleteGroup()), mainWindow, SLOT(minusGroupBtnEvent()));
+    connect(this, SIGNAL(deleteGroup()), mainWindow->getPointsController(), SLOT(minusGroupBtnEvent()));
+
+    /// to connect the buttons in the left menu so they can be double clicked after they were updated
+    connect(groupButtonGroup, SIGNAL(updateConnectionsRequest()), mainWindow->getPointsController(), SLOT(reestablishConnectionsGroups()));
+    /// to create a new group, the signal is sent by pointsLeftWidget
+    connect(this, SIGNAL(newGroup(QString)), mainWindow->getPointsController(), SLOT(createGroup(QString)));
+    /// to modify the name of a group, the signal is sent by pointsLeftWidget
+    connect(this, SIGNAL(modifiedGroup(QString)), mainWindow->getPointsController(), SLOT(modifyGroupWithEnter(QString)));
+    /// same but mainWindow happens when the user clicks on a random point of the window
+    connect(this, SIGNAL(modifiedGroupAfterClick(QString)), mainWindow->getPointsController(), SLOT(modifyGroupAfterClick(QString)));
+    /// to know what message to display when a user is creating a group
+    connect(this, SIGNAL(messageCreationGroup(QString, QString)), mainWindow->getTopLayoutController(), SLOT(setLabel(QString,QString)));
 
     creationLayout->setContentsMargins(0, 0, 10, 0);
     topLayout->setContentsMargins(0, 0, 10, 0);

@@ -4,7 +4,7 @@
 class CustomScrollArea;
 class QVBoxLayout;
 class QHBoxLayout;
-class QMainWindow;
+class MainWindow;
 class QLabel;
 class Points;
 class CustomLabel;
@@ -23,7 +23,7 @@ class CustomLabel;
 class DisplaySelectedGroup: public QWidget {
     Q_OBJECT
 public:
-    DisplaySelectedGroup(QWidget *_parent, const QSharedPointer<Points> &_points);
+    DisplaySelectedGroup(MainWindow *mainWindow, const QSharedPointer<Points> &_points);
 
     PointButtonGroup* getPointButtonGroup(void) const { return pointButtonGroup; }
     TopLeftMenu* getActionButtons(void) const { return actionButtons; }

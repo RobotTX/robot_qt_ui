@@ -40,7 +40,7 @@ public:
     void setLastCheckedId(const int id) { lastCheckedId = id; }
 
     /// unchecks the buttons with the robots names
-    void uncheckRobots(void);
+    void uncheckRobotNameBtns(void);
 
     /// updates the robot's information of the robot with Id <id> and robotView <robotView>
     /// which consists in updating name and path, disabling some buttons if path is empty
@@ -59,7 +59,7 @@ public:
     void uncheckViewPathSelectedRobot(const int robotNb = -1);
 
     /// uncheck all view path buttons
-    void uncheckAll();
+    void uncheckAllViewPath();
 
     /// to create a QString to display from the path
     QString pathToStr(const QVector<QSharedPointer<PathPoint> > &path, const int stage = 0);

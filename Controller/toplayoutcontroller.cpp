@@ -1,8 +1,8 @@
 #include "toplayoutcontroller.h"
+#include <QMainWindow>
 #include "Model/toplayout.h"
 #include "View/toplayoutwidget.h"
-#include <QMainWindow>
-#include "stylesettings.h"
+#include "View/stylesettings.h"
 
 TopLayoutController::TopLayoutController(QWidget *parent): QObject(parent)
 {
