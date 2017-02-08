@@ -30,6 +30,7 @@ MergeMapWidget::MergeMapWidget(QSharedPointer<Robots> _robots, QWidget *parent) 
     QRect screenGeometry = QApplication::desktop()->screenGeometry();
     int x = (screenGeometry.width() - width()) / 2;
     int y = (screenGeometry.height() - height()) / 2;
+
     move(x, y);
 }
 

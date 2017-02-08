@@ -1,20 +1,24 @@
-#include "std_msgs/String.h"
 #include "recover_position.hpp"
-#include "gobot_move/FindNextPoint.h"
-#include "play_path.hpp"
+
+using boost::asio::ip::tcp;
+
+boost::asio::io_service io_service;
+tcp::socket socket_recovered_position(io_service);
+tcp::acceptor l_acceptor(io_service);
+
+#define ROBOT_POS_TOLERANCE 0.5
 
 bool waitingForNextGoal = false;
-Point currentGoal;
+coordinates currentGoal;
 
 std::vector<int8_t> my_map;
 Metadata metadata;
 RobotPos robotOrigin;
 
+geometry_msgs::Pose robot_full_pos;
+
 /// to process the goals needed to recover the position
 std::shared_ptr<MoveBaseClient> ac(0);
-
-ros::Publisher target_pub;
-ros::Publisher fail_pub;
 
 ros::Subscriber localisationToolFeedbackSuscriber;
 
@@ -32,34 +36,87 @@ void getMetaData(const nav_msgs::MapMetaData::ConstPtr& msg){
 	metadata.y = msg->origin.position.y;
 }
 
-void getRobotPos(const geometry_msgs::PoseStamped::ConstPtr& msg){
-	robotOrigin.x = msg->pose.position.x;
-	robotOrigin.y = msg->pose.position.y;
+void getRobotPos(const geometry_msgs::Pose::ConstPtr& msg){
+	robotOrigin.x = msg->position.x;
+	robotOrigin.y = msg->position.y;
+
+	/// used later to send the recovered position to the application
+	robot_full_pos = *msg;
+
+	/// if a goal has been set, we check if it's been reached
+	if(currentGoal.first != -1){
+		/// we check if the robot is close enough to its goal
+		if(std::abs(msg->position.x - currentGoal.first) < ROBOT_POS_TOLERANCE && std::abs(msg->position.y - currentGoal.second) < ROBOT_POS_TOLERANCE){
+			/// if the robot has already arrived, we want to wait for the next goal instead of repeat the same "success" functions
+			if(!waitingForNextGoal){
+				std::cout << "(PlayPath) getRobotPos robot close enough to the goal" << std::endl;
+				std::cout << "(PlayPath) robot position " << msg->position.x << " " << msg->position.y 
+				<< "\n(PlayPath) robot goal " << currentGoal.first << " " << currentGoal.second
+				<< std::endl;
+				waitingForNextGoal = true;
+				currentGoal.first = -1;
+			}
+		}
+	}
 }
 
-bool recoverPosition(std_srvs::Empty::Request &req, std_srvs::Empty::Response &res){
-	localisationToolFeedbackSuscriber.subscribe("position_found", 1, checkRecoveryStatus);
-	return true;
+void sendRecoveredPosition(const geometry_msgs::Pose& recoveredPosition){
+	/// to recover the orientation of the robot
+	tf::Matrix3x3 matrix = tf::Matrix3x3(tf::Quaternion(recoveredPosition.orientation.x, recoveredPosition.orientation.y, recoveredPosition.orientation.z, recoveredPosition.orientation.w));
+ 	tfScalar roll;
+	tfScalar pitch;
+	tfScalar yaw;
+	matrix.getRPY(roll, pitch, yaw);
+	/// a blank is added at the end so that different messages can be separated
+	std::string recovered_position_to_send = std::to_string(recoveredPosition.position.x) + " " + std::to_string(recoveredPosition.position.y) + " " + std::to_string(yaw) + " ";
+    try { 
+        boost::system::error_code ignored_error;
+        boost::asio::write(socket_recovered_position, boost::asio::buffer(recovered_position_to_send), boost::asio::transfer_all(), ignored_error);
+    } catch (std::exception& e) {
+        e.what();
+    }
+}
+
+void sendErrorMessage(){
+	/// what is sent to the application if we cannot find a proper goal for the robot
+	try { 
+        boost::system::error_code ignored_error;
+        boost::asio::write(socket_recovered_position, boost::asio::buffer("nok "), boost::asio::transfer_all(), ignored_error);
+    } catch (std::exception& e) {
+        e.what();
+    }
 }
 
 void checkRecoveryStatus(const std_msgs::String& msg){
-	// check msg, if it says we found we cancel goals and give the info to the application
-	// if not found we call find next point to go to new goal until goal is reached
-	// use play path function to make sure we arrived to goal
 
 	/// the position has not been found yet
-	if(msg.compare("position found")) {
+	if(msg.data == "position found") {
 		// need to find a way to make sure the goal has been reached using the function in play_path
-		if(waitingForNextGoal) {
+		if(waitingForNextGoal) 
 			findNextPoint();
-		}
+	} else {
+		/// since we have found the position we cancel the goal using cancelAllGoals (does not crash if no goal was sent)
+		ac->cancelAllGoals();
+		currentGoal.first = -1;
+		/// we sent the position to the application
+		sendRecoveredPosition(robot_full_pos);
 	}
+}
 
-	else {
+bool recoverPosition(std_srvs::Empty::Request &req, std_srvs::Empty::Response &res){
+	ROS_INFO("recoverPosition started : trying to open port 4004 to send back the recovered position when available\n");
+	ros::NodeHandle n;
 
-		/// position has been recovered so stop here and do something else. publish ? call another program ? important is to send the app the new pos ->
-	}
+    socket_recovered_position = tcp::socket(io_service);
+    l_acceptor = tcp::acceptor(io_service, tcp::endpoint(tcp::v4(), 4004));
+    l_acceptor.set_option(tcp::acceptor::reuse_address(true));
 
+    l_acceptor.accept(socket_recovered_position);
+    std::cout << "Recovery position connection established" << std::endl;
+
+	localisationToolFeedbackSuscriber = n.subscribe("position_found", 1, checkRecoveryStatus);
+
+	return true;
 }
 
 ReducedMap reduceMap(const std::vector<int8_t>& _map, const uint32_t width, const uint32_t height){
@@ -213,19 +270,15 @@ bool findNextPoint(){
 		    goal.target_pose.pose.orientation.z = 0;
 		    goal.target_pose.pose.orientation.w = 1;
 
+		    currentGoal = std::make_pair((furthestPoint.first.end) * metadata.resolution + metadata.x, (furthestPoint.first.row) * metadata.resolution + metadata.y);
+
 			ac->sendGoal(goal);
 
-		} else {
-			std_msgs::String msg;
-            msg.data = "fail";
-            fail_pub.publish(msg);
-		}
+		} else 
+			sendErrorMessage();
 	}
-
 	return true;
 }
-
-// don't forget to run hector_mapping in order to get /slam_out_pose
 
 int main(int argc, char* argv[]){
 
@@ -237,19 +290,17 @@ int main(int argc, char* argv[]){
 	ros::Subscriber sub_metadata = n.subscribe("/map1_metadata", 1000, getMetaData);
 
 	// to receive the robot's position and orientation
-	ros::Subscriber sub_robot = n.subscribe("/slam_out_pose", 1000, getRobotPos);
+	ros::Subscriber sub_robot = n.subscribe("/robot_pose", 1, getRobotPos);
 
 	// to receive the current map
 	ros::Subscriber sub_map = n.subscribe("/map1", 1000, getMap);
-
-	fail_pub = n.advertise<std_msgs::String>("/restartSmallMap", 1000);
 	
+	// to send the position of the robot to the application once recovered
 	ros::ServiceServer service = n.advertiseService("recover_position", recoverPosition);
 
 	// wait for the action server to come up
 	while(!ac->waitForServer(ros::Duration(5.0)))
 		ROS_INFO("Waiting for the move_base action server to come up");
-
 
 	ros::spin();
 	

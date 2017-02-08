@@ -8,7 +8,6 @@
 #include <set>
 #include "ros/ros.h"
 #include "geometry_msgs/Pose.h"
-#include "geometry_msgs/PoseStamped.h"
 #include "nav_msgs/MapMetaData.h"
 #include "nav_msgs/OccupancyGrid.h"
 #include <cstdint>
@@ -16,8 +15,17 @@
 #include <limits>
 #include <unistd.h>
 #include <assert.h>
+#include "move_base_msgs/MoveBaseAction.h"
+#include <tf/transform_broadcaster.h> // tf::Matrix3x3
+#include <boost/asio.hpp>
+#include <actionlib/client/simple_action_client.h>
+#include "std_msgs/String.h"
+#include "std_srvs/Empty.h"
+#include "geometry_msgs/PoseStamped.h"
 
 #define ROBOT_WIDTH 6
+
+typedef actionlib::SimpleActionClient<move_base_msgs::MoveBaseAction> MoveBaseClient;
 
 enum Color { White, Black };
 
@@ -66,7 +74,7 @@ void getMap(const nav_msgs::OccupancyGrid::ConstPtr& msg);
 
 void getMetaData(const nav_msgs::MapMetaData::ConstPtr& msg);
 
-void getRobotPos(const geometry_msgs::PoseStamped::ConstPtr& msg);
+void getRobotPos(const geometry_msgs::Pose::ConstPtr& msg);
 
 void addEdgeToReducedGraph(const ReducedVertex head, const ReducedVertex tail, reducedGraph_t & graph);
 
@@ -81,5 +89,15 @@ void graphFromReducedMap(const ReducedMap& _map, reducedGraph_t & graph,
 ReducedVertex reducedVertexFromPixels(const coordinates pixelsCoordinates, const ReducedMap& _map);
 
 std::pair<ReducedVertex, int> findFurthestPointInReducedGraph(const RobotPos& robotOrigin, const Metadata& mapMetadata, const reducedGraph_t& graph, const ReducedMap& _reducedMap);	
+
+void checkRecoveryStatus(const std_msgs::String& msg);
+
+void sendRecoveredPosition(const geometry_msgs::Pose::ConstPtr& recoveredPosition);
+
+bool recoverPosition(std_srvs::Empty::Request &req, std_srvs::Empty::Response &res);
+
+bool findNextPoint();
+
+void sendErrorMessage();
 
 #endif

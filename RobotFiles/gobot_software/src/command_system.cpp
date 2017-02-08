@@ -30,6 +30,8 @@ ros::ServiceClient sendLaserClient;
 ros::ServiceClient stopSendLaserClient;
 ros::ServiceClient stopLaserClient;
 
+ros::ServiceClient recoverPositionClient;
+
 ros::Publisher go_pub;
 ros::Publisher teleop_pub;
 
@@ -37,6 +39,7 @@ int metadata_port = 4000;
 int robot_pos_port = 4001;
 int map_port = 4002;
 int laser_port = 4003;
+int recovered_position_port = 4004;
 
 std::string path_computer_software = "/home/gtdollar/computer_software/";
 
@@ -364,7 +367,7 @@ bool execCommand(ros::NodeHandle n, std::vector<std::string> command){
 		/// Command for the robot to stop a scan
 		case 'u':
 		{
-			std::cout << "(Command system) Gobot stop the scan of the new map" << std::endl;
+			std::cout << "(Command system) Gobot stops the scan of the new map" << std::endl;
 			scanning = false;
 
             /// Kill gobot move so that we'll restart it with the new map
@@ -382,6 +385,21 @@ bool execCommand(ros::NodeHandle n, std::vector<std::string> command){
 		}
 		break;
 
+		/// command to recover the robot's position
+		case 'v':
+		{
+			std::cout << "(Command system) Gobot tries to recover its position" << std::endl;
+			/// starts the localisation package
+			std::string cmd = "rosrun localisationTool isLocalised_optimized";
+			system(cmd.c_str());
+
+			/// gives some time to start the node
+			sleep(2);
+
+			return recoverPosition();
+		}
+		break;
+
 		/// Default/Unknown command
 		default:
 			std::cerr << "(Command system) Unknown command '" << command.at(0) << "' with " << command.size()-1 << " arguments : ";
@@ -393,6 +411,19 @@ bool execCommand(ros::NodeHandle n, std::vector<std::string> command){
 		break;
 	}
 	return false;
+}
+
+void recoverPosition(){
+	std::cout << "(Command system) Launching the service to recover the robot's position" << std::endl;
+	std_srvs::Empty srv;
+
+	if (recoverPositionClient.call(srv)) {
+		std::cout << "(Command system) recover_position service started" << std::endl;
+		return true;
+	} else {
+		std::cerr << "(Command system) Failed to call service recover_position" << std::endl;
+		return false;
+	}
 }
 
 void stopTwist(){
@@ -452,7 +483,7 @@ void stopMetadata(){
 }
 
 bool startMap(){
-	std::cout << "(Command system) Launching the service to start the map socket" << std::endl;
+	std::cout << "(Command system) Launching the service to open the map socket" << std::endl;
 
 	gobot_software::Port srv;
 	srv.request.port = map_port;
@@ -875,6 +906,8 @@ int main(int argc, char* argv[]){
 		sendLaserClient = n.serviceClient<std_srvs::Empty>("send_laser_data_sender");
 		stopSendLaserClient = n.serviceClient<std_srvs::Empty>("stop_send_laser_data_sender");
 		stopLaserClient = n.serviceClient<std_srvs::Empty>("stop_laser_data_sender");
+
+		recoverPositionClient = n.serviceClient<std_srvs::Empty>("recover_position");
 
 		go_pub = n.advertise<geometry_msgs::PoseStamped>("/move_base_simple/goal", 1000);
     	teleop_pub = n.advertise<geometry_msgs::Twist>("/cmd_vel", 1000);

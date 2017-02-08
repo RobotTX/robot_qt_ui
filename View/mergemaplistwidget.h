@@ -20,4 +20,4 @@ protected:
 
 };
 
-#endif // MERGEMAPLISTWIDGET_H
+#endif /// MERGEMAPLISTWIDGET_H

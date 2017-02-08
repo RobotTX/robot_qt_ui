@@ -94,7 +94,8 @@ HEADERS += \
     View/toplayoutwidget.h \
     Model/toplayout.h \
     Controller/mapcontroller.h \
-    Controller/pathscontroller.h
+    Controller/pathscontroller.h \
+    View/robotpositionrecovery.h
 
 FORMS += Controller/mainwindow.ui
 
@@ -173,7 +174,8 @@ SOURCES += main.cpp \
     View/toplayoutwidget.cpp \
     Model/toplayout.cpp \
     Controller/mapcontroller.cpp \
-    Controller/pathscontroller.cpp
+    Controller/pathscontroller.cpp \
+    View/robotpositionrecovery.cpp
 
 
 RESOURCES += Resources/resources.qrc

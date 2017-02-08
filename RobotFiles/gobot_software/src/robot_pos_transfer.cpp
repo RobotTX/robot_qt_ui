@@ -18,6 +18,7 @@ void sendRobotPos(const std::string& robot_string){
 }
 
 void getRobotPos(const geometry_msgs::Pose::ConstPtr& msg){
+	/// to recover the orientation of the robot
 	tf::Matrix3x3 matrix = tf::Matrix3x3(tf::Quaternion(msg->orientation.x, msg->orientation.y, msg->orientation.z, msg->orientation.w));
  	tfScalar roll;
 	tfScalar pitch;
