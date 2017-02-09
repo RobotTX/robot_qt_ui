@@ -20,7 +20,7 @@ class QHideEvent;
  */
 class RobotsLeftWidget: public QWidget{
 public:
-    RobotsLeftWidget(QWidget *parent, MainWindow *mainWindow, QSharedPointer<Robots> const &_robots);
+    RobotsLeftWidget(MainWindow *mainWindow, QSharedPointer<Robots> const &_robots);
 
     /// Getters
     RobotBtnGroup* getBtnGroup(void) const { return btnGroup; }
@@ -44,7 +44,6 @@ protected:
     void showEvent(QShowEvent *);
 
 private:
-    MainWindow* mainWindow;
     QVBoxLayout* layout;
     QSharedPointer<Robots> robots;
     QVBoxLayout* robotsLayout;

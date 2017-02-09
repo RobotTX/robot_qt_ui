@@ -1,15 +1,16 @@
 #include "pathpainter.h"
-#include "View/mapview.h"
-#include "Model/points.h"
-#include "Model/point.h"
-#include "Model/robot.h"
-#include "View/pointview.h"
 #include <QDebug>
 #include <QPainterPath>
 #include <QPixmap>
 #include "Controller/mainwindow.h"
 #include "Controller/mapcontroller.h"
 #include "Controller/pointscontroller.h"
+#include "Controller/robotscontroller.h"
+#include "Model/points.h"
+#include "Model/point.h"
+#include "Model/robot.h"
+#include "View/pointview.h"
+#include "View/mapview.h"
 
 PathPainter::PathPainter(MainWindow* const &mainWindow, const QSharedPointer<Points> _points)
     : QGraphicsPathItem(mainWindow->getMapController()->getMapView()), points(_points), mainWindow(mainWindow), pathDeleted(false), visiblePath("")
@@ -52,8 +53,11 @@ void PathPainter::addPathPointSlot(QString name, double x, double y, int waitTim
 
             Point::PointType type = Point::PointType::PATH;
 
-            if((mainWindow->getSelectedRobot() && mainWindow->getSelectedRobot()->getRobot()->getHome() && mainWindow->getSelectedRobot()->getRobot()->getHome()->getPoint()->getName().compare(name) == 0)
-                    || (mainWindow->getSelectedRobot() == NULL && points->isAHome(name, x, y)))
+            if((mainWindow->getRobotsController()->getSelectedRobot()
+                && mainWindow->getRobotsController()->getSelectedRobot()->getRobot()->getHome()
+                && mainWindow->getRobotsController()->getSelectedRobot()->getRobot()->getHome()->getPoint()->getName().compare(name) == 0)
+                    || (mainWindow->getRobotsController()->getSelectedRobot() == NULL
+                        && points->isAHome(name, x, y)))
                 type = Point::PointType::HOME;
 
             points->addPoint(PATH_GROUP_NAME, name, x, y, true, type);

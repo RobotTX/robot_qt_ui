@@ -27,7 +27,7 @@ public:
     DisplaySelectedPath* getDisplaySelectedPath(void) const { return displaySelectedPath; }
     GroupsPathsWidget* getGroupsPathsWidget(void) const { return groupsPathsWidget; }
     DisplayPathGroup* getPathGroupDisplayed(void) const { return pathGroup; }
-    PathCreationWidget* getpathCreationWidget(void) const { return pathCreationWidget; }
+    PathCreationWidget* getPathCreationWidget(void) const { return pathCreationWidget; }
     PathPainter* getPathPainter(void) const { return pathPainter; }
 
     void initializePaths(void);

@@ -7,7 +7,7 @@
 #include "mergemaplistwidget.h"
 #include "View/teleopwidget.h"
 
-robotPositionRecovery::robotPositionRecovery(QSharedPointer<Robots> _robots, QWidget *parent) : QWidget(parent), robots(_robots) {
+RobotPositionRecovery::RobotPositionRecovery(QSharedPointer<Robots> _robots, QWidget *parent) : QWidget(parent), robots(_robots) {
     setAttribute(Qt::WA_DeleteOnClose);
     setMouseTracking(true);
 
@@ -15,7 +15,7 @@ robotPositionRecovery::robotPositionRecovery(QSharedPointer<Robots> _robots, QWi
 
 }
 
-void robotPositionRecovery::initializeMenu(){
+void RobotPositionRecovery::initializeMenu(){
     /// to create a widget that can contain all the left part of the whole widget
     /// and later on be added to the main layout
     QWidget* menuWidget = new QWidget(this);
@@ -54,10 +54,18 @@ void robotPositionRecovery::initializeMenu(){
     /// Teleoperation widget
     QVBoxLayout* teleopLayout = new QVBoxLayout();
     TeleopWidget* teleopWidget = new TeleopWidget(this);
-    connect(teleopWidget->getBtnGroup(), SIGNAL(buttonClicked(int)), this, SLOT(teleopCmdSlot(int)));
+    //connect(teleopWidget->getBtnGroup(), SIGNAL(buttonClicked(int)), this, SLOT(teleopCmdSlot(int)));
     teleopLayout->addWidget(teleopWidget);
-    menuLayout->addLayout(teleopLayout);
+    leftLayout->addLayout(teleopLayout);
 
 
+
+}
+
+void RobotPositionRecovery::dirKeyEventSlot(int key){
+
+}
+
+void RobotPositionRecovery::teleopCmdSlot(int){
 
 }

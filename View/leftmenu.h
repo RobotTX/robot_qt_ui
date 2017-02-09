@@ -31,9 +31,7 @@ public:
 
     /// Getters
     LeftMenuWidget* getLeftMenuWidget(void) const {return leftMenuWidget;}
-    RobotsLeftWidget* getRobotsLeftWidget(void) const {return robotsLeftWidget;}
     MapLeftWidget* getMapLeftWidget(void) const {return mapLeftWidget;}
-    EditSelectedRobotWidget* getEditSelectedRobotWidget(void) const {return editSelectedRobotWidget;}
     CustomPushButton* getReturnButton(void) const { return returnButton; }
     CustomPushButton* getCloseButton(void) const { return closeBtn; }
     QWidget* getLastWidget() const {return lastWidget; }
@@ -63,9 +61,7 @@ private:
     QVBoxLayout* leftLayout;
     QWidget* lastWidget;
     LeftMenuWidget* leftMenuWidget;
-    RobotsLeftWidget* robotsLeftWidget;
     MapLeftWidget* mapLeftWidget;
-    EditSelectedRobotWidget* editSelectedRobotWidget;
     CustomPushButton * returnButton;
 };
 

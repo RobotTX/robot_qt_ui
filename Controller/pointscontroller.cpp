@@ -3,9 +3,11 @@
 #include <QDebug>
 #include <QMessageBox>
 #include <assert.h>
+#include "Controller/mainwindow.h"
 #include "Controller/mapcontroller.h"
 #include "Controller/commandcontroller.h"
 #include "Controller/toplayoutcontroller.h"
+#include "Controller/robotscontroller.h"
 #include "Model/xmlparser.h"
 #include "Model/pathpoint.h"
 #include "Model/robots.h"
@@ -360,7 +362,7 @@ void PointsController::askForDeleteDefaultGroupPointConfirmation(QString pointNa
                 setMessageTop(TEXT_COLOR_SUCCESS, "You have successfully deleted the point \"" + pointName + "\" that used to belong to the default group");
             } else {
                 /// this is in fact the home point of a robot, we prompt a customized message to the end user
-                QPointer<RobotView> robot = static_cast<MainWindow*>(parent())->getRobots()->findRobotUsingHome(pointName);
+                QPointer<RobotView> robot = static_cast<MainWindow*>(parent())->getRobotsController()->getRobots()->findRobotUsingHome(pointName);
                 if(robot != NULL){
                     openInterdictionOfPointRemovalMessage(pointName, robot->getRobot()->getName());
                     qDebug() << "Sorry this point is the home of a robot and therefore cannot be removed";
@@ -493,7 +495,7 @@ void PointsController::editGroupBtnEvent(void){
                 pointView->show();
                 QString robotName = "";
                 if(pointView->getPoint()->isHome()){
-                    QPointer<RobotView> robotView = mainWindow->getRobots()->findRobotUsingHome(pointView->getPoint()->getName());
+                    QPointer<RobotView> robotView = mainWindow->getRobotsController()->getRobots()->findRobotUsingHome(pointView->getPoint()->getName());
                     if(robotView)
                         robotName = robotView->getRobot()->getName();
                     else
@@ -632,7 +634,7 @@ void PointsController::removePointFromGroupMenu(void){
                     } else {
                         /// this is in fact the home point of a robot, we prompt a customized message to the end user
                         MainWindow* mainWindow = static_cast<MainWindow*>(parent());
-                        QPointer<RobotView> robotView = mainWindow->getRobots()->findRobotUsingHome(pointName);
+                        QPointer<RobotView> robotView = mainWindow->getRobotsController()->getRobots()->findRobotUsingHome(pointName);
                         if(robotView != NULL){
                             qDebug() << robotView->getRobot()->getName();
                             openInterdictionOfPointRemovalMessage(pointName, robotView->getRobot()->getName());
@@ -678,7 +680,7 @@ void PointsController::displayPointEvent(QString name, double x, double y){
 
                 QString robotName = "";
                 if(pointView->getPoint()->isHome()){
-                    QPointer<RobotView> robotView = mainWindow->getRobots()->findRobotUsingHome(pointView->getPoint()->getName());
+                    QPointer<RobotView> robotView = mainWindow->getRobotsController()->getRobots()->findRobotUsingHome(pointView->getPoint()->getName());
                     if(robotView)
                         robotName = robotView->getRobot()->getName();
                     else
@@ -704,7 +706,7 @@ void PointsController::displayPointEvent(QString name, double x, double y){
 
                 qDebug() << "PointsController::displayPointEvent  : is this point a path ?" << (pointView->getPoint()->isPath()) << pointView->getPoint()->getType();
                 if(pointView->getPoint()->isHome()){
-                    QPointer<RobotView> robotView = mainWindow->getRobots()->findRobotUsingHome(pointView->getPoint()->getName());
+                    QPointer<RobotView> robotView = mainWindow->getRobotsController()->getRobots()->findRobotUsingHome(pointView->getPoint()->getName());
                     if(robotView)
                         robotName = robotView->getRobot()->getName();
                     else
@@ -719,7 +721,7 @@ void PointsController::displayPointEvent(QString name, double x, double y){
 
             } else {
                 /// The point is a path' point from a temporary point so we display the page of the robot in which this pathpoint is used
-                QPointer<RobotView> robot = mainWindow->getRobots()->findRobotUsingTmpPointInPath(pointView->getPoint());
+                QPointer<RobotView> robot = mainWindow->getRobotsController()->getRobots()->findRobotUsingTmpPointInPath(pointView->getPoint());
                 if(robot){
                     qDebug() << "PointsController::displayPointEvent  At least, I found the robot" << robot->getRobot()->getName();
                     mainWindow->resetFocus();
@@ -916,7 +918,7 @@ void PointsController::displayPointsInGroup(void){
         QString robotName = "";
 
         if(pointView && pointView->getPoint()->isHome()){
-            QPointer<RobotView> robotView = mainWindow->getRobots()->findRobotUsingHome(checkedName);
+            QPointer<RobotView> robotView = mainWindow->getRobotsController()->getRobots()->findRobotUsingHome(checkedName);
             if(robotView)
                 robotName = robotView->getRobot()->getName();
             else
@@ -1025,7 +1027,7 @@ void PointsController::removePointFromInformationMenu(void){
                 }
             } else {
                 /// this point is actually the home point of a robot and therefore cannot be removed
-                QPointer<RobotView> robot = mainWindow->getRobots()->findRobotUsingHome(pointView->getPoint()->getName());
+                QPointer<RobotView> robot = mainWindow->getRobotsController()->getRobots()->findRobotUsingHome(pointView->getPoint()->getName());
                 if(robot != NULL){
                     qDebug() << "PointsController::removepointfrominformationmenu Sorry this point is the home of a robot and therefore cannot be removed";
                     openInterdictionOfPointRemovalMessage(pointView->getPoint()->getName(), robot->getRobot()->getName());
@@ -1060,7 +1062,7 @@ void PointsController::editPointFromGroupMenu(void){
         /// update the pointview and show the point on the map with hover color
         QString robotName = "";
         if(points->findPointView(pointName)->getPoint()->isHome()){
-            QPointer<RobotView> robotView = mainWindow->getRobots()->findRobotUsingHome(pointName);
+            QPointer<RobotView> robotView = mainWindow->getRobotsController()->getRobots()->findRobotUsingHome(pointName);
             if(robotView)
                 robotName = robotView->getRobot()->getName();
             else
@@ -1133,7 +1135,7 @@ void PointsController::displayPointInfoFromGroupMenu(void){
 
         QString robotName = "";
         if(pointView->getPoint()->isHome()){
-            QPointer<RobotView> robotView = mainWindow->getRobots()->findRobotUsingHome(pointName);
+            QPointer<RobotView> robotView = mainWindow->getRobotsController()->getRobots()->findRobotUsingHome(pointName);
             if(robotView)
                 robotName = robotView->getRobot()->getName();
             else
@@ -1214,13 +1216,13 @@ void PointsController::updatePoint(void){
         if(displaySelectedPointView->getPoint()->isHome()){
             /// if the point is the home of a robot, we update the file containing the home on the robot
             qDebug() << "MainWindow::updatePoint need to update if home";
-            Position posInRobotCoordinates = MainWindow::convertPixelCoordinatesToRobotCoordinates(
+            Position posInRobotCoordinates = MainWindow::Helper::Convert::pixelCoordToRobotCoord(
                         displaySelectedPointView->getPoint()->getPosition(),
                         mainWindow->getMapController()->getMapOrigin().getX(),
                         mainWindow->getMapController()->getMapOrigin().getY(),
                         mainWindow->getMapController()->getMapResolution(),
                         mainWindow->getMapController()->getMapHeight());
-            QPointer<RobotView> robotView = mainWindow->getRobots()->getRobotViewByName(displaySelectedPointView->getPoint()->getRobotName());
+            QPointer<RobotView> robotView = mainWindow->getRobotsController()->getRobots()->getRobotViewByName(displaySelectedPointView->getPoint()->getRobotName());
             if(robotView)
                 mainWindow->getCommandController()->sendCommand(robotView->getRobot(), QString("n \"") + QString::number(posInRobotCoordinates.getX()) + "\" \""
                                                                     + QString::number(posInRobotCoordinates.getY()) + "\"", displaySelectedPoint->getPointName(), "", "", false, 1);
@@ -1425,7 +1427,7 @@ void PointsController::doubleClickOnPoint(QString pointName){
         MainWindow* mainWindow = static_cast<MainWindow*>(parent());
         QString robotName = "";
         if(pointView->getPoint()->isHome()){
-            QPointer<RobotView> robotView = mainWindow->getRobots()->findRobotUsingHome(pointName);
+            QPointer<RobotView> robotView = mainWindow->getRobotsController()->getRobots()->findRobotUsingHome(pointName);
             if(robotView)
                 robotName = robotView->getRobot()->getName();
             else
@@ -1489,7 +1491,7 @@ void PointsController::doubleClickOnGroup(QString checkedName){
 
         QString robotName = "";
         if(pointView->getPoint()->isHome()){
-            QPointer<RobotView> robotView = mainWindow->getRobots()->findRobotUsingHome(pointView->getPoint()->getName());
+            QPointer<RobotView> robotView = mainWindow->getRobotsController()->getRobots()->findRobotUsingHome(pointView->getPoint()->getName());
             if(robotView)
                 robotName = robotView->getRobot()->getName();
             else

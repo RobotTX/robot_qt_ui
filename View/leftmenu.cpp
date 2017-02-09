@@ -28,6 +28,7 @@
 #include "View/pathbuttongroup.h"
 #include "Controller/pathscontroller.h"
 #include "Controller/pointscontroller.h"
+#include "Controller/robotscontroller.h"
 
 LeftMenu::LeftMenu(MainWindow* mainWindow, QSharedPointer<Points> const& points,
                    const QSharedPointer<Robots> &robots, const QSharedPointer<Map> &_map)
@@ -76,9 +77,7 @@ LeftMenu::LeftMenu(MainWindow* mainWindow, QSharedPointer<Points> const& points,
     leftLayout->addWidget(mainWindow->getPointsController()->getPointsLeftWidget());
 
     /// Menu which display the list of robots
-    robotsLeftWidget = new RobotsLeftWidget(this, mainWindow, robots);
-    robotsLeftWidget->hide();
-    leftLayout->addWidget(robotsLeftWidget);
+    leftLayout->addWidget(mainWindow->getRobotsController()->getRobotsLeftWidget());
 
     /// Menu which display the map menu in which user can save/load a map
     mapLeftWidget = new MapLeftWidget(this, mainWindow);
@@ -86,11 +85,7 @@ LeftMenu::LeftMenu(MainWindow* mainWindow, QSharedPointer<Points> const& points,
     leftLayout->addWidget(mapLeftWidget);
 
     /// Menu to edit the selected robot
-    editSelectedRobotWidget = new EditSelectedRobotWidget(this, mainWindow, points, robots, mainWindow->getPathsController()->getPaths());
-    editSelectedRobotWidget->hide();
-    leftLayout->addWidget(editSelectedRobotWidget);
-    connect(editSelectedRobotWidget, SIGNAL(showEditSelectedRobotWidget()), mainWindow, SLOT(showEditHome()));
-    connect(editSelectedRobotWidget, SIGNAL(hideEditSelectedRobotWidget()), mainWindow, SLOT(showAllHomes()));
+    leftLayout->addWidget(mainWindow->getRobotsController()->getEditSelectedRobotWidget());
 
     /// Menu to edit the selected point
     leftLayout->addWidget(mainWindow->getPointsController()->getCreatePointWidget());
@@ -105,7 +100,7 @@ LeftMenu::LeftMenu(MainWindow* mainWindow, QSharedPointer<Points> const& points,
     /// Menu which displays a particular group of paths
     leftLayout->addWidget(mainWindow->getPathsController()->getPathGroupDisplayed());
 
-    leftLayout->addWidget(mainWindow->getPathsController()->getpathCreationWidget());
+    leftLayout->addWidget(mainWindow->getPathsController()->getPathCreationWidget());
     hide();
 
     globalLayout->addLayout(leftLayout);

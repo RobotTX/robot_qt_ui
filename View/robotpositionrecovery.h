@@ -3,16 +3,17 @@
 
 class Robots;
 class QHBoxLayout;
+class MergeMapListWidget;
 
 #include <QSharedPointer>
 #include <QWidget>
 
-class robotPositionRecovery : public QWidget {
+class RobotPositionRecovery : public QWidget {
 
     Q_OBJECT
 
 public:
-    robotPositionRecovery(QSharedPointer<Robots> _robots, QWidget* parent = Q_NULLPTR);
+    RobotPositionRecovery(QSharedPointer<Robots> _robots, QWidget* parent = Q_NULLPTR);
 
     void initializeMenu(void);
 
@@ -35,6 +36,8 @@ private:
     QSharedPointer<Robots> robots;
 
     QHBoxLayout* mainLayout;
+
+    MergeMapListWidget* listWidget;
 };
 
 #endif /// ROBOTPOSITIONRECOVERY_H

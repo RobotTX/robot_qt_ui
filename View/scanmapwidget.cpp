@@ -210,7 +210,7 @@ void ScanMapWidget::saveSlot(){
                 qDebug() << "ScanMapWidget::saveSlot final origin in pixel :" << resolution << -image.width()*resolution/2;
 
                 /// Reconvert the new origin from pixel coordinates to the system used by the robot
-                Position newOrigin = MainWindow::convertPixelCoordinatesToRobotCoordinates(Position(image.width()/2, image.height()/2), 0, 0, resolution, image.height());
+                Position newOrigin = MainWindow::Helper::Convert::pixelCoordToRobotCoord(Position(image.width()/2, image.height()/2), 0, 0, resolution, image.height());
                 newOrigin.setX(-newOrigin.getX());
                 newOrigin.setY(-newOrigin.getY());
 

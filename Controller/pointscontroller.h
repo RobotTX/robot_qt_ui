@@ -1,6 +1,7 @@
 #ifndef POINTSCONTROLLER_H
 #define POINTSCONTROLLER_H
 
+class MainWindow;
 class PointsLeftWidget;
 class CreatePointWidget;
 class DisplaySelectedPoint;
@@ -12,7 +13,6 @@ class MapController;
 
 #include <QObject>
 #include <QSharedPointer>
-#include "Controller/mainwindow.h"
 #include "Model/points.h"
 
 class PointsController : public QObject {
