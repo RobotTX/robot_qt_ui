@@ -13,14 +13,6 @@ RobotsController::RobotsController(MainWindow *mainWindow) : QObject(mainWindow)
     robots = QSharedPointer<Robots>(new Robots());
     selectedRobot = Q_NULLPTR;
 
-    robotServerWorker = new RobotServerWorker(PORT_ROBOT_UPDATE);
-    connect(robotServerWorker, SIGNAL(robotIsAlive(QString, QString, QString, int, int)), mainWindow, SLOT(robotIsAliveSlot(QString, QString, QString, int, int)));
-    connect(this, SIGNAL(stopUpdateRobotsThread()), robotServerWorker, SLOT(stopWorker()));
-    connect(&serverThread, SIGNAL(finished()), robotServerWorker, SLOT(deleteLater()));
-    serverThread.start();
-    robotServerWorker->moveToThread(&serverThread);
-
-
     /// Get the list of taken robot's name from the file
     QFile fileRead(QDir::currentPath() + QDir::separator() + "robotsName.dat");
 
@@ -39,6 +31,15 @@ RobotsController::~RobotsController(){
         serverThread.quit();
         serverThread.wait();
     }
+}
+
+void RobotsController::launchServer(MainWindow* mainWindow){
+    robotServerWorker = new RobotServerWorker(PORT_ROBOT_UPDATE);
+    connect(robotServerWorker, SIGNAL(robotIsAlive(QString, QString, QString, int, int)), mainWindow, SLOT(robotIsAliveSlot(QString, QString, QString, int, int)));
+    connect(this, SIGNAL(stopUpdateRobotsThread()), robotServerWorker, SLOT(stopWorker()));
+    connect(&serverThread, SIGNAL(finished()), robotServerWorker, SLOT(deleteLater()));
+    serverThread.start();
+    robotServerWorker->moveToThread(&serverThread);
 }
 
 void RobotsController::initializeMenus(MainWindow* mainWindow){

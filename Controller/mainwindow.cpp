@@ -167,6 +167,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     mainLayout->setContentsMargins(0, 0, 0, 0);
     bottomLayout->setContentsMargins(0, 0, 0, 0);
     mainLayout->setSpacing(0);
+
+    robotsController->launchServer(this);
 }
 
 MainWindow::~MainWindow(){

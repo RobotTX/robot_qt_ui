@@ -26,6 +26,7 @@ public:
     void resetSelectedRobot(void){ selectedRobot = Q_NULLPTR; }
 
     void initializeMenus(MainWindow* mainWindow);
+    void launchServer(MainWindow* mainWindow);
 
 signals:
     void stopUpdateRobotsThread();
