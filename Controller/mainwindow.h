@@ -87,7 +87,6 @@ public:
     TopLayoutController* getTopLayoutController(void) const { return topLayoutController; }
 
     void initializeMenu();
-    void initializeRobots();
     void initializeBottomPanel();
     void initializeLeftMenu();
     void hideAllWidgets();
@@ -131,7 +130,6 @@ signals:
     void robotDisconnected(QString);
     void robotReconnected(QString);
     void robotScanning(bool, QString, bool);
-    void scanRobotPos(QString, double, double, double);
     void newBatteryLevel(int);
     void updatePath(const QString groupName, const QString pathName);
     void stopAllCmd();
@@ -145,7 +143,6 @@ public slots:
 private slots:
     void setTemporaryMessageTop(const QString type, const QString message, const int ms);
     void sendPathSelectedRobotSlot(const QString groupName, const QString pathName);
-    void updateRobot(const QString ipAddress, const float posX, const float posY, const float ori);
     void updateMetadata(const int width, const int height, const float resolution, const float originX, const float originY);
     void mapReceivedSlot(const QByteArray mapArray, int who, QString mapId, QString mapDate, QString resolution, QString originX, QString originY, QString ipAddress);
     void startScanningSlot(QString robotName);

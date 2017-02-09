@@ -1,13 +1,14 @@
 #include "robot.h"
-#include "Model/point.h"
-#include "Model/pathpoint.h"
-#include "Controller/mainwindow.h"
 #include <iostream>
 #include <QFile>
-#include "Controller/commandcontroller.h"
-#include "Model/map.h"
 #include <QDir>
+#include "Controller/mainwindow.h"
+#include "Controller/commandcontroller.h"
 #include "Controller/lasercontroller.h"
+#include "Controller/robotscontroller.h"
+#include "Model/point.h"
+#include "Model/pathpoint.h"
+#include "Model/map.h"
 
 
 Robot::Robot(MainWindow* mainWindow, const QSharedPointer<Paths>& _paths, const QString _name, const QString _ip) : QObject(mainWindow), paths(_paths), name(_name), ip(_ip), position(Position()),
@@ -166,7 +167,7 @@ void Robot::launchWorkers(MainWindow* mainWindow){
 
     robotWorker = QPointer<RobotPositionWorker>(new RobotPositionWorker(ip, PORT_ROBOT_POS));
     connect(robotWorker, SIGNAL(valueChangedRobot(QString, float, float, float)),
-                     mainWindow ,SLOT(updateRobot(QString, float, float, float)));
+                     mainWindow->getRobotsController() ,SLOT(updateRobot(QString, float, float, float)));
     connect(this, SIGNAL(stopRobotWorker()), robotWorker, SLOT(stopWorker()));
     connect(&robotThread, SIGNAL(finished()), robotWorker, SLOT(deleteLater()));
     connect(this, SIGNAL(startRobotWorker()), robotWorker, SLOT(connectSocket()));

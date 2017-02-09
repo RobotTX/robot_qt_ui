@@ -110,13 +110,14 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     pointsController->initializePoints();
     pointsController->initializeMenus(this, robotsController->getRobots(), mapController->getMap());
 
+    robotsController->initializeMenus(this);
+
     /// the temporary point view is only set here because initializePoints() was needed before
     mapController->setTmpPointView(pointsController->getPoints()->getTmpPointView());
 
     /// button to save the zoom and the position of the map
     connect(topLayoutController->getTopLayout()->getSaveButton(), SIGNAL(clicked()), mapController, SLOT(saveMapState()));
 
-    initializeRobots();
 
     /// settings of the application (battery level warning threshold, which map to choose between the map of the robot and the map of the app, etc...
     settingsController = new SettingsController(this);
@@ -181,34 +182,6 @@ MainWindow::~MainWindow(){
 
 /**********************************************************************************************************************************/
 
-void MainWindow::initializeRobots(){
-
-    /// Get the list of taken robot's name from the file
-    QFile fileRead(QDir::currentPath() + QDir::separator() + "robotsName.dat");
-
-    fileRead.open(QIODevice::ReadWrite);
-    /// read the data serialized from the file
-    QDataStream in(&fileRead);
-    QMap<QString, QString> tmp;
-    in >> tmp;
-    robotsController->getRobots()->setRobotsNameMap(tmp);
-    fileRead.close();
-}
-
-void MainWindow::updateRobot(const QString ipAddress, const float posX, const float posY, const float oriZ){
-
-    /// need to first convert the coordinates that we receive from the robot
-    Position robotPositionInPixelCoordinates = Helper::Convert::robotCoordToPixelCoord(Position(posX, posY), mapController->getMap()->getOrigin().getX(), mapController->getMap()->getOrigin().getY(), mapController->getMap()->getResolution(), mapController->getMap()->getHeight());
-    float orientation = -oriZ * 180.0 / PI + 90;
-
-    QPointer<RobotView> robotView = robotsController->getRobots()->getRobotViewByIp(ipAddress);
-    if(robotView){
-        robotView->setPosition(robotPositionInPixelCoordinates.getX(), robotPositionInPixelCoordinates.getY());
-        robotView->setOrientation(orientation);
-
-        emit scanRobotPos(robotView->getRobot()->getName(), robotPositionInPixelCoordinates.getX(), robotPositionInPixelCoordinates.getY(), orientation);
-    }
-}
 
 void MainWindow::startScanningSlot(QString robotName){
     qDebug() << "MainWindow::startScanningSlot called" << robotName;
@@ -283,12 +256,6 @@ void MainWindow::robotGoToSlot(QString robotName, double x, double y){
         commandController->sendCommand(robotView->getRobot(), QString("c \"") +
                                        QString::number(posInRobotCoordinates.getX()) + "\" \"" +
                                        QString::number(posInRobotCoordinates.getY()) + "\" \"0\"");
-}
-
-void MainWindow::testCoordSlot(double x, double y){
-    qDebug() << "MainWindow::testCoordSlot Trying to go to" << x << y;
-    Position posInRobotCoordinates = Helper::Convert::pixelCoordToRobotCoord(Position(x, y), mapController->getMap()->getOrigin().getX(), mapController->getMap()->getOrigin().getY(), mapController->getMap()->getResolution(), mapController->getMap()->getHeight());
-    qDebug() << "MainWindow::testCoordSlot converted in robot coord to" << posInRobotCoordinates.getX() << posInRobotCoordinates.getY();
 }
 
 void MainWindow::deletePath(int robotNb){
@@ -1474,7 +1441,7 @@ void MainWindow::scanMapSlot(){
         connect(this, SIGNAL(robotReconnected(QString)), scanMapWidget, SLOT(robotReconnectedSlot(QString)));
         connect(this, SIGNAL(robotScanning(bool,QString,bool)), scanMapWidget, SLOT(robotScanningSlot(bool,QString,bool)));
         connect(this, SIGNAL(receivedScanMap(QString,QImage,double)), scanMapWidget, SLOT(receivedScanMapSlot(QString,QImage,double)));
-        connect(this, SIGNAL(scanRobotPos(QString, double, double, double)), scanMapWidget, SLOT(scanRobotPosSlot(QString, double, double, double)));
+        connect(robotsController, SIGNAL(scanRobotPos(QString, double, double, double)), scanMapWidget, SLOT(scanRobotPosSlot(QString, double, double, double)));
 
     } else
         scanMapWidget->activateWindow();
@@ -3186,4 +3153,10 @@ void MainWindow::commandDoneStopScan(bool success, QString robotName){
         } else
             qDebug() << "MainWindow::stopScanningSlot Could not stop the robot" << robotName << "to scan, stopped trying after 5 attempts";
     }
+}
+
+void MainWindow::testCoordSlot(double x, double y){
+    qDebug() << "MainWindow::testCoordSlot Trying to go to" << x << y;
+    Position posInRobotCoordinates = Helper::Convert::pixelCoordToRobotCoord(Position(x, y), mapController->getMap()->getOrigin().getX(), mapController->getMap()->getOrigin().getY(), mapController->getMap()->getResolution(), mapController->getMap()->getHeight());
+    qDebug() << "MainWindow::testCoordSlot converted in robot coord to" << posInRobotCoordinates.getX() << posInRobotCoordinates.getY();
 }

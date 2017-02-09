@@ -31,7 +31,7 @@ class MainWindow;
 class EditSelectedRobotWidget: public QWidget{
     Q_OBJECT
 public:
-    EditSelectedRobotWidget(QWidget* parent, MainWindow* _mainWindow, const QSharedPointer<Points>& _points, QSharedPointer<Robots> const robots, const QSharedPointer<Paths>& _paths);
+    EditSelectedRobotWidget(MainWindow* mainWindow);
 
     CustomLabel* getNameLabel(void){ return nameLabel; }
     CustomPushButton* getHomeBtn(void){ return homeBtn; }
@@ -52,7 +52,6 @@ public:
     CustomRobotDialog* getRobotInfoDialog(void) const { return robotDialog; }
     QPointer<RobotView> getRobot(void) const { return robotView; }
 
-    void setRobots(QSharedPointer<Robots> const _robots) { robots = _robots; }
     void setEditing(bool const _editing) { editing = _editing; }
     void setHome(QSharedPointer<PointView> const _home) { home = _home; }
     void setPathChanged(const bool change) { pathChanged = change; }
@@ -119,16 +118,12 @@ private slots:
     void cancelRobotModificationsSlot();
 
 private:
-    MainWindow* mainWindow;
     QVBoxLayout* layout;
     QVBoxLayout* pathLayout;
     QPointer<RobotView> robotView;
     CustomLabel* nameLabel;
     CustomLabel* wifiNameLabel;
     QLabel* ipAddressLabel;
-    QSharedPointer<Points> points;
-    QSharedPointer<Robots> robots;
-    QSharedPointer<Paths> paths;
     CustomPushButton* saveBtn;
     CustomPushButton* homeBtn;
     QSharedPointer<PointView> home;

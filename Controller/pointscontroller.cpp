@@ -3,6 +3,7 @@
 #include <QDebug>
 #include <QMessageBox>
 #include <assert.h>
+#include "Helper/helper.h"
 #include "Controller/mainwindow.h"
 #include "Controller/mapcontroller.h"
 #include "Controller/commandcontroller.h"
@@ -1216,7 +1217,7 @@ void PointsController::updatePoint(void){
         if(displaySelectedPointView->getPoint()->isHome()){
             /// if the point is the home of a robot, we update the file containing the home on the robot
             qDebug() << "MainWindow::updatePoint need to update if home";
-            Position posInRobotCoordinates = MainWindow::Helper::Convert::pixelCoordToRobotCoord(
+            Position posInRobotCoordinates = Helper::Convert::pixelCoordToRobotCoord(
                         displaySelectedPointView->getPoint()->getPosition(),
                         mainWindow->getMapController()->getMapOrigin().getX(),
                         mainWindow->getMapController()->getMapOrigin().getY(),

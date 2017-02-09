@@ -25,8 +25,14 @@ public:
     void setSelectedRobot(QPointer<RobotView> _selectedRobot){ selectedRobot = _selectedRobot; }
     void resetSelectedRobot(void){ selectedRobot = Q_NULLPTR; }
 
+    void initializeMenus(MainWindow* mainWindow);
+
 signals:
     void stopUpdateRobotsThread();
+    void scanRobotPos(QString, double, double, double);
+
+private slots:
+    void updateRobot(const QString ipAddress, const float posX, const float posY, const float ori);
 
 private:
     RobotServerWorker* robotServerWorker;
