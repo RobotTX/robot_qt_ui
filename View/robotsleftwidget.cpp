@@ -9,9 +9,9 @@
 #include "View/custompushbutton.h"
 #include <QHideEvent>
 
-RobotsLeftWidget::RobotsLeftWidget(QWidget* parent, MainWindow* _mainWindow, QSharedPointer<Robots> const &_robots):
-    QWidget(parent), mainWindow(_mainWindow), lastCheckedId(-1)
-{
+RobotsLeftWidget::RobotsLeftWidget(MainWindow* mainWindow, QSharedPointer<Robots> const &_robots):
+    QWidget(mainWindow), lastCheckedId(-1){
+
     layout = new QVBoxLayout(this);
     scrollArea = new CustomScrollArea(this, true);
 
@@ -34,7 +34,7 @@ RobotsLeftWidget::RobotsLeftWidget(QWidget* parent, MainWindow* _mainWindow, QSh
 
 void RobotsLeftWidget::setRobots(QSharedPointer<Robots> const &_robots){
     robots = _robots;
-
+    MainWindow* mainWindow = static_cast<MainWindow*>(parent());
     /// Clickable buttons group to select/edit a robot
     btnGroup = new RobotBtnGroup(robots->getRobotsVector(), mainWindow);
 

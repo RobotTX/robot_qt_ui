@@ -3,15 +3,16 @@
 #include <QVBoxLayout>
 #include <QGraphicsScene>
 #include <QPushButton>
-#include "stylesettings.h"
 #include <QDir>
 #include <QLineEdit>
 #include <QIntValidator>
 #include <QDebug>
 #include <fstream>
+#include <QCheckBox>
+#include "Helper/helper.h"
 #include "Controller/mainwindow.h"
 #include "View/mergemapgraphicsitem.h"
-#include <QCheckBox>
+#include "View/stylesettings.h"
 
 MergeMapListItemWidget::MergeMapListItemWidget(int _id, QString _fileName, QGraphicsScene* scene, bool _fromRobot, QImage image, double _resolution, double _originX, double _originY):
     QWidget(), id(_id),  fromRobot(_fromRobot), origin(QPointF(_originX, _originY)), resolution(_resolution), pixmapItem(new MergeMapGraphicsItem()), originInPixel(QPoint(-1, -1)) {
@@ -133,7 +134,7 @@ void MergeMapListItemWidget::initializeMap(QString _fileName, QGraphicsScene* sc
     /// If we have a resolution (and so an origin), we want to convert it into coordinates in pixel
     /// to later display the origin as a blue point and be able to find it at the end after all the transformations
     if(resolution != -1){
-        Position pos = MainWindow::convertRobotCoordinatesToPixelCoordinates(Position(0, 0), origin.x(), origin.y(), resolution, image.height());
+        Position pos = Helper::Convert::robotCoordToPixelCoord(Position(0, 0), origin.x(), origin.y(), resolution, image.height());
         originInPixel = QPoint(pos.getX(), pos.getY());
         pixmapItem->setZValue(id+1);
         qDebug() << "MergeMapListItemWidget::initializeMap origin vs originInPixel :" << origin << "vs" << originInPixel;

@@ -13,8 +13,11 @@ class MergeMapListWidget;
 #define LIST_WIDGET_HEIGHT 140
 
 class ScanMapWidget : public QWidget {
+
     Q_OBJECT
+
 public:
+
     ScanMapWidget(QSharedPointer<Robots> _robots, QWidget* parent = Q_NULLPTR);
 
     /**
@@ -239,4 +242,4 @@ private:
     double resolution;
 };
 
-#endif // SCANMAPWIDGET_H
+#endif /// SCANMAPWIDGET_H

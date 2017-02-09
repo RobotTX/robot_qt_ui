@@ -6,9 +6,12 @@ class Robot;
 #include <QObject>
 #include "Model/robots.h"
 
-class LaserController :public QObject{
+class LaserController :public QObject {
+
     Q_OBJECT
+
 public:
+
     LaserController(QSharedPointer<Robots> _robots, QObject* parent);
 
     QVector<QPointF> convertRangesToPoints(const float angle_min /* rad */, const float angle_increment /* rad */, const QVector<float> ranges, QPointer<Robot> robot) const;

@@ -1,17 +1,18 @@
 #include "mergemapwidget.h"
 #include <QHBoxLayout>
 #include <QDebug>
+#include <QListWidgetItem>
+#include <QMenu>
+#include <QButtonGroup>
+#include <fstream>
+#include "Helper/helper.h"
+#include "Controller/mainwindow.h"
 #include "View/customqgraphicsview.h"
 #include "View/custompushbutton.h"
 #include "View/spacewidget.h"
-#include <QButtonGroup>
 #include "View/mergemaplistitemwidget.h"
-#include <QListWidgetItem>
-#include "stylesettings.h"
-#include <fstream>
-#include "Controller/mainwindow.h"
+#include "View/stylesettings.h"
 #include "View/mergemapgraphicsitem.h"
-#include <QMenu>
 
 MergeMapWidget::MergeMapWidget(QSharedPointer<Robots> _robots, QWidget *parent) : QWidget(parent), robots(_robots), nbMaps(0) {
     setAttribute(Qt::WA_DeleteOnClose);
@@ -207,7 +208,7 @@ void MergeMapWidget::saveSlot(){
                 qDebug() << "MergeMapWidget::saveSlot final origin in pixel :" << originInPixel << resolution << -image.width()*resolution/2;
 
                 /// Reconvert the new origin from pixel coordinates to the system used by the robot
-                Position pos1 = MainWindow::convertPixelCoordinatesToRobotCoordinates(Position(originInPixel.x(), originInPixel.y()), 0, 0, resolution, image.height());
+                Position pos1 = Helper::Convert::pixelCoordToRobotCoord(Position(originInPixel.x(), originInPixel.y()), 0, 0, resolution, image.height());
                 pos1.setX(-pos1.getX());
                 pos1.setY(-pos1.getY());
 

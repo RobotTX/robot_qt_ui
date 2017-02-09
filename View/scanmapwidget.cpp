@@ -1,18 +1,18 @@
 #include "scanmapwidget.h"
 #include <QHBoxLayout>
 #include <QDebug>
+#include <QButtonGroup>
+#include <QMenu>
+#include "Helper/helper.h"
 #include "View/customqgraphicsview.h"
 #include "View/custompushbutton.h"
 #include "View/spacewidget.h"
-#include <QButtonGroup>
-#include "stylesettings.h"
+#include "View/stylesettings.h"
 #include "View/mergemaplistwidget.h"
 #include "View/scanmaplistitemwidget.h"
 #include "View/scanmapgraphicsitem.h"
-#include <QMenu>
 #include "View/robotview.h"
 #include "View/teleopwidget.h"
-
 
 ScanMapWidget::ScanMapWidget(QSharedPointer<Robots> _robots, QWidget* parent)
     : QWidget(parent), robots(_robots), mapSize(QSize()), resolution(-1){
@@ -210,7 +210,7 @@ void ScanMapWidget::saveSlot(){
                 qDebug() << "ScanMapWidget::saveSlot final origin in pixel :" << resolution << -image.width()*resolution/2;
 
                 /// Reconvert the new origin from pixel coordinates to the system used by the robot
-                Position newOrigin = MainWindow::convertPixelCoordinatesToRobotCoordinates(Position(image.width()/2, image.height()/2), 0, 0, resolution, image.height());
+                Position newOrigin = Helper::Convert::pixelCoordToRobotCoord(Position(image.width()/2, image.height()/2), 0, 0, resolution, image.height());
                 newOrigin.setX(-newOrigin.getX());
                 newOrigin.setY(-newOrigin.getY());
 

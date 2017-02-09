@@ -3,10 +3,8 @@
 
 class RobotView;
 class PointView;
-class RobotServerWorker;
 class CustomQGraphicsView;
 class Map;
-class Robots;
 class LeftMenuWidget;
 class RobotsLeftWidget;
 class MapLeftWidget;
@@ -33,6 +31,7 @@ class MapController;
 class PathsController;
 class PointsController;
 class RobotPositionRecovery;
+class RobotsController;
 
 #include "Model/paths.h"
 #include "View/createpointwidget.h"
@@ -46,7 +45,6 @@ class RobotPositionRecovery;
 #include <QMessageBox>
 #include "Model/point.h"
 #include <QSettings>
-#include <QThread>
 #include <QUuid>
 #include <ctime>
 
@@ -81,16 +79,15 @@ public:
 
     QList<QPair<QPair<QWidget*, QString>, MainWindow::WidgetType>> getLastWidgets(void) const { return lastWidgets; }
     CommandController* getCommandController(void) const { return commandController; }
-    QSharedPointer<Robots> getRobots(void) const { return robots; }
     LeftMenu* getLeftMenu(void) const { return leftMenu; }
     LaserController* getLaserController(void) const { return laserController; }
     MapController* getMapController(void) const { return mapController; }
     PathsController* getPathsController(void) const { return pathsController; }
     PointsController* getPointsController(void) const { return pointsController; }
+    RobotsController* getRobotsController(void) const { return robotsController; }
     TopLayoutController* getTopLayoutController(void) const { return topLayoutController; }
 
     void initializeMenu();
-    void initializeRobots();
     void initializeBottomPanel();
     void initializeLeftMenu();
     void hideAllWidgets();
@@ -101,7 +98,6 @@ public:
     static void delay(const int ms);
     void updateAllPaths(const Point &old_point, const Point &new_point);
     void clearPath(const int robotNb);
-    QPointer<RobotView> getSelectedRobot(void) const { return selectedRobot; }
 
     /// returns true if the first date is later to the second date
     bool isLater(const QStringList& date, const QStringList& otherDate);
@@ -118,9 +114,6 @@ public:
     QString prepareCommandPath(const Paths::Path& path) const;
     void saveMap(QString fileName);
 
-    static Position convertPixelCoordinatesToRobotCoordinates(const Position positionInPixels, double originX, double originY, double resolution, int height);
-    static Position convertRobotCoordinatesToPixelCoordinates(const Position positionInRobotCoordinates, double originX, double originY, double resolution, int height);
-
     void openHelpMessage(const QString message, const QString feature);
 
     void openPositionRecoveryWidget(void);
@@ -133,7 +126,6 @@ signals:
     void updatePathPainterPointView();
     void resetPath();
     void resetPathCreationWidget();
-    void stopUpdateRobotsThread();
     void cancelRobotModifications();
     void receivedMapToMerge(QString, QImage, double, double, double);
     void receivedScanMap(QString, QImage, double);
@@ -141,7 +133,6 @@ signals:
     void robotDisconnected(QString);
     void robotReconnected(QString);
     void robotScanning(bool, QString, bool);
-    void scanRobotPos(QString, double, double, double);
     void newBatteryLevel(int);
     void updatePath(const QString groupName, const QString pathName);
     void stopAllCmd();
@@ -155,7 +146,6 @@ public slots:
 private slots:
     void setTemporaryMessageTop(const QString type, const QString message, const int ms);
     void sendPathSelectedRobotSlot(const QString groupName, const QString pathName);
-    void updateRobot(const QString ipAddress, const float posX, const float posY, const float ori);
     void updateMetadata(const int width, const int height, const float resolution, const float originX, const float originY);
     void mapReceivedSlot(const QByteArray mapArray, int who, QString mapId, QString mapDate, QString resolution, QString originX, QString originY, QString ipAddress);
     void startScanningSlot(QString robotName);
@@ -265,7 +255,6 @@ private slots:
     void relayTutorialSignal(const bool messageNeeded);
 
 protected:
-    void stopMapThread();
     void closeEvent(QCloseEvent *event);
     void robotHasNoHome(QString robotName);
     void closeWidgets();
@@ -292,24 +281,16 @@ protected:
 private:
     Ui::MainWindow* ui;
 
-    QThread serverThread;
-    QThread mapThread;
-
-    RobotServerWorker* robotServerWorker;
 
     QVBoxLayout* rightLayout;
     BottomLayout* bottomLayout;
 
-    QSharedPointer<Robots> robots;
-    QPointer<RobotView> selectedRobot;
 
     QMessageBox msgBox;
 
     QList<QPair<QPair<QWidget*, QString>, MainWindow::WidgetType>> lastWidgets;
 
     LeftMenuWidget* leftMenuWidget;
-    RobotsLeftWidget* robotsLeftWidget;
-    EditSelectedRobotWidget* editSelectedRobotWidget;
     MapLeftWidget* mapLeftWidget;
     QPointer<EditMapWidget> editMapWidget;
     QPointer<MergeMapWidget> mergeMapWidget;
@@ -328,6 +309,7 @@ private:
     LaserController* laserController;
     PathsController* pathsController;
     PointsController* pointsController;
+    RobotsController* robotsController;
 };
 
 #endif /// MAINWINDOW_H

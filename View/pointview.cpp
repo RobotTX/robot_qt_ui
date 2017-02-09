@@ -1,14 +1,15 @@
 #include "pointview.h"
-#include "Model/point.h"
 #include <QGraphicsSceneMouseEvent>
 #include <QDebug>
 #include <QPixmap>
 #include <QMouseEvent>
-#include "View/robotview.h"
-#include "Model/robot.h"
 #include "Controller/mainwindow.h"
-#include "View/mapview.h"
 #include "Controller/mapcontroller.h"
+#include "Controller/robotscontroller.h"
+#include "Model/robot.h"
+#include "Model/point.h"
+#include "View/mapview.h"
+#include "View/robotview.h"
 
 PointView::PointView(const QSharedPointer<Point> &_point, MainWindow *_mainWindow)
     : QGraphicsPixmapItem(QPixmap(PIXMAP_NORMAL), static_cast<QGraphicsPixmapItem*>(_mainWindow->getMapController()->getMapView())), state(GraphicItemState::NO_STATE), type(PixmapType::NORMAL),
@@ -154,11 +155,12 @@ void PointView::setPixmap(const PixmapType pixType){
     bool homePixmap = false;
 
     QPixmap pixmap2;
-    if(mainWindow->getSelectedRobot()){
-        if(mainWindow->getSelectedRobot()->getRobot()->getHome() && mainWindow->getSelectedRobot()->getRobot()->getHome()->getPoint()->getName().compare(point->getName()) == 0)
+    if(mainWindow->getRobotsController()->getSelectedRobot()){
+        if(mainWindow->getRobotsController()->getSelectedRobot()->getRobot()->getHome()
+                && mainWindow->getRobotsController()->getSelectedRobot()->getRobot()->getHome()->getPoint()->getName().compare(point->getName()) == 0)
             homePixmap = true;
     } else {
-        if(!mainWindow->getSelectedRobot() && point->isHome())
+        if(!mainWindow->getRobotsController()->getSelectedRobot() && point->isHome())
             homePixmap = true;
     }
 
