@@ -177,11 +177,8 @@ SOURCES += main.cpp \
     Model/toplayout.cpp \
     Controller/mapcontroller.cpp \
     Controller/pathscontroller.cpp \
-<<<<<<< HEAD
-    View/robotpositionrecovery.cpp
-=======
+    View/robotpositionrecovery.cpp \
     Controller/pointscontroller.cpp
->>>>>>> 48cb991b9c8551d82c0589ce1360cb63ea085e25
 
 
 RESOURCES += Resources/resources.qrc
