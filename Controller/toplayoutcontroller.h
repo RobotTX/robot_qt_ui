@@ -6,9 +6,13 @@
 #include <QWidget>
 #include "View/toplayoutwidget.h"
 
-class TopLayout;
+/**
+ * @brief The TopLayoutController class
+ * This class's purpose is to control what is going on at the top of the application
+ * the buttons and the label
+ */
+class TopLayoutController : public QObject {
 
-class TopLayoutController: public QObject {
     Q_OBJECT
 
 public:
@@ -28,12 +32,17 @@ public:
 
     void enableLayout(const bool enable) { view->setEnable(enable); }
 
+    QString getRobotsString(void) const;
+
 public slots:
+
     void setLabel(const QString msgType, const QString label);
 
 private:
-    QPointer<TopLayout> topLayout;
+
     TopLayoutWidget* view;
+
+    QVector<QString> robotsWithoutHome;
 
 };
 

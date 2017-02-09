@@ -26,8 +26,10 @@ class MainWindow;
  */
 
 class Points : public QObject {
+
     Q_OBJECT
 
+private:
     typedef QMap<QString, QSharedPointer<QVector<QSharedPointer<PointView>>>> Groups;
 
 public:

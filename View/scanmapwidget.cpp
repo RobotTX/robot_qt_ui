@@ -204,7 +204,7 @@ void ScanMapWidget::saveSlot(){
             image = croppedImageToMapImage(image);
             image.save("/home/m-a/Desktop/2.pgm");
 
-
+            /// TODO what does it mean ?
             /// If we got a resolution proceed, else we don't save
             if(resolution != -1){
                 qDebug() << "ScanMapWidget::saveSlot final origin in pixel :" << resolution << -image.width()*resolution/2;

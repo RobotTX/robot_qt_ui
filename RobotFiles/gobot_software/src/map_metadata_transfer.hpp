@@ -21,22 +21,22 @@
 using boost::asio::ip::tcp;
 
 /**
- * Send the metadata to the software
+ * Send the metadata to the application
  */
 void sendMetaData(const std::string& metadata_string);
 
 /**
- * Called when metadata are published
+ * Called when metadata is published
  */
 void getMetaData(const nav_msgs::MapMetaData::ConstPtr& msg);
 
 /**
- * Service called to start the listening to the metadata topic and transfer to the software
+ * Service called to start listening to the metadata topic and transfer to the application
  */
 bool startMeta(gobot_software::Port::Request &req, gobot_software::Port::Response &res);
 
 /**
- * Service called to stop the listening to the metadata topic and transfer to the software
+ * Service called to stop listening to the metadata topic and transfer to the application
  */
 bool stopMeta(std_srvs::Empty::Request &req, std_srvs::Empty::Response &res);
 

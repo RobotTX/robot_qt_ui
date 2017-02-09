@@ -7,14 +7,13 @@ class CustomPushButton;
 #include <QWidget>
 #include <QMainWindow>
 #include <QLabel>
-#include "Model/toplayout.h"
 
 class TopLayoutWidget : public QWidget{
     Q_OBJECT
 
 public:
 
-    TopLayoutWidget(const TopLayout &topLayout, QMainWindow* parent = 0);
+    TopLayoutWidget(QMainWindow* parent = 0);
 
     QString getLabelText(void) const { return label->text(); }
     QString getLabelPerm(void) const { return labelPerm->text(); }

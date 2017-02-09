@@ -37,10 +37,6 @@ void session(boost::shared_ptr<tcp::socket> sock, ros::NodeHandle n){
             return;
         }
 
-
-        /*std::cout << "(New Map) Last data :" << (int) data[length-5] << " " << (int) data[length-4] << " "
-         << (int) data[length-3] << " " << (int) data[length-2] << " " << (int) data[length-1] << " compared to "
-         << (uint8_t) -2 << " or " << -2 << std::endl;*/
        /// Parse the data as we are supposed to receive : "mapId ; mapDate ; metadata ; map"
         for(int i = 0; i < length; i++){
             if(data[i] == ';' && gotMapData <= 2){
@@ -225,11 +221,11 @@ int main(int argc, char **argv){
     m_acceptor->set_option(tcp::acceptor::reuse_address(true));
 
     ros::Rate r(10);
+
     while(ros::ok()){
         if(!connected && !waiting){
             std::cout << "(New Map) Ready to connect" << std::endl;
             boost::thread t(boost::bind(asyncAccept, io_service, m_acceptor, n));
-
             waiting = true;
         }
         ros::spinOnce();

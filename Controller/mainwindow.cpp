@@ -64,6 +64,7 @@
 #include "View/settingswidget.h"
 #include "View/scanmapwidget.h"
 #include "View/drawobstacles.h"
+#include "View/robotpositionrecovery.h"
 
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow) {
@@ -1204,6 +1205,18 @@ void MainWindow::updateBatteryLevel(const int level){
 void MainWindow::doubleClickOnRobot(QString id){
     qDebug() << "double click on robot" << id;
     setSelectedRobot(robots->getRobotViewByName(id));
+}
+
+void MainWindow::openPositionRecoveryWidget() {
+    if(!robotPositionRecoveryWidget) {
+        robotPositionRecoveryWidget = QPointer<RobotPositionRecovery>(new RobotPositionRecovery(robots));
+        openHelpMessage("You are about to recover the position of one or more of your robots. This is how to proceed...\n\n\t"
+                        "* Choose a robot and click on \"start recovering the position\""
+                        "* You can also click the map to set your own goals"
+                        "* When the position has been recovered this window will automatically close", "recover_robot_position");
+
+    } else
+        robotPositionRecoveryWidget->activateWindow();
 }
 
 /**********************************************************************************************************************************/
@@ -2683,6 +2696,7 @@ QString MainWindow::prepareCommandPath(const Paths::Path &path) const {
 void MainWindow::testFunctionSlot(){
     qDebug() << "MainWindow::testFunctionSlot called";
     scanMapSlot();
+    //openPositionRecoveryWidget();
 }
 
 void MainWindow::switchFocus(const QString name, QWidget* widget, const MainWindow::WidgetType type){

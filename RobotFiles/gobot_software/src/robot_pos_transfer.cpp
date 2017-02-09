@@ -24,7 +24,6 @@ void getRobotPos(const geometry_msgs::Pose::ConstPtr& msg){
 	tfScalar pitch;
 	tfScalar yaw;
 	matrix.getRPY(roll, pitch, yaw);
-	//std::cout << "(Robot Pos) Orientation : " << yaw << std::endl;
 	std::string robot_string = std::to_string(msg->position.x) + " " + std::to_string(msg->position.y) + " " + std::to_string(yaw) + " ";
 	sendRobotPos(robot_string);
 	sleep(0.5);

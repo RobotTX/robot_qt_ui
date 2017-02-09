@@ -32,6 +32,7 @@ class TopLayoutController;
 class MapController;
 class PathsController;
 class PointsController;
+class RobotPositionRecovery;
 
 #include "Model/paths.h"
 #include "View/createpointwidget.h"
@@ -121,6 +122,8 @@ public:
     static Position convertRobotCoordinatesToPixelCoordinates(const Position positionInRobotCoordinates, double originX, double originY, double resolution, int height);
 
     void openHelpMessage(const QString message, const QString feature);
+
+    void openPositionRecoveryWidget(void);
 
 signals:
     void changeCmdThreadRobotName(QString);
@@ -311,6 +314,7 @@ private:
     QPointer<EditMapWidget> editMapWidget;
     QPointer<MergeMapWidget> mergeMapWidget;
     QPointer<ScanMapWidget> scanMapWidget;
+    QPointer<RobotPositionRecovery> robotPositionRecoveryWidget;
 
     LeftMenu* leftMenu;
 

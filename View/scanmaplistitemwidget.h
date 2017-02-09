@@ -13,7 +13,9 @@ class Robots;
 #include <QSlider>
 
 class ScanMapListItemWidget : public QWidget {
+
     Q_OBJECT
+
 public:
     ScanMapListItemWidget(int _id, QString name, QSharedPointer<Robots> robots, QGraphicsScene *_scene);
 
@@ -151,4 +153,4 @@ private:
 };
 
 
-#endif // SCANMAPLISTITEMWIDGET_H
+#endif /// SCANMAPLISTITEMWIDGET_H

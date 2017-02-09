@@ -10,6 +10,8 @@ std::shared_ptr<MoveBaseClient> ac(0);
 
 // the stage of the robot within the path (if path going from first point to second point, stage is 0, if going from point before last point to last point stage is #points-1)
 int stage = 0;
+
+// holds whether the robot is ready to accept a new goal or not (already moving towards one)
 bool waitingForNextGoal = false;
 
 std::vector<Point> path;
@@ -33,7 +35,7 @@ void getRobotPos(const geometry_msgs::Pose::ConstPtr& msg){
 	if(currentGoal.x != -1){
 		/// we check if the robot is close enough to its goal
 		if(std::abs(msg->position.x - currentGoal.x) < ROBOT_POS_TOLERANCE && std::abs(msg->position.y - currentGoal.y) < ROBOT_POS_TOLERANCE){
-			/// if the robotalready arrived, we want to wait for the next goal instead of repeat the same "success" functions
+			/// if the robot has already arrived, we want to wait for the next goal instead of repeating the same "success" functions
 			if(!waitingForNextGoal){
 				std::cout << "(PlayPath) getRobotPos robot close enough to the goal" << std::endl;
 				std::cout << "(PlayPath) robot position " << msg->position.x << " " << msg->position.y 
@@ -68,6 +70,7 @@ void getStatus(const actionlib_msgs::GoalStatusArray::ConstPtr& goalStatusArray)
 	}
 }
 
+// called when the last goal has been reached
 void goalReached(){
 	if(currentGoal.isHome){
 		std::cout << "(PlayPath) home reached" << std::endl;
@@ -79,6 +82,7 @@ void goalReached(){
 			std::cout << "I have completed my journey Master Joda, what will you have me do ?" << std::endl;
 			// resets the stage of the path to be able to play the path from the start again
 			stage = 0;
+			// resets the current goal
 			currentGoal.x = -1;
 		} else {
 			// reached a normal/path goal so we sleep the given time
@@ -110,7 +114,7 @@ bool pausePathService(std_srvs::Empty::Request &req, std_srvs::Empty::Response &
 
 void goNextPoint(){
 	std::cout << "(PlayPath) goNextPoint called" << std::endl;
-	// get the next point in the path list and tell to go there
+	// get the next point in the path list and tell the robot to go there
 
 	if(path.size()-1 == stage)
 		std::cout << "(PlayPath) This is my final destination" << std::endl;
@@ -124,7 +128,8 @@ void goNextPoint(){
     goToPoint(point);
 }
 
-void goToPoint(Point point){
+// sends the next goal to the robot
+void goToPoint(const Point& point){
 	std::cout << "(PlayPath) goToPoint " << point.x << " " << point.y << std::endl;
 	move_base_msgs::MoveBaseGoal goal;
 
@@ -142,10 +147,10 @@ void goToPoint(Point point){
     ac->sendGoal(goal);
 }
 
-void setStageInFile(int _stage){
+void setStageInFile(const int _stage){
 
 	std::ofstream path_stage_file(PATH_STAGE_FILE, std::ios::out | std::ios::trunc);
-
+	// when the stage is < 0 it means the robot was blocked at stage -stage (which is > 0)
 	if(path_stage_file){
 		std::cout << "(PlayPath) setStageInFile " << _stage << std::endl;
 		path_stage_file << _stage;

@@ -12,6 +12,7 @@ Settings::Settings(const int _settingMapChoice, const int _batteryWarningThreshH
     activated_messages["merge_maps"] = true;
     activated_messages["scan"] = true;
     activated_messages["edit_map"] = true;
+    activated_messages["recover_robot_position"] = true;
 }
 
 int Settings::currentId = 0;

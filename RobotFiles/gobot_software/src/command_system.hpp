@@ -56,6 +56,6 @@ bool sendLaserData();
 bool stopSendLaserData();
 bool stopLaserData();
 void stopTwist();
-void recoverPosition();
+bool recoverPosition();
 
 #endif

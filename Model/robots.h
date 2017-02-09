@@ -120,25 +120,6 @@ public:
      */
     void deselect(void);
 
-    /**
-     * @brief hide
-     * Hide all robots
-     */
-    void hide(void) const;
-
-    /**
-     * @brief show
-     * Show all robots
-     */
-    void show(void) const;
-
-    /**
-     * @brief showRobot
-     * @param id
-     * Show the robot at the given id
-     */
-    void showRobot(const int id) const;
-
 private:
 
     QVector<QPointer<RobotView>> robotsVector;

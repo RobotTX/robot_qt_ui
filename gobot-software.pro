@@ -92,7 +92,6 @@ HEADERS += \
            Controller/settingscontroller.h \
            Controller/toplayoutcontroller.h \
            View/toplayoutwidget.h \
-           Model/toplayout.h \
            Controller/mapcontroller.h \
            Controller/pathscontroller.h \
            View/robotpositionrecovery.h \
@@ -173,7 +172,6 @@ SOURCES += main.cpp \
            Controller/settingscontroller.cpp \
            Controller/toplayoutcontroller.cpp \
            View/toplayoutwidget.cpp \
-           Model/toplayout.cpp \
            Controller/mapcontroller.cpp \
            Controller/pathscontroller.cpp \
            View/robotpositionrecovery.cpp \

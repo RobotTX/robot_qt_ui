@@ -56,11 +56,13 @@ void serverDisconnected(const std_msgs::String::ConstPtr& msg){
 }
 
 void teleop(const int8_t val){
-    std::cout << "(Teleop) got data " << (int) val << std::endl;
+    std::cout << "(Teleop) got data " << static_cast<int> (val) << std::endl;
     if(connected){
         float speed = 0.2;
         float turnSpeed = 1.0;
-        int x, th;
+        // x == 1 -> forward       x == -1 -> backward
+        // th == 1 -> left         th == -1 -> right
+        int x(0), th(0);
         /// the value we got determine which way we go
         switch(val){
             case 0: /// Forward + Left
@@ -101,7 +103,7 @@ void teleop(const int8_t val){
             break;
         }
 
-        /// Before sending the teleoperation command, we stop any goal
+        /// Before sending the teleoperation command, we stop all potential goals
         actionlib_msgs::GoalID cancel;
         cancel.stamp = ros::Time::now();
         cancel.id = "map";
@@ -112,12 +114,12 @@ void teleop(const int8_t val){
         
         /// Send the teleoperation command
         geometry_msgs::Twist twist;
-        twist.linear.x = x*speed;
+        twist.linear.x = x * speed;
         twist.linear.y = 0;
         twist.linear.z = 0;
         twist.angular.x = 0;
         twist.angular.y = 0;
-        twist.angular.z = th*turnSpeed;
+        twist.angular.z = th * turnSpeed;
 
         teleop_pub.publish(twist);
     }
@@ -146,8 +148,11 @@ int main(int argc, char **argv){
     m_acceptor->set_option(tcp::acceptor::reuse_address(true));
 
     ros::Rate r(10);
+
     while(ros::ok()){
+
         if(!connected && !waiting){
+            
             std::cout << "(Teleop) Ready to connect" << std::endl;
             boost::thread t(boost::bind(asyncAccept, io_service, m_acceptor, n));
 

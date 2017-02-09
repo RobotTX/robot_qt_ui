@@ -4,6 +4,8 @@
 class Robots;
 class QHBoxLayout;
 class MergeMapListWidget;
+class QGraphicsScene;
+class CustomQGraphicsView;
 
 #include <QSharedPointer>
 #include <QWidget>
@@ -16,6 +18,7 @@ public:
     RobotPositionRecovery(QSharedPointer<Robots> _robots, QWidget* parent = Q_NULLPTR);
 
     void initializeMenu(void);
+    void initializeMap(void);
 
 private slots:
     /**
@@ -29,7 +32,14 @@ private slots:
      * @brief teleopCmdSlot
      * Called when a user pressed one of the button in the teleop widget or pressed a key
      */
-    void teleopCmdSlot(int);
+    void teleopCmdSlot(int id);
+
+    void recoverRobotPosSlot(void);
+
+    void startRecoveringSlot(void);
+
+signals:
+    void teleopCmd(QString, int);
 
 
 private:
@@ -38,6 +48,9 @@ private:
     QHBoxLayout* mainLayout;
 
     MergeMapListWidget* listWidget;
+
+    CustomQGraphicsView* graphicsView;
+    QGraphicsScene* scene;
 };
 
 #endif /// ROBOTPOSITIONRECOVERY_H

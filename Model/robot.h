@@ -37,7 +37,9 @@ class Map;
  */
 
 class Robot : public QObject {
+
     Q_OBJECT
+
 public:
     Robot(MainWindow* mainWindow, const QSharedPointer<Paths> &_paths, const QString name, const QString addressIp);
     Robot();
@@ -143,6 +145,10 @@ signals:
      */
     void sendNewMapSignal(QString mapId, QString date, QString metadata, QImage map);
 
+    /**
+     * @brief teleopCmd
+     * To control the robot, to each command corresponds a different movement
+     */
     void teleopCmd(int);
 
     void stopCmdRobotWorker();
@@ -160,7 +166,6 @@ signals:
     void startLocalMapWorker();
     void startMapWorker();
     void startTeleopWorker();
-
 
 private slots:
     void doneSendingMapSlot();
@@ -189,7 +194,6 @@ private:
     QPointer<LocalMapWorker> localMapWorker;
     QPointer<ScanMapWorker> mapWorker;
     QPointer<TeleopWorker> teleopWorker;
-
 
     QThread cmdThread;
     QThread robotThread;

@@ -11,7 +11,7 @@
 #include "View/custompushbutton.h"
 #include "Controller/mainwindow.h"
 
-TopLayoutWidget::TopLayoutWidget(const TopLayout& topLayout, QMainWindow* parent): QWidget(parent){
+TopLayoutWidget::TopLayoutWidget(QMainWindow* parent): QWidget(parent){
     layout = new QHBoxLayout(this);
 
     menuBtn = new CustomPushButton(QIcon(":/icons/list.png"), "", this, CustomPushButton::ButtonType::TOP);
@@ -75,7 +75,6 @@ TopLayoutWidget::TopLayoutWidget(const TopLayout& topLayout, QMainWindow* parent
     scrollArea->setWidget(widget);
     layout->addWidget(scrollArea);
     label->setAutoFillBackground(true);
-
 
     SpaceWidget* spaceWidget2 = new SpaceWidget(SpaceWidget::SpaceOrientation::VERTICAL, this);
     spaceWidget2->setColor("lightgrey");

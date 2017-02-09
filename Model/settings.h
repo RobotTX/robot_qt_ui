@@ -15,14 +15,15 @@ public:
     int getSettingMapChoice(void) const { return settingMapChoice; }
     QMap<int, QPair<QString, bool>> getIDtoNameMap(void) const { return idToNameMap; }
     int getBatteryWarningThreshold(void) const { return batteryWarningThreshHold; }
+    bool getHelpNeeded(const QString feature) const { return activated_messages[feature]; }
+    QMap<QString, bool> getTutorialMap(void) const { return activated_messages; }
+
+    static int getCurrentId(void) { return currentId; }
+
     void setMapChoice(const int choice) { settingMapChoice = choice; }
     void setBatteryThreshold(const int thresh) { batteryWarningThreshHold = thresh; }
     bool setLaserStatus(const int id, const bool status);
     void setHelpNeeded(const bool help, const QString feature) { activated_messages[feature] = !help; qDebug() << "Settings setHelpNeeded" << feature << !help; }
-
-    static int getCurrentId(void) { return currentId; }
-    bool getHelpNeeded(const QString feature) const { return activated_messages[feature]; }
-    QMap<QString, bool> getTutorialMap(void) const { return activated_messages; }
     void setTutorialMap(const QMap<QString, bool>& tuto) { activated_messages = tuto; }
 
     void resetSettings(void);

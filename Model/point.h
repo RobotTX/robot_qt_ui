@@ -22,8 +22,8 @@ public:
     enum PointType { PERM, TEMP, HOME, PATH };
     Point(void);
     /// by default a point it set to be permanent
-    Point(const QString name, const double x, const double y, const PointType type = PERM);
-    Point(const QString name, const Position position, const PointType type = PERM);
+    explicit Point(const QString name, const double x, const double y, const PointType type = PERM);
+    explicit Point(const QString name, const Position position, const PointType type = PERM);
 
     Position getPosition(void) const { return position; }
     QString getName(void) const { return name; }
@@ -60,6 +60,10 @@ private:
     QString name;
     Position position;
     PointType type;
+    /**
+     * @brief robotName
+     * the robot whose home point is this point
+     */
     QString robotName;
 };
 

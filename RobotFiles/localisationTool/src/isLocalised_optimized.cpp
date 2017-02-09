@@ -11,17 +11,17 @@
 ros::Publisher pub; 
 ros::Subscriber sub;
 
-int test (Cluster& dataSet, int numberData, int seq)
-{
-
+int test (const Cluster& dataSet, const int numberData, const int seq){
 	std::cout << dataSet.getMaxDistPoint().second << " ";
+
 	// if the diameter of the cluster is < 2 then all the cloud is small enough and the position is valid.
 	if(dataSet.getMaxDistPoint().second <= 2)
 		return 1;
 
-	// if the size of the cluster becomes less than 90 % of all points but the diameter is still to big then the we didn't find the robot position
+	// if the size of the cluster becomes less than 90 % of all points but the diameter is still too big then we didn't find the robot position
 	else if(dataSet.getSize() < (90*numberData) / 100) 
 		return -1;
+
 	else 
 		return 0;
 }
@@ -40,35 +40,13 @@ void checkLocalisation (const geometry_msgs::PoseArray& data)
 	dataSet.calculateCentroid();
 	dataSet.calculateMaxDistPoint();
 
-	while((testVal = test(dataSet, numberData, seq)) == 0 and dataSet.getSize() > 1 && ros::ok()){
-			/* DISPLAY centroid cluster
-		
-			std_msgs::Header header = std_msgs::Header();
-			header.seq = seq;
-			header.stamp = ros::Time::now();
-			header.frame_id = "/map";
-			geometry_msgs::PoseStamped pose_msg;
-			pose_msg.header = header;
-			pose_msg.pose = dataSet.getCentroid();
-	 		pubCentroid.publish(pose_msg);
-			*/
-
-	 		/* DISPLAY removed point
-			std_msgs::Header header2 = std_msgs::Header();
-			header2.seq = seq;
-			header2.stamp = ros::Time::now();
-			header2.frame_id = "/map";
-			geometry_msgs::PoseStamped remove_pose_msg;
-			remove_pose_msg.header = header2;
-			remove_pose_msg.pose = dataSet.getPoses()[dataSet.getMaxDistPoint().first];
-	 		pubRemove.publish(remove_pose_msg);
-
-			*/
+	while((testVal = test(dataSet, numberData, seq)) == 0 && dataSet.getSize() > 1 && ros::ok()){
 		dataSet.remove(dataSet.getMaxDistPoint().first);
 		dataSet.calculateCentroid();
 		dataSet.calculateMaxDistPoint();
 		seq++;
 	}
+	
 	
 	if(testVal == 1){
 

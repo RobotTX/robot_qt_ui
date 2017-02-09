@@ -132,10 +132,6 @@ include_directories(
 # add_dependencies(localisationTool ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Declare a C++ executable
-add_library(cluster src/cluster.cpp)
-add_executable(isLocalised src/isLocalised.cpp)
-target_link_libraries(isLocalised ${catkin_LIBRARIES}  cluster )
-
 add_library(cluster_optimized src/cluster_optimized.cpp)
 add_executable(isLocalised_optimized src/isLocalised_optimized.cpp)
 target_link_libraries(isLocalised_optimized ${catkin_LIBRARIES} cluster_optimized)

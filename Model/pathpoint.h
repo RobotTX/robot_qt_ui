@@ -16,7 +16,7 @@ public:
      * Used to know if we should wait for a certain amount of time
      * or for a human action when the robot reach the point
      */
-    PathPoint(const Point& point, const int waitTime = 0);
+    explicit PathPoint(const Point& point, const int waitTime = 0);
     PathPoint(void);
 
     Point getPoint(void) const { return point; }

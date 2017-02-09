@@ -13,10 +13,12 @@
  * The model class for the Map,
  * contains the map as a QImage and its width, height, resolution and the origin
  */
-class Map : public QObject
-{
+class Map : public QObject {
+
     Q_OBJECT
+
 public:
+
     explicit Map();
 
     QImage getMapImage(void) const { return mapImage; }
@@ -25,7 +27,6 @@ public:
     int getHeight(void) const { return height; }
     Position getOrigin(void) const { return origin; }
     QRect getRect(void) const { return rect; }
-    QPointF getCenter(void) const { return center; }
     QDateTime getDateTime(void) const { return dateTime; }
     QUuid getMapId(void) const { return mapId; }
     bool getModified(void) const { return modified; }
@@ -92,7 +93,6 @@ private:
     float resolution;
     int width;
     int height;
-
     /**
      * @brief origin
      * The origin of the map, the position of the robot depending of this origin
@@ -105,15 +105,33 @@ private:
      * display the known part of the map by default
      */
     QRect rect;
-    QPointF center;
+    /**
+     * @brief dateTime
+     * The last time the map was modified
+     */
     QDateTime dateTime;
+    /**
+     * @brief mapId
+     * The id of the map, used to make sure all robots linked to this application have the same map
+     */
     QUuid mapId;
+    /**
+     * @brief modified
+     * holds whether the map has been modified since the last time it was saved
+     */
     bool modified;
 
+    /**
+     * @brief mapFile
+     * File where the currently used map is stored
+     */
     std::string mapFile;
 
-
-
+    /**
+     * @brief mapState
+     * The point is the point we put in the center of the scene
+     * the float is the zoom coefficient
+     */
     QPair<QPointF, float> mapState;
 };
 

@@ -51,7 +51,6 @@ void sendLaserData(const std::vector<float>& scan){
 
 bool sendLaser(std_srvs::Empty::Request &req, std_srvs::Empty::Response &res){
     std::cout << "(Laser) send_laser_data_sender " << std::endl;
-
     ros::NodeHandle n;
     sub_laser.shutdown();
     sub_laser = n.subscribe("/scan", 1, getLaserData);
@@ -60,7 +59,6 @@ bool sendLaser(std_srvs::Empty::Request &req, std_srvs::Empty::Response &res){
 
 bool stopSendLaser(std_srvs::Empty::Request &req, std_srvs::Empty::Response &res){
     std::cout << "(Laser) stop_send_laser_data_sender " << std::endl;
-
     sub_laser.shutdown();
     return true;
 }

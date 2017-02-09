@@ -52,7 +52,8 @@ bool execCommand(ros::NodeHandle n, std::vector<std::string> command){
 
 		/// Command for changing the name of the robot
 		case 'a':
-			if(command.size() > 1){
+			// first param = command, second param = nom 
+			if(command.size() == 2){
 				std::cout << "(Command system) New name : " << command.at(1) << std::endl;
 
 				std::ofstream ofs;
@@ -67,7 +68,8 @@ bool execCommand(ros::NodeHandle n, std::vector<std::string> command){
 
 		/// Command for changing the wifi of the robot
 		case 'b':
-			if(command.size() > 2){
+			// first param = b, second param = new ssid, third param = password
+			if(command.size() == 3){
 				std::cout << "(Command system) New wifi : " << command.at(1) << std::endl;
 				std::cout << "(Command system) New wifi password : " << command.at(2) << std::endl;
 				std::string cmd = "sudo bash " + path_computer_software + "change_wifi.sh \"" + command.at(1) + "\" \""+ command.at(2) + "\"";
@@ -79,11 +81,12 @@ bool execCommand(ros::NodeHandle n, std::vector<std::string> command){
 				std::cout << "(Command system) Parameter missing" << std::endl;
 		break;
 		
-
+		// TODO waitingTime might not be needed anymore
 		/// Command for the robot to move to a point
 		case 'c':
+			// first param == c, second param = goal pos x coordinate, third param = goal pos y coordinate, 4th param = waiting time
 			std::cout << "(Command system) Gobot go to point" << std::endl;
-			if(command.size() > 3){
+			if(command.size() == 4){
 				float posX = std::stof(command.at(1));
 				float posY = std::stof(command.at(2));
 				int waitTime = std::stoi(command.at(3));
@@ -119,30 +122,37 @@ bool execCommand(ros::NodeHandle n, std::vector<std::string> command){
 		/// Command for the robot to pause the path
 		case 'd':
 		{
-			std::cout << "(Command system) Pausing the path" << std::endl;
-			std_srvs::Empty arg;
-			if(ros::service::call("pause_path", arg)){
-				std::cout << "Pause path service called with success";
-				return true;
-			} else
-				std::cout << "Pause path service call failed";
+			if(command.size() == 1) {
+				std::cout << "(Command system) Pausing the path" << std::endl;
+				std_srvs::Empty arg;
+				if(ros::service::call("pause_path", arg)){
+					std::cout << "Pause path service called with success";
+					return true;
+				} else
+					std::cout << "Pause path service call failed";
+			}
 		}
 		break;
 
 		/// Command for the robot to play the ongoing scan
 		case 'e':
-			std::cout << "(Command system) Gobot play the ongoing scan" << std::endl;
-			return sendAutoMap();
+			if(command.size() == 1) {
+				std::cout << "(Command system) Gobot play the ongoing scan" << std::endl;
+				return sendAutoMap();
+			}
 		break;
 
 		/// Command for the robot to pause the ongoing scan
 		case 'f':
-			std::cout << "(Command system) Gobot pause the ongoing scan" << std::endl;
-			return stopAutoMap();
+			if(command.size() == 1) {
+				std::cout << "(Command system) Gobot pause the ongoing scan" << std::endl;
+				return stopAutoMap();
+			}
 		break;
 
 		case 'g':
-			if(command.size() > 3){
+			// first param is g, second param is the new name, third param is ssid, 4th param is password
+			if(command.size() == 4){
 				std::cout << "(Command system) New name : " << command.at(1) << std::endl;
 
 				std::ofstream ofs;
@@ -159,11 +169,12 @@ bool execCommand(ros::NodeHandle n, std::vector<std::string> command){
 
 				return true;
 			} else 
-				std::cout << "(Command system) Name missing" << std::endl;
+				std::cout << "(Command system) Parameter missing" << std::endl;
 		break;
 
 		/// Command for the robot to receive the ports needed for the map, metadata and robot pos services
 		case 'h':
+			// first param is h, 2nd is port for metadata, 3rd is port for robot position, 4th for map, 5th for laser, 6th indicates whether or not to activate the laser feedback
 			if(command.size() == 6){
 
 				metadata_port = std::stoi(command.at(1));
@@ -185,6 +196,7 @@ bool execCommand(ros::NodeHandle n, std::vector<std::string> command){
 		/// Command for the robot to save a new path
 		case 'i':
 		{
+			// first param is i, then triplets of parameters to represent path points (posX, posY, waiting time) 
 			if(command.size() >= 4 && command.size()%3 == 1){
 
 				std::cout << "(Command system) Path received :" << std::endl;
@@ -222,59 +234,70 @@ bool execCommand(ros::NodeHandle n, std::vector<std::string> command){
 		break;
 
 		/// Command for the robot to play the saved path
-		case 'j':{
-			std::cout << "(Command system) Playing the path" << std::endl;
-			std_srvs::Empty arg;
-			if(ros::service::call("play_path", arg)){
-				std::cout << "Play path service called with success";
-				return true;
-			} else
-				std::cout << "Play path service call failed";
+		case 'j':
+		{
+			if(command.size() == 1) {
+				std::cout << "(Command system) Playing the path" << std::endl;
+				std_srvs::Empty arg;
+				if(ros::service::call("play_path", arg)){
+					std::cout << "Play path service called with success";
+					return true;
+				} else
+					std::cout << "Play path service call failed";
+			}
 		}
 		break;
 
 		/// Command for the robot to delete the saved path
 		case 'k':
-			{
-				std::cout << "(Command system) Deleting the path" << std::endl;
-				std::ofstream ofs;
-				ofs.open(path_computer_software + "Robot_Infos/path.txt", std::ofstream::out | std::ofstream::trunc);
-				ofs.close();
+			if(command.size() == 1) {
+				{
+					std::cout << "(Command system) Deleting the path" << std::endl;
+					std::ofstream ofs;
+					ofs.open(path_computer_software + "Robot_Infos/path.txt", std::ofstream::out | std::ofstream::trunc);
+					ofs.close();
+				}
+				return true;
 			}
-			return true;
 		break;
 
 		/// Command to stop the robot while following its path
 		case 'l':
 		{
-			std::cout << "(Command system) Stopping the path" << std::endl;
-			std_srvs::Empty arg;
-			if(ros::service::call("stop_path", arg)){
-				std::cout << "Stop path service called with success";
-				return true;
-			} else
-				std::cout << "Stop path service call failed";
+			if(command.size() == 1) {
+				
+				std::cout << "(Command system) Stopping the path" << std::endl;
+				std_srvs::Empty arg;
+				if(ros::service::call("stop_path", arg)){
+					std::cout << "Stop path service called with success";
+					return true;
+				} else
+					std::cout << "Stop path service call failed";
+			}
 		}
 		break;
 
 		// command to stop the robot and then delete its path
 		case 'm':
 		{
-			std::cout << "(Command system) Stopping the robot and deleting its path" << std::endl;
-			std_srvs::Empty arg;
-			if(ros::service::call("stop_path", arg)){
-				std::cout << "Stop path service called with success";
-				std::ofstream ofs;
-				ofs.open(path_computer_software + "Robot_Infos/path.txt", std::ofstream::out | std::ofstream::trunc);
-				ofs.close();
-				return true;
-			} else
-				std::cout << "Stop path service call failed";
+			if(command.size() == 1) {
+				std::cout << "(Command system) Stopping the robot and deleting its path" << std::endl;
+				std_srvs::Empty arg;
+				if(ros::service::call("stop_path", arg)){
+					std::cout << "Stop path service called with success";
+					std::ofstream ofs;
+					ofs.open(path_computer_software + "Robot_Infos/path.txt", std::ofstream::out | std::ofstream::trunc);
+					ofs.close();
+					return true;
+				} else
+					std::cout << "Stop path service call failed";
+			}
 		}
 		break;
 
 		// command to save the home of the robot
 		case 'n':
+			// param 1 is n, 2nd is home x coordinate, 3rd is home y coordinate
 			if(command.size() == 3){
 
 				std::cout << "(Command system) Home received :" << std::endl;
@@ -297,45 +320,54 @@ bool execCommand(ros::NodeHandle n, std::vector<std::string> command){
 		// command to send the robot home
 		case 'o':
 		{
-			std::cout << "(Command system) Sending the robot home" << std::endl;
-			std_srvs::Empty arg;
-			if(ros::service::call("go_home", arg)){
-				std::cout << "Go home service called with success" << std::endl;
-				return true;
-			} else
-				std::cout << "Stop path service call failed" << std::endl;
+			if(command.size() == 1) {
+				std::cout << "(Command system) Sending the robot home" << std::endl;
+				std_srvs::Empty arg;
+				if(ros::service::call("go_home", arg)){
+					std::cout << "Go home service called with success" << std::endl;
+					return true;
+				} else
+					std::cout << "Stop path service call failed" << std::endl;
+			}
 		}
 		break;
 
 		// command so that the robot stops on its way home
 		case 'p':
 		{
-			std::cout << "(Command system) Stopping the robot on its way home" << std::endl;
-			std_srvs::Empty arg;
-			if(ros::service::call("stop_going_home", arg)){
-				std::cout << "Stop going home service called with success" << std::endl;
-				return true;
-			} else
-				std::cout << "Stop going home service call failed" << std::endl;
+			if(command.size() == 1) {
+				std::cout << "(Command system) Stopping the robot on its way home" << std::endl;
+				std_srvs::Empty arg;
+				if(ros::service::call("stop_going_home", arg)){
+					std::cout << "Stop going home service called with success" << std::endl;
+					return true;
+				} else
+					std::cout << "Stop going home service call failed" << std::endl;
+			}
 		}
 		break;
 
 		case 'q':
 		{
-			std::cout << "(Command system) Gobot sends laser data" << std::endl;
-			return sendLaserData();
+			if(command.size() == 1) {
+				std::cout << "(Command system) Gobot sends laser data" << std::endl;
+				return sendLaserData();
+			}
 		}
 		break;
 
 		case 'r':
 		{
-			std::cout << "(Command system) Gobot stops sending laser data" << std::endl;
-			return stopSendLaserData();
+			if(command.size() == 1) {
+				std::cout << "(Command system) Gobot stops sending laser data" << std::endl;
+				return stopSendLaserData();
+			}
 		}
 		break;
 
 		/// Command for the robot to start to scan the map
 		case 's':
+			// first param is s, second is who -> which widget requires it
 			std::cout << "(Command system) Gobot send the map once" << std::endl;
 			if(command.size() == 2)
 				return sendOnceMap(std::stoi(command.at(1)));
@@ -346,57 +378,62 @@ bool execCommand(ros::NodeHandle n, std::vector<std::string> command){
 		/// Command for the robot to start a scan from the beggining
 		case 't':
 		{
-			std::cout << "(Command system) Gobot start to scan a new map" << std::endl;
-			scanning = true;
+			if(command.size() == 1) {
+				std::cout << "(Command system) Gobot start to scan a new map" << std::endl;
+				scanning = true;
 
-            /// Kill gobot move so that we'll restart it with the new map
-            std::string cmd = "rosnode kill /move_base";
-            system(cmd.c_str());
+	            /// Kill gobot move so that we'll restart it with the new map
+	            std::string cmd = "rosnode kill /move_base";
+	            system(cmd.c_str());
 
-            sleep(5);
+	            sleep(5);
 
-            /// Relaunch gobot_move
-            cmd = "roslaunch gobot_move scan.launch &";
-            system(cmd.c_str());
-            std::cout << "(New Map) We relaunched gobot_move" << std::endl;
+	            /// Relaunch gobot_move
+	            cmd = "roslaunch gobot_move scan.launch &";
+	            system(cmd.c_str());
+	            std::cout << "(New Map) We relaunched gobot_move" << std::endl;
 
-			return sendAutoMap();
+				return sendAutoMap();
+			}
 		}
 		break;
 
 		/// Command for the robot to stop a scan
 		case 'u':
 		{
-			std::cout << "(Command system) Gobot stops the scan of the new map" << std::endl;
-			scanning = false;
+			if(command.size() == 1) {
+				std::cout << "(Command system) Gobot stops the scan of the new map" << std::endl;
+				scanning = false;
 
-            /// Kill gobot move so that we'll restart it with the new map
-            std::string cmd = "rosnode kill /move_base";
-            system(cmd.c_str());
+	            /// Kill gobot move so that we'll restart it with the new map
+	            std::string cmd = "rosnode kill /move_base";
+	            system(cmd.c_str());
+	            sleep(5);
 
-            sleep(5);
+	            /// Relaunch gobot_move
+	            cmd = "roslaunch gobot_move slam.launch &";
+	            system(cmd.c_str());
+	            std::cout << "(New Map) We relaunched gobot_move" << std::endl;
 
-            /// Relaunch gobot_move
-            cmd = "roslaunch gobot_move slam.launch &";
-            system(cmd.c_str());
-            std::cout << "(New Map) We relaunched gobot_move" << std::endl;
-
-			return stopAutoMap();
+				return stopAutoMap();
+			}
 		}
 		break;
 
 		/// command to recover the robot's position
 		case 'v':
 		{
-			std::cout << "(Command system) Gobot tries to recover its position" << std::endl;
-			/// starts the localisation package
-			std::string cmd = "rosrun localisationTool isLocalised_optimized";
-			system(cmd.c_str());
+			if(command.size() == 1) {
+				std::cout << "(Command system) Gobot tries to recover its position" << std::endl;
+				/// starts the localisation package
+				std::string cmd = "rosrun localisationTool isLocalised_optimized";
+				system(cmd.c_str());
 
-			/// gives some time to start the node
-			sleep(2);
+				/// gives some time to start the node
+				sleep(2);
 
-			return recoverPosition();
+				return recoverPosition();
+			}
 		}
 		break;
 
@@ -413,7 +450,7 @@ bool execCommand(ros::NodeHandle n, std::vector<std::string> command){
 	return false;
 }
 
-void recoverPosition(){
+bool recoverPosition(){
 	std::cout << "(Command system) Launching the service to recover the robot's position" << std::endl;
 	std_srvs::Empty srv;
 
