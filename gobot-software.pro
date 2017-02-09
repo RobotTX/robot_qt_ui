@@ -98,7 +98,6 @@ HEADERS += \
            View/robotpositionrecovery.h \
            Controller/pointscontroller.h
 
-
 FORMS += Controller/mainwindow.ui
 
 SOURCES += main.cpp \
@@ -166,23 +165,19 @@ SOURCES += main.cpp \
            View/mergemapgraphicsitem.cpp \
            View/scanmapwidget.cpp \
            View/scanmaplistitemwidget.cpp \
-    View/scanmapgraphicsitem.cpp \
-    Controller/teleopworker.cpp \
-    View/teleopwidget.cpp \
-    Controller/lasercontroller.cpp \
-    Model/settings.cpp \
-    Controller/settingscontroller.cpp \
-    Controller/toplayoutcontroller.cpp \
-    View/toplayoutwidget.cpp \
-    Model/toplayout.cpp \
-    Controller/mapcontroller.cpp \
-    Controller/pathscontroller.cpp \
-<<<<<<< HEAD
-    View/robotpositionrecovery.cpp
-=======
-    Controller/pointscontroller.cpp
->>>>>>> 48cb991b9c8551d82c0589ce1360cb63ea085e25
-
+           View/scanmapgraphicsitem.cpp \
+           Controller/teleopworker.cpp \
+           View/teleopwidget.cpp \
+           Controller/lasercontroller.cpp \
+           Model/settings.cpp \
+           Controller/settingscontroller.cpp \
+           Controller/toplayoutcontroller.cpp \
+           View/toplayoutwidget.cpp \
+           Model/toplayout.cpp \
+           Controller/mapcontroller.cpp \
+           Controller/pathscontroller.cpp \
+           View/robotpositionrecovery.cpp \
+           Controller/pointscontroller.cpp
 
 RESOURCES += Resources/resources.qrc
 
