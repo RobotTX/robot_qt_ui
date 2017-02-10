@@ -96,7 +96,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
     laserController = new LaserController(robotsController->getRobots(), this);
 
-
     QHBoxLayout* bottom = new QHBoxLayout();    
 
     /// need to create the tmp point view so we can create the map but at the same time the map needs to be created before

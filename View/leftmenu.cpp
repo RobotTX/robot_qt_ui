@@ -105,6 +105,17 @@ LeftMenu::LeftMenu(MainWindow* mainWindow, QSharedPointer<Points> const& points,
 
     globalLayout->addLayout(leftLayout);
 
+    /// globalLayout->addLayout reparents all the widgets contained in the left layout
+    /// which is a behavior that we don't want because
+    /// we sometimes cast the parent in mainwindow
+    /// so we reparent everyone afterwards
+    mainWindow->getPointsController()->getCreatePointWidget()->setParent(mainWindow);
+    mainWindow->getRobotsController()->getEditSelectedRobotWidget()->setParent(mainWindow);
+    mainWindow->getPathsController()->getDisplaySelectedPath()->setParent(mainWindow);
+    mainWindow->getPathsController()->getGroupsPathsWidget()->setParent(mainWindow);
+    mainWindow->getPathsController()->getPathGroupDisplayed()->setParent(mainWindow);
+    mainWindow->getPathsController()->getPathCreationWidget()->setParent(mainWindow);
+
     leftLayout->setAlignment(Qt::AlignTop);
     leftLayout->setAlignment(closeBtn, Qt::AlignTop | Qt::AlignRight);
 

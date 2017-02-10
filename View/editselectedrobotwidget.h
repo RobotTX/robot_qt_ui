@@ -7,29 +7,30 @@ class QVBoxLayout;
 class QGridLayout;
 class CustomPushButton;
 class QLabel;
-class MainWindow;
-class CustomLabel;
 class PathWidget;
 class Points;
 class CustomLabel;
 class CustomRobotDialog;
 class MainWindow;
+class SpaceWidget;
 
 #include "pathpoint.h"
 #include <QWidget>
 #include <QSharedPointer>
 #include "Model/point.h"
 #include "View/pointview.h"
-#include "mainwindow.h"
 #include "Model/paths.h"
 #include <QProgressBar>
+#include "View/robotview.h"
 
 /**
  * @brief The EditSelectedRobotWidget class
  * The class which display the menu to edit a robot
  */
-class EditSelectedRobotWidget: public QWidget{
+class EditSelectedRobotWidget: public QWidget {
+
     Q_OBJECT
+
 public:
     EditSelectedRobotWidget(MainWindow* mainWindow);
 

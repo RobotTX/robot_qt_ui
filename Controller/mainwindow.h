@@ -69,6 +69,7 @@ namespace Ui {
  * The main controller of the application
  */
 class MainWindow : public QMainWindow {
+
     Q_OBJECT
 
 public:

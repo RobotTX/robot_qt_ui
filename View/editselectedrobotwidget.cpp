@@ -21,7 +21,6 @@
 #include "View/custompushbutton.h"
 #include "View/stylesettings.h"
 #include "View/customlabel.h"
-#include "View/customlabel.h"
 #include "View/customrobotdialog.h"
 #include "View/customlineedit.h"
 #include "View/robotview.h"
@@ -223,6 +222,17 @@ void EditSelectedRobotWidget::clearPath(){
 
 void EditSelectedRobotWidget::updatePathsMenu(){
     pathsMenu->clear();
+    MainWindow* mw = static_cast<MainWindow*>(parent());
+    if(mw){
+        qDebug() << " got a mw ";
+        PathsController* pc = mw->getPathsController();
+        if(pc)
+            qDebug() << "got a paths controller" ;
+        else
+            qDebug() << " no paths controller";
+    }
+    else
+        qDebug() << " no mw" ;
     QMapIterator<QString, QSharedPointer<Paths::CollectionPaths>> i(*(static_cast<MainWindow*>(parent())->getPathsController()->getPaths()->getGroups()));
     while (i.hasNext()) {
         i.next();
