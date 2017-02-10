@@ -61,8 +61,6 @@ public:
     void setSelectedRobot(QPointer<RobotView> const robotView);
     void setBatteryLevel(const int level) { batteryLevel->setValue(level); }
 
-    /// updates the name and wifi or the robot
-    void editName(void);
     /// disables the buttons and line edits
     void disableAll(void);
     /// enables the buttons and line edits
@@ -145,6 +143,7 @@ private:
     CustomPushButton* editRobotInfoBtn;
     CustomRobotDialog* robotDialog;
     QWidget* inWidget;
+    MainWindow* mainWindow;
 };
 
 #endif // EDITSELECTEDROBOTWIDGET_H

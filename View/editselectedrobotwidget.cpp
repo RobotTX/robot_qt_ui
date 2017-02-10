@@ -26,8 +26,8 @@
 #include "View/customlineedit.h"
 #include "View/robotview.h"
 
-EditSelectedRobotWidget::EditSelectedRobotWidget(MainWindow* mainWindow):
-    QWidget(mainWindow), assignedPath("")
+EditSelectedRobotWidget::EditSelectedRobotWidget(MainWindow* _mainWindow):
+    QWidget(_mainWindow), mainWindow(_mainWindow), assignedPath("")
 {
     /// creates a dialog widget to modify the robot's info and centers it on the main window
     robotDialog = new CustomRobotDialog(this);
@@ -167,18 +167,6 @@ void EditSelectedRobotWidget::setSelectedRobot(QPointer<RobotView> const _robotV
     }
 }
 
-void EditSelectedRobotWidget::editName(void){
-    robotView->getRobot()->setName(nameLabel->text());
-    robotView->getRobot()->setWifi(wifiNameLabel->text());
-    QPointer<RobotView> rv = static_cast<MainWindow*>(parent())->getRobotsController()->getRobots()->getRobotViewByName(robotView->getRobot()->getName());
-    if(rv != NULL){
-        rv->getRobot()->setName(nameLabel->text());
-        rv->getRobot()->setWifi(wifiNameLabel->text());
-    } else {
-        qDebug() << "EditSelectedRobotWidget::editName something unexpected happened";
-    }
-}
-
 void EditSelectedRobotWidget::setEnableAll(const bool enable){
     qDebug() << "EditSelectedRobotWidget::setEnableAll called" << enable;
     homeBtn->setEnabled(enable);
@@ -223,7 +211,7 @@ void EditSelectedRobotWidget::clearPath(){
 
 void EditSelectedRobotWidget::updatePathsMenu(){
     pathsMenu->clear();
-    QMapIterator<QString, QSharedPointer<Paths::CollectionPaths>> i(*(static_cast<MainWindow*>(parent())->getPathsController()->getPaths()->getGroups()));
+    QMapIterator<QString, QSharedPointer<Paths::CollectionPaths>> i(*(mainWindow->getPathsController()->getPaths()->getGroups()));
     while (i.hasNext()) {
         i.next();
         QMapIterator<QString, QSharedPointer<Paths::Path> > it_paths(*(i.value()));
@@ -266,7 +254,7 @@ void EditSelectedRobotWidget::applyNewPath(const QString groupName, const QStrin
     emit clearMapOfPaths();
     setPathChanged(true);
     bool foundFlag(false);
-    setPath(static_cast<MainWindow*>(parent())->getPathsController()->getPaths()->getPath(groupName, pathName, foundFlag));
+    setPath(mainWindow->getPathsController()->getPaths()->getPath(groupName, pathName, foundFlag));
     assert(foundFlag);
     emit showPath(groupName, pathName);
 }
@@ -295,7 +283,7 @@ void EditSelectedRobotWidget::assignHome(QAction *action){
 
 void EditSelectedRobotWidget::updateHomeMenu(){
     homeMenu->clear();
-    QMapIterator<QString, QSharedPointer<QVector<QSharedPointer<PointView>>>> i(*(static_cast<MainWindow*>(parent())->getPointsController()->getPoints()->getGroups()));
+    QMapIterator<QString, QSharedPointer<QVector<QSharedPointer<PointView>>>> i(*(mainWindow->getPointsController()->getPoints()->getGroups()));
     while (i.hasNext()) {
         i.next();
         if(i.value() && i.key().compare(TMP_GROUP_NAME) && i.key().compare(PATH_GROUP_NAME)){
@@ -318,7 +306,7 @@ void EditSelectedRobotWidget::updateHomeMenu(){
 
 void EditSelectedRobotWidget::editRobot(){
     qDebug() << "EditSelectedRobotWidget::editRobot called";
-    MainWindow* mainWindow = static_cast<MainWindow*>(parent());
+    MainWindow* mainWindow = mainWindow;
     robotDialog->move(mainWindow->pos().x() + mainWindow->width()/2-robotDialog->width()/2,
                       mainWindow->pos().y() + mainWindow->height()/2-robotDialog->height()/2);
     robotDialog->getNameEdit()->setText(robotView->getRobot()->getName());
