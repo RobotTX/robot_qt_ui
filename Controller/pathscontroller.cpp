@@ -72,9 +72,6 @@ PathsController::PathsController(MainWindow *mainWindow, const QSharedPointer<Po
     connect(pathGroup, SIGNAL(updateDisplayedPath()), this, SLOT(updateDisplayedPath()));
     connect(pathGroup, SIGNAL(setPathsGroup(QString)), this, SLOT(setPathsGroup(QString)));
 
-    /// to add a path point when we click on a pointView (which is relayed by the mainWindow)
-    connect(mainWindow, SIGNAL(addPathPoint(QString, double, double)), pathCreationWidget, SLOT(addPathPointSlot(QString, double, double)));
-
     connect(mainWindow, SIGNAL(updatePathPainter(bool)), pathPainter, SLOT(updatePathPainterSlot(bool)));
 
     connect(pathCreationWidget, SIGNAL(editTmpPathPoint(int, QString, double, double)), mainWindow, SLOT(editTmpPathPointSlot(int, QString, double, double)));

@@ -20,7 +20,7 @@ class MapController: public QObject
 
 public:
 
-    MapController(QSharedPointer<Robots> _robots, MainWindow *parent = 0);
+    MapController(QSharedPointer<Robots> _robots, MainWindow *mainWindow);
 
     QSharedPointer<Map> getMap(void) const { return map; }
     MapView* getMapView(void) const { return view; }
@@ -28,7 +28,7 @@ public:
     DrawObstacles* getObstaclesPainter(void) const { return obstaclesPainter; }
 
     void setTmpPointView(QSharedPointer<PointView> pv) { view->setTmpPointView(pv); }
-    void createMapView(QWidget* parent, QSharedPointer<Robots> _robots);
+    void createMapView(MainWindow *mainWindow, QSharedPointer<Robots> _robots);
 
     QImage getMapImage(void) const { return map->getMapImage(); }
     QPair<QPointF, float> getMapState(void) const { return map->getMapState(); }
@@ -55,9 +55,6 @@ public:
 
     QImage getImageFromArray(const QByteArray array, const bool fromPgm);
 
-    void updateMetadata(const int width, const int height, const float resolution,
-    const float originX, const float originY);
-
     bool saveMapConfig(const std::string fileName);
 
     void updateMapFile(const std::string file) { map->setMapFile(file); }
@@ -78,6 +75,8 @@ public:
 
 private slots:
     void relayPathPoint(QString, double, double);
+    void updateMetadata(const int width, const int height, const float resolution,
+    const float originX, const float originY);
 
 public slots:
     void saveMapState();

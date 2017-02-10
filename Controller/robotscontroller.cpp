@@ -1,9 +1,12 @@
 #include "robotscontroller.h"
 #include <QDir>
+#include <assert.h>
 #include "Helper/helper.h"
 #include "Controller/robotserverworker.h"
 #include "Controller/pointscontroller.h"
 #include "Controller/mapcontroller.h"
+#include "Controller/pathscontroller.h"
+#include "Model/paths.h"
 #include "Model/robots.h"
 #include "View/robotview.h"
 #include "View/robotsleftwidget.h"
@@ -45,7 +48,7 @@ void RobotsController::launchServer(MainWindow* mainWindow){
 void RobotsController::initializeMenus(MainWindow* mainWindow){
 
     /// Menu which display the list of robots
-    robotsLeftWidget = new RobotsLeftWidget(mainWindow, robots);
+    robotsLeftWidget = new RobotsLeftWidget(mainWindow);
     robotsLeftWidget->hide();
 
     /// Menu to edit the selected robot
@@ -53,6 +56,13 @@ void RobotsController::initializeMenus(MainWindow* mainWindow){
     editSelectedRobotWidget->hide();
     connect(editSelectedRobotWidget, SIGNAL(showEditSelectedRobotWidget()), mainWindow, SLOT(showEditHome()));
     connect(editSelectedRobotWidget, SIGNAL(hideEditSelectedRobotWidget()), mainWindow, SLOT(showAllHomes()));
+    connect(editSelectedRobotWidget, SIGNAL(updatePathsMenu(bool)), this, SLOT(updatePathsMenuEditSelectedRobotWidget(bool)));
+    connect(editSelectedRobotWidget, SIGNAL(updateHomeMenu(bool)), this, SLOT(updateHomeMenuEditSelectedRobotWidget(bool)));
+
+    connect(mainWindow, SIGNAL(updatePath(QString, QString)), this, SLOT(applyNewPath(QString, QString)));
+    /// to display a path that's assigned to the robot after clearing the map of other path(s)
+    connect(this, SIGNAL(clearMapOfPaths()), mainWindow, SLOT(clearMapOfPaths()));
+    connect(this, SIGNAL(showPath(QString, QString)), mainWindow, SLOT(displayAssignedPath(QString, QString)));
 }
 
 void RobotsController::updateRobot(const QString ipAddress, const float posX, const float posY, const float oriZ){
@@ -74,4 +84,27 @@ void RobotsController::updateRobot(const QString ipAddress, const float posX, co
 
         emit scanRobotPos(robotView->getRobot()->getName(), robotPositionInPixelCoordinates.getX(), robotPositionInPixelCoordinates.getY(), orientation);
     }
+}
+
+void RobotsController::updatePathsMenuEditSelectedRobotWidget(bool openMenu){
+    editSelectedRobotWidget->updatePathsMenu(static_cast<MainWindow*>(parent()));
+    if(openMenu)
+        editSelectedRobotWidget->openPathsMenu();
+}
+
+void RobotsController::updateHomeMenuEditSelectedRobotWidget(bool openMenu){
+    editSelectedRobotWidget->updateHomeMenu(static_cast<MainWindow*>(parent())->getPointsController()->getPoints()->getGroups());
+    if(openMenu)
+        editSelectedRobotWidget->openHomeMenu();
+}
+
+void RobotsController::applyNewPath(const QString groupName, const QString pathName){
+    qDebug() << "EditSelectedRobotWidget::applyNewPath " << pathName;
+    /// Once we know for sure (from the main window) that the command has been received, we proceed to the update here
+    emit clearMapOfPaths();
+    editSelectedRobotWidget->setPathChanged(true);
+    bool foundFlag(false);
+    editSelectedRobotWidget->setPath(static_cast<MainWindow*>(parent())->getPathsController()->getPaths()->getPath(groupName, pathName, foundFlag));
+    assert(foundFlag);
+    emit showPath(groupName, pathName);
 }

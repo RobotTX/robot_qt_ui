@@ -28,10 +28,9 @@ class MainWindow;
 class Points : public QObject {
     Q_OBJECT
 
-    typedef QMap<QString, QSharedPointer<QVector<QSharedPointer<PointView>>>> Groups;
-
 public:
     Points(QObject *parent, MainWindow *_mainWindow);
+    typedef QMap<QString, QSharedPointer<QVector<QSharedPointer<PointView>>>> Groups;
 
     /// a helper class to overload the << operator
     void display(std::ostream& stream) const;

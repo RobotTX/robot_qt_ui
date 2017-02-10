@@ -44,7 +44,7 @@ void PointView::mousePressEvent(QGraphicsSceneMouseEvent *event){
         }
     } else if(state == GraphicItemState::CREATING_PATH){
         qDebug() << "PointView::mousePressEvent CREATING_PATH";
-        emit addPointPath(getPoint()->getName(), getPoint()->getPosition().getX(), getPoint()->getPosition().getY(), GraphicItemState::CREATING_PATH);
+        emit addPointPath(getPoint()->getName(), getPoint()->getPosition().getX(), getPoint()->getPosition().getY());
 
     } else if(state == GraphicItemState::EDITING_PATH){
         qDebug() << "PointView::mousePressEvent " << state << pos().x() << pos().y();

@@ -4,7 +4,9 @@
 #include <QMapIterator>
 #include "Controller/mainwindow.h"
 #include "Controller/pointscontroller.h"
+#include "Controller/pathscontroller.h"
 #include "View/mapview.h"
+#include "View/pathcreationwidget.h"
 
 Points::Points(QObject* parent, MainWindow *_mainWindow) : QObject(parent), mainWindow(_mainWindow), groups(QSharedPointer<Groups>(new Groups())) {}
 
@@ -161,7 +163,7 @@ QSharedPointer<PointView> Points::createPoint(const QString pointName, const dou
     connect(&(*pointView), SIGNAL(moveEditedPathPoint()), mainWindow, SLOT(moveEditedPathPointSlot()));
 
     /// to add a path point to a path
-    connect(&(*pointView), SIGNAL(addPointPath(QString, double, double, GraphicItemState)), mainWindow, SLOT(addPointPathSlot(QString, double, double, GraphicItemState)));
+    connect(&(*pointView), SIGNAL(addPointPath(QString, double, double)), mainWindow->getPathsController()->getPathCreationWidget(), SLOT(addPathPointSlot(QString, double, double)));
 
     /// to update the path painter
     connect(&(*pointView), SIGNAL(updatePathPainterPointView()), mainWindow, SLOT(updatePathPainterPointViewSlot()));

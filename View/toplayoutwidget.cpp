@@ -86,7 +86,7 @@ TopLayoutWidget::TopLayoutWidget(const TopLayout& topLayout, QMainWindow* parent
     closeBtn->setFocusPolicy(Qt::FocusPolicy::NoFocus);
 
     layout->addWidget(closeBtn);
-    connect(closeBtn, SIGNAL(clicked()), parent, SLOT(quit()));
+    connect(closeBtn, SIGNAL(clicked()), parent, SLOT(close()));
 
     this->setMaximumHeight(top_layout_height);
     QPalette pal;
