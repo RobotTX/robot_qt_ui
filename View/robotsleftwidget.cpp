@@ -4,13 +4,15 @@
 #include "View/spacewidget.h"
 #include <QVBoxLayout>
 #include "Controller/mainwindow.h"
+#include "Controller/robotscontroller.h"
 #include "topleftmenu.h"
 #include <QDebug>
 #include "View/custompushbutton.h"
 #include <QHideEvent>
 
-RobotsLeftWidget::RobotsLeftWidget(MainWindow* mainWindow, QSharedPointer<Robots> const &_robots):
-    QWidget(mainWindow), lastCheckedId(-1){
+RobotsLeftWidget::RobotsLeftWidget(MainWindow* mainWindow)
+    : QWidget(mainWindow), lastCheckedId(-1){
+    robots = mainWindow->getRobotsController()->getRobots();
 
     layout = new QVBoxLayout(this);
     scrollArea = new CustomScrollArea(this, true);
@@ -25,18 +27,17 @@ RobotsLeftWidget::RobotsLeftWidget(MainWindow* mainWindow, QSharedPointer<Robots
 
     layout->addWidget(actionButtons);
 
-    setRobots(_robots);
+    setRobots(mainWindow);
 
     layout->addWidget(scrollArea);
     layout->setAlignment(Qt::AlignTop);
     layout->setContentsMargins(0, 0, 10, 0);
 }
 
-void RobotsLeftWidget::setRobots(QSharedPointer<Robots> const &_robots){
-    robots = _robots;
-    MainWindow* mainWindow = static_cast<MainWindow*>(parent());
+void RobotsLeftWidget::setRobots(MainWindow* mainWindow){
+
     /// Clickable buttons group to select/edit a robot
-    btnGroup = new RobotBtnGroup(robots->getRobotsVector(), mainWindow);
+    btnGroup = new RobotBtnGroup(robots->getRobotsVector(), mainWindow, this);
 
     /// Checkable buttons group to show/hide a robot
     btnGroup->show();
@@ -46,10 +47,10 @@ void RobotsLeftWidget::setRobots(QSharedPointer<Robots> const &_robots){
     scrollArea->setWidget(btnGroup);
 }
 
-void RobotsLeftWidget::updateRobots(QSharedPointer<Robots> const& _robots){
+void RobotsLeftWidget::updateRobots(MainWindow* mainWindow){
     scrollArea->takeWidget();
     delete btnGroup;
-    setRobots(_robots);
+    setRobots(mainWindow);
 }
 
 void RobotsLeftWidget::unSelectAllRobots(){

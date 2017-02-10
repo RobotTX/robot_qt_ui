@@ -88,9 +88,6 @@ public:
     RobotsController* getRobotsController(void) const { return robotsController; }
     TopLayoutController* getTopLayoutController(void) const { return topLayoutController; }
 
-    void initializeMenu();
-    void initializeBottomPanel();
-    void initializeLeftMenu();
     void hideAllWidgets();
     int openConfirmMessage(const QString);
     void clearNewMap();
@@ -121,8 +118,6 @@ public:
 
 signals:
     void changeCmdThreadRobotName(QString);
-    void addPathPoint(QString name, double x, double y);
-    void addNoRobotPathPoint(QString name, double x, double y);
     void updatePathPainter(bool);
     void updatePathPainterPointView();
     void resetPath();
@@ -147,7 +142,6 @@ public slots:
 private slots:
     void setTemporaryMessageTop(const QString type, const QString message, const int ms);
     void sendPathSelectedRobotSlot(const QString groupName, const QString pathName);
-    void updateMetadata(const int width, const int height, const float resolution, const float originX, const float originY);
     void mapReceivedSlot(const QByteArray mapArray, int who, QString mapId, QString mapDate, QString resolution, QString originX, QString originY, QString ipAddress);
     void startScanningSlot(QString robotName);
     void stopScanningSlot(QStringList listRobot);
@@ -155,7 +149,6 @@ private slots:
     void robotGoToSlot(QString robotName, double x, double y);
     void saveScanMapSlot(double resolution, Position origin, QImage image, QString fileName);
     void teleopCmdSlot(QString robotName, int id);
-    void quit(void);
     void setSelectedRobot(QPointer<RobotView> robotView);
     void setSelectedRobot(QAbstractButton* button);
     void setSelectedRobotNoParent(QAbstractButton *button);
@@ -165,18 +158,14 @@ private slots:
     void mapBtnEvent(void);
     void pathBtnEvent(void);
     void openLeftMenu(void);
-    void backRobotBtnEvent(void);
     void editRobotBtnEvent(void);
     void checkRobotBtnEventMenu();
-    void checkRobotBtnEvent(QString name);
-    void cancelEditSelecRobotBtnEvent(void);
     void saveRobotModifications(void);
     void setSelectedTmpPoint(void);
     void pointSavedEvent(QString groupName, double x, double y, QString name);
     void deletePath(int robotNb);
     void playSelectedRobot(int robotNb);
     void savePathSlot(void);
-    void addPointPathSlot(QString name, double x, double y, GraphicItemState);
     void editTmpPathPointSlot(int id, QString name, double x, double y);
     void saveEditPathPointSlot(void);
     void cancelEditPathPointSlot(void);
@@ -194,10 +183,8 @@ private slots:
     void showEditHome();
     void showAllHomes(void);
     void backEvent();
-    void updateView();
     void robotIsAliveSlot(QString hostname, QString ip, QString ssid, int stage, int battery);
     void robotIsDeadSlot(QString hostname, QString ip);
-    void selectViewRobot();
     void sendNewMapToRobots(QString ipAddress = "");
     void settingBtnSlot();
     void updatePathPainterPointViewSlot();
@@ -224,21 +211,17 @@ private slots:
     void doubleClickOnPath(QString pathName);
     void setMessageNoRobotPath(const int code);
     void cancelNoRobotPathSlot();
-    void saveNoRobotPathSlot();
     void setMessageModifGroupPaths(int code);
     void displayAssignedPath(QString groupName, QString pathName);
     /// to clear paths on the map
     void clearMapOfPaths();
 
-    void messageMapSaved(bool status);
     void saveMapBtnEvent();
     void loadMapBtnEvent();
 
     void testCoordSlot(double x, double y);
     void editMapSlot();
     void updateRobotInfo(QString robot_name, QString robotInfo);
-    void setHomeAtConnection(const QString robot_name, const Position& pos_home);
-    bool updateHomeFile(const QString robot_name, const Position& robot_home_position, const QStringList date);
     void saveEditMapSlot();
     void mergeMapSlot();
     void saveMergeMapSlot(double resolution, Position origin, QImage image, QString fileName);
@@ -278,6 +261,8 @@ protected:
     void commandDoneReceiveMap(bool success);
     void commandDoneStartScan(bool success, bool scan, QString robotName);
     void commandDoneStopScan(bool success, QString robotName);
+    void setHomeAtConnection(const QString robot_name, const Position& pos_home);
+    void updateHomeFile(const QString robot_name, const Position& robot_home_position, const QStringList date);
 
 private:
     Ui::MainWindow* ui;
@@ -291,8 +276,6 @@ private:
 
     QList<QPair<QPair<QWidget*, QString>, MainWindow::WidgetType>> lastWidgets;
 
-    LeftMenuWidget* leftMenuWidget;
-    MapLeftWidget* mapLeftWidget;
     QPointer<EditMapWidget> editMapWidget;
     QPointer<MergeMapWidget> mergeMapWidget;
     QPointer<ScanMapWidget> scanMapWidget;

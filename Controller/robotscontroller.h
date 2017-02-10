@@ -31,9 +31,17 @@ public:
 signals:
     void stopUpdateRobotsThread();
     void scanRobotPos(QString, double, double, double);
+    /// to stop displaying all paths on the map
+    void clearMapOfPaths();
+    /// to display the path whose groupname and pathname are propagated by the signal
+    void showPath(QString, QString);
 
 private slots:
     void updateRobot(const QString ipAddress, const float posX, const float posY, const float ori);
+    void updatePathsMenuEditSelectedRobotWidget(bool openMenu);
+    void updateHomeMenuEditSelectedRobotWidget(bool openMenu);
+    /// called after the main window has received ackownledgement from the robot (update path)
+    void applyNewPath(const QString groupName, const QString pathName);
 
 private:
     RobotServerWorker* robotServerWorker;

@@ -20,7 +20,7 @@ class QHideEvent;
  */
 class RobotsLeftWidget: public QWidget{
 public:
-    RobotsLeftWidget(MainWindow *mainWindow, QSharedPointer<Robots> const &_robots);
+    RobotsLeftWidget(MainWindow *mainWindow);
 
     /// Getters
     RobotBtnGroup* getBtnGroup(void) const { return btnGroup; }
@@ -29,7 +29,7 @@ public:
     int getLastCheckedId(void) const { return lastCheckedId; }
 
     ///Setters
-    void setRobots(QSharedPointer<Robots> const& robots);
+    void setRobots(MainWindow *mainWindow);
     void setLastCheckedId(const int id) { lastCheckedId = id; }
 
     /**
@@ -37,7 +37,7 @@ public:
      * @param robots
      * Update the list of robots when needed (e.g. : when a robot's name is edited)
      */
-    void updateRobots(QSharedPointer<Robots> const& robots);
+    void updateRobots(MainWindow *mainWindow);
     void unSelectAllRobots();
 
 protected:

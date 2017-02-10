@@ -6,6 +6,7 @@
 #include "Controller/commandcontroller.h"
 #include "Controller/lasercontroller.h"
 #include "Controller/robotscontroller.h"
+#include "Controller/mapcontroller.h"
 #include "Model/point.h"
 #include "Model/pathpoint.h"
 #include "Model/map.h"
@@ -179,7 +180,7 @@ void Robot::launchWorkers(MainWindow* mainWindow){
 
     metadataWorker = QPointer<MetadataWorker>(new MetadataWorker(ip, PORT_MAP_METADATA));
     connect(metadataWorker, SIGNAL(valueChangedMetadata(int, int, float, float, float)),
-                     mainWindow , SLOT(updateMetadata(int, int, float, float, float)));
+                     mainWindow->getMapController() , SLOT(updateMetadata(int, int, float, float, float)));
     connect(this, SIGNAL(stopMetadataWorker()), metadataWorker, SLOT(stopWorker()));
     connect(this, SIGNAL(startMetadataWorker()), metadataWorker, SLOT(connectSocket()));
     connect(&metadataThread, SIGNAL(finished()), metadataWorker, SLOT(deleteLater()));

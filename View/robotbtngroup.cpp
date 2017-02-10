@@ -1,17 +1,18 @@
 #include "robotbtngroup.h"
-#include "View/robotview.h"
-#include "Model/robot.h"
 #include <QVBoxLayout>
-#include "View/custompushbutton.h"
 #include <QAbstractButton>
+#include "Controller/mainwindow.h"
+#include "Model/robot.h"
+#include "View/robotview.h"
+#include "View/custompushbutton.h"
 
-RobotBtnGroup::RobotBtnGroup(const QVector<QPointer<RobotView>>& vector, QWidget* parent):QWidget(parent){
+RobotBtnGroup::RobotBtnGroup(const QVector<QPointer<RobotView>>& vector, MainWindow *mainWindow, QWidget* parent):QWidget(parent){
     btnGroup = new QButtonGroup(this);
     layout = new QVBoxLayout(this);
 
     for(int i = 0; i < vector.length(); i++){
         CustomPushButton* robotBtn = new CustomPushButton(vector[i]->getRobot()->getName(), this, CustomPushButton::ButtonType::LEFT_MENU, "left", true);
-        connect(robotBtn, SIGNAL(doubleClick(QString)), parent, SLOT(doubleClickOnRobot(QString)));
+        connect(robotBtn, SIGNAL(doubleClick(QString)), mainWindow, SLOT(doubleClickOnRobot(QString)));
         btnGroup->addButton(robotBtn, i);
         layout->addWidget(robotBtn);
     }

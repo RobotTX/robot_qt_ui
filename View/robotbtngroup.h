@@ -3,6 +3,7 @@
 
 class RobotView;
 class QVBoxLayout;
+class MainWindow;
 
 #include <QButtonGroup>
 #include <QWidget>
@@ -15,7 +16,7 @@ class QVBoxLayout;
 class RobotBtnGroup: public QWidget {
 
 public:
-    RobotBtnGroup(const QVector<QPointer<RobotView>>& vector, QWidget *parent);
+    RobotBtnGroup(const QVector<QPointer<RobotView>>& vector, MainWindow* mainWindow, QWidget *parent);
     QButtonGroup* getBtnGroup(void) const { return btnGroup; }
 
 public:

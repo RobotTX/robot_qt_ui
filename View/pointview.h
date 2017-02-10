@@ -84,7 +84,7 @@ signals:
     /// emitted when the point view catches a left click
     void pointLeftClicked(QString name, double x, double y);
     /// emitted when a path is being created so that a permanent point (corresponding to this point view) is to be added to the path
-    void addPointPath(QString name, double x, double y, GraphicItemState);
+    void addPointPath(QString name, double x, double y);
     /// when an edited path point is dragged
     void moveEditedPathPoint();
     /// when an edited permanent point is dragged
