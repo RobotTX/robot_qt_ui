@@ -12,7 +12,8 @@ ScanMapGraphicsItem::ScanMapGraphicsItem(QString _robotName, QSharedPointer<Robo
     : QGraphicsPixmapItem(), robotName(_robotName), robots(_robots){
 
     /// Tell the class which mouse button to accept
-    setAcceptedMouseButtons(Qt::LeftButton | Qt::MidButton);
+    setAcceptedMouseButtons(Qt::LeftButton | Qt::RightButton);
+
     /// To drag & drop the map
     setFlag(QGraphicsItem::ItemIsMovable);
 
@@ -46,9 +47,9 @@ void ScanMapGraphicsItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event){
         float x = dragStartPosition.x() - this->pos().x();
         float y = dragStartPosition.y() - this->pos().y();
 
+        /// TODO connect the emit with a slot to select the robot in the list on the left
         /// we compare the start position of the drag event & the drop position
-        /// if we have moved for more than 1 pixel, it's a drag, else it's a click
-        /// and we create a temporary point
+        /// if we have moved for more than 1 pixel, it's a drag, else
         if (abs(x) <= 1 && abs(y) <= 1)
             emit pixmapClicked();
 

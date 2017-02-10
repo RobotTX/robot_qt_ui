@@ -6,7 +6,9 @@ class Robots;
 #include <QGraphicsPixmapItem>
 
 class ScanMapGraphicsItem: public QObject, public QGraphicsPixmapItem {
+
     Q_OBJECT
+
 public:
     ScanMapGraphicsItem(QString robotName, QSharedPointer<Robots> _robots);
 
@@ -51,4 +53,4 @@ private:
     QSharedPointer<Robots> robots;
 };
 
-#endif // SCANMAPGRAPHICSITEM_H
+#endif /// SCANMAPGRAPHICSITEM_H

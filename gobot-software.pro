@@ -97,7 +97,8 @@ HEADERS += \
     View/robotpositionrecovery.h \
     Controller/pointscontroller.h \
     Controller/robotscontroller.h \
-    Helper/helper.h
+    Helper/helper.h \
+    View/recoverpositionmapgraphicsitem.h
 
 FORMS += Controller/mainwindow.ui
 
@@ -179,7 +180,8 @@ SOURCES += main.cpp \
     View/robotpositionrecovery.cpp \
     Controller/pointscontroller.cpp \
     Controller/robotscontroller.cpp \
-    Helper/helper.cpp
+    Helper/helper.cpp \
+    View/recoverpositionmapgraphicsitem.cpp
 
 RESOURCES += Resources/resources.qrc
 
