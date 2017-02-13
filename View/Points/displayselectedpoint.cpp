@@ -5,6 +5,7 @@
 #include <QLineEdit>
 #include <QDebug>
 #include <QKeyEvent>
+#include <QRegularExpression>
 #include <assert.h>
 #include "Controller/mainwindow.h"
 #include "Controller/Points/pointscontroller.h"
@@ -89,7 +90,7 @@ DisplaySelectedPoint::DisplaySelectedPoint(MainWindow* mainWindow, QSharedPointe
     /// to cancel edition of a point on hide event
     connect(this, SIGNAL(cancelEditionPoint()), mainWindow->getPointsController(), SLOT(cancelUpdatePoint()));
     /// to check the name of a point being edited
-    connect(this, SIGNAL(invalidName(QString, CreatePointWidget::Error)), mainWindow, SLOT(setMessageCreationPoint(QString,CreatePointWidget::Error)));
+    connect(this, SIGNAL(invalidName(QString, PointsController::PointNameError)), mainWindow, SLOT(setMessageCreationPoint(QString,PointsController::PointNameError)));
     /// to cancel the modifications on an edited point
     connect(cancelButton, SIGNAL(clicked(bool)), mainWindow->getPointsController(), SLOT(cancelUpdatePoint()));
     /// to save the modifications on an edited point
@@ -133,14 +134,14 @@ void DisplaySelectedPoint::keyPressEvent(QKeyEvent* event){
     if(!event->text().compare("\r")){
         switch(checkPointName(nameEdit->text())){
         case 0:
-            emit invalidName(TEXT_COLOR_DANGER, CreatePointWidget::Error::ContainsSemicolon);
+            emit invalidName(TEXT_COLOR_DANGER, PointsController::PointNameError::ContainsSemicolon);
             break;
         case 1:
             /// that is the case where the name of the point has not actually changed
             emit nameChanged(pointView->getPoint()->getName(), pointView->getPoint()->getName());
             break;
         case 2:
-            emit invalidName(TEXT_COLOR_DANGER, CreatePointWidget::Error::AlreadyExists);
+            emit invalidName(TEXT_COLOR_DANGER, PointsController::PointNameError::AlreadyExists);
             break;
         case 3:
             emit nameChanged(pointView->getPoint()->getName(), nameEdit->text());
@@ -190,7 +191,7 @@ int DisplaySelectedPoint::checkPointName(QString name) {
     if(!formatName(name).compare(pointView->getPoint()->getName())){
         saveButton->setToolTip("");
         saveButton->setEnabled(true);
-        emit invalidName(TEXT_COLOR_INFO, CreatePointWidget::Error::NoError);
+        emit invalidName(TEXT_COLOR_INFO, PointsController::PointNameError::NoError);
         return 3;
     }
 
@@ -199,7 +200,7 @@ int DisplaySelectedPoint::checkPointName(QString name) {
         qDebug() << " I contain a ; or }";
         saveButton->setToolTip("The name of your point cannot contain the characters \";\" and } or the pattern <pathpoint> ");
         saveButton->setEnabled(false);
-        emit invalidName(TEXT_COLOR_WARNING, CreatePointWidget::Error::ContainsSemicolon);
+        emit invalidName(TEXT_COLOR_WARNING, PointsController::PointNameError::ContainsSemicolon);
         return 0;
     }
     if(!nameEdit->text().simplified().compare("")){
@@ -207,7 +208,7 @@ int DisplaySelectedPoint::checkPointName(QString name) {
         /// cannot add a point with no name
         saveButton->setToolTip("The name of your point cannot be empty");
         saveButton->setEnabled(false);
-        emit invalidName(TEXT_COLOR_WARNING, CreatePointWidget::Error::EmptyName);
+        emit invalidName(TEXT_COLOR_WARNING, PointsController::PointNameError::EmptyName);
         return 1;
     }
 
@@ -220,14 +221,14 @@ int DisplaySelectedPoint::checkPointName(QString name) {
                 saveButton->setEnabled(false);
                 /// to explain the user why he cannot add its point as it is
                 saveButton->setToolTip("A point with this name already exists, please choose another name for your point");
-                emit invalidName(TEXT_COLOR_WARNING, CreatePointWidget::Error::AlreadyExists);
+                emit invalidName(TEXT_COLOR_WARNING, PointsController::PointNameError::AlreadyExists);
                 return 2;
             }
         }
     }
     saveButton->setToolTip("");
     saveButton->setEnabled(true);
-    emit invalidName(TEXT_COLOR_INFO, CreatePointWidget::Error::NoError);
+    emit invalidName(TEXT_COLOR_INFO, PointsController::PointNameError::NoError);
     return 3;
 }
 

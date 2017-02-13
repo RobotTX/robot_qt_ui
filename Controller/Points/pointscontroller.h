@@ -18,6 +18,9 @@ class MapController;
 class PointsController : public QObject {
     Q_OBJECT
 public:
+    /// to display an appropriate message to the end user when he tries to create a point
+    enum PointNameError { ContainsSemicolon, EmptyName, AlreadyExists, NoError };
+
     PointsController(MainWindow* mainWindow);
     void initializePoints(void);
     void initializeMenus(MainWindow *mainWindow, const QSharedPointer<Robots> &robots, const QSharedPointer<Map> &_map);
@@ -83,8 +86,14 @@ private slots:
     void createGroup(QString name);
     void modifyGroupWithEnter(QString name);
     void modifyGroupAfterClick(QString name);
-    void reestablishConnectionsGroups();
-    void reestablishConnectionsPoints();
+    void reestablishConnectionsGroups(void);
+    void reestablishConnectionsPoints(void);
+    void resetPointViewsSlot(void);
+    void checkPointName(QString name);
+
+protected:
+    /// this prevents a user to type names like " a                stupidname       " by removing extra spaces
+    QString formatName(const QString name) const;
 
 signals:
     void setMessageTop(QString msgType, QString msg);
@@ -92,6 +101,8 @@ signals:
     void backEvent();
     void setSelectedTmpPoint(void);
     void setSelectedRobot(QPointer<RobotView> robotView);
+    /// emitted every time the input field changes to allow (no error) or not the creation of the point with the indicated name
+    void invalidName(QString, PointsController::PointNameError);
 
 private:
     QSharedPointer<Points> points;

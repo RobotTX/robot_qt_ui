@@ -17,10 +17,10 @@ class CustomLineEdit;
 #include <QSharedPointer>
 #include <QWidget>
 #include <QObject>
+#include "Controller/Points/pointscontroller.h"
 #include "Model/Points/points.h"
 #include "Model/Other/graphicitemstate.h"
 #include "Model/Points/point.h"
-#include "View/Points/createpointwidget.h"
 #include "View/Points/pointview.h"
 #include "View/LeftMenu/topleftmenu.h"
 
@@ -81,7 +81,7 @@ signals:
     /// to reset the state of the map if a user clicks a random button while he was editing a point
     void resetState(GraphicItemState);
     /// emitted when the field to type the name of the point is changed to allow or not the user to save its point
-    void invalidName(QString, CreatePointWidget::Error);
+    void invalidName(QString, PointsController::PointNameError);
     /// in the event where this point is a special point for a robot (home or part of a path), allows those pieces of information to
     /// be displayed
     void setSelectedRobotFromPoint(QString);

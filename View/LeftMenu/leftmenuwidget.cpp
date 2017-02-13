@@ -6,7 +6,7 @@
 #include "View/Other/custompushbutton.h"
 #include "View/Other/stylesettings.h"
 
-LeftMenuWidget::LeftMenuWidget(QWidget *_parent, QSharedPointer<Points> const& _points): QWidget(_parent), points(_points)
+LeftMenuWidget::LeftMenuWidget(QWidget *_parent): QWidget(_parent)
 {
     layout = new QVBoxLayout(this);
     layout->setAlignment(Qt::AlignTop);
@@ -40,7 +40,7 @@ LeftMenuWidget::LeftMenuWidget(QWidget *_parent, QSharedPointer<Points> const& _
 
 void LeftMenuWidget::showEvent(QShowEvent *event){
     /// to reset the colors of the points on the map
-    points->setPixmapAll(PointView::PixmapType::NORMAL);
+    emit resetPointViews();
     emit resetPathPointViews();
     QWidget::showEvent(event);
 }

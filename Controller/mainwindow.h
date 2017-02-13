@@ -29,7 +29,6 @@ class SettingsController;
 class TopLayoutController;
 class MapController;
 class PathsController;
-class PointsController;
 class RobotPositionRecovery;
 class RobotsController;
 
@@ -40,11 +39,11 @@ class RobotsController;
 #include <QSettings>
 #include <QUuid>
 #include <ctime>
+#include "Controller/Points/pointscontroller.h"
 #include "Model/Paths/paths.h"
 #include "Model/Points/points.h"
 #include "Model/Points/point.h"
 #include "Model/Other/graphicitemstate.h"
-#include "View/Points/createpointwidget.h"
 #include "View/TopLayout/toplayoutwidget.h"
 #include "View/Robots/robotview.h"
 
@@ -174,7 +173,7 @@ private slots:
     void setMessageCreationPath(QString message);
     void updateEditedPathPoint(double x, double y);
     void centerMap(void);
-    void setMessageCreationPoint(QString type, CreatePointWidget::Error error);
+    void setMessageCreationPoint(QString type, PointsController::PointNameError error);
     void viewPathSelectedRobot(int robotNb, bool checked);
     void closeSlot();
     void showHome();

@@ -54,7 +54,9 @@ void PointsController::initializeMenus(MainWindow* mainWindow,
 
 
     /// Menu to edit the selected point
-    createPointWidget = new CreatePointWidget(mainWindow, points);
+    createPointWidget = new CreatePointWidget(mainWindow);
+    /// to display appropriate messages when a user attemps to create a point
+    connect(this, SIGNAL(invalidName(QString, PointsController::PointNameError)), mainWindow, SLOT(setMessageCreationPoint(QString, PointsController::PointNameError)));
     createPointWidget->hide();
 
 
@@ -279,7 +281,7 @@ void PointsController::askForDeleteGroupConfirmation(QString groupName){
                 savePoints(QDir::currentPath() + QDir::separator() + "points.xml");
 
                 /// updates the group box so that the user cannot create a point in this group anymore
-                createPointWidget->updateGroupBox();
+                createPointWidget->updateGroupBox(points);
 
             } else {
                 /// this group contains the home point of a robot and cannot be removed,
@@ -628,7 +630,7 @@ void PointsController::removePointFromGroupMenu(void){
                                 /// hides group menu and shows list of groups menu
                                 displaySelectedGroup->hide();
                                 pointsLeftWidget->show();
-                                createPointWidget->updateGroupBox();
+                                createPointWidget->updateGroupBox(points);
                                 emit backEvent();
                             }
                         }
@@ -1016,7 +1018,7 @@ void PointsController::removePointFromInformationMenu(void){
 
                                 /// updates menu
                                 pointsLeftWidget->getGroupButtonGroup()->updateButtons();
-                                createPointWidget->updateGroupBox();
+                                createPointWidget->updateGroupBox(points);
                                 emit backEvent();
                             }
                         }
@@ -1533,7 +1535,7 @@ void PointsController::createGroup(QString groupName){
         pointsLeftWidget->updateGroupButtonGroup();
 
         /// updates the comboBox to make this new group available when a user creates a point
-        createPointWidget->updateGroupBox();
+        createPointWidget->updateGroupBox(points);
 
         /// enables the return button again
         mainWindow->getLeftMenu()->getReturnButton()->setEnabled(true);
@@ -1592,7 +1594,7 @@ void PointsController::modifyGroupWithEnter(QString name){
         points->getGroups()->insert(name, points->getGroups()->value(pointsLeftWidget->getLastCheckedId()));
 
         /// updates the group box to create a point
-        createPointWidget->updateGroupBox();
+        createPointWidget->updateGroupBox(points);
 
         /// enables the plus button
         pointsLeftWidget->getActionButtons()->getPlusButton()->setEnabled(true);
@@ -1745,4 +1747,70 @@ void PointsController::showHomeFromHomeName(QString homeName){
             }
         }
     }
+}
+
+void PointsController::resetPointViewsSlot(void){
+    points->setPixmapAll(PointView::PixmapType::NORMAL);
+}
+
+void PointsController::checkPointName(QString name){
+    name = formatName(name);
+
+    createPointWidget->getNameEdit()->setText(name);
+    if(name.simplified().contains(QRegularExpression("[;{}]")) || name.contains("pathpoint", Qt::CaseInsensitive)){
+        createPointWidget->getSaveBtn()->setToolTip("The name of your point cannot contain the characters \";\" and } or the pattern <pathpoint> ");
+        createPointWidget->getSaveBtn()->setEnabled(false);
+        emit invalidName(TEXT_COLOR_WARNING, PointNameError::ContainsSemicolon);
+        return;
+    }
+    if(!name.simplified().compare("")){
+        qDebug() << " I am empty ";
+        /// cannot add a point with no name
+        createPointWidget->getSaveBtn()->setToolTip("The name of your point cannot be empty");
+        createPointWidget->getSaveBtn()->setEnabled(false);
+        emit invalidName(TEXT_COLOR_WARNING, PointNameError::EmptyName);
+        return;
+    }
+
+    QMapIterator<QString, QSharedPointer<QVector<QSharedPointer<PointView>>>> i(*(points->getGroups()));
+    while (i.hasNext()) {
+        /// determines whether or not the current name is a valid one (not already the name of another point or group)
+        bool valid(true);
+        i.next();
+        if(!i.key().compare(name.simplified(), Qt::CaseInsensitive)){
+            qDebug() << "This is already the name of a group" ;
+            valid = false;
+        }
+        for(int j = 0; j < i.value()->size(); j++){
+            if(i.value()->at(j)->getPoint()->getName().compare(name.simplified(), Qt::CaseInsensitive) == 0){
+                qDebug() << name << " already exists";
+                valid = false;
+            }
+        }
+
+        if(!valid){
+            createPointWidget->getSaveBtn()->setEnabled(false);
+            /// to explain the user why he cannot add its point as it is
+            createPointWidget->getSaveBtn()->setToolTip("A point or group with this name already exists, please choose another name for your point");
+            emit invalidName(TEXT_COLOR_WARNING, PointNameError::AlreadyExists);
+            return;
+        }
+    }
+    createPointWidget->getSaveBtn()->setToolTip("");
+    createPointWidget->getSaveBtn()->setEnabled(true);
+    emit invalidName(TEXT_COLOR_INFO, PointNameError::NoError);
+}
+
+QString PointsController::formatName(const QString name) const {
+    qDebug() << "formatName called";
+    QString ret("");
+    QStringList nameStrList = name.split(" ", QString::SkipEmptyParts);
+    for(int i = 0; i < nameStrList.size(); i++){
+        if(i > 0)
+            ret += " ";
+        ret += nameStrList.at(i);
+    }
+    if(name.size() > 0 && name.at(name.size()-1) == ' ')
+        ret += " ";
+    return ret;
 }

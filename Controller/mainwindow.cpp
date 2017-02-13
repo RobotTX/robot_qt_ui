@@ -19,7 +19,6 @@
 #include "Controller/TopLayout/toplayoutcontroller.h"
 #include "Controller/Map/mapcontroller.h"
 #include "Controller/Paths/pathscontroller.h"
-#include "Controller/Points/pointscontroller.h"
 #include "Controller/Robots/robotscontroller.h"
 #include "Model/Paths/pathpoint.h"
 #include "Model/Map/map.h"
@@ -66,6 +65,7 @@
 #include "View/Map/scanmapwidget.h"
 #include "View/Map/drawobstacles.h"
 #include "View/Map/robotpositionrecovery.h"
+#include "View/Points/createpointwidget.h"
 
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow) {
@@ -121,7 +121,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     /// settings of the application (battery level warning threshold, which map to choose between the map of the robot and the map of the app, etc...
     settingsController = new SettingsController(this);
 
-    leftMenu = new LeftMenu(this, pointsController->getPoints());
+    leftMenu = new LeftMenu(this);
 
     lastWidgets =  QList<QPair<QPair<QWidget*,QString>, MainWindow::WidgetType>>();
     bottom->addWidget(leftMenu);
@@ -140,7 +140,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
 
     ///  ------------------------------------------------------- PATHS CONNECTS ----------------------------------------------------------
-
 
     /// to add a path point when we click on the map
     connect(mapController, SIGNAL(pathPointSignal(QString,double,double)), pathsController->getPathCreationWidget(), SLOT(addPathPointSlot(QString, double, double)));
@@ -1203,7 +1202,7 @@ void MainWindow::loadMapBtnEvent(){
             pointsController->savePoints(QDir::currentPath() + QDir::separator() + "points.xml");
 
             /// updates the group box so that new points can be added
-            pointsController->getCreatePointWidget()->updateGroupBox();
+            pointsController->getCreatePointWidget()->updateGroupBox(pointsController->getPoints());
 
             /// saves the imported paths in the current paths file
             pathsController->serializePaths(QDir::currentPath() + QDir::separator() + "paths.dat");
@@ -1448,26 +1447,26 @@ void MainWindow::enableReturnAndCloseButtons(){
     topLayoutController->enableLayout(true);
 }
 
-void MainWindow::setMessageCreationPoint(QString type, CreatePointWidget::Error error){
+void MainWindow::setMessageCreationPoint(QString type, PointsController::PointNameError error){
     qDebug() << "MainWindow::setMessageCreation point called from mainwindow";
     switch(error){
-    case CreatePointWidget::Error::NoError:
-        topLayoutController->setLabel(type, "Click save or press ENTER to save this point");
+        case PointsController::PointNameError::NoError:
+            topLayoutController->setLabel(type, "Click save or press ENTER to save this point");
         break;
-    case CreatePointWidget::Error::ContainsSemicolon:
-        topLayoutController->setLabel(type, "You cannot create a point with a name that contains a semicolon, a curly bracket or the pattern \"pathpoint\"");
+        case PointsController::PointNameError::ContainsSemicolon:
+            topLayoutController->setLabel(type, "You cannot create a point with a name that contains a semicolon, a curly bracket or the pattern \"pathpoint\"");
         break;
-    case CreatePointWidget::Error::EmptyName:
-        topLayoutController->setLabel(type, "You cannot create a point with an empty name");
+        case PointsController::PointNameError::EmptyName:
+            topLayoutController->setLabel(type, "You cannot create a point with an empty name");
         break;
-    case CreatePointWidget::Error::AlreadyExists:
-        topLayoutController->setLabel(type, "You cannot create a point with this name because a point with the same name already exists");
+        case PointsController::PointNameError::AlreadyExists:
+            topLayoutController->setLabel(type, "You cannot create a point with this name because a point with the same name already exists");
         break;
-    default:
-        Q_UNREACHABLE();
-        qDebug() << "Should never be here, if you do get here however, check that you have not added a new error code and forgotten to add it in the cases afterwards";
+        default:
+            Q_UNREACHABLE();
+            qDebug() << "Should never be here, if you do get here however, check that you have not added a new error code and forgotten to add it in the cases afterwards";
         break;
-    }
+        }
 }
 
 
