@@ -90,7 +90,7 @@ void sendErrorMessage(){
 void checkRecoveryStatus(const std_msgs::String& msg){
 
 	/// the position has not been found yet
-	if(msg.data == "position found") {
+	if(msg.data != "position found") {
 		// need to find a way to make sure the goal has been reached using the function in play_path
 		if(waitingForNextGoal) 
 			findNextPoint();
