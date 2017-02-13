@@ -1,29 +1,43 @@
 #include "robotbtngroup.h"
 #include <QVBoxLayout>
 #include <QAbstractButton>
-#include "Controller/mainwindow.h"
+#include <QPushButton>
+#include <QDebug>
 #include "Model/Robots/robot.h"
+#include "Model/Robots/robots.h"
 #include "View/Robots/robotview.h"
 #include "View/Other/custompushbutton.h"
 
-RobotBtnGroup::RobotBtnGroup(const QVector<QPointer<RobotView>>& vector, MainWindow *mainWindow, QWidget* parent):QWidget(parent){
+RobotBtnGroup::RobotBtnGroup(QWidget* parent):QWidget(parent){
     btnGroup = new QButtonGroup(this);
     layout = new QVBoxLayout(this);
 
-    for(int i = 0; i < vector.length(); i++){
-        CustomPushButton* robotBtn = new CustomPushButton(vector[i]->getRobot()->getName(), this, CustomPushButton::ButtonType::LEFT_MENU, "left", true);
-        connect(robotBtn, SIGNAL(doubleClick(QString)), mainWindow, SLOT(doubleClickOnRobot(QString)));
-        btnGroup->addButton(robotBtn, i);
-        layout->addWidget(robotBtn);
-    }
-    hide();
     layout->setAlignment(Qt::AlignTop);
     layout->setContentsMargins(0, 0, 0, 0);
 }
 
+
+void RobotBtnGroup::updateRobots(QSharedPointer<Robots> robots){
+
+    /// Remove buttons
+    QList<QAbstractButton*> listBtn = btnGroup->buttons();
+    for(int i = 0; i < listBtn.size(); i++){
+        btnGroup->removeButton(listBtn.at(i));
+        layout->removeWidget(listBtn.at(i));
+        delete listBtn.at(i);
+    }
+
+    /// Add buttons
+    for(int j = 0; j < robots->getRobotsVector().size(); j++){
+        CustomPushButton* robotBtn = new CustomPushButton(robots->getRobotsVector().at(j)->getRobot()->getName(), this, CustomPushButton::ButtonType::LEFT_MENU, "left", true);
+        connect(robotBtn, SIGNAL(doubleClick(QString)), this, SLOT(doubleClickOnRobotSlot(QString)));
+        btnGroup->addButton(robotBtn, j);
+        layout->addWidget(robotBtn);
+    }
+}
+
 void RobotBtnGroup::resizeEvent(QResizeEvent *event){
-    QWidget* widget = static_cast<QWidget*>(parent());
-    int maxWidth = widget->width() - 18;
+    int maxWidth = static_cast<QWidget*>(parent())->width() - 18;
     setMaximumWidth(maxWidth);
     QWidget::resizeEvent(event);
 }
@@ -34,4 +48,8 @@ void RobotBtnGroup::uncheck(){
     if(btnGroup->checkedButton())
         btnGroup->checkedButton()->setChecked(false);
     btnGroup->setExclusive(true);
+}
+
+void RobotBtnGroup::doubleClickOnRobotSlot(QString robotName){
+    emit doubleClickOnRobot(robotName);
 }

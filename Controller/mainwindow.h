@@ -92,8 +92,6 @@ public:
     int openConfirmMessage(const QString);
     void clearNewMap();
     void resetFocus();
-    /// to sleep for ms milliseconds
-    static void delay(const int ms);
     void updateAllPaths(const Point &old_point, const Point &new_point);
     void clearPath(const int robotNb);
 
@@ -172,7 +170,7 @@ private slots:
     void moveEditedPathPointSlot(void);
     void doubleClickOnPathsGroup(QString checkedButton);
     void enableReturnAndCloseButtons(void);
-    void doubleClickOnRobot(QString checkedId);
+    void doubleClickOnRobotSlot(QString robotName);
     void setMessageCreationPath(QString message);
     void updateEditedPathPoint(double x, double y);
     void centerMap(void);
@@ -180,7 +178,6 @@ private slots:
     void viewPathSelectedRobot(int robotNb, bool checked);
     void closeSlot();
     void showHome();
-    void showEditHome();
     void showAllHomes(void);
     void backEvent();
     void robotIsAliveSlot(QString hostname, QString ip, QString ssid, int stage, int battery);

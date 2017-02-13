@@ -121,7 +121,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     /// settings of the application (battery level warning threshold, which map to choose between the map of the robot and the map of the app, etc...
     settingsController = new SettingsController(this);
 
-    leftMenu = new LeftMenu(this, pointsController->getPoints(), robotsController->getRobots(), mapController->getMap());
+    leftMenu = new LeftMenu(this, pointsController->getPoints());
 
     lastWidgets =  QList<QPair<QPair<QWidget*,QString>, MainWindow::WidgetType>>();
     bottom->addWidget(leftMenu);
@@ -674,38 +674,6 @@ void MainWindow::showHome(){
 
         pointView->show();
     }
-
-    if(!robotsController->getEditSelectedRobotWidget()->isEditing()){
-        bottomLayout->uncheckAllViewPath();
-        if(pathsController->getPathPainter()->getOldPath().size() > 0){
-            robotsController->getEditSelectedRobotWidget()->setPath(pathsController->getPathPainter()->getOldPath());
-
-            pathsController->getPathPainter()->clearOldPath();
-        } else {
-            QPointer<RobotView> robotView =  robotsController->getRobots()->getRobotViewByName(robotsController->getSelectedRobot()->getRobot()->getName());
-            /// If the robot has a path, we display it, otherwise we show the button to add the path
-            if(robotView->getRobot()->getPath().size() > 0){
-                bottomLayout->getViewPathRobotBtnGroup()->button(robotsController->getRobots()->getRobotId(robotsController->getSelectedRobot()->getRobot()->getName()))->setChecked(true);
-
-                robotsController->getEditSelectedRobotWidget()->getPathWidget()->setPath(robotView->getRobot()->getPath());
-                robotsController->getEditSelectedRobotWidget()->getPathWidget()->show();
-
-                robotsController->getEditSelectedRobotWidget()->setPath(robotView->getRobot()->getPath());
-            } else {
-                qDebug() << "MainWindow::showHome I don't have a path !";
-                robotsController->getEditSelectedRobotWidget()->getPathWidget()->hide();
-
-                robotsController->getEditSelectedRobotWidget()->clearPath();
-            }
-        }
-    }
-}
-
-void MainWindow::showEditHome(){
-    showHome();
-    if(!robotsController->getEditSelectedRobotWidget()->isEditing()){
-        robotsController->getEditSelectedRobotWidget()->setEditing(true);
-    }
 }
 
 void MainWindow::clearPath(const int robotNb){
@@ -742,7 +710,6 @@ void MainWindow::clearPath(const int robotNb){
 
     if(robotsController->getEditSelectedRobotWidget()->isVisible()){
         robotsController->getEditSelectedRobotWidget()->setSelectedRobot(robotsController->getRobots()->getRobotsVector().at(robotNb));
-        robotsController->getEditSelectedRobotWidget()->setPathChanged(true);
         robotsController->getEditSelectedRobotWidget()->clearPath();
         robotsController->getEditSelectedRobotWidget()->updatePathsMenu(false);
         robotsController->getEditSelectedRobotWidget()->getPathWidget()->hide();
@@ -781,7 +748,7 @@ void MainWindow::robotIsAliveSlot(QString hostname, QString ip, QString ssid, in
         robotsController->getRobots()->add(robotView);
         robot->launchWorkers(this);
         bottomLayout->addRobot(robotView);
-        robotsController->getRobotsLeftWidget()->updateRobots(this);
+        robotsController->updateRobotsLeftWidget();
 
 
         /// Check if connection by usb
@@ -891,8 +858,8 @@ void MainWindow::robotIsDeadSlot(QString hostname, QString ip){
 
         robotView->deleteLater();
 
-        /// update robotsController->getRobotsLeftWidget()
-        robotsController->getRobotsLeftWidget()->updateRobots(this);
+        /// update robotsLeftWidget
+        robotsController->updateRobotsLeftWidget();
 
         /// bottomLayout
         bottomLayout->removeRobot(id);
@@ -910,7 +877,7 @@ void MainWindow::robotIsDeadSlot(QString hostname, QString ip){
 
 void MainWindow::setMessageCreationPath(QString message){
     topLayoutController->setLabel(TEXT_COLOR_DANGER, message);
-    delay(2500);
+    Helper::Thread::delay(2500);
     if(robotsController->getSelectedRobot())
         topLayoutController->setLabel(TEXT_COLOR_INFO, "Click white points of the map to add new points to the path of " +
                   robotsController->getSelectedRobot()->getRobot()->getName() + "\nAlternatively you can click the \"+\" button to add an existing point to your path"
@@ -1080,13 +1047,13 @@ void MainWindow::updateBatteryLevel(const int level){
 }
 
 /**
- * @brief MainWindow::doubleClickOnRobot
+ * @brief MainWindow::doubleClickOnRobotSlot
  * @param id
  * does the same as clicking on a robot and then on the eye button
  */
-void MainWindow::doubleClickOnRobot(QString id){
-    qDebug() << "double click on robot" << id;
-    setSelectedRobot(robotsController->getRobots()->getRobotViewByName(id));
+void MainWindow::doubleClickOnRobotSlot(QString robotName){
+    qDebug() << "double click on robot" << robotName;
+    setSelectedRobot(robotsController->getRobots()->getRobotViewByName(robotName));
 }
 
 void MainWindow::openPositionRecoveryWidget() {
@@ -1640,7 +1607,7 @@ void MainWindow::deleteGroupPaths(){
         /// if the displayed path was among the paths of this group, we hide it as we delete it
         emit resetPath();
         topLayoutController->setLabel(TEXT_COLOR_SUCCESS, "You have successfully deleted the group of paths \"" + groupPaths + "\"");
-        delay(4000);
+        Helper::Thread::delay(4000);
         topLayoutController->setLabel(TEXT_COLOR_NORMAL, "");
         break;
     }
@@ -2028,12 +1995,6 @@ void MainWindow::clearNewMap(){
     }
 }
 
-void MainWindow::delay(const int ms){
-    QTime dieTime= QTime::currentTime().addMSecs(ms);
-    while (QTime::currentTime() < dieTime)
-        QCoreApplication::processEvents(QEventLoop::AllEvents, 100);
-}
-
 void MainWindow::setEnableAll(bool enable, GraphicItemState state, int noReturn){
     setGraphicItemsState(state);
     bottomLayout->setEnable(enable);
@@ -2056,7 +2017,7 @@ void MainWindow::settingBtnSlot(){
 
 void MainWindow::setTemporaryMessageTop(const QString type, const QString message, const int ms){
     topLayoutController->setLabel(type, message);
-    delay(ms);
+    Helper::Thread::delay(ms);
     topLayoutController->setLabel(TEXT_COLOR_NORMAL, "");
 }
 
@@ -2775,7 +2736,7 @@ void MainWindow::commandDoneNewName(bool success, QString name){
         robotsController->getEditSelectedRobotWidget()->getNameLabel()->setText(name);
         robotsController->getEditSelectedRobotWidget()->getRobotInfoDialog()->getNameEdit()->setText(name);
 
-        robotsController->getRobotsLeftWidget()->updateRobots(this);
+        robotsController->updateRobotsLeftWidget();
         robotDialog->getNameEdit()->setText(robotsController->getSelectedRobot()->getRobot()->getName());
         topLayoutController->setLabel(TEXT_COLOR_SUCCESS, "You have successfully updated" + name);
     } else

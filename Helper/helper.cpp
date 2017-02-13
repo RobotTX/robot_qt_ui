@@ -1,4 +1,6 @@
 #include "helper.h"
+#include <QTime>
+#include <QCoreApplication>
 
 namespace Helper {
 
@@ -14,6 +16,15 @@ namespace Helper {
             float xInPixelCoordinates = (-originX+ positionInRobotCoordinates.getX())/resolution;
             float yInPixelCoordinates = height - (-originY + positionInRobotCoordinates.getY()) / resolution;
             return Position(xInPixelCoordinates, yInPixelCoordinates);
+        }
+    }
+
+    namespace Thread {
+
+        void delay(const int ms){
+            QTime dieTime = QTime::currentTime().addMSecs(ms);
+            while (QTime::currentTime() < dieTime)
+                QCoreApplication::processEvents(QEventLoop::AllEvents, 100);
         }
     }
 }

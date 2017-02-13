@@ -3,7 +3,7 @@
 
 class RobotView;
 class QVBoxLayout;
-class MainWindow;
+class Robots;
 
 #include <QButtonGroup>
 #include <QWidget>
@@ -14,24 +14,31 @@ class MainWindow;
  * with a layout to show the group of buttons
  */
 class RobotBtnGroup: public QWidget {
-
+    Q_OBJECT
 public:
-    RobotBtnGroup(const QVector<QPointer<RobotView>>& vector, MainWindow* mainWindow, QWidget *parent);
+    RobotBtnGroup(QWidget *parent);
     QButtonGroup* getBtnGroup(void) const { return btnGroup; }
 
-public:
     /**
      * @brief uncheck
      * unchecks all buttons of the group
      */
     void uncheck();
 
-private:
-    QButtonGroup* btnGroup;
-    QVBoxLayout* layout;
+    void updateRobots(QSharedPointer<Robots> robots);
+
+private slots:
+    void doubleClickOnRobotSlot(QString robotName);
 
 protected:
     void resizeEvent(QResizeEvent *event);
+
+signals:
+    void doubleClickOnRobot(QString);
+
+private:
+    QButtonGroup* btnGroup;
+    QVBoxLayout* layout;
 };
 
 #endif // ROBOTBTNGROUP_H

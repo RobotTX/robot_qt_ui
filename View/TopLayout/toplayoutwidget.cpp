@@ -3,16 +3,15 @@
 #include <QLabel>
 #include <QIcon>
 #include <QDebug>
-#include "View/Other/customscrollarea.h"
-#include "View/Other/spacewidget.h"
-#include <QTime>
-#include <QCoreApplication>
+#include "Helper/helper.h"
+#include "Controller/mainwindow.h"
 #include "View/Other/stylesettings.h"
 #include "View/Other/custompushbutton.h"
-#include "Controller/mainwindow.h"
+#include "View/Other/customscrollarea.h"
+#include "View/Other/spacewidget.h"
 
-TopLayoutWidget::TopLayoutWidget(QMainWindow* parent): QWidget(parent){
-    layout = new QHBoxLayout(this);
+TopLayoutWidget::TopLayoutWidget(MainWindow* parent): QWidget(parent){
+    QHBoxLayout* layout = new QHBoxLayout(this);
 
     menuBtn = new CustomPushButton(QIcon(":/icons/list.png"), "", this, CustomPushButton::ButtonType::TOP);
     menuBtn->setIconSize(xs_icon_size);
@@ -121,7 +120,7 @@ void TopLayoutWidget::setEnable(const bool enable){
     saveMapBtn->setEnabled(enable);
 }
 
-void TopLayoutWidget::setLabelDelay(const QString msgType, const QString msg, int delayTime){
+void TopLayoutWidget::setLabelDelay(const QString msgType, const QString msg, const int delayTime){
 
     if(msg.isEmpty())
         label->hide();
@@ -132,7 +131,7 @@ void TopLayoutWidget::setLabelDelay(const QString msgType, const QString msg, in
     if (msgType == TEXT_COLOR_DANGER){
         label->setText("");
         label->setStyleSheet("QLabel { color: " + QString(TEXT_COLOR_NORMAL) +";background:transparent}");
-        delay(300);
+        Helper::Thread::delay(300);
     }
 
     /// display message
@@ -140,7 +139,7 @@ void TopLayoutWidget::setLabelDelay(const QString msgType, const QString msg, in
     label->setStyleSheet("QLabel { color: " + QString(msgType) +";background:transparent}");
 
     /// wait before to remove message
-    delay(delayTime);
+    Helper::Thread::delay(delayTime);
 
     /// reset message
     label->setText("");
@@ -148,17 +147,10 @@ void TopLayoutWidget::setLabelDelay(const QString msgType, const QString msg, in
     label->setStyleSheet("QLabel { color: " + QString(TEXT_COLOR_NORMAL) +";background:transparent}");
 }
 
-void TopLayoutWidget::delay(const int ms){
-    QTime dieTime = QTime::currentTime().addMSecs(ms);
-    while (QTime::currentTime() < dieTime)
-        QCoreApplication::processEvents(QEventLoop::AllEvents, 100);
-}
-
 void TopLayoutWidget::setRobotNoHomeLabel(const QString robots_string){
 
     if(robots_string.isEmpty())
         labelPerm->hide();
-
     else {
         labelPerm->show();
         setLabelPerm(TEXT_COLOR_WARNING, "\"" + robots_string + "\" do(es) not have a home point yet.\n Please choose a home for the robot(s) in the robot menu.");

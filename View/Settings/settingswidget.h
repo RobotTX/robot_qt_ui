@@ -47,11 +47,8 @@ private:
     static int currentId;
     QVBoxLayout* robotsLaserLayout;
     QButtonGroup* robotsLaserButtonGroup;
-    QLabel* feedBackLabel;
-    QLabel* chooseMapLabel;
     QComboBox* chooseMapBox;
     QSlider* batteryThresholdSlider;
-    QLabel* batteryThresholdLabel;
     CustomPushButton* helpButton;
 };
 

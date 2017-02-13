@@ -9,16 +9,17 @@ CommandMessageBox::CommandMessageBox(QWidget *parent) : QMessageBox(parent){
     setModal(false);
     abortButton = addButton(QMessageBox::Abort);
     //setAttribute(Qt::WA_DeleteOnClose);
+
+    /// Timer used to show the abort button when we wait for too long for an answer
+    timer = new QTimer(this);
+    timer->setInterval(15000);
+    timer->setSingleShot(true);
+    connect(timer, SIGNAL(timeout()), this, SLOT(timerSlot()));
 }
 
 void CommandMessageBox::show(){
     abortButton->hide();
 
-    /// Timer used to show the abort button when we wait for too long for an answer
-    QTimer* timer = new QTimer(this);
-    timer->setInterval(15000);
-    timer->setSingleShot(true);
-    connect(timer, SIGNAL(timeout()), this, SLOT(timerSlot()));
     timer->start();
 
     QMessageBox::show();

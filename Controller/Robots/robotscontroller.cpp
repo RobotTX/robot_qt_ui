@@ -54,7 +54,7 @@ void RobotsController::initializeMenus(MainWindow* mainWindow){
     /// Menu to edit the selected robot
     editSelectedRobotWidget = new EditSelectedRobotWidget(mainWindow);
     editSelectedRobotWidget->hide();
-    connect(editSelectedRobotWidget, SIGNAL(showEditSelectedRobotWidget()), mainWindow, SLOT(showEditHome()));
+    connect(editSelectedRobotWidget, SIGNAL(showEditSelectedRobotWidget()), mainWindow, SLOT(showHome()));
     connect(editSelectedRobotWidget, SIGNAL(hideEditSelectedRobotWidget()), mainWindow, SLOT(showAllHomes()));
     connect(editSelectedRobotWidget, SIGNAL(updatePathsMenu(bool)), this, SLOT(updatePathsMenuEditSelectedRobotWidget(bool)));
     connect(editSelectedRobotWidget, SIGNAL(updateHomeMenu(bool)), this, SLOT(updateHomeMenuEditSelectedRobotWidget(bool)));
@@ -102,9 +102,12 @@ void RobotsController::applyNewPath(const QString groupName, const QString pathN
     qDebug() << "EditSelectedRobotWidget::applyNewPath " << pathName;
     /// Once we know for sure (from the main window) that the command has been received, we proceed to the update here
     emit clearMapOfPaths();
-    editSelectedRobotWidget->setPathChanged(true);
     bool foundFlag(false);
     editSelectedRobotWidget->setPath(static_cast<MainWindow*>(parent())->getPathsController()->getPaths()->getPath(groupName, pathName, foundFlag));
     assert(foundFlag);
     emit showPath(groupName, pathName);
+}
+
+void RobotsController::updateRobotsLeftWidget(void){
+    robotsLeftWidget->getBtnGroup()->updateRobots(robots);
 }

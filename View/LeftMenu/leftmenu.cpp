@@ -29,8 +29,7 @@
 #include "View/Paths/pathbuttongroup.h"
 #include "View/Other/customscrollarea.h"
 
-LeftMenu::LeftMenu(MainWindow* mainWindow, QSharedPointer<Points> const& points,
-                   const QSharedPointer<Robots> &robots, const QSharedPointer<Map> &_map)
+LeftMenu::LeftMenu(MainWindow* mainWindow, QSharedPointer<Points> const& points)
     : QWidget(mainWindow){
 
     QVBoxLayout* leftLayout  = new QVBoxLayout();
