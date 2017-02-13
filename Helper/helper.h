@@ -1,4 +1,4 @@
-#include "Model/position.h"
+#include "Model/Other/position.h"
 
 /**
  * In this file we put all sorts of useful functions used by any classes

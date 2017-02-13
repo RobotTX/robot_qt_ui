@@ -33,20 +33,20 @@ class PointsController;
 class RobotPositionRecovery;
 class RobotsController;
 
-#include "Model/paths.h"
-#include "View/createpointwidget.h"
-#include "View/toplayoutwidget.h"
-#include "Model/points.h"
-#include "View/robotview.h"
 #include <QMainWindow>
 #include <QModelIndex>
-#include "Model/graphicitemstate.h"
 #include <QPair>
 #include <QMessageBox>
-#include "Model/point.h"
 #include <QSettings>
 #include <QUuid>
 #include <ctime>
+#include "Model/Paths/paths.h"
+#include "Model/Points/points.h"
+#include "Model/Points/point.h"
+#include "Model/Other/graphicitemstate.h"
+#include "View/Points/createpointwidget.h"
+#include "View/TopLayout/toplayoutwidget.h"
+#include "View/Robots/robotview.h"
 
 #define DESKTOP_PATH "/home/m-a/Desktop/"
 #define GOBOT_PATH "/home/m-a/Documents/QtProject/gobot-software/"
