@@ -2,6 +2,7 @@
 #include <QThread>
 #include <QDir>
 #include <fstream>
+#include "Helper/helper.h"
 
 CmdRobotWorker::CmdRobotWorker(const QString _ipAddress, const int cmdPort, const int _metadataPort, const int _robotPort, const int _mapPort, const int _laserPort, const QString _robotName):
     ipAddress(_ipAddress), port(cmdPort), robotName(_robotName), metadataPort(_metadataPort), robotPort(_robotPort), mapPort(_mapPort), laserPort(_laserPort), timeCounter(0)
@@ -24,7 +25,13 @@ void CmdRobotWorker::connectSocket(){
     /// We create the timer used to know for how long we haven't receive any ping
     timer = new QTimer(this);
 
-    timer->setInterval(1000);
+
+    if(TESTING)
+        timer->setInterval(10000000);
+    else
+        timer->setInterval(1000);
+
+
     connect(timer, SIGNAL(timeout()), this, SLOT(timerSlot()));
     timer->start();
 

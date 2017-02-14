@@ -1,11 +1,12 @@
 ﻿#include "commandcontroller.h"
-#include "Model/Robots/robot.h"
-#include "Model/Map/map.h"
-#include "Controller/mainwindow.h"
 #include <QStringList>
 #include <QFile>
 #include <QFocusEvent>
 #include <QApplication>
+#include "Helper/helper.h"
+#include "Controller/mainwindow.h"
+#include "Model/Robots/robot.h"
+#include "Model/Map/map.h"
 
 CommandController::CommandController(QWidget *parent)
     : QObject(parent), robotName(""), messageBox(parent), stop(false), newRobotName(""),
@@ -29,27 +30,42 @@ bool CommandController::sendCommand(QPointer<Robot> robot, QString cmd,
         /// Data is received as a string separated by a space ("cmd done" or "cmd failed")
         QStringList listCmd = cmd.split(rx, QString::SkipEmptyParts);
 
-        if(robot->isScanning() && listCmd.at(0).compare("c") != 0 && listCmd.at(0).compare("e") != 0 && listCmd.at(0).compare("f") != 0 &&
-                    listCmd.at(0).compare("t") != 0 && listCmd.at(0).compare("u") != 0){
-            qDebug() << "CommandController::sendCommand Robot" << robot->getName() << "is already scanning and can not perform command" << cmd;
-            return false;
+
+        if(TESTING){
+            robotName = robot->getName();
+            cmdName = listCmd.at(0);
+            groupName = _groupName;
+            pathName = _pathName;
+            scan = _scan;
+            nb = _nb;
+            newRobotName = _newRobotName;
+            path = _path;
+            qDebug() << "CommandController::sendCommand" << robotName << cmdName << newRobotName << groupName << pathName << scan << nb << path;
+
+            cmdAnswerSlot(listCmd.at(0)+" done");
+            return true;
+        } else {
+            if(robot->isScanning() && listCmd.at(0).compare("c") != 0 && listCmd.at(0).compare("e") != 0 && listCmd.at(0).compare("f") != 0 &&
+                        listCmd.at(0).compare("t") != 0 && listCmd.at(0).compare("u") != 0){
+                qDebug() << "CommandController::sendCommand Robot" << robot->getName() << "is already scanning and can not perform command" << cmd;
+                return false;
+            }
+
+            robot->sendCommand(cmd);
+
+            robotName = robot->getName();
+            cmdName = listCmd.at(0);
+            groupName = _groupName;
+            pathName = _pathName;
+            scan = _scan;
+            nb = _nb;
+            newRobotName = _newRobotName;
+            path = _path;
+            qDebug() << "CommandController::sendCommand" << robotName << cmdName << newRobotName << groupName << pathName << scan << nb << path;
+
+            openMessageBox(listCmd);
+            return true;
         }
-
-        robot->sendCommand(cmd);
-
-        robotName = robot->getName();
-        cmdName = listCmd.at(0);
-        groupName = _groupName;
-        pathName = _pathName;
-        scan = _scan;
-        nb = _nb;
-        newRobotName = _newRobotName;
-        path = _path;
-        qDebug() << "CommandController::sendCommand" << robotName << cmdName << newRobotName << groupName << pathName << scan << nb << path;
-
-        openMessageBox(listCmd);
-        return true;
-
     } else {
         qDebug() << "CommandController::sendCommand Robot" << robotName << "is already processing the command" << cmdName;
         return false;
@@ -83,7 +99,11 @@ void CommandController::cmdAnswerSlot(QString answer){
         } else {
             /// Should be caught by cmdAnswerSlot
             qDebug() << "CommandController::cmdAnswerSlot Got an answer to the wrong command :" << list;
-            Q_UNREACHABLE();
+            if(TESTING)
+                success = true;
+            else
+                Q_UNREACHABLE();
+
         }
     } else {
         /// Should be caught by cmdAnswerSlot

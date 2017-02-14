@@ -137,6 +137,7 @@ public slots:
     void setEnableAll(bool enable, GraphicItemState state = GraphicItemState::NO_STATE, int noReturn = -1);
 
 private slots:
+    void timerSlot();
     void setTemporaryMessageTop(const QString type, const QString message, const int ms);
     void sendPathSelectedRobotSlot(const QString groupName, const QString pathName);
     void mapReceivedSlot(const QByteArray mapArray, int who, QString mapId, QString mapDate, QString resolution, QString originX, QString originY, QString ipAddress);

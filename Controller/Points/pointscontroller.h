@@ -90,6 +90,7 @@ private slots:
     void reestablishConnectionsPoints(void);
     void resetPointViewsSlot(void);
     void checkPointName(QString name);
+    void updateBtnGroupPointsSlot();
 
 protected:
     /// this prevents a user to type names like " a                stupidname       " by removing extra spaces

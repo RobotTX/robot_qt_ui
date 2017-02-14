@@ -45,7 +45,7 @@ TopLayoutWidget::TopLayoutWidget(MainWindow* parent): QWidget(parent){
     connect(settingBtn, SIGNAL(clicked()), parent, SLOT(settingBtnSlot()));
 
     testButton = new CustomPushButton(QIcon(":/icons/T_icon.png"), "", this, CustomPushButton::ButtonType::TOP);
-    testButton->setToolTip("Click to try your new function");
+    testButton->setToolTip("This is just a testing button");
     testButton->setIconSize(s_icon_size);
     testButton->setFocusPolicy(Qt::FocusPolicy::NoFocus);
     layout->addWidget(testButton);

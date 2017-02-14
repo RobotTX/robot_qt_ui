@@ -4,6 +4,8 @@
  * In this file we put all sorts of useful functions used by any classes
  */
 
+#define TESTING false
+
 namespace Helper {
 
     namespace Convert {

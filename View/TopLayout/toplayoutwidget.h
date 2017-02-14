@@ -52,6 +52,11 @@ public:
      */
     void setLabelDelay(const QString msgType, const QString msg, const int delayTime);
 
+    /**
+     * @brief setRobotNoHomeLabel
+     * @param robots_string
+     * sets a label to remember the user to set a home for its robot(s)
+     */
     void setRobotNoHomeLabel(const QString robots_string);
 
 private:

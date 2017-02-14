@@ -53,6 +53,7 @@ DisplaySelectedGroup::DisplaySelectedGroup(MainWindow* mainWindow, QSharedPointe
     connect(actionButtons->getGoButton(), SIGNAL(clicked(bool)), mainWindow->getPointsController(), SLOT(displayPointInfoFromGroupMenu()));
     connect(actionButtons->getMapButton(), SIGNAL(clicked(bool)), mainWindow->getPointsController(), SLOT(displayPointFromGroupMenu()));
     /// to remove the point by pressing the delete key
+    connect(this, SIGNAL(updateBtnGroupPoints()), mainWindow->getPointsController(), SLOT(updateBtnGroupPointsSlot()));
     connect(this, SIGNAL(removePoint()), mainWindow->getPointsController(), SLOT(removePointFromGroupMenu()));
     /// to connect the buttons in the group menu so they can be double clicked after they were updated
     connect(pointButtonGroup, SIGNAL(updateConnectionsRequest()), mainWindow->getPointsController(), SLOT(reestablishConnectionsPoints()));
@@ -133,7 +134,7 @@ void DisplaySelectedGroup::buttonClickedSlot(QAbstractButton* button){
 
 void DisplaySelectedGroup::showEvent(QShowEvent* event){
     Q_UNUSED(event)
-    getPointButtonGroup()->setGroup(getPointButtonGroup()->getGroupName());
+    emit updateBtnGroupPoints();
     emit resetPathPointViews();
     QWidget::show();
 }

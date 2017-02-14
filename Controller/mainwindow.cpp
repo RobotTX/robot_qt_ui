@@ -68,6 +68,9 @@
 #include "View/Points/createpointwidget.h"
 
 
+#include <QTimer>
+
+
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow) {
     ui->setupUi(this);
 
@@ -169,6 +172,20 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     mainLayout->setSpacing(0);
 
     robotsController->launchServer(this);
+
+
+
+    if(TESTING){
+        QTimer* timer = new QTimer(this);
+        timer->setInterval(2000);
+        timer->setSingleShot(true);
+        connect(timer, SIGNAL(timeout()), this, SLOT(timerSlot()));
+        timer->start();
+    }
+}
+
+void MainWindow::timerSlot(){
+    robotIsAliveSlot("Robot 1", "192.168.4.212", "GTDollar Account 2.4", 0, 70);
 }
 
 MainWindow::~MainWindow(){
@@ -742,7 +759,7 @@ void MainWindow::robotIsAliveSlot(QString hostname, QString ip, QString ssid, in
         robotView = QPointer<RobotView>(new RobotView(robot, mapController->getMapView()));
         connect(robotView, SIGNAL(setSelectedSignal(QPointer<RobotView>)), this, SLOT(setSelectedRobot(QPointer<RobotView>)));
         connect(robotView, SIGNAL(updateLaser()), this, SLOT(updateLaserSlot()));
-        robotView->setPosition(robotsController->getRobots()->getRobotsVector().count()*100+100, robotsController->getRobots()->getRobotsVector().count()*100+100);
+        robotView->setPosition(mapController->getMapWidth()/2 + robotsController->getRobots()->getRobotsVector().count()*100, mapController->getMapHeight()/2 + robotsController->getRobots()->getRobotsVector().count()*100);
         robotView->setParentItem(mapController->getMapView());
         robotsController->getRobots()->add(robotView);
         robot->launchWorkers(this);

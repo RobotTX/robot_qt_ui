@@ -82,7 +82,7 @@ void PointsController::loadPoints(const QString fileName){
 }
 
 void PointsController::updateGroupDisplayed(const QString groupName){
-    displaySelectedGroup->getPointButtonGroup()->setGroup(groupName);
+    displaySelectedGroup->getPointButtonGroup()->setGroup(groupName, points);
 }
 
 void PointsController::hidePointViewsToDisplayButPath(QVector<QSharedPointer<PathPoint>> currentPath){
@@ -241,7 +241,7 @@ void PointsController::minusGroupBtnEvent(){
     else if(points->isAPoint(checkedId))
         askForDeleteDefaultGroupPointConfirmation(checkedId);
 
-    displaySelectedGroup->getPointButtonGroup()->setGroup(displaySelectedGroup->getPointButtonGroup()->getGroupName());
+    displaySelectedGroup->getPointButtonGroup()->setGroup(displaySelectedGroup->getPointButtonGroup()->getGroupName(), points);
     pointsLeftWidget->updateGroupButtonGroup();
 }
 
@@ -601,7 +601,7 @@ void PointsController::removePointFromGroupMenu(void){
                         points->removePoint(pointName);
 
                         /// updates the group menu
-                        displaySelectedGroup->getPointButtonGroup()->setGroup(pointsLeftWidget->getLastCheckedId());
+                        displaySelectedGroup->getPointButtonGroup()->setGroup(pointsLeftWidget->getLastCheckedId(), points);
 
                         /// save the changes to the file
                         savePoints(QDir::currentPath() + QDir::separator() + "points.xml");
@@ -995,7 +995,7 @@ void PointsController::removePointFromInformationMenu(void){
                         savePoints(QDir::currentPath() + QDir::separator() + "points.xml");
 
                         /// updates the group menu
-                        displaySelectedGroup->getPointButtonGroup()->setGroup(pointsLeftWidget->getLastCheckedId());
+                        displaySelectedGroup->getPointButtonGroup()->setGroup(pointsLeftWidget->getLastCheckedId(), points);
 
                         /// closes the window
                         emit backEvent();
@@ -1813,4 +1813,8 @@ QString PointsController::formatName(const QString name) const {
     if(name.size() > 0 && name.at(name.size()-1) == ' ')
         ret += " ";
     return ret;
+}
+
+void PointsController::updateBtnGroupPointsSlot(){
+    displaySelectedGroup->getPointButtonGroup()->setGroup(displaySelectedGroup->getPointButtonGroup()->getGroupName(), points);
 }
