@@ -38,4 +38,4 @@ private:
 
 };
 
-#endif // CUSTOMROBOTDIALOG_H
+#endif /// CUSTOMROBOTDIALOG_H

@@ -98,7 +98,8 @@ HEADERS += \
     View/Robots/robotsleftwidget.h \
     View/Robots/robotview.h \
     View/Settings/settingswidget.h \
-    View/TopLayout/toplayoutwidget.h
+    View/TopLayout/toplayoutwidget.h \
+    View/Map/robotpositionrecoverylistitemwidget.h
 
 
 FORMS += Controller/mainwindow.ui
@@ -182,7 +183,8 @@ SOURCES += main.cpp \
     View/Robots/robotsleftwidget.cpp \
     View/Robots/robotview.cpp \
     View/Settings/settingswidget.cpp \
-    View/TopLayout/toplayoutwidget.cpp
+    View/TopLayout/toplayoutwidget.cpp \
+    View/Map/robotpositionrecoverylistitemwidget.cpp
 
 RESOURCES += Resources/resources.qrc
 

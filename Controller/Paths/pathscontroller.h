@@ -45,7 +45,7 @@ public:
     QString getVisiblePath(void) const { return pathPainter->getVisiblePath(); }
     void setVisiblePath(const QString pathName) { pathPainter->setVisiblePath(pathName); }
 
-    void updateDisplayedPath(const QString groupName, const QString pathName, const QVector<QSharedPointer<PathPoint>>& path, const QString visiblePath) { displaySelectedPath->updatePath(groupName, pathName, path, visiblePath); }
+    void updateDisplayedPath();
 
     void enableSaveEditButton(const bool enable);
 
@@ -102,7 +102,7 @@ public:
 public slots:
     void doubleClickOnPathsGroup(const QString checkButton);
     void doubleClickOnPath(const QString pathName, const QString groupName);
-    void updateDisplayedPath(void);
+    void exhibitDisplayedPath(void);
     void setPathsGroup(const QString groupName);
 
 private slots:

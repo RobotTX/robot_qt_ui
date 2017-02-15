@@ -17,7 +17,7 @@ class ScanMapListItemWidget : public QWidget {
     Q_OBJECT
 
 public:
-    ScanMapListItemWidget(int _id, QString name, QSharedPointer<Robots> robots, QGraphicsScene *_scene);
+    ScanMapListItemWidget(const int _id, const QString name, QSharedPointer<Robots> robots, QGraphicsScene *_scene);
 
     /// Setter
     void setId(const int _id){ id = _id; }
@@ -31,14 +31,14 @@ public:
      * @param connected
      * Display an icon when the robot disconnect/reconnect
      */
-    void robotConnected(bool connected);
+    void robotConnected(const bool connected);
 
     /**
      * @brief robotScanning
      * @param scanning
      * Change the play/pause button icon and label when a robot start/stop scanning
      */
-    void robotScanning(bool scanning);
+    void robotScanning(const bool scanning);
 
     /**
      * @brief updateMap

@@ -148,10 +148,6 @@ add_executable(gobot_move_odom src/odom.cpp)
 target_link_libraries(gobot_move_odom ${catkin_LIBRARIES})
 add_dependencies(gobot_move_odom gobot_move_generate_messages_cpp)
 
-add_executable(findPoint src/findFurthestPoint.cpp)
-target_link_libraries(findPoint ${catkin_LIBRARIES})
-add_dependencies(findPoint gobot_move_generate_messages_cpp)
-
 ## Add cmake target dependencies of the executable
 ## same as for the library above
 # add_dependencies(gobot_move_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})

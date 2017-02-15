@@ -38,7 +38,7 @@ void ScanMapGraphicsItem::mousePressEvent(QGraphicsSceneMouseEvent *event){
         dragStartPosition = this->pos();
         QGraphicsPixmapItem::mousePressEvent(event);
 
-    } else if(event->button() == Qt::MidButton)
+    } else if(event->button() == Qt::RightButton)
         emit robotGoTo(event->pos().x(), event->pos().y());
 }
 
@@ -47,7 +47,6 @@ void ScanMapGraphicsItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event){
         float x = dragStartPosition.x() - this->pos().x();
         float y = dragStartPosition.y() - this->pos().y();
 
-        /// TODO connect the emit with a slot to select the robot in the list on the left
         /// we compare the start position of the drag event & the drop position
         /// if we have moved for more than 1 pixel, it's a drag, else
         if (abs(x) <= 1 && abs(y) <= 1)

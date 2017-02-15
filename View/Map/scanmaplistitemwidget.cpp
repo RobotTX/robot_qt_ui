@@ -1,4 +1,4 @@
-#include "scanmaplistitemwidget.h"
+﻿#include "scanmaplistitemwidget.h"
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 #include <QGridLayout>
@@ -105,7 +105,7 @@ ScanMapListItemWidget::ScanMapListItemWidget(int _id, QString name, QSharedPoint
     scene->addItem(pixmapItem);
 }
 
-void ScanMapListItemWidget::robotConnected(bool connected){
+void ScanMapListItemWidget::robotConnected(const bool connected){
     if(connected)
         discoIcon->hide();
     else
@@ -134,7 +134,7 @@ void ScanMapListItemWidget::scanningBtnSlot(){
     emit playScan(startingToScan, robotName);
 }
 
-void ScanMapListItemWidget::robotScanning(bool scanning){
+void ScanMapListItemWidget::robotScanning(const bool scanning){
     if(scanning){
         scanningBtn->setIcon(QIcon(":/icons/pause.png"));
         scanningLabel->setText("Scanning");

@@ -38,7 +38,7 @@ signals:
 
     /**
      * @brief robotGoTo
-     * When using the middle mouse, we tell the robot where to go
+     * When using the right mouse button, we tell the robot where to go
      */
     void robotGoTo(double, double);
 

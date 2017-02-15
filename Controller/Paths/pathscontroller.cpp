@@ -69,7 +69,7 @@ PathsController::PathsController(MainWindow *mainWindow, const QSharedPointer<Po
     foreach(QAbstractButton *button, pathGroup->getPathButtonGroup()->getButtonGroup()->buttons())
         connect(button, SIGNAL(doubleClick(QString)), mainWindow, SLOT(doubleClickOnPath(QString)));
 
-    connect(pathGroup, SIGNAL(updateDisplayedPath()), this, SLOT(updateDisplayedPath()));
+    connect(pathGroup, SIGNAL(updateDisplayedPath()), this, SLOT(exhibitDisplayedPath()));
     connect(pathGroup, SIGNAL(setPathsGroup(QString)), this, SLOT(setPathsGroup(QString)));
 
     connect(mainWindow, SIGNAL(updatePathPainter(bool)), pathPainter, SLOT(updatePathPainterSlot(bool)));
@@ -196,16 +196,11 @@ bool PathsController::deletePath(){
 
     setVisiblePath(path);
     /// resets the menu so that it reflects the creation of this new path
-    /// TODO Check that we actually need a parameter -> if it's always currentgroupname then no need
     setPathsGroup(pathCreationWidget->getCurrentGroupName());
 
     serializePaths(QDir::currentPath() + QDir::separator() + "paths.dat");
 
-    /// TODO CHeck if parameters needed
-    updateDisplayedPath(pathCreationWidget->getCurrentGroupName(),
-                        pathCreationWidget->getNameEdit()->text().simplified(),
-                        getCurrentPathFromPathPainter(),
-                        getVisiblePath());
+    updateDisplayedPath();
 
     pathPainter->updatePathPainterSlot(true);
     return already_existed;
@@ -303,7 +298,7 @@ bool PathsController::modifyGroupPathsWithEnter(QString name){
     groupsPathsWidget->getActionButtons()->getPlusButton()->setEnabled(true);
 
     groupsPathsWidget->getButtonGroup()->getModifyEdit()->hide();
-    /// TODO check that the delay caused by this function is not chiant vis a vis de l appel a leftMenu->get... in MainWindow::modifyGroupPathsWithEnter
+
     if(name.compare(groupsPathsWidget->getLastCheckedButton())){
         name_has_changed = true;
         /// Update the model
@@ -341,7 +336,7 @@ void PathsController::checkEyeButtonSlot(const QString path){
 }
 
 /// sets the eye icon properly in front of the displayed path if such path exists
-void PathsController::updateDisplayedPath(){
+void PathsController::exhibitDisplayedPath(){
     foreach(QAbstractButton* button, pathGroup->getPathButtonGroup()->getButtonGroup()->buttons()){
         if(!button->text().compare(getVisiblePath()))
             button->setIcon(QIcon(":/icons/eye.png"));
@@ -397,4 +392,11 @@ void PathsController::updatePaths(const Point &old_point, const Point &new_point
     /// saves the paths as the paths of the current configuration
     /// for paths to be saved permanently "save map" must be clicked (map menu)
     serializePaths(QDir::currentPath() + QDir::separator() + "paths.dat");
+}
+
+void PathsController::updateDisplayedPath(){
+    displaySelectedPath->updatePath(pathCreationWidget->getCurrentGroupName(),
+                                    pathCreationWidget->getNameEdit()->text().simplified(),
+                                    getCurrentPathFromPathPainter(),
+                                    getVisiblePath());
 }

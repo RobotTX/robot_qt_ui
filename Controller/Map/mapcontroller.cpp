@@ -13,6 +13,8 @@ MapController::MapController(QSharedPointer<Robots> _robots, MainWindow *mainWin
 {
     map = QSharedPointer<Map> (new Map());
 
+    loadMapConfig((QDir::currentPath() + "currentMap.txt").toStdString());
+
     scene = new QGraphicsScene();
 
     scene->setSceneRect(0, 0, 800, 600);
@@ -130,14 +132,19 @@ QImage MapController::getImageFromArray(const QByteArray array, const bool fromP
 
 void MapController::saveMapState(){
 
-    QFileInfo newMapInfo(QDir::currentPath(), "../gobot-software/currentMap.txt");
-    std::ofstream file(newMapInfo.absoluteFilePath().toStdString(), std::ios::out | std::ios::trunc);
+    std::ofstream file((QDir::currentPath() + QDir::separator() + "currentMap.txt").toStdString(), std::ios::out | std::ios::trunc);
 
     map->setMapPosition(view->pos());
     map->setZoomCoeff(graphicsView->getZoomCoeff());
 
     /// saves the current configuration into the current configuration file
     if(file){
+        qDebug() << "saveMapState called with following parameters";
+        qDebug() << "map file - height - width - centerX - centerY - zoom - originX - originY - resolution - date - id";
+        qDebug() << QString::fromStdString(map->getMapFile()) << map->getHeight() << map->getWidth() << map->getMapState().first.x() << map->getMapState().first.y()
+                 << map->getMapState().second << map->getOrigin().getX() << map->getOrigin().getY() << map->getResolution()
+                 << map->getDateTime().toString("yyyy-MM-dd-hh-mm-ss")
+                 << map->getMapId().toString();
         file << map->getMapFile() << " " << std::endl <<
                 map->getHeight() << " " << map->getWidth() << std::endl
              << map->getMapState().first.x() << " " << map->getMapState().first.y() << std::endl
@@ -183,7 +190,7 @@ bool MapController::loadMapConfig(const std::string fileName){
         return false;
 
     /// saves the configuration contained in the file <fileName> as the current configuration
-    return saveMapConfig((QDir::currentPath() + QDir::separator() + "currentMap.txt").toStdString());
+    saveMapState();
 }
 
 void MapController::updateMap(const std::string mapFile, const float resolution, const int width, const int height, const Position& origin, const QPixmap& pix, const QUuid id, const QDateTime date){
@@ -220,5 +227,3 @@ void MapController::relayPathPoint(QString name, double x, double y){
     else
         emit newMessage("You cannot create a point here because your robot cannot go there. You must click known areas of the map");
 }
-
-

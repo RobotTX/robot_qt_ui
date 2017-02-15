@@ -5,14 +5,14 @@ class QHBoxLayout;
 class CustomQGraphicsView;
 class MergeMapListWidget;
 
-#include <QWidget>
+#include <QDialog>
 #include <QGraphicsScene>
 #include "Model/Robots/robots.h"
 #include "Model/Other/position.h"
 
 #define LIST_WIDGET_HEIGHT 140
 
-class ScanMapWidget : public QWidget {
+class ScanMapWidget : public QDialog {
 
     Q_OBJECT
 

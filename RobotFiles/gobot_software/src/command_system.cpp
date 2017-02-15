@@ -426,7 +426,7 @@ bool execCommand(ros::NodeHandle n, std::vector<std::string> command){
 			if(command.size() == 1) {
 				std::cout << "(Command system) Gobot tries to recover its position" << std::endl;
 				/// starts the localisation package
-				std::string cmd = "rosrun localisationTool recover_position";
+				std::string cmd = "rosrun localisationTool isLocalised_optimized";
 				system(cmd.c_str());
 
 				/// gives some time to start the node

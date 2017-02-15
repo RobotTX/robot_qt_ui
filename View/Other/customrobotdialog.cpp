@@ -30,7 +30,6 @@ CustomRobotDialog::CustomRobotDialog(QWidget *parent): QDialog(parent)
     passwordEdit = new CustomLineEdit("......", this);
     passwordEdit->setEchoMode(QLineEdit::Password);
     form->addRow(passwordLabel, passwordEdit);
-    //connect(passwordEdit, SIGNAL(clickSomewhere(QString))
 
     cancelButton = new QPushButton("Cancel", this);
     saveButton = new QPushButton("Save", this);

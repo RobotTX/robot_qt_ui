@@ -58,7 +58,7 @@ void PointsController::initializeMenus(MainWindow* mainWindow,
     createPointWidget->hide();
 
 
-    // TODO the 2 next lines of codes are causing a warning about the layout
+    /// TODO the 2 next lines of codes are causing a warning about the layout
     /// to display the information relative to a point
     displaySelectedPoint = new DisplaySelectedPoint(mainWindow, robots, points, map);
     displaySelectedPoint->hide();

@@ -15,7 +15,8 @@
 #include "View/Map/teleopwidget.h"
 
 ScanMapWidget::ScanMapWidget(QSharedPointer<Robots> _robots, QWidget* parent)
-    : QWidget(parent), robots(_robots), mapSize(QSize()), resolution(-1){
+    : QDialog(parent), robots(_robots), mapSize(QSize()), resolution(-1){
+
     setAttribute(Qt::WA_DeleteOnClose);
     setMouseTracking(true);
     layout = new QHBoxLayout(this);
@@ -26,13 +27,13 @@ ScanMapWidget::ScanMapWidget(QSharedPointer<Robots> _robots, QWidget* parent)
     layout->addWidget(graphicsView);
 
     resize(800, 600);
-    show();
 
     /// We center the window on the desktop
     QRect screenGeometry = QApplication::desktop()->screenGeometry();
     int x = (screenGeometry.width() - width()) / 2;
     int y = (screenGeometry.height() - height()) / 2;
     move(x, y);
+
 }
 
 void ScanMapWidget::initializeMenu(){
@@ -204,7 +205,6 @@ void ScanMapWidget::saveSlot(){
             image = croppedImageToMapImage(image);
             image.save("/home/m-a/Desktop/2.pgm");
 
-            /// TODO what does it mean ?
             /// If we got a resolution proceed, else we don't save
             if(resolution != -1){
                 qDebug() << "ScanMapWidget::saveSlot final origin in pixel :" << resolution << -image.width()*resolution/2;
@@ -329,7 +329,7 @@ void ScanMapWidget::receivedScanMapSlot(QString robotName, QImage map, double _r
     mapSize = map.size();
     if(_resolution != -1)
         resolution = _resolution;
-
+    /// looks for the right item in the list to update the map of the corresponding robot
     for(int i = 0; i < listWidget->count(); i++){
         ScanMapListItemWidget* item = static_cast<ScanMapListItemWidget*>(listWidget->itemWidget(listWidget->item(i)));
         if(item->getRobotName().compare(robotName) == 0)

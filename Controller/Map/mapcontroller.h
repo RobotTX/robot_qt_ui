@@ -55,12 +55,11 @@ public:
 
     QImage getImageFromArray(const QByteArray array, const bool fromPgm);
 
-    bool saveMapConfig(const std::string fileName);
+
+    bool loadMapConfig(const std::string file);
 
     void updateMapFile(const std::string file) { map->setMapFile(file); }
     void saveMapToFile(const QString file) { map->saveToFile(file); }
-
-    bool loadMapConfig(const std::string file);
 
     void moveMap(const QPointF& pos) { view->setPos(pos); }
 
@@ -80,6 +79,7 @@ private slots:
 
 public slots:
     void saveMapState();
+    bool saveMapConfig(const std::string fileName);
 
 signals:
     void pathPointSignal(QString, double, double);

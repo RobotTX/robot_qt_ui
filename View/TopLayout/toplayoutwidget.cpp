@@ -22,14 +22,14 @@ TopLayoutWidget::TopLayoutWidget(QMainWindow* parent): QWidget(parent){
     layout->addWidget(menuBtn);
     connect(menuBtn, SIGNAL(clicked()), parent, SLOT(openLeftMenu()));
 
-    saveMapBtn = new CustomPushButton(QIcon(":/icons/load_map.png"), "", this, CustomPushButton::ButtonType::TOP);
+    saveMapBtn = new CustomPushButton(QIcon(":/icons/save_map.png"), "", this, CustomPushButton::ButtonType::TOP);
     saveMapBtn->setIconSize(s_icon_size);
     saveMapBtn->setFocusPolicy(Qt::FocusPolicy::NoFocus);
     layout->addWidget(saveMapBtn);
     saveMapBtn->setToolTip("Save the configuration of the map");
     saveMapBtn->setShortcut(QKeySequence("Ctrl+K"));
 
-    centerBtn = new CustomPushButton(QIcon(":/icons/save_map.png"), "", this, CustomPushButton::ButtonType::TOP);
+    centerBtn = new CustomPushButton(QIcon(":/icons/load_map.png"), "", this, CustomPushButton::ButtonType::TOP);
     centerBtn->setToolTip("Restore the configuration of the map");
     centerBtn->setIconSize(s_icon_size);
     centerBtn->setFocusPolicy(Qt::FocusPolicy::NoFocus);

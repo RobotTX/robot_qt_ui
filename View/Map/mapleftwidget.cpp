@@ -13,7 +13,11 @@ MapLeftWidget::MapLeftWidget(QWidget* parent, const MainWindow *mainWindow): QWi
     CustomPushButton* loadBtn = new CustomPushButton(QIcon(":/icons/download.png"), "Load a map", this);
 
     /// this button allows a user to save a particular state for the map (point in the center of its screen and zoom)
-    CustomPushButton* saveStateBtn = new CustomPushButton(QIcon(":/icons/save_map.png"), "Save the state of the map", this);
+    saveStateBtn = new CustomPushButton(QIcon(":/icons/save_map.png"), "Save the state of the map", this);
+
+    /// this button allows a user to restore the state of its map (resetting the zoom and center as it was)
+    restoreStateBtn = new CustomPushButton(QIcon(":/icons/load_map.png"), "Restore the state of the map", this);
+
     CustomPushButton* scanBtn = new CustomPushButton(QIcon(":/icons/map.png"), "Scan a map", this);
     scanBtn->setToolTip("Scan a new map");
     CustomPushButton* editBtn = new CustomPushButton(QIcon(":/icons/edit.png"), "Edit the map", this);
@@ -31,6 +35,7 @@ MapLeftWidget::MapLeftWidget(QWidget* parent, const MainWindow *mainWindow): QWi
     layout->addWidget(saveBtn);
     layout->addWidget(loadBtn);
     layout->addWidget(saveStateBtn);
+    layout->addWidget(restoreStateBtn);
     layout->addWidget(scanBtn);
     layout->addWidget(editBtn);
     layout->addWidget(mergeBtn);

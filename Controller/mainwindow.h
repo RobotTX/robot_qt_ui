@@ -133,6 +133,7 @@ signals:
     void updatePath(const QString groupName, const QString pathName);
     void stopAllCmd();
     void tutorialSignal(const bool, const QString);
+    void startedRecovering(QString, bool);
 
 public slots:
     void setGraphicItemsState(const GraphicItemState state);
@@ -225,6 +226,8 @@ private slots:
     void saveEditMapSlot();
     void mergeMapSlot();
     void saveMergeMapSlot(double resolution, Position origin, QImage image, QString fileName);
+    void startRecoveringSlot(QString robotName);
+    void stopRecoveringRobotsSlot(QStringList robotList);
 
     void testFunctionSlot();
     void activateLaserSlot(QString name, bool);

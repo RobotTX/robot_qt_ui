@@ -117,7 +117,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     /// button to save the zoom and the position of the map
     connect(topLayoutController->getTopLayout()->getSaveButton(), SIGNAL(clicked()), mapController, SLOT(saveMapState()));
 
-
     /// settings of the application (battery level warning threshold, which map to choose between the map of the robot and the map of the app, etc...
     settingsController = new SettingsController(this);
 
@@ -147,7 +146,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
     ///  ------------------------------------------------------- ROBOTS CONNECTS ----------------------------------------------------------
 
-    connect(leftMenu->getMapLeftWidget()->getSaveBtn(), SIGNAL(clicked()), mapController, SLOT(saveMapState()));
+    connect(leftMenu->getMapLeftWidget()->getSaveStateBtn(), SIGNAL(clicked()), mapController, SLOT(saveMapState()));
+    connect(leftMenu->getMapLeftWidget()->getRestoreStateBtn(), SIGNAL(clicked()), this, SLOT(centerMap()));
 
     connect(this, SIGNAL(newBatteryLevel(int)), this, SLOT(updateBatteryLevel(int)));
 
@@ -233,11 +233,11 @@ void MainWindow::playScanSlot(bool scan, QString robotName){
                             emit robotScanning(scan, robotName, false);
                     break;
                     case QMessageBox::Cancel:
-                        // Cancel was clicked
+                        /// Cancel was clicked
                         emit robotScanning(scan, robotName, false);
                     break;
                     default:
-                        // should never be reached
+                        Q_UNREACHABLE();
                     break;
                 }
             }
@@ -1097,8 +1097,55 @@ void MainWindow::openPositionRecoveryWidget() {
                         "* You can also click the map to set your own goals"
                         "* When the position has been recovered this window will automatically close", "recover_robot_position");
 
+        connect(robotPositionRecoveryWidget, SIGNAL(teleopCmd(QString, int)), this, SLOT(teleopCmdSlot(QString, int)));
+        connect(robotPositionRecoveryWidget, SIGNAL(startRecovering(QString)), this, SLOT(startRecoveringSlot(QString)));
+        connect(robotPositionRecoveryWidget, SIGNAL(robotGoTo(QString, double, double)), this, SLOT(robotGoToSlot(QString, double, double)));
+        connect(robotPositionRecoveryWidget, SIGNAL(stopRecoveringRobots(QStringList)), this, SLOT(stopRecoveringRobotsSlot(QStringList)));
+
+        connect(this, SIGNAL(startedRecovering(QString, bool)), robotPositionRecoveryWidget, SLOT(startedRecoveringSlot(QString, bool)));
+        connect(this, SIGNAL(receivedScanMap(QString, QImage, double)), robotPositionRecoveryWidget, SLOT(receivedMapSlot(QString, QImage, double)));
+        /*
+        connect(this, SIGNAL(robotDisconnected(QString)), scanMapWidget, SLOT(robotDisconnectedSlot(QString)));
+        connect(this, SIGNAL(robotReconnected(QString)), scanMapWidget, SLOT(robotReconnectedSlot(QString)));
+        connect(this, SIGNAL(robotScanning(bool,QString,bool)), scanMapWidget, SLOT(robotScanningSlot(bool,QString,bool)));
+        connect(robotsController, SIGNAL(scanRobotPos(QString, double, double, double)), scanMapWidget, SLOT(scanRobotPosSlot(QString, double, double, double)));
+*/
+        /*
+        connect(scanMapWidget, SIGNAL(playScan(bool, QString)), this, SLOT(playScanSlot(bool, QString)));
+
+        connect(this, SIGNAL(robotDisconnected(QString)), scanMapWidget, SLOT(robotDisconnectedSlot(QString)));
+        connect(this, SIGNAL(robotReconnected(QString)), scanMapWidget, SLOT(robotReconnectedSlot(QString)));
+        connect(this, SIGNAL(robotScanning(bool,QString,bool)), scanMapWidget, SLOT(robotScanningSlot(bool,QString,bool)));
+
+        connect(robotsController, SIGNAL(scanRobotPos(QString, double, double, double)), scanMapWidget, SLOT(scanRobotPosSlot(QString, double, double, double)));
+        */
     } else
         robotPositionRecoveryWidget->activateWindow();
+}
+
+void MainWindow::startRecoveringSlot(QString robotName){
+    qDebug() << "MainWindow::startRecoveringSlot called" << robotName;
+
+    QPointer<RobotView> robotView = robotsController->getRobots()->getRobotViewByName(robotName);
+    if(robotView){
+        if(!commandController->sendCommand(robotView->getRobot(), QString("v"), "", "", "", true))
+            emit startedRecovering(robotName, false);
+    } else
+        emit startedRecovering(robotName, false);
+}
+
+
+void MainWindow::stopRecoveringRobotsSlot(QStringList listRobot){
+    qDebug() << "MainWindow::stopRecoveringRobotsSlot";
+
+    for(int i = 0; i < listRobot.count(); i++){
+        QPointer<RobotView> robotView = robotsController->getRobots()->getRobotViewByName(listRobot.at(i));
+        if(robotView && robotView->getRobot()){
+            if(!commandController->sendCommand(robotView->getRobot(), QString("w")))
+                qDebug() << "MainWindow::stopRecoveringRobotsSlot Could not stop the robot" << listRobot.at(i) << "to scan, stopped trying after 5 attempts";
+        } else
+            qDebug() << "MainWindow::stopRecoveringRobotsSlot Trying to stop the robot" << listRobot.at(i) << "to scan, but the RobotView could not be found, the robot is probably disconnected";
+    }
 }
 
 /**********************************************************************************************************************************/
@@ -1145,19 +1192,17 @@ void MainWindow::saveMap(QString fileName){
         if(fileName.indexOf(".pgm", fileName.length()-4) != -1)
             fileName = fileName.mid(0, fileName.length()-4);
 
-        mapController->saveMapState();
-
         topLayoutController->setLabel(TEXT_COLOR_INFO, "The current configuration of the map has been saved");
 
         QFileInfo mapFileInfo(static_cast<QDir> (fileName), "");
-        QFileInfo fileInfo(QDir::currentPath(), "../gobot-software/mapConfigs/" + mapFileInfo.fileName() + ".config");
-        qDebug() << fileInfo.absoluteFilePath();
+        QString filePath(QDir::currentPath() + QDir::separator() + "mapConfigs" + QDir::separator() + mapFileInfo.fileName() + ".config");
+        qDebug() << filePath;
 
         mapController->updateMapFile(fileName.toStdString() + ".pgm");
 
-        mapController->saveMapConfig((QDir::currentPath() + QDir::separator() + "currentMap.txt").toStdString());
+        mapController->saveMapState();
 
-        assert(mapController->saveMapConfig(fileInfo.absoluteFilePath().toStdString()));
+        mapController->saveMapConfig(filePath.toStdString());
 
         /// saves the new configuration to the map configuration file
         const QString pointsFile = fileName + "_points.xml";
@@ -1177,7 +1222,6 @@ void MainWindow::saveMap(QString fileName){
 
         for(int i = 0; i < robotsController->getRobots()->getRobotsVector().size(); i++)
             robotsController->getRobots()->getRobotsVector().at(i)->getRobot()->sendNewMap(mapController->getMap());
-
     }
 }
 
@@ -1206,10 +1250,10 @@ void MainWindow::loadMapBtnEvent(){
             fileNameWithoutExtension = fileName.mid(0, fileName.length()-4);
 
         QFileInfo mapFileInfo(static_cast<QDir> (fileNameWithoutExtension), "");
-        QFileInfo fileInfo(QDir::currentPath(), "../gobot-software/mapConfigs/" + mapFileInfo.fileName() + ".config");
-        qDebug() << fileInfo.absoluteFilePath() << "map to load";
+        QString filePath(QDir::currentPath() + QDir::separator() +  "mapConfigs" + QDir::separator() + mapFileInfo.fileName() + ".config");
+        qDebug() << filePath << "map to load";
         /// if we are able to find the configuration then we load the map
-        if(mapController->loadMapConfig(fileInfo.absoluteFilePath().toStdString())){
+        if(mapController->loadMapConfig(filePath.toStdString())){
 
             for(int i = 0; i < robotsController->getRobots()->getRobotsVector().size(); i++)
                 robotsController->getRobots()->getRobotsVector().at(i)->getRobot()->sendNewMap(mapController->getMap());
@@ -1376,8 +1420,9 @@ void MainWindow::scanMapSlot(){
         connect(this, SIGNAL(robotScanning(bool,QString,bool)), scanMapWidget, SLOT(robotScanningSlot(bool,QString,bool)));
         connect(this, SIGNAL(receivedScanMap(QString,QImage,double)), scanMapWidget, SLOT(receivedScanMapSlot(QString,QImage,double)));
         connect(robotsController, SIGNAL(scanRobotPos(QString, double, double, double)), scanMapWidget, SLOT(scanRobotPosSlot(QString, double, double, double)));
-
+        scanMapWidget->exec();
     } else
+        /// sets the focus on this window
         scanMapWidget->activateWindow();
 }
 
@@ -1580,7 +1625,6 @@ void MainWindow::editPathSlot(QString groupName, QString pathName){
 }
 
 void MainWindow::displayGroupPaths(){
-    /// TODO if can bedone inside controller
     qDebug() << "MainWindow::displayGroupPaths called";
     switchFocus(pathsController->getGroupPathsChecked(),
                 pathsController->getPathGroupDisplayed(), MainWindow::WidgetType::GROUP_OF_PATHS);
@@ -1694,8 +1738,6 @@ void MainWindow::saveGroupPaths(QString name){
         pathsController->enableGroupsPathsWidgetPlusButtonOnly();
 
         topLayoutController->enableLayout(true);
-        /// TODO check if next line needed
-        //leftMenu->getGroupsPathsWidget()->getActionButtons()->getPlusButton()->setEnabled(true);
     }
     else
         topLayoutController->setLabelDelay(TEXT_COLOR_DANGER, "You cannot choose : " + name + " as a new name for your group because another group already has this name", 4000);
@@ -1759,7 +1801,6 @@ void MainWindow::deletePath(){
 }
 
 void MainWindow::displayPathOnMap(const bool display){
-    /// TODO check if can be done inside controller
     qDebug() << "MainWindow::displayPathOnMap called";
     /// to hide the path drawn by the robot path painter
     pathsController->getPathCreationWidget()->resetPath();
@@ -1802,12 +1843,10 @@ void MainWindow::editPath(){
 }
 
 void MainWindow::doubleClickOnPath(QString pathName){
-    /// TODO check if can be done inside controller
     QString groupName = lastWidgets.at(lastWidgets.size()-1).first.second;
     qDebug() << "MainWindow::displayPath called" << groupName << pathName;
     switchFocus(pathName, pathsController->getDisplaySelectedPath(), MainWindow::WidgetType::PATH);
     pathsController->doubleClickOnPath(pathName, groupName);
-
 }
 
 void MainWindow::sendPathSelectedRobotSlot(const QString groupName, const QString pathName){
@@ -1893,7 +1932,6 @@ void MainWindow::setMessageModifGroupPaths(int code){
 void MainWindow::displayAssignedPath(QString groupName, QString pathName){
 
     bool foundFlag(true);
-    /// TODO check if param needed
     pathsController->getPathPainter()->setCurrentPath(pathsController->getPath(groupName, pathName, foundFlag), pathName);
     robotsController->getEditSelectedRobotWidget()->updatePathsMenu(false);
     assert(foundFlag);
@@ -2506,8 +2544,8 @@ QString MainWindow::prepareCommandPath(const Paths::Path &path) const {
 
 void MainWindow::testFunctionSlot(){
     qDebug() << "MainWindow::testFunctionSlot called";
-    scanMapSlot();
-    //openPositionRecoveryWidget();
+    //scanMapSlot();
+    openPositionRecoveryWidget();
 }
 
 void MainWindow::switchFocus(const QString name, QWidget* widget, const MainWindow::WidgetType type){
@@ -2944,6 +2982,7 @@ void MainWindow::commandDoneNewHome(bool success, QString robotName, int id, QSt
                 home->getPoint()->setHome(Point::HOME);
 
                 /// saves the position of the new home in the corresponding file
+                /// TODO CHANGE HERE IF U WANT NEW HOME TO WORK
                 QFileInfo homeFileInfo(QDir::currentPath(), "../gobot-software/robotsController->getRobots()_homes/" + robotsController->getSelectedRobot()->getRobot()->getName());
                 std::ofstream homeFile(homeFileInfo.absoluteFilePath().toStdString(), std::ios::out | std::ios::trunc);
                 if(homeFile){

@@ -18,11 +18,14 @@ public:
     MapLeftWidget(QWidget* parent, const MainWindow* mainWindow);
 
     CustomPushButton* getSaveBtn(void) const { return saveBtn; }
-
+    CustomPushButton* getSaveStateBtn(void) const { return saveStateBtn; }
+    CustomPushButton* getRestoreStateBtn(void) const { return restoreStateBtn; }
 
 private:
     QVBoxLayout* layout;
     CustomPushButton* saveBtn;
+    CustomPushButton* saveStateBtn;
+    CustomPushButton* restoreStateBtn;
 };
 
 #endif // MAPLEFTWIDGET_H
