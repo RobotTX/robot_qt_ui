@@ -98,6 +98,7 @@ void goalReached(){
 
 bool stopPathService(std_srvs::Empty::Request &req, std_srvs::Empty::Response &res){
 	std::cout << "(PlayPath) stopPathService called" << std::endl;
+	/// TODO if action server is up -> cancel
 	ac->cancelAllGoals();
 	currentGoal.x = -1;
 	stage = 0;

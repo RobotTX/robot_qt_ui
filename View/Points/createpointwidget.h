@@ -24,26 +24,20 @@ class CreatePointWidget: public QWidget{
     Q_OBJECT
 public:
 
-    /// to display an appropriate message to the end user when he tries to create a point
-    enum Error { ContainsSemicolon, EmptyName, AlreadyExists, NoError };
-
-    CreatePointWidget(MainWindow* mainWindow, QSharedPointer<Points> points);
+    CreatePointWidget(MainWindow* mainWindow);
 
     void setSelectedPoint(QSharedPointer<PointView> _pointView);
 
     QLabel* getPosXLabel(void) const { return posXLabel; }
     QLabel* getPosYLabel(void) const { return posYLabel; }
     CustomLineEdit* getNameEdit(void) const { return nameEdit; }
+    CustomPushButton* getSaveBtn(void) const { return saveBtn; }
     TopLeftMenu* getActionButtons(void) const { return actionButtons; }
     QComboBox* getGroupBox(void) const { return groupBox; }
     QLabel* getGroupLabel(void) const { return groupLabel; }
 
     /// called when a new group is created to add it to the box
-    void updateGroupBox();
-
-private:
-    /// this prevents a user to type names like " a                stupidname       " by removing extra spaces
-    QString formatName(const QString name) const;
+    void updateGroupBox(QSharedPointer<Points> points);
 
 protected:
     void keyPressEvent(QKeyEvent* event);
@@ -53,8 +47,6 @@ protected:
 signals:
     /// emitted when the 'save' button is clicked
     void pointSaved(QString, double, double, QString);
-    /// emitted every time the input field changes to allow (no error) or not the creation of the point with the indicated name
-    void invalidName(QString, CreatePointWidget::Error);
     /// emitted after the user clicks the plus button to explain him what to do to create his point
     void setMessageTop(QString, QString);
 
@@ -63,10 +55,7 @@ private slots:
      * @brief saveEditSelecPointBtnEvent
      * emit a signal to save the point
      */
-    void saveEditSelecPointBtnEvent();
-    /// check whether or not a point is valid
-    /// a point is valid if it's not empty, already taken and if it does not contain ";" or "}" or "pathpoint" (case insensitive)
-    int checkPointName(void);
+    void saveEditSelecPointBtnEvent(void);
     /// shows the widgets necessary to the creation of a point, cancel and save buttons and checkbox
     void showGroupLayout(void);
 
@@ -79,20 +68,16 @@ public slots:
 
 private:
 
-    QHBoxLayout* cancelSaveLayout;
-    QVBoxLayout* layout;
-    QSharedPointer<PointView> pointView;
     CustomLineEdit* nameEdit;
-    QLabel* posXLabel;
-    QLabel* posYLabel;
-    QSharedPointer<Points> points;
     CustomPushButton* saveBtn;
     CustomPushButton* cancelBtn;
     QComboBox* groupBox;
     QLabel* groupLabel;
-    SpaceWidget* separator;
-    TopLeftMenu* actionButtons;
     QLabel* messageCreationLabel;
+    QLabel* posXLabel;
+    QLabel* posYLabel;
+    QSharedPointer<PointView> pointView;
+    TopLeftMenu* actionButtons;
 };
 
 #endif /// CreatePointWidget_H

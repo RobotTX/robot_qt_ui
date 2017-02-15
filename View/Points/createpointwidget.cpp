@@ -19,10 +19,10 @@
 #include "View/Points/pointview.h"
 
 
-CreatePointWidget::CreatePointWidget(MainWindow *mainWindow, QSharedPointer<Points> _points):
-    QWidget(mainWindow), points(_points){
+CreatePointWidget::CreatePointWidget(MainWindow *mainWindow):
+    QWidget(mainWindow){
 
-    layout = new QVBoxLayout(this);
+    QVBoxLayout* layout = new QVBoxLayout(this);
     QVBoxLayout* topLayout = new QVBoxLayout();
 
     actionButtons = new TopLeftMenu(this);
@@ -50,19 +50,9 @@ CreatePointWidget::CreatePointWidget(MainWindow *mainWindow, QSharedPointer<Poin
     groupLabel = new QLabel("Group : ", this);
     groupLabel->hide();
     groupBox = new QComboBox(this);
-
-    /// to insert the groups in the box
-    QMapIterator<QString, QSharedPointer<QVector<QSharedPointer<PointView>>>> i(*(points->getGroups()));
-    int j = 0;
-    while (i.hasNext()) {
-        i.next();
-        if(i.key().compare(TMP_GROUP_NAME) != 0 && i.key().compare(PATH_GROUP_NAME) != 0)
-            groupBox->insertItem(points->count()-1-j, i.key());
-    }
-
-    /// to set the default group as default
-    groupBox->setCurrentIndex(0);
     groupBox->hide();
+
+    updateGroupBox(mainWindow->getPointsController()->getPoints());
 
     topLayout->addWidget(groupLabel);
     topLayout->addWidget(groupBox);
@@ -70,7 +60,7 @@ CreatePointWidget::CreatePointWidget(MainWindow *mainWindow, QSharedPointer<Poin
 
     /// Add Cancel and Save buttons
 
-    cancelSaveLayout = new QHBoxLayout();
+    QHBoxLayout* cancelSaveLayout = new QHBoxLayout();
 
     saveBtn = new CustomPushButton("Save", this, CustomPushButton::ButtonType::LEFT_MENU, "center");
     cancelBtn = new CustomPushButton("Cancel", this, CustomPushButton::ButtonType::LEFT_MENU, "center");
@@ -85,12 +75,9 @@ CreatePointWidget::CreatePointWidget(MainWindow *mainWindow, QSharedPointer<Poin
     connect(actionButtons->getPlusButton(), SIGNAL(clicked(bool)), this, SLOT(showGroupLayout()));
 
     connect(saveBtn, SIGNAL(clicked()), this, SLOT(saveEditSelecPointBtnEvent()));
-    connect(nameEdit, SIGNAL(textEdited(QString)), this, SLOT(checkPointName()));
+    connect(nameEdit, SIGNAL(textEdited(QString)), mainWindow->getPointsController(), SLOT(checkPointName(QString)));
 
     connect(cancelBtn, SIGNAL(clicked(bool)), this, SLOT(hideGroupLayout(bool)));
-
-    /// to display appropriate messages when a user attemps to create a point
-    connect(this, SIGNAL(invalidName(QString, CreatePointWidget::Error)), mainWindow, SLOT(setMessageCreationPoint(QString, CreatePointWidget::Error)));
 
     connect(this, SIGNAL(setMessageTop(QString, QString)), mainWindow->getTopLayoutController(), SLOT(setLabel(QString, QString)));
 
@@ -118,59 +105,9 @@ void CreatePointWidget::setSelectedPoint(QSharedPointer<PointView> _pointView){
 }
 
 /// emits signal when a user clicks save after editing a point
-void CreatePointWidget::saveEditSelecPointBtnEvent(){
+void CreatePointWidget::saveEditSelecPointBtnEvent(void){
     qDebug() << "CreatePointWidget::saveEditSelecPointBtnEvent called";
     emit pointSaved(groupBox->currentText(), posXLabel->text().right(posXLabel->text().length()-4).toDouble(), posYLabel->text().right(posYLabel->text().length()-4).toDouble(), nameEdit->text().simplified());
-}
-
-/// to check that the name given to a point is valid ( a point with the same name does not already exist, it is not empty and does not contain ';' '{' or '}'
-int CreatePointWidget::checkPointName(void){
-    qDebug() << "checkPointName called";
-
-    nameEdit->setText(formatName(nameEdit->text()));
-    if(nameEdit->text().simplified().contains(QRegularExpression("[;{}]")) || nameEdit->text().contains("pathpoint", Qt::CaseInsensitive)){
-        saveBtn->setToolTip("The name of your point cannot contain the characters \";\" and } or the pattern <pathpoint> ");
-        saveBtn->setEnabled(false);
-        emit invalidName(TEXT_COLOR_WARNING, Error::ContainsSemicolon);
-        return 0;
-    }
-    if(!nameEdit->text().simplified().compare("")){
-        qDebug() << " I am empty ";
-        /// cannot add a point with no name
-        saveBtn->setToolTip("The name of your point cannot be empty");
-        saveBtn->setEnabled(false);
-        emit invalidName(TEXT_COLOR_WARNING, Error::EmptyName);
-        return 1;
-    }
-
-    QMapIterator<QString, QSharedPointer<QVector<QSharedPointer<PointView>>>> i(*(points->getGroups()));
-    while (i.hasNext()) {
-        /// determines whether or not the current name is a valid one (not already the name of another point or group)
-        bool valid(true);
-        i.next();
-        if(!i.key().compare(nameEdit->text().simplified(), Qt::CaseInsensitive)){
-            qDebug() << "This is already the name of a group" ;
-            valid = false;
-        }
-        for(int j = 0; j < i.value()->size(); j++){
-            if(i.value()->at(j)->getPoint()->getName().compare(nameEdit->text().simplified(), Qt::CaseInsensitive) == 0){
-                qDebug() << nameEdit->text() << " already exists";
-                valid = false;
-            }
-        }
-
-        if(!valid){
-            saveBtn->setEnabled(false);
-            /// to explain the user why he cannot add its point as it is
-            saveBtn->setToolTip("A point or group with this name already exists, please choose another name for your point");
-            emit invalidName(TEXT_COLOR_WARNING, Error::AlreadyExists);
-            return 2;
-        }
-    }
-    saveBtn->setToolTip("");
-    saveBtn->setEnabled(true);
-    emit invalidName(TEXT_COLOR_INFO, Error::NoError);
-    return 3;
 }
 
 /// shows the widgets related to the choice of a group and the saving of a point
@@ -219,7 +156,7 @@ void CreatePointWidget::hideGroupLayout(const bool pointAdded) {
 }
 
 /// updates the group box when a new group is created
-void CreatePointWidget::updateGroupBox(){
+void CreatePointWidget::updateGroupBox(QSharedPointer<Points> points){
     //qDebug() << "updateGroupBox called";
     groupBox->clear();
     int index(0);
@@ -240,40 +177,8 @@ void CreatePointWidget::updateGroupBox(){
 void CreatePointWidget::keyPressEvent(QKeyEvent* event){
     qDebug() << "CreatePointWidget keyPressEvent called";
     /// this is the enter key
-    if(!event->text().compare("\r")){
-        switch(checkPointName()){
-        case 0:
-            emit invalidName(TEXT_COLOR_DANGER, Error::ContainsSemicolon);
-            break;
-        case 1:
-            emit invalidName(TEXT_COLOR_DANGER, Error::EmptyName);
-            break;
-        case 2:
-            emit invalidName(TEXT_COLOR_DANGER, Error::AlreadyExists);
-            break;
-        case 3:
-            emit pointSaved(groupBox->currentText(), posXLabel->text().right(posXLabel->text().length()-4).toDouble(), posYLabel->text().right(posYLabel->text().length()-4).toDouble(), nameEdit->text().simplified());
-            break;
-        default:
-            Q_UNREACHABLE();
-            qDebug() << "if you got here it's probably that u forgot to implement the behavior for one or more error codes";
-            break;
-        }
-    }
-}
-
-QString CreatePointWidget::formatName(const QString name) const {
-    qDebug() << "formatName called";
-    QString ret("");
-    QStringList nameStrList = name.split(" ", QString::SkipEmptyParts);
-    for(int i = 0; i < nameStrList.size(); i++){
-        if(i > 0)
-            ret += " ";
-        ret += nameStrList.at(i);
-    }
-    if(name.size() > 0 && name.at(name.size()-1) == ' ')
-        ret += " ";
-    return ret;
+    if(!event->text().compare("\r") && saveBtn->isEnabled())
+        emit pointSaved(groupBox->currentText(), posXLabel->text().right(posXLabel->text().length()-4).toDouble(), posYLabel->text().right(posYLabel->text().length()-4).toDouble(), nameEdit->text().simplified());
 }
 
 void CreatePointWidget::showEvent(QShowEvent* event){

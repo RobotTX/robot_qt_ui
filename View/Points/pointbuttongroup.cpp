@@ -10,65 +10,66 @@
 #include "View/Points/pointview.h"
 #include "View/Other/stylesettings.h"
 
-PointButtonGroup::PointButtonGroup(QSharedPointer<Points> _points, const QString _groupName
-                                   , QWidget* parent): QWidget(parent), points(_points){
+PointButtonGroup::PointButtonGroup(QSharedPointer<Points> points, const QString _groupName
+                                   , QWidget* parent): QWidget(parent){
     layout = new QVBoxLayout(this);
 
     groupName = _groupName;
-    buttonGroup = new QButtonGroup(this);
+    btnGroup = new QButtonGroup(this);
     layout->setAlignment(Qt::AlignTop);
-    createButtons();
+    updatePoints(points);
 }
 
-void PointButtonGroup::setGroup(const QString _groupName){
+void PointButtonGroup::setGroup(const QString _groupName, QSharedPointer<Points> points){
     qDebug() << "PointButtonGroup::setGroup called";
-    deleteButtons();
     groupName = _groupName;
-    createButtons();
+    updatePoints(points);
     setCheckable(true);
     emit updateConnectionsRequest();
 }
 
-void PointButtonGroup::createButtons(){
+void PointButtonGroup::updatePoints(QSharedPointer<Points> points){
+    if(points->isAGroup(groupName)){
 
-    if(points->isAGroup(groupName) && points->getGroups()->value(groupName) && points->getGroups()->value(groupName)->size() > 0){
-        QSharedPointer<QVector<QSharedPointer<PointView>>> group = points->getGroups()->value(groupName);
-        for(int j = 0; j < group->size(); j++){
-            QSharedPointer<Point> currentPoint = group->at(j)->getPoint();
+        /// Remove buttons
+        QList<QAbstractButton*> listBtn = btnGroup->buttons();
+        for(int i = 0; i < listBtn.size(); i++){
+            btnGroup->removeButton(listBtn.at(i));
+            layout->removeWidget(listBtn.at(i));
+            delete listBtn.at(i);
+        }
 
-            CustomPushButton* pointButton = new CustomPushButton(currentPoint->getName(), this);
+        /// Add buttons
+        if(points->getGroups()->value(groupName) && points->getGroups()->value(groupName)->size() > 0){
+            QSharedPointer<QVector<QSharedPointer<PointView>>> group = points->getGroups()->value(groupName);
+            for(int j = 0; j < group->size(); j++){
+                QSharedPointer<Point> currentPoint = group->at(j)->getPoint();
 
-            buttonGroup->addButton(pointButton);
-            layout->addWidget(pointButton);
-            if(group->at(j)->isVisible())
-                pointButton->setIcon(QIcon(":/icons/eye_point.png"));
-            else
-                pointButton->setIcon(QIcon(":/icons/space_point.png"));
-            pointButton->setIconSize(xl_icon_size);
+                CustomPushButton* pointButton = new CustomPushButton(currentPoint->getName(), this);
+
+                btnGroup->addButton(pointButton);
+                layout->addWidget(pointButton);
+                if(group->at(j)->isVisible())
+                    pointButton->setIcon(QIcon(":/icons/eye_point.png"));
+                else
+                    pointButton->setIcon(QIcon(":/icons/space_point.png"));
+                pointButton->setIconSize(xl_icon_size);
+            }
         }
     }
 }
 
-void PointButtonGroup::deleteButtons(void){
-    qDebug() << "PointButtonGroup::deleteButtons called";
-    while(QLayoutItem* item = layout->takeAt(0)){
-        if(QWidget* button = item->widget())
-            delete button;
-        delete item;
-    }
-}
-
 void PointButtonGroup::setCheckable(const bool checkable){
-    foreach(QAbstractButton* button, buttonGroup->buttons())
+    foreach(QAbstractButton* button, btnGroup->buttons())
         button->setCheckable(checkable);
 }
 
 void PointButtonGroup::uncheck(void){
     /// little trick to uncheck all buttons because the class doesn't provide a function to do it
-    buttonGroup->setExclusive(false);
-    if(buttonGroup->checkedButton())
-        buttonGroup->checkedButton()->setChecked(false);
-    buttonGroup->setExclusive(true);
+    btnGroup->setExclusive(false);
+    if(btnGroup->checkedButton())
+        btnGroup->checkedButton()->setChecked(false);
+    btnGroup->setExclusive(true);
 }
 
 QAbstractButton* PointButtonGroup::getButtonByName(const QString name) const {

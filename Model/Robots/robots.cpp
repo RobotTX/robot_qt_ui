@@ -117,5 +117,5 @@ QPointer<RobotView> Robots::findRobotUsingTmpPointInPath(const QSharedPointer<Po
 /// deselects the robot on the map (changing its pixmap)
 void Robots::deselect(){
     for(int i = 0; i < robotsVector.size(); i++)
-        robotsVector[i]->setSelected(false);
+        robotsVector.at(i)->setSelected(false);
 }

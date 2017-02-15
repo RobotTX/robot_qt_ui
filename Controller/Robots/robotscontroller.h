@@ -27,6 +27,7 @@ public:
 
     void initializeMenus(MainWindow* mainWindow);
     void launchServer(MainWindow* mainWindow);
+    void updateRobotsLeftWidget(void);
 
 signals:
     void stopUpdateRobotsThread();

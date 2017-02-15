@@ -59,7 +59,7 @@ public:
     void uncheckViewPathSelectedRobot(const int robotNb = -1);
 
     /// uncheck all view path buttons
-    void uncheckAllViewPath();
+    void uncheckAllViewPath(void);
 
     /// to create a QString to display from the path
     QString pathToStr(const QVector<QSharedPointer<PathPoint> > &path, const int stage = 0);

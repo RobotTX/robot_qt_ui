@@ -1,4 +1,6 @@
 #include "helper.h"
+#include <QTime>
+#include <QCoreApplication>
 
 namespace Helper {
 

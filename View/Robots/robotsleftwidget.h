@@ -29,24 +29,14 @@ public:
     int getLastCheckedId(void) const { return lastCheckedId; }
 
     ///Setters
-    void setRobots(MainWindow *mainWindow);
     void setLastCheckedId(const int id) { lastCheckedId = id; }
 
-    /**
-     * @brief updateRobots
-     * @param robots
-     * Update the list of robots when needed (e.g. : when a robot's name is edited)
-     */
-    void updateRobots(MainWindow *mainWindow);
-    void unSelectAllRobots();
+    void unSelectAllRobots(void);
 
 protected:
     void showEvent(QShowEvent *);
 
 private:
-    QVBoxLayout* layout;
-    QSharedPointer<Robots> robots;
-    QVBoxLayout* robotsLayout;
     RobotBtnGroup* btnGroup;
     CustomScrollArea* scrollArea;
     TopLeftMenu* actionButtons;

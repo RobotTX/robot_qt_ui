@@ -428,7 +428,7 @@ void BottomLayout::uncheckViewPathSelectedRobot(const int robotNb){
     }
 }
 
-void BottomLayout::uncheckAllViewPath(){
+void BottomLayout::uncheckAllViewPath(void){
     QList<QAbstractButton*> list = viewPathRobotBtnGroup->buttons();
      for(int i =0; i < list.size(); i++){
          if(list.at(i)->isChecked())

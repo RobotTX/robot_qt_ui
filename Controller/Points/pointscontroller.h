@@ -10,6 +10,7 @@ class Robots;
 class Map;
 class PathPoint;
 class MapController;
+class QAbstractButton;
 
 #include <QObject>
 #include <QSharedPointer>
@@ -18,6 +19,9 @@ class MapController;
 class PointsController : public QObject {
     Q_OBJECT
 public:
+    /// to display an appropriate message to the end user when he tries to create a point
+    enum PointNameError { ContainsSemicolon, EmptyName, AlreadyExists, NoError };
+
     PointsController(MainWindow* mainWindow);
     void initializePoints(void);
     void initializeMenus(MainWindow *mainWindow, const QSharedPointer<Robots> &robots, const QSharedPointer<Map> &_map);
@@ -60,6 +64,15 @@ private:
     void askForDeleteDefaultGroupPointConfirmation(const QString index);
     void askForDeletePointConfirmation(QString pointName);
 
+public slots:
+    /**
+      * @brief checkGroupName
+      * @param name
+      * @return int (error code)
+      * checks whether the name is valid (not empty and not taken)
+      */
+     int checkGroupName(QString name);
+
 private slots:
     void replacePoint(int id, QString name);
     void plusGroupBtnEvent(void);
@@ -83,8 +96,24 @@ private slots:
     void createGroup(QString name);
     void modifyGroupWithEnter(QString name);
     void modifyGroupAfterClick(QString name);
-    void reestablishConnectionsGroups();
-    void reestablishConnectionsPoints();
+    void reestablishConnectionsGroups(void);
+    void reestablishConnectionsPoints(void);
+    void resetPointViewsSlot(void);
+    void checkPointName(QString name);
+    void updateBtnGroupPointsSlot(void);
+    void updateGroupButtonGroupSlot(void);
+    void enableButtonsPointsLeftWidget(QAbstractButton*);
+
+protected:
+    /// this prevents a user to type names like " a                stupidname       " by removing extra spaces
+    QString formatName(const QString name) const;
+
+    /**
+     * @brief sendMessageEditGroup
+     * @param code
+     * so that an appropriate message can be displayed while a group is being edited
+     */
+    void sendMessageEditGroup(int code);
 
 signals:
     void setMessageTop(QString msgType, QString msg);
@@ -92,6 +121,10 @@ signals:
     void backEvent();
     void setSelectedTmpPoint(void);
     void setSelectedRobot(QPointer<RobotView> robotView);
+    /// emitted every time the input field changes to allow (no error) or not the creation of the point with the indicated name
+    void invalidName(QString, PointsController::PointNameError);
+    /// to reset the path point views on the map
+    void resetPathPointViews();
 
 private:
     QSharedPointer<Points> points;

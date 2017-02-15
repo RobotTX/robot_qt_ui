@@ -191,6 +191,7 @@ bool MapController::loadMapConfig(const std::string fileName){
 
     /// saves the configuration contained in the file <fileName> as the current configuration
     saveMapState();
+    return true;
 }
 
 void MapController::updateMap(const std::string mapFile, const float resolution, const int width, const int height, const Position& origin, const QPixmap& pix, const QUuid id, const QDateTime date){

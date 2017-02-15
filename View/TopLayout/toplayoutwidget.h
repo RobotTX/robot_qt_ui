@@ -3,9 +3,9 @@
 
 class QHBoxLayout;
 class CustomPushButton;
+class MainWindow;
 
 #include <QWidget>
-#include <QMainWindow>
 #include <QLabel>
 
 class TopLayoutWidget : public QWidget{
@@ -13,7 +13,7 @@ class TopLayoutWidget : public QWidget{
 
 public:
 
-    TopLayoutWidget(QMainWindow* parent = 0);
+    TopLayoutWidget(MainWindow* parent = 0);
 
     QString getLabelText(void) const { return label->text(); }
     QString getLabelPerm(void) const { return labelPerm->text(); }
@@ -50,29 +50,27 @@ public:
      * @param delayTime
      * sets a message with a delay
      */
-    void setLabelDelay(const QString msgType, const QString msg, int delayTime);
+    void setLabelDelay(const QString msgType, const QString msg, const int delayTime);
 
     /**
-     * @brief delay
-     * @param ms
-     * introduces a delay of <ms> milliseconds
+     * @brief setRobotNoHomeLabel
+     * @param robots_string
+     * sets a label to remember the user to set a home for its robot(s)
      */
-    void delay(const int ms);
-
-    void addRobotWithoutHome(QString robotName);
-    void removeRobotWithoutHome(QString robotName);
     void setRobotNoHomeLabel(const QString robots_string);
 
+protected:
+    void timerSlot();
+
 private:
-    QHBoxLayout* layout;
-    QLabel* label;
-    QLabel* labelPerm;
     CustomPushButton* menuBtn;
     CustomPushButton* closeBtn;
     CustomPushButton* centerBtn;
     CustomPushButton* settingBtn;
     CustomPushButton* saveMapBtn;
     CustomPushButton* testButton;
+    QLabel* label;
+    QLabel* labelPerm;
 };
 
 #endif // TOPLAYOUT_H

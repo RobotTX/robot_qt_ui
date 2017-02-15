@@ -29,7 +29,6 @@ class SettingsController;
 class TopLayoutController;
 class MapController;
 class PathsController;
-class PointsController;
 class RobotPositionRecovery;
 class RobotsController;
 
@@ -40,11 +39,11 @@ class RobotsController;
 #include <QSettings>
 #include <QUuid>
 #include <ctime>
+#include "Controller/Points/pointscontroller.h"
 #include "Model/Paths/paths.h"
 #include "Model/Points/points.h"
 #include "Model/Points/point.h"
 #include "Model/Other/graphicitemstate.h"
-#include "View/Points/createpointwidget.h"
 #include "View/TopLayout/toplayoutwidget.h"
 #include "View/Robots/robotview.h"
 
@@ -92,8 +91,6 @@ public:
     int openConfirmMessage(const QString);
     void clearNewMap();
     void resetFocus();
-    /// to sleep for ms milliseconds
-    static void delay(const int ms);
     void updateAllPaths(const Point &old_point, const Point &new_point);
     void clearPath(const int robotNb);
 
@@ -141,6 +138,7 @@ public slots:
     void setEnableAll(bool enable, GraphicItemState state = GraphicItemState::NO_STATE, int noReturn = -1);
 
 private slots:
+    void timerSlot();
     void setTemporaryMessageTop(const QString type, const QString message, const int ms);
     void sendPathSelectedRobotSlot(const QString groupName, const QString pathName);
     void mapReceivedSlot(const QByteArray mapArray, int who, QString mapId, QString mapDate, QString resolution, QString originX, QString originY, QString ipAddress);
@@ -173,15 +171,14 @@ private slots:
     void moveEditedPathPointSlot(void);
     void doubleClickOnPathsGroup(QString checkedButton);
     void enableReturnAndCloseButtons(void);
-    void doubleClickOnRobot(QString checkedId);
+    void doubleClickOnRobotSlot(QString robotName);
     void setMessageCreationPath(QString message);
     void updateEditedPathPoint(double x, double y);
     void centerMap(void);
-    void setMessageCreationPoint(QString type, CreatePointWidget::Error error);
+    void setMessageCreationPoint(QString type, PointsController::PointNameError error);
     void viewPathSelectedRobot(int robotNb, bool checked);
     void closeSlot();
     void showHome();
-    void showEditHome();
     void showAllHomes(void);
     void backEvent();
     void robotIsAliveSlot(QString hostname, QString ip, QString ssid, int stage, int battery);
@@ -240,6 +237,7 @@ private slots:
 
     /// sends a signal to the settings controller in order to keep track of the messages we need to show the user
     void relayTutorialSignal(const bool messageNeeded);
+    void setMessageCreationPathTimerSlot();
 
 protected:
     void closeEvent(QCloseEvent *event);

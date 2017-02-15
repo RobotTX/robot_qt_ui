@@ -38,7 +38,7 @@ SettingsWidget::SettingsWidget(const Settings& settings, QWidget *parent): QWidg
      * in real time, he has to check the box and vice-versa
      * */
 
-    feedBackLabel = new QLabel("Laser feedback", this);
+    QLabel* feedBackLabel = new QLabel("Laser feedback", this);
     topLayout->addWidget(feedBackLabel);
 
     robotsLaserButtonGroup = new QButtonGroup(this);
@@ -63,7 +63,7 @@ SettingsWidget::SettingsWidget(const Settings& settings, QWidget *parent): QWidg
      * when a robot connects, if it already contains a map the application user has
      * to decide if he wants to use the map stored on the robot or on the application
      * */
-    chooseMapLabel = new QLabel("Choice of the map", this);
+    QLabel* chooseMapLabel = new QLabel("Choice of the map", this);
     chooseMapBox = new QComboBox(this);
     chooseMapBox->insertItem(ALWAYS_ASK, "Always ask which map I want to use");
     chooseMapBox->insertItem(ALWAYS_NEW, "Always use the newest map");
@@ -72,7 +72,7 @@ SettingsWidget::SettingsWidget(const Settings& settings, QWidget *parent): QWidg
     chooseMapBox->insertItem(ALWAYS_APPLICATION, "Always use the map of this application");
     chooseMapBox->setCurrentIndex(settings.getSettingMapChoice());
 
-    batteryThresholdLabel = new QLabel("Battery level warning trigger (value of the remaining battery in % under which you receive a warning)", this);
+    QLabel* batteryThresholdLabel = new QLabel("Battery level warning trigger (value of the remaining battery in % under which you receive a warning)", this);
     batteryThresholdSlider = new QSlider(Qt::Horizontal, this);
     batteryThresholdSlider->setRange(0, 100);
     batteryThresholdSlider->setTickPosition(QSlider::TicksBelow);

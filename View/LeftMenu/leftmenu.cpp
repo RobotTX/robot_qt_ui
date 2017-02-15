@@ -29,8 +29,7 @@
 #include "View/Paths/pathbuttongroup.h"
 #include "View/Other/customscrollarea.h"
 
-LeftMenu::LeftMenu(MainWindow* mainWindow, QSharedPointer<Points> const& points,
-                   const QSharedPointer<Robots> &robots, const QSharedPointer<Map> &_map)
+LeftMenu::LeftMenu(MainWindow* mainWindow)
     : QWidget(mainWindow){
 
     QVBoxLayout* leftLayout  = new QVBoxLayout();
@@ -62,13 +61,14 @@ LeftMenu::LeftMenu(MainWindow* mainWindow, QSharedPointer<Points> const& points,
     leftLayout->addWidget(mainWindow->getPointsController()->getDisplaySelectedGroup());
 
     /// The first menu with 3 buttons : Robots, Points, Map
-    leftMenuWidget = new LeftMenuWidget(this, points);
+    leftMenuWidget = new LeftMenuWidget(this);
 
     connect(leftMenuWidget->getRobotBtn(), SIGNAL(clicked()), mainWindow, SLOT(robotBtnEvent()));
     connect(leftMenuWidget->getPointBtn(), SIGNAL(clicked()), mainWindow, SLOT(pointBtnEvent()));
     connect(leftMenuWidget->getMapBtn(), SIGNAL(clicked()), mainWindow, SLOT(mapBtnEvent()));
     connect(leftMenuWidget->getPathBtn(), SIGNAL(clicked()), mainWindow, SLOT(pathBtnEvent()));
     connect(leftMenuWidget, SIGNAL(resetPathPointViews()), mainWindow, SLOT(resetPathPointViewsSlot()));
+    connect(leftMenuWidget, SIGNAL(resetPointViews()), mainWindow->getPointsController(), SLOT(resetPointViewsSlot()));
     leftMenuWidget->hide();
     leftLayout->addWidget(leftMenuWidget);
 

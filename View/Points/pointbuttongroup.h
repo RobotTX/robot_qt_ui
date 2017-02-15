@@ -21,50 +21,51 @@ class PointButtonGroup: public QWidget
     Q_OBJECT
 public:
     PointButtonGroup(QSharedPointer<Points> points, const QString groupName, QWidget *parent);
-    ~PointButtonGroup(){}
 
-    QButtonGroup* getButtonGroup(void) const { return buttonGroup; }
+    /// Getters
+    QButtonGroup* getButtonGroup(void) const { return btnGroup; }
     QAbstractButton* getButtonByName(const QString name) const;
     int getButtonIdByName(const QString name) const;
     QString getGroupName(void) const { return groupName; }
 
-public:
-    void deleteButtons(void);
     /**
      * @brief setGroup
      * @param _groupName
      * Displays the points of the group whose name is groupName
      */
-    void setGroup(const QString _groupName);
+    void setGroup(const QString _groupName, QSharedPointer<Points> points);
+
     /**
      * @brief setCheckable
      * @param checkable
      * sets the QButtonGroup to be checkable
      */
     void setCheckable(const bool checkable);
+
     /**
      * @brief uncheck
      * unchecks all buttons
      */
     void uncheck(void);
-    /**
-     * @brief createButtons
-     * creates the buttons
-     */
-    void createButtons();
 
-private:
-    QVBoxLayout* layout;
-    QButtonGroup* buttonGroup;
-    QString groupName;
-    QSharedPointer<Points> points;
+    /**
+     * @brief updatePoints
+     * remove and create the buttons
+     */
+    void updatePoints(QSharedPointer<Points> points);
+
+protected:
+    void resizeEvent(QResizeEvent *event);
 
 signals:
     /// emitted when the group is recreated and connections must be reestablished
     void updateConnectionsRequest();
 
-protected:
-    void resizeEvent(QResizeEvent *event);
+private:
+    QVBoxLayout* layout;
+    QButtonGroup* btnGroup;
+    QString groupName;
+
 };
 
 #endif // POINTBUTTONGROUP_H

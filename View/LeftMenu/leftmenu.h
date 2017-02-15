@@ -26,8 +26,7 @@ class CustomPushButton;
 class LeftMenu: public QWidget{
     Q_OBJECT
 public:
-    LeftMenu(MainWindow* mainWindow, const QSharedPointer<Points> &points, QSharedPointer<Robots> const& robots,
-             QSharedPointer<Map> const& _map);
+    LeftMenu(MainWindow* mainWindow);
 
     /// Getters
     LeftMenuWidget* getLeftMenuWidget(void) const {return leftMenuWidget;}

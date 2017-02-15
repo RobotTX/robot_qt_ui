@@ -68,6 +68,7 @@ signals:
     void resetPathPointViews();
     /// emitted when the delete key is pressed
     void removePoint();
+    void updateBtnGroupPoints();
 
 private:
 

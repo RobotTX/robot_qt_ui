@@ -25,9 +25,9 @@
 #include "View/Other/customlineedit.h"
 #include "View/Robots/robotview.h"
 
-EditSelectedRobotWidget::EditSelectedRobotWidget(MainWindow* mainWindow):
-    QWidget(mainWindow)
-{
+EditSelectedRobotWidget::EditSelectedRobotWidget(MainWindow* mainWindow)
+    : QWidget(mainWindow){
+
     /// creates a dialog widget to modify the robot's info and centers it on the main window
     robotDialog = new CustomRobotDialog(this);
 
@@ -36,15 +36,13 @@ EditSelectedRobotWidget::EditSelectedRobotWidget(MainWindow* mainWindow):
     connect(robotDialog->getSaveButton(), SIGNAL(clicked()), mainWindow, SLOT(saveRobotModifications()));
     connect(this, SIGNAL(sendPathSelectedRobot(QString, QString)), mainWindow, SLOT(sendPathSelectedRobotSlot(QString, QString)));
 
-    layout = new QVBoxLayout(this);
-    robotView = NULL;
+    QVBoxLayout* layout = new QVBoxLayout(this);
+    robotView = Q_NULLPTR;
     home = QSharedPointer<PointView>();
-    pathChanged = false;
-    editing = false;
 
     CustomScrollArea* scrollArea = new CustomScrollArea(this, true, true);
     QVBoxLayout * inLayout = new QVBoxLayout(scrollArea);
-    inWidget = new QWidget(scrollArea);
+    QWidget* inWidget = new QWidget(scrollArea);
 
     inWidget->setLayout(inLayout);
 
@@ -139,8 +137,6 @@ EditSelectedRobotWidget::EditSelectedRobotWidget(MainWindow* mainWindow):
 void EditSelectedRobotWidget::setSelectedRobot(QPointer<RobotView> const _robotView){
     qDebug() << "EditSelectedRobotWidget::setSelectedRobot" << _robotView->getRobot()->getName();
 
-    pathChanged = false;
-
     robotView = _robotView;
 
     /// When a robot is selected, the informations are updated
@@ -200,7 +196,7 @@ void EditSelectedRobotWidget::clearPath(){
     deletePathBtn->hide();
 }
 
-void EditSelectedRobotWidget::updatePathsMenu(MainWindow* mainWindow){
+void EditSelectedRobotWidget::updatePathsMenu(const MainWindow* mainWindow){
     pathsMenu->clear();
     QString assignedPath = mainWindow->getRobotsController()->getSelectedRobot()->getRobot()->getPathName();
     QString groupAssignedPath = mainWindow->getRobotsController()->getSelectedRobot()->getRobot()->getGroupPathName();
@@ -223,11 +219,11 @@ void EditSelectedRobotWidget::updatePathsMenu(MainWindow* mainWindow){
     }
 }
 
-void EditSelectedRobotWidget::updateAndOpenPathsMenu(){
+void EditSelectedRobotWidget::updateAndOpenPathsMenu(void){
     emit updatePathsMenu(true);
 }
 
-void EditSelectedRobotWidget::openPathsMenu(){
+void EditSelectedRobotWidget::openPathsMenu(void){
     if(!pathsMenu->actions().empty())
         pathsMenu->exec(QCursor::pos());
     else {
@@ -245,11 +241,11 @@ void EditSelectedRobotWidget::assignPath(QAction *action){
 }
 
 
-void EditSelectedRobotWidget::updateAndOpenHomeMenu(){
+void EditSelectedRobotWidget::updateAndOpenHomeMenu(void){
     emit updateHomeMenu(true);
 }
 
-void EditSelectedRobotWidget::openHomeMenu(){
+void EditSelectedRobotWidget::openHomeMenu(void){
     if(!homeMenu->actions().empty())
         homeMenu->exec(QCursor::pos());
     else {
@@ -271,7 +267,7 @@ void EditSelectedRobotWidget::assignHome(QAction *action){
     emit newHome(homeName);
 }
 
-void EditSelectedRobotWidget::updateHomeMenu(QSharedPointer<Points::Groups> groups){
+void EditSelectedRobotWidget::updateHomeMenu(const QSharedPointer<Points::Groups> groups){
     homeMenu->clear();
     QMapIterator<QString, QSharedPointer<QVector<QSharedPointer<PointView>>>> i(*groups);
     while (i.hasNext()) {
@@ -280,10 +276,11 @@ void EditSelectedRobotWidget::updateHomeMenu(QSharedPointer<Points::Groups> grou
             if(i.value()->count() > 0){
                 QMenu *group = homeMenu->addMenu("&" + i.key());
                 for(int j = 0; j < i.value()->count(); j++){
-                    group->addAction(i.value()->at(j)->getPoint()->getName());
-                    if(i.value()->at(j)->getPoint()->isHome()){
+                    QSharedPointer<PointView> pointView = i.value()->at(j);
+                    group->addAction(pointView->getPoint()->getName());
+                    if(pointView->getPoint()->isHome()){
                         group->actions().at(j)->setEnabled(false);
-                        if(!i.value()->at(j)->getPoint()->getRobotName().compare(robotView->getRobot()->getName())){
+                        if(!pointView->getPoint()->getRobotName().compare(robotView->getRobot()->getName())){
                             group->actions().at(j)->setCheckable(true);
                             group->actions().at(j)->setChecked(true);
                         }
@@ -294,22 +291,24 @@ void EditSelectedRobotWidget::updateHomeMenu(QSharedPointer<Points::Groups> grou
     }
 }
 
-void EditSelectedRobotWidget::editRobot(){
+void EditSelectedRobotWidget::editRobot(void){
     qDebug() << "EditSelectedRobotWidget::editRobot called";
     //robotDialog->move(mainWindow->pos().x() + mainWindow->width()/2-robotDialog->width()/2,
     //                  mainWindow->pos().y() + mainWindow->height()/2-robotDialog->height()/2);
-    robotDialog->getNameEdit()->setText(robotView->getRobot()->getName());
-    robotDialog->getSSIDEdit()->setText(robotView->getRobot()->getWifi());
-    robotDialog->getPasswordEdit()->setText("......");
+    resetRobotDialog();
     robotDialog->exec();
 }
 
-void EditSelectedRobotWidget::cancelRobotModificationsSlot(){
+void EditSelectedRobotWidget::cancelRobotModificationsSlot(void){
     qDebug() << "EditSelectedRobotWidget::cancelRobotModificationsSlot called";
+    resetRobotDialog();
+    robotDialog->close();
+}
+
+void EditSelectedRobotWidget::resetRobotDialog(void){
     robotDialog->getNameEdit()->setText(robotView->getRobot()->getName());
     robotDialog->getSSIDEdit()->setText(robotView->getRobot()->getWifi());
     robotDialog->getPasswordEdit()->setText("......");
-    robotDialog->close();
 }
 
 void EditSelectedRobotWidget::resizeEvent(QResizeEvent *event){

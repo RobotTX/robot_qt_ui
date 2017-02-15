@@ -19,7 +19,6 @@
 #include "Controller/TopLayout/toplayoutcontroller.h"
 #include "Controller/Map/mapcontroller.h"
 #include "Controller/Paths/pathscontroller.h"
-#include "Controller/Points/pointscontroller.h"
 #include "Controller/Robots/robotscontroller.h"
 #include "Model/Paths/pathpoint.h"
 #include "Model/Map/map.h"
@@ -66,6 +65,10 @@
 #include "View/Map/scanmapwidget.h"
 #include "View/Map/drawobstacles.h"
 #include "View/Map/robotpositionrecovery.h"
+#include "View/Points/createpointwidget.h"
+
+
+#include <QTimer>
 
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow) {
@@ -120,7 +123,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     /// settings of the application (battery level warning threshold, which map to choose between the map of the robot and the map of the app, etc...
     settingsController = new SettingsController(this);
 
-    leftMenu = new LeftMenu(this, pointsController->getPoints(), robotsController->getRobots(), mapController->getMap());
+    leftMenu = new LeftMenu(this);
 
     lastWidgets =  QList<QPair<QPair<QWidget*,QString>, MainWindow::WidgetType>>();
     bottom->addWidget(leftMenu);
@@ -139,7 +142,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
 
     ///  ------------------------------------------------------- PATHS CONNECTS ----------------------------------------------------------
-
 
     /// to add a path point when we click on the map
     connect(mapController, SIGNAL(pathPointSignal(QString,double,double)), pathsController->getPathCreationWidget(), SLOT(addPathPointSlot(QString, double, double)));
@@ -170,6 +172,20 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     mainLayout->setSpacing(0);
 
     robotsController->launchServer(this);
+
+
+
+    if(TESTING){
+        QTimer* timer = new QTimer(this);
+        timer->setInterval(2000);
+        timer->setSingleShot(true);
+        connect(timer, SIGNAL(timeout()), this, SLOT(timerSlot()));
+        timer->start();
+    }
+}
+
+void MainWindow::timerSlot(){
+    robotIsAliveSlot("Robot 1", "192.168.4.212", "GTDollar Account 2.4", 0, 70);
 }
 
 MainWindow::~MainWindow(){
@@ -674,38 +690,6 @@ void MainWindow::showHome(){
 
         pointView->show();
     }
-
-    if(!robotsController->getEditSelectedRobotWidget()->isEditing()){
-        bottomLayout->uncheckAllViewPath();
-        if(pathsController->getPathPainter()->getOldPath().size() > 0){
-            robotsController->getEditSelectedRobotWidget()->setPath(pathsController->getPathPainter()->getOldPath());
-
-            pathsController->getPathPainter()->clearOldPath();
-        } else {
-            QPointer<RobotView> robotView =  robotsController->getRobots()->getRobotViewByName(robotsController->getSelectedRobot()->getRobot()->getName());
-            /// If the robot has a path, we display it, otherwise we show the button to add the path
-            if(robotView->getRobot()->getPath().size() > 0){
-                bottomLayout->getViewPathRobotBtnGroup()->button(robotsController->getRobots()->getRobotId(robotsController->getSelectedRobot()->getRobot()->getName()))->setChecked(true);
-
-                robotsController->getEditSelectedRobotWidget()->getPathWidget()->setPath(robotView->getRobot()->getPath());
-                robotsController->getEditSelectedRobotWidget()->getPathWidget()->show();
-
-                robotsController->getEditSelectedRobotWidget()->setPath(robotView->getRobot()->getPath());
-            } else {
-                qDebug() << "MainWindow::showHome I don't have a path !";
-                robotsController->getEditSelectedRobotWidget()->getPathWidget()->hide();
-
-                robotsController->getEditSelectedRobotWidget()->clearPath();
-            }
-        }
-    }
-}
-
-void MainWindow::showEditHome(){
-    showHome();
-    if(!robotsController->getEditSelectedRobotWidget()->isEditing()){
-        robotsController->getEditSelectedRobotWidget()->setEditing(true);
-    }
 }
 
 void MainWindow::clearPath(const int robotNb){
@@ -742,7 +726,6 @@ void MainWindow::clearPath(const int robotNb){
 
     if(robotsController->getEditSelectedRobotWidget()->isVisible()){
         robotsController->getEditSelectedRobotWidget()->setSelectedRobot(robotsController->getRobots()->getRobotsVector().at(robotNb));
-        robotsController->getEditSelectedRobotWidget()->setPathChanged(true);
         robotsController->getEditSelectedRobotWidget()->clearPath();
         robotsController->getEditSelectedRobotWidget()->updatePathsMenu(false);
         robotsController->getEditSelectedRobotWidget()->getPathWidget()->hide();
@@ -776,12 +759,12 @@ void MainWindow::robotIsAliveSlot(QString hostname, QString ip, QString ssid, in
         robotView = QPointer<RobotView>(new RobotView(robot, mapController->getMapView()));
         connect(robotView, SIGNAL(setSelectedSignal(QPointer<RobotView>)), this, SLOT(setSelectedRobot(QPointer<RobotView>)));
         connect(robotView, SIGNAL(updateLaser()), this, SLOT(updateLaserSlot()));
-        robotView->setPosition(robotsController->getRobots()->getRobotsVector().count()*100+100, robotsController->getRobots()->getRobotsVector().count()*100+100);
+        robotView->setPosition(mapController->getMapWidth()/2 + robotsController->getRobots()->getRobotsVector().count()*100, mapController->getMapHeight()/2 + robotsController->getRobots()->getRobotsVector().count()*100);
         robotView->setParentItem(mapController->getMapView());
         robotsController->getRobots()->add(robotView);
         robot->launchWorkers(this);
         bottomLayout->addRobot(robotView);
-        robotsController->getRobotsLeftWidget()->updateRobots(this);
+        robotsController->updateRobotsLeftWidget();
 
 
         /// Check if connection by usb
@@ -891,8 +874,8 @@ void MainWindow::robotIsDeadSlot(QString hostname, QString ip){
 
         robotView->deleteLater();
 
-        /// update robotsController->getRobotsLeftWidget()
-        robotsController->getRobotsLeftWidget()->updateRobots(this);
+        /// update robotsLeftWidget
+        robotsController->updateRobotsLeftWidget();
 
         /// bottomLayout
         bottomLayout->removeRobot(id);
@@ -910,7 +893,15 @@ void MainWindow::robotIsDeadSlot(QString hostname, QString ip){
 
 void MainWindow::setMessageCreationPath(QString message){
     topLayoutController->setLabel(TEXT_COLOR_DANGER, message);
-    delay(2500);
+
+    /// Timer used to delete the message after a given delay
+    QTimer* timer = new QTimer(this);
+    timer->setInterval(2500);
+    timer->setSingleShot(true);
+    connect(timer, SIGNAL(timeout()), this, SLOT(setMessageCreationPathTimerSlot()));
+}
+
+void MainWindow::setMessageCreationPathTimerSlot(){
     if(robotsController->getSelectedRobot())
         topLayoutController->setLabel(TEXT_COLOR_INFO, "Click white points of the map to add new points to the path of " +
                   robotsController->getSelectedRobot()->getRobot()->getName() + "\nAlternatively you can click the \"+\" button to add an existing point to your path"
@@ -919,6 +910,7 @@ void MainWindow::setMessageCreationPath(QString message){
         topLayoutController->setLabel(TEXT_COLOR_INFO, "Click white points of the map to add new points to your path\n"
                                        "Alternatively you can click the \"+\" button to add an existing point to your path"
                                        "\nYou can re-order the points in the list by dragging them");
+
 }
 
 void MainWindow::updateEditedPathPoint(double x, double y){
@@ -1080,13 +1072,13 @@ void MainWindow::updateBatteryLevel(const int level){
 }
 
 /**
- * @brief MainWindow::doubleClickOnRobot
+ * @brief MainWindow::doubleClickOnRobotSlot
  * @param id
  * does the same as clicking on a robot and then on the eye button
  */
-void MainWindow::doubleClickOnRobot(QString id){
-    qDebug() << "double click on robot" << id;
-    setSelectedRobot(robotsController->getRobots()->getRobotViewByName(id));
+void MainWindow::doubleClickOnRobotSlot(QString robotName){
+    qDebug() << "double click on robot" << robotName;
+    setSelectedRobot(robotsController->getRobots()->getRobotViewByName(robotName));
 }
 
 void MainWindow::openPositionRecoveryWidget() {
@@ -1280,7 +1272,7 @@ void MainWindow::loadMapBtnEvent(){
             pointsController->savePoints(QDir::currentPath() + QDir::separator() + "points.xml");
 
             /// updates the group box so that new points can be added
-            pointsController->getCreatePointWidget()->updateGroupBox();
+            pointsController->getCreatePointWidget()->updateGroupBox(pointsController->getPoints());
 
             /// saves the imported paths in the current paths file
             pathsController->serializePaths(QDir::currentPath() + QDir::separator() + "paths.dat");
@@ -1526,26 +1518,26 @@ void MainWindow::enableReturnAndCloseButtons(){
     topLayoutController->enableLayout(true);
 }
 
-void MainWindow::setMessageCreationPoint(QString type, CreatePointWidget::Error error){
+void MainWindow::setMessageCreationPoint(QString type, PointsController::PointNameError error){
     qDebug() << "MainWindow::setMessageCreation point called from mainwindow";
     switch(error){
-    case CreatePointWidget::Error::NoError:
-        topLayoutController->setLabel(type, "Click save or press ENTER to save this point");
+        case PointsController::PointNameError::NoError:
+            topLayoutController->setLabel(type, "Click save or press ENTER to save this point");
         break;
-    case CreatePointWidget::Error::ContainsSemicolon:
-        topLayoutController->setLabel(type, "You cannot create a point with a name that contains a semicolon, a curly bracket or the pattern \"pathpoint\"");
+        case PointsController::PointNameError::ContainsSemicolon:
+            topLayoutController->setLabel(type, "You cannot create a point with a name that contains a semicolon, a curly bracket or the pattern \"pathpoint\"");
         break;
-    case CreatePointWidget::Error::EmptyName:
-        topLayoutController->setLabel(type, "You cannot create a point with an empty name");
+        case PointsController::PointNameError::EmptyName:
+            topLayoutController->setLabel(type, "You cannot create a point with an empty name");
         break;
-    case CreatePointWidget::Error::AlreadyExists:
-        topLayoutController->setLabel(type, "You cannot create a point with this name because a point with the same name already exists");
+        case PointsController::PointNameError::AlreadyExists:
+            topLayoutController->setLabel(type, "You cannot create a point with this name because a point with the same name already exists");
         break;
-    default:
-        Q_UNREACHABLE();
-        qDebug() << "Should never be here, if you do get here however, check that you have not added a new error code and forgotten to add it in the cases afterwards";
+        default:
+            Q_UNREACHABLE();
+            qDebug() << "Should never be here, if you do get here however, check that you have not added a new error code and forgotten to add it in the cases afterwards";
         break;
-    }
+        }
 }
 
 
@@ -1683,9 +1675,7 @@ void MainWindow::deleteGroupPaths(){
         pathsController->updateGroupsPaths();
         /// if the displayed path was among the paths of this group, we hide it as we delete it
         emit resetPath();
-        topLayoutController->setLabel(TEXT_COLOR_SUCCESS, "You have successfully deleted the group of paths \"" + groupPaths + "\"");
-        delay(4000);
-        topLayoutController->setLabel(TEXT_COLOR_NORMAL, "");
+        topLayoutController->setLabelDelay(TEXT_COLOR_SUCCESS, "You have successfully deleted the group of paths \"" + groupPaths + "\"", 4000);
         break;
     }
     case QMessageBox::StandardButton::Cancel:
@@ -2055,7 +2045,7 @@ void MainWindow::clearNewMap(){
     pathsController->clearPaths();
 
     /// Update the left menu displaying the list of groups and buttons
-    pointsController->getPointsLeftWidget()->updateGroupButtonGroup();
+    pointsController->getPointsLeftWidget()->getGroupButtonGroup()->updateButtons(pointsController->getPoints());
 
     for(int i = 0; i < robotsController->getRobots()->getRobotsVector().size(); i++){
         robotsController->getRobots()->getRobotsVector().at(i)->getRobot()->clearPath();
@@ -2064,12 +2054,6 @@ void MainWindow::clearNewMap(){
             robotsController->getRobots()->getRobotsVector().at(i)->getRobot()->setHome(QSharedPointer<PointView>());
         }
     }
-}
-
-void MainWindow::delay(const int ms){
-    QTime dieTime= QTime::currentTime().addMSecs(ms);
-    while (QTime::currentTime() < dieTime)
-        QCoreApplication::processEvents(QEventLoop::AllEvents, 100);
 }
 
 void MainWindow::setEnableAll(bool enable, GraphicItemState state, int noReturn){
@@ -2093,9 +2077,7 @@ void MainWindow::settingBtnSlot(){
 }
 
 void MainWindow::setTemporaryMessageTop(const QString type, const QString message, const int ms){
-    topLayoutController->setLabel(type, message);
-    delay(ms);
-    topLayoutController->setLabel(TEXT_COLOR_NORMAL, "");
+    topLayoutController->setLabelDelay(type, message, ms);
 }
 
 void MainWindow::updateRobotInfo(QString robotName, QString robotInfo){
@@ -2813,7 +2795,7 @@ void MainWindow::commandDoneNewName(bool success, QString name){
         robotsController->getEditSelectedRobotWidget()->getNameLabel()->setText(name);
         robotsController->getEditSelectedRobotWidget()->getRobotInfoDialog()->getNameEdit()->setText(name);
 
-        robotsController->getRobotsLeftWidget()->updateRobots(this);
+        robotsController->updateRobotsLeftWidget();
         robotDialog->getNameEdit()->setText(robotsController->getSelectedRobot()->getRobot()->getName());
         topLayoutController->setLabel(TEXT_COLOR_SUCCESS, "You have successfully updated" + name);
     } else

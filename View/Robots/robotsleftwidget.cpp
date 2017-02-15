@@ -12,9 +12,8 @@
 
 RobotsLeftWidget::RobotsLeftWidget(MainWindow* mainWindow)
     : QWidget(mainWindow), lastCheckedId(-1){
-    robots = mainWindow->getRobotsController()->getRobots();
 
-    layout = new QVBoxLayout(this);
+    QVBoxLayout* layout = new QVBoxLayout(this);
     scrollArea = new CustomScrollArea(this, true);
 
     actionButtons = new TopLeftMenu(this);
@@ -27,33 +26,21 @@ RobotsLeftWidget::RobotsLeftWidget(MainWindow* mainWindow)
 
     layout->addWidget(actionButtons);
 
-    setRobots(mainWindow);
+    /// Clickable buttons group to select/edit a robot
+    btnGroup = new RobotBtnGroup(this);
+    /// Checkable buttons group to show/hide a robot
+    btnGroup->show();
+    connect(btnGroup->getBtnGroup(), SIGNAL(buttonClicked(QAbstractButton*)), mainWindow, SLOT(setSelectedRobot(QAbstractButton*)));
+    connect(btnGroup, SIGNAL(doubleClickOnRobot(QString)), mainWindow, SLOT(doubleClickOnRobotSlot(QString)));
+
+    scrollArea->setWidget(btnGroup);
 
     layout->addWidget(scrollArea);
     layout->setAlignment(Qt::AlignTop);
     layout->setContentsMargins(0, 0, 10, 0);
 }
 
-void RobotsLeftWidget::setRobots(MainWindow* mainWindow){
-
-    /// Clickable buttons group to select/edit a robot
-    btnGroup = new RobotBtnGroup(robots->getRobotsVector(), mainWindow, this);
-
-    /// Checkable buttons group to show/hide a robot
-    btnGroup->show();
-
-    connect(btnGroup->getBtnGroup(), SIGNAL(buttonClicked(QAbstractButton*)), mainWindow, SLOT(setSelectedRobot(QAbstractButton*)));
-
-    scrollArea->setWidget(btnGroup);
-}
-
-void RobotsLeftWidget::updateRobots(MainWindow* mainWindow){
-    scrollArea->takeWidget();
-    delete btnGroup;
-    setRobots(mainWindow);
-}
-
-void RobotsLeftWidget::unSelectAllRobots(){
+void RobotsLeftWidget::unSelectAllRobots(void){
     btnGroup->getBtnGroup()->setExclusive(false);
 
     for (int i = 0; i < btnGroup->getBtnGroup()->buttons().size() ;i++)
@@ -66,7 +53,8 @@ void RobotsLeftWidget::showEvent(QShowEvent *){
     lastCheckedId = -1;
     actionButtons->enableAll(false);
     actionButtons->checkAll(false);
-    robots->deselect();
+    /// TODO
+    //robots->deselect();
     unSelectAllRobots();
 }
 

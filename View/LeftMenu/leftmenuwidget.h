@@ -16,7 +16,7 @@ class CustomPushButton;
 class LeftMenuWidget: public QWidget{
     Q_OBJECT
 public:
-    LeftMenuWidget(QWidget* parent, QSharedPointer<Points> const& _points);
+    LeftMenuWidget(QWidget* parent);
     CustomPushButton* getRobotBtn(void) const { return robotBtn; }
     CustomPushButton* getPointBtn(void) const { return pointBtn; }
     CustomPushButton* getMapBtn(void) const { return mapBtn; }
@@ -28,10 +28,10 @@ protected:
 signals:
     /// when showing this widget the application resets the colors of the path points on the map
     void resetPathPointViews();
+    void resetPointViews();
 
 private:
     QVBoxLayout* layout;
-    QSharedPointer<Points> points;
     CustomPushButton* robotBtn;
     CustomPushButton* pointBtn;
     CustomPushButton* mapBtn;

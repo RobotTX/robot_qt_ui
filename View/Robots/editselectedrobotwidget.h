@@ -34,27 +34,20 @@ class EditSelectedRobotWidget: public QWidget {
 public:
     EditSelectedRobotWidget(MainWindow* mainWindow);
 
-    CustomLabel* getNameLabel(void){ return nameLabel; }
-    CustomPushButton* getHomeBtn(void){ return homeBtn; }
+    CustomLabel* getNameLabel(void) const { return nameLabel; }
+    CustomPushButton* getHomeBtn(void) const { return homeBtn; }
     QSharedPointer<PointView> getHome() const { return home; }
     CustomLabel* getWifiNameLabel(void) const { return wifiNameLabel; }
     PathWidget* getPathWidget(void) const { return pathWidget; }
-    CustomPushButton* getAddPathBtn(void) const { return addPathBtn; }
-    bool getPathChanged() const { return pathChanged; }
     CustomLabel* getHomeLabel(void) const { return homeLabel; }
-    CustomPushButton* getSaveButton(void) const { return saveBtn; }
-    CustomPushButton* getCancelButton(void) const { return cancelBtn; }
-    bool isEditing(void) const { return editing; }
     CustomPushButton* getGoHomeBtn(void) const { return goHomeBtn; }
     CustomPushButton* getDeletePathBtn(void) const { return deletePathBtn; }
     CustomRobotDialog* getRobotInfoDialog(void) const { return robotDialog; }
     QPointer<RobotView> getRobot(void) const { return robotView; }
 
-    void setEditing(bool const _editing) { editing = _editing; }
-    void setHome(QSharedPointer<PointView> const _home) { home = _home; }
-    void setPathChanged(const bool change) { pathChanged = change; }
+    void setHome(const QSharedPointer<PointView> _home) { home = _home; }
     void setPathWidget(PathWidget* pw) { pathWidget = pw; }
-    void setSelectedRobot(QPointer<RobotView> const robotView);
+    void setSelectedRobot(const QPointer<RobotView> robotView);
     void setBatteryLevel(const int level) { batteryLevel->setValue(level); }
 
     /// disables the buttons and line edits
@@ -64,11 +57,11 @@ public:
     /// updates the path description of the robot
     void setPath(const QVector<QSharedPointer<PathPoint> > &path);
     /// hides the path description of the robot
-    void clearPath();
-    void updatePathsMenu(MainWindow *mainWindow);
-    void updateHomeMenu(QSharedPointer<Points::Groups> groups);
-    void openHomeMenu();
-    void openPathsMenu();
+    void clearPath(void);
+    void updatePathsMenu(const MainWindow *mainWindow);
+    void updateHomeMenu(const QSharedPointer<Points::Groups> groups);
+    void openHomeMenu(void);
+    void openPathsMenu(void);
 
 signals:
     /// Signal emitted when a robot has been edited & saved
@@ -90,10 +83,11 @@ protected:
     void showEvent(QShowEvent *event);
     void hideEvent(QHideEvent *event);
     void resizeEvent(QResizeEvent *event);
+    void resetRobotDialog(void);
 
 private slots:
-    void updateAndOpenPathsMenu();
-    void updateAndOpenHomeMenu();
+    void updateAndOpenPathsMenu(void);
+    void updateAndOpenHomeMenu(void);
     void assignPath(QAction* action);
     void assignHome(QAction* action);
     /**
@@ -108,31 +102,23 @@ private slots:
     void cancelRobotModificationsSlot();
 
 private:
-    QVBoxLayout* layout;
-    QVBoxLayout* pathLayout;
-    QPointer<RobotView> robotView;
     CustomLabel* nameLabel;
     CustomLabel* wifiNameLabel;
-    QLabel* ipAddressLabel;
-    CustomPushButton* saveBtn;
-    CustomPushButton* homeBtn;
-    QSharedPointer<PointView> home;
-    CustomPushButton* addPathBtn;
-    CustomPushButton* cancelBtn;
-    CustomPushButton* deletePathBtn;
-    PathWidget* pathWidget;
-    bool pathChanged;
     CustomLabel* homeLabel;
-    bool editing;
-    QMenu* pathsMenu;
-    QMenu* homeMenu;
-    SpaceWidget* pathSpaceWidget;
-    CustomPushButton* assignPathButton;
-    QProgressBar* batteryLevel;
+    CustomPushButton* homeBtn;
+    CustomPushButton* deletePathBtn;
     CustomPushButton* goHomeBtn;
     CustomPushButton* editRobotInfoBtn;
+    CustomPushButton* assignPathButton;
     CustomRobotDialog* robotDialog;
-    QWidget* inWidget;
+    QLabel* ipAddressLabel;
+    QMenu* pathsMenu;
+    QMenu* homeMenu;
+    QPointer<RobotView> robotView;
+    QProgressBar* batteryLevel;
+    QSharedPointer<PointView> home;
+    PathWidget* pathWidget;
+    SpaceWidget* pathSpaceWidget;
 };
 
 #endif // EDITSELECTEDROBOTWIDGET_H
