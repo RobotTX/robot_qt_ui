@@ -29,22 +29,20 @@ class PointsController;
 class PointsLeftWidget: public QWidget{
     Q_OBJECT
 public:
-    PointsLeftWidget(MainWindow* const mainWindow, QSharedPointer<Points> const& _points, bool _groupDisplayed = true);
+    PointsLeftWidget(MainWindow* const mainWindow, QSharedPointer<Points> const& _points);
 
-    bool getGroupDisplayed(void) const { return groupDisplayed; }
-    void setGroupDisplayed(const bool _groupDisplayed) { groupDisplayed = _groupDisplayed; }
-    QSharedPointer<Points> getPoints(void) const { return points; }
     CustomPushButton* getSaveButton(void) const { return saveButton; }
     CustomPushButton* getCancelButton(void) const { return cancelButton; }
     TopLeftMenu* getActionButtons(void) {return actionButtons;}
     GroupButtonGroup* getGroupButtonGroup(void) const { return groupButtonGroup; }
     QLabel* getGroupNameLabel(void) const { return groupNameLabel; }
     CustomLineEdit* getGroupNameEdit(void) const { return groupNameEdit; }
-    CustomScrollArea* getScrollArea(void) const { return scrollArea; }
-    QString getLastCheckedId() const { return lastCheckedId;}
+    QString getLastCheckedId(void) const { return lastCheckedId;}
+    bool isCreatingGroup(void) const { return creatingGroup; }
 
     void setCreatingGroup(const bool create) { creatingGroup = create; }
     void setLastCheckedId(const QString  id) { lastCheckedId = id; }
+    void setNameError(const int error) { nameError = error; }
 
 public:
     /**
@@ -52,18 +50,18 @@ public:
      * disables the buttons when no group is selected
      */
     void disableButtons(void);
-    /**
-     * @brief updateGroupButtonGroup
-     * to update the buttons when some modification occured (group edited or added)
-     */
-    void updateGroupButtonGroup();
+
     /**
      * @brief resetWidget
      * buttons recreated, pointviews reset to normal and some buttons and lineedit hidden
      */
     void resetWidget(void);
 
-private:
+
+protected:
+    void keyPressEvent(QKeyEvent* event);
+    void showEvent(QShowEvent *event);
+    void resizeEvent(QResizeEvent *event);
     /**
      * @brief formatName
      * @param name
@@ -72,55 +70,26 @@ private:
      */
     QString formatName(const QString name) const;
 
-protected:
-    void keyPressEvent(QKeyEvent* event);
-    void showEvent(QShowEvent *event);
-    void resizeEvent(QResizeEvent *event);
-
-public slots:
-    /**
-      * @brief checkGroupName
-      * @param name
-      * @return int (error code)
-      * checks whether the name is valid (not empty and not taken)
-      */
-     int checkGroupName(QString name);
-
 private slots:
-     /**
-     * @brief enableButtons
-     * @param button
-     * enables buttons when a group is selected
-     */
-    void enableButtons(QString button);
-    void enableButtons(QAbstractButton* button);
+
     /**
      * @brief cancelCreationGroup
      * called when the user clicks somewhere at random in the window (during creation of a group)
      */
     void cancelCreationGroup();
+
     /**
      * @brief emitNewGroupSignal
      * emits a signal to create a new group
      */
     void emitNewGroupSignal();
+
     /**
      * @brief modifyGroupAfterClick
      * @param name
      * to modify a group when a user clicks somewhere else in the window (during edition of a group)
      */
     void modifyGroupAfterClick(QString name);
-    /**
-     * @brief reconnectModifyEdit
-     * to reconnect the modify edit after a group has been edited
-     */
-    void reconnectModifyEdit();
-    /**
-     * @brief sendMessageEditGroup
-     * @param code
-     * so that an appropriate message can be displayed while a group is being edited
-     */
-    void sendMessageEditGroup(int code);
 
 signals:
     /// emitted when a new group is created
@@ -133,39 +102,24 @@ signals:
     void enableReturn();
     /// to display an appropriate message regarding the creation of a group
     void messageCreationGroup(QString, QString);
-    /// to display an appropriate message regarding the creation of a point
-    void messageCreationPoint();
     /// to reset the path point views on the map
     void resetPathPointViews();
     /// to trigger the same slot as the minus button by using the delete key
     void deleteGroup();
+    void updateGroupButtonGroup();
+    void resetPointViews();
 
 private:
-
-    QVBoxLayout* layout;
-    QHBoxLayout* eyeMapLayout;
-    QHBoxLayout* grid;
-    QHBoxLayout* creationLayout;
-
-    GroupButtonGroup* groupButtonGroup;
-
+    CustomLineEdit* groupNameEdit;
     CustomPushButton* saveButton;
     CustomPushButton* cancelButton;
-
+    GroupButtonGroup* groupButtonGroup;
     QLabel* groupNameLabel;
-    CustomLineEdit* groupNameEdit;
-
-    CustomScrollArea* scrollArea;
-
     TopLeftMenu* actionButtons;
-
-    /// true if the groups are displayed, false if the points are displayed
-    /// this way we can implement two different behavior for the same button minus
-    bool groupDisplayed;
-    QSharedPointer<Points> points;
     /// to differenciate the behavior of the enter key
     bool creatingGroup;
     QString lastCheckedId;
+    int nameError;
 };
 
 #endif // POINTSLEFTWIDGET_H

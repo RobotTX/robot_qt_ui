@@ -59,6 +59,9 @@ public:
      */
     void setRobotNoHomeLabel(const QString robots_string);
 
+protected:
+    void timerSlot();
+
 private:
     CustomPushButton* menuBtn;
     CustomPushButton* closeBtn;

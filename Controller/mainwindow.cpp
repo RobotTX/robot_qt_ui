@@ -893,7 +893,15 @@ void MainWindow::robotIsDeadSlot(QString hostname, QString ip){
 
 void MainWindow::setMessageCreationPath(QString message){
     topLayoutController->setLabel(TEXT_COLOR_DANGER, message);
-    Helper::Thread::delay(2500);
+
+    /// Timer used to delete the message after a given delay
+    QTimer* timer = new QTimer(this);
+    timer->setInterval(2500);
+    timer->setSingleShot(true);
+    connect(timer, SIGNAL(timeout()), this, SLOT(setMessageCreationPathTimerSlot()));
+}
+
+void MainWindow::setMessageCreationPathTimerSlot(){
     if(robotsController->getSelectedRobot())
         topLayoutController->setLabel(TEXT_COLOR_INFO, "Click white points of the map to add new points to the path of " +
                   robotsController->getSelectedRobot()->getRobot()->getName() + "\nAlternatively you can click the \"+\" button to add an existing point to your path"
@@ -902,6 +910,7 @@ void MainWindow::setMessageCreationPath(QString message){
         topLayoutController->setLabel(TEXT_COLOR_INFO, "Click white points of the map to add new points to your path\n"
                                        "Alternatively you can click the \"+\" button to add an existing point to your path"
                                        "\nYou can re-order the points in the list by dragging them");
+
 }
 
 void MainWindow::updateEditedPathPoint(double x, double y){
@@ -1622,9 +1631,7 @@ void MainWindow::deleteGroupPaths(){
         pathsController->updateGroupsPaths();
         /// if the displayed path was among the paths of this group, we hide it as we delete it
         emit resetPath();
-        topLayoutController->setLabel(TEXT_COLOR_SUCCESS, "You have successfully deleted the group of paths \"" + groupPaths + "\"");
-        Helper::Thread::delay(4000);
-        topLayoutController->setLabel(TEXT_COLOR_NORMAL, "");
+        topLayoutController->setLabelDelay(TEXT_COLOR_SUCCESS, "You have successfully deleted the group of paths \"" + groupPaths + "\"", 4000);
         break;
     }
     case QMessageBox::StandardButton::Cancel:
@@ -2000,7 +2007,7 @@ void MainWindow::clearNewMap(){
     pathsController->clearPaths();
 
     /// Update the left menu displaying the list of groups and buttons
-    pointsController->getPointsLeftWidget()->updateGroupButtonGroup();
+    pointsController->getPointsLeftWidget()->getGroupButtonGroup()->updateButtons(pointsController->getPoints());
 
     for(int i = 0; i < robotsController->getRobots()->getRobotsVector().size(); i++){
         robotsController->getRobots()->getRobotsVector().at(i)->getRobot()->clearPath();
@@ -2032,9 +2039,7 @@ void MainWindow::settingBtnSlot(){
 }
 
 void MainWindow::setTemporaryMessageTop(const QString type, const QString message, const int ms){
-    topLayoutController->setLabel(type, message);
-    Helper::Thread::delay(ms);
-    topLayoutController->setLabel(TEXT_COLOR_NORMAL, "");
+    topLayoutController->setLabelDelay(type, message, ms);
 }
 
 void MainWindow::updateRobotInfo(QString robotName, QString robotInfo){

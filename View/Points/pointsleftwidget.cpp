@@ -24,12 +24,12 @@
 #include "View/Other/customscrollarea.h"
 #include "View/Points/groupbuttongroup.h"
 
-PointsLeftWidget::PointsLeftWidget(MainWindow* const mainWindow, QSharedPointer<Points> const& _points, bool _groupDisplayed)
-    : QWidget(mainWindow), groupDisplayed(_groupDisplayed), points(_points), creatingGroup(true), lastCheckedId("")
+PointsLeftWidget::PointsLeftWidget(MainWindow* const mainWindow, QSharedPointer<Points> const& points)
+    : QWidget(mainWindow), creatingGroup(true), lastCheckedId(""), nameError(0)
 {
-    scrollArea = new CustomScrollArea(this, true);
+    CustomScrollArea* scrollArea = new CustomScrollArea(this, true);
 
-    layout = new QVBoxLayout(this);
+    QVBoxLayout* layout = new QVBoxLayout(this);
     QVBoxLayout* topLayout = new QVBoxLayout();
 
     actionButtons = new TopLeftMenu(this);
@@ -61,7 +61,7 @@ PointsLeftWidget::PointsLeftWidget(MainWindow* const mainWindow, QSharedPointer<
     scrollArea->setWidget(groupButtonGroup);
     layout->addWidget(scrollArea);
 
-    creationLayout = new QHBoxLayout();
+    QHBoxLayout* creationLayout = new QHBoxLayout();
     saveButton = new CustomPushButton("Save", this, CustomPushButton::ButtonType::LEFT_MENU, "center", false, false);
     saveButton->hide();
 
@@ -83,13 +83,10 @@ PointsLeftWidget::PointsLeftWidget(MainWindow* const mainWindow, QSharedPointer<
         connect(button, SIGNAL(doubleClick(QString)), mainWindow->getPointsController(), SLOT(doubleClickOnGroup(QString)));
 
     /// to enable the buttons
-    connect(groupButtonGroup->getButtonGroup(), SIGNAL(buttonClicked(QAbstractButton*)), this, SLOT(enableButtons(QAbstractButton*)));
+    connect(groupButtonGroup->getButtonGroup(), SIGNAL(buttonClicked(QAbstractButton*)), mainWindow->getPointsController(), SLOT(enableButtonsPointsLeftWidget(QAbstractButton*)));
 
     /// to make sure the name chosen for a new group is valid
-    connect(groupNameEdit, SIGNAL(textEdited(QString)), this, SLOT(checkGroupName(QString)));
-
-    /// to make sure the new name chosen for a group is valid
-    connect(groupButtonGroup->getModifyEdit(), SIGNAL(textEdited(QString)), groupButtonGroup, SLOT(checkEditGroupName(QString)));
+    connect(groupNameEdit, SIGNAL(textEdited(QString)), mainWindow->getPointsController(), SLOT(checkGroupName(QString)));
 
     connect(cancelButton, SIGNAL(clicked(bool)), this, SLOT(cancelCreationGroup()));
 
@@ -101,12 +98,6 @@ PointsLeftWidget::PointsLeftWidget(MainWindow* const mainWindow, QSharedPointer<
     connect(groupNameEdit, SIGNAL(clickSomewhere(QString)), this, SLOT(cancelCreationGroup()));  
 
     connect(this, SIGNAL(enableReturn()), mainWindow, SLOT(enableReturnAndCloseButtons()));
-
-    /// to reconnect the modifyEdit field in the case where a user creates a new group
-    connect(groupButtonGroup, SIGNAL(modifyEditReconnection()), this, SLOT(reconnectModifyEdit()));
-
-    /// relay the signal to the mainWindow so it displays the appropriate messages to the user (e.g, you cannot change the name of the group for this one because it's empty)
-    connect(groupButtonGroup, SIGNAL(codeEditGroup(int)), this, SLOT(sendMessageEditGroup(int)));
 
     /// to reset the path points point views after a path point is deselected
     connect(this, SIGNAL(resetPathPointViews()), mainWindow, SLOT(resetPathPointViewsSlot()));
@@ -126,96 +117,12 @@ PointsLeftWidget::PointsLeftWidget(MainWindow* const mainWindow, QSharedPointer<
     connect(this, SIGNAL(modifiedGroupAfterClick(QString)), mainWindow->getPointsController(), SLOT(modifyGroupAfterClick(QString)));
     /// to know what message to display when a user is creating a group
     connect(this, SIGNAL(messageCreationGroup(QString, QString)), mainWindow->getTopLayoutController(), SLOT(setLabel(QString,QString)));
+    connect(this, SIGNAL(resetPointViews()), mainWindow->getPointsController(), SLOT(resetPointViewsSlot()));
 
     creationLayout->setContentsMargins(0, 0, 10, 0);
     topLayout->setContentsMargins(0, 0, 10, 0);
     layout->setContentsMargins(0, 0, 0, 0);
     setAutoFillBackground(true);
-}
-
-void PointsLeftWidget::updateGroupButtonGroup(){
-    qDebug() << "PointsLeftWidget::updateGroupButtonGroup called";
-    groupButtonGroup->updateButtons();
-}
-
-void PointsLeftWidget::enableButtons(QAbstractButton* button){
-    qDebug() << "PointsLeftWidget::enableButtons called" << button->text();
-    enableButtons(button->text());
-}
-
-void PointsLeftWidget::enableButtons(QString button){
-    points->setPixmapAll(PointView::PixmapType::NORMAL);
-    emit resetPathPointViews();
-    if(button.compare(lastCheckedId) == 0){
-        groupButtonGroup->uncheck();
-        lastCheckedId = "";
-        disableButtons();
-    } else {
-
-        lastCheckedId = button;
-        groupButtonGroup->setEditedGroupName(button);
-        groupButtonGroup->getLayout()->removeWidget(groupButtonGroup->getModifyEdit());
-        groupButtonGroup->getLayout()->addWidget(groupButtonGroup->getModifyEdit());
-        disableButtons();
-        /// enables the minus button
-        actionButtons->getMinusButton()->setEnabled(true);
-        if(points->isAGroup(button))
-            actionButtons->getMinusButton()->setToolTip("Click to remove the selected group");
-        else
-            actionButtons->getMinusButton()->setToolTip("Click to remove the selected point");
-
-        /// enables the eye button
-        actionButtons->getGoButton()->setEnabled(true);
-        if(points->isAGroup(button))
-            actionButtons->getGoButton()->setToolTip("Click to display the information of the selected group");
-        else
-            actionButtons->getGoButton()->setToolTip("Click to display the information of the selected point");
-
-        /// enables the map button
-        actionButtons->getMapButton()->setCheckable(true);
-        actionButtons->getMapButton()->setEnabled(true);
-
-        if(points->isAGroup(button)){
-            if(points->isDisplayed(button)){
-                actionButtons->getMapButton()->setChecked(true);
-                actionButtons->getMapButton()->setToolTip("Click to hide the selected group on the map");
-            } else {
-                actionButtons->getMapButton()->setChecked(false);
-                actionButtons->getMapButton()->setToolTip("Click to display the selected group on the map");
-            }
-            /// changes the pointviews of all the points displayed in the group on the map
-            for(int i = 0; i < points->getGroups()->value(button)->size(); i++){
-                QSharedPointer<PointView> pv = points->getGroups()->value(button)->at(i);
-                if(pv->isVisible())
-                    pv->setPixmap(PointView::PixmapType::SELECTED);
-            }
-        } else {
-            QSharedPointer<PointView> pv = points->findPointView(button);
-            if(pv->isVisible()){
-                /// if the point is displayed, changes its pointview on the map
-                points->findPointView(button)->setPixmap(PointView::PixmapType::SELECTED);
-                actionButtons->getMapButton()->setChecked(true);
-                actionButtons->getMapButton()->setToolTip("Click to hide the selected point on the map");
-            } else {
-                actionButtons->getMapButton()->setChecked(false);
-                actionButtons->getMapButton()->setToolTip("Click to display the selected point on the map");
-            }
-            /// if this point belongs to a path we also need to set the pixmap of the path point point view
-            if(QSharedPointer<PointView> pathPv = points->findPathPointView(pv->getPoint()->getPosition().getX(), pv->getPoint()->getPosition().getY())){
-                qDebug() << "PATH !";
-                pathPv->setPixmap(PointView::PixmapType::SELECTED);
-            } else {
-                qDebug() << "NOT PATH";
-            }
-        }
-
-        /// enables the edit button
-        actionButtons->getEditButton()->setEnabled(true);
-        if(points->isAGroup(button))
-            actionButtons->getEditButton()->setToolTip("Click to modify the selected group");
-        else
-            actionButtons->getEditButton()->setToolTip("click to modify the selected point");
-    }
 }
 
 void PointsLeftWidget::disableButtons(void){
@@ -239,52 +146,6 @@ void PointsLeftWidget::disableButtons(void){
     actionButtons->getEditButton()->setEnabled(false);
     actionButtons->getEditButton()->setToolTip("Select a group or a point and click here to modify it");
     actionButtons->getEditButton()->setChecked(false);
-}
-
-int PointsLeftWidget::checkGroupName(QString name){
-    //qDebug() << "checking while creating" << name;
-    groupNameEdit->setText(formatName(name));
-    name = name.simplified();
-    //qDebug() << "name im testing" << name;
-    if(!creatingGroup && !name.compare(groupButtonGroup->getEditedGroupName(), Qt::CaseInsensitive)){
-        saveButton->setToolTip("");
-        qDebug() << "same name" << name;
-        connect(groupNameEdit, SIGNAL(clickSomewhere(QString)), this, SLOT(cancelCreationGroup()));
-        return 0;
-    }
-    if(!name.compare("")){
-        emit messageCreationGroup(TEXT_COLOR_NORMAL, "");
-        return 1;
-    }
-    QMapIterator<QString, QSharedPointer<QVector<QSharedPointer<PointView>>>> i(*(points->getGroups()));
-    while (i.hasNext()) {
-        bool valid(true);
-        i.next();
-        for(int j = 0; j < i.value()->size(); j++){
-            if(!i.value()->at(j)->getPoint()->getName().compare(name.simplified(), Qt::CaseInsensitive)){
-                qDebug() << name << "already exists as a point";
-                valid = false;
-            }
-        }
-        if(!name.compare(i.key(), Qt::CaseInsensitive)){
-            qDebug() << "PointsLeftWidget::checkGroupName" << i.key() << "already exists";
-            valid = false;
-
-        }
-
-        if(!valid){
-            saveButton->setToolTip("A group with the same name already exists, please choose another name for your group");
-            saveButton->setEnabled(false);
-            connect(groupNameEdit, SIGNAL(clickSomewhere(QString)), this, SLOT(cancelCreationGroup()));
-            emit messageCreationGroup(TEXT_COLOR_WARNING, "A group or point with the same name already exists, please choose another name for your group");
-            return 2;
-        }
-    }
-    saveButton->setToolTip("");
-    saveButton->setEnabled(true);
-    disconnect(groupNameEdit, SIGNAL(clickSomewhere(QString)), this, SLOT(cancelCreationGroup()));
-    emit messageCreationGroup(TEXT_COLOR_INFO, "To save this group press Enter or click the \"Save button\"");
-    return 0;
 }
 
 void PointsLeftWidget::cancelCreationGroup(){
@@ -313,7 +174,7 @@ void PointsLeftWidget::keyPressEvent(QKeyEvent* event){
         if(creatingGroup)
             emit newGroup(groupNameEdit->text());
         else{
-            switch(groupButtonGroup->checkEditGroupName(groupButtonGroup->getModifyEdit()->text())){
+            switch(nameError){
             case 0:
                 emit modifiedGroup(groupButtonGroup->getModifyEdit()->text());
                 //setLastCheckedId("");
@@ -349,20 +210,21 @@ void PointsLeftWidget::keyPressEvent(QKeyEvent* event){
 
 void PointsLeftWidget::showEvent(QShowEvent *event){
     resetWidget();
-    points->setPixmapAll(PointView::PixmapType::NORMAL);
+    emit resetPointViews();
     emit resetPathPointViews();
+    groupButtonGroup->getModifyEdit()->hide();
     groupNameEdit->hide();
     groupNameLabel->hide();
     actionButtons->getPlusButton()->setEnabled(true);
     saveButton->hide();
     cancelButton->hide();
-    groupButtonGroup->updateButtons();
+    emit updateGroupButtonGroup();
     QWidget::showEvent(event);
 }
 
 void PointsLeftWidget::resetWidget(void){
     //qDebug() << "PointsLeftWidget::resetWidget called";
-    groupButtonGroup->updateButtons();
+    emit updateGroupButtonGroup();
     groupButtonGroup->uncheck();
     lastCheckedId=-1;
     disableButtons();
@@ -371,12 +233,6 @@ void PointsLeftWidget::resetWidget(void){
 void PointsLeftWidget::modifyGroupAfterClick(QString name){
     //qDebug() << "PointsLeftWidget::modifyGroupAfterClick called";
     emit modifiedGroupAfterClick(name);
-}
-
-void PointsLeftWidget::reconnectModifyEdit(){
-    //qDebug() << "PointsLeftWidget::reconnectModifyEdit called";
-    connect(groupButtonGroup->getModifyEdit(), SIGNAL(clickSomewhere(QString)), this, SLOT(modifyGroupAfterClick(QString)));
-    connect(groupButtonGroup->getModifyEdit(), SIGNAL(textEdited(QString)), groupButtonGroup, SLOT(checkEditGroupName(QString)));
 }
 
 QString PointsLeftWidget::formatName(const QString name) const {
@@ -392,23 +248,6 @@ QString PointsLeftWidget::formatName(const QString name) const {
     if(name.size() > 0 && name.at(name.size()-1) == ' ')
         ret += " ";
     return ret;
-}
-
-void PointsLeftWidget::sendMessageEditGroup(int code){
-    //qDebug() << "PointsLeftWidget::sendMessageEditGroup called";
-    switch(code){
-    case 0:
-        emit messageCreationGroup(TEXT_COLOR_INFO, "To save this group press Enter or click the \"Save button\"");
-        break;
-    case 1:
-        emit messageCreationGroup(TEXT_COLOR_INFO, "");
-        break;
-    case 2:
-        emit messageCreationGroup(TEXT_COLOR_WARNING, "A group with the same name already exists, please choose another name for your group");
-        break;
-    default:
-        qDebug() << "if you get here you probably forgot to implement the behavior for one or more error codes";
-    }
 }
 
 void PointsLeftWidget::resizeEvent(QResizeEvent *event){

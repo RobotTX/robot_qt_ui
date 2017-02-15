@@ -2,6 +2,7 @@
 #include "Model/Robots/robot.h"
 #include "View/Robots/robotview.h"
 #include <QDebug>
+#include <QtMath>
 
 LaserController::LaserController(QSharedPointer<Robots> _robots, QObject* parent)
     : QObject(parent), robots(_robots){

@@ -3,6 +3,7 @@
 #include <QLabel>
 #include <QIcon>
 #include <QDebug>
+#include <QTimer>
 #include "Helper/helper.h"
 #include "Controller/mainwindow.h"
 #include "View/Other/stylesettings.h"
@@ -127,25 +128,17 @@ void TopLayoutWidget::setLabelDelay(const QString msgType, const QString msg, co
     else
         label->show();
 
-    /// if it is an error make sure the person have seen it
-    if (msgType == TEXT_COLOR_DANGER){
-        label->setText("");
-        label->setStyleSheet("QLabel { color: " + QString(TEXT_COLOR_NORMAL) +";background:transparent}");
-        Helper::Thread::delay(300);
-    }
-
     /// display message
     label->setText(msg);
     label->setStyleSheet("QLabel { color: " + QString(msgType) +";background:transparent}");
 
-    /// wait before to remove message
-    Helper::Thread::delay(delayTime);
 
-    /// reset message
-    label->setText("");
-    label->hide();
-    label->setStyleSheet("QLabel { color: " + QString(TEXT_COLOR_NORMAL) +";background:transparent}");
-}
+    /// Timer used to delete the message after a given delay
+    QTimer* timer = new QTimer(this);
+    timer->setInterval(delayTime);
+    timer->setSingleShot(true);
+    connect(timer, SIGNAL(timeout()), this, SLOT(timerSlot()));
+ }
 
 void TopLayoutWidget::setRobotNoHomeLabel(const QString robots_string){
 
@@ -155,4 +148,11 @@ void TopLayoutWidget::setRobotNoHomeLabel(const QString robots_string){
         labelPerm->show();
         setLabelPerm(TEXT_COLOR_WARNING, "\"" + robots_string + "\" do(es) not have a home point yet.\n Please choose a home for the robot(s) in the robot menu.");
     }
+}
+
+void TopLayoutWidget::timerSlot(){
+    /// reset message
+    label->setText("");
+    label->hide();
+    label->setStyleSheet("QLabel { color: " + QString(TEXT_COLOR_NORMAL) +";background:transparent}");
 }

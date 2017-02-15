@@ -21,7 +21,6 @@ class PointButtonGroup: public QWidget
     Q_OBJECT
 public:
     PointButtonGroup(QSharedPointer<Points> points, const QString groupName, QWidget *parent);
-    ~PointButtonGroup(){}
 
     /// Getters
     QButtonGroup* getButtonGroup(void) const { return btnGroup; }

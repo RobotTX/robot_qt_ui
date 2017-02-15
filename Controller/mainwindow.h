@@ -234,6 +234,7 @@ private slots:
 
     /// sends a signal to the settings controller in order to keep track of the messages we need to show the user
     void relayTutorialSignal(const bool messageNeeded);
+    void setMessageCreationPathTimerSlot();
 
 protected:
     void closeEvent(QCloseEvent *event);

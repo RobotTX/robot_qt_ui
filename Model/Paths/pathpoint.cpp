@@ -38,7 +38,8 @@ std::ostream& operator <<(std::ostream& stream, const PathPoint& point){
 }
 
 void PathPoint::display(std::ostream& stream) const {
-    stream << point.getPosition().getX() << " " << point.getPosition().getY() << " " << waitTime;
+    QString txt = QString::number(point.getPosition().getX()) + " " + QString::number(point.getPosition().getY()) + " " + QString::number(waitTime);
+    stream << txt.toStdString();
 }
 
 

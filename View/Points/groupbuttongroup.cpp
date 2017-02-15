@@ -10,12 +10,13 @@
 #include "View/Other/custompushbutton.h"
 #include "View/Other/stylesettings.h"
 
-GroupButtonGroup::GroupButtonGroup(const QSharedPointer<Points> &_points, QWidget* _parent): QWidget(_parent), parentWidget(_parent), points(_points)
-{
+GroupButtonGroup::GroupButtonGroup(const QSharedPointer<Points> &points, QWidget* parent)
+    : QWidget(parent) {
+
     layout = new QVBoxLayout(this);
     layout->setAlignment(Qt::AlignTop);
 
-    buttonGroup = new QButtonGroup(this);
+    btnGroup = new QButtonGroup(this);
 
     /// to modify the name of a group
     modifyEdit = new CustomLineEdit(this);
@@ -27,75 +28,21 @@ GroupButtonGroup::GroupButtonGroup(const QSharedPointer<Points> &_points, QWidge
 
     editedGroupName = "";
 
-    int index = 0;
-    QMapIterator<QString, QSharedPointer<QVector<QSharedPointer<PointView>>>> i(*(points->getGroups()));
-    while (i.hasNext()) {
-        i.next();
-        if(i.key().compare(NO_GROUP_NAME)!= 0
-                && i.key().compare(TMP_GROUP_NAME)!= 0
-                && i.key().compare(PATH_GROUP_NAME)!= 0){
-            CustomPushButton* groupButton = new CustomPushButton(i.key(), this, CustomPushButton::ButtonType::LEFT_MENU, "left", true);
-            buttonGroup->addButton(groupButton, index);
-            layout->addWidget(groupButton);
-
-            if(points->isDisplayed(i.key()))
-                groupButton->setIcon(QIcon(":/icons/folder_eye.png"));
-            else
-                groupButton->setIcon(QIcon(":/icons/folder_space.png"));
-
-            groupButton->setIconSize(xl_icon_size);
-            index++;
-        }
-    }
-
-    /// for the last group we just want to show the points and not "no group"
-    if(points->getGroups()->value(NO_GROUP_NAME)){
-        for(int i = 0; i < points->getGroups()->value(NO_GROUP_NAME)->size(); i++){
-            QSharedPointer<PointView> currentPointView = points->getGroups()->value(NO_GROUP_NAME)->at(i);
-            CustomPushButton* pointButton = new CustomPushButton(currentPointView->getPoint()->getName(), this, CustomPushButton::ButtonType::LEFT_MENU, "left", true);
-
-            buttonGroup->addButton(pointButton, index + i);
-            layout->addWidget(pointButton);
-            if(currentPointView->isVisible())
-                pointButton->setIcon(QIcon(":/icons/eye_point.png"));
-            else
-                pointButton->setIcon(QIcon(":/icons/space_point.png"));
-            pointButton->setIconSize(xl_icon_size);
-        }
-    }
-    /// to make sure that when the name of a group is being edited, this name is valid (not empty or taken)
-    connect(modifyEdit, SIGNAL(textEdited(QString)), this, SLOT(checkEditGroupName(QString)));
-
+    updateButtons(points);
 }
 
-GroupButtonGroup::~GroupButtonGroup(){
-    delete layout;
-    layout = Q_NULLPTR;
-}
-
-void GroupButtonGroup::deleteButtons(void){
-    //qDebug() << "GroupButtonGroup::deleteButtons called";
-    layout->removeWidget(modifyEdit);
-    while(QLayoutItem* item = layout->takeAt(0)){
-        if(item){
-            if(QWidget* button = item->widget()){
-                delete button;
-                button = 0;
-            }
-            delete item;
-            item = 0;
-        } else {
-            qDebug() << "groupbuttongroup::deletebuttons oops";
-        }
-    }
-    layout->addWidget(modifyEdit);
-}
-
-void GroupButtonGroup::updateButtons(){
+void GroupButtonGroup::updateButtons(QSharedPointer<Points> const& points){
     //qDebug() << "GroupButtonGroup::update called";
 
-    deleteButtons();
+    /// Remove buttons
+    QList<QAbstractButton*> listBtn = btnGroup->buttons();
+    for(int i = 0; i < listBtn.size(); i++){
+        btnGroup->removeButton(listBtn.at(i));
+        layout->removeWidget(listBtn.at(i));
+        delete listBtn.at(i);
+    }
 
+    /// Add buttons
     int index = 0;
     QMapIterator<QString, QSharedPointer<QVector<QSharedPointer<PointView>>>> i(*(points->getGroups()));
     while (i.hasNext()) {
@@ -104,17 +51,9 @@ void GroupButtonGroup::updateButtons(){
         if(i.key().compare(NO_GROUP_NAME) != 0
                 && i.key().compare(TMP_GROUP_NAME) != 0
                 && i.key().compare(PATH_GROUP_NAME) != 0){
-            /// sets the modifyEdit at the position of the selected group so that we can show it at the same position if the user wants to update its name
-            if(i.key().compare(editedGroupName) == 0){
-                modifyEdit = new CustomLineEdit(this);
-                modifyEdit->setFixedWidth(1.29*modifyEdit->width());
-                layout->addWidget(modifyEdit);
-                modifyEdit->hide();
-            }
-
             CustomPushButton* groupButton = new CustomPushButton(i.key(), this, CustomPushButton::ButtonType::LEFT_MENU, "left", true);
             groupButton->setIconSize(xl_icon_size);
-            buttonGroup->addButton(groupButton, index);
+            btnGroup->addButton(groupButton, index);
             layout->addWidget(groupButton);
             if(points->isDisplayed(i.key()))
                 groupButton->setIcon(QIcon(":/icons/folder_eye.png"));
@@ -130,7 +69,7 @@ void GroupButtonGroup::updateButtons(){
         for(int i = 0; i < points->getGroups()->value(NO_GROUP_NAME)->size(); i++){
             QSharedPointer<Point> currentPoint = points->getGroups()->value(NO_GROUP_NAME)->at(i)->getPoint();
             CustomPushButton* pointButton = new CustomPushButton(currentPoint->getName(), this, CustomPushButton::ButtonType::LEFT_MENU, "left", true);
-            buttonGroup->addButton(pointButton, index + i);
+            btnGroup->addButton(pointButton, index + i);
             layout->addWidget(pointButton);
             if(points->findPointView(currentPoint->getName())->isVisible())
                 pointButton->setIcon(QIcon(":/icons/eye_point.png"));
@@ -140,82 +79,26 @@ void GroupButtonGroup::updateButtons(){
         }
     }
 
-    emit modifyEditReconnection();
     emit updateConnectionsRequest();
 }
 
 void GroupButtonGroup::uncheck(void){
     /// little trick to uncheck all buttons because the class doesn't provide a function to do it
-    buttonGroup->setExclusive(false);
-    if(buttonGroup->checkedButton())
-        buttonGroup->checkedButton()->setChecked(false);
-    buttonGroup->setExclusive(true);
+    btnGroup->setExclusive(false);
+    if(btnGroup->checkedButton())
+        btnGroup->checkedButton()->setChecked(false);
+    btnGroup->setExclusive(true);
 }
 
 void GroupButtonGroup::mouseDoubleClickEvent(QMouseEvent * /* unused */){
-    if(buttonGroup->checkedButton())
-        emit doubleClick(buttonGroup->checkedButton()->text());
+    if(btnGroup->checkedButton())
+        emit doubleClick(btnGroup->checkedButton()->text());
 }
 
 void GroupButtonGroup::setEnabled(const bool enable){
     qDebug() << "GroupButtonGroup::setEnabled called";
-    foreach(QAbstractButton* button, buttonGroup->buttons())
+    foreach(QAbstractButton* button, btnGroup->buttons())
         button->setEnabled(enable);
-}
-
-int GroupButtonGroup::checkEditGroupName(QString name){
-    qDebug() << "GroupButtonGroup::checkEditGroupName called";
-    modifyEdit->setText(formatName(modifyEdit->text()));
-    name = modifyEdit->text().simplified();
-    /// if the group has not changed we allow saving it
-    if(!name.compare(editedGroupName, Qt::CaseInsensitive)){
-        qDebug() << "same name";
-        emit codeEditGroup(0);
-        return 0;
-    }
-    /// if the name is empty we forbid it
-    if(!name.compare("")){
-        emit codeEditGroup(1);
-        return 1;
-    }
-
-    QMapIterator<QString, QSharedPointer<QVector<QSharedPointer<PointView>>>> i(*(points->getGroups()));
-    while (i.hasNext()) {
-        i.next();
-        /// if the name is already taken we also forbid it
-        if(!name.compare(i.key(), Qt::CaseInsensitive)){
-            qDebug() << "GroupButtonGroup::checkEditGroupName" << i.key();
-            emit codeEditGroup(2);
-            return 2;
-        }
-    }
-    emit codeEditGroup(0);
-    return 0;
-}
-
-/// removes extra spaces like in " a  name with   extra spaces "
-QString GroupButtonGroup::formatName(const QString name) const {
-    qDebug() << "GroupButtonGroup::formatName called";
-
-    QString ret("");
-    QStringList nameStrList = name.split(" ", QString::SkipEmptyParts);
-    for(int i = 0; i < nameStrList.size(); i++){
-        if(i > 0)
-            ret += " ";
-        ret += nameStrList.at(i);
-    }
-    if(name.size() > 0 && name.at(name.size()-1) == ' ')
-        ret += " ";
-    return ret;
-}
-
-/// returns the id of the edited group
-int GroupButtonGroup::getEditedGroupId(void) const{
-    for(int i = 0; i < getButtonGroup()->buttons().size(); i++){
-        if(getButtonGroup()->buttons().at(i)->text().compare(editedGroupName) == 0)
-            return i;
-    }
-    return -1;
 }
 
 QAbstractButton* GroupButtonGroup::getButtonByName(const QString name) const {

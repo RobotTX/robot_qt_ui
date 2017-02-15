@@ -18,13 +18,4 @@ namespace Helper {
             return Position(xInPixelCoordinates, yInPixelCoordinates);
         }
     }
-
-    namespace Thread {
-
-        void delay(const int ms){
-            QTime dieTime = QTime::currentTime().addMSecs(ms);
-            while (QTime::currentTime() < dieTime)
-                QCoreApplication::processEvents(QEventLoop::AllEvents, 100);
-        }
-    }
 }

@@ -13,7 +13,4 @@ namespace Helper {
         Position robotCoordToPixelCoord(const Position positionInRobotCoordinates, double originX, double originY, double resolution, int height);
     }
 
-    namespace Thread {
-        void delay(const int ms);
-    }
 }
