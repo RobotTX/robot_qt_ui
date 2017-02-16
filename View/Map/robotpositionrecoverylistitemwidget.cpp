@@ -60,6 +60,10 @@ RobotPositionRecoveryListItemWidget::RobotPositionRecoveryListItemWidget(const i
 
     layout->addLayout(recoverPositionLayout);
 
+    topLayout->setContentsMargins(10, 0, 10, 0);
+    recoverPositionLayout->setContentsMargins(10, 0, 10, 5);
+    layout->setContentsMargins(0, 0, 0, 0);
+
     connect(closeBtn, SIGNAL(clicked()), this, SLOT(closeBtnSlot()));
     connect(pixmapItem, SIGNAL(robotGoTo(double, double)), this, SLOT(robotGoToSlot(double, double)));
     connect(recoverPositionBtn, SIGNAL(clicked()), this, SLOT(startRecoverySlot()));
@@ -84,6 +88,7 @@ void RobotPositionRecoveryListItemWidget::startRecoverySlot(){
     emit startRecovery(startingToRecover, robotName);
 }
 
+/// updates the icon
 void RobotPositionRecoveryListItemWidget::robotRecovering(const bool recovering){
     if(recovering){
         recoverPositionBtn->setIcon(QIcon(":/icons/pause.png"));
@@ -97,9 +102,10 @@ void RobotPositionRecoveryListItemWidget::robotRecovering(const bool recovering)
 void RobotPositionRecoveryListItemWidget::updateMap(const QImage map){
     QPixmap pixmap = QPixmap::fromImage(map);
     pixmapItem->setPixmap(pixmap);
-
+    /// we have received a map so no reason to show the warning icon anymore
     if(!warningIcon->isHidden()){
         warningIcon->hide();
+        /// center on the map that we just received
         emit centerOn(pixmapItem->getRobotView());
     }
 }
@@ -114,6 +120,7 @@ void RobotPositionRecoveryListItemWidget::updateRobotPos(double x, double y, dou
     pixmapItem->updateRobotPos(x, y, ori);
 }
 
+/// when the item is clicked the scene centers on the corresponding robot
 void RobotPositionRecoveryListItemWidget::mouseDoubleClickEvent(QMouseEvent*){
     qDebug() << "RobotPositionRecoveryListItemWidget::mouseDoubleClickEvent";
     emit centerOn(pixmapItem->getRobotView());

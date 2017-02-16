@@ -76,7 +76,7 @@ void ScanMapWidget::initializeMenu(){
     menuLayout->addLayout(teleopLayout);
 
 
-    /// Cancel + Svae button
+    /// Cancel + Save button
     QHBoxLayout* cancelSaveLayout = new QHBoxLayout();
     CustomPushButton* cancelBtn = new CustomPushButton("Cancel", this, CustomPushButton::ButtonType::LEFT_MENU, "center");
     cancelSaveLayout->addWidget(cancelBtn);
@@ -198,12 +198,12 @@ void ScanMapWidget::saveSlot(){
 
         /// Get an image from the scene
         QImage image = sceneToImage();
-        image.save("/home/m-a/Desktop/1.pgm");
+        //image.save("/home/m-a/Desktop/1.pgm");
 
         /// Check if the size of the image is bigger than expected, and if so, alert the user that we might lose data if using it
         if(checkImageSize(image.size())){
             image = croppedImageToMapImage(image);
-            image.save("/home/m-a/Desktop/2.pgm");
+            //image.save("/home/m-a/Desktop/2.pgm");
 
             /// If we got a resolution proceed, else we don't save
             if(resolution != -1){
@@ -369,7 +369,7 @@ QImage ScanMapWidget::sceneToImage(){
     /// We use a painter to copy the scene into the image
     QPainter painter(&image);
     scene->render(&painter);
-    image.save("/home/m-a/Desktop/0.png");
+    //image.save("/home/m-a/Desktop/0.png");
 
 
     /// The image is still in green and red color so we set the pixel to white and black

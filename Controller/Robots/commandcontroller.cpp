@@ -12,6 +12,7 @@ CommandController::CommandController(QWidget *parent)
     : QObject(parent), robotName(""), messageBox(parent), stop(false), newRobotName(""),
       groupName(""), pathName(""), scan(false), nb(-1), path(QStringList()) {
     messageBox.setWindowTitle("Processing a command");
+    connect(&messageBox, SIGNAL(hideBox()), this, SLOT(commandFailed()));
 }
 
 bool CommandController::sendCommand(QPointer<Robot> robot, QString cmd,
@@ -96,15 +97,9 @@ void CommandController::cmdAnswerSlot(QString answer){
             }
         } else if(list.at(0).compare("cmd") == 0 && list.at(1).compare("failed") == 0){
             qDebug() << "CommandController::cmdAnswerSlot The user stopped the command";
-        } else {
+        } else
             /// Should be caught by cmdAnswerSlot
             qDebug() << "CommandController::cmdAnswerSlot Got an answer to the wrong command :" << list;
-            if(TESTING)
-                success = true;
-            else
-                Q_UNREACHABLE();
-
-        }
     } else {
         /// Should be caught by cmdAnswerSlot
         qDebug() << "CommandController::cmdAnswerSlot Got a wrong answer :" << list;
@@ -219,10 +214,15 @@ void CommandController::openMessageBox(QStringList listCmd){
     }
 
     messageBox.setText(msg);
-    connect(&messageBox, SIGNAL(hideBox()), this, SLOT(commandFailed()));
     /**
     /// is supposed to reset the timer
     messageBox.hide();
     */
-    messageBox.show();
+    //messageBox.setWindowFlags(Qt::WindowStaysOnTopHint);
+
+    //messageBox.show();
+    //messageBox.raise();
+    //messageBox.activateWindow();
+    /// TODO check that it's not stopping the other commands
+    messageBox.exec();
 }

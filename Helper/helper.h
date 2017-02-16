@@ -1,4 +1,5 @@
 #include "Model/Other/position.h"
+#include <QDir>
 
 /**
  * In this file we put all sorts of useful functions used by any classes
