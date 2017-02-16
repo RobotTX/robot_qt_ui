@@ -10,8 +10,8 @@
 #include <QVBoxLayout>
 #include <QDebug>
 
-DisplaySelectedPath::DisplaySelectedPath(MainWindow *mainWindow,  const QSharedPointer<Paths>& _paths):
-    QWidget(mainWindow), paths(_paths)
+DisplaySelectedPath::DisplaySelectedPath(MainWindow *mainWindow):
+    QWidget(mainWindow)
 {
     scrollArea = new CustomScrollArea(this, true);
 

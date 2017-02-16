@@ -7,6 +7,7 @@
 #include <QKeyEvent>
 #include <QRegularExpression>
 #include <assert.h>
+#include "Helper/helper.h"
 #include "Controller/mainwindow.h"
 #include "Controller/Points/pointscontroller.h"
 #include "Model/Other/xmlparser.h"
@@ -185,10 +186,10 @@ void DisplaySelectedPoint::hideEvent(QHideEvent *event){
 
 int DisplaySelectedPoint::checkPointName(QString name) {
     qDebug() << "DisplaySelectedPoint::checkPointName called";
-    nameEdit->setText(formatName(name));
+    nameEdit->setText(Helper::formatName(name));
 
     /// if it keeps the same name we allow the point to be saved
-    if(!formatName(name).compare(pointView->getPoint()->getName())){
+    if(!Helper::formatName(name).compare(pointView->getPoint()->getName())){
         saveButton->setToolTip("");
         saveButton->setEnabled(true);
         emit invalidName(TEXT_COLOR_INFO, PointsController::PointNameError::NoError);
@@ -246,22 +247,6 @@ void DisplaySelectedPoint::setPointView(QSharedPointer<PointView> _pointView, co
         qDebug() << "Displayselectedpoint::setpointview pointview null pointer";
     }
     */
-}
-
-/// removes extra useless spaces like in " a name    with extra   useless spaces  "
-QString DisplaySelectedPoint::formatName(const QString name) const {
-    qDebug() << "DisplaySelectedPoint::formatName called";
-
-    QString ret("");
-    QStringList nameStrList = name.split(" ", QString::SkipEmptyParts);
-    for(int i = 0; i < nameStrList.size(); i++){
-        if(i > 0)
-            ret += " ";
-        ret += nameStrList.at(i);
-    }
-    if(name.size() > 0 && name.at(name.size()-1) == ' ')
-        ret += " ";
-    return ret;
 }
 
 void DisplaySelectedPoint::resizeEvent(QResizeEvent *event){

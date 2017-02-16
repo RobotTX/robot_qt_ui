@@ -29,7 +29,7 @@ public:
       QVector<QSharedPointer<PathPoint>> path;
     };
 
-    DisplaySelectedPath(MainWindow* mainWindow, const QSharedPointer<Paths>& _paths);
+    DisplaySelectedPath(MainWindow* mainWindow);
     void updatePath(const QString groupName, const QString pathName, const QVector<QSharedPointer<PathPoint> > &path, const QString visiblePath);
 
 protected:
@@ -57,7 +57,6 @@ private slots:/**
     void mapBtnSlot(bool checked);
 
 private:
-    QSharedPointer<Paths> paths;
     QVBoxLayout* layout;
     TopLeftMenu* actionButtons;
     CustomLabel* nameLabel;

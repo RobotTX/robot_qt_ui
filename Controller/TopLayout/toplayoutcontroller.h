@@ -28,17 +28,14 @@ public:
     void removeRobotWithoutHome(const QString name);
     void addRobotWithoutHome(const QString name);
 
-    void setLabelDelay(const QString msgType, const QString label, int delay);
-
     QString getLabelText(void) const { return view->getLabelText(); }
-
-    void enableLayout(const bool enable) { view->setEnable(enable); }
 
     QString getRobotsString(void) const;
 
-public slots:
-
+private slots:
+    void setLabelDelay(const QString msgType, const QString label, int delay);
     void setLabel(const QString msgType, const QString label);
+    void enableLayout(const bool enable) { view->setEnable(enable); }
 
 private:
 

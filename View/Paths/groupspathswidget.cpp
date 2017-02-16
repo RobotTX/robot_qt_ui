@@ -1,24 +1,26 @@
 #include "groupspathswidget.h"
-#include "Controller/mainwindow.h"
-#include "View/LeftMenu/topleftmenu.h"
 #include <QDebug>
-#include "View/Other/customlabel.h"
 #include <QVBoxLayout>
+#include <QHBoxLayout>
+#include <QAbstractButton>
+#include "Helper/helper.h"
+#include "Controller/mainwindow.h"
+#include "Controller/Paths/pathscontroller.h"
 #include "Model/Points/point.h"
+#include "View/LeftMenu/topleftmenu.h"
+#include "View/Other/customlabel.h"
 #include "View/Paths/groupspathsbuttongroup.h"
 #include "View/Paths/pathbuttongroup.h"
 #include "View/Other/customlineedit.h"
-#include <QAbstractButton>
 #include "View/Other/customscrollarea.h"
-#include <QHBoxLayout>
 #include "View/Other/custompushbutton.h"
 #include "View/Other/stylesettings.h"
 
 
-GroupsPathsWidget::GroupsPathsWidget(MainWindow* _mainWindow, const QSharedPointer<Paths> &_paths): QWidget(_mainWindow), mainWindow(_mainWindow), paths(_paths), lastCheckedButton("")
+GroupsPathsWidget::GroupsPathsWidget(PathsController* pathsController): QWidget(), lastCheckedButton("")
 {
     /// to scroll the QButtonGroup if there is a lot of groups of paths
-    scrollArea = new CustomScrollArea(this, true);
+    CustomScrollArea* scrollArea = new CustomScrollArea(this, true);
 
     layout = new QVBoxLayout(this);
     QVBoxLayout* topLayout = new QVBoxLayout();
@@ -38,15 +40,15 @@ GroupsPathsWidget::GroupsPathsWidget(MainWindow* _mainWindow, const QSharedPoint
     topLayout->addWidget(groupNameEdit);
     layout->addLayout(topLayout);
 
-    buttonGroup = new GroupsPathsButtonGroup(this, paths);
+    buttonGroup = new GroupsPathsButtonGroup(this);
+    connect(buttonGroup, SIGNAL(updateConnectionsRequest()), pathsController, SLOT(updateConnectionsRequestSlot()));
+    /// to enable the action buttons when a group is selected
+    connect(buttonGroup->getButtonGroup(), SIGNAL(buttonClicked(QAbstractButton*)), this, SLOT(enableButtons(QAbstractButton*)));
     scrollArea->setWidget(buttonGroup);
     layout->addWidget(scrollArea);
 
-    /// to enable the action buttons when a group is selected
-    connect(buttonGroup->getButtonGroup(), SIGNAL(buttonClicked(QAbstractButton*)), this, SLOT(enableButtons(QAbstractButton*)));    
-
     /// this layout contains the widgets necessary to the creation of a group
-    creationLayout = new QHBoxLayout();
+    QHBoxLayout* creationLayout = new QHBoxLayout();
     saveButton = new CustomPushButton("Save", this, CustomPushButton::ButtonType::LEFT_MENU, "center", false, false);
     saveButton->hide();
 
@@ -60,11 +62,10 @@ GroupsPathsWidget::GroupsPathsWidget(MainWindow* _mainWindow, const QSharedPoint
     creationLayout->setAlignment(Qt::AlignBottom);
 
     /// to make sure the name chosen for a new group is valid
-    connect(groupNameEdit, SIGNAL(textEdited(QString)), this, SLOT(checkGroupName(QString)));
+    connect(groupNameEdit, SIGNAL(textEdited(QString)), pathsController, SLOT(checkPathGroupName(QString)));
 
     /// to notify the user whether the name he chose is valid or not
-    connect(buttonGroup->getModifyEdit(), SIGNAL(textEdited(QString)), this, SLOT(checkEditGroupName(QString)));
-    connect(this, SIGNAL(codeEditGroup(int)), _mainWindow, SLOT(setMessageModifGroupPaths(int)));
+    connect(buttonGroup->getModifyEdit(), SIGNAL(textEdited(QString)), pathsController, SLOT(checkEditGroupName(QString)));
 
     /// to save a group of paths if the name is valid
     connect(saveButton, SIGNAL(clicked()), this, SLOT(newGroupPaths()));
@@ -72,9 +73,8 @@ GroupsPathsWidget::GroupsPathsWidget(MainWindow* _mainWindow, const QSharedPoint
     /// to cancel the creation of a group of paths
     connect(cancelButton, SIGNAL(clicked(bool)), this, SLOT(cancelCreationGroup()));
 
-    /// to handle double clicks
-    foreach(QAbstractButton *button, buttonGroup->getButtonGroup()->buttons())
-        connect(button, SIGNAL(doubleClick(QString)), mainWindow, SLOT(doubleClickOnPathsGroup(QString)));
+    connect(this, SIGNAL(codeEditGroup(int)), pathsController, SLOT(setMessageModifGroupPaths(int)));
+    connect(this, SIGNAL(updatePathGroupButtons()), pathsController, SLOT(updateGroupsPaths()));
 
     hide();
     creationLayout->setContentsMargins(0, 0, 10, 0);
@@ -133,7 +133,7 @@ void GroupsPathsWidget::keyPressEvent(QKeyEvent* event){
         else {
         /// if a group is being edited
             qDebug() << "editing group";
-            switch(checkEditGroupName(buttonGroup->getModifyEdit()->text())){
+            switch(nameError){
             case 0:
                 emit modifiedGroup(buttonGroup->getModifyEdit()->text());
                 //setLastCheckedButton("");
@@ -158,7 +158,7 @@ void GroupsPathsWidget::keyPressEvent(QKeyEvent* event){
         if(creatingGroup)
             emit newPathGroup("");
         else {
-            if(checkEditGroupName(buttonGroup->getModifyEdit()->text()) == 1){
+            if(nameError == 1){
                 emit modifiedGroup(lastCheckedButton);
                 setLastCheckedButton("");
             }
@@ -168,60 +168,6 @@ void GroupsPathsWidget::keyPressEvent(QKeyEvent* event){
         if(buttonGroup->getButtonGroup()->checkedButton())
             emit deleteGroup();
     }
-}
-
-int GroupsPathsWidget::checkGroupName(QString name){
-    qDebug() << "GroupsPathsWidget::checkGroupName checking name" << name;
-    groupNameEdit->setText(formatName(name));
-    /// gets rid of the extra spaces
-    name = name.simplified();
-
-    if(!name.compare("")){
-        saveButton->setToolTip("The name of your group cannot be empty");
-        saveButton->setEnabled(false);
-        emit messageCreationGroup(TEXT_COLOR_INFO, "");
-        return 1;
-    }
-    QMapIterator<QString, QSharedPointer<Paths::CollectionPaths>> it(*(paths->getGroups()));
-    while(it.hasNext()){
-        it.next();
-        if(!name.compare(it.key(), Qt::CaseInsensitive)){
-            saveButton->setToolTip("A group with the same name already exists, please choose another name");
-            saveButton->setEnabled(false);
-            emit messageCreationGroup(TEXT_COLOR_WARNING, "A group with the same name already exists, please choose another name");
-            return 2;
-        }
-    }
-    saveButton->setToolTip("");
-    saveButton->setEnabled(true);
-    emit messageCreationGroup(TEXT_COLOR_INFO, "To save this group press Enter or click the \"Save button\"");
-    return 0;
-}
-
-/// to remove extra spaces like "A          word  " becomes "A word"
-QString GroupsPathsWidget::formatName(const QString name) const {
-    qDebug() << "GroupsPathsWidget::formatName called" << name;
-
-    QString ret("");
-    QStringList nameStrList = name.split(" ", QString::SkipEmptyParts);
-    for(int i = 0; i < nameStrList.size(); i++){
-        if(i > 0)
-            ret += " ";
-        ret += nameStrList.at(i);
-    }
-    if(name.size() > 0 && name.at(name.size()-1) == ' ')
-        ret += " ";
-    return ret;
-}
-
-/// update the QButtonGroup by reconstructing it from scratch
-void GroupsPathsWidget::updateGroupsPaths(void){
-    qDebug() << "GroupsPathsWidget::updateGroupsPaths called";
-    buttonGroup->deleteButtons();
-    buttonGroup->createButtons();
-    /// to handle double clicks
-    foreach(QAbstractButton *button, buttonGroup->getButtonGroup()->buttons())
-        connect(button, SIGNAL(doubleClick(QString)), mainWindow, SLOT(doubleClickOnPathsGroup(QString)));
 }
 
 void GroupsPathsWidget::uncheck(){
@@ -267,17 +213,13 @@ void GroupsPathsWidget::hideEvent(QHideEvent *event){
     /// resets the buttons so we can click them
     buttonGroup->setEnabled(true);
     buttonGroup->setEnabledGroup(true);
-    buttonGroup->deleteButtons();
-    buttonGroup->createButtons();
-    /// to reestablish the connections so we can doubleclick the buttons
-    /// to handle double clicks
-    foreach(QAbstractButton *button, buttonGroup->getButtonGroup()->buttons())
-        connect(button, SIGNAL(doubleClick(QString)), mainWindow, SLOT(doubleClickOnPathsGroup(QString)));
+    emit updatePathGroupButtons();
     QWidget::hideEvent(event);
 }
 
 void GroupsPathsWidget::showEvent(QShowEvent *event){
     hideCreationWidgets();
+    emit updatePathGroupButtons();
     buttonGroup->getModifyEdit()->hide();
     QWidget::showEvent(event);
 }
@@ -301,38 +243,6 @@ void GroupsPathsWidget::resetWidget(){
     actionButtons->getMinusButton()->setEnabled(false);
     actionButtons->getEditButton()->setEnabled(false);
     setLastCheckedButton("");
-}
-
-/// to check that the name edited for a group is valid
-int GroupsPathsWidget::checkEditGroupName(QString name){
-    qDebug() << "GroupPathsWidget::checkEditGroupName called";
-    buttonGroup->getModifyEdit()->setText(formatName(buttonGroup->getModifyEdit()->text()));
-    name =  buttonGroup->getModifyEdit()->text().simplified();
-    if(!name.compare(buttonGroup->getButtonGroup()->checkedButton()->text(), Qt::CaseInsensitive)){
-        qDebug() << "same name";
-        /// if the name has not been changed we return 0 so that the user can save the same name
-        emit codeEditGroup(0);
-        return 0;
-    }
-    if(!name.compare("")){
-        /// if the name is empty we return 1 to prevent this name from being saved
-        emit codeEditGroup(1);
-        return 1;
-    }
-
-    QMapIterator<QString, QSharedPointer<Paths::CollectionPaths>> i(*(paths->getGroups()));
-    while (i.hasNext()) {
-        i.next();
-        if(!name.compare(i.key(), Qt::CaseInsensitive)){
-            qDebug() << "GroupPathsGroup::checkEditGroupName" << i.key();
-            /// if the name is already the name of another group of paths we return 2, saving this name is also forbidden
-            emit codeEditGroup(2);
-            return 2;
-        }
-    }
-    /// if there is nothing to report we return 0 and the name can be saved
-    emit codeEditGroup(0);
-    return 0;
 }
 
 void GroupsPathsWidget::initializeActionButtons(void){

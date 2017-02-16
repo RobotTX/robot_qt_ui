@@ -43,7 +43,7 @@ void GroupButtonGroup::updateButtons(QSharedPointer<Points> const& points){
     }
 
     /// Add buttons
-    int index = 0;
+    int index(0);
     QMapIterator<QString, QSharedPointer<QVector<QSharedPointer<PointView>>>> i(*(points->getGroups()));
     while (i.hasNext()) {
         i.next();

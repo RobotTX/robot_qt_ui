@@ -235,21 +235,6 @@ void PointsLeftWidget::modifyGroupAfterClick(QString name){
     emit modifiedGroupAfterClick(name);
 }
 
-QString PointsLeftWidget::formatName(const QString name) const {
-    //qDebug() << "PointsLeftWidget::formatName called" << name;
-
-    QString ret("");
-    QStringList nameStrList = name.split(" ", QString::SkipEmptyParts);
-    for(int i = 0; i < nameStrList.size(); i++){
-        if(i > 0)
-            ret += " ";
-        ret += nameStrList.at(i);
-    }
-    if(name.size() > 0 && name.at(name.size()-1) == ' ')
-        ret += " ";
-    return ret;
-}
-
 void PointsLeftWidget::resizeEvent(QResizeEvent *event){
     QWidget* widget = static_cast<QWidget*>(parent());
     int maxWidth = widget->width() - 10;

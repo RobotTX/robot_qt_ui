@@ -33,7 +33,6 @@ public:
     void clearLayout(QLayout *layout);
 
 private:
-    QWidget* parent;
     QVBoxLayout* layout;
 };
 

@@ -16,7 +16,7 @@ class QVBoxLayout;
 class PathButtonGroup: public QWidget
 {
 public:
-    PathButtonGroup(QWidget *_parent, const QSharedPointer<Paths>& _paths);
+    PathButtonGroup(QWidget *_parent);
     ~PathButtonGroup(){}
 
     QButtonGroup* getButtonGroup(void) const { return buttonGroup; }
@@ -46,7 +46,6 @@ protected:
 private:
     QVBoxLayout* layout;
     QButtonGroup* buttonGroup;
-    QSharedPointer<Paths> paths;
 };
 
 #endif // PATHBUTTONGROUP_H

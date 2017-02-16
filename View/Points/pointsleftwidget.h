@@ -62,13 +62,6 @@ protected:
     void keyPressEvent(QKeyEvent* event);
     void showEvent(QShowEvent *event);
     void resizeEvent(QResizeEvent *event);
-    /**
-     * @brief formatName
-     * @param name
-     * @return formated name
-     * format a name to remove extra spaces
-     */
-    QString formatName(const QString name) const;
 
 private slots:
 

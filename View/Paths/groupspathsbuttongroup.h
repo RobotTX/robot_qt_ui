@@ -17,28 +17,25 @@ class GroupsPathsButtonGroup: public QWidget {
     Q_OBJECT
 
 public:
-    GroupsPathsButtonGroup(QWidget *_parent, const QSharedPointer<Paths>& _paths);
+    GroupsPathsButtonGroup(QWidget *_parent);
 
-    QButtonGroup* getButtonGroup(void) const { return buttonGroup; }
+    QButtonGroup* getButtonGroup(void) const { return btnGroup; }
     CustomLineEdit* getModifyEdit(void) const { return modifyEdit; }
     QVBoxLayout* getLayout(void) const { return layout; }
 
 public:
     /**
-     * @brief deleteButtons
-     * delete buttons to prepare an update
+     * @brief updateButtons
+     * updateButtons the buttons (at initialization or to update)
      */
-    void deleteButtons(void);
-    /**
-     * @brief createButtons
-     * creates the buttons (at initialization or to update)
-     */
-    void createButtons(void);
+    void updateButtons(QSharedPointer<Paths> const& paths);
+
     /**
      * @brief uncheck
      * unchecks the buttons
      */
     void uncheck(void);
+
     /**
      * @brief setEnabledGroup
      * @param enable
@@ -49,10 +46,13 @@ public:
 protected:
     void resizeEvent(QResizeEvent *event);
 
+signals:
+    /// emitted when buttons are updated to reestablish the connections
+    void updateConnectionsRequest();
+
 private:
     QVBoxLayout* layout;
-    QButtonGroup* buttonGroup;
-    QSharedPointer<Paths> paths;
+    QButtonGroup* btnGroup;
     CustomLineEdit* modifyEdit;
 };
 

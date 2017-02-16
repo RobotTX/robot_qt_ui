@@ -24,7 +24,7 @@ class DisplayPathGroup: public QWidget {
     Q_OBJECT
 
 public:
-    DisplayPathGroup(MainWindow *_parent, const QSharedPointer<Paths> &_paths);
+    DisplayPathGroup(MainWindow *_parent);
 
     PathButtonGroup* getPathButtonGroup(void) const { return pathButtonGroup; }
     TopLeftMenu* getActionButtons(void) const { return actionButtons; }
@@ -72,7 +72,6 @@ signals:
     void setPathsGroup(const QString);
 
 private:
-    QSharedPointer<Paths> paths;
     CustomScrollArea* scrollArea;
     PathButtonGroup* pathButtonGroup;
     TopLeftMenu* actionButtons;

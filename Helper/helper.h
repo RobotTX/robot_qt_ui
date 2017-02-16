@@ -1,4 +1,5 @@
 #include "Model/Other/position.h"
+#include <QString>
 
 /**
  * In this file we put all sorts of useful functions used by any classes
@@ -13,4 +14,6 @@ namespace Helper {
         Position robotCoordToPixelCoord(const Position positionInRobotCoordinates, double originX, double originY, double resolution, int height);
     }
 
+    /// to remove extra spaces like "A          word  " becomes "A word"
+    QString formatName(const QString name);
 }

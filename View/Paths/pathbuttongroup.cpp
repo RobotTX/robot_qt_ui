@@ -5,7 +5,7 @@
 #include "View/Other/stylesettings.h"
 #include <QResizeEvent>
 
-PathButtonGroup::PathButtonGroup(QWidget *_parent, const QSharedPointer<Paths> &_paths): QWidget(_parent), paths(_paths)
+PathButtonGroup::PathButtonGroup(QWidget *_parent): QWidget(_parent)
 {
     layout = new QVBoxLayout(this);
     buttonGroup = new QButtonGroup(this);

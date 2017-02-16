@@ -85,6 +85,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     /// Create the toolbar
     topLayoutController = new TopLayoutController(this);
     mainLayout->addWidget(topLayoutController->getTopLayout());
+    connect(this, SIGNAL(setMessageTop(QString,QString)), topLayoutController, SLOT(setLabel(QString,QString)));
+    connect(this, SIGNAL(setTemporaryMessageTop(QString,QString,int)), topLayoutController, SLOT(setLabelDelay(QString,QString,int)));
+    connect(this, SIGNAL(enableTopLayout(bool)), topLayoutController, SLOT(enableLayout(bool)));
 
     pointsController = new PointsController(this);
 
@@ -289,7 +292,7 @@ void MainWindow::deletePath(int robotNb){
                 case QMessageBox::Ok:
                     /// if the command is succesfully sent to the robot, we apply the change
                     if(!commandController->sendCommand(robot, QString("k"), "", "", "", false, robotNb))
-                        topLayoutController->setLabel(TEXT_COLOR_DANGER, "Failed to delete the path of " + robot->getName() + ", please try again");
+                        emit setMessageTop(TEXT_COLOR_DANGER, "Failed to delete the path of " + robot->getName() + ", please try again");
                 break;
                 case QMessageBox::Cancel:
                     qDebug() << "Cancel was clicked";
@@ -307,7 +310,7 @@ void MainWindow::deletePath(int robotNb){
                 case QMessageBox::Ok:
                     /// if the command is succesfully sent to the robot, we apply the change
                     if(!commandController->sendCommand(robot, QString("m"), "", "", "", false, robotNb))
-                        topLayoutController->setLabel(TEXT_COLOR_DANGER, "Failed to delete the path of " + robot->getName() + ", please try again");
+                        emit setMessageTop(TEXT_COLOR_DANGER, "Failed to delete the path of " + robot->getName() + ", please try again");
                 break;
                 case QMessageBox::Cancel:
                     qDebug() << "Cancel was clicked";
@@ -326,7 +329,7 @@ void MainWindow::stopPath(int robotNb){
     qDebug() << "MainWindow::StopPath called";
     QPointer<Robot> robot = robotsController->getRobots()->getRobotsVector().at(robotNb)->getRobot();
     if(!commandController->sendCommand(robot, QString("l"), "", "", "", false))
-        topLayoutController->setLabel(TEXT_COLOR_DANGER, "Path failed to be stopped, please try again");
+        emit setMessageTop(TEXT_COLOR_DANGER, "Path failed to be stopped, please try again");
 }
 
 void MainWindow::playSelectedRobot(int robotNb){
@@ -335,13 +338,13 @@ void MainWindow::playSelectedRobot(int robotNb){
         qDebug() << "MainWindow::playSelectedRobot pause path on robot " << robotNb << " : " << robot->getName();
 
         if(!commandController->sendCommand(robot, QString("d"), "", "", "", false, robotNb))
-            topLayoutController->setLabel(TEXT_COLOR_DANGER, "Path failed to be stopped, please try again");
+            emit setMessageTop(TEXT_COLOR_DANGER, "Path failed to be stopped, please try again");
 
     } else {
         qDebug() << "MainWindow::playSelectedRobot play path on robot " << robotNb << " : " << robot->getName();
 
         if(!commandController->sendCommand(robot, QString("j"), "", "", "", false, robotNb))
-            topLayoutController->setLabel(TEXT_COLOR_DANGER, "Path failed to start, please try again");
+            emit setMessageTop(TEXT_COLOR_DANGER, "Path failed to start, please try again");
     }
 }
 
@@ -397,15 +400,15 @@ void MainWindow::setSelectedRobot(QPointer<RobotView> robotView){
 
 
     /// message to explain the user how to assign a path or a home to his robot
-    topLayoutController->setLabel(TEXT_COLOR_NORMAL, "");
+    emit setMessageTop(TEXT_COLOR_NORMAL, "");
     if(robotsController->getSelectedRobot()->getRobot()->getPath().size() == 0){
-        topLayoutController->setLabel(TEXT_COLOR_INFO, "You can assign a path to your robot by clicking the button labeled \"Assign a path\"");
+        emit setMessageTop(TEXT_COLOR_INFO, "You can assign a path to your robot by clicking the button labeled \"Assign a path\"");
         if(!robotsController->getSelectedRobot()->getRobot()->getHome())
-            topLayoutController->setLabel(TEXT_COLOR_INFO, topLayoutController->getLabelText() + "\nYou can assign a home to your robot by clicking the button "
+            emit setMessageTop(TEXT_COLOR_INFO, topLayoutController->getLabelText() + "\nYou can assign a home to your robot by clicking the button "
                                                                                                  "labeled \"Assign a home point\"");
     } else
         if(!robotsController->getSelectedRobot()->getRobot()->getHome())
-            topLayoutController->setLabel(TEXT_COLOR_INFO, topLayoutController->getLabelText() + "You can assign a home to your robot by clicking the button "
+            emit setMessageTop(TEXT_COLOR_INFO, topLayoutController->getLabelText() + "You can assign a home to your robot by clicking the button "
                                                                        "labeled \"Assign a home point\"");
 
     robotsController->getEditSelectedRobotWidget()->setSelectedRobot(robotsController->getSelectedRobot());
@@ -575,16 +578,16 @@ void MainWindow::saveRobotModifications(){
 
             robotDialog->getSSIDEdit()->setText(robotsController->getSelectedRobot()->getRobot()->getWifi());
             robotDialog->getPasswordEdit()->setText("......");
-            topLayoutController->setLabel(TEXT_COLOR_SUCCESS, "You have successfully updated" + name);
+            emit setMessageTop(TEXT_COLOR_SUCCESS, "You have successfully updated" + name);
         } else {
-            topLayoutController->setLabel(TEXT_COLOR_DANGER, "Failed to update the robot, please try again");
+            emit setMessageTop(TEXT_COLOR_DANGER, "Failed to update the robot, please try again");
             return;
         }
     } else {
         /// we check if the name has been changed
         if(!name.isEmpty() && name.compare(robotsController->getSelectedRobot()->getRobot()->getName(), Qt::CaseSensitive)){
             if(!commandController->sendCommand(robotsController->getSelectedRobot()->getRobot(), QString("a \"") + name + "\"", name)){
-                topLayoutController->setLabel(TEXT_COLOR_DANGER, "Failed to edit the name of the robot, please try again");
+                emit setMessageTop(TEXT_COLOR_DANGER, "Failed to edit the name of the robot, please try again");
                 return;
             }
 
@@ -598,9 +601,9 @@ void MainWindow::saveRobotModifications(){
 
                 robotDialog->getSSIDEdit()->setText(robotsController->getSelectedRobot()->getRobot()->getWifi());
                 robotDialog->getPasswordEdit()->setText("......");
-                topLayoutController->setLabel(TEXT_COLOR_SUCCESS, "You have successfully updated" + name);
+                emit setMessageTop(TEXT_COLOR_SUCCESS, "You have successfully updated" + name);
             } else {
-                topLayoutController->setLabel(TEXT_COLOR_DANGER, "Failed to edit the wifi of the robot, please try again");
+                emit setMessageTop(TEXT_COLOR_DANGER, "Failed to edit the wifi of the robot, please try again");
                 return;
             }
         }
@@ -615,7 +618,7 @@ void MainWindow::editTmpPathPointSlot(int id, QString name, double x, double y){
 
     leftMenu->setEnableReturnCloseButtons(false);
 
-    topLayoutController->setLabel(TEXT_COLOR_INFO, "Drag the selected point or click the map and click \"Save changes\" to modify the path");
+    emit setMessageTop(TEXT_COLOR_INFO, "Drag the selected point or click the map and click \"Save changes\" to modify the path");
     int nbWidget = pathsController->getPathPainter()->nbUsedPointView(name, x ,y);
 
     mapController->setMapState(GraphicItemState::EDITING_PATH);
@@ -634,8 +637,8 @@ void MainWindow::savePathSlot(){
 
     backEvent();
 
-    (already_existed) ? topLayoutController->setLabel(TEXT_COLOR_SUCCESS, "You have successfully updated the path \"" + pathsController->getPathCreationWidget()->getNameEdit()->text().simplified() + "\" within the group \"" + pathsController->getPathCreationWidget()->getCurrentGroupName() + "\"") :
-                        topLayoutController->setLabel(TEXT_COLOR_SUCCESS, "You have successfully created the path \"" + pathsController->getPathCreationWidget()->getNameEdit()->text().simplified() + "\" within the group \"" + pathsController->getPathCreationWidget()->getCurrentGroupName() + "\"");
+    (already_existed) ? emit setMessageTop(TEXT_COLOR_SUCCESS, "You have successfully updated the path \"" + pathsController->getPathCreationWidget()->getNameEdit()->text().simplified() + "\" within the group \"" + pathsController->getPathCreationWidget()->getCurrentGroupName() + "\"") :
+                        emit setMessageTop(TEXT_COLOR_SUCCESS, "You have successfully created the path \"" + pathsController->getPathCreationWidget()->getNameEdit()->text().simplified() + "\" within the group \"" + pathsController->getPathCreationWidget()->getCurrentGroupName() + "\"");
 }
 
 void MainWindow::saveEditPathPointSlot(){
@@ -816,7 +819,7 @@ void MainWindow::robotIsAliveSlot(QString hostname, QString ip, QString ssid, in
 
     /// Check the current stage of the robot
     if(robotView->getRobot()->isPlayingPath() && robotView->getRobot()->getPath().size() == stage){
-        topLayoutController->setLabel(TEXT_COLOR_SUCCESS, "The robot " + robotView->getRobot()->getName() + " has successfully reached its destination");
+        emit setMessageTop(TEXT_COLOR_SUCCESS, "The robot " + robotView->getRobot()->getName() + " has successfully reached its destination");
         bottomLayout->getPlayRobotBtnGroup()->button(robotId)->setIcon(QIcon(":/icons/play.png"));
         bottomLayout->getStopRobotBtnGroup()->button(robotId)->setEnabled(false);
     }
@@ -824,7 +827,7 @@ void MainWindow::robotIsAliveSlot(QString hostname, QString ip, QString ssid, in
 
 void MainWindow::robotIsDeadSlot(QString hostname, QString ip){
     qDebug() << "MainWindow::robotIsDeadSlot Robot" << hostname << "at ip" << ip << "... He is dead, Jim!!";
-    topLayoutController->setLabel(TEXT_COLOR_DANGER, QString("Robot " + hostname + " at ip " + ip + " disconnected."));
+    emit setMessageTop(TEXT_COLOR_DANGER, QString("Robot " + hostname + " at ip " + ip + " disconnected."));
 
     settingsController->removeRobot(robotsController->getRobots()->getRobotViewByIp(ip)->getRobot()->getName());
 
@@ -885,14 +888,14 @@ void MainWindow::robotIsDeadSlot(QString hostname, QString ip){
         mapController->updateMap();
 
         qDebug() << "MainWindow::robotIsDeadSlot Done removing robot" << hostname << "at ip" << ip;
-        topLayoutController->setLabel(TEXT_COLOR_DANGER, QString("Robot " + hostname + " at ip " + ip +" disconnected."));
+        emit setMessageTop(TEXT_COLOR_DANGER, QString("Robot " + hostname + " at ip " + ip +" disconnected."));
     } else {
         qDebug() << "MainWindow::robotIsDeadSlot A problem occured, the RobotView or its Robot are NULL, I have been kill twice ?";
     }
 }
 
 void MainWindow::setMessageCreationPath(QString message){
-    topLayoutController->setLabel(TEXT_COLOR_DANGER, message);
+    emit setMessageTop(TEXT_COLOR_DANGER, message);
 
     /// Timer used to delete the message after a given delay
     QTimer* timer = new QTimer(this);
@@ -903,11 +906,11 @@ void MainWindow::setMessageCreationPath(QString message){
 
 void MainWindow::setMessageCreationPathTimerSlot(){
     if(robotsController->getSelectedRobot())
-        topLayoutController->setLabel(TEXT_COLOR_INFO, "Click white points of the map to add new points to the path of " +
+        emit setMessageTop(TEXT_COLOR_INFO, "Click white points of the map to add new points to the path of " +
                   robotsController->getSelectedRobot()->getRobot()->getName() + "\nAlternatively you can click the \"+\" button to add an existing point to your path"
                   "\nYou can re-order the points in the list by dragging them");
     else
-        topLayoutController->setLabel(TEXT_COLOR_INFO, "Click white points of the map to add new points to your path\n"
+        emit setMessageTop(TEXT_COLOR_INFO, "Click white points of the map to add new points to your path\n"
                                        "Alternatively you can click the \"+\" button to add an existing point to your path"
                                        "\nYou can re-order the points in the list by dragging them");
 
@@ -925,10 +928,10 @@ void MainWindow::updateEditedPathPoint(double x, double y){
     emit updatePathPainter(false);
 
     if(mapController->getMap()->getMapImage().pixelColor(x, y).red() >= 254){
-        topLayoutController->setLabel(TEXT_COLOR_INFO, "You can click either \"Save changes\" to modify your path permanently or \"Cancel\" to keep the original path. If you want you can keep editing your point");
+        emit setMessageTop(TEXT_COLOR_INFO, "You can click either \"Save changes\" to modify your path permanently or \"Cancel\" to keep the original path. If you want you can keep editing your point");
         pathsController->enableSaveEditButton(true);
     } else {
-        topLayoutController->setLabel(TEXT_COLOR_DANGER, "You cannot save the current path because the point that you are editing is not in a known area of the map");
+        emit setMessageTop(TEXT_COLOR_DANGER, "You cannot save the current path because the point that you are editing is not in a known area of the map");
         pathsController->enableSaveEditButton(false);
     }
 }
@@ -937,10 +940,10 @@ void MainWindow::moveEditedPathPointSlot(){
     emit updatePathPainter(false);
     qDebug() << "MainWindow::moveEditedPathPointSlot";
     if(mapController->getPixelColor(pointsController->getEditedPointView()->getPoint()->getPosition().getX(), pointsController->getEditedPointView()->getPoint()->getPosition().getY()).red() >= 254){
-        topLayoutController->setLabel(TEXT_COLOR_INFO, "You can click either \"Save changes\" to modify your path permanently or \"Cancel\" to keep the original path. If you want you can keep editing your point");
+        emit setMessageTop(TEXT_COLOR_INFO, "You can click either \"Save changes\" to modify your path permanently or \"Cancel\" to keep the original path. If you want you can keep editing your point");
         pathsController->enableSaveEditButton(true);
     } else {
-        topLayoutController->setLabel(TEXT_COLOR_DANGER, "You cannot save the current path because the point that you are editing is not in a known area of the map");
+        emit setMessageTop(TEXT_COLOR_DANGER, "You cannot save the current path because the point that you are editing is not in a known area of the map");
         pathsController->enableSaveEditButton(false);
     }
 }
@@ -1033,16 +1036,16 @@ void MainWindow::setNewHome(QString homeName){
         Position posInRobotCoordinates = Helper::Convert::pixelCoordToRobotCoord(home->getPoint()->getPosition(), mapController->getMap()->getOrigin().getX(), mapController->getMap()->getOrigin().getY(), mapController->getMap()->getResolution(), mapController->getMap()->getHeight());
         if(!commandController->sendCommand(robotsController->getSelectedRobot()->getRobot(), QString("n \"") + QString::number(posInRobotCoordinates.getX()) + "\" \""
                                                           + QString::number(posInRobotCoordinates.getY()) + "\"", homeName, "", "", false, 0))
-            topLayoutController->setLabel(TEXT_COLOR_DANGER, robotsController->getSelectedRobot()->getRobot()->getName() + " failed to save its home point, please try again");
+            emit setMessageTop(TEXT_COLOR_DANGER, robotsController->getSelectedRobot()->getRobot()->getName() + " failed to save its home point, please try again");
     } else
-        topLayoutController->setLabel(TEXT_COLOR_DANGER, "Sorry, this point is already a home\nPlease select another");
+        emit setMessageTop(TEXT_COLOR_DANGER, "Sorry, this point is already a home\nPlease select another");
 
 }
 
 void MainWindow::goHome(){
     qDebug() << "MainWindow::goHome called (soon soon working)";
     if(!commandController->sendCommand(robotsController->getSelectedRobot()->getRobot(), QString("o")))
-        topLayoutController->setLabel(TEXT_COLOR_DANGER, "Failed to send the robot " + robotsController->getSelectedRobot()->getRobot()->getName() + " home, please try again");
+        emit setMessageTop(TEXT_COLOR_DANGER, "Failed to send the robot " + robotsController->getSelectedRobot()->getRobot()->getName() + " home, please try again");
 }
 
 void MainWindow::goHome(int nbRobot){
@@ -1050,7 +1053,7 @@ void MainWindow::goHome(int nbRobot){
     QPointer<Robot> currRobot = robotsController->getRobots()->getRobotsVector().at(nbRobot)->getRobot();
     if(!currRobot->isPlayingPath()){
         if(!commandController->sendCommand(currRobot, QString("o")))
-            topLayoutController->setLabel(TEXT_COLOR_DANGER, "Failed to send the robot " + currRobot->getName() + " home, please try again");
+            emit setMessageTop(TEXT_COLOR_DANGER, "Failed to send the robot " + currRobot->getName() + " home, please try again");
     } else {
         int answer = openConfirmMessage("The robot " + currRobot->getName() + " is currently playing its path. Do you want to stop it and send it home anyway ?");
         switch(answer){
@@ -1058,7 +1061,7 @@ void MainWindow::goHome(int nbRobot){
             break;
             case QMessageBox::Ok:
                 if(!commandController->sendCommand(currRobot, QString("o")))
-                    topLayoutController->setLabel(TEXT_COLOR_DANGER, "Failed to send the robot " + currRobot->getName() + " home, please try again");
+                    emit setMessageTop(TEXT_COLOR_DANGER, "Failed to send the robot " + currRobot->getName() + " home, please try again");
             break;
             default:
             break;
@@ -1184,7 +1187,7 @@ void MainWindow::saveMap(QString fileName){
         if(fileName.indexOf(".pgm", fileName.length()-4) != -1)
             fileName = fileName.mid(0, fileName.length()-4);
 
-        topLayoutController->setLabel(TEXT_COLOR_INFO, "The current configuration of the map has been saved");
+        emit setMessageTop(TEXT_COLOR_INFO, "The current configuration of the map has been saved");
 
         QFileInfo mapFileInfo(static_cast<QDir> (fileName), "");
         QString filePath(QDir::currentPath() + QDir::separator() + "mapConfigs" + QDir::separator() + mapFileInfo.fileName() + ".config");
@@ -1337,7 +1340,7 @@ void MainWindow::saveEditMapSlot(){
 
 void MainWindow::mergeMapSlot(){
     qDebug() << "MainWindow::mergeMapSlot called";
-    topLayoutController->setLabel(TEXT_COLOR_INFO, "You can select a map by clicking it or by clicking the list in the menu."
+    emit setMessageTop(TEXT_COLOR_INFO, "You can select a map by clicking it or by clicking the list in the menu."
                                          "\nYou can move a map by dragging and dropping it or by using the directional keys."
                                          "\nYou can rotate the map in the menu using the text block or the slider.");
 
@@ -1365,7 +1368,7 @@ void MainWindow::saveMergeMapSlot(double resolution, Position origin, QImage ima
     saveMap(fileName);
 
     sendNewMapToRobots();
-    topLayoutController->setLabel(TEXT_COLOR_SUCCESS, "The new merged map has been save successfully");
+    emit setMessageTop(TEXT_COLOR_SUCCESS, "The new merged map has been save successfully");
 }
 
 void MainWindow::saveScanMapSlot(double resolution, Position origin, QImage image, QString fileName){
@@ -1380,7 +1383,7 @@ void MainWindow::saveScanMapSlot(double resolution, Position origin, QImage imag
     saveMap(fileName);
 
     sendNewMapToRobots();
-    topLayoutController->setLabel(TEXT_COLOR_SUCCESS, "The new scanned map has been save successfully");
+    emit setMessageTop(TEXT_COLOR_SUCCESS, "The new scanned map has been save successfully");
 }
 
 void MainWindow::teleopCmdSlot(QString robotName, int id){
@@ -1485,7 +1488,7 @@ void MainWindow::pointBtnEvent(void){
     pointsController->getDisplaySelectedGroup()->uncheck();
     hideAllWidgets();
     pointsController->getPointsLeftWidget()->show();
-    topLayoutController->setLabel(TEXT_COLOR_INFO, "Click the map to add a permanent point");
+    emit setMessageTop(TEXT_COLOR_INFO, "Click the map to add a permanent point");
 }
 
 /**
@@ -1508,30 +1511,30 @@ void MainWindow::pointSavedEvent(QString groupName, double x, double y, QString 
     hideAllWidgets();
     leftMenu->hide();
 
-    topLayoutController->setLabel(TEXT_COLOR_SUCCESS, "You have successfully added the new point \"" + name + "\" to the group : \"" + groupName + "\"");
+    emit setMessageTop(TEXT_COLOR_SUCCESS, "You have successfully added the new point \"" + name + "\" to the group : \"" + groupName + "\"");
 }
 
 
 void MainWindow::enableReturnAndCloseButtons(){
     leftMenu->getReturnButton()->setEnabled(true);
     leftMenu->getCloseButton()->setEnabled(true);
-    topLayoutController->enableLayout(true);
+    emit enableTopLayout(true);
 }
 
 void MainWindow::setMessageCreationPoint(QString type, PointsController::PointNameError error){
     qDebug() << "MainWindow::setMessageCreation point called from mainwindow";
     switch(error){
         case PointsController::PointNameError::NoError:
-            topLayoutController->setLabel(type, "Click save or press ENTER to save this point");
+            emit setMessageTop(type, "Click save or press ENTER to save this point");
         break;
         case PointsController::PointNameError::ContainsSemicolon:
-            topLayoutController->setLabel(type, "You cannot create a point with a name that contains a semicolon, a curly bracket or the pattern \"pathpoint\"");
+            emit setMessageTop(type, "You cannot create a point with a name that contains a semicolon, a curly bracket or the pattern \"pathpoint\"");
         break;
         case PointsController::PointNameError::EmptyName:
-            topLayoutController->setLabel(type, "You cannot create a point with an empty name");
+            emit setMessageTop(type, "You cannot create a point with an empty name");
         break;
         case PointsController::PointNameError::AlreadyExists:
-            topLayoutController->setLabel(type, "You cannot create a point with this name because a point with the same name already exists");
+            emit setMessageTop(type, "You cannot create a point with this name because a point with the same name already exists");
         break;
         default:
             Q_UNREACHABLE();
@@ -1577,7 +1580,7 @@ void MainWindow::deletePathSlot(QString groupName, QString pathName){
             emit resetPath();
         }
         backEvent();
-        topLayoutController->setLabel(TEXT_COLOR_SUCCESS, "You have successfully deleted the path \"" + pathName + "\" which belonged to the group \"" + groupName + "\"");
+        emit setMessageTop(TEXT_COLOR_SUCCESS, "You have successfully deleted the path \"" + pathName + "\" which belonged to the group \"" + groupName + "\"");
     }
     break;
     case QMessageBox::StandardButton::Cancel:
@@ -1594,7 +1597,7 @@ void MainWindow::deletePathSlot(QString groupName, QString pathName){
 
 void MainWindow::editPathSlot(QString groupName, QString pathName){
     qDebug() << "MainWindow::editPathSlot called on group :" << groupName << ", path :" << pathName;
-    topLayoutController->setLabel(TEXT_COLOR_INFO, "Click white points of the map to add new points to the path of "
+    emit setMessageTop(TEXT_COLOR_INFO, "Click white points of the map to add new points to the path of "
                  "\nAlternatively you can click the \"+\" button to add an existing point to your path"
                  "\nYou can re-order the points in the list by dragging them");
 
@@ -1626,7 +1629,7 @@ void MainWindow::displayGroupPaths(){
 
 void MainWindow::createGroupPaths(){
     qDebug() << "MainWindow::createGroupPaths called";
-    topLayoutController->setLabel(TEXT_COLOR_INFO, "The name of your group cannot be empty");
+    emit setMessageTop(TEXT_COLOR_INFO, "The name of your group cannot be empty");
     pathsController->prepareGroupPathsCreation();
 }
 
@@ -1675,7 +1678,7 @@ void MainWindow::deleteGroupPaths(){
         pathsController->updateGroupsPaths();
         /// if the displayed path was among the paths of this group, we hide it as we delete it
         emit resetPath();
-        topLayoutController->setLabelDelay(TEXT_COLOR_SUCCESS, "You have successfully deleted the group of paths \"" + groupPaths + "\"", 4000);
+        emit setTemporaryMessageTop(TEXT_COLOR_SUCCESS, "You have successfully deleted the group of paths \"" + groupPaths + "\"", 4000);
         break;
     }
     case QMessageBox::StandardButton::Cancel:
@@ -1689,50 +1692,6 @@ void MainWindow::deleteGroupPaths(){
     }
 }
 
-void MainWindow::saveGroupPaths(QString name){
-    qDebug() << "saveGroupPaths called" << name;
-
-    name = name.simplified();
-    if(pathsController->checkGroupPathName(name) == 0){
-        pathsController->getGroupsPathsWidget()->setLastCheckedButton("");
-
-        /// updates the model
-        pathsController->createGroup(name);
-
-        /// updates list of groups in menu
-        pathsController->updateGroupsPaths();
-
-        /// enables the return button again
-        leftMenu->getReturnButton()->setEnabled(true);
-
-        /// hides everything that's related to the creation of a group
-        pathsController->hideGroupCreationWidgets();
-
-        /// enables the plus button again
-        pathsController->enableGroupsPathsWidgetPlusButtonOnly();
-
-        topLayoutController->enableLayout(true);
-
-        pathsController->serializePaths(QDir::currentPath() + QDir::separator() + "paths.dat");
-
-        topLayoutController->setLabelDelay(TEXT_COLOR_SUCCESS, "You have created a new group of paths", 4000);
-
-    } else if(pathsController->checkGroupPathName(name) == 1){
-        /// enables the return button again
-        leftMenu->getReturnButton()->setEnabled(true);
-
-        /// hides everything that's related to the creation of a group
-        pathsController->hideGroupCreationWidgets();
-
-        /// enables the plus button again
-        pathsController->enableGroupsPathsWidgetPlusButtonOnly();
-
-        topLayoutController->enableLayout(true);
-    }
-    else
-        topLayoutController->setLabelDelay(TEXT_COLOR_DANGER, "You cannot choose : " + name + " as a new name for your group because another group already has this name", 4000);
-}
-
 void MainWindow::modifyGroupPathsWithEnter(QString name){
     name = name.simplified();
     qDebug() << "modifying group paths after enter key pressed from" << pointsController->getPointsLeftWidget()->getLastCheckedId() << "to" << name;
@@ -1742,7 +1701,7 @@ void MainWindow::modifyGroupPathsWithEnter(QString name){
     bool has_changed = pathsController->modifyGroupPathsWithEnter(name);
 
     /// if the name has really changed
-    (has_changed) ? topLayoutController->setLabelDelay(TEXT_COLOR_SUCCESS, "You have successfully modified the name of your group", 4000) : topLayoutController->setLabel(TEXT_COLOR_NORMAL, "");
+    (has_changed) ? emit setTemporaryMessageTop(TEXT_COLOR_SUCCESS, "You have successfully modified the name of your group", 4000) : emit setMessageTop(TEXT_COLOR_NORMAL, "");
 }
 
 void MainWindow::doubleClickOnPathsGroup(QString checkedButton){
@@ -1767,7 +1726,7 @@ void MainWindow::createPath(){
     /// to clear the map of any path
     emit resetPath();
 
-    topLayoutController->setLabel(TEXT_COLOR_INFO, "The name of your path cannot be empty, fill up the corresponding field to give your path a name");
+    emit setMessageTop(TEXT_COLOR_INFO, "The name of your path cannot be empty, fill up the corresponding field to give your path a name");
     hideAllWidgets();
     setEnableAll(false, GraphicItemState::CREATING_PATH, true);
     pathsController->getPathCreationWidget()->show();
@@ -1808,7 +1767,7 @@ void MainWindow::displayPathOnMap(const bool display){
 
 void MainWindow::editPath(){
     qDebug() << "MainWindow::editPath called";
-    topLayoutController->setLabel(TEXT_COLOR_INFO, "Click white points of the map to add new points to the path of "
+    emit setMessageTop(TEXT_COLOR_INFO, "Click white points of the map to add new points to the path of "
                  "\nAlternatively you can click the \"+\" button to add an existing point to your path"
                  "\nYou can re-order the points in the list by dragging them");
 
@@ -1851,7 +1810,7 @@ void MainWindow::sendPathSelectedRobotSlot(const QString groupName, const QStrin
 
     /// if the command is succesfully sent to the robot, we apply the change
     if(!commandController->sendCommand(robot, QString("i ") + pathStr, "", groupName, pathName)){
-        topLayoutController->setLabel(TEXT_COLOR_DANGER, "The path of " + robot->getName() + "\" could not be updated, please try again");
+        emit setMessageTop(TEXT_COLOR_DANGER, "The path of " + robot->getName() + "\" could not be updated, please try again");
         qDebug() << "MainWindow::sendPathSelectedRobotSlot Path failed to be saved, please try again";
     }
 }
@@ -1859,15 +1818,15 @@ void MainWindow::sendPathSelectedRobotSlot(const QString groupName, const QStrin
 void MainWindow::setMessageNoRobotPath(const int code){
     switch(code){
     case 0:
-        topLayoutController->setLabel(TEXT_COLOR_INFO, "You cannot save your path because its name is still empty");
+        emit setMessageTop(TEXT_COLOR_INFO, "You cannot save your path because its name is still empty");
         pathsController->enablePathCreationSaveButton(false);
     break;
     case 1:
-        topLayoutController->setLabel(TEXT_COLOR_INFO, "You cannot save your path because the name you chose is already taken by another path in the same group");
+        emit setMessageTop(TEXT_COLOR_INFO, "You cannot save your path because the name you chose is already taken by another path in the same group");
         pathsController->enablePathCreationSaveButton(false);
     break;
     case 2:
-        topLayoutController->setLabel(TEXT_COLOR_INFO, "You can save your path any time you want by clicking the \"Save\" button");
+        emit setMessageTop(TEXT_COLOR_INFO, "You can save your path any time you want by clicking the \"Save\" button");
         pathsController->enablePathCreationSaveButton(true);
     break;
     default:
@@ -1895,28 +1854,10 @@ void MainWindow::cancelNoRobotPathSlot(){
     pathsController->getPathPainter()->setOldPath(oldPath);
     setEnableAll(false, GraphicItemState::NO_EVENT);
     leftMenu->setEnableReturnCloseButtons(true);
-    topLayoutController->enableLayout(true);
+    emit enableTopLayout(true);
     bottomLayout->setEnable(true);
 
     setTemporaryMessageTop(TEXT_COLOR_INFO, "You have cancelled the modifications of the path \"" + pathsController->getPathCreationWidget()->getCurrentPathName() + "\"", 2500);
-}
-
-void MainWindow::setMessageModifGroupPaths(int code){
-    switch(code){
-    case 0:
-        topLayoutController->setLabel(TEXT_COLOR_INFO, "Press enter to save this name for your group");
-        break;
-    case 1:
-        topLayoutController->setLabel(TEXT_COLOR_INFO, "You cannot have an empty name for your group");
-        break;
-
-    case 2:
-        topLayoutController->setLabel(TEXT_COLOR_INFO, "You cannot save this name for your group as it is already the name of another group");
-        break;
-    default:
-        Q_UNREACHABLE();
-        qDebug() << "MainWindow::setMessageModifGroupPaths You should not be here you probably forgot to implement the behavior for the code" << code;
-    }
 }
 
 void MainWindow::displayAssignedPath(QString groupName, QString pathName){
@@ -1972,7 +1913,7 @@ void MainWindow::backEvent(){
     if (lastWidgets.size() > 1){
         lastWidgets.removeLast();
         if(lastWidgets.last().second == MainWindow::WidgetType::GROUP || lastWidgets.last().second == MainWindow::WidgetType::GROUPS)
-            topLayoutController->setLabel(TEXT_COLOR_INFO, "Click the map to add a permanent point");
+            emit setMessageTop(TEXT_COLOR_INFO, "Click the map to add a permanent point");
 
         lastWidgets.last().first.first->show();
 
@@ -2059,7 +2000,7 @@ void MainWindow::clearNewMap(){
 void MainWindow::setEnableAll(bool enable, GraphicItemState state, int noReturn){
     setGraphicItemsState(state);
     bottomLayout->setEnable(enable);
-    topLayoutController->enableLayout(enable);
+    emit enableTopLayout(enable);
     leftMenu->setEnableReturnCloseButtons((noReturn == -1) ? enable : noReturn);
 }
 
@@ -2074,10 +2015,6 @@ void MainWindow::centerMap(){
 void MainWindow::settingBtnSlot(){
     qDebug() << "MainWindow::settingBtnSlot called";
     settingsController->showView();
-}
-
-void MainWindow::setTemporaryMessageTop(const QString type, const QString message, const int ms){
-    topLayoutController->setLabelDelay(type, message, ms);
 }
 
 void MainWindow::updateRobotInfo(QString robotName, QString robotInfo){
@@ -2545,7 +2482,7 @@ void MainWindow::resetFocus(){
 
 void MainWindow::openLeftMenu(){
     qDebug() << "openLeftMenu called";
-    topLayoutController->setLabel(TEXT_COLOR_NORMAL, "");
+    emit setMessageTop(TEXT_COLOR_NORMAL, "");
 
     /// resets the color of the selected point on the map and hides the temporary point`
     if(pointsController->getDisplaySelectedPoint()->getPointView()){
@@ -2797,9 +2734,9 @@ void MainWindow::commandDoneNewName(bool success, QString name){
 
         robotsController->updateRobotsLeftWidget();
         robotDialog->getNameEdit()->setText(robotsController->getSelectedRobot()->getRobot()->getName());
-        topLayoutController->setLabel(TEXT_COLOR_SUCCESS, "You have successfully updated" + name);
+        emit setMessageTop(TEXT_COLOR_SUCCESS, "You have successfully updated" + name);
     } else
-        topLayoutController->setLabel(TEXT_COLOR_DANGER, "Failed to edit the name of the robot, please try again");
+        emit setMessageTop(TEXT_COLOR_DANGER, "Failed to edit the name of the robot, please try again");
 }
 
 void MainWindow::commandDonePausePath(bool success, QString robotName){
@@ -2814,9 +2751,9 @@ void MainWindow::commandDonePausePath(bool success, QString robotName){
                 bottomLayout->getStopRobotBtnGroup()->button(robotNb)->setEnabled(true);
             else
                 bottomLayout->getStopRobotBtnGroup()->button(robotNb)->setEnabled(false);
-            topLayoutController->setLabel(TEXT_COLOR_SUCCESS, "Path paused");
+            emit setMessageTop(TEXT_COLOR_SUCCESS, "Path paused");
         } else
-            topLayoutController->setLabel(TEXT_COLOR_DANGER, "Path failed to be paused, please try again");
+            emit setMessageTop(TEXT_COLOR_DANGER, "Path failed to be paused, please try again");
     }
 }
 
@@ -2880,10 +2817,10 @@ void MainWindow::commandDoneSendPath(bool success, bool boolean, QString robotNa
                     }
                 }
                 emit updatePath(groupName, pathName);
-                topLayoutController->setLabel(TEXT_COLOR_SUCCESS, "the path of \"" + robotView->getRobot()->getName() + "\" has been successfully updated");
+                emit setMessageTop(TEXT_COLOR_SUCCESS, "the path of \"" + robotView->getRobot()->getName() + "\" has been successfully updated");
                 qDebug() << "MainWindow::commandDoneSendPath Path saved for robot" << robotView->getRobot()->getIp();
             } else {
-                topLayoutController->setLabel(TEXT_COLOR_DANGER, "The path of " + robotView->getRobot()->getName() + "\" could not be updated, please try again");
+                emit setMessageTop(TEXT_COLOR_DANGER, "The path of " + robotView->getRobot()->getName() + "\" could not be updated, please try again");
                 qDebug() << "MainWindow::commandDoneSendPath Path failed to be saved, please try again";
             }
         }
@@ -2898,9 +2835,9 @@ void MainWindow::commandDonePlayPath(bool success, QString robotName){
             robotView->getRobot()->setPlayingPath(true);
             bottomLayout->getPlayRobotBtnGroup()->button(robotNb)->setIcon(QIcon(":/icons/pause.png"));
             bottomLayout->getStopRobotBtnGroup()->button(robotNb)->setEnabled(true);
-            topLayoutController->setLabel(TEXT_COLOR_SUCCESS, "Path playing");
+            emit setMessageTop(TEXT_COLOR_SUCCESS, "Path playing");
         } else
-            topLayoutController->setLabel(TEXT_COLOR_DANGER, "Path failed to start, please try again");
+            emit setMessageTop(TEXT_COLOR_DANGER, "Path failed to start, please try again");
     }
 }
 
@@ -2910,9 +2847,9 @@ void MainWindow::commandDoneDeletePath(bool success, QString robotName){
     if(robotView && robotNb >= 0){
         if(success){
             clearPath(robotNb);
-            topLayoutController->setLabel(TEXT_COLOR_SUCCESS, "The path of \"" + robotView->getRobot()->getName() + "\" has been successfully deleted");
+            emit setMessageTop(TEXT_COLOR_SUCCESS, "The path of \"" + robotView->getRobot()->getName() + "\" has been successfully deleted");
         } else
-            topLayoutController->setLabel(TEXT_COLOR_DANGER, "Failed to delete the path of " + robotView->getRobot()->getName() + ", please try again");
+            emit setMessageTop(TEXT_COLOR_DANGER, "Failed to delete the path of " + robotView->getRobot()->getName() + ", please try again");
     }
 }
 
@@ -2924,9 +2861,9 @@ void MainWindow::commandDoneStopPath(bool success, QString robotName){
             robotView->getRobot()->setPlayingPath(false);
             bottomLayout->getPlayRobotBtnGroup()->button(robotNb)->setIcon(QIcon(":/icons/play.png"));
             bottomLayout->getStopRobotBtnGroup()->button(robotNb)->setEnabled(false);
-            topLayoutController->setLabel(TEXT_COLOR_SUCCESS, "Path stopped");
+            emit setMessageTop(TEXT_COLOR_SUCCESS, "Path stopped");
         } else
-            topLayoutController->setLabel(TEXT_COLOR_DANGER, "Path failed to be stopped, please try again");
+            emit setMessageTop(TEXT_COLOR_DANGER, "Path failed to be stopped, please try again");
     }
 }
 
@@ -2936,9 +2873,9 @@ void MainWindow::commandDoneStopDeletePath(bool success, QString robotName){
     if(robotView && robotNb >= 0){
         if(success){
             clearPath(robotNb);
-            topLayoutController->setLabel(TEXT_COLOR_SUCCESS, "The path of " + robotView->getRobot()->getName() + " has been successfully deleted");
+            emit setMessageTop(TEXT_COLOR_SUCCESS, "The path of " + robotView->getRobot()->getName() + " has been successfully deleted");
         } else
-            topLayoutController->setLabel(TEXT_COLOR_DANGER, "Failed to delete the path of " + robotView->getRobot()->getName() + ", please try again");
+            emit setMessageTop(TEXT_COLOR_DANGER, "Failed to delete the path of " + robotView->getRobot()->getName() + ", please try again");
     }
 }
 
@@ -2994,9 +2931,9 @@ void MainWindow::commandDoneNewHome(bool success, QString robotName, int id, QSt
                 home->setPixmap(PointView::PixmapType::SELECTED);
                 home->show();
 
-                topLayoutController->setLabel(TEXT_COLOR_SUCCESS, robotsController->getSelectedRobot()->getRobot()->getName() + " successfully updated its home point");
+                emit setMessageTop(TEXT_COLOR_SUCCESS, robotsController->getSelectedRobot()->getRobot()->getName() + " successfully updated its home point");
             } else
-                topLayoutController->setLabel(TEXT_COLOR_DANGER, robotsController->getSelectedRobot()->getRobot()->getName() + " failed to save its home point, please try again");
+                emit setMessageTop(TEXT_COLOR_DANGER, robotsController->getSelectedRobot()->getRobot()->getName() + " failed to save its home point, please try again");
 
         break;
         case 1:
@@ -3019,9 +2956,9 @@ void MainWindow::commandDoneNewHome(bool success, QString robotName, int id, QSt
 
 void MainWindow::commandDoneGoHome(bool success, QString robotName){
     if(success)
-        topLayoutController->setLabel(TEXT_COLOR_SUCCESS, "The robot " + robotName + " is going home");
+        emit setMessageTop(TEXT_COLOR_SUCCESS, "The robot " + robotName + " is going home");
     else
-        topLayoutController->setLabel(TEXT_COLOR_DANGER, "Failed to send the robot " + robotName + " home, please try again");
+        emit setMessageTop(TEXT_COLOR_DANGER, "Failed to send the robot " + robotName + " home, please try again");
 }
 
 void MainWindow::commandDoneStartScan(bool success, bool scan, QString robotName){
