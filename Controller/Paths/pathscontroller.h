@@ -49,8 +49,6 @@ public:
 
     void enableSaveEditButton(const bool enable);
 
-    void updateGroupsPaths(void) { groupsPathsWidget->updateGroupsPaths(); }
-
     void showGroupsPathsWidget(void) const { groupsPathsWidget->show(); }
     void showPathsGroup(void) const { pathGroup->show(); }
 
@@ -66,8 +64,6 @@ public:
     QString getGroupPathsChecked(void) const { return groupsPathsWidget->getButtonGroup()->getButtonGroup()->checkedButton()->text(); }
 
     void resetGroupsPathsWidget(void) const { groupsPathsWidget->resetWidget(); }
-
-    int checkGroupPathName(const QString name) { return groupsPathsWidget->checkGroupName(name); }
 
     void hideGroupCreationWidgets(void) const;
 
@@ -104,12 +100,37 @@ public slots:
     void doubleClickOnPath(const QString pathName, const QString groupName);
     void exhibitDisplayedPath(void);
     void setPathsGroup(const QString groupName);
+    void updateGroupsPaths(void) { groupsPathsWidget->getButtonGroup()->updateButtons(paths); }
 
 private slots:
     void displayPathSlot(const QString group, const QString path, const bool display);
     void editGroupPaths();
     /// the path received corresponds to a button in the group
     void checkEyeButtonSlot(const QString path);
+    void updateConnectionsRequestSlot();
+    void setMessageModifGroupPaths(int code);
+
+    /**
+     * @brief checkPathGroupName
+     * @param name
+     * @return
+     * to make sure that the name chosen to create a group is valid
+     */
+    int checkPathGroupName(QString name);
+    void saveGroupPaths(QString name);
+
+    /**
+     * @brief checkEditGroupName
+     * @param name
+     * @return
+     * to make sure that the new name chosen for an existing group is valid
+     */
+    void checkEditGroupName(QString name);
+
+signals:
+    void setMessageTop(QString,QString);
+    void setTemporaryMessageTop(QString type, QString message, int ms);
+    void enableReturnAndCloseButtons();
 
 private:
 

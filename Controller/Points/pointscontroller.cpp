@@ -34,7 +34,8 @@ PointsController::PointsController(MainWindow* mainWindow) : QObject(mainWindow)
 
     connect(this, SIGNAL(resetPathPointViews()), mainWindow, SLOT(resetPathPointViewsSlot()));
     connect(this, SIGNAL(setMessageTop(QString,QString)), mainWindow->getTopLayoutController(), SLOT(setLabel(QString,QString)));
-    connect(this, SIGNAL(setTemporaryMessageTop(QString,QString,int)), mainWindow, SLOT(setTemporaryMessageTop(QString,QString,int)));
+    connect(this, SIGNAL(setTemporaryMessageTop(QString,QString,int)), mainWindow->getTopLayoutController(), SLOT(setLabelDelay(QString,QString,int)));
+    connect(this, SIGNAL(enableTopLayout(bool)), mainWindow->getTopLayoutController(), SLOT(enableLayout(bool)));
     connect(this, SIGNAL(backEvent()), mainWindow, SLOT(backEvent()));
     connect(this, SIGNAL(setSelectedRobot(QPointer<RobotView>)), mainWindow, SLOT(setSelectedRobot(QPointer<RobotView>)));
     connect(this, SIGNAL(setSelectedTmpPoint()), mainWindow, SLOT(setSelectedTmpPoint()));
@@ -1289,7 +1290,7 @@ void PointsController::cancelUpdatePoint(void){
     displaySelectedPoint->getNameLabel()->show();
     mainWindow->getLeftMenu()->getCloseButton()->setEnabled(true);
     mainWindow->getLeftMenu()->getReturnButton()->setEnabled(true);
-    mainWindow->getTopLayoutController()->enableLayout(true);
+    emit enableTopLayout(true);
     /// reset the color of the pointView
     QSharedPointer<PointView> displaySelectedPointView = points->findPointView(displaySelectedPoint->getPointName());
     if(displaySelectedPointView){
@@ -1553,7 +1554,7 @@ void PointsController::createGroup(QString groupName){
         pointsLeftWidget->disableButtons();
         pointsLeftWidget->getActionButtons()->getPlusButton()->setEnabled(true);
         pointsLeftWidget->getActionButtons()->getPlusButton()->setToolTip("Click here to add a new group");
-        mainWindow->getTopLayoutController()->enableLayout(true);
+        emit enableTopLayout(true);
 
         emit setTemporaryMessageTop(TEXT_COLOR_SUCCESS, "You have successfully created a new group : \"" + groupName + "\"", 4000);
     } else if(checkGroupName(groupName) == 1){
@@ -1575,7 +1576,7 @@ void PointsController::createGroup(QString groupName){
         pointsLeftWidget->disableButtons();
         pointsLeftWidget->getActionButtons()->getPlusButton()->setEnabled(true);
         pointsLeftWidget->getActionButtons()->getPlusButton()->setToolTip("Click here to add a new group");
-        mainWindow->getTopLayoutController()->enableLayout(true);
+        emit enableTopLayout(true);
     } else
         emit setTemporaryMessageTop(TEXT_COLOR_DANGER, "You cannot choose : " + groupName + " as a new name for your group because another group already has this name", 4000);
 }
@@ -1585,7 +1586,7 @@ void PointsController::modifyGroupWithEnter(QString name){
     qDebug() << "PointsController::modifyGroupWithEnter called : modifying group after enter key pressed from" << pointsLeftWidget->getLastCheckedId() << "to" << name;
 
     MainWindow* mainWindow = static_cast<MainWindow*>(parent());
-    mainWindow->getTopLayoutController()->enableLayout(true);
+    emit enableTopLayout(true);
     mainWindow->setEnableAll(true);
 
     QString oldGroupName = pointsLeftWidget->getLastCheckedId();
@@ -1651,7 +1652,7 @@ void PointsController::modifyGroupAfterClick(QString name){
     qDebug() << "PointsController::modifyGroupAfterClick called from" << pointsLeftWidget->getLastCheckedId() << "to" << name;
 
     MainWindow* mainWindow = static_cast<MainWindow*>(parent());
-    mainWindow->getTopLayoutController()->enableLayout(true);
+    emit enableTopLayout(true);
 
     if (pointsLeftWidget->getLastCheckedId() != "") {
         /// resets the menu
@@ -1757,7 +1758,7 @@ void PointsController::resetPointViewsSlot(void){
 }
 
 void PointsController::checkPointName(QString name){
-    name = formatName(name);
+    name = Helper::formatName(name);
 
     createPointWidget->getNameEdit()->setText(name);
     if(name.simplified().contains(QRegularExpression("[;{}]")) || name.contains("pathpoint", Qt::CaseInsensitive)){
@@ -1802,20 +1803,6 @@ void PointsController::checkPointName(QString name){
     createPointWidget->getSaveBtn()->setToolTip("");
     createPointWidget->getSaveBtn()->setEnabled(true);
     emit invalidName(TEXT_COLOR_INFO, PointNameError::NoError);
-}
-
-QString PointsController::formatName(const QString name) const {
-    qDebug() << "formatName called";
-    QString ret("");
-    QStringList nameStrList = name.split(" ", QString::SkipEmptyParts);
-    for(int i = 0; i < nameStrList.size(); i++){
-        if(i > 0)
-            ret += " ";
-        ret += nameStrList.at(i);
-    }
-    if(name.size() > 0 && name.at(name.size()-1) == ' ')
-        ret += " ";
-    return ret;
 }
 
 void PointsController::updateBtnGroupPointsSlot(){
@@ -1923,7 +1910,7 @@ void PointsController::enableButtonsPointsLeftWidget(QAbstractButton* button){
 
 int PointsController::checkGroupName(QString name){
     //qDebug() << "checking while creating" << name;
-    pointsLeftWidget->getGroupNameEdit()->setText(formatName(name));
+    pointsLeftWidget->getGroupNameEdit()->setText(Helper::formatName(name));
     name = name.simplified();
     //qDebug() << "name im testing" << name;
     if(!pointsLeftWidget->isCreatingGroup() && !name.compare(pointsLeftWidget->getGroupButtonGroup()->getEditedGroupName(), Qt::CaseInsensitive)){

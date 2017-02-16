@@ -12,8 +12,8 @@
 #include <QKeyEvent>
 #include "View/Paths/pathpainter.h"
 
-DisplayPathGroup::DisplayPathGroup(MainWindow *_parent, const QSharedPointer<Paths>& _paths):
-    QWidget(_parent), paths(_paths), lastCheckedButton("")
+DisplayPathGroup::DisplayPathGroup(MainWindow *_parent):
+    QWidget(_parent), lastCheckedButton("")
 {
     /// to scroll the button group if there is a lot of paths
     CustomScrollArea* scrollArea = new CustomScrollArea(this, true);
@@ -32,7 +32,7 @@ DisplayPathGroup::DisplayPathGroup(MainWindow *_parent, const QSharedPointer<Pat
     topLayout->addWidget(groupNameLabel);
     layout->addLayout(topLayout);
 
-    pathButtonGroup = new PathButtonGroup(this, paths);
+    pathButtonGroup = new PathButtonGroup(this);
 
     /// called when a button is clicked in the button group
     connect(pathButtonGroup->getButtonGroup(), SIGNAL(buttonClicked(QAbstractButton*)), this, SLOT(enableButtons(QAbstractButton*)));

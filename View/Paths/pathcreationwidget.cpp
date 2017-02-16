@@ -209,7 +209,10 @@ void PathCreationWidget::savePathClicked(void){
     }
 
     /// if there is no error, we can save the path
-    (error) ? (emit setMessage(TEXT_COLOR_DANGER, "Please make sure all the following error(s) have been fixed :\n" + errorMsg)) : (emit savePath());
+    if(error)
+        emit setMessage(TEXT_COLOR_DANGER, "Please make sure all the following error(s) have been fixed :\n" + errorMsg);
+    else
+        emit savePath();
 }
 
 void PathCreationWidget::addPathPointByMenuSlot(void){

@@ -3,6 +3,10 @@
 #include <QCoreApplication>
 #include <QDebug>
 #include <QMessageBox>
+#include <QFile>
+#include <QFileInfo>
+#include <QStringList>
+#include <QDir>
 
 namespace Helper {
 
@@ -116,5 +120,22 @@ namespace Helper {
             msgBox.setDefaultButton(QMessageBox::Cancel);
             return msgBox.exec();
         }
+
+    }
+
+    QString formatName(const QString name) {
+        qDebug() << "GroupsPathsWidget::formatName called" << name;
+
+        QString ret("");
+        QStringList nameStrList = name.split(" ", QString::SkipEmptyParts);
+        for(int i = 0; i < nameStrList.size(); i++){
+            if(i > 0)
+                ret += " ";
+            ret += nameStrList.at(i);
+        }
+        if(name.size() > 0 && name.at(name.size()-1) == ' ')
+            ret += " ";
+        return ret;
+
     }
 }

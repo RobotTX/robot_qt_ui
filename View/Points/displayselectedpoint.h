@@ -61,13 +61,6 @@ public:
      * emits a signal to reset the state of the map
      */
     void resetWidget(void);
-    /**
-     * @brief formatName
-     * @param name
-     * @return QString
-     * formats the name given as a parameter so that duplicated and useless spaces are removed ex: " a     name" -> "a name"
-     */
-    QString formatName(const QString name) const;
 
 protected:
     void mousePressEvent(QEvent*);

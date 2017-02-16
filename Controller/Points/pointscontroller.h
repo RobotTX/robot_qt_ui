@@ -105,8 +105,6 @@ private slots:
     void enableButtonsPointsLeftWidget(QAbstractButton*);
 
 protected:
-    /// this prevents a user to type names like " a                stupidname       " by removing extra spaces
-    QString formatName(const QString name) const;
 
     /**
      * @brief sendMessageEditGroup
@@ -118,6 +116,7 @@ protected:
 signals:
     void setMessageTop(QString msgType, QString msg);
     void setTemporaryMessageTop(QString type, QString message, int ms);
+    void enableTopLayout(bool);
     void backEvent();
     void setSelectedTmpPoint(void);
     void setSelectedRobot(QPointer<RobotView> robotView);

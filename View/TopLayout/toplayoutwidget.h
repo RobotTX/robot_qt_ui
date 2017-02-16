@@ -59,7 +59,7 @@ public:
      */
     void setRobotNoHomeLabel(const QString robots_string);
 
-protected:
+private slots:
     void timerSlot();
 
 private:

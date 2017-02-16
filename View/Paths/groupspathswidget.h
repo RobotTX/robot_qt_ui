@@ -14,12 +14,13 @@ class QAbstractButton;
 class CustomPushButton;
 class CustomScrollArea;
 class QHBoxLayout;
+class PathsController;
 
 class GroupsPathsWidget: public QWidget
 {
     Q_OBJECT
 public:
-    GroupsPathsWidget(MainWindow* _mainWindow, const QSharedPointer<Paths> &_paths);
+    GroupsPathsWidget(PathsController *pathsController);
 
     GroupsPathsButtonGroup* getButtonGroup(void) const { return buttonGroup; }
     TopLeftMenu* getActionButtons(void) const { return actionButtons; }
@@ -39,38 +40,38 @@ public:
      * and resets tooltips of those buttons
      */
     void initializeActionButtons(void);
+
     /**
      * @brief disableButtons
      * same as initializeActionButtons except for the plus button
      */
     void disableButtons();
-    /**
-     * @brief formatName
-     * @param name
-     * @return QString
-     * returns a formatted name so that " a name    " becomes "a name"
-     */
-    QString formatName(const QString name) const;
+
     /**
      * @brief updateGroupsPaths
      * called after modifition of one of the group of paths to take into account the modifications
      */
     void updateGroupsPaths(void);
+
     void uncheck(void);
+
     /**
      * @brief enableActionButtons
      * enables the action buttons when a group of path is selected
      */
     void enableActionButtons(void);
+
     /**
      * @brief hideCreationWidgets
      * hides the widgets necessary to the creation of a new group
      * cancel and save buttons, group name label and editLine
      */
     void hideCreationWidgets(void);
+
     /// sets the widget in the state where u can either click a group or create a new one but nothing else
     /// same state as when u show the widget
     void resetWidget(void);
+    void setNameError(const int error) { nameError = error; }
 
 protected:
     void keyPressEvent(QKeyEvent* event);
@@ -85,22 +86,9 @@ signals:
     void modifiedGroup(QString);
     /// to delete a group with the delete key
     void deleteGroup();
+    void updatePathGroupButtons();
 
 public slots:
-    /**
-     * @brief checkGroupName
-     * @param name
-     * @return
-     * to make sure that the name chosen to create a group is valid
-     */
-    int checkGroupName(QString name);
-    /**
-     * @brief checkEditGroupName
-     * @param name
-     * @return
-     * to make sure that the new name chosen for an existing group is valid
-     */
-    int checkEditGroupName(QString name);
     /**
      * @brief cancelCreationGroup
      * cancels the creation of a group, resets the widget (in particular hides the save and cancel buttons)
@@ -122,22 +110,17 @@ private slots:
     void newGroupPaths();
 
 private:
-    MainWindow* mainWindow;
-
-    QHBoxLayout* creationLayout;
-    CustomScrollArea* scrollArea;
-    CustomLabel* groupNameLabel;
-
-    CustomLineEdit* groupNameEdit;
-    QSharedPointer<Paths> paths;
-    QVBoxLayout* layout;
-    GroupsPathsButtonGroup* buttonGroup;
-    TopLeftMenu* actionButtons;
-    QString lastCheckedButton;
-    CustomPushButton* saveButton;
-    CustomPushButton* cancelButton;
     /// to differenciate the behavior of the enter key
     bool creatingGroup;
+    CustomLabel* groupNameLabel;
+    CustomLineEdit* groupNameEdit;
+    CustomPushButton* saveButton;
+    CustomPushButton* cancelButton;
+    GroupsPathsButtonGroup* buttonGroup;
+    QString lastCheckedButton;
+    QVBoxLayout* layout;
+    TopLeftMenu* actionButtons;
+    int nameError;
 };
 
 #endif // GROUPSPATHSWIDGET_H

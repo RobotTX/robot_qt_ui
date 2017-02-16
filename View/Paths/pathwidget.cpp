@@ -6,8 +6,7 @@
 #include <QVBoxLayout>
 #include <QLabel>
 
-PathWidget::PathWidget(QWidget* _parent):QWidget(_parent){
-    parent = _parent;
+PathWidget::PathWidget(QWidget* parent):QWidget(parent){
 
     layout = new QVBoxLayout(this);
 

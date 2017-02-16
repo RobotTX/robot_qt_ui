@@ -124,6 +124,9 @@ signals:
     void stopAllCmd();
     void tutorialSignal(const bool, const QString);
     void startedRecovering(QString, bool);
+    void setMessageTop(QString,QString);
+    void setTemporaryMessageTop(QString type, QString message, int ms);
+    void enableTopLayout(bool);
 
 public slots:
     void setGraphicItemsState(const GraphicItemState state);
@@ -132,7 +135,6 @@ public slots:
 
 private slots:
     void timerSlot();
-    void setTemporaryMessageTop(const QString type, const QString message, const int ms);
     void sendPathSelectedRobotSlot(const QString groupName, const QString pathName);
     void mapReceivedSlot(const QByteArray mapArray, int who, QString mapId, QString mapDate, QString resolution, QString originX, QString originY, QString ipAddress);
     void startScanningSlot(QString robotName);
@@ -192,7 +194,6 @@ private slots:
     void displayGroupPaths();
     void createGroupPaths();
     void deleteGroupPaths();
-    void saveGroupPaths(QString name);
     void modifyGroupPathsWithEnter(QString name);
     void displayPath();
     void createPath();
@@ -202,7 +203,6 @@ private slots:
     void doubleClickOnPath(QString pathName);
     void setMessageNoRobotPath(const int code);
     void cancelNoRobotPathSlot();
-    void setMessageModifGroupPaths(int code);
     void displayAssignedPath(QString groupName, QString pathName);
     /// to clear paths on the map
     void clearMapOfPaths();
