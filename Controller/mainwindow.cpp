@@ -70,7 +70,6 @@
 
 #include <QTimer>
 
-
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow) {
     ui->setupUi(this);
 
@@ -140,7 +139,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
     mapController->showGraphicsView();
 
-
     ///  ------------------------------------------------------- PATHS CONNECTS ----------------------------------------------------------
 
     /// to add a path point when we click on the map
@@ -172,8 +170,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     mainLayout->setSpacing(0);
 
     robotsController->launchServer(this);
-
-
 
     if(TESTING){
         QTimer* timer = new QTimer(this);
@@ -284,7 +280,7 @@ void MainWindow::deletePath(int robotNb){
         /// if the robot is not playing its path
         if(!robot->isPlayingPath()){
             msgBox.setIcon(QMessageBox::Question);
-            int ret = openConfirmMessage("Are you sure you want to delete this path ?");
+            int ret = Helper::Prompt::openConfirmMessage("Are you sure you want to delete this path ?");
             switch (ret) {
                 case QMessageBox::Ok:
                     /// if the command is succesfully sent to the robot, we apply the change
@@ -301,7 +297,7 @@ void MainWindow::deletePath(int robotNb){
             }
         } else {
             msgBox.setIcon(QMessageBox::Warning);
-            int ret = openConfirmMessage(robot->getName() + " is currently playing this path, if you delete it the robot will be stopped even if it"
+            int ret = Helper::Prompt::openConfirmMessage(robot->getName() + " is currently playing this path, if you delete it the robot will be stopped even if it"
                                                             "has not reached its destination yet. Continue ?");
             switch (ret) {
                 case QMessageBox::Ok:
@@ -893,7 +889,6 @@ void MainWindow::robotIsDeadSlot(QString hostname, QString ip){
 
 void MainWindow::setMessageCreationPath(QString message){
     topLayoutController->setLabel(TEXT_COLOR_DANGER, message);
-
     /// Timer used to delete the message after a given delay
     QTimer* timer = new QTimer(this);
     timer->setInterval(2500);
@@ -910,7 +905,6 @@ void MainWindow::setMessageCreationPathTimerSlot(){
         topLayoutController->setLabel(TEXT_COLOR_INFO, "Click white points of the map to add new points to your path\n"
                                        "Alternatively you can click the \"+\" button to add an existing point to your path"
                                        "\nYou can re-order the points in the list by dragging them");
-
 }
 
 void MainWindow::updateEditedPathPoint(double x, double y){
@@ -1052,7 +1046,7 @@ void MainWindow::goHome(int nbRobot){
         if(!commandController->sendCommand(currRobot, QString("o")))
             topLayoutController->setLabel(TEXT_COLOR_DANGER, "Failed to send the robot " + currRobot->getName() + " home, please try again");
     } else {
-        int answer = openConfirmMessage("The robot " + currRobot->getName() + " is currently playing its path. Do you want to stop it and send it home anyway ?");
+        int answer = Helper::Prompt::openConfirmMessage("The robot " + currRobot->getName() + " is currently playing its path. Do you want to stop it and send it home anyway ?");
         switch(answer){
             case QMessageBox::Cancel:
             break;
@@ -1562,7 +1556,7 @@ void MainWindow::pathBtnEvent(){
 
 void MainWindow::deletePathSlot(QString groupName, QString pathName){
     qDebug() << "MainWindow::deletePathSlot called on group :" << groupName << ", path :" << pathName;
-    int answer = openConfirmMessage("Are you sure you want to delete this path, this action is irreversible ?");
+    int answer = Helper::Prompt::openConfirmMessage("Are you sure you want to delete this path, this action is irreversible ?");
     switch(answer){
     case QMessageBox::StandardButton::Ok:
     {
@@ -1658,7 +1652,7 @@ void MainWindow::deleteGroupPaths(){
     message += ". If you delete this group, these robotsController->getRobots() will lose their paths. If you wish to continue click \"Ok\". ";
 
     /// if none of the paths of this group has been assigned to a robot
-    int answer = openConfirmMessage((first) ? "Are you sure you want to delete this group of path, all the paths inside will be deleted as well ?" :
+    int answer = Helper::Prompt::openConfirmMessage((first) ? "Are you sure you want to delete this group of path, all the paths inside will be deleted as well ?" :
                                           message);
 
     pathsController->resetGroupsPathsWidget();
@@ -1985,18 +1979,7 @@ void MainWindow::backEvent(){
     }
 }
 
-/**
- * @brief MainWindow::openConfirmMessage
- * @param text
- * @return int
- * prompts the user for confirmation
- */
-int MainWindow::openConfirmMessage(const QString text){
-    msgBox.setText(text);
-    msgBox.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
-    msgBox.setDefaultButton(QMessageBox::Cancel);
-    return msgBox.exec();
-}
+
 
 /**
  * @brief MainWindow::setGraphicItemsState
@@ -2201,47 +2184,6 @@ void MainWindow::updateMapInfo(const QString robotName, QString mapId, QString m
     }
 }
 
-bool MainWindow::isLater(const QStringList& date, const QStringList& otherDate){
-    /// to ensure that we don't crash even if one date is not complete
-    if(date.size() < otherDate.size())
-        return false;
-    else if(date.size() > otherDate.size())
-        return true;
-    else {
-        for(int i = 0; i < date.size(); i++){
-            if(date.at(i).toInt() > otherDate.at(i).toInt())
-                return true;
-            else if(date.at(i).toInt() < otherDate.at(i).toInt())
-                return false;
-        }
-        return false;
-    }
-}
-
-QPair<Position, QStringList> MainWindow::getHomeFromFile(const QString robotName){
-    /// retrieves the home point of the robot if the robot has one
-    QFile fileInfo(QDir::currentPath() + QDir::separator() + "robots_homes" + QDir::separator() + robotName);
-    Position p;
-    QStringList dateLastModification;
-    if(fileInfo.open(QIODevice::ReadWrite)){
-        QRegExp regex("[-\n ]");
-        QString content = fileInfo.readAll();
-        if(!content.compare(""))
-            content = "0-0-1970-01-01-00-00-00";
-        content.replace("\n", " ");
-        QStringList l = content.split(regex, QString::SkipEmptyParts);
-        qDebug() << "app list" << l;
-        if(l.size() > 0){
-            p.setX(l.at(0).toDouble());
-            p.setY(l.at(1).toDouble());
-            for(int i = 2; i < l.size(); i++)
-                dateLastModification.push_back(l.at(i));
-        }
-    }
-    fileInfo.close();
-    return QPair<Position, QStringList> (p, dateLastModification);
-}
-
 void MainWindow::setHomeAtConnection(const QString robotName, const Position &pos_home){
     /// the robot and the application have the same point so we set this one as the home of the robot
     QSharedPointer<PointView> home = pointsController->getPoints()->findPointViewByPos(pos_home);
@@ -2265,20 +2207,6 @@ void MainWindow::setHomeAtConnection(const QString robotName, const Position &po
     pointsController->savePoints(QDir::currentPath() + QDir::separator() + "points.xml");
 }
 
-void MainWindow::updateHomeFile(const QString robotName, const Position& robot_home_position, const QStringList date){
-    qDebug() << "updatehomefile" << robotName << date.size();
-    QFile fileWriteHome(QDir::currentPath() + QDir::separator() + "robots_homes" + QDir::separator() + robotName);
-    if(fileWriteHome.open(QIODevice::ReadWrite)){
-        QTextStream out(&fileWriteHome);
-        out << robot_home_position.getX() << " " << robot_home_position.getY() << "\n";
-        for(int i = 0; i < date.size()-1; i++)
-            out << date.at(i) << "-";
-        out << date.at(date.size()-1);
-        fileWriteHome.close();
-    } else
-        qDebug() << "could not update the home of" << robotName;
-}
-
 QVector<PathPoint> MainWindow::extractPathFromInfo(const QStringList &robotInfo){
     QVector<PathPoint> path;
     for(int i = 0; i < robotInfo.size(); i += 3){
@@ -2293,7 +2221,7 @@ void MainWindow::updateHomeInfo(const QString robotName, QString posX, QString p
     QPointer<RobotView> robotView = robotsController->getRobots()->getRobotViewByName(robotName);
 
     /// retrieves the home point of the robot if the robot has one
-    QPair<Position, QStringList> appHome = getHomeFromFile(robotName);
+    QPair<Position, QStringList> appHome = Helper::File::getHomeFromFile(robotName);
     Position pos = appHome.first;
     QStringList dateLastModification = appHome.second;
 
@@ -2315,9 +2243,9 @@ void MainWindow::updateHomeInfo(const QString robotName, QString posX, QString p
                 qDebug() << "HOME ROBOT" << home->getPoint()->getName();
                 /// if the robot's file is more recent we update on the application side and we look for the pointview corresponding to
                 /// the coordinates given by the robot
-                if(isLater(dateHomeOnRobot, dateLastModification)){
+                if(Helper::Date::isLater(dateHomeOnRobot, dateLastModification)){
                     setHomeAtConnection(robotName, robot_home_position);
-                    updateHomeFile(robotName, robot_home_position, dateHomeOnRobot);
+                    Helper::File::updateHomeFile(robotName, robot_home_position, dateHomeOnRobot);
                 } else {
                     /// the application has the most recent file, we send the updated coordinates to the robot
                     Position posInRobotCoordinates = Helper::Convert::pixelCoordToRobotCoord(home->getPoint()->getPosition(), mapController->getMapOrigin().getX(), mapController->getMapOrigin().getY(), mapController->getMapResolution(), mapController->getMapHeight());
@@ -2342,7 +2270,7 @@ void MainWindow::updateHomeInfo(const QString robotName, QString posX, QString p
                 setHomeAtConnection(robotName, robot_home_position);
 
                 /// updates the home file on the application side
-                updateHomeFile(robotName, robot_home_position, dateHomeOnRobot);
+                Helper::File::updateHomeFile(robotName, robot_home_position, dateHomeOnRobot);
 
             } else {
                 robotHasNoHome(robotView->getRobot()->getName());
@@ -2376,7 +2304,7 @@ void MainWindow::updatePathInfo(const QString robotName, QString pathDate, QStri
     QPointer<RobotView> robotView = robotsController->getRobots()->getRobotViewByName(robotName);
 
     /// retrieves the path of the robot on the application side if the robot has one
-    QPair<QPair<QString, QString>, QStringList> appPathInfo = getPathFromFile(robotName);
+    QPair<QPair<QString, QString>, QStringList> appPathInfo = Helper::File::getPathFromFile(robotName);
     qDebug() << "MainWindow::updatePathInfo appPathinfo" << appPathInfo;
     QVector<PathPoint> robotPath = extractPathFromInfo(path);
 
@@ -2396,7 +2324,7 @@ void MainWindow::updatePathInfo(const QString robotName, QString pathDate, QStri
                 qDebug() << "mainWindow::updatepathinfo DIFFERENT PATHS";
                 /// the file is more recent on the robot
                 /// we do as if the application did not have a path at all
-                if(isLater(pathDate.split("-", QString::SkipEmptyParts), appPathInfo.second)){
+                if(Helper::Date::isLater(pathDate.split("-", QString::SkipEmptyParts), appPathInfo.second)){
                     qDebug() << " BUT ROBOT MORE RECENT";
                     /// the application does not have a path so we use the path sent by the robot and update the file on the app side
                     bool foundFlag(true);
@@ -2493,26 +2421,6 @@ void MainWindow::updatePathInfo(const QString robotName, QString pathDate, QStri
     }
 }
 
-QPair<QPair<QString, QString>, QStringList> MainWindow::getPathFromFile(const QString robotName){
-    /// QPair<QPair<groupName, pathName>, date>
-    QPair<QPair<QString, QString>, QStringList> pathInfo;
-    QFile fileInfo(QDir::currentPath() + QDir::separator() + "robots_paths" + QDir::separator() + robotName + "_path");
-    if(fileInfo.open(QIODevice::ReadWrite)){
-        QRegExp regex("[-\n%]");
-        QString content = fileInfo.readAll();
-        QStringList l = content.split(regex, QString::SkipEmptyParts);
-        qDebug() << "path QStringlist" << l;
-        if(l.size() == 8){
-            for(int i = 0; i < 6; i++)
-                pathInfo.second.push_back(l.at(i));
-            pathInfo.first.first = l.at(6);
-            pathInfo.first.second = l.at(7);
-        }
-    }
-    fileInfo.close();
-    return pathInfo;
-}
-
 QString MainWindow::prepareCommandPath(const Paths::Path &path) const {
     QString pathStr("");
     for(int i = 0; i < path.size(); i++){
@@ -2532,7 +2440,6 @@ QString MainWindow::prepareCommandPath(const Paths::Path &path) const {
 
 void MainWindow::testFunctionSlot(){
     qDebug() << "MainWindow::testFunctionSlot called";
-    //scanMapSlot();
     openPositionRecoveryWidget();
 }
 
@@ -3008,14 +2915,14 @@ void MainWindow::commandDoneNewHome(bool success, QString robotName, int id, QSt
         case 1:
             if(success){
                 QSharedPointer<PointView> home = pointsController->getPoints()->findPointView(homeName);
-                updateHomeFile(home->getPoint()->getRobotName(),
+                Helper::File::updateHomeFile(home->getPoint()->getRobotName(),
                                home->getPoint()->getPosition(),
                                QDateTime::currentDateTime().toString("yyyy-MM-dd-hh-mm-ss").split("-"));
             }
         break;
         case 2:
             if(success)
-                setHomeAtConnection(robotName, getHomeFromFile(robotName).first);
+                setHomeAtConnection(robotName, Helper::File::getHomeFromFile(robotName).first);
         break;
         default:
             Q_UNREACHABLE();
