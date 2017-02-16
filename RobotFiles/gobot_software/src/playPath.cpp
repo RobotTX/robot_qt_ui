@@ -99,7 +99,8 @@ void goalReached(){
 bool stopPathService(std_srvs::Empty::Request &req, std_srvs::Empty::Response &res){
 	std::cout << "(PlayPath) stopPathService called" << std::endl;
 	/// TODO if action server is up -> cancel
-	ac->cancelAllGoals();
+	if(ac->isServerConnected())
+		ac->cancelAllGoals();
 	currentGoal.x = -1;
 	stage = 0;
 	setStageInFile(stage);
@@ -108,7 +109,8 @@ bool stopPathService(std_srvs::Empty::Request &req, std_srvs::Empty::Response &r
 
 bool pausePathService(std_srvs::Empty::Request &req, std_srvs::Empty::Response &res){
 	std::cout << "(PlayPath) pausePathService called" << std::endl;
-	ac->cancelAllGoals();
+	if(ac->isServerConnected())
+		ac->cancelAllGoals();
 	currentGoal.x = -1;
 	return true;
 }
@@ -144,8 +146,8 @@ void goToPoint(const Point& point){
     goal.target_pose.pose.orientation.w = 1;
 
 	currentGoal = point;
-
-    ac->sendGoal(goal);
+	if(ac->isServerConnected())
+    	ac->sendGoal(goal);
 }
 
 void setStageInFile(const int _stage){
@@ -207,6 +209,7 @@ bool playPathService(std_srvs::Empty::Request &req, std_srvs::Empty::Response &r
 	return true;	
 }
 
+// TO DO REVOIR CE TRUC COTE APPLI
 bool goHomeService(std_srvs::Empty::Request &req, std_srvs::Empty::Response &res){
 	std::cout << "(PlayPath) goHomeService called" << std::endl;
 	
@@ -238,9 +241,9 @@ bool goHomeService(std_srvs::Empty::Request &req, std_srvs::Empty::Response &res
 
 bool stopGoingHomeService(std_srvs::Empty::Request &req, std_srvs::Empty::Response &res){
 	std::cout << "(PlayPath) stopGoingHomeService called" << std::endl;
-	ac->cancelAllGoals();
+	if(ac->isServerConnected())
+		ac->cancelAllGoals();
 	currentGoal.x = -1;
-
 	return true;
 }
 

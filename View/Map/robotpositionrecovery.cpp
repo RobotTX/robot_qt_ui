@@ -25,6 +25,7 @@ RobotPositionRecovery::RobotPositionRecovery(QSharedPointer<Robots> _robots, QWi
     mainLayout = new QHBoxLayout(this);
 
     initializeMap();
+
     initializeMenu();
 
     /// to add the maps received from the robot
@@ -85,12 +86,22 @@ void RobotPositionRecovery::initializeMenu(){
 
     mainLayout->addWidget(menuWidget);
 
+    menuWidget->setFixedWidth(150);
+    teleopLayout->setContentsMargins(0, 0, 0, 0);
+    topMenuLayout->setContentsMargins(0, 0, 0, 0);
+    leftLayout->setContentsMargins(0, 0, 5, 0);
+
     topMenuLayout->setAlignment(Qt::AlignTop);
     teleopLayout->setAlignment(Qt::AlignBottom);
 }
 
 void RobotPositionRecovery::initializeMap(){
     scene = new QGraphicsScene(this);
+
+    /// Set the background of the scene as the same grey used in the map
+    /// so that it looks better when a map is received with a lot of grey
+    scene->setBackgroundBrush(QBrush(QColor(205, 205, 205)));
+
     graphicsView = new CustomQGraphicsView(scene, this);
     graphicsView->setCatchKeyEvent(true);
     graphicsView->setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding));
@@ -269,7 +280,6 @@ void RobotPositionRecovery::addMapWidget(QString name){
     connect(listItem, SIGNAL(playScan(bool, QString)), this, SLOT(playScanSlot(bool, QString)));
     connect(listItem, SIGNAL(robotGoTo(QString, double, double)), this, SLOT(robotGoToSlot(QString, double, double)));
     connect(listItem, SIGNAL(centerOn(QGraphicsItem*)), this, SLOT(centerOnSlot(QGraphicsItem*)));
-
 
     /// We add the path point widget to the list
     QListWidgetItem* listWidgetItem = new QListWidgetItem(listWidget);

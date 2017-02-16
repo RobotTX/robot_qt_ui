@@ -12,8 +12,12 @@ RecoverPositionMapGraphicsItem::RecoverPositionMapGraphicsItem(const QString rob
     /// The view of the robot on the map
     scanRobotView = new QGraphicsPixmapItem(QPixmap(":/icons/final_robot.png"), this);
     scanRobotView->setScale(0.07);
+
+    /// so that the robot rotates around the center of the pixmap and not around the top left corner
     scanRobotView->setTransformOriginPoint(scanRobotView->pixmap().width()/2, scanRobotView->pixmap().height()/2);
     scanRobotView->setToolTip(robotName);
+
+    /// to make the robot on top of the map
     scanRobotView->setZValue(2);
 }
 

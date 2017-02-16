@@ -2139,14 +2139,20 @@ void MainWindow::updateMapInfo(const QString robotName, QString mapId, QString m
 }
 
 bool MainWindow::isLater(const QStringList& date, const QStringList& otherDate){
-    assert(date.size() == otherDate.size());
-    for(int i = 0; i < date.size(); i++){
-        if(date.at(i).toInt() > otherDate.at(i).toInt())
-            return true;
-        else if(date.at(i).toInt() < otherDate.at(i).toInt())
-            return false;
+    /// to ensure that we don't crash even if one date is not complete
+    if(date.size() < otherDate.size())
+        return false;
+    else if(date.size() > otherDate.size())
+        return true;
+    else {
+        for(int i = 0; i < date.size(); i++){
+            if(date.at(i).toInt() > otherDate.at(i).toInt())
+                return true;
+            else if(date.at(i).toInt() < otherDate.at(i).toInt())
+                return false;
+        }
+        return false;
     }
-    return false;
 }
 
 QPair<Position, QStringList> MainWindow::getHomeFromFile(const QString robotName){
