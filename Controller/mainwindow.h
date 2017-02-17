@@ -89,17 +89,10 @@ public:
     TopLayoutController* getTopLayoutController(void) const { return topLayoutController; }
 
     void hideAllWidgets();
-    int openConfirmMessage(const QString);
     void clearNewMap();
     void resetFocus();
     void updateAllPaths(const Point &old_point, const Point &new_point);
     void clearPath(const int robotNb);
-
-    /// returns true if the first date is later to the second date
-    bool isLater(const QStringList& date, const QStringList& otherDate);
-
-    QPair<Position, QStringList> getHomeFromFile(const QString robot_name);
-    QPair<QPair<QString, QString>, QStringList> getPathFromFile(const QString robot_name);
 
     QVector<PathPoint> extractPathFromInfo(const QStringList& robotInfo);
 
@@ -275,7 +268,6 @@ protected:
     void commandDoneStartScan(bool success, bool scan, QString robotName);
     void commandDoneStopScan(bool success, QString robotName);
     void setHomeAtConnection(const QString robot_name, const Position& pos_home);
-    void updateHomeFile(const QString robot_name, const Position& robot_home_position, const QStringList date);
 
 private:
     Ui::MainWindow* ui;
