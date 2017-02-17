@@ -44,10 +44,7 @@ public:
     CustomLineEdit* getTimeEdit(void) const { return timeEdit; }
     int getPosX(void) const { return posX; }
     int getPosY(void) const { return posY; }
-    bool isTemporary(void) const { return name.contains(PATH_POINT_NAME); }
-    CustomPushButton* getCancelBtn(void) const { return cancelBtn; }
     CustomPushButton* getSaveEditBtn(void) const { return saveEditBtn; }
-    QWidget* getTimeWidget(void) const { return timeWidget; }
     QWidget* getEditWidget(void) const { return editWidget; }
     QWidget* getPathWidget(void) const { return pathWidget; }
 
@@ -61,26 +58,10 @@ public:
     void displayActionWidget(const bool show);
 
     /**
-     * @brief displaySaveEditBtn
-     * @param show
-     * @param count
-     * Display or not the button to save while editing a temporary point
-     */
-    void displaySaveEditBtn(const bool show, const int count);
-
-    /**
      * @brief resetAction
      * Reset the action widget
      */
     void resetAction(void);
-
-    /**
-     * @brief updatePointLabel
-     * @param x
-     * @param y
-     * Update the displayed text
-     */
-    void updatePointLabel(const float x, const float y);
 
     /**
      * @brief setPointLabel
@@ -137,15 +118,10 @@ private:
     QString name;
     float posX;
     float posY;
-    QHBoxLayout* layout;
-    QVBoxLayout* rightLayout ;
-    /// contains the label with the name, position and cross button
-    QGridLayout* topLayout;
     QLabel* pointLabel;
     QComboBox* actionBtn;
     CustomPushButton* saveEditBtn;
     CustomPushButton* cancelBtn;
-    CustomPushButton* closeBtn;
     CustomLineEdit* timeEdit;
     QWidget* timeWidget;
     QWidget* actionWidget;

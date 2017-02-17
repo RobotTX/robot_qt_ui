@@ -22,8 +22,8 @@
 #include "View/Other/stylesettings.h"
 #include "View/LeftMenu/leftmenu.h"
 
-PathCreationWidget::PathCreationWidget(QWidget* parent, const QSharedPointer<Points> &_points, const QSharedPointer<Paths>& _paths, const bool associatedToRobot):
-    QWidget(parent), points(_points), paths(_paths), currentGroupName(""), currentPathName("")
+PathCreationWidget::PathCreationWidget(QWidget* parent, const bool associatedToRobot):
+    QWidget(parent), currentGroupName(""), currentPathName("")
 {
     layout = new QVBoxLayout(this);
     QVBoxLayout* topLayout = new QVBoxLayout();
@@ -51,9 +51,6 @@ PathCreationWidget::PathCreationWidget(QWidget* parent, const QSharedPointer<Poi
     topLayout->addWidget(nameLabel);
     topLayout->addWidget(nameEdit);
     layout->addLayout(topLayout);
-
-    /// to check that the name given to the path is valid
-    connect(nameEdit, SIGNAL(textEdited(QString)), this, SLOT(checkPathName(QString)));
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -83,8 +80,6 @@ PathCreationWidget::PathCreationWidget(QWidget* parent, const QSharedPointer<Poi
 
     connect(actionButtons->getPlusButton(), SIGNAL(clicked()), this, SLOT(addPathPointByMenuSlot()));
     connect(actionButtons->getMinusButton(), SIGNAL(clicked()), this, SLOT(deletePathPointSlot()));
-    connect(actionButtons->getEditButton(), SIGNAL(clicked()), this, SLOT(editPathPointSlot()));
-    connect(pointsMenu, SIGNAL(triggered(QAction*)), this, SLOT(pointClicked(QAction*)));
 
     connect(pathPointsList, SIGNAL(itemClicked(QListWidgetItem*)), this, SLOT(itemClicked(QListWidgetItem*)));
     connect(pathPointsList, SIGNAL(itemMovedSignal(QModelIndex, int, int, QModelIndex, int)), this, SLOT(itemMovedSlot(QModelIndex, int, int, QModelIndex, int)));
@@ -113,7 +108,7 @@ void PathCreationWidget::updatePath(const QVector<QSharedPointer<PathPoint>>& _p
 
 void PathCreationWidget::showEvent(QShowEvent* event){
     Q_UNUSED(event)
-    updatePointsList();
+    emit updatePointsList();
     nameEdit->setFocus();
     static_cast<LeftMenu*>(parent())->getCloseButton()->hide();
     show();
@@ -125,7 +120,7 @@ void PathCreationWidget::hideEvent(QHideEvent *event){
     currentPathName = "";
 }
 
-void PathCreationWidget::updatePointsList(void){
+void PathCreationWidget::updatePointsList(QSharedPointer<Points> points){
     //qDebug() << "PathCreationWidget::updatePointsList called";
     pointsMenu->clear();
 
@@ -138,17 +133,15 @@ void PathCreationWidget::updatePointsList(void){
              && i.key().compare(PATH_GROUP_NAME)){
             if(i.value()->count() > 0){
                 QMenu *group = pointsMenu->addMenu("&" + i.key());
-                for(int j = 0; j < i.value()->count(); j++){
+                for(int j = 0; j < i.value()->count(); j++)
                     group->addAction(i.value()->at(j)->getPoint()->getName());
-                }
             }
         }
     }
 
-    if(points->getGroups()->value(NO_GROUP_NAME)){
+    if(points->getGroups()->value(NO_GROUP_NAME))
         for(int k = 0; k < points->getGroups()->value(NO_GROUP_NAME)->count(); k++)
             pointsMenu->addAction(points->getGroups()->value(NO_GROUP_NAME)->at(k)->getPoint()->getName());
-    }
 }
 
 void PathCreationWidget::resetWidget(){
@@ -158,7 +151,7 @@ void PathCreationWidget::resetWidget(){
     pathPointsList->clear();
     checkState = NO_STATE;
 
-    updatePointsList();
+    emit updatePointsList();
     emit resetPath();
 }
 
@@ -236,17 +229,16 @@ void PathCreationWidget::clicked(void){
     }
 }
 
-void PathCreationWidget::pointClicked(QAction *action){
+void PathCreationWidget::pointClicked(Position pos, QString pointName){
     /// A permanent point has been selected on the QMenu so we add it to the list or edit the selected item
-    Position pos = points->findPoint(action->text())->getPosition();
     if(checkState == CREATE){
-       qDebug() << "PathCreationWidget::pointClicked called to create a new path point" << action->text();
-       addPathPointSlot(action->text(), pos.getX(), pos.getY());
+       qDebug() << "PathCreationWidget::pointClicked called to create a new path point" << pointName;
+       addPathPointSlot(pointName, pos.getX(), pos.getY());
     } else if(checkState == EDIT){
-       qDebug() << "PathCreationWidget::pointClicked called to edit a path point into" << action->text();
-       editPathPoint(action->text(), pos.getX(), pos.getY());
+       qDebug() << "PathCreationWidget::pointClicked called to edit a path point into" << pointName;
+       editPathPoint(pointName, pos.getX(), pos.getY());
     } else
-        qDebug() << "PathCreationWidget::pointClicked called while in NO_STATE" << action->text();
+        qDebug() << "PathCreationWidget::pointClicked called while in NO_STATE" << pointName;
 }
 
 void PathCreationWidget::addPathPointSlot(QString name, double x, double y, int waitTime){
@@ -319,8 +311,8 @@ void PathCreationWidget::deleteItem(QListWidgetItem* item){
     }
 }
 
-void PathCreationWidget::editPathPointSlot(){
-    //qDebug() << "PathCreationWidget::editPathPointSlot called";
+void PathCreationWidget::editPathPoint(const QSharedPointer<Points> points){
+    //qDebug() << "PathCreationWidget::editPathPoint called";
     int id = pathPointsList->row(pathPointsList->currentItem());
     checkState = EDIT;
 
@@ -330,7 +322,7 @@ void PathCreationWidget::editPathPointSlot(){
         QSharedPointer<PointView> pointView = points->getGroups()->value(PATH_GROUP_NAME)->at(id);
 
         if(pointView->getPoint()->getName().contains(PATH_POINT_NAME)){
-            qDebug() << "PathCreationWidget::editPathPointSlot This is a temporary point";
+            qDebug() << "PathCreationWidget::editPathPoint This is a temporary point";
             pathPointsList->setDragDropMode(QAbstractItemView::NoDragDrop);
             actionButtons->getPlusButton()->setEnabled(false);
             actionButtons->getMinusButton()->setEnabled(false);
@@ -348,7 +340,7 @@ void PathCreationWidget::editPathPointSlot(){
             emit editTmpPathPoint(id, pointView->getPoint()->getName(),
                                   pointView->getPoint()->getPosition().getX(), pointView->getPoint()->getPosition().getY());
         } else {
-            qDebug() << "PathCreationWidget::editPathPointSlot This is a permanent point";
+            qDebug() << "PathCreationWidget::editPathPoint This is a permanent point";
             clicked();
         }
     }
@@ -369,10 +361,7 @@ void PathCreationWidget::saveEditSlot(PathPointCreationWidget* pathPointCreation
     cancelBtn->setEnabled(true);
     saveBtn->setEnabled(true);
 
-    Position pos = points->getGroups()->value(PATH_GROUP_NAME)->at(pathPointCreationWidget->getId())->getPoint()->getPosition();
-    pathPointCreationWidget->setPos(pos.getX(), pos.getY());
-    pathPointCreationWidget->getEditWidget()->hide();
-    pathPointCreationWidget->getPathWidget()->show();
+    emit updatePathPointCreationWidget(pathPointCreationWidget);
     pathPointsList->setDragDropMode(QAbstractItemView::InternalMove);
 
     emit setMessage(TEXT_COLOR_INFO, "Click white points of the map to add new points to this path"
@@ -411,32 +400,6 @@ void PathCreationWidget::actionChangedSlot(int id, QString waitTime){
     emit actionChanged(id, waitTime);
 }
 
-void PathCreationWidget::checkPathName(const QString name){
-    //qDebug() << "PathCreationWidget::checkPathName" << name.simplified();
-    if(!name.simplified().compare("")){
-        emit codeEditPath(0);
-        //qDebug() << "PathCreatioNWidget::checkPathName The name of your path cannot be empty";
-    }
-    else if(!currentPathName.compare(name.simplified())){
-        qDebug() << "same name";
-        /// if the name simply has not changed the user can still save his path
-         emit codeEditPath(2);
-    }
-
-    else {
-        bool foundFlag(false);
-        /// the found flag will have the value true after the call if the path has been found which means it already exists
-        paths->getPath(currentGroupName, name.simplified(), foundFlag);
-        if(foundFlag){
-            //qDebug() << "PathCreationWidget::checkPathName Sorry there is already a path with the same name";
-            emit codeEditPath(1);
-        } else {
-            //qDebug() << "PathCreatioNWidget::checkPathName nice this path does not exist yet !";
-            emit codeEditPath(2);
-        }
-    }
-}
-
 void PathCreationWidget::keyPressEvent(QKeyEvent *event){
     /// if the name has not changed we valid (this is the job of the next function to check whether there is at least one point
     /// in the path and whether waiting times are filled
@@ -444,28 +407,8 @@ void PathCreationWidget::keyPressEvent(QKeyEvent *event){
     if(!event->text().compare("\r")){
         if(checkState != CheckState::EDIT){
             qDebug() << "old path" << currentPathName << " new path" << nameEdit->text().simplified();
-            if(!currentPathName.compare(nameEdit->text().simplified())){
+            if(canSave)
                 savePathClicked();
-                return;
-            }
-            if(!nameEdit->text().simplified().compare(""))
-                return;
-
-            /// we check that the path name is valid (not taken and not empty)
-            auto it = paths->getGroups()->find(currentGroupName);
-            if(it != paths->getGroups()->end()){
-                QSharedPointer<Paths::CollectionPaths> paths_ptr = it.value();
-                QMapIterator<QString, QSharedPointer<Paths::Path> > it_paths(*paths_ptr);
-                while(it_paths.hasNext()){
-                    it_paths.next();
-                    qDebug() << "pathCreationWidget::keyPressEvent, checking whether or not you can add this path" << it_paths.key();
-                    if(!it_paths.key().compare(nameEdit->text().simplified())){
-                        qDebug() << "already a path named" << it_paths.key();
-                        return;
-                    }
-                }
-            }
-            savePathClicked();
         } else {
             QString msg = "Please finish editing your point before saving";
             emit setMessage(TEXT_COLOR_DANGER, msg);

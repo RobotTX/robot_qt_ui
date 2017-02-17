@@ -31,6 +31,7 @@ class MapController;
 class PathsController;
 class RobotPositionRecovery;
 class RobotsController;
+class PathPointCreationWidget;
 
 #include <QMainWindow>
 #include <QModelIndex>
@@ -115,9 +116,9 @@ public:
 
 signals:
     void changeCmdThreadRobotName(QString);
-    void updatePathPainter(bool);
-    void updatePathPainterPointView();
-    void resetPath();
+    void updatePathPainter(QSharedPointer<Points>, bool);
+    void updatePathPainterPointView(QSharedPointer<QVector<QSharedPointer<PointView>>>);
+    void resetPath(QSharedPointer<Points>);
     void resetPathCreationWidget();
     void cancelRobotModifications();
     void receivedMapToMerge(QString, QImage, double, double, double);
@@ -208,7 +209,6 @@ private slots:
     void displayPathOnMap(const bool display);
     void editPath();
     void doubleClickOnPath(QString pathName);
-    void setMessageNoRobotPath(const int code);
     void cancelNoRobotPathSlot();
     void displayAssignedPath(QString groupName, QString pathName);
     /// to clear paths on the map
@@ -238,6 +238,18 @@ private slots:
     /// sends a signal to the settings controller in order to keep track of the messages we need to show the user
     void relayTutorialSignal(const bool messageNeeded);
     void setMessageCreationPathTimerSlot();
+
+    void resetPathSlot();
+    void addPathPointSlot(QString name, double x, double y, int waitTime);
+    void setCurrentPathSlot(const QVector<QSharedPointer<PathPoint>>& currentPath, QString pathName);
+    void updatePathPainterSlot(bool savePath);
+    void editPathPointSlot(int id, QString name, double, double);
+    void deletePathPointSlot(int id);
+    void orderPathPointChangedSlot(int from, int to);
+    void updatePointsListSlot();
+    void pointClicked(QAction* action);
+    void editPathPointSlot();
+    void updatePathPointCreationWidgetSlot(PathPointCreationWidget* pathPointCreationWidget);
 
 protected:
     void closeEvent(QCloseEvent *event);
