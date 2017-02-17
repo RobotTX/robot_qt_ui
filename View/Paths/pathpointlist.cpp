@@ -1,8 +1,8 @@
 #include "pathpointlist.h"
-#include "View/Paths/pathpointcreationwidget.h"
 #include <QDebug>
 #include <QModelIndex>
 #include <QComboBox>
+#include "View/Paths/pathpointcreationwidget.h"
 #include "View/Other/customlineedit.h"
 #include "View/Other/stylesettings.h"
 

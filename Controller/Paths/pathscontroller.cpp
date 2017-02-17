@@ -1,6 +1,7 @@
 #include "pathscontroller.h"
 #include <QLineEdit>
 #include <QDir>
+#include <QMenu>
 #include "Helper/helper.h"
 #include "Controller/TopLayout/toplayoutcontroller.h"
 #include "Model/Paths/paths.h"
@@ -18,15 +19,18 @@
 #include "View/Other/customlabel.h"
 #include "View/Other/stylesettings.h"
 
-PathsController::PathsController(MainWindow *mainWindow, const QSharedPointer<Points> points): QObject(mainWindow)
+PathsController::PathsController(MainWindow *mainWindow): QObject(mainWindow)
 {
     connect(this, SIGNAL(setMessageTop(QString,QString)), mainWindow->getTopLayoutController(), SLOT(setLabel(QString,QString)));
     connect(this, SIGNAL(setTemporaryMessageTop(QString,QString,int)), mainWindow->getTopLayoutController(), SLOT(setLabelDelay(QString,QString,int)));
     connect(this, SIGNAL(enableReturnAndCloseButtons()), mainWindow, SLOT(enableReturnAndCloseButtons()));
+    connect(this, SIGNAL(setCurrentPath(QVector<QSharedPointer<PathPoint>>,QString)), mainWindow, SLOT(setCurrentPathSlot(QVector<QSharedPointer<PathPoint>>,QString)));
+    connect(this, SIGNAL(updatePathPainter(bool)), mainWindow, SLOT(updatePathPainterSlot(bool)));
 
     paths = QSharedPointer<Paths>(new Paths());
 
-    pathPainter = new PathPainter(mainWindow, points);
+    pathPainter = new PathPainter(mainWindow);
+    connect(this, SIGNAL(resetPath()), mainWindow, SLOT(resetPathSlot()));
 
     initializePaths();
 
@@ -58,14 +62,19 @@ PathsController::PathsController(MainWindow *mainWindow, const QSharedPointer<Po
 
     connect(pathGroup->getPathButtonGroup()->getButtonGroup(), SIGNAL(buttonToggled(int, bool)), pathGroup, SLOT(resetMapButton()));
 
-    pathCreationWidget = new PathCreationWidget(mainWindow, points, paths, false);
-    connect(pathCreationWidget, SIGNAL(addPathPoint(QString, double, double, int)), pathPainter, SLOT(addPathPointSlot(QString, double, double, int)));
-    connect(pathCreationWidget, SIGNAL(deletePathPoint(int)), pathPainter, SLOT(deletePathPointSlot(int)));
-    connect(pathCreationWidget, SIGNAL(orderPathPointChanged(int, int)), pathPainter, SLOT(orderPathPointChangedSlot(int, int)));
-    connect(pathCreationWidget, SIGNAL(resetPath()), pathPainter, SLOT(resetPathSlot()));
+    pathCreationWidget = new PathCreationWidget(mainWindow, false);
+    connect(pathCreationWidget, SIGNAL(addPathPoint(QString, double, double, int)), mainWindow, SLOT(addPathPointSlot(QString, double, double, int)));
+    connect(pathCreationWidget, SIGNAL(deletePathPoint(int)), mainWindow, SLOT(deletePathPointSlot(int)));
+    connect(pathCreationWidget, SIGNAL(orderPathPointChanged(int, int)), mainWindow, SLOT(orderPathPointChangedSlot(int, int)));
+    connect(pathCreationWidget, SIGNAL(resetPath()), mainWindow, SLOT(resetPathSlot()));
     connect(pathCreationWidget, SIGNAL(setMessage(QString, QString)), mainWindow->getTopLayoutController(), SLOT(setLabel(QString, QString)));
     connect(pathCreationWidget, SIGNAL(actionChanged(int, QString)), pathPainter, SLOT(actionChangedSlot(int, QString)));
-    connect(pathCreationWidget, SIGNAL(editPathPoint(int, QString, double, double)), pathPainter, SLOT(editPathPointSlot(int, QString, double, double)));
+    connect(pathCreationWidget, SIGNAL(editPathPoint(int, QString, double, double)), mainWindow, SLOT(editPathPointSlot(int, QString, double, double)));
+    connect(pathCreationWidget, SIGNAL(updatePointsList()), mainWindow, SLOT(updatePointsListSlot()));
+    connect(pathCreationWidget->getPointsMenu(), SIGNAL(triggered(QAction*)), mainWindow, SLOT(pointClicked(QAction*)));
+    connect(pathCreationWidget->getActionButtons()->getEditButton(), SIGNAL(clicked()), mainWindow, SLOT(editPathPointSlot()));
+    connect(pathCreationWidget, SIGNAL(updatePathPointCreationWidget(PathPointCreationWidget*)), mainWindow, SLOT(updatePathPointCreationWidgetSlot(PathPointCreationWidget*)));
+    connect(pathCreationWidget->getNameEdit(), SIGNAL(textEdited(QString)), this, SLOT(checkPathName(QString)));
 
     pathCreationWidget->hide();
 
@@ -77,11 +86,9 @@ PathsController::PathsController(MainWindow *mainWindow, const QSharedPointer<Po
     connect(pathGroup, SIGNAL(updateDisplayedPath()), this, SLOT(exhibitDisplayedPath()));
     connect(pathGroup, SIGNAL(setPathsGroup(QString)), this, SLOT(setPathsGroup(QString)));
 
-    connect(mainWindow, SIGNAL(updatePathPainter(bool)), pathPainter, SLOT(updatePathPainterSlot(bool)));
-
     connect(pathCreationWidget, SIGNAL(editTmpPathPoint(int, QString, double, double)), mainWindow, SLOT(editTmpPathPointSlot(int, QString, double, double)));
 
-    connect(mainWindow, SIGNAL(updatePathPainterPointView()), pathPainter, SLOT(updatePathPainterPointViewSlot()));
+    connect(mainWindow, SIGNAL(updatePathPainterPointView(QSharedPointer<QVector<QSharedPointer<PointView>>>)), pathPainter, SLOT(updatePathPainterPointViewSlot(QSharedPointer<QVector<QSharedPointer<PointView>>>)));
 
     connect(pathCreationWidget, SIGNAL(saveEditPathPoint()), mainWindow, SLOT(saveEditPathPointSlot()));
 
@@ -89,7 +96,7 @@ PathsController::PathsController(MainWindow *mainWindow, const QSharedPointer<Po
 
     connect(pathCreationWidget, SIGNAL(savePath()), mainWindow, SLOT(savePathSlot()));
 
-    connect(mainWindow, SIGNAL(resetPath()), pathPainter, SLOT(resetPathSlot()));
+    connect(mainWindow, SIGNAL(resetPath(QSharedPointer<Points>)), pathPainter, SLOT(resetPathSlot(QSharedPointer<Points>)));
 
     connect(mainWindow, SIGNAL(resetPathCreationWidget()), pathCreationWidget, SLOT(resetWidget()));
 
@@ -99,7 +106,7 @@ PathsController::PathsController(MainWindow *mainWindow, const QSharedPointer<Po
 
     connect(pathCreationWidget->getCancelButton(), SIGNAL(clicked()), mainWindow, SLOT(cancelNoRobotPathSlot()));
 
-    connect(pathCreationWidget, SIGNAL(codeEditPath(int)), mainWindow, SLOT(setMessageNoRobotPath(int)));
+    connect(pathCreationWidget, SIGNAL(codeEditPath(int)), this, SLOT(setMessageNoRobotPath(int)));
 
 }
 
@@ -129,7 +136,7 @@ void PathsController::deserializePaths(const QString fileName){
 void PathsController::enableSaveEditButton(const bool enable){
     static_cast<PathPointCreationWidget*> (pathCreationWidget->getPathPointList()->
                                        itemWidget(pathCreationWidget->getPathPointList()->currentItem()))
-                                       -> getSaveEditBtn()->setEnabled(enable);
+                                       ->getSaveEditBtn()->setEnabled(enable);
 }
 
 void PathsController::hideGroupCreationWidgets() const {
@@ -207,7 +214,7 @@ bool PathsController::deletePath(){
 
     updateDisplayedPath();
 
-    pathPainter->updatePathPainterSlot(true);
+    emit updatePathPainter(true);
     return already_existed;
 }
 
@@ -218,12 +225,12 @@ void PathsController::displayPathSlot(const QString groupName, const QString pat
         bool foundFlag = false;
         Paths::Path path = paths->getPath(groupName, pathName, foundFlag);
         if(foundFlag)
-            pathPainter->setCurrentPath(path, pathName);
+            emit setCurrentPath(path, pathName);
         else
             qDebug() << "MainWindow::displayPathSlot Sorry could not find the path";
     }
     else
-         pathPainter->resetPathSlot();
+         emit resetPath();
 }
 
 void PathsController::displayGroupPaths(){
@@ -527,3 +534,50 @@ void PathsController::checkEditGroupName(QString name){
     groupsPathsWidget->setNameError(0);
 }
 
+void PathsController::checkPathName(const QString name){
+    //qDebug() << "PathCreationWidget::checkPathName" << name.simplified();
+    if(!name.simplified().compare("")){
+        //qDebug() << "PathCreatioNWidget::checkPathName The name of your path cannot be empty";
+        pathCreationWidget->setCanSave(false);
+        emit setMessageNoRobotPath(0);
+    } else if(!pathCreationWidget->getCurrentPathName().compare(name.simplified())){
+        /// if the name simply has not changed the user can still save his path
+        pathCreationWidget->setCanSave(true);
+         emit setMessageNoRobotPath(2);
+    } else {
+        bool foundFlag(false);
+        /// the found flag will have the value true after the call if the path has been found which means it already exists
+        paths->getPath(pathCreationWidget->getCurrentGroupName(), name.simplified(), foundFlag);
+        if(foundFlag){
+            //qDebug() << "PathCreationWidget::checkPathName Sorry there is already a path with the same name";
+            pathCreationWidget->setCanSave(false);
+            setMessageNoRobotPath(1);
+        } else {
+            //qDebug() << "PathCreatioNWidget::checkPathName nice this path does not exist yet !";
+            pathCreationWidget->setCanSave(true);
+            setMessageNoRobotPath(2);
+        }
+    }
+}
+
+
+void PathsController::setMessageNoRobotPath(const int code){
+    switch(code){
+    case 0:
+        emit setMessageTop(TEXT_COLOR_INFO, "You cannot save your path because its name is still empty");
+        enablePathCreationSaveButton(false);
+    break;
+    case 1:
+        emit setMessageTop(TEXT_COLOR_INFO, "You cannot save your path because the name you chose is already taken by another path in the same group");
+        enablePathCreationSaveButton(false);
+    break;
+    case 2:
+        emit setMessageTop(TEXT_COLOR_INFO, "You can save your path any time you want by clicking the \"Save\" button");
+        enablePathCreationSaveButton(true);
+    break;
+    default:
+        Q_UNREACHABLE();
+        qDebug() << "PathsController::setMessageNoRobotPath you should not be here you probably forgot to implement the behavior for the error code" << code;
+    break;
+    }
+}

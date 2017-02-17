@@ -20,7 +20,7 @@ class PathsController: public QObject
 
 public:
 
-    PathsController(MainWindow *mainWindow, const QSharedPointer<Points> points);
+    PathsController(MainWindow *mainWindow);
 
     QSharedPointer<Paths> getPaths(void) const { return paths; }
 
@@ -127,10 +127,21 @@ private slots:
      */
     void checkEditGroupName(QString name);
 
+    /**
+     * @brief checkPathName
+     * @param name
+     * checks that the name of a path point is valid (not already taken or empty
+     */
+    void checkPathName(const QString name);
+    void setMessageNoRobotPath(const int code);
+
 signals:
     void setMessageTop(QString,QString);
     void setTemporaryMessageTop(QString type, QString message, int ms);
     void enableReturnAndCloseButtons();
+    void resetPath();
+    void setCurrentPath(QVector<QSharedPointer<PathPoint>>, QString);
+    void updatePathPainter(bool);
 
 private:
 

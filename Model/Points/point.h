@@ -28,7 +28,6 @@ public:
     Position getPosition(void) const { return position; }
     QString getName(void) const { return name; }
     bool isPermanent(void) const { return (type == PERM); }
-    bool isTemporary(void) const { return (type == TEMP); }
     bool isHome(void) const { return (robotName.compare("")); }
     bool isPath(void) const { return (type == PATH); }
     PointType getType(void) const { return type; }

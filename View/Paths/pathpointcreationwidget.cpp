@@ -14,20 +14,20 @@
 PathPointCreationWidget::PathPointCreationWidget(const int _id, const QString _name, const double x, const double y, QWidget* parent):
     QWidget(parent), id(_id), name(_name), posX(x), posY(y)
 {
-    layout = new QHBoxLayout(this);
+    QHBoxLayout* layout = new QHBoxLayout(this);
 
     pathWidget = new QWidget(this);
     editWidget = new QWidget(this);
     QVBoxLayout* pathLayout = new QVBoxLayout(pathWidget);
     QVBoxLayout* editLayout = new QVBoxLayout(editWidget);
 
-    topLayout = new QGridLayout();
+    QGridLayout* topLayout = new QGridLayout();
     /// Label for the name of the point
     pointLabel = new QLabel(this);
     setName(name);
     topLayout->addWidget(pointLabel, 0, 0);
 
-    closeBtn = new CustomPushButton(QIcon(":/icons/close.png"), "", this);
+    CustomPushButton* closeBtn = new CustomPushButton(QIcon(":/icons/close.png"), "", this);
     closeBtn->setIconSize(xxs_icon_size);
     topLayout->addWidget(closeBtn, 0, 1);
 
@@ -129,13 +129,6 @@ void PathPointCreationWidget::resetAction(){
     timeWidget->show();
 }
 
-void PathPointCreationWidget::displaySaveEditBtn(const bool show, const int count){
-    qDebug() << "PathPointCreationWidget::displaySaveEditBtn called";
-    (show) ? saveEditBtn->show() : saveEditBtn->hide();
-    if(id < count)
-        displayActionWidget(!show);
-}
-
 void PathPointCreationWidget::saveEdit(){
     //qDebug() << "PathPointCreationWidget::saveEdit called";
     emit saveEditSignal(this);
@@ -151,11 +144,6 @@ void PathPointCreationWidget::setPos(const float x, const float y){
     posX = x;
     posY = y;
     setPointLabel(posX, posY);
-}
-
-void PathPointCreationWidget::updatePointLabel(const float x, const float y){
-    //qDebug() << "PathPointCreationWidget::updatePointLabel called";
-    setPointLabel(x, y);
 }
 
 void PathPointCreationWidget::setPointLabel(const float _posX, const float _posY){
