@@ -14,10 +14,10 @@
 #include "View/Map/scanmapgraphicsitem.h"
 #include "View/Map/mergemaplistitemwidget.h"
 #include "View/Other/stylesettings.h"
+#include "Helper/helper.h"
 
 ScanMapListItemWidget::ScanMapListItemWidget(int _id, QString name, QSharedPointer<Robots> robots, QGraphicsScene* _scene)
-    : QWidget(), id(_id), robotName(name), scene(_scene), pixmapItem(new ScanMapGraphicsItem(name, robots)),
-      oriWidth(0), oriHeight(0), newWidth(0), newHeight(0), top(0), left(0){
+    : QWidget(), id(_id), robotName(name), scene(_scene), pixmapItem(new ScanMapGraphicsItem(name, robots)), top(0), left(0){
 
     QVBoxLayout* layout = new QVBoxLayout(this);
 
@@ -106,14 +106,12 @@ ScanMapListItemWidget::ScanMapListItemWidget(int _id, QString name, QSharedPoint
 }
 
 void ScanMapListItemWidget::robotConnected(const bool connected){
-    if(connected)
-        discoIcon->hide();
-    else
-        discoIcon->show();
+    (connected) ? discoIcon->hide() : discoIcon->show();
 }
 
 void ScanMapListItemWidget::closeBtnSlot(){
     qDebug() << "MergeMapListItemWidget::closeBtnSlot called";
+    /// emitted to make sure the scan is aborted if the widget is closed
     emit deleteMap(id, robotName);
 }
 
@@ -123,7 +121,7 @@ void ScanMapListItemWidget::rotLineEditSlot(QString text){
 }
 
 void ScanMapListItemWidget::sliderSlot(int value){
-    rotLineEdit->setText(QString::number(MergeMapListItemWidget::mod(value, 360)));
+    rotLineEdit->setText(QString::number(Helper::mod(value, 360)));
     /// rotate the map
     if(pixmapItem)
         pixmapItem->setRotation(value);
@@ -164,9 +162,7 @@ void ScanMapListItemWidget::updateRobotPos(double x, double y, double ori){
     pixmapItem->updateRobotPos(x - left, y - top, ori);
 }
 
-QImage ScanMapListItemWidget::cropImage(QImage image){
-    oriWidth = image.width();
-    oriHeight = image.height();
+QImage ScanMapListItemWidget::cropImage(const QImage& image){
     left = image.width();
     int right = 0;
     top = image.height();
@@ -191,6 +187,7 @@ QImage ScanMapListItemWidget::cropImage(QImage image){
 
     /// We crop the image
     QImage croppedImage = image.copy(left, top, right - left + 1, bottom - top + 1);
+
     /// Create a new image filled with invisible grey
     QImage newImage = QImage(croppedImage.size(), QImage::Format_ARGB32);
     newImage.fill(qRgba(205, 205, 205, 0));
@@ -206,9 +203,6 @@ QImage ScanMapListItemWidget::cropImage(QImage image){
                 newImage.setPixel(i, j, qRgba(255, 255, 255, 170));
         }
     }
-
-    newWidth = newImage.width();
-    newHeight = newImage.height();
 
     return newImage;
 }

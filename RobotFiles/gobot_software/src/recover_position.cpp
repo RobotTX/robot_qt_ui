@@ -272,7 +272,9 @@ bool findNextPoint(){
 
 		    currentGoal = std::make_pair((furthestPoint.first.end) * metadata.resolution + metadata.x, (furthestPoint.first.row) * metadata.resolution + metadata.y);
 
-			ac->sendGoal(goal);
+		    std::cout << "Only a test otherwise I would send this goal " << goal.target_pose.pose.position.x << " " << goal.target_pose.pose.position.y << std::endl;
+			
+			//ac->sendGoal(goal);
 
 		} else 
 			sendErrorMessage();
@@ -292,7 +294,6 @@ int main(int argc, char* argv[]){
 	// to receive the robot's position and orientation
 	ros::Subscriber sub_robot = n.subscribe("/robot_pose", 1, getRobotPos);
 	
-
 	// to receive the current map
 	ros::Subscriber sub_map = n.subscribe("/map1", 1000, getMap);
 	

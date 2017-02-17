@@ -25,9 +25,8 @@ public:
     double getResolution(void) const { return resolution; }
     QPointF getOrigin(void) const { return origin; }
     QString getFileNameLabel(void) const { return fileNameLabel->text(); }
-    QString getFileName(void) const { return fileName; }
 
-    static int mod(const int a, const int b);
+
 
 protected:
     void initializeMap(QString fileName, QGraphicsScene* scene, QImage image);
@@ -58,7 +57,6 @@ private :
     double resolution;
     MergeMapGraphicsItem* pixmapItem;
     QPoint originInPixel;
-    QString fileName;
 };
 
 

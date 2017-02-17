@@ -2,7 +2,9 @@
 #include <QDebug>
 #include <QGraphicsSceneMouseEvent>
 
-EditMapView::EditMapView(int _width, int _height, QGraphicsItem* parent) : QGraphicsItem(parent), width(_width), height(_height){
+EditMapView::EditMapView(int _width, int _height, QGraphicsItem* parent) : QGraphicsItem(parent), width(_width), height(_height),
+    color(Qt::black), shape(0), size(1), released(true)
+{
     /// Tell the class which mouse button to accept
     setAcceptedMouseButtons(Qt::LeftButton);
 
@@ -15,10 +17,6 @@ EditMapView::EditMapView(int _width, int _height, QGraphicsItem* parent) : QGrap
     /// To drag & drop the map
     setFlags(ItemIsSelectable | ItemIsMovable);
 
-    color = Qt::black;
-    shape = 0;
-    size = 1;
-    released = true;
     resetLastPoint();
 }
 
@@ -28,7 +26,7 @@ void EditMapView::resetLastPoint(){
     lastSize = -1;
 }
 
-QRectF EditMapView::boundingRect() const{
+QRectF EditMapView::boundingRect() const {
     return QRectF(0, 0, width, height);
 }
 
@@ -60,7 +58,6 @@ void EditMapView::mousePressEvent(QGraphicsSceneMouseEvent *event){
 
 void EditMapView::mouseMoveEvent(QGraphicsSceneMouseEvent *event){
     if(!(flags() & QGraphicsItem::ItemIsMovable)){
-        //qDebug() << "EditMapView::mouseMoveEvent click" << event->pos().x() << event->pos().y();
 
         /// If we move while pressing and drawing
         if(!(lastX == static_cast<int>(event->pos().x()) && lastY == static_cast<int>(event->pos().y()) && lastSize == size)){
@@ -87,7 +84,6 @@ void EditMapView::mouseMoveEvent(QGraphicsSceneMouseEvent *event){
 
 void EditMapView::mouseReleaseEvent(QGraphicsSceneMouseEvent *event){
     if(!(flags() & QGraphicsItem::ItemIsMovable)){
-        //qDebug() << "EditMapView::mouseReleaseEvent click" << event->pos().x() << event->pos().y();
         if(shape > 0){
             resetLastPoint();
             released = true;
@@ -113,14 +109,11 @@ void EditMapView::paint(QPainter* painter, const QStyleOptionGraphicsItem*, QWid
                     qDebug() << "EditMapView::paint should not be here (case 0)";
                 break;
                 case 1:
-                    //qDebug() << "EditMapView::paint Drawing points";
                     painter->setPen(QPen(QColor(_color, _color, _color), _size));
                     for(int j = 0; j < points.size(); j++)
                         painter->drawPoint(points.at(j));
-
                 break;
                 case 2:{
-                    //qDebug() << "EditMapView::paint Drawing a line";
                     painter->setPen(QPen(QColor(_color, _color, _color), _size));
                     if(points.size() > 1){
                         QVector<QPointF> newPoints = getLine(points.at(0), points.at(1));
@@ -130,14 +123,12 @@ void EditMapView::paint(QPainter* painter, const QStyleOptionGraphicsItem*, QWid
                 }
                 break;
                 case 3:
-                    //qDebug() << "EditMapView::paint Drawing an empty rectangle";
                     painter->setPen(QPen(QColor(_color, _color, _color), _size, Qt::SolidLine, Qt::SquareCap, Qt::MiterJoin));
                     if(points.size() > 1)
                         painter->drawRect(QRect(QPoint(static_cast<int>(points.at(0).x()), static_cast<int>(points.at(0).y())),
                                                 QPoint(static_cast<int>(points.at(1).x()), static_cast<int>(points.at(1).y()))));
                 break;
                 case 4:
-                    //qDebug() << "EditMapView::paint Drawing a filled rectangle";
                     if(points.size() > 1){
                         QRect rect = QRect(QPoint(static_cast<int>(points.at(0).x()), static_cast<int>(points.at(0).y())),
                                            QPoint(static_cast<int>(points.at(1).x()), static_cast<int>(points.at(1).y())));
@@ -147,9 +138,11 @@ void EditMapView::paint(QPainter* painter, const QStyleOptionGraphicsItem*, QWid
                 break;
                 default:
                     qDebug() << "EditMapView::paint should not be here (default)";
+                    Q_UNREACHABLE();
                 break;
             }
         } else {
+            /// TO DO what is items.first ? seems to be a vector, don't get the "< 3", same in editmapWidget
             qDebug() << "EditMapView::paint should not be here (items.first < 3)";
         }
     }
@@ -189,18 +182,13 @@ void EditMapView::changeColorSlot(int _color){
             color = 0;
         break;
     }
-
     resetLastPoint();
 }
 
 void EditMapView::changeShapeSlot(int _shape){
     qDebug() << "EditMapView::changeShapeSlot called" << _shape;
     shape = _shape;
-    if(!shape)
-        setFlag(QGraphicsItem::ItemIsMovable);
-    else
-        setFlag(QGraphicsItem::ItemIsMovable, false);
-
+    (shape) ? setFlag(QGraphicsItem::ItemIsMovable, false) : setFlag(QGraphicsItem::ItemIsMovable);
     resetLastPoint();
 }
 
@@ -212,18 +200,19 @@ void EditMapView::changeSizeSlot(int _size){
 
 void EditMapView::resetSlot(){
     qDebug() << "EditMapView::resetSlot called";
-
     undoItems.clear();
     items.clear();
     resetLastPoint();
     update();
 }
 
-QPointF EditMapView::getPoint(float x, float y){
+QPointF EditMapView::getPoint(const float x, const float y){
     return QPointF(static_cast<int>(x) + 0.5, static_cast<int>(y) + 0.5);
 }
 
-QVector<QPointF> EditMapView::getLine(QPointF p1, QPointF p2){
+/// returns a vector containing all the points which belong to the line defined by <p1> and <p2>
+QVector<QPointF> EditMapView::getLine(const QPointF& p1, const QPointF& p2){
+
     int Ax = static_cast<int>(p1.x());
     int Ay = static_cast<int>(p1.y());
     int Bx = static_cast<int>(p2.x());
@@ -231,8 +220,8 @@ QVector<QPointF> EditMapView::getLine(QPointF p1, QPointF p2){
 
     QVector<QPointF> res;
 
-    int	y,x,dy,dx,sx,sy;
-    int	decision,incE,incNE;
+    int	y, x, dy, dx, sx, sy;
+    int	decision, incE, incNE;
 
     dx = Bx - Ax;
     dy = By - Ay;
@@ -241,6 +230,7 @@ QVector<QPointF> EditMapView::getLine(QPointF p1, QPointF p2){
         sx = 1;
     else
         sx = -1;
+
     if(dy >= 0)
         sy = 1;
     else
@@ -248,7 +238,6 @@ QVector<QPointF> EditMapView::getLine(QPointF p1, QPointF p2){
 
     dx = qAbs(dx);
     dy = qAbs(dy);
-
 
     Bx += sx;
     By += sy;

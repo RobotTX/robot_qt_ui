@@ -150,7 +150,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     ///  ------------------------------------------------------- ROBOTS CONNECTS ----------------------------------------------------------
 
     connect(leftMenu->getMapLeftWidget()->getSaveStateBtn(), SIGNAL(clicked()), mapController, SLOT(saveMapState()));
-    connect(leftMenu->getMapLeftWidget()->getRestoreStateBtn(), SIGNAL(clicked()), this, SLOT(centerMap()));
 
     connect(this, SIGNAL(newBatteryLevel(int)), this, SLOT(updateBatteryLevel(int)));
 
@@ -202,13 +201,16 @@ MainWindow::~MainWindow(){
 
 
 void MainWindow::startScanningSlot(QString robotName){
+    /// called when a robot is clicked in the menu in the scan map widget
     qDebug() << "MainWindow::startScanningSlot called" << robotName;
 
     QPointer<RobotView> robotView = robotsController->getRobots()->getRobotViewByName(robotName);
     if(robotView){
         if(!commandController->sendCommand(robotView->getRobot(), QString("t"), "", "", "", true))
+            /// will call startedScanningSlot in the scan map widget
             emit startedScanning(robotName, false);
     } else
+        /// will call startedScanningSlot in the scan map widget
         emit startedScanning(robotName, false);
 }
 
@@ -1086,27 +1088,40 @@ void MainWindow::openPositionRecoveryWidget() {
                         "* You can also click the map to set your own goals"
                         "* When the position has been recovered this window will automatically close", "recover_robot_position");
 
+        /// to teleoperate the robot using the keys of the position recovery widget
         connect(robotPositionRecoveryWidget, SIGNAL(teleopCmd(QString, int)), this, SLOT(teleopCmdSlot(QString, int)));
+
+         /// to start recovering the position of a robot for the first time
         connect(robotPositionRecoveryWidget, SIGNAL(startRecovering(QString)), this, SLOT(startRecoveringSlot(QString)));
+
+        /// sends out a goal to the robot
         connect(robotPositionRecoveryWidget, SIGNAL(robotGoTo(QString, double, double)), this, SLOT(robotGoToSlot(QString, double, double)));
+
+        /// to stop the scans of all robots contained in the QStringList passed as a parameter
         connect(robotPositionRecoveryWidget, SIGNAL(stopRecoveringRobots(QStringList)), this, SLOT(stopRecoveringRobotsSlot(QStringList)));
 
+        /// adds a new map and everything is the recovery was able to be started and opens a window for the user if not
         connect(this, SIGNAL(startedRecovering(QString, bool)), robotPositionRecoveryWidget, SLOT(startedRecoveringSlot(QString, bool)));
+
+        /// when a new map is received we notify the position recovery widget so that the corresponding's robot map can be updated
         connect(this, SIGNAL(receivedScanMap(QString, QImage, double)), robotPositionRecoveryWidget, SLOT(receivedMapSlot(QString, QImage, double)));
-        /*
-        connect(this, SIGNAL(robotDisconnected(QString)), scanMapWidget, SLOT(robotDisconnectedSlot(QString)));
-        connect(this, SIGNAL(robotReconnected(QString)), scanMapWidget, SLOT(robotReconnectedSlot(QString)));
-        connect(this, SIGNAL(robotScanning(bool,QString,bool)), scanMapWidget, SLOT(robotScanningSlot(bool,QString,bool)));
-        connect(robotsController, SIGNAL(scanRobotPos(QString, double, double, double)), scanMapWidget, SLOT(scanRobotPosSlot(QString, double, double, double)));
-*/
+
+        /// Same but for the robot position
+        connect(robotsController, SIGNAL(scanRobotPos(QString, double, double, double)), robotPositionRecoveryWidget, SLOT(updateRobotPosSlot(QString, double, double, double)));
+
+        /// shows the warning icon in the position recovery widget depending when the robot disconnects
+        connect(this, SIGNAL(robotDisconnected(QString)), robotPositionRecoveryWidget, SLOT(robotDisconnectedSlot(QString)));
+
+        /// hides the warning icon in the position recovery widget depending when the robot connects
+        connect(this, SIGNAL(robotReconnected(QString)), robotPositionRecoveryWidget, SLOT(robotReconnectedSlot(QString)));
+
+        /// when the position recovery process was started or stopped, updates the play / pause button in the position recovery widget
+        /// in case of a fail it opens a box
+        connect(this, SIGNAL(robotRecovering(bool, QString, bool)), robotPositionRecoveryWidget, SLOT(robotRecoveringSlot(bool,QString,bool)));
+
         /*
         connect(scanMapWidget, SIGNAL(playScan(bool, QString)), this, SLOT(playScanSlot(bool, QString)));
 
-        connect(this, SIGNAL(robotDisconnected(QString)), scanMapWidget, SLOT(robotDisconnectedSlot(QString)));
-        connect(this, SIGNAL(robotReconnected(QString)), scanMapWidget, SLOT(robotReconnectedSlot(QString)));
-        connect(this, SIGNAL(robotScanning(bool,QString,bool)), scanMapWidget, SLOT(robotScanningSlot(bool,QString,bool)));
-
-        connect(robotsController, SIGNAL(scanRobotPos(QString, double, double, double)), scanMapWidget, SLOT(scanRobotPosSlot(QString, double, double, double)));
         */
     } else
         robotPositionRecoveryWidget->activateWindow();
@@ -1135,6 +1150,47 @@ void MainWindow::stopRecoveringRobotsSlot(QStringList listRobot){
         } else
             qDebug() << "MainWindow::stopRecoveringRobotsSlot Trying to stop the robot" << listRobot.at(i) << "to scan, but the RobotView could not be found, the robot is probably disconnected";
     }
+}
+
+void MainWindow::playRecoverySlot(bool recover, QString robotName){
+    qDebug() << "MainWindow::playScanSlot called" << robotName << recover;
+
+    QPointer<RobotView> robotView = robotsController->getRobots()->getRobotViewByName(robotName);
+    if(robotView){
+        if(recover){
+            /// If the robot is scanning or was scanning, gmapping is launched so we just want to subscribe to get the map
+            /// else we ask if we want to relaunch gmapping and start the scan again
+            if(robotView->getRobot()->isRecovering()){
+                /// TODO check what to do here
+                if(!commandController->sendCommand(robotView->getRobot(), QString("e"), "", "", "", recover))
+                    emit robotRecovering(recover, robotName, false);
+            } else {
+                QMessageBox msgBox;
+                msgBox.setText("The robot restarted, do you wish to restart the scan ?");
+                msgBox.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
+                msgBox.setDefaultButton(QMessageBox::Ok);
+                int ret = msgBox.exec();
+                switch (ret) {
+                    case QMessageBox::Ok:
+                        if(!commandController->sendCommand(robotView->getRobot(), QString("v"), "", "", "", false))
+                            emit robotRecovering(recover, robotName, false);
+                    break;
+                    case QMessageBox::Cancel:
+                        /// Cancel was clicked
+                        emit robotRecovering(recover, robotName, false);
+                    break;
+                    default:
+                        Q_UNREACHABLE();
+                    break;
+                }
+            }
+        } else {
+            /// TODO check what to do about scan
+            if(!commandController->sendCommand(robotView->getRobot(), QString("f"), "", "", "", recover))
+                emit robotRecovering(recover, robotName, false);
+        }
+    } else
+        emit robotRecovering(recover, robotName, false);
 }
 
 /**********************************************************************************************************************************/
@@ -1396,20 +1452,45 @@ void MainWindow::scanMapSlot(){
                         "* Use the teleop keys to make the robot\n\n\t"
                         "* Click the map to set goals from the robot", "scan");
 
+        /// to start scanning the map on a robot for the first time
         connect(scanMapWidget, SIGNAL(startScanning(QString)), this, SLOT(startScanningSlot(QString)));
+
+        /// to stop the scans of all robots contained in the QStringList passed as a parameter
         connect(scanMapWidget, SIGNAL(stopScanning(QStringList)), this, SLOT(stopScanningSlot(QStringList)));
+
+        /// to resume or pause the scan of the map on a particular robot (has already been started before)
         connect(scanMapWidget, SIGNAL(playScan(bool, QString)), this, SLOT(playScanSlot(bool, QString)));
+
+        /// sends out a goal to the robot
         connect(scanMapWidget, SIGNAL(robotGoTo(QString, double, double)), this, SLOT(robotGoToSlot(QString, double, double)));
+
+        /// saves the newly scanned map and send it to each robot connected to this instance of the application
         connect(scanMapWidget, SIGNAL(saveScanMap(double, Position, QImage, QString)), this, SLOT(saveScanMapSlot(double, Position, QImage, QString)));
+
+        /// to teleoperate the robot using the keys of the scan map widget
         connect(scanMapWidget, SIGNAL(teleopCmd(QString, int)), this, SLOT(teleopCmdSlot(QString, int)));
 
+        /// adds a new map and everything is the scan was able to be started and opens a window for the user if not
         connect(this, SIGNAL(startedScanning(QString, bool)), scanMapWidget, SLOT(startedScanningSlot(QString, bool)));
+
+        /// shows the warning icon in the scan map widget when the robot disconnects
         connect(this, SIGNAL(robotDisconnected(QString)), scanMapWidget, SLOT(robotDisconnectedSlot(QString)));
+
+        /// hides the warning icon in the scan map widget when the robot connects
         connect(this, SIGNAL(robotReconnected(QString)), scanMapWidget, SLOT(robotReconnectedSlot(QString)));
-        connect(this, SIGNAL(robotScanning(bool,QString,bool)), scanMapWidget, SLOT(robotScanningSlot(bool,QString,bool)));
+
+        /// when the scan was launched or stopped, updates the play / pause button in the scan map widget
+        /// in case of a fail it opens a box
+        connect(this, SIGNAL(robotScanning(bool, QString, bool)), scanMapWidget, SLOT(robotScanningSlot(bool, QString, bool)));
+
+        /// when a new map is received we notify the scan map widget so that the corresponding's robot map can be updated
         connect(this, SIGNAL(receivedScanMap(QString,QImage,double)), scanMapWidget, SLOT(receivedScanMapSlot(QString,QImage,double)));
+
+        /// Same but for the robot position
         connect(robotsController, SIGNAL(scanRobotPos(QString, double, double, double)), scanMapWidget, SLOT(scanRobotPosSlot(QString, double, double, double)));
+
         scanMapWidget->exec();
+
     } else
         /// sets the focus on this window
         scanMapWidget->activateWindow();
@@ -1419,11 +1500,11 @@ void MainWindow::updateLaserSlot(){
     mapController->getObstaclesPainter()->update();
 }
 
-/**********************************************************************************************************************************/
+///**********************************************************************************************************************************/
 
-//                                          MENUS
+///                                         MENUS
 
-/**********************************************************************************************************************************/
+///**********************************************************************************************************************************/
 
 
 void MainWindow::closeSlot(){
@@ -1435,11 +1516,11 @@ void MainWindow::closeSlot(){
         pointsController->getDisplaySelectedPoint()->getPointView()->setPixmap(PointView::PixmapType::NORMAL);
 }
 
-/**********************************************************************************************************************************/
+///**********************************************************************************************************************************/
 
-//                                          POINTS
+///                                          POINTS
 
-/**********************************************************************************************************************************/
+///**********************************************************************************************************************************/
 
 
 /**
@@ -1538,11 +1619,11 @@ void MainWindow::setMessageCreationPoint(QString type, PointsController::PointNa
 }
 
 
-/**********************************************************************************************************************************/
+///**********************************************************************************************************************************/
 
-//                                          PATHS
+///                                          PATHS
 
-/**********************************************************************************************************************************/
+///**********************************************************************************************************************************/
 
 
 
@@ -1887,11 +1968,11 @@ void MainWindow::clearMapOfPaths(){
     emit resetPath();
 }
 
-/**********************************************************************************************************************************/
+///**********************************************************************************************************************************/
 
-//                                          ODDS AND ENDS
+///                                          ODDS AND ENDS
 
-/**********************************************************************************************************************************/
+///**********************************************************************************************************************************/
 
 void MainWindow::backEvent(){
     setEnableAll(true);
@@ -2006,7 +2087,7 @@ void MainWindow::updateRobotInfo(QString robotName, QString robotInfo){
     qDebug() << "MainWindow::updateRobotInfo" << robotInfo << "to" << strList;
     QPointer<RobotView> robotView = robotsController->getRobots()->getRobotViewByName(robotName);
 
-    if(strList.size() > 7){
+    if(strList.size() > 8){
         /// Remove the "Connected"
         strList.removeFirst();
         QString mapId = strList.takeFirst();
@@ -2016,6 +2097,7 @@ void MainWindow::updateRobotInfo(QString robotName, QString robotInfo){
         QString homeDate = strList.takeFirst();
         QString pathDate = strList.takeFirst();
         bool scanning = static_cast<QString>(strList.takeFirst()).toInt();
+        bool recovering = static_cast<QString>(strList.takeFirst()).toInt();
         /// What remains in the list is the path
 
         updatePathInfo(robotName, pathDate, strList);
@@ -2047,6 +2129,26 @@ void MainWindow::updateRobotInfo(QString robotName, QString robotInfo){
                 }
             }
         }
+
+        if(recovering){
+            if(robotPositionRecoveryWidget){
+                emit robotReconnected(robotName);
+                playRecoverySlot(true, robotName);
+            } else
+                stopRecoveringRobotsSlot(QStringList(robotName));
+        } else {
+            if(robotPositionRecoveryWidget){
+                QStringList robotRecoveringList = robotPositionRecoveryWidget->getAllRecoveringRobots();
+                for(int i = 0; i < robotRecoveringList.count(); i++){
+                    if(static_cast<QString>(robotRecoveringList.at(i)) == robotName){
+                        emit robotReconnected(robotName);
+                        emit robotRecovering(false, robotName, true);
+                    }
+                }
+            }
+        }
+
+
     } else
         qDebug() << "MainWindow::updateRobotInfo Connected received without enough parameters :" << strList;
 

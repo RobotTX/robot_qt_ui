@@ -16,14 +16,14 @@ public:
     void paint(QPainter *_painter, const QStyleOptionGraphicsItem *, QWidget *) Q_DECL_OVERRIDE;
 
     QVector<QPair<QVector<int>, QVector<QPointF>>> getItems(void) const { return items; }
-    QVector<QPointF> getLine(QPointF p1, QPointF p2);
+    QVector<QPointF> getLine(const QPointF &p1, const QPointF &p2);
 
 protected:
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *event) Q_DECL_OVERRIDE;
     void mouseMoveEvent(QGraphicsSceneMouseEvent *event) Q_DECL_OVERRIDE;
     void mousePressEvent(QGraphicsSceneMouseEvent *event) Q_DECL_OVERRIDE;
     void resetLastPoint();
-    QPointF getPoint(float x, float y);
+    QPointF getPoint(const float x, const float y);
 
 private slots:
     void undoSlot();

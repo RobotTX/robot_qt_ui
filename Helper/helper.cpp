@@ -136,6 +136,14 @@ namespace Helper {
         if(name.size() > 0 && name.at(name.size()-1) == ' ')
             ret += " ";
         return ret;
+    }
 
+    int mod(const int a, const int b) {
+        if(b < 0)
+            return mod(a, -b);
+        int ret = a % b;
+        if(ret < 0)
+            ret += b;
+        return ret;
     }
 }

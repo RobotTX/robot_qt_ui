@@ -16,7 +16,10 @@
 
 MergeMapWidget::MergeMapWidget(QSharedPointer<Robots> _robots, QWidget *parent) : QWidget(parent), robots(_robots), nbMaps(0) {
     setAttribute(Qt::WA_DeleteOnClose);
+
+    /// If mouse tracking is enabled, the widget receives mouse move events even if no buttons are pressed.
     setMouseTracking(true);
+
     layout = new QHBoxLayout(this);
 
     initializeMap();
@@ -194,12 +197,10 @@ void MergeMapWidget::saveSlot(){
 
         /// Get an image from the scene
         QImage image = sceneToImage();
-        //image.save("/home/m-a/Desktop/1.pgm");
 
         /// Check if the size of the image is bigger than expected, and if so, alert the user that we might lose data if using it
         if(checkImageSize(image.size())){
             image = croppedImageToMapImage(image);
-            //image.save("/home/m-a/Desktop/2.pgm");
 
             getResolution();
 
@@ -241,14 +242,13 @@ QImage MergeMapWidget::sceneToImage(){
 
     /// Create an image with the size the images are taking in the scene
     QImage image(scene->sceneRect().size().toSize(), QImage::Format_ARGB32);
+
     /// Fill the image with grey
     image.fill(QColor(205, 205, 205));
 
     /// We use a painter to copy the scene into the image
     QPainter painter(&image);
     scene->render(&painter);
-    //image.save("/home/m-a/Desktop/0.png");
-
 
     /// The image is still in green and red color so we set the pixel to white and black
     for(int i = 0; i < image.width(); i++){
@@ -267,7 +267,6 @@ QImage MergeMapWidget::sceneToImage(){
             }
         }
     }
-
     return image;
 }
 

@@ -214,15 +214,7 @@ void CommandController::openMessageBox(QStringList listCmd){
     }
 
     messageBox.setText(msg);
-    /**
-    /// is supposed to reset the timer
-    messageBox.hide();
-    */
-    //messageBox.setWindowFlags(Qt::WindowStaysOnTopHint);
 
-    //messageBox.show();
-    //messageBox.raise();
-    //messageBox.activateWindow();
     /// TODO check that it's not stopping the other commands
     messageBox.exec();
 }

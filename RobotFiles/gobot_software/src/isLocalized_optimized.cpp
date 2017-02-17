@@ -7,11 +7,12 @@
 #include <std_msgs/Header.h> 
 #include <typeinfo>
 #include <sstream>
+#include "std_srvs/Empty.h"
 
 ros::Publisher pub; 
-ros::Subscriber sub;
+ros::Subscriber particlesCloudSub;
 
-int test (const Cluster& dataSet, const int numberData, const int seq){
+int test(const Cluster& dataSet, const int numberData, const int seq){
 	std::cout << dataSet.getMaxDistPoint().second << " ";
 
 	// if the diameter of the cluster is < 2 then all the cloud is small enough and the position is valid.
@@ -26,9 +27,7 @@ int test (const Cluster& dataSet, const int numberData, const int seq){
 		return 0;
 }
 
-
-void checkLocalisation (const geometry_msgs::PoseArray& data)
-{
+void checkLocalization(const geometry_msgs::PoseArray& data){
 	std::cout << "__________________________________" << std::endl;
 	std::cout << "new position set" << std::endl;
 	
@@ -63,10 +62,18 @@ void checkLocalisation (const geometry_msgs::PoseArray& data)
 		pub.publish(msg);
 
 		// if the position has been found there is no need to process the messages anymore
-		sub.shutdown();
+		particlesCloudSub.shutdown();
 
 	} else
 		std::cout << "nok" << std::endl;
+}
+
+
+bool checkLocalizationService(std_srvs::Empty::Request &req, std_srvs::Empty::Response &res)
+{
+	ros::NodeHandle n;
+	particlesCloudSub = n.subscribe("particlecloud", 1, checkLocalization);
+	return true;
 }	
 	
 int main(int argc, char **argv){
@@ -77,7 +84,7 @@ int main(int argc, char **argv){
   	
   pub = n.advertise<std_msgs::String>("position_found", 1000);
 
-  sub = n.subscribe("particlecloud", 1000, checkLocalisation);
+  ros::ServiceServer service = n.advertiseService("check_localization", checkLocalizationService);
 
   ros::spin();
 

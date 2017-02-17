@@ -15,9 +15,11 @@
 #include "View/Other/customlineedit.h"
 
 EditMapWidget::EditMapWidget(QImage _mapImage, int _width, int _height, float _mapResolution, Position _mapOrigin, QWidget* parent):
-    QWidget(parent), mapImage(_mapImage), mapWidth(_width), mapHeight(_height), mapResolution(_mapResolution), mapOrigin(_mapOrigin){
+    QWidget(parent), mapImage(_mapImage), mapWidth(_width), mapHeight(_height), mapResolution(_mapResolution), mapOrigin(_mapOrigin)
+{
     setAttribute(Qt::WA_DeleteOnClose);
     setMouseTracking(true);
+
     layout = new QHBoxLayout(this);
 
     initializeMap();
@@ -188,7 +190,6 @@ void EditMapWidget::initializeMenu(){
     topMenuLayout->setContentsMargins(0, 0, 0, 0);
     cancelSaveLayout->setContentsMargins(0, 0, 0, 0);
     menuLayout->setContentsMargins(0, 0, 5, 0);
-    //layout->setContentsMargins(0, 0, 0, 0);
 
     topMenuLayout->setAlignment(Qt::AlignTop);
     cancelSaveLayout->setAlignment(Qt::AlignBottom);
@@ -203,7 +204,6 @@ void EditMapWidget::initializeMap(){
     graphicsView->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     graphicsView->setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding));
 
-
     canvas = new EditMapView(mapImage.width(), mapImage.height());
     scene->addItem(canvas);
 
@@ -212,7 +212,6 @@ void EditMapWidget::initializeMap(){
     pixmapItem = new QGraphicsPixmapItem(pixmap, canvas);
     pixmapItem->setZValue(0);
     pixmapItem->setFlag(QGraphicsItem::ItemStacksBehindParent);
-    //scene->addItem(pixmapItem);
 }
 
 void EditMapWidget::centerMap(){
@@ -245,14 +244,12 @@ void EditMapWidget::saveSlot(){
                     qDebug() << "EditMapWidget::saveSlot should not be here (case 0)";
                 break;
                 case 1:
-                    //qDebug() << "EditMapView::paint Drawing points";
                     painter.setPen(QPen(QColor(_color, _color, _color), _size));
                     for(int j = 0; j < points.size(); j++)
                         painter.drawPoint(points.at(j));
 
                 break;
                 case 2:{
-                    //qDebug() << "EditMapWidget::saveSlot Drawing a line";
                     painter.setPen(QPen(QColor(_color, _color, _color), _size));
                     if(points.size() > 1){
                         QVector<QPointF> newPoints = canvas->getLine(points.at(0), points.at(1));
@@ -262,14 +259,12 @@ void EditMapWidget::saveSlot(){
                 }
                 break;
                 case 3:
-                    //qDebug() << "EditMapWidget::saveSlot Drawing an empty rectangle";
                     painter.setPen(QPen(QColor(_color, _color, _color), _size, Qt::SolidLine, Qt::SquareCap, Qt::MiterJoin));
                     if(points.size() > 1)
                         painter.drawRect(QRect(QPoint(static_cast<int>(points.at(0).x()), static_cast<int>(points.at(0).y())),
                                                 QPoint(static_cast<int>(points.at(1).x()), static_cast<int>(points.at(1).y()))));
                 break;
                 case 4:
-                    //qDebug() << "EditMapWidget::saveSlot Drawing a filled rectangle";
                     if(points.size() > 1){
                         QRect rect = QRect(QPoint(static_cast<int>(points.at(0).x()), static_cast<int>(points.at(0).y())),
                                            QPoint(static_cast<int>(points.at(1).x()), static_cast<int>(points.at(1).y())));
@@ -278,7 +273,8 @@ void EditMapWidget::saveSlot(){
                     }
                 break;
                 default:
-                    qDebug() << "EditMapWidget::saveSlot should not be here (default)";
+                    qDebug() << "EditMapWidget::saveSlot should not be here (default)" << _shape;
+                    Q_UNREACHABLE();
                 break;
             }
         } else {

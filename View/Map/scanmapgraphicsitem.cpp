@@ -9,7 +9,8 @@
 #include <QtMath>
 
 ScanMapGraphicsItem::ScanMapGraphicsItem(QString _robotName, QSharedPointer<Robots> _robots)
-    : QGraphicsPixmapItem(), robotName(_robotName), robots(_robots){
+    : QGraphicsPixmapItem(), robotName(_robotName), robots(_robots)
+{
 
     /// Tell the class which mouse button to accept
     setAcceptedMouseButtons(Qt::LeftButton | Qt::RightButton);
@@ -28,6 +29,7 @@ ScanMapGraphicsItem::ScanMapGraphicsItem(QString _robotName, QSharedPointer<Robo
     laserView->setZValue(3);
 
     QPointer<RobotView> robotView = robots->getRobotViewByName(robotName);
+
     if(robotView)
         connect(robotView, SIGNAL(updateLaser()), this, SLOT(updateLaserSLot()));
 }
@@ -59,6 +61,7 @@ void ScanMapGraphicsItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event){
 
 void ScanMapGraphicsItem::updateRobotPos(double x, double y, double ori){
     scanRobotView->setRotation(ori);
+    /// don't forget to take into account
     scanRobotView->setPos(x-scanRobotView->pixmap().width()/2, y-scanRobotView->pixmap().height()/2);
 }
 
@@ -86,11 +89,11 @@ void ScanMapGraphicsItem::updateLaserSLot(){
             }
         }
 
-        /// Create an image that contians the obstacles
+        /// Create an image that contains the obstacles
         QImage laserImage = QImage(maxX - minX + 1, maxY - minY + 1, QImage::Format_ARGB32);
         laserImage.fill(qRgba(205, 205, 205, 0));
 
-        /// Fill the image with the obstacles
+        /// Fills the image with the obstacles
         for(int j = 0; j < obstacles.size(); j++)
             if(obstacles.at(j).x() < 1000 && obstacles.at(j).x() > -1000 && obstacles.at(j).y() < 1000 && obstacles.at(j).y() > -1000)
                 laserImage.setPixel(obstacles.at(j).x() - minX,
@@ -100,10 +103,6 @@ void ScanMapGraphicsItem::updateLaserSLot(){
         /// Get the position of the laser depending on the rotation of the robot (the laser is not in the middle of the image)
         double posX = sqrt(37) * cos(atan(-1.0/6.0) + (scanRobotView->rotation() - 90)/180.0*3.14159);
         double posY = sqrt(37) * sin(atan(-1.0/6.0) + (scanRobotView->rotation() - 90)/180.0*3.14159);
-
-
-        /// Position of the laser
-        //laserImage.setPixel(-minX + posX, -minY + posY, qRgba(0, 255, 0, 255));
 
         laserView->setPixmap(QPixmap::fromImage(laserImage));
         laserView->setTransformOriginPoint(-minX, -minY);

@@ -119,6 +119,7 @@ signals:
     void robotDisconnected(QString);
     void robotReconnected(QString);
     void robotScanning(bool, QString, bool);
+    void robotRecovering(bool, QString, bool);
     void newBatteryLevel(int);
     void updatePath(const QString groupName, const QString pathName);
     void stopAllCmd();
@@ -140,6 +141,7 @@ private slots:
     void startScanningSlot(QString robotName);
     void stopScanningSlot(QStringList listRobot);
     void playScanSlot(bool scan, QString robotName);
+    void playRecoverySlot(bool recover, QString robotName);
     void robotGoToSlot(QString robotName, double x, double y);
     void saveScanMapSlot(double resolution, Position origin, QImage image, QString fileName);
     void teleopCmdSlot(QString robotName, int id);

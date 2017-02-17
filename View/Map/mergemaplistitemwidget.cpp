@@ -19,11 +19,8 @@ MergeMapListItemWidget::MergeMapListItemWidget(int _id, QString _fileName, QGrap
 
     connect(pixmapItem, SIGNAL(pixmapClicked()), this, SLOT(pixmapClickedSlot()));
 
-    if(fromRobot){
-        fileName = QDir::currentPath() + QDir::separator() + "robotsmapFile.pgm";
-        image.save(fileName, "PGM");
-    } else
-        fileName = _fileName;
+    if(fromRobot)
+        image.save(QDir::currentPath() + QDir::separator() + "robotsmapFile.pgm", "PGM");
 
     initializeMenu(_fileName);
     initializeMap(_fileName, scene, image);
@@ -131,7 +128,7 @@ void MergeMapListItemWidget::initializeMap(QString _fileName, QGraphicsScene* sc
         }
     }
 
-    /// If we have a resolution (and so an origin), we want to convert it into coordinates in pixel
+    /// If we have a resolution (and therefore an origin), we want to convert it to coordinates in pixels
     /// to later display the origin as a blue point and be able to find it at the end after all the transformations
     if(resolution != -1){
         Position pos = Helper::Convert::robotCoordToPixelCoord(Position(0, 0), origin.x(), origin.y(), resolution, image.height());
@@ -164,7 +161,6 @@ void MergeMapListItemWidget::initializeMap(QString _fileName, QGraphicsScene* sc
     if(resolution != -1)
         newImage.setPixel(originInPixel.x() - top, originInPixel.y() - left, qRgba(0, 0, 255, 170));
 
-
     /// Create the graphic item of the map
     QPixmap pixmap = QPixmap::fromImage(newImage);
     pixmapItem->setPixmap(pixmap);
@@ -183,21 +179,11 @@ void MergeMapListItemWidget::rotLineEditSlot(QString text){
 }
 
 void MergeMapListItemWidget::sliderSlot(int value){
-    rotLineEdit->setText(QString::number(mod(value, 360)));
+    rotLineEdit->setText(QString::number(Helper::mod(value, 360)));
     /// rotate the map
     pixmapItem->setRotation(value);
 }
 
-
 void MergeMapListItemWidget::pixmapClickedSlot(){
     emit pixmapClicked(id);
-}
-
-int MergeMapListItemWidget::mod (const int a, const int b) {
-    if(b < 0)
-        return mod(a, -b);
-    int ret = a % b;
-    if(ret < 0)
-        ret += b;
-    return ret;
 }

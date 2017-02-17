@@ -33,7 +33,7 @@ public:
      * @param map
      * Update the pixmap with the new given map
      */
-    void updateMap(const QImage map);
+    void updateMap(const QImage &map);
 
     /**
      * @brief updateRobotPos
@@ -50,6 +50,14 @@ public:
      * Change the play/pause button icon and label when a robot start/stop recovering its position
      */
     void robotRecovering(const bool recovering);
+
+    /**
+     * @brief cropImage
+     * @param image
+     * @return
+     * When we receive an image, we crop it, keep only the walls and floor, and change the color of the walls
+     */
+    QImage cropImage(const QImage &image);
 
 signals:
     void startRecovery(bool start, const QString robotName);
@@ -100,6 +108,10 @@ private:
 
     QLabel* recoverPositionLabel;
     QLabel* fileNameLabel;
+
+    /// the amount we crop in both dimensions
+    int top;
+    int left;
 };
 
 #endif /// ROBOTPOSITIONRECOVERYLISTITEMWIDGET_H
