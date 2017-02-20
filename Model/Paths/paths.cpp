@@ -270,3 +270,17 @@ QPair<QString, QString> Paths::findPath(const QVector<PathPoint>& path) const {
     return QPair<QString, QString> ("", "");
 }
 
+bool Paths::pathNameIsUsed(QString pathName){
+    QMapIterator<QString, QSharedPointer<CollectionPaths>> it(*(groups));
+    while(it.hasNext()){
+        it.next();
+        QMapIterator<QString, QSharedPointer<Path> > it_paths(*(it.value()));
+        while(it_paths.hasNext()){
+            it_paths.next();
+            if(it_paths.key().compare(pathName) == 0){
+                return true;
+            }
+        }
+    }
+    return false;
+}

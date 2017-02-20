@@ -1812,15 +1812,23 @@ void MainWindow::displayPathOnMap(const bool display){
     qDebug() << "MainWindow::displayPathOnMap called";
     /// to hide the path drawn by the robot path painter
     emit resetPath(pointsController->getPoints());
+    QString checkedPathName = pathsController->getPathGroupDisplayed()->getLastCheckedButton();
+    QString pathGroupName("");
+    if(lastWidgets.size() > 0)
+        pathGroupName = lastWidgets.at(lastWidgets.size()-1).first.second;
     if(display){
         bottomLayout->uncheckViewPathSelectedRobot(bottomLayout->getLastCheckedId());
         bool foundFlag = false;
-        setCurrentPathSlot(pathsController->getPaths()->getPath(lastWidgets.at(lastWidgets.size()-1).first.second, pathsController->getPathGroupDisplayed()->getLastCheckedButton(), foundFlag), pathsController->getPathGroupDisplayed()->getLastCheckedButton());
+        if(!pathGroupName.isEmpty())
+            setCurrentPathSlot(pathsController->getPaths()->getPath(pathGroupName, checkedPathName, foundFlag), checkedPathName);
     } else {
         pathsController->setVisiblePath("");
         qDebug() << "no path visible !";
     }
+
     /// to set the 'eye' icon appropriately
+    if(!pathGroupName.isEmpty())
+        pathsController->setPathsGroup(pathGroupName);
     pathsController->updateDisplayedPath();
 }
 
@@ -1875,6 +1883,7 @@ void MainWindow::sendPathSelectedRobotSlot(const QString groupName, const QStrin
 }
 
 void MainWindow::cancelNoRobotPathSlot(){
+    QString pathName = pathsController->getPathCreationWidget()->getCurrentPathName();
     qDebug() << "MainWindow::cancelNoRobotPathSlot called";
 
     pathsController->setPathsGroup(pathsController->getPathCreationWidget()->getCurrentGroupName());
@@ -1895,7 +1904,7 @@ void MainWindow::cancelNoRobotPathSlot(){
     emit enableTopLayout(true);
     bottomLayout->setEnable(true);
 
-    setTemporaryMessageTop(TEXT_COLOR_INFO, "You have cancelled the modifications of the path \"" + pathsController->getPathCreationWidget()->getCurrentPathName() + "\"", 2500);
+    setTemporaryMessageTop(TEXT_COLOR_INFO, "You have cancelled the modifications of the path \"" + pathName + "\"", 2500);
 }
 
 void MainWindow::displayAssignedPath(QString groupName, QString pathName){
@@ -2060,6 +2069,7 @@ void MainWindow::updateRobotInfo(QString robotName, QString robotInfo){
         QString homeDate = strList.takeFirst();
         QString pathDate = strList.takeFirst();
         bool scanning = static_cast<QString>(strList.takeFirst()).toInt();
+        bool recovering = static_cast<QString>(strList.takeFirst()).toInt();
         /// What remains in the list is the path
 
         updatePathInfo(robotName, pathDate, strList);

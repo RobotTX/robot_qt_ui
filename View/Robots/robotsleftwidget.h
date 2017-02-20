@@ -19,6 +19,7 @@ class QHideEvent;
  * the edit & map button
  */
 class RobotsLeftWidget: public QWidget{
+    Q_OBJECT
 public:
     RobotsLeftWidget(MainWindow *mainWindow);
 
@@ -35,6 +36,9 @@ public:
 
 protected:
     void showEvent(QShowEvent *);
+
+signals:
+    void deselectRobots();
 
 private:
     RobotBtnGroup* btnGroup;
