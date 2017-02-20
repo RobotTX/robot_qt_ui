@@ -23,10 +23,9 @@ void MergeMapGraphicsItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event){
     /// we compare the start position of the drag event & the drop position
     /// if we have moved for more than 1 pixel, it's a drag, else it's a click
     /// and we create a temporary point
-    if (abs(x) <= 1 && abs(y) <= 1){
-        /// click
+    if (abs(x) <= 1 && abs(y) <= 1)
         emit pixmapClicked();
-    }
+
     /// drag and drop
     QGraphicsPixmapItem::mouseReleaseEvent(event);
 }

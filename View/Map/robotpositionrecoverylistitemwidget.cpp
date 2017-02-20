@@ -9,7 +9,7 @@
 #include "View/Other/stylesettings.h"
 
 RobotPositionRecoveryListItemWidget::RobotPositionRecoveryListItemWidget(const int _id, const QString name, QSharedPointer<Robots> robots, QGraphicsScene *_scene)
-    : QWidget(), id(_id), robotName(name), scene(_scene), pixmapItem(new RecoverPositionMapGraphicsItem(name))
+    : QWidget(), id(_id), robotName(name), scene(_scene), pixmapItem(new RecoverPositionMapGraphicsItem(name)), top(0), left(0)
 {
     QVBoxLayout* layout = new QVBoxLayout(this);
 
@@ -72,10 +72,7 @@ RobotPositionRecoveryListItemWidget::RobotPositionRecoveryListItemWidget(const i
 }
 
 void RobotPositionRecoveryListItemWidget::robotConnected(const bool connected){
-    if(connected)
-        disconnectedIcon->hide();
-    else
-        disconnectedIcon->show();
+    (connected) ? disconnectedIcon->hide() : disconnectedIcon->show();
 }
 
 void RobotPositionRecoveryListItemWidget::closeBtnSlot(){
@@ -99,8 +96,8 @@ void RobotPositionRecoveryListItemWidget::robotRecovering(const bool recovering)
     }
 }
 
-void RobotPositionRecoveryListItemWidget::updateMap(const QImage map){
-    QPixmap pixmap = QPixmap::fromImage(map);
+void RobotPositionRecoveryListItemWidget::updateMap(const QImage& map){
+    QPixmap pixmap = QPixmap::fromImage(cropImage(map));
     pixmapItem->setPixmap(pixmap);
     /// we have received a map so no reason to show the warning icon anymore
     if(!warningIcon->isHidden()){
@@ -112,16 +109,60 @@ void RobotPositionRecoveryListItemWidget::updateMap(const QImage map){
 
 void RobotPositionRecoveryListItemWidget::robotGoToSlot(double x, double y){
     /// Tell the robot where to go, we add left and top as they are the padding we removed when cropping the map
-    emit robotGoTo(robotName, x, y);
+    emit robotGoTo(robotName, x + left, y + top);
 }
 
 void RobotPositionRecoveryListItemWidget::updateRobotPos(double x, double y, double ori){
     /// Got the new position of the robot, minus the padding we removed when cropping the map
-    pixmapItem->updateRobotPos(x, y, ori);
+    pixmapItem->updateRobotPos(x - left, y - top, ori);
 }
 
 /// when the item is clicked the scene centers on the corresponding robot
 void RobotPositionRecoveryListItemWidget::mouseDoubleClickEvent(QMouseEvent*){
     qDebug() << "RobotPositionRecoveryListItemWidget::mouseDoubleClickEvent";
     emit centerOn(pixmapItem->getRobotView());
+}
+
+QImage RobotPositionRecoveryListItemWidget::cropImage(const QImage &image) {
+    left = image.width();
+    int right = 0;
+    top = image.height();
+    int bottom = 0;
+
+    /// We want to find the smallest rectangle containing the map (white and black) to crop it and use a small image
+    for(int i = 0; i < image.height(); i++){
+        for(int j = 0; j < image.width(); j++){
+            int color = image.pixelColor(i, j).red();
+            if(color == 255 || color == 0){
+                if(left > i)
+                    left = i;
+                if(top > j)
+                    top = j;
+                if(right < i)
+                    right = i;
+                if(bottom < j)
+                    bottom = j;
+            }
+        }
+    }
+
+    /// We crop the image
+    QImage croppedImage = image.copy(left, top, right - left + 1, bottom - top + 1);
+    /// Create a new image filled with invisible grey
+    QImage newImage = QImage(croppedImage.size(), QImage::Format_ARGB32);
+    newImage.fill(qRgba(205, 205, 205, 0));
+
+    /// 1 out of 2 map will have red wall and the other one green wall to better distinguish them
+    QRgb wallColor = (id % 2 == 0) ? qRgba(0, 0, 255, 170) : qRgba(0, 255, 0, 170);
+    for(int i = 0; i < croppedImage.width(); i++){
+        for(int j = 0; j < croppedImage.height(); j++){
+            int color = croppedImage.pixelColor(i, j).red();
+            if(color < 205)
+                newImage.setPixel(i, j, wallColor);
+            else if(color > 205)
+                newImage.setPixel(i, j, qRgba(255, 255, 255, 170));
+        }
+    }
+
+    return newImage;
 }

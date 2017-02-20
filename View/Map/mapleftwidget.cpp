@@ -50,6 +50,7 @@ MapLeftWidget::MapLeftWidget(QWidget* parent, const MainWindow *mainWindow): QWi
     connect(scanBtn, SIGNAL(clicked()), mainWindow, SLOT(scanMapSlot()));
     connect(editBtn, SIGNAL(clicked()), mainWindow, SLOT(editMapSlot()));
     connect(mergeBtn, SIGNAL(clicked()), mainWindow, SLOT(mergeMapSlot()));
+    connect(restoreStateBtn, SIGNAL(clicked()), mainWindow, SLOT(centerMap()));
 
     hide();
     layout->setAlignment(Qt::AlignTop);

@@ -63,12 +63,10 @@ void PointsController::initializeMenus(MainWindow* mainWindow,
     connect(this, SIGNAL(invalidName(QString, PointsController::PointNameError)), mainWindow, SLOT(setMessageCreationPoint(QString, PointsController::PointNameError)));
     createPointWidget->hide();
 
-
     /// TODO the 2 next lines of codes are causing a warning about the layout
     /// to display the information relative to a point
     displaySelectedPoint = new DisplaySelectedPoint(mainWindow, robots, points, map);
     displaySelectedPoint->hide();
-
 
     /// to display the information relative to a group of points
     displaySelectedGroup = new DisplaySelectedGroup(mainWindow, points);

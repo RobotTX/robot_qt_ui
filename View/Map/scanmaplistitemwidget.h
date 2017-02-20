@@ -63,7 +63,7 @@ protected:
      * @return
      * When we receive an image, we crop it, keep only the walls and floor, and change the color of the walls
      */
-    QImage cropImage(QImage image);
+    QImage cropImage(const QImage &image);
 
     /**
      * @brief mouseDoubleClickEvent
@@ -144,13 +144,11 @@ private:
     QPushButton* warningIcon;
     QPushButton* scanningBtn;
     QLabel* scanningLabel;
-    int oriWidth;
-    int oriHeight;
-    int newWidth;
-    int newHeight;
+
+    /// the amount we crop in both dimensions
     int top;
     int left;
-};
+ };
 
 
 #endif /// SCANMAPLISTITEMWIDGET_H

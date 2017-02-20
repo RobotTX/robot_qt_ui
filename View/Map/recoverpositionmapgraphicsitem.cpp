@@ -49,5 +49,6 @@ void RecoverPositionMapGraphicsItem::mouseReleaseEvent(QGraphicsSceneMouseEvent 
 
 void RecoverPositionMapGraphicsItem::updateRobotPos(double x, double y, double ori){
     scanRobotView->setRotation(ori);
+    /// don't forget to take into account the size of the pixmap
     scanRobotView->setPos(x-scanRobotView->pixmap().width()/2, y-scanRobotView->pixmap().height()/2);
 }

@@ -8,6 +8,7 @@ const std::string DEBUG_CMD_FILE = "/home/gtdollar/computer_software/debug_cmd.t
 bool waiting = false;
 bool connected = false;
 bool scanning = false;
+bool recovering = false;
 
 ros::ServiceClient startRobotPosClient;
 ros::ServiceClient stopRobotPosClient;
@@ -31,6 +32,7 @@ ros::ServiceClient stopSendLaserClient;
 ros::ServiceClient stopLaserClient;
 
 ros::ServiceClient recoverPositionClient;
+ros::ServiceClient checkLocalizationClient;
 
 ros::Publisher go_pub;
 ros::Publisher teleop_pub;
@@ -425,17 +427,21 @@ bool execCommand(ros::NodeHandle n, std::vector<std::string> command){
 		{
 			if(command.size() == 1) {
 				std::cout << "(Command system) Gobot tries to recover its position" << std::endl;
-				/// starts the localisation package
-				std::string cmd = "rosrun localisationTool isLocalised_optimized";
-				system(cmd.c_str());
-
-				/// gives some time to start the node
-				sleep(2);
-
+				recovering = true;
 				return recoverPosition();
 			}
 		}
 		break;
+
+		/// command to stop recovering the robot's position
+		case 'w':
+		{
+			if(command.size() == 1) {
+				std::cout << "(Command system) Gobot stops trying to recover its position" << std::endl;
+				recovering = false;
+				return stopRecoveringPosition();
+			}
+		}
 
 		/// Default/Unknown command
 		default:
@@ -450,13 +456,24 @@ bool execCommand(ros::NodeHandle n, std::vector<std::string> command){
 	return false;
 }
 
+bool stopRecoveringPosition(){
+
+}
+
 bool recoverPosition(){
 	std::cout << "(Command system) Launching the service to recover the robot's position" << std::endl;
 	std_srvs::Empty srv;
 
-	if (recoverPositionClient.call(srv)) {
-		std::cout << "(Command system) recover_position service started" << std::endl;
-		return true;
+	if (recoverPositionClient.call(srv)){
+		std::cout << "(Command system) succesfully called recover_position service, now trying to call checkLocalization service" << std::endl;
+		if(checkLocalizationClient.call(srv)){
+			std::cout << "(Command system) checkLocalization succesfully launched, recovery can start" << std::endl;
+			return true;
+		} 
+		else {
+			std::cout << "(Command system) recover_position service could not start" << std::endl;
+			return false;
+		}
 	} else {
 		std::cerr << "(Command system) Failed to call service recover_position" << std::endl;
 		return false;
@@ -845,6 +862,7 @@ void asyncAccept(boost::shared_ptr<boost::asio::io_service> io_service, boost::s
    	std::string path("");
    	if(ifPath){
    		std::string line("");
+   		std::cout << "Line path" << std::endl;
    		while(getline(ifPath, line))
    			path += line + " ";
    		ifPath.close();
@@ -880,8 +898,9 @@ void asyncAccept(boost::shared_ptr<boost::asio::io_service> io_service, boost::s
    		datePath = "1970-05-21-00-00-00";
 
    	std::string scan = (scanning) ? "1" : "0";
+   	std::string recover = (recovering) ? "1" : "0";
 
-	sendMessageToPc(sock, "Connected " + mapId + " " + mapDate + " " + home_x + " " + home_y + " " + dateHome + " " + datePath + " " + scan + " " + path);
+	sendMessageToPc(sock, "Connected " + mapId + " " + mapDate + " " + home_x + " " + home_y + " " + dateHome + " " + datePath + " " + scan + " " + recover + " " + path);
 }
 
 void server(unsigned short port, ros::NodeHandle n){
@@ -945,6 +964,7 @@ int main(int argc, char* argv[]){
 		stopLaserClient = n.serviceClient<std_srvs::Empty>("stop_laser_data_sender");
 
 		recoverPositionClient = n.serviceClient<std_srvs::Empty>("recover_position");
+		checkLocalizationClient = n.serviceClient<std_srvs::Empty>("check_localization");
 
 		go_pub = n.advertise<geometry_msgs::PoseStamped>("/move_base_simple/goal", 1000);
     	teleop_pub = n.advertise<geometry_msgs::Twist>("/cmd_vel", 1000);

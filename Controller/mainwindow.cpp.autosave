@@ -1121,6 +1121,7 @@ void MainWindow::openPositionRecoveryWidget() {
 
         /*
         connect(scanMapWidget, SIGNAL(playScan(bool, QString)), this, SLOT(playScanSlot(bool, QString)));
+        
 
         */
     } else
@@ -1893,23 +1894,15 @@ void MainWindow::displayPathOnMap(const bool display){
     qDebug() << "MainWindow::displayPathOnMap called";
     /// to hide the path drawn by the robot path painter
     emit resetPath(pointsController->getPoints());
-    QString checkedPathName = pathsController->getPathGroupDisplayed()->getLastCheckedButton();
-    QString pathGroupName("");
-    if(lastWidgets.size() > 0)
-        pathGroupName = lastWidgets.at(lastWidgets.size()-1).first.second;
     if(display){
         bottomLayout->uncheckViewPathSelectedRobot(bottomLayout->getLastCheckedId());
         bool foundFlag = false;
-        if(!pathGroupName.isEmpty())
-            setCurrentPathSlot(pathsController->getPaths()->getPath(pathGroupName, checkedPathName, foundFlag), checkedPathName);
+        setCurrentPathSlot(pathsController->getPaths()->getPath(lastWidgets.at(lastWidgets.size()-1).first.second, pathsController->getPathGroupDisplayed()->getLastCheckedButton(), foundFlag), pathsController->getPathGroupDisplayed()->getLastCheckedButton());
     } else {
         pathsController->setVisiblePath("");
         qDebug() << "no path visible !";
     }
-
     /// to set the 'eye' icon appropriately
-    if(!pathGroupName.isEmpty())
-        pathsController->setPathsGroup(pathGroupName);
     pathsController->updateDisplayedPath();
 }
 
@@ -1964,7 +1957,6 @@ void MainWindow::sendPathSelectedRobotSlot(const QString groupName, const QStrin
 }
 
 void MainWindow::cancelNoRobotPathSlot(){
-    QString pathName = pathsController->getPathCreationWidget()->getCurrentPathName();
     qDebug() << "MainWindow::cancelNoRobotPathSlot called";
 
     pathsController->setPathsGroup(pathsController->getPathCreationWidget()->getCurrentGroupName());
@@ -1985,7 +1977,7 @@ void MainWindow::cancelNoRobotPathSlot(){
     emit enableTopLayout(true);
     bottomLayout->setEnable(true);
 
-    setTemporaryMessageTop(TEXT_COLOR_INFO, "You have cancelled the modifications of the path \"" + pathName + "\"", 2500);
+    setTemporaryMessageTop(TEXT_COLOR_INFO, "You have cancelled the modifications of the path \"" + pathsController->getPathCreationWidget()->getCurrentPathName() + "\"", 2500);
 }
 
 void MainWindow::displayAssignedPath(QString groupName, QString pathName){

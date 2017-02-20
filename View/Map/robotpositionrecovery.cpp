@@ -18,8 +18,11 @@
 #include "View/Map/robotpositionrecoverylistitemwidget.h"
 #include "View/Map/recoverpositionmapgraphicsitem.h"
 
-RobotPositionRecovery::RobotPositionRecovery(QSharedPointer<Robots> _robots, QWidget *parent) : QWidget(parent), robots(_robots) {
+RobotPositionRecovery::RobotPositionRecovery(QSharedPointer<Robots> _robots, QWidget *parent) : QWidget(parent), robots(_robots), mapSize(QSize())
+{
     setAttribute(Qt::WA_DeleteOnClose);
+
+    /// If mouse tracking is enabled, the widget receives mouse move events even if no buttons are pressed.
     setMouseTracking(true);
 
     mainLayout = new QHBoxLayout(this);
@@ -86,6 +89,7 @@ void RobotPositionRecovery::initializeMenu(){
 
     mainLayout->addWidget(menuWidget);
 
+    /// ensures that the menu on the left is not taking too much space
     menuWidget->setFixedWidth(150);
     teleopLayout->setContentsMargins(0, 0, 0, 0);
     topMenuLayout->setContentsMargins(0, 0, 0, 0);
@@ -111,6 +115,7 @@ void RobotPositionRecovery::dirKeyEventSlot(int key){
     if(listWidget->currentItem() != NULL){
         RobotPositionRecoveryListItemWidget* widget = static_cast<RobotPositionRecoveryListItemWidget*>(listWidget->itemWidget(listWidget->currentItem()));
         switch(key){
+            /// the arrows are used to move the manipulate the map
             case Qt::Key_Up:
                 widget->getPixmapItem()->moveBy(0, -0.1);
             break;
@@ -175,7 +180,7 @@ void RobotPositionRecovery::addImageRobotSlot(){
         for(int i = 0; i < listWidget->count(); i++)
             list.push_back(static_cast<RobotPositionRecoveryListItemWidget*>(listWidget->itemWidget(listWidget->item(i)))->getRobotName());
 
-        /// Add the available robots to the list + disable the one already scanning
+        /// Add the available robots to the list + disable the one already recovering
         for(int i = 0; i < robots->getRobotsVector().size(); i++){
             menu.addAction(robots->getRobotsVector().at(i)->getRobot()->getName());
             if(list.contains(robots->getRobotsVector().at(i)->getRobot()->getName())){
@@ -199,6 +204,7 @@ void RobotPositionRecovery::addImageRobotSlot(){
 
 void RobotPositionRecovery::receivedMapSlot(QString robotName, QImage map, double _resolution){
     Q_UNUSED(_resolution)
+    mapSize = map.size();
     /// looks for the right item in the list to update the map of the corresponding robot
     for(int i = 0; i < listWidget->count(); i++){
         RobotPositionRecoveryListItemWidget* item = static_cast<RobotPositionRecoveryListItemWidget*>(listWidget->itemWidget(listWidget->item(i)));
@@ -277,7 +283,7 @@ void RobotPositionRecovery::addMapWidget(QString name){
     RobotPositionRecoveryListItemWidget* listItem = new RobotPositionRecoveryListItemWidget(listWidget->count(), name, robots, scene);
 
     connect(listItem, SIGNAL(deleteMap(int, QString)), this, SLOT(deleteMapSlot(int, QString)));
-    connect(listItem, SIGNAL(playScan(bool, QString)), this, SLOT(playScanSlot(bool, QString)));
+    connect(listItem, SIGNAL(playRecovery(bool, QString)), this, SLOT(playScanSlot(bool, QString)));
     connect(listItem, SIGNAL(robotGoTo(QString, double, double)), this, SLOT(robotGoToSlot(QString, double, double)));
     connect(listItem, SIGNAL(centerOn(QGraphicsItem*)), this, SLOT(centerOnSlot(QGraphicsItem*)));
 
@@ -288,4 +294,43 @@ void RobotPositionRecovery::addMapWidget(QString name){
 
     listWidget->addItem(listWidgetItem);
     listWidget->setItemWidget(listWidgetItem, listItem);
+}
+
+void RobotPositionRecovery::robotDisconnectedSlot(QString robotName){
+    for(int i = 0; i < listWidget->count(); i++){
+        RobotPositionRecoveryListItemWidget* item = static_cast<RobotPositionRecoveryListItemWidget*>(listWidget->itemWidget(listWidget->item(i)));
+        if(item->getRobotName() == robotName)
+            item->robotConnected(false);
+    }
+}
+
+void RobotPositionRecovery::robotReconnectedSlot(QString robotName){
+    for(int i = 0; i < listWidget->count(); i++){
+        RobotPositionRecoveryListItemWidget* item = static_cast<RobotPositionRecoveryListItemWidget*>(listWidget->itemWidget(listWidget->item(i)));
+        if(item->getRobotName() == robotName)
+            item->robotConnected(true);
+    }
+}
+
+void RobotPositionRecovery::robotRecoveringSlot(bool recover, QString robotName, bool success){
+    for(int i = 0; i < listWidget->count(); i++){
+        RobotPositionRecoveryListItemWidget* item = static_cast<RobotPositionRecoveryListItemWidget*>(listWidget->itemWidget(listWidget->item(i)));
+        if(item->getRobotName() == robotName)
+            item->robotRecovering(recover == success);
+    }
+
+    if(!success){
+        QString msg = (recover) ? "Failed to launch the scan for the robot : " + robotName + "\nPlease try again." :
+                               "Failed to stop the scan for the robot : " + robotName + "\nPlease try again.";
+        QMessageBox msgBox;
+        msgBox.setText(msg);
+        msgBox.setStandardButtons(QMessageBox::Cancel);
+        msgBox.setDefaultButton(QMessageBox::Cancel);
+        msgBox.exec();
+    }
+}
+
+void RobotPositionRecovery::playRecoverySlot(bool recover, QString robotName){
+    /// emit to give it to the mainWindow
+    emit playRecovery(recover, robotName);
 }

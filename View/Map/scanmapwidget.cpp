@@ -146,14 +146,17 @@ void ScanMapWidget::addImageRobotSlot(){
 
 void ScanMapWidget::robotMenuSlot(QAction* action){
     qDebug() << "ScanMapWidget::robotMenuSlot called" << action->text();
+    /// called when a robot is clicked in the menu
     emit startScanning(action->text());
 }
 
 void ScanMapWidget::startedScanningSlot(QString robotName, bool scanning){
+    /// called by the main window if the scan could start
     qDebug() << "ScanMapWidget::startedScanningSlot called" << robotName << scanning;
     if(scanning)
         addMapWidget(robotName);
     else {
+        /// if it could not start
         QMessageBox msgBox;
         msgBox.setText(robotName + "could not start scanning, please try again");
         msgBox.setStandardButtons(QMessageBox::Cancel);
@@ -163,6 +166,9 @@ void ScanMapWidget::startedScanningSlot(QString robotName, bool scanning){
 }
 
 void ScanMapWidget::addMapWidget(QString name){
+    /// called after the scan started
+
+    /// allow the creation of a new item on the menu at the left as well as a map and a robot view on the map
     ScanMapListItemWidget* listItem = new ScanMapListItemWidget(listWidget->count(), name, robots, scene);
 
     connect(listItem, SIGNAL(deleteMap(int, QString)), this, SLOT(deleteMapSlot(int, QString)));
@@ -267,8 +273,8 @@ void ScanMapWidget::deleteMapSlot(int id, QString robotName){
     /// Tell the robot to stop scanning
     QStringList list;
     list.push_back(robotName);
-    emit stopScanning(list);
 
+    emit stopScanning(list);
 
     /// Remove the QGraphicsPixmapItem from the scene
     QListWidgetItem* listWidgetItem = listWidget->item(id);
@@ -311,12 +317,8 @@ void ScanMapWidget::robotScanningSlot(bool scan, QString robotName, bool success
     }
 
     if(!success){
-        QString msg;
-        if(scan)
-            msg = "Failed to launch the scan for the robot : " + robotName + "\nPlease try again.";
-        else
-            msg = "Failed to stop the scan for the robot : " + robotName + "\nPlease try again.";
-
+        QString msg = (scan) ? "Failed to launch the scan for the robot : " + robotName + "\nPlease try again." :
+                               "Failed to stop the scan for the robot : " + robotName + "\nPlease try again.";
         QMessageBox msgBox;
         msgBox.setText(msg);
         msgBox.setStandardButtons(QMessageBox::Cancel);
@@ -369,8 +371,6 @@ QImage ScanMapWidget::sceneToImage(){
     /// We use a painter to copy the scene into the image
     QPainter painter(&image);
     scene->render(&painter);
-    //image.save("/home/m-a/Desktop/0.png");
-
 
     /// The image is still in green and red color so we set the pixel to white and black
     for(int i = 0; i < image.width(); i++){
@@ -388,9 +388,8 @@ QImage ScanMapWidget::sceneToImage(){
     return image;
 }
 
-QImage ScanMapWidget::croppedImageToMapImage(QImage croppedImage){
+QImage ScanMapWidget::croppedImageToMapImage(const QImage& croppedImage){
     qDebug() << "ScanMapWidget::croppedImageToMapImage called";
-
 
     /// Create the new image on the desired size
     QImage image(mapSize, QImage::Format_ARGB32);

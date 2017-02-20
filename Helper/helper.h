@@ -38,4 +38,6 @@ namespace Helper {
 
     /// to remove extra spaces like "A          word  " becomes "A word"
     QString formatName(const QString name);
+
+    int mod(const int a, const int b);
 }

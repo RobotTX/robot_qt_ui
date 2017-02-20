@@ -71,7 +71,7 @@ protected:
      * @return
      * Transform the image from sceneToImage to a new image with the right size
      */
-    QImage croppedImageToMapImage(QImage croppedImage);
+    QImage croppedImageToMapImage(const QImage &croppedImage);
 
     /**
      * @brief checkImageSize

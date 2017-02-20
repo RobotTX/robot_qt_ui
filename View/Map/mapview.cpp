@@ -26,9 +26,8 @@ void MapView::mousePressEvent(QGraphicsSceneMouseEvent *event){
         dragStartPosition = this->pos();
         QGraphicsPixmapItem::mousePressEvent(event);
 
-    } else if(event->button() == Qt::MidButton){
+    } else if(event->button() == Qt::MidButton)
         emit testCoord(event->pos().x(), event->pos().y());
-    }
 }
 
 void MapView::mouseReleaseEvent(QGraphicsSceneMouseEvent *event){

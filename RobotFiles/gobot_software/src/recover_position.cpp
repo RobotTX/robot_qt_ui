@@ -104,14 +104,15 @@ void checkRecoveryStatus(const std_msgs::String& msg){
 }
 
 bool recoverPosition(std_srvs::Empty::Request &req, std_srvs::Empty::Response &res){
-	ROS_INFO("recoverPosition started : trying to open port 4004 to send back the recovered position when available\n");
+	ROS_INFO("recoverPosition started : trying to open port 13452 to send back the recovered position when available\n");
 	ros::NodeHandle n;
 
     socket_recovered_position = tcp::socket(io_service);
-    l_acceptor = tcp::acceptor(io_service, tcp::endpoint(tcp::v4(), 4004));
+    l_acceptor = tcp::acceptor(io_service, tcp::endpoint(tcp::v4(), 13452));
     l_acceptor.set_option(tcp::acceptor::reuse_address(true));
 
     l_acceptor.accept(socket_recovered_position);
+    
     std::cout << "Recovery position connection established" << std::endl;
 
 	localisationToolFeedbackSuscriber = n.subscribe("position_found", 1, checkRecoveryStatus);
@@ -272,7 +273,9 @@ bool findNextPoint(){
 
 		    currentGoal = std::make_pair((furthestPoint.first.end) * metadata.resolution + metadata.x, (furthestPoint.first.row) * metadata.resolution + metadata.y);
 
-			ac->sendGoal(goal);
+		    std::cout << "Only a test otherwise I would send this goal " << goal.target_pose.pose.position.x << " " << goal.target_pose.pose.position.y << std::endl;
+			
+			//ac->sendGoal(goal);
 
 		} else 
 			sendErrorMessage();
@@ -282,28 +285,42 @@ bool findNextPoint(){
 
 int main(int argc, char* argv[]){
 
-	ros::init(argc, argv, "furthest_point");
+	std::cout << "(Recover position) recover position main running..." << std::endl;
 
-	ros::NodeHandle n; 
+	try {
 
-	// to receive the metadata of the map : width, height, resolution and origin
-	ros::Subscriber sub_metadata = n.subscribe("/map1_metadata", 1000, getMetaData);
+		ros::init(argc, argv, "recover_position");
 
-	// to receive the robot's position and orientation
-	ros::Subscriber sub_robot = n.subscribe("/robot_pose", 1, getRobotPos);
-	
+		ros::NodeHandle n; 
 
-	// to receive the current map
-	ros::Subscriber sub_map = n.subscribe("/map1", 1000, getMap);
-	
-	// to send the position of the robot to the application once recovered
-	ros::ServiceServer service = n.advertiseService("recover_position", recoverPosition);
+		// to receive the metadata of the map : width, height, resolution and origin
+		ros::Subscriber sub_metadata = n.subscribe("/map_metadata", 1000, getMetaData);
 
-	// wait for the action server to come up
-	while(!ac->waitForServer(ros::Duration(5.0)))
-		ROS_INFO("Waiting for the move_base action server to come up");
+		// to receive the robot's position and orientation
+		ros::Subscriber sub_robot = n.subscribe("/robot_pose", 1, getRobotPos);
+		
+		// to receive the current map
+		ros::Subscriber sub_map = n.subscribe("/map", 1000, getMap);
 
-	ros::spin();
+		// tell the action client that we want to spin a thread by default
+		ac = std::shared_ptr<MoveBaseClient> (new MoveBaseClient("move_base", true));
+
+		// to send the position of the robot to the application once recovered
+		ros::ServiceServer service = n.advertiseService("recover_position", recoverPosition);
+		
+		// wait for the action server to come up
+		while(!ac->waitForServer(ros::Duration(5.0)))
+			ROS_INFO("Waiting for the move_base action server to come up");
+
+		if(ac->isServerConnected())
+			std::cout << "Server is connected" << std::endl;
+
+		ros::spin();
+
+	} catch (std::exception& e) {
+
+		std::cout << "Recover position exception " << e.what() << std::endl;
+	}
 	
 	return 0;
 }

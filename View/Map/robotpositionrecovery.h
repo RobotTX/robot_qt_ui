@@ -79,6 +79,13 @@ private slots:
 
     void robotMenuSlot(QAction* action);
 
+    void robotDisconnectedSlot(QString robotName);
+    void robotReconnectedSlot(QString robotName);
+
+    void robotRecoveringSlot(bool recover, QString robotName, bool success);
+
+    void playRecoverySlot(bool recover, QString robotName);
+
 signals:
     void teleopCmd(QString, int);
     void robotGoTo(QString, double, double);
@@ -119,6 +126,8 @@ private:
 
     CustomQGraphicsView* graphicsView;
     QGraphicsScene* scene;
+
+    QSize mapSize;
 };
 
 #endif /// ROBOTPOSITIONRECOVERY_H

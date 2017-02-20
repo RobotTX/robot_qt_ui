@@ -59,6 +59,7 @@ public:
     QSharedPointer<Paths> getPaths(void) const { return paths; }
     bool isSendingMap(void) const { return sendingMap; }
     bool isScanning(void) const { return scanning; }
+    bool isRecovering(void) const { return recovering; }
 
     void setPlayingPath(const bool playPath) { playingPath = playPath; }
     void setPath(const QVector<QSharedPointer<PathPoint>>& _path) { path = _path; }
@@ -73,6 +74,7 @@ public:
     void setPathName(const QString name) { pathName = name; }
     void setGroupPathName(const QString name) { groupName = name; }
     void setScanning(const bool _scanning) { scanning = _scanning; }
+    void setRecovering(const bool _recovering) { recovering = _recovering; }
 
     /**
      * @brief launchWorkers
@@ -186,6 +188,7 @@ private:
     QString groupName;
     bool sendingMap;
     bool scanning;
+    bool recovering;
 
     QPointer<CmdRobotWorker> cmdRobotWorker;
     QPointer<RobotPositionWorker> robotWorker;

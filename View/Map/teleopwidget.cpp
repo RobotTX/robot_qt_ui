@@ -4,6 +4,7 @@
 #include <QButtonGroup>
 
 TeleopWidget::TeleopWidget(QWidget* parent) : QWidget(parent), btnGroup(new QButtonGroup(this)){
+
     QGridLayout* layout = new QGridLayout(this);
 
     QPushButton* upLeftBtn = new QPushButton("u", this);
