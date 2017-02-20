@@ -296,6 +296,9 @@ int main(int argc, char* argv[]){
 		while(!ac->waitForServer(ros::Duration(5.0)))
 			ROS_INFO("Waiting for the move_base action server to come up");
 
+		if(ac->isServerConnected())
+			std::cout << "Server is connected" << std::endl;
+
 		ros::spin();
 
 	} catch (std::exception& e) {

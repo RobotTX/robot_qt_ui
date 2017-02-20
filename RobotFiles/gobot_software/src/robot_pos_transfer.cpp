@@ -7,6 +7,14 @@ tcp::socket socket_robot(io_service);
 ros::Subscriber sub_robot;
 tcp::acceptor m_acceptor(io_service);
 
+/*
+// called by recover position to notify the application that the position has been recovered
+bool confirmPositionRecovered(std_srvs::Empty::Request &req, std_srvs::Empty::Response &res){
+	try {
+		boost::system::error_code ignored_error;
+
+	}
+}*/
 
 void sendRobotPos(const std::string& robot_string){
 	try {
@@ -72,7 +80,7 @@ int main(int argc, char **argv){
 
 	ros::NodeHandle n;
 
-	ros::Rate loop_rate(20);
+	ros::Rate loop_rate(10);
 	
 	ros::ServiceServer start_service = n.advertiseService("start_robot_pos_sender", startRobotPos);
 	ros::ServiceServer stop_service = n.advertiseService("stop_robot_pos_sender", stopRobotPos);
@@ -81,7 +89,6 @@ int main(int argc, char **argv){
 		ros::spinOnce();
 		loop_rate.sleep();
 	}
-
 
 	return 0;
 }

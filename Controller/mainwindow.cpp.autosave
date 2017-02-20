@@ -1121,6 +1121,7 @@ void MainWindow::openPositionRecoveryWidget() {
 
         /*
         connect(scanMapWidget, SIGNAL(playScan(bool, QString)), this, SLOT(playScanSlot(bool, QString)));
+        
 
         */
     } else

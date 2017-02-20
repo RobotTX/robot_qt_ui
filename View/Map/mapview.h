@@ -56,9 +56,9 @@ protected:
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
 
 private:
+    QSize size;
     QSharedPointer<PointView> tmpPointView;
     QPointF dragStartPosition;
-    QSize size;
     QPixmap tmpPointPixmap;
     GraphicItemState state;
 };

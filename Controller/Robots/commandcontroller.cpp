@@ -214,7 +214,7 @@ void CommandController::openMessageBox(QStringList listCmd){
     }
 
     messageBox.setText(msg);
-
+    messageBox.show();
     /// TODO check that it's not stopping the other commands
-    messageBox.exec();
+    //messageBox.exec();
 }

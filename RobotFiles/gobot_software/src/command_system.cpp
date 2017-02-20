@@ -456,13 +456,24 @@ bool execCommand(ros::NodeHandle n, std::vector<std::string> command){
 	return false;
 }
 
+bool stopRecoveringPosition(){
+
+}
+
 bool recoverPosition(){
 	std::cout << "(Command system) Launching the service to recover the robot's position" << std::endl;
 	std_srvs::Empty srv;
 
-	if (recoverPositionClient.call(srv) && checkLocalizationClient.call(srv)) {
-		std::cout << "(Command system) recover_position service started" << std::endl;
-		return true;
+	if (recoverPositionClient.call(srv)){
+		std::cout << "(Command system) succesfully called recover_position service, now trying to call checkLocalization service" << std::endl;
+		if(checkLocalizationClient.call(srv)){
+			std::cout << "(Command system) checkLocalization succesfully launched, recovery can start" << std::endl;
+			return true;
+		} 
+		else {
+			std::cout << "(Command system) recover_position service could not start" << std::endl;
+			return false;
+		}
 	} else {
 		std::cerr << "(Command system) Failed to call service recover_position" << std::endl;
 		return false;
@@ -851,6 +862,7 @@ void asyncAccept(boost::shared_ptr<boost::asio::io_service> io_service, boost::s
    	std::string path("");
    	if(ifPath){
    		std::string line("");
+   		std::cout << "Line path" << std::endl;
    		while(getline(ifPath, line))
    			path += line + " ";
    		ifPath.close();
@@ -886,7 +898,7 @@ void asyncAccept(boost::shared_ptr<boost::asio::io_service> io_service, boost::s
    		datePath = "1970-05-21-00-00-00";
 
    	std::string scan = (scanning) ? "1" : "0";
-   	std::string recover = (recover) ? "1" : "0";
+   	std::string recover = (recovering) ? "1" : "0";
 
 	sendMessageToPc(sock, "Connected " + mapId + " " + mapDate + " " + home_x + " " + home_y + " " + dateHome + " " + datePath + " " + scan + " " + recover + " " + path);
 }
