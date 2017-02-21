@@ -136,7 +136,6 @@ public slots:
     void setEnableAll(bool enable, GraphicItemState state = GraphicItemState::NO_STATE, int noReturn = -1);
 
 private slots:
-    void timerSlot();
     void sendPathSelectedRobotSlot(const QString groupName, const QString pathName);
     void mapReceivedSlot(const QByteArray mapArray, int who, QString mapId, QString mapDate, QString resolution, QString originX, QString originY, QString ipAddress);
     void startScanningSlot(QString robotName);
@@ -245,6 +244,9 @@ private slots:
     void pointClicked(QAction* action);
     void editPathPointSlot();
     void updatePathPointCreationWidgetSlot(PathPointCreationWidget* pathPointCreationWidget);
+
+    void testSlot();
+    void testSlot2();
 
 protected:
     void closeEvent(QCloseEvent *event);

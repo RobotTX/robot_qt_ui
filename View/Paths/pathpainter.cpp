@@ -13,7 +13,7 @@
 #include "View/Map/mapview.h"
 
 PathPainter::PathPainter(MainWindow* const &mainWindow)
-    : QGraphicsPathItem(mainWindow->getMapController()->getMapView()), pathDeleted(false), visiblePath(""){
+    : QGraphicsPathItem(mainWindow->getMapController()->getMapView()), pathDeleted(false), visiblePath(""), robotName(""){
 
     setPen(QPen(Qt::red));
     connect(this, SIGNAL(updatePoints(int, QString)), mainWindow->getPointsController(), SLOT(replacePoint(int, QString)));
@@ -22,6 +22,7 @@ PathPainter::PathPainter(MainWindow* const &mainWindow)
 void PathPainter::resetPathSlot(QSharedPointer<Points> points){
     path = QPainterPath();
     visiblePath = "";
+    robotName = "";
     points->setPixmapAll(PointView::PixmapType::NORMAL);
 
     if(QSharedPointer<QVector<QSharedPointer<PointView>>> group = points->getGroups()->value(PATH_GROUP_NAME)){
@@ -52,11 +53,9 @@ void PathPainter::addPathPoint(QSharedPointer<Points> points, QPointer<RobotView
 
             Point::PointType type = Point::PointType::PATH;
 
-            if((robotView
-                && robotView->getRobot()->getHome()
+            if((robotView && robotView->getRobot()->getHome()
                 && robotView->getRobot()->getHome()->getPoint()->getName().compare(name) == 0)
-                    || (robotView == NULL
-                        && points->isAHome(name, x, y)))
+                    || (robotView == NULL && points->isAHome(name, x, y)))
                 type = Point::PointType::HOME;
 
             points->addPoint(PATH_GROUP_NAME, name, x, y, true, type);
@@ -273,6 +272,10 @@ int PathPainter::nbUsedPointView(QString name, double x, double y){
 void PathPainter::setCurrentPath(const QSharedPointer<Points> points, const QPointer<RobotView> robotView, const GraphicItemState state, const QVector<QSharedPointer<PathPoint>>& _currentPath, QString pathName){
     resetPathSlot(points);
     visiblePath = pathName;
+
+    if(robotView)
+        robotName = robotView->getRobot()->getName();
+
     for(int i = 0; i < _currentPath.size(); i++){
         Point point = _currentPath.at(i)->getPoint();
         addPathPoint(points, robotView, state, point.getName(), point.getPosition().getX(), point.getPosition().getY(), _currentPath.at(i)->getWaitTime());

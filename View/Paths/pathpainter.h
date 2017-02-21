@@ -31,11 +31,13 @@ public:
     QVector<QSharedPointer<PathPoint>> getOldPath(void) const { return oldPath; }
     bool getPathDeleted(void) const { return pathDeleted; }
     QString getVisiblePath(void) const { return visiblePath; }
+    QString getRobotName(void) const { return robotName; }
 
     void setCurrentPath(const QSharedPointer<Points> points, const QPointer<RobotView> robotView, const GraphicItemState state, const QVector<QSharedPointer<PathPoint> > &_currentPath, QString pathName);
     void setOldPath(const QVector<QSharedPointer<PathPoint> > _oldPath);
     void setPathDeleted(const bool _pathDeleted){ pathDeleted = _pathDeleted; }
     void setVisiblePath(const QString path) { visiblePath = path; }
+    void setRobotName(const QString _robotName) { robotName = _robotName; }
 
     /**
      * @brief nbUsedPointView
@@ -139,6 +141,7 @@ private:
     QVector<QSharedPointer<PathPoint>> oldPath;
     bool pathDeleted;
     QString visiblePath;
+    QString robotName;
 };
 
 #endif // PATHPAINTER_H

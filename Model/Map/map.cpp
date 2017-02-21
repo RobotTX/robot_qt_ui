@@ -11,15 +11,16 @@ Map::Map(): modified(false) {
 
     if(file){
         double centerX, centerY, originX, originY;
-        std::string _dateTime, mapId;
-        file >> mapFile >> height >> width >> centerX >> centerY >> mapState.second >> originX >> originY >> resolution >> _dateTime >> mapId;
+        std::string _dateTime, _mapId;
+        file >> mapFile >> height >> width >> centerX >> centerY >> mapState.second >> originX >> originY >> resolution >> _dateTime >> _mapId;
         qDebug() << "CurrentMap.txt :" << QString::fromStdString(mapFile) << height << width
                  << centerX << centerY << originX << originY << resolution
-                 << QString::fromStdString(_dateTime) << QString::fromStdString(mapId);
+                 << QString::fromStdString(_dateTime) << QString::fromStdString(_mapId);
         mapState.first.setX(centerX);
         mapState.first.setY(centerY);
         origin = Position(originX, originY);
         dateTime = QDateTime::fromString(QString::fromStdString(_dateTime), "yyyy-MM-dd-hh-mm-ss");
+        mapId = QUuid(QString::fromStdString(_mapId));
         file.close();
     }
 

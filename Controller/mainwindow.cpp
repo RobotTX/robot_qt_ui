@@ -173,17 +173,32 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
     robotsController->launchServer(this);
 
-    if(TESTING){
+    /*if(TESTING){
         QTimer* timer = new QTimer(this);
         timer->setInterval(2000);
         timer->setSingleShot(true);
         connect(timer, SIGNAL(timeout()), this, SLOT(timerSlot()));
         timer->start();
+    }*/
+
+    /// NOTE JUST FOR TEST
+    if(TESTING){
+        QShortcut* shortcut = new QShortcut(QKeySequence(tr(".", "Test")), this);
+        connect(shortcut, SIGNAL(activated()), this, SLOT(testSlot()));
+        QShortcut* shortcut2 = new QShortcut(QKeySequence(tr(",", "Test2")), this);
+        connect(shortcut2, SIGNAL(activated()), this, SLOT(testSlot2()));
     }
 }
 
-void MainWindow::timerSlot(){
-    robotIsAliveSlot("Robot 1", "192.168.4.212", "GTDollar Account 2.4", 0, 70);
+void MainWindow::testSlot(){
+    if(robotsController->getRobots()->getRobotsVector().size() > 0){
+        robotIsDeadSlot(robotsController->getRobots()->getRobotsVector().at(robotsController->getRobots()->getRobotsVector().size()-1)->getRobot()->getName(),
+                        robotsController->getRobots()->getRobotsVector().at(robotsController->getRobots()->getRobotsVector().size()-1)->getRobot()->getIp());
+    }
+}
+
+void MainWindow::testSlot2(){
+    robotIsAliveSlot("Robot " + QString::number(robotsController->getRobots()->getRobotsVector().size()), "192.168.4." + QString::number(robotsController->getRobots()->getRobotsVector().size()), "GTDollar Account 2.4", 0, 70);
 }
 
 MainWindow::~MainWindow(){
@@ -419,7 +434,6 @@ void MainWindow::setSelectedRobot(QPointer<RobotView> robotView){
     leftMenu->getReturnButton()->setEnabled(true);
 
     emit resetPathCreationWidget();
-    setCurrentPathSlot(robotView->getRobot()->getPath(), "");
 
     pointsController->showHomeFromRobotName(robotsController->getSelectedRobot()->getRobot()->getName());
     leftMenu->show();
@@ -737,9 +751,13 @@ void MainWindow::clearPath(const int robotNb){
 
 void MainWindow::showAllHomes(void){
     qDebug() << "MainWindow::showAllHomes called after editselectrobot went hidden";
+
+    QPointer<RobotView> robotView = robotsController->getSelectedRobot();
     /// shows the home of each robot
     robotsController->resetSelectedRobot();
     setCurrentPathSlot(pathsController->getPathPainter()->getCurrentPath(), pathsController->getPathPainter()->getVisiblePath());
+    if(robotView)
+        pathsController->getPathPainter()->setRobotName(robotView->getRobot()->getName());
     bottomLayout->uncheckRobotNameBtns();
 }
 
@@ -827,6 +845,11 @@ void MainWindow::robotIsDeadSlot(QString hostname, QString ip){
     qDebug() << "MainWindow::robotIsDeadSlot Robot" << hostname << "at ip" << ip << "... He is dead, Jim!!";
     emit setMessageTop(TEXT_COLOR_DANGER, QString("Robot " + hostname + " at ip " + ip + " disconnected."));
 
+    /// TODO stop pathPainter if path = path from the robot
+    qDebug() << "MainWindow::robotIsDeadSlot Robot" << hostname << "at ip" << ip << "disconnected while we were displaying the robot" << pathsController->getPathPainter()->getRobotName() << "path";
+    if(hostname.compare(pathsController->getPathPainter()->getRobotName()) == 0)
+        resetPathSlot();
+
     settingsController->removeRobot(robotsController->getRobots()->getRobotViewByIp(ip)->getRobot()->getName());
 
     qDebug() << "MainWindow::robotIsDeadSlot Robots IPs : ";
@@ -864,15 +887,16 @@ void MainWindow::robotIsDeadSlot(QString hostname, QString ip){
         /// if the robot is scanning send signal to ScanMapWidget
         emit robotDisconnected(hostname);
 
-        /// we stop the robots threads
+        /// delete the robot
         robotView->getRobot()->deleteLater();
 
-        /// delete robotview
+        /// remove the robotView from the scene
         mapController->removeFromScene(robotView);
 
-        /// remove from the model
+        /// remove the robotView from the model
         robotsController->getRobots()->remove(robotView);
 
+        /// delete robotview
         robotView->deleteLater();
 
         /// update robotsLeftWidget
@@ -1533,10 +1557,12 @@ void MainWindow::setSelectedTmpPoint(){
 
     resetFocus();
 
+    /// TODO check if useful
+/*
     int id = bottomLayout->getViewPathRobotBtnGroup()->checkedId();
     if(id > 0)
         setCurrentPathSlot(robotsController->getRobots()->getRobotsVector().at(id)->getRobot()->getPath(), "");
-
+*/
     leftMenu->show();
 
     hideAllWidgets();
@@ -1957,7 +1983,7 @@ void MainWindow::sendPathSelectedRobotSlot(const QString groupName, const QStrin
     QString pathStr = prepareCommandPath(currPath);
 
     /// if the command is succesfully sent to the robot, we apply the change
-    if(!commandController->sendCommand(robot, QString("i ") + pathStr, "", groupName, pathName)){
+    if(!commandController->sendCommand(robot, QString("i ") + pathStr, "", groupName, pathName, true)){
         emit setMessageTop(TEXT_COLOR_DANGER, "The path of " + robot->getName() + "\" could not be updated, please try again");
         qDebug() << "MainWindow::sendPathSelectedRobotSlot Path failed to be saved, please try again";
     }
@@ -2212,18 +2238,18 @@ void MainWindow::updateRobotInfo(QString robotName, QString robotInfo){
 void MainWindow::updateMapInfo(const QString robotName, QString mapId, QString mapDate){
 
     /// Check if the robot has the current map
-    //qDebug() << "Robot" << robotName << "comparing ids" << mapId << "and" << map->getMapId().toString();
+    qDebug() << "MainWindow::updateMapInfo Robot" << robotName << "comparing ids" << mapId << "and" << mapController->getMapId();
     if(mapId.compare(mapController->getMapId().toString()) == 0){
-        qDebug() << "Robot" << robotName << "has the current map";
+        qDebug() << "MainWindow::updateMapInfo Robot" << robotName << "has the current map";
     } else {
         QDateTime mapDateTime = QDateTime::fromString(mapDate, "yyyy-MM-dd-hh-mm-ss");
         //qDebug() << "Robot" << robotName << "comparing date" << mapDateTime << "and" << map->getDateTime();
 
         bool robotOlder = mapDateTime <= mapController->getMapTime();
         if(robotOlder){
-            qDebug() << "Robot" << robotName << "has a different and older map";
+            qDebug() << "MainWindow::updateMapInfo Robot" << robotName << "has a different and older map";
         } else {
-            qDebug() << "Robot" << robotName << "has a different and newer map";
+            qDebug() << "MainWindow::updateMapInfo Robot" << robotName << "has a different and newer map";
         }
 
         QPointer<Robot> robot = robotsController->getRobots()->getRobotViewByName(robotName)->getRobot();
@@ -2260,12 +2286,17 @@ void MainWindow::updateMapInfo(const QString robotName, QString mapId, QString m
 
                 msgBox.exec();
 
-                if (msgBox.clickedButton() == robotButton) {
-                    qDebug() << "Robot" << robotName << "using the map from the robot";
-                    commandController->sendCommand(robot, QString("s \"1\""));
-                } else if (msgBox.clickedButton() == appButton) {
-                    qDebug() << "Robot" << robotName << "using the map from the app";
-                    robot->sendNewMap(mapController->getMap());
+                /// The previous line is blocking so if the robot dc in the meantime, we don't have a robot anymore
+                if(robot){
+                    if (msgBox.clickedButton() == robotButton) {
+                        qDebug() << "MainWindow::updateMapInfo Robot" << robotName << "using the map from the robot";
+                        commandController->sendCommand(robot, QString("s \"1\""));
+                    } else if (msgBox.clickedButton() == appButton) {
+                        qDebug() << "MainWindow::updateMapInfo Robot" << robotName << "using the map from the app";
+                        robot->sendNewMap(mapController->getMap());
+                    }
+                } else {
+                    qDebug() << "MainWindow::updateMapInfo Robot" << robotName << "has been disconnected and can't perform this operation";
                 }
                 delete robotButton;
                 robotButton = 0;
