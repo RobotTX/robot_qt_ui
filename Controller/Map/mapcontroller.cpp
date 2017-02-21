@@ -130,6 +130,10 @@ QImage MapController::getImageFromArray(const QByteArray array, const bool fromP
     return map->getImageFromArray(array, fromPgm);
 }
 
+QImage MapController::getImageFromArray(const QByteArray array, int map_width, int map_height, const bool fromPgm){
+    return map->getImageFromArray(array, map_width, map_height, fromPgm);
+}
+
 void MapController::saveMapState(){
 
     std::ofstream file((QDir::currentPath() + QDir::separator() + "currentMap.txt").toStdString(), std::ios::out | std::ios::trunc);

@@ -69,12 +69,17 @@ void checkLocalization(const geometry_msgs::PoseArray& data){
 }
 
 
-bool checkLocalizationService(std_srvs::Empty::Request &req, std_srvs::Empty::Response &res)
-{
+bool checkLocalizationService(std_srvs::Empty::Request &req, std_srvs::Empty::Response &res){
 	ros::NodeHandle n;
 	particlesCloudSub = n.subscribe("particlecloud", 1, checkLocalization);
 	return true;
 }	
+
+bool stopCheckingLocalizationService(std_srvs::Empty::Request &req, std_srvs::Empty::Response &res){
+	std::cout << "Stop Checking Localization Service" << std::endl;
+	particlesCloudSub.shutdown();
+	return true;
+}
 	
 int main(int argc, char **argv){
 
@@ -84,7 +89,9 @@ int main(int argc, char **argv){
   	
   pub = n.advertise<std_msgs::String>("position_found", 1000);
 
-  ros::ServiceServer service = n.advertiseService("check_localization", checkLocalizationService);
+  ros::ServiceServer check_localization_service = n.advertiseService("check_localization", checkLocalizationService);
+
+  ros::ServiceServer stop_checking_localization_service = n.advertiseService("stop_checking_localization", stopCheckingLocalizationService);
 
   ros::spin();
 

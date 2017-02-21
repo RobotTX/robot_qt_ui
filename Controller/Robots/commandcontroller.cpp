@@ -9,8 +9,8 @@
 #include "Model/Map/map.h"
 
 CommandController::CommandController(QWidget *parent)
-    : QObject(parent), robotName(""), messageBox(parent), stop(false), newRobotName(""),
-      groupName(""), pathName(""), scan(false), nb(-1), path(QStringList()) {
+    : QObject(parent), robotName(""), messageBox(parent), stop(false), newRobotName(""), groupName(""), pathName(""), scan(false), nb(-1), path(QStringList())
+{
     messageBox.setWindowTitle("Processing a command");
     connect(&messageBox, SIGNAL(hideBox()), this, SLOT(commandFailed()));
 }
@@ -18,6 +18,7 @@ CommandController::CommandController(QWidget *parent)
 bool CommandController::sendCommand(QPointer<Robot> robot, QString cmd,
                                     QString _newRobotName, QString _groupName,
                                     QString _pathName, bool _scan,
+                                    /// to perform different tasks using the same command (for the command i)
                                     int _nb, QStringList _path){
 
     qDebug() << "CommandController::sendCommand" << cmd << "to" << robot->getName();

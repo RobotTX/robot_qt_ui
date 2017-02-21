@@ -138,7 +138,7 @@ public slots:
 private slots:
     void timerSlot();
     void sendPathSelectedRobotSlot(const QString groupName, const QString pathName);
-    void mapReceivedSlot(const QByteArray mapArray, int who, QString mapId, QString mapDate, QString resolution, QString originX, QString originY, QString ipAddress);
+    void mapReceivedSlot(const QByteArray mapArray, int who, QString mapId, QString mapDate, QString resolution, QString originX, QString originY, QString ipAddress, int map_width, int map_height);
     void startScanningSlot(QString robotName);
     void stopScanningSlot(QStringList listRobot);
     void playScanSlot(bool scan, QString robotName);
@@ -253,7 +253,6 @@ protected:
     void commandDoneNewName(bool success, QString name);
     void commandDonePausePath(bool success, QString robotName);
     void commandDonePlayScan(bool success, bool scan, QString robotName);
-    void commandDonePauseScan(bool success, bool scan, QString robotName);
     void commandDoneSendMap(bool success);
     void commandDoneSendPorts(bool success);
     void commandDoneSendPath(bool success, bool boolean, QString robotName, QString groupName, QString pathName, QStringList path);
@@ -269,6 +268,8 @@ protected:
     void commandDoneReceiveMap(bool success);
     void commandDoneStartScan(bool success, bool scan, QString robotName);
     void commandDoneStopScan(bool success, QString robotName);
+    void commandDoneStartRecovery(bool success, QString robotName);
+    void commandDoneStopRecovery(bool success, QString robotName);
     void setHomeAtConnection(const QString robot_name, const Position& pos_home);
 
 private:

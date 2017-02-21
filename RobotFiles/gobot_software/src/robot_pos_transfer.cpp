@@ -4,17 +4,51 @@ using boost::asio::ip::tcp;
 
 boost::asio::io_service io_service;
 tcp::socket socket_robot(io_service);
-ros::Subscriber sub_robot;
 tcp::acceptor m_acceptor(io_service);
 
-/*
+ros::Subscriber sub_robot;
+
+#define max_length 1024
+
+void readAck(void){
+	bool found_ack(false);
+	while(!found_ack){
+		try {
+			boost::system::error_code error;
+			char data[max_length] = {0};
+			size_t length = socket_robot.read_some(boost::asio::buffer(data), error);
+			// parse what has been received
+			std::istringstream iss(data);
+			while(iss){
+				std::string ack;
+				iss >> ack;
+				std::cout << "potential ack " << ack << std::endl;
+				if(ack.compare("ack") == 0)
+					found_ack = true;
+			}
+		} catch (std::exception& e) {
+			std::cout << e.what() << std::endl;
+		}
+	}
+}
+
 // called by recover position to notify the application that the position has been recovered
 bool confirmPositionRecovered(std_srvs::Empty::Request &req, std_srvs::Empty::Response &res){
 	try {
 		boost::system::error_code ignored_error;
-
+		boost::asio::write(socket_robot, boost::asio::buffer(" found "), boost::asio::transfer_all(), ignored_error);
+		std::cout << "confirmPositionRecovered sent status to application" << std::endl;
+	} catch (std::exception& e) {
+		std::cerr << e.what() << std::endl;
 	}
-}*/
+
+	ros::NodeHandle n; 
+
+	// reads until ACK is found
+	boost::thread t(boost::bind(readAck));
+
+	return true;
+}
 
 void sendRobotPos(const std::string& robot_string){
 	try {
@@ -84,6 +118,13 @@ int main(int argc, char **argv){
 	
 	ros::ServiceServer start_service = n.advertiseService("start_robot_pos_sender", startRobotPos);
 	ros::ServiceServer stop_service = n.advertiseService("stop_robot_pos_sender", stopRobotPos);
+
+	// to tell the application that the position of the robot has been recovered
+	ros::ServiceServer service = n.advertiseService("send_position_recovered_confirmation", confirmPositionRecovered);
+
+	ros::service::waitForService("send_position_recovered_confirmation", 10);
+
+	std::cout << "Service send_position_recovered_confirmation now available" << std::endl;
 
 	while(ros::ok()){
 		ros::spinOnce();

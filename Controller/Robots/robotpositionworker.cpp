@@ -37,6 +37,17 @@ void RobotPositionWorker::connectSocket(){
 
 void RobotPositionWorker::readTcpDataSlot(){
     QString data = socket->readAll();
+
+    /// special case where the robot is trying to recover its position and we receive a confirmation that
+    /// the position was actually recovered
+    if(data.contains("found")){
+        /// we send an ack to the robot
+        QByteArray toSend = QByteArray().append(static_cast<QString>("ack"));
+        if(socket && socket->isOpen())
+            socket->write(toSend);
+        return;
+    }
+
     QRegExp rx("[ ]");
 
     /// Data is received as a string containing values separated by a space ("posX posY orientationZ")

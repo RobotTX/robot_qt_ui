@@ -54,6 +54,7 @@ public:
     QColor getPixelColor(const double x, const double y);
 
     QImage getImageFromArray(const QByteArray array, const bool fromPgm);
+    QImage getImageFromArray(const QByteArray array, int map_width, int map_height, const bool fromPgm);
 
 
     bool loadMapConfig(const std::string file);

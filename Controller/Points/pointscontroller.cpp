@@ -1649,7 +1649,6 @@ void PointsController::modifyGroupAfterClick(QString name){
     name = name.simplified();
     qDebug() << "PointsController::modifyGroupAfterClick called from" << pointsLeftWidget->getLastCheckedId() << "to" << name;
 
-    MainWindow* mainWindow = static_cast<MainWindow*>(parent());
     emit enableTopLayout(true);
 
     if (pointsLeftWidget->getLastCheckedId() != "") {

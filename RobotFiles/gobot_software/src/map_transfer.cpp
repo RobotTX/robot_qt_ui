@@ -23,32 +23,27 @@ void sendMap(const std::vector<uint8_t>& my_map){
 	}
 }
 
-void sendMap(const std::vector<int8_t>& my_map){
-	try {
-		boost::system::error_code ignored_error;
-		std::cout << "(Map) Last map size to send in int8_t : " << my_map.size() << std::endl;
-
-		boost::asio::write(socket_map, boost::asio::buffer(my_map), boost::asio::transfer_all(), ignored_error);
-	} catch (std::exception& e) {
-		e.what();
-	}
-}
-
 void getMap(const nav_msgs::OccupancyGrid::ConstPtr& msg){
 	int map_size = msg->info.width * msg->info.height;
-	std::cout << "(Map) Just received a new map" << std::endl;
+	std::cout << "(Map) Just received a new map" << msg->info.width << " " << msg->info.height << " " << map_size << std::endl;
 
-	sendMap(compress(msg->data, map_size, false));
+	sendMap(compress(msg->data, msg->info.width, msg->info.height, 0));
 }
 
-std::vector<uint8_t> compress(std::vector<int8_t> map, int map_size, int who){
+void getLocalMap(const nav_msgs::OccupancyGrid::ConstPtr& msg){
+	int map_size = msg->info.width * msg->info.height;
+	std::cout << "(Map) Just received a new map" << msg->info.width << " " << msg->info.height << " " << map_size << std::endl;
+	sendMap(compress(msg->data, msg->info.width, msg->info.height, 3));
+}
+
+std::vector<uint8_t> compress(std::vector<int8_t> map, int map_width, int map_height, int who){
 	std::vector<uint8_t> my_map;
 	int last = 205;
 	uint32_t count = 0;
 
 	/// If the map comes from a pgm, we send the mapId, the mapDate,
 	/// the resolution and the origin with it
-	if(who > 0){
+	if(who == 1 || who == 2){
 	   	std::ifstream ifMap(path_computer_software + "Robot_Infos/mapId.txt", std::ifstream::in);
 	   	std::string mapId("{0}");
 	   	std::string mapDate("0");
@@ -86,13 +81,26 @@ std::vector<uint8_t> compress(std::vector<int8_t> map, int map_size, int who){
 		my_map.push_back(252);
 		my_map.push_back(252);
 		my_map.push_back(252);
+	} else if(who == 3) {
+		/// when we are recovering the position, we need to send the size of the local map too
+		/// we send it in a byte array so we cut our int into 4 bytes
+		my_map.push_back((map_width & 0xff000000) >> 24);
+		my_map.push_back((map_width & 0x00ff0000) >> 16);
+		my_map.push_back((map_width & 0x0000ff00) >> 8);
+		my_map.push_back((map_width & 0x000000ff));
+
+		my_map.push_back((map_height & 0xff000000) >> 24);
+		my_map.push_back((map_height & 0x00ff0000) >> 16);
+		my_map.push_back((map_height & 0x0000ff00) >> 8);
+		my_map.push_back((map_height & 0x000000ff));
 	}
 
 
+	int map_size = map_width * map_height;
 	for(size_t i = 0; i < map_size; i++){
 		int curr = map.at(i);
 
-		if(who == 0){
+		if(who == 0 || who == 3){
 		    if(curr < 0)
 	            curr = 205;
 	        else if(curr < LOW_THRESHOLD)
@@ -132,6 +140,8 @@ std::vector<uint8_t> compress(std::vector<int8_t> map, int map_size, int who){
 		my_map.push_back(254);
 	else if(who == 2)
 		my_map.push_back(252);
+	else if(who == 3)
+		my_map.push_back(251);
 	else
 		my_map.push_back(253);
 
@@ -161,8 +171,8 @@ bool startMap(gobot_software::Port::Request &req,
 	return true;
 }
 
-bool sendAutoMap(std_srvs::Empty::Request &req,
-    std_srvs::Empty::Response &res){
+bool sendAutoMap(std_srvs::Empty::Request &req, std_srvs::Empty::Response &res){
+	
 	std::cout << "(Map) SendAutoMap " << std::endl;
 
 	ros::NodeHandle n;
@@ -172,9 +182,27 @@ bool sendAutoMap(std_srvs::Empty::Request &req,
 	return true;
 }
 
-bool stopAutoMap(std_srvs::Empty::Request &req,
-    std_srvs::Empty::Response &res){
+bool sendLocalMap(std_srvs::Empty::Request &req, std_srvs::Empty::Response &res){
+
+	std::cout << "(Map) sendLocalMap " << std::endl;
+
+	ros::NodeHandle n;
+	/// in case sub map would have subscribed to another topic before we unsubscribe first
+	sub_map.shutdown();
+	sub_map = n.subscribe("/move_base/local_costmap/costmap", 1, getLocalMap);
+	return true;
+}
+
+bool stopAutoMap(std_srvs::Empty::Request &req, std_srvs::Empty::Response &res){
 	std::cout << "(Map) StopAutoMap " << std::endl;
+
+	sub_map.shutdown();
+
+	return true;
+}
+
+bool stopSendingLocalMap(std_srvs::Empty::Request& req, std_srvs::Empty::Response &res){
+	std::cout << "(Map) StopSendingLocalMap " << std::endl;
 
 	sub_map.shutdown();
 
@@ -216,7 +244,7 @@ bool sendOnceMap(gobot_software::Port::Request &req,
 
 		mapFile.close();
 		std::cout << "(Map) Got the whole map from file, about to compress and send it" << std::endl;
-		sendMap(compress(my_map, map_size, who));
+		sendMap(compress(my_map, width, height, who));
 
 		return true;
 		
@@ -247,6 +275,10 @@ int main(int argc, char **argv){
 	ros::ServiceServer send_auto_service = n.advertiseService("send_auto_map_sender", sendAutoMap);
 	ros::ServiceServer stop_auto_service = n.advertiseService("stop_auto_map_sender", stopAutoMap);
 	ros::ServiceServer stop_service = n.advertiseService("stop_map_sender", stopMap);
+
+	// to recover a robot's position
+	ros::ServiceServer send_local_map_service = n.advertiseService("send_local_map", sendLocalMap);
+	ros::ServiceServer stop_sending_local_map_service = n.advertiseService("stop_sending_local_map", stopSendingLocalMap);
 
 	ros::Rate loop_rate(20);
 	while(ros::ok()){

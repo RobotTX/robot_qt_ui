@@ -41,4 +41,8 @@ bool startRobotPos(gobot_software::Port::Request &req, gobot_software::Port::Res
  */
 bool stopRobotPos(std_srvs::Empty::Request &req, std_srvs::Empty::Response &res);
 
+bool confirmPositionRecovered(std_srvs::Empty::Request &req, std_srvs::Empty::Response &res);
+
+void readAck();
+
 #endif
