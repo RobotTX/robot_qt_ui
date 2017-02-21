@@ -135,6 +135,8 @@ public:
      */
     QPair<QString, QString> findPath(const QVector<PathPoint>& path) const;
 
+    bool pathNameIsUsed(QString pathName);
+
 private:
     QSharedPointer<Groups> groups;
 };

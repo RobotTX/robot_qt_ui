@@ -50,6 +50,7 @@ void RobotsController::initializeMenus(MainWindow* mainWindow){
     /// Menu which display the list of robots
     robotsLeftWidget = new RobotsLeftWidget(mainWindow);
     robotsLeftWidget->hide();
+    connect(robotsLeftWidget, SIGNAL(deselectRobots()), this, SLOT(delesectRobotsSlot()));
 
     /// Menu to edit the selected robot
     editSelectedRobotWidget = new EditSelectedRobotWidget(mainWindow);
@@ -110,4 +111,8 @@ void RobotsController::applyNewPath(const QString groupName, const QString pathN
 
 void RobotsController::updateRobotsLeftWidget(void){
     robotsLeftWidget->getBtnGroup()->updateRobots(robots);
+}
+
+void RobotsController::delesectRobotsSlot(){
+    robots->deselect();
 }

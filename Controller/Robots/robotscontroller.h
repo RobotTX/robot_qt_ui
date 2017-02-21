@@ -43,6 +43,7 @@ private slots:
     void updateHomeMenuEditSelectedRobotWidget(bool openMenu);
     /// called after the main window has received ackownledgement from the robot (update path)
     void applyNewPath(const QString groupName, const QString pathName);
+    void delesectRobotsSlot();
 
 private:
     RobotServerWorker* robotServerWorker;

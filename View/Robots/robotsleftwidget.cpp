@@ -53,8 +53,7 @@ void RobotsLeftWidget::showEvent(QShowEvent *){
     lastCheckedId = -1;
     actionButtons->enableAll(false);
     actionButtons->checkAll(false);
-    /// TODO
-    //robots->deselect();
+    emit deselectRobots();
     unSelectAllRobots();
 }
 

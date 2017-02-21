@@ -1593,7 +1593,7 @@ void PointsController::modifyGroupWithEnter(QString name){
         qDebug() << "PointsController::modifyGroupWithEnter this name is ok";
 
         /// Updates the model
-        points->getGroups()->insert(name, points->getGroups()->value(pointsLeftWidget->getLastCheckedId()));
+        points->getGroups()->insert(name, points->getGroups()->take(oldGroupName));
 
         /// updates the group box to create a point
         createPointWidget->updateGroupBox(points);

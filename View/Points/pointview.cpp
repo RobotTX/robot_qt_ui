@@ -159,10 +159,9 @@ void PointView::setPixmap(const PixmapType pixType){
         if(mainWindow->getRobotsController()->getSelectedRobot()->getRobot()->getHome()
                 && mainWindow->getRobotsController()->getSelectedRobot()->getRobot()->getHome()->getPoint()->getName().compare(point->getName()) == 0)
             homePixmap = true;
-    } else {
-        if(!mainWindow->getRobotsController()->getSelectedRobot() && point->isHome())
+    } else if(point->isHome())
             homePixmap = true;
-    }
+
 
     if(homePixmap){
         qDebug() << "pixmap home set for" << point->getName();

@@ -64,7 +64,8 @@ private :
     QPointer<QTcpSocket> socket;
     QString ipAddress;
     int port;
-
+    int ok;
+    int pasOk;
 };
 
 

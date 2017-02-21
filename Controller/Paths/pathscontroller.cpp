@@ -545,10 +545,7 @@ void PathsController::checkPathName(const QString name){
         pathCreationWidget->setCanSave(true);
          emit setMessageNoRobotPath(2);
     } else {
-        bool foundFlag(false);
-        /// the found flag will have the value true after the call if the path has been found which means it already exists
-        paths->getPath(pathCreationWidget->getCurrentGroupName(), name.simplified(), foundFlag);
-        if(foundFlag){
+        if(paths->pathNameIsUsed(name.simplified())){
             //qDebug() << "PathCreationWidget::checkPathName Sorry there is already a path with the same name";
             pathCreationWidget->setCanSave(false);
             setMessageNoRobotPath(1);
