@@ -209,8 +209,8 @@ void Robot::launchWorkers(MainWindow* mainWindow){
     localMapThread.start();
 
     mapWorker = QPointer<ScanMapWorker>(new ScanMapWorker(ip, PORT_MAP, QDir::currentPath() + QDir::separator() + QString(MAP_FILE)));
-    connect(mapWorker, SIGNAL(valueChangedMap(QByteArray, int, QString, QString, QString, QString, QString, QString)),
-            mainWindow , SLOT(mapReceivedSlot(QByteArray, int, QString, QString, QString, QString, QString, QString)));
+    connect(mapWorker, SIGNAL(valueChangedMap(QByteArray, int, QString, QString, QString, QString, QString, QString, int, int)),
+            mainWindow , SLOT(mapReceivedSlot(QByteArray, int, QString, QString, QString, QString, QString, QString, int, int)));
     connect(mapWorker, SIGNAL(newScanSaved(QString)), mainWindow , SLOT(sendNewMapToRobots(QString)));
     connect(&mapThread, SIGNAL(finished()), mapWorker, SLOT(deleteLater()));
     connect(this, SIGNAL(startMapWorker()), mapWorker, SLOT(connectSocket()));

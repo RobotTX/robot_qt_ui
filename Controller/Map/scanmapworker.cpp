@@ -43,13 +43,16 @@ void ScanMapWorker::readTcpDataSlot(){
     QString resolution("");
     QString originX("");
     QString originY("");
+    uint32_t map_width(0);
+    uint32_t map_height(0);
 
     /// The TCP protocol sending blocks of data, a map is defined by a random number
     /// of blocks, so we wait till the last byte of a block is -2, meaning we have received
     /// a complete map
     if(data.size() >= 5 && static_cast<uint8_t>(data.at(data.size()-5)) == 254 && static_cast<uint8_t>(data.at(data.size()-4)) == 254
             && static_cast<uint8_t>(data.at(data.size()-3)) == 254 && static_cast<uint8_t>(data.at(data.size()-2)) == 254 &&
-            (static_cast<uint8_t>(data.at(data.size()-1)) == 252 ||static_cast<uint8_t>(data.at(data.size()-1)) == 253 || static_cast<uint8_t>(data.at(data.size()-1)) == 254)){
+            (static_cast<uint8_t>(data.at(data.size()-1)) == 251 || static_cast<uint8_t>(data.at(data.size()-1)) == 252
+             || static_cast<uint8_t>(data.at(data.size()-1)) == 253 || static_cast<uint8_t>(data.at(data.size()-1)) == 254)){
 
         /// Emit the signal valueChangedMap, meaning that we finished to receive a whole map
         /// and we can display it
@@ -58,11 +61,14 @@ void ScanMapWorker::readTcpDataSlot(){
             who = 1;
         else if(static_cast<uint8_t>(data.at(data.size()-1)) == 252)
             who = 2;
+        else if(static_cast<uint8_t>(data.at(data.size()-1)) == 251)
+            who = 3;
+        /// TODO who = 3 -> recovering position -> local map
 
         qDebug() << "(ScanMapWorker) Who :" << who;
 
         QString mapInfo("");
-        if(who > 0){
+        if(who == 1 || who == 2){
             /// If the map comes from a pgm, we get the mapId and mapDate associated to it
             int i = 0;
             bool gotMapInfo = false;
@@ -91,14 +97,20 @@ void ScanMapWorker::readTcpDataSlot(){
             } else {
                 qDebug() << "(ScanMapWorker) Could not parse mapInfo :" << mapInfo;
             }
+        } else if(who == 3){
+            map_width = static_cast<uint32_t> (static_cast<uint8_t> (data.at(0)) << 24) + static_cast<uint32_t> (static_cast<uint8_t> (data.at(1)) << 16)
+                            + static_cast<uint32_t> (static_cast<uint8_t> (data.at(2)) << 8) + static_cast<uint32_t> (static_cast<uint8_t> (data.at(3)));
+            map_height = static_cast<uint32_t> (static_cast<uint8_t> (data.at(4)) << 24) + static_cast<uint32_t> (static_cast<uint8_t> (data.at(5)) << 16)
+                            + static_cast<uint32_t> (static_cast<uint8_t> (data.at(6)) << 8) + static_cast<uint32_t> (static_cast<uint8_t> (data.at(7)));
+            data.remove(0, 8);
         }
 
         /// Remove the end bytes 254 254 254 254 254 as we no longer need them
         data.remove(data.size()-5, 5);
 
-        emit valueChangedMap(data, who, mapId, mapDate, resolution, originX, originY, ipAddress);
+        emit valueChangedMap(data, who, mapId, mapDate, resolution, originX, originY, ipAddress, map_width, map_height);
 
-        /// Clear the Vector that contain the map, once it has been treated
+        /// Clear the Vector that contain the map, once it has been processed
         data.clear();
     }
 }

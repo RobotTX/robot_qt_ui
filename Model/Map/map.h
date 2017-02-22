@@ -75,6 +75,7 @@ public:
      * returns a QImage constructed from a QByteArray
      */
     QImage getImageFromArray(const QByteArray& mapArrays, const bool fromPgm);
+    QImage getImageFromArray(const QByteArray& mapArrays, const int map_width, const int map_height, const bool fromPgm);
 
 private:
 

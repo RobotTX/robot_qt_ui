@@ -58,4 +58,5 @@ bool stopLaserData();
 void stopTwist();
 bool recoverPosition();
 bool stopRecoveringPosition();
+bool sendLocalMap();
 #endif

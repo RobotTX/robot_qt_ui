@@ -21,6 +21,8 @@ public:
 
     RecoverPositionMapGraphicsItem* getPixmapItem(void) const { return pixmapItem; }
 
+    void setId(const int _id){ id = _id; }
+
     /**
      * @brief robotConnected
      * @param connected
@@ -60,7 +62,7 @@ public:
     QImage cropImage(const QImage &image);
 
 signals:
-    void startRecovery(bool start, const QString robotName);
+    void playRecovery(bool start, const QString robotName);
     /**
      * @brief centerOn
      * Signal to center the image on the given QGraphicsItem

@@ -32,7 +32,13 @@ ros::ServiceClient stopSendLaserClient;
 ros::ServiceClient stopLaserClient;
 
 ros::ServiceClient recoverPositionClient;
+ros::ServiceClient stopRecoveringPositionClient;
 ros::ServiceClient checkLocalizationClient;
+ros::ServiceClient stopCheckingLocalizationClient;
+
+// to get the local map to be send to recover the robot's position
+ros::ServiceClient sendLocalMapClient;
+ros::ServiceClient stopSendingLocalMapClient;
 
 ros::Publisher go_pub;
 ros::Publisher teleop_pub;
@@ -428,7 +434,10 @@ bool execCommand(ros::NodeHandle n, std::vector<std::string> command){
 			if(command.size() == 1) {
 				std::cout << "(Command system) Gobot tries to recover its position" << std::endl;
 				recovering = true;
-				return recoverPosition();
+				if(sendLocalMap())
+					return recoverPosition();
+				else
+					std::cout << "(Command system) Could not get the local map" << std::endl;
 			}
 		}
 		break;
@@ -457,7 +466,24 @@ bool execCommand(ros::NodeHandle n, std::vector<std::string> command){
 }
 
 bool stopRecoveringPosition(){
+	std::cout << "Stop recovering position called" << std::endl;
+	std_srvs::Empty srv;
+	stopCheckingLocalizationClient.call(srv);
+	if(stopRecoveringPositionClient.call(srv)){
+		if(stopSendingLocalMapClient.call(srv)){
+			std::cout << "Stopped sending the local map" << std::endl;
+			return true;
+		}
+		else {
+			std::cout << "Could not stop sending the local map" << std::endl;
+			return false;
+		}
+	}
 
+	else { 
+		std::cout << " Could not stop the recover position service " << std::endl;
+		return false;
+	}
 }
 
 bool recoverPosition(){
@@ -576,6 +602,20 @@ bool sendAutoMap(){
 		return true;
 	} else {
 		std::cerr << "(Command system) Failed to call service send_auto_map_sender" << std::endl;
+		return false;
+	}
+}
+
+bool sendLocalMap(){
+	std::cout << "(Command system) Launching the service to get the map auto" << std::endl;
+
+	std_srvs::Empty srv;
+
+	if (sendLocalMapClient.call(srv)) {
+		std::cout << "(Command system) send_local_map service started" << std::endl;
+		return true;
+	} else {
+		std::cerr << "(Command system) Failed to call service send_local_map" << std::endl;
 		return false;
 	}
 }
@@ -964,7 +1004,12 @@ int main(int argc, char* argv[]){
 		stopLaserClient = n.serviceClient<std_srvs::Empty>("stop_laser_data_sender");
 
 		recoverPositionClient = n.serviceClient<std_srvs::Empty>("recover_position");
+		stopRecoveringPositionClient = n.serviceClient<std_srvs::Empty>("stop_recovering_position");
 		checkLocalizationClient = n.serviceClient<std_srvs::Empty>("check_localization");
+		stopCheckingLocalizationClient = n.serviceClient<std_srvs::Empty>("stop_checking_localization");
+
+		sendLocalMapClient = n.serviceClient<std_srvs::Empty>("send_local_map");
+		stopSendingLocalMapClient = n.serviceClient<std_srvs::Empty>("stop_sending_local_map");
 
 		go_pub = n.advertise<geometry_msgs::PoseStamped>("/move_base_simple/goal", 1000);
     	teleop_pub = n.advertise<geometry_msgs::Twist>("/cmd_vel", 1000);

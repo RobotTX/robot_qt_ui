@@ -92,12 +92,8 @@ std::pair<ReducedVertex, int> findFurthestPointInReducedGraph(const RobotPos& ro
 
 void checkRecoveryStatus(const std_msgs::String& msg);
 
-void sendRecoveredPosition(const geometry_msgs::Pose::ConstPtr& recoveredPosition);
-
 bool recoverPosition(std_srvs::Empty::Request &req, std_srvs::Empty::Response &res);
 
 bool findNextPoint();
-
-void sendErrorMessage();
 
 #endif

@@ -82,7 +82,7 @@ void RobotPositionRecoveryListItemWidget::closeBtnSlot(){
 
 void RobotPositionRecoveryListItemWidget::startRecoverySlot(){
     bool startingToRecover = !recoverPositionLabel->text().compare("Recovering the position");
-    emit startRecovery(startingToRecover, robotName);
+    emit playRecovery(startingToRecover, robotName);
 }
 
 /// updates the icon
@@ -115,12 +115,6 @@ void RobotPositionRecoveryListItemWidget::robotGoToSlot(double x, double y){
 void RobotPositionRecoveryListItemWidget::updateRobotPos(double x, double y, double ori){
     /// Got the new position of the robot, minus the padding we removed when cropping the map
     pixmapItem->updateRobotPos(x - left, y - top, ori);
-}
-
-/// when the item is clicked the scene centers on the corresponding robot
-void RobotPositionRecoveryListItemWidget::mouseDoubleClickEvent(QMouseEvent*){
-    qDebug() << "RobotPositionRecoveryListItemWidget::mouseDoubleClickEvent";
-    emit centerOn(pixmapItem->getRobotView());
 }
 
 QImage RobotPositionRecoveryListItemWidget::cropImage(const QImage &image) {
@@ -165,4 +159,10 @@ QImage RobotPositionRecoveryListItemWidget::cropImage(const QImage &image) {
     }
 
     return newImage;
+}
+
+/// when the item is clicked the scene centers on the corresponding robot
+void RobotPositionRecoveryListItemWidget::mouseDoubleClickEvent(QMouseEvent*){
+    qDebug() << "RobotPositionRecoveryListItemWidget::mouseDoubleClickEvent";
+    emit centerOn(pixmapItem->getRobotView());
 }

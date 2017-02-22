@@ -63,6 +63,10 @@ bool stopAutoMap(std_srvs::Empty::Request &req, std_srvs::Empty::Response &res);
  */
 bool sendOnceMap(gobot_software::Port::Request &req, gobot_software::Port::Response &res);
 
-std::vector<uint8_t> compress(std::vector<int8_t> map, int map_size, int who);
+std::vector<uint8_t> compress(std::vector<int8_t> map, int map_width, int map_height, int who);
+
+bool sendLocalMap(std_srvs::Empty::Request &req, std_srvs::Empty::Response &res);
+
+void getLocalMap(const nav_msgs::OccupancyGrid::ConstPtr& msg);
 
 #endif

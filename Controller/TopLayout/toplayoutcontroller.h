@@ -32,9 +32,11 @@ public:
 
     QString getRobotsString(void) const;
 
+public slots:
+    void setLabel(const QString msgType, const QString label);
+
 private slots:
     void setLabelDelay(const QString msgType, const QString label, int delay);
-    void setLabel(const QString msgType, const QString label);
     void enableLayout(const bool enable) { view->setEnable(enable); }
 
 private:

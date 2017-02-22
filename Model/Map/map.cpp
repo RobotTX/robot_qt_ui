@@ -57,10 +57,10 @@ void Map::setMapFromArray(const QByteArray& mapArrays, bool fromPgm){
     mapImage = getImageFromArray(mapArrays, fromPgm);
 }
 
-QImage Map::getImageFromArray(const QByteArray& mapArrays, const bool fromPgm){
+QImage Map::getImageFromArray(const QByteArray& mapArrays, const int map_width, const int map_height, const bool fromPgm){
 
-    qDebug() << "Map::getImageFromArray" << width << height << fromPgm;
-    QImage image = QImage(width, height, QImage::Format_Grayscale8);
+    qDebug() << "Map::getImageFromArray" << map_width << map_height << fromPgm;
+    QImage image = QImage(map_width, map_height, QImage::Format_Grayscale8);
 
     uint32_t index = 0;
 
@@ -69,7 +69,7 @@ QImage Map::getImageFromArray(const QByteArray& mapArrays, const bool fromPgm){
     int shift = 0;
     int sign = 1;
     if(!fromPgm){
-        shift = height-1;
+        shift = map_height-1;
         sign = -1;
     }
 
@@ -88,15 +88,21 @@ QImage Map::getImageFromArray(const QByteArray& mapArrays, const bool fromPgm){
 
         for(int j = 0; j < static_cast<int> (count); j++){
             /// Sometimes we receive too much informations so we need to check
-            if(index > static_cast<uint>(width*height))
+            if(index > static_cast<uint>(map_width*map_height))
                 return image;
 
-            image.setPixelColor(QPoint(static_cast<int>(index%width), shift + sign * (static_cast<int>(index/width))), QColor(color, color, color));
+            image.setPixelColor(QPoint(static_cast<int>(index%map_width), shift + sign * (static_cast<int>(index/map_width))), QColor(color, color, color));
             index++;
         }
     }
 
     return image;
+}
+
+QImage Map::getImageFromArray(const QByteArray& mapArrays, const bool fromPgm){
+
+    qDebug() << "Map::getImageFromArray" << width << height << fromPgm;
+    return getImageFromArray(mapArrays, width, height, fromPgm);
 }
 
 void Map::saveToFile(const QString fileName){

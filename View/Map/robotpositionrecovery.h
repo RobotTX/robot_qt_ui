@@ -86,6 +86,20 @@ private slots:
 
     void playRecoverySlot(bool recover, QString robotName);
 
+    /**
+     * @brief deleteMapSlot
+     * @param id
+     * @param robotName
+     * Called when we want to stop the recovery and delete the map of a robot
+     */
+    void deleteMapSlot(int id, QString robotName);
+
+    /**
+     * @brief refreshIds
+     * Refresh the ids of the ScanMapListItemWidget according to their position in the list
+     */
+    void refreshIds();
+
 signals:
     void teleopCmd(QString, int);
     void robotGoTo(QString, double, double);

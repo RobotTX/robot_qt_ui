@@ -2,14 +2,12 @@
 
 using boost::asio::ip::tcp;
 
-boost::asio::io_service io_service;
-tcp::socket socket_recovered_position(io_service);
-tcp::acceptor l_acceptor(io_service);
-
 #define ROBOT_POS_TOLERANCE 0.5
 
 bool waitingForNextGoal = false;
 coordinates currentGoal;
+
+ros::ServiceClient sendPositionRecoveredConfirmation;
 
 std::vector<int8_t> my_map;
 Metadata metadata;
@@ -20,7 +18,7 @@ geometry_msgs::Pose robot_full_pos;
 /// to process the goals needed to recover the position
 std::shared_ptr<MoveBaseClient> ac(0);
 
-ros::Subscriber localisationToolFeedbackSuscriber;
+ros::Subscriber localizationToolFeedbackSuscriber;
 
 void getMap(const nav_msgs::OccupancyGrid::ConstPtr& msg){
 	my_map.clear();
@@ -60,33 +58,6 @@ void getRobotPos(const geometry_msgs::Pose::ConstPtr& msg){
 	}
 }
 
-void sendRecoveredPosition(const geometry_msgs::Pose& recoveredPosition){
-	/// to recover the orientation of the robot
-	tf::Matrix3x3 matrix = tf::Matrix3x3(tf::Quaternion(recoveredPosition.orientation.x, recoveredPosition.orientation.y, recoveredPosition.orientation.z, recoveredPosition.orientation.w));
- 	tfScalar roll;
-	tfScalar pitch;
-	tfScalar yaw;
-	matrix.getRPY(roll, pitch, yaw);
-	/// a blank is added at the end so that different messages can be separated
-	std::string recovered_position_to_send = std::to_string(recoveredPosition.position.x) + " " + std::to_string(recoveredPosition.position.y) + " " + std::to_string(yaw) + " ";
-    try { 
-        boost::system::error_code ignored_error;
-        boost::asio::write(socket_recovered_position, boost::asio::buffer(recovered_position_to_send), boost::asio::transfer_all(), ignored_error);
-    } catch (std::exception& e) {
-        e.what();
-    }
-}
-
-void sendErrorMessage(){
-	/// what is sent to the application if we cannot find a proper goal for the robot
-	try { 
-        boost::system::error_code ignored_error;
-        boost::asio::write(socket_recovered_position, boost::asio::buffer("nok "), boost::asio::transfer_all(), ignored_error);
-    } catch (std::exception& e) {
-        e.what();
-    }
-}
-
 void checkRecoveryStatus(const std_msgs::String& msg){
 
 	/// the position has not been found yet
@@ -98,25 +69,28 @@ void checkRecoveryStatus(const std_msgs::String& msg){
 		/// since we have found the position we cancel the goal using cancelAllGoals (does not crash if no goal was sent)
 		ac->cancelAllGoals();
 		currentGoal.first = -1;
-		/// we sent the position to the application
-		sendRecoveredPosition(robot_full_pos);
+		/// we tell the application the position was recovered
+		std_srvs::Empty srv;
+		if(sendPositionRecoveredConfirmation.call(srv))
+			std::cout << "Service send position recovered confirmation called" << std::endl;
+		else
+			std::cout << "Service send position recovered confirmation could not be called" << std::endl;
 	}
 }
 
 bool recoverPosition(std_srvs::Empty::Request &req, std_srvs::Empty::Response &res){
-	ROS_INFO("recoverPosition started : trying to open port 13452 to send back the recovered position when available\n");
+
 	ros::NodeHandle n;
 
-    socket_recovered_position = tcp::socket(io_service);
-    l_acceptor = tcp::acceptor(io_service, tcp::endpoint(tcp::v4(), 13452));
-    l_acceptor.set_option(tcp::acceptor::reuse_address(true));
+	localizationToolFeedbackSuscriber = n.subscribe("position_found", 1, checkRecoveryStatus);
 
-    l_acceptor.accept(socket_recovered_position);
-    
-    std::cout << "Recovery position connection established" << std::endl;
+	return true;
+}
 
-	localisationToolFeedbackSuscriber = n.subscribe("position_found", 1, checkRecoveryStatus);
-
+bool stopRecoveringPosition(std_srvs::Empty::Request &req, std_srvs::Empty::Response &res){
+	
+	localizationToolFeedbackSuscriber.shutdown();
+	
 	return true;
 }
 
@@ -274,11 +248,9 @@ bool findNextPoint(){
 		    currentGoal = std::make_pair((furthestPoint.first.end) * metadata.resolution + metadata.x, (furthestPoint.first.row) * metadata.resolution + metadata.y);
 
 		    std::cout << "Only a test otherwise I would send this goal " << goal.target_pose.pose.position.x << " " << goal.target_pose.pose.position.y << std::endl;
-			
+			// TODO uncomment 
 			//ac->sendGoal(goal);
-
-		} else 
-			sendErrorMessage();
+		}
 	}
 	return true;
 }
@@ -306,7 +278,11 @@ int main(int argc, char* argv[]){
 		ac = std::shared_ptr<MoveBaseClient> (new MoveBaseClient("move_base", true));
 
 		// to send the position of the robot to the application once recovered
-		ros::ServiceServer service = n.advertiseService("recover_position", recoverPosition);
+		ros::ServiceServer recover_position_service = n.advertiseService("recover_position", recoverPosition);
+
+		ros::ServiceServer stop_recovering_position_service = n.advertiseService("stop_recovering_position", stopRecoveringPosition);
+
+		sendPositionRecoveredConfirmation = n.serviceClient<std_srvs::Empty>("send_position_recovered_confirmation");
 		
 		// wait for the action server to come up
 		while(!ac->waitForServer(ros::Duration(5.0)))
