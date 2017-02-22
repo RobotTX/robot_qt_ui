@@ -1987,21 +1987,34 @@ void MainWindow::sendPathSelectedRobotSlot(const QString groupName, const QStrin
 
 void MainWindow::cancelNoRobotPathSlot(){
     QString pathName = pathsController->getPathCreationWidget()->getCurrentPathName();
+    QString groupName = pathsController->getPathCreationWidget()->getCurrentGroupName();
     qDebug() << "MainWindow::cancelNoRobotPathSlot called";
 
-    pathsController->setPathsGroup(pathsController->getPathCreationWidget()->getCurrentGroupName());
+    pathsController->setPathsGroup(groupName);
 
-    QVector<QSharedPointer<PathPoint>> oldPath = pathsController->getPathPainter()->getOldPath();
     /// we hide the points that we displayed just for the edition of the path
     pointsController->hidePointViewsToDisplay();
 
     emit resetPathCreationWidget();
 
-    pathsController->getPathCreationWidget()->updatePath(oldPath);
+
+    bool foundFlag(false);
+    setCurrentPathSlot(pathsController->getPaths()->getPath(groupName, pathName, foundFlag), pathName);
+    /// to set the 'eye' icon appropriately
+    if(!groupName.isEmpty()){
+        QList<QAbstractButton*> list = pathsController->getPathGroupDisplayed()->getPathButtonGroup()->getButtonGroup()->buttons();
+        for(int i = 0; i < list.size(); i++){
+            /// if it's the button we just pressed, if we checked it, set the eye icon, else set the blank icon
+            if(list.at(i)->text().compare(pathName) == 0)
+                list.at(i)->setIcon(QIcon(":/icons/eye.png"));
+            else
+                /// if it's one of the buttons we did not press, we set them to the blank icon ( in case we were showing their path )
+                list.at(i)->setIcon(QIcon(":/icons/blank.png"));
+        }
+    }
 
     backEvent();
 
-    pathsController->getPathPainter()->setOldPath(oldPath);
     setEnableAll(false, GraphicItemState::NO_EVENT);
     leftMenu->setEnableReturnCloseButtons(true);
     emit enableTopLayout(true);

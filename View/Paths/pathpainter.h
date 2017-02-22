@@ -28,13 +28,11 @@ public:
     PathPainter(MainWindow* const &mainWindow);
 
     QVector<QSharedPointer<PathPoint>> getCurrentPath(void) const { return currentPath; }
-    QVector<QSharedPointer<PathPoint>> getOldPath(void) const { return oldPath; }
     bool getPathDeleted(void) const { return pathDeleted; }
     QString getVisiblePath(void) const { return visiblePath; }
     QString getRobotName(void) const { return robotName; }
 
     void setCurrentPath(const QSharedPointer<Points> points, const QPointer<RobotView> robotView, const GraphicItemState state, const QVector<QSharedPointer<PathPoint> > &_currentPath, QString pathName);
-    void setOldPath(const QVector<QSharedPointer<PathPoint> > _oldPath);
     void setPathDeleted(const bool _pathDeleted){ pathDeleted = _pathDeleted; }
     void setVisiblePath(const QString path) { visiblePath = path; }
     void setRobotName(const QString _robotName) { robotName = _robotName; }
@@ -53,12 +51,6 @@ public:
      * Update the current path with the points in the group PATH_GROUP_NAME
      */
     void updateCurrentPath(QSharedPointer<Points> points);
-
-    /**
-     * @brief clearOldPath
-     * Delete the content of the old path
-     */
-    void clearOldPath();
 
     void resetAllPixmap();
 
@@ -138,7 +130,6 @@ private:
     QPainterPath path;
     /// changing as the user edits the path of its robot
     QVector<QSharedPointer<PathPoint>> currentPath;
-    QVector<QSharedPointer<PathPoint>> oldPath;
     bool pathDeleted;
     QString visiblePath;
     QString robotName;

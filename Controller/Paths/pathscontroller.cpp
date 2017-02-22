@@ -154,7 +154,6 @@ void PathsController::enableGroupsPathsWidgetPlusButtonOnly() const {
 
 void PathsController::editPath(const QString group, const QString path){
     showPathCreationWidget();
-    pathPainter->setOldPath(pathPainter->getCurrentPath());
 
     pathCreationWidget->resetWidget();
     pathCreationWidget->setCurrentPathName(path);
@@ -169,7 +168,6 @@ void PathsController::editPath(const QString group, const QString path){
 
 QString PathsController::editPath(){
     pathCreationWidget->show();
-    pathPainter->setOldPath(pathPainter->getCurrentPath());
 
     const QString pathName = pathGroup->getPathButtonGroup()->getButtonGroup()->checkedButton()->text();
     const QString groupName = pathGroup->getGroupNameLabel()->text();
@@ -195,7 +193,6 @@ QString PathsController::editPath(){
 bool PathsController::deletePath(){
     bool already_existed(false);
     pathPainter->setPathDeleted(false);
-    pathPainter->setOldPath(pathPainter->getCurrentPath());
     const QString group = pathCreationWidget->getCurrentGroupName();
     const QString path = pathCreationWidget->getNameEdit()->text().simplified();
     if(!pathCreationWidget->getCurrentPathName().isEmpty())
