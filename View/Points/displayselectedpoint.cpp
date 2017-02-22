@@ -81,7 +81,7 @@ DisplaySelectedPoint::DisplaySelectedPoint(MainWindow* mainWindow, QSharedPointe
 
 
     /// to check that a point that's being edited does not get a new name that's already used in the database
-    connect(nameEdit, SIGNAL(textEdited(QString)), this, SLOT(checkPointName(QString)));
+    connect(nameEdit, SIGNAL(textEdited(QString)), mainWindow->getPointsController(), SLOT(checkDisplayPointName(QString)));
     connect(robotsWidget, SIGNAL(setSelectedRobotFromPoint(QString)), mainWindow, SLOT(setSelectedRobotFromPointSlot(QString)));
     connect(actionButtons->getMinusButton(), SIGNAL(clicked(bool)), mainWindow->getPointsController(), SLOT(removePointFromInformationMenu()));
     connect(actionButtons->getMapButton(), SIGNAL(clicked(bool)), mainWindow->getPointsController(), SLOT(displayPointMapEvent()));
@@ -132,30 +132,11 @@ void DisplaySelectedPoint::mousePressEvent(QEvent* /* unused */){
 void DisplaySelectedPoint::keyPressEvent(QKeyEvent* event){
     qDebug() << "DisplaySelectedPoint::keyPressEvent called";
     /// this is the enter key
-    if(!event->text().compare("\r")){
-        switch(checkPointName(nameEdit->text())){
-        case 0:
-            emit invalidName(TEXT_COLOR_DANGER, PointsController::PointNameError::ContainsSemicolon);
-            break;
-        case 1:
-            /// that is the case where the name of the point has not actually changed
-            emit nameChanged(pointView->getPoint()->getName(), pointView->getPoint()->getName());
-            break;
-        case 2:
-            emit invalidName(TEXT_COLOR_DANGER, PointsController::PointNameError::AlreadyExists);
-            break;
-        case 3:
-            emit nameChanged(pointView->getPoint()->getName(), nameEdit->text());
-            break;
-        default:
-            Q_UNREACHABLE();
-            qDebug() << "if you got here, it's probably that you forgot to define the behavior for one or more error codes";
-            break;
-        }
-    }
-    else if(event->key() == Qt::Key_Delete){
+    if(!event->text().compare("\r") && saveButton->isEnabled())
+        emit nameChanged(pointView->getPoint()->getName(), nameEdit->text());
+    else if(event->key() == Qt::Key_Delete)
         emit removePoint();
-    }
+
 }
 
 void DisplaySelectedPoint::resetWidget(){
@@ -182,55 +163,6 @@ void DisplaySelectedPoint::hideEvent(QHideEvent *event){
     nameLabel->show();
     nameEdit->hide();
     QWidget::hideEvent(event);
-}
-
-int DisplaySelectedPoint::checkPointName(QString name) {
-    qDebug() << "DisplaySelectedPoint::checkPointName called";
-    nameEdit->setText(Helper::formatName(name));
-
-    /// if it keeps the same name we allow the point to be saved
-    if(!Helper::formatName(name).compare(pointView->getPoint()->getName())){
-        saveButton->setToolTip("");
-        saveButton->setEnabled(true);
-        emit invalidName(TEXT_COLOR_INFO, PointsController::PointNameError::NoError);
-        return 3;
-    }
-
-    /// if the name contains semicolons or curly brackets we forbid it
-    if(nameEdit->text().simplified().contains(QRegularExpression("[;{}]")) || nameEdit->text().contains("pathpoint", Qt::CaseInsensitive)){
-        qDebug() << " I contain a ; or }";
-        saveButton->setToolTip("The name of your point cannot contain the characters \";\" and } or the pattern <pathpoint> ");
-        saveButton->setEnabled(false);
-        emit invalidName(TEXT_COLOR_WARNING, PointsController::PointNameError::ContainsSemicolon);
-        return 0;
-    }
-    if(!nameEdit->text().simplified().compare("")){
-        qDebug() << " I am empty ";
-        /// cannot add a point with no name
-        saveButton->setToolTip("The name of your point cannot be empty");
-        saveButton->setEnabled(false);
-        emit invalidName(TEXT_COLOR_WARNING, PointsController::PointNameError::EmptyName);
-        return 1;
-    }
-
-    QMapIterator<QString, QSharedPointer<QVector<QSharedPointer<PointView>>>> i(*(points->getGroups()));
-    while (i.hasNext()) {
-        i.next();
-        for(int j = 0; j < i.value()->size(); j++){
-            if(i.value()->at(j)->getPoint()->getName().compare(nameEdit->text().simplified(), Qt::CaseInsensitive) == 0){
-                qDebug() << nameEdit->text() << " already exists";
-                saveButton->setEnabled(false);
-                /// to explain the user why he cannot add its point as it is
-                saveButton->setToolTip("A point with this name already exists, please choose another name for your point");
-                emit invalidName(TEXT_COLOR_WARNING, PointsController::PointNameError::AlreadyExists);
-                return 2;
-            }
-        }
-    }
-    saveButton->setToolTip("");
-    saveButton->setEnabled(true);
-    emit invalidName(TEXT_COLOR_INFO, PointsController::PointNameError::NoError);
-    return 3;
 }
 
 void DisplaySelectedPoint::setPointView(QSharedPointer<PointView> _pointView, const QString robotName) {

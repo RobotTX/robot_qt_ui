@@ -83,10 +83,6 @@ signals:
     /// emitted on hideEvent to cancel the edition of a point
     void cancelEditionPoint();
 
-private slots:
-    /// to check that a name is available before we proceed to the update
-    int checkPointName(QString name);
-
 private:
     QSharedPointer<Map> map;
     CustomLineEdit* nameEdit;

@@ -1755,52 +1755,94 @@ void PointsController::resetPointViewsSlot(void){
     points->setPixmapAll(PointView::PixmapType::NORMAL);
 }
 
-void PointsController::checkPointName(QString name){
-    name = Helper::formatName(name);
+void PointsController::checkCreatePointName(QString pointName){
+    pointName = Helper::formatName(pointName);
 
-    createPointWidget->getNameEdit()->setText(name);
-    if(name.simplified().contains(QRegularExpression("[;{}]")) || name.contains("pathpoint", Qt::CaseInsensitive)){
-        createPointWidget->getSaveBtn()->setToolTip("The name of your point cannot contain the characters \";\" and } or the pattern <pathpoint> ");
-        createPointWidget->getSaveBtn()->setEnabled(false);
-        emit invalidName(TEXT_COLOR_WARNING, PointNameError::ContainsSemicolon);
-        return;
+    QString msg("");
+    bool enableSave(false);
+
+    createPointWidget->getNameEdit()->setText(pointName);
+    getPointCreationMessage(pointName, enableSave, msg);
+
+    createPointWidget->getSaveBtn()->setToolTip(msg);
+    createPointWidget->getSaveBtn()->setEnabled(enableSave);
+
+    if(enableSave)
+        emit setMessageTop(TEXT_COLOR_INFO, msg);
+    else
+        emit setMessageTop(TEXT_COLOR_WARNING, msg);
+}
+
+void PointsController::checkDisplayPointName(QString pointName){
+    pointName = Helper::formatName(pointName);
+
+    displaySelectedPoint->getNameEdit()->setText(pointName);
+
+    QString msg("");
+    bool enableSave(false);
+
+    /// if it keeps the same name we allow the point to be saved
+    if(!pointName.compare(displaySelectedPoint->getPointName())){
+        enableSave = true;
+        msg = "Click save or press ENTER to save this point";
+    } else
+        getPointCreationMessage(pointName, enableSave, msg);
+
+    displaySelectedPoint->getSaveButton()->setToolTip(msg);
+    displaySelectedPoint->getSaveButton()->setEnabled(enableSave);
+
+    if(enableSave)
+        emit setMessageTop(TEXT_COLOR_INFO, msg);
+    else
+        emit setMessageTop(TEXT_COLOR_WARNING, msg);
+}
+
+void PointsController::getPointCreationMessage(QString pointName, bool &enableSave, QString &msg){
+    switch(checkPointName(pointName)){
+        case PointNameError::ContainsSemicolon:
+            msg = "The name of your point cannot contain the characters \";\" and } or the pattern <pathpoint> ";
+        break;
+        case PointNameError::EmptyName:
+            msg = "The name of your point cannot be empty";
+        break;
+        case PointNameError::AlreadyExists:
+            msg = "A point or group with this name already exists, please choose another name for your point";
+        break;
+        case PointNameError::NoError:
+            msg = "Click save or press ENTER to save this point";
+            enableSave = true;
+        break;
+        default:
+            Q_UNREACHABLE();
+        break;
     }
-    if(!name.simplified().compare("")){
-        qDebug() << " I am empty ";
-        /// cannot add a point with no name
-        createPointWidget->getSaveBtn()->setToolTip("The name of your point cannot be empty");
-        createPointWidget->getSaveBtn()->setEnabled(false);
-        emit invalidName(TEXT_COLOR_WARNING, PointNameError::EmptyName);
-        return;
-    }
+}
+
+PointsController::PointNameError PointsController::checkPointName(QString name){
+    if(name.simplified().contains(QRegularExpression("[;{}]")) || name.contains("pathpoint", Qt::CaseInsensitive))
+        return PointNameError::ContainsSemicolon;
+
+    if(!name.simplified().compare(""))
+        return PointNameError::EmptyName;
+
 
     QMapIterator<QString, QSharedPointer<QVector<QSharedPointer<PointView>>>> i(*(points->getGroups()));
     while (i.hasNext()) {
         /// determines whether or not the current name is a valid one (not already the name of another point or group)
         bool valid(true);
         i.next();
-        if(!i.key().compare(name.simplified(), Qt::CaseInsensitive)){
-            qDebug() << "This is already the name of a group" ;
+        if(!i.key().compare(name.simplified(), Qt::CaseInsensitive))
             valid = false;
-        }
-        for(int j = 0; j < i.value()->size(); j++){
-            if(i.value()->at(j)->getPoint()->getName().compare(name.simplified(), Qt::CaseInsensitive) == 0){
-                qDebug() << name << " already exists";
-                valid = false;
-            }
-        }
 
-        if(!valid){
-            createPointWidget->getSaveBtn()->setEnabled(false);
-            /// to explain the user why he cannot add its point as it is
-            createPointWidget->getSaveBtn()->setToolTip("A point or group with this name already exists, please choose another name for your point");
-            emit invalidName(TEXT_COLOR_WARNING, PointNameError::AlreadyExists);
-            return;
-        }
+        for(int j = 0; j < i.value()->size(); j++)
+            if(i.value()->at(j)->getPoint()->getName().compare(name.simplified(), Qt::CaseInsensitive) == 0)
+                valid = false;
+
+        if(!valid)
+            return PointNameError::AlreadyExists;
     }
-    createPointWidget->getSaveBtn()->setToolTip("");
-    createPointWidget->getSaveBtn()->setEnabled(true);
-    emit invalidName(TEXT_COLOR_INFO, PointNameError::NoError);
+
+    return PointNameError::NoError;
 }
 
 void PointsController::updateBtnGroupPointsSlot(){

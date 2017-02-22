@@ -903,7 +903,8 @@ void MainWindow::robotIsDeadSlot(QString hostname, QString ip){
         robotsController->updateRobotsLeftWidget();
 
         /// bottomLayout
-        bottomLayout->removeRobot(id);
+        //bottomLayout->removeRobot(id);
+        bottomLayout->updateRobots(robotsController->getRobots());
 
         topLayoutController->removeRobotWithoutHome(hostname);
 
