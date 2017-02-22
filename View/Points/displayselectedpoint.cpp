@@ -90,8 +90,6 @@ DisplaySelectedPoint::DisplaySelectedPoint(MainWindow* mainWindow, QSharedPointe
     connect(this, SIGNAL(removePoint()), mainWindow->getPointsController(), SLOT(removePointFromInformationMenu()));
     /// to cancel edition of a point on hide event
     connect(this, SIGNAL(cancelEditionPoint()), mainWindow->getPointsController(), SLOT(cancelUpdatePoint()));
-    /// to check the name of a point being edited
-    connect(this, SIGNAL(invalidName(QString, PointsController::PointNameError)), mainWindow, SLOT(setMessageCreationPoint(QString,PointsController::PointNameError)));
     /// to cancel the modifications on an edited point
     connect(cancelButton, SIGNAL(clicked(bool)), mainWindow->getPointsController(), SLOT(cancelUpdatePoint()));
     /// to save the modifications on an edited point

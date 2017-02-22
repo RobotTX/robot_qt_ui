@@ -859,7 +859,6 @@ void MainWindow::robotIsDeadSlot(QString hostname, QString ip){
     }
 
     QPointer<RobotView> robotView = robotsController->getRobots()->getRobotViewByIp(ip);
-    int id = robotsController->getRobots()->getRobotId(hostname);
 
     if(robotView && robotView->getRobot() != NULL){
 
@@ -1629,28 +1628,6 @@ void MainWindow::enableReturnAndCloseButtons(){
     emit enableTopLayout(true);
 }
 
-void MainWindow::setMessageCreationPoint(QString type, PointsController::PointNameError error){
-    qDebug() << "MainWindow::setMessageCreation point called from mainwindow";
-    switch(error){
-        case PointsController::PointNameError::NoError:
-            emit setMessageTop(type, "Click save or press ENTER to save this point");
-        break;
-        case PointsController::PointNameError::ContainsSemicolon:
-            emit setMessageTop(type, "You cannot create a point with a name that contains a semicolon, a curly bracket or the pattern \"pathpoint\"");
-        break;
-        case PointsController::PointNameError::EmptyName:
-            emit setMessageTop(type, "You cannot create a point with an empty name");
-        break;
-        case PointsController::PointNameError::AlreadyExists:
-            emit setMessageTop(type, "You cannot create a point with this name because a point with the same name already exists");
-        break;
-        default:
-            Q_UNREACHABLE();
-            qDebug() << "Should never be here, if you do get here however, check that you have not added a new error code and forgotten to add it in the cases afterwards";
-        break;
-        }
-}
-
 
 ///**********************************************************************************************************************************/
 
@@ -1797,7 +1774,7 @@ void MainWindow::displayGroupPaths(){
     switchFocus(pathsController->getGroupPathsChecked(),
                 pathsController->getPathGroupDisplayed(), MainWindow::WidgetType::GROUP_OF_PATHS);
 
-    pathsController->displayGroupPaths();
+    pathsController->displayGroupPaths(pathsController->getGroupPathsChecked());
 }
 
 void MainWindow::createGroupPaths(){
@@ -1879,7 +1856,7 @@ void MainWindow::modifyGroupPathsWithEnter(QString name){
 
 void MainWindow::doubleClickOnPathsGroup(QString checkedButton){
     switchFocus(checkedButton, pathsController->getPathGroupDisplayed(), MainWindow::WidgetType::GROUP_OF_PATHS);
-    pathsController->doubleClickOnPathsGroup(checkedButton);
+    pathsController->displayGroupPaths(checkedButton);
 }
 
 void MainWindow::displayPath(){
@@ -1941,8 +1918,20 @@ void MainWindow::displayPathOnMap(const bool display){
     }
 
     /// to set the 'eye' icon appropriately
-    if(!pathGroupName.isEmpty())
-        pathsController->setPathsGroup(pathGroupName);
+    if(!pathGroupName.isEmpty()){
+        QList<QAbstractButton*> list = pathsController->getPathGroupDisplayed()->getPathButtonGroup()->getButtonGroup()->buttons();
+        for(int i = 0; i < list.size(); i++){
+            /// if it's the button we just pressed, if we checked it, set the eye icon, else set the blank icon
+            if(list.at(i)->text().compare(checkedPathName) == 0){
+                if(display)
+                    list.at(i)->setIcon(QIcon(":/icons/eye.png"));
+                else
+                    list.at(i)->setIcon(QIcon(":/icons/blank.png"));
+            } else
+                /// if it's one of the buttons we did not press, we set them to the blank icon ( in case we were showing their path )
+                list.at(i)->setIcon(QIcon(":/icons/blank.png"));
+        }
+    }
     pathsController->updateDisplayedPath();
 }
 
@@ -1966,7 +1955,7 @@ void MainWindow::editPath(){
     pointsController->getPoints()->getTmpPointView()->hide();
 
     /// displays the points in order to make them available for the edition of the path,
-    ///  we have to keep track of those which were hidden so we can hide them again once the edition is finished
+    /// we have to keep track of those which were hidden so we can hide them again once the edition is finished
     pointsController->showPointViewsToDisplay();
 
     leftMenu->getReturnButton()->setEnabled(false);

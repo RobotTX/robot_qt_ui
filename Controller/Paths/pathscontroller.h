@@ -85,8 +85,6 @@ public:
     /// returns true if the path existed before
     bool deletePath();
 
-    void displayGroupPaths();
-
     void prepareGroupPathsCreation(void);
 
     bool modifyGroupPathsWithEnter(QString name);
@@ -94,9 +92,9 @@ public:
     void updatePaths(const Point& old_point, const Point& new_point);
 
     void displayPath(const QString groupName);
+    void displayGroupPaths(const QString groupName);
 
 public slots:
-    void doubleClickOnPathsGroup(const QString checkButton);
     void doubleClickOnPath(const QString pathName, const QString groupName);
     void exhibitDisplayedPath(void);
     void setPathsGroup(const QString groupName);
@@ -111,12 +109,12 @@ private slots:
     void setMessageModifGroupPaths(int code);
 
     /**
-     * @brief checkPathGroupName
+     * @brief checkCreateGroupName
      * @param name
      * @return
      * to make sure that the name chosen to create a group is valid
      */
-    int checkPathGroupName(QString name);
+    void checkCreateGroupName(QString name);
     void saveGroupPaths(QString name);
 
     /**
@@ -134,6 +132,9 @@ private slots:
      */
     void checkPathName(const QString name);
     void setMessageNoRobotPath(const int code);
+
+protected:
+    int checkGroupName(QString name);
 
 signals:
     void setMessageTop(QString,QString);

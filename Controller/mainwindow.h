@@ -172,7 +172,6 @@ private slots:
     void setMessageCreationPath(QString message);
     void updateEditedPathPoint(double x, double y);
     void centerMap(void);
-    void setMessageCreationPoint(QString type, PointsController::PointNameError error);
     void viewPathSelectedRobot(int robotNb, bool checked);
     void closeSlot();
     void showHome();

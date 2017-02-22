@@ -59,8 +59,6 @@ void PointsController::initializeMenus(MainWindow* mainWindow,
 
     /// Menu to edit the selected point
     createPointWidget = new CreatePointWidget(mainWindow);
-    /// to display appropriate messages when a user attemps to create a point
-    connect(this, SIGNAL(invalidName(QString, PointsController::PointNameError)), mainWindow, SLOT(setMessageCreationPoint(QString, PointsController::PointNameError)));
     createPointWidget->hide();
 
     /// TODO the 2 next lines of codes are causing a warning about the layout
