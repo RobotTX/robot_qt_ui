@@ -34,7 +34,7 @@ DisplaySelectedPointRobots::DisplaySelectedPointRobots(QWidget *parent):QWidget(
     pathWidget = new QWidget(this);
     QVBoxLayout* pathLayout = new QVBoxLayout(pathWidget);
 
-    QVBoxLayout* pathLabelLayout = new QVBoxLayout(pathWidget);
+    QVBoxLayout* pathLabelLayout = new QVBoxLayout();
     SpaceWidget* spaceWidget2 = new SpaceWidget(SpaceWidget::SpaceOrientation::HORIZONTAL, this);
     pathLabelLayout->addWidget(spaceWidget2);
     QLabel* pathLabel = new QLabel("This point belongs to the path of the robot(s) :", this);

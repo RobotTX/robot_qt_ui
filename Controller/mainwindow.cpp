@@ -11,6 +11,7 @@
 #include <fstream>
 #include <chrono>
 #include <thread>
+#include <QTimer>
 #include "ui_mainwindow.h"
 #include "Helper/helper.h"
 #include "Controller/Robots/commandcontroller.h"
@@ -68,7 +69,8 @@
 #include "View/Points/createpointwidget.h"
 
 
-#include <QTimer>
+/// TODO for final release : remove QT_FATAL_WARNINGS in Projects -> Run Environment
+
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow) {
     ui->setupUi(this);
@@ -364,16 +366,16 @@ void MainWindow::viewPathSelectedRobot(int robotNb, bool checked){
     qDebug() << "MainWindow::viewPathSelectedRobot called" << robotNb << checked;
     if(checked){
         /// in case we were displaying a path from the menu we make sure the eye button as well as the eye icon are unchecked and hidden respectively
-       pathsController->getPathGroupDisplayed()->getActionButtons()->getMapButton()->setChecked(false);
+        pathsController->getPathGroupDisplayed()->getActionButtons()->getMapButton()->setChecked(false);
         if(pathsController->getPathGroupDisplayed()->getPathButtonGroup()->getButtonGroup()->checkedButton())
             pathsController->getPathGroupDisplayed()->enableButtons(pathsController->getPathGroupDisplayed()->getPathButtonGroup()->getButtonGroup()->checkedButton());
         displayPathOnMap(false);
 
-        QPointer<Robot> robot = robotsController->getRobots()->getRobotsVector().at(robotNb)->getRobot();
-        qDebug() << "MainWindow::viewPathSelectedRobot called on robot" << robot->getName();
+        QPointer<RobotView> robotView = robotsController->getRobots()->getRobotsVector().at(robotNb);
+        qDebug() << "MainWindow::viewPathSelectedRobot called on robot" << robotView->getRobot()->getName();
         bottomLayout->uncheckViewPathSelectedRobot(robotNb);
-        setCurrentPathSlot(robot->getPath(), "");
-        bottomLayout->updateRobot(robotNb, robotsController->getRobots()->getRobotsVector().at(robotNb));
+        setCurrentPathSlot(robotView->getRobot()->getPath(), "");
+        bottomLayout->updateRobot(robotNb, robotView);
 
     } else {
         if(pointsController->getDisplaySelectedPoint()
@@ -426,13 +428,14 @@ void MainWindow::setSelectedRobot(QPointer<RobotView> robotView){
     robotsController->getEditSelectedRobotWidget()->setSelectedRobot(robotsController->getSelectedRobot());
     pathsController->getPathPainter()->setPathDeleted(false);
 
-    viewPathSelectedRobot(robotsController->getRobots()->getRobotId(robotView->getRobot()->getName()), true);
+    //viewPathSelectedRobot(robotsController->getRobots()->getRobotId(robotView->getRobot()->getName()), true);
     switchFocus(robotsController->getSelectedRobot()->getRobot()->getName(), robotsController->getEditSelectedRobotWidget(), MainWindow::WidgetType::ROBOT);
 
     /// it was disable by setEnableAll
     leftMenu->getReturnButton()->setEnabled(true);
 
     emit resetPathCreationWidget();
+    setCurrentPathSlot(robotsController->getSelectedRobot()->getRobot()->getPath(), "");
 
     pointsController->showHomeFromRobotName(robotsController->getSelectedRobot()->getRobot()->getName());
     leftMenu->show();
