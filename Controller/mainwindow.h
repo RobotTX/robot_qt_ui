@@ -251,7 +251,7 @@ protected:
     void closeEvent(QCloseEvent *event);
     void robotHasNoHome(QString robotName);
     void closeWidgets();
-    void commandDoneNewName(bool success, QString name);
+    void commandDoneNewName(bool success, QString oldName, QString newName);
     void commandDonePausePath(bool success, QString robotName);
     void commandDonePlayScan(bool success, bool scan, QString robotName);
     void commandDoneSendMap(bool success);

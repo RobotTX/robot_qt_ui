@@ -37,52 +37,54 @@ void LocalMapWorker::stopWorker(){
 void LocalMapWorker::readTcpDataSlot(){
     data.append(socket->readAll());
 
-    /// parameters of the laser scans
-    float angle_min, angle_max, angle_increment;
-    QVector<float> ranges;
+    if(data.size() > 11){
+        /// parameters of the laser scans
+        float angle_min, angle_max, angle_increment;
+        QVector<float> ranges;
 
-    /// we construct the float values using 4 bytes at a time
+        /// we construct the float values using 4 bytes at a time
 
-    *(reinterpret_cast<uchar*>(&angle_min) + 3) = data.at(3);
-    *(reinterpret_cast<uchar*>(&angle_min) + 2) = data.at(2);
-    *(reinterpret_cast<uchar*>(&angle_min) + 1) = data.at(1);
-    *(reinterpret_cast<uchar*>(&angle_min) + 0) = data.at(0);
+        *(reinterpret_cast<uchar*>(&angle_min) + 3) = data.at(3);
+        *(reinterpret_cast<uchar*>(&angle_min) + 2) = data.at(2);
+        *(reinterpret_cast<uchar*>(&angle_min) + 1) = data.at(1);
+        *(reinterpret_cast<uchar*>(&angle_min) + 0) = data.at(0);
 
-    *(reinterpret_cast<uchar*>(&angle_max) + 3) = data.at(7);
-    *(reinterpret_cast<uchar*>(&angle_max) + 2) = data.at(6);
-    *(reinterpret_cast<uchar*>(&angle_max) + 1) = data.at(5);
-    *(reinterpret_cast<uchar*>(&angle_max) + 0) = data.at(4);
+        *(reinterpret_cast<uchar*>(&angle_max) + 3) = data.at(7);
+        *(reinterpret_cast<uchar*>(&angle_max) + 2) = data.at(6);
+        *(reinterpret_cast<uchar*>(&angle_max) + 1) = data.at(5);
+        *(reinterpret_cast<uchar*>(&angle_max) + 0) = data.at(4);
 
-    *(reinterpret_cast<uchar*>(&angle_increment) + 3) = data.at(11);
-    *(reinterpret_cast<uchar*>(&angle_increment) + 2) = data.at(10);
-    *(reinterpret_cast<uchar*>(&angle_increment) + 1) = data.at(9);
-    *(reinterpret_cast<uchar*>(&angle_increment) + 0) = data.at(8);
+        *(reinterpret_cast<uchar*>(&angle_increment) + 3) = data.at(11);
+        *(reinterpret_cast<uchar*>(&angle_increment) + 2) = data.at(10);
+        *(reinterpret_cast<uchar*>(&angle_increment) + 1) = data.at(9);
+        *(reinterpret_cast<uchar*>(&angle_increment) + 0) = data.at(8);
 
-    for(int i = 12; i < data.size(); i += 4){
-        QByteArray currentValue = data.mid(i, 4);
+        for(int i = 12; i < data.size(); i += 4){
+            QByteArray currentValue = data.mid(i, 4);
 
-        float range;
+            float range;
 
-        *(reinterpret_cast<uchar*>(&range) + 3) = currentValue.at(3);
-        *(reinterpret_cast<uchar*>(&range) + 2) = currentValue.at(2);
-        *(reinterpret_cast<uchar*>(&range) + 1) = currentValue.at(1);
-        *(reinterpret_cast<uchar*>(&range) + 0) = currentValue.at(0);
+            *(reinterpret_cast<uchar*>(&range) + 3) = currentValue.at(3);
+            *(reinterpret_cast<uchar*>(&range) + 2) = currentValue.at(2);
+            *(reinterpret_cast<uchar*>(&range) + 1) = currentValue.at(1);
+            *(reinterpret_cast<uchar*>(&range) + 0) = currentValue.at(0);
 
-        /// the appended -1.0f at the end of the batch so when we reach it we ignore everything else we have
-        if(range < 0)
-            break;
+            /// the appended -1.0f at the end of the batch so when we reach it we ignore everything else we have
+            if(range < 0)
+                break;
 
-        ranges.push_back(range);
+            ranges.push_back(range);
 
+        }
+
+        /// sometimes we don't receive a complete scan and the first values do not correspond to the values of angle_min
+        /// angle_max and angle_increment in which case we receive positive values instead which correspond to ranges
+        /// that's why we check that the angle_min is negative before transmitting the data
+        if(angle_min < 0)
+            emit laserValues(angle_min, angle_max, angle_increment, ranges, ipAddress);
     }
 
     data = QByteArray();
-
-    /// sometimes we don't receive a complete scan and the first values do not correspond to the values of angle_min
-    /// angle_max and angle_increment in which case we receive positive values instead which correspond to ranges
-    /// that's why we check that the angle_min is negative before transmitting the data
-    if(angle_min < 0)
-        emit laserValues(angle_min, angle_max, angle_increment, ranges, ipAddress);
 }
 
 void LocalMapWorker::errorConnectionSlot(QAbstractSocket::SocketError error){

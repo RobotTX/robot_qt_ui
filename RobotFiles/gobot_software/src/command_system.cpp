@@ -36,6 +36,9 @@ ros::ServiceClient stopRecoveringPositionClient;
 ros::ServiceClient checkLocalizationClient;
 ros::ServiceClient stopCheckingLocalizationClient;
 
+ros::ServiceClient connectToParticleCloudClient;
+ros::ServiceClient startSendingParticleCloudDataClient;
+
 // to get the local map to be send to recover the robot's position
 ros::ServiceClient sendLocalMapClient;
 ros::ServiceClient stopSendingLocalMapClient;
@@ -48,6 +51,7 @@ int robot_pos_port = 4001;
 int map_port = 4002;
 int laser_port = 4003;
 int recovered_position_port = 4004;
+int particle_cloud_port = 4005;
 
 std::string path_computer_software = "/home/gtdollar/computer_software/";
 
@@ -195,6 +199,7 @@ bool execCommand(ros::NodeHandle n, std::vector<std::string> command){
 				startMetadata();
 				startMap();
 				startLaserData(startLaser);
+				connectToParticleCloudNode();
 				return true;
 			} else
 				std::cout << "(Command system) Parameter missing" << std::endl;
@@ -434,7 +439,7 @@ bool execCommand(ros::NodeHandle n, std::vector<std::string> command){
 			if(command.size() == 1) {
 				std::cout << "(Command system) Gobot tries to recover its position" << std::endl;
 				recovering = true;
-				if(sendLocalMap())
+				if(startSendingParticleCloud())
 					return recoverPosition();
 				else
 					std::cout << "(Command system) Could not get the local map" << std::endl;
@@ -698,6 +703,30 @@ bool stopLaserData(){
 	}
 }
 
+bool connectToParticleCloudNode(){
+	gobot_software::Port srv;
+	srv.request.port = particle_cloud_port;
+
+	if (connectToParticleCloudClient.call(srv)) {
+		std::cout << "(Command system) connect_particle_cloud service started" << std::endl;
+		return true;
+	} else {
+		std::cerr << "(Command system) Failed to call service connect_particle_cloud" << std::endl;
+		return false;
+	}
+}
+
+bool startSendingParticleCloud(void){
+	std_srvs::Empty srv;
+	if(startSendingParticleCloudDataClient.call(srv)){
+		std::cout << "Command system send_particle_cloud_data started" << std::endl;
+		return true;
+	} else {
+		std::cerr << "(Command system) failed to call service send_particle_cloud_data" << std::endl;
+		return false;
+	}
+}
+
 void getPorts(boost::shared_ptr<tcp::socket> sock, ros::NodeHandle n){
 
 	std::cout << "getPorts launched" << std::endl;
@@ -768,10 +797,12 @@ void session(boost::shared_ptr<tcp::socket> sock, ros::NodeHandle n){
 			boost::system::error_code error;
 			size_t length = sock->read_some(boost::asio::buffer(data), error);
 			std::cout << "(Command system) " << length << " byte(s) received" << std::endl;
-			if ((error == boost::asio::error::eof) || (error == boost::asio::error::connection_reset)){
+			if (error == boost::asio::error::eof)
+				std::cout << "(Command system) Got error eof" << std::endl;
+			
+			if (error == boost::asio::error::connection_reset){
 				std::cout << "(Command system) Connection closed" << std::endl;
-				connected = false;
-				return;
+				disconnect();
         	} else if (error) 
 				throw boost::system::system_error(error); // Some other error.
 
@@ -818,29 +849,39 @@ void session(boost::shared_ptr<tcp::socket> sock, ros::NodeHandle n){
 					commandStr = "";
 				}
 			} else {
-					std::cout << "\n******************\n(Command system) Got a bad command to debug :" << std::endl;
-					std::istringstream iss2(data);
+				std::cout << "\n******************\n(Command system) Got a bad command to debug :" << std::endl;
+				std::istringstream iss2(data);
 
-					std::string sub;
-					while (iss2){
-						iss2 >> sub;
+				std::string sub;
+				while (iss2){
+					iss2 >> sub;
+				}
+
+				/*std::ofstream debug_file(DEBUG_CMD_FILE, std::ofstream::out | std::ofstream::trunc);
+
+				if(debug_file){
+					debug_file << "(Command system) data received : " << sub.length() << "byte(s) in str : " << sub << std::endl;
+					debug_file << "(Command system) data received raw : " << sub << std::endl;
+					for(int i = 0; i < max_length; i++){
+						debug_file << i << ": " << static_cast<int>(data[i]) << " or " << data[i] << std::endl;
 					}
+					debug_file.close();
 
-					std::ofstream debug_file(DEBUG_CMD_FILE, std::ofstream::out | std::ofstream::trunc);
+				}
 
-					if(debug_file){
-						debug_file << "(Command system) data received : " << sub.length() << "byte(s) in str : " << sub << std::endl;
-						debug_file << "(Command system) data received raw : " << sub << std::endl;
-						for(int i = 0; i < max_length; i++){
-							debug_file << i << ": " << static_cast<int>(data[i]) << " or " << data[i] << std::endl;
-						}
-						debug_file.close();
-					}
+				std::cout << "(Command system) data received : " << sub.length() << "byte(s) in str : " << sub << std::endl;
+				*/
 
-					std::cout << "(Command system) data received : " << sub.length() << "byte(s) in str : " << sub << std::endl;
-					std::cout << "(Command system) Stopping the function\n******************\n" << std::endl;
+				std::cout  << "(Command system) data received : " << sub.length() << "byte(s) in str : " << sub << std::endl;
+				std::cout  << "(Command system) data received raw : " << sub << std::endl;
+				for(int i = 0; i < max_length; i++)
+					if(static_cast<int>(data[i]) != 0)
+						std::cout  << i << ": " << static_cast<int>(data[i]) << " or " << data[i] << std::endl;
 
-					return;
+
+				std::cout << "(Command system) Stopping the function\n******************\n" << std::endl;
+
+				//disconnect();
 			}
 		}
 	} catch (std::exception& e) {
@@ -873,7 +914,6 @@ void asyncAccept(boost::shared_ptr<boost::asio::io_service> io_service, boost::s
 	std::cout << "(Command system) Command socket connected to " << sock->remote_endpoint().address().to_string() << std::endl;
 	connected = true;
 	waiting = false;
-	boost::thread t(boost::bind(session, sock, n));
 
 	/// Send a message to the PC to tell we are connected
 	/// send home position and timestamp
@@ -941,6 +981,8 @@ void asyncAccept(boost::shared_ptr<boost::asio::io_service> io_service, boost::s
    	std::string recover = (recovering) ? "1" : "0";
 
 	sendMessageToPc(sock, "Connected " + mapId + " " + mapDate + " " + home_x + " " + home_y + " " + dateHome + " " + datePath + " " + scan + " " + recover + " " + path);
+
+	boost::thread t(boost::bind(session, sock, n));
 }
 
 void server(unsigned short port, ros::NodeHandle n){
@@ -967,12 +1009,18 @@ void server(unsigned short port, ros::NodeHandle n){
 }
 
 void serverDisconnected(const std_msgs::String::ConstPtr& msg){
-	std::cout << "(Command system) I heard " << std::endl;
-	connected = false;
-	stopRobotPos();
-	stopMap();
-	stopMetadata();
-	stopLaserData();
+	disconnect();
+}
+
+void disconnect(){
+	if(connected){
+		std::cout << "(Command system) Robot could not find the application " << std::endl;
+		stopRobotPos();
+		stopMap();
+		stopMetadata();
+		stopLaserData();
+		connected = false;
+	}
 }
 
 int main(int argc, char* argv[]){
@@ -1007,6 +1055,9 @@ int main(int argc, char* argv[]){
 		stopRecoveringPositionClient = n.serviceClient<std_srvs::Empty>("stop_recovering_position");
 		checkLocalizationClient = n.serviceClient<std_srvs::Empty>("check_localization");
 		stopCheckingLocalizationClient = n.serviceClient<std_srvs::Empty>("stop_checking_localization");
+
+		connectToParticleCloudClient = n.serviceClient<gobot_software::Port>("connect_particle_cloud");
+		startSendingParticleCloudDataClient = n.serviceClient<std_srvs::Empty>("send_particle_cloud_data");
 
 		sendLocalMapClient = n.serviceClient<std_srvs::Empty>("send_local_map");
 		stopSendingLocalMapClient = n.serviceClient<std_srvs::Empty>("stop_sending_local_map");

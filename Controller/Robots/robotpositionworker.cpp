@@ -4,8 +4,6 @@
 RobotPositionWorker::RobotPositionWorker(const QString newipAddress, const int newPort){
     ipAddress = newipAddress;
     port = newPort;
-    ok = 0;
-    pasOk = 0;
 }
 
 RobotPositionWorker::~RobotPositionWorker(){
@@ -55,13 +53,6 @@ void RobotPositionWorker::readTcpDataSlot(){
     /// Data is received as a string containing values separated by a space ("posX posY orientationZ")
     QStringList list = data.split(rx, QString::SkipEmptyParts);
     //qDebug() << "Robot" << ipAddress << " position :" << list;
-    if(list.size() == 3)
-        ok++;
-    else
-        pasOk++;
-
-    qDebug() << "Robot" << ipAddress << " ok :" << ok << "vs pas ok:" << pasOk << "for a total of" << ok + pasOk << "so" << (float)((float)ok/(float)(ok+pasOk))*100 << "%";
-
 
     /// the IP address is send along to identify the robot
     if(list.count() > 2)

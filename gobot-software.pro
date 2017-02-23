@@ -16,6 +16,8 @@ INCLUDEPATH += . Controller Model View
 
 QMAKE_CXXFLAGS += -std=c++11 -Wall -lz
 
+DEFINES *= QT_USE_QSTRINGBUILDER
+
 # Input
 HEADERS += \
     Controller/Map/localmapworker.h \

@@ -55,16 +55,15 @@ void CmdRobotWorker::connectSocket(){
 }
 
 void CmdRobotWorker::sendCommand(const QString cmd){
-    qDebug() << "(Robot" << robotName << ") Command to send :" << cmd << "to" << ipAddress << "at port " << port;
+    qDebug() << "(Robot" << robotName << ") Command to send :" << (cmd + " } ") << "to" << ipAddress << "at port " << port;
     int nbDataSend = socket->write(QString(cmd + " } ").toUtf8());
 
     socket->waitForBytesWritten(100);
 
-    if(nbDataSend == -1){
+    if(nbDataSend == -1)
         qDebug() << "(Robot" << robotName << ") An error occured while sending data";
-    } else {
+    else
         qDebug() << "(Robot" << robotName << ") " << nbDataSend << " bytes sent";
-    }
 }
 
 void CmdRobotWorker::readTcpDataSlot(){

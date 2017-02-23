@@ -583,7 +583,7 @@ void MainWindow::saveRobotModifications(){
             (!ssid.isEmpty() && ssid.compare(robotsController->getSelectedRobot()->getRobot()->getWifi(), Qt::CaseSensitive)))){
 
         if(commandController->sendCommand(robotsController->getSelectedRobot()->getRobot(), QString("g \"") + name + "\" \"" + ssid + "\" \"" + password + "\"", name)){
-            commandDoneNewName(true, name);
+            commandDoneNewName(true, robotsController->getSelectedRobot()->getRobot()->getName(), name);
             robotsController->getEditSelectedRobotWidget()->getWifiNameLabel()->setText(ssid);
             robotsController->getSelectedRobot()->getRobot()->setWifi(ssid);
 
@@ -769,6 +769,18 @@ void MainWindow::robotIsAliveSlot(QString hostname, QString ip, QString ssid, in
     if(robotView){
         //qDebug() << "Robot" << hostname << "at ip" << ip << "is still alive";
         robotView->getRobot()->ping();
+
+        /// if the robot's page is open the progress bar is refreshed to reflect the battery level
+        if(robotsController->getSelectedRobot() && robotsController->getSelectedRobot()->getRobot()->getIp() == ip)
+            emit newBatteryLevel(battery);
+
+        /// if the battery runs low we send a warning to the user (only when the threshold is just reached so that we don't send
+        /// the warning repeatedly
+        if(battery < settingsController->getSettings()->getBatteryWarningThreshold() && robotView->getRobot()->getBatteryLevel() == settingsController->getSettings()->getBatteryWarningThreshold())
+            QMessageBox::warning(this, "Running low on battery", robotView->getRobot()->getName() + " is running low on battery, perhaps you should think about charging it soon");
+
+
+        robotView->getRobot()->setBatteryLevel(battery);
     } else {
         qDebug() << "MainWindow::robotIsAliveSlot Robot" << hostname << "at ip" << ip << "just connected";
         /// to stop displaying that the robot is disconnected when we reconnect but not erase any other kind of message
@@ -822,15 +834,11 @@ void MainWindow::robotIsAliveSlot(QString hostname, QString ip, QString ssid, in
         }
     }
 
-    /// if the robot's page is open the progress bar is refreshed to reflect the battery level
-    if(robotsController->getSelectedRobot() && robotsController->getSelectedRobot()->getRobot()->getIp() == ip)
-        emit newBatteryLevel(battery);
-
     /// if the battery runs low we send a warning to the user (only when the threshold is just reached so that we don't send
     /// the warning repeatedly
-    if(battery < settingsController->getSettings()->getBatteryWarningThreshold() && robotView->getRobot()->getBatteryLevel() == settingsController->getSettings()->getBatteryWarningThreshold()) {
+    if(battery < settingsController->getSettings()->getBatteryWarningThreshold() && robotView->getRobot()->getBatteryLevel() == settingsController->getSettings()->getBatteryWarningThreshold())
         QMessageBox::warning(this, "Running low on battery", robotView->getRobot()->getName() + " is running low on battery, perhaps you should think about charging it soon");
-    }
+
 
     robotView->getRobot()->setBatteryLevel(battery);
 
@@ -1563,12 +1571,6 @@ void MainWindow::setSelectedTmpPoint(){
 
     resetFocus();
 
-    /// TODO check if useful
-/*
-    int id = bottomLayout->getViewPathRobotBtnGroup()->checkedId();
-    if(id > 0)
-        setCurrentPathSlot(robotsController->getRobots()->getRobotsVector().at(id)->getRobot()->getPath(), "");
-*/
     leftMenu->show();
 
     hideAllWidgets();
@@ -2456,38 +2458,31 @@ void MainWindow::updatePathInfo(const QString robotName, QString pathDate, QStri
         if(flag){
             /// they have different paths so we keep the most recent one
             if(robotPathInApp.first.compare(appPathInfo.first.first) || robotPathInApp.second.compare(appPathInfo.first.second)){
-                qDebug() << "mainWindow::updatepathinfo DIFFERENT PATHS";
+                qDebug() << "MainWindow::updatePathInfo DIFFERENT PATHS";
                 /// the file is more recent on the robot
                 /// we do as if the application did not have a path at all
                 if(Helper::Date::isLater(pathDate.split("-", QString::SkipEmptyParts), appPathInfo.second)){
-                    qDebug() << " BUT ROBOT MORE RECENT";
+                    qDebug() << "MainWindow::updatePathInfo BUT ROBOT MORE RECENT";
                     /// the application does not have a path so we use the path sent by the robot and update the file on the app side
                     bool foundFlag(true);
-                    setCurrentPathSlot(pathsController->getPath(robotPathInApp.first, robotPathInApp.second, foundFlag), robotPathInApp.second);
-                    pathsController->setVisiblePath(robotPathInApp.second);
-                    robotView->getRobot()->setPath(pathsController->getPathPainter()->getCurrentPath());
+                    robotView->getRobot()->setPath(pathsController->getPath(robotPathInApp.first, robotPathInApp.second, foundFlag));
                     robotView->getRobot()->setGroupPathName(robotPathInApp.first);
                     robotView->getRobot()->setPathName(robotPathInApp.second);
                     int id = robotsController->getRobots()->getRobotId(robotView->getRobot()->getName());
                     bottomLayout->updateRobot(id, robotView);
-                    if(pathsController->getPathPainter()->getCurrentPath().size() > 0){
-                        bottomLayout->getViewPathRobotBtnGroup()->button(id)->setChecked(true);
-                        viewPathSelectedRobot(id, true);
-                    }
-                    QFile fileInfo(QDir::currentPath() + QDir::separator() + "robots_paths" + QDir::separator()
-                                   + robotName + "_path");
+                    QFile fileInfo(QDir::currentPath() + QDir::separator() + "robots_paths" + QDir::separator() + robotName + "_path");
                     if(fileInfo.open(QIODevice::ReadWrite)){
                         fileInfo.resize(0);
                         QTextStream out(&fileInfo);
                         /// contains the date of the last modification of the path file on the robot
                         out << pathDate;
                         out << "%" << robotPathInApp.first << "%" << robotPathInApp.second;
-                        qDebug() << "date now is" << pathDate;
+                        qDebug() << "MainWindow::updatePathInfo date now is" << pathDate;
                         fileInfo.close();
                     }
 
                 } else {
-                    qDebug() << "BUT APP MORE RECENT";
+                    qDebug() << "MainWindow::updatePathInfo BUT APP MORE RECENT";
                     /// the file is more recent on the application side
                     /// we sent the path to the robot
                     /// but the application has one
@@ -2498,45 +2493,31 @@ void MainWindow::updatePathInfo(const QString robotName, QString pathDate, QStri
                 }
             } else {
                 /// they have the same path
-                qDebug() << "mainWindow::updatepathinfo SAME PATH";
+                qDebug() << "MainWindow::updatePathInfo SAME PATH";
                 bool foundFlag(true);
-                setCurrentPathSlot(pathsController->getPath(robotPathInApp.first, robotPathInApp.second, foundFlag), robotPathInApp.second);
-                pathsController->setVisiblePath(robotPathInApp.second);
-                robotView->getRobot()->setPath(pathsController->getPathPainter()->getCurrentPath());
+                robotView->getRobot()->setPath(pathsController->getPath(robotPathInApp.first, robotPathInApp.second, foundFlag));
                 robotView->getRobot()->setGroupPathName(robotPathInApp.first);
                 robotView->getRobot()->setPathName(robotPathInApp.second);
                 int id = robotsController->getRobots()->getRobotId(robotView->getRobot()->getName());
                 bottomLayout->updateRobot(id, robotView);
-                if(pathsController->getPathPainter()->getCurrentPath().size() > 0){
-                    bottomLayout->getViewPathRobotBtnGroup()->button(id)->setChecked(true);
-                    viewPathSelectedRobot(id, true);
-                }
             }
         } else {
-            qDebug() << "mainWindow::updatepathinfo ONLY ROBOT HAS A PATH";
+            qDebug() << "MainWindow::updatePathInfo ONLY ROBOT HAS A PATH";
             /// the application does not have a path so we use the path sent by the robot and update the file on the app side
             bool foundFlag(true);
-            setCurrentPathSlot(pathsController->getPath(robotPathInApp.first, robotPathInApp.second, foundFlag), robotPathInApp.second);
-            pathsController->setVisiblePath(robotPathInApp.second);
-            robotView->getRobot()->setPath(pathsController->getPathPainter()->getCurrentPath());
+            robotView->getRobot()->setPath(pathsController->getPath(robotPathInApp.first, robotPathInApp.second, foundFlag));
             robotView->getRobot()->setGroupPathName(robotPathInApp.first);
             robotView->getRobot()->setPathName(robotPathInApp.second);
             int id = robotsController->getRobots()->getRobotId(robotView->getRobot()->getName());
             bottomLayout->updateRobot(id, robotView);
-            if(pathsController->getPathPainter()->getCurrentPath().size() > 0){
-                bottomLayout->getViewPathRobotBtnGroup()->button(id)->setChecked(true);
-                viewPathSelectedRobot(id, true);
-            }
-            QFile fileInfo(QDir::currentPath() + QDir::separator() + "robots_paths" + QDir::separator()
-                           + robotName + "_path");
+            QFile fileInfo(QDir::currentPath() + QDir::separator() + "robots_paths" + QDir::separator() + robotName + "_path");
             if(fileInfo.open(QIODevice::ReadWrite)){
                 fileInfo.resize(0);
                 QTextStream out(&fileInfo);
-                QString currentDateTime = QDateTime::currentDateTime().toString("yyyy-MM-dd-hh-mm-ss");
                 /// contains the date of the last modification of the path file on the robot
                 out << pathDate;
                 out << "%" << robotPathInApp.first << "%" << robotPathInApp.second;
-                qDebug() << "date now is" << pathDate;
+                qDebug() << "MainWindow::updatePathInfo date now is" << pathDate;
                 fileInfo.close();
             }
         }
@@ -2545,14 +2526,14 @@ void MainWindow::updatePathInfo(const QString robotName, QString pathDate, QStri
         bool flag(false);
         Paths::Path currPath = pathsController->getPath(appPathInfo.first.first, appPathInfo.first.second, flag);
         if(flag){
-            qDebug() << "mainWindow::updatepathinfo ONLY APP HAS A PATH";
+            qDebug() << "MainWindow::updatePathInfo ONLY APP HAS A PATH";
             /// but the application has one
             /// prepares the cmd to send to the robot
 
             QString pathStr = prepareCommandPath(currPath);
             commandController->sendCommand(robotView->getRobot(), QString("i ") + pathStr, "", appPathInfo.first.first, appPathInfo.first.second, false, -1, path);
         } else
-           qDebug() << "mainWindow::updatepathinfo NO PATH ON EITHER SIDE";
+            qDebug() << "MainWindow::updatePathInfo NO PATH ON EITHER SIDE";
     }
 }
 
@@ -2592,7 +2573,7 @@ void MainWindow::resetFocus(){
 }
 
 void MainWindow::openLeftMenu(){
-    qDebug() << "openLeftMenu called";
+    qDebug() << "MainWindow::openLeftMenu called";
     emit setMessageTop(TEXT_COLOR_NORMAL, "");
 
     /// resets the color of the selected point on the map and hides the temporary point`
@@ -2720,11 +2701,11 @@ void MainWindow::relayTutorialSignal(const bool messageNeeded){
 void MainWindow::commandDoneSlot(QString cmdName, bool success, QString robotName, QString newRobotName, QString groupName, QString pathName, bool scan, int nb, QStringList path){
     //qDebug() << "MainWindow::commandDoneSlot" << cmdName << success << newRobotName << groupName << pathName << scan << nb << path;
 
-    if(!cmdName.isEmpty()){
+    if(!cmdName.isEmpty() && robotsController->getRobots()->getRobotViewByName(robotName)){
         switch (cmdName.at(0).unicode()) {
             case 'a':
                 /// Changed the name of the robot
-                commandDoneNewName(success, newRobotName);
+                commandDoneNewName(success, robotName, newRobotName);
             break;
             case 'b':
                 /// Changed the wifi informations of a robot
@@ -2822,26 +2803,26 @@ void MainWindow::commandDoneSlot(QString cmdName, bool success, QString robotNam
     }
 }
 
-void MainWindow::commandDoneNewName(bool success, QString name){
+void MainWindow::commandDoneNewName(bool success, QString oldName, QString newName){
     if(success){
         CustomRobotDialog* robotDialog = robotsController->getEditSelectedRobotWidget()->getRobotInfoDialog();
 
         /// updates the name of the file which stores the path of the robot
         QFile robotPathFile(QDir::currentPath() + QDir::separator() + "robots_paths" + QDir::separator() + robotsController->getSelectedRobot()->getRobot()->getName() + "_path");
         if(robotPathFile.exists())
-            robotPathFile.rename(QDir::currentPath() + QDir::separator() + "robots_paths" + QDir::separator() + name + "_path");
+            robotPathFile.rename(QDir::currentPath() + QDir::separator() + "robots_paths" + QDir::separator() + newName + "_path");
 
         /// updates the name of the file which stores the home of the robot
         QFile robotHomeFile(QDir::currentPath() + QDir::separator() + "robots_homes" + QDir::separator() + robotsController->getSelectedRobot()->getRobot()->getName());
         if(robotHomeFile.exists())
-            robotHomeFile.rename(QDir::currentPath() + QDir::separator() + "robots_homes" + QDir::separator() + name);
+            robotHomeFile.rename(QDir::currentPath() + QDir::separator() + "robots_homes" + QDir::separator() + newName);
 
         QMap<QString, QString> tmp = robotsController->getRobots()->getRobotsNameMap();
-        tmp[robotsController->getSelectedRobot()->getRobot()->getIp()] = name;
-        robotsController->getSelectedRobot()->getRobot()->setName(name);
+        tmp[robotsController->getSelectedRobot()->getRobot()->getIp()] = newName;
+        robotsController->getSelectedRobot()->getRobot()->setName(newName);
         robotsController->getRobots()->setRobotsNameMap(tmp);
 
-        emit changeCmdThreadRobotName(name);
+        emit changeCmdThreadRobotName(newName);
         QFile fileWrite(QDir::currentPath() + QDir::separator() + QString(ROBOTS_NAME_FILE));
         fileWrite.resize(0);
         fileWrite.open(QIODevice::WriteOnly);
@@ -2851,12 +2832,12 @@ void MainWindow::commandDoneNewName(bool success, QString name){
 
         qDebug() << "MainWindow::robotSavedEvent RobotsNameMap updated" << robotsController->getRobots()->getRobotsNameMap();
         bottomLayout->updateRobot(robotsController->getRobots()->getRobotId(robotsController->getSelectedRobot()->getRobot()->getName()), robotsController->getSelectedRobot());
-        robotsController->getEditSelectedRobotWidget()->getNameLabel()->setText(name);
-        robotsController->getEditSelectedRobotWidget()->getRobotInfoDialog()->getNameEdit()->setText(name);
+        robotsController->getEditSelectedRobotWidget()->getNameLabel()->setText(newName);
+        robotsController->getEditSelectedRobotWidget()->getRobotInfoDialog()->getNameEdit()->setText(newName);
 
         robotsController->updateRobotsLeftWidget();
         robotDialog->getNameEdit()->setText(robotsController->getSelectedRobot()->getRobot()->getName());
-        emit setMessageTop(TEXT_COLOR_SUCCESS, "You have successfully updated" + name);
+        emit setMessageTop(TEXT_COLOR_SUCCESS, "You have successfully updated " + newName);
     } else
         emit setMessageTop(TEXT_COLOR_DANGER, "Failed to edit the name of the robot, please try again");
 }
