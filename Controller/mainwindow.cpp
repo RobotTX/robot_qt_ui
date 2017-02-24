@@ -2128,13 +2128,22 @@ void MainWindow::hideAllWidgets(){
 }
 
 void MainWindow::clearNewMap(){
-    qDebug() << "clearNewMap called";
+    qDebug() << "MainWindow::clearNewMap called";
 
     pointsController->resetEditedPointView();
 
     pathsController->setVisiblePath("");
 
     emit resetPath(pointsController->getPoints());
+
+
+    QMapIterator<QString, QSharedPointer<QVector<QSharedPointer<PointView>>>> i(*pointsController->getPoints()->getGroups());
+    while (i.hasNext()) {
+        i.next();
+        QSharedPointer<QVector<QSharedPointer<PointView>>> vector = i.value();
+        for(int j = 0; j < vector->size(); j++)
+            mapController->removeFromScene(vector->at(j).data());
+    }
 
     /// Clear the list of points
     pointsController->getPoints()->clear();

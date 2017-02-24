@@ -822,7 +822,7 @@ void session(boost::shared_ptr<tcp::socket> sock, ros::NodeHandle n){
 
 			for(int i = 0; i < length; i++){
 				if(static_cast<int>(data[i]) != 0){
-					if(static_cast<int>(data[i]) == '}'){
+					if(static_cast<int>(data[i]) == 23){
 						std::cout << "(Command system) Command complete" << std::endl;
 						finishedCmd = 1;
 						i = length;

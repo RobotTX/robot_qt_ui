@@ -55,8 +55,8 @@ void CmdRobotWorker::connectSocket(){
 }
 
 void CmdRobotWorker::sendCommand(const QString cmd){
-    qDebug() << "(Robot" << robotName << ") Command to send :" << (cmd + " } ") << "to" << ipAddress << "at port " << port;
-    int nbDataSend = socket->write(QString(cmd + " } ").toUtf8());
+    qDebug() << "(Robot" << robotName << ") Command to send :" << (cmd + " " + static_cast<int8_t>(23) + " ") << "to" << ipAddress << "at port " << port;
+    int nbDataSend = socket->write(QString(cmd + " " + static_cast<int8_t>(23) + " ").toUtf8());
 
     socket->waitForBytesWritten(100);
 
