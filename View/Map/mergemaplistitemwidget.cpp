@@ -53,6 +53,11 @@ void MergeMapListItemWidget::initializeMenu(QString _fileName){
             mapConfig.close();
 
             qDebug() << "MergeMapListItemWidget::initializeMenu Got a resolution and origin" << resolution << origin;
+            if(resolution <= 0){
+                resolution = -1;
+                origin = QPointF(-1, -1);
+                qDebug() << "MergeMapListItemWidget::initializeMenu The resolution is negative so we set it at" << resolution << origin;
+            }
         } else
             qDebug() << "MergeMapListItemWidget::initializeMenu no config file found for the map" << _fileName;
     } else
@@ -105,6 +110,7 @@ void MergeMapListItemWidget::initializeMenu(QString _fileName){
 void MergeMapListItemWidget::initializeMap(QString _fileName, QGraphicsScene* scene, QImage image){
     if(!fromRobot)
         image = QImage(_fileName,"PGM");
+
 
     int top = image.height();
     int bottom = 0;

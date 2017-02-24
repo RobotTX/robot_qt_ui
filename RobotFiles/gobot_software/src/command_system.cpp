@@ -805,18 +805,33 @@ void session(boost::shared_ptr<tcp::socket> sock, ros::NodeHandle n){
 				disconnect();
         	} else if (error) 
 				throw boost::system::system_error(error); // Some other error.
-
+/*
 			std::istringstream iss(data);
 
 			while (iss && !finishedCmd && ros::ok() && connected){
 				std::string sub;
 				iss >> sub;
+				std::cout << "(Command system) Sub command :" << sub << std::endl;
 				if(sub.compare("}") == 0){
 					std::cout << "(Command system) Command complete" << std::endl;
 					finishedCmd = 1;
 				} else 
 					commandStr += sub + " ";
 			}
+*/
+
+			for(int i = 0; i < length; i++){
+				if(static_cast<int>(data[i]) != 0){
+					if(static_cast<int>(data[i]) == '}'){
+						std::cout << "(Command system) Command complete" << std::endl;
+						finishedCmd = 1;
+						i = length;
+					} else
+						commandStr += data[i];
+				}
+			}
+
+
 
 			if(commandStr.length() > 0){
 				command.push_back(std::string(1, commandStr.at(0)));

@@ -1260,7 +1260,7 @@ void MainWindow::mapReceivedSlot(const QByteArray mapArray, int who, QString map
         QString robotName = robotsController->getRobots()->getRobotViewByIp(ipAddress)->getRobot()->getName();
         QImage image = mapController->getImageFromArray(mapArray, false);
         image.save(QDir::currentPath() + QDir::separator() + "brutos", "PNG");
-        emit receivedScanMap(robotName, image, resolution.toDouble());
+        emit receivedScanMap(robotName, image, mapController->getMap()->getResolution());
     }
 }
 
@@ -1312,9 +1312,9 @@ void MainWindow::saveMap(QString fileName){
 }
 
 void MainWindow::loadMapBtnEvent(){
-    qDebug() << "loadMapBtnEvent called";
+    qDebug() << "MainWindow::loadMapBtnEvent called";
     QMessageBox box;
-    box.setText("Warning, loading a new map will erase all previously created points, paths and selected home of robotsController->getRobots(). Do you wish to save your current configuration first ?");
+    box.setText("Warning, loading a new map will erase all previously created points, paths and selected home of robots. Do you wish to save your current configuration first ?");
     QAbstractButton* saveButton = box.addButton("Save and load", QMessageBox::YesRole);
     box.addButton("Load", QMessageBox::YesRole);
     QPushButton* cancelButton = box.addButton("Cancel", QMessageBox::NoRole);
@@ -1337,7 +1337,7 @@ void MainWindow::loadMapBtnEvent(){
 
         QFileInfo mapFileInfo(static_cast<QDir> (fileNameWithoutExtension), "");
         QString filePath(QDir::currentPath() + QDir::separator() +  "mapConfigs" + QDir::separator() + mapFileInfo.fileName() + ".config");
-        qDebug() << filePath << "map to load";
+        qDebug() << "MainWindow::loadMapBtnEvent map to load :" << filePath;
         /// if we are able to find the configuration then we load the map
         if(mapController->loadMapConfig(filePath.toStdString())){
 

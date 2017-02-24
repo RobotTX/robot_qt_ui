@@ -212,7 +212,7 @@ void ScanMapWidget::saveSlot(){
             //image.save("/home/m-a/Desktop/2.pgm");
 
             /// If we got a resolution proceed, else we don't save
-            if(resolution != -1){
+            if(resolution > 0){
                 qDebug() << "ScanMapWidget::saveSlot final origin in pixel :" << resolution << -image.width()*resolution/2;
 
                 /// Reconvert the new origin from pixel coordinates to the system used by the robot
@@ -329,7 +329,7 @@ void ScanMapWidget::robotScanningSlot(bool scan, QString robotName, bool success
 
 void ScanMapWidget::receivedScanMapSlot(QString robotName, QImage map, double _resolution){
     mapSize = map.size();
-    if(_resolution != -1)
+    if(_resolution > 0)
         resolution = _resolution;
     /// looks for the right item in the list to update the map of the corresponding robot
     for(int i = 0; i < listWidget->count(); i++){

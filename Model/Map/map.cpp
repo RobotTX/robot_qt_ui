@@ -10,18 +10,36 @@ Map::Map(): modified(false) {
     std::ifstream file((QDir::currentPath() + QDir::separator() + "currentMap.txt").toStdString(), std::ios::in);
 
     if(file){
-        double centerX, centerY, originX, originY;
-        std::string _dateTime, _mapId;
-        file >> mapFile >> height >> width >> centerX >> centerY >> mapState.second >> originX >> originY >> resolution >> _dateTime >> _mapId;
-        qDebug() << "CurrentMap.txt :" << QString::fromStdString(mapFile) << height << width
-                 << centerX << centerY << originX << originY << resolution
-                 << QString::fromStdString(_dateTime) << QString::fromStdString(_mapId);
-        mapState.first.setX(centerX);
-        mapState.first.setY(centerY);
-        origin = Position(originX, originY);
-        dateTime = QDateTime::fromString(QString::fromStdString(_dateTime), "yyyy-MM-dd-hh-mm-ss");
-        mapId = QUuid(QString::fromStdString(_mapId));
+        /// We get the path of the map to use so that we can deduce the path of its config file
+        std::string _dateTime, osef;
+        file >> mapFile >> osef >> osef >> osef >> osef >> osef >> osef >> osef >> osef >> _dateTime >> osef;
         file.close();
+
+        qDebug() << "Map::Map full map path :" << QString::fromStdString(mapFile);
+        /// We get the config file from the map file
+        QString fileName = QString::fromStdString(mapFile);
+        fileName.remove(0, fileName.lastIndexOf(QDir::separator()) + 1);
+        fileName.remove(fileName.length() - 4, 4);
+        QString configPath = QDir::currentPath() + QDir::separator() + "mapConfigs" + QDir::separator() + fileName + ".config";
+
+        qDebug() << "Map::Map config path :" << configPath;
+
+        /// We get the map informations from the map config file
+        std::ifstream pathFile(configPath.toStdString(), std::ios::in);
+        if(pathFile){
+            double centerX, centerY, originX, originY;
+            std::string _mapId;
+            pathFile >> mapFile >> height >> width >> centerX >> centerY >> mapState.second >> originX >> originY >> resolution >> _mapId;
+            qDebug() << "Map::Map all info :" << QString::fromStdString(mapFile) << height << width
+                     << centerX << centerY << originX << originY << resolution
+                     << QString::fromStdString(_dateTime) << QString::fromStdString(_mapId);
+            mapState.first.setX(centerX);
+            mapState.first.setY(centerY);
+            origin = Position(originX, originY);
+            dateTime = QDateTime::fromString(QString::fromStdString(_dateTime), "yyyy-MM-dd-hh-mm-ss");
+            mapId = QUuid(QString::fromStdString(_mapId));
+            pathFile.close();
+        }
     }
 
     if(!mapFile.compare("")){
@@ -88,7 +106,7 @@ QImage Map::getImageFromArray(const QByteArray& mapArrays, const int map_width, 
 
         for(int j = 0; j < static_cast<int> (count); j++){
             /// Sometimes we receive too much informations so we need to check
-            if(index > static_cast<uint>(map_width*map_height))
+            if(index >= static_cast<uint>(map_width*map_height))
                 return image;
 
             image.setPixelColor(QPoint(static_cast<int>(index%map_width), shift + sign * (static_cast<int>(index/map_width))), QColor(color, color, color));
