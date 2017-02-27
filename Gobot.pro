@@ -34,3 +34,5 @@ FORMS += \
 HEADERS += \
 
 DISTFILES += \
+    Customs/MenuButtons.qml \
+    MenuButton.qml

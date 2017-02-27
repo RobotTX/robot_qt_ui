@@ -1,25 +1,26 @@
 import QtQuick 2.7
 import QtQuick.Controls 2.0
 import QtQuick.Layouts 1.0
+import "Customs/."
 
 ApplicationWindow {
     id: applicationWindow
     visible: true
-    width: 640
-    height: 480
+    width: 1000
+    height: 700
     title: qsTr("Gobot :)")
 
     ColumnLayout {
         id: rowLayout
         x: 0
         y: 0
-        width: 640
-        height: 480
         spacing: 0
+        anchors.top: parent.top
+        anchors.bottom: parent.bottom
 
         GroupBox {
             id: groupBox
-            width: 200
+            width: 66
             padding: 0
             rightPadding: 0
             bottomPadding: 0
@@ -30,55 +31,47 @@ ApplicationWindow {
             Layout.fillHeight: true
             spacing: 0
 
-            Flow {
-                id: columnLayout1
-                width: 100
-                Layout.fillWidth: true
-                Layout.fillHeight: true
-                Button {
-                    id: button5
-                    text: qsTr("Robot")
-                    checked: true
-                    autoExclusive: true
-                    checkable: true
-                    Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-                }
+            background: Rectangle {
+                color: "#27313a"
+                opacity: 0.8
+            }
 
-                Button {
-                    id: button6
-                    text: qsTr("Path")
-                    transformOrigin: Item.Center
-                    Layout.fillWidth: true
-                    Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-                    autoExclusive: true
-                    checkable: true
-                }
+            MenuButton {
+                id: robotButton
+                txt: qsTr("Robot")
+                imgSrc: "qrc:/icons/robot_checked.png"
+                checked: true
+                x:0
+                y:0
+            }
 
-                Button {
-                    id: button7
-                    text: qsTr("Point")
-                    Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-                    autoExclusive: true
-                    checkable: true
-                }
+            MenuButton {
+                id: pathButton
+                txt: qsTr("Path")
+                imgSrc: "qrc:/icons/path.png"
+                anchors.top: robotButton.bottom
+            }
 
-                Button {
-                    id: button8
-                    text: qsTr("Map")
-                    Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-                    autoExclusive: true
-                    checkable: true
-                }
+            MenuButton {
+                id: pointButton
+                txt: qsTr("Point")
+                imgSrc: "qrc:/icons/point.png"
+                anchors.top: pathButton.bottom
+            }
+
+            MenuButton {
+                id: mapButton
+                txt: qsTr("Map")
+                imgSrc: "qrc:/icons/map.png"
+                anchors.top: pointButton.bottom
+            }
+
+            MenuButton {
+                id: settingsButton
+                txt: qsTr("Settings")
+                imgSrc: "qrc:/icons/settings.png"
+                anchors.bottom: parent.bottom
             }
         }
-
-        Button {
-            id: button9
-            text: qsTr("Settings")
-            Layout.alignment: Qt.AlignLeft | Qt.AlignBottom
-            autoExclusive: true
-            checkable: true
-        }
-
     }
 }

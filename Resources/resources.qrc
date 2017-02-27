@@ -1,3 +1,20 @@
 <RCC>
-    <qresource prefix="/maps"/>
+    <qresource prefix="/maps">
+        <file>map.pgm</file>
+    </qresource>
+    <qresource prefix="/icons">
+        <file alias="map_checked.png">icons/icMap_checked.png</file>
+        <file alias="map.png">icons/icMap_normal.png</file>
+
+        <file alias="robot_checked.png">icons/icRobot_checked.png</file>
+        <file alias="robot.png">icons/icRobot_normal.png</file>
+
+        <file alias="path_checked.png">icons/icPath_checked.png</file>
+        <file alias="path.png">icons/icPath_normal.png</file>
+
+        <file alias="point_checked.png">icons/icPoint_checked.png</file>
+        <file alias="point.png">icons/icPoint_normal.png</file>
+
+        <file alias="settings.png">icons/icSettings_normal.png</file>
+    </qresource>
 </RCC>
