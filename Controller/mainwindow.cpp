@@ -231,7 +231,6 @@ void MainWindow::startScanningSlot(QString robotName){
 
 void MainWindow::stopScanningSlot(QStringList listRobot){
     qDebug() << "MainWindow::stopScanningSlot";
-
     for(int i = 0; i < listRobot.count(); i++){
         QPointer<RobotView> robotView = robotsController->getRobots()->getRobotViewByName(listRobot.at(i));
         if(robotView && robotView->getRobot()){
@@ -1152,19 +1151,18 @@ void MainWindow::openPositionRecoveryWidget() {
 
 void MainWindow::startRecoveringSlot(QString robotName){
     qDebug() << "MainWindow::startRecoveringSlot called" << robotName;
-
     QPointer<RobotView> robotView = robotsController->getRobots()->getRobotViewByName(robotName);
     if(robotView){
         if(!commandController->sendCommand(robotView->getRobot(), QString("v"), "", "", "", true))
+            /// will call startedRecoveringSlot in the robot position recovery widget
             emit startedRecovering(robotName, false);
     } else
+        /// will call startedRecoveringSlot in the robot position recovery widget
         emit startedRecovering(robotName, false);
 }
 
-
 void MainWindow::stopRecoveringRobotsSlot(QStringList listRobot){
     qDebug() << "MainWindow::stopRecoveringRobotsSlot";
-
     for(int i = 0; i < listRobot.count(); i++){
         QPointer<RobotView> robotView = robotsController->getRobots()->getRobotViewByName(listRobot.at(i));
         if(robotView && robotView->getRobot()){
@@ -1181,11 +1179,9 @@ void MainWindow::playRecoverySlot(bool recover, QString robotName){
     QPointer<RobotView> robotView = robotsController->getRobots()->getRobotViewByName(robotName);
     if(robotView){
         if(recover){
-            /// If the robot is scanning or was scanning, gmapping is launched so we just want to subscribe to get the map
-            /// else we ask if we want to relaunch gmapping and start the scan again
+            ///
             if(robotView->getRobot()->isRecovering()){
-                /// TODO check what to do here
-                if(commandController->sendCommand(robotView->getRobot(), QString("v"), "", "", "", recover))
+                if(!commandController->sendCommand(robotView->getRobot(), QString("v"), "", "", "", recover))
                     emit robotRecovering(recover, robotName, false);
             } else {
                 QMessageBox msgBox;
@@ -1208,7 +1204,6 @@ void MainWindow::playRecoverySlot(bool recover, QString robotName){
                 }
             }
         } else {
-            /// TODO check what to do about this send command
             if(!commandController->sendCommand(robotView->getRobot(), QString("w"), "", "", "", recover))
                 emit robotRecovering(recover, robotName, false);
         }
@@ -2192,8 +2187,10 @@ void MainWindow::updateRobotInfo(QString robotName, QString robotInfo){
         updateMapInfo(robotName, mapId, mapDate);
 
 
-        if(robotView && robotView->getRobot())
+        if(robotView && robotView->getRobot()){
             robotView->getRobot()->setScanning(scanning);
+            robotView->getRobot()->setRecovering(recovering);
+        }
         else
             return;
 
@@ -2714,7 +2711,7 @@ void MainWindow::relayTutorialSignal(const bool messageNeeded){
     emit tutorialSignal(messageNeeded, currentFeature);
 }
 
-void MainWindow::commandDoneSlot(QString cmdName, bool success, QString robotName, QString newRobotName, QString groupName, QString pathName, bool scan, int nb, QStringList path){
+void MainWindow::commandDoneSlot(QString cmdName, bool success, QString robotName, QString newRobotName, QString groupName, QString pathName, bool scan_or_recover, int nb, QStringList path){
     //qDebug() << "MainWindow::commandDoneSlot" << cmdName << success << newRobotName << groupName << pathName << scan << nb << path;
 
     if(!cmdName.isEmpty()){
@@ -2737,11 +2734,11 @@ void MainWindow::commandDoneSlot(QString cmdName, bool success, QString robotNam
             break;
             case 'e':
                 /// Played the scan of the map
-                commandDonePlayScan(success, scan, robotName);
+                commandDonePlayScan(success, scan_or_recover, robotName);
             break;
             case 'f':
                 /// Paused the scan of the map
-                commandDonePlayScan(success, scan, robotName);
+                commandDonePlayScan(success, scan_or_recover, robotName);
             break;
             case 'g':
                 /// Updated the name & wifi of the robot
@@ -2753,7 +2750,7 @@ void MainWindow::commandDoneSlot(QString cmdName, bool success, QString robotNam
             break;
             case 'i':
                 /// Sent a new path to the robot
-                commandDoneSendPath(success, scan, robotName, groupName, pathName, path);
+                commandDoneSendPath(success, scan_or_recover, robotName, groupName, pathName, path);
             break;
             case 'j':
                 /// Played the path of the robot
@@ -2798,7 +2795,7 @@ void MainWindow::commandDoneSlot(QString cmdName, bool success, QString robotNam
             break;
             case 't':
                 /// Started a new scan
-                commandDoneStartScan(success, scan, robotName);
+                commandDoneStartScan(success, scan_or_recover, robotName);
             break;
             case 'u':
                 /// Stopped the current scan
@@ -2806,11 +2803,11 @@ void MainWindow::commandDoneSlot(QString cmdName, bool success, QString robotNam
             break;
             case 'v':
                 /// started to recover the position of a robot
-                commandDoneStartRecovery(success, robotName);
+                commandDoneStartRecovery(success, scan_or_recover, robotName);
             break;
             case 'w':
                 /// stopped to recover the position of a robot
-                commandDoneStopRecovery(success, robotName);
+                commandDoneStopRecovery(success, scan_or_recover, robotName);
             break;
             default:
                 /// Unknown/unused command or we simply don't care
@@ -3073,6 +3070,7 @@ void MainWindow::commandDoneGoHome(bool success, QString robotName){
 void MainWindow::commandDoneStartScan(bool success, bool scan, QString robotName){
     QPointer<RobotView> robotView = robotsController->getRobots()->getRobotViewByName(robotName);
     if(robotView){
+        /// if scan is true robot was not already scanning so we add the item
         if(scan){
             if(success){
                 emit startedScanning(robotName, true);
@@ -3100,25 +3098,34 @@ void MainWindow::commandDoneStopScan(bool success, QString robotName){
     }
 }
 
-void MainWindow::commandDoneStartRecovery(bool success, QString robotName){
+void MainWindow::commandDoneStartRecovery(bool success, bool recover, QString robotName){
     QPointer<RobotView> robotView = robotsController->getRobots()->getRobotViewByName(robotName);
     if(robotView){
-        emit startedRecovering(robotName, success);
-        robotView->getRobot()->setRecovering(success);
-    } else {
-        qDebug() << "MainWindow::commandDoneStartRecovery called but could not find the robot";
-        Q_UNREACHABLE();
+        /// if scan is true robot was not already scanning so we add the item
+        if(recover){
+            if(success){
+                emit startedRecovering(robotName, true);
+                robotView->getRobot()->setRecovering(true);
+            } else
+                emit startedRecovering(robotName, false);
+        } else {
+            if(success){
+                emit robotRecovering(recover, robotName, true);
+                robotView->getRobot()->setRecovering(true);
+            } else
+                emit robotRecovering(recover, robotName, false);
+        }
     }
 }
 
-void MainWindow::commandDoneStopRecovery(bool success, QString robotName){
+void MainWindow::commandDoneStopRecovery(bool success, bool recover, QString robotName){
     QPointer<RobotView> robotView = robotsController->getRobots()->getRobotViewByName(robotName);
     if(robotView && success){
-       robotView->getRobot()->setRecovering(false);
+       emit robotRecovering(recover, robotName, success);
        qDebug() << "MainWindow::commandDoneStopRecovery called " << robotName << " stopped recovering its position " ;
     } else {
         qDebug() << "MainWindow::commandDoneStopRecovery called but could not find robot " << robotName;
-        Q_UNREACHABLE();
+        qDebug() << "If you end up here it's probably that the robot disconnected";
     }
 
 }

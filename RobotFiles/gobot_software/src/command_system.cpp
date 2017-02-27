@@ -36,6 +36,9 @@ ros::ServiceClient stopRecoveringPositionClient;
 ros::ServiceClient checkLocalizationClient;
 ros::ServiceClient stopCheckingLocalizationClient;
 
+ros::ServiceClient connectToParticleCloudClient;
+ros::ServiceClient startSendingParticleCloudDataClient;
+
 // to get the local map to be send to recover the robot's position
 ros::ServiceClient sendLocalMapClient;
 ros::ServiceClient stopSendingLocalMapClient;
@@ -48,6 +51,7 @@ int robot_pos_port = 4001;
 int map_port = 4002;
 int laser_port = 4003;
 int recovered_position_port = 4004;
+int particle_cloud_port = 4005;
 
 std::string path_computer_software = "/home/gtdollar/computer_software/";
 
@@ -195,6 +199,7 @@ bool execCommand(ros::NodeHandle n, std::vector<std::string> command){
 				startMetadata();
 				startMap();
 				startLaserData(startLaser);
+				connectToParticleCloudNode();
 				return true;
 			} else
 				std::cout << "(Command system) Parameter missing" << std::endl;
@@ -434,7 +439,7 @@ bool execCommand(ros::NodeHandle n, std::vector<std::string> command){
 			if(command.size() == 1) {
 				std::cout << "(Command system) Gobot tries to recover its position" << std::endl;
 				recovering = true;
-				if(sendLocalMap())
+				if(startSendingParticleCloud())
 					return recoverPosition();
 				else
 					std::cout << "(Command system) Could not get the local map" << std::endl;
@@ -694,6 +699,30 @@ bool stopLaserData(){
 		return true;
 	} else {
 		std::cerr << "(Command system) failed to call service stop_sending_laser_data" << std::endl;
+		return false;
+	}
+}
+
+bool connectToParticleCloudNode(){
+	gobot_software::Port srv;
+	srv.request.port = particle_cloud_port;
+
+	if (connectToParticleCloudClient.call(srv)) {
+		std::cout << "(Command system) connect_particle_cloud service started" << std::endl;
+		return true;
+	} else {
+		std::cerr << "(Command system) Failed to call service connect_particle_cloud" << std::endl;
+		return false;
+	}
+}
+
+bool startSendingParticleCloud(void){
+	std_srvs::Empty srv;
+	if(startSendingParticleCloudDataClient.call(srv)){
+		std::cout << "Command system send_particle_cloud_data started" << std::endl;
+		return true;
+	} else {
+		std::cerr << "(Command system) failed to call service send_particle_cloud_data" << std::endl;
 		return false;
 	}
 }
@@ -1007,6 +1036,9 @@ int main(int argc, char* argv[]){
 		stopRecoveringPositionClient = n.serviceClient<std_srvs::Empty>("stop_recovering_position");
 		checkLocalizationClient = n.serviceClient<std_srvs::Empty>("check_localization");
 		stopCheckingLocalizationClient = n.serviceClient<std_srvs::Empty>("stop_checking_localization");
+
+		connectToParticleCloudClient = n.serviceClient<gobot_software::Port>("connect_particle_cloud");
+		startSendingParticleCloudDataClient = n.serviceClient<std_srvs::Empty>("send_particle_cloud_data");
 
 		sendLocalMapClient = n.serviceClient<std_srvs::Empty>("send_local_map");
 		stopSendingLocalMapClient = n.serviceClient<std_srvs::Empty>("stop_sending_local_map");

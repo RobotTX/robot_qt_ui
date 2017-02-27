@@ -9,7 +9,7 @@
 #include "Model/Map/map.h"
 
 CommandController::CommandController(QWidget *parent)
-    : QObject(parent), robotName(""), messageBox(parent), stop(false), newRobotName(""), groupName(""), pathName(""), scan(false), nb(-1), path(QStringList())
+    : QObject(parent), robotName(""), messageBox(parent), stop(false), newRobotName(""), groupName(""), pathName(""), scan_or_recover(false), nb(-1), path(QStringList())
 {
     messageBox.setWindowTitle("Processing a command");
     connect(&messageBox, SIGNAL(hideBox()), this, SLOT(commandFailed()));
@@ -17,7 +17,7 @@ CommandController::CommandController(QWidget *parent)
 
 bool CommandController::sendCommand(QPointer<Robot> robot, QString cmd,
                                     QString _newRobotName, QString _groupName,
-                                    QString _pathName, bool _scan,
+                                    QString _pathName, bool _scan_or_recover,
                                     /// to perform different tasks using the same command (for the command i)
                                     int _nb, QStringList _path){
 
@@ -38,11 +38,11 @@ bool CommandController::sendCommand(QPointer<Robot> robot, QString cmd,
             cmdName = listCmd.at(0);
             groupName = _groupName;
             pathName = _pathName;
-            scan = _scan;
+            scan_or_recover = _scan_or_recover;
             nb = _nb;
             newRobotName = _newRobotName;
             path = _path;
-            qDebug() << "CommandController::sendCommand" << robotName << cmdName << newRobotName << groupName << pathName << scan << nb << path;
+            qDebug() << "CommandController::sendCommand" << robotName << cmdName << newRobotName << groupName << pathName << _scan_or_recover << nb << path;
 
             cmdAnswerSlot(listCmd.at(0)+" done");
             return true;
@@ -53,17 +53,19 @@ bool CommandController::sendCommand(QPointer<Robot> robot, QString cmd,
                 return false;
             }
 
+
+
             robot->sendCommand(cmd);
 
             robotName = robot->getName();
             cmdName = listCmd.at(0);
             groupName = _groupName;
             pathName = _pathName;
-            scan = _scan;
+            scan_or_recover = _scan_or_recover;
             nb = _nb;
             newRobotName = _newRobotName;
             path = _path;
-            qDebug() << "CommandController::sendCommand" << robotName << cmdName << newRobotName << groupName << pathName << scan << nb << path;
+            qDebug() << "CommandController::sendCommand" << robotName << cmdName << newRobotName << groupName << pathName << scan_or_recover << nb << path;
 
             openMessageBox(listCmd);
             return true;
@@ -107,7 +109,7 @@ void CommandController::cmdAnswerSlot(QString answer){
         Q_UNREACHABLE();
     }
 
-    emit commandDone(cmdName, success, robotName, newRobotName, groupName, pathName, scan, nb, path);
+    emit commandDone(cmdName, success, robotName, newRobotName, groupName, pathName, scan_or_recover, nb, path);
     resetParams();
 }
 
@@ -116,7 +118,7 @@ void CommandController::resetParams(){
     cmdName = "";
     groupName = "";
     pathName = "";
-    scan = false;
+    scan_or_recover = false;
     nb = -1;
     newRobotName = "";
     path = QStringList();
@@ -131,7 +133,7 @@ void CommandController::robotDisconnected(QString _robotName){
 
 void CommandController::commandFailed(){
     messageBox.hide();
-    emit commandDone(cmdName, false, robotName, newRobotName, groupName, pathName, scan, nb, path);
+    emit commandDone(cmdName, false, robotName, newRobotName, groupName, pathName, scan_or_recover, nb, path);
     resetParams();
 }
 
@@ -208,6 +210,12 @@ void CommandController::openMessageBox(QStringList listCmd){
         break;
     case 'u':
         msg = "Stopping the current scan";
+        break;
+    case 'v':
+        msg = "Initiating the recovery of the robot";
+        break;
+    case 'w':
+        msg = "Aborting the recovery of the robot";
         break;
     default:
         msg = "Unknown command " + cmd.at(0).unicode();

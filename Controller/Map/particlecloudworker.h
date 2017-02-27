@@ -1,18 +1,18 @@
-#ifndef LOCALMAPWORKER_H
-#define LOCALMAPWORKER_H
+#ifndef PARTICLECLOUDWORKER_H
+#define PARTICLECLOUDWORKER_H
 
 #include <QObject>
-#include <QThread>
-#include <QString>
-#include <QtNetwork/QTcpSocket>
 #include <QPointer>
+#include <QtNetwork/QTcpSocket>
+#include <QThread>
 
-class LocalMapWorker: public QObject
-{
+class ParticleCloudWorker: public QObject {
+
     Q_OBJECT
+
 public:
-    LocalMapWorker(const QString _ipAddress, const int _port);
-    ~LocalMapWorker();
+    ParticleCloudWorker(const QString _ipAddress, const int _port);
+    ~ParticleCloudWorker();
 
 private slots:
     /**
@@ -41,14 +41,6 @@ private slots:
      */
     void connectSocket();
 
-signals:
-    /// used to draw the obstacles around the robot, the ranges represent the distance to the obstacles
-    /// for each angle within the range, the range is [angle_min, angle_max]
-    /// two angles differ by <angle_increment>
-    void laserValues(float angle_min, float angle_max, float angle_increment, QVector<float> ranges, QString ipAddress);
-    /// to add an entry for this robot in the obstacles map in order to draw the obstacles around it in real time
-    void addNewRobotObstacles(QString ip);
-
 private:
     QPointer<QTcpSocket> socket;
     QString ipAddress;
@@ -57,4 +49,4 @@ private:
     QByteArray data;
 };
 
-#endif /// LOCALMAPWORKER_H
+#endif /// PARTICLECLOUDWORKER_H

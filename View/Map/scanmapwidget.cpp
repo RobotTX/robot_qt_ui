@@ -18,12 +18,17 @@ ScanMapWidget::ScanMapWidget(QSharedPointer<Robots> _robots, QWidget* parent)
     : QDialog(parent), robots(_robots), mapSize(QSize()), resolution(-1){
 
     setAttribute(Qt::WA_DeleteOnClose);
+
+    /// If mouse tracking is enabled, the widget receives mouse move events even if no buttons are pressed.
     setMouseTracking(true);
+
     layout = new QHBoxLayout(this);
 
     initializeMap();
+
     initializeMenu();
 
+    /// a graphicView to add the maps received from the robot
     layout->addWidget(graphicsView);
 
     resize(800, 600);
@@ -33,7 +38,6 @@ ScanMapWidget::ScanMapWidget(QSharedPointer<Robots> _robots, QWidget* parent)
     int x = (screenGeometry.width() - width()) / 2;
     int y = (screenGeometry.height() - height()) / 2;
     move(x, y);
-
 }
 
 void ScanMapWidget::initializeMenu(){
@@ -75,7 +79,6 @@ void ScanMapWidget::initializeMenu(){
     teleopLayout->addWidget(teleopWidget);
     menuLayout->addLayout(teleopLayout);
 
-
     /// Cancel + Save button
     QHBoxLayout* cancelSaveLayout = new QHBoxLayout();
     CustomPushButton* cancelBtn = new CustomPushButton("Cancel", this, CustomPushButton::ButtonType::LEFT_MENU, "center");
@@ -105,6 +108,7 @@ void ScanMapWidget::initializeMap(){
     scene = new QGraphicsScene(this);
 
     /// Set the background of the scene as the same grey used in the map
+    /// so that it looks better when a map is received with a lot of grey
     scene->setBackgroundBrush(QBrush(QColor(205, 205, 205)));
 
     graphicsView = new CustomQGraphicsView(scene, this);
@@ -119,6 +123,7 @@ void ScanMapWidget::addImageRobotSlot(){
     if(robots->getRobotsVector().size() > 0){
         QMenu menu(this);
         QStringList list;
+
         /// Create a list of already scanning robots so we can't add them twice
         for(int i = 0; i < listWidget->count(); i++)
             list.push_back(static_cast<ScanMapListItemWidget*>(listWidget->itemWidget(listWidget->item(i)))->getRobotName());
@@ -176,8 +181,7 @@ void ScanMapWidget::addMapWidget(QString name){
     connect(listItem, SIGNAL(robotGoTo(QString, double, double)), this, SLOT(robotGoToSlot(QString, double, double)));
     connect(listItem, SIGNAL(centerOn(QGraphicsItem*)), this, SLOT(centerOnSlot(QGraphicsItem*)));
 
-
-    /// We add the path point widget to the list
+    /// We add a new item to the list
     QListWidgetItem* listWidgetItem = new QListWidgetItem(listWidget);
     listWidgetItem->setSizeHint(QSize(listWidgetItem->sizeHint().width(), LIST_WIDGET_HEIGHT));
     listWidgetItem->setBackgroundColor(QColor(255, 255, 255, 10));
@@ -263,7 +267,7 @@ QStringList ScanMapWidget::getAllScanningRobots(){
 void ScanMapWidget::robotDisconnectedSlot(QString robotName){
     for(int i = 0; i < listWidget->count(); i++){
         ScanMapListItemWidget* item = static_cast<ScanMapListItemWidget*>(listWidget->itemWidget(listWidget->item(i)));
-        if(item->getRobotName() == robotName)
+        if(item->getRobotName().compare(robotName) == 0)
             item->robotConnected(false);
     }
 }
@@ -312,7 +316,7 @@ void ScanMapWidget::playScanSlot(bool scan, QString robotName){
 void ScanMapWidget::robotScanningSlot(bool scan, QString robotName, bool success){
     for(int i = 0; i < listWidget->count(); i++){
         ScanMapListItemWidget* item = static_cast<ScanMapListItemWidget*>(listWidget->itemWidget(listWidget->item(i)));
-        if(item->getRobotName() == robotName)
+        if(item->getRobotName().compare(robotName) == 0)
             item->robotScanning(scan == success);
     }
 

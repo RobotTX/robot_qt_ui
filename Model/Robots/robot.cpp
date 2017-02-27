@@ -62,6 +62,10 @@ void Robot::stopThreads() {
     emit stopTeleopWorker();
     teleopThread.quit();
     teleopThread.wait();
+
+    emit stopParticleCloudWorker();
+    particleCloudThread.quit();
+    particleCloudThread.wait();
 }
 
 void Robot::portSentSlot(){
@@ -71,6 +75,7 @@ void Robot::portSentSlot(){
     emit startLocalMapWorker();
     emit startMapWorker();
     emit startTeleopWorker();
+    emit startParticleCloudWorker();
 }
 
 std::ostream& operator <<(std::ostream& stream, Robot const& robot){
@@ -118,7 +123,7 @@ void Robot::doneSendingMapSlot(){
 }
 
 void Robot::ping(){
-    qDebug() << "Robot::ping" << name;
+    //qDebug() << "Robot::ping" << name;
     emit pingSignal();
 }
 
@@ -225,6 +230,13 @@ void Robot::launchWorkers(MainWindow* mainWindow){
     connect(this, SIGNAL(teleopCmd(int)), teleopWorker, SLOT(writeTcpDataSlot(int)));
     teleopWorker->moveToThread(&mapThread);
     mapThread.start();
+
+    particleCloudWorker = QPointer<ParticleCloudWorker>(new ParticleCloudWorker(ip, PORT_PARTICLE_CLOUD));
+    connect(&particleCloudThread, SIGNAL(finished()), particleCloudWorker, SLOT(deleteLater()));
+    connect(this, SIGNAL(startParticleCloudWorker()), particleCloudWorker, SLOT(connectSocket()));
+    connect(this, SIGNAL(stopParticleCloudWorker()), particleCloudWorker, SLOT(stopWorker()));
+    particleCloudWorker->moveToThread(&particleCloudThread);
+    particleCloudThread.start();
 
     emit startCmdRobotWorker();
 }

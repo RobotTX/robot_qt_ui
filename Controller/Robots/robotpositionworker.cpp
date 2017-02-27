@@ -60,7 +60,7 @@ void RobotPositionWorker::readTcpDataSlot(){
     else
         pasOk++;
 
-    qDebug() << "Robot" << ipAddress << " ok :" << ok << "vs pas ok:" << pasOk << "for a total of" << ok + pasOk << "so" << (float)((float)ok/(float)(ok+pasOk))*100 << "%";
+    //qDebug() << "Robot" << ipAddress << " ok :" << ok << "vs pas ok:" << pasOk << "for a total of" << ok + pasOk << "so" << (float)((float)ok/(float)(ok+pasOk))*100 << "%";
 
 
     /// the IP address is send along to identify the robot

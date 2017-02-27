@@ -59,4 +59,6 @@ void stopTwist();
 bool recoverPosition();
 bool stopRecoveringPosition();
 bool sendLocalMap();
+bool connectToParticleCloudNode(void);
+bool startSendingParticleCloud(void);
 #endif

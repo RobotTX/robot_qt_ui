@@ -31,7 +31,7 @@ RobotPositionRecovery::RobotPositionRecovery(QSharedPointer<Robots> _robots, QWi
 
     initializeMenu();
 
-    /// to add the maps received from the robot
+    /// a graphicView to add the maps received from the robot
     mainLayout->addWidget(graphicsView);
 
     resize(800, 600);
@@ -264,13 +264,17 @@ QStringList RobotPositionRecovery::getAllRecoveringRobots() const {
 
 void RobotPositionRecovery::robotMenuSlot(QAction* action){
     qDebug() << "RobotPositionRecovery::robotMenuSlot called" << action->text();
+    /// called when a robot is clicked in the menu
     emit startRecovering(action->text());
 }
 
 void RobotPositionRecovery::startedRecoveringSlot(QString robotName, bool recovering){
     qDebug() << "RobotPositionRecovery::startedRecoveringSlot called" << robotName << recovering;
-    if(recovering)
-        addMapWidget(robotName);
+    QStringList list = getAllRecoveringRobots();
+    if(recovering){
+        if(!list.contains(robotName))
+            addMapWidget(robotName);
+    }
     else {
         QMessageBox msgBox;
         msgBox.setText(robotName + "could not start recovering, please try again");
@@ -281,7 +285,10 @@ void RobotPositionRecovery::startedRecoveringSlot(QString robotName, bool recove
 }
 
 void RobotPositionRecovery::addMapWidget(QString name){
+    /// called after the recovery started
+
     qDebug() << "RobotPositionRecovery::addMapWidget" << name;
+    /// allow the creation of a new item on the menu at the left as well as a map and a robot view on the map
     RobotPositionRecoveryListItemWidget* listItem = new RobotPositionRecoveryListItemWidget(listWidget->count(), name, robots, scene);
 
     connect(listItem, SIGNAL(deleteMap(int, QString)), this, SLOT(deleteMapSlot(int, QString)));
@@ -289,7 +296,7 @@ void RobotPositionRecovery::addMapWidget(QString name){
     connect(listItem, SIGNAL(robotGoTo(QString, double, double)), this, SLOT(robotGoToSlot(QString, double, double)));
     connect(listItem, SIGNAL(centerOn(QGraphicsItem*)), this, SLOT(centerOnSlot(QGraphicsItem*)));
 
-    /// We add the path point widget to the list
+    /// We add a new item to the list
     QListWidgetItem* listWidgetItem = new QListWidgetItem(listWidget);
     listWidgetItem->setSizeHint(QSize(listWidgetItem->sizeHint().width(), LIST_WIDGET_HEIGHT));
     listWidgetItem->setBackgroundColor(QColor(255, 255, 255, 10));
@@ -301,7 +308,7 @@ void RobotPositionRecovery::addMapWidget(QString name){
 void RobotPositionRecovery::robotDisconnectedSlot(QString robotName){
     for(int i = 0; i < listWidget->count(); i++){
         RobotPositionRecoveryListItemWidget* item = static_cast<RobotPositionRecoveryListItemWidget*>(listWidget->itemWidget(listWidget->item(i)));
-        if(item->getRobotName() == robotName)
+        if(item->getRobotName().compare(robotName) == 0)
             item->robotConnected(false);
     }
 }
@@ -322,8 +329,8 @@ void RobotPositionRecovery::robotRecoveringSlot(bool recover, QString robotName,
     }
 
     if(!success){
-        QString msg = (recover) ? "Failed to launch the scan for the robot : " + robotName + "\nPlease try again." :
-                               "Failed to stop the scan for the robot : " + robotName + "\nPlease try again.";
+        QString msg = (recover) ? "Failed to launch the recovery for the robot : " + robotName + "\nPlease try again." :
+                               "Failed to stop the recovery for the robot : " + robotName + "\nPlease try again.";
         QMessageBox msgBox;
         msgBox.setText(msg);
         msgBox.setStandardButtons(QMessageBox::Cancel);
@@ -339,7 +346,7 @@ void RobotPositionRecovery::playRecoverySlot(bool recover, QString robotName){
 
 void RobotPositionRecovery::deleteMapSlot(int id, QString robotName){
     qDebug() << "MergeMapWidget::deleteMapSlot Removing map" << id << "coming from robot" << robotName;
-    /// Tell the robot to stop scanning
+    /// Tell the robot to stop recovering
     QStringList list;
     list.push_back(robotName);
 

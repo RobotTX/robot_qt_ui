@@ -67,7 +67,7 @@ private:
     QString newRobotName;
     QString groupName;
     QString pathName;
-    bool scan;
+    bool scan_or_recover;
     int nb;
     QStringList path;
 };

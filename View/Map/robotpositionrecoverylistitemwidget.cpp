@@ -81,7 +81,7 @@ void RobotPositionRecoveryListItemWidget::closeBtnSlot(){
 }
 
 void RobotPositionRecoveryListItemWidget::startRecoverySlot(){
-    bool startingToRecover = !recoverPositionLabel->text().compare("Recovering the position");
+    bool startingToRecover =  recoverPositionLabel->text().compare("Recovering the position");
     emit playRecovery(startingToRecover, robotName);
 }
 

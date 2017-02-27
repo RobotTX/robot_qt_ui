@@ -104,12 +104,18 @@ target_link_libraries(send_laser_data ${gobot_software} ${Boost_FILESYSTEM_LIBRA
 add_dependencies(send_laser_data gobot_software_generate_messages_cpp)
 
 add_library(cluster_optimized src/cluster_optimized.cpp)
-add_executable(isLocalised_optimized src/isLocalised_optimized.cpp)
-target_link_libraries(isLocalised_optimized ${catkin_LIBRARIES} )
-target_link_libraries(isLocalised_optimized ${gobot_software} cluster_optimized)
-add_dependencies(isLocalised_optimized gobot_software_generate_messages_cpp)
+add_executable(isLocalized_optimized src/isLocalized_optimized.cpp)
+target_link_libraries(isLocalized_optimized ${catkin_LIBRARIES} )
+target_link_libraries(isLocalized_optimized ${gobot_software} cluster_optimized)
+add_dependencies(isLocalized_optimized gobot_software_generate_messages_cpp)
 
 add_executable(recover_position src/recover_position.cpp)
 target_link_libraries(recover_position ${catkin_LIBRARIES})
 target_link_libraries(recover_position ${gobot_software} ${Boost_FILESYSTEM_LIBRARY} ${Boost_SYSTEM_LIBRARY} )
 add_dependencies(recover_position gobot_software_generate_messages_cpp)
+
+add_executable(particle_cloud src/particle_cloud.cpp)
+target_link_libraries(particle_cloud ${catkin_LIBRARIES})
+target_link_libraries(particle_cloud ${gobot_software} ${Boost_FILESYSTEM_LIBRARY} ${Boost_SYSTEM_LIBRARY} )
+add_dependencies(recover_position gobot_software_generate_messages_cpp)
+

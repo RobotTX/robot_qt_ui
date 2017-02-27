@@ -270,13 +270,12 @@ protected:
     void commandDoneReceiveMap(bool success);
     void commandDoneStartScan(bool success, bool scan, QString robotName);
     void commandDoneStopScan(bool success, QString robotName);
-    void commandDoneStartRecovery(bool success, QString robotName);
-    void commandDoneStopRecovery(bool success, QString robotName);
+    void commandDoneStartRecovery(bool success, bool recover, QString robotName);
+    void commandDoneStopRecovery(bool success, bool recover, QString robotName);
     void setHomeAtConnection(const QString robot_name, const Position& pos_home);
 
 private:
     Ui::MainWindow* ui;
-
 
     QVBoxLayout* rightLayout;
     BottomLayout* bottomLayout;

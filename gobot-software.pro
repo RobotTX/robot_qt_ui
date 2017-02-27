@@ -99,7 +99,8 @@ HEADERS += \
     View/Robots/robotview.h \
     View/Settings/settingswidget.h \
     View/TopLayout/toplayoutwidget.h \
-    View/Map/robotpositionrecoverylistitemwidget.h
+    View/Map/robotpositionrecoverylistitemwidget.h \
+    Controller/Map/particlecloudworker.h
 
 
 FORMS += Controller/mainwindow.ui
@@ -184,7 +185,8 @@ SOURCES += main.cpp \
     View/Robots/robotview.cpp \
     View/Settings/settingswidget.cpp \
     View/TopLayout/toplayoutwidget.cpp \
-    View/Map/robotpositionrecoverylistitemwidget.cpp
+    View/Map/robotpositionrecoverylistitemwidget.cpp \
+    Controller/Map/particlecloudworker.cpp
 
 RESOURCES += Resources/resources.qrc
 

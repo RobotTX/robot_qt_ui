@@ -22,6 +22,7 @@ class Map;
 #include "Controller/Map/localmapworker.h"
 #include "Controller/Map/scanmapworker.h"
 #include "Controller/Robots/teleopworker.h"
+#include "Controller/Map/particlecloudworker.h"
 
 #define PORT_MAP_METADATA 4000
 #define PORT_ROBOT_POS 4001
@@ -30,6 +31,7 @@ class Map;
 #define PORT_NEW_MAP 5601
 #define PORT_TELEOP 5602
 #define PORT_LOCAL_MAP 5605
+#define PORT_PARTICLE_CLOUD 4005
 
 /**
  * @brief The Robot class
@@ -160,6 +162,7 @@ signals:
     void stopLocalMapWorker();
     void stopMapWorker();
     void stopTeleopWorker();
+    void stopParticleCloudWorker();
 
     void startCmdRobotWorker();
     void startRobotWorker();
@@ -168,6 +171,7 @@ signals:
     void startLocalMapWorker();
     void startMapWorker();
     void startTeleopWorker();
+    void startParticleCloudWorker();
 
 private slots:
     void doneSendingMapSlot();
@@ -197,6 +201,7 @@ private:
     QPointer<LocalMapWorker> localMapWorker;
     QPointer<ScanMapWorker> mapWorker;
     QPointer<TeleopWorker> teleopWorker;
+    QPointer<ParticleCloudWorker> particleCloudWorker;
 
     QThread cmdThread;
     QThread robotThread;
@@ -205,6 +210,7 @@ private:
     QThread localMapThread;
     QThread mapThread;
     QThread teleopThread;
+    QThread particleCloudThread;
 };
 
 /**
