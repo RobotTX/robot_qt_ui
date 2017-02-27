@@ -114,7 +114,7 @@ int main(int argc, char **argv){
 
 	ros::NodeHandle n;
 
-	ros::Rate loop_rate(4);
+	ros::Rate loop_rate(10);
 	
 	ros::ServiceServer start_service = n.advertiseService("start_robot_pos_sender", startRobotPos);
 	ros::ServiceServer stop_service = n.advertiseService("stop_robot_pos_sender", stopRobotPos);

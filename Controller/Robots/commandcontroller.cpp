@@ -146,12 +146,23 @@ void CommandController::openMessageBox(QStringList listCmd){
     QString msg("");
     QString cmd = listCmd.at(0);
     switch (cmd.at(0).unicode()) {
-    case 'a':
-        msg = "Sending the new name : " + listCmd.at(1) + " to the robot";
+    case 'a':{
+        QString name("");
+        for(int i = 1; i < listCmd.size(); i++)
+            name += " " + listCmd.at(i);
+        name.remove(0, 2);
+        qDebug() << "CommandController::openMessageBox new name :" << name;
+        msg = "Sending the new name : " + name + " to the robot";
         break;
-    case 'b':
-        msg = "Sending the new wifi : " + listCmd.at(1) + " to the robot";
+    }
+    case 'b':{
+        QString wifi("");
+        for(int i = 1; i < listCmd.size(); i++)
+            wifi += " " + listCmd.at(i);
+        qDebug() << "CommandController::openMessageBox new wifi :" << wifi;
+        msg = "Sending the new wifi : " + wifi + " to the robot";
         break;
+    }
     case 'c':
         msg = "Sending the robot to a new destination : " + listCmd.at(1) + ", " + listCmd.at(2);
         break;
@@ -165,7 +176,7 @@ void CommandController::openMessageBox(QStringList listCmd){
         msg = "Pausing the scan of the map";
         break;
     case 'g':
-        msg = "Sending the new name : " + listCmd.at(1) + " to the robot and the new wifi : " + listCmd.at(2) + " to the robot";
+        msg = "Sending the new name and wifi to the robot";
         break;
     case 'h':
         msg = "Sending the ports to the robot";

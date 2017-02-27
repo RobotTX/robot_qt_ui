@@ -24,7 +24,6 @@ void CustomQGraphicsView::wheelEvent(QWheelEvent *event){
 
 void CustomQGraphicsView::keyPressEvent(QKeyEvent* event){
     emit dirKeyPressed(event->key());
-    QGraphicsView::keyPressEvent(event);
 }
 
 void CustomQGraphicsView::mousePressEvent(QMouseEvent *event){

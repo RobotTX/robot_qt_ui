@@ -15,5 +15,4 @@ MergeMapListWidget::MergeMapListWidget(QWidget *parent) : QListWidget(parent){
 void MergeMapListWidget::keyPressEvent(QKeyEvent* event){
     /// We want to use the directional keys to move the map on the scene and not to navigate in the list
     emit dirKeyPressed(event->key());
-    QListWidget::keyPressEvent(event);
 }

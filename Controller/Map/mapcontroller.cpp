@@ -13,8 +13,6 @@ MapController::MapController(QSharedPointer<Robots> _robots, MainWindow *mainWin
 {
     map = QSharedPointer<Map> (new Map());
 
-    loadMapConfig((QDir::currentPath() + "currentMap.txt").toStdString());
-
     scene = new QGraphicsScene();
 
     scene->setSceneRect(0, 0, 800, 600);
@@ -32,6 +30,10 @@ MapController::MapController(QSharedPointer<Robots> _robots, MainWindow *mainWin
     graphicsView->setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding));
 
     scene->addItem(view);
+
+    view->setPos(map->getMapState().first);
+    graphicsView->setZoomCoeff(map->getMapState().second);
+    saveMapState();
 
     /// to know what message to display when a user is creating a path
     connect(this, SIGNAL(newMessage(QString)), mainWindow, SLOT(setMessageCreationPath(QString)));

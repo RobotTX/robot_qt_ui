@@ -99,10 +99,11 @@ private slots:
     void reestablishConnectionsGroups(void);
     void reestablishConnectionsPoints(void);
     void resetPointViewsSlot(void);
-    void checkPointName(QString name);
     void updateBtnGroupPointsSlot(void);
     void updateGroupButtonGroupSlot(void);
     void enableButtonsPointsLeftWidget(QAbstractButton*);
+    void checkCreatePointName(QString pointName);
+    void checkDisplayPointName(QString pointName);
 
 protected:
 
@@ -112,6 +113,8 @@ protected:
      * so that an appropriate message can be displayed while a group is being edited
      */
     void sendMessageEditGroup(int code);
+    PointNameError checkPointName(QString name);
+    void getPointCreationMessage(QString pointName, bool &enableSave, QString &msg);
 
 signals:
     void setMessageTop(QString msgType, QString msg);

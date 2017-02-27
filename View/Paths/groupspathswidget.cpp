@@ -62,7 +62,7 @@ GroupsPathsWidget::GroupsPathsWidget(PathsController* pathsController): QWidget(
     creationLayout->setAlignment(Qt::AlignBottom);
 
     /// to make sure the name chosen for a new group is valid
-    connect(groupNameEdit, SIGNAL(textEdited(QString)), pathsController, SLOT(checkPathGroupName(QString)));
+    connect(groupNameEdit, SIGNAL(textEdited(QString)), pathsController, SLOT(checkCreateGroupName(QString)));
 
     /// to notify the user whether the name he chose is valid or not
     connect(buttonGroup->getModifyEdit(), SIGNAL(textEdited(QString)), pathsController, SLOT(checkEditGroupName(QString)));

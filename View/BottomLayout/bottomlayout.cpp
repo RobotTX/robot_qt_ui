@@ -420,6 +420,16 @@ void BottomLayout::setEnable(const bool enable){
     }
 }
 
+void BottomLayout::updateRobots(QSharedPointer<Robots> robots){
+    for(int i = playRobotBtnGroup->buttons().size() - 1; i >= 0; i--){
+        removeRobot(i);
+    }
+
+    for(int i = 0; i < robots->getRobotsVector().size(); i++){
+        addRobot(robots->getRobotsVector().at(i));
+    }
+}
+
 void BottomLayout::uncheckViewPathSelectedRobot(const int robotNb){
     QList<QAbstractButton*> list = viewPathRobotBtnGroup->buttons();
     for(int i =0; i < list.size(); i++){

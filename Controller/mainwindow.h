@@ -172,7 +172,6 @@ private slots:
     void setMessageCreationPath(QString message);
     void updateEditedPathPoint(double x, double y);
     void centerMap(void);
-    void setMessageCreationPoint(QString type, PointsController::PointNameError error);
     void viewPathSelectedRobot(int robotNb, bool checked);
     void closeSlot();
     void showHome();
@@ -252,7 +251,7 @@ protected:
     void closeEvent(QCloseEvent *event);
     void robotHasNoHome(QString robotName);
     void closeWidgets();
-    void commandDoneNewName(bool success, QString name);
+    void commandDoneNewName(bool success, QString oldName, QString newName);
     void commandDonePausePath(bool success, QString robotName);
     void commandDonePlayScan(bool success, bool scan, QString robotName);
     void commandDoneSendMap(bool success);

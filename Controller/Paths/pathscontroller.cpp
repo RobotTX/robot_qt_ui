@@ -154,7 +154,6 @@ void PathsController::enableGroupsPathsWidgetPlusButtonOnly() const {
 
 void PathsController::editPath(const QString group, const QString path){
     showPathCreationWidget();
-    pathPainter->setOldPath(pathPainter->getCurrentPath());
 
     pathCreationWidget->resetWidget();
     pathCreationWidget->setCurrentPathName(path);
@@ -169,7 +168,6 @@ void PathsController::editPath(const QString group, const QString path){
 
 QString PathsController::editPath(){
     pathCreationWidget->show();
-    pathPainter->setOldPath(pathPainter->getCurrentPath());
 
     const QString pathName = pathGroup->getPathButtonGroup()->getButtonGroup()->checkedButton()->text();
     const QString groupName = pathGroup->getGroupNameLabel()->text();
@@ -195,7 +193,6 @@ QString PathsController::editPath(){
 bool PathsController::deletePath(){
     bool already_existed(false);
     pathPainter->setPathDeleted(false);
-    pathPainter->setOldPath(pathPainter->getCurrentPath());
     const QString group = pathCreationWidget->getCurrentGroupName();
     const QString path = pathCreationWidget->getNameEdit()->text().simplified();
     if(!pathCreationWidget->getCurrentPathName().isEmpty())
@@ -228,13 +225,17 @@ void PathsController::displayPathSlot(const QString groupName, const QString pat
             emit setCurrentPath(path, pathName);
         else
             qDebug() << "MainWindow::displayPathSlot Sorry could not find the path";
-    }
-    else
+    } else
          emit resetPath();
 }
 
-void PathsController::displayGroupPaths(){
-    const QString current_group = getGroupPathsChecked();
+void PathsController::displayGroupPaths(const QString groupName){
+    setPathsGroup(groupName);
+    pathCreationWidget->setCurrentGroupName(groupName);
+    pathGroup->getGroupNameLabel()->setText(groupName);
+    hideGroupsPathsWidget();
+    pathGroup->show();
+    /*const QString current_group = getGroupPathsChecked();
 
     ///updates the current group displayed
     pathCreationWidget->setCurrentGroupName(current_group);
@@ -243,7 +244,7 @@ void PathsController::displayGroupPaths(){
     pathGroup->getGroupNameLabel()->setText(current_group);
     setPathsGroup(current_group);
     hideGroupsPathsWidget();
-    showGroupsPathsWidget();
+    showGroupsPathsWidget();*/
 }
 
 void PathsController::editGroupPaths(){
@@ -321,17 +322,11 @@ bool PathsController::modifyGroupPathsWithEnter(QString name){
     } else
         updateGroupsPaths();
 
+    serializePaths(QDir::currentPath() + QDir::separator() + "paths.dat");
+
     groupsPathsWidget->setLastCheckedButton("");
 
     return name_has_changed;
-}
-
-void PathsController::doubleClickOnPathsGroup(const QString checkedButton){
-    setPathsGroup(checkedButton);
-    pathCreationWidget->setCurrentGroupName(checkedButton);
-    pathGroup->getGroupNameLabel()->setText(checkedButton);
-    hideGroupsPathsWidget();
-    pathGroup->show();
 }
 
 void PathsController::doubleClickOnPath(const QString pathName, const QString groupName){
@@ -437,15 +432,33 @@ void PathsController::setMessageModifGroupPaths(int code){
     }
 }
 
-int PathsController::checkPathGroupName(QString name){
+void PathsController::checkCreateGroupName(QString name){
     qDebug() << "PathsController::checkGroupName checking name" << name;
     groupsPathsWidget->getGroupNameEdit()->setText(Helper::formatName(name));
     /// gets rid of the extra spaces
     name = name.simplified();
 
+    switch(checkGroupName(name)){
+        case 0:
+            groupsPathsWidget->getSaveButton()->setToolTip("");
+            groupsPathsWidget->getSaveButton()->setEnabled(true);
+        break;
+        case 1:
+            groupsPathsWidget->getSaveButton()->setToolTip("The name of your group cannot be empty");
+            groupsPathsWidget->getSaveButton()->setEnabled(false);
+        break;
+        case 2:
+            groupsPathsWidget->getSaveButton()->setToolTip("A group with the same name already exists, please choose another name");
+            groupsPathsWidget->getSaveButton()->setEnabled(false);
+        break;
+        default:
+            Q_UNREACHABLE();
+        break;
+    }
+}
+
+int PathsController::checkGroupName(QString name){
     if(!name.compare("")){
-        groupsPathsWidget->getSaveButton()->setToolTip("The name of your group cannot be empty");
-        groupsPathsWidget->getSaveButton()->setEnabled(false);
         emit setMessageTop(TEXT_COLOR_INFO, "");
         return 1;
     }
@@ -453,14 +466,10 @@ int PathsController::checkPathGroupName(QString name){
     while(it.hasNext()){
         it.next();
         if(!name.compare(it.key(), Qt::CaseInsensitive)){
-            groupsPathsWidget->getSaveButton()->setToolTip("A group with the same name already exists, please choose another name");
-            groupsPathsWidget->getSaveButton()->setEnabled(false);
             emit setMessageTop(TEXT_COLOR_WARNING, "A group with the same name already exists, please choose another name");
             return 2;
         }
     }
-    groupsPathsWidget->getSaveButton()->setToolTip("");
-    groupsPathsWidget->getSaveButton()->setEnabled(true);
     emit setMessageTop(TEXT_COLOR_INFO, "To save this group press Enter or click the \"Save button\"");
     return 0;
 }
@@ -469,7 +478,7 @@ void PathsController::saveGroupPaths(QString name){
     qDebug() << "saveGroupPaths called" << name;
 
     name = name.simplified();
-    if(checkPathGroupName(name) == 0){
+    if(checkGroupName(name) == 0){
         getGroupsPathsWidget()->setLastCheckedButton("");
 
         /// updates the model
@@ -491,7 +500,7 @@ void PathsController::saveGroupPaths(QString name){
 
         emit setTemporaryMessageTop(TEXT_COLOR_SUCCESS, "You have created a new group of paths", 4000);
 
-    } else if(checkPathGroupName(name) == 1){
+    } else if(checkGroupName(name) == 1){
         /// enables the return button again
         emit enableReturnAndCloseButtons();
 
@@ -508,30 +517,15 @@ void PathsController::saveGroupPaths(QString name){
 
 /// to check that the name edited for a group is valid
 void PathsController::checkEditGroupName(QString name){
-    qDebug() << "GroupPathsWidget::checkEditGroupName called";
+    qDebug() << "PathsController::checkEditGroupName called";
     groupsPathsWidget->getButtonGroup()->getModifyEdit()->setText(Helper::formatName(groupsPathsWidget->getButtonGroup()->getModifyEdit()->text()));
     name =  groupsPathsWidget->getButtonGroup()->getModifyEdit()->text().simplified();
     if(!name.compare(groupsPathsWidget->getButtonGroup()->getButtonGroup()->checkedButton()->text(), Qt::CaseInsensitive)){
         qDebug() << "same name";
         /// if the name has not been changed we return 0 so that the user can save the same name
         groupsPathsWidget->setNameError(0);
-    }
-    if(!name.compare("")){
-        /// if the name is empty we return 1 to prevent this name from being saved
-        groupsPathsWidget->setNameError(1);
-    }
-
-    QMapIterator<QString, QSharedPointer<Paths::CollectionPaths>> i(*(paths->getGroups()));
-    while (i.hasNext()) {
-        i.next();
-        if(!name.compare(i.key(), Qt::CaseInsensitive)){
-            qDebug() << "GroupPathsGroup::checkEditGroupName" << i.key();
-            /// if the name is already the name of another group of paths we return 2, saving this name is also forbidden
-            groupsPathsWidget->setNameError(2);
-        }
-    }
-    /// if there is nothing to report we return 0 and the name can be saved
-    groupsPathsWidget->setNameError(0);
+    } else
+        groupsPathsWidget->setNameError(checkGroupName(name));
 }
 
 void PathsController::checkPathName(const QString name){

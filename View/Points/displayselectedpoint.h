@@ -73,8 +73,6 @@ signals:
     void nameChanged(QString, QString);
     /// to reset the state of the map if a user clicks a random button while he was editing a point
     void resetState(GraphicItemState);
-    /// emitted when the field to type the name of the point is changed to allow or not the user to save its point
-    void invalidName(QString, PointsController::PointNameError);
     /// in the event where this point is a special point for a robot (home or part of a path), allows those pieces of information to
     /// be displayed
     void setSelectedRobotFromPoint(QString);
@@ -82,10 +80,6 @@ signals:
     void removePoint();
     /// emitted on hideEvent to cancel the edition of a point
     void cancelEditionPoint();
-
-private slots:
-    /// to check that a name is available before we proceed to the update
-    int checkPointName(QString name);
 
 private:
     QSharedPointer<Map> map;

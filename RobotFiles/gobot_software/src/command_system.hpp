@@ -61,4 +61,9 @@ bool stopRecoveringPosition();
 bool sendLocalMap();
 bool connectToParticleCloudNode(void);
 bool startSendingParticleCloud(void);
+<<<<<<< HEAD
+=======
+void disconnect(void);
+
+>>>>>>> d222485533e457400dc53dfa293c17d4d51c4377
 #endif

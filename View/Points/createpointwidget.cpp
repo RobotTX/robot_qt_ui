@@ -75,7 +75,7 @@ CreatePointWidget::CreatePointWidget(MainWindow *mainWindow):
     connect(actionButtons->getPlusButton(), SIGNAL(clicked(bool)), this, SLOT(showGroupLayout()));
 
     connect(saveBtn, SIGNAL(clicked()), this, SLOT(saveEditSelecPointBtnEvent()));
-    connect(nameEdit, SIGNAL(textEdited(QString)), mainWindow->getPointsController(), SLOT(checkPointName(QString)));
+    connect(nameEdit, SIGNAL(textEdited(QString)), mainWindow->getPointsController(), SLOT(checkCreatePointName(QString)));
 
     connect(cancelBtn, SIGNAL(clicked(bool)), this, SLOT(hideGroupLayout(bool)));
 

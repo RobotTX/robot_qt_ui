@@ -281,15 +281,3 @@ void PathPainter::setCurrentPath(const QSharedPointer<Points> points, const QPoi
         addPathPoint(points, robotView, state, point.getName(), point.getPosition().getX(), point.getPosition().getY(), _currentPath.at(i)->getWaitTime());
     }
 }
-
-void PathPainter::setOldPath(const QVector<QSharedPointer<PathPoint> > _oldPath){
-    oldPath.clear();
-    for(int i = 0; i < _oldPath.size(); i++){
-        QSharedPointer<PathPoint> pathPoint = QSharedPointer<PathPoint>(new PathPoint(_oldPath.at(i)->getPoint(), _oldPath.at(i)->getWaitTime()));
-        oldPath.push_back(pathPoint);
-    }
-}
-
-void PathPainter::clearOldPath(){
-    oldPath.clear();
-}

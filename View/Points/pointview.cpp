@@ -164,7 +164,7 @@ void PointView::setPixmap(const PixmapType pixType){
 
 
     if(homePixmap){
-        qDebug() << "pixmap home set for" << point->getName();
+        //qDebug() << "pixmap home set for" << point->getName();
         switch(pixType){
             case NORMAL:
                 pixmap2 = QPixmap(PIXMAP_HOME_NORMAL);

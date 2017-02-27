@@ -40,9 +40,9 @@ void ScanMapWorker::readTcpDataSlot(){
 
     QString mapId("");
     QString mapDate("");
-    QString resolution("");
-    QString originX("");
-    QString originY("");
+    QString resolution("-1");
+    QString originX("-1");
+    QString originY("-1");
     uint32_t map_width(0);
     uint32_t map_height(0);
 

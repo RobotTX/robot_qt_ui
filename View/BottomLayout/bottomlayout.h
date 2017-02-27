@@ -67,6 +67,8 @@ public:
     /// to display at which stage of the path the robot is in the label itself (with a different color)
     void updateStageRobot(const int id, QPointer<RobotView>robotView, const int stage);
 
+    void updateRobots(QSharedPointer<Robots> robots);
+
 private:
     /**
      * @brief layout
