@@ -9,22 +9,33 @@ Button {
     property string imgSrc
     property string txt
 
+    // This is to change the background color of the button when selected
     background: Rectangle {
-        //color: checked ? "#000000" : "#27313a"
-        //opacity: checked ? 0.4 : 0.8
-        color: "#27313a"
-        opacity: 0.8
+        color: checked ? "#66000000" : "transparent"
+
+        // The blue border when the item is selected
+        Rectangle {
+            color: checked ? "#4a8fe3" : "transparent"
+            width : 3
+            anchors {
+                left: parent.left
+                top: parent.top
+                bottom: parent.bottom
+            }
+        }
     }
 
     Image {
-        source: imgSrc
+        source: checked ? imgSrc + "_checked" : imgSrc
         fillMode: Image.Pad // For not stretching image (optional)
         anchors.fill: parent
         anchors.margins: 2 // Leaving space between image and borders (optional)
-        anchors.bottomMargin:10 // Leaving space for text in bottom
+        anchors.bottomMargin: (txt == "Settings") ? 0 : 10 // Leaving space for text in bottom
     }
+
     Text {
-        text: txt
+        color: checked ? "#4a8fe3" : "#8f8f94"
+        text: (txt == "Settings") ? qsTr("") : qsTr(txt)
         anchors.bottom: parent.bottom // Placing text in bottom
         anchors.margins: 2 // Leaving space between text and borders  (optional)
         anchors.horizontalCenter: parent.horizontalCenter // Centering text

@@ -3,6 +3,7 @@
         <file>main.qml</file>
         <file>qtquickcontrols2.conf</file>
         <file>main.cpp</file>
+        <file>View/MainMenu.qml</file>
         <file>Customs/MenuButton.qml</file>
     </qresource>
 </RCC>
