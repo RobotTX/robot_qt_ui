@@ -16,3 +16,5 @@ settings/*
 robots_homes/*
 robots_paths/*
 Resources/qt-*
+Gobot.pro.*
+Gobot.pro.user
