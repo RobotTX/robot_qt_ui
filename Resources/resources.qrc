@@ -5,17 +5,23 @@
     <qresource prefix="/icons">
         <file alias="map_checked">icons/icMap_checked.png</file>
         <file alias="map">icons/icMap_normal.png</file>
+        <file alias="big_map">icons/icMap@2x_normal.png</file>
 
         <file alias="robot_checked">icons/icRobot_checked.png</file>
         <file alias="robot">icons/icRobot_normal.png</file>
+        <file alias="big_robot">icons/icRobot@2x_normal.png</file>
 
         <file alias="path_checked">icons/icPath_checked.png</file>
         <file alias="path">icons/icPath_normal.png</file>
+        <file alias="big_path">icons/icPath@2x_normal.png</file>
 
         <file alias="point_checked">icons/icPoint_checked.png</file>
         <file alias="point">icons/icPoint_normal.png</file>
+        <file alias="big_point">icons/icPoint@2x_normal.png</file>
 
         <file alias="settings_checked">icons/icSettings_normal.png</file>
         <file alias="settings">icons/icSettings_normal.png</file>
+
+        <file alias="closeBtn">icons/closeBtn.png</file>
     </qresource>
 </RCC>

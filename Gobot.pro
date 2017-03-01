@@ -2,7 +2,9 @@ QT += qml quick
 
 CONFIG += c++11
 
-SOURCES += main.cpp
+SOURCES += main.cpp \
+    Controller/mainmenucontroller.cpp \
+    Controller/maincontroller.cpp
 
 RESOURCES += qml.qrc \
     Resources/resources.qrc
@@ -28,3 +30,19 @@ DEFINES += QT_DEPRECATED_WARNINGS
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
+
+HEADERS += \
+    Controller/mainmenucontroller.h \
+    Controller/maincontroller.h
+
+DISTFILES += \
+        main.qml \
+        View/MainMenu/MenuButton.qml \
+        View/MainMenu/MainMenu.qml \
+        View/MainMenu/MainMenuViews.qml \
+        View/MapView/MapView.qml \
+        View/Robot/RobotMenu.qml \
+        View/Path/PathMenu.qml \
+        View/Point/PointMenu.qml \
+        View/Map/MapMenu.qml \
+        View/Settings/SettingsMenu.qml

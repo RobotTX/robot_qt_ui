@@ -4,10 +4,10 @@ import QtQuick.Controls 2.0
 Button {
     width: 66
     height: 76
-    autoExclusive: true
     checkable: true
     property string imgSrc
     property string txt
+    objectName: txt + "Button"
 
     // This is to change the background color of the button when selected
     background: Rectangle {
@@ -26,19 +26,21 @@ Button {
     }
 
     Image {
+        y: (txt == "Settings") ? 0 : 15
+        id: image
         source: checked ? imgSrc + "_checked" : imgSrc
-        fillMode: Image.Pad // For not stretching image (optional)
-        anchors.fill: parent
-        anchors.margins: 2 // Leaving space between image and borders (optional)
-        anchors.bottomMargin: (txt == "Settings") ? 0 : 10 // Leaving space for text in bottom
+        fillMode: Image.Pad // For not stretching image
+        anchors.horizontalCenter: parent.horizontalCenter // Centering text
+        anchors.fill: if(txt == "Settings"){parent}
     }
 
     Text {
         color: checked ? "#4a8fe3" : "#8f8f94"
         text: (txt == "Settings") ? qsTr("") : qsTr(txt)
-        anchors.bottom: parent.bottom // Placing text in bottom
-        anchors.margins: 2 // Leaving space between text and borders  (optional)
+        font.pointSize: 9
+        anchors.top: image.bottom // Placing text in bottom
+        anchors.topMargin: 4 // Leaving space between text and borders
         anchors.horizontalCenter: parent.horizontalCenter // Centering text
-        renderType: Text.NativeRendering // Rendering type (optional)
+        renderType: Text.NativeRendering // Rendering type
     }
 }
