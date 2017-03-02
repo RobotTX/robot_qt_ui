@@ -34,15 +34,3 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 HEADERS += \
     Controller/mainmenucontroller.h \
     Controller/maincontroller.h
-
-DISTFILES += \
-        main.qml \
-        View/MainMenu/MenuButton.qml \
-        View/MainMenu/MainMenu.qml \
-        View/MainMenu/MainMenuViews.qml \
-        View/MapView/MapView.qml \
-        View/Robot/RobotMenu.qml \
-        View/Path/PathMenu.qml \
-        View/Point/PointMenu.qml \
-        View/Map/MapMenu.qml \
-        View/Settings/SettingsMenu.qml

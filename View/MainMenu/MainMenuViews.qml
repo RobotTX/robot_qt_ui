@@ -5,12 +5,13 @@ import "../Path"
 import "../Point"
 import "../Map"
 import "../Settings"
+import "../../Helper/style.js" as Style
 
 Frame {
     id: mainMenuViewsFrame
     objectName: "mainMenuViewsFrame"
     visible: false
-    width: 270
+    width: Style.menuWidth
     padding: 0
 
     RobotMenu {
@@ -40,11 +41,8 @@ Frame {
 
     /// We show the given menu in txt
     function showMenu(txt) {
-        console.log("showMenu Got message:", txt);
-
         switch(txt){
             case 'Robot':
-                console.log("Display Robot page");
                 if(robotMenu.visible){
                     robotMenu.visible = false;
                     mainMenuViewsFrame.visible = false;
@@ -59,7 +57,6 @@ Frame {
                 }
             break;
             case 'Path':
-                console.log("Display Path page");
                 if(pathMenu.visible){
                     pathMenu.visible = false;
                     mainMenuViewsFrame.visible = false;
@@ -74,7 +71,6 @@ Frame {
                 }
             break;
             case 'Point':
-                console.log("Display Point page");
                 if(pointMenu.visible){
                     pointMenu.visible = false;
                     mainMenuViewsFrame.visible = false;
@@ -89,7 +85,6 @@ Frame {
                 }
             break;
             case 'Map':
-                console.log("Display Map page");
                 if(mapMenu.visible){
                     mapMenu.visible = false;
                     mainMenuViewsFrame.visible = false;
@@ -104,7 +99,6 @@ Frame {
                 }
             break;
             case 'Settings':
-                console.log("Display Settings page");
                 if(settingsMenu.visible){
                     settingsMenu.visible = false;
                     mainMenuViewsFrame.visible = false;

@@ -1,5 +1,6 @@
 import QtQuick 2.7
 import QtQuick.Controls 2.0
+import "../../Helper/style.js" as Style
 
 Button {
     width: 66
@@ -15,7 +16,7 @@ Button {
 
         // The blue border when the item is selected
         Rectangle {
-            color: checked ? "#4a8fe3" : "transparent"
+            color: checked ? Style.darkSkyBlue : "transparent"
             width : 3
             anchors {
                 left: parent.left
@@ -35,7 +36,7 @@ Button {
     }
 
     Text {
-        color: checked ? "#4a8fe3" : "#8f8f94"
+        color: checked ? Style.darkSkyBlue : Style.midGrey
         text: (txt == "Settings") ? qsTr("") : qsTr(txt)
         font.pointSize: 9
         anchors.top: image.bottom // Placing text in bottom

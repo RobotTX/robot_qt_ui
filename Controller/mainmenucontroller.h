@@ -4,11 +4,20 @@
 class QQmlApplicationEngine;
 
 #include <QObject>
+#include <QVariant>
 
 class MainMenuController : public QObject {
     Q_OBJECT
 public:
-    MainMenuController(QObject* parent = Q_NULLPTR);
+    MainMenuController(QQmlApplicationEngine *engine, QObject* parent = Q_NULLPTR);
+
+private slots:
+    void menuClicked(QString txt, bool checked);
+    void closeMenuClicked(QString txt);
+
+signals:
+    void showMenu(QVariant);
+    void closeMenu(QVariant);
 
 };
 

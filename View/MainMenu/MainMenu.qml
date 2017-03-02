@@ -1,11 +1,12 @@
 import QtQuick 2.7
 import QtQuick.Controls 2.0
+import "../../Helper/style.js" as Style
 
 Frame {
     id: mainMenuFrame
     objectName: "mainMenuFrame"
 
-    width: 66
+    width: Style.mainMenuWidth
     padding: 0
 
     anchors {
@@ -15,7 +16,7 @@ Frame {
     }
 
     background: Rectangle {
-        color: "#cc26303a"
+        color: Style.darkGrey
     }
 
     signal selectMenu(string txt, bool checked)
@@ -61,6 +62,27 @@ Frame {
         imgSrc: "qrc:/icons/settings"
         anchors.bottom: parent.bottom
         onClicked: mainMenuFrame.uncheckButtons(txt, checked)
+    }
+
+    function closeMenu(txt){
+        switch(txt){
+            case 'Robot':
+                robotButton.checked = false;
+            break;
+            case 'Path':
+                pathButton.checked = false;
+            break;
+            case 'Point':
+                pointButton.checked = false;
+            break;
+            case 'Map':
+                mapButton.checked = false;
+            break;
+            case 'Settings':
+                settingsButton.checked = false;
+            break;
+        }
+        mainMenuFrame.selectMenu(txt, false)
     }
 
     /// Uncheck the other buttons when a new one is checked
