@@ -8,7 +8,7 @@ class Map;
 class MapController : public QObject {
     Q_OBJECT
 public:
-    MapController(QObject *applicationWindow, QObject* parent = Q_NULLPTR);
+    MapController(QObject *applicationWindow, QObject* parent);
 
 private:
         Map* map;

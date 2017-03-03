@@ -7,7 +7,7 @@
 class MainMenuController : public QObject {
     Q_OBJECT
 public:
-    MainMenuController(QObject *applicationWindow, QObject* parent = Q_NULLPTR);
+    MainMenuController(QObject *applicationWindow, QObject* parent);
 
 private slots:
     /**

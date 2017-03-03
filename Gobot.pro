@@ -3,11 +3,15 @@ QT += qml quick
 CONFIG += c++11
 
 SOURCES += main.cpp \
-    Controller/mainmenucontroller.cpp \
     Controller/maincontroller.cpp \
     Helper/helper.cpp \
     Model/Map/map.cpp \
-    Controller/Map/mapcontroller.cpp
+    Controller/Map/mapcontroller.cpp \
+    Model/Point/xmlparser.cpp \
+    Model/Point/point.cpp \
+    Model/Point/points.cpp \
+    Controller/Point/pointcontroller.cpp \
+    Controller/Menu/mainmenucontroller.cpp
 
 RESOURCES += qml.qrc \
     Resources/resources.qrc
@@ -35,8 +39,12 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 HEADERS += \
-    Controller/mainmenucontroller.h \
     Controller/maincontroller.h \
     Helper/helper.h \
     Model/Map/map.h \
-    Controller/Map/mapcontroller.h
+    Controller/Map/mapcontroller.h \
+    Model/Point/xmlparser.h \
+    Model/Point/point.h \
+    Model/Point/points.h \
+    Controller/Point/pointcontroller.h \
+    Controller/Menu/mainmenucontroller.h
