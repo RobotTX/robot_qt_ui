@@ -16,7 +16,7 @@
 class Map : public QObject {
     Q_OBJECT
 public:
-    Map(QObject* parent = Q_NULLPTR);
+    Map(QObject* parent);
     void initializeMap(void);
 
 private slots:

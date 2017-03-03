@@ -4,6 +4,7 @@
 class QQmlApplicationEngine;
 class MainMenuController;
 class MapController;
+class PointController;
 
 #include <QObject>
 #include <QList>
@@ -16,6 +17,7 @@ public:
 private:
     MainMenuController* mainMenuController;
     MapController* mapController;
+    PointController* pointController;
 };
 
 #endif // MAINCONTROLLER_H
