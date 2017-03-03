@@ -1,15 +1,13 @@
 #ifndef MAINMENUCONTROLLER_H
 #define MAINMENUCONTROLLER_H
 
-class QQmlApplicationEngine;
-
 #include <QObject>
 #include <QVariant>
 
 class MainMenuController : public QObject {
     Q_OBJECT
 public:
-    MainMenuController(QQmlApplicationEngine *engine, QObject* parent = Q_NULLPTR);
+    MainMenuController(QObject *applicationWindow, QObject* parent = Q_NULLPTR);
 
 private slots:
     void menuClicked(QString txt, bool checked);

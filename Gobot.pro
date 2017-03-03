@@ -6,7 +6,8 @@ SOURCES += main.cpp \
     Controller/mainmenucontroller.cpp \
     Controller/maincontroller.cpp \
     Helper/helper.cpp \
-    Model/Map/map.cpp
+    Model/Map/map.cpp \
+    Controller/Map/mapcontroller.cpp
 
 RESOURCES += qml.qrc \
     Resources/resources.qrc
@@ -37,4 +38,5 @@ HEADERS += \
     Controller/mainmenucontroller.h \
     Controller/maincontroller.h \
     Helper/helper.h \
-    Model/Map/map.h
+    Model/Map/map.h \
+    Controller/Map/mapcontroller.h

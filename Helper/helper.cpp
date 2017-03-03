@@ -2,7 +2,6 @@
 #include <QTime>
 #include <QCoreApplication>
 #include <QDebug>
-#include <QMessageBox>
 #include <QFile>
 #include <QFileInfo>
 #include <QStringList>
@@ -12,16 +11,16 @@ namespace Helper {
 
     namespace Convert {
 
-        Position pixelCoordToRobotCoord(const Position positionInPixels, double originX, double originY, double resolution, int height){
-            float xInRobotCoordinates = (positionInPixels.getX()) * resolution + originX;
-            float yInRobotCoordinates = (-positionInPixels.getY() + height) * resolution + originY;
-            return Position(xInRobotCoordinates, yInRobotCoordinates);
+        QPointF pixelCoordToRobotCoord(const QPointF positionInPixels, double originX, double originY, double resolution, int height){
+            float xInRobotCoordinates = (positionInPixels.x()) * resolution + originX;
+            float yInRobotCoordinates = (-positionInPixels.y() + height) * resolution + originY;
+            return QPointF(xInRobotCoordinates, yInRobotCoordinates);
         }
 
-        Position robotCoordToPixelCoord(const Position positionInRobotCoordinates, double originX, double originY, double resolution, int height){
-            float xInPixelCoordinates = (-originX+ positionInRobotCoordinates.getX())/resolution;
-            float yInPixelCoordinates = height - (-originY + positionInRobotCoordinates.getY()) / resolution;
-            return Position(xInPixelCoordinates, yInPixelCoordinates);
+        QPointF robotCoordToPixelCoord(const QPointF positionInRobotCoordinates, double originX, double originY, double resolution, int height){
+            float xInPixelCoordinates = (-originX+ positionInRobotCoordinates.x())/resolution;
+            float yInPixelCoordinates = height - (-originY + positionInRobotCoordinates.y()) / resolution;
+            return QPointF(xInPixelCoordinates, yInPixelCoordinates);
         }
     }
 
@@ -67,12 +66,12 @@ namespace Helper {
             return pathInfo;
         }
 
-        void updateHomeFile(const QString robotName, const Position& robot_home_position, const QStringList date){
+        void updateHomeFile(const QString robotName, const QPointF& robot_home_position, const QStringList date){
             qDebug() << "updatehomefile" << robotName << date.size();
             QFile fileWriteHome(QDir::currentPath() + QDir::separator() + "robots_homes" + QDir::separator() + robotName);
             if(fileWriteHome.open(QIODevice::ReadWrite)){
                 QTextStream out(&fileWriteHome);
-                out << robot_home_position.getX() << " " << robot_home_position.getY() << "\n";
+                out << robot_home_position.x() << " " << robot_home_position.y() << "\n";
                 for(int i = 0; i < date.size()-1; i++)
                     out << date.at(i) << "-";
                 out << date.at(date.size()-1);
@@ -81,10 +80,10 @@ namespace Helper {
                 qDebug() << "could not update the home of" << robotName;
         }
 
-        QPair<Position, QStringList> getHomeFromFile(const QString robotName){
+        QPair<QPointF, QStringList> getHomeFromFile(const QString robotName){
             /// retrieves the home point of the robot if the robot has one
             QFile fileInfo(QDir::currentPath() + QDir::separator() + "robots_homes" + QDir::separator() + robotName);
-            Position p;
+            QPointF p;
             QStringList dateLastModification;
             if(fileInfo.open(QIODevice::ReadWrite)){
                 QRegExp regex("[-\n ]");
@@ -102,25 +101,8 @@ namespace Helper {
                 }
             }
             fileInfo.close();
-            return QPair<Position, QStringList> (p, dateLastModification);
+            return QPair<QPointF, QStringList> (p, dateLastModification);
         }
-    }
-
-    namespace Prompt {
-        /**
-         * @brief MainWindow::openConfirmMessage
-         * @param text
-         * @return int
-         * prompts the user for confirmation
-         */
-        int openConfirmMessage(const QString text){
-            QMessageBox msgBox;
-            msgBox.setText(text);
-            msgBox.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
-            msgBox.setDefaultButton(QMessageBox::Cancel);
-            return msgBox.exec();
-        }
-
     }
 
     QString formatName(const QString name) {
