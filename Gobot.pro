@@ -4,7 +4,9 @@ CONFIG += c++11
 
 SOURCES += main.cpp \
     Controller/mainmenucontroller.cpp \
-    Controller/maincontroller.cpp
+    Controller/maincontroller.cpp \
+    Helper/helper.cpp \
+    Model/Map/map.cpp
 
 RESOURCES += qml.qrc \
     Resources/resources.qrc
@@ -33,4 +35,6 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 HEADERS += \
     Controller/mainmenucontroller.h \
-    Controller/maincontroller.h
+    Controller/maincontroller.h \
+    Helper/helper.h \
+    Model/Map/map.h
