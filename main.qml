@@ -16,13 +16,7 @@ ApplicationWindow {
 
     ColumnLayout {
         spacing: 0
-
-        anchors {
-            left: parent.left
-            top: parent.top
-            right: parent.right
-            bottom: parent.bottom
-        }
+        anchors.fill: parent
 
         MainMenu {
             id: mainMenu

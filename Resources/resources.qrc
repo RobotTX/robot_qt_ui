@@ -23,5 +23,7 @@
         <file alias="settings">icons/icSettings_normal.png</file>
 
         <file alias="closeBtn">icons/closeBtn.png</file>
+        <file alias="loadState">icons/Ic_LoadState.png</file>
+        <file alias="saveState">icons/Ic_SaveState.png</file>
     </qresource>
 </RCC>

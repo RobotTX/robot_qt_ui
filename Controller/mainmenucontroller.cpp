@@ -62,7 +62,6 @@ MainMenuController::MainMenuController(QObject *applicationWindow, QObject *pare
 
 void MainMenuController::menuClicked(QString txt, bool checked){
     qDebug() << "MainController::menuClicked" << txt << checked;
-    /// NOTE do stuff like update the menu
     emit showMenu(txt);
 }
 

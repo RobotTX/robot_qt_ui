@@ -21,16 +21,16 @@ Frame {
         anchors.bottom: text.top
     }
 
-    Text {
+    Label {
         id: text
         color: Style.midGrey
         text: qsTr(txt)
-        horizontalAlignment: Text.AlignHCenter
+        horizontalAlignment: Label.AlignHCenter
         y: parent.height / 2 - Style.menuHeaderHeight / 2 // Placing text in the middle
         width: Style.menuWidth - 40
-        wrapMode: Text.WordWrap
+        wrapMode: Label.WordWrap
         anchors.margins: 2 // Leaving space between text and borders
         anchors.horizontalCenter: parent.horizontalCenter // Centering text
-        renderType: Text.NativeRendering // Rendering type
+        renderType: Label.NativeRendering // Rendering type
     }
 }

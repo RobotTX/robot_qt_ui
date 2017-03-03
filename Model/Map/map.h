@@ -19,6 +19,10 @@ public:
     Map(QObject* parent = Q_NULLPTR);
     void initializeMap(void);
 
+private slots:
+    void saveStateSlot(double posX, double posY, double zoom, QString mapSrc);
+    void loadStateSlot();
+
 signals:
     void setMap(QVariant mapSrc);
     void setMapState(QVariant posX, QVariant posY, QVariant zoom);

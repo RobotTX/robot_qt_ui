@@ -1,12 +1,20 @@
 import QtQuick 2.7
 import QtQuick.Controls 2.0
 import "../../Helper/style.js" as Style
+import "../MainMenu"
 
 Frame {
     id: mapViewFrame
     objectName: "mapViewFrame"
     property string mapSrc
+    signal saveState(double posX, double posY, double zoom, string mapSrc)
+    signal loadState()
     padding: 0
+
+    TopView {
+        onSaveState: mapViewFrame.saveState(mapImage.x, mapImage.y, mapImage.scale, mapSrc)
+        onLoadState: mapViewFrame.loadState()
+    }
 
     EmptyMap {
         id: emptyMap

@@ -10,7 +10,9 @@ MainController::MainController(QQmlApplicationEngine *engine, QObject* parent) :
 
     QList<QObject*> qmlList = engine->rootObjects();
     if(qmlList.size() == 1){
+        /// The main parent element in the QML tree
         QObject *applicationWindow = qmlList.at(0);
+
         /// Main menu controller
         mainMenuController = new MainMenuController(applicationWindow, this);
 

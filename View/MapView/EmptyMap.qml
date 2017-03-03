@@ -19,16 +19,16 @@ Frame {
         anchors.bottom: mapText.top
     }
 
-    Text {
+    Label {
         id: mapText
         color: Style.midGrey
         text: qsTr(txt)
-        horizontalAlignment: Text.AlignHCenter
+        horizontalAlignment: Label.AlignHCenter
         y: parent.height / 2 // Placing text in the middle
         width: 340
-        wrapMode: Text.WordWrap
+        wrapMode: Label.WordWrap
         anchors.margins: 2 // Leaving space between text and borders
         anchors.horizontalCenter: parent.horizontalCenter
-        renderType: Text.NativeRendering // Rendering type
+        renderType: Label.NativeRendering // Rendering type
     }
 }

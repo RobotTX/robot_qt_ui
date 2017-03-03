@@ -5,7 +5,11 @@ import "../Custom"
 
 Frame {
     id: menuHeader
+
     property string txt
+
+    signal closeMenu(string txt)
+
     height: Style.menuHeaderHeight
     anchors {
         left: parent.left
@@ -19,17 +23,16 @@ Frame {
         border.width: 1
     }
 
-    signal closeMenu(string txt)
 
-    CloseButton {
+    SmallButton {
         id: closeBtn
         onClicked: menuHeader.closeMenu(txt)
+        imgSrc: "qrc:/icons/closeBtn"
     }
 
-    Text {
+    Label {
         color: Style.midGrey2
         text: qsTr("Manage " + txt)
-        font.pointSize: 12
         anchors.verticalCenter: parent.verticalCenter
         anchors.left: closeBtn.right
         anchors.leftMargin: 11

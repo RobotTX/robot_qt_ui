@@ -6,6 +6,7 @@
         <file>View/MainMenu/MenuButton.qml</file>
         <file>View/MainMenu/MainMenu.qml</file>
         <file>View/MainMenu/MainMenuViews.qml</file>
+        <file>View/MainMenu/TopView.qml</file>
 
         <file>View/MapView/MapView.qml</file>
         <file>View/MapView/EmptyMap.qml</file>
@@ -25,7 +26,7 @@
         <file>View/Settings/SettingsMenu.qml</file>
         <file>View/Settings/SettingsMenuContent.qml</file>
 
-        <file>View/Custom/CloseButton.qml</file>
+        <file>View/Custom/SmallButton.qml</file>
         <file>View/Custom/EmptyMenu.qml</file>
         <file>View/Custom/MenuHeader.qml</file>
     </qresource>
