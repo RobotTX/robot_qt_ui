@@ -3,6 +3,11 @@ QT += qml quick
 CONFIG += c++11
 
 SOURCES += main.cpp \
+    Controller/mainmenucontroller.cpp \
+    Controller/maincontroller.cpp \
+    Helper/helper.cpp \
+    Model/Map/map.cpp \
+    Controller/Map/mapcontroller.cpp
 
 RESOURCES += qml.qrc \
     Resources/resources.qrc
@@ -29,8 +34,9 @@ qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
-FORMS += \
-
 HEADERS += \
-
-DISTFILES += \
+    Controller/mainmenucontroller.h \
+    Controller/maincontroller.h \
+    Helper/helper.h \
+    Model/Map/map.h \
+    Controller/Map/mapcontroller.h

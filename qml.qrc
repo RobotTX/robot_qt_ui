@@ -1,6 +1,33 @@
 <RCC>
     <qresource prefix="/">
         <file>main.qml</file>
-        <file>qtquickcontrols2.conf</file>
+        <file>Helper/style.js</file>
+
+        <file>View/MainMenu/MenuButton.qml</file>
+        <file>View/MainMenu/MainMenu.qml</file>
+        <file>View/MainMenu/MainMenuViews.qml</file>
+        <file>View/MainMenu/TopView.qml</file>
+
+        <file>View/MapView/MapView.qml</file>
+        <file>View/MapView/EmptyMap.qml</file>
+
+        <file>View/Robot/RobotMenu.qml</file>
+        <file>View/Robot/RobotMenuContent.qml</file>
+
+        <file>View/Path/PathMenu.qml</file>
+        <file>View/Path/PathMenuContent.qml</file>
+
+        <file>View/Point/PointMenu.qml</file>
+        <file>View/Point/PointMenuContent.qml</file>
+
+        <file>View/Map/MapMenu.qml</file>
+        <file>View/Map/MapMenuContent.qml</file>
+
+        <file>View/Settings/SettingsMenu.qml</file>
+        <file>View/Settings/SettingsMenuContent.qml</file>
+
+        <file>View/Custom/SmallButton.qml</file>
+        <file>View/Custom/EmptyMenu.qml</file>
+        <file>View/Custom/MenuHeader.qml</file>
     </qresource>
 </RCC>
