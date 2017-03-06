@@ -12,8 +12,12 @@ Frame {
     padding: 0
 
     TopView {
+        id: topView
         onSaveState: mapViewFrame.saveState(mapImage.x, mapImage.y, mapImage.scale, mapSrc)
         onLoadState: mapViewFrame.loadState()
+        /// If we have a map, the mapImage is visible
+        /// so we enable the buttons to save/load the state of the map
+        hasMap: mapImage.visible
     }
 
     EmptyMap {

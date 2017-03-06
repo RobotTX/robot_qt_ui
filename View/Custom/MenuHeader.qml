@@ -5,6 +5,7 @@ import "../Custom"
 
 Frame {
     id: menuHeader
+    padding: 0
 
     property string txt
 
@@ -28,6 +29,8 @@ Frame {
         id: closeBtn
         onClicked: menuHeader.closeMenu(txt)
         imgSrc: "qrc:/icons/closeBtn"
+        anchors.left: parent.left
+        anchors.leftMargin: 11
     }
 
     Label {

@@ -17,3 +17,6 @@ var lightGreyBorder = "#d8d8d8"
 /// Map
 var maxZoom = 8
 var minZoom = 0.35
+
+var smallBtnWidth = 20
+var smallBtnHeight = 20

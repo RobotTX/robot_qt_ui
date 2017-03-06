@@ -18,6 +18,7 @@ class Map : public QObject {
 public:
     Map(QObject* parent);
     void initializeMap(void);
+    QString getMapFile(void) const { return mapFile; }
 
 private slots:
     void saveStateSlot(double posX, double posY, double zoom, QString mapSrc);

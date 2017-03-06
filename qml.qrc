@@ -19,6 +19,7 @@
 
         <file>View/Point/PointMenu.qml</file>
         <file>View/Point/PointMenuContent.qml</file>
+        <file>Model/Point/Point.qml</file>
 
         <file>View/Map/MapMenu.qml</file>
         <file>View/Map/MapMenuContent.qml</file>

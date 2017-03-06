@@ -5,8 +5,8 @@ import "../../Helper/style.js" as Style
 Button {
     property string imgSrc
     anchors.verticalCenter: parent.verticalCenter
-    width: 20
-    height: 20
+    width: Style.smallBtnWidth
+    height: Style.smallBtnHeight
 
     background: Rectangle {
         color: pressed ? Style.lightGreyBorder : "transparent"

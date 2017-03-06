@@ -25,5 +25,12 @@
         <file alias="closeBtn">icons/closeBtn.png</file>
         <file alias="loadState">icons/Ic_LoadState.png</file>
         <file alias="saveState">icons/Ic_SaveState.png</file>
+
+        <file alias="fold">icons/Btn_Fold.png</file>
+        <file alias="visible">icons/Btn_Visible.png</file>
+        <file alias="unfold">icons/Btn_Unfold1.png</file>
+        <file alias="invisible">icons/Btn_Invisible.png</file>
+        <file alias="more">icons/Btn_More.png</file>
+        <file alias="add">icons/Btn_Add.png</file>
     </qresource>
 </RCC>

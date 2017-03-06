@@ -5,6 +5,7 @@ import "../Custom"
 
 Frame {
     id: topViewFrame
+    property bool hasMap
 
     signal saveState()
     signal loadState()
@@ -34,6 +35,7 @@ Frame {
         anchors.verticalCenter: parent.verticalCenter
         anchors.right: parent.right
         anchors.rightMargin: 10
+        enabled: hasMap
         onClicked: topViewFrame.loadState()
     }
 
@@ -43,6 +45,7 @@ Frame {
         anchors.verticalCenter: parent.verticalCenter
         anchors.right: loadStateButton.left
         anchors.rightMargin: 14
+        enabled: hasMap
         onClicked: topViewFrame.saveState()
     }
 }
