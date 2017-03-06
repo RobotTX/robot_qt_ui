@@ -29,6 +29,7 @@ Frame {
         text: qsTr("Soon some awesome messages here ")
     }
 
+    /// The load state button
     SmallButton {
         id: loadStateButton
         imgSrc: "qrc:/icons/loadState"
@@ -39,6 +40,7 @@ Frame {
         onClicked: topViewFrame.loadState()
     }
 
+    /// The save state button
     SmallButton {
         id: saveStateButton
         imgSrc: "qrc:/icons/saveState"

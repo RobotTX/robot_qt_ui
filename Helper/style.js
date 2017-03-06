@@ -13,6 +13,7 @@ var midGrey2 = "#8F8F8F"
 var midGrey3 = "#e4e4e4"
 var lightGreyBackground = "#FAFAFA"
 var lightGreyBorder = "#d8d8d8"
+var blackMenuTextColor = "#262626"
 
 /// Map
 var maxZoom = 8

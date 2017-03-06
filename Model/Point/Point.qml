@@ -2,59 +2,59 @@ import QtQuick 2.0
 
 ListModel {
     ListElement {
-        name: "Point 1"
-        isVisible: true
-        group: "No Group"
+        _name: "Point 1"
+        _isVisible: true
+        _groupName: "No Group"
     }
     ListElement {
-        name: "Point 2"
-        isVisible: false
-        group: "No Group"
+        _name: "Point 2"
+        _isVisible: false
+        _groupName: "No Group"
     }
     ListElement {
-        name: "Group 1"
-        isVisible: true
-        group: ""
+        _name: "Group 1"
+        _isVisible: true
+        _groupName: ""
     }
     ListElement {
-        name: "Point 3"
-        isVisible: true
-        group: "Group"
+        _name: "Point 3"
+        _isVisible: true
+        _groupName: "Group"
     }
     ListElement {
-        name: "Point 4"
-        isVisible: true
-        group: "Group"
+        _name: "Point 4"
+        _isVisible: true
+        _groupName: "Group"
     }
     ListElement {
-        name: "Group 2"
-        isVisible: false
-        group: ""
+        _name: "Group 2"
+        _isVisible: false
+        _groupName: ""
     }
     ListElement {
-        name: "Point 5"
-        isVisible: true
-        group: "Group 2"
+        _name: "Point 5"
+        _isVisible: true
+        _groupName: "Group 2"
     }
     ListElement {
-        name: "Point 6"
-        isVisible: true
-        group: "Group 2"
+        _name: "Point 6"
+        _isVisible: true
+        _groupName: "Group 2"
     }
     ListElement {
-        name: "Group 3"
-        isVisible: true
-        group: ""
+        _name: "Group 3"
+        _isVisible: true
+        _groupName: ""
     }
     ListElement {
-        name: "Point 7"
-        isVisible: true
-        group: "Group 3"
+        _name: "Point 7"
+        _isVisible: true
+        _groupName: "Group 3"
     }
     ListElement {
-        name: "Point 8"
-        isVisible: true
-        group: "Group 3"
+        _name: "Point 8"
+        _isVisible: true
+        _groupName: "Group 3"
     }
 }
 
