@@ -13,6 +13,7 @@ Frame {
     }
 
     Image {
+        asynchronous: true
         source: imgSrc
         fillMode: Image.PreserveAspectFit // For not stretching image
         anchors.horizontalCenter: parent.horizontalCenter

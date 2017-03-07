@@ -21,7 +21,7 @@ MainController::MainController(QQmlApplicationEngine *engine, QObject* parent) :
         mapController = new MapController(applicationWindow, this);
 
         /// Point Controller
-        pointController = new PointController(this, mapController->getMapFile());
+        pointController = new PointController(applicationWindow, mapController->getMapFile(), this);
     } else {
         qDebug() << "MainController::MainController We are supposed to only have 1 item, the ApplicationWindow";
         Q_UNREACHABLE();

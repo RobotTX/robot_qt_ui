@@ -11,6 +11,7 @@ Frame {
 
     Image {
         id: mapImage
+        asynchronous: true
         source: "qrc:/icons/big_map"
         fillMode: Image.PreserveAspectFit // For not stretching image
         anchors.horizontalCenter: parent.horizontalCenter

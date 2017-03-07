@@ -27,8 +27,9 @@ Button {
     }
 
     Image {
-        y: (txt == "Settings") ? 0 : 15
         id: image
+        asynchronous: true
+        y: (txt == "Settings") ? 0 : 15
         source: checked ? imgSrc + "_checked" : imgSrc
         fillMode: Image.Pad // For not stretching image
         anchors.horizontalCenter: parent.horizontalCenter // Centering text

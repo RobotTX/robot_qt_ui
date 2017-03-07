@@ -8,7 +8,7 @@ class Points;
 class PointController : public QObject {
     Q_OBJECT
 public:
-    PointController(QObject *parent, QString mapFile);
+    PointController(QObject *applicationWindow, QString mapFile, QObject *parent);
 
 private:
     void loadPoints(QString fileName);

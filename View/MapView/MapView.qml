@@ -28,6 +28,7 @@ Frame {
 
     Image {
         id: mapImage
+        asynchronous: true
         visible: false
         source: mapSrc
         fillMode: Image.PreserveAspectFit // For not stretching image

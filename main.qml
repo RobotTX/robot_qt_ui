@@ -3,6 +3,7 @@ import QtQuick.Controls 2.0
 import QtQuick.Layouts 1.0
 import "View/MainMenu"
 import "View/MapView"
+import "Model/Point"
 
 ApplicationWindow {
     id: applicationWindow
@@ -14,7 +15,15 @@ ApplicationWindow {
     minimumHeight: 600
     title: qsTr("Gobot :)")
 
+    Item {
+        Point {
+            id: _pointModel
+            objectName: "pointModel"
+        }
+    }
+
     ColumnLayout {
+
         spacing: 0
         anchors.fill: parent
 
@@ -26,6 +35,7 @@ ApplicationWindow {
         MainMenuViews {
             id: mainMenuViews
             z: 1
+            pointModel: _pointModel
             anchors {
                 left: mainMenu.right
                 top: parent.top

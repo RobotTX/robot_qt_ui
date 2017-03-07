@@ -4,6 +4,7 @@ import "../Custom"
 
 Page {
     id: page
+    readonly property int index: 1
     anchors.fill: parent
 
     MenuHeader {

@@ -1,11 +1,14 @@
 import QtQuick 2.7
 import QtQuick.Controls 2.0
-import "../Custom"
 import "../../Helper/style.js" as Style
+import "../../Model/Point"
+import "../Custom"
 
 Page {
     id: page
+    readonly property int index: 2
     anchors.fill: parent
+    property Point _pointModel;
 
     MenuHeader {
         id: pointMenuHeader
@@ -28,6 +31,7 @@ Page {
             }
 
             Image {
+                asynchronous: true
                 source: "qrc:/icons/add"
                 fillMode: Image.Pad // For not stretching image
                 anchors.horizontalCenter: parent.horizontalCenter
@@ -38,6 +42,7 @@ Page {
     }
 
     PointMenuContent {
+        pointModel: _pointModel
         anchors {
             left: parent.left
             top: pointMenuHeader.bottom

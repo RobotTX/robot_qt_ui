@@ -1,60 +1,17 @@
-import QtQuick 2.0
+import QtQuick 2.7
+import QtQuick.Controls 2.0
 
 ListModel {
-    ListElement {
-        _name: "Point 1"
-        _isVisible: true
-        _groupName: "No Group"
+    id: pointModel
+    function addGroup(index, name){
+        console.log("Add group " + name);
+        pointModel.insert(index, {"_name": name, "_isVisible": false, "_groupName": "",
+                              "_x": 0, "_y": 0});
     }
-    ListElement {
-        _name: "Point 2"
-        _isVisible: false
-        _groupName: "No Group"
-    }
-    ListElement {
-        _name: "Group 1"
-        _isVisible: true
-        _groupName: ""
-    }
-    ListElement {
-        _name: "Point 3"
-        _isVisible: true
-        _groupName: "Group"
-    }
-    ListElement {
-        _name: "Point 4"
-        _isVisible: true
-        _groupName: "Group"
-    }
-    ListElement {
-        _name: "Group 2"
-        _isVisible: false
-        _groupName: ""
-    }
-    ListElement {
-        _name: "Point 5"
-        _isVisible: true
-        _groupName: "Group 2"
-    }
-    ListElement {
-        _name: "Point 6"
-        _isVisible: true
-        _groupName: "Group 2"
-    }
-    ListElement {
-        _name: "Group 3"
-        _isVisible: true
-        _groupName: ""
-    }
-    ListElement {
-        _name: "Point 7"
-        _isVisible: true
-        _groupName: "Group 3"
-    }
-    ListElement {
-        _name: "Point 8"
-        _isVisible: true
-        _groupName: "Group 3"
+
+    function addPoint(index, name, isVisible, groupName, x, y){
+        console.log("Add point " + name);
+        pointModel.insert(index, {"_name": name, "_isVisible": isVisible, "_groupName": groupName,
+                              "_x": x, "_y": y});
     }
 }
-

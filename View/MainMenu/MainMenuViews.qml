@@ -6,111 +6,75 @@ import "../Point"
 import "../Map"
 import "../Settings"
 import "../../Helper/style.js" as Style
+import "../../Model/Point"
 
 Frame {
     id: mainMenuViewsFrame
     objectName: "mainMenuViewsFrame"
-    visible: false
+    visible: !(currentMenu == -1)
     width: Style.menuWidth
     padding: 0
+    property Point pointModel
+    property int currentMenu: -1
 
     RobotMenu {
         id: robotMenu
-        visible: false
+        visible: index == currentMenu
     }
 
     PathMenu {
         id: pathMenu
-        visible: false
+        visible: index == currentMenu
     }
 
     PointMenu {
         id: pointMenu
-        visible: false
+        visible: index == currentMenu
+        _pointModel: pointModel
     }
 
     MapMenu {
         id: mapMenu
-        visible: false
+        visible: index == currentMenu
     }
 
     SettingsMenu {
         id: settingsMenu
-        visible: false
+        visible: index == currentMenu
     }
 
     /// We show the given menu in txt
     function showMenu(txt) {
         switch(txt){
             case 'Robot':
-                if(robotMenu.visible){
-                    robotMenu.visible = false;
-                    mainMenuViewsFrame.visible = false;
-                } else {
-                    robotMenu.visible = true;
-                    mainMenuViewsFrame.visible = true;
-
-                    pathMenu.visible = false;
-                    pointMenu.visible = false;
-                    mapMenu.visible = false;
-                    settingsMenu.visible = false;
-                }
+                if(robotMenu.visible)
+                    mainMenuViewsFrame.currentMenu = -1;
+                else
+                    mainMenuViewsFrame.currentMenu = 0;
             break;
             case 'Path':
-                if(pathMenu.visible){
-                    pathMenu.visible = false;
-                    mainMenuViewsFrame.visible = false;
-                } else {
-                    pathMenu.visible = true;
-                    mainMenuViewsFrame.visible = true;
-
-                    robotMenu.visible = false;
-                    pointMenu.visible = false;
-                    mapMenu.visible = false;
-                    settingsMenu.visible = false;
-                }
+                if(pathMenu.visible)
+                    mainMenuViewsFrame.currentMenu = -1;
+                else
+                    mainMenuViewsFrame.currentMenu = 1;
             break;
             case 'Point':
-                if(pointMenu.visible){
-                    pointMenu.visible = false;
-                    mainMenuViewsFrame.visible = false;
-                } else {
-                    pointMenu.visible = true;
-                    mainMenuViewsFrame.visible = true;
-
-                    robotMenu.visible = false;
-                    pathMenu.visible = false;
-                    mapMenu.visible = false;
-                    settingsMenu.visible = false;
-                }
+                if(pointMenu.visible)
+                    mainMenuViewsFrame.currentMenu = -1;
+                else
+                    mainMenuViewsFrame.currentMenu = 2;
             break;
             case 'Map':
-                if(mapMenu.visible){
-                    mapMenu.visible = false;
-                    mainMenuViewsFrame.visible = false;
-                } else {
-                    mapMenu.visible = true;
-                    mainMenuViewsFrame.visible = true;
-
-                    robotMenu.visible = false;
-                    pathMenu.visible = false;
-                    pointMenu.visible = false;
-                    settingsMenu.visible = false;
-                }
+                if(mapMenu.visible)
+                    mainMenuViewsFrame.currentMenu = -1;
+                else
+                    mainMenuViewsFrame.currentMenu = 3;
             break;
             case 'Settings':
-                if(settingsMenu.visible){
-                    settingsMenu.visible = false;
-                    mainMenuViewsFrame.visible = false;
-                } else {
-                    settingsMenu.visible = true;
-                    mainMenuViewsFrame.visible = true;
-
-                    robotMenu.visible = false;
-                    pathMenu.visible = false;
-                    pointMenu.visible = false;
-                    mapMenu.visible = false;
-                }
+                if(settingsMenu.visible)
+                    mainMenuViewsFrame.currentMenu = -1;
+                else
+                    mainMenuViewsFrame.currentMenu = 4;
             break;
         }
     }

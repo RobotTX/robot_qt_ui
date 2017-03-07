@@ -14,6 +14,7 @@ Button {
     }
 
     Image {
+        asynchronous: true
         source: imgSrc
         fillMode: Image.Pad // For not stretching image
         anchors.horizontalCenter: parent.horizontalCenter // Centering text

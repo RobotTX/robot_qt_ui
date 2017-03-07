@@ -10,7 +10,6 @@ Frame {
         border.width: 1
     }
 
-
     EmptyMenu {
         txt: "You have no path, click the '+' buton to create a path."
         imgSrc: "qrc:/icons/big_path"
