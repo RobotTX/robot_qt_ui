@@ -1,5 +1,5 @@
 import QtQuick 2.7
-import QtQuick.Controls 2.0
+import QtQuick.Controls 2.1
 import "../Robot"
 import "../Path"
 import "../Point"
@@ -14,7 +14,7 @@ Frame {
     visible: !(currentMenu == -1)
     width: Style.menuWidth
     padding: 0
-    property Point pointModel
+    property Points pointModel
     property int currentMenu: -1
 
     RobotMenu {

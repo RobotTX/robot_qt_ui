@@ -1,5 +1,5 @@
 import QtQuick 2.7
-import QtQuick.Controls 2.0
+import QtQuick.Controls 2.1
 import "../../Helper/style.js" as Style
 import "../../Model/Point"
 import "../Custom"
@@ -8,7 +8,7 @@ Frame {
     id: pointMenuFrame
     objectName: "pointMenuFrame"
     padding: 0
-    property Point pointModel;
+    property Points pointModel
 
     background: Rectangle {
         color: Style.lightGreyBackground
@@ -49,9 +49,8 @@ Frame {
         }
 
         function removeGroup(begin, end){
-            console.log("remove group " + begin + " " + end);
-            var i;
-            for(i = begin; i <= end; i++)
+            //console.log("remove group " + begin + " " + end);
+            for(var i = begin; i <= end; i++)
                 pointModel.remove(begin);
         }
     }

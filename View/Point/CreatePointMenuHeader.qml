@@ -7,9 +7,7 @@ Frame {
     id: menuHeader
     padding: 0
 
-    property string txt
-
-    signal closeMenu(string txt)
+    signal backToMenu()
 
     height: Style.menuHeaderHeight
     anchors {
@@ -27,15 +25,15 @@ Frame {
 
     SmallButton {
         id: closeBtn
-        onClicked: menuHeader.closeMenu(txt)
-        imgSrc: "qrc:/icons/closeBtn"
+        imgSrc: "qrc:/icons/back"
         anchors.left: parent.left
         anchors.leftMargin: 11
+        onClicked: backToMenu()
     }
 
     Label {
         color: Style.midGrey2
-        text: qsTr("Manage " + txt)
+        text: qsTr("New Point")
         anchors.verticalCenter: parent.verticalCenter
         anchors.left: closeBtn.right
         anchors.leftMargin: 11

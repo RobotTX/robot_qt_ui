@@ -3,7 +3,7 @@
         <file>main.qml</file>
         <file>Helper/style.js</file>
         <file>Helper/helper.js</file>
-        <file>Model/Point/Point.qml</file>
+        <file>Model/Point/Points.qml</file>
         <file>View/MainMenu/MenuButton.qml</file>
         <file>View/MainMenu/MainMenu.qml</file>
         <file>View/MainMenu/MainMenuViews.qml</file>
@@ -15,8 +15,11 @@
         <file>View/Path/PathMenu.qml</file>
         <file>View/Path/PathMenuContent.qml</file>
         <file>View/Point/PointMenu.qml</file>
+        <file>View/Point/PointMenuHeader.qml</file>
         <file>View/Point/PointMenuContent.qml</file>
         <file>View/Point/PointListItem.qml</file>
+        <file>View/Point/CreatePointMenuHeader.qml</file>
+        <file>View/Point/CreatePointMenuContent.qml</file>
         <file>View/Map/MapMenu.qml</file>
         <file>View/Map/MapMenuContent.qml</file>
         <file>View/Settings/SettingsMenu.qml</file>
@@ -24,5 +27,6 @@
         <file>View/Custom/SmallButton.qml</file>
         <file>View/Custom/EmptyMenu.qml</file>
         <file>View/Custom/MenuHeader.qml</file>
+        <file>View/Custom/CustomComboBox.qml</file>
     </qresource>
 </RCC>

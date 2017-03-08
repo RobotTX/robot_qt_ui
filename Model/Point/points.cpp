@@ -10,7 +10,7 @@ Points::Points(QObject* parent) : QObject(parent), groups(new QMap<QString, QVec
 
 void Points::addGroup(QString groupName){
     if(!groups->contains(groupName)){
-        qDebug() << "Points::addGroup" << groupName;
+        //qDebug() << "Points::addGroup" << groupName;
         groups->insert(groupName, new QVector<Point*>());
 
         /// We do not want to add the group "No Group" in the list but just display its points
@@ -22,7 +22,7 @@ void Points::addGroup(QString groupName){
 }
 
 void Points::addPoint(QString groupName, QString name, double x, double y, bool displayed){
-    qDebug() << "Points::addPoint" << groupName << name << x << y << displayed;
+    //qDebug() << "Points::addPoint" << groupName << name << x << y << displayed;
     addGroup(groupName);
 
     QVector<Point*>* group = groups->value(groupName);
@@ -71,7 +71,7 @@ int Points::indexOfGroup(QString groupName){
 }
 
 void Points::deletePointOrGroup(QString name, QString groupName){
-    qDebug() << "Points::deletePointOrGroup" << name << groupName;
+    //qDebug() << "Points::deletePointOrGroup" << name << groupName;
     if(groupName.isEmpty()){
         if(groups->find(name) != groups->end()){
             emit removeGroupQml(QVariant::fromValue(indexOfGroup(name) - 1),

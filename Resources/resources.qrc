@@ -17,6 +17,7 @@
 
         <file alias="point_checked">icons/icPoint_checked.png</file>
         <file alias="point">icons/icPoint_normal.png</file>
+        <file alias="pointView">icons/Point_s.png</file>
         <file alias="big_point">icons/Img_Point.png</file>
 
         <file alias="settings_checked">icons/icSettings_normal.png</file>
@@ -32,5 +33,7 @@
         <file alias="invisible">icons/Btn_Invisible.png</file>
         <file alias="more">icons/Btn_More.png</file>
         <file alias="add">icons/Btn_Add.png</file>
+        <file alias="back">icons/Btn_Back.png</file>
+        <file alias="white_stepper">icons/White_Stepper.png</file>
     </qresource>
 </RCC>

@@ -1,5 +1,5 @@
 import QtQuick 2.7
-import QtQuick.Controls 2.0
+import QtQuick.Controls 2.1
 import "../../Helper/style.js" as Style
 import "../../Helper/helper.js" as Helper
 import QtQuick.Layouts 1.3
@@ -113,7 +113,7 @@ Rectangle {
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.verticalCenter: parent.verticalCenter
         }
-        onClicked: myList.deletePointOrGroup(name, groupName)
+        //onClicked: myList.deletePointOrGroup(name, groupName)
     }
 
     function leftButtonClicked(item){

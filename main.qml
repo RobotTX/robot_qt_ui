@@ -1,5 +1,5 @@
 import QtQuick 2.7
-import QtQuick.Controls 2.0
+import QtQuick.Controls 2.1
 import QtQuick.Layouts 1.0
 import "View/MainMenu"
 import "View/MapView"
@@ -15,8 +15,12 @@ ApplicationWindow {
     minimumHeight: 600
     title: qsTr("Gobot :)")
 
+    Keys.onPressed: {
+        console.log("space");
+    }
+
     Item {
-        Point {
+        Points {
             id: _pointModel
             objectName: "pointModel"
         }
@@ -44,6 +48,7 @@ ApplicationWindow {
         }
 
         MapView {
+            pointModel: _pointModel
             anchors {
                 left: (mainMenuViews.visible) ? mainMenuViews.right : mainMenu.right
                 top: parent.top
