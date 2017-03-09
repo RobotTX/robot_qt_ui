@@ -10,6 +10,9 @@ PointController::PointController(QObject *applicationWindow, QString mapFile, QO
     if (pointModel){
         connect(points, SIGNAL(addGroupQml(QVariant, QVariant)), pointModel, SLOT(addGroup(QVariant, QVariant)));
         connect(points, SIGNAL(addPointQml(QVariant, QVariant, QVariant, QVariant, QVariant, QVariant)), pointModel, SLOT(addPoint(QVariant, QVariant, QVariant, QVariant, QVariant, QVariant)));
+        connect(points, SIGNAL(removePointQml(QVariant)), pointModel, SLOT(removePoint(QVariant)));
+        connect(points, SIGNAL(removeGroupQml(QVariant, QVariant)), pointModel, SLOT(removeGroup(QVariant, QVariant)));
+        connect(points, SIGNAL(hideShowQml(QVariant, QVariant)), pointModel, SLOT(hideShow(QVariant, QVariant)));
     } else {
         qDebug() << "PointController::PointController could not find the qml point model";
         Q_UNREACHABLE();
@@ -18,9 +21,8 @@ PointController::PointController(QObject *applicationWindow, QString mapFile, QO
     QObject *pointList = applicationWindow->findChild<QObject*>("pointList");
     if (pointList){
         connect(pointList, SIGNAL(deletePointOrGroup(QString, QString)), points, SLOT(deletePointOrGroup(QString, QString)));
-        connect(points, SIGNAL(removePointQml(QVariant)), pointList, SLOT(removePoint(QVariant)));
-        connect(points, SIGNAL(removeGroupQml(QVariant, QVariant)), pointList, SLOT(removeGroup(QVariant, QVariant)));
-    } else {
+        connect(pointList, SIGNAL(hideShow(QString, QString, bool)), points, SLOT(hideShow(QString, QString, bool)));
+     } else {
         qDebug() << "PointController::PointController could not find the qml point model";
         Q_UNREACHABLE();
     }

@@ -20,6 +20,7 @@
         <file>View/Point/PointListItem.qml</file>
         <file>View/Point/CreatePointMenuHeader.qml</file>
         <file>View/Point/CreatePointMenuContent.qml</file>
+        <file>View/Point/PointView.qml</file>
         <file>View/Map/MapMenu.qml</file>
         <file>View/Map/MapMenuContent.qml</file>
         <file>View/Settings/SettingsMenu.qml</file>

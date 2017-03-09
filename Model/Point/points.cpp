@@ -26,7 +26,7 @@ void Points::addPoint(QString groupName, QString name, double x, double y, bool 
     addGroup(groupName);
 
     QVector<Point*>* group = groups->value(groupName);
-    group->push_back(new Point(name, x, y, displayed, this));
+    group->push_back(new Point(name, this));
     /// We -1 the index of the poit as we don't count the group "No Group"
     emit addPointQml(QVariant::fromValue(indexOfPoint(name, groupName)-1),
                      QVariant::fromValue(name),
@@ -72,6 +72,7 @@ int Points::indexOfGroup(QString groupName){
 
 void Points::deletePointOrGroup(QString name, QString groupName){
     //qDebug() << "Points::deletePointOrGroup" << name << groupName;
+    /// if we want to delete a group, we delete all its points
     if(groupName.isEmpty()){
         if(groups->find(name) != groups->end()){
             emit removeGroupQml(QVariant::fromValue(indexOfGroup(name) - 1),
@@ -79,12 +80,21 @@ void Points::deletePointOrGroup(QString name, QString groupName){
             groups->remove(name);
         }
     } else {
+        /// TODO check if work correctly
+        /// we want ot delete a point so we remove it on the qml side
+        emit removePointQml(QVariant::fromValue(indexOfPoint(name, groupName) - 1));
+        /// and we remove it on the c++ side
         QVector<Point*>* group = groups->value(groupName);
-        for(int i = 0; i < group->size(); i++){
-            if(group->at(i)->getName().compare(name) == 0){
-                emit removePointQml(QVariant::fromValue(indexOfPoint(name, groupName) - 1));
+        for(int i = 0; i < group->size(); i++)
+            if(group->at(i)->getName().compare(name) == 0)
                 group->remove(i);
-            }
-        }
     }
+}
+
+void Points::hideShow(QString name, QString groupName, bool show){
+    /// If it's a group
+    if(groupName.isEmpty())
+        emit hideShowQml(QVariant::fromValue(indexOfGroup(name) - 1), QVariant::fromValue(!show));
+    else
+        emit hideShowQml(QVariant::fromValue(indexOfPoint(name, groupName) - 1), QVariant::fromValue(!show));
 }

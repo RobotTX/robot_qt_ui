@@ -15,10 +15,6 @@ ApplicationWindow {
     minimumHeight: 600
     title: qsTr("Gobot :)")
 
-    Keys.onPressed: {
-        console.log("space");
-    }
-
     Item {
         Points {
             id: _pointModel

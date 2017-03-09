@@ -29,12 +29,14 @@ public:
 
 private slots:
     void deletePointOrGroup(QString name, QString groupName);
+    void hideShow(QString name, QString groupName, bool show);
 
 signals:
     void addGroupQml(QVariant index, QVariant name);
     void addPointQml(QVariant index, QVariant name, QVariant isVisible, QVariant groupName, QVariant x, QVariant y);
     void removeGroupQml(QVariant begin, QVariant end);
     void removePointQml(QVariant index);
+    void hideShowQml(QVariant index, QVariant show);
 
 private:
     QMap<QString, QVector<Point*>*>* groups;

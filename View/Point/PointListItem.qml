@@ -67,13 +67,14 @@ Rectangle {
         Image {
             asynchronous: true
             /// Change the image depending on whther or not it's a point or a group and if it's visible
-            source: (groupName == "") ? (isVisible ? "qrc:/icons/fold" : "qrc:/icons/unfold") : (isVisible ? "qrc:/icons/visible" : "qrc:/icons/invisible")
+            source: (groupName == "") ? (_isVisible ? "qrc:/icons/fold" : "qrc:/icons/unfold") : (_isVisible ? "qrc:/icons/visible" : "qrc:/icons/invisible")
             fillMode: Image.Pad // For not stretching image
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.verticalCenter: parent.verticalCenter
         }
 
-        onClicked: leftButtonClicked(parent)
+        //onClicked: leftButtonClicked(parent)
+        onClicked: myList.hideShow(name, groupName, _isVisible);
     }
 
     /// The item displaying the name of the point/group
@@ -115,8 +116,9 @@ Rectangle {
         }
         //onClicked: myList.deletePointOrGroup(name, groupName)
     }
-
+/*
     function leftButtonClicked(item){
         item.isVisible = !item.isVisible;
-    }
+        myList.hideShow(name, groupName, item.isVisible);
+    }*/
 }

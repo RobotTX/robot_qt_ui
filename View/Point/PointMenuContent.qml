@@ -43,15 +43,7 @@ Frame {
         anchors.topMargin: 14
 
         signal deletePointOrGroup(string name, string groupName)
+        signal hideShow(string name, string groupName, bool isVisible)
 
-        function removePoint(index){
-            pointModel.remove(index);
-        }
-
-        function removeGroup(begin, end){
-            //console.log("remove group " + begin + " " + end);
-            for(var i = begin; i <= end; i++)
-                pointModel.remove(begin);
-        }
     }
 }
