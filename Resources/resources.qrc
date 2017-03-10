@@ -19,6 +19,7 @@
         <file alias="point">icons/icPoint_normal.png</file>
         <file alias="pointView">icons/Point_s.png</file>
         <file alias="big_point">icons/Img_Point.png</file>
+        <file alias="addPointView">icons/Point_Add.png</file>
 
         <file alias="settings_checked">icons/icSettings_normal.png</file>
         <file alias="settings">icons/icSettings_normal.png</file>

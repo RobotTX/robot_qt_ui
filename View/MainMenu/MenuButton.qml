@@ -1,5 +1,6 @@
 import QtQuick 2.7
 import QtQuick.Controls 2.1
+import QtGraphicalEffects 1.0
 import "../../Helper/style.js" as Style
 
 Button {
@@ -12,7 +13,7 @@ Button {
 
     // This is to change the background color of the button when selected
     background: Rectangle {
-        color: checked ? "#66000000" : "transparent"
+        color: checked ? Style.darkGrey2 : "transparent"
 
         // The blue border when the item is selected
         Rectangle {
@@ -36,6 +37,13 @@ Button {
         anchors.fill: if(txt == "Settings"){parent}
     }
 
+    /// TODO ask for better images to designer (or do it ourself) instead of using colorOverlay
+    ColorOverlay {
+        anchors.fill: image
+        source: image
+        color: checked ? "#6788e0" : "transparent"
+    }
+
     Label {
         color: checked ? Style.darkSkyBlue : Style.midGrey
         text: (txt == "Settings") ? qsTr("") : qsTr(txt)
@@ -43,6 +51,5 @@ Button {
         anchors.top: image.bottom // Placing text in bottom
         anchors.topMargin: 4 // Leaving space between text and borders
         anchors.horizontalCenter: parent.horizontalCenter // Centering text
-        renderType: Label.NativeRendering // Rendering type
     }
 }

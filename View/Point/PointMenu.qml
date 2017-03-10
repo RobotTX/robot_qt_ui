@@ -7,11 +7,16 @@ Page {
     id: page
     readonly property int index: 2
     anchors.fill: parent
-    property Points _pointModel;
+    property Points pointModel
+    property PointView tmpPointView
+
+    onVisibleChanged: {
+        createPointMenuFrame.visible = false;
+    }
 
     Frame {
         id: pointMenuFrame
-        visible: !createPointMenuFrame.visible
+        visible: !createPointMenuFrame.visible && !createGroupMenuFrame.visible
         anchors.fill: parent
         padding: 0
         PointMenuHeader {
@@ -19,6 +24,7 @@ Page {
             objectName: "pointMenuHeader"
             txt: "Point"
             onOpenCreatePointMenu: createPointMenuFrame.visible = true;
+            onOpenCreateGroupMenu: createGroupMenuFrame.visible = true;
         }
 
         PointMenuContent {
@@ -45,13 +51,37 @@ Page {
         }
 
         CreatePointMenuContent {
-            pointModel: _pointModel
+            pointModel: page.pointModel
+            tmpPointView: page.tmpPointView
             anchors {
                 left: parent.left
                 top: createPointMenuHeader.bottom
                 right: parent.right
                 bottom: parent.bottom
             }
+            onBackToMenu: createPointMenuFrame.visible = false;
+        }
+    }
+
+    Frame {
+        id: createGroupMenuFrame
+        visible: false
+        anchors.fill: parent
+        padding: 0
+
+        CreateGroupMenuHeader {
+            id: createGroupMenuHeader
+            onBackToMenu: createGroupMenuFrame.visible = false;
+        }
+
+        CreateGroupMenuContent {
+            anchors {
+                left: parent.left
+                top: createGroupMenuHeader.bottom
+                right: parent.right
+                bottom: parent.bottom
+            }
+            onBackToMenu: createGroupMenuFrame.visible = false;
         }
     }
 }

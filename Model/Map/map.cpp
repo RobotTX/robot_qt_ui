@@ -42,6 +42,7 @@ void Map::initializeMap(void){
                          << centerX << centerY << originX << originY << resolution
                          << QString::fromStdString(_dateTime) << QString::fromStdString(_mapId);
 
+                mapImage = QImage(mapFile);
                 origin = QPointF(originX, originY);
                 dateTime = QDateTime::fromString(QString::fromStdString(_dateTime), "yyyy-MM-dd-hh-mm-ss");
                 mapId = QUuid(QString::fromStdString(_mapId));

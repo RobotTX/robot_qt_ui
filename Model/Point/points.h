@@ -22,10 +22,14 @@ class Points : public QObject {
 public:
     Points(QObject *parent);
 
-    void addGroup(QString groupName);
-    void addPoint(QString groupName, QString name, double x, double y, bool displayed);
     int indexOfPoint(QString pointName, QString groupName);
     int indexOfGroup(QString groupName);
+    bool checkPointName(const QString name);
+    bool checkGroupName(const QString name);
+
+public slots:
+    void addPoint(QString name, QString groupName, double x, double y, bool displayed = true);
+    void addGroup(QString groupName);
 
 private slots:
     void deletePointOrGroup(QString name, QString groupName);

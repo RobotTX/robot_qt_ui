@@ -4,6 +4,7 @@ import QtQuick.Layouts 1.0
 import "View/MainMenu"
 import "View/MapView"
 import "Model/Point"
+import "View/Point"
 
 ApplicationWindow {
     id: applicationWindow
@@ -36,6 +37,7 @@ ApplicationWindow {
             id: mainMenuViews
             z: 1
             pointModel: _pointModel
+            tmpPointView: mapView.tmpPointView
             anchors {
                 left: mainMenu.right
                 top: parent.top
@@ -44,6 +46,7 @@ ApplicationWindow {
         }
 
         MapView {
+            id: mapView
             pointModel: _pointModel
             anchors {
                 left: (mainMenuViews.visible) ? mainMenuViews.right : mainMenu.right

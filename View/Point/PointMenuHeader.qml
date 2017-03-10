@@ -11,6 +11,7 @@ Frame {
 
     signal closeMenu(string txt)
     signal openCreatePointMenu()
+    signal openCreateGroupMenu()
 
     height: Style.menuHeaderHeight
     anchors {
@@ -67,40 +68,11 @@ Frame {
         }
         onClicked: createMenu.open()
 
-        Menu {
+        CreatePointGroupPopupMenu {
             id: createMenu
             x: createButton.width
-            padding: 0
-            width: 117
-
-            background: Rectangle {
-                implicitWidth: 117
-                implicitHeight: 58
-                color: Style.lightGreyBackground
-                border.color: Style.lightGreyBorder
-                radius: 5
-            }
-
-            MenuItem {
-                text: qsTr("New Point")
-                width: 117
-                leftPadding: Style.menuItemLeftPadding
-                height: Style.menuItemHeight
-                onTriggered: openCreatePointMenu()
-            }
-
-            Rectangle {
-                color: Style.lightGreyBorder
-                width: 117
-                height: 2
-            }
-
-            MenuItem {
-                text: qsTr("New Group")
-                width: 117
-                leftPadding: Style.menuItemLeftPadding
-                height: Style.menuItemHeight
-            }
+            onOpenCreatePointMenu: menuHeader.openCreatePointMenu()
+            onOpenCreateGroupMenu: menuHeader.openCreateGroupMenu()
         }
     }
 }

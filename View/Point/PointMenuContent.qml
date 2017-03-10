@@ -42,8 +42,8 @@ Frame {
         focus: true
         anchors.topMargin: 14
 
-        signal deletePointOrGroup(string name, string groupName)
         signal hideShow(string name, string groupName, bool isVisible)
-
+        signal deletePointOrGroup(string name, string groupName)
     }
+
 }

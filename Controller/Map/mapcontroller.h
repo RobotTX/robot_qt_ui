@@ -9,6 +9,7 @@ class MapController : public QObject {
 public:
     MapController(QObject *applicationWindow, QObject* parent);
     QString getMapFile(void) const { return map->getMapFile(); }
+    QImage getMapImage(void) const { return map->getMapImage(); }
 
 private:
         Map* map;

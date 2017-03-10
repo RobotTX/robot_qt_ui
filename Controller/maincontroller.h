@@ -14,6 +14,9 @@ class MainController : public QObject {
 public:
     MainController(QQmlApplicationEngine* _engine, QObject* parent = Q_NULLPTR);
 
+private slots:
+    void checkPoint(QString name, double x, double y);
+
 private:
     MainMenuController* mainMenuController;
     MapController* mapController;

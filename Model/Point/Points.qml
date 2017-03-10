@@ -1,11 +1,12 @@
 import QtQuick 2.7
 import QtQuick.Controls 2.1
 import "../../View/Point"
+import "../../Helper/helper.js" as Helper
 
 ListModel {
     id: pointModel
     function addGroup(index, name){
-        //console.log("Add group " + name);
+        console.log("Add group " + name);
         pointModel.insert(index, {"_name": name, "_isVisible": false, "_groupName": "",
                               "_x": 0, "_y": 0});
     }
@@ -14,6 +15,9 @@ ListModel {
         console.log("Add point " + name + " " + x + " " + y);
         pointModel.insert(index, {"_name": name, "_isVisible": isVisible, "_groupName": groupName,
                               "_x": x, "_y": y});
+
+        /*pointModel.get(index).visible = Helper.previousGroupIsVisible(this);
+        pointModel.get(index).height = Helper.previousGroupIsVisible(this) ? 37 : 0*/
     }
 
     function removePoint(index){
@@ -27,7 +31,7 @@ ListModel {
     }
 
     function hideShow(index, show){
-        console.log("Modifying the visible property at index " + index + " " + pointModel.get(index)._name + " to " + show);
+        //console.log("Modifying the visible property at index " + index + " " + pointModel.get(index)._name + " to " + show);
         pointModel.setProperty(index, "_isVisible", show);
     }
 }

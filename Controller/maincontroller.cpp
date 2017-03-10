@@ -3,6 +3,7 @@
 #include <QQmlApplicationEngine>
 #include <QDebug>
 #include <QVariant>
+#include <QImage>
 #include "Controller/Menu/mainmenucontroller.h"
 #include "Controller/Map/mapcontroller.h"
 #include "Controller/Point/pointcontroller.h"
@@ -22,8 +23,13 @@ MainController::MainController(QQmlApplicationEngine *engine, QObject* parent) :
 
         /// Point Controller
         pointController = new PointController(applicationWindow, mapController->getMapFile(), this);
+
     } else {
         qDebug() << "MainController::MainController We are supposed to only have 1 item, the ApplicationWindow";
         Q_UNREACHABLE();
     }
+}
+
+void MainController::checkPoint(QString name, double x, double y){
+    pointController->checkErrorPoint(mapController->getMapImage(), name, x, y);
 }

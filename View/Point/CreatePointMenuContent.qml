@@ -6,8 +6,34 @@ import "../../Model/Point"
 import "../Custom"
 
 Frame {
+    id: createPointMenuFrame
     objectName: "createPointMenuFrame"
     property Points pointModel
+    property PointView tmpPointView
+
+    Connections {
+        target: tmpPointView
+        onTmpPointViewPosChanged: {
+            checkPoint(pointTextField.text,
+                       tmpPointView.x + tmpPointView.width / 2,
+                       tmpPointView.y + tmpPointView.height)
+        }
+    }
+
+    signal backToMenu()
+    signal createPoint(string name, string groupName, double x, double y)
+    signal checkPoint(string name, double x, double y)
+
+    onVisibleChanged: {
+        if(tmpPointView && createPointMenuFrame){
+            tmpPointView.isVisible = createPointMenuFrame.visible;
+            tmpPointView.x = tmpPointView.originX;
+            tmpPointView.y = tmpPointView.originY;
+        }
+        pointTextField.text = "";
+        groupComboBox.currentIndex = 0;
+    }
+
     padding: 20
 
     background: Rectangle {
@@ -39,11 +65,13 @@ Frame {
         anchors.topMargin: 8
 
         background: Rectangle {
-            radius: pointTextField.activeFocus ? 2 : 0
+            radius: 2
             border.color: pointTextField.activeFocus ? Style.lightBlue : Style.lightGreyBorder
             border.width: pointTextField.activeFocus ? 3 : 1
         }
-        // a9d1fc
+        onTextChanged: checkPoint(pointTextField.text,
+                       tmpPointView.x + tmpPointView.width / 2,
+                       tmpPointView.y + tmpPointView.height)
     }
 
     Label {
@@ -77,7 +105,7 @@ Frame {
 
     Label {
         id: xLabel
-        text: qsTr("X : 147.1")
+        text: qsTr("X : " + Math.round(tmpPointView.x + tmpPointView.width / 2))
         anchors {
             left: parent.left
             top: pointLocationLabel.bottom
@@ -87,7 +115,7 @@ Frame {
     }
 
     Label {
-        text: qsTr("Y : 132.8")
+        text: qsTr("Y : " + Math.round(tmpPointView.y + tmpPointView.height))
         anchors {
             left: parent.left
             top: xLabel.bottom
@@ -95,17 +123,41 @@ Frame {
         }
     }
 
-    function getGroupList(){
-        var groups = [];
-        var lastGroup = "";
-        for(var i = 0; i < pointModel.count; i++){
-            var groupName = pointModel.get(i)._groupName;
-            if(groupName !== lastGroup && groupName !== ""){
-                groups.push(groupName);
-                lastGroup = groupName;
-            }
+    CancelButton {
+        anchors {
+            left: parent.left
+            right: parent.horizontalCenter
+            bottom: parent.bottom
         }
+        anchors.rightMargin: 5
+        onClicked: backToMenu()
+    }
+
+    SaveButton {
+        id: saveButton
+        anchors {
+            left: parent.horizontalCenter
+            right: parent.right
+            bottom: parent.bottom
+        }
+        enabled: false
+        anchors.leftMargin: 5
+        onClicked: {
+            createPoint(pointTextField.text, groupComboBox.currentText, tmpPointView.x + tmpPointView.width / 2, tmpPointView.y + tmpPointView.height);
+            backToMenu();
+        }
+    }
+
+    function getGroupList(){
+        var groups = ["No Group"];
+        for(var i = 0; i < pointModel.count; i++)
+            if(pointModel.get(i)._groupName === "" && pointModel.get(i)._name !== "No Group")
+                groups.push(pointModel.get(i)._name );
 
         return groups;
+    }
+
+    function enableSave(enable){
+        saveButton.enabled = enable;
     }
 }

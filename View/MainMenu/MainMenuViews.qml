@@ -15,6 +15,7 @@ Frame {
     width: Style.menuWidth
     padding: 0
     property Points pointModel
+    property PointView tmpPointView
     property int currentMenu: -1
 
     RobotMenu {
@@ -30,7 +31,8 @@ Frame {
     PointMenu {
         id: pointMenu
         visible: index == currentMenu
-        _pointModel: pointModel
+        pointModel: mainMenuViewsFrame.pointModel
+        tmpPointView: mainMenuViewsFrame.tmpPointView
     }
 
     MapMenu {

@@ -5,7 +5,9 @@ import "../../Helper/helper.js" as Helper
 import QtQuick.Layouts 1.3
 
 Rectangle {
-    /// Name of the element (point or group)
+    id: pointListItem
+
+    /// Name of the point or group
     property string name: _name
 
     /// Name of the parent of the element (if it's a point => the group name)
@@ -21,12 +23,16 @@ Rectangle {
     /// The list we are in
     property ListView myList
 
+    signal hideShow(string name, string groupName, bool isVisible)
+    signal rightButtonClicked(string name, string groupName)
+    signal deletePointOrGroup(string name, string groupName)
+
     /// We look for the group in which this point is and if this group is displayed (isVisible)
     /// then we display its points
-    visible: Helper.previousGroupIsVisible(this)
+    visible: Helper.isVisible(this, _groupName)
 
     /// if the group in which we are doesn't display its points, we hide it in the menu
-    height: Helper.previousGroupIsVisible(this) ? 37 : 0
+    height: Helper.isVisible(this, _groupName) ? 37 : 0
 
     /// The blue rectangle on the selected item
     Rectangle {
@@ -55,7 +61,7 @@ Rectangle {
             bottom: parent.bottom
         }
         /// If it's a point in a group we add some more margin
-        anchors.leftMargin: (groupName != "No Group" && groupName != "") ? 45 : 20
+        anchors.leftMargin: (_groupName != "No Group" && _groupName != "") ? 45 : 20
 
         width: Style.smallBtnWidth
         height: Style.smallBtnHeight
@@ -67,19 +73,18 @@ Rectangle {
         Image {
             asynchronous: true
             /// Change the image depending on whther or not it's a point or a group and if it's visible
-            source: (groupName == "") ? (_isVisible ? "qrc:/icons/fold" : "qrc:/icons/unfold") : (_isVisible ? "qrc:/icons/visible" : "qrc:/icons/invisible")
+            source: (_groupName == "") ? (_isVisible ? "qrc:/icons/fold" : "qrc:/icons/unfold") : (_isVisible ? "qrc:/icons/visible" : "qrc:/icons/invisible")
             fillMode: Image.Pad // For not stretching image
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.verticalCenter: parent.verticalCenter
         }
 
-        //onClicked: leftButtonClicked(parent)
-        onClicked: myList.hideShow(name, groupName, _isVisible);
+        onClicked: myList.hideShow(_name, _groupName, _isVisible);
     }
 
     /// The item displaying the name of the point/group
     Label {
-        text: qsTr(name)
+        text: qsTr(_name)
         color: Style.blackMenuTextColor
         anchors.verticalCenter: parent.verticalCenter
         anchors.left: leftButton.right
@@ -114,11 +119,19 @@ Rectangle {
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.verticalCenter: parent.verticalCenter
         }
-        //onClicked: myList.deletePointOrGroup(name, groupName)
+        onClicked: {
+            myList.currentIndex = index;
+            _groupName === "" ? editGroupPopupMenu.open() : editPointPopupMenu.open();
+        }
+
+        EditGroupPopupMenu {
+            id: editGroupPopupMenu
+            x: rightButton.width
+        }
+
+        EditPointPopupMenu {
+            id: editPointPopupMenu
+            x: rightButton.width
+        }
     }
-/*
-    function leftButtonClicked(item){
-        item.isVisible = !item.isVisible;
-        myList.hideShow(name, groupName, item.isVisible);
-    }*/
 }
