@@ -2,6 +2,7 @@ import QtQuick 2.7
 import QtQuick.Controls 2.1
 import QtQuick.Controls.Styles 1.4
 import "../../Helper/style.js" as Style
+import "../../Helper/helper.js" as Helper
 import "../../Model/Point"
 import "../Custom"
 
@@ -88,7 +89,7 @@ Frame {
 
     CustomComboBox {
         id: groupComboBox
-        model: getGroupList()
+        model: Helper.getGroupList(pointModel)
     }
 
     Label {
@@ -146,15 +147,6 @@ Frame {
             createPoint(pointTextField.text, groupComboBox.currentText, tmpPointView.x + tmpPointView.width / 2, tmpPointView.y + tmpPointView.height);
             backToMenu();
         }
-    }
-
-    function getGroupList(){
-        var groups = ["No Group"];
-        for(var i = 0; i < pointModel.count; i++)
-            if(pointModel.get(i)._groupName === "" && pointModel.get(i)._name !== "No Group")
-                groups.push(pointModel.get(i)._name );
-
-        return groups;
     }
 
     function enableSave(enable){

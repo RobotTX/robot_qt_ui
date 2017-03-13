@@ -20,6 +20,8 @@ PointController::PointController(QObject *applicationWindow, QString mapFile, Ma
         connect(points, SIGNAL(removeGroupQml(QVariant, QVariant)), pointModel, SLOT(removeGroup(QVariant, QVariant)));
         /// Tell the qml point model that we just hided or showed a point on the map
         connect(points, SIGNAL(hideShowQml(QVariant, QVariant)), pointModel, SLOT(hideShow(QVariant, QVariant)));
+        /// Tel the qml point model that we just renamed a group
+        connect(points, SIGNAL(renameGroupQml(QVariant,QVariant)), pointModel, SLOT(renameGroup(QVariant,QVariant)));
     } else {
         qDebug() << "PointController::PointController could not find the qml point model";
         Q_UNREACHABLE();

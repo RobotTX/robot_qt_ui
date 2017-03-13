@@ -113,5 +113,6 @@ bool Points::checkGroupName(const QString name){
 
 void Points::renameGroup(QString newName, QString oldName){
     qDebug() << "Points::renameGroup from" << oldName << "to" << newName;
-    /// TODO rename group
+    groups->insert(newName, groups->take(oldName));
+    emit renameGroupQml(newName, oldName);
 }
