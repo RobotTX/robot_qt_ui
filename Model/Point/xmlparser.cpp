@@ -4,18 +4,17 @@
 #include "Model/Point/points.h"
 #include "Model/Point/point.h"
 
-XMLParser::XMLParser(const QString filename): file(new QFile(filename)) {}
+XMLParser::XMLParser() {}
 
 XMLParser::~XMLParser(){
-    delete file;
 }
 
-void XMLParser::save(const Points& points) const {
-    /*try {
+void XMLParser::save(const Points& points, const QString fileName) {
+  /*  try {
+        QFile file(fileName);
+        file.open(QIODevice::WriteOnly);
 
-        file->open(QIODevice::WriteOnly);
-
-        QXmlStreamWriter xmlWriter(file);
+        QXmlStreamWriter xmlWriter(&file);
         xmlWriter.setAutoFormatting(true);
         xmlWriter.writeStartDocument();
 
@@ -43,7 +42,7 @@ void XMLParser::save(const Points& points) const {
             }
         }
         xmlWriter.writeEndElement();
-        file->close();
+        file.close();
 
     } catch(std::exception e) {
         std::cout << e.what() << std::endl;
@@ -105,14 +104,15 @@ float XMLParser::readCoordinateElement(QXmlStreamReader &xmlReader){
     return coordinate;
 }
 
-void XMLParser::readPoints(Points* points){
+void XMLParser::readPoints(Points* points, const QString fileName){
     QXmlStreamReader xmlReader;
 
     try {
+        QFile file(fileName);
 
-        file->open(QFile::ReadOnly | QFile::Text);
+        file.open(QFile::ReadOnly | QFile::Text);
 
-        xmlReader.setDevice(file);
+        xmlReader.setDevice(&file);
         xmlReader.readNext();
 
         while(!xmlReader.atEnd()){
@@ -160,7 +160,7 @@ void XMLParser::readPoints(Points* points){
                                         break;
                                     } else xmlReader.readNext();
                                 }
-                                points->addPoint(groupName, name, x, y, displayed);
+                                points->addPoint(name, groupName, x, y, displayed);
                             }
                             xmlReader.readNext();
                         } else {
@@ -172,7 +172,7 @@ void XMLParser::readPoints(Points* points){
                 xmlReader.readNext();
             }
         }
-        file->close();
+        file.close();
     }
 
     catch(std::exception e) {
@@ -199,11 +199,12 @@ bool XMLParser::readDisplayedElement(QXmlStreamReader &xmlReader){
 }
 
 /// resets the file, only writting an empty default group
-void XMLParser::clear(void){
+void XMLParser::clear(const QString fileName){
     try {
-        file->open(QIODevice::WriteOnly);
+        QFile file(fileName);
+        file.open(QIODevice::WriteOnly);
 
-        QXmlStreamWriter xmlWriter(file);
+        QXmlStreamWriter xmlWriter(&file);
         xmlWriter.setAutoFormatting(true);
         xmlWriter.writeStartDocument();
 
@@ -215,7 +216,7 @@ void XMLParser::clear(void){
         xmlWriter.writeEndElement();
         xmlWriter.writeEndElement();
 
-        file->close();
+        file.close();
 
     } catch(std::exception e) {
         qDebug() << e.what();

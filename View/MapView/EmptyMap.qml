@@ -1,5 +1,5 @@
 import QtQuick 2.7
-import QtQuick.Controls 2.0
+import QtQuick.Controls 2.1
 import "../../Helper/style.js" as Style
 
 Frame {
@@ -11,6 +11,7 @@ Frame {
 
     Image {
         id: mapImage
+        asynchronous: true
         source: "qrc:/icons/big_map"
         fillMode: Image.PreserveAspectFit // For not stretching image
         anchors.horizontalCenter: parent.horizontalCenter

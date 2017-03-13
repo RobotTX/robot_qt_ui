@@ -1,10 +1,15 @@
 import QtQuick 2.7
-import QtQuick.Controls 2.0
+import QtQuick.Controls 2.1
 import "../../Helper/style.js" as Style
 
+/**
+  * List of buttons of the left menu
+  */
 Frame {
     id: mainMenuFrame
     objectName: "mainMenuFrame"
+    /// The index of the current menu
+    property int currentMenu
 
     width: Style.mainMenuWidth
     padding: 0
@@ -19,7 +24,7 @@ Frame {
         color: Style.darkGrey
     }
 
-    signal selectMenu(string txt, bool checked)
+    signal selectMenu(int index)
 
     MenuButton {
         id: robotButton
@@ -29,7 +34,8 @@ Frame {
             left: parent.left
             top: parent.top
         }
-        onClicked: mainMenuFrame.uncheckButtons(txt, checked)
+        onClicked: checked ? selectMenu(0) : selectMenu(-1)
+        checked: currentMenu == 0
     }
 
     MenuButton {
@@ -37,7 +43,8 @@ Frame {
         txt: "Path"
         imgSrc: "qrc:/icons/path"
         anchors.top: robotButton.bottom
-        onClicked: mainMenuFrame.uncheckButtons(txt, checked)
+        onClicked: checked ? selectMenu(1) : selectMenu(-1)
+        checked: currentMenu == 1
     }
 
     MenuButton {
@@ -45,7 +52,8 @@ Frame {
         txt: "Point"
         imgSrc: "qrc:/icons/point"
         anchors.top: pathButton.bottom
-        onClicked: mainMenuFrame.uncheckButtons(txt, checked)
+        onClicked: checked ? selectMenu(2) : selectMenu(-1)
+        checked: currentMenu == 2
     }
 
     MenuButton {
@@ -53,7 +61,8 @@ Frame {
         txt: "Map"
         imgSrc: "qrc:/icons/map"
         anchors.top: pointButton.bottom
-        onClicked: mainMenuFrame.uncheckButtons(txt, checked)
+        onClicked: checked ? selectMenu(3) : selectMenu(-1)
+        checked: currentMenu == 3
     }
 
     MenuButton {
@@ -61,68 +70,7 @@ Frame {
         txt: "Settings"
         imgSrc: "qrc:/icons/settings"
         anchors.bottom: parent.bottom
-        onClicked: mainMenuFrame.uncheckButtons(txt, checked)
-    }
-
-    function closeMenu(txt){
-        switch(txt){
-            case 'Robot':
-                robotButton.checked = false;
-            break;
-            case 'Path':
-                pathButton.checked = false;
-            break;
-            case 'Point':
-                pointButton.checked = false;
-            break;
-            case 'Map':
-                mapButton.checked = false;
-            break;
-            case 'Settings':
-                settingsButton.checked = false;
-            break;
-        }
-        mainMenuFrame.selectMenu(txt, false)
-    }
-
-    /// Uncheck the other buttons when a new one is checked
-    function uncheckButtons(txt, checked){
-
-        if(checked){
-            switch(txt){
-                case 'Robot':
-                    pathButton.checked = false;
-                    pointButton.checked = false;
-                    mapButton.checked = false;
-                    settingsButton.checked = false;
-                break;
-                case 'Path':
-                    robotButton.checked = false;
-                    pointButton.checked = false;
-                    mapButton.checked = false;
-                    settingsButton.checked = false;
-                break;
-                case 'Point':
-                    robotButton.checked = false;
-                    pathButton.checked = false;
-                    mapButton.checked = false;
-                    settingsButton.checked = false;
-                break;
-                case 'Map':
-                    robotButton.checked = false;
-                    pathButton.checked = false;
-                    pointButton.checked = false;
-                    settingsButton.checked = false;
-                break;
-                case 'Settings':
-                    robotButton.checked = false;
-                    pathButton.checked = false;
-                    pointButton.checked = false;
-                    mapButton.checked = false;
-                break;
-            }
-        }
-
-        mainMenuFrame.selectMenu(txt, checked)
+        onClicked: checked ? selectMenu(4) : selectMenu(-1)
+        checked: currentMenu == 4
     }
 }

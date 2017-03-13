@@ -3,7 +3,7 @@
 #include <QQmlApplicationEngine>
 #include <QDebug>
 #include <QVariant>
-#include "Controller/Menu/mainmenucontroller.h"
+#include <QImage>
 #include "Controller/Map/mapcontroller.h"
 #include "Controller/Point/pointcontroller.h"
 
@@ -14,16 +14,19 @@ MainController::MainController(QQmlApplicationEngine *engine, QObject* parent) :
         /// The main parent element in the QML tree
         QObject *applicationWindow = qmlList.at(0);
 
-        /// Main menu controller
-        mainMenuController = new MainMenuController(applicationWindow, this);
-
         /// Map Controller
         mapController = new MapController(applicationWindow, this);
 
         /// Point Controller
-        pointController = new PointController(this);
+        pointController = new PointController(applicationWindow, mapController->getMapFile(), this);
+
     } else {
         qDebug() << "MainController::MainController We are supposed to only have 1 item, the ApplicationWindow";
         Q_UNREACHABLE();
     }
+}
+
+void MainController::checkPoint(QString name, double x, double y){
+    /// When creating/editing a point we need the map to chekc if the point is on a wall or unknown place
+    pointController->checkErrorPoint(mapController->getMapImage(), name, x, y);
 }

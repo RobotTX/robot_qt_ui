@@ -19,7 +19,7 @@ class QXmlStreamReader;
 class XMLParser{
 
 public:
-    XMLParser(const QString filename);
+    XMLParser();
     ~XMLParser();
 
 public:
@@ -28,14 +28,16 @@ public:
      * @param points
      * Saves our model in an xml file
      */
-    void save(const Points& points) const;
+    static void save(const Points& points, const QString fileName);
 
     /**
      * @brief readPoints
      * @param points
      * Imports a list of points from an xml file to the model
      */
-    void readPoints(Points *points);
+    static void readPoints(Points *points, const QString fileName);
+
+private:
 
     /**
      * @brief readNameElement
@@ -43,7 +45,7 @@ public:
      * @return QString
      * Reads a name attribute in an xml file
      */
-    QString readNameElement(QXmlStreamReader &xmlReader);
+    static QString readNameElement(QXmlStreamReader &xmlReader);
 
     /**
      * @brief readIPElement
@@ -51,7 +53,7 @@ public:
      * @return QString
      * Reads an IP attribute in an xml file
      */
-    QString readIPElement(QXmlStreamReader &xmlReader);
+    static QString readIPElement(QXmlStreamReader &xmlReader);
 
     /**
      * @brief readCoordinateElement
@@ -59,7 +61,7 @@ public:
      * @return float
      * Reads a coordinate attribute in an xml file
      */
-    float readCoordinateElement(QXmlStreamReader &xmlReader);
+    static float readCoordinateElement(QXmlStreamReader &xmlReader);
 
     /**
      * @brief readDisplayedElement
@@ -67,18 +69,14 @@ public:
      * @return bool
      * Reads a boolean attribute in an xml file
      */
-    bool readDisplayedElement(QXmlStreamReader &xmlReader);
+    static bool readDisplayedElement(QXmlStreamReader &xmlReader);
 
     /**
      * @brief clear
      * clears the file, only leaving the default group empty
      * careful this function assumes that you are absolutely sure it is applied to a points xml file
      */
-    void clear(void);
-
-private:
-    /// a pointer to the file that will be opened in order to retrieve or save the model
-    QFile* file;
+    static void clear(const QString fileName);
 };
 
 #endif /// XMLPARSER_H

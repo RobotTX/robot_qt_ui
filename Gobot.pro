@@ -10,8 +10,7 @@ SOURCES += main.cpp \
     Model/Point/xmlparser.cpp \
     Model/Point/point.cpp \
     Model/Point/points.cpp \
-    Controller/Point/pointcontroller.cpp \
-    Controller/Menu/mainmenucontroller.cpp
+    Controller/Point/pointcontroller.cpp
 
 RESOURCES += qml.qrc \
     Resources/resources.qrc
@@ -46,5 +45,4 @@ HEADERS += \
     Model/Point/xmlparser.h \
     Model/Point/point.h \
     Model/Point/points.h \
-    Controller/Point/pointcontroller.h \
-    Controller/Menu/mainmenucontroller.h
+    Controller/Point/pointcontroller.h

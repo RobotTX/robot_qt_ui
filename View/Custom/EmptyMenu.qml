@@ -1,5 +1,5 @@
 import QtQuick 2.7
-import QtQuick.Controls 2.0
+import QtQuick.Controls 2.1
 import "../../Helper/style.js" as Style
 
 Frame {
@@ -13,6 +13,7 @@ Frame {
     }
 
     Image {
+        asynchronous: true
         source: imgSrc
         fillMode: Image.PreserveAspectFit // For not stretching image
         anchors.horizontalCenter: parent.horizontalCenter

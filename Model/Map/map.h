@@ -18,6 +18,8 @@ class Map : public QObject {
 public:
     Map(QObject* parent);
     void initializeMap(void);
+    QString getMapFile(void) const { return mapFile; }
+    QImage getMapImage(void) const { return mapImage; }
 
 private slots:
     void saveStateSlot(double posX, double posY, double zoom, QString mapSrc);
@@ -63,6 +65,7 @@ private:
      * File where the currently used map is stored
      */
     QString mapFile;
+    QImage mapImage;
 };
 
 #endif /// MAP_H

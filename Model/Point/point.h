@@ -13,7 +13,8 @@
 class Point : public QObject{
     Q_OBJECT
 public:
-    Point(const QString _name, const double x, const double y, const bool displayed, QObject *parent);
+    Point(const QString _name, QObject *parent);
+    QString getName(void) const { return name; }
 
 private:
     QString name;

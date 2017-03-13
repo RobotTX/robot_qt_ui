@@ -1,6 +1,5 @@
 #include "mapcontroller.h"
 #include <QDebug>
-#include "Model/Map/map.h"
 
 MapController::MapController(QObject *applicationWindow, QObject *parent) : QObject(parent){
     map = new Map(this);

@@ -1,14 +1,15 @@
 import QtQuick 2.7
-import QtQuick.Controls 2.0
+import QtQuick.Controls 2.1
 import "../../Helper/style.js" as Style
 import "../Custom"
 
 Frame {
     id: menuHeader
+    padding: 0
 
     property string txt
 
-    signal closeMenu(string txt)
+    signal closeMenu()
 
     height: Style.menuHeaderHeight
     anchors {
@@ -28,6 +29,8 @@ Frame {
         id: closeBtn
         onClicked: menuHeader.closeMenu(txt)
         imgSrc: "qrc:/icons/closeBtn"
+        anchors.left: parent.left
+        anchors.leftMargin: 11
     }
 
     Label {
