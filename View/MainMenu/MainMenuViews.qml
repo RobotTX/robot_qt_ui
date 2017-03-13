@@ -8,6 +8,9 @@ import "../Settings"
 import "../../Helper/style.js" as Style
 import "../../Model/Point"
 
+/**
+  * The left panel displaying the opened menu
+  */
 Frame {
     id: mainMenuViewsFrame
     objectName: "mainMenuViewsFrame"
@@ -16,68 +19,41 @@ Frame {
     padding: 0
     property Points pointModel
     property PointView tmpPointView
-    property int currentMenu: -1
+
+    /// The index of the current menu
+    property int currentMenu
+
+    signal closeMenu()
 
     RobotMenu {
         id: robotMenu
-        visible: index == currentMenu
+        visible: currentMenu == 0
+        onCloseMenu: mainMenuViewsFrame.closeMenu()
     }
 
     PathMenu {
         id: pathMenu
-        visible: index == currentMenu
+        visible: currentMenu == 1
+        onCloseMenu: mainMenuViewsFrame.closeMenu()
     }
 
     PointMenu {
         id: pointMenu
-        visible: index == currentMenu
+        visible: currentMenu == 2
         pointModel: mainMenuViewsFrame.pointModel
         tmpPointView: mainMenuViewsFrame.tmpPointView
+        onCloseMenu: mainMenuViewsFrame.closeMenu()
     }
 
     MapMenu {
         id: mapMenu
-        visible: index == currentMenu
+        visible: currentMenu == 3
+        onCloseMenu: mainMenuViewsFrame.closeMenu()
     }
 
     SettingsMenu {
         id: settingsMenu
-        visible: index == currentMenu
-    }
-
-    /// We show the given menu in txt
-    function showMenu(txt) {
-        switch(txt){
-            case 'Robot':
-                if(robotMenu.visible)
-                    mainMenuViewsFrame.currentMenu = -1;
-                else
-                    mainMenuViewsFrame.currentMenu = 0;
-            break;
-            case 'Path':
-                if(pathMenu.visible)
-                    mainMenuViewsFrame.currentMenu = -1;
-                else
-                    mainMenuViewsFrame.currentMenu = 1;
-            break;
-            case 'Point':
-                if(pointMenu.visible)
-                    mainMenuViewsFrame.currentMenu = -1;
-                else
-                    mainMenuViewsFrame.currentMenu = 2;
-            break;
-            case 'Map':
-                if(mapMenu.visible)
-                    mainMenuViewsFrame.currentMenu = -1;
-                else
-                    mainMenuViewsFrame.currentMenu = 3;
-            break;
-            case 'Settings':
-                if(settingsMenu.visible)
-                    mainMenuViewsFrame.currentMenu = -1;
-                else
-                    mainMenuViewsFrame.currentMenu = 4;
-            break;
-        }
+        visible: currentMenu == 4
+        onCloseMenu: mainMenuViewsFrame.closeMenu()
     }
 }

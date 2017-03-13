@@ -10,6 +10,10 @@ Frame {
     padding: 0
     property Points pointModel
 
+    signal deletePoint(string name, string groupName)
+    signal deleteGroup(string name)
+    signal renameGroup(string name)
+
     background: Rectangle {
         color: Style.lightGreyBackground
         border.color: Style.lightGreyBorder
@@ -18,7 +22,8 @@ Frame {
 
     /// This frame is displayed when there is no point
     EmptyMenu {
-        visible: pointList.count == 0
+        /// Only the invisible "No Group" left
+        visible: pointList.count == 1
         txt: "You have no points, click the '+' button or double click the map to create a point."
         imgSrc: "qrc:/icons/big_point"
     }
@@ -29,6 +34,9 @@ Frame {
         PointListItem {
             width: pointMenuFrame.width
             myList: pointList
+            onDeleteGroup: pointMenuFrame.deleteGroup(name)
+            onRenameGroup: pointMenuFrame.renameGroup(name)
+            onDeletePoint: pointMenuFrame.deletePoint(name, groupName)
         }
     }
 
@@ -43,7 +51,5 @@ Frame {
         anchors.topMargin: 14
 
         signal hideShow(string name, string groupName, bool isVisible)
-        signal deletePointOrGroup(string name, string groupName)
     }
-
 }

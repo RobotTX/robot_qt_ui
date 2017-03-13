@@ -4,13 +4,14 @@ import "../Custom"
 
 Page {
     id: page
-    readonly property int index: 4
     anchors.fill: parent
+    signal closeMenu()
 
     MenuHeader {
         id: settingsMenuHeader
         objectName: "settingsMenuHeader"
         txt: "Settings"
+        onCloseMenu: page.closeMenu()
     }
 
     SettingsMenuContent {

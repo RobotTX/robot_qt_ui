@@ -23,14 +23,19 @@ ApplicationWindow {
         }
     }
 
-    ColumnLayout {
-
+    Frame {
+        id: layout
         spacing: 0
+        padding: 0
         anchors.fill: parent
+        /// The index of the current menu
+        property int currentMenu: -1
 
         MainMenu {
             id: mainMenu
             z: 1
+            currentMenu: layout.currentMenu
+            onSelectMenu: layout.currentMenu = index
         }
 
         MainMenuViews {
@@ -38,11 +43,13 @@ ApplicationWindow {
             z: 1
             pointModel: _pointModel
             tmpPointView: mapView.tmpPointView
+            currentMenu: layout.currentMenu
             anchors {
                 left: mainMenu.right
                 top: parent.top
                 bottom: parent.bottom
             }
+            onCloseMenu: layout.currentMenu = -1
         }
 
         MapView {

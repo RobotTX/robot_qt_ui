@@ -14,6 +14,7 @@ ComboBox {
     }
     anchors.topMargin: 8
 
+    /// Customisation of the indicator on the right of the combo box
     indicator: Rectangle {
         id: canvas
         x: groupComboBox.width - width
@@ -38,6 +39,7 @@ ComboBox {
         }
     }
 
+    /// What to display in the popup list once we clicked the box
     delegate: ItemDelegate {
         width: groupComboBox.width
         contentItem: Text {
@@ -54,6 +56,7 @@ ComboBox {
         radius: 2
     }
 
+    /// Customisation of the popup when the box has been clicked
     popup: Popup {
         y: groupComboBox.height - 1
         width: groupComboBox.width

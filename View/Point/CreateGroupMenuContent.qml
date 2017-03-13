@@ -7,12 +7,14 @@ import "../Custom"
 Frame {
     id: createGroupMenuFrame
     objectName: "createGroupMenuFrame"
+    property string oldName: ""
 
     signal backToMenu()
     signal createGroup(string name)
+    signal renameGroup(string newName, string oldName)
     signal checkGroup(string name)
 
-    onVisibleChanged: groupTextField.text = "";
+    onVisibleChanged: groupTextField.text = oldName;
 
     padding: 20
 
@@ -72,7 +74,10 @@ Frame {
         enabled: false
         anchors.leftMargin: 5
         onClicked: {
-            createGroup(groupTextField.text);
+            if(oldName === "")
+                createGroup(groupTextField.text);
+            else
+                renameGroup(groupTextField.text, oldName);
             backToMenu();
         }
     }

@@ -25,6 +25,7 @@ Image {
         onClicked: console.log("Clicked on " + name + " in group " + groupName + " " + isVisible + " " + type)
     }
 
+    /// To change the source file of the pointView according to its type
     function imageSource(){
         var src = "qrc:/icons/pointView";
         switch(type){

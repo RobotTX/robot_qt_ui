@@ -4,13 +4,14 @@ import "../Custom"
 
 Page {
     id: page
-    readonly property int index: 3
     anchors.fill: parent
+    signal closeMenu()
 
     MenuHeader {
         id: mapMenuHeader
         objectName: "mapMenuHeader"
         txt: "Map"
+        onCloseMenu: page.closeMenu()
     }
 
     MapMenuContent {

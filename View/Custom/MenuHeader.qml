@@ -9,7 +9,7 @@ Frame {
 
     property string txt
 
-    signal closeMenu(string txt)
+    signal closeMenu()
 
     height: Style.menuHeaderHeight
     anchors {

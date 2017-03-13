@@ -25,7 +25,9 @@ Rectangle {
 
     signal hideShow(string name, string groupName, bool isVisible)
     signal rightButtonClicked(string name, string groupName)
-    signal deletePointOrGroup(string name, string groupName)
+    signal deletePoint(string name, string groupName)
+    signal deleteGroup(string name)
+    signal renameGroup(string name)
 
     /// We look for the group in which this point is and if this group is displayed (isVisible)
     /// then we display its points
@@ -119,6 +121,7 @@ Rectangle {
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.verticalCenter: parent.verticalCenter
         }
+
         onClicked: {
             myList.currentIndex = index;
             _groupName === "" ? editGroupPopupMenu.open() : editPointPopupMenu.open();
@@ -127,11 +130,14 @@ Rectangle {
         EditGroupPopupMenu {
             id: editGroupPopupMenu
             x: rightButton.width
+            onDeleteGroup: pointListItem.deleteGroup(name)
+            onRenameGroup: pointListItem.renameGroup(name)
         }
 
         EditPointPopupMenu {
             id: editPointPopupMenu
             x: rightButton.width
+            onDeletePoint: pointListItem.deletePoint(name, groupName)
         }
     }
 }

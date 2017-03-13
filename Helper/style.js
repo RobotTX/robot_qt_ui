@@ -1,11 +1,15 @@
-/// Main menu
-var mainMenuWidth = 66
+/// Map
+var maxZoom = 8
+var minZoom = 0.35
 
-/// Menu
+/// Sizes
+var mainMenuWidth = 66
 var menuWidth = 270
 var menuHeaderHeight = 43
 var menuItemHeight = 26
 var menuItemLeftPadding = 21
+var smallBtnWidth = 20
+var smallBtnHeight = 20
 
 /// Colors
 var darkSkyBlue = "#6788e0"
@@ -24,9 +28,3 @@ var blackMenuTextColor = "#262626"
 var stepperBegin = "#80a7f6"
 var stepperEnd = "#4c64f8"
 
-/// Map
-var maxZoom = 8
-var minZoom = 0.35
-
-var smallBtnWidth = 20
-var smallBtnHeight = 20

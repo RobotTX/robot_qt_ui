@@ -5,10 +5,10 @@ import "../../Model/Point"
 
 Page {
     id: page
-    readonly property int index: 2
     anchors.fill: parent
     property Points pointModel
     property PointView tmpPointView
+    signal closeMenu()
 
     onVisibleChanged: {
         createPointMenuFrame.visible = false;
@@ -25,6 +25,7 @@ Page {
             txt: "Point"
             onOpenCreatePointMenu: createPointMenuFrame.visible = true;
             onOpenCreateGroupMenu: createGroupMenuFrame.visible = true;
+            onCloseMenu: page.closeMenu()
         }
 
         PointMenuContent {
@@ -35,6 +36,10 @@ Page {
                 top: pointMenuHeader.bottom
                 right: parent.right
                 bottom: parent.bottom
+            }
+            onRenameGroup: {
+                createGroupMenuContent.oldName = name;
+                createGroupMenuFrame.visible = true;
             }
         }
     }
@@ -75,13 +80,17 @@ Page {
         }
 
         CreateGroupMenuContent {
+            id: createGroupMenuContent
             anchors {
                 left: parent.left
                 top: createGroupMenuHeader.bottom
                 right: parent.right
                 bottom: parent.bottom
             }
-            onBackToMenu: createGroupMenuFrame.visible = false;
+            onBackToMenu: {
+                oldName = "";
+                createGroupMenuFrame.visible = false;
+            }
         }
     }
 }

@@ -4,13 +4,14 @@ import "../Custom"
 
 Page {
     id: page
-    readonly property int index: 0
     anchors.fill: parent
+    signal closeMenu()
 
     MenuHeader {
         id: robotMenuHeader
         objectName: "robotMenuHeader"
         txt: "Robot"
+        onCloseMenu: page.closeMenu()
     }
 
     RobotMenuContent {

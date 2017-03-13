@@ -6,7 +6,7 @@ var PointViewType = {
 };
 
 
-/// To get the current index of this item
+/// To get the current index of the given item
 function itemIndex(item) {
     /// if item is not parented, -1 is returned
     if (item.parent === null)
@@ -53,4 +53,5 @@ function groupIsVisible(item, _group){
             /// we look for its previous item until we find our group
             return groupIsVisible(item.parent.children[itemIndex(item) - 1], _group);
     }
+    return false;
 }
