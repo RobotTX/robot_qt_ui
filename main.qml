@@ -17,8 +17,8 @@ ApplicationWindow {
     title: qsTr("Gobot :)")
 
     // TODO add paths
-    // To save the current configuration -> points, paths, zoom, center
-    signal mapConfig(variant points, double zoom, double centerX, double centerY)
+    // To save the current configuration -> zoom, center (paths and points retrieved on the c++ side)
+    signal mapConfig(string file_name, double zoom, double centerX, double centerY)
 
     Item {
         Points {
@@ -55,7 +55,7 @@ ApplicationWindow {
             }
             onCloseMenu: layout.currentMenu = -1
             onSaveState: mapView.emitState()
-            onSaveMap: applicationWindow.emitMapConfig()
+            onSaveMap: applicationWindow.emitMapConfig(file_name)
         }
 
         MapView {
@@ -70,9 +70,10 @@ ApplicationWindow {
         }
     }
 
-    function emitMapConfig(){
+    function emitMapConfig(file_name){
         console.log(mapView.pointModel.count + " " + mapView.scale + " " + mapView.centerX + " " + mapView.centerY);
         console.log("map config");
-        applicationWindow.mapConfig(mapView.pointModel, mapView.scale, mapView.centerX, mapView.centerY);
+        mapView._topView.label.text = "The current configuration of the map has been saved";
+        applicationWindow.mapConfig(file_name, mapView.zoom, mapView.centerX, mapView.centerY);
     }
 }

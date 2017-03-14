@@ -10,10 +10,10 @@ MapController::MapController(QObject *applicationWindow, QObject *parent) : QObj
 
     QObject *mapViewFrame = applicationWindow->findChild<QObject*>("mapViewFrame");
     if (mapViewFrame){
-        connect(map, SIGNAL(setMap(QVariant)), mapViewFrame, SLOT(setMap(QVariant)));
-        connect(map, SIGNAL(setMapState(QVariant, QVariant, QVariant)), mapViewFrame, SLOT(setMapState(QVariant ,QVariant, QVariant)));
-        connect(mapViewFrame, SIGNAL(saveState(double, double, double, QString)), map, SLOT(saveStateSlot(double, double, double, QString)));
-        connect(mapViewFrame, SIGNAL(loadState()), map, SLOT(loadStateSlot()));
+        connect(this, SIGNAL(setMap(QVariant)), mapViewFrame, SLOT(setMap(QVariant)));
+        connect(this, SIGNAL(setMapState(QVariant, QVariant, QVariant)), mapViewFrame, SLOT(setMapState(QVariant ,QVariant, QVariant)));
+        connect(mapViewFrame, SIGNAL(saveState(double, double, double, QString)), this, SLOT(saveStateSlot(double, double, double, QString)));
+        connect(mapViewFrame, SIGNAL(loadState()), this, SLOT(loadStateSlot()));
     } else {
         qDebug() << "MapController::MapController could not find the mapViewFrame";
         Q_UNREACHABLE();
@@ -21,47 +21,71 @@ MapController::MapController(QObject *applicationWindow, QObject *parent) : QObj
 
     QObject *mapMenuFrame = applicationWindow->findChild<QObject*>("mapMenuFrame");
     if (mapMenuFrame){
-        connect(mapMenuFrame, SIGNAL(loadState()), map, SLOT(loadStateSlot()));
+        connect(mapMenuFrame, SIGNAL(loadState()), this, SLOT(loadStateSlot()));
 
     } else {
         qDebug() << "MapController::MapController could not find the mapMenuFrame";
         Q_UNREACHABLE();
     }
 
-    QObject* _appWindow = applicationWindow->findChild<QObject*>("applicationWindow");
-
-    if(_appWindow == 0){
-        qDebug() << "no app window found";
-        connect(_appWindow, SIGNAL(mapConfig(QObject*, double, double, double)), this, SLOT(saveMapConfig(QObject*, double, double, double)));
-    } else {
-        qDebug() << "MapController::MapController could not find the applicationWindow";
-        Q_UNREACHABLE();
-    }
-
-    map->initializeMap();
+    initializeMap();
 }
 
-void MapController::saveMapConfig(double zoom, double centerX, double centerY) const {
-    qDebug() << "MapController::saveMapConfig called with" << zoom << centerX << centerY;
+void MapController::initializeMap(void){
+    QString currentPathFile = QDir::currentPath() + QDir::separator() + "currentMap.txt";
+    qDebug() << currentPathFile;
+    std::ifstream file(currentPathFile.toStdString(), std::ios::in);
 
-
-/*
-    std::string fileName((QDir::currentPath() + QDir::separator() + "mapConfigs" + QDir::separator() + getMapFile()).toStdString());
-
-    qDebug() << "MainWindow::saveMapConfig saving map to " << QString::fromStdString(fileName);
-    std::ofstream file(fileName, std::ios::out | std::ios::trunc);
     if(file){
-        file << map->getMapFile().toStdString() << " " << std::endl <<
-                map->getHeight() << " " << map->getWidth() << std::endl
-             << map->getMapState().first.x() << " " << map->getMapState().first.y() << std::endl
-             << map->getMapState().second << std::endl
-             << map->getOrigin().getX() << " " << map->getOrigin().getY() << std::endl
-             << map->getResolution() << std::endl
-             << map->getMapId().toString().toStdString();
+        /// We get the path of the map to use so that we can deduce the path of its config file
+        std::string _dateTime, osef, stdMapFile;
+        double centerX, centerY, zoom;
+        file >> stdMapFile >> osef >> osef >> centerX >> centerY >> zoom >> osef >> osef >> osef >> _dateTime >> osef;
         file.close();
-        return true;
+
+        /// our map file as a QString
+        QString qMapFile = QString::fromStdString(stdMapFile);
+
+        map->setMapFile(qMapFile);
+        qDebug() << "Map::initializeMap full map path :" << qMapFile;
+        /// We get the config file from the map file
+        QString fileName = qMapFile;
+        fileName.remove(0, fileName.lastIndexOf(QDir::separator()) + 1);
+        fileName.remove(fileName.length() - 4, 4);
+        QString configPath = QDir::currentPath() + QDir::separator() + "mapConfigs" + QDir::separator() + fileName + ".config";
+
+
+        if(QFile(qMapFile).exists()){
+            qDebug() << "Map::initializeMap config path :" << configPath;
+            /// We get the map informations from the map config file
+            std::ifstream pathFile(configPath.toStdString(), std::ios::in);
+            if(pathFile){
+                double originX, originY, resolution;
+                std::string _mapId, mapFile;
+                int height, width;
+                pathFile >> osef >> height >> width >> osef >> osef >> osef >> originX >> originY >> resolution >> _mapId;
+                qDebug() << "Map::initializeMap all info :" << QString::fromStdString(mapFile) << height << width
+                         << centerX << centerY << originX << originY << resolution
+                         << QString::fromStdString(_dateTime) << QString::fromStdString(_mapId);
+                map->setHeight(height);
+                map->setWidth(width);
+                map->setMapImage(QImage(QString::fromStdString(mapFile)));
+                map->setResolution(resolution);
+                map->setOrigin(QPointF(originX, originY));
+                map->setDateTime(QDateTime::fromString(QString::fromStdString(_dateTime), "yyyy-MM-dd-hh-mm-ss"));
+                map->setId(QUuid(QString::fromStdString(_mapId)));
+                pathFile.close();
+                emit setMap(QVariant::fromValue(qMapFile));
+                emit setMapState(QVariant::fromValue(centerX), QVariant::fromValue(centerY), QVariant::fromValue(zoom));
+            } else
+                qDebug() << "Map::initializeMap could not find the map config file at :" << configPath;
+        } else
+            qDebug() << "Map::initializeMap could not find the map file at :" << qMapFile;
     } else
-        return false;
+        qDebug() << "Map::initializeMap could not find the currentMap file at :" << currentPathFile;
+}
+
+void MapController::saveStateSlot(double posX, double posY, double zoom, QString mapSrc){
     QString currentPathFile = QDir::currentPath() + QDir::separator() + "currentMap.txt";
     std::ofstream file(currentPathFile.toStdString(), std::ios::out | std::ios::trunc);
 
@@ -71,22 +95,53 @@ void MapController::saveMapConfig(double zoom, double centerX, double centerY) c
         mapSrc.remove(0,6);
         qDebug() << "Map::saveStateSlot called with following parameters";
         qDebug() << "map file - height - width - centerX - centerY - zoom - originX - originY - resolution - date - id";
-        qDebug() << mapSrc<< height << width << posX << posY
-                 << zoom << origin.x() << origin.y() << resolution
-                 << dateTime.toString("yyyy-MM-dd-hh-mm-ss")
-                 << mapId.toString();
+        qDebug() << mapSrc << map->getHeight() << map->getWidth() << posX << posY
+                 << zoom << map->getOrigin().x() << map->getOrigin().y() << map->getResolution()
+                 << map->getDateTime().toString("yyyy-MM-dd-hh-mm-ss")
+                 << map->getMapId().toString();
 
         file << mapSrc.toStdString() << " " << std::endl
-             << height << " " << width << std::endl
+             << map->getHeight() << " " << map->getWidth() << std::endl
              << posX << " " << posY << std::endl
              << zoom << std::endl
-             << origin.x() << " " << origin.y() << std::endl
-             << resolution << std::endl
-             << dateTime.toString("yyyy-MM-dd-hh-mm-ss").toStdString() << std::endl
-             << mapId.toString().toStdString();
+             << map->getOrigin().x() << " " << map->getOrigin().y() << std::endl
+             << map->getResolution() << std::endl
+             << map->getDateTime().toString("yyyy-MM-dd-hh-mm-ss").toStdString() << std::endl
+             << map->getMapId().toString().toStdString();
         file.close();
     } else
         qDebug() << "Map::saveStateSlot could not find the currentMap file at :" << currentPathFile;
+}
 
-        */
+void MapController::loadStateSlot(){
+    qDebug() << "Map::loadStateSlot called";
+    QString currentPathFile = QDir::currentPath() + QDir::separator() + "currentMap.txt";
+    std::ifstream file(currentPathFile.toStdString(), std::ios::in);
+
+    if(file){
+        /// We get the path of the map to use so that we can deduce the path of its config file
+        std::string osef;
+        double centerX, centerY, zoom;
+        file >> osef >> osef >> osef >> centerX >> centerY >> zoom;
+        file.close();
+        emit setMapState(QVariant::fromValue(centerX), QVariant::fromValue(centerY), QVariant::fromValue(zoom));
+    } else
+        qDebug() << "Map::loadStateSlot could not find the currentMap file at :" << currentPathFile;
+}
+
+bool MapController::saveMapConfig(const std::string fileName, const double centerX, const double centerY, const double zoom) const {
+    qDebug() << "MainWindow::saveMapConfig saving map to " << QString::fromStdString(fileName);
+    std::ofstream file(fileName, std::ios::out | std::ios::trunc);
+    if(file){
+        file << map->getMapFile().toStdString() << " " << std::endl <<
+                map->getHeight() << " " << map->getWidth() << std::endl
+             << centerX << " " << centerY << std::endl
+             << zoom << std::endl
+             << map->getOrigin().x() << " " << map->getOrigin().y() << std::endl
+             << map->getResolution() << std::endl
+             << map->getMapId().toString().toStdString();
+        file.close();
+        return true;
+    } else
+        return false;
 }

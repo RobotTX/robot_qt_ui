@@ -7,6 +7,9 @@ Frame {
     id: topViewFrame
     property bool hasMap
 
+    // this is to be able to display messages at the top
+    property Label label: _label
+
     signal saveState()
     signal loadState()
 
@@ -25,6 +28,7 @@ Frame {
     }
 
     Label {
+        id: _label
         color: Style.midGrey2
         text: qsTr("Soon some awesome messages here ")
     }

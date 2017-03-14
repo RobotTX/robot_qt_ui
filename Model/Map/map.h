@@ -14,22 +14,29 @@
  * contains the map as a QImage and its width, height, resolution and the origin
  */
 class Map : public QObject {
+
     Q_OBJECT
+
 public:
     Map(QObject* parent);
-    void initializeMap(void);
+
     QString getMapFile(void) const { return mapFile; }
     QImage getMapImage(void) const { return mapImage; }
     int getHeight(void) const { return height; }
     int getWidth(void) const { return width; }
+    QPointF getOrigin(void) const { return origin; }
+    double getResolution(void) const { return resolution; }
+    QDateTime getDateTime(void) const { return dateTime; }
+    QUuid getMapId(void) const { return mapId; }
 
-private slots:
-    void saveStateSlot(double posX, double posY, double zoom, QString mapSrc);
-    void loadStateSlot();
-
-signals:
-    void setMap(QVariant mapSrc);
-    void setMapState(QVariant posX, QVariant posY, QVariant zoom);
+    void setMapFile(const QString file) { mapFile = file; }
+    void setId(const QUuid id) { mapId = id; }
+    void setDateTime(const QDateTime date) { dateTime = date; }
+    void setMapImage(const QImage image) { mapImage = image; }
+    void setOrigin(const QPointF _origin) { origin = _origin; }
+    void setHeight(const int _height) { height = _height; }
+    void setWidth(const int _width) { width = _width; }
+    void setResolution(const double _resolution) { resolution = _resolution; }
 
 private:
 
@@ -39,7 +46,7 @@ private:
      * (the resolution of our map being different from the resolution of the map sent
      * affecting the robot's position)
      */
-    float resolution;
+    double resolution;
     int width;
     int height;
 
