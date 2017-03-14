@@ -106,7 +106,7 @@ namespace Helper {
     }
 
     QString formatName(const QString name) {
-        qDebug() << "GroupsPathsWidget::formatName called" << name;
+        //qDebug() << "Helper::formatName called" << name;
 
         QString ret("");
         QStringList nameStrList = name.split(" ", QString::SkipEmptyParts);

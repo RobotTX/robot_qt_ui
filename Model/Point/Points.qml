@@ -39,11 +39,9 @@ ListModel {
     }
 
     function movePoint(oldIndex, newIndex, newGroupName){
-        displayList();
-        console.log("move to " + oldIndex + " " + newIndex + " " + count);
+        //console.log("move to " + oldIndex + " " + newIndex + " " + count);
         move(oldIndex, newIndex, 1);
         setProperty(newIndex, "_groupName", newGroupName);
-        displayList();
     }
 
     function displayList(){
