@@ -1,7 +1,7 @@
 #ifndef XMLPARSER_H
 #define XMLPARSER_H
 
-class Points;
+class PointController;
 class QXmlStreamReader;
 
 #include <QVector>
@@ -28,14 +28,14 @@ public:
      * @param points
      * Saves our model in an xml file
      */
-    static void save(const Points& points, const QString fileName);
+    static void save(PointController *pointController, const QString fileName);
 
     /**
      * @brief readPoints
      * @param points
      * Imports a list of points from an xml file to the model
      */
-    static void readPoints(Points *points, const QString fileName);
+    static void readPoints(PointController *pointController, const QString fileName);
 
 private:
 

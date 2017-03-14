@@ -13,17 +13,23 @@
 class Point : public QObject{
     Q_OBJECT
 public:
-    Point(const QString _name, const QString groupName, const double _x, const double _y, const bool _visible, QObject *parent);
+    Point(const QString _name, const double _x, const double _y, const bool _visible, QObject *parent);
+
+    /// Getters
     QString getName(void) const { return name; }
-    QString getGroupName(void) const { return groupName; }
     bool isVisible(void) const { return visible; }
     double getX(void) const { return x; }
     double getY(void) const { return y; }
 
+    /// Setters
+    void setName(const QString _name) { name = _name; }
+    void setVisible(const bool _visible) { visible = _visible; }
+    void setX(const double _x) { x = _x; }
+    void setY(const double _y) { y = _y; }
+
 private:
     QString name;
     bool visible;
-    QString groupName;
     double x;
     double y;
 };
