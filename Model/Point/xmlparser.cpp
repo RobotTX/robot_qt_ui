@@ -1,6 +1,7 @@
 #include "xmlparser.h"
 #include <QXmlStreamWriter>
 #include <QDebug>
+#include "Controller/Point/pointcontroller.h"
 #include "Model/Point/points.h"
 #include "Model/Point/point.h"
 
@@ -9,8 +10,8 @@ XMLParser::XMLParser() {}
 XMLParser::~XMLParser(){
 }
 
-void XMLParser::save(const Points& points, const QString fileName) {
-  /*  try {
+void XMLParser::save(PointController *pointController, const QString fileName) {
+    try {
         QFile file(fileName);
         file.open(QIODevice::WriteOnly);
 
@@ -20,33 +21,31 @@ void XMLParser::save(const Points& points, const QString fileName) {
 
         xmlWriter.writeStartElement("points");
 
-        QMapIterator<QString, QSharedPointer<QVector<QSharedPointer<PointView>>>> i(*(points.getGroups()));
+        QMapIterator<QString, QVector<Point*>*> i(*(pointController->getPoints()->getGroups()));
         /// For each group
         while (i.hasNext()) {
             i.next();
 
-            if(i.key().compare(PATH_GROUP_NAME) && i.key().compare(TMP_GROUP_NAME)){
-                xmlWriter.writeStartElement("group");
-                xmlWriter.writeTextElement("name", i.key());
+            xmlWriter.writeStartElement("group");
+            xmlWriter.writeTextElement("name", i.key());
 
-                /// For each point of the group
-                for(int j = 0; j < i.value()->size(); j++){
-                    xmlWriter.writeStartElement("point");
-                    xmlWriter.writeTextElement("name", i.value()->at(j)->getPoint()->getName());
-                    xmlWriter.writeTextElement("x", QString::number(i.value()->at(j)->getPoint()->getPosition().getX()));
-                    xmlWriter.writeTextElement("y", QString::number(i.value()->at(j)->getPoint()->getPosition().getY()));
-                    xmlWriter.writeTextElement("displayed", QString::number(i.value()->at(j)->isVisible()));
-                    xmlWriter.writeEndElement();
-                }
+            /// For each point of the group
+            for(int j = 0; j < i.value()->size(); j++){
+                xmlWriter.writeStartElement("point");
+                xmlWriter.writeTextElement("name", i.value()->at(j)->getName());
+                xmlWriter.writeTextElement("x", QString::number(i.value()->at(j)->getX()));
+                xmlWriter.writeTextElement("y", QString::number(i.value()->at(j)->getY()));
+                xmlWriter.writeTextElement("displayed", QString::number(i.value()->at(j)->isVisible()));
                 xmlWriter.writeEndElement();
             }
+            xmlWriter.writeEndElement();
         }
         xmlWriter.writeEndElement();
         file.close();
 
     } catch(std::exception e) {
-        std::cout << e.what() << std::endl;
-    }*/
+        qDebug() << "XMLParser::save" << e.what();
+    }
 }
 
 
@@ -104,7 +103,7 @@ float XMLParser::readCoordinateElement(QXmlStreamReader &xmlReader){
     return coordinate;
 }
 
-void XMLParser::readPoints(Points* points, const QString fileName){
+void XMLParser::readPoints(PointController* pointController, const QString fileName){
     QXmlStreamReader xmlReader;
 
     try {
@@ -130,7 +129,7 @@ void XMLParser::readPoints(Points* points, const QString fileName){
                         } else if(xmlReader.isStartElement()){
                             if(xmlReader.name() == "name"){
                                 groupName = readNameElement(xmlReader);
-                                points->addGroup(groupName);
+                                pointController->addGroup(groupName);
                             } else if(xmlReader.name() == "point"){
                                 double x(0.0);
                                 double y(0.0);
@@ -160,7 +159,7 @@ void XMLParser::readPoints(Points* points, const QString fileName){
                                         break;
                                     } else xmlReader.readNext();
                                 }
-                                points->addPoint(name, groupName, x, y, displayed);
+                                pointController->addPoint(name, groupName, x, y, displayed);
                             }
                             xmlReader.readNext();
                         } else {

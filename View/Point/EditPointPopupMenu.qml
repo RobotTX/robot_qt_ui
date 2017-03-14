@@ -14,9 +14,8 @@ Menu {
     property string myGroup
 
     signal editPoint()
-    signal renamePoint()
     signal deletePoint()
-    signal moveTo(string groupName)
+    signal moveTo(string newGroup)
 
     background: Rectangle {
         implicitWidth: parent.width
