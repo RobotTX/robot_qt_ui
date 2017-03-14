@@ -28,17 +28,22 @@ public:
     double getResolution(void) const { return resolution; }
     QDateTime getDateTime(void) const { return dateTime; }
     QUuid getMapId(void) const { return mapId; }
+    bool hasBeenModified(void) const { return modified; }
 
     void setMapFile(const QString file) { mapFile = file; }
     void setId(const QUuid id) { mapId = id; }
-    void setDateTime(const QDateTime date) { dateTime = date; }
+    void setDateTime(const QDateTime _dateTime) { /// if the time is not valid we use the current date
+        dateTime = (_dateTime.isValid()) ? _dateTime : QDateTime::currentDateTime(); }
+
     void setMapImage(const QImage image) { mapImage = image; }
     void setOrigin(const QPointF _origin) { origin = _origin; }
     void setHeight(const int _height) { height = _height; }
     void setWidth(const int _width) { width = _width; }
     void setResolution(const double _resolution) { resolution = _resolution; }
+    void setModified(const bool _modified) { modified = _modified; }
 
 private:
+    bool modified;
 
     /**
      * @brief resolution

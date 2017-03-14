@@ -54,22 +54,21 @@ void MapController::initializeMap(void){
         fileName.remove(fileName.length() - 4, 4);
         QString configPath = QDir::currentPath() + QDir::separator() + "mapConfigs" + QDir::separator() + fileName + ".config";
 
-
         if(QFile(qMapFile).exists()){
             qDebug() << "Map::initializeMap config path :" << configPath;
             /// We get the map informations from the map config file
             std::ifstream pathFile(configPath.toStdString(), std::ios::in);
             if(pathFile){
                 double originX, originY, resolution;
-                std::string _mapId, mapFile;
+                std::string _mapId;
                 int height, width;
                 pathFile >> osef >> height >> width >> osef >> osef >> osef >> originX >> originY >> resolution >> _mapId;
-                qDebug() << "Map::initializeMap all info :" << QString::fromStdString(mapFile) << height << width
+                qDebug() << "Map::initializeMap all info :" << map->getMapFile() << height << width
                          << centerX << centerY << originX << originY << resolution
                          << QString::fromStdString(_dateTime) << QString::fromStdString(_mapId);
                 map->setHeight(height);
                 map->setWidth(width);
-                map->setMapImage(QImage(QString::fromStdString(mapFile)));
+                map->setMapImage(QImage(map->getMapFile()));
                 map->setResolution(resolution);
                 map->setOrigin(QPointF(originX, originY));
                 map->setDateTime(QDateTime::fromString(QString::fromStdString(_dateTime), "yyyy-MM-dd-hh-mm-ss"));
@@ -144,4 +143,12 @@ bool MapController::saveMapConfig(const std::string fileName, const double cente
         return true;
     } else
         return false;
+}
+
+void MapController::saveMapToFile(const QString fileName) const {
+    /// Qt has is own function to save the QImage to a PGM file
+    map->getMapImage().save(fileName, "PGM");
+
+    /// When the map is saved, no need to tell the user to save it again when closing the app
+    map->setModified(false);
 }

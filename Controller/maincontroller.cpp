@@ -8,6 +8,7 @@
 #include "Controller/Point/pointcontroller.h"
 #include <QFileInfo>
 #include <QDir>
+#include "Model/Point/xmlparser.h"
 
 MainController::MainController(QQmlApplicationEngine *engine, QObject* parent) : QObject(parent) {
 
@@ -55,25 +56,24 @@ void MainController::saveMapConfig(QString fileName, double zoom, double centerX
     mapController->saveStateSlot(centerX, centerY, zoom, fileName);
 
     mapController->saveMapConfig(filePath.toStdString(), centerX, centerY, zoom);
-/*
+
     /// saves the new configuration to the map configuration file
-    const QString pointsFile = fileName + "_points.xml";
-    pointsController->savePoints(pointsFile);
+    XMLParser::save(pointController, fileName + "_points.xml");
 
     /// saves the new configuration to the current configuration file
-    pointsController->savePoints(QDir::currentPath() + QDir::separator() + "points.xml");
+    XMLParser::save(pointController, QDir::currentPath() + QDir::separator() + "currentPoints.xml");
 
     /// saves the map
     mapController->saveMapToFile(fileName + ".pgm");
-
+/*
     const QString pathsFile = fileName + "_paths.dat";
 
     /// saves the current configuration for the paths (this configuration will be associated to the map
     /// when you load the map in the future
+
     pathsController->serializePaths(pathsFile);
-*/
+
     // TODO add this when possible
-    /*
     for(int i = 0; i < robotsController->getRobots()->getRobotsVector().size(); i++)
         robotsController->getRobots()->getRobotsVector().at(i)->getRobot()->sendNewMap(mapController->getMap());
     */

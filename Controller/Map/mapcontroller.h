@@ -20,6 +20,9 @@ public:
 
     bool saveMapConfig(const std::string fileName, const double centerX, const double centerY, const double zoom) const;
 
+    void saveMapToFile(const QString fileName) const;
+
+
 private slots:
     void loadStateSlot();
 
