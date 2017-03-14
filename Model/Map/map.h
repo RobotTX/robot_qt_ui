@@ -20,6 +20,8 @@ public:
     void initializeMap(void);
     QString getMapFile(void) const { return mapFile; }
     QImage getMapImage(void) const { return mapImage; }
+    int getHeight(void) const { return height; }
+    int getWidth(void) const { return width; }
 
 private slots:
     void saveStateSlot(double posX, double posY, double zoom, QString mapSrc);

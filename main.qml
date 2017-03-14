@@ -16,6 +16,10 @@ ApplicationWindow {
     minimumHeight: 600
     title: qsTr("Gobot :)")
 
+    // TODO add paths
+    // To save the current configuration -> points, paths, zoom, center
+    signal mapConfig(variant points, double zoom, double centerX, double centerY)
+
     Item {
         Points {
             id: _pointModel
@@ -50,6 +54,8 @@ ApplicationWindow {
                 bottom: parent.bottom
             }
             onCloseMenu: layout.currentMenu = -1
+            onSaveState: mapView.emitState()
+            onSaveMap: applicationWindow.emitMapConfig()
         }
 
         MapView {
@@ -62,5 +68,11 @@ ApplicationWindow {
                 bottom: parent.bottom
             }
         }
+    }
+
+    function emitMapConfig(){
+        console.log(mapView.pointModel.count + " " + mapView.scale + " " + mapView.centerX + " " + mapView.centerY);
+        console.log("map config");
+        applicationWindow.mapConfig(mapView.pointModel, mapView.scale, mapView.centerX, mapView.centerY);
     }
 }

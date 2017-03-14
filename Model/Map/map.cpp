@@ -11,6 +11,7 @@ Map::Map(QObject *parent) : QObject(parent) {
 
 void Map::initializeMap(void){
     QString currentPathFile = QDir::currentPath() + QDir::separator() + "currentMap.txt";
+    qDebug() << currentPathFile;
     std::ifstream file(currentPathFile.toStdString(), std::ios::in);
 
     if(file){

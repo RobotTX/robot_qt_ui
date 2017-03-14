@@ -36,5 +36,6 @@
         <file>View/Custom/CustomComboBox.qml</file>
         <file>View/Custom/SaveButton.qml</file>
         <file>View/Custom/CancelButton.qml</file>
+        <file>View/Map/MapMenuButton.qml</file>
     </qresource>
 </RCC>

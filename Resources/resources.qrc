@@ -36,5 +36,12 @@
         <file alias="add">icons/Btn_Add.png</file>
         <file alias="back">icons/Btn_Back.png</file>
         <file alias="white_stepper">icons/White_Stepper.png</file>
+
+        <file alias="edit_map">icons/Ic_EditMap.png</file>
+        <file alias="load_map">icons/Ic_LoadMap.png</file>
+        <file alias="merge_map">icons/Ic_MergeMap.png</file>
+        <file alias="scan_map">icons/Ic_ScanMap.png</file>
+        <file alias="save_map">icons/Ic_SaveMap.png</file>
+        
     </qresource>
 </RCC>
