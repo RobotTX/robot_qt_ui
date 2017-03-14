@@ -1,13 +1,14 @@
 #include "pointcontroller.h"
 #include <QDebug>
 #include <QImage>
+#include <QDir>
 #include "Controller/maincontroller.h"
 #include "Model/Point/point.h"
 #include "Model/Point/points.h"
 #include "Model/Point/xmlparser.h"
 #include "Helper/helper.h"
 
-PointController::PointController(QObject *applicationWindow, QString mapFile, MainController* parent) : QObject(parent){
+PointController::PointController(QObject *applicationWindow, MainController* parent) : QObject(parent){
     points = new Points(this);
 
     QObject *pointModel = applicationWindow->findChild<QObject*>("pointModel");
@@ -22,8 +23,10 @@ PointController::PointController(QObject *applicationWindow, QString mapFile, Ma
         connect(this, SIGNAL(removeGroupQml(QVariant, QVariant)), pointModel, SLOT(removeGroup(QVariant, QVariant)));
         /// Tell the qml point model that we just hided or showed a point on the map
         connect(this, SIGNAL(hideShowQml(QVariant, QVariant)), pointModel, SLOT(hideShow(QVariant, QVariant)));
-        /// Tel the qml point model that we just renamed a group
-        connect(this, SIGNAL(renameGroupQml(QVariant,QVariant)), pointModel, SLOT(renameGroup(QVariant,QVariant)));
+        /// Tell the qml point model that we just renamed a group
+        connect(this, SIGNAL(renameGroupQml(QVariant, QVariant)), pointModel, SLOT(renameGroup(QVariant, QVariant)));
+        /// Tell the qml point model that we moved a point to a new group
+        connect(this, SIGNAL(movePointQml(QVariant, QVariant, QVariant)), pointModel, SLOT(movePoint(QVariant, QVariant, QVariant)));
     } else {
         qDebug() << "PointController::PointController could not find the qml point model";
         Q_UNREACHABLE();
@@ -79,10 +82,9 @@ PointController::PointController(QObject *applicationWindow, QString mapFile, Ma
     }
 
 
-    /// WARNING check if the file is saved next to the map or next to the config file
-    mapFile.remove(mapFile.length() - 4, 4);
-    mapFile += "_points.xml";
-    loadPoints(mapFile);
+    currentPointsFile = QDir::currentPath() + QDir::separator() + "currentPoints.xml";
+    qDebug() << "PointController::PointController" << currentPointsFile;
+    loadPoints(currentPointsFile);
 }
 
 void PointController::loadPoints(const QString fileName){
@@ -91,7 +93,7 @@ void PointController::loadPoints(const QString fileName){
 }
 
 
-void PointController::addGroup(QString groupName){
+void PointController::addGroup(QString groupName, bool saveXML){
     groupName = Helper::formatName(groupName);
     if(!points->getGroups()->contains(groupName)){
         //qDebug() << "PointController::addGroup" << groupName;
@@ -99,12 +101,15 @@ void PointController::addGroup(QString groupName){
 
         emit addGroupQml(QVariant::fromValue(indexOfGroup(groupName)),
                          QVariant::fromValue(groupName));
+
+        if(saveXML)
+            XMLParser::save(this, currentPointsFile);
     }
 }
 
-void PointController::addPoint(QString name, QString groupName, double x, double y, bool displayed){
+void PointController::addPoint(QString name, QString groupName, double x, double y, bool displayed, bool saveXML){
     //qDebug() << "PointController::addPoint" << groupName << name << x << y << displayed;
-    addGroup(groupName);
+    addGroup(groupName, saveXML);
 
     name = Helper::formatName(name);
     QVector<Point*>* group = points->getGroups()->value(groupName);
@@ -115,6 +120,9 @@ void PointController::addPoint(QString name, QString groupName, double x, double
                      QVariant::fromValue(groupName),
                      QVariant::fromValue(x),
                      QVariant::fromValue(y));
+
+    if(saveXML)
+        XMLParser::save(this, currentPointsFile);
 }
 
 int PointController::indexOfPoint(QString pointName, QString groupName){
@@ -159,6 +167,7 @@ void PointController::deletePoint(QString name, QString groupName){
     for(int i = 0; i < group->size(); i++)
         if(group->at(i)->getName().compare(name) == 0)
             group->remove(i);
+    XMLParser::save(this, currentPointsFile);
 }
 
 void PointController::deleteGroup(QString name){
@@ -170,24 +179,23 @@ void PointController::deleteGroup(QString name){
         /// Remove from c++ model
         points->getGroups()->remove(name);
     }
+    XMLParser::save(this, currentPointsFile);
 }
 
 void PointController::hideShow(QString name, QString groupName, bool show){
-    /// If it's a group
-    if(groupName.isEmpty()){
-        QVector<Point*>* group = points->getGroups()->value(groupName);
-        for(int i = 0; i < group->size(); i++)
-            group->at(i)->setVisible(show);
-
+    /// If it's a group we just want to open it on the menu
+    if(groupName.isEmpty())
         emit hideShowQml(QVariant::fromValue(indexOfGroup(name)), QVariant::fromValue(!show));
-
-    } else {
+     else {
+        /// If it's a point, we ant to show/hide it on the map
         QVector<Point*>* group = points->getGroups()->value(groupName);
         for(int i = 0; i < group->size(); i++)
             if(group->at(i)->getName().compare(name) == 0)
-                group->at(i)->setVisible(show);
+                group->at(i)->setVisible(!show);
 
         emit hideShowQml(QVariant::fromValue(indexOfPoint(name, groupName)), QVariant::fromValue(!show));
+
+        XMLParser::save(this, currentPointsFile);
     }
 }
 
@@ -214,11 +222,23 @@ void PointController::renameGroup(QString newName, QString oldName){
     qDebug() << "PointController::renameGroup from" << oldName << "to" << newName;
     points->getGroups()->insert(newName, points->getGroups()->take(oldName));
     emit renameGroupQml(newName, oldName);
+    XMLParser::save(this, currentPointsFile);
 }
 
 void PointController::moveTo(QString name, QString oldGroup, QString newGroup){
     qDebug() << "PointController::move" << name << "from" << oldGroup << "to" << newGroup;
     /// TODO move to + on rename group
+    int oldIndex = indexOfPoint(name, oldGroup);
+
+    QVector<Point*>* group = points->getGroups()->value(oldGroup);
+    for(int j = 0; j < group->size(); j++)
+        if(group->at(j)->getName().compare(name) == 0)
+            points->getGroups()->value(newGroup)->push_back(group->takeAt(j));
+
+    int newIndex = indexOfPoint(name, newGroup);
+    emit movePointQml(QVariant::fromValue(oldIndex), QVariant::fromValue(newIndex), QVariant::fromValue(newGroup));
+
+    XMLParser::save(this, currentPointsFile);
 }
 
 void PointController::checkErrorPoint(const QImage& mapImage, const QString name, const double x, const double y){

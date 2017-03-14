@@ -37,4 +37,19 @@ ListModel {
                 get(i)._groupName = newName;
         }
     }
+
+    function movePoint(oldIndex, newIndex, newGroupName){
+        displayList();
+        console.log("move to " + oldIndex + " " + newIndex + " " + count);
+        move(oldIndex, newIndex, 1);
+        setProperty(newIndex, "_groupName", newGroupName);
+        displayList();
+    }
+
+    function displayList(){
+        console.log("\nList of points :");
+        for(var i = 0; i < count; i++){
+            console.log(i + " : " + get(i)._groupName + " " + get(i)._name);
+        }
+    }
 }

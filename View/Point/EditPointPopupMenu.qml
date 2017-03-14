@@ -97,7 +97,11 @@ Menu {
                         leftPadding: Style.menuItemLeftPadding
                         /// Disable the group in which the point already is so we can't move it in
                         enabled: !(modelData === myGroup)
-                        onTriggered: moveTo(modelData)
+                        onTriggered: {
+                            moveTo(modelData)
+                            moveToMenu.close()
+                            menu.close()
+                        }
                     }
                 }
             }

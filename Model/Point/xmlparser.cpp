@@ -12,6 +12,7 @@ XMLParser::~XMLParser(){
 
 void XMLParser::save(PointController *pointController, const QString fileName) {
     try {
+        qDebug() << "XMLParser::save the points in" << fileName;
         QFile file(fileName);
         file.open(QIODevice::WriteOnly);
 
@@ -129,7 +130,7 @@ void XMLParser::readPoints(PointController* pointController, const QString fileN
                         } else if(xmlReader.isStartElement()){
                             if(xmlReader.name() == "name"){
                                 groupName = readNameElement(xmlReader);
-                                pointController->addGroup(groupName);
+                                pointController->addGroup(groupName, false);
                             } else if(xmlReader.name() == "point"){
                                 double x(0.0);
                                 double y(0.0);
@@ -159,7 +160,7 @@ void XMLParser::readPoints(PointController* pointController, const QString fileN
                                         break;
                                     } else xmlReader.readNext();
                                 }
-                                pointController->addPoint(name, groupName, x, y, displayed);
+                                pointController->addPoint(name, groupName, x, y, displayed, false);
                             }
                             xmlReader.readNext();
                         } else {

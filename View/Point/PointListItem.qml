@@ -35,10 +35,10 @@ Rectangle {
 
     /// We look for the group in which this point is and if this group is displayed (isVisible)
     /// then we display its points
-    visible: Helper.isVisible(this, _groupName)
+    visible: Helper.isVisible(pointModel, _name, _groupName)
 
     /// if the group in which we are doesn't display its points, we hide it in the menu
-    height: Helper.isVisible(this, _groupName) ? 37 : 0
+    height: visible ? 37 : 0
 
     /// The blue rectangle on the selected item
     Rectangle {

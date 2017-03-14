@@ -10,7 +10,7 @@ class MainController;
 class PointController : public QObject {
     Q_OBJECT
 public:
-    PointController(QObject *applicationWindow, QString mapFile, MainController *parent);
+    PointController(QObject *applicationWindow, MainController *parent);
 
     /// Getters
     Points* getPoints(void) const { return points; }
@@ -64,14 +64,14 @@ public slots:
      * @param displayed
      * Add a point to the model
      */
-    void addPoint(QString name, QString groupName, double x, double y, bool displayed = true);
+    void addPoint(QString name, QString groupName, double x, double y, bool displayed = true, bool saveXML = true);
 
     /**
      * @brief addGroup
      * @param groupName
      * Add a group to the model
      */
-    void addGroup(QString groupName);
+    void addGroup(QString groupName, bool saveXML = true);
 
 private:
     /**
@@ -196,8 +196,18 @@ signals:
      */
     void renameGroupQml(QVariant newName, QVariant oldName);
 
+    /**
+     * @brief movePointQml
+     * @param oldIndex
+     * @param newIndex
+     * @param newGroup
+     * Tell the qml model that we moved the point at index oldIndex to newIndex
+     */
+    void movePointQml(QVariant oldIndex, QVariant newIndex, QVariant newGroup);
+
 private:
     Points* points;
+    QString currentPointsFile;
 };
 
 #endif // POINTCONTROLLER_H
