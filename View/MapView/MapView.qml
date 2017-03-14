@@ -10,6 +10,8 @@ import "../Point"
 Frame {
     id: mapViewFrame
     objectName: "mapViewFrame"
+    property double centerX: mapImage.x
+    property double centerY: mapImage.y
     property string mapSrc
     property Points pointModel
     property PointView tmpPointView: PointView {
@@ -44,11 +46,12 @@ Frame {
 
     signal saveState(double posX, double posY, double zoom, string mapSrc)
     signal loadState()
+
     padding: 0
 
     TopView {
         id: topView
-        onSaveState: mapViewFrame.saveState(mapImage.x, mapImage.y, mapImage.scale, mapSrc)
+        onSaveState: emitState()
         onLoadState: mapViewFrame.loadState()
         /// If we have a map, the mapImage is visible
         /// so we enable the buttons to save/load the state of the map
@@ -118,5 +121,9 @@ Frame {
         mapImage.scale = zoom;
         mapImage.x = posX;
         mapImage.y = posY;
+    }
+
+    function emitState(){
+        mapViewFrame.saveState(mapImage.x, mapImage.y, mapImage.scale, mapSrc)
     }
 }

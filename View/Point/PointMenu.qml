@@ -8,6 +8,7 @@ Page {
     anchors.fill: parent
     property Points pointModel
     property PointView tmpPointView
+
     signal closeMenu()
 
     onVisibleChanged: {

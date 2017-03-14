@@ -24,6 +24,9 @@ Frame {
     property int currentMenu
 
     signal closeMenu()
+    signal saveState()
+
+    signal saveMap(string file_name)
 
     RobotMenu {
         id: robotMenu
@@ -49,6 +52,8 @@ Frame {
         id: mapMenu
         visible: currentMenu == 3
         onCloseMenu: mainMenuViewsFrame.closeMenu()
+        onSaveState: mainMenuViewsFrame.saveState()
+        onSaveMap: mainMenuViewsFrame.saveMap(file_name)
     }
 
     SettingsMenu {

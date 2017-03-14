@@ -26,7 +26,7 @@ void Points::addPoint(QString name, QString groupName, double x, double y, bool 
 
     name = Helper::formatName(name);
     QVector<Point*>* group = groups->value(groupName);
-    group->push_back(new Point(name, this));
+    group->push_back(new Point(name, groupName, x, y, displayed, this));
     emit addPointQml(QVariant::fromValue(indexOfPoint(name, groupName)),
                      QVariant::fromValue(name),
                      QVariant::fromValue(displayed),

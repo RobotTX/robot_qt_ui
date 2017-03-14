@@ -78,7 +78,7 @@ Rectangle {
 
         Image {
             asynchronous: true
-            /// Change the image depending on whther or not it's a point or a group and if it's visible
+            /// Change the image depending on whether or not it's a point or a group and if it's visible
             source: (_groupName == "") ? (_isVisible ? "qrc:/icons/fold" : "qrc:/icons/unfold") : (_isVisible ? "qrc:/icons/visible" : "qrc:/icons/invisible")
             fillMode: Image.Pad // For not stretching image
             anchors.horizontalCenter: parent.horizontalCenter

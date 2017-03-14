@@ -5,7 +5,11 @@ import "../Custom"
 Page {
     id: page
     anchors.fill: parent
+
     signal closeMenu()
+    signal saveState()
+
+    signal saveMap(string file_name)
 
     MenuHeader {
         id: mapMenuHeader
@@ -19,8 +23,11 @@ Page {
             left: parent.left
             top: mapMenuHeader.bottom
             right: parent.right
-            bottom: parent.bottom
+            bottom: parent.bottom    
         }
+
+        onSaveState: page.saveState()
+        onSaveMap: page.saveMap(file_name)
     }
 }
 
