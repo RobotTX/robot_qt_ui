@@ -13,6 +13,7 @@ Frame {
     signal deletePoint(string name, string groupName)
     signal deleteGroup(string name)
     signal renameGroup(string name)
+    signal moveTo(string name, string oldGroup, string newGroup)
 
     background: Rectangle {
         color: Style.lightGreyBackground
@@ -34,10 +35,11 @@ Frame {
         PointListItem {
             width: pointMenuFrame.width
             myList: pointList
+            pointModel: pointMenuFrame.pointModel
             onDeleteGroup: pointMenuFrame.deleteGroup(name)
             onRenameGroup: pointMenuFrame.renameGroup(name)
             onDeletePoint: pointMenuFrame.deletePoint(name, groupName)
-            pointModel: pointMenuFrame.pointModel
+            onMoveTo: pointMenuFrame.moveTo(name, oldGroup, newGroup)
         }
     }
 

@@ -31,6 +31,7 @@ Rectangle {
     signal deletePoint(string name, string groupName)
     signal deleteGroup(string name)
     signal renameGroup(string name)
+    signal moveTo(string name, string oldGroup, string newGroup)
 
     /// We look for the group in which this point is and if this group is displayed (isVisible)
     /// then we display its points
@@ -140,9 +141,10 @@ Rectangle {
         EditPointPopupMenu {
             id: editPointPopupMenu
             x: rightButton.width
-            onDeletePoint: pointListItem.deletePoint(name, groupName)
             pointModel: pointListItem.pointModel
             myGroup: groupName
+            onDeletePoint: pointListItem.deletePoint(name, groupName)
+            onMoveTo: pointListItem.moveTo(_name, _groupName, newGroup)
         }
     }
 }

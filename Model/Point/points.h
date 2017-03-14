@@ -103,6 +103,14 @@ private slots:
      * Rename a group from oldName to newName
      */
     void renameGroup(QString newName, QString oldName);
+    /**
+     * @brief moveTo
+     * @param name
+     * @param oldName
+     * @param newGroup
+     * Move a point from oldGroup to newGroup
+     */
+    void moveTo(QString name, QString oldGroup, QString newGroup);
 
 signals:
     /**

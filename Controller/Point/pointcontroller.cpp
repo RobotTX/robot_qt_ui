@@ -70,6 +70,7 @@ PointController::PointController(QObject *applicationWindow, QString mapFile, Ma
         connect(pointMenuFrame, SIGNAL(deletePoint(QString, QString)), points, SLOT(deletePoint(QString, QString)));
         /// Clicked on the right popup menu to delete a group
         connect(pointMenuFrame, SIGNAL(deleteGroup(QString)), points, SLOT(deleteGroup(QString)));
+        connect(pointMenuFrame, SIGNAL(moveTo(QString, QString, QString)), points, SLOT(moveTo(QString, QString, QString)));
     } else {
         qDebug() << "PointController::PointController could not find the createPointMenuFrame";
         Q_UNREACHABLE();

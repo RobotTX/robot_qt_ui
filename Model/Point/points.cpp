@@ -3,12 +3,14 @@
 #include <QDebug>
 #include <QString>
 #include "Model/Point/point.h"
+#include "Helper/helper.h"
 
 Points::Points(QObject* parent) : QObject(parent), groups(new QMap<QString, QVector<Point*>*>()) {
 
 }
 
 void Points::addGroup(QString groupName){
+    groupName = Helper::formatName(groupName);
     if(!groups->contains(groupName)){
         //qDebug() << "Points::addGroup" << groupName;
         groups->insert(groupName, new QVector<Point*>());
@@ -22,6 +24,7 @@ void Points::addPoint(QString name, QString groupName, double x, double y, bool 
     //qDebug() << "Points::addPoint" << groupName << name << x << y << displayed;
     addGroup(groupName);
 
+    name = Helper::formatName(name);
     QVector<Point*>* group = groups->value(groupName);
     group->push_back(new Point(name, this));
     emit addPointQml(QVariant::fromValue(indexOfPoint(name, groupName)),
@@ -100,7 +103,7 @@ bool Points::checkPointName(const QString name){
 
         QVector<Point*>* group = i.value();
         for(int j = 0; j < group->size(); j++){
-            if(group->at(j)->getName().compare(name) == 0)
+            if(group->at(j)->getName().compare(Helper::formatName(name)) == 0)
                 return true;
         }
     }
@@ -108,11 +111,17 @@ bool Points::checkPointName(const QString name){
 }
 
 bool Points::checkGroupName(const QString name){
-    return groups->find(name) != groups->end();
+    return groups->find(Helper::formatName(name)) != groups->end();
 }
 
 void Points::renameGroup(QString newName, QString oldName){
+    newName = Helper::formatName(newName);
     qDebug() << "Points::renameGroup from" << oldName << "to" << newName;
     groups->insert(newName, groups->take(oldName));
     emit renameGroupQml(newName, oldName);
+}
+
+void Points::moveTo(QString name, QString oldGroup, QString newGroup){
+    qDebug() << "Points::move" << name << "from" << oldGroup << "to" << newGroup;
+    /// TODO move to + on rename group
 }
