@@ -89,7 +89,7 @@ Frame {
 
     CustomComboBox {
         id: groupComboBox
-        model: Helper.getGroupList(pointModel)
+        model: [Helper.noGroup].concat(Helper.getGroupList(pointModel))
     }
 
     Label {

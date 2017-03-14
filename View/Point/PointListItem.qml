@@ -35,7 +35,7 @@ Rectangle {
 
     /// We look for the group in which this point is and if this group is displayed (isVisible)
     /// then we display its points
-    visible: Helper.isVisible(pointModel, _name, _groupName)
+    visible: (_name === Helper.noGroup && _groupName === "") ? false : ((_groupName === "") ? true : _groupIsOpen)
 
     /// if the group in which we are doesn't display its points, we hide it in the menu
     height: visible ? 37 : 0
@@ -46,7 +46,7 @@ Rectangle {
         height: parent.height - 10
         anchors.left: parent.left
         anchors.right: parent.right
-        color: isCurrentItem ? "#b0c8f7" : "transparent"
+        color: isCurrentItem ? Style.selectedItemColor : "transparent"
     }
 
     /// Make the element transparent so we use the backround color of its parent
@@ -67,7 +67,7 @@ Rectangle {
             bottom: parent.bottom
         }
         /// If it's a point in a group we add some more margin
-        anchors.leftMargin: (_groupName != "No Group" && _groupName != "") ? 45 : 20
+        anchors.leftMargin: (_groupName != Helper.noGroup && _groupName != "") ? 45 : 20
 
         width: Style.smallBtnWidth
         height: Style.smallBtnHeight
@@ -79,13 +79,13 @@ Rectangle {
         Image {
             asynchronous: true
             /// Change the image depending on whether or not it's a point or a group and if it's visible
-            source: (_groupName == "") ? (_isVisible ? "qrc:/icons/fold" : "qrc:/icons/unfold") : (_isVisible ? "qrc:/icons/visible" : "qrc:/icons/invisible")
+            source: (_groupName == "") ? (_groupIsOpen ? "qrc:/icons/fold" : "qrc:/icons/unfold") : (_isVisible ? "qrc:/icons/visible" : "qrc:/icons/invisible")
             fillMode: Image.Pad // For not stretching image
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.verticalCenter: parent.verticalCenter
         }
 
-        onClicked: myList.hideShow(_name, _groupName, _isVisible);
+        onClicked: myList.hideShow(_name, _groupName, (_groupName === "") ? _groupIsOpen : _isVisible);
     }
 
     /// The item displaying the name of the point/group

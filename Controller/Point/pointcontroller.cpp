@@ -183,6 +183,7 @@ void PointController::deleteGroup(QString name){
 }
 
 void PointController::hideShow(QString name, QString groupName, bool show){
+    qDebug() << "PointController::hideShow" << name << groupName << show;
     /// If it's a group we just want to open it on the menu
     if(groupName.isEmpty())
         emit hideShowQml(QVariant::fromValue(indexOfGroup(name)), QVariant::fromValue(!show));

@@ -15,6 +15,7 @@ var smallBtnHeight = 20
 var darkSkyBlue = "#6788e0"
 var darkSkyBlueBorder = "#5372de"
 var lightBlue = "#a9d1fc"
+var selectedItemColor = "#b0c8f7"
 var disableSaveColor = "#a2cdfd"
 var disableSaveBorder = "#d6e9fe"
 var darkGrey = "#585c63"

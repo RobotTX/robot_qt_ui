@@ -73,15 +73,22 @@ Menu {
             }
 
             MenuItem {
-                text: qsTr("New Group")
+                height: Style.menuItemHeight
+                text: qsTr(Helper.noGroup)
                 width: parent.width
                 leftPadding: Style.menuItemLeftPadding
-                height: Style.menuItemHeight
+                /// Disable the group in which the point already is so we can't move it in
+                enabled: !(Helper.noGroup === myGroup)
+                onTriggered: {
+                    moveTo(Helper.noGroup)
+                    moveToMenu.close()
+                    menu.close()
+                }
             }
 
             Rectangle {
                 color: Style.lightGreyBorder
-                width: parent.width
+                width: moveToMenu.width
                 height: 2
             }
 
