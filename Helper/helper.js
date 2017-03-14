@@ -55,3 +55,15 @@ function groupIsVisible(item, _group){
     }
     return false;
 }
+
+/// Get the list of groups only as an array
+function getGroupList(pointModel){
+    var groups = ["No Group"];
+    for(var i = 0; i < pointModel.count; i++)
+        if(pointModel.get(i)._groupName === "" && pointModel.get(i)._name !== "No Group")
+            groups.push(pointModel.get(i)._name );
+
+
+    return groups;
+}
+

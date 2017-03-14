@@ -28,6 +28,7 @@
         <file alias="loadState">icons/Ic_LoadState.png</file>
         <file alias="saveState">icons/Ic_SaveState.png</file>
 
+        <file alias="arrow">icons/Arrow.png</file>
         <file alias="fold">icons/Btn_Fold.png</file>
         <file alias="visible">icons/Btn_Visible.png</file>
         <file alias="unfold">icons/Btn_Unfold1.png</file>

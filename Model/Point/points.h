@@ -149,6 +149,14 @@ signals:
      */
     void hideShowQml(QVariant index, QVariant show);
 
+    /**
+     * @brief renameGroupQml
+     * @param newName
+     * @param oldName
+     * Tell the qml model that we renamed the group oldName into newName
+     */
+    void renameGroupQml(QVariant newName, QVariant oldName);
+
 private:
     QMap<QString, QVector<Point*>*>* groups;
 };

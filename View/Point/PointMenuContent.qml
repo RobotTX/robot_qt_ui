@@ -37,6 +37,7 @@ Frame {
             onDeleteGroup: pointMenuFrame.deleteGroup(name)
             onRenameGroup: pointMenuFrame.renameGroup(name)
             onDeletePoint: pointMenuFrame.deletePoint(name, groupName)
+            pointModel: pointMenuFrame.pointModel
         }
     }
 

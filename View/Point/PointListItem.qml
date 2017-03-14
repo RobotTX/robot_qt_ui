@@ -2,10 +2,13 @@ import QtQuick 2.7
 import QtQuick.Controls 2.1
 import "../../Helper/style.js" as Style
 import "../../Helper/helper.js" as Helper
+import "../../Model/Point"
 import QtQuick.Layouts 1.3
 
 Rectangle {
     id: pointListItem
+
+    property Points pointModel
 
     /// Name of the point or group
     property string name: _name
@@ -138,6 +141,8 @@ Rectangle {
             id: editPointPopupMenu
             x: rightButton.width
             onDeletePoint: pointListItem.deletePoint(name, groupName)
+            pointModel: pointListItem.pointModel
+            myGroup: groupName
         }
     }
 }
