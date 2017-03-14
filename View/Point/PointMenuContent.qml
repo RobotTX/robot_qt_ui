@@ -24,7 +24,7 @@ Frame {
     /// This frame is displayed when there is no point
     EmptyMenu {
         /// Only the invisible "No Group" left
-        visible: pointList.count == 1
+        visible: pointList.count <= 1
         txt: "You have no points, click the '+' button or double click the map to create a point."
         imgSrc: "qrc:/icons/big_point"
     }
