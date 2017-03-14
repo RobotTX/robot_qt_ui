@@ -10,10 +10,19 @@ import "../Point"
 Frame {
     id: mapViewFrame
     objectName: "mapViewFrame"
+
+    // declared as properties so that main.qml can send them to the C++ side, sending mapImage.scale instead of zoom does not work
     property double centerX: mapImage.x
     property double centerY: mapImage.y
+    property double zoom: mapImage.scale
+
+    // this is to be able to display messages at the top from other classes
+    property TopView _topView: topView
+
     property string mapSrc
+
     property Points pointModel
+
     property PointView tmpPointView: PointView {
         objectName: "tmpPointView"
         parent: mapImage

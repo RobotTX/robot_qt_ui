@@ -76,13 +76,15 @@ Frame {
 
     FileDialog {
         id: fileDialog
+        nameFilters: ".pgm"
         // won't let you choose a file name if selectExisting is true
         selectExisting: false
         title: "Please choose a location for your map"
-        folder: "/home/joan/Gobot/build-Gobot-Desktop_Qt_5_8_0_GCC_64bit-Debug/Maps/"
+        folder: "/home/joan/Gobot/build-Gobot-Desktop_Qt_5_8_0_GCC_64bit-Debug/mapConfigs/"
 
         onAccepted: {
-            mapMenuFrame.saveMap(fileDialog.fileUrls)
+            // the selected name filter is the extension .pgm
+            mapMenuFrame.saveMap(fileDialog.fileUrl + selectedNameFilter)
         }
 
         onRejected: {

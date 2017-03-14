@@ -16,6 +16,7 @@ public:
 
 private slots:
     void checkPoint(QString name, double x, double y);
+    void saveMapConfig(QString fileName, double zoom, double centerX, double centerY) const;
 
 private:
     MainMenuController* mainMenuController;
@@ -23,4 +24,4 @@ private:
     PointController* pointController;
 };
 
-#endif // MAINCONTROLLER_H
+#endif /// MAINCONTROLLER_H
