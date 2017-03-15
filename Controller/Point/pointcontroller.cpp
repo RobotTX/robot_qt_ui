@@ -66,14 +66,6 @@ PointController::PointController(QObject *applicationWindow, MainController* par
         Q_UNREACHABLE();
     }
 
-    QObject *pointMenuFrame = applicationWindow->findChild<QObject*>("pointMenuFrame");
-    if (pointMenuFrame){
-        //connect(pointMenuFrame, SIGNAL(moveTo(QString, QString, QString)), this, SLOT(moveTo(QString, QString, QString)));
-    } else {
-        qDebug() << "PointController::PointController could not find the createPointMenuFrame";
-        Q_UNREACHABLE();
-    }
-
 
     currentPointsFile = QDir::currentPath() + QDir::separator() + "currentPoints.xml";
     qDebug() << "PointController::PointController" << currentPointsFile;
