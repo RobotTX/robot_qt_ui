@@ -27,9 +27,9 @@ Frame {
         objectName: "tmpPointView"
         parent: mapImage
         type: Helper.PointViewType.TEMP
-        name: "tmpPointView"
-        groupName: "tmpGroup"
-        isVisible: false
+        _name: "tmpPointView"
+        _groupName: "tmpGroup"
+        _isVisible: false
         originX: mapImage.width/2
         originY: mapImage.height/2
         x: mapImage.width/2
@@ -100,19 +100,21 @@ Frame {
             }
         }
 
-        /// TODO pointviews
-        /*Repeater {
+        Repeater {
             model: pointModel
-            PointView {
-                name: _name
-                isVisible: _isVisible
-                groupName: _groupName
-                originX: _x - width/2
-                originY: _y - height
-                x: _x - width/2
-                y: _y - height
+            delegate: Repeater {
+                model: points
+                delegate: PointView {
+                    _name: name
+                    _isVisible: isVisible
+                    _groupName: groupName
+                    originX: posX - width/2
+                    originY: posY - height
+                    x: posX - width/2
+                    y: posY - height
+                }
             }
-        }*/
+        }
     }
 
     function setMap(_mapSrc){

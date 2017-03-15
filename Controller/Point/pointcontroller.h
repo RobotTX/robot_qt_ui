@@ -95,7 +95,7 @@ private slots:
      * @param groupName
      * Delete a point from the model
      */
-    void deletePoint(QString name, QString groupName);
+    void deletePoint(QString groupName, QString name);
 
     /**
      * @brief deleteGroup
@@ -111,7 +111,7 @@ private slots:
      * @param show
      * Hide or show the given point
      */
-    void hideShow(QString name, QString groupName, bool show);
+    void hideShow(QString groupName, QString name);
 
     /**
      * @brief renameGroup
@@ -165,45 +165,12 @@ signals:
     void addPointQml(QVariant index, QVariant name, QVariant isVisible, QVariant groupName, QVariant x, QVariant y);
 
     /**
-     * @brief removeGroupQml
-     * @param begin
-     * @param end
-     * Tell the qml model that we removed a group at the index begin
-     * and with points up to the index end
-     */
-    void removeGroupQml(QVariant begin, QVariant end);
-
-    /**
-     * @brief removePointQml
-     * @param index
-     * Tell the qml model to remove the point at the given index
-     */
-    void removePointQml(QVariant index);
-
-    /**
-     * @brief hideShowQml
-     * @param index
-     * @param show
-     * Tell the qml model to show/hide the point at the given index
-     */
-    void hideShowQml(QVariant index, QVariant show);
-
-    /**
      * @brief renameGroupQml
      * @param newName
      * @param oldName
      * Tell the qml model that we renamed the group oldName into newName
      */
     void renameGroupQml(QVariant newName, QVariant oldName);
-
-    /**
-     * @brief movePointQml
-     * @param oldIndex
-     * @param newIndex
-     * @param newGroup
-     * Tell the qml model that we moved the point at index oldIndex to newIndex
-     */
-    void movePointQml(QVariant oldIndex, QVariant newIndex, QVariant newGroup);
 
 private:
     Points* points;

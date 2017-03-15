@@ -31,7 +31,7 @@ Frame {
 
     onVisibleChanged: {
         if(tmpPointView && createPointMenuFrame)
-            tmpPointView.isVisible = visible;
+            tmpPointView._isVisible = visible;
 
         if(!visible){
             if(tmpPointView && createPointMenuFrame){
@@ -46,11 +46,16 @@ Frame {
         } else {
             if(oldName !== ""){
                 console.log(oldName + " " + oldGroup);
-                var index = pointModel.getIndex(oldName, oldGroup);
-                pointModel.get(index)._isVisible = false;
-                tmpPointView.x = pointModel.get(index)._x - tmpPointView.width / 2;
-                tmpPointView.y = pointModel.get(index)._y - tmpPointView.height;
-                groupComboBox.currentIndex = pointModel.getGroupIndex(oldGroup);
+                for(var i = 0; i < pointModel.count; i++)
+                    if(pointModel.get(i).groupName === oldGroup)
+                        for(var j = 0; j < pointModel.get(i).points.count; j++)
+                            if(pointModel.get(i).points.get(j).name === oldName){
+                                pointModel.get(i).points.setProperty(j, "isVisible", false);
+
+                                tmpPointView.x = pointModel.get(i).points.get(j).posX - tmpPointView.width / 2;
+                                tmpPointView.y = pointModel.get(i).points.get(j).posY - tmpPointView.height;
+                                groupComboBox.currentIndex = i;
+                            }
             }
         }
     }
@@ -110,7 +115,8 @@ Frame {
 
     CustomComboBox {
         id: groupComboBox
-        model: [Helper.noGroup].concat(pointModel.getGroupList())
+        model: pointModel
+        displayText: oldName ? oldGroup : Helper.noGroup
     }
 
     Label {
@@ -165,7 +171,7 @@ Frame {
         enabled: false
         anchors.leftMargin: 5
         onClicked: {
-            createPoint(pointTextField.text, groupComboBox.currentText, tmpPointView.x + tmpPointView.width / 2, tmpPointView.y + tmpPointView.height, oldName, oldGroup);
+            createPoint(pointTextField.text, groupComboBox.displayText, tmpPointView.x + tmpPointView.width / 2, tmpPointView.y + tmpPointView.height, oldName, oldGroup);
             backToMenu();
         }
     }

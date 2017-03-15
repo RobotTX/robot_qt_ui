@@ -5,9 +5,9 @@ import "../../Helper/helper.js" as Helper
 Image {
 
     id: image
-    property string name
-    property bool isVisible
-    property string groupName
+    property string _name
+    property bool _isVisible
+    property string _groupName
     property int type: Helper.PointViewType.PERM
     property double originX
     property double originY
@@ -18,11 +18,11 @@ Image {
     height: 24
     asynchronous: true
     smooth: false
-    visible: ((groupName !== "") && isVisible)
+    visible: _isVisible
 
     MouseArea {
         anchors.fill: parent
-        onClicked: console.log("Clicked on " + name + " in group " + groupName + " " + isVisible + " " + type)
+        onClicked: console.log("Clicked on " + _name + " in group " + _groupName + " " + _isVisible + " " + type)
     }
 
     /// To change the source file of the pointView according to its type
@@ -35,7 +35,7 @@ Image {
                 src = "qrc:/icons/addPointView";
             break;
             default:
-                console.log("The pointView \"" + name + "\" in group \"" + groupName + "\" is in an undefined status " + type);
+                console.log("The pointView \"" + _name + "\" in group \"" + _groupName + "\" is in an undefined status " + type);
             break;
         }
         return src;

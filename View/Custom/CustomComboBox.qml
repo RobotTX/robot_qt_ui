@@ -43,11 +43,12 @@ ComboBox {
     delegate: ItemDelegate {
         width: groupComboBox.width
         contentItem: Text {
-            text: modelData
+            text: groupName
             elide: Text.ElideRight
             verticalAlignment: Text.AlignVCenter
         }
         highlighted: groupComboBox.highlightedIndex == index
+        onClicked: displayText = groupName
     }
 
     background: Rectangle {

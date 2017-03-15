@@ -5,145 +5,96 @@ import "../../Helper/helper.js" as Helper
 
 ListModel {
     id: listModel
+    signal hideShow(string groupName, string name)
+    signal deletePointSignal(string groupName, string name)
+    signal deleteGroupSignal(string groupName)
+    signal moveToSignal(string name, string oldGroup, string newGroup)
+
     function addGroup(index, name){
         console.log("Add group " + name);
         insert(index, {
-                   "name": name,
-                   "isOpen": (name === Helper.noGroup) ? true : false,
-                   "points": []
-               });
+           "groupName": name,
+           "isOpen": (name === Helper.noGroup) ? true : false,
+           "points": []
+        });
     }
 
     function addPoint(index, name, isVisible, groupName, x, y){
         console.log("Add point " + name + " to group " + groupName + " " + x + " " + y);
         for(var i = 0; i < count; i++){
-            if(get(i).name === groupName){
+            if(get(i).groupName === groupName){
                 get(i).points.insert(index, {
                      "name": name,
                      "isVisible": isVisible,
-                     "x": x,
-                     "y": y
-                 });
+                     "posX": x,
+                     "posY": y
+                });
             }
         }
     }
 
-    function removePoint(index){
-        console.log("removePoint");
-        //remove(index);
+    function deletePoint(groupName, name){
+        for(var i = 0; i < count; i++)
+            if(get(i).groupName === groupName)
+                for(var j = 0; j < get(i).points.count; j++)
+                    if(get(i).points.get(j).name === name)
+                        get(i).points.remove(j);
+
+        deletePointSignal(groupName, name);
     }
 
-    function removeGroup(begin, end){
-        console.log("removeGroup");
-        /*for(var i = begin; i <= end; i++)
-            remove(begin);*/
+    function deleteGroup(groupName){
+        for(var i = 0; i < count; i++)
+            if(get(i).groupName === groupName)
+                remove(i);
+        deleteGroupSignal(groupName);
     }
 
-    function hideShow(index, show){
-        console.log("hideShow");
-        //console.log("hideShow " + index + " " + get(index)._groupName + " " + get(index)._name + " " + get(index)._isVisible + " " + show);
-       /* if(get(index)._groupName === ""){
-            setProperty(index, "_groupIsOpen", show);
-            for(var i = 0; i < count; i++)
-                if(get(i)._groupName === get(index)._name)
-                    get(i)._groupIsOpen = show;
+    function hideShowGroup(groupName){
+        for(var i = 0; i < count; i++)
+            if(get(i).groupName === groupName)
+                setProperty(i, "isOpen", !get(i).isOpen);
+    }
 
-        } else
-            setProperty(index, "_isVisible", show);*/
+    function hideShowPoint(groupName, name){
+        for(var i = 0; i < count; i++)
+            if(get(i).groupName === groupName)
+                for(var j = 0; j < get(i).points.count; j++)
+                    if(get(i).points.get(j).name === name)
+                        get(i).points.setProperty(j, "isVisible", !get(i).points.get(j).isVisible);
+
+        hideShow(groupName, name);
     }
 
     function renameGroup(newName, oldName){
         console.log("renameGroup");
-        /*for(var i = 0; i < count; i++){
-            if(get(i)._groupName === "" && get(i)._name === oldName)
-                get(i)._name = newName;
-            else if(get(i)._groupName === oldName)
-                get(i)._groupName = newName;
-        }*/
-    }
-
-    function movePoint(oldIndex, newIndex, newGroupName){
-        console.log("movePoint");
-        //console.log("move to " + oldIndex + " " + newIndex+ " " + count + " " + newGroupName );
-        /*setProperty(oldIndex, "_groupName", newGroupName);
-        setProperty(oldIndex, "_groupIsOpen", groupIsOpen(newGroupName))
-        move(oldIndex, newIndex, 1);*/
-    }
-
-    function displayList(){
-        console.log("displayList");
-        /*console.log("\nList of points :");
-        for(var i = 0; i < count; i++)
-            console.log(i + " : " + get(i)._groupName + " " + get(i)._name);*/
-    }
-
-    /// Get the index of the given point
-    function getIndex(name, groupName){
-        console.log("getIndex");
-        /*for(var i = 0; i < count; i++)
-            if(get(i)._groupName === groupName && get(i)._name === name)
-                return i;
-
-        return -1;*/
-    }
-
-    /// Get the index of the given group compared to other groups
-    function getGroupIndex(name){
-        console.log("getGroupIndex");
-        /*var nb = 0;
         for(var i = 0; i < count; i++){
-            if(get(i)._groupName === ""){
-                if(get(i)._name === name)
-                    return nb;
-                else if(get(i)._name !== Helper.noGroup)
-                    nb++;
-            }
+            if(get(i).groupName === oldName)
+                setProperty(i, "groupName", newName);
         }
-
-        return -1;*/
     }
 
-    /// To check whether or not the group we are in is displayed or not
-    function groupIsOpen(_groupName) {
-        console.log("groupIsOpen");
-/*
-        /// We don't want to display the group "No group"
-        if(_groupName === Helper.noGroup)
-            return true;
+    function moveTo(name, oldGroup, newGroup){
+        console.log("movePoint");
 
+        var point = {};
         for(var i = 0; i < count; i++)
-            if(get(i)._groupName === "" && get(i)._name === _groupName)
-                return get(i)._groupIsOpen;
-
-        console.log("\n**********************************************************");
-        console.log("We should not be there " + _groupName + " " + count);
+            if(get(i).groupName === oldGroup)
+                for(var j = 0; j < get(i).points.count; j++)
+                    if(get(i).points.get(j).name === name){
+                        point = {
+                            "name": get(i).points.get(j).name,
+                            "isVisible": get(i).points.get(j).isVisible,
+                            "posX": get(i).points.get(j).posX,
+                            "posY": get(i).points.get(j).posY
+                       }
+                        get(i).points.remove(j);
+                    }
 
         for(i = 0; i < count; i++)
-            console.log(get(i)._groupName + " : " + get(i)._name + " vs " + _groupName);
+            if(get(i).groupName === newGroup)
+                get(i).points.append(point);
 
-        console.log("**********************************************************\n");
-        return false;*/
-    }
-
-    /// Get the list of groups except "No Group" as an array
-    function getGroupList(){
-        console.log("getGroupList");
-        /*var groups = [];
-        for(var i = 0; i < count; i++)
-            if(get(i)._groupName === "" && get(i)._name !== Helper.noGroup)
-                groups.push(get(i)._name);
-
-        return groups;*/
-    }
-
-    /// Get the nb of groups
-    function getNbGroup(){
-        console.log("getNbGroup");
-        /*var nb = 0;
-        for(var i = 0; i < count; i++)
-            if(get(i)._groupName === "" && get(i)._name !== Helper.noGroup)
-                nb++;
-
-        return nb;*/
+        moveToSignal(name, oldGroup, newGroup)
     }
 }

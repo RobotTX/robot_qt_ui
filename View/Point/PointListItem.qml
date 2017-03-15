@@ -8,19 +8,41 @@ import "../../Model/Point"
 Column {
     id: groupListItem
 
-    signal hideShow(string name, string groupName, bool isVisible)
+    property Points pointModel
+    property Column column
     signal rightButtonClicked(string name, string groupName)
     signal deletePoint(string name, string groupName)
     signal deleteGroup(string name)
     signal renameGroup(string name)
     signal moveTo(string name, string oldGroup, string newGroup)
     signal editPoint(string name, string groupName)
+    signal hideShowGroup(string groupName)
+    signal hideShowPoint(string groupName, string name)
 
     Rectangle {
-        height: 37
+        id: groupItem
+        visible: !(groupName === Helper.noGroup)
+        height: visible ? 37 :0
         anchors.left: parent.left
         anchors.right: parent.right
         color: "transparent"
+
+        /// The blue rectangle on the selected item
+        Rectangle {
+            anchors.verticalCenter: parent.verticalCenter
+            height: parent.height - 10
+            anchors.left: parent.left
+            anchors.right: parent.right
+            color: (column.selectedGroup === groupName && column.selectedPoint === "") ? Style.selectedItemColor : "transparent"
+        }
+
+        MouseArea {
+            onClicked: {
+                column.selectedGroup = groupName;
+                column.selectedPoint = "";
+            }
+            anchors.fill: parent
+        }
 
         /// The left button in each element of the list
         Button {
@@ -29,6 +51,7 @@ Column {
                 top: parent.top
                 left: parent.left
                 bottom: parent.bottom
+                leftMargin: 20
             }
 
             width: Style.smallBtnWidth
@@ -46,11 +69,13 @@ Column {
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.verticalCenter: parent.verticalCenter
             }
+
+            onClicked: hideShowGroup(groupName);
         }
 
         /// The item displaying the name of the point/group
         Label {
-            text: qsTr(name)
+            text: qsTr(groupName)
             color: Style.blackMenuTextColor
             anchors.verticalCenter: parent.verticalCenter
             anchors.left: leftButton.right
@@ -84,13 +109,27 @@ Column {
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.verticalCenter: parent.verticalCenter
             }
+
+            onClicked: editGroupPopupMenu.open()
+
+            EditGroupPopupMenu {
+                id: editGroupPopupMenu
+                x: rightButton.width
+                onDeleteGroup: groupListItem.deleteGroup(groupName)
+                onRenameGroup: groupListItem.renameGroup(groupName)
+            }
         }
     }
 
     Repeater {
         id: pointList
+        anchors {
+            left: parent.left
+            top: groupItem.bottom
+            right: parent.right
+        }
+
         objectName: "pointList"
-        anchors.fill: parent
         model: points
         delegate: delegate
         focus: true
@@ -102,10 +141,27 @@ Column {
         id: delegate
         Rectangle {
             visible: isOpen
-            height: visible ? 37 : 0
+            height: isOpen ? 37 : 0
             anchors.left: parent.left
             anchors.right: parent.right
             color: "transparent"
+
+            /// The blue rectangle on the selected item
+            Rectangle {
+                anchors.verticalCenter: parent.verticalCenter
+                height: parent.height - 10
+                anchors.left: parent.left
+                anchors.right: parent.right
+                color: (column.selectedGroup === groupName && column.selectedPoint === name) ? Style.selectedItemColor : "transparent"
+            }
+
+            MouseArea {
+                onClicked: {
+                    column.selectedGroup = groupName;
+                    column.selectedPoint = name;
+                }
+                anchors.fill: parent
+            }
 
             /// The left button in each element of the list
             Button {
@@ -114,6 +170,7 @@ Column {
                     top: parent.top
                     left: parent.left
                     bottom: parent.bottom
+                    leftMargin: groupName === Helper.noGroup ? 20 : 45
                 }
 
                 width: Style.smallBtnWidth
@@ -131,6 +188,8 @@ Column {
                     anchors.horizontalCenter: parent.horizontalCenter
                     anchors.verticalCenter: parent.verticalCenter
                 }
+
+                onClicked: hideShowPoint(groupName, name);
             }
 
             /// The item displaying the name of the point/group
@@ -168,6 +227,21 @@ Column {
                     fillMode: Image.Pad // For not stretching image
                     anchors.horizontalCenter: parent.horizontalCenter
                     anchors.verticalCenter: parent.verticalCenter
+                }
+
+                onClicked: {
+                    //myList.currentIndex = index;
+                    editPointPopupMenu.open();
+                }
+
+                EditPointPopupMenu {
+                    id: editPointPopupMenu
+                    x: rightButton.width
+                    pointModel: groupListItem.pointModel
+                    myGroup: groupName
+                    onDeletePoint: groupListItem.deletePoint(name, groupName)
+                    onMoveTo: groupListItem.moveTo(name, groupName, newGroup)
+                    onEditPoint: groupListItem.editPoint(name, groupName)
                 }
             }
         }

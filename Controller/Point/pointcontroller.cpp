@@ -17,16 +17,12 @@ PointController::PointController(QObject *applicationWindow, MainController* par
         connect(this, SIGNAL(addGroupQml(QVariant, QVariant)), pointModel, SLOT(addGroup(QVariant, QVariant)));
         /// Tell the qml point model that we just added a new point
         connect(this, SIGNAL(addPointQml(QVariant, QVariant, QVariant, QVariant, QVariant, QVariant)), pointModel, SLOT(addPoint(QVariant, QVariant, QVariant, QVariant, QVariant, QVariant)));
-        /// Tell the qml point model that we just removed a point
-        connect(this, SIGNAL(removePointQml(QVariant)), pointModel, SLOT(removePoint(QVariant)));
-        /// Tell the qml point model that we just removed a group
-        connect(this, SIGNAL(removeGroupQml(QVariant, QVariant)), pointModel, SLOT(removeGroup(QVariant, QVariant)));
-        /// Tell the qml point model that we just hided or showed a point on the map
-        connect(this, SIGNAL(hideShowQml(QVariant, QVariant)), pointModel, SLOT(hideShow(QVariant, QVariant)));
         /// Tell the qml point model that we just renamed a group
         connect(this, SIGNAL(renameGroupQml(QVariant, QVariant)), pointModel, SLOT(renameGroup(QVariant, QVariant)));
-        /// Tell the qml point model that we moved a point to a new group
-        connect(this, SIGNAL(movePointQml(QVariant, QVariant, QVariant)), pointModel, SLOT(movePoint(QVariant, QVariant, QVariant)));
+        connect(pointModel, SIGNAL(hideShow(QString, QString)), this, SLOT(hideShow(QString, QString)));
+        connect(pointModel, SIGNAL(deletePointSignal(QString, QString)), this, SLOT(deletePoint(QString, QString)));
+        connect(pointModel, SIGNAL(deleteGroupSignal(QString)), this, SLOT(deleteGroup(QString)));
+        connect(pointModel, SIGNAL(moveToSignal(QString, QString, QString)), this, SLOT(moveTo(QString, QString, QString)));
     } else {
         qDebug() << "PointController::PointController could not find the qml point model";
         Q_UNREACHABLE();
@@ -35,7 +31,7 @@ PointController::PointController(QObject *applicationWindow, MainController* par
     QObject *pointList = applicationWindow->findChild<QObject*>("pointList");
     if (pointList){
         /// Got a signal from the qml list of point that we just clicked to hide/show the given point
-        connect(pointList, SIGNAL(hideShow(QString, QString, bool)), this, SLOT(hideShow(QString, QString, bool)));
+        //connect(pointList, SIGNAL(hideShow(QString, QString, bool)), this, SLOT(hideShow(QString, QString, bool)));
      } else {
         qDebug() << "PointController::PointController could not find the qml point model";
         Q_UNREACHABLE();
@@ -71,11 +67,7 @@ PointController::PointController(QObject *applicationWindow, MainController* par
 
     QObject *pointMenuFrame = applicationWindow->findChild<QObject*>("pointMenuFrame");
     if (pointMenuFrame){
-        /// Clicked on the right popup menu to delete a point
-        connect(pointMenuFrame, SIGNAL(deletePoint(QString, QString)), this, SLOT(deletePoint(QString, QString)));
-        /// Clicked on the right popup menu to delete a group
-        connect(pointMenuFrame, SIGNAL(deleteGroup(QString)), this, SLOT(deleteGroup(QString)));
-        connect(pointMenuFrame, SIGNAL(moveTo(QString, QString, QString)), this, SLOT(moveTo(QString, QString, QString)));
+        //connect(pointMenuFrame, SIGNAL(moveTo(QString, QString, QString)), this, SLOT(moveTo(QString, QString, QString)));
     } else {
         qDebug() << "PointController::PointController could not find the createPointMenuFrame";
         Q_UNREACHABLE();
@@ -126,7 +118,7 @@ void PointController::addPoint(QString name, QString groupName, double x, double
     } else {
         qDebug() << "PointController::addPoint Editing a point";
         /// We are editing a point
-        deletePoint(oldName, oldGroup);
+        deletePoint(oldGroup, oldName);
 
         QVector<Point*>* group = points->getGroups()->value(groupName);
         group->push_back(new Point(name, x, y, displayed, this));
@@ -165,10 +157,9 @@ int PointController::indexOfGroup(QString groupName){
     return -1;
 }
 
-void PointController::deletePoint(QString name, QString groupName){
-    /// we want ot delete a point so we remove it from the qml side
-    emit removePointQml(QVariant::fromValue(indexOfPoint(name, groupName)));
-    /// and we remove it from the c++ side
+void PointController::deletePoint(QString groupName, QString name){
+    qDebug() << "Delete point";
+    /// we remove the point from the c++ side
     QVector<Point*>* group = points->getGroups()->value(groupName);
     for(int i = 0; i < group->size(); i++)
         if(group->at(i)->getName().compare(name) == 0)
@@ -177,33 +168,22 @@ void PointController::deletePoint(QString name, QString groupName){
 }
 
 void PointController::deleteGroup(QString name){
-    /// if we want to delete a group, we delete all its points from the qml side and the c++ side
     if(points->getGroups()->find(name) != points->getGroups()->end()){
-        /// Remove the group from qml side first as we need the index in the c++ model
-        emit removeGroupQml(QVariant::fromValue(indexOfGroup(name)),
-                            QVariant::fromValue(indexOfPoint(points->getGroups()->value(name)->last()->getName(), name)));
         /// Remove from c++ model
         points->getGroups()->remove(name);
     }
     XMLParser::save(this, currentPointsFile);
 }
 
-void PointController::hideShow(QString name, QString groupName, bool show){
-    qDebug() << "PointController::hideShow" << name << groupName << show;
-    /// If it's a group we just want to open it on the menu
-    if(groupName.isEmpty())
-        emit hideShowQml(QVariant::fromValue(indexOfGroup(name)), QVariant::fromValue(!show));
-     else {
-        /// If it's a point, we ant to show/hide it on the map
-        QVector<Point*>* group = points->getGroups()->value(groupName);
-        for(int i = 0; i < group->size(); i++)
-            if(group->at(i)->getName().compare(name) == 0)
-                group->at(i)->setVisible(!show);
+void PointController::hideShow(QString groupName, QString name){
+    qDebug() << "PointController::hideShow" << name << groupName;
 
-        emit hideShowQml(QVariant::fromValue(indexOfPoint(name, groupName)), QVariant::fromValue(!show));
+    QVector<Point*>* group = points->getGroups()->value(groupName);
+    for(int i = 0; i < group->size(); i++)
+        if(group->at(i)->getName().compare(name) == 0)
+            group->at(i)->setVisible(!group->at(i)->isVisible());
 
-        XMLParser::save(this, currentPointsFile);
-    }
+    XMLParser::save(this, currentPointsFile);
 }
 
 bool PointController::checkPointName(const QString name){
@@ -234,16 +214,10 @@ void PointController::renameGroup(QString newName, QString oldName){
 
 void PointController::moveTo(QString name, QString oldGroup, QString newGroup){
     qDebug() << "PointController::move" << name << "from" << oldGroup << "to" << newGroup;
-    /// TODO move to + on rename group
-    int oldIndex = indexOfPoint(name, oldGroup);
-
     QVector<Point*>* group = points->getGroups()->value(oldGroup);
     for(int j = 0; j < group->size(); j++)
         if(group->at(j)->getName().compare(name) == 0)
             points->getGroups()->value(newGroup)->push_back(group->takeAt(j));
-
-    int newIndex = indexOfPoint(name, newGroup);
-    emit movePointQml(QVariant::fromValue(oldIndex), QVariant::fromValue(newIndex), QVariant::fromValue(newGroup));
 
     XMLParser::save(this, currentPointsFile);
 }
