@@ -1,6 +1,7 @@
 #include "xmlparser.h"
 #include <QXmlStreamWriter>
 #include <QDebug>
+#include <QPointer>
 #include "Controller/Point/pointcontroller.h"
 #include "Model/Point/points.h"
 #include "Model/Point/point.h"
@@ -22,7 +23,7 @@ void XMLParser::save(PointController *pointController, const QString fileName) {
 
         xmlWriter.writeStartElement("points");
 
-        QMapIterator<QString, QVector<Point*>*> i(*(pointController->getPoints()->getGroups()));
+        QMapIterator<QString, QVector<QPointer<Point>>> i(pointController->getPoints()->getGroups());
         /// For each group
         while (i.hasNext()) {
             i.next();
@@ -31,12 +32,12 @@ void XMLParser::save(PointController *pointController, const QString fileName) {
             xmlWriter.writeTextElement("name", i.key());
 
             /// For each point of the group
-            for(int j = 0; j < i.value()->size(); j++){
+            for(int j = 0; j < i.value().size(); j++){
                 xmlWriter.writeStartElement("point");
-                xmlWriter.writeTextElement("name", i.value()->at(j)->getName());
-                xmlWriter.writeTextElement("x", QString::number(i.value()->at(j)->getX()));
-                xmlWriter.writeTextElement("y", QString::number(i.value()->at(j)->getY()));
-                xmlWriter.writeTextElement("displayed", QString::number(i.value()->at(j)->isVisible()));
+                xmlWriter.writeTextElement("name", i.value().at(j)->getName());
+                xmlWriter.writeTextElement("x", QString::number(i.value().at(j)->getX()));
+                xmlWriter.writeTextElement("y", QString::number(i.value().at(j)->getY()));
+                xmlWriter.writeTextElement("displayed", QString::number(i.value().at(j)->isVisible()));
                 xmlWriter.writeEndElement();
             }
             xmlWriter.writeEndElement();

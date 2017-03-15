@@ -111,6 +111,7 @@ void MainController::loadMapConfig(QString fileName) const {
 
             /// clears the map of all paths and points
             // TODO need some kind of equivalent
+
             clearNewMap();
 
             mapController->saveMapState();

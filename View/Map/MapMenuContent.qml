@@ -5,7 +5,6 @@ import QtQuick.Controls.Styles 1.4
 import QtQuick.Window 2.0
 import "../../Helper/style.js" as Style
 
-
 Frame {
 
     id: mapMenuFrame
@@ -59,6 +58,10 @@ Frame {
         txt: "Edit the Map"
         imgSrc: "qrc:/icons/edit_map"
         anchors.top: loadButton.bottom
+        onClicked: {
+            //mapMenuFrame.visible = false;
+            editMap.visible = true;
+        }
     }
 
     MapMenuButton {
@@ -142,4 +145,3 @@ Frame {
         }
     }
 }
-

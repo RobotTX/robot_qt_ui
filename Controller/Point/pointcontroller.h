@@ -54,6 +54,12 @@ public:
      */
     bool checkGroupName(const QString name);
 
+    /**
+     * @brief clearPoints
+     * Clear the points on the C++ side and sends a signal to Qml to delete the points on the Qml side
+     */
+    void clearPoints(void);
+
 public slots:
     /**
      * @brief addPoint
@@ -172,6 +178,7 @@ signals:
      * Tell the qml model that we renamed the group oldName into newName
      */
     void renameGroupQml(QVariant newName, QVariant oldName);
+
 
 private:
     Points* points;

@@ -43,6 +43,21 @@
         <file alias="merge_map">icons/Ic_MergeMap.png</file>
         <file alias="scan_map">icons/Ic_ScanMap.png</file>
         <file alias="save_map">icons/Ic_SaveMap.png</file>
-        
+
+        <!-- for edit map -->
+        <file alias="undo">icons/Btn_Undo.png</file>
+        <file alias="redo">icons/Btn_Redo.png</file>
+        <file alias="reset">icons/Btn_Reset.png</file>
+        <file alias="hand">icons/Btn_Hands.png</file>
+        <file alias="white">icons/Btn_White_s.png</file>
+        <file alias="grey">icons/Btn_Grey.png</file>
+        <file alias="dot">icons/Btn_Dot_s.png</file>
+        <file alias="line">icons/Btn_Line.png</file>
+        <file alias="outline">icons/Btn_Outline.png</file>
+        <file alias="solid">icons/Btn_Solid.png</file>
+        <file alias="decrease">icons/Btn_Decrease.png</file>
+        <file alias="increase">icons/Btn_Add.png</file>
+        <file alias="save">icons/Btn_Save.png</file>
+
     </qresource>
 </RCC>
