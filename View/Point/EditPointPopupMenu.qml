@@ -44,7 +44,6 @@ Menu {
         width: parent.width
         leftPadding: Style.menuItemLeftPadding
         height: Style.menuItemHeight
-        //onTriggered: openCreateGroupMenu()
 
         Image {
             asynchronous: true
@@ -62,7 +61,7 @@ Menu {
             padding: 0
             width: 140
             x: parent.width
-            property int nbGroup: Helper.getGroupList(menu.pointModel).length
+            property int nbGroup: pointModel.getNbGroup()
 
             background: Rectangle {
                 implicitWidth: parent.width
@@ -93,17 +92,39 @@ Menu {
             }
 
             ColumnLayout {
+                anchors {
+                    left: parent.left
+                    right: parent.right
+                }
 
                 Repeater {
-                    model: Helper.getGroupList(menu.pointModel)
+                    model: pointModel.getGroupList()
 
                     MenuItem {
                         Layout.preferredHeight: Style.menuItemHeight
-                        text: qsTr(modelData)
-                        width: parent.width
+                        anchors {
+                            left: parent.left
+                            right: parent.right
+                        }
                         leftPadding: Style.menuItemLeftPadding
                         /// Disable the group in which the point already is so we can't move it in
                         enabled: !(modelData === myGroup)
+
+                        Label {
+                            text: qsTr(modelData)
+                            anchors {
+                                left: parent.left
+                                right: parent.right
+                                leftMargin: 20
+                                rightMargin: 5
+                                verticalCenter: parent.verticalCenter
+                            }
+                            maximumLineCount: 1
+                            elide: Text.ElideRight
+                            color: enabled ? "black" : "lightgrey"
+                            enabled: !(modelData === myGroup)
+                        }
+
                         onTriggered: {
                             moveTo(modelData)
                             moveToMenu.close()

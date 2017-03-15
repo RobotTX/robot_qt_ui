@@ -15,7 +15,7 @@ public:
     MainController(QQmlApplicationEngine* _engine, QObject* parent = Q_NULLPTR);
 
 private slots:
-    void checkPoint(QString name, double x, double y);
+    void checkPoint(QString name, QString oldName, double x, double y);
     void saveMapConfig(QString fileName, double zoom, double centerX, double centerY) const;
 
 private:

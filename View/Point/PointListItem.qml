@@ -10,16 +10,6 @@ Rectangle {
 
     property Points pointModel
 
-    /// Name of the point or group
-    property string name: _name
-
-    /// Name of the parent of the element (if it's a point => the group name)
-    property string groupName: _groupName
-
-    /// For a point => if the point is displayed on the map
-    /// For a group => if the group is opened and displaying his points in the menu
-    property bool isVisible: _isVisible
-
     /// Whether or not this item is the selected one in the list
     property bool isCurrentItem: ListView.isCurrentItem
 
@@ -32,6 +22,7 @@ Rectangle {
     signal deleteGroup(string name)
     signal renameGroup(string name)
     signal moveTo(string name, string oldGroup, string newGroup)
+    signal editPoint(string name, string groupName)
 
     /// We look for the group in which this point is and if this group is displayed (isVisible)
     /// then we display its points
@@ -134,17 +125,18 @@ Rectangle {
         EditGroupPopupMenu {
             id: editGroupPopupMenu
             x: rightButton.width
-            onDeleteGroup: pointListItem.deleteGroup(name)
-            onRenameGroup: pointListItem.renameGroup(name)
+            onDeleteGroup: pointListItem.deleteGroup(_name)
+            onRenameGroup: pointListItem.renameGroup(_name)
         }
 
         EditPointPopupMenu {
             id: editPointPopupMenu
             x: rightButton.width
             pointModel: pointListItem.pointModel
-            myGroup: groupName
-            onDeletePoint: pointListItem.deletePoint(name, groupName)
+            myGroup: _groupName
+            onDeletePoint: pointListItem.deletePoint(_name, _groupName)
             onMoveTo: pointListItem.moveTo(_name, _groupName, newGroup)
+            onEditPoint: pointListItem.editPoint(_name, _groupName)
         }
     }
 }

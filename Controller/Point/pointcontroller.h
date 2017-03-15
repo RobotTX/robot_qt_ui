@@ -23,7 +23,7 @@ public:
      * @param y
      * Check if there is any error in the point name or position
      */
-    void checkErrorPoint(const QImage &mapImage, const QString name, const double x, const double y);
+    void checkErrorPoint(const QImage &mapImage, const QString name, const QString oldName, const double x, const double y);
 
     /**
      * @brief indexOfPoint
@@ -64,7 +64,7 @@ public slots:
      * @param displayed
      * Add a point to the model
      */
-    void addPoint(QString name, QString groupName, double x, double y, bool displayed = true, bool saveXML = true);
+    void addPoint(QString name, QString groupName, double x, double y, QString oldName = "", QString oldGroup = "", bool displayed = true, bool saveXML = true);
 
     /**
      * @brief addGroup

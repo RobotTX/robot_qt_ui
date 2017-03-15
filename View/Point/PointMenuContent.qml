@@ -14,6 +14,7 @@ Frame {
     signal deleteGroup(string name)
     signal renameGroup(string name)
     signal moveTo(string name, string oldGroup, string newGroup)
+    signal editPoint(string name, string groupName)
 
     background: Rectangle {
         color: Style.lightGreyBackground
@@ -40,6 +41,7 @@ Frame {
             onRenameGroup: pointMenuFrame.renameGroup(name)
             onDeletePoint: pointMenuFrame.deletePoint(name, groupName)
             onMoveTo: pointMenuFrame.moveTo(name, oldGroup, newGroup)
+            onEditPoint: pointMenuFrame.editPoint(name, groupName)
         }
     }
 

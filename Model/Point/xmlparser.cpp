@@ -160,7 +160,7 @@ void XMLParser::readPoints(PointController* pointController, const QString fileN
                                         break;
                                     } else xmlReader.readNext();
                                 }
-                                pointController->addPoint(name, groupName, x, y, displayed, false);
+                                pointController->addPoint(name, groupName, x, y, "", "", displayed, false);
                             }
                             xmlReader.readNext();
                         } else {

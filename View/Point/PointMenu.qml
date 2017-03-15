@@ -42,6 +42,11 @@ Page {
                 createGroupMenuContent.oldName = name;
                 createGroupMenuFrame.visible = true;
             }
+            onEditPoint: {
+                createPointMenuContent.oldName = name;
+                createPointMenuContent.oldGroup = groupName;
+                createPointMenuFrame.visible = true;
+            }
         }
     }
 
@@ -57,6 +62,7 @@ Page {
         }
 
         CreatePointMenuContent {
+            id: createPointMenuContent
             pointModel: page.pointModel
             tmpPointView: page.tmpPointView
             anchors {

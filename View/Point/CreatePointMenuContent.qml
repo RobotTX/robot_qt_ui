@@ -11,28 +11,48 @@ Frame {
     objectName: "createPointMenuFrame"
     property Points pointModel
     property PointView tmpPointView
+    property string oldName: ""
+    property string oldGroup
+    property double oldPosX
+    property double oldPosY
+
+    signal backToMenu()
+    signal createPoint(string name, string groupName, double x, double y, string oldName, string oldGroup)
+    signal checkPoint(string name, string oldName, double x, double y)
 
     Connections {
         target: tmpPointView
         onTmpPointViewPosChanged: {
-            checkPoint(pointTextField.text,
+            checkPoint(pointTextField.text, oldName,
                        tmpPointView.x + tmpPointView.width / 2,
                        tmpPointView.y + tmpPointView.height)
         }
     }
 
-    signal backToMenu()
-    signal createPoint(string name, string groupName, double x, double y)
-    signal checkPoint(string name, double x, double y)
-
     onVisibleChanged: {
-        if(tmpPointView && createPointMenuFrame){
-            tmpPointView.isVisible = createPointMenuFrame.visible;
-            tmpPointView.x = tmpPointView.originX;
-            tmpPointView.y = tmpPointView.originY;
+        if(tmpPointView && createPointMenuFrame)
+            tmpPointView.isVisible = visible;
+
+        if(!visible){
+            if(tmpPointView && createPointMenuFrame){
+                tmpPointView.x = tmpPointView.originX;
+                tmpPointView.y = tmpPointView.originY;
+            }
+            oldName = "";
+            oldGroup = "";
+            oldPosX = 0;
+            oldPosY = 0;
+            groupComboBox.currentIndex = 0;
+        } else {
+            if(oldName !== ""){
+                console.log(oldName + " " + oldGroup);
+                var index = pointModel.getIndex(oldName, oldGroup);
+                pointModel.get(index)._isVisible = false;
+                tmpPointView.x = pointModel.get(index)._x - tmpPointView.width / 2;
+                tmpPointView.y = pointModel.get(index)._y - tmpPointView.height;
+                groupComboBox.currentIndex = pointModel.getGroupIndex(oldGroup);
+            }
         }
-        pointTextField.text = "";
-        groupComboBox.currentIndex = 0;
     }
 
     padding: 20
@@ -57,6 +77,7 @@ Frame {
     TextField {
         id: pointTextField
         placeholderText: qsTr("Enter name")
+        text: oldName
         height: 28
         anchors {
             left: parent.left
@@ -70,7 +91,7 @@ Frame {
             border.color: pointTextField.activeFocus ? Style.lightBlue : Style.lightGreyBorder
             border.width: pointTextField.activeFocus ? 3 : 1
         }
-        onTextChanged: checkPoint(pointTextField.text,
+        onTextChanged: checkPoint(pointTextField.text, oldName,
                        tmpPointView.x + tmpPointView.width / 2,
                        tmpPointView.y + tmpPointView.height)
     }
@@ -89,7 +110,7 @@ Frame {
 
     CustomComboBox {
         id: groupComboBox
-        model: [Helper.noGroup].concat(Helper.getGroupList(pointModel))
+        model: [Helper.noGroup].concat(pointModel.getGroupList())
     }
 
     Label {
@@ -144,7 +165,7 @@ Frame {
         enabled: false
         anchors.leftMargin: 5
         onClicked: {
-            createPoint(pointTextField.text, groupComboBox.currentText, tmpPointView.x + tmpPointView.width / 2, tmpPointView.y + tmpPointView.height);
+            createPoint(pointTextField.text, groupComboBox.currentText, tmpPointView.x + tmpPointView.width / 2, tmpPointView.y + tmpPointView.height, oldName, oldGroup);
             backToMenu();
         }
     }

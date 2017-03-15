@@ -33,9 +33,9 @@ MainController::MainController(QQmlApplicationEngine *engine, QObject* parent) :
     }
 }
 
-void MainController::checkPoint(QString name, double x, double y){
+void MainController::checkPoint(QString name, QString oldName, double x, double y){
     /// When creating/editing a point we need the map to chekc if the point is on a wall or unknown place
-    pointController->checkErrorPoint(mapController->getMapImage(), name, x, y);
+    pointController->checkErrorPoint(mapController->getMapImage(), name, oldName, x, y);
 }
 
 void MainController::saveMapConfig(QString fileName, double zoom, double centerX, double centerY) const {

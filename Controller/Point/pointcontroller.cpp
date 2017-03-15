@@ -46,9 +46,9 @@ PointController::PointController(QObject *applicationWindow, MainController* par
         /// Tell the menu where we create this that we enable the save button
         connect(this, SIGNAL(enablePointSaveQml(QVariant)), createPointMenuFrame, SLOT(enableSave(QVariant)));
         /// Got a modification of the name or position of the point we are creating so we check to enable or not the save button
-        connect(createPointMenuFrame, SIGNAL(checkPoint(QString, double, double)), parent, SLOT(checkPoint(QString, double, double)));
+        connect(createPointMenuFrame, SIGNAL(checkPoint(QString, QString, double, double)), parent, SLOT(checkPoint(QString, QString, double, double)));
         /// Clicked on the save button to create the given point
-        connect(createPointMenuFrame, SIGNAL(createPoint(QString, QString, double, double)), this, SLOT(addPoint(QString, QString, double, double)));
+        connect(createPointMenuFrame, SIGNAL(createPoint(QString, QString, double, double, QString, QString)), this, SLOT(addPoint(QString, QString, double, double, QString, QString)));
     } else {
         qDebug() << "PointController::PointController could not find the createPointMenuFrame";
         Q_UNREACHABLE();
@@ -107,19 +107,36 @@ void PointController::addGroup(QString groupName, bool saveXML){
     }
 }
 
-void PointController::addPoint(QString name, QString groupName, double x, double y, bool displayed, bool saveXML){
+void PointController::addPoint(QString name, QString groupName, double x, double y, QString oldName, QString oldGroup, bool displayed, bool saveXML){
     //qDebug() << "PointController::addPoint" << groupName << name << x << y << displayed;
     addGroup(groupName, saveXML);
 
     name = Helper::formatName(name);
-    QVector<Point*>* group = points->getGroups()->value(groupName);
-    group->push_back(new Point(name, x, y, displayed, this));
-    emit addPointQml(QVariant::fromValue(indexOfPoint(name, groupName)),
-                     QVariant::fromValue(name),
-                     QVariant::fromValue(displayed),
-                     QVariant::fromValue(groupName),
-                     QVariant::fromValue(x),
-                     QVariant::fromValue(y));
+    /// We are creating a new point
+    if(oldName.isEmpty()){
+        qDebug() << "PointController::addPoint Creating a point";
+        QVector<Point*>* group = points->getGroups()->value(groupName);
+        group->push_back(new Point(name, x, y, displayed, this));
+        emit addPointQml(QVariant::fromValue(indexOfPoint(name, groupName)),
+                         QVariant::fromValue(name),
+                         QVariant::fromValue(displayed),
+                         QVariant::fromValue(groupName),
+                         QVariant::fromValue(x),
+                         QVariant::fromValue(y));
+    } else {
+        qDebug() << "PointController::addPoint Editing a point";
+        /// We are editing a point
+        deletePoint(oldName, oldGroup);
+
+        QVector<Point*>* group = points->getGroups()->value(groupName);
+        group->push_back(new Point(name, x, y, displayed, this));
+        emit addPointQml(QVariant::fromValue(indexOfPoint(name, groupName)),
+                         QVariant::fromValue(name),
+                         QVariant::fromValue(displayed),
+                         QVariant::fromValue(groupName),
+                         QVariant::fromValue(x),
+                         QVariant::fromValue(y));
+    }
 
     if(saveXML)
         XMLParser::save(this, currentPointsFile);
@@ -242,14 +259,14 @@ void PointController::moveTo(QString name, QString oldGroup, QString newGroup){
     XMLParser::save(this, currentPointsFile);
 }
 
-void PointController::checkErrorPoint(const QImage& mapImage, const QString name, const double x, const double y){
+void PointController::checkErrorPoint(const QImage& mapImage, const QString name, const QString oldName, const double x, const double y){
     bool error = false;
 
     /// Name not empty
     error = name.isEmpty();
 
     /// Check if the name is taken by another point
-    if(!error)
+    if(!error && name.compare(oldName) != 0)
         error = checkPointName(name);
 
     /// Check if the point is not in a wall or unknown place
