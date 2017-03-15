@@ -7,7 +7,6 @@ import "../Custom"
 
 Frame {
     id: pointMenuFrame
-    objectName: "pointMenuFrame"
     padding: 0
     property Points pointModel
 
