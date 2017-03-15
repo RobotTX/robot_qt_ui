@@ -24,7 +24,7 @@ Frame {
     property int currentMenu
 
     signal closeMenu()
-    signal saveState()
+    signal savePosition()
 
     signal saveMap(string file_name)
 
@@ -52,7 +52,7 @@ Frame {
         id: mapMenu
         visible: currentMenu == 3
         onCloseMenu: mainMenuViewsFrame.closeMenu()
-        onSaveState: mainMenuViewsFrame.saveState()
+        onSavePosition: mainMenuViewsFrame.savePosition()
         onSaveMap: mainMenuViewsFrame.saveMap(file_name)
     }
 

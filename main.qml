@@ -1,6 +1,7 @@
 import QtQuick 2.7
 import QtQuick.Controls 2.1
 import QtQuick.Layouts 1.0
+import QtQuick.Window 2.0
 import "View/MainMenu"
 import "View/MapView"
 import "Model/Point"
@@ -9,12 +10,18 @@ import "View/Point"
 ApplicationWindow {
     id: applicationWindow
     objectName: "applicationWindow"
+    x: Screen.width / 2
+    y: Screen.height / 2
     visible: true
     width: 1000
     height: 700
     minimumWidth: 800
     minimumHeight: 600
     title: qsTr("Gobot :)")
+    Component.onCompleted: {
+            setX(Screen.width / 2 - width / 2);
+            setY(Screen.height / 2 - height / 2);
+        }
 
     // TODO add paths
     // To save the current configuration -> zoom, center (paths and points retrieved on the c++ side)
@@ -54,7 +61,7 @@ ApplicationWindow {
                 bottom: parent.bottom
             }
             onCloseMenu: layout.currentMenu = -1
-            onSaveState: mapView.emitState()
+            onSavePosition: mapView.emitPosition()
             onSaveMap: applicationWindow.emitMapConfig(file_name)
         }
 

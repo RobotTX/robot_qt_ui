@@ -163,6 +163,7 @@ signals:
      * Tell the point model that we added a new point
      */
     void addPointQml(QVariant index, QVariant name, QVariant isVisible, QVariant groupName, QVariant x, QVariant y);
+    void editPointQml(QVariant oldName, QVariant oldGroup, QVariant index, QVariant name, QVariant isVisible, QVariant groupName, QVariant x, QVariant y);
 
     /**
      * @brief renameGroupQml

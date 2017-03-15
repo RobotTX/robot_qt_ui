@@ -17,6 +17,7 @@ PointController::PointController(QObject *applicationWindow, MainController* par
         connect(this, SIGNAL(addGroupQml(QVariant, QVariant)), pointModel, SLOT(addGroup(QVariant, QVariant)));
         /// Tell the qml point model that we just added a new point
         connect(this, SIGNAL(addPointQml(QVariant, QVariant, QVariant, QVariant, QVariant, QVariant)), pointModel, SLOT(addPoint(QVariant, QVariant, QVariant, QVariant, QVariant, QVariant)));
+        connect(this, SIGNAL(editPointQml(QVariant, QVariant, QVariant, QVariant, QVariant, QVariant, QVariant, QVariant)), pointModel, SLOT(editPoint(QVariant, QVariant, QVariant, QVariant, QVariant, QVariant, QVariant, QVariant)));
         /// Tell the qml point model that we just renamed a group
         connect(this, SIGNAL(renameGroupQml(QVariant, QVariant)), pointModel, SLOT(renameGroup(QVariant, QVariant)));
         connect(pointModel, SIGNAL(hideShow(QString, QString)), this, SLOT(hideShow(QString, QString)));
@@ -117,12 +118,11 @@ void PointController::addPoint(QString name, QString groupName, double x, double
                          QVariant::fromValue(y));
     } else {
         qDebug() << "PointController::addPoint Editing a point";
-        /// We are editing a point
-        deletePoint(oldGroup, oldName);
-
         QVector<Point*>* group = points->getGroups()->value(groupName);
         group->push_back(new Point(name, x, y, displayed, this));
-        emit addPointQml(QVariant::fromValue(indexOfPoint(name, groupName)),
+        emit editPointQml(QVariant::fromValue(oldName),
+                         QVariant::fromValue(oldGroup),
+                         QVariant::fromValue(indexOfPoint(name, groupName)),
                          QVariant::fromValue(name),
                          QVariant::fromValue(displayed),
                          QVariant::fromValue(groupName),

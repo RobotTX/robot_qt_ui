@@ -54,7 +54,9 @@ Frame {
 
                                 tmpPointView.x = pointModel.get(i).points.get(j).posX - tmpPointView.width / 2;
                                 tmpPointView.y = pointModel.get(i).points.get(j).posY - tmpPointView.height;
+                                console.log("index " + i);
                                 groupComboBox.currentIndex = i;
+                                groupComboBox.displayText = oldGroup;
                             }
             }
         }

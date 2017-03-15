@@ -53,15 +53,15 @@ Frame {
         }
     }
 
-    signal saveState(double posX, double posY, double zoom, string mapSrc)
-    signal loadState()
+    signal savePosition(double posX, double posY, double zoom, string mapSrc)
+    signal loadPosition()
 
     padding: 0
 
     TopView {
         id: topView
-        onSaveState: emitState()
-        onLoadState: mapViewFrame.loadState()
+        onSavePosition: emitPosition()
+        onLoadPosition: mapViewFrame.loadPosition()
         /// If we have a map, the mapImage is visible
         /// so we enable the buttons to save/load the state of the map
         hasMap: mapImage.visible
@@ -124,8 +124,8 @@ Frame {
         mapImage.visible = true;
     }
 
-    function setMapState(posX, posY, zoom){
-        console.log("setMapState : " + posX + " | " + posY + " | " + zoom);
+    function setMapPosition(posX, posY, zoom){
+        console.log("setMapPosition : " + posX + " | " + posY + " | " + zoom);
         if(zoom > Style.maxZoom)
             zoom = Style.maxZoom;
         else if(zoom < Style.minZoom)
@@ -135,7 +135,8 @@ Frame {
         mapImage.y = posY;
     }
 
-    function emitState(){
-        mapViewFrame.saveState(mapImage.x, mapImage.y, mapImage.scale, mapSrc)
+    function emitPosition(){
+        // qml got a path of this format : file://path_understood_by_Qt, so we get rid of the first 6 characters
+        mapViewFrame.savePosition(mapImage.x, mapImage.y, mapImage.scale, mapSrc.substring(6))
     }
 }

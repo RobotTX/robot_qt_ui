@@ -1,13 +1,14 @@
 import QtQuick 2.7
 import QtQuick.Controls 2.1
-import "../Custom"
+import "../Custom" // MenuHeader
 
 Page {
+
     id: page
     anchors.fill: parent
 
     signal closeMenu()
-    signal saveState()
+    signal savePosition()
 
     signal saveMap(string file_name)
 
@@ -26,7 +27,8 @@ Page {
             bottom: parent.bottom    
         }
 
-        onSaveState: page.saveState()
+        onSavePosition: page.savePosition()
+        // originally comes from saveButton being clicked
         onSaveMap: page.saveMap(file_name)
     }
 }

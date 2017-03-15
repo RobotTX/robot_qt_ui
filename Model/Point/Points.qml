@@ -33,6 +33,21 @@ ListModel {
         }
     }
 
+    function editPoint(oldName, oldGroup, index, name, isVisible, groupName, x, y){
+        console.log("Add point " + name + " to group " + groupName + " " + x + " " + y);
+        deletePoint(oldGroup, oldName);
+        for(var i = 0; i < count; i++){
+            if(get(i).groupName === groupName){
+                get(i).points.insert(index, {
+                     "name": name,
+                     "isVisible": isVisible,
+                     "posX": x,
+                     "posY": y
+                });
+            }
+        }
+    }
+
     function deletePoint(groupName, name){
         for(var i = 0; i < count; i++)
             if(get(i).groupName === groupName)
