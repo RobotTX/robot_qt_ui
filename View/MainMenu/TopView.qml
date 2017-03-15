@@ -10,8 +10,8 @@ Frame {
     // this is to be able to display messages at the top
     property Label label: _label
 
-    signal saveState()
-    signal loadState()
+    signal savePosition()
+    signal loadPosition()
 
     height: Style.menuHeaderHeight
     z: 1
@@ -41,7 +41,7 @@ Frame {
         anchors.right: parent.right
         anchors.rightMargin: 10
         enabled: hasMap
-        onClicked: topViewFrame.loadState()
+        onClicked: topViewFrame.loadPosition()
     }
 
     /// The save state button
@@ -52,6 +52,6 @@ Frame {
         anchors.right: loadStateButton.left
         anchors.rightMargin: 14
         enabled: hasMap
-        onClicked: topViewFrame.saveState()
+        onClicked: topViewFrame.savePosition()
     }
 }

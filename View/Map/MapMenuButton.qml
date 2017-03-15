@@ -1,7 +1,9 @@
 import QtQuick 2.0
 import QtQuick.Controls 2.1
+import "../../Helper/style.js" as Style
 
 Button {
+
     property string txt
     property string imgSrc
 
@@ -13,13 +15,14 @@ Button {
     }
 
     background: Rectangle {
-        color: "transparent"
+        // to change the color of the button when pressed
+        color: pressed ? Style.selectedItemColor : "transparent"
     }
 
     Image {
         id: icon
         source: imgSrc
-        fillMode: Image.Pad // For not stretching image
+        fillMode: Image.Pad // to not stretch the image
         anchors.verticalCenter: parent.verticalCenter
         anchors.left: parent.left
         anchors.leftMargin: 20

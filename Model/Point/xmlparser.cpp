@@ -14,7 +14,7 @@ void XMLParser::save(PointController *pointController, const QString fileName) {
     try {
         qDebug() << "XMLParser::save the points in" << fileName;
         QFile file(fileName);
-        file.open(QIODevice::WriteOnly);
+        file.open(QIODevice::Truncate | QIODevice::WriteOnly);
 
         QXmlStreamWriter xmlWriter(&file);
         xmlWriter.setAutoFormatting(true);
@@ -110,7 +110,7 @@ void XMLParser::readPoints(PointController* pointController, const QString fileN
     try {
         QFile file(fileName);
 
-        file.open(QFile::ReadOnly | QFile::Text);
+        file.open(QFile::ReadWrite | QFile::Text);
 
         xmlReader.setDevice(&file);
         xmlReader.readNext();
