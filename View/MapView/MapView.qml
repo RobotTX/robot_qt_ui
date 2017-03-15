@@ -100,7 +100,8 @@ Frame {
             }
         }
 
-        Repeater {
+        /// TODO pointviews
+        /*Repeater {
             model: pointModel
             PointView {
                 name: _name
@@ -111,7 +112,7 @@ Frame {
                 x: _x - width/2
                 y: _y - height
             }
-        }
+        }*/
     }
 
     function setMap(_mapSrc){

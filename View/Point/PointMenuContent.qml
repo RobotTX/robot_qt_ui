@@ -35,8 +35,8 @@ Frame {
         id: delegate
         PointListItem {
             width: pointMenuFrame.width
-            myList: pointList
-            pointModel: pointMenuFrame.pointModel
+            //myList: pointList
+            //pointModel: pointMenuFrame.pointModel
             onDeleteGroup: pointMenuFrame.deleteGroup(name)
             onRenameGroup: pointMenuFrame.renameGroup(name)
             onDeletePoint: pointMenuFrame.deletePoint(name, groupName)
@@ -45,16 +45,19 @@ Frame {
         }
     }
 
-    /// The list containing both the graphical and model of the points in the menu
-    ListView {
-        id: pointList
-        objectName: "pointList"
+    Column {
         anchors.fill: parent
-        model: pointModel
-        delegate: delegate
-        focus: true
-        anchors.topMargin: 14
+        /// The list containing both the graphical and model of the points in the menu
+        Repeater {
+            id: pointList
+            objectName: "pointList"
+            anchors.fill: parent
+            model: pointModel
+            delegate: delegate
+            focus: true
+            anchors.topMargin: 14
 
-        signal hideShow(string name, string groupName, bool isVisible)
+            signal hideShow(string name, string groupName, bool isVisible)
+        }
     }
 }

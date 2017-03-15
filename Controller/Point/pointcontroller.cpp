@@ -143,18 +143,10 @@ void PointController::addPoint(QString name, QString groupName, double x, double
 }
 
 int PointController::indexOfPoint(QString pointName, QString groupName){
-    QMapIterator<QString, QVector<Point*>*> i(*(points->getGroups()));
-    int index(0);
-    while (i.hasNext()) {
-        i.next();
-        index++;
-
-        QVector<Point*>* group = i.value();
-        for(int j = 0; j < group->size(); j++){
-            index++;
-            if(i.key().compare(groupName) == 0 && group->at(j)->getName().compare(pointName) == 0)
-                return index-1;
-        }
+    QVector<Point*>* group = points->getGroups()->value(groupName);
+    for(int j = 0; j < group->size(); j++){
+        if(group->at(j)->getName().compare(pointName) == 0)
+            return j;
     }
 
     return -1;
@@ -165,12 +157,9 @@ int PointController::indexOfGroup(QString groupName){
     int index(0);
     while (i.hasNext()) {
         i.next();
-        index++;
         if(i.key().compare(groupName) == 0)
-            return index-1;
-        QVector<Point*>* group = i.value();
-        for(int j = 0; j < group->size(); j++)
-            index++;
+            return index;
+        index++;
     }
 
     return -1;
