@@ -1,5 +1,5 @@
-#ifndef GROUP_H
-#define GROUP_H
+#ifndef POINTGROUP_H
+#define POINTGROUP_H
 
 class Point;
 
@@ -7,9 +7,9 @@ class Point;
 #include <QPointer>
 #include <QVector>
 
-class Group : public QObject {
+class PointGroup : public QObject {
 public:
-    Group(QObject *parent);
+    PointGroup(QObject *parent);
     QVector<QPointer<Point>> getPointVector(void) const { return pointVector; }
 
     void addPoint(const QString name, const double x, const double y, const bool displayed);
@@ -22,4 +22,4 @@ private:
     QVector<QPointer<Point>> pointVector;
 };
 
-#endif // GROUP_H
+#endif // POINTGROUP_H

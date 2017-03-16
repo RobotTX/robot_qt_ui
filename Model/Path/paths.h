@@ -1,19 +1,20 @@
 #ifndef PATHS_H
 #define PATHS_H
 
-class PathPoint;
+class PathGroup;
 
 #include <QObject>
+#include <QMap>
+#include <QPointer>
 
 class Paths : public QObject {
 public:
-    Paths(QObject *parent = Q_NULLPTR);
+    Paths(QObject *parent);
 
-    QMap<QString, QMap<QString, QVector<PathPoint*>*>*>* getGroups(void) const { return groups; }
-    void setGroups(QMap<QString, QMap<QString, QVector<PathPoint*>*>*>* _groups) { groups = _groups; }
+    QMap<QString, QPointer<PathGroup>> getGroups(void) const { return groups; }
 
 private:
-    QMap<QString, QMap<QString, QVector<PathPoint*>*>*>* groups;
+    QMap<QString, QPointer<PathGroup>> groups;
 };
 
 #endif // PATHS_H

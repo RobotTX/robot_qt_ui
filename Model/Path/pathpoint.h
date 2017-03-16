@@ -4,12 +4,13 @@
 class Point;
 
 #include <QObject>
+#include <QPointer>
 
 class PathPoint : public QObject {
 public:
     PathPoint(const QString _name, const double _x, const double _y, const int _waitTime, QObject *parent);
 
-    Point* getPoint(void) const { return point; }
+    QPointer<Point> getPoint(void) const { return point; }
     int getWaitTime(void) const { return waitTime; }
 
     void setWaitTime(const int _waitTime) { waitTime = _waitTime; }
@@ -25,7 +26,7 @@ private:
      * @brief point
      * The point where the robot goes
      */
-    Point* point;
+    QPointer<Point> point;
 };
 
 #endif // PATHPOINT_H

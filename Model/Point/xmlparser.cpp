@@ -4,7 +4,7 @@
 #include <QPointer>
 #include "Controller/Point/pointcontroller.h"
 #include "Model/Point/points.h"
-#include "Model/Point/group.h"
+#include "Model/Point/pointgroup.h"
 #include "Model/Point/point.h"
 
 XMLParser::XMLParser() {}
@@ -25,7 +25,7 @@ void XMLParser::save(PointController *pointController, const QString fileName) {
         xmlWriter.writeStartElement("points");
 
 
-        QMapIterator<QString, QPointer<Group>> i(pointController->getPoints()->getGroups());
+        QMapIterator<QString, QPointer<PointGroup>> i(pointController->getPoints()->getGroups());
         /// For each group
         while (i.hasNext()) {
             i.next();

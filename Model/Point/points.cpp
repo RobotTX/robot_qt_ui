@@ -4,14 +4,14 @@
 #include <QString>
 #include "Helper/helper.h"
 #include "Model/Point/point.h"
-#include "Model/Point/group.h"
+#include "Model/Point/pointgroup.h"
 
-Points::Points(QObject* parent) : QObject(parent), groups(QMap<QString, QPointer<Group>>()) {
+Points::Points(QObject* parent) : QObject(parent), groups(QMap<QString, QPointer<PointGroup>>()) {
 
 }
 
 void Points::addGroup(const QString groupName){
-    groups.insert(groupName, QPointer<Group>(new Group(this)));
+    groups.insert(groupName, QPointer<PointGroup>(new PointGroup(this)));
 }
 
 void Points::addPoint(const QString groupName, const QString name, const double x, const double y, const bool displayed){

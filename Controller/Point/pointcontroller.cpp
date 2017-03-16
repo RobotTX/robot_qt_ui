@@ -4,7 +4,7 @@
 #include <QDir>
 #include "Controller/maincontroller.h"
 #include "Model/Point/point.h"
-#include "Model/Point/group.h"
+#include "Model/Point/pointgroup.h"
 #include "Model/Point/points.h"
 #include "Model/Point/xmlparser.h"
 #include "Helper/helper.h"
@@ -135,7 +135,7 @@ void PointController::hideShow(QString groupName, QString name){
 }
 
 bool PointController::checkPointName(const QString name){
-    QMapIterator<QString, QPointer<Group>> i(points->getGroups());
+    QMapIterator<QString, QPointer<PointGroup>> i(points->getGroups());
     while (i.hasNext()) {
         i.next();
 

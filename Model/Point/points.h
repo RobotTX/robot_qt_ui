@@ -1,7 +1,7 @@
 #ifndef POINTS_H
 #define POINTS_H
 
-class Group;
+class PointGroup;
 
 #include <QObject>
 #include <QMap>
@@ -22,7 +22,7 @@ class Points : public QObject {
 
 public:
     Points(QObject *parent);
-    QMap<QString, QPointer<Group>> getGroups(void) const { return groups; }
+    QMap<QString, QPointer<PointGroup>> getGroups(void) const { return groups; }
 
     void addGroup(const QString groupName);
     void addPoint(const QString groupName, const QString name, const double x, const double y, const bool displayed);
@@ -41,7 +41,7 @@ public:
     void clearGoups(void);
 
 private:
-    QMap<QString, QPointer<Group>> groups;
+    QMap<QString, QPointer<PointGroup>> groups;
 };
 
 #endif /// POINTS_H
