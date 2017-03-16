@@ -32,6 +32,7 @@ public:
      * @return if the given name of point is taken
      */
     bool checkPointName(const QString name);
+    void clearPoints(void);
 
 public slots:
     /**

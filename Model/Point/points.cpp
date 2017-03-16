@@ -42,3 +42,7 @@ bool Points::checkGroupName(const QString name){
     qDebug() << "PointController::checkGroupName" << name << (groups.find(Helper::formatName(name)) != groups.end());
     return groups.find(Helper::formatName(name)) != groups.end();
 }
+
+void Points::clearGoups(){
+    groups.clear();
+}

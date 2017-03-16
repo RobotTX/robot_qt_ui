@@ -38,6 +38,7 @@ public:
      * @return if the given name of group is taken
      */
     bool checkGroupName(const QString name);
+    void clearGoups(void);
 
 private:
     QMap<QString, QPointer<Group>> groups;

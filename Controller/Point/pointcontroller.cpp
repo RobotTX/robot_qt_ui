@@ -186,3 +186,7 @@ void PointController::checkGroup(QString name){
     /// Check if the name of the group is already taken and send the result to enable or not the save button
     emit enableGroupSaveQml(QVariant::fromValue(!points->checkGroupName(name)));
 }
+
+void PointController::clearPoints(){
+    points->clearGoups();
+}
