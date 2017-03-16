@@ -4,6 +4,7 @@ import QtQuick.Layouts 1.0
 import QtQuick.Window 2.0
 import "View/MainMenu"
 import "View/MapView"
+import "View/Map"
 import "Model/Point"
 import "View/Point"
 
@@ -43,6 +44,7 @@ ApplicationWindow {
         property int currentMenu: -1
 
         MainMenu {
+            visible: false
             id: mainMenu
             z: 1
             currentMenu: layout.currentMenu
@@ -50,6 +52,7 @@ ApplicationWindow {
         }
 
         MainMenuViews {
+            visible: false
             id: mainMenuViews
             z: 1
             pointModel: _pointModel
@@ -66,6 +69,7 @@ ApplicationWindow {
         }
 
         MapView {
+            visible: false
             id: mapView
             pointModel: _pointModel
             anchors {
@@ -74,6 +78,11 @@ ApplicationWindow {
                 right: parent.right
                 bottom: parent.bottom
             }
+        }
+
+        EditMap {
+            id: editMap
+
         }
     }
 
