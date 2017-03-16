@@ -112,4 +112,8 @@ ListModel {
 
         moveToSignal(name, oldGroup, newGroup)
     }
+
+    function deleteAllGroups(){
+        clear();
+    }
 }

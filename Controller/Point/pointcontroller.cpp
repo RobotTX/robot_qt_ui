@@ -19,6 +19,7 @@ PointController::PointController(QObject *applicationWindow, MainController* par
         /// Tell the qml point model that we just added a new point
         connect(this, SIGNAL(addPointQml(QVariant, QVariant, QVariant, QVariant, QVariant)), pointModel, SLOT(addPoint(QVariant, QVariant, QVariant, QVariant, QVariant)));
         connect(this, SIGNAL(editPointQml(QVariant, QVariant, QVariant, QVariant, QVariant, QVariant, QVariant)), pointModel, SLOT(editPoint(QVariant, QVariant, QVariant, QVariant, QVariant, QVariant, QVariant)));
+        connect(this, SIGNAL(deleteAllGroupsQml()), pointModel, SLOT(deleteAllGroups()));
         /// Tell the qml point model that we just renamed a group
         connect(this, SIGNAL(renameGroupQml(QVariant, QVariant)), pointModel, SLOT(renameGroup(QVariant, QVariant)));
         connect(pointModel, SIGNAL(hideShow(QString, QString)), this, SLOT(hideShow(QString, QString)));
@@ -188,5 +189,7 @@ void PointController::checkGroup(QString name){
 }
 
 void PointController::clearPoints(){
+    qDebug() << "PointController::clearPoints called";
+    emit deleteAllGroupsQml();
     points->clearGoups();
 }

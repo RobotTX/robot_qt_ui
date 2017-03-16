@@ -44,7 +44,6 @@ ApplicationWindow {
         property int currentMenu: -1
 
         MainMenu {
-            visible: false
             id: mainMenu
             z: 1
             currentMenu: layout.currentMenu
@@ -52,7 +51,6 @@ ApplicationWindow {
         }
 
         MainMenuViews {
-            visible: false
             id: mainMenuViews
             z: 1
             pointModel: _pointModel
@@ -69,7 +67,6 @@ ApplicationWindow {
         }
 
         MapView {
-            visible: false
             id: mapView
             pointModel: _pointModel
             anchors {
@@ -79,6 +76,7 @@ ApplicationWindow {
                 bottom: parent.bottom
             }
         }
+
 
         EditMap {
             id: editMap

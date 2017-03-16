@@ -128,7 +128,7 @@ void MainController::loadMapConfig(QString fileName) const {
             //pointsController->loadPoints(fileNameWithoutExtension + "_points.xml");
 
             /// saves the new configuration to the current configuration file
-            XMLParser::save(pointController, QDir::currentPath() + QDir::separator() + "points.xml");
+            XMLParser::save(pointController, QDir::currentPath() + QDir::separator() + "currentPoints.xml");
             //pointsController->savePoints(QDir::currentPath() + QDir::separator() + "points.xml");
 
             /// updates the group box so that new points can be added
