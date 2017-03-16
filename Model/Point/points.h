@@ -7,7 +7,7 @@ class Point;
 #include <QMap>
 #include <QVector>
 #include <QVariant>
-#include <QPointer>
+#include <QSharedPointer>
 
 #define NO_GROUP_NAME "No Group"
 
@@ -24,14 +24,16 @@ class Points : public QObject {
 
 public:
     Points(QObject *parent);
-    QMap<QString, QVector<QPointer<Point> >>& getGroups(void) { return groups; }
+    QMap<QString, QVector<QSharedPointer<Point> >>& getGroups(void) { return groups; }
 
     void resetGroups(void);
-    void addPointToGroup(const QString group, QPointer<Point> point) { groups[group].push_back(point); }
-    void deletePointFromGroup(const QString group, const QString point_name);
+    void addPointToGroup(const QString group, QSharedPointer<Point> point) { groups[group].push_back(point); }
+    QSharedPointer<Point> deletePointFromGroup(const QString group, const QString point_name);
+
+    void display(void) const;
 
 private:
-    QMap<QString, QVector<QPointer<Point> >> groups;
+    QMap<QString, QVector<QSharedPointer<Point> >> groups;
 };
 
 #endif /// POINTS_H

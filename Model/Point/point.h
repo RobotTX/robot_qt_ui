@@ -10,8 +10,10 @@
  * to distinguish permanent and temporary points
  */
 
-class Point : public QObject{
+class Point : public QObject {
+
 public:
+
     Point(const QString _name, const double _x, const double _y, const bool _visible, QObject *parent);
 
     /// Getters

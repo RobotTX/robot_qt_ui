@@ -14,7 +14,6 @@ public:
 
     void setWaitTime(const int _waitTime) { waitTime = _waitTime; }
 
-
 private:
     /**
      * @brief point

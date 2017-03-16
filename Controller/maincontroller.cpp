@@ -108,10 +108,12 @@ void MainController::loadMapConfig(QString fileName) const {
 /*
             for(int i = 0; i < robotsController->getRobots()->getRobotsVector().size(); i++)
                 robotsController->getRobots()->getRobotsVector().at(i)->getRobot()->sendNewMap(mapController->getMap());
-
+*/
             /// clears the map of all paths and points
             // TODO need some kind of equivalent
+            pointController->clearPoints();
 
+/*
             clearNewMap();
 
             mapController->saveMapState();

@@ -23,7 +23,7 @@ void XMLParser::save(PointController *pointController, const QString fileName) {
 
         xmlWriter.writeStartElement("points");
 
-        QMapIterator<QString, QVector<QPointer<Point>>> i(pointController->getPoints()->getGroups());
+        QMapIterator<QString, QVector<QSharedPointer<Point>>> i(pointController->getPoints()->getGroups());
         /// For each group
         while (i.hasNext()) {
             i.next();

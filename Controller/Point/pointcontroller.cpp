@@ -18,6 +18,7 @@ PointController::PointController(QObject *applicationWindow, MainController* par
         /// Tell the qml point model that we just added a new point
         connect(this, SIGNAL(addPointQml(QVariant, QVariant, QVariant, QVariant, QVariant, QVariant)), pointModel, SLOT(addPoint(QVariant, QVariant, QVariant, QVariant, QVariant, QVariant)));
         connect(this, SIGNAL(editPointQml(QVariant, QVariant, QVariant, QVariant, QVariant, QVariant, QVariant, QVariant)), pointModel, SLOT(editPoint(QVariant, QVariant, QVariant, QVariant, QVariant, QVariant, QVariant, QVariant)));
+        connect(this, SIGNAL(deleteGroupQml(QVariant)), pointModel, SLOT(deleteGroup(QVariant)));
         /// Tell the qml point model that we just renamed a group
         connect(this, SIGNAL(renameGroupQml(QVariant, QVariant)), pointModel, SLOT(renameGroup(QVariant, QVariant)));
         connect(pointModel, SIGNAL(hideShow(QString, QString)), this, SLOT(hideShow(QString, QString)));
@@ -83,7 +84,7 @@ void PointController::addGroup(QString groupName, bool saveXML){
     groupName = Helper::formatName(groupName);
     if(!points->getGroups().contains(groupName)){
         //qDebug() << "PointController::addGroup" << groupName;
-        points->getGroups().insert(groupName, QVector<QPointer<Point>>());
+        points->getGroups().insert(groupName, QVector<QSharedPointer<Point>>());
 
         emit addGroupQml(QVariant::fromValue(indexOfGroup(groupName)),
                          QVariant::fromValue(groupName));
@@ -101,8 +102,8 @@ void PointController::addPoint(QString name, QString groupName, double x, double
     /// We are creating a new point
     if(oldName.isEmpty()){
         qDebug() << "PointController::addPoint Creating a point";
-        QVector<QPointer<Point>> group = points->getGroups().value(groupName);
-        points->addPointToGroup(groupName, new Point(name, x, y, displayed, this));
+        QVector<QSharedPointer<Point>> group = points->getGroups().value(groupName);
+        points->addPointToGroup(groupName, QSharedPointer<Point> (new Point(name, x, y, displayed, this)));
         //group.push_back(new Point(name, x, y, displayed, this));
         emit addPointQml(QVariant::fromValue(indexOfPoint(name, groupName)),
                          QVariant::fromValue(name),
@@ -112,8 +113,8 @@ void PointController::addPoint(QString name, QString groupName, double x, double
                          QVariant::fromValue(y));
     } else {
         qDebug() << "PointController::addPoint Editing a point";
-        QVector<QPointer<Point>> group = points->getGroups().value(groupName);
-        group.push_back(new Point(name, x, y, displayed, this));
+        QVector<QSharedPointer<Point>> group = points->getGroups().value(groupName);
+        group.push_back(QSharedPointer<Point> (new Point(name, x, y, displayed, this)));
         emit editPointQml(QVariant::fromValue(oldName),
                          QVariant::fromValue(oldGroup),
                          QVariant::fromValue(indexOfPoint(name, groupName)),
@@ -129,7 +130,7 @@ void PointController::addPoint(QString name, QString groupName, double x, double
 }
 
 int PointController::indexOfPoint(QString pointName, QString groupName){
-    QVector<QPointer<Point>> group = points->getGroups().value(groupName);
+    QVector<QSharedPointer<Point>> group = points->getGroups().value(groupName);
     for(int j = 0; j < group.size(); j++){
         if(group.at(j)->getName().compare(pointName) == 0)
             return j;
@@ -139,7 +140,7 @@ int PointController::indexOfPoint(QString pointName, QString groupName){
 }
 
 int PointController::indexOfGroup(QString groupName){
-    QMapIterator<QString, QVector<QPointer<Point>>> i(points->getGroups());
+    QMapIterator<QString, QVector<QSharedPointer<Point>>> i(points->getGroups());
     int index(0);
     while (i.hasNext()) {
         i.next();
@@ -169,7 +170,7 @@ void PointController::deleteGroup(QString name){
 void PointController::hideShow(QString groupName, QString name){
     qDebug() << "PointController::hideShow" << name << groupName;
 
-    QVector<QPointer<Point>> group = points->getGroups().value(groupName);
+    QVector<QSharedPointer<Point>> group = points->getGroups().value(groupName);
     for(int i = 0; i < group.size(); i++)
         if(group.at(i)->getName().compare(name) == 0)
             group.at(i)->setVisible(!group.at(i)->isVisible());
@@ -178,11 +179,11 @@ void PointController::hideShow(QString groupName, QString name){
 }
 
 bool PointController::checkPointName(const QString name){
-    QMapIterator<QString, QVector<QPointer<Point>>> i(points->getGroups());
+    QMapIterator<QString, QVector<QSharedPointer<Point>>> i(points->getGroups());
     while (i.hasNext()) {
         i.next();
 
-        QVector<QPointer<Point>> group = i.value();
+        QVector<QSharedPointer<Point>> group = i.value();
         for(int j = 0; j < group.size(); j++){
             if(group.at(j)->getName().compare(Helper::formatName(name)) == 0)
                 return true;
@@ -205,20 +206,7 @@ void PointController::renameGroup(QString newName, QString oldName){
 
 void PointController::moveTo(QString name, QString oldGroup, QString newGroup){
     qDebug() << "PointController::move" << name << "from" << oldGroup << "to" << newGroup;
-    QMutableMapIterator<QString, QVector<QPointer<Point>>> i(points->getGroups());
-    while(i.hasNext()){
-        i.next();
-        if(i.key().compare(oldGroup) == 0){
-            QMutableVectorIterator<QPointer<Point>> it(i.value());
-            while(it.hasNext()){
-                QPointer<Point> current_point = it.next();
-                if(current_point->getName().compare(name) == 0)
-                    points->addPointToGroup(newGroup, current_point);
-            }
-        }
-    }
-
-
+    points->addPointToGroup(newGroup, points->deletePointFromGroup(oldGroup, name));
     XMLParser::save(this, currentPointsFile);
 }
 
@@ -246,5 +234,12 @@ void PointController::checkGroup(QString name){
 }
 
 void PointController::clearPoints(){
+    qDebug() << "PointController::clearPoints called";
+    QMapIterator<QString, QVector<QSharedPointer<Point>> > it(points->getGroups());
+    while(it.hasNext()){
+        it.next();
+        emit deleteGroupQml(QVariant::fromValue(it.key()));
+    }
     points->resetGroups();
+    points->display();
 }

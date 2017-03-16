@@ -62,7 +62,8 @@ ListModel {
         for(var i = 0; i < count; i++)
             if(get(i).groupName === groupName)
                 remove(i);
-        deleteGroupSignal(groupName);
+        if(groupName !== "No Group")
+            deleteGroupSignal(groupName);
     }
 
     function hideShowGroup(groupName){
