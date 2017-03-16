@@ -43,9 +43,9 @@ Frame {
             oldPosX = 0;
             oldPosY = 0;
             groupComboBox.currentIndex = 0;
+            groupComboBox.displayText = Helper.noGroup;
         } else {
             if(oldName !== ""){
-                console.log(oldName + " " + oldGroup);
                 for(var i = 0; i < pointModel.count; i++)
                     if(pointModel.get(i).groupName === oldGroup)
                         for(var j = 0; j < pointModel.get(i).points.count; j++)
@@ -54,12 +54,12 @@ Frame {
 
                                 tmpPointView.x = pointModel.get(i).points.get(j).posX - tmpPointView.width / 2;
                                 tmpPointView.y = pointModel.get(i).points.get(j).posY - tmpPointView.height;
-                                console.log("index " + i);
                                 groupComboBox.currentIndex = i;
                                 groupComboBox.displayText = oldGroup;
                             }
             }
         }
+        pointTextField.text = oldName;
     }
 
     padding: 20

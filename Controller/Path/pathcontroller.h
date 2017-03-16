@@ -11,9 +11,6 @@ class PathController : public QObject {
 public:
     PathController(QObject *applicationWindow, MainController* parent);
 
-    void serializePaths(const QString fileName);
-    void deserializePaths(const QString fileName);
-
 private:
     Paths* paths;
 };

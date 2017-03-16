@@ -1,13 +1,12 @@
 #ifndef POINTS_H
 #define POINTS_H
 
-class Point;
+class PointGroup;
 
 #include <QObject>
 #include <QMap>
-#include <QVector>
+#include <QPointer>
 #include <QVariant>
-#include <QSharedPointer>
 
 #define NO_GROUP_NAME "No Group"
 
@@ -19,21 +18,30 @@ class Point;
  */
 
 class Points : public QObject {
-
     Q_OBJECT
 
 public:
     Points(QObject *parent);
-    QMap<QString, QVector<QSharedPointer<Point> >>& getGroups(void) { return groups; }
+    QMap<QString, QPointer<PointGroup>> getGroups(void) const { return groups; }
 
-    void resetGroups(void);
-    void addPointToGroup(const QString group, QSharedPointer<Point> point) { groups[group].push_back(point); }
-    QSharedPointer<Point> deletePointFromGroup(const QString group, const QString point_name);
+    void addGroup(const QString groupName);
+    void addPoint(const QString groupName, const QString name, const double x, const double y, const bool displayed);
+    void deletePoint(const QString groupName, const QString name);
+    void deleteGroup(const QString groupName);
+    void hideShow(const QString groupName, const QString name);
+    void renameGroup(const QString newName, const QString oldName);
+    void movePoint(const QString name, const QString oldGroup, const QString newGroup);
 
-    void display(void) const;
+    /**
+     * @brief checkGroupName
+     * @param name
+     * @return if the given name of group is taken
+     */
+    bool checkGroupName(const QString name);
+    void clearGoups(void);
 
 private:
-    QMap<QString, QVector<QSharedPointer<Point> >> groups;
+    QMap<QString, QPointer<PointGroup>> groups;
 };
 
 #endif /// POINTS_H

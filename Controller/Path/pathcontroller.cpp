@@ -11,23 +11,3 @@ PathController::PathController(QObject *applicationWindow, MainController* paren
      deserializePaths(QDir::currentPath() + QDir::separator() + "paths.dat");
      */
 }
-
-void PathController::serializePaths(const QString fileName){
-    QFile pathFile(fileName);
-    pathFile.resize(0);
-    pathFile.open(QIODevice::ReadWrite);
-    QDataStream out(&pathFile);
-    out << *paths;
-    pathFile.close();
-}
-
-void PathController::deserializePaths(const QString fileName){
-    QFile pathFile(fileName);
-    pathFile.open(QIODevice::ReadWrite);
-    QDataStream in(&pathFile);
-    Paths tmpPaths;
-    in >> tmpPaths;
-    pathFile.close();
-    paths->setGroups(tmpPaths.getGroups());
-}
-
