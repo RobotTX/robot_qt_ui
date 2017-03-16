@@ -62,6 +62,7 @@ ListModel {
         for(var i = 0; i < count; i++)
             if(get(i).groupName === groupName)
                 remove(i);
+        // we don't delete the "No Group" group,we only leave it empty
         if(groupName !== "No Group")
             deleteGroupSignal(groupName);
     }

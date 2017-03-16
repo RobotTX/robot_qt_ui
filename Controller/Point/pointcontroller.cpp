@@ -241,5 +241,4 @@ void PointController::clearPoints(){
         emit deleteGroupQml(QVariant::fromValue(it.key()));
     }
     points->resetGroups();
-    points->display();
 }
