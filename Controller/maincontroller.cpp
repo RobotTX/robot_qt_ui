@@ -4,12 +4,13 @@
 #include <QDebug>
 #include <QVariant>
 #include <QImage>
-#include "Controller/Map/mapcontroller.h"
-#include "Controller/Point/pointcontroller.h"
 #include <QFileInfo>
 #include <QDir>
-#include "Model/Point/xmlparser.h"
 #include <QMessageBox>
+#include "Controller/Map/mapcontroller.h"
+#include "Controller/Point/pointcontroller.h"
+#include "Controller/Path/pathcontroller.h"
+#include "Model/Point/xmlparser.h"
 
 MainController::MainController(QQmlApplicationEngine *engine, QObject* parent) : QObject(parent) {
 
@@ -21,11 +22,13 @@ MainController::MainController(QQmlApplicationEngine *engine, QObject* parent) :
 
         /// to allow the map model and the map view to communicate with each other
         /// and to ensure that they are consistent with each other
-        mapController = new MapController(applicationWindow, this);
+        mapController = QPointer<MapController>(new MapController(applicationWindow, this));
 
         /// to allow the point model and the point view to communicate with each other
         /// and to ensure that they are consistent with each other
-        pointController = new PointController(applicationWindow, this);
+        pointController = QPointer<PointController>(new PointController(applicationWindow, this));
+
+        pathController = QPointer<PathController>(new PathController(applicationWindow, this));
 
         connect(applicationWindow, SIGNAL(mapConfig(QString, double, double, double)), this, SLOT(saveMapConfig(QString, double, double, double)));
 

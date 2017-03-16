@@ -7,6 +7,7 @@
 #include <QStringList>
 #include <QDir>
 
+
 namespace Helper {
 
     namespace Convert {

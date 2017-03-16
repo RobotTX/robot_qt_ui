@@ -8,8 +8,6 @@ class PointGroup;
 #include <QPointer>
 #include <QVariant>
 
-#define NO_GROUP_NAME "No Group"
-
 /**
  * @brief The Points class
  * This class provides a model for a list of points organized in groups
@@ -25,9 +23,9 @@ public:
     QMap<QString, QPointer<PointGroup>> getGroups(void) const { return groups; }
 
     void addGroup(const QString groupName);
+    void deleteGroup(const QString groupName);
     void addPoint(const QString groupName, const QString name, const double x, const double y, const bool displayed);
     void deletePoint(const QString groupName, const QString name);
-    void deleteGroup(const QString groupName);
     void hideShow(const QString groupName, const QString name);
     void renameGroup(const QString newName, const QString oldName);
     void movePoint(const QString name, const QString oldGroup, const QString newGroup);

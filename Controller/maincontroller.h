@@ -5,9 +5,11 @@ class QQmlApplicationEngine;
 class MainMenuController;
 class MapController;
 class PointController;
+class PathController;
 
 #include <QObject>
 #include <QList>
+#include <QPointer>
 
 class MainController : public QObject {
 
@@ -44,9 +46,10 @@ private slots:
     void loadMapConfig(QString fileName) const;
 
 private:
-    MainMenuController* mainMenuController;
-    MapController* mapController;
-    PointController* pointController;
+    QPointer<MainMenuController> mainMenuController;
+    QPointer<MapController> mapController;
+    QPointer<PointController> pointController;
+    QPointer<PathController> pathController;
 };
 
 #endif /// MAINCONTROLLER_H

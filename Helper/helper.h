@@ -7,6 +7,7 @@
  */
 
 #define TESTING false
+#define NO_GROUP_NAME "No Group"
 
 namespace Helper {
 
