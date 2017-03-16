@@ -10,20 +10,20 @@ ListModel {
     signal deleteGroupSignal(string groupName)
     signal moveToSignal(string name, string oldGroup, string newGroup)
 
-    function addGroup(index, name){
+    function addGroup(name){
         console.log("Add group " + name);
-        insert(index, {
+        append({
            "groupName": name,
            "isOpen": (name === Helper.noGroup) ? true : false,
            "points": []
         });
     }
 
-    function addPoint(index, name, isVisible, groupName, x, y){
+    function addPoint(name, isVisible, groupName, x, y){
         console.log("Add point " + name + " to group " + groupName + " " + x + " " + y);
         for(var i = 0; i < count; i++){
             if(get(i).groupName === groupName){
-                get(i).points.insert(index, {
+                get(i).points.append({
                      "name": name,
                      "isVisible": isVisible,
                      "posX": x,
@@ -33,12 +33,12 @@ ListModel {
         }
     }
 
-    function editPoint(oldName, oldGroup, index, name, isVisible, groupName, x, y){
+    function editPoint(oldName, oldGroup, name, isVisible, groupName, x, y){
         console.log("Add point " + name + " to group " + groupName + " " + x + " " + y);
         deletePoint(oldGroup, oldName);
         for(var i = 0; i < count; i++){
             if(get(i).groupName === groupName){
-                get(i).points.insert(index, {
+                get(i).points.append({
                      "name": name,
                      "isVisible": isVisible,
                      "posX": x,
@@ -102,7 +102,7 @@ ListModel {
                             "isVisible": get(i).points.get(j).isVisible,
                             "posX": get(i).points.get(j).posX,
                             "posY": get(i).points.get(j).posY
-                       }
+                        }
                         get(i).points.remove(j);
                     }
 

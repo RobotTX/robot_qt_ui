@@ -2,8 +2,43 @@
 #include <QDataStream>
 #include <QDebug>
 #include <QString>
+#include "Helper/helper.h"
 #include "Model/Point/point.h"
+#include "Model/Point/group.h"
 
-Points::Points(QObject* parent) : QObject(parent), groups(new QMap<QString, QVector<Point*>*>()) {
+Points::Points(QObject* parent) : QObject(parent), groups(QMap<QString, QPointer<Group>>()) {
 
+}
+
+void Points::addGroup(const QString groupName){
+    groups.insert(groupName, QPointer<Group>(new Group(this)));
+}
+
+void Points::addPoint(const QString groupName, const QString name, const double x, const double y, const bool displayed){
+    groups.value(groupName)->addPoint(name, x, y, displayed);
+}
+
+void Points::deletePoint(const QString groupName, const QString name){
+    groups.value(groupName)->deletePoint(name);
+}
+
+void Points::deleteGroup(const QString groupName){
+    groups.remove(groupName);
+}
+
+void Points::hideShow(const QString groupName, const QString name){
+    groups.value(groupName)->hideShow(name);
+}
+
+void Points::renameGroup(const QString newName, const QString oldName){
+    groups.insert(newName, groups.take(oldName));
+}
+
+void Points::movePoint(const QString name, const QString oldGroup, const QString newGroup){
+    groups.value(newGroup)->addPoint(groups.value(oldGroup)->takePoint(name));
+}
+
+bool Points::checkGroupName(const QString name){
+    qDebug() << "PointController::checkGroupName" << name << (groups.find(Helper::formatName(name)) != groups.end());
+    return groups.find(Helper::formatName(name)) != groups.end();
 }

@@ -14,7 +14,8 @@ SOURCES += main.cpp \
     Controller/Point/pointcontroller.cpp \
     Controller/Path/pathcontroller.cpp \
     Model/Path/paths.cpp \
-    Model/Path/pathpoint.cpp
+    Model/Path/pathpoint.cpp \
+    Model/Point/group.cpp
 
 RESOURCES += qml.qrc \
     Resources/resources.qrc
@@ -52,4 +53,5 @@ HEADERS += \
     Controller/Point/pointcontroller.h \
     Controller/Path/pathcontroller.h \
     Model/Path/paths.h \
-    Model/Path/pathpoint.h
+    Model/Path/pathpoint.h \
+    Model/Point/group.h

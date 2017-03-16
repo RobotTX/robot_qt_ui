@@ -6,6 +6,7 @@ class MainController;
 
 #include <QObject>
 #include <QVariant>
+#include <QPointer>
 
 class PointController : public QObject {
     Q_OBJECT
@@ -13,7 +14,7 @@ public:
     PointController(QObject *applicationWindow, MainController *parent);
 
     /// Getters
-    Points* getPoints(void) const { return points; }
+    QPointer<Points> getPoints(void) const { return points; }
 
     /**
      * @brief checkErrorPoint
@@ -26,33 +27,11 @@ public:
     void checkErrorPoint(const QImage &mapImage, const QString name, const QString oldName, const double x, const double y);
 
     /**
-     * @brief indexOfPoint
-     * @param pointName
-     * @param groupName
-     * @return the index of the given point as in the qml point list
-     */
-    int indexOfPoint(QString pointName, QString groupName);
-
-    /**
-     * @brief indexOfGroup
-     * @param groupName
-     * @return the index of the given group as in the qml point list
-     */
-    int indexOfGroup(QString groupName);
-
-    /**
      * @brief checkPointName
      * @param name
      * @return if the given name of point is taken
      */
     bool checkPointName(const QString name);
-
-    /**
-     * @brief checkGroupName
-     * @param name
-     * @return if the given name of group is taken
-     */
-    bool checkGroupName(const QString name);
 
 public slots:
     /**
@@ -146,15 +125,13 @@ signals:
 
     /**
      * @brief addGroupQml
-     * @param index
      * @param name
      * Tell the qml model that we added a new group
      */
-    void addGroupQml(QVariant index, QVariant name);
+    void addGroupQml(QVariant name);
 
     /**
      * @brief addPointQml
-     * @param index
      * @param name
      * @param isVisible
      * @param groupName
@@ -162,8 +139,8 @@ signals:
      * @param y
      * Tell the point model that we added a new point
      */
-    void addPointQml(QVariant index, QVariant name, QVariant isVisible, QVariant groupName, QVariant x, QVariant y);
-    void editPointQml(QVariant oldName, QVariant oldGroup, QVariant index, QVariant name, QVariant isVisible, QVariant groupName, QVariant x, QVariant y);
+    void addPointQml(QVariant name, QVariant isVisible, QVariant groupName, QVariant x, QVariant y);
+    void editPointQml(QVariant oldName, QVariant oldGroup, QVariant name, QVariant isVisible, QVariant groupName, QVariant x, QVariant y);
 
     /**
      * @brief renameGroupQml
@@ -174,7 +151,7 @@ signals:
     void renameGroupQml(QVariant newName, QVariant oldName);
 
 private:
-    Points* points;
+    QPointer<Points> points;
     QString currentPointsFile;
 };
 

@@ -17,16 +17,16 @@ public:
 
 private:
     /**
-     * @brief point
-     * The point where the robot goes
-     */
-    Point* point;
-
-    /**
      * @brief waitTime
      * How long the robot needs to wait if its action is to wait
      */
     int waitTime;
+
+    /**
+     * @brief point
+     * The point where the robot goes
+     */
+    Point* point;
 };
 
 #endif // PATHPOINT_H
