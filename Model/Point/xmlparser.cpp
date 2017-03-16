@@ -2,14 +2,13 @@
 #include <QXmlStreamWriter>
 #include <QDebug>
 #include <QPointer>
+#include "Helper/helper.h"
 #include "Controller/Point/pointcontroller.h"
 #include "Model/Point/points.h"
 #include "Model/Point/pointgroup.h"
 #include "Model/Point/point.h"
 
-XMLParser::XMLParser() {}
-
-XMLParser::~XMLParser(){
+XMLParser::XMLParser(){
 }
 
 void XMLParser::save(PointController *pointController, const QString fileName) {
@@ -69,24 +68,6 @@ QString XMLParser::readNameElement(QXmlStreamReader& xmlReader){
             xmlReader.readNext();
     }
     return nameElement;
-}
-
-QString XMLParser::readIPElement(QXmlStreamReader& xmlReader){
-    QString IPElement("");
-    while(!xmlReader.atEnd()){
-        if(xmlReader.isEndElement()){
-            xmlReader.readNext();
-            break;
-        } else if(xmlReader.isStartElement()){
-            IPElement = xmlReader.readElementText();
-            xmlReader.readNext();
-            break;
-        } else if(xmlReader.isCharacters())
-            xmlReader.readNext();
-        else
-            xmlReader.readNext();
-    }
-    return IPElement;
 }
 
 float XMLParser::readCoordinateElement(QXmlStreamReader &xmlReader){

@@ -1,0 +1,242 @@
+#include "pathxmlparser.h"
+#include <QXmlStreamWriter>
+#include <QDebug>
+#include <QPointer>
+#include <QFile>
+#include "Helper/helper.h"
+#include "Controller/Path/pathcontroller.h"
+#include "Model/Path/paths.h"
+#include "Model/Path/pathgroup.h"
+#include "Model/Path/path.h"
+#include "Model/Path/pathpoint.h"
+#include "Model/Point/point.h"
+
+PathXMLParser::PathXMLParser(){
+}
+
+void PathXMLParser::save(PathController *pathController, const QString fileName) {
+    try {
+        qDebug() << "PathXMLParser::save the points in" << fileName;
+        QFile file(fileName);
+        file.open(QIODevice::Truncate | QIODevice::WriteOnly);
+
+        QXmlStreamWriter xmlWriter(&file);
+        xmlWriter.setAutoFormatting(true);
+        xmlWriter.writeStartDocument();
+
+        xmlWriter.writeStartElement("paths");
+
+
+        QMapIterator<QString, QPointer<PathGroup>> i(pathController->getPaths()->getGroups());
+        /// For each group
+        while (i.hasNext()) {
+            i.next();
+
+            xmlWriter.writeStartElement("group");
+            xmlWriter.writeTextElement("name", i.key());
+
+
+            QMapIterator<QString, QPointer<Path>> j(i.value()->getPaths());
+            /// For each group
+            while (j.hasNext()) {
+                j.next();
+
+                xmlWriter.writeStartElement("path");
+                xmlWriter.writeTextElement("name", j.key());
+
+
+                /// For each point of the group
+                for(int k = 0; k < j.value()->getPathPointVector().size(); k++){
+                    xmlWriter.writeStartElement("pathpoint");
+                    xmlWriter.writeTextElement("name", j.value()->getPathPointVector().at(k)->getPoint()->getName());
+                    xmlWriter.writeTextElement("x", QString::number(j.value()->getPathPointVector().at(k)->getPoint()->getX()));
+                    xmlWriter.writeTextElement("y", QString::number(j.value()->getPathPointVector().at(k)->getPoint()->getY()));
+                    xmlWriter.writeTextElement("waittime", QString::number(j.value()->getPathPointVector().at(k)->getWaitTime()));
+                    xmlWriter.writeEndElement();
+                }
+                xmlWriter.writeEndElement();
+            }
+            xmlWriter.writeEndElement();
+        }
+        xmlWriter.writeEndElement();
+        file.close();
+
+    } catch(std::exception e) {
+        qDebug() << "PathXMLParser::save" << e.what();
+    }
+}
+
+
+QString PathXMLParser::readNameElement(QXmlStreamReader& xmlReader){
+    QString nameElement("");
+    while(!xmlReader.atEnd()){
+        if(xmlReader.isEndElement()){
+            xmlReader.readNext();
+            break;
+        } else if(xmlReader.isStartElement()){
+            nameElement = xmlReader.readElementText();
+            xmlReader.readNext();
+            break;
+        } else if(xmlReader.isCharacters())
+            xmlReader.readNext();
+        else
+            xmlReader.readNext();
+    }
+    return nameElement;
+}
+
+float PathXMLParser::readCoordinateElement(QXmlStreamReader &xmlReader){
+    float coordinate(0.0);
+    while(!xmlReader.atEnd()){
+        if(xmlReader.isEndElement()){
+            xmlReader.readNext();
+            break;
+        } else if(xmlReader.isStartElement()){
+            coordinate = xmlReader.readElementText().toFloat();
+            xmlReader.readNext();
+            break;
+        } else if(xmlReader.isCharacters())
+            xmlReader.readNext();
+        else
+            xmlReader.readNext();
+    }
+    return coordinate;
+}
+
+void PathXMLParser::readPaths(PathController *pathController, const QString fileName){
+    QXmlStreamReader xmlReader;
+
+    try {
+        QFile file(fileName);
+
+        file.open(QFile::ReadWrite | QFile::Text);
+
+        xmlReader.setDevice(&file);
+        xmlReader.readNext();
+
+        while(!xmlReader.atEnd()){
+            if(xmlReader.isStartElement()){
+                if(xmlReader.name() == "paths"){
+                    xmlReader.readNext();
+                } else if(xmlReader.name() == "group"){
+                    QString groupName("");
+                    while(!xmlReader.atEnd()){
+                        if(xmlReader.isEndElement()){
+                            xmlReader.readNext();
+                            break;
+                        } else if(xmlReader.isCharacters()){
+                            xmlReader.readNext();
+                        } else if(xmlReader.isStartElement()){
+                            if(xmlReader.name() == "name"){
+                                groupName = readNameElement(xmlReader);
+                                pathController->addGroup(groupName, false);
+                            } else if(xmlReader.name() == "path"){
+                                QString pathName("");
+                                while(!xmlReader.atEnd()){
+                                    if(xmlReader.isEndElement()){
+                                        xmlReader.readNext();
+                                        break;
+                                    } else if(xmlReader.isCharacters()){
+                                        xmlReader.readNext();
+                                    } else if(xmlReader.isStartElement()){
+                                        if(xmlReader.name() == "name"){
+                                            pathName = readNameElement(xmlReader);
+                                            pathController->addPath(groupName, pathName, false);
+                                        } else if(xmlReader.name() == "pathpoint"){
+                                            double x(0.0);
+                                            double y(0.0);
+                                            QString name;
+                                            int waitTime;
+                                            xmlReader.readNext();
+                                            while(!xmlReader.atEnd()){
+
+                                                if(xmlReader.isStartElement()){
+                                                    if(xmlReader.name() == "x"){
+                                                        x = readCoordinateElement(xmlReader);
+                                                        xmlReader.readNext();
+                                                    } else if(xmlReader.name() == "y"){
+                                                        y = readCoordinateElement(xmlReader);
+                                                        xmlReader.readNext();
+                                                    } else if(xmlReader.name() == "name"){
+                                                        name = readNameElement(xmlReader);
+                                                        xmlReader.readNext();
+                                                    } else if(xmlReader.name() == "waittime"){
+                                                        waitTime = readWaitTimeElement(xmlReader);
+                                                        xmlReader.readNext();
+                                                    } else {
+                                                        xmlReader.readNext();
+                                                    }
+                                                } else if(xmlReader.isEndElement()){
+                                                    xmlReader.readNext();
+                                                    break;
+                                                } else xmlReader.readNext();
+                                            }
+                                            pathController->addPathPoint(groupName, pathName, name, x, y, waitTime, false);
+
+                                            xmlReader.readNext();
+                                        } else {
+                                            xmlReader.readNext();
+                                        }
+                                    }
+                                }
+                            }
+                            xmlReader.readNext();
+                        } else {
+                            xmlReader.readNext();
+                        }
+                    }
+                }
+            } else {
+                xmlReader.readNext();
+            }
+        }
+        file.close();
+    }
+
+    catch(std::exception e) {
+        qDebug() << "Exception in PathXMLParser::readPoints :" << e.what();
+    }
+}
+
+int PathXMLParser::readWaitTimeElement(QXmlStreamReader &xmlReader){
+    int waitTime(0);
+    while(!xmlReader.atEnd()){
+        if(xmlReader.isEndElement()){
+            xmlReader.readNext();
+            break;
+        } else if(xmlReader.isStartElement()){
+            waitTime = xmlReader.readElementText().toInt();
+            xmlReader.readNext();
+            break;
+        } else if(xmlReader.isCharacters())
+            xmlReader.readNext();
+        else
+            xmlReader.readNext();
+    }
+    return waitTime;
+}
+
+/// resets the file, only writting an empty default group
+void PathXMLParser::clear(const QString fileName){
+    try {
+        QFile file(fileName);
+        file.open(QIODevice::WriteOnly);
+
+        QXmlStreamWriter xmlWriter(&file);
+        xmlWriter.setAutoFormatting(true);
+        xmlWriter.writeStartDocument();
+
+        xmlWriter.writeStartElement("paths");
+
+        xmlWriter.writeStartElement("group");
+        xmlWriter.writeTextElement("name", NO_GROUP_NAME);
+
+        xmlWriter.writeEndElement();
+        xmlWriter.writeEndElement();
+
+        file.close();
+
+    } catch(std::exception e) {
+        qDebug() << e.what();
+    }
+}

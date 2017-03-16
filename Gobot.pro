@@ -17,7 +17,8 @@ SOURCES += main.cpp \
     Model/Path/pathpoint.cpp \
     Model/Path/path.cpp \
     Model/Path/pathgroup.cpp \
-    Model/Point/pointgroup.cpp
+    Model/Point/pointgroup.cpp \
+    Model/Path/pathxmlparser.cpp
 
 RESOURCES += qml.qrc \
     Resources/resources.qrc
@@ -58,4 +59,5 @@ HEADERS += \
     Model/Path/pathpoint.h \
     Model/Path/path.h \
     Model/Path/pathgroup.h \
-    Model/Point/pointgroup.h
+    Model/Point/pointgroup.h \
+    Model/Path/pathxmlparser.h

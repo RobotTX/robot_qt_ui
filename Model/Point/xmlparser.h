@@ -20,7 +20,6 @@ class XMLParser{
 
 public:
     XMLParser();
-    ~XMLParser();
 
 public:
     /**
@@ -46,14 +45,6 @@ private:
      * Reads a name attribute in an xml file
      */
     static QString readNameElement(QXmlStreamReader &xmlReader);
-
-    /**
-     * @brief readIPElement
-     * @param xmlReader
-     * @return QString
-     * Reads an IP attribute in an xml file
-     */
-    static QString readIPElement(QXmlStreamReader &xmlReader);
 
     /**
      * @brief readCoordinateElement
