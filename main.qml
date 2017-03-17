@@ -80,7 +80,6 @@ ApplicationWindow {
 
         EditMap {
             id: editMap
-
         }
     }
 

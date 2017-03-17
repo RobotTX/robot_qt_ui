@@ -7,8 +7,11 @@ class MainController;
 #include "Model/Path/paths.h"
 
 class PathController : public QObject {
+
     Q_OBJECT
+
 public:
+
     PathController(QObject *applicationWindow, MainController* parent);
 
     QPointer<Paths> getPaths(void) const { return paths; }
@@ -37,4 +40,4 @@ private:
     QString currentPathsFile;
 };
 
-#endif // PATHCONTROLLER_H
+#endif /// PATHCONTROLLER_H

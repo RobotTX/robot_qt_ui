@@ -4,7 +4,6 @@ import "../../View/Point"
 import "../../Helper/helper.js" as Helper
 
 ListModel {
-    id: listModel
     signal hideShow(string groupName, string name)
     signal deletePointSignal(string groupName, string name)
     signal deleteGroupSignal(string groupName)

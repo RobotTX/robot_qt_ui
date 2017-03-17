@@ -7,9 +7,7 @@
 #include "Model/Path/pathpoint.h"
 #include "Model/Point/point.h"
 
-Paths::Paths(QObject* parent) : QObject(parent), groups(QMap<QString, QPointer<PathGroup>>()) {
-
-}
+Paths::Paths(QObject* parent) : QObject(parent), groups(QMap<QString, QPointer<PathGroup>>()) {}
 
 void Paths::addGroup(const QString groupName){
     groups.insert(groupName, QPointer<PathGroup>(new PathGroup(this)));

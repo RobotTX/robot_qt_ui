@@ -38,5 +38,6 @@
         <file>View/Custom/CancelButton.qml</file>
         <file>View/Map/MapMenuButton.qml</file>
         <file>View/Map/EditMap.qml</file>
+        <file>Model/Map/EditMapModel.qml</file>
     </qresource>
 </RCC>

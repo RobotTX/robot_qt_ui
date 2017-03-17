@@ -15,6 +15,7 @@ PathXMLParser::PathXMLParser(){
 }
 
 void PathXMLParser::save(PathController *pathController, const QString fileName) {
+
     try {
         qDebug() << "PathXMLParser::save the points in" << fileName;
         QFile file(fileName);

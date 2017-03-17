@@ -1,6 +1,6 @@
 <RCC>
     <qresource prefix="/maps">
-        <file>map.pgm</file>
+        <file alias="map">map.pgm</file>
     </qresource>
     <qresource prefix="/icons">
         <file alias="map_checked">icons/icMap_checked.png</file>
