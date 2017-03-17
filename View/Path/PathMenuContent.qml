@@ -19,7 +19,7 @@ Frame {
     /// This frame is displayed when there is no path
     EmptyMenu {
         visible: (pathModel.count === 1 && pathModel.get(0).paths.count === 0) || pathModel.count === 0
-        txt: "You have no path, click the '+' buton to create a path."
+        txt: "You have no path, click the '+' button to create a path."
         imgSrc: "qrc:/icons/big_path"
     }
 

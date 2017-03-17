@@ -78,24 +78,6 @@ Frame {
         anchors.fill: parent
         padding:0
 
-        MouseArea {
-            anchors.fill: parent
-
-            drag.target: mapImage
-            onWheel: {
-                var newScale = mapImage.scale + mapImage.scale * wheel.angleDelta.y / 120 / 10;
-                if(newScale > Style.minZoom && newScale < Style.maxZoom)
-                    mapImage.scale = newScale;
-            }
-            onClicked: {
-                if(tmpPointView.visible){
-                    tmpPointView.x = mouseX - tmpPointView.width / 2;
-                    tmpPointView.y = mouseY - tmpPointView.height;
-                    tmpPointView.tmpPointViewPosChanged()
-                }
-            }
-        }
-
         Image {
             id: mapImage
             asynchronous: true
@@ -104,6 +86,24 @@ Frame {
             fillMode: Image.PreserveAspectFit // For not stretching image
 
             smooth: false
+
+            MouseArea {
+                anchors.fill: parent
+
+                drag.target: parent
+                onWheel: {
+                    var newScale = mapImage.scale + mapImage.scale * wheel.angleDelta.y / 120 / 10;
+                    if(newScale > Style.minZoom && newScale < Style.maxZoom)
+                        mapImage.scale = newScale;
+                }
+                onClicked: {
+                    if(tmpPointView.visible){
+                        tmpPointView.x = mouseX - tmpPointView.width / 2;
+                        tmpPointView.y = mouseY - tmpPointView.height;
+                        tmpPointView.tmpPointViewPosChanged()
+                    }
+                }
+            }
 
             Repeater {
                 model: pointModel
