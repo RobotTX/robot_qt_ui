@@ -1,10 +1,12 @@
 import QtQuick 2.7
 import QtQuick.Controls 2.1
 import "../Custom"
+import "../../Model/Path"
 
 Page {
     id: page
     anchors.fill: parent
+    property Paths pathModel
     signal closeMenu()
 
     MenuHeader {
@@ -15,6 +17,7 @@ Page {
     }
 
     PathMenuContent {
+        pathModel: page.pathModel
         anchors {
             left: parent.left
             top: pathMenuHeader.bottom

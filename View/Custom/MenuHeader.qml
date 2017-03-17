@@ -6,6 +6,7 @@ import "../Custom"
 Frame {
     id: menuHeader
     padding: 0
+    z: 2
 
     property string txt
 

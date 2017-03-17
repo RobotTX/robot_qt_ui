@@ -24,43 +24,38 @@ Frame {
 
     /// This frame is displayed when there is no point
     EmptyMenu {
-        /// Only the invisible "No Group" left
-        visible: pointModel.count === 1 && pointModel.get(0).points.count === 0
+        /// Only the invisible "No Group" left and it's empty
+        visible: (pointModel.count === 1 && pointModel.get(0).points.count === 0) || pointModel.count === 0
         txt: "You have no points, click the '+' button or double click the map to create a point."
         imgSrc: "qrc:/icons/big_point"
     }
 
-    /// This frame is displayed when we have points
     Component {
         id: delegate
         PointListItem {
             column: columnId
             width: pointMenuFrame.width
             pointModel: pointMenuFrame.pointModel
-            onDeleteGroup: pointModel.deleteGroup(name)
             onRenameGroup: pointMenuFrame.renameGroup(name)
-            onDeletePoint: pointModel.deletePoint(groupName, name)
-            onMoveTo: pointModel.moveTo(name, oldGroup, newGroup)
             onEditPoint: pointMenuFrame.editPoint(name, groupName)
-            onHideShowGroup: pointModel.hideShowGroup(groupName)
-            onHideShowPoint: pointModel.hideShowPoint(groupName, name)
         }
     }
 
-    Column {
-        id: columnId
-        property string selectedGroup: Helper.noGroup
-        property string selectedPoint: (pointModel.count > 0) ? pointModel.get(0).points.count > 0 ? pointModel.get(0).points.get(0).name : "" : ""
-        //anchors.fill: parent
-        /// The list containing both the graphical and model of the points in the menu
-        Repeater {
-            id: pointList
-            objectName: "pointList"
-            anchors.fill: parent
-            model: pointModel
-            delegate: delegate
-            focus: true
-            anchors.topMargin: 14
+
+    Flickable {
+        ScrollBar.vertical: ScrollBar { }
+        contentHeight: contentItem.childrenRect.height
+        anchors.fill: parent
+
+        Column {
+            id: columnId
+            property string selectedGroup: Helper.noGroup
+            property string selectedPoint: (pointModel.count > 0) ? pointModel.get(0).points.count > 0 ? pointModel.get(0).points.get(0).name : "" : ""
+            /// The list containing both the graphical and model of the points in the menu
+            Repeater {
+                model: pointModel
+                delegate: delegate
+            }
         }
     }
 }

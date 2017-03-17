@@ -2,9 +2,10 @@ import QtQuick 2.7
 import QtQuick.Controls 2.1
 import QtQuick.Layouts 1.0
 import QtQuick.Window 2.0
+import "Model/Point"
+import "Model/Path"
 import "View/MainMenu"
 import "View/MapView"
-import "Model/Point"
 import "View/Point"
 
 ApplicationWindow {
@@ -32,6 +33,11 @@ ApplicationWindow {
             id: _pointModel
             objectName: "pointModel"
         }
+
+        Paths {
+            id: _pathModel
+            objectName: "pathModel"
+        }
     }
 
     Frame {
@@ -54,6 +60,7 @@ ApplicationWindow {
             z: 1
             pointModel: _pointModel
             tmpPointView: mapView.tmpPointView
+            pathModel: _pathModel
             currentMenu: layout.currentMenu
             anchors {
                 left: mainMenu.right

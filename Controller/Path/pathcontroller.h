@@ -4,6 +4,7 @@
 class MainController;
 
 #include <QObject>
+#include <QVariant>
 #include "Model/Path/paths.h"
 
 class PathController : public QObject {
@@ -31,6 +32,12 @@ private slots:
     void deletePath(const QString groupName, const QString name);
     void deletePathPoint(const QString groupName, const QString pathName, const QString name);
     void renameGroup(const QString newName, const QString oldName);
+
+signals:
+    void addGroupQml(QVariant);
+    void addPathQml(QVariant, QVariant);
+    void addPathPointQml(QVariant, QVariant, QVariant, QVariant, QVariant, QVariant);
+    void renameGroupQml(QVariant, QVariant);
 
 private:
     QPointer<Paths> paths;
