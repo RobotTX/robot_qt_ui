@@ -7,7 +7,6 @@ import "../../Helper/style.js" as Style
   */
 Frame {
     id: mainMenuFrame
-    objectName: "mainMenuFrame"
     /// The index of the current menu
     property int currentMenu
 

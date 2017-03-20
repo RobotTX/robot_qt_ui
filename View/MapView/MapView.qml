@@ -3,8 +3,9 @@ import QtQuick.Controls 2.1
 import QtQml.Models 2.2
 import "../../Helper/style.js" as Style
 import "../../Helper/helper.js" as Helper
-import "../MainMenu"
 import "../../Model/Point"
+import "../../Model/Path"
+import "../MainMenu"
 import "../Point"
 
 Frame {
@@ -17,14 +18,26 @@ Frame {
     property double zoom: mapImage.scale
 
     // this is to be able to display messages at the top from other classes
-    property TopView _topView: topView
+    property TopView topView: topViewId
 
     property string mapSrc
 
     property Points pointModel
+    property Paths pathModel
+    property Paths tmpPathModel
+    property bool useTmpPathModel
+
+    Connections {
+        target: pathModel
+        onVisiblePathChanged: canvas.requestPaint()
+    }
+
+    Connections {
+        target: tmpPathModel
+        onVisiblePathChanged: canvas.requestPaint()
+    }
 
     property PointView tmpPointView: PointView {
-        objectName: "tmpPointView"
         parent: mapImage
         type: Helper.PointViewType.TEMP
         _name: "tmpPointView"
@@ -59,7 +72,7 @@ Frame {
     padding: 0
 
     TopView {
-        id: topView
+        id: topViewId
         onSavePosition: emitPosition()
         onLoadPosition: mapViewFrame.loadPosition()
         /// If we have a map, the mapImage is visible
@@ -69,7 +82,6 @@ Frame {
 
     EmptyMap {
         id: emptyMap
-        objectName: "emptyMap"
         anchors.fill: parent
     }
 
@@ -86,6 +98,84 @@ Frame {
             fillMode: Image.PreserveAspectFit // For not stretching image
 
             smooth: false
+
+            /// Canvas to display the paths dotted line on the map
+            Canvas {
+                id:canvas
+                anchors.fill: parent
+                smooth: false
+                onPaint:{
+                    var ctx = canvas.getContext('2d');
+                    ctx.dashedLineTo = function (fromX, fromY, toX, toY, pattern) {
+                        // Our growth rate for our line can be one of the following:
+                        //   (+,+), (+,-), (-,+), (-,-)
+                        // Because of this, our algorithm needs to understand if the x-coord and
+                        // y-coord should be getting smaller or larger and properly cap the values
+                        // based on (x,y).
+                        var lt = function (a, b) { return a <= b; };
+                        var gt = function (a, b) { return a >= b; };
+                        var capmin = function (a, b) { return Math.min(a, b); };
+                        var capmax = function (a, b) { return Math.max(a, b); };
+
+                        var checkX = { thereYet: gt, cap: capmin };
+                        var checkY = { thereYet: gt, cap: capmin };
+
+                        if (fromY - toY > 0) {
+                            checkY.thereYet = lt;
+                            checkY.cap = capmax;
+                        }
+                        if (fromX - toX > 0) {
+                            checkX.thereYet = lt;
+                            checkX.cap = capmax;
+                        }
+
+                        this.moveTo(fromX, fromY);
+                        var offsetX = fromX;
+                        var offsetY = fromY;
+                        var idx = 0, dash = true;
+                        while (!(checkX.thereYet(offsetX, toX) && checkY.thereYet(offsetY, toY))) {
+                            var ang = Math.atan2(toY - fromY, toX - fromX);
+                            var len = pattern[idx];
+
+                            offsetX = checkX.cap(toX, offsetX + (Math.cos(ang) * len));
+                            offsetY = checkY.cap(toY, offsetY + (Math.sin(ang) * len));
+
+                            if (dash) this.lineTo(offsetX, offsetY);
+                            else this.moveTo(offsetX, offsetY);
+
+                            idx = (idx + 1) % pattern.length;
+                            dash = !dash;
+                        }
+                    };
+
+                    ctx.clearRect(0, 0, canvas.width, canvas.height)
+                    ctx.strokeStyle = "#929292";
+                    ctx.lineWidth = 3;
+                    ctx.beginPath();
+                    if(useTmpPathModel){
+                        for(var i = 0; i < tmpPathModel.count; i++)
+                            for(var j = 0; j < tmpPathModel.get(i).paths.count; j++)
+                                if(tmpPathModel.get(i).paths.get(j).pathIsVisible && tmpPathModel.get(i).paths.get(j).pathPoints.count > 1)
+                                    for(var k = 1; k < tmpPathModel.get(i).paths.get(j).pathPoints.count; k++)
+                                        ctx.dashedLineTo(tmpPathModel.get(i).paths.get(j).pathPoints.get(k-1).posX,
+                                                         tmpPathModel.get(i).paths.get(j).pathPoints.get(k-1).posY,
+                                                         tmpPathModel.get(i).paths.get(j).pathPoints.get(k).posX,
+                                                         tmpPathModel.get(i).paths.get(j).pathPoints.get(k).posY,
+                                                         [3, 5]);
+                    } else {
+                        for(var i = 0; i < pathModel.count; i++)
+                            for(var j = 0; j < pathModel.get(i).paths.count; j++)
+                                if(pathModel.get(i).paths.get(j).pathIsVisible && pathModel.get(i).paths.get(j).pathPoints.count > 1)
+                                    for(var k = 1; k < pathModel.get(i).paths.get(j).pathPoints.count; k++)
+                                        ctx.dashedLineTo(pathModel.get(i).paths.get(j).pathPoints.get(k-1).posX,
+                                                         pathModel.get(i).paths.get(j).pathPoints.get(k-1).posY,
+                                                         pathModel.get(i).paths.get(j).pathPoints.get(k).posX,
+                                                         pathModel.get(i).paths.get(j).pathPoints.get(k).posY,
+                                                         [3, 5]);
+                    }
+                    ctx.stroke();
+                }
+            }
 
             MouseArea {
                 anchors.fill: parent
@@ -105,6 +195,7 @@ Frame {
                 }
             }
 
+            /// Repeater to display the points on the map
             Repeater {
                 model: pointModel
                 delegate: Repeater {
@@ -117,6 +208,28 @@ Frame {
                         originY: posY - height
                         x: posX - width/2
                         y: posY - height
+                    }
+                }
+            }
+
+
+            /// Repeater to display the paths points on the map
+            Repeater {
+                model: useTmpPathModel ? tmpPathModel : pathModel
+                delegate: Repeater {
+                    model: paths
+                    delegate: Repeater {
+                        model: pathPoints
+                        delegate: PointView {
+                            _name: name
+                            _isVisible: pathIsVisible
+                            _groupName: pathName
+                            type: index == 0 ? Helper.PointViewType.PATHPOINT_START : Helper.PointViewType.PATHPOINT
+                            originX: posX - width/2
+                            originY: posY - height
+                            x: posX - width/2
+                            y: posY - height
+                        }
                     }
                 }
             }

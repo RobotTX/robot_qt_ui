@@ -1,6 +1,7 @@
 import QtQuick 2.7
 import QtQuick.Controls 2.1
 import "../../Model/Point"
+import "../Custom"
 
 Page {
     id: page
@@ -21,8 +22,6 @@ Page {
         padding: 0
         PointMenuHeader {
             id: pointMenuHeader
-            objectName: "pointMenuHeader"
-            txt: "Point"
             onOpenCreatePointMenu: createPointMenuFrame.visible = true;
             onOpenCreateGroupMenu: createGroupMenuFrame.visible = true;
             onCloseMenu: page.closeMenu()
@@ -55,9 +54,10 @@ Page {
         anchors.fill: parent
         padding: 0
 
-        CreatePointMenuHeader {
+        CreateMenuHeader {
             id: createPointMenuHeader
             onBackToMenu: createPointMenuFrame.visible = false;
+            txt: "Point"
         }
 
         CreatePointMenuContent {
@@ -87,6 +87,7 @@ Page {
 
         CreateGroupMenuContent {
             id: createGroupMenuContent
+            objectName: "createPointGroupMenu"
             anchors {
                 left: parent.left
                 top: createGroupMenuHeader.bottom

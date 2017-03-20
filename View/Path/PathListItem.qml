@@ -61,7 +61,7 @@ Column {
 
             Image {
                 asynchronous: true
-                /// Change the image depending on whether or not it's a point or a group and if it's visible
+                /// Change the image depending on whether or not it's a path or a group and if it's visible
                 source: groupIsOpen ? "qrc:/icons/fold" : "qrc:/icons/unfold"
                 fillMode: Image.Pad // For not stretching image
                 anchors.horizontalCenter: parent.horizontalCenter
@@ -71,7 +71,7 @@ Column {
             onClicked: pathModel.hideShowGroup(groupName);
         }
 
-        /// The item displaying the name of the point/group
+        /// The item displaying the name of the path/group
         Label {
             text: qsTr(groupName)
             color: Style.blackMenuTextColor
@@ -113,7 +113,7 @@ Column {
             EditPathGroupPopupMenu {
                 id: editGroupPopupMenu
                 x: rightButton.width
-                onDeleteGroup: groupListItem.deleteGroup(groupName)
+                onDeleteGroup: pathModel.deleteGroup(groupName)
                 onRenameGroup: groupListItem.renameGroup(groupName)
             }
         }
@@ -169,7 +169,7 @@ Column {
 
                     Image {
                         asynchronous: true
-                        /// Change the image depending on whether or not it's a point or a group and if it's visible
+                        /// Change the image depending on whether or not it's a path or a group and if it's visible
                         source: pathIsVisible ? "qrc:/icons/visible" : "qrc:/icons/invisible"
                         fillMode: Image.Pad // For not stretching image
                         anchors.horizontalCenter: parent.horizontalCenter
@@ -179,7 +179,7 @@ Column {
                     onClicked: pathModel.hideShowPathOnMap(groupName, pathName);
                 }
 
-                /// The item displaying the name of the point/group
+                /// The item displaying the name of the path/group
                 Label {
                     text: qsTr(pathName)
                     color: Style.blackMenuTextColor
@@ -210,7 +210,7 @@ Column {
 
                     Image {
                         asynchronous: true
-                        /// Change the image depending on whether or not it's a point or a group and if it's visible
+                        /// Change the image depending on whether or not it's a path or a group and if it's visible
                         source: pathIsOpen ? "qrc:/icons/fold" : "qrc:/icons/unfold"
                         fillMode: Image.Pad // For not stretching image
                         anchors.horizontalCenter: parent.horizontalCenter
@@ -244,16 +244,16 @@ Column {
                         anchors.verticalCenter: parent.verticalCenter
                     }
 
-                    onClicked: editPointPopupMenu.open();
+                    onClicked: editPathPopupMenu.open();
 
                     EditPathPopupMenu {
-                        id: editPointPopupMenu
+                        id: editPathPopupMenu
                         x: rightButton.width
-                        //pointModel: groupListItem.pointModel
+                        pathModel: groupListItem.pathModel
                         myGroup: groupName
-                        onDeletePoint: groupListItem.deletePoint(name, groupName)
-                        onMoveTo: groupListItem.moveTo(name, groupName, newGroup)
-                        onEditPoint: groupListItem.editPoint(name, groupName)
+                        onDeletePath: pathModel.deletePath(groupName, pathName)
+                        onMoveTo: pathModel.moveTo(pathName, groupName, newGroup)
+                        onEditPath: groupListItem.editPath(pathName, groupName)
                     }
                 }
             }
@@ -296,7 +296,7 @@ Column {
                         anchors.leftMargin: groupName === Helper.noGroup ? 25 : 50
                     }
 
-                    /// The item displaying the name of the point/group
+                    /// The item displaying the name of the path/group
                     Label {
                         text: qsTr(name)
                         font.pixelSize: 14

@@ -8,6 +8,8 @@ import "../../Model/Path"
 Frame {
     id: pathMenuFrame
     padding: 0
+    signal renameGroup(string name)
+    signal editPath(string name, string groupName)
 
     property Paths pathModel
     background: Rectangle {
@@ -29,7 +31,7 @@ Frame {
             column: columnId
             width: pathMenuFrame.width
             pathModel: pathMenuFrame.pathModel
-            onRenameGroup: pointMenuFrame.renameGroup(name)
+            onRenameGroup: pathMenuFrame.renameGroup(name)
             onEditPath: pathMenuFrame.editPath(name, groupName)
         }
     }
@@ -43,7 +45,7 @@ Frame {
             id: columnId
             property string selectedGroup: Helper.noGroup
             property string selectedPath: (pathModel.count > 0) ? pathModel.get(0).paths.count > 0 ? pathModel.get(0).paths.get(0).pathName : "" : ""
-            /// The list containing both the graphical and model of the points in the menu
+            /// The list containing both the graphical and model of the paths in the menu
             Repeater {
                 model: pathModel
                 delegate: delegate

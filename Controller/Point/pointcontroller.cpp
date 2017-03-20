@@ -43,16 +43,16 @@ PointController::PointController(QObject *applicationWindow, MainController* par
         Q_UNREACHABLE();
     }
 
-    QObject *createGroupMenuFrame = applicationWindow->findChild<QObject*>("createGroupMenuFrame");
-    if (createGroupMenuFrame){
+    QObject *createPointGroupMenu = applicationWindow->findChild<QObject*>("createPointGroupMenu");
+    if (createPointGroupMenu){
         /// Tell the menu where we create groups that we enable the save button
-        connect(this, SIGNAL(enableGroupSaveQml(QVariant)), createGroupMenuFrame, SLOT(enableSave(QVariant)));
+        connect(this, SIGNAL(enableGroupSaveQml(QVariant)), createPointGroupMenu, SLOT(enableSave(QVariant)));
         /// The group name has been modified so we check if it's taken to enable or not the save button
-        connect(createGroupMenuFrame, SIGNAL(checkGroup(QString)), this, SLOT(checkGroup(QString)));
+        connect(createPointGroupMenu, SIGNAL(checkGroup(QString)), this, SLOT(checkGroup(QString)));
         /// Clicked on the save button to create the given group
-        connect(createGroupMenuFrame, SIGNAL(createGroup(QString)), this, SLOT(addGroup(QString)));
+        connect(createPointGroupMenu, SIGNAL(createGroup(QString)), this, SLOT(addGroup(QString)));
         /// Clicked on the save button while editing a group
-        connect(createGroupMenuFrame, SIGNAL(renameGroup(QString, QString)), this, SLOT(renameGroup(QString, QString)));
+        connect(createPointGroupMenu, SIGNAL(renameGroup(QString, QString)), this, SLOT(renameGroup(QString, QString)));
     } else {
         qDebug() << "PointController::PointController could not find the createPointMenuFrame";
         Q_UNREACHABLE();

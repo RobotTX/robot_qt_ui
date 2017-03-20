@@ -28,6 +28,8 @@ ApplicationWindow {
     // To save the current configuration -> zoom, center (paths and points retrieved on the c++ side)
     signal mapConfig(string file_name, double zoom, double centerX, double centerY)
 
+    property bool useTmpPathModel: false
+
     Item {
         Points {
             id: _pointModel
@@ -37,6 +39,13 @@ ApplicationWindow {
         Paths {
             id: _pathModel
             objectName: "pathModel"
+        }
+
+        Paths {
+            id: _tmpPathModel
+            Component.onCompleted: {
+                clearTmpPath();
+            }
         }
     }
 
@@ -61,6 +70,7 @@ ApplicationWindow {
             pointModel: _pointModel
             tmpPointView: mapView.tmpPointView
             pathModel: _pathModel
+            tmpPathModel: _tmpPathModel
             currentMenu: layout.currentMenu
             anchors {
                 left: mainMenu.right
@@ -70,13 +80,17 @@ ApplicationWindow {
             onCloseMenu: layout.currentMenu = -1
             onSavePosition: mapView.emitPosition()
             onSaveMap: applicationWindow.emitMapConfig(file_name)
+            onUseTmpPathModel: applicationWindow.useTmpPathModel = use
         }
 
         MapView {
             id: mapView
             pointModel: _pointModel
+            pathModel: _pathModel
+            tmpPathModel: _tmpPathModel
+            useTmpPathModel: applicationWindow.useTmpPathModel
             anchors {
-                left: (mainMenuViews.visible) ? mainMenuViews.right : mainMenu.right
+                left: mainMenuViews.visible ? mainMenuViews.right : mainMenu.right
                 top: parent.top
                 right: parent.right
                 bottom: parent.bottom

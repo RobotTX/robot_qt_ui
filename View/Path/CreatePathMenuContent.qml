@@ -1,20 +1,38 @@
 import QtQuick 2.7
 import QtQuick.Controls 2.1
 import "../../Helper/style.js" as Style
-import "../../Model/Point"
+import "../../Model/Path"
 import "../Custom"
 
 Frame {
-    id: createGroupMenuFrame
-    objectName: "createGroupMenuFrame"
+    id: createPathMenuFrame
+    objectName: "createPathMenuFrame"
     property string oldName: ""
+    property Paths pathModel
+    property Paths tmpPathModel
 
     signal backToMenu()
     signal createGroup(string name)
     signal renameGroup(string newName, string oldName)
     signal checkGroup(string name)
+    signal useTmpPathModel(bool use)
 
-    onVisibleChanged: groupTextField.text = oldName;
+    onVisibleChanged: {
+        if(!visible){
+            if(tmpPathModel && createPathMenuFrame){
+                tmpPathModel.clearTmpPath();
+                useTmpPathModel(false);
+                tmpPathModel.visiblePathChanged();
+            }
+            oldName = "";
+        } else {
+            if(tmpPathModel && createPathMenuFrame){
+                tmpPathModel.clearTmpPath();
+                useTmpPathModel(true);
+                tmpPathModel.visiblePathChanged();
+            }
+        }
+    }
 
     padding: 20
 
@@ -51,7 +69,7 @@ Frame {
             border.color: groupTextField.activeFocus ? Style.lightBlue : Style.lightGreyBorder
             border.width: groupTextField.activeFocus ? 3 : 1
         }
-        onTextChanged: checkGroup(groupTextField.text)
+        //onTextChanged: checkGroup(groupTextField.text)
     }
 
     CancelButton {
@@ -74,10 +92,10 @@ Frame {
         enabled: false
         anchors.leftMargin: 5
         onClicked: {
-            if(oldName === "")
+            /*if(oldName === "")
                 createGroup(groupTextField.text);
             else
-                renameGroup(groupTextField.text, oldName);
+                renameGroup(groupTextField.text, oldName);*/
             backToMenu();
         }
     }

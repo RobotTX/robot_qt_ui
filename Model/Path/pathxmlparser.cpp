@@ -26,37 +26,67 @@ void PathXMLParser::save(PathController *pathController, const QString fileName)
 
         xmlWriter.writeStartElement("paths");
 
+        /// We write the "No Group" first
+        xmlWriter.writeStartElement("group");
+        xmlWriter.writeTextElement("name", NO_GROUP_NAME);
+
+
+        QMapIterator<QString, QPointer<Path>> l(pathController->getPaths()->getGroups().value(NO_GROUP_NAME)->getPaths());
+        /// For each path
+        while (l.hasNext()) {
+            l.next();
+
+            xmlWriter.writeStartElement("path");
+            xmlWriter.writeTextElement("name", l.key());
+
+
+            /// For each point of the path
+            for(int k = 0; k < l.value()->getPathPointVector().size(); k++){
+                xmlWriter.writeStartElement("pathpoint");
+                xmlWriter.writeTextElement("name", l.value()->getPathPointVector().at(k)->getPoint()->getName());
+                xmlWriter.writeTextElement("x", QString::number(l.value()->getPathPointVector().at(k)->getPoint()->getX()));
+                xmlWriter.writeTextElement("y", QString::number(l.value()->getPathPointVector().at(k)->getPoint()->getY()));
+                xmlWriter.writeTextElement("waittime", QString::number(l.value()->getPathPointVector().at(k)->getWaitTime()));
+                xmlWriter.writeEndElement();
+            }
+            xmlWriter.writeEndElement();
+        }
+        xmlWriter.writeEndElement();
+
 
         QMapIterator<QString, QPointer<PathGroup>> i(pathController->getPaths()->getGroups());
-        /// For each group
+        /// For each group except "No Group"
         while (i.hasNext()) {
             i.next();
 
-            xmlWriter.writeStartElement("group");
-            xmlWriter.writeTextElement("name", i.key());
+            if(i.key().compare(NO_GROUP_NAME) != 0){
+
+                xmlWriter.writeStartElement("group");
+                xmlWriter.writeTextElement("name", i.key());
 
 
-            QMapIterator<QString, QPointer<Path>> j(i.value()->getPaths());
-            /// For each group
-            while (j.hasNext()) {
-                j.next();
+                QMapIterator<QString, QPointer<Path>> j(i.value()->getPaths());
+                /// For each path
+                while (j.hasNext()) {
+                    j.next();
 
-                xmlWriter.writeStartElement("path");
-                xmlWriter.writeTextElement("name", j.key());
+                    xmlWriter.writeStartElement("path");
+                    xmlWriter.writeTextElement("name", j.key());
 
 
-                /// For each point of the group
-                for(int k = 0; k < j.value()->getPathPointVector().size(); k++){
-                    xmlWriter.writeStartElement("pathpoint");
-                    xmlWriter.writeTextElement("name", j.value()->getPathPointVector().at(k)->getPoint()->getName());
-                    xmlWriter.writeTextElement("x", QString::number(j.value()->getPathPointVector().at(k)->getPoint()->getX()));
-                    xmlWriter.writeTextElement("y", QString::number(j.value()->getPathPointVector().at(k)->getPoint()->getY()));
-                    xmlWriter.writeTextElement("waittime", QString::number(j.value()->getPathPointVector().at(k)->getWaitTime()));
+                    /// For each point of the path
+                    for(int k = 0; k < j.value()->getPathPointVector().size(); k++){
+                        xmlWriter.writeStartElement("pathpoint");
+                        xmlWriter.writeTextElement("name", j.value()->getPathPointVector().at(k)->getPoint()->getName());
+                        xmlWriter.writeTextElement("x", QString::number(j.value()->getPathPointVector().at(k)->getPoint()->getX()));
+                        xmlWriter.writeTextElement("y", QString::number(j.value()->getPathPointVector().at(k)->getPoint()->getY()));
+                        xmlWriter.writeTextElement("waittime", QString::number(j.value()->getPathPointVector().at(k)->getWaitTime()));
+                        xmlWriter.writeEndElement();
+                    }
                     xmlWriter.writeEndElement();
                 }
                 xmlWriter.writeEndElement();
             }
-            xmlWriter.writeEndElement();
         }
         xmlWriter.writeEndElement();
         file.close();

@@ -14,13 +14,14 @@ import "../../Model/Path"
   */
 Frame {
     id: mainMenuViewsFrame
-    objectName: "mainMenuViewsFrame"
     visible: !(currentMenu == -1)
     width: Style.menuWidth
     padding: 0
     property Points pointModel
     property PointView tmpPointView
     property Paths pathModel
+    property Paths tmpPathModel
+    signal useTmpPathModel(bool use)
 
     /// The index of the current menu
     property int currentMenu
@@ -39,7 +40,9 @@ Frame {
     PathMenu {
         id: pathMenu
         visible: currentMenu == 1
+        tmpPathModel: mainMenuViewsFrame.tmpPathModel
         pathModel: mainMenuViewsFrame.pathModel
+        onUseTmpPathModel: mainMenuViewsFrame.useTmpPathModel(use)
         onCloseMenu: mainMenuViewsFrame.closeMenu()
     }
 

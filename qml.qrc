@@ -18,10 +18,7 @@
         <file>View/Point/PointMenuHeader.qml</file>
         <file>View/Point/PointMenuContent.qml</file>
         <file>View/Point/PointListItem.qml</file>
-        <file>View/Point/CreatePointMenuHeader.qml</file>
         <file>View/Point/CreatePointMenuContent.qml</file>
-        <file>View/Point/CreateGroupMenuHeader.qml</file>
-        <file>View/Point/CreateGroupMenuContent.qml</file>
         <file>View/Point/CreatePointGroupPopupMenu.qml</file>
         <file>View/Point/EditPointGroupPopupMenu.qml</file>
         <file>View/Point/EditPointPopupMenu.qml</file>
@@ -36,10 +33,17 @@
         <file>View/Custom/CustomComboBox.qml</file>
         <file>View/Custom/SaveButton.qml</file>
         <file>View/Custom/CancelButton.qml</file>
+        <file>View/Custom/CreateMenuHeader.qml</file>
+        <file>View/Custom/CreateGroupMenuHeader.qml</file>
+        <file>View/Custom/CreateGroupMenuContent.qml</file>
         <file>View/Map/MapMenuButton.qml</file>
         <file>Model/Path/Paths.qml</file>
         <file>View/Path/PathListItem.qml</file>
         <file>View/Path/EditPathGroupPopupMenu.qml</file>
         <file>View/Path/EditPathPopupMenu.qml</file>
+        <file>View/Path/PathMenuHeader.qml</file>
+        <file>View/Path/CreatePathGroupPopupMenu.qml</file>
+        <file>View/Path/CreatePathGroupMenuContent.qml</file>
+        <file>View/Path/CreatePathMenuContent.qml</file>
     </qresource>
 </RCC>

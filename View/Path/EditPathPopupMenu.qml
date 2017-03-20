@@ -3,18 +3,18 @@ import QtQuick.Controls 2.1
 import QtQuick.Layouts 1.3
 import "../../Helper/style.js" as Style
 import "../../Helper/helper.js" as Helper
-import "../../Model/Point"
+import "../../Model/Path"
 
 Menu {
     id: menu
     padding: 0
     width: 188
 
-    //property Points pointModel
+    property Paths pathModel
     property string myGroup
 
-    signal editPoint()
-    signal deletePoint()
+    signal editPath()
+    signal deletePath()
     signal moveTo(string newGroup)
 
     background: Rectangle {
@@ -26,11 +26,11 @@ Menu {
     }
 
     MenuItem {
-        text: qsTr("Edit Point")
+        text: qsTr("Edit Path")
         width: parent.width
         leftPadding: Style.menuItemLeftPadding
         height: Style.menuItemHeight
-        onTriggered: editPoint()
+        onTriggered: editPath()
     }
 
     Rectangle {
@@ -56,7 +56,7 @@ Menu {
         onHoveredChanged: if(visible && !moveToMenu.visible) moveToMenu.open()
 
 
-       /* Menu {
+        Menu {
             id: moveToMenu
             padding: 0
             width: 140
@@ -64,7 +64,7 @@ Menu {
 
             background: Rectangle {
                 implicitWidth: parent.width
-                implicitHeight: pointModel.count * Style.menuItemHeight + 2
+                implicitHeight: pathModel.count * Style.menuItemHeight + 2
                 color: Style.lightGreyBackground
                 border.color: Style.lightGreyBorder
                 radius: 5
@@ -75,7 +75,7 @@ Menu {
                 text: qsTr(Helper.noGroup)
                 width: parent.width
                 leftPadding: Style.menuItemLeftPadding
-                /// Disable the group in which the point already is so we can't move it in
+                /// Disable the group in which the path already is so we can't move it in
                 enabled: !(Helper.noGroup === myGroup)
                 onTriggered: moveTo(Helper.noGroup)
             }
@@ -93,7 +93,7 @@ Menu {
                 }
 
                 Repeater {
-                    model: pointModel
+                    model: pathModel
 
                     MenuItem {
                         anchors {
@@ -103,7 +103,7 @@ Menu {
                         visible: groupName !== Helper.noGroup
                         Layout.preferredHeight: visible ? Style.menuItemHeight : 0
                         leftPadding: Style.menuItemLeftPadding
-                        /// Disable the group in which the point already is so we can't move it in
+                        /// Disable the group in which the path already is so we can't move it in
                         enabled: !(groupName === myGroup)
 
                         Label {
@@ -125,7 +125,7 @@ Menu {
                     }
                 }
             }
-        }*/
+        }
     }
 
     Rectangle {
@@ -135,10 +135,10 @@ Menu {
     }
 
     MenuItem {
-        text: qsTr("Delete Point")
+        text: qsTr("Delete Path")
         width: parent.width
         leftPadding: Style.menuItemLeftPadding
         height: Style.menuItemHeight
-        onTriggered: deletePoint()
+        onTriggered: deletePath()
     }
 }

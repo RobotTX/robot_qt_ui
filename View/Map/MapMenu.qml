@@ -14,7 +14,6 @@ Page {
 
     MenuHeader {
         id: mapMenuHeader
-        objectName: "mapMenuHeader"
         txt: "Map"
         onCloseMenu: page.closeMenu()
     }

@@ -33,11 +33,34 @@ private slots:
     void deletePathPoint(const QString groupName, const QString pathName, const QString name);
     void renameGroup(const QString newName, const QString oldName);
 
+    /**
+     * @brief checkGroup
+     * @param name
+     * Check if the given name is already taken by a group and send a signal to qml
+     */
+    void checkGroup(QString name);
+
+    /**
+     * @brief moveTo
+     * @param name
+     * @param oldName
+     * @param newGroup
+     * Move a path from oldGroup to newGroup
+     */
+    void moveTo(QString name, QString oldGroup, QString newGroup);
+
 signals:
     void addGroupQml(QVariant);
     void addPathQml(QVariant, QVariant);
     void addPathPointQml(QVariant, QVariant, QVariant, QVariant, QVariant, QVariant);
     void renameGroupQml(QVariant, QVariant);
+
+    /**
+     * @brief enableGroupSaveQml
+     * @param enable
+     * Signal to enable the save button while creating/editing a group
+     */
+    void enableGroupSaveQml(QVariant enable);
 
 private:
     QPointer<Paths> paths;

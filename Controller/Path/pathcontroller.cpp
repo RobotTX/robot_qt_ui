@@ -21,9 +21,24 @@ PathController::PathController(QObject *applicationWindow, MainController* paren
         connect(this, SIGNAL(renameGroupQml(QVariant, QVariant)), pathModel, SLOT(renameGroup(QVariant, QVariant)));
         connect(pathModel, SIGNAL(deletePathSignal(QString, QString)), this, SLOT(deletePath(QString, QString)));
         connect(pathModel, SIGNAL(deleteGroupSignal(QString)), this, SLOT(deleteGroup(QString)));
-        //connect(pathModel, SIGNAL(moveToSignal(QString, QString, QString)), this, SLOT(moveTo(QString, QString, QString)));
+        connect(pathModel, SIGNAL(moveToSignal(QString, QString, QString)), this, SLOT(moveTo(QString, QString, QString)));
     } else {
         qDebug() << "PointController::PointController could not find the qml point model";
+        Q_UNREACHABLE();
+    }
+
+    QObject *createPathGroupMenu = applicationWindow->findChild<QObject*>("createPathGroupMenu");
+    if (createPathGroupMenu){
+        /// Tell the menu where we create groups that we enable the save button
+        connect(this, SIGNAL(enableGroupSaveQml(QVariant)), createPathGroupMenu, SLOT(enableSave(QVariant)));
+        /// The group name has been modified so we check if it's taken to enable or not the save button
+        connect(createPathGroupMenu, SIGNAL(checkGroup(QString)), this, SLOT(checkGroup(QString)));
+        /// Clicked on the save button to create the given group
+        connect(createPathGroupMenu, SIGNAL(createGroup(QString)), this, SLOT(addGroup(QString)));
+        /// Clicked on the save button while editing a group
+        connect(createPathGroupMenu, SIGNAL(renameGroup(QString, QString)), this, SLOT(renameGroup(QString, QString)));
+    } else {
+        qDebug() << "PointController::PointController could not find the createPointMenuFrame";
         Q_UNREACHABLE();
     }
 
@@ -85,5 +100,17 @@ void PathController::deletePathPoint(const QString groupName, const QString path
 void PathController::renameGroup(const QString newName, const QString oldName){
     paths->renameGroup(newName, oldName);
     emit renameGroupQml(QVariant::fromValue(newName), QVariant::fromValue(oldName));
+    PathXMLParser::save(this, currentPathsFile);
+}
+
+void PathController::checkGroup(QString name){
+    /// Check if the name of the group is already taken and send the result to enable or not the save button
+    emit enableGroupSaveQml(QVariant::fromValue(!paths->checkGroupName(name)));
+}
+
+void PathController::moveTo(QString name, QString oldGroup, QString newGroup){
+    qDebug() << "PathController::move" << name << "from" << oldGroup << "to" << newGroup;
+    paths->movePath(name, oldGroup, newGroup);
+
     PathXMLParser::save(this, currentPathsFile);
 }
