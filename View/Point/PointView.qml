@@ -20,11 +20,6 @@ Image {
     visible: _isVisible
     fillMode: Image.PreserveAspectFit
 
-    MouseArea {
-        anchors.fill: parent
-        onClicked: console.log("Clicked on " + _name + " in group " + _groupName + " " + _isVisible + " " + type)
-    }
-
     /// To change the source file of the pointView according to its type
     function imageSource(){
         var src = "qrc:/icons/pointView";

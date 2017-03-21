@@ -4,6 +4,7 @@ import QtQuick.Dialogs 1.2
 import QtQuick.Controls.Styles 1.4
 import QtQuick.Window 2.0
 import "../../Helper/style.js" as Style
+import "../Custom"
 
 Frame {
 
@@ -29,7 +30,7 @@ Frame {
         border.width: 1
     }
 
-    MapMenuButton {
+    NormalButton {
         id: scanButton
         txt: "Scan a Map"
         imgSrc: "qrc:/icons/scan_map"
@@ -37,7 +38,7 @@ Frame {
         anchors.topMargin: 12
     }
 
-    MapMenuButton {
+    NormalButton {
         id: saveMapButton
         txt: "Export the current Map"
         imgSrc: "qrc:/icons/save_map"
@@ -45,7 +46,7 @@ Frame {
         onClicked: saveFileDialog.open()
     }
 
-    MapMenuButton {
+    NormalButton {
         id: loadButton
         txt: "Import an existing Map"
         imgSrc: "qrc:/icons/load_map"
@@ -53,7 +54,7 @@ Frame {
         onClicked: messageDialog.open()
     }
 
-    MapMenuButton {
+    NormalButton {
         id: editButton
         txt: "Edit the Map"
         imgSrc: "qrc:/icons/edit_map"
@@ -64,14 +65,14 @@ Frame {
         }
     }
 
-    MapMenuButton {
+    NormalButton {
         id: mergeButton
         txt: "Merge Maps"
         imgSrc: "qrc:/icons/merge_map"
         anchors.top: editButton.bottom
     }
 
-    MapMenuButton {
+    NormalButton {
         id: savePositionButton
         txt: "Save the position of the map"
         imgSrc: "qrc:/icons/saveState"
@@ -79,7 +80,7 @@ Frame {
         onClicked: mapMenuFrame.savePosition()
     }
 
-    MapMenuButton {
+    NormalButton {
         id: loadPositionButton
         txt: "Reset the position of the map"
         imgSrc: "qrc:/icons/loadState"

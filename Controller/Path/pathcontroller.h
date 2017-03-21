@@ -18,6 +18,7 @@ public slots:
     void addGroup(const QString groupName, bool saveXML = true);
     void addPath(const QString groupName, const QString name, bool saveXML = true);
     void addPathPoint(const QString groupName, const QString pathName, const QString name, const double x, const double y, const int waitTime, bool saveXML = true);
+    void checkPosition(const QImage& mapImage, const int index, const double x, const double y);
 
 private:
     /**
@@ -54,6 +55,7 @@ signals:
     void addPathQml(QVariant, QVariant);
     void addPathPointQml(QVariant, QVariant, QVariant, QVariant, QVariant, QVariant);
     void renameGroupQml(QVariant, QVariant);
+    void setTmpValidPositionQml(QVariant, QVariant);
 
     /**
      * @brief enableGroupSaveQml

@@ -1,6 +1,7 @@
 #include "pathcontroller.h"
 #include <QDir>
 #include <QDebug>
+#include <QImage>
 #include "Controller/maincontroller.h"
 #include "Model/Path/pathpoint.h"
 #include "Model/Point/point.h"
@@ -23,7 +24,16 @@ PathController::PathController(QObject *applicationWindow, MainController* paren
         connect(pathModel, SIGNAL(deleteGroupSignal(QString)), this, SLOT(deleteGroup(QString)));
         connect(pathModel, SIGNAL(moveToSignal(QString, QString, QString)), this, SLOT(moveTo(QString, QString, QString)));
     } else {
-        qDebug() << "PointController::PointController could not find the qml point model";
+        qDebug() << "PathController::PathController could not find the qml point model";
+        Q_UNREACHABLE();
+    }
+
+    QObject *tmpPathModel = applicationWindow->findChild<QObject*>("tmpPathModel");
+    if (tmpPathModel){
+        connect(tmpPathModel, SIGNAL(checkTmpPosition(int, double, double)), parent, SLOT(checkTmpPosition(int, double, double)));
+        connect(this, SIGNAL(setTmpValidPositionQml(QVariant, QVariant)), tmpPathModel, SLOT(setTmpValidPosition(QVariant, QVariant)));
+    } else {
+        qDebug() << "PathController::PathController could not find the qml point model";
         Q_UNREACHABLE();
     }
 
@@ -38,7 +48,18 @@ PathController::PathController(QObject *applicationWindow, MainController* paren
         /// Clicked on the save button while editing a group
         connect(createPathGroupMenu, SIGNAL(renameGroup(QString, QString)), this, SLOT(renameGroup(QString, QString)));
     } else {
-        qDebug() << "PointController::PointController could not find the createPointMenuFrame";
+        qDebug() << "PathController::PathController could not find the createPathGroupMenu";
+        Q_UNREACHABLE();
+    }
+
+    QObject *createPathMenuFrame = applicationWindow->findChild<QObject*>("createPathMenuFrame");
+    if (createPathMenuFrame){
+        /// Clicked on the save button to create the given group
+        connect(createPathMenuFrame, SIGNAL(createPath(QString, QString)), this, SLOT(addPath(QString, QString)));
+        /// Clicked on the save button while editing a group
+        connect(createPathMenuFrame, SIGNAL(createPathPoint(QString, QString, QString, double, double, int)), this, SLOT(addPathPoint(QString, QString, QString, double, double, int)));
+    } else {
+        qDebug() << "PathController::PathController could not find the createPathMenuFrame";
         Q_UNREACHABLE();
     }
 
@@ -109,8 +130,11 @@ void PathController::checkGroup(QString name){
 }
 
 void PathController::moveTo(QString name, QString oldGroup, QString newGroup){
-    qDebug() << "PathController::move" << name << "from" << oldGroup << "to" << newGroup;
     paths->movePath(name, oldGroup, newGroup);
 
     PathXMLParser::save(this, currentPathsFile);
+}
+
+void PathController::checkPosition(const QImage& mapImage, const int index, const double x, const double y){
+    emit setTmpValidPositionQml(QVariant::fromValue(index), QVariant::fromValue(mapImage.pixelColor(x, y).red() != 255));
 }

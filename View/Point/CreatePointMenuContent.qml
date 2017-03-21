@@ -90,8 +90,8 @@ Frame {
             left: parent.left
             top: pointLabel.bottom
             right: parent.right
+            topMargin: 8
         }
-        anchors.topMargin: 8
 
         background: Rectangle {
             radius: 2
@@ -111,14 +111,20 @@ Frame {
             left: parent.left
             top: pointTextField.bottom
             right: parent.right
+            topMargin: 20
         }
-        anchors.topMargin: 20
     }
 
     CustomComboBox {
         id: groupComboBox
         model: pointModel
         displayText: oldName ? oldGroup : Helper.noGroup
+        anchors {
+            left: parent.left
+            top: groupLabel.bottom
+            right: parent.right
+            topMargin: 8
+        }
     }
 
     Label {
@@ -129,8 +135,8 @@ Frame {
             left: parent.left
             top: groupComboBox.bottom
             right: parent.right
+            topMargin: 20
         }
-        anchors.topMargin: 20
     }
 
     Label {
@@ -140,8 +146,8 @@ Frame {
             left: parent.left
             top: pointLocationLabel.bottom
             right: parent.right
+            topMargin: 8
         }
-        anchors.topMargin: 8
     }
 
     Label {
@@ -158,8 +164,8 @@ Frame {
             left: parent.left
             right: parent.horizontalCenter
             bottom: parent.bottom
+            rightMargin: 5
         }
-        anchors.rightMargin: 5
         onClicked: backToMenu()
     }
 
@@ -169,9 +175,9 @@ Frame {
             left: parent.horizontalCenter
             right: parent.right
             bottom: parent.bottom
+            leftMargin: 5
         }
         enabled: false
-        anchors.leftMargin: 5
         onClicked: {
             createPoint(pointTextField.text, groupComboBox.displayText, tmpPointView.x + tmpPointView.width / 2, tmpPointView.y + tmpPointView.height, oldName, oldGroup);
             backToMenu();

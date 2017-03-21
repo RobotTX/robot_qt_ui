@@ -43,20 +43,20 @@ Frame {
         _name: "tmpPointView"
         _groupName: "tmpGroup"
         _isVisible: false
-        originX: mapImage.width/2
-        originY: mapImage.height/2
-        x: mapImage.width/2
-        y: mapImage.height/2
+        originX: 0
+        originY: 0
+        x: 0 - width / 2
+        y: 0 - height
         signal tmpPointViewPosChanged()
 
         MouseArea {
             anchors.fill: parent
             drag {
                 target: parent
-                minimumX: 0 - parent.width / 2
-                minimumY: 0 - parent.height
-                maximumX: mapImage.width - tmpPointView.width / 2
-                maximumY: mapImage.height - tmpPointView.height
+                minimumX: 0
+                minimumY: 0
+                maximumX: mapImage.width
+                maximumY: mapImage.height
             }
             onClicked: console.log("This is the temporary point")
             onPositionChanged: {
@@ -188,9 +188,15 @@ Frame {
                 }
                 onClicked: {
                     if(tmpPointView.visible){
-                        tmpPointView.x = mouseX - tmpPointView.width / 2;
-                        tmpPointView.y = mouseY - tmpPointView.height;
+                        tmpPointView.x = mouseX;
+                        tmpPointView.y = mouseY;
                         tmpPointView.tmpPointViewPosChanged()
+                    }
+
+                    if(useTmpPathModel){
+                        tmpPathModel.addPathPoint(Math.round(mouseX) + ' ' + Math.round(mouseY),  "tmpPath", "tmpGroup", mouseX, mouseY, 0);
+                        tmpPathModel.checkTmpPosition(tmpPathModel.get(0).paths.get(0).pathPoints.count - 1, mouseX, mouseY);
+                        canvas.requestPaint();
                     }
                 }
             }
@@ -201,13 +207,26 @@ Frame {
                 delegate: Repeater {
                     model: points
                     delegate: PointView {
+                        //id: pointView
                         _name: name
                         _isVisible: isVisible
                         _groupName: groupName
-                        originX: posX - width/2
-                        originY: posY - height
-                        x: posX - width/2
+                        originX: posX
+                        originY: posY
+                        x: posX - width / 2
                         y: posY - height
+
+                        MouseArea {
+                            anchors.fill: parent
+                            onClicked: {
+                                console.log("Clicked on " + _name + " in group " + _groupName + " " + _isVisible + " " + type)
+                                if(useTmpPathModel){
+                                    tmpPathModel.addPathPoint(_name,  "tmpPath", "tmpGroup", posX, posY, 0);
+                                    tmpPathModel.checkTmpPosition(tmpPathModel.get(0).paths.get(0).pathPoints.count - 1, posX, posY);
+                                    canvas.requestPaint();
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -221,14 +240,59 @@ Frame {
                     delegate: Repeater {
                         model: pathPoints
                         delegate: PointView {
+                            id: pathPointView
                             _name: name
                             _isVisible: pathIsVisible
                             _groupName: pathName
                             type: index == 0 ? Helper.PointViewType.PATHPOINT_START : Helper.PointViewType.PATHPOINT
-                            originX: posX - width/2
-                            originY: posY - height
-                            x: posX - width/2
+                            originX: posX
+                            originY: posY
+                            x: posX - width / 2
                             y: posY - height
+
+                            MouseArea {
+                                anchors.fill: parent
+                                onClicked: {
+                                    console.log("Clicked on " + _name + " in group " + _groupName + " " + _isVisible + " " + type)
+                                    if(useTmpPathModel){
+                                        tmpPathModel.addPathPoint(_name,  "tmpPath", "tmpGroup", posX, posY, 0);
+                                        tmpPathModel.checkTmpPosition(tmpPathModel.get(0).paths.get(0).pathPoints.count - 1, posX, posY);
+                                        canvas.requestPaint();
+                                    }
+                                }
+                                /// We want to be able to move the path points on the map when creating a path
+                                drag {
+                                    target: useTmpPathModel ? parent : undefined
+                                    minimumX: 0
+                                    minimumY: 0
+                                    maximumX: mapImage.width
+                                    maximumY: mapImage.height
+                                }
+                                onPositionChanged: {
+                                    if(drag.active){
+                                        /// Need to do all of this to break the binding on the position of the image
+                                        /// as when the pointView is moved, we want to set this value in the model
+                                        /// which will update the pointView again...
+                                        var _posX = pathPointView.x;
+                                        var _posY = pathPointView.y;
+
+                                        if(Math.round(posX) + ' ' + Math.round(posY) === name)
+                                            name = Math.round(_posX) + ' ' + Math.round(_posY)
+
+                                        var _oriX = pathPointView.originX;
+                                        var _oriY = pathPointView.originY;
+                                        pathPointView.originX = _oriX;
+                                        pathPointView.originY = _oriY;
+                                        pathPointView.x = _posX - pathPointView.width/2;
+                                        pathPointView.y = _posY - pathPointView.height;
+
+                                        posX = _posX;
+                                        posY = _posY;
+                                        tmpPathModel.checkTmpPosition(index, posX, posY);
+                                        canvas.requestPaint();
+                                    }
+                                }
+                            }
                         }
                     }
                 }

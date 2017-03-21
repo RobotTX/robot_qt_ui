@@ -6,7 +6,9 @@ ListModel {
     signal deletePathSignal(string groupName, string name)
     signal deleteGroupSignal(string groupName)
     signal moveToSignal(string name, string oldGroup, string newGroup)
+    signal checkTmpPosition(int index, double x, double y)
     signal visiblePathChanged()
+    signal validPositionChanged()
 
     function addGroup(name){
         //console.log("Add group " + name);
@@ -34,13 +36,28 @@ ListModel {
         for(var i = 0; i < count; i++)
             if(get(i).groupName === groupName)
                 for(var j = 0; j < get(i).paths.count; j++)
-                    if(get(i).paths.get(j).pathName === pathName)
-                        get(i).paths.get(j).pathPoints.append({
-                             "name": name,
-                             "posX": x,
-                             "posY": y,
-                             "waitTime": waitTime
-                        });
+                    if(get(i).paths.get(j).pathName === pathName){
+                        if(get(i).paths.get(j).pathPoints.count > 0){
+                            if(get(i).paths.get(j).pathPoints.get(get(i).paths.get(j).pathPoints.count - 1).posX !== x
+                                    || get(i).paths.get(j).pathPoints.get(get(i).paths.get(j).pathPoints.count - 1).posY !== y)
+                                get(i).paths.get(j).pathPoints.append({
+                                     "name": name,
+                                     "posX": x,
+                                     "posY": y,
+                                     "waitTime": waitTime,
+                                     "validPos": false
+                                });
+                        } else {
+                            get(i).paths.get(j).pathPoints.append({
+                                 "name": name,
+                                 "posX": x,
+                                 "posY": y,
+                                 "waitTime": waitTime,
+                                 "validPos": false
+                            });
+                        }
+                    }
+
     }
 
     function deleteGroup(groupName){
@@ -98,16 +115,15 @@ ListModel {
         var pathPoints = [];
         for(var i = 0; i < count; i++){
             if(get(i).groupName === oldGroup){
-                console.log("Found the group");
                 for(var j = 0; j < get(i).paths.count; j++){
                     if(get(i).paths.get(j).pathName === name){
-                        console.log("Found the path");
                         for(var k = 0; k < get(i).paths.get(j).pathPoints.count; k++){
                             pathPoints.push({
                                 "name": get(i).paths.get(j).pathPoints.get(k).name,
                                 "posX": get(i).paths.get(j).pathPoints.get(k).posX,
                                 "posY": get(i).paths.get(j).pathPoints.get(k).posY,
-                                "waitTime": get(i).paths.get(j).pathPoints.get(k).waitTime
+                                "waitTime": get(i).paths.get(j).pathPoints.get(k).waitTime,
+                                "validPos": get(i).paths.get(j).pathPoints.get(k).validPos
                            });
                         }
 
@@ -135,8 +151,10 @@ ListModel {
         addGroup("tmpGroup");
         addPath("tmpPath", "tmpGroup");
         hideShowPathOnMap("tmpGroup", "tmpPath");
-        addPathPoint("pathPoint 1", "tmpPath", "tmpGroup", 1000, 1000, 0);
-        addPathPoint("pathPoint 2", "tmpPath", "tmpGroup", 1300, 1000, 0);
-        addPathPoint("pathPoint 3", "tmpPath", "tmpGroup", 1300, 1300, 0);
+    }
+
+    function setTmpValidPosition(index, error){
+        get(0).paths.get(0).pathPoints.setProperty(index, "validPos", !error);
+        validPositionChanged();
     }
 }

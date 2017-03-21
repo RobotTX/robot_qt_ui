@@ -43,6 +43,7 @@ ApplicationWindow {
 
         Paths {
             id: _tmpPathModel
+            objectName: "tmpPathModel"
             Component.onCompleted: {
                 clearTmpPath();
             }

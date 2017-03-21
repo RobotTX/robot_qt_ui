@@ -7,12 +7,6 @@ ComboBox {
     id: groupComboBox
     height: 25
     currentIndex: 0
-    anchors {
-        left: parent.left
-        top: groupLabel.bottom
-        right: parent.right
-    }
-    anchors.topMargin: 8
 
     /// Customisation of the indicator on the right of the combo box
     indicator: Rectangle {
