@@ -35,6 +35,7 @@ Frame {
 
     TextField {
         id: groupTextField
+        selectByMouse: true
         placeholderText: qsTr("Enter name")
         height: 28
         anchors {

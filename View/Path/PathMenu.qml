@@ -37,8 +37,8 @@ Page {
                 createGroupMenuFrame.visible = true;
             }
             onEditPath: {
-                //createPathMenuContent.oldName = name;
-                //createPathMenuContent.oldGroup = groupName;
+                createPathMenuContent.oldName = name;
+                createPathMenuContent.oldGroup = groupName;
                 createPathMenuFrame.visible = true;
             }
         }
