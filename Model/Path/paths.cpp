@@ -38,7 +38,7 @@ void Paths::renameGroup(const QString newName, const QString oldName){
 }
 
 void Paths::movePath(const QString name, const QString oldGroup, const QString newGroup){
-    qDebug() << "Paths::movePath";
+    groups.value(newGroup)->addPath(name, groups.value(oldGroup)->takePath(name));
 }
 
 bool Paths::checkGroupName(const QString name){

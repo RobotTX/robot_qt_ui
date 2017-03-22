@@ -7,7 +7,7 @@ Button {
     property string txt
     property string imgSrc
 
-    height: 45
+    height: 40
 
     anchors {
         left: parent.left
@@ -23,16 +23,20 @@ Button {
         id: icon
         source: imgSrc
         fillMode: Image.Pad // to not stretch the image
-        anchors.verticalCenter: parent.verticalCenter
-        anchors.left: parent.left
-        anchors.leftMargin: 20
+        anchors{
+            verticalCenter: parent.verticalCenter
+            left: parent.left
+            leftMargin: 20
+        }
     }
 
     Label {
         text: qsTr(txt)
-        anchors.verticalCenter: parent.verticalCenter
-        anchors.left: icon.right
-        anchors.leftMargin: 11
+        anchors{
+            verticalCenter: parent.verticalCenter
+            left: icon.right
+            leftMargin: 11
+        }
     }
 }
 

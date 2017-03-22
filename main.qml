@@ -30,6 +30,8 @@ ApplicationWindow {
     // To save the current configuration -> zoom, center (paths and points retrieved on the c++ side)
     signal mapConfig(string file_name, double zoom, double centerX, double centerY)
 
+    property bool useTmpPathModel: false
+
     Item {
         Points {
             id: _pointModel
@@ -39,6 +41,14 @@ ApplicationWindow {
         Paths {
             id: _pathModel
             objectName: "pathModel"
+        }
+
+        Paths {
+            id: _tmpPathModel
+            objectName: "tmpPathModel"
+            Component.onCompleted: {
+                clearTmpPath();
+            }
         }
     }
 
@@ -63,6 +73,7 @@ ApplicationWindow {
             pointModel: _pointModel
             tmpPointView: mapView.tmpPointView
             pathModel: _pathModel
+            tmpPathModel: _tmpPathModel
             currentMenu: layout.currentMenu
             anchors {
                 left: mainMenu.right
@@ -72,13 +83,17 @@ ApplicationWindow {
             onCloseMenu: layout.currentMenu = -1
             onSavePosition: mapView.emitPosition()
             onSaveMap: applicationWindow.emitMapConfig(file_name)
+            onUseTmpPathModel: applicationWindow.useTmpPathModel = use
         }
 
         MapView {
             id: mapView
             pointModel: _pointModel
+            pathModel: _pathModel
+            tmpPathModel: _tmpPathModel
+            useTmpPathModel: applicationWindow.useTmpPathModel
             anchors {
-                left: (mainMenuViews.visible) ? mainMenuViews.right : mainMenu.right
+                left: mainMenuViews.visible ? mainMenuViews.right : mainMenu.right
                 top: parent.top
                 right: parent.right
                 bottom: parent.bottom
@@ -97,4 +112,23 @@ ApplicationWindow {
         mapView._topView.label.text = "The current configuration of the map has been saved";
         applicationWindow.mapConfig(file_name, mapView.zoom, mapView.centerX, mapView.centerY);
     }
+    Text {
+        anchors { bottom: parent.bottom; horizontalCenter: parent.horizontalCenter; bottomMargin: 20 }
+        text: "YO"
+    }
+/*
+    Button {
+        anchors.fill:parent
+        onClicked: createPaintedItem()
+    }
+
+    function createPaintedItem(){
+        var component = Qt.createComponent("EditMapPaintedItem.qml");
+        var sprite = component.createObject(applicationWindow, {"x": 100, "y": 100});
+
+        if (sprite == null) {
+            // Error Handling
+            console.log("Error creating object");
+        }
+    }*/
 }

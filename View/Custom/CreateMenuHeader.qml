@@ -6,8 +6,10 @@ import "../Custom"
 Frame {
     id: menuHeader
     padding: 0
+    z: 2
 
     signal backToMenu()
+    property string txt
 
     height: Style.menuHeaderHeight
     anchors {
@@ -33,7 +35,7 @@ Frame {
 
     Label {
         color: Style.midGrey2
-        text: qsTr("New Point")
+        text: qsTr("New " + txt)
         anchors.verticalCenter: parent.verticalCenter
         anchors.left: closeBtn.right
         anchors.leftMargin: 11

@@ -9,7 +9,6 @@ Page {
 
     MenuHeader {
         id: robotMenuHeader
-        objectName: "robotMenuHeader"
         txt: "Robot"
         onCloseMenu: page.closeMenu()
     }

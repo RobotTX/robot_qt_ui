@@ -5,8 +5,6 @@ import "../../Model/Point"
 import "../Custom"
 
 Frame {
-    id: createGroupMenuFrame
-    objectName: "createGroupMenuFrame"
     property string oldName: ""
 
     signal backToMenu()

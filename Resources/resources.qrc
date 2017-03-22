@@ -21,12 +21,17 @@
         <file alias="big_point">icons/Img_Point.png</file>
         <file alias="addPointView">icons/Point_Add_80.png</file>
 
+        <file alias="pathPoint">icons/Point_Path_80.png</file>
+        <file alias="pathPointStart">icons/Point_PathStart_80.png</file>
+
         <file alias="settings_checked">icons/icSettings_normal.png</file>
         <file alias="settings">icons/icSettings_normal.png</file>
 
         <file alias="closeBtn">icons/closeBtn.png</file>
         <file alias="loadState">icons/Ic_LoadState.png</file>
         <file alias="saveState">icons/Ic_SaveState.png</file>
+        <file alias="valid">icons/Ic_Normal.png</file>
+        <file alias="notValid">icons/Ic_Error.png</file>
 
         <file alias="arrow">icons/Arrow.png</file>
         <file alias="fold">icons/Btn_Fold.png</file>

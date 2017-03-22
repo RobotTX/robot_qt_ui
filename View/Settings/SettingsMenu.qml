@@ -9,7 +9,6 @@ Page {
 
     MenuHeader {
         id: settingsMenuHeader
-        objectName: "settingsMenuHeader"
         txt: "Settings"
         onCloseMenu: page.closeMenu()
     }

@@ -45,6 +45,8 @@ private slots:
      */
     void loadMapConfig(QString fileName) const;
 
+    void checkTmpPosition(int index, double x, double y);
+
 private:
     QPointer<MainMenuController> mainMenuController;
     QPointer<MapController> mapController;

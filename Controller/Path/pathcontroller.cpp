@@ -1,6 +1,7 @@
 #include "pathcontroller.h"
 #include <QDir>
 #include <QDebug>
+#include <QImage>
 #include "Controller/maincontroller.h"
 #include "Model/Path/pathpoint.h"
 #include "Model/Point/point.h"
@@ -21,9 +22,44 @@ PathController::PathController(QObject *applicationWindow, MainController* paren
         connect(this, SIGNAL(renameGroupQml(QVariant, QVariant)), pathModel, SLOT(renameGroup(QVariant, QVariant)));
         connect(pathModel, SIGNAL(deletePathSignal(QString, QString)), this, SLOT(deletePath(QString, QString)));
         connect(pathModel, SIGNAL(deleteGroupSignal(QString)), this, SLOT(deleteGroup(QString)));
-        //connect(pathModel, SIGNAL(moveToSignal(QString, QString, QString)), this, SLOT(moveTo(QString, QString, QString)));
+        connect(pathModel, SIGNAL(moveToSignal(QString, QString, QString)), this, SLOT(moveTo(QString, QString, QString)));
     } else {
-        qDebug() << "PointController::PointController could not find the qml point model";
+        qDebug() << "PathController::PathController could not find the qml point model";
+        Q_UNREACHABLE();
+    }
+
+    QObject *tmpPathModel = applicationWindow->findChild<QObject*>("tmpPathModel");
+    if (tmpPathModel){
+        connect(tmpPathModel, SIGNAL(checkTmpPosition(int, double, double)), parent, SLOT(checkTmpPosition(int, double, double)));
+        connect(this, SIGNAL(setTmpValidPositionQml(QVariant, QVariant)), tmpPathModel, SLOT(setTmpValidPosition(QVariant, QVariant)));
+    } else {
+        qDebug() << "PathController::PathController could not find the qml point model";
+        Q_UNREACHABLE();
+    }
+
+    QObject *createPathGroupMenu = applicationWindow->findChild<QObject*>("createPathGroupMenu");
+    if (createPathGroupMenu){
+        /// Tell the menu where we create groups that we enable the save button
+        connect(this, SIGNAL(enableGroupSaveQml(QVariant)), createPathGroupMenu, SLOT(enableSave(QVariant)));
+        /// The group name has been modified so we check if it's taken to enable or not the save button
+        connect(createPathGroupMenu, SIGNAL(checkGroup(QString)), this, SLOT(checkGroup(QString)));
+        /// Clicked on the save button to create the given group
+        connect(createPathGroupMenu, SIGNAL(createGroup(QString)), this, SLOT(addGroup(QString)));
+        /// Clicked on the save button while editing a group
+        connect(createPathGroupMenu, SIGNAL(renameGroup(QString, QString)), this, SLOT(renameGroup(QString, QString)));
+    } else {
+        qDebug() << "PathController::PathController could not find the createPathGroupMenu";
+        Q_UNREACHABLE();
+    }
+
+    QObject *createPathMenuFrame = applicationWindow->findChild<QObject*>("createPathMenuFrame");
+    if (createPathMenuFrame){
+        /// Clicked on the save button to create the given group
+        connect(createPathMenuFrame, SIGNAL(createPath(QString, QString)), this, SLOT(addPath(QString, QString)));
+        /// Clicked on the save button while editing a group
+        connect(createPathMenuFrame, SIGNAL(createPathPoint(QString, QString, QString, double, double, int)), this, SLOT(addPathPoint(QString, QString, QString, double, double, int)));
+    } else {
+        qDebug() << "PathController::PathController could not find the createPathMenuFrame";
         Q_UNREACHABLE();
     }
 
@@ -86,4 +122,19 @@ void PathController::renameGroup(const QString newName, const QString oldName){
     paths->renameGroup(newName, oldName);
     emit renameGroupQml(QVariant::fromValue(newName), QVariant::fromValue(oldName));
     PathXMLParser::save(this, currentPathsFile);
+}
+
+void PathController::checkGroup(QString name){
+    /// Check if the name of the group is already taken and send the result to enable or not the save button
+    emit enableGroupSaveQml(QVariant::fromValue(!paths->checkGroupName(name)));
+}
+
+void PathController::moveTo(QString name, QString oldGroup, QString newGroup){
+    paths->movePath(name, oldGroup, newGroup);
+
+    PathXMLParser::save(this, currentPathsFile);
+}
+
+void PathController::checkPosition(const QImage& mapImage, const int index, const double x, const double y){
+    emit setTmpValidPositionQml(QVariant::fromValue(index), QVariant::fromValue(mapImage.pixelColor(x, y).red() != 255));
 }

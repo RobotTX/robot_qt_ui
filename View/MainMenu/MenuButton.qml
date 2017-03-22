@@ -9,7 +9,6 @@ Button {
     checkable: true
     property string imgSrc
     property string txt
-    objectName: txt + "Button"
 
     // This is to change the background color of the button when selected
     background: Rectangle {

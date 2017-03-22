@@ -123,7 +123,6 @@ Column {
             right: parent.right
         }
 
-        objectName: "pointList"
         model: points
         delegate: delegate
         focus: true
