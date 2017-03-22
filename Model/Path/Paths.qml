@@ -60,6 +60,16 @@ ListModel {
 
     }
 
+    function addTmpPathPoint(name, x, y, waitTime, validPos){
+        get(0).paths.get(0).pathPoints.append({
+             "name": name,
+             "posX": x,
+             "posY": y,
+             "waitTime": waitTime,
+             "validPos": validPos
+        });
+    }
+
     function deleteGroup(groupName){
         for(var i = 0; i < count; i++)
             if(get(i).groupName === groupName)

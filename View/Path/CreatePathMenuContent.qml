@@ -10,6 +10,7 @@ Frame {
     id: createPathMenuFrame
     objectName: "createPathMenuFrame"
     property string oldName: ""
+    property string oldGroup
     property Paths pathModel
     property Paths tmpPathModel
 
@@ -31,6 +32,7 @@ Frame {
                 tmpPathModel.visiblePathChanged();
             }
             oldName = "";
+            oldGroup = "";
             groupComboBox.currentIndex = 0;
             groupComboBox.displayText = Helper.noGroup;
         } else {
@@ -38,6 +40,28 @@ Frame {
                 tmpPathModel.clearTmpPath();
                 useTmpPathModel(true);
                 tmpPathModel.visiblePathChanged();
+
+                if(oldName !== ""){
+                    for(var i = 0; i < pathModel.count; i++){
+                        if(pathModel.get(i).groupName === oldGroup){
+                            groupComboBox.currentIndex = i;
+                            groupComboBox.displayText = oldGroup;
+                            for(var j = 0; j < pathModel.get(i).paths.count; j++){
+                                if(pathModel.get(i).paths.get(j).pathName === oldName){
+                                    for(var k = 0; k < pathModel.get(i).paths.get(j).pathPoints.count; k++){
+                                        tmpPathModel.get(0).paths.get(0).pathPoints.append({
+                                            "name": pathModel.get(i).paths.get(j).pathPoints.get(k).name,
+                                            "posX": pathModel.get(i).paths.get(j).pathPoints.get(k).posX,
+                                            "posY": pathModel.get(i).paths.get(j).pathPoints.get(k).posY,
+                                            "waitTime": pathModel.get(i).paths.get(j).pathPoints.get(k).waitTime,
+                                            "validPos": true
+                                       });
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
         pathTextField.text = oldName;
@@ -88,6 +112,7 @@ Frame {
 
         TextField {
             id: pathTextField
+            selectByMouse: true
             placeholderText: qsTr("Enter name")
             height: 28
             anchors {
@@ -152,6 +177,7 @@ Frame {
         NormalButton {
             id: addSavedPoint
             txt: "Add Saved Point"
+
             imgSrc: "qrc:/icons/add"
             anchors {
                 left: parent.left
@@ -185,10 +211,6 @@ Frame {
             top: topFrame.bottom
             right: parent.right
             bottom: bottomFrame.top
-            /*topMargin: 5
-            bottomMargin: 10
-            leftMargin: 20
-            rightMargin: 20*/
         }
         padding: 0
         background: Rectangle {
@@ -227,7 +249,7 @@ Frame {
                     }
                     width: dragArea.width; height: 90 + 4
 
-                    color: dragArea.held ? "lightsteelblue" : "transparent"
+                    color: dragArea.held ? Style.lightBlue : "transparent"
                     Behavior on color {
                         ColorAnimation {
                             duration: 100
@@ -262,13 +284,14 @@ Frame {
                         anchors {
                             top: parent.top
                             left: parent.left
-                            leftMargin: 20
+                            topMargin: 5
                         }
                     }
 
                     Label {
                         id: indexId
-                        text: index + ":"
+                        text: index + 1 + "."
+                        color: "#262626"
                         anchors {
                             left: validBtn.right
                             verticalCenter: validBtn.verticalCenter
@@ -277,18 +300,26 @@ Frame {
                         height: 20
                     }
 
-                    Label {
+                    TextField {
                         id: nameId
                         text: name
+                        selectByMouse: true
+                        color: "#262626"
+                        padding: 2
                         anchors {
                             left: indexId.right
                             verticalCenter: validBtn.verticalCenter
                             right: closeBtn.left
                             leftMargin: 6
                         }
-                        maximumLineCount: 1
-                        elide: Text.ElideRight
                         height: 20
+                        background: Rectangle {
+                            radius: 2
+                            border.color: nameId.activeFocus ? Style.lightBlue : Style.lightGreyBorder
+                            border.width: nameId.activeFocus ? 3 : 1
+                        }
+                        onFocusChanged: !focus && text === "" ? name = Math.round(posX) + ' ' + Math.round(posY) : undefined
+                        onTextChanged: name = text
                     }
 
                     SmallButton {
@@ -298,7 +329,89 @@ Frame {
                             verticalCenter: validBtn.verticalCenter
                             right: parent.right
                         }
+                        onClicked: {
+                            tmpPathModel.get(0).paths.get(0).pathPoints.remove(index);
+                            tmpPathModel.visiblePathChanged();
+                        }
                     }
+
+                    RoundCheckBox {
+                        id: humanAction
+                        text: qsTr("Human Action")
+                        checked: false
+                        anchors {
+                            left: indexId.left
+                            top: indexId.bottom
+                            topMargin: 10
+                        }
+                        onCheckedChanged: {
+                            waitTime = humanAction.checked ? -1 : parseInt(waitTextField.text);
+                            waitFor.checked = !humanAction.checked;
+                        }
+                    }
+
+                    RoundCheckBox {
+                        id: waitFor
+                        text: qsTr("Wait for")
+                        checked: true
+                        anchors {
+                            left: indexId.left
+                            top: humanAction.bottom
+                            topMargin: 11
+                        }
+                        onCheckedChanged: {
+                            humanAction.checked = !waitFor.checked
+                        }
+                    }
+
+                    TextField {
+                        id: waitTextField
+                        selectByMouse: true
+                        text: "0"
+                        height: 20
+                        width: 30
+                        padding: 2
+                        validator: IntValidator{bottom: 0; top: 999;}
+                        anchors {
+                            left: waitFor.right
+                            verticalCenter: waitFor.verticalCenter
+                        }
+                        enabled: waitFor.checked
+
+                        background: Rectangle {
+                            radius: 2
+                            border.color: waitTextField.activeFocus ? Style.lightBlue : Style.lightGreyBorder
+                            border.width: waitTextField.activeFocus ? 3 : 1
+                        }
+                        onFocusChanged: !focus && text === "" ? text = "0" : undefined
+                        onTextChanged: text === "" ? waitTime = 0 : waitTime = parseInt(text)
+                    }
+
+                    Image {
+                        id: stepper
+                        source: "qrc:/icons/stepper"
+                        fillMode: Image.Pad
+                        anchors {
+                            left: waitTextField.right
+                            verticalCenter: waitFor.verticalCenter
+                            leftMargin: 4
+                        }
+                    }
+
+                    Text {
+                        text: "Mins"
+                        //font: control.font
+                        font.pointSize: 10
+                        color: Style.greyText
+                        anchors {
+                            left: stepper.right
+                            verticalCenter: waitFor.verticalCenter
+                            leftMargin: 4
+                        }
+                        horizontalAlignment: Text.AlignHCenter
+                        verticalAlignment: Text.AlignVCenter
+                    }
+
                 }
                 DropArea {
                     anchors {
@@ -395,6 +508,8 @@ Frame {
             enabled: false
             onClicked: {
                 console.log("create " + groupComboBox.displayText + " : " + pathTextField.text);
+                if(oldName !== "")
+                    pathModel.deletePath(oldGroup, oldName);
                 createPath(groupComboBox.displayText, pathTextField.text);
                 for(var i = 0; i < tmpPathModel.get(0).paths.get(0).pathPoints.count; i++)
                     createPathPoint(groupComboBox.displayText,
@@ -414,7 +529,7 @@ Frame {
 
         error = (pathTextField.text === "");
 
-        if(!error)
+        if(!error && pathTextField.text !== oldName)
             for(var i = 0; i < pathModel.get(0).paths.count; i++)
                 error = (pathModel.get(0).paths.get(i).pathName === pathTextField.text)
 

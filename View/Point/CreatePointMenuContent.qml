@@ -83,6 +83,7 @@ Frame {
 
     TextField {
         id: pointTextField
+        selectByMouse: true
         placeholderText: qsTr("Enter name")
         text: oldName
         height: 28

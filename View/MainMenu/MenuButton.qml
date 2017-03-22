@@ -36,7 +36,6 @@ Button {
         anchors.fill: if(txt == "Settings"){parent}
     }
 
-    /// TODO ask for better images to designer (or do it ourselves) instead of using colorOverlay
     ColorOverlay {
         anchors.fill: image
         source: image

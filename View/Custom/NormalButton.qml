@@ -32,6 +32,7 @@ Button {
 
     Label {
         text: qsTr(txt)
+        color: "#262626"
         anchors{
             verticalCenter: parent.verticalCenter
             left: icon.right
