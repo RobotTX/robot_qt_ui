@@ -2,12 +2,14 @@ import QtQuick 2.7
 import QtQuick.Controls 2.1
 import "../Custom"
 import "../../Model/Path"
+import "../../Model/Point"
 
 Page {
     id: page
     anchors.fill: parent
     property Paths pathModel
     property Paths tmpPathModel
+    property Points pointModel
     signal useTmpPathModel(bool use)
     signal closeMenu()
 
@@ -59,6 +61,7 @@ Page {
             id: createPathMenuContent
             pathModel: page.pathModel
             tmpPathModel: page.tmpPathModel
+            pointModel: page.pointModel
             onUseTmpPathModel: page.useTmpPathModel(use)
             anchors {
                 left: parent.left

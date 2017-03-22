@@ -42,6 +42,7 @@ Frame {
         visible: currentMenu == 1
         tmpPathModel: mainMenuViewsFrame.tmpPathModel
         pathModel: mainMenuViewsFrame.pathModel
+        pointModel: mainMenuViewsFrame.pointModel
         onUseTmpPathModel: mainMenuViewsFrame.useTmpPathModel(use)
         onCloseMenu: mainMenuViewsFrame.closeMenu()
     }

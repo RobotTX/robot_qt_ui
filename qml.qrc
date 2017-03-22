@@ -46,5 +46,6 @@
         <file>View/Custom/CreateGroupMenuContent.qml</file>
         <file>View/Custom/NormalButton.qml</file>
         <file>View/Custom/RoundCheckBox.qml</file>
+        <file>View/Point/PointListInPopup.qml</file>
     </qresource>
 </RCC>
