@@ -7,6 +7,7 @@ import "../Map"
 import "../Settings"
 import "../../Helper/style.js" as Style
 import "../../Model/Point"
+import "../../Model/Path"
 
 /**
   * The left panel displaying the opened menu
@@ -19,6 +20,7 @@ Frame {
     padding: 0
     property Points pointModel
     property PointView tmpPointView
+    property Paths pathModel
 
     /// The index of the current menu
     property int currentMenu
@@ -37,6 +39,7 @@ Frame {
     PathMenu {
         id: pathMenu
         visible: currentMenu == 1
+        pathModel: mainMenuViewsFrame.pathModel
         onCloseMenu: mainMenuViewsFrame.closeMenu()
     }
 

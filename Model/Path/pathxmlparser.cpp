@@ -147,7 +147,7 @@ void PathXMLParser::readPaths(PathController *pathController, const QString file
                                             double x(0.0);
                                             double y(0.0);
                                             QString name;
-                                            int waitTime;
+                                            int waitTime(0);
                                             xmlReader.readNext();
                                             while(!xmlReader.atEnd()){
 

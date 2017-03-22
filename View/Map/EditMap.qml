@@ -60,6 +60,12 @@ Window {
                 }
 
                 ToolButton {
+/*
+                    background: Rectangle {
+                        anchors.fill: parent
+                        color: parent.pressed ? "red" : Style.lightGreyBackground
+                    }
+*/
                     Image {
                         source: "qrc:/icons/reset"
                         anchors.verticalCenter: parent.verticalCenter
@@ -290,14 +296,15 @@ Window {
             id: img
             smooth: false
             source: "qrc:/maps/map"
-            fillMode: Image.PreserveAspectCrop
+            fillMode: Image.PreserveAspectFit
+            x: - width / 2 + parent.width / 2
+            y: - height / 2 + parent.height / 2
 
             MouseArea {
                 anchors.fill: parent
                 onClicked: console.log("clicked the map");
                 drag.target: parent
                 onWheel: {
-                    console.log("zooming");
                     var newScale = img.scale + img.scale * wheel.angleDelta.y / 120 / 10;
                     if(newScale > Style.minZoom && newScale < Style.maxZoom)
                         img.scale = newScale;
@@ -313,6 +320,8 @@ Window {
                 anchors.bottom: parent.bottom
                 contextType: "2d"
 
+                renderStrategy: Canvas.Threaded
+
                 property var points: []
 
                 property int startLineX
@@ -325,26 +334,29 @@ Window {
                 onPaint: {
                     var ctx = getContext('2d')
                     for(var i = 0; i < items.count; i++){
-                        console.log("number items " + items.count)
+                        //console.log("number items " + items.count)
                         ctx.fillStyle = "red";
                         if(items.get(i).shape === "points"){
-                            console.log("Number of points in this item " + items.get(i).points.count);
+                            //console.log("Number of points in this item " + items.get(i).points.count);
                             for(var j = 0; j < items.get(i).points.count; j += 2){
                                 //console.log("point : " + items.get(i).points.get(j).x + " " + items.get(i).points.get(j+1).y);
                                 ctx.fillRect(items.get(i).points.get(j).x-3, items.get(i).points.get(j).y-3, 3, 3);
                             }
                         }
                         if(items.get(i).shape === "line"){
-                            console.log("Number of points in this item line " + items.get(i).points.count)
-                            console.log("About to draw a line from " + items.get(i).points.get(0).x + " " + items.get(i).points.get(0).y + " to " +
-                                        items.get(i).points.get(1).x + " " + items.get(i).points.get(1).y);
+                            //console.log("Number of points in this item line " + items.get(i).points.count)
+                            //console.log("About to draw a line from " + items.get(i).points.get(0).x + " " + items.get(i).points.get(0).y + " to " +
+                            //            items.get(i).points.get(1).x + " " + items.get(i).points.get(1).y);
                             ctx.lineTo(items.get(i).points.get(0).x, items.get(i).points.get(0).y);
                             ctx.stroke();
                         }
                     }
                 }
 
+
+
                 MouseArea {
+
                     anchors.fill: parent
                     propagateComposedEvents: true
 
@@ -355,39 +367,32 @@ Window {
                             mouse.accepted = true;
                             if(shape === "points"){
                                 console.log("Gonna draw a bunch of points")
-                                canvas.points.push(mouseX)
-                                canvas.points.push(mouseY)
-
+                                canvas.points.push(Math.round(mouseX))
+                                canvas.points.push(Math.round(mouseY))
                             }
                             if(shape === "line"){
                                 console.log("Gonna draw a line")
-                                canvas.startLineX = mouseX
-                                canvas.startLineY = mouseY
+                                canvas.startLineX = Math.round(mouseX)
+                                canvas.startLineY = Math.round(mouseY)
                             }
-                            items.addItem(shape, thickness, color, canvas.points, false)
+                            items.addItem(shape, thickness, color, canvas.points, true)
                             canvas.requestPaint()
                         }
                     }
-                    onMouseXChanged: {
+
+                    onPositionChanged: {
                         if(!selectButton.checked){
-                            canvas.points.push(mouseX)
-                            canvas.points.push(mouseY)
-                            items.addItem(shape, thickness, color, canvas.points, false)
+                            canvas.points.push(Math.round(mouseX))
+                            canvas.points.push(Math.round(mouseY))
+                            items.addItem(shape, thickness, color, canvas.points, true)
                             canvas.requestPaint()
                         }
                     }
-                    onMouseYChanged: {
-                        if(!selectButton.checked){
-                            canvas.points.push(mouseX)
-                            canvas.points.push(mouseY)
-                            items.addItem(shape, thickness, color, canvas.points, false)
-                            canvas.requestPaint()
-                        }
-                    }
+
                     onReleased: {
                         if(shape === "line")
-                            canvas.points = [canvas.startLineX, canvas.startLineY, mouseX, mouseY];
-                        items.addItem(shape, thickness, color, canvas.points, true)
+                            canvas.points = [canvas.startLineX, canvas.startLineY, Math.round(mouseX), Math.round(mouseY)];
+                        items.addItem(shape, thickness, color, canvas.points, false)
                         canvas.requestPaint()
                         canvas.points = []
                     }

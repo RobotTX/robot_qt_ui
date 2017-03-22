@@ -10,7 +10,7 @@ ListModel {
     signal moveToSignal(string name, string oldGroup, string newGroup)
 
     function addGroup(name){
-        console.log("Add group " + name);
+        //console.log("Add group " + name);
         append({
            "groupName": name,
            "isOpen": (name === Helper.noGroup) ? true : false,
@@ -19,7 +19,7 @@ ListModel {
     }
 
     function addPoint(name, isVisible, groupName, x, y){
-        console.log("Add point " + name + " to group " + groupName + " " + x + " " + y);
+        //console.log("Add point " + name + " to group " + groupName + " " + x + " " + y);
         for(var i = 0; i < count; i++){
             if(get(i).groupName === groupName){
                 get(i).points.append({
@@ -33,7 +33,7 @@ ListModel {
     }
 
     function editPoint(oldName, oldGroup, name, isVisible, groupName, x, y){
-        console.log("Add point " + name + " to group " + groupName + " " + x + " " + y);
+        //console.log("Add point " + name + " to group " + groupName + " " + x + " " + y);
         deletePoint(oldGroup, oldName);
         for(var i = 0; i < count; i++){
             if(get(i).groupName === groupName){
@@ -81,7 +81,6 @@ ListModel {
     }
 
     function renameGroup(newName, oldName){
-        console.log("renameGroup");
         for(var i = 0; i < count; i++){
             if(get(i).groupName === oldName)
                 setProperty(i, "groupName", newName);
@@ -89,8 +88,6 @@ ListModel {
     }
 
     function moveTo(name, oldGroup, newGroup){
-        console.log("movePoint");
-
         var point = {};
         for(var i = 0; i < count; i++)
             if(get(i).groupName === oldGroup)

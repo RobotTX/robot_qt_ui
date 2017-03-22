@@ -10,14 +10,8 @@ Column {
 
     property Points pointModel
     property Column column
-    signal rightButtonClicked(string name, string groupName)
-    signal deletePoint(string name, string groupName)
-    signal deleteGroup(string name)
     signal renameGroup(string name)
-    signal moveTo(string name, string oldGroup, string newGroup)
     signal editPoint(string name, string groupName)
-    signal hideShowGroup(string groupName)
-    signal hideShowPoint(string groupName, string name)
 
     Rectangle {
         id: groupItem
@@ -70,7 +64,7 @@ Column {
                 anchors.verticalCenter: parent.verticalCenter
             }
 
-            onClicked: hideShowGroup(groupName);
+            onClicked: pointModel.hideShowGroup(groupName);
         }
 
         /// The item displaying the name of the point/group
@@ -112,10 +106,10 @@ Column {
 
             onClicked: editGroupPopupMenu.open()
 
-            EditGroupPopupMenu {
+            EditPointGroupPopupMenu {
                 id: editGroupPopupMenu
                 x: rightButton.width
-                onDeleteGroup: groupListItem.deleteGroup(groupName)
+                onDeleteGroup: pointModel.deleteGroup(groupName)
                 onRenameGroup: groupListItem.renameGroup(groupName)
             }
         }
@@ -189,7 +183,7 @@ Column {
                     anchors.verticalCenter: parent.verticalCenter
                 }
 
-                onClicked: hideShowPoint(groupName, name);
+                onClicked: pointModel.hideShowPoint(groupName, name);
             }
 
             /// The item displaying the name of the point/group
@@ -198,7 +192,7 @@ Column {
                 color: Style.blackMenuTextColor
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.left: leftButton2.right
-                anchors.right: rightButton2.left
+                anchors.right: rightMenuButton.left
                 anchors.leftMargin: 5
                 anchors.rightMargin: 5
                 maximumLineCount: 1
@@ -206,7 +200,7 @@ Column {
             }
 
             Button {
-                id: rightButton2
+                id: rightMenuButton
                 anchors {
                     top: parent.top
                     bottom: parent.bottom
@@ -236,8 +230,8 @@ Column {
                     x: rightButton.width
                     pointModel: groupListItem.pointModel
                     myGroup: groupName
-                    onDeletePoint: groupListItem.deletePoint(name, groupName)
-                    onMoveTo: groupListItem.moveTo(name, groupName, newGroup)
+                    onDeletePoint: pointModel.deletePoint(groupName, name)
+                    onMoveTo: pointModel.moveTo(name, groupName, newGroup)
                     onEditPoint: groupListItem.editPoint(name, groupName)
                 }
             }

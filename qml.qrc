@@ -23,7 +23,7 @@
         <file>View/Point/CreateGroupMenuHeader.qml</file>
         <file>View/Point/CreateGroupMenuContent.qml</file>
         <file>View/Point/CreatePointGroupPopupMenu.qml</file>
-        <file>View/Point/EditGroupPopupMenu.qml</file>
+        <file>View/Point/EditPointGroupPopupMenu.qml</file>
         <file>View/Point/EditPointPopupMenu.qml</file>
         <file>View/Point/PointView.qml</file>
         <file>View/Map/MapMenu.qml</file>
@@ -39,5 +39,10 @@
         <file>View/Map/MapMenuButton.qml</file>
         <file>View/Map/EditMap.qml</file>
         <file>Model/Map/EditMapModel.qml</file>
+        <file>Model/Path/Paths.qml</file>
+        <file>View/Path/PathListItem.qml</file>
+        <file>View/Path/EditPathGroupPopupMenu.qml</file>
+        <file>View/Path/EditPathPopupMenu.qml</file>
+        <file>View/Map/EditMapPaintedItem.qml</file>
     </qresource>
 </RCC>

@@ -93,14 +93,14 @@ void PointController::addPoint(QString name, QString groupName, double x, double
 
     /// We are creating a new point
     if(oldName.isEmpty()){
-        qDebug() << "PointController::addPoint Creating a point";
+        //qDebug() << "PointController::addPoint Creating a point";
         emit addPointQml(QVariant::fromValue(name),
                          QVariant::fromValue(displayed),
                          QVariant::fromValue(groupName),
                          QVariant::fromValue(x),
                          QVariant::fromValue(y));
     } else {
-        qDebug() << "PointController::addPoint Editing a point";
+        //qDebug() << "PointController::addPoint Editing a point";
         emit editPointQml(QVariant::fromValue(oldName),
                          QVariant::fromValue(oldGroup),
                          QVariant::fromValue(name),

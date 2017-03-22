@@ -18,7 +18,8 @@ SOURCES += main.cpp \
     Model/Path/path.cpp \
     Model/Path/pathgroup.cpp \
     Model/Point/pointgroup.cpp \
-    Model/Path/pathxmlparser.cpp
+    Model/Path/pathxmlparser.cpp \
+    View/editmappainteditem.cpp
 
 RESOURCES += qml.qrc \
     Resources/resources.qrc
@@ -60,4 +61,5 @@ HEADERS += \
     Model/Path/path.h \
     Model/Path/pathgroup.h \
     Model/Point/pointgroup.h \
-    Model/Path/pathxmlparser.h
+    Model/Path/pathxmlparser.h \
+    View/editmappainteditem.h
