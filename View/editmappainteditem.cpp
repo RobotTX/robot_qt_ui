@@ -18,12 +18,12 @@ void EditMapPaintedItem::paint(QPainter *painter){
         QBrush brush;
         brush.setStyle(Qt::BrushStyle::SolidPattern);
         brush.setColor(_color);
-        painter->fillRect(QRect(50, 50, _thickness, _thickness), brush);
-        qDebug() << " drew a point ";
+        painter->fillRect(QRect(QPoint(_x-_thickness/2, _y-_thickness/2), QSize(_thickness, _thickness)), brush);
+        qDebug() << " drew a point " << _x << _y << _thickness;
         break;
     }
     case LINE:
-        painter->drawLine(QPointF(40, 40), QPointF(80, 80));
+        painter->drawLine(QPointF(403, 40), QPointF(600, 600));
         qDebug() << " drew a line" ;
         break;
     case OUTLINE:

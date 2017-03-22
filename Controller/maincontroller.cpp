@@ -23,7 +23,7 @@ MainController::MainController(QQmlApplicationEngine *engine, QObject* parent) :
 
         /// to allow the map model and the map view to communicate with each other
         /// and to ensure that they are consistent with each other
-        mapController = QPointer<MapController>(new MapController(applicationWindow, this));
+        mapController = QPointer<MapController>(new MapController(engine, applicationWindow, this));
 
         /// to allow the point model and the point view to communicate with each other
         /// and to ensure that they are consistent with each other

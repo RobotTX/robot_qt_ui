@@ -2,24 +2,23 @@ import QtQuick 2.7
 import EditMapItems 1.0
 import QtQuick.Controls 2.1
 
-Item {
+EditMapPaintedItem {
 
-    width:300
-    height:200
-
+/*
     property  int shape: 0
     property string color: "green"
-    property int thickness: 5
+    property int thickness: 10
+*/
+    id: paintedItem
 
-    EditMapPaintedItem {
-        id: paintedItem
-        objectName: "paintedItem"
-        anchors.centerIn: parent
-        width: 100
-        height: 100
+    width: 2048
+    height: 2048
+    smooth: false
+
+    function test(str){
+        console.log(parent.width + " " + parent.height + " " + x + " " + y);
     }
 
 }
-
 
 

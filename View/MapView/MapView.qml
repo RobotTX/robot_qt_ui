@@ -92,6 +92,7 @@ Frame {
 
         Image {
             id: mapImage
+            objectName: "mapImage"
             asynchronous: true
             visible: false
             source: mapSrc

@@ -12,14 +12,17 @@ import "../../Model/Map/"
 Window {
 
     id: dialog
+    objectName: "editMapWindow"
     width: 1000
     minimumWidth: 800
     height: 700
     minimumHeight: 600
 
-    property string color: "black"
-    property string shape: "points"
-    property int thickness: 1
+    property color color: "black"
+    property int shape: 0
+    property int thickness: 3
+
+    signal clicked(int shape, color color, int thickness, int x, int y)
 
     Frame {
         id: rectangleToolbar
@@ -178,7 +181,7 @@ Window {
                         anchors.horizontalCenter: parent.horizontalCenter
                     }
                     onClicked: {
-                        shape = "line"
+                        shape = 1
                         dotButton.checked = false
                         outlineButton.checked = false
                         solidButton.checked = false
@@ -194,7 +197,7 @@ Window {
                         anchors.horizontalCenter: parent.horizontalCenter
                     }
                     onClicked: {
-                        shape = "outline"
+                        shape = 2
                         lineButton.checked = false
                         dotButton.checked = false
                         solidButton.checked = false
@@ -210,7 +213,7 @@ Window {
                         anchors.horizontalCenter: parent.horizontalCenter
                     }
                     onClicked: {
-                        shape = "solid"
+                        shape = 3
                         lineButton.checked = false
                         outlineButton.checked = false
                         dotButton.checked = false
@@ -301,8 +304,12 @@ Window {
             y: - height / 2 + parent.height / 2
 
             MouseArea {
+                objectName: "editMapImage"
                 anchors.fill: parent
-                onClicked: console.log("clicked the map");
+                onClicked: {
+                    dialog.clicked(shape, color, thickness, mouseX, mouseY);
+                    console.log("clicked the map" + mouseX + " " + mouseY);
+                }
                 drag.target: parent
                 onWheel: {
                     var newScale = img.scale + img.scale * wheel.angleDelta.y / 120 / 10;
@@ -310,7 +317,7 @@ Window {
                         img.scale = newScale;
                 }
             }
-
+/*
             Canvas {
                 smooth: false
                 id: canvas
@@ -360,6 +367,8 @@ Window {
                     anchors.fill: parent
                     propagateComposedEvents: true
 
+
+
                     onPressed: {
                         if(selectButton.checked)
                             mouse.accepted = false;
@@ -397,7 +406,7 @@ Window {
                         canvas.points = []
                     }
                 }
-            }
+            }*/
         }
     }
 }

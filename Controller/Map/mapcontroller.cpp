@@ -4,8 +4,10 @@
 #include <QFileDialog>
 #include <fstream>
 #include <QAbstractListModel>
+#include "editmapcontroller.h"
+#include <QQmlApplicationEngine>
 
-MapController::MapController(QObject *applicationWindow, QObject *parent) : QObject(parent){
+MapController::MapController(QQmlApplicationEngine* engine, QObject *applicationWindow, QObject *parent) : QObject(parent){
     map = new Map(this);
 
     QObject *mapViewFrame = applicationWindow->findChild<QObject*>("mapViewFrame");
@@ -29,6 +31,8 @@ MapController::MapController(QObject *applicationWindow, QObject *parent) : QObj
     }
 
     initializeMap();
+
+    editMapController = new EditMapController(engine, applicationWindow, this);
 }
 
 void MapController::initializeMap(void){
