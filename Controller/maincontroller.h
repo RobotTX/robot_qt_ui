@@ -6,6 +6,7 @@ class MainMenuController;
 class MapController;
 class PointController;
 class PathController;
+class RobotsController;
 
 #include <QObject>
 #include <QList>
@@ -52,6 +53,7 @@ private:
     QPointer<MapController> mapController;
     QPointer<PointController> pointController;
     QPointer<PathController> pathController;
+    QPointer<RobotsController> robotsController;
 };
 
 #endif /// MAINCONTROLLER_H

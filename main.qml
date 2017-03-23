@@ -4,6 +4,7 @@ import QtQuick.Layouts 1.0
 import QtQuick.Window 2.0
 import "Model/Point"
 import "Model/Path"
+import "Model/Robot"
 import "View/MainMenu"
 import "View/MapView"
 import "View/Point"
@@ -27,6 +28,8 @@ ApplicationWindow {
     // TODO add paths
     // To save the current configuration -> zoom, center (paths and points retrieved on the c++ side)
     signal mapConfig(string file_name, double zoom, double centerX, double centerY)
+    signal shortcutAddRobot()
+    signal shortcutDeleteRobot()
 
     property bool useTmpPathModel: false
 
@@ -44,9 +47,22 @@ ApplicationWindow {
         Paths {
             id: _tmpPathModel
             objectName: "tmpPathModel"
-            Component.onCompleted: {
-                clearTmpPath();
-            }
+            Component.onCompleted: clearTmpPath();
+        }
+
+        Robots {
+            id: _robotModel
+            objectName: "robotModel"
+        }
+
+        /// TODO Just for testing, to remove later
+        Shortcut {
+            sequence: "."
+            onActivated: shortcutAddRobot()
+        }
+        Shortcut {
+            sequence: ","
+            onActivated: shortcutDeleteRobot()
         }
     }
 
