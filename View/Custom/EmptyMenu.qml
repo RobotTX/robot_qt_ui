@@ -9,7 +9,7 @@ Frame {
     anchors.fill: parent
 
     background: Rectangle {
-        color: Style.lightGreyBackground
+        color: "transparent"
     }
 
     Image {

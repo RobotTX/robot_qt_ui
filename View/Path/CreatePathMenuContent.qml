@@ -544,8 +544,9 @@ Frame {
         error = (pathTextField.text === "");
 
         if(!error && pathTextField.text !== oldName)
-            for(var i = 0; i < pathModel.get(0).paths.count; i++)
-                error = (pathModel.get(0).paths.get(i).pathName === pathTextField.text)
+            for(var i = 0; i < pathModel.count; i++)
+                for(var j = 0; j < pathModel.get(i).paths.count; i++)
+                    error = (pathModel.get(i).paths.get(j).pathName === pathTextField.text)
 
         if(!error)
             error = (tmpPathModel.get(0).paths.get(0).pathPoints.count < 1);

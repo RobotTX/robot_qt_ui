@@ -3,8 +3,6 @@ import QtQuick.Controls 2.1
 import "../../Helper/helper.js" as Helper
 
 Image {
-
-    id: image
     property string _name
     property bool _isVisible
     property string _groupName

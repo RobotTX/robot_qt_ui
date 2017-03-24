@@ -48,5 +48,7 @@
         <file>View/Custom/RoundCheckBox.qml</file>
         <file>View/Point/PointListInPopup.qml</file>
         <file>Model/Robot/Robots.qml</file>
+        <file>View/Robot/RobotView.qml</file>
+        <file>View/Robot/RobotListItem.qml</file>
     </qresource>
 </RCC>

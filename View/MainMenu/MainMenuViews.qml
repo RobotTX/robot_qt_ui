@@ -8,6 +8,7 @@ import "../Settings"
 import "../../Helper/style.js" as Style
 import "../../Model/Point"
 import "../../Model/Path"
+import "../../Model/Robot"
 
 /**
   * The left panel displaying the opened menu
@@ -21,6 +22,7 @@ Frame {
     property PointView tmpPointView
     property Paths pathModel
     property Paths tmpPathModel
+    property Robots robotModel
     signal useTmpPathModel(bool use)
 
     /// The index of the current menu
@@ -34,6 +36,9 @@ Frame {
     RobotMenu {
         id: robotMenu
         visible: currentMenu == 0
+        robotModel: mainMenuViewsFrame.robotModel
+        pathModel: mainMenuViewsFrame.pathModel
+        pointModel: mainMenuViewsFrame.pointModel
         onCloseMenu: mainMenuViewsFrame.closeMenu()
     }
 

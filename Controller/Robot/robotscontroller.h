@@ -33,8 +33,11 @@ signals:
     void setPos(QVariant ip, QVariant posX, QVariant posY, QVariant orientation);
     void setHome(QVariant ip, QVariant name, QVariant posX, QVariant posY);
     void setPath(QVariant ip, QVariant name);
+    void setPlayingPath(QVariant, QVariant);
     void addPathPoint(QVariant ip, QVariant name, QVariant posX, QVariant posY, QVariant waitTime);
     void displayRobots();
+    void setStage(QVariant, QVariant);
+    void setBattery(QVariant, QVariant);
 
 private:
     QMap<QString, QPointer<RobotController>> robots;

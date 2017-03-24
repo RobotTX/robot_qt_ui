@@ -5,8 +5,10 @@ import "../../Helper/style.js" as Style
 import "../../Helper/helper.js" as Helper
 import "../../Model/Point"
 import "../../Model/Path"
+import "../../Model/Robot"
 import "../MainMenu"
 import "../Point"
+import "../Robot"
 
 Frame {
     id: mapViewFrame
@@ -25,6 +27,8 @@ Frame {
     property Points pointModel
     property Paths pathModel
     property Paths tmpPathModel
+    property Robots robotModel
+
     property bool useTmpPathModel
 
     Connections {
@@ -295,6 +299,19 @@ Frame {
                             }
                         }
                     }
+                }
+            }
+
+
+            /// Repeater to display the robots on the map
+            Repeater {
+                model: robotModel
+                delegate: RobotView {
+                    _name: name
+                    _ip: ip
+                    _orientation: orientation
+                    x: posX - width / 2
+                    y: posY - height / 2
                 }
             }
         }
