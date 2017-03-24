@@ -135,6 +135,7 @@ float PathXMLParser::readCoordinateElement(QXmlStreamReader &xmlReader){
 }
 
 void PathXMLParser::readPaths(PathController *pathController, const QString fileName){
+    qDebug() << "Reading paths from" << fileName;
     QXmlStreamReader xmlReader;
 
     try {

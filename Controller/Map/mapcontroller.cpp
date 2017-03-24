@@ -33,6 +33,8 @@ MapController::MapController(QQmlApplicationEngine* engine, QObject *application
         Q_UNREACHABLE();
     }
 
+    connect(this, SIGNAL(requestReloadMap(QVariant)), applicationWindow, SLOT(reloadMapImage(QVariant)));
+
     initializeMap();
 
     editMapController = new EditMapController(engine, applicationWindow, this);
@@ -183,6 +185,8 @@ bool MapController::loadMapConfig(const std::string fileName) {
                     "resolution:" << resolution << "\n\t" <<
                     "map ID:" << QString::fromStdString(mapId);
         map->setMapFile(QString::fromStdString(_mapFile));
+        qDebug() << "requestloadmap" << "file:/" + QString::fromStdString(_mapFile);
+        emit requestReloadMap("file:/" + QString::fromStdString(_mapFile));
         map->setHeight(_height);
         map->setWidth(_width);
         map->setOrigin(QPointF(originX, originY));
@@ -205,6 +209,7 @@ void MapController::centerMap(double centerX, double centerY, double zoom) {
 
 void MapController::saveEditedImage(QString location){
     editMapController->getPaintedItem()->saveImage(map->getMapImage(), location);
+    emit requestReloadMap("file:/" + location);
     /*
     map->setMapFile(map->getMapFile());
     map->setMapImage(QImage(map->getMapFile()));

@@ -97,7 +97,7 @@ Frame {
         Image {
             id: mapImage
             objectName: "mapImage"
-            asynchronous: true
+            //asynchronous: false
             visible: false
             onSourceChanged: console.log("new source " + mapSrc)
             source: mapSrc

@@ -22,7 +22,7 @@ Frame {
 
     EmptyMenu {
         visible: robotModel.count === 0
-        txt: "No robot connected. Make sure the robot and computer are connected to the same WIFI network."
+        txt: "No robot connected. Make sure that the robot and your computer are connected to the same WIFI network."
         imgSrc: "qrc:/icons/big_robot"
     }
 

@@ -545,7 +545,7 @@ Frame {
 
         if(!error && pathTextField.text !== oldName)
             for(var i = 0; i < pathModel.count; i++)
-                for(var j = 0; j < pathModel.get(i).paths.count; i++)
+                for(var j = 0; j < pathModel.get(i).paths.count; j++)
                     error = (pathModel.get(i).paths.get(j).pathName === pathTextField.text)
 
         if(!error)
