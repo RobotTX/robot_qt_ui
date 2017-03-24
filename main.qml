@@ -90,6 +90,7 @@ ApplicationWindow {
             tmpPointView: mapView.tmpPointView
             pathModel: _pathModel
             tmpPathModel: _tmpPathModel
+            robotModel: _robotModel
             currentMenu: layout.currentMenu
             anchors {
                 left: mainMenu.right
@@ -107,6 +108,7 @@ ApplicationWindow {
             pointModel: _pointModel
             pathModel: _pathModel
             tmpPathModel: _tmpPathModel
+            robotModel: _robotModel
             useTmpPathModel: applicationWindow.useTmpPathModel
             anchors {
                 left: mainMenuViews.visible ? mainMenuViews.right : mainMenu.right

@@ -40,6 +40,7 @@ Frame {
         ScrollBar.vertical: ScrollBar { }
         contentHeight: contentItem.childrenRect.height
         anchors.fill: parent
+        anchors.topMargin: 10
 
         Column {
             id: columnId
