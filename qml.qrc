@@ -49,5 +49,7 @@
         <file>View/Custom/CreateGroupMenuContent.qml</file>
         <file>View/Custom/NormalButton.qml</file>
         <file>View/Custom/RoundCheckBox.qml</file>
+        <file>View/Custom/EditMapToolButton.qml</file>
+        <file>View/Custom/EditMapToolTip.qml</file>
     </qresource>
 </RCC>

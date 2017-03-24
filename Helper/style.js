@@ -29,4 +29,4 @@ var lightGreyBorder = "#d8d8d8"
 var blackMenuTextColor = "#262626"
 var stepperBegin = "#80a7f6"
 var stepperEnd = "#4c64f8"
-
+var mapGrey = "#cdcdcd"

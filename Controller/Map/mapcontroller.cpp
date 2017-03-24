@@ -2,13 +2,16 @@
 #include <QDebug>
 #include <QDir>
 #include <QFileDialog>
+#include <QQmlContext>
+#include <QQmlApplicationEngine>
 #include <fstream>
 #include <QAbstractListModel>
 #include "editmapcontroller.h"
-#include <QQmlApplicationEngine>
+#include "View/editmappainteditem.h"
 
 MapController::MapController(QQmlApplicationEngine* engine, QObject *applicationWindow, QObject *parent) : QObject(parent){
     map = new Map(this);
+    engine->rootContext()->setContextProperty("map", map);
 
     QObject *mapViewFrame = applicationWindow->findChild<QObject*>("mapViewFrame");
     if (mapViewFrame){
@@ -16,6 +19,7 @@ MapController::MapController(QQmlApplicationEngine* engine, QObject *application
         connect(this, SIGNAL(setMapPosition(QVariant, QVariant, QVariant)), mapViewFrame, SLOT(setMapPosition(QVariant ,QVariant, QVariant)));
         connect(mapViewFrame, SIGNAL(savePosition(double, double, double, QString)), this, SLOT(savePositionSlot(double, double, double, QString)));
         connect(mapViewFrame, SIGNAL(loadPosition()), this, SLOT(loadPositionSlot()));
+        connect(map, SIGNAL(mapFileChanged()), mapViewFrame, SLOT(test()));
     } else {
         qDebug() << "MapController::MapController could not find the mapViewFrame";
         Q_UNREACHABLE();
@@ -199,4 +203,9 @@ bool MapController::loadMapConfig(const std::string fileName) {
 
 void MapController::centerMap(double centerX, double centerY, double zoom) {
     emit setMapPosition(centerX, centerY, zoom);
+}
+
+void MapController::saveEditedImage(QString location){
+    editMapController->getPaintedItem()->saveImage(map->getMapImage(), location);
+    map->setMapFile(map->getMapFile());
 }

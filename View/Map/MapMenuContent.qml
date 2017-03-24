@@ -60,7 +60,6 @@ Frame {
         imgSrc: "qrc:/icons/edit_map"
         anchors.top: loadButton.bottom
         onClicked: {
-            //mapMenuFrame.visible = false;
             editMap.visible = true;
         }
     }

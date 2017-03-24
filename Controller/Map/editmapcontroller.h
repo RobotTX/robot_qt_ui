@@ -7,6 +7,7 @@
 
 class QQuickItem;
 class QQmlApplicationEngine;
+class EditMapPaintedItem;
 
 class EditMapController : public QObject {
 
@@ -15,14 +16,16 @@ class EditMapController : public QObject {
 public:
     EditMapController(QQmlApplicationEngine* engine, QObject *applicationWindow, QObject* parent);
 
+    EditMapPaintedItem* getPaintedItem() const { return paintedItem; }
+
 public slots:
-    void add_item(int shape, QColor color, int thickness, int x, int y);
+    void add_item(int shape, QColor color, int thickness, int x, int y, bool _update);
+    void clearMapItems();
 
 private:
     QQmlApplicationEngine* _engine;
+    EditMapPaintedItem* paintedItem;
 
-    QVector<QQuickItem*> items;
-    QVector<QQuickItem*> undoItems;
 };
 
 #endif /// EDITMAPCONTROLLER_H

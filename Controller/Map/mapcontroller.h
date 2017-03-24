@@ -78,6 +78,8 @@ public slots:
      */
     void savePositionSlot(double posX, double posY, double zoom, QString mapSrc);
 
+    void saveEditedImage(QString location);
+
 signals:
     /**
      * @brief setMap

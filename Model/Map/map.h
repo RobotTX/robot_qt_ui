@@ -7,6 +7,7 @@
 #include <QDateTime>
 #include <QUuid>
 #include <QVariant>
+#include <QDebug>
 
 /**
  * @brief The Map class
@@ -16,6 +17,7 @@
 class Map : public QObject {
 
     Q_OBJECT
+    Q_PROPERTY(QString _mapFile READ getMapFile WRITE setMapFile NOTIFY mapFileChanged)
 
 public:
     Map(QObject* parent);
@@ -30,7 +32,13 @@ public:
     QUuid getMapId(void) const { return mapId; }
     bool hasBeenModified(void) const { return modified; }
 
-    void setMapFile(const QString file) { mapFile = file; }
+    void setMapFile(const QString file) {
+        qDebug() << "file changed from " << mapFile << " to " << file;
+        if(mapFile.compare(file))
+            mapFile = file;
+
+        emit mapFileChanged();
+    }
     void setId(const QUuid id) { mapId = id; }
     void setDateTime(const QDateTime _dateTime) { /// if the time is not valid we use the current date
         dateTime = (_dateTime.isValid()) ? _dateTime : QDateTime::currentDateTime(); }
@@ -41,6 +49,9 @@ public:
     void setWidth(const int _width) { width = _width; }
     void setResolution(const double _resolution) { resolution = _resolution; }
     void setModified(const bool _modified) { modified = _modified; }
+
+signals:
+    void mapFileChanged();
 
 private:
     bool modified;

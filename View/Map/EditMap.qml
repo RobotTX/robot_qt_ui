@@ -1,8 +1,6 @@
 import QtQuick 2.7
 import QtQuick.Controls 2.1
 import QtQuick.Window 2.2
-import QtQuick.Dialogs 1.1
-import QtQuick.Layouts 1.3
 import QtQml.Models 2.2
 
 import "../../Helper/style.js" as Style
@@ -18,287 +16,409 @@ Window {
     height: 700
     minimumHeight: 600
 
+    property string imgSource
+
+    property var imagesArray: ["qrc:/icons/add", "qrc:/icons/grey", "qrc:/icons/black", "qrc:/icons/undo",
+                       "qrc:/icons/white", "qrc:/icons/reset", "qrc:/icons/redo", "qrc:/icons/hand"]
+
     property color color: "black"
     property int shape: 0
-    property int thickness: 3
+    property int thickness: 1
 
-    signal clicked(int shape, color color, int thickness, int x, int y)
+    signal clicked(int shape, color color, int thickness, int x, int y, bool update)
+    signal resetMap()
+    signal undo()
+    signal redo()
+    signal saveImage(string location)
+
+    // to clear the map of its items everytime we show the window
+    onVisibleChanged: dialog.resetMap()
 
     Frame {
-        id: rectangleToolbar
-        anchors.right: parent.right
-        anchors.left: parent.left
-        anchors.top: parent.top
-        height: undoButton.height
-        padding: 0
-        z: 2
+
+        id: toolbar
+
         background: Rectangle {
             anchors.fill: parent
             color: Style.lightGreyBackground
-            border.color: Style.lightGreyBorder
         }
 
-//            border.color: Style.lightGreyBorder
+        // to place the toolbar on top of the map
+        z: 2
 
-        ToolBar {
-            id: toolbar
-            anchors.verticalCenter: parent.verticalCenter
-            RowLayout {
+        height: 40
+        padding: 0
 
-                ToolButton {
-                    id: undoButton
-                    Image {
-                        source: "qrc:/icons/undo"
-                        anchors.verticalCenter: parent.verticalCenter
-                        anchors.horizontalCenter: parent.horizontalCenter
-                    }
-                }
+        anchors {
+            left: parent.left
+            top: parent.top
+            right: parent.right
+        }
 
-                ToolButton {
-                    Image {
-                        source: "qrc:/icons/redo"
-                        anchors.verticalCenter: parent.verticalCenter
-                        anchors.horizontalCenter: parent.horizontalCenter
-                    }
-                }
-
-                ToolButton {
-/*
-                    background: Rectangle {
-                        anchors.fill: parent
-                        color: parent.pressed ? "red" : Style.lightGreyBackground
-                    }
-*/
-                    Image {
-                        source: "qrc:/icons/reset"
-                        anchors.verticalCenter: parent.verticalCenter
-                        anchors.horizontalCenter: parent.horizontalCenter
-                    }
-                }
-
-                ToolButton {
-                    id: selectButton
-                    checkable: true
-                    checked: true
-                    Image {
-                        source: "qrc:/icons/hand"
-                        anchors.verticalCenter: parent.verticalCenter
-                        anchors.horizontalCenter: parent.horizontalCenter
-                    }
-                }
-
-                Rectangle {
-                    id: verticalSpaceBar1
-                    anchors.left: selectButton.right
-                    anchors.leftMargin: 10
-                    anchors.verticalCenter: parent.verticalCenter
-                    color: Style.lightGreyBorder
-                    height: selectButton.height - 20
-                    width: 2
-                }
-
-                ToolButton {
-                    id: whiteButton
-                    checkable: true
-
-                    Image {
-                        source: "qrc:/icons/white"
-                        anchors.verticalCenter: parent.verticalCenter
-                        anchors.horizontalCenter: parent.horizontalCenter
-                    }
-                    onClicked: {
-                        // we implement exclusivity manually as radio buttons are really uggly
-                        color = "white"
-                        blackButton.checked = false
-                        greyButton.checked = false
-                    }
-                }
-
-                ToolButton {
-                    id: greyButton
-                    checkable: true
-                    Image {
-                        source: "qrc:/icons/grey"
-                        anchors.verticalCenter: parent.verticalCenter
-                        anchors.horizontalCenter: parent.horizontalCenter
-                    }
-                    onClicked: {
-                        color = "grey"
-                        whiteButton.checked = false
-                        blackButton.checked = false
-                    }
-                }
-
-                ToolButton {
-                    id: blackButton
-                    checkable: true
-                    checked: true
-                    Image {
-                        source: "qrc:/icons/black"
-                        anchors.verticalCenter: parent.verticalCenter
-                        anchors.horizontalCenter: parent.horizontalCenter
-                    }
-                    onClicked: {
-                        color = "black"
-                        greyButton.checked = false
-                        whiteButton.checked = false
-                    }
-                }
-
-                Rectangle {
-                    id: verticalSpaceBar2
-                    anchors.left: blackButton.right
-                    anchors.leftMargin: 10
-                    anchors.verticalCenter: parent.verticalCenter
-                    color: Style.lightGreyBorder
-                    height: selectButton.height - 20
-                    width: 2
-                }
-
-                ToolButton {
-                    id: dotButton
-                    checkable: true
-                    checked: true
-                    Image {
-                        source: "qrc:/icons/dot"
-                        anchors.verticalCenter: parent.verticalCenter
-                        anchors.horizontalCenter: parent.horizontalCenter
-                    }
-                    onClicked: {
-                        shape = "point"
-                        lineButton.checked = false
-                        outlineButton.checked = false
-                        solidButton.checked = false
-                    }
-                }
-
-                ToolButton {
-                    id: lineButton
-                    checkable: true
-                    Image {
-                        source: "qrc:/icons/line"
-                        anchors.verticalCenter: parent.verticalCenter
-                        anchors.horizontalCenter: parent.horizontalCenter
-                    }
-                    onClicked: {
-                        shape = 1
-                        dotButton.checked = false
-                        outlineButton.checked = false
-                        solidButton.checked = false
-                    }
-                }
-
-                ToolButton {
-                    id: outlineButton
-                    checkable: true
-                    Image {
-                        source: "qrc:/icons/outline"
-                        anchors.verticalCenter: parent.verticalCenter
-                        anchors.horizontalCenter: parent.horizontalCenter
-                    }
-                    onClicked: {
-                        shape = 2
-                        lineButton.checked = false
-                        dotButton.checked = false
-                        solidButton.checked = false
-                    }
-                }
-
-                ToolButton {
-                    id: solidButton
-                    checkable: true
-                    Image {
-                        source: "qrc:/icons/solid"
-                        anchors.verticalCenter: parent.verticalCenter
-                        anchors.horizontalCenter: parent.horizontalCenter
-                    }
-                    onClicked: {
-                        shape = 3
-                        lineButton.checked = false
-                        outlineButton.checked = false
-                        dotButton.checked = false
-                    }
-                }
-
-                Rectangle {
-                    id: verticalSpaceBar3
-                    anchors.left: solidButton.right
-                    anchors.leftMargin: 10
-                    anchors.verticalCenter: parent.verticalCenter
-                    color: Style.lightGreyBorder
-                    height: selectButton.height - 20
-                    width: 2
-                }
-
-                ToolButton {
-                    Image {
-                        source: "qrc:/icons/decrease"
-                        anchors.verticalCenter: parent.verticalCenter
-                        anchors.horizontalCenter: parent.horizontalCenter
-                    }
-                }
-
-                ToolButton {
-                    Image {
-                        source: "qrc:/icons/robot"
-                        anchors.verticalCenter: parent.verticalCenter
-                        anchors.horizontalCenter: parent.horizontalCenter
-                    }
-                }
-
-                ToolButton {
-                    id: increaseButton
-                    Image {
-                        source: "qrc:/icons/add"
-                        anchors.verticalCenter: parent.verticalCenter
-                        anchors.horizontalCenter: parent.horizontalCenter
-                    }
-                }
-
-                Rectangle {
-                    id: verticalSpaceBar4
-                    anchors.left: increaseButton.right
-                    anchors.leftMargin: 10
-                    anchors.verticalCenter: parent.verticalCenter
-                    color: Style.lightGreyBorder
-                    height: selectButton.height - 20
-                    width: 2
-                }
+        EditMapToolButton {
+            id: undo
+            EditMapToolTip {
+                text: "Undo"
+            }
+            Shortcut {
+                sequence: StandardKey.Undo
+                onActivated: dialog.undo()
             }
 
-            ToolButton {
-                id: closeButton
-                anchors.right: saveButton.left
-                Image {
-                    source: "qrc:/icons/closeBtn"
-                    anchors.verticalCenter: closeButton.verticalCenter
-                    anchors.horizontalCenter: closeButton.horizontalCenter
-                }
+            src: "qrc:/icons/undo"
+
+            anchors {
+                verticalCenter: parent.verticalCenter
+                left: parent.left
+                leftMargin: 10
             }
 
-            ToolButton {
-                id: saveButton
-                // could not find better than repositionning the button manually (10 is the margin)
-                x: dialog.width - 10 - undoButton.width
-                Image {
-                    source: "qrc:/icons/save"
-                    anchors.verticalCenter: saveButton.verticalCenter
-                    anchors.horizontalCenter: saveButton.horizontalCenter
-                }
+            onClicked: dialog.undo()
+        }
+
+        EditMapToolButton {
+            id: redo
+            EditMapToolTip {
+                text: "Redo"
+            }
+            Shortcut {
+                sequence: "Ctrl+Y"
+                onActivated: dialog.redo()
+            }
+
+            src: "qrc:/icons/redo"
+            anchors {
+                verticalCenter: parent.verticalCenter
+                left: undo.right
+                leftMargin: 10
+            }
+            onClicked: dialog.redo()
+        }
+
+        EditMapToolButton {
+            id: reset
+
+            EditMapToolTip {
+                text: "Cancel all modifications"
+            }
+
+            src: "qrc:/icons/reset"
+            anchors {
+                verticalCenter: parent.verticalCenter
+                left: redo.right
+                leftMargin: 10
+            }
+            onClicked: dialog.resetMap()
+        }
+
+        EditMapToolButton {
+            id: selectButton
+
+            EditMapToolTip {
+                text: "Drag the map"
+            }
+
+            checkable: true
+
+            src: "qrc:/icons/hand"
+
+            anchors {
+                verticalCenter: parent.verticalCenter
+                left: reset.right
+                leftMargin: 10
+            }
+        }
+
+        Rectangle {
+            id: verticalSpaceBar1
+            color: Style.lightGreyBorder
+            width: 2
+            height: undo.height - 20
+            anchors {
+                verticalCenter: parent.verticalCenter
+                left: selectButton.right
+                leftMargin: 10
+            }
+        }
+
+        // to create a group of mutually exclusive buttons for all the different colors
+        ButtonGroup {
+            id: colorGroup
+        }
+
+        EditMapToolButton {
+            id: whiteButton
+            ButtonGroup.group: colorGroup
+            checkable: true
+            EditMapToolTip {
+                text: "Add a known area to the map"
+            }
+
+            src: "qrc:/icons/white"
+
+            checked: false
+
+            anchors {
+                verticalCenter: parent.verticalCenter
+                left: verticalSpaceBar1.right
+                leftMargin: 10
+            }
+
+            onClicked: {
+                // we implement exclusivity manually as radio buttons are really uggly
+                color = "white"
+            }
+        }
+
+        EditMapToolButton {
+            id: greyButton
+            checkable: true
+            ButtonGroup.group: colorGroup
+            EditMapToolTip {
+                text: "Add an unknown area to the map"
+            }
+
+            checked: false
+
+            src: "qrc:/icons/grey"
+            anchors {
+                verticalCenter: parent.verticalCenter
+                left: whiteButton.right
+                leftMargin: 10
+            }
+            onClicked: {
+                color = Style.mapGrey
+            }
+        }
+
+        EditMapToolButton {
+
+            id: blackButton
+            checkable: true
+            ButtonGroup.group: colorGroup
+            EditMapToolTip {
+                text: "Add an obstacle to the map"
+            }
+
+            checked: true
+
+            src: "qrc:/icons/black"
+
+            anchors {
+                verticalCenter: parent.verticalCenter
+                left: greyButton.right
+                leftMargin: 10
+            }
+            onClicked: {
+                color = "black"
+            }
+        }
+
+        Rectangle {
+            id: verticalSpaceBar2
+            color: Style.lightGreyBorder
+            width: 2
+            height: undo.height - 20
+            anchors {
+                verticalCenter: parent.verticalCenter
+                left: blackButton.right
+                leftMargin: 10
+            }
+        }
+
+        // to create a group of mutually exclusive buttons for all the different shapes
+        ButtonGroup {
+            id: shapeGroup
+        }
+
+        EditMapToolButton {
+            id: dotButton
+            EditMapToolTip {
+                text: "Draw a point on the map"
+            }
+
+            checkable: true
+            checked: true
+            src: "qrc:/icons/dot"
+            anchors {
+                verticalCenter: parent.verticalCenter
+                left: verticalSpaceBar2.right
+                leftMargin: 10
+            }
+            ButtonGroup.group: shapeGroup
+            onClicked: {
+                shape = 0
+            }
+        }
+
+        EditMapToolButton {
+            id: lineButton
+            EditMapToolTip {
+                text: "Draw a line on the map"
+            }
+            checkable: true
+            src: "qrc:/icons/line"
+            anchors {
+                verticalCenter: parent.verticalCenter
+                left: dotButton.right
+                leftMargin: 10
+            }
+            ButtonGroup.group: shapeGroup
+            onClicked: {
+                shape = 1
+            }
+        }
+
+        EditMapToolButton {
+            id: outlineButton
+            EditMapToolTip {
+                text: "Draw an empty rectangle on the map"
+            }
+            ButtonGroup.group: shapeGroup
+            checkable: true
+            src: "qrc:/icons/outline"
+            anchors {
+                verticalCenter: parent.verticalCenter
+                left: lineButton.right
+                leftMargin: 10
+            }
+            onClicked: {
+                shape = 2
+            }
+        }
+
+        EditMapToolButton {
+            id: solidButton
+            EditMapToolTip {
+                text: "Draw an filled rectangle on the map"
+            }
+            checkable: true
+            src: "qrc:/icons/solid"
+            ButtonGroup.group: shapeGroup
+            anchors {
+                verticalCenter: parent.verticalCenter
+                left: outlineButton.right
+                leftMargin: 10
+            }
+            onClicked: {
+                shape = 3
+            }
+        }
+
+        Rectangle {
+            id: verticalSpaceBar3
+            color: Style.lightGreyBorder
+            width: 2
+            height: solidButton.height - 20
+            anchors {
+                verticalCenter: parent.verticalCenter
+                left: solidButton.right
+                leftMargin: 10
+            }
+        }
+
+        EditMapToolButton {
+            id: decrease
+            EditMapToolTip {
+                text: "Decrease the size of your brush"
+            }
+            src: "qrc:/icons/decrease"
+            anchors {
+                verticalCenter: parent.verticalCenter
+                left: verticalSpaceBar3.right
+                leftMargin: 10
+            }
+            onClicked: {
+                if(thickness > 1)
+                    thickness--;
+            }
+        }
+
+        Image {
+
+            id: thicknessImage
+            source: imagesArray.length < thickness ? "qrc:/icons/robot" : imagesArray[thickness-1]
+            anchors {
+                verticalCenter: parent.verticalCenter
+                left: decrease.right
+                leftMargin: 10
+            }
+        }
+
+        EditMapToolButton {
+            id: increaseButton
+            EditMapToolTip {
+                text: "Increase the size of your brush"
+            }
+            src: "qrc:/icons/add"
+            anchors {
+                verticalCenter: parent.verticalCenter
+                left: thicknessImage.right
+                leftMargin: 10
+            }
+            onClicked: {
+                if(thickness < 8)
+                    thickness++;
+            }
+        }
+
+        Rectangle {
+            id: verticalSpaceBar4
+            color: Style.lightGreyBorder
+            width: 2
+            height: increaseButton.height - 20
+            anchors {
+                verticalCenter: parent.verticalCenter
+                left: increaseButton.right
+                leftMargin: 10
+            }
+        }
+
+        EditMapToolButton {
+            id: closeButton
+            EditMapToolTip {
+                text: "Close the current window: all modifications will be lost"
+            }
+            src: "qrc:/icons/closeBtn"
+            anchors {
+                verticalCenter: parent.verticalCenter
+                right: saveButton.left
+                rightMargin: 10
+            }
+            onClicked: {
+                dialog.hide();
+            }
+        }
+
+        EditMapToolButton {
+            id: saveButton
+            EditMapToolTip {
+                text: "Save your modifications to the current map and notify your robots"
+            }
+            src: "qrc:/icons/save"
+            anchors {
+                verticalCenter: parent.verticalCenter
+                right: parent.right
+                rightMargin: 10
+            }
+            onClicked: {
+                // modifies directly the source image
+                dialog.saveImage(imgSource.substring(6));
             }
         }
     }
 
     Frame {
-        anchors.top: rectangleToolbar.bottom
+        anchors.top: toolbar.bottom
         anchors.right: parent.right
         anchors.bottom: parent.bottom
         anchors.left: parent.left
         padding: 0
+
         Image {
-            id: img
+            id: image
             smooth: false
-            source: "qrc:/maps/map"
+            source: imgSource
             fillMode: Image.PreserveAspectFit
             x: - width / 2 + parent.width / 2
             y: - height / 2 + parent.height / 2
@@ -306,107 +426,29 @@ Window {
             MouseArea {
                 objectName: "editMapImage"
                 anchors.fill: parent
+                onPressed: {
+                    if(!selectButton.checked)
+                        dialog.clicked(shape, color, thickness, mouseX, mouseY, false);
+                }
+
                 onClicked: {
-                    dialog.clicked(shape, color, thickness, mouseX, mouseY);
+                    if(!selectButton.checked)
+                        dialog.clicked(shape, color, thickness, mouseX, mouseY, true);
                     console.log("clicked the map" + mouseX + " " + mouseY);
                 }
-                drag.target: parent
+                // when we drag we don't want to create a new item, we want to add more points to the last item (so that undo and redo functions erase or repaint the whole acceptedButtons
+                // group of points together
+                onPositionChanged: {
+                    if(!selectButton.checked)
+                        dialog.clicked(shape, color, thickness, mouseX, mouseY, true)
+                }
+                drag.target: selectButton.checked ? parent: undefined // gros menteur
                 onWheel: {
-                    var newScale = img.scale + img.scale * wheel.angleDelta.y / 120 / 10;
+                    var newScale = image.scale + image.scale * wheel.angleDelta.y / 120 / 10;
                     if(newScale > Style.minZoom && newScale < Style.maxZoom)
-                        img.scale = newScale;
+                        image.scale = newScale;
                 }
-            }
-/*
-            Canvas {
-                smooth: false
-                id: canvas
-                anchors.top: img.top
-                anchors.right: parent.right
-                anchors.left: parent.left
-                anchors.bottom: parent.bottom
-                contextType: "2d"
-
-                renderStrategy: Canvas.Threaded
-
-                property var points: []
-
-                property int startLineX
-                property int startLineY
-
-                EditMapModel {
-                    id: items
-                }
-
-                onPaint: {
-                    var ctx = getContext('2d')
-                    for(var i = 0; i < items.count; i++){
-                        //console.log("number items " + items.count)
-                        ctx.fillStyle = "red";
-                        if(items.get(i).shape === "points"){
-                            //console.log("Number of points in this item " + items.get(i).points.count);
-                            for(var j = 0; j < items.get(i).points.count; j += 2){
-                                //console.log("point : " + items.get(i).points.get(j).x + " " + items.get(i).points.get(j+1).y);
-                                ctx.fillRect(items.get(i).points.get(j).x-3, items.get(i).points.get(j).y-3, 3, 3);
-                            }
-                        }
-                        if(items.get(i).shape === "line"){
-                            //console.log("Number of points in this item line " + items.get(i).points.count)
-                            //console.log("About to draw a line from " + items.get(i).points.get(0).x + " " + items.get(i).points.get(0).y + " to " +
-                            //            items.get(i).points.get(1).x + " " + items.get(i).points.get(1).y);
-                            ctx.lineTo(items.get(i).points.get(0).x, items.get(i).points.get(0).y);
-                            ctx.stroke();
-                        }
-                    }
-                }
-
-
-
-                MouseArea {
-
-                    anchors.fill: parent
-                    propagateComposedEvents: true
-
-
-
-                    onPressed: {
-                        if(selectButton.checked)
-                            mouse.accepted = false;
-                        else {
-                            mouse.accepted = true;
-                            if(shape === "points"){
-                                console.log("Gonna draw a bunch of points")
-                                canvas.points.push(Math.round(mouseX))
-                                canvas.points.push(Math.round(mouseY))
-                            }
-                            if(shape === "line"){
-                                console.log("Gonna draw a line")
-                                canvas.startLineX = Math.round(mouseX)
-                                canvas.startLineY = Math.round(mouseY)
-                            }
-                            items.addItem(shape, thickness, color, canvas.points, true)
-                            canvas.requestPaint()
-                        }
-                    }
-
-                    onPositionChanged: {
-                        if(!selectButton.checked){
-                            canvas.points.push(Math.round(mouseX))
-                            canvas.points.push(Math.round(mouseY))
-                            items.addItem(shape, thickness, color, canvas.points, true)
-                            canvas.requestPaint()
-                        }
-                    }
-
-                    onReleased: {
-                        if(shape === "line")
-                            canvas.points = [canvas.startLineX, canvas.startLineY, Math.round(mouseX), Math.round(mouseY)];
-                        items.addItem(shape, thickness, color, canvas.points, false)
-                        canvas.requestPaint()
-                        canvas.points = []
-                    }
-                }
-            }*/
+            }              
         }
     }
 }

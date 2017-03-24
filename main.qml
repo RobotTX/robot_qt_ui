@@ -103,6 +103,10 @@ ApplicationWindow {
 
         EditMap {
             id: editMap
+            onVisibleChanged: {
+                console.log("just changed to " + mapView.mapSrc);
+                imgSource = mapView.mapSrc;
+            }
         }
     }
 
@@ -111,10 +115,6 @@ ApplicationWindow {
         console.log("map config");
         mapView._topView.label.text = "The current configuration of the map has been saved";
         applicationWindow.mapConfig(file_name, mapView.zoom, mapView.centerX, mapView.centerY);
-    }
-    Text {
-        anchors { bottom: parent.bottom; horizontalCenter: parent.horizontalCenter; bottomMargin: 20 }
-        text: "YO"
     }
 /*
     Button {

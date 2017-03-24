@@ -157,13 +157,13 @@ void MainController::loadMapConfig(QString fileName) const {
             /// updates the groups of paths menu using the paths that have just been imported
             pathsController->updateGroupsPaths();
             */
-        } else {
+        } else {/*
             QMessageBox warningBox;
             warningBox.setText("No configuration found for this map.");
             Q_UNREACHABLE();
             warningBox.setStandardButtons(QMessageBox::Ok);
             warningBox.setDefaultButton(QMessageBox::Ok);
-            warningBox.exec();
+            warningBox.exec();*/
         }
     }
 }

@@ -95,7 +95,7 @@ Frame {
             objectName: "mapImage"
             asynchronous: true
             visible: false
-            source: mapSrc
+            source: "file:/" + mapSrc
             fillMode: Image.PreserveAspectFit // For not stretching image
 
             smooth: false
@@ -322,5 +322,11 @@ Frame {
     function emitPosition(){
         // qml got a path of this format : file://path_understood_by_Qt, so we get rid of the first 6 characters
         mapViewFrame.savePosition(mapImage.x, mapImage.y, mapImage.scale, mapSrc.substring(6))
+    }
+
+    function test(){
+        console.log("changed file " + "file:/" + map._mapFile+ " " + mapImage.source);
+        mapImage.source = "";
+        mapImage.source = "file:/" + map._mapFile;
     }
 }

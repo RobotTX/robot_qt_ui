@@ -4,11 +4,6 @@ import QtQuick.Controls 2.1
 
 EditMapPaintedItem {
 
-/*
-    property  int shape: 0
-    property string color: "green"
-    property int thickness: 10
-*/
     id: paintedItem
 
     width: 2048
@@ -20,5 +15,3 @@ EditMapPaintedItem {
     }
 
 }
-
-
