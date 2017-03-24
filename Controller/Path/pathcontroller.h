@@ -17,6 +17,8 @@ public:
 
     QPointer<Paths> getPaths(void) const { return paths; }
 
+    void clearPaths(void);
+
 public slots:
     void addGroup(const QString groupName, bool saveXML = true);
     void addPath(const QString groupName, const QString name, bool saveXML = true);
@@ -66,6 +68,7 @@ signals:
      * Signal to enable the save button while creating/editing a group
      */
     void enableGroupSaveQml(QVariant enable);
+    void deleteAllPathsQml();
 
 private:
     QPointer<Paths> paths;

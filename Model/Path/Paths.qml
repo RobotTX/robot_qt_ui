@@ -169,4 +169,8 @@ ListModel {
         get(0).paths.get(0).pathPoints.setProperty(index, "validPos", !error);
         validPositionChanged();
     }
+
+    function deleteAllPaths(){
+        clear();
+    }
 }

@@ -54,7 +54,7 @@ Menu {
                     anchors.right: parent.right
                     anchors.rightMargin: 12
                 }
-                onHoveredChanged: if(visible && !pointMenu.visible) currentMenuIndex = index //pointMenu.open()
+                onHoveredChanged: if(visible && !pointMenu.visible) currentMenuIndex = index
 
                 Menu {
                     id: pointMenu

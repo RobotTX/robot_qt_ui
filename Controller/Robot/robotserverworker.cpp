@@ -5,7 +5,7 @@
 #include <string>
 
 
-RobotServerWorker::RobotServerWorker(const int newPort, QObject* parent): port(newPort), QTcpServer(parent){
+RobotServerWorker::RobotServerWorker(const int newPort, QObject* parent): QTcpServer(parent), port(newPort) {
     connect(this, SIGNAL(newConnection()), this, SLOT(newConnectionSlot()));
     connect(this, SIGNAL(acceptError(QAbstractSocket::SocketError)), this, SLOT(errorConnectionSlot(QAbstractSocket::SocketError)));
     startServer();

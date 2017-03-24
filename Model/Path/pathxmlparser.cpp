@@ -17,7 +17,7 @@ PathXMLParser::PathXMLParser(){
 void PathXMLParser::save(PathController *pathController, const QString fileName) {
 
     try {
-        qDebug() << "PathXMLParser::save the points in" << fileName;
+        qDebug() << "PathXMLParser::save the paths in" << fileName;
         QFile file(fileName);
         file.open(QIODevice::Truncate | QIODevice::WriteOnly);
 
@@ -31,7 +31,7 @@ void PathXMLParser::save(PathController *pathController, const QString fileName)
         xmlWriter.writeStartElement("group");
         xmlWriter.writeTextElement("name", NO_GROUP_NAME);
 
-
+        //if(pathController->getPaths()){
         QMapIterator<QString, QPointer<Path>> l(pathController->getPaths()->getGroups().value(NO_GROUP_NAME)->getPaths());
         /// For each path
         while (l.hasNext()) {

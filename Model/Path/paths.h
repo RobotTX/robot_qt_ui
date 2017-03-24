@@ -28,7 +28,7 @@ public:
      * @return if the given name of group is taken
      */
     bool checkGroupName(const QString name);
-    void clearGoups(void);
+    void clearGroups(void);
     void display(void);
 
 private:

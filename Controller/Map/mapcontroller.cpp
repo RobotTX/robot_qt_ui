@@ -11,7 +11,6 @@
 
 MapController::MapController(QQmlApplicationEngine* engine, QObject *applicationWindow, QObject *parent) : QObject(parent){
     map = new Map(this);
-    engine->rootContext()->setContextProperty("map", map);
 
     QObject *mapViewFrame = applicationWindow->findChild<QObject*>("mapViewFrame");
     if (mapViewFrame){
@@ -155,7 +154,6 @@ bool MapController::saveMapConfig(const std::string fileName, const double cente
 }
 
 void MapController::saveMapToFile(const QString fileName) const {
-    qDebug() << "MapController::saveMapToFile" << fileName;
     /// Qt has is own function to save the QImage to a PGM file
     map->getMapImage().save(fileName, "PGM");
 
@@ -207,5 +205,8 @@ void MapController::centerMap(double centerX, double centerY, double zoom) {
 
 void MapController::saveEditedImage(QString location){
     editMapController->getPaintedItem()->saveImage(map->getMapImage(), location);
+    /*
     map->setMapFile(map->getMapFile());
+    map->setMapImage(QImage(map->getMapFile()));
+    */
 }
