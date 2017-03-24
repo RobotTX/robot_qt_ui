@@ -19,6 +19,8 @@ SOURCES += main.cpp \
     Model/Path/pathgroup.cpp \
     Model/Point/pointgroup.cpp \
     Model/Path/pathxmlparser.cpp \
+    View/editmappainteditem.cpp \
+    Controller/Map/editmapcontroller.cpp \
     Controller/Robot/robotcontroller.cpp \
     Controller/Robot/robotscontroller.cpp \
     Controller/Robot/robotserverworker.cpp \
@@ -72,6 +74,8 @@ HEADERS += \
     Model/Path/pathgroup.h \
     Model/Point/pointgroup.h \
     Model/Path/pathxmlparser.h \
+    View/editmappainteditem.h \
+    Controller/Map/editmapcontroller.h \
     Controller/Robot/robotcontroller.h \
     Controller/Robot/robotscontroller.h \
     Controller/Robot/robotserverworker.h \

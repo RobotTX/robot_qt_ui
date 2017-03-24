@@ -13,6 +13,7 @@
 #include "Controller/Robot/robotscontroller.h"
 #include "Model/Point/xmlparser.h"
 
+
 MainController::MainController(QQmlApplicationEngine *engine, QObject* parent) : QObject(parent) {
 
     QList<QObject*> qmlList = engine->rootObjects();
@@ -23,7 +24,7 @@ MainController::MainController(QQmlApplicationEngine *engine, QObject* parent) :
 
         /// to allow the map model and the map view to communicate with each other
         /// and to ensure that they are consistent with each other
-        mapController = QPointer<MapController>(new MapController(applicationWindow, this));
+        mapController = QPointer<MapController>(new MapController(engine, applicationWindow, this));
 
         /// to allow the point model and the point view to communicate with each other
         /// and to ensure that they are consistent with each other
@@ -49,6 +50,8 @@ MainController::MainController(QQmlApplicationEngine *engine, QObject* parent) :
         qDebug() << "MainController::MainController We are supposed to only have 1 item, the ApplicationWindow";
         Q_UNREACHABLE();
     }
+
+
 }
 
 void MainController::checkPoint(QString name, QString oldName, double x, double y){
@@ -141,7 +144,7 @@ void MainController::loadMapConfig(QString fileName) const {
             //pointsController->loadPoints(fileNameWithoutExtension + "_points.xml");
 
             /// saves the new configuration to the current configuration file
-            XMLParser::save(pointController, QDir::currentPath() + QDir::separator() + "points.xml");
+            XMLParser::save(pointController, QDir::currentPath() + QDir::separator() + "currentPoints.xml");
             //pointsController->savePoints(QDir::currentPath() + QDir::separator() + "points.xml");
 
             /// updates the group box so that new points can be added
@@ -159,13 +162,13 @@ void MainController::loadMapConfig(QString fileName) const {
             /// updates the groups of paths menu using the paths that have just been imported
             pathsController->updateGroupsPaths();
             */
-        } else {
+        } else {/*
             QMessageBox warningBox;
             warningBox.setText("No configuration found for this map.");
             Q_UNREACHABLE();
             warningBox.setStandardButtons(QMessageBox::Ok);
             warningBox.setDefaultButton(QMessageBox::Ok);
-            warningBox.exec();
+            warningBox.exec();*/
         }
     }
 }

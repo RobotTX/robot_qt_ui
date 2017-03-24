@@ -41,11 +41,16 @@
         <file>View/Custom/CustomComboBox.qml</file>
         <file>View/Custom/SaveButton.qml</file>
         <file>View/Custom/CancelButton.qml</file>
+        <file>View/Map/EditMap.qml</file>
+        <file>Model/Map/EditMapModel.qml</file>
+        <file>View/Map/EditMapPaintedItem.qml</file>
         <file>View/Custom/CreateMenuHeader.qml</file>
         <file>View/Custom/CreateGroupMenuHeader.qml</file>
         <file>View/Custom/CreateGroupMenuContent.qml</file>
         <file>View/Custom/NormalButton.qml</file>
         <file>View/Custom/RoundCheckBox.qml</file>
+        <file>View/Custom/EditMapToolButton.qml</file>
+        <file>View/Custom/EditMapToolTip.qml</file>
         <file>View/Point/PointListInPopup.qml</file>
         <file>Model/Robot/Robots.qml</file>
         <file>View/Robot/RobotView.qml</file>

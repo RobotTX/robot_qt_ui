@@ -33,4 +33,4 @@ private:
     static void clear(const QString fileName);
 };
 
-#endif // PATHXMLPARSER_H
+#endif /// PATHXMLPARSER_H

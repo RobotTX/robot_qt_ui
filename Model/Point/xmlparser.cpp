@@ -135,7 +135,7 @@ void XMLParser::readPoints(PointController* pointController, const QString fileN
                                 double x(0.0);
                                 double y(0.0);
                                 QString name;
-                                bool displayed;
+                                bool displayed(true);
                                 xmlReader.readNext();
                                 while(!xmlReader.atEnd()){
 

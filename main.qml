@@ -7,6 +7,8 @@ import "Model/Path"
 import "Model/Robot"
 import "View/MainMenu"
 import "View/MapView"
+import "View/Map"
+import "Model/Point"
 import "View/Point"
 
 ApplicationWindow {
@@ -115,6 +117,15 @@ ApplicationWindow {
                 bottom: parent.bottom
             }
         }
+
+
+        EditMap {
+            id: editMap
+            onVisibleChanged: {
+                console.log("just changed to " + mapView.mapSrc);
+                imgSource = mapView.mapSrc;
+            }
+        }
     }
 
     function emitMapConfig(file_name){
@@ -123,4 +134,19 @@ ApplicationWindow {
         mapView._topView.label.text = "The current configuration of the map has been saved";
         applicationWindow.mapConfig(file_name, mapView.zoom, mapView.centerX, mapView.centerY);
     }
+/*
+    Button {
+        anchors.fill:parent
+        onClicked: createPaintedItem()
+    }
+
+    function createPaintedItem(){
+        var component = Qt.createComponent("EditMapPaintedItem.qml");
+        var sprite = component.createObject(applicationWindow, {"x": 100, "y": 100});
+
+        if (sprite == null) {
+            // Error Handling
+            console.log("Error creating object");
+        }
+    }*/
 }

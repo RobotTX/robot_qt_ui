@@ -152,9 +152,16 @@ signals:
      */
     void renameGroupQml(QVariant newName, QVariant oldName);
 
+    /**
+     * @brief deleteGroupQml
+     * @param groupName
+     * Tells the qml model to delete the group <groupName>
+     */
+    void deleteAllGroupsQml();
+
 private:
     QPointer<Points> points;
     QString currentPointsFile;
 };
 
-#endif // POINTCONTROLLER_H
+#endif /// POINTCONTROLLER_H

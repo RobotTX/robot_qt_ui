@@ -1,9 +1,7 @@
 #include "pathgroup.h"
 #include "Model/Path/path.h"
 
-PathGroup::PathGroup(QObject* parent) : QObject(parent), paths(QMap<QString, QPointer<Path>>()){
-
-}
+PathGroup::PathGroup(QObject* parent) : QObject(parent), paths(QMap<QString, QPointer<Path>>()) {}
 
 void PathGroup::addPath(const QString name){
     paths.insert(name, QPointer<Path>(new Path(this)));

@@ -4,13 +4,16 @@
 #include <QObject>
 #include "Model/Map/map.h"
 
+class EditMapController;
+class QQmlApplicationEngine;
+
 class MapController : public QObject {
 
     Q_OBJECT
 
 public:
 
-    MapController(QObject *applicationWindow, QObject* parent);
+    MapController(QQmlApplicationEngine* engine, QObject *applicationWindow, QObject* parent);
 
     QString getMapFile(void) const { return map->getMapFile(); }
     QImage getMapImage(void) const { return map->getMapImage(); }
@@ -75,6 +78,8 @@ public slots:
      */
     void savePositionSlot(double posX, double posY, double zoom, QString mapSrc);
 
+    void saveEditedImage(QString location);
+
 signals:
     /**
      * @brief setMap
@@ -93,6 +98,7 @@ signals:
 
 private:
     Map* map;
+    EditMapController* editMapController;
 };
 
 #endif /// MAPCONTROLLER_H

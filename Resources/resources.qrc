@@ -1,6 +1,6 @@
 <RCC>
     <qresource prefix="/maps">
-        <file>map.pgm</file>
+        <file alias="map">map.pgm</file>
     </qresource>
     <qresource prefix="/icons">
         <file alias="map_checked">icons/icMap_checked.png</file>
@@ -21,6 +21,7 @@
         <file alias="pointView">icons/Point_s_80.png</file>
         <file alias="big_point">icons/Img_Point.png</file>
         <file alias="addPointView">icons/Point_Add_80.png</file>
+
         <file alias="pathPoint">icons/Point_Path_80.png</file>
         <file alias="pathPointStart">icons/Point_PathStart_80.png</file>
 
@@ -57,6 +58,7 @@
         <file alias="hand">icons/Btn_Hands.png</file>
         <file alias="white">icons/Btn_White_s.png</file>
         <file alias="grey">icons/Btn_Grey.png</file>
+        <file alias="black">icons/Btn_Black.png</file>
         <file alias="dot">icons/Btn_Dot_s.png</file>
         <file alias="line">icons/Btn_Line.png</file>
         <file alias="outline">icons/Btn_Outline.png</file>

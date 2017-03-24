@@ -8,8 +8,11 @@ class PathPoint;
 #include <QVector>
 
 class Path : public QObject {
+
 public:
+
     Path(QObject* parent);
+
     QVector<QPointer<PathPoint>> getPathPointVector(void) const { return pathPointVector; }
 
     void addPathPoint(const QString name, const double x, const double y, const int waitTime);
@@ -19,4 +22,4 @@ private:
     QVector<QPointer<PathPoint>> pathPointVector;
 };
 
-#endif // PATH_H
+#endif /// PATH_H
