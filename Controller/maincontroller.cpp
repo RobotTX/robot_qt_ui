@@ -10,6 +10,7 @@
 #include "Controller/Map/mapcontroller.h"
 #include "Controller/Point/pointcontroller.h"
 #include "Controller/Path/pathcontroller.h"
+#include "Controller/Robot/robotscontroller.h"
 #include "Model/Point/xmlparser.h"
 
 
@@ -31,7 +32,11 @@ MainController::MainController(QQmlApplicationEngine *engine, QObject* parent) :
 
         pathController = QPointer<PathController>(new PathController(applicationWindow, this));
 
+        robotsController = QPointer<RobotsController>(new RobotsController(applicationWindow, this));
+
         connect(applicationWindow, SIGNAL(mapConfig(QString, double, double, double)), this, SLOT(saveMapConfig(QString, double, double, double)));
+        connect(applicationWindow, SIGNAL(shortcutAddRobot()), robotsController, SLOT(shortcutAddRobot()));
+        connect(applicationWindow, SIGNAL(shortcutDeleteRobot()), robotsController, SLOT(shortcutDeleteRobot()));
 
         QObject* mapMenuFrame = applicationWindow->findChild<QObject*>("mapMenuFrame");
         if(mapMenuFrame){

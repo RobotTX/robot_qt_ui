@@ -4,6 +4,8 @@ import QtQml.Models 2.2
 import "../../Helper/style.js" as Style
 import "../../Helper/helper.js" as Helper
 import "../../Model/Path"
+import "../../Model/Point"
+import "../Point"
 import "../Custom"
 
 Frame {
@@ -13,6 +15,7 @@ Frame {
     property string oldGroup
     property Paths pathModel
     property Paths tmpPathModel
+    property Points pointModel
 
     signal backToMenu()
     signal createPath(string groupName, string name)
@@ -78,6 +81,7 @@ Frame {
     }
 
 
+    // The top frame with the path name, the group and the button to add a path point from a saved point
     Frame {
         id: topFrame
         z: 2
@@ -185,6 +189,20 @@ Frame {
                 right: parent.right
                 topMargin: 5
             }
+            onClicked: pointList.open()
+        }
+
+        PointListInPopup {
+            id: pointList
+            pointModel: createPathMenuFrame.pointModel
+            x: addSavedPoint.width
+            y: addSavedPoint.y
+            onPointSelected: {
+                console.log(name + " " + posX + " " + posY)
+                tmpPathModel.addPathPoint(name,  "tmpPath", "tmpGroup", posX, posY, 0);
+                tmpPathModel.checkTmpPosition(tmpPathModel.get(0).paths.get(0).pathPoints.count - 1, posX, posY);
+                tmpPathModel.visiblePathChanged();
+            }
         }
 
         Rectangle {
@@ -203,8 +221,9 @@ Frame {
         }
     }
 
+    /// The middle frame with the list of path points
     Frame {
-        id: root
+        id: pathPointList
 
         anchors {
             left: parent.left
@@ -238,7 +257,7 @@ Frame {
                 drag.target: held ? content : undefined
                 drag.axis: Drag.YAxis
 
-                onPressAndHold: held = true
+                onPressed: held = true
                 onReleased: held = false
 
                 Rectangle {
@@ -250,11 +269,6 @@ Frame {
                     width: dragArea.width; height: 90 + 4
 
                     color: dragArea.held ? Style.lightBlue : "transparent"
-                    Behavior on color {
-                        ColorAnimation {
-                            duration: 100
-                        }
-                    }
 
                     radius: 2
                     Drag.active: dragArea.held
@@ -266,7 +280,7 @@ Frame {
 
                         ParentChange {
                             target: content
-                            parent: root
+                            parent: pathPointList
                         }
                         AnchorChanges {
                             target: content
@@ -400,7 +414,6 @@ Frame {
 
                     Text {
                         text: "Mins"
-                        //font: control.font
                         font.pointSize: 10
                         color: Style.greyText
                         anchors {
@@ -465,6 +478,7 @@ Frame {
         }
     }
 
+    /// The bottom frame with the buttons to save or cancel
     Frame {
         id: bottomFrame
         z: 2

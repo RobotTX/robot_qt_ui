@@ -20,7 +20,18 @@ SOURCES += main.cpp \
     Model/Point/pointgroup.cpp \
     Model/Path/pathxmlparser.cpp \
     View/editmappainteditem.cpp \
-    Controller/Map/editmapcontroller.cpp
+    Controller/Map/editmapcontroller.cpp \
+    Controller/Robot/robotcontroller.cpp \
+    Controller/Robot/robotscontroller.cpp \
+    Controller/Robot/robotserverworker.cpp \
+    Controller/Robot/cmdrobotworker.cpp \
+    Controller/Robot/robotpositionworker.cpp \
+    Controller/Robot/teleopworker.cpp \
+    Controller/Map/localmapworker.cpp \
+    Controller/Map/metadataworker.cpp \
+    Controller/Map/particlecloudworker.cpp \
+    Controller/Map/scanmapworker.cpp \
+    Controller/Map/sendnewmapworker.cpp
 
 RESOURCES += qml.qrc \
     Resources/resources.qrc
@@ -64,4 +75,15 @@ HEADERS += \
     Model/Point/pointgroup.h \
     Model/Path/pathxmlparser.h \
     View/editmappainteditem.h \
-    Controller/Map/editmapcontroller.h
+    Controller/Map/editmapcontroller.h \
+    Controller/Robot/robotcontroller.h \
+    Controller/Robot/robotscontroller.h \
+    Controller/Robot/robotserverworker.h \
+    Controller/Robot/cmdrobotworker.h \
+    Controller/Robot/robotpositionworker.h \
+    Controller/Robot/teleopworker.h \
+    Controller/Map/localmapworker.h \
+    Controller/Map/metadataworker.h \
+    Controller/Map/particlecloudworker.h \
+    Controller/Map/scanmapworker.h \
+    Controller/Map/sendnewmapworker.h

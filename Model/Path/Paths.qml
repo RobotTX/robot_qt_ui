@@ -75,6 +75,7 @@ ListModel {
             if(get(i).groupName === groupName)
                 remove(i);
         deleteGroupSignal(groupName);
+        visiblePathChanged();
     }
 
     function deletePath(groupName, name){
@@ -85,6 +86,7 @@ ListModel {
                         get(i).paths.remove(j);
 
         deletePathSignal(groupName, name);
+        visiblePathChanged();
     }
 
     function hideShowGroup(groupName){

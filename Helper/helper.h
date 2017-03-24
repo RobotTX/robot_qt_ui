@@ -9,6 +9,16 @@
 #define TESTING false
 #define NO_GROUP_NAME "No Group"
 
+#define PORT_ROBOT_UPDATE 6000
+#define PORT_MAP_METADATA 4000
+#define PORT_ROBOT_POS 4001
+#define PORT_MAP 4002
+#define PORT_CMD 5600
+#define PORT_NEW_MAP 5601
+#define PORT_TELEOP 5602
+#define PORT_LOCAL_MAP 5605
+#define PORT_PARTICLE_CLOUD 4005
+
 namespace Helper {
 
     namespace Convert {
