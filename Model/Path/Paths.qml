@@ -11,7 +11,7 @@ ListModel {
     signal validPositionChanged()
 
     function addGroup(name){
-        //console.log("Add group " + name);
+        console.log("Add group " + name);
         append({
            "groupName": name,
            "groupIsOpen": (name === Helper.noGroup) ? true : false,
@@ -20,7 +20,7 @@ ListModel {
     }
 
     function addPath(name, groupName){
-        //console.log("Add path " + name + " to group " + groupName);
+        console.log("Add path " + name + " to group " + groupName);
         for(var i = 0; i < count; i++)
             if(get(i).groupName === groupName)
                 get(i).paths.append({
@@ -168,5 +168,9 @@ ListModel {
     function setTmpValidPosition(index, error){
         get(0).paths.get(0).pathPoints.setProperty(index, "validPos", !error);
         validPositionChanged();
+    }
+
+    function deleteAllPaths(){
+        clear();
     }
 }

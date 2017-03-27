@@ -116,8 +116,8 @@ ApplicationWindow {
                 right: parent.right
                 bottom: parent.bottom
             }
-        }
 
+        }
 
         EditMap {
             id: editMap
@@ -131,22 +131,14 @@ ApplicationWindow {
     function emitMapConfig(file_name){
         console.log(mapView.pointModel.count + " " + mapView.scale + " " + mapView.centerX + " " + mapView.centerY);
         console.log("map config");
-        mapView._topView.label.text = "The current configuration of the map has been saved";
+        mapView.topView.label.text = "The current configuration of the map has been saved";
         applicationWindow.mapConfig(file_name, mapView.zoom, mapView.centerX, mapView.centerY);
     }
-/*
-    Button {
-        anchors.fill:parent
-        onClicked: createPaintedItem()
+
+    function reloadMapImage(file_name){
+        // little trick as the binding property does not allow the map to be reloaded unless the filename changes
+        console.log("updating");
+        mapView.mapSrc = "qrc:/icons/hand";
+        mapView.mapSrc = file_name;
     }
-
-    function createPaintedItem(){
-        var component = Qt.createComponent("EditMapPaintedItem.qml");
-        var sprite = component.createObject(applicationWindow, {"x": 100, "y": 100});
-
-        if (sprite == null) {
-            // Error Handling
-            console.log("Error creating object");
-        }
-    }*/
 }

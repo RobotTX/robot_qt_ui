@@ -24,7 +24,6 @@ EditMapController::EditMapController(QQmlApplicationEngine* engine, QObject *app
         connect(editMapWindow, SIGNAL(resetMap()), this, SLOT(clearMapItems()));
         connect(editMapWindow, SIGNAL(undo()), paintedItem, SLOT(undo()));
         connect(editMapWindow, SIGNAL(redo()), paintedItem, SLOT(redo()));
-
         connect(editMapWindow, SIGNAL(saveImage(QString)), parent, SLOT(saveEditedImage(QString)));
 
     } else {

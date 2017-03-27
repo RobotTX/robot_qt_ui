@@ -15,8 +15,7 @@ Button {
     }
 
     background: Rectangle {
-        // to change the color of the button when pressed
-        color: pressed ? Style.selectedItemColor : "transparent"
+        color: hovered ? Style.lightBlue : "transparent"
     }
 
     Image {

@@ -97,11 +97,13 @@ Frame {
         Image {
             id: mapImage
             objectName: "mapImage"
-            asynchronous: true
+            //asynchronous: false
             visible: false
-            source: "file:/" + mapSrc
+            onSourceChanged: console.log("new source " + mapSrc)
+            source: mapSrc
             fillMode: Image.PreserveAspectFit // For not stretching image
-
+            // because the map could change (through the edit map function) it is not useful to cache it
+            cache: false
             smooth: false
 
             /// Canvas to display the paths dotted line on the map

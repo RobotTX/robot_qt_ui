@@ -45,8 +45,9 @@ bool Paths::checkGroupName(const QString name){
     return groups.find(Helper::formatName(name)) != groups.end();
 }
 
-void Paths::clearGoups(void){
+void Paths::clearGroups(void){
     groups.clear();
+    addGroup(NO_GROUP_NAME);
 }
 
 void Paths::display(void){

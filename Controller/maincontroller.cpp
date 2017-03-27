@@ -12,6 +12,7 @@
 #include "Controller/Path/pathcontroller.h"
 #include "Controller/Robot/robotscontroller.h"
 #include "Model/Point/xmlparser.h"
+#include "Model/Path/pathxmlparser.h"
 
 
 MainController::MainController(QQmlApplicationEngine *engine, QObject* parent) : QObject(parent) {
@@ -32,7 +33,7 @@ MainController::MainController(QQmlApplicationEngine *engine, QObject* parent) :
 
         pathController = QPointer<PathController>(new PathController(applicationWindow, this));
 
-        robotsController = QPointer<RobotsController>(new RobotsController(applicationWindow, this));
+        //robotsController = QPointer<RobotsController>(new RobotsController(applicationWindow, this));
 
         connect(applicationWindow, SIGNAL(mapConfig(QString, double, double, double)), this, SLOT(saveMapConfig(QString, double, double, double)));
         connect(applicationWindow, SIGNAL(shortcutAddRobot()), robotsController, SLOT(shortcutAddRobot()));
@@ -67,7 +68,6 @@ void MainController::checkTmpPosition(int index, double x, double y){
 void MainController::saveMapConfig(QString fileName, double zoom, double centerX, double centerY) const {
     qDebug() << "MapController::saveMapConfig called with" << fileName << zoom << centerX << centerY;
 
-
     if(fileName.lastIndexOf(".pgm", fileName.length()-4) != -1){
         qDebug() << "filename" << fileName;
         fileName = fileName.mid(0, fileName.length()-4);
@@ -85,7 +85,7 @@ void MainController::saveMapConfig(QString fileName, double zoom, double centerX
 
     mapController->saveMapConfig(filePath.toStdString(), centerX, centerY, zoom);
 
-    /// saves the new configuration to the map configuration file
+    /// saves the current points to the points file associated with the new configuration
     XMLParser::save(pointController, QDir::currentPath() + QDir::separator() + "mapConfigs" + QDir::separator() + mapFileInfo.fileName() + "_points.xml");
 
     /// saves the new configuration to the current configuration file
@@ -93,14 +93,13 @@ void MainController::saveMapConfig(QString fileName, double zoom, double centerX
 
     /// saves the map
     mapController->saveMapToFile(QDir::currentPath() + QDir::separator() + "mapConfigs" + QDir::separator() + mapFileInfo.fileName() + ".pgm");
+
+    /// saves the current points to the points file associated with the new configuration
+    PathXMLParser::save(pathController, QDir::currentPath() + QDir::separator() + "mapConfigs" + QDir::separator() + mapFileInfo.fileName() + "_paths.xml");
+
+    /// saves the new configuration to the current configuration file
+    PathXMLParser::save(pathController, QDir::currentPath() + QDir::separator() + "currentPaths.xml");
 /*
-    const QString pathsFile = fileName + "_paths.dat";
-
-    /// saves the current configuration for the paths (this configuration will be associated to the map
-    /// when you load the map in the future
-
-    pathsController->serializePaths(pathsFile);
-
     // TODO add this when possible
     for(int i = 0; i < robotsController->getRobots()->getRobotsVector().size(); i++)
         robotsController->getRobots()->getRobotsVector().at(i)->getRobot()->sendNewMap(mapController->getMap());
@@ -129,6 +128,8 @@ void MainController::loadMapConfig(QString fileName) const {
             // TODO need some kind of equivalent
             pointController->clearPoints();
 
+            pathController->clearPaths();
+
 /*
             clearNewMap();
 
@@ -141,27 +142,16 @@ void MainController::loadMapConfig(QString fileName) const {
             /// imports points associated to the map and save them in the current file
             qDebug() << " reading points from" << QDir::currentPath() + QDir::separator() +  "mapConfigs" + QDir::separator() + mapFileInfo.fileName() + "_points.xml";
             XMLParser::readPoints(pointController, QDir::currentPath() + QDir::separator() +  "mapConfigs" + QDir::separator() + mapFileInfo.fileName() + "_points.xml");
-            //pointsController->loadPoints(fileNameWithoutExtension + "_points.xml");
 
             /// saves the new configuration to the current configuration file
             XMLParser::save(pointController, QDir::currentPath() + QDir::separator() + "currentPoints.xml");
-            //pointsController->savePoints(QDir::currentPath() + QDir::separator() + "points.xml");
-
-            /// updates the group box so that new points can be added
-            //pointsController->getCreatePointWidget()->updateGroupBox(pointsController->getPoints());
 
             // TODO put this back when paths are implemented
-            /*
-
-            /// imports paths associated to the map and save them in the current file
-            pathsController->deserializePaths(fileNameWithoutExtension + "_paths.dat");
+            PathXMLParser::readPaths(pathController, QDir::currentPath() + QDir::separator() +  "mapConfigs" + QDir::separator() + mapFileInfo.fileName() + "_paths.xml");
 
             /// saves the imported paths in the current paths file
-            pathsController->serializePaths(QDir::currentPath() + QDir::separator() + "paths.dat");
+            PathXMLParser::save(pathController, QDir::currentPath() + QDir::separator() + "currentPaths.xml");
 
-            /// updates the groups of paths menu using the paths that have just been imported
-            pathsController->updateGroupsPaths();
-            */
         } else {/*
             QMessageBox warningBox;
             warningBox.setText("No configuration found for this map.");

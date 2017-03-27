@@ -23,6 +23,7 @@ PathController::PathController(QObject *applicationWindow, MainController* paren
         connect(pathModel, SIGNAL(deletePathSignal(QString, QString)), this, SLOT(deletePath(QString, QString)));
         connect(pathModel, SIGNAL(deleteGroupSignal(QString)), this, SLOT(deleteGroup(QString)));
         connect(pathModel, SIGNAL(moveToSignal(QString, QString, QString)), this, SLOT(moveTo(QString, QString, QString)));
+        connect(this, SIGNAL(deleteAllPathsQml()), pathModel, SLOT(deleteAllPaths()));
     } else {
         qDebug() << "PathController::PathController could not find the qml point model";
         Q_UNREACHABLE();
@@ -137,4 +138,10 @@ void PathController::moveTo(QString name, QString oldGroup, QString newGroup){
 
 void PathController::checkPosition(const QImage& mapImage, const int index, const double x, const double y){
     emit setTmpValidPositionQml(QVariant::fromValue(index), QVariant::fromValue(mapImage.pixelColor(x, y).red() != 255));
+}
+
+
+void PathController::clearPaths(){
+    paths->clearGroups();
+    emit deleteAllPathsQml();
 }

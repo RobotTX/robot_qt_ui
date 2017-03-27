@@ -95,6 +95,7 @@ signals:
      * Notifies qml to center the map on posX, posY with a zoom coefficient of <zoom>
      */
     void setMapPosition(QVariant posX, QVariant posY, QVariant zoom);
+    void requestReloadMap(QVariant location);
 
 private:
     Map* map;
