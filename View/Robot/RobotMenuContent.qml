@@ -12,13 +12,13 @@ Frame {
     property Robots robotModel
     property Points pointModel
     property Paths pathModel
+
     background: Rectangle {
         color: Style.lightGreyBackground
         border.color: Style.lightGreyBorder
         border.width: 1
     }
     padding: 0
-
 
     EmptyMenu {
         visible: robotModel.count === 0
@@ -31,6 +31,7 @@ Frame {
         RobotListItem {
             pointModel: robotMenuFrame.pointModel
             pathModel: robotMenuFrame.pathModel
+            robotModel: robotMenuFrame.robotModel
             width: flick.width
         }
     }

@@ -11,8 +11,15 @@ Page {
     property Paths tmpPathModel
     property Points pointModel
     signal useTmpPathModel(bool use)
+    signal useRobotPathModel(bool use)
     signal closeMenu()
 
+    onVisibleChanged: {
+        if(visible){
+            useRobotPathModel(false);
+            pathModel.visiblePathChanged();
+        }
+    }
 
     Frame {
         id: pathMenuFrame

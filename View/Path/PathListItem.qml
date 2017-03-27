@@ -183,11 +183,14 @@ Column {
                 Label {
                     text: qsTr(pathName)
                     color: Style.blackMenuTextColor
-                    anchors.verticalCenter: parent.verticalCenter
-                    anchors.left: leftButton2.right
-                    anchors.right: rightOpenPath.left
-                    anchors.leftMargin: 5
-                    anchors.rightMargin: 5
+                    anchors {
+                        verticalCenter: parent.verticalCenter
+                        left: leftButton2.right
+                        right: rightOpenPath.left
+                        leftMargin: 5
+                        rightMargin: 5
+                    }
+
                     maximumLineCount: 1
                     elide: Text.ElideRight
                 }

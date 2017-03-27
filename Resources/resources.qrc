@@ -11,6 +11,11 @@
         <file alias="robot">icons/icRobot_normal.png</file>
         <file alias="big_robot">icons/Img_Robot.png</file>
         <file alias="robotView">icons/Robot_s_80.png</file>
+        <file alias="home">icons/Btn_GoHome_n.png</file>
+        <file alias="noHome">icons/Btn_GoHome_d.png</file>
+        <file alias="play">icons/Btn_Pause.png</file>
+        <file alias="pause">icons/Btn_Play.png</file>
+        <file alias="stop">icons/Btn_Stop.png</file>
 
         <file alias="path_checked">icons/icPath_checked.png</file>
         <file alias="path">icons/icPath_normal.png</file>

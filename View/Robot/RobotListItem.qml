@@ -2,15 +2,17 @@ import QtQuick 2.7
 import QtQuick.Controls 2.1
 import QtQuick.Layouts 1.3
 import "../../Helper/style.js" as Style
-import "../../Helper/helper.js" as Helper
 import "../../Model/Point"
 import "../../Model/Path"
+import "../../Model/Robot"
 
 Frame {
+    id: frame
     property Points pointModel
     property Paths pathModel
+    property Robots robotModel
 
-    height: 125
+    height: 105 + robotPathListItem.height
 
     background: Rectangle {
         anchors.fill: parent
@@ -58,7 +60,14 @@ Frame {
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.verticalCenter: parent.verticalCenter
         }
-        onClicked: console.log("Stop clicking me")
+        onClicked: robotPopupMenu.open()
+
+        RobotPopupMenu {
+            id: robotPopupMenu
+            x: rightButton.width
+            pointModel: frame.pointModel
+            pathModel: frame.pathModel
+        }
     }
 
     ProgressBar {
@@ -89,17 +98,18 @@ Frame {
                 width: batteryLevel.visualPosition * parent.width
                 height: parent.height
                 radius: 2
-                color:  Style.darkSkyBlue
+                color: Style.darkSkyBlue
             }
         }
     }
 
     Label {
-        text: pathName !== "" && pathPoints.count > 0 ? (playingPath ? qsTr("Heading to " + pathPoints.get(0).name) : qsTr("Waiting at " + pathPoints.get(0).name)) : qsTr("No Path Assigned")
+        id: pathLabel
+        text: pathName !== "" && pathPoints.count > 0 ? (playingPath ? qsTr("Heading to " + pathPoints.get(stage).pathPointName) : qsTr("Waiting at " + pathPoints.get(stage).pathPointName)) : qsTr("No Path Assigned")
         font.pixelSize: 14
         maximumLineCount: 1
         elide: Text.ElideRight
-        color: Style.midGrey2
+        color: pathName !== "" && pathPoints.count > 0 ? Style.darkSkyBlue : Style.midGrey2
         anchors {
             top: batteryLevel.bottom
             left: parent.left
@@ -109,6 +119,20 @@ Frame {
             rightMargin: 20
         }
         Component.onCompleted: console.log("nb pathpoints " + pathPoints.count)
+    }
+
+    RobotPathListItem {
+        id: robotPathListItem
+        robotModel: frame.robotModel
+        pathModel: frame.pathModel
+        anchors {
+            top: pathLabel.bottom
+            left: parent.left
+            right: parent.right
+            topMargin: 10
+            leftMargin: 20
+            rightMargin: 20
+        }
     }
 
     Rectangle {

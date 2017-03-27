@@ -13,11 +13,14 @@ ListModel {
             "posY": -1,
             "orientation": 0,
             "playingPath": 0,
+            "pathIsOpen": false,
+            "pathIsVisible": false,
+            "pathName": "",
+            "pathPoints": [],
             "homeName": "",
             "homeX": 0,
             "homeY": 0,
-            "pathName": "",
-            "pathPoints": []
+            "laserActivated": false
         });
     }
 
@@ -25,7 +28,7 @@ ListModel {
         for(var i = 0; i < count; i++)
             if(get(i).ip === ip)
                 remove(i);
-        console.log("Remove robot " + count);
+        //console.log("Remove robot " + count);
     }
 
     function setPos(ip, posX, posY, orientation){
@@ -71,12 +74,12 @@ ListModel {
         for(var i = 0; i < count; i++)
             if(get(i).ip === ip){
                 get(i).pathPoints.append({
-                                          "name": name,
-                                          "posX": posX,
-                                          "posY": posY,
+                                          "pathPointName": name,
+                                          "pathPointPosX": posX,
+                                          "pathPointPosY": posY,
                                           "waitTime": waitTime
                                       });
-                console.log(ip + " addPathPoint " + get(i).pathPoints.count);
+                //console.log(ip + " addPathPoint " + get(i).pathPoints.count);
             }
     }
 
@@ -91,5 +94,26 @@ ListModel {
         for(var i = 0; i < count; i++)
             console.log(get(i).name + " : " + get(i).ip + " : " + get(i).posX + " : " +  get(i).posY + " : "
                         +  get(i).homeName + " : " +  get(i).pathName + " : " +  get(i).playingPath + " : " +  get(i).stage + " : " +  get(i).pathPoints.count);
+    }
+
+    function hideShowPathOnMap(ip){
+        for(var i = 0; i < count; i++){
+            if(get(i).ip === ip)
+                setProperty(i, "pathIsVisible", !get(i).pathIsVisible);
+            else
+                setProperty(i, "pathIsVisible", false);
+        }
+    }
+
+    function openPath(ip){
+        for(var i = 0; i < count; i++)
+            if(get(i).ip === ip)
+                setProperty(i, "pathIsOpen", !get(i).pathIsOpen);
+    }
+
+    function activateLaser(ip){
+        for(var i = 0; i < count; i++)
+            if(get(i).ip === ip)
+                setProperty(i, "laserActivated", !get(i).laserActivated);
     }
 }

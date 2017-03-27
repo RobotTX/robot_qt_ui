@@ -30,6 +30,7 @@ Frame {
     property Robots robotModel
 
     property bool useTmpPathModel
+    property bool useRobotPathModel
 
     Connections {
         target: pathModel
@@ -113,47 +114,6 @@ Frame {
                 smooth: false
                 onPaint:{
                     var ctx = canvas.getContext('2d');
-                    ctx.dashedLineTo = function (fromX, fromY, toX, toY, pattern) {
-                        // Our growth rate for our line can be one of the following:
-                        //   (+,+), (+,-), (-,+), (-,-)
-                        // Because of this, our algorithm needs to understand if the x-coord and
-                        // y-coord should be getting smaller or larger and properly cap the values
-                        // based on (x,y).
-                        var lt = function (a, b) { return a <= b; };
-                        var gt = function (a, b) { return a >= b; };
-                        var capmin = function (a, b) { return Math.min(a, b); };
-                        var capmax = function (a, b) { return Math.max(a, b); };
-
-                        var checkX = { thereYet: gt, cap: capmin };
-                        var checkY = { thereYet: gt, cap: capmin };
-
-                        if (fromY - toY > 0) {
-                            checkY.thereYet = lt;
-                            checkY.cap = capmax;
-                        }
-                        if (fromX - toX > 0) {
-                            checkX.thereYet = lt;
-                            checkX.cap = capmax;
-                        }
-
-                        this.moveTo(fromX, fromY);
-                        var offsetX = fromX;
-                        var offsetY = fromY;
-                        var idx = 0, dash = true;
-                        while (!(checkX.thereYet(offsetX, toX) && checkY.thereYet(offsetY, toY))) {
-                            var ang = Math.atan2(toY - fromY, toX - fromX);
-                            var len = pattern[idx];
-
-                            offsetX = checkX.cap(toX, offsetX + (Math.cos(ang) * len));
-                            offsetY = checkY.cap(toY, offsetY + (Math.sin(ang) * len));
-
-                            if (dash) this.lineTo(offsetX, offsetY);
-                            else this.moveTo(offsetX, offsetY);
-
-                            idx = (idx + 1) % pattern.length;
-                            dash = !dash;
-                        }
-                    };
 
                     ctx.clearRect(0, 0, canvas.width, canvas.height)
                     ctx.strokeStyle = "#929292";
@@ -164,21 +124,33 @@ Frame {
                             for(var j = 0; j < tmpPathModel.get(i).paths.count; j++)
                                 if(tmpPathModel.get(i).paths.get(j).pathIsVisible && tmpPathModel.get(i).paths.get(j).pathPoints.count > 1)
                                     for(var k = 1; k < tmpPathModel.get(i).paths.get(j).pathPoints.count; k++)
-                                        ctx.dashedLineTo(tmpPathModel.get(i).paths.get(j).pathPoints.get(k-1).posX,
+                                        Helper.dashLine(ctx, tmpPathModel.get(i).paths.get(j).pathPoints.get(k-1).posX,
                                                          tmpPathModel.get(i).paths.get(j).pathPoints.get(k-1).posY,
                                                          tmpPathModel.get(i).paths.get(j).pathPoints.get(k).posX,
                                                          tmpPathModel.get(i).paths.get(j).pathPoints.get(k).posY,
                                                          [3, 5]);
                     } else {
-                        for(var i = 0; i < pathModel.count; i++)
-                            for(var j = 0; j < pathModel.get(i).paths.count; j++)
-                                if(pathModel.get(i).paths.get(j).pathIsVisible && pathModel.get(i).paths.get(j).pathPoints.count > 1)
-                                    for(var k = 1; k < pathModel.get(i).paths.get(j).pathPoints.count; k++)
-                                        ctx.dashedLineTo(pathModel.get(i).paths.get(j).pathPoints.get(k-1).posX,
-                                                         pathModel.get(i).paths.get(j).pathPoints.get(k-1).posY,
-                                                         pathModel.get(i).paths.get(j).pathPoints.get(k).posX,
-                                                         pathModel.get(i).paths.get(j).pathPoints.get(k).posY,
+                        if(useRobotPathModel){
+                            for(var i = 0; i < robotModel.count; i++)
+                                if(robotModel.get(i).pathIsVisible && robotModel.get(i).pathPoints.count > 1)
+                                    for(var j = 1; j < robotModel.get(i).pathPoints.count; j++){
+                                        Helper.dashLine(ctx, robotModel.get(i).pathPoints.get(j-1).pathPointPosX,
+                                                         robotModel.get(i).pathPoints.get(j-1).pathPointPosX,
+                                                         robotModel.get(i).pathPoints.get(j).pathPointPosX,
+                                                         robotModel.get(i).pathPoints.get(j).pathPointPosX,
                                                          [3, 5]);
+                                    }
+                        } else {
+                            for(var i = 0; i < pathModel.count; i++)
+                                for(var j = 0; j < pathModel.get(i).paths.count; j++)
+                                    if(pathModel.get(i).paths.get(j).pathIsVisible && pathModel.get(i).paths.get(j).pathPoints.count > 1)
+                                        for(var k = 1; k < pathModel.get(i).paths.get(j).pathPoints.count; k++)
+                                            Helper.dashLine(ctx, pathModel.get(i).paths.get(j).pathPoints.get(k-1).posX,
+                                                             pathModel.get(i).paths.get(j).pathPoints.get(k-1).posY,
+                                                             pathModel.get(i).paths.get(j).pathPoints.get(k).posX,
+                                                             pathModel.get(i).paths.get(j).pathPoints.get(k).posY,
+                                                             [3, 5]);
+                        }
                     }
                     ctx.stroke();
                 }
@@ -216,7 +188,7 @@ Frame {
                     delegate: PointView {
                         //id: pointView
                         _name: name
-                        _isVisible: isVisible
+                        _isVisible: useTmpPathModel ? true : isVisible
                         _groupName: groupName
                         originX: posX
                         originY: posY
@@ -249,7 +221,7 @@ Frame {
                         delegate: PointView {
                             id: pathPointView
                             _name: name
-                            _isVisible: pathIsVisible
+                            _isVisible: useRobotPathModel ? false : pathIsVisible
                             _groupName: pathName
                             type: index == 0 ? Helper.PointViewType.PATHPOINT_START : Helper.PointViewType.PATHPOINT
                             originX: posX
@@ -309,12 +281,27 @@ Frame {
             /// Repeater to display the robots on the map
             Repeater {
                 model: robotModel
-                delegate: RobotView {
-                    _name: name
-                    _ip: ip
-                    _orientation: orientation
-                    x: posX - width / 2
-                    y: posY - height / 2
+                delegate: Item{
+                    RobotView {
+                        _name: name
+                        _ip: ip
+                        _orientation: orientation
+                        x: posX - width / 2
+                        y: posY - height / 2
+                    }
+                    Repeater {
+                        model: pathPoints
+                        delegate: PointView {
+                            _name: pathPointName
+                            _isVisible: useRobotPathModel ? pathIsVisible : false
+                            _groupName: pathName
+                            type: index == 0 ? Helper.PointViewType.PATHPOINT_START : Helper.PointViewType.PATHPOINT
+                            originX: pathPointPosX
+                            originY: pathPointPosY
+                            x: pathPointPosX - width / 2
+                            y: pathPointPosY - height
+                        }
+                    }
                 }
             }
         }
