@@ -21,7 +21,7 @@ ApplicationWindow {
     height: 700
     minimumWidth: 800
     minimumHeight: 600
-    title: qsTr("Gobot :)")
+    title: qsTr("GT Gobot")
     Component.onCompleted: {
             setX(Screen.width / 2 - width / 2);
             setY(Screen.height / 2 - height / 2);
@@ -34,6 +34,7 @@ ApplicationWindow {
     signal shortcutDeleteRobot()
 
     property bool useTmpPathModel: false
+    property bool useRobotPathModel: false
 
     Item {
         Points {
@@ -101,6 +102,7 @@ ApplicationWindow {
             onSavePosition: mapView.emitPosition()
             onSaveMap: applicationWindow.emitMapConfig(file_name)
             onUseTmpPathModel: applicationWindow.useTmpPathModel = use
+            onUseRobotPathModel: applicationWindow.useRobotPathModel = use
         }
 
         MapView {
@@ -110,6 +112,7 @@ ApplicationWindow {
             tmpPathModel: _tmpPathModel
             robotModel: _robotModel
             useTmpPathModel: applicationWindow.useTmpPathModel
+            useRobotPathModel: applicationWindow.useRobotPathModel
             anchors {
                 left: mainMenuViews.visible ? mainMenuViews.right : mainMenu.right
                 top: parent.top

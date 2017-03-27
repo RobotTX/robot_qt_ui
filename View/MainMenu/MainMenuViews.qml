@@ -24,6 +24,7 @@ Frame {
     property Paths tmpPathModel
     property Robots robotModel
     signal useTmpPathModel(bool use)
+    signal useRobotPathModel(bool use)
 
     /// The index of the current menu
     property int currentMenu
@@ -39,6 +40,7 @@ Frame {
         robotModel: mainMenuViewsFrame.robotModel
         pathModel: mainMenuViewsFrame.pathModel
         pointModel: mainMenuViewsFrame.pointModel
+        onUseRobotPathModel: mainMenuViewsFrame.useRobotPathModel(use)
         onCloseMenu: mainMenuViewsFrame.closeMenu()
     }
 
@@ -49,6 +51,7 @@ Frame {
         pathModel: mainMenuViewsFrame.pathModel
         pointModel: mainMenuViewsFrame.pointModel
         onUseTmpPathModel: mainMenuViewsFrame.useTmpPathModel(use)
+        onUseRobotPathModel: mainMenuViewsFrame.useRobotPathModel(use)
         onCloseMenu: mainMenuViewsFrame.closeMenu()
     }
 

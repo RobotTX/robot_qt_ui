@@ -5,9 +5,11 @@ import "../../Helper/style.js" as Style
 import "../../Helper/helper.js" as Helper
 import "../../Model/Point"
 import "../../Model/Path"
+import "../Point"
+import "../Path"
 
 Menu {
-    id: selectPointMenu
+    id: robotMenu
     padding: 0
     width: 190
     property Points pointModel
@@ -24,6 +26,7 @@ Menu {
     }
 
     MenuItem {
+        id: assignHome
         height: Style.menuItemHeight
         width: parent.width
         contentItem: Label {
@@ -49,6 +52,13 @@ Menu {
             anchors.rightMargin: 12
         }
         onHoveredChanged: if(visible) currentMenuIndex = 0
+
+        PointListInPopup {
+            x: assignHome.width
+            visible: robotMenu.currentMenuIndex === 0
+            onVisibleChanged: if(!visible) currentMenuIndex = -1
+            pointModel: robotMenu.pointModel
+        }
     }
 
     Rectangle {
@@ -58,6 +68,7 @@ Menu {
     }
 
     MenuItem {
+        id: assignPath
         height: Style.menuItemHeight
         width: parent.width
         contentItem: Label {
@@ -83,6 +94,13 @@ Menu {
             anchors.rightMargin: 12
         }
         onHoveredChanged: if(visible) currentMenuIndex = 1
+
+        PathListInPopup {
+            x: assignPath.width
+            visible: robotMenu.currentMenuIndex === 1
+            onVisibleChanged: if(!visible) currentMenuIndex = -1
+            pathModel: robotMenu.pathModel
+        }
     }
 
     Rectangle {

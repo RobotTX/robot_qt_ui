@@ -12,7 +12,15 @@ Page {
     property Robots robotModel
     property Points pointModel
     property Paths pathModel
+    signal useRobotPathModel(bool use)
     signal closeMenu()
+
+    onVisibleChanged: {
+        if(visible){
+            useRobotPathModel(true);
+            pathModel.visiblePathChanged();
+        }
+    }
 
     MenuHeader {
         id: robotMenuHeader

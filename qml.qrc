@@ -56,5 +56,6 @@
         <file>View/Robot/RobotListItem.qml</file>
         <file>View/Robot/RobotPathListItem.qml</file>
         <file>View/Robot/RobotPopupMenu.qml</file>
+        <file>View/Path/PathListInPopup.qml</file>
     </qresource>
 </RCC>

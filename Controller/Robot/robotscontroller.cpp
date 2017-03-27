@@ -86,21 +86,21 @@ void RobotsController::shortcutAddRobot(){
 
     if((robots.size() - 1)%3 == 0){
         emit setPath(QVariant::fromValue(ip), QVariant::fromValue("pathName " + ip));
-        emit addPathPoint(QVariant::fromValue(ip), QVariant::fromValue(QString("pathPoint 1")), QVariant::fromValue(posX + 50 * robots.size()), QVariant::fromValue(posY + 50 * robots.size()), QVariant::fromValue((robots.size() - 1)%3));
-        emit addPathPoint(QVariant::fromValue(ip), QVariant::fromValue(QString("pathPoint 2")), QVariant::fromValue(posX + 50 * robots.size()*2), QVariant::fromValue(posY + 50 * robots.size()*2), QVariant::fromValue((robots.size() - 1)%3));
-        emit addPathPoint(QVariant::fromValue(ip), QVariant::fromValue(QString("pathPoint 3")), QVariant::fromValue(posX + 50 * robots.size()*3), QVariant::fromValue(posY + 50 * robots.size()*3), QVariant::fromValue((robots.size() - 1)%3));
-        emit addPathPoint(QVariant::fromValue(ip), QVariant::fromValue(QString("pathPoint 4")), QVariant::fromValue(posX + 50 * robots.size()*4), QVariant::fromValue(posY + 50 * robots.size()*4), QVariant::fromValue((robots.size() - 1)%3));
-        emit addPathPoint(QVariant::fromValue(ip), QVariant::fromValue(QString("pathPoint 5")), QVariant::fromValue(posX + 50 * robots.size()*5), QVariant::fromValue(posY + 50 * robots.size()*5), QVariant::fromValue((robots.size() - 1)%3));
-        emit addPathPoint(QVariant::fromValue(ip), QVariant::fromValue(QString("pathPoint 6")), QVariant::fromValue(posX + 50 * robots.size()*6), QVariant::fromValue(posY + 50 * robots.size()*6), QVariant::fromValue((robots.size() - 1)%3));
+        emit addPathPoint(QVariant::fromValue(ip), QVariant::fromValue(QString("pathPoint 1")), QVariant::fromValue(50 * robots.size() + 50), QVariant::fromValue(50 * robots.size() + 50), QVariant::fromValue((robots.size() - 1)%3));
+        emit addPathPoint(QVariant::fromValue(ip), QVariant::fromValue(QString("pathPoint 2")), QVariant::fromValue(50 * robots.size() + 50*2), QVariant::fromValue(50 * robots.size() + 50*2), QVariant::fromValue((robots.size() - 1)%3));
+        emit addPathPoint(QVariant::fromValue(ip), QVariant::fromValue(QString("pathPoint 3")), QVariant::fromValue(50 * robots.size() + 50*3), QVariant::fromValue(50 * robots.size() + 50*3), QVariant::fromValue((robots.size() - 1)%3));
+        emit addPathPoint(QVariant::fromValue(ip), QVariant::fromValue(QString("pathPoint 4")), QVariant::fromValue(50 * robots.size() + 50*4), QVariant::fromValue(50 * robots.size() + 50*4), QVariant::fromValue((robots.size() - 1)%3));
+        emit addPathPoint(QVariant::fromValue(ip), QVariant::fromValue(QString("pathPoint 5")), QVariant::fromValue(50 * robots.size() + 50*5), QVariant::fromValue(50 * robots.size() + 50*5), QVariant::fromValue((robots.size() - 1)%3));
+        emit addPathPoint(QVariant::fromValue(ip), QVariant::fromValue(QString("pathPoint 6")), QVariant::fromValue(50 * robots.size() + 50*6), QVariant::fromValue(50 * robots.size() + 50*6), QVariant::fromValue((robots.size() - 1)%3));
         emit setStage(QVariant::fromValue(ip), QVariant::fromValue((int) ((robots.size() - 1) / 3)));
     }
-    emit displayRobots();
+    //emit displayRobots();
 }
 
 void RobotsController::shortcutDeleteRobot(){
     if(robots.size() > 0){
         robotIsDeadSlot(QString::number(robots.size() - 1));
-        emit displayRobots();
+        //emit displayRobots();
     } else
         qDebug() << "You already have no robot";
 }

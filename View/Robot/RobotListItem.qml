@@ -124,6 +124,7 @@ Frame {
     RobotPathListItem {
         id: robotPathListItem
         robotModel: frame.robotModel
+        pathModel: frame.pathModel
         anchors {
             top: pathLabel.bottom
             left: parent.left

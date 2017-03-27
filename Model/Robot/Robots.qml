@@ -28,7 +28,7 @@ ListModel {
         for(var i = 0; i < count; i++)
             if(get(i).ip === ip)
                 remove(i);
-        console.log("Remove robot " + count);
+        //console.log("Remove robot " + count);
     }
 
     function setPos(ip, posX, posY, orientation){
@@ -79,7 +79,7 @@ ListModel {
                                           "pathPointPosY": posY,
                                           "waitTime": waitTime
                                       });
-                console.log(ip + " addPathPoint " + get(i).pathPoints.count);
+                //console.log(ip + " addPathPoint " + get(i).pathPoints.count);
             }
     }
 

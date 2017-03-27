@@ -6,6 +6,7 @@ import "../../Model/Robot"
 
 Frame {
     property Robots robotModel
+    property Paths pathModel
     height: noPathItem.visible ? noPathItem.height : pathItem.height
     padding: 0
 
@@ -124,7 +125,10 @@ Frame {
                     anchors.horizontalCenter: parent.horizontalCenter
                     anchors.verticalCenter: parent.verticalCenter
                 }
-                onClicked: robotModel.hideShowPathOnMap(ip)
+                onClicked: {
+                    robotModel.hideShowPathOnMap(ip);
+                    pathModel.visiblePathChanged();
+                }
             }
 
             Label {
