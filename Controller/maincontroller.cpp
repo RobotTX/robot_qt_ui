@@ -33,7 +33,7 @@ MainController::MainController(QQmlApplicationEngine *engine, QObject* parent) :
 
         pathController = QPointer<PathController>(new PathController(applicationWindow, this));
 
-        //robotsController = QPointer<RobotsController>(new RobotsController(applicationWindow, this));
+        robotsController = QPointer<RobotsController>(new RobotsController(applicationWindow, this));
 
         connect(applicationWindow, SIGNAL(mapConfig(QString, double, double, double)), this, SLOT(saveMapConfig(QString, double, double, double)));
         connect(applicationWindow, SIGNAL(shortcutAddRobot()), robotsController, SLOT(shortcutAddRobot()));
@@ -99,11 +99,7 @@ void MainController::saveMapConfig(QString fileName, double zoom, double centerX
 
     /// saves the new configuration to the current configuration file
     PathXMLParser::save(pathController, QDir::currentPath() + QDir::separator() + "currentPaths.xml");
-/*
-    // TODO add this when possible
-    for(int i = 0; i < robotsController->getRobots()->getRobotsVector().size(); i++)
-        robotsController->getRobots()->getRobotsVector().at(i)->getRobot()->sendNewMap(mapController->getMap());
-    */
+
 
 }
 

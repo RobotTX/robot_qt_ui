@@ -70,6 +70,7 @@ Frame {
 
     SettingsMenu {
         id: settingsMenu
+        robotModel: mainMenuViewsFrame.robotModel
         visible: currentMenu == 4
         onCloseMenu: mainMenuViewsFrame.closeMenu()
     }

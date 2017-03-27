@@ -55,5 +55,8 @@
         <file>Model/Robot/Robots.qml</file>
         <file>View/Robot/RobotView.qml</file>
         <file>View/Robot/RobotListItem.qml</file>
+        <file>View/Settings/MapChoiceRadioButton.qml</file>
+        <file>View/Settings/BatteryLevelSlider.qml</file>
+        <file>View/Settings/SliderLineMeasurement.qml</file>
     </qresource>
 </RCC>
