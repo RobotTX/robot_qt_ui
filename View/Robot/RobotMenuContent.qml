@@ -31,6 +31,7 @@ Frame {
         RobotListItem {
             pointModel: robotMenuFrame.pointModel
             pathModel: robotMenuFrame.pathModel
+            robotModel: robotMenuFrame.robotModel
             width: flick.width
         }
     }
