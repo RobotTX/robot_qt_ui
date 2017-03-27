@@ -21,7 +21,7 @@ Page {
 
     SettingsMenuContent {
         id: settings
-        robotModel: robotModel
+        robotModel: page.robotModel
         anchors {
             left: parent.left
             top: settingsMenuHeader.bottom

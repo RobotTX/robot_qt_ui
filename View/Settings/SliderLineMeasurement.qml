@@ -6,7 +6,6 @@ Rectangle {
 
     Rectangle {
         id: rectangle
-
         color: "#979797"
         height: 7
         width: 2

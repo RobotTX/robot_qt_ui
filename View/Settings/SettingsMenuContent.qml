@@ -18,48 +18,112 @@ Frame {
 
     background: Rectangle {
         anchors.fill: parent
-        color: "#ECECEC"
+        color: Style.lightGreyBackground
+        border.color: Style.lightGreyBorder
+        border.width: 1
     }
 
     onVisibleChanged: batterySlider.initializeBatteryThreshold(batteryWarningThreshold)
 
-    Label {
+    Item {
 
         id: label
-
-        Text {
-            color: "#8F8E94"
-            text: qsTr("Laser feedback")
-        }
-
-        anchors.top: parent.top
-        anchors.left: parent.left
 
         height: 15
 
         anchors {
-            left: backgroundRectangle.left
-            top: backgroundRectangle.top
+            left: parent.left
+            top: parent.top
+            right: parent.right
         }
 
-        Image {
-            id: icon
-            source: "qrc:/icons/dot"
-            fillMode: Image.Pad // to not stretch the image
-            anchors{
-                verticalCenter: parent.verticalCenter
+        Label {
+            id: txt
+
+            anchors {
                 left: parent.left
-                leftMargin: 120
+                top: parent.top
+            }
+
+            color: "#8F8E94"
+            text: qsTr("Laser feedback")
+        }
+
+        Button {
+            background: Rectangle {
+                border.color: Style.lightGreyBorder
+                border.width: 1
+                radius: 10
+            }
+
+            onClicked: console.log("cool")
+
+            anchors.left: txt.right
+            anchors.leftMargin: 5
+            anchors.top: parent.top
+
+            height: 20
+            width: 20
+            contentItem: Text {
+
+                text: "?"
+                font.pointSize: 12
+                font.bold: true
+                color: Style.darkSkyBlue
+
+                verticalAlignment: Text.AlignVCenter
+                horizontalAlignment: Text.AlignHCenter
             }
         }
+
     }
 
-    Repeater {
-        id: robots
-        model: robotModel
-        delegate: CheckDelegate {
-                text: name
-                checked: true
+    Flickable {
+        id: flick
+        height: 80
+        ScrollBar.vertical: ScrollBar { }
+        contentHeight: contentItem.childrenRect.height
+        clip: true
+        anchors {
+            left: parent.left
+            right: parent.right
+            top: label.bottom
+            topMargin: 10
+        }
+
+        Column {
+            topPadding: 10
+            leftPadding: 50
+            spacing: 5
+            Repeater {
+                id: robots
+                model: robotModel
+                delegate: CheckDelegate {
+
+                    height: 25
+
+                    id: box
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    indicator: Image {
+                        id: rect
+                        anchors.verticalCenter: parent.verticalCenter
+                        height: 14
+                        width: 14
+                        source: box.checked ? "qrc:/icons/valid" : "qrc:/icons/unchecked"
+                    }
+                    contentItem: Text {
+                        id: txt
+                        leftPadding: rect.width
+                        verticalAlignment: Text.AlignVCenter
+                        text: name
+                        font.pointSize: 10
+                    }
+
+
+
+                    checked: true
+                }
+            }
         }
     }
 
@@ -67,10 +131,9 @@ Frame {
         id: horizontalSeparation
         height: 2
         anchors {
-            top: label.bottom
             left: parent.left
             right: parent.right
-            topMargin: 25
+            top: flick.bottom
         }
         color: Style.darkGrey2
         opacity: 0.1
@@ -92,6 +155,7 @@ Frame {
         anchors.top: choiceMapLabel.bottom
         anchors.topMargin: 20
         anchors.left: parent.left
+        anchors.leftMargin: 10
 
         ButtonGroup {
             id: mapChoiceGroup
@@ -181,7 +245,7 @@ Frame {
         anchors.top: batterySlider.bottom
         anchors.topMargin: 30
         anchors.left: parent.left
-        anchors.leftMargin: 20
+        anchors.leftMargin: 12
         txt: "10%"
     }
 
@@ -257,76 +321,72 @@ Frame {
         }
     }
 
-    Rectangle {
+    Button {
 
+        id: cancelButton
+
+        height: 23
+        width: 70
+
+        anchors.bottom: parent.bottom
         anchors.left: parent.left
+
+        background: Rectangle {
+            radius: 3
+            color: cancelButton.pressed ? Style.whiteButtonPressed : "white"
+            border.width: 1
+            border.color: Style.lightGreyBorder
+        }
+
+        Label {
+            text: qsTr("Cancel")
+            color: "Black"
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.horizontalCenter: parent.horizontalCenter
+        }
+
+        onClicked: settingsPage.close()
+    }
+
+    Button {
+
+        id: applyButton
+
+        height: 23
+        width: 70
+
+        Label {
+            text: qsTr("Apply")
+            color: "white"
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.horizontalCenter: parent.horizontalCenter
+        }
+
+        background: Rectangle {
+            radius: 3
+            color: applyButton.pressed ? Style.darkSkyBlueBorder : Style.darkSkyBlue
+            border.width: 1
+            border.color: Style.darkSkyBlueBorder
+        }
+
         anchors.horizontalCenter: parent.horizontalCenter
-        anchors.top: box.bottom
-        anchors.topMargin: 17
+        anchors.bottom: parent.bottom
 
-        Button {
-
-            id: cancelButton
-
-            height: 23
-            width: 70
-
-            background: Rectangle {
-                radius: 3
-                color: cancelButton.pressed ? Style.whiteButtonPressed : "white"
-                border.width: 1
-                border.color: "white"
-            }
-
-            Label {
-                text: qsTr("Cancel")
-                color: "Black"
-                anchors.verticalCenter: parent.verticalCenter
-                anchors.horizontalCenter: parent.horizontalCenter
-            }
-
-            onClicked: settingsPage.close()
+        onClicked: {
+            batteryWarningThreshold = batterySlider.threshold
+            console.log("new threshold " + batterySlider.threshold)
         }
+    }
 
-        Button {
-
-            id: applyButton
-
-            height: 23
-            width: 70
-
-            Label {
-                text: qsTr("Apply")
-                color: "white"
-                anchors.verticalCenter: parent.verticalCenter
-                anchors.horizontalCenter: parent.horizontalCenter
-            }
-
-            background: Rectangle {
-                radius: 3
-                color: applyButton.pressed ? Style.darkSkyBlueBorder : Style.darkSkyBlue
-                border.width: 1
-                border.color: Style.darkSkyBlueBorder
-            }
-
-            anchors.left:cancelButton.right
-            anchors.leftMargin: 10
-
-            onClicked: {
-                batteryWarningThreshold = batterySlider.threshold
-                console.log("new threshold " + batterySlider.threshold)
-            }
-        }
-
-        SaveButton {
-            width: 70
-            anchors.left: applyButton.right
-            anchors.leftMargin: 10
-            onClicked: {
-                batteryWarningThreshold = batterySlider.threshold
-                console.log("new threshold " + batterySlider.threshold)
-                settingsPage.close()
-            }
+    SaveButton {
+        id: saveButton
+        width: 70
+        anchors.right: parent.right
+        anchors.bottom: parent.bottom
+        onClicked: {
+            batteryWarningThreshold = batterySlider.threshold
+            console.log("new threshold " + batterySlider.threshold)
+            settingsPage.close()
         }
     }
 }
