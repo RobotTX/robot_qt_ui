@@ -7,12 +7,13 @@ import "../../View/Custom/"
 Frame {
 
     id: settingsPage
+    objectName: "settings"
 
     signal close()
-    signal requestUpdate(real _batteryThreshold)
+    signal saveSettings(int mapChoice, double _batteryThreshold, bool showTutorial)
 
     property int mapChoice
-    property real batteryWarningThreshold
+    property real batteryWarningThreshold: 0.1
 
     property Robots robotModel
 
@@ -80,20 +81,23 @@ Frame {
 
     Flickable {
         id: flick
-        height: 80
+        // we display at most 3 robots before we start using the scroll bar
+        height: Math.min(90, robotModel.count * 30)
         ScrollBar.vertical: ScrollBar { }
         contentHeight: contentItem.childrenRect.height
         clip: true
+
         anchors {
             left: parent.left
             right: parent.right
             top: label.bottom
-            topMargin: 10
+            topMargin: 15
         }
 
         Column {
             topPadding: 10
             leftPadding: 50
+            bottomPadding: 10
             spacing: 5
             Repeater {
                 id: robots
@@ -134,6 +138,7 @@ Frame {
             left: parent.left
             right: parent.right
             top: flick.bottom
+            topMargin: 20
         }
         color: Style.darkGrey2
         opacity: 0.1
@@ -238,50 +243,52 @@ Frame {
         id: batterySlider
         anchors.top: batteryLabel.bottom
         anchors.topMargin: 16
+        anchors.left: parent.left
+        anchors.right: parent.right
     }
 
     SliderLineMeasurement {
         id: lineMeasurement1
         anchors.top: batterySlider.bottom
-        anchors.topMargin: 30
+        anchors.topMargin: batterySlider.cursor_height-10
         anchors.left: parent.left
-        anchors.leftMargin: 12
+        anchors.leftMargin: batterySlider.width/10-batterySlider.cursor_width/2
         txt: "10%"
     }
 
     SliderLineMeasurement {
         id: lineMeasurement2
         anchors.top: batterySlider.bottom
-        anchors.topMargin: 30
+        anchors.topMargin: batterySlider.cursor_height-10
         anchors.left: lineMeasurement1.right
-        anchors.leftMargin: 43
+        anchors.leftMargin: (batterySlider.width/2 - lineMeasurement1.x) / 2 - lineMeasurement1.width - 4
         txt: "20%"
     }
 
     SliderLineMeasurement {
         id: lineMeasurement3
         anchors.top: batterySlider.bottom
-        anchors.topMargin: 30
+        anchors.topMargin: batterySlider.cursor_height-10
         anchors.left: lineMeasurement2.right
-        anchors.leftMargin: 43
+        anchors.horizontalCenter: batterySlider.horizontalCenter
         txt: "30%"
     }
 
     SliderLineMeasurement {
         id: lineMeasurement4
         anchors.top: batterySlider.bottom
-        anchors.topMargin: 30
+        anchors.topMargin: batterySlider.cursor_height-10
         anchors.left: lineMeasurement3.right
-        anchors.leftMargin: 43
+        anchors.leftMargin: 4
         txt: "40%"
     }
 
     SliderLineMeasurement {
         id: lineMeasurement5
         anchors.top: batterySlider.bottom
-        anchors.topMargin: 30
-        anchors.left: lineMeasurement4.right
-        anchors.leftMargin: 43
+        anchors.topMargin: batterySlider.cursor_height-10
+        anchors.right: parent.right
+        anchors.rightMargin: batterySlider.width/10-batterySlider.cursor_width/2
         txt: "50%"
     }
 
@@ -292,7 +299,7 @@ Frame {
             top: lineMeasurement1.bottom
             left: parent.left
             right: parent.right
-            topMargin: 45
+            topMargin: 20
         }
         color: Style.darkGrey2
         opacity: 0.1
@@ -300,21 +307,27 @@ Frame {
 
     CheckBox {
 
-        id: box
+        id: box2
+
+        property bool show
 
         anchors.top: horizontalSeparation3.bottom
         anchors.topMargin: 16
+
+        checkable: true
         checked: true
 
+        onClicked: show = !show
+
         indicator: Image {
-            id: rect
-            source: box.checked ? "qrc:/icons/valid" : "qrc:/icons/unchecked"
+            id: rect2
+            source: box2.show ? "qrc:/icons/valid" : "qrc:/icons/unchecked"
         }
 
         contentItem: Text {
-            anchors.left: rect.right
+            anchors.left: rect2.right
             anchors.leftMargin: 6
-            anchors.verticalCenter: rect.verticalCenter
+            anchors.verticalCenter: rect2.verticalCenter
             anchors.verticalCenterOffset: 1
             text: "Show tutorial"
             font.pointSize: 10
@@ -322,7 +335,6 @@ Frame {
     }
 
     Button {
-
         id: cancelButton
 
         height: 23
@@ -351,7 +363,6 @@ Frame {
     Button {
 
         id: applyButton
-
         height: 23
         width: 70
 
@@ -374,7 +385,7 @@ Frame {
 
         onClicked: {
             batteryWarningThreshold = batterySlider.threshold
-            console.log("new threshold " + batterySlider.threshold)
+            saveSettings(mapChoice, batterySlider.threshold, box2.show)
         }
     }
 
@@ -385,8 +396,33 @@ Frame {
         anchors.bottom: parent.bottom
         onClicked: {
             batteryWarningThreshold = batterySlider.threshold
-            console.log("new threshold " + batterySlider.threshold)
+            saveSettings(mapChoice, batterySlider.threshold, box2.show)
             settingsPage.close()
+        }
+    }
+
+    function setSettings(mapChoice, _thresh, showTutorial){
+        settingsPage.batteryWarningThreshold = _thresh;
+        box2.show = showTutorial;
+        settingsPage.mapChoice = mapChoice;
+        switch(mapChoice){
+        case 0:
+            mapChoice1.checked = true;
+            break;
+        case 1:
+            mapChoice2.checked = true;
+            break;
+        case 2:
+            mapChoice3.checked = true;
+            break;
+        case 3:
+            mapChoice4.checked = true;
+            break;
+        case 4:
+            mapChoice5.checked = true;
+            break;
+        default:
+            break;
         }
     }
 }

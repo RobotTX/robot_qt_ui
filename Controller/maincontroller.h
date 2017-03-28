@@ -48,6 +48,11 @@ private slots:
 
     void checkTmpPosition(int index, double x, double y);
 
+    void saveSettings(int mapChoice, double batteryThreshold, bool showTutorial);
+
+signals:
+    void emitSettings(QVariant mapChoice, QVariant batteryThreshold, QVariant showTutorial);
+
 private:
     QPointer<MainMenuController> mainMenuController;
     QPointer<MapController> mapController;

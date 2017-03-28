@@ -6,6 +6,7 @@
 
 class EditMapController;
 class QQmlApplicationEngine;
+class MergeMapController;
 
 class MapController : public QObject {
 
@@ -100,6 +101,7 @@ signals:
 private:
     Map* map;
     EditMapController* editMapController;
+    MergeMapController* mergeMapController;
 };
 
 #endif /// MAPCONTROLLER_H

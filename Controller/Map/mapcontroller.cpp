@@ -8,6 +8,7 @@
 #include <QAbstractListModel>
 #include "editmapcontroller.h"
 #include "View/editmappainteditem.h"
+#include "mergemapcontroller.h"
 
 MapController::MapController(QQmlApplicationEngine* engine, QObject *applicationWindow, QObject *parent) : QObject(parent){
     map = new Map(this);
@@ -38,6 +39,9 @@ MapController::MapController(QQmlApplicationEngine* engine, QObject *application
     initializeMap();
 
     editMapController = new EditMapController(engine, applicationWindow, this);
+
+    mergeMapController = new MergeMapController(applicationWindow, this);
+
 }
 
 void MapController::initializeMap(void){

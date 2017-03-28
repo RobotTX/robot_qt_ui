@@ -59,9 +59,8 @@ Frame {
         txt: "Edit the Map"
         imgSrc: "qrc:/icons/edit_map"
         anchors.top: loadButton.bottom
-        onClicked: {
-            editMap.visible = true;
-        }
+        onClicked: editMap.visible = true;
+
     }
 
     NormalButton {
@@ -69,6 +68,7 @@ Frame {
         txt: "Merge Maps"
         imgSrc: "qrc:/icons/merge_map"
         anchors.top: editButton.bottom
+        onClicked: mergeMap.visible = true;
     }
 
     NormalButton {

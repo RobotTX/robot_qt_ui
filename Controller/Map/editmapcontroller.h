@@ -23,7 +23,6 @@ public slots:
     void clearMapItems();
 
 private:
-    QQmlApplicationEngine* _engine;
     EditMapPaintedItem* paintedItem;
 
 };

@@ -4,7 +4,9 @@ import "../../Helper/style.js" as Style
 import "../Custom"
 
 Frame {
+
     id: menuHeader
+
     padding: 0
     z: 2
 
@@ -13,6 +15,7 @@ Frame {
     signal closeMenu()
 
     height: Style.menuHeaderHeight
+
     anchors {
         left: parent.left
         top: parent.top
@@ -24,7 +27,6 @@ Frame {
         border.color: Style.lightGreyBorder
         border.width: 1
     }
-
 
     SmallButton {
         id: closeBtn
