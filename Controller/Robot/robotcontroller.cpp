@@ -10,8 +10,9 @@
 #include "Controller/Map/scanmapworker.h"
 #include "Controller/Robot/teleopworker.h"
 #include "Controller/Map/particlecloudworker.h"
+#include "Controller/Robot/commandcontroller.h"
 
-RobotController::RobotController(QObject *parent, QString _ip) : QObject(parent), ip(_ip){
+RobotController::RobotController(QObject *parent, QString _ip) : QObject(parent), ip(_ip), commandController(QPointer<CommandController>(new CommandController(this))){
     launchWorkers();
 }
 
@@ -78,19 +79,19 @@ void RobotController::portSentSlot(){
 
 void RobotController::launchWorkers(){
 
-    if(ip.size() < 100)
+    if(ip.length() < 3)
         return;
 
     qDebug() << "RobotController at ip" << ip << " launching its cmd thread";
 
     cmdRobotWorker = QPointer<CmdRobotWorker>(new CmdRobotWorker(ip, PORT_CMD, PORT_MAP_METADATA, PORT_ROBOT_POS, PORT_MAP, PORT_LOCAL_MAP));
     connect(cmdRobotWorker, SIGNAL(robotIsDead()), this, SLOT(robotIsDeadSlot()));
-    connect(cmdRobotWorker, SIGNAL(cmdAnswer(QString)), this, SLOT(cmdAnswerSlot(QString)));
+    connect(cmdRobotWorker, SIGNAL(cmdAnswer(QString)), commandController, SLOT(cmdAnswerSlot(QString)));
     connect(cmdRobotWorker, SIGNAL(portSent()), this, SLOT(portSentSlot()));
     /// so that the first time the RobotController connects its home position and the last modification of its file are sent to
     /// the application in order to update the homes on both the RobotController and the application side correctly
-    connect(cmdRobotWorker, SIGNAL(newConnection(QString, QString)), this, SLOT(updateRobotInfo(QString, QString)));
-    connect(this, SIGNAL(sendCommandSignal(QString)), cmdRobotWorker, SLOT(sendCommand(QString)));
+    connect(cmdRobotWorker, SIGNAL(newConnection(QString)), this, SLOT(updateRobotInfo(QString)));
+    connect(commandController, SIGNAL(sendCommandSignal(QString)), cmdRobotWorker, SLOT(sendCommand(QString)));
     connect(this, SIGNAL(pingSignal()), cmdRobotWorker, SLOT(pingSlot()));
     connect(this, SIGNAL(stopCmdRobotWorker()), cmdRobotWorker, SLOT(stopWorker()));
     connect(&cmdThread, SIGNAL(finished()), cmdRobotWorker, SLOT(deleteLater()));
@@ -101,8 +102,8 @@ void RobotController::launchWorkers(){
     //qDebug() << "RobotController" << name << "at ip" << ip << " launching its RobotController pos thread at port" << PORT_ROBOT_POS;
 
     robotWorker = QPointer<RobotPositionWorker>(new RobotPositionWorker(ip, PORT_ROBOT_POS));
-    connect(robotWorker, SIGNAL(valueChangedRobot(QString, float, float, float)),
-                     this ,SLOT(updateRobot(QString, float, float, float)));
+    connect(robotWorker, SIGNAL(valueChangedRobot(float, float, float)),
+                     this ,SLOT(updateRobot(float, float, float)));
     connect(this, SIGNAL(stopRobotWorker()), robotWorker, SLOT(stopWorker()));
     connect(&robotThread, SIGNAL(finished()), robotWorker, SLOT(deleteLater()));
     connect(this, SIGNAL(startRobotWorker()), robotWorker, SLOT(connectSocket()));
@@ -172,6 +173,7 @@ void RobotController::launchWorkers(){
 
 void RobotController::mapReceivedSlot(QByteArray, int, QString, QString, QString, QString, QString, QString, int, int){
     qDebug() << "RobotController::mapReceivedSlot called";
+    emit pingSignal();
 }
 
 void RobotController::sendNewMapToRobots(QString){
@@ -182,12 +184,15 @@ void RobotController::doneSendingMapSlot(){
     qDebug() << "RobotController::doneSendingMapSlot called";
 }
 
-void RobotController::updateMetadata(int, int, float, float, float){
+void RobotController::updateMetadata(int width, int height, float resolution, float originX, float originY){
     qDebug() << "RobotController::updateMetadata called";
+    emit pingSignal();
+    emit newMetadata(width, height, resolution, originX, originY);
 }
 
-void RobotController::updateRobot(QString, float, float, float){
-    qDebug() << "RobotController::updateRobot called";
+void RobotController::updateRobot(float posX, float posY, float ori){
+    emit pingSignal();
+    emit newRobotPos(ip, posX, posY, ori);
 }
 
 void RobotController::robotIsDeadSlot(){
@@ -196,13 +201,80 @@ void RobotController::robotIsDeadSlot(){
     emit robotIsDead(ip);
 }
 
-void RobotController::cmdAnswerSlot(QString){
-    qDebug() << "RobotController::cmdAnswerSlot called";
+void RobotController::updateRobotInfo(QString robotInfo){
+
+    QStringList strList = robotInfo.split(static_cast<u_char>(31), QString::SkipEmptyParts);
+    qDebug() << "MainWindow::updateRobotInfo" << strList;
+
+    if(strList.size() > 8){
+        /// Remove the "Connected"
+        strList.removeFirst();
+        QString mapId = strList.takeFirst();
+        QString mapDate = strList.takeFirst();
+        QString homeName = strList.takeFirst();
+        float homeX = static_cast<QString>(strList.takeFirst()).toFloat();
+        float homeY = static_cast<QString>(strList.takeFirst()).toFloat();
+        bool scanning = static_cast<QString>(strList.takeFirst()).toInt();
+        bool recovering = static_cast<QString>(strList.takeFirst()).toInt();
+        /// What remains in the list is the path
+
+        emit updatePath(ip, strList);
+
+        emit updateHome(ip, homeName, homeX, homeY);
+
+        /*
+        updateMapInfo(robotName, mapId, mapDate);
+
+
+        if(robotView && robotView->getRobot()){
+            robotView->getRobot()->setScanning(scanning);
+            robotView->getRobot()->setRecovering(recovering);
+        }
+        else
+            return;
+        if(scanning){
+            if(scanMapWidget){
+                emit robotReconnected(robotName);
+                playScanSlot(true, robotName);
+            } else
+                stopScanningSlot(QStringList(robotName));
+        } else {
+            if(scanMapWidget){
+                QStringList robotScanningList = scanMapWidget->getAllScanningRobots();
+                for(int i = 0; i < robotScanningList.count(); i++){
+                    if(static_cast<QString>(robotScanningList.at(i)) == robotName){
+                        emit robotReconnected(robotName);
+                        emit robotScanning(false, robotName, true);
+                    }
+                }
+            }
+        }
+
+        if(recovering){
+            if(robotPositionRecoveryWidget){
+                emit robotReconnected(robotName);
+                playRecoverySlot(true, robotName);
+            } else
+                stopRecoveringRobotsSlot(QStringList(robotName));
+        } else {
+            if(robotPositionRecoveryWidget){
+                QStringList robotRecoveringList = robotPositionRecoveryWidget->getAllRecoveringRobots();
+                for(int i = 0; i < robotRecoveringList.count(); i++){
+                    if(static_cast<QString>(robotRecoveringList.at(i)) == robotName){
+                        emit robotReconnected(robotName);
+                        emit robotRecovering(false, robotName, true);
+                    }
+                }
+            }
+        }
+*/
+
+    } else
+        qDebug() << "MainWindow::updateRobotInfo Connected received without enough parameters :" << strList;
+
+    emit pingSignal();
 }
 
-void RobotController::updateRobotInfo(QString, QString){
-    qDebug() << "RobotController::updateRobotInfo called";
-}
 
 
 

@@ -9,6 +9,7 @@ import "../../Model/Robot"
 import "../MainMenu"
 import "../Point"
 import "../Robot"
+import "../Custom"
 
 Frame {
     id: mapViewFrame
@@ -158,25 +159,30 @@ Frame {
 
             MouseArea {
                 anchors.fill: parent
+                acceptedButtons: Qt.LeftButton | Qt.RightButton
 
                 drag.target: parent
+
                 onWheel: {
                     var newScale = mapImage.scale + mapImage.scale * wheel.angleDelta.y / 120 / 10;
                     if(newScale > Style.minZoom && newScale < Style.maxZoom)
                         mapImage.scale = newScale;
                 }
                 onClicked: {
-                    if(tmpPointView.visible){
-                        tmpPointView.x = mouseX;
-                        tmpPointView.y = mouseY;
-                        tmpPointView.tmpPointViewPosChanged()
-                    }
+                    if (mouse.button === Qt.LeftButton) {
+                        if(tmpPointView.visible){
+                            tmpPointView.x = mouseX;
+                            tmpPointView.y = mouseY;
+                            tmpPointView.tmpPointViewPosChanged()
+                        }
 
-                    if(useTmpPathModel){
-                        tmpPathModel.addPathPoint(Math.round(mouseX) + ' ' + Math.round(mouseY),  "tmpPath", "tmpGroup", mouseX, mouseY, 0);
-                        tmpPathModel.checkTmpPosition(tmpPathModel.get(0).paths.get(0).pathPoints.count - 1, mouseX, mouseY);
-                        canvas.requestPaint();
-                    }
+                        if(useTmpPathModel){
+                            tmpPathModel.addPathPoint(Math.round(mouseX) + ' ' + Math.round(mouseY),  "tmpPath", "tmpGroup", mouseX, mouseY, 0);
+                            tmpPathModel.checkTmpPosition(tmpPathModel.get(0).paths.get(0).pathPoints.count - 1, mouseX, mouseY);
+                            canvas.requestPaint();
+                        }
+                    } else if (mouse.button === Qt.RightButton)
+                        console.log("Pos clicked : " + Math.round(mouseX) + ' ' + Math.round(mouseY));
                 }
             }
 
@@ -282,6 +288,7 @@ Frame {
             Repeater {
                 model: robotModel
                 delegate: Item{
+                    /// The robot on the map
                     RobotView {
                         _name: name
                         _ip: ip
@@ -289,6 +296,19 @@ Frame {
                         x: posX - width / 2
                         y: posY - height / 2
                     }
+                    /// The robot's home on the map
+                    PointView {
+                        _name: homeName
+                        _isVisible: useRobotPathModel
+                        type: Helper.PointViewType.HOME
+                        originX: homeX
+                        originY: homeY
+                        x: homeX - width / 2
+                        y: homeY - height
+
+                        CustomToolTip { text: "Home of " + name }
+                    }
+                    /// The robot's path on the map
                     Repeater {
                         model: pathPoints
                         delegate: PointView {

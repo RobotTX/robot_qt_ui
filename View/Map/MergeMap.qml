@@ -40,6 +40,8 @@ Window {
         MergeMapButton {
             id: importButton
             src: "qrc:/icons/load_map"
+            txt: "Add Map From File"
+            width: 175
             anchors {
                 top: parent.top
                 topMargin: 12
@@ -65,6 +67,8 @@ Window {
         MergeMapButton {
             id: fromRobotButton
             src: "qrc:/icons/small_robot"
+            txt: "Add Map From a Robot"
+            width: 200
             anchors {
                 top: parent.top
                 topMargin: 12

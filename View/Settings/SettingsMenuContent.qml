@@ -10,7 +10,7 @@ Frame {
     objectName: "settings"
 
     signal close()
-    signal saveSettings(int mapChoice, double _batteryThreshold, bool showTutorial)
+    signal saveSettingsSignal(int mapChoice, double _batteryThreshold, bool showTutorial)
 
     property int mapChoice
     property real batteryWarningThreshold: 0.1
@@ -385,7 +385,7 @@ Frame {
 
         onClicked: {
             batteryWarningThreshold = batterySlider.threshold
-            saveSettings(mapChoice, batterySlider.threshold, box2.show)
+            saveSettingsSignal(mapChoice, batterySlider.threshold, box2.show)
         }
     }
 
@@ -396,7 +396,7 @@ Frame {
         anchors.bottom: parent.bottom
         onClicked: {
             batteryWarningThreshold = batterySlider.threshold
-            saveSettings(mapChoice, batterySlider.threshold, box2.show)
+            saveSettingsSignal(mapChoice, batterySlider.threshold, box2.show)
             settingsPage.close()
         }
     }

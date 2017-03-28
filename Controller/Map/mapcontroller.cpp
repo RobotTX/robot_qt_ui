@@ -4,14 +4,14 @@
 #include <QFileDialog>
 #include <QQmlContext>
 #include <QQmlApplicationEngine>
-#include <fstream>
 #include <QAbstractListModel>
-#include "editmapcontroller.h"
+#include <fstream>
+#include "Controller/Map/editmapcontroller.h"
 #include "View/editmappainteditem.h"
 #include "mergemapcontroller.h"
 
 MapController::MapController(QQmlApplicationEngine* engine, QObject *applicationWindow, QObject *parent) : QObject(parent){
-    map = new Map(this);
+    map = QPointer<Map>(new Map(this));
 
     QObject *mapViewFrame = applicationWindow->findChild<QObject*>("mapViewFrame");
     if (mapViewFrame){
@@ -38,10 +38,9 @@ MapController::MapController(QQmlApplicationEngine* engine, QObject *application
 
     initializeMap();
 
-    editMapController = new EditMapController(engine, applicationWindow, this);
+    mergeMapController = QPointer<MergeMapController>(new MergeMapController(applicationWindow, this));
 
-    mergeMapController = new MergeMapController(applicationWindow, this);
-
+    editMapController = QPointer<EditMapController>(new EditMapController(engine, applicationWindow, this));
 }
 
 void MapController::initializeMap(void){
@@ -87,8 +86,8 @@ void MapController::initializeMap(void){
                 map->setDateTime(QDateTime::fromString(QString::fromStdString(_dateTime), "yyyy-MM-dd-hh-mm-ss"));
                 map->setId(QUuid(QString::fromStdString(_mapId)));
                 pathFile.close();
-                emit setMap(QVariant::fromValue(qMapFile));
-                emit setMapPosition(QVariant::fromValue(centerX), QVariant::fromValue(centerY), QVariant::fromValue(zoom));
+                emit setMap(qMapFile);
+                emit setMapPosition(centerX, centerY, zoom);
             } else
                 qDebug() << "Map::initializeMap could not find the map config file at :" << configPath;
         } else
@@ -134,7 +133,7 @@ void MapController::loadPositionSlot(){
         double centerX, centerY, zoom;
         file >> osef >> osef >> osef >> centerX >> centerY >> zoom;
         file.close();
-        emit setMapPosition(QVariant::fromValue(centerX), QVariant::fromValue(centerY), QVariant::fromValue(zoom));
+        emit setMapPosition(centerX, centerY, zoom);
     } else
         qDebug() << "Map::loadStateSlot could not find the currentMap file at :" << currentPathFile;
 }

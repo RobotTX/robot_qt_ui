@@ -47,11 +47,19 @@ private slots:
     void loadMapConfig(QString fileName) const;
 
     void checkTmpPosition(int index, double x, double y);
-
-    void saveSettings(int mapChoice, double batteryThreshold, bool showTutorial);
+    void newRobotPosSlot(QString ip, float posX, float posY, float ori);
+    void newMetadataSlot(int width, int height, float resolution, float originX, float originY);
+    void updatePathSlot(QString ip, QStringList strList);
+    void updateHomeSlot(QString ip, QString homeName, float homeX, float homeY);
 
 signals:
+    void setHome(QVariant ip, QVariant name, QVariant posX, QVariant posY);
+    void setPath(QVariant ip, QVariant name);
+    void addPathPoint(QVariant ip, QVariant name, QVariant posX, QVariant posY, QVariant waitTime);
     void emitSettings(QVariant mapChoice, QVariant batteryThreshold, QVariant showTutorial);
+
+private slots:
+    void saveSettings(int mapChoice, double batteryThreshold, bool showTutorial);
 
 private:
     QPointer<MainMenuController> mainMenuController;

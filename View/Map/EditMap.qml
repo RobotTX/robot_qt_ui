@@ -61,7 +61,7 @@ Window {
 
             id: undo
 
-            EditMapToolTip { text: "Undo" }
+            CustomToolTip { text: "Undo" }
 
             Shortcut {
                 sequence: StandardKey.Undo
@@ -83,7 +83,7 @@ Window {
 
             id: redo
 
-            EditMapToolTip { text: "Redo" }
+            CustomToolTip { text: "Redo" }
 
             Shortcut {
                 sequence: "Ctrl+Y"
@@ -105,7 +105,7 @@ Window {
 
             id: reset
 
-            EditMapToolTip { text: "Cancel all modifications" }
+            CustomToolTip { text: "Cancel all modifications" }
 
             src: "qrc:/icons/reset"
 
@@ -122,7 +122,7 @@ Window {
 
             id: selectButton
 
-            EditMapToolTip { text: "Drag the map" }
+            CustomToolTip { text: "Drag the map" }
 
             checkable: true
 
@@ -162,7 +162,7 @@ Window {
             checkable: true
             checked: false
 
-            EditMapToolTip { text: "Add a known area to the map" }
+            CustomToolTip { text: "Add a known area to the map" }
 
             src: "qrc:/icons/white"
 
@@ -184,7 +184,7 @@ Window {
 
             ButtonGroup.group: colorGroup
 
-            EditMapToolTip { text: "Add an unknown area to the map" }
+            CustomToolTip { text: "Add an unknown area to the map" }
 
             src: "qrc:/icons/grey"
 
@@ -208,7 +208,7 @@ Window {
 
             ButtonGroup.group: colorGroup
 
-            EditMapToolTip { text: "Add an obstacle to the map" }
+            CustomToolTip { text: "Add an obstacle to the map" }
 
             src: "qrc:/icons/black"
 
@@ -243,7 +243,7 @@ Window {
 
             id: dotButton
 
-            EditMapToolTip { text: "Draw a point on the map" }
+            CustomToolTip { text: "Draw a point on the map" }
 
             checkable: true
             checked: true
@@ -265,7 +265,7 @@ Window {
 
             id: lineButton
 
-            EditMapToolTip { text: "Draw a line on the map" }
+            CustomToolTip { text: "Draw a line on the map" }
 
             checkable: true
 
@@ -286,7 +286,7 @@ Window {
 
             id: outlineButton
 
-            EditMapToolTip { text: "Draw an empty rectangle on the map" }
+            CustomToolTip { text: "Draw an empty rectangle on the map" }
 
             ButtonGroup.group: shapeGroup
 
@@ -307,7 +307,7 @@ Window {
 
             id: solidButton
 
-            EditMapToolTip { text: "Draw an filled rectangle on the map" }
+            CustomToolTip { text: "Draw an filled rectangle on the map" }
 
             checkable: true
 
@@ -343,7 +343,7 @@ Window {
 
             id: decrease
 
-            EditMapToolTip { text: "Decrease the size of your brush" }
+            CustomToolTip { text: "Decrease the size of your brush" }
 
             src: "qrc:/icons/decrease"
 
@@ -376,7 +376,7 @@ Window {
 
             id: increaseButton
 
-            EditMapToolTip { text: "Increase the size of your brush" }
+            CustomToolTip { text: "Increase the size of your brush" }
 
             src: "qrc:/icons/add"
 
@@ -411,7 +411,7 @@ Window {
 
             id: closeButton
 
-            EditMapToolTip { text: "Close the current window: all modifications will be lost" }
+            CustomToolTip { text: "Close the current window: all modifications will be lost" }
 
             src: "qrc:/icons/closeBtn"
 
@@ -428,7 +428,7 @@ Window {
 
             id: saveButton
 
-            EditMapToolTip { text: "Save your modifications to the current map and notify your robots" }
+            CustomToolTip { text: "Save your modifications to the current map and notify your robots" }
 
             src: "qrc:/icons/save"
 

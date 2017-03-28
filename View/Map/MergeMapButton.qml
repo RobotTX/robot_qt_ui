@@ -5,11 +5,9 @@ import "../../Helper/style.js" as Style
 Button {
 
     property string src
+    property string txt
 
     padding: 0
-    width: 180
-
-
 
     background: Rectangle {
         color: "transparent"
@@ -28,11 +26,12 @@ Button {
     }
 
     Text {
+        id: textId
         verticalAlignment: Text.AlignVCenter
         anchors.left: robotImg.right
         anchors.leftMargin: 8
         anchors.right: parent.right
-        text: "Add Map From File"
+        text: txt
     }
 
     onClicked: console.log("lol")

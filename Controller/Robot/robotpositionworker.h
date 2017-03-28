@@ -58,7 +58,7 @@ signals:
      * @param ori
      * Signal emitted when we have received the robot position & orientation
      */
-    void valueChangedRobot(QString ipAddress, float posX, float posY, float ori);
+    void valueChangedRobot(float posX, float posY, float ori);
 
 private :
     QPointer<QTcpSocket> socket;

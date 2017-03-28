@@ -23,10 +23,24 @@ RobotsController::RobotsController(QObject *applicationWindow, MainController* p
                 robotModel, SLOT(addPathPoint(QVariant, QVariant, QVariant, QVariant, QVariant)));
         connect(this, SIGNAL(setStage(QVariant, QVariant)), robotModel, SLOT(setStage(QVariant, QVariant)));
         connect(this, SIGNAL(setBattery(QVariant, QVariant)), robotModel, SLOT(setBattery(QVariant, QVariant)));
+
+
+        /// MainController signals
+        connect(parent, SIGNAL(setPath(QVariant, QVariant)), robotModel, SLOT(setPath(QVariant, QVariant)));
+        connect(parent, SIGNAL(addPathPoint(QVariant, QVariant, QVariant, QVariant, QVariant)),
+                robotModel, SLOT(addPathPoint(QVariant, QVariant, QVariant, QVariant, QVariant)));
+        connect(parent, SIGNAL(setHome(QVariant, QVariant, QVariant, QVariant)),
+                robotModel, SLOT(setHome(QVariant, QVariant, QVariant, QVariant)));
     } else {
         qDebug() << "RobotsController::RobotsController could not find the qml robot model";
         Q_UNREACHABLE();
     }
+
+
+    connect(this, SIGNAL(newRobotPos(QString, float, float, float)), parent, SLOT(newRobotPosSlot(QString, float, float, float)));
+    connect(this, SIGNAL(newMetadata(int, int, float, float, float)), parent, SLOT(newMetadataSlot(int, int, float, float, float)));
+    connect(this, SIGNAL(updatePath(QString, QStringList)), parent, SLOT(updatePathSlot(QString, QStringList)));
+    connect(this, SIGNAL(updateHome(QString, QString, float, float)), parent, SLOT(updateHomeSlot(QString, QString, float, float)));
 
     launchServer();
 }
@@ -55,14 +69,18 @@ void RobotsController::launchServer(){
 }
 
 void RobotsController::robotIsAliveSlot(QString name, QString ip, QString ssid, int stage, int battery){
-    qDebug() << "RobotsController::robotIsAliveSlot" << name << ip << ssid << stage << battery;
+    //qDebug() << "RobotsController::robotIsAliveSlot" << name << ip << ssid << stage << battery;
     if(robots.find(ip) != robots.end()){
         /// TODO update battery + stage + ping RobotController
     } else {
         QPointer<RobotController> robotController = QPointer<RobotController>(new RobotController(this, ip));
         robots.insert(ip, robotController);
         connect(robotController, SIGNAL(robotIsDead(QString)), this, SLOT(robotIsDeadSlot(QString)));
-        emit addRobot(QVariant::fromValue(name), QVariant::fromValue(ip), QVariant::fromValue(ssid), QVariant::fromValue(stage), QVariant::fromValue(battery));
+        connect(robotController, SIGNAL(newRobotPos(QString, float, float, float)), this, SLOT(newRobotPosSlot(QString, float, float, float)));
+        connect(robotController, SIGNAL(newMetadata(int, int, float, float, float)), this, SLOT(newMetadataSlot(int, int, float, float, float)));
+        connect(robotController, SIGNAL(updatePath(QString, QStringList)), this, SLOT(updatePathSlot(QString, QStringList)));
+        connect(robotController, SIGNAL(updateHome(QString, QString, float, float)), this, SLOT(updateHomeSlot(QString, QString, float, float)));
+        emit addRobot(name, ip, ssid, stage, battery);
     }
 }
 
@@ -77,22 +95,22 @@ void RobotsController::shortcutAddRobot(){
     double posY = ((robots.size() + 1) * 200) % 1222;
 
     robotIsAliveSlot("Robot " + ip, ip, "Wifi " + ip, 0, (robots.size()*10)%100);
-    emit setPos(QVariant::fromValue(ip), QVariant::fromValue(posX), QVariant::fromValue(posY), QVariant::fromValue((20 * robots.size()) % 360));
+    emit setPos(ip, posX, posY, (20 * robots.size()) % 360);
 
     if((robots.size() - 1)%2 == 0){
-        emit setHome(QVariant::fromValue(ip), QVariant::fromValue("home " + ip), QVariant::fromValue(posX + 50), QVariant::fromValue(posY));
-        emit setPlayingPath(QVariant::fromValue(ip), QVariant::fromValue((robots.size() - 1)%4/2));
+        emit setHome(ip, "home " + ip, posX + 50, posY);
+        emit setPlayingPath(ip, (robots.size() - 1)%4/2);
     }
 
     if((robots.size() - 1)%3 == 0){
-        emit setPath(QVariant::fromValue(ip), QVariant::fromValue("pathName " + ip));
-        emit addPathPoint(QVariant::fromValue(ip), QVariant::fromValue(QString("pathPoint 1")), QVariant::fromValue(50 * robots.size() + 50), QVariant::fromValue(50 * robots.size() + 50), QVariant::fromValue((robots.size() - 1)%3));
-        emit addPathPoint(QVariant::fromValue(ip), QVariant::fromValue(QString("pathPoint 2")), QVariant::fromValue(50 * robots.size() + 50*2), QVariant::fromValue(50 * robots.size() + 50*2), QVariant::fromValue((robots.size() - 1)%3));
-        emit addPathPoint(QVariant::fromValue(ip), QVariant::fromValue(QString("pathPoint 3")), QVariant::fromValue(50 * robots.size() + 50*3), QVariant::fromValue(50 * robots.size() + 50*3), QVariant::fromValue((robots.size() - 1)%3));
-        emit addPathPoint(QVariant::fromValue(ip), QVariant::fromValue(QString("pathPoint 4")), QVariant::fromValue(50 * robots.size() + 50*4), QVariant::fromValue(50 * robots.size() + 50*4), QVariant::fromValue((robots.size() - 1)%3));
-        emit addPathPoint(QVariant::fromValue(ip), QVariant::fromValue(QString("pathPoint 5")), QVariant::fromValue(50 * robots.size() + 50*5), QVariant::fromValue(50 * robots.size() + 50*5), QVariant::fromValue((robots.size() - 1)%3));
-        emit addPathPoint(QVariant::fromValue(ip), QVariant::fromValue(QString("pathPoint 6")), QVariant::fromValue(50 * robots.size() + 50*6), QVariant::fromValue(50 * robots.size() + 50*6), QVariant::fromValue((robots.size() - 1)%3));
-        emit setStage(QVariant::fromValue(ip), QVariant::fromValue((int) ((robots.size() - 1) / 3)));
+        emit setPath(ip, "pathName " + ip);
+        emit addPathPoint(ip, QString("pathPoint 1"), 50 * robots.size() + 50, 50 * robots.size() + 50, (robots.size() - 1)%3);
+        emit addPathPoint(ip, QString("pathPoint 2"), 50 * robots.size() + 50*2, 50 * robots.size() + 50*2, (robots.size() - 1)%3);
+        emit addPathPoint(ip, QString("pathPoint 3"), 50 * robots.size() + 50*3, 50 * robots.size() + 50*3, (robots.size() - 1)%3);
+        emit addPathPoint(ip, QString("pathPoint 4"), 50 * robots.size() + 50*4, 50 * robots.size() + 50*4, (robots.size() - 1)%3);
+        emit addPathPoint(ip, QString("pathPoint 5"), 50 * robots.size() + 50*5, 50 * robots.size() + 50*5, (robots.size() - 1)%3);
+        emit addPathPoint(ip, QString("pathPoint 6"), 50 * robots.size() + 50*6, 50 * robots.size() + 50*6, (robots.size() - 1)%3);
+        emit setStage(ip, (int) ((robots.size() - 1) / 3));
     }
     //emit displayRobots();
 }
@@ -103,4 +121,24 @@ void RobotsController::shortcutDeleteRobot(){
         //emit displayRobots();
     } else
         qDebug() << "You already have no robot";
+}
+
+void RobotsController::newRobotPosSlot(QString ip, float posX, float posY, float ori){
+    emit newRobotPos(ip, posX, posY, ori);
+}
+
+void RobotsController::setRobotPos(QString ip, float posX, float posY, float ori){
+    emit setPos(ip, posX, posY, ori);
+}
+
+void RobotsController::newMetadataSlot(int width, int height, float resolution, float originX, float originY){
+    emit newMetadata(width, height, resolution, originX, originY);
+}
+
+void RobotsController::updatePathSlot(QString ip, QStringList strList){
+    emit updatePath(ip, strList);
+}
+
+void RobotsController::updateHomeSlot(QString ip, QString homeName, float homeX, float homeY){
+    emit updateHome(ip, homeName, homeX, homeY);
 }

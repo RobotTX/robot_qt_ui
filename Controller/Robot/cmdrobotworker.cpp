@@ -25,11 +25,7 @@ void CmdRobotWorker::connectSocket(){
     /// We create the timer used to know for how long we haven't receive any ping
     timer = new QTimer(this);
 
-
-    if(TESTING)
-        timer->setInterval(10000000);
-    else
-        timer->setInterval(1000);
+    timer->setInterval(1000);
 
 
     connect(timer, SIGNAL(timeout()), this, SLOT(timerSlot()));
@@ -56,7 +52,7 @@ void CmdRobotWorker::connectSocket(){
 
 void CmdRobotWorker::sendCommand(const QString cmd){
     qDebug() << "(Robot" << ipAddress << ") Command to send :" << (cmd + " " + static_cast<int8_t>(23) + " ") << "at port " << port;
-    int nbDataSend = socket->write(QString(cmd + " " + static_cast<int8_t>(23) + " ").toUtf8());
+    int nbDataSend = socket->write(QString(cmd + " " + char(23) + " ").toUtf8());
 
     socket->waitForBytesWritten(100);
 
@@ -72,7 +68,7 @@ void CmdRobotWorker::readTcpDataSlot(){
     /// if the command contains "Connected" it means the robot has just connected in which case
     /// we proceed a little differently (need to exchange home and path, modify settings page)
     if(commandAnswer.contains("Connected"))
-        emit newConnection(ipAddress, commandAnswer);
+        emit newConnection(commandAnswer);
     else
         emit cmdAnswer(commandAnswer);
 }
@@ -135,7 +131,7 @@ void CmdRobotWorker::pingSlot(void){
 
 void CmdRobotWorker::timerSlot(void){
     timeCounter++;
-    //qDebug()<< "(Robot" << ipAddress << ") Did not receive any ping from this robot for" << timeCounter << "seconds";
+    qDebug()<< "(Robot" << ipAddress << ") Did not receive any ping from this robot for" << timeCounter << "seconds";
     /// if the application has lost the connection with the robot for a time > ROBOT_TIMER
     /// the socket is closed
     if(timeCounter >= ROBOT_TIMER && socket->isOpen())

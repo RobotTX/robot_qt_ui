@@ -1,0 +1,52 @@
+<?xml version="1.0"?>
+<launch>
+  <node pkg="hokuyo_node" type="hokuyo_node" name="hokuyo" >
+    <param name="frame_id" value="base_laser" />
+    <param name="min_ang" value="-1.5707963265" />
+    <param name="max_ang" value="1.5707963265" />
+  </node>
+  <!--node pkg="battery" type="battery_node.py" name="battery" /-->
+  <node pkg="wheel" type="MD49.py" name="wheel" />
+  <node pkg="gobot_move" type="amcl_adjust.py" name="adjust" />
+  <node pkg="tf" type="static_transform_publisher" name="base_link" args="0 0 0 0 0 0 /base_link /base_laser 100 "/>
+  <node pkg="tf" type="static_transform_publisher" name="base_link_one" args="0 0 0 0 0 0 /base_link1 /base_laser1 100 "/>
+  <node pkg="gobot_move" type="odom_twoFrame.py" name="odom_node"/>
+  <node pkg="gobot_move" type="twist.py" name="control_node"/>
+  <node pkg="map_server" type="map_server" name="map_server" args="$(find gobot_move)/maps/map3.yaml" />
+  <node pkg="amcl" type="amcl" name="amcl">
+        <param name="tf_broadcast" value="true" />
+        <param name="base_frame_id" value="/base_link" />
+        <param name="global_frame_id" value="/map" />
+        <param name="odom_frame_id" value="/odom" />
+        <param name="use_map_topic" value="false" />
+
+        <remap from="scan" to="/scan" />
+        <param name="odom_model_type" value="diff" />
+        <param name="transform_tolerance" value="0.2" />
+        <param name="gui_publish_rate" value="14"/>
+        <param name="laser_max_beams" value="30"/>
+        <param name="laser_max_range" value="6.0"/>
+        <param name="min_particles" value="100"/>
+        <param name="max_particles" value="5000"/>
+        <param name="kld_err" value="0.01"/>
+        <param name="kld_z" value="0.99"/>
+        <param name="update_min_a" value="0.5"/>
+        <param name="resample_interval" value="2"/>
+        <param name="transform_tolerance" value="0.1"/>
+        <param name="recovery_alpha_slow" value="0.0"/>
+        <param name="recovery_alpha_fast" value="0.0"/>
+	<param name="odom_alpha1" value="0.2" />
+	<param name="odom_alpha2" value="0.2" />
+	<param name="odom_alpha3" value="1.0" />
+	<param name="odom_alpha4" value="1.0" />
+	<!--<param name="initial_cov_xx" value="10.0" />-->
+  </node>
+  <node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen">
+	<rosparam file="$(find gobot_move)/config/costmap_common_params.yaml" command="load" ns="global_costmap"/>
+    <rosparam file="$(find gobot_move)/config/costmap_common_params.yaml" command="load" ns="local_costmap"/>
+    <rosparam file="$(find gobot_move)/config/local_costmap_params.yaml" command="load"/>
+    <rosparam file="$(find gobot_move)/config/global_costmap_params.yaml" command="load"/>
+    <rosparam file="$(find gobot_move)/config/base_local_planner_params.yaml" command="load"/>
+  </node>
+ <!-- <node pkg="gobot_move" type="findPoint" name="findPoint" />-->
+</launch>

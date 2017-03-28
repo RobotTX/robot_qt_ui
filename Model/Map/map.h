@@ -42,6 +42,7 @@ public:
     void setHeight(const int _height) { height = _height; }
     void setWidth(const int _width) { width = _width; }
     void setResolution(const double _resolution) { resolution = _resolution; }
+    /// TODO check if we want to use the modified system ?
     void setModified(const bool _modified) { modified = _modified; }
 
 signals:

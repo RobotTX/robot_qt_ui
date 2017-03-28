@@ -9,6 +9,7 @@ class LocalMapWorker;
 class ScanMapWorker;
 class TeleopWorker;
 class ParticleCloudWorker;
+class CommandController;
 
 #include <QObject>
 #include <QThread>
@@ -34,19 +35,21 @@ private slots:
     void mapReceivedSlot(QByteArray, int, QString, QString, QString, QString, QString, QString, int, int);
     void sendNewMapToRobots(QString);
     void doneSendingMapSlot();
-    void updateMetadata(int, int, float, float, float);
-    void updateRobot(QString, float, float, float);
+    void updateMetadata(int width, int height, float resolution, float originX, float originY);
+    void updateRobot(float posX, float posY, float ori);
     void robotIsDeadSlot();
-    void cmdAnswerSlot(QString);
-    void updateRobotInfo(QString, QString);
+    void updateRobotInfo(QString robotInfo);
     void portSentSlot();
 
 signals:
     void robotIsDead(QString);
     void pingSignal();
-    void sendCommandSignal(QString cmd);
     void sendNewMapSignal(QString mapId, QString date, QString metadata, QImage map);
     void teleopCmd(int);
+    void newRobotPos(QString ip, float posX, float posY, float ori);
+    void newMetadata(int width, int height, float resolution, float originX, float originY);
+    void updatePath(QString ip, QStringList strList);
+    void updateHome(QString ip, QString homeName, float homeX, float homeY);
 
     void stopCmdRobotWorker();
     void stopRobotWorker();
@@ -68,6 +71,7 @@ signals:
 
 private:
     QString ip;
+    QPointer<CommandController> commandController;
 
     QPointer<CmdRobotWorker> cmdRobotWorker;
     QPointer<RobotPositionWorker> robotWorker;

@@ -4,6 +4,7 @@ import QtQuick.Layouts 1.3
 import "../../Helper/style.js" as Style
 import "../../Helper/helper.js" as Helper
 import "../../Model/Point"
+import "../Custom"
 
 Menu {
     id: selectPointMenu
@@ -29,7 +30,7 @@ Menu {
 
         Repeater {
             model: pointModel
-            MenuItem {
+            PopupMenuItem {
                 contentItem: Label {
                     text: qsTr(groupName)
                     anchors {
@@ -82,7 +83,7 @@ Menu {
                         Repeater {
                             model: points
 
-                            MenuItem {
+                            PopupMenuItem {
                                 anchors {
                                     left: parent.left
                                     right: parent.right

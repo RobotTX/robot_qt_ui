@@ -56,7 +56,7 @@ void RobotPositionWorker::readTcpDataSlot(){
 
     /// the IP address is sent along to identify the robot
     if(list.count() > 2)
-        emit valueChangedRobot(ipAddress, list.at(0).toDouble(), list.at(1).toDouble(), list.at(2).toDouble());
+        emit valueChangedRobot(list.at(0).toDouble(), list.at(1).toDouble(), list.at(2).toDouble());
 }
 
 void RobotPositionWorker::errorConnectionSlot(QAbstractSocket::SocketError error){
