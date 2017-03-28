@@ -77,7 +77,7 @@ void PointController::addGroup(QString groupName, bool saveXML){
         //qDebug() << "PointController::addGroup" << groupName;
         points->addGroup(groupName);
 
-        emit addGroupQml(QVariant::fromValue(groupName));
+        emit addGroupQml(groupName);
 
         if(saveXML)
             XMLParser::save(this, currentPointsFile);
@@ -94,20 +94,20 @@ void PointController::addPoint(QString name, QString groupName, double x, double
     /// We are creating a new point
     if(oldName.isEmpty()){
         //qDebug() << "PointController::addPoint Creating a point";
-        emit addPointQml(QVariant::fromValue(name),
-                         QVariant::fromValue(displayed),
-                         QVariant::fromValue(groupName),
-                         QVariant::fromValue(x),
-                         QVariant::fromValue(y));
+        emit addPointQml(name,
+                         displayed,
+                         groupName,
+                         x,
+                         y);
     } else {
         //qDebug() << "PointController::addPoint Editing a point";
-        emit editPointQml(QVariant::fromValue(oldName),
-                         QVariant::fromValue(oldGroup),
-                         QVariant::fromValue(name),
-                         QVariant::fromValue(displayed),
-                         QVariant::fromValue(groupName),
-                         QVariant::fromValue(x),
-                         QVariant::fromValue(y));
+        emit editPointQml(oldName,
+                         oldGroup,
+                         name,
+                         displayed,
+                         groupName,
+                         x,
+                         y);
     }
 
     if(saveXML)
@@ -180,12 +180,12 @@ void PointController::checkErrorPoint(const QImage& mapImage, const QString name
         error = (mapImage.pixelColor(x, y).red() != 255);
 
     /// Send the result to qml to enable or not the save button
-    emit enablePointSaveQml(QVariant::fromValue(!error));
+    emit enablePointSaveQml(!error);
 }
 
 void PointController::checkGroup(QString name){
     /// Check if the name of the group is already taken and send the result to enable or not the save button
-    emit enableGroupSaveQml(QVariant::fromValue(!points->checkGroupName(name)));
+    emit enableGroupSaveQml(!points->checkGroupName(name));
 }
 
 void PointController::clearPoints(){

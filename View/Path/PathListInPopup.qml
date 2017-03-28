@@ -4,6 +4,7 @@ import QtQuick.Layouts 1.3
 import "../../Helper/style.js" as Style
 import "../../Helper/helper.js" as Helper
 import "../../Model/Path"
+import "../Custom"
 
 Menu {
     id: selectPathMenu
@@ -29,7 +30,7 @@ Menu {
 
         Repeater {
             model: pathModel
-            MenuItem {
+            PopupMenuItem {
                 contentItem: Label {
                     text: qsTr(groupName)
                     anchors {
@@ -82,7 +83,7 @@ Menu {
                         Repeater {
                             model: paths
 
-                            MenuItem {
+                            PopupMenuItem {
                                 anchors {
                                     left: parent.left
                                     right: parent.right

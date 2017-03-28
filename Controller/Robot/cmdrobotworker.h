@@ -55,7 +55,7 @@ signals:
      * and calls a slot that will make sure the robot and the application have
      * the same paths and same home points
      */
-    void newConnection(QString ipAddress, QString home_pos);
+    void newConnection(QString home_pos);
 
 private slots:
     /**

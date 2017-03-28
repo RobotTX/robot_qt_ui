@@ -6,7 +6,6 @@
  * In this file we put all sorts of useful functions used by any classes
  */
 
-#define TESTING false
 #define NO_GROUP_NAME "No Group"
 
 #define PORT_ROBOT_UPDATE 6000

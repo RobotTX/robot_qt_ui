@@ -67,6 +67,10 @@ Frame {
             x: rightButton.width
             pointModel: frame.pointModel
             pathModel: frame.pathModel
+            onPointSelected: console.log("Selected a new home for the robot " + name + " at ip " + ip + " : " + _homeName + " " + _homeX + " " + _homeY)
+            onPathSelected: console.log("Selected a new path for the robot " + name + " at ip " + ip + " : " + _pathName + " " + _groupName)
+            onRenameRobot: console.log("Rename the robot " + name + " at ip " + ip)
+            onDeletePath: console.log("Delete the path of the robot " + name + " at ip " + ip)
         }
     }
 

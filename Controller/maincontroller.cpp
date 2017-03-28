@@ -7,6 +7,8 @@
 #include <QFileInfo>
 #include <QDir>
 #include <QMessageBox>
+#include "math.h"
+#include "Helper/helper.h"
 #include "Controller/Map/mapcontroller.h"
 #include "Controller/Point/pointcontroller.h"
 #include "Controller/Path/pathcontroller.h"
@@ -163,10 +165,50 @@ void MainController::loadMapConfig(QString fileName) const {
     }
 }
 
+void MainController::newRobotPosSlot(QString ip, float posX, float posY, float ori){
+    QPointF robotPos = Helper::Convert::robotCoordToPixelCoord(
+                    QPointF(posX, posY),
+                    mapController->getOrigin().x(),
+                    mapController->getOrigin().y(),
+                    mapController->getResolution(),
+                    mapController->getHeight());
+    float orientation = -ori * 180.0 / M_PI + 90;
+    robotsController->setRobotPos(ip, robotPos.x(), robotPos.y(), orientation);
+}
+
+void MainController::newMetadataSlot(int width, int height, float resolution, float originX, float originY){
+    mapController->setOrigin(QPointF(originX, originY));
+    mapController->setWidth(width);
+    mapController->setHeight(height);
+    mapController->setResolution(resolution);
+}
 
 
+void MainController::updatePathSlot(QString ip, QStringList strList){
+    if(strList.size() % 4 == 1){
+        emit setPath(ip, strList.takeFirst());
+        for(int i = 0; i < strList.size(); i+=4){
+            QPointF pathPointPos = Helper::Convert::robotCoordToPixelCoord(
+                            QPointF(static_cast<QString>(strList.at(i+1)).toFloat(), static_cast<QString>(strList.at(i+2)).toFloat()),
+                            mapController->getOrigin().x(),
+                            mapController->getOrigin().y(),
+                            mapController->getResolution(),
+                            mapController->getHeight());
+            emit addPathPoint(ip, strList.at(i), pathPointPos.x(), pathPointPos.y(), static_cast<QString>(strList.at(i+3)).toInt());
+        }
+    } else
+        qDebug() << "RobotsController::updatePathSlot" << ip << "got a wrong number of param for the path :" << strList.size() << ", supposed to have the path name + a multiple of 4";
+}
 
-
+void MainController::updateHomeSlot(QString ip, QString homeName, float homeX, float homeY){
+    QPointF homePos = Helper::Convert::robotCoordToPixelCoord(
+                    QPointF(homeX, homeY),
+                    mapController->getOrigin().x(),
+                    mapController->getOrigin().y(),
+                    mapController->getResolution(),
+                    mapController->getHeight());
+    emit setHome(ip, homeName, homePos.x(), homePos.y());
+}
 
 
 

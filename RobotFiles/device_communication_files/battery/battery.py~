@@ -1,0 +1,58 @@
+import time
+import serial
+import commands
+
+
+# configure the serial connections (the parameters differs on the device you are connecting to)
+deviceNode = "1-3.2:1.0"
+(status, output) = commands.getstatusoutput("ls -l /sys/class/tty/ttyUSB*")
+devPort = "/dev"+output[output.index(deviceNode)+9:output.index(deviceNode)+17]
+print devPort
+
+sonar = serial.Serial(
+	port = devPort,
+        baudrate = 38400,
+        stopbits = 1,
+        bytesize = serial.EIGHTBITS,
+        timeout = 0.5
+)
+
+if sonar.isOpen():
+	print "Connected on port", sonar.port 
+
+
+	while True:
+
+		sonar.write("\xBA\x02\x00\x00\x00\x00\x00\x00\x00\x00\x1B")
+		res = sonar.read(5)
+		if len(res) == 5:
+			print 'info :', ord(res[3])
+		else:
+			print "Length read :", len(res)
+		time.sleep(1)
+
+		print "Ready to read value"
+
+		sonar.write("\xBA\x01\x00\x00\x00\x00\x00\x00\x00\x00\x1B")
+		res = sonar.read(15)
+
+		if len(res) == 15:
+			print 'Info :', ord(res[3]), ord(res[4]), ord(res[5]), ord(res[6]), ord(res[7]), ord(res[8]), ord(res[9]), ord(res[10]), ord(res[11]), ord(res[12]), ord(res[13])
+			soc = ord(res[3])
+			batteryVolt = ord(res[4])*256 + ord(res[5])
+			chargingCurrent = ord(res[6])*256 + ord(res[7])
+			temp = ord(res[8])*256 + ord(res[9])
+			remainCapacity = ord(res[10])*256 + ord(res[11])
+			fullCapacity = ord(res[12])*256 + ord(res[13])
+			print 'State of charge :', soc, '%'
+			print 'Battery Voltage :', batteryVolt, 'mV'
+			print 'Charging Current :', chargingCurrent, 'mA'
+			print 'Temperature on battery :', temp/100, 'C'
+			print 'Remaining Capacity of battery voltage :', remainCapacity/100, '%'
+			print 'Full Capacity of battery voltage :', fullCapacity/100, '%'
+		else:
+			print "Length read :", len(res)
+		time.sleep(2)
+
+
+    

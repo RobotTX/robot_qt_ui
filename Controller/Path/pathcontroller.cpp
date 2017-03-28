@@ -77,7 +77,7 @@ void PathController::loadPaths(const QString fileName){
 
 void PathController::addGroup(const QString groupName, bool saveXML){
     paths->addGroup(groupName);
-    emit addGroupQml(QVariant::fromValue(groupName));
+    emit addGroupQml(groupName);
     if(saveXML)
         PathXMLParser::save(this, currentPathsFile);
 }
@@ -90,7 +90,7 @@ void PathController::deleteGroup(const QString groupName){
 
 void PathController::addPath(const QString groupName, const QString name, bool saveXML){
     paths->addPath(groupName, name);
-    emit addPathQml(QVariant::fromValue(name), QVariant::fromValue(groupName));
+    emit addPathQml(name, groupName);
 
     if(saveXML)
         PathXMLParser::save(this, currentPathsFile);
@@ -105,9 +105,9 @@ void PathController::deletePath(const QString groupName, const QString name){
 void PathController::addPathPoint(const QString groupName, const QString pathName, const QString name, const double x, const double y, const int waitTime, bool saveXML){
     paths->addPathPoint(groupName, pathName, name, x, y, waitTime);
 
-    emit addPathPointQml(QVariant::fromValue(name), QVariant::fromValue(pathName),
-                    QVariant::fromValue(groupName), QVariant::fromValue(x),
-                    QVariant::fromValue(y), QVariant::fromValue(waitTime));
+    emit addPathPointQml(name, pathName,
+                    groupName, x,
+                    y, waitTime);
 
     if(saveXML)
         PathXMLParser::save(this, currentPathsFile);
@@ -121,13 +121,13 @@ void PathController::deletePathPoint(const QString groupName, const QString path
 
 void PathController::renameGroup(const QString newName, const QString oldName){
     paths->renameGroup(newName, oldName);
-    emit renameGroupQml(QVariant::fromValue(newName), QVariant::fromValue(oldName));
+    emit renameGroupQml(newName, oldName);
     PathXMLParser::save(this, currentPathsFile);
 }
 
 void PathController::checkGroup(QString name){
     /// Check if the name of the group is already taken and send the result to enable or not the save button
-    emit enableGroupSaveQml(QVariant::fromValue(!paths->checkGroupName(name)));
+    emit enableGroupSaveQml(!paths->checkGroupName(name));
 }
 
 void PathController::moveTo(QString name, QString oldGroup, QString newGroup){
@@ -137,7 +137,7 @@ void PathController::moveTo(QString name, QString oldGroup, QString newGroup){
 }
 
 void PathController::checkPosition(const QImage& mapImage, const int index, const double x, const double y){
-    emit setTmpValidPositionQml(QVariant::fromValue(index), QVariant::fromValue(mapImage.pixelColor(x, y).red() != 255));
+    emit setTmpValidPositionQml(index, mapImage.pixelColor(x, y).red() != 255);
 }
 
 

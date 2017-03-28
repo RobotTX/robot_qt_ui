@@ -42,6 +42,7 @@ ListModel {
     }
 
     function setHome(ip, name, posX, posY){
+        console.log("Set home " + ip + " " + name + " " + posX + " " + posY);
         for(var i = 0; i < count; i++)
             if(get(i).ip === ip){
                 setProperty(i, "homeName", name);
@@ -71,6 +72,7 @@ ListModel {
     }
 
     function addPathPoint(ip, name, posX, posY, waitTime){
+        console.log("addPathPoint " + ip + " " + name + " " + posX + " " + posY + " " + waitTime);
         for(var i = 0; i < count; i++)
             if(get(i).ip === ip){
                 get(i).pathPoints.append({
@@ -79,7 +81,6 @@ ListModel {
                                           "pathPointPosY": posY,
                                           "waitTime": waitTime
                                       });
-                //console.log(ip + " addPathPoint " + get(i).pathPoints.count);
             }
     }
 

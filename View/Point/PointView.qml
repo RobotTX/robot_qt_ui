@@ -27,6 +27,9 @@ Image {
             case Helper.PointViewType.TEMP:
                 src = "qrc:/icons/addPointView";
             break;
+            case Helper.PointViewType.HOME:
+                src = "qrc:/icons/homeView";
+            break;
             case Helper.PointViewType.PATHPOINT:
                 src = "qrc:/icons/pathPoint";
             break;

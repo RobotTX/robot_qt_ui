@@ -2,6 +2,7 @@
 #define MAPCONTROLLER_H
 
 #include <QObject>
+#include <QPointer>
 #include "Model/Map/map.h"
 
 class EditMapController;
@@ -17,8 +18,16 @@ public:
 
     QString getMapFile(void) const { return map->getMapFile(); }
     QImage getMapImage(void) const { return map->getMapImage(); }
+    int getHeight(void) const { return map->getHeight(); }
+    int getWidth(void) const { return map->getWidth(); }
+    QPointF getOrigin(void) const { return map->getOrigin(); }
+    double getResolution(void) const { return map->getResolution(); }
 
     void setMapFile(const QString file) { map->setMapFile(file); }
+    void setOrigin(const QPointF origin) { map->setOrigin(origin); }
+    void setHeight(const int height) { map->setHeight(height); }
+    void setWidth(const int width) { map->setWidth(width); }
+    void setResolution(const double resolution) { map->setResolution(resolution); }
 
     /**
      * @brief initializeMap
@@ -98,8 +107,8 @@ signals:
     void requestReloadMap(QVariant location);
 
 private:
-    Map* map;
-    EditMapController* editMapController;
+    QPointer<Map> map;
+    QPointer<EditMapController> editMapController;
 };
 
 #endif /// MAPCONTROLLER_H

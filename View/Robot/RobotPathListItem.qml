@@ -226,14 +226,6 @@ Frame {
                                 anchors.fill: parent
                                 color: "transparent"
                             }
-/*
-                            Label {
-                                text: qsTr(pathPointName)
-                                font.pixelSize: 14
-                                color: Style.midGrey2
-                                maximumLineCount: 1
-                                elide: Text.ElideRight
-                            }*/
 
                             Rectangle {
                                 height: 15

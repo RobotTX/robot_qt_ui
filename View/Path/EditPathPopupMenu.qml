@@ -4,6 +4,7 @@ import QtQuick.Layouts 1.3
 import "../../Helper/style.js" as Style
 import "../../Helper/helper.js" as Helper
 import "../../Model/Path"
+import "../Custom"
 
 Menu {
     id: menu
@@ -25,7 +26,7 @@ Menu {
         radius: 5
     }
 
-    MenuItem {
+    PopupMenuItem {
         text: qsTr("Edit Path")
         width: parent.width
         leftPadding: Style.menuItemLeftPadding
@@ -39,7 +40,7 @@ Menu {
         height: 2
     }
 
-    MenuItem {
+    PopupMenuItem {
         text: qsTr("Move to")
         width: parent.width
         leftPadding: Style.menuItemLeftPadding
@@ -70,7 +71,7 @@ Menu {
                 radius: 5
             }
 
-            MenuItem {
+            PopupMenuItem {
                 height: Style.menuItemHeight
                 text: qsTr(Helper.noGroup)
                 width: parent.width
@@ -95,7 +96,7 @@ Menu {
                 Repeater {
                     model: pathModel
 
-                    MenuItem {
+                    PopupMenuItem {
                         anchors {
                             left: parent.left
                             right: parent.right
@@ -134,7 +135,7 @@ Menu {
         height: 2
     }
 
-    MenuItem {
+    PopupMenuItem {
         text: qsTr("Delete Path")
         width: parent.width
         leftPadding: Style.menuItemLeftPadding
