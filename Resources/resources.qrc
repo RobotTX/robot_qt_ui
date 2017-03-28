@@ -73,5 +73,9 @@
         <file alias="increase">icons/Btn_Add.png</file>
         <file alias="save">icons/Btn_Save.png</file>
 
+        <!-- for settings -->
+        <file alias="unchecked">icons/Btn_Stop_p.png</file>
+        <file alias="question">icons/question_mark.png</file>
+
     </qresource>
 </RCC>

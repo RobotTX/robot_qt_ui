@@ -101,11 +101,7 @@ void MainController::saveMapConfig(QString fileName, double zoom, double centerX
 
     /// saves the new configuration to the current configuration file
     PathXMLParser::save(pathController, QDir::currentPath() + QDir::separator() + "currentPaths.xml");
-/*
-    // TODO add this when possible
-    for(int i = 0; i < robotsController->getRobots()->getRobotsVector().size(); i++)
-        robotsController->getRobots()->getRobotsVector().at(i)->getRobot()->sendNewMap(mapController->getMap());
-    */
+
 
 }
 
