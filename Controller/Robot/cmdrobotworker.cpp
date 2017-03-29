@@ -51,8 +51,8 @@ void CmdRobotWorker::connectSocket(){
 }
 
 void CmdRobotWorker::sendCommand(const QString cmd){
-    qDebug() << "(Robot" << ipAddress << ") Command to send :" << (cmd + " " + static_cast<int8_t>(23) + " ") << "at port " << port;
-    int nbDataSend = socket->write(QString(cmd + " " + char(23) + " ").toUtf8());
+    qDebug() << "(Robot" << ipAddress << ") Command to send :" << cmd << "at port " << port;
+    int nbDataSend = socket->write(QString(cmd + QChar(31) + QChar(23) + QChar(31)).toUtf8());
 
     socket->waitForBytesWritten(100);
 
@@ -94,8 +94,8 @@ void CmdRobotWorker::connectedSlot(){
 
     /// When we are connected, we send the ports to use for the other workers
     /// in order to get laser feedback, robot position, map and map metadata
-    QString portStr = "h \"" + QString::number(metadataPort) + "\" \"" + QString::number(robotPort) + "\" \"" +
-            QString::number(mapPort) + "\" \"" + QString::number(laserPort) + "\" \"" + QString::number(startLaser) + "\" } ";
+    QString portStr = QString("h") + QChar(31) + QString::number(metadataPort) + QChar(31) + QString::number(robotPort) + QChar(31) +
+            QString::number(mapPort) + QChar(31) + QString::number(laserPort) + QChar(31) + QString::number(startLaser) + QChar(23);
 
     bool tmpBool(false);
     while(!tmpBool){

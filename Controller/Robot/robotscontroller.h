@@ -18,6 +18,7 @@ public:
     ~RobotsController();
 
     void setRobotPos(QString ip, float posX, float posY, float ori);
+    void sendCommand(QString ip, QString cmd);
 
 private:
     void launchServer();
@@ -31,6 +32,10 @@ private slots:
     void newMetadataSlot(int width, int height, float resolution, float originX, float originY);
     void updatePathSlot(QString ip, QStringList strList);
     void updateHomeSlot(QString ip, QString homeName, float homeX, float homeY);
+    void sendCommandNewName(QString ip, QString name);
+    void updateNameSlot(QString ip, QString name);
+    void sendCommandDeletePath(QString ip);
+    void stoppedDeletedPathSlot(QString ip);
 
 signals:
     void stopRobotServerWorker();
@@ -48,6 +53,7 @@ signals:
     void newMetadata(int width, int height, float resolution, float originX, float originY);
     void updatePath(QString ip, QStringList strList);
     void updateHome(QString ip, QString homeName, float homeX, float homeY);
+    void setName(QVariant ip, QVariant name);
 
 private:
     QMap<QString, QPointer<RobotController>> robots;

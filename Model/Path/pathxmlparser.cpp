@@ -45,8 +45,8 @@ void PathXMLParser::save(PathController *pathController, const QString fileName)
             for(int k = 0; k < l.value()->getPathPointVector().size(); k++){
                 xmlWriter.writeStartElement("pathpoint");
                 xmlWriter.writeTextElement("name", l.value()->getPathPointVector().at(k)->getPoint()->getName());
-                xmlWriter.writeTextElement("x", QString::number(l.value()->getPathPointVector().at(k)->getPoint()->getX()));
-                xmlWriter.writeTextElement("y", QString::number(l.value()->getPathPointVector().at(k)->getPoint()->getY()));
+                xmlWriter.writeTextElement("x", QString::number(l.value()->getPathPointVector().at(k)->getPoint()->getPos().x()));
+                xmlWriter.writeTextElement("y", QString::number(l.value()->getPathPointVector().at(k)->getPoint()->getPos().y()));
                 xmlWriter.writeTextElement("waittime", QString::number(l.value()->getPathPointVector().at(k)->getWaitTime()));
                 xmlWriter.writeEndElement();
             }
@@ -79,8 +79,8 @@ void PathXMLParser::save(PathController *pathController, const QString fileName)
                     for(int k = 0; k < j.value()->getPathPointVector().size(); k++){
                         xmlWriter.writeStartElement("pathpoint");
                         xmlWriter.writeTextElement("name", j.value()->getPathPointVector().at(k)->getPoint()->getName());
-                        xmlWriter.writeTextElement("x", QString::number(j.value()->getPathPointVector().at(k)->getPoint()->getX()));
-                        xmlWriter.writeTextElement("y", QString::number(j.value()->getPathPointVector().at(k)->getPoint()->getY()));
+                        xmlWriter.writeTextElement("x", QString::number(j.value()->getPathPointVector().at(k)->getPoint()->getPos().x()));
+                        xmlWriter.writeTextElement("y", QString::number(j.value()->getPathPointVector().at(k)->getPoint()->getPos().y()));
                         xmlWriter.writeTextElement("waittime", QString::number(j.value()->getPathPointVector().at(k)->getWaitTime()));
                         xmlWriter.writeEndElement();
                     }

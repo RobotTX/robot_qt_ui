@@ -9,8 +9,8 @@ Button {
     height: Style.smallBtnHeight
 
     background: Rectangle {
-        color: pressed ? Style.lightGreyBorder : "transparent"
-        radius: pressed ? 10 : 0
+        color: hovered ? Style.lightGreyBackgroundHover : pressed ? Style.lightGreyBorder : "transparent"
+        radius: pressed || hovered ? 10 : 0
     }
 
     Image {

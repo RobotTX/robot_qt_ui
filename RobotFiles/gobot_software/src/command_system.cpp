@@ -58,11 +58,24 @@ int particle_cloud_port = 4005;
 
 std::string path_computer_software = "/home/gtdollar/computer_software/";
 
-static const boost::regex cmd_regex("\"(.*?)\"");
+/// Separator which is just a char(31) => unit separator in ASCII
+static const std::string sep = std::string(1, 31);
+static const char sep_c = 31;
+
+template<typename Out>
+void split(const std::string &s, char delim, Out result) {
+    std::stringstream ss;
+    ss.str(s);
+    std::string item;
+    while (std::getline(ss, item, delim)) {
+        *(result++) = item;
+    }
+}
 
 bool execCommand(ros::NodeHandle n, std::vector<std::string> command){
 
 	std::string commandStr = command.at(0);
+	bool status(false);
 	switch (commandStr.at(0)) {
 
 		/// Command for changing the name of the robot
@@ -76,7 +89,7 @@ bool execCommand(ros::NodeHandle n, std::vector<std::string> command){
 				ofs << command.at(1);
 				ofs.close();
 
-				return true;
+				status = true;
 			} else 
 				std::cout << "(Command system) Name missing" << std::endl;
 		break;
@@ -91,7 +104,7 @@ bool execCommand(ros::NodeHandle n, std::vector<std::string> command){
 				std::cout << "(Command system) Cmd : " << cmd << std::endl;
 
 				system(cmd.c_str());
-				return true;
+				status = true;
 			} else 
 				std::cout << "(Command system) Parameter missing" << std::endl;
 		break;
@@ -100,7 +113,7 @@ bool execCommand(ros::NodeHandle n, std::vector<std::string> command){
 		/// Command for the robot to move to a point
 		case 'c':
 			// first param == c, second param = goal pos x coordinate, third param = goal pos y coordinate, 4th param = waiting time
-			std::cout << "(Command system) Gobot go to point" << std::endl;
+			/*std::cout << "(Command system) Gobot go to point" << std::endl;
 			if(command.size() == 4){
 				float posX = std::stof(command.at(1));
 				float posY = std::stof(command.at(2));
@@ -128,9 +141,10 @@ bool execCommand(ros::NodeHandle n, std::vector<std::string> command){
 				else 
 					std::cout << "(Command system) Then wait for : Human Action" << std::endl;
 
-				return true;
+				status = true;
 			} else 
-				std::cout << "(Command system) Parameter missing" << std::endl;
+				std::cout << "(Command system) Parameter missing" << std::endl;*/
+			std::cout << "(Command system) Command c to change the wifi not used anymore" << std::endl;
 		
 		break;
 
@@ -142,7 +156,7 @@ bool execCommand(ros::NodeHandle n, std::vector<std::string> command){
 				std_srvs::Empty arg;
 				if(ros::service::call("pause_path", arg)){
 					std::cout << "Pause path service called with success";
-					return true;
+					status = true;
 				} else
 					std::cout << "Pause path service call failed";
 			}
@@ -153,7 +167,7 @@ bool execCommand(ros::NodeHandle n, std::vector<std::string> command){
 		case 'e':
 			if(command.size() == 1) {
 				std::cout << "(Command system) Gobot play the ongoing scan" << std::endl;
-				return sendAutoMap();
+				status = sendAutoMap();
 			}
 		break;
 
@@ -161,13 +175,13 @@ bool execCommand(ros::NodeHandle n, std::vector<std::string> command){
 		case 'f':
 			if(command.size() == 1) {
 				std::cout << "(Command system) Gobot pause the ongoing scan" << std::endl;
-				return stopAutoMap();
+				status = stopAutoMap();
 			}
 		break;
 
 		case 'g':
 			// first param is g, second param is the new name, third param is ssid, 4th param is password
-			if(command.size() == 4){
+			/*if(command.size() == 4){
 				std::cout << "(Command system) New name : " << command.at(1) << std::endl;
 
 				std::ofstream ofs;
@@ -182,9 +196,9 @@ bool execCommand(ros::NodeHandle n, std::vector<std::string> command){
 
 				system(cmd.c_str());
 
-				return true;
 			} else 
-				std::cout << "(Command system) Parameter missing" << std::endl;
+				std::cout << "(Command system) Parameter missing" << std::endl;*/
+			std::cout << "(Command system) Command g to change the name + wifi not used anymore" << std::endl;
 		break;
 
 		/// Command for the robot to receive the ports needed for the map, metadata and robot pos services
@@ -203,7 +217,7 @@ bool execCommand(ros::NodeHandle n, std::vector<std::string> command){
 				startMap();
 				startLaserData(startLaser);
 				//connectToParticleCloudNode();
-				return true;
+				status = true;
 			} else
 				std::cout << "(Command system) Parameter missing" << std::endl;
 		break;
@@ -212,17 +226,19 @@ bool execCommand(ros::NodeHandle n, std::vector<std::string> command){
 		/// Command for the robot to save a new path
 		case 'i':
 		{
-			// first param is i, then triplets of parameters to represent path points (posX, posY, waiting time) 
-			if(command.size() >= 4 && command.size()%3 == 1){
+			// first param is i, then the path name, then quadriplets of parameters to represent path points (path point name, posX, posY, waiting time) 
+			if(command.size() >= 5 && command.size()%4 == 2){
 
 				std::cout << "(Command system) Path received :" << std::endl;
 
 				std::ofstream ofs(path_computer_software + "Robot_Infos/path.txt", std::ofstream::out | std::ofstream::trunc);
 				
 				if(ofs){
-
-					for(int i = 1; i < command.size(); i+=3)
-						ofs << command.at(i) << " " << command.at(i+1) << " " << command.at(i+2) << "\n";
+					std::string strPath;
+					for(int i = 1; i < command.size(); i++){
+						ofs << command.at(i) << "\n";
+						strPath += sep + command.at(i);
+					}
 
 					ofs.close();
 					
@@ -239,7 +255,7 @@ bool execCommand(ros::NodeHandle n, std::vector<std::string> command){
 						else
 							std::cout << "Stop path service call failed";
 
-						return true;
+						status = true;
 					} else
 						std::cout << "Sorry we were not able to find the file play_path.txt in order to keep track of the stage of the path to be played" << std::endl;
 				} else 
@@ -257,7 +273,7 @@ bool execCommand(ros::NodeHandle n, std::vector<std::string> command){
 				std_srvs::Empty arg;
 				if(ros::service::call("play_path", arg)){
 					std::cout << "Play path service called with success";
-					return true;
+					status = true;
 				} else
 					std::cout << "Play path service call failed";
 			}
@@ -266,15 +282,15 @@ bool execCommand(ros::NodeHandle n, std::vector<std::string> command){
 
 		/// Command for the robot to delete the saved path
 		case 'k':
-			if(command.size() == 1) {
+			/*if(command.size() == 1) {
 				{
 					std::cout << "(Command system) Deleting the path" << std::endl;
 					std::ofstream ofs;
 					ofs.open(path_computer_software + "Robot_Infos/path.txt", std::ofstream::out | std::ofstream::trunc);
 					ofs.close();
 				}
-				return true;
-			}
+				status = true;
+			}*/
 		break;
 
 		/// Command to stop the robot while following its path
@@ -286,7 +302,7 @@ bool execCommand(ros::NodeHandle n, std::vector<std::string> command){
 				std_srvs::Empty arg;
 				if(ros::service::call("stop_path", arg)){
 					std::cout << "Stop path service called with success";
-					return true;
+					status = true;
 				} else
 					std::cout << "Stop path service call failed";
 			}
@@ -304,7 +320,7 @@ bool execCommand(ros::NodeHandle n, std::vector<std::string> command){
 					std::ofstream ofs;
 					ofs.open(path_computer_software + "Robot_Infos/path.txt", std::ofstream::out | std::ofstream::trunc);
 					ofs.close();
-					return true;
+					status = true;
 				} else
 					std::cout << "Stop path service call failed";
 			}
@@ -316,7 +332,7 @@ bool execCommand(ros::NodeHandle n, std::vector<std::string> command){
 			// param 1 is n, 2nd is the home name, 3rd is the home x coordinate, 4th is the home y coordinate
 			if(command.size() == 4){
 
-				std::cout << "(Command system) Home received :" << std::endl;
+				std::cout << "(Command system) Home received" << std::endl;
 
 				std::ofstream ofs(path_computer_software + "Robot_Infos/home.txt", std::ofstream::out | std::ofstream::trunc);
 				
@@ -325,10 +341,10 @@ bool execCommand(ros::NodeHandle n, std::vector<std::string> command){
 					ofs << command.at(1) << "\n" << command.at(2) << "\n" << command.at(3) << "\n";
 
 					ofs.close();
-					return true;
+					status = true;
 
 				} else
-					std::cout << "sorry could nt open the file " << path_computer_software + "Robot_Infos/path.txt";
+					std::cout << "sorry could not open the file " << path_computer_software + "Robot_Infos/path.txt";
 			} else
 				std::cout << "Not enough arguments, received " << command.size() << " arguments, 3 arguments expected" << std::endl;
 		break;
@@ -341,7 +357,7 @@ bool execCommand(ros::NodeHandle n, std::vector<std::string> command){
 				std_srvs::Empty arg;
 				if(ros::service::call("go_home", arg)){
 					std::cout << "Go home service called with success" << std::endl;
-					return true;
+					status = true;
 				} else
 					std::cout << "Stop path service call failed" << std::endl;
 			}
@@ -356,7 +372,7 @@ bool execCommand(ros::NodeHandle n, std::vector<std::string> command){
 				std_srvs::Empty arg;
 				if(ros::service::call("stop_going_home", arg)){
 					std::cout << "Stop going home service called with success" << std::endl;
-					return true;
+					status = true;
 				} else
 					std::cout << "Stop going home service call failed" << std::endl;
 			}
@@ -367,7 +383,7 @@ bool execCommand(ros::NodeHandle n, std::vector<std::string> command){
 		{
 			if(command.size() == 1) {
 				std::cout << "(Command system) Gobot sends laser data" << std::endl;
-				return sendLaserData();
+				status = sendLaserData();
 			}
 		}
 		break;
@@ -376,7 +392,7 @@ bool execCommand(ros::NodeHandle n, std::vector<std::string> command){
 		{
 			if(command.size() == 1) {
 				std::cout << "(Command system) Gobot stops sending laser data" << std::endl;
-				return stopSendLaserData();
+				status = stopSendLaserData();
 			}
 		}
 		break;
@@ -386,7 +402,7 @@ bool execCommand(ros::NodeHandle n, std::vector<std::string> command){
 			// first param is s, second is who -> which widget requires it
 			std::cout << "(Command system) Gobot send the map once" << std::endl;
 			if(command.size() == 2)
-				return sendOnceMap(std::stoi(command.at(1)));
+				status = sendOnceMap(std::stoi(command.at(1)));
 			 else 
 				std::cout << "Not enough arguments, received " << command.size() << " arguments, 2 arguments expected" << std::endl; 
 		break;
@@ -409,7 +425,7 @@ bool execCommand(ros::NodeHandle n, std::vector<std::string> command){
 	            system(cmd.c_str());
 	            std::cout << "(New Map) We relaunched gobot_move" << std::endl;
 
-				return sendAutoMap();
+				status = sendAutoMap();
 			}
 		}
 		break;
@@ -431,7 +447,7 @@ bool execCommand(ros::NodeHandle n, std::vector<std::string> command){
 	            system(cmd.c_str());
 	            std::cout << "(New Map) We relaunched gobot_move" << std::endl;
 
-				return stopAutoMap();
+				status = stopAutoMap();
 			}
 		}
 		break;
@@ -443,9 +459,7 @@ bool execCommand(ros::NodeHandle n, std::vector<std::string> command){
 				std::cout << "(Command system) Gobot starts recovering its position" << std::endl;
 				recovering = true;
 				if(sendLocalMap())
-					return recoverPosition();
-				else 
-					return false;
+					status = recoverPosition();
 				/*
 				if(startSendingParticleCloud())
 					return recoverPosition();
@@ -461,7 +475,7 @@ bool execCommand(ros::NodeHandle n, std::vector<std::string> command){
 		{
 			if(command.size() == 1) {
 				std::cout << "(Command system) Gobot pauses during the recovery of its position" << std::endl;
-				return stopRecoveringPosition();
+				status = stopRecoveringPosition();
 			}
 		}
 
@@ -471,7 +485,7 @@ bool execCommand(ros::NodeHandle n, std::vector<std::string> command){
 			if(command.size() == 1){
 				std::cout << "(Command system) Gobot stops during the recovery of its position" << std::endl;
 				recovering = false;
-				return stopRecoveringPosition();
+				status = stopRecoveringPosition();
 			}
 		}
 		break;
@@ -482,11 +496,9 @@ bool execCommand(ros::NodeHandle n, std::vector<std::string> command){
 				std::cout << "(Command system) Gobot resumes recovering its position" << std::endl;
 				recovering = true;
 				if(sendLocalMap())
-					return resumeRecoveryPosition();
-				else {
+					status = resumeRecoveryPosition();
+				else
 					std::cout << "(Command system) Could not get the local map" << std::endl;
-					return false;
-				}
 			}	
 		}
 		break;
@@ -514,7 +526,7 @@ bool execCommand(ros::NodeHandle n, std::vector<std::string> command){
 	            cmd = "roslaunch gobot_move slam.launch &";
 	            system(cmd.c_str());
 	            */
-	            return true;
+	            status = true;
 			}
 		}
 		break;
@@ -529,7 +541,7 @@ bool execCommand(ros::NodeHandle n, std::vector<std::string> command){
 				std::cout << "(Command system) Too many arguments to display (" << command.size() << ")" << std::endl;
 		break;
 	}
-	return false;
+	return status;
 }
 
 bool resumeRecoveryPosition(){
@@ -865,28 +877,20 @@ void getPorts(boost::shared_ptr<tcp::socket> sock, ros::NodeHandle n){
 	} else if (error) 
 		throw boost::system::system_error(error); // Some other error.
 
-	std::istringstream iss(data);
-
-	while (iss && !finishedCmd && ros::ok() && connected){
-		std::string sub;
-		iss >> sub;
-		if(sub.compare("}") == 0){
-			std::cout << "(Command system) Command complete" << std::endl;
-			finishedCmd = 1;
-		} else 
-			commandStr += sub + " ";
+	for(int i = 0; i < length; i++){
+		if(static_cast<int>(data[i]) != 0){
+			if(static_cast<int>(data[i]) == 23){
+				std::cout << "(Command system) Command complete" << std::endl;
+				finishedCmd = 1;
+				i = length;
+			} else
+				commandStr += data[i];
+		}
 	}
 	std::cout << "Received :" << commandStr << std::endl;
 
-	command.push_back(std::string(1, commandStr.at(0)));
-
-	std::list<std::string> l;
-	boost::regex_split(std::back_inserter(l), commandStr, cmd_regex);
-	while(l.size()) {
-		std::string s = *(l.begin());
-		l.pop_front();
-		command.push_back(s);
-	}
+	/// Split the command from a str to a vector of str
+	split(commandStr, sep_c, std::back_inserter(command));
 
 	if(finishedCmd){
 		std::cout << "(Command system) Executing command : " << std::endl;
@@ -937,15 +941,9 @@ void session(boost::shared_ptr<tcp::socket> sock, ros::NodeHandle n){
 			}
 
 			if(commandStr.length() > 0){
-				command.push_back(std::string(1, commandStr.at(0)));
-			
-	   			std::list<std::string> l;
-				boost::regex_split(std::back_inserter(l), commandStr, cmd_regex);
-				while(l.size()) {
-					std::string s = *(l.begin());
-					l.pop_front();
-					command.push_back(s);
-				}
+
+				/// Split the command from a str to a vector of str
+				split(commandStr, sep_c, std::back_inserter(command));
 
 				if(finishedCmd){
 					std::cout << "(Command system) Executing command : " << std::endl;
@@ -955,12 +953,7 @@ void session(boost::shared_ptr<tcp::socket> sock, ros::NodeHandle n){
 					} else 
 						std::cout << "(Command system) Too many arguments to display (" << command.size() << ")" << std::endl;
 
-					std::string msg = command.at(0);
-					if(execCommand(n, command))
-						msg += " done";
-					else 
-						msg += " failed";
-
+					std::string msg = (execCommand(n, command) ? "done" : "failed") + sep + commandStr;
 					sendMessageToPc(sock, msg);
 					command.clear();
 					finishedCmd = 0;
@@ -1008,8 +1001,6 @@ bool sendMessageToPc(boost::shared_ptr<tcp::socket> sock, std::string message){
 
 void asyncAccept(boost::shared_ptr<boost::asio::io_service> io_service, boost::shared_ptr<tcp::acceptor> m_acceptor, ros::NodeHandle n){
 	std::cout << "(Command system) Waiting for connection" << std::endl;
-   	/// Separator which is just a char(31) => unit separator in ASCII
-   	std::string sep = std::string(1, 31);
 
 	boost::shared_ptr<tcp::socket> sock = boost::shared_ptr<tcp::socket>(new tcp::socket(*io_service));
 

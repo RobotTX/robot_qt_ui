@@ -31,8 +31,8 @@ void XMLParser::save(PointController *pointController, const QString fileName) {
         for(int j = 0; j < pointController->getPoints()->getGroups().value(NO_GROUP_NAME)->getPointVector().size(); j++){
             xmlWriter.writeStartElement("point");
             xmlWriter.writeTextElement("name", pointController->getPoints()->getGroups().value(NO_GROUP_NAME)->getPointVector().at(j)->getName());
-            xmlWriter.writeTextElement("x", QString::number(pointController->getPoints()->getGroups().value(NO_GROUP_NAME)->getPointVector().at(j)->getX()));
-            xmlWriter.writeTextElement("y", QString::number(pointController->getPoints()->getGroups().value(NO_GROUP_NAME)->getPointVector().at(j)->getY()));
+            xmlWriter.writeTextElement("x", QString::number(pointController->getPoints()->getGroups().value(NO_GROUP_NAME)->getPointVector().at(j)->getPos().x()));
+            xmlWriter.writeTextElement("y", QString::number(pointController->getPoints()->getGroups().value(NO_GROUP_NAME)->getPointVector().at(j)->getPos().y()));
             xmlWriter.writeTextElement("displayed", QString::number(pointController->getPoints()->getGroups().value(NO_GROUP_NAME)->getPointVector().at(j)->isVisible()));
             xmlWriter.writeEndElement();
         }
@@ -51,8 +51,8 @@ void XMLParser::save(PointController *pointController, const QString fileName) {
                 for(int j = 0; j < i.value()->getPointVector().size(); j++){
                     xmlWriter.writeStartElement("point");
                     xmlWriter.writeTextElement("name", i.value()->getPointVector().at(j)->getName());
-                    xmlWriter.writeTextElement("x", QString::number(i.value()->getPointVector().at(j)->getX()));
-                    xmlWriter.writeTextElement("y", QString::number(i.value()->getPointVector().at(j)->getY()));
+                    xmlWriter.writeTextElement("x", QString::number(i.value()->getPointVector().at(j)->getPos().x()));
+                    xmlWriter.writeTextElement("y", QString::number(i.value()->getPointVector().at(j)->getPos().y()));
                     xmlWriter.writeTextElement("displayed", QString::number(i.value()->getPointVector().at(j)->isVisible()));
                     xmlWriter.writeEndElement();
                 }

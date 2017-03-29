@@ -521,13 +521,14 @@ Frame {
             }
             enabled: false
             onClicked: {
-                console.log("create " + groupComboBox.displayText + " : " + pathTextField.text);
+                var newName = Helper.formatName(pathTextField.text);
+                console.log("create " + groupComboBox.displayText + " : " + newName);
                 if(oldName !== "")
                     pathModel.deletePath(oldGroup, oldName);
-                createPath(groupComboBox.displayText, pathTextField.text);
+                createPath(groupComboBox.displayText, newName);
                 for(var i = 0; i < tmpPathModel.get(0).paths.get(0).pathPoints.count; i++)
                     createPathPoint(groupComboBox.displayText,
-                                    pathTextField.text,
+                                    newName,
                                     tmpPathModel.get(0).paths.get(0).pathPoints.get(i).name,
                                     tmpPathModel.get(0).paths.get(0).pathPoints.get(i).posX,
                                     tmpPathModel.get(0).paths.get(0).pathPoints.get(i).posY,
@@ -539,14 +540,14 @@ Frame {
 
     function enableSave(){
         var error = false;
-        /// TODO need to format the text like in c++
+        var newName = Helper.formatName(pathTextField.text);
 
-        error = (pathTextField.text === "");
+        error = (newName === "");
 
-        if(!error && pathTextField.text !== oldName)
+        if(!error && newName !== oldName)
             for(var i = 0; i < pathModel.count; i++)
                 for(var j = 0; j < pathModel.get(i).paths.count; j++)
-                    error = (pathModel.get(i).paths.get(j).pathName === pathTextField.text)
+                    error = (pathModel.get(i).paths.get(j).pathName === newName)
 
         if(!error)
             error = (tmpPathModel.get(0).paths.get(0).pathPoints.count < 1);

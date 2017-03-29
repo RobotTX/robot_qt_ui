@@ -2,6 +2,7 @@ import QtQuick 2.7
 import QtQuick.Controls 2.1
 import QtQuick.Layouts 1.3
 import "../../Helper/style.js" as Style
+import "../../Helper/helper.js" as Helper
 import "../../Model/Point"
 import "../../Model/Path"
 import "../../Model/Robot"
@@ -38,6 +39,98 @@ Frame {
         }
     }
 
+    Item {
+        visible: !nameLabel.visible
+        anchors {
+            top: parent.top
+            left: parent.left
+            right: rightButton.left
+            leftMargin: 20
+            topMargin: 11
+        }
+        height: 28
+        TextField {
+            id: nameField
+            selectByMouse: true
+            placeholderText: qsTr(name)
+            height: 28
+            anchors {
+                verticalCenter: parent.verticalCenter
+                left: parent.left
+                right: cancelName.left
+                rightMargin: 5
+            }
+
+            background: Rectangle {
+                radius: 2
+                border.color: parent.activeFocus ? Style.lightBlue : Style.lightGreyBorder
+                border.width: parent.activeFocus ? 3 : 1
+            }
+        }
+
+        Button {
+            id: cancelName
+            anchors {
+                verticalCenter: nameField.verticalCenter
+                right: saveName.left
+                rightMargin: 5
+            }
+
+            background: Rectangle {
+                color: parent.hovered ? Style.lightGreyBackgroundHover : "transparent"
+                radius: parent.hovered ? Style.smallBtnWidth / 2 : 0
+            }
+
+            width: Style.smallBtnWidth
+            height: Style.smallBtnHeight
+
+            Image {
+                asynchronous: true
+                source: "qrc:/icons/closeBtn"
+                fillMode: Image.Pad // For not stretching image
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.verticalCenter: parent.verticalCenter
+            }
+            onClicked: {
+                nameLabel.visible = true;
+                nameField.focus = false;
+            }
+        }
+
+        Button {
+            id: saveName
+            anchors {
+                verticalCenter: nameField.verticalCenter
+                right: parent.right
+                rightMargin: 5
+            }
+
+            background: Rectangle {
+                color: parent.hovered ? Style.lightGreyBackgroundHover : "transparent"
+                radius: parent.hovered ? Style.smallBtnWidth / 2 : 0
+            }
+
+            width: Style.smallBtnWidth
+            height: Style.smallBtnHeight
+
+            Image {
+                asynchronous: true
+                source: "qrc:/icons/save"
+                fillMode: Image.Pad // For not stretching image
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.verticalCenter: parent.verticalCenter
+            }
+            onClicked: {
+                var newName = Helper.formatName(nameField.text);
+                if(newName !== ""){
+                    nameLabel.visible = true;
+                    nameField.focus = false;
+                    robotModel.newNameSignal(ip, newName);
+                }
+            }
+        }
+    }
+
     Button {
         id: rightButton
         anchors {
@@ -47,7 +140,8 @@ Frame {
         }
 
         background: Rectangle {
-            color: "transparent"
+            color: parent.hovered ? Style.lightGreyBackgroundHover : "transparent"
+            radius: parent.hovered ? Style.smallBtnWidth / 2 : 0
         }
 
         width: Style.smallBtnWidth
@@ -67,10 +161,13 @@ Frame {
             x: rightButton.width
             pointModel: frame.pointModel
             pathModel: frame.pathModel
-            onPointSelected: console.log("Selected a new home for the robot " + name + " at ip " + ip + " : " + _homeName + " " + _homeX + " " + _homeY)
-            onPathSelected: console.log("Selected a new path for the robot " + name + " at ip " + ip + " : " + _pathName + " " + _groupName)
-            onRenameRobot: console.log("Rename the robot " + name + " at ip " + ip)
-            onDeletePath: console.log("Delete the path of the robot " + name + " at ip " + ip)
+            onPointSelected: robotModel.newHomeSignal(ip, _homeName, _homeX, _homeY)
+            onPathSelected: robotModel.newPathSignal(ip, _groupName, _pathName)
+            onRenameRobot: {
+                nameLabel.visible = false;
+                nameField.focus = true;
+            }
+            onDeletePath: robotModel.deletePathSignal(ip)
         }
     }
 
@@ -137,6 +234,7 @@ Frame {
             leftMargin: 20
             rightMargin: 20
         }
+        onPathSelected: robotModel.newPathSignal(ip, _groupName, _pathName)
     }
 
     Rectangle {
