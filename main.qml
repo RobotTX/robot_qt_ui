@@ -70,7 +70,7 @@ ApplicationWindow {
     }
 
     Frame {
-        id: layout
+        id: mainFrame
         spacing: 0
         padding: 0
         anchors.fill: parent
@@ -80,8 +80,8 @@ ApplicationWindow {
         MainMenu {
             id: mainMenu
             z: 1
-            currentMenu: layout.currentMenu
-            onSelectMenu: layout.currentMenu = index
+            currentMenu: mainFrame.currentMenu
+            onSelectMenu: mainFrame.currentMenu = index
         }
 
         MainMenuViews {
@@ -92,13 +92,13 @@ ApplicationWindow {
             pathModel: _pathModel
             tmpPathModel: _tmpPathModel
             robotModel: _robotModel
-            currentMenu: layout.currentMenu
+            currentMenu: mainFrame.currentMenu
             anchors {
                 left: mainMenu.right
                 top: parent.top
                 bottom: parent.bottom
             }
-            onCloseMenu: layout.currentMenu = -1
+            onCloseMenu: mainFrame.currentMenu = -1
             onSavePosition: mapView.emitPosition()
             onSaveMap: applicationWindow.emitMapConfig(file_name)
             onUseTmpPathModel: applicationWindow.useTmpPathModel = use

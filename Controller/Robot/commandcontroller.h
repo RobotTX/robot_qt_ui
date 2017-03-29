@@ -6,7 +6,7 @@
 class CommandController : public QObject {
     Q_OBJECT
 public:
-    CommandController(QObject *parent);
+    CommandController(QObject *parent, QString ip);
     void sendCommand(const QString cmd);
 
 private slots:
@@ -14,6 +14,13 @@ private slots:
 
 signals:
     void sendCommandSignal(QString cmd);
+    void updateName(QString ip, QString newName);
+    void updateHome(QString ip, QString homeName, float homeX, float homeY);
+    void updatePath(QString ip, QStringList strList);
+    void stoppedDeletedPath(QString ip);
+
+private:
+    QString ip;
 };
 
 #endif // COMMANDCONTROLLER_H

@@ -2,6 +2,7 @@
 #define POINT_H
 
 #include <QObject>
+#include <QPointF>
 
 /**
  * @brief The Point class
@@ -17,19 +18,17 @@ public:
     /// Getters
     QString getName(void) const { return name; }
     bool isVisible(void) const { return visible; }
-    double getX(void) const { return x; }
-    double getY(void) const { return y; }
+    QPointF getPos(void) const { return pos; }
 
     /// Setters
     void setName(const QString _name) { name = _name; }
     void setVisible(const bool _visible) { visible = _visible; }
-    void setX(const double _x) { x = _x; }
-    void setY(const double _y) { y = _y; }
+    void setX(const double _x) { pos.setX(_x); }
+    void setY(const double _y) { pos.setY(_y); }
 
 private:
     QString name;
-    double x;
-    double y;
+    QPointF pos;
     bool visible;
 };
 

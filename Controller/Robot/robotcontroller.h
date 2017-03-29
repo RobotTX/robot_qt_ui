@@ -10,6 +10,7 @@ class ScanMapWorker;
 class TeleopWorker;
 class ParticleCloudWorker;
 class CommandController;
+class RobotsController;
 
 #include <QObject>
 #include <QThread>
@@ -19,9 +20,10 @@ class CommandController;
 class RobotController : public QObject {
     Q_OBJECT
 public:
-    RobotController(QObject* parent, QString ip);
+    RobotController(RobotsController* parent, QString ip);
     ~RobotController();
     void stopThreads();
+    void sendCommand(const QString cmd);
 
 private:
     /**

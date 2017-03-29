@@ -43,6 +43,11 @@ Frame {
         onVisiblePathChanged: canvas.requestPaint()
     }
 
+    Connections {
+        target: robotModel
+        onVisiblePathChanged: canvas.requestPaint()
+    }
+
     property PointView tmpPointView: PointView {
         parent: mapImage
         type: Helper.PointViewType.TEMP
@@ -136,9 +141,9 @@ Frame {
                                 if(robotModel.get(i).pathIsVisible && robotModel.get(i).pathPoints.count > 1)
                                     for(var j = 1; j < robotModel.get(i).pathPoints.count; j++){
                                         Helper.dashLine(ctx, robotModel.get(i).pathPoints.get(j-1).pathPointPosX,
-                                                         robotModel.get(i).pathPoints.get(j-1).pathPointPosX,
+                                                         robotModel.get(i).pathPoints.get(j-1).pathPointPosY,
                                                          robotModel.get(i).pathPoints.get(j).pathPointPosX,
-                                                         robotModel.get(i).pathPoints.get(j).pathPointPosX,
+                                                         robotModel.get(i).pathPoints.get(j).pathPointPosY,
                                                          [3, 5]);
                                     }
                         } else {
@@ -299,14 +304,12 @@ Frame {
                     /// The robot's home on the map
                     PointView {
                         _name: homeName
-                        _isVisible: useRobotPathModel
+                        _isVisible: useRobotPathModel && homeName !== ""
                         type: Helper.PointViewType.HOME
                         originX: homeX
                         originY: homeY
                         x: homeX - width / 2
                         y: homeY - height
-
-                        CustomToolTip { text: "Home of " + name }
                     }
                     /// The robot's path on the map
                     Repeater {

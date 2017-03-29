@@ -3,10 +3,14 @@ import QtQuick.Controls 2.1
 import "../../Helper/style.js" as Style
 import "../../Model/Path"
 import "../../Model/Robot"
+import "../Path"
 
 Frame {
+    id: frame
     property Robots robotModel
     property Paths pathModel
+    signal pathSelected(string _pathName, string _groupName)
+
     height: noPathItem.visible ? noPathItem.height : pathItem.height
     padding: 0
 
@@ -42,6 +46,20 @@ Frame {
                 left: parent.left
                 right: homeButton.left
                 rightMargin: 12
+            }
+
+            onClicked: pathListInPopup.open()
+
+            PathListInPopup {
+                id: pathListInPopup
+                x: assignPath.width
+                onVisibleChanged: if(!visible) currentMenuIndex = -1
+                pathModel: frame.pathModel
+                onPathSelected: {
+                    frame.pathSelected(pathName, groupName);
+                    currentMenuIndex = -1;
+                    close();
+                }
             }
         }
 

@@ -14,7 +14,12 @@
 #include "Controller/Path/pathcontroller.h"
 #include "Controller/Robot/robotscontroller.h"
 #include "Model/Point/xmlparser.h"
+#include "Model/Point/point.h"
 #include "Model/Path/pathxmlparser.h"
+#include "Model/Path/paths.h"
+#include "Model/Path/path.h"
+#include "Model/Path/pathgroup.h"
+#include "Model/Path/pathpoint.h"
 
 
 MainController::MainController(QQmlApplicationEngine *engine, QObject* parent) : QObject(parent) {
@@ -251,7 +256,35 @@ void MainController::updateHomeSlot(QString ip, QString homeName, float homeX, f
     emit setHome(ip, homeName, homePos.x(), homePos.y());
 }
 
+void MainController::sendCommandNewHome(QString ip, QString homeName, double homeX, double homeY){
+    QPointF homePos = Helper::Convert::pixelCoordToRobotCoord(
+    QPointF(homeX, homeY),
+    mapController->getOrigin().x(),
+    mapController->getOrigin().y(),
+    mapController->getResolution(),
+    mapController->getHeight());
+    QString cmd = QString("n") + QChar(31) + homeName + QChar(31) + QString::number(homePos.x()) + QChar(31) + QString::number(homePos.y());
+    robotsController->sendCommand(ip, cmd);
+}
 
+void MainController::sendCommandNewPath(QString ip, QString groupName, QString pathName){
+    QVector<QPointer<PathPoint>> pathPointVector = pathController->getPath(groupName, pathName);
+    QString pathStr("");
+    for(int i = 0; i < pathPointVector.size(); i++){
+        QPointF pathPointPos = Helper::Convert::pixelCoordToRobotCoord(
+                        pathPointVector.at(i)->getPoint()->getPos(),
+                        mapController->getOrigin().x(),
+                        mapController->getOrigin().y(),
+                        mapController->getResolution(),
+                        mapController->getHeight());
+        pathStr += QChar(31) + pathPointVector.at(i)->getPoint()->getName()
+                + QChar(31) + QString::number(pathPointPos.x())
+                + QChar(31) + QString::number(pathPointPos.y())
+                + QChar(31) + QString::number(pathPointVector.at(i)->getWaitTime());
+    }
+    QString cmd = QString("i") + QChar(31) + pathName + pathStr;
+    robotsController->sendCommand(ip, cmd);
+}
 
 
 

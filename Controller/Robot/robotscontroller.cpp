@@ -8,6 +8,7 @@ RobotsController::RobotsController(QObject *applicationWindow, MainController* p
 
     QObject *robotModel = applicationWindow->findChild<QObject*>("robotModel");
     if (robotModel){
+        /// Signals from the controller to the qml model
         connect(this, SIGNAL(displayRobots()), robotModel, SLOT(display()));
         connect(this, SIGNAL(addRobot(QVariant, QVariant, QVariant, QVariant, QVariant)),
                 robotModel, SLOT(addRobot(QVariant, QVariant, QVariant, QVariant, QVariant)));
@@ -17,12 +18,20 @@ RobotsController::RobotsController(QObject *applicationWindow, MainController* p
                 robotModel, SLOT(setPos(QVariant, QVariant, QVariant, QVariant)));
         connect(this, SIGNAL(setHome(QVariant, QVariant, QVariant, QVariant)),
                 robotModel, SLOT(setHome(QVariant, QVariant, QVariant, QVariant)));
+        connect(this, SIGNAL(setName(QVariant, QVariant)),
+                robotModel, SLOT(setName(QVariant, QVariant)));
         connect(this, SIGNAL(setPath(QVariant, QVariant)), robotModel, SLOT(setPath(QVariant, QVariant)));
         connect(this, SIGNAL(setPlayingPath(QVariant, QVariant)), robotModel, SLOT(setPlayingPath(QVariant, QVariant)));
         connect(this, SIGNAL(addPathPoint(QVariant, QVariant, QVariant, QVariant, QVariant)),
                 robotModel, SLOT(addPathPoint(QVariant, QVariant, QVariant, QVariant, QVariant)));
         connect(this, SIGNAL(setStage(QVariant, QVariant)), robotModel, SLOT(setStage(QVariant, QVariant)));
         connect(this, SIGNAL(setBattery(QVariant, QVariant)), robotModel, SLOT(setBattery(QVariant, QVariant)));
+
+        /// Signals from qml to the controller
+        connect(robotModel, SIGNAL(newHomeSignal(QString, QString, double, double)), parent, SLOT(sendCommandNewHome(QString, QString, double, double)));
+        connect(robotModel, SIGNAL(newPathSignal(QString, QString, QString)), parent, SLOT(sendCommandNewPath(QString, QString, QString)));
+        connect(robotModel, SIGNAL(newNameSignal(QString, QString)), this, SLOT(sendCommandNewName(QString, QString)));
+        connect(robotModel, SIGNAL(deletePathSignal(QString)), this, SLOT(sendCommandDeletePath(QString)));
 
 
         /// MainController signals
@@ -123,6 +132,10 @@ void RobotsController::shortcutDeleteRobot(){
         qDebug() << "You already have no robot";
 }
 
+void RobotsController::sendCommand(QString ip, QString cmd){
+    robots.value(ip)->sendCommand(cmd);
+}
+
 void RobotsController::newRobotPosSlot(QString ip, float posX, float posY, float ori){
     emit newRobotPos(ip, posX, posY, ori);
 }
@@ -141,4 +154,21 @@ void RobotsController::updatePathSlot(QString ip, QStringList strList){
 
 void RobotsController::updateHomeSlot(QString ip, QString homeName, float homeX, float homeY){
     emit updateHome(ip, homeName, homeX, homeY);
+}
+
+void RobotsController::sendCommandNewName(QString ip, QString name){
+    sendCommand(ip, QString("a") + QChar(31) + name);
+}
+
+void RobotsController::updateNameSlot(QString ip, QString name){
+    emit setName(ip, name);
+}
+
+void RobotsController::sendCommandDeletePath(QString ip){
+    sendCommand(ip, QString("m"));
+}
+
+void RobotsController::stoppedDeletedPathSlot(QString ip){
+    emit setPath(ip, "");
+    emit setPlayingPath(ip, false);
 }

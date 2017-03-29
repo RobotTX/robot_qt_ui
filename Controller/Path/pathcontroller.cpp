@@ -3,7 +3,6 @@
 #include <QDebug>
 #include <QImage>
 #include "Controller/maincontroller.h"
-#include "Model/Path/pathpoint.h"
 #include "Model/Point/point.h"
 #include "Model/Path/pathxmlparser.h"
 

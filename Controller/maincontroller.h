@@ -51,6 +51,8 @@ private slots:
     void newMetadataSlot(int width, int height, float resolution, float originX, float originY);
     void updatePathSlot(QString ip, QStringList strList);
     void updateHomeSlot(QString ip, QString homeName, float homeX, float homeY);
+    void sendCommandNewHome(QString ip, QString homeName, double homeX, double homeY);
+    void sendCommandNewPath(QString ip, QString groupName, QString pathName);
 
 signals:
     void setHome(QVariant ip, QVariant name, QVariant posX, QVariant posY);

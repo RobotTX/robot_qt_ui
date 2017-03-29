@@ -52,3 +52,7 @@ function dashLine(ctx, fromX, fromY, toX, toY, pattern) {
         dash = !dash;
     }
 };
+
+function formatName(name){
+    return name.replace(/ +/g, ' ').trim();
+}

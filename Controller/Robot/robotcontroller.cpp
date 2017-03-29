@@ -2,17 +2,25 @@
 #include <QDir>
 #include <QDebug>
 #include "Helper/helper.h"
+#include "Controller/Robot/robotscontroller.h"
 #include "Controller/Robot/cmdrobotworker.h"
 #include "Controller/Robot/robotpositionworker.h"
+#include "Controller/Robot/teleopworker.h"
+#include "Controller/Robot/commandcontroller.h"
 #include "Controller/Map/metadataworker.h"
 #include "Controller/Map/sendnewmapworker.h"
 #include "Controller/Map/localmapworker.h"
 #include "Controller/Map/scanmapworker.h"
-#include "Controller/Robot/teleopworker.h"
 #include "Controller/Map/particlecloudworker.h"
-#include "Controller/Robot/commandcontroller.h"
 
-RobotController::RobotController(QObject *parent, QString _ip) : QObject(parent), ip(_ip), commandController(QPointer<CommandController>(new CommandController(this))){
+RobotController::RobotController(RobotsController *parent, QString _ip):
+    QObject(parent), ip(_ip), commandController(QPointer<CommandController>(new CommandController(this, ip))){
+
+    connect(commandController, SIGNAL(updateName(QString,QString)), parent, SLOT(updateNameSlot(QString,QString)));
+    connect(commandController, SIGNAL(updateHome(QString,QString,float,float)), parent, SLOT(updateHomeSlot(QString,QString,float,float)));
+    connect(commandController, SIGNAL(updatePath(QString, QStringList)), parent, SLOT(updatePathSlot(QString, QStringList)));
+    connect(commandController, SIGNAL(stoppedDeletedPath(QString)), parent, SLOT(stoppedDeletedPathSlot(QString)));
+
     launchWorkers();
 }
 
@@ -275,46 +283,8 @@ void RobotController::updateRobotInfo(QString robotInfo){
     emit pingSignal();
 }
 
-
-
-
-
-/*
-void RobotController::sendCommand(const QString cmd) {
+void RobotController::sendCommand(const QString cmd){
     qDebug() << "(RobotController) Send command called" << cmd;
-    emit sendCommandSignal(cmd);
+    commandController->sendCommand(cmd);
 }
 
-void RobotController::sendTeleopCmd(const int cmd) {
-    qDebug() << "(RobotController) sendTeleopCmd" << cmd;
-    emit teleopCmd(cmd);
-}
-
-void RobotController::sendNewMap(QSharedPointer<Map> map) {
-    qDebug() << "RobotController::sendNewMap to" << name;
-    if(!sendingMap){
-
-        QString mapId = map->getMapId().toString();
-
-        QString date = map->getDateTime().toString("yyyy-MM-dd-hh-mm-ss");
-
-        QString mapMetadata = QString::number(map->getWidth()) + ' ' + QString::number(map->getHeight()) +
-                ' ' + QString::number(map->getResolution()) + ' ' + QString::number(map->getOrigin().getX()) +
-                ' ' + QString::number(map->getOrigin().getY());
-
-        sendingMap = 1;
-        emit sendNewMapSignal(mapId, date, mapMetadata, map->getMapImage());
-    } else {
-        qDebug() << "RobotController::sendNewMap already sending a map" << name;
-    }
-}
-
-void RobotController::doneSendingMapSlot(){
-    sendingMap = 0;
-}
-
-void RobotController::ping(){
-    //qDebug() << "RobotController::ping" << name;
-    emit pingSignal();
-}
-*/

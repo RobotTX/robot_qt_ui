@@ -1,6 +1,11 @@
 import QtQuick 2.0
 
 ListModel {
+    signal newHomeSignal(string ip, string homeName, double homeX, double homeY)
+    signal newPathSignal(string ip, string groupName, string pathName)
+    signal newNameSignal(string ip, string newName)
+    signal deletePathSignal(string ip)
+    signal visiblePathChanged()
 
     function addRobot(name, ip, wifi, stage, battery){
         append({
@@ -12,7 +17,7 @@ ListModel {
             "posX": -1,
             "posY": -1,
             "orientation": 0,
-            "playingPath": 0,
+            "playingPath": false,
             "pathIsOpen": false,
             "pathIsVisible": false,
             "pathName": "",
@@ -57,6 +62,7 @@ ListModel {
                 setProperty(i, "pathName", name);
                 get(i).pathPoints.clear();
             }
+        visiblePathChanged();
     }
 
     function setStage(ip, stage){
@@ -82,6 +88,7 @@ ListModel {
                                           "waitTime": waitTime
                                       });
             }
+        visiblePathChanged();
     }
 
     function setPlayingPath(ip, playingPath){
@@ -116,5 +123,11 @@ ListModel {
         for(var i = 0; i < count; i++)
             if(get(i).ip === ip)
                 setProperty(i, "laserActivated", !get(i).laserActivated);
+    }
+
+    function setName(ip, newName){
+        for(var i = 0; i < count; i++)
+            if(get(i).ip === ip)
+                setProperty(i, "name", newName);
     }
 }

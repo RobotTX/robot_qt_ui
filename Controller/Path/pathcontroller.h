@@ -6,6 +6,10 @@ class MainController;
 #include <QObject>
 #include <QVariant>
 #include "Model/Path/paths.h"
+#include "Model/Path/path.h"
+#include "Model/Path/pathgroup.h"
+#include "Model/Path/pathpoint.h"
+
 
 class PathController : public QObject {
 
@@ -16,6 +20,7 @@ public:
     PathController(QObject *applicationWindow, MainController* parent);
 
     QPointer<Paths> getPaths(void) const { return paths; }
+    QVector<QPointer<PathPoint>> getPath(const QString groupName, const QString pathName) { return paths->getGroups().value(groupName)->getPaths().value(pathName)->getPathPointVector(); }
 
     void clearPaths(void);
 
