@@ -401,6 +401,66 @@ Frame {
                         onTextChanged: text === "" ? waitTime = 0 : waitTime = parseInt(text)
                     }
 
+
+                    Button {
+                        id: stepper
+
+                        anchors {
+                            left: waitTextField.right
+                            top: waitTextField.top
+                            leftMargin: 4
+                        }
+
+                        background: Rectangle {
+                            anchors.fill: parent
+
+                            MouseArea {
+                                id: mouseArea
+                                anchors.fill: parent
+                                Timer {
+                                    id: timer
+                                    interval: 50
+                                    repeat: true
+                                    onTriggered: {
+                                        console.log("timer trigerred")
+                                        if(mouseArea.pressed){
+                                            console.log("Mouse here " + mouseArea.mouseY)
+                                            if(mouseArea.mouseY > parent.height / 2)
+                                                waitTextField.text = Math.max(0 , (parseInt(waitTextField.text) - 1)).toString()
+                                            else
+                                                waitTextField.text = Math.min((parseInt(waitTextField.text) + 1)).toString()
+                                        }
+                                    }
+                                }
+
+                                onPressed: {
+                                    timer.start()
+                                    //console.log("Clicked here " + mouseY + " " + mouseArea.y + " " + parent.height / 2)
+
+
+                                }
+                                onReleased: {
+                                    console.log("timer stopped")
+                                    timer.stop()
+                                }
+                            }
+                        }
+
+                        anchors {
+                            top: parent.top
+                            left: editField.right
+                            leftMargin: 8
+                        }
+                        width: 12
+                        height: 21
+                        contentItem: Image {
+                            anchors.fill: parent
+                            source: "qrc:/icons/stepper"
+                            fillMode: Image.PreserveAspectFit
+                        }
+                    }
+                    /*
+
                     Image {
                         id: stepper
                         source: "qrc:/icons/stepper"
@@ -411,8 +471,9 @@ Frame {
                             leftMargin: 4
                         }
                     }
-
+*/
                     Text {
+                        id: minText
                         text: "Mins"
                         font.pointSize: 10
                         color: Style.greyText

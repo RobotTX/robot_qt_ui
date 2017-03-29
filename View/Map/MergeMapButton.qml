@@ -33,6 +33,4 @@ Button {
         anchors.right: parent.right
         text: txt
     }
-
-    onClicked: console.log("lol")
 }

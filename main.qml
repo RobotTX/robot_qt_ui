@@ -132,6 +132,7 @@ ApplicationWindow {
 
         MergeMap {
             id: mergeMap
+            robotsModel: _robotModel
         }
     }
 
