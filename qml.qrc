@@ -60,6 +60,8 @@
         <file>View/Robot/RobotPathListItem.qml</file>
         <file>View/Robot/RobotPopupMenu.qml</file>
         <file>View/Path/PathListInPopup.qml</file>
+        <file>View/Map/MergeMap.qml</file>
+        <file>View/Map/MergeMapButton.qml</file>
         <file>View/Custom/PopupMenuItem.qml</file>
     </qresource>
 </RCC>

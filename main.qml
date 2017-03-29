@@ -129,6 +129,10 @@ ApplicationWindow {
                 imgSource = mapView.mapSrc;
             }
         }
+
+        MergeMap {
+            id: mergeMap
+        }
     }
 
     function emitMapConfig(file_name){

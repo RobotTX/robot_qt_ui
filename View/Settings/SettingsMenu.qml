@@ -20,14 +20,18 @@ Page {
     }
 
     SettingsMenuContent {
+
         id: settings
+
         robotModel: page.robotModel
+
         anchors {
             left: parent.left
             top: settingsMenuHeader.bottom
             right: parent.right
             bottom: parent.bottom
         }
+
         onClose: page.closeMenu()
     }
 }

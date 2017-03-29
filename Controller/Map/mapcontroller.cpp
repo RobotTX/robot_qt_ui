@@ -8,6 +8,7 @@
 #include <fstream>
 #include "Controller/Map/editmapcontroller.h"
 #include "View/editmappainteditem.h"
+#include "mergemapcontroller.h"
 
 MapController::MapController(QQmlApplicationEngine* engine, QObject *applicationWindow, QObject *parent) : QObject(parent){
     map = QPointer<Map>(new Map(this));
@@ -36,6 +37,8 @@ MapController::MapController(QQmlApplicationEngine* engine, QObject *application
     connect(this, SIGNAL(requestReloadMap(QVariant)), applicationWindow, SLOT(reloadMapImage(QVariant)));
 
     initializeMap();
+
+    mergeMapController = QPointer<MergeMapController>(new MergeMapController(applicationWindow, this));
 
     editMapController = QPointer<EditMapController>(new EditMapController(engine, applicationWindow, this));
 }

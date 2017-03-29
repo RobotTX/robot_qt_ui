@@ -76,6 +76,10 @@
         <!-- for settings -->
         <file alias="unchecked">icons/Btn_Stop_p.png</file>
         <file alias="question">icons/question_mark.png</file>
+        <file alias="cursor">icons/slider_cursor.png</file>
+
+        <!-- for merge map -->
+        <file alias="small_robot">icons/small_robot.png</file>
 
     </qresource>
 </RCC>

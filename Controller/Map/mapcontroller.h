@@ -7,6 +7,7 @@
 
 class EditMapController;
 class QQmlApplicationEngine;
+class MergeMapController;
 
 class MapController : public QObject {
 
@@ -107,6 +108,7 @@ signals:
     void requestReloadMap(QVariant location);
 
 private:
+    QPointer<MergeMapController> mergeMapController;
     QPointer<Map> map;
     QPointer<EditMapController> editMapController;
 };

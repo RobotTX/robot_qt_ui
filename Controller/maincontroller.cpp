@@ -47,10 +47,45 @@ MainController::MainController(QQmlApplicationEngine *engine, QObject* parent) :
         connect(applicationWindow, SIGNAL(shortcutDeleteRobot()), robotsController, SLOT(shortcutDeleteRobot()));
 
         QObject* mapMenuFrame = applicationWindow->findChild<QObject*>("mapMenuFrame");
-        if(mapMenuFrame){
+        if(mapMenuFrame)
             connect(mapMenuFrame, SIGNAL(importMap(QString)), this, SLOT(loadMapConfig(QString)));
-        } else {
+        else {
             qDebug() << "MapController::MapController could not find the mapMenuFrame";
+            Q_UNREACHABLE();
+        }
+
+        QObject* settings = applicationWindow->findChild<QObject*>("settings");
+        if(settings){
+            connect(this, SIGNAL(emitSettings(QVariant, QVariant, QVariant)), settings, SLOT(setSettings(QVariant, QVariant, QVariant)));
+            connect(settings, SIGNAL(saveSettingsSignal(int, double, bool)), this, SLOT(saveSettings(int,double,bool)));
+        }
+        else {
+            qDebug() << "MapController::MapController could not find the settings";
+            Q_UNREACHABLE();
+        }
+
+        /// get settings from file
+        QFile file(QDir::currentPath() + QDir::separator() + "settings.txt");
+        if(file.open(QFile::ReadWrite)){
+            QTextStream in(&file);
+                while (!in.atEnd()){
+                    QString line = in.readLine();
+                    int mapChoice(2);
+                    double batteryThreshold(0.3);
+                    bool showTutorial(true);
+                    QStringList list = line.split(' ');
+                    if(list.size() > 2){
+                        mapChoice = list.at(0).toInt();
+                        if(list.at(1).toDouble() > 0 && list.at(1).toDouble() < 1)
+                            batteryThreshold = list.at(1).toDouble();
+                        showTutorial = list.at(2).toInt() == 1;
+                    }
+                    qDebug() << "Emitting values" << mapChoice << batteryThreshold << showTutorial;
+                    emit emitSettings(mapChoice, batteryThreshold, showTutorial);
+               }
+               file.close();
+        } else {
+            qDebug() << "MainController::MainController could not find the settings file";
             Q_UNREACHABLE();
         }
 
@@ -163,6 +198,16 @@ void MainController::loadMapConfig(QString fileName) const {
             warningBox.setDefaultButton(QMessageBox::Ok);
             warningBox.exec();*/
         }
+    }
+}
+
+void MainController::saveSettings(int mapChoice, double batteryThreshold, bool showTutorial){
+    qDebug() << "save settings called" << mapChoice << batteryThreshold << showTutorial;
+    QFile file(QDir::currentPath() + QDir::separator() + "settings.txt");
+    if(file.open(QFile::ReadWrite)){
+        QTextStream stream(&file);
+        stream << mapChoice << " " << batteryThreshold << " " << showTutorial;
+        file.close();
     }
 }
 

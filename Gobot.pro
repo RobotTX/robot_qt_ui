@@ -32,6 +32,7 @@ SOURCES += main.cpp \
     Controller/Map/particlecloudworker.cpp \
     Controller/Map/scanmapworker.cpp \
     Controller/Map/sendnewmapworker.cpp \
+    Controller/Map/mergemapcontroller.cpp \
     Controller/Robot/commandcontroller.cpp
 
 RESOURCES += qml.qrc \
@@ -88,4 +89,5 @@ HEADERS += \
     Controller/Map/particlecloudworker.h \
     Controller/Map/scanmapworker.h \
     Controller/Map/sendnewmapworker.h \
+    Controller/Map/mergemapcontroller.h \
     Controller/Robot/commandcontroller.h

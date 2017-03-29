@@ -58,6 +58,10 @@ signals:
     void setHome(QVariant ip, QVariant name, QVariant posX, QVariant posY);
     void setPath(QVariant ip, QVariant name);
     void addPathPoint(QVariant ip, QVariant name, QVariant posX, QVariant posY, QVariant waitTime);
+    void emitSettings(QVariant mapChoice, QVariant batteryThreshold, QVariant showTutorial);
+
+private slots:
+    void saveSettings(int mapChoice, double batteryThreshold, bool showTutorial);
 
 private:
     QPointer<MainMenuController> mainMenuController;
