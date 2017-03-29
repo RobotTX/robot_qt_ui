@@ -180,9 +180,7 @@ Rectangle {
                         interval: 50
                         repeat: true
                         onTriggered: {
-                            console.log("timer trigerred")
                             if(mouseArea.pressed){
-                                console.log("Mouse here " + mouseArea.mouseY)
                                 if(mouseArea.mouseY > parent.height / 2)
                                     slider.value = slider.value - 1
                                 else
@@ -191,16 +189,10 @@ Rectangle {
                         }
                     }
 
-                    onPressed: {
-                        timer.start()
-                        //console.log("Clicked here " + mouseY + " " + mouseArea.y + " " + parent.height / 2)
+                    onPressed: timer.start()
 
+                    onReleased: timer.stop()
 
-                    }
-                    onReleased: {
-                        console.log("timer stopped")
-                        timer.stop()
-                    }
                 }
             }
 

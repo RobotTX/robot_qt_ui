@@ -433,16 +433,10 @@ Frame {
                                     }
                                 }
 
-                                onPressed: {
-                                    timer.start()
-                                    //console.log("Clicked here " + mouseY + " " + mouseArea.y + " " + parent.height / 2)
+                                onPressed: timer.start()
 
+                                onReleased: timer.stop()
 
-                                }
-                                onReleased: {
-                                    console.log("timer stopped")
-                                    timer.stop()
-                                }
                             }
                         }
 
