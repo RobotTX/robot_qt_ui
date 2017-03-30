@@ -6,9 +6,10 @@
 #include <QQmlApplicationEngine>
 #include <QAbstractListModel>
 #include <fstream>
+#include "Helper/helper.h"
 #include "Controller/Map/editmapcontroller.h"
+#include "Controller/Map/mergemapcontroller.h"
 #include "View/editmappainteditem.h"
-#include "mergemapcontroller.h"
 
 MapController::MapController(QQmlApplicationEngine* engine, QObject *applicationWindow, QObject *parent) : QObject(parent){
     map = QPointer<Map>(new Map(this));
@@ -20,6 +21,7 @@ MapController::MapController(QQmlApplicationEngine* engine, QObject *application
         connect(mapViewFrame, SIGNAL(savePosition(double, double, double, QString)), this, SLOT(savePositionSlot(double, double, double, QString)));
         connect(mapViewFrame, SIGNAL(loadPosition()), this, SLOT(loadPositionSlot()));
         connect(map, SIGNAL(mapFileChanged()), mapViewFrame, SLOT(test()));
+        connect(mapViewFrame, SIGNAL(posClicked(double, double)), this, SLOT(posClicked(double, double)));
     } else {
         qDebug() << "MapController::MapController could not find the mapViewFrame";
         Q_UNREACHABLE();
@@ -58,7 +60,7 @@ void MapController::initializeMap(void){
         /// our map file as a QString
         QString qMapFile = QString::fromStdString(stdMapFile);
 
-        map->setMapFile(qMapFile);
+        setMapFile(qMapFile);
         qDebug() << "Map::initializeMap full map path :" << qMapFile;
         /// We get the config file from the map file
         QString fileName = qMapFile;
@@ -80,13 +82,11 @@ void MapController::initializeMap(void){
                          << QString::fromStdString(_dateTime) << QString::fromStdString(_mapId);
                 map->setHeight(height);
                 map->setWidth(width);
-                map->setMapImage(QImage(map->getMapFile()));
                 map->setResolution(resolution);
                 map->setOrigin(QPointF(originX, originY));
                 map->setDateTime(QDateTime::fromString(QString::fromStdString(_dateTime), "yyyy-MM-dd-hh-mm-ss"));
-                map->setId(QUuid(QString::fromStdString(_mapId)));
+                map->setMapId(QUuid(QString::fromStdString(_mapId)));
                 pathFile.close();
-                emit setMap(qMapFile);
                 emit setMapPosition(centerX, centerY, zoom);
             } else
                 qDebug() << "Map::initializeMap could not find the map config file at :" << configPath;
@@ -109,7 +109,7 @@ void MapController::savePositionSlot(double posX, double posY, double zoom, QStr
                  << map->getDateTime().toString("yyyy-MM-dd-hh-mm-ss")
                  << map->getMapId().toString();
 
-        file << mapSrc.toStdString() << " " << std::endl
+        file << mapSrc.toStdString() << std::endl
              << map->getHeight() << " " << map->getWidth() << std::endl
              << posX << " " << posY << std::endl
              << zoom << std::endl
@@ -138,9 +138,9 @@ void MapController::loadPositionSlot(){
         qDebug() << "Map::loadStateSlot could not find the currentMap file at :" << currentPathFile;
 }
 
-bool MapController::saveMapConfig(const std::string fileName, const double centerX, const double centerY, const double zoom) const {
-    qDebug() << "MainWindow::saveMapConfig saving map to " << QString::fromStdString(fileName);
-    std::ofstream file(fileName, std::ios::out | std::ios::trunc);
+bool MapController::saveMapConfig(const QString fileName, const double centerX, const double centerY, const double zoom) const {
+    qDebug() << "MainWindow::saveMapConfig saving map to " << fileName;
+    std::ofstream file(fileName.toStdString(), std::ios::out | std::ios::trunc);
     if(file){
         qDebug() << "saving map with file " << map->getMapFile();
 
@@ -166,10 +166,10 @@ void MapController::saveMapToFile(const QString fileName) const {
     map->setModified(false);
 }
 
-bool MapController::loadMapConfig(const std::string fileName) {
-    qDebug() << "MapController::loadMapConfig from" << QString::fromStdString(fileName);
+bool MapController::loadMapConfig(const QString fileName) {
+    qDebug() << "MapController::loadMapConfig from" << fileName;
     /// loads the configuration contained in the file <fileName> into the application
-    std::ifstream file(fileName, std::ios::in);
+    std::ifstream file(fileName.toStdString(), std::ios::in);
     if(file){
         std::string _mapFile;
         int _height, _width;
@@ -187,19 +187,18 @@ bool MapController::loadMapConfig(const std::string fileName) {
                     "originY:" << originY << "\n\t" <<
                     "resolution:" << resolution << "\n\t" <<
                     "map ID:" << QString::fromStdString(mapId);
-        map->setMapFile(QString::fromStdString(_mapFile));
+        setMapFile(QString::fromStdString(_mapFile));
         qDebug() << "requestloadmap" << "file:/" + QString::fromStdString(_mapFile);
         emit requestReloadMap("file:/" + QString::fromStdString(_mapFile));
         map->setHeight(_height);
         map->setWidth(_width);
         map->setOrigin(QPointF(originX, originY));
         map->setResolution(resolution);
-        map->setId(QUuid(QString::fromStdString(mapId)));
-        map->setMapFile(QString::fromStdString(_mapFile));
+        map->setMapId(QUuid(QString::fromStdString(mapId)));
         map->setDateTime(QDateTime::currentDateTime());
         centerMap(centerX, centerY, zoom);
         /// saves the configuration contained in the file <fileName> as the current configuration
-        saveMapConfig(QString(QDir::currentPath() + QDir::separator() + "currentMap.txt").toStdString(), centerX, centerY, zoom);
+        saveMapConfig(QDir::currentPath() + QDir::separator() + "currentMap.txt", centerX, centerY, zoom);
         file.close();
         return true;
     }
@@ -214,7 +213,101 @@ void MapController::saveEditedImage(QString location){
     editMapController->getPaintedItem()->saveImage(map->getMapImage(), location);
     emit requestReloadMap("file:/" + location);
     /*
-    map->setMapFile(map->getMapFile());
+    setMapFile(map->getMapFile());
     map->setMapImage(QImage(map->getMapFile()));
     */
+}
+
+void MapController::posClicked(double x, double y){
+    QPointF pos = Helper::Convert::pixelCoordToRobotCoord(
+    QPointF(x, y),
+    getOrigin().x(),
+    getOrigin().y(),
+    getResolution(),
+    getHeight());
+    qDebug() << "MapController::posClicked" << x << y << "to" << pos.x() << pos.y();
+}
+
+QImage MapController::getImageFromArray(const QByteArray& mapArrays, const int map_width, const int map_height, const bool fromPgm){
+
+    qDebug() << "MapController::getImageFromArray" << map_width << map_height << fromPgm;
+    QImage image = QImage(map_width, map_height, QImage::Format_Grayscale8);
+
+    uint32_t index = 0;
+
+    /// depending on where we get the map from, the system of coordinates is not the same
+    /// so the formula is adjusted using <shift> and <sign>
+    int shift = 0;
+    int sign = 1;
+    if(!fromPgm){
+        shift = map_height-1;
+        sign = -1;
+    }
+
+    QVector<int> countVector;
+    int countSum = 0;
+
+    /// We set each pixel of the image
+    for(int i = 0; i < mapArrays.size(); i += 5){
+        int color = static_cast<int> (static_cast<uint8_t> (mapArrays.at(i)));
+
+        uint32_t count = static_cast<uint32_t> (static_cast<uint8_t> (mapArrays.at(i+1)) << 24) + static_cast<uint32_t> (static_cast<uint8_t> (mapArrays.at(i+2)) << 16)
+                        + static_cast<uint32_t> (static_cast<uint8_t> (mapArrays.at(i+3)) << 8) + static_cast<uint32_t> (static_cast<uint8_t> (mapArrays.at(i+4)));
+
+        countVector.push_back(count);
+        countSum += count;
+
+        for(int j = 0; j < static_cast<int> (count); j++){
+            /// Sometimes we receive too much informations so we need to check
+            if(index >= static_cast<uint>(map_width*map_height))
+                return image;
+
+            image.setPixelColor(QPoint(static_cast<int>(index%map_width), shift + sign * (static_cast<int>(index/map_width))), QColor(color, color, color));
+            index++;
+        }
+    }
+
+    return image;
+}
+
+void MapController::newMapFromRobot(QByteArray mapArray, QString mapId, QString mapDate){
+    map->setMapImage(getImageFromArray(mapArray, map->getWidth(), map->getHeight(), true));
+    map->setMapId(QUuid(mapId));
+    map->setDateTime(QDateTime::fromString(mapDate, "yyyy-MM-dd-hh-mm-ss"));
+    map->getMapImage().save(QDir::currentPath() + QDir::separator() + "mapConfigs" + QDir::separator() + "tmpImage.pgm", "PGM");
+    setMapFile(QDir::currentPath() + QDir::separator() + "mapConfigs" + QDir::separator() + "tmpImage.pgm");
+
+    double centerX = 0;
+    double centerY = 0;
+    double zoom = 0;
+
+    /// Save in currentMap.txt
+    QFile file(QDir::currentPath() + QDir::separator() + "currentMap.txt");
+    if(file.open(QFile::ReadWrite)){
+        QTextStream stream(&file);
+        QString osef;
+        stream >> osef >> osef >> osef >> centerX >> centerY >> zoom >> osef >> osef >> osef >> osef >> osef;
+        file.close();
+    }
+
+    QFile file2(QDir::currentPath() + QDir::separator() + "currentMap.txt");
+    if(file2.open(QFile::WriteOnly|QFile::Truncate)){
+        QTextStream stream(&file2);
+        stream << map->getMapFile() << endl
+             << map->getHeight() << " " << map->getWidth() << endl
+             << centerX << " " << centerY << endl
+             << zoom << endl
+             << map->getOrigin().x() << " " << map->getOrigin().y() << endl
+             << map->getResolution() << endl
+             << map->getMapId().toString();
+        file.close();
+        saveMapConfig(QDir::currentPath() + QDir::separator() + "mapConfigs" + QDir::separator() + "tmpImage.config", centerX, centerY, zoom);
+    }
+}
+
+void MapController::setMapFile(const QString file) {
+    qDebug() << "MapController::setMapFile to" << file;
+    map->setMapFile(file);
+    map->setMapImage(QImage(map->getMapFile()));
+    emit setMap(file);
 }

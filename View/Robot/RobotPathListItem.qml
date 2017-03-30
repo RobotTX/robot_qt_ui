@@ -325,7 +325,7 @@ Frame {
                     anchors.horizontalCenter: parent.horizontalCenter
                     anchors.verticalCenter: parent.verticalCenter
                 }
-                onClicked: console.log(playingPath ? "Going to pause the path" : "Going to play the path")
+                onClicked: playingPath ? robotModel.pausePathSignal(ip) : robotModel.playPathSignal(ip)
             }
 
             Button {
@@ -350,7 +350,7 @@ Frame {
                     anchors.horizontalCenter: parent.horizontalCenter
                     anchors.verticalCenter: parent.verticalCenter
                 }
-                onClicked: console.log("Going to stop the path")
+                onClicked: robotModel.stopPathSignal(ip)
             }
 
 

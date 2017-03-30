@@ -31,11 +31,12 @@ void CommandController::cmdAnswerSlot(QString answer){
                 case 'c':
                     /// Sent the robot to a new goal
                     /// OSEF
-                break;
+                break;*/
                 case 'd':
                     /// Paused the path of the robot
+                    emit updatePlayingPath(ip, false);
                 break;
-                case 'e':
+                /*case 'e':
                     /// Played the scan of the map
                 break;
                 case 'f':
@@ -56,15 +57,19 @@ void CommandController::cmdAnswerSlot(QString answer){
                     list.removeFirst();
                     emit updatePath(ip, QStringList(list));
                 break;
-                /*case 'j':
+                case 'j':
                     /// Played the path of the robot
+                    emit updatePlayingPath(ip, true);
                 break;
-                case 'k':
+                /*case 'k':
                     /// Deleted the path of the robot
-                break;
+                    /// NOT USED ANYMORE
+                    Q_UNREACHABLE();
+                break;*/
                 case 'l':
                     /// Stopped the path of the robot
-                break;*/
+                    emit updatePlayingPath(ip, false);
+                break;
                 case 'm':
                     /// Stopped and deleted the path of the robot
                     emit stoppedDeletedPath(ip);
@@ -88,12 +93,12 @@ void CommandController::cmdAnswerSlot(QString answer){
                 case 'r':
                     /// Stopped the laser of the robot
                     /// OSEF
-                break;
+                break;*/
                 case 's':
                     /// Received the map from the robot
                     /// OSEF
                 break;
-                case 't':
+                /*case 't':
                     /// Started a new scan
                 break;
                 case 'u':

@@ -14,12 +14,13 @@
 #include "Controller/Map/particlecloudworker.h"
 
 RobotController::RobotController(RobotsController *parent, QString _ip):
-    QObject(parent), ip(_ip), commandController(QPointer<CommandController>(new CommandController(this, ip))){
+    QObject(parent), ip(_ip), sendingMap(false), commandController(QPointer<CommandController>(new CommandController(this, ip))){
 
     connect(commandController, SIGNAL(updateName(QString,QString)), parent, SLOT(updateNameSlot(QString,QString)));
     connect(commandController, SIGNAL(updateHome(QString,QString,float,float)), parent, SLOT(updateHomeSlot(QString,QString,float,float)));
     connect(commandController, SIGNAL(updatePath(QString, QStringList)), parent, SLOT(updatePathSlot(QString, QStringList)));
     connect(commandController, SIGNAL(stoppedDeletedPath(QString)), parent, SLOT(stoppedDeletedPathSlot(QString)));
+    connect(commandController, SIGNAL(updatePlayingPath(QString, bool)), parent, SLOT(updatePlayingPathSlot(QString, bool)));
 
     launchWorkers();
 }
@@ -147,13 +148,13 @@ void RobotController::launchWorkers(){
     connect(this, SIGNAL(startLocalMapWorker()), localMapWorker, SLOT(connectSocket()));
     connect(&localMapThread, SIGNAL(finished()), localMapWorker, SLOT(deleteLater()));
     //qRegisterMetaType<QVector<float>>("QVector<float>");
-    //connect(localMapWorker, SIGNAL(laserValues(float, float, float, QVector<float>, QString)), mainWindow->getLaserController(), SLOT(drawObstacles(float,float,float,QVector<float>,QString)));
+    //connect(localMapWorker, SIGNAL(laserValues(float, float, float, QVector<float>, QString)), RobotController->getLaserController(), SLOT(drawObstacles(float,float,float,QVector<float>,QString)));
     localMapWorker->moveToThread(&localMapThread);
     localMapThread.start();
 
     mapWorker = QPointer<ScanMapWorker>(new ScanMapWorker(ip, PORT_MAP));
-    connect(mapWorker, SIGNAL(valueChangedMap(QByteArray, int, QString, QString, QString, QString, QString, QString, int, int)),
-            this , SLOT(mapReceivedSlot(QByteArray, int, QString, QString, QString, QString, QString, QString, int, int)));
+    connect(mapWorker, SIGNAL(valueChangedMap(QByteArray, int, QString, QString, QString, QString, QString, int, int)),
+            this , SLOT(mapReceivedSlot(QByteArray, int, QString, QString, QString, QString, QString, int, int)));
     connect(mapWorker, SIGNAL(newScanSaved(QString)), this , SLOT(sendNewMapToRobots(QString)));
     connect(&mapThread, SIGNAL(finished()), mapWorker, SLOT(deleteLater()));
     connect(this, SIGNAL(startMapWorker()), mapWorker, SLOT(connectSocket()));
@@ -179,9 +180,36 @@ void RobotController::launchWorkers(){
     emit startCmdRobotWorker();
 }
 
-void RobotController::mapReceivedSlot(QByteArray, int, QString, QString, QString, QString, QString, QString, int, int){
-    qDebug() << "RobotController::mapReceivedSlot called";
-    emit pingSignal();
+void RobotController::mapReceivedSlot(const QByteArray mapArray, int who, QString mapId, QString mapDate, QString resolution, QString originX, QString originY, int map_width, int map_height){
+    qDebug() << "RobotController::mapReceivedSlot received a map" << who;
+
+    switch(who){
+        case 3:
+            qDebug() << "RobotController::mapReceivedSlot received a map while scanning";
+            /*QString robotName = robotsController->getRobots()->getRobotViewByIp(ipAddress)->getRobot()->getName();
+            QImage image = mapController->getImageFromArray(mapArray, map_width, map_height, false);
+            image.save(QDir::currentPath() + QDir::separator() + "brutos", "PNG");
+            emit receivedScanMap(robotName, image, resolution.toDouble());*/
+        break;
+        case 2:
+            qDebug() << "RobotController::mapReceivedSlot received a map from a robot to merge" << ip << resolution << originX << originY;
+            /*QString robotName = robotsController->getRobots()->getRobotViewByIp(ipAddress)->getRobot()->getName();
+            QImage image = mapController->getImageFromArray(mapArray, true);
+
+            emit receivedMapToMerge(robotName, image, resolution.toDouble(), originX.toDouble(), originY.toDouble());*/
+        break;
+        case 1:
+            emit newMapFromRobot(mapArray, mapId, mapDate);
+        break;
+        default:
+            qDebug() << "RobotController::mapReceivedSlot received a map while scanning (default)";
+            /*QString robotName = robotsController->getRobots()->getRobotViewByIp(ipAddress)->getRobot()->getName();
+            QImage image = mapController->getImageFromArray(mapArray, false);
+            image.save(QDir::currentPath() + QDir::separator() + "brutos", "PNG");
+            emit receivedScanMap(robotName, image, mapController->getMap()->getResolution());*/
+        break;
+    }
+    ping();
 }
 
 void RobotController::sendNewMapToRobots(QString){
@@ -190,29 +218,28 @@ void RobotController::sendNewMapToRobots(QString){
 
 void RobotController::doneSendingMapSlot(){
     qDebug() << "RobotController::doneSendingMapSlot called";
+    sendingMap = false;
 }
 
 void RobotController::updateMetadata(int width, int height, float resolution, float originX, float originY){
-    qDebug() << "RobotController::updateMetadata called";
-    emit pingSignal();
+    ping();
     emit newMetadata(width, height, resolution, originX, originY);
 }
 
 void RobotController::updateRobot(float posX, float posY, float ori){
-    emit pingSignal();
+    ping();
     emit newRobotPos(ip, posX, posY, ori);
 }
 
 void RobotController::robotIsDeadSlot(){
     qDebug() << "RobotController::robotIsDeadSlot called";
-    stopThreads();
     emit robotIsDead(ip);
 }
 
 void RobotController::updateRobotInfo(QString robotInfo){
 
     QStringList strList = robotInfo.split(static_cast<u_char>(31), QString::SkipEmptyParts);
-    qDebug() << "MainWindow::updateRobotInfo" << strList;
+    qDebug() << "RobotController::updateRobotInfo" << strList;
 
     if(strList.size() > 8){
         /// Remove the "Connected"
@@ -230,10 +257,9 @@ void RobotController::updateRobotInfo(QString robotInfo){
 
         emit updateHome(ip, homeName, homeX, homeY);
 
+        emit checkMapInfo(ip, mapId, mapDate);
+
         /*
-        updateMapInfo(robotName, mapId, mapDate);
-
-
         if(robotView && robotView->getRobot()){
             robotView->getRobot()->setScanning(scanning);
             robotView->getRobot()->setRecovering(recovering);
@@ -278,9 +304,9 @@ void RobotController::updateRobotInfo(QString robotInfo){
 */
 
     } else
-        qDebug() << "MainWindow::updateRobotInfo Connected received without enough parameters :" << strList;
+        qDebug() << "RobotController::updateRobotInfo Connected received without enough parameters :" << strList;
 
-    emit pingSignal();
+    ping();
 }
 
 void RobotController::sendCommand(const QString cmd){
@@ -288,3 +314,16 @@ void RobotController::sendCommand(const QString cmd){
     commandController->sendCommand(cmd);
 }
 
+
+void RobotController::sendNewMap(QString mapId, QString date, QString mapMetadata, QImage mapImage){
+    qDebug() << "Robot::sendNewMap to" << ip;
+    if(!sendingMap){
+        sendingMap = true;
+        emit sendNewMapSignal(mapId, date, mapMetadata, mapImage);
+    } else
+        qDebug() << "Robot::sendNewMap already sending a map to" << ip;
+}
+
+void RobotController::ping(void){
+    emit pingSignal();
+}

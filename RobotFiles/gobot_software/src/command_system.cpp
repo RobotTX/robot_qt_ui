@@ -344,7 +344,7 @@ bool execCommand(ros::NodeHandle n, std::vector<std::string> command){
 					status = true;
 
 				} else
-					std::cout << "sorry could not open the file " << path_computer_software + "Robot_Infos/path.txt";
+					std::cout << "sorry could not open the file " << path_computer_software + "Robot_Infos/home.txt";
 			} else
 				std::cout << "Not enough arguments, received " << command.size() << " arguments, 3 arguments expected" << std::endl;
 		break;
