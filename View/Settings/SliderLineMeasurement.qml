@@ -9,18 +9,24 @@ Rectangle {
     color: "transparent"
 
     Rectangle {
+
         id: rectangle
         anchors.top: parent.top
         anchors.horizontalCenter: parent.horizontalCenter
+        // some grey
         color: "#979797"
         height: 7
         width: 2
     }
 
     Rectangle {
-        anchors.horizontalCenter: parent.horizontalCenter
-        anchors.top: rectangle.bottom
-        anchors.topMargin: 10
+
+        anchors {
+            horizontalCenter: parent.horizontalCenter
+            top: rectangle.bottom
+            topMargin: 10
+        }
+
         Text {
             id: textId
             anchors.fill: parent

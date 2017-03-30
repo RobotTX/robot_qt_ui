@@ -57,27 +57,31 @@ Frame {
                 radius: 10
             }
 
+            // TODO get some box to open with help message ?
             onClicked: console.log("cool")
 
-            anchors.left: txt.right
-            anchors.leftMargin: 5
-            anchors.top: parent.top
+            anchors {
+                left: txt.right
+                leftMargin: 5
+                top: parent.top
+            }
 
             height: 20
             width: 20
-            contentItem: Text {
 
+            contentItem: Text {
                 text: "?"
                 font.pointSize: 12
                 font.bold: true
                 color: Style.darkSkyBlue
-
                 verticalAlignment: Text.AlignVCenter
                 horizontalAlignment: Text.AlignHCenter
             }
         }
 
     }
+
+    // for each robot we can choose whether or not we want to display the laser data (which gives the obstacles within a few meters range around the robot
 
     Flickable {
         id: flick
@@ -95,19 +99,21 @@ Frame {
         }
 
         Column {
+
             topPadding: 10
             leftPadding: 50
             bottomPadding: 10
             spacing: 5
+
             Repeater {
                 id: robots
                 model: robotModel
                 delegate: CheckDelegate {
-
+                    id: box
                     height: 25
 
-                    id: box
                     anchors.horizontalCenter: parent.horizontalCenter
+
                     indicator: Image {
                         id: rect
                         anchors.verticalCenter: parent.verticalCenter
@@ -115,6 +121,7 @@ Frame {
                         width: 14
                         source: box.checked ? "qrc:/icons/valid" : "qrc:/icons/unchecked"
                     }
+
                     contentItem: Text {
                         id: txt
                         leftPadding: rect.width
@@ -122,8 +129,6 @@ Frame {
                         text: name
                         font.pointSize: 10
                     }
-
-
 
                     checked: true
                 }
@@ -154,13 +159,18 @@ Frame {
         }
     }
 
+    // the radio buttons to choose which map is used for the robots
+
     Rectangle {
 
         id: mapChoices
-        anchors.top: choiceMapLabel.bottom
-        anchors.topMargin: 20
-        anchors.left: parent.left
-        anchors.leftMargin: 10
+
+        anchors {
+            top: choiceMapLabel.bottom
+            topMargin: 20
+            left: parent.left
+            leftMargin: 10
+        }
 
         ButtonGroup {
             id: mapChoiceGroup
@@ -177,20 +187,28 @@ Frame {
         RoundCheckBox {
             id: mapChoice2
             ButtonGroup.group: mapChoiceGroup
-            anchors.left: parent.left
-            anchors.top: mapChoice1.bottom
-            anchors.topMargin: 12
+
+            anchors {
+                left: parent.left
+                top: mapChoice1.bottom
+                topMargin: 12
+            }
+
             text: qsTr("The application's map")
             onClicked: mapChoice = 1
         }
 
         RoundCheckBox {
             id: mapChoice3
-            checked: true
             ButtonGroup.group: mapChoiceGroup
-            anchors.left: parent.left
-            anchors.top: mapChoice2.bottom
-            anchors.topMargin: 12
+            checked: true
+
+            anchors {
+                left: parent.left
+                top: mapChoice2.bottom
+                topMargin: 12
+            }
+
             text: qsTr("Always ask me")
             onClicked: mapChoice = 2
         }
@@ -198,9 +216,13 @@ Frame {
         RoundCheckBox {
             id: mapChoice4
             ButtonGroup.group: mapChoiceGroup
-            anchors.left: parent.left
-            anchors.top: mapChoice3.bottom
-            anchors.topMargin: 12
+
+            anchors {
+                left: parent.left
+                top: mapChoice3.bottom
+                topMargin: 12
+            }
+
             text: qsTr("The newest map")
             onClicked: mapChoice = 3
         }
@@ -208,9 +230,13 @@ Frame {
         RoundCheckBox {
             id: mapChoice5
             ButtonGroup.group: mapChoiceGroup
-            anchors.left: parent.left
-            anchors.top: mapChoice4.bottom
-            anchors.topMargin: 12
+
+            anchors {
+                left: parent.left
+                top: mapChoice4.bottom
+                topMargin: 12
+            }
+
             text: qsTr("The oldest map")
             onClicked: mapChoice = 4
         }
@@ -241,54 +267,66 @@ Frame {
 
     BatteryLevelSlider {
         id: batterySlider
-        anchors.top: batteryLabel.bottom
-        anchors.topMargin: 16
-        anchors.left: parent.left
-        anchors.right: parent.right
+        anchors {
+            top: batteryLabel.bottom
+            topMargin: 16
+            left: parent.left
+            right: parent.right
+        }
     }
 
     SliderLineMeasurement {
         id: lineMeasurement1
-        anchors.top: batterySlider.bottom
-        anchors.topMargin: batterySlider.cursor_height-10
-        anchors.left: parent.left
-        anchors.leftMargin: batterySlider.width/10-batterySlider.cursor_width/2
+        anchors {
+            top: batterySlider.bottom
+            topMargin: batterySlider.cursor_height-10
+            left: parent.left
+            leftMargin: batterySlider.width/10-batterySlider.cursor_width/2
+        }
         txt: "10%"
     }
 
     SliderLineMeasurement {
         id: lineMeasurement2
-        anchors.top: batterySlider.bottom
-        anchors.topMargin: batterySlider.cursor_height-10
-        anchors.left: lineMeasurement1.right
-        anchors.leftMargin: (batterySlider.width/2 - lineMeasurement1.x) / 2 - lineMeasurement1.width - 4
+        anchors {
+            top: batterySlider.bottom
+            topMargin: batterySlider.cursor_height-10
+            left: lineMeasurement1.right
+            leftMargin: (batterySlider.width/2 - lineMeasurement1.x) / 2 - lineMeasurement1.width - 4
+        }
         txt: "20%"
     }
 
     SliderLineMeasurement {
         id: lineMeasurement3
-        anchors.top: batterySlider.bottom
-        anchors.topMargin: batterySlider.cursor_height-10
-        anchors.left: lineMeasurement2.right
-        anchors.horizontalCenter: batterySlider.horizontalCenter
+        anchors {
+            top: batterySlider.bottom
+            topMargin: batterySlider.cursor_height-10
+            left: lineMeasurement2.right
+            horizontalCenter: batterySlider.horizontalCenter
+        }
         txt: "30%"
     }
 
     SliderLineMeasurement {
         id: lineMeasurement4
-        anchors.top: batterySlider.bottom
-        anchors.topMargin: batterySlider.cursor_height-10
-        anchors.left: lineMeasurement3.right
-        anchors.leftMargin: 4
+        anchors {
+            top: batterySlider.bottom
+            topMargin: batterySlider.cursor_height-10
+            left: lineMeasurement3.right
+            leftMargin: 4
+        }
         txt: "40%"
     }
 
     SliderLineMeasurement {
         id: lineMeasurement5
-        anchors.top: batterySlider.bottom
-        anchors.topMargin: batterySlider.cursor_height-10
-        anchors.right: parent.right
-        anchors.rightMargin: batterySlider.width/10-batterySlider.cursor_width/2
+        anchors {
+            top: batterySlider.bottom
+            topMargin: batterySlider.cursor_height-10
+            right: parent.right
+            rightMargin: batterySlider.width/10-batterySlider.cursor_width/2
+        }
         txt: "50%"
     }
 
@@ -305,6 +343,7 @@ Frame {
         opacity: 0.1
     }
 
+    // whether or not we display the tutorial to the user (the messages to help him use the features of the application
     CheckBox {
 
         id: box2
@@ -360,6 +399,7 @@ Frame {
         onClicked: settingsPage.close()
     }
 
+    // apply button to save the changes but keep the window open
     Button {
 
         id: applyButton

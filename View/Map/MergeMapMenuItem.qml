@@ -21,6 +21,7 @@ Rectangle {
     color: "transparent"
 
     signal removeMap(string ip)
+    signal rotate(int angle, int id)
 
     Label {
         id: label
@@ -39,6 +40,9 @@ Rectangle {
     }
 
     Button {
+        width: 20
+        height: 20
+
         background: Rectangle {
             anchors.fill: parent
             color: "transparent"
@@ -51,22 +55,25 @@ Rectangle {
             rightMargin: 15
         }
 
-        width: 20
-        height: 20
         contentItem: Image {
             source: "qrc:/icons/closeBtn"
             anchors.fill: parent
             fillMode: Image.PreserveAspectFit
         }
+
         onClicked: robotMap.removeMap(ip)
     }
 
     Slider {
+
         id: slider
+
+        height: 14
         padding: 0
         from: 0
         to: 359
         stepSize: 5
+
         anchors {
             top: label.bottom
             topMargin: 20
@@ -75,7 +82,7 @@ Rectangle {
             right: parent.right
             rightMargin: 10
         }
-        height: 14
+
         handle: Rectangle {
             id: handle
             anchors {
@@ -88,6 +95,7 @@ Rectangle {
             x: slider.visualPosition * slider.availableWidth - width / 2
             y: slider.availableHeight / 2 - height / 2
         }
+
         background: Rectangle {
             id: background
             x: slider.leftPadding
@@ -104,10 +112,15 @@ Rectangle {
                 radius: 2
             }
         }
-        onVisualPositionChanged: field.text = Math.round(valueAt(position))
+        // to update the text accordingly
+        onVisualPositionChanged: {
+            robotMap.rotate(Math.round(valueAt(position)), index)
+            field.text = Math.round(valueAt(position))
+        }
     }
 
     Rectangle {
+
         anchors {
             top: slider.bottom
             bottom: parent.bottom
@@ -116,6 +129,7 @@ Rectangle {
             right: parent.right
 
         }
+
         color: "transparent"
 
         Label {
@@ -145,20 +159,23 @@ Rectangle {
             }
 
             TextField {
+
                 id: field
+
                 padding: 0
                 selectByMouse: true
+                // range of accepted values : 0 to 359
                 validator: IntValidator { bottom: 0; top: 359 }
                 inputMethodHints: Qt.ImhDigitsOnly
                 verticalAlignment: Text.AlignVCenter
                 horizontalAlignment: Text.AlignLeft
                 placeholderText: "0"
-
                 color: Style.darkSkyBlue
                 font.pointSize: 10
                 anchors {
                     fill: parent
                 }
+                // to update the slider value accordingly
                 onAccepted: {
                     focus = false;
                     slider.value = parseInt(text);
@@ -167,19 +184,27 @@ Rectangle {
         }
 
         Button {
+
             id: incButton
 
+            width: 12
+            height: 21
+
             background: Rectangle {
+
                 anchors.fill: parent
 
                 MouseArea {
                     id: mouseArea
                     anchors.fill: parent
+
+                    // so that you can press the button to increment the value instead of having to click a lot of times
                     Timer {
                         id: timer
                         interval: 50
                         repeat: true
                         onTriggered: {
+                            // if we click the lower half of the button we decrement the value of otherwise we increment it
                             if(mouseArea.pressed){
                                 if(mouseArea.mouseY > parent.height / 2)
                                     slider.value = slider.value - 1
@@ -192,7 +217,6 @@ Rectangle {
                     onPressed: timer.start()
 
                     onReleased: timer.stop()
-
                 }
             }
 
@@ -201,8 +225,7 @@ Rectangle {
                 left: editField.right
                 leftMargin: 8
             }
-            width: 12
-            height: 21
+
             contentItem: Image {
                 anchors.fill: parent
                 source: "qrc:/icons/stepper"
@@ -211,6 +234,7 @@ Rectangle {
         }
 
         Rectangle {
+
             anchors {
                 top: mapLabel.bottom
                 topMargin: 17
@@ -219,6 +243,7 @@ Rectangle {
                 right: parent.right
                 rightMargin: 10
             }
+
             color: Style.lightGreyBorder
             height: 2
         }

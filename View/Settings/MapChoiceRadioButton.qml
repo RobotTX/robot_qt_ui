@@ -17,16 +17,19 @@ RadioButton {
     indicator: Rectangle {
 
         id: indicator
-        anchors.verticalCenter: parent.verticalCenter
-        anchors.right: name.left
-        anchors.rightMargin: 6
+
+        anchors {
+            verticalCenter: parent.verticalCenter
+            right: name.left
+            rightMargin: 6
+        }
+
         implicitWidth: 16
         implicitHeight: 16
         radius: 9
         border.width: 1
 
         Rectangle {
-
             anchors.fill: parent
             color: checked ? "#555" : "transparent"
             radius: 9

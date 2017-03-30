@@ -8,6 +8,7 @@ import "../../Helper/style.js" as Style
 Frame {
 
     id: leftMenu
+    objectName: "mergeMapLeftMenu"
 
     padding: 0
     width: 180
@@ -18,7 +19,12 @@ Frame {
         color: Style.lightGreyBackground
     }
 
-    property ListModel robotsList
+    property ListModel mapsList
+
+    signal rotate(int _angle, int _index)
+    signal removeMap(int _index)
+
+    // all the maps from the robots we chose, can rotate each of them individually
 
     Flickable {
 
@@ -51,13 +57,15 @@ Frame {
 
             Repeater {
 
-                model: robotsList
+                model: mapsList
 
                 MergeMapMenuItem {
                     onRemoveMap: {
-                        console.log("removing ip" + ip)
-                        robotsList.removeRobot(ip)
+                        console.log("removing id" + index);
+                        leftMenu.removeMap(index);
+                        mapsList.removeRobot(index);
                     }
+                    onRotate: leftMenu.rotate(angle, id)
                 }
             }
         }

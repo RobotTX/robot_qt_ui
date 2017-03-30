@@ -21,25 +21,19 @@ void EditMapPaintedItem::paint(QPainter *painter){
         switch(it.shape) {
         case POINT:
         {
-
-            qDebug() << "This item contains" << it.points.size();
-            for(int i = 0; i < it.points.size(); i++){
+            for(int i = 0; i < it.points.size(); i++)
                 painter->fillRect(QRect(QPoint(it.points.at(i).x() - it.thickness/2, it.points.at(i).y() - it.thickness/2), QSize(it.thickness, it.thickness)), pen.brush());
-                qDebug() << it.points.at(i).x() << it.points.at(i).y();
-            }
             break;
         }
         case LINE:
             if(it.points.size() > 1)
                 painter->drawLine(it.points.at(0), it.points.last());
-            qDebug() << " drew a line" ;
             break;
         case OUTLINE:
             painter->setPen(QPen(items.at(i).color, items.at(i).thickness, Qt::SolidLine, Qt::SquareCap, Qt::MiterJoin));
             if(it.points.size() > 1)
                 painter->drawRect(QRect(QPoint(it.points.at(0).x(), it.points.at(0).y()),
                                  QPoint(it.points.at(1).x(), it.points.at(1).y())));
-            qDebug() << " drew an empty rectangle";
             break;
         case SOLID:
         {
@@ -48,7 +42,6 @@ void EditMapPaintedItem::paint(QPainter *painter){
                 path.addRoundedRect(QRectF(QPoint(it.points.at(0).x(), it.points.at(0).y()),
                                            QPoint(it.points.at(1).x(), it.points.at(1).y())), 0, 0);
                 painter->fillPath(path, pen.brush());
-                qDebug() << " drew a filled rectangle";
             }
             break;
         }
@@ -102,20 +95,18 @@ void EditMapPaintedItem::clearMapItems(){
 }
 
 void EditMapPaintedItem::undo(){
-    qDebug() << "EditMapView::undoSlot called";
     if(items.size() > 0){
         undoItems.push_back(items.takeLast());
         update();
     }
 }
+
 void EditMapPaintedItem::redo(){
-    qDebug() << "EditMapView::redoSlot called";
     if(undoItems.size() > 0){
         items.push_back(undoItems.takeLast());
         update();
     }
 }
-
 
 void EditMapPaintedItem::saveImage(QImage image, QString location){
     qDebug() << "EditMapController::saveImage saving the image called" << location;

@@ -486,7 +486,7 @@ Window {
                         dialog.clicked(shape, color, thickness, mouseX, mouseY, true)
                 }
 
-                drag.target: selectButton.checked ? parent: undefined // gros menteur
+                drag.target: selectButton.checked ? parent: undefined
 
                 onWheel: {
                     var newScale = image.scale + image.scale * wheel.angleDelta.y / 120 / 10;
