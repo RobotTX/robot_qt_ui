@@ -18,6 +18,7 @@ signals:
     void updateHome(QString ip, QString homeName, float homeX, float homeY);
     void updatePath(QString ip, QStringList strList);
     void stoppedDeletedPath(QString ip);
+    void updatePlayingPath(QString ip, bool playingPath);
 
 private:
     QString ip;

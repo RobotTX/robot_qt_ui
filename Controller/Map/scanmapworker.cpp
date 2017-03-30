@@ -108,7 +108,7 @@ void ScanMapWorker::readTcpDataSlot(){
         /// Remove the end bytes 254 254 254 254 254 as we no longer need them
         data.remove(data.size()-5, 5);
 
-        emit valueChangedMap(data, who, mapId, mapDate, resolution, originX, originY, ipAddress, map_width, map_height);
+        emit valueChangedMap(data, who, mapId, mapDate, resolution, originX, originY, map_width, map_height);
 
         /// Clear the Vector that contain the map, once it has been processed
         data.clear();

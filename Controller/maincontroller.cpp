@@ -125,7 +125,7 @@ void MainController::saveMapConfig(QString fileName, double zoom, double centerX
 
     mapController->savePositionSlot(centerX, centerY, zoom, QDir::currentPath() + QDir::separator() + "mapConfigs" + QDir::separator() + mapFileInfo.fileName() + ".pgm");
 
-    mapController->saveMapConfig(filePath.toStdString(), centerX, centerY, zoom);
+    mapController->saveMapConfig(filePath, centerX, centerY, zoom);
 
     /// saves the current points to the points file associated with the new configuration
     XMLParser::save(pointController, QDir::currentPath() + QDir::separator() + "mapConfigs" + QDir::separator() + mapFileInfo.fileName() + "_points.xml");
@@ -146,7 +146,7 @@ void MainController::saveMapConfig(QString fileName, double zoom, double centerX
 }
 
 void MainController::loadMapConfig(QString fileName) const {
-    qDebug() << "MainWindow::loadMapConfig called";
+    qDebug() << "MainController::loadMapConfig called";
 
     if(!fileName.isEmpty()){
         QString fileNameWithoutExtension;
@@ -155,9 +155,9 @@ void MainController::loadMapConfig(QString fileName) const {
 
         QFileInfo mapFileInfo(static_cast<QDir> (fileNameWithoutExtension), "");
         QString filePath(QDir::currentPath() + QDir::separator() +  "mapConfigs" + QDir::separator() + mapFileInfo.fileName() + ".config");
-        qDebug() << "MainWindow::loadMapBtnEvent map to load :" << filePath;
+        qDebug() << "MainController::loadMapBtnEvent map to load :" << filePath;
         /// if we are able to find the configuration then we load the map
-        if(mapController->loadMapConfig(filePath.toStdString())){
+        if(mapController->loadMapConfig(filePath)){
 /*
             for(int i = 0; i < robotsController->getRobots()->getRobotsVector().size(); i++)
                 robotsController->getRobots()->getRobotsVector().at(i)->getRobot()->sendNewMap(mapController->getMap());
@@ -286,14 +286,105 @@ void MainController::sendCommandNewPath(QString ip, QString groupName, QString p
     robotsController->sendCommand(ip, cmd);
 }
 
+void MainController::checkMapInfoSlot(QString ip, QString mapId, QString mapDate){
 
+    /// Check if the robot has the current map
+    qDebug() << "MainController::updateMapInfo Robot" << ip << "comparing ids" << mapId << "and" << mapController->getMapId();
+    if(mapId.compare(mapController->getMapId().toString()) == 0){
+        qDebug() << "MainController::updateMapInfo Robot" << ip << "has the current map";
+    } else {
+        QDateTime mapDateTime = QDateTime::fromString(mapDate, "yyyy-MM-dd-hh-mm-ss");
+        //qDebug() << "Robot" << robotName << "comparing date" << mapDateTime << "and" << map->getDateTime();
 
+        bool robotOlder = (mapDateTime <= mapController->getDateTime());
+        if(robotOlder){
+            qDebug() << "MainController::updateMapInfo Robot" << ip << "has a different and older map";
+        } else {
+            qDebug() << "MainController::updateMapInfo Robot" << ip << "has a different and newer map";
+        }
 
+        int mapChoice = -1;
+        QFile file(QDir::currentPath() + QDir::separator() + "settings.txt");
+        if(file.open(QFile::ReadOnly)){
+            QTextStream stream(&file);
+            stream >> mapChoice;
+            file.close();
+        }
+        qDebug() << "MainController::updateMapInfo Robot" << ip << "map choice :" << mapChoice;
 
+        /// TODO if from robot: delete paths, points + paths & home of the robots except this one
 
+        switch(mapChoice){
+            case Helper::ALWAYS_NEW:
+               if(robotOlder)
+                   sendNewMap(ip);
+               else
+                   robotsController->sendCommand(ip, QString("s") + QChar(31) + QString::number(1));
+            break;
+            case Helper::ALWAYS_OLD:
+                if(robotOlder)
+                    robotsController->sendCommand(ip, QString("s") + QChar(31) + QString::number(1));
+                else
+                    sendNewMap(ip);
+            break;
+            case Helper::ALWAYS_ROBOT:
+                robotsController->sendCommand(ip, QString("s") + QChar(31) + QString::number(1));
+            break;
+            case Helper::ALWAYS_APPLICATION:
+                sendNewMap(ip);
+            break;
+            default:
+                qDebug() << "MainController::updateMapInfo default choice";
+                /*QMessageBox msgBox;
+                QPushButton* robotButton;
+                QPushButton* appButton;
 
+                (robotOlder) ? msgBox.setText("The robot " + robotName + " has a new map.") : msgBox.setText("The robot " + robotName + " has an old map.");
 
+                msgBox.setInformativeText("Which map do you want to use ?");
+                robotButton = msgBox.addButton(tr("Robot"), QMessageBox::AcceptRole);
+                appButton = msgBox.addButton(tr("Application"), QMessageBox::RejectRole);
 
+                msgBox.exec();
+
+                /// The previous line is blocking so if the robot dc in the meantime, we don't have a robot anymore
+                if(robot){
+                    if (msgBox.clickedButton() == robotButton) {
+                        qDebug() << "MainController::updateMapInfo Robot" << robotName << "using the map from the robot";
+                        commandController->sendCommand(robot, QString("s \"1\""));
+                    } else if (msgBox.clickedButton() == appButton) {
+                        qDebug() << "MainController::updateMapInfo Robot" << robotName << "using the map from the app";
+                        robot->sendNewMap(mapController->getMap());
+                    }
+                } else {
+                    qDebug() << "MainController::updateMapInfo Robot" << robotName << "has been disconnected and can't perform this operation";
+                }
+                delete robotButton;
+                robotButton = 0;
+                delete appButton;
+                appButton = 0;*/
+            break;
+        }
+    }
+}
+
+void MainController::sendNewMap(QString ip){
+    QString mapId = mapController->getMapId().toString();
+
+    QString date = mapController->getDateTime().toString("yyyy-MM-dd-hh-mm-ss");
+
+    QString mapMetadata = QString::number(mapController->getWidth()) + ' ' + QString::number(mapController->getHeight()) +
+            ' ' + QString::number(mapController->getResolution()) + ' ' + QString::number(mapController->getOrigin().x()) +
+            ' ' + QString::number(mapController->getOrigin().y());
+
+    robotsController->sendNewMap(ip, mapId, date, mapMetadata, mapController->getMapImage());
+}
+
+void MainController::newMapFromRobotSlot(QByteArray mapArray, QString mapId, QString mapDate){
+    mapController->newMapFromRobot(mapArray, mapId, mapDate);
+
+    /// TODO change bool => modified the map, need to save on close
+}
 
 
 

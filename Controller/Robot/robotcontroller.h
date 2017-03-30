@@ -24,6 +24,8 @@ public:
     ~RobotController();
     void stopThreads();
     void sendCommand(const QString cmd);
+    void sendNewMap(QString mapId, QString date, QString mapMetadata, QImage mapImage);
+    void ping(void);
 
 private:
     /**
@@ -34,7 +36,7 @@ private:
     void launchWorkers();
 
 private slots:
-    void mapReceivedSlot(QByteArray, int, QString, QString, QString, QString, QString, QString, int, int);
+    void mapReceivedSlot(const QByteArray mapArray, int who, QString mapId, QString mapDate, QString resolution, QString originX, QString originY, int map_width, int map_height);
     void sendNewMapToRobots(QString);
     void doneSendingMapSlot();
     void updateMetadata(int width, int height, float resolution, float originX, float originY);
@@ -52,6 +54,8 @@ signals:
     void newMetadata(int width, int height, float resolution, float originX, float originY);
     void updatePath(QString ip, QStringList strList);
     void updateHome(QString ip, QString homeName, float homeX, float homeY);
+    void checkMapInfo(QString ip, QString mapId, QString mapDate);
+    void newMapFromRobot(QByteArray mapArray, QString mapId, QString mapDate);
 
     void stopCmdRobotWorker();
     void stopRobotWorker();
@@ -73,6 +77,7 @@ signals:
 
 private:
     QString ip;
+    bool sendingMap;
     QPointer<CommandController> commandController;
 
     QPointer<CmdRobotWorker> cmdRobotWorker;

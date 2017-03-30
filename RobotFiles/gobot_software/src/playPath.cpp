@@ -146,8 +146,12 @@ void goToPoint(const Point& point){
     goal.target_pose.pose.orientation.w = 1;
 
 	currentGoal = point;
-	if(ac->isServerConnected())
+	if(ac->isServerConnected()){
+		std::cout << "(PlayPath) got an action server, sending the goal" << std::endl;
     	ac->sendGoal(goal);
+	} else {
+		std::cout << "(PlayPath) no action server" << std::endl;
+	}
 }
 
 void setStageInFile(const int _stage){
@@ -177,12 +181,22 @@ bool playPathService(std_srvs::Empty::Request &req, std_srvs::Empty::Response &r
 
         std::string line;
 
+        int i = 0;
+        Point pathPoint;
         while(getline(file, line)){
-        	std::istringstream iss(line);
-            Point pathPoint;
-            iss >> pathPoint.x >> pathPoint.y >> pathPoint.waitingTime;
-            pathPoint.isHome = false;
-            path.push_back(pathPoint);
+        	if(i!= 0 && (i-1)%4 != 0){
+	        	std::istringstream iss(line);
+        		if((i-1)%4 == 1){
+        			iss >> pathPoint.x;
+        		} else if((i-1)%4 == 2){
+        			iss >> pathPoint.y;
+        		} else if((i-1)%4 == 3){
+        			iss >> pathPoint.waitingTime;
+		            pathPoint.isHome = false;
+		            path.push_back(pathPoint);
+        		}
+        	}
+            i++;
         }
 
 	} else {
@@ -209,10 +223,11 @@ bool playPathService(std_srvs::Empty::Request &req, std_srvs::Empty::Response &r
 	return true;	
 }
 
-// TO DO REVOIR CE TRUC COTE APPLI
+// TO DO link with luna's charging code
 bool goHomeService(std_srvs::Empty::Request &req, std_srvs::Empty::Response &res){
 	std::cout << "(PlayPath) goHomeService called" << std::endl;
-	
+		return true; 
+	/*
 	std::ifstream file("/home/gtdollar/computer_software/Robot_Infos/path.txt", std::ios::in);
 
 	Point home;
@@ -236,7 +251,7 @@ bool goHomeService(std_srvs::Empty::Request &req, std_srvs::Empty::Response &res
 	} else {
 		std::cerr << "sorry could not find the home file on the robot, returning false to the cmd system";
 		return false;
-	}
+	}*/
 }
 
 bool stopGoingHomeService(std_srvs::Empty::Request &req, std_srvs::Empty::Response &res){

@@ -5,6 +5,9 @@ ListModel {
     signal newPathSignal(string ip, string groupName, string pathName)
     signal newNameSignal(string ip, string newName)
     signal deletePathSignal(string ip)
+    signal pausePathSignal(string ip)
+    signal playPathSignal(string ip)
+    signal stopPathSignal(string ip)
     signal visiblePathChanged()
 
     function addRobot(name, ip, wifi, stage, battery){
@@ -33,7 +36,7 @@ ListModel {
         for(var i = 0; i < count; i++)
             if(get(i).ip === ip)
                 remove(i);
-        //console.log("Remove robot " + count);
+        visiblePathChanged();
     }
 
     function setPos(ip, posX, posY, orientation){

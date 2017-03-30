@@ -131,7 +131,8 @@ void CmdRobotWorker::pingSlot(void){
 
 void CmdRobotWorker::timerSlot(void){
     timeCounter++;
-    qDebug()<< "(Robot" << ipAddress << ") Did not receive any ping from this robot for" << timeCounter << "seconds";
+    if(timeCounter > 5)
+        qDebug()<< "(Robot" << ipAddress << ") Did not receive any ping from this robot for" << timeCounter << "seconds";
     /// if the application has lost the connection with the robot for a time > ROBOT_TIMER
     /// the socket is closed
     if(timeCounter >= ROBOT_TIMER && socket->isOpen())

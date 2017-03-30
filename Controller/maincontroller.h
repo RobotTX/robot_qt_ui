@@ -20,6 +20,9 @@ public:
 
     MainController(QQmlApplicationEngine* _engine, QObject* parent = Q_NULLPTR);
 
+private :
+    void sendNewMap(QString ip);
+
 private slots:
     /**
      * @brief checkPoint
@@ -53,15 +56,15 @@ private slots:
     void updateHomeSlot(QString ip, QString homeName, float homeX, float homeY);
     void sendCommandNewHome(QString ip, QString homeName, double homeX, double homeY);
     void sendCommandNewPath(QString ip, QString groupName, QString pathName);
+    void checkMapInfoSlot(QString ip, QString mapId, QString mapDate);
+    void saveSettings(int mapChoice, double batteryThreshold, bool showTutorial);
+    void newMapFromRobotSlot(QByteArray mapArray, QString mapId, QString mapDate);
 
 signals:
     void setHome(QVariant ip, QVariant name, QVariant posX, QVariant posY);
     void setPath(QVariant ip, QVariant name);
     void addPathPoint(QVariant ip, QVariant name, QVariant posX, QVariant posY, QVariant waitTime);
     void emitSettings(QVariant mapChoice, QVariant batteryThreshold, QVariant showTutorial);
-
-private slots:
-    void saveSettings(int mapChoice, double batteryThreshold, bool showTutorial);
 
 private:
     QPointer<MainMenuController> mainMenuController;

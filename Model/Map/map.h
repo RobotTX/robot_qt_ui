@@ -33,7 +33,7 @@ public:
 
     void setMapFile(const QString file) { mapFile = file; }
 
-    void setId(const QUuid id) { mapId = id; }
+    void setMapId(const QUuid id) { mapId = id; }
     void setDateTime(const QDateTime _dateTime) { /// if the time is not valid we use the current date
         dateTime = (_dateTime.isValid()) ? _dateTime : QDateTime::currentDateTime(); }
 

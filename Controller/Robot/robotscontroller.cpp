@@ -32,6 +32,9 @@ RobotsController::RobotsController(QObject *applicationWindow, MainController* p
         connect(robotModel, SIGNAL(newPathSignal(QString, QString, QString)), parent, SLOT(sendCommandNewPath(QString, QString, QString)));
         connect(robotModel, SIGNAL(newNameSignal(QString, QString)), this, SLOT(sendCommandNewName(QString, QString)));
         connect(robotModel, SIGNAL(deletePathSignal(QString)), this, SLOT(sendCommandDeletePath(QString)));
+        connect(robotModel, SIGNAL(pausePathSignal(QString)), this, SLOT(sendCommandPausePath(QString)));
+        connect(robotModel, SIGNAL(playPathSignal(QString)), this, SLOT(sendCommandPlayPath(QString)));
+        connect(robotModel, SIGNAL(stopPathSignal(QString)), this, SLOT(sendCommandStopPath(QString)));
 
 
         /// MainController signals
@@ -50,6 +53,8 @@ RobotsController::RobotsController(QObject *applicationWindow, MainController* p
     connect(this, SIGNAL(newMetadata(int, int, float, float, float)), parent, SLOT(newMetadataSlot(int, int, float, float, float)));
     connect(this, SIGNAL(updatePath(QString, QStringList)), parent, SLOT(updatePathSlot(QString, QStringList)));
     connect(this, SIGNAL(updateHome(QString, QString, float, float)), parent, SLOT(updateHomeSlot(QString, QString, float, float)));
+    connect(this, SIGNAL(checkMapInfo(QString, QString, QString)), parent, SLOT(checkMapInfoSlot(QString, QString, QString)));
+    connect(this, SIGNAL(newMapFromRobot(QByteArray, QString, QString)), parent, SLOT(newMapFromRobotSlot(QByteArray, QString, QString)));
 
     launchServer();
 }
@@ -69,7 +74,7 @@ RobotsController::~RobotsController(){
 }
 
 void RobotsController::launchServer(){
-    robotServerWorker = new RobotServerWorker(PORT_ROBOT_UPDATE);
+    robotServerWorker = QPointer<RobotServerWorker>(new RobotServerWorker(PORT_ROBOT_UPDATE));
     connect(robotServerWorker, SIGNAL(robotIsAlive(QString, QString, QString, int, int)), this, SLOT(robotIsAliveSlot(QString, QString, QString, int, int)));
     connect(this, SIGNAL(stopRobotServerWorker()), robotServerWorker, SLOT(stopWorker()));
     connect(&serverThread, SIGNAL(finished()), robotServerWorker, SLOT(deleteLater()));
@@ -89,12 +94,14 @@ void RobotsController::robotIsAliveSlot(QString name, QString ip, QString ssid, 
         connect(robotController, SIGNAL(newMetadata(int, int, float, float, float)), this, SLOT(newMetadataSlot(int, int, float, float, float)));
         connect(robotController, SIGNAL(updatePath(QString, QStringList)), this, SLOT(updatePathSlot(QString, QStringList)));
         connect(robotController, SIGNAL(updateHome(QString, QString, float, float)), this, SLOT(updateHomeSlot(QString, QString, float, float)));
+        connect(robotController, SIGNAL(checkMapInfo(QString, QString, QString)), this, SLOT(checkMapInfoSlot(QString, QString, QString)));
+        connect(robotController, SIGNAL(newMapFromRobot(QByteArray, QString, QString)), this, SLOT(newMapFromRobotSlot(QByteArray, QString, QString)));
         emit addRobot(name, ip, ssid, stage, battery);
     }
 }
 
 void RobotsController::robotIsDeadSlot(QString ip){
-    robots.remove(ip);
+    robots.take(ip)->deleteLater();
     emit removeRobot(ip);
 }
 
@@ -108,7 +115,7 @@ void RobotsController::shortcutAddRobot(){
 
     if((robots.size() - 1)%2 == 0){
         emit setHome(ip, "home " + ip, posX + 50, posY);
-        emit setPlayingPath(ip, (robots.size() - 1)%4/2);
+        emit setPlayingPath(ip, (robots.size() - 1)%2 == 0);
     }
 
     if((robots.size() - 1)%3 == 0){
@@ -171,4 +178,32 @@ void RobotsController::sendCommandDeletePath(QString ip){
 void RobotsController::stoppedDeletedPathSlot(QString ip){
     emit setPath(ip, "");
     emit setPlayingPath(ip, false);
+}
+
+void RobotsController::sendCommandPausePath(QString ip){
+    sendCommand(ip, QString("d"));
+}
+
+void RobotsController::sendCommandPlayPath(QString ip){
+    sendCommand(ip, QString("j"));
+}
+
+void RobotsController::sendCommandStopPath(QString ip){
+    sendCommand(ip, QString("l"));
+}
+
+void RobotsController::updatePlayingPathSlot(QString ip, bool playingPath){
+    emit setPlayingPath(ip, playingPath);
+}
+
+void RobotsController::checkMapInfoSlot(QString ip, QString mapId, QString mapDate){
+    emit checkMapInfo(ip, mapId, mapDate);
+}
+
+void RobotsController::sendNewMap(QString ip, QString mapId, QString date, QString mapMetadata, QImage mapImage) {
+    robots.value(ip)->sendNewMap(mapId, date, mapMetadata, mapImage);
+}
+
+void RobotsController::newMapFromRobotSlot(QByteArray mapArray, QString mapId, QString mapDate){
+    emit newMapFromRobot(mapArray, mapId, mapDate);
 }

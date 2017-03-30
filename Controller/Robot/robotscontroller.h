@@ -19,6 +19,7 @@ public:
 
     void setRobotPos(QString ip, float posX, float posY, float ori);
     void sendCommand(QString ip, QString cmd);
+    void sendNewMap(QString ip, QString mapId, QString date, QString mapMetadata, QImage mapImage);
 
 private:
     void launchServer();
@@ -36,6 +37,12 @@ private slots:
     void updateNameSlot(QString ip, QString name);
     void sendCommandDeletePath(QString ip);
     void stoppedDeletedPathSlot(QString ip);
+    void sendCommandPausePath(QString ip);
+    void sendCommandPlayPath(QString ip);
+    void sendCommandStopPath(QString ip);
+    void updatePlayingPathSlot(QString ip, bool playingPath);
+    void checkMapInfoSlot(QString ip, QString mapId, QString mapDate);
+    void newMapFromRobotSlot(QByteArray mapArray, QString mapId, QString mapDate);
 
 signals:
     void stopRobotServerWorker();
@@ -54,11 +61,13 @@ signals:
     void updatePath(QString ip, QStringList strList);
     void updateHome(QString ip, QString homeName, float homeX, float homeY);
     void setName(QVariant ip, QVariant name);
+    void checkMapInfo(QString ip, QString mapId, QString mapDate);
+    void newMapFromRobot(QByteArray mapArray, QString mapId, QString mapDate);
 
 private:
     QMap<QString, QPointer<RobotController>> robots;
 
-    RobotServerWorker* robotServerWorker;
+    QPointer<RobotServerWorker> robotServerWorker;
     QThread serverThread;
 };
 

@@ -19,16 +19,20 @@ public:
 
     QString getMapFile(void) const { return map->getMapFile(); }
     QImage getMapImage(void) const { return map->getMapImage(); }
+    QUuid getMapId(void) const { return map->getMapId(); }
+    QDateTime getDateTime(void) const { return map->getDateTime(); }
     int getHeight(void) const { return map->getHeight(); }
     int getWidth(void) const { return map->getWidth(); }
     QPointF getOrigin(void) const { return map->getOrigin(); }
     double getResolution(void) const { return map->getResolution(); }
 
-    void setMapFile(const QString file) { map->setMapFile(file); }
+    void setMapFile(const QString file);
     void setOrigin(const QPointF origin) { map->setOrigin(origin); }
     void setHeight(const int height) { map->setHeight(height); }
     void setWidth(const int width) { map->setWidth(width); }
     void setResolution(const double resolution) { map->setResolution(resolution); }
+    void setMapId(const QUuid mapId) { map->setMapId(mapId); }
+    void setDateTime(const QDateTime dateTime) { map->setDateTime(dateTime); }
 
     /**
      * @brief initializeMap
@@ -44,7 +48,7 @@ public:
      * @param zoom
      * @return true if the configuration was successfully saved, false otherwise
      */
-    bool saveMapConfig(const std::string fileName, const double centerX, const double centerY, const double zoom) const;
+    bool saveMapConfig(const QString fileName, const double centerX, const double centerY, const double zoom) const;
 
     /**
      * @brief loadMapConfig
@@ -52,7 +56,7 @@ public:
      * @return true if the map could be loaded and false otherwise
      * Imports the map with the configuration given in the configuration file
      */
-    bool loadMapConfig(const std::string fileName);
+    bool loadMapConfig(const QString fileName);
 
     /**
      * @brief saveMapToFile
@@ -70,12 +74,24 @@ public:
      */
     void centerMap(double centerX, double centerY, double zoom);
 
+    /**
+     * @brief getImageFromArray
+     * @param mapArrays
+     * @param fromPgm
+     * @return QImage
+     * returns a QImage constructed from a QByteArray
+     */
+    QImage getImageFromArray(const QByteArray& mapArrays, const int map_width, const int map_height, const bool fromPgm);
+
+    void newMapFromRobot(QByteArray mapArray, QString mapId, QString mapDate);
+
 private slots:
     /**
      * @brief loadPositionSlot
      * Restores the position of the map (and zoom) to the last configuration saved
      */
     void loadPositionSlot();
+    void posClicked(double x, double y);
 
 public slots:
     /**

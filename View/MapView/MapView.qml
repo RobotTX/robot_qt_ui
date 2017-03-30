@@ -33,6 +33,8 @@ Frame {
     property bool useTmpPathModel
     property bool useRobotPathModel
 
+    signal posClicked(double x, double y)
+
     Connections {
         target: pathModel
         onVisiblePathChanged: canvas.requestPaint()
@@ -187,7 +189,7 @@ Frame {
                             canvas.requestPaint();
                         }
                     } else if (mouse.button === Qt.RightButton)
-                        console.log("Pos clicked : " + Math.round(mouseX) + ' ' + Math.round(mouseY));
+                        posClicked(Math.round(mouseX), Math.round(mouseY));
                 }
             }
 
