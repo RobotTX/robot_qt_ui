@@ -10,6 +10,7 @@ import "../../Model/Map/"
 Window {
 
     id: dialog
+    title: "Edit Map"
     objectName: "editMapWindow"
 
     width: 1000

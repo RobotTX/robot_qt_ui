@@ -1,11 +1,16 @@
 import QtQuick 2.7
 import QtQuick.Controls 2.1
 import QtQuick.Window 2.2
+import QtQuick.Layouts 1.3
+import QtQuick.Dialogs 1.2
 import "../../Helper/style.js" as Style
+import "../../Model/Robot/"
+import "../Robot/"
 
 Window {
 
     id: window
+    title: "Merge maps"
     objectName: "mergeMapWindow"
 
     width: 1000
@@ -14,6 +19,8 @@ Window {
     minimumHeight: 600
 
     signal importMap(string file)
+
+    property Robots robotsModel
 
     Frame {
 
@@ -50,7 +57,23 @@ Window {
                 left: parent.left
                 leftMargin: 20
             }
-            onClicked: window.importMap("lol")
+            onClicked: loadFileDialog.open()
+        }
+
+        FileDialog {
+            id: loadFileDialog
+            // allow only pgm files to be selected
+            nameFilters: "*.pgm"
+            title: "Import a map"
+            folder: "/home/joan/Gobot/build-Gobot-Desktop_Qt_5_8_0_GCC_64bit-Debug/mapConfigs/"
+            selectMultiple: false
+            onRejected: {
+                console.log("Canceled the save of a map")
+            }
+            onAccepted: {
+                console.log("gonna send file " << fileUrl);
+                window.importMap(fileUrl.toString().substring(7));
+            }
         }
 
         Rectangle {
@@ -77,6 +100,21 @@ Window {
                 left: separation1.right
                 leftMargin: 20
             }
+            RobotListInPopup {
+                id: robotsList
+                robotsModel: window.robotsModel
+                robotMapsList: _robotsList
+                y: fromRobotButton.height + 12
+                onRobotSelected: {
+                    console.log("adding robot " + name + " " + ip)
+                    _robotsList.addRobot(name, ip)
+                }
+            }
+            onClicked: {
+                console.log("click import map from robot button")
+                robotsList.open()
+            }
+
         }
 
         Rectangle {
@@ -122,7 +160,7 @@ Window {
                 anchors.verticalCenter: parent.verticalCenter
             }
 
-            onClicked: console.log("lol")
+            onClicked: console.log("ok")
         }
 
         Button {
@@ -187,6 +225,60 @@ Window {
             }
 
             onClicked: window.hide();
+        }
+    }
+
+    ListModel {
+        id: _robotsList
+
+        function addRobot(name, ip){
+            append({
+                "name": name,
+                "ip": ip
+            });
+        }
+
+        function removeRobot(ip){
+            for(var i = 0; i < count; i++)
+                if(get(i).ip === ip)
+                    remove(i);
+        }
+
+        function contains(ip){
+            for(var i = 0; i < count; i++){
+                console.log("curr ip " + get(i).ip + " compared to IP: " + ip)
+                if(get(i).ip == ip){
+                    console.log("contains " + ip);
+                    return true;
+                }
+            }
+
+            console.log("does not contain " + ip);
+            return false;
+        }
+    }
+
+    MergeMapsLeftMenu {
+        id: leftMenu
+        robotsList: _robotsList
+        anchors {
+            top: toolbar.bottom
+            bottom: parent.bottom
+            left: parent.left
+        }
+    }
+
+    Canvas {
+        anchors {
+            left: leftMenu.right
+            right: parent.right
+            top: toolbar.bottom
+            bottom: parent.bottom
+        }
+        onPaint: {
+            var ctx = getContext("2d");
+            ctx.fillStyle = Qt.rgba(1, 0, 0, 1);
+            ctx.fillRect(0, 0, width, height);
         }
     }
 }
