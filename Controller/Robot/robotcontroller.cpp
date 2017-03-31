@@ -199,7 +199,7 @@ void RobotController::mapReceivedSlot(const QByteArray mapArray, int who, QStrin
             emit receivedMapToMerge(robotName, image, resolution.toDouble(), originX.toDouble(), originY.toDouble());*/
         break;
         case 1:
-            emit newMapFromRobot(mapArray, mapId, mapDate);
+            emit newMapFromRobot(ip, mapArray, mapId, mapDate);
         break;
         default:
             qDebug() << "RobotController::mapReceivedSlot received a map while scanning (default)";

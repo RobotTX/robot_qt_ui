@@ -25,6 +25,7 @@ public:
     int getWidth(void) const { return map->getWidth(); }
     QPointF getOrigin(void) const { return map->getOrigin(); }
     double getResolution(void) const { return map->getResolution(); }
+    QString getMatadaString(void) const;
 
     void setMapFile(const QString file);
     void setOrigin(const QPointF origin) { map->setOrigin(origin); }

@@ -3,8 +3,14 @@ import QtQuick.Controls 2.1
 import "../../Helper/style.js" as Style
 
 Button {
-    text: "Cancel"
+    property string txt: "Cancel"
     height: 23
+
+    Label {
+        text: qsTr(txt)
+        anchors.verticalCenter: parent.verticalCenter
+        anchors.horizontalCenter: parent.horizontalCenter
+    }
 
     background: Rectangle {
         radius: 3

@@ -4,7 +4,7 @@
 #include "Controller/Robot/robotserverworker.h"
 #include "Controller/maincontroller.h"
 
-RobotsController::RobotsController(QObject *applicationWindow, MainController* parent) : QObject(parent), robots(QMap<QString, QPointer<RobotController>>()){
+RobotsController::RobotsController(QObject *applicationWindow, MainController* parent) : QObject(parent), robots(QMap<QString, QPointer<RobotController>>()), receivingMap(false){
 
     QObject *robotModel = applicationWindow->findChild<QObject*>("robotModel");
     if (robotModel){
@@ -54,7 +54,7 @@ RobotsController::RobotsController(QObject *applicationWindow, MainController* p
     connect(this, SIGNAL(updatePath(QString, QStringList)), parent, SLOT(updatePathSlot(QString, QStringList)));
     connect(this, SIGNAL(updateHome(QString, QString, float, float)), parent, SLOT(updateHomeSlot(QString, QString, float, float)));
     connect(this, SIGNAL(checkMapInfo(QString, QString, QString)), parent, SLOT(checkMapInfoSlot(QString, QString, QString)));
-    connect(this, SIGNAL(newMapFromRobot(QByteArray, QString, QString)), parent, SLOT(newMapFromRobotSlot(QByteArray, QString, QString)));
+    connect(this, SIGNAL(newMapFromRobot(QString, QByteArray, QString, QString)), parent, SLOT(newMapFromRobotSlot(QString, QByteArray, QString, QString)));
 
     launchServer();
 }
@@ -95,7 +95,7 @@ void RobotsController::robotIsAliveSlot(QString name, QString ip, QString ssid, 
         connect(robotController, SIGNAL(updatePath(QString, QStringList)), this, SLOT(updatePathSlot(QString, QStringList)));
         connect(robotController, SIGNAL(updateHome(QString, QString, float, float)), this, SLOT(updateHomeSlot(QString, QString, float, float)));
         connect(robotController, SIGNAL(checkMapInfo(QString, QString, QString)), this, SLOT(checkMapInfoSlot(QString, QString, QString)));
-        connect(robotController, SIGNAL(newMapFromRobot(QByteArray, QString, QString)), this, SLOT(newMapFromRobotSlot(QByteArray, QString, QString)));
+        connect(robotController, SIGNAL(newMapFromRobot(QString, QByteArray, QString, QString)), this, SLOT(newMapFromRobotSlot(QString, QByteArray, QString, QString)));
         emit addRobot(name, ip, ssid, stage, battery);
     }
 }
@@ -202,8 +202,37 @@ void RobotsController::checkMapInfoSlot(QString ip, QString mapId, QString mapDa
 
 void RobotsController::sendNewMap(QString ip, QString mapId, QString date, QString mapMetadata, QImage mapImage) {
     robots.value(ip)->sendNewMap(mapId, date, mapMetadata, mapImage);
+    emit setHome(ip, "", 0, 0);
+    emit setPath(ip, "");
 }
 
-void RobotsController::newMapFromRobotSlot(QByteArray mapArray, QString mapId, QString mapDate){
-    emit newMapFromRobot(mapArray, mapId, mapDate);
+void RobotsController::newMapFromRobotSlot(QString ip, QByteArray mapArray, QString mapId, QString mapDate){
+    emit newMapFromRobot(ip, mapArray, mapId, mapDate);
+}
+
+void RobotsController::requestMap(QString ip){
+    if(!receivingMap){
+        sendCommand(ip, QString("s") + QChar(31) + QString::number(1));
+        receivingMap = true;
+    }
+}
+
+void RobotsController::sendNewMapToAllExcept(QString ip, QString mapId, QString date, QString mapMetadata, QImage mapImage) {
+    QList<QString> ipList = robots.keys();
+    for(int i = 0; i < ipList.size(); i++)
+        if(ipList.at(i).compare(ip) != 0)
+            sendNewMap(ip, mapId, date, mapMetadata, mapImage);
+
+    timer = new QTimer(this);
+    timer->setInterval(10000);
+
+
+    connect(timer, SIGNAL(timeout()), this, SLOT(timerSlot()));
+    timer->start();
+}
+
+void RobotsController::timerSlot(){
+    qDebug() << "RobotsController::timerSlot should have sent all the map already";
+    receivingMap = false;
+    timer->stop();
 }

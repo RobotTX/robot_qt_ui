@@ -252,8 +252,6 @@ Window {
                     return true;
                 }
             }
-
-            console.log("does not contain " + ip);
             return false;
         }
     }

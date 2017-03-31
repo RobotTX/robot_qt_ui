@@ -133,4 +133,10 @@ ListModel {
             if(get(i).ip === ip)
                 setProperty(i, "name", newName);
     }
+
+    function getName(ip){
+        for(var i = 0; i < count; i++)
+            if(get(i).ip === ip)
+                return get(i).name;
+    }
 }

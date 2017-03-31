@@ -58,13 +58,15 @@ private slots:
     void sendCommandNewPath(QString ip, QString groupName, QString pathName);
     void checkMapInfoSlot(QString ip, QString mapId, QString mapDate);
     void saveSettings(int mapChoice, double batteryThreshold, bool showTutorial);
-    void newMapFromRobotSlot(QByteArray mapArray, QString mapId, QString mapDate);
+    void newMapFromRobotSlot(QString ip, QByteArray mapArray, QString mapId, QString mapDate);
+    void requestOrSendMap(QString ip, bool request);
 
 signals:
     void setHome(QVariant ip, QVariant name, QVariant posX, QVariant posY);
     void setPath(QVariant ip, QVariant name);
     void addPathPoint(QVariant ip, QVariant name, QVariant posX, QVariant posY, QVariant waitTime);
     void emitSettings(QVariant mapChoice, QVariant batteryThreshold, QVariant showTutorial);
+    void openMapChoiceMessageDialog(QVariant ip, QVariant robotIsOlder);
 
 private:
     QPointer<MainMenuController> mainMenuController;

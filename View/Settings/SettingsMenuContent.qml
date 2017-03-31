@@ -12,8 +12,12 @@ Frame {
     signal close()
     signal saveSettingsSignal(int mapChoice, double _batteryThreshold, bool showTutorial)
 
+    property real batteryWarningThreshold
     property int mapChoice
-    property real batteryWarningThreshold: 0.1
+
+    property real oriBatteryWarningThreshold
+    property bool oriShowTutorial
+    property int oriMapChoice
 
     property Robots robotModel
 
@@ -169,7 +173,7 @@ Frame {
         RoundCheckBox {
             id: mapChoice1
             ButtonGroup.group: mapChoiceGroup
-            checked: true
+            checked: mapChoice == 0
             text: qsTr("The robot's map")
             onClicked: mapChoice = 0
         }
@@ -180,17 +184,18 @@ Frame {
             anchors.left: parent.left
             anchors.top: mapChoice1.bottom
             anchors.topMargin: 12
+            checked: mapChoice == 1
             text: qsTr("The application's map")
             onClicked: mapChoice = 1
         }
 
         RoundCheckBox {
             id: mapChoice3
-            checked: true
             ButtonGroup.group: mapChoiceGroup
             anchors.left: parent.left
             anchors.top: mapChoice2.bottom
             anchors.topMargin: 12
+            checked: mapChoice == 2
             text: qsTr("Always ask me")
             onClicked: mapChoice = 2
         }
@@ -201,6 +206,7 @@ Frame {
             anchors.left: parent.left
             anchors.top: mapChoice3.bottom
             anchors.topMargin: 12
+            checked: mapChoice == 3
             text: qsTr("The newest map")
             onClicked: mapChoice = 3
         }
@@ -211,6 +217,7 @@ Frame {
             anchors.left: parent.left
             anchors.top: mapChoice4.bottom
             anchors.topMargin: 12
+            checked: mapChoice == 4
             text: qsTr("The oldest map")
             onClicked: mapChoice = 4
         }
@@ -357,7 +364,13 @@ Frame {
             anchors.horizontalCenter: parent.horizontalCenter
         }
 
-        onClicked: settingsPage.close()
+        onClicked: {
+            /// TODO cancel the laser modifications
+            settingsPage.batteryWarningThreshold = oriBatteryWarningThreshold;
+            box2.show = oriShowTutorial;
+            settingsPage.mapChoice = oriMapChoice;
+            settingsPage.close()
+        }
     }
 
     Button {
@@ -384,8 +397,8 @@ Frame {
         anchors.bottom: parent.bottom
 
         onClicked: {
-            batteryWarningThreshold = batterySlider.threshold
-            saveSettingsSignal(mapChoice, batterySlider.threshold, box2.show)
+            batteryWarningThreshold = batterySlider.threshold;
+            saveSettingsSignal(mapChoice, batterySlider.threshold, box2.show);
         }
     }
 
@@ -395,35 +408,20 @@ Frame {
         anchors.right: parent.right
         anchors.bottom: parent.bottom
         onClicked: {
-            batteryWarningThreshold = batterySlider.threshold
-            saveSettingsSignal(mapChoice, batterySlider.threshold, box2.show)
-            settingsPage.close()
+            batteryWarningThreshold = batterySlider.threshold;
+            saveSettingsSignal(mapChoice, batterySlider.threshold, box2.show);
+            settingsPage.close();
         }
     }
 
     function setSettings(mapChoice, _thresh, showTutorial){
+        oriBatteryWarningThreshold = _thresh;
+        oriShowTutorial = showTutorial;
+        oriMapChoice = mapChoice;
+
         settingsPage.batteryWarningThreshold = _thresh;
         box2.show = showTutorial;
         settingsPage.mapChoice = mapChoice;
-        switch(mapChoice){
-        case 0:
-            mapChoice1.checked = true;
-            break;
-        case 1:
-            mapChoice2.checked = true;
-            break;
-        case 2:
-            mapChoice3.checked = true;
-            break;
-        case 3:
-            mapChoice4.checked = true;
-            break;
-        case 4:
-            mapChoice5.checked = true;
-            break;
-        default:
-            break;
-        }
     }
 }
 

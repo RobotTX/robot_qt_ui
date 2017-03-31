@@ -10,6 +10,7 @@ class RobotServerWorker;
 #include <QMap>
 #include <QThread>
 #include <QVariant>
+#include <QTimer>
 
 class RobotsController : public QObject {
     Q_OBJECT
@@ -20,6 +21,8 @@ public:
     void setRobotPos(QString ip, float posX, float posY, float ori);
     void sendCommand(QString ip, QString cmd);
     void sendNewMap(QString ip, QString mapId, QString date, QString mapMetadata, QImage mapImage);
+    void requestMap(QString ip);
+    void sendNewMapToAllExcept(QString ip, QString mapId, QString date, QString mapMetadata, QImage mapImage);
 
 private:
     void launchServer();
@@ -42,7 +45,8 @@ private slots:
     void sendCommandStopPath(QString ip);
     void updatePlayingPathSlot(QString ip, bool playingPath);
     void checkMapInfoSlot(QString ip, QString mapId, QString mapDate);
-    void newMapFromRobotSlot(QByteArray mapArray, QString mapId, QString mapDate);
+    void newMapFromRobotSlot(QString ip, QByteArray mapArray, QString mapId, QString mapDate);
+    void timerSlot();
 
 signals:
     void stopRobotServerWorker();
@@ -62,13 +66,15 @@ signals:
     void updateHome(QString ip, QString homeName, float homeX, float homeY);
     void setName(QVariant ip, QVariant name);
     void checkMapInfo(QString ip, QString mapId, QString mapDate);
-    void newMapFromRobot(QByteArray mapArray, QString mapId, QString mapDate);
+    void newMapFromRobot(QString ip, QByteArray mapArray, QString mapId, QString mapDate);
 
 private:
     QMap<QString, QPointer<RobotController>> robots;
 
     QPointer<RobotServerWorker> robotServerWorker;
     QThread serverThread;
+    bool receivingMap;
+    QPointer<QTimer> timer;
 };
 
 #endif // ROBOTSCONTROLLER_H
