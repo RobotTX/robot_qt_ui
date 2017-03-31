@@ -4,17 +4,18 @@
 #include <QQmlApplicationEngine>
 #include <QKeySequence>
 #include <QQuickWindow>
-#include <QQuickItemGrabResult>
 
 EditMapController::EditMapController(QQmlApplicationEngine* engine, QObject *applicationWindow, QObject* parent) : QObject(parent)
 {
     QObject *editMapWindow = applicationWindow->findChild<QObject*>("editMapWindow");
 
     if(editMapWindow){
-        QObject *applicationWindow = engine->rootObjects().at(0);
+
         QQmlComponent component(engine, QUrl("qrc:/View/Map/EditMapPaintedItem.qml"));
         paintedItem = qobject_cast<EditMapPaintedItem*>(component.create());
         QQmlEngine::setObjectOwnership(paintedItem, QQmlEngine::CppOwnership);
+
+        // that is where we actually tell the paintemItem to paint itself
         QQuickItem* mapView = applicationWindow->findChild<QQuickItem*> ("editMapImage");
         paintedItem->setParentItem(mapView);
         paintedItem->setParent(engine);

@@ -44,6 +44,7 @@ Window {
             right: parent.right
         }
 
+        // to load a map from your the computer file system
         MergeMapButton {
             id: importButton
             src: "qrc:/icons/load_map"
@@ -60,6 +61,7 @@ Window {
             onClicked: loadFileDialog.open()
         }
 
+        // the window that actually opens to choose the file
         FileDialog {
             id: loadFileDialog
             // allow only pgm files to be selected
@@ -73,6 +75,7 @@ Window {
             onAccepted: {
                 console.log("gonna send file " << fileUrl);
                 window.importMap(fileUrl.toString().substring(7));
+                _mapsList.addRobot(fileUrl.toString().substring(7), _mapsList.count+1)
             }
         }
 
@@ -100,10 +103,11 @@ Window {
                 left: separation1.right
                 leftMargin: 20
             }
+            // the list of robots from which we can choose a map
             RobotListInPopup {
                 id: robotsList
                 robotsModel: window.robotsModel
-                robotMapsList: _robotsList
+                robotMapsList: _mapsList
                 y: fromRobotButton.height + 12
                 onRobotSelected: {
                     console.log("adding robot " + name + " " + ip)
@@ -114,7 +118,6 @@ Window {
                 console.log("click import map from robot button")
                 robotsList.open()
             }
-
         }
 
         Rectangle {
@@ -194,6 +197,33 @@ Window {
                 fillMode: Image.PreserveAspectFit
                 anchors.verticalCenter: parent.verticalCenter
             }
+
+            onClicked: saveFileDialog.open()
+        }
+
+        FileDialog {
+            id: saveFileDialog
+            // format of files is pgm
+            nameFilters: "*.pgm"
+            // won't let you choose a file name if selectExisting is true
+            selectExisting: false
+            title: "Please choose a location for your map"
+            // to start directly with that folder selected
+            folder: "/home/joan/Gobot/build-Gobot-Desktop_Qt_5_8_0_GCC_64bit-Debug/mapConfigs/"
+
+            onAccepted: {
+
+                // if an already existing file is selected we only send the url, if a file is being created we add the extension .pgm
+                if(fileUrl.toString().lastIndexOf(".pgm") == -1)
+                    mergedMap.grabToImage(function(result) {
+                                                  result.saveToFile(fileUrl.toString().substring(7) + ".pgm");});
+                else mergedMap.grabToImage(function(result) {
+                                                  result.saveToFile(fileUrl.toString().substring(7));});
+            }
+
+            onRejected: {
+                console.log("Canceled the save of a map")
+            }
         }
 
         Button {
@@ -228,8 +258,9 @@ Window {
         }
     }
 
+    // to store the robots whose map has been imported for merging (subset of the robotsModel and only the name and ip attributes are used
     ListModel {
-        id: _robotsList
+        id: _mapsList
 
         function addRobot(name, ip){
             append({
@@ -238,27 +269,23 @@ Window {
             });
         }
 
-        function removeRobot(ip){
-            for(var i = 0; i < count; i++)
-                if(get(i).ip === ip)
-                    remove(i);
+        function removeRobot(id){
+            remove(id)
         }
 
         function contains(ip){
-            for(var i = 0; i < count; i++){
-                console.log("curr ip " + get(i).ip + " compared to IP: " + ip)
-                if(get(i).ip == ip){
-                    console.log("contains " + ip);
+            for(var i = 0; i < count; i++)
+                if(get(i).ip === ip)
                     return true;
-                }
-            }
             return false;
         }
     }
 
+    // the menu of the left from where u can rotate maps
     MergeMapsLeftMenu {
+        z: 1
         id: leftMenu
-        robotsList: _robotsList
+        mapsList: _mapsList
         anchors {
             top: toolbar.bottom
             bottom: parent.bottom
@@ -266,17 +293,16 @@ Window {
         }
     }
 
-    Canvas {
+    Rectangle {
+        id: mergedMap
+        clip: true
+        objectName: "mergeMapsView"
         anchors {
             left: leftMenu.right
             right: parent.right
             top: toolbar.bottom
             bottom: parent.bottom
         }
-        onPaint: {
-            var ctx = getContext("2d");
-            ctx.fillStyle = Qt.rgba(1, 0, 0, 1);
-            ctx.fillRect(0, 0, width, height);
-        }
+        color: "#cdcdcd"
     }
 }

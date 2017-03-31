@@ -140,8 +140,6 @@ void MainController::saveMapConfig(QString fileName, double zoom, double centerX
 
     /// saves the new configuration to the current configuration file
     PathXMLParser::save(pathController, QDir::currentPath() + QDir::separator() + "currentPaths.xml");
-
-
 }
 
 void MainController::loadMapConfig(QString fileName) const {

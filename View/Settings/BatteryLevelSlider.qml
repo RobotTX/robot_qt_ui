@@ -5,12 +5,13 @@ import "../../Helper/style.js" as Style
 Rectangle {
 
     property real threshold: slider.value
-
     property int cursor_width: img.width
     property int cursor_height: img.height
 
     Slider {
+
         id: slider
+
         padding: 0
         anchors.fill: parent
         snapMode: Slider.SnapAlways

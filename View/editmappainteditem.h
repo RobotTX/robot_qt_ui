@@ -26,7 +26,7 @@ public:
     void addItem(const SHAPE shape, const QColor color, const int thickness, const int x, const int y, bool _update);
     void clearMapItems();
 
-    void paint(QPainter *painter);
+    void paint(QPainter *painter) Q_DECL_OVERRIDE;
 
 public slots:
     void undo();

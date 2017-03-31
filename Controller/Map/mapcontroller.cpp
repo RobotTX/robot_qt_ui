@@ -40,7 +40,7 @@ MapController::MapController(QQmlApplicationEngine* engine, QObject *application
 
     initializeMap();
 
-    mergeMapController = QPointer<MergeMapController>(new MergeMapController(applicationWindow, this));
+    mergeMapController = QPointer<MergeMapController>(new MergeMapController(engine, applicationWindow, this));
 
     editMapController = QPointer<EditMapController>(new EditMapController(engine, applicationWindow, this));
 }
