@@ -1,19 +1,23 @@
 #include <QDebug>
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
+#include <QQuickItemGrabResult>
 #include <QPixmap>
 #include <QQuickWindow>
 #include "mergemapcontroller.h"
 #include "View/mergemapspainteditem.h"
 
-MergeMapController::MergeMapController(QQmlApplicationEngine* engine, QObject *applicationWindow, QObject *parent)
-    :_engine(engine), _applicationWindow(applicationWindow), QObject(parent)
+MergeMapController::MergeMapController(QObject *parent, QQmlApplicationEngine* engine, QObject *applicationWindow)
+    : QObject(parent), _engine(engine), _applicationWindow(applicationWindow)
 {
     QObject* mergeMapWindow = applicationWindow->findChild<QObject*>("mergeMapWindow");
 
-    if(mergeMapWindow)
+    if(mergeMapWindow){
         /// to add new maps
         connect(mergeMapWindow, SIGNAL(importMap(QString)), this, SLOT(importMap(QString)));
+        connect(mergeMapWindow, SIGNAL(exportMap(QString)), this, SLOT(exportMap(QString)));
+        connect(mergeMapWindow, SIGNAL(resetWidget()), this, SLOT(resetMergeMapWidget()));
+    }
 
     QObject* mergeMapLeftMenu = applicationWindow->findChild<QObject*>("mergeMapLeftMenu");
     if(mergeMapLeftMenu){
@@ -23,13 +27,11 @@ MergeMapController::MergeMapController(QQmlApplicationEngine* engine, QObject *a
     }
 }
 
-void MergeMapController::importMap(QString _filename){
+void MergeMapController::importMap(const QString& _filename){
     qDebug() << "MergeMapController importMap called" << _filename;
     QQmlComponent component(_engine, QUrl("qrc:/View/Map/MergeMapsPaintedItem.qml"));
     MergeMapsPaintedItem* paintedItem = qobject_cast<MergeMapsPaintedItem*>(component.create());
     QQmlEngine::setObjectOwnership(paintedItem, QQmlEngine::CppOwnership);
-
-    _engine->rootContext()->setContextProperty("paintedItem", paintedItem);
 
     /// that is where we actually tell the paintemItem to paint itself
     QQuickItem* mapView = _applicationWindow->findChild<QQuickItem*> ("mergeMapsView");
@@ -37,6 +39,7 @@ void MergeMapController::importMap(QString _filename){
     paintedItem->setParent(_engine);
 
     QImage image(_filename, "PGM");
+    qDebug() << "imported map of size" << image.width() << image.height();
 
     int top = image.height();
     int bottom = 0;
@@ -44,6 +47,7 @@ void MergeMapController::importMap(QString _filename){
     int right = 0;
 
     /// We want to find the smallest rectangle containing the map (white and black) to crop it and use a small image
+
     for(int i = 0; i < image.height(); i++){
         for(int j = 0; j < image.width(); j++){
             int color = image.pixelColor(i, j).red();
@@ -67,8 +71,6 @@ void MergeMapController::importMap(QString _filename){
     QImage new_image = QImage(image.size(), QImage::Format_ARGB32);
     new_image.fill(qRgba(205, 205, 205, 0));
 
-    new_image.save("/home/joan/res_better.pmg", "PGM");
-
     /// 1 out of 2 map will have red wall and the other one green wall to better distinguish them
     QRgb wallColor = (paintedItems.count() % 2 == 0) ? qRgba(255, 0, 0, 170) : qRgba(0, 255, 0, 170);
     for(int i = 0; i < image.width(); i++){
@@ -81,10 +83,21 @@ void MergeMapController::importMap(QString _filename){
         }
     }
 
+    /// so that the properties are set properly on the qml side
+    paintedItem->setProperty("width", new_image.width());
+    paintedItem->setProperty("height", new_image.height());
     paintedItem->setImage(new_image);
+
     paintedItem->update();
     /// adds the image to the list of the image drawn
     paintedItems.append(paintedItem);
+}
+
+void MergeMapController::exportMap(QString fileName){
+    qDebug() << "exportMap called" << fileName;
+    QQuickItem* mapView = _applicationWindow->findChild<QQuickItem*> ("mergeMapsView");
+
+    mapView->grabToImage()->image().save("/home/joan/try2.pgm", "PGM");
 }
 
 void MergeMapController::rotateMap(int angle, int index){
@@ -92,7 +105,14 @@ void MergeMapController::rotateMap(int angle, int index){
 }
 
 void MergeMapController::removeMap(int index){
-    qDebug() << "removemap called" << index;
+    qDebug() << "MergeMapController::removemap called" << index;
     paintedItems.at(index)->setVisible(false);
     paintedItems.remove(index);
+}
+
+void MergeMapController::resetMergeMapWidget(){
+    qDebug() << "MergeMapController::resetWidget called";
+    for(int i = 0; i < paintedItems.count(); i++)
+        paintedItems.at(i)->setVisible(false);
+    paintedItems.clear();
 }

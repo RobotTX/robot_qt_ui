@@ -13,13 +13,15 @@ class MergeMapController : public QObject {
 
 public:
 
-    MergeMapController(QQmlApplicationEngine *engine, QObject *applicationWindow, QObject* parent);
+    MergeMapController(QObject* parent, QQmlApplicationEngine *engine, QObject *applicationWindow);
 
 private slots:
 
-    void importMap(QString _filename);
+    void importMap(const QString &_filename);
+    void exportMap(QString fileName);
     void rotateMap(int angle, int index);
     void removeMap(int index);
+    void resetMergeMapWidget();
 
 private:
     QQmlApplicationEngine* _engine;

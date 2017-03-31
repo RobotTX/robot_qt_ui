@@ -7,15 +7,13 @@ MergeMapsPaintedItem {
     x: 0
     y: 0
     smooth: false
-    width: paintedItem._width
-    height: paintedItem._height
 
     MouseArea {
         anchors.fill: parent
         drag.target: parent
         acceptedButtons: Qt.LeftButton
-        onWidthChanged: console.log("width changed");
-        onHeightChanged: console.log("height changed");
+        onWidthChanged: console.log("width changed " + width);
+        onHeightChanged: console.log("height changed " + height);
         onClicked: {
             console.log(width + " " + height)
             console.log("got clicked");

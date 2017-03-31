@@ -99,7 +99,7 @@ Frame {
         }
 
         Column {
-
+            id:column
             topPadding: 10
             leftPadding: 50
             bottomPadding: 10
@@ -107,11 +107,13 @@ Frame {
 
             Repeater {
                 id: robots
+                property int currentItemCount: 0
+                property bool currentItemLaserActivated
                 model: robotModel
                 delegate: CheckDelegate {
+
                     id: box
                     height: 25
-
                     anchors.horizontalCenter: parent.horizontalCenter
 
                     indicator: Image {
@@ -129,8 +131,6 @@ Frame {
                         text: name
                         font.pointSize: 10
                     }
-
-                    checked: true
                 }
             }
         }
@@ -436,6 +436,11 @@ Frame {
         anchors.bottom: parent.bottom
         onClicked: {
             batteryWarningThreshold = batterySlider.threshold
+            for(var i = 0; i < robotModel.count; i++){
+                //robots.itemAt(i).laserActivated = robots.itemAt(i).box.checked
+                console.log("item i laser " + robots.itemAt(i).box.checked)
+            }
+
             saveSettingsSignal(mapChoice, batterySlider.threshold, box2.show)
             settingsPage.close()
         }
