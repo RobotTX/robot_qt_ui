@@ -269,6 +269,7 @@ Frame {
                             originY: posY
                             x: posX - width / 2
                             y: posY - height
+                            tooltipText: pathName + " : " + name
 
                             MouseArea {
                                 anchors.fill: parent
