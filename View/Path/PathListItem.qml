@@ -108,7 +108,11 @@ Column {
                 anchors.verticalCenter: parent.verticalCenter
             }
 
-            onClicked: editGroupPopupMenu.open()
+            onClicked: {
+                column.selectedGroup = groupName;
+                column.selectedPath = "";
+                editGroupPopupMenu.open();
+            }
 
             EditPathGroupPopupMenu {
                 id: editGroupPopupMenu
@@ -247,7 +251,11 @@ Column {
                         anchors.verticalCenter: parent.verticalCenter
                     }
 
-                    onClicked: editPathPopupMenu.open();
+                    onClicked: {
+                        column.selectedGroup = groupName;
+                        column.selectedPath = pathName;
+                        editPathPopupMenu.open();
+                    }
 
                     EditPathPopupMenu {
                         id: editPathPopupMenu

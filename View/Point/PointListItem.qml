@@ -135,7 +135,9 @@ Column {
 
 
     Component {
+
         id: delegate
+
         Rectangle {
             visible: isOpen
             height: isOpen ? 37 : 0
