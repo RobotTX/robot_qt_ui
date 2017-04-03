@@ -181,15 +181,24 @@ Frame {
                 drag.target: parent
 
                 onWheel: {
-                    var newScale = zoomScale.xScale + zoomScale.xScale * wheel.angleDelta.y / 120 / 10;
+                    var factor = 1 + wheel.angleDelta.y / 120 / 10;
+                    var newScale = zoomScale.xScale * factor;
 
                     if(newScale > Style.minZoom && newScale < Style.maxZoom){
-                        if(wheel.angleDelta.y > 0){
-                            zoomScale.origin.x = zoomScale.origin.x + (mouseX - zoomScale.origin.x)/2;
-                            zoomScale.origin.y = zoomScale.origin.y + (mouseY - zoomScale.origin.y)/2;
-                        }
+
+                        var scalechange = newScale - zoomScale.xScale;
+
+                        // Zoom into the image
                         zoomScale.xScale = newScale;
                         zoomScale.yScale = newScale;
+
+                        // Calculate displacement of zooming position
+                        var offsetX = -(mouseX * scalechange);
+                        var offsetY = -(mouseY * scalechange);
+
+                        // Compensate for displacement
+                        mapImage.x = mapImage.x + offsetX;
+                        mapImage.y = mapImage.y + offsetY;
                     }
                 }
                 onClicked: {
