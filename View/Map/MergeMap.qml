@@ -13,12 +13,20 @@ Window {
     title: "Merge maps"
     objectName: "mergeMapWindow"
 
+    // no need to do it twice, on the hideEvent or the showEvent, both would work, here we clean the map on the hideEvent
+    onVisibleChanged: {
+        _mapsList.clear();
+        if(!visible) resetWidget();
+    }
+
     width: 1000
     minimumWidth: 800
     height: 700
     minimumHeight: 600
 
     signal importMap(string file)
+    signal exportMap(string file)
+    signal resetWidget()
 
     property Robots robotsModel
 
@@ -163,7 +171,10 @@ Window {
                 anchors.verticalCenter: parent.verticalCenter
             }
 
-            onClicked: console.log("ok")
+            onClicked: {
+                _mapsList.clear();
+                window.resetWidget();
+            }
         }
 
         Button {
@@ -214,11 +225,28 @@ Window {
             onAccepted: {
 
                 // if an already existing file is selected we only send the url, if a file is being created we add the extension .pgm
-                if(fileUrl.toString().lastIndexOf(".pgm") == -1)
+        /*
+                if(fileUrl.toString().lastIndexOf(".pgm") == -1){
                     mergedMap.grabToImage(function(result) {
-                                                  result.saveToFile(fileUrl.toString().substring(7) + ".pgm");});
+                        result.saveToFile(fileUrl.toString().substring(7) + ".pgm");
+                    });
+                }
+
+
+
                 else mergedMap.grabToImage(function(result) {
                                                   result.saveToFile(fileUrl.toString().substring(7));});
+*/
+                if(fileUrl.toString().lastIndexOf(".pgm") == -1)
+                    window.exportMap(fileUrl.toString().substring(7) + ".pgm")
+                else
+                    window.exportMap(fileUrl.toString().substring(7))
+                /*
+                if(fileUrl.toString().lastIndexOf(".pgm") == -1)
+                    window.exportMap(fileUrl.toString().substring(7) + ".pgm");
+                else
+                    window.exportMap(fileUrl.toString().substring(7));
+                    */
             }
 
             onRejected: {
@@ -291,18 +319,51 @@ Window {
             bottom: parent.bottom
             left: parent.left
         }
+        onExportMap: saveFileDialog.open()
+        onCloseWidget: window.hide()
     }
 
     Rectangle {
+
         id: mergedMap
         clip: true
         objectName: "mergeMapsView"
+
         anchors {
             left: leftMenu.right
             right: parent.right
             top: toolbar.bottom
             bottom: parent.bottom
         }
+
         color: "#cdcdcd"
+
+        MouseArea {
+            anchors.fill: parent
+            clip: true
+            acceptedButtons: Qt.LeftButton
+            drag.target: parent
+
+            onWheel: {
+                var newScale = mergedMap.scale + mergedMap.scale * wheel.angleDelta.y / 120 / 10;
+                if(newScale > 0.20 && newScale < Style.maxZoom)
+                    mergedMap.scale = newScale;
+            }
+        }
+    }
+
+    function cancelImportMap(){
+        console.log("Cancelling import map");
+        _mapsList.removeRobot(_mapsList.count-1);
+        mapImportErrorDialog.open();
+    }
+
+    Dialog {
+        id: mapImportErrorDialog
+        title: "Import impossible";
+        standardButtons: Dialog.Ok
+        Label {
+            text: "Sorry, you can only merge maps of the same size";
+        }
     }
 }

@@ -128,6 +128,12 @@ ListModel {
                 setProperty(i, "laserActivated", !get(i).laserActivated);
     }
 
+    function setLaserActivate(ip, activate){
+        for(var i = 0; i < count; i++)
+            if(get(i).ip === ip)
+                setProperty(i, "laserActivated", activate)
+    }
+
     function setName(ip, newName){
         for(var i = 0; i < count; i++)
             if(get(i).ip === ip)

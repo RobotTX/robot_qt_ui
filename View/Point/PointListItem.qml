@@ -104,7 +104,11 @@ Column {
                 anchors.verticalCenter: parent.verticalCenter
             }
 
-            onClicked: editGroupPopupMenu.open()
+            onClicked: {
+                column.selectedGroup = groupName
+                column.selectedPoint = ""
+                editGroupPopupMenu.open()
+            }
 
             EditPointGroupPopupMenu {
                 id: editGroupPopupMenu
@@ -222,7 +226,11 @@ Column {
                     anchors.verticalCenter: parent.verticalCenter
                 }
 
-                onClicked: editPointPopupMenu.open();
+                onClicked: {
+                    column.selectedGroup = groupName
+                    column.selectedPoint = name
+                    editPointPopupMenu.open();
+                }
 
                 EditPointPopupMenu {
                     id: editPointPopupMenu

@@ -23,6 +23,8 @@ Frame {
 
     signal rotate(int _angle, int _index)
     signal removeMap(int _index)
+    signal exportMap()
+    signal closeWidget()
 
     // all the maps from the robots we chose, can rotate each of them individually
 
@@ -82,6 +84,8 @@ Frame {
             rightMargin: 18
         }
         width: 70
+        // received in the parent
+        onClicked: leftMenu.closeWidget()
     }
 
     SaveButton {
@@ -95,5 +99,7 @@ Frame {
             rightMargin: 18
         }
         width: cancelButton.width
+        // we handle the signal in the parent
+        onClicked: leftMenu.exportMap()
     }
 }

@@ -60,6 +60,7 @@ Frame {
         originY: 0
         x: 0 - width / 2
         y: 0 - height
+        tooltipText: "Drag me or click the map to modify my position"
         signal tmpPointViewPosChanged()
 
         MouseArea {
@@ -233,6 +234,7 @@ Frame {
                         originY: posY
                         x: posX - width / 2
                         y: posY - height
+                        tooltipText: name
 
                         MouseArea {
                             anchors.fill: parent
@@ -338,6 +340,7 @@ Frame {
                         originY: homeY
                         x: homeX - width / 2
                         y: homeY - height
+                        tooltipText: "Home of " + name
                     }
                     /// The robot's path on the map
                     Repeater {
@@ -351,6 +354,7 @@ Frame {
                             originY: pathPointPosY
                             x: pathPointPosX - width / 2
                             y: pathPointPosY - height
+                            tooltipText: pathPointName
                         }
                     }
                 }

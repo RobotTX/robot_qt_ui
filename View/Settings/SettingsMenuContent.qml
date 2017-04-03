@@ -55,14 +55,15 @@ Frame {
         }
 
         Button {
+
+            height: 20
+            width: 20
+
             background: Rectangle {
                 border.color: Style.lightGreyBorder
                 border.width: 1
                 radius: 10
             }
-
-            // TODO get some box to open with help message ?
-            onClicked: console.log("cool")
 
             anchors {
                 left: txt.right
@@ -70,8 +71,19 @@ Frame {
                 top: parent.top
             }
 
-            height: 20
-            width: 20
+            ToolTip {
+                visible: parent.hovered
+                text: "Activate its laser feedback to see the obstacles around a robot";
+                font.pointSize: 10
+                x:parent.x - 80
+                y: parent.y - 3
+                background: Rectangle {
+                    border.color: Style.darkSkyBlue
+                    border.width: 1
+                    radius: 8;
+                    anchors.fill: parent
+                }
+            }
 
             contentItem: Text {
                 text: "?"
@@ -103,7 +115,7 @@ Frame {
         }
 
         Column {
-
+            id:column
             topPadding: 10
             leftPadding: 50
             bottomPadding: 10
@@ -111,11 +123,13 @@ Frame {
 
             Repeater {
                 id: robots
+                property int currentItemCount: 0
+                property bool currentItemLaserActivated
                 model: robotModel
                 delegate: CheckDelegate {
+
                     id: box
                     height: 25
-
                     anchors.horizontalCenter: parent.horizontalCenter
 
                     indicator: Image {
@@ -133,8 +147,6 @@ Frame {
                         text: name
                         font.pointSize: 10
                     }
-
-                    checked: true
                 }
             }
         }
@@ -259,14 +271,70 @@ Frame {
         opacity: 0.1
     }
 
-    Label {
+    Item {
+
         id: batteryLabel
-        anchors.top: horizontalSeparation2.bottom
-        anchors.topMargin: 25
-        Text {
+
+        height: 15
+
+        anchors {
+            top: horizontalSeparation2.bottom
+            topMargin: 25
+        }
+
+        Label {
+            id: batteryHelp
+
+            anchors {
+                left: parent.left
+                top: parent.top
+            }
+
             color: "#8F8E94"
             text: qsTr("Battery level warning trigger")
         }
+
+        Button {
+
+            height: 20
+            width: 20
+
+            background: Rectangle {
+                border.color: Style.lightGreyBorder
+                border.width: 1
+                radius: 10
+            }
+
+            anchors {
+                left: batteryHelp.right
+                leftMargin: 5
+                top: parent.top
+            }
+
+            ToolTip {
+                visible: parent.hovered
+                text: "Level of battery under which you receive a warning";
+                font.pointSize: 10
+                x: 26
+                y: -4
+                background: Rectangle {
+                    border.color: Style.darkSkyBlue
+                    border.width: 1
+                    radius: 8;
+                    anchors.fill: parent
+                }
+            }
+
+            contentItem: Text {
+                text: "?"
+                font.pointSize: 12
+                font.bold: true
+                color: Style.darkSkyBlue
+                verticalAlignment: Text.AlignVCenter
+                horizontalAlignment: Text.AlignHCenter
+            }
+        }
+
     }
 
     BatteryLevelSlider {
@@ -445,9 +513,15 @@ Frame {
         anchors.right: parent.right
         anchors.bottom: parent.bottom
         onClicked: {
-            batteryWarningThreshold = batterySlider.threshold;
-            saveSettingsSignal(mapChoice, batterySlider.threshold, box2.show);
-            settingsPage.close();
+
+            batteryWarningThreshold = batterySlider.threshold
+            for(var i = 0; i < robotModel.count; i++){
+                //robots.itemAt(i).laserActivated = robots.itemAt(i).box.checked
+                console.log("item i laser " + robots.itemAt(i).box.checked)
+            }
+
+            saveSettingsSignal(mapChoice, batterySlider.threshold, box2.show)
+            settingsPage.close()
         }
     }
 

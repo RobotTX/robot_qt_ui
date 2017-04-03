@@ -1,15 +1,19 @@
 import QtQuick 2.7
 import QtQuick.Controls 2.1
 import "../../Helper/helper.js" as Helper
+import "../../Helper/style.js" as Style
 
 Image {
+
+    id: img
+
     property string _name
     property bool _isVisible
     property string _groupName
     property int type: Helper.PointViewType.PERM
     property double originX
     property double originY
-
+    property string tooltipText
 
     source: imageSource()
     width: 18
@@ -18,8 +22,50 @@ Image {
     visible: _isVisible
     fillMode: Image.PreserveAspectFit
 
+    Label {
+
+        id: tooltip
+
+        visible: false
+        font.pointSize: 10
+        text: tooltipText
+
+        anchors {
+            horizontalCenter: parent.horizontalCenter
+            bottom: parent.top
+            bottomMargin: 10
+        }
+
+        horizontalAlignment: Text.AlignHCenter
+        verticalAlignment: Text.AlignVCenter
+
+        background: Rectangle {
+            anchors.horizontalCenter: tooltip.horizontalCenter
+            anchors.verticalCenter: tooltip.verticalCenter
+            width: tooltip.paintedWidth + 8
+            height: tooltip.paintedHeight + 8
+            radius: 8
+            border.color: Style.darkSkyBlue
+            color: "white"
+        }
+    }
+
+    MouseArea {
+
+        id: mArea
+
+        hoverEnabled: true
+        anchors.fill: parent
+
+        onHoveredChanged: {
+            if(_isVisible)
+              tooltip.visible = !tooltip.visible
+        }
+    }
+
     /// To change the source file of the pointView according to its type
     function imageSource(){
+        console.log("parent coords " + x + " " + y + " " + width + " " + height)
         var src = "qrc:/icons/pointView";
         switch(type){
             case Helper.PointViewType.PERM:

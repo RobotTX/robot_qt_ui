@@ -35,7 +35,14 @@ Window {
     signal saveImage(string location)
 
     // to clear the map of its items everytime we show the window
-    onVisibleChanged: dialog.resetMap()
+    onVisibleChanged: {
+        // to reset the map on c++ side
+        dialog.resetMap();
+        // to reset the toolbar
+        blackButton.checked = true;
+        dotButton.checked = true;
+        thickness = 1
+    }
 
     Frame {
 
@@ -439,7 +446,10 @@ Window {
                 rightMargin: 10
             }
 
-            onClicked: dialog.saveImage(imgSource.substring(6));
+            onClicked: {
+                dialog.hide();
+                dialog.saveImage(imgSource.substring(6));
+            }
         }
     }
 
