@@ -20,19 +20,20 @@ Image {
     visible: _isVisible
     fillMode: Image.PreserveAspectFit
 
+    ToolTip.text: "YO"/*
     ToolTip {
         id: tooltip
         font.pointSize: 10
         contentItem: Label {
             id: label
-            width: label.paintedWidth + 30
+            width: implicitWidth + 8
+            height: implicitHeight + 8
             wrapMode: Text.WrapAnywhere
             text: tooltipText
         }
 
         // for tooltips the y is given relatively to the y of the associated item (here the image)
         // so we put it slightly above our image
-        y: -20 - paintedHeight
         background: Rectangle {
             radius: 8
             anchors.fill: parent
@@ -40,15 +41,15 @@ Image {
             color: "white"
         }
     }
-
+*/
     MouseArea {
         id: mArea
         hoverEnabled: true
         anchors.fill: parent
         onHoveredChanged: {
-            //console.log("being hovered")
-            if(_isVisible)
-                tooltip.visible = !tooltip.visible
+            console.log("being hovered")
+            /*if(_isVisible)
+                tooltip.visible = !tooltip.visible*/
         }
     }
 
