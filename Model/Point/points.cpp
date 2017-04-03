@@ -39,7 +39,7 @@ void Points::movePoint(const QString name, const QString oldGroup, const QString
 }
 
 bool Points::checkGroupName(const QString name){
-    return groups.find(Helper::formatName(name)) != groups.end();
+    return name.isEmpty() || groups.find(name) != groups.end();
 }
 
 void Points::clearGoups(){

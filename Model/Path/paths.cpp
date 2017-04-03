@@ -42,7 +42,7 @@ void Paths::movePath(const QString name, const QString oldGroup, const QString n
 }
 
 bool Paths::checkGroupName(const QString name){
-    return groups.find(Helper::formatName(name)) != groups.end();
+    return name.isEmpty() || groups.find(name) != groups.end();
 }
 
 void Paths::clearGroups(void){

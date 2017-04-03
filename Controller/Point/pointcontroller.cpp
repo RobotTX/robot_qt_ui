@@ -34,7 +34,7 @@ PointController::PointController(QObject *applicationWindow, MainController* par
     QObject *createPointMenuFrame = applicationWindow->findChild<QObject*>("createPointMenuFrame");
     if (createPointMenuFrame){
         /// Tell the menu where we create this that we enable the save button
-        connect(this, SIGNAL(enablePointSaveQml(QVariant)), createPointMenuFrame, SLOT(enableSave(QVariant)));
+        connect(this, SIGNAL(enablePointSaveQml(QVariant, QVariant)), createPointMenuFrame, SLOT(enableSave(QVariant, QVariant)));
         /// Got a modification of the name or position of the point we are creating so we check to enable or not the save button
         connect(createPointMenuFrame, SIGNAL(checkPoint(QString, QString, double, double)), parent, SLOT(checkPoint(QString, QString, double, double)));
         /// Clicked on the save button to create the given point
@@ -72,7 +72,6 @@ void PointController::loadPoints(const QString fileName){
 
 
 void PointController::addGroup(QString groupName, bool saveXML){
-    groupName = Helper::formatName(groupName);
     if(!points->getGroups().contains(groupName)){
         //qDebug() << "PointController::addGroup" << groupName;
         points->addGroup(groupName);
@@ -88,19 +87,16 @@ void PointController::addPoint(QString name, QString groupName, double x, double
     //qDebug() << "PointController::addPoint" << groupName << name << x << y << displayed;
     addGroup(groupName, saveXML);
 
-    name = Helper::formatName(name);
     points->addPoint(groupName, name, x, y, displayed);
 
     /// We are creating a new point
     if(oldName.isEmpty()){
-        //qDebug() << "PointController::addPoint Creating a point";
         emit addPointQml(name,
                          displayed,
                          groupName,
                          x,
                          y);
     } else {
-        //qDebug() << "PointController::addPoint Editing a point";
         emit editPointQml(oldName,
                          oldGroup,
                          name,
@@ -142,7 +138,7 @@ bool PointController::checkPointName(const QString name){
 
         QVector<QPointer<Point>> group = i.value()->getPointVector();
         for(int j = 0; j < group.size(); j++){
-            if(group.at(j)->getName().compare(Helper::formatName(name)) == 0)
+            if(group.at(j)->getName().compare(name) == 0)
                 return true;
         }
     }
@@ -150,7 +146,6 @@ bool PointController::checkPointName(const QString name){
 }
 
 void PointController::renameGroup(QString newName, QString oldName){
-    newName = Helper::formatName(newName);
     qDebug() << "PointController::renameGroup from" << oldName << "to" << newName;
     points->renameGroup(newName, oldName);
     emit renameGroupQml(newName, oldName);
@@ -175,12 +170,14 @@ void PointController::checkErrorPoint(const QImage& mapImage, const QString name
     if(!error && name.compare(oldName) != 0)
         error = checkPointName(name);
 
+    bool nameError = error;
+
     /// Check if the point is not in a wall or unknown place
     if(!error)
         error = (mapImage.pixelColor(x, y).red() != 255);
 
     /// Send the result to qml to enable or not the save button
-    emit enablePointSaveQml(!error);
+    emit enablePointSaveQml(!error, nameError);
 }
 
 void PointController::checkGroup(QString name){

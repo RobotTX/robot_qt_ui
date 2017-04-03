@@ -116,7 +116,7 @@ signals:
      * @param enable
      * Signal to enable the save button while creating/editing a point
      */
-    void enablePointSaveQml(QVariant enable);
+    void enablePointSaveQml(QVariant enable, QVariant nameError);
 
     /**
      * @brief enableGroupSaveQml
