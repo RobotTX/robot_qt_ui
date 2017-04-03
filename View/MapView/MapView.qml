@@ -165,16 +165,33 @@ Frame {
                 }
             }
 
+            transform: [
+                       Scale {
+                           id: zoomScale
+                       },
+                       Translate {
+                           id: zoomTranslate
+                       }
+                   ]
+
             MouseArea {
                 anchors.fill: parent
                 acceptedButtons: Qt.LeftButton | Qt.RightButton
+                hoverEnabled: true
 
                 drag.target: parent
 
                 onWheel: {
-                    var newScale = mapImage.scale + mapImage.scale * wheel.angleDelta.y / 120 / 10;
-                    if(newScale > Style.minZoom && newScale < Style.maxZoom)
-                        mapImage.scale = newScale;
+                    var newScale = zoomScale.xScale + zoomScale.xScale * wheel.angleDelta.y / 120 / 10;
+
+                    if(newScale > Style.minZoom && newScale < Style.maxZoom){
+                        if(wheel.angleDelta.y > 0){
+                            zoomScale.origin.x = zoomScale.origin.x + (mouseX - zoomScale.origin.x)/2;
+                            zoomScale.origin.y = zoomScale.origin.y + (mouseY - zoomScale.origin.y)/2;
+                        }
+                        zoomScale.xScale = newScale;
+                        zoomScale.yScale = newScale;
+                    }
                 }
                 onClicked: {
                     if (mouse.button === Qt.LeftButton) {
