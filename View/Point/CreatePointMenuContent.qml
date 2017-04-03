@@ -13,6 +13,7 @@ Frame {
     property PointView tmpPointView
     property string oldName: ""
     property string oldGroup
+    property bool nameError: true
     property double oldPosX
     property double oldPosY
 
@@ -23,7 +24,7 @@ Frame {
     Connections {
         target: tmpPointView
         onTmpPointViewPosChanged: {
-            checkPoint(pointTextField.text, oldName,
+            checkPoint(Helper.formatName(pointTextField.text), oldName,
                        tmpPointView.x + tmpPointView.width / 2,
                        tmpPointView.y + tmpPointView.height)
         }
@@ -96,10 +97,10 @@ Frame {
 
         background: Rectangle {
             radius: 2
-            border.color: pointTextField.activeFocus ? Style.lightBlue : Style.lightGreyBorder
-            border.width: pointTextField.activeFocus ? 3 : 1
+            border.color: nameError ? Style.redError : pointTextField.activeFocus ? Style.lightBlue : Style.lightGreyBorder
+            border.width: pointTextField.activeFocus || nameError ? 3 : 1
         }
-        onTextChanged: checkPoint(pointTextField.text, oldName,
+        onTextChanged: checkPoint(Helper.formatName(pointTextField.text), oldName,
                        tmpPointView.x + tmpPointView.width / 2,
                        tmpPointView.y + tmpPointView.height)
     }
@@ -180,12 +181,13 @@ Frame {
         }
         enabled: false
         onClicked: {
-            createPoint(pointTextField.text, groupComboBox.displayText, tmpPointView.x + tmpPointView.width / 2, tmpPointView.y + tmpPointView.height, oldName, oldGroup);
+            createPoint(Helper.formatName(pointTextField.text), groupComboBox.displayText, tmpPointView.x + tmpPointView.width / 2, tmpPointView.y + tmpPointView.height, oldName, oldGroup);
             backToMenu();
         }
     }
 
-    function enableSave(enable){
+    function enableSave(enable, _nameError){
+        nameError = _nameError;
         saveButton.enabled = enable;
     }
 }

@@ -63,9 +63,11 @@ Frame {
 
             background: Rectangle {
                 radius: 2
-                border.color: parent.activeFocus ? Style.lightBlue : Style.lightGreyBorder
-                border.width: parent.activeFocus ? 3 : 1
+
+                border.color: nameField.text === "" ? Style.redError : nameField.activeFocus ? Style.lightBlue : Style.lightGreyBorder
+                border.width: nameField.activeFocus || nameField.text === "" ? 3 : 1
             }
+            onVisibleChanged: nameField.text = ""
         }
 
         Button {

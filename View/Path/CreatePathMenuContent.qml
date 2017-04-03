@@ -13,6 +13,7 @@ Frame {
     objectName: "createPathMenuFrame"
     property string oldName: ""
     property string oldGroup
+    property bool nameError: true
     property Paths pathModel
     property Paths tmpPathModel
     property Points pointModel
@@ -130,8 +131,8 @@ Frame {
 
             background: Rectangle {
                 radius: 2
-                border.color: pathTextField.activeFocus ? Style.lightBlue : Style.lightGreyBorder
-                border.width: pathTextField.activeFocus ? 3 : 1
+                border.color: nameError ? Style.redError : pathTextField.activeFocus ? Style.lightBlue : Style.lightGreyBorder
+                border.width: pathTextField.activeFocus || nameError ? 3 : 1
             }
             onTextChanged: enableSave()
         }
@@ -602,7 +603,9 @@ Frame {
         if(!error && newName !== oldName)
             for(var i = 0; i < pathModel.count; i++)
                 for(var j = 0; j < pathModel.get(i).paths.count; j++)
-                    error = (pathModel.get(i).paths.get(j).pathName === newName)
+                    error = error || (pathModel.get(i).paths.get(j).pathName === newName)
+
+        nameError = error;
 
         if(!error)
             error = (tmpPathModel.get(0).paths.get(0).pathPoints.count < 1);

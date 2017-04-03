@@ -1,6 +1,7 @@
 import QtQuick 2.7
 import QtQuick.Controls 2.1
 import "../../Helper/style.js" as Style
+import "../../Helper/helper.js" as Helper
 import "../../Model/Point"
 import "../Custom"
 
@@ -47,10 +48,10 @@ Frame {
 
         background: Rectangle {
             radius: 2
-            border.color: groupTextField.activeFocus ? Style.lightBlue : Style.lightGreyBorder
-            border.width: groupTextField.activeFocus ? 3 : 1
+            border.color: !saveButton.enabled ? Style.redError : groupTextField.activeFocus ? Style.lightBlue : Style.lightGreyBorder
+            border.width: groupTextField.activeFocus || !saveButton.enabled ? 3 : 1
         }
-        onTextChanged: checkGroup(groupTextField.text)
+        onTextChanged: checkGroup(Helper.formatName(groupTextField.text))
     }
 
     CancelButton {
@@ -74,9 +75,9 @@ Frame {
         anchors.leftMargin: 5
         onClicked: {
             if(oldName === "")
-                createGroup(groupTextField.text);
+                createGroup(Helper.formatName(groupTextField.text));
             else
-                renameGroup(groupTextField.text, oldName);
+                renameGroup(Helper.formatName(groupTextField.text), oldName);
             backToMenu();
         }
     }

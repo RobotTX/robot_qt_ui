@@ -147,11 +147,11 @@ Column {
                 }
 
                 MouseArea {
+                    anchors.fill: parent
                     onClicked: {
                         column.selectedGroup = groupName;
                         column.selectedPath = pathName;
                     }
-                    anchors.fill: parent
                 }
 
                 /// The left button in each element of the list
@@ -319,6 +319,14 @@ Column {
                         anchors.rightMargin: 5
                         maximumLineCount: 1
                         elide: Text.ElideRight
+                    }
+
+                    MouseArea {
+                        anchors.fill: parent
+                        onClicked: {
+                            column.selectedGroup = groupName;
+                            column.selectedPath = pathName;
+                        }
                     }
                 }
             }
