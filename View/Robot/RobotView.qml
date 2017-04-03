@@ -5,9 +5,11 @@ import "../../Helper/style.js" as Style
 
 Image {
 
+    id: img
+
     property string _name
     property string _ip
-    property double _orientation
+    property bool hover: false
 
     transform: Rotation {
         origin.x: width / 2
@@ -21,33 +23,6 @@ Image {
     smooth: false
     fillMode: Image.PreserveAspectFit
 
-    Label {
-
-        id: tooltip
-
-        visible: false
-        font.pointSize: 10
-        text: _name
-
-        anchors {
-            horizontalCenter: parent.horizontalCenter
-            bottom: parent.top
-            bottomMargin: 10
-        }
-
-        horizontalAlignment: Text.AlignHCenter
-        verticalAlignment: Text.AlignVCenter
-
-        background: Rectangle {
-            anchors.horizontalCenter: tooltip.horizontalCenter
-            anchors.verticalCenter: tooltip.verticalCenter
-            width: tooltip.paintedWidth + 8
-            height: tooltip.paintedHeight + 8
-            radius: 8
-            border.color: Style.darkSkyBlue
-            color: "white"
-        }
-    }
 
     MouseArea {
 
@@ -60,7 +35,7 @@ Image {
 
         onHoveredChanged: {
             console.log("robot hovered")
-            tooltip.visible = !tooltip.visible
+            hover = !hover
         }
     }
 }

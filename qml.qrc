@@ -68,5 +68,7 @@
         <file>View/Map/MergeMapMenuItem.qml</file>
         <file>View/Map/MapChoiceMessageDialog.qml</file>
         <file>View/Map/MergeMapsPaintedItem.qml</file>
+        <file>View/Robot/Scan.qml</file>
+        <file>View/Robot/ScanLeftMenu.qml</file>
     </qresource>
 </RCC>

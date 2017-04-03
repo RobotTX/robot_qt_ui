@@ -10,6 +10,7 @@ import "View/MainMenu"
 import "View/MapView"
 import "View/Map"
 import "View/Point"
+import "View/Robot"
 
 ApplicationWindow {
     id: applicationWindow
@@ -138,6 +139,10 @@ ApplicationWindow {
         MergeMap {
             id: mergeMap
             robotsModel: _robotModel
+        }
+
+        Scan {
+
         }
     }
 
