@@ -3,10 +3,11 @@ import QtQuick.Controls 2.1
 import "../../Helper/style.js" as Style
 
 Button {
+    property string txt: "Save"
     height: 23
 
     Label {
-        text: qsTr("Save")
+        text: qsTr(txt)
         color: "white"
         anchors.verticalCenter: parent.verticalCenter
         anchors.horizontalCenter: parent.horizontalCenter

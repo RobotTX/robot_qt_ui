@@ -45,11 +45,13 @@ MainController::MainController(QQmlApplicationEngine *engine, QObject* parent) :
         connect(applicationWindow, SIGNAL(mapConfig(QString, double, double, double)), this, SLOT(saveMapConfig(QString, double, double, double)));
         connect(applicationWindow, SIGNAL(shortcutAddRobot()), robotsController, SLOT(shortcutAddRobot()));
         connect(applicationWindow, SIGNAL(shortcutDeleteRobot()), robotsController, SLOT(shortcutDeleteRobot()));
+        connect(this, SIGNAL(openMapChoiceMessageDialog(QVariant, QVariant)), applicationWindow, SLOT(openMapChoiceMessageDialog(QVariant, QVariant)));
+        connect(applicationWindow, SIGNAL(requestOrSendMap(QString, bool)), this, SLOT(requestOrSendMap(QString, bool)));
 
         QObject* mapMenuFrame = applicationWindow->findChild<QObject*>("mapMenuFrame");
-        if(mapMenuFrame)
+        if(mapMenuFrame){
             connect(mapMenuFrame, SIGNAL(importMap(QString)), this, SLOT(loadMapConfig(QString)));
-        else {
+        } else {
             qDebug() << "MapController::MapController could not find the mapMenuFrame";
             Q_UNREACHABLE();
         }
@@ -88,13 +90,10 @@ MainController::MainController(QQmlApplicationEngine *engine, QObject* parent) :
             qDebug() << "MainController::MainController could not find the settings file";
             Q_UNREACHABLE();
         }
-
     } else {
         qDebug() << "MainController::MainController We are supposed to only have 1 item, the ApplicationWindow";
         Q_UNREACHABLE();
     }
-
-
 }
 
 void MainController::checkPoint(QString name, QString oldName, double x, double y){
@@ -310,57 +309,28 @@ void MainController::checkMapInfoSlot(QString ip, QString mapId, QString mapDate
         }
         qDebug() << "MainController::updateMapInfo Robot" << ip << "map choice :" << mapChoice;
 
-        /// TODO if from robot: delete paths, points + paths & home of the robots except this one
-
         switch(mapChoice){
             case Helper::ALWAYS_NEW:
                if(robotOlder)
                    sendNewMap(ip);
                else
-                   robotsController->sendCommand(ip, QString("s") + QChar(31) + QString::number(1));
+                   robotsController->requestMap(ip);
             break;
             case Helper::ALWAYS_OLD:
                 if(robotOlder)
-                    robotsController->sendCommand(ip, QString("s") + QChar(31) + QString::number(1));
+                    robotsController->requestMap(ip);
                 else
                     sendNewMap(ip);
             break;
             case Helper::ALWAYS_ROBOT:
-                robotsController->sendCommand(ip, QString("s") + QChar(31) + QString::number(1));
+                robotsController->requestMap(ip);
             break;
             case Helper::ALWAYS_APPLICATION:
                 sendNewMap(ip);
             break;
             default:
-                qDebug() << "MainController::updateMapInfo default choice";
-                /*QMessageBox msgBox;
-                QPushButton* robotButton;
-                QPushButton* appButton;
-
-                (robotOlder) ? msgBox.setText("The robot " + robotName + " has a new map.") : msgBox.setText("The robot " + robotName + " has an old map.");
-
-                msgBox.setInformativeText("Which map do you want to use ?");
-                robotButton = msgBox.addButton(tr("Robot"), QMessageBox::AcceptRole);
-                appButton = msgBox.addButton(tr("Application"), QMessageBox::RejectRole);
-
-                msgBox.exec();
-
-                /// The previous line is blocking so if the robot dc in the meantime, we don't have a robot anymore
-                if(robot){
-                    if (msgBox.clickedButton() == robotButton) {
-                        qDebug() << "MainController::updateMapInfo Robot" << robotName << "using the map from the robot";
-                        commandController->sendCommand(robot, QString("s \"1\""));
-                    } else if (msgBox.clickedButton() == appButton) {
-                        qDebug() << "MainController::updateMapInfo Robot" << robotName << "using the map from the app";
-                        robot->sendNewMap(mapController->getMap());
-                    }
-                } else {
-                    qDebug() << "MainController::updateMapInfo Robot" << robotName << "has been disconnected and can't perform this operation";
-                }
-                delete robotButton;
-                robotButton = 0;
-                delete appButton;
-                appButton = 0;*/
+                qDebug() << "MainController::updateMapInfo ALWAYS_ASK choice";
+                emit openMapChoiceMessageDialog(ip, robotOlder);
             break;
         }
     }
@@ -371,19 +341,31 @@ void MainController::sendNewMap(QString ip){
 
     QString date = mapController->getDateTime().toString("yyyy-MM-dd-hh-mm-ss");
 
-    QString mapMetadata = QString::number(mapController->getWidth()) + ' ' + QString::number(mapController->getHeight()) +
-            ' ' + QString::number(mapController->getResolution()) + ' ' + QString::number(mapController->getOrigin().x()) +
-            ' ' + QString::number(mapController->getOrigin().y());
+    QString mapMetadata = mapController->getMatadaString();
 
     robotsController->sendNewMap(ip, mapId, date, mapMetadata, mapController->getMapImage());
 }
 
-void MainController::newMapFromRobotSlot(QByteArray mapArray, QString mapId, QString mapDate){
+void MainController::newMapFromRobotSlot(QString ip, QByteArray mapArray, QString mapId, QString mapDate){
     mapController->newMapFromRobot(mapArray, mapId, mapDate);
 
+    QString mapMetadata = mapController->getMatadaString();
+
+    /// When we receive a map from a robot, we send it to all the other robots
+    robotsController->sendNewMapToAllExcept(ip, mapId, mapDate, mapMetadata, mapController->getMapImage());
     /// TODO change bool => modified the map, need to save on close
+
+    pointController->clearPoints();
+
+    pathController->clearPaths();
 }
 
+void MainController::requestOrSendMap(QString ip, bool request){
+    if(request)
+        robotsController->requestMap(ip);
+    else
+        sendNewMap(ip);
+}
 
 
 

@@ -55,7 +55,7 @@ signals:
     void updatePath(QString ip, QStringList strList);
     void updateHome(QString ip, QString homeName, float homeX, float homeY);
     void checkMapInfo(QString ip, QString mapId, QString mapDate);
-    void newMapFromRobot(QByteArray mapArray, QString mapId, QString mapDate);
+    void newMapFromRobot(QString ip, QByteArray mapArray, QString mapId, QString mapDate);
 
     void stopCmdRobotWorker();
     void stopRobotWorker();

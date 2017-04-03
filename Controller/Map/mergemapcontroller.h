@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QVector>
+#include <QSize>
 
 class QQmlApplicationEngine;
 class MergeMapsPaintedItem;
@@ -23,10 +24,17 @@ private slots:
     void removeMap(int index);
     void resetMergeMapWidget();
 
+signals:
+    void differentMapSizes();
+
 private:
     QQmlApplicationEngine* _engine;
     QObject* _applicationWindow;
     QVector<MergeMapsPaintedItem*> paintedItems;
+
+    double resolution;
+    /// updated when the first image is imported to set a reference for the subsequent images
+    QSize size_of_images_merged;
 };
 
 #endif /// MERGEMAPCONTROLLER_H

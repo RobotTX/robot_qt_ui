@@ -66,6 +66,7 @@
         <file>View/Robot/RobotListInPopup.qml</file>
         <file>View/Map/MergeMapsLeftMenu.qml</file>
         <file>View/Map/MergeMapMenuItem.qml</file>
+        <file>View/Map/MapChoiceMessageDialog.qml</file>
         <file>View/Map/MergeMapsPaintedItem.qml</file>
     </qresource>
 </RCC>

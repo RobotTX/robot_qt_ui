@@ -311,3 +311,9 @@ void MapController::setMapFile(const QString file) {
     map->setMapImage(QImage(map->getMapFile()));
     emit setMap(file);
 }
+
+QString MapController::getMatadaString(void) const {
+    return QString::number(map->getWidth()) + ' ' + QString::number(map->getHeight()) +
+            ' ' + QString::number(map->getResolution()) + ' ' + QString::number(map->getOrigin().x()) +
+            ' ' + QString::number(map->getOrigin().y());
+}

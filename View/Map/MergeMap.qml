@@ -225,16 +225,22 @@ Window {
             onAccepted: {
 
                 // if an already existing file is selected we only send the url, if a file is being created we add the extension .pgm
-
+        /*
                 if(fileUrl.toString().lastIndexOf(".pgm") == -1){
                     mergedMap.grabToImage(function(result) {
                         result.saveToFile(fileUrl.toString().substring(7) + ".pgm");
                     });
                 }
 
+
+
                 else mergedMap.grabToImage(function(result) {
                                                   result.saveToFile(fileUrl.toString().substring(7));});
-
+*/
+                if(fileUrl.toString().lastIndexOf(".pgm") == -1)
+                    window.exportMap(fileUrl.toString().substring(7) + ".pgm")
+                else
+                    window.exportMap(fileUrl.toString().substring(7))
                 /*
                 if(fileUrl.toString().lastIndexOf(".pgm") == -1)
                     window.exportMap(fileUrl.toString().substring(7) + ".pgm");
@@ -343,6 +349,21 @@ Window {
                 if(newScale > 0.20 && newScale < Style.maxZoom)
                     mergedMap.scale = newScale;
             }
+        }
+    }
+
+    function cancelImportMap(){
+        console.log("Cancelling import map");
+        _mapsList.removeRobot(_mapsList.count-1);
+        mapImportErrorDialog.open();
+    }
+
+    Dialog {
+        id: mapImportErrorDialog
+        title: "Import impossible";
+        standardButtons: Dialog.Ok
+        Label {
+            text: "Sorry, you can only merge maps of the same size";
         }
     }
 }

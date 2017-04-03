@@ -5,10 +5,10 @@ import QtQuick.Window 2.0
 import "Model/Point"
 import "Model/Path"
 import "Model/Robot"
+import "Model/Point"
 import "View/MainMenu"
 import "View/MapView"
 import "View/Map"
-import "Model/Point"
 import "View/Point"
 
 ApplicationWindow {
@@ -32,6 +32,7 @@ ApplicationWindow {
     signal mapConfig(string file_name, double zoom, double centerX, double centerY)
     signal shortcutAddRobot()
     signal shortcutDeleteRobot()
+    signal requestOrSendMap(string ip, bool request)
 
     property bool useTmpPathModel: false
     property bool useRobotPathModel: false
@@ -66,6 +67,10 @@ ApplicationWindow {
         Shortcut {
             sequence: ","
             onActivated: shortcutDeleteRobot()
+        }
+        Shortcut {
+            sequence: "/"
+            onActivated: openMapChoiceMessageDialog("0", true)
         }
     }
 
@@ -133,6 +138,27 @@ ApplicationWindow {
         MergeMap {
             id: mergeMap
             robotsModel: _robotModel
+        }
+    }
+
+    MapChoiceMessageDialog {
+        id: mapChoiceMessageDialog
+        x: parent.width / 2 - width / 2
+        y: parent.height / 2 - height / 2
+
+        onAccepted: requestOrSendMap(ip, false)
+        onRejected: requestOrSendMap(ip, true)
+    }
+
+    function openMapChoiceMessageDialog(ip, robotIsOlder){
+        if(mapChoiceMessageDialog.visible){
+            /// TODO fix this :/
+            console.log("We are already choosing a map for the robot, try again later");
+        } else {
+            mapChoiceMessageDialog.ip = ip;
+            mapChoiceMessageDialog.robotName = _robotModel.getName(ip);
+            mapChoiceMessageDialog.robotIsOlder = robotIsOlder;
+            mapChoiceMessageDialog.open();
         }
     }
 

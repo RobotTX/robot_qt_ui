@@ -12,8 +12,12 @@ Frame {
     signal close()
     signal saveSettingsSignal(int mapChoice, double _batteryThreshold, bool showTutorial)
 
+    property real batteryWarningThreshold
     property int mapChoice
-    property real batteryWarningThreshold: 0.1
+
+    property real oriBatteryWarningThreshold
+    property bool oriShowTutorial
+    property int oriMapChoice
 
     property Robots robotModel
 
@@ -51,14 +55,15 @@ Frame {
         }
 
         Button {
+
+            height: 20
+            width: 20
+
             background: Rectangle {
                 border.color: Style.lightGreyBorder
                 border.width: 1
                 radius: 10
             }
-
-            // TODO get some box to open with help message ?
-            onClicked: console.log("cool")
 
             anchors {
                 left: txt.right
@@ -66,8 +71,19 @@ Frame {
                 top: parent.top
             }
 
-            height: 20
-            width: 20
+            ToolTip {
+                visible: parent.hovered
+                text: "Activate its laser feedback to see the obstacles around a robot";
+                font.pointSize: 10
+                x:parent.x - 80
+                y: parent.y - 3
+                background: Rectangle {
+                    border.color: Style.darkSkyBlue
+                    border.width: 1
+                    radius: 8;
+                    anchors.fill: parent
+                }
+            }
 
             contentItem: Text {
                 text: "?"
@@ -179,7 +195,7 @@ Frame {
         RoundCheckBox {
             id: mapChoice1
             ButtonGroup.group: mapChoiceGroup
-            checked: true
+            checked: mapChoice == 0
             text: qsTr("The robot's map")
             onClicked: mapChoice = 0
         }
@@ -187,6 +203,7 @@ Frame {
         RoundCheckBox {
             id: mapChoice2
             ButtonGroup.group: mapChoiceGroup
+            checked: mapChoice == 1
 
             anchors {
                 left: parent.left
@@ -201,7 +218,7 @@ Frame {
         RoundCheckBox {
             id: mapChoice3
             ButtonGroup.group: mapChoiceGroup
-            checked: true
+            checked: mapChoice == 2
 
             anchors {
                 left: parent.left
@@ -216,13 +233,12 @@ Frame {
         RoundCheckBox {
             id: mapChoice4
             ButtonGroup.group: mapChoiceGroup
-
+            checked: mapChoice == 3
             anchors {
                 left: parent.left
                 top: mapChoice3.bottom
                 topMargin: 12
             }
-
             text: qsTr("The newest map")
             onClicked: mapChoice = 3
         }
@@ -230,7 +246,7 @@ Frame {
         RoundCheckBox {
             id: mapChoice5
             ButtonGroup.group: mapChoiceGroup
-
+            checked: mapChoice == 4
             anchors {
                 left: parent.left
                 top: mapChoice4.bottom
@@ -396,7 +412,13 @@ Frame {
             anchors.horizontalCenter: parent.horizontalCenter
         }
 
-        onClicked: settingsPage.close()
+        onClicked: {
+            /// TODO cancel the laser modifications
+            settingsPage.batteryWarningThreshold = oriBatteryWarningThreshold;
+            box2.show = oriShowTutorial;
+            settingsPage.mapChoice = oriMapChoice;
+            settingsPage.close()
+        }
     }
 
     // apply button to save the changes but keep the window open
@@ -424,8 +446,8 @@ Frame {
         anchors.bottom: parent.bottom
 
         onClicked: {
-            batteryWarningThreshold = batterySlider.threshold
-            saveSettingsSignal(mapChoice, batterySlider.threshold, box2.show)
+            batteryWarningThreshold = batterySlider.threshold;
+            saveSettingsSignal(mapChoice, batterySlider.threshold, box2.show);
         }
     }
 
@@ -435,6 +457,7 @@ Frame {
         anchors.right: parent.right
         anchors.bottom: parent.bottom
         onClicked: {
+
             batteryWarningThreshold = batterySlider.threshold
             for(var i = 0; i < robotModel.count; i++){
                 //robots.itemAt(i).laserActivated = robots.itemAt(i).box.checked
@@ -447,28 +470,13 @@ Frame {
     }
 
     function setSettings(mapChoice, _thresh, showTutorial){
+        oriBatteryWarningThreshold = _thresh;
+        oriShowTutorial = showTutorial;
+        oriMapChoice = mapChoice;
+
         settingsPage.batteryWarningThreshold = _thresh;
         box2.show = showTutorial;
         settingsPage.mapChoice = mapChoice;
-        switch(mapChoice){
-        case 0:
-            mapChoice1.checked = true;
-            break;
-        case 1:
-            mapChoice2.checked = true;
-            break;
-        case 2:
-            mapChoice3.checked = true;
-            break;
-        case 3:
-            mapChoice4.checked = true;
-            break;
-        case 4:
-            mapChoice5.checked = true;
-            break;
-        default:
-            break;
-        }
     }
 }
 
