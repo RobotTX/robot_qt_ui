@@ -4,7 +4,9 @@ import "../../Helper/helper.js" as Helper
 import "../../Helper/style.js" as Style
 
 Image {
+
     id: img
+
     property string _name
     property bool _isVisible
     property string _groupName
@@ -20,36 +22,44 @@ Image {
     visible: _isVisible
     fillMode: Image.PreserveAspectFit
 
-    ToolTip.text: "YO"/*
-    ToolTip {
+    Label {
+
         id: tooltip
+
+        visible: false
         font.pointSize: 10
-        contentItem: Label {
-            id: label
-            width: implicitWidth + 8
-            height: implicitHeight + 8
-            wrapMode: Text.WrapAnywhere
-            text: tooltipText
+        text: tooltipText
+
+        anchors {
+            horizontalCenter: parent.horizontalCenter
+            bottom: parent.top
+            bottomMargin: 10
         }
 
-        // for tooltips the y is given relatively to the y of the associated item (here the image)
-        // so we put it slightly above our image
+        horizontalAlignment: Text.AlignHCenter
+        verticalAlignment: Text.AlignVCenter
+
         background: Rectangle {
+            anchors.horizontalCenter: tooltip.horizontalCenter
+            anchors.verticalCenter: tooltip.verticalCenter
+            width: tooltip.paintedWidth + 8
+            height: tooltip.paintedHeight + 8
             radius: 8
-            anchors.fill: parent
             border.color: Style.darkSkyBlue
             color: "white"
         }
     }
-*/
+
     MouseArea {
+
         id: mArea
+
         hoverEnabled: true
         anchors.fill: parent
+
         onHoveredChanged: {
-            console.log("being hovered")
-            /*if(_isVisible)
-                tooltip.visible = !tooltip.visible*/
+            if(_isVisible)
+              tooltip.visible = !tooltip.visible
         }
     }
 
