@@ -271,8 +271,11 @@ Column {
                 Frame {
                     visible: pathIsOpen
                     height: visible ? 25 : 0
-                    anchors.left: parent.left
-                    anchors.right: parent.right
+                    anchors {
+                        left: parent.left
+                        right: parent.right
+                        rightMargin: 35
+                    }
                     padding: 0
                     background: Rectangle {
                         anchors.fill: parent

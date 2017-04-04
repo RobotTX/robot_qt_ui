@@ -119,7 +119,6 @@ void RobotController::launchWorkers(){
     robotWorker->moveToThread(&robotThread);
     robotThread.start();
 
-
     //qDebug() << "RobotController" << name << "at ip" << ip << " launching its metadata thread at port" << PORT_ROBOT_POS;
 
     metadataWorker = QPointer<MetadataWorker>(new MetadataWorker(ip, PORT_MAP_METADATA));
@@ -130,7 +129,6 @@ void RobotController::launchWorkers(){
     connect(&metadataThread, SIGNAL(finished()), metadataWorker, SLOT(deleteLater()));
     metadataWorker->moveToThread(&metadataThread);
     metadataThread.start();
-
 
     //qDebug() << "RobotController" << name << "at ip" << ip << " launching its new map thread at port" << PORT_NEW_MAP;
 

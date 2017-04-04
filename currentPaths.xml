@@ -147,4 +147,34 @@
             </pathpoint>
         </path>
     </group>
+    <group>
+        <name>Group avec un nom tres tres long</name>
+        <path>
+            <name>Path avec un nom tres tres long 5</name>
+            <pathpoint>
+                <name>PathPoint avec un nom tres tres long 1</name>
+                <x>1200</x>
+                <y>1200</y>
+                <waittime>120</waittime>
+            </pathpoint>
+            <pathpoint>
+                <name>PathPoint avec un nom tres tres long 2</name>
+                <x>1300</x>
+                <y>1300</y>
+                <waittime>130</waittime>
+            </pathpoint>
+            <pathpoint>
+                <name>PathPoint avec un nom tres tres long 3</name>
+                <x>1400</x>
+                <y>1400</y>
+                <waittime>140</waittime>
+            </pathpoint>
+            <pathpoint>
+                <name>PathPoint avec un nom tres tres long 4</name>
+                <x>1500</x>
+                <y>1500</y>
+                <waittime>150</waittime>
+            </pathpoint>
+        </path>
+    </group>
 </paths>

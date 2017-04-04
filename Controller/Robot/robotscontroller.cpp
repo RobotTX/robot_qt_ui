@@ -110,22 +110,22 @@ void RobotsController::shortcutAddRobot(){
     double posX = ((robots.size() + 1) * 200) % 1555;
     double posY = ((robots.size() + 1) * 200) % 1222;
 
-    robotIsAliveSlot("Robot " + ip, ip, "Wifi " + ip, 0, (robots.size()*10)%100);
+    robotIsAliveSlot("Robot avec un nom tres tres long " + ip, ip, "Wifi " + ip, 0, (robots.size()*10)%100);
     emit setPos(ip, posX, posY, (20 * robots.size()) % 360);
 
     if((robots.size() - 1)%2 == 0){
-        emit setHome(ip, "home " + ip, posX + 50, posY);
+        emit setHome(ip, "home avec un nom tres tres long " + ip, posX + 50, posY);
         emit setPlayingPath(ip, (robots.size() - 1)%2 == 0);
     }
 
     if((robots.size() - 1)%3 == 0){
-        emit setPath(ip, "pathName " + ip);
-        emit addPathPoint(ip, QString("pathPoint 1"), 50 * robots.size() + 50, 50 * robots.size() + 50, (robots.size() - 1)%3);
-        emit addPathPoint(ip, QString("pathPoint 2"), 50 * robots.size() + 50*2, 50 * robots.size() + 50*2, (robots.size() - 1)%3);
-        emit addPathPoint(ip, QString("pathPoint 3"), 50 * robots.size() + 50*3, 50 * robots.size() + 50*3, (robots.size() - 1)%3);
-        emit addPathPoint(ip, QString("pathPoint 4"), 50 * robots.size() + 50*4, 50 * robots.size() + 50*4, (robots.size() - 1)%3);
-        emit addPathPoint(ip, QString("pathPoint 5"), 50 * robots.size() + 50*5, 50 * robots.size() + 50*5, (robots.size() - 1)%3);
-        emit addPathPoint(ip, QString("pathPoint 6"), 50 * robots.size() + 50*6, 50 * robots.size() + 50*6, (robots.size() - 1)%3);
+        emit setPath(ip, "pathName avec un nom tres tres long " + ip);
+        emit addPathPoint(ip, QString("pathPoint avec un nom tres tres long 1"), 50 * robots.size() + 50, 50 * robots.size() + 50, (robots.size() - 1)%3);
+        emit addPathPoint(ip, QString("pathPoint avec un nom tres tres long 2"), 50 * robots.size() + 50*2, 50 * robots.size() + 50*2, (robots.size() - 1)%3);
+        emit addPathPoint(ip, QString("pathPoint avec un nom tres tres long 3"), 50 * robots.size() + 50*3, 50 * robots.size() + 50*3, (robots.size() - 1)%3);
+        emit addPathPoint(ip, QString("pathPoint avec un nom tres tres long 4"), 50 * robots.size() + 50*4, 50 * robots.size() + 50*4, (robots.size() - 1)%3);
+        emit addPathPoint(ip, QString("pathPoint avec un nom tres tres long 5"), 50 * robots.size() + 50*5, 50 * robots.size() + 50*5, (robots.size() - 1)%3);
+        emit addPathPoint(ip, QString("pathPoint avec un nom tres tres long 6"), 50 * robots.size() + 50*6, 50 * robots.size() + 50*6, (robots.size() - 1)%3);
         emit setStage(ip, (int) ((robots.size() - 1) / 3));
     }
     //emit displayRobots();
