@@ -8,6 +8,7 @@
 class EditMapController;
 class QQmlApplicationEngine;
 class MergeMapController;
+class MainController;
 
 class MapController : public QObject {
 
@@ -15,7 +16,9 @@ class MapController : public QObject {
 
 public:
 
-    MapController(QQmlApplicationEngine* engine, QObject *applicationWindow, QObject* parent);
+    MapController(QQmlApplicationEngine* engine, QObject *applicationWindow, MainController *parent);
+
+    QPointer<MergeMapController> getMergeMapController(void) const { return mergeMapController; }
 
     QString getMapFile(void) const { return map->getMapFile(); }
     QImage getMapImage(void) const { return map->getMapImage(); }

@@ -27,6 +27,7 @@ Window {
     signal importMap(string file)
     signal exportMap(string file)
     signal resetWidget()
+    signal getMapFromRobot(string ip)
 
     property Robots robotModel
 
@@ -119,7 +120,8 @@ Window {
                 y: fromRobotButton.height + 12
                 onRobotSelected: {
                     console.log("adding robot " + name + " " + ip)
-                    _robotsList.addRobot(name, ip)
+                    _mapsList.addRobot(name, ip)
+                    window.getMapFromRobot(ip)
                 }
             }
             onClicked: {

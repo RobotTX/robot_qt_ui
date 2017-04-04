@@ -22,6 +22,8 @@ RobotController::RobotController(RobotsController *parent, QString _ip):
     connect(commandController, SIGNAL(stoppedDeletedPath(QString)), parent, SLOT(stoppedDeletedPathSlot(QString)));
     connect(commandController, SIGNAL(updatePlayingPath(QString, bool)), parent, SLOT(updatePlayingPathSlot(QString, bool)));
 
+    connect(this, SIGNAL(mapToMergeFromRobot(QByteArray, QString)), parent, SLOT(processMapForMerge(QByteArray, QString)));
+
     launchWorkers();
 }
 
@@ -191,10 +193,8 @@ void RobotController::mapReceivedSlot(const QByteArray mapArray, int who, QStrin
         break;
         case 2:
             qDebug() << "RobotController::mapReceivedSlot received a map from a robot to merge" << ip << resolution << originX << originY;
-            /*QString robotName = robotsController->getRobots()->getRobotViewByIp(ipAddress)->getRobot()->getName();
-            QImage image = mapController->getImageFromArray(mapArray, true);
-
-            emit receivedMapToMerge(robotName, image, resolution.toDouble(), originX.toDouble(), originY.toDouble());*/
+            qDebug() << "Map::getImageFromArray" << map_width << map_height << who;
+            emit mapToMergeFromRobot(mapArray, resolution);
         break;
         case 1:
             emit newMapFromRobot(ip, mapArray, mapId, mapDate);

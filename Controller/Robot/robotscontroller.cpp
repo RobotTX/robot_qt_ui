@@ -55,6 +55,7 @@ RobotsController::RobotsController(QObject *applicationWindow, MainController* p
     connect(this, SIGNAL(updateHome(QString, QString, float, float)), parent, SLOT(updateHomeSlot(QString, QString, float, float)));
     connect(this, SIGNAL(checkMapInfo(QString, QString, QString)), parent, SLOT(checkMapInfoSlot(QString, QString, QString)));
     connect(this, SIGNAL(newMapFromRobot(QString, QByteArray, QString, QString)), parent, SLOT(newMapFromRobotSlot(QString, QByteArray, QString, QString)));
+    connect(this, SIGNAL(sendMapToProcessForMerge(QByteArray, QString)), parent, SLOT(processMapForMerge(QByteArray, QString)));
 
     launchServer();
 }
@@ -235,4 +236,16 @@ void RobotsController::timerSlot(){
     qDebug() << "RobotsController::timerSlot should have sent all the map already";
     receivingMap = false;
     timer->stop();
+}
+
+void RobotsController::requestMapForMerging(QString ip){
+    if(!receivingMap){
+        sendCommand(ip, QString("s") + QChar(31) + QString::number(2));
+        receivingMap = true;
+    }
+}
+
+void RobotsController::processMapForMerge(QByteArray map, QString resolution){
+    qDebug() << "RobotsController::processMapForMerge";
+    sendMapToProcessForMerge(map, resolution);
 }

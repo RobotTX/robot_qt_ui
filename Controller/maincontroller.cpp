@@ -10,6 +10,7 @@
 #include "math.h"
 #include "Helper/helper.h"
 #include "Controller/Map/mapcontroller.h"
+#include "Controller/Map/mergemapcontroller.h"
 #include "Controller/Point/pointcontroller.h"
 #include "Controller/Path/pathcontroller.h"
 #include "Controller/Robot/robotscontroller.h"
@@ -33,6 +34,7 @@ MainController::MainController(QQmlApplicationEngine *engine, QObject* parent) :
         /// to allow the map model and the map view to communicate with each other
         /// and to ensure that they are consistent with each other
         mapController = QPointer<MapController>(new MapController(engine, applicationWindow, this));
+        connect(this, SIGNAL(sendImageToMerge(QImage, double)), mapController->getMergeMapController(), SLOT(importMap(QImage, double)));
 
         /// to allow the point model and the point view to communicate with each other
         /// and to ensure that they are consistent with each other
@@ -367,5 +369,14 @@ void MainController::requestOrSendMap(QString ip, bool request){
         sendNewMap(ip);
 }
 
+void MainController::getMapFromRobot(QString ip){
+    robotsController->requestMapForMerging(ip);
+}
 
-
+void MainController::processMapForMerge(QByteArray mapArray, QString resolution){
+    qDebug() << "MainController::processMapForMerge" << resolution << mapController->getWidth() << mapController->getHeight();
+    QImage image = mapController->getImageFromArray(mapArray, mapController->getWidth(), mapController->getHeight(), true);
+    qDebug() << "Saving image of size" << image.size();
+    image.save("/home/joan/robot_map", "PGM");
+    emit sendImageToMerge(image, resolution.toDouble());
+}

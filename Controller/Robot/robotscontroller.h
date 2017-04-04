@@ -13,8 +13,11 @@ class RobotServerWorker;
 #include <QTimer>
 
 class RobotsController : public QObject {
+
     Q_OBJECT
+
 public:
+
     RobotsController(QObject *applicationWindow, MainController *parent);
     ~RobotsController();
 
@@ -23,11 +26,13 @@ public:
     void sendNewMap(QString ip, QString mapId, QString date, QString mapMetadata, QImage mapImage);
     void requestMap(QString ip);
     void sendNewMapToAllExcept(QString ip, QString mapId, QString date, QString mapMetadata, QImage mapImage);
+    void requestMapForMerging(QString ip);
 
 private:
     void launchServer();
 
 private slots:
+
     void robotIsAliveSlot(QString name, QString ip, QString ssid, int stage, int battery);
     void robotIsDeadSlot(QString ip);
     void shortcutAddRobot();
@@ -47,6 +52,7 @@ private slots:
     void checkMapInfoSlot(QString ip, QString mapId, QString mapDate);
     void newMapFromRobotSlot(QString ip, QByteArray mapArray, QString mapId, QString mapDate);
     void timerSlot();
+    void processMapForMerge(QByteArray map, QString resolution);
 
 signals:
     void stopRobotServerWorker();
@@ -67,6 +73,7 @@ signals:
     void setName(QVariant ip, QVariant name);
     void checkMapInfo(QString ip, QString mapId, QString mapDate);
     void newMapFromRobot(QString ip, QByteArray mapArray, QString mapId, QString mapDate);
+    void sendMapToProcessForMerge(QByteArray, QString);
 
 private:
     QMap<QString, QPointer<RobotController>> robots;
@@ -77,4 +84,4 @@ private:
     QPointer<QTimer> timer;
 };
 
-#endif // ROBOTSCONTROLLER_H
+#endif /// ROBOTSCONTROLLER_H
