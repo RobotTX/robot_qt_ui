@@ -10,7 +10,9 @@ class RobotsController;
 
 #include <QObject>
 #include <QList>
+#include <QByteArray>
 #include <QPointer>
+#include <QImage>
 
 class MainController : public QObject {
 
@@ -61,12 +63,16 @@ private slots:
     void newMapFromRobotSlot(QString ip, QByteArray mapArray, QString mapId, QString mapDate);
     void requestOrSendMap(QString ip, bool request);
 
+    void getMapFromRobot(QString ip);
+    void processMapForMerge(QByteArray mapArray, QString resolution);
+
 signals:
     void setHome(QVariant ip, QVariant name, QVariant posX, QVariant posY);
     void setPath(QVariant ip, QVariant name);
     void addPathPoint(QVariant ip, QVariant name, QVariant posX, QVariant posY, QVariant waitTime);
     void emitSettings(QVariant mapChoice, QVariant batteryThreshold, QVariant showTutorial);
     void openMapChoiceMessageDialog(QVariant ip, QVariant robotIsOlder);
+    void sendImageToMerge(QImage, double resolution);
 
 private:
     QPointer<MainMenuController> mainMenuController;

@@ -9,9 +9,10 @@
 #include "Helper/helper.h"
 #include "Controller/Map/editmapcontroller.h"
 #include "Controller/Map/mergemapcontroller.h"
+#include "Controller/maincontroller.h"
 #include "View/editmappainteditem.h"
 
-MapController::MapController(QQmlApplicationEngine* engine, QObject *applicationWindow, QObject *parent) : QObject(parent){
+MapController::MapController(QQmlApplicationEngine* engine, QObject *applicationWindow, MainController *parent) : QObject(parent){
     map = QPointer<Map>(new Map(this));
 
     QObject *mapViewFrame = applicationWindow->findChild<QObject*>("mapViewFrame");
@@ -40,7 +41,7 @@ MapController::MapController(QQmlApplicationEngine* engine, QObject *application
 
     initializeMap();
 
-    mergeMapController = QPointer<MergeMapController>(new MergeMapController(this, engine, applicationWindow));
+    mergeMapController = QPointer<MergeMapController>(new MergeMapController(parent, engine, applicationWindow));
 
     editMapController = QPointer<EditMapController>(new EditMapController(engine, applicationWindow, this));
 }

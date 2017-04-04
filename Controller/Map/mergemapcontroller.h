@@ -4,9 +4,11 @@
 #include <QObject>
 #include <QVector>
 #include <QSize>
+#include <QImage>
 
 class QQmlApplicationEngine;
 class MergeMapsPaintedItem;
+class MainController;
 
 class MergeMapController : public QObject {
 
@@ -14,11 +16,12 @@ class MergeMapController : public QObject {
 
 public:
 
-    MergeMapController(QObject* parent, QQmlApplicationEngine *engine, QObject *applicationWindow);
+    MergeMapController(MainController* parent, QQmlApplicationEngine *engine, QObject *applicationWindow);
 
 private slots:
 
     void importMap(const QString &_filename);
+    void importMap(QImage image, double _resolution);
     void exportMap(QString fileName);
     void rotateMap(int angle, int index);
     void removeMap(int index);

@@ -56,6 +56,7 @@ signals:
     void updateHome(QString ip, QString homeName, float homeX, float homeY);
     void checkMapInfo(QString ip, QString mapId, QString mapDate);
     void newMapFromRobot(QString ip, QByteArray mapArray, QString mapId, QString mapDate);
+    void mapToMergeFromRobot(QByteArray mapArray, QString resolution);
 
     void stopCmdRobotWorker();
     void stopRobotWorker();

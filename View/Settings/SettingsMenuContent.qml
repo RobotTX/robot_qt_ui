@@ -75,7 +75,7 @@ Frame {
                 visible: parent.hovered
                 text: "Activate its laser feedback to see the obstacles around a robot";
                 font.pointSize: 10
-                x:parent.x - 80
+                x: parent.x - 80
                 y: parent.y - 3
                 background: Rectangle {
                     border.color: Style.darkSkyBlue
@@ -111,7 +111,7 @@ Frame {
             left: parent.left
             right: parent.right
             top: label.bottom
-            topMargin: 15
+            topMargin: 5
         }
 
         Column {
@@ -141,10 +141,10 @@ Frame {
                     }
 
                     contentItem: Text {
-                        id: txt
                         leftPadding: rect.width
                         verticalAlignment: Text.AlignVCenter
                         text: name
+                        color: Style.greyText
                         font.pointSize: 10
                     }
                 }
@@ -441,6 +441,7 @@ Frame {
             anchors.verticalCenter: rect2.verticalCenter
             anchors.verticalCenterOffset: 1
             text: "Show tutorial"
+            color: Style.greyText
             font.pointSize: 10
         }
     }
