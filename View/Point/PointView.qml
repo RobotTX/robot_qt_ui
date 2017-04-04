@@ -65,7 +65,6 @@ Image {
 
     /// To change the source file of the pointView according to its type
     function imageSource(){
-        //console.log("parent coords " + x + " " + y + " " + width + " " + height)
         var src = "qrc:/icons/pointView";
         switch(type){
             case Helper.PointViewType.PERM:

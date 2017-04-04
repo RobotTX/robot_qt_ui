@@ -269,6 +269,7 @@ Frame {
                             originY: posY
                             x: posX - width / 2
                             y: posY - height
+                            tooltipText: name
 
                             MouseArea {
                                 anchors.fill: parent
@@ -325,12 +326,47 @@ Frame {
                 delegate: Item{
                     /// The robot on the map
                     RobotView {
+                        id: robot
                         _name: name
                         _ip: ip
-                        _orientation: orientation
                         x: posX - width / 2
                         y: posY - height / 2
                     }
+
+                    Label {
+/*
+                        transform: Rotation {
+                            origin.x: img.width / 2
+                            origin.y: img.height / 2
+                            angle: -orientation
+                        }*/
+
+                        id: tooltip
+
+                        visible: robot.hover
+                        font.pointSize: 10
+                        text: name
+
+                        anchors {
+                            horizontalCenter: robot.horizontalCenter
+                            bottom: robot.top
+                            bottomMargin: 10
+                        }
+
+                        horizontalAlignment: Text.AlignHCenter
+                        verticalAlignment: Text.AlignVCenter
+
+                        background: Rectangle {
+                            anchors.horizontalCenter: tooltip.horizontalCenter
+                            anchors.verticalCenter: tooltip.verticalCenter
+                            width: tooltip.paintedWidth + 8
+                            height: tooltip.paintedHeight + 8
+                            radius: 8
+                            border.color: Style.darkSkyBlue
+                            color: "white"
+                        }
+                    }
+
                     /// The robot's home on the map
                     PointView {
                         _name: homeName
