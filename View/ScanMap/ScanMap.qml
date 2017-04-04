@@ -6,7 +6,6 @@ import "../../Model/Robot"
 import "../../View/Custom/"
 
 Window {
-
     id: scanWindow
     objectName: "scanWindow"
 
@@ -17,4 +16,12 @@ Window {
 
     property Robots robotModel
 
+    ScanMapLeftMenu {
+        robotModel: scanWindow.robotModel
+        anchors {
+            top: parent.top
+            left: parent.left
+            bottom: parent.bottom
+        }
+    }
 }

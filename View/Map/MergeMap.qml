@@ -28,7 +28,7 @@ Window {
     signal exportMap(string file)
     signal resetWidget()
 
-    property Robots robotsModel
+    property Robots robotModel
 
     Frame {
 
@@ -114,7 +114,7 @@ Window {
             // the list of robots from which we can choose a map
             RobotListInPopup {
                 id: robotsList
-                robotsModel: window.robotsModel
+                robotModel: window.robotModel
                 robotMapsList: _mapsList
                 y: fromRobotButton.height + 12
                 onRobotSelected: {
@@ -286,7 +286,7 @@ Window {
         }
     }
 
-    // to store the robots whose map has been imported for merging (subset of the robotsModel and only the name and ip attributes are used
+    // to store the robots whose map has been imported for merging (subset of the robotModel and only the name and ip attributes are used
     ListModel {
         id: _mapsList
 

@@ -359,7 +359,6 @@ Frame {
                 onClicked: robotModel.stopPathSignal(ip)
             }
 
-
             Button {
                 id: goHomeButton
 

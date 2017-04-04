@@ -16,8 +16,7 @@ Frame {
     height: 105 + robotPathListItem.height
 
     background: Rectangle {
-        anchors.fill: parent
-        color: "transparent" //Style.lightGreyBackground
+        color: "transparent"
     }
 
     padding: 0
@@ -85,6 +84,7 @@ Frame {
 
             width: Style.smallBtnWidth
             height: Style.smallBtnHeight
+            padding: 0
 
             contentItem: Image {
                 asynchronous: true
@@ -114,6 +114,7 @@ Frame {
 
             width: Style.smallBtnWidth
             height: Style.smallBtnHeight
+            padding: 0
 
             contentItem: Image {
                 asynchronous: true
@@ -148,6 +149,7 @@ Frame {
 
         width: Style.smallBtnWidth
         height: Style.smallBtnHeight
+        padding: 0
 
         contentItem: Image {
             asynchronous: true

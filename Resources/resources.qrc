@@ -81,5 +81,15 @@
         <!-- for merge map -->
         <file alias="small_robot">icons/small_robot.png</file>
 
+        <!-- for teleop -->
+        <file alias="down">icons/Arrow_Down.png</file>
+        <file alias="left">icons/Arrow_Left.png</file>
+        <file alias="right">icons/Arrow_Right.png</file>
+        <file alias="up">icons/Arrow_Up.png</file>
+        <file alias="downLeft">icons/Arrow_LowerLeft.png</file>
+        <file alias="downRight">icons/Arrow_LowerRight.png</file>
+        <file alias="upLeft">icons/Arrow_UpperLeft.png</file>
+        <file alias="upRight">icons/Arrow_UpperRight.png</file>
+
     </qresource>
 </RCC>

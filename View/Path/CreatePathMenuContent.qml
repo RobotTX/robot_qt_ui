@@ -402,30 +402,39 @@ Frame {
                         onTextChanged: text === "" ? waitTime = 0 : waitTime = parseInt(text)
                     }
 
-
                     Button {
-                        id: stepper
+                        id: incButton
+
+                        width: 12
+                        height: 21
 
                         anchors {
                             left: waitTextField.right
-                            top: waitTextField.top
+                            verticalCenter: waitTextField.verticalCenter
                             leftMargin: 4
                         }
 
                         background: Rectangle {
+                            color: "transparent"
+                        }
+
+                        contentItem: Image {
                             anchors.fill: parent
+                            source: "qrc:/icons/stepper"
+                            fillMode: Image.PreserveAspectFit
 
                             MouseArea {
                                 id: mouseArea
                                 anchors.fill: parent
+
+                                // so that you can press the button to increment the value instead of having to click a lot of times
                                 Timer {
                                     id: timer
                                     interval: 50
                                     repeat: true
                                     onTriggered: {
-                                        console.log("timer trigerred")
+                                        // if we click the lower half of the button we decrement the value of otherwise we increment it
                                         if(mouseArea.pressed){
-                                            console.log("Mouse here " + mouseArea.mouseY)
                                             if(mouseArea.mouseY > parent.height / 2)
                                                 waitTextField.text = Math.max(0 , (parseInt(waitTextField.text) - 1)).toString()
                                             else
@@ -437,51 +446,25 @@ Frame {
                                 onPressed: timer.start()
 
                                 onReleased: timer.stop()
-
                             }
                         }
-
-                        anchors {
-                            top: parent.top
-                            left: editField.right
-                            leftMargin: 8
-                        }
-                        width: 12
-                        height: 21
-                        contentItem: Image {
-                            anchors.fill: parent
-                            source: "qrc:/icons/stepper"
-                            fillMode: Image.PreserveAspectFit
-                        }
                     }
-                    /*
 
-                    Image {
-                        id: stepper
-                        source: "qrc:/icons/stepper"
-                        fillMode: Image.Pad
-                        anchors {
-                            left: waitTextField.right
-                            verticalCenter: waitFor.verticalCenter
-                            leftMargin: 4
-                        }
-                    }
-*/
                     Text {
                         id: minText
                         text: "Mins"
                         font.pointSize: 10
                         color: Style.greyText
                         anchors {
-                            left: stepper.right
+                            left: incButton.right
                             verticalCenter: waitFor.verticalCenter
                             leftMargin: 4
                         }
                         horizontalAlignment: Text.AlignHCenter
                         verticalAlignment: Text.AlignVCenter
                     }
-
                 }
+
                 DropArea {
                     anchors {
                         fill: parent

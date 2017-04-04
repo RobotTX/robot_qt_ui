@@ -43,11 +43,6 @@ Frame {
         anchors.fill: parent
         anchors.topMargin: 10
 
-        Rectangle {
-            anchors.fill: parent
-            color: "transparent" //Style.lightGreyBackground
-        }
-
         Column {
             /// The list containing both the graphical and model of the robots in the menu
             Repeater {

@@ -5,6 +5,7 @@ var minZoom = 0.35
 /// Sizes
 var mainMenuWidth = 66
 var menuWidth = 270
+var smallMenuWidth = 180
 var menuHeaderHeight = 43
 var menuItemHeight = 26
 var menuItemLeftPadding = 21

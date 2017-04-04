@@ -12,14 +12,14 @@ Menu {
     padding: 0
     width: 140
 
-    property Robots robotsModel
+    property Robots robotModel
     property ListModel robotMapsList
 
     signal robotSelected(string name, string ip)
 
     background: Rectangle {
         implicitWidth: parent.width
-        implicitHeight: robotsModel.count * Style.menuItemHeight
+        implicitHeight: robotModel.count * Style.menuItemHeight
         color: Style.lightGreyBackground
         border.color: Style.lightGreyBorder
         radius: 5
@@ -33,7 +33,7 @@ Menu {
         }
 
         Repeater {
-            model: robotsModel
+            model: robotModel
 
             PopupMenuItem {
                 enabled: !robotMapsList.contains(ip)

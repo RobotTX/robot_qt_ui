@@ -36,6 +36,7 @@ Frame {
         imgSrc: "qrc:/icons/scan_map"
         anchors.top: parent.top
         anchors.topMargin: 12
+        onClicked: scanMap.show();
     }
 
     NormalButton {
@@ -59,7 +60,7 @@ Frame {
         txt: "Edit the Map"
         imgSrc: "qrc:/icons/edit_map"
         anchors.top: loadButton.bottom
-        onClicked: editMap.visible = true;
+        onClicked: editMap.show();
 
     }
 
@@ -68,7 +69,7 @@ Frame {
         txt: "Merge Maps"
         imgSrc: "qrc:/icons/merge_map"
         anchors.top: editButton.bottom
-        onClicked: mergeMap.visible = true;
+        onClicked: mergeMap.show();
     }
 
     NormalButton {
