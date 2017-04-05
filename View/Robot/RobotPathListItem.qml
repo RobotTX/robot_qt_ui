@@ -32,7 +32,8 @@ Frame {
         Button {
             id: assignPath
             text: "Assign Path"
-            height: parent.height
+            height: parent.height - 2
+            padding: 0
 
             background: Rectangle {
                 color: "white"
@@ -66,8 +67,9 @@ Frame {
         Button {
             id: homeButton
 
-            height: parent.height
+            height: parent.height - 2
             width: 32
+            padding: 0
 
             background: Rectangle {
                 color: "white"
@@ -81,7 +83,7 @@ Frame {
                 right: parent.right
             }
 
-            Image {
+            contentItem: Image {
                 asynchronous: true
                 source: homeName === "" ? "qrc:/icons/noHome" : "qrc:/icons/home"
                 fillMode: Image.Pad // For not stretching image
@@ -123,11 +125,12 @@ Frame {
             Button {
                 id: hideShowPathButton
 
-                height: parent.height
+                height: parent.height - 2
                 width: 32
+                padding: 0
 
                 background: Rectangle {
-                    color: "transparent"
+                    color: "white"
                 }
 
                 anchors {
@@ -136,7 +139,7 @@ Frame {
                     leftMargin: 8
                 }
 
-                Image {
+                contentItem: Image {
                     asynchronous: true
                     source: pathIsVisible ? "qrc:/icons/visible" : "qrc:/icons/invisible"
                     fillMode: Image.Pad // For not stretching image
@@ -171,11 +174,12 @@ Frame {
             Button {
                 id: expandPathButton
 
-                height: parent.height
+                height: parent.height - 2
                 width: 32
+                padding: 0
 
                 background: Rectangle {
-                    color: "transparent"
+                    color: "white"
                 }
 
                 anchors {
@@ -184,7 +188,7 @@ Frame {
                     rightMargin: 8
                 }
 
-                Image {
+                contentItem: Image {
                     asynchronous: true
                     source: pathIsOpen ? "qrc:/icons/fold" : "qrc:/icons/unfold"
                     fillMode: Image.Pad // For not stretching image
@@ -305,11 +309,12 @@ Frame {
             Button {
                 id: playPausePathButton
 
-                height: parent.height
+                height: parent.height - 2
                 width: 32
+                padding: 0
 
                 background: Rectangle {
-                    color: "transparent"
+                    color: "white"
                 }
 
                 anchors {
@@ -318,7 +323,7 @@ Frame {
                     leftMargin: 8
                 }
 
-                Image {
+                contentItem: Image {
                     asynchronous: true
                     source: playingPath ? "qrc:/icons/pause" : "qrc:/icons/play"
                     fillMode: Image.Pad // For not stretching image
@@ -331,11 +336,12 @@ Frame {
             Button {
                 id: stopPathButton
 
-                height: parent.height
+                height: parent.height - 2
                 width: 32
+                padding: 0
 
                 background: Rectangle {
-                    color: "transparent"
+                    color: "white"
                 }
 
                 anchors {
@@ -343,7 +349,7 @@ Frame {
                     horizontalCenter: parent.horizontalCenter
                 }
 
-                Image {
+                contentItem: Image {
                     asynchronous: true
                     source: "qrc:/icons/stop"
                     fillMode: Image.Pad // For not stretching image
@@ -353,15 +359,15 @@ Frame {
                 onClicked: robotModel.stopPathSignal(ip)
             }
 
-
             Button {
                 id: goHomeButton
 
-                height: parent.height
+                height: parent.height - 2
                 width: 32
+                padding: 0
 
                 background: Rectangle {
-                    color: "transparent"
+                    color: "white"
                 }
 
                 anchors {
@@ -370,7 +376,7 @@ Frame {
                     rightMargin: 8
                 }
 
-                Image {
+                contentItem: Image {
                     asynchronous: true
                     source: homeName === "" ? "qrc:/icons/noHome" : "qrc:/icons/home"
                     fillMode: Image.Pad // For not stretching image

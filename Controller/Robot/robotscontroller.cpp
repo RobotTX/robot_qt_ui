@@ -43,9 +43,22 @@ RobotsController::RobotsController(QObject *applicationWindow, MainController* p
                 robotModel, SLOT(addPathPoint(QVariant, QVariant, QVariant, QVariant, QVariant)));
         connect(parent, SIGNAL(setHome(QVariant, QVariant, QVariant, QVariant)),
                 robotModel, SLOT(setHome(QVariant, QVariant, QVariant, QVariant)));
+
+        connect(this, SIGNAL(receivedScanMap(QString, QByteArray, QString)),
+                parent, SLOT(receivedScanMapSlot(QString, QByteArray, QString)));
     } else {
         qDebug() << "RobotsController::RobotsController could not find the qml robot model";
         Q_UNREACHABLE();
+    }
+
+
+    QObject* scanLeftMenuFrame = applicationWindow->findChild<QObject*>("scanLeftMenuFrame");
+
+    if(scanLeftMenuFrame){
+        /// to add new maps
+        connect(this, SIGNAL(stoppedScanning(QVariant)), scanLeftMenuFrame, SLOT(stoppedScanning(QVariant)));
+        connect(this, SIGNAL(startedScanning(QVariant)), scanLeftMenuFrame, SLOT(startedScanning(QVariant)));
+        connect(this, SIGNAL(pausedScanning(QVariant)), scanLeftMenuFrame, SLOT(pausedScanning(QVariant)));
     }
 
 
@@ -86,7 +99,8 @@ void RobotsController::launchServer(){
 void RobotsController::robotIsAliveSlot(QString name, QString ip, QString ssid, int stage, int battery){
     //qDebug() << "RobotsController::robotIsAliveSlot" << name << ip << ssid << stage << battery;
     if(robots.find(ip) != robots.end()){
-        /// TODO update battery + stage + ping RobotController
+        /// TODO update battery + stage
+        robots.value(ip)->ping();
     } else {
         QPointer<RobotController> robotController = QPointer<RobotController>(new RobotController(this, ip));
         robots.insert(ip, robotController);
@@ -111,22 +125,22 @@ void RobotsController::shortcutAddRobot(){
     double posX = ((robots.size() + 1) * 200) % 1555;
     double posY = ((robots.size() + 1) * 200) % 1222;
 
-    robotIsAliveSlot("Robot " + ip, ip, "Wifi " + ip, 0, (robots.size()*10)%100);
+    robotIsAliveSlot("Robot avec un nom tres tres long " + ip, ip, "Wifi " + ip, 0, (robots.size()*10)%100);
     emit setPos(ip, posX, posY, (20 * robots.size()) % 360);
 
     if((robots.size() - 1)%2 == 0){
-        emit setHome(ip, "home " + ip, posX + 50, posY);
+        emit setHome(ip, "home avec un nom tres tres long " + ip, posX + 50, posY);
         emit setPlayingPath(ip, (robots.size() - 1)%2 == 0);
     }
 
     if((robots.size() - 1)%3 == 0){
-        emit setPath(ip, "pathName " + ip);
-        emit addPathPoint(ip, QString("pathPoint 1"), 50 * robots.size() + 50, 50 * robots.size() + 50, (robots.size() - 1)%3);
-        emit addPathPoint(ip, QString("pathPoint 2"), 50 * robots.size() + 50*2, 50 * robots.size() + 50*2, (robots.size() - 1)%3);
-        emit addPathPoint(ip, QString("pathPoint 3"), 50 * robots.size() + 50*3, 50 * robots.size() + 50*3, (robots.size() - 1)%3);
-        emit addPathPoint(ip, QString("pathPoint 4"), 50 * robots.size() + 50*4, 50 * robots.size() + 50*4, (robots.size() - 1)%3);
-        emit addPathPoint(ip, QString("pathPoint 5"), 50 * robots.size() + 50*5, 50 * robots.size() + 50*5, (robots.size() - 1)%3);
-        emit addPathPoint(ip, QString("pathPoint 6"), 50 * robots.size() + 50*6, 50 * robots.size() + 50*6, (robots.size() - 1)%3);
+        emit setPath(ip, "pathName avec un nom tres tres long " + ip);
+        emit addPathPoint(ip, QString("pathPoint avec un nom tres tres long 1"), 50 * robots.size() + 50, 50 * robots.size() + 50, (robots.size() - 1)%3);
+        emit addPathPoint(ip, QString("pathPoint avec un nom tres tres long 2"), 50 * robots.size() + 50*2, 50 * robots.size() + 50*2, (robots.size() - 1)%3);
+        emit addPathPoint(ip, QString("pathPoint avec un nom tres tres long 3"), 50 * robots.size() + 50*3, 50 * robots.size() + 50*3, (robots.size() - 1)%3);
+        emit addPathPoint(ip, QString("pathPoint avec un nom tres tres long 4"), 50 * robots.size() + 50*4, 50 * robots.size() + 50*4, (robots.size() - 1)%3);
+        emit addPathPoint(ip, QString("pathPoint avec un nom tres tres long 5"), 50 * robots.size() + 50*5, 50 * robots.size() + 50*5, (robots.size() - 1)%3);
+        emit addPathPoint(ip, QString("pathPoint avec un nom tres tres long 6"), 50 * robots.size() + 50*6, 50 * robots.size() + 50*6, (robots.size() - 1)%3);
         emit setStage(ip, (int) ((robots.size() - 1) / 3));
     }
     //emit displayRobots();
@@ -141,7 +155,10 @@ void RobotsController::shortcutDeleteRobot(){
 }
 
 void RobotsController::sendCommand(QString ip, QString cmd){
-    robots.value(ip)->sendCommand(cmd);
+    if(robots.contains(ip))
+        robots.value(ip)->sendCommand(cmd);
+    else
+        qDebug() << "RobotsController::sendCommand Trying to send a command to a robot which is disconnected";
 }
 
 void RobotsController::newRobotPosSlot(QString ip, float posX, float posY, float ori){
@@ -247,5 +264,28 @@ void RobotsController::requestMapForMerging(QString ip){
 
 void RobotsController::processMapForMerge(QByteArray map, QString resolution){
     qDebug() << "RobotsController::processMapForMerge";
-    sendMapToProcessForMerge(map, resolution);
+    emit sendMapToProcessForMerge(map, resolution);
+}
+
+void RobotsController::startedScanningSlot(QString ip){
+    emit startedScanning(ip);
+}
+
+void RobotsController::stoppedScanningSlot(QString ip){
+    emit stoppedScanning(ip);
+}
+
+void RobotsController::pausedScanningSlot(QString ip){
+    emit pausedScanning(ip);
+}
+
+void RobotsController::receivedScanMapSlot(QString ip, QByteArray map, QString resolution){
+    emit receivedScanMap(ip, map, resolution);
+}
+
+void RobotsController::sendTeleop(QString ip, int teleop){
+    if(robots.contains(ip))
+        robots.value(ip)->sendTeleop(teleop);
+    else
+        qDebug() << "RobotsController::sendTeleop Trying to send a teleop cmd to a robot which is disconnected";
 }

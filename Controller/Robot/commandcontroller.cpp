@@ -36,13 +36,15 @@ void CommandController::cmdAnswerSlot(QString answer){
                     /// Paused the path of the robot
                     emit updatePlayingPath(ip, false);
                 break;
-                /*case 'e':
+                case 'e':
                     /// Played the scan of the map
+                    emit playedScanning(ip);
                 break;
                 case 'f':
-                    /// Paused the scan of the map
+                    /// Paused the scanf of the map
+                    emit pausedScanning(ip);
                 break;
-                case 'g':
+                /*case 'g':
                     /// Updated the name & wifi of the robot
                     /// NOT USED ANYMORE
                     Q_UNREACHABLE();
@@ -98,13 +100,15 @@ void CommandController::cmdAnswerSlot(QString answer){
                     /// Received the map from the robot
                     /// OSEF
                 break;
-                /*case 't':
+                case 't':
                     /// Started a new scan
+                    emit startedScanning(ip);
                 break;
                 case 'u':
                     /// Stopped the current scan
+                    emit stoppedScanning(ip);
                 break;
-                case 'v':
+                /*case 'v':
                     /// Started to recover the position of a robot
                 break;
                 case 'w':

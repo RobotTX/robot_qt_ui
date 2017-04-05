@@ -64,12 +64,9 @@ Rectangle {
         onClicked: robotMap.removeMap(ip)
     }
 
-    Slider {
-
+    CustomSlider {
         id: slider
 
-        height: 14
-        padding: 0
         from: 0
         to: 359
         stepSize: 5
@@ -83,35 +80,6 @@ Rectangle {
             rightMargin: 10
         }
 
-        handle: Rectangle {
-            id: handle
-            anchors {
-                top: parent.top
-            }
-            radius: 10
-            height: 14
-            width: 14
-            color: Style.darkSkyBlue
-            x: slider.visualPosition * slider.availableWidth - width / 2
-            y: slider.availableHeight / 2 - height / 2
-        }
-
-        background: Rectangle {
-            id: background
-            x: slider.leftPadding
-            y: slider.availableHeight / 2 - height / 2
-            height: 2
-            width: slider.availableWidth
-            color: "#bdbebf"
-            radius: 2
-
-            Rectangle {
-                width: handle.x
-                height: parent.height
-                color: Style.darkSkyBlue
-                radius: 2
-            }
-        }
         // to update the text accordingly
         onVisualPositionChanged: {
             robotMap.rotate(Math.round(valueAt(position)), index)
@@ -145,54 +113,60 @@ Rectangle {
             width: 80
         }
 
-        Rectangle {
-            id: editField
-            border.color: "white"
-            border.width: 1
+        TextField {
+
+            id: field
+
+            background: Rectangle {
+                border.color: field.activeFocus ? Style.lightBlue : Style.lightGreyBorder
+                border.width: 2
+            }
+
             height: 21
             width: 40
+
+            padding: 0
+            selectByMouse: true
+            // range of accepted values : 0 to 359
+            validator: IntValidator { bottom: 0; top: 359 }
+            inputMethodHints: Qt.ImhDigitsOnly
+            verticalAlignment: Text.AlignVCenter
+            horizontalAlignment: Text.AlignLeft
+            placeholderText: "0"
+            color: Style.darkSkyBlue
+            font.pointSize: 10
             anchors {
                 left: mapLabel.right
                 leftMargin: 4
                 top: parent.top
-
             }
-
-            TextField {
-
-                id: field
-
-                padding: 0
-                selectByMouse: true
-                // range of accepted values : 0 to 359
-                validator: IntValidator { bottom: 0; top: 359 }
-                inputMethodHints: Qt.ImhDigitsOnly
-                verticalAlignment: Text.AlignVCenter
-                horizontalAlignment: Text.AlignLeft
-                placeholderText: "0"
-                color: Style.darkSkyBlue
-                font.pointSize: 10
-                anchors {
-                    fill: parent
-                }
-                // to update the slider value accordingly
-                onAccepted: {
-                    focus = false;
-                    slider.value = parseInt(text);
-                }
+            // to update the slider value accordingly
+            onAccepted: {
+                focus = false;
+                slider.value = parseInt(text);
             }
         }
 
         Button {
-
             id: incButton
 
             width: 12
             height: 21
 
-            background: Rectangle {
+            anchors {
+                top: parent.top
+                left: field.right
+                leftMargin: 8
+            }
 
+            background: Rectangle {
+                color: "transparent"
+            }
+
+            contentItem: Image {
                 anchors.fill: parent
+                source: "qrc:/icons/stepper"
+                fillMode: Image.PreserveAspectFit
 
                 MouseArea {
                     id: mouseArea
@@ -218,18 +192,6 @@ Rectangle {
 
                     onReleased: timer.stop()
                 }
-            }
-
-            anchors {
-                top: parent.top
-                left: editField.right
-                leftMargin: 8
-            }
-
-            contentItem: Image {
-                anchors.fill: parent
-                source: "qrc:/icons/stepper"
-                fillMode: Image.PreserveAspectFit
             }
         }
 

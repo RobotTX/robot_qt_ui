@@ -16,8 +16,7 @@ Frame {
     height: 105 + robotPathListItem.height
 
     background: Rectangle {
-        anchors.fill: parent
-        color: "transparent" //Style.lightGreyBackground
+        color: "transparent"
     }
 
     padding: 0
@@ -85,8 +84,9 @@ Frame {
 
             width: Style.smallBtnWidth
             height: Style.smallBtnHeight
+            padding: 0
 
-            Image {
+            contentItem: Image {
                 asynchronous: true
                 source: "qrc:/icons/closeBtn"
                 fillMode: Image.Pad // For not stretching image
@@ -114,8 +114,9 @@ Frame {
 
             width: Style.smallBtnWidth
             height: Style.smallBtnHeight
+            padding: 0
 
-            Image {
+            contentItem: Image {
                 asynchronous: true
                 source: "qrc:/icons/save"
                 fillMode: Image.Pad // For not stretching image
@@ -148,8 +149,9 @@ Frame {
 
         width: Style.smallBtnWidth
         height: Style.smallBtnHeight
+        padding: 0
 
-        Image {
+        contentItem: Image {
             asynchronous: true
             source: "qrc:/icons/more"
             fillMode: Image.Pad // For not stretching image

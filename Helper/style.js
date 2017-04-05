@@ -5,6 +5,7 @@ var minZoom = 0.35
 /// Sizes
 var mainMenuWidth = 66
 var menuWidth = 270
+var smallMenuWidth = 180
 var menuHeaderHeight = 43
 var menuItemHeight = 26
 var menuItemLeftPadding = 21
@@ -35,4 +36,4 @@ var mapButtonPressedBlue = "#6b6bf1"
 var mapChoiceLabel = "#222524"
 var whiteButtonPressed = "#fafafa"
 var mergeMapGrey = "#979797"
-var redError = "#f27676"
+var redError = "#f2a5a5"

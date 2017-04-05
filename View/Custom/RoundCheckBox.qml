@@ -27,6 +27,7 @@ CheckBox {
         text: control.text
         //font: control.font
         font.pointSize: 10
+        elide: Text.ElideRight
         color: Style.greyText
         horizontalAlignment: Text.AlignHCenter
         verticalAlignment: Text.AlignVCenter

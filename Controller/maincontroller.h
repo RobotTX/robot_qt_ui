@@ -66,6 +66,12 @@ private slots:
     void getMapFromRobot(QString ip);
     void processMapForMerge(QByteArray mapArray, QString resolution);
 
+    void startScanningSlot(QString ip);
+    void stopScanningSlot(QString ip);
+    void playPauseScanningSlot(QString ip, bool wasScanning, bool scanningOnConnection);
+    void receivedScanMapSlot(QString ip, QByteArray map, QString resolution);
+    void sendTeleopSlot(QString ip, int teleop);
+
 signals:
     void setHome(QVariant ip, QVariant name, QVariant posX, QVariant posY);
     void setPath(QVariant ip, QVariant name);
@@ -73,6 +79,7 @@ signals:
     void emitSettings(QVariant mapChoice, QVariant batteryThreshold, QVariant showTutorial);
     void openMapChoiceMessageDialog(QVariant ip, QVariant robotIsOlder);
     void sendImageToMerge(QImage, double resolution);
+    void openRestartScanMessageDialog(QVariant ip);
 
 private:
     QPointer<MainMenuController> mainMenuController;

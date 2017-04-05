@@ -28,7 +28,8 @@ ListModel {
             "homeName": "",
             "homeX": 0,
             "homeY": 0,
-            "laserActivated": false
+            "laserActivated": false,
+            "scanningOnConnection": false
         });
     }
 
@@ -144,5 +145,19 @@ ListModel {
         for(var i = 0; i < count; i++)
             if(get(i).ip === ip)
                 return get(i).name;
+        return "";
+    }
+
+    function setScanningOnConnection(ip, scanning){
+        for(var i = 0; i < count; i++)
+            if(get(i).ip === ip)
+                setProperty(i, "scanningOnConnection", scanning);
+    }
+
+    function getScanningOnConnection(ip){
+        for(var i = 0; i < count; i++)
+            if(get(i).ip === ip)
+                return get(i).scanningOnConnection;
+        return false;
     }
 }

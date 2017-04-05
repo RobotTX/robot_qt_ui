@@ -10,9 +10,9 @@
 #include "View/mergemapspainteditem.h"
 #include "Controller/maincontroller.h"
 
-MergeMapController::MergeMapController(MainController *parent, QQmlApplicationEngine* engine, QObject *applicationWindow)
-    : QObject(parent), _engine(engine), _applicationWindow(applicationWindow)
-{
+MergeMapController::MergeMapController(MainController *parent, QQmlApplicationEngine* _engine, QObject *_applicationWindow)
+    : QObject(parent), engine(_engine), applicationWindow(_applicationWindow) {
+
     QObject* mergeMapWindow = applicationWindow->findChild<QObject*>("mergeMapWindow");
 
     if(mergeMapWindow){
@@ -49,14 +49,14 @@ void MergeMapController::importMap(const QString& _filename){
         size_of_images_merged = image.size();
 
     if(image.size() == size_of_images_merged){
-        QQmlComponent component(_engine, QUrl("qrc:/View/Map/MergeMapsPaintedItem.qml"));
+        QQmlComponent component(engine, QUrl("qrc:/View/Map/MergeMapsPaintedItem.qml"));
         MergeMapsPaintedItem* paintedItem = qobject_cast<MergeMapsPaintedItem*>(component.create());
         QQmlEngine::setObjectOwnership(paintedItem, QQmlEngine::CppOwnership);
 
         /// that is where we actually tell the paintemItem to paint itself
-        QQuickItem* mapView = _applicationWindow->findChild<QQuickItem*> ("mergeMapsView");
+        QQuickItem* mapView = applicationWindow->findChild<QQuickItem*> ("mergeMapsView");
         paintedItem->setParentItem(mapView);
-        paintedItem->setParent(_engine);
+        paintedItem->setParent(engine);
 
         qDebug() << "imported map of size" << image.width() << image.height();
 
@@ -123,14 +123,14 @@ void MergeMapController::importMap(QImage image, double _resolution){
         size_of_images_merged = image.size();
 
     if(image.size() == size_of_images_merged){
-        QQmlComponent component(_engine, QUrl("qrc:/View/Map/MergeMapsPaintedItem.qml"));
+        QQmlComponent component(engine, QUrl("qrc:/View/Map/MergeMapsPaintedItem.qml"));
         MergeMapsPaintedItem* paintedItem = qobject_cast<MergeMapsPaintedItem*>(component.create());
         QQmlEngine::setObjectOwnership(paintedItem, QQmlEngine::CppOwnership);
 
         /// that is where we actually tell the paintemItem to paint itself
-        QQuickItem* mapView = _applicationWindow->findChild<QQuickItem*> ("mergeMapsView");
+        QQuickItem* mapView = applicationWindow->findChild<QQuickItem*> ("mergeMapsView");
         paintedItem->setParentItem(mapView);
-        paintedItem->setParent(_engine);
+        paintedItem->setParent(engine);
 
         qDebug() << "imported map of size" << image.width() << image.height();
 
@@ -192,7 +192,7 @@ void MergeMapController::importMap(QImage image, double _resolution){
 
 void MergeMapController::exportMap(QString fileName){
     qDebug() << "exportMap called" << fileName;
-    QQuickItem* mapView = _applicationWindow->findChild<QQuickItem*> ("mergeMapsView");
+    QQuickItem* mapView = applicationWindow->findChild<QQuickItem*> ("mergeMapsView");
 
     qDebug() << "\nMergeMapWidget::saveSlot called";
 
