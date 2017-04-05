@@ -7,7 +7,12 @@ import "../Robot"
 
 Frame {
     id: scanLeftMenuFrame
+    objectName: "scanLeftMenuFrame"
+
     property Robots robotModel
+    signal startScanning(string ip)
+    signal stopScanning(string ip)
+    signal playPauseScanning(string ip, bool scanning, bool scanningOnConnection)
 
     width: Style.smallMenuWidth
     padding: 0
@@ -26,12 +31,17 @@ Frame {
             append({
                 "name": name,
                 "ip": ip,
-                "mapReceived": false
+                "mapReceived": false,
+                "busy": true,
+                "scanning": false
             });
+            startScanning(ip)
         }
 
-        function removeRobot(id){
-            remove(id)
+        function removeRobot(ip){
+            for(var i = 0; i < count; i++)
+                if(get(i).ip === ip)
+                    remove(i);
         }
 
         function contains(ip){
@@ -45,6 +55,18 @@ Frame {
             for(var i = 0; i < count; i++)
                 if(get(i).ip === ip)
                     setProperty(i, "mapReceived", true);
+        }
+
+        function setBusy(ip, busy){
+            for(var i = 0; i < count; i++)
+                if(get(i).ip === ip)
+                    setProperty(i, "busy", busy);
+        }
+
+        function setScanning(ip, scanning){
+            for(var i = 0; i < count; i++)
+                if(get(i).ip === ip)
+                    setProperty(i, "scanning", scanning);
         }
     }
 
@@ -88,7 +110,14 @@ Frame {
         id: delegate
         ScanMapListItem {
             width: flick.width
-            robotModel: scanLeftMenuFrame.robotModel
+            onStopScanning: {
+                scanLeftMenuFrame.stopScanning(ip);
+                scanningRobotsList.setBusy(ip, true);
+            }
+            onPlayPauseScanning: {
+                scanLeftMenuFrame.playPauseScanning(ip, scanning, robotModel.getScanningOnConnection(ip));
+                scanningRobotsList.setBusy(ip, true);
+            }
         }
     }
 
@@ -137,5 +166,23 @@ Frame {
             right: parent.right
             rightMargin: 15
         }
+    }
+
+    function startedScanning(ip){
+        scanningRobotsList.setScanning(ip, true);
+        scanningRobotsList.setBusy(ip, false);
+    }
+
+    function stoppedScanning(ip){
+        scanningRobotsList.removeRobot(ip);
+    }
+
+    function pausedScanning(ip){
+        scanningRobotsList.setScanning(ip, false);
+        scanningRobotsList.setBusy(ip, false);
+    }
+
+    function receivedScanMap(ip){
+        scanningRobotsList.setMapReceived(ip);
     }
 }

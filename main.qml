@@ -6,6 +6,7 @@ import "Model/Point"
 import "Model/Path"
 import "Model/Robot"
 import "Model/Point"
+import "View/Custom"
 import "View/MainMenu"
 import "View/MapView"
 import "View/Map"
@@ -148,8 +149,8 @@ ApplicationWindow {
         }
     }
 
-    MapChoiceMessageDialog {
-        id: mapChoiceMessageDialog
+    DualChoiceMessageDialog {
+        id: dualChoiceMessageDialog
         x: parent.width / 2 - width / 2
         y: parent.height / 2 - height / 2
 
@@ -158,14 +159,16 @@ ApplicationWindow {
     }
 
     function openMapChoiceMessageDialog(ip, robotIsOlder){
-        if(mapChoiceMessageDialog.visible){
+        if(dualChoiceMessageDialog.visible){
             /// TODO fix this :/
             console.log("We are already choosing a map for the robot, try again later");
         } else {
-            mapChoiceMessageDialog.ip = ip;
-            mapChoiceMessageDialog.robotName = _robotModel.getName(ip);
-            mapChoiceMessageDialog.robotIsOlder = robotIsOlder;
-            mapChoiceMessageDialog.open();
+            dualChoiceMessageDialog.title = qsTr("Choose which map to use");
+            dualChoiceMessageDialog.ip = ip;
+            dualChoiceMessageDialog.message = (robotIsOlder ? "The robot " +  _robotModel.getName(ip) + " has a new map." : "The robot " +  _robotModel.getName(ip) + " has an old map.") + "\n\n\tWhich map do you want to use ?";
+            dualChoiceMessageDialog.rejectMessage = "Robot";
+            dualChoiceMessageDialog.acceptMessage = "Application";
+            dualChoiceMessageDialog.open();
         }
     }
 

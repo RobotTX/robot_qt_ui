@@ -43,9 +43,22 @@ RobotsController::RobotsController(QObject *applicationWindow, MainController* p
                 robotModel, SLOT(addPathPoint(QVariant, QVariant, QVariant, QVariant, QVariant)));
         connect(parent, SIGNAL(setHome(QVariant, QVariant, QVariant, QVariant)),
                 robotModel, SLOT(setHome(QVariant, QVariant, QVariant, QVariant)));
+
+        connect(this, SIGNAL(receivedScanMap(QString, QByteArray, QString)),
+                parent, SLOT(receivedScanMapSlot(QString, QByteArray, QString)));
     } else {
         qDebug() << "RobotsController::RobotsController could not find the qml robot model";
         Q_UNREACHABLE();
+    }
+
+
+    QObject* scanLeftMenuFrame = applicationWindow->findChild<QObject*>("scanLeftMenuFrame");
+
+    if(scanLeftMenuFrame){
+        /// to add new maps
+        connect(this, SIGNAL(stoppedScanning(QVariant)), scanLeftMenuFrame, SLOT(stoppedScanning(QVariant)));
+        connect(this, SIGNAL(startedScanning(QVariant)), scanLeftMenuFrame, SLOT(startedScanning(QVariant)));
+        connect(this, SIGNAL(pausedScanning(QVariant)), scanLeftMenuFrame, SLOT(pausedScanning(QVariant)));
     }
 
 
@@ -86,7 +99,8 @@ void RobotsController::launchServer(){
 void RobotsController::robotIsAliveSlot(QString name, QString ip, QString ssid, int stage, int battery){
     //qDebug() << "RobotsController::robotIsAliveSlot" << name << ip << ssid << stage << battery;
     if(robots.find(ip) != robots.end()){
-        /// TODO update battery + stage + ping RobotController
+        /// TODO update battery + stage
+        robots.value(ip)->ping();
     } else {
         QPointer<RobotController> robotController = QPointer<RobotController>(new RobotController(this, ip));
         robots.insert(ip, robotController);
@@ -141,7 +155,10 @@ void RobotsController::shortcutDeleteRobot(){
 }
 
 void RobotsController::sendCommand(QString ip, QString cmd){
-    robots.value(ip)->sendCommand(cmd);
+    if(robots.contains(ip))
+        robots.value(ip)->sendCommand(cmd);
+    else
+        qDebug() << "RobotsController::sendCommand Trying to send a command to a robot which is disconnected";
 }
 
 void RobotsController::newRobotPosSlot(QString ip, float posX, float posY, float ori){
@@ -247,5 +264,21 @@ void RobotsController::requestMapForMerging(QString ip){
 
 void RobotsController::processMapForMerge(QByteArray map, QString resolution){
     qDebug() << "RobotsController::processMapForMerge";
-    sendMapToProcessForMerge(map, resolution);
+    emit sendMapToProcessForMerge(map, resolution);
+}
+
+void RobotsController::startedScanningSlot(QString ip){
+    emit startedScanning(ip);
+}
+
+void RobotsController::stoppedScanningSlot(QString ip){
+    emit stoppedScanning(ip);
+}
+
+void RobotsController::pausedScanningSlot(QString ip){
+    emit pausedScanning(ip);
+}
+
+void RobotsController::receivedScanMapSlot(QString ip, QByteArray map, QString resolution){
+    emit receivedScanMap(ip, map, resolution);
 }

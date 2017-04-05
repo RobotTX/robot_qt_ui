@@ -21,8 +21,13 @@ RobotController::RobotController(RobotsController *parent, QString _ip):
     connect(commandController, SIGNAL(updatePath(QString, QStringList)), parent, SLOT(updatePathSlot(QString, QStringList)));
     connect(commandController, SIGNAL(stoppedDeletedPath(QString)), parent, SLOT(stoppedDeletedPathSlot(QString)));
     connect(commandController, SIGNAL(updatePlayingPath(QString, bool)), parent, SLOT(updatePlayingPathSlot(QString, bool)));
+    connect(commandController, SIGNAL(startedScanning(QString)), parent, SLOT(startedScanningSlot(QString)));
+    connect(commandController, SIGNAL(stoppedScanning(QString)), parent, SLOT(stoppedScanningSlot(QString)));
+    connect(commandController, SIGNAL(playedScanning(QString)), parent, SLOT(startedScanningSlot(QString)));
+    connect(commandController, SIGNAL(pausedScanning(QString)), parent, SLOT(pausedScanningSlot(QString)));
 
     connect(this, SIGNAL(mapToMergeFromRobot(QByteArray, QString)), parent, SLOT(processMapForMerge(QByteArray, QString)));
+    connect(this, SIGNAL(receivedScanMap(QString, QByteArray, QString)), parent, SLOT(receivedScanMapSlot(QString, QByteArray, QString)));
 
     launchWorkers();
 }
@@ -185,7 +190,7 @@ void RobotController::mapReceivedSlot(const QByteArray mapArray, int who, QStrin
 
     switch(who){
         case 3:
-            qDebug() << "RobotController::mapReceivedSlot received a map while scanning";
+            qDebug() << "RobotController::mapReceivedSlot received a map while scanning 3";
             /*QString robotName = robotsController->getRobots()->getRobotViewByIp(ipAddress)->getRobot()->getName();
             QImage image = mapController->getImageFromArray(mapArray, map_width, map_height, false);
             image.save(QDir::currentPath() + QDir::separator() + "brutos", "PNG");
@@ -199,12 +204,16 @@ void RobotController::mapReceivedSlot(const QByteArray mapArray, int who, QStrin
         case 1:
             emit newMapFromRobot(ip, mapArray, mapId, mapDate);
         break;
-        default:
-            qDebug() << "RobotController::mapReceivedSlot received a map while scanning (default)";
+        case 0:
+            qDebug() << "RobotController::mapReceivedSlot received a map while scanning 0";
+            emit receivedScanMap(ip, mapArray, resolution);
             /*QString robotName = robotsController->getRobots()->getRobotViewByIp(ipAddress)->getRobot()->getName();
             QImage image = mapController->getImageFromArray(mapArray, false);
             image.save(QDir::currentPath() + QDir::separator() + "brutos", "PNG");
             emit receivedScanMap(robotName, image, mapController->getMap()->getResolution());*/
+        break;
+        default:
+            Q_UNREACHABLE();
         break;
     }
     ping();
@@ -239,8 +248,8 @@ void RobotController::updateRobotInfo(QString robotInfo){
     QStringList strList = robotInfo.split(static_cast<u_char>(31), QString::SkipEmptyParts);
     qDebug() << "RobotController::updateRobotInfo" << strList;
 
-    if(strList.size() > 8){
-        /// Remove the "Connected"
+    if(strList.size() > 7){
+        /// Remove the "Connected" in the list
         strList.removeFirst();
         QString mapId = strList.takeFirst();
         QString mapDate = strList.takeFirst();
@@ -257,6 +266,7 @@ void RobotController::updateRobotInfo(QString robotInfo){
 
         emit checkMapInfo(ip, mapId, mapDate);
 
+        /// TODO set scanning on connection
         /*
         if(robotView && robotView->getRobot()){
             robotView->getRobot()->setScanning(scanning);
@@ -301,8 +311,10 @@ void RobotController::updateRobotInfo(QString robotInfo){
         }
 */
 
-    } else
+    } else {
         qDebug() << "RobotController::updateRobotInfo Connected received without enough parameters :" << strList;
+        Q_UNREACHABLE();
+    }
 
     ping();
 }

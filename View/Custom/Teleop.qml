@@ -3,8 +3,6 @@ import QtQuick.Controls 2.1
 import QtQuick.Layouts 1.3
 import "../../Helper/style.js" as Style
 
-// TODO add shortcut
-
 GridLayout {
     columns: 3
     columnSpacing: 8

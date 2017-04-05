@@ -17,11 +17,31 @@ Window {
     property Robots robotModel
 
     ScanMapLeftMenu {
+        id: scanMapLeftMenu
         robotModel: scanWindow.robotModel
         anchors {
             top: parent.top
             left: parent.left
             bottom: parent.bottom
+        }
+    }
+
+    DualChoiceMessageDialog {
+        id: dualChoiceMessageDialog
+        x: parent.width / 2 - width / 2
+        y: parent.height / 2 - height / 2
+
+        onAccepted: scanMapLeftMenu.startScanning(ip)
+    }
+
+    function openRestartScanMessageDialog(ip){
+        if(!dualChoiceMessageDialog.visible){
+            dualChoiceMessageDialog.title = qsTr("Do you wish to restart the scan ?");
+            dualChoiceMessageDialog.ip = ip;
+            dualChoiceMessageDialog.message = "The robot restarted, do you wish to restart the scan and erase the previous one ?";
+            dualChoiceMessageDialog.rejectMessage = "Cancel";
+            dualChoiceMessageDialog.acceptMessage = "Ok";
+            dualChoiceMessageDialog.open();
         }
     }
 }

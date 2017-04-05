@@ -6,15 +6,15 @@ import "../Custom"
 Dialog {
     id: dialog
     modal: true
-    title: qsTr("Choose which map to use")
     property string ip
-    property string robotName
-    property bool robotIsOlder
+    property string message
+    property string rejectMessage
+    property string acceptMessage
 
     background: Rectangle {
-        color: "#f3f3f3"//Style.lightGreyBackground
+        color: "#f3f3f3"
         border.width: 2
-        border.color: "#bcb5b9"//Style.lightGreyBorder
+        border.color: "#bcb5b9"
         radius: 5
     }
 
@@ -51,7 +51,8 @@ Dialog {
                 leftMargin: 10
                 rightMargin: 10
             }
-            text: qsTr((robotIsOlder ? "The robot " + robotName + " has a new map." : "The robot " + robotName + " has an old map.") + "\n\n\tWhich map do you want to use ?")
+            text: qsTr(message)
+            wrapMode: Text.WordWrap
         }
 
         CancelButton {
@@ -64,13 +65,13 @@ Dialog {
                 rightMargin: 10
                 bottomMargin: 10
             }
-            txt: "Robot"
+            txt: rejectMessage
             onClicked: dialog.reject()
         }
 
         SaveButton {
             id: appButton
-            txt: "Application"
+            txt: acceptMessage
             anchors {
                 left: parent.horizontalCenter
                 right: parent.right

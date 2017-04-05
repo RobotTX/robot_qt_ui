@@ -11,6 +11,7 @@
 #include "Helper/helper.h"
 #include "Controller/Map/mapcontroller.h"
 #include "Controller/Map/mergemapcontroller.h"
+#include "Controller/Map/scanmapcontroller.h"
 #include "Controller/Point/pointcontroller.h"
 #include "Controller/Path/pathcontroller.h"
 #include "Controller/Robot/robotscontroller.h"
@@ -65,6 +66,14 @@ MainController::MainController(QQmlApplicationEngine *engine, QObject* parent) :
         }
         else {
             qDebug() << "MapController::MapController could not find the settings";
+            Q_UNREACHABLE();
+        }
+
+        QObject* scanWindow = applicationWindow->findChild<QObject*>("scanWindow");
+        if(scanWindow){
+            connect(this, SIGNAL(openRestartScanMessageDialog(QVariant)), scanWindow, SLOT(openRestartScanMessageDialog(QVariant)));
+        } else {
+            qDebug() << "MapController::MapController could not find the scanWindow";
             Q_UNREACHABLE();
         }
 
@@ -230,19 +239,21 @@ void MainController::newMetadataSlot(int width, int height, float resolution, fl
 
 
 void MainController::updatePathSlot(QString ip, QStringList strList){
-    if(strList.size() % 4 == 1){
-        emit setPath(ip, strList.takeFirst());
-        for(int i = 0; i < strList.size(); i+=4){
-            QPointF pathPointPos = Helper::Convert::robotCoordToPixelCoord(
-                            QPointF(static_cast<QString>(strList.at(i+1)).toFloat(), static_cast<QString>(strList.at(i+2)).toFloat()),
-                            mapController->getOrigin().x(),
-                            mapController->getOrigin().y(),
-                            mapController->getResolution(),
-                            mapController->getHeight());
-            emit addPathPoint(ip, strList.at(i), pathPointPos.x(), pathPointPos.y(), static_cast<QString>(strList.at(i+3)).toInt());
-        }
-    } else
-        qDebug() << "RobotsController::updatePathSlot" << ip << "got a wrong number of param for the path :" << strList.size() << ", supposed to have the path name + a multiple of 4";
+    if(strList.size() > 0){
+        if(strList.size() % 4 == 1){
+            emit setPath(ip, strList.takeFirst());
+            for(int i = 0; i < strList.size(); i+=4){
+                QPointF pathPointPos = Helper::Convert::robotCoordToPixelCoord(
+                                QPointF(static_cast<QString>(strList.at(i+1)).toFloat(), static_cast<QString>(strList.at(i+2)).toFloat()),
+                                mapController->getOrigin().x(),
+                                mapController->getOrigin().y(),
+                                mapController->getResolution(),
+                                mapController->getHeight());
+                emit addPathPoint(ip, strList.at(i), pathPointPos.x(), pathPointPos.y(), static_cast<QString>(strList.at(i+3)).toInt());
+            }
+        } else
+            qDebug() << "RobotsController::updatePathSlot" << ip << "got a wrong number of param for the path :" << strList.size() << ", supposed to have the path name + a multiple of 4";
+    }
 }
 
 void MainController::updateHomeSlot(QString ip, QString homeName, float homeX, float homeY){
@@ -379,4 +390,35 @@ void MainController::processMapForMerge(QByteArray mapArray, QString resolution)
     qDebug() << "Saving image of size" << image.size();
     image.save("/home/joan/robot_map", "PGM");
     emit sendImageToMerge(image, resolution.toDouble());
+}
+
+/************************* SCANNING *************************/
+
+void MainController::startScanningSlot(QString ip){
+    robotsController->sendCommand(ip, QString("t"));
+}
+
+void MainController::stopScanningSlot(QString ip){
+    robotsController->sendCommand(ip, QString("u"));
+}
+
+void MainController::playPauseScanningSlot(QString ip, bool wasScanning, bool scanningOnConnection){
+    if(wasScanning){
+        /// Then we pause the scan
+        robotsController->sendCommand(ip, QString("f"));
+    } else {
+        /// We pause the scan
+        /// If the robot was already scanning, gmapping is launched so we just want to subscribe to get the map
+        /// else the robot shut down while scanning and we need to relaunch gmapping to restart the scan
+        /// so we ask if we want to relaunch gmapping and start the scan from the beggining or keep the previously scanned map
+        if(scanningOnConnection)
+            emit openRestartScanMessageDialog(ip);
+        else
+            robotsController->sendCommand(ip, QString("e"));
+    }
+}
+
+void MainController::receivedScanMapSlot(QString ip, QByteArray map, QString resolution){
+    QImage image = mapController->getImageFromArray(map, mapController->getWidth(), mapController->getHeight(), true);
+    mapController->getScanMapController()->receivedScanMap(ip, image, resolution);
 }

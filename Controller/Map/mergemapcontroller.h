@@ -1,14 +1,14 @@
 #ifndef MERGEMAPCONTROLLER_H
 #define MERGEMAPCONTROLLER_H
 
+class QQmlApplicationEngine;
+class MergeMapsPaintedItem;
+class MainController;
+
 #include <QObject>
 #include <QVector>
 #include <QSize>
 #include <QImage>
-
-class QQmlApplicationEngine;
-class MergeMapsPaintedItem;
-class MainController;
 
 class MergeMapController : public QObject {
 
@@ -31,8 +31,8 @@ signals:
     void differentMapSizes();
 
 private:
-    QQmlApplicationEngine* _engine;
-    QObject* _applicationWindow;
+    QQmlApplicationEngine* engine;
+    QObject* applicationWindow;
     QVector<MergeMapsPaintedItem*> paintedItems;
 
     double resolution;

@@ -66,7 +66,7 @@
         <file>View/Robot/RobotListInPopup.qml</file>
         <file>View/Map/MergeMapsLeftMenu.qml</file>
         <file>View/Map/MergeMapMenuItem.qml</file>
-        <file>View/Map/MapChoiceMessageDialog.qml</file>
+        <file>View/Custom/DualChoiceMessageDialog.qml</file>
         <file>View/Map/MergeMapsPaintedItem.qml</file>
         <file>View/ScanMap/ScanMap.qml</file>
         <file>View/ScanMap/ScanMapLeftMenu.qml</file>

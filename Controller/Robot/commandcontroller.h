@@ -19,6 +19,10 @@ signals:
     void updatePath(QString ip, QStringList strList);
     void stoppedDeletedPath(QString ip);
     void updatePlayingPath(QString ip, bool playingPath);
+    void startedScanning(QString ip);
+    void stoppedScanning(QString ip);
+    void playedScanning(QString ip);
+    void pausedScanning(QString ip);
 
 private:
     QString ip;

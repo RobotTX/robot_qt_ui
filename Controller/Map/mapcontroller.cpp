@@ -10,6 +10,7 @@
 #include "Controller/Map/editmapcontroller.h"
 #include "Controller/Map/mergemapcontroller.h"
 #include "Controller/maincontroller.h"
+#include "Controller/Map/scanmapcontroller.h"
 #include "View/editmappainteditem.h"
 
 MapController::MapController(QQmlApplicationEngine* engine, QObject *applicationWindow, MainController *parent) : QObject(parent){
@@ -44,6 +45,8 @@ MapController::MapController(QQmlApplicationEngine* engine, QObject *application
     mergeMapController = QPointer<MergeMapController>(new MergeMapController(parent, engine, applicationWindow));
 
     editMapController = QPointer<EditMapController>(new EditMapController(engine, applicationWindow, this));
+
+    scanMapController = QPointer<ScanMapController>(new ScanMapController(parent, engine, applicationWindow));
 }
 
 void MapController::initializeMap(void){
