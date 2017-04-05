@@ -14,4 +14,5 @@ void MergeMapsPaintedItem::paint(QPainter *painter){
 
 void MergeMapsPaintedItem::rotate(const int angle){
     setRotation(angle);
+    _angle = angle;
 }

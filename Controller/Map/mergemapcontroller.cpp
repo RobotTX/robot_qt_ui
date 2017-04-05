@@ -3,7 +3,9 @@
 #include <QQmlContext>
 #include <QQuickItemGrabResult>
 #include <QPixmap>
+#include <QQuickItem>
 #include <QQuickWindow>
+#include <QPainter>
 #include "mergemapcontroller.h"
 #include "View/mergemapspainteditem.h"
 #include "Controller/maincontroller.h"
@@ -21,7 +23,16 @@ MergeMapController::MergeMapController(MainController *parent, QQmlApplicationEn
         connect(mergeMapWindow, SIGNAL(getMapFromRobot(QString)), parent, SLOT(getMapFromRobot(QString)));
 
         connect(this, SIGNAL(differentMapSizes()), mergeMapWindow, SLOT(cancelImportMap()));
+        connect(this, SIGNAL(readyToBeGrabbed(QVariant)), mergeMapWindow, SLOT(grabMergedMap(QVariant)));
+
     }
+
+    QObject* mergeMapsView = applicationWindow->findChild<QObject*>("mergeMapsView");
+/*
+    if(mergeMapsView){
+        connect(this, SIGNAL(readyToBeGrabbed(QVariant)), mergeMapsView, SLOT(grabMergedMap(QVariant)));
+    }*/
+
 
     QObject* mergeMapLeftMenu = applicationWindow->findChild<QObject*>("mergeMapLeftMenu");
     if(mergeMapLeftMenu){
@@ -77,8 +88,6 @@ void MergeMapController::importMap(const QString& _filename){
         /// We crop the image
         image = image.copy(QRect(QPoint(left, bottom), QPoint(right, top)));
 
-        image.save("/home/joan/0.pgm", "PGM");
-
         /// Create a new image filled with invisible grey
         QImage new_image = QImage(image.size(), QImage::Format_ARGB32);
         new_image.fill(qRgba(205, 205, 205, 0));
@@ -99,7 +108,7 @@ void MergeMapController::importMap(const QString& _filename){
         paintedItem->setProperty("width", new_image.width());
         paintedItem->setProperty("height", new_image.height());
         paintedItem->setImage(new_image);
-
+        paintedItem->setPosition(QPointF(mapView->width()/2, mapView->height()/2));
         paintedItem->update();
         /// adds the image to the list of the image drawn
         paintedItems.append(paintedItem);
@@ -186,35 +195,32 @@ void MergeMapController::exportMap(QString fileName){
     QQuickItem* mapView = _applicationWindow->findChild<QQuickItem*> ("mergeMapsView");
 
     qDebug() << "\nMergeMapWidget::saveSlot called";
-        /// We want the origin to be reset when saving
-    /*
-    originInPixel = QPoint(-1, -1);
-    croppedOriginInPixel = QPoint(-1, -1);
-    if(listWidget->count() > 1){
-        /// Get an image from the scene
-        QImage image = sceneToImage();
-        /// Check if the size of the image is bigger than expected, and if so, alert the user that we might lose data if using it
-        if(checkImageSize(image.size())){
-            image = croppedImageToMapImage(image);
-            getResolution();
-            /// If we got a resolution proceed, else we don't save
-            if(resolution != -1){
-                qDebug() << "MergeMapWidget::saveSlot final origin in pixel :" << originInPixel << resolution << -image.width()*resolution/2;
-                /// Reconvert the new origin from pixel coordinates to the system used by the robot
-                Position pos1 = Helper::Convert::pixelCoordToRobotCoord(Position(originInPixel.x(), originInPixel.y()), 0, 0, resolution, image.height());
-                pos1.setX(-pos1.getX());
-                pos1.setY(-pos1.getY());
-                /// Where to save the new map
-                QString fileName = QFileDialog::getSaveFileName(this, tr("Save File"), "", tr("Images (*.pgm)"));
-                if(!fileName.isEmpty()){
-                    image.save(fileName);
-                    emit saveMergeMap(resolution, pos1, image, fileName);
-                    close();
+
+    QImage final_image(QSize(2048, 2048), QImage::Format_ARGB32);
+    final_image.fill(QColor(205, 205, 205));
+    QPainter painter(&final_image);
+
+    for(int i = 0; i < paintedItems.size(); i++){
+        QImage& image = paintedItems.at(i)->getImage();
+        for(int i = 0; i < image.width(); i++){
+            for(int j = 0; j < image.height(); j++){
+                QColor color = image.pixelColor(i, j);
+                if(!(color.red() == 205 && color.green() == 205 && color.blue() == 205)){
+                    /// If we find a pixel with more blue than the rest, it is our origin pixel
+                    if(color.red() == color.green() && color.blue() > color.red()){
+                        image.setPixelColor(i, j, Qt::white);
+                    } else if(color.red() == color.green() && color.green() == color.blue())
+                        image.setPixelColor(i, j, Qt::white);
+                    else
+                        image.setPixelColor(i, j, Qt::black);
                 }
             }
         }
+        paintedItems.at(i)->update();
     }
-    */
+
+    emit readyToBeGrabbed(fileName);
+
 }
 
 void MergeMapController::rotateMap(int angle, int index){

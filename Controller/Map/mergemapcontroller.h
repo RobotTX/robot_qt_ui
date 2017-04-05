@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QVector>
 #include <QSize>
+#include <QVariant>
 #include <QImage>
 
 class QQmlApplicationEngine;
@@ -29,6 +30,7 @@ private slots:
 
 signals:
     void differentMapSizes();
+    void readyToBeGrabbed(QVariant);
 
 private:
     QQmlApplicationEngine* _engine;
