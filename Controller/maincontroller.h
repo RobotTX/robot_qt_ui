@@ -70,6 +70,7 @@ private slots:
     void stopScanningSlot(QString ip);
     void playPauseScanningSlot(QString ip, bool wasScanning, bool scanningOnConnection);
     void receivedScanMapSlot(QString ip, QByteArray map, QString resolution);
+    void sendTeleopSlot(QString ip, int teleop);
 
 signals:
     void setHome(QVariant ip, QVariant name, QVariant posX, QVariant posY);

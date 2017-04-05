@@ -422,3 +422,7 @@ void MainController::receivedScanMapSlot(QString ip, QByteArray map, QString res
     QImage image = mapController->getImageFromArray(map, mapController->getWidth(), mapController->getHeight(), true);
     mapController->getScanMapController()->receivedScanMap(ip, image, resolution);
 }
+
+void MainController::sendTeleopSlot(QString ip, int teleop){
+    robotsController->sendTeleop(ip, teleop);
+}

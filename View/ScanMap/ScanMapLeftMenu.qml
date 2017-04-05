@@ -13,6 +13,7 @@ Frame {
     signal startScanning(string ip)
     signal stopScanning(string ip)
     signal playPauseScanning(string ip, bool scanning, bool scanningOnConnection)
+    signal sendTeleop(string ip, int index)
 
     width: Style.smallMenuWidth
     padding: 0
@@ -118,6 +119,7 @@ Frame {
                 scanLeftMenuFrame.playPauseScanning(ip, scanning, robotModel.getScanningOnConnection(ip));
                 scanningRobotsList.setBusy(ip, true);
             }
+            onSendTeleop: scanLeftMenuFrame.sendTeleop(ip, index)
         }
     }
 

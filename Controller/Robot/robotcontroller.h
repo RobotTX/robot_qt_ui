@@ -26,6 +26,7 @@ public:
     void sendCommand(const QString cmd);
     void sendNewMap(QString mapId, QString date, QString mapMetadata, QImage mapImage);
     void ping(void);
+    void sendTeleop(int teleop);
 
 private:
     /**

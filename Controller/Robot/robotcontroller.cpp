@@ -337,3 +337,7 @@ void RobotController::sendNewMap(QString mapId, QString date, QString mapMetadat
 void RobotController::ping(void){
     emit pingSignal();
 }
+
+void RobotController::sendTeleop(int teleop){
+    emit teleopCmd(teleop);
+}

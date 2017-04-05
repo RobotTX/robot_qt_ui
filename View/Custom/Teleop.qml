@@ -8,6 +8,9 @@ GridLayout {
     columnSpacing: 8
     rowSpacing: 8
 
+    signal sendTeleop(int index)
+    property int checkedIndex: -1
+
     ListModel {
         id: listBtn
         ListElement { src: "upLeft" }
@@ -27,9 +30,10 @@ GridLayout {
             Layout.preferredWidth: 30
             Layout.preferredHeight: 30
             padding: 0
+            checked: checkedIndex === index
 
             background: Rectangle {
-                color: "white"
+                color: parent.checked ? Style.lightBlue : "white"
                 border.width: 1
                 border.color: Style.lightGreyBorder
                 radius: 2
@@ -37,12 +41,16 @@ GridLayout {
 
             contentItem: Image {
                 asynchronous: true
-                source: "qrc:/icons/" + src
+                source: index === 4 && checkedIndex != -1 ? "qrc:/icons/pause" : "qrc:/icons/" + src
                 fillMode: Image.Pad // For not stretching image
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.verticalCenter: parent.verticalCenter
             }
-            onClicked: console.log("Clicked on teleop " + index)
+            onClicked: {
+                checkedIndex = (index === 4 || checkedIndex === index ? -1 : index);
+                console.log("Send teleop " + (checkedIndex === -1 ? 4 : checkedIndex));
+                sendTeleop(checkedIndex === -1 ? 4 : checkedIndex);
+            }
         }
     }
 }

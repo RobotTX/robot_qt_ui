@@ -12,6 +12,7 @@ ScanMapController::ScanMapController(MainController* parent, QQmlApplicationEngi
         connect(scanLeftMenuFrame, SIGNAL(startScanning(QString)), parent, SLOT(startScanningSlot(QString)));
         connect(scanLeftMenuFrame, SIGNAL(stopScanning(QString)), parent, SLOT(stopScanningSlot(QString)));
         connect(scanLeftMenuFrame, SIGNAL(playPauseScanning(QString, bool, bool)), parent, SLOT(playPauseScanningSlot(QString, bool, bool)));
+        connect(scanLeftMenuFrame, SIGNAL(sendTeleop(QString, int)), parent, SLOT(sendTeleopSlot(QString, int)));
         connect(this, SIGNAL(receivedScanMap(QVariant)), scanLeftMenuFrame, SLOT(receivedScanMap(QVariant)));
     }
 }

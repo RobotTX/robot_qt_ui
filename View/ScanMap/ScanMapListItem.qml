@@ -5,8 +5,10 @@ import "../../Model/Robot"
 import "../Custom"
 
 Frame {
+    id: scanMapListItemFrame
     signal stopScanning(string ip)
     signal playPauseScanning(string ip, bool scanning)
+    signal sendTeleop(string ip, int index)
 
     height: 270
     padding: 0
@@ -203,6 +205,7 @@ Frame {
                 topMargin: 20
                 horizontalCenter: parent.horizontalCenter
             }
+            onSendTeleop: scanMapListItemFrame.sendTeleop(ip, index)
         }
 
         Rectangle {

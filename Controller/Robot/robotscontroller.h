@@ -27,6 +27,7 @@ public:
     void requestMap(QString ip);
     void sendNewMapToAllExcept(QString ip, QString mapId, QString date, QString mapMetadata, QImage mapImage);
     void requestMapForMerging(QString ip);
+    void sendTeleop(QString ip, int teleop);
 
 private:
     void launchServer();

@@ -282,3 +282,10 @@ void RobotsController::pausedScanningSlot(QString ip){
 void RobotsController::receivedScanMapSlot(QString ip, QByteArray map, QString resolution){
     emit receivedScanMap(ip, map, resolution);
 }
+
+void RobotsController::sendTeleop(QString ip, int teleop){
+    if(robots.contains(ip))
+        robots.value(ip)->sendTeleop(teleop);
+    else
+        qDebug() << "RobotsController::sendTeleop Trying to send a teleop cmd to a robot which is disconnected";
+}
