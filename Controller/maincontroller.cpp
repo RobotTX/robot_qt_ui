@@ -192,7 +192,6 @@ void MainController::loadMapConfig(QString fileName) const {
             /// saves the new configuration to the current configuration file
             XMLParser::save(pointController, QDir::currentPath() + QDir::separator() + "currentPoints.xml");
 
-            // TODO put this back when paths are implemented
             PathXMLParser::readPaths(pathController, QDir::currentPath() + QDir::separator() +  "mapConfigs" + QDir::separator() + mapFileInfo.fileName() + "_paths.xml");
 
             /// saves the imported paths in the current paths file
@@ -411,7 +410,7 @@ void MainController::playPauseScanningSlot(QString ip, bool wasScanning, bool sc
         /// If the robot was already scanning, gmapping is launched so we just want to subscribe to get the map
         /// else the robot shut down while scanning and we need to relaunch gmapping to restart the scan
         /// so we ask if we want to relaunch gmapping and start the scan from the beggining or keep the previously scanned map
-        if(scanningOnConnection)
+        if(!scanningOnConnection)
             emit openRestartScanMessageDialog(ip);
         else
             robotsController->sendCommand(ip, QString("e"));

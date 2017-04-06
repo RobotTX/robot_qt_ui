@@ -26,8 +26,16 @@ RobotController::RobotController(RobotsController *parent, QString _ip):
     connect(commandController, SIGNAL(playedScanning(QString)), parent, SLOT(startedScanningSlot(QString)));
     connect(commandController, SIGNAL(pausedScanning(QString)), parent, SLOT(pausedScanningSlot(QString)));
 
+    connect(this, SIGNAL(robotIsDead(QString)), parent, SLOT(robotIsDeadSlot(QString)));
+    connect(this, SIGNAL(newRobotPos(QString, float, float, float)), parent, SLOT(newRobotPosSlot(QString, float, float, float)));
+    connect(this, SIGNAL(newMetadata(int, int, float, float, float)), parent, SLOT(newMetadataSlot(int, int, float, float, float)));
+    connect(this, SIGNAL(updatePath(QString, QStringList)), parent, SLOT(updatePathSlot(QString, QStringList)));
+    connect(this, SIGNAL(updateHome(QString, QString, float, float)), parent, SLOT(updateHomeSlot(QString, QString, float, float)));
+    connect(this, SIGNAL(checkMapInfo(QString, QString, QString)), parent, SLOT(checkMapInfoSlot(QString, QString, QString)));
+    connect(this, SIGNAL(newMapFromRobot(QString, QByteArray, QString, QString)), parent, SLOT(newMapFromRobotSlot(QString, QByteArray, QString, QString)));
     connect(this, SIGNAL(mapToMergeFromRobot(QByteArray, QString)), parent, SLOT(processMapForMerge(QByteArray, QString)));
     connect(this, SIGNAL(receivedScanMap(QString, QByteArray, QString)), parent, SLOT(receivedScanMapSlot(QString, QByteArray, QString)));
+    connect(this, SIGNAL(checkScanning(QString, bool)), parent, SLOT(checkScanningSlot(QString, bool)));
 
     launchWorkers();
 }
@@ -120,6 +128,7 @@ void RobotController::launchWorkers(){
     robotWorker = QPointer<RobotPositionWorker>(new RobotPositionWorker(ip, PORT_ROBOT_POS));
     connect(robotWorker, SIGNAL(valueChangedRobot(float, float, float)),
                      this ,SLOT(updateRobot(float, float, float)));
+    connect(robotWorker, SIGNAL(robotIsDead()), this, SLOT(robotIsDeadSlot()));
     connect(this, SIGNAL(stopRobotWorker()), robotWorker, SLOT(stopWorker()));
     connect(&robotThread, SIGNAL(finished()), robotWorker, SLOT(deleteLater()));
     connect(this, SIGNAL(startRobotWorker()), robotWorker, SLOT(connectSocket()));
@@ -131,6 +140,7 @@ void RobotController::launchWorkers(){
     metadataWorker = QPointer<MetadataWorker>(new MetadataWorker(ip, PORT_MAP_METADATA));
     connect(metadataWorker, SIGNAL(valueChangedMetadata(int, int, float, float, float)),
                      this , SLOT(updateMetadata(int, int, float, float, float)));
+    connect(metadataWorker, SIGNAL(robotIsDead()), this, SLOT(robotIsDeadSlot()));
     connect(this, SIGNAL(stopMetadataWorker()), metadataWorker, SLOT(stopWorker()));
     connect(this, SIGNAL(startMetadataWorker()), metadataWorker, SLOT(connectSocket()));
     connect(&metadataThread, SIGNAL(finished()), metadataWorker, SLOT(deleteLater()));
@@ -142,6 +152,7 @@ void RobotController::launchWorkers(){
     newMapWorker = QPointer<SendNewMapWorker>(new SendNewMapWorker(ip, PORT_NEW_MAP));
     connect(this, SIGNAL(sendNewMapSignal(QString, QString, QString, QImage)), newMapWorker, SLOT(writeTcpDataSlot(QString, QString, QString, QImage)));
     connect(newMapWorker, SIGNAL(doneSendingNewMapSignal()), this, SLOT(doneSendingMapSlot()));
+    connect(newMapWorker, SIGNAL(robotIsDead()), this, SLOT(robotIsDeadSlot()));
     connect(this, SIGNAL(stopNewMapWorker()), newMapWorker, SLOT(stopWorker()));
     connect(this, SIGNAL(startNewMapWorker()), newMapWorker, SLOT(connectSocket()));
     connect(&newMapThread, SIGNAL(finished()), newMapWorker, SLOT(deleteLater()));
@@ -149,6 +160,7 @@ void RobotController::launchWorkers(){
     newMapThread.start();
 
     localMapWorker = QPointer<LocalMapWorker>(new LocalMapWorker(ip, PORT_LOCAL_MAP));
+    connect(localMapWorker, SIGNAL(robotIsDead()), this, SLOT(robotIsDeadSlot()));
     connect(this, SIGNAL(stopLocalMapWorker()), localMapWorker, SLOT(stopWorker()));
     connect(this, SIGNAL(startLocalMapWorker()), localMapWorker, SLOT(connectSocket()));
     connect(&localMapThread, SIGNAL(finished()), localMapWorker, SLOT(deleteLater()));
@@ -160,6 +172,7 @@ void RobotController::launchWorkers(){
     mapWorker = QPointer<ScanMapWorker>(new ScanMapWorker(ip, PORT_MAP));
     connect(mapWorker, SIGNAL(valueChangedMap(QByteArray, int, QString, QString, QString, QString, QString, int, int)),
             this , SLOT(mapReceivedSlot(QByteArray, int, QString, QString, QString, QString, QString, int, int)));
+    connect(mapWorker, SIGNAL(robotIsDead()), this, SLOT(robotIsDeadSlot()));
     connect(mapWorker, SIGNAL(newScanSaved(QString)), this , SLOT(sendNewMapToRobots(QString)));
     connect(&mapThread, SIGNAL(finished()), mapWorker, SLOT(deleteLater()));
     connect(this, SIGNAL(startMapWorker()), mapWorker, SLOT(connectSocket()));
@@ -168,6 +181,7 @@ void RobotController::launchWorkers(){
     mapThread.start();
 
     teleopWorker = QPointer<TeleopWorker>(new TeleopWorker(ip, PORT_TELEOP));
+    connect(teleopWorker, SIGNAL(robotIsDead()), this, SLOT(robotIsDeadSlot()));
     connect(&mapThread, SIGNAL(finished()), teleopWorker, SLOT(deleteLater()));
     connect(this, SIGNAL(startTeleopWorker()), teleopWorker, SLOT(connectSocket()));
     connect(this, SIGNAL(stopTeleopWorker()), teleopWorker, SLOT(stopWorker()));
@@ -176,6 +190,7 @@ void RobotController::launchWorkers(){
     mapThread.start();
 
     particleCloudWorker = QPointer<ParticleCloudWorker>(new ParticleCloudWorker(ip, PORT_PARTICLE_CLOUD));
+    connect(particleCloudWorker, SIGNAL(robotIsDead()), this, SLOT(robotIsDeadSlot()));
     connect(&particleCloudThread, SIGNAL(finished()), particleCloudWorker, SLOT(deleteLater()));
     connect(this, SIGNAL(startParticleCloudWorker()), particleCloudWorker, SLOT(connectSocket()));
     connect(this, SIGNAL(stopParticleCloudWorker()), particleCloudWorker, SLOT(stopWorker()));
@@ -266,32 +281,8 @@ void RobotController::updateRobotInfo(QString robotInfo){
 
         emit checkMapInfo(ip, mapId, mapDate);
 
-        /// TODO set scanning on connection
-        /*
-        if(robotView && robotView->getRobot()){
-            robotView->getRobot()->setScanning(scanning);
-            robotView->getRobot()->setRecovering(recovering);
-        }
-        else
-            return;
-        if(scanning){
-            if(scanMapWidget){
-                emit robotReconnected(robotName);
-                playScanSlot(true, robotName);
-            } else
-                stopScanningSlot(QStringList(robotName));
-        } else {
-            if(scanMapWidget){
-                QStringList robotScanningList = scanMapWidget->getAllScanningRobots();
-                for(int i = 0; i < robotScanningList.count(); i++){
-                    if(static_cast<QString>(robotScanningList.at(i)) == robotName){
-                        emit robotReconnected(robotName);
-                        emit robotScanning(false, robotName, true);
-                    }
-                }
-            }
-        }
-
+        emit checkScanning(ip, scanning);
+/*
         if(recovering){
             if(robotPositionRecoveryWidget){
                 emit robotReconnected(robotName);

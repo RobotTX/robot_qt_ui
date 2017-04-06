@@ -1,4 +1,5 @@
 #include "robotscontroller.h"
+#include <QQmlProperty>
 #include "Helper/helper.h"
 #include "Controller/Robot/robotcontroller.h"
 #include "Controller/Robot/robotserverworker.h"
@@ -26,6 +27,7 @@ RobotsController::RobotsController(QObject *applicationWindow, MainController* p
                 robotModel, SLOT(addPathPoint(QVariant, QVariant, QVariant, QVariant, QVariant)));
         connect(this, SIGNAL(setStage(QVariant, QVariant)), robotModel, SLOT(setStage(QVariant, QVariant)));
         connect(this, SIGNAL(setBattery(QVariant, QVariant)), robotModel, SLOT(setBattery(QVariant, QVariant)));
+        connect(this, SIGNAL(setScanningOnConnection(QVariant, QVariant)), robotModel, SLOT(setScanningOnConnection(QVariant, QVariant)));
 
         /// Signals from qml to the controller
         connect(robotModel, SIGNAL(newHomeSignal(QString, QString, double, double)), parent, SLOT(sendCommandNewHome(QString, QString, double, double)));
@@ -35,6 +37,7 @@ RobotsController::RobotsController(QObject *applicationWindow, MainController* p
         connect(robotModel, SIGNAL(pausePathSignal(QString)), this, SLOT(sendCommandPausePath(QString)));
         connect(robotModel, SIGNAL(playPathSignal(QString)), this, SLOT(sendCommandPlayPath(QString)));
         connect(robotModel, SIGNAL(stopPathSignal(QString)), this, SLOT(sendCommandStopPath(QString)));
+        connect(robotModel, SIGNAL(stopScanning(QString)), parent, SLOT(stopScanningSlot(QString)));
 
 
         /// MainController signals
@@ -55,11 +58,15 @@ RobotsController::RobotsController(QObject *applicationWindow, MainController* p
     QObject* scanLeftMenuFrame = applicationWindow->findChild<QObject*>("scanLeftMenuFrame");
 
     if(scanLeftMenuFrame){
-        /// to add new maps
         connect(this, SIGNAL(stoppedScanning(QVariant)), scanLeftMenuFrame, SLOT(stoppedScanning(QVariant)));
         connect(this, SIGNAL(startedScanning(QVariant)), scanLeftMenuFrame, SLOT(startedScanning(QVariant)));
         connect(this, SIGNAL(pausedScanning(QVariant)), scanLeftMenuFrame, SLOT(pausedScanning(QVariant)));
     }
+
+    QObject* scanWindow = applicationWindow->findChild<QObject*>("scanWindow");
+
+    if(scanWindow)
+        connect(this, SIGNAL(checkScanWindow()), scanWindow, SLOT(checkScanWindow()));
 
 
     connect(this, SIGNAL(newRobotPos(QString, float, float, float)), parent, SLOT(newRobotPosSlot(QString, float, float, float)));
@@ -79,12 +86,6 @@ RobotsController::~RobotsController(){
         serverThread.quit();
         serverThread.wait();
     }
-/*
-    QMapIterator<QString, QPointer<RobotController>> i(robots);
-    while (i.hasNext()) {
-        i.next();
-        i.value()->stopThreads();
-    }*/
 }
 
 void RobotsController::launchServer(){
@@ -104,20 +105,15 @@ void RobotsController::robotIsAliveSlot(QString name, QString ip, QString ssid, 
     } else {
         QPointer<RobotController> robotController = QPointer<RobotController>(new RobotController(this, ip));
         robots.insert(ip, robotController);
-        connect(robotController, SIGNAL(robotIsDead(QString)), this, SLOT(robotIsDeadSlot(QString)));
-        connect(robotController, SIGNAL(newRobotPos(QString, float, float, float)), this, SLOT(newRobotPosSlot(QString, float, float, float)));
-        connect(robotController, SIGNAL(newMetadata(int, int, float, float, float)), this, SLOT(newMetadataSlot(int, int, float, float, float)));
-        connect(robotController, SIGNAL(updatePath(QString, QStringList)), this, SLOT(updatePathSlot(QString, QStringList)));
-        connect(robotController, SIGNAL(updateHome(QString, QString, float, float)), this, SLOT(updateHomeSlot(QString, QString, float, float)));
-        connect(robotController, SIGNAL(checkMapInfo(QString, QString, QString)), this, SLOT(checkMapInfoSlot(QString, QString, QString)));
-        connect(robotController, SIGNAL(newMapFromRobot(QString, QByteArray, QString, QString)), this, SLOT(newMapFromRobotSlot(QString, QByteArray, QString, QString)));
         emit addRobot(name, ip, ssid, stage, battery);
     }
 }
 
 void RobotsController::robotIsDeadSlot(QString ip){
-    robots.take(ip)->deleteLater();
-    emit removeRobot(ip);
+    if(robots.contains(ip)){
+        robots.take(ip)->deleteLater();
+        emit removeRobot(ip);
+    }
 }
 
 void RobotsController::shortcutAddRobot(){
@@ -143,14 +139,12 @@ void RobotsController::shortcutAddRobot(){
         emit addPathPoint(ip, QString("pathPoint avec un nom tres tres long 6"), 50 * robots.size() + 50*6, 50 * robots.size() + 50*6, (robots.size() - 1)%3);
         emit setStage(ip, (int) ((robots.size() - 1) / 3));
     }
-    //emit displayRobots();
 }
 
 void RobotsController::shortcutDeleteRobot(){
-    if(robots.size() > 0){
+    if(robots.size() > 0)
         robotIsDeadSlot(QString::number(robots.size() - 1));
-        //emit displayRobots();
-    } else
+    else
         qDebug() << "You already have no robot";
 }
 
@@ -289,3 +283,19 @@ void RobotsController::sendTeleop(QString ip, int teleop){
     else
         qDebug() << "RobotsController::sendTeleop Trying to send a teleop cmd to a robot which is disconnected";
 }
+
+void RobotsController::checkScanningSlot(QString ip, bool scanning){
+    /// update the robot model
+    emit setScanningOnConnection(ip, scanning);
+
+
+    /// update the scanning menu
+    if(scanning)
+        emit startedScanning(ip);
+    else
+        emit pausedScanning(ip);
+
+    /// Stop the scan if a scanning robot reconnect after the window has been closed
+    emit checkScanWindow();
+}
+

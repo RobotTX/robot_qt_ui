@@ -60,6 +60,7 @@ signals:
      */
     void valueChangedMap(QByteArray, int, QString, QString, QString, QString, QString, int, int);
     void newScanSaved(QString ipAddress);
+    void robotIsDead();
 
 private :
     QPointer<QTcpSocket> socket;

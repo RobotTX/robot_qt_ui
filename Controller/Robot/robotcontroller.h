@@ -59,6 +59,7 @@ signals:
     void newMapFromRobot(QString ip, QByteArray mapArray, QString mapId, QString mapDate);
     void mapToMergeFromRobot(QByteArray mapArray, QString resolution);
     void receivedScanMap(QString ip, QByteArray mapArray, QString resolution);
+    void checkScanning(QString ip, bool scanning);
 
     void stopCmdRobotWorker();
     void stopRobotWorker();

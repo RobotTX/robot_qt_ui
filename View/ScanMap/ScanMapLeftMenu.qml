@@ -10,10 +10,11 @@ Frame {
     objectName: "scanLeftMenuFrame"
 
     property Robots robotModel
+    /// TODO check the robot is connected before sending + on robot dc, stop the busy indicator
     signal startScanning(string ip)
-    signal stopScanning(string ip)
     signal playPauseScanning(string ip, bool scanning, bool scanningOnConnection)
     signal sendTeleop(string ip, int index)
+    signal cancelScan()
 
     width: Style.smallMenuWidth
     padding: 0
@@ -22,6 +23,17 @@ Frame {
         color: Style.lightGreyBackground
         border.color: Style.lightGreyBorder
         border.width: 1
+    }
+
+    Connections {
+        target: robotModel
+        onRobotDc: {
+            scanningRobotsList.setBusy(ip, false);
+            scanningRobotsList.setConnected(ip, false);
+        }
+        onRobotConnection: {
+            scanningRobotsList.setConnected(ip, true);
+        }
     }
 
     // to store the robots whose map has been imported for merging (subset of the robotModel and only the name and ip attributes are used
@@ -34,7 +46,8 @@ Frame {
                 "ip": ip,
                 "mapReceived": false,
                 "busy": true,
-                "scanning": false
+                "scanning": false,
+                "connected": true
             });
             startScanning(ip)
         }
@@ -68,6 +81,19 @@ Frame {
             for(var i = 0; i < count; i++)
                 if(get(i).ip === ip)
                     setProperty(i, "scanning", scanning);
+        }
+
+        function setConnected(ip, connected){
+            for(var i = 0; i < count; i++)
+                if(get(i).ip === ip)
+                    setProperty(i, "connected", connected);
+        }
+
+        function reset(){
+            for(var i = 0; i < count; i++){
+                robotModel.stopScanning(get(i).ip);
+                remove(i);
+            }
         }
     }
 
@@ -112,12 +138,16 @@ Frame {
         ScanMapListItem {
             width: flick.width
             onStopScanning: {
-                scanLeftMenuFrame.stopScanning(ip);
-                scanningRobotsList.setBusy(ip, true);
+                if(robotModel.isConnected(ip)){
+                    robotModel.stopScanning(ip);
+                    scanningRobotsList.setBusy(ip, true);
+                }
             }
             onPlayPauseScanning: {
-                scanLeftMenuFrame.playPauseScanning(ip, scanning, robotModel.getScanningOnConnection(ip));
-                scanningRobotsList.setBusy(ip, true);
+                if(robotModel.isConnected(ip)){
+                    scanLeftMenuFrame.playPauseScanning(ip, scanning, robotModel.getScanningOnConnection(ip));
+                    scanningRobotsList.setBusy(ip, true);
+                }
             }
             onSendTeleop: scanLeftMenuFrame.sendTeleop(ip, index)
         }
@@ -168,6 +198,7 @@ Frame {
             right: parent.right
             rightMargin: 15
         }
+        onClicked: cancelScan()
     }
 
     function startedScanning(ip){
@@ -186,5 +217,13 @@ Frame {
 
     function receivedScanMap(ip){
         scanningRobotsList.setMapReceived(ip);
+    }
+
+    function reset(){
+        scanningRobotsList.reset();
+    }
+
+    function setBusy(ip, busy){
+        scanningRobotsList.setBusy(ip, busy);
     }
 }

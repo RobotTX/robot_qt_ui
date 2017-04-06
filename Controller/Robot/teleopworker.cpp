@@ -58,6 +58,7 @@ void TeleopWorker::errorConnectionSlot(QAbstractSocket::SocketError error){
         break;
     case(QAbstractSocket::RemoteHostClosedError):
         qDebug() << "(TeleopWorker) The remote host closed the connection. Note that the client socket (i.e., this socket) will be closed after the remote close notification has been sent.";
+        emit robotIsDead();
         break;
     case(QAbstractSocket::HostNotFoundError):
         qDebug() << "(TeleopWorker) The host address was not found.";

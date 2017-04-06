@@ -61,6 +61,7 @@ signals:
      * Signal emitted when we have received the Metadata
      */
     void valueChangedMetadata(int width, int height, float resolution, float originX, float originY);
+    void robotIsDead();
 
 private :
     QPointer<QTcpSocket> socket;

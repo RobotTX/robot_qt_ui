@@ -41,6 +41,9 @@ private slots:
      */
     void errorConnectionSlot(QAbstractSocket::SocketError error);
 
+signals:
+    void robotIsDead();
+
 private :
     QPointer<QTcpSocket> socket;
     QString ipAddress;
