@@ -76,10 +76,11 @@ signals:
     void setHome(QVariant ip, QVariant name, QVariant posX, QVariant posY);
     void setPath(QVariant ip, QVariant name);
     void addPathPoint(QVariant ip, QVariant name, QVariant posX, QVariant posY, QVariant waitTime);
-    void emitSettings(QVariant mapChoice, QVariant batteryThreshold, QVariant showTutorial);
+    void emitSettings(QVariant mapChoice, QVariant showTutorial);
     void openMapChoiceMessageDialog(QVariant ip, QVariant robotIsOlder);
     void sendImageToMerge(QImage, double resolution);
     void openRestartScanMessageDialog(QVariant ip);
+    void emitBatteryThreshold(QVariant batteryThreshold);
 
 private:
     QPointer<MainMenuController> mainMenuController;

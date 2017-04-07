@@ -4,6 +4,7 @@ import QtQuick.Layouts 1.3
 import "../../Helper/style.js" as Style
 import "../../Helper/helper.js" as Helper
 import "../../Model/Point"
+import "../Custom"
 
 Column {
     id: groupListItem
@@ -39,29 +40,14 @@ Column {
         }
 
         /// The left button in each element of the list
-        Button {
+        SmallButton {
             id: leftButton
+            imgSrc: isOpen ? "qrc:/icons/fold" : "qrc:/icons/unfold"
             anchors {
                 top: parent.top
                 left: parent.left
                 bottom: parent.bottom
                 leftMargin: 20
-            }
-
-            width: Style.smallBtnWidth
-            height: Style.smallBtnHeight
-
-            background: Rectangle {
-                color: "transparent"
-            }
-
-            Image {
-                asynchronous: true
-                /// Change the image depending on whether or not it's a point or a group and if it's visible
-                source: isOpen ? "qrc:/icons/fold" : "qrc:/icons/unfold"
-                fillMode: Image.Pad // For not stretching image
-                anchors.horizontalCenter: parent.horizontalCenter
-                anchors.verticalCenter: parent.verticalCenter
             }
 
             onClicked: pointModel.hideShowGroup(groupName);
@@ -80,29 +66,15 @@ Column {
             elide: Text.ElideRight
         }
 
-        Button {
+        SmallButton {
             id: rightButton
+            imgSrc: "qrc:/icons/more"
             anchors {
                 top: parent.top
                 bottom: parent.bottom
                 right: parent.right
             }
             anchors.rightMargin: 20
-
-            width: Style.smallBtnWidth
-            height: Style.smallBtnHeight
-
-            background: Rectangle {
-                color: "transparent"
-            }
-
-            Image {
-                asynchronous: true
-                source: "qrc:/icons/more"
-                fillMode: Image.Pad // For not stretching image
-                anchors.horizontalCenter: parent.horizontalCenter
-                anchors.verticalCenter: parent.verticalCenter
-            }
 
             onClicked: {
                 column.selectedGroup = groupName
@@ -163,29 +135,14 @@ Column {
             }
 
             /// The left button in each element of the list
-            Button {
+            SmallButton {
                 id: leftButton2
+                imgSrc: isVisible ? "qrc:/icons/visible" : "qrc:/icons/invisible"
                 anchors {
                     top: parent.top
                     left: parent.left
                     bottom: parent.bottom
                     leftMargin: groupName === Helper.noGroup ? 20 : 45
-                }
-
-                width: Style.smallBtnWidth
-                height: Style.smallBtnHeight
-
-                background: Rectangle {
-                    color: "transparent"
-                }
-
-                Image {
-                    asynchronous: true
-                    /// Change the image depending on whether or not it's a point or a group and if it's visible
-                    source: isVisible ? "qrc:/icons/visible" : "qrc:/icons/invisible"
-                    fillMode: Image.Pad // For not stretching image
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    anchors.verticalCenter: parent.verticalCenter
                 }
 
                 onClicked: pointModel.hideShowPoint(groupName, name);
@@ -204,29 +161,15 @@ Column {
                 elide: Text.ElideRight
             }
 
-            Button {
+            SmallButton {
                 id: rightMenuButton
+                imgSrc: "qrc:/icons/more"
                 anchors {
                     top: parent.top
                     bottom: parent.bottom
                     right: parent.right
                 }
                 anchors.rightMargin: 20
-
-                width: Style.smallBtnWidth
-                height: Style.smallBtnHeight
-
-                background: Rectangle {
-                    color: "transparent"
-                }
-
-                Image {
-                    asynchronous: true
-                    source: "qrc:/icons/more"
-                    fillMode: Image.Pad // For not stretching image
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    anchors.verticalCenter: parent.verticalCenter
-                }
 
                 onClicked: {
                     column.selectedGroup = groupName

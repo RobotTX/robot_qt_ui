@@ -32,6 +32,7 @@ Frame {
         id: closeBtn
         onClicked: menuHeader.closeMenu(txt)
         imgSrc: "qrc:/icons/closeBtn"
+        anchors.verticalCenter: parent.verticalCenter
         anchors.left: parent.left
         anchors.leftMargin: 11
     }

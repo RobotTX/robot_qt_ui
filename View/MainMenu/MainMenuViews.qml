@@ -23,6 +23,7 @@ Frame {
     property Paths pathModel
     property Paths tmpPathModel
     property Robots robotModel
+    property real batteryWarningThreshold
     signal useTmpPathModel(bool use)
     signal useRobotPathModel(bool use)
 
@@ -40,6 +41,7 @@ Frame {
         robotModel: mainMenuViewsFrame.robotModel
         pathModel: mainMenuViewsFrame.pathModel
         pointModel: mainMenuViewsFrame.pointModel
+        batteryWarningThreshold: mainMenuViewsFrame.batteryWarningThreshold
         onUseRobotPathModel: mainMenuViewsFrame.useRobotPathModel(use)
         onCloseMenu: mainMenuViewsFrame.closeMenu()
     }
@@ -74,6 +76,7 @@ Frame {
     SettingsMenu {
         id: settingsMenu
         robotModel: mainMenuViewsFrame.robotModel
+        batteryWarningThreshold: mainMenuViewsFrame.batteryWarningThreshold
         visible: currentMenu == 4
         onCloseMenu: mainMenuViewsFrame.closeMenu()
     }

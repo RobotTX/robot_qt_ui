@@ -10,7 +10,6 @@ Frame {
     objectName: "scanLeftMenuFrame"
 
     property Robots robotModel
-    /// TODO check the robot is connected before sending + on robot dc, stop the busy indicator
     signal startScanning(string ip)
     signal playPauseScanning(string ip, bool scanning, bool scanningOnConnection)
     signal sendTeleop(string ip, int index)

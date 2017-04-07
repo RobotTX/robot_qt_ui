@@ -13,7 +13,7 @@ class PointController : public QObject {
 public:
     PointController(QObject *applicationWindow, MainController *parent);
 
-    /// Getters
+    /// Getter
     QPointer<Points> getPoints(void) const { return points; }
 
     /**
@@ -32,6 +32,11 @@ public:
      * @return if the given name of point is taken
      */
     bool checkPointName(const QString name);
+
+    /**
+     * @brief clearPoints
+     * Delete all the points on the c++ and qml side
+     */
     void clearPoints(void);
 
 public slots:
@@ -139,9 +144,21 @@ signals:
      * @param groupName
      * @param x
      * @param y
-     * Tell the point model that we added a new point
+     * Tell the qml model that we added a new point
      */
     void addPointQml(QVariant name, QVariant isVisible, QVariant groupName, QVariant x, QVariant y);
+
+    /**
+     * @brief editPointQml
+     * @param oldName
+     * @param oldGroup
+     * @param name
+     * @param isVisible
+     * @param groupName
+     * @param x
+     * @param y
+     * Tell the qml model that we edited a point
+     */
     void editPointQml(QVariant oldName, QVariant oldGroup, QVariant name, QVariant isVisible, QVariant groupName, QVariant x, QVariant y);
 
     /**

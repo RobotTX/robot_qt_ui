@@ -4,6 +4,7 @@ import QtQuick.Layouts 1.3
 import "../../Helper/style.js" as Style
 import "../../Helper/helper.js" as Helper
 import "../../Model/Path"
+import "../Custom"
 
 Column {
     id: groupListItem
@@ -43,29 +44,14 @@ Column {
         }
 
         /// The left button in each element of the list
-        Button {
+        SmallButton {
             id: leftButton
+            imgSrc: groupIsOpen ? "qrc:/icons/fold" : "qrc:/icons/unfold"
             anchors {
                 top: parent.top
                 left: parent.left
                 bottom: parent.bottom
                 leftMargin: 20
-            }
-
-            width: Style.smallBtnWidth
-            height: Style.smallBtnHeight
-
-            background: Rectangle {
-                color: "transparent"
-            }
-
-            Image {
-                asynchronous: true
-                /// Change the image depending on whether or not it's a path or a group and if it's visible
-                source: groupIsOpen ? "qrc:/icons/fold" : "qrc:/icons/unfold"
-                fillMode: Image.Pad // For not stretching image
-                anchors.horizontalCenter: parent.horizontalCenter
-                anchors.verticalCenter: parent.verticalCenter
             }
 
             onClicked: pathModel.hideShowGroup(groupName);
@@ -84,29 +70,15 @@ Column {
             elide: Text.ElideRight
         }
 
-        Button {
+        SmallButton {
             id: rightButton
+            imgSrc: "qrc:/icons/more"
             anchors {
                 top: parent.top
                 bottom: parent.bottom
                 right: parent.right
             }
             anchors.rightMargin: 20
-
-            width: Style.smallBtnWidth
-            height: Style.smallBtnHeight
-
-            background: Rectangle {
-                color: "transparent"
-            }
-
-            Image {
-                asynchronous: true
-                source: "qrc:/icons/more"
-                fillMode: Image.Pad // For not stretching image
-                anchors.horizontalCenter: parent.horizontalCenter
-                anchors.verticalCenter: parent.verticalCenter
-            }
 
             onClicked: {
                 column.selectedGroup = groupName;
@@ -155,29 +127,14 @@ Column {
                 }
 
                 /// The left button in each element of the list
-                Button {
+                SmallButton {
                     id: leftButton2
+                    imgSrc: pathIsVisible ? "qrc:/icons/visible" : "qrc:/icons/invisible"
                     anchors {
                         top: parent.top
                         left: parent.left
                         bottom: parent.bottom
                         leftMargin: groupName === Helper.noGroup ? 20 : 45
-                    }
-
-                    width: Style.smallBtnWidth
-                    height: Style.smallBtnHeight
-
-                    background: Rectangle {
-                        color: "transparent"
-                    }
-
-                    Image {
-                        asynchronous: true
-                        /// Change the image depending on whether or not it's a path or a group and if it's visible
-                        source: pathIsVisible ? "qrc:/icons/visible" : "qrc:/icons/invisible"
-                        fillMode: Image.Pad // For not stretching image
-                        anchors.horizontalCenter: parent.horizontalCenter
-                        anchors.verticalCenter: parent.verticalCenter
                     }
 
                     onClicked: pathModel.hideShowPathOnMap(groupName, pathName);
@@ -199,8 +156,9 @@ Column {
                     elide: Text.ElideRight
                 }
 
-                Button {
+                SmallButton {
                     id: rightOpenPath
+                    imgSrc: pathIsOpen ? "qrc:/icons/fold" : "qrc:/icons/unfold"
                     anchors {
                         top: parent.top
                         bottom: parent.bottom
@@ -208,47 +166,17 @@ Column {
                         rightMargin: 5
                     }
 
-                    width: Style.smallBtnWidth
-                    height: Style.smallBtnHeight
-
-                    background: Rectangle {
-                        color: "transparent"
-                    }
-
-                    Image {
-                        asynchronous: true
-                        /// Change the image depending on whether or not it's a path or a group and if it's visible
-                        source: pathIsOpen ? "qrc:/icons/fold" : "qrc:/icons/unfold"
-                        fillMode: Image.Pad // For not stretching image
-                        anchors.horizontalCenter: parent.horizontalCenter
-                        anchors.verticalCenter: parent.verticalCenter
-                    }
-
                     onClicked: pathModel.hideShowPath(groupName, pathName);
                 }
 
-                Button {
+                SmallButton {
                     id: rightMenuButton
+                    imgSrc: "qrc:/icons/more"
                     anchors {
                         top: parent.top
                         bottom: parent.bottom
                         right: parent.right
                         rightMargin: 20
-                    }
-
-                    width: Style.smallBtnWidth
-                    height: Style.smallBtnHeight
-
-                    background: Rectangle {
-                        color: "transparent"
-                    }
-
-                    Image {
-                        asynchronous: true
-                        source: "qrc:/icons/more"
-                        fillMode: Image.Pad // For not stretching image
-                        anchors.horizontalCenter: parent.horizontalCenter
-                        anchors.verticalCenter: parent.verticalCenter
                     }
 
                     onClicked: {
@@ -296,7 +224,7 @@ Column {
                         color: "#d7d7d7"
                         anchors.horizontalCenter: rect.horizontalCenter
                         anchors.bottom: rect.top
-                        visible: index > 0
+                        visible: pathIsOpen && groupIsOpen && index > 0
                     }
 
                     Rectangle {
@@ -308,6 +236,7 @@ Column {
                         anchors.verticalCenter: parent.verticalCenter
                         anchors.left: parent.left
                         anchors.leftMargin: groupName === Helper.noGroup ? 25 : 50
+                        visible: pathIsOpen && groupIsOpen
                     }
 
                     /// The item displaying the name of the path/group

@@ -16,6 +16,7 @@
 RobotController::RobotController(RobotsController *parent, QString _ip):
     QObject(parent), ip(_ip), sendingMap(false), commandController(QPointer<CommandController>(new CommandController(this, ip))){
 
+    /// Signals from the command controller when we have executed a command
     connect(commandController, SIGNAL(updateName(QString,QString)), parent, SLOT(updateNameSlot(QString,QString)));
     connect(commandController, SIGNAL(updateHome(QString,QString,float,float)), parent, SLOT(updateHomeSlot(QString,QString,float,float)));
     connect(commandController, SIGNAL(updatePath(QString, QStringList)), parent, SLOT(updatePathSlot(QString, QStringList)));
@@ -26,15 +27,25 @@ RobotController::RobotController(RobotsController *parent, QString _ip):
     connect(commandController, SIGNAL(playedScanning(QString)), parent, SLOT(startedScanningSlot(QString)));
     connect(commandController, SIGNAL(pausedScanning(QString)), parent, SLOT(pausedScanningSlot(QString)));
 
+    /// Signals to tell the robotsController that the robot just disconnected
     connect(this, SIGNAL(robotIsDead(QString)), parent, SLOT(robotIsDeadSlot(QString)));
+    /// Update the position of the robot
     connect(this, SIGNAL(newRobotPos(QString, float, float, float)), parent, SLOT(newRobotPosSlot(QString, float, float, float)));
+    /// Update the metadata
     connect(this, SIGNAL(newMetadata(int, int, float, float, float)), parent, SLOT(newMetadataSlot(int, int, float, float, float)));
+    /// Update the path of the robot when it connects
     connect(this, SIGNAL(updatePath(QString, QStringList)), parent, SLOT(updatePathSlot(QString, QStringList)));
+    /// Update the home of the robot when it connects
     connect(this, SIGNAL(updateHome(QString, QString, float, float)), parent, SLOT(updateHomeSlot(QString, QString, float, float)));
+    /// Check if the robot has the same map as the application
     connect(this, SIGNAL(checkMapInfo(QString, QString, QString)), parent, SLOT(checkMapInfoSlot(QString, QString, QString)));
+    /// Signal that we just received a new map fron the robot
     connect(this, SIGNAL(newMapFromRobot(QString, QByteArray, QString, QString)), parent, SLOT(newMapFromRobotSlot(QString, QByteArray, QString, QString)));
+    /// Signal that we just received a map to merge from the robot
     connect(this, SIGNAL(mapToMergeFromRobot(QByteArray, QString)), parent, SLOT(processMapForMerge(QByteArray, QString)));
+    /// Signal that we received a new map while scanning
     connect(this, SIGNAL(receivedScanMap(QString, QByteArray, QString)), parent, SLOT(receivedScanMapSlot(QString, QByteArray, QString)));
+    /// Check if the robot is scanning when it connects
     connect(this, SIGNAL(checkScanning(QString, bool)), parent, SLOT(checkScanningSlot(QString, bool)));
 
     launchWorkers();
@@ -44,53 +55,44 @@ RobotController::~RobotController(){
     stopThreads();
 }
 
-void RobotController::stopThreads() {
-    //qDebug() << "RobotController::stopThreads" << ip << "going to stop the threads";
+void RobotController::stopThreads(void) {
 
     emit stopCmdRobotWorker();
     cmdThread.quit();
     cmdThread.wait();
-    //qDebug() << "RobotController::stopThreads" << ip << "stopCmdRobotWorker ok";
 
     emit stopRobotWorker();
     robotThread.quit();
     robotThread.wait();
-    //qDebug() << "RobotController::stopThreads" << ip << "stopRobotWorker ok";
 
     emit stopMetadataWorker();
     metadataThread.quit();
     metadataThread.wait();
-    //qDebug() << "RobotController::stopThreads" << ip << "stopMetadataWorker ok";
 
     emit stopNewMapWorker();
     newMapThread.quit();
     newMapThread.wait();
-    //qDebug() << "RobotController::stopThreads" << ip << "stopNewMapWorker ok";
 
     emit stopLocalMapWorker();
     localMapThread.quit();
     localMapThread.wait();
-    //qDebug() << "RobotController::stopThreads" << ip << "stopLocalMapWorker ok";
 
     emit stopMapWorker();
     mapThread.quit();
     mapThread.wait();
-    //qDebug() << "RobotController::stopThreads" << ip << "stopMapWorker ok";
 
     emit stopTeleopWorker();
     teleopThread.quit();
     teleopThread.wait();
-    //qDebug() << "RobotController::stopThreads" << ip << "stopTeleopWorker ok";
 
     emit stopParticleCloudWorker();
     particleCloudThread.quit();
     particleCloudThread.wait();
-    //qDebug() << "RobotController::stopThreads" << ip << "stopParticleCloudWorker ok";
 
     qDebug() << "RobotController::stopThreads" << ip << "all threads stopped";
 }
 
-void RobotController::portSentSlot(){
+void RobotController::portSentSlot(void){
     emit startMetadataWorker();
     emit startRobotWorker();
     emit startNewMapWorker();
@@ -101,7 +103,7 @@ void RobotController::portSentSlot(){
 }
 
 
-void RobotController::launchWorkers(){
+void RobotController::launchWorkers(void){
 
     if(ip.length() < 3)
         return;
@@ -112,8 +114,6 @@ void RobotController::launchWorkers(){
     connect(cmdRobotWorker, SIGNAL(robotIsDead()), this, SLOT(robotIsDeadSlot()));
     connect(cmdRobotWorker, SIGNAL(cmdAnswer(QString)), commandController, SLOT(cmdAnswerSlot(QString)));
     connect(cmdRobotWorker, SIGNAL(portSent()), this, SLOT(portSentSlot()));
-    /// so that the first time the RobotController connects its home position and the last modification of its file are sent to
-    /// the application in order to update the homes on both the RobotController and the application side correctly
     connect(cmdRobotWorker, SIGNAL(newConnection(QString)), this, SLOT(updateRobotInfo(QString)));
     connect(commandController, SIGNAL(sendCommandSignal(QString)), cmdRobotWorker, SLOT(sendCommand(QString)));
     connect(this, SIGNAL(pingSignal()), cmdRobotWorker, SLOT(pingSlot()));
@@ -123,7 +123,6 @@ void RobotController::launchWorkers(){
     cmdRobotWorker->moveToThread(&cmdThread);
     cmdThread.start();
 
-    //qDebug() << "RobotController" << name << "at ip" << ip << " launching its RobotController pos thread at port" << PORT_ROBOT_POS;
 
     robotWorker = QPointer<RobotPositionWorker>(new RobotPositionWorker(ip, PORT_ROBOT_POS));
     connect(robotWorker, SIGNAL(valueChangedRobot(float, float, float)),
@@ -135,7 +134,6 @@ void RobotController::launchWorkers(){
     robotWorker->moveToThread(&robotThread);
     robotThread.start();
 
-    //qDebug() << "RobotController" << name << "at ip" << ip << " launching its metadata thread at port" << PORT_ROBOT_POS;
 
     metadataWorker = QPointer<MetadataWorker>(new MetadataWorker(ip, PORT_MAP_METADATA));
     connect(metadataWorker, SIGNAL(valueChangedMetadata(int, int, float, float, float)),
@@ -147,7 +145,6 @@ void RobotController::launchWorkers(){
     metadataWorker->moveToThread(&metadataThread);
     metadataThread.start();
 
-    //qDebug() << "RobotController" << name << "at ip" << ip << " launching its new map thread at port" << PORT_NEW_MAP;
 
     newMapWorker = QPointer<SendNewMapWorker>(new SendNewMapWorker(ip, PORT_NEW_MAP));
     connect(this, SIGNAL(sendNewMapSignal(QString, QString, QString, QImage)), newMapWorker, SLOT(writeTcpDataSlot(QString, QString, QString, QImage)));
@@ -159,6 +156,7 @@ void RobotController::launchWorkers(){
     newMapWorker->moveToThread(&newMapThread);
     newMapThread.start();
 
+
     localMapWorker = QPointer<LocalMapWorker>(new LocalMapWorker(ip, PORT_LOCAL_MAP));
     connect(localMapWorker, SIGNAL(robotIsDead()), this, SLOT(robotIsDeadSlot()));
     connect(this, SIGNAL(stopLocalMapWorker()), localMapWorker, SLOT(stopWorker()));
@@ -168,6 +166,7 @@ void RobotController::launchWorkers(){
     //connect(localMapWorker, SIGNAL(laserValues(float, float, float, QVector<float>, QString)), RobotController->getLaserController(), SLOT(drawObstacles(float,float,float,QVector<float>,QString)));
     localMapWorker->moveToThread(&localMapThread);
     localMapThread.start();
+
 
     mapWorker = QPointer<ScanMapWorker>(new ScanMapWorker(ip, PORT_MAP));
     connect(mapWorker, SIGNAL(valueChangedMap(QByteArray, int, QString, QString, QString, QString, QString, int, int)),
@@ -180,6 +179,7 @@ void RobotController::launchWorkers(){
     mapWorker->moveToThread(&mapThread);
     mapThread.start();
 
+
     teleopWorker = QPointer<TeleopWorker>(new TeleopWorker(ip, PORT_TELEOP));
     connect(teleopWorker, SIGNAL(robotIsDead()), this, SLOT(robotIsDeadSlot()));
     connect(&mapThread, SIGNAL(finished()), teleopWorker, SLOT(deleteLater()));
@@ -188,6 +188,7 @@ void RobotController::launchWorkers(){
     connect(this, SIGNAL(teleopCmd(int)), teleopWorker, SLOT(writeTcpDataSlot(int)));
     teleopWorker->moveToThread(&mapThread);
     mapThread.start();
+
 
     particleCloudWorker = QPointer<ParticleCloudWorker>(new ParticleCloudWorker(ip, PORT_PARTICLE_CLOUD));
     connect(particleCloudWorker, SIGNAL(robotIsDead()), this, SLOT(robotIsDeadSlot()));
@@ -200,12 +201,12 @@ void RobotController::launchWorkers(){
     emit startCmdRobotWorker();
 }
 
-void RobotController::mapReceivedSlot(const QByteArray mapArray, int who, QString mapId, QString mapDate, QString resolution, QString originX, QString originY, int map_width, int map_height){
+void RobotController::mapReceivedSlot(const QByteArray mapArray, const int who, const QString mapId, const QString mapDate, const QString resolution, const QString originX, const QString originY, const int map_width, const int map_height){
     qDebug() << "RobotController::mapReceivedSlot received a map" << who;
 
     switch(who){
         case 3:
-            qDebug() << "RobotController::mapReceivedSlot received a map while scanning 3";
+            qDebug() << "RobotController::mapReceivedSlot received a map while recovering";
             /*QString robotName = robotsController->getRobots()->getRobotViewByIp(ipAddress)->getRobot()->getName();
             QImage image = mapController->getImageFromArray(mapArray, map_width, map_height, false);
             image.save(QDir::currentPath() + QDir::separator() + "brutos", "PNG");
@@ -220,7 +221,7 @@ void RobotController::mapReceivedSlot(const QByteArray mapArray, int who, QStrin
             emit newMapFromRobot(ip, mapArray, mapId, mapDate);
         break;
         case 0:
-            qDebug() << "RobotController::mapReceivedSlot received a map while scanning 0";
+            qDebug() << "RobotController::mapReceivedSlot received a map while scanning";
             emit receivedScanMap(ip, mapArray, resolution);
             /*QString robotName = robotsController->getRobots()->getRobotViewByIp(ipAddress)->getRobot()->getName();
             QImage image = mapController->getImageFromArray(mapArray, false);
@@ -238,27 +239,27 @@ void RobotController::sendNewMapToRobots(QString){
     qDebug() << "RobotController::sendNewMapToRobots called";
 }
 
-void RobotController::doneSendingMapSlot(){
+void RobotController::doneSendingMapSlot(void){
     qDebug() << "RobotController::doneSendingMapSlot called";
     sendingMap = false;
 }
 
-void RobotController::updateMetadata(int width, int height, float resolution, float originX, float originY){
+void RobotController::updateMetadata(const int width, const int height, const float resolution, const float originX, const float originY){
     ping();
     emit newMetadata(width, height, resolution, originX, originY);
 }
 
-void RobotController::updateRobot(float posX, float posY, float ori){
+void RobotController::updateRobot(const float posX, const float posY, const float ori){
     ping();
     emit newRobotPos(ip, posX, posY, ori);
 }
 
-void RobotController::robotIsDeadSlot(){
+void RobotController::robotIsDeadSlot(void){
     qDebug() << "RobotController::robotIsDeadSlot called";
     emit robotIsDead(ip);
 }
 
-void RobotController::updateRobotInfo(QString robotInfo){
+void RobotController::updateRobotInfo(const QString robotInfo){
 
     QStringList strList = robotInfo.split(static_cast<u_char>(31), QString::SkipEmptyParts);
     qDebug() << "RobotController::updateRobotInfo" << strList;
@@ -316,7 +317,7 @@ void RobotController::sendCommand(const QString cmd){
 }
 
 
-void RobotController::sendNewMap(QString mapId, QString date, QString mapMetadata, QImage mapImage){
+void RobotController::sendNewMap(const QString mapId, const QString date, const QString mapMetadata, const QImage &mapImage){
     qDebug() << "Robot::sendNewMap to" << ip;
     if(!sendingMap){
         sendingMap = true;

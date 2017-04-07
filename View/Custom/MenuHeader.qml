@@ -33,6 +33,7 @@ Frame {
         onClicked: menuHeader.closeMenu(txt)
         imgSrc: "qrc:/icons/closeBtn"
         anchors.left: parent.left
+        anchors.verticalCenter: parent.verticalCenter
         anchors.leftMargin: 11
     }
 

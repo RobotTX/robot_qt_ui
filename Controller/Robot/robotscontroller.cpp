@@ -88,7 +88,7 @@ RobotsController::~RobotsController(){
     }
 }
 
-void RobotsController::launchServer(){
+void RobotsController::launchServer(void){
     robotServerWorker = QPointer<RobotServerWorker>(new RobotServerWorker(PORT_ROBOT_UPDATE));
     connect(robotServerWorker, SIGNAL(robotIsAlive(QString, QString, QString, int, int)), this, SLOT(robotIsAliveSlot(QString, QString, QString, int, int)));
     connect(this, SIGNAL(stopRobotServerWorker()), robotServerWorker, SLOT(stopWorker()));
@@ -97,10 +97,11 @@ void RobotsController::launchServer(){
     robotServerWorker->moveToThread(&serverThread);
 }
 
-void RobotsController::robotIsAliveSlot(QString name, QString ip, QString ssid, int stage, int battery){
+void RobotsController::robotIsAliveSlot(const QString name, const QString ip, const QString ssid, const int stage, const int battery){
     //qDebug() << "RobotsController::robotIsAliveSlot" << name << ip << ssid << stage << battery;
     if(robots.find(ip) != robots.end()){
-        /// TODO update battery + stage
+        emit setStage(ip, stage);
+        emit setBattery(ip, battery);
         robots.value(ip)->ping();
     } else {
         QPointer<RobotController> robotController = QPointer<RobotController>(new RobotController(this, ip));
@@ -109,14 +110,14 @@ void RobotsController::robotIsAliveSlot(QString name, QString ip, QString ssid, 
     }
 }
 
-void RobotsController::robotIsDeadSlot(QString ip){
+void RobotsController::robotIsDeadSlot(const QString ip){
     if(robots.contains(ip)){
         robots.take(ip)->deleteLater();
         emit removeRobot(ip);
     }
 }
 
-void RobotsController::shortcutAddRobot(){
+void RobotsController::shortcutAddRobot(void){
     QString ip = QString::number(robots.size());
     double posX = ((robots.size() + 1) * 200) % 1555;
     double posY = ((robots.size() + 1) * 200) % 1222;
@@ -141,95 +142,95 @@ void RobotsController::shortcutAddRobot(){
     }
 }
 
-void RobotsController::shortcutDeleteRobot(){
+void RobotsController::shortcutDeleteRobot(void){
     if(robots.size() > 0)
         robotIsDeadSlot(QString::number(robots.size() - 1));
     else
         qDebug() << "You already have no robot";
 }
 
-void RobotsController::sendCommand(QString ip, QString cmd){
+void RobotsController::sendCommand(const QString ip, const QString cmd){
     if(robots.contains(ip))
         robots.value(ip)->sendCommand(cmd);
     else
         qDebug() << "RobotsController::sendCommand Trying to send a command to a robot which is disconnected";
 }
 
-void RobotsController::newRobotPosSlot(QString ip, float posX, float posY, float ori){
+void RobotsController::newRobotPosSlot(const QString ip, const float posX, const float posY, const float ori){
     emit newRobotPos(ip, posX, posY, ori);
 }
 
-void RobotsController::setRobotPos(QString ip, float posX, float posY, float ori){
+void RobotsController::setRobotPos(const QString ip, const float posX, const float posY, const float ori){
     emit setPos(ip, posX, posY, ori);
 }
 
-void RobotsController::newMetadataSlot(int width, int height, float resolution, float originX, float originY){
+void RobotsController::newMetadataSlot(const int width, const int height, const float resolution, const float originX, const float originY){
     emit newMetadata(width, height, resolution, originX, originY);
 }
 
-void RobotsController::updatePathSlot(QString ip, QStringList strList){
+void RobotsController::updatePathSlot(const QString ip, const QStringList strList){
     emit updatePath(ip, strList);
 }
 
-void RobotsController::updateHomeSlot(QString ip, QString homeName, float homeX, float homeY){
+void RobotsController::updateHomeSlot(const QString ip, const QString homeName, const float homeX, const float homeY){
     emit updateHome(ip, homeName, homeX, homeY);
 }
 
-void RobotsController::sendCommandNewName(QString ip, QString name){
+void RobotsController::sendCommandNewName(const QString ip, const QString name){
     sendCommand(ip, QString("a") + QChar(31) + name);
 }
 
-void RobotsController::updateNameSlot(QString ip, QString name){
+void RobotsController::updateNameSlot(const QString ip, const QString name){
     emit setName(ip, name);
 }
 
-void RobotsController::sendCommandDeletePath(QString ip){
+void RobotsController::sendCommandDeletePath(const QString ip){
     sendCommand(ip, QString("m"));
 }
 
-void RobotsController::stoppedDeletedPathSlot(QString ip){
+void RobotsController::stoppedDeletedPathSlot(const QString ip){
     emit setPath(ip, "");
     emit setPlayingPath(ip, false);
 }
 
-void RobotsController::sendCommandPausePath(QString ip){
+void RobotsController::sendCommandPausePath(const QString ip){
     sendCommand(ip, QString("d"));
 }
 
-void RobotsController::sendCommandPlayPath(QString ip){
+void RobotsController::sendCommandPlayPath(const QString ip){
     sendCommand(ip, QString("j"));
 }
 
-void RobotsController::sendCommandStopPath(QString ip){
+void RobotsController::sendCommandStopPath(const QString ip){
     sendCommand(ip, QString("l"));
 }
 
-void RobotsController::updatePlayingPathSlot(QString ip, bool playingPath){
+void RobotsController::updatePlayingPathSlot(const QString ip, const bool playingPath){
     emit setPlayingPath(ip, playingPath);
 }
 
-void RobotsController::checkMapInfoSlot(QString ip, QString mapId, QString mapDate){
+void RobotsController::checkMapInfoSlot(const QString ip, const QString mapId, const QString mapDate){
     emit checkMapInfo(ip, mapId, mapDate);
 }
 
-void RobotsController::sendNewMap(QString ip, QString mapId, QString date, QString mapMetadata, QImage mapImage) {
+void RobotsController::sendNewMap(const QString ip, const QString mapId, const QString date, const QString mapMetadata, const QImage mapImage) {
     robots.value(ip)->sendNewMap(mapId, date, mapMetadata, mapImage);
     emit setHome(ip, "", 0, 0);
     emit setPath(ip, "");
 }
 
-void RobotsController::newMapFromRobotSlot(QString ip, QByteArray mapArray, QString mapId, QString mapDate){
+void RobotsController::newMapFromRobotSlot(const QString ip, const QByteArray mapArray, const QString mapId, const QString mapDate){
     emit newMapFromRobot(ip, mapArray, mapId, mapDate);
 }
 
-void RobotsController::requestMap(QString ip){
+void RobotsController::requestMap(const QString ip){
     if(!receivingMap){
         sendCommand(ip, QString("s") + QChar(31) + QString::number(1));
         receivingMap = true;
     }
 }
 
-void RobotsController::sendNewMapToAllExcept(QString ip, QString mapId, QString date, QString mapMetadata, QImage mapImage) {
+void RobotsController::sendNewMapToAllExcept(const QString ip, const QString mapId, const QString date, const QString mapMetadata, const QImage mapImage) {
     QList<QString> ipList = robots.keys();
     for(int i = 0; i < ipList.size(); i++)
         if(ipList.at(i).compare(ip) != 0)
@@ -243,48 +244,48 @@ void RobotsController::sendNewMapToAllExcept(QString ip, QString mapId, QString 
     timer->start();
 }
 
-void RobotsController::timerSlot(){
+void RobotsController::timerSlot(void){
     qDebug() << "RobotsController::timerSlot should have sent all the map already";
     receivingMap = false;
     timer->stop();
 }
 
-void RobotsController::requestMapForMerging(QString ip){
+void RobotsController::requestMapForMerging(const QString ip){
     if(!receivingMap){
         sendCommand(ip, QString("s") + QChar(31) + QString::number(2));
         receivingMap = true;
     }
 }
 
-void RobotsController::processMapForMerge(QByteArray map, QString resolution){
+void RobotsController::processMapForMerge(const QByteArray map, const QString resolution){
     qDebug() << "RobotsController::processMapForMerge";
     emit sendMapToProcessForMerge(map, resolution);
 }
 
-void RobotsController::startedScanningSlot(QString ip){
+void RobotsController::startedScanningSlot(const QString ip){
     emit startedScanning(ip);
 }
 
-void RobotsController::stoppedScanningSlot(QString ip){
+void RobotsController::stoppedScanningSlot(const QString ip){
     emit stoppedScanning(ip);
 }
 
-void RobotsController::pausedScanningSlot(QString ip){
+void RobotsController::pausedScanningSlot(const QString ip){
     emit pausedScanning(ip);
 }
 
-void RobotsController::receivedScanMapSlot(QString ip, QByteArray map, QString resolution){
+void RobotsController::receivedScanMapSlot(const QString ip, const QByteArray map, const QString resolution){
     emit receivedScanMap(ip, map, resolution);
 }
 
-void RobotsController::sendTeleop(QString ip, int teleop){
+void RobotsController::sendTeleop(const QString ip, const int teleop){
     if(robots.contains(ip))
         robots.value(ip)->sendTeleop(teleop);
     else
         qDebug() << "RobotsController::sendTeleop Trying to send a teleop cmd to a robot which is disconnected";
 }
 
-void RobotsController::checkScanningSlot(QString ip, bool scanning){
+void RobotsController::checkScanningSlot(const QString ip, const bool scanning){
     /// update the robot model
     emit setScanningOnConnection(ip, scanning);
 

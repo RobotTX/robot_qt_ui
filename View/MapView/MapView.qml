@@ -420,7 +420,7 @@ Frame {
         mapViewFrame.savePosition(mapImage.x, mapImage.y, mapImage.scale, mapSrc.substring(6))
     }
 
-    function test(){
+    function mapFileChanged(){
         console.log("changed file " + "file:/" + map._mapFile+ " " + mapImage.source);
         mapImage.source = "";
         mapImage.source = "file:/" + map._mapFile;

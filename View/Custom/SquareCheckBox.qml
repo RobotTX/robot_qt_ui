@@ -1,5 +1,8 @@
 import QtQuick 2.7
 import QtQuick.Controls 2.1
+
+import QtQuick 2.7
+import QtQuick.Controls 2.1
 import "../../Helper/style.js" as Style
 
 
@@ -10,16 +13,14 @@ CheckBox {
     indicator: Rectangle {
         implicitWidth: 16
         implicitHeight: 16
-        radius: 8
-        border.color: "#cdcdcd"
+        radius: 3
+        border.color: control.checked ? Style.darkSkyBlueBorder : "#cdcdcd"
         border.width: 1
-        Rectangle {
-            visible: control.checked || control.hovered
-            color: !control.checked && control.hovered ? "#d6d6d6" : "#4e4e4e"
-            border.color: !control.checked && control.hovered ? "#d6d6d6" : "#3e3e3e"
-            radius: 3
-            anchors.margins: 5
-            anchors.fill: parent
+        color: control.checked ? Style.darkSkyBlue : control.hovered ? "#d6d6d6" : "white"
+        Image {
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.horizontalCenter: parent.horizontalCenter
+            source: "qrc:/icons/checkmark"
         }
     }
 
@@ -33,3 +34,4 @@ CheckBox {
         leftPadding: control.indicator.width
     }
 }
+
