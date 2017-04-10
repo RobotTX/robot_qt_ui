@@ -30,6 +30,7 @@ Frame {
         imgSrc: "qrc:/icons/back"
         anchors.left: parent.left
         anchors.leftMargin: 11
+        anchors.verticalCenter: parent.verticalCenter
         onClicked: backToMenu()
     }
 

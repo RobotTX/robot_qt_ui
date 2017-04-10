@@ -506,7 +506,7 @@ bool execCommand(ros::NodeHandle n, std::vector<std::string> command){
 		case 'z':
 		{
 			if(command.size() == 1){
-				std::cout << "(Command system) Gobot restars its packages" << std::endl;
+				std::cout << "(Command system) Gobot restarts its packages" << std::endl;
 				recovering = false;
 				scanning = false;
 				system(("sh " + COMPUTER_SOFTWARE + "restart_packages.sh").c_str());

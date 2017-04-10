@@ -276,9 +276,11 @@ void RobotController::updateRobotInfo(const QString robotInfo){
         bool recovering = static_cast<QString>(strList.takeFirst()).toInt();
         /// What remains in the list is the path
 
-        emit updatePath(ip, strList);
+        if(!strList.empty())
+            emit updatePath(ip, strList);
 
-        emit updateHome(ip, homeName, homeX, homeY);
+        if(homeX != -1 && homeY != -1)
+            emit updateHome(ip, homeName, homeX, homeY);
 
         emit checkMapInfo(ip, mapId, mapDate);
 

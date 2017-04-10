@@ -167,11 +167,34 @@ Frame {
 
     Label {
         id: pathLabel
-        text: pathName !== "" && pathPoints.count > 0 ? (playingPath ? qsTr("Heading to " + pathPoints.get(stage).pathPointName) : qsTr("Waiting at " + pathPoints.get(stage).pathPointName)) : qsTr("No Path Assigned")
+        text: {
+            if(pathName !== "" && pathPoints.count > 0){
+                if(stage >= 0){
+                    if(playingPath)
+                        qsTr("Heading to " + pathPoints.get(stage).pathPointName);
+                    else
+                        qsTr("Waiting to go to " + pathPoints.get(stage).pathPointName);
+                } else {
+                    if(stage == -1)
+                        qsTr("Stuck going to " + pathPoints.get(Math.abs(stage + 1)).pathPointName);
+                    else
+                        qsTr("Stuck going from " + pathPoints.get(Math.abs(stage  + 2)).pathPointName + " to " + pathPoints.get(Math.abs(stage + 1)).pathPointName);
+                }
+            } else
+            qsTr("No Path Assigned");
+        }
         font.pixelSize: 14
         maximumLineCount: 1
         elide: Text.ElideRight
-        color: pathName !== "" && pathPoints.count > 0 ? Style.darkSkyBlue : Style.midGrey2
+        color: {
+            if(pathName !== "" && pathPoints.count > 0){
+                if(stage >= 0)
+                    Style.darkSkyBlue
+                else
+                    Style.redError2
+            } else
+                Style.midGrey2
+        }
         anchors {
             top: batteryLevel.bottom
             left: parent.left

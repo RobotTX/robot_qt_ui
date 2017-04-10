@@ -168,11 +168,11 @@ void MainController::loadMapConfig(QString fileName) const {
         qDebug() << "MainController::loadMapBtnEvent map to load :" << filePath;
         /// if we are able to find the configuration then we load the map
         if(mapController->loadMapConfig(filePath)){
-            // TODO need some kind of equivalent
-/*
-            for(int i = 0; i < robotsController->getRobots()->getRobotsVector().size(); i++)
-                robotsController->getRobots()->getRobotsVector().at(i)->getRobot()->sendNewMap(mapController->getMap());
-*/
+            robotsController->sendMapToAllRobots(mapController->getMapId().toString(),
+                                                 mapController->getDateTime().toString("yyyy-MM-dd-hh-mm-ss"),
+                                                 mapController->getMetadataString(),
+                                                 mapController->getMapImage());
+
             /// clears the map of all paths and points
             pointController->clearPoints();
 
@@ -190,7 +190,10 @@ void MainController::loadMapConfig(QString fileName) const {
             /// saves the imported paths in the current paths file
             PathXMLParser::save(pathController, QDir::currentPath() + QDir::separator() + "currentPaths.xml");
 
-        } else {/*
+        } else {
+            /// TODO emit signal to open warning box
+            Q_UNIMPLEMENTED();
+            /*
             QMessageBox warningBox;
             warningBox.setText("No configuration found for this map.");
             Q_UNREACHABLE();
@@ -388,6 +391,25 @@ void MainController::processMapForMerge(QByteArray mapArray, QString resolution)
     emit sendImageToMerge(image, resolution.toDouble());
 }
 
+void MainController::resetMapConfigurationAfterMerge(QString file_name){
+    qDebug() << "MainController::resetMapConfigurationAfterMerge" << file_name;
+    mapController->requestReloadMap("file://" + file_name);
+    pointController->clearPoints();
+    pathController->clearPaths();
+    saveMapConfig(file_name, 1.0, 0.0, 0.0);
+    QUuid mapId = QUuid::createUuid();
+
+    QString date = QDate::currentDate().toString("yyyy-MM-dd-hh-mm-ss");
+
+    qDebug() << mapController->getMetadataString() << mapController->getMapImage().size();
+
+    QString mapMetadata = mapController->getMetadataString();
+
+    QImage img(file_name);
+
+    robotsController->sendMapToAllRobots(mapId.toString(), date, mapMetadata, img);
+}
+
 /************************* SCANNING *************************/
 
 void MainController::startScanningSlot(QString ip){
@@ -423,27 +445,8 @@ void MainController::sendTeleopSlot(QString ip, int teleop){
     robotsController->sendTeleop(ip, teleop);
 }
 
-void MainController::resetMapConfigurationAfterMerge(QString file_name){
-    qDebug() << "MainController::resetMapConfigurationAfterMerge" << file_name;
-    mapController->requestReloadMap("file://" + file_name);
-    pointController->clearPoints();
-    pathController->clearPaths();
-    saveMapConfig(file_name, 1.0, 0.0, 0.0);
-    QUuid mapId = QUuid::createUuid();
-
-    QString date = QDate::currentDate().toString("yyyy-MM-dd-hh-mm-ss");
-
-    qDebug() << mapController->getMetadataString() << mapController->getMapImage().size();
-
-    QString mapMetadata = mapController->getMetadataString();
-
-    QImage img(file_name);
-
-    robotsController->sendMapToAllRobots(mapId.toString(), date, mapMetadata, img);
-}
-
 // dumb slot to import dumb image and call mapController->getScanMapController, get image from mapcontroller
 void MainController::testScanSlot(){
     qDebug() << "MainController::testScanSlot called";
-    mapController->getScanMapController()->receivedScanMap(ip, mapController->getMapImage(), resolution);
+    //mapController->getScanMapController()->receivedScanMap(ip, mapController->getMapImage(), resolution);
 }
