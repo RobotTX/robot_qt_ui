@@ -72,6 +72,8 @@ private slots:
     void receivedScanMapSlot(QString ip, QByteArray map, QString resolution);
     void sendTeleopSlot(QString ip, int teleop);
 
+    void resetMapConfigurationAfterMerge(QString file_name);
+
 signals:
     void setHome(QVariant ip, QVariant name, QVariant posX, QVariant posY);
     void setPath(QVariant ip, QVariant name);

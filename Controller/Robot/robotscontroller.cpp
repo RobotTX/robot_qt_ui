@@ -289,3 +289,11 @@ void RobotsController::sendTeleop(QString ip, int teleop){
     else
         qDebug() << "RobotsController::sendTeleop Trying to send a teleop cmd to a robot which is disconnected";
 }
+
+void RobotsController::sendMapToAllRobots(QString mapId, QString date, QString mapMetadata, QImage img){
+    QMapIterator<QString, QPointer<RobotController>> it(robots);
+    while(it.hasNext()){
+        it.next();
+        robots.value(it.key())->sendNewMap(mapId, date, mapMetadata, img);
+    }
+}

@@ -21,6 +21,8 @@ public:
     RobotsController(QObject *applicationWindow, MainController *parent);
     ~RobotsController();
 
+    QMap<QString, QPointer<RobotController>> getRobots(void) const { return robots; }
+
     void setRobotPos(QString ip, float posX, float posY, float ori);
     void sendCommand(QString ip, QString cmd);
     void sendNewMap(QString ip, QString mapId, QString date, QString mapMetadata, QImage mapImage);
@@ -28,6 +30,8 @@ public:
     void sendNewMapToAllExcept(QString ip, QString mapId, QString date, QString mapMetadata, QImage mapImage);
     void requestMapForMerging(QString ip);
     void sendTeleop(QString ip, int teleop);
+
+    void sendMapToAllRobots(QString mapId, QString date, QString mapMetadata, QImage img);
 
 private:
     void launchServer();
