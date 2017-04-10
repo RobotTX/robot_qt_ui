@@ -33,6 +33,45 @@ Window {
         onCancelScan: scanWindow.close()
     }
 
+    Rectangle {
+
+        clip: true
+
+        anchors {
+            top: parent.top
+            left: scanMapLeftMenu.right
+            right: parent.right
+            bottom: parent.bottom
+        }
+
+        Rectangle {
+
+            id: scanMap
+            clip: true
+            objectName: "scanMapView"
+
+            width: 2048
+            height: 2048
+
+            color: "#cdcdcd"
+
+            MouseArea {
+                anchors.fill: parent
+                clip: true
+                acceptedButtons: Qt.LeftButton
+                drag.target: parent
+
+                onClicked: console.log(mouseX + " " + mouseY + " width " + width + " height " + height)
+
+                onWheel: {
+                    var newScale = scanMap.scale + scanMap.scale * wheel.angleDelta.y / 120 / 10;
+                    if(newScale > 0.20 && newScale < Style.maxZoom)
+                        scanMap.scale = newScale;
+                }
+            }
+        }
+    }
+
     DualChoiceMessageDialog {
         id: dualChoiceMessageDialog
         x: parent.width / 2 - width / 2

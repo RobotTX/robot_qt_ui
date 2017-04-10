@@ -3,7 +3,6 @@
 
 #include <QtQuick/QQuickPaintedItem>
 #include <QImage>
-#include <QPointer>
 
 class QMouseEvent;
 
@@ -26,11 +25,6 @@ public:
     }
 
     void paint(QPainter *painter) Q_DECL_OVERRIDE;
-
-signals:
-
-    void widthChanged();
-    void heightChanged();
 
 private:
     int _angle;
