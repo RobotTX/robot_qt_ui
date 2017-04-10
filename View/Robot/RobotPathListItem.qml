@@ -244,7 +244,19 @@ Frame {
                             Rectangle {
                                 height: 15
                                 width: 2
-                                color: stage >= index ? Style.darkSkyBlue : "#d7d7d7"
+                                color: {
+                                    if(stage >= 0){
+                                        if(stage >= index)
+                                            Style.darkSkyBlue
+                                        else
+                                            "#d7d7d7"
+                                    } else {
+                                        if(Math.abs(stage + 1) >= index)
+                                            Style.redError2
+                                        else
+                                            "#d7d7d7"
+                                    }
+                                }
                                 anchors.horizontalCenter: rect.horizontalCenter
                                 anchors.bottom: rect.top
                                 visible: index > 0
@@ -255,7 +267,19 @@ Frame {
                                 height: 10
                                 width: height
                                 radius: height
-                                color: "#d7d7d7"
+                                color: {
+                                    if(stage >= 0){
+                                        if(stage > index)
+                                            Style.darkSkyBlue
+                                        else
+                                            "#d7d7d7"
+                                    } else {
+                                        if(Math.abs(stage + 1) > index)
+                                            Style.redError2
+                                        else
+                                            "#d7d7d7"
+                                    }
+                                }
                                 anchors.verticalCenter: parent.verticalCenter
                                 anchors.left: parent.left
                                 anchors.leftMargin: 25

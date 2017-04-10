@@ -15,10 +15,10 @@ Frame {
     id: mapViewFrame
     objectName: "mapViewFrame"
 
-    // declared as properties so that main.qml can send them to the C++ side, sending mapImage.scale instead of zoom does not work
+    // declared as properties so that main.qml can send them to the C++ side, sending zoomScale.xScale instead of zoom does not work
     property double centerX: mapImage.x
     property double centerY: mapImage.y
-    property double zoom: mapImage.scale
+    property double zoom: zoomScale.xScale
 
     // this is to be able to display messages at the top from other classes
     property TopView topView: topViewId
@@ -167,9 +167,6 @@ Frame {
             transform: [
                        Scale {
                            id: zoomScale
-                       },
-                       Translate {
-                           id: zoomTranslate
                        }
                    ]
 
@@ -177,10 +174,12 @@ Frame {
                 anchors.fill: parent
                 acceptedButtons: Qt.LeftButton | Qt.RightButton
                 hoverEnabled: true
+                property bool canDrag: true
 
-                drag.target: parent
+                drag.target: canDrag ? parent : undefined
 
                 onWheel: {
+                    canDrag = false
                     var factor = 1 + wheel.angleDelta.y / 120 / 10;
                     var newScale = zoomScale.xScale * factor;
 
@@ -201,6 +200,10 @@ Frame {
                         mapImage.y = mapImage.y + offsetY;
                     }
                 }
+
+                onPressed: canDrag = true
+                onReleased: canDrag = true
+
                 onClicked: {
                     if (mouse.button === Qt.LeftButton) {
                         if(tmpPointView.visible){
@@ -410,14 +413,15 @@ Frame {
             zoom = Style.maxZoom;
         else if(zoom < Style.minZoom)
             zoom = Style.minZoom;
-        mapImage.scale = zoom;
+        zoomScale.xScale = zoom;
+        zoomScale.yScale = zoom;
         mapImage.x = posX;
         mapImage.y = posY;
     }
 
     function emitPosition(){
         // qml got a path of this format : file://path_understood_by_Qt, so we get rid of the first 6 characters
-        mapViewFrame.savePosition(mapImage.x, mapImage.y, mapImage.scale, mapSrc.substring(6))
+        mapViewFrame.savePosition(mapImage.x, mapImage.y, zoomScale.xScale, mapSrc.substring(6))
     }
 
     function mapFileChanged(){

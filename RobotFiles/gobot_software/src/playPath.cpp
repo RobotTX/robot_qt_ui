@@ -62,7 +62,8 @@ void getStatus(const actionlib_msgs::GoalStatusArray::ConstPtr& goalStatusArray)
 			if(!waitingForNextGoal){
 				waitingForNextGoal = true;
 				// we use -stage to tell where on the path we blocked
-				setStageInFile(-stage);
+				// - 1 because if we get stuck going to the first stage, it's going to be 0
+				setStageInFile(-stage - 1);
 			}
 		} else {
 			waitingForNextGoal = false;
@@ -116,11 +117,12 @@ bool pausePathService(std_srvs::Empty::Request &req, std_srvs::Empty::Response &
 }
 
 void goNextPoint(){
-	std::cout << "(PlayPath) goNextPoint called" << std::endl;
 	// get the next point in the path list and tell the robot to go there
 
 	if(path.size()-1 == stage)
 		std::cout << "(PlayPath) This is my final destination" << std::endl;
+
+	std::cout << "(PlayPath) goNextPoint called " << stage << " " << path.at(stage).x << " " << path.at(stage).y << std::endl;
 
     Point point;
     point.x = path.at(stage).x;
@@ -168,7 +170,7 @@ void setStageInFile(const int _stage){
 }
 
 bool playPathService(std_srvs::Empty::Request &req, std_srvs::Empty::Response &res){
-	std::cout << "(PlayPath) playPathService called" << std::endl;
+	std::cout << "(PlayPath) playPathService called while at stage : " << stage << std::endl;
 
 	path = std::vector<Point>();
 
