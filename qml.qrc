@@ -73,5 +73,6 @@
         <file>View/ScanMap/ScanMapListItem.qml</file>
         <file>View/Custom/CustomSlider.qml</file>
         <file>View/Custom/Teleop.qml</file>
+        <file>View/Custom/SquareCheckBox.qml</file>
     </qresource>
 </RCC>

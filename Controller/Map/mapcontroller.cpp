@@ -22,7 +22,7 @@ MapController::MapController(QQmlApplicationEngine* engine, QObject *application
         connect(this, SIGNAL(setMapPosition(QVariant, QVariant, QVariant)), mapViewFrame, SLOT(setMapPosition(QVariant ,QVariant, QVariant)));
         connect(mapViewFrame, SIGNAL(savePosition(double, double, double, QString)), this, SLOT(savePositionSlot(double, double, double, QString)));
         connect(mapViewFrame, SIGNAL(loadPosition()), this, SLOT(loadPositionSlot()));
-        connect(map, SIGNAL(mapFileChanged()), mapViewFrame, SLOT(test()));
+        connect(map, SIGNAL(mapFileChanged()), mapViewFrame, SLOT(mapFileChanged()));
         connect(mapViewFrame, SIGNAL(posClicked(double, double)), this, SLOT(posClicked(double, double)));
     } else {
         qDebug() << "MapController::MapController could not find the mapViewFrame";
@@ -100,7 +100,7 @@ void MapController::initializeMap(void){
         qDebug() << "Map::initializeMap could not find the currentMap file at :" << currentPathFile;
 }
 
-void MapController::savePositionSlot(double posX, double posY, double zoom, QString mapSrc){
+void MapController::savePositionSlot(const double posX, const double posY, const double zoom, const QString mapSrc){
     QString currentPathFile = QDir::currentPath() + QDir::separator() + "currentMap.txt";
     std::ofstream file(currentPathFile.toStdString(), std::ios::out | std::ios::trunc);
 
@@ -209,11 +209,11 @@ bool MapController::loadMapConfig(const QString fileName) {
     return false;
 }
 
-void MapController::centerMap(double centerX, double centerY, double zoom) {
+void MapController::centerMap(const double centerX, const double centerY, const double zoom) {
     emit setMapPosition(centerX, centerY, zoom);
 }
 
-void MapController::saveEditedImage(QString location){
+void MapController::saveEditedImage(const QString location){
     editMapController->getPaintedItem()->saveImage(map->getMapImage(), location);
     emit requestReloadMap("file:/" + location);
     /*
@@ -222,7 +222,7 @@ void MapController::saveEditedImage(QString location){
     */
 }
 
-void MapController::posClicked(double x, double y){
+void MapController::posClicked(const double x, const double y){
     QPointF pos = Helper::Convert::pixelCoordToRobotCoord(
     QPointF(x, y),
     getOrigin().x(),
@@ -274,7 +274,8 @@ QImage MapController::getImageFromArray(const QByteArray& mapArrays, const int m
     return image;
 }
 
-void MapController::newMapFromRobot(QByteArray mapArray, QString mapId, QString mapDate){
+void MapController::newMapFromRobot(const QByteArray& mapArray, const QString mapId, const QString mapDate){
+    /// Convert the map from a byteArray to a QImage and save it
     map->setMapImage(getImageFromArray(mapArray, map->getWidth(), map->getHeight(), true));
     map->setMapId(QUuid(mapId));
     map->setDateTime(QDateTime::fromString(mapDate, "yyyy-MM-dd-hh-mm-ss"));

@@ -12,6 +12,7 @@ Frame {
     property Robots robotModel
     property Points pointModel
     property Paths pathModel
+    property real batteryWarningThreshold
 
     background: Rectangle {
         color: Style.lightGreyBackground
@@ -29,6 +30,7 @@ Frame {
     Component {
         id: delegate
         RobotListItem {
+            batteryWarningThreshold: robotMenuFrame.batteryWarningThreshold
             pointModel: robotMenuFrame.pointModel
             pathModel: robotMenuFrame.pathModel
             robotModel: robotMenuFrame.robotModel

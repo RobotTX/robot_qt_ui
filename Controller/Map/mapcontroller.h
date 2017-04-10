@@ -19,6 +19,7 @@ public:
 
     MapController(QQmlApplicationEngine* engine, QObject *applicationWindow, MainController *parent);
 
+    /// Getters
     QPointer<MergeMapController> getMergeMapController(void) const { return mergeMapController; }
     QPointer<ScanMapController> getScanMapController(void) const { return scanMapController; }
 
@@ -32,6 +33,7 @@ public:
     double getResolution(void) const { return map->getResolution(); }
     QString getMetadataString(void) const;
 
+    /// Setters
     void setMapFile(const QString file);
     void setOrigin(const QPointF origin) { map->setOrigin(origin); }
     void setHeight(const int height) { map->setHeight(height); }
@@ -78,18 +80,26 @@ public:
      * @param zoom
      * Centers the map on (centerX, centerY) with a zoom coefficient of <zoom>
      */
-    void centerMap(double centerX, double centerY, double zoom);
+    void centerMap(const double centerX, const double centerY, const double zoom);
 
     /**
      * @brief getImageFromArray
      * @param mapArrays
+     * @param map_width
+     * @param map_height
      * @param fromPgm
-     * @return QImage
      * returns a QImage constructed from a QByteArray
      */
     QImage getImageFromArray(const QByteArray& mapArrays, const int map_width, const int map_height, const bool fromPgm);
 
-    void newMapFromRobot(QByteArray mapArray, QString mapId, QString mapDate);
+    /**
+     * @brief newMapFromRobot
+     * @param mapArray
+     * @param mapId
+     * @param mapDate
+     * Save the image we just received from a robot as the currentMap
+     */
+    void newMapFromRobot(const QByteArray& mapArray, const QString mapId, const QString mapDate);
 
 private slots:
     /**
@@ -97,7 +107,14 @@ private slots:
      * Restores the position of the map (and zoom) to the last configuration saved
      */
     void loadPositionSlot();
-    void posClicked(double x, double y);
+
+    /**
+     * @brief posClicked
+     * @param x
+     * @param y
+     * Display the clicked position in robot and map coordinates when we click on the map
+     */
+    void posClicked(const double x, const double y);
 
 public slots:
     /**
@@ -105,12 +122,17 @@ public slots:
      * @param posX
      * @param posY
      * @param zoom
-     * @param mapSrc pgm-format map file
+     * @param mapSrc path of the pgm-format map file
      * Saves the current configuration inside the currentMap.txt configuration file
      */
-    void savePositionSlot(double posX, double posY, double zoom, QString mapSrc);
+    void savePositionSlot(const double posX, const double posY, const double zoom, const QString mapSrc);
 
-    void saveEditedImage(QString location);
+    /**
+     * @brief saveEditedImage
+     * @param location
+     * Save the edited image and change it on the main window
+     */
+    void saveEditedImage(const QString location);
 
 signals:
     /**
@@ -127,11 +149,17 @@ signals:
      * Notifies qml to center the map on posX, posY with a zoom coefficient of <zoom>
      */
     void setMapPosition(QVariant posX, QVariant posY, QVariant zoom);
+
+    /**
+     * @brief requestReloadMap
+     * @param location
+     * Change the main window image to the given one
+     */
     void requestReloadMap(QVariant location);
 
 private:
-    QPointer<MergeMapController> mergeMapController;
     QPointer<Map> map;
+    QPointer<MergeMapController> mergeMapController;
     QPointer<EditMapController> editMapController;
     QPointer<ScanMapController> scanMapController;
 };

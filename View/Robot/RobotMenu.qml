@@ -12,6 +12,7 @@ Page {
     property Robots robotModel
     property Points pointModel
     property Paths pathModel
+    property real batteryWarningThreshold
     signal useRobotPathModel(bool use)
     signal closeMenu()
 
@@ -32,6 +33,7 @@ Page {
         robotModel: page.robotModel
         pointModel: page.pointModel
         pathModel: page.pathModel
+        batteryWarningThreshold: page.batteryWarningThreshold
         anchors {
             left: parent.left
             top: robotMenuHeader.bottom

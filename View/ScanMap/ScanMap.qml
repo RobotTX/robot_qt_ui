@@ -16,6 +16,12 @@ Window {
 
     property Robots robotModel
 
+
+    onVisibleChanged: {
+        if(!visible)
+            scanMapLeftMenu.reset();
+    }
+
     ScanMapLeftMenu {
         id: scanMapLeftMenu
         robotModel: scanWindow.robotModel
@@ -24,6 +30,7 @@ Window {
             left: parent.left
             bottom: parent.bottom
         }
+        onCancelScan: scanWindow.close()
     }
 
     DualChoiceMessageDialog {
@@ -32,6 +39,7 @@ Window {
         y: parent.height / 2 - height / 2
 
         onAccepted: scanMapLeftMenu.startScanning(ip)
+        onRejected: scanMapLeftMenu.setBusy(ip, false)
     }
 
     function openRestartScanMessageDialog(ip){
@@ -43,5 +51,11 @@ Window {
             dualChoiceMessageDialog.acceptMessage = "Ok";
             dualChoiceMessageDialog.open();
         }
+    }
+
+    function checkScanWindow(){
+        /// Stop the scan if a scanning robot reconnect after the window has been closed
+        if(!visible)
+            robotModel.stopAllScanOnConnection();
     }
 }

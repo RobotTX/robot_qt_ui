@@ -35,7 +35,8 @@ SOURCES += main.cpp \
     Controller/Map/mergemapcontroller.cpp \
     Controller/Robot/commandcontroller.cpp \
     View/mergemapspainteditem.cpp \
-    Controller/Map/scanmapcontroller.cpp
+    Controller/Map/scanmapcontroller.cpp \
+    View/scanmappainteditem.cpp
 
 RESOURCES += qml.qrc \
     Resources/resources.qrc
@@ -94,4 +95,5 @@ HEADERS += \
     Controller/Map/mergemapcontroller.h \
     Controller/Robot/commandcontroller.h \
     View/mergemapspainteditem.h \
-    Controller/Map/scanmapcontroller.h
+    Controller/Map/scanmapcontroller.h \
+    View/scanmappainteditem.h

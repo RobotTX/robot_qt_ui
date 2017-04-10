@@ -50,6 +50,7 @@ MainController::MainController(QQmlApplicationEngine *engine, QObject* parent) :
         connect(applicationWindow, SIGNAL(shortcutDeleteRobot()), robotsController, SLOT(shortcutDeleteRobot()));
         connect(this, SIGNAL(openMapChoiceMessageDialog(QVariant, QVariant)), applicationWindow, SLOT(openMapChoiceMessageDialog(QVariant, QVariant)));
         connect(applicationWindow, SIGNAL(requestOrSendMap(QString, bool)), this, SLOT(requestOrSendMap(QString, bool)));
+        connect(this, SIGNAL(emitBatteryThreshold(QVariant)), applicationWindow, SLOT(setBatteryThreshold(QVariant)));
 
         QObject* mapMenuFrame = applicationWindow->findChild<QObject*>("mapMenuFrame");
         if(mapMenuFrame){
@@ -61,7 +62,7 @@ MainController::MainController(QQmlApplicationEngine *engine, QObject* parent) :
 
         QObject* settings = applicationWindow->findChild<QObject*>("settings");
         if(settings){
-            connect(this, SIGNAL(emitSettings(QVariant, QVariant, QVariant)), settings, SLOT(setSettings(QVariant, QVariant, QVariant)));
+            connect(this, SIGNAL(emitSettings(QVariant, QVariant)), settings, SLOT(setSettings(QVariant, QVariant)));
             connect(settings, SIGNAL(saveSettingsSignal(int, double, bool)), this, SLOT(saveSettings(int,double,bool)));
         }
         else {
@@ -94,7 +95,8 @@ MainController::MainController(QQmlApplicationEngine *engine, QObject* parent) :
                         showTutorial = list.at(2).toInt() == 1;
                     }
                     qDebug() << "Emitting values" << mapChoice << batteryThreshold << showTutorial;
-                    emit emitSettings(mapChoice, batteryThreshold, showTutorial);
+                    emit emitSettings(mapChoice, showTutorial);
+                    emit emitBatteryThreshold(batteryThreshold);
                }
                file.close();
         } else {
@@ -166,12 +168,12 @@ void MainController::loadMapConfig(QString fileName) const {
         qDebug() << "MainController::loadMapBtnEvent map to load :" << filePath;
         /// if we are able to find the configuration then we load the map
         if(mapController->loadMapConfig(filePath)){
+            // TODO need some kind of equivalent
 /*
             for(int i = 0; i < robotsController->getRobots()->getRobotsVector().size(); i++)
                 robotsController->getRobots()->getRobotsVector().at(i)->getRobot()->sendNewMap(mapController->getMap());
 */
             /// clears the map of all paths and points
-            // TODO need some kind of equivalent
             pointController->clearPoints();
 
             pathController->clearPaths();
@@ -192,7 +194,6 @@ void MainController::loadMapConfig(QString fileName) const {
             /// saves the new configuration to the current configuration file
             XMLParser::save(pointController, QDir::currentPath() + QDir::separator() + "currentPoints.xml");
 
-            // TODO put this back when paths are implemented
             PathXMLParser::readPaths(pathController, QDir::currentPath() + QDir::separator() +  "mapConfigs" + QDir::separator() + mapFileInfo.fileName() + "_paths.xml");
 
             /// saves the imported paths in the current paths file
@@ -216,6 +217,7 @@ void MainController::saveSettings(int mapChoice, double batteryThreshold, bool s
         QTextStream stream(&file);
         stream << mapChoice << " " << batteryThreshold << " " << showTutorial;
         file.close();
+        emit emitBatteryThreshold(batteryThreshold);
     }
 }
 
@@ -414,7 +416,7 @@ void MainController::playPauseScanningSlot(QString ip, bool wasScanning, bool sc
         /// If the robot was already scanning, gmapping is launched so we just want to subscribe to get the map
         /// else the robot shut down while scanning and we need to relaunch gmapping to restart the scan
         /// so we ask if we want to relaunch gmapping and start the scan from the beggining or keep the previously scanned map
-        if(scanningOnConnection)
+        if(!scanningOnConnection)
             emit openRestartScanMessageDialog(ip);
         else
             robotsController->sendCommand(ip, QString("e"));
@@ -449,3 +451,8 @@ void MainController::resetMapConfigurationAfterMerge(QString file_name){
     robotsController->sendMapToAllRobots(mapId.toString(), date, mapMetadata, img);
 }
 
+// dumb slot to import dumb image and call mapController->getScanMapController, get image from mapcontroller
+void MainController::testScanSlot(){
+    qDebug() << "MainController::testScanSlot called";
+    mapController->getScanMapController()->receivedScanMap(ip, mapController->getMapImage(), resolution);
+}

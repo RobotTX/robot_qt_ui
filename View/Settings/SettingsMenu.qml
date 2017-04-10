@@ -10,6 +10,7 @@ Page {
     anchors.fill: parent
 
     property Robots robotModel
+    property real batteryWarningThreshold
 
     signal closeMenu()
 
@@ -24,6 +25,7 @@ Page {
         id: settings
 
         robotModel: page.robotModel
+        oriBatteryWarningThreshold: page.batteryWarningThreshold
 
         anchors {
             left: parent.left

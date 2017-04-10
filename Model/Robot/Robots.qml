@@ -9,6 +9,9 @@ ListModel {
     signal playPathSignal(string ip)
     signal stopPathSignal(string ip)
     signal visiblePathChanged()
+    signal stopScanning(string ip);
+    signal robotDc(string ip);
+    signal robotConnection(string ip);
 
     function addRobot(name, ip, wifi, stage, battery){
         append({
@@ -31,6 +34,7 @@ ListModel {
             "laserActivated": false,
             "scanningOnConnection": false
         });
+        robotConnection(ip);
     }
 
     function removeRobot(ip){
@@ -38,6 +42,7 @@ ListModel {
             if(get(i).ip === ip)
                 remove(i);
         visiblePathChanged();
+        robotDc(ip);
     }
 
     function setPos(ip, posX, posY, orientation){
@@ -158,6 +163,20 @@ ListModel {
         for(var i = 0; i < count; i++)
             if(get(i).ip === ip)
                 return get(i).scanningOnConnection;
+        return false;
+    }
+
+    function stopAllScanOnConnection(){
+        /// Stop the scan if a scanning robot reconnect after the window has been closed
+        for(var i = 0; i < count; i++)
+            if(get(i).scanningOnConnection === true)
+                stopScanning(get(i).ip);
+    }
+
+    function isConnected(ip){
+        for(var i = 0; i < count; i++)
+            if(get(i).ip === ip)
+                return true;
         return false;
     }
 }

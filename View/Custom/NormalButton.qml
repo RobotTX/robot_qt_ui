@@ -15,7 +15,7 @@ Button {
     }
 
     background: Rectangle {
-        color: hovered ? Style.lightBlue : "transparent"
+        color: hovered ? Style.selectedItemColor : "transparent"
     }
 
     Image {

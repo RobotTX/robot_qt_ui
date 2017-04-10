@@ -59,6 +59,7 @@ signals:
      * Signal emitted when we have received the robot position & orientation
      */
     void valueChangedRobot(float posX, float posY, float ori);
+    void robotIsDead();
 
 private :
     QPointer<QTcpSocket> socket;

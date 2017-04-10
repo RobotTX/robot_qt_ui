@@ -28,7 +28,10 @@ Frame {
         border.width: 1
     }
 
-    onVisibleChanged: batterySlider.initializeBatteryThreshold(batteryWarningThreshold)
+    onVisibleChanged: {
+        settingsPage.batteryWarningThreshold = oriBatteryWarningThreshold;
+        batterySlider.initializeBatteryThreshold(batteryWarningThreshold);
+    }
 
     Item {
 
@@ -126,26 +129,13 @@ Frame {
                 property int currentItemCount: 0
                 property bool currentItemLaserActivated
                 model: robotModel
-                delegate: CheckDelegate {
-
+                delegate: SquareCheckBox {
                     id: box
-                    height: 25
-                    anchors.horizontalCenter: parent.horizontalCenter
-
-                    indicator: Image {
-                        id: rect
-                        anchors.verticalCenter: parent.verticalCenter
-                        height: 14
-                        width: 14
-                        source: box.checked ? "qrc:/icons/valid" : "qrc:/icons/unchecked"
-                    }
-
-                    contentItem: Text {
-                        leftPadding: rect.width
-                        verticalAlignment: Text.AlignVCenter
-                        text: name
-                        color: Style.greyText
-                        font.pointSize: 10
+                    text: name
+                    width: flick.width - 20
+                    anchors {
+                        left: parent.left
+                        leftMargin: 20
                     }
                 }
             }
@@ -185,7 +175,7 @@ Frame {
             top: choiceMapLabel.bottom
             topMargin: 20
             left: parent.left
-            leftMargin: 10
+            leftMargin: 20
         }
 
         ButtonGroup {
@@ -415,35 +405,22 @@ Frame {
         opacity: 0.1
     }
 
-    // whether or not we display the tutorial to the user (the messages to help him use the features of the application
-    CheckBox {
-
+    /// whether or not we display the tutorial to the user (the messages to help him use the features of the application
+    SquareCheckBox {
         id: box2
 
         property bool show
+        text: "Show tutorial"
 
-        anchors.top: horizontalSeparation3.bottom
-        anchors.topMargin: 16
+        anchors {
+            top: horizontalSeparation3.bottom
+            topMargin: 16
+        }
 
         checkable: true
         checked: true
 
         onClicked: show = !show
-
-        indicator: Image {
-            id: rect2
-            source: box2.show ? "qrc:/icons/valid" : "qrc:/icons/unchecked"
-        }
-
-        contentItem: Text {
-            anchors.left: rect2.right
-            anchors.leftMargin: 6
-            anchors.verticalCenter: rect2.verticalCenter
-            anchors.verticalCenterOffset: 1
-            text: "Show tutorial"
-            color: Style.greyText
-            font.pointSize: 10
-        }
     }
 
     Button {
@@ -471,7 +448,6 @@ Frame {
 
         onClicked: {
             /// TODO cancel the laser modifications
-            settingsPage.batteryWarningThreshold = oriBatteryWarningThreshold;
             box2.show = oriShowTutorial;
             settingsPage.mapChoice = oriMapChoice;
             settingsPage.close()
@@ -503,8 +479,8 @@ Frame {
         anchors.bottom: parent.bottom
 
         onClicked: {
-            batteryWarningThreshold = batterySlider.threshold;
-            saveSettingsSignal(mapChoice, batterySlider.threshold, box2.show);
+            batteryWarningThreshold = batterySlider.value;
+            saveSettingsSignal(mapChoice, batterySlider.value, box2.show);
         }
     }
 
@@ -515,23 +491,21 @@ Frame {
         anchors.bottom: parent.bottom
         onClicked: {
 
-            batteryWarningThreshold = batterySlider.threshold
-            for(var i = 0; i < robotModel.count; i++){
-                //robots.itemAt(i).laserActivated = robots.itemAt(i).box.checked
-                console.log("item i laser " + robots.itemAt(i).box.checked)
-            }
+            batteryWarningThreshold = batterySlider.value;
+            /*for(var i = 0; i < robotModel.count; i++){
+                //robots.itemAt(i).laserActivated = robots.itemAt(i).box.checked;
+                console.log("item i laser " + robots.itemAt(i).box.checked);
+            }*/
 
-            saveSettingsSignal(mapChoice, batterySlider.threshold, box2.show)
-            settingsPage.close()
+            saveSettingsSignal(mapChoice, batterySlider.value, box2.show);
+            settingsPage.close();
         }
     }
 
-    function setSettings(mapChoice, _thresh, showTutorial){
-        oriBatteryWarningThreshold = _thresh;
+    function setSettings(mapChoice, showTutorial){
         oriShowTutorial = showTutorial;
         oriMapChoice = mapChoice;
 
-        settingsPage.batteryWarningThreshold = _thresh;
         box2.show = showTutorial;
         settingsPage.mapChoice = mapChoice;
     }

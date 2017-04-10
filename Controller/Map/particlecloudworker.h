@@ -41,6 +41,9 @@ private slots:
      */
     void connectSocket();
 
+signals:
+    void robotIsDead();
+
 private:
     QPointer<QTcpSocket> socket;
     QString ipAddress;

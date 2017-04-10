@@ -39,6 +39,7 @@ ApplicationWindow {
 
     property bool useTmpPathModel: false
     property bool useRobotPathModel: false
+    property real batteryWarningThreshold: 20
 
     Item {
         Points {
@@ -101,6 +102,7 @@ ApplicationWindow {
             tmpPathModel: _tmpPathModel
             robotModel: _robotModel
             currentMenu: mainFrame.currentMenu
+            batteryWarningThreshold: applicationWindow.batteryWarningThreshold
             anchors {
                 left: mainMenu.right
                 top: parent.top
@@ -184,5 +186,9 @@ ApplicationWindow {
         console.log("updating");
         mapView.mapSrc = "qrc:/icons/hand";
         mapView.mapSrc = file_name;
+    }
+
+    function setBatteryThreshold(threshold){
+        batteryWarningThreshold = threshold;
     }
 }

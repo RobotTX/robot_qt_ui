@@ -6,12 +6,14 @@ import "../../Helper/helper.js" as Helper
 import "../../Model/Point"
 import "../../Model/Path"
 import "../../Model/Robot"
+import "../Custom"
 
 Frame {
     id: frame
     property Points pointModel
     property Paths pathModel
     property Robots robotModel
+    property real batteryWarningThreshold
 
     height: 105 + robotPathListItem.height
 
@@ -69,60 +71,30 @@ Frame {
             onVisibleChanged: nameField.text = ""
         }
 
-        Button {
+        SmallButton {
             id: cancelName
+            imgSrc: "qrc:/icons/closeBtn"
             anchors {
                 verticalCenter: nameField.verticalCenter
                 right: saveName.left
                 rightMargin: 5
             }
 
-            background: Rectangle {
-                color: parent.hovered ? Style.lightGreyBackgroundHover : "transparent"
-                radius: parent.hovered ? Style.smallBtnWidth / 2 : 0
-            }
-
-            width: Style.smallBtnWidth
-            height: Style.smallBtnHeight
-            padding: 0
-
-            contentItem: Image {
-                asynchronous: true
-                source: "qrc:/icons/closeBtn"
-                fillMode: Image.Pad // For not stretching image
-                anchors.horizontalCenter: parent.horizontalCenter
-                anchors.verticalCenter: parent.verticalCenter
-            }
             onClicked: {
                 nameLabel.visible = true;
                 nameField.focus = false;
             }
         }
 
-        Button {
+        SmallButton {
             id: saveName
+            imgSrc: "qrc:/icons/save"
             anchors {
                 verticalCenter: nameField.verticalCenter
                 right: parent.right
                 rightMargin: 5
             }
 
-            background: Rectangle {
-                color: parent.hovered ? Style.lightGreyBackgroundHover : "transparent"
-                radius: parent.hovered ? Style.smallBtnWidth / 2 : 0
-            }
-
-            width: Style.smallBtnWidth
-            height: Style.smallBtnHeight
-            padding: 0
-
-            contentItem: Image {
-                asynchronous: true
-                source: "qrc:/icons/save"
-                fillMode: Image.Pad // For not stretching image
-                anchors.horizontalCenter: parent.horizontalCenter
-                anchors.verticalCenter: parent.verticalCenter
-            }
             onClicked: {
                 var newName = Helper.formatName(nameField.text);
                 if(newName !== ""){
@@ -134,30 +106,15 @@ Frame {
         }
     }
 
-    Button {
+    SmallButton {
         id: rightButton
+        imgSrc: "qrc:/icons/more"
         anchors {
             verticalCenter: nameLabel.verticalCenter
             right: parent.right
             rightMargin: 20
         }
 
-        background: Rectangle {
-            color: parent.hovered ? Style.lightGreyBackgroundHover : "transparent"
-            radius: parent.hovered ? Style.smallBtnWidth / 2 : 0
-        }
-
-        width: Style.smallBtnWidth
-        height: Style.smallBtnHeight
-        padding: 0
-
-        contentItem: Image {
-            asynchronous: true
-            source: "qrc:/icons/more"
-            fillMode: Image.Pad // For not stretching image
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.verticalCenter: parent.verticalCenter
-        }
         onClicked: robotPopupMenu.open()
 
         RobotPopupMenu {
@@ -203,7 +160,7 @@ Frame {
                 width: batteryLevel.visualPosition * parent.width
                 height: parent.height
                 radius: 2
-                color: Style.darkSkyBlue
+                color: battery < 50 * batteryWarningThreshold ? Style.redError2 : Style.darkSkyBlue
             }
         }
     }

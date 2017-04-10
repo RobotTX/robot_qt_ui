@@ -34,6 +34,7 @@ Frame {
         imgSrc: "qrc:/icons/closeBtn"
         anchors.left: parent.left
         anchors.leftMargin: 11
+        anchors.verticalCenter: parent.verticalCenter
     }
 
     Label {

@@ -34,6 +34,8 @@ Frame {
     property bool useRobotPathModel
 
     signal posClicked(double x, double y)
+    signal savePosition(double posX, double posY, double zoom, string mapSrc)
+    signal loadPosition()
 
     Connections {
         target: pathModel
@@ -58,8 +60,8 @@ Frame {
         _isVisible: false
         originX: 0
         originY: 0
-        x: 0 - width / 2
-        y: 0 - height
+        x: - width / 2
+        y: - height
         tooltipText: "Drag me or click the map to modify my position"
         signal tmpPointViewPosChanged()
 
@@ -79,9 +81,6 @@ Frame {
             }
         }
     }
-
-    signal savePosition(double posX, double posY, double zoom, string mapSrc)
-    signal loadPosition()
 
     padding: 0
 
@@ -421,7 +420,7 @@ Frame {
         mapViewFrame.savePosition(mapImage.x, mapImage.y, mapImage.scale, mapSrc.substring(6))
     }
 
-    function test(){
+    function mapFileChanged(){
         console.log("changed file " + "file:/" + map._mapFile+ " " + mapImage.source);
         mapImage.source = "";
         mapImage.source = "file:/" + map._mapFile;

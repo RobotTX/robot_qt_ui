@@ -3,6 +3,7 @@ import QtQuick.Controls 2.1
 import "../../Helper/style.js" as Style
 import "../../Model/Path"
 import "../../Model/Robot"
+import "../Custom"
 import "../Path"
 
 Frame {
@@ -97,7 +98,7 @@ Frame {
     Rectangle {
         id: pathItem
         visible: !noPathItem.visible
-        height: pathIsOpen ? 145 : 59
+        height: pathIsOpen ? 145 : 55
 
         anchors {
             top: parent.top
@@ -121,17 +122,12 @@ Frame {
                 right: parent.right
             }
 
-
-            Button {
+            SmallButton {
                 id: hideShowPathButton
-
+                imgSrc: pathIsVisible ? "qrc:/icons/visible" : "qrc:/icons/invisible"
+                backColor: "white"
                 height: parent.height - 2
                 width: 32
-                padding: 0
-
-                background: Rectangle {
-                    color: "white"
-                }
 
                 anchors {
                     verticalCenter: parent.verticalCenter
@@ -139,13 +135,6 @@ Frame {
                     leftMargin: 8
                 }
 
-                contentItem: Image {
-                    asynchronous: true
-                    source: pathIsVisible ? "qrc:/icons/visible" : "qrc:/icons/invisible"
-                    fillMode: Image.Pad // For not stretching image
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    anchors.verticalCenter: parent.verticalCenter
-                }
                 onClicked: {
                     robotModel.hideShowPathOnMap(ip);
                     pathModel.visiblePathChanged();
@@ -179,7 +168,12 @@ Frame {
                 padding: 0
 
                 background: Rectangle {
-                    color: "white"
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    anchors.verticalCenter: parent.verticalCenter
+                    width: Math.min(expandPathButton.width, expandPathButton.height)
+                    height: width
+                    color: expandPathButton.hovered ? Style.lightGreyBackgroundHover : "white"
+                    radius: expandPathButton.hovered ? width/2 : 0
                 }
 
                 anchors {
@@ -206,8 +200,6 @@ Frame {
                 color: Style.lightGreyBorder
             }
         }
-
-
 
         Item {
             visible: pathIsOpen
@@ -314,7 +306,12 @@ Frame {
                 padding: 0
 
                 background: Rectangle {
-                    color: "white"
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    anchors.verticalCenter: parent.verticalCenter
+                    width: Math.min(playPausePathButton.width, playPausePathButton.height)
+                    height: width
+                    color: playPausePathButton.hovered ? Style.lightGreyBackgroundHover : "white"
+                    radius: playPausePathButton.hovered ? width/2 : 0
                 }
 
                 anchors {
@@ -341,7 +338,12 @@ Frame {
                 padding: 0
 
                 background: Rectangle {
-                    color: "white"
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    anchors.verticalCenter: parent.verticalCenter
+                    width: Math.min(stopPathButton.width, stopPathButton.height)
+                    height: width
+                    color: stopPathButton.hovered ? Style.lightGreyBackgroundHover : "white"
+                    radius: stopPathButton.hovered ? width/2 : 0
                 }
 
                 anchors {
@@ -367,7 +369,12 @@ Frame {
                 padding: 0
 
                 background: Rectangle {
-                    color: "white"
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    anchors.verticalCenter: parent.verticalCenter
+                    width: Math.min(goHomeButton.width, goHomeButton.height)
+                    height: width
+                    color: goHomeButton.hovered ? Style.lightGreyBackgroundHover : "white"
+                    radius: goHomeButton.hovered ? width/2 : 0
                 }
 
                 anchors {

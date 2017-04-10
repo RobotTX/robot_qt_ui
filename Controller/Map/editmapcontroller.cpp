@@ -15,7 +15,7 @@ EditMapController::EditMapController(QQmlApplicationEngine* engine, QObject *app
         paintedItem = qobject_cast<EditMapPaintedItem*>(component.create());
         QQmlEngine::setObjectOwnership(paintedItem, QQmlEngine::CppOwnership);
 
-        // that is where we actually tell the paintemItem to paint itself
+        /// that is where we actually tell the paintemItem to paint itself
         QQuickItem* mapView = applicationWindow->findChild<QQuickItem*> ("editMapImage");
         paintedItem->setParentItem(mapView);
         paintedItem->setParent(engine);
