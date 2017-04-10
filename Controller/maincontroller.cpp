@@ -178,15 +178,6 @@ void MainController::loadMapConfig(QString fileName) const {
 
             pathController->clearPaths();
 
-/*
-            clearNewMap();
-
-            mapController->saveMapState();
-
-            mapController->modifyMap();
-
-            mapController->updateScene();
-*/
             /// imports points associated to the map and save them in the current file
             qDebug() << " reading points from" << QDir::currentPath() + QDir::separator() +  "mapConfigs" + QDir::separator() + mapFileInfo.fileName() + "_points.xml";
             XMLParser::readPoints(pointController, QDir::currentPath() + QDir::separator() +  "mapConfigs" + QDir::separator() + mapFileInfo.fileName() + "_points.xml");
