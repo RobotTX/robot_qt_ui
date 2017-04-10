@@ -18,6 +18,8 @@ public:
     RobotsController(QObject *applicationWindow, MainController *parent);
     ~RobotsController();
 
+    QMap<QString, QPointer<RobotController>> getRobots(void) const { return robots; }
+
     /**
      * @brief setRobotPos
      * @param ip
@@ -40,6 +42,8 @@ public:
     void sendNewMapToAllExcept(const QString ip, const QString mapId, const QString date, const QString mapMetadata, const QImage mapImage);
     void requestMapForMerging(const QString ip);
     void sendTeleop(const QString ip, const int teleop);
+
+    void sendMapToAllRobots(QString mapId, QString date, QString mapMetadata, QImage img);
 
 private:
     void launchServer(void);
@@ -97,6 +101,7 @@ signals:
     void receivedScanMap(QString ip, QByteArray mapArray, QString resolution);
     void setScanningOnConnection(QVariant ip, QVariant scanningOnConnection);
     void checkScanWindow(void);
+    void testScanSignal(void);
 
 private:
     QMap<QString, QPointer<RobotController>> robots;

@@ -189,4 +189,5 @@ void PointController::clearPoints(){
     qDebug() << "PointController::clearPoints called";
     emit deleteAllGroupsQml();
     points->clearGoups();
+    //addGroup(NO_GROUP_NAME);
 }

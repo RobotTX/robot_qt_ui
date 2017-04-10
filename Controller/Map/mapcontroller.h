@@ -31,7 +31,7 @@ public:
     int getWidth(void) const { return map->getWidth(); }
     QPointF getOrigin(void) const { return map->getOrigin(); }
     double getResolution(void) const { return map->getResolution(); }
-    QString getMatadaString(void) const;
+    QString getMetadataString(void) const;
 
     /// Setters
     void setMapFile(const QString file);

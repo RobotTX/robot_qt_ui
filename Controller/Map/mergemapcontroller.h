@@ -8,6 +8,7 @@ class MainController;
 #include <QObject>
 #include <QVector>
 #include <QSize>
+#include <QVariant>
 #include <QImage>
 
 class MergeMapController : public QObject {
@@ -29,6 +30,7 @@ private slots:
 
 signals:
     void differentMapSizes();
+    void readyToBeGrabbed(QVariant);
 
 private:
     QQmlApplicationEngine* engine;

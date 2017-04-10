@@ -343,11 +343,14 @@ void MainController::checkMapInfoSlot(QString ip, QString mapId, QString mapDate
 }
 
 void MainController::sendNewMap(QString ip){
+
     QString mapId = mapController->getMapId().toString();
 
     QString date = mapController->getDateTime().toString("yyyy-MM-dd-hh-mm-ss");
 
-    QString mapMetadata = mapController->getMatadaString();
+    qDebug() << mapController->getMetadataString() << mapController->getMapImage().size();
+
+    QString mapMetadata = mapController->getMetadataString();
 
     robotsController->sendNewMap(ip, mapId, date, mapMetadata, mapController->getMapImage());
 }
@@ -355,7 +358,7 @@ void MainController::sendNewMap(QString ip){
 void MainController::newMapFromRobotSlot(QString ip, QByteArray mapArray, QString mapId, QString mapDate){
     mapController->newMapFromRobot(mapArray, mapId, mapDate);
 
-    QString mapMetadata = mapController->getMatadaString();
+    QString mapMetadata = mapController->getMetadataString();
 
     /// When we receive a map from a robot, we send it to all the other robots
     robotsController->sendNewMapToAllExcept(ip, mapId, mapDate, mapMetadata, mapController->getMapImage());
@@ -418,4 +421,29 @@ void MainController::receivedScanMapSlot(QString ip, QByteArray map, QString res
 
 void MainController::sendTeleopSlot(QString ip, int teleop){
     robotsController->sendTeleop(ip, teleop);
+}
+
+void MainController::resetMapConfigurationAfterMerge(QString file_name){
+    qDebug() << "MainController::resetMapConfigurationAfterMerge" << file_name;
+    mapController->requestReloadMap("file://" + file_name);
+    pointController->clearPoints();
+    pathController->clearPaths();
+    saveMapConfig(file_name, 1.0, 0.0, 0.0);
+    QUuid mapId = QUuid::createUuid();
+
+    QString date = QDate::currentDate().toString("yyyy-MM-dd-hh-mm-ss");
+
+    qDebug() << mapController->getMetadataString() << mapController->getMapImage().size();
+
+    QString mapMetadata = mapController->getMetadataString();
+
+    QImage img(file_name);
+
+    robotsController->sendMapToAllRobots(mapId.toString(), date, mapMetadata, img);
+}
+
+// dumb slot to import dumb image and call mapController->getScanMapController, get image from mapcontroller
+void MainController::testScanSlot(){
+    qDebug() << "MainController::testScanSlot called";
+    mapController->getScanMapController()->receivedScanMap(ip, mapController->getMapImage(), resolution);
 }

@@ -5,6 +5,7 @@
 #include "Controller/maincontroller.h"
 #include "Model/Point/point.h"
 #include "Model/Path/pathxmlparser.h"
+#include "Helper/helper.h"
 
 PathController::PathController(QObject *applicationWindow, MainController* parent) : QObject(parent){
     paths = QPointer<Paths>(new Paths(this));

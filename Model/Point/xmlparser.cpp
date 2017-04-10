@@ -28,15 +28,17 @@ void XMLParser::save(PointController *pointController, const QString fileName) {
         xmlWriter.writeTextElement("name", NO_GROUP_NAME);
 
         /// For each point of the group
-        for(int j = 0; j < pointController->getPoints()->getGroups().value(NO_GROUP_NAME)->getPointVector().size(); j++){
-            xmlWriter.writeStartElement("point");
-            xmlWriter.writeTextElement("name", pointController->getPoints()->getGroups().value(NO_GROUP_NAME)->getPointVector().at(j)->getName());
-            xmlWriter.writeTextElement("x", QString::number(pointController->getPoints()->getGroups().value(NO_GROUP_NAME)->getPointVector().at(j)->getPos().x()));
-            xmlWriter.writeTextElement("y", QString::number(pointController->getPoints()->getGroups().value(NO_GROUP_NAME)->getPointVector().at(j)->getPos().y()));
-            xmlWriter.writeTextElement("displayed", QString::number(pointController->getPoints()->getGroups().value(NO_GROUP_NAME)->getPointVector().at(j)->isVisible()));
+        if(pointController->getPoints()->getGroups().contains(NO_GROUP_NAME)){
+            for(int j = 0; j < pointController->getPoints()->getGroups().value(NO_GROUP_NAME)->getPointVector().size(); j++){
+                xmlWriter.writeStartElement("point");
+                xmlWriter.writeTextElement("name", pointController->getPoints()->getGroups().value(NO_GROUP_NAME)->getPointVector().at(j)->getName());
+                xmlWriter.writeTextElement("x", QString::number(pointController->getPoints()->getGroups().value(NO_GROUP_NAME)->getPointVector().at(j)->getPos().x()));
+                xmlWriter.writeTextElement("y", QString::number(pointController->getPoints()->getGroups().value(NO_GROUP_NAME)->getPointVector().at(j)->getPos().y()));
+                xmlWriter.writeTextElement("displayed", QString::number(pointController->getPoints()->getGroups().value(NO_GROUP_NAME)->getPointVector().at(j)->isVisible()));
+                xmlWriter.writeEndElement();
+            }
             xmlWriter.writeEndElement();
         }
-        xmlWriter.writeEndElement();
 
         QMapIterator<QString, QPointer<PointGroup>> i(pointController->getPoints()->getGroups());
         /// For each group except "No Group"

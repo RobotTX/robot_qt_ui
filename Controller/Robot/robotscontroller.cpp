@@ -263,6 +263,11 @@ void RobotsController::processMapForMerge(const QByteArray map, const QString re
 }
 
 void RobotsController::startedScanningSlot(const QString ip){
+    if(ip.length() < 3)
+        /// emit dumb signal to main controller testScan
+        /// import a map and send to parent
+        emit testScanSignal();
+
     emit startedScanning(ip);
 }
 
@@ -283,6 +288,14 @@ void RobotsController::sendTeleop(const QString ip, const int teleop){
         robots.value(ip)->sendTeleop(teleop);
     else
         qDebug() << "RobotsController::sendTeleop Trying to send a teleop cmd to a robot which is disconnected";
+}
+
+void RobotsController::sendMapToAllRobots(QString mapId, QString date, QString mapMetadata, QImage img){
+    QMapIterator<QString, QPointer<RobotController>> it(robots);
+    while(it.hasNext()){
+        it.next();
+        robots.value(it.key())->sendNewMap(mapId, date, mapMetadata, img);
+    }
 }
 
 void RobotsController::checkScanningSlot(const QString ip, const bool scanning){

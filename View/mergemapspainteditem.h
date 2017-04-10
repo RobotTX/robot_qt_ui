@@ -16,6 +16,9 @@ public:
     MergeMapsPaintedItem(QQuickItem* parent = 0);
 
     void rotate(const int angle);
+    int getAngle(void) const { return _angle; }
+
+    QImage& getImage(void) { return _image; }
 
     void setImage(const QImage image) {
         qDebug() << "width and height" << image.width() << image.height();
@@ -30,7 +33,7 @@ signals:
     void heightChanged();
 
 private:
-
+    int _angle;
     QImage _image;
 };
 

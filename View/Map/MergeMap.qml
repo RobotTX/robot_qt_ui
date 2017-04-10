@@ -6,6 +6,7 @@ import QtQuick.Dialogs 1.2
 import "../../Helper/style.js" as Style
 import "../../Model/Robot/"
 import "../Robot/"
+import "../Custom/"
 
 Window {
 
@@ -28,6 +29,7 @@ Window {
     signal exportMap(string file)
     signal resetWidget()
     signal getMapFromRobot(string ip)
+    signal resetMapConfiguration(string file_name)
 
     property Robots robotModel
 
@@ -224,36 +226,7 @@ Window {
             // to start directly with that folder selected
             folder: "/home/joan/Gobot/build-Gobot-Desktop_Qt_5_8_0_GCC_64bit-Debug/mapConfigs/"
 
-            onAccepted: {
-
-                // if an already existing file is selected we only send the url, if a file is being created we add the extension .pgm
-        /*
-                if(fileUrl.toString().lastIndexOf(".pgm") == -1){
-                    mergedMap.grabToImage(function(result) {
-                        result.saveToFile(fileUrl.toString().substring(7) + ".pgm");
-                    });
-                }
-
-
-
-                else mergedMap.grabToImage(function(result) {
-                                                  result.saveToFile(fileUrl.toString().substring(7));});
-*/
-                if(fileUrl.toString().lastIndexOf(".pgm") == -1)
-                    window.exportMap(fileUrl.toString().substring(7) + ".pgm")
-                else
-                    window.exportMap(fileUrl.toString().substring(7))
-                /*
-                if(fileUrl.toString().lastIndexOf(".pgm") == -1)
-                    window.exportMap(fileUrl.toString().substring(7) + ".pgm");
-                else
-                    window.exportMap(fileUrl.toString().substring(7));
-                    */
-            }
-
-            onRejected: {
-                console.log("Canceled the save of a map")
-            }
+            onAccepted: window.exportMap(fileUrl.toString())
         }
 
         Button {
@@ -327,9 +300,7 @@ Window {
 
     Rectangle {
 
-        id: mergedMap
         clip: true
-        objectName: "mergeMapsView"
 
         anchors {
             left: leftMenu.right
@@ -338,19 +309,76 @@ Window {
             bottom: parent.bottom
         }
 
-        color: "#cdcdcd"
+        Rectangle {
 
-        MouseArea {
-            anchors.fill: parent
+            id: mergedMap
             clip: true
-            acceptedButtons: Qt.LeftButton
-            drag.target: parent
+            objectName: "mergeMapsView"
 
-            onWheel: {
-                var newScale = mergedMap.scale + mergedMap.scale * wheel.angleDelta.y / 120 / 10;
-                if(newScale > 0.20 && newScale < Style.maxZoom)
-                    mergedMap.scale = newScale;
+            width: 2048
+            height: 2048
+
+            color: "#cdcdcd"
+
+            MouseArea {
+                anchors.fill: parent
+                clip: true
+                acceptedButtons: Qt.LeftButton
+                drag.target: parent
+
+                onClicked: console.log(mouseX + " " + mouseY + " width " + width + " height " + height)
+
+                onWheel: {
+                    var newScale = mergedMap.scale + mergedMap.scale * wheel.angleDelta.y / 120 / 10;
+                    if(newScale > 0.20 && newScale < Style.maxZoom)
+                        mergedMap.scale = newScale;
+                }
             }
+        }
+    }
+
+    function grabMergedMap(_fileName){
+        console.log("grabbed called " + _fileName.substring(7) + ".pgm");
+        if(_fileName.toString().lastIndexOf(".pgm") === -1){
+            console.log("you");
+            mergedMap.grabToImage(function(result) {
+                result.saveToFile(_fileName.substring(7) + ".pgm");
+                // important to call the hide function here as this call is asynchronous and if you call hide outside
+                // you will most likely hide the window before you can grab it and will end up grabbing nothing
+                useMapDialog.file_new_map = _fileName.substring(7) + ".pgm";
+                useMapDialog.open();
+            });
+        }
+
+        else mergedMap.grabToImage(function(result) {
+                                          result.saveToFile(_fileName.substring(7));
+                                            useMapDialog.file_new_map = _fileName.substring(7);
+                                            useMapDialog.open();
+        });
+    }
+
+    DualChoiceMessageDialog {
+        id: useMapDialog
+        x: parent.width / 2
+        y: parent.height / 2
+        visible: false
+        message: qsTr("Do you want to replace the map you are currently using with his one ?");
+        acceptMessage: "Ok"
+        rejectMessage: "No"
+
+        property string file_new_map
+
+        onAccepted: {
+            window.close();
+            console.log("accepted");
+            // we delete points and paths and set the current map as the newly saved map,
+            // also we send it to currently connected robots
+            window.resetMapConfiguration(file_new_map)
+        }
+
+        onRejected: {
+            window.close();
+            console.log("rejected");
         }
     }
 
