@@ -75,5 +75,6 @@
         <file>View/Custom/Teleop.qml</file>
         <file>View/Custom/SquareCheckBox.qml</file>
         <file>View/ScanMap/ScanMapsPaintedItem.qml</file>
+        <file>View/Custom/CustomBusyIndicator.qml</file>
     </qresource>
 </RCC>

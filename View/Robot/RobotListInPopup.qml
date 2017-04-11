@@ -35,8 +35,8 @@ Menu {
         Repeater {
             model: robotModel
 
-            PopupMenuItem {
-                enabled: !robotMapsList.contains(ip)
+            delegate: PopupMenuItem {
+                enabled: !robotMapsList.contains(ip) && !processingCmd
 
                 anchors {
                     left: parent.left
@@ -64,6 +64,11 @@ Menu {
                     console.log("Selected robot " + name)
                     robotMenu.robotSelected(name, ip)
                     close()
+                }
+
+                CustomBusyIndicator {
+                    running: processingCmd
+                    anchors.fill: parent
                 }
             }
         }

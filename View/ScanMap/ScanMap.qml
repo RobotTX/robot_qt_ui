@@ -91,10 +91,4 @@ Window {
             dualChoiceMessageDialog.open();
         }
     }
-
-    function checkScanWindow(){
-        /// Stop the scan if a scanning robot reconnect after the window has been closed
-        if(!visible)
-            robotModel.stopAllScanOnConnection();
-    }
 }

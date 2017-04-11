@@ -34,7 +34,8 @@ ListModel {
             "homeY": 0,
             "laserActivated": false,
             "scanningOnConnection": false,
-            "processingCmd": false
+                   /// TODO change once custom nusy indicator done
+            "processingCmd": true//false
         });
         robotConnection(ip);
     }

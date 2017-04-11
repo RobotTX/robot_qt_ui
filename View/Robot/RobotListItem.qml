@@ -16,6 +16,7 @@ Frame {
     property real batteryWarningThreshold
 
     height: 105 + robotPathListItem.height
+    enabled: !processingCmd
 
     background: Rectangle {
         color: "transparent"
@@ -231,5 +232,19 @@ Frame {
         }
         color: Style.lightGreyBorder
         height: 2
+    }
+
+
+    Rectangle {
+        visible: processingCmd
+        radius: 3
+        color: Style.lightGreyBackground
+        opacity: 0.5
+        anchors.fill: parent
+    }
+
+    CustomBusyIndicator {
+        running: processingCmd
+        anchors.fill: parent
     }
 }

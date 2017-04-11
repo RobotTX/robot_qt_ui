@@ -19,6 +19,7 @@ Frame {
         color: "transparent"
     }
 
+
     Item {
         id: noPathItem
         visible: pathName === ""

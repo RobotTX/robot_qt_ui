@@ -230,9 +230,8 @@ Frame {
         anchors.fill: parent
     }
 
-    BusyIndicator {
+    CustomBusyIndicator {
         running: busy
-        anchors.verticalCenter: parent.verticalCenter
-        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.fill: parent
     }
 }
