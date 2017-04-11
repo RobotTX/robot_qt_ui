@@ -26,6 +26,7 @@ RobotController::RobotController(RobotsController *parent, QString _ip):
     connect(commandController, SIGNAL(stoppedScanning(QString)), parent, SLOT(stoppedScanningSlot(QString)));
     connect(commandController, SIGNAL(playedScanning(QString)), parent, SLOT(startedScanningSlot(QString)));
     connect(commandController, SIGNAL(pausedScanning(QString)), parent, SLOT(pausedScanningSlot(QString)));
+    connect(commandController, SIGNAL(processingCmd(QString, bool)), parent, SLOT(processingCmdSlot(QString, bool)));
 
     /// Signals to tell the robotsController that the robot just disconnected
     connect(this, SIGNAL(robotIsDead(QString)), parent, SLOT(robotIsDeadSlot(QString)));

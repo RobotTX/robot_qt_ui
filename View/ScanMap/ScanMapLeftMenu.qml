@@ -33,6 +33,7 @@ Frame {
         onRobotConnection: {
             scanningRobotsList.setConnected(ip, true);
         }
+        onSetBusy: scanningRobotsList.setBusy(ip, busy);
     }
 
     // to store the robots whose map has been imported for merging (subset of the robotModel and only the name and ip attributes are used
@@ -139,13 +140,11 @@ Frame {
             onStopScanning: {
                 if(robotModel.isConnected(ip)){
                     robotModel.stopScanning(ip);
-                    scanningRobotsList.setBusy(ip, true);
                 }
             }
             onPlayPauseScanning: {
                 if(robotModel.isConnected(ip)){
                     scanLeftMenuFrame.playPauseScanning(ip, scanning, robotModel.getScanningOnConnection(ip));
-                    scanningRobotsList.setBusy(ip, true);
                 }
             }
             onSendTeleop: scanLeftMenuFrame.sendTeleop(ip, index)
@@ -202,7 +201,6 @@ Frame {
 
     function startedScanning(ip){
         scanningRobotsList.setScanning(ip, true);
-        scanningRobotsList.setBusy(ip, false);
     }
 
     function stoppedScanning(ip){
@@ -211,7 +209,6 @@ Frame {
 
     function pausedScanning(ip){
         scanningRobotsList.setScanning(ip, false);
-        scanningRobotsList.setBusy(ip, false);
     }
 
     function receivedScanMap(ip){
@@ -220,9 +217,5 @@ Frame {
 
     function reset(){
         scanningRobotsList.reset();
-    }
-
-    function setBusy(ip, busy){
-        scanningRobotsList.setBusy(ip, busy);
     }
 }

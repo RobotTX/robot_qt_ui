@@ -28,6 +28,7 @@ RobotsController::RobotsController(QObject *applicationWindow, MainController* p
         connect(this, SIGNAL(setStage(QVariant, QVariant)), robotModel, SLOT(setStage(QVariant, QVariant)));
         connect(this, SIGNAL(setBattery(QVariant, QVariant)), robotModel, SLOT(setBattery(QVariant, QVariant)));
         connect(this, SIGNAL(setScanningOnConnection(QVariant, QVariant)), robotModel, SLOT(setScanningOnConnection(QVariant, QVariant)));
+        connect(this, SIGNAL(processingCmd(QVariant, QVariant)), robotModel, SLOT(setProcessingCmd(QVariant, QVariant)));
 
         /// Signals from qml to the controller
         connect(robotModel, SIGNAL(newHomeSignal(QString, QString, double, double)), parent, SLOT(sendCommandNewHome(QString, QString, double, double)));
@@ -302,7 +303,6 @@ void RobotsController::checkScanningSlot(const QString ip, const bool scanning){
     /// update the robot model
     emit setScanningOnConnection(ip, scanning);
 
-
     /// update the scanning menu
     if(scanning)
         emit startedScanning(ip);
@@ -313,3 +313,6 @@ void RobotsController::checkScanningSlot(const QString ip, const bool scanning){
     emit checkScanWindow();
 }
 
+void RobotsController::processingCmdSlot(QString ip, bool processing){
+    emit processingCmd(ip, processing);
+}
