@@ -194,14 +194,7 @@ void MergeMapController::importMap(QImage image, double _resolution){
 
 void MergeMapController::exportMap(QString fileName){
     qDebug() << "exportMap called" << fileName;
-    QQuickItem* mapView = applicationWindow->findChild<QQuickItem*> ("mergeMapsView");
 
-    qDebug() << "\nMergeMapWidget::saveSlot called";
-/*
-    QImage final_image(QSize(2048, 2048), QImage::Format_ARGB32);
-    final_image.fill(QColor(205, 205, 205));
-    QPainter painter(&final_image);
-*/
     int top = 0;
     int bottom = 2048;
     int left = 2048;

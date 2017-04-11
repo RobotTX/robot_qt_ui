@@ -105,7 +105,7 @@ signals:
     void receivedScanMap(QString ip, QByteArray mapArray, QString resolution);
     void setScanningOnConnection(QVariant ip, QVariant scanningOnConnection);
     void checkScanWindow(void);
-    void testScanSignal(QString);
+    void removeScanMap(QString);
 
 private:
     QMap<QString, QPointer<RobotController>> robots;

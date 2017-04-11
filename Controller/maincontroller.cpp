@@ -452,11 +452,6 @@ void MainController::sendTeleopSlot(QString ip, int teleop){
     robotsController->sendTeleop(ip, teleop);
 }
 
-// dumb slot to import dumb image and call mapController->getScanMapController, get image from mapcontroller
-void MainController::testScanSlot(QString ip){
-    /*
-    qDebug() << "MainController::testScanSlot called with ip" << ip;
-    mapController->getScanMapController()->receivedScanMap(ip, mapController->getMapImage(), QString::number(mapController->getResolution()));
-    */
-
+void MainController::removeScanMapSlot(QString ip){
+    mapController->getScanMapController()->removeMap(ip);
 }

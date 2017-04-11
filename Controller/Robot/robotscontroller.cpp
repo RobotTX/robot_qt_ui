@@ -29,8 +29,6 @@ RobotsController::RobotsController(QObject *applicationWindow, MainController* p
         connect(this, SIGNAL(setBattery(QVariant, QVariant)), robotModel, SLOT(setBattery(QVariant, QVariant)));
         connect(this, SIGNAL(setScanningOnConnection(QVariant, QVariant)), robotModel, SLOT(setScanningOnConnection(QVariant, QVariant)));
 
-        connect(this, SIGNAL(testScanSignal(QString)), parent, SLOT(testScanSlot(QString)));
-
         /// Signals from qml to the controller
         connect(robotModel, SIGNAL(newHomeSignal(QString, QString, double, double)), parent, SLOT(sendCommandNewHome(QString, QString, double, double)));
         connect(robotModel, SIGNAL(newPathSignal(QString, QString, QString)), parent, SLOT(sendCommandNewPath(QString, QString, QString)));
@@ -78,6 +76,7 @@ RobotsController::RobotsController(QObject *applicationWindow, MainController* p
     connect(this, SIGNAL(checkMapInfo(QString, QString, QString)), parent, SLOT(checkMapInfoSlot(QString, QString, QString)));
     connect(this, SIGNAL(newMapFromRobot(QString, QByteArray, QString, QString)), parent, SLOT(newMapFromRobotSlot(QString, QByteArray, QString, QString)));
     connect(this, SIGNAL(sendMapToProcessForMerge(QByteArray, QString)), parent, SLOT(processMapForMerge(QByteArray, QString)));
+    connect(this, SIGNAL(removeScanMap(QString)), parent, SLOT(removeScanMapSlot(QString)));
 
     launchServer();
 }
@@ -265,16 +264,13 @@ void RobotsController::processMapForMerge(const QByteArray map, const QString re
 }
 
 void RobotsController::startedScanningSlot(const QString ip){
-    if(ip.length() < 3)
-        /// emit dumb signal to main controller testScan
-        /// import a map and send to parent
-        emit testScanSignal(ip);
-
     emit startedScanning(ip);
 }
 
 void RobotsController::stoppedScanningSlot(const QString ip){
     emit stoppedScanning(ip);
+    /// TO DO remove scan map
+    emit removeScanMap(ip);
 }
 
 void RobotsController::pausedScanningSlot(const QString ip){

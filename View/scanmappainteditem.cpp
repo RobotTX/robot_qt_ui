@@ -13,3 +13,7 @@ void ScanMapPaintedItem::paint(QPainter *painter){
     qDebug() << "ScanMapPaintedItem::paint called" << _image.size();
     painter->drawImage(QPoint(0, 0), _image);
 }
+
+void ScanMapPaintedItem::rotate(const int angle){
+    setRotation(angle);
+}
