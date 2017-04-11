@@ -40,9 +40,12 @@ signals:
     void stoppedScanning(QString ip);
     void playedScanning(QString ip);
     void pausedScanning(QString ip);
+    void processingCmd(QString ip, bool waitingForAnswer);
 
 private:
     QString ip;
+    QList<QString> cmdQueue;
+    bool waitingForAnswer;
 };
 
 #endif // COMMANDCONTROLLER_H

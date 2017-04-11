@@ -12,6 +12,7 @@ ListModel {
     signal stopScanning(string ip);
     signal robotDc(string ip);
     signal robotConnection(string ip);
+    signal setBusy(string ip, bool busy)
 
     function addRobot(name, ip, wifi, stage, battery){
         append({
@@ -32,7 +33,9 @@ ListModel {
             "homeX": 0,
             "homeY": 0,
             "laserActivated": false,
-            "scanningOnConnection": false
+            "scanningOnConnection": false,
+                   /// TODO change once custom nusy indicator done
+            "processingCmd": true//false
         });
         robotConnection(ip);
     }
@@ -178,5 +181,12 @@ ListModel {
             if(get(i).ip === ip)
                 return true;
         return false;
+    }
+
+    function setProcessingCmd(ip, processing){
+        for(var i = 0; i < count; i++)
+            if(get(i).ip === ip)
+                setProperty(i, "processingCmd", processing);
+        setBusy(ip, processing);
     }
 }

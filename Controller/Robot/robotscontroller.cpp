@@ -28,6 +28,7 @@ RobotsController::RobotsController(QObject *applicationWindow, MainController* p
         connect(this, SIGNAL(setStage(QVariant, QVariant)), robotModel, SLOT(setStage(QVariant, QVariant)));
         connect(this, SIGNAL(setBattery(QVariant, QVariant)), robotModel, SLOT(setBattery(QVariant, QVariant)));
         connect(this, SIGNAL(setScanningOnConnection(QVariant, QVariant)), robotModel, SLOT(setScanningOnConnection(QVariant, QVariant)));
+        connect(this, SIGNAL(processingCmd(QVariant, QVariant)), robotModel, SLOT(setProcessingCmd(QVariant, QVariant)));
 
         /// Signals from qml to the controller
         connect(robotModel, SIGNAL(newHomeSignal(QString, QString, double, double)), parent, SLOT(sendCommandNewHome(QString, QString, double, double)));
@@ -61,13 +62,8 @@ RobotsController::RobotsController(QObject *applicationWindow, MainController* p
         connect(this, SIGNAL(stoppedScanning(QVariant)), scanLeftMenuFrame, SLOT(stoppedScanning(QVariant)));
         connect(this, SIGNAL(startedScanning(QVariant)), scanLeftMenuFrame, SLOT(startedScanning(QVariant)));
         connect(this, SIGNAL(pausedScanning(QVariant)), scanLeftMenuFrame, SLOT(pausedScanning(QVariant)));
+        connect(this, SIGNAL(checkScanWindow(QVariant)), scanLeftMenuFrame, SLOT(checkScanWindow(QVariant)));
     }
-
-    QObject* scanWindow = applicationWindow->findChild<QObject*>("scanWindow");
-
-    if(scanWindow)
-        connect(this, SIGNAL(checkScanWindow()), scanWindow, SLOT(checkScanWindow()));
-
 
     connect(this, SIGNAL(newRobotPos(QString, float, float, float)), parent, SLOT(newRobotPosSlot(QString, float, float, float)));
     connect(this, SIGNAL(newMetadata(int, int, float, float, float)), parent, SLOT(newMetadataSlot(int, int, float, float, float)));
@@ -300,7 +296,6 @@ void RobotsController::checkScanningSlot(const QString ip, const bool scanning){
     /// update the robot model
     emit setScanningOnConnection(ip, scanning);
 
-
     /// update the scanning menu
     if(scanning)
         emit startedScanning(ip);
@@ -308,6 +303,9 @@ void RobotsController::checkScanningSlot(const QString ip, const bool scanning){
         emit pausedScanning(ip);
 
     /// Stop the scan if a scanning robot reconnect after the window has been closed
-    emit checkScanWindow();
+    emit checkScanWindow(ip);
 }
 
+void RobotsController::processingCmdSlot(QString ip, bool processing){
+    emit processingCmd(ip, processing);
+}

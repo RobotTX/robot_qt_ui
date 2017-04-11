@@ -34,7 +34,6 @@ Image {
         }
 
         onHoveredChanged: {
-            console.log("robot hovered")
             hover = !hover
         }
     }

@@ -2,13 +2,20 @@
 #include <QDebug>
 #include <QStringList>
 
-CommandController::CommandController(QObject* parent, QString _ip) : QObject(parent), ip(_ip) {
+CommandController::CommandController(QObject* parent, QString _ip) : QObject(parent), ip(_ip), cmdQueue(QList<QString>()), waitingForAnswer(false) {
 
 }
 
 void CommandController::sendCommand(const QString cmd){
     /// TODO gerer multi command etc
-    emit sendCommandSignal(cmd);
+    if(!waitingForAnswer){
+        waitingForAnswer = true;
+        emit sendCommandSignal(cmd);
+    } else {
+        qDebug() << "CommandController::sendCommand got a cmd but already processing => sent to the queue" << cmdQueue;
+        cmdQueue.append(cmd);
+    }
+    emit processingCmd(ip, waitingForAnswer);
 }
 
 
@@ -81,6 +88,7 @@ void CommandController::cmdAnswerSlot(QString answer){
                     emit updateHome(ip, list.at(2), list.at(3).toFloat(), list.at(4).toFloat());
                 break;
                 /*case 'o':
+                    /// TODO go home system
                     /// Sent the robot to its home
                 break;
                 case 'p':
@@ -122,10 +130,19 @@ void CommandController::cmdAnswerSlot(QString answer){
             }
         } else {
             qDebug() << "CommandController::cmdAnswerSlot The command failed : " << list;
+            /// TO debug in case it happens
             Q_UNREACHABLE();
         }
     } else {
         qDebug() << "CommandController::cmdAnswerSlot Did not get enough data : " << list;
         Q_UNREACHABLE();
     }
+
+    waitingForAnswer = false;
+    if(!cmdQueue.isEmpty()){
+        qDebug() << "CommandController::cmdAnswerSlot got an answer and processing the next cmd in the queue" << cmdQueue;
+        waitingForAnswer = true;
+        emit sendCommandSignal(cmdQueue.takeFirst());
+    }
+    emit processingCmd(ip, waitingForAnswer);
 }

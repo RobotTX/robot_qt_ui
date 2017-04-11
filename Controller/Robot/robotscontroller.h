@@ -78,6 +78,7 @@ private slots:
     void pausedScanningSlot(const QString ip);
     void receivedScanMapSlot(const QString ip, const QByteArray map, const QString resolution);
     void checkScanningSlot(const QString ip, const bool scanning);
+    void processingCmdSlot(QString ip, bool processing);
 
 signals:
     void stopRobotServerWorker(void);
@@ -104,8 +105,10 @@ signals:
     void pausedScanning(QVariant ip);
     void receivedScanMap(QString ip, QByteArray mapArray, QString resolution);
     void setScanningOnConnection(QVariant ip, QVariant scanningOnConnection);
-    void checkScanWindow(void);
     void removeScanMap(QString);
+    void checkScanWindow(QVariant ip);
+    void processingCmd(QVariant, QVariant);
+    void testScanSignal(QString);
 
 private:
     QMap<QString, QPointer<RobotController>> robots;
