@@ -30,6 +30,8 @@ RobotsController::RobotsController(QObject *applicationWindow, MainController* p
         connect(this, SIGNAL(setScanningOnConnection(QVariant, QVariant)), robotModel, SLOT(setScanningOnConnection(QVariant, QVariant)));
         connect(this, SIGNAL(processingCmd(QVariant, QVariant)), robotModel, SLOT(setProcessingCmd(QVariant, QVariant)));
 
+        connect(this, SIGNAL(testScanSignal(QString)), parent, SLOT(testScanSlot(QString)));
+
         /// Signals from qml to the controller
         connect(robotModel, SIGNAL(newHomeSignal(QString, QString, double, double)), parent, SLOT(sendCommandNewHome(QString, QString, double, double)));
         connect(robotModel, SIGNAL(newPathSignal(QString, QString, QString)), parent, SLOT(sendCommandNewPath(QString, QString, QString)));
@@ -267,7 +269,7 @@ void RobotsController::startedScanningSlot(const QString ip){
     if(ip.length() < 3)
         /// emit dumb signal to main controller testScan
         /// import a map and send to parent
-        emit testScanSignal();
+        emit testScanSignal(ip);
 
     emit startedScanning(ip);
 }

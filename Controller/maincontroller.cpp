@@ -15,6 +15,7 @@
 #include "Controller/Point/pointcontroller.h"
 #include "Controller/Path/pathcontroller.h"
 #include "Controller/Robot/robotscontroller.h"
+#include "Controller/Map/scanmapcontroller.h"
 #include "Model/Point/xmlparser.h"
 #include "Model/Point/point.h"
 #include "Model/Path/pathxmlparser.h"
@@ -224,6 +225,10 @@ void MainController::newRobotPosSlot(QString ip, float posX, float posY, float o
                     mapController->getHeight());
     float orientation = -ori * 180.0 / M_PI + 90;
     robotsController->setRobotPos(ip, robotPos.x(), robotPos.y(), orientation);
+    //qDebug() << "Coords robot" << robotPos.x() << robotPos.y();
+    //qDebug() << "Coords robot" << robotPos.x()-mapController->getWidth()/2 + mapController->getOrigin().x() <<
+     //       robotPos.y()-mapController->getHeight()/2 + mapController->getOrigin().y();
+    mapController->getScanMapController()->updateRobotPos(ip, robotPos.x(), robotPos.y(), orientation);
 }
 
 void MainController::newMetadataSlot(int width, int height, float resolution, float originX, float originY){
@@ -414,6 +419,8 @@ void MainController::resetMapConfigurationAfterMerge(QString file_name){
 
 void MainController::startScanningSlot(QString ip){
     robotsController->sendCommand(ip, QString("t"));
+    /// TODO remove when tests ok
+    robotsController->startedScanningSlot(ip);
 }
 
 void MainController::stopScanningSlot(QString ip){
@@ -437,7 +444,7 @@ void MainController::playPauseScanningSlot(QString ip, bool wasScanning, bool sc
 }
 
 void MainController::receivedScanMapSlot(QString ip, QByteArray map, QString resolution){
-    QImage image = mapController->getImageFromArray(map, mapController->getWidth(), mapController->getHeight(), true);
+    QImage image = mapController->getImageFromArray(map, mapController->getWidth(), mapController->getHeight(), false);
     mapController->getScanMapController()->receivedScanMap(ip, image, resolution);
 }
 
@@ -446,7 +453,10 @@ void MainController::sendTeleopSlot(QString ip, int teleop){
 }
 
 // dumb slot to import dumb image and call mapController->getScanMapController, get image from mapcontroller
-void MainController::testScanSlot(){
-    qDebug() << "MainController::testScanSlot called";
-    //mapController->getScanMapController()->receivedScanMap(ip, mapController->getMapImage(), resolution);
+void MainController::testScanSlot(QString ip){
+    /*
+    qDebug() << "MainController::testScanSlot called with ip" << ip;
+    mapController->getScanMapController()->receivedScanMap(ip, mapController->getMapImage(), QString::number(mapController->getResolution()));
+    */
+
 }

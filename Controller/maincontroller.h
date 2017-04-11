@@ -74,7 +74,7 @@ private slots:
 
     void resetMapConfigurationAfterMerge(QString file_name);
 
-    void testScanSlot();
+    void testScanSlot(QString ip);
 
 signals:
     void setHome(QVariant ip, QVariant name, QVariant posX, QVariant posY);

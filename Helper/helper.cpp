@@ -6,7 +6,7 @@
 #include <QFileInfo>
 #include <QStringList>
 #include <QDir>
-
+#include <QRgb>
 
 namespace Helper {
 
@@ -42,6 +42,59 @@ namespace Helper {
                 }
                 return false;
             }
+        }
+    }
+
+    namespace Image {
+
+        /// n is given to determine which color should be used to draw the map
+        QPair<QImage, QPoint> crop(const QImage& image, const int n) {
+
+            int top = 0;
+            int bottom = image.height();
+            int left = image.width();
+            int right = 0;
+
+            /// We want to find the smallest rectangle containing the map (white and black) to crop it and use a small image
+
+            for(int i = 0; i < image.width(); i++){
+                for(int j = 0; j < image.height(); j++){
+                    int color = image.pixelColor(i, j).red();
+                    if(color == 255 || color == 0){
+                        if(bottom > j)
+                            bottom = j;
+                        if(top < j)
+                            top = j;
+                        if(left > i)
+                            left = i;
+                        if(right < i)
+                            right = i;
+                    }
+                }
+            }
+
+            qDebug() << "cropping with values" << top << left << bottom << right;
+
+            /// We crop the image
+            QImage copy = image.copy(QRect(QPoint(left, bottom), QPoint(right, top)));
+
+            /// Create a new image filled with invisible grey
+            QImage new_image = QImage(copy.size(), QImage::Format_ARGB32);
+            new_image.fill(qRgba(205, 205, 205, 0));
+
+            /// 1 out of 2 map will have red wall and the other one green wall to better distinguish them
+            QRgb wallColor = (n % 2 == 0) ? qRgba(255, 0, 0, 170) : qRgba(0, 255, 0, 170);
+            for(int i = 0; i < copy.width(); i++){
+                for(int j = 0; j < copy.height(); j++){
+                    int color = copy.pixelColor(i, j).red();
+                    if(color < 205)
+                        new_image.setPixel(i, j, wallColor);
+                    else if(color > 205)
+                        new_image.setPixel(i, j, qRgba(255, 255, 255, 170));
+                }
+            }
+            qDebug() << "cropped to size" << new_image.size();
+            return QPair<QImage, QPoint> (new_image, QPoint(left, bottom));
         }
     }
 

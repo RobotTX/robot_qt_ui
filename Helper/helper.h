@@ -1,6 +1,7 @@
 #include <QString>
 #include <QPair>
 #include <QPointF>
+#include <QImage>
 
 /**
  * In this file we put all sorts of useful functions used by any classes
@@ -41,6 +42,11 @@ namespace Helper {
 
        QPair<QPointF, QStringList> getHomeFromFile(const QString robotName);
 
+    }
+
+    namespace Image {
+
+        QPair<QImage, QPoint> crop(const QImage& image, const int n);
     }
 
     /// to remove extra spaces like "A          word  " becomes "A word"

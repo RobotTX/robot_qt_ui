@@ -4,7 +4,6 @@ import "../../Helper/helper.js" as Helper
 import "../../Helper/style.js" as Style
 
 Image {
-
     id: img
 
     property string _name
@@ -30,7 +29,8 @@ Image {
         hoverEnabled: true
 
         onClicked: {
-           console.log("Clicked on " + _name + " at ip " + _ip + " with an orientation of " + orientation)
+           console.log("Clicked on " + _name + " at ip " + _ip + " with an orientation of "
+                       + orientation + " " + img.x + " " + img.y + " " + img.width + " " + img.height)
         }
 
         onHoveredChanged: {

@@ -3,6 +3,7 @@
 #include "Controller/maincontroller.h"
 #include "View/editmappainteditem.h"
 #include "View/mergemapspainteditem.h"
+#include "View/scanmappainteditem.h"
 #include <QtQuick/QQuickView>
 
 int main(int argc, char *argv[]) {
@@ -11,6 +12,7 @@ int main(int argc, char *argv[]) {
 
     qmlRegisterType<EditMapPaintedItem>("EditMapItems", 1, 0, "EditMapPaintedItem");
     qmlRegisterType<MergeMapsPaintedItem>("MergeMapsItems", 1, 0, "MergeMapsPaintedItem");
+    qmlRegisterType<ScanMapPaintedItem>("ScanMapsPaintedItem", 1, 0, "ScanMapPaintedItem");
 
     QQmlApplicationEngine engine;
     engine.load(QUrl("qrc:/main.qml"));

@@ -8,6 +8,8 @@ MergeMapsPaintedItem {
     y: 0
     smooth: false
 
+   onRotationChanged: console.log("rotation changed " + rotation)
+
     MouseArea {
         anchors.fill: parent
         drag.target: parent
@@ -16,7 +18,7 @@ MergeMapsPaintedItem {
         onHeightChanged: console.log("height changed " + height);
         onClicked: {
             console.log(width + " " + height)
-            console.log("got clicked");
+            console.log("got clicked ");
         }
     }
 }

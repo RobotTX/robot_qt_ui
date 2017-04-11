@@ -45,6 +45,10 @@ public:
 
     void sendMapToAllRobots(QString mapId, QString date, QString mapMetadata, QImage img);
 
+public slots:
+    /// TODO remove from here when tests ok
+    void startedScanningSlot(const QString ip);
+
 private:
     void launchServer(void);
 
@@ -69,7 +73,7 @@ private slots:
     void newMapFromRobotSlot(const QString ip, const QByteArray mapArray, const QString mapId, const QString mapDate);
     void timerSlot(void);
     void processMapForMerge(const QByteArray map, const QString resolution);
-    void startedScanningSlot(const QString ip);
+
     void stoppedScanningSlot(const QString ip);
     void pausedScanningSlot(const QString ip);
     void receivedScanMapSlot(const QString ip, const QByteArray map, const QString resolution);
@@ -102,8 +106,8 @@ signals:
     void receivedScanMap(QString ip, QByteArray mapArray, QString resolution);
     void setScanningOnConnection(QVariant ip, QVariant scanningOnConnection);
     void checkScanWindow(void);
-    void testScanSignal(void);
     void processingCmd(QVariant, QVariant);
+    void testScanSignal(QString);
 
 private:
     QMap<QString, QPointer<RobotController>> robots;
