@@ -25,6 +25,8 @@ signals:
 
 private:
     QMap<QString, ScanMapPaintedItem*> paintedItems;
+    /// to store the color of the maps
+    QMap<QString, int> colors;
     QQmlApplicationEngine* engine;
     QObject* applicationWindow;
 };

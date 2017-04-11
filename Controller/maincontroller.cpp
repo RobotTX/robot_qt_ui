@@ -225,6 +225,9 @@ void MainController::newRobotPosSlot(QString ip, float posX, float posY, float o
                     mapController->getHeight());
     float orientation = -ori * 180.0 / M_PI + 90;
     robotsController->setRobotPos(ip, robotPos.x(), robotPos.y(), orientation);
+    //qDebug() << "Coords robot" << robotPos.x() << robotPos.y();
+    //qDebug() << "Coords robot" << robotPos.x()-mapController->getWidth()/2 + mapController->getOrigin().x() <<
+     //       robotPos.y()-mapController->getHeight()/2 + mapController->getOrigin().y();
     mapController->getScanMapController()->updateRobotPos(ip, robotPos.x(), robotPos.y(), orientation);
 }
 
@@ -441,7 +444,7 @@ void MainController::playPauseScanningSlot(QString ip, bool wasScanning, bool sc
 }
 
 void MainController::receivedScanMapSlot(QString ip, QByteArray map, QString resolution){
-    QImage image = mapController->getImageFromArray(map, mapController->getWidth(), mapController->getHeight(), true);
+    QImage image = mapController->getImageFromArray(map, mapController->getWidth(), mapController->getHeight(), false);
     mapController->getScanMapController()->receivedScanMap(ip, image, resolution);
 }
 

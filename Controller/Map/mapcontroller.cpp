@@ -234,6 +234,7 @@ void MapController::posClicked(const double x, const double y){
 
 QImage MapController::getImageFromArray(const QByteArray& mapArrays, const int map_width, const int map_height, const bool fromPgm){
 
+
     qDebug() << "MapController::getImageFromArray" << map_width << map_height << fromPgm;
     QImage image = QImage(map_width, map_height, QImage::Format_Grayscale8);
 
@@ -250,6 +251,8 @@ QImage MapController::getImageFromArray(const QByteArray& mapArrays, const int m
 
     QVector<int> countVector;
     int countSum = 0;
+
+    qDebug() << "Shift and sign" << shift << sign;
 
     /// We set each pixel of the image
     for(int i = 0; i < mapArrays.size(); i += 5){

@@ -93,8 +93,8 @@ namespace Helper {
                         new_image.setPixel(i, j, qRgba(255, 255, 255, 170));
                 }
             }
-
-            return QPair<QImage, QPoint> (new_image, QPoint(left, top));
+            qDebug() << "cropped to size" << new_image.size();
+            return QPair<QImage, QPoint> (new_image, QPoint(left, bottom));
         }
     }
 

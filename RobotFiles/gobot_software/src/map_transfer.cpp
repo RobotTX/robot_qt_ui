@@ -81,6 +81,7 @@ std::vector<uint8_t> compress(std::vector<int8_t> map, int map_width, int map_he
 		my_map.push_back(252);
 		my_map.push_back(252);
 		my_map.push_back(252);
+		
 	} else if(who == 3) {
 		/// when we are recovering the position, we need to send the size of the local map too
 		/// we send it in a byte array so we cut our int into 4 bytes

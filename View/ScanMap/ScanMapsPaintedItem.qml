@@ -15,10 +15,10 @@ ScanMapPaintedItem {
         drag.target: parent
         acceptedButtons: Qt.LeftButton
         onWidthChanged: console.log("width changed scan item " + width);
-        onHeightChanged: console.log("height changed scan item" + height);
+        onHeightChanged: console.log("height changed scan item " + height);
         onClicked: {
             console.log(width + " " + height)
-            console.log("got clicked " + parent.xRobot + " " + parent.yRobot + " " + parent.orientationRobot);
+            console.log("got clicked " + parent.xRobot + " " + parent.yRobot + " " + parent.orientationRobot + " " + width + " " + height);
         }
     }
 
@@ -26,8 +26,8 @@ ScanMapPaintedItem {
         target: item
         onUpdateRobot: {
             robotView.orientation = item.orientationRobot;
-            robotView.x = item.xRobot;
-            robotView.y = item.yRobot;
+            robotView.x = item.xRobot - robotView.width / 2;
+            robotView.y = item.yRobot - robotView.height / 2;
         }
     }
 
@@ -37,7 +37,7 @@ ScanMapPaintedItem {
     RobotView {
         id: robotView
         property real orientation: 0
-        x: parent.xRobot
-        y: parent.yRobot
+        x: parent.xRobot - robotView.width / 2
+        y: parent.yRobot - robotView.height / 2
     }
 }

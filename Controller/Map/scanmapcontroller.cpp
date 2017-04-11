@@ -20,8 +20,9 @@ ScanMapController::ScanMapController(MainController* parent, QQmlApplicationEngi
 void ScanMapController::receivedScanMap(QString ip, QImage map, QString resolution){
 
     emit receivedScanMap(ip);
+
     if(!paintedItems.contains(ip)){
-        /// TODO do stuff with the map
+
         QQmlComponent component(engine, QUrl("qrc:/View/ScanMap/ScanMapsPaintedItem.qml"));
         ScanMapPaintedItem* paintedItem = qobject_cast<ScanMapPaintedItem*>(component.create());
         QQmlEngine::setObjectOwnership(paintedItem, QQmlEngine::CppOwnership);
@@ -31,8 +32,6 @@ void ScanMapController::receivedScanMap(QString ip, QImage map, QString resoluti
 
         paintedItem->setParentItem(mapView);
         paintedItem->setParent(engine);
-        paintedItem->setProperty("width", map.width());
-        paintedItem->setProperty("height", map.height());
 
         /// we crop before drawing
         paintedItem->setImage(Helper::Image::crop(map, paintedItems.count()));
@@ -40,9 +39,17 @@ void ScanMapController::receivedScanMap(QString ip, QImage map, QString resoluti
 
         paintedItem->update();
         qDebug() << "inserting ip" << ip;
+        colors.insert(ip, paintedItems.count());
         paintedItems.insert(ip, paintedItem);
+        paintedItems[ip]->setProperty("width", paintedItems[ip]->getImage().width());
+        paintedItems[ip]->setProperty("height", paintedItems[ip]->getImage().height());
+
     } else {
-        paintedItems[ip]->setImage(Helper::Image::crop(map, paintedItems.count()));
+
+        qDebug() << "resetting size to" << map.width() << map.height();
+        paintedItems[ip]->setImage(Helper::Image::crop(map, colors[ip]));
+        paintedItems[ip]->setProperty("width", paintedItems[ip]->getImage().width());
+        paintedItems[ip]->setProperty("height", paintedItems[ip]->getImage().height());
         paintedItems[ip]->update();
     }
 }

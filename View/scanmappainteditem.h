@@ -25,12 +25,14 @@ public:
         top = image_and_shift.second.y();
     }
 
+    QImage getImage(void) const { return _image; }
+
     float robotOrientation(void) const { return orientationRobot; }
     float robotX(void) const { return xRobot; }
     float robotY(void) const { return yRobot; }
 
-    void setRobotX(const float x) { xRobot = x-left; }
-    void setRobotY(const float y) { yRobot = top-y; }
+    void setRobotX(const float x) { xRobot = x - left; }
+    void setRobotY(const float y) { yRobot = y - top; }
     void setRobotOrientation(const float ori) { orientationRobot = ori; emit updateRobot(); }
 
 signals:

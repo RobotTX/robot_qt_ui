@@ -29,7 +29,8 @@ Image {
         hoverEnabled: true
 
         onClicked: {
-           console.log("Clicked on " + _name + " at ip " + _ip + " with an orientation of " + orientation + " " + img.x + " " + img.y)
+           console.log("Clicked on " + _name + " at ip " + _ip + " with an orientation of "
+                       + orientation + " " + img.x + " " + img.y + " " + img.width + " " + img.height)
         }
 
         onHoveredChanged: {
