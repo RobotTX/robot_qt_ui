@@ -25,6 +25,12 @@ ScanMapController::ScanMapController(MainController* parent, QQmlApplicationEngi
         connect(this, SIGNAL(readyToBeGrabbed(QVariant)), scanWindow, SLOT(grabScannedMap(QVariant)));
     }
 
+    QObject* topView = applicationWindow->findChild<QObject*>("topViewFrame");
+    if(topView){
+        connect(this, SIGNAL(invalidGoal()), topView, SLOT(displayInvalidGoalError()));
+    }
+
+    connect(this, SIGNAL(sendGoal(QString,double,double)), parent, SLOT(sendScanGoal(QString, double, double)));
 }
 
 void ScanMapController::receivedScanMap(QString ip, QImage map, QString resolution){
@@ -37,6 +43,8 @@ void ScanMapController::receivedScanMap(QString ip, QImage map, QString resoluti
         ScanMapPaintedItem* paintedItem = qobject_cast<ScanMapPaintedItem*>(component.create());
         QQmlEngine::setObjectOwnership(paintedItem, QQmlEngine::CppOwnership);
 
+        connect(paintedItem, SIGNAL(sendGoal(QString, double, double)), this, SLOT(sendGoalSlot(QString, double, double)));
+
         /// that is where we actually tell the paintemItem to paint itself
         QQuickItem* mapView = applicationWindow->findChild<QQuickItem*> ("scanMapView");
 
@@ -47,15 +55,18 @@ void ScanMapController::receivedScanMap(QString ip, QImage map, QString resoluti
         paintedItem->setImage(Helper::Image::crop(map, paintedItems.count()));
         paintedItem->setPosition(QPointF(mapView->width()/2, mapView->height()/2));
 
+        paintedItem->setProperty("ip", ip);
+        paintedItem->setProperty("width", paintedItem->getImage().width());
+        paintedItem->setProperty("height", paintedItem->getImage().height());
+        /// at first we draw the robot on the map, we will hide it just before saving
+        paintedItem->setProperty("_drawRobotView", true);
         paintedItem->update();
+
         qDebug() << "inserting ip" << ip;
         colors.insert(ip, paintedItems.count());
         paintedItems.insert(ip, paintedItem);
-        paintedItems[ip]->setProperty("width", paintedItems[ip]->getImage().width());
-        paintedItems[ip]->setProperty("height", paintedItems[ip]->getImage().height());
 
     } else {
-
         qDebug() << "resetting size to" << map.width() << map.height();
         paintedItems[ip]->setImage(Helper::Image::crop(map, colors[ip]));
         paintedItems[ip]->setProperty("width", paintedItems[ip]->getImage().width());
@@ -117,8 +128,20 @@ void ScanMapController::saveScanSlot(QString file_name){
                 }
             }
         }
-        it.value()->update();
+        it.value()->setProperty("_drawRobotView", false);
+        it.value()->update();    
     }
 
     emit readyToBeGrabbed(file_name);
+}
+
+void ScanMapController::sendGoalSlot(QString ip, double x, double y){
+    qDebug() << "ScanMapController::sendGoalSlot called" << ip << x + paintedItems[ip]->getLeft() << y + paintedItems[ip]->getTop();
+    if(paintedItems.contains(ip)){
+        /// it is an empty area of the map
+        if(paintedItems[ip]->getImage().pixelColor(x, y).red() > 250)
+            emit sendGoal(ip, x + paintedItems[ip]->getLeft(), y + paintedItems[ip]->getTop());
+        else
+            emit invalidGoal();
+    }
 }

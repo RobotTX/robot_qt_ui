@@ -109,15 +109,13 @@ bool execCommand(ros::NodeHandle n, std::vector<std::string> command){
 				std::cout << "(Command system) Parameter missing" << std::endl;
 		break;
 		
-		// TODO waitingTime might not be needed anymore
 		/// Command for the robot to move to a point
 		case 'c':
-			// first param == c, second param = goal pos x coordinate, third param = goal pos y coordinate, 4th param = waiting time
-			/*std::cout << "(Command system) Gobot go to point" << std::endl;
-			if(command.size() == 4){
+			// first param == c, second param = goal pos x coordinate, third param = goal pos y coordinate
+			std::cout << "(Command system) Gobot go to point" << std::endl;
+			if(command.size() == 3){
 				float posX = std::stof(command.at(1));
 				float posY = std::stof(command.at(2));
-				int waitTime = std::stoi(command.at(3));
 
 				/// Before setting a new goal, we stop any teleoperation command
 				stopTwist();
@@ -135,15 +133,10 @@ bool execCommand(ros::NodeHandle n, std::vector<std::string> command){
 				msg.pose.orientation.w = 1;
 				
 				go_pub.publish(msg);
-			
-				if(waitTime >= 0)
-					std::cout << "(Command system) Then wait for : " << waitTime << std::endl;
-				else 
-					std::cout << "(Command system) Then wait for : Human Action" << std::endl;
 
 				status = true;
 			} else 
-				std::cout << "(Command system) Parameter missing" << std::endl;*/
+				std::cout << "(Command system) Parameter missing" << std::endl;
 			std::cout << "(Command system) Command c to change the wifi not used anymore" << std::endl;
 		
 		break;

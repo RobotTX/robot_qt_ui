@@ -34,11 +34,11 @@ void CommandController::cmdAnswerSlot(QString answer){
                     /// Changed the wifi informations of a robot
                     /// NOT USED ANYMORE
                     Q_UNREACHABLE();
-                break;
+                break;*/
                 case 'c':
                     /// Sent the robot to a new goal
-                    /// OSEF
-                break;*/
+                    ///nothing is needed on the qml side
+                break;/*
                 case 'd':
                     /// Paused the path of the robot
                     emit updatePlayingPath(ip, false);

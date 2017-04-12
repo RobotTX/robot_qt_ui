@@ -26,11 +26,14 @@ public:
 private slots:
     void rotateMap(int angle, QString ip);
     void saveScanSlot(QString file_name);
-     void resetScanMaps();
+    void resetScanMaps();
+    void sendGoalSlot(QString ip, double x, double y);
 
 signals:
     void receivedScanMap(QVariant);
     void readyToBeGrabbed(QVariant);
+    void sendGoal(QString, double, double);
+    void invalidGoal();
 
 private:
     QMap<QString, ScanMapPaintedItem*> paintedItems;

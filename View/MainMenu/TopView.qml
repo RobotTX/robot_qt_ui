@@ -54,4 +54,10 @@ Frame {
         enabled: hasMap
         onClicked: topViewFrame.savePosition()
     }
+
+    // TODO find a decent alternative to this
+    function displayInvalidGoalError(){
+        console.log("displayerror called");
+        _label.text = "You cannot send your robot there as this area has yet to be discovered by the robot. Double click a white point of the map instead."
+    }
 }
