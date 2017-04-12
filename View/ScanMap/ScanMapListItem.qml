@@ -5,10 +5,13 @@ import "../../Model/Robot"
 import "../Custom"
 
 Frame {
+
     id: scanMapListItemFrame
+
     signal stopScanning(string ip)
     signal playPauseScanning(string ip, bool scanning)
     signal sendTeleop(string ip, int index)
+    signal rotateMap(int angle, int id)
 
     height: 270
     padding: 0
@@ -194,7 +197,10 @@ Frame {
             }
 
             // to update the text accordingly
-            onVisualPositionChanged: field.text = Math.round(valueAt(position))
+            onVisualPositionChanged: {
+                scanMapListItemFrame.rotateMap(Math.round(valueAt(position)), ip)
+                field.text = Math.round(valueAt(position))
+            }
         }
 
         Teleop {

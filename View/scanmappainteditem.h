@@ -19,13 +19,15 @@ public:
 
     void paint(QPainter *painter) Q_DECL_OVERRIDE;
 
+    void rotate(const int angle);
+
     void setImage(const QPair<QImage, QPoint> image_and_shift) {
         _image = image_and_shift.first;
         left = image_and_shift.second.x();
         top = image_and_shift.second.y();
     }
 
-    QImage getImage(void) const { return _image; }
+    QImage& getImage(void) { return _image; }
 
     float robotOrientation(void) const { return orientationRobot; }
     float robotX(void) const { return xRobot; }

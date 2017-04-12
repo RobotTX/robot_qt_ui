@@ -14,12 +14,15 @@ Window {
     height: 700
     minimumHeight: 600
 
+
+
     property Robots robotModel
 
-
     onVisibleChanged: {
-        if(!visible)
+        if(!visible){
             scanMapLeftMenu.reset();
+            scanMapLeftMenu.resetScanMaps();
+        }
     }
 
     ScanMapLeftMenu {
@@ -82,6 +85,8 @@ Window {
         onRejected: scanMapLeftMenu.setBusy(ip, false)
     }
 
+
+
     function openRestartScanMessageDialog(ip){
         if(!dualChoiceMessageDialog.visible){
             dualChoiceMessageDialog.title = qsTr("Do you wish to restart the scan ?");
@@ -91,5 +96,36 @@ Window {
             dualChoiceMessageDialog.acceptMessage = "Ok";
             dualChoiceMessageDialog.open();
         }
+    }
+
+    function checkScanWindow(){
+        /// Stop the scan if a scanning robot reconnect after the window has been closed
+        if(!visible)
+            robotModel.stopAllScanOnConnection();
+    }
+
+    function grabScannedMap(file_name){
+        console.log("scan: grabbed called " + file_name.substring(7) + ".pgm");
+
+        if(_fileName.toString().lastIndexOf(".pgm") === -1){
+            console.log("you");
+            mergedMap.grabToImage(function(result) {
+                result.saveToFile(_fileName.substring(7) + ".pgm");
+                // important to call the hide function here as this call is asynchronous and if you call hide outside
+                // you will most likely hide the window before you can grab it and will end up grabbing nothing
+                /*
+                useMapDialog.file_new_map = _fileName.substring(7) + ".pgm";
+                useMapDialog.open();
+                */
+            });
+        }
+
+        else mergedMap.grabToImage(function(result) {
+                                          result.saveToFile(_fileName.substring(7));
+            /*
+                                            useMapDialog.file_new_map = _fileName.substring(7);
+                                            useMapDialog.open();
+                                            */
+        });
     }
 }

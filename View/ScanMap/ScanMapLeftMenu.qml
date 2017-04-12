@@ -1,5 +1,6 @@
 import QtQuick 2.7
 import QtQuick.Controls 2.1
+import QtQuick.Dialogs 1.2
 import "../../Helper/style.js" as Style
 import "../../Model/Robot"
 import "../Custom"
@@ -14,6 +15,9 @@ Frame {
     signal playPauseScanning(string ip, bool scanning, bool scanningOnConnection)
     signal sendTeleop(string ip, int index)
     signal cancelScan()
+    signal rotateMap(int angle, string ip)
+    signal resetScanMaps()
+    signal saveScan(string file_name)
 
     width: Style.smallMenuWidth
     padding: 0
@@ -90,10 +94,9 @@ Frame {
         }
 
         function reset(){
-            for(var i = 0; i < count; i++){
+            for(var i = 0; i < count; i++)
                 robotModel.stopScanning(get(i).ip);
-                remove(i);
-            }
+            clear();
         }
     }
 
@@ -148,6 +151,8 @@ Frame {
                 }
             }
             onSendTeleop: scanLeftMenuFrame.sendTeleop(ip, index)
+
+            onRotateMap: scanLeftMenuFrame.rotateMap(angle, ip)
         }
     }
 
@@ -184,6 +189,7 @@ Frame {
             right: parent.right
             rightMargin: 15
         }
+        onClicked: saveFileDialog.open()
     }
 
     CancelButton {
@@ -223,5 +229,18 @@ Frame {
         /// Stop the scan if a scanning robot reconnect after the window has been closed
         if(scanning && (!scanLeftMenuFrame.visible || !scanningRobotsList.contains(ip)))
             robotModel.stopScanning(ip);
+    }
+
+    FileDialog {
+        id: saveFileDialog
+        // format of files is pgm
+        nameFilters: "*.pgm"
+        // won't let you choose a file name if selectExisting is true
+        selectExisting: false
+        title: "Please choose a location for your map"
+        // to start directly with that folder selected
+        folder: "/home/joan/Gobot/build-Gobot-Desktop_Qt_5_8_0_GCC_64bit-Debug/mapConfigs/"
+
+        onAccepted: scanLeftMenuFrame.saveScan(fileUrl.toString())
     }
 }

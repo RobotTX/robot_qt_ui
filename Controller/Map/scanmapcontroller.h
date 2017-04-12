@@ -20,8 +20,17 @@ public:
 
     void updateRobotPos(QString ip, float x, float y, float orientation);
 
+    void removeMap(QString ip);
+
+
+private slots:
+    void rotateMap(int angle, QString ip);
+    void saveScanSlot(QString file_name);
+     void resetScanMaps();
+
 signals:
     void receivedScanMap(QVariant);
+    void readyToBeGrabbed(QVariant);
 
 private:
     QMap<QString, ScanMapPaintedItem*> paintedItems;
