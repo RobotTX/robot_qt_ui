@@ -455,3 +455,10 @@ void MainController::sendTeleopSlot(QString ip, int teleop){
 void MainController::removeScanMapSlot(QString ip){
     mapController->getScanMapController()->removeMap(ip);
 }
+
+void MainController::sendScanGoal(QString ip, double x, double y){
+    QPointF goal_in_robot_coords(Helper::Convert::pixelCoordToRobotCoord(QPointF(x, y), mapController->getOrigin().x(), mapController->getOrigin().y(),
+                                                                         mapController->getResolution(), mapController->getHeight()));
+    qDebug() << "Sending command" << QString("c") + QChar(31) + QString::number(goal_in_robot_coords.x()) + QChar(31) + QString::number(goal_in_robot_coords.y());
+    robotsController->sendCommand(ip, QString("c") + QChar(31) + QString::number(goal_in_robot_coords.x()) + QChar(31) + QString::number(goal_in_robot_coords.y()));
+}

@@ -14,8 +14,6 @@ Window {
     height: 700
     minimumHeight: 600
 
-
-
     property Robots robotModel
 
     onVisibleChanged: {
@@ -76,17 +74,6 @@ Window {
         }
     }
 
-    DualChoiceMessageDialog {
-        id: dualChoiceMessageDialog
-        x: parent.width / 2 - width / 2
-        y: parent.height / 2 - height / 2
-
-        onAccepted: scanMapLeftMenu.startScanning(ip)
-        onRejected: scanMapLeftMenu.setBusy(ip, false)
-    }
-
-
-
     function openRestartScanMessageDialog(ip){
         if(!dualChoiceMessageDialog.visible){
             dualChoiceMessageDialog.title = qsTr("Do you wish to restart the scan ?");
@@ -107,10 +94,11 @@ Window {
     function grabScannedMap(file_name){
         console.log("scan: grabbed called " + file_name.substring(7) + ".pgm");
 
-        if(_fileName.toString().lastIndexOf(".pgm") === -1){
+        if(file_name.toString().lastIndexOf(".pgm") === -1){
             console.log("you");
-            mergedMap.grabToImage(function(result) {
-                result.saveToFile(_fileName.substring(7) + ".pgm");
+            scanMap.grabToImage(function(result) {
+                result.saveToFile(file_name.substring(7) + ".pgm");
+                scanWindow.close();
                 // important to call the hide function here as this call is asynchronous and if you call hide outside
                 // you will most likely hide the window before you can grab it and will end up grabbing nothing
                 /*
@@ -120,8 +108,9 @@ Window {
             });
         }
 
-        else mergedMap.grabToImage(function(result) {
-                                          result.saveToFile(_fileName.substring(7));
+        else scanMap.grabToImage(function(result) {
+                                          result.saveToFile(file_name.substring(7));
+                                          scanWindow.close();
             /*
                                             useMapDialog.file_new_map = _fileName.substring(7);
                                             useMapDialog.open();

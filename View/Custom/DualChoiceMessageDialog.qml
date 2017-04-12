@@ -10,6 +10,7 @@ Dialog {
     property string message
     property string rejectMessage
     property string acceptMessage
+    property bool hideCancelButton: false
 
     background: Rectangle {
         color: "#f3f3f3"
@@ -46,7 +47,7 @@ Dialog {
                 top: parent.top
                 left: parent.left
                 right: parent.right
-                bottom: robotButton.top
+                bottom: appButton.top
                 topMargin: customHeader.height + 10
                 leftMargin: 10
                 rightMargin: 10
@@ -57,6 +58,7 @@ Dialog {
 
         CancelButton {
             id: robotButton
+            visible: !hideCancelButton
             anchors {
                 left: parent.left
                 right: parent.horizontalCenter

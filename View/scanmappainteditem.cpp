@@ -2,7 +2,7 @@
 #include <QDebug>
 #include <QPainter>
 
-ScanMapPaintedItem::ScanMapPaintedItem(QQuickItem *parent) : QQuickPaintedItem(parent),
+ScanMapPaintedItem::ScanMapPaintedItem(QQuickItem *parent) : QQuickPaintedItem(parent), ip(""),
     left(0), top(0), xRobot(0.0), yRobot(0.0), orientationRobot(0.0) {
     setFlag(QQuickItem::ItemHasContents, true);
     setAcceptedMouseButtons(Qt::LeftButton | Qt::RightButton);
