@@ -23,7 +23,7 @@ Rectangle {
     signal removeMap(string ip)
     signal rotate(int angle, int id)
 
-    Label {
+    CustomLabel {
         id: label
         font.pointSize: 11
         text: qsTr(name)
@@ -35,8 +35,6 @@ Rectangle {
             topMargin: 13
         }
         width: 60
-        maximumLineCount: 1
-        elide: Text.ElideRight
     }
 
     Button {

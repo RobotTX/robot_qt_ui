@@ -23,7 +23,6 @@ Image {
     fillMode: Image.PreserveAspectFit
 
     Label {
-
         id: tooltip
 
         visible: false

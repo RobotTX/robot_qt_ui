@@ -1,4 +1,5 @@
 import QtQuick 2.7
+import QtQuick.Controls 2.1
 
 Rectangle {
 
@@ -27,7 +28,7 @@ Rectangle {
             topMargin: 10
         }
 
-        Text {
+        Label {
             id: textId
             anchors.fill: parent
             verticalAlignment: Text.AlignVCenter

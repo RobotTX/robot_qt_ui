@@ -1,12 +1,13 @@
 import QtQuick 2.7
 import QtQuick.Controls 2.1
 import "../../Helper/style.js" as Style
+import "../Custom"
 
 RadioButton {
 
     property string txt
 
-    Text {
+    CustomLabel {
         id: name
         text: qsTr(txt)
         color: Style.mapChoiceLabel

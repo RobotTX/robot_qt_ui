@@ -64,7 +64,7 @@ RobotsController::RobotsController(QObject *applicationWindow, MainController* p
         connect(this, SIGNAL(stoppedScanning(QVariant)), scanLeftMenuFrame, SLOT(stoppedScanning(QVariant)));
         connect(this, SIGNAL(startedScanning(QVariant)), scanLeftMenuFrame, SLOT(startedScanning(QVariant)));
         connect(this, SIGNAL(pausedScanning(QVariant)), scanLeftMenuFrame, SLOT(pausedScanning(QVariant)));
-        connect(this, SIGNAL(checkScanWindow(QVariant)), scanLeftMenuFrame, SLOT(checkScanWindow(QVariant)));
+        connect(this, SIGNAL(checkScanWindow(QVariant, QVariant)), scanLeftMenuFrame, SLOT(checkScanWindow(QVariant, QVariant)));
     }
 
     connect(this, SIGNAL(newRobotPos(QString, float, float, float)), parent, SLOT(newRobotPosSlot(QString, float, float, float)));
@@ -307,7 +307,7 @@ void RobotsController::checkScanningSlot(const QString ip, const bool scanning){
         emit pausedScanning(ip);
 
     /// Stop the scan if a scanning robot reconnect after the window has been closed
-    emit checkScanWindow(ip);
+    emit checkScanWindow(ip, scanning);
 }
 
 void RobotsController::processingCmdSlot(QString ip, bool processing){

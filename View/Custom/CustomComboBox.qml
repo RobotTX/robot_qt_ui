@@ -36,9 +36,8 @@ ComboBox {
     /// What to display in the popup list once we clicked the box
     delegate: ItemDelegate {
         width: groupComboBox.width
-        contentItem: Text {
+        contentItem: CustomLabel {
             text: groupName
-            elide: Text.ElideRight
             verticalAlignment: Text.AlignVCenter
         }
         highlighted: groupComboBox.highlightedIndex == index

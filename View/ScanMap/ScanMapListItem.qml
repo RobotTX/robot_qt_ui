@@ -33,10 +33,9 @@ Frame {
             }
         }
 
-        Label {
+        CustomLabel {
             id: nameLabel
             text: qsTr(name)
-            elide: Text.ElideRight
             anchors {
                 verticalCenter: validIcon.verticalCenter
                 left: validIcon.right

@@ -25,7 +25,7 @@ Button {
         anchors.verticalCenter: parent.verticalCenter
     }
 
-    Text {
+    Label {
         id: textId
         verticalAlignment: Text.AlignVCenter
         anchors.left: robotImg.right

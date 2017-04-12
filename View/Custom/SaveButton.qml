@@ -6,7 +6,7 @@ Button {
     property string txt: "Save"
     height: 23
 
-    Label {
+    CustomLabel {
         text: qsTr(txt)
         color: "white"
         anchors.verticalCenter: parent.verticalCenter

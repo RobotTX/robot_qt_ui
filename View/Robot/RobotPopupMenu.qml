@@ -33,7 +33,7 @@ Menu {
         id: assignHome
         height: Style.menuItemHeight
         width: parent.width
-        contentItem: Label {
+        contentItem: CustomLabel {
             text: qsTr("Assign a Home Point")
             anchors {
                 left: parent.left
@@ -42,8 +42,6 @@ Menu {
                 rightMargin: 5
                 verticalCenter: parent.verticalCenter
             }
-            maximumLineCount: 1
-            elide: Text.ElideRight
         }
         leftPadding: Style.menuItemLeftPadding
 
@@ -81,7 +79,7 @@ Menu {
         id: assignPath
         height: Style.menuItemHeight
         width: parent.width
-        contentItem: Label {
+        contentItem: CustomLabel {
             text: qsTr("Assign a Path")
             anchors {
                 left: parent.left
@@ -90,8 +88,6 @@ Menu {
                 rightMargin: 5
                 verticalCenter: parent.verticalCenter
             }
-            maximumLineCount: 1
-            elide: Text.ElideRight
         }
         leftPadding: Style.menuItemLeftPadding
 
@@ -128,7 +124,7 @@ Menu {
     PopupMenuItem {
         height: Style.menuItemHeight
         width: parent.width
-        contentItem: Label {
+        contentItem: CustomLabel {
             text: qsTr("Rename")
             anchors {
                 left: parent.left
@@ -137,8 +133,6 @@ Menu {
                 rightMargin: 5
                 verticalCenter: parent.verticalCenter
             }
-            maximumLineCount: 1
-            elide: Text.ElideRight
         }
         leftPadding: Style.menuItemLeftPadding
 
@@ -155,7 +149,7 @@ Menu {
     PopupMenuItem {
         height: Style.menuItemHeight
         width: parent.width
-        contentItem: Label {
+        contentItem: CustomLabel {
             text: qsTr("Delete Path from Robot")
             anchors {
                 left: parent.left
@@ -164,8 +158,6 @@ Menu {
                 rightMargin: 5
                 verticalCenter: parent.verticalCenter
             }
-            maximumLineCount: 1
-            elide: Text.ElideRight
         }
         leftPadding: Style.menuItemLeftPadding
 

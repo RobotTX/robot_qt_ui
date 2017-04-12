@@ -6,7 +6,6 @@ BusyIndicator {
     id: control
     property int nb: 0
     property int size: Math.min(parent.width, parent.height, 70)
-    Component.onCompleted: console.log("size : " + size)
     padding: 0
 
     contentItem: Item {

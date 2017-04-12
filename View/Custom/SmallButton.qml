@@ -13,16 +13,18 @@ Button {
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
         width: Math.min(btn.width, btn.height)
-        height: width
-        color: pressed ? Style.lightGreyBorder : hovered ? Style.lightGreyBackgroundHover : backColor
-        radius: btn.hovered ? width/2 : 0
+        height: btn.width
+        color: btn.pressed ? Style.lightGreyBorder : btn.hovered ? Style.lightGreyBackgroundHover : backColor
+        radius: btn.hovered ? btn.width/2 : 0
     }
 
-    Image {
-        asynchronous: true
-        source: imgSrc
-        fillMode: Image.Pad
-        anchors.horizontalCenter: parent.horizontalCenter
-        anchors.verticalCenter: parent.verticalCenter
+    contentItem : Item {
+        Image {
+            asynchronous: true
+            source: imgSrc
+            fillMode: Image.Pad
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.verticalCenter: parent.verticalCenter
+        }
     }
 }

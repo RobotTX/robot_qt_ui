@@ -30,24 +30,23 @@ Menu {
 
         Repeater {
             model: pathModel
-            PopupMenuItem {
-                contentItem: Label {
+            delegate: PopupMenuItem {
+                contentItem: CustomLabel {
                     text: qsTr(groupName)
                     anchors {
                         left: parent.left
-                        right: parent.right
+                        right: arrow.left
                         leftMargin: 20
                         rightMargin: 5
                         verticalCenter: parent.verticalCenter
                     }
-                    maximumLineCount: 1
-                    elide: Text.ElideRight
                 }
                 Layout.preferredHeight: Style.menuItemHeight
                 Layout.preferredWidth: parent.width
                 leftPadding: Style.menuItemLeftPadding
 
                 Image {
+                    id: arrow
                     asynchronous: true
                     source: "qrc:/icons/arrow"
                     fillMode: Image.Pad // For not stretching image
@@ -64,7 +63,6 @@ Menu {
                     x: parent.width
                     visible: currentMenuIndex === index
 
-
                     background: Rectangle {
                         implicitWidth: parent.width
                         implicitHeight: paths.count * Style.menuItemHeight
@@ -72,7 +70,6 @@ Menu {
                         border.color: Style.lightGreyBorder
                         radius: 5
                     }
-
 
                     ColumnLayout {
                         anchors {
@@ -82,8 +79,7 @@ Menu {
 
                         Repeater {
                             model: paths
-
-                            PopupMenuItem {
+                            delegate: PopupMenuItem {
                                 anchors {
                                     left: parent.left
                                     right: parent.right
@@ -92,7 +88,7 @@ Menu {
                                 Layout.preferredHeight: Style.menuItemHeight
                                 Layout.preferredWidth: parent.width
 
-                                Label {
+                                contentItem: CustomLabel {
                                     text: qsTr(pathName)
                                     anchors {
                                         left: parent.left
@@ -101,8 +97,6 @@ Menu {
                                         rightMargin: 5
                                         verticalCenter: parent.verticalCenter
                                     }
-                                    maximumLineCount: 1
-                                    elide: Text.ElideRight
                                 }
 
                                 onTriggered: selectPathMenu.pathSelected(pathName, groupName)

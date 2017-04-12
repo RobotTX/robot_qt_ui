@@ -7,7 +7,6 @@ import "../../Model/Robot"
 import "../Custom"
 
 Menu {
-
     id: robotMenu
     padding: 0
     width: 140
@@ -46,7 +45,7 @@ Menu {
                 Layout.preferredHeight: Style.menuItemHeight
                 Layout.preferredWidth: parent.width
 
-                Label {
+                contentItem: CustomLabel {
                     color: enabled ? "black" : Style.darkGrey
                     text: qsTr(name)
                     anchors {
@@ -56,8 +55,6 @@ Menu {
                         rightMargin: 5
                         verticalCenter: parent.verticalCenter
                     }
-                    maximumLineCount: 1
-                    elide: Text.ElideRight
                 }
 
                 onTriggered: {
@@ -67,6 +64,7 @@ Menu {
                 }
 
                 CustomBusyIndicator {
+                    visible: processingCmd
                     running: processingCmd
                     anchors.fill: parent
                 }

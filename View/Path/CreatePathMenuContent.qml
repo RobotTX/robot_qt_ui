@@ -450,7 +450,7 @@ Frame {
                         }
                     }
 
-                    Text {
+                    Label {
                         id: minText
                         text: "Mins"
                         font.pointSize: 10

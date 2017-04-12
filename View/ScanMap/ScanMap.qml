@@ -24,6 +24,7 @@ Window {
 
     ScanMapLeftMenu {
         id: scanMapLeftMenu
+        visible: scanWindow.visible
         robotModel: scanWindow.robotModel
         anchors {
             top: parent.top

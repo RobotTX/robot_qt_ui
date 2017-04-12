@@ -336,13 +336,6 @@ Frame {
                     }
 
                     Label {
-/*
-                        transform: Rotation {
-                            origin.x: img.width / 2
-                            origin.y: img.height / 2
-                            angle: -orientation
-                        }*/
-
                         id: tooltip
 
                         visible: robot.hover

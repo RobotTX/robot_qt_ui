@@ -29,7 +29,7 @@ Button {
         }
     }
 
-    Label {
+    CustomLabel {
         text: qsTr(txt)
         color: "#262626"
         anchors{
