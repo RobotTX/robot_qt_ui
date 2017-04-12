@@ -58,7 +58,7 @@ Column {
         }
 
         /// The item displaying the name of the path/group
-        Label {
+        CustomLabel {
             text: qsTr(groupName)
             color: Style.blackMenuTextColor
             anchors.verticalCenter: parent.verticalCenter
@@ -66,8 +66,6 @@ Column {
             anchors.right: rightButton.left
             anchors.leftMargin: 5
             anchors.rightMargin: 5
-            maximumLineCount: 1
-            elide: Text.ElideRight
         }
 
         SmallButton {
@@ -141,7 +139,7 @@ Column {
                 }
 
                 /// The item displaying the name of the path/group
-                Label {
+                CustomLabel {
                     text: qsTr(pathName)
                     color: Style.blackMenuTextColor
                     anchors {
@@ -151,9 +149,6 @@ Column {
                         leftMargin: 5
                         rightMargin: 5
                     }
-
-                    maximumLineCount: 1
-                    elide: Text.ElideRight
                 }
 
                 SmallButton {
@@ -240,7 +235,7 @@ Column {
                     }
 
                     /// The item displaying the name of the path/group
-                    Label {
+                    CustomLabel {
                         text: qsTr(name)
                         font.pixelSize: 14
                         color: Style.midGrey2
@@ -249,8 +244,6 @@ Column {
                         anchors.right: parent.right
                         anchors.leftMargin: 10
                         anchors.rightMargin: 5
-                        maximumLineCount: 1
-                        elide: Text.ElideRight
                     }
 
                     MouseArea {

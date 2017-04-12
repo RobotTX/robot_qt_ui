@@ -8,6 +8,7 @@ CheckBox {
     height: 16
 
     indicator: Rectangle {
+        id: indicator
         implicitWidth: 16
         implicitHeight: 16
         radius: 3
@@ -21,14 +22,17 @@ CheckBox {
         }
     }
 
-    contentItem: Text {
+    contentItem: CustomLabel {
         text: control.text
         font.pointSize: 10
-        elide: Text.ElideRight
         color: Style.greyText
-        horizontalAlignment: Text.AlignHCenter
         verticalAlignment: Text.AlignVCenter
-        leftPadding: control.indicator.width
+        anchors {
+            left: indicator.right
+            leftMargin: 10
+            right: parent.right
+            rightMargin: 10
+        }
     }
 }
 

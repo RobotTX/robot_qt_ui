@@ -7,7 +7,6 @@ CommandController::CommandController(QObject* parent, QString _ip) : QObject(par
 }
 
 void CommandController::sendCommand(const QString cmd){
-    /// TODO gerer multi command etc
     if(!waitingForAnswer){
         waitingForAnswer = true;
         emit sendCommandSignal(cmd);

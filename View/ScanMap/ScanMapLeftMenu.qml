@@ -225,9 +225,9 @@ Frame {
         scanningRobotsList.reset();
     }
 
-    function checkScanWindow(ip){
+    function checkScanWindow(ip, scanning){
         /// Stop the scan if a scanning robot reconnect after the window has been closed
-        if(!scanningRobotsList.contains(ip))
+        if(scanning && (!scanLeftMenuFrame.visible || !scanningRobotsList.contains(ip)))
             robotModel.stopScanning(ip);
     }
 

@@ -105,8 +105,8 @@ signals:
     void pausedScanning(QVariant ip);
     void receivedScanMap(QString ip, QByteArray mapArray, QString resolution);
     void setScanningOnConnection(QVariant ip, QVariant scanningOnConnection);
+    void checkScanWindow(QVariant ip, QVariant scanning);
     void removeScanMap(QString);
-    void checkScanWindow(QVariant ip);
     void processingCmd(QVariant, QVariant);
     void testScanSignal(QString);
 

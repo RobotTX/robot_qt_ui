@@ -107,7 +107,7 @@ Menu {
                         /// Disable the group in which the path already is so we can't move it in
                         enabled: !(groupName === myGroup)
 
-                        Label {
+                        CustomLabel {
                             text: qsTr(groupName)
                             anchors {
                                 left: parent.left
@@ -116,8 +116,6 @@ Menu {
                                 rightMargin: 5
                                 verticalCenter: parent.verticalCenter
                             }
-                            maximumLineCount: 1
-                            elide: Text.ElideRight
                             color: enabled ? "black" : "lightgrey"
                             enabled: !(groupName === myGroup)
                         }

@@ -54,7 +54,7 @@ Column {
         }
 
         /// The item displaying the name of the point/group
-        Label {
+        CustomLabel {
             text: qsTr(groupName)
             color: Style.blackMenuTextColor
             anchors.verticalCenter: parent.verticalCenter
@@ -62,8 +62,6 @@ Column {
             anchors.right: rightButton.left
             anchors.leftMargin: 5
             anchors.rightMargin: 5
-            maximumLineCount: 1
-            elide: Text.ElideRight
         }
 
         SmallButton {
@@ -149,7 +147,7 @@ Column {
             }
 
             /// The item displaying the name of the point/group
-            Label {
+            CustomLabel {
                 text: qsTr(name)
                 color: Style.blackMenuTextColor
                 anchors.verticalCenter: parent.verticalCenter
@@ -157,8 +155,6 @@ Column {
                 anchors.right: rightMenuButton.left
                 anchors.leftMargin: 5
                 anchors.rightMargin: 5
-                maximumLineCount: 1
-                elide: Text.ElideRight
             }
 
             SmallButton {

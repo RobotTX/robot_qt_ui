@@ -88,7 +88,7 @@ Frame {
                 }
             }
 
-            contentItem: Text {
+            contentItem: Label {
                 text: "?"
                 font.pointSize: 12
                 font.bold: true
@@ -159,10 +159,8 @@ Frame {
         id: choiceMapLabel
         anchors.top: horizontalSeparation.bottom
         anchors.topMargin: 16
-        Text {
-            color: "#8F8E94"
-            text: qsTr("Which map do you want to use ?")
-        }
+        color: "#8F8E94"
+        text: qsTr("Which map do you want to use ?")
     }
 
     // the radio buttons to choose which map is used for the robots
@@ -415,6 +413,8 @@ Frame {
         anchors {
             top: horizontalSeparation3.bottom
             topMargin: 16
+            left: parent.left
+            right: parent.right
         }
 
         checkable: true

@@ -24,12 +24,10 @@ Frame {
 
     padding: 0
 
-    Label {
+    CustomLabel {
         id: nameLabel
         text: qsTr(name)
         height: 20
-        maximumLineCount: 1
-        elide: Text.ElideRight
         font.pixelSize: 16
 
         anchors {
@@ -166,7 +164,7 @@ Frame {
         }
     }
 
-    Label {
+    CustomLabel {
         id: pathLabel
         text: {
             if(pathName !== "" && pathPoints.count > 0){
@@ -185,8 +183,6 @@ Frame {
             qsTr("No Path Assigned");
         }
         font.pixelSize: 14
-        maximumLineCount: 1
-        elide: Text.ElideRight
         color: {
             if(pathName !== "" && pathPoints.count > 0){
                 if(stage >= 0)
@@ -204,7 +200,6 @@ Frame {
             leftMargin: 20
             rightMargin: 20
         }
-        Component.onCompleted: console.log("nb pathpoints " + pathPoints.count)
     }
 
     RobotPathListItem {
@@ -234,17 +229,18 @@ Frame {
         height: 2
     }
 
-
-    Rectangle {
+    Item {
         visible: processingCmd
-        radius: 3
-        color: Style.lightGreyBackground
-        opacity: 0.5
-        anchors.fill: parent
-    }
+        Rectangle {
+            radius: 3
+            color: Style.lightGreyBackground
+            opacity: 0.5
+            anchors.fill: parent
+        }
 
-    CustomBusyIndicator {
-        running: processingCmd
-        anchors.fill: parent
+        CustomBusyIndicator {
+            running: processingCmd
+            anchors.fill: parent
+        }
     }
 }

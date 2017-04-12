@@ -6,7 +6,7 @@ Button {
     property string txt: "Cancel"
     height: 23
 
-    Label {
+    CustomLabel {
         text: qsTr(txt)
         anchors.verticalCenter: parent.verticalCenter
         anchors.horizontalCenter: parent.horizontalCenter

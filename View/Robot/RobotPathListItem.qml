@@ -123,12 +123,21 @@ Frame {
                 right: parent.right
             }
 
-            SmallButton {
+            Button {
                 id: hideShowPathButton
-                imgSrc: pathIsVisible ? "qrc:/icons/visible" : "qrc:/icons/invisible"
-                backColor: "white"
+
                 height: parent.height - 2
                 width: 32
+                padding: 0
+
+                background: Rectangle {
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    anchors.verticalCenter: parent.verticalCenter
+                    width: Math.min(hideShowPathButton.width, hideShowPathButton.height)
+                    height: width
+                    color: hideShowPathButton.hovered ? Style.lightGreyBackgroundHover : "white"
+                    radius: hideShowPathButton.hovered ? width/2 : 0
+                }
 
                 anchors {
                     verticalCenter: parent.verticalCenter
@@ -136,13 +145,20 @@ Frame {
                     leftMargin: 8
                 }
 
+                contentItem: Image {
+                    asynchronous: true
+                    source: pathIsVisible ? "qrc:/icons/visible" : "qrc:/icons/invisible"
+                    fillMode: Image.Pad // For not stretching image
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    anchors.verticalCenter: parent.verticalCenter
+                }
                 onClicked: {
                     robotModel.hideShowPathOnMap(ip);
                     pathModel.visiblePathChanged();
                 }
             }
 
-            Label {
+            CustomLabel {
                 text: qsTr(pathName)
                 height: parent.height
                 color: Style.blackMenuTextColor
@@ -156,9 +172,6 @@ Frame {
                     leftMargin: 5
                     rightMargin: 5
                 }
-
-                maximumLineCount: 1
-                elide: Text.ElideRight
             }
 
             Button {
@@ -287,7 +300,7 @@ Frame {
                             }
 
                             /// The item displaying the name of the path/group
-                            Label {
+                            CustomLabel {
                                 text: qsTr(pathPointName)
                                 font.pixelSize: 14
                                 color: Style.midGrey2
@@ -296,8 +309,6 @@ Frame {
                                 anchors.right: parent.right
                                 anchors.leftMargin: 10
                                 anchors.rightMargin: 5
-                                maximumLineCount: 1
-                                elide: Text.ElideRight
                             }
                         }
                     }
