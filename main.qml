@@ -129,7 +129,10 @@ ApplicationWindow {
                 right: parent.right
                 bottom: parent.bottom
             }
-
+            onDoubleClickedOnMap: {
+                mainFrame.currentMenu = 2;
+                mainMenuViews.doubleClickedOnMap(mouseX, mouseY);
+            }
         }
 
         EditMap {

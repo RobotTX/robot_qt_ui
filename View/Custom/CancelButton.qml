@@ -3,6 +3,7 @@ import QtQuick.Controls 2.1
 import "../../Helper/style.js" as Style
 
 Button {
+    id: btn
     property string txt: "Cancel"
     height: 23
 
@@ -15,6 +16,7 @@ Button {
     background: Rectangle {
         radius: 3
         border.width: 1
+        color: btn.pressed ? Style.whiteButtonPressed : "white"
         border.color: Style.lightGreyBorder
     }
 }

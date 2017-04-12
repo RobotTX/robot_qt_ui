@@ -10,6 +10,7 @@ Page {
     property Paths pathModel
     property Paths tmpPathModel
     property Points pointModel
+    property int menuIndex: 0
     signal useTmpPathModel(bool use)
     signal useRobotPathModel(bool use)
     signal closeMenu()
@@ -18,18 +19,19 @@ Page {
         if(visible){
             useRobotPathModel(false);
             pathModel.visiblePathChanged();
+            menuIndex = 0;
         }
     }
 
     Frame {
         id: pathMenuFrame
-        visible: !createPathMenuFrame.visible && !createGroupMenuFrame.visible
+        visible: menuIndex == 0
         anchors.fill: parent
         padding: 0
         PathMenuHeader {
             id: pathMenuHeader
-            onOpenCreatePathMenu: createPathMenuFrame.visible = true;
-            onOpenCreateGroupMenu: createGroupMenuFrame.visible = true;
+            onOpenCreatePathMenu: menuIndex = 1;
+            onOpenCreateGroupMenu: menuIndex = 2;
             onCloseMenu: page.closeMenu()
         }
 
@@ -43,24 +45,24 @@ Page {
             }
             onRenameGroup: {
                 createGroupMenuContent.oldName = name;
-                createGroupMenuFrame.visible = true;
+                menuIndex = 2;
             }
             onEditPath: {
                 createPathMenuContent.oldName = name;
                 createPathMenuContent.oldGroup = groupName;
-                createPathMenuFrame.visible = true;
+                menuIndex = 1;
             }
         }
     }
     Frame {
         id: createPathMenuFrame
-        visible: false
+        visible: menuIndex == 1
         anchors.fill: parent
         padding: 0
 
         CreateMenuHeader {
             id: createPathMenuHeader
-            onBackToMenu: createPathMenuFrame.visible = false;
+            onBackToMenu: menuIndex = 0;
             txt: "Path"
         }
 
@@ -76,19 +78,19 @@ Page {
                 right: parent.right
                 bottom: parent.bottom
             }
-            onBackToMenu: createPathMenuFrame.visible = false;
+            onBackToMenu: menuIndex = 0;
         }
     }
 
     Frame {
         id: createGroupMenuFrame
-        visible: false
+        visible: menuIndex == 2
         anchors.fill: parent
         padding: 0
 
         CreateGroupMenuHeader {
             id: createGroupMenuHeader
-            onBackToMenu: createGroupMenuFrame.visible = false;
+            onBackToMenu: menuIndex = 0;
         }
 
         CreateGroupMenuContent {
@@ -102,7 +104,7 @@ Page {
             }
             onBackToMenu: {
                 oldName = "";
-                createGroupMenuFrame.visible = false;
+                menuIndex = 0;
             }
         }
     }

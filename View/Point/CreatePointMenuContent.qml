@@ -36,8 +36,7 @@ Frame {
 
         if(!visible){
             if(tmpPointView && createPointMenuFrame){
-                tmpPointView.x = tmpPointView.originX;
-                tmpPointView.y = tmpPointView.originY;
+                tmpPointView.setPos(tmpPointView.originX, tmpPointView.originY);
             }
             oldName = "";
             oldGroup = "";
@@ -53,8 +52,7 @@ Frame {
                             if(pointModel.get(i).points.get(j).name === oldName){
                                 pointModel.get(i).points.setProperty(j, "isVisible", false);
 
-                                tmpPointView.x = pointModel.get(i).points.get(j).posX - tmpPointView.width / 2;
-                                tmpPointView.y = pointModel.get(i).points.get(j).posY - tmpPointView.height;
+                                tmpPointView.setPos(pointModel.get(i).points.get(j).posX, pointModel.get(i).points.get(j).posY);
                                 groupComboBox.currentIndex = i;
                                 groupComboBox.displayText = oldGroup;
                             }

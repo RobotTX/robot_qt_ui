@@ -10,20 +10,22 @@ Page {
     property PointView tmpPointView
 
     signal closeMenu()
+    property int menuIndex: 0
 
     onVisibleChanged: {
-        createPointMenuFrame.visible = false;
+        if(visible)
+            menuIndex = 0;
     }
 
     Frame {
         id: pointMenuFrame
-        visible: !createPointMenuFrame.visible && !createGroupMenuFrame.visible
+        visible: menuIndex == 0
         anchors.fill: parent
         padding: 0
         PointMenuHeader {
             id: pointMenuHeader
-            onOpenCreatePointMenu: createPointMenuFrame.visible = true;
-            onOpenCreateGroupMenu: createGroupMenuFrame.visible = true;
+            onOpenCreatePointMenu: menuIndex = 1;
+            onOpenCreateGroupMenu: menuIndex = 2;
             onCloseMenu: page.closeMenu()
         }
 
@@ -38,25 +40,25 @@ Page {
             }
             onRenameGroup: {
                 createGroupMenuContent.oldName = name;
-                createGroupMenuFrame.visible = true;
+                menuIndex = 2;
             }
             onEditPoint: {
                 createPointMenuContent.oldName = name;
                 createPointMenuContent.oldGroup = groupName;
-                createPointMenuFrame.visible = true;
+                menuIndex = 1;
             }
         }
     }
 
     Frame {
         id: createPointMenuFrame
-        visible: false
+        visible: menuIndex == 1
         anchors.fill: parent
         padding: 0
 
         CreateMenuHeader {
             id: createPointMenuHeader
-            onBackToMenu: createPointMenuFrame.visible = false;
+            onBackToMenu: menuIndex = 0;
             txt: "Point"
         }
 
@@ -70,19 +72,19 @@ Page {
                 right: parent.right
                 bottom: parent.bottom
             }
-            onBackToMenu: createPointMenuFrame.visible = false;
+            onBackToMenu: menuIndex = 0;
         }
     }
 
     Frame {
         id: createGroupMenuFrame
-        visible: false
+        visible: menuIndex == 2
         anchors.fill: parent
         padding: 0
 
         CreateGroupMenuHeader {
             id: createGroupMenuHeader
-            onBackToMenu: createGroupMenuFrame.visible = false;
+            onBackToMenu: menuIndex = 0;
         }
 
         CreateGroupMenuContent {
@@ -96,8 +98,15 @@ Page {
             }
             onBackToMenu: {
                 oldName = "";
-                createGroupMenuFrame.visible = false;
+                menuIndex = 0;
             }
+        }
+    }
+
+    function doubleClickedOnMap(mouseX, mouseY){
+        if(!createPointMenuFrame.visible){
+            menuIndex = 1;
+            tmpPointView.setPos(mouseX, mouseY);
         }
     }
 }

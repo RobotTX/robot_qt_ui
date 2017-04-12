@@ -80,4 +80,8 @@ Frame {
         visible: currentMenu == 4
         onCloseMenu: mainMenuViewsFrame.closeMenu()
     }
+
+    function doubleClickedOnMap(mouseX, mouseY){
+        pointMenu.doubleClickedOnMap(mouseX, mouseY);
+    }
 }

@@ -15,6 +15,9 @@ Image {
     property double originY
     property string tooltipText
 
+    x: - width / 2
+    y: - height
+
     source: imageSource()
     width: 18
     asynchronous: true
@@ -85,5 +88,10 @@ Image {
             break;
         }
         return src;
+    }
+
+    function setPos(posX, posY){
+        x = posX - width/2;
+        y = posY - height;
     }
 }
