@@ -48,7 +48,7 @@ Frame {
 
         background: Rectangle {
             radius: 2
-            border.color: !saveButton.enabled ? Style.redError : groupTextField.activeFocus ? Style.lightBlue : Style.lightGreyBorder
+            border.color: !saveButton.enabled ? Style.errorColor : groupTextField.activeFocus ? Style.lightBlue : Style.lightGreyBorder
             border.width: groupTextField.activeFocus || !saveButton.enabled ? 3 : 1
         }
         onTextChanged: checkGroup(Helper.formatName(groupTextField.text))

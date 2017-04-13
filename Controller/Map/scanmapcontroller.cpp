@@ -24,12 +24,13 @@ ScanMapController::ScanMapController(MainController* parent, QQmlApplicationEngi
     if(scanWindow){
         connect(this, SIGNAL(readyToBeGrabbed(QVariant)), scanWindow, SLOT(grabScannedMap(QVariant)));
     }
-
-    QObject* topView = applicationWindow->findChild<QObject*>("topViewFrame");
+/*
+ * TODO
+    QObject* topView = applicationWindow->findChild<QObject*>("topView");
     if(topView){
         connect(this, SIGNAL(invalidGoal()), topView, SLOT(displayInvalidGoalError()));
     }
-
+*/
     connect(this, SIGNAL(sendGoal(QString,double,double)), parent, SLOT(sendScanGoal(QString, double, double)));
 }
 

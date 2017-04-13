@@ -95,7 +95,7 @@ Frame {
 
         background: Rectangle {
             radius: 2
-            border.color: nameError ? Style.redError : pointTextField.activeFocus ? Style.lightBlue : Style.lightGreyBorder
+            border.color: nameError ? Style.errorColor : pointTextField.activeFocus ? Style.lightBlue : Style.lightGreyBorder
             border.width: pointTextField.activeFocus || nameError ? 3 : 1
         }
         onTextChanged: checkPoint(Helper.formatName(pointTextField.text), oldName,

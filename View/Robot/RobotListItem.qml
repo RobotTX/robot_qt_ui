@@ -64,7 +64,7 @@ Frame {
             background: Rectangle {
                 radius: 2
 
-                border.color: nameField.text === "" ? Style.redError : nameField.activeFocus ? Style.lightBlue : Style.lightGreyBorder
+                border.color: nameField.text === "" ? Style.errorColor : nameField.activeFocus ? Style.lightBlue : Style.lightGreyBorder
                 border.width: nameField.activeFocus || nameField.text === "" ? 3 : 1
             }
             onVisibleChanged: nameField.text = ""
@@ -159,7 +159,7 @@ Frame {
                 width: batteryLevel.visualPosition * parent.width
                 height: parent.height
                 radius: 2
-                color: battery < 50 * batteryWarningThreshold ? Style.redError2 : Style.darkSkyBlue
+                color: battery < 50 * batteryWarningThreshold ? Style.errorColor2 : Style.darkSkyBlue
             }
         }
     }
@@ -188,7 +188,7 @@ Frame {
                 if(stage >= 0)
                     Style.darkSkyBlue
                 else
-                    Style.redError2
+                    Style.errorColor2
             } else
                 Style.midGrey2
         }

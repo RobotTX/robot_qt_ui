@@ -2,6 +2,7 @@
 #define COMMANDCONTROLLER_H
 
 #include <QObject>
+#include <QTimer>
 
 class CommandController : public QObject {
     Q_OBJECT
@@ -21,6 +22,7 @@ private slots:
      * Receive the answer of the command we sent to the robot
      */
     void cmdAnswerSlot(QString);
+    void cmdFinished(void);
 
 signals:
     /**
@@ -45,6 +47,7 @@ signals:
 private:
     QString ip;
     QList<QString> cmdQueue;
+    QTimer timer;
     bool waitingForAnswer;
 };
 

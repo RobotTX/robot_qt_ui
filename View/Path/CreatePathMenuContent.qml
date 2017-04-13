@@ -131,7 +131,7 @@ Frame {
 
             background: Rectangle {
                 radius: 2
-                border.color: nameError ? Style.redError : pathTextField.activeFocus ? Style.lightBlue : Style.lightGreyBorder
+                border.color: nameError ? Style.errorColor : pathTextField.activeFocus ? Style.lightBlue : Style.lightGreyBorder
                 border.width: pathTextField.activeFocus || nameError ? 3 : 1
             }
             onTextChanged: enableSave()

@@ -76,6 +76,7 @@ private slots:
 
     void removeScanMapSlot(QString ip);
     void sendScanGoal(QString ip, double x, double y);
+    void setMessageTopSlot(int status, QString msg);
 
 signals:
     void setHome(QVariant ip, QVariant name, QVariant posX, QVariant posY);
@@ -86,6 +87,7 @@ signals:
     void sendImageToMerge(QImage, double resolution);
     void openRestartScanMessageDialog(QVariant ip);
     void emitBatteryThreshold(QVariant batteryThreshold);
+    void setMessageTop(QVariant status, QVariant msg);
 
 private:
     QPointer<MainMenuController> mainMenuController;

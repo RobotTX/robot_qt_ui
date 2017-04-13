@@ -180,7 +180,6 @@ ApplicationWindow {
     function emitMapConfig(file_name){
         console.log(mapView.pointModel.count + " " + mapView.scale + " " + mapView.centerX + " " + mapView.centerY);
         console.log("map config");
-        mapView.topView.label.text = "The current configuration of the map has been saved";
         applicationWindow.mapConfig(file_name, mapView.zoom, mapView.centerX, mapView.centerY);
     }
 

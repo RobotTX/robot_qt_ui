@@ -3,17 +3,19 @@
 #include <QStringList>
 
 CommandController::CommandController(QObject* parent, QString _ip) : QObject(parent), ip(_ip), cmdQueue(QList<QString>()), waitingForAnswer(false) {
-
+    connect(&timer, SIGNAL(timeout()), this, SLOT(cmdFinished()));
 }
 
 void CommandController::sendCommand(const QString cmd){
     if(!waitingForAnswer){
         waitingForAnswer = true;
         emit sendCommandSignal(cmd);
+        timer.start(15000);
     } else {
         qDebug() << "CommandController::sendCommand got a cmd but already processing => sent to the queue" << cmdQueue;
         cmdQueue.append(cmd);
     }
+    /// Send to the robot model to display the busy indicator when we are waiting for a cmd answer
     emit processingCmd(ip, waitingForAnswer);
 }
 
@@ -137,11 +139,17 @@ void CommandController::cmdAnswerSlot(QString answer){
         Q_UNREACHABLE();
     }
 
+    timer.stop();
+    cmdFinished();
+}
+
+void CommandController::cmdFinished(){
     waitingForAnswer = false;
     if(!cmdQueue.isEmpty()){
         qDebug() << "CommandController::cmdAnswerSlot got an answer and processing the next cmd in the queue" << cmdQueue;
         waitingForAnswer = true;
         emit sendCommandSignal(cmdQueue.takeFirst());
     }
+    /// Send to the robot model to display the busy indicator when we are waiting for a cmd answer
     emit processingCmd(ip, waitingForAnswer);
 }

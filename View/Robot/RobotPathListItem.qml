@@ -266,7 +266,7 @@ Frame {
                                             "#d7d7d7"
                                     } else {
                                         if(Math.abs(stage + 1) >= index)
-                                            Style.redError2
+                                            Style.errorColor2
                                         else
                                             "#d7d7d7"
                                     }
@@ -289,7 +289,7 @@ Frame {
                                             "#d7d7d7"
                                     } else {
                                         if(Math.abs(stage + 1) > index)
-                                            Style.redError2
+                                            Style.errorColor2
                                         else
                                             "#d7d7d7"
                                     }

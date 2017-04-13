@@ -29,7 +29,6 @@ Frame {
     // all the maps from the robots we chose, can rotate each of them individually
 
     Flickable {
-
         anchors {
             top: parent.top
             bottom: saveButton.top

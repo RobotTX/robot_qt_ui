@@ -79,6 +79,14 @@ MainController::MainController(QQmlApplicationEngine *engine, QObject* parent) :
             Q_UNREACHABLE();
         }
 
+        QObject* topView = applicationWindow->findChild<QObject*>("topView");
+        if(settings){
+            connect(this, SIGNAL(setMessageTop(QVariant, QVariant)), topView, SLOT(setMessageTop(QVariant, QVariant)));
+        } else {
+            qDebug() << "MapController::MapController could not find the topView";
+            Q_UNREACHABLE();
+        }
+
         /// get settings from file
         QFile file(QDir::currentPath() + QDir::separator() + "settings.txt");
         if(file.open(QFile::ReadWrite)){
@@ -461,4 +469,8 @@ void MainController::sendScanGoal(QString ip, double x, double y){
                                                                          mapController->getResolution(), mapController->getHeight()));
     qDebug() << "Sending command" << QString("c") + QChar(31) + QString::number(goal_in_robot_coords.x()) + QChar(31) + QString::number(goal_in_robot_coords.y());
     robotsController->sendCommand(ip, QString("c") + QChar(31) + QString::number(goal_in_robot_coords.x()) + QChar(31) + QString::number(goal_in_robot_coords.y()));
+}
+
+void MainController::setMessageTopSlot(int status, QString msg){
+    emit setMessageTop(status, msg);
 }

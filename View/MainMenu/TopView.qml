@@ -1,25 +1,19 @@
 import QtQuick 2.7
+//import QtQuick.Controls 1.4
 import QtQuick.Controls 2.1
+import QtQuick.Layouts 1.3
 import "../../Helper/style.js" as Style
 import "../Custom"
 
 Frame {
     id: topViewFrame
     property bool hasMap
-
-    // this is to be able to display messages at the top
-    property Label label: _label
-
     signal savePosition()
     signal loadPosition()
+    padding: 0
 
-    height: Style.menuHeaderHeight
-    z: 1
-    anchors {
-        left: parent.left
-        top: parent.top
-        right: parent.right
-    }
+    Layout.minimumHeight: Style.menuHeaderHeight
+    Layout.maximumHeight: Math.max(Style.menuHeaderHeight, flick.contentItem.childrenRect.height + 15)
 
     background: Rectangle {
         color: Style.lightGreyBackground
@@ -27,19 +21,73 @@ Frame {
         border.width: 1
     }
 
-    Label {
-        id: _label
-        color: Style.midGrey2
-        text: qsTr("Soon some awesome messages here ")
+    Flickable {
+        id: flick
+        ScrollBar.vertical: ScrollBar { }
+        contentHeight: contentItem.childrenRect.height
+        clip: true
+        anchors {
+            left: parent.left
+            top: parent.top
+            right: saveStateButton.left
+            bottom: parent.bottom
+            leftMargin: 10
+            topMargin: 5
+            bottomMargin: 5
+        }
+
+        MouseArea {
+            onWheel: console.log
+        }
+
+        Column {
+            anchors.left: parent.left
+            anchors.right: parent.right
+            Label {
+                id: errorLabel
+                color: Style.errorColor2
+                visible: text !== ""
+                text: qsTr("Soon some awesome messages here Soon some awesome messages here Soon some awesome messages here Soon some awesome messages here Soon some awesome messages here Soon some awesome messages here ")
+                wrapMode: Text.WordWrap
+                width: parent.width
+            }
+            Label {
+                id: warningLabel
+                color: Style.warningColor
+                visible: text !== ""
+                text: qsTr("Soon some awesome messages here Soon some awesome messages here Soon some awesome messages here Soon some awesome messages here Soon some awesome messages here Soon some awesome messages here ")
+                wrapMode: Text.WordWrap
+                width: parent.width
+            }
+            Label {
+                id: successLabel
+                color: Style.successColor
+                visible: text !== ""
+                text: qsTr("Soon some awesome messages here Soon some awesome messages here Soon some awesome messages here Soon some awesome messages here Soon some awesome messages here Soon some awesome messages here ")
+                wrapMode: Text.WordWrap
+                width: parent.width
+            }
+            Label {
+                id: infoLabel
+                color: Style.infoColor
+                visible: text !== ""
+                text: qsTr("Soon some awesome messages here Soon some awesome messages here Soon some awesome messages here Soon some awesome messages here Soon some awesome messages here Soon some awesome messages here ")
+                wrapMode: Text.WordWrap
+                width: parent.width
+            }
+        }
     }
 
     /// The load state button
     SmallButton {
         id: loadStateButton
         imgSrc: "qrc:/icons/loadState"
-        anchors.verticalCenter: parent.verticalCenter
-        anchors.right: parent.right
-        anchors.rightMargin: 10
+        anchors {
+            top: parent.top
+            topMargin: 10
+            right: parent.right
+            rightMargin: 10
+        }
         enabled: hasMap
         onClicked: topViewFrame.loadPosition()
     }
@@ -48,16 +96,34 @@ Frame {
     SmallButton {
         id: saveStateButton
         imgSrc: "qrc:/icons/saveState"
-        anchors.verticalCenter: parent.verticalCenter
-        anchors.right: loadStateButton.left
-        anchors.rightMargin: 14
+        anchors {
+            top: parent.top
+            topMargin: 10
+            right: loadStateButton.left
+            rightMargin: 14
+        }
         enabled: hasMap
         onClicked: topViewFrame.savePosition()
     }
 
-    // TODO find a decent alternative to this
-    function displayInvalidGoalError(){
-        console.log("displayerror called");
-        _label.text = "You cannot send your robot there as this area has yet to be discovered by the robot. Double click a white point of the map instead."
+    /// TODO add Timer ?
+    function setMessageTop(label, msg){
+        switch(label){
+            case 0:
+                errorLabel.text = msg;
+            break;
+            case 1:
+                warningLabel.text = msg;
+            break;
+            case 2:
+                successLabel.text = msg;
+            break;
+            case 3:
+                infoLabel.text = msg;
+            break;
+            default:
+                console.log("Not supposed to be here");
+            break;
+        }
     }
 }
