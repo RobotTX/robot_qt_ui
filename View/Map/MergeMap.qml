@@ -315,6 +315,12 @@ Window {
             clip: true
             objectName: "mergeMapsView"
 
+            function adjustSize(_width, _height){
+                console.log("adjusting merge map size to " + _width + " " + _height)
+                width = _width
+                height = _height
+            }
+
             width: 2048
             height: 2048
 

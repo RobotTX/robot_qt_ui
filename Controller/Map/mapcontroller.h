@@ -157,7 +157,7 @@ signals:
      */
     void requestReloadMap(QVariant location);
 
-private:
+ private:
     QPointer<Map> map;
     QPointer<MergeMapController> mergeMapController;
     QPointer<EditMapController> editMapController;

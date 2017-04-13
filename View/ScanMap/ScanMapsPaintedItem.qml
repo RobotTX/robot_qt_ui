@@ -38,7 +38,6 @@ ScanMapPaintedItem {
         onHideRobot: robotView.visible = false
     }
 
-
     // actually matters to create the mouse area of the robot after the mouse area of the item
     // in order for its events not to be stolen
     RobotView {

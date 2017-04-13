@@ -3,7 +3,7 @@ import QtQuick 2.7
 import QtQuick.Controls 2.1
 
 MergeMapsPaintedItem {
-
+    id: item
     x: 0
     y: 0
     smooth: false
@@ -17,8 +17,7 @@ MergeMapsPaintedItem {
         onWidthChanged: console.log("width changed " + width);
         onHeightChanged: console.log("height changed " + height);
         onClicked: {
-            console.log(width + " " + height)
-            console.log("got clicked ");
+            console.log(width + " " + height + " " + item.x + " " + item.y)
         }
     }
 }
