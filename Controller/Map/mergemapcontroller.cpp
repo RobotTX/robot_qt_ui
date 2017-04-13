@@ -4,6 +4,8 @@
 #include <QQuickItemGrabResult>
 #include <QPixmap>
 #include <QQuickItem>
+#include <QGraphicsPixmapItem>
+#include <QGraphicsScene>
 #include <QQuickWindow>
 #include <QPainter>
 #include "mergemapcontroller.h"
@@ -29,12 +31,11 @@ MergeMapController::MergeMapController(MainController *parent, QQmlApplicationEn
 
     }
 
-    QObject* mergeMapsView = applicationWindow->findChild<QObject*>("mergeMapsView");
-/*
-    if(mergeMapsView){
-        connect(this, SIGNAL(readyToBeGrabbed(QVariant)), mergeMapsView, SLOT(grabMergedMap(QVariant)));
-    }*/
-
+    QObject* mergeMap = applicationWindow->findChild<QObject*>("mergeMapsView");
+    if(mergeMap)
+        connect(this, SIGNAL(updateSize(QVariant, QVariant)), mergeMap, SLOT(adjustSize(QVariant, QVariant)));
+    else
+        Q_UNREACHABLE();
 
     QObject* mergeMapLeftMenu = applicationWindow->findChild<QObject*>("mergeMapLeftMenu");
     if(mergeMapLeftMenu){
@@ -47,8 +48,10 @@ MergeMapController::MergeMapController(MainController *parent, QQmlApplicationEn
 void MergeMapController::importMap(const QString& _filename){
     qDebug() << "MergeMapController importMap called" << _filename;
     QImage image(_filename, "PGM");
-    if(paintedItems.size() == 0)
+    if(paintedItems.size() == 0){
+        emit updateSize(image.width(), image.height());
         size_of_images_merged = image.size();
+    }
 
     if(image.size() == size_of_images_merged){
         QQmlComponent component(engine, QUrl("qrc:/View/Map/MergeMapsPaintedItem.qml"));
@@ -121,8 +124,10 @@ void MergeMapController::importMap(const QString& _filename){
 void MergeMapController::importMap(QImage image, double _resolution){
     qDebug() << "Import map from robot" << image.size();
     resolution = _resolution;
-    if(paintedItems.isEmpty())
+    if(paintedItems.isEmpty()){
+        emit updateSize(image.width(), image.height());
         size_of_images_merged = image.size();
+    }
 
     if(image.size() == size_of_images_merged){
         QQmlComponent component(engine, QUrl("qrc:/View/Map/MergeMapsPaintedItem.qml"));
@@ -188,6 +193,7 @@ void MergeMapController::importMap(QImage image, double _resolution){
         paintedItem->update();
         /// adds the image to the list of the image drawn
         paintedItems.append(paintedItem);
+
     } else
         emit differentMapSizes();
 }
@@ -195,30 +201,13 @@ void MergeMapController::importMap(QImage image, double _resolution){
 void MergeMapController::exportMap(QString fileName){
     qDebug() << "exportMap called" << fileName;
 
-    int top = 0;
-    int bottom = 2048;
-    int left = 2048;
-    int right = 0;
-
     /// We want to find the smallest rectangle containing the map so we can find its center and put it at the center of the window
     /// before grab
-
     for(int i = 0; i < paintedItems.size(); i++){
         QImage& image = paintedItems.at(i)->getImage();
         for(int i = 0; i < image.width(); i++){
             for(int j = 0; j < image.height(); j++){
                 QColor color = image.pixelColor(i, j);
-                int red = color.red();
-                if(red == 255 || red == 0){
-                    if(bottom > j)
-                        bottom = j;
-                    if(top < j)
-                        top = j;
-                    if(left > i)
-                        left = i;
-                    if(right < i)
-                        right = i;
-                }
                 if(!(color.red() == 205 && color.green() == 205 && color.blue() == 205)){
                     /// If we find a pixel with more blue than the rest, it is our origin pixel
                     if(color.red() == color.green() && color.blue() > color.red()){
@@ -232,8 +221,6 @@ void MergeMapController::exportMap(QString fileName){
         }
         paintedItems.at(i)->update();
     }
-
-    qDebug() << QPoint((top-bottom)/2, (right-left)/2);
 
     emit readyToBeGrabbed(fileName);
 

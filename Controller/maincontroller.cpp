@@ -167,6 +167,7 @@ void MainController::loadMapConfig(QString fileName) const {
         QFileInfo mapFileInfo(static_cast<QDir> (fileNameWithoutExtension), "");
         QString filePath(QDir::currentPath() + QDir::separator() +  "mapConfigs" + QDir::separator() + mapFileInfo.fileName() + ".config");
         qDebug() << "MainController::loadMapBtnEvent map to load :" << filePath;
+
         /// if we are able to find the configuration then we load the map
         if(mapController->loadMapConfig(filePath)){
             robotsController->sendMapToAllRobots(mapController->getMapId().toString(),
@@ -225,9 +226,6 @@ void MainController::newRobotPosSlot(QString ip, float posX, float posY, float o
                     mapController->getHeight());
     float orientation = -ori * 180.0 / M_PI + 90;
     robotsController->setRobotPos(ip, robotPos.x(), robotPos.y(), orientation);
-    //qDebug() << "Coords robot" << robotPos.x() << robotPos.y();
-    //qDebug() << "Coords robot" << robotPos.x()-mapController->getWidth()/2 + mapController->getOrigin().x() <<
-     //       robotPos.y()-mapController->getHeight()/2 + mapController->getOrigin().y();
     mapController->getScanMapController()->updateRobotPos(ip, robotPos.x(), robotPos.y(), orientation);
 }
 

@@ -6,6 +6,7 @@ import "../../Model/Robot"
 import "../../View/Custom/"
 
 Window {
+
     id: scanWindow
     objectName: "scanWindow"
 
@@ -51,6 +52,12 @@ Window {
             id: scanMap
             clip: true
             objectName: "scanMapView"
+
+            function adjustSize(_width, _height){
+                console.log("adjusting scan size to " + _width + " " + _height)
+                width = _width
+                height = _height
+            }
 
             width: 2048
             height: 2048
@@ -98,23 +105,15 @@ Window {
             console.log("you");
             scanMap.grabToImage(function(result) {
                 result.saveToFile(file_name.substring(7) + ".pgm");
-                scanWindow.close();
                 // important to call the hide function here as this call is asynchronous and if you call hide outside
                 // you will most likely hide the window before you can grab it and will end up grabbing nothing
-                /*
-                useMapDialog.file_new_map = _fileName.substring(7) + ".pgm";
-                useMapDialog.open();
-                */
+                scanWindow.close();
             });
         }
 
         else scanMap.grabToImage(function(result) {
                                           result.saveToFile(file_name.substring(7));
                                           scanWindow.close();
-            /*
-                                            useMapDialog.file_new_map = _fileName.substring(7);
-                                            useMapDialog.open();
-                                            */
         });
     }
 }

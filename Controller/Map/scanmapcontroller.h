@@ -34,6 +34,12 @@ signals:
     void readyToBeGrabbed(QVariant);
     void sendGoal(QString, double, double);
     void invalidGoal();
+    /**
+     * @brief updateSize
+     * Sends the size of the map to the merge and scan widgets so that they can save maps
+     * of the same size
+     */
+    void updateSize(QVariant, QVariant);
 
 private:
     QMap<QString, ScanMapPaintedItem*> paintedItems;

@@ -25,12 +25,18 @@ ScanMapController::ScanMapController(MainController* parent, QQmlApplicationEngi
         connect(this, SIGNAL(readyToBeGrabbed(QVariant)), scanWindow, SLOT(grabScannedMap(QVariant)));
     }
 
+    QObject* scanMap = applicationWindow->findChild<QObject*>("scanMapView");
+    if(scanMap)
+        connect(this, SIGNAL(updateSize(QVariant, QVariant)), scanMap, SLOT(adjustSize(QVariant, QVariant)));
+    else
+        Q_UNREACHABLE();
+
     QObject* topView = applicationWindow->findChild<QObject*>("topViewFrame");
     if(topView){
         connect(this, SIGNAL(invalidGoal()), topView, SLOT(displayInvalidGoalError()));
     }
 
-    connect(this, SIGNAL(sendGoal(QString,double,double)), parent, SLOT(sendScanGoal(QString, double, double)));
+    connect(this, SIGNAL(sendGoal(QString,double, double)), parent, SLOT(sendScanGoal(QString, double, double)));
 }
 
 void ScanMapController::receivedScanMap(QString ip, QImage map, QString resolution){
@@ -38,6 +44,8 @@ void ScanMapController::receivedScanMap(QString ip, QImage map, QString resoluti
     emit receivedScanMap(ip);
 
     if(!paintedItems.contains(ip)){
+
+        emit updateSize(map.width(), map.height());
 
         QQmlComponent component(engine, QUrl("qrc:/View/ScanMap/ScanMapsPaintedItem.qml"));
         ScanMapPaintedItem* paintedItem = qobject_cast<ScanMapPaintedItem*>(component.create());

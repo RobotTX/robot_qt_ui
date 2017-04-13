@@ -31,6 +31,12 @@ private slots:
 signals:
     void differentMapSizes();
     void readyToBeGrabbed(QVariant);
+    /**
+     * @brief updateSize
+     * Sends the size of the map to the merge and scan widgets so that they can save maps
+     * of the same size
+     */
+    void updateSize(QVariant, QVariant);
 
 private:
     QQmlApplicationEngine* engine;
