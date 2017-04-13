@@ -423,28 +423,13 @@ Frame {
         onClicked: show = !show
     }
 
-    Button {
+    CancelButton {
         id: cancelButton
 
-        height: 23
         width: 70
 
         anchors.bottom: parent.bottom
         anchors.left: parent.left
-
-        background: Rectangle {
-            radius: 3
-            color: cancelButton.pressed ? Style.whiteButtonPressed : "white"
-            border.width: 1
-            border.color: Style.lightGreyBorder
-        }
-
-        Label {
-            text: qsTr("Cancel")
-            color: "Black"
-            anchors.verticalCenter: parent.verticalCenter
-            anchors.horizontalCenter: parent.horizontalCenter
-        }
 
         onClicked: {
             /// TODO cancel the laser modifications
@@ -455,25 +440,11 @@ Frame {
     }
 
     // apply button to save the changes but keep the window open
-    Button {
-
+    SaveButton {
         id: applyButton
-        height: 23
+
+        txt: "Apply"
         width: 70
-
-        Label {
-            text: qsTr("Apply")
-            color: "white"
-            anchors.verticalCenter: parent.verticalCenter
-            anchors.horizontalCenter: parent.horizontalCenter
-        }
-
-        background: Rectangle {
-            radius: 3
-            color: applyButton.pressed ? Style.darkSkyBlueBorder : Style.darkSkyBlue
-            border.width: 1
-            border.color: Style.darkSkyBlueBorder
-        }
 
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.bottom: parent.bottom

@@ -36,6 +36,7 @@ Frame {
     signal posClicked(double x, double y)
     signal savePosition(double posX, double posY, double zoom, string mapSrc)
     signal loadPosition()
+    signal doubleClickedOnMap(double mouseX, double mouseY)
 
     Connections {
         target: pathModel
@@ -60,8 +61,6 @@ Frame {
         _isVisible: false
         originX: 0
         originY: 0
-        x: - width / 2
-        y: - height
         tooltipText: "Drag me or click the map to modify my position"
         signal tmpPointViewPosChanged()
 
@@ -204,11 +203,11 @@ Frame {
                 onPressed: canDrag = true
                 onReleased: canDrag = true
 
+                onDoubleClicked: doubleClickedOnMap(mouseX, mouseY)
                 onClicked: {
                     if (mouse.button === Qt.LeftButton) {
                         if(tmpPointView.visible){
-                            tmpPointView.x = mouseX;
-                            tmpPointView.y = mouseY;
+                            tmpPointView.setPos(mouseX,  mouseY);
                             tmpPointView.tmpPointViewPosChanged()
                         }
 
