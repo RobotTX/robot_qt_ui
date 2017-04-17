@@ -161,23 +161,21 @@ void PointController::moveTo(QString name, QString oldGroup, QString newGroup){
 }
 
 void PointController::checkErrorPoint(const QImage& mapImage, const QString name, const QString oldName, const double x, const double y){
-    bool error = false;
+    bool nameError = false;
+    bool posError = false;
 
     /// Name not empty
-    error = name.isEmpty();
+    nameError = name.isEmpty();
 
     /// Check if the name is taken by another point
-    if(!error && name.compare(oldName) != 0)
-        error = checkPointName(name);
-
-    bool nameError = error;
+    if(!nameError && name.compare(oldName) != 0)
+        nameError = checkPointName(name);
 
     /// Check if the point is not in a wall or unknown place
-    if(!error)
-        error = (mapImage.pixelColor(x, y).red() != 255);
+    posError = (mapImage.pixelColor(x, y).red() != 255);
 
     /// Send the result to qml to enable or not the save button
-    emit enablePointSaveQml(!error, nameError);
+    emit enablePointSaveQml(posError, nameError);
 }
 
 void PointController::checkGroup(QString name){
