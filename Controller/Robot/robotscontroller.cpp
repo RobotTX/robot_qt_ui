@@ -51,6 +51,7 @@ RobotsController::RobotsController(QObject *applicationWindow, MainController* p
 
         connect(this, SIGNAL(receivedScanMap(QString, QByteArray, QString)),
                 parent, SLOT(receivedScanMapSlot(QString, QByteArray, QString)));
+
     } else {
         qDebug() << "RobotsController::RobotsController could not find the qml robot model";
         Q_UNREACHABLE();
@@ -74,6 +75,7 @@ RobotsController::RobotsController(QObject *applicationWindow, MainController* p
     connect(this, SIGNAL(newMapFromRobot(QString, QByteArray, QString, QString)), parent, SLOT(newMapFromRobotSlot(QString, QByteArray, QString, QString)));
     connect(this, SIGNAL(sendMapToProcessForMerge(QByteArray, QString)), parent, SLOT(processMapForMerge(QByteArray, QString)));
     connect(this, SIGNAL(removeScanMap(QString)), parent, SLOT(removeScanMapSlot(QString)));
+    connect(this, SIGNAL(setMessageTop(int, QString)), parent, SLOT(setMessageTopSlot(int, QString)));
 
     launchServer();
 }
@@ -102,7 +104,7 @@ void RobotsController::robotIsAliveSlot(const QString name, const QString ip, co
         emit setBattery(ip, battery);
         robots.value(ip)->ping();
     } else {
-        QPointer<RobotController> robotController = QPointer<RobotController>(new RobotController(this, ip));
+        QPointer<RobotController> robotController = QPointer<RobotController>(new RobotController(this, ip, name));
         robots.insert(ip, robotController);
         emit addRobot(name, ip, ssid, stage, battery);
     }
@@ -308,4 +310,8 @@ void RobotsController::checkScanningSlot(const QString ip, const bool scanning){
 
 void RobotsController::processingCmdSlot(QString ip, bool processing){
     emit processingCmd(ip, processing);
+}
+
+void RobotsController::setMessageTopSlot(int status, QString msg){
+    emit setMessageTop(status, msg);
 }

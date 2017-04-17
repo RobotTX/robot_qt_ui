@@ -167,6 +167,7 @@ bool MapController::saveMapConfig(const QString fileName, const double centerX, 
 }
 
 void MapController::saveMapToFile(const QString fileName) const {
+    qDebug() << "saving a map of size " << map->getMapImage().size();
     /// Qt has is own function to save the QImage to a PGM file
     map->getMapImage().save(fileName, "PGM");
 
@@ -195,7 +196,9 @@ bool MapController::loadMapConfig(const QString fileName) {
                     "originY:" << originY << "\n\t" <<
                     "resolution:" << resolution << "\n\t" <<
                     "map ID:" << QString::fromStdString(mapId);
+
         setMapFile(QString::fromStdString(_mapFile));
+
         qDebug() << "requestloadmap" << "file:/" + QString::fromStdString(_mapFile);
         /// for the qml side to reload the main window map file
         emit requestReloadMap("file:/" + QString::fromStdString(_mapFile));
@@ -320,7 +323,9 @@ void MapController::newMapFromRobot(const QByteArray& mapArray, const QString ma
 void MapController::setMapFile(const QString file) {
     qDebug() << "MapController::setMapFile to" << file;
     map->setMapFile(file);
-    map->setMapImage(QImage(map->getMapFile()));
+    QImage img(map->getMapFile(), "PGM");
+    qDebug() << "imported a map of size " << img.size();
+    map->setMapImage(QImage(map->getMapFile(), "PGM"));
     /// so that the qml side can load the map
     emit setMap(file);
 }

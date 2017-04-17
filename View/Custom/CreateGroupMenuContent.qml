@@ -14,8 +14,13 @@ Frame {
     signal createGroup(string name)
     signal renameGroup(string newName, string oldName)
     signal checkGroup(string name)
+    signal setMessageTop(int status, string msg)
 
-    onVisibleChanged: groupTextField.text = oldName;
+
+    onVisibleChanged: {
+        groupTextField.text = oldName;
+        setMessageTop(1, "");
+    }
 
     padding: 20
 
@@ -76,15 +81,23 @@ Frame {
         enabled: false
         anchors.leftMargin: 5
         onClicked: {
-            if(oldName === "")
-                createGroup(Helper.formatName(groupTextField.text));
-            else
-                renameGroup(Helper.formatName(groupTextField.text), oldName);
+            var newName = Helper.formatName(groupTextField.text);
+            if(oldName === ""){
+                createGroup(newName);
+                setMessageTop(2, "Created the group \"" + newName + "\"")
+            } else {
+                renameGroup(newName, oldName);
+                setMessageTop(2, "Renamed the group \"" + oldName + "\" to \"" + newName + "\"")
+            }
             backToMenu();
         }
     }
 
     function enableSave(enable){
         saveButton.enabled = enable;
+        if(enable)
+            setMessageTop(1, "");
+        else
+            setMessageTop(1, Helper.formatName(groupTextField.text) === "" ? "The name of the group can not be empty" : "\"" + groupTextField.text + "\" is already taken")
     }
 }

@@ -129,7 +129,7 @@ void MainController::checkTmpPosition(int index, double x, double y){
 }
 
 void MainController::saveMapConfig(QString fileName, double zoom, double centerX, double centerY) const {
-    qDebug() << "MapController::saveMapConfig called with" << fileName << zoom << centerX << centerY;
+    qDebug() << "MainController::saveMapConfig called with" << fileName << zoom << centerX << centerY;
 
     if(fileName.lastIndexOf(".pgm", fileName.length()-4) != -1){
         qDebug() << "filename" << fileName;
@@ -142,7 +142,8 @@ void MainController::saveMapConfig(QString fileName, double zoom, double centerX
     QString filePath(QDir::currentPath() + QDir::separator() + "mapConfigs" + QDir::separator() + mapFileInfo.fileName() + ".config");
     qDebug() << filePath;
 
-    mapController->setMapFile(QDir::currentPath() + QDir::separator() + "mapConfigs" + QDir::separator() + mapFileInfo.fileName() + ".pgm");
+
+    //mapController->setMapFile(QDir::currentPath() + QDir::separator() + "mapConfigs" + QDir::separator() + mapFileInfo.fileName() + ".pgm");
 
     mapController->savePositionSlot(centerX, centerY, zoom, QDir::currentPath() + QDir::separator() + "mapConfigs" + QDir::separator() + mapFileInfo.fileName() + ".pgm");
 
@@ -164,7 +165,7 @@ void MainController::saveMapConfig(QString fileName, double zoom, double centerX
     PathXMLParser::save(pathController, QDir::currentPath() + QDir::separator() + "currentPaths.xml");
 }
 
-void MainController::loadMapConfig(QString fileName) const {
+void MainController::loadMapConfig(QString fileName) {
     qDebug() << "MainController::loadMapConfig called";
 
     if(!fileName.isEmpty()){
@@ -200,12 +201,13 @@ void MainController::loadMapConfig(QString fileName) const {
             /// saves the imported paths in the current paths file
             PathXMLParser::save(pathController, QDir::currentPath() + QDir::separator() + "currentPaths.xml");
 
+            setMessageTopSlot(2, "Loaded the map: " + mapFileInfo.fileName());
         } else {
             /// TODO emit signal to open warning box
             Q_UNIMPLEMENTED();
             /*
             QMessageBox warningBox;
-            warningBox.setText("No configuration found for this map.");
+            warningBox.setText("No configuration found for this map.\nPlease select another file.");
             Q_UNREACHABLE();
             warningBox.setStandardButtons(QMessageBox::Ok);
             warningBox.setDefaultButton(QMessageBox::Ok);
@@ -223,6 +225,7 @@ void MainController::saveSettings(int mapChoice, double batteryThreshold, bool s
         file.close();
         emit emitBatteryThreshold(batteryThreshold);
     }
+    setMessageTopSlot(2, "Settings saved");
 }
 
 void MainController::newRobotPosSlot(QString ip, float posX, float posY, float ori){
@@ -243,7 +246,6 @@ void MainController::newMetadataSlot(int width, int height, float resolution, fl
     mapController->setHeight(height);
     mapController->setResolution(resolution);
 }
-
 
 void MainController::updatePathSlot(QString ip, QStringList strList){
     if(strList.size() > 0){
@@ -425,7 +427,6 @@ void MainController::resetMapConfigurationAfterMerge(QString file_name){
 
 void MainController::startScanningSlot(QString ip){
     robotsController->sendCommand(ip, QString("t"));
-    robotsController->startedScanningSlot(ip);
 }
 
 void MainController::stopScanningSlot(QString ip){

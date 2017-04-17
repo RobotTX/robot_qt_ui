@@ -123,6 +123,7 @@ private slots:
     void receivedScanMapSlot(const QString ip, const QByteArray map, const QString resolution);
     void checkScanningSlot(const QString ip, const bool scanning);
     void processingCmdSlot(QString ip, bool processing);
+    void setMessageTopSlot(int status, QString msg);
 
 signals:
     void stopRobotServerWorker(void);
@@ -153,6 +154,7 @@ signals:
     void removeScanMap(QString);
     void processingCmd(QVariant, QVariant);
     void testScanSignal(QString);
+    void setMessageTop(int status, QString msg);
 
 private:
     QMap<QString, QPointer<RobotController>> robots;

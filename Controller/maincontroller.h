@@ -54,7 +54,7 @@ private slots:
      * @param fileName configuration file
      * To import a map inside the application (along with its points, configuration and paths)
      */
-    void loadMapConfig(QString fileName) const;
+    void loadMapConfig(QString fileName);
     /**
      * @brief checkTmpPosition
      * @param index

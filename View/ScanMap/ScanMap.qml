@@ -102,18 +102,17 @@ Window {
         console.log("scan: grabbed called " + file_name.substring(7) + ".pgm");
 
         if(file_name.toString().lastIndexOf(".pgm") === -1){
-            console.log("you");
             scanMap.grabToImage(function(result) {
                 result.saveToFile(file_name.substring(7) + ".pgm");
                 // important to call the hide function here as this call is asynchronous and if you call hide outside
                 // you will most likely hide the window before you can grab it and will end up grabbing nothing
                 scanWindow.close();
             });
-        }
-
-        else scanMap.grabToImage(function(result) {
+        } else {
+            scanMap.grabToImage(function(result) {
                                           result.saveToFile(file_name.substring(7));
                                           scanWindow.close();
-        });
+            });
+        }
     }
 }

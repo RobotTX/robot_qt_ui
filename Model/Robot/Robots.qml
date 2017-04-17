@@ -14,6 +14,7 @@ ListModel {
     signal robotDc(string ip);
     signal robotConnection(string ip);
     signal setBusy(string ip, bool busy)
+    signal setMessageTop(int status, string msg)
 
     function addRobot(name, ip, wifi, stage, battery){
         append({
@@ -38,12 +39,15 @@ ListModel {
             "processingCmd": false
         });
         robotConnection(ip);
+        setMessageTop(3, "The robot \"" + name + "\" just connected");
     }
 
     function removeRobot(ip){
         for(var i = 0; i < count; i++)
-            if(get(i).ip === ip)
+            if(get(i).ip === ip){
+                setMessageTop(0, "The robot \"" + get(i).name + "\" just disconnected");
                 remove(i);
+            }
         visiblePathChanged();
         robotDc(ip);
     }

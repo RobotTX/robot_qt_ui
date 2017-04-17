@@ -36,6 +36,9 @@ ApplicationWindow {
     signal shortcutAddRobot()
     signal shortcutDeleteRobot()
     signal requestOrSendMap(string ip, bool request)
+    signal setMessageTop(int status, string msg)
+
+    onSetMessageTop: mapView.setMessageTop(status, msg)
 
     property bool useTmpPathModel: false
     property bool useRobotPathModel: false
@@ -45,11 +48,13 @@ ApplicationWindow {
         Points {
             id: _pointModel
             objectName: "pointModel"
+            onSetMessageTop: mapView.setMessageTop(status, msg)
         }
 
         Paths {
             id: _pathModel
             objectName: "pathModel"
+            onSetMessageTop: mapView.setMessageTop(status, msg)
         }
 
         Paths {
@@ -61,6 +66,7 @@ ApplicationWindow {
         Robots {
             id: _robotModel
             objectName: "robotModel"
+            onSetMessageTop: mapView.setMessageTop(status, msg)
         }
 
         /// TODO Just for testing, to remove later
@@ -113,6 +119,7 @@ ApplicationWindow {
             onSaveMap: applicationWindow.emitMapConfig(file_name)
             onUseTmpPathModel: applicationWindow.useTmpPathModel = use
             onUseRobotPathModel: applicationWindow.useRobotPathModel = use
+            onSetMessageTop: mapView.setMessageTop(status, msg)
         }
 
         MapView {
@@ -165,7 +172,7 @@ ApplicationWindow {
 
     function openMapChoiceMessageDialog(ip, robotIsOlder){
         if(dualChoiceMessageDialog.visible){
-            /// TODO fix this :/
+            /// TODO fix this (if more than 1 robot connect and has a wrong map, we were already asking to choose a map for the previous robot)
             console.log("We are already choosing a map for the robot, try again later");
         } else {
             dualChoiceMessageDialog.title = qsTr("Choose which map to use");
@@ -181,6 +188,7 @@ ApplicationWindow {
         console.log(mapView.pointModel.count + " " + mapView.scale + " " + mapView.centerX + " " + mapView.centerY);
         console.log("map config");
         applicationWindow.mapConfig(file_name, mapView.zoom, mapView.centerX, mapView.centerY);
+        mapView.setMessageTop(2, "Saved the map to \"" + file_name + "\"");
     }
 
     function reloadMapImage(file_name){

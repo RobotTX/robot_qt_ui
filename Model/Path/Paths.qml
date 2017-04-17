@@ -10,6 +10,7 @@ ListModel {
     signal checkTmpPosition(int index, double x, double y)
     signal visiblePathChanged()
     signal validPositionChanged()
+    signal setMessageTop(int status, string msg)
 
     function addGroup(name){
         append({
@@ -63,8 +64,10 @@ ListModel {
 
     function deleteGroup(groupName){
         for(var i = 0; i < count; i++)
-            if(get(i).groupName === groupName)
+            if(get(i).groupName === groupName){
                 remove(i);
+                setMessageTop(2, "Deleted the group \"" + groupName + "\"");
+            }
         deleteGroupSignal(groupName);
         visiblePathChanged();
     }
@@ -73,8 +76,10 @@ ListModel {
         for(var i = 0; i < count; i++)
             if(get(i).groupName === groupName)
                 for(var j = 0; j < get(i).paths.count; j++)
-                    if(get(i).paths.get(j).pathName === name)
+                    if(get(i).paths.get(j).pathName === name){
                         get(i).paths.remove(j);
+                        setMessageTop(2, "Deleted the path \"" + name + "\" in \"" + groupName + "\"");
+                    }
 
         deletePathSignal(groupName, name);
         visiblePathChanged();
@@ -146,6 +151,7 @@ ListModel {
             if(get(i).groupName === newGroup)
                 get(i).paths.append(path);
 
+        setMessageTop(2, "Moved the path \"" + name + "\" from \"" + oldGroup + "\" to \"" + newGroup + "\"");
         moveToSignal(name, oldGroup, newGroup)
     }
 

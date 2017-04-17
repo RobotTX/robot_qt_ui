@@ -31,6 +31,7 @@ ScanMapController::ScanMapController(MainController* parent, QQmlApplicationEngi
         Q_UNREACHABLE();
 
     connect(this, SIGNAL(sendGoal(QString, double, double)), parent, SLOT(sendScanGoal(QString, double, double)));
+    connect(this, SIGNAL(setMessageTop(int, QString)), parent, SLOT(setMessageTopSlot(int, QString)));
 }
 
 void ScanMapController::receivedScanMap(QString ip, QImage map, QString resolution){
@@ -112,29 +113,32 @@ void ScanMapController::saveScanSlot(QString file_name){
     /// We want to find the smallest rectangle containing the map so we can find its center and put it at the center of the window
     /// before grab
 
-    QMapIterator<QString, ScanMapPaintedItem*> it(paintedItems);
-    while(it.hasNext()){
-        it.next();
-        QImage& image = it.value()->getImage();
-        for(int i = 0; i < image.width(); i++){
-            for(int j = 0; j < image.height(); j++){
-                QColor color = image.pixelColor(i, j);
-                if(!(color.red() == 205 && color.green() == 205 && color.blue() == 205)){
-                    /// If we find a pixel with more blue than the rest, it is our origin pixel
-                    if(color.red() == color.green() && color.blue() > color.red()){
-                        image.setPixelColor(i, j, Qt::white);
-                    } else if(color.red() == color.green() && color.green() == color.blue())
-                        image.setPixelColor(i, j, Qt::white);
-                    else
-                        image.setPixelColor(i, j, Qt::black);
+    if(paintedItems.size() > 0){
+        QMapIterator<QString, ScanMapPaintedItem*> it(paintedItems);
+        while(it.hasNext()){
+            it.next();
+            QImage& image = it.value()->getImage();
+            for(int i = 0; i < image.width(); i++){
+                for(int j = 0; j < image.height(); j++){
+                    QColor color = image.pixelColor(i, j);
+                    if(!(color.red() == 205 && color.green() == 205 && color.blue() == 205)){
+                        /// If we find a pixel with more blue than the rest, it is our origin pixel
+                        if(color.red() == color.green() && color.blue() > color.red()){
+                            image.setPixelColor(i, j, Qt::white);
+                        } else if(color.red() == color.green() && color.green() == color.blue())
+                            image.setPixelColor(i, j, Qt::white);
+                        else
+                            image.setPixelColor(i, j, Qt::black);
+                    }
                 }
             }
+            it.value()->setProperty("_drawRobotView", false);
+            it.value()->update();
         }
-        it.value()->setProperty("_drawRobotView", false);
-        it.value()->update();    
-    }
 
-    emit readyToBeGrabbed(file_name);
+        emit readyToBeGrabbed(file_name);
+        emit setMessageTop(2, "Finished to scan the new map");
+    }
 }
 
 void ScanMapController::sendGoalSlot(QString ip, double x, double y){

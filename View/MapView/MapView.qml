@@ -109,7 +109,6 @@ Frame {
             Image {
                 id: mapImage
                 clip: true
-                //asynchronous: false
                 visible: false
                 onSourceChanged: console.log("new source " + mapSrc)
                 source: mapSrc
@@ -423,5 +422,9 @@ Frame {
         console.log("changed file " + "file:/" + map._mapFile+ " " + mapImage.source);
         mapImage.source = "";
         mapImage.source = "file:/" + map._mapFile;
+    }
+
+    function setMessageTop(status, msg){
+        topViewId.setMessageTop(status, msg);
     }
 }

@@ -10,7 +10,7 @@ class CommandController : public QObject {
 
 public:
 
-    CommandController(QObject *parent, QString ip);
+    CommandController(QObject *parent, QString ip, QString robotName);
 
     /**
      * @brief sendCommand
@@ -110,9 +110,12 @@ signals:
      * where the model is updated so that busy indicators can be displayed when relevant
      */
     void processingCmd(QString ip, bool waitingForAnswer);
+    void setMessageTop(int status, QString msg);
 
 private:
     QString ip;
+    /// Only used to set messages on top of the application
+    QString robotName;
     QList<QString> cmdQueue;
     QTimer timer;
     bool waitingForAnswer;
