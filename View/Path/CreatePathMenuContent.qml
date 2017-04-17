@@ -70,6 +70,7 @@ Frame {
             }
         }
         pathTextField.text = oldName;
+        setMessageTop(1, "");
     }
 
     padding: 0
@@ -581,26 +582,38 @@ Frame {
     }
 
     function enableSave(){
-        var error = false;
         var newName = Helper.formatName(pathTextField.text);
 
-        error = (newName === "");
+        var topMsg = "";
 
-        if(!error && newName !== oldName)
+        var error = (newName === "");
+        if(error)
+            topMsg = "The path name can not be empty";
+
+        if(newName !== "" && !newName !== oldName)
             for(var i = 0; i < pathModel.count; i++)
-                for(var j = 0; j < pathModel.get(i).paths.count; j++)
-                    error = error || (pathModel.get(i).paths.get(j).pathName === newName)
+                for(var j = 0; j < pathModel.get(i).paths.count; j++){
+                    if(pathModel.get(i).paths.get(j).pathName === newName){
+                        topMsg += (topMsg !== "" ? "\n" : "") + "The path name \"" + newName + "\" is already taken";
+                        error = true;
+                    }
+                }
 
         nameError = error;
 
-        if(!error)
-            error = (tmpPathModel.get(0).paths.get(0).pathPoints.count < 1);
+        if(tmpPathModel.get(0).paths.get(0).pathPoints.count < 1){
+            topMsg += (topMsg !== "" ? "\n" : "") + "You need at least 1 point to create a path";
+            error = true;
+        }
 
-        if(!error)
-            for(var j = 0; j < tmpPathModel.get(0).paths.get(0).pathPoints.count; j++)
-                if(!error)
-                    error = !tmpPathModel.get(0).paths.get(0).pathPoints.get(j).validPos;
+        for(var k = 0; k < tmpPathModel.get(0).paths.get(0).pathPoints.count; k++){
+            if(!tmpPathModel.get(0).paths.get(0).pathPoints.get(k).validPos){
+                topMsg += (topMsg !== "" ? "\n" : "") + "The point " + (k+1) + " is at a wrong position, your robot(s) would not be able to go there";
+                error = true;
+            }
+        }
 
+        setMessageTop(1, topMsg);
         saveButton.enabled = !error;
     }
 }

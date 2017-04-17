@@ -20,6 +20,7 @@ Frame {
     signal backToMenu()
     signal createPoint(string name, string groupName, double x, double y, string oldName, string oldGroup)
     signal checkPoint(string name, string oldName, double x, double y)
+    signal setMessageTop(int status, string msg)
 
     Connections {
         target: tmpPointView
@@ -59,6 +60,7 @@ Frame {
             }
         }
         pointTextField.text = oldName;
+        setMessageTop(1, "");
     }
 
     padding: 20
@@ -179,13 +181,29 @@ Frame {
         }
         enabled: false
         onClicked: {
-            createPoint(Helper.formatName(pointTextField.text), groupComboBox.displayText, tmpPointView.x + tmpPointView.width / 2, tmpPointView.y + tmpPointView.height, oldName, oldGroup);
+            var newName = Helper.formatName(pointTextField.text);
+            var groupName = groupComboBox.displayText;
+            createPoint(newName, groupName, tmpPointView.x + tmpPointView.width / 2, tmpPointView.y + tmpPointView.height, oldName, oldGroup);
             backToMenu();
+            setMessageTop(2, oldName === "" ? "Created the point \"" + newName + "\" in \"" + groupName + "\"" :
+                                            "Edited a point from \"" + oldName + "\" in \"" + oldGroup + "\" to \"" + newName + "\" in \"" + groupName + "\"")
         }
     }
 
-    function enableSave(enable, _nameError){
+    function enableSave(posError, _nameError){
         nameError = _nameError;
-        saveButton.enabled = enable;
+        saveButton.enabled = !posError && !nameError;
+
+        var topMsg = "";
+        if(!saveButton.enabled){
+            if(Helper.formatName(pointTextField.text) === "")
+                topMsg = "The point name can not be empty";
+            else if(nameError)
+                topMsg = "The point name \"" + Helper.formatName(pointTextField.text) + "\" is already taken";
+
+            if(posError)
+                topMsg += (nameError ? "\n" : "") + "You cannot save this point because your robot(s) would not be able to go there";
+        }
+        setMessageTop(1, topMsg);
     }
 }

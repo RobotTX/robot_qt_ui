@@ -62,6 +62,14 @@ Frame {
                 visible: text !== ""
                 wrapMode: Text.WordWrap
                 width: parent.width
+
+                onTextChanged: if(text !== "") successTimer.start()
+
+                Timer {
+                    id: successTimer
+                    interval: 10000;
+                    onTriggered: successLabel.text = ""
+                }
             }
             Label {
                 id: infoLabel
@@ -69,6 +77,14 @@ Frame {
                 visible: text !== ""
                 wrapMode: Text.WordWrap
                 width: parent.width
+
+                onTextChanged: if(text !== "") infoTimer.start()
+
+                Timer {
+                    id: infoTimer
+                    interval: 10000;
+                    onTriggered: infoLabel.text = ""
+                }
             }
         }
     }

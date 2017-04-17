@@ -75,8 +75,7 @@ Page {
                 bottom: parent.bottom
             }
             onBackToMenu: menuIndex = 0;
-            onCreatePoint: setMessageTop(2, oldName === "" ? "Created the point \"" + name + "\" in \"" + groupName + "\"" :
-                                                           "Edited a point from \"" + oldName + "\" in \"" + oldGroup + "\" to \"" + name + "\" in \"" + groupName + "\"")
+            onSetMessageTop: page.setMessageTop(status, msg)
         }
     }
 
