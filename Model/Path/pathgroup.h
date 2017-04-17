@@ -8,7 +8,9 @@ class Path;
 #include <QPointer>
 
 class PathGroup : public QObject {
+
 public:
+
     PathGroup(QObject *parent);
     QMap<QString, QPointer<Path>> getPaths(void) const { return paths; }
 
@@ -23,4 +25,4 @@ private:
     QMap<QString, QPointer<Path>> paths;
 };
 
-#endif // PATHGROUP_H
+#endif /// PATHGROUP_H

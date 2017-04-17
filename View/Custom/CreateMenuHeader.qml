@@ -4,7 +4,9 @@ import "../../Helper/style.js" as Style
 import "../Custom"
 
 Frame {
+
     id: menuHeader
+
     padding: 0
     z: 2
 

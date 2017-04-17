@@ -19,6 +19,7 @@ class Map : public QObject {
     Q_OBJECT
 
 public:
+
     Map(QObject* parent);
 
     QString getMapFile(void) const { return mapFile; }

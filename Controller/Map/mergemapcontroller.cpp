@@ -232,6 +232,8 @@ void MergeMapController::rotateMap(int angle, int index){
 
 void MergeMapController::removeMap(int index){
     qDebug() << "MergeMapController::removemap called" << index;
+    /// it is common to simply hide the item, it will be destroyed once the application is closed
+    /// which is enough if you don't have too many objects created by once instance of the application
     paintedItems.at(index)->setVisible(false);
     paintedItems.remove(index);
     /// if that was the last item we reset the reference size

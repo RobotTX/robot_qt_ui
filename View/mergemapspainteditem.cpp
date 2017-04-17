@@ -5,6 +5,7 @@
 MergeMapsPaintedItem::MergeMapsPaintedItem(QQuickItem *parent): QQuickPaintedItem(parent) {
     setFlag(QQuickItem::ItemHasContents, true);
     setAcceptedMouseButtons(Qt::LeftButton);
+    /// so we rotate around the center of the item and not around the top left corner
     setTransformOrigin(QQuickItem::Center);
 }
 

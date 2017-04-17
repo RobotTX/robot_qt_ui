@@ -8,9 +8,11 @@
 #include "Helper/helper.h"
 
 PathController::PathController(QObject *applicationWindow, MainController* parent) : QObject(parent){
+
     paths = QPointer<Paths>(new Paths(this));
 
     QObject *pathModel = applicationWindow->findChild<QObject*>("pathModel");
+
     if (pathModel){
         /// Signals from c++ to the qml path model
         connect(this, SIGNAL(addGroupQml(QVariant)), pathModel, SLOT(addGroup(QVariant)));
@@ -24,6 +26,7 @@ PathController::PathController(QObject *applicationWindow, MainController* paren
         connect(pathModel, SIGNAL(deletePathSignal(QString, QString)), this, SLOT(deletePath(QString, QString)));
         connect(pathModel, SIGNAL(deleteGroupSignal(QString)), this, SLOT(deleteGroup(QString)));
         connect(pathModel, SIGNAL(moveToSignal(QString, QString, QString)), this, SLOT(moveTo(QString, QString, QString)));
+
     } else {
         qDebug() << "PathController::PathController could not find the qml point model";
         Q_UNREACHABLE();

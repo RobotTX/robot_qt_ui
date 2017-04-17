@@ -6,8 +6,11 @@
 #include <QPointer>
 
 class TeleopWorker : public QObject {
+
     Q_OBJECT
+
 public:
+
     TeleopWorker(const QString _ipAddress, const int _port);
     ~TeleopWorker();
 
@@ -42,6 +45,10 @@ private slots:
     void errorConnectionSlot(QAbstractSocket::SocketError error);
 
 signals:
+    /**
+     * @brief robotIsDead
+     * to notify the robot controller that the connection cannot be established
+     */
     void robotIsDead();
 
 private :
@@ -50,4 +57,4 @@ private :
     int port;
 };
 
-#endif // TELEOPWORKER_H
+#endif /// TELEOPWORKER_H

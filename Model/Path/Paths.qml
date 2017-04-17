@@ -3,6 +3,7 @@ import QtQuick.Controls 2.1
 import "../../Helper/helper.js" as Helper
 
 ListModel {
+
     signal deletePathSignal(string groupName, string name)
     signal deleteGroupSignal(string groupName)
     signal moveToSignal(string name, string oldGroup, string newGroup)
@@ -11,10 +12,9 @@ ListModel {
     signal validPositionChanged()
 
     function addGroup(name){
-        //console.log("Add group " + name);
         append({
            "groupName": name,
-           "groupIsOpen": (name === Helper.noGroup) ? true : false,
+           "groupIsOpen": name === Helper.noGroup,
            "paths": []
         });
     }
@@ -38,6 +38,7 @@ ListModel {
                 for(var j = 0; j < get(i).paths.count; j++)
                     if(get(i).paths.get(j).pathName === pathName){
                         if(get(i).paths.get(j).pathPoints.count > 0){
+                            // to prevent the same path point to be added twice in a row
                             if(get(i).paths.get(j).pathPoints.get(get(i).paths.get(j).pathPoints.count - 1).posX !== x
                                     || get(i).paths.get(j).pathPoints.get(get(i).paths.get(j).pathPoints.count - 1).posY !== y)
                                 get(i).paths.get(j).pathPoints.append({
@@ -58,16 +59,6 @@ ListModel {
                         }
                     }
 
-    }
-
-    function addTmpPathPoint(name, x, y, waitTime, validPos){
-        get(0).paths.get(0).pathPoints.append({
-             "name": name,
-             "posX": x,
-             "posY": y,
-             "waitTime": waitTime,
-             "validPos": validPos
-        });
     }
 
     function deleteGroup(groupName){

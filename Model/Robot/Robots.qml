@@ -1,6 +1,7 @@
 import QtQuick 2.0
 
 ListModel {
+
     signal newHomeSignal(string ip, string homeName, double homeX, double homeY)
     signal newPathSignal(string ip, string groupName, string pathName)
     signal newNameSignal(string ip, string newName)

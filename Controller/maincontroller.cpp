@@ -425,7 +425,6 @@ void MainController::resetMapConfigurationAfterMerge(QString file_name){
 
 void MainController::startScanningSlot(QString ip){
     robotsController->sendCommand(ip, QString("t"));
-    /// TODO remove when tests ok
     robotsController->startedScanningSlot(ip);
 }
 

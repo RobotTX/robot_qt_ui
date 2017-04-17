@@ -13,7 +13,8 @@
 #include "Controller/Map/scanmapcontroller.h"
 #include "View/editmappainteditem.h"
 
-MapController::MapController(QQmlApplicationEngine* engine, QObject *applicationWindow, MainController *parent) : QObject(parent){
+MapController::MapController(QQmlApplicationEngine* engine, QObject *applicationWindow, MainController *parent) : QObject(parent) {
+
     map = QPointer<Map>(new Map(this));
 
     QObject *mapViewFrame = applicationWindow->findChild<QObject*>("mapViewFrame");
@@ -50,6 +51,7 @@ MapController::MapController(QQmlApplicationEngine* engine, QObject *application
 }
 
 void MapController::initializeMap(void){
+
     QString currentPathFile = QDir::currentPath() + QDir::separator() + "currentMap.txt";
     qDebug() << currentPathFile;
     std::ifstream file(currentPathFile.toStdString(), std::ios::in);
@@ -101,6 +103,7 @@ void MapController::initializeMap(void){
 }
 
 void MapController::savePositionSlot(const double posX, const double posY, const double zoom, const QString mapSrc){
+
     QString currentPathFile = QDir::currentPath() + QDir::separator() + "currentMap.txt";
     std::ofstream file(currentPathFile.toStdString(), std::ios::out | std::ios::trunc);
 
@@ -158,6 +161,7 @@ bool MapController::saveMapConfig(const QString fileName, const double centerX, 
 
         file.close();
         return true;
+
     } else
         return false;
 }
@@ -193,6 +197,7 @@ bool MapController::loadMapConfig(const QString fileName) {
                     "map ID:" << QString::fromStdString(mapId);
         setMapFile(QString::fromStdString(_mapFile));
         qDebug() << "requestloadmap" << "file:/" + QString::fromStdString(_mapFile);
+        /// for the qml side to reload the main window map file
         emit requestReloadMap("file:/" + QString::fromStdString(_mapFile));
         map->setHeight(_height);
         map->setWidth(_width);
@@ -200,6 +205,7 @@ bool MapController::loadMapConfig(const QString fileName) {
         map->setResolution(resolution);
         map->setMapId(QUuid(QString::fromStdString(mapId)));
         map->setDateTime(QDateTime::currentDateTime());
+        /// centers on (centerX, centerY) with the proper zoom coefficient
         centerMap(centerX, centerY, zoom);
         /// saves the configuration contained in the file <fileName> as the current configuration
         saveMapConfig(QDir::currentPath() + QDir::separator() + "currentMap.txt", centerX, centerY, zoom);
@@ -214,14 +220,13 @@ void MapController::centerMap(const double centerX, const double centerY, const 
 }
 
 void MapController::saveEditedImage(const QString location){
+    /// to save the image being edited in the edit map window
     editMapController->getPaintedItem()->saveImage(map->getMapImage(), location);
+    /// and request the main map to be reload on the qml side
     emit requestReloadMap("file:/" + location);
-    /*
-    setMapFile(map->getMapFile());
-    map->setMapImage(QImage(map->getMapFile()));
-    */
 }
 
+/// helper function to print out the position where the map has been clicked
 void MapController::posClicked(const double x, const double y){
     QPointF pos = Helper::Convert::pixelCoordToRobotCoord(
     QPointF(x, y),
@@ -233,7 +238,6 @@ void MapController::posClicked(const double x, const double y){
 }
 
 QImage MapController::getImageFromArray(const QByteArray& mapArrays, const int map_width, const int map_height, const bool fromPgm){
-
 
     qDebug() << "MapController::getImageFromArray" << map_width << map_height << fromPgm;
     QImage image = QImage(map_width, map_height, QImage::Format_Grayscale8);
@@ -317,6 +321,7 @@ void MapController::setMapFile(const QString file) {
     qDebug() << "MapController::setMapFile to" << file;
     map->setMapFile(file);
     map->setMapImage(QImage(map->getMapFile()));
+    /// so that the qml side can load the map
     emit setMap(file);
 }
 

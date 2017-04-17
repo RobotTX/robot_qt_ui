@@ -4,6 +4,7 @@
 
 CommandController::CommandController(QObject* parent, QString _ip) : QObject(parent), ip(_ip), cmdQueue(QList<QString>()), waitingForAnswer(false) {
     connect(&timer, SIGNAL(timeout()), this, SLOT(cmdFinished()));
+    timer.setSingleShot(true);
 }
 
 void CommandController::sendCommand(const QString cmd){
@@ -32,7 +33,7 @@ void CommandController::cmdAnswerSlot(QString answer){
                     emit updateName(ip, list.at(2));
                 break;
                 /*case 'b':
-                    /// Changed the wifi informations of a robot
+                    /// Changed the wifi information of a robot
                     /// NOT USED ANYMORE
                     Q_UNREACHABLE();
                 break;*/
@@ -144,7 +145,9 @@ void CommandController::cmdAnswerSlot(QString answer){
 }
 
 void CommandController::cmdFinished(){
+    qDebug() << "CommandCOntroller::cmdFinished";
     waitingForAnswer = false;
+    /// if the command queue is not empty we process the next command
     if(!cmdQueue.isEmpty()){
         qDebug() << "CommandController::cmdAnswerSlot got an answer and processing the next cmd in the queue" << cmdQueue;
         waitingForAnswer = true;

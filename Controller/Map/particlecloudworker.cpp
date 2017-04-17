@@ -33,6 +33,7 @@ void ParticleCloudWorker::connectSocket(){
 }
 
 void ParticleCloudWorker::readTcpDataSlot(){
+
     data.append(socket->readAll());
 
     QVector<QPointF> points;

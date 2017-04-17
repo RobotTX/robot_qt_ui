@@ -1,10 +1,7 @@
 #include "robotpositionworker.h"
 #include <QThread>
 
-RobotPositionWorker::RobotPositionWorker(const QString newipAddress, const int newPort){
-    ipAddress = newipAddress;
-    port = newPort;
-}
+RobotPositionWorker::RobotPositionWorker(const QString newipAddress, const int newPort) : ipAddress(newipAddress), port(newPort) {}
 
 RobotPositionWorker::~RobotPositionWorker(){
     stopWorker();

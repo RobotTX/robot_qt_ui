@@ -24,6 +24,10 @@ public:
     EditMapPaintedItem(QQuickItem* parent = 0);
 
     void addItem(const SHAPE shape, const QColor color, const int thickness, const int x, const int y, bool _update);
+    /**
+     * @brief clearMapItems
+     * removes all the items from the map and clear the undo vector as well
+     */
     void clearMapItems();
 
     void paint(QPainter *painter) Q_DECL_OVERRIDE;

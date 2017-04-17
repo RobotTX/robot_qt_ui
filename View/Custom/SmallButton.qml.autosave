@@ -5,7 +5,7 @@ import "../../Helper/style.js" as Style
 Button {
 
     id: btn
-
+ 
     property string imgSrc
     property string backColor: "transparent"
     width: Style.smallBtnWidth

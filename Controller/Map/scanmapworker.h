@@ -59,7 +59,10 @@ signals:
      * and we can display it
      */
     void valueChangedMap(QByteArray, int, QString, QString, QString, QString, QString, int, int);
-    void newScanSaved(QString ipAddress);
+    /**
+     * @brief robotIsDead
+     * to notify the robot controller that the connection cannot be established
+     */
     void robotIsDead();
 
 private :

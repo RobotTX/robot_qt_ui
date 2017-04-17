@@ -6,7 +6,6 @@
 ScanMapController::ScanMapController(MainController* parent, QQmlApplicationEngine* _engine, QObject *_applicationWindow)
     : QObject(parent), engine(_engine), applicationWindow(_applicationWindow) {
 
-
     QObject* scanLeftMenuFrame = applicationWindow->findChild<QObject*>("scanLeftMenuFrame");
 
     if(scanLeftMenuFrame){
@@ -31,7 +30,7 @@ ScanMapController::ScanMapController(MainController* parent, QQmlApplicationEngi
     else
         Q_UNREACHABLE();
 
-    connect(this, SIGNAL(sendGoal(QString,double, double)), parent, SLOT(sendScanGoal(QString, double, double)));
+    connect(this, SIGNAL(sendGoal(QString, double, double)), parent, SLOT(sendScanGoal(QString, double, double)));
 }
 
 void ScanMapController::receivedScanMap(QString ip, QImage map, QString resolution){

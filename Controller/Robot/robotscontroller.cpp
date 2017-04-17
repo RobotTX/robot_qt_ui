@@ -8,6 +8,7 @@
 RobotsController::RobotsController(QObject *applicationWindow, MainController* parent) : QObject(parent), robots(QMap<QString, QPointer<RobotController>>()), receivingMap(false){
 
     QObject *robotModel = applicationWindow->findChild<QObject*>("robotModel");
+
     if (robotModel){
         /// Signals from the controller to the qml model
         connect(this, SIGNAL(displayRobots()), robotModel, SLOT(display()));
@@ -95,7 +96,7 @@ void RobotsController::launchServer(void){
 }
 
 void RobotsController::robotIsAliveSlot(const QString name, const QString ip, const QString ssid, const int stage, const int battery){
-    qDebug() << "RobotsController::robotIsAliveSlot" << name << ip << ssid << stage << battery;
+    //qDebug() << "RobotsController::robotIsAliveSlot" << name << ip << ssid << stage << battery;
     if(robots.find(ip) != robots.end()){
         emit setStage(ip, stage);
         emit setBattery(ip, battery);
@@ -127,6 +128,7 @@ void RobotsController::shortcutAddRobot(void){
         emit setPlayingPath(ip, (robots.size() - 1)%2 == 0);
     }
 
+    /// TODO remove when tests ok
     if((robots.size() - 1)%3 == 0){
         emit setPath(ip, "pathName avec un nom tres tres long " + ip);
         emit addPathPoint(ip, QString("pathPoint 1"), 50 * robots.size() + 50, 50 * robots.size() + 50, (robots.size() - 1)%3);
@@ -236,7 +238,6 @@ void RobotsController::sendNewMapToAllExcept(const QString ip, const QString map
     timer = new QTimer(this);
     timer->setInterval(10000);
 
-
     connect(timer, SIGNAL(timeout()), this, SLOT(timerSlot()));
     timer->start();
 }
@@ -265,7 +266,6 @@ void RobotsController::startedScanningSlot(const QString ip){
 
 void RobotsController::stoppedScanningSlot(const QString ip){
     emit stoppedScanning(ip);
-    /// TO DO remove scan map
     emit removeScanMap(ip);
 }
 

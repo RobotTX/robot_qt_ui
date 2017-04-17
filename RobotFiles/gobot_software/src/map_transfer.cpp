@@ -13,6 +13,9 @@ tcp::acceptor m_acceptor(io_service);
 std::string path_computer_software = "/home/gtdollar/computer_software/";
 std::string path_gobot_move = "/home/gtdollar/catkin_ws/src/gobot_move/";
 
+// this allows us to resub to the /map topic in case the connection would have been lost
+bool sendingMapWhileScanning = false;
+
 void sendMap(const std::vector<uint8_t>& my_map){
 	try {
 		boost::system::error_code ignored_error;
@@ -169,6 +172,11 @@ bool startMap(gobot_software::Port::Request &req,
 	m_acceptor.accept(socket_map);
 	std::cout << "(Map) We are connected " << std::endl;
 
+	if(sendingMapWhileScanning){
+		ros::NodeHandle n;
+		sub_map = n.subscribe("/map", 1, getMap);
+	}
+
 	return true;
 }
 
@@ -179,6 +187,7 @@ bool sendAutoMap(std_srvs::Empty::Request &req, std_srvs::Empty::Response &res){
 	ros::NodeHandle n;
 	sub_map.shutdown();
 	sub_map = n.subscribe("/map", 1, getMap);
+	sendingMapWhileScanning = true;
 
 	return true;
 }
@@ -198,6 +207,7 @@ bool stopAutoMap(std_srvs::Empty::Request &req, std_srvs::Empty::Response &res){
 	std::cout << "(Map) StopAutoMap " << std::endl;
 
 	sub_map.shutdown();
+	sendingMapWhileScanning = false;
 
 	return true;
 }
@@ -210,6 +220,11 @@ bool stopSendingLocalMap(std_srvs::Empty::Request& req, std_srvs::Empty::Respons
 	return true;
 }
 
+// who:
+// 0 : scan 
+// 1 : application requesting at connection time
+// 2 : to merge
+// 3 : recovering position
 bool sendOnceMap(gobot_software::Port::Request &req,
     gobot_software::Port::Response &res){
 	std::cout << "(Map) SendOnceMap doing nothing for now" << std::endl;

@@ -16,9 +16,11 @@ class PointGroup;
  */
 
 class Points : public QObject {
+
     Q_OBJECT
 
 public:
+
     Points(QObject *parent);
     QMap<QString, QPointer<PointGroup>> getGroups(void) const { return groups; }
 

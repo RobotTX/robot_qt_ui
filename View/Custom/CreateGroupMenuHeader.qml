@@ -4,7 +4,9 @@ import "../../Helper/style.js" as Style
 import "../Custom"
 
 Frame {
+
     id: menuHeader
+
     padding: 0
 
     signal backToMenu()
@@ -21,7 +23,6 @@ Frame {
         border.color: Style.lightGreyBorder
         border.width: 1
     }
-
 
     SmallButton {
         id: closeBtn

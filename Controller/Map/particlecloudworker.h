@@ -11,6 +11,7 @@ class ParticleCloudWorker: public QObject {
     Q_OBJECT
 
 public:
+
     ParticleCloudWorker(const QString _ipAddress, const int _port);
     ~ParticleCloudWorker();
 
@@ -42,6 +43,10 @@ private slots:
     void connectSocket();
 
 signals:
+    /**
+     * @brief robotIsDead
+     * notifies the robot controller that the connection cannot be established
+     */
     void robotIsDead();
 
 private:

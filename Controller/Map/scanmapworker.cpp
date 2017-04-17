@@ -56,6 +56,11 @@ void ScanMapWorker::readTcpDataSlot(){
 
         /// Emit the signal valueChangedMap, meaning that we finished to receive a whole map
         /// and we can display it
+        /// who:
+        /// 0 : scan
+        /// 1 : application requesting at connection time
+        /// 2 : to merge
+        /// 3 : recovering position
         int who = 0;
         if(static_cast<uint8_t>(data.at(data.size()-1)) == 254)
             who = 1;
@@ -75,11 +80,11 @@ void ScanMapWorker::readTcpDataSlot(){
             while(!gotMapInfo && i < data.size() - 6){
                 if(static_cast<uint8_t>(data.at(i)) == 252 && static_cast<uint8_t>(data.at(i+1)) == 252
                         && static_cast<uint8_t>(data.at(i+2)) == 252 && static_cast<uint8_t>(data.at(i+3)) == 252 &&
-                        static_cast<uint8_t>(data.at(i+4)) == 252){
+                        static_cast<uint8_t>(data.at(i+4)) == 252) {
+
                     gotMapInfo = true;
-                } else {
+                } else
                     mapInfo.append(static_cast<char>(data.at(i)));
-                }
                 i++;
             }
 

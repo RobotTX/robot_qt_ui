@@ -8,7 +8,9 @@ class Point;
 #include <QVector>
 
 class PointGroup : public QObject {
+
 public:
+
     PointGroup(QObject *parent);
     QVector<QPointer<Point>> getPointVector(void) const { return pointVector; }
 
@@ -22,4 +24,4 @@ private:
     QVector<QPointer<Point>> pointVector;
 };
 
-#endif // POINTGROUP_H
+#endif /// POINTGROUP_H

@@ -7,7 +7,9 @@ class Point;
 #include <QPointer>
 
 class PathPoint : public QObject {
+
 public:
+
     PathPoint(const QString _name, const double _x, const double _y, const int _waitTime, QObject *parent);
 
     QPointer<Point> getPoint(void) const { return point; }
@@ -29,4 +31,4 @@ private:
     QPointer<Point> point;
 };
 
-#endif // PATHPOINT_H
+#endif /// PATHPOINT_H

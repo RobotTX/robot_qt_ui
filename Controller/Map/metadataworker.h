@@ -11,7 +11,9 @@
  * data of the map we want to display
  */
 class MetadataWorker : public QObject {
+
     Q_OBJECT
+
 public:
     /**
      * @brief MetadataWorker
@@ -61,6 +63,10 @@ signals:
      * Signal emitted when we have received the Metadata
      */
     void valueChangedMetadata(int width, int height, float resolution, float originX, float originY);
+    /**
+     * @brief robotIsDead
+     * notifies the robot controller that the connection has been lost
+     */
     void robotIsDead();
 
 private :
@@ -68,7 +74,6 @@ private :
     QString ipAddress;
     int port;
 };
-
 
 #endif /// METADATAWORKER_H
 

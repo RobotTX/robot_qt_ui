@@ -215,7 +215,6 @@ void RobotController::mapReceivedSlot(const QByteArray mapArray, const int who, 
         break;
         case 2:
             qDebug() << "RobotController::mapReceivedSlot received a map from a robot to merge" << ip << resolution << originX << originY;
-            qDebug() << "Map::getImageFromArray" << map_width << map_height << who;
             emit mapToMergeFromRobot(mapArray, resolution);
         break;
         case 1:
@@ -224,10 +223,6 @@ void RobotController::mapReceivedSlot(const QByteArray mapArray, const int who, 
         case 0:
             qDebug() << "RobotController::mapReceivedSlot received a map while scanning";
             emit receivedScanMap(ip, mapArray, resolution);
-            /*QString robotName = robotsController->getRobots()->getRobotViewByIp(ipAddress)->getRobot()->getName();
-            QImage image = mapController->getImageFromArray(mapArray, false);
-            image.save(QDir::currentPath() + QDir::separator() + "brutos", "PNG");
-            emit receivedScanMap(robotName, image, mapController->getMap()->getResolution());*/
         break;
         default:
             Q_UNREACHABLE();

@@ -4,6 +4,7 @@ import "../../View/Point"
 import "../../Helper/helper.js" as Helper
 
 ListModel {
+
     signal hideShow(string groupName, string name)
     signal deletePointSignal(string groupName, string name)
     signal deleteGroupSignal(string groupName)
@@ -87,6 +88,7 @@ ListModel {
         }
     }
 
+    // moves the point <name> from <oldGroup> to <newGroup>
     function moveTo(name, oldGroup, newGroup){
         var point = {};
         for(var i = 0; i < count; i++)

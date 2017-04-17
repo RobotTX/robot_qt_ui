@@ -10,9 +10,11 @@
 #include "Helper/helper.h"
 
 PointController::PointController(QObject *applicationWindow, MainController* parent) : QObject(parent){
+
     points = QPointer<Points>(new Points(this));
 
     QObject *pointModel = applicationWindow->findChild<QObject*>("pointModel");
+
     if (pointModel){
         /// Tell the qml point model that we just added a new group
         connect(this, SIGNAL(addGroupQml(QVariant)), pointModel, SLOT(addGroup(QVariant)));
@@ -26,6 +28,7 @@ PointController::PointController(QObject *applicationWindow, MainController* par
         connect(pointModel, SIGNAL(deletePointSignal(QString, QString)), this, SLOT(deletePoint(QString, QString)));
         connect(pointModel, SIGNAL(deleteGroupSignal(QString)), this, SLOT(deleteGroup(QString)));
         connect(pointModel, SIGNAL(moveToSignal(QString, QString, QString)), this, SLOT(moveTo(QString, QString, QString)));
+
     } else {
         qDebug() << "PointController::PointController could not find the qml point model";
         Q_UNREACHABLE();
@@ -59,7 +62,6 @@ PointController::PointController(QObject *applicationWindow, MainController* par
         Q_UNREACHABLE();
     }
 
-
     currentPointsFile = QDir::currentPath() + QDir::separator() + "currentPoints.xml";
     qDebug() << "PointController::PointController" << currentPointsFile;
     loadPoints(currentPointsFile);
@@ -72,8 +74,9 @@ void PointController::loadPoints(const QString fileName){
 
 
 void PointController::addGroup(QString groupName, bool saveXML){
+
     if(!points->getGroups().contains(groupName)){
-        //qDebug() << "PointController::addGroup" << groupName;
+
         points->addGroup(groupName);
 
         emit addGroupQml(groupName);
@@ -189,5 +192,4 @@ void PointController::clearPoints(){
     qDebug() << "PointController::clearPoints called";
     emit deleteAllGroupsQml();
     points->clearGoups();
-    //addGroup(NO_GROUP_NAME);
 }

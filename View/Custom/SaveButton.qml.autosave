@@ -3,22 +3,21 @@ import QtQuick.Controls 2.1
 import "../../Helper/style.js" as Style
 
 Button {
-
-    id: btn
-
-    property string txt: "Cancel"
+    property string txt: "Save"
     height: 23
 
     CustomLabel {
         text: qsTr(txt)
+        color: "white"
         anchors.verticalCenter: parent.verticalCenter
         anchors.horizontalCenter: parent.horizontalCenter
     }
 
     background: Rectangle {
         radius: 3
+        color: enabled ? (pressed ? Style.darkSkyBlueBorder : Style.darkSkyBlue) : Style.disableSaveColor
         border.width: 1
-        color: btn.pressed ? Style.whiteButtonPressed : "white"
-        border.color: Style.lightGreyBorder
+        border.color: enabled ? Style.darkSkyBlueBorder : Style.disableSaveBorder
     }
 }
+ 

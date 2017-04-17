@@ -137,7 +137,6 @@ bool execCommand(ros::NodeHandle n, std::vector<std::string> command){
 				status = true;
 			} else 
 				std::cout << "(Command system) Parameter missing" << std::endl;
-			std::cout << "(Command system) Command c to change the wifi not used anymore" << std::endl;
 		
 		break;
 
@@ -390,7 +389,7 @@ bool execCommand(ros::NodeHandle n, std::vector<std::string> command){
 		}
 		break;
 
-		/// Command for the robot to start to scan the map
+		/// 
 		case 's':
 			// first param is s, second is who -> which widget requires it
 			std::cout << "(Command system) Gobot send the map once" << std::endl;
@@ -694,6 +693,11 @@ bool startMap(){
 	}
 }
 
+// who:
+// 0 : scan 
+// 1 : application requesting at connection time
+// 2 : to merge
+// 3 : recovering position
 bool sendOnceMap(int who){
 	std::cout << "(Command system) Launching the service to get the map once" << std::endl;
 

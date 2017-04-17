@@ -14,10 +14,8 @@ ListModel {
             });
         }
 
-        for(var i = 0; i < points.length; i += 2){
-            //console.log("add point " + points[i] + " " + points[i+1]);
+        for(var i = 0; i < points.length; i += 2)
             addPointToGroup(points[i], points[i+1]);
-        }
     }
 
     function deleteItem(name){

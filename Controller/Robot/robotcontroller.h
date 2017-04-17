@@ -18,8 +18,11 @@ class RobotsController;
 #include <QImage>
 
 class RobotController : public QObject {
+
     Q_OBJECT
+
 public:
+
     RobotController(RobotsController* parent, QString ip);
     ~RobotController();
 

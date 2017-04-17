@@ -6,6 +6,7 @@ ScanMapPaintedItem::ScanMapPaintedItem(QQuickItem *parent) : QQuickPaintedItem(p
     left(0), top(0), xRobot(0.0), yRobot(0.0), orientationRobot(0.0) {
     setFlag(QQuickItem::ItemHasContents, true);
     setAcceptedMouseButtons(Qt::LeftButton | Qt::RightButton);
+    /// so we rotate around the center of the item and not around the top left corner
     setTransformOrigin(QQuickItem::Center);
 }
 

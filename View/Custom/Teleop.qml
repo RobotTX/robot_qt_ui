@@ -4,6 +4,7 @@ import QtQuick.Layouts 1.3
 import "../../Helper/style.js" as Style
 
 GridLayout {
+
     columns: 3
     columnSpacing: 8
     rowSpacing: 8

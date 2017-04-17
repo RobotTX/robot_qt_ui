@@ -3,7 +3,9 @@ import QtQuick.Controls 2.1
 import "../../Helper/style.js" as Style
 
 BusyIndicator {
+
     id: control
+
     property int nb: 0
     property int size: Math.min(parent.width, parent.height, 70)
     padding: 0
@@ -72,30 +74,6 @@ BusyIndicator {
                     ]
                 }
             }
-            /*Repeater {
-                id: repeater
-                model: listModel
-
-                delegate: Rectangle {
-                    x: item.width / 2 - width / 2
-                    y: item.height / 2 - height / 2
-                    implicitWidth: 10
-                    implicitHeight: 10
-                    radius: 5
-                    color: white ? "white" : Style.darkSkyBlue
-                    border.color: Style.darkSkyBlueBorder
-                    transform: [
-                        Translate {
-                            y: -Math.min(item.width, item.height) * 0.5 + 5
-                        },
-                        Rotation {
-                            angle: index / repeater.count * 360
-                            origin.x: 5
-                            origin.y: 5
-                        }
-                    ]
-                }
-            }*/
         }
     }
 }

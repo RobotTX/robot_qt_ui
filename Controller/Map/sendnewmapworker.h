@@ -13,6 +13,10 @@ public:
     ~SendNewMapWorker();
 
 signals:
+    /**
+     * @brief doneSendingNewMapSignal
+     * notifies the robot controller that we are not sending the map anymore
+     */
     void doneSendingNewMapSignal();
 
 private slots:
@@ -55,6 +59,10 @@ private slots:
     void errorConnectionSlot(QAbstractSocket::SocketError error);
 
 signals:
+    /**
+     * @brief robotIsDead
+     * notifies the robot controller that the connection cannot be established
+     */
     void robotIsDead();
 
 private :

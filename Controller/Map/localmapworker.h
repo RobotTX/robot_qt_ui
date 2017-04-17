@@ -48,6 +48,7 @@ signals:
     void laserValues(float angle_min, float angle_max, float angle_increment, QVector<float> ranges, QString ipAddress);
     /// to add an entry for this robot in the obstacles map in order to draw the obstacles around it in real time
     void addNewRobotObstacles(QString ip);
+    /// to notify the robot controller that the connection has been lost
     void robotIsDead();
 
 private:

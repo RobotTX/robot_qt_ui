@@ -13,8 +13,11 @@ class RobotServerWorker;
 #include <QTimer>
 
 class RobotsController : public QObject {
+
     Q_OBJECT
+
 public:
+
     RobotsController(QObject *applicationWindow, MainController *parent);
     ~RobotsController();
 
@@ -37,12 +40,53 @@ public:
      * Send the command to the robotController
      */
     void sendCommand(const QString ip, const QString cmd);
+    /**
+     * @brief sendNewMap
+     * @param ip
+     * @param mapId
+     * @param date
+     * @param mapMetadata
+     * @param mapImage
+     * sends a new map to a robot and resets its path and home
+     */
     void sendNewMap(const QString ip, const QString mapId, const QString date, const QString mapMetadata, const QImage mapImage);
+    /**
+     * @brief requestMap
+     * @param ip
+     * requests map from robot at ip <ip>
+     */
     void requestMap(const QString ip);
+    /**
+     * @brief sendNewMapToAllExcept
+     * @param ip
+     * @param mapId
+     * @param date
+     * @param mapMetadata
+     * @param mapImage
+     * sends a new map to all robots except the one at ip <ip>
+     */
     void sendNewMapToAllExcept(const QString ip, const QString mapId, const QString date, const QString mapMetadata, const QImage mapImage);
+    /**
+     * @brief requestMapForMerging
+     * @param ip
+     * requests a map for merging from robot at ip <ip>
+     */
     void requestMapForMerging(const QString ip);
+    /**
+     * @brief sendTeleop
+     * @param ip
+     * @param teleop
+     * sends a teleoperation command to robot at ip <ip>
+     */
     void sendTeleop(const QString ip, const int teleop);
-
+    /**
+     * @brief sendMapToAllRobots
+     * @param mapId
+     * @param date
+     * @param mapMetadata
+     * @param img
+     * sends the map to all robots
+     */
     void sendMapToAllRobots(QString mapId, QString date, QString mapMetadata, QImage img);
 
 public slots:

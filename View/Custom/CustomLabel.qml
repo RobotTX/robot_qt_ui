@@ -2,7 +2,9 @@ import QtQuick 2.7
 import QtQuick.Controls 2.1
 
 Label {
+
     id: label
+
     maximumLineCount: 1
     elide: Text.ElideRight
     property bool hovered: false

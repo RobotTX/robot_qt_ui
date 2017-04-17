@@ -98,6 +98,7 @@ public:
      * @param mapId
      * @param mapDate
      * Save the image we just received from a robot as the currentMap
+     * <fromPgm> typically is false if the map comes from the robot, true if it was stored in the file system
      */
     void newMapFromRobot(const QByteArray& mapArray, const QString mapId, const QString mapDate);
 

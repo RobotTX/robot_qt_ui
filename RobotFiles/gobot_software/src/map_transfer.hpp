@@ -24,7 +24,7 @@
 using boost::asio::ip::tcp;
 
 /**
- * Send the map to the software as pixels (0 to 255)
+ * Send the map to the application as pixels (0 to 255)
  */
 void sendMap(const std::vector<uint8_t>& my_map);
 
@@ -44,12 +44,12 @@ void getMap(const nav_msgs::OccupancyGrid::ConstPtr& msg);
 bool startMap(gobot_software::Port::Request &req, gobot_software::Port::Response &res);
 
 /**
- * Service called to stop everything
+ * Service called to stop everything (in particular it closes the connection)
  */
 bool stopMap(std_srvs::Empty::Request &req, std_srvs::Empty::Response &res);
 
 /**
- * Service called to start sending the map to the app
+ * Service called to start sending the map to the app (constantly)
  */
 bool sendAutoMap(std_srvs::Empty::Request &req, std_srvs::Empty::Response &res);
 
@@ -59,14 +59,24 @@ bool sendAutoMap(std_srvs::Empty::Request &req, std_srvs::Empty::Response &res);
 bool stopAutoMap(std_srvs::Empty::Request &req, std_srvs::Empty::Response &res);
 
 /**
- * Service called to send the map once to the app
+ * Service called to send the map once to the app 
+ * (for example when the map is requested from the robot to be used inside the application, or to merge maps)
  */
 bool sendOnceMap(gobot_software::Port::Request &req, gobot_software::Port::Response &res);
 
+/**
+ * Compresses the map in order to send it faster
+ */
 std::vector<uint8_t> compress(std::vector<int8_t> map, int map_width, int map_height, int who);
 
+/**
+ * Send local map when the robot is recovering its position
+ */
 bool sendLocalMap(std_srvs::Empty::Request &req, std_srvs::Empty::Response &res);
 
+/**
+ * Called when local map is published
+ */
 void getLocalMap(const nav_msgs::OccupancyGrid::ConstPtr& msg);
 
 #endif

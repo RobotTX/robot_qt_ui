@@ -60,6 +60,7 @@ void LocalMapWorker::readTcpDataSlot(){
         *(reinterpret_cast<uchar*>(&angle_increment) + 0) = data.at(8);
 
         for(int i = 12; i < data.size(); i += 4){
+
             QByteArray currentValue = data.mid(i, 4);
 
             float range;

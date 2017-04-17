@@ -6,6 +6,8 @@ import "../../Model/Point"
 import "../Custom"
 
 Frame {
+    // used to create a group (points or paths)
+
     property string oldName: ""
 
     signal backToMenu()

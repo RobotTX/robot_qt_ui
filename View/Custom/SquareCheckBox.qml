@@ -4,7 +4,9 @@ import "../../Helper/style.js" as Style
 
 
 CheckBox {
+
     id: control
+
     height: 16
 
     indicator: Rectangle {

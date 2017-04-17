@@ -39,7 +39,7 @@ void EditMapController::add_item(int shape, QColor color, int thickness, int x, 
     paintedItem->addItem(static_cast<EditMapPaintedItem::SHAPE> (shape), color, thickness, x, y, _update);
 }
 
-
+/// remove all the items and clear the undo vector as well
 void EditMapController::clearMapItems(){
     qDebug() << "EditMapController::clearMapItems called";
     paintedItem->clearMapItems();
