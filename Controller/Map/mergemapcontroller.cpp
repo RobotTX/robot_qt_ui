@@ -43,6 +43,8 @@ MergeMapController::MergeMapController(MainController *parent, QQmlApplicationEn
         connect(mergeMapLeftMenu, SIGNAL(rotate(int, int)), this, SLOT(rotateMap(int, int)));
         connect(mergeMapLeftMenu, SIGNAL(removeMap(int)), this, SLOT(removeMap(int)));
     }
+
+    connect(this, SIGNAL(setMessageTop(int, QString)), parent, SLOT(setMessageTopSlot(int, QString)));
 }
 
 void MergeMapController::importMap(const QString& _filename){
@@ -199,7 +201,7 @@ void MergeMapController::importMap(QImage image, double _resolution){
 }
 
 void MergeMapController::exportMap(QString fileName){
-    qDebug() << "exportMap called" << fileName;
+    qDebug() << "MergeMapController::exportMap called" << fileName;
 
     /// We want to find the smallest rectangle containing the map so we can find its center and put it at the center of the window
     /// before grab
@@ -223,7 +225,7 @@ void MergeMapController::exportMap(QString fileName){
     }
 
     emit readyToBeGrabbed(fileName);
-
+    emit setMessageTop(2, "Finished to merge the maps");
 }
 
 void MergeMapController::rotateMap(int angle, int index){

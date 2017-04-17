@@ -2,7 +2,8 @@
 #include <QDebug>
 #include <QStringList>
 
-CommandController::CommandController(QObject* parent, QString _ip) : QObject(parent), ip(_ip), cmdQueue(QList<QString>()), waitingForAnswer(false) {
+CommandController::CommandController(QObject* parent, QString _ip, QString _robotName)
+    : QObject(parent), ip(_ip), robotName(_robotName), cmdQueue(QList<QString>()), waitingForAnswer(false){
     connect(&timer, SIGNAL(timeout()), this, SLOT(cmdFinished()));
 }
 
@@ -30,6 +31,8 @@ void CommandController::cmdAnswerSlot(QString answer){
                 case 'a':
                     /// Changed the name of the robot
                     emit updateName(ip, list.at(2));
+                    emit setMessageTop(2, "Updated the name of the robot \"" + robotName + "\" to \"" + list.at(2) + "\"");
+                    robotName = list.at(2);
                 break;
                 /*case 'b':
                     /// Changed the wifi informations of a robot
@@ -39,7 +42,7 @@ void CommandController::cmdAnswerSlot(QString answer){
                 case 'c':
                     /// Sent the robot to a new goal
                     ///nothing is needed on the qml side
-                break;/*
+                break;
                 case 'd':
                     /// Paused the path of the robot
                     emit updatePlayingPath(ip, false);
@@ -49,7 +52,7 @@ void CommandController::cmdAnswerSlot(QString answer){
                     emit playedScanning(ip);
                 break;
                 case 'f':
-                    /// Paused the scanf of the map
+                    /// Paused the scan of the map
                     emit pausedScanning(ip);
                 break;
                 /*case 'g':
@@ -65,6 +68,7 @@ void CommandController::cmdAnswerSlot(QString answer){
                     /// Sent a new path to the robot
                     list.removeFirst();
                     list.removeFirst();
+                    emit setMessageTop(2, "Updated the path of \"" + robotName + "\"");
                     emit updatePath(ip, QStringList(list));
                 break;
                 case 'j':
@@ -83,10 +87,12 @@ void CommandController::cmdAnswerSlot(QString answer){
                 case 'm':
                     /// Stopped and deleted the path of the robot
                     emit stoppedDeletedPath(ip);
+                    emit setMessageTop(2, "Deleted the path of \"" + robotName + "\"");
                 break;
                 case 'n':
                     /// Sent the new home to the robot
                     emit updateHome(ip, list.at(2), list.at(3).toFloat(), list.at(4).toFloat());
+                    emit setMessageTop(2, "Updated the home of \"" + robotName + "\" to \"" + list.at(2) + "\"");
                 break;
                 /*case 'o':
                     /// TODO go home system

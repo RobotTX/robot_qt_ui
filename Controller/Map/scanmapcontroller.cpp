@@ -32,6 +32,7 @@ ScanMapController::ScanMapController(MainController* parent, QQmlApplicationEngi
         Q_UNREACHABLE();
 
     connect(this, SIGNAL(sendGoal(QString,double, double)), parent, SLOT(sendScanGoal(QString, double, double)));
+    connect(this, SIGNAL(setMessageTop(int, QString)), parent, SLOT(setMessageTopSlot(int, QString)));
 }
 
 void ScanMapController::receivedScanMap(QString ip, QImage map, QString resolution){
@@ -136,6 +137,7 @@ void ScanMapController::saveScanSlot(QString file_name){
     }
 
     emit readyToBeGrabbed(file_name);
+    emit setMessageTop(2, "Finished to scan the new map");
 }
 
 void ScanMapController::sendGoalSlot(QString ip, double x, double y){

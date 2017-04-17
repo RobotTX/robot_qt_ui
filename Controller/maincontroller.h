@@ -49,7 +49,7 @@ private slots:
      * @param fileName configuration file
      * To import a map inside the application (along with its points, configuration and paths)
      */
-    void loadMapConfig(QString fileName) const;
+    void loadMapConfig(QString fileName);
 
     void checkTmpPosition(int index, double x, double y);
     void newRobotPosSlot(QString ip, float posX, float posY, float ori);

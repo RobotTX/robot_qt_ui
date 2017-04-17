@@ -8,6 +8,7 @@ ListModel {
     signal deletePointSignal(string groupName, string name)
     signal deleteGroupSignal(string groupName)
     signal moveToSignal(string name, string oldGroup, string newGroup)
+    signal setMessageTop(int status, string msg)
 
     function addGroup(name){
         //console.log("Add group " + name);
@@ -51,16 +52,19 @@ ListModel {
         for(var i = 0; i < count; i++)
             if(get(i).groupName === groupName)
                 for(var j = 0; j < get(i).points.count; j++)
-                    if(get(i).points.get(j).name === name)
+                    if(get(i).points.get(j).name === name){
                         get(i).points.remove(j);
-
+                        setMessageTop(2, "Deleted the point \"" + name + "\" in \"" + groupName + "\"");
+                    }
         deletePointSignal(groupName, name);
     }
 
     function deleteGroup(groupName){
         for(var i = 0; i < count; i++)
-            if(get(i).groupName === groupName)
+            if(get(i).groupName === groupName){
                 remove(i);
+                setMessageTop(2, "Deleted the group \"" + groupName + "\"");
+            }
         deleteGroupSignal(groupName);
     }
 
@@ -106,6 +110,7 @@ ListModel {
             if(get(i).groupName === newGroup)
                 get(i).points.append(point);
 
+        setMessageTop(2, "Moved the point \"" + name + "\" from \"" + oldGroup + "\" to \"" + newGroup + "\"");
         moveToSignal(name, oldGroup, newGroup)
     }
 

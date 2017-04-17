@@ -22,6 +22,7 @@ Frame {
     signal createPath(string groupName, string name)
     signal createPathPoint(string groupName, string pathName, string name, double x, double y, int waitTime)
     signal useTmpPathModel(bool use)
+    signal setMessageTop(int status, string msg)
 
     Connections {
         target: tmpPathModel
@@ -154,7 +155,7 @@ Frame {
         CustomComboBox {
             id: groupComboBox
             model: pathModel
-            displayText: Helper.noGroup //oldName ? oldGroup : Helper.noGroup
+            displayText: oldName ? oldGroup : Helper.noGroup
             anchors {
                 left: parent.left
                 top: groupLabel.bottom
@@ -572,6 +573,8 @@ Frame {
                                     tmpPathModel.get(0).paths.get(0).pathPoints.get(i).posX,
                                     tmpPathModel.get(0).paths.get(0).pathPoints.get(i).posY,
                                     tmpPathModel.get(0).paths.get(0).pathPoints.get(i).waitTime);
+                setMessageTop(2, oldName === "" ? "Created the path \"" + newName + "\" in \"" + groupComboBox.displayText + "\"" :
+                                                "Edited a path from \"" + oldName + "\" in \"" + oldGroup + "\" to \"" + newName + "\" in \"" + groupComboBox.displayText + "\"")
                 backToMenu();
             }
         }

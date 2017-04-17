@@ -13,8 +13,8 @@
 #include "Controller/Map/scanmapworker.h"
 #include "Controller/Map/particlecloudworker.h"
 
-RobotController::RobotController(RobotsController *parent, QString _ip):
-    QObject(parent), ip(_ip), sendingMap(false), commandController(QPointer<CommandController>(new CommandController(this, ip))){
+RobotController::RobotController(RobotsController *parent, QString _ip, QString robotName):
+    QObject(parent), ip(_ip), sendingMap(false), commandController(QPointer<CommandController>(new CommandController(this, ip, robotName))){
 
     /// Signals from the command controller when we have executed a command
     connect(commandController, SIGNAL(updateName(QString,QString)), parent, SLOT(updateNameSlot(QString,QString)));
@@ -27,6 +27,7 @@ RobotController::RobotController(RobotsController *parent, QString _ip):
     connect(commandController, SIGNAL(playedScanning(QString)), parent, SLOT(startedScanningSlot(QString)));
     connect(commandController, SIGNAL(pausedScanning(QString)), parent, SLOT(pausedScanningSlot(QString)));
     connect(commandController, SIGNAL(processingCmd(QString, bool)), parent, SLOT(processingCmdSlot(QString, bool)));
+    connect(commandController, SIGNAL(setMessageTop(int, QString)), parent, SLOT(setMessageTopSlot(int, QString)));
 
     /// Signals to tell the robotsController that the robot just disconnected
     connect(this, SIGNAL(robotIsDead(QString)), parent, SLOT(robotIsDeadSlot(QString)));

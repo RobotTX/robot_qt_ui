@@ -1,5 +1,4 @@
 import QtQuick 2.7
-//import QtQuick.Controls 1.4
 import QtQuick.Controls 2.1
 import QtQuick.Layouts 1.3
 import "../../Helper/style.js" as Style
@@ -47,7 +46,6 @@ Frame {
                 id: errorLabel
                 color: Style.errorColor2
                 visible: text !== ""
-                text: qsTr("Soon some awesome messages here Soon some awesome messages here Soon some awesome messages here Soon some awesome messages here Soon some awesome messages here Soon some awesome messages here ")
                 wrapMode: Text.WordWrap
                 width: parent.width
             }
@@ -55,7 +53,6 @@ Frame {
                 id: warningLabel
                 color: Style.warningColor
                 visible: text !== ""
-                text: qsTr("Soon some awesome messages here Soon some awesome messages here Soon some awesome messages here Soon some awesome messages here Soon some awesome messages here Soon some awesome messages here ")
                 wrapMode: Text.WordWrap
                 width: parent.width
             }
@@ -63,7 +60,6 @@ Frame {
                 id: successLabel
                 color: Style.successColor
                 visible: text !== ""
-                text: qsTr("Soon some awesome messages here Soon some awesome messages here Soon some awesome messages here Soon some awesome messages here Soon some awesome messages here Soon some awesome messages here ")
                 wrapMode: Text.WordWrap
                 width: parent.width
             }
@@ -71,7 +67,6 @@ Frame {
                 id: infoLabel
                 color: Style.infoColor
                 visible: text !== ""
-                text: qsTr("Soon some awesome messages here Soon some awesome messages here Soon some awesome messages here Soon some awesome messages here Soon some awesome messages here Soon some awesome messages here ")
                 wrapMode: Text.WordWrap
                 width: parent.width
             }

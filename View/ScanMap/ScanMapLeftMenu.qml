@@ -205,6 +205,19 @@ Frame {
         onClicked: cancelScan()
     }
 
+    FileDialog {
+        id: saveFileDialog
+        // format of files is pgm
+        nameFilters: "*.pgm"
+        // won't let you choose a file name if selectExisting is true
+        selectExisting: false
+        title: "Please choose a location for your map"
+        // to start directly with that folder selected
+        folder: "/home/joan/Gobot/build-Gobot-Desktop_Qt_5_8_0_GCC_64bit-Debug/mapConfigs/"
+
+        onAccepted: scanLeftMenuFrame.saveScan(fileUrl.toString())
+    }
+
     function startedScanning(ip){
         scanningRobotsList.setScanning(ip, true);
     }
@@ -229,18 +242,5 @@ Frame {
         /// Stop the scan if a scanning robot reconnect after the window has been closed
         if(scanning && (!scanLeftMenuFrame.visible || !scanningRobotsList.contains(ip)))
             robotModel.stopScanning(ip);
-    }
-
-    FileDialog {
-        id: saveFileDialog
-        // format of files is pgm
-        nameFilters: "*.pgm"
-        // won't let you choose a file name if selectExisting is true
-        selectExisting: false
-        title: "Please choose a location for your map"
-        // to start directly with that folder selected
-        folder: "/home/joan/Gobot/build-Gobot-Desktop_Qt_5_8_0_GCC_64bit-Debug/mapConfigs/"
-
-        onAccepted: scanLeftMenuFrame.saveScan(fileUrl.toString())
     }
 }

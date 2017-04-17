@@ -37,6 +37,7 @@ signals:
      * of the same size
      */
     void updateSize(QVariant, QVariant);
+    void setMessageTop(int status, QString msg);
 
 private:
     QQmlApplicationEngine* engine;

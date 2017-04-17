@@ -26,6 +26,7 @@ Frame {
     property real batteryWarningThreshold
     signal useTmpPathModel(bool use)
     signal useRobotPathModel(bool use)
+    signal setMessageTop(int status, string msg)
 
     /// The index of the current menu
     property int currentMenu
@@ -55,6 +56,7 @@ Frame {
         onUseTmpPathModel: mainMenuViewsFrame.useTmpPathModel(use)
         onUseRobotPathModel: mainMenuViewsFrame.useRobotPathModel(use)
         onCloseMenu: mainMenuViewsFrame.closeMenu()
+        onSetMessageTop: mainMenuViewsFrame.setMessageTop(status, msg)
     }
 
     PointMenu {
@@ -63,6 +65,7 @@ Frame {
         pointModel: mainMenuViewsFrame.pointModel
         tmpPointView: mainMenuViewsFrame.tmpPointView
         onCloseMenu: mainMenuViewsFrame.closeMenu()
+        onSetMessageTop: mainMenuViewsFrame.setMessageTop(status, msg)
     }
 
     MapMenu {

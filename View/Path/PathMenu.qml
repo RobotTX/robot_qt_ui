@@ -14,6 +14,7 @@ Page {
     signal useTmpPathModel(bool use)
     signal useRobotPathModel(bool use)
     signal closeMenu()
+    signal setMessageTop(int status, string msg)
 
     onVisibleChanged: {
         if(visible){
@@ -79,6 +80,7 @@ Page {
                 bottom: parent.bottom
             }
             onBackToMenu: menuIndex = 0;
+            onSetMessageTop: page.setMessageTop(status, msg)
         }
     }
 
@@ -106,6 +108,7 @@ Page {
                 oldName = "";
                 menuIndex = 0;
             }
+            onSetMessageTop: page.setMessageTop(status, msg)
         }
     }
 }

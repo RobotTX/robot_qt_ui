@@ -7,7 +7,7 @@
 class CommandController : public QObject {
     Q_OBJECT
 public:
-    CommandController(QObject *parent, QString ip);
+    CommandController(QObject *parent, QString ip, QString robotName);
 
     /**
      * @brief sendCommand
@@ -43,9 +43,12 @@ signals:
     void playedScanning(QString ip);
     void pausedScanning(QString ip);
     void processingCmd(QString ip, bool waitingForAnswer);
+    void setMessageTop(int status, QString msg);
 
 private:
     QString ip;
+    /// Only used to set messages on top of the application
+    QString robotName;
     QList<QString> cmdQueue;
     QTimer timer;
     bool waitingForAnswer;

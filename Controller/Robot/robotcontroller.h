@@ -20,7 +20,7 @@ class RobotsController;
 class RobotController : public QObject {
     Q_OBJECT
 public:
-    RobotController(RobotsController* parent, QString ip);
+    RobotController(RobotsController* parent, QString ip, QString robotName);
     ~RobotController();
 
     /**
