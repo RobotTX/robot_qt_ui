@@ -86,6 +86,7 @@ Frame {
         id: pointTextField
         selectByMouse: true
         placeholderText: qsTr("Enter name")
+
         text: oldName
         height: 28
         anchors {
@@ -93,6 +94,11 @@ Frame {
             top: pointLabel.bottom
             right: parent.right
             topMargin: 8
+        }
+
+        onEditingFinished: {
+            if(saveButton.enabled)
+                saveButton.clicked()
         }
 
         background: Rectangle {

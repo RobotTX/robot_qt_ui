@@ -143,6 +143,7 @@ void MainController::saveMapConfig(QString fileName, double zoom, double centerX
     qDebug() << filePath;
 
 
+    mapController->saveNewMap(QDir::currentPath() + QDir::separator() + "mapConfigs" + QDir::separator() + mapFileInfo.fileName() + ".pgm");
     //mapController->setMapFile(QDir::currentPath() + QDir::separator() + "mapConfigs" + QDir::separator() + mapFileInfo.fileName() + ".pgm");
 
     mapController->savePositionSlot(centerX, centerY, zoom, QDir::currentPath() + QDir::separator() + "mapConfigs" + QDir::separator() + mapFileInfo.fileName() + ".pgm");
@@ -156,7 +157,7 @@ void MainController::saveMapConfig(QString fileName, double zoom, double centerX
     XMLParser::save(pointController, QDir::currentPath() + QDir::separator() + "currentPoints.xml");
 
     /// saves the map
-    mapController->saveMapToFile(QDir::currentPath() + QDir::separator() + "mapConfigs" + QDir::separator() + mapFileInfo.fileName() + ".pgm");
+    //mapController->saveMapToFile(QDir::currentPath() + QDir::separator() + "mapConfigs" + QDir::separator() + mapFileInfo.fileName() + ".pgm");
 
     /// saves the current points to the points file associated with the new configuration
     PathXMLParser::save(pathController, QDir::currentPath() + QDir::separator() + "mapConfigs" + QDir::separator() + mapFileInfo.fileName() + "_paths.xml");

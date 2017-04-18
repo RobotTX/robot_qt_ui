@@ -335,3 +335,11 @@ QString MapController::getMetadataString(void) const {
             ' ' + QString::number(map->getResolution()) + ' ' + QString::number(map->getOrigin().x()) +
             ' ' + QString::number(map->getOrigin().y());
 }
+
+void MapController::saveNewMap(const QString file_name){
+    map->getMapImage().save(file_name, "PGM");
+    map->setMapFile(file_name);
+    /// no need to ask the user to save the map again
+    map->setModified(false);
+    emit setMap(file_name);
+}

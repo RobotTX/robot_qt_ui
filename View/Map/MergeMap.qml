@@ -188,6 +188,9 @@ Window {
             padding: 0
             width: 20
 
+            // we don't want to allow the user to save if there is no map to save at all
+            enabled: _mapsList.count > 0
+
             anchors {
                 top: parent.top
                 topMargin: 12

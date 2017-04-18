@@ -101,6 +101,12 @@ public:
      * <fromPgm> typically is false if the map comes from the robot, true if it was stored in the file system
      */
     void newMapFromRobot(const QByteArray& mapArray, const QString mapId, const QString mapDate);
+    /**
+     * @brief saveNewMap
+     * @param file_name
+     * to save the map of the current configuration
+     */
+    void saveNewMap(const QString file_name);
 
 private slots:
     /**
