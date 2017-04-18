@@ -458,7 +458,7 @@ Frame {
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.bottom: parent.bottom
 
-        onClicked: {
+        onReleased: {
             batteryWarningThreshold = batterySlider.value;
             saveSettingsSignal(mapChoice, batterySlider.value, box2.show);
         }
@@ -469,7 +469,7 @@ Frame {
         width: 70
         anchors.right: parent.right
         anchors.bottom: parent.bottom
-        onClicked: {
+        onReleased: {
 
             batteryWarningThreshold = batterySlider.value;
             /*for(var i = 0; i < robotModel.count; i++){

@@ -123,21 +123,13 @@ Frame {
                 right: parent.right
             }
 
-            Button {
+            SmallButton {
                 id: hideShowPathButton
 
                 height: parent.height - 2
                 width: 32
-                padding: 0
-
-                background: Rectangle {
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    anchors.verticalCenter: parent.verticalCenter
-                    width: Math.min(hideShowPathButton.width, hideShowPathButton.height)
-                    height: width
-                    color: hideShowPathButton.hovered ? Style.lightGreyBackgroundHover : "white"
-                    radius: hideShowPathButton.hovered ? width/2 : 0
-                }
+                imgSrc: pathIsVisible ? "qrc:/icons/visible" : "qrc:/icons/invisible"
+                tooltip: pathIsVisible ? "Hide the path of the robot on the map" : "Show the path of the robot on the map"
 
                 anchors {
                     verticalCenter: parent.verticalCenter
@@ -145,13 +137,6 @@ Frame {
                     leftMargin: 8
                 }
 
-                contentItem: Image {
-                    asynchronous: true
-                    source: pathIsVisible ? "qrc:/icons/visible" : "qrc:/icons/invisible"
-                    fillMode: Image.Pad // For not stretching image
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    anchors.verticalCenter: parent.verticalCenter
-                }
                 onClicked: {
                     robotModel.hideShowPathOnMap(ip);
                     pathModel.visiblePathChanged();
@@ -174,21 +159,12 @@ Frame {
                 }
             }
 
-            Button {
+            SmallButton {
                 id: expandPathButton
 
                 height: parent.height - 2
                 width: 32
-                padding: 0
-
-                background: Rectangle {
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    anchors.verticalCenter: parent.verticalCenter
-                    width: Math.min(expandPathButton.width, expandPathButton.height)
-                    height: width
-                    color: expandPathButton.hovered ? Style.lightGreyBackgroundHover : "white"
-                    radius: expandPathButton.hovered ? width/2 : 0
-                }
+                imgSrc: pathIsOpen ? "qrc:/icons/fold" : "qrc:/icons/unfold"
 
                 anchors {
                     verticalCenter: parent.verticalCenter
@@ -196,13 +172,6 @@ Frame {
                     rightMargin: 8
                 }
 
-                contentItem: Image {
-                    asynchronous: true
-                    source: pathIsOpen ? "qrc:/icons/fold" : "qrc:/icons/unfold"
-                    fillMode: Image.Pad // For not stretching image
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    anchors.verticalCenter: parent.verticalCenter
-                }
                 onClicked: robotModel.openPath(ip)
             }
 
@@ -334,21 +303,13 @@ Frame {
             }
 
 
-            Button {
+            SmallButton {
                 id: playPausePathButton
 
                 height: parent.height - 2
                 width: 32
-                padding: 0
-
-                background: Rectangle {
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    anchors.verticalCenter: parent.verticalCenter
-                    width: Math.min(playPausePathButton.width, playPausePathButton.height)
-                    height: width
-                    color: playPausePathButton.hovered ? Style.lightGreyBackgroundHover : "white"
-                    radius: playPausePathButton.hovered ? width/2 : 0
-                }
+                imgSrc: playingPath ? "qrc:/icons/pause" : "qrc:/icons/play"
+                tooltip: playingPath ? "Pause the robot in its path" : "Play the path of the robot"
 
                 anchors {
                     verticalCenter: parent.verticalCenter
@@ -356,62 +317,33 @@ Frame {
                     leftMargin: 8
                 }
 
-                contentItem: Image {
-                    asynchronous: true
-                    source: playingPath ? "qrc:/icons/pause" : "qrc:/icons/play"
-                    fillMode: Image.Pad // For not stretching image
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    anchors.verticalCenter: parent.verticalCenter
-                }
                 onClicked: playingPath ? robotModel.pausePathSignal(ip) : robotModel.playPathSignal(ip)
             }
 
-            Button {
+            SmallButton {
                 id: stopPathButton
 
                 height: parent.height - 2
                 width: 32
-                padding: 0
-
-                background: Rectangle {
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    anchors.verticalCenter: parent.verticalCenter
-                    width: Math.min(stopPathButton.width, stopPathButton.height)
-                    height: width
-                    color: stopPathButton.hovered ? Style.lightGreyBackgroundHover : "white"
-                    radius: stopPathButton.hovered ? width/2 : 0
-                }
+                imgSrc: "qrc:/icons/stop"
+                tooltip: "Stop the robot in its path"
 
                 anchors {
                     verticalCenter: parent.verticalCenter
                     horizontalCenter: parent.horizontalCenter
                 }
 
-                contentItem: Image {
-                    asynchronous: true
-                    source: "qrc:/icons/stop"
-                    fillMode: Image.Pad // For not stretching image
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    anchors.verticalCenter: parent.verticalCenter
-                }
                 onClicked: robotModel.stopPathSignal(ip)
             }
 
-            Button {
+            SmallButton {
                 id: goHomeButton
 
                 height: parent.height - 2
                 width: 32
                 padding: 0
-
-                background: Rectangle {
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    anchors.verticalCenter: parent.verticalCenter
-                    width: Math.min(goHomeButton.width, goHomeButton.height)
-                    height: width
-                    color: goHomeButton.hovered ? Style.lightGreyBackgroundHover : "white"
-                    radius: goHomeButton.hovered ? width/2 : 0
-                }
+                imgSrc: homeName === "" ? "qrc:/icons/noHome" : "qrc:/icons/home"
+                tooltip: "Tell the robot to go home"
 
                 anchors {
                     verticalCenter: parent.verticalCenter
@@ -419,13 +351,6 @@ Frame {
                     rightMargin: 8
                 }
 
-                contentItem: Image {
-                    asynchronous: true
-                    source: homeName === "" ? "qrc:/icons/noHome" : "qrc:/icons/home"
-                    fillMode: Image.Pad // For not stretching image
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    anchors.verticalCenter: parent.verticalCenter
-                }
                 onClicked: console.log(homeName === "" ? "I don't have a home" : "Let's go home to " + homeName)
             }
         }

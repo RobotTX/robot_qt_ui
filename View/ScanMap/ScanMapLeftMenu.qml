@@ -177,7 +177,7 @@ Frame {
 
     SaveButton {
         id: saveButton
-        enabled: robotModel.count > 0
+        canSave: robotModel.count > 0
         anchors {
             bottom: cancelButton.top
             bottomMargin: 10
@@ -186,7 +186,7 @@ Frame {
             right: parent.right
             rightMargin: 15
         }
-        onClicked: saveFileDialog.open()
+        onReleased: if(saveButton.canSave) saveFileDialog.open()
     }
 
     CancelButton {

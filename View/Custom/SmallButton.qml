@@ -17,7 +17,7 @@ Button {
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
         width: Math.min(btn.width, btn.height)
-        height: btn.width
+        height: Math.min(btn.width, btn.height)
         color: btn.pressed ? Style.lightGreyBorder : btn.hovered ? Style.lightGreyBackgroundHover : backColor
         radius: btn.hovered ? btn.width/2 : 0
     }
@@ -36,18 +36,8 @@ Button {
         id: mouseArea
         anchors.fill: parent
         hoverEnabled: true
-        onEntered: {
-            if(tooltip !== ""){
-                //hovered = true;
-                timer.start();
-            }
-        }
-        onExited: {
-            if(tooltip !== ""){
-                //hovered = false;
-                timerTriggered = false;
-            }
-        }
+        onEntered: if(tooltip !== "") timer.start();
+        onExited: if(tooltip !== "") timerTriggered = false;
         onClicked: mouse.accepted = false;
         onPressed: mouse.accepted = false;
         onReleased: mouse.accepted = false;
