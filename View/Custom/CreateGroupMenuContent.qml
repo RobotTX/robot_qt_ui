@@ -53,6 +53,11 @@ Frame {
         }
         anchors.topMargin: 8
 
+        onEditingFinished: {
+            if(saveButton.enabled)
+                saveButton.clicked()
+        }
+
         background: Rectangle {
             radius: 2
             border.color: !saveButton.enabled ? Style.errorColor : groupTextField.activeFocus ? Style.lightBlue : Style.lightGreyBorder

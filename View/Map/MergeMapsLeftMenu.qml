@@ -89,6 +89,8 @@ Frame {
 
     SaveButton {
         id: saveButton
+        // we don't want to allow the user to save if there is no map to save at all
+        enabled: _mapsList.count > 0
         anchors {
             bottom: cancelButton.top
             bottomMargin: 11

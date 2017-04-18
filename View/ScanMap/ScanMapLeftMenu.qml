@@ -181,6 +181,7 @@ Frame {
 
     SaveButton {
         id: saveButton
+        enabled: robotModel.count > 0
         anchors {
             bottom: cancelButton.top
             bottomMargin: 10
