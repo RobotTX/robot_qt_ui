@@ -213,11 +213,8 @@ Frame {
             onSendTeleop: scanMapListItemFrame.sendTeleop(ip, index)
         }
 
-        Rectangle {
-            color: Style.lightGreyBorder
-            width: parent.width
-            height: 2
-
+        ToolSeparator {
+            orientation: Qt.Horizontal
             anchors {
                 top: teleop.bottom
                 left: parent.left

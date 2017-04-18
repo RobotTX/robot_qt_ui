@@ -20,8 +20,8 @@ Window {
 
     property string imgSource
 
-    property var imagesArray: ["qrc:/icons/add", "qrc:/icons/grey", "qrc:/icons/black", "qrc:/icons/undo",
-                       "qrc:/icons/white", "qrc:/icons/reset", "qrc:/icons/redo", "qrc:/icons/hand"]
+    property var imagesArray: ["qrc:/icons/line1", "qrc:/icons/line2", "qrc:/icons/line3", "qrc:/icons/line4",
+                       "qrc:/icons/line5", "qrc:/icons/line6", "qrc:/icons/line7", "qrc:/icons/line8"]
 
     // properties of the items drawn on the map
     property color color: "black"
@@ -143,14 +143,8 @@ Window {
             }
         }
 
-        Rectangle {
-
+        ToolSeparator {
             id: verticalSpaceBar1
-
-            color: Style.lightGreyBorder
-            width: 2
-            height: undo.height - 20
-
             anchors {
                 verticalCenter: parent.verticalCenter
                 left: selectButton.right
@@ -229,14 +223,8 @@ Window {
             onClicked: color = "black"
         }
 
-        Rectangle {
-
+        ToolSeparator {
             id: verticalSpaceBar2
-
-            color: Style.lightGreyBorder
-            width: 2
-            height: undo.height - 20
-
             anchors {
                 verticalCenter: parent.verticalCenter
                 left: blackButton.right
@@ -332,14 +320,8 @@ Window {
             onClicked: shape = 3
         }
 
-        Rectangle {
-
+        ToolSeparator {
             id: verticalSpaceBar3
-
-            color: Style.lightGreyBorder
-            width: 2
-            height: solidButton.height - 20
-
             anchors {
                 verticalCenter: parent.verticalCenter
                 left: solidButton.right
@@ -400,14 +382,8 @@ Window {
             }
         }
 
-        Rectangle {
-
+        ToolSeparator {
             id: verticalSpaceBar4
-
-            color: Style.lightGreyBorder
-            width: 2
-            height: increaseButton.height - 20
-
             anchors {
                 verticalCenter: parent.verticalCenter
                 left: increaseButton.right

@@ -119,12 +119,9 @@ Frame {
         }
     }
 
-    Rectangle {
-        id: rect
-        color: Style.lightGreyBorder
-        width: parent.width
-        height: 2
-
+    ToolSeparator {
+        id: separator
+        orientation: Qt.Horizontal
         anchors {
             top: addScan.bottom
             left: parent.left
@@ -134,7 +131,6 @@ Frame {
             rightMargin: 15
         }
     }
-
 
     Component {
         id: delegate
@@ -162,7 +158,7 @@ Frame {
         ScrollBar.vertical: ScrollBar { }
         contentHeight: contentItem.childrenRect.height
         anchors {
-            top: rect.bottom
+            top: separator.bottom
             left: parent.left
             right: parent.right
             bottom: saveButton.top

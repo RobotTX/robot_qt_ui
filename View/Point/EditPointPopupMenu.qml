@@ -37,7 +37,7 @@ Menu {
     Rectangle {
         color: Style.lightGreyBorder
         width: parent.width
-        height: 2
+        height: 1
     }
 
     PopupMenuItem {
@@ -84,7 +84,7 @@ Menu {
             Rectangle {
                 color: Style.lightGreyBorder
                 width: moveToMenu.width
-                height: 2
+                height: 1
             }
 
             ColumnLayout {
@@ -130,7 +130,7 @@ Menu {
     Rectangle {
         color: Style.lightGreyBorder
         width: parent.width
-        height: 2
+        height: 1
     }
 
     PopupMenuItem {

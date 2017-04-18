@@ -28,11 +28,7 @@ Menu {
         }
     }
 
-    Rectangle {
-        color: Style.lightGreyBorder
-        width: parent.width
-        height: 2
-    }
+    ToolSeparator { orientation: Qt.Horizontal }
 
     PopupMenuItem {
         text: qsTr("New Group")

@@ -10,28 +10,34 @@ Button {
     padding: 0
 
     background: Rectangle {
-        color: "transparent"
+        color: hovered ? Style.lightGreyBorder : "transparent"
         anchors.fill: parent
         anchors.margins: 5
         radius: 8
     }
 
-    Image {
-        id: robotImg
-        width: 20
-        height: 20
-        source: src
-        fillMode: Image.PreserveAspectFit
-        anchors.verticalCenter: parent.verticalCenter
-    }
+    contentItem: Item {
 
-    Label {
-        id: textId
-        verticalAlignment: Text.AlignVCenter
-        anchors.left: robotImg.right
-        anchors.leftMargin: 8
-        anchors.right: parent.right
-        text: txt
+        Image {
+            id: robotImg
+            width: 20
+            height: 20
+            source: src
+            fillMode: Image.PreserveAspectFit
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.left: parent.left
+            anchors.leftMargin: 5
+        }
+
+        Label {
+            id: textId
+            verticalAlignment: Text.AlignVCenter
+            anchors.left: robotImg.right
+            anchors.leftMargin: 8
+            anchors.right: parent.right
+            anchors.verticalCenter: parent.verticalCenter
+            text: txt
+        }
     }
 }
 

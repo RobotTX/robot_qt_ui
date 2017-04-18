@@ -224,7 +224,8 @@ Frame {
         onPathSelected: robotModel.newPathSignal(ip, _groupName, _pathName)
     }
 
-    Rectangle {
+    ToolSeparator {
+        orientation: Qt.Horizontal
         anchors {
             bottom: parent.bottom
             left: parent.left
@@ -232,8 +233,6 @@ Frame {
             leftMargin: 20
             rightMargin: 20
         }
-        color: Style.lightGreyBorder
-        height: 2
     }
 
     Item {

@@ -89,7 +89,7 @@ Frame {
         id: topFrame
         z: 2
         padding: 0
-        height: 230
+        height: 242
 
         anchors {
             left: parent.left
@@ -213,6 +213,19 @@ Frame {
             }
         }
 
+        ToolSeparator {
+            id: space
+            orientation: Qt.Horizontal
+            anchors {
+                left: parent.left
+                top: addSavedPoint.bottom
+                right: parent.right
+                topMargin: 5
+                leftMargin: 20
+                rightMargin: 20
+            }
+        }
+/*
         Rectangle {
             id: space
             color: Style.lightGreyBorder
@@ -226,7 +239,7 @@ Frame {
                 leftMargin: 20
                 rightMargin: 20
             }
-        }
+        }*/
     }
 
     /// The middle frame with the list of path points
@@ -486,6 +499,18 @@ Frame {
                     }
                 }
 
+                ToolSeparator {
+                    id: innerSpace
+                    orientation: Qt.Horizontal
+                    width: parent.width
+                    anchors {
+                        left: parent.let
+                        right: parent.right
+                        top: content.bottom
+                        topMargin: 10
+                    }
+                }
+/*
                 Rectangle {
                     id: innerSpace
                     color: Style.lightGreyBorder
@@ -498,6 +523,7 @@ Frame {
                         topMargin: 10
                     }
                 }
+                */
             }
         }
 

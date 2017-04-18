@@ -142,17 +142,15 @@ Frame {
         }
     }
 
-    Rectangle {
+    ToolSeparator {
         id: horizontalSeparation
-        height: 2
         anchors {
             left: parent.left
             right: parent.right
             top: flick.bottom
             topMargin: 20
         }
-        color: Style.darkGrey2
-        opacity: 0.1
+        orientation: Qt.Horizontal
     }
 
     Label {
@@ -168,6 +166,8 @@ Frame {
     Rectangle {
 
         id: mapChoices
+
+        height: 130
 
         anchors {
             top: choiceMapLabel.bottom
@@ -246,17 +246,15 @@ Frame {
         }
     }
 
-    Rectangle {
+    ToolSeparator {
         id: horizontalSeparation2
-        height: 2
+        orientation: Qt.Horizontal
         anchors {
             top: mapChoices.bottom
             left: parent.left
             right: parent.right
-            topMargin: 150
+            topMargin: 20
         }
-        color: Style.darkGrey2
-        opacity: 0.1
     }
 
     Item {
@@ -267,7 +265,7 @@ Frame {
 
         anchors {
             top: horizontalSeparation2.bottom
-            topMargin: 25
+            topMargin: 20
         }
 
         Label {
@@ -390,6 +388,17 @@ Frame {
         txt: "50%"
     }
 
+    ToolSeparator {
+        id: horizontalSeparation3
+        orientation: Qt.Horizontal
+        anchors {
+            top: lineMeasurement1.bottom
+            left: parent.left
+            right: parent.right
+            topMargin: 20
+        }
+    }/*
+
     Rectangle {
         id: horizontalSeparation3
         height: 2
@@ -401,7 +410,7 @@ Frame {
         }
         color: Style.darkGrey2
         opacity: 0.1
-    }
+    }*/
 
     /// whether or not we display the tutorial to the user (the messages to help him use the features of the application
     SquareCheckBox {

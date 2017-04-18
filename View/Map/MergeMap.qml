@@ -56,6 +56,7 @@ Window {
         }
 
         // to load a map from your the computer file system
+
         MergeMapButton {
             id: importButton
             src: "qrc:/icons/load_map"
@@ -63,11 +64,11 @@ Window {
             width: 175
             anchors {
                 top: parent.top
-                topMargin: 12
+                topMargin: 5
                 bottom: parent.bottom
-                bottomMargin: 12
+                bottomMargin: 5
                 left: parent.left
-                leftMargin: 20
+                leftMargin: 10
             }
             onClicked: loadFileDialog.open()
         }
@@ -90,15 +91,14 @@ Window {
             }
         }
 
-        Rectangle {
+        ToolSeparator {
             id: separation1
             anchors {
                 left: importButton.right
+                leftMargin: 10
                 verticalCenter: parent.verticalCenter
             }
-            color: Style.mergeMapGrey
-            height: 20
-            width: 2
+
         }
 
         MergeMapButton {
@@ -108,11 +108,11 @@ Window {
             width: 200
             anchors {
                 top: parent.top
-                topMargin: 12
+                topMargin: 5
                 bottom: parent.bottom
-                bottomMargin: 12
+                bottomMargin: 5
                 left: separation1.right
-                leftMargin: 20
+                leftMargin: 10
             }
             // the list of robots from which we can choose a map
             RobotListInPopup {
@@ -132,53 +132,33 @@ Window {
             }
         }
 
-        Rectangle {
+        ToolSeparator {
             id: separation2
             anchors {
                 left: fromRobotButton.right
+                leftMargin: 10
                 verticalCenter: parent.verticalCenter
             }
-            color: Style.mergeMapGrey
-            height: 20
-            width: 2
+
         }
 
-        Button {
-
+        SmallButton {
             id: resetButton
 
-            padding: 0
-            width: 50
-
             anchors {
-                top: parent.top
-                topMargin: 12
-                bottom: parent.bottom
-                bottomMargin: 12
+                verticalCenter: parent.verticalCenter
                 left: separation2.right
-                leftMargin: 20
+                leftMargin: 10
             }
 
-            background: Rectangle {
-                color: "transparent"
-                anchors.fill: parent
-                anchors.margins: 5
-                radius: 8
-            }
-
-            Image {
-                id: resetImg
-                width: 20
-                height: 20
-                source: "qrc:/icons/reset"
-                fillMode: Image.PreserveAspectFit
-                anchors.verticalCenter: parent.verticalCenter
-            }
+            imgSrc: "qrc:/icons/reset"
 
             onClicked: {
                 _mapsList.clear();
                 window.resetWidget();
             }
+
+            tooltip: "Clear the window of all maps"
         }
 
         Button {
@@ -232,34 +212,15 @@ Window {
             onAccepted: window.exportMap(fileUrl.toString())
         }
 
-        Button {
-
+        SmallButton {
             id: closeButton
-            width: 20
-
+            imgSrc: "qrc:/icons/closeBtn"
             anchors {
                 top: parent.top
                 bottom: parent.bottom
                 right: saveButton.left
                 rightMargin: 22
             }
-
-            background: Rectangle {
-                // careful the color "transparent" cannot be used as it induces a bug which hides the image of the button
-                color: Style.lightGreyBackground
-                anchors.fill: parent
-                anchors.margins: 5
-                radius: 8
-            }
-
-            Image {
-                id: closeImg
-                anchors.fill: parent
-                source: "qrc:/icons/closeBtn"
-                fillMode: Image.PreserveAspectFit
-                anchors.verticalCenter: parent.verticalCenter
-            }
-
             onClicked: window.hide();
         }
     }

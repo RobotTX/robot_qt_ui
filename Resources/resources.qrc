@@ -73,6 +73,14 @@
         <file alias="decrease">icons/Btn_Decrease.png</file>
         <file alias="increase">icons/Btn_Add.png</file>
         <file alias="save">icons/Btn_Save.png</file>
+        <file alias="line1">icons/Line_1.png</file>
+        <file alias="line2">icons/Line_2.png</file>
+        <file alias="line3">icons/Line_3.png</file>
+        <file alias="line4">icons/Line_4.png</file>
+        <file alias="line5">icons/Line_5.png</file>
+        <file alias="line6">icons/Line_6.png</file>
+        <file alias="line7">icons/Line_7.png</file>
+        <file alias="line8">icons/Line_8.png</file>
 
         <!-- for settings -->
         <file alias="unchecked">icons/Btn_Stop_p.png</file>

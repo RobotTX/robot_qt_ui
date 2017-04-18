@@ -28,7 +28,7 @@ Menu {
     Rectangle {
         color: Style.lightGreyBorder
         width: parent.width
-        height: 2
+        height: 1
     }
 
     PopupMenuItem {
