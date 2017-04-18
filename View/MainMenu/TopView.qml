@@ -2,11 +2,13 @@ import QtQuick 2.7
 import QtQuick.Controls 2.1
 import QtQuick.Layouts 1.3
 import "../../Helper/style.js" as Style
+import "../../Model/Robot"
 import "../Custom"
 
 Frame {
     id: topViewFrame
     property bool hasMap
+    property Robots robotModel
     signal savePosition()
     signal loadPosition()
     padding: 0
@@ -42,12 +44,16 @@ Frame {
         Column {
             anchors.left: parent.left
             anchors.right: parent.right
-            Label {
+            /*
+            Behavior on opacity {
+                OpacityAnimator {
+                    duration: 250
+                }
+            }
+            */
+            CustomLabelWithTimer {
                 id: errorLabel
                 color: Style.errorColor2
-                visible: text !== ""
-                wrapMode: Text.WordWrap
-                width: parent.width
             }
             Label {
                 id: warningLabel
@@ -56,34 +62,22 @@ Frame {
                 wrapMode: Text.WordWrap
                 width: parent.width
             }
-            Label {
+            CustomLabelWithTimer {
                 id: successLabel
                 color: Style.successColor
-                visible: text !== ""
-                wrapMode: Text.WordWrap
-                width: parent.width
-
-                onTextChanged: if(text !== "") successTimer.start()
-
-                Timer {
-                    id: successTimer
-                    interval: 10000;
-                    onTriggered: successLabel.text = ""
-                }
             }
-            Label {
+            CustomLabelWithTimer {
                 id: infoLabel
                 color: Style.infoColor
-                visible: text !== ""
-                wrapMode: Text.WordWrap
-                width: parent.width
-
-                onTextChanged: if(text !== "") infoTimer.start()
-
-                Timer {
-                    id: infoTimer
-                    interval: 10000;
-                    onTriggered: infoLabel.text = ""
+            }
+            Repeater {
+                model: robotModel
+                delegate: Label {
+                    color: Style.errorColor2
+                    text: "Warning: The robot \"" + name + "\" is running low on battery"
+                    visible: battery < 50 * robotModel.batteryWarningThreshold
+                    wrapMode: Text.WordWrap
+                    width: parent.width
                 }
             }
         }
@@ -92,6 +86,7 @@ Frame {
     /// The load state button
     SmallButton {
         id: loadStateButton
+        tooltip: "Reset the position of the map"
         imgSrc: "qrc:/icons/loadState"
         anchors {
             top: parent.top
@@ -106,6 +101,7 @@ Frame {
     /// The save state button
     SmallButton {
         id: saveStateButton
+        tooltip: "Save the position of the map"
         imgSrc: "qrc:/icons/saveState"
         anchors {
             top: parent.top
@@ -117,7 +113,6 @@ Frame {
         onClicked: topViewFrame.savePosition()
     }
 
-    /// TODO add Timer ?
     function setMessageTop(label, msg){
         switch(label){
             case 0:

@@ -96,7 +96,7 @@ Frame {
             /// If we have a map, the mapImage is visible
             /// so we enable the buttons to save/load the state of the map
             hasMap: mapImage.visible
-
+            robotModel: mapViewFrame.robotModel
         }
 
         Item {

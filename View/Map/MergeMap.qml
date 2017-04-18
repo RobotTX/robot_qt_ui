@@ -269,7 +269,7 @@ Window {
             append({
                 "name": name,
                 "ip": ip
-            });
+            });zz
         }
 
         function removeRobot(id){

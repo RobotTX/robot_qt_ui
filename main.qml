@@ -67,6 +67,7 @@ ApplicationWindow {
             id: _robotModel
             objectName: "robotModel"
             onSetMessageTop: mapView.setMessageTop(status, msg)
+            batteryWarningThreshold: applicationWindow.batteryWarningThreshold
         }
 
         /// TODO Just for testing, to remove later
@@ -172,7 +173,7 @@ ApplicationWindow {
 
     function openMapChoiceMessageDialog(ip, robotIsOlder){
         if(dualChoiceMessageDialog.visible){
-            /// TODO fix this (if more than 1 robot connect and has a wrong map, we were already asking to choose a map for the previous robot)
+            /// TODO fix this (if more than 1 robot connect, has a wrong map, and we were already asking to choose a map for the previous robot)
             console.log("We are already choosing a map for the robot, try again later");
         } else {
             dualChoiceMessageDialog.title = qsTr("Choose which map to use");

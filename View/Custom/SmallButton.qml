@@ -8,6 +8,8 @@ Button {
 
     property string imgSrc
     property string backColor: "transparent"
+    property string tooltip
+    property bool timerTriggered: false
     width: Style.smallBtnWidth
     height: Style.smallBtnHeight
 
@@ -27,6 +29,44 @@ Button {
             fillMode: Image.Pad
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.verticalCenter: parent.verticalCenter
+        }
+    }
+
+    MouseArea {
+        id: mouseArea
+        anchors.fill: parent
+        hoverEnabled: true
+        onEntered: {
+            if(tooltip !== ""){
+                //hovered = true;
+                timer.start();
+            }
+        }
+        onExited: {
+            if(tooltip !== ""){
+                //hovered = false;
+                timerTriggered = false;
+            }
+        }
+        onClicked: mouse.accepted = false;
+        onPressed: mouse.accepted = false;
+        onReleased: mouse.accepted = false;
+    }
+
+    CustomToolTip {
+        id: toolTip
+        x: -6
+        y: btn.height
+        visible: btn.hovered && tooltip !== "" && timerTriggered
+        text: tooltip
+    }
+
+    Timer {
+        id: timer
+        interval: 800
+        onTriggered: {
+            if(btn.hovered)
+                timerTriggered = true;
         }
     }
 }

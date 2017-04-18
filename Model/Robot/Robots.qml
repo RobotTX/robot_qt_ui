@@ -1,6 +1,7 @@
 import QtQuick 2.0
 
 ListModel {
+    property real batteryWarningThreshold
 
     signal newHomeSignal(string ip, string homeName, double homeX, double homeY)
     signal newPathSignal(string ip, string groupName, string pathName)
@@ -83,8 +84,11 @@ ListModel {
 
     function setStage(ip, stage){
         for(var i = 0; i < count; i++)
-            if(get(i).ip === ip)
+            if(get(i).ip === ip){
+                if(get(i).stage >= 0 && stage < 0)
+                    setMessageTop(0, "The robot \"" + get(i).name + "\" is currently stuck in its path to \"" + get(i).pathPoints.get(Math.abs(stage + 1)).pathPointName + "\"");
                 setProperty(i, "stage", stage);
+            }
     }
 
     function setBattery(ip, battery){

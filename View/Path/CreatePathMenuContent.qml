@@ -248,6 +248,7 @@ Frame {
                 id: dragArea
 
                 property bool held: false
+                hoverEnabled: true
 
                 anchors {
                     left: parent.left
@@ -513,7 +514,6 @@ Frame {
                     delegate: dragDelegate
 
                     spacing: 4
-                    cacheBuffer: 50
                 }
             }
         }

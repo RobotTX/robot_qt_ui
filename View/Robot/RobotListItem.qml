@@ -72,6 +72,7 @@ Frame {
 
         SmallButton {
             id: cancelName
+            tooltip: "Cancel"
             imgSrc: "qrc:/icons/closeBtn"
             anchors {
                 verticalCenter: nameField.verticalCenter
@@ -87,6 +88,7 @@ Frame {
 
         SmallButton {
             id: saveName
+            tooltip: "Save"
             imgSrc: "qrc:/icons/save"
             anchors {
                 verticalCenter: nameField.verticalCenter

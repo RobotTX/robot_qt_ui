@@ -41,7 +41,7 @@ Label {
 
     Timer {
         id: timer
-        interval: 800;
+        interval: 800
         onTriggered: {
             if(hovered)
                 timerTriggered = true;

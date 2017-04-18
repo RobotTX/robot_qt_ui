@@ -127,6 +127,7 @@ Column {
                 /// The left button in each element of the list
                 SmallButton {
                     id: leftButton2
+                    tooltip: pathIsVisible ? "Hide the path on the map" : "Show the path on the map"
                     imgSrc: pathIsVisible ? "qrc:/icons/visible" : "qrc:/icons/invisible"
                     anchors {
                         top: parent.top

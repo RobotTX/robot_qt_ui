@@ -58,7 +58,12 @@ Frame {
         height: Style.smallBtnHeight
 
         background: Rectangle {
-            color: "transparent"
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.verticalCenter: parent.verticalCenter
+            width: Math.min(createButton.width, createButton.height)
+            height: createButton.width
+            color: createButton.pressed ? Style.lightGreyBorder : createButton.hovered ? Style.lightGreyBackgroundHover : "transparent"
+            radius: createButton.hovered ? createButton.width/2 : 0
         }
 
         Image {

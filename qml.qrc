@@ -77,5 +77,6 @@
         <file>View/ScanMap/ScanMapsPaintedItem.qml</file>
         <file>View/Custom/CustomBusyIndicator.qml</file>
         <file>View/Custom/CustomLabel.qml</file>
+        <file>View/Custom/CustomLabelWithTimer.qml</file>
     </qresource>
 </RCC>
