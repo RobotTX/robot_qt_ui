@@ -11,8 +11,9 @@ import "../Custom"
 Frame {
     id: createPathMenuFrame
     objectName: "createPathMenuFrame"
-    property string oldName: ""
+    property string oldName
     property string oldGroup
+    property string errorMsg
     property bool nameError: true
     property Paths pathModel
     property Paths tmpPathModel
@@ -70,7 +71,8 @@ Frame {
             }
         }
         pathTextField.text = oldName;
-        setMessageTop(1, "");
+        errorMsg = "";
+        setMessageTop(1, errorMsg);
     }
 
     padding: 0
@@ -132,7 +134,7 @@ Frame {
             }
 
             onEditingFinished: {
-                if(saveButton.enabled)
+                if(saveButton.canSave)
                     saveButton.clicked()
             }
 
@@ -355,6 +357,7 @@ Frame {
                         onClicked: {
                             tmpPathModel.get(0).paths.get(0).pathPoints.remove(index);
                             tmpPathModel.visiblePathChanged();
+                            enableSave();
                         }
                     }
 
@@ -565,8 +568,9 @@ Frame {
                 rightMargin: 20
                 bottomMargin: 20
             }
-            enabled: false
-            onClicked: {
+            tooltip: errorMsg
+            canSave: false
+            onReleased: if(saveButton.canSave) {
                 var newName = Helper.formatName(pathTextField.text);
                 console.log("create " + groupComboBox.displayText + " : " + newName);
                 if(oldName !== "")
@@ -589,17 +593,17 @@ Frame {
     function enableSave(){
         var newName = Helper.formatName(pathTextField.text);
 
-        var topMsg = "";
+        errorMsg = "";
 
         var error = (newName === "");
         if(error)
-            topMsg = "The path name can not be empty";
+            errorMsg = "The path name can not be empty";
 
         if(newName !== "" && !newName !== oldName)
             for(var i = 0; i < pathModel.count; i++)
                 for(var j = 0; j < pathModel.get(i).paths.count; j++){
                     if(pathModel.get(i).paths.get(j).pathName === newName){
-                        topMsg += (topMsg !== "" ? "\n" : "") + "The path name \"" + newName + "\" is already taken";
+                        errorMsg += (errorMsg !== "" ? "\n" : "") + "The path name \"" + newName + "\" is already taken";
                         error = true;
                     }
                 }
@@ -607,18 +611,18 @@ Frame {
         nameError = error;
 
         if(tmpPathModel.get(0).paths.get(0).pathPoints.count < 1){
-            topMsg += (topMsg !== "" ? "\n" : "") + "You need at least 1 point to create a path";
+            errorMsg += (errorMsg !== "" ? "\n" : "") + "You need at least 1 point to create a path";
             error = true;
         }
 
         for(var k = 0; k < tmpPathModel.get(0).paths.get(0).pathPoints.count; k++){
             if(!tmpPathModel.get(0).paths.get(0).pathPoints.get(k).validPos){
-                topMsg += (topMsg !== "" ? "\n" : "") + "The point " + (k+1) + " is at a wrong position, your robot(s) would not be able to go there";
+                errorMsg += (errorMsg !== "" ? "\n" : "") + "The point " + (k+1) + " is at a wrong position, your robot(s) would not be able to go there";
                 error = true;
             }
         }
 
-        setMessageTop(1, topMsg);
-        saveButton.enabled = !error;
+        setMessageTop(1, errorMsg);
+        saveButton.canSave = !error;
     }
 }

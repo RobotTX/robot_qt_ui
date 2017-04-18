@@ -8,7 +8,8 @@ import "../Custom"
 Frame {
     // used to create a group (points or paths)
 
-    property string oldName: ""
+    property string oldName
+    property string errorMsg
 
     signal backToMenu()
     signal createGroup(string name)
@@ -19,7 +20,8 @@ Frame {
 
     onVisibleChanged: {
         groupTextField.text = oldName;
-        setMessageTop(1, "");
+        errorMsg = "";
+        setMessageTop(1, errorMsg);
     }
 
     padding: 20
@@ -54,14 +56,14 @@ Frame {
         anchors.topMargin: 8
 
         onEditingFinished: {
-            if(saveButton.enabled)
+            if(saveButton.canSave)
                 saveButton.clicked()
         }
 
         background: Rectangle {
             radius: 2
-            border.color: !saveButton.enabled ? Style.errorColor : groupTextField.activeFocus ? Style.lightBlue : Style.lightGreyBorder
-            border.width: groupTextField.activeFocus || !saveButton.enabled ? 3 : 1
+            border.color: !saveButton.canSave ? Style.errorColor : groupTextField.activeFocus ? Style.lightBlue : Style.lightGreyBorder
+            border.width: groupTextField.activeFocus || !saveButton.canSave ? 3 : 1
         }
         onTextChanged: checkGroup(Helper.formatName(groupTextField.text))
     }
@@ -83,26 +85,25 @@ Frame {
             right: parent.right
             bottom: parent.bottom
         }
-        enabled: false
+        canSave: false
+        tooltip: errorMsg
         anchors.leftMargin: 5
-        onClicked: {
+        onReleased: if(saveButton.canSave) {
             var newName = Helper.formatName(groupTextField.text);
             if(oldName === ""){
                 createGroup(newName);
-                setMessageTop(2, "Created the group \"" + newName + "\"")
+                setMessageTop(2, "Created the group \"" + newName + "\"");
             } else {
                 renameGroup(newName, oldName);
-                setMessageTop(2, "Renamed the group \"" + oldName + "\" to \"" + newName + "\"")
+                setMessageTop(2, "Renamed the group \"" + oldName + "\" to \"" + newName + "\"");
             }
             backToMenu();
         }
     }
 
     function enableSave(enable){
-        saveButton.enabled = enable;
-        if(enable)
-            setMessageTop(1, "");
-        else
-            setMessageTop(1, Helper.formatName(groupTextField.text) === "" ? "The name of the group can not be empty" : "\"" + groupTextField.text + "\" is already taken")
+        saveButton.canSave = enable;
+        errorMsg = enable ? "" : Helper.formatName(groupTextField.text) === "" ? "The name of the group can not be empty" : "\"" + groupTextField.text + "\" is already taken";
+        setMessageTop(1, errorMsg);
     }
 }

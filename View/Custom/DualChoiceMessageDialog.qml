@@ -82,7 +82,7 @@ Dialog {
                 rightMargin: 10
                 bottomMargin: 10
             }
-            onClicked: dialog.accept()
+            onReleased: dialog.accept()
         }
     }
 }

@@ -14,6 +14,7 @@ Frame {
     property string oldName: ""
     property string oldGroup
     property bool nameError: true
+    property string errorMsg
     property double oldPosX
     property double oldPosY
 
@@ -60,7 +61,8 @@ Frame {
             }
         }
         pointTextField.text = oldName;
-        setMessageTop(1, "");
+        errorMsg = "";
+        setMessageTop(1, errorMsg);
     }
 
     padding: 20
@@ -97,7 +99,7 @@ Frame {
         }
 
         onEditingFinished: {
-            if(saveButton.enabled)
+            if(saveButton.canSave)
                 saveButton.clicked()
         }
 
@@ -185,8 +187,9 @@ Frame {
             bottom: parent.bottom
             leftMargin: 5
         }
-        enabled: false
-        onClicked: {
+        canSave: false
+        tooltip: errorMsg
+        onReleased: if(saveButton.canSave) {
             var newName = Helper.formatName(pointTextField.text);
             var groupName = groupComboBox.displayText;
             createPoint(newName, groupName, tmpPointView.x + tmpPointView.width / 2, tmpPointView.y + tmpPointView.height, oldName, oldGroup);
@@ -198,18 +201,18 @@ Frame {
 
     function enableSave(posError, _nameError){
         nameError = _nameError;
-        saveButton.enabled = !posError && !nameError;
+        saveButton.canSave = !posError && !nameError;
 
-        var topMsg = "";
-        if(!saveButton.enabled){
+        errorMsg = "";
+        if(!saveButton.canSave){
             if(Helper.formatName(pointTextField.text) === "")
-                topMsg = "The point name can not be empty";
+                errorMsg = "The point name can not be empty";
             else if(nameError)
-                topMsg = "The point name \"" + Helper.formatName(pointTextField.text) + "\" is already taken";
+                errorMsg = "The point name \"" + Helper.formatName(pointTextField.text) + "\" is already taken";
 
             if(posError)
-                topMsg += (nameError ? "\n" : "") + "You cannot save this point because your robot(s) would not be able to go there";
+                errorMsg += (nameError ? "\n" : "") + "You cannot save this point because your robot(s) would not be able to go there";
         }
-        setMessageTop(1, topMsg);
+        setMessageTop(1, errorMsg);
     }
 }

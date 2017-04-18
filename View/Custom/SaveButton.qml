@@ -3,7 +3,11 @@ import QtQuick.Controls 2.1
 import "../../Helper/style.js" as Style
 
 Button {
+    id: btn
     property string txt: "Save"
+    property string tooltip
+    property bool canSave: true
+    property bool timerTriggered: false
     height: 23
 
     CustomLabel {
@@ -15,8 +19,37 @@ Button {
 
     background: Rectangle {
         radius: 3
-        color: enabled ? (pressed ? Style.darkSkyBlueBorder : Style.darkSkyBlue) : Style.disableSaveColor
+        color: canSave ? (pressed ? Style.darkSkyBlueBorder : Style.darkSkyBlue) : Style.disableSaveColor
         border.width: 1
-        border.color: enabled ? Style.darkSkyBlueBorder : Style.disableSaveBorder
+        border.color: canSave ? Style.darkSkyBlueBorder : Style.disableSaveBorder
+    }
+
+    MouseArea {
+        id: mouseArea
+        anchors.fill: parent
+        hoverEnabled: true
+        propagateComposedEvents: true
+        onEntered: if(!btn.canSave && tooltip !== "") timer.start();
+        onExited: if(!btn.canSave && tooltip !== "") timerTriggered = false;
+        onClicked: mouse.accepted = false;
+        onPressed: mouse.accepted = false;
+        onReleased: mouse.accepted = false;
+    }
+
+    CustomToolTip {
+        id: toolTip
+        x: -6
+        y: btn.height
+        visible: !btn.canSave && btn.hovered && tooltip !== "" && timerTriggered
+        text: tooltip
+    }
+
+    Timer {
+        id: timer
+        interval: 800
+        onTriggered: {
+            if(!btn.canSave && btn.hovered)
+                timerTriggered = true;
+        }
     }
 }
