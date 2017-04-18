@@ -4,7 +4,7 @@ import "../../Helper/style.js" as Style
 
 Label {
     id: label
-    visible: text === "" || opacity == 0
+    visible: !(text === "" || opacity == 0)
     wrapMode: Text.WordWrap
     width: parent.width
 

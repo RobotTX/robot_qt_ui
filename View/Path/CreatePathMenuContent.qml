@@ -135,7 +135,7 @@ Frame {
 
             onEditingFinished: {
                 if(saveButton.canSave)
-                    saveButton.clicked()
+                    saveButton.released()
             }
 
             background: Rectangle {

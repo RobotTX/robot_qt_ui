@@ -100,7 +100,7 @@ Frame {
 
         onEditingFinished: {
             if(saveButton.canSave)
-                saveButton.clicked()
+                saveButton.released()
         }
 
         background: Rectangle {
@@ -108,6 +108,7 @@ Frame {
             border.color: nameError ? Style.errorColor : pointTextField.activeFocus ? Style.lightBlue : Style.lightGreyBorder
             border.width: pointTextField.activeFocus || nameError ? 3 : 1
         }
+
         onTextChanged: checkPoint(Helper.formatName(pointTextField.text), oldName,
                        tmpPointView.x + tmpPointView.width / 2,
                        tmpPointView.y + tmpPointView.height)

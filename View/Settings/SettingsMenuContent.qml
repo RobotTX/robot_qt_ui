@@ -148,7 +148,7 @@ Frame {
             left: parent.left
             right: parent.right
             top: flick.bottom
-            topMargin: 20
+            topMargin: 10
         }
         orientation: Qt.Horizontal
     }
@@ -397,20 +397,7 @@ Frame {
             right: parent.right
             topMargin: 20
         }
-    }/*
-
-    Rectangle {
-        id: horizontalSeparation3
-        height: 2
-        anchors {
-            top: lineMeasurement1.bottom
-            left: parent.left
-            right: parent.right
-            topMargin: 20
-        }
-        color: Style.darkGrey2
-        opacity: 0.1
-    }*/
+    }
 
     /// whether or not we display the tutorial to the user (the messages to help him use the features of the application
     SquareCheckBox {
