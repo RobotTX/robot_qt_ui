@@ -130,15 +130,11 @@ void RobotsController::shortcutAddRobot(void){
         emit setPlayingPath(ip, (robots.size() - 1)%2 == 0);
     }
 
-    /// TODO remove when tests ok
+    /// NOTE remove when tests ok
     if((robots.size() - 1)%3 == 0){
         emit setPath(ip, "pathName avec un nom tres tres long " + ip);
-        emit addPathPoint(ip, QString("pathPoint 1"), 50 * robots.size() + 50, 50 * robots.size() + 50, (robots.size() - 1)%3);
-        emit addPathPoint(ip, QString("pathPoint 2"), 50 * robots.size() + 50*2, 50 * robots.size() + 50*2, (robots.size() - 1)%3);
-        emit addPathPoint(ip, QString("pathPoint 3"), 50 * robots.size() + 50*3, 50 * robots.size() + 50*3, (robots.size() - 1)%3);
-        emit addPathPoint(ip, QString("pathPoint 4"), 50 * robots.size() + 50*4, 50 * robots.size() + 50*4, (robots.size() - 1)%3);
-        emit addPathPoint(ip, QString("pathPoint 5"), 50 * robots.size() + 50*5, 50 * robots.size() + 50*5, (robots.size() - 1)%3);
-        emit addPathPoint(ip, QString("pathPoint 6"), 50 * robots.size() + 50*6, 50 * robots.size() + 50*6, (robots.size() - 1)%3);
+        for(int i = 1; i <= robots.size()%3; i++)
+            emit addPathPoint(ip, "pathPoint " + QString::number(i), 50 * robots.size() + 50*i%3, 50 * robots.size() + 50*i%3, (robots.size() - 1)%3);
         emit setStage(ip, (int) ((robots.size() - 1) / 3));
     }
 }

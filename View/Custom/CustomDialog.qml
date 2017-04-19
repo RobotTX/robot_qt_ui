@@ -35,7 +35,7 @@ Dialog {
         }
 
         font.bold: true
-        text: title
+        text: qsTr(title)
     }
 
     contentItem: Rectangle {
@@ -67,7 +67,7 @@ Dialog {
                 rightMargin: 10
                 bottomMargin: 10
             }
-            txt: rejectMessage
+            txt: qsTr(rejectMessage)
             onClicked: dialog.reject()
         }
 

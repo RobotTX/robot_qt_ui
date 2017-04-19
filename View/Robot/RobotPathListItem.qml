@@ -203,7 +203,7 @@ Frame {
 
                 Rectangle {
                     anchors.fill: parent
-                    color: "transparent" //Style.lightGreyBackground
+                    color: "transparent"
                 }
 
                 Column {

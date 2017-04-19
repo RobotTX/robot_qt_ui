@@ -41,7 +41,7 @@ Button {
         x: -6
         y: btn.height
         visible: !btn.canSave && btn.hovered && tooltip !== "" && timerTriggered
-        text: tooltip
+        text: qsTr(tooltip)
     }
 
     Timer {

@@ -90,7 +90,7 @@ public:
     void sendMapToAllRobots(QString mapId, QString date, QString mapMetadata, QImage img);
 
 public slots:
-    /// TODO remove from here when tests ok
+    /// NOTE remove from here when tests ok
     void startedScanningSlot(const QString ip);
 
 private:
