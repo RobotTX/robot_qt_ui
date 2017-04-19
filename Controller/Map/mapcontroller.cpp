@@ -170,9 +170,6 @@ void MapController::saveMapToFile(const QString fileName) const {
     qDebug() << "saving a map of size " << map->getMapImage().size();
     /// Qt has is own function to save the QImage to a PGM file
     map->getMapImage().save(fileName, "PGM");
-
-    /// When the map is saved, no need to tell the user to save it again when closing the app
-    map->setModified(false);
 }
 
 bool MapController::loadMapConfig(const QString fileName) {
@@ -339,7 +336,5 @@ QString MapController::getMetadataString(void) const {
 void MapController::saveNewMap(const QString file_name){
     map->getMapImage().save(file_name, "PGM");
     map->setMapFile(file_name);
-    /// no need to ask the user to save the map again
-    map->setModified(false);
     emit setMap(file_name);
 }

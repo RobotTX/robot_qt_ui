@@ -30,7 +30,6 @@ public:
     double getResolution(void) const { return resolution; }
     QDateTime getDateTime(void) const { return dateTime; }
     QUuid getMapId(void) const { return mapId; }
-    bool hasBeenModified(void) const { return modified; }
 
     void setMapFile(const QString file) { qDebug() << "Updating map"; mapFile = file; }
 
@@ -43,15 +42,11 @@ public:
     void setHeight(const int _height) { height = _height; }
     void setWidth(const int _width) { width = _width; }
     void setResolution(const double _resolution) { resolution = _resolution; }
-    /// TODO check if we want to use the modified system ?
-    void setModified(const bool _modified) { modified = _modified; }
 
 signals:
     void mapFileChanged();
 
 private:
-    bool modified;
-
     /**
      * @brief resolution
      * The resolution of the map used to calculate the position of the robot

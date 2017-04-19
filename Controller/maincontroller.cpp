@@ -371,7 +371,6 @@ void MainController::newMapFromRobotSlot(QString ip, QByteArray mapArray, QStrin
 
     /// When we receive a map from a robot, we send it to all the other robots
     robotsController->sendNewMapToAllExcept(ip, mapId, mapDate, mapMetadata, mapController->getMapImage());
-    /// TODO change bool => modified the map, need to save on close
 
     pointController->clearPoints();
 

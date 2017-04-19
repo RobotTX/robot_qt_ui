@@ -87,12 +87,6 @@ private slots:
     void mapReceivedSlot(const QByteArray mapArray, const int who, const QString mapId, const QString mapDate, const QString resolution, const QString originX, const QString originY, const int map_width, const int map_height);
 
     /**
-     * @brief sendNewMapToRobots
-     * Just finished to scan a map
-     */
-    void sendNewMapToRobots(const QString);
-
-    /**
      * @brief doneSendingMapSlot
      * Finished to send the map to the robot
      */

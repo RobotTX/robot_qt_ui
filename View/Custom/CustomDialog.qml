@@ -1,5 +1,6 @@
 import QtQuick 2.7
 import QtQuick.Controls 2.1
+import QtQuick.Layouts 1.3
 import "../../Helper/style.js" as Style
 import "../Custom"
 
@@ -10,7 +11,8 @@ Dialog {
     property string message
     property string rejectMessage
     property string acceptMessage
-    property bool hideCancelButton: false
+    property string yesMessage
+    signal yes()
 
     background: Rectangle {
         color: "#f3f3f3"
@@ -47,7 +49,7 @@ Dialog {
                 top: parent.top
                 left: parent.left
                 right: parent.right
-                bottom: appButton.top
+                bottom: layout.top
                 topMargin: customHeader.height + 10
                 leftMargin: 10
                 rightMargin: 10
@@ -56,33 +58,46 @@ Dialog {
             wrapMode: Text.WordWrap
         }
 
-        CancelButton {
-            id: robotButton
-            visible: !hideCancelButton
+        RowLayout {
+            id: layout
             anchors {
                 left: parent.left
-                right: parent.horizontalCenter
-                bottom: parent.bottom
-                leftMargin: 10
-                rightMargin: 10
-                bottomMargin: 10
-            }
-            txt: qsTr(rejectMessage)
-            onClicked: dialog.reject()
-        }
-
-        SaveButton {
-            id: appButton
-            txt: acceptMessage
-            anchors {
-                left: parent.horizontalCenter
                 right: parent.right
                 bottom: parent.bottom
-                leftMargin: 10
-                rightMargin: 10
                 bottomMargin: 10
             }
-            onReleased: dialog.accept()
+
+            CancelButton {
+                id: robotButton
+                visible: rejectMessage !== ""
+                txt: qsTr(rejectMessage)
+                onClicked: dialog.reject()
+                Layout.preferredHeight: height
+                Layout.fillWidth: true
+                Layout.leftMargin: 10
+                Layout.rightMargin: 10
+            }
+
+            SaveButton {
+                id: yesButton
+                visible: yesMessage !== ""
+                txt: yesMessage
+                onReleased: dialog.yes()
+                Layout.preferredHeight: height
+                Layout.fillWidth: true
+                Layout.leftMargin: 10
+                Layout.rightMargin: 10
+            }
+
+            SaveButton {
+                id: appButton
+                txt: acceptMessage
+                onReleased: dialog.accept()
+                Layout.preferredHeight: height
+                Layout.fillWidth: true
+                Layout.leftMargin: 10
+                Layout.rightMargin: 10
+            }
         }
     }
 }

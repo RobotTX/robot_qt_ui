@@ -164,8 +164,8 @@ ApplicationWindow {
 
     CustomDialog {
         id: dialog
-        x: parent.width / 2 - width / 2
-        y: parent.height / 2 - height / 2
+        x: applicationWindow.width / 2 - width / 2
+        y: applicationWindow.height / 2 - height / 2
 
         onAccepted: requestOrSendMap(ip, false)
         onRejected: requestOrSendMap(ip, true)
@@ -173,9 +173,8 @@ ApplicationWindow {
 
     CustomDialog {
         id: warningDialog
-        x: parent.width / 2 - width / 2
-        y: parent.height / 2 - height / 2
-        hideCancelButton: true
+        x: applicationWindow.width / 2 - width / 2
+        y: applicationWindow.height / 2 - height / 2
     }
 
     function openMapChoiceMessageDialog(ip, robotIsOlder){

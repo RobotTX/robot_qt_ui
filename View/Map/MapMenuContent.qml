@@ -127,19 +127,23 @@ Frame {
         }
     }
 
-    MessageDialog {
+    CustomDialog {
         id: messageDialog
-        text: "Do you wish to save the current map before importing a new one ?"
-        informativeText: "          If you don't save the current map, your changes will be discarded"
-        icon: StandardIcon.Question
-        standardButtons: StandardButton.Cancel | StandardButton.Ignore | StandardButton.Yes
+        title: "Importing an existing map"
+        message: "Do you wish to save the current map before importing a new one ?\n\n\tIf you don't save the current map, your changes will be discarded"
+        rejectMessage: "Cancel"
+        acceptMessage: "Load"
+        yesMessage: "Save & Load"
+        height: 170
+
+        x: applicationWindow.width / 2 - width / 2 - Style.mainMenuWidth
+        y: applicationWindow.height / 2 - height / 2 - Style.menuHeaderHeight
+
         onRejected: console.log("You canceled the import of a map");
         onAccepted: {
             loadFileDialog.open()
-            console.log("You clicked ignore");
         }
         onYes: {
-            console.log("You clicked yes");
             // to make sure the load file dialog is openened after the current has been saved
             mapMenuFrame.haveToUploadAfterSaveMap = true
             saveFileDialog.open()

@@ -133,7 +133,7 @@ void RobotsController::shortcutAddRobot(void){
     /// NOTE remove when tests ok
     if((robots.size() - 1)%3 == 0){
         emit setPath(ip, "pathName avec un nom tres tres long " + ip);
-        for(int i = 1; i <= robots.size()%3; i++)
+        for(int i = 1; i <= robots.size(); i++)
             emit addPathPoint(ip, "pathPoint " + QString::number(i), 50 * robots.size() + 50*i%3, 50 * robots.size() + 50*i%3, (robots.size() - 1)%3);
         emit setStage(ip, (int) ((robots.size() - 1) / 3));
     }
