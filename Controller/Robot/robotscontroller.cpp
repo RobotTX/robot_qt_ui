@@ -5,7 +5,7 @@
 #include "Controller/Robot/robotserverworker.h"
 #include "Controller/maincontroller.h"
 
-RobotsController::RobotsController(QObject *applicationWindow, MainController* parent) : QObject(parent), robots(QMap<QString, QPointer<RobotController>>()), receivingMap(false){
+RobotsController::RobotsController(QObject *applicationWindow, QQmlApplicationEngine* engine, MainController* parent) : QObject(parent), engine_(engine), robots(QMap<QString, QPointer<RobotController>>()), receivingMap(false) {
 
     QObject *robotModel = applicationWindow->findChild<QObject*>("robotModel");
 
@@ -104,7 +104,7 @@ void RobotsController::robotIsAliveSlot(const QString name, const QString ip, co
         emit setBattery(ip, battery);
         robots.value(ip)->ping();
     } else {
-        QPointer<RobotController> robotController = QPointer<RobotController>(new RobotController(this, ip, name));
+        QPointer<RobotController> robotController = QPointer<RobotController>(new RobotController(engine_, this, ip, name));
         robots.insert(ip, robotController);
         emit addRobot(name, ip, ssid, stage, battery);
     }

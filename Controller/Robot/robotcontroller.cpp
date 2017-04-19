@@ -1,6 +1,7 @@
 #include "robotcontroller.h"
 #include <QDir>
 #include <QDebug>
+#include <QQmlApplicationEngine>
 #include "Helper/helper.h"
 #include "Controller/Robot/robotscontroller.h"
 #include "Controller/Robot/cmdrobotworker.h"
@@ -12,8 +13,13 @@
 #include "Controller/Map/localmapworker.h"
 #include "Controller/Map/scanmapworker.h"
 #include "Controller/Map/particlecloudworker.h"
+#include "Controller/maincontroller.h"
+#include "Controller/Map/mapcontroller.h"
+#include "View/obstaclespainteditem.h"
 
-RobotController::RobotController(RobotsController *parent, QString _ip, QString robotName):
+#define PI 3.14159265
+
+RobotController::RobotController(QQmlApplicationEngine* engine, RobotsController *parent, QString _ip, QString robotName):
     QObject(parent), ip(_ip), sendingMap(false), commandController(QPointer<CommandController>(new CommandController(this, ip, robotName))){
 
     /// Signals from the command controller when we have executed a command
@@ -49,6 +55,19 @@ RobotController::RobotController(RobotsController *parent, QString _ip, QString 
     connect(this, SIGNAL(receivedScanMap(QString, QByteArray, QString)), parent, SLOT(receivedScanMapSlot(QString, QByteArray, QString)));
     /// Check if the robot is scanning when it connects
     connect(this, SIGNAL(checkScanning(QString, bool)), parent, SLOT(checkScanningSlot(QString, bool)));
+
+    /// to draw the obstacles of the robots
+    QQmlComponent component(engine, QUrl("qrc:/View/ObstaclesItems.qml"));
+    paintedItem = qobject_cast<ObstaclesPaintedItem*>(component.create());
+    QQmlEngine::setObjectOwnership(paintedItem, QQmlEngine::CppOwnership);
+
+    QList<QObject*> qmlList = engine->rootObjects();
+    /// The main parent element in the QML tree
+    QObject *applicationWindow = qmlList.at(0);
+
+    QQuickItem* mapView = applicationWindow->findChild<QQuickItem*> ("mapImage");
+    paintedItem->setParentItem(mapView);
+    paintedItem->setParent(this);
 
     launchWorkers();
 }
@@ -136,7 +155,6 @@ void RobotController::launchWorkers(void){
     robotWorker->moveToThread(&robotThread);
     robotThread.start();
 
-
     metadataWorker = QPointer<MetadataWorker>(new MetadataWorker(ip, PORT_MAP_METADATA));
     connect(metadataWorker, SIGNAL(valueChangedMetadata(int, int, float, float, float)),
                      this , SLOT(updateMetadata(int, int, float, float, float)));
@@ -158,14 +176,14 @@ void RobotController::launchWorkers(void){
     newMapWorker->moveToThread(&newMapThread);
     newMapThread.start();
 
-
     localMapWorker = QPointer<LocalMapWorker>(new LocalMapWorker(ip, PORT_LOCAL_MAP));
     connect(localMapWorker, SIGNAL(robotIsDead()), this, SLOT(robotIsDeadSlot()));
     connect(this, SIGNAL(stopLocalMapWorker()), localMapWorker, SLOT(stopWorker()));
     connect(this, SIGNAL(startLocalMapWorker()), localMapWorker, SLOT(connectSocket()));
     connect(&localMapThread, SIGNAL(finished()), localMapWorker, SLOT(deleteLater()));
-    //qRegisterMetaType<QVector<float>>("QVector<float>");
-    //connect(localMapWorker, SIGNAL(laserValues(float, float, float, QVector<float>, QString)), RobotController->getLaserController(), SLOT(drawObstacles(float,float,float,QVector<float>,QString)));
+    qRegisterMetaType<QVector<float>>("QVector<float>");
+    connect(localMapWorker, SIGNAL(laserValues(float, float, float, QVector<float>)),
+            this, SLOT(updateObstacles(float, float, float, QVector<float>)));
     localMapWorker->moveToThread(&localMapThread);
     localMapThread.start();
 
@@ -174,7 +192,7 @@ void RobotController::launchWorkers(void){
     connect(mapWorker, SIGNAL(valueChangedMap(QByteArray, int, QString, QString, QString, QString, QString, int, int)),
             this , SLOT(mapReceivedSlot(QByteArray, int, QString, QString, QString, QString, QString, int, int)));
     connect(mapWorker, SIGNAL(robotIsDead()), this, SLOT(robotIsDeadSlot()));
-    /// TODO check this
+    /// TODO check this, newscan used ?
     connect(mapWorker, SIGNAL(newScanSaved(QString)), this , SLOT(sendNewMapToRobots(QString)));
     connect(&mapThread, SIGNAL(finished()), mapWorker, SLOT(deleteLater()));
     connect(this, SIGNAL(startMapWorker()), mapWorker, SLOT(connectSocket()));
@@ -249,6 +267,10 @@ void RobotController::updateMetadata(const int width, const int height, const fl
 
 void RobotController::updateRobot(const float posX, const float posY, const float ori){
     ping();
+    QPointF pos = Helper::Convert::robotCoordToPixelCoord(QPointF(posX, posY), -57.4575, -48.2396, 0.05, 2048);
+    paintedItem->setProperty("x", pos.x()-300);
+    paintedItem->setProperty("y", pos.y()-300);
+    paintedItem->setProperty("orientation_", -ori * 180.0 / PI + 90);
     emit newRobotPos(ip, posX, posY, ori);
 }
 
@@ -332,4 +354,16 @@ void RobotController::ping(void){
 
 void RobotController::sendTeleop(int teleop){
     emit teleopCmd(teleop);
+}
+
+void RobotController::updateObstacles(float angle_min, float angle_max, float angle_increment, QVector<float> ranges){
+    QVector<QPointF> points;
+    int i(ranges.size()-1);
+    /// for improved performance
+    std::for_each(ranges.begin(), ranges.end(), [&](const float range) {
+        /// rotation is done on the qml side
+        points.push_back(QPointF(range * cos(paintedItem->orientation()*3.14159/180 - 3.14159/2 + angle_min + i*angle_increment) * 20 ,
+                                 range * sin(paintedItem->orientation()*3.14159/180 - 3.14159/2 + angle_min + i*angle_increment) * 20)); i--; });
+
+    paintedItem->setObstacles(points);
 }

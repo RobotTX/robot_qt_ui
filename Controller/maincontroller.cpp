@@ -44,7 +44,7 @@ MainController::MainController(QQmlApplicationEngine *engine, QObject* parent) :
 
         pathController = QPointer<PathController>(new PathController(applicationWindow, this));
 
-        robotsController = QPointer<RobotsController>(new RobotsController(applicationWindow, this));
+        robotsController = QPointer<RobotsController>(new RobotsController(applicationWindow, engine, this));
 
         connect(applicationWindow, SIGNAL(mapConfig(QString, double, double, double)), this, SLOT(saveMapConfig(QString, double, double, double)));
         connect(applicationWindow, SIGNAL(shortcutAddRobot()), robotsController, SLOT(shortcutAddRobot()));
@@ -242,6 +242,7 @@ void MainController::newRobotPosSlot(QString ip, float posX, float posY, float o
 }
 
 void MainController::newMetadataSlot(int width, int height, float resolution, float originX, float originY){
+    qDebug() << "metadata" << width << height << resolution << originX << originY;
     mapController->setOrigin(QPointF(originX, originY));
     mapController->setWidth(width);
     mapController->setHeight(height);

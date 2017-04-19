@@ -78,5 +78,6 @@
         <file>View/Custom/CustomBusyIndicator.qml</file>
         <file>View/Custom/CustomLabel.qml</file>
         <file>View/Custom/CustomLabelWithTimer.qml</file>
+        <file>View/ObstaclesItems.qml</file>
     </qresource>
 </RCC>

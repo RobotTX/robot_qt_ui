@@ -21,9 +21,6 @@ void LocalMapWorker::connectSocket(){
     /// the errorConnectionSlot will try to reconnect
     socket->connectToHost(ipAddress, port);
 
-    /// to add an entry for this robot in the obstacles map
-    emit addNewRobotObstacles(ipAddress);
-
     qDebug() << "(Local Map Thread) connectSocket done";
 }
 
@@ -35,57 +32,71 @@ void LocalMapWorker::stopWorker(){
 }
 
 void LocalMapWorker::readTcpDataSlot(){
+
     data.append(socket->readAll());
 
-    if(data.size() > 11){
-        /// parameters of the laser scans
-        float angle_min, angle_max, angle_increment;
-        QVector<float> ranges;
+    if(data.size() > 3){
 
-        /// we construct the float values using 4 bytes at a time
+        float range;
 
-        *(reinterpret_cast<uchar*>(&angle_min) + 3) = data.at(3);
-        *(reinterpret_cast<uchar*>(&angle_min) + 2) = data.at(2);
-        *(reinterpret_cast<uchar*>(&angle_min) + 1) = data.at(1);
-        *(reinterpret_cast<uchar*>(&angle_min) + 0) = data.at(0);
+        *(reinterpret_cast<uchar*>(&range) + 3) = data.at(data.size()-1);
+        *(reinterpret_cast<uchar*>(&range) + 2) = data.at(data.size()-2);
+        *(reinterpret_cast<uchar*>(&range) + 1) = data.at(data.size()-3);
+        *(reinterpret_cast<uchar*>(&range) + 0) = data.at(data.size()-4);
 
-        *(reinterpret_cast<uchar*>(&angle_max) + 3) = data.at(7);
-        *(reinterpret_cast<uchar*>(&angle_max) + 2) = data.at(6);
-        *(reinterpret_cast<uchar*>(&angle_max) + 1) = data.at(5);
-        *(reinterpret_cast<uchar*>(&angle_max) + 0) = data.at(4);
+        /// the appended -1.0f at the end of the batch so when we reach it we ignore everything else we have
+        if(range < 0){
 
-        *(reinterpret_cast<uchar*>(&angle_increment) + 3) = data.at(11);
-        *(reinterpret_cast<uchar*>(&angle_increment) + 2) = data.at(10);
-        *(reinterpret_cast<uchar*>(&angle_increment) + 1) = data.at(9);
-        *(reinterpret_cast<uchar*>(&angle_increment) + 0) = data.at(8);
+            if(data.size() > 11){
+                /// parameters of the laser scans
+                float angle_min, angle_max, angle_increment;
 
-        for(int i = 12; i < data.size(); i += 4){
+                QVector<float> ranges;
 
-            QByteArray currentValue = data.mid(i, 4);
+                /// we construct the float values using 4 bytes at a time
 
-            float range;
+                *(reinterpret_cast<uchar*>(&angle_min) + 3) = data.at(3);
+                *(reinterpret_cast<uchar*>(&angle_min) + 2) = data.at(2);
+                *(reinterpret_cast<uchar*>(&angle_min) + 1) = data.at(1);
+                *(reinterpret_cast<uchar*>(&angle_min) + 0) = data.at(0);
 
-            *(reinterpret_cast<uchar*>(&range) + 3) = currentValue.at(3);
-            *(reinterpret_cast<uchar*>(&range) + 2) = currentValue.at(2);
-            *(reinterpret_cast<uchar*>(&range) + 1) = currentValue.at(1);
-            *(reinterpret_cast<uchar*>(&range) + 0) = currentValue.at(0);
+                *(reinterpret_cast<uchar*>(&angle_max) + 3) = data.at(7);
+                *(reinterpret_cast<uchar*>(&angle_max) + 2) = data.at(6);
+                *(reinterpret_cast<uchar*>(&angle_max) + 1) = data.at(5);
+                *(reinterpret_cast<uchar*>(&angle_max) + 0) = data.at(4);
 
-            /// the appended -1.0f at the end of the batch so when we reach it we ignore everything else we have
-            if(range < 0)
-                break;
+                *(reinterpret_cast<uchar*>(&angle_increment) + 3) = data.at(11);
+                *(reinterpret_cast<uchar*>(&angle_increment) + 2) = data.at(10);
+                *(reinterpret_cast<uchar*>(&angle_increment) + 1) = data.at(9);
+                *(reinterpret_cast<uchar*>(&angle_increment) + 0) = data.at(8);
 
-            ranges.push_back(range);
+                for(int i = 12; i < data.size(); i += 4){
+                    QByteArray currentValue = data.mid(i, 4);
 
+                    float range;
+
+                    *(reinterpret_cast<uchar*>(&range) + 3) = currentValue.at(3);
+                    *(reinterpret_cast<uchar*>(&range) + 2) = currentValue.at(2);
+                    *(reinterpret_cast<uchar*>(&range) + 1) = currentValue.at(1);
+                    *(reinterpret_cast<uchar*>(&range) + 0) = currentValue.at(0);
+
+                    /// the appended -1.0f at the end of the batch so when we reach it we ignore everything else we have
+                    if(range < 0)
+                        break;
+
+                    ranges.push_back(range);
+
+                }
+
+                /// sometimes we don't receive a complete scan and the first values do not correspond to the values of angle_min
+                /// angle_max and angle_increment in which case we receive positive values instead which correspond to ranges
+                /// that's why we check that the angle_min is negative before transmitting the data
+                if(angle_min < 0)
+                    emit laserValues(angle_min, angle_max, angle_increment, ranges);
+            }
+            data = QByteArray();
         }
-
-        /// sometimes we don't receive a complete scan and the first values do not correspond to the values of angle_min
-        /// angle_max and angle_increment in which case we receive positive values instead which correspond to ranges
-        /// that's why we check that the angle_min is negative before transmitting the data
-        if(angle_min < 0)
-            emit laserValues(angle_min, angle_max, angle_increment, ranges, ipAddress);
     }
-
-    data = QByteArray();
 }
 
 void LocalMapWorker::errorConnectionSlot(QAbstractSocket::SocketError error){

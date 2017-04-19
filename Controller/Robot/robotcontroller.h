@@ -11,6 +11,8 @@ class TeleopWorker;
 class ParticleCloudWorker;
 class CommandController;
 class RobotsController;
+class ObstaclesPaintedItem;
+class QQmlApplicationEngine;
 
 #include <QObject>
 #include <QThread>
@@ -23,7 +25,7 @@ class RobotController : public QObject {
 
 public:
 
-    RobotController(RobotsController* parent, QString ip, QString robotName);
+    RobotController(QQmlApplicationEngine *engine, RobotsController* parent, QString ip, QString robotName);
     ~RobotController();
 
     /**
@@ -136,6 +138,8 @@ private slots:
      * The port have ben sent successfuly to the robot so we start all the workers/threads
      */
     void portSentSlot(void);
+
+    void updateObstacles(float angle_min, float angle_max, float angle_increment, QVector<float> ranges);
 
 signals:
     /**
@@ -270,6 +274,8 @@ signals:
     void startTeleopWorker(void);
     void startParticleCloudWorker(void);
 
+
+
 private:
     QString ip;
     bool sendingMap;
@@ -292,6 +298,8 @@ private:
     QThread mapThread;
     QThread teleopThread;
     QThread particleCloudThread;
+
+    ObstaclesPaintedItem* paintedItem;
 };
 
-#endif // ROBOTCONTROLLER_H
+#endif /// ROBOTCONTROLLER_H

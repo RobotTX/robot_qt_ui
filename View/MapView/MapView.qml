@@ -12,6 +12,7 @@ import "../MainMenu"
 import "../Point"
 import "../Robot"
 import "../Custom"
+import "../"
 
 Frame {
     id: mapViewFrame
@@ -108,6 +109,7 @@ Frame {
 
             Image {
                 id: mapImage
+                objectName: "mapImage"
                 clip: true
                 visible: false
                 onSourceChanged: console.log("new source " + mapSrc)
@@ -334,6 +336,8 @@ Frame {
                             x: posX - width / 2
                             y: posY - height / 2
                         }
+
+                        /// TODO add obstacles
 
                         Label {
                             id: tooltip

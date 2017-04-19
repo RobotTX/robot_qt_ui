@@ -343,3 +343,4 @@ void MapController::saveNewMap(const QString file_name){
     map->setModified(false);
     emit setMap(file_name);
 }
+

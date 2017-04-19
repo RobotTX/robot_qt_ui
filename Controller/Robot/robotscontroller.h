@@ -2,8 +2,10 @@
 #define ROBOTSCONTROLLER_H
 
 class RobotController;
+class Robots;
 class MainController;
 class RobotServerWorker;
+class QQmlApplicationEngine;
 
 #include <QObject>
 #include <QPointer>
@@ -18,7 +20,7 @@ class RobotsController : public QObject {
 
 public:
 
-    RobotsController(QObject *applicationWindow, MainController *parent);
+    RobotsController(QObject *applicationWindow, QQmlApplicationEngine *engine, MainController *parent);
     ~RobotsController();
 
     QMap<QString, QPointer<RobotController>> getRobots(void) const { return robots; }
@@ -157,8 +159,8 @@ signals:
     void setMessageTop(int status, QString msg);
 
 private:
+    QQmlApplicationEngine* engine_;
     QMap<QString, QPointer<RobotController>> robots;
-
     QPointer<RobotServerWorker> robotServerWorker;
     QThread serverThread;
     bool receivingMap;

@@ -22,6 +22,8 @@ public:
 
     MainController(QQmlApplicationEngine* _engine, QObject* parent = Q_NULLPTR);
 
+    QPointer<MapController> getMapController(void) const { return mapController; }
+
 private :
     /**
      * @brief sendNewMap
