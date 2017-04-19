@@ -327,7 +327,7 @@ Window {
         });
     }
 
-    DualChoiceMessageDialog {
+    CustomDialog {
         id: useMapDialog
         x: parent.width / 2
         y: parent.height / 2

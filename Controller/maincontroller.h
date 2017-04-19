@@ -62,10 +62,9 @@ private slots:
      * @param index
      * @param x
      * @param y
-     *
+     * Check the position of the path point at <index> when creating a path
      */
     void checkTmpPosition(int index, double x, double y);
-    /// TODO please Emma comment this one :)
     /**
      * @brief newRobotPosSlot
      * @param ip
@@ -255,6 +254,7 @@ signals:
      * sends the map to the merge map controller
      */
     void sendImageToMerge(QImage, double resolution);
+    void openWarningDialog(QVariant title, QVariant msg);
 
 private:
     QPointer<MainMenuController> mainMenuController;

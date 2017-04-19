@@ -177,7 +177,8 @@ Frame {
 
     SaveButton {
         id: saveButton
-        canSave: robotModel.count > 0
+        canSave: scanningRobotsList.count > 0
+        tooltip: "You need at least 1 map to save"
         anchors {
             bottom: cancelButton.top
             bottomMargin: 10

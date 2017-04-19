@@ -91,6 +91,7 @@ Frame {
         id: saveButton
         // we don't want to allow the user to save if there is no map to save at all
         canSave: _mapsList.count > 0
+        tooltip: "You need at least 1 map to save"
         anchors {
             bottom: cancelButton.top
             bottomMargin: 11

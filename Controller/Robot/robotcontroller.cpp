@@ -192,8 +192,6 @@ void RobotController::launchWorkers(void){
     connect(mapWorker, SIGNAL(valueChangedMap(QByteArray, int, QString, QString, QString, QString, QString, int, int)),
             this , SLOT(mapReceivedSlot(QByteArray, int, QString, QString, QString, QString, QString, int, int)));
     connect(mapWorker, SIGNAL(robotIsDead()), this, SLOT(robotIsDeadSlot()));
-    /// TODO check this, newscan used ?
-    connect(mapWorker, SIGNAL(newScanSaved(QString)), this , SLOT(sendNewMapToRobots(QString)));
     connect(&mapThread, SIGNAL(finished()), mapWorker, SLOT(deleteLater()));
     connect(this, SIGNAL(startMapWorker()), mapWorker, SLOT(connectSocket()));
     connect(this, SIGNAL(stopMapWorker()), mapWorker, SLOT(stopWorker()));
@@ -249,10 +247,6 @@ void RobotController::mapReceivedSlot(const QByteArray mapArray, const int who, 
         break;
     }
     ping();
-}
-
-void RobotController::sendNewMapToRobots(QString){
-    qDebug() << "RobotController::sendNewMapToRobots called";
 }
 
 void RobotController::doneSendingMapSlot(void){

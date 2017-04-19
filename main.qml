@@ -70,7 +70,7 @@ ApplicationWindow {
             batteryWarningThreshold: applicationWindow.batteryWarningThreshold
         }
 
-        /// TODO Just for testing, to remove later
+        /// NOTE Just for testing, to remove later
         Shortcut {
             sequence: "."
             onActivated: shortcutAddRobot()
@@ -162,27 +162,40 @@ ApplicationWindow {
         }
     }
 
-    DualChoiceMessageDialog {
-        id: dualChoiceMessageDialog
-        x: parent.width / 2 - width / 2
-        y: parent.height / 2 - height / 2
+    CustomDialog {
+        id: dialog
+        x: applicationWindow.width / 2 - width / 2
+        y: applicationWindow.height / 2 - height / 2
 
         onAccepted: requestOrSendMap(ip, false)
         onRejected: requestOrSendMap(ip, true)
     }
 
+    CustomDialog {
+        id: warningDialog
+        x: applicationWindow.width / 2 - width / 2
+        y: applicationWindow.height / 2 - height / 2
+    }
+
     function openMapChoiceMessageDialog(ip, robotIsOlder){
-        if(dualChoiceMessageDialog.visible){
+        if(dialog.visible){
             /// TODO fix this (if more than 1 robot connect, has a wrong map, and we were already asking to choose a map for the previous robot)
             console.log("We are already choosing a map for the robot, try again later");
         } else {
-            dualChoiceMessageDialog.title = qsTr("Choose which map to use");
-            dualChoiceMessageDialog.ip = ip;
-            dualChoiceMessageDialog.message = (robotIsOlder ? "The robot " +  _robotModel.getName(ip) + " has a new map." : "The robot " +  _robotModel.getName(ip) + " has an old map.") + "\n\n\tWhich map do you want to use ?";
-            dualChoiceMessageDialog.rejectMessage = "Robot";
-            dualChoiceMessageDialog.acceptMessage = "Application";
-            dualChoiceMessageDialog.open();
+            dialog.title = qsTr("Choose which map to use");
+            dialog.ip = ip;
+            dialog.message = (robotIsOlder ? "The robot " +  _robotModel.getName(ip) + " has a new map." : "The robot " +  _robotModel.getName(ip) + " has an old map.") + "\n\n\tWhich map do you want to use ?";
+            dialog.rejectMessage = "Robot";
+            dialog.acceptMessage = "Application";
+            dialog.open();
         }
+    }
+
+    function openWarningDialog(title, msg){
+        warningDialog.title = title;
+        warningDialog.message = msg;
+        warningDialog.acceptMessage = "Ok";
+        warningDialog.open();
     }
 
     function emitMapConfig(file_name){

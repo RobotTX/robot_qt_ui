@@ -50,6 +50,7 @@ MainController::MainController(QQmlApplicationEngine *engine, QObject* parent) :
         connect(applicationWindow, SIGNAL(shortcutAddRobot()), robotsController, SLOT(shortcutAddRobot()));
         connect(applicationWindow, SIGNAL(shortcutDeleteRobot()), robotsController, SLOT(shortcutDeleteRobot()));
         connect(this, SIGNAL(openMapChoiceMessageDialog(QVariant, QVariant)), applicationWindow, SLOT(openMapChoiceMessageDialog(QVariant, QVariant)));
+        connect(this, SIGNAL(openWarningDialog(QVariant, QVariant)), applicationWindow, SLOT(openWarningDialog(QVariant, QVariant)));
         connect(applicationWindow, SIGNAL(requestOrSendMap(QString, bool)), this, SLOT(requestOrSendMap(QString, bool)));
         connect(this, SIGNAL(emitBatteryThreshold(QVariant)), applicationWindow, SLOT(setBatteryThreshold(QVariant)));
 
@@ -203,17 +204,8 @@ void MainController::loadMapConfig(QString fileName) {
             PathXMLParser::save(pathController, QDir::currentPath() + QDir::separator() + "currentPaths.xml");
 
             setMessageTopSlot(2, "Loaded the map: " + mapFileInfo.fileName());
-        } else {
-            /// TODO emit signal to open warning box
-            Q_UNIMPLEMENTED();
-            /*
-            QMessageBox warningBox;
-            warningBox.setText("No configuration found for this map.\nPlease select another file.");
-            Q_UNREACHABLE();
-            warningBox.setStandardButtons(QMessageBox::Ok);
-            warningBox.setDefaultButton(QMessageBox::Ok);
-            warningBox.exec();*/
-        }
+        } else
+            emit openWarningDialog("WARNING", "No configuration found for this map.\n\n\tPlease select another file.");
     }
 }
 
@@ -380,7 +372,6 @@ void MainController::newMapFromRobotSlot(QString ip, QByteArray mapArray, QStrin
 
     /// When we receive a map from a robot, we send it to all the other robots
     robotsController->sendNewMapToAllExcept(ip, mapId, mapDate, mapMetadata, mapController->getMapImage());
-    /// TODO change bool => modified the map, need to save on close
 
     pointController->clearPoints();
 

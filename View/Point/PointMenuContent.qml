@@ -26,7 +26,6 @@ Frame {
     EmptyMenu {
         /// Only the invisible "No Group" left and it's empty
         visible: (pointModel.count === 1 && pointModel.get(0).points.count === 0) || pointModel.count === 0
-        // TODO double click needs to be implemented
         txt: "You don't have any points yet, click the '+' button or double click the map to create a point."
         imgSrc: "qrc:/icons/big_point"
     }

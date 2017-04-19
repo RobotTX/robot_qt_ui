@@ -99,7 +99,7 @@ Frame {
     Rectangle {
         id: pathItem
         visible: !noPathItem.visible
-        height: pathIsOpen ? 145 : 55
+        height: topItem.height + bottomItem.height + (pathIsOpen ? Math.min(89, flick.contentHeight) : 0)
 
         anchors {
             top: parent.top
@@ -203,7 +203,7 @@ Frame {
 
                 Rectangle {
                     anchors.fill: parent
-                    color: "transparent" //Style.lightGreyBackground
+                    color: "transparent"
                 }
 
                 Column {
@@ -268,7 +268,7 @@ Frame {
                                 anchors.leftMargin: 25
                             }
 
-                            /// The item displaying the name of the path/group
+                            /// The item displaying the name of the pathpoint
                             CustomLabel {
                                 text: qsTr(pathPointName)
                                 font.pixelSize: 14
