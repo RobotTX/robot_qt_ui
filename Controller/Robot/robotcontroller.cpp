@@ -262,9 +262,9 @@ void RobotController::updateMetadata(const int width, const int height, const fl
 void RobotController::updateRobot(const float posX, const float posY, const float ori){
     ping();
     QPointF pos = Helper::Convert::robotCoordToPixelCoord(QPointF(posX, posY), -57.4575, -48.2396, 0.05, 2048);
-    paintedItem->setProperty("x", pos.x()-300);
-    paintedItem->setProperty("y", pos.y()-300);
     paintedItem->setProperty("orientation_", -ori * 180.0 / PI + 90);
+    paintedItem->setProperty("_x", pos.x()-300 + 5 * cos((paintedItem->orientation() - 90) / 180.0*3.14159));
+    paintedItem->setProperty("_y", pos.y()-300 + 5 * sin((paintedItem->orientation() - 90) / 180.0*3.14159));
     emit newRobotPos(ip, posX, posY, ori);
 }
 
@@ -351,13 +351,5 @@ void RobotController::sendTeleop(int teleop){
 }
 
 void RobotController::updateObstacles(float angle_min, float angle_max, float angle_increment, QVector<float> ranges){
-    QVector<QPointF> points;
-    int i(ranges.size()-1);
-    /// for improved performance
-    std::for_each(ranges.begin(), ranges.end(), [&](const float range) {
-        /// rotation is done on the qml side
-        points.push_back(QPointF(range * cos(paintedItem->orientation()*3.14159/180 - 3.14159/2 + angle_min + i*angle_increment) * 20 ,
-                                 range * sin(paintedItem->orientation()*3.14159/180 - 3.14159/2 + angle_min + i*angle_increment) * 20)); i--; });
-
-    paintedItem->setObstacles(points);
+    paintedItem->updateObstacles(angle_min, angle_max, angle_increment, ranges);
 }
