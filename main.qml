@@ -6,7 +6,7 @@ import "Model/Point"
 import "Model/Path"
 import "Model/Robot"
 import "Model/Point"
-import "Model"
+import "Model/Tutorial/"
 import "View/Custom"
 import "View/MainMenu"
 import "View/MapView"
@@ -14,7 +14,7 @@ import "View/Map"
 import "View/Point"
 import "View/Robot"
 import "View/ScanMap"
-import "View"
+import "View/Tutorial/"
 
 ApplicationWindow {
     id: applicationWindow
@@ -156,24 +156,19 @@ ApplicationWindow {
                 console.log("just changed to " + mapView.mapSrc);
                 imgSource = mapView.mapSrc;
             }
+            tutorial: _tutorial
         }
 
         MergeMap {
             id: mergeMap
             robotModel: _robotModel
             tutorial: _tutorial
-
-            TutorialDialog {
-                x: parent.width / 2 - width / 2
-                y: parent.height / 2 - height / 2
-                visible: _tutorial.isDisplayed("merge_map")
-                tutoMessage: _tutorial.getMessage("merge_map")
-            }
         }
 
         ScanMap {
             id: scanMap
             robotModel: _robotModel
+            tutorial: _tutorial
         }
     }
 
@@ -231,3 +226,4 @@ ApplicationWindow {
         batteryWarningThreshold = threshold;
     }
 }
+

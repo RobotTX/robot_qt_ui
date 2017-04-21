@@ -10,6 +10,7 @@ import "../../Helper/style.js" as Style
 import "../../Model/Point"
 import "../../Model/Path"
 import "../../Model/Robot"
+import "../../Model/Tutorial/"
 
 /**
   * The left panel displaying the opened menu

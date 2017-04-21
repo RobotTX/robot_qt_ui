@@ -7,7 +7,8 @@ import "../../Helper/style.js" as Style
 import "../../Model/Robot/"
 import "../Robot/"
 import "../Custom/"
-import "../../Model"
+import "../../Model/Tutorial"
+import "../Tutorial"
 
 Window {
 
@@ -18,7 +19,13 @@ Window {
     // no need to do it twice, on the hideEvent or the showEvent, both would work, here we clean the map on the hideEvent
     onVisibleChanged: {
         _mapsList.clear();
-        if(!visible) resetWidget();
+        if(!visible){
+            resetWidget();
+            tutorialD.close();
+        }
+        else
+            if(tutorial.isDisplayed("merge_map"))
+                tutorialD.open()
     }
 
     width: 1000
@@ -145,6 +152,7 @@ Window {
         }
 
         SmallButton {
+
             id: resetButton
 
             anchors {
@@ -165,9 +173,42 @@ Window {
 
         Button {
 
+            id: helpButton
+
+            height: 24
+            width: 24
+
+            background: Rectangle {
+                border.color: Style.lightGreyBorder
+                border.width: 1
+                radius: 12
+                color: "white"
+            }
+
+            anchors {
+                right: closeButton.left
+                rightMargin: 23
+                verticalCenter: parent.verticalCenter
+            }
+
+            contentItem: Label {
+                text: "?"
+                font.pointSize: 12
+                font.bold: true
+                color: Style.darkSkyBlue
+                verticalAlignment: Text.AlignVCenter
+                horizontalAlignment: Text.AlignHCenter
+            }
+
+            onClicked: tutorialD.open()
+        }
+
+        Button {
+
             id: saveButton
 
             padding: 0
+
             width: 20
 
             // we don't want to allow the user to save if there is no map to save at all
@@ -369,5 +410,12 @@ Window {
         }
     }
 
-
+    TutorialDialog {
+        id: tutorialD
+        x: window.width / 2 - width / 2
+        y: window.height / 2 - height / 2
+        feature: "merge_map"
+        tutorial: window.tutorial
+        tutoMessage: tutorial.getMessage("merge_map")
+    }
 }

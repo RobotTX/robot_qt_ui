@@ -6,6 +6,8 @@ import QtQml.Models 2.2
 import "../../Helper/style.js" as Style
 import "../Custom"
 import "../../Model/Map/"
+import "../../Model/Tutorial"
+import "../Tutorial"
 
 Window {
 
@@ -17,6 +19,8 @@ Window {
     minimumWidth: 800
     height: 700
     minimumHeight: 600
+
+    property Tutorial tutorial
 
     property string imgSource
 
@@ -42,6 +46,11 @@ Window {
         blackButton.checked = true;
         dotButton.checked = true;
         thickness = 1
+        if(!visible)
+            tutorialD.close()
+        else
+            if(tutorial.isDisplayed("edit_map"))
+                tutorialD.open()
     }
 
     Frame {
@@ -391,21 +400,35 @@ Window {
             }
         }
 
-        EditMapToolButton {
+        Button {
+            id: helpButton
 
-            id: closeButton
+            height: 24
+            width: 24
 
-            CustomToolTip { text: "Close the current window: all modifications will be lost" }
-
-            src: "qrc:/icons/closeBtn"
-
-            anchors {
-                verticalCenter: parent.verticalCenter
-                right: saveButton.left
-                rightMargin: 10
+            background: Rectangle {
+                border.color: Style.lightGreyBorder
+                border.width: 1
+                radius: 12
+                color: "white"
             }
 
-            onClicked: dialog.hide();
+            anchors {
+                left: verticalSpaceBar4.right
+                leftMargin: 10
+                verticalCenter: parent.verticalCenter
+            }
+
+            contentItem: Label {
+                text: "?"
+                font.pointSize: 12
+                font.bold: true
+                color: Style.darkSkyBlue
+                verticalAlignment: Text.AlignVCenter
+                horizontalAlignment: Text.AlignHCenter
+            }
+
+            onClicked: tutorialD.open()
         }
 
         EditMapToolButton {
@@ -481,5 +504,15 @@ Window {
                 }
             }              
         }
+    }
+
+    TutorialDialog {
+        id: tutorialD
+        height: 500
+        x: dialog.width / 2 - width / 2
+        y: dialog.height / 2 - height / 2
+        feature: "edit_map"
+        tutorial: dialog.tutorial
+        tutoMessage: tutorial.getMessage("edit_map")
     }
 }

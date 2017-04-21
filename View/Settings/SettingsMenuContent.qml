@@ -3,7 +3,7 @@ import QtQuick.Controls 2.1
 import "../../Helper/style.js" as Style
 import "../../Model/Robot"
 import "../../View/Custom/"
-import "../../Model"
+import "../../Model/Tutorial"
 
 Frame {
 
@@ -99,7 +99,6 @@ Frame {
                 horizontalAlignment: Text.AlignHCenter
             }
         }
-
     }
 
     // for each robot we can choose whether or not we want to display the laser data (which gives the obstacles within a few meters range around the robot
@@ -419,8 +418,8 @@ Frame {
         checked: true
 
         onClicked: {
-            show ? tutorial.resetTutorial() : tutorial.hideTutorial()
             show = !show
+            checked ? tutorial.resetTutorial() : tutorial.hideTutorial()
         }
     }
 
