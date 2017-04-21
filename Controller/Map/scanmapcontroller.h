@@ -7,7 +7,7 @@ class QQmlApplicationEngine;
 #include <QObject>
 #include <QImage>
 #include <QVariant>
-#include "View/scanmappainteditem.h"
+#include "View/Robot/scanmappainteditem.h"
 
 class ScanMapController : public QObject  {
 

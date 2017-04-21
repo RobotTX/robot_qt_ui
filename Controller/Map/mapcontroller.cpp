@@ -11,7 +11,7 @@
 #include "Controller/Map/mergemapcontroller.h"
 #include "Controller/maincontroller.h"
 #include "Controller/Map/scanmapcontroller.h"
-#include "View/editmappainteditem.h"
+#include "View/Map/editmappainteditem.h"
 
 MapController::MapController(QQmlApplicationEngine* engine, QObject *applicationWindow, MainController *parent) : QObject(parent) {
 

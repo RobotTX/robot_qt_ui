@@ -1,5 +1,5 @@
 #include "editmapcontroller.h"
-#include "View/editmappainteditem.h"
+#include "View/Map/editmappainteditem.h"
 #include <QDebug>
 #include <QQmlApplicationEngine>
 #include <QKeySequence>

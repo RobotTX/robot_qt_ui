@@ -15,7 +15,7 @@
 #include "Controller/Map/particlecloudworker.h"
 #include "Controller/maincontroller.h"
 #include "Controller/Map/mapcontroller.h"
-#include "View/obstaclespainteditem.h"
+#include "View/Robot/obstaclespainteditem.h"
 
 #define PI 3.14159265
 
@@ -57,7 +57,7 @@ RobotController::RobotController(QQmlApplicationEngine* engine, RobotsController
     connect(this, SIGNAL(checkScanning(QString, bool)), parent, SLOT(checkScanningSlot(QString, bool)));
 
     /// to draw the obstacles of the robots
-    QQmlComponent component(engine, QUrl("qrc:/View/ObstaclesItems.qml"));
+    QQmlComponent component(engine, QUrl("qrc:/View/Robot/ObstaclesItems.qml"));
     paintedItem = qobject_cast<ObstaclesPaintedItem*>(component.create());
     QQmlEngine::setObjectOwnership(paintedItem, QQmlEngine::CppOwnership);
 

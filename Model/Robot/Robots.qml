@@ -88,6 +88,7 @@ ListModel {
                 if(get(i).stage >= 0 && stage < 0)
                     setMessageTop(0, "The robot \"" + get(i).name + "\" is currently stuck in its path to \"" + get(i).pathPoints.get(Math.abs(stage + 1)).pathPointName + "\"");
                 setProperty(i, "stage", stage);
+
             }
     }
 

@@ -4,6 +4,7 @@ import "../Robot"
 import "../Path"
 import "../Point"
 import "../Map"
+import "../../Model/"
 import "../Settings"
 import "../../Helper/style.js" as Style
 import "../../Model/Point"
@@ -23,6 +24,7 @@ Frame {
     property Paths pathModel
     property Paths tmpPathModel
     property Robots robotModel
+    property Tutorial tutorial
     property real batteryWarningThreshold
     signal useTmpPathModel(bool use)
     signal useRobotPathModel(bool use)
@@ -78,6 +80,7 @@ Frame {
 
     SettingsMenu {
         id: settingsMenu
+        tutorial: mainMenuViewsFrame.tutorial
         robotModel: mainMenuViewsFrame.robotModel
         batteryWarningThreshold: mainMenuViewsFrame.batteryWarningThreshold
         visible: currentMenu == 4
