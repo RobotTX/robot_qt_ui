@@ -369,17 +369,5 @@ Window {
         }
     }
 
-    Dialog {
-        id: tutorialDialog
-        visible: false
-        //visible: tutorial.getMessage("merge_map")
-        title: "Merge maps"
-        standardButtons: Dialog.Ok
-        Label {
-            text: tutorial.isDisplayed("merge_map")
-        }
-        CheckBox {
-            text: "Do not show this message again"
-        }
-    }
+
 }
