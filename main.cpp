@@ -1,10 +1,10 @@
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
 #include "Controller/maincontroller.h"
-#include "View/editmappainteditem.h"
-#include "View/mergemapspainteditem.h"
-#include "View/scanmappainteditem.h"
-#include "View/obstaclespainteditem.h"
+#include "View/Map/editmappainteditem.h"
+#include "View/Map/mergemapspainteditem.h"
+#include "View/Robot/scanmappainteditem.h"
+#include "View/Robot/obstaclespainteditem.h"
 #include <QtQuick/QQuickView>
 
 int main(int argc, char *argv[]) {

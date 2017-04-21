@@ -2,6 +2,7 @@ import QtQuick 2.7
 import QtQuick.Controls 2.1
 import "../Custom"
 import "../../Model/Robot"
+import "../../Model/"
 
 Page {
 
@@ -10,6 +11,7 @@ Page {
     anchors.fill: parent
 
     property Robots robotModel
+    property Tutorial tutorial
     property real batteryWarningThreshold
 
     signal closeMenu()
@@ -25,6 +27,8 @@ Page {
         id: settings
 
         robotModel: page.robotModel
+        tutorial: page.tutorial
+
         oriBatteryWarningThreshold: page.batteryWarningThreshold
 
         anchors {

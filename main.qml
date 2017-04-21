@@ -6,6 +6,7 @@ import "Model/Point"
 import "Model/Path"
 import "Model/Robot"
 import "Model/Point"
+import "Model"
 import "View/Custom"
 import "View/MainMenu"
 import "View/MapView"
@@ -70,6 +71,10 @@ ApplicationWindow {
             batteryWarningThreshold: applicationWindow.batteryWarningThreshold
         }
 
+        Tutorial {
+            id: _tutorial
+        }
+
         /// NOTE Just for testing, to remove later
         Shortcut {
             sequence: "."
@@ -108,6 +113,7 @@ ApplicationWindow {
             pathModel: _pathModel
             tmpPathModel: _tmpPathModel
             robotModel: _robotModel
+            tutorial: _tutorial
             currentMenu: mainFrame.currentMenu
             batteryWarningThreshold: applicationWindow.batteryWarningThreshold
             anchors {
@@ -154,6 +160,7 @@ ApplicationWindow {
         MergeMap {
             id: mergeMap
             robotModel: _robotModel
+            tutorial: _tutorial
         }
 
         ScanMap {

@@ -3,6 +3,7 @@ import QtQuick.Controls 2.1
 import "../../Helper/style.js" as Style
 import "../../Model/Robot"
 import "../../View/Custom/"
+import "../../Model"
 
 Frame {
 
@@ -20,6 +21,7 @@ Frame {
     property int oriMapChoice
 
     property Robots robotModel
+    property Tutorial tutorial
 
     background: Rectangle {
         anchors.fill: parent
@@ -301,7 +303,10 @@ Frame {
         checkable: true
         checked: true
 
-        onClicked: show = !show
+        onClicked: {
+            show ? tutorial.resetTutorial() : tutorial.hideTutorial()
+            show = !show
+        }
     }
 
     CancelButton {

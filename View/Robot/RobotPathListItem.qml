@@ -343,7 +343,7 @@ Frame {
                 width: 32
                 padding: 0
                 imgSrc: homeName === "" ? "qrc:/icons/noHome" : "qrc:/icons/home"
-                tooltip: "Tell the robot to go home"
+                tooltip: "Send the robot home"
 
                 anchors {
                     verticalCenter: parent.verticalCenter

@@ -129,8 +129,9 @@ Frame {
 
                         ctx.clearRect(0, 0, canvas.width, canvas.height)
                         ctx.strokeStyle = "#929292";
-                        ctx.lineWidth = 3;
+                        ctx.lineWidth = 2;
                         ctx.beginPath();
+                        var _spacing = 5;
                         if(useTmpPathModel){
                             for(var i = 0; i < tmpPathModel.count; i++)
                                 for(var j = 0; j < tmpPathModel.get(i).paths.count; j++)
@@ -140,7 +141,7 @@ Frame {
                                                              tmpPathModel.get(i).paths.get(j).pathPoints.get(k-1).posY,
                                                              tmpPathModel.get(i).paths.get(j).pathPoints.get(k).posX,
                                                              tmpPathModel.get(i).paths.get(j).pathPoints.get(k).posY,
-                                                             [3, 5]);
+                                                             [ctx.lineWidth, _spacing]);
                         } else {
                             if(useRobotPathModel){
                                 for(var i = 0; i < robotModel.count; i++)
@@ -150,7 +151,7 @@ Frame {
                                                              robotModel.get(i).pathPoints.get(j-1).pathPointPosY,
                                                              robotModel.get(i).pathPoints.get(j).pathPointPosX,
                                                              robotModel.get(i).pathPoints.get(j).pathPointPosY,
-                                                             [3, 5]);
+                                                             [ctx.lineWidth, _spacing]);
                                         }
                             } else {
                                 for(var i = 0; i < pathModel.count; i++)
@@ -161,7 +162,7 @@ Frame {
                                                                  pathModel.get(i).paths.get(j).pathPoints.get(k-1).posY,
                                                                  pathModel.get(i).paths.get(j).pathPoints.get(k).posX,
                                                                  pathModel.get(i).paths.get(j).pathPoints.get(k).posY,
-                                                                 [3, 5]);
+                                                                 [ctx.lineWidth, _spacing]);
                             }
                         }
                         ctx.stroke();

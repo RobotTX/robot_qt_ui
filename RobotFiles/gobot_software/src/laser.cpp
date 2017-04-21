@@ -42,7 +42,6 @@ void getLaserData(const sensor_msgs::LaserScan::ConstPtr& msg){
 void sendLaserData(const std::vector<float>& scan){
     try { 
         boost::system::error_code ignored_error;
-        //std::cout << "(Laser) LaserData " << scan.size() * 4 << std::endl;
         boost::asio::write(socket_laser, boost::asio::buffer(scan), boost::asio::transfer_all(), ignored_error);
     } catch (std::exception& e) {
         e.what();

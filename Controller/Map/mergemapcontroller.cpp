@@ -9,7 +9,7 @@
 #include <QQuickWindow>
 #include <QPainter>
 #include "mergemapcontroller.h"
-#include "View/mergemapspainteditem.h"
+#include "View/Map/mergemapspainteditem.h"
 #include "Controller/maincontroller.h"
 
 MergeMapController::MergeMapController(MainController *parent, QQmlApplicationEngine* _engine, QObject *_applicationWindow)

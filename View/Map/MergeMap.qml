@@ -7,6 +7,7 @@ import "../../Helper/style.js" as Style
 import "../../Model/Robot/"
 import "../Robot/"
 import "../Custom/"
+import "../../Model"
 
 Window {
 
@@ -32,6 +33,7 @@ Window {
     signal resetMapConfiguration(string file_name)
 
     property Robots robotModel
+    property Tutorial tutorial
 
     Frame {
 
@@ -364,6 +366,20 @@ Window {
         standardButtons: Dialog.Ok
         Label {
             text: "Sorry, you can only merge maps of the same size";
+        }
+    }
+
+    Dialog {
+        id: tutorialDialog
+        visible: false
+        //visible: tutorial.getMessage("merge_map")
+        title: "Merge maps"
+        standardButtons: Dialog.Ok
+        Label {
+            text: tutorial.isDisplayed("merge_map")
+        }
+        CheckBox {
+            text: "Do not show this message again"
         }
     }
 }

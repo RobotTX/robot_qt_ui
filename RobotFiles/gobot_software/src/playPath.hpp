@@ -23,7 +23,9 @@ typedef actionlib::SimpleActionClient<move_base_msgs::MoveBaseAction> MoveBaseCl
 struct Point {
 	double x;
 	double y;
+    // time that you have to spend waiting before heading to this point
 	double waitingTime;
+    // whether or not this point is the charging point of the robot
     bool isHome;
 };
 

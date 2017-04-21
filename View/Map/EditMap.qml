@@ -133,7 +133,7 @@ Window {
             CustomToolTip { text: "Drag the map" }
 
             checkable: true
-
+            checked: true
             src: "qrc:/icons/hand"
 
             anchors {

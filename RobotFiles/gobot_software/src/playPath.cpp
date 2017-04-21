@@ -112,7 +112,6 @@ bool pausePathService(std_srvs::Empty::Request &req, std_srvs::Empty::Response &
 	std::cout << "(PlayPath) pausePathService called" << std::endl;
 	if(ac->isServerConnected())
 		ac->cancelAllGoals();
-	currentGoal.x = -1;
 	return true;
 }
 

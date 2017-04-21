@@ -227,21 +227,6 @@ Frame {
                 rightMargin: 20
             }
         }
-/*
-        Rectangle {
-            id: space
-            color: Style.lightGreyBorder
-            width: parent.width
-            height: 2
-            anchors {
-                left: parent.left
-                top: addSavedPoint.bottom
-                right: parent.right
-                topMargin: 5
-                leftMargin: 20
-                rightMargin: 20
-            }
-        }*/
     }
 
     /// The middle frame with the list of path points
@@ -377,7 +362,7 @@ Frame {
                     RoundCheckBox {
                         id: humanAction
                         text: qsTr("Human Action")
-                        checked: false
+                        checked: waitTime < 0 ? true : false
                         anchors {
                             left: indexId.left
                             top: indexId.bottom
@@ -392,7 +377,7 @@ Frame {
                     RoundCheckBox {
                         id: waitFor
                         text: qsTr("Wait for")
-                        checked: true
+                        checked: waitTime >= 0 ? true : false
                         anchors {
                             left: indexId.left
                             top: humanAction.bottom
@@ -400,13 +385,15 @@ Frame {
                         }
                         onCheckedChanged: {
                             humanAction.checked = !waitFor.checked
+                            if(waitFor.checked && waitTime < 0)
+                               waitTextField.text = "0"
                         }
                     }
 
                     TextField {
                         id: waitTextField
                         selectByMouse: true
-                        text: "0"
+                        text: waitTime
                         height: 20
                         width: 30
                         padding: 2
@@ -513,20 +500,6 @@ Frame {
                         topMargin: 10
                     }
                 }
-/*
-                Rectangle {
-                    id: innerSpace
-                    color: Style.lightGreyBorder
-                    width: parent.width
-                    height: 2
-                    anchors {
-                        left: parent.let
-                        right: parent.right
-                        top: content.bottom
-                        topMargin: 10
-                    }
-                }
-                */
             }
         }
 

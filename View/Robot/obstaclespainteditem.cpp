@@ -12,7 +12,6 @@ void ObstaclesPaintedItem::paint(QPainter *painter){
 }
 
 void ObstaclesPaintedItem::updateObstacles(float angle_min, float angle_max, float angle_increment, QVector<float> ranges){
-    qDebug() << "please";
     setPosition(QPointF(_x, _y));
     obstacles_.clear();
     int i(ranges.size()-1);
