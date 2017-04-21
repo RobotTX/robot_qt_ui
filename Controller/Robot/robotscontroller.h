@@ -126,6 +126,8 @@ private slots:
     void checkScanningSlot(const QString ip, const bool scanning);
     void processingCmdSlot(QString ip, bool processing);
     void setMessageTopSlot(int status, QString msg);
+    void updateLaserSlot(QString ip, bool activated);
+    void activateLaserSlot(QString ip, bool activate);
 
 signals:
     void stopRobotServerWorker(void);
@@ -157,6 +159,7 @@ signals:
     void processingCmd(QVariant, QVariant);
     void testScanSignal(QString);
     void setMessageTop(int status, QString msg);
+    void updateLaser(QVariant ip, QVariant activated);
 
 private:
     QQmlApplicationEngine* engine_;

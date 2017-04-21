@@ -20,6 +20,7 @@ Menu {
     signal pathSelected(string _pathName, string _groupName)
     signal renameRobot()
     signal deletePath()
+    signal laserPressed()
 
     background: Rectangle {
         implicitWidth: parent.width
@@ -125,6 +126,34 @@ Menu {
         height: Style.menuItemHeight
         width: parent.width
         contentItem: CustomLabel {
+            text: qsTr(laserActivated ? "Hide laser feedback" : "Show laser feedback")
+            anchors {
+                left: parent.left
+                right: parent.right
+                leftMargin: 20
+                rightMargin: 5
+                verticalCenter: parent.verticalCenter
+            }
+        }
+        leftPadding: Style.menuItemLeftPadding
+
+        onHoveredChanged: {
+            if(visible) currentMenuIndex = 2;
+            console.log("Pute " + laserActivated);
+        }
+        onTriggered: robotMenu.laserPressed()
+    }
+
+    Rectangle {
+        color: Style.lightGreyBorder
+        width: parent.width
+        height: 1
+    }
+
+    PopupMenuItem {
+        height: Style.menuItemHeight
+        width: parent.width
+        contentItem: CustomLabel {
             text: qsTr("Rename")
             anchors {
                 left: parent.left
@@ -136,7 +165,7 @@ Menu {
         }
         leftPadding: Style.menuItemLeftPadding
 
-        onHoveredChanged: if(visible) currentMenuIndex = 2
+        onHoveredChanged: if(visible) currentMenuIndex = 3
         onTriggered: robotMenu.renameRobot()
     }
 
@@ -161,7 +190,7 @@ Menu {
         }
         leftPadding: Style.menuItemLeftPadding
 
-        onHoveredChanged: if(visible) currentMenuIndex = 3
+        onHoveredChanged: if(visible) currentMenuIndex = 4
         onTriggered: robotMenu.deletePath()
     }
 }

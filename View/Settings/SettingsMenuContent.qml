@@ -11,7 +11,7 @@ Frame {
     objectName: "settings"
 
     signal close()
-    signal saveSettingsSignal(int mapChoice, double _batteryThreshold, bool showTutorial)
+    signal saveSettingsSignal(int mapChoice, double _batteryThreshold)
 
     property real batteryWarningThreshold
     property int mapChoice
@@ -35,129 +35,15 @@ Frame {
         batterySlider.initializeBatteryThreshold(batteryWarningThreshold);
     }
 
-    Item {
-
-        id: label
-
-        height: 15
-
+    Label {
+        id: choiceMapLabel
         anchors {
             left: parent.left
+            right: parent.right
             top: parent.top
-            right: parent.right
-        }
-
-        Label {
-            id: txt
-
-            anchors {
-                left: parent.left
-                top: parent.top
-            }
-
-            color: "#8F8E94"
-            text: qsTr("Laser feedback")
-        }
-
-        Button {
-
-            height: 20
-            width: 20
-
-            background: Rectangle {
-                border.color: Style.lightGreyBorder
-                border.width: 1
-                radius: 10
-            }
-
-            anchors {
-                left: txt.right
-                leftMargin: 5
-                top: parent.top
-            }
-
-            ToolTip {
-                visible: parent.hovered
-                text: "Activate its laser feedback to see the obstacles around a robot";
-                font.pointSize: 10
-                x: parent.x - 80
-                y: parent.y - 3
-                background: Rectangle {
-                    border.color: Style.darkSkyBlue
-                    border.width: 1
-                    radius: 8;
-                    anchors.fill: parent
-                }
-            }
-
-            contentItem: Label {
-                text: "?"
-                font.pointSize: 12
-                font.bold: true
-                color: Style.darkSkyBlue
-                verticalAlignment: Text.AlignVCenter
-                horizontalAlignment: Text.AlignHCenter
-            }
-        }
-    }
-
-    // for each robot we can choose whether or not we want to display the laser data (which gives the obstacles within a few meters range around the robot
-
-    Flickable {
-        id: flick
-        // we display at most 3 robots before we start using the scroll bar
-        height: Math.min(90, robotModel.count * 30)
-        ScrollBar.vertical: ScrollBar { }
-        contentHeight: contentItem.childrenRect.height
-        clip: true
-
-        anchors {
-            left: parent.left
-            right: parent.right
-            top: label.bottom
             topMargin: 5
         }
 
-        Column {
-            id:column
-            topPadding: 10
-            leftPadding: 50
-            bottomPadding: 10
-            spacing: 5
-
-            Repeater {
-                id: robots
-                property int currentItemCount: 0
-                property bool currentItemLaserActivated
-                model: robotModel
-                delegate: SquareCheckBox {
-                    id: box
-                    text: name
-                    width: flick.width - 20
-                    anchors {
-                        left: parent.left
-                        leftMargin: 20
-                    }
-                }
-            }
-        }
-    }
-
-    ToolSeparator {
-        id: horizontalSeparation
-        anchors {
-            left: parent.left
-            right: parent.right
-            top: flick.bottom
-            topMargin: 10
-        }
-        orientation: Qt.Horizontal
-    }
-
-    Label {
-        id: choiceMapLabel
-        anchors.top: horizontalSeparation.bottom
-        anchors.topMargin: 16
         color: "#8F8E94"
         text: qsTr("Which map do you want to use ?")
     }
@@ -400,29 +286,6 @@ Frame {
         }
     }
 
-    /// whether or not we display the tutorial to the user (the messages to help him use the features of the application
-    SquareCheckBox {
-        id: box2
-
-        property bool show
-        text: "Show tutorial"
-
-        anchors {
-            top: horizontalSeparation3.bottom
-            topMargin: 16
-            left: parent.left
-            right: parent.right
-        }
-
-        checkable: true
-        checked: true
-
-        onClicked: {
-            show = !show
-            checked ? tutorial.resetTutorial() : tutorial.hideTutorial()
-        }
-    }
-
     CancelButton {
         id: cancelButton
 
@@ -432,8 +295,6 @@ Frame {
         anchors.left: parent.left
 
         onClicked: {
-            /// TODO cancel the laser modifications
-            box2.show = oriShowTutorial;
             settingsPage.mapChoice = oriMapChoice;
             settingsPage.close()
         }
@@ -451,7 +312,7 @@ Frame {
 
         onReleased: {
             batteryWarningThreshold = batterySlider.value;
-            saveSettingsSignal(mapChoice, batterySlider.value, box2.show);
+            saveSettingsSignal(mapChoice, batterySlider.value);
         }
     }
 
@@ -461,14 +322,8 @@ Frame {
         anchors.right: parent.right
         anchors.bottom: parent.bottom
         onReleased: {
-
             batteryWarningThreshold = batterySlider.value;
-            /*for(var i = 0; i < robotModel.count; i++){
-                //robots.itemAt(i).laserActivated = robots.itemAt(i).box.checked;
-                console.log("item i laser " + robots.itemAt(i).box.checked);
-            }*/
-
-            saveSettingsSignal(mapChoice, batterySlider.value, box2.show);
+            saveSettingsSignal(mapChoice, batterySlider.value);
             settingsPage.close();
         }
     }
@@ -476,8 +331,6 @@ Frame {
     function setSettings(mapChoice, showTutorial){
         oriShowTutorial = showTutorial;
         oriMapChoice = mapChoice;
-
-        box2.show = showTutorial;
         settingsPage.mapChoice = mapChoice;
     }
 }

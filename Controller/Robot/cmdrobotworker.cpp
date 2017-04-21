@@ -76,26 +76,10 @@ void CmdRobotWorker::readTcpDataSlot(){
 void CmdRobotWorker::connectedSlot(){
     qDebug() << "(Robot" << ipAddress << ") Connected";
 
-    /// if true activates the feedback from the laser, otherwise doesn't
-    bool startLaser = 1;
-
-    QString fileStr = QDir::currentPath() + QDir::separator() + "settings" + QDir::separator() + ipAddress + ".txt";
-    std::ifstream file(fileStr.toStdString(), std::ios::in);
-
-    /// stored in a file, so we can fetch it when each new session starts and activate or deactivate the laser
-    /// according to the user's preference
-    if(file){
-        file >> startLaser;
-        qDebug() << "CmdRobotWorker::connectedSlot startLaser :" << startLaser;
-        file.close();
-    } else {
-        qDebug() << "CmdRobotWorker::connectedSlot could not open the setting file at" << fileStr;
-    }
-
     /// When we are connected, we send the ports to use for the other workers
     /// in order to get laser feedback, robot position, map and map metadata
     QString portStr = QString("h") + QChar(31) + QString::number(metadataPort) + QChar(31) + QString::number(robotPort) + QChar(31) +
-            QString::number(mapPort) + QChar(31) + QString::number(laserPort) + QChar(31) + QString::number(startLaser) + QChar(23);
+            QString::number(mapPort) + QChar(31) + QString::number(laserPort) + QChar(23);
 
     bool tmpBool(false);
     while(!tmpBool){

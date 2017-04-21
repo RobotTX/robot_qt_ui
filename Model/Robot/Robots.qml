@@ -16,6 +16,7 @@ ListModel {
     signal robotConnection(string ip);
     signal setBusy(string ip, bool busy)
     signal setMessageTop(int status, string msg)
+    signal activateLaser(string ip, bool activate)
 
     function addRobot(name, ip, wifi, stage, battery){
         append({
@@ -140,16 +141,12 @@ ListModel {
                 setProperty(i, "pathIsOpen", !get(i).pathIsOpen);
     }
 
-    function activateLaser(ip){
+    function setLaserActivated(ip, activate){
         for(var i = 0; i < count; i++)
-            if(get(i).ip === ip)
-                setProperty(i, "laserActivated", !get(i).laserActivated);
-    }
-
-    function setLaserActivate(ip, activate){
-        for(var i = 0; i < count; i++)
-            if(get(i).ip === ip)
-                setProperty(i, "laserActivated", activate)
+            if(get(i).ip === ip){
+                setProperty(i, "laserActivated", activate);
+                console.log("laser set");
+            }
     }
 
     function setName(ip, newName){

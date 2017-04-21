@@ -65,7 +65,7 @@ MainController::MainController(QQmlApplicationEngine *engine, QObject* parent) :
         QObject* settings = applicationWindow->findChild<QObject*>("settings");
         if(settings){
             connect(this, SIGNAL(emitSettings(QVariant, QVariant)), settings, SLOT(setSettings(QVariant, QVariant)));
-            connect(settings, SIGNAL(saveSettingsSignal(int, double, bool)), this, SLOT(saveSettings(int,double,bool)));
+            connect(settings, SIGNAL(saveSettingsSignal(int, double)), this, SLOT(saveSettings(int, double)));
         }
         else {
             qDebug() << "MapController::MapController could not find the settings";
@@ -145,7 +145,6 @@ void MainController::saveMapConfig(QString fileName, double zoom, double centerX
 
 
     mapController->saveNewMap(QDir::currentPath() + QDir::separator() + "mapConfigs" + QDir::separator() + mapFileInfo.fileName() + ".pgm");
-    //mapController->setMapFile(QDir::currentPath() + QDir::separator() + "mapConfigs" + QDir::separator() + mapFileInfo.fileName() + ".pgm");
 
     mapController->savePositionSlot(centerX, centerY, zoom, QDir::currentPath() + QDir::separator() + "mapConfigs" + QDir::separator() + mapFileInfo.fileName() + ".pgm");
 
@@ -209,12 +208,12 @@ void MainController::loadMapConfig(QString fileName) {
     }
 }
 
-void MainController::saveSettings(int mapChoice, double batteryThreshold, bool showTutorial){
-    qDebug() << "save settings called" << mapChoice << batteryThreshold << showTutorial;
+void MainController::saveSettings(int mapChoice, double batteryThreshold){
+    qDebug() << "save settings called" << mapChoice << batteryThreshold;
     QFile file(QDir::currentPath() + QDir::separator() + "settings.txt");
     if(file.open(QFile::ReadWrite)){
         QTextStream stream(&file);
-        stream << mapChoice << " " << batteryThreshold << " " << showTutorial;
+        stream << mapChoice << " " << batteryThreshold ;
         file.close();
         emit emitBatteryThreshold(batteryThreshold);
     }

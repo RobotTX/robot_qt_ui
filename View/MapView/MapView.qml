@@ -338,8 +338,6 @@ Frame {
                             y: posY - height / 2
                         }
 
-                        /// TODO add obstacles
-
                         Label {
                             id: tooltip
 

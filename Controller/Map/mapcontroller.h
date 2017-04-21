@@ -35,7 +35,7 @@ public:
     QString getMetadataString(void) const;
 
     /// Setters
-    void setMapFile(const QString file);
+    bool setMapFile(const QString file);
     void setOrigin(const QPointF origin) { map->setOrigin(origin); }
     void setHeight(const int height) { map->setHeight(height); }
     void setWidth(const int width) { map->setWidth(width); }

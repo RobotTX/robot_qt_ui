@@ -110,7 +110,22 @@ signals:
      * where the model is updated so that busy indicators can be displayed when relevant
      */
     void processingCmd(QString ip, bool waitingForAnswer);
+
+    /**
+     * @brief setMessageTop
+     * @param status
+     * @param msg
+     * Send a signal to set a message on top of the application
+     */
     void setMessageTop(int status, QString msg);
+
+    /**
+     * @brief updateLaser
+     * @param ip
+     * @param activated
+     * Tell the robot model that the robot at ip <ip> as <activated> is lasers
+     */
+    void updateLaser(QString ip, bool activated);
 
 private:
     QString ip;

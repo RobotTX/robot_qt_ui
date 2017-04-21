@@ -88,8 +88,8 @@ void LocalMapWorker::readTcpDataSlot(){
 
                 }
 
-                qDebug() << "laser angle " << angle_min << angle_max << abs(angle_min / angle_increment) <<
-                            ranges[abs(angle_min-30*3.14159/180)/angle_increment] << ranges[abs(angle_min/angle_increment)] << ranges[abs(angle_min+30*3.14159/180)/angle_increment];
+                //qDebug() << "laser angle " << angle_min << angle_max << abs(angle_min / angle_increment) <<
+                //            ranges[abs(angle_min-30*3.14159/180)/angle_increment] << ranges[abs(angle_min/angle_increment)] << ranges[abs(angle_min+30*3.14159/180)/angle_increment];
 
                 /// sometimes we don't receive a complete scan and the first values do not correspond to the values of angle_min
                 /// angle_max and angle_increment in which case we receive positive values instead which correspond to ranges

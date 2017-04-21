@@ -103,15 +103,15 @@ void CommandController::cmdAnswerSlot(QString answer){
                     /// Stopped the robot to go home
                     /// NOT USED ANYMORE
                     Q_UNREACHABLE();
-                break;
+                break;*/
                 case 'q':
                     /// Started the laser of the robot
-                    /// OSEF
+                    emit updateLaser(ip, true);
                 break;
                 case 'r':
                     /// Stopped the laser of the robot
-                    /// OSEF
-                break;*/
+                    emit updateLaser(ip, false);
+                break;
                 case 's':
                     /// Received the map from the robot
                     /// OSEF

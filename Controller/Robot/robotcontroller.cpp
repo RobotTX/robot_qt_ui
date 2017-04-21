@@ -34,6 +34,7 @@ RobotController::RobotController(QQmlApplicationEngine* engine, RobotsController
     connect(commandController, SIGNAL(pausedScanning(QString)), parent, SLOT(pausedScanningSlot(QString)));
     connect(commandController, SIGNAL(processingCmd(QString, bool)), parent, SLOT(processingCmdSlot(QString, bool)));
     connect(commandController, SIGNAL(setMessageTop(int, QString)), parent, SLOT(setMessageTopSlot(int, QString)));
+    connect(commandController, SIGNAL(updateLaser(QString, bool)), parent, SLOT(updateLaserSlot(QString, bool)));
 
     /// Signals to tell the robotsController that the robot just disconnected
     connect(this, SIGNAL(robotIsDead(QString)), parent, SLOT(robotIsDeadSlot(QString)));
@@ -55,6 +56,7 @@ RobotController::RobotController(QQmlApplicationEngine* engine, RobotsController
     connect(this, SIGNAL(receivedScanMap(QString, QByteArray, QString)), parent, SLOT(receivedScanMapSlot(QString, QByteArray, QString)));
     /// Check if the robot is scanning when it connects
     connect(this, SIGNAL(checkScanning(QString, bool)), parent, SLOT(checkScanningSlot(QString, bool)));
+    connect(this, SIGNAL(updateLaser(QString, bool)), parent, SLOT(updateLaserSlot(QString, bool)));
 
     /// to draw the obstacles of the robots
     QQmlComponent component(engine, QUrl("qrc:/View/Robot/ObstaclesItems.qml"));
@@ -288,6 +290,7 @@ void RobotController::updateRobotInfo(const QString robotInfo){
         float homeY = static_cast<QString>(strList.takeFirst()).toFloat();
         bool scanning = static_cast<QString>(strList.takeFirst()).toInt();
         bool recovering = static_cast<QString>(strList.takeFirst()).toInt();
+        bool laser = static_cast<QString>(strList.takeFirst()).toInt();
         /// What remains in the list is the path
 
         if(!strList.empty())
@@ -299,6 +302,8 @@ void RobotController::updateRobotInfo(const QString robotInfo){
         emit checkMapInfo(ip, mapId, mapDate);
 
         emit checkScanning(ip, scanning);
+
+        emit updateLaser(ip, laser);
 /*
         if(recovering){
             if(robotPositionRecoveryWidget){
@@ -352,4 +357,8 @@ void RobotController::sendTeleop(int teleop){
 
 void RobotController::updateObstacles(float angle_min, float angle_max, float angle_increment, QVector<float> ranges){
     paintedItem->updateObstacles(angle_min, angle_max, angle_increment, ranges);
+}
+
+void RobotController::clearObstacles(bool activated){
+    paintedItem->clearObstacles(activated);
 }
