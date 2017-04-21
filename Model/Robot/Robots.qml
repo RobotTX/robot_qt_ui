@@ -141,10 +141,12 @@ ListModel {
                 setProperty(i, "pathIsOpen", !get(i).pathIsOpen);
     }
 
-    function setLaserActivate(ip, activate){
+    function setLaserActivated(ip, activate){
         for(var i = 0; i < count; i++)
-            if(get(i).ip === ip)
-                setProperty(i, "laserActivated", activate)
+            if(get(i).ip === ip){
+                setProperty(i, "laserActivated", activate);
+                console.log("laser set");
+            }
     }
 
     function setName(ip, newName){

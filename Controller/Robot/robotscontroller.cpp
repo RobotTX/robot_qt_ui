@@ -30,7 +30,7 @@ RobotsController::RobotsController(QObject *applicationWindow, QQmlApplicationEn
         connect(this, SIGNAL(setBattery(QVariant, QVariant)), robotModel, SLOT(setBattery(QVariant, QVariant)));
         connect(this, SIGNAL(setScanningOnConnection(QVariant, QVariant)), robotModel, SLOT(setScanningOnConnection(QVariant, QVariant)));
         connect(this, SIGNAL(processingCmd(QVariant, QVariant)), robotModel, SLOT(setProcessingCmd(QVariant, QVariant)));
-        connect(this, SIGNAL(updateLaser(QVariant, QVariant)), robotModel, SLOT(setLaserActivate(QVariant, QVariant)));
+        connect(this, SIGNAL(updateLaser(QVariant, QVariant)), robotModel, SLOT(setLaserActivated(QVariant, QVariant)));
 
         /// Signals from qml to the controller
         connect(robotModel, SIGNAL(newHomeSignal(QString, QString, double, double)), parent, SLOT(sendCommandNewHome(QString, QString, double, double)));
@@ -41,7 +41,7 @@ RobotsController::RobotsController(QObject *applicationWindow, QQmlApplicationEn
         connect(robotModel, SIGNAL(playPathSignal(QString)), this, SLOT(sendCommandPlayPath(QString)));
         connect(robotModel, SIGNAL(stopPathSignal(QString)), this, SLOT(sendCommandStopPath(QString)));
         connect(robotModel, SIGNAL(stopScanning(QString)), parent, SLOT(stopScanningSlot(QString)));
-        connect(robotModel, SIGNAL(activateLaser(QString, bool)), parent, SLOT(activateLaserSlot(QString, bool)));
+        connect(robotModel, SIGNAL(activateLaser(QString, bool)), this, SLOT(activateLaserSlot(QString, bool)));
 
 
         /// MainController signals
@@ -322,5 +322,8 @@ void RobotsController::activateLaserSlot(QString ip, bool activate){
 }
 
 void RobotsController::updateLaserSlot(QString ip, bool activated){
+    if(robots.contains(ip))
+        robots.value(ip)->clearObstacles(activated);
+
     emit updateLaser(ip, activated);
 }

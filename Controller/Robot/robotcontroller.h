@@ -64,6 +64,12 @@ public:
      */
     void sendTeleop(const int teleop);
 
+    /**
+     * @brief clearObstacles
+     * To remove all the obstacles when we stop using the laser
+     */
+    void clearObstacles(bool activated);
+
 private:
     /**
      * @brief launchWorkers
@@ -133,6 +139,14 @@ private slots:
      */
     void portSentSlot(void);
 
+    /**
+     * @brief updateObstacles
+     * @param angle_min
+     * @param angle_max
+     * @param angle_increment
+     * @param ranges
+     * To update the display of the obstacles on the map when we receive it from the robot
+     */
     void updateObstacles(float angle_min, float angle_max, float angle_increment, QVector<float> ranges);
 
 signals:
@@ -247,6 +261,8 @@ signals:
      * Tell the robotsController to check if the robot is still scanning and act accordingly
      */
     void checkScanning(QString ip, bool scanning);
+
+    void updateLaser(QString ip, bool activated);
 
     /// Tell the workers to stop their connection to the robot
     void stopCmdRobotWorker(void);

@@ -127,6 +127,7 @@ private slots:
     void processingCmdSlot(QString ip, bool processing);
     void setMessageTopSlot(int status, QString msg);
     void updateLaserSlot(QString ip, bool activated);
+    void activateLaserSlot(QString ip, bool activate);
 
 signals:
     void stopRobotServerWorker(void);

@@ -8,12 +8,4 @@ ObstaclesPaintedItems {
     onXChanged: console.log("x " + x)
     onYChanged: console.log("y " + y)
     smooth: false
-    // TODO remove in production code
-    Rectangle {
-        color: "green"
-        x: parent.width / 2
-        y: parent.height / 2
-        width: 1
-        height: 1
-    }
 }

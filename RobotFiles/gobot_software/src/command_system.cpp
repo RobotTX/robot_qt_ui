@@ -10,6 +10,7 @@ bool waiting = false;
 bool connected = false;
 bool scanning = false;
 bool recovering = false;
+bool laserActivated = false;
 
 ros::ServiceClient startRobotPosClient;
 ros::ServiceClient stopRobotPosClient;
@@ -195,19 +196,17 @@ bool execCommand(ros::NodeHandle n, std::vector<std::string> command){
 
 		/// Command for the robot to receive the ports needed for the map, metadata and robot pos services
 		case 'h':
-			// first param is h, 2nd is port for metadata, 3rd is port for robot position, 4th for map, 5th for laser, 6th indicates whether or not to activate the laser feedback
-			if(command.size() == 6){
-
+			// first param is h, 2nd is port for metadata, 3rd is port for robot position, 4th for map, 5th for laser
+			if(command.size() == 5){
 				metadata_port = std::stoi(command.at(1));
 				robot_pos_port = std::stoi(command.at(2));
 				map_port = std::stoi(command.at(3));
 				laser_port = std::stoi(command.at(4));
-				bool startLaser = std::stoi(command.at(5));
 				std::cout << "(Command system) Gobot here are the ports " << metadata_port << ", " << robot_pos_port << ", " << map_port << ", " << laser_port << std::endl;
 				startRobotPos();
 				startMetadata();
 				startMap();
-				startLaserData(startLaser);
+				startLaserData(laserActivated);
 				//connectToParticleCloudNode();
 				status = true;
 			} else
@@ -376,6 +375,13 @@ bool execCommand(ros::NodeHandle n, std::vector<std::string> command){
 			if(command.size() == 1) {
 				std::cout << "(Command system) Gobot sends laser data" << std::endl;
 				status = sendLaserData();
+
+				if(status){
+					std::ofstream ofs;
+					ofs.open(path_computer_software + "Robot_Infos/laser.txt", std::ofstream::out | std::ofstream::trunc);
+					ofs << "1";
+					ofs.close();
+				}
 			}
 		}
 		break;
@@ -385,6 +391,13 @@ bool execCommand(ros::NodeHandle n, std::vector<std::string> command){
 			if(command.size() == 1) {
 				std::cout << "(Command system) Gobot stops sending laser data" << std::endl;
 				status = stopSendLaserData();
+
+				if(status){
+					std::ofstream ofs;
+					ofs.open(path_computer_software + "Robot_Infos/laser.txt", std::ofstream::out | std::ofstream::trunc);
+					ofs << "0";
+					ofs.close();
+				}
 			}
 		}
 		break;
@@ -1041,6 +1054,15 @@ void asyncAccept(boost::shared_ptr<boost::asio::io_service> io_service, boost::s
    		ifMap.close();
    	}
 
+	std::ifstream ifLaser(path_computer_software + "Robot_Infos/laser.txt", std::ifstream::in);
+	std::string laserStr("0");
+	if(ifLaser){
+   		getline(ifLaser, laserStr);
+		std::cout << "Laser activated : " << laserStr;
+		laserActivated = boost::lexical_cast<bool>(laserStr);
+		ifLaser.close();
+	}
+
    	if(mapId.empty())
    		mapId = "{00000000-0000-0000-0000-000000000000}";
    	if(mapDate.empty())
@@ -1055,7 +1077,7 @@ void asyncAccept(boost::shared_ptr<boost::asio::io_service> io_service, boost::s
    	std::string scan = (scanning) ? "1" : "0";
    	std::string recover = (recovering) ? "1" : "0";
 
-	sendMessageToPc(sock, "Connected" + sep + mapId + sep + mapDate + sep + homeName + sep + homeX + sep + homeY + sep + scan + sep + recover + sep + path);
+	sendMessageToPc(sock, "Connected" + sep + mapId + sep + mapDate + sep + homeName + sep + homeX + sep + homeY + sep + scan + sep + recover + sep + laserStr + sep + path);
 
 	boost::thread t(boost::bind(session, sock, n));
 }

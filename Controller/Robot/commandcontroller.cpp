@@ -109,7 +109,7 @@ void CommandController::cmdAnswerSlot(QString answer){
                     emit updateLaser(ip, true);
                 break;
                 case 'r':
-                    /// Stopped the labs(ser of the robot
+                    /// Stopped the laser of the robot
                     emit updateLaser(ip, false);
                 break;
                 case 's':

@@ -17,7 +17,22 @@ public:
 
     void paint(QPainter *painter) Q_DECL_OVERRIDE;
 
+
+    /**
+     * @brief updateObstacles
+     * @param angle_min
+     * @param angle_max
+     * @param angle_increment
+     * @param ranges
+     * To update the display of the obstacles on the map when we receive it from the robot
+     */
     void updateObstacles(float angle_min, float angle_max, float angle_increment, QVector<float> ranges);
+
+    /**
+     * @brief clearObstacles
+     * To remove all the obstacles when we stop using the laser
+     */
+    void clearObstacles(bool activated);
 
     float orientation() const { return orientation_; }
     float getX() const { return _x; }
@@ -32,6 +47,7 @@ private:
     float orientation_;
     float _x;
     float _y;
+    bool activated;
 };
 
 #endif /// OBSTACLESPAINTEDITEM_H

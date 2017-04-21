@@ -135,6 +135,7 @@ Frame {
                 nameField.focus = true;
             }
             onDeletePath: robotModel.deletePathSignal(ip)
+            onLaserPressed: robotModel.activateLaser(ip, !laserActivated)
         }
     }
 
@@ -176,15 +177,21 @@ Frame {
         text: {
             if(pathName !== "" && pathPoints.count > 0){
                 if(stage >= 0){
-                    if(playingPath)
-                        qsTr("Heading to " + pathPoints.get(stage).pathPointName);
-                    else
-                        qsTr("Waiting to go to " + pathPoints.get(stage).pathPointName);
+                    if(stage < pathPoints.count){
+                        if(playingPath)
+                            qsTr("Heading to " + pathPoints.get(stage).pathPointName);
+                        else
+                            qsTr("Waiting to go to " + pathPoints.get(stage).pathPointName);
+                    } else
+                        qsTr("Stage not in the pathpoint list");
                 } else {
-                    if(stage == -1)
-                        qsTr("Stuck going to " + pathPoints.get(Math.abs(stage + 1)).pathPointName);
-                    else
-                        qsTr("Stuck going from " + pathPoints.get(Math.abs(stage  + 2)).pathPointName + " to " + pathPoints.get(Math.abs(stage + 1)).pathPointName);
+                    if(Math.abs(stage + 1) < pathPoints.count){
+                        if(stage == -1)
+                            qsTr("Stuck going to " + pathPoints.get(Math.abs(stage + 1)).pathPointName);
+                        else
+                            qsTr("Stuck going from " + pathPoints.get(Math.abs(stage  + 2)).pathPointName + " to " + pathPoints.get(Math.abs(stage + 1)).pathPointName);
+                    } else
+                        qsTr("Stage not in the pathpoint list");
                 }
             } else
                 qsTr("No Path Assigned");

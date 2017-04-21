@@ -27,17 +27,6 @@ Frame {
         imgSrc: "qrc:/icons/big_robot"
     }
 
-    Component {
-        id: delegate
-        RobotListItem {
-            batteryWarningThreshold: robotMenuFrame.batteryWarningThreshold
-            pointModel: robotMenuFrame.pointModel
-            pathModel: robotMenuFrame.pathModel
-            robotModel: robotMenuFrame.robotModel
-            width: flick.width
-        }
-    }
-
     Flickable {
         id: flick
         ScrollBar.vertical: ScrollBar { }
@@ -49,7 +38,13 @@ Frame {
             /// The list containing both the graphical and model of the robots in the menu
             Repeater {
                 model: robotModel
-                delegate: delegate
+                delegate: RobotListItem {
+                    batteryWarningThreshold: robotMenuFrame.batteryWarningThreshold
+                    pointModel: robotMenuFrame.pointModel
+                    pathModel: robotMenuFrame.pathModel
+                    robotModel: robotMenuFrame.robotModel
+                    width: flick.width
+                }
             }
         }
     }
