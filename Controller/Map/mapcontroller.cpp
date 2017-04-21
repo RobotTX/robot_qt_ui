@@ -66,15 +66,14 @@ void MapController::initializeMap(void){
         /// our map file as a QString
         QString qMapFile = QString::fromStdString(stdMapFile);
 
-        setMapFile(qMapFile);
-        qDebug() << "Map::initializeMap full map path :" << qMapFile;
-        /// We get the config file from the map file
-        QString fileName = qMapFile;
-        fileName.remove(0, fileName.lastIndexOf(QDir::separator()) + 1);
-        fileName.remove(fileName.length() - 4, 4);
-        QString configPath = QDir::currentPath() + QDir::separator() + "mapConfigs" + QDir::separator() + fileName + ".config";
+        if(setMapFile(qMapFile)){
+            qDebug() << "Map::initializeMap full map path :" << qMapFile;
+            /// We get the config file from the map file
+            QString fileName = qMapFile;
+            fileName.remove(0, fileName.lastIndexOf(QDir::separator()) + 1);
+            fileName.remove(fileName.length() - 4, 4);
+            QString configPath = QDir::currentPath() + QDir::separator() + "mapConfigs" + QDir::separator() + fileName + ".config";
 
-        if(QFile(qMapFile).exists()){
             qDebug() << "Map::initializeMap config path :" << configPath;
             /// We get the map informations from the map config file
             std::ifstream pathFile(configPath.toStdString(), std::ios::in);
@@ -194,23 +193,23 @@ bool MapController::loadMapConfig(const QString fileName) {
                     "resolution:" << resolution << "\n\t" <<
                     "map ID:" << QString::fromStdString(mapId);
 
-        setMapFile(QString::fromStdString(_mapFile));
-
-        qDebug() << "requestloadmap" << "file:/" + QString::fromStdString(_mapFile);
-        /// for the qml side to reload the main window map file
-        emit requestReloadMap("file:/" + QString::fromStdString(_mapFile));
-        map->setHeight(_height);
-        map->setWidth(_width);
-        map->setOrigin(QPointF(originX, originY));
-        map->setResolution(resolution);
-        map->setMapId(QUuid(QString::fromStdString(mapId)));
-        map->setDateTime(QDateTime::currentDateTime());
-        /// centers on (centerX, centerY) with the proper zoom coefficient
-        centerMap(centerX, centerY, zoom);
-        /// saves the configuration contained in the file <fileName> as the current configuration
-        saveMapConfig(QDir::currentPath() + QDir::separator() + "currentMap.txt", centerX, centerY, zoom);
-        file.close();
-        return true;
+        if(setMapFile(QString::fromStdString(_mapFile))){
+            qDebug() << "requestloadmap" << "file:/" + QString::fromStdString(_mapFile);
+            /// for the qml side to reload the main window map file
+            emit requestReloadMap("file:/" + QString::fromStdString(_mapFile));
+            map->setHeight(_height);
+            map->setWidth(_width);
+            map->setOrigin(QPointF(originX, originY));
+            map->setResolution(resolution);
+            map->setMapId(QUuid(QString::fromStdString(mapId)));
+            map->setDateTime(QDateTime::currentDateTime());
+            /// centers on (centerX, centerY) with the proper zoom coefficient
+            centerMap(centerX, centerY, zoom);
+            /// saves the configuration contained in the file <fileName> as the current configuration
+            saveMapConfig(QDir::currentPath() + QDir::separator() + "currentMap.txt", centerX, centerY, zoom);
+            file.close();
+            return true;
+        }
     }
     return false;
 }
@@ -287,44 +286,48 @@ void MapController::newMapFromRobot(const QByteArray& mapArray, const QString ma
     map->setMapId(QUuid(mapId));
     map->setDateTime(QDateTime::fromString(mapDate, "yyyy-MM-dd-hh-mm-ss"));
     map->getMapImage().save(QDir::currentPath() + QDir::separator() + "mapConfigs" + QDir::separator() + "tmpImage.pgm", "PGM");
-    setMapFile(QDir::currentPath() + QDir::separator() + "mapConfigs" + QDir::separator() + "tmpImage.pgm");
+    if(setMapFile(QDir::currentPath() + QDir::separator() + "mapConfigs" + QDir::separator() + "tmpImage.pgm")){
+        double centerX = 0;
+        double centerY = 0;
+        double zoom = 0;
 
-    double centerX = 0;
-    double centerY = 0;
-    double zoom = 0;
+        /// Save in currentMap.txt
+        QFile file(QDir::currentPath() + QDir::separator() + "currentMap.txt");
+        if(file.open(QFile::ReadWrite)){
+            QTextStream stream(&file);
+            QString osef;
+            stream >> osef >> osef >> osef >> centerX >> centerY >> zoom >> osef >> osef >> osef >> osef >> osef;
+            file.close();
+        }
 
-    /// Save in currentMap.txt
-    QFile file(QDir::currentPath() + QDir::separator() + "currentMap.txt");
-    if(file.open(QFile::ReadWrite)){
-        QTextStream stream(&file);
-        QString osef;
-        stream >> osef >> osef >> osef >> centerX >> centerY >> zoom >> osef >> osef >> osef >> osef >> osef;
-        file.close();
-    }
-
-    QFile file2(QDir::currentPath() + QDir::separator() + "currentMap.txt");
-    if(file2.open(QFile::WriteOnly|QFile::Truncate)){
-        QTextStream stream(&file2);
-        stream << map->getMapFile() << endl
-             << map->getHeight() << " " << map->getWidth() << endl
-             << centerX << " " << centerY << endl
-             << zoom << endl
-             << map->getOrigin().x() << " " << map->getOrigin().y() << endl
-             << map->getResolution() << endl
-             << map->getMapId().toString();
-        file.close();
-        saveMapConfig(QDir::currentPath() + QDir::separator() + "mapConfigs" + QDir::separator() + "tmpImage.config", centerX, centerY, zoom);
+        QFile file2(QDir::currentPath() + QDir::separator() + "currentMap.txt");
+        if(file2.open(QFile::WriteOnly|QFile::Truncate)){
+            QTextStream stream(&file2);
+            stream << map->getMapFile() << endl
+                 << map->getHeight() << " " << map->getWidth() << endl
+                 << centerX << " " << centerY << endl
+                 << zoom << endl
+                 << map->getOrigin().x() << " " << map->getOrigin().y() << endl
+                 << map->getResolution() << endl
+                 << map->getMapId().toString();
+            file.close();
+            saveMapConfig(QDir::currentPath() + QDir::separator() + "mapConfigs" + QDir::separator() + "tmpImage.config", centerX, centerY, zoom);
+        }
     }
 }
 
-void MapController::setMapFile(const QString file) {
-    qDebug() << "MapController::setMapFile to" << file;
-    map->setMapFile(file);
-    QImage img(map->getMapFile(), "PGM");
-    qDebug() << "imported a map of size " << img.size();
-    map->setMapImage(QImage(map->getMapFile(), "PGM"));
-    /// so that the qml side can load the map
-    emit setMap(file);
+bool MapController::setMapFile(const QString file) {
+    if(QFile(file).exists()){
+        qDebug() << "MapController::setMapFile to" << file;
+        map->setMapFile(file);
+        QImage img(map->getMapFile(), "PGM");
+        qDebug() << "imported a map of size " << img.size();
+        map->setMapImage(QImage(map->getMapFile(), "PGM"));
+        /// so that the qml side can load the map
+        emit setMap(file);
+        return true;
+    } else
+        return false;
 }
 
 QString MapController::getMetadataString(void) const {
