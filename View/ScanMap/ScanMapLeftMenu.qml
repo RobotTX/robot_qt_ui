@@ -3,8 +3,10 @@ import QtQuick.Controls 2.1
 import QtQuick.Dialogs 1.2
 import "../../Helper/style.js" as Style
 import "../../Model/Robot"
+import "../../Model/Tutorial"
 import "../Custom"
 import "../Robot"
+import "../Tutorial"
 
 Frame {
     id: scanLeftMenuFrame
@@ -19,8 +21,22 @@ Frame {
     signal resetScanMaps()
     signal saveScan(string file_name)
 
+    property Tutorial tutorial
+
+    property int tutoX
+    property int tutoY
+
     width: Style.smallMenuWidth
     padding: 0
+
+    onVisibleChanged: {
+        if(!visible)
+            tutorialD.close()
+        else
+            // when the scan window is opened, if the scan map message should be displayed then the dialog window is opened
+            if(tutorial.isDisplayed("scan_map"))
+                tutorialD.open()
+    }
 
     background: Rectangle {
         color: Style.lightGreyBackground
@@ -100,14 +116,78 @@ Frame {
         }
     }
 
-    NormalButton {
+    Button {
         id: addScan
-        txt: "Add a Scan"
-        imgSrc: "qrc:/icons/add"
-        anchors{
+
+        height: 40
+        padding: 0
+
+        anchors {
             top: parent.top
             topMargin: 5
+            left: parent.left
+            right: parent.right
         }
+
+        background: Rectangle {
+            color: addScan.hovered ? Style.selectedItemColor : "transparent"
+        }
+
+        Image {
+            id: icon
+            source: "qrc:/icons/add"
+            fillMode: Image.Pad // to not stretch the image
+            anchors {
+                verticalCenter: parent.verticalCenter
+                left: parent.left
+                leftMargin: 20
+            }
+        }
+
+        CustomLabel {
+            text: qsTr("Add a scan")
+            color: "#262626"
+            anchors{
+                verticalCenter: parent.verticalCenter
+                left: icon.right
+                leftMargin: 11
+            }
+        }
+
+        Button {
+            id: helpButton
+
+            height: 25
+            width: 25
+
+            background: Rectangle {
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.verticalCenter: parent.verticalCenter
+                width: Math.min(helpButton.width, helpButton.height)
+                height: Math.min(helpButton.width, helpButton.height)
+                border.color: Style.lightGreyBorder
+                color: helpButton.pressed ? Style.lightGreyBorder : helpButton.hovered ? Style.lightGreyBackgroundHover : "white"
+                radius: helpButton.width/2
+            }
+
+            anchors {
+                verticalCenter: parent.verticalCenter
+                right: parent.right
+                rightMargin: 15
+            }
+
+            contentItem: Label {
+                text: "?"
+                font.pointSize: 14
+                font.bold: true
+                color: Style.darkSkyBlue
+                verticalAlignment: Text.AlignVCenter
+                horizontalAlignment: Text.AlignHCenter
+            }
+
+            onClicked: tutorialD.open()
+        }
+
         onClicked: robotListInPopup.open()
 
         RobotListInPopup {
@@ -214,6 +294,15 @@ Frame {
         folder: "/home/joan/Gobot/build-Gobot-Desktop_Qt_5_8_0_GCC_64bit-Debug/mapConfigs/"
 
         onAccepted: scanLeftMenuFrame.saveScan(fileUrl.toString())
+    }
+
+    TutorialDialog {
+        id: tutorialD
+        x: tutoX
+        y: tutoY
+        feature: "scan_map"
+        tutorial: scanLeftMenuFrame.tutorial
+        tutoMessage: tutorial.getMessage("scan_map")
     }
 
     function startedScanning(ip){

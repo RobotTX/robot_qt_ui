@@ -1,15 +1,21 @@
 import QtQuick 2.7
 import QtQuick.Controls 2.1
-import "Custom"
-import "../Helper/style.js" as Style
+import "../Custom"
+import "../../Helper/style.js" as Style
+import "../../Model/Tutorial"
 
 Dialog {
 
     id: tutorialDialog
 
+    property Tutorial tutorial
     property string tutoMessage
+    property string feature
 
-    title: "Merge maps"
+    // to reset the box that asks the user if he wants to hide the message
+    onVisibleChanged: box.checked = true
+
+    title: feature
 
     height: 400
     width: 400
@@ -62,7 +68,6 @@ Dialog {
 
             SquareCheckBox {
                 id: box
-
                 anchors {
                     top: button.top
                     left: parent.left
@@ -90,7 +95,10 @@ Dialog {
                 height: 23
                 width: 60
                 text: "Ok"
-
+                onClicked: {
+                    box.checked ? tutorialDialog.tutorial.hideMessage(tutorialDialog.feature) : tutorialDialog.tutorial.showMessage(tutorialDialog.feature)
+                    tutorialDialog.close()
+                }
             }
         }
 

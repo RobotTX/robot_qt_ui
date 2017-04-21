@@ -137,7 +137,7 @@ private slots:
      * have a different map, the level of battery under which the user is warned
      * and whether or not the tutorial should be shown to the user
      */
-    void saveSettings(int mapChoice, double batteryThreshold, bool showTutorial);
+    void saveSettings(int mapChoice, double batteryThreshold);
     /**
      * @brief newMapFromRobotSlot
      * @param ip

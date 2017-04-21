@@ -79,7 +79,7 @@
         <file>View/Custom/CustomLabel.qml</file>
         <file>View/Custom/CustomLabelWithTimer.qml</file>
         <file>View/Robot/ObstaclesItems.qml</file>
-        <file>Model/Tutorial.qml</file>
-        <file>View/TutorialDialog.qml</file>
+        <file>Model/Tutorial/Tutorial.qml</file>
+        <file>View/Tutorial/TutorialDialog.qml</file>
     </qresource>
 </RCC>

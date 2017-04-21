@@ -3,7 +3,9 @@ import QtQuick.Controls 2.1
 import QtQuick.Window 2.2
 import "../../Helper/style.js" as Style
 import "../../Model/Robot"
+import "../../Model/Tutorial"
 import "../../View/Custom/"
+import "../../View/Tutorial"
 
 Window {
 
@@ -16,6 +18,7 @@ Window {
     minimumHeight: 600
 
     property Robots robotModel
+    property Tutorial tutorial
 
     onVisibleChanged: {
         if(!visible){
@@ -26,8 +29,11 @@ Window {
 
     ScanMapLeftMenu {
         id: scanMapLeftMenu
+        tutoX: scanWindow.width / 2  - width / 2
+        tutoY: scanWindow.height / 2 - height / 2
         visible: scanWindow.visible
         robotModel: scanWindow.robotModel
+        tutorial: scanWindow.tutorial
         anchors {
             top: parent.top
             left: parent.left

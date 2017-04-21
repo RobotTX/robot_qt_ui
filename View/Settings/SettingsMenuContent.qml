@@ -3,7 +3,7 @@ import QtQuick.Controls 2.1
 import "../../Helper/style.js" as Style
 import "../../Model/Robot"
 import "../../View/Custom/"
-import "../../Model"
+import "../../Model/Tutorial"
 
 Frame {
 
@@ -11,7 +11,7 @@ Frame {
     objectName: "settings"
 
     signal close()
-    signal saveSettingsSignal(int mapChoice, double _batteryThreshold, bool showTutorial)
+    signal saveSettingsSignal(int mapChoice, double _batteryThreshold)
 
     property real batteryWarningThreshold
     property int mapChoice
@@ -286,29 +286,6 @@ Frame {
         }
     }
 
-    /// whether or not we display the tutorial to the user (the messages to help him use the features of the application
-    SquareCheckBox {
-        id: box2
-
-        property bool show
-        text: "Show tutorial"
-
-        anchors {
-            top: horizontalSeparation3.bottom
-            topMargin: 16
-            left: parent.left
-            right: parent.right
-        }
-
-        checkable: true
-        checked: true
-
-        onClicked: {
-            show ? tutorial.resetTutorial() : tutorial.hideTutorial()
-            show = !show
-        }
-    }
-
     CancelButton {
         id: cancelButton
 
@@ -318,7 +295,6 @@ Frame {
         anchors.left: parent.left
 
         onClicked: {
-            box2.show = oriShowTutorial;
             settingsPage.mapChoice = oriMapChoice;
             settingsPage.close()
         }
@@ -336,7 +312,7 @@ Frame {
 
         onReleased: {
             batteryWarningThreshold = batterySlider.value;
-            saveSettingsSignal(mapChoice, batterySlider.value, box2.show);
+            saveSettingsSignal(mapChoice, batterySlider.value);
         }
     }
 
@@ -347,7 +323,7 @@ Frame {
         anchors.bottom: parent.bottom
         onReleased: {
             batteryWarningThreshold = batterySlider.value;
-            saveSettingsSignal(mapChoice, batterySlider.value, box2.show);
+            saveSettingsSignal(mapChoice, batterySlider.value);
             settingsPage.close();
         }
     }
@@ -355,8 +331,6 @@ Frame {
     function setSettings(mapChoice, showTutorial){
         oriShowTutorial = showTutorial;
         oriMapChoice = mapChoice;
-
-        box2.show = showTutorial;
         settingsPage.mapChoice = mapChoice;
     }
 }
