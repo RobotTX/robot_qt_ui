@@ -68,14 +68,18 @@ ListModel {
     }
 
     function getMessage(_feature){
-        for(var i = 0; i < count; i++)
+        for(var i = 0; i < count; i++){
             if(get(i).feature === _feature)
                 return get(i).message
+        }
     }
 
     function isDisplayed(_feature){
-        for(var i = 0; i < count; i++)
-            if(get(i).feature === _feature)
+        for(var i = 0; i < count; i++){
+            if(get(i).feature === _feature){
+                console.log("found feature " + _feature)
                 return get(i).show
+            }
+        }
     }
 }

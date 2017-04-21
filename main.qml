@@ -14,6 +14,7 @@ import "View/Map"
 import "View/Point"
 import "View/Robot"
 import "View/ScanMap"
+import "View"
 
 ApplicationWindow {
     id: applicationWindow
@@ -161,6 +162,13 @@ ApplicationWindow {
             id: mergeMap
             robotModel: _robotModel
             tutorial: _tutorial
+
+            TutorialDialog {
+                x: parent.width / 2 - width / 2
+                y: parent.height / 2 - height / 2
+                visible: _tutorial.isDisplayed("merge_map")
+                tutoMessage: _tutorial.getMessage("merge_map")
+            }
         }
 
         ScanMap {
