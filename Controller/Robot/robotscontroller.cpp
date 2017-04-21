@@ -30,6 +30,7 @@ RobotsController::RobotsController(QObject *applicationWindow, QQmlApplicationEn
         connect(this, SIGNAL(setBattery(QVariant, QVariant)), robotModel, SLOT(setBattery(QVariant, QVariant)));
         connect(this, SIGNAL(setScanningOnConnection(QVariant, QVariant)), robotModel, SLOT(setScanningOnConnection(QVariant, QVariant)));
         connect(this, SIGNAL(processingCmd(QVariant, QVariant)), robotModel, SLOT(setProcessingCmd(QVariant, QVariant)));
+        connect(this, SIGNAL(updateLaser(QVariant, QVariant)), robotModel, SLOT(setLaserActivate(QVariant, QVariant)));
 
         /// Signals from qml to the controller
         connect(robotModel, SIGNAL(newHomeSignal(QString, QString, double, double)), parent, SLOT(sendCommandNewHome(QString, QString, double, double)));
@@ -40,6 +41,7 @@ RobotsController::RobotsController(QObject *applicationWindow, QQmlApplicationEn
         connect(robotModel, SIGNAL(playPathSignal(QString)), this, SLOT(sendCommandPlayPath(QString)));
         connect(robotModel, SIGNAL(stopPathSignal(QString)), this, SLOT(sendCommandStopPath(QString)));
         connect(robotModel, SIGNAL(stopScanning(QString)), parent, SLOT(stopScanningSlot(QString)));
+        connect(robotModel, SIGNAL(activateLaser(QString, bool)), parent, SLOT(activateLaserSlot(QString, bool)));
 
 
         /// MainController signals
@@ -310,4 +312,15 @@ void RobotsController::processingCmdSlot(QString ip, bool processing){
 
 void RobotsController::setMessageTopSlot(int status, QString msg){
     emit setMessageTop(status, msg);
+}
+
+void RobotsController::activateLaserSlot(QString ip, bool activate){
+    if(activate)
+        sendCommand(ip, QString("q"));
+    else
+        sendCommand(ip, QString("r"));
+}
+
+void RobotsController::updateLaserSlot(QString ip, bool activated){
+    emit updateLaser(ip, activated);
 }

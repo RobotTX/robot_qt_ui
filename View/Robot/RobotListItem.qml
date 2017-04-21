@@ -187,7 +187,7 @@ Frame {
                         qsTr("Stuck going from " + pathPoints.get(Math.abs(stage  + 2)).pathPointName + " to " + pathPoints.get(Math.abs(stage + 1)).pathPointName);
                 }
             } else
-            qsTr("No Path Assigned");
+                qsTr("No Path Assigned");
         }
         font.pixelSize: 14
         color: {

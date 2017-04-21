@@ -34,6 +34,7 @@ RobotController::RobotController(QQmlApplicationEngine* engine, RobotsController
     connect(commandController, SIGNAL(pausedScanning(QString)), parent, SLOT(pausedScanningSlot(QString)));
     connect(commandController, SIGNAL(processingCmd(QString, bool)), parent, SLOT(processingCmdSlot(QString, bool)));
     connect(commandController, SIGNAL(setMessageTop(int, QString)), parent, SLOT(setMessageTopSlot(int, QString)));
+    connect(commandController, SIGNAL(updateLaser(QString, bool)), parent, SLOT(updateLaserSlot(QString, bool)));
 
     /// Signals to tell the robotsController that the robot just disconnected
     connect(this, SIGNAL(robotIsDead(QString)), parent, SLOT(robotIsDeadSlot(QString)));
