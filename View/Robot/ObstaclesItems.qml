@@ -5,7 +5,5 @@ ObstaclesPaintedItems {
     z: 3
     width: 600
     height: 600
-    onXChanged: console.log("x " + x)
-    onYChanged: console.log("y " + y)
     smooth: false
 }

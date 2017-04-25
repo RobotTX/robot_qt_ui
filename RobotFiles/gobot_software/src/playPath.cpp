@@ -82,7 +82,7 @@ void goalReached(){
 			// the robot successfully reached all its goals
 			std::cout << "I have completed my journey Master Joda, what will you have me do ?" << std::endl;
 			// resets the stage of the path to be able to play the path from the start again
-			stage = 0;
+			stage = 10000;
 			// resets the current goal
 			currentGoal.x = -1;
 		} else {
@@ -99,7 +99,7 @@ void goalReached(){
 
 bool stopPathService(std_srvs::Empty::Request &req, std_srvs::Empty::Response &res){
 	std::cout << "(PlayPath) stopPathService called" << std::endl;
-	/// TODO if action server is up -> cancel
+	/// if action server is up -> cancel
 	if(ac->isServerConnected())
 		ac->cancelAllGoals();
 	currentGoal.x = -1;

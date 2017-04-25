@@ -86,10 +86,14 @@ ListModel {
     function setStage(ip, stage){
         for(var i = 0; i < count; i++)
             if(get(i).ip === ip){
-                if(get(i).stage >= 0 && stage < 0)
+                if(Math.abs(get(i).stage) < 10000 && stage >= 9999){
+                    setMessageTop(2, "The robot \"" + get(i).name + "\" just completed its path");
+                    stage = 0;
+                    setProperty(i, "playingPath", false);
+                    stopPathSignal(ip);
+                } else if(get(i).stage >= 0 && stage < 0)
                     setMessageTop(0, "The robot \"" + get(i).name + "\" is currently stuck in its path to \"" + get(i).pathPoints.get(Math.abs(stage + 1)).pathPointName + "\"");
                 setProperty(i, "stage", stage);
-
             }
     }
 
