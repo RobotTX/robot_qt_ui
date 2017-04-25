@@ -54,6 +54,16 @@ MainController::MainController(QQmlApplicationEngine *engine, QObject* parent) :
         connect(applicationWindow, SIGNAL(requestOrSendMap(QString, bool)), this, SLOT(requestOrSendMap(QString, bool)));
         connect(this, SIGNAL(emitBatteryThreshold(QVariant)), applicationWindow, SLOT(setBatteryThreshold(QVariant)));
 
+        /// to initialize tutorial messages
+        QObject* tuto = applicationWindow->findChild<QObject*>("tutorialModel");
+        if(tuto){
+            connect(this, SIGNAL(updateTutorialMessageVisibility(QVariant, QVariant)), tuto, SLOT(setVisibleMessage(QVariant, QVariant)));
+            connect(tuto, SIGNAL(updateFile(int, bool)), this, SLOT(updateTutoFile(int, bool)));
+        } else {
+            qDebug() << "could not find tuto model";
+            Q_UNREACHABLE();
+        }
+
         QObject* mapMenuFrame = applicationWindow->findChild<QObject*>("mapMenuFrame");
         if(mapMenuFrame){
             connect(mapMenuFrame, SIGNAL(importMap(QString)), this, SLOT(loadMapConfig(QString)));
@@ -104,7 +114,6 @@ MainController::MainController(QQmlApplicationEngine *engine, QObject* parent) :
                             batteryThreshold = list.at(1).toDouble();
                         showTutorial = list.at(2).toInt() == 1;
                     }
-                    qDebug() << "Emitting values" << mapChoice << batteryThreshold << showTutorial;
                     emit emitSettings(mapChoice, showTutorial);
                     emit emitBatteryThreshold(batteryThreshold);
                }
@@ -117,6 +126,46 @@ MainController::MainController(QQmlApplicationEngine *engine, QObject* parent) :
         qDebug() << "MainController::MainController We are supposed to only have 1 item, the ApplicationWindow";
         Q_UNREACHABLE();
     }
+
+    QFile tutoFile(QDir::currentPath() + QDir::separator() + "tutorial.txt");
+    if(tutoFile.exists() && tutoFile.open(QIODevice::ReadOnly)){
+        QTextStream in(&tutoFile);
+        int counter(0);
+
+        while(!in.atEnd()){
+
+            QString line = in.readLine();
+
+            switch(counter++){
+
+            /// careful to either cast the int to bool or to use == on the qml side instead of === which
+            /// also looks at the type
+            case 0: updateTutorialMessageVisibility("edit_map", static_cast<bool>(line.toInt()));
+                break;
+
+            case 1: updateTutorialMessageVisibility("merge_map", static_cast<bool>(line.toInt()));
+                break;
+
+            case 2: updateTutorialMessageVisibility("recover_position", static_cast<bool>(line.toInt()));
+                break;
+
+            case 3: updateTutorialMessageVisibility("scan_map", static_cast<bool>(line.toInt()));
+                break;
+            default:
+                Q_UNREACHABLE();
+                break;
+            }
+        }
+        tutoFile.close();
+    } else {
+        tutoFile.open(QIODevice::ReadWrite);
+        QTextStream out(&tutoFile);
+        /// 1 for each message
+        /// NOTE if a message was to be added, you would have to modify this as well as the code above
+        out << '1' << '\n' << '1' << '\n' << '1' << '\n' << '1';
+        tutoFile.close();
+    }
+
 }
 
 void MainController::checkPoint(QString name, QString oldName, double x, double y){
@@ -463,4 +512,31 @@ void MainController::sendScanGoal(QString ip, double x, double y){
 
 void MainController::setMessageTopSlot(int status, QString msg){
     emit setMessageTop(status, msg);
+}
+
+void MainController::updateTutoFile(int index, bool visible){
+    QFile tutoFile(QDir::currentPath() + QDir::separator() + "tutorial.txt");
+    tutoFile.open(QIODevice::ReadWrite);
+    int counter(0);
+    QStringList list;
+    QTextStream in(&tutoFile);
+    while(!in.atEnd()){
+
+        QString line = in.readLine();
+
+        /// this is the value that needs to be replaced
+        if(counter++ == index)
+            line = QString::number(visible);
+        list.append(line);
+    }
+
+    /// erases the old content
+    tutoFile.resize(0);
+
+    QTextStream out(&tutoFile);
+    /// 1 for each message
+    /// NOTE if a message was to be added, you would have to modify this as well as the code above
+    for(int i = 0; i < list.size(); i++)
+        out << list.at(i) << '\n';
+    tutoFile.close();
 }

@@ -5,6 +5,7 @@
 #include "View/Map/mergemapspainteditem.h"
 #include "View/Robot/scanmappainteditem.h"
 #include "View/Robot/obstaclespainteditem.h"
+
 #include <QtQuick/QQuickView>
 
 int main(int argc, char *argv[]) {

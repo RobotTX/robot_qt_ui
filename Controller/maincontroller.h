@@ -13,6 +13,7 @@ class RobotsController;
 #include <QByteArray>
 #include <QPointer>
 #include <QImage>
+#include <QDir>
 
 class MainController : public QObject {
 
@@ -237,6 +238,13 @@ private slots:
      * of the application
      */
     void setMessageTopSlot(int status, QString msg);
+    /**
+     * @brief updateTutoFile
+     * @param index
+     * @param visible
+     * needs to replace the index'th value by <visible> in tutorial.txt
+     */
+    void updateTutoFile(int index, bool visible);
 
 signals:
     /// those signals are connected to the qml model to keep the data consistent between the c++ side and the qml side
@@ -255,6 +263,13 @@ signals:
      */
     void sendImageToMerge(QImage, double resolution);
     void openWarningDialog(QVariant title, QVariant msg);
+    /**
+     * @brief updateTutorialMessageVisibility
+     * @param feature
+     * @param visible
+     * updates the visibility of the message for the feature <feature>
+     */
+    void updateTutorialMessageVisibility(QVariant feature, QVariant visible);
 
 private:
     QPointer<MainMenuController> mainMenuController;

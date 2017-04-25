@@ -2,6 +2,8 @@ import QtQuick 2.7
 import QtQuick.Controls 2.1
 
 ListModel {
+    id: listmod
+    signal updateFile(int index, bool value)
 
     ListElement {
         feature: "edit_map"
@@ -46,27 +48,20 @@ ListModel {
     function hideMessage(_feature){
         console.log("hiding feature " + _feature)
         for(var i = 0; i < count; i++)
-            if(get(i).feature === _feature)
+            if(get(i).feature === _feature){
                 get(i).show = false
+                listmod.updateFile(i, false)
+            }
     }
 
     function showMessage(_feature){
         console.log("showing feature " + _feature)
-        for(var i = 0; i < count; i++)
-            if(get(i).feature === _feature)
+        for(var i = 0; i < count; i++){
+            if(get(i).feature === _feature){
                 get(i).show = true
-    }
-
-    function resetTutorial(){
-        console.log("resetting the tutorial")
-        for(var i = 0; i < count; i++)
-            get(i).show = true
-    }
-
-    function hideTutorial(){
-        console.log("hiding the tutorial")
-        for(var i = 0; i < count; i++)
-            get(i).show = false
+                listmod.updateFile(i, true)
+            }
+        }
     }
 
     function getMessage(_feature){
@@ -78,10 +73,16 @@ ListModel {
 
     function isDisplayed(_feature){
         for(var i = 0; i < count; i++){
-            if(get(i).feature === _feature){
-                console.log("is displayed called found feature " + _feature)
+            if(get(i).feature === _feature)
                 return get(i).show
-            }
+        }
+    }
+
+    // NOTE: do not use this function except for initialization as it is not connected to the c++ side to update the file
+    function setVisibleMessage(_feature, visible){
+        for(var i = 0; i < count; i++){
+            if(get(i).feature === _feature)
+                get(i).show = visible;
         }
     }
 }

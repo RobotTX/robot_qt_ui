@@ -32,7 +32,6 @@ ApplicationWindow {
             setY(Screen.height / 2 - height / 2);
         }
 
-    // TODO add paths
     // To save the current configuration -> zoom, center (paths and points retrieved on the c++ side)
     signal mapConfig(string file_name, double zoom, double centerX, double centerY)
     signal shortcutAddRobot()
@@ -74,6 +73,7 @@ ApplicationWindow {
 
         Tutorial {
             id: _tutorial
+            objectName: "tutorialModel"
         }
 
         /// NOTE Just for testing, to remove later
@@ -152,10 +152,7 @@ ApplicationWindow {
 
         EditMap {
             id: editMap
-            onVisibleChanged: {
-                console.log("just changed to " + mapView.mapSrc);
-                imgSource = mapView.mapSrc;
-            }
+            onVisibleChanged: imgSource = mapView.mapSrc
             tutorial: _tutorial
         }
 
@@ -189,7 +186,7 @@ ApplicationWindow {
 
     function openMapChoiceMessageDialog(ip, robotIsOlder){
         if(dialog.visible){
-            /// TODO fix this (if more than 1 robot connect, has a wrong map, and we were already asking to choose a map for the previous robot)
+            /// TODO fix this (if more than 1 robot connect, has a wrong map, and we were already asking to choose a map for the previous robot), MORE ROBOTS NEEDED
             console.log("We are already choosing a map for the robot, try again later");
         } else {
             dialog.title = qsTr("Choose which map to use");

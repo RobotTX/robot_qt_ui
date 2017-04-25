@@ -91,10 +91,6 @@ public:
      */
     void sendMapToAllRobots(QString mapId, QString date, QString mapMetadata, QImage img);
 
-public slots:
-    /// NOTE remove from here when tests ok
-    void startedScanningSlot(const QString ip);
-
 private:
     void launchServer(void);
 
@@ -128,6 +124,7 @@ private slots:
     void setMessageTopSlot(int status, QString msg);
     void updateLaserSlot(QString ip, bool activated);
     void activateLaserSlot(QString ip, bool activate);
+    void startedScanningSlot(const QString ip);
 
 signals:
     void stopRobotServerWorker(void);
