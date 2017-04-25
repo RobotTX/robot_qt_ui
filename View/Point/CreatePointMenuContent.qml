@@ -97,12 +97,12 @@ Frame {
             right: parent.right
             topMargin: 8
         }
-
+/*
         onEditingFinished: {
             if(saveButton.canSave)
                 saveButton.released()
         }
-
+*/
         background: Rectangle {
             radius: 2
             border.color: nameError ? Style.errorColor : pointTextField.activeFocus ? Style.lightBlue : Style.lightGreyBorder

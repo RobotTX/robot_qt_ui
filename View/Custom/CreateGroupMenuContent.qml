@@ -54,18 +54,21 @@ Frame {
             right: parent.right
         }
         anchors.topMargin: 8
-
+/*
         onEditingFinished: {
             if(saveButton.canSave)
                 saveButton.released()
         }
-
+*/
         background: Rectangle {
             radius: 2
             border.color: !saveButton.canSave ? Style.errorColor : groupTextField.activeFocus ? Style.lightBlue : Style.lightGreyBorder
             border.width: groupTextField.activeFocus || !saveButton.canSave ? 3 : 1
         }
-        onTextChanged: checkGroup(Helper.formatName(groupTextField.text))
+        onTextChanged: {
+            console.log(text)
+            checkGroup(Helper.formatName(groupTextField.text))
+        }
     }
 
     CancelButton {

@@ -60,12 +60,12 @@ Frame {
                 right: cancelName.left
                 rightMargin: 5
             }
-
+/*
             onEditingFinished: {
                 if(saveName.enabled)
                     saveName.clicked()
             }
-
+*/
             background: Rectangle {
                 radius: 2
 

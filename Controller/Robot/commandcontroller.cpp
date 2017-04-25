@@ -93,7 +93,7 @@ void CommandController::cmdAnswerSlot(QString answer){
                 case 'n':
                     /// Sent the new home to the robot
                     emit updateHome(ip, list.at(2), list.at(3).toFloat(), list.at(4).toFloat());
-                    emit setMessageTop(2, "Updated the home of \"" + robotName + "\" to \"" + list.at(2) + "\"");
+                    emit setMessageTop(2, "Moved the home of \"" + robotName + "\" to \"" + list.at(2) + "\"");
                 break;
                 /*case 'o':
                     /// TODO go home system

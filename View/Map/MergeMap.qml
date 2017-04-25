@@ -19,13 +19,14 @@ Window {
     // no need to do it twice, on the hideEvent or the showEvent, both would work, here we clean the map on the hideEvent
     onVisibleChanged: {
         _mapsList.clear();
-        if(!visible){
-            resetWidget();
+        if(!visible)
             tutorialD.close();
-        }
-        else
+
+        else {
+            resetWidget();
             if(tutorial.isDisplayed("merge_map"))
                 tutorialD.open()
+        }
     }
 
     width: 1000
@@ -276,7 +277,7 @@ Window {
             append({
                 "name": name,
                 "ip": ip
-            });zz
+            });
         }
 
         function removeRobot(id){

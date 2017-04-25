@@ -355,7 +355,6 @@ void MainController::checkMapInfoSlot(QString ip, QString mapId, QString mapDate
         qDebug() << "MainController::updateMapInfo Robot" << ip << "has the current map";
     } else {
         QDateTime mapDateTime = QDateTime::fromString(mapDate, "yyyy-MM-dd-hh-mm-ss");
-        //qDebug() << "Robot" << robotName << "comparing date" << mapDateTime << "and" << map->getDateTime();
 
         bool robotOlder = (mapDateTime <= mapController->getDateTime());
         if(robotOlder){
@@ -447,7 +446,7 @@ void MainController::processMapForMerge(QByteArray mapArray, QString resolution)
 
 void MainController::resetMapConfigurationAfterMerge(QString file_name){
     qDebug() << "MainController::resetMapConfigurationAfterMerge" << file_name;
-    mapController->requestReloadMap("file://" + file_name);
+    mapController->requestReloadMap("file:/" + file_name);
     pointController->clearPoints();
     pathController->clearPaths();
     saveMapConfig(file_name, 1.0, 0.0, 0.0);

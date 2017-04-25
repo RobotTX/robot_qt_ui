@@ -89,6 +89,7 @@ void EditMapPaintedItem::addItem(const SHAPE shape, const QColor color, const in
 }
 
 void EditMapPaintedItem::clearMapItems(){
+    qDebug() << "clearMapItems called";
     items.clear();
     undoItems.clear();
     update();

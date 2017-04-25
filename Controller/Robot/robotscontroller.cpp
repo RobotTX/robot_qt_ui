@@ -223,6 +223,7 @@ void RobotsController::newMapFromRobotSlot(const QString ip, const QByteArray ma
 }
 
 void RobotsController::requestMap(const QString ip){
+    qDebug() << "Requesting the map from robot at ip" << ip;
     if(!receivingMap){
         sendCommand(ip, QString("s") + QChar(31) + QString::number(1));
         receivingMap = true;

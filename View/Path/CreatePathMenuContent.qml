@@ -132,12 +132,12 @@ Frame {
                 leftMargin: 20
                 rightMargin: 20
             }
-
+/*
             onEditingFinished: {
                 if(saveButton.canSave)
                     saveButton.released()
             }
-
+*/
             background: Rectangle {
                 radius: 2
                 border.color: nameError ? Style.errorColor : pathTextField.activeFocus ? Style.lightBlue : Style.lightGreyBorder

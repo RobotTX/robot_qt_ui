@@ -41,10 +41,10 @@ Window {
     // to clear the map of its items everytime we show the window
     onVisibleChanged: {
         // to reset the map on c++ side
-        dialog.resetMap();
+        if(visible)
+            dialog.resetMap();
         // to reset the toolbar
         blackButton.checked = true;
-        dotButton.checked = true;
         thickness = 1
         if(!visible)
             tutorialD.close()
@@ -144,6 +144,7 @@ Window {
             checkable: true
             checked: true
             src: "qrc:/icons/hand"
+            ButtonGroup.group: shapeGroup
 
             anchors {
                 verticalCenter: parent.verticalCenter
@@ -251,7 +252,6 @@ Window {
             CustomToolTip { text: "Draw a point on the map" }
 
             checkable: true
-            checked: true
 
             src: "qrc:/icons/dot"
 

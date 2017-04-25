@@ -219,6 +219,7 @@ void MapController::centerMap(const double centerX, const double centerY, const 
 }
 
 void MapController::saveEditedImage(const QString location){
+    qDebug() << "saving edited image to" << location;
     /// to save the image being edited in the edit map window
     editMapController->getPaintedItem()->saveImage(map->getMapImage(), location);
     /// and request the main map to be reload on the qml side
