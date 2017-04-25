@@ -28,9 +28,9 @@ ApplicationWindow {
     minimumHeight: 600
     title: qsTr("GT Gobot")
     Component.onCompleted: {
-            setX(Screen.width / 2 - width / 2);
-            setY(Screen.height / 2 - height / 2);
-        }
+        setX(Screen.width / 2 - width / 2);
+        setY(Screen.height / 2 - height / 2);
+    }
 
     // To save the current configuration -> zoom, center (paths and points retrieved on the c++ side)
     signal mapConfig(string file_name, double zoom, double centerX, double centerY)

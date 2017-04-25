@@ -277,7 +277,7 @@ void RobotController::robotIsDeadSlot(void){
 
 void RobotController::updateRobotInfo(const QString robotInfo){
 
-    QStringList strList = robotInfo.split(static_cast<u_char>(31), QString::SkipEmptyParts);
+    QStringList strList = robotInfo.split(QChar(31), QString::SkipEmptyParts);
     qDebug() << "RobotController::updateRobotInfo" << strList;
 
     if(strList.size() > 7){
