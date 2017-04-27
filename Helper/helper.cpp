@@ -103,7 +103,7 @@ namespace Helper {
         QPair<QPair<QString, QString>, QStringList> getPathFromFile(const QString robotName){
             /// QPair<QPair<groupName, pathName>, date>
             QPair<QPair<QString, QString>, QStringList> pathInfo;
-            QFile fileInfo(QApplication::applicationDirPath() + QDir::separator() + "robots_paths" + QDir::separator() + robotName + "_path");
+            QFile fileInfo(Helper::getAppPath() + QDir::separator() + "robots_paths" + QDir::separator() + robotName + "_path");
             if(fileInfo.open(QIODevice::ReadWrite)){
                 QRegExp regex("[-\n%]");
                 QString content = fileInfo.readAll();
@@ -122,7 +122,7 @@ namespace Helper {
 
         void updateHomeFile(const QString robotName, const QPointF& robot_home_position, const QStringList date){
             qDebug() << "updatehomefile" << robotName << date.size();
-            QFile fileWriteHome(QApplication::applicationDirPath() + QDir::separator() + "robots_homes" + QDir::separator() + robotName);
+            QFile fileWriteHome(Helper::getAppPath() + QDir::separator() + "robots_homes" + QDir::separator() + robotName);
             if(fileWriteHome.open(QIODevice::ReadWrite)){
                 QTextStream out(&fileWriteHome);
                 out << robot_home_position.x() << " " << robot_home_position.y() << "\n";
@@ -136,7 +136,7 @@ namespace Helper {
 
         QPair<QPointF, QStringList> getHomeFromFile(const QString robotName){
             /// retrieves the home point of the robot if the robot has one
-            QFile fileInfo(QApplication::applicationDirPath() + QDir::separator() + "robots_homes" + QDir::separator() + robotName);
+            QFile fileInfo(Helper::getAppPath() + QDir::separator() + "robots_homes" + QDir::separator() + robotName);
             QPointF p;
             QStringList dateLastModification;
             if(fileInfo.open(QIODevice::ReadWrite)){
@@ -180,7 +180,7 @@ namespace Helper {
         int ret = a % b;
         return (ret < 0) ? ret + b : ret;
     }
-/*
+
     QString getAppPath(void){
 
         QDir appDir = QApplication::applicationDirPath();
@@ -189,7 +189,7 @@ namespace Helper {
             if (appDir.dirName().toLower() == "debug" || appDir.dirName().toLower() == "release")
                 appDir.cdUp();
         #elif defined(Q_OS_MAC)
-        *
+        */
         #if defined(Q_OS_MAC)
             if (appDir.dirName() == "MacOS") {
                 appDir.cdUp();
@@ -199,5 +199,5 @@ namespace Helper {
         #endif
 
         return appDir.path();
-    }*/
+    }
 }
