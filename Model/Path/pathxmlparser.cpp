@@ -138,6 +138,8 @@ void PathXMLParser::readPaths(PathController *pathController, const QString file
 
     QXmlStreamReader xmlReader;
 
+    /// TODO if cannot open -> create and call clear to create group
+
     try {
         QFile file(fileName);
 
@@ -226,7 +228,7 @@ void PathXMLParser::readPaths(PathController *pathController, const QString file
     }
 
     catch(std::exception e) {
-        qDebug() << "Exception in PathXMLParser::readPoints :" << e.what();
+        qDebug() << "Exception in PathXMLParser::readPaths :" << e.what();
     }
 }
 
