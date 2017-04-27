@@ -231,7 +231,7 @@ void RobotController::mapReceivedSlot(const QByteArray mapArray, const int who, 
             qDebug() << "RobotController::mapReceivedSlot received a map while recovering";
             /*QString robotName = robotsController->getRobots()->getRobotViewByIp(ipAddress)->getRobot()->getName();
             QImage image = mapController->getImageFromArray(mapArray, map_width, map_height, false);
-            image.save(QApplication::applicationDirPath() + QDir::separator() + "brutos", "PNG");
+            image.save(Helper::getAppPath() + QDir::separator() + "brutos", "PNG");
             emit receivedScanMap(robotName, image, resolution.toDouble());*/
         break;
         case 2:

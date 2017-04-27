@@ -53,4 +53,6 @@ namespace Helper {
     QString formatName(const QString name);
 
     int mod(const int a, const int b);
+
+    QString getAppPath(void);
 }
