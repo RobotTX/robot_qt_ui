@@ -40,7 +40,6 @@ void PathXMLParser::save(PathController *pathController, const QString fileName)
             xmlWriter.writeStartElement("path");
             xmlWriter.writeTextElement("name", l.key());
 
-
             /// For each point of the path
             for(int k = 0; k < l.value()->getPathPointVector().size(); k++){
                 xmlWriter.writeStartElement("pathpoint");
@@ -53,7 +52,6 @@ void PathXMLParser::save(PathController *pathController, const QString fileName)
             xmlWriter.writeEndElement();
         }
         xmlWriter.writeEndElement();
-
 
         QMapIterator<QString, QPointer<PathGroup>> i(pathController->getPaths()->getGroups());
         /// For each group except "No Group"
@@ -97,7 +95,6 @@ void PathXMLParser::save(PathController *pathController, const QString fileName)
     }
 }
 
-
 QString PathXMLParser::readNameElement(QXmlStreamReader& xmlReader){
     QString nameElement("");
     while(!xmlReader.atEnd()){
@@ -140,10 +137,9 @@ void PathXMLParser::readPaths(PathController *pathController, const QString file
 
     /// TODO if cannot open -> create and call clear to create group
 
-    try {
-        QFile file(fileName);
+    QFile file(fileName);
 
-        file.open(QFile::ReadWrite | QFile::Text);
+    if(file.exists() && file.open(QFile::ReadWrite | QFile::Text)){
 
         xmlReader.setDevice(&file);
         xmlReader.readNext();
@@ -225,10 +221,8 @@ void PathXMLParser::readPaths(PathController *pathController, const QString file
             }
         }
         file.close();
-    }
-
-    catch(std::exception e) {
-        qDebug() << "Exception in PathXMLParser::readPaths :" << e.what();
+    } else {
+        clear(pathController, fileName);
     }
 }
 
@@ -251,9 +245,11 @@ int PathXMLParser::readWaitTimeElement(QXmlStreamReader &xmlReader){
 }
 
 /// resets the file, only writting an empty default group
-void PathXMLParser::clear(const QString fileName){
+void PathXMLParser::clear(PathController *pathController, const QString fileName){
+
     try {
         QFile file(fileName);
+        file.resize(0);
         file.open(QIODevice::WriteOnly);
 
         QXmlStreamWriter xmlWriter(&file);
@@ -264,6 +260,7 @@ void PathXMLParser::clear(const QString fileName){
 
         xmlWriter.writeStartElement("group");
         xmlWriter.writeTextElement("name", NO_GROUP_NAME);
+        pathController->addGroup(NO_GROUP_NAME);
 
         xmlWriter.writeEndElement();
         xmlWriter.writeEndElement();

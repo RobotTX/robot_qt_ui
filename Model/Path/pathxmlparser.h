@@ -30,7 +30,7 @@ private:
     static QString readNameElement(QXmlStreamReader &xmlReader);
     static float readCoordinateElement(QXmlStreamReader &xmlReader);
     static int readWaitTimeElement(QXmlStreamReader &xmlReader);
-    static void clear(const QString fileName);
+    static void clear(PathController *pathController, const QString fileName);
 };
 
 #endif /// PATHXMLPARSER_H
