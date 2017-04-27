@@ -1,5 +1,6 @@
 #include "obstaclespainteditem.h"
 #include <QPainter>
+#include <QtMath>
 
 ObstaclesPaintedItem::ObstaclesPaintedItem(QQuickItem *parent) : QQuickPaintedItem(parent), activated(false) {
     setFlag(QQuickItem::ItemHasContents, true);
@@ -20,8 +21,8 @@ void ObstaclesPaintedItem::updateObstacles(float angle_min, float angle_max, flo
         /// for improved performance
         std::for_each(ranges.begin(), ranges.end(), [&](const float range) {
             /// rotation is done on the qml side
-            obstacles_.push_back(QPointF(range * cos(orientation_*3.14159/180 - 3.14159/2 + angle_min + i*angle_increment) * 20 ,
-                                     range * sin(orientation_*3.14159/180 - 3.14159/2 + angle_min + i*angle_increment) * 20)); i--; });
+            obstacles_.push_back(QPointF(range * qCos(orientation_*3.14159/180 - 3.14159/2 + angle_min + i*angle_increment) * 20 ,
+                                     range * qSin(orientation_*3.14159/180 - 3.14159/2 + angle_min + i*angle_increment) * 20)); i--; });
 
         update();
     } else

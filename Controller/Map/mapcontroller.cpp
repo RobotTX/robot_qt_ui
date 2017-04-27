@@ -1,4 +1,5 @@
 #include "mapcontroller.h"
+#include <QApplication>
 #include <QDebug>
 #include <QDir>
 #include <QFileDialog>
@@ -52,7 +53,7 @@ MapController::MapController(QQmlApplicationEngine* engine, QObject *application
 
 void MapController::initializeMap(void){
 
-    QString currentPathFile = QDir::currentPath() + QDir::separator() + "currentMap.txt";
+    QString currentPathFile = QApplication::applicationDirPath() + QDir::separator() + "currentMap.txt";
     qDebug() << currentPathFile;
     std::ifstream file(currentPathFile.toStdString(), std::ios::in);
 
@@ -72,7 +73,7 @@ void MapController::initializeMap(void){
             QString fileName = qMapFile;
             fileName.remove(0, fileName.lastIndexOf(QDir::separator()) + 1);
             fileName.remove(fileName.length() - 4, 4);
-            QString configPath = QDir::currentPath() + QDir::separator() + "mapConfigs" + QDir::separator() + fileName + ".config";
+            QString configPath = QApplication::applicationDirPath() + QDir::separator() + "mapConfigs" + QDir::separator() + fileName + ".config";
 
             qDebug() << "Map::initializeMap config path :" << configPath;
             /// We get the map informations from the map config file
@@ -103,7 +104,7 @@ void MapController::initializeMap(void){
 
 void MapController::savePositionSlot(const double posX, const double posY, const double zoom, const QString mapSrc){
 
-    QString currentPathFile = QDir::currentPath() + QDir::separator() + "currentMap.txt";
+    QString currentPathFile = QApplication::applicationDirPath() + QDir::separator() + "currentMap.txt";
     std::ofstream file(currentPathFile.toStdString(), std::ios::out | std::ios::trunc);
 
     /// saves the current configuration into the current configuration file
@@ -130,7 +131,7 @@ void MapController::savePositionSlot(const double posX, const double posY, const
 
 void MapController::loadPositionSlot(){
     qDebug() << "Map::loadStateSlot called";
-    QString currentPathFile = QDir::currentPath() + QDir::separator() + "currentMap.txt";
+    QString currentPathFile = QApplication::applicationDirPath() + QDir::separator() + "currentMap.txt";
     std::ifstream file(currentPathFile.toStdString(), std::ios::in);
 
     if(file){
@@ -206,7 +207,7 @@ bool MapController::loadMapConfig(const QString fileName) {
             /// centers on (centerX, centerY) with the proper zoom coefficient
             centerMap(centerX, centerY, zoom);
             /// saves the configuration contained in the file <fileName> as the current configuration
-            saveMapConfig(QDir::currentPath() + QDir::separator() + "currentMap.txt", centerX, centerY, zoom);
+            saveMapConfig(QApplication::applicationDirPath() + QDir::separator() + "currentMap.txt", centerX, centerY, zoom);
             file.close();
             return true;
         }
@@ -286,14 +287,14 @@ void MapController::newMapFromRobot(const QByteArray& mapArray, const QString ma
     map->setMapImage(getImageFromArray(mapArray, map->getWidth(), map->getHeight(), true));
     map->setMapId(QUuid(mapId));
     map->setDateTime(QDateTime::fromString(mapDate, "yyyy-MM-dd-hh-mm-ss"));
-    map->getMapImage().save(QDir::currentPath() + QDir::separator() + "mapConfigs" + QDir::separator() + "tmpImage.pgm", "PGM");
-    if(setMapFile(QDir::currentPath() + QDir::separator() + "mapConfigs" + QDir::separator() + "tmpImage.pgm")){
+    map->getMapImage().save(QApplication::applicationDirPath() + QDir::separator() + "mapConfigs" + QDir::separator() + "tmpImage.pgm", "PGM");
+    if(setMapFile(QApplication::applicationDirPath() + QDir::separator() + "mapConfigs" + QDir::separator() + "tmpImage.pgm")){
         double centerX = 0;
         double centerY = 0;
         double zoom = 0;
 
         /// Save in currentMap.txt
-        QFile file(QDir::currentPath() + QDir::separator() + "currentMap.txt");
+        QFile file(QApplication::applicationDirPath() + QDir::separator() + "currentMap.txt");
         if(file.open(QFile::ReadWrite)){
             QTextStream stream(&file);
             QString osef;
@@ -301,7 +302,7 @@ void MapController::newMapFromRobot(const QByteArray& mapArray, const QString ma
             file.close();
         }
 
-        QFile file2(QDir::currentPath() + QDir::separator() + "currentMap.txt");
+        QFile file2(QApplication::applicationDirPath() + QDir::separator() + "currentMap.txt");
         if(file2.open(QFile::WriteOnly|QFile::Truncate)){
             QTextStream stream(&file2);
             stream << map->getMapFile() << endl
@@ -312,7 +313,7 @@ void MapController::newMapFromRobot(const QByteArray& mapArray, const QString ma
                  << map->getResolution() << endl
                  << map->getMapId().toString();
             file.close();
-            saveMapConfig(QDir::currentPath() + QDir::separator() + "mapConfigs" + QDir::separator() + "tmpImage.config", centerX, centerY, zoom);
+            saveMapConfig(QApplication::applicationDirPath() + QDir::separator() + "mapConfigs" + QDir::separator() + "tmpImage.config", centerX, centerY, zoom);
         }
     }
 }

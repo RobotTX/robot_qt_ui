@@ -1,6 +1,7 @@
 #include "robotcontroller.h"
 #include <QDir>
 #include <QDebug>
+#include <QtMath>
 #include <QQmlApplicationEngine>
 #include "Helper/helper.h"
 #include "Controller/Robot/robotscontroller.h"
@@ -230,7 +231,7 @@ void RobotController::mapReceivedSlot(const QByteArray mapArray, const int who, 
             qDebug() << "RobotController::mapReceivedSlot received a map while recovering";
             /*QString robotName = robotsController->getRobots()->getRobotViewByIp(ipAddress)->getRobot()->getName();
             QImage image = mapController->getImageFromArray(mapArray, map_width, map_height, false);
-            image.save(QDir::currentPath() + QDir::separator() + "brutos", "PNG");
+            image.save(QApplication::applicationDirPath() + QDir::separator() + "brutos", "PNG");
             emit receivedScanMap(robotName, image, resolution.toDouble());*/
         break;
         case 2:
@@ -265,8 +266,8 @@ void RobotController::updateRobot(const float posX, const float posY, const floa
     ping();
     QPointF pos = Helper::Convert::robotCoordToPixelCoord(QPointF(posX, posY), -57.4575, -48.2396, 0.05, 2048);
     paintedItem->setProperty("orientation_", -ori * 180.0 / PI + 90);
-    paintedItem->setProperty("_x", pos.x()-300 + 5 * cos((paintedItem->orientation() - 90) / 180.0*3.14159));
-    paintedItem->setProperty("_y", pos.y()-300 + 5 * sin((paintedItem->orientation() - 90) / 180.0*3.14159));
+    paintedItem->setProperty("_x", pos.x()-300 + 5 * qCos((paintedItem->orientation() - 90) / 180.0*3.14159));
+    paintedItem->setProperty("_y", pos.y()-300 + 5 * qSin((paintedItem->orientation() - 90) / 180.0*3.14159));
     emit newRobotPos(ip, posX, posY, ori);
 }
 

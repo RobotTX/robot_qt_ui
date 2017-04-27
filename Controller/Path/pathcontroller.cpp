@@ -1,4 +1,5 @@
 #include "pathcontroller.h"
+#include <QApplication>
 #include <QDir>
 #include <QDebug>
 #include <QImage>
@@ -70,7 +71,7 @@ PathController::PathController(QObject *applicationWindow, MainController* paren
         Q_UNREACHABLE();
     }
 
-    currentPathsFile = QDir::currentPath() + QDir::separator() + "currentPaths.xml";
+    currentPathsFile = QApplication::applicationDirPath() + QDir::separator() + "currentPaths.xml";
     qDebug() << "PathController::PathController" << currentPathsFile;
     loadPaths(currentPathsFile);
 }

@@ -1,4 +1,5 @@
 #include "pointcontroller.h"
+#include <QApplication>
 #include <QDebug>
 #include <QImage>
 #include <QDir>
@@ -62,7 +63,7 @@ PointController::PointController(QObject *applicationWindow, MainController* par
         Q_UNREACHABLE();
     }
 
-    currentPointsFile = QDir::currentPath() + QDir::separator() + "currentPoints.xml";
+    currentPointsFile = QApplication::applicationDirPath() + QDir::separator() + "currentPoints.xml";
     qDebug() << "PointController::PointController" << currentPointsFile;
     loadPoints(currentPointsFile);
 }
