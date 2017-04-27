@@ -1,4 +1,5 @@
 #include "helper.h"
+#include <QApplication>
 #include <QTime>
 #include <QDebug>
 #include <QFile>
@@ -182,7 +183,7 @@ namespace Helper {
 
     QString getAppPath(void){
 
-        QString appDir = QDir::currentPath();
+        QDir appDir = QApplication::applicationDirPath();
 
         #if defined(Q_OS_WIN)
             if (appDir.dirName().toLower() == "debug" || appDir.dirName().toLower() == "release")
@@ -195,6 +196,6 @@ namespace Helper {
             }
         #endif
 
-        return appDir;
+        return appDir.path();
     }
 }
