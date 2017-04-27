@@ -16,13 +16,14 @@ Menu {
 
     background: Rectangle {
         implicitWidth: parent.width
-        implicitHeight: pathModel.count * Style.menuItemHeight
+        implicitHeight: pathModel.count * (1 + Style.menuItemHeight) - 1
         color: Style.lightGreyBackground
         border.color: Style.lightGreyBorder
         radius: 5
     }
 
     ColumnLayout {
+        spacing: 0
         anchors {
             left: parent.left
             right: parent.right
@@ -41,7 +42,7 @@ Menu {
                         verticalCenter: parent.verticalCenter
                     }
                 }
-                Layout.preferredHeight: Style.menuItemHeight
+                Layout.preferredHeight: 1 + Style.menuItemHeight
                 Layout.preferredWidth: parent.width
                 leftPadding: Style.menuItemLeftPadding
 
@@ -65,13 +66,14 @@ Menu {
 
                     background: Rectangle {
                         implicitWidth: parent.width
-                        implicitHeight: paths.count * Style.menuItemHeight
+                        implicitHeight: paths.count * (1 + Style.menuItemHeight) - 1
                         color: Style.lightGreyBackground
                         border.color: Style.lightGreyBorder
                         radius: 5
                     }
 
                     ColumnLayout {
+                        spacing: 0
                         anchors {
                             left: parent.left
                             right: parent.right
@@ -85,7 +87,7 @@ Menu {
                                     right: parent.right
                                 }
                                 leftPadding: Style.menuItemLeftPadding
-                                Layout.preferredHeight: Style.menuItemHeight
+                                Layout.preferredHeight: 1 + Style.menuItemHeight
                                 Layout.preferredWidth: parent.width
 
                                 contentItem: CustomLabel {

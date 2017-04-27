@@ -23,8 +23,8 @@ Frame {
 
     property Tutorial tutorial
 
-    property int tutoX
-    property int tutoY
+    property int scanWindowWidth
+    property int scanWindowHeight
 
     width: Style.smallMenuWidth
     padding: 0
@@ -298,8 +298,8 @@ Frame {
 
     TutorialDialog {
         id: tutorialD
-        x: tutoX
-        y: tutoY
+        x: scanWindowWidth / 2 - width / 2
+        y: scanWindowHeight / 2 - height / 2
         feature: "scan_map"
         tutorial: scanLeftMenuFrame.tutorial
         tutoMessage: tutorial.getMessage("scan_map")

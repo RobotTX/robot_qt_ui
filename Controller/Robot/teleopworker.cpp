@@ -44,6 +44,7 @@ void TeleopWorker::writeTcpDataSlot(int cmd){
         else
             qDebug() << "(Teleop) " << nbDataSend << "bytes sent out of" << toSend.size();
     } else {
+        /// NOTE is it possible that the socket is closed at this point ? if yes, what to do ?
         qDebug() << "(Teleop) Trying to write on a socket that is not created or connected yet";
         Q_UNREACHABLE();
     }
@@ -127,6 +128,7 @@ void TeleopWorker::errorConnectionSlot(QAbstractSocket::SocketError error){
         qDebug() << "(TeleopWorker) An unidentified error occurred.";
         break;
     default:
+        /// NOTE can probably remove that when testing phase is over
         Q_UNREACHABLE();
         qDebug() << "(TeleopWorker) Not supposed to be here.";
         break;

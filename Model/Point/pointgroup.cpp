@@ -29,7 +29,7 @@ QPointer<Point> PointGroup::takePoint(const QString name){
     for(int i = 0; i < pointVector.size(); i++)
         if(pointVector.at(i)->getName().compare(name) == 0)
             return pointVector.takeAt(i);
-
+    /// not supposed to get here atm as this function is only called to move a point from a group to another
     Q_UNREACHABLE();
     return Q_NULLPTR;
 }

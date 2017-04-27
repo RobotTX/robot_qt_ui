@@ -28,6 +28,7 @@ PathController::PathController(QObject *applicationWindow, MainController* paren
         connect(pathModel, SIGNAL(moveToSignal(QString, QString, QString)), this, SLOT(moveTo(QString, QString, QString)));
 
     } else {
+        /// NOTE can probably remove that when testing phase is over
         qDebug() << "PathController::PathController could not find the qml point model";
         Q_UNREACHABLE();
     }
@@ -38,6 +39,7 @@ PathController::PathController(QObject *applicationWindow, MainController* paren
         connect(tmpPathModel, SIGNAL(checkTmpPosition(int, double, double)), parent, SLOT(checkTmpPosition(int, double, double)));
         connect(this, SIGNAL(setTmpValidPositionQml(QVariant, QVariant)), tmpPathModel, SLOT(setTmpValidPosition(QVariant, QVariant)));
     } else {
+        /// NOTE can probably remove that when testing phase is over
         qDebug() << "PathController::PathController could not find the qml point model";
         Q_UNREACHABLE();
     }
@@ -54,6 +56,7 @@ PathController::PathController(QObject *applicationWindow, MainController* paren
         /// Clicked on the save button while editing a group
         connect(createPathGroupMenu, SIGNAL(renameGroup(QString, QString)), this, SLOT(renameGroup(QString, QString)));
     } else {
+        /// NOTE can probably remove that when testing phase is over
         qDebug() << "PathController::PathController could not find the createPathGroupMenu";
         Q_UNREACHABLE();
     }
@@ -66,6 +69,7 @@ PathController::PathController(QObject *applicationWindow, MainController* paren
         /// Clicked on the save button while editing a group
         connect(createPathMenuFrame, SIGNAL(createPathPoint(QString, QString, QString, double, double, int)), this, SLOT(addPathPoint(QString, QString, QString, double, double, int)));
     } else {
+        /// NOTE can probably remove that when testing phase is over
         qDebug() << "PathController::PathController could not find the createPathMenuFrame";
         Q_UNREACHABLE();
     }

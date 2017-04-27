@@ -28,6 +28,7 @@ ScanMapController::ScanMapController(MainController* parent, QQmlApplicationEngi
     if(scanMap)
         connect(this, SIGNAL(updateSize(QVariant, QVariant)), scanMap, SLOT(adjustSize(QVariant, QVariant)));
     else
+        /// NOTE can probably remove that when testing phase is over
         Q_UNREACHABLE();
 
     connect(this, SIGNAL(sendGoal(QString, double, double)), parent, SLOT(sendScanGoal(QString, double, double)));

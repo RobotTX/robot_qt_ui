@@ -26,6 +26,7 @@ MapController::MapController(QQmlApplicationEngine* engine, QObject *application
         connect(map, SIGNAL(mapFileChanged()), mapViewFrame, SLOT(mapFileChanged()));
         connect(mapViewFrame, SIGNAL(posClicked(double, double)), this, SLOT(posClicked(double, double)));
     } else {
+        /// NOTE can probably remove that when testing phase is over
         qDebug() << "MapController::MapController could not find the mapViewFrame";
         Q_UNREACHABLE();
     }
@@ -35,6 +36,7 @@ MapController::MapController(QQmlApplicationEngine* engine, QObject *application
         connect(mapMenuFrame, SIGNAL(loadPosition()), this, SLOT(loadPositionSlot()));
 
     } else {
+        /// NOTE can probably remove that when testing phase is over
         qDebug() << "MapController::MapController could not find the mapMenuFrame";
         Q_UNREACHABLE();
     }

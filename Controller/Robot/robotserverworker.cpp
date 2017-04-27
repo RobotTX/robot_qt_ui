@@ -124,6 +124,7 @@ void RobotServerWorker::errorConnectionSlot(QAbstractSocket::SocketError error){
         qDebug() << "(RobotServerWorker) An unidentified error occurred.";
         break;
     default:
+        /// NOTE can probably remove that when testing phase is over
         Q_UNREACHABLE();
         qDebug() << "(RobotServerWorker) Not supposed to be here.";
         break;

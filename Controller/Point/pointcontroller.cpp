@@ -30,6 +30,7 @@ PointController::PointController(QObject *applicationWindow, MainController* par
         connect(pointModel, SIGNAL(moveToSignal(QString, QString, QString)), this, SLOT(moveTo(QString, QString, QString)));
 
     } else {
+        /// NOTE can probably remove that when testing phase is over
         qDebug() << "PointController::PointController could not find the qml point model";
         Q_UNREACHABLE();
     }
@@ -43,6 +44,7 @@ PointController::PointController(QObject *applicationWindow, MainController* par
         /// Clicked on the save button to create the given point
         connect(createPointMenuFrame, SIGNAL(createPoint(QString, QString, double, double, QString, QString)), this, SLOT(addPoint(QString, QString, double, double, QString, QString)));
     } else {
+        /// NOTE can probably remove that when testing phase is over
         qDebug() << "PointController::PointController could not find the createPointMenuFrame";
         Q_UNREACHABLE();
     }
@@ -58,6 +60,7 @@ PointController::PointController(QObject *applicationWindow, MainController* par
         /// Clicked on the save button while editing a group
         connect(createPointGroupMenu, SIGNAL(renameGroup(QString, QString)), this, SLOT(renameGroup(QString, QString)));
     } else {
+        /// NOTE can probably remove that when testing phase is over
         qDebug() << "PointController::PointController could not find the createPointMenuFrame";
         Q_UNREACHABLE();
     }

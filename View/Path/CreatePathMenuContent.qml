@@ -596,7 +596,7 @@ Frame {
 
         var error = (newName === "");
         if(error)
-            errorMsg = "The path name can not be empty";
+            errorMsg = "The path name cannot be empty";
 
         if(newName !== "" && !newName !== oldName)
             for(var i = 0; i < pathModel.count; i++)

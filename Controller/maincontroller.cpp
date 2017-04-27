@@ -60,6 +60,7 @@ MainController::MainController(QQmlApplicationEngine *engine, QObject* parent) :
             connect(this, SIGNAL(updateTutorialMessageVisibility(QVariant, QVariant)), tuto, SLOT(setVisibleMessage(QVariant, QVariant)));
             connect(tuto, SIGNAL(updateFile(int, bool)), this, SLOT(updateTutoFile(int, bool)));
         } else {
+            /// NOTE can probably remove that when testing phase is over
             qDebug() << "could not find tuto model";
             Q_UNREACHABLE();
         }
@@ -68,6 +69,7 @@ MainController::MainController(QQmlApplicationEngine *engine, QObject* parent) :
         if(mapMenuFrame){
             connect(mapMenuFrame, SIGNAL(importMap(QString)), this, SLOT(loadMapConfig(QString)));
         } else {
+            /// NOTE can probably remove that when testing phase is over
             qDebug() << "MapController::MapController could not find the mapMenuFrame";
             Q_UNREACHABLE();
         }
@@ -78,6 +80,7 @@ MainController::MainController(QQmlApplicationEngine *engine, QObject* parent) :
             connect(settings, SIGNAL(saveSettingsSignal(int, double)), this, SLOT(saveSettings(int, double)));
         }
         else {
+            /// NOTE can probably remove that when testing phase is over
             qDebug() << "MapController::MapController could not find the settings";
             Q_UNREACHABLE();
         }
@@ -86,6 +89,7 @@ MainController::MainController(QQmlApplicationEngine *engine, QObject* parent) :
         if(scanWindow){
             connect(this, SIGNAL(openRestartScanMessageDialog(QVariant)), scanWindow, SLOT(openRestartScanMessageDialog(QVariant)));
         } else {
+            /// NOTE can probably remove that when testing phase is over
             qDebug() << "MapController::MapController could not find the scanWindow";
             Q_UNREACHABLE();
         }
@@ -94,6 +98,7 @@ MainController::MainController(QQmlApplicationEngine *engine, QObject* parent) :
         if(settings){
             connect(this, SIGNAL(setMessageTop(QVariant, QVariant)), topView, SLOT(setMessageTop(QVariant, QVariant)));
         } else {
+            /// NOTE can probably remove that when testing phase is over
             qDebug() << "MapController::MapController could not find the topView";
             Q_UNREACHABLE();
         }
@@ -123,6 +128,7 @@ MainController::MainController(QQmlApplicationEngine *engine, QObject* parent) :
             Q_UNREACHABLE();
         }
     } else {
+        /// NOTE can probably remove that when testing phase is over
         qDebug() << "MainController::MainController We are supposed to only have 1 item, the ApplicationWindow";
         Q_UNREACHABLE();
     }
@@ -152,6 +158,8 @@ MainController::MainController(QQmlApplicationEngine *engine, QObject* parent) :
             case 3: updateTutorialMessageVisibility("scan_map", static_cast<bool>(line.toInt()));
                 break;
             default:
+                /// NOTE can probably remove that when testing phase is over, helpful during the test phase
+                /// to make sure one message has not been left behind
                 Q_UNREACHABLE();
                 break;
             }

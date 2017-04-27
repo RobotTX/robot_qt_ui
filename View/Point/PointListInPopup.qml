@@ -16,13 +16,16 @@ Menu {
 
     background: Rectangle {
         implicitWidth: parent.width
-        implicitHeight: pointModel.count * Style.menuItemHeight
+        // +1 is needed to compensate the line that we don't have a line in these menus
+        // but we have it in the previous menu
+        implicitHeight: (pointModel.count) * (Style.menuItemHeight+1) - 1
         color: Style.lightGreyBackground
         border.color: Style.lightGreyBorder
         radius: 5
     }
 
     ColumnLayout {
+        spacing: 0
         anchors {
             left: parent.left
             right: parent.right
@@ -41,7 +44,7 @@ Menu {
                         verticalCenter: parent.verticalCenter
                     }
                 }
-                Layout.preferredHeight: Style.menuItemHeight
+                Layout.preferredHeight: Style.menuItemHeight+1
                 Layout.preferredWidth: parent.width
                 leftPadding: Style.menuItemLeftPadding
 
@@ -63,10 +66,9 @@ Menu {
                     x: parent.width
                     visible: currentMenuIndex === index
 
-
                     background: Rectangle {
                         implicitWidth: parent.width
-                        implicitHeight: points.count * Style.menuItemHeight
+                        implicitHeight: points.count * (Style.menuItemHeight+1)-1
                         color: Style.lightGreyBackground
                         border.color: Style.lightGreyBorder
                         radius: 5
@@ -74,6 +76,7 @@ Menu {
 
 
                     ColumnLayout {
+                        spacing: 0
                         anchors {
                             left: parent.left
                             right: parent.right
@@ -83,12 +86,8 @@ Menu {
                             model: points
 
                             PopupMenuItem {
-                                anchors {
-                                    left: parent.left
-                                    right: parent.right
-                                }
                                 leftPadding: Style.menuItemLeftPadding
-                                Layout.preferredHeight: Style.menuItemHeight
+                                Layout.preferredHeight: Style.menuItemHeight+1
                                 Layout.preferredWidth: parent.width
 
                                 contentItem: CustomLabel {

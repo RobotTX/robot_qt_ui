@@ -245,6 +245,7 @@ void RobotController::mapReceivedSlot(const QByteArray mapArray, const int who, 
             emit receivedScanMap(ip, mapArray, resolution);
         break;
         default:
+        /// NOTE can probably remove that when testing phase is over
             Q_UNREACHABLE();
         break;
     }
@@ -325,6 +326,7 @@ void RobotController::updateRobotInfo(const QString robotInfo){
 */
 
     } else {
+        /// NOTE what to do if something is missing ? should not happen as the user should not be able to access the robot files
         qDebug() << "RobotController::updateRobotInfo Connected received without enough parameters :" << strList;
         Q_UNREACHABLE();
     }

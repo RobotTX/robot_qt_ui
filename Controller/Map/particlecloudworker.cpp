@@ -163,6 +163,7 @@ void ParticleCloudWorker::errorConnectionSlot(QAbstractSocket::SocketError error
         qDebug() << "(ParticleCloudWorker) An unidentified error occurred.";
         break;
     default:
+        /// NOTE can probably remove that when testing phase is over
         Q_UNREACHABLE();
         qDebug() << "(ParticleCloudWorker) Not supposed to be here.";
         break;

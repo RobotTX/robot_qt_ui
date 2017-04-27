@@ -198,6 +198,7 @@ void ScanMapWorker::errorConnectionSlot(QAbstractSocket::SocketError error){
         qDebug() << "(ScanMapWorker) An unidentified error occurred.";
         break;
     default:
+        /// NOTE can probably remove that when testing phase is over
         Q_UNREACHABLE();
         qDebug() << "(ScanMapWorker) Not supposed to be here.";
         break;

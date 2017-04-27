@@ -10,7 +10,6 @@ EditMapController::EditMapController(QQmlApplicationEngine* engine, QObject *app
     QObject *editMapWindow = applicationWindow->findChild<QObject*>("editMapWindow");
 
     if(editMapWindow){
-
         QQmlComponent component(engine, QUrl("qrc:/View/Map/EditMapPaintedItem.qml"));
         paintedItem = qobject_cast<EditMapPaintedItem*>(component.create());
         QQmlEngine::setObjectOwnership(paintedItem, QQmlEngine::CppOwnership);
@@ -28,6 +27,7 @@ EditMapController::EditMapController(QQmlApplicationEngine* engine, QObject *app
         connect(editMapWindow, SIGNAL(saveImage(QString)), parent, SLOT(saveEditedImage(QString)));
 
     } else {
+        /// NOTE prob can remove that when testing phase over
         Q_UNREACHABLE();
         qDebug() << "could not find the mouse area within the edit map widget";
     }

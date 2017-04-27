@@ -21,16 +21,17 @@ Window {
     property Tutorial tutorial
 
     onVisibleChanged: {
-        if(!visible){
+        if(visible){
             scanMapLeftMenu.reset();
             scanMapLeftMenu.resetScanMaps();
+            console.log("size scanleftmenu " + scanMapLeftMenu.width + " " + scanMapLeftMenu.height + " " + height)
         }
     }
 
     ScanMapLeftMenu {
         id: scanMapLeftMenu
-        tutoX: scanWindow.width / 2  - width / 2
-        tutoY: scanWindow.height / 2 - height / 2
+        scanWindowWidth: scanWindow.width
+        scanWindowHeight: scanWindow.height
         visible: scanWindow.visible
         robotModel: scanWindow.robotModel
         tutorial: scanWindow.tutorial

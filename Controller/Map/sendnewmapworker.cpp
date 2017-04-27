@@ -102,6 +102,7 @@ void SendNewMapWorker::writeTcpDataSlot(QString mapId, QString date, QString met
         else
             qDebug() << "(New Map) " << nbDataSend << "bytes sent out of" << byteArray.size();
     } else {
+        /// NOTE: what to do if the socket is closed ? can it happen ?
         qDebug() << "(New Map) Trying to write on a socket that is not created or connected yet";
         Q_UNREACHABLE();
     }
@@ -185,6 +186,7 @@ void SendNewMapWorker::errorConnectionSlot(QAbstractSocket::SocketError error){
         qDebug() << "(SendNewMapWorker) An unidentified error occurred.";
         break;
     default:
+        /// NOTE can probably remove that when testing phase is over
         Q_UNREACHABLE();
         qDebug() << "(SendNewMapWorker) Not supposed to be here.";
         break;

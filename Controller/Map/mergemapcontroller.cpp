@@ -35,6 +35,7 @@ MergeMapController::MergeMapController(MainController *parent, QQmlApplicationEn
     if(mergeMap)
         connect(this, SIGNAL(updateSize(QVariant, QVariant)), mergeMap, SLOT(adjustSize(QVariant, QVariant)));
     else
+        /// NOTE can probably remove that when testing phase is over
         Q_UNREACHABLE();
 
     QObject* mergeMapLeftMenu = applicationWindow->findChild<QObject*>("mergeMapLeftMenu");

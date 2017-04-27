@@ -55,6 +55,7 @@ RobotsController::RobotsController(QObject *applicationWindow, QQmlApplicationEn
                 parent, SLOT(receivedScanMapSlot(QString, QByteArray, QString)));
 
     } else {
+        /// NOTE can probably remove that when testing phase is over
         qDebug() << "RobotsController::RobotsController could not find the qml robot model";
         Q_UNREACHABLE();
     }
