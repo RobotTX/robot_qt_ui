@@ -16,6 +16,14 @@ Window {
     title: "Merge maps"
     objectName: "mergeMapWindow"
 
+    width: 1000
+    minimumWidth: 800
+    height: 700
+    minimumHeight: 600
+
+
+    property Robots robotModel
+    property Tutorial tutorial
     // no need to do it twice, on the hideEvent or the showEvent, both would work, here we clean the map on the hideEvent
     onVisibleChanged: {
         _mapsList.clear();
@@ -29,19 +37,11 @@ Window {
         }
     }
 
-    width: 1000
-    minimumWidth: 800
-    height: 700
-    minimumHeight: 600
-
     signal importMap(string file)
     signal exportMap(string file)
     signal resetWidget()
     signal getMapFromRobot(string ip)
     signal resetMapConfiguration(string file_name)
-
-    property Robots robotModel
-    property Tutorial tutorial
 
     Frame {
 

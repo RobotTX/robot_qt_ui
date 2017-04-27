@@ -185,10 +185,12 @@ namespace Helper {
 
         QDir appDir = QApplication::applicationDirPath();
 
-        #if defined(Q_OS_WIN)
+        /*#if defined(Q_OS_WIN)
             if (appDir.dirName().toLower() == "debug" || appDir.dirName().toLower() == "release")
                 appDir.cdUp();
         #elif defined(Q_OS_MAC)
+        */
+        #if defined(Q_OS_MAC)
             if (appDir.dirName() == "MacOS") {
                 appDir.cdUp();
                 appDir.cdUp();
