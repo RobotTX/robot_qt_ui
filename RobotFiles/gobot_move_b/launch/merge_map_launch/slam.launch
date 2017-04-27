@@ -1,6 +1,0 @@
-<?xml version="1.0"?>
-<launch>
-    <include file="$(find gobot_move)/launch/mapbase.launch"/>
-    <include file="$(find gobot_move)/launch/nav_amcl.launch"/>
-    <include file="$(find gobot_move)/launch/make_move_base.launch"/>
-</launch>
