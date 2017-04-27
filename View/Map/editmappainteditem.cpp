@@ -10,11 +10,9 @@ EditMapPaintedItem::EditMapPaintedItem(QQuickItem *parent): QQuickPaintedItem(pa
 }
 
 void EditMapPaintedItem::paint(QPainter *painter){
-    qDebug() << items.size() << "items to display";
     QPen pen;
     for(int i = 0; i < items.size(); i++){
         pen.setColor(items.at(i).color);
-        qDebug() << "color " << items.at(i).color;
         pen.setWidth(items.at(i).thickness);
         painter->setPen(pen);
         Item it = items.at(i);
@@ -89,7 +87,6 @@ void EditMapPaintedItem::addItem(const SHAPE shape, const QColor color, const in
 }
 
 void EditMapPaintedItem::clearMapItems(){
-    qDebug() << "clearMapItems called";
     items.clear();
     undoItems.clear();
     update();
