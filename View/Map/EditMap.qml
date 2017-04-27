@@ -513,6 +513,6 @@ Window {
         y: dialog.height / 2 - height / 2
         feature: "edit_map"
         tutorial: dialog.tutorial
-        tutoMessage: tutorial.getMessage("edit_map")
+        Component.onCompleted: tutoMessage = tutorial.getMessage("edit_map")
     }
 }

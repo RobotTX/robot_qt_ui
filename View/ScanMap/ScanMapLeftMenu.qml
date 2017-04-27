@@ -302,7 +302,7 @@ Frame {
         y: tutoY
         feature: "scan_map"
         tutorial: scanLeftMenuFrame.tutorial
-        tutoMessage: tutorial.getMessage("scan_map")
+        Component.onCompleted: tutoMessage = tutorial.getMessage("scan_map")
     }
 
     function startedScanning(ip){

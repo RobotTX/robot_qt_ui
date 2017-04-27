@@ -417,6 +417,6 @@ Window {
         y: window.height / 2 - height / 2
         feature: "merge_map"
         tutorial: window.tutorial
-        tutoMessage: tutorial.getMessage("merge_map")
+        Component.onCompleted: tutoMessage = tutorial.getMessage("merge_map")
     }
 }
