@@ -54,5 +54,5 @@ namespace Helper {
 
     int mod(const int a, const int b);
 
-    QString getAppPath(void);
+    //QString getAppPath(void);
 }
