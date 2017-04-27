@@ -45,6 +45,13 @@ ApplicationWindow {
     property bool useRobotPathModel: false
     property real batteryWarningThreshold: 20
 
+    onClosing: {
+        mergeMap.close();
+        scanMap.close();
+        editMap.close();
+        Qt.quit();
+    }
+
     Item {
         Points {
             id: _pointModel
@@ -88,6 +95,24 @@ ApplicationWindow {
         Shortcut {
             sequence: "/"
             onActivated: openMapChoiceMessageDialog("0", true)
+        }
+
+        EditMap {
+            id: editMap
+            onVisibleChanged: imgSource = mapView.mapSrc
+            tutorial: _tutorial
+        }
+
+        MergeMap {
+            id: mergeMap
+            robotModel: _robotModel
+            tutorial: _tutorial
+        }
+
+        ScanMap {
+            id: scanMap
+            robotModel: _robotModel
+            tutorial: _tutorial
         }
     }
 
@@ -149,24 +174,6 @@ ApplicationWindow {
                 mainMenuViews.doubleClickedOnMap(mouseX, mouseY);
             }
         }
-
-        EditMap {
-            id: editMap
-            onVisibleChanged: imgSource = mapView.mapSrc
-            tutorial: _tutorial
-        }
-
-        MergeMap {
-            id: mergeMap
-            robotModel: _robotModel
-            tutorial: _tutorial
-        }
-
-        ScanMap {
-            id: scanMap
-            robotModel: _robotModel
-            tutorial: _tutorial
-        }
     }
 
     CustomDialog {
@@ -220,6 +227,7 @@ ApplicationWindow {
     }
 
     function setBatteryThreshold(threshold){
+        console.log("Set threshold " + threshold);
         batteryWarningThreshold = threshold;
     }
 }

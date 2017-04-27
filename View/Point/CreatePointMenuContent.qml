@@ -207,7 +207,7 @@ Frame {
         errorMsg = "";
         if(!saveButton.canSave){
             if(Helper.formatName(pointTextField.text) === "")
-                errorMsg = "The point name can not be empty";
+                errorMsg = "The point name cannot be empty";
             else if(nameError)
                 errorMsg = "The point name \"" + Helper.formatName(pointTextField.text) + "\" is already taken";
 

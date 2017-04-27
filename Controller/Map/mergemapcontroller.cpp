@@ -29,7 +29,8 @@ MergeMapController::MergeMapController(MainController *parent, QQmlApplicationEn
         connect(this, SIGNAL(differentMapSizes()), mergeMapWindow, SLOT(cancelImportMap()));
         connect(this, SIGNAL(readyToBeGrabbed(QVariant)), mergeMapWindow, SLOT(grabMergedMap(QVariant)));
 
-    }
+    } else
+        Q_UNREACHABLE();
 
     QObject* mergeMap = applicationWindow->findChild<QObject*>("mergeMapsView");
     if(mergeMap)

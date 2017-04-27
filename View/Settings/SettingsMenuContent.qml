@@ -17,7 +17,6 @@ Frame {
     property int mapChoice
 
     property real oriBatteryWarningThreshold
-    property bool oriShowTutorial
     property int oriMapChoice
 
     property Robots robotModel
@@ -324,12 +323,13 @@ Frame {
         onReleased: {
             batteryWarningThreshold = batterySlider.value;
             saveSettingsSignal(mapChoice, batterySlider.value);
+            console.log("save settings signal called " + mapChoice + " " + batterySlider.value);
             settingsPage.close();
         }
     }
 
-    function setSettings(mapChoice, showTutorial){
-        oriShowTutorial = showTutorial;
+    function setSettings(mapChoice){
+        console.log("Settings map choice " + mapChoice);
         oriMapChoice = mapChoice;
         settingsPage.mapChoice = mapChoice;
     }

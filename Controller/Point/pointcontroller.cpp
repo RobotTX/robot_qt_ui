@@ -65,7 +65,7 @@ PointController::PointController(QObject *applicationWindow, MainController* par
         Q_UNREACHABLE();
     }
 
-    currentPointsFile = QDir::currentPath() + QDir::separator() + "currentPoints.xml";
+    currentPointsFile = Helper::getAppPath() + QDir::separator() + "currentPoints.xml";
     qDebug() << "PointController::PointController" << currentPointsFile;
     loadPoints(currentPointsFile);
 }

@@ -106,7 +106,7 @@ Frame {
 
     function enableSave(enable){
         saveButton.canSave = enable;
-        errorMsg = enable ? "" : Helper.formatName(groupTextField.text) === "" ? "The name of the group can not be empty" : "\"" + groupTextField.text + "\" is already taken";
+        errorMsg = enable ? "" : Helper.formatName(groupTextField.text) === "" ? "The name of the group cannot be empty" : "\"" + groupTextField.text + "\" is already taken";
         setMessageTop(1, errorMsg);
     }
 }
