@@ -105,8 +105,8 @@ MainController::MainController(QQmlApplicationEngine *engine, QObject* parent) :
         }
 
         /// get settings from file
-        QFile file(QApplication::applicationDirPath() + QDir::separator() + "settings.txt");
-        qDebug() << "App path :" << QApplication::applicationDirPath();
+        QFile file(Helper::getAppPath() + QDir::separator() + "settings.txt");
+        qDebug() << "App path :" << Helper::getAppPath();
         if(file.open(QFile::ReadWrite)){
             QTextStream in(&file);
                 while (!in.atEnd()){
@@ -137,7 +137,7 @@ MainController::MainController(QQmlApplicationEngine *engine, QObject* parent) :
         Q_UNREACHABLE();
     }
 
-    QFile tutoFile(QApplication::applicationDirPath() + QDir::separator() + "tutorial.txt");
+    QFile tutoFile(Helper::getAppPath() + QDir::separator() + "tutorial.txt");
     if(tutoFile.exists() && tutoFile.open(QIODevice::ReadOnly)){
         QTextStream in(&tutoFile);
         int counter(0);
@@ -201,30 +201,30 @@ void MainController::saveMapConfig(QString fileName, double zoom, double centerX
 
     QFileInfo mapFileInfo(static_cast<QDir> (fileName), "");
 
-    QString filePath(QApplication::applicationDirPath() + QDir::separator() + "mapConfigs" + QDir::separator() + mapFileInfo.fileName() + ".config");
+    QString filePath(Helper::getAppPath() + QDir::separator() + "mapConfigs" + QDir::separator() + mapFileInfo.fileName() + ".config");
     qDebug() << filePath;
 
 
-    mapController->saveNewMap(QApplication::applicationDirPath() + QDir::separator() + "mapConfigs" + QDir::separator() + mapFileInfo.fileName() + ".pgm");
+    mapController->saveNewMap(Helper::getAppPath() + QDir::separator() + "mapConfigs" + QDir::separator() + mapFileInfo.fileName() + ".pgm");
 
-    mapController->savePositionSlot(centerX, centerY, zoom, QApplication::applicationDirPath() + QDir::separator() + "mapConfigs" + QDir::separator() + mapFileInfo.fileName() + ".pgm");
+    mapController->savePositionSlot(centerX, centerY, zoom, Helper::getAppPath() + QDir::separator() + "mapConfigs" + QDir::separator() + mapFileInfo.fileName() + ".pgm");
 
     mapController->saveMapConfig(filePath, centerX, centerY, zoom);
 
     /// saves the current points to the points file associated with the new configuration
-    XMLParser::save(pointController, QApplication::applicationDirPath() + QDir::separator() + "mapConfigs" + QDir::separator() + mapFileInfo.fileName() + "_points.xml");
+    XMLParser::save(pointController, Helper::getAppPath() + QDir::separator() + "mapConfigs" + QDir::separator() + mapFileInfo.fileName() + "_points.xml");
 
     /// saves the new configuration to the current configuration file
-    XMLParser::save(pointController, QApplication::applicationDirPath() + QDir::separator() + "currentPoints.xml");
+    XMLParser::save(pointController, Helper::getAppPath() + QDir::separator() + "currentPoints.xml");
 
     /// saves the map
-    //mapController->saveMapToFile(QApplication::applicationDirPath() + QDir::separator() + "mapConfigs" + QDir::separator() + mapFileInfo.fileName() + ".pgm");
+    //mapController->saveMapToFile(Helper::getAppPath() + QDir::separator() + "mapConfigs" + QDir::separator() + mapFileInfo.fileName() + ".pgm");
 
     /// saves the current points to the points file associated with the new configuration
-    PathXMLParser::save(pathController, QApplication::applicationDirPath() + QDir::separator() + "mapConfigs" + QDir::separator() + mapFileInfo.fileName() + "_paths.xml");
+    PathXMLParser::save(pathController, Helper::getAppPath() + QDir::separator() + "mapConfigs" + QDir::separator() + mapFileInfo.fileName() + "_paths.xml");
 
     /// saves the new configuration to the current configuration file
-    PathXMLParser::save(pathController, QApplication::applicationDirPath() + QDir::separator() + "currentPaths.xml");
+    PathXMLParser::save(pathController, Helper::getAppPath() + QDir::separator() + "currentPaths.xml");
 }
 
 void MainController::loadMapConfig(QString fileName) {
@@ -236,7 +236,7 @@ void MainController::loadMapConfig(QString fileName) {
             fileNameWithoutExtension = fileName.mid(0, fileName.length()-4);
 
         QFileInfo mapFileInfo(static_cast<QDir> (fileNameWithoutExtension), "");
-        QString filePath(QApplication::applicationDirPath() + QDir::separator() +  "mapConfigs" + QDir::separator() + mapFileInfo.fileName() + ".config");
+        QString filePath(Helper::getAppPath() + QDir::separator() +  "mapConfigs" + QDir::separator() + mapFileInfo.fileName() + ".config");
         qDebug() << "MainController::loadMapBtnEvent map to load :" << filePath;
 
         /// if we are able to find the configuration then we load the map
@@ -252,16 +252,16 @@ void MainController::loadMapConfig(QString fileName) {
             pathController->clearPaths();
 
             /// imports points associated to the map and save them in the current file
-            qDebug() << " reading points from" << QApplication::applicationDirPath() + QDir::separator() +  "mapConfigs" + QDir::separator() + mapFileInfo.fileName() + "_points.xml";
-            XMLParser::readPoints(pointController, QApplication::applicationDirPath() + QDir::separator() +  "mapConfigs" + QDir::separator() + mapFileInfo.fileName() + "_points.xml");
+            qDebug() << " reading points from" << Helper::getAppPath() + QDir::separator() +  "mapConfigs" + QDir::separator() + mapFileInfo.fileName() + "_points.xml";
+            XMLParser::readPoints(pointController, Helper::getAppPath() + QDir::separator() +  "mapConfigs" + QDir::separator() + mapFileInfo.fileName() + "_points.xml");
 
             /// saves the new configuration to the current configuration file
-            XMLParser::save(pointController, QApplication::applicationDirPath() + QDir::separator() + "currentPoints.xml");
+            XMLParser::save(pointController, Helper::getAppPath() + QDir::separator() + "currentPoints.xml");
 
-            PathXMLParser::readPaths(pathController, QApplication::applicationDirPath() + QDir::separator() +  "mapConfigs" + QDir::separator() + mapFileInfo.fileName() + "_paths.xml");
+            PathXMLParser::readPaths(pathController, Helper::getAppPath() + QDir::separator() +  "mapConfigs" + QDir::separator() + mapFileInfo.fileName() + "_paths.xml");
 
             /// saves the imported paths in the current paths file
-            PathXMLParser::save(pathController, QApplication::applicationDirPath() + QDir::separator() + "currentPaths.xml");
+            PathXMLParser::save(pathController, Helper::getAppPath() + QDir::separator() + "currentPaths.xml");
 
             setMessageTopSlot(2, "Loaded the map: " + mapFileInfo.fileName());
         } else
@@ -271,7 +271,7 @@ void MainController::loadMapConfig(QString fileName) {
 
 void MainController::saveSettings(int mapChoice, double batteryThreshold){
     qDebug() << "save settings called" << mapChoice << batteryThreshold;
-    QFile file(QApplication::applicationDirPath() + QDir::separator() + "settings.txt");
+    QFile file(Helper::getAppPath() + QDir::separator() + "settings.txt");
     if(file.open(QFile::ReadWrite)){
         QTextStream stream(&file);
         stream << mapChoice << " " << batteryThreshold ;
@@ -376,7 +376,7 @@ void MainController::checkMapInfoSlot(QString ip, QString mapId, QString mapDate
         }
 
         int mapChoice = -1;
-        QFile file(QApplication::applicationDirPath() + QDir::separator() + "settings.txt");
+        QFile file(Helper::getAppPath() + QDir::separator() + "settings.txt");
         if(file.open(QFile::ReadOnly)){
             QTextStream stream(&file);
             stream >> mapChoice;
@@ -526,7 +526,7 @@ void MainController::setMessageTopSlot(int status, QString msg){
 }
 
 void MainController::updateTutoFile(int index, bool visible){
-    QFile tutoFile(QApplication::applicationDirPath() + QDir::separator() + "tutorial.txt");
+    QFile tutoFile(Helper::getAppPath() + QDir::separator() + "tutorial.txt");
     tutoFile.open(QIODevice::ReadWrite);
     int counter(0);
     QStringList list;
