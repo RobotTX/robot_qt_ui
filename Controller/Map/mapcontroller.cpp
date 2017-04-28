@@ -16,6 +16,10 @@
 
 MapController::MapController(QQmlApplicationEngine* engine, QObject *applicationWindow, MainController *parent) : QObject(parent) {
 
+    /// Create the mapConfig folder if it does not exist
+    if(!QDir(Helper::getAppPath() + QDir::separator() + "mapConfigs").exists())
+        QDir().mkdir(Helper::getAppPath() + QDir::separator() + "mapConfigs");
+
     map = QPointer<Map>(new Map(this));
 
     QObject *mapViewFrame = applicationWindow->findChild<QObject*>("mapViewFrame");
@@ -289,6 +293,7 @@ void MapController::newMapFromRobot(const QByteArray& mapArray, const QString ma
     map->setMapImage(getImageFromArray(mapArray, map->getWidth(), map->getHeight(), true));
     map->setMapId(QUuid(mapId));
     map->setDateTime(QDateTime::fromString(mapDate, "yyyy-MM-dd-hh-mm-ss"));
+    qDebug() << Helper::getAppPath() + QDir::separator() + "mapConfigs" + QDir::separator() + "tmpImage.pgm";
     map->getMapImage().save(Helper::getAppPath() + QDir::separator() + "mapConfigs" + QDir::separator() + "tmpImage.pgm", "PGM");
     if(setMapFile(Helper::getAppPath() + QDir::separator() + "mapConfigs" + QDir::separator() + "tmpImage.pgm")){
         double centerX = 0;
