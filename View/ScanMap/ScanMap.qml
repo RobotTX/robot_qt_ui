@@ -66,8 +66,8 @@ Window {
                 height = _height
             }
 
-            width: 2048
-            height: 2048
+            width: 2496
+            height: 2496
 
             color: "#cdcdcd"
 

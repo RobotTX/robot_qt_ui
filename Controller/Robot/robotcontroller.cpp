@@ -266,10 +266,6 @@ void RobotController::updateMetadata(const int width, const int height, const fl
 
 void RobotController::updateRobot(const float posX, const float posY, const float ori){
     ping();
-    QPointF pos = Helper::Convert::robotCoordToPixelCoord(QPointF(posX, posY), -57.4575, -48.2396, 0.05, 2048);
-    paintedItem->setProperty("orientation_", -ori * 180.0 / PI + 90);
-    paintedItem->setProperty("_x", pos.x()-300 + 5 * qCos((paintedItem->orientation() - 90) / 180.0*3.14159));
-    paintedItem->setProperty("_y", pos.y()-300 + 5 * qSin((paintedItem->orientation() - 90) / 180.0*3.14159));
     emit newRobotPos(ip, posX, posY, ori);
 }
 
@@ -365,4 +361,11 @@ void RobotController::updateObstacles(float angle_min, float angle_max, float an
 
 void RobotController::clearObstacles(bool activated){
     paintedItem->clearObstacles(activated);
+}
+
+void RobotController::updateRobotPosition(float x, float y, float orientation){
+    qDebug() << "RobotController::updateRobotPosition called" << x << y << orientation;
+    paintedItem->setProperty("orientation_", orientation);
+    paintedItem->setProperty("_x", x-300 + 5 * qCos((paintedItem->orientation() - 90) / 180.0*3.14159));
+    paintedItem->setProperty("_y", y-300 + 5 * qSin((paintedItem->orientation() - 90) / 180.0*3.14159));
 }

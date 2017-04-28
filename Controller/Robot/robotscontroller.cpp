@@ -329,3 +329,8 @@ void RobotsController::updateLaserSlot(QString ip, bool activated){
 
     emit updateLaser(ip, activated);
 }
+
+void RobotsController::updateRobotPos(QString ip, float x, float y, float orientation){
+    qDebug() << "updateRobotPos called";
+    robots.value(ip)->updateRobotPosition(x, y, orientation);
+}

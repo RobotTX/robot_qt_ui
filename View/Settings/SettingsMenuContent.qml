@@ -30,6 +30,7 @@ Frame {
     }
 
     onVisibleChanged: {
+        settingsPage.mapChoice = oriMapChoice;
         settingsPage.batteryWarningThreshold = oriBatteryWarningThreshold;
         batterySlider.initializeBatteryThreshold(batteryWarningThreshold);
     }
@@ -293,10 +294,7 @@ Frame {
         anchors.bottom: parent.bottom
         anchors.left: parent.left
 
-        onClicked: {
-            settingsPage.mapChoice = oriMapChoice;
-            settingsPage.close()
-        }
+        onClicked: settingsPage.close()
     }
 
     // apply button to save the changes but keep the window open

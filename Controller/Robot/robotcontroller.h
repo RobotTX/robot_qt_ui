@@ -70,6 +70,8 @@ public:
      */
     void clearObstacles(bool activated);
 
+    void updateRobotPosition(float x, float y, float orientation);
+
 private:
     /**
      * @brief launchWorkers
@@ -148,6 +150,8 @@ private slots:
      * To update the display of the obstacles on the map when we receive it from the robot
      */
     void updateObstacles(float angle_min, float angle_max, float angle_increment, QVector<float> ranges);
+
+
 
 signals:
     /**

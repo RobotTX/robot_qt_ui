@@ -270,6 +270,7 @@ signals:
      * updates the visibility of the message for the feature <feature>
      */
     void updateTutorialMessageVisibility(QVariant feature, QVariant visible);
+    void updateRobotPos(QString ip, float x, float y, float orientation);
 
 private:
     QPointer<MainMenuController> mainMenuController;

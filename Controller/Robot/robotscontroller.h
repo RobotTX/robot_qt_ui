@@ -126,6 +126,8 @@ private slots:
     void activateLaserSlot(QString ip, bool activate);
     void startedScanningSlot(const QString ip);
 
+    void updateRobotPos(QString ip, float x, float y, float orientation);
+
 signals:
     void stopRobotServerWorker(void);
     void addRobot(QVariant name, QVariant ip, QVariant ssid, QVariant stage, QVariant battery);

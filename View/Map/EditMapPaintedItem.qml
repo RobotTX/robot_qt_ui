@@ -6,8 +6,8 @@ EditMapPaintedItem {
 
     id: paintedItem
 
-    width: 2048
-    height: 2048
+    width: 2496
+    height: 2496
     smooth: false
 
     function test(str){

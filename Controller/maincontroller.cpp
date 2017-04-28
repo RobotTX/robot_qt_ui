@@ -178,6 +178,8 @@ MainController::MainController(QQmlApplicationEngine *engine, QObject* parent) :
         tutoFile.close();
     }
 
+    connect(this, SIGNAL(updateRobotPos(QString,float,float,float)), robotsController, SLOT(updateRobotPos(QString, float, float, float)));
+
 }
 
 void MainController::checkPoint(QString name, QString oldName, double x, double y){
@@ -290,6 +292,7 @@ void MainController::newRobotPosSlot(QString ip, float posX, float posY, float o
                     mapController->getHeight());
     float orientation = -ori * 180.0 / M_PI + 90;
     robotsController->setRobotPos(ip, robotPos.x(), robotPos.y(), orientation);
+    emit updateRobotPos(ip, robotPos.x(), robotPos.y(), orientation);
     mapController->getScanMapController()->updateRobotPos(ip, robotPos.x(), robotPos.y(), orientation);
 }
 
