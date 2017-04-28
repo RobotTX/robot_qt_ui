@@ -35,4 +35,4 @@ private:
     QMap<QString, QPointer<PathGroup>> groups;
 };
 
-#endif // PATHS_H
+#endif /// PATHS_H

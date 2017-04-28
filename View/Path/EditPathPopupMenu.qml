@@ -20,7 +20,7 @@ Menu {
 
     background: Rectangle {
         implicitWidth: parent.width
-        implicitHeight: 3 * Style.menuItemHeight + 4
+        implicitHeight: 3 * Style.menuItemHeight + 3
         color: Style.lightGreyBackground
         border.color: Style.lightGreyBorder
         radius: 5
