@@ -405,7 +405,15 @@ void MainController::checkMapInfoSlot(QString ip, QString mapId, QString mapDate
             break;
             default:
                 qDebug() << "MainController::updateMapInfo ALWAYS_ASK choice";
-                emit openMapChoiceMessageDialog(ip, robotOlder);
+                /// if there is no map on the application side, no need to ask, just take the robot's one
+                if(mapController->getMapImage().size().width() != 0){
+                    qDebug() << "MainController::checkMapInfoSlot There is a map on the application's side so the choice is offered to the user";
+                    emit openMapChoiceMessageDialog(ip, robotOlder);
+                }
+                else {
+                    qDebug() << "MainController::checkMapInfoSlot There is no map on the application side so we take the robot's one";
+                    robotsController->requestMap(ip);
+                }
             break;
         }
     }
