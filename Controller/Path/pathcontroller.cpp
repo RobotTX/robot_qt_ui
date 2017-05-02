@@ -147,7 +147,8 @@ void PathController::moveTo(const QString name, const QString oldGroup, const QS
 }
 
 void PathController::checkPosition(const QImage& mapImage, const int index, const double x, const double y){
-    emit setTmpValidPositionQml(index, mapImage.pixelColor(x, y).red() != 255);
+    qDebug() << "PathController::checkPosition" << x << y << mapImage.pixelColor(x, y).red();
+    emit setTmpValidPositionQml(index, mapImage.pixelColor(x, y).red() >= 254);
 }
 
 

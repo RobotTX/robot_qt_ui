@@ -77,7 +77,7 @@ private slots:
      */
     void newRobotPosSlot(QString ip, float posX, float posY, float ori);
     /**
-     * @brief newMetadataSlot
+     * @brief updateMetadataSlot
      * @param width
      * @param height
      * @param resolution
@@ -85,7 +85,7 @@ private slots:
      * @param originY
      * updates the metadata
      */
-    void newMetadataSlot(int width, int height, float resolution, float originX, float originY);
+    void updateMetadataSlot(int width, int height, float resolution, float originX, float originY);
     /**
      * @brief updatePathSlot
      * @param ip

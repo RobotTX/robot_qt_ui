@@ -76,6 +76,7 @@ Image {
             break;
             case Helper.PointViewType.HOME:
                 src = "qrc:/icons/homeView";
+                img.width = 20;
             break;
             case Helper.PointViewType.PATHPOINT:
                 src = "qrc:/icons/pathPoint";

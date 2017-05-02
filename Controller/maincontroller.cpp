@@ -296,7 +296,7 @@ void MainController::newRobotPosSlot(QString ip, float posX, float posY, float o
     mapController->getScanMapController()->updateRobotPos(ip, robotPos.x(), robotPos.y(), orientation);
 }
 
-void MainController::newMetadataSlot(int width, int height, float resolution, float originX, float originY){
+void MainController::updateMetadataSlot(int width, int height, float resolution, float originX, float originY){
     qDebug() << "metadata" << width << height << resolution << originX << originY;
     mapController->setOrigin(QPointF(originX, originY));
     mapController->setWidth(width);

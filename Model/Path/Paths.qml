@@ -162,8 +162,8 @@ ListModel {
         hideShowPathOnMap("tmpGroup", "tmpPath");
     }
 
-    function setTmpValidPosition(index, error){
-        get(0).paths.get(0).pathPoints.setProperty(index, "validPos", !error);
+    function setTmpValidPosition(index, valid){
+        get(0).paths.get(0).pathPoints.setProperty(index, "validPos", valid);
         validPositionChanged();
     }
 

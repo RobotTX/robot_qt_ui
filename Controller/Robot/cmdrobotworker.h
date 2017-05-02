@@ -20,7 +20,7 @@ public:
      * @param ipAddress
      * @param port
      */
-    CmdRobotWorker(const QString ipAddress, const int cmdPort, const int metadataPort, const int robotPort, const int mapPort, const int _laserPort);
+    CmdRobotWorker(const QString ipAddress, const int cmdPort, const int robotPort, const int mapPort, const int _laserPort);
     ~CmdRobotWorker();
 
 signals:
@@ -122,7 +122,6 @@ private :
     QPointer<QTcpSocket> socket;
     QString ipAddress;
     int port;
-    int metadataPort;
     int robotPort;
     int mapPort;
     int laserPort;

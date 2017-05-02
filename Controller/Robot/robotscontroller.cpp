@@ -71,7 +71,7 @@ RobotsController::RobotsController(QObject *applicationWindow, QQmlApplicationEn
     }
 
     connect(this, SIGNAL(newRobotPos(QString, float, float, float)), parent, SLOT(newRobotPosSlot(QString, float, float, float)));
-    connect(this, SIGNAL(newMetadata(int, int, float, float, float)), parent, SLOT(newMetadataSlot(int, int, float, float, float)));
+    connect(this, SIGNAL(updateMetadata(int, int, float, float, float)), parent, SLOT(updateMetadataSlot(int, int, float, float, float)));
     connect(this, SIGNAL(updatePath(QString, QStringList)), parent, SLOT(updatePathSlot(QString, QStringList)));
     connect(this, SIGNAL(updateHome(QString, QString, float, float)), parent, SLOT(updateHomeSlot(QString, QString, float, float)));
     connect(this, SIGNAL(checkMapInfo(QString, QString, QString)), parent, SLOT(checkMapInfoSlot(QString, QString, QString)));
@@ -164,8 +164,8 @@ void RobotsController::setRobotPos(const QString ip, const float posX, const flo
     emit setPos(ip, posX, posY, ori);
 }
 
-void RobotsController::newMetadataSlot(const int width, const int height, const float resolution, const float originX, const float originY){
-    emit newMetadata(width, height, resolution, originX, originY);
+void RobotsController::updateMetadataSlot(const int width, const int height, const float resolution, const float originX, const float originY){
+    emit updateMetadata(width, height, resolution, originX, originY);
 }
 
 void RobotsController::updatePathSlot(const QString ip, const QStringList strList){
@@ -331,6 +331,5 @@ void RobotsController::updateLaserSlot(QString ip, bool activated){
 }
 
 void RobotsController::updateRobotPos(QString ip, float x, float y, float orientation){
-    qDebug() << "updateRobotPos called";
     robots.value(ip)->updateRobotPosition(x, y, orientation);
 }

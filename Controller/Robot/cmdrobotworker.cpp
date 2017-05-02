@@ -4,8 +4,8 @@
 #include <fstream>
 #include "Helper/helper.h"
 
-CmdRobotWorker::CmdRobotWorker(const QString _ipAddress, const int cmdPort, const int _metadataPort, const int _robotPort, const int _mapPort, const int _laserPort):
-    ipAddress(_ipAddress), port(cmdPort), metadataPort(_metadataPort), robotPort(_robotPort), mapPort(_mapPort), laserPort(_laserPort), timeCounter(0)
+CmdRobotWorker::CmdRobotWorker(const QString _ipAddress, const int cmdPort, const int _robotPort, const int _mapPort, const int _laserPort):
+    ipAddress(_ipAddress), port(cmdPort), robotPort(_robotPort), mapPort(_mapPort), laserPort(_laserPort), timeCounter(0)
 {}
 
 CmdRobotWorker::~CmdRobotWorker(){
@@ -78,7 +78,7 @@ void CmdRobotWorker::connectedSlot(){
 
     /// When we are connected, we send the ports to use for the other workers
     /// in order to get laser feedback, robot position, map and map metadata
-    QString portStr = QString("h") + QChar(31) + QString::number(metadataPort) + QChar(31) + QString::number(robotPort) + QChar(31) +
+    QString portStr = QString("h") + QChar(31) + QString::number(robotPort) + QChar(31) +
             QString::number(mapPort) + QChar(31) + QString::number(laserPort) + QChar(23);
 
     bool tmpBool(false);
@@ -119,7 +119,7 @@ void CmdRobotWorker::timerSlot(void){
         qDebug()<< "(Robot" << ipAddress << ") Did not receive any ping from this robot for" << timeCounter << "seconds";
     /// if the application has lost the connection with the robot for a time > ROBOT_TIMER
     /// the socket is closed
-    if(timeCounter >= ROBOT_TIMER && socket->isOpen())
+    if(timeCounter >= ROBOT_TIMER)
         socket->close();
 }
 

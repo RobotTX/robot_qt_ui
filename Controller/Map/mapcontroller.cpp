@@ -241,7 +241,7 @@ void MapController::posClicked(const double x, const double y){
     getOrigin().y(),
     getResolution(),
     getHeight());
-    qDebug() << "MapController::posClicked" << x << y << "to" << pos.x() << pos.y();
+    qDebug() << "MapController::posClicked" << x << y << "to" << pos.x() << pos.y() << "\nMetadata" << getWidth() << getHeight() << getResolution() << getOrigin();
 }
 
 QImage MapController::getImageFromArray(const QByteArray& mapArrays, const int map_width, const int map_height, const bool fromPgm){
