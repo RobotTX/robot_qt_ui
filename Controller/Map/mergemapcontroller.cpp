@@ -24,7 +24,7 @@ MergeMapController::MergeMapController(MainController *parent, QQmlApplicationEn
         connect(mergeMapWindow, SIGNAL(resetWidget()), this, SLOT(resetMergeMapWidget()));
 
         connect(mergeMapWindow, SIGNAL(getMapFromRobot(QString)), parent, SLOT(getMapFromRobot(QString)));
-        connect(mergeMapWindow, SIGNAL(resetMapConfiguration(QString)), parent, SLOT(resetMapConfigurationAfterMerge(QString)));
+        connect(mergeMapWindow, SIGNAL(resetMapConfiguration(QString, bool)), parent, SLOT(resetMapConfiguration(QString, bool)));
 
         connect(this, SIGNAL(differentMapSizes()), mergeMapWindow, SLOT(cancelImportMap()));
         connect(this, SIGNAL(readyToBeGrabbed(QVariant)), mergeMapWindow, SLOT(grabMergedMap(QVariant)));

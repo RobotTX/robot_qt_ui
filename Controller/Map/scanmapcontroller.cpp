@@ -22,6 +22,7 @@ ScanMapController::ScanMapController(MainController* parent, QQmlApplicationEngi
     QObject* scanWindow = applicationWindow->findChild<QObject*>("scanWindow");
     if(scanWindow){
         connect(this, SIGNAL(readyToBeGrabbed(QVariant)), scanWindow, SLOT(grabScannedMap(QVariant)));
+        connect(scanWindow, SIGNAL(resetMapConfiguration(QString, bool)), parent, SLOT(resetMapConfiguration(QString, bool)));
     }
 
     QObject* scanMap = applicationWindow->findChild<QObject*>("scanMapView");

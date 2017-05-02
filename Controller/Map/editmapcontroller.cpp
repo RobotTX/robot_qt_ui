@@ -35,7 +35,6 @@ EditMapController::EditMapController(QQmlApplicationEngine* engine, QObject *app
 
 /// adds a new item to draw
 void EditMapController::add_item(int shape, QColor color, int thickness, int x, int y, bool _update){
-    qDebug() << "painting " << shape << color << thickness << x << y ;
     paintedItem->addItem(static_cast<EditMapPaintedItem::SHAPE> (shape), color, thickness, x, y, _update);
 }
 

@@ -346,7 +346,7 @@ QString MapController::getMetadataString(void) const {
 }
 
 void MapController::saveNewMap(const QString file_name){
-    map->getMapImage().save(file_name, "PGM");
+    qDebug() << "MapController::saveNewMap " << file_name;
     map->setMapFile(file_name);
     emit setMap(file_name);
 }

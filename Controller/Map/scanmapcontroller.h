@@ -41,6 +41,8 @@ public:
      */
     void removeMap(QString ip);
 
+    QMap<QString, ScanMapPaintedItem*> getPaintedItems(void) const { return paintedItems; }
+
 
 private slots:
     /**

@@ -100,7 +100,7 @@ ApplicationWindow {
 
         EditMap {
             id: editMap
-            onVisibleChanged: imgSource = mapView.mapSrc
+            imgSource: mapView.mapSrc
             tutorial: _tutorial
         }
 
@@ -171,6 +171,7 @@ ApplicationWindow {
                 bottom: parent.bottom
             }
             onDoubleClickedOnMap: {
+                console.log("size map " + width + " " + height);
                 mainFrame.currentMenu = 2;
                 mainMenuViews.doubleClickedOnMap(mouseX, mouseY);
             }

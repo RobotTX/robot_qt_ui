@@ -20,6 +20,8 @@ Window {
     property Robots robotModel
     property Tutorial tutorial
 
+    signal resetMapConfiguration(string file_name, bool scan)
+
     onVisibleChanged: {
         if(visible){
             scanMapLeftMenu.reset();
@@ -113,11 +115,13 @@ Window {
                 result.saveToFile(file_name.substring(7) + ".pgm");
                 // important to call the hide function here as this call is asynchronous and if you call hide outside
                 // you will most likely hide the window before you can grab it and will end up grabbing nothing
+                scanWindow.resetMapConfiguration(file_name + ".pgm", true);
                 scanWindow.close();
             });
         } else {
             scanMap.grabToImage(function(result) {
                                           result.saveToFile(file_name.substring(7));
+                                          scanWindow.resetMapConfiguration(file_name, true);
                                           scanWindow.close();
             });
         }

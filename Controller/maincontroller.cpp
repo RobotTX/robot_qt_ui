@@ -7,6 +7,7 @@
 #include <QImage>
 #include <QFileInfo>
 #include <QDir>
+#include <QThread>
 #include <QMessageBox>
 #include "math.h"
 #include "Helper/helper.h"
@@ -192,7 +193,7 @@ void MainController::checkTmpPosition(int index, double x, double y){
     pathController->checkPosition(mapController->getMapImage(), index, x, y);
 }
 
-void MainController::saveMapConfig(QString fileName, double zoom, double centerX, double centerY) const {
+void MainController::saveMapConfig(QString fileName, double zoom, double centerX, double centerY, bool new_config) const {
     qDebug() << "MainController::saveMapConfig called with" << fileName << zoom << centerX << centerY;
 
     if(fileName.lastIndexOf(".pgm", fileName.length()-4) != -1){
@@ -202,31 +203,36 @@ void MainController::saveMapConfig(QString fileName, double zoom, double centerX
     }
 
     QFileInfo mapFileInfo(static_cast<QDir> (fileName), "");
-
     QString filePath(Helper::getAppPath() + QDir::separator() + "mapConfigs" + QDir::separator() + mapFileInfo.fileName() + ".config");
-    qDebug() << filePath;
-
 
     mapController->saveNewMap(Helper::getAppPath() + QDir::separator() + "mapConfigs" + QDir::separator() + mapFileInfo.fileName() + ".pgm");
 
-    mapController->savePositionSlot(centerX, centerY, zoom, Helper::getAppPath() + QDir::separator() + "mapConfigs" + QDir::separator() + mapFileInfo.fileName() + ".pgm");
+    if(!new_config){
 
-    mapController->saveMapConfig(filePath, centerX, centerY, zoom);
+        mapController->savePositionSlot(centerX, centerY, zoom, Helper::getAppPath() + QDir::separator() + "mapConfigs" + QDir::separator() + mapFileInfo.fileName() + ".pgm");
 
-    /// saves the current points to the points file associated with the new configuration
-    XMLParser::save(pointController, Helper::getAppPath() + QDir::separator() + "mapConfigs" + QDir::separator() + mapFileInfo.fileName() + "_points.xml");
+        mapController->saveMapConfig(filePath, centerX, centerY, zoom);
 
-    /// saves the new configuration to the current configuration file
-    XMLParser::save(pointController, Helper::getAppPath() + QDir::separator() + "currentPoints.xml");
+        /// saves the current points to the points file associated with the new configuration
+        XMLParser::save(pointController, Helper::getAppPath() + QDir::separator() + "mapConfigs" + QDir::separator() + mapFileInfo.fileName() + "_points.xml");
 
-    /// saves the map
-    //mapController->saveMapToFile(Helper::getAppPath() + QDir::separator() + "mapConfigs" + QDir::separator() + mapFileInfo.fileName() + ".pgm");
+        /// saves the new configuration to the current configuration file
+        XMLParser::save(pointController, Helper::getAppPath() + QDir::separator() + "currentPoints.xml");
 
-    /// saves the current points to the points file associated with the new configuration
-    PathXMLParser::save(pathController, Helper::getAppPath() + QDir::separator() + "mapConfigs" + QDir::separator() + mapFileInfo.fileName() + "_paths.xml");
+        /// saves the current points to the points file associated with the new configuration
+        PathXMLParser::save(pathController, Helper::getAppPath() + QDir::separator() + "mapConfigs" + QDir::separator() + mapFileInfo.fileName() + "_paths.xml");
 
-    /// saves the new configuration to the current configuration file
-    PathXMLParser::save(pathController, Helper::getAppPath() + QDir::separator() + "currentPaths.xml");
+        /// saves the new configuration to the current configuration file
+        PathXMLParser::save(pathController, Helper::getAppPath() + QDir::separator() + "currentPaths.xml");
+    }
+
+    else {
+
+        mapController->savePositionSlot(centerX, centerY, zoom, Helper::getAppPath() + QDir::separator() + "mapConfigs" + QDir::separator() + mapFileInfo.fileName() + ".pgm");
+
+        mapController->saveMapConfig(filePath, 0, 0, 1.0);
+
+    }
 }
 
 void MainController::loadMapConfig(QString fileName) {
@@ -297,7 +303,6 @@ void MainController::newRobotPosSlot(QString ip, float posX, float posY, float o
 }
 
 void MainController::newMetadataSlot(int width, int height, float resolution, float originX, float originY){
-    qDebug() << "metadata" << width << height << resolution << originX << originY;
     mapController->setOrigin(QPointF(originX, originY));
     mapController->setWidth(width);
     mapController->setHeight(height);
@@ -467,21 +472,33 @@ void MainController::processMapForMerge(QByteArray mapArray, QString resolution)
     emit sendImageToMerge(image, resolution.toDouble());
 }
 
-void MainController::resetMapConfigurationAfterMerge(QString file_name){
-    qDebug() << "MainController::resetMapConfigurationAfterMerge" << file_name;
-    mapController->requestReloadMap("file:/" + file_name);
+void MainController::resetMapConfiguration(QString file_name, bool scan, double centerX, double centerY){
+    qDebug() << "MainController::resetMapConfiguration" << file_name;
+
+    if(scan){
+        ScanMapPaintedItem* map_reference = mapController->getScanMapController()->getPaintedItems().begin().value();
+        qDebug() << "Saving map config after scan with origin" << map_reference->x()+map_reference->getLeft() << map_reference->y()+map_reference->getTop();
+        saveMapConfig(file_name, 1.0, 0.0, 0.0, true);
+        mapController->setOrigin(QPointF(map_reference->x()+map_reference->getLeft(), map_reference->y()+map_reference->getTop()));
+    }
+
+    else saveMapConfig(file_name, 1.0, 0, 0, true);
+
+    mapController->requestReloadMap(file_name);
+    qDebug() << "requesting reload" << file_name;
+
     pointController->clearPoints();
     pathController->clearPaths();
-    saveMapConfig(file_name, 1.0, 0.0, 0.0);
+
     QUuid mapId = QUuid::createUuid();
 
     QString date = QDate::currentDate().toString("yyyy-MM-dd-hh-mm-ss");
 
-    qDebug() << mapController->getMetadataString() << mapController->getMapImage().size();
-
     QString mapMetadata = mapController->getMetadataString();
 
     QImage img(file_name);
+
+    qDebug() << "sending map with metadata " << mapMetadata << " size of map is " << img.size();
 
     robotsController->sendMapToAllRobots(mapId.toString(), date, mapMetadata, img);
 }

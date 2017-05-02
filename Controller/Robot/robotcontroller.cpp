@@ -364,7 +364,6 @@ void RobotController::clearObstacles(bool activated){
 }
 
 void RobotController::updateRobotPosition(float x, float y, float orientation){
-    qDebug() << "RobotController::updateRobotPosition called" << x << y << orientation;
     paintedItem->setProperty("orientation_", orientation);
     paintedItem->setProperty("_x", x-300 + 5 * qCos((paintedItem->orientation() - 90) / 180.0*3.14159));
     paintedItem->setProperty("_y", y-300 + 5 * qSin((paintedItem->orientation() - 90) / 180.0*3.14159));

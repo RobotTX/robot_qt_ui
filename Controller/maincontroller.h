@@ -51,7 +51,7 @@ private slots:
      * @param centerY
      * To export the current map in files (one for the image, one for the configuration, one for the points, one for the paths)
      */
-    void saveMapConfig(QString fileName, double zoom, double centerX, double centerY) const;
+    void saveMapConfig(QString fileName, double zoom, double centerX, double centerY, bool new_config = false) const;
     /**
      * @brief loadMapConfig
      * @param fileName configuration file
@@ -207,12 +207,13 @@ private slots:
      */
     void sendTeleopSlot(QString ip, int teleop);
     /**
-     * @brief resetMapConfigurationAfterMerge
+     * @brief resetMapConfiguration
      * @param file_name
      * after a merged map has been saved, it replaces the main window map
      * paths and points are cleared, the new configuration is saved
+     * if
      */
-    void resetMapConfigurationAfterMerge(QString file_name);
+    void resetMapConfiguration(QString file_name, bool scan, double centerX = 0.0, double centerY = 0.0);
     /**
      * @brief removeScanMapSlot
      * @param ip
