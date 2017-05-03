@@ -108,6 +108,16 @@ public:
      * to save the map of the current configuration
      */
     void saveNewMap(const QString file_name);
+    /**
+     * @brief updateMetadata
+     * @param width
+     * @param height
+     * @param resolution
+     * @param originX
+     * @param originY
+     * updates the metadata
+     */
+    void updateMetadata(int width, int height, float resolution, float originX, float originY);
 
 private slots:
     /**

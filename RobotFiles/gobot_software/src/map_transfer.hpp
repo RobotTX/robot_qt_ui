@@ -79,4 +79,9 @@ bool sendLocalMap(std_srvs::Empty::Request &req, std_srvs::Empty::Response &res)
  */
 void getLocalMap(const nav_msgs::OccupancyGrid::ConstPtr& msg);
 
+/**
+ * Called when metadata are published
+ */
+void getMetaData(const nav_msgs::MapMetaData::ConstPtr& msg);
+
 #endif

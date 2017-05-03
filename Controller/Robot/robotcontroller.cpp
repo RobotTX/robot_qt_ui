@@ -41,8 +41,6 @@ RobotController::RobotController(QQmlApplicationEngine* engine, RobotsController
     connect(this, SIGNAL(robotIsDead(QString)), parent, SLOT(robotIsDeadSlot(QString)));
     /// Update the position of the robot
     connect(this, SIGNAL(newRobotPos(QString, float, float, float)), parent, SLOT(newRobotPosSlot(QString, float, float, float)));
-    /// Update the metadata
-    connect(this, SIGNAL(updateMetadata(int, int, float, float, float)), parent, SLOT(updateMetadataSlot(int, int, float, float, float)));
     /// Update the path of the robot when it connects
     connect(this, SIGNAL(updatePath(QString, QStringList)), parent, SLOT(updatePathSlot(QString, QStringList)));
     /// Update the home of the robot when it connects
@@ -50,11 +48,13 @@ RobotController::RobotController(QQmlApplicationEngine* engine, RobotsController
     /// Check if the robot has the same map as the application
     connect(this, SIGNAL(checkMapInfo(QString, QString, QString)), parent, SLOT(checkMapInfoSlot(QString, QString, QString)));
     /// Signal that we just received a new map fron the robot
-    connect(this, SIGNAL(newMapFromRobot(QString, QByteArray, QString, QString)), parent, SLOT(newMapFromRobotSlot(QString, QByteArray, QString, QString)));
+    connect(this, SIGNAL(newMapFromRobot(QString, QByteArray, QString, QString, QString, QString, QString, int, int)),
+            parent, SLOT(newMapFromRobotSlot(QString, QByteArray, QString, QString, QString, QString, QString, int, int)));
     /// Signal that we just received a map to merge from the robot
     connect(this, SIGNAL(mapToMergeFromRobot(QByteArray, QString)), parent, SLOT(processMapForMerge(QByteArray, QString)));
     /// Signal that we received a new map while scanning
-    connect(this, SIGNAL(receivedScanMap(QString, QByteArray, QString)), parent, SLOT(receivedScanMapSlot(QString, QByteArray, QString)));
+    connect(this, SIGNAL(receivedScanMap(QString, QByteArray, QString, QString, QString, int, int)),
+            parent, SLOT(receivedScanMapSlot(QString, QByteArray, QString, QString, QString, int, int)));
     /// Check if the robot is scanning when it connects
     connect(this, SIGNAL(checkScanning(QString, bool)), parent, SLOT(checkScanningSlot(QString, bool)));
     connect(this, SIGNAL(updateLaser(QString, bool)), parent, SLOT(updateLaserSlot(QString, bool)));
@@ -225,11 +225,11 @@ void RobotController::mapReceivedSlot(const QByteArray mapArray, const int who, 
             emit mapToMergeFromRobot(mapArray, resolution);
         break;
         case 1:
-            emit newMapFromRobot(ip, mapArray, mapId, mapDate);
+            emit newMapFromRobot(ip, mapArray, mapId, mapDate, resolution, originX, originY, map_width, map_height);
         break;
         case 0:
             qDebug() << "RobotController::mapReceivedSlot received a map while scanning";
-            emit receivedScanMap(ip, mapArray, resolution);
+            emit receivedScanMap(ip, mapArray, resolution, originX, originY, map_width, map_height);
         break;
         default:
         /// NOTE can probably remove that when testing phase is over
@@ -270,11 +270,6 @@ void RobotController::updateRobotInfo(const QString robotInfo){
         bool scanning = static_cast<QString>(strList.takeFirst()).toInt();
         bool recovering = static_cast<QString>(strList.takeFirst()).toInt();
         bool laser = static_cast<QString>(strList.takeFirst()).toInt();
-        int width = static_cast<QString>(strList.takeFirst()).toInt();
-        int height = static_cast<QString>(strList.takeFirst()).toInt();
-        float resolution = static_cast<QString>(strList.takeFirst()).toFloat();
-        float originX = static_cast<QString>(strList.takeFirst()).toFloat();
-        float originY = static_cast<QString>(strList.takeFirst()).toFloat();
         /// What remains in the list is the path
 
         if(!strList.empty())
@@ -288,9 +283,6 @@ void RobotController::updateRobotInfo(const QString robotInfo){
         emit checkScanning(ip, scanning);
 
         emit updateLaser(ip, laser);
-
-        qDebug() << "Got metadata" << width << height << resolution << originX << originY;
-        emit updateMetadata(width, height, resolution, originX, originY);
 /*
         if(recovering){
             if(robotPositionRecoveryWidget){

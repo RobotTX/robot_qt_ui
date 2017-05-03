@@ -54,7 +54,6 @@ int recovered_position_port = 4004;
 int particle_cloud_port = 4005;
 
 std::string path_computer_software = "/home/gtdollar/computer_software/";
-std::string metadata_string = "";
 
 /// Separator which is just a char(31) => unit separator in ASCII
 static const std::string sep = std::string(1, 31);
@@ -843,12 +842,6 @@ bool stopParticleCloudData(void){
 	}
 }
 
-void updateMetaData(const nav_msgs::MapMetaData::ConstPtr& msg){
-	metadata_string = std::to_string(msg->width) + sep + std::to_string(msg->height) + sep + std::to_string(msg->resolution) + sep + 
-	std::to_string(msg->origin.position.x) + sep + std::to_string(msg->origin.position.y);
-	std::cout << "command system update metadata " << metadata_string;
-}
-
 void getPorts(boost::shared_ptr<tcp::socket> sock, ros::NodeHandle n){
 
 	std::cout << "getPorts launched" << std::endl;
@@ -1058,12 +1051,8 @@ void asyncAccept(boost::shared_ptr<boost::asio::io_service> io_service, boost::s
    	std::string scan = (scanning) ? "1" : "0";
    	std::string recover = (recovering) ? "1" : "0";
 
-   	std::cout << "Need to send the metadata now " << metadata_string;
-
-
-//width, height, resolution, originX, originY
 	sendMessageToPc(sock, "Connected" + sep + mapId + sep + mapDate + sep + homeName + sep + homeX + sep + homeY + sep 
-		+ scan + sep + recover + sep + laserStr + sep + (metadata_string.empty() ? "0" + sep + "0" + sep + "0" + sep + "0" + sep + "0" : metadata_string) + sep + path);
+		+ scan + sep + recover + sep + laserStr + sep + path);
 
 	boost::thread t(boost::bind(session, sock, n));
 }
@@ -1146,7 +1135,6 @@ int main(int argc, char* argv[]){
 
 		go_pub = n.advertise<geometry_msgs::PoseStamped>("/move_base_simple/goal", 1000);
     	teleop_pub = n.advertise<geometry_msgs::Twist>("/cmd_vel", 1000);
-		ros::Subscriber sub_meta = n.subscribe("/map_metadata", 1, updateMetaData);
 
 		ros::spinOnce();
 
