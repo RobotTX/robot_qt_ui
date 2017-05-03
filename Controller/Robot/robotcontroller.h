@@ -3,7 +3,6 @@
 
 class CmdRobotWorker;
 class RobotPositionWorker;
-class MetadataWorker;
 class SendNewMapWorker;
 class LocalMapWorker;
 class ScanMapWorker;
@@ -103,17 +102,6 @@ private slots:
     void doneSendingMapSlot(void);
 
     /**
-     * @brief updateMetadata
-     * @param width
-     * @param height
-     * @param resolution
-     * @param originX
-     * @param originY
-     * Just received new metadata
-     */
-    void updateMetadata(const int width, const int height, const float resolution, const float originX, const float originY);
-
-    /**
      * @brief updateRobot
      * @param posX
      * @param posY
@@ -202,7 +190,7 @@ signals:
      * @param originY
      * Send the new metadata to the robotsController
      */
-    void newMetadata(int width, int height, float resolution, float originX, float originY);
+    void updateMetadata(int width, int height, float resolution, float originX, float originY);
 
     /**
      * @brief updatePath
@@ -271,7 +259,6 @@ signals:
     /// Tell the workers to stop their connection to the robot
     void stopCmdRobotWorker(void);
     void stopRobotWorker(void);
-    void stopMetadataWorker(void);
     void stopNewMapWorker(void);
     void stopLocalMapWorker(void);
     void stopMapWorker(void);
@@ -281,7 +268,6 @@ signals:
     /// Tell the workers to start their connection to the robot
     void startCmdRobotWorker(void);
     void startRobotWorker(void);
-    void startMetadataWorker(void);
     void startNewMapWorker(void);
     void startLocalMapWorker(void);
     void startMapWorker(void);
@@ -297,7 +283,6 @@ private:
 
     QPointer<CmdRobotWorker> cmdRobotWorker;
     QPointer<RobotPositionWorker> robotWorker;
-    QPointer<MetadataWorker> metadataWorker;
     QPointer<SendNewMapWorker> newMapWorker;
     QPointer<LocalMapWorker> localMapWorker;
     QPointer<ScanMapWorker> mapWorker;
@@ -306,7 +291,6 @@ private:
 
     QThread cmdThread;
     QThread robotThread;
-    QThread metadataThread;
     QThread newMapThread;
     QThread localMapThread;
     QThread mapThread;

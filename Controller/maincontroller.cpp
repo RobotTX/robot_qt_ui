@@ -302,7 +302,8 @@ void MainController::newRobotPosSlot(QString ip, float posX, float posY, float o
     mapController->getScanMapController()->updateRobotPos(ip, robotPos.x(), robotPos.y(), orientation);
 }
 
-void MainController::newMetadataSlot(int width, int height, float resolution, float originX, float originY){
+void MainController::updateMetadataSlot(int width, int height, float resolution, float originX, float originY){
+    qDebug() << "metadata" << width << height << resolution << originX << originY;
     mapController->setOrigin(QPointF(originX, originY));
     mapController->setWidth(width);
     mapController->setHeight(height);
@@ -475,14 +476,16 @@ void MainController::processMapForMerge(QByteArray mapArray, QString resolution)
 void MainController::resetMapConfiguration(QString file_name, bool scan, double centerX, double centerY){
     qDebug() << "MainController::resetMapConfiguration" << file_name;
 
+    QString cpp_file_name = file_name.mid(7);
+
     if(scan){
         ScanMapPaintedItem* map_reference = mapController->getScanMapController()->getPaintedItems().begin().value();
-        qDebug() << "Saving map config after scan with origin" << map_reference->x()+map_reference->getLeft() << map_reference->y()+map_reference->getTop();
-        saveMapConfig(file_name, 1.0, 0.0, 0.0, true);
-        mapController->setOrigin(QPointF(map_reference->x()+map_reference->getLeft(), map_reference->y()+map_reference->getTop()));
+        qDebug() << "Saving map config after scan with origin" << map_reference->x()-map_reference->getLeft() << map_reference->y()-map_reference->getTop();
+        saveMapConfig(cpp_file_name, 1.0, 0.0, 0.0, true);
+        mapController->setOrigin(QPointF(map_reference->x()-map_reference->getLeft(), map_reference->y()-map_reference->getTop()));
     }
 
-    else saveMapConfig(file_name, 1.0, 0, 0, true);
+    else saveMapConfig(cpp_file_name, 1.0, 0, 0, true);
 
     mapController->requestReloadMap(file_name);
     qDebug() << "requesting reload" << file_name;
@@ -496,7 +499,7 @@ void MainController::resetMapConfiguration(QString file_name, bool scan, double 
 
     QString mapMetadata = mapController->getMetadataString();
 
-    QImage img(file_name);
+    QImage img(cpp_file_name);
 
     qDebug() << "sending map with metadata " << mapMetadata << " size of map is " << img.size();
 

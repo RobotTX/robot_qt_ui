@@ -2,8 +2,8 @@
 <launch>
 	<node pkg="hokuyo_node" type="hokuyo_node" name="hokuyo" >
 		<param name="frame_id" value="base_laser" />
-    		<param name="min_ang" value="-2.0945" />
-    		<param name="max_ang" value="2.0945" />
+    		<param name="min_ang" value="-1.5745" />
+    		<param name="max_ang" value="1.5745" />
   	</node>
 
   	<node pkg="wheel" type="MD49.py" name="wheel" />

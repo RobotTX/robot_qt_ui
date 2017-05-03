@@ -10,7 +10,6 @@
 #include "Controller/Robot/robotpositionworker.h"
 #include "Controller/Robot/teleopworker.h"
 #include "Controller/Robot/commandcontroller.h"
-#include "Controller/Map/metadataworker.h"
 #include "Controller/Map/sendnewmapworker.h"
 #include "Controller/Map/localmapworker.h"
 #include "Controller/Map/scanmapworker.h"
@@ -43,7 +42,7 @@ RobotController::RobotController(QQmlApplicationEngine* engine, RobotsController
     /// Update the position of the robot
     connect(this, SIGNAL(newRobotPos(QString, float, float, float)), parent, SLOT(newRobotPosSlot(QString, float, float, float)));
     /// Update the metadata
-    connect(this, SIGNAL(newMetadata(int, int, float, float, float)), parent, SLOT(newMetadataSlot(int, int, float, float, float)));
+    connect(this, SIGNAL(updateMetadata(int, int, float, float, float)), parent, SLOT(updateMetadataSlot(int, int, float, float, float)));
     /// Update the path of the robot when it connects
     connect(this, SIGNAL(updatePath(QString, QStringList)), parent, SLOT(updatePathSlot(QString, QStringList)));
     /// Update the home of the robot when it connects
@@ -90,10 +89,6 @@ void RobotController::stopThreads(void) {
     robotThread.quit();
     robotThread.wait();
 
-    emit stopMetadataWorker();
-    metadataThread.quit();
-    metadataThread.wait();
-
     emit stopNewMapWorker();
     newMapThread.quit();
     newMapThread.wait();
@@ -118,7 +113,6 @@ void RobotController::stopThreads(void) {
 }
 
 void RobotController::portSentSlot(void){
-    emit startMetadataWorker();
     emit startRobotWorker();
     emit startNewMapWorker();
     emit startLocalMapWorker();
@@ -135,7 +129,7 @@ void RobotController::launchWorkers(void){
 
     qDebug() << "RobotController at ip" << ip << " launching its cmd thread";
 
-    cmdRobotWorker = QPointer<CmdRobotWorker>(new CmdRobotWorker(ip, PORT_CMD, PORT_MAP_METADATA, PORT_ROBOT_POS, PORT_MAP, PORT_LOCAL_MAP));
+    cmdRobotWorker = QPointer<CmdRobotWorker>(new CmdRobotWorker(ip, PORT_CMD, PORT_ROBOT_POS, PORT_MAP, PORT_LOCAL_MAP));
     connect(cmdRobotWorker, SIGNAL(robotIsDead()), this, SLOT(robotIsDeadSlot()));
     connect(cmdRobotWorker, SIGNAL(cmdAnswer(QString)), commandController, SLOT(cmdAnswerSlot(QString)));
     connect(cmdRobotWorker, SIGNAL(portSent()), this, SLOT(portSentSlot()));
@@ -159,16 +153,6 @@ void RobotController::launchWorkers(void){
     robotWorker->moveToThread(&robotThread);
     robotThread.start();
 
-    metadataWorker = QPointer<MetadataWorker>(new MetadataWorker(ip, PORT_MAP_METADATA));
-    connect(metadataWorker, SIGNAL(valueChangedMetadata(int, int, float, float, float)),
-                     this , SLOT(updateMetadata(int, int, float, float, float)));
-    connect(metadataWorker, SIGNAL(robotIsDead()), this, SLOT(robotIsDeadSlot()));
-    connect(this, SIGNAL(stopMetadataWorker()), metadataWorker, SLOT(stopWorker()));
-    connect(this, SIGNAL(startMetadataWorker()), metadataWorker, SLOT(connectSocket()));
-    connect(&metadataThread, SIGNAL(finished()), metadataWorker, SLOT(deleteLater()));
-    metadataWorker->moveToThread(&metadataThread);
-    metadataThread.start();
-
 
     newMapWorker = QPointer<SendNewMapWorker>(new SendNewMapWorker(ip, PORT_NEW_MAP));
     connect(this, SIGNAL(sendNewMapSignal(QString, QString, QString, QImage)), newMapWorker, SLOT(writeTcpDataSlot(QString, QString, QString, QImage)));
@@ -179,6 +163,7 @@ void RobotController::launchWorkers(void){
     connect(&newMapThread, SIGNAL(finished()), newMapWorker, SLOT(deleteLater()));
     newMapWorker->moveToThread(&newMapThread);
     newMapThread.start();
+
 
     localMapWorker = QPointer<LocalMapWorker>(new LocalMapWorker(ip, PORT_LOCAL_MAP));
     connect(localMapWorker, SIGNAL(robotIsDead()), this, SLOT(robotIsDeadSlot()));
@@ -259,11 +244,6 @@ void RobotController::doneSendingMapSlot(void){
     sendingMap = false;
 }
 
-void RobotController::updateMetadata(const int width, const int height, const float resolution, const float originX, const float originY){
-    ping();
-    emit newMetadata(width, height, resolution, originX, originY);
-}
-
 void RobotController::updateRobot(const float posX, const float posY, const float ori){
     ping();
     emit newRobotPos(ip, posX, posY, ori);
@@ -279,7 +259,7 @@ void RobotController::updateRobotInfo(const QString robotInfo){
     QStringList strList = robotInfo.split(QChar(31), QString::SkipEmptyParts);
     qDebug() << "RobotController::updateRobotInfo" << strList;
 
-    if(strList.size() > 7){
+    if(strList.size() > 12){
         /// Remove the "Connected" in the list
         strList.removeFirst();
         QString mapId = strList.takeFirst();
@@ -290,6 +270,11 @@ void RobotController::updateRobotInfo(const QString robotInfo){
         bool scanning = static_cast<QString>(strList.takeFirst()).toInt();
         bool recovering = static_cast<QString>(strList.takeFirst()).toInt();
         bool laser = static_cast<QString>(strList.takeFirst()).toInt();
+        int width = static_cast<QString>(strList.takeFirst()).toInt();
+        int height = static_cast<QString>(strList.takeFirst()).toInt();
+        float resolution = static_cast<QString>(strList.takeFirst()).toFloat();
+        float originX = static_cast<QString>(strList.takeFirst()).toFloat();
+        float originY = static_cast<QString>(strList.takeFirst()).toFloat();
         /// What remains in the list is the path
 
         if(!strList.empty())
@@ -303,6 +288,9 @@ void RobotController::updateRobotInfo(const QString robotInfo){
         emit checkScanning(ip, scanning);
 
         emit updateLaser(ip, laser);
+
+        qDebug() << "Got metadata" << width << height << resolution << originX << originY;
+        emit updateMetadata(width, height, resolution, originX, originY);
 /*
         if(recovering){
             if(robotPositionRecoveryWidget){
@@ -326,7 +314,7 @@ void RobotController::updateRobotInfo(const QString robotInfo){
     } else {
         /// NOTE what to do if something is missing ? should not happen as the user should not be able to access the robot files
         qDebug() << "RobotController::updateRobotInfo Connected received without enough parameters :" << strList;
-        Q_UNREACHABLE();
+        //Q_UNREACHABLE();
     }
 
     ping();

@@ -30,6 +30,7 @@
 #include <time.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include "nav_msgs/MapMetaData.h"
 
 
 #define CMD_PORT 5600
@@ -43,8 +44,6 @@ void session(boost::shared_ptr<tcp::socket> sock, ros::NodeHandle n);
 void asyncAccept(boost::shared_ptr<boost::asio::io_service> io_service, boost::shared_ptr<tcp::acceptor> m_acceptor, ros::NodeHandle n);
 void startRobotPos();
 void stopRobotPos();
-void startMetadata();
-void stopMetadata();
 bool startMap();
 bool sendOnceMap(int who);
 bool sendAutoMap();
@@ -66,5 +65,6 @@ bool connectToParticleCloudNode(void);
 bool startSendingParticleCloud(void);
 void disconnect(void);
 bool resumeRecoveryPosition(void);
+void updateMetaData(const nav_msgs::MapMetaData::ConstPtr& msg);
 
 #endif

@@ -214,7 +214,8 @@ Frame {
                                 tmpPointView.setPos(mouseX,  mouseY);
                                 tmpPointView.tmpPointViewPosChanged()
                             }
-
+                            if(robotModel.count > 0)
+                                console.log("robot pos " + robotModel.get(0).x + " " + robotModel.get(0).y)
                             if(useTmpPathModel){
                                 tmpPathModel.addPathPoint(Math.round(mouseX) + ' ' + Math.round(mouseY),  "tmpPath", "tmpGroup", mouseX, mouseY, 0);
                                 tmpPathModel.checkTmpPosition(tmpPathModel.get(0).paths.get(0).pathPoints.count - 1, mouseX, mouseY);

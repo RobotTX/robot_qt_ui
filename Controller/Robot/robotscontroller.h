@@ -100,7 +100,7 @@ private slots:
     void shortcutAddRobot(void);
     void shortcutDeleteRobot(void);
     void newRobotPosSlot(const QString ip, const float posX, const float posY, const float ori);
-    void newMetadataSlot(const int width, const int height, const float resolution, const float originX, const float originY);
+    void updateMetadataSlot(const int width, const int height, const float resolution, const float originX, const float originY);
     void updatePathSlot(const QString ip, const QStringList strList);
     void updateHomeSlot(const QString ip, const QString homeName, const float homeX, const float homeY);
     void sendCommandNewName(const QString ip, const QString name);
@@ -128,6 +128,8 @@ private slots:
 
     void updateRobotPos(QString ip, float x, float y, float orientation);
 
+    void dockRobot(QString ip);
+
 signals:
     void stopRobotServerWorker(void);
     void addRobot(QVariant name, QVariant ip, QVariant ssid, QVariant stage, QVariant battery);
@@ -141,7 +143,7 @@ signals:
     void setStage(QVariant ip, QVariant stage);
     void setBattery(QVariant ip, QVariant battery);
     void newRobotPos(QString ip, float posX, float posY, float ori);
-    void newMetadata(int width, int height, float resolution, float originX, float originY);
+    void updateMetadata(int width, int height, float resolution, float originX, float originY);
     void updatePath(QString ip, QStringList strList);
     void updateHome(QString ip, QString homeName, float homeX, float homeY);
     void setName(QVariant ip, QVariant name);

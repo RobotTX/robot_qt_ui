@@ -15,9 +15,6 @@ bool laserActivated = false;
 ros::ServiceClient startRobotPosClient;
 ros::ServiceClient stopRobotPosClient;
 
-ros::ServiceClient startMetadataClient;
-ros::ServiceClient stopMetadataClient;
-
 ros::ServiceClient startMapClient;
 ros::ServiceClient sendOnceMapClient;
 ros::ServiceClient sendAutoMapClient;
@@ -50,7 +47,6 @@ ros::ServiceClient stopSendingLocalMapClient;
 ros::Publisher go_pub;
 ros::Publisher teleop_pub;
 
-int metadata_port = 4000;
 int robot_pos_port = 4001;
 int map_port = 4002;
 int laser_port = 4003;
@@ -58,6 +54,7 @@ int recovered_position_port = 4004;
 int particle_cloud_port = 4005;
 
 std::string path_computer_software = "/home/gtdollar/computer_software/";
+std::string metadata_string = "";
 
 /// Separator which is just a char(31) => unit separator in ASCII
 static const std::string sep = std::string(1, 31);
@@ -194,17 +191,15 @@ bool execCommand(ros::NodeHandle n, std::vector<std::string> command){
 			std::cout << "(Command system) Command g to change the name + wifi not used anymore" << std::endl;
 		break;
 
-		/// Command for the robot to receive the ports needed for the map, metadata and robot pos services
+		/// Command for the robot to receive the ports needed for the map and robot pos services
 		case 'h':
-			// first param is h, 2nd is port for metadata, 3rd is port for robot position, 4th for map, 5th for laser
-			if(command.size() == 5){
-				metadata_port = std::stoi(command.at(1));
-				robot_pos_port = std::stoi(command.at(2));
-				map_port = std::stoi(command.at(3));
-				laser_port = std::stoi(command.at(4));
-				std::cout << "(Command system) Gobot here are the ports " << metadata_port << ", " << robot_pos_port << ", " << map_port << ", " << laser_port << std::endl;
+			// first param is h, 2nd is port for robot position, 3rd for map, 4th for laser
+			if(command.size() == 4){
+				robot_pos_port = std::stoi(command.at(1));
+				map_port = std::stoi(command.at(2));
+				laser_port = std::stoi(command.at(3));
+				std::cout << "(Command system) Gobot here are the ports " << robot_pos_port << ", " << map_port << ", " << laser_port << std::endl;
 				startRobotPos();
-				startMetadata();
 				startMap();
 				startLaserData(laserActivated);
 				//connectToParticleCloudNode();
@@ -346,7 +341,9 @@ bool execCommand(ros::NodeHandle n, std::vector<std::string> command){
 			if(command.size() == 1) {
 				std::cout << "(Command system) Sending the robot home" << std::endl;
 				std_srvs::Empty arg;
-				if(ros::service::call("go_home", arg)){
+				/// TODO ? 
+				if(call ros::service::call("setAutoCharging", arg)){
+				//if(ros::service::call("go_home", arg)){
 					std::cout << "Go home service called with success" << std::endl;
 					status = true;
 				} else
@@ -670,26 +667,6 @@ void stopRobotPos(){
 		std::cerr << "(Command system) Failed to call service stop_robot_pos_sender" << std::endl;
 }
 
-void startMetadata(){
-	std::cout << "(Command system) Launching the service to get the metadata" << std::endl;
-
-	gobot_software::Port srv;
-	srv.request.port = metadata_port;
-
-	if (startMetadataClient.call(srv)) 
-		std::cout << "(Command system) start_map_metadata_sender service started" << std::endl;
-	else 
-		std::cerr << "(Command system) Failed to call service start_map_metadata_sender" << std::endl;
-}
-
-void stopMetadata(){
-	std_srvs::Empty srv;
-
-	if (stopMetadataClient.call(srv)) 
-		std::cout << "(Command system) stop_map_metadata_sender service started" << std::endl;
-	else 
-		std::cerr << "(Command system) Failed to call service stop_map_metadata_sender" << std::endl;
-}
 
 bool startMap(){
 	std::cout << "(Command system) Launching the service to open the map socket" << std::endl;
@@ -866,6 +843,12 @@ bool stopParticleCloudData(void){
 		std::cerr << "(Command system) Failed to call service stop_sending_cloud_data" << std::endl;
 		return false;
 	}
+}
+
+void updateMetaData(const nav_msgs::MapMetaData::ConstPtr& msg){
+	metadata_string = std::to_string(msg->width) + sep + std::to_string(msg->height) + sep + std::to_string(msg->resolution) + sep + 
+	std::to_string(msg->origin.position.x) + sep + std::to_string(msg->origin.position.y);
+	std::cout << "command system update metadata " << metadata_string;
 }
 
 void getPorts(boost::shared_ptr<tcp::socket> sock, ros::NodeHandle n){
@@ -1077,7 +1060,12 @@ void asyncAccept(boost::shared_ptr<boost::asio::io_service> io_service, boost::s
    	std::string scan = (scanning) ? "1" : "0";
    	std::string recover = (recovering) ? "1" : "0";
 
-	sendMessageToPc(sock, "Connected" + sep + mapId + sep + mapDate + sep + homeName + sep + homeX + sep + homeY + sep + scan + sep + recover + sep + laserStr + sep + path);
+   	std::cout << "Need to send the metadata now " << metadata_string;
+
+
+//width, height, resolution, originX, originY
+	sendMessageToPc(sock, "Connected" + sep + mapId + sep + mapDate + sep + homeName + sep + homeX + sep + homeY + sep 
+		+ scan + sep + recover + sep + laserStr + sep + (metadata_string.empty() ? "0" + sep + "0" + sep + "0" + sep + "0" + sep + "0" : metadata_string) + sep + path);
 
 	boost::thread t(boost::bind(session, sock, n));
 }
@@ -1114,7 +1102,6 @@ void disconnect(){
 		std::cout << "(Command system) Robot could not find the application " << std::endl;
 		stopRobotPos();
 		stopMap();
-		stopMetadata();
 		stopLaserData();
 		//stopParticleCloudData();
 		connected = false;
@@ -1130,9 +1117,6 @@ int main(int argc, char* argv[]){
 		
 		startRobotPosClient = n.serviceClient<gobot_software::Port>("start_robot_pos_sender");
 		stopRobotPosClient = n.serviceClient<std_srvs::Empty>("stop_robot_pos_sender");
-		
-		startMetadataClient = n.serviceClient<gobot_software::Port>("start_map_metadata_sender");
-		stopMetadataClient = n.serviceClient<std_srvs::Empty>("stop_map_metadata_sender");
 		
 		startMapClient = n.serviceClient<gobot_software::Port>("start_map_sender");
 		sendOnceMapClient = n.serviceClient<gobot_software::Port>("send_once_map_sender");
@@ -1164,6 +1148,9 @@ int main(int argc, char* argv[]){
 
 		go_pub = n.advertise<geometry_msgs::PoseStamped>("/move_base_simple/goal", 1000);
     	teleop_pub = n.advertise<geometry_msgs::Twist>("/cmd_vel", 1000);
+		ros::Subscriber sub_meta = n.subscribe("/map_metadata", 1, updateMetaData);
+
+		ros::spinOnce();
 
 		server(CMD_PORT, n);
 		

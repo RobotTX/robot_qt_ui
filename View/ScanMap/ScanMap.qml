@@ -79,7 +79,7 @@ Window {
                 acceptedButtons: Qt.LeftButton
                 drag.target: parent
 
-                onClicked: console.log(mouseX + " " + mouseY + " width " + width + " height " + height)
+                onClicked: console.log(mouseX + " " + mouseY + " width " + width + " height " + height + " " + robotModel.get(0).x + " " + robotModel.get(0).y)
 
                 onWheel: {
                     var newScale = scanMap.scale + scanMap.scale * wheel.angleDelta.y / 120 / 10;
