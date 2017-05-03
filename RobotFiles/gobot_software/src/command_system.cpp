@@ -1,5 +1,6 @@
 #include "command_system.hpp"
 
+
 const int max_length = 1024;
 
 const std::string PATH_STAGE_FILE = "/home/gtdollar/computer_software/Robot_Infos/path_stage.txt";
