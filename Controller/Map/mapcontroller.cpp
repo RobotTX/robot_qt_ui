@@ -353,14 +353,8 @@ void MapController::saveNewMap(const QString file_name){
 
 void MapController::updateMetadata(int width, int height, float resolution, float originX, float originY){
     qDebug() << "MapController::updateMetadata" << width << height << resolution << originX << originY;
+    setOrigin(origin);
     setWidth(width);
     setHeight(height);
     setResolution(resolution);
-    QPointF origin = Helper::Convert::robotCoordToPixelCoord(
-                        QPointF(originX, originY),
-                        getOrigin().x(),
-                        getOrigin().y(),
-                        getResolution(),
-                        getHeight());
-    setOrigin(origin);
 }
