@@ -182,17 +182,6 @@ signals:
     void newRobotPos(QString ip, float posX, float posY, float ori);
 
     /**
-     * @brief newMetadata
-     * @param width
-     * @param height
-     * @param resolution
-     * @param originX
-     * @param originY
-     * Send the new metadata to the robotsController
-     */
-    void updateMetadata(int width, int height, float resolution, float originX, float originY);
-
-    /**
      * @brief updatePath
      * @param ip
      * @param strList
@@ -225,9 +214,14 @@ signals:
      * @param mapArray
      * @param mapId
      * @param mapDate
+     * @param resolution
+     * @param originX
+     * @param originY
+     * @param map_width
+     * @param map_height
      * Send the new map to the robotsController to be used as the main one
      */
-    void newMapFromRobot(QString ip, QByteArray mapArray, QString mapId, QString mapDate);
+    void newMapFromRobot(QString ip, QByteArray mapArray, QString mapId, QString mapDate, QString resolution, QString originX, QString originY, int map_width, int map_height);
 
     /**
      * @brief mapToMergeFromRobot
@@ -242,9 +236,13 @@ signals:
      * @param ip
      * @param mapArray
      * @param resolution
+     * @param originX
+     * @param originY
+     * @param map_width
+     * @param map_height
      * Send the new map to the robotsController to be used in the scan window
      */
-    void receivedScanMap(QString ip, QByteArray mapArray, QString resolution);
+    void receivedScanMap(QString ip, QByteArray mapArray, QString resolution, QString originX, QString originY, int map_width, int map_height);
 
     /**
      * @brief checkScanning

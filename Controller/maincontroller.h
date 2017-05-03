@@ -77,16 +77,6 @@ private slots:
      */
     void newRobotPosSlot(QString ip, float posX, float posY, float ori);
     /**
-     * @brief updateMetadataSlot
-     * @param width
-     * @param height
-     * @param resolution
-     * @param originX
-     * @param originY
-     * updates the metadata
-     */
-    void updateMetadataSlot(int width, int height, float resolution, float originX, float originY);
-    /**
      * @brief updatePathSlot
      * @param ip
      * @param strList
@@ -148,7 +138,7 @@ private slots:
      * updates the map of the map controller, resets paths and points and sends
      * the map to all the other robots
      */
-    void newMapFromRobotSlot(QString ip, QByteArray mapArray, QString mapId, QString mapDate);
+    void newMapFromRobotSlot(QString ip, QByteArray mapArray, QString mapId, QString mapDate, QString resolution, QString originX, QString originY, int map_width, int map_height);
     /**
      * @brief requestOrSendMap
      * @param ip
@@ -198,7 +188,7 @@ private slots:
      * @param resolution
      * gives the newly received scan map to the scan controller
      */
-    void receivedScanMapSlot(QString ip, QByteArray map, QString resolution);
+    void receivedScanMapSlot(QString ip, QByteArray map, QString resolution, QString originX, QString originY, int map_width, int map_height);
     /**
      * @brief sendTeleopSlot
      * @param ip

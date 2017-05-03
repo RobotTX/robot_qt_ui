@@ -51,8 +51,9 @@ RobotsController::RobotsController(QObject *applicationWindow, QQmlApplicationEn
         connect(parent, SIGNAL(setHome(QVariant, QVariant, QVariant, QVariant)),
                 robotModel, SLOT(setHome(QVariant, QVariant, QVariant, QVariant)));
 
-        connect(this, SIGNAL(receivedScanMap(QString, QByteArray, QString)),
-                parent, SLOT(receivedScanMapSlot(QString, QByteArray, QString)));
+        connect(this, SIGNAL(receivedScanMap(QString, QByteArray, QString, QString, QString, int, int)),
+                parent, SLOT(receivedScanMapSlot(QString, QByteArray, QString, QString, QString, int, int)));
+
 
     } else {
         /// NOTE can probably remove that when testing phase is over
@@ -71,11 +72,12 @@ RobotsController::RobotsController(QObject *applicationWindow, QQmlApplicationEn
     }
 
     connect(this, SIGNAL(newRobotPos(QString, float, float, float)), parent, SLOT(newRobotPosSlot(QString, float, float, float)));
-    connect(this, SIGNAL(updateMetadata(int, int, float, float, float)), parent, SLOT(updateMetadataSlot(int, int, float, float, float)));
     connect(this, SIGNAL(updatePath(QString, QStringList)), parent, SLOT(updatePathSlot(QString, QStringList)));
     connect(this, SIGNAL(updateHome(QString, QString, float, float)), parent, SLOT(updateHomeSlot(QString, QString, float, float)));
     connect(this, SIGNAL(checkMapInfo(QString, QString, QString)), parent, SLOT(checkMapInfoSlot(QString, QString, QString)));
-    connect(this, SIGNAL(newMapFromRobot(QString, QByteArray, QString, QString)), parent, SLOT(newMapFromRobotSlot(QString, QByteArray, QString, QString)));
+    connect(this, SIGNAL(newMapFromRobot(QString, QByteArray, QString, QString, QString, QString, QString, int, int)),
+            parent, SLOT(newMapFromRobotSlot(QString, QByteArray, QString, QString, QString, QString, QString, int, int)));
+
     connect(this, SIGNAL(sendMapToProcessForMerge(QByteArray, QString)), parent, SLOT(processMapForMerge(QByteArray, QString)));
     connect(this, SIGNAL(removeScanMap(QString)), parent, SLOT(removeScanMapSlot(QString)));
     connect(this, SIGNAL(setMessageTop(int, QString)), parent, SLOT(setMessageTopSlot(int, QString)));
@@ -172,10 +174,6 @@ void RobotsController::setRobotPos(const QString ip, const float posX, const flo
     emit setPos(ip, posX, posY, ori);
 }
 
-void RobotsController::updateMetadataSlot(const int width, const int height, const float resolution, const float originX, const float originY){
-    emit updateMetadata(width, height, resolution, originX, originY);
-}
-
 void RobotsController::updatePathSlot(const QString ip, const QStringList strList){
     emit updatePath(ip, strList);
 }
@@ -227,8 +225,8 @@ void RobotsController::sendNewMap(const QString ip, const QString mapId, const Q
     emit setPath(ip, "");
 }
 
-void RobotsController::newMapFromRobotSlot(const QString ip, const QByteArray mapArray, const QString mapId, const QString mapDate){
-    emit newMapFromRobot(ip, mapArray, mapId, mapDate);
+void RobotsController::newMapFromRobotSlot(const QString ip, const QByteArray mapArray, const QString mapId, const QString mapDate, const QString resolution, const QString originX, const QString originY, const int map_width, const int map_height){
+    emit newMapFromRobot(ip, mapArray, mapId, mapDate, resolution, originX, originY, map_width, map_height);
 }
 
 void RobotsController::requestMap(const QString ip){
@@ -283,8 +281,8 @@ void RobotsController::pausedScanningSlot(const QString ip){
     emit pausedScanning(ip);
 }
 
-void RobotsController::receivedScanMapSlot(const QString ip, const QByteArray map, const QString resolution){
-    emit receivedScanMap(ip, map, resolution);
+void RobotsController::receivedScanMapSlot(const QString ip, const QByteArray map, const QString resolution, const QString originX, const QString originY, const int map_width, const int map_height){
+    emit receivedScanMap(ip, map, resolution, originX, originY, map_width, map_height);
 }
 
 void RobotsController::sendTeleop(const QString ip, const int teleop){

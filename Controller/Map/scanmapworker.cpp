@@ -73,7 +73,36 @@ void ScanMapWorker::readTcpDataSlot(){
         qDebug() << "(ScanMapWorker) Who :" << who;
 
         QString mapInfo("");
-        if(who == 1 || who == 2){
+        if(who == 0){
+            /*std::to_string(msg->width) + " " + std::to_string(msg->height) + " " + std::to_string(msg->resolution) + " " +
+                std::to_string(msg->origin.position.x) + " " + std::to_string(msg->origin.position.y) + " ";*/
+            int i = 0;
+            bool gotMapInfo = false;
+            while(!gotMapInfo && i < data.size() - 6){
+                if(static_cast<uint8_t>(data.at(i)) == 252 && static_cast<uint8_t>(data.at(i+1)) == 252
+                        && static_cast<uint8_t>(data.at(i+2)) == 252 && static_cast<uint8_t>(data.at(i+3)) == 252 &&
+                        static_cast<uint8_t>(data.at(i+4)) == 252) {
+
+                    gotMapInfo = true;
+                } else
+                    mapInfo.append(static_cast<char>(data.at(i)));
+                i++;
+            }
+
+            data.remove(0, mapInfo.size() + 5);
+
+            qDebug() << "(ScanMapWorker) Got mapInfo (who = 0) :" << mapInfo;
+            QStringList strList = mapInfo.split(" ", QString::SkipEmptyParts);
+            if(strList.size() > 4){
+                map_width = QString(strList.at(0)).toInt();
+                map_height = QString(strList.at(1)).toInt();
+                resolution = strList.at(2);
+                originX = strList.at(3);
+                originY = strList.at(4);
+            } else
+                qDebug() << "(ScanMapWorker) Could not parse mapInfo :" << mapInfo;
+
+        } else if(who == 1 || who == 2){
             /// If the map comes from a pgm, we get the mapId and mapDate associated to it
             int i = 0;
             bool gotMapInfo = false;
@@ -90,7 +119,7 @@ void ScanMapWorker::readTcpDataSlot(){
 
             data.remove(0, mapInfo.size() + 5);
 
-            qDebug() << "(ScanMapWorker) Got mapInfo :" << mapInfo;
+            qDebug() << "(ScanMapWorker) Got mapInfo (who = 1 or 2) :" << mapInfo;
             QStringList strList = mapInfo.split(" ", QString::SkipEmptyParts);
             if(strList.size() > 4){
                 mapId = strList.at(0);
@@ -99,9 +128,9 @@ void ScanMapWorker::readTcpDataSlot(){
                 originX = strList.at(3);
                 originX.remove(originX.size()-1, 1);
                 originY = strList.at(4);
-            } else {
+            } else
                 qDebug() << "(ScanMapWorker) Could not parse mapInfo :" << mapInfo;
-            }
+
         } else if(who == 3){
             map_width = static_cast<uint32_t> (static_cast<uint8_t> (data.at(0)) << 24) + static_cast<uint32_t> (static_cast<uint8_t> (data.at(1)) << 16)
                             + static_cast<uint32_t> (static_cast<uint8_t> (data.at(2)) << 8) + static_cast<uint32_t> (static_cast<uint8_t> (data.at(3)));

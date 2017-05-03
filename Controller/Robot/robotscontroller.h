@@ -100,7 +100,6 @@ private slots:
     void shortcutAddRobot(void);
     void shortcutDeleteRobot(void);
     void newRobotPosSlot(const QString ip, const float posX, const float posY, const float ori);
-    void updateMetadataSlot(const int width, const int height, const float resolution, const float originX, const float originY);
     void updatePathSlot(const QString ip, const QStringList strList);
     void updateHomeSlot(const QString ip, const QString homeName, const float homeX, const float homeY);
     void sendCommandNewName(const QString ip, const QString name);
@@ -112,13 +111,13 @@ private slots:
     void sendCommandStopPath(const QString ip);
     void updatePlayingPathSlot(const QString ip, const bool playingPath);
     void checkMapInfoSlot(const QString ip, const QString mapId, const QString mapDate);
-    void newMapFromRobotSlot(const QString ip, const QByteArray mapArray, const QString mapId, const QString mapDate);
+    void newMapFromRobotSlot(const QString ip, const QByteArray mapArray, const QString mapId, const QString mapDate, const QString resolution, const QString originX, const QString originY, const int map_width, const int map_height);
     void timerSlot(void);
     void processMapForMerge(const QByteArray map, const QString resolution);
 
     void stoppedScanningSlot(const QString ip);
     void pausedScanningSlot(const QString ip);
-    void receivedScanMapSlot(const QString ip, const QByteArray map, const QString resolution);
+    void receivedScanMapSlot(const QString ip, const QByteArray map, const QString resolution, const QString originX, const QString originY, const int map_width, const int map_height);
     void checkScanningSlot(const QString ip, const bool scanning);
     void processingCmdSlot(QString ip, bool processing);
     void setMessageTopSlot(int status, QString msg);
@@ -143,17 +142,16 @@ signals:
     void setStage(QVariant ip, QVariant stage);
     void setBattery(QVariant ip, QVariant battery);
     void newRobotPos(QString ip, float posX, float posY, float ori);
-    void updateMetadata(int width, int height, float resolution, float originX, float originY);
     void updatePath(QString ip, QStringList strList);
     void updateHome(QString ip, QString homeName, float homeX, float homeY);
     void setName(QVariant ip, QVariant name);
     void checkMapInfo(QString ip, QString mapId, QString mapDate);
-    void newMapFromRobot(QString ip, QByteArray mapArray, QString mapId, QString mapDate);
+    void newMapFromRobot(QString ip, QByteArray mapArray, QString mapId, QString mapDate, QString resolution, QString originX, QString originY, int map_width, int map_height);
     void sendMapToProcessForMerge(QByteArray map, QString resolution);
     void stoppedScanning(QVariant ip);
     void startedScanning(QVariant ip);
     void pausedScanning(QVariant ip);
-    void receivedScanMap(QString ip, QByteArray mapArray, QString resolution);
+    void receivedScanMap(QString ip, QByteArray mapArray, QString resolution, QString originX, QString originY, int map_width, int map_height);
     void setScanningOnConnection(QVariant ip, QVariant scanningOnConnection);
     void checkScanWindow(QVariant ip, QVariant scanning);
     void removeScanMap(QString);

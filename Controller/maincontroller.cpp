@@ -302,14 +302,6 @@ void MainController::newRobotPosSlot(QString ip, float posX, float posY, float o
     mapController->getScanMapController()->updateRobotPos(ip, robotPos.x(), robotPos.y(), orientation);
 }
 
-void MainController::updateMetadataSlot(int width, int height, float resolution, float originX, float originY){
-    qDebug() << "metadata" << width << height << resolution << originX << originY;
-    mapController->setOrigin(QPointF(originX, originY));
-    mapController->setWidth(width);
-    mapController->setHeight(height);
-    mapController->setResolution(resolution);
-}
-
 void MainController::updatePathSlot(QString ip, QStringList strList){
     if(strList.size() > 0){
         if(strList.size() % 4 == 1){
@@ -441,7 +433,8 @@ void MainController::sendNewMap(QString ip){
     robotsController->sendNewMap(ip, mapId, date, mapMetadata, mapController->getMapImage());
 }
 
-void MainController::newMapFromRobotSlot(QString ip, QByteArray mapArray, QString mapId, QString mapDate){
+void MainController::newMapFromRobotSlot(QString ip, QByteArray mapArray, QString mapId, QString mapDate, QString resolution, QString originX, QString originY, int map_width, int map_height){
+    mapController->updateMetadata(map_width, map_height, resolution.toFloat(), originX.toFloat(), originY.toFloat());
     mapController->newMapFromRobot(mapArray, mapId, mapDate);
 
     QString mapMetadata = mapController->getMetadataString();
@@ -532,7 +525,8 @@ void MainController::playPauseScanningSlot(QString ip, bool wasScanning, bool sc
     }
 }
 
-void MainController::receivedScanMapSlot(QString ip, QByteArray map, QString resolution){
+void MainController::receivedScanMapSlot(QString ip, QByteArray map, QString resolution, QString originX, QString originY, int map_width, int map_height){
+    mapController->updateMetadata(map_width, map_height, resolution.toFloat(), originX.toFloat(), originY.toFloat());
     QImage image = mapController->getImageFromArray(map, mapController->getWidth(), mapController->getHeight(), false);
     mapController->getScanMapController()->receivedScanMap(ip, image, resolution);
 }

@@ -65,6 +65,5 @@ bool connectToParticleCloudNode(void);
 bool startSendingParticleCloud(void);
 void disconnect(void);
 bool resumeRecoveryPosition(void);
-void updateMetaData(const nav_msgs::MapMetaData::ConstPtr& msg);
 
 #endif

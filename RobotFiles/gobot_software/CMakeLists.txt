@@ -62,42 +62,35 @@ target_link_libraries(map_transfer ${catkin_LIBRARIES})
 target_link_libraries(map_transfer ${gobot_software} ${Boost_FILESYSTEM_LIBRARY} ${Boost_SYSTEM_LIBRARY} )
 add_dependencies(map_transfer gobot_software_generate_messages_cpp)
 
-
 add_executable(robot_pos_transfer src/robot_pos_transfer.cpp)
 target_link_libraries(robot_pos_transfer ${catkin_LIBRARIES})
 target_link_libraries(robot_pos_transfer ${gobot_software} ${Boost_FILESYSTEM_LIBRARY} ${Boost_SYSTEM_LIBRARY} )
 add_dependencies(robot_pos_transfer gobot_software_generate_messages_cpp)
 
-
-add_executable(map_metadata_transfer src/map_metadata_transfer.cpp)
-target_link_libraries(map_metadata_transfer ${catkin_LIBRARIES})
-target_link_libraries(map_metadata_transfer ${gobot_software} ${Boost_FILESYSTEM_LIBRARY} ${Boost_SYSTEM_LIBRARY} )
-add_dependencies(map_metadata_transfer gobot_software_generate_messages_cpp)
-
+#add_executable(map_metadata_transfer src/map_metadata_transfer.cpp)
+#target_link_libraries(map_metadata_transfer ${catkin_LIBRARIES})
+#target_link_libraries(map_metadata_transfer ${gobot_software} ${Boost_FILESYSTEM_LIBRARY} ${Boost_SYSTEM_LIBRARY} )
+#add_dependencies(map_metadata_transfer gobot_software_generate_messages_cpp)
 
 add_executable(command_system src/command_system.cpp)
 target_link_libraries(command_system ${catkin_LIBRARIES})
 target_link_libraries(command_system ${gobot_software} ${Boost_FILESYSTEM_LIBRARY} ${Boost_SYSTEM_LIBRARY} )
 add_dependencies(command_system gobot_software_generate_messages_cpp)
 
-
 add_executable(read_new_map src/read_new_map.cpp)
 target_link_libraries(read_new_map ${catkin_LIBRARIES})
 target_link_libraries(read_new_map ${gobot_software} ${Boost_FILESYSTEM_LIBRARY} ${Boost_SYSTEM_LIBRARY} )
 add_dependencies(read_new_map gobot_software_generate_messages_cpp)
-
 
 add_executable(teleop src/teleop.cpp)
 target_link_libraries(teleop ${catkin_LIBRARIES})
 target_link_libraries(teleop ${gobot_software} ${Boost_FILESYSTEM_LIBRARY} ${Boost_SYSTEM_LIBRARY} )
 add_dependencies(teleop gobot_software_generate_messages_cpp)
 
-
 add_executable(play_path src/playPath.cpp)
 target_link_libraries(play_path ${catkin_LIBRARIES})
 target_link_libraries(play_path ${gobot_software} ${Boost_FILESYSTEM_LIBRARY} ${Boost_SYSTEM_LIBRARY} )
 add_dependencies(play_path gobot_software_generate_messages_cpp)
-
 
 add_executable(send_laser_data src/laser.cpp)
 target_link_libraries(send_laser_data ${catkin_LIBRARIES})

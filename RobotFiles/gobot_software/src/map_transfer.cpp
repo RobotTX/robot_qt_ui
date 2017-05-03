@@ -15,6 +15,7 @@ std::string path_gobot_move = "/home/gtdollar/catkin_ws/src/gobot_move/";
 
 // this allows us to resub to the /map topic in case the connection would have been lost
 bool sendingMapWhileScanning = false;
+std::string metadata_string = "";
 
 void sendMap(const std::vector<uint8_t>& my_map){
 	try {
@@ -24,6 +25,11 @@ void sendMap(const std::vector<uint8_t>& my_map){
 	} catch (std::exception& e) {
 		e.what();
 	}
+}
+
+void getMetaData(const nav_msgs::MapMetaData::ConstPtr& msg){
+	metadata_string = std::to_string(msg->width) + " " + std::to_string(msg->height) + " " + std::to_string(msg->resolution) + " " + 
+	std::to_string(msg->origin.position.x) + " " + std::to_string(msg->origin.position.y) + " ";
 }
 
 void getMap(const nav_msgs::OccupancyGrid::ConstPtr& msg){
@@ -44,9 +50,21 @@ std::vector<uint8_t> compress(std::vector<int8_t> map, int map_width, int map_he
 	int last = 205;
 	uint32_t count = 0;
 
-	/// If the map comes from a pgm, we send the mapId, the mapDate,
-	/// the resolution and the origin with it
-	if(who == 1 || who == 2){
+	if(who == 0){
+		/// If we are scanning a new map, we send the published metadata with it
+	   	std::cout << "(Map) Map metadata (who = 0) : " << metadata_string << std::endl;
+	   	for(int i = 0; i < metadata_string.size(); i++)
+	   		my_map.push_back(static_cast<uint8_t>(metadata_string.at(i)));
+	   	
+		my_map.push_back(252);
+		my_map.push_back(252);
+		my_map.push_back(252);
+		my_map.push_back(252);
+		my_map.push_back(252);
+
+	} else if(who == 1 || who == 2){
+		/// If the map comes from a pgm, we send the mapId, the mapDate,
+		/// the resolution and the origin with it
 	   	std::ifstream ifMap(path_computer_software + "Robot_Infos/mapId.txt", std::ifstream::in);
 	   	std::string mapId("{0}");
 	   	std::string mapDate("0");
@@ -58,8 +76,10 @@ std::vector<uint8_t> compress(std::vector<int8_t> map, int map_width, int map_he
 
 
 	   	std::ifstream ifYaml(path_gobot_move + "maps/used_map.yaml", std::ifstream::in);
+	   	/// We initialize the resolution and origin
 	   	std::string resolution("resolution: 0.050000");
 	   	std::string origin("origin: [-51.224998, -51.224998, 0.000000]");
+	   	/// Get the resolution and origin from the yaml file
 	   	if(ifYaml){
 	   		getline(ifYaml, resolution);
 	   		getline(ifYaml, resolution);
@@ -74,11 +94,10 @@ std::vector<uint8_t> compress(std::vector<int8_t> map, int map_width, int map_he
 		origin = origin.substr(0,found);
 
 	   	std::string str = mapId + " " + mapDate + " " + resolution + " " + origin;
-	   	std::cout << "(Map) Map metadata : " << str << std::endl;
-	   	for(int i = 0; i < str.size(); i++){
+	   	std::cout << "(Map) Map metadata (who = 1 or 2) : " << str << std::endl;
+	   	for(int i = 0; i < str.size(); i++)
 	   		my_map.push_back(static_cast<uint8_t>(str.at(i)));
-	   	}
-
+	   	
 		my_map.push_back(252);
 		my_map.push_back(252);
 		my_map.push_back(252);
@@ -295,6 +314,7 @@ int main(int argc, char **argv){
 	// to recover a robot's position
 	ros::ServiceServer send_local_map_service = n.advertiseService("send_local_map", sendLocalMap);
 	ros::ServiceServer stop_sending_local_map_service = n.advertiseService("stop_sending_local_map", stopSendingLocalMap);
+	ros::Subscriber sub_meta = n.subscribe("/map_metadata", 1, getMetaData);
 
 	ros::Rate loop_rate(20);
 	while(ros::ok()){

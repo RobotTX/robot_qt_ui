@@ -26,7 +26,7 @@ using boost::asio::ip::tcp;
 void sendMetaData(const std::string& metadata_string);
 
 /**
- * Called when metadata is published
+ * Called when metadata are published
  */
 void getMetaData(const nav_msgs::MapMetaData::ConstPtr& msg);
 

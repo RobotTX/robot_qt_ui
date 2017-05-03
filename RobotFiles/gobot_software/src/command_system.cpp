@@ -342,7 +342,7 @@ bool execCommand(ros::NodeHandle n, std::vector<std::string> command){
 				std::cout << "(Command system) Sending the robot home" << std::endl;
 				std_srvs::Empty arg;
 				/// TODO ? 
-				if(call ros::service::call("setAutoCharging", arg)){
+				if(ros::service::call("setAutoCharging", arg)){
 				//if(ros::service::call("go_home", arg)){
 					std::cout << "Go home service called with success" << std::endl;
 					status = true;
