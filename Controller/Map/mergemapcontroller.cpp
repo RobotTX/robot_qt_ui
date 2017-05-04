@@ -67,8 +67,6 @@ void MergeMapController::importMap(const QString& _filename){
         paintedItem->setParentItem(mapView);
         paintedItem->setParent(engine);
 
-        qDebug() << "imported map of size" << image.width() << image.height();
-
         int top = 0;
         int bottom = image.height();
         int left = image.width();
@@ -142,8 +140,6 @@ void MergeMapController::importMap(QImage image, double _resolution){
         QQuickItem* mapView = applicationWindow->findChild<QQuickItem*> ("mergeMapsView");
         paintedItem->setParentItem(mapView);
         paintedItem->setParent(engine);
-
-        qDebug() << "imported map of size" << image.width() << image.height();
 
         int top = 0;
         int bottom = image.height();

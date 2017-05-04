@@ -146,6 +146,8 @@ void CommandController::cmdAnswerSlot(QString answer){
         Q_UNREACHABLE();
     }
 
+    qDebug() << "CommandCOntroller::cmdAnswerSlot in" << 15000 - timer.remainingTime();
+
     timer.stop();
     cmdFinished();
 }

@@ -40,7 +40,7 @@ RobotsController::RobotsController(QObject *applicationWindow, QQmlApplicationEn
         connect(robotModel, SIGNAL(pausePathSignal(QString)), this, SLOT(sendCommandPausePath(QString)));
         connect(robotModel, SIGNAL(playPathSignal(QString)), this, SLOT(sendCommandPlayPath(QString)));
         connect(robotModel, SIGNAL(stopPathSignal(QString)), this, SLOT(sendCommandStopPath(QString)));
-        connect(robotModel, SIGNAL(stopScanning(QString)), parent, SLOT(stopScanningSlot(QString)));
+        connect(robotModel, SIGNAL(stopScanning(QString, bool)), parent, SLOT(stopScanningSlot(QString, bool)));
         connect(robotModel, SIGNAL(activateLaser(QString, bool)), this, SLOT(activateLaserSlot(QString, bool)));
 
 
@@ -225,8 +225,8 @@ void RobotsController::sendNewMap(const QString ip, const QString mapId, const Q
     emit setPath(ip, "");
 }
 
-void RobotsController::newMapFromRobotSlot(const QString ip, const QByteArray mapArray, const QString mapId, const QString mapDate, const QString resolution, const QString originX, const QString originY, const int map_width, const int map_height){
-    emit newMapFromRobot(ip, mapArray, mapId, mapDate, resolution, originX, originY, map_width, map_height);
+void RobotsController::newMapFromRobotSlot(const QString ip, const QByteArray mapArray, const QString mapId, const QString mapDate, const QString resolution, const QString originX, const QString originY, const QString orientation, const int map_width, const int map_height){
+    emit newMapFromRobot(ip, mapArray, mapId, mapDate, resolution, originX, originY, orientation, map_width, map_height);
 }
 
 void RobotsController::requestMap(const QString ip){
@@ -281,8 +281,8 @@ void RobotsController::pausedScanningSlot(const QString ip){
     emit pausedScanning(ip);
 }
 
-void RobotsController::receivedScanMapSlot(const QString ip, const QByteArray map, const QString resolution, const QString originX, const QString originY, const int map_width, const int map_height){
-    emit receivedScanMap(ip, map, resolution, originX, originY, map_width, map_height);
+void RobotsController::receivedScanMapSlot(const QString ip, const QByteArray map, const QString resolution, const QString originX, const QString originY, const QString orientation, const int map_width, const int map_height){
+    emit receivedScanMap(ip, map, resolution, originX, originY, orientation, map_width, map_height);
 }
 
 void RobotsController::sendTeleop(const QString ip, const int teleop){

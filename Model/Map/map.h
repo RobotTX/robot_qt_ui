@@ -30,6 +30,7 @@ public:
     double getResolution(void) const { return resolution; }
     QDateTime getDateTime(void) const { return dateTime; }
     QUuid getMapId(void) const { return mapId; }
+    float getOrientation(void) const { return orientation; }
 
     void setMapFile(const QString file) { qDebug() << "Updating map"; mapFile = file; }
 
@@ -39,6 +40,7 @@ public:
 
     void setMapImage(const QImage image) { mapImage = image; }
     void setOrigin(const QPointF _origin) { origin = _origin; }
+    void setOrientation(const float _orientation) { orientation = _orientation; }
     void setHeight(const int _height) { height = _height; }
     void setWidth(const int _width) { width = _width; }
     void setResolution(const double _resolution) { resolution = _resolution; }
@@ -63,6 +65,8 @@ private:
      * (which can be anywhere in the map) and not our map origin (top-left corner)
      */
     QPointF origin;
+
+    float orientation;
 
     /**
      * @brief dateTime

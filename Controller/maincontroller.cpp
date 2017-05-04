@@ -9,7 +9,7 @@
 #include <QDir>
 #include <QThread>
 #include <QMessageBox>
-#include "math.h"
+#include <QtMath>
 #include "Helper/helper.h"
 #include "Controller/Map/mapcontroller.h"
 #include "Controller/Map/mergemapcontroller.h"
@@ -27,7 +27,7 @@
 #include "Model/Path/pathpoint.h"
 
 
-MainController::MainController(QQmlApplicationEngine *engine, QObject* parent) : QObject(parent) {
+MainController::MainController(QQmlApplicationEngine *engine, QObject* parent) : QObject(parent), discardMap(true) {
 
     QList<QObject*> qmlList = engine->rootObjects();
 
@@ -296,6 +296,7 @@ void MainController::newRobotPosSlot(QString ip, float posX, float posY, float o
                     mapController->getOrigin().y(),
                     mapController->getResolution(),
                     mapController->getHeight());
+    /// TODO check if add map rotation needed
     float orientation = -ori * 180.0 / M_PI + 90;
     robotsController->setRobotPos(ip, robotPos.x(), robotPos.y(), orientation);
     emit updateRobotPos(ip, robotPos.x(), robotPos.y(), orientation);
@@ -433,8 +434,8 @@ void MainController::sendNewMap(QString ip){
     robotsController->sendNewMap(ip, mapId, date, mapMetadata, mapController->getMapImage());
 }
 
-void MainController::newMapFromRobotSlot(QString ip, QByteArray mapArray, QString mapId, QString mapDate, QString resolution, QString originX, QString originY, int map_width, int map_height){
-    mapController->updateMetadata(map_width, map_height, resolution.toFloat(), originX.toFloat(), originY.toFloat());
+void MainController::newMapFromRobotSlot(QString ip, QByteArray mapArray, QString mapId, QString mapDate, QString resolution, QString originX, QString originY, QString orientation, int map_width, int map_height){
+    mapController->updateMetadata(map_width, map_height, resolution.toFloat(), originX.toFloat(), originY.toFloat(), orientation.toFloat());
     mapController->newMapFromRobot(mapArray, mapId, mapDate);
 
     QString mapMetadata = mapController->getMetadataString();
@@ -474,17 +475,45 @@ void MainController::resetMapConfiguration(QString file_name, bool scan, double 
     if(scan){
         ScanMapPaintedItem* map_reference = mapController->getScanMapController()->getPaintedItems().begin().value();
         qDebug() << "Saving map config after scan with origin" << map_reference->x()-map_reference->getLeft() << map_reference->y()-map_reference->getTop();
-        saveMapConfig(cpp_file_name, 1.0, 0.0, 0.0, true);
-        mapController->setOrigin(QPointF(map_reference->x()-map_reference->getLeft(), map_reference->y()-map_reference->getTop()));
+
+        float rotationInRadian = map_reference->rotation() * 3.14159 / 180;
+
+        float x = (map_reference->height()/2 - (map_reference->getRobotOrigin().y() - map_reference->getTop()))*qSin(rotationInRadian)
+                  + (map_reference->width()/2 - (map_reference->getRobotOrigin().x() - map_reference->getLeft()))*qCos(rotationInRadian);
+
+        float y = (map_reference->height()/2 - (map_reference->getRobotOrigin().y() - map_reference->getTop()))*qCos(rotationInRadian)
+                  - (map_reference->width()/2 - (map_reference->getRobotOrigin().x() - map_reference->getLeft()))*qSin(rotationInRadian);
+
+        qDebug() << map_reference->x() << map_reference->y()
+                 << map_reference->height()/2 << map_reference->width()/2
+                 << map_reference->getRobotOrigin().x() << map_reference->getRobotOrigin().y()
+                 << map_reference->getTop() << map_reference->getLeft()
+                 << x << y;
+        /*y' = y*cos(a) - x*sin(a)
+        x' = y*sin(a) + x*cos(a)*/
+
+        ///QPointF robotOriginAfterRotation()
+        QPointF newOrigin(x + map_reference->x() + map_reference->width()/2,
+                          y + map_reference->y() + map_reference->height()/2);
+        //QPointF newOrigin(x, y);
+        qDebug() << newOrigin << mapController->getOrigin() << Helper::Convert::pixelCoordToRobotCoord(newOrigin, mapController->getOrigin().x(), mapController->getOrigin().y(), mapController->getResolution(),
+                                                                                                      mapController->getHeight());
+        /// have to compute the difference between the old origin and the position of the robot at the beginning of the scan,
+        /// this is used as the new origin for the scanned map
+        mapController->setOrigin(mapController->getOrigin() - Helper::Convert::pixelCoordToRobotCoord(newOrigin, mapController->getOrigin().x(), mapController->getOrigin().y(), mapController->getResolution(),
+                                                                         mapController->getHeight()));
+        mapController->setOrientation(map_reference->rotation());
     }
-
-    else saveMapConfig(cpp_file_name, 1.0, 0, 0, true);
-
-    mapController->requestReloadMap(file_name);
-    qDebug() << "requesting reload" << file_name;
 
     pointController->clearPoints();
     pathController->clearPaths();
+
+    /// although this is a new configuraton we have to pass false in order to reset properly the paths and points
+    /// in the files
+    saveMapConfig(cpp_file_name, 1.0, 0, 0, false);
+
+    mapController->requestReloadMap(file_name);
+    qDebug() << "requesting reload" << file_name;
 
     QUuid mapId = QUuid::createUuid();
 
@@ -505,8 +534,8 @@ void MainController::startScanningSlot(QString ip){
     robotsController->sendCommand(ip, QString("t"));
 }
 
-void MainController::stopScanningSlot(QString ip){
-    robotsController->sendCommand(ip, QString("u"));
+void MainController::stopScanningSlot(QString ip, bool killGobotMove){
+    robotsController->sendCommand(ip, QString("u") + QChar(31) + QString::number(killGobotMove));
 }
 
 void MainController::playPauseScanningSlot(QString ip, bool wasScanning, bool scanningOnConnection){
@@ -525,10 +554,13 @@ void MainController::playPauseScanningSlot(QString ip, bool wasScanning, bool sc
     }
 }
 
-void MainController::receivedScanMapSlot(QString ip, QByteArray map, QString resolution, QString originX, QString originY, int map_width, int map_height){
-    mapController->updateMetadata(map_width, map_height, resolution.toFloat(), originX.toFloat(), originY.toFloat());
-    QImage image = mapController->getImageFromArray(map, mapController->getWidth(), mapController->getHeight(), false);
-    mapController->getScanMapController()->receivedScanMap(ip, image, resolution);
+void MainController::receivedScanMapSlot(QString ip, QByteArray map, QString resolution, QString originX, QString originY, QString orientation, int map_width, int map_height){
+    if(!discardMap){
+        mapController->updateMetadata(map_width, map_height, resolution.toFloat(), originX.toFloat(), originY.toFloat(), orientation.toFloat());
+        QImage image = mapController->getImageFromArray(map, mapController->getWidth(), mapController->getHeight(), false);
+        mapController->getScanMapController()->receivedScanMap(ip, image, resolution);
+    } else
+        qDebug() << "Received a map to be discardeded";
 }
 
 void MainController::sendTeleopSlot(QString ip, int teleop){
@@ -575,4 +607,11 @@ void MainController::updateTutoFile(int index, bool visible){
     for(int i = 0; i < list.size(); i++)
         out << list.at(i) << '\n';
     tutoFile.close();
+}
+
+void MainController::clearPointsAndPathsAfterScan(){
+    /// clears the map of all paths and points
+    pointController->clearPoints();
+
+    pathController->clearPaths();
 }

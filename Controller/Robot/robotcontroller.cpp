@@ -209,7 +209,7 @@ void RobotController::launchWorkers(void){
     emit startCmdRobotWorker();
 }
 
-void RobotController::mapReceivedSlot(const QByteArray mapArray, const int who, const QString mapId, const QString mapDate, const QString resolution, const QString originX, const QString originY, const int map_width, const int map_height){
+void RobotController::mapReceivedSlot(const QByteArray mapArray, const int who, const QString mapId, const QString mapDate, const QString resolution, const QString originX, const QString originY, const QString orientation, const int map_width, const int map_height){
     qDebug() << "RobotController::mapReceivedSlot received a map" << who;
 
     switch(who){
@@ -221,15 +221,15 @@ void RobotController::mapReceivedSlot(const QByteArray mapArray, const int who, 
             emit receivedScanMap(robotName, image, resolution.toDouble());*/
         break;
         case 2:
-            qDebug() << "RobotController::mapReceivedSlot received a map from a robot to merge" << ip << resolution << originX << originY;
+            qDebug() << "RobotController::mapReceivedSlot received a map from a robot to merge" << ip << resolution << originX << originY << orientation;
             emit mapToMergeFromRobot(mapArray, resolution);
         break;
         case 1:
-            emit newMapFromRobot(ip, mapArray, mapId, mapDate, resolution, originX, originY, map_width, map_height);
+            emit newMapFromRobot(ip, mapArray, mapId, mapDate, resolution, originX, originY, orientation, map_width, map_height);
         break;
         case 0:
             qDebug() << "RobotController::mapReceivedSlot received a map while scanning";
-            emit receivedScanMap(ip, mapArray, resolution, originX, originY, map_width, map_height);
+            emit receivedScanMap(ip, mapArray, resolution, originX, originY, orientation, map_width, map_height);
         break;
         default:
         /// NOTE can probably remove that when testing phase is over
@@ -259,7 +259,7 @@ void RobotController::updateRobotInfo(const QString robotInfo){
     QStringList strList = robotInfo.split(QChar(31), QString::SkipEmptyParts);
     qDebug() << "RobotController::updateRobotInfo" << strList;
 
-    if(strList.size() > 12){
+    if(strList.size() > 7){
         /// Remove the "Connected" in the list
         strList.removeFirst();
         QString mapId = strList.takeFirst();

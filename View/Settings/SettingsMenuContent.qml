@@ -327,7 +327,6 @@ Frame {
     }
 
     function setSettings(mapChoice){
-        console.log("Settings map choice " + mapChoice);
         oriMapChoice = mapChoice;
         settingsPage.mapChoice = mapChoice;
     }

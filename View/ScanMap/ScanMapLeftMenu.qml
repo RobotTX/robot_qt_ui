@@ -111,8 +111,13 @@ Frame {
 
         function reset(){
             for(var i = 0; i < count; i++)
-                robotModel.stopScanning(get(i).ip);
+                robotModel.stopScanning(get(i).ip, true);
             clear();
+        }
+
+        function stopAllScans(killGobotMove){
+            for(var i = 0; i < count; i++)
+                robotModel.stopScanning(get(i).ip, killGobotMove);
         }
     }
 
@@ -218,7 +223,7 @@ Frame {
             width: flick.width
             onStopScanning: {
                 if(robotModel.isConnected(ip)){
-                    robotModel.stopScanning(ip);
+                    robotModel.stopScanning(ip, true);
                 }
             }
             onPlayPauseScanning: {
@@ -293,7 +298,9 @@ Frame {
         // to start directly with that folder selected
         folder: "/home/joan/Gobot/build-Gobot-Desktop_Qt_5_8_0_GCC_64bit-Debug/mapConfigs/"
 
-        onAccepted: scanLeftMenuFrame.saveScan(fileUrl.toString())
+        onAccepted: {
+            scanLeftMenuFrame.saveScan(fileUrl.toString())
+        }
     }
 
     TutorialDialog {
@@ -325,9 +332,17 @@ Frame {
         scanningRobotsList.reset();
     }
 
+    function clear(){
+        scanningRobotsList.clear();
+    }
+
     function checkScanWindow(ip, scanning){
         /// Stop the scan if a scanning robot reconnect after the window has been closed
         if(scanning && (!scanLeftMenuFrame.visible || !scanningRobotsList.contains(ip)))
-            robotModel.stopScanning(ip);
+            robotModel.stopScanning(ip, true);
+    }
+
+    function stopAllScans(killGobotMove){
+        scanningRobotsList.stopAllScans(killGobotMove);
     }
 }

@@ -19,14 +19,24 @@ Window {
 
     property Robots robotModel
     property Tutorial tutorial
+    property bool closeOnSave: false
 
     signal resetMapConfiguration(string file_name, bool scan)
+    signal discardMap(bool discard)
 
     onVisibleChanged: {
+        /// When we close the scan window, we want all the robot to stop scanning
         if(visible){
             scanMapLeftMenu.reset();
             scanMapLeftMenu.resetScanMaps();
+            discardMap(false);
             console.log("size scanleftmenu " + scanMapLeftMenu.width + " " + scanMapLeftMenu.height + " " + height)
+            closeOnSave = false
+        } else {
+            if(!closeOnSave)
+                scanMapLeftMenu.clear();
+            else
+                scanMapLeftMenu.stopAllScans(false);
         }
     }
 
@@ -43,6 +53,7 @@ Window {
             bottom: parent.bottom
         }
         onCancelScan: scanWindow.close()
+        onSaveScan: closeOnSave = true
     }
 
     Rectangle {
@@ -79,7 +90,7 @@ Window {
                 acceptedButtons: Qt.LeftButton
                 drag.target: parent
 
-                onClicked: console.log(mouseX + " " + mouseY + " width " + width + " height " + height + " " + robotModel.get(0).x + " " + robotModel.get(0).y)
+                onClicked: console.log("scan map " + mouseX + " " + mouseY + " width " + width + " height " + height + " " + robotModel.count + " " + robotModel.get(0).posX + " " + robotModel.get(0).posY)
 
                 onWheel: {
                     var newScale = scanMap.scale + scanMap.scale * wheel.angleDelta.y / 120 / 10;

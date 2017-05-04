@@ -51,6 +51,8 @@ void RobotPositionWorker::readTcpDataSlot(){
     QStringList list = data.split(rx, QString::SkipEmptyParts);
     //qDebug() << "Robot" << ipAddress << " position :" << list;
 
+    //qDebug() << list.at(0).toDouble()
+
     /// the IP address is sent along to identify the robot
     if(list.count() > 2)
         emit valueChangedRobot(list.at(0).toDouble(), list.at(1).toDouble(), list.at(2).toDouble());

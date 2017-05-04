@@ -373,17 +373,21 @@ def init():
 	sonar.open()
 
 if __name__ == "__main__":
-    	rospy.init_node('sonar_pub', anonymous=False)
+    
+	rospy.init_node('sonar_pub', anonymous=False)
+        """
 	init()
+
 	rospy.Subscriber("/cmd_vel", Twist, twist)
-        rospy.Subscriber("/amcl_pose", PoseWithCovarianceStamped, callback)
+    rospy.Subscriber("/amcl_pose", PoseWithCovarianceStamped, callback)
 	bumper_service = rospy.Service('getBumpers', GetBumpers, getBumpers)
 	sonar_service = rospy.Service('getSonars', GetSonars, getSonars)
 	battery_service = rospy.Service('getBatteryInfo', GetBatteryInfo, getBatteryInfo)
 	cliff_service = rospy.Service('getCliffData',GetCliffData,getCliffData)
 	load_service = rospy.Service('getWeightInfo',GetWeightInfo,getWeightInfo)
+    """
 	auto_charging_service = rospy.Service('setAutoCharging', SetAutoCharging, setAutoCharging )
-	get_sonar_value()
-    	rospy.spin()
+	#get_sonar_value()
+	rospy.spin()
 
 

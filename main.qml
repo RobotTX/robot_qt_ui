@@ -229,7 +229,6 @@ ApplicationWindow {
     }
 
     function setBatteryThreshold(threshold){
-        console.log("Set threshold " + threshold);
         batteryWarningThreshold = threshold;
     }
 }

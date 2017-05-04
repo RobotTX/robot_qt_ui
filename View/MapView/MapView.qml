@@ -215,7 +215,7 @@ Frame {
                                 tmpPointView.tmpPointViewPosChanged()
                             }
                             if(robotModel.count > 0)
-                                console.log("robot pos " + robotModel.get(0).x + " " + robotModel.get(0).y)
+                                console.log("robot pos " + robotModel.get(0).posX + " " + robotModel.get(0).posY)
                             if(useTmpPathModel){
                                 tmpPathModel.addPathPoint(Math.round(mouseX) + ' ' + Math.round(mouseY),  "tmpPath", "tmpGroup", mouseX, mouseY, 0);
                                 tmpPathModel.checkTmpPosition(tmpPathModel.get(0).paths.get(0).pathPoints.count - 1, mouseX, mouseY);
@@ -337,6 +337,8 @@ Frame {
                             _ip: ip
                             x: posX - width / 2
                             y: posY - height / 2
+                            onXChanged: console.log("x robot is " + x)
+                            onYChanged: console.log("y robot is " + y)
                         }
 
                         Label {
@@ -406,7 +408,6 @@ Frame {
     }
 
     function setMapPosition(posX, posY, zoom){
-        console.log("setMapPosition : " + posX + " | " + posY + " | " + zoom);
         if(zoom > Style.maxZoom)
             zoom = Style.maxZoom;
         else if(zoom < Style.minZoom)
