@@ -48,13 +48,13 @@ RobotController::RobotController(QQmlApplicationEngine* engine, RobotsController
     /// Check if the robot has the same map as the application
     connect(this, SIGNAL(checkMapInfo(QString, QString, QString)), parent, SLOT(checkMapInfoSlot(QString, QString, QString)));
     /// Signal that we just received a new map fron the robot
-    connect(this, SIGNAL(newMapFromRobot(QString, QByteArray, QString, QString, QString, QString, QString, int, int)),
-            parent, SLOT(newMapFromRobotSlot(QString, QByteArray, QString, QString, QString, QString, QString, int, int)));
+    connect(this, SIGNAL(newMapFromRobot(QString, QByteArray, QString, QString, QString, QString, QString, QString, int, int)),
+            parent, SLOT(newMapFromRobotSlot(QString, QByteArray, QString, QString, QString, QString, QString, QString, int, int)));
     /// Signal that we just received a map to merge from the robot
     connect(this, SIGNAL(mapToMergeFromRobot(QByteArray, QString)), parent, SLOT(processMapForMerge(QByteArray, QString)));
     /// Signal that we received a new map while scanning
-    connect(this, SIGNAL(receivedScanMap(QString, QByteArray, QString, QString, QString, int, int)),
-            parent, SLOT(receivedScanMapSlot(QString, QByteArray, QString, QString, QString, int, int)));
+    connect(this, SIGNAL(receivedScanMap(QString, QByteArray, QString, QString, QString, QString, int, int)),
+            parent, SLOT(receivedScanMapSlot(QString, QByteArray, QString, QString, QString, QString, int, int)));
     /// Check if the robot is scanning when it connects
     connect(this, SIGNAL(checkScanning(QString, bool)), parent, SLOT(checkScanningSlot(QString, bool)));
     connect(this, SIGNAL(updateLaser(QString, bool)), parent, SLOT(updateLaserSlot(QString, bool)));
