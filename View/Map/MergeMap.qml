@@ -41,7 +41,7 @@ Window {
     signal exportMap(string file)
     signal resetWidget()
     signal getMapFromRobot(string ip)
-    signal resetMapConfiguration(string file_name)
+    signal resetMapConfiguration(string file_name, bool scan)
 
     Frame {
 
@@ -359,41 +359,16 @@ Window {
                 result.saveToFile(_fileName.substring(7) + ".pgm");
                 // important to call the hide function here as this call is asynchronous and if you call hide outside
                 // you will most likely hide the window before you can grab it and will end up grabbing nothing
-                useMapDialog.file_new_map = _fileName.substring(7) + ".pgm";
-                useMapDialog.open();
+                window.resetMapConfiguration(_fileName + ".pgm", false);
+                window.close();
             });
         }
 
         else mergedMap.grabToImage(function(result) {
                                           result.saveToFile(_fileName.substring(7));
-                                            useMapDialog.file_new_map = _fileName.substring(7);
-                                            useMapDialog.open();
+                                            window.resetMapConfiguration(_fileName, false);
+                                            window.close();
         });
-    }
-
-    CustomDialog {
-        id: useMapDialog
-        x: parent.width / 2
-        y: parent.height / 2
-        visible: false
-        message: qsTr("Do you want to replace the map you are currently using with his one ?");
-        acceptMessage: "Ok"
-        rejectMessage: "No"
-
-        property string file_new_map
-
-        onAccepted: {
-            window.close();
-            console.log("accepted");
-            // we delete points and paths and set the current map as the newly saved map,
-            // also we send it to currently connected robots
-            window.resetMapConfiguration(file_new_map)
-        }
-
-        onRejected: {
-            window.close();
-            console.log("rejected");
-        }
     }
 
     function cancelImportMap(){

@@ -58,7 +58,7 @@ signals:
      * Signal emmited when we finished to receive a whole map
      * and we can display it
      */
-    void valueChangedMap(QByteArray, int, QString, QString, QString, QString, QString, int, int);
+    void valueChangedMap(QByteArray, int, QString, QString, QString, QString, QString, QString, int, int);
     /**
      * @brief robotIsDead
      * to notify the robot controller that the connection cannot be established

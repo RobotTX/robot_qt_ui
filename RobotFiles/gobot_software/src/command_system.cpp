@@ -341,7 +341,9 @@ bool execCommand(ros::NodeHandle n, std::vector<std::string> command){
 			if(command.size() == 1) {
 				std::cout << "(Command system) Sending the robot home" << std::endl;
 				std_srvs::Empty arg;
-				if(ros::service::call("go_home", arg)){
+				/// TODO ? 
+				if(ros::service::call("setAutoCharging", arg)){
+				//if(ros::service::call("go_home", arg)){
 					std::cout << "Go home service called with success" << std::endl;
 					status = true;
 				} else
@@ -433,19 +435,22 @@ bool execCommand(ros::NodeHandle n, std::vector<std::string> command){
 		/// Command for the robot to stop a scan
 		case 'u':
 		{
-			if(command.size() == 1) {
+			if(command.size() == 2) {
 				std::cout << "(Command system) Gobot stops the scan of the new map" << std::endl;
 				scanning = false;
 
-	            /// Kill gobot move so that we'll restart it with the new map
-	            std::string cmd = "rosnode kill /move_base";
-	            system(cmd.c_str());
-	            sleep(5);
+				if(std::stoi(command.at(1)) == 1){
 
-	            /// Relaunch gobot_move
-	            cmd = "roslaunch gobot_move slam.launch &";
-	            system(cmd.c_str());
-	            std::cout << "(New Map) We relaunched gobot_move" << std::endl;
+		            /// Kill gobot move so that we'll restart it with the new map
+		            std::string cmd = "rosnode kill /move_base";
+		            system(cmd.c_str());
+		            sleep(5);
+
+		            /// Relaunch gobot_move
+		            cmd = "roslaunch gobot_move slam.launch &";
+		            system(cmd.c_str());
+		            std::cout << "(New Map) We relaunched gobot_move" << std::endl;
+		        }
 
 				status = stopAutoMap();
 			}

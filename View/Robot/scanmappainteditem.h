@@ -40,9 +40,10 @@ public:
 
     int getLeft(void) const { return left; }
     int getTop(void) const { return top; }
+    QPointF getRobotOrigin(void) const { return robotOrigin; }
 
-    void setRobotX(const float x) { xRobot = x - left; }
-    void setRobotY(const float y) { yRobot = y - top; }
+    void setRobotX(const float x);
+    void setRobotY(const float y);
     void setRobotOrientation(const float ori) { orientationRobot = ori; emit updateRobot(); }
     void setIp(const QString _ip) { ip = _ip; }
     void setDrawRobotView(const bool draw) {
@@ -70,7 +71,8 @@ private:
     float yRobot;
     float orientationRobot;
     QImage _image;
-
+    /// used to replace the robot after the scan is saved
+    QPointF robotOrigin;
 };
 
 #endif /// SCANMAPPAINTEDITEM_H

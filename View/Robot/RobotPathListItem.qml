@@ -11,6 +11,7 @@ Frame {
     property Robots robotModel
     property Paths pathModel
     signal pathSelected(string _pathName, string _groupName)
+    signal dockRobot(string ip)
 
     height: noPathItem.visible ? noPathItem.height : pathItem.height
     padding: 0
@@ -92,7 +93,10 @@ Frame {
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.verticalCenter: parent.verticalCenter
             }
-            onClicked: console.log(homeName === "" ? "I don't have a home" : "My home is " + homeName)
+            onClicked: {
+                frame.dockRobot(ip)
+                console.log(homeName === "" ? "I don't have a home" : "My home is " + homeName + "my ip " + ip + " and I am going to dock now")
+            }
         }
     }
 

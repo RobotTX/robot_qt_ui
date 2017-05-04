@@ -466,6 +466,7 @@ Window {
 
             smooth: false
             source: imgSource
+            onSourceChanged: console.log("edit map source changed " + image.source)
             fillMode: Image.PreserveAspectFit
 
             x: - width / 2 + parent.width / 2

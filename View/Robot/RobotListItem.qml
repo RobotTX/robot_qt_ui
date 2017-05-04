@@ -15,6 +15,8 @@ Frame {
     property Robots robotModel
     property real batteryWarningThreshold
 
+    signal dockRobot(string ip)
+
     height: 105 + robotPathListItem.height
     enabled: !processingCmd
 
@@ -229,6 +231,7 @@ Frame {
             rightMargin: 20
         }
         onPathSelected: robotModel.newPathSignal(ip, _groupName, _pathName)
+        onDockRobot: frame.dockRobot(ip)
     }
 
     ToolSeparator {

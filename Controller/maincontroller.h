@@ -51,7 +51,7 @@ private slots:
      * @param centerY
      * To export the current map in files (one for the image, one for the configuration, one for the points, one for the paths)
      */
-    void saveMapConfig(QString fileName, double zoom, double centerX, double centerY) const;
+    void saveMapConfig(QString fileName, double zoom, double centerX, double centerY, bool new_config = false) const;
     /**
      * @brief loadMapConfig
      * @param fileName configuration file
@@ -138,7 +138,7 @@ private slots:
      * updates the map of the map controller, resets paths and points and sends
      * the map to all the other robots
      */
-    void newMapFromRobotSlot(QString ip, QByteArray mapArray, QString mapId, QString mapDate, QString resolution, QString originX, QString originY, int map_width, int map_height);
+    void newMapFromRobotSlot(QString ip, QByteArray mapArray, QString mapId, QString mapDate, QString resolution, QString originX, QString originY, QString orientation, int map_width, int map_height);
     /**
      * @brief requestOrSendMap
      * @param ip
@@ -171,7 +171,7 @@ private slots:
      * @param ip
      * sends a command to the robot at ip <ip> to stop scanning the map
      */
-    void stopScanningSlot(QString ip);
+    void stopScanningSlot(QString ip, bool killGobotMove);
     /**
      * @brief playPauseScanningSlot
      * @param ip
@@ -188,7 +188,7 @@ private slots:
      * @param resolution
      * gives the newly received scan map to the scan controller
      */
-    void receivedScanMapSlot(QString ip, QByteArray map, QString resolution, QString originX, QString originY, int map_width, int map_height);
+    void receivedScanMapSlot(QString ip, QByteArray map, QString resolution, QString originX, QString originY, QString orientation, int map_width, int map_height);
     /**
      * @brief sendTeleopSlot
      * @param ip
@@ -197,12 +197,13 @@ private slots:
      */
     void sendTeleopSlot(QString ip, int teleop);
     /**
-     * @brief resetMapConfigurationAfterMerge
+     * @brief resetMapConfiguration
      * @param file_name
      * after a merged map has been saved, it replaces the main window map
      * paths and points are cleared, the new configuration is saved
+     * if
      */
-    void resetMapConfigurationAfterMerge(QString file_name);
+    void resetMapConfiguration(QString file_name, bool scan, double centerX = 0.0, double centerY = 0.0);
     /**
      * @brief removeScanMapSlot
      * @param ip
@@ -236,6 +237,9 @@ private slots:
      */
     void updateTutoFile(int index, bool visible);
 
+    void clearPointsAndPathsAfterScan(void);
+    void setDiscardMap(bool discard){ discardMap = discard; }
+
 signals:
     /// those signals are connected to the qml model to keep the data consistent between the c++ side and the qml side
     void setHome(QVariant ip, QVariant name, QVariant posX, QVariant posY);
@@ -268,6 +272,13 @@ private:
     QPointer<PointController> pointController;
     QPointer<PathController> pathController;
     QPointer<RobotsController> robotsController;
+
+    /**
+     * @brief discardMap
+     * Boolean to tell that even if we received a new map from a scan, we already saved the map and don't want to use the new one
+     * and don't want to update the metadata
+     */
+    bool discardMap;
 };
 
 #endif /// MAINCONTROLLER_H

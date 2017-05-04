@@ -139,12 +139,14 @@ void CommandController::cmdAnswerSlot(QString answer){
         } else {
             qDebug() << "CommandController::cmdAnswerSlot The command failed : " << list;
             /// TO debug in case it happens
-            Q_UNREACHABLE();
+            //Q_UNREACHABLE();
         }
     } else {
         qDebug() << "CommandController::cmdAnswerSlot Did not get enough data : " << list;
         Q_UNREACHABLE();
     }
+
+    qDebug() << "CommandCOntroller::cmdAnswerSlot in" << 15000 - timer.remainingTime();
 
     timer.stop();
     cmdFinished();

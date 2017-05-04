@@ -11,7 +11,7 @@ ListModel {
     signal playPathSignal(string ip)
     signal stopPathSignal(string ip)
     signal visiblePathChanged()
-    signal stopScanning(string ip);
+    signal stopScanning(string ip, bool killGobotMove);
     signal robotDc(string ip);
     signal robotConnection(string ip);
     signal setBusy(string ip, bool busy)
@@ -183,7 +183,7 @@ ListModel {
         /// Stop the scan if a scanning robot reconnect after the window has been closed
         for(var i = 0; i < count; i++)
             if(get(i).scanningOnConnection === true)
-                stopScanning(get(i).ip);
+                stopScanning(get(i).ip, true);
     }
 
     function isConnected(ip){

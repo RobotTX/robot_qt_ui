@@ -139,7 +139,7 @@ Menu {
 
         onHoveredChanged: {
             if(visible) currentMenuIndex = 2;
-            console.log("Pute " + laserActivated);
+            console.log("laser activated " + laserActivated);
         }
         onTriggered: robotMenu.laserPressed()
     }

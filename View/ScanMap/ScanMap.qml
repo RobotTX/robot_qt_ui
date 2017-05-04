@@ -19,12 +19,24 @@ Window {
 
     property Robots robotModel
     property Tutorial tutorial
+    property bool closeOnSave: false
+
+    signal resetMapConfiguration(string file_name, bool scan)
+    signal discardMap(bool discard)
 
     onVisibleChanged: {
+        /// When we close the scan window, we want all the robot to stop scanning
         if(visible){
             scanMapLeftMenu.reset();
             scanMapLeftMenu.resetScanMaps();
+            discardMap(false);
             console.log("size scanleftmenu " + scanMapLeftMenu.width + " " + scanMapLeftMenu.height + " " + height)
+            closeOnSave = false
+        } else {
+            if(!closeOnSave)
+                scanMapLeftMenu.clear();
+            else
+                scanMapLeftMenu.stopAllScans(false);
         }
     }
 
@@ -41,6 +53,7 @@ Window {
             bottom: parent.bottom
         }
         onCancelScan: scanWindow.close()
+        onSaveScan: closeOnSave = true
     }
 
     Rectangle {
@@ -77,7 +90,7 @@ Window {
                 acceptedButtons: Qt.LeftButton
                 drag.target: parent
 
-                onClicked: console.log(mouseX + " " + mouseY + " width " + width + " height " + height)
+                onClicked: console.log("scan map " + mouseX + " " + mouseY + " width " + width + " height " + height + " " + robotModel.count + " " + robotModel.get(0).posX + " " + robotModel.get(0).posY)
 
                 onWheel: {
                     var newScale = scanMap.scale + scanMap.scale * wheel.angleDelta.y / 120 / 10;
@@ -113,11 +126,13 @@ Window {
                 result.saveToFile(file_name.substring(7) + ".pgm");
                 // important to call the hide function here as this call is asynchronous and if you call hide outside
                 // you will most likely hide the window before you can grab it and will end up grabbing nothing
+                scanWindow.resetMapConfiguration(file_name + ".pgm", true);
                 scanWindow.close();
             });
         } else {
             scanMap.grabToImage(function(result) {
                                           result.saveToFile(file_name.substring(7));
+                                          scanWindow.resetMapConfiguration(file_name, true);
                                           scanWindow.close();
             });
         }

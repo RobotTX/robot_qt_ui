@@ -14,6 +14,8 @@ Frame {
     property Paths pathModel
     property real batteryWarningThreshold
 
+    signal dockRobot(string ip)
+
     background: Rectangle {
         color: Style.lightGreyBackground
         border.color: Style.lightGreyBorder
@@ -44,6 +46,7 @@ Frame {
                     pathModel: robotMenuFrame.pathModel
                     robotModel: robotMenuFrame.robotModel
                     width: flick.width
+                    onDockRobot: robotMenuFrame.dockRobot(ip)
                 }
             }
         }

@@ -86,16 +86,18 @@ void MapController::initializeMap(void){
             std::ifstream pathFile(configPath.toStdString(), std::ios::in);
             if(pathFile){
                 double originX, originY, resolution;
+                float orientation;
                 std::string _mapId;
                 int height, width;
-                pathFile >> osef >> height >> width >> osef >> osef >> osef >> originX >> originY >> resolution >> _mapId;
+                pathFile >> osef >> height >> width >> osef >> osef >> osef >> originX >> originY >> orientation >> resolution >> _mapId;
                 qDebug() << "Map::initializeMap all info :" << map->getMapFile() << height << width
-                         << centerX << centerY << originX << originY << resolution
+                         << centerX << centerY << originX << originY << orientation << resolution
                          << QString::fromStdString(_dateTime) << QString::fromStdString(_mapId);
                 map->setHeight(height);
                 map->setWidth(width);
                 map->setResolution(resolution);
                 map->setOrigin(QPointF(originX, originY));
+                map->setOrientation(orientation);
                 map->setDateTime(QDateTime::fromString(QString::fromStdString(_dateTime), "yyyy-MM-dd-hh-mm-ss"));
                 map->setMapId(QUuid(QString::fromStdString(_mapId)));
                 pathFile.close();
@@ -118,7 +120,7 @@ void MapController::savePositionSlot(const double posX, const double posY, const
         qDebug() << "Map::savePositionSlot called with following parameters";
         qDebug() << "map file - height - width - centerX - centerY - zoom - originX - originY - resolution - date - id";
         qDebug() << mapSrc << map->getHeight() << map->getWidth() << posX << posY
-                 << zoom << map->getOrigin().x() << map->getOrigin().y() << map->getResolution()
+                 << zoom << map->getOrigin().x() << map->getOrigin().y() << map->getOrientation() <<  map->getResolution()
                  << map->getDateTime().toString("yyyy-MM-dd-hh-mm-ss")
                  << map->getMapId().toString();
 
@@ -126,7 +128,7 @@ void MapController::savePositionSlot(const double posX, const double posY, const
              << map->getHeight() << " " << map->getWidth() << std::endl
              << posX << " " << posY << std::endl
              << zoom << std::endl
-             << map->getOrigin().x() << " " << map->getOrigin().y() << std::endl
+             << map->getOrigin().x() << " " << map->getOrigin().y() << " " << map->getOrientation() << std::endl
              << map->getResolution() << std::endl
              << map->getDateTime().toString("yyyy-MM-dd-hh-mm-ss").toStdString() << std::endl
              << map->getMapId().toString().toStdString();
@@ -161,7 +163,7 @@ bool MapController::saveMapConfig(const QString fileName, const double centerX, 
                 map->getHeight() << " " << map->getWidth() << std::endl
              << centerX << " " << centerY << std::endl
              << zoom << std::endl
-             << map->getOrigin().x() << " " << map->getOrigin().y() << std::endl
+             << map->getOrigin().x() << " " << map->getOrigin().y() << " " << map->getOrientation() << std::endl
              << map->getResolution() << std::endl
              << map->getMapId().toString().toStdString();
 
@@ -185,10 +187,11 @@ bool MapController::loadMapConfig(const QString fileName) {
     if(file){
         std::string _mapFile;
         int _height, _width;
+        float orientation(0.0f);
         double centerX, centerY, originX, originY, resolution, zoom;
         QPair<QPointF, float> _mapState;
         std::string mapId;
-        file >> _mapFile >> _height >> _width >> centerX >> centerY >> zoom >> originX >> originY >> resolution >> mapId;
+        file >> _mapFile >> _height >> _width >> centerX >> centerY >> zoom >> originX >> originY >> orientation >> resolution >> mapId;
         qDebug() << "Loading map with config : \n\t" <<
                     "Height:" << _height << "\n\t" <<
                     "Width:" << _width << "\n\t" <<
@@ -197,6 +200,7 @@ bool MapController::loadMapConfig(const QString fileName) {
                     "zoom:" << zoom << "\n\t" <<
                     "originX:" << originX << "\n\t" <<
                     "originY:" << originY << "\n\t" <<
+                    "orientation:" << orientation << "\n\t" <<
                     "resolution:" << resolution << "\n\t" <<
                     "map ID:" << QString::fromStdString(mapId);
 
@@ -207,6 +211,7 @@ bool MapController::loadMapConfig(const QString fileName) {
             map->setHeight(_height);
             map->setWidth(_width);
             map->setOrigin(QPointF(originX, originY));
+            map->setOrientation(orientation);
             map->setResolution(resolution);
             map->setMapId(QUuid(QString::fromStdString(mapId)));
             map->setDateTime(QDateTime::currentDateTime());
@@ -342,18 +347,19 @@ bool MapController::setMapFile(const QString file) {
 QString MapController::getMetadataString(void) const {
     return QString::number(map->getWidth()) + ' ' + QString::number(map->getHeight()) +
             ' ' + QString::number(map->getResolution()) + ' ' + QString::number(map->getOrigin().x()) +
-            ' ' + QString::number(map->getOrigin().y());
+            ' ' + QString::number(map->getOrigin().y()) + ' ' + QString::number(map->getOrientation());
 }
 
 void MapController::saveNewMap(const QString file_name){
-    map->getMapImage().save(file_name, "PGM");
+    qDebug() << "MapController::saveNewMap " << file_name;
     map->setMapFile(file_name);
     emit setMap(file_name);
 }
 
-void MapController::updateMetadata(int width, int height, float resolution, float originX, float originY){
-    qDebug() << "MapController::updateMetadata" << width << height << resolution << originX << originY;
+void MapController::updateMetadata(int width, int height, float resolution, float originX, float originY, float orientation){
+    qDebug() << "MapController::updateMetadata" << width << height << resolution << originX << originY << orientation;
     setOrigin(QPointF(originX, originY));
+    setOrientation(orientation);
     setWidth(width);
     setHeight(height);
     setResolution(resolution);

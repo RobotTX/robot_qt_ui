@@ -43,6 +43,7 @@ void ScanMapWorker::readTcpDataSlot(){
     QString resolution("-1");
     QString originX("-1");
     QString originY("-1");
+    QString orientation("0");
     uint32_t map_width(0);
     uint32_t map_height(0);
 
@@ -93,12 +94,13 @@ void ScanMapWorker::readTcpDataSlot(){
 
             qDebug() << "(ScanMapWorker) Got mapInfo (who = 0) :" << mapInfo;
             QStringList strList = mapInfo.split(" ", QString::SkipEmptyParts);
-            if(strList.size() > 4){
+            if(strList.size() > 5){
                 map_width = QString(strList.at(0)).toInt();
                 map_height = QString(strList.at(1)).toInt();
                 resolution = strList.at(2);
                 originX = strList.at(3);
                 originY = strList.at(4);
+                orientation = strList.at(5);
             } else
                 qDebug() << "(ScanMapWorker) Could not parse mapInfo :" << mapInfo;
 
@@ -121,13 +123,14 @@ void ScanMapWorker::readTcpDataSlot(){
 
             qDebug() << "(ScanMapWorker) Got mapInfo (who = 1 or 2) :" << mapInfo;
             QStringList strList = mapInfo.split(" ", QString::SkipEmptyParts);
-            if(strList.size() > 4){
+            if(strList.size() > 5){
                 mapId = strList.at(0);
                 mapDate = strList.at(1);
                 resolution = strList.at(2);
                 originX = strList.at(3);
                 originX.remove(originX.size()-1, 1);
                 originY = strList.at(4);
+                orientation = strList.at(5);
             } else
                 qDebug() << "(ScanMapWorker) Could not parse mapInfo :" << mapInfo;
 
@@ -142,7 +145,7 @@ void ScanMapWorker::readTcpDataSlot(){
         /// Remove the end bytes 254 254 254 254 254 as we no longer need them
         data.remove(data.size()-5, 5);
 
-        emit valueChangedMap(data, who, mapId, mapDate, resolution, originX, originY, map_width, map_height);
+        emit valueChangedMap(data, who, mapId, mapDate, resolution, originX, originY, orientation, map_width, map_height);
 
         /// Clear the Vector that contain the map, once it has been processed
         data.clear();

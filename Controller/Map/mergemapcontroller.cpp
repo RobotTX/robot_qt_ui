@@ -24,7 +24,7 @@ MergeMapController::MergeMapController(MainController *parent, QQmlApplicationEn
         connect(mergeMapWindow, SIGNAL(resetWidget()), this, SLOT(resetMergeMapWidget()));
 
         connect(mergeMapWindow, SIGNAL(getMapFromRobot(QString)), parent, SLOT(getMapFromRobot(QString)));
-        connect(mergeMapWindow, SIGNAL(resetMapConfiguration(QString)), parent, SLOT(resetMapConfigurationAfterMerge(QString)));
+        connect(mergeMapWindow, SIGNAL(resetMapConfiguration(QString, bool)), parent, SLOT(resetMapConfiguration(QString, bool)));
 
         connect(this, SIGNAL(differentMapSizes()), mergeMapWindow, SLOT(cancelImportMap()));
         connect(this, SIGNAL(readyToBeGrabbed(QVariant)), mergeMapWindow, SLOT(grabMergedMap(QVariant)));
@@ -66,8 +66,6 @@ void MergeMapController::importMap(const QString& _filename){
         QQuickItem* mapView = applicationWindow->findChild<QQuickItem*> ("mergeMapsView");
         paintedItem->setParentItem(mapView);
         paintedItem->setParent(engine);
-
-        qDebug() << "imported map of size" << image.width() << image.height();
 
         int top = 0;
         int bottom = image.height();
@@ -142,8 +140,6 @@ void MergeMapController::importMap(QImage image, double _resolution){
         QQuickItem* mapView = applicationWindow->findChild<QQuickItem*> ("mergeMapsView");
         paintedItem->setParentItem(mapView);
         paintedItem->setParent(engine);
-
-        qDebug() << "imported map of size" << image.width() << image.height();
 
         int top = 0;
         int bottom = image.height();

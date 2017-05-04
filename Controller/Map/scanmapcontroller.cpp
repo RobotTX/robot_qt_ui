@@ -22,17 +22,21 @@ ScanMapController::ScanMapController(MainController* parent, QQmlApplicationEngi
     QObject* scanWindow = applicationWindow->findChild<QObject*>("scanWindow");
     if(scanWindow){
         connect(this, SIGNAL(readyToBeGrabbed(QVariant)), scanWindow, SLOT(grabScannedMap(QVariant)));
+        connect(scanWindow, SIGNAL(resetMapConfiguration(QString, bool)), parent, SLOT(resetMapConfiguration(QString, bool)));
+        connect(scanWindow, SIGNAL(discardMap(bool)), parent, SLOT(setDiscardMap(bool)));
     }
 
     QObject* scanMap = applicationWindow->findChild<QObject*>("scanMapView");
-    if(scanMap)
+    if(scanMap){
         connect(this, SIGNAL(updateSize(QVariant, QVariant)), scanMap, SLOT(adjustSize(QVariant, QVariant)));
-    else
+    } else
         /// NOTE can probably remove that when testing phase is over
         Q_UNREACHABLE();
 
     connect(this, SIGNAL(sendGoal(QString, double, double)), parent, SLOT(sendScanGoal(QString, double, double)));
     connect(this, SIGNAL(setMessageTop(int, QString)), parent, SLOT(setMessageTopSlot(int, QString)));
+    connect(this, SIGNAL(clearPointsAndPaths()), parent, SLOT(clearPointsAndPathsAfterScan()));
+    connect(this, SIGNAL(discardMap(bool)), parent, SLOT(setDiscardMap(bool)));
 }
 
 void ScanMapController::receivedScanMap(QString ip, QImage map, QString resolution){
@@ -56,8 +60,10 @@ void ScanMapController::receivedScanMap(QString ip, QImage map, QString resoluti
         paintedItem->setParent(engine);
 
         /// we crop before drawing
-        paintedItem->setImage(Helper::Image::crop(map, paintedItems.count()));
-        paintedItem->setPosition(QPointF(mapView->width()/2, mapView->height()/2));
+        //paintedItem->setImage(Helper::Image::crop(map, paintedItems.count()));
+        paintedItem->setImage(QPair<QImage, QPoint> (map, QPoint(0, 0)));
+        //paintedItem->setPosition(QPointF(mapView->width()/2, mapView->height()/2));
+        paintedItem->setPosition(QPointF(0, 0));
 
         paintedItem->setProperty("ip", ip);
         paintedItem->setProperty("width", paintedItem->getImage().width());
@@ -72,7 +78,8 @@ void ScanMapController::receivedScanMap(QString ip, QImage map, QString resoluti
 
     } else {
         qDebug() << "resetting size to" << map.width() << map.height();
-        paintedItems[ip]->setImage(Helper::Image::crop(map, colors[ip]));
+        //paintedItems[ip]->setImage(Helper::Image::crop(map, colors[ip]));
+        paintedItems[ip]->setImage(QPair<QImage, QPoint> (map, QPoint(0, 0)));
         paintedItems[ip]->setProperty("width", paintedItems[ip]->getImage().width());
         paintedItems[ip]->setProperty("height", paintedItems[ip]->getImage().height());
         paintedItems[ip]->update();
@@ -113,6 +120,7 @@ void ScanMapController::resetScanMaps(){
 void ScanMapController::saveScanSlot(QString file_name){
     /// We want to find the smallest rectangle containing the map so we can find its center and put it at the center of the window
     /// before grab
+    emit discardMap(true);
 
     if(paintedItems.size() > 0){
         QMapIterator<QString, ScanMapPaintedItem*> it(paintedItems);
@@ -139,6 +147,7 @@ void ScanMapController::saveScanSlot(QString file_name){
 
         emit readyToBeGrabbed(file_name);
         emit setMessageTop(2, "Finished to scan the new map");
+        emit clearPointsAndPaths();
     }
 }
 
