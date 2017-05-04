@@ -51,8 +51,8 @@ RobotsController::RobotsController(QObject *applicationWindow, QQmlApplicationEn
         connect(parent, SIGNAL(setHome(QVariant, QVariant, QVariant, QVariant)),
                 robotModel, SLOT(setHome(QVariant, QVariant, QVariant, QVariant)));
 
-        connect(this, SIGNAL(receivedScanMap(QString, QByteArray, QString, QString, QString, int, int)),
-                parent, SLOT(receivedScanMapSlot(QString, QByteArray, QString, QString, QString, int, int)));
+        connect(this, SIGNAL(receivedScanMap(QString, QByteArray, QString, QString, QString, QString, int, int)),
+                parent, SLOT(receivedScanMapSlot(QString, QByteArray, QString, QString, QString, QString, int, int)));
 
 
     } else {
@@ -75,8 +75,8 @@ RobotsController::RobotsController(QObject *applicationWindow, QQmlApplicationEn
     connect(this, SIGNAL(updatePath(QString, QStringList)), parent, SLOT(updatePathSlot(QString, QStringList)));
     connect(this, SIGNAL(updateHome(QString, QString, float, float)), parent, SLOT(updateHomeSlot(QString, QString, float, float)));
     connect(this, SIGNAL(checkMapInfo(QString, QString, QString)), parent, SLOT(checkMapInfoSlot(QString, QString, QString)));
-    connect(this, SIGNAL(newMapFromRobot(QString, QByteArray, QString, QString, QString, QString, QString, int, int)),
-            parent, SLOT(newMapFromRobotSlot(QString, QByteArray, QString, QString, QString, QString, QString, int, int)));
+    connect(this, SIGNAL(newMapFromRobot(QString, QByteArray, QString, QString, QString, QString, QString, QString, int, int)),
+            parent, SLOT(newMapFromRobotSlot(QString, QByteArray, QString, QString, QString, QString, QString, QString, int, int)));
 
     connect(this, SIGNAL(sendMapToProcessForMerge(QByteArray, QString)), parent, SLOT(processMapForMerge(QByteArray, QString)));
     connect(this, SIGNAL(removeScanMap(QString)), parent, SLOT(removeScanMapSlot(QString)));
