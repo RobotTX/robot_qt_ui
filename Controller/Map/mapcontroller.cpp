@@ -353,7 +353,7 @@ void MapController::saveNewMap(const QString file_name){
 
 void MapController::updateMetadata(int width, int height, float resolution, float originX, float originY){
     qDebug() << "MapController::updateMetadata" << width << height << resolution << originX << originY;
-    setOrigin(origin);
+    setOrigin(QPointF(originX, originY));
     setWidth(width);
     setHeight(height);
     setResolution(resolution);
