@@ -337,8 +337,6 @@ Frame {
                             _ip: ip
                             x: posX - width / 2
                             y: posY - height / 2
-                            onXChanged: console.log("x robot is " + x)
-                            onYChanged: console.log("y robot is " + y)
                         }
 
                         Label {

@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include "ros/ros.h"
 #include <time.h>
+#include <tf/transform_broadcaster.h>
 #include "geometry_msgs/PoseWithCovarianceStamped.h"
 
 int main(int argc, char* argv[] ){
@@ -23,6 +24,13 @@ int main(int argc, char* argv[] ){
             file.close();
         }
 
+        tf::Matrix3x3 matrix = tf::Matrix3x3(tf::Quaternion(angle_x , angle_y , angle_z, angle_w));
+        tfScalar roll;
+        tfScalar pitch;
+        tfScalar yaw;
+        matrix.getRPY(roll, pitch, yaw);
+        std::cout << "First try : " << roll*180/3.14159 << " " << pitch*180/3.14159 << " " << yaw*180/3.14159 << std::endl;
+
         geometry_msgs::PoseWithCovarianceStamped initialPose;
         initialPose.header.frame_id = "map";
         initialPose.header.stamp = ros::Time::now();
@@ -36,6 +44,7 @@ int main(int argc, char* argv[] ){
         ros::Publisher initial_pose_publisher = n.advertise<geometry_msgs::PoseWithCovarianceStamped>("/initialpose", 1);
         // TO DO, test if ros::spinOnce() has the same effect as sleep
         // we wait for the topic to be created so we can publish on it
+        //ros::spinOnce();
         sleep(3);
         initial_pose_publisher.publish(initialPose);
         ros::spin();

@@ -12,7 +12,6 @@ ScanMapController::ScanMapController(MainController* parent, QQmlApplicationEngi
         connect(scanLeftMenuFrame, SIGNAL(startScanning(QString)), parent, SLOT(startScanningSlot(QString)));
         connect(scanLeftMenuFrame, SIGNAL(playPauseScanning(QString, bool, bool)), parent, SLOT(playPauseScanningSlot(QString, bool, bool)));
         connect(scanLeftMenuFrame, SIGNAL(sendTeleop(QString, int)), parent, SLOT(sendTeleopSlot(QString, int)));
-        connect(scanLeftMenuFrame, SIGNAL(rotateMap(int, QString)), this, SLOT(rotateMap(int, QString)));
         connect(scanLeftMenuFrame, SIGNAL(resetScanMaps()), this, SLOT(resetScanMaps()));
         connect(scanLeftMenuFrame, SIGNAL(saveScan(QString)), this, SLOT(saveScanSlot(QString)));
 
@@ -60,10 +59,11 @@ void ScanMapController::receivedScanMap(QString ip, QImage map, QString resoluti
         paintedItem->setParent(engine);
 
         /// we crop before drawing
-        //paintedItem->setImage(Helper::Image::crop(map, paintedItems.count()));
-        paintedItem->setImage(QPair<QImage, QPoint> (map, QPoint(0, 0)));
-        //paintedItem->setPosition(QPointF(mapView->width()/2, mapView->height()/2));
-        paintedItem->setPosition(QPointF(0, 0));
+        paintedItem->setImage(Helper::Image::crop(map, paintedItems.count()));
+        //paintedItem->setImage(QPair<QImage, QPoint> (map, QPoint(0, 0)));
+        paintedItem->setPosition(QPointF(mapView->width()/2 - paintedItem->getImage().width()/2,
+                                         mapView->height()/2 - paintedItem->getImage().height()/2));
+        //paintedItem->setPosition(QPointF(0, 0));
 
         paintedItem->setProperty("ip", ip);
         paintedItem->setProperty("width", paintedItem->getImage().width());
@@ -78,8 +78,8 @@ void ScanMapController::receivedScanMap(QString ip, QImage map, QString resoluti
 
     } else {
         qDebug() << "resetting size to" << map.width() << map.height();
-        //paintedItems[ip]->setImage(Helper::Image::crop(map, colors[ip]));
-        paintedItems[ip]->setImage(QPair<QImage, QPoint> (map, QPoint(0, 0)));
+        paintedItems[ip]->setImage(Helper::Image::crop(map, colors[ip]));
+        //paintedItems[ip]->setImage(QPair<QImage, QPoint> (map, QPoint(0, 0)));
         paintedItems[ip]->setProperty("width", paintedItems[ip]->getImage().width());
         paintedItems[ip]->setProperty("height", paintedItems[ip]->getImage().height());
         paintedItems[ip]->update();
@@ -100,11 +100,6 @@ void ScanMapController::removeMap(QString ip){
         paintedItems[ip]->setVisible(false);
         paintedItems.remove(ip);
     }
-}
-
-void ScanMapController::rotateMap(int angle, QString ip){
-    if(paintedItems.contains(ip))
-        paintedItems[ip]->rotate(angle);
 }
 
 void ScanMapController::resetScanMaps(){
@@ -131,13 +126,12 @@ void ScanMapController::saveScanSlot(QString file_name){
                 for(int j = 0; j < image.height(); j++){
                     QColor color = image.pixelColor(i, j);
                     if(!(color.red() == 205 && color.green() == 205 && color.blue() == 205)){
-                        /// If we find a pixel with more blue than the rest, it is our origin pixel
-                        if(color.red() == color.green() && color.blue() > color.red()){
+                        if(color.red() == color.green() && color.green() == color.blue())
                             image.setPixelColor(i, j, Qt::white);
-                        } else if(color.red() == color.green() && color.green() == color.blue())
-                            image.setPixelColor(i, j, Qt::white);
-                        else
+                        else {
+                            qDebug() << "setting a black pixel";
                             image.setPixelColor(i, j, Qt::black);
+                        }
                     }
                 }
             }

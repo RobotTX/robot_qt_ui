@@ -85,10 +85,10 @@ RobotsController::RobotsController(QObject *applicationWindow, QQmlApplicationEn
     QObject* robotMenuFrame = applicationWindow->findChild<QObject*>("robotMenuFrame");
     if(robotMenuFrame){
         connect(robotMenuFrame, SIGNAL(dockRobot(QString)), this, SLOT(dockRobot(QString)));
+    } else {
+        qDebug() << "could not find robot menu frame";
+        Q_UNREACHABLE();
     }
-
-    else qDebug() << "could not find robot menu frame";
-
 
     launchServer();
 }

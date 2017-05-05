@@ -9,15 +9,9 @@ ScanMapPaintedItem {
     x: 0
     y: 0
     smooth: false
+    clip: false
 
     signal sendGoal(string ip, double x, double y)
-
-    Rectangle {
-        anchors.fill: parent
-        color: "transparent"
-        border.color: "green"
-        border.width: 2
-    }
 
     MouseArea {
         anchors.fill: parent
@@ -39,7 +33,6 @@ ScanMapPaintedItem {
     Connections {
         target: item
         onUpdateRobot: {
-            //console.log("robot update caught on qml side")
             robotView.orientation = item.orientationRobot;
             robotView.x = item.xRobot - robotView.width / 2;
             robotView.y = item.yRobot - robotView.height / 2;

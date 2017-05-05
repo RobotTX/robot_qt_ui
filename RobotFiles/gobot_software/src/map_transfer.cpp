@@ -79,25 +79,7 @@ std::vector<uint8_t> compress(std::vector<int8_t> map, int map_width, int map_he
 	   		ifMap.close();
 	   	}
 
-
-	   	std::ifstream ifYaml(path_gobot_move + "maps/used_map.yaml", std::ifstream::in);
-	   	/// We initialize the resolution and origin
-	   	std::string resolution("resolution: 0.050000");
-	   	std::string origin("origin: [-51.224998, -51.224998, 0.000000]");
-	   	/// Get the resolution and origin from the yaml file
-	   	if(ifYaml){
-	   		getline(ifYaml, resolution);
-	   		getline(ifYaml, resolution);
-	   		getline(ifYaml, origin);
-	   		ifYaml.close();
-	   	}
-	   	std::cout << "(Map) Resolution & origin before parsing : " << resolution << " & " << origin << std::endl;
-
-	   	resolution = resolution.substr(12);
-	   	origin = origin.substr(9);
-		origin = origin.substr(0,origin.size()-2);
-
-	   	std::string str = mapId + " " + mapDate + " " + resolution + " " + origin;
+	   	std::string str = mapId + " " + mapDate + " " + metadata_string;
 	   	std::cout << "(Map) Map metadata (who = 1 or 2) : " << str << std::endl;
 	   	for(int i = 0; i < str.size(); i++)
 	   		my_map.push_back(static_cast<uint8_t>(str.at(i)));

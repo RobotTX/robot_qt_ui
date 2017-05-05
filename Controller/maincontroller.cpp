@@ -297,6 +297,7 @@ void MainController::newRobotPosSlot(QString ip, float posX, float posY, float o
                     mapController->getHeight());
     float orientation = -ori * 180.0 / M_PI + 90;
     robotsController->setRobotPos(ip, robotPos.x(), robotPos.y(), orientation);
+    qDebug() << "maincontroller: update robot pos" << robotPos << posX << posY << mapController->getOrigin() << mapController->getResolution() << mapController->getHeight();
     emit updateRobotPos(ip, robotPos.x(), robotPos.y(), orientation);
     mapController->getScanMapController()->updateRobotPos(ip, robotPos.x(), robotPos.y(), orientation);
 }
@@ -471,36 +472,19 @@ void MainController::resetMapConfiguration(QString file_name, bool scan, double 
     QString cpp_file_name = file_name.mid(7);
 
     if(scan){
+
         ScanMapPaintedItem* map_reference = mapController->getScanMapController()->getPaintedItems().begin().value();
-        qDebug() << "Saving map config after scan with origin" << map_reference->x()-map_reference->getLeft() << map_reference->y()-map_reference->getTop();
+        qDebug() << "\n\n\nSaving map config after scan with origin" << map_reference->robotOrientation();
 
-        float rotationInRadian = map_reference->rotation() * 3.14159 / 180;
-
-        float x = (map_reference->height()/2 - (map_reference->getRobotOrigin().y() - map_reference->getTop()))*qSin(rotationInRadian)
-                  + (map_reference->width()/2 - (map_reference->getRobotOrigin().x() - map_reference->getLeft()))*qCos(rotationInRadian);
-
-        float y = (map_reference->height()/2 - (map_reference->getRobotOrigin().y() - map_reference->getTop()))*qCos(rotationInRadian)
-                  - (map_reference->width()/2 - (map_reference->getRobotOrigin().x() - map_reference->getLeft()))*qSin(rotationInRadian);
-
-        qDebug() << map_reference->x() << map_reference->y()
-                 << map_reference->height()/2 << map_reference->width()/2
-                 << map_reference->getRobotOrigin().x() << map_reference->getRobotOrigin().y()
-                 << map_reference->getTop() << map_reference->getLeft()
-                 << x << y;
-        /*y' = y*cos(a) - x*sin(a)
-        x' = y*sin(a) + x*cos(a)*/
-
-        ///QPointF robotOriginAfterRotation()
-        QPointF newOrigin(x + map_reference->x() + map_reference->width()/2,
-                          y + map_reference->y() + map_reference->height()/2);
-        //QPointF newOrigin(x, y);
-        qDebug() << newOrigin << mapController->getOrigin() << Helper::Convert::pixelCoordToRobotCoord(newOrigin, mapController->getOrigin().x(), mapController->getOrigin().y(), mapController->getResolution(),
-                                                                                                      mapController->getHeight());
         /// have to compute the difference between the old origin and the position of the robot at the beginning of the scan,
         /// this is used as the new origin for the scanned map
-        mapController->setOrigin(Helper::Convert::pixelCoordToRobotCoord(newOrigin, mapController->getOrigin().x(), mapController->getOrigin().y(), mapController->getResolution(),
+        /// TODO check what to do about this origin, it fucks up the position of the robot after the scan ends
+        mapController->setOrigin(Helper::Convert::pixelCoordToRobotCoord(QPointF(map_reference->x() + map_reference->robotX(),
+                                                                                 map_reference->y() + map_reference->robotY()),
+                                                                         mapController->getOrigin().x(), mapController->getOrigin().y(), mapController->getResolution(),
                                                                          mapController->getHeight()));
-        mapController->setOrientation(map_reference->rotation());
+        /// Reset the orientation to reset the initial pose of the robot
+        mapController->setOrientation(map_reference->robotOrientation()-90);
     }
 
     pointController->clearPoints();
@@ -510,8 +494,9 @@ void MainController::resetMapConfiguration(QString file_name, bool scan, double 
     /// in the files
     saveMapConfig(cpp_file_name, 1.0, 0, 0, false);
 
+    /// we load the map we just scanned into the application
     mapController->requestReloadMap(file_name);
-    qDebug() << "requesting reload" << file_name;
+    qDebug() << "\n\n\nrequesting reload" << file_name;
 
     QUuid mapId = QUuid::createUuid();
 

@@ -85,7 +85,7 @@ void session(boost::shared_ptr<tcp::socket> sock, ros::NodeHandle n){
 
                 std::istringstream iss(mapMetadata);
                 iss >> width >> height >> resolution >> originX >> originY >> orientation;
-                std::cout << "(New Map) Map metadata after split : " << width << " " << height << " " << resolution << " " << originX << " " << originY << " " << orientation<< std::endl;
+                std::cout << "(New Map) Map metadata after split : " << width << " " << height << " " << resolution << " " << originX << " " << originY << " " << orientation << std::endl;
 
                 /// We remove the 5 last bytes as they are only there to identify the end of the map
                 map.erase(map.end() - 5, map.end());
@@ -97,7 +97,7 @@ void session(boost::shared_ptr<tcp::socket> sock, ros::NodeHandle n){
                 if(ofs.is_open()){
                     /// We translate the rotation of the robot from degrees to a quaternion
                     tf::Quaternion quaternion;
-                    quaternion.setEuler(orientation, 0, 0);
+                    quaternion.setEuler(0, 0, -orientation*3.14159/180);
 
                     /// We write the inital position of the robot in its file
                     ofs << originX << " " << originY << " " << quaternion.x() << " " << quaternion.y() << " " << quaternion.z() << " " << quaternion.w() << std::endl;

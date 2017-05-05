@@ -9,6 +9,7 @@ import "../../Model/Robot"
 
 Frame {
     id: robotMenuFrame
+    objectName: "robotMenuFrame"
     property Robots robotModel
     property Points pointModel
     property Paths pathModel

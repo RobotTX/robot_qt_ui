@@ -22,8 +22,6 @@ public:
 
     void paint(QPainter *painter) Q_DECL_OVERRIDE;
 
-    void rotate(const int angle);
-
     void setImage(const QPair<QImage, QPoint> image_and_shift) {
         _image = image_and_shift.first;
         left = image_and_shift.second.x();
@@ -37,19 +35,18 @@ public:
     float robotY(void) const { return yRobot; }
     QString getIp(void) const { return ip; }
     bool drawRobotView(void) const { return _drawRobotView; }
-
     int getLeft(void) const { return left; }
     int getTop(void) const { return top; }
-    QPointF getRobotOrigin(void) const { return robotOrigin; }
 
     void setRobotX(const float x);
     void setRobotY(const float y);
+
     void setRobotOrientation(const float ori) { orientationRobot = ori; emit updateRobot(); }
     void setIp(const QString _ip) { ip = _ip; }
     void setDrawRobotView(const bool draw) {
                                             _drawRobotView = draw;
                                             if(!_drawRobotView) emit hideRobot();
-                                        }
+                            }
 
 signals:
 
@@ -71,8 +68,6 @@ private:
     float yRobot;
     float orientationRobot;
     QImage _image;
-    /// used to replace the robot after the scan is saved
-    QPointF robotOrigin;
 };
 
 #endif /// SCANMAPPAINTEDITEM_H

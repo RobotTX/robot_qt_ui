@@ -46,14 +46,6 @@ public:
 
 private slots:
     /**
-     * @brief rotateMap
-     * @param angle
-     * @param ip
-     * rotates the map corresponding to the robot with ip <ip>
-     * of an angle of <angle> given in degrees
-     */
-    void rotateMap(int angle, QString ip);
-    /**
      * @brief saveScanSlot
      * @param file_name
      * draws the pixels the right colors (black, white, grey),

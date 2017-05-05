@@ -123,15 +123,15 @@ void ScanMapWorker::readTcpDataSlot(){
 
             qDebug() << "(ScanMapWorker) Got mapInfo (who = 1 or 2) :" << mapInfo;
             QStringList strList = mapInfo.split(" ", QString::SkipEmptyParts);
-            if(strList.size() > 5){
+            if(strList.size() > 7){
                 mapId = strList.at(0);
                 mapDate = strList.at(1);
-                resolution = strList.at(2);
-                originX = strList.at(3);
-                originX.remove(originX.size()-1, 1);
-                originY = strList.at(4);
-                originY.remove(originY.size()-1, 1);
-                orientation = strList.at(5);
+                map_width = QString(strList.at(2)).toInt();
+                map_height = QString(strList.at(3)).toInt();
+                resolution = strList.at(4);
+                originX = strList.at(5);
+                originY = strList.at(6);
+                orientation = strList.at(7);
             } else
                 qDebug() << "(ScanMapWorker) Could not parse mapInfo :" << mapInfo;
 
