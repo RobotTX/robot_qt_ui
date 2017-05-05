@@ -80,8 +80,7 @@ MainController::MainController(QQmlApplicationEngine *engine, QObject* parent) :
         if(settings){
             connect(this, SIGNAL(emitSettings(QVariant)), settings, SLOT(setSettings(QVariant)));
             connect(settings, SIGNAL(saveSettingsSignal(int, double)), this, SLOT(saveSettings(int, double)));
-        }
-        else {
+        } else {
             /// NOTE can probably remove that when testing phase is over
             qDebug() << "MapController::MapController could not find the settings";
             Q_UNREACHABLE();
@@ -296,7 +295,6 @@ void MainController::newRobotPosSlot(QString ip, float posX, float posY, float o
                     mapController->getOrigin().y(),
                     mapController->getResolution(),
                     mapController->getHeight());
-    /// TODO check if add map rotation needed
     float orientation = -ori * 180.0 / M_PI + 90;
     robotsController->setRobotPos(ip, robotPos.x(), robotPos.y(), orientation);
     emit updateRobotPos(ip, robotPos.x(), robotPos.y(), orientation);
@@ -500,7 +498,7 @@ void MainController::resetMapConfiguration(QString file_name, bool scan, double 
                                                                                                       mapController->getHeight());
         /// have to compute the difference between the old origin and the position of the robot at the beginning of the scan,
         /// this is used as the new origin for the scanned map
-        mapController->setOrigin(mapController->getOrigin() - Helper::Convert::pixelCoordToRobotCoord(newOrigin, mapController->getOrigin().x(), mapController->getOrigin().y(), mapController->getResolution(),
+        mapController->setOrigin(Helper::Convert::pixelCoordToRobotCoord(newOrigin, mapController->getOrigin().x(), mapController->getOrigin().y(), mapController->getResolution(),
                                                                          mapController->getHeight()));
         mapController->setOrientation(map_reference->rotation());
     }

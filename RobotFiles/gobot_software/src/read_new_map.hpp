@@ -11,6 +11,7 @@
 #include <boost/thread.hpp>
 #include "std_msgs/String.h"
 #include <fstream>
+#include <tf/transform_broadcaster.h>
 #include "nav_msgs/OccupancyGrid.h"
 
 #define PORT 5601

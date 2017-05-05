@@ -130,6 +130,7 @@ void ScanMapWorker::readTcpDataSlot(){
                 originX = strList.at(3);
                 originX.remove(originX.size()-1, 1);
                 originY = strList.at(4);
+                originY.remove(originY.size()-1, 1);
                 orientation = strList.at(5);
             } else
                 qDebug() << "(ScanMapWorker) Could not parse mapInfo :" << mapInfo;

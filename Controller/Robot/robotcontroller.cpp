@@ -178,8 +178,8 @@ void RobotController::launchWorkers(void){
 
 
     mapWorker = QPointer<ScanMapWorker>(new ScanMapWorker(ip, PORT_MAP));
-    connect(mapWorker, SIGNAL(valueChangedMap(QByteArray, int, QString, QString, QString, QString, QString, int, int)),
-            this , SLOT(mapReceivedSlot(QByteArray, int, QString, QString, QString, QString, QString, int, int)));
+    connect(mapWorker, SIGNAL(valueChangedMap(QByteArray, int, QString, QString, QString, QString, QString, QString, int, int)),
+            this , SLOT(mapReceivedSlot(QByteArray, int, QString, QString, QString, QString, QString, QString, int, int)));
     connect(mapWorker, SIGNAL(robotIsDead()), this, SLOT(robotIsDeadSlot()));
     connect(&mapThread, SIGNAL(finished()), mapWorker, SLOT(deleteLater()));
     connect(this, SIGNAL(startMapWorker()), mapWorker, SLOT(connectSocket()));
