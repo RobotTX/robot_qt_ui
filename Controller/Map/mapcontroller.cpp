@@ -67,7 +67,7 @@ void MapController::initializeMap(void){
         /// We get the path of the map to use so that we can deduce the path of its config file
         std::string _dateTime, osef, stdMapFile;
         double centerX, centerY, zoom;
-        file >> stdMapFile >> osef >> osef >> centerX >> centerY >> zoom >> osef >> osef >> osef >> _dateTime >> osef;
+        file >> stdMapFile >> osef >> osef >> centerX >> centerY >> zoom >> osef >> osef >> osef >> osef >> _dateTime >> osef;
         file.close();
 
         /// our map file as a QString

@@ -19,6 +19,7 @@
 #include <boost/thread.hpp>
 #include <chrono>
 #include <thread>
+#include <tf/transform_broadcaster.h>
 #include "std_srvs/Empty.h"
 
 using boost::asio::ip::tcp;

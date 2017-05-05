@@ -8,7 +8,9 @@
 
 
   <node pkg="wheel" type="MD49.py" name="wheel" />
+
   <node pkg="sonar" type="sonar_bumper.py" name="sonar" />
+
 <!--
   <node pkg="gobot_move" type="sonar_range.py" name="sonar_range" />
 -->

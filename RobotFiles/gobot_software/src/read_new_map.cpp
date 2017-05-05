@@ -76,31 +76,31 @@ void session(boost::shared_ptr<tcp::socket> sock, ros::NodeHandle n){
 
                 /// Set the medatada of the new map
                 std::cout << "(New Map) Map metadata before split : " << mapMetadata << std::endl;
-                int width = 0;
-                int height = 0;
-                float resolution = 0;
-                float originX = 0;
-                float originY = 0;
+                int width(0);
+                int height(0);
+                float resolution(0.0f);
+                float originX(0.0f);
+                float originY(0.0f);
+                float orientation(0.0f);
 
                 std::istringstream iss(mapMetadata);
-                iss >> width >> height >> resolution >> originX >> originY;
-                std::cout << "(New Map) Map metadata after split : " << width << " " << height << " " << resolution << " " << originX << " " << originY << std::endl;
+                iss >> width >> height >> resolution >> originX >> originY >> orientation;
+                std::cout << "(New Map) Map metadata after split : " << width << " " << height << " " << resolution << " " << originX << " " << originY << " " << orientation<< std::endl;
 
                 /// We remove the 5 last bytes as they are only there to identify the end of the map
                 map.erase(map.end() - 5, map.end());
                 std::cout << "(New Map) Size of the map received : " << map.size() << std::endl;
 
 
-                std::string yamlFile = path_gobot_move + "maps/used_map.yaml";
-                ofs.open(yamlFile, std::ofstream::out | std::ofstream::trunc);
+                std::string initialPoseFile = path_computer_software + "Robot_Infos/initialPose.txt";
+                ofs.open(initialPoseFile, std::ofstream::out | std::ofstream::trunc);
                 if(ofs.is_open()){
+                    /// We translate the rotation of the robot from degrees to a quaternion
+                    tf::Quaternion quaternion;
+                    quaternion.setEuler(orientation, 0, 0);
 
-                    ofs << "image: used_map.pgm" << std::endl
-                        << "resolution: " << resolution << std::endl
-                        << "origin: [" << originX << ", " << originY << ", 0.000000]" << std::endl
-                        << "negate: 0" << std::endl
-                        << "occupied_thresh: 0.65" << std::endl
-                        << "free_thresh: 0.196" << std::endl;
+                    /// We write the inital position of the robot in its file
+                    ofs << originX << " " << originY << " " << quaternion.x() << " " << quaternion.y() << " " << quaternion.z() << " " << quaternion.w() << std::endl;
 
                     ofs.close();
 
@@ -154,7 +154,7 @@ void session(boost::shared_ptr<tcp::socket> sock, ros::NodeHandle n){
                         message = "failed";
                     }
                 } else {
-                    std::cout << "(New Map) Could not open the file to create a new yaml file " << yamlFile << std::endl;
+                    std::cout << "(New Map) Could not open the file to create a new yaml file " << initialPoseFile << std::endl;
                     message = "failed";
                 }
             } else {

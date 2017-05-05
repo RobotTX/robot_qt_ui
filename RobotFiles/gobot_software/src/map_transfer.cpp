@@ -28,8 +28,13 @@ void sendMap(const std::vector<uint8_t>& my_map){
 }
 
 void getMetaData(const nav_msgs::MapMetaData::ConstPtr& msg){
+	tf::Matrix3x3 matrix = tf::Matrix3x3(tf::Quaternion(msg->origin.orientation.x, msg->origin.orientation.y, msg->origin.orientation.z, msg->origin.orientation.w));
+ 	tfScalar roll;
+	tfScalar pitch;
+	tfScalar yaw;
+	matrix.getRPY(roll, pitch, yaw);
 	metadata_string = std::to_string(msg->width) + " " + std::to_string(msg->height) + " " + std::to_string(msg->resolution) + " " + 
-	std::to_string(msg->origin.position.x) + " " + std::to_string(msg->origin.position.y) + " ";
+	std::to_string(msg->origin.position.x) + " " + std::to_string(msg->origin.position.y) + " " + std::to_string(yaw);
 }
 
 void getMap(const nav_msgs::OccupancyGrid::ConstPtr& msg){
@@ -90,8 +95,7 @@ std::vector<uint8_t> compress(std::vector<int8_t> map, int map_width, int map_he
 
 	   	resolution = resolution.substr(12);
 	   	origin = origin.substr(9);
-		std::size_t found = origin.find_last_of(",");
-		origin = origin.substr(0,found);
+		origin = origin.substr(0,origin.size()-2);
 
 	   	std::string str = mapId + " " + mapDate + " " + resolution + " " + origin;
 	   	std::cout << "(Map) Map metadata (who = 1 or 2) : " << str << std::endl;
