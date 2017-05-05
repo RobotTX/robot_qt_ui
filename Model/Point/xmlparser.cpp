@@ -109,10 +109,9 @@ float XMLParser::readCoordinateElement(QXmlStreamReader &xmlReader){
 void XMLParser::readPoints(PointController* pointController, const QString fileName){
     QXmlStreamReader xmlReader;
 
-    try {
-        QFile file(fileName);
+    QFile file(fileName);
 
-        file.open(QFile::ReadWrite | QFile::Text);
+    if(file.exists() && file.open(QFile::ReadWrite | QFile::Text)){
 
         xmlReader.setDevice(&file);
         xmlReader.readNext();
@@ -175,10 +174,11 @@ void XMLParser::readPoints(PointController* pointController, const QString fileN
             }
         }
         file.close();
-    }
-
-    catch(std::exception e) {
-        qDebug() << "Exception in XMLParser::readPoints :" << e.what();
+        /// in case the file exists but is empty we add the no group to it
+        if(pointController->getPoints()->getGroups().empty())
+            clear(pointController, fileName);
+    } else {
+        clear(pointController, fileName);
     }
 }
 
@@ -201,8 +201,10 @@ bool XMLParser::readDisplayedElement(QXmlStreamReader &xmlReader){
 }
 
 /// resets the file, only writting an empty default group
-void XMLParser::clear(const QString fileName){
+void XMLParser::clear(PointController* pointController, const QString fileName){
+
     try {
+
         QFile file(fileName);
         file.open(QIODevice::WriteOnly);
 
@@ -214,6 +216,7 @@ void XMLParser::clear(const QString fileName){
 
         xmlWriter.writeStartElement("group");
         xmlWriter.writeTextElement("name", NO_GROUP_NAME);
+        pointController->addGroup(NO_GROUP_NAME);
 
         xmlWriter.writeEndElement();
         xmlWriter.writeEndElement();

@@ -221,6 +221,9 @@ void PathXMLParser::readPaths(PathController *pathController, const QString file
             }
         }
         file.close();
+        /// in case the file exists but is empty we add the no group to it
+        if(pathController->getPaths()->getGroups().empty())
+            clear(pathController, fileName);
     } else {
         clear(pathController, fileName);
     }

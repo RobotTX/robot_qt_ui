@@ -67,7 +67,10 @@ Frame {
         }
         onTextChanged: {
             console.log(text)
-            checkGroup(Helper.formatName(groupTextField.text))
+            if(oldName === groupTextField.text)
+                saveButton.canSave = true
+            else
+                checkGroup(Helper.formatName(groupTextField.text))
         }
     }
 

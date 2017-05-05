@@ -67,7 +67,7 @@ private:
      * clears the file, only leaving the default group empty
      * careful this function assumes that you are absolutely sure it is applied to a points xml file
      */
-    static void clear(const QString fileName);
+    static void clear(PointController* pointController, const QString fileName);
 };
 
 #endif /// XMLPARSER_H

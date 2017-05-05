@@ -39,13 +39,21 @@ Frame {
         id: choiceMapLabel
         anchors {
             left: parent.left
-            right: parent.right
             top: parent.top
             topMargin: 5
         }
 
         color: "#8F8E94"
         text: qsTr("Which map do you want to use ?")
+    }
+
+    HelpButton {
+        anchors {
+            left: choiceMapLabel.right
+            leftMargin: 5
+            verticalCenter: choiceMapLabel.verticalCenter
+        }
+        tooltipText: "Where to find the map in which your robot operates"
     }
 
     // the radio buttons to choose which map is used for the robots
@@ -167,16 +175,7 @@ Frame {
             text: qsTr("Battery level warning trigger")
         }
 
-        Button {
-
-            height: 20
-            width: 20
-
-            background: Rectangle {
-                border.color: Style.lightGreyBorder
-                border.width: 1
-                radius: 10
-            }
+        HelpButton {
 
             anchors {
                 left: batteryHelp.right
@@ -184,30 +183,8 @@ Frame {
                 top: parent.top
             }
 
-            ToolTip {
-                visible: parent.hovered
-                text: "Level of battery under which you receive a warning";
-                font.pointSize: 10
-                x: 26
-                y: -4
-                background: Rectangle {
-                    border.color: Style.darkSkyBlue
-                    border.width: 1
-                    radius: 8;
-                    anchors.fill: parent
-                }
-            }
-
-            contentItem: Text {
-                text: "?"
-                font.pointSize: 12
-                font.bold: true
-                color: Style.darkSkyBlue
-                verticalAlignment: Text.AlignVCenter
-                horizontalAlignment: Text.AlignHCenter
-            }
+            tooltipText: "Level of battery under which you receive a warning"
         }
-
     }
 
     BatteryLevelSlider {

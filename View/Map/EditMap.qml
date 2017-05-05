@@ -45,6 +45,7 @@ Window {
             dialog.resetMap();
         // to reset the toolbar
         blackButton.checked = true;
+        color = "black"
         thickness = 1
         if(!visible)
             tutorialD.close()

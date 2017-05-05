@@ -81,5 +81,6 @@
         <file>View/Robot/ObstaclesItems.qml</file>
         <file>Model/Tutorial/Tutorial.qml</file>
         <file>View/Tutorial/TutorialDialog.qml</file>
+        <file>View/Custom/HelpButton.qml</file>
     </qresource>
 </RCC>
