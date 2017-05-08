@@ -34,7 +34,7 @@ ApplicationWindow {
     }
 
     // To save the current configuration -> zoom, center (paths and points retrieved on the c++ side)
-    signal mapConfig(string file_name, double zoom, double centerX, double centerY)
+    signal mapConfig(string file_name, double zoom, double centerX, double centerY, int mapRotation)
     signal shortcutAddRobot()
     signal shortcutDeleteRobot()
     signal requestOrSendMap(string ip, bool request)
@@ -217,7 +217,7 @@ ApplicationWindow {
     function emitMapConfig(file_name){
         console.log(mapView.pointModel.count + " " + mapView.scale + " " + mapView.centerX + " " + mapView.centerY);
         console.log("map config");
-        applicationWindow.mapConfig(file_name, mapView.zoom, mapView.centerX, mapView.centerY);
+        applicationWindow.mapConfig(file_name, mapView.zoom, mapView.centerX, mapView.centerY, mapView.getMapRotation());
         mapView.setMessageTop(2, "Saved the map to \"" + file_name + "\"");
     }
 

@@ -17,7 +17,6 @@ Frame {
     signal playPauseScanning(string ip, bool scanning, bool scanningOnConnection)
     signal sendTeleop(string ip, int index)
     signal cancelScan()
-    signal rotateMap(int angle, string ip)
     signal resetScanMaps()
     signal saveScan(string file_name)
 
@@ -232,8 +231,6 @@ Frame {
                 }
             }
             onSendTeleop: scanLeftMenuFrame.sendTeleop(ip, index)
-
-            onRotateMap: scanLeftMenuFrame.rotateMap(angle, ip)
         }
     }
 

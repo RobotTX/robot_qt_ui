@@ -49,9 +49,10 @@ private slots:
      * @param zoom
      * @param centerX
      * @param centerY
+     * @param mapRotation
      * To export the current map in files (one for the image, one for the configuration, one for the points, one for the paths)
      */
-    void saveMapConfig(QString fileName, double zoom, double centerX, double centerY, bool new_config = false) const;
+    void saveMapConfig(QString fileName, double zoom, double centerX, double centerY, int mapRotation, bool new_config = false) const;
     /**
      * @brief loadMapConfig
      * @param fileName configuration file

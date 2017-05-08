@@ -100,10 +100,22 @@ Frame {
         folder: "/home/joan/Gobot/build-Gobot-Desktop_Qt_5_8_0_GCC_64bit-Debug/mapConfigs/"
 
         onAccepted: {
+            var fileStr = fileUrl.toString();
+            console.log("Accepted the save of a map " + fileStr + " " + fileStr.indexOf("file://"));
+            if(fileStr.indexOf("file://") === 0)
+                fileStr = fileStr.slice(7);
+
             // if an already existing file is selected we only send the url, if a file is being created we add the extension .pgm
-            (fileUrl.toString().lastIndexOf(".pgm") == -1) ? mapMenuFrame.saveMap(fileUrl + ".pgm") : mapMenuFrame.saveMap(fileUrl);
+            if(fileStr.lastIndexOf(".pgm") == -1)
+                mapMenuFrame.saveMap(fileStr + ".pgm")
+            else
+                mapMenuFrame.saveMap(fileStr);
+
             // depending on whether we try to upload a map or not we open the corresponding dialog
-            (mapMenuFrame.haveToUploadAfterSaveMap) ? loadFileDialog.open() : console.log("NO need to open load dialog");
+            if(mapMenuFrame.haveToUploadAfterSaveMap)
+                loadFileDialog.open()
+            else
+                console.log("NO need to open load dialog");
         }
 
         onRejected: {
