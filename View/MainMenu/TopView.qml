@@ -9,6 +9,7 @@ Frame {
     id: topViewFrame
     property bool hasMap
     property Robots robotModel
+    property int mapRotation: Math.round(slider.valueAt(slider.position))
     signal savePosition()
     signal loadPosition()
     padding: 0
@@ -30,11 +31,12 @@ Frame {
         anchors {
             left: parent.left
             top: parent.top
-            right: saveStateButton.left
+            right: slider.left
             bottom: parent.bottom
             leftMargin: 10
             topMargin: 5
             bottomMargin: 5
+            rightMargin: 5
         }
 
         MouseArea {
@@ -83,19 +85,25 @@ Frame {
         }
     }
 
-    /// The load state button
-    SmallButton {
-        id: loadStateButton
-        tooltip: "Reset the position of the map"
-        imgSrc: "qrc:/icons/loadState"
+    CustomSlider {
+        id: slider
+
+        from: 0
+        to: 359
+        stepSize: 1
+
+        width: 100
+
         anchors {
-            top: parent.top
-            topMargin: 10
-            right: parent.right
-            rightMargin: 10
+            verticalCenter: saveStateButton.verticalCenter
+            right: saveStateButton.left
+            rightMargin: 15
         }
-        enabled: hasMap
-        onClicked: topViewFrame.loadPosition()
+
+        // to update the text accordingly
+        /*onVisualPositionChanged: {
+            console.log("New rotation : " + Math.round(valueAt(position)));
+        }*/
     }
 
     /// The save state button
@@ -111,6 +119,21 @@ Frame {
         }
         enabled: hasMap
         onClicked: topViewFrame.savePosition()
+    }
+
+    /// The load state button
+    SmallButton {
+        id: loadStateButton
+        tooltip: "Reset the position of the map"
+        imgSrc: "qrc:/icons/loadState"
+        anchors {
+            top: parent.top
+            topMargin: 10
+            right: parent.right
+            rightMargin: 10
+        }
+        enabled: hasMap
+        onClicked: topViewFrame.loadPosition()
     }
 
     function setMessageTop(label, msg){
@@ -131,5 +154,9 @@ Frame {
                 console.log("Not supposed to be here");
             break;
         }
+    }
+
+    function setMapRotation(mapRotation){
+        slider.value = mapRotation;
     }
 }

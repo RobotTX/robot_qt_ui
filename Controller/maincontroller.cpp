@@ -48,7 +48,7 @@ MainController::MainController(QQmlApplicationEngine *engine, QObject* parent) :
 
         robotsController = QPointer<RobotsController>(new RobotsController(applicationWindow, engine, this));
 
-        connect(applicationWindow, SIGNAL(mapConfig(QString, double, double, double)), this, SLOT(saveMapConfig(QString, double, double, double)));
+        connect(applicationWindow, SIGNAL(mapConfig(QString, double, double, double, int)), this, SLOT(saveMapConfig(QString, double, double, double, int)));
         connect(applicationWindow, SIGNAL(shortcutAddRobot()), robotsController, SLOT(shortcutAddRobot()));
         connect(applicationWindow, SIGNAL(shortcutDeleteRobot()), robotsController, SLOT(shortcutDeleteRobot()));
         connect(this, SIGNAL(openMapChoiceMessageDialog(QVariant, QVariant)), applicationWindow, SLOT(openMapChoiceMessageDialog(QVariant, QVariant)));
@@ -192,8 +192,8 @@ void MainController::checkTmpPosition(int index, double x, double y){
     pathController->checkPosition(mapController->getMapImage(), index, x, y);
 }
 
-void MainController::saveMapConfig(QString fileName, double zoom, double centerX, double centerY, bool new_config) const {
-    qDebug() << "MainController::saveMapConfig called with" << fileName << zoom << centerX << centerY;
+void MainController::saveMapConfig(QString fileName, double zoom, double centerX, double centerY, int mapRotation, bool new_config) const {
+    qDebug() << "MainController::saveMapConfig called with" << fileName << zoom << mapRotation << centerX << centerY;
 
     if(fileName.lastIndexOf(".pgm", fileName.length()-4) != -1){
         qDebug() << "filename" << fileName;
@@ -208,9 +208,9 @@ void MainController::saveMapConfig(QString fileName, double zoom, double centerX
 
     if(!new_config){
 
-        mapController->savePositionSlot(centerX, centerY, zoom, Helper::getAppPath() + QDir::separator() + "mapConfigs" + QDir::separator() + mapFileInfo.fileName() + ".pgm");
+        mapController->savePositionSlot(centerX, centerY, zoom, mapRotation, Helper::getAppPath() + QDir::separator() + "mapConfigs" + QDir::separator() + mapFileInfo.fileName() + ".pgm");
 
-        mapController->saveMapConfig(filePath, centerX, centerY, zoom);
+        mapController->saveMapConfig(filePath, centerX, centerY, zoom, mapRotation);
 
         /// saves the current points to the points file associated with the new configuration
         XMLParser::save(pointController, Helper::getAppPath() + QDir::separator() + "mapConfigs" + QDir::separator() + mapFileInfo.fileName() + "_points.xml");
@@ -223,13 +223,12 @@ void MainController::saveMapConfig(QString fileName, double zoom, double centerX
 
         /// saves the new configuration to the current configuration file
         PathXMLParser::save(pathController, Helper::getAppPath() + QDir::separator() + "currentPaths.xml");
-    }
 
-    else {
+    } else {
 
-        mapController->savePositionSlot(centerX, centerY, zoom, Helper::getAppPath() + QDir::separator() + "mapConfigs" + QDir::separator() + mapFileInfo.fileName() + ".pgm");
+        mapController->savePositionSlot(centerX, centerY, zoom, mapRotation, Helper::getAppPath() + QDir::separator() + "mapConfigs" + QDir::separator() + mapFileInfo.fileName() + ".pgm");
 
-        mapController->saveMapConfig(filePath, 0, 0, 1.0);
+        mapController->saveMapConfig(filePath, 0, 0, 1.0, 0);
 
     }
 }

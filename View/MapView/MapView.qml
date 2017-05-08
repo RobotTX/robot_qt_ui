@@ -34,7 +34,7 @@ Frame {
     property bool useRobotPathModel
 
     signal posClicked(double x, double y)
-    signal savePosition(double posX, double posY, double zoom, string mapSrc)
+    signal savePosition(double posX, double posY, double zoom, int mapRotations, string mapSrc)
     signal loadPosition()
     signal doubleClickedOnMap(double mouseX, double mouseY)
 
@@ -64,6 +64,13 @@ Frame {
         tooltipText: "Drag me or click the map to modify my position"
         signal tmpPointViewPosChanged()
 
+
+        transform: Rotation {
+            origin.x: tmpPointView.width / 2
+            origin.y: tmpPointView.height
+            angle: -topViewId.mapRotation
+        }
+
         MouseArea {
             anchors.fill: parent
             drag {
@@ -92,7 +99,8 @@ Frame {
         TopView {
             id: topViewId
             objectName: "topView"
-            onSavePosition: emitPosition()
+            // qml got a path of this format : file://path_understood_by_Qt, so we get rid of the first 6 characters
+            onSavePosition: mapViewFrame.savePosition(mapImage.x, mapImage.y, zoomScale.xScale, mapRotation, mapSrc.substring(6))
             onLoadPosition: mapViewFrame.loadPosition()
             /// If we have a map, the mapImage is visible
             /// so we enable the buttons to save/load the state of the map
@@ -118,6 +126,12 @@ Frame {
                 // because the map could change (through the edit map function) it is not useful to cache it
                 cache: false
                 smooth: false
+                rotation: topViewId.mapRotation
+
+                transform: Scale {
+                    id: zoomScale
+                    yScale: xScale
+                }
 
                 /// Canvas to display the paths dotted line on the map
                 Canvas {
@@ -169,45 +183,15 @@ Frame {
                     }
                 }
 
-                transform: [
-                           Scale {
-                               id: zoomScale
-                           }
-                       ]
-
                 MouseArea {
                     anchors.fill: parent
                     acceptedButtons: Qt.LeftButton | Qt.RightButton
                     hoverEnabled: true
-                    property bool canDrag: true
 
-                    drag.target: canDrag ? parent : undefined
+                    drag.target: parent
 
-                    onWheel: {
-                        canDrag = false
-                        var factor = 1 + wheel.angleDelta.y / 120 / 10;
-                        var newScale = zoomScale.xScale * factor;
-
-                        if(newScale > Style.minZoom && newScale < Style.maxZoom){
-
-                            var scalechange = newScale - zoomScale.xScale;
-
-                            // Zoom into the image
-                            zoomScale.xScale = newScale;
-                            zoomScale.yScale = newScale;
-
-                            // Calculate displacement of zooming position
-                            var offsetX = -(mouseX * scalechange);
-                            var offsetY = -(mouseY * scalechange);
-
-                            // Compensate for displacement
-                            mapImage.x = mapImage.x + offsetX;
-                            mapImage.y = mapImage.y + offsetY;
-                        }
-                    }
-                    onPressed: canDrag = true
-                    onReleased: canDrag = true
                     onDoubleClicked: doubleClickedOnMap(mouseX, mouseY)
+
                     onClicked: {
                         if (mouse.button === Qt.LeftButton) {
                             if(tmpPointView.visible){
@@ -221,8 +205,9 @@ Frame {
                                 tmpPathModel.checkTmpPosition(tmpPathModel.get(0).paths.get(0).pathPoints.count - 1, mouseX, mouseY);
                                 canvas.requestPaint();
                             }
-                        } else if (mouse.button === Qt.RightButton)
+                        } else if (mouse.button === Qt.RightButton){
                             posClicked(Math.round(mouseX), Math.round(mouseY));
+                        }
                     }
                 }
 
@@ -232,7 +217,7 @@ Frame {
                     delegate: Repeater {
                         model: points
                         delegate: PointView {
-                            //id: pointView
+                            id: pointView
                             _name: name
                             _isVisible: useTmpPathModel ? true : isVisible
                             _groupName: groupName
@@ -241,6 +226,12 @@ Frame {
                             x: posX - width / 2
                             y: posY - height
                             tooltipText: name
+
+                            transform: Rotation {
+                                origin.x: pointView.width / 2
+                                origin.y: pointView.height
+                                angle: -topViewId.mapRotation
+                            }
 
                             MouseArea {
                                 anchors.fill: parent
@@ -276,6 +267,12 @@ Frame {
                                 x: posX - width / 2
                                 y: posY - height
                                 tooltipText: name
+
+                                transform: Rotation {
+                                    origin.x: pathPointView.width / 2
+                                    origin.y: pathPointView.height
+                                    angle: -topViewId.mapRotation
+                                }
 
                                 MouseArea {
                                     anchors.fill: parent
@@ -395,6 +392,32 @@ Frame {
                     }
                 }
             }
+
+            MouseArea {
+                anchors.fill: parent
+                hoverEnabled: true
+                propagateComposedEvents: true
+                acceptedButtons: Qt.LeftButton | Qt.RightButton
+
+                onWheel: {
+                    var oldPos = mapToItem(mapImage, width / 2, height / 2);
+                    var factor = 1 + wheel.angleDelta.y / 120 / 10;
+                    var newScale = zoomScale.xScale * factor;
+
+                    /// Zoom into the image
+                    if(newScale > Style.minZoom && newScale < Style.maxZoom)
+                        zoomScale.xScale = newScale;
+
+                    var newPos = mapToItem(mapImage, width / 2, height / 2);
+
+                    /// Calculate the misplacement of the image so that we zoom in the middle of what we see and not in the middle of the map
+                    mapImage.x = mapImage.x + (newPos.x - oldPos.x) * zoomScale.xScale;
+                    mapImage.y = mapImage.y + (newPos.y - oldPos.y) * zoomScale.xScale;
+                }
+                onPressed: mouse.accepted = false
+                onClicked: mouse.accepted = false
+                onReleased: mouse.accepted = false
+            }
         }
     }
 
@@ -405,21 +428,17 @@ Frame {
         mapImage.visible = true;
     }
 
-    function setMapPosition(posX, posY, zoom){
+    function setMapPosition(posX, posY, zoom, mapRotation){
         if(zoom > Style.maxZoom)
             zoom = Style.maxZoom;
         else if(zoom < Style.minZoom)
             zoom = Style.minZoom;
         zoomScale.xScale = zoom;
-        zoomScale.yScale = zoom;
         mapImage.x = posX;
         mapImage.y = posY;
+        topViewId.setMapRotation(mapRotation);
     }
 
-    function emitPosition(){
-        // qml got a path of this format : file://path_understood_by_Qt, so we get rid of the first 6 characters
-        mapViewFrame.savePosition(mapImage.x, mapImage.y, zoomScale.xScale, mapSrc.substring(6))
-    }
 
     function mapFileChanged(){
         console.log("changed file " + "file:/" + map._mapFile+ " " + mapImage.source);
@@ -429,5 +448,9 @@ Frame {
 
     function setMessageTop(status, msg){
         topViewId.setMessageTop(status, msg);
+    }
+
+    function getMapRotation(){
+        return topViewId.mapRotation;
     }
 }

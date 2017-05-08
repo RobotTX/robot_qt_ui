@@ -57,9 +57,10 @@ public:
      * @param centerX
      * @param centerY
      * @param zoom
+     * @param mapRotation
      * @return true if the configuration was successfully saved, false otherwise
      */
-    bool saveMapConfig(const QString fileName, const double centerX, const double centerY, const double zoom) const;
+    bool saveMapConfig(const QString fileName, const double centerX, const double centerY, const double zoom, const int mapRotation) const;
 
     /**
      * @brief loadMapConfig
@@ -81,9 +82,10 @@ public:
      * @param centerX
      * @param centerY
      * @param zoom
+     * @param mapRotation
      * Centers the map on (centerX, centerY) with a zoom coefficient of <zoom>
      */
-    void centerMap(const double centerX, const double centerY, const double zoom);
+    void centerMap(const double centerX, const double centerY, const double zoom, const int mapRotation);
 
     /**
      * @brief getImageFromArray
@@ -124,7 +126,7 @@ public:
 private slots:
     /**
      * @brief loadPositionSlot
-     * Restores the position of the map (and zoom) to the last configuration saved
+     * Restores the position of the map, the zoom and the rotation to the last configuration saved
      */
     void loadPositionSlot();
 
@@ -142,10 +144,11 @@ public slots:
      * @param posX
      * @param posY
      * @param zoom
+     * @param mapRotation
      * @param mapSrc path of the pgm-format map file
      * Saves the current configuration inside the currentMap.txt configuration file
      */
-    void savePositionSlot(const double posX, const double posY, const double zoom, const QString mapSrc);
+    void savePositionSlot(const double posX, const double posY, const double zoom, const int mapRotation, const QString mapSrc);
 
     /**
      * @brief saveEditedImage
@@ -166,9 +169,10 @@ signals:
      * @param posX
      * @param posY
      * @param zoom
+     * @param mapRotation
      * Notifies qml to center the map on posX, posY with a zoom coefficient of <zoom>
      */
-    void setMapPosition(QVariant posX, QVariant posY, QVariant zoom);
+    void setMapPosition(QVariant posX, QVariant posY, QVariant zoom, QVariant mapRotation);
 
     /**
      * @brief requestReloadMap
