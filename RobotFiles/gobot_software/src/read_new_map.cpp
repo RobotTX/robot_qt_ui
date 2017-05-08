@@ -10,8 +10,6 @@ boost::asio::io_service io_service;
 tcp::socket socket_new_map(io_service);
 tcp::acceptor m_acceptor(io_service);
 
-std::string path_computer_software = "/home/gtdollar/computer_software/";
-std::string path_gobot_move = "/home/gtdollar/catkin_ws/src/gobot_move/";
 ros::Publisher map_pub;
 
 void session(boost::shared_ptr<tcp::socket> sock, ros::NodeHandle n){
@@ -66,8 +64,13 @@ void session(boost::shared_ptr<tcp::socket> sock, ros::NodeHandle n){
             /// Save the id of the new map
             std::cout << "(New Map) Id of the new map : " << mapId << std::endl;
             std::cout << "(New Map) Date of the new map : " << mapDate << std::endl;
+            std::string mapIdFile;
+            if(n.hasParam("map_id_file")){
+                n.getParam("map_id_file", mapIdFile);
+                std::cout << "read_new_map set mapIdFile to " << mapIdFile << std::endl;
+            }
             std::ofstream ofs;
-            ofs.open(path_computer_software + "Robot_Infos/mapId.txt", std::ofstream::out | std::ofstream::trunc);
+            ofs.open(mapIdFile, std::ofstream::out | std::ofstream::trunc);
 
             if(ofs.is_open()){
                 ofs << mapId << std::endl << mapDate << std::endl;
@@ -91,8 +94,13 @@ void session(boost::shared_ptr<tcp::socket> sock, ros::NodeHandle n){
                 map.erase(map.end() - 5, map.end());
                 std::cout << "(New Map) Size of the map received : " << map.size() << std::endl;
 
+                /// TODO check if we want to discriminate with initialPosePublisher/robot_position
+                std::string initialPoseFile;
+                if(n.hasParam("last_known_position_file")){
+                    n.getParam("last_known_position_file", initialPoseFile);
+                    std::cout << "read_new_map set last known position file to " << initialPoseFile << std::endl;
+                } 
 
-                std::string initialPoseFile = path_computer_software + "Robot_Infos/initialPose.txt";
                 ofs.open(initialPoseFile, std::ofstream::out | std::ofstream::trunc);
                 if(ofs.is_open()){
                     /// We translate the rotation of the robot from degrees to a quaternion
@@ -105,7 +113,12 @@ void session(boost::shared_ptr<tcp::socket> sock, ros::NodeHandle n){
                     ofs.close();
 
                     /// We save the file in a the pgm file used by amcl
-                    std::string mapFile = path_gobot_move + "maps/used_map.pgm";
+
+                    std::string mapFile;
+                    if(n.hasParam("map_image_used")){
+                        n.getParam("map_image_used", mapFile);
+                        std::cout << "read new map set map file to " << mapFile << std::endl;
+                    } 
                     ofs.open(mapFile, std::ofstream::out | std::ofstream::trunc);
 
                     if(ofs.is_open()){
@@ -135,12 +148,22 @@ void session(boost::shared_ptr<tcp::socket> sock, ros::NodeHandle n){
                         std::cout << "(New Map) We killed gobot_move" << std::endl;
 
                         /// We delete the old path
-                        ofs.open(path_computer_software + "Robot_Infos/path.txt", std::ofstream::out | std::ofstream::trunc);
+                        std::string pathFile;
+                        if(n.hasParam("path_file")){
+                            n.getParam("path_file", pathFile);
+                            std::cout << "read new map set path file to " << pathFile;
+                        }
+                        ofs.open(pathFile, std::ofstream::out | std::ofstream::trunc);
                         ofs.close();
                         std::cout << "(New Map) Path deleted" << std::endl;
 
                         /// We delete the old home
-                        ofs.open(path_computer_software + "Robot_Infos/home.txt", std::ofstream::out | std::ofstream::trunc);
+                        std::string homeFile;
+                        if(n.hasParam("home_file")){
+                            n.getParam("home_file", homeFile);
+                            std::cout << "read new map home file to " << homeFile;
+                        }
+                        ofs.open(homeFile, std::ofstream::out | std::ofstream::trunc);
                         ofs.close();
                         std::cout << "(New Map) Home deleted" << std::endl;
 

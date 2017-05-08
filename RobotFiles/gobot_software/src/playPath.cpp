@@ -3,9 +3,6 @@
 #define PLAY_PATH_PORT 8333
 #define ROBOT_POS_TOLERANCE 0.5
 
-const std::string PATH_STAGE_FILE = "/home/gtdollar/computer_software/Robot_Infos/path_stage.txt";
-const std::string IS_HOME_FILE = "/home/gtdollar/computer_software/Robot_Infos/is_home.txt";
-
 std::shared_ptr<MoveBaseClient> ac(0);
 
 // the stage of the robot within the path (if path going from first point to second point, stage is 0, if going from point before last point to last point stage is #points-1)
@@ -157,7 +154,13 @@ void goToPoint(const Point& point){
 
 void setStageInFile(const int _stage){
 
-	std::ofstream path_stage_file(PATH_STAGE_FILE, std::ios::out | std::ios::trunc);
+	std::string pathStageFile;
+	ros::NodeHandle n;
+	if(n.hasParam("path_stage_file")){
+		n.getParam("path_stage_file", pathStageFile);
+		std::cout << "play path set path stage file to " << pathStageFile << std::endl;
+	}
+	std::ofstream path_stage_file(pathStageFile, std::ios::out | std::ios::trunc);
 	// when the stage is < 0 it means the robot was blocked at stage -stage (which is > 0)
 	if(path_stage_file){
 		std::cout << "(PlayPath) setStageInFile " << _stage << std::endl;
@@ -174,8 +177,12 @@ bool playPathService(std_srvs::Empty::Request &req, std_srvs::Empty::Response &r
 	path = std::vector<Point>();
 
 	ros::NodeHandle n;
-
-	std::ifstream file("/home/gtdollar/computer_software/Robot_Infos/path.txt", std::ios::in);
+	std::string pathFile;
+	if(n.hasParam("path_file")){
+		n.getParam("path_file", pathFile);
+		std::cout << "play path set path file to " << pathFile << std::endl;
+	}
+	std::ifstream file(pathFile, std::ios::in);
 
 	// we recreate the path to follow from the file
 	if(file){

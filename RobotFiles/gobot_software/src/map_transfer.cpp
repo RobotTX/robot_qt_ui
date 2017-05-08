@@ -10,9 +10,6 @@ tcp::acceptor m_acceptor(io_service);
 #define HIGH_THRESHOLD 0.65*100
 #define LOW_THRESHOLD 0.196*100
 
-std::string path_computer_software = "/home/gtdollar/computer_software/";
-std::string path_gobot_move = "/home/gtdollar/catkin_ws/src/gobot_move/";
-
 // this allows us to resub to the /map topic in case the connection would have been lost
 bool sendingMapWhileScanning = false;
 std::string metadata_string = "";
@@ -70,8 +67,15 @@ std::vector<uint8_t> compress(std::vector<int8_t> map, int map_width, int map_he
 	} else if(who == 1 || who == 2){
 		/// If the map comes from a pgm, we send the mapId, the mapDate,
 		/// the resolution and the origin with it
-	   	std::ifstream ifMap(path_computer_software + "Robot_Infos/mapId.txt", std::ifstream::in);
-	   	std::string mapId("{0}");
+		ros::NodeHandle n;
+		std::string mapIdFile;
+		if(n.hasParam("map_id_file")){
+			n.getParam("map_id_file", mapIdFile);
+			std::cout << "map_transfer got map id file " << mapIdFile << std::endl;
+		}
+		std::string mapId("{0}");
+	   	std::ifstream ifMap(mapIdFile, std::ifstream::in);
+	   	
 	   	std::string mapDate("0");
 	   	if(ifMap){
 	   		getline(ifMap, mapId);
@@ -237,7 +241,12 @@ bool sendOnceMap(gobot_software::Port::Request &req,
 	int who = req.port;	
 
 	std::vector<int8_t> my_map;
-    std::string mapFileStr = path_gobot_move + "maps/used_map.pgm";
+    std::string mapFileStr;
+    ros::NodeHandle n;
+    if(n.hasParam("map_image_used")){
+    	n.getParam("map_image_used", mapFileStr);
+    	std::cout << "map_transfer set map image file to " << mapFileStr << std::endl;
+    }
 
 	std::string line;
 	std::ifstream mapFile;

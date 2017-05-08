@@ -3,5 +3,8 @@
     <include file="$(find gobot_move)/launch/mapbase.launch.xml"/>
 	<include file="$(find gobot_move)/launch/nav_amcl.launch.xml"/>
     <include file="$(find gobot_move)/launch/make_move_base.launch.xml"/>
-    <node pkg="gobot_move" type="initialPosePublisher" name="initialPosePublisher" output="screen" respawn="false" />
+    <node pkg="gobot_move" type="initialPosePublisher" name="initialPosePublisher" output="screen" respawn="false">
+        <!-- 0 -> lastKnownPosition, 1 -> home -->
+        <param name="robot_position" type="string" textfile="$(find gobot_move)/config/robot_position.txt" />
+    </node>
 </launch>

@@ -7,13 +7,11 @@ tcp::socket socket_meta(io_service);
 ros::Subscriber sub_meta;
 tcp::acceptor m_acceptor(io_service);
 
-
 void sendMetaData(const std::string& metadata_string){
 	//std::cout << "(Map Metadata) Trying to send map_metadata : " << metadata_string << std::endl;
 	try {
 		boost::system::error_code ignored_error;
 		int sizeSent = boost::asio::write(socket_meta, boost::asio::buffer(metadata_string, metadata_string.length()), boost::asio::transfer_all(), ignored_error);
-		//std::cout << "(Map Metadata) Sent metadata of size :" << sizeSent << std::endl;
 	} catch (std::exception& e) {
 		std::cerr << "(Map Metadata) " << e.what() << std::endl;
 	}
@@ -72,7 +70,6 @@ int main(int argc, char **argv){
 	ros::ServiceServer stop_service = n.advertiseService("stop_map_metadata_sender", stopMeta);
 
 	ros::spin();
-
 
 	return 0;
 }

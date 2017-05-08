@@ -41,7 +41,7 @@ void RobotServerWorker::newConnectionSlot(){
                               static_cast<QString> (strList.at(2)).toInt(),
                               static_cast<QString> (strList.at(3)).toInt());
         } else
-            qDebug() << "(RobotServerWorker) Not enough param received for robotIsAlive";
+            qDebug() << "(RobotServerWorker) Not enough param received for robotIsAlive" << strList;
     }
 
     socket->close();

@@ -32,7 +32,7 @@ public:
     QUuid getMapId(void) const { return mapId; }
     float getOrientation(void) const { return orientation; }
 
-    void setMapFile(const QString file) { qDebug() << "Updating map"; mapFile = file; }
+    void setMapFile(const QString file) { mapFile = file; }
 
     void setMapId(const QUuid id) { mapId = id; }
     void setDateTime(const QDateTime _dateTime) { /// if the time is not valid we use the current date

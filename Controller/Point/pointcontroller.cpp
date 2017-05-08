@@ -72,7 +72,7 @@ PointController::PointController(QObject *applicationWindow, MainController* par
 }
 
 void PointController::loadPoints(const QString fileName){
-    qDebug() << "PointController::loadPoints loading points from " << fileName;
+    //qDebug() << "PointController::loadPoints loading points from " << fileName;
     XMLParser::readPoints(this, fileName);
 }
 

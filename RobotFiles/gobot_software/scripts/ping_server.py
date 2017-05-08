@@ -10,16 +10,12 @@ import time
 from std_msgs.msg import String
 import subprocess
 
-computer_software = "/home/gtdollar/computer_software/"
-file_server = computer_software + "IP/serverIP.txt"
-file_IPs = computer_software + "IP/serverIP.txt"
+file_IPs = rospy.get_param("server_file")
+# to retrieve all scanned IPs
 #file_IPs = computer_software + "IP/isAlive.txt"
-ping_script = "sudo sh " + computer_software + "IP/ping.sh"
-file_hostname = computer_software + "Robot_Infos/name.txt"
-file_battery = computer_software + "Robot_Infos/battery.txt"
-file_map_id = computer_software + "Robot_Infos/mapId.txt"
-file_path_stage = computer_software + "Robot_Infos/path_stage.txt"
-file_home = "/home/gtdollar/computer_software/Robot_Infos/home.txt"
+pingFile = rospy.get_param("ping_file")
+ping_script = "sudo sh " + pingFile
+
 
 def isServer(IP) :
 	s = socket.socket()
@@ -35,7 +31,8 @@ def isServer(IP) :
 		if res == "OK" :
 			find = True
 			# Get the hostname of the robot
-			with open(file_hostname, 'r') as file_name:
+			nameFile = rospy.get_param("robot_name_file")
+			with open(nameFile, 'r') as file_name:
 				hostname = file_name.readline()
 				file_name.close()
 
@@ -46,7 +43,9 @@ def isServer(IP) :
 
 			# Get the battery level
 			battery = 50
-			with open(file_battery, 'r') as file_name:
+			batteryFile = rospy.get_param("battery_file")
+			print 'batteryfile', batteryFile
+			with open(batteryFile, 'r') as file_name:
 				battery = file_name.readline()
 				file_name.close()
 
@@ -55,14 +54,16 @@ def isServer(IP) :
 
 			# Get the path stage
 			stage = 0
-			with open(file_path_stage, 'r') as file_path:
+			pathStageFile = rospy.get_param("path_stage_file")
+			with open(pathStageFile, 'r') as file_path:
 				stage = file_path.readline()
 				#print "stage ", stage
 				file_path.close()
 
 			# Send everything to the application
+
 			toSend = "%s\"%s\"%s\"%s" % (hostname, ssid, stage, battery)
-			#print "ping_server sending :",toSend
+			print "ping_server sending :",toSend
 			s.send(toSend)
 
 	except : 
@@ -80,7 +81,8 @@ def checkIPs ():
 			found = isServer(line)
 			if found:
 				#print "my server is ",line
-				file= open(file_server,"w")
+				serverFile = rospy.get_param("server_file")
+				file = open(serverFile,"w")
 				file.write(line)
 				return True
 	return False
@@ -93,8 +95,9 @@ def client (pub, checkOldIP):
 	if checkOldIP :
 		#print "check old"
 		found = False
-		if os.path.exists(file_server):
-			file = open(file_server)
+		serverFile = rospy.get_param("server_file")
+		if os.path.exists(serverFile):
+			file = open(serverFile)
 			IP = file.readline()
 			found = isServer(IP)
 		if not found and not rospy.is_shutdown(): 

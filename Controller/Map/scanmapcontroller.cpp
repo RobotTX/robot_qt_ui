@@ -60,10 +60,8 @@ void ScanMapController::receivedScanMap(QString ip, QImage map, QString resoluti
 
         /// we crop before drawing
         paintedItem->setImage(Helper::Image::crop(map, paintedItems.count()));
-        //paintedItem->setImage(QPair<QImage, QPoint> (map, QPoint(0, 0)));
         paintedItem->setPosition(QPointF(mapView->width()/2 - paintedItem->getImage().width()/2,
                                          mapView->height()/2 - paintedItem->getImage().height()/2));
-        //paintedItem->setPosition(QPointF(0, 0));
 
         paintedItem->setProperty("ip", ip);
         paintedItem->setProperty("width", paintedItem->getImage().width());
@@ -79,7 +77,6 @@ void ScanMapController::receivedScanMap(QString ip, QImage map, QString resoluti
     } else {
         qDebug() << "resetting size to" << map.width() << map.height();
         paintedItems[ip]->setImage(Helper::Image::crop(map, colors[ip]));
-        //paintedItems[ip]->setImage(QPair<QImage, QPoint> (map, QPoint(0, 0)));
         paintedItems[ip]->setProperty("width", paintedItems[ip]->getImage().width());
         paintedItems[ip]->setProperty("height", paintedItems[ip]->getImage().height());
         paintedItems[ip]->update();

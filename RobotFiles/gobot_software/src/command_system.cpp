@@ -1,11 +1,6 @@
 #include "command_system.hpp"
 
-
 const int max_length = 1024;
-
-const std::string PATH_STAGE_FILE = "/home/gtdollar/computer_software/Robot_Infos/path_stage.txt";
-const std::string DEBUG_CMD_FILE = "/home/gtdollar/computer_software/debug_cmd.txt";
-const std::string COMPUTER_SOFTWARE = "/home/gtdollar/computer_software/";
 
 bool waiting = false;
 bool connected = false;
@@ -54,8 +49,6 @@ int laser_port = 4003;
 int recovered_position_port = 4004;
 int particle_cloud_port = 4005;
 
-std::string path_computer_software = "/home/gtdollar/computer_software/";
-
 /// Separator which is just a char(31) => unit separator in ASCII
 static const std::string sep = std::string(1, 31);
 static const char sep_c = 31;
@@ -82,12 +75,17 @@ bool execCommand(ros::NodeHandle n, std::vector<std::string> command){
 			if(command.size() == 2){
 				std::cout << "(Command system) New name : " << command.at(1) << std::endl;
 
-				std::ofstream ofs;
-				ofs.open(path_computer_software + "Robot_Infos/name.txt", std::ofstream::out | std::ofstream::trunc);
-				ofs << command.at(1);
-				ofs.close();
-
-				status = true;
+				std::string nameFile;
+				if(n.hasParam("robot_name_file")){
+					n.getParam("robot_name_file", nameFile);
+					std::cout << "commandSystem set name file to " << nameFile << std::endl;
+					std::ofstream ofs;
+					ofs.open(nameFile, std::ofstream::out | std::ofstream::trunc);
+					ofs << command.at(1);
+					ofs.close();
+					status = true;
+				}
+				
 			} else 
 				std::cout << "(Command system) Name missing" << std::endl;
 		break;
@@ -98,7 +96,7 @@ bool execCommand(ros::NodeHandle n, std::vector<std::string> command){
 			if(command.size() == 3){
 				std::cout << "(Command system) New wifi : " << command.at(1) << std::endl;
 				std::cout << "(Command system) New wifi password : " << command.at(2) << std::endl;
-				std::string cmd = "sudo bash " + path_computer_software + "change_wifi.sh \"" + command.at(1) + "\" \""+ command.at(2) + "\"";
+				std::string cmd = "sudo bash ~/computer_software/change_wifi.sh \"" + command.at(1) + "\" \""+ command.at(2) + "\"";
 				std::cout << "(Command system) Cmd : " << cmd << std::endl;
 
 				system(cmd.c_str());
@@ -217,35 +215,46 @@ bool execCommand(ros::NodeHandle n, std::vector<std::string> command){
 
 				std::cout << "(Command system) Path received :" << std::endl;
 
-				std::ofstream ofs(path_computer_software + "Robot_Infos/path.txt", std::ofstream::out | std::ofstream::trunc);
+				std::string pathFile;
+				if(n.hasParam("path_file")){
+					n.getParam("path_file", pathFile);
+					std::cout << "commandSystem set path file to " << pathFile << std::endl;
+					std::ofstream ofs(pathFile, std::ofstream::out | std::ofstream::trunc);
 				
-				if(ofs){
-					std::string strPath;
-					for(int i = 1; i < command.size(); i++){
-						ofs << command.at(i) << "\n";
-						strPath += sep + command.at(i);
-					}
+					if(ofs){
+						std::string strPath;
+						for(int i = 1; i < command.size(); i++){
+							ofs << command.at(i) << "\n";
+							strPath += sep + command.at(i);
+						}
 
-					ofs.close();
-					
-					// reset the path stage in the file
-					std::ofstream path_stage_file(PATH_STAGE_FILE, std::ofstream::out | std::ofstream::trunc);
+						ofs.close();
+						
+						// reset the path stage in the file
+						std::string pathStageFile;
+						if(n.hasParam("path_stage_file")){
+							n.getParam("path_stage_file", pathStageFile);
+							std::cout << "commandSystem set pathStageFile to " << pathStageFile << std::endl;
+						}
+						std::ofstream path_stage_file(pathStageFile, std::ofstream::out | std::ofstream::trunc);
 
-					if(path_stage_file){
-						path_stage_file << "0";
-						path_stage_file.close();
+						if(path_stage_file){
+							path_stage_file << "0";
+							path_stage_file.close();
 
-						std_srvs::Empty arg;
-						if(ros::service::call("stop_path", arg))
-							std::cout << "Stop path service called with success";
-						else
-							std::cout << "Stop path service call failed";
+							std_srvs::Empty arg;
+							if(ros::service::call("stop_path", arg))
+								std::cout << "Stop path service called with success";
+							else
+								std::cout << "Stop path service call failed";
 
-						status = true;
-					} else
-						std::cout << "Sorry we were not able to find the file play_path.txt in order to keep track of the stage of the path to be played" << std::endl;
-				} else 
-					std::cout << "sorry could not open the file " << path_computer_software + "Robot_Infos/path.txt";
+							status = true;
+						} else
+							std::cout << "Sorry we were not able to find the file play_path.txt in order to keep track of the stage of the path to be played" << std::endl;
+					} else 
+						std::cout << "sorry could not open the file " << pathFile;
+				}
+				
 			} else 
 				std::cout << "(Command system) Parameter missing" << std::endl;
 		}
@@ -303,10 +312,15 @@ bool execCommand(ros::NodeHandle n, std::vector<std::string> command){
 				std_srvs::Empty arg;
 				if(ros::service::call("stop_path", arg)){
 					std::cout << "Stop path service called with success";
-					std::ofstream ofs;
-					ofs.open(path_computer_software + "Robot_Infos/path.txt", std::ofstream::out | std::ofstream::trunc);
-					ofs.close();
-					status = true;
+					std::string pathFile;
+					if(n.hasParam("path_file")){
+						n.getParam("path_file", pathFile);
+						std::cout << "commandSystem set path file to " << pathFile << std::endl;
+						// deleting the path
+						std::ofstream ofs(pathFile, std::ofstream::out | std::ofstream::trunc);
+						ofs.close();
+						status = true;
+					}
 				} else
 					std::cout << "Stop path service call failed";
 			}
@@ -320,7 +334,11 @@ bool execCommand(ros::NodeHandle n, std::vector<std::string> command){
 
 				std::cout << "(Command system) Home received" << std::endl;
 
-				std::ofstream ofs(path_computer_software + "Robot_Infos/home.txt", std::ofstream::out | std::ofstream::trunc);
+				std::string homeFile;
+				if(n.hasParam("home_file")){
+					n.getParam("home_file", homeFile);
+					std::cout << "CommandSystem set home file to " << homeFile << std::endl;
+					std::ofstream ofs(homeFile, std::ofstream::out | std::ofstream::trunc);
 				
 				if(ofs){
 
@@ -330,7 +348,9 @@ bool execCommand(ros::NodeHandle n, std::vector<std::string> command){
 					status = true;
 
 				} else
-					std::cout << "sorry could not open the file " << path_computer_software + "Robot_Infos/home.txt";
+					std::cout << "sorry could not open the file " << homeFile << std::endl;
+				}
+				
 			} else
 				std::cout << "Not enough arguments, received " << command.size() << " arguments, 3 arguments expected" << std::endl;
 		break;
@@ -374,10 +394,15 @@ bool execCommand(ros::NodeHandle n, std::vector<std::string> command){
 				status = sendLaserData();
 
 				if(status){
-					std::ofstream ofs;
-					ofs.open(path_computer_software + "Robot_Infos/laser.txt", std::ofstream::out | std::ofstream::trunc);
-					ofs << "1";
-					ofs.close();
+					std::string laserFile;
+					if(n.hasParam("laser_file")){
+						n.getParam("laser_file", laserFile);
+						std::cout << "CommandSystem set laser file to " << laserFile << std::endl;
+						std::ofstream ofs;
+						ofs.open(laserFile, std::ofstream::out | std::ofstream::trunc);
+						ofs << "1";
+						ofs.close();
+					}
 				}
 			}
 		}
@@ -390,10 +415,15 @@ bool execCommand(ros::NodeHandle n, std::vector<std::string> command){
 				status = stopSendLaserData();
 
 				if(status){
-					std::ofstream ofs;
-					ofs.open(path_computer_software + "Robot_Infos/laser.txt", std::ofstream::out | std::ofstream::trunc);
-					ofs << "0";
-					ofs.close();
+					std::string laserFile;
+					if(n.hasParam("laser_file")){
+						n.getParam("laser_file", laserFile);
+						std::cout << "CommandSystem set laser file to " << laserFile << std::endl;
+						std::ofstream ofs;
+						ofs.open(laserFile, std::ofstream::out | std::ofstream::trunc);
+						ofs << "0";
+						ofs.close();
+					}
 				}
 			}
 		}
@@ -439,20 +469,30 @@ bool execCommand(ros::NodeHandle n, std::vector<std::string> command){
 				std::cout << "(Command system) Gobot stops the scan of the new map" << std::endl;
 				scanning = false;
 
-				if(std::stoi(command.at(1)) == 1){
+				// we update this file which in turn is read to set the param /initialPosePublisher/robot_position 
+				// so that gobot move can restart with the last known position of the robot
+				if(n.hasParam("/initialPosePublisher/robot_position")){
+					std::string robotPositionFile;
+					n.getParam("/initialPosePublisher/robot_position", robotPositionFile);
+					std::ofstream ofs(robotPositionFile, std::ifstream::out | std::ofstream::trunc);
+					ofs << 0;
+					ofs.close();
 
-		            /// Kill gobot move so that we'll restart it with the new map
-		            std::string cmd = "rosnode kill /move_base";
-		            system(cmd.c_str());
-		            sleep(5);
+					if(std::stoi(command.at(1)) == 1){
 
-		            /// Relaunch gobot_move
-		            cmd = "roslaunch gobot_move slam.launch &";
-		            system(cmd.c_str());
-		            std::cout << "(New Map) We relaunched gobot_move" << std::endl;
-		        }
+			            /// Kill gobot move so that we'll restart it with the new map
+			            std::string cmd = "rosnode kill /move_base";
+			            system(cmd.c_str());
+			            sleep(5);
 
-				status = stopAutoMap();
+			            /// Relaunch gobot_move
+			            cmd = "roslaunch gobot_move slam.launch &";
+			            system(cmd.c_str());
+			            std::cout << "(New Map) We relaunched gobot_move" << std::endl;
+			        }
+
+					status = stopAutoMap();
+				}
 			}
 		}
 		break;
@@ -510,13 +550,14 @@ bool execCommand(ros::NodeHandle n, std::vector<std::string> command){
 
 		case 'z':
 		{
+			/// TODO finish this shit
 			if(command.size() == 1){
 				std::cout << "(Command system) Gobot restarts its packages" << std::endl;
 				recovering = false;
 				scanning = false;
-				system(("sh " + COMPUTER_SOFTWARE + "restart_packages.sh").c_str());
+				system(("sh ~/computer_software/restart_packages.sh"));
 				sleep(10);
-				system(("sh " + COMPUTER_SOFTWARE + "roslaunch.sh").c_str());
+				system(("sh ~/computer_software/roslaunch.sh"));
 				/*
 				// to kill gobot move and gobot software using the fact that those two nodes are required (see launch files)
 				std::string cmd = "rosnode kill /move_base";
@@ -1001,46 +1042,69 @@ void asyncAccept(boost::shared_ptr<boost::asio::io_service> io_service, boost::s
 
 	/// Send a message to the PC to tell we are connected
 	/// send home position and timestamp
-	std::ifstream ifs(path_computer_software + "Robot_Infos/home.txt", std::ifstream::in);
 	std::string homeName("");
 	std::string homeX("");
 	std::string homeY("");
-	if(ifs){
-   		getline(ifs, homeName);
-   		getline(ifs, homeX);
-   		getline(ifs, homeY);
-		std::cout << homeName << " " << homeX << " " << homeY << std::endl;
-		ifs.close();
+	std::string homeFile;
+	if(n.hasParam("home_file")){
+		n.getParam("home_file", homeFile);
+		std::cout << "commandsystem set homefile to " << homeFile << std::endl;
+		std::ifstream ifs(homeFile, std::ifstream::in);
+		
+		if(ifs){
+	   		getline(ifs, homeName);
+	   		getline(ifs, homeX);
+	   		getline(ifs, homeY);
+			std::cout << homeName << " " << homeX << " " << homeY << std::endl;
+			ifs.close();
+		}
 	}
 
     /// we also send the path along with the time of the last modification of its file
-   	std::ifstream ifPath(path_computer_software + "Robot_Infos/path.txt", std::ifstream::in);
-   	std::string path("");
-   	if(ifPath){
-   		std::string line("");
-   		std::cout << "Line path" << std::endl;
-   		while(getline(ifPath, line))
-   			path += line + sep;
-   		ifPath.close();
-   	}
+    std::string path("");
+    std::string pathFile;
+    if(n.hasParam("path_file")){
+    	n.getParam("path_file", pathFile);
+    	std::cout << "commandSystem set path file to " << pathFile << std::endl;
+	   	std::ifstream ifPath(pathFile, std::ifstream::in);
+	   	
+	   	if(ifPath){
+	   		std::string line("");
+	   		std::cout << "Line path" << std::endl;
+	   		while(getline(ifPath, line))
+	   			path += line + sep;
+	   		ifPath.close();
+	   	}
+    }
 
     /// we also send the map id along with the time of the last modification of the map
-   	std::ifstream ifMap(path_computer_software + "Robot_Infos/mapId.txt", std::ifstream::in);
-   	std::string mapId("");
-   	std::string mapDate("");
-   	if(ifMap){
-   		getline(ifMap, mapId);
-   		getline(ifMap, mapDate);
-   		ifMap.close();
-   	}
+    std::string mapId("");
+    std::string mapDate("");
+    std::string mapIdFile;
+    if(n.hasParam("map_id_file")){
+    	n.getParam("map_id_file", mapIdFile);
+	   	std::ifstream ifMap(mapIdFile, std::ifstream::in);
+	   	
+	   	
+	   	if(ifMap){
+	   		getline(ifMap, mapId);
+	   		getline(ifMap, mapDate);
+	   		ifMap.close();
+	   	}
+    }
 
-	std::ifstream ifLaser(path_computer_software + "Robot_Infos/laser.txt", std::ifstream::in);
-	std::string laserStr("0");
-	if(ifLaser){
-   		getline(ifLaser, laserStr);
-		std::cout << "Laser activated : " << laserStr;
-		laserActivated = boost::lexical_cast<bool>(laserStr);
-		ifLaser.close();
+    std::string laserStr("0");
+    std::string laserFile;
+    if(n.hasParam("laser_file")){
+    	n.getParam("laser_file", laserFile);
+		std::ifstream ifLaser(laserFile, std::ifstream::in);
+		
+		if(ifLaser){
+	   		getline(ifLaser, laserStr);
+			std::cout << "Laser activated : " << laserStr;
+			laserActivated = boost::lexical_cast<bool>(laserStr);
+			ifLaser.close();
+		}
 	}
 
    	if(mapId.empty())
