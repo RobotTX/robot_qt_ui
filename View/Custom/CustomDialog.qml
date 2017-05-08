@@ -44,6 +44,13 @@ Dialog {
         anchors.fill: parent
         color: "transparent"
 
+        MouseArea {
+            width: dialog.parent.width
+            height: dialog.parent.height
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.horizontalCenter: parent.horizontalCenter
+        }
+
         Label {
             anchors {
                 top: parent.top
