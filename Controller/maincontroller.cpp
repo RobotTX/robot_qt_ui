@@ -497,6 +497,7 @@ void MainController::resetMapConfiguration(QString file_name, bool scan, double 
     pointController->clearPoints();
     pathController->clearPaths();
 
+    /// to create a new configuration
     mapController->setMapId(QUuid::createUuid());
     mapController->setDateTime(QDateTime::currentDateTime());
 
@@ -603,7 +604,6 @@ void MainController::updateTutoFile(int index, bool visible){
 void MainController::clearPointsAndPathsAfterScan(){
     /// clears the map of all paths and points
     pointController->clearPoints();
-
     pathController->clearPaths();
 }
 

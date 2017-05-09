@@ -21,9 +21,13 @@ EditMapController::EditMapController(QQmlApplicationEngine* engine, QObject *app
 
         /// to add new items to the scene
         connect(editMapWindow, SIGNAL(clicked(int, QColor, int, int, int, bool)), this, SLOT(add_item(int, QColor, int, int, int, bool)));
+        /// to clear the map of all the items
         connect(editMapWindow, SIGNAL(resetMap()), this, SLOT(clearMapItems()));
+        /// to undo the last action
         connect(editMapWindow, SIGNAL(undo()), paintedItem, SLOT(undo()));
+        /// to redo the last action
         connect(editMapWindow, SIGNAL(redo()), paintedItem, SLOT(redo()));
+        /// to save the result
         connect(editMapWindow, SIGNAL(saveImage(QString)), parent, SLOT(saveEditedImage(QString)));
 
     } else {
@@ -40,7 +44,6 @@ void EditMapController::add_item(int shape, QColor color, int thickness, int x, 
 
 /// remove all the items and clear the undo vector as well
 void EditMapController::clearMapItems(){
-    qDebug() << "EditMapController::clearMapItems called";
     paintedItem->clearMapItems();
 }
 
