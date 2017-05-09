@@ -125,10 +125,8 @@ void ScanMapController::saveScanSlot(QString file_name){
                     if(!(color.red() == 205 && color.green() == 205 && color.blue() == 205)){
                         if(color.red() == color.green() && color.green() == color.blue())
                             image.setPixelColor(i, j, Qt::white);
-                        else {
-                            qDebug() << "setting a black pixel";
+                        else
                             image.setPixelColor(i, j, Qt::black);
-                        }
                     }
                 }
             }

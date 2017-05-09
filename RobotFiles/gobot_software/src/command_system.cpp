@@ -331,7 +331,7 @@ bool execCommand(ros::NodeHandle n, std::vector<std::string> command){
 		case 'n':
 			// param 1 is n, 2nd is the home name, 3rd is the home x coordinate, 4th is the home y coordinate
 			if(command.size() == 4){
-
+				// TODO send an angle from the application and convert it to store it in home.txt
 				std::cout << "(Command system) Home received" << std::endl;
 
 				std::string homeFile;
@@ -341,9 +341,9 @@ bool execCommand(ros::NodeHandle n, std::vector<std::string> command){
 					std::ofstream ofs(homeFile, std::ofstream::out | std::ofstream::trunc);
 				
 				if(ofs){
-
-					ofs << command.at(1) << "\n" << command.at(2) << "\n" << command.at(3) << "\n";
-
+					// home
+					// x y x_angle y_angle z_angle w_angle
+					ofs << command.at(1) << "\n" << command.at(2) << " " << command.at(3) << " 0 0 0 0";
 					ofs.close();
 					status = true;
 
@@ -469,30 +469,20 @@ bool execCommand(ros::NodeHandle n, std::vector<std::string> command){
 				std::cout << "(Command system) Gobot stops the scan of the new map" << std::endl;
 				scanning = false;
 
-				// we update this file which in turn is read to set the param /initialPosePublisher/robot_position 
-				// so that gobot move can restart with the last known position of the robot
-				if(n.hasParam("/initialPosePublisher/robot_position")){
-					std::string robotPositionFile;
-					n.getParam("/initialPosePublisher/robot_position", robotPositionFile);
-					std::ofstream ofs(robotPositionFile, std::ifstream::out | std::ofstream::trunc);
-					ofs << 0;
-					ofs.close();
+				if(std::stoi(command.at(1)) == 1){
 
-					if(std::stoi(command.at(1)) == 1){
+		            /// Kill gobot move so that we'll restart it with the new map
+		            std::string cmd = "rosnode kill /move_base";
+		            system(cmd.c_str());
+		            sleep(5);
 
-			            /// Kill gobot move so that we'll restart it with the new map
-			            std::string cmd = "rosnode kill /move_base";
-			            system(cmd.c_str());
-			            sleep(5);
+		            /// Relaunch gobot_move
+		            cmd = "roslaunch gobot_move slam.launch &";
+		            system(cmd.c_str());
+		            std::cout << "(New Map) We relaunched gobot_move" << std::endl;
+		        }
 
-			            /// Relaunch gobot_move
-			            cmd = "roslaunch gobot_move slam.launch &";
-			            system(cmd.c_str());
-			            std::cout << "(New Map) We relaunched gobot_move" << std::endl;
-			        }
-
-					status = stopAutoMap();
-				}
+				status = stopAutoMap();
 			}
 		}
 		break;

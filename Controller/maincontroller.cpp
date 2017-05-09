@@ -51,6 +51,7 @@ MainController::MainController(QQmlApplicationEngine *engine, QObject* parent) :
         connect(applicationWindow, SIGNAL(mapConfig(QString, double, double, double, int)), this, SLOT(saveMapConfig(QString, double, double, double, int)));
         connect(applicationWindow, SIGNAL(shortcutAddRobot()), robotsController, SLOT(shortcutAddRobot()));
         connect(applicationWindow, SIGNAL(shortcutDeleteRobot()), robotsController, SLOT(shortcutDeleteRobot()));
+        connect(applicationWindow, SIGNAL(test()), this, SLOT(testSlot()));
         connect(this, SIGNAL(openMapChoiceMessageDialog(QVariant, QVariant)), applicationWindow, SLOT(openMapChoiceMessageDialog(QVariant, QVariant)));
         connect(this, SIGNAL(openWarningDialog(QVariant, QVariant)), applicationWindow, SLOT(openWarningDialog(QVariant, QVariant)));
         connect(applicationWindow, SIGNAL(requestOrSendMap(QString, bool)), this, SLOT(requestOrSendMap(QString, bool)));
@@ -204,9 +205,9 @@ void MainController::saveMapConfig(QString fileName, double zoom, double centerX
     QFileInfo mapFileInfo(static_cast<QDir> (fileName), "");
     QString filePath(Helper::getAppPath() + QDir::separator() + "mapConfigs" + QDir::separator() + mapFileInfo.fileName() + ".config");
 
-    mapController->saveNewMap(Helper::getAppPath() + QDir::separator() + "mapConfigs" + QDir::separator() + mapFileInfo.fileName() + ".pgm");
-
     if(!new_config){
+
+        mapController->saveMapToFile(Helper::getAppPath() + QDir::separator() + "mapConfigs" + QDir::separator() + mapFileInfo.fileName() + ".pgm");
 
         mapController->savePositionSlot(centerX, centerY, zoom, mapRotation, Helper::getAppPath() + QDir::separator() + "mapConfigs" + QDir::separator() + mapFileInfo.fileName() + ".pgm");
 
@@ -231,6 +232,9 @@ void MainController::saveMapConfig(QString fileName, double zoom, double centerX
         mapController->saveMapConfig(filePath, 0, 0, 1.0, 0);
 
     }
+
+    mapController->saveNewMap(Helper::getAppPath() + QDir::separator() + "mapConfigs" + QDir::separator() + mapFileInfo.fileName() + ".pgm");
+
 }
 
 void MainController::loadMapConfig(QString fileName) {
@@ -288,6 +292,7 @@ void MainController::saveSettings(int mapChoice, double batteryThreshold){
 }
 
 void MainController::newRobotPosSlot(QString ip, float posX, float posY, float ori){
+
     QPointF robotPos = Helper::Convert::robotCoordToPixelCoord(
                     QPointF(posX, posY),
                     mapController->getOrigin().x(),
@@ -296,7 +301,7 @@ void MainController::newRobotPosSlot(QString ip, float posX, float posY, float o
                     mapController->getHeight());
     float orientation = -ori * 180.0 / M_PI + 90;
     robotsController->setRobotPos(ip, robotPos.x(), robotPos.y(), orientation);
-    //qDebug() << "maincontroller: update robot pos" << robotPos << posX << posY << mapController->getOrigin() << mapController->getResolution() << mapController->getHeight();
+    qDebug() << "maincontroller: update robot pos" << robotPos << posX << posY << mapController->getOrigin() << mapController->getResolution() << mapController->getHeight();
     emit updateRobotPos(ip, robotPos.x(), robotPos.y(), orientation);
     mapController->getScanMapController()->updateRobotPos(ip, robotPos.x(), robotPos.y(), orientation);
 }
@@ -432,8 +437,8 @@ void MainController::sendNewMap(QString ip){
     robotsController->sendNewMap(ip, mapId, date, mapMetadata, mapController->getMapImage());
 }
 
-void MainController::newMapFromRobotSlot(QString ip, QByteArray mapArray, QString mapId, QString mapDate, QString resolution, QString originX, QString originY, QString orientation, int map_width, int map_height){
-    mapController->updateMetadata(map_width, map_height, resolution.toFloat(), originX.toFloat(), originY.toFloat(), orientation.toFloat());
+void MainController::newMapFromRobotSlot(QString ip, QByteArray mapArray, QString mapId, QString mapDate, QString resolution, QString originX, QString originY, int map_width, int map_height){
+    mapController->updateMetadata(map_width, map_height, resolution.toFloat(), originX.toFloat(), originY.toFloat());
     mapController->newMapFromRobot(mapArray, mapId, mapDate);
 
     QString mapMetadata = mapController->getMetadataString();
@@ -469,8 +474,11 @@ void MainController::resetMapConfiguration(QString file_name, bool scan, double 
     qDebug() << "MainController::resetMapConfiguration" << file_name;
 
     QString cpp_file_name = file_name.mid(7);
+    QPointF initPos(0.0f, 0.0f);
+    float robotOri(0.0f);
 
     if(scan){
+        mapController->setMapFile(cpp_file_name);
 
         ScanMapPaintedItem* map_reference = mapController->getScanMapController()->getPaintedItems().begin().value();
         qDebug() << "\n\n\nSaving map config after scan with origin" << map_reference->robotOrientation();
@@ -478,16 +486,19 @@ void MainController::resetMapConfiguration(QString file_name, bool scan, double 
         /// have to compute the difference between the old origin and the position of the robot at the beginning of the scan,
         /// this is used as the new origin for the scanned map
         /// TODO check what to do about this origin, it fucks up the position of the robot after the scan ends
-        mapController->setOrigin(Helper::Convert::pixelCoordToRobotCoord(QPointF(map_reference->x() + map_reference->robotX(),
+        initPos = Helper::Convert::pixelCoordToRobotCoord(QPointF(map_reference->x() + map_reference->robotX(),
                                                                                  map_reference->y() + map_reference->robotY()),
                                                                          mapController->getOrigin().x(), mapController->getOrigin().y(), mapController->getResolution(),
-                                                                         mapController->getHeight()));
+                                                                         mapController->getHeight());
         /// Reset the orientation to reset the initial pose of the robot
-        mapController->setOrientation(map_reference->robotOrientation()-90);
+        robotOri = map_reference->robotOrientation()-90;
     }
 
     pointController->clearPoints();
     pathController->clearPaths();
+
+    mapController->setMapId(QUuid::createUuid());
+    mapController->setDateTime(QDateTime::currentDateTime());
 
     /// although this is a new configuraton we have to pass false in order to reset properly the paths and points
     /// in the files
@@ -497,17 +508,15 @@ void MainController::resetMapConfiguration(QString file_name, bool scan, double 
     mapController->requestReloadMap(file_name);
     qDebug() << "\n\n\nrequesting reload" << file_name;
 
-    QUuid mapId = QUuid::createUuid();
-
-    QString date = QDate::currentDate().toString("yyyy-MM-dd-hh-mm-ss");
-
-    QString mapMetadata = mapController->getMetadataString();
+    QString mapMetadata = QString::number(mapController->getWidth()) + ' ' + QString::number(mapController->getHeight()) +
+            ' ' + QString::number(mapController->getResolution()) + ' ' + QString::number(initPos.x()) +
+            ' ' + QString::number(initPos.y()) + ' ' + QString::number(robotOri);;
 
     QImage img(cpp_file_name);
 
     qDebug() << "sending map with metadata " << mapMetadata << " size of map is " << img.size();
 
-    robotsController->sendMapToAllRobots(mapId.toString(), date, mapMetadata, img);
+    robotsController->sendMapToAllRobots(mapController->getMapId().toString(), mapController->getDateTime().toString("yyyy-MM-dd-hh-mm-ss"), mapMetadata, img);
 }
 
 /************************* SCANNING *************************/
@@ -536,9 +545,9 @@ void MainController::playPauseScanningSlot(QString ip, bool wasScanning, bool sc
     }
 }
 
-void MainController::receivedScanMapSlot(QString ip, QByteArray map, QString resolution, QString originX, QString originY, QString orientation, int map_width, int map_height){
+void MainController::receivedScanMapSlot(QString ip, QByteArray map, QString resolution, QString originX, QString originY, int map_width, int map_height){
     if(!discardMap){
-        mapController->updateMetadata(map_width, map_height, resolution.toFloat(), originX.toFloat(), originY.toFloat(), orientation.toFloat());
+        mapController->updateMetadata(map_width, map_height, resolution.toFloat(), originX.toFloat(), originY.toFloat());
         QImage image = mapController->getImageFromArray(map, mapController->getWidth(), mapController->getHeight(), false);
         mapController->getScanMapController()->receivedScanMap(ip, image, resolution);
     } else
@@ -596,4 +605,12 @@ void MainController::clearPointsAndPathsAfterScan(){
     pointController->clearPoints();
 
     pathController->clearPaths();
+}
+
+
+/**********************************************************************************************************/
+
+void MainController::testSlot(){
+    qDebug() << "MainController::testSlot called";
+    mapController->getMapImage().save("/home/joan/Documents/test.pgm", "PGM");
 }

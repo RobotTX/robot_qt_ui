@@ -39,6 +39,7 @@ ApplicationWindow {
     signal shortcutDeleteRobot()
     signal requestOrSendMap(string ip, bool request)
     signal setMessageTop(int status, string msg)
+    signal test()
 
     onSetMessageTop: mapView.setMessageTop(status, msg)
 
@@ -96,6 +97,10 @@ ApplicationWindow {
         Shortcut {
             sequence: "/"
             onActivated: openMapChoiceMessageDialog("0", true)
+        }
+        Shortcut {
+            sequence: ";"
+            onActivated: test()
         }
 
         EditMap {
@@ -185,6 +190,8 @@ ApplicationWindow {
 
         onAccepted: requestOrSendMap(ip, false)
         onRejected: requestOrSendMap(ip, true)
+
+
     }
 
     CustomDialog {

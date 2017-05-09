@@ -139,7 +139,7 @@ private slots:
      * updates the map of the map controller, resets paths and points and sends
      * the map to all the other robots
      */
-    void newMapFromRobotSlot(QString ip, QByteArray mapArray, QString mapId, QString mapDate, QString resolution, QString originX, QString originY, QString orientation, int map_width, int map_height);
+    void newMapFromRobotSlot(QString ip, QByteArray mapArray, QString mapId, QString mapDate, QString resolution, QString originX, QString originY, int map_width, int map_height);
     /**
      * @brief requestOrSendMap
      * @param ip
@@ -189,7 +189,7 @@ private slots:
      * @param resolution
      * gives the newly received scan map to the scan controller
      */
-    void receivedScanMapSlot(QString ip, QByteArray map, QString resolution, QString originX, QString originY, QString orientation, int map_width, int map_height);
+    void receivedScanMapSlot(QString ip, QByteArray map, QString resolution, QString originX, QString originY, int map_width, int map_height);
     /**
      * @brief sendTeleopSlot
      * @param ip
@@ -239,7 +239,13 @@ private slots:
     void updateTutoFile(int index, bool visible);
 
     void clearPointsAndPathsAfterScan(void);
+    /**
+     * @brief setDiscardMap
+     * @param discard
+     * To discard any new scan map after the scan has finished
+     */
     void setDiscardMap(bool discard){ discardMap = discard; }
+    void testSlot();
 
 signals:
     /// those signals are connected to the qml model to keep the data consistent between the c++ side and the qml side

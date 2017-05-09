@@ -99,11 +99,6 @@ Frame {
             right: saveStateButton.left
             rightMargin: 15
         }
-
-        // to update the text accordingly
-        /*onVisualPositionChanged: {
-            console.log("New rotation : " + Math.round(valueAt(position)));
-        }*/
     }
 
     /// The save state button

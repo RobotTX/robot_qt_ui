@@ -31,14 +31,12 @@ public:
     int getHeight(void) const { return map->getHeight(); }
     int getWidth(void) const { return map->getWidth(); }
     QPointF getOrigin(void) const { return map->getOrigin(); }
-    float getOrientation(void) const { return map->getOrientation(); }
     double getResolution(void) const { return map->getResolution(); }
     QString getMetadataString(void) const;
 
     /// Setters
     bool setMapFile(const QString file);
     void setOrigin(const QPointF origin) { map->setOrigin(origin); }
-    void setOrientation(const float _orientation) { map->setOrientation(_orientation); }
     void setHeight(const int height) { map->setHeight(height); }
     void setWidth(const int width) { map->setWidth(width); }
     void setResolution(const double resolution) { map->setResolution(resolution); }
@@ -121,7 +119,7 @@ public:
      * @param originY
      * updates the metadata
      */
-    void updateMetadata(int width, int height, float resolution, float originX, float originY, float orientation);
+    void updateMetadata(int width, int height, float resolution, float originX, float originY);
 
 private slots:
     /**

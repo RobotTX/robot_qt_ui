@@ -93,7 +93,7 @@ private slots:
      * @param map_height
      * We just received a map from the robot, <who> tells us what the map is for (map to use, scanning, merging, recovering)
      */
-    void mapReceivedSlot(const QByteArray mapArray, const int who, const QString mapId, const QString mapDate, const QString resolution, const QString originX, const QString originY, const QString orientation, const int map_width, const int map_height);
+    void mapReceivedSlot(const QByteArray mapArray, const int who, const QString mapId, const QString mapDate, const QString resolution, const QString originX, const QString originY, const int map_width, const int map_height);
 
     /**
      * @brief doneSendingMapSlot
@@ -221,7 +221,7 @@ signals:
      * @param map_height
      * Send the new map to the robotsController to be used as the main one
      */
-    void newMapFromRobot(QString ip, QByteArray mapArray, QString mapId, QString mapDate, QString resolution, QString originX, QString originY, QString orientation, int map_width, int map_height);
+    void newMapFromRobot(QString ip, QByteArray mapArray, QString mapId, QString mapDate, QString resolution, QString originX, QString originY, int map_width, int map_height);
 
     /**
      * @brief mapToMergeFromRobot
@@ -242,7 +242,7 @@ signals:
      * @param map_height
      * Send the new map to the robotsController to be used in the scan window
      */
-    void receivedScanMap(QString ip, QByteArray mapArray, QString resolution, QString originX, QString originY, QString orientation, int map_width, int map_height);
+    void receivedScanMap(QString ip, QByteArray mapArray, QString resolution, QString originX, QString originY, int map_width, int map_height);
 
     /**
      * @brief checkScanning

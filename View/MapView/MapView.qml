@@ -423,7 +423,7 @@ Frame {
 
     function setMap(_mapSrc){
         console.log("setMap source : " + _mapSrc);
-        mapSrc = "file:/" + _mapSrc;
+        mapSrc = "file://" + _mapSrc;
         emptyMap.visible = false;
         mapImage.visible = true;
     }

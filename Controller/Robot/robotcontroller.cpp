@@ -48,13 +48,13 @@ RobotController::RobotController(QQmlApplicationEngine* engine, RobotsController
     /// Check if the robot has the same map as the application
     connect(this, SIGNAL(checkMapInfo(QString, QString, QString)), parent, SLOT(checkMapInfoSlot(QString, QString, QString)));
     /// Signal that we just received a new map fron the robot
-    connect(this, SIGNAL(newMapFromRobot(QString, QByteArray, QString, QString, QString, QString, QString, QString, int, int)),
-            parent, SLOT(newMapFromRobotSlot(QString, QByteArray, QString, QString, QString, QString, QString, QString, int, int)));
+    connect(this, SIGNAL(newMapFromRobot(QString, QByteArray, QString, QString, QString, QString, QString, int, int)),
+            parent, SLOT(newMapFromRobotSlot(QString, QByteArray, QString, QString, QString, QString, QString, int, int)));
     /// Signal that we just received a map to merge from the robot
     connect(this, SIGNAL(mapToMergeFromRobot(QByteArray, QString)), parent, SLOT(processMapForMerge(QByteArray, QString)));
     /// Signal that we received a new map while scanning
-    connect(this, SIGNAL(receivedScanMap(QString, QByteArray, QString, QString, QString, QString, int, int)),
-            parent, SLOT(receivedScanMapSlot(QString, QByteArray, QString, QString, QString, QString, int, int)));
+    connect(this, SIGNAL(receivedScanMap(QString, QByteArray, QString, QString, QString, int, int)),
+            parent, SLOT(receivedScanMapSlot(QString, QByteArray, QString, QString, QString, int, int)));
     /// Check if the robot is scanning when it connects
     connect(this, SIGNAL(checkScanning(QString, bool)), parent, SLOT(checkScanningSlot(QString, bool)));
     connect(this, SIGNAL(updateLaser(QString, bool)), parent, SLOT(updateLaserSlot(QString, bool)));
@@ -178,8 +178,8 @@ void RobotController::launchWorkers(void){
 
 
     mapWorker = QPointer<ScanMapWorker>(new ScanMapWorker(ip, PORT_MAP));
-    connect(mapWorker, SIGNAL(valueChangedMap(QByteArray, int, QString, QString, QString, QString, QString, QString, int, int)),
-            this , SLOT(mapReceivedSlot(QByteArray, int, QString, QString, QString, QString, QString, QString, int, int)));
+    connect(mapWorker, SIGNAL(valueChangedMap(QByteArray, int, QString, QString, QString, QString, QString, int, int)),
+            this , SLOT(mapReceivedSlot(QByteArray, int, QString, QString, QString, QString, QString, int, int)));
     connect(mapWorker, SIGNAL(robotIsDead()), this, SLOT(robotIsDeadSlot()));
     connect(&mapThread, SIGNAL(finished()), mapWorker, SLOT(deleteLater()));
     connect(this, SIGNAL(startMapWorker()), mapWorker, SLOT(connectSocket()));
@@ -209,7 +209,7 @@ void RobotController::launchWorkers(void){
     emit startCmdRobotWorker();
 }
 
-void RobotController::mapReceivedSlot(const QByteArray mapArray, const int who, const QString mapId, const QString mapDate, const QString resolution, const QString originX, const QString originY, const QString orientation, const int map_width, const int map_height){
+void RobotController::mapReceivedSlot(const QByteArray mapArray, const int who, const QString mapId, const QString mapDate, const QString resolution, const QString originX, const QString originY, const int map_width, const int map_height){
     qDebug() << "RobotController::mapReceivedSlot received a map" << who;
 
     switch(who){
@@ -221,15 +221,15 @@ void RobotController::mapReceivedSlot(const QByteArray mapArray, const int who, 
             emit receivedScanMap(robotName, image, resolution.toDouble());*/
         break;
         case 2:
-            qDebug() << "RobotController::mapReceivedSlot received a map from a robot to merge" << ip << resolution << originX << originY << orientation;
+            qDebug() << "RobotController::mapReceivedSlot received a map from a robot to merge" << ip << resolution << originX << originY;
             emit mapToMergeFromRobot(mapArray, resolution);
         break;
         case 1:
-            emit newMapFromRobot(ip, mapArray, mapId, mapDate, resolution, originX, originY, orientation, map_width, map_height);
+            emit newMapFromRobot(ip, mapArray, mapId, mapDate, resolution, originX, originY, map_width, map_height);
         break;
         case 0:
             qDebug() << "RobotController::mapReceivedSlot received a map while scanning";
-            emit receivedScanMap(ip, mapArray, resolution, originX, originY, orientation, map_width, map_height);
+            emit receivedScanMap(ip, mapArray, resolution, originX, originY, map_width, map_height);
         break;
         default:
         /// NOTE can probably remove that when testing phase is over

@@ -82,102 +82,114 @@ void session(boost::shared_ptr<tcp::socket> sock, ros::NodeHandle n){
                 int width(0);
                 int height(0);
                 float resolution(0.0f);
-                float originX(0.0f);
-                float originY(0.0f);
+                float initPosX(0.0f);
+                float initPosY(0.0f);
                 float orientation(0.0f);
 
                 std::istringstream iss(mapMetadata);
-                iss >> width >> height >> resolution >> originX >> originY >> orientation;
-                std::cout << "(New Map) Map metadata after split : " << width << " " << height << " " << resolution << " " << originX << " " << originY << " " << orientation << std::endl;
+                iss >> width >> height >> resolution >> initPosX >> initPosY >> orientation;
+                std::cout << "(New Map) Map metadata after split : " << width << " " << height << " " << resolution << " " << initPosX << " " << initPosY << " " << orientation << std::endl;
 
                 /// We remove the 5 last bytes as they are only there to identify the end of the map
                 map.erase(map.end() - 5, map.end());
                 std::cout << "(New Map) Size of the map received : " << map.size() << std::endl;
 
-                /// TODO check if we want to discriminate with initialPosePublisher/robot_position
-                std::string initialPoseFile;
-                if(n.hasParam("last_known_position_file")){
-                    n.getParam("last_known_position_file", initialPoseFile);
-                    std::cout << "read_new_map set last known position file to " << initialPoseFile << std::endl;
-                } 
+                if(initPosX > -100.0){
 
-                ofs.open(initialPoseFile, std::ofstream::out | std::ofstream::trunc);
-                if(ofs.is_open()){
-                    /// We translate the rotation of the robot from degrees to a quaternion
-                    tf::Quaternion quaternion;
-                    quaternion.setEuler(0, 0, -orientation*3.14159/180);
-
-                    /// We write the inital position of the robot in its file
-                    ofs << originX << " " << originY << " " << quaternion.x() << " " << quaternion.y() << " " << quaternion.z() << " " << quaternion.w() << std::endl;
-
-                    ofs.close();
-
-                    /// We save the file in a the pgm file used by amcl
-
-                    std::string mapFile;
-                    if(n.hasParam("map_image_used")){
-                        n.getParam("map_image_used", mapFile);
-                        std::cout << "read new map set map file to " << mapFile << std::endl;
+                    /// TODO check if we want to discriminate with initialPosePublisher/robot_position
+                    std::string initialPoseFile;
+                    if(n.hasParam("last_known_position_file")){
+                        n.getParam("last_known_position_file", initialPoseFile);
+                        std::cout << "read_new_map set last known position file to " << initialPoseFile << std::endl;
                     } 
-                    ofs.open(mapFile, std::ofstream::out | std::ofstream::trunc);
+                    
+                    if(n.hasParam("robot_position_file")){
+                        std::string robotPositionFile;
+                        n.getParam("robot_position_file", robotPositionFile);
+                        std::ofstream ofs(robotPositionFile, std::ifstream::out | std::ofstream::trunc);
+                        ofs << 0;
+                        ofs.close();
+                    }
 
+                    ofs.open(initialPoseFile, std::ofstream::out | std::ofstream::trunc);
                     if(ofs.is_open()){
-                        ofs << "P5" << std::endl << width << " " << height << std::endl << "255" << std::endl;
+                        /// We translate the rotation of the robot from degrees to a quaternion
+                        tf::Quaternion quaternion;
+                        quaternion.setEuler(0, 0, -orientation*3.14159/180);
 
-                        /// writes every single pixel to the pgm file
-                        for(int i = 0; i < map.size(); i+=5){
-                            uint8_t color = static_cast<uint8_t> (map.at(i));
+                        /// We write the inital position of the robot in its file
+                        ofs << initPosX << " " << initPosY << " " << quaternion.x() << " " << quaternion.y() << " " << quaternion.z() << " " << quaternion.w() << std::endl;
 
-                            uint32_t count2 = static_cast<uint32_t> (static_cast<uint8_t> (map.at(i+1)) << 24) + static_cast<uint32_t> (static_cast<uint8_t> (map.at(i+2)) << 16)
-                                            + static_cast<uint32_t> (static_cast<uint8_t> (map.at(i+3)) << 8) + static_cast<uint32_t> (static_cast<uint8_t> (map.at(i+4)));
-
-                            for(int j = 0; j < count2; j++)
-                                ofs << color;
-                        }
-
-                        ofs << std::endl;
                         ofs.close();
-
-                        std::cout << "(New Map) New map pgm file created in " << mapFile << std::endl;
-
-                        /// Kill gobot move so that we'll restart it with the new map
-                        std::string cmd = "rosnode kill /move_base";
-                        system(cmd.c_str());
-
-                        sleep(5);
-                        std::cout << "(New Map) We killed gobot_move" << std::endl;
-
-                        /// We delete the old path
-                        std::string pathFile;
-                        if(n.hasParam("path_file")){
-                            n.getParam("path_file", pathFile);
-                            std::cout << "read new map set path file to " << pathFile;
-                        }
-                        ofs.open(pathFile, std::ofstream::out | std::ofstream::trunc);
-                        ofs.close();
-                        std::cout << "(New Map) Path deleted" << std::endl;
-
-                        /// We delete the old home
-                        std::string homeFile;
-                        if(n.hasParam("home_file")){
-                            n.getParam("home_file", homeFile);
-                            std::cout << "read new map home file to " << homeFile;
-                        }
-                        ofs.open(homeFile, std::ofstream::out | std::ofstream::trunc);
-                        ofs.close();
-                        std::cout << "(New Map) Home deleted" << std::endl;
-
-                        /// Relaunch gobot_move
-                        cmd = "roslaunch gobot_move slam.launch &";
-                        system(cmd.c_str());
-                        std::cout << "(New Map) We relaunched gobot_move" << std::endl;
 
                     } else {
-                        std::cout << "(New Map) Could not open the file to create a new pgm file " << mapFile << std::endl;
+                        std::cout << "(New Map) Could not open the file to create a new initialPoseFile file " << initialPoseFile << std::endl;
                         message = "failed";
                     }
+                } 
+
+                /// We save the file in a the pgm file used by amcl
+
+                std::string mapFile;
+                if(n.hasParam("map_image_used")){
+                    n.getParam("map_image_used", mapFile);
+                    std::cout << "read new map set map file to " << mapFile << std::endl;
+                } 
+                ofs.open(mapFile, std::ofstream::out | std::ofstream::trunc);
+
+                if(ofs.is_open()){
+                    ofs << "P5" << std::endl << width << " " << height << std::endl << "255" << std::endl;
+
+                    /// writes every single pixel to the pgm file
+                    for(int i = 0; i < map.size(); i+=5){
+                        uint8_t color = static_cast<uint8_t> (map.at(i));
+
+                        uint32_t count2 = static_cast<uint32_t> (static_cast<uint8_t> (map.at(i+1)) << 24) + static_cast<uint32_t> (static_cast<uint8_t> (map.at(i+2)) << 16)
+                                        + static_cast<uint32_t> (static_cast<uint8_t> (map.at(i+3)) << 8) + static_cast<uint32_t> (static_cast<uint8_t> (map.at(i+4)));
+
+                        for(int j = 0; j < count2; j++)
+                            ofs << color;
+                    }
+
+                    ofs << std::endl;
+                    ofs.close();
+
+                    std::cout << "(New Map) New map pgm file created in " << mapFile << std::endl;
+
+                    /// Kill gobot move so that we'll restart it with the new map
+                    std::string cmd = "rosnode kill /move_base";
+                    system(cmd.c_str());
+
+                    sleep(5);
+                    std::cout << "(New Map) We killed gobot_move" << std::endl;
+
+                    /// We delete the old path
+                    std::string pathFile;
+                    if(n.hasParam("path_file")){
+                        n.getParam("path_file", pathFile);
+                        std::cout << "read new map set path file to " << pathFile;
+                    }
+                    ofs.open(pathFile, std::ofstream::out | std::ofstream::trunc);
+                    ofs.close();
+                    std::cout << "(New Map) Path deleted" << std::endl;
+
+                    /// We delete the old home
+                    std::string homeFile;
+                    if(n.hasParam("home_file")){
+                        n.getParam("home_file", homeFile);
+                        std::cout << "read new map home file to " << homeFile;
+                    }
+                    ofs.open(homeFile, std::ofstream::out | std::ofstream::trunc);
+                    ofs.close();
+                    std::cout << "(New Map) Home deleted" << std::endl;
+
+                    /// Relaunch gobot_move
+                    cmd = "roslaunch gobot_move slam.launch &";
+                    system(cmd.c_str());
+                    std::cout << "(New Map) We relaunched gobot_move" << std::endl;
+
                 } else {
-                    std::cout << "(New Map) Could not open the file to create a new yaml file " << initialPoseFile << std::endl;
+                    std::cout << "(New Map) Could not open the file to create a new pgm file " << mapFile << std::endl;
                     message = "failed";
                 }
             } else {

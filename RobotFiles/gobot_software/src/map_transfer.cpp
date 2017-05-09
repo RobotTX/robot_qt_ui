@@ -25,13 +25,8 @@ void sendMap(const std::vector<uint8_t>& my_map){
 }
 
 void getMetaData(const nav_msgs::MapMetaData::ConstPtr& msg){
-	tf::Matrix3x3 matrix = tf::Matrix3x3(tf::Quaternion(msg->origin.orientation.x, msg->origin.orientation.y, msg->origin.orientation.z, msg->origin.orientation.w));
- 	tfScalar roll;
-	tfScalar pitch;
-	tfScalar yaw;
-	matrix.getRPY(roll, pitch, yaw);
 	metadata_string = std::to_string(msg->width) + " " + std::to_string(msg->height) + " " + std::to_string(msg->resolution) + " " + 
-	std::to_string(msg->origin.position.x) + " " + std::to_string(msg->origin.position.y) + " " + std::to_string(yaw);
+	std::to_string(msg->origin.position.x) + " " + std::to_string(msg->origin.position.y);
 }
 
 void getMap(const nav_msgs::OccupancyGrid::ConstPtr& msg){

@@ -14,21 +14,57 @@ int main(int argc, char* argv[] ){
         ros::NodeHandle n; 
 
         float position_x(0.0), position_y(0.0);
-        float angle_x(0.0), angle_y(0.0), angle_z(0.0), angle_w(0.0);
+        float angle_x(0.0), angle_y(0.0), angle_z(0.0), angle_w(1.0);
 
         std::string robotPos;
-        if(private_node_handle.hasParam("/initialPosePublisher/robot_position")){
-            private_node_handle.getParam("/initialPosePublisher/robot_position", robotPos);
-            std::cout << "initialPosePublisher::setParam robot_position to " << robotPos << std::endl;
-        }
+
+        if(n.hasParam("robot_position_file")){
+            std::string robotPositionFile;
+            n.getParam("robot_position_file", robotPositionFile);
+
+            std::fstream file(robotPositionFile, std::ios::in);
+            file >> robotPos;
+            file.close();
+
+            file.open(robotPositionFile, std::fstream::out | std::fstream::trunc);
+            file << "1";
+            file.close();
+
+        } else 
+            std::cout << "initialPosePublisher could not find the parameter </initialPosePublisher/robot_position_file>" << std::endl;
+
+        std::cout << "RobotPos : " << robotPos << std::endl;
+
         
         if(std::stoi(robotPos) == 0){
             // if we can read the file that contains the initial position then we update <initialPose>
-            std::ifstream file("/home/gtdollar/computer_software/Robot_Infos/lastKnownPosition.txt", std::ios::in);
-            if(file){
-                file >> position_x >> position_y >> angle_x >> angle_y >> angle_z >> angle_w;
-                file.close();
-            }
+            if(n.hasParam("last_known_position_file")){
+                std::string fileName;
+                n.getParam("last_known_position_file", fileName);
+                std::ifstream file(fileName, std::ios::in);
+                if(file){
+                    file >> position_x >> position_y >> angle_x >> angle_y >> angle_z >> angle_w;
+                    std::cout << "values I got from lastKnownPosition.txt " << std::to_string(position_x) << " " << std::to_string(position_y) << " " << std::to_string(angle_x) << " " << std::to_string(angle_y) << " " << std::to_string(angle_z) << " " << std::to_string(angle_w) << std::endl;
+                    file.close();
+                } 
+            } else 
+                std::cout << "initialPosePublisher could not find the parameter <last_known_position_file>" << std::endl;
+                
+        } else if(std::stoi(robotPos) == 1){
+            if(n.hasParam("home_file")){
+                std::string fileName;
+                // we don't care about the name of the home that is on the first line of the file so we discard it
+                std::string osef;
+                n.getParam("home_file", fileName);
+                std::ifstream file(fileName, std::ios::in);
+                if(file){
+                    std::getline(file, osef);
+                    file >> position_x >> position_y >> angle_x >> angle_y >> angle_z >> angle_w;
+                    std::cout << "values I got from home.txt " << std::to_string(position_x) << " " << std::to_string(position_y) << " " << std::to_string(angle_x) << " " << std::to_string(angle_y) << " " << std::to_string(angle_w) << std::endl;
+                    file.close();
+                } 
+            } else 
+                std::cout << "initialPosePublisher could not find the parameter <home_file>" << std::endl;
         }
 
         // TODO robotPos == 1, home position (recover == 2 ?)
@@ -38,7 +74,7 @@ int main(int argc, char* argv[] ){
         tfScalar pitch;
         tfScalar yaw;
         matrix.getRPY(roll, pitch, yaw);
-        std::cout << "First try : " << roll*180/3.14159 << " " << pitch*180/3.14159 << " " << yaw*180/3.14159 << std::endl;
+        std::cout << "rotation " << yaw*180/3.14159 << std::endl;
 
         geometry_msgs::PoseWithCovarianceStamped initialPose;
         initialPose.header.frame_id = "map";
@@ -54,6 +90,7 @@ int main(int argc, char* argv[] ){
         
         // we wait for the topic to be created so we can publish on it
         sleep(3);
+
 
         initial_pose_publisher.publish(initialPose);
 

@@ -44,7 +44,7 @@ def isServer(IP) :
 			# Get the battery level
 			battery = 50
 			batteryFile = rospy.get_param("battery_file")
-			print 'batteryfile', batteryFile
+
 			with open(batteryFile, 'r') as file_name:
 				battery = file_name.readline()
 				file_name.close()
@@ -63,7 +63,7 @@ def isServer(IP) :
 			# Send everything to the application
 
 			toSend = "%s\"%s\"%s\"%s" % (hostname, ssid, stage, battery)
-			print "ping_server sending :",toSend
+			#print "ping_server sending :",toSend
 			s.send(toSend)
 
 	except : 
