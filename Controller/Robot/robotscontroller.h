@@ -33,7 +33,7 @@ public:
      * @param ori
      * Send the robot pos to the qml model
      */
-    void setRobotPos(const QString ip, const float posX, const float posY, const float ori);
+    void setRobotPos(const QString ip, const double posX, const double posY, const double ori);
 
     /**
      * @brief sendCommand
@@ -99,9 +99,9 @@ private slots:
     void robotIsDeadSlot(const QString ip);
     void shortcutAddRobot(void);
     void shortcutDeleteRobot(void);
-    void newRobotPosSlot(const QString ip, const float posX, const float posY, const float ori);
+    void newRobotPosSlot(const QString ip, const double posX, const double posY, const double ori);
     void updatePathSlot(const QString ip, const QStringList strList);
-    void updateHomeSlot(const QString ip, const QString homeName, const float homeX, const float homeY);
+    void updateHomeSlot(const QString ip, const double homeX, const double homeY, const double homeOri);
     void sendCommandNewName(const QString ip, const QString name);
     void updateNameSlot(const QString ip, const QString name);
     void sendCommandDeletePath(const QString ip);
@@ -125,7 +125,7 @@ private slots:
     void activateLaserSlot(QString ip, bool activate);
     void startedScanningSlot(const QString ip);
 
-    void updateRobotPos(QString ip, float x, float y, float orientation);
+    void updateRobotPos(QString ip, double x, double y, double orientation);
 
     void dockRobot(QString ip);
 
@@ -134,16 +134,16 @@ signals:
     void addRobot(QVariant name, QVariant ip, QVariant ssid, QVariant stage, QVariant battery);
     void removeRobot(QVariant ip);
     void setPos(QVariant ip, QVariant posX, QVariant posY, QVariant orientation);
-    void setHome(QVariant ip, QVariant name, QVariant posX, QVariant posY);
+    void setHome(QVariant ip, QVariant posX, QVariant posY, QVariant homeOri);
     void setPath(QVariant ip, QVariant name);
     void setPlayingPath(QVariant ip, QVariant playingPath);
     void addPathPoint(QVariant ip, QVariant name, QVariant posX, QVariant posY, QVariant waitTime);
     void displayRobots(void);
     void setStage(QVariant ip, QVariant stage);
     void setBattery(QVariant ip, QVariant battery);
-    void newRobotPos(QString ip, float posX, float posY, float ori);
+    void newRobotPos(QString ip, double posX, double posY, double ori);
     void updatePath(QString ip, QStringList strList);
-    void updateHome(QString ip, QString homeName, float homeX, float homeY);
+    void updateHome(QString ip, double homeX, double homeY, double homeOri);
     void setName(QVariant ip, QVariant name);
     void checkMapInfo(QString ip, QString mapId, QString mapDate);
     void newMapFromRobot(QString ip, QByteArray mapArray, QString mapId, QString mapDate, QString resolution, QString originX, QString originY, int map_width, int map_height);

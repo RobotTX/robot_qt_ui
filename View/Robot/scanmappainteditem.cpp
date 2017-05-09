@@ -15,10 +15,10 @@ void ScanMapPaintedItem::paint(QPainter *painter){
     painter->drawImage(QPoint(0, 0), _image);
 }
 
-void ScanMapPaintedItem::setRobotX(const float x){
+void ScanMapPaintedItem::setRobotX(const double x){
     xRobot = x - left;
 }
 
-void ScanMapPaintedItem::setRobotY(const float y){
+void ScanMapPaintedItem::setRobotY(const double y){
      yRobot = y - top;
 }

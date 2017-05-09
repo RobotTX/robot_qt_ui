@@ -110,8 +110,8 @@ bool execCommand(ros::NodeHandle n, std::vector<std::string> command){
 			// first param == c, second param = goal pos x coordinate, third param = goal pos y coordinate
 			std::cout << "(Command system) Gobot go to point" << std::endl;
 			if(command.size() == 3){
-				float posX = std::stof(command.at(1));
-				float posY = std::stof(command.at(2));
+				double posX = std::stof(command.at(1));
+				double posY = std::stof(command.at(2));
 
 				/// Before setting a new goal, we stop any teleoperation command
 				stopTwist();
@@ -329,7 +329,7 @@ bool execCommand(ros::NodeHandle n, std::vector<std::string> command){
 
 		// command to save the home of the robot
 		case 'n':
-			// param 1 is n, 2nd is the home name, 3rd is the home x coordinate, 4th is the home y coordinate
+			// param 1 is n, 2nd is the home x coordinate, 3rd is the home y coordinate, 4th is the orientation of the home
 			if(command.size() == 4){
 				// TODO send an angle from the application and convert it to store it in home.txt
 				std::cout << "(Command system) Home received" << std::endl;
@@ -340,19 +340,20 @@ bool execCommand(ros::NodeHandle n, std::vector<std::string> command){
 					std::cout << "CommandSystem set home file to " << homeFile << std::endl;
 					std::ofstream ofs(homeFile, std::ofstream::out | std::ofstream::trunc);
 				
-				if(ofs){
-					// home
-					// x y x_angle y_angle z_angle w_angle
-					ofs << command.at(1) << "\n" << command.at(2) << " " << command.at(3) << " 0 0 0 0";
-					ofs.close();
-					status = true;
+					if(ofs){
+						double orientation = std::stod(command.at(3));
+						tf::Quaternion quaternion;
+						quaternion.setEuler(0, 0, -orientation*3.14159/180);
+						ofs << command.at(1) << " " << command.at(2) << " " << quaternion.x() << " " << quaternion.y() << " " << quaternion.z() << " " << quaternion.w();
+						ofs.close();
+						status = true;
 
-				} else
-					std::cout << "sorry could not open the file " << homeFile << std::endl;
+					} else
+						std::cout << "sorry could not open the file " << homeFile << std::endl;
 				}
 				
 			} else
-				std::cout << "Not enough arguments, received " << command.size() << " arguments, 3 arguments expected" << std::endl;
+				std::cout << "Not enough arguments, received " << command.size() << " arguments, 4 arguments expected" << std::endl;
 		break;
 
 		// command to send the robot home
@@ -1032,9 +1033,15 @@ void asyncAccept(boost::shared_ptr<boost::asio::io_service> io_service, boost::s
 
 	/// Send a message to the PC to tell we are connected
 	/// send home position and timestamp
-	std::string homeName("");
 	std::string homeX("");
 	std::string homeY("");
+	double x_angle(0);
+	double y_angle(0);
+	double z_angle(0);
+	double w_angle(1);
+	tfScalar roll;
+	tfScalar pitch;
+	tfScalar yaw;
 	std::string homeFile;
 	if(n.hasParam("home_file")){
 		n.getParam("home_file", homeFile);
@@ -1042,10 +1049,14 @@ void asyncAccept(boost::shared_ptr<boost::asio::io_service> io_service, boost::s
 		std::ifstream ifs(homeFile, std::ifstream::in);
 		
 		if(ifs){
-	   		getline(ifs, homeName);
-	   		getline(ifs, homeX);
-	   		getline(ifs, homeY);
-			std::cout << homeName << " " << homeX << " " << homeY << std::endl;
+	   		ifs >> homeX >> homeY >> x_angle >> y_angle >> z_angle >> w_angle;
+
+	   		tf::Matrix3x3 matrix = tf::Matrix3x3(tf::Quaternion(x_angle , y_angle , z_angle, w_angle));
+
+	        matrix.getRPY(roll, pitch, yaw);
+	        std::cout << "rotation " << yaw*180/3.14159 << std::endl;
+
+			std::cout << "Home : " << homeX << " " << homeY << " " << yaw << std::endl;
 			ifs.close();
 		}
 	}
@@ -1101,17 +1112,15 @@ void asyncAccept(boost::shared_ptr<boost::asio::io_service> io_service, boost::s
    		mapId = "{00000000-0000-0000-0000-000000000000}";
    	if(mapDate.empty())
    		mapDate = "1970-05-21-00-00-00";
-   	if(homeName.empty())
-   		homeName = "no";
    	if(homeX.empty())
-   		homeX = "-1";
+   		homeX = "-150";
    	if(homeY.empty())
-   		homeY = "-1";
+   		homeY = "-150";
 
    	std::string scan = (scanning) ? "1" : "0";
    	std::string recover = (recovering) ? "1" : "0";
 
-	sendMessageToPc(sock, "Connected" + sep + mapId + sep + mapDate + sep + homeName + sep + homeX + sep + homeY + sep 
+	sendMessageToPc(sock, "Connected" + sep + mapId + sep + mapDate + sep + homeX + sep + homeY + sep + std::to_string(yaw) + sep
 		+ scan + sep + recover + sep + laserStr + sep + path);
 
 	boost::thread t(boost::bind(session, sock, n));

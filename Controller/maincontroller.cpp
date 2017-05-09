@@ -179,7 +179,7 @@ MainController::MainController(QQmlApplicationEngine *engine, QObject* parent) :
         tutoFile.close();
     }
 
-    connect(this, SIGNAL(updateRobotPos(QString,float,float,float)), robotsController, SLOT(updateRobotPos(QString, float, float, float)));
+    connect(this, SIGNAL(updateRobotPos(QString,double,double,double)), robotsController, SLOT(updateRobotPos(QString, double, double, double)));
 
 }
 
@@ -291,7 +291,7 @@ void MainController::saveSettings(int mapChoice, double batteryThreshold){
     setMessageTopSlot(2, "Settings saved");
 }
 
-void MainController::newRobotPosSlot(QString ip, float posX, float posY, float ori){
+void MainController::newRobotPosSlot(QString ip, double posX, double posY, double ori){
 
     QPointF robotPos = Helper::Convert::robotCoordToPixelCoord(
                     QPointF(posX, posY),
@@ -299,9 +299,9 @@ void MainController::newRobotPosSlot(QString ip, float posX, float posY, float o
                     mapController->getOrigin().y(),
                     mapController->getResolution(),
                     mapController->getHeight());
-    float orientation = -ori * 180.0 / M_PI + 90;
+    double orientation = -ori * 180.0 / M_PI + 90;
     robotsController->setRobotPos(ip, robotPos.x(), robotPos.y(), orientation);
-    qDebug() << "maincontroller: update robot pos" << robotPos << posX << posY << mapController->getOrigin() << mapController->getResolution() << mapController->getHeight();
+    //qDebug() << "maincontroller: update robot pos" << robotPos << posX << posY << mapController->getOrigin() << mapController->getResolution() << mapController->getHeight();
     emit updateRobotPos(ip, robotPos.x(), robotPos.y(), orientation);
     mapController->getScanMapController()->updateRobotPos(ip, robotPos.x(), robotPos.y(), orientation);
 }
@@ -312,7 +312,7 @@ void MainController::updatePathSlot(QString ip, QStringList strList){
             emit setPath(ip, strList.takeFirst());
             for(int i = 0; i < strList.size(); i+=4){
                 QPointF pathPointPos = Helper::Convert::robotCoordToPixelCoord(
-                                QPointF(static_cast<QString>(strList.at(i+1)).toFloat(), static_cast<QString>(strList.at(i+2)).toFloat()),
+                                QPointF(static_cast<QString>(strList.at(i+1)).toDouble(), static_cast<QString>(strList.at(i+2)).toDouble()),
                                 mapController->getOrigin().x(),
                                 mapController->getOrigin().y(),
                                 mapController->getResolution(),
@@ -324,24 +324,24 @@ void MainController::updatePathSlot(QString ip, QStringList strList){
     }
 }
 
-void MainController::updateHomeSlot(QString ip, QString homeName, float homeX, float homeY){
+void MainController::updateHomeSlot(QString ip, double homeX, double homeY, double homeOri){
     QPointF homePos = Helper::Convert::robotCoordToPixelCoord(
                     QPointF(homeX, homeY),
                     mapController->getOrigin().x(),
                     mapController->getOrigin().y(),
                     mapController->getResolution(),
                     mapController->getHeight());
-    emit setHome(ip, homeName, homePos.x(), homePos.y());
+    emit setHome(ip, homePos.x(), homePos.y(), homeOri);
 }
 
-void MainController::sendCommandNewHome(QString ip, QString homeName, double homeX, double homeY){
+void MainController::sendCommandNewHome(QString ip, double homeX, double homeY, double homeOri){
     QPointF homePos = Helper::Convert::pixelCoordToRobotCoord(
     QPointF(homeX, homeY),
     mapController->getOrigin().x(),
     mapController->getOrigin().y(),
     mapController->getResolution(),
     mapController->getHeight());
-    QString cmd = QString("n") + QChar(31) + homeName + QChar(31) + QString::number(homePos.x()) + QChar(31) + QString::number(homePos.y());
+    QString cmd = QString("n") + QChar(31) + QString::number(homePos.x()) + QChar(31) + QString::number(homePos.y()) + QChar(31) + QString::number(homeOri);
     robotsController->sendCommand(ip, cmd);
 }
 
@@ -438,7 +438,7 @@ void MainController::sendNewMap(QString ip){
 }
 
 void MainController::newMapFromRobotSlot(QString ip, QByteArray mapArray, QString mapId, QString mapDate, QString resolution, QString originX, QString originY, int map_width, int map_height){
-    mapController->updateMetadata(map_width, map_height, resolution.toFloat(), originX.toFloat(), originY.toFloat());
+    mapController->updateMetadata(map_width, map_height, resolution.toDouble(), originX.toDouble(), originY.toDouble());
     mapController->newMapFromRobot(mapArray, mapId, mapDate);
 
     QString mapMetadata = mapController->getMetadataString();
@@ -466,7 +466,6 @@ void MainController::processMapForMerge(QByteArray mapArray, QString resolution)
     qDebug() << "MainController::processMapForMerge" << resolution << mapController->getWidth() << mapController->getHeight();
     QImage image = mapController->getImageFromArray(mapArray, mapController->getWidth(), mapController->getHeight(), true);
     qDebug() << "Saving image of size" << image.size();
-    image.save("/home/joan/robot_map", "PGM");
     emit sendImageToMerge(image, resolution.toDouble());
 }
 
@@ -475,7 +474,7 @@ void MainController::resetMapConfiguration(QString file_name, bool scan, double 
 
     QString cpp_file_name = file_name.mid(7);
     QPointF initPos(0.0f, 0.0f);
-    float robotOri(0.0f);
+    double robotOri(0.0f);
 
     if(scan){
         mapController->setMapFile(cpp_file_name);
@@ -547,7 +546,7 @@ void MainController::playPauseScanningSlot(QString ip, bool wasScanning, bool sc
 
 void MainController::receivedScanMapSlot(QString ip, QByteArray map, QString resolution, QString originX, QString originY, int map_width, int map_height){
     if(!discardMap){
-        mapController->updateMetadata(map_width, map_height, resolution.toFloat(), originX.toFloat(), originY.toFloat());
+        mapController->updateMetadata(map_width, map_height, resolution.toDouble(), originX.toDouble(), originY.toDouble());
         QImage image = mapController->getImageFromArray(map, mapController->getWidth(), mapController->getHeight(), false);
         mapController->getScanMapController()->receivedScanMap(ip, image, resolution);
     } else
@@ -612,5 +611,4 @@ void MainController::clearPointsAndPathsAfterScan(){
 
 void MainController::testSlot(){
     qDebug() << "MainController::testSlot called";
-    mapController->getMapImage().save("/home/joan/Documents/test.pgm", "PGM");
 }

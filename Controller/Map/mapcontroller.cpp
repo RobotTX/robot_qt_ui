@@ -187,7 +187,7 @@ bool MapController::loadMapConfig(const QString fileName) {
         std::string _mapFile;
         int _height, _width, mapRotation;
         double centerX, centerY, originX, originY, resolution, zoom;
-        QPair<QPointF, float> _mapState;
+        QPair<QPointF, double> _mapState;
         std::string mapId;
         file >> _mapFile >> _height >> _width >> centerX >> centerY >> zoom >> mapRotation >> originX >> originY >> resolution >> mapId;
         qDebug() << "Loading map with config : \n\t" <<
@@ -357,7 +357,7 @@ void MapController::saveNewMap(const QString file_name){
     emit setMap(file_name);
 }
 
-void MapController::updateMetadata(int width, int height, float resolution, float originX, float originY){
+void MapController::updateMetadata(int width, int height, double resolution, double originX, double originY){
     qDebug() << "MapController::updateMetadata" << width << height << resolution << originX << originY;
     setOrigin(QPointF(originX, originY));
     setWidth(width);

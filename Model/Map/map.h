@@ -64,7 +64,7 @@ private:
      */
     QPointF origin;
 
-    float orientation;
+    double orientation;
 
     /**
      * @brief dateTime

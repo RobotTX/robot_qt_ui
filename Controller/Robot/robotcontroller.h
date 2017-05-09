@@ -69,7 +69,7 @@ public:
      */
     void clearObstacles(bool activated);
 
-    void updateRobotPosition(float x, float y, float orientation);
+    void updateRobotPosition(double x, double y, double orientation);
 
 private:
     /**
@@ -108,7 +108,7 @@ private slots:
      * @param ori
      * Just received the position of the robot
      */
-    void updateRobot(const float posX, const float posY, const float ori);
+    void updateRobot(const double posX, const double posY, const double ori);
 
     /**
      * @brief robotIsDeadSlot
@@ -137,7 +137,7 @@ private slots:
      * @param ranges
      * To update the display of the obstacles on the map when we receive it from the robot
      */
-    void updateObstacles(float angle_min, float angle_max, float angle_increment, QVector<float> ranges);
+    void updateObstacles(double angle_min, double angle_max, double angle_increment, QVector<double> ranges);
 
 
 
@@ -179,7 +179,7 @@ signals:
      * @param ori
      * Send the new position of the robot to the robotsController
      */
-    void newRobotPos(QString ip, float posX, float posY, float ori);
+    void newRobotPos(QString ip, double posX, double posY, double ori);
 
     /**
      * @brief updatePath
@@ -192,12 +192,11 @@ signals:
     /**
      * @brief updateHome
      * @param ip
-     * @param homeName
      * @param homeX
      * @param homeY
      * Tell the robotsController to update the home of this robot with the given one
      */
-    void updateHome(QString ip, QString homeName, float homeX, float homeY);
+    void updateHome(QString ip, double homeX, double homeY, double homeOri);
 
     /**
      * @brief checkMapInfo

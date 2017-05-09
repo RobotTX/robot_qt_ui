@@ -12,13 +12,13 @@ void ObstaclesPaintedItem::paint(QPainter *painter){
         painter->drawPoint(obstacles_.at(j).x() + 300, obstacles_.at(j).y() + 300);
 }
 
-void ObstaclesPaintedItem::updateObstacles(float angle_min, float angle_max, float angle_increment, QVector<float> ranges){
+void ObstaclesPaintedItem::updateObstacles(double angle_min, double angle_max, double angle_increment, QVector<double> ranges){
     if(activated){
         setPosition(QPointF(_x, _y));
         obstacles_.clear();
         int i(ranges.size()-1);
         /// for improved performance
-        std::for_each(ranges.begin(), ranges.end(), [&](const float range) {
+        std::for_each(ranges.begin(), ranges.end(), [&](const double range) {
             /// rotation is done on the qml side
             obstacles_.push_back(QPointF(range * qCos(orientation_*3.14159/180 - 3.14159/2 + angle_min + i*angle_increment) * 20 ,
                                      range * qSin(orientation_*3.14159/180 - 3.14159/2 + angle_min + i*angle_increment) * 20)); i--; });

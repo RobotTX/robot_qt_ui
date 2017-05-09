@@ -58,8 +58,8 @@ void serverDisconnected(const std_msgs::String::ConstPtr& msg){
 void teleop(const int8_t val){
     std::cout << "(Teleop) got data " << static_cast<int> (val) << std::endl;
     if(connected){
-        float speed = 0.2;
-        float turnSpeed = 1.0;
+        double speed = 0.2;
+        double turnSpeed = 1.0;
         // x == 1 -> forward       x == -1 -> backward
         // th == 1 -> left         th == -1 -> right
         int x(0), th(0);

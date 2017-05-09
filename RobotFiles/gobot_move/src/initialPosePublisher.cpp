@@ -13,8 +13,8 @@ int main(int argc, char* argv[] ){
         ros::init(argc, argv, "initial_pose_publisher");
         ros::NodeHandle n; 
 
-        float position_x(0.0), position_y(0.0);
-        float angle_x(0.0), angle_y(0.0), angle_z(0.0), angle_w(1.0);
+        double position_x(0.0), position_y(0.0);
+        double angle_x(0.0), angle_y(0.0), angle_z(0.0), angle_w(1.0);
 
         std::string robotPos;
 
@@ -53,12 +53,9 @@ int main(int argc, char* argv[] ){
         } else if(std::stoi(robotPos) == 1){
             if(n.hasParam("home_file")){
                 std::string fileName;
-                // we don't care about the name of the home that is on the first line of the file so we discard it
-                std::string osef;
                 n.getParam("home_file", fileName);
                 std::ifstream file(fileName, std::ios::in);
                 if(file){
-                    std::getline(file, osef);
                     file >> position_x >> position_y >> angle_x >> angle_y >> angle_z >> angle_w;
                     std::cout << "values I got from home.txt " << std::to_string(position_x) << " " << std::to_string(position_y) << " " << std::to_string(angle_x) << " " << std::to_string(angle_y) << " " << std::to_string(angle_w) << std::endl;
                     file.close();

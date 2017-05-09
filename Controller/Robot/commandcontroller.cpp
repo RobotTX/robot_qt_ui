@@ -92,8 +92,8 @@ void CommandController::cmdAnswerSlot(QString answer){
                 break;
                 case 'n':
                     /// Sent the new home to the robot
-                    emit updateHome(ip, list.at(2), list.at(3).toFloat(), list.at(4).toFloat());
-                    emit setMessageTop(2, "Moved the home of \"" + robotName + "\" to \"" + list.at(2) + "\"");
+                    emit updateHome(ip, list.at(2).toDouble(), list.at(3).toDouble(), list.at(4).toDouble());
+                    emit setMessageTop(2, "The robot " + robotName + " has a new home");
                 break;
                 /*case 'o':
                     /// TODO go home system

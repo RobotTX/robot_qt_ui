@@ -45,13 +45,12 @@ signals:
     /**
      * @brief updateHome
      * @param ip
-     * @param homeName
      * @param homeX
      * @param homeY
      * signal propagated to the qml side where the home of the robot
      * at ip <ip> is updated
      */
-    void updateHome(QString ip, QString homeName, float homeX, float homeY);
+    void updateHome(QString ip, double homeX, double homeY, double homeOri);
     /**
      * @brief updatePath
      * @param ip

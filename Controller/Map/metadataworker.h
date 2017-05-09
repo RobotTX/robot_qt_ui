@@ -62,7 +62,7 @@ signals:
      * @param originY
      * Signal emitted when we have received the Metadata
      */
-    void valueChangedMetadata(int width, int height, float resolution, float originX, float originY, float orientation);
+    void valueChangedMetadata(int width, int height, double resolution, double originX, double originY, double orientation);
     /**
      * @brief robotIsDead
      * notifies the robot controller that the connection has been lost

@@ -38,11 +38,11 @@ void MetadataWorker::readTcpDataSlot(){
     /// Data is received as a string with values separated by a space ("width height resolution originX originY")
     QStringList list = data.split(rx, QString::SkipEmptyParts);
 
-    qDebug() << "new metadata" << list.at(0).toInt() << list.at(1).toInt() << list.at(2).toFloat() << list.at(3).toFloat() << list.at(4).toFloat() << list.at(5).toFloat();
+    qDebug() << "new metadata" << list.at(0).toInt() << list.at(1).toInt() << list.at(2).toDouble() << list.at(3).toDouble() << list.at(4).toDouble() << list.at(5).toDouble();
 
     emit valueChangedMetadata(list.at(0).toInt(), list.at(1).toInt(),
-                              list.at(2).toFloat(), list.at(3).toFloat(),
-                              list.at(4).toFloat(), list.at(5).toFloat());
+                              list.at(2).toDouble(), list.at(3).toDouble(),
+                              list.at(4).toDouble(), list.at(5).toDouble());
 }
 
 void MetadataWorker::errorConnectionSlot(QAbstractSocket::SocketError error){
