@@ -88,14 +88,14 @@ Frame {
 
             contentItem: Image {
                 asynchronous: true
-                source: homeName === "" ? "qrc:/icons/noHome" : "qrc:/icons/home"
+                source: homeX < -100 ? "qrc:/icons/noHome" : "qrc:/icons/home"
                 fillMode: Image.Pad // For not stretching image
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.verticalCenter: parent.verticalCenter
             }
             onClicked: {
                 frame.dockRobot(ip)
-                console.log(homeName === "" ? "I don't have a home" : "My home is " + homeName + "my ip " + ip + " and I am going to dock now")
+                console.log(homeX < -100 ? "I don't have a home" : "Going to dock now")
             }
         }
     }
@@ -346,7 +346,7 @@ Frame {
                 height: parent.height - 2
                 width: 32
                 padding: 0
-                imgSrc: homeName === "" ? "qrc:/icons/noHome" : "qrc:/icons/home"
+                imgSrc: homeX < -100 ? "qrc:/icons/noHome" : "qrc:/icons/home"
                 tooltip: "Send the robot home"
 
                 anchors {
@@ -355,7 +355,10 @@ Frame {
                     rightMargin: 8
                 }
 
-                onClicked: console.log(homeName === "" ? "I don't have a home" : "Let's go home to " + homeName)
+                onClicked: {
+                    frame.dockRobot(ip)
+                    console.log(homeX < -100 ? "I don't have a home" : "Going to dock now")
+                }
             }
         }
     }

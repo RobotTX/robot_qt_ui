@@ -33,7 +33,7 @@ public:
      * @param orientation
      * updates the robot position whose ip is <ip> to (x, y) with orientation <orientation>
      */
-    void updateRobotPos(QString ip, float x, float y, float orientation);
+    void updateRobotPos(QString ip, double x, double y, double orientation);
     /**
      * @brief removeMap
      * @param ip

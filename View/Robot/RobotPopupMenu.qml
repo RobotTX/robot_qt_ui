@@ -16,7 +16,7 @@ Menu {
     property Points pointModel
     property Paths pathModel
     property int currentMenuIndex: -1
-    signal pointSelected(string _homeName, double _homeX, double _homeY)
+    signal pointSelected(double _homeX, double _homeY)
     signal pathSelected(string _pathName, string _groupName)
     signal renameRobot()
     signal deletePath()
@@ -62,7 +62,7 @@ Menu {
             onVisibleChanged: if(!visible) currentMenuIndex = -1
             pointModel: robotMenu.pointModel
             onPointSelected: {
-                robotMenu.pointSelected(name, posX, posY)
+                robotMenu.pointSelected(posX, posY)
                 currentMenuIndex = -1;
                 robotMenu.currentMenuIndex = -1;
                 robotMenu.close();

@@ -88,14 +88,14 @@ QString XMLParser::readNameElement(QXmlStreamReader& xmlReader){
     return nameElement;
 }
 
-float XMLParser::readCoordinateElement(QXmlStreamReader &xmlReader){
-    float coordinate(0.0);
+double XMLParser::readCoordinateElement(QXmlStreamReader &xmlReader){
+    double coordinate(0.0);
     while(!xmlReader.atEnd()){
         if(xmlReader.isEndElement()){
             xmlReader.readNext();
             break;
         } else if(xmlReader.isStartElement()){
-            coordinate = xmlReader.readElementText().toFloat();
+            coordinate = xmlReader.readElementText().toDouble();
             xmlReader.readNext();
             break;
         } else if(xmlReader.isCharacters())

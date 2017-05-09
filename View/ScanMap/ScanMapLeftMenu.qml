@@ -293,6 +293,7 @@ Frame {
         selectExisting: false
         title: "Please choose a location for your map"
         // to start directly with that folder selected
+        /// TODO pk tu fais des trucs comme ca
         folder: "/home/joan/Gobot/build-Gobot-Desktop_Qt_5_8_0_GCC_64bit-Debug/mapConfigs/"
 
         onAccepted: {

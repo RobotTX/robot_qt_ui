@@ -119,7 +119,7 @@ public:
      * @param originY
      * updates the metadata
      */
-    void updateMetadata(int width, int height, float resolution, float originX, float originY);
+    void updateMetadata(int width, int height, double resolution, double originX, double originY);
 
 private slots:
     /**

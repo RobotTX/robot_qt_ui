@@ -37,7 +37,7 @@ void LocalMapWorker::readTcpDataSlot(){
 
     if(data.size() > 3){
 
-        float range;
+        double range;
 
         *(reinterpret_cast<uchar*>(&range) + 3) = data.at(data.size()-1);
         *(reinterpret_cast<uchar*>(&range) + 2) = data.at(data.size()-2);
@@ -49,11 +49,11 @@ void LocalMapWorker::readTcpDataSlot(){
 
             if(data.size() > 11){
                 /// parameters of the laser scans
-                float angle_min, angle_max, angle_increment;
+                double angle_min, angle_max, angle_increment;
 
-                QVector<float> ranges;
+                QVector<double> ranges;
 
-                /// we construct the float values using 4 bytes at a time
+                /// we construct the double values using 4 bytes at a time
 
                 *(reinterpret_cast<uchar*>(&angle_min) + 3) = data.at(3);
                 *(reinterpret_cast<uchar*>(&angle_min) + 2) = data.at(2);
@@ -73,7 +73,7 @@ void LocalMapWorker::readTcpDataSlot(){
                 for(int i = 12; i < data.size(); i += 4){
                     QByteArray currentValue = data.mid(i, 4);
 
-                    float range;
+                    double range;
 
                     *(reinterpret_cast<uchar*>(&range) + 3) = currentValue.at(3);
                     *(reinterpret_cast<uchar*>(&range) + 2) = currentValue.at(2);

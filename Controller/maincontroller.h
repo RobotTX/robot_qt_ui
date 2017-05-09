@@ -76,7 +76,7 @@ private slots:
      * updates the position of the robot (on the map and in the scan window if necessary)
      * with a new position (posX, posY) and orientation <ori>
      */
-    void newRobotPosSlot(QString ip, float posX, float posY, float ori);
+    void newRobotPosSlot(QString ip, double posX, double posY, double ori);
     /**
      * @brief updatePathSlot
      * @param ip
@@ -88,12 +88,11 @@ private slots:
     /**
      * @brief updateHomeSlot
      * @param ip
-     * @param homeName
      * @param homeX
      * @param homeY
      * updates the model qml with a new home for the robot whose ip is <ip>
      */
-    void updateHomeSlot(QString ip, QString homeName, float homeX, float homeY);
+    void updateHomeSlot(QString ip, double homeX, double homeY, double homeOri);
     /**
      * @brief sendCommandNewHome
      * @param ip
@@ -102,7 +101,7 @@ private slots:
      * @param homeY
      * sends a new home to the robot at ip <ip>
      */
-    void sendCommandNewHome(QString ip, QString homeName, double homeX, double homeY);
+    void sendCommandNewHome(QString ip, double homeX, double homeY, double homeOri);
     /**
      * @brief sendCommandNewPath
      * @param ip
@@ -249,7 +248,7 @@ private slots:
 
 signals:
     /// those signals are connected to the qml model to keep the data consistent between the c++ side and the qml side
-    void setHome(QVariant ip, QVariant name, QVariant posX, QVariant posY);
+    void setHome(QVariant ip, QVariant posX, QVariant posY, QVariant homeOri);
     void setPath(QVariant ip, QVariant name);
     void addPathPoint(QVariant ip, QVariant name, QVariant posX, QVariant posY, QVariant waitTime);
     void emitSettings(QVariant mapChoice);
@@ -271,7 +270,7 @@ signals:
      * updates the visibility of the message for the feature <feature>
      */
     void updateTutorialMessageVisibility(QVariant feature, QVariant visible);
-    void updateRobotPos(QString ip, float x, float y, float orientation);
+    void updateRobotPos(QString ip, double x, double y, double orientation);
 
 private:
     QPointer<MainMenuController> mainMenuController;

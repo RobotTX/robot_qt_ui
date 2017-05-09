@@ -3,7 +3,7 @@ import QtQuick 2.0
 ListModel {
     property real batteryWarningThreshold
 
-    signal newHomeSignal(string ip, string homeName, double homeX, double homeY)
+    signal newHomeSignal(string ip, double homeX, double homeY, double homeOri)
     signal newPathSignal(string ip, string groupName, string pathName)
     signal newNameSignal(string ip, string newName)
     signal deletePathSignal(string ip)
@@ -33,9 +33,9 @@ ListModel {
             "pathIsVisible": false,
             "pathName": "",
             "pathPoints": [],
-            "homeName": "",
             "homeX": 0,
             "homeY": 0,
+            "homeOri": 0,
             "laserActivated": false,
             "scanningOnConnection": false,
             "processingCmd": false
@@ -64,13 +64,13 @@ ListModel {
         }
     }
 
-    function setHome(ip, name, posX, posY){
-        console.log("Set home " + ip + " " + name + " " + posX + " " + posY);
+    function setHome(ip, posX, posY, ori){
+        console.log("Set home " + ip + " " + posX + " " + posY + " " + ori);
         for(var i = 0; i < count; i++)
             if(get(i).ip === ip){
-                setProperty(i, "homeName", name);
                 setProperty(i, "homeX", posX);
                 setProperty(i, "homeY", posY);
+                setProperty(i, "homeOri", ori);
             }
     }
 
@@ -127,7 +127,7 @@ ListModel {
         console.log("Displaying the robots :\n");
         for(var i = 0; i < count; i++)
             console.log(get(i).name + " : " + get(i).ip + " : " + get(i).posX + " : " +  get(i).posY + " : "
-                        +  get(i).homeName + " : " +  get(i).pathName + " : " +  get(i).playingPath + " : " +  get(i).stage + " : " +  get(i).pathPoints.count);
+                        +  get(i).pathName + " : " +  get(i).playingPath + " : " +  get(i).stage + " : " +  get(i).pathPoints.count);
     }
 
     function hideShowPathOnMap(ip){

@@ -83,7 +83,7 @@ void ScanMapController::receivedScanMap(QString ip, QImage map, QString resoluti
     }
 }
 
-void ScanMapController::updateRobotPos(QString ip, float x, float y, float orientation){
+void ScanMapController::updateRobotPos(QString ip, double x, double y, double orientation){
     if(paintedItems.contains(ip)){
         paintedItems[ip]->setRobotX(x);
         paintedItems[ip]->setRobotY(y);

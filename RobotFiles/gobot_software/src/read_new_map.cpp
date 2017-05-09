@@ -81,10 +81,10 @@ void session(boost::shared_ptr<tcp::socket> sock, ros::NodeHandle n){
                 std::cout << "(New Map) Map metadata before split : " << mapMetadata << std::endl;
                 int width(0);
                 int height(0);
-                float resolution(0.0f);
-                float initPosX(0.0f);
-                float initPosY(0.0f);
-                float orientation(0.0f);
+                double resolution(0.0f);
+                double initPosX(0.0f);
+                double initPosY(0.0f);
+                double orientation(0.0f);
 
                 std::istringstream iss(mapMetadata);
                 iss >> width >> height >> resolution >> initPosX >> initPosY >> orientation;

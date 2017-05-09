@@ -58,7 +58,7 @@ signals:
      * @param ori
      * Signal emitted when we have received the robot position & orientation
      */
-    void valueChangedRobot(float posX, float posY, float ori);
+    void valueChangedRobot(double posX, double posY, double ori);
     void robotIsDead();
 
 private :

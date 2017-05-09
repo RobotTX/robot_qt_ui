@@ -3,17 +3,17 @@
 Cluster::Cluster(const std::vector<geometry_msgs::Pose>& posesV): poses(posesV)
 {}
 
-float Cluster::distancePoints(const geometry_msgs::Pose& A, const geometry_msgs::Pose& B) const {
-	float xdist = pow((B.position.x - A.position.x), 2);
-	float ydist = pow((B.position.y - A.position.y), 2);
-	float zdist = pow((B.position.z - A.position.z), 2);
+double Cluster::distancePoints(const geometry_msgs::Pose& A, const geometry_msgs::Pose& B) const {
+	double xdist = pow((B.position.x - A.position.x), 2);
+	double ydist = pow((B.position.y - A.position.y), 2);
+	double zdist = pow((B.position.z - A.position.z), 2);
 	return xdist + ydist + zdist;
 }
 
 void Cluster::calculateMaxDistPoint(void){
 	
-	float maxDist(-100000.0);
-	float dist(0.0);
+	double maxDist(-100000.0);
+	double dist(0.0);
 	int maxID(-1);
 
 	for (size_t i = 0; i < poses.size(); i++){	
@@ -30,12 +30,12 @@ void Cluster::calculateMaxDistPoint(void){
 
 void Cluster::calculateCentroid(void) {
 	
-	float sumx(0.0);
-	float sumy(0.0);
-	float sumz(0.0);
+	double sumx(0.0);
+	double sumy(0.0);
+	double sumz(0.0);
 
-	float maxDist(-1000000.0);
-	float dist(0.0);
+	double maxDist(-1000000.0);
+	double dist(0.0);
 
 	for(size_t i = 0; i < poses.size(); i++){
 

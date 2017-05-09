@@ -18,15 +18,15 @@ public:
 	void remove(const int i);
 	int getSize(void) const { return poses.size(); }
 	int setPoses(std::vector<geometry_msgs::Pose>& posesV) { poses.swap(posesV); }
-	std::pair<int,float> getMaxDistPoint() const { return maxPoint; }
+	std::pair<int,double> getMaxDistPoint() const { return maxPoint; }
 
 private:
-	float distancePoints(const geometry_msgs::Pose& A, const geometry_msgs::Pose& B) const;
+	double distancePoints(const geometry_msgs::Pose& A, const geometry_msgs::Pose& B) const;
 
 private:  
 	std::vector<geometry_msgs::Pose> poses;	
 	geometry_msgs::Pose centroid;
-	std::pair<int, float> maxPoint;
+	std::pair<int, double> maxPoint;
 };
 
 #endif

@@ -33,7 +33,7 @@ RobotsController::RobotsController(QObject *applicationWindow, QQmlApplicationEn
         connect(this, SIGNAL(updateLaser(QVariant, QVariant)), robotModel, SLOT(setLaserActivated(QVariant, QVariant)));
 
         /// Signals from qml to the controller
-        connect(robotModel, SIGNAL(newHomeSignal(QString, QString, double, double)), parent, SLOT(sendCommandNewHome(QString, QString, double, double)));
+        connect(robotModel, SIGNAL(newHomeSignal(QString, double, double, double)), parent, SLOT(sendCommandNewHome(QString, double, double, double)));
         connect(robotModel, SIGNAL(newPathSignal(QString, QString, QString)), parent, SLOT(sendCommandNewPath(QString, QString, QString)));
         connect(robotModel, SIGNAL(newNameSignal(QString, QString)), this, SLOT(sendCommandNewName(QString, QString)));
         connect(robotModel, SIGNAL(deletePathSignal(QString)), this, SLOT(sendCommandDeletePath(QString)));
@@ -71,9 +71,9 @@ RobotsController::RobotsController(QObject *applicationWindow, QQmlApplicationEn
         connect(this, SIGNAL(checkScanWindow(QVariant, QVariant)), scanLeftMenuFrame, SLOT(checkScanWindow(QVariant, QVariant)));
     }
 
-    connect(this, SIGNAL(newRobotPos(QString, float, float, float)), parent, SLOT(newRobotPosSlot(QString, float, float, float)));
+    connect(this, SIGNAL(newRobotPos(QString, double, double, double)), parent, SLOT(newRobotPosSlot(QString, double, double, double)));
     connect(this, SIGNAL(updatePath(QString, QStringList)), parent, SLOT(updatePathSlot(QString, QStringList)));
-    connect(this, SIGNAL(updateHome(QString, QString, float, float)), parent, SLOT(updateHomeSlot(QString, QString, float, float)));
+    connect(this, SIGNAL(updateHome(QString, double, double, double)), parent, SLOT(updateHomeSlot(QString, double, double, double)));
     connect(this, SIGNAL(checkMapInfo(QString, QString, QString)), parent, SLOT(checkMapInfoSlot(QString, QString, QString)));
     connect(this, SIGNAL(newMapFromRobot(QString, QByteArray, QString, QString, QString, QString, QString, int, int)),
             parent, SLOT(newMapFromRobotSlot(QString, QByteArray, QString, QString, QString, QString, QString, int, int)));
@@ -139,7 +139,7 @@ void RobotsController::shortcutAddRobot(void){
     emit setPos(ip, posX, posY, (20 * robots.size()) % 360);
 
     if((robots.size() - 1)%2 == 0){
-        emit setHome(ip, "home avec un nom tres tres long " + ip, posX + 50, posY);
+        emit setHome(ip, posX + 50, posY, static_cast<int>(posX) % 360);
         emit setPlayingPath(ip, (robots.size() - 1)%2 == 0);
     }
 
@@ -166,11 +166,11 @@ void RobotsController::sendCommand(const QString ip, const QString cmd){
         qDebug() << "RobotsController::sendCommand Trying to send a command to a robot which is disconnected";
 }
 
-void RobotsController::newRobotPosSlot(const QString ip, const float posX, const float posY, const float ori){
+void RobotsController::newRobotPosSlot(const QString ip, const double posX, const double posY, const double ori){
     emit newRobotPos(ip, posX, posY, ori);
 }
 
-void RobotsController::setRobotPos(const QString ip, const float posX, const float posY, const float ori){
+void RobotsController::setRobotPos(const QString ip, const double posX, const double posY, const double ori){
     emit setPos(ip, posX, posY, ori);
 }
 
@@ -178,8 +178,8 @@ void RobotsController::updatePathSlot(const QString ip, const QStringList strLis
     emit updatePath(ip, strList);
 }
 
-void RobotsController::updateHomeSlot(const QString ip, const QString homeName, const float homeX, const float homeY){
-    emit updateHome(ip, homeName, homeX, homeY);
+void RobotsController::updateHomeSlot(const QString ip, const double homeX, const double homeY, const double homeOri){
+    emit updateHome(ip, homeX, homeY, homeOri);
 }
 
 void RobotsController::sendCommandNewName(const QString ip, const QString name){
@@ -221,7 +221,7 @@ void RobotsController::checkMapInfoSlot(const QString ip, const QString mapId, c
 
 void RobotsController::sendNewMap(const QString ip, const QString mapId, const QString date, const QString mapMetadata, const QImage mapImage) {
     robots.value(ip)->sendNewMap(mapId, date, mapMetadata, mapImage);
-    emit setHome(ip, "", 0, 0);
+    emit setHome(ip, 0, 0, 0);
     emit setPath(ip, "");
 }
 
@@ -336,7 +336,7 @@ void RobotsController::updateLaserSlot(QString ip, bool activated){
     emit updateLaser(ip, activated);
 }
 
-void RobotsController::updateRobotPos(QString ip, float x, float y, float orientation){
+void RobotsController::updateRobotPos(QString ip, double x, double y, double orientation){
     robots.value(ip)->updateRobotPosition(x, y, orientation);
 }
 

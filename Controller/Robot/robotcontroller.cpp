@@ -24,8 +24,8 @@ RobotController::RobotController(QQmlApplicationEngine* engine, RobotsController
     QObject(parent), ip(_ip), sendingMap(false), commandController(QPointer<CommandController>(new CommandController(this, ip, robotName))){
 
     /// Signals from the command controller when we have executed a command
-    connect(commandController, SIGNAL(updateName(QString,QString)), parent, SLOT(updateNameSlot(QString,QString)));
-    connect(commandController, SIGNAL(updateHome(QString,QString,float,float)), parent, SLOT(updateHomeSlot(QString,QString,float,float)));
+    connect(commandController, SIGNAL(updateName(QString, QString)), parent, SLOT(updateNameSlot(QString, QString)));
+    connect(commandController, SIGNAL(updateHome(QString, double, double, double)), parent, SLOT(updateHomeSlot(QString, double, double, double)));
     connect(commandController, SIGNAL(updatePath(QString, QStringList)), parent, SLOT(updatePathSlot(QString, QStringList)));
     connect(commandController, SIGNAL(stoppedDeletedPath(QString)), parent, SLOT(stoppedDeletedPathSlot(QString)));
     connect(commandController, SIGNAL(updatePlayingPath(QString, bool)), parent, SLOT(updatePlayingPathSlot(QString, bool)));
@@ -40,11 +40,11 @@ RobotController::RobotController(QQmlApplicationEngine* engine, RobotsController
     /// Signals to tell the robotsController that the robot just disconnected
     connect(this, SIGNAL(robotIsDead(QString)), parent, SLOT(robotIsDeadSlot(QString)));
     /// Update the position of the robot
-    connect(this, SIGNAL(newRobotPos(QString, float, float, float)), parent, SLOT(newRobotPosSlot(QString, float, float, float)));
+    connect(this, SIGNAL(newRobotPos(QString, double, double, double)), parent, SLOT(newRobotPosSlot(QString, double, double, double)));
     /// Update the path of the robot when it connects
     connect(this, SIGNAL(updatePath(QString, QStringList)), parent, SLOT(updatePathSlot(QString, QStringList)));
     /// Update the home of the robot when it connects
-    connect(this, SIGNAL(updateHome(QString, QString, float, float)), parent, SLOT(updateHomeSlot(QString, QString, float, float)));
+    connect(this, SIGNAL(updateHome(QString, double, double, double)), parent, SLOT(updateHomeSlot(QString, double, double, double)));
     /// Check if the robot has the same map as the application
     connect(this, SIGNAL(checkMapInfo(QString, QString, QString)), parent, SLOT(checkMapInfoSlot(QString, QString, QString)));
     /// Signal that we just received a new map fron the robot
@@ -144,8 +144,8 @@ void RobotController::launchWorkers(void){
 
 
     robotWorker = QPointer<RobotPositionWorker>(new RobotPositionWorker(ip, PORT_ROBOT_POS));
-    connect(robotWorker, SIGNAL(valueChangedRobot(float, float, float)),
-                     this ,SLOT(updateRobot(float, float, float)));
+    connect(robotWorker, SIGNAL(valueChangedRobot(double, double, double)),
+                     this ,SLOT(updateRobot(double, double, double)));
     connect(robotWorker, SIGNAL(robotIsDead()), this, SLOT(robotIsDeadSlot()));
     connect(this, SIGNAL(stopRobotWorker()), robotWorker, SLOT(stopWorker()));
     connect(&robotThread, SIGNAL(finished()), robotWorker, SLOT(deleteLater()));
@@ -170,9 +170,9 @@ void RobotController::launchWorkers(void){
     connect(this, SIGNAL(stopLocalMapWorker()), localMapWorker, SLOT(stopWorker()));
     connect(this, SIGNAL(startLocalMapWorker()), localMapWorker, SLOT(connectSocket()));
     connect(&localMapThread, SIGNAL(finished()), localMapWorker, SLOT(deleteLater()));
-    qRegisterMetaType<QVector<float>>("QVector<float>");
-    connect(localMapWorker, SIGNAL(laserValues(float, float, float, QVector<float>)),
-            this, SLOT(updateObstacles(float, float, float, QVector<float>)));
+    qRegisterMetaType<QVector<double>>("QVector<double>");
+    connect(localMapWorker, SIGNAL(laserValues(double, double, double, QVector<double>)),
+            this, SLOT(updateObstacles(double, double, double, QVector<double>)));
     localMapWorker->moveToThread(&localMapThread);
     localMapThread.start();
 
@@ -244,7 +244,7 @@ void RobotController::doneSendingMapSlot(void){
     sendingMap = false;
 }
 
-void RobotController::updateRobot(const float posX, const float posY, const float ori){
+void RobotController::updateRobot(const double posX, const double posY, const double ori){
     ping();
     emit newRobotPos(ip, posX, posY, ori);
 }
@@ -264,9 +264,9 @@ void RobotController::updateRobotInfo(const QString robotInfo){
         strList.removeFirst();
         QString mapId = strList.takeFirst();
         QString mapDate = strList.takeFirst();
-        QString homeName = strList.takeFirst();
-        float homeX = static_cast<QString>(strList.takeFirst()).toFloat();
-        float homeY = static_cast<QString>(strList.takeFirst()).toFloat();
+        double homeX = static_cast<QString>(strList.takeFirst()).toDouble();
+        double homeY = static_cast<QString>(strList.takeFirst()).toDouble();
+        double homeOri = static_cast<QString>(strList.takeFirst()).toDouble();
         bool scanning = static_cast<QString>(strList.takeFirst()).toInt();
         bool recovering = static_cast<QString>(strList.takeFirst()).toInt();
         bool laser = static_cast<QString>(strList.takeFirst()).toInt();
@@ -276,7 +276,7 @@ void RobotController::updateRobotInfo(const QString robotInfo){
             emit updatePath(ip, strList);
 
         if(homeX != -1 && homeY != -1)
-            emit updateHome(ip, homeName, homeX, homeY);
+            emit updateHome(ip, homeX, homeY, homeOri);
 
         emit checkMapInfo(ip, mapId, mapDate);
 
@@ -335,7 +335,7 @@ void RobotController::sendTeleop(int teleop){
     emit teleopCmd(teleop);
 }
 
-void RobotController::updateObstacles(float angle_min, float angle_max, float angle_increment, QVector<float> ranges){
+void RobotController::updateObstacles(double angle_min, double angle_max, double angle_increment, QVector<double> ranges){
     paintedItem->updateObstacles(angle_min, angle_max, angle_increment, ranges);
 }
 
@@ -343,7 +343,7 @@ void RobotController::clearObstacles(bool activated){
     paintedItem->clearObstacles(activated);
 }
 
-void RobotController::updateRobotPosition(float x, float y, float orientation){
+void RobotController::updateRobotPosition(double x, double y, double orientation){
     paintedItem->setProperty("orientation_", orientation);
     paintedItem->setProperty("_x", x-300 + 5 * qCos((paintedItem->orientation() - 90) / 180.0*3.14159));
     paintedItem->setProperty("_y", y-300 + 5 * qSin((paintedItem->orientation() - 90) / 180.0*3.14159));

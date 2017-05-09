@@ -49,10 +49,10 @@ private:
     /**
      * @brief readCoordinateElement
      * @param xmlReader
-     * @return float
+     * @return double
      * Reads a coordinate attribute in an xml file
      */
-    static float readCoordinateElement(QXmlStreamReader &xmlReader);
+    static double readCoordinateElement(QXmlStreamReader &xmlReader);
 
     /**
      * @brief readDisplayedElement

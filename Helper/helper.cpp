@@ -13,14 +13,14 @@ namespace Helper {
     namespace Convert {
 
         QPointF pixelCoordToRobotCoord(const QPointF positionInPixels, double originX, double originY, double resolution, int height){
-            float xInRobotCoordinates = (positionInPixels.x()) * resolution + originX;
-            float yInRobotCoordinates = (-positionInPixels.y() + height) * resolution + originY;
+            double xInRobotCoordinates = (positionInPixels.x()) * resolution + originX;
+            double yInRobotCoordinates = (-positionInPixels.y() + height) * resolution + originY;
             return QPointF(xInRobotCoordinates, yInRobotCoordinates);
         }
 
         QPointF robotCoordToPixelCoord(const QPointF positionInRobotCoordinates, double originX, double originY, double resolution, int height){
-            float xInPixelCoordinates = (-originX+ positionInRobotCoordinates.x())/resolution;
-            float yInPixelCoordinates = height - (-originY + positionInRobotCoordinates.y()) / resolution;
+            double xInPixelCoordinates = (-originX+ positionInRobotCoordinates.x())/resolution;
+            double yInPixelCoordinates = height - (-originY + positionInRobotCoordinates.y()) / resolution;
             return QPointF(xInPixelCoordinates, yInPixelCoordinates);
         }
     }
