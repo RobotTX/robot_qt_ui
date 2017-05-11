@@ -12,6 +12,7 @@ class PointGroup : public QObject {
 public:
 
     PointGroup(QObject *parent);
+
     QVector<QPointer<Point>> getPointVector(void) const { return pointVector; }
 
     void addPoint(const QString name, const double x, const double y, const bool displayed);

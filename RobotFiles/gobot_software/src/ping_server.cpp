@@ -181,13 +181,16 @@ int main(int argc, char* argv[]){
 
     FILE *in(0);
     char buff[512];
+    // gets the ssid in a file
     if(!(in = popen("iwgetid -r", "r"))){
         ROS_INFO("ping_server.cpp could not get the ssid");
         return 1;
     }
-
+    // retrieves the ssid from the file
     fgets(buff, sizeof(buff), in);
     std::string ssid(buff);
+
+    // to get rid of \n at the end
     ssid = ssid.substr(0, ssid.size()-1);
     pclose(in);
 

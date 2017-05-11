@@ -7,6 +7,7 @@ class PathController;
 #include <QString>
 
 class PathXMLParser {
+
 public:
     PathXMLParser();
 

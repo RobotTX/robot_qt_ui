@@ -17,6 +17,13 @@ public:
 
     void paint(QPainter *painter) Q_DECL_OVERRIDE;
 
+    double orientation() const { return orientation_; }
+    double getX() const { return _x; }
+    double getY() const { return _y; }
+
+    void setOrientation(const double orientation) { orientation_ = orientation; }
+    void setX(const double x) { _x = x; }
+    void setY(const double y) { _y = y; }
 
     /**
      * @brief updateObstacles
@@ -33,14 +40,6 @@ public:
      * To remove all the obstacles when we stop using the laser
      */
     void clearObstacles(bool activated);
-
-    double orientation() const { return orientation_; }
-    double getX() const { return _x; }
-    double getY() const { return _y; }
-
-    void setOrientation(const double orientation) { orientation_ = orientation; }
-    void setX(const double x) { _x = x; }
-    void setY(const double y) { _y = y; }
 
 private:
     QVector<QPointF> obstacles_;

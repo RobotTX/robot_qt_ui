@@ -47,9 +47,7 @@ public:
                                             _drawRobotView = draw;
                                             if(!_drawRobotView) emit hideRobot();
                             }
-
 signals:
-
     void orientationRobotChanged();
     void xRobotChanged();
     void yRobotChanged();

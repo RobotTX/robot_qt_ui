@@ -2,8 +2,9 @@
 #include <QDebug>
 #include <QPainter>
 
-ScanMapPaintedItem::ScanMapPaintedItem(QQuickItem *parent) : QQuickPaintedItem(parent), ip(""),
-    left(0), top(0), xRobot(0.0), yRobot(0.0), orientationRobot(0.0) {
+ScanMapPaintedItem::ScanMapPaintedItem(QQuickItem *parent)
+    : QQuickPaintedItem(parent), ip(""), left(0), top(0), xRobot(0.0), yRobot(0.0), orientationRobot(0.0)
+{
     setFlag(QQuickItem::ItemHasContents, true);
     setAcceptedMouseButtons(Qt::LeftButton | Qt::RightButton);
     /// so we rotate around the center of the item and not around the top left corner
@@ -20,5 +21,5 @@ void ScanMapPaintedItem::setRobotX(const double x){
 }
 
 void ScanMapPaintedItem::setRobotY(const double y){
-     yRobot = y - top;
+    yRobot = y - top;
 }

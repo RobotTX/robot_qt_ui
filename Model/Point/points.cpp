@@ -6,9 +6,7 @@
 #include "Model/Point/point.h"
 #include "Model/Point/pointgroup.h"
 
-Points::Points(QObject* parent) : QObject(parent), groups(QMap<QString, QPointer<PointGroup>>()) {
-
-}
+Points::Points(QObject* parent) : QObject(parent), groups(QMap<QString, QPointer<PointGroup>>()) {}
 
 void Points::addGroup(const QString groupName){
     groups.insert(groupName, QPointer<PointGroup>(new PointGroup(this)));
