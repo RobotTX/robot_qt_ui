@@ -320,7 +320,7 @@ int main(int argc, char* argv[]){
 			ROS_INFO("Waiting for the move_base action server to come up");
 
 		if(ac->isServerConnected())
-			std::cout << "Server is connected" << std::endl;
+                        std::cout << "Play path:: Server is connected" << std::endl;
 
 		ros::spin();
 

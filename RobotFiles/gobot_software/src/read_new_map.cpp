@@ -13,15 +13,18 @@ tcp::acceptor m_acceptor(io_service);
 ros::Publisher map_pub;
 
 void session(boost::shared_ptr<tcp::socket> sock, ros::NodeHandle n){
+    
     std::cout << "(New Map) session launched" << std::endl;
-    int gotMapData = 0;
-    std::string mapId = "";
-    std::string mapMetadata = "";
-    std::string mapDate = "";
+    int gotMapData(0);
+    std::string mapId("");
+    std::string mapMetadata("");
+    std::string mapDate("");
     std::vector<uint8_t> map;
-    std::string message = "done";
+    std::string message("done");
 
     while(ros::ok() && connected){
+        
+        // buffer in which we store the bytes we read on the socket
         char data[max_length];
 
         boost::system::error_code error;
@@ -55,10 +58,9 @@ void session(boost::shared_ptr<tcp::socket> sock, ros::NodeHandle n){
             }
         }
 
-        //std::cout << "(New Map) Size of the map received : " << map.size() << std::endl;
-
-        if(map.size() > 4 && (int) map.at(map.size()-5) == 254 && (int) map.at(map.size()-4) == 254
-             && (int) map.at(map.size()-3) == 254 && (int) map.at(map.size()-2) == 254 && (int) map.at(map.size()-1) == 254){
+        // when the last 5 bytes are 254 we know we have received a complete map
+        if(map.size() > 4 && static_cast<int>(map.at(map.size()-5)) == 254 && static_cast<int>(map.at(map.size()-4)) == 254
+             && static_cast<int>(map.at(map.size()-3)) == 254 && static_cast<int>(map.at(map.size()-2)) == 254 && static_cast<int>(map.at(map.size()-1)) == 254){
             std::cout << "(New Map) Last separator found" << std::endl;
 
             /// Save the id of the new map
@@ -69,10 +71,9 @@ void session(boost::shared_ptr<tcp::socket> sock, ros::NodeHandle n){
                 n.getParam("map_id_file", mapIdFile);
                 std::cout << "read_new_map set mapIdFile to " << mapIdFile << std::endl;
             }
-            std::ofstream ofs;
-            ofs.open(mapIdFile, std::ofstream::out | std::ofstream::trunc);
 
-            if(ofs.is_open()){
+            std::ofstream ofs(mapIdFile, std::ofstream::out | std::ofstream::trunc);
+            if(ofs.open()){
                 ofs << mapId << std::endl << mapDate << std::endl;
                 ofs.close();
                 std::cout << "(New Map) Map id updated : " << mapId << " with date " << mapDate << std::endl;
@@ -94,22 +95,22 @@ void session(boost::shared_ptr<tcp::socket> sock, ros::NodeHandle n){
                 map.erase(map.end() - 5, map.end());
                 std::cout << "(New Map) Size of the map received : " << map.size() << std::endl;
 
+                // if initPosX <= 100.0 it means we have just finished a scan and we have the position of the robot
                 if(initPosX > -100.0){
 
-                    /// TODO check if we want to discriminate with initialPosePublisher/robot_position
+                    if(n.hasParam("robot_position_file")){
+                        std::string robotPositionFile;
+                        n.getParam("robot_position_file", robotPositionFile);
+                        ofs.open(robotPositionFile, std::ifstream::out | std::ofstream::trunc);
+                        ofs << 0;
+                        ofs.close();
+                    }
+
                     std::string initialPoseFile;
                     if(n.hasParam("last_known_position_file")){
                         n.getParam("last_known_position_file", initialPoseFile);
                         std::cout << "read_new_map set last known position file to " << initialPoseFile << std::endl;
                     } 
-                    
-                    if(n.hasParam("robot_position_file")){
-                        std::string robotPositionFile;
-                        n.getParam("robot_position_file", robotPositionFile);
-                        std::ofstream ofs(robotPositionFile, std::ifstream::out | std::ofstream::trunc);
-                        ofs << 0;
-                        ofs.close();
-                    }
 
                     ofs.open(initialPoseFile, std::ofstream::out | std::ofstream::trunc);
                     if(ofs.is_open()){
@@ -138,6 +139,7 @@ void session(boost::shared_ptr<tcp::socket> sock, ros::NodeHandle n){
                 ofs.open(mapFile, std::ofstream::out | std::ofstream::trunc);
 
                 if(ofs.is_open()){
+                    /// pgm file header
                     ofs << "P5" << std::endl << width << " " << height << std::endl << "255" << std::endl;
 
                     /// writes every single pixel to the pgm file

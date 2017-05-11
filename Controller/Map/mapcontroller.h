@@ -107,7 +107,8 @@ public:
     /**
      * @brief saveNewMap
      * @param file_name
-     * to save the map of the current configuration
+     * to save the map file of the current configuration and
+     * reload the correct map in the merge and edit windows
      */
     void saveNewMap(const QString file_name);
     /**

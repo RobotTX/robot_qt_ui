@@ -473,7 +473,9 @@ void MainController::resetMapConfiguration(QString file_name, bool scan, double 
     qDebug() << "MainController::resetMapConfiguration" << file_name;
 
     QString cpp_file_name = file_name.mid(7);
+    /// this is the position of the robot at the end of the scan
     QPointF initPos(0.0f, 0.0f);
+    /// orientation of the robot at the end of the scan
     double robotOri(0.0f);
 
     if(scan){
@@ -484,7 +486,6 @@ void MainController::resetMapConfiguration(QString file_name, bool scan, double 
 
         /// have to compute the difference between the old origin and the position of the robot at the beginning of the scan,
         /// this is used as the new origin for the scanned map
-        /// TODO check what to do about this origin, it fucks up the position of the robot after the scan ends
         initPos = Helper::Convert::pixelCoordToRobotCoord(QPointF(map_reference->x() + map_reference->robotX(),
                                                                                  map_reference->y() + map_reference->robotY()),
                                                                          mapController->getOrigin().x(), mapController->getOrigin().y(), mapController->getResolution(),
@@ -508,15 +509,17 @@ void MainController::resetMapConfiguration(QString file_name, bool scan, double 
     mapController->requestReloadMap(file_name);
     qDebug() << "\n\n\nrequesting reload" << file_name;
 
-    QString mapMetadata = QString::number(mapController->getWidth()) + ' ' + QString::number(mapController->getHeight()) +
+    /// we send this information to the robot, init pos is used to determine the position of the robot directly after gobot move
+    /// is relaunched
+    QString infoRobot = QString::number(mapController->getWidth()) + ' ' + QString::number(mapController->getHeight()) +
             ' ' + QString::number(mapController->getResolution()) + ' ' + QString::number(initPos.x()) +
             ' ' + QString::number(initPos.y()) + ' ' + QString::number(robotOri);;
 
     QImage img(cpp_file_name);
 
-    qDebug() << "sending map with metadata " << mapMetadata << " size of map is " << img.size();
+    //qDebug() << "sending map with metadata " << mapMetadata << " size of map is " << img.size();
 
-    robotsController->sendMapToAllRobots(mapController->getMapId().toString(), mapController->getDateTime().toString("yyyy-MM-dd-hh-mm-ss"), mapMetadata, img);
+    robotsController->sendMapToAllRobots(mapController->getMapId().toString(), mapController->getDateTime().toString("yyyy-MM-dd-hh-mm-ss"), infoRobot, img);
 }
 
 /************************* SCANNING *************************/
