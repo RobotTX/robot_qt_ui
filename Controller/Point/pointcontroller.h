@@ -49,7 +49,7 @@ public slots:
      * @param displayed
      * Add a point to the model
      */
-    void addPoint(QString name, QString groupName, double x, double y, QString oldName = "", QString oldGroup = "", bool displayed = true, bool saveXML = true);
+    void addPoint(const QString name, const QString groupName, const double x, const double y, const QString oldName = "", const QString oldGroup = "", const bool displayed = true, const bool home = false, const int orientation = 0, const bool saveXML = true);
 
     /**
      * @brief addGroup
@@ -146,7 +146,7 @@ signals:
      * @param y
      * Tell the qml model that we added a new point
      */
-    void addPointQml(QVariant name, QVariant isVisible, QVariant groupName, QVariant x, QVariant y);
+    void addPointQml(QVariant name, QVariant isVisible, QVariant groupName, QVariant x, QVariant y, QVariant home, QVariant orientation);
 
     /**
      * @brief editPointQml
@@ -159,7 +159,7 @@ signals:
      * @param y
      * Tell the qml model that we edited a point
      */
-    void editPointQml(QVariant oldName, QVariant oldGroup, QVariant name, QVariant isVisible, QVariant groupName, QVariant x, QVariant y);
+    void editPointQml(QVariant oldName, QVariant oldGroup, QVariant name, QVariant isVisible, QVariant groupName, QVariant x, QVariant y, QVariant home, QVariant orientation);
 
     /**
      * @brief renameGroupQml

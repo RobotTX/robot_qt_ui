@@ -42,25 +42,9 @@ private:
      * @brief readNameElement
      * @param xmlReader
      * @return QString
-     * Reads a name attribute in an xml file
+     * Reads an attribute in an xml file
      */
-    static QString readNameElement(QXmlStreamReader &xmlReader);
-
-    /**
-     * @brief readCoordinateElement
-     * @param xmlReader
-     * @return double
-     * Reads a coordinate attribute in an xml file
-     */
-    static double readCoordinateElement(QXmlStreamReader &xmlReader);
-
-    /**
-     * @brief readDisplayedElement
-     * @param xmlReader
-     * @return bool
-     * Reads a boolean attribute in an xml file
-     */
-    static bool readDisplayedElement(QXmlStreamReader &xmlReader);
+    static QString readElement(QXmlStreamReader &xmlReader);
 
     /**
      * @brief clear

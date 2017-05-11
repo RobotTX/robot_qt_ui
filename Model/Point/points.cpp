@@ -12,8 +12,8 @@ void Points::addGroup(const QString groupName){
     groups.insert(groupName, QPointer<PointGroup>(new PointGroup(this)));
 }
 
-void Points::addPoint(const QString groupName, const QString name, const double x, const double y, const bool displayed){
-    groups.value(groupName)->addPoint(name, x, y, displayed);
+void Points::addPoint(const QString groupName, const QString name, const double x, const double y, const bool displayed, const bool home, const int orientation){
+    groups.value(groupName)->addPoint(name, x, y, displayed, home, orientation);
 }
 
 void Points::deletePoint(const QString groupName, const QString name){

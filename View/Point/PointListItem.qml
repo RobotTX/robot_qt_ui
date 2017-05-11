@@ -179,7 +179,10 @@ Column {
                     x: rightButton.width
                     pointModel: groupListItem.pointModel
                     myGroup: groupName
-                    onDeletePoint: pointModel.deletePoint(groupName, name)
+                    onDeletePoint: {
+                        pointModel.deletePoint(groupName, name);
+                        pointModel.deletePointSignal(groupName, name);
+                    }
                     onMoveTo: pointModel.moveTo(name, groupName, newGroup)
                     onEditPoint: groupListItem.editPoint(name, groupName)
                 }

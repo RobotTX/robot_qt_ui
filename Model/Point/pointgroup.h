@@ -15,7 +15,7 @@ public:
 
     QVector<QPointer<Point>> getPointVector(void) const { return pointVector; }
 
-    void addPoint(const QString name, const double x, const double y, const bool displayed);
+    void addPoint(const QString name, const double x, const double y, const bool displayed, const bool home = false, const int orientation = 0);
     void addPoint(const QPointer<Point> point);
     void deletePoint(const QString name);
     void hideShow(const QString name);
