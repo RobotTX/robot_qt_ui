@@ -9,6 +9,7 @@ Image {
     property string _name
     property string _ip
     property bool hover: false
+    property int mapOrientation: 0
 
     transform: Rotation {
         origin.x: width / 2
@@ -22,6 +23,39 @@ Image {
     smooth: false
     fillMode: Image.PreserveAspectFit
 
+    Label {
+        id: tooltip
+
+        visible: img.hover
+        font.pointSize: 10
+        text: name
+
+        anchors {
+            horizontalCenter: img.horizontalCenter
+            bottom: img.top
+            bottomMargin: 10
+        }
+
+        transform: Rotation {
+            origin.x: tooltip.width / 2
+            origin.y: tooltip.height + img.height / 2 + tooltip.anchors.bottomMargin
+
+            angle: -orientation + mapOrientation
+        }
+
+        horizontalAlignment: Text.AlignHCenter
+        verticalAlignment: Text.AlignVCenter
+
+        background: Rectangle {
+            anchors.horizontalCenter: tooltip.horizontalCenter
+            anchors.verticalCenter: tooltip.verticalCenter
+            width: tooltip.paintedWidth + 8
+            height: tooltip.paintedHeight + 8
+            radius: 8
+            border.color: Style.darkSkyBlue
+            color: "white"
+        }
+    }
 
     MouseArea {
 

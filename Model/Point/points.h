@@ -26,7 +26,7 @@ public:
 
     void addGroup(const QString groupName);
     void deleteGroup(const QString groupName);
-    void addPoint(const QString groupName, const QString name, const double x, const double y, const bool displayed);
+    void addPoint(const QString groupName, const QString name, const double x, const double y, const bool displayed, const bool home = false, const int orientation = 0);
     void deletePoint(const QString groupName, const QString name);
     void hideShow(const QString groupName, const QString name);
     void renameGroup(const QString newName, const QString oldName);

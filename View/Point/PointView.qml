@@ -14,6 +14,8 @@ Image {
     property double originX
     property double originY
     property string tooltipText
+    property int pointOrientation: 0
+    property int mapOrientation: 0
 
     x: - width / 2
     y: - height
@@ -24,6 +26,13 @@ Image {
     smooth: false
     visible: _isVisible
     fillMode: Image.PreserveAspectFit
+
+
+    transform: Rotation {
+        origin.x: img.width / 2
+        origin.y: img.height
+        angle: (type === Helper.PointViewType.HOME || type === Helper.PointViewType.HOME_TEMP) ? pointOrientation : mapOrientation
+    }
 
     Label {
         id: tooltip
@@ -36,6 +45,12 @@ Image {
             horizontalCenter: parent.horizontalCenter
             bottom: parent.top
             bottomMargin: 10
+        }
+
+        transform: Rotation {
+            origin.x: tooltip.width / 2
+            origin.y: tooltip.height + img.height / 2 + tooltip.anchors.bottomMargin
+            angle: (type === Helper.PointViewType.HOME || type === Helper.PointViewType.HOME_TEMP) ? -pointOrientation + mapOrientation : 0
         }
 
         horizontalAlignment: Text.AlignHCenter
@@ -53,7 +68,6 @@ Image {
     }
 
     MouseArea {
-
         id: mArea
 
         hoverEnabled: true
@@ -76,13 +90,15 @@ Image {
             break;
             case Helper.PointViewType.HOME:
                 src = "qrc:/icons/homeView";
-                img.width = 20;
             break;
             case Helper.PointViewType.PATHPOINT:
                 src = "qrc:/icons/pathPoint";
             break;
             case Helper.PointViewType.PATHPOINT_START:
                 src = "qrc:/icons/pathPointStart";
+            break;
+            case Helper.PointViewType.HOME_TEMP:
+                src = "qrc:/icons/addHomeView";
             break;
             default:
                 console.log("The pointView \"" + _name + "\" in group \"" + _groupName + "\" is in an undefined status " + type);
@@ -94,5 +110,13 @@ Image {
     function setPos(posX, posY){
         x = posX - width/2;
         y = posY - height;
+    }
+
+    function setType(newType){
+        type = newType;
+    }
+
+    function setOrientation(newOri){
+        pointOrientation = newOri;
     }
 }

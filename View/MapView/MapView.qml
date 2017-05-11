@@ -64,12 +64,7 @@ Frame {
         tooltipText: "Drag me or click the map to modify my position"
         signal tmpPointViewPosChanged()
 
-
-        transform: Rotation {
-            origin.x: tmpPointView.width / 2
-            origin.y: tmpPointView.height
-            angle: -topViewId.mapRotation
-        }
+        mapOrientation: -topViewId.mapRotation
 
         MouseArea {
             anchors.fill: parent
@@ -246,12 +241,9 @@ Frame {
                             x: posX - width / 2
                             y: posY - height
                             tooltipText: name
-
-                            transform: Rotation {
-                                origin.x: pointView.width / 2
-                                origin.y: pointView.height
-                                angle: -topViewId.mapRotation
-                            }
+                            type: home ? Helper.PointViewType.HOME : Helper.PointViewType.PERM
+                            mapOrientation: -topViewId.mapRotation
+                            pointOrientation: orientation
 
                             MouseArea {
                                 anchors.fill: parent
@@ -287,12 +279,7 @@ Frame {
                                 x: posX - width / 2
                                 y: posY - height
                                 tooltipText: name
-
-                                transform: Rotation {
-                                    origin.x: pathPointView.width / 2
-                                    origin.y: pathPointView.height
-                                    angle: -topViewId.mapRotation
-                                }
+                                mapOrientation: -topViewId.mapRotation
 
                                 MouseArea {
                                     anchors.fill: parent
@@ -354,37 +341,12 @@ Frame {
                             _ip: ip
                             x: posX - width / 2
                             y: posY - height / 2
-                        }
-
-                        Label {
-                            id: tooltip
-
-                            visible: robot.hover
-                            font.pointSize: 10
-                            text: name
-
-                            anchors {
-                                horizontalCenter: robot.horizontalCenter
-                                bottom: robot.top
-                                bottomMargin: 10
-                            }
-
-                            horizontalAlignment: Text.AlignHCenter
-                            verticalAlignment: Text.AlignVCenter
-
-                            background: Rectangle {
-                                anchors.horizontalCenter: tooltip.horizontalCenter
-                                anchors.verticalCenter: tooltip.verticalCenter
-                                width: tooltip.paintedWidth + 8
-                                height: tooltip.paintedHeight + 8
-                                radius: 8
-                                border.color: Style.darkSkyBlue
-                                color: "white"
-                            }
+                            mapOrientation: -topViewId.mapRotation
                         }
 
                         /// The robot's home on the map
                         PointView {
+                            id: homeView
                             _name: "Home of " + name
                             _isVisible: useRobotPathModel && homeX > -100
                             type: Helper.PointViewType.HOME
@@ -393,11 +355,15 @@ Frame {
                             x: homeX - width / 2
                             y: homeY - height
                             tooltipText: "Home of " + name
+                            mapOrientation: -topViewId.mapRotation
+                            pointOrientation: homeOri
                         }
+
                         /// The robot's path on the map
                         Repeater {
                             model: pathPoints
                             delegate: PointView {
+                                id: robotPathPointView
                                 _name: pathPointName
                                 _isVisible: useRobotPathModel ? pathIsVisible : false
                                 _groupName: pathName
@@ -407,6 +373,7 @@ Frame {
                                 x: pathPointPosX - width / 2
                                 y: pathPointPosY - height
                                 tooltipText: pathPointName
+                                mapOrientation: -topViewId.mapRotation
                             }
                         }
                     }

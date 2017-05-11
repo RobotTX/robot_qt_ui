@@ -5,8 +5,8 @@ PointGroup::PointGroup(QObject *parent) : QObject(parent), pointVector(QVector<Q
 
 }
 
-void PointGroup::addPoint(const QString name, const double x, const double y, const bool displayed){
-    pointVector.push_back(QPointer<Point>(new Point(name, x, y, displayed, this)));
+void PointGroup::addPoint(const QString name, const double x, const double y, const bool displayed, const bool home, const int orientation){
+    pointVector.push_back(QPointer<Point>(new Point(name, x, y, displayed, home, orientation, this)));
 }
 
 void PointGroup::addPoint(const QPointer<Point> point){

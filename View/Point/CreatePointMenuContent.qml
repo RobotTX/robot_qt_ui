@@ -14,12 +14,11 @@ Frame {
     property string oldName: ""
     property string oldGroup
     property bool nameError: true
+    property bool wasDisplayed: false
     property string errorMsg
-    property double oldPosX
-    property double oldPosY
 
     signal backToMenu()
-    signal createPoint(string name, string groupName, double x, double y, string oldName, string oldGroup)
+    signal createPoint(string name, string groupName, double x, double y, string oldName, string oldGroup, bool displayed, bool home, int orientation)
     signal checkPoint(string name, string oldName, double x, double y)
     signal setMessageTop(int status, string msg)
 
@@ -36,14 +35,25 @@ Frame {
         if(tmpPointView && createPointMenuFrame)
             tmpPointView._isVisible = visible;
 
+        homeCheckBox.checked = false;
+        slider.value = 0;
+
         if(!visible){
-            if(tmpPointView && createPointMenuFrame){
+            if(tmpPointView && createPointMenuFrame)
                 tmpPointView.setPos(tmpPointView.originX, tmpPointView.originY);
+
+            /// When you finish or cancel an edition, we show the point you were editing
+            if(oldName !== ""){
+                for(var i = 0; i < pointModel.count; i++)
+                    if(pointModel.get(i).groupName === oldGroup)
+                        for(var j = 0; j < pointModel.get(i).points.count; j++)
+                            if(pointModel.get(i).points.get(j).name === oldName)
+                                pointModel.get(i).points.setProperty(j, "isVisible", true);
             }
+
+
             oldName = "";
             oldGroup = "";
-            oldPosX = 0;
-            oldPosY = 0;
             groupComboBox.currentIndex = 0;
             groupComboBox.displayText = Helper.noGroup;
         } else {
@@ -52,9 +62,14 @@ Frame {
                     if(pointModel.get(i).groupName === oldGroup)
                         for(var j = 0; j < pointModel.get(i).points.count; j++)
                             if(pointModel.get(i).points.get(j).name === oldName){
+                                wasDisplayed = pointModel.get(i).points.get(j).isVisible;
                                 pointModel.get(i).points.setProperty(j, "isVisible", false);
+                                homeCheckBox.checked = pointModel.get(i).points.get(j).home;
+                                slider.value = pointModel.get(i).points.get(j).orientation;
 
                                 tmpPointView.setPos(pointModel.get(i).points.get(j).posX, pointModel.get(i).points.get(j).posY);
+                                tmpPointView.setType(pointModel.get(i).points.get(j).home ? Helper.PointViewType.HOME_TEMP : Helper.PointViewType.TEMP);
+                                tmpPointView.setOrientation(pointModel.get(i).points.get(j).orientation);
                                 groupComboBox.currentIndex = i;
                                 groupComboBox.displayText = oldGroup;
                             }
@@ -80,7 +95,6 @@ Frame {
         anchors {
             left: parent.left
             top: parent.top
-            right: parent.right
         }
     }
 
@@ -139,12 +153,156 @@ Frame {
     }
 
     Label {
+        id: homeLabel
+        text: qsTr("Charging station")
+        color: Style.midGrey2
+        anchors {
+            left: parent.left
+            top: groupComboBox.bottom
+            right: parent.right
+            topMargin: 20
+        }
+    }
+
+    SquareCheckBox {
+        id: homeCheckBox
+        anchors {
+            left: parent.left
+            top: homeLabel.bottom
+            right: parent.right
+            topMargin: 10
+        }
+        text: "This point is a charging station"
+        onCheckedChanged: tmpPointView.setType(homeCheckBox.checked ? Helper.PointViewType.HOME_TEMP : Helper.PointViewType.TEMP);
+    }
+
+
+    Label {
+        id: oriLabel
+        visible: homeCheckBox.checked
+        text: qsTr("Orientation")
+        color: Style.midGrey2
+        anchors {
+            left: parent.left
+            top: homeCheckBox.bottom
+            topMargin: 20
+        }
+        width: 80
+    }
+
+    TextField {
+        id: field
+
+        background: Rectangle {
+            border.color: field.activeFocus ? Style.lightBlue : Style.lightGreyBorder
+            border.width: 2
+        }
+
+        width: 40
+        height: 21
+        visible: homeCheckBox.checked
+
+        padding: 0
+        selectByMouse: true
+        // range of accepted values : 0 to 359
+        validator: IntValidator { bottom: 0; top: 359 }
+        inputMethodHints: Qt.ImhDigitsOnly
+        verticalAlignment: Text.AlignVCenter
+        horizontalAlignment: Text.AlignLeft
+        placeholderText: "0"
+        color: Style.darkSkyBlue
+        font.pointSize: 10
+        anchors {
+            left: oriLabel.right
+            leftMargin: 4
+            verticalCenter: oriLabel.verticalCenter
+        }
+        // to update the slider value accordingly
+        onAccepted: {
+            focus = false;
+            slider.value = parseInt(text);
+        }
+    }
+
+    Button {
+        id: incButton
+
+        width: 12
+        height: 21
+        visible: homeCheckBox.checked
+
+        anchors {
+            left: field.right
+            leftMargin: 8
+            verticalCenter: oriLabel.verticalCenter
+        }
+
+        background: Rectangle {
+            color: "transparent"
+        }
+
+        contentItem: Image {
+            anchors.fill: parent
+            source: "qrc:/icons/stepper"
+            fillMode: Image.PreserveAspectFit
+
+            MouseArea {
+                id: mouseArea
+                anchors.fill: parent
+
+                // so that you can press the button to increment the value instead of having to click a lot of times
+                Timer {
+                    id: timer
+                    interval: 50
+                    repeat: true
+                    onTriggered: {
+                        // if we click the lower half of the button we decrement the value of otherwise we increment it
+                        if(mouseArea.pressed){
+                            if(mouseArea.mouseY > parent.height / 2)
+                                slider.value = slider.value - 1
+                            else
+                                slider.value = slider.value + 1
+                        }
+                    }
+                }
+
+                onPressed: timer.start()
+
+                onReleased: timer.stop()
+            }
+        }
+    }
+
+    CustomSlider {
+        id: slider
+        visible: homeCheckBox.checked
+
+        from: 0
+        to: 359
+        stepSize: 1
+
+        anchors {
+            left: parent.left
+            top: oriLabel.bottom
+            right: parent.right
+            leftMargin: 10
+            topMargin: 10
+            rightMargin: 10
+        }
+        onPositionChanged: {
+            tmpPointView.setOrientation(Math.round(slider.valueAt(slider.position)));
+            field.text = Math.round(valueAt(position))
+        }
+    }
+
+
+    Label {
         id: pointLocationLabel
         text: qsTr("Point Location")
         color: Style.midGrey2
         anchors {
             left: parent.left
-            top: groupComboBox.bottom
+            top: homeCheckBox.checked ? slider.bottom : homeCheckBox.bottom
             right: parent.right
             topMargin: 20
         }
@@ -193,7 +351,9 @@ Frame {
         onReleased: if(saveButton.canSave) {
             var newName = Helper.formatName(pointTextField.text);
             var groupName = groupComboBox.displayText;
-            createPoint(newName, groupName, tmpPointView.x + tmpPointView.width / 2, tmpPointView.y + tmpPointView.height, oldName, oldGroup);
+            createPoint(newName, groupName, tmpPointView.x + tmpPointView.width / 2, tmpPointView.y + tmpPointView.height,
+                        oldName, oldGroup, true, homeCheckBox.checked,
+                        homeCheckBox.checked ? Math.round(slider.valueAt(slider.position)) : 0);
             backToMenu();
             setMessageTop(2, oldName === "" ? "Created the point \"" + newName + "\" in \"" + groupName + "\"" :
                                             "Edited a point from \"" + oldName + "\" in \"" + oldGroup + "\" to \"" + newName + "\" in \"" + groupName + "\"")

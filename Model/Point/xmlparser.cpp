@@ -35,6 +35,8 @@ void XMLParser::save(PointController *pointController, const QString fileName) {
                 xmlWriter.writeTextElement("x", QString::number(pointController->getPoints()->getGroups().value(NO_GROUP_NAME)->getPointVector().at(j)->getPos().x()));
                 xmlWriter.writeTextElement("y", QString::number(pointController->getPoints()->getGroups().value(NO_GROUP_NAME)->getPointVector().at(j)->getPos().y()));
                 xmlWriter.writeTextElement("displayed", QString::number(pointController->getPoints()->getGroups().value(NO_GROUP_NAME)->getPointVector().at(j)->isVisible()));
+                xmlWriter.writeTextElement("home", QString::number(pointController->getPoints()->getGroups().value(NO_GROUP_NAME)->getPointVector().at(j)->isHome()));
+                xmlWriter.writeTextElement("orientation", QString::number(pointController->getPoints()->getGroups().value(NO_GROUP_NAME)->getPointVector().at(j)->getOrientation()));
                 xmlWriter.writeEndElement();
             }
             xmlWriter.writeEndElement();
@@ -56,6 +58,8 @@ void XMLParser::save(PointController *pointController, const QString fileName) {
                     xmlWriter.writeTextElement("x", QString::number(i.value()->getPointVector().at(j)->getPos().x()));
                     xmlWriter.writeTextElement("y", QString::number(i.value()->getPointVector().at(j)->getPos().y()));
                     xmlWriter.writeTextElement("displayed", QString::number(i.value()->getPointVector().at(j)->isVisible()));
+                    xmlWriter.writeTextElement("home", QString::number(i.value()->getPointVector().at(j)->isHome()));
+                    xmlWriter.writeTextElement("orientation", QString::number(i.value()->getPointVector().at(j)->getOrientation()));
                     xmlWriter.writeEndElement();
                 }
                 xmlWriter.writeEndElement();
@@ -70,14 +74,14 @@ void XMLParser::save(PointController *pointController, const QString fileName) {
 }
 
 
-QString XMLParser::readNameElement(QXmlStreamReader& xmlReader){
-    QString nameElement("");
+QString XMLParser::readElement(QXmlStreamReader& xmlReader){
+    QString element("");
     while(!xmlReader.atEnd()){
         if(xmlReader.isEndElement()){
             xmlReader.readNext();
             break;
         } else if(xmlReader.isStartElement()){
-            nameElement = xmlReader.readElementText();
+            element = xmlReader.readElementText();
             xmlReader.readNext();
             break;
         } else if(xmlReader.isCharacters())
@@ -85,25 +89,7 @@ QString XMLParser::readNameElement(QXmlStreamReader& xmlReader){
         else
             xmlReader.readNext();
     }
-    return nameElement;
-}
-
-double XMLParser::readCoordinateElement(QXmlStreamReader &xmlReader){
-    double coordinate(0.0);
-    while(!xmlReader.atEnd()){
-        if(xmlReader.isEndElement()){
-            xmlReader.readNext();
-            break;
-        } else if(xmlReader.isStartElement()){
-            coordinate = xmlReader.readElementText().toDouble();
-            xmlReader.readNext();
-            break;
-        } else if(xmlReader.isCharacters())
-            xmlReader.readNext();
-        else
-            xmlReader.readNext();
-    }
-    return coordinate;
+    return element;
 }
 
 void XMLParser::readPoints(PointController* pointController, const QString fileName){
@@ -130,28 +116,36 @@ void XMLParser::readPoints(PointController* pointController, const QString fileN
                             xmlReader.readNext();
                         } else if(xmlReader.isStartElement()){
                             if(xmlReader.name() == "name"){
-                                groupName = readNameElement(xmlReader);
+                                groupName = readElement(xmlReader);
                                 pointController->addGroup(groupName, false);
                             } else if(xmlReader.name() == "point"){
                                 double x(0.0);
                                 double y(0.0);
                                 QString name;
                                 bool displayed(true);
+                                bool home(false);
+                                int orientation(0);
                                 xmlReader.readNext();
                                 while(!xmlReader.atEnd()){
 
                                     if(xmlReader.isStartElement()){
                                         if(xmlReader.name() == "x"){
-                                            x = readCoordinateElement(xmlReader);
+                                            x = readElement(xmlReader).toDouble();
                                             xmlReader.readNext();
                                         } else if(xmlReader.name() == "y"){
-                                            y = readCoordinateElement(xmlReader);
+                                            y = readElement(xmlReader).toDouble();
                                             xmlReader.readNext();
                                         } else if(xmlReader.name() == "name"){
-                                            name = readNameElement(xmlReader);
+                                            name = readElement(xmlReader);
                                             xmlReader.readNext();
                                         } else if(xmlReader.name() == "displayed"){
-                                            displayed = readDisplayedElement(xmlReader);
+                                            displayed = readElement(xmlReader).toInt();
+                                            xmlReader.readNext();
+                                        } else if(xmlReader.name() == "home"){
+                                            home = readElement(xmlReader).toInt();
+                                            xmlReader.readNext();
+                                        } else if(xmlReader.name() == "orientation"){
+                                            orientation = readElement(xmlReader).toInt();
                                             xmlReader.readNext();
                                         } else {
                                             xmlReader.readNext();
@@ -161,7 +155,7 @@ void XMLParser::readPoints(PointController* pointController, const QString fileN
                                         break;
                                     } else xmlReader.readNext();
                                 }
-                                pointController->addPoint(name, groupName, x, y, "", "", displayed, false);
+                                pointController->addPoint(name, groupName, x, y, "", "", displayed, home, orientation, false);
                             }
                             xmlReader.readNext();
                         } else {
@@ -180,24 +174,6 @@ void XMLParser::readPoints(PointController* pointController, const QString fileN
     } else {
         clear(pointController, fileName);
     }
-}
-
-bool XMLParser::readDisplayedElement(QXmlStreamReader &xmlReader){
-    bool displayed(false);
-    while(!xmlReader.atEnd()){
-        if(xmlReader.isEndElement()){
-            xmlReader.readNext();
-            break;
-        } else if(xmlReader.isStartElement()){
-            displayed = xmlReader.readElementText().toInt();
-            xmlReader.readNext();
-            break;
-        } else if(xmlReader.isCharacters())
-            xmlReader.readNext();
-        else
-            xmlReader.readNext();
-    }
-    return displayed;
 }
 
 /// resets the file, only writting an empty default group

@@ -20,8 +20,10 @@ PointController::PointController(QObject *applicationWindow, MainController* par
         /// Tell the qml point model that we just added a new group
         connect(this, SIGNAL(addGroupQml(QVariant)), pointModel, SLOT(addGroup(QVariant)));
         /// Tell the qml point model that we just added a new point
-        connect(this, SIGNAL(addPointQml(QVariant, QVariant, QVariant, QVariant, QVariant)), pointModel, SLOT(addPoint(QVariant, QVariant, QVariant, QVariant, QVariant)));
-        connect(this, SIGNAL(editPointQml(QVariant, QVariant, QVariant, QVariant, QVariant, QVariant, QVariant)), pointModel, SLOT(editPoint(QVariant, QVariant, QVariant, QVariant, QVariant, QVariant, QVariant)));
+        connect(this, SIGNAL(addPointQml(QVariant, QVariant, QVariant, QVariant, QVariant, QVariant, QVariant)),
+                pointModel, SLOT(addPoint(QVariant, QVariant, QVariant, QVariant, QVariant, QVariant, QVariant)));
+        connect(this, SIGNAL(editPointQml(QVariant, QVariant, QVariant, QVariant, QVariant, QVariant, QVariant, QVariant, QVariant)),
+                pointModel, SLOT(editPoint(QVariant, QVariant, QVariant, QVariant, QVariant, QVariant, QVariant, QVariant, QVariant)));
         connect(this, SIGNAL(deleteAllGroupsQml()), pointModel, SLOT(deleteAllGroups()));
         /// Tell the qml point model that we just renamed a group
         connect(this, SIGNAL(renameGroupQml(QVariant, QVariant)), pointModel, SLOT(renameGroup(QVariant, QVariant)));
@@ -43,7 +45,7 @@ PointController::PointController(QObject *applicationWindow, MainController* par
         /// Got a modification of the name or position of the point we are creating so we check to enable or not the save button
         connect(createPointMenuFrame, SIGNAL(checkPoint(QString, QString, double, double)), parent, SLOT(checkPoint(QString, QString, double, double)));
         /// Clicked on the save button to create the given point
-        connect(createPointMenuFrame, SIGNAL(createPoint(QString, QString, double, double, QString, QString)), this, SLOT(addPoint(QString, QString, double, double, QString, QString)));
+        connect(createPointMenuFrame, SIGNAL(createPoint(QString, QString, double, double, QString, QString, bool, bool, int)), this, SLOT(addPoint(QString, QString, double, double, QString, QString, bool, bool, int)));
     } else {
         /// NOTE can probably remove that when testing phase is over
         qDebug() << "PointController::PointController could not find the createPointMenuFrame";
@@ -90,27 +92,18 @@ void PointController::addGroup(QString groupName, bool saveXML){
     }
 }
 
-void PointController::addPoint(QString name, QString groupName, double x, double y, QString oldName, QString oldGroup, bool displayed, bool saveXML){
+void PointController::addPoint(const QString name, const QString groupName, const double x, const double y, const QString oldName, const QString oldGroup, const bool displayed, const bool home, const int orientation, bool saveXML){
     //qDebug() << "PointController::addPoint" << groupName << name << x << y << displayed;
     addGroup(groupName, saveXML);
 
-    points->addPoint(groupName, name, x, y, displayed);
+    points->addPoint(groupName, name, x, y, displayed, home, orientation);
 
     /// We are creating a new point
-    if(oldName.isEmpty()){
-        emit addPointQml(name,
-                         displayed,
-                         groupName,
-                         x,
-                         y);
-    } else {
-        emit editPointQml(oldName,
-                         oldGroup,
-                         name,
-                         displayed,
-                         groupName,
-                         x,
-                         y);
+    if(oldName.isEmpty())
+        emit addPointQml(name, displayed, groupName, x, y, home, orientation);
+    else {
+        deletePoint(oldGroup, oldName);
+        emit editPointQml(oldName, oldGroup, name, displayed, groupName, x, y, home, orientation);
     }
 
     if(saveXML)

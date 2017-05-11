@@ -20,7 +20,7 @@ ListModel {
         });
     }
 
-    function addPoint(name, isVisible, groupName, x, y){
+    function addPoint(name, isVisible, groupName, x, y, home, orientation){
         //console.log("Add point " + name + " to group " + groupName + " " + x + " " + y);
         for(var i = 0; i < count; i++){
             if(get(i).groupName === groupName){
@@ -28,13 +28,15 @@ ListModel {
                      "name": name,
                      "isVisible": isVisible,
                      "posX": x,
-                     "posY": y
+                     "posY": y,
+                     "home": home,
+                     "orientation": orientation
                 });
             }
         }
     }
 
-    function editPoint(oldName, oldGroup, name, isVisible, groupName, x, y){
+    function editPoint(oldName, oldGroup, name, isVisible, groupName, x, y, home, orientation){
         //console.log("Add point " + name + " to group " + groupName + " " + x + " " + y);
         deletePoint(oldGroup, oldName);
         for(var i = 0; i < count; i++){
@@ -43,7 +45,9 @@ ListModel {
                      "name": name,
                      "isVisible": isVisible,
                      "posX": x,
-                     "posY": y
+                     "posY": y,
+                     "home": home,
+                     "orientation": orientation
                 });
             }
         }
@@ -57,7 +61,6 @@ ListModel {
                         get(i).points.remove(j);
                         setMessageTop(2, "Deleted the point \"" + name + "\" in \"" + groupName + "\"");
                     }
-        deletePointSignal(groupName, name);
     }
 
     function deleteGroup(groupName){
@@ -103,7 +106,9 @@ ListModel {
                             "name": get(i).points.get(j).name,
                             "isVisible": get(i).points.get(j).isVisible,
                             "posX": get(i).points.get(j).posX,
-                            "posY": get(i).points.get(j).posY
+                            "posY": get(i).points.get(j).posY,
+                            "home": get(i).points.get(j).home,
+                            "orientation": get(i).points.get(j).orientation
                         }
                         get(i).points.remove(j);
                     }
