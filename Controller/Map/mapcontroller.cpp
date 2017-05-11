@@ -60,7 +60,6 @@ MapController::MapController(QQmlApplicationEngine* engine, QObject *application
 void MapController::initializeMap(void){
 
     QString currentPathFile = Helper::getAppPath() + QDir::separator() + "currentMap.txt";
-    qDebug() << currentPathFile;
     std::ifstream file(currentPathFile.toStdString(), std::ios::in);
 
     if(file){
@@ -131,7 +130,9 @@ void MapController::savePositionSlot(const double posX, const double posY, const
              << map->getResolution() << std::endl
              << map->getDateTime().toString("yyyy-MM-dd-hh-mm-ss").toStdString() << std::endl
              << map->getMapId().toString().toStdString();
+
         file.close();
+
     } else
         qDebug() << "Map::savePositionSlot could not find the currentMap file at :" << currentPathFile;
 }
@@ -142,7 +143,7 @@ void MapController::loadPositionSlot(){
     std::ifstream file(currentPathFile.toStdString(), std::ios::in);
 
     if(file){
-        /// We get the path of the map to use so that we can deduce the path of its config file
+        /// to store the values we don't need
         std::string osef;
         double centerX, centerY, zoom;
         int mapRotation;
@@ -351,14 +352,13 @@ QString MapController::getMetadataString(void) const {
 
 void MapController::saveNewMap(const QString file_name){
     qDebug() << "MapController::saveNewMap " << file_name;
-    /// TODO check bug export map
-    //saveMapToFile(file_name);
     map->setMapFile(file_name);
     emit setMap(file_name);
 }
 
 void MapController::updateMetadata(int width, int height, double resolution, double originX, double originY){
-    qDebug() << "MapController::updateMetadata" << width << height << resolution << originX << originY;
+    qDebug() << "MapController::updateMetadata width height resolution originX originY";
+    qDebug() << width << height << resolution << originX << originY;
     setOrigin(QPointF(originX, originY));
     setWidth(width);
     setHeight(height);

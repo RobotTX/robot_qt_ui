@@ -26,26 +26,27 @@ void sendMap(const std::vector<uint8_t>& my_map){
 
 void getMetaData(const nav_msgs::MapMetaData::ConstPtr& msg){
 	metadata_string = std::to_string(msg->width) + " " + std::to_string(msg->height) + " " + std::to_string(msg->resolution) + " " + 
-	std::to_string(msg->origin.position.x) + " " + std::to_string(msg->origin.position.y);
+	                  std::to_string(msg->origin.position.x) + " " + std::to_string(msg->origin.position.y);
 }
 
 void getMap(const nav_msgs::OccupancyGrid::ConstPtr& msg){
 	int map_size = msg->info.width * msg->info.height;
 	std::cout << "(Map) Just received a new map" << msg->info.width << " " << msg->info.height << " " << map_size << std::endl;
-
 	sendMap(compress(msg->data, msg->info.width, msg->info.height, 0));
 }
 
+/// TODO can we remove that ? and all that is related to particle cloud
 void getLocalMap(const nav_msgs::OccupancyGrid::ConstPtr& msg){
 	int map_size = msg->info.width * msg->info.height;
 	std::cout << "(Map) Just received a new map" << msg->info.width << " " << msg->info.height << " " << map_size << std::endl;
 	sendMap(compress(msg->data, msg->info.width, msg->info.height, 3));
 }
 
+// algorithm to compress the map before sending it
 std::vector<uint8_t> compress(std::vector<int8_t> map, int map_width, int map_height, int who){
 	std::vector<uint8_t> my_map;
-	int last = 205;
-	uint32_t count = 0;
+	int last(205);
+	uint32_t count(0);
 
 	if(who == 0){
 		/// If we are scanning a new map, we send the published metadata with it
@@ -176,6 +177,8 @@ bool startMap(gobot_software::Port::Request &req,
 	m_acceptor.accept(socket_map);
 	std::cout << "(Map) We are connected " << std::endl;
 
+	// if the robot disconnects while scanning it unsuscribes to /map
+	// startMap is called when the robot reconnects and we need to resub
 	if(sendingMapWhileScanning){
 		ros::NodeHandle n;
 		sub_map = n.subscribe("/map", 1, getMap);
@@ -185,14 +188,11 @@ bool startMap(gobot_software::Port::Request &req,
 }
 
 bool sendAutoMap(std_srvs::Empty::Request &req, std_srvs::Empty::Response &res){
-	
 	std::cout << "(Map) SendAutoMap " << std::endl;
-
 	ros::NodeHandle n;
 	sub_map.shutdown();
 	sub_map = n.subscribe("/map", 1, getMap);
 	sendingMapWhileScanning = true;
-
 	return true;
 }
 
@@ -277,14 +277,11 @@ bool sendOnceMap(gobot_software::Port::Request &req,
 		return false;
 }
 
-bool stopMap(std_srvs::Empty::Request &req,
-    std_srvs::Empty::Response &res){
-
+bool stopMap(std_srvs::Empty::Request &req, std_srvs::Empty::Response &res){
 	std::cout << "(Map) Stopping map_sender" << std::endl;
 	sub_map.shutdown();
 	socket_map.close();
 	m_acceptor.close();
-
 	return true;
 }
 
@@ -311,5 +308,6 @@ int main(int argc, char **argv){
 		ros::spinOnce();
 		loop_rate.sleep();
 	}
+
 	return 0;
 }

@@ -12,6 +12,7 @@ ros::Subscriber sub_robot;
 
 // reads on the socket looking for an ACK from the app that the recovered position has been received
 void readAck(const std::string position_to_send){
+	/// TODO probably needs to disappear or to be adapted as a new way to recover the position is needed
 	bool found_ack(false);
 	while(!found_ack){
 		try {
@@ -55,8 +56,6 @@ bool confirmPositionRecovered(gobot_software::RecoveredPosition::Request &req, g
 	} catch (std::exception& e) {
 		std::cerr << e.what() << std::endl;
 	}
-
-	ros::NodeHandle n; 
 
 	// reads until ACK is found
 	boost::thread t(boost::bind(readAck, position));
@@ -137,7 +136,9 @@ int main(int argc, char **argv){
 	// to tell the application that the position of the robot has been recovered
 	ros::ServiceServer service = n.advertiseService("send_position_recovered_confirmation", confirmPositionRecovered);
 
+	// we wait for 10 sec
 	ros::service::waitForService("send_position_recovered_confirmation", 10);
+	
 	if(ros::service::exists("send_position_recovered_confirmation", true))
 		std::cout << "send_position_recovered_confirmation is available" << std::endl;
 	else

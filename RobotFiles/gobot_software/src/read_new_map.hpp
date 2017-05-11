@@ -19,6 +19,10 @@
 using boost::asio::ip::tcp;
 
 /**
+    Connects to the desktop application to receive maps
+*/
+
+/**
  * Main function that reads the new map with its id and metadata, and saves it
  */
 void session(boost::shared_ptr<tcp::socket> sock, ros::NodeHandle n);

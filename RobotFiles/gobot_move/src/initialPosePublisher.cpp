@@ -18,6 +18,8 @@ int main(int argc, char* argv[] ){
 
         std::string robotPos;
 
+        // from this file we retrieve an int that tells us if the robot should start at the charging station
+        // or at the last known position
         if(n.hasParam("robot_position_file")){
             std::string robotPositionFile;
             n.getParam("robot_position_file", robotPositionFile);
@@ -35,7 +37,6 @@ int main(int argc, char* argv[] ){
 
         std::cout << "RobotPos : " << robotPos << std::endl;
 
-        
         if(std::stoi(robotPos) == 0){
             // if we can read the file that contains the initial position then we update <initialPose>
             if(n.hasParam("last_known_position_file")){
@@ -64,15 +65,6 @@ int main(int argc, char* argv[] ){
                 std::cout << "initialPosePublisher could not find the parameter <home_file>" << std::endl;
         }
 
-        // TODO robotPos == 1, home position (recover == 2 ?)
-
-        tf::Matrix3x3 matrix = tf::Matrix3x3(tf::Quaternion(angle_x , angle_y , angle_z, angle_w));
-        tfScalar roll;
-        tfScalar pitch;
-        tfScalar yaw;
-        matrix.getRPY(roll, pitch, yaw);
-        std::cout << "rotation " << yaw*180/3.14159 << std::endl;
-
         geometry_msgs::PoseWithCovarianceStamped initialPose;
         initialPose.header.frame_id = "map";
         initialPose.header.stamp = ros::Time::now();
@@ -94,7 +86,9 @@ int main(int argc, char* argv[] ){
         ros::spin();
 
     } catch (std::exception& e) {
+
         std::cerr << "(initial_pose_publisher) Exception: " << e.what() << std::endl;
+
     }
 
     return 0;

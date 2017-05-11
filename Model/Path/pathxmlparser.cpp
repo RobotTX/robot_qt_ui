@@ -135,8 +135,6 @@ void PathXMLParser::readPaths(PathController *pathController, const QString file
 
     QXmlStreamReader xmlReader;
 
-    /// TODO if cannot open -> create and call clear to create group
-
     QFile file(fileName);
 
     if(file.exists() && file.open(QFile::ReadWrite | QFile::Text)){
