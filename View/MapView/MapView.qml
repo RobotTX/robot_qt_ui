@@ -104,6 +104,24 @@ Frame {
         }
 
         Item {
+
+            Shortcut {
+                sequence: "s"
+                onActivated: mapImage.y = mapImage.y + zoomScale.xScale
+            }
+            Shortcut {
+                sequence: "w"
+                onActivated: mapImage.y = mapImage.y - zoomScale.xScale
+            }
+            Shortcut {
+                sequence: "a"
+                onActivated: mapImage.x = mapImage.x + zoomScale.xScale
+            }
+            Shortcut {
+                sequence: "d"
+                onActivated: mapImage.x = mapImage.x - zoomScale.xScale
+            }
+
             clip: true
             EmptyMap {
                 id: emptyMap
@@ -111,6 +129,7 @@ Frame {
             }
 
             MouseArea {
+                id: mouseArea
                 anchors.fill: parent
 
                 onWheel: {
@@ -126,25 +145,13 @@ Frame {
                     var newPos = mapToItem(mapImage, width / 2, height / 2);
 
                     /// Calculate the misplacement of the image so that we zoom in the middle of what we see and not in the middle of the map
-                    mapImage.x = mapImage.x + (newPos.x - oldPos.x) * zoomScale.xScale;
-                    mapImage.y = mapImage.y + (newPos.y - oldPos.y) * zoomScale.xScale;
-                    /*
+                    var diff = Qt.point(newPos.x - oldPos.x, newPos.y - oldPos.y);
+                    var res = Qt.point(diff.x* Math.cos(topViewId.mapRotation * (Math.PI / 180)) - diff.y * Math.sin(topViewId.mapRotation * (Math.PI / 180)),
+                                     diff.x* Math.sin(topViewId.mapRotation * (Math.PI / 180)) + diff.y * Math.cos(topViewId.mapRotation * (Math.PI / 180)));
 
-                    var oldPos = mapFromItem(mapImage, mapImage.origin.x, mapImage.origin.y);
-                    var factor = 1 + wheel.angleDelta.y / 120 / 10;
-                    var newScale = zoomScale.xScale * factor;
+                    mapImage.x = mapImage.x + res.x * zoomScale.xScale;
+                    mapImage.y = mapImage.y + res.y * zoomScale.xScale;
 
-                    /// Zoom into the image
-                    if(newScale > Style.minZoom && newScale < Style.maxZoom)
-                        zoomScale.xScale = newScale;
-
-                    var newPos = mapToItem(mapImage, width / 2, height / 2);
-
-                    /// Calculate the misplacement of the image so that we zoom in the middle of what we see and not in the middle of the map
-                    mapImage.x = mapImage.x + (newPos.x - oldPos.x) * zoomScale.xScale;
-                    mapImage.y = mapImage.y + (newPos.y - oldPos.y) * zoomScale.xScale;*/
-                    console.log("oldPos " + oldPos + " and new pos " + newPos + " so a shift of " + (newPos - oldPos) +
-                                " with a rotation of " + (-topViewId.mapRotation) + " and a zoom of " + zoomScale.x)
                 }
             }
 
@@ -164,6 +171,16 @@ Frame {
                 transform: Scale {
                     id: zoomScale
                     yScale: xScale
+                    origin.x: mapImage.width / 2
+                    origin.y: mapImage.height / 2
+                }
+
+                Rectangle {
+                    width: 2
+                    height: 2
+                    color: "green"
+                    x: mapImage.width/2 - 1
+                    y: mapImage.height/2 - 1
                 }
 
                 /// Canvas to display the paths dotted line on the map
@@ -396,6 +413,15 @@ Frame {
                         }
                     }
                 }
+            }
+
+
+            Rectangle {
+                width: 2
+                height: 2
+                color: "red"
+                x: mouseArea.width/2 - 1
+                y: mouseArea.height/2 - 1
             }
         }
     }
