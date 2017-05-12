@@ -119,8 +119,11 @@ void CmdRobotWorker::timerSlot(void){
         qDebug()<< "(Robot" << ipAddress << ") Did not receive any ping from this robot for" << timeCounter << "seconds";
     /// if the application has lost the connection with the robot for a time > ROBOT_TIMER
     /// the socket is closed
-    if(timeCounter >= ROBOT_TIMER)
+    if(timeCounter >= ROBOT_TIMER){
         socket->close();
+        timer->stop();
+        timeCounter = 0;
+    }
 }
 
 void CmdRobotWorker::errorConnectionSlot(QAbstractSocket::SocketError error){

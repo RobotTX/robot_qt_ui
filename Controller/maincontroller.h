@@ -101,7 +101,7 @@ private slots:
      * @param homeY
      * sends a new home to the robot at ip <ip>
      */
-    void sendCommandNewHome(QString ip, double homeX, double homeY, double homeOri);
+    void sendCommandNewHome(QString ip, double homeX, double homeY, int homeOri);
     /**
      * @brief sendCommandNewPath
      * @param ip

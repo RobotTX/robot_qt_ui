@@ -341,9 +341,9 @@ bool execCommand(ros::NodeHandle n, std::vector<std::string> command){
 					std::ofstream ofs(homeFile, std::ofstream::out | std::ofstream::trunc);
 				
 					if(ofs){
-						double orientation = std::stod(command.at(3));
+						int orientation = std::stoi(command.at(3));
 						tf::Quaternion quaternion;
-						quaternion.setEuler(0, 0, -orientation*3.14159/180);
+						quaternion.setEuler(0, 0, -(orientation+90)*3.14159/180);
 						ofs << command.at(1) << " " << command.at(2) << " " << quaternion.x() << " " << quaternion.y() << " " << quaternion.z() << " " << quaternion.w();
 						ofs.close();
 						status = true;

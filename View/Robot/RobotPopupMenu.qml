@@ -12,11 +12,11 @@ import "../Custom"
 Menu {
     id: robotMenu
     padding: 0
-    width: 195
+    width: 220
     property Points pointModel
     property Paths pathModel
     property int currentMenuIndex: -1
-    signal pointSelected(double _homeX, double _homeY)
+    signal pointSelected(double _homeX, double _homeY, int orientation)
     signal pathSelected(string _pathName, string _groupName)
     signal renameRobot()
     signal deletePath()
@@ -35,7 +35,7 @@ Menu {
         height: Style.menuItemHeight
         width: parent.width
         contentItem: CustomLabel {
-            text: qsTr("Assign a Home Point")
+            text: qsTr("Assign a Charging Station")
             anchors {
                 left: parent.left
                 right: parent.right
@@ -61,8 +61,9 @@ Menu {
             visible: robotMenu.currentMenuIndex === 0
             onVisibleChanged: if(!visible) currentMenuIndex = -1
             pointModel: robotMenu.pointModel
+            homeOnly: true
             onPointSelected: {
-                robotMenu.pointSelected(posX, posY)
+                robotMenu.pointSelected(posX, posY, orientation)
                 currentMenuIndex = -1;
                 robotMenu.currentMenuIndex = -1;
                 robotMenu.close();

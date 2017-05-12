@@ -33,7 +33,7 @@ RobotsController::RobotsController(QObject *applicationWindow, QQmlApplicationEn
         connect(this, SIGNAL(updateLaser(QVariant, QVariant)), robotModel, SLOT(setLaserActivated(QVariant, QVariant)));
 
         /// Signals from qml to the controller
-        connect(robotModel, SIGNAL(newHomeSignal(QString, double, double, double)), parent, SLOT(sendCommandNewHome(QString, double, double, double)));
+        connect(robotModel, SIGNAL(newHomeSignal(QString, double, double, int)), parent, SLOT(sendCommandNewHome(QString, double, double, int)));
         connect(robotModel, SIGNAL(newPathSignal(QString, QString, QString)), parent, SLOT(sendCommandNewPath(QString, QString, QString)));
         connect(robotModel, SIGNAL(newNameSignal(QString, QString)), this, SLOT(sendCommandNewName(QString, QString)));
         connect(robotModel, SIGNAL(deletePathSignal(QString)), this, SLOT(sendCommandDeletePath(QString)));
