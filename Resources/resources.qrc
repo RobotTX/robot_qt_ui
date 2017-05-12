@@ -100,10 +100,5 @@
         <file alias="downRight">icons/Arrow_LowerRight.png</file>
         <file alias="upLeft">icons/Arrow_UpperLeft.png</file>
         <file alias="upRight">icons/Arrow_UpperRight.png</file>
-
-        <file alias="help">icons/help.png</file>
-
-
-
     </qresource>
 </RCC>

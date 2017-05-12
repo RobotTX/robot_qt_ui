@@ -99,6 +99,8 @@ Frame {
             right: saveStateButton.left
             rightMargin: 15
         }
+
+        onPositionChanged: console.log("New rotation : " + mapRotation)
     }
 
     /// The save state button

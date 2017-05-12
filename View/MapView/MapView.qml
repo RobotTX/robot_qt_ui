@@ -59,8 +59,8 @@ Frame {
         _name: "tmpPointView"
         _groupName: "tmpGroup"
         _isVisible: false
-        originX: 0
-        originY: 0
+        pointPosX: 0
+        pointPosY: 0
         tooltipText: "Drag me or click the map to modify my position"
         signal tmpPointViewPosChanged()
 
@@ -142,8 +142,9 @@ Frame {
 
                     /// Calculate the misplacement of the image so that we zoom in the middle of what we see and not in the middle of the map
                     mapImage.x = mapImage.x + (newPos.x - oldPos.x) * zoomScale.xScale;
-                    mapImage.y = mapImage.y + (newPos.y - oldPos.y) * zoomScale.xScale;
-                    console.log("oldPos " + oldPos + " and new pos " + newPos)*/
+                    mapImage.y = mapImage.y + (newPos.y - oldPos.y) * zoomScale.xScale;*/
+                    console.log("oldPos " + oldPos + " and new pos " + newPos + " so a shift of " + (newPos - oldPos) +
+                                " with a rotation of " + (-topViewId.mapRotation) + " and a zoom of " + zoomScale.x)
                 }
             }
 
@@ -327,10 +328,10 @@ Frame {
                                             if(Math.round(posX) + ' ' + Math.round(posY) === name)
                                                 name = Math.round(_posX) + ' ' + Math.round(_posY)
 
-                                            var _oriX = pathPointView.originX;
-                                            var _oriY = pathPointView.originY;
-                                            pathPointView.originX = _oriX;
-                                            pathPointView.originY = _oriY;
+                                            var _oriX = pathPointView.pointPosX;
+                                            var _oriY = pathPointView.pointPosY;
+                                            pathPointView.pointPosX = _oriX;
+                                            pathPointView.pointPosY = _oriY;
                                             pathPointView.x = _posX - pathPointView.width/2;
                                             pathPointView.y = _posY - pathPointView.height;
 
