@@ -1086,7 +1086,6 @@ void asyncAccept(boost::shared_ptr<boost::asio::io_service> io_service, boost::s
     	n.getParam("map_id_file", mapIdFile);
 	   	std::ifstream ifMap(mapIdFile, std::ifstream::in);
 	   	
-	   	
 	   	if(ifMap){
 	   		getline(ifMap, mapId);
 	   		getline(ifMap, mapDate);

@@ -74,7 +74,7 @@ bool isServer(const std::string IP, const std::string ssid){
 
                 // Sends everything to the application, '\' is used to as a delimiter, spaces cannot be used because of the ssid
                 std::string info_to_send(hostname + "\" " + ssid + "\" " + std::to_string(stage) + "\" " + std::to_string(battery));
-                ROS_INFO("ping_server.cpp sending %s", info_to_send.c_str());
+                //ROS_INFO("ping_server.cpp sending %s", info_to_send.c_str());
 
                 boost::system::error_code ignored_error;
                 boost::asio::write(socket, boost::asio::buffer(info_to_send, info_to_send.length()), boost::asio::transfer_all(), ignored_error);
@@ -181,13 +181,16 @@ int main(int argc, char* argv[]){
 
     FILE *in(0);
     char buff[512];
+    // gets the ssid in a file
     if(!(in = popen("iwgetid -r", "r"))){
         ROS_INFO("ping_server.cpp could not get the ssid");
         return 1;
     }
-
+    // retrieves the ssid from the file
     fgets(buff, sizeof(buff), in);
     std::string ssid(buff);
+
+    // to get rid of \n at the end
     ssid = ssid.substr(0, ssid.size()-1);
     pclose(in);
 

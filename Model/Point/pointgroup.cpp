@@ -1,9 +1,7 @@
 #include "pointgroup.h"
 #include "Model/Point/point.h"
 
-PointGroup::PointGroup(QObject *parent) : QObject(parent), pointVector(QVector<QPointer<Point>>()){
-
-}
+PointGroup::PointGroup(QObject *parent) : QObject(parent), pointVector(QVector<QPointer<Point>>()) {}
 
 void PointGroup::addPoint(const QString name, const double x, const double y, const bool displayed, const bool home, const int orientation){
     pointVector.push_back(QPointer<Point>(new Point(name, x, y, displayed, home, orientation, this)));

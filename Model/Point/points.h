@@ -22,6 +22,7 @@ class Points : public QObject {
 public:
 
     Points(QObject *parent);
+
     QMap<QString, QPointer<PointGroup>> getGroups(void) const { return groups; }
 
     void addGroup(const QString groupName);

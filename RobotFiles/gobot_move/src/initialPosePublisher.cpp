@@ -80,7 +80,6 @@ int main(int argc, char* argv[] ){
         // we wait for the topic to be created so we can publish on it
         sleep(3);
 
-
         initial_pose_publisher.publish(initialPose);
 
         ros::spin();

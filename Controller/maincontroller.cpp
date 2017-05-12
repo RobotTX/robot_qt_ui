@@ -207,6 +207,7 @@ void MainController::saveMapConfig(QString fileName, double zoom, double centerX
 
     if(!new_config){
 
+        /// saves the image as a pgm file
         mapController->saveMapToFile(Helper::getAppPath() + QDir::separator() + "mapConfigs" + QDir::separator() + mapFileInfo.fileName() + ".pgm");
 
         mapController->savePositionSlot(centerX, centerY, zoom, mapRotation, Helper::getAppPath() + QDir::separator() + "mapConfigs" + QDir::separator() + mapFileInfo.fileName() + ".pgm");

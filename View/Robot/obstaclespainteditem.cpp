@@ -21,10 +21,10 @@ void ObstaclesPaintedItem::updateObstacles(double angle_min, double angle_max, d
         std::for_each(ranges.begin(), ranges.end(), [&](const double range) {
             /// rotation is done on the qml side
             obstacles_.push_back(QPointF(range * qCos(orientation_*3.14159/180 - 3.14159/2 + angle_min + i*angle_increment) * 20 ,
-                                     range * qSin(orientation_*3.14159/180 - 3.14159/2 + angle_min + i*angle_increment) * 20)); i--; });
+                                         range * qSin(orientation_*3.14159/180 - 3.14159/2 + angle_min + i*angle_increment) * 20));
+                                         i--; });
         update();
-    } //else
-        //qDebug() << "ObstaclesPaintedItem::updateObstacles Got data while the laser was not activated";
+    }
 }
 
 void ObstaclesPaintedItem::clearObstacles(bool _activated){
