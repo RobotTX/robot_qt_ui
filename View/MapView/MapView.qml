@@ -114,6 +114,7 @@ Frame {
                 anchors.fill: parent
 
                 onWheel: {
+
                     var oldPos = mapToItem(mapImage, width / 2, height / 2);
                     var factor = 1 + wheel.angleDelta.y / 120 / 10;
                     var newScale = zoomScale.xScale * factor;
@@ -127,6 +128,22 @@ Frame {
                     /// Calculate the misplacement of the image so that we zoom in the middle of what we see and not in the middle of the map
                     mapImage.x = mapImage.x + (newPos.x - oldPos.x) * zoomScale.xScale;
                     mapImage.y = mapImage.y + (newPos.y - oldPos.y) * zoomScale.xScale;
+                    /*
+
+                    var oldPos = mapFromItem(mapImage, mapImage.origin.x, mapImage.origin.y);
+                    var factor = 1 + wheel.angleDelta.y / 120 / 10;
+                    var newScale = zoomScale.xScale * factor;
+
+                    /// Zoom into the image
+                    if(newScale > Style.minZoom && newScale < Style.maxZoom)
+                        zoomScale.xScale = newScale;
+
+                    var newPos = mapToItem(mapImage, width / 2, height / 2);
+
+                    /// Calculate the misplacement of the image so that we zoom in the middle of what we see and not in the middle of the map
+                    mapImage.x = mapImage.x + (newPos.x - oldPos.x) * zoomScale.xScale;
+                    mapImage.y = mapImage.y + (newPos.y - oldPos.y) * zoomScale.xScale;
+                    console.log("oldPos " + oldPos + " and new pos " + newPos)*/
                 }
             }
 
