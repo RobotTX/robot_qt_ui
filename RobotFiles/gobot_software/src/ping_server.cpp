@@ -11,12 +11,13 @@ bool isServer(const std::string IP, const std::string ssid){
     tcp::resolver::query query(IP);
 
     tcp::socket socket(io_service);
-    
-    socket.connect(boost::asio::ip::tcp::endpoint(boost::asio::ip::address::from_string(IP), 6000));
 
-    bool found(false);
+    if(socket.is_open())
+        socket.close();
 
     try {
+    
+        socket.connect(boost::asio::ip::tcp::endpoint(boost::asio::ip::address::from_string(IP), 6000));
 
         char buffer[1024] = {0};
 
@@ -24,7 +25,7 @@ bool isServer(const std::string IP, const std::string ssid){
         size_t length = socket.read_some(boost::asio::buffer(buffer), error);
 
         if(std::string(buffer).compare("OK") == 0){
-            found = true;
+
             // Retrieves the file that contains the hostname of the robot
             if(n.hasParam("robot_name_file")){
                 std::string nameFile;
@@ -78,6 +79,7 @@ bool isServer(const std::string IP, const std::string ssid){
 
                 boost::system::error_code ignored_error;
                 boost::asio::write(socket, boost::asio::buffer(info_to_send, info_to_send.length()), boost::asio::transfer_all(), ignored_error);
+                return true;
             }
         } else
             ROS_INFO("ping_server.cpp:: parameter <robot_name_file> does not exist");
@@ -85,10 +87,11 @@ bool isServer(const std::string IP, const std::string ssid){
             
         
     } catch(std::exception& e) {
+        socket.close();
         ROS_INFO("ping_server.cpp error %s", e.what());
     }
-
-    return found;
+    socket.close();
+    return false;
 }
 
 bool checkIPList(const std::string ssid){
