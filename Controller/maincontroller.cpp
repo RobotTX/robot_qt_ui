@@ -26,7 +26,6 @@
 #include "Model/Path/pathgroup.h"
 #include "Model/Path/pathpoint.h"
 
-
 MainController::MainController(QQmlApplicationEngine *engine, QObject* parent) : QObject(parent), discardMap(true) {
 
     QList<QObject*> qmlList = engine->rootObjects();
@@ -239,7 +238,7 @@ void MainController::saveMapConfig(QString fileName, double zoom, double centerX
 }
 
 void MainController::loadMapConfig(QString fileName) {
-    qDebug() << "MainController::loadMapConfig called";
+    qDebug() << "MainController::loadMapConfig called with file" << fileName;
 
     if(!fileName.isEmpty()){
         QString fileNameWithoutExtension;

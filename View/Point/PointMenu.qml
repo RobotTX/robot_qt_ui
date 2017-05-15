@@ -47,6 +47,7 @@ Page {
             onEditPoint: {
                 createPointMenuContent.oldName = name;
                 createPointMenuContent.oldGroup = groupName;
+                // will open the point menu
                 menuIndex = 1;
             }
         }

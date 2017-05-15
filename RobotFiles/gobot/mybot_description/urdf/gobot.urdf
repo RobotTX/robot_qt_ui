@@ -1,0 +1,210 @@
+<?xml version="1.0"?>
+<robot name="gobot" " xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <xacro:include filename="$(find mybot_description)/urdf/mybot.gazebo" />
+  <xacro:include filename="$(find mybot_description)/urdf/materials.xacro" />
+  <xacro:include filename="$(find mybot_description)/urdf/macros.xacro" />
+
+  <xacro:property name="PI" value="3.1415926535897931"/>
+
+  <xacro:property name="chassisHeight" value="0.1"/>
+  <xacro:property name="chassisLength" value="0.4"/>
+  <xacro:property name="chassisWidth" value="0.2"/>
+  <xacro:property name="chassisMass" value="50"/>
+
+  <xacro:property name="casterRadius" value="0.05"/>
+  <xacro:property name="casterMass" value="5"/>
+
+  <xacro:property name="wheelWidth" value="0.05"/>
+  <xacro:property name="wheelRadius" value="0.1"/>
+  <xacro:property name="wheelPos" value="0.2"/>
+  <xacro:property name="wheelMass" value="5"/>
+
+  <xacro:property name="cameraSize" value="0.05"/>
+  <xacro:property name="cameraMass" value="0.1"/>
+ 
+  <link name="base_footprint" />
+
+  <joint name="base_joint" type="fixed">
+    <parent link="base_footprint"/>
+    <child link="base_link"/>
+  </joint>
+
+  <link name="base_link">
+    <visual>
+      <geometry>
+        <box size="0.680 .600 .200"/>
+      </geometry>
+      <material name="white">
+         <color rgba="1 1 1 .5"/>
+    </material>
+    </visual>
+  </link>
+
+  <joint name="laser" type="fixed">
+    <origin xyz="0.288 0.00 -0.03" rpy="0 0 0" />
+    <parent link="base_link" />
+    <child link="base_laser" />
+  </joint>
+
+  <link name="base_laser">
+    <visual>
+      <geometry>
+        <box size="0.01 0.05 0.06" />
+      </geometry>
+      <material name="Green" />
+    </visual>
+    <inertial>
+      <mass value="0.000001" />
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <inertia ixx="0.0001" ixy="0.0" ixz="0.0" iyy="0.0001" iyz="0.0" izz="0.0001" />
+    </inertial>
+  </link>
+
+  <link name="tyer_front_left">
+    <visual>
+      <geometry>
+       <cylinder length=".03" radius="0.037"></cylinder>
+      </geometry>
+      <material name="black">
+          <color rgba="0 0 0 1"/>
+      </material>
+    </visual>
+  </link>
+
+  <link name="tyer_front_right">
+    <visual>
+      <geometry>
+       <cylinder length=".03" radius="0.037"></cylinder>
+      </geometry>
+      <material name="black">
+          <color rgba="0 0 0 1"/>
+      </material>
+    </visual>
+  </link>
+
+  <link name="tyer_middle_left">
+    <visual>
+      <geometry>
+       <cylinder length=".045" radius="0.075"></cylinder>
+      </geometry>
+      <material name="white">
+          <color rgba="1 1 1 1"/>
+      </material>
+    </visual>
+  </link>
+
+ <link name="tyer_middle_right">
+    <visual>
+      <geometry>
+       <cylinder length=".045" radius="0.075"></cylinder>
+      </geometry>
+      <material name="white">
+          <color rgba="1 1 1 1"/>
+      </material>
+    </visual>
+  </link>
+
+  <link name="tyer_back_left">
+    <visual>
+      <geometry>
+       <cylinder length=".03" radius="0.037"></cylinder>
+      </geometry>
+      <material name="black">
+          <color rgba="0 0 0 1"/>
+      </material>
+    </visual>
+  </link>
+
+ <link name="tyer_back_right">
+    <visual>
+      <geometry>
+       <cylinder length=".03" radius="0.037"></cylinder>
+      </geometry>
+      <material name="black">
+          <color rgba="0 0 0 1"/>
+      </material>
+    </visual>
+  </link>
+
+
+  <joint name="base_to_front_left" type="continuous">
+    <origin rpy="1.57075  0  0" xyz="0.167  0.220  -0.0978"/>
+    <parent link="base_link"/>
+    <child link="tyer_front_left"/>
+    <axis xyz="0 0 1"/>
+  </joint>
+
+  <joint name="base_to_front_right" type="continuous">
+    <origin rpy="1.57075  0  0" xyz="0.167  -0.220  -0.0978"/>
+    <parent link="base_link"/>
+    <child link="tyer_front_right"/>
+    <axis xyz="0 0 1"/>
+  </joint>
+
+  <joint name="base_to_middle_left" type="continuous">
+    <origin rpy="1.57075  0  0" xyz="-0.07  0.225  -0.095"/>
+    <parent link="base_link"/>
+    <child link="tyer_middle_left"/>
+    <axis xyz="0 0 1"/>
+  </joint>
+
+  <joint name="base_to_middle_right" type="continuous">
+    <origin rpy="1.57075  0  0" xyz="-0.07  -0.225  -0.095"/>
+    <parent link="base_link"/>
+    <child link="tyer_middle_right"/>
+    <axis xyz="0 0 1"/>
+  </joint>
+
+  <joint name="base_to_back_left" type="continuous">
+    <origin rpy="1.57075  0  0" xyz="-0.245  0.16  -0.0978"/>
+    <parent link="base_link"/>
+    <child link="tyer_back_left"/>
+    <axis xyz="0 0 1"/>
+  </joint>
+
+  <joint name="base_to_back_right" type="continuous">
+    <origin rpy="1.57075  0  0" xyz="-0.245  -0.16  -0.0978"/>
+    <parent link="base_link"/>
+    <child link="tyer_back_right"/>
+    <axis xyz="0 0 1"/>
+  </joint>
+
+  <link name="pillar_front">
+    <visual>
+      <geometry>
+        <box size="0.08 .15 1.2"/>
+      </geometry>
+      <material name="silver">
+          <color rgba=".86 .86 .86 1"/>
+      </material>
+    </visual>
+  </link>
+
+  <joint name="base_to_pillar_front_left" type="fixed">
+    <origin xyz="0.288  0.0  0.5685"/>
+    <parent link="base_link"/>
+    <child link="pillar_front"/>
+  </joint>
+
+  <link name="robot_head">
+    <visual>
+      <geometry>
+        <box size="0.08 .40 0.26"/>
+      </geometry>
+      <material name="silver">
+          <color rgba=".86 .86 .86 1"/>
+      </material>
+    </visual>
+  </link>
+
+  <joint name="pillar_to_head" type="fixed">
+    <origin rpy="0  -0.5235  0" xyz="0.0  0.0  0.5715"/>
+    <parent link="pillar_front"/>
+    <child link="robot_head"/>
+  </joint>
+
+  <property name="M_PI" value="3.14159"/>
+  <property name="SCALE" value="0.0254"/>
+</robot>
+

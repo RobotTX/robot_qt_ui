@@ -82,7 +82,7 @@ void CmdRobotWorker::connectedSlot(){
             QString::number(mapPort) + QChar(31) + QString::number(laserPort) + QChar(23);
 
     bool tmpBool(false);
-    while(!tmpBool){
+    while(!tmpBool && socket->isOpen()){
         socket->write(portStr.toUtf8());
         if(socket->waitForBytesWritten(100)){
             qDebug() << "(Robot" << ipAddress << ") Ports sent";
