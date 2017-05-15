@@ -12,13 +12,14 @@ Menu {
     width: 140
     property Points pointModel
     property int currentMenuIndex: -1
-    signal pointSelected(string name, double posX, double posY)
+    property bool homeOnly: false
+    signal pointSelected(string name, double posX, double posY, int orientation)
 
     background: Rectangle {
         implicitWidth: parent.width
         // +1 is needed to compensate the line that we don't have a line in these menus
         // but we have it in the previous menu
-        implicitHeight: (pointModel.count) * (Style.menuItemHeight+1) - 1
+        implicitHeight: pointModel.count * (Style.menuItemHeight+1) - 1
         color: Style.lightGreyBackground
         border.color: Style.lightGreyBorder
         radius: 5
@@ -64,11 +65,11 @@ Menu {
                     padding: 0
                     width: 140
                     x: parent.width
-                    visible: currentMenuIndex === index
+                    visible: currentMenuIndex === index && (homeOnly ? pointModel.getNbHome(groupName) > 0 : true)
 
                     background: Rectangle {
                         implicitWidth: parent.width
-                        implicitHeight: points.count * (Style.menuItemHeight+1)-1
+                        implicitHeight: (homeOnly ? pointModel.getNbHome(groupName) : points.count) * (Style.menuItemHeight+1)-1
                         color: Style.lightGreyBackground
                         border.color: Style.lightGreyBorder
                         radius: 5
@@ -87,8 +88,9 @@ Menu {
 
                             PopupMenuItem {
                                 leftPadding: Style.menuItemLeftPadding
-                                Layout.preferredHeight: Style.menuItemHeight+1
+                                Layout.preferredHeight: homeOnly ? (home ? Style.menuItemHeight+1 : 0) : Style.menuItemHeight+1
                                 Layout.preferredWidth: parent.width
+                                visible: homeOnly ? home : true
 
                                 contentItem: CustomLabel {
                                     text: qsTr(name)
@@ -101,7 +103,7 @@ Menu {
                                     }
                                 }
 
-                                onTriggered: selectPointMenu.pointSelected(name, posX, posY)
+                                onTriggered: selectPointMenu.pointSelected(name, posX, posY, orientation)
                             }
                         }
                     }

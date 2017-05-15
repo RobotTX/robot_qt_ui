@@ -124,4 +124,14 @@ ListModel {
     function deleteAllGroups(){
         clear();
     }
+
+    function getNbHome(groupName){
+        var nb = 0;
+        for(var i = 0; i < count; i++)
+            if(get(i).groupName === groupName)
+                for(var j = 0; j < get(i).points.count; j++)
+                    if(get(i).points.get(j).home)
+                        nb++;
+        return nb;
+    }
 }

@@ -99,6 +99,8 @@ Frame {
             right: saveStateButton.left
             rightMargin: 15
         }
+
+        onPositionChanged: console.log("New rotation : " + Math.round(slider.valueAt(slider.position)))
     }
 
     /// The save state button

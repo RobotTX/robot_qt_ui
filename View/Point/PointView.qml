@@ -16,9 +16,11 @@ Image {
     property string tooltipText
     property int pointOrientation: 0
     property int mapOrientation: 0
+    property double pointPosX
+    property double pointPosY
 
-    x: - width / 2
-    y: - height
+    x: pointPosX - width / 2
+    y: pointPosY - height
 
     source: imageSource()
     width: 18
@@ -108,8 +110,8 @@ Image {
     }
 
     function setPos(posX, posY){
-        x = posX - width/2;
-        y = posY - height;
+        pointPosX = posX;
+        pointPosY = posY;
     }
 
     function setType(newType){

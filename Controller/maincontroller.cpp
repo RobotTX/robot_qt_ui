@@ -334,7 +334,7 @@ void MainController::updateHomeSlot(QString ip, double homeX, double homeY, doub
     emit setHome(ip, homePos.x(), homePos.y(), homeOri);
 }
 
-void MainController::sendCommandNewHome(QString ip, double homeX, double homeY, double homeOri){
+void MainController::sendCommandNewHome(QString ip, double homeX, double homeY, int homeOri){
     QPointF homePos = Helper::Convert::pixelCoordToRobotCoord(
     QPointF(homeX, homeY),
     mapController->getOrigin().x(),

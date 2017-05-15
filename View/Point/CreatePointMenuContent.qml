@@ -26,22 +26,21 @@ Frame {
         target: tmpPointView
         onTmpPointViewPosChanged: {
             checkPoint(Helper.formatName(pointTextField.text), oldName,
-                       tmpPointView.x + tmpPointView.width / 2,
-                       tmpPointView.y + tmpPointView.height)
+                       tmpPointView.pointPosX,
+                       tmpPointView.pointPosY)
         }
     }
 
     onVisibleChanged: {
-        if(tmpPointView && createPointMenuFrame)
+        if(tmpPointView && createPointMenuFrame){
             tmpPointView._isVisible = visible;
+            tmpPointView.setPos(0, 0);
+        }
 
         homeCheckBox.checked = false;
         slider.value = 0;
 
         if(!visible){
-            if(tmpPointView && createPointMenuFrame)
-                tmpPointView.setPos(tmpPointView.originX, tmpPointView.originY);
-
             /// When you finish or cancel an edition, we show the point you were editing
             if(oldName !== ""){
                 for(var i = 0; i < pointModel.count; i++)
@@ -50,7 +49,6 @@ Frame {
                             if(pointModel.get(i).points.get(j).name === oldName)
                                 pointModel.get(i).points.setProperty(j, "isVisible", true);
             }
-
 
             oldName = "";
             oldGroup = "";
@@ -67,8 +65,8 @@ Frame {
                                 homeCheckBox.checked = pointModel.get(i).points.get(j).home;
                                 slider.value = pointModel.get(i).points.get(j).orientation;
 
-                                tmpPointView.setPos(pointModel.get(i).points.get(j).posX, pointModel.get(i).points.get(j).posY);
                                 tmpPointView.setType(pointModel.get(i).points.get(j).home ? Helper.PointViewType.HOME_TEMP : Helper.PointViewType.TEMP);
+                                tmpPointView.setPos(pointModel.get(i).points.get(j).posX, pointModel.get(i).points.get(j).posY);
                                 tmpPointView.setOrientation(pointModel.get(i).points.get(j).orientation);
                                 groupComboBox.currentIndex = i;
                                 groupComboBox.displayText = oldGroup;
@@ -124,8 +122,8 @@ Frame {
         }
 
         onTextChanged: checkPoint(Helper.formatName(pointTextField.text), oldName,
-                       tmpPointView.x + tmpPointView.width / 2,
-                       tmpPointView.y + tmpPointView.height)
+                       tmpPointView.pointPosX,
+                       tmpPointView.pointPosY)
     }
 
     Label {
@@ -310,7 +308,7 @@ Frame {
 
     Label {
         id: xLabel
-        text: qsTr("X : " + Math.round(tmpPointView.x + tmpPointView.width / 2))
+        text: qsTr("X : " + Math.round(tmpPointView.pointPosX))
         anchors {
             left: parent.left
             top: pointLocationLabel.bottom
@@ -320,7 +318,7 @@ Frame {
     }
 
     Label {
-        text: qsTr("Y : " + Math.round(tmpPointView.y + tmpPointView.height))
+        text: qsTr("Y : " + Math.round(tmpPointView.pointPosY))
         anchors {
             left: parent.left
             top: xLabel.bottom
@@ -351,7 +349,7 @@ Frame {
         onReleased: if(saveButton.canSave) {
             var newName = Helper.formatName(pointTextField.text);
             var groupName = groupComboBox.displayText;
-            createPoint(newName, groupName, tmpPointView.x + tmpPointView.width / 2, tmpPointView.y + tmpPointView.height,
+            createPoint(newName, groupName, tmpPointView.pointPosX, tmpPointView.pointPosY,
                         oldName, oldGroup, true, homeCheckBox.checked,
                         homeCheckBox.checked ? Math.round(slider.valueAt(slider.position)) : 0);
             backToMenu();
