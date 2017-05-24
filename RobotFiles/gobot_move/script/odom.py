@@ -39,7 +39,7 @@ def talker():
     pub = rospy.Publisher('odom', Odometry, queue_size=10)
     br =  tf2_ros.TransformBroadcaster()
     rospy.init_node('odometry_publisher')
-    rate = rospy.Rate(20) # 10hz
+    rate = rospy.Rate(20) # 20hz
     resetEncodesProxy()
     lastTime = rospy.Time.now()
     

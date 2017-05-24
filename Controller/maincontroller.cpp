@@ -447,8 +447,10 @@ void MainController::newMapFromRobotSlot(QString ip, QByteArray mapArray, QStrin
     robotsController->sendNewMapToAllExcept(ip, mapId, mapDate, mapMetadata, mapController->getMapImage());
 
     pointController->clearPoints();
+    XMLParser::save(pointController, Helper::getAppPath() + QDir::separator() + "currentPoints.xml");
 
     pathController->clearPaths();
+    PathXMLParser::save(pathController, Helper::getAppPath() + QDir::separator() + "currentPaths.xml");
 }
 
 void MainController::requestOrSendMap(QString ip, bool request){
