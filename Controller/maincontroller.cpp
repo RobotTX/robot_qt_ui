@@ -116,7 +116,7 @@ MainController::MainController(QQmlApplicationEngine *engine, QObject* parent) :
                     QStringList list = line.split(' ');
                     if(list.size() == 2){
                         mapChoice = list.at(0).toInt();
-                        if(list.at(1).toDouble() > 0 && list.at(1).toDouble() < 1)
+                        if(list.at(1).toDouble() >= 0 && list.at(1).toDouble() <= 1)
                             batteryThreshold = list.at(1).toDouble();
                     } else {
                         /// TODO tell the user and rewrite the settings file as it has been corrupted
@@ -282,7 +282,7 @@ void MainController::loadMapConfig(QString fileName) {
 void MainController::saveSettings(int mapChoice, double batteryThreshold){
     qDebug() << "save settings called" << mapChoice << batteryThreshold;
     QFile file(Helper::getAppPath() + QDir::separator() + "settings.txt");
-    if(file.open(QFile::ReadWrite)){
+    if(file.open(QFile::WriteOnly)){
         QTextStream stream(&file);
         stream << mapChoice << " " << batteryThreshold ;
         file.close();
