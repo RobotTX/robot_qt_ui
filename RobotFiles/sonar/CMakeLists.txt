@@ -1,23 +1,19 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(gobot_move)
+project(sonar)
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
-  nav_msgs
   roscpp
   rospy
   std_msgs
-  genmsg
-  tf 
   message_generation
 )
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
 
-set(CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_CXX_FLAGS}")
 
 ## Uncomment this if the package has a setup.py. This macro ensures
 ## modules and global scripts declared therein get installed
@@ -51,31 +47,28 @@ set(CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_CXX_FLAGS}")
 ## Generate messages in the 'msg' folder
  add_message_files(
    FILES
-   moveInfo.msg
-#   Message1.msg
-#   Message2.msg
+   DistanceMsg.msg
+   DistanceMsgFollow.msg
+   BumperMsg.msg
+   SonarMsg.msg
+   BatteryInfo.msg
+   CliffData.msg
  )
 
 ## Generate services in the 'srv' folder
  add_service_files(
    FILES
-   FindNextPoint.srv
-   RestartSmallMap.srv
-   GetEncoder.srv
-   GetEncoders.srv
-   SetSpeed.srv
-   GetSpeed.srv
-   SetMotor.srv
-   SetSpeedDirection.srv
-   SetSpeeds.srv
-#   Service1.srv
-#   Service2.srv
+   GetBumpers.srv
+   GetSonars.srv
+   GetBatteryInfo.srv
+   GetWeightInfo.srv
+   GetCliffData.srv
+   SetAutoCharging.srv
  )
 
 ## Generate actions in the 'action' folder
 # add_action_files(
 #   FILES
-   
 #   Action1.action
 #   Action2.action
 # )
@@ -83,7 +76,7 @@ set(CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_CXX_FLAGS}")
 ## Generate added messages and services with any dependencies listed here
  generate_messages(
    DEPENDENCIES
-   std_msgs#   std_msgs
+   std_msgs
  )
 
 ################################################
@@ -116,9 +109,9 @@ set(CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_CXX_FLAGS}")
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
-  INCLUDE_DIRS include
-#  LIBRARIES gobot_move
-  CATKIN_DEPENDS nav_msgs roscpp rospy std_msgs tf
+#  INCLUDE_DIRS include
+#  LIBRARIES sonar
+  CATKIN_DEPENDS message_runtime rospy std_msgs
 #  DEPENDS system_lib
 )
 
@@ -134,42 +127,24 @@ include_directories(
 )
 
 ## Declare a C++ library
-# add_library(gobot_move
-#   src/${PROJECT_NAME}/gobot_move.cpp
+# add_library(sonar
+#   src/${PROJECT_NAME}/sonar.cpp
 # )
 
 ## Add cmake target dependencies of the library
 ## as an example, code may need to be generated before libraries
 ## either from message generation or dynamic reconfigure
-# add_dependencies(gobot_move ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+# add_dependencies(sonar ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Declare a C++ executable
-add_executable(gobot_move_odom src/odom.cpp)
-target_link_libraries(gobot_move_odom ${catkin_LIBRARIES})
-add_dependencies(gobot_move_odom gobot_move_generate_messages_cpp)
-
-add_executable(initialPosePublisher src/initialPosePublisher.cpp)
-target_link_libraries(initialPosePublisher ${catkin_LIBRARIES})
-add_dependencies(initialPosePublisher gobot_move_generate_messages_cpp)
-
-add_executable(odom_test src/odom_test.cpp)
-target_link_libraries(odom_test ${catkin_LIBRARIES})
-add_dependencies(odom_test gobot_move_generate_messages_cpp)
-
-add_executable(odom_turn src/odom_turn.cpp)
-target_link_libraries(odom_turn ${catkin_LIBRARIES})
-add_dependencies(odom_turn gobot_move_generate_messages_cpp)
-
-add_executable(odom_line src/odom_line.cpp)
-target_link_libraries(odom_line ${catkin_LIBRARIES})
-add_dependencies(odom_line gobot_move_generate_messages_cpp)
+# add_executable(sonar_node src/sonar_node.cpp)
 
 ## Add cmake target dependencies of the executable
 ## same as for the library above
-# add_dependencies(gobot_move_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+# add_dependencies(sonar_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Specify libraries to link a library or executable target against
-# target_link_libraries(gobot_move_node
+# target_link_libraries(sonar_node
 #   ${catkin_LIBRARIES}
 # )
 
@@ -188,7 +163,7 @@ add_dependencies(odom_line gobot_move_generate_messages_cpp)
 # )
 
 ## Mark executables and/or libraries for installation
-# install(TARGETS gobot_move gobot_move_node
+# install(TARGETS sonar sonar_node
 #   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
 #   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
 #   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
@@ -213,11 +188,10 @@ add_dependencies(odom_line gobot_move_generate_messages_cpp)
 #############
 
 ## Add gtest based cpp test target and link libraries
-# catkin_add_gtest(${PROJECT_NAME}-test test/test_gobot_move.cpp)
+# catkin_add_gtest(${PROJECT_NAME}-test test/test_sonar.cpp)
 # if(TARGET ${PROJECT_NAME}-test)
 #   target_link_libraries(${PROJECT_NAME}-test ${PROJECT_NAME})
 # endif()
 
 ## Add folders to be run by python nosetests
 # catkin_add_nosetests(test)
-

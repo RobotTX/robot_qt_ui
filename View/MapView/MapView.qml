@@ -151,7 +151,6 @@ Frame {
 
                     mapImage.x = mapImage.x + res.x * zoomScale.xScale;
                     mapImage.y = mapImage.y + res.y * zoomScale.xScale;
-
                 }
             }
 
@@ -173,14 +172,6 @@ Frame {
                     yScale: xScale
                     origin.x: mapImage.width / 2
                     origin.y: mapImage.height / 2
-                }
-
-                Rectangle {
-                    width: 2
-                    height: 2
-                    color: "green"
-                    x: mapImage.width/2 - 1
-                    y: mapImage.height/2 - 1
                 }
 
                 /// Canvas to display the paths dotted line on the map
@@ -413,15 +404,6 @@ Frame {
                         }
                     }
                 }
-            }
-
-
-            Rectangle {
-                width: 2
-                height: 2
-                color: "red"
-                x: mouseArea.width/2 - 1
-                y: mouseArea.height/2 - 1
             }
         }
     }

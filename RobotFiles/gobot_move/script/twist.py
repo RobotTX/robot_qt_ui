@@ -45,7 +45,7 @@ def callback(msg):
        			wheelSpeed = 0.0
     		#change msg.linear.z to anglespeed
     		if ( WHEELSPEED[2] != 0.0 ):
-       			angleSpeed = 20.86 * abs(WHEELSPEED[2])
+       			angleSpeed = 40.86 * abs(WHEELSPEED[2])
     		else:
        			angleSpeed = 0.0
     		if ( WHEELSPEED[2] > 0.0 ):
@@ -66,13 +66,14 @@ def callback(msg):
     		else:
        			lDir = "B"
        			leftSpeed = round(abs(leftSpeed),1)
-    
+		print "twist", rightSpeed,leftSpeed
+   		''' 
 	    	if rightSpeed < 5.0 and rightSpeed != 0.0:
        			rightSpeed = 5.0
     		if leftSpeed < 5.0 and leftSpeed != 0.0:
        			leftSpeed = 5.0
-   	 	#logging = "\n rightSpeed is:" + str(rightSpeed) +" leftSpeed is:" + str(leftSpeed)
-    		#fileHandle.write( logging )
+		print rightSpeed,leftSpeed
+		'''
     		setSpeed(rDir, rightSpeed, lDir, leftSpeed)
     	elif (frontBumper<4):
 		flag = True
