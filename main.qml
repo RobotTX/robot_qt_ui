@@ -228,13 +228,6 @@ ApplicationWindow {
         mapView.setMessageTop(2, "Saved the map to \"" + file_name + "\"");
     }
 
-    function reloadMapImage(file_name){
-        // little trick as the binding property does not allow the map to be reloaded unless the filename changes
-        console.log("updating");
-        mapView.mapSrc = "qrc:/icons/hand";
-        mapView.mapSrc = file_name;
-    }
-
     function setBatteryThreshold(threshold){
         batteryWarningThreshold = threshold;
     }

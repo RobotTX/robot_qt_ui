@@ -252,7 +252,13 @@ bool sendOnceMap(gobot_software::Port::Request &req,
 		std::cout << "(Map) 1 : " << line << std::endl;
 
 		getline(mapFile, line);
+        if(line.at(0) == '#'){
+            std::cout << "(Map) Got a second line with # : " << line << std::endl;
+            getline(mapFile, line);
+        }
+
 		std::cout << "(Map) 2 : " << line << std::endl;
+
 		int width = std::stoi(line.substr(0,line.find_first_of(" ")));
 		int height = std::stoi(line);
 		int map_size = width * height;

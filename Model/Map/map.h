@@ -43,9 +43,6 @@ public:
     void setWidth(const int _width) { width = _width; }
     void setResolution(const double _resolution) { resolution = _resolution; }
 
-signals:
-    void mapFileChanged();
-
 private:
     /**
      * @brief resolution

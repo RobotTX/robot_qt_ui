@@ -28,8 +28,8 @@ MapController::MapController(QQmlApplicationEngine* engine, QObject *application
         connect(this, SIGNAL(setMapPosition(QVariant, QVariant, QVariant, QVariant)), mapViewFrame, SLOT(setMapPosition(QVariant ,QVariant, QVariant, QVariant)));
         connect(mapViewFrame, SIGNAL(savePosition(double, double, double, int, QString)), this, SLOT(savePositionSlot(double, double, double, int, QString)));
         connect(mapViewFrame, SIGNAL(loadPosition()), this, SLOT(loadPositionSlot()));
-        connect(map, SIGNAL(mapFileChanged()), mapViewFrame, SLOT(mapFileChanged()));
         connect(mapViewFrame, SIGNAL(posClicked(double, double)), this, SLOT(posClicked(double, double)));
+        connect(this, SIGNAL(requestReloadMap(QVariant)), mapViewFrame, SLOT(setMap(QVariant)));
     } else {
         /// NOTE can probably remove that when testing phase is over
         qDebug() << "MapController::MapController could not find the mapViewFrame";
@@ -46,7 +46,6 @@ MapController::MapController(QQmlApplicationEngine* engine, QObject *application
         Q_UNREACHABLE();
     }
 
-    connect(this, SIGNAL(requestReloadMap(QVariant)), applicationWindow, SLOT(reloadMapImage(QVariant)));
 
     initializeMap();
 
@@ -294,7 +293,12 @@ QImage MapController::getImageFromArray(const QByteArray& mapArrays, const int m
 void MapController::newMapFromRobot(const QByteArray& mapArray, const QString mapId, const QString mapDate){
     /// Convert the map from a byteArray to a QImage and save it
     map->setMapImage(getImageFromArray(mapArray, map->getWidth(), map->getHeight(), true));
-    map->setMapId(QUuid(mapId));
+    QUuid mapId_quuid = QUuid(mapId);
+    if(mapId_quuid == QUuid()){
+        qDebug() << "The robot gave us a null or invalid QUUID => to investigate, not supposed to happens";
+        Q_UNREACHABLE();
+    }
+    map->setMapId(mapId_quuid);
     map->setDateTime(QDateTime::fromString(mapDate, "yyyy-MM-dd-hh-mm-ss"));
     qDebug() << Helper::getAppPath() + QDir::separator() + "mapConfigs" + QDir::separator() + "tmpImage.pgm";
     map->getMapImage().save(Helper::getAppPath() + QDir::separator() + "mapConfigs" + QDir::separator() + "tmpImage.pgm", "PGM");

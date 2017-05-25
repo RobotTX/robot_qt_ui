@@ -146,14 +146,14 @@ void CommandController::cmdAnswerSlot(QString answer){
         Q_UNREACHABLE();
     }
 
-    qDebug() << "CommandCOntroller::cmdAnswerSlot in" << 15000 - timer.remainingTime();
+    qDebug() << "CommandController::cmdAnswerSlot in" << 15000 - timer.remainingTime();
 
     timer.stop();
     cmdFinished();
 }
 
 void CommandController::cmdFinished(){
-    qDebug() << "CommandCOntroller::cmdFinished";
+    qDebug() << "CommandController::cmdFinished";
     waitingForAnswer = false;
     /// if the command queue is not empty we process the next command
     if(!cmdQueue.isEmpty()){

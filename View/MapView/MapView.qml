@@ -409,8 +409,12 @@ Frame {
     }
 
     function setMap(_mapSrc){
+        // little trick as the binding property does not allow the map to be reloaded unless the filename changes
+        mapSrc = "qrc:/icons/hand";
+        if(_mapSrc.indexOf("file://") !== 0)
+            _mapSrc = "file://" + _mapSrc;
         console.log("setMap source : " + _mapSrc);
-        mapSrc = "file://" + _mapSrc;
+        mapSrc = _mapSrc;
         emptyMap.visible = false;
         mapImage.visible = true;
     }
@@ -424,13 +428,6 @@ Frame {
         mapImage.x = posX;
         mapImage.y = posY;
         topViewId.setMapRotation(mapRotation);
-    }
-
-
-    function mapFileChanged(){
-        console.log("changed file " + "file:/" + map._mapFile+ " " + mapImage.source);
-        mapImage.source = "";
-        mapImage.source = "file:/" + map._mapFile;
     }
 
     function setMessageTop(status, msg){

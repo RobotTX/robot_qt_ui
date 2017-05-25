@@ -138,10 +138,7 @@ Menu {
         }
         leftPadding: Style.menuItemLeftPadding
 
-        onHoveredChanged: {
-            if(visible) currentMenuIndex = 2;
-            console.log("laser activated " + laserActivated);
-        }
+        onHoveredChanged: if(visible) currentMenuIndex = 2
         onTriggered: robotMenu.laserPressed()
     }
 
