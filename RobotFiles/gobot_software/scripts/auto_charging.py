@@ -140,7 +140,8 @@ def auto_charging():
 def setAutoCharging(req):
 	print "setAutoCharging called"
 	global chargingFlag
-	#batteryFlag = getBatteryProxy().ChargingFlag
+	# TODO put this guy back when testing phase is over
+	# batteryFlag = getBatteryProxy().ChargingFlag
 	batteryFlag = False
 	if (not batteryFlag):
 		pub = rospy.Publisher("/move_base_simple/goal", PoseStamped, queue_size = 10)
@@ -153,9 +154,9 @@ def setAutoCharging(req):
 		home_parameters = file.readline().split()
 		print len(home_parameters)
 		if(len(home_parameters) == 6):
-			print "home position and orientation", home_parameters[0], home_parameters[0], home_parameters[4], home_parameters[5]
+			print "home position and orientation", home_parameters[0], home_parameters[1], home_parameters[4], home_parameters[5]
 			nav_goal.pose.position.x = home_parameters[0]
-			nav_goal.pose.position.y = home_parameters[0]
+			nav_goal.pose.position.y = home_parameters[1]
 			nav_goal.pose.position.z = 0.0
 			nav_goal.pose.orientation.x = 0.0
 			nav_goal.pose.orientation.y = 0.0

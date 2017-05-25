@@ -340,7 +340,7 @@ void RobotsController::updateRobotPos(QString ip, double x, double y, double ori
 }
 
 void RobotsController::dockRobot(QString ip){
-    sendCommand(ip, QString("0"));
+    sendCommand(ip, QString("o"));
 }
 
 void RobotsController::resetHomePathSlot(QString ip){

@@ -95,15 +95,16 @@ void CommandController::cmdAnswerSlot(QString answer){
                     emit updateHome(ip, list.at(2).toDouble(), list.at(3).toDouble(), list.at(4).toDouble());
                     emit setMessageTop(2, "The robot " + robotName + " has a new home");
                 break;
-                /*case 'o':
-                    /// TODO go home system
-                    /// Sent the robot to its home
+                case 'o':
+                    /// TODO message to say robot on its way
                 break;
+                /**
                 case 'p':
                     /// Stopped the robot to go home
                     /// NOT USED ANYMORE
                     Q_UNREACHABLE();
-                break;*/
+                break;
+                */
                 case 'q':
                     /// Started the laser of the robot
                     emit updateLaser(ip, true);

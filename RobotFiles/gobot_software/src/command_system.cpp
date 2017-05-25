@@ -362,9 +362,7 @@ bool execCommand(ros::NodeHandle n, std::vector<std::string> command){
 			if(command.size() == 1) {
 				std::cout << "(Command system) Sending the robot home" << std::endl;
 				std_srvs::Empty arg;
-				/// TODO ? 
 				if(ros::service::call("setAutoCharging", arg)){
-				//if(ros::service::call("go_home", arg)){
 					std::cout << "Go home service called with success" << std::endl;
 					status = true;
 				} else
@@ -379,6 +377,7 @@ bool execCommand(ros::NodeHandle n, std::vector<std::string> command){
 			if(command.size() == 1) {
 				std::cout << "(Command system) Stopping the robot on its way home" << std::endl;
 				std_srvs::Empty arg;
+				// TODO stop the mothofockin robot lah
 				if(ros::service::call("stop_going_home", arg)){
 					std::cout << "Stop going home service called with success" << std::endl;
 					status = true;

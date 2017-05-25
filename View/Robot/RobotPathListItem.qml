@@ -94,8 +94,10 @@ Frame {
                 anchors.verticalCenter: parent.verticalCenter
             }
             onClicked: {
-                frame.dockRobot(ip)
-                console.log(homeX < -100 ? "I don't have a home" : "Going to dock now")
+                if(homeX > -100){
+                    frame.dockRobot(ip)
+                    console.log(homeX < -100 ? "I don't have a home" : "Going to dock now")
+                }
             }
         }
     }
