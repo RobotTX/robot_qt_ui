@@ -99,7 +99,7 @@ private slots:
      * @brief doneSendingMapSlot
      * Finished to send the map to the robot
      */
-    void doneSendingMapSlot(void);
+    void doneSendingMapSlot(bool deleteHomePath);
 
     /**
      * @brief updateRobot
@@ -252,6 +252,7 @@ signals:
     void checkScanning(QString ip, bool scanning);
 
     void updateLaser(QString ip, bool activated);
+    void resetHomePath(QString ip);
 
     /// Tell the workers to stop their connection to the robot
     void stopCmdRobotWorker(void);

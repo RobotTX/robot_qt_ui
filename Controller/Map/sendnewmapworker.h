@@ -17,7 +17,7 @@ signals:
      * @brief doneSendingNewMapSignal
      * notifies the robot controller that we are not sending the map anymore
      */
-    void doneSendingNewMapSignal();
+    void doneSendingNewMapSignal(bool deleteHomePath);
 
 private slots:
 

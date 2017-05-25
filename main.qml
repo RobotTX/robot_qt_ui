@@ -40,6 +40,7 @@ ApplicationWindow {
     signal requestOrSendMap(string ip, bool request)
     signal setMessageTop(int status, string msg)
     signal test()
+    signal disco(string ip)
 
     onSetMessageTop: mapView.setMessageTop(status, msg)
 
@@ -190,8 +191,6 @@ ApplicationWindow {
 
         onAccepted: requestOrSendMap(ip, false)
         onRejected: requestOrSendMap(ip, true)
-
-
     }
 
     CustomDialog {
@@ -199,6 +198,7 @@ ApplicationWindow {
         x: applicationWindow.width / 2 - width / 2
         y: applicationWindow.height / 2 - height / 2
     }
+
 
     function openMapChoiceMessageDialog(ip, robotIsOlder){
         if(dialog.visible){

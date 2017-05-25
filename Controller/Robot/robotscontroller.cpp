@@ -118,6 +118,7 @@ void RobotsController::robotIsAliveSlot(const QString name, const QString ip, co
         robots.value(ip)->ping();
     } else {
         QPointer<RobotController> robotController = QPointer<RobotController>(new RobotController(engine_, this, ip, name));
+
         robots.insert(ip, robotController);
         emit addRobot(name, ip, ssid, stage, battery);
     }
@@ -221,8 +222,6 @@ void RobotsController::checkMapInfoSlot(const QString ip, const QString mapId, c
 
 void RobotsController::sendNewMap(const QString ip, const QString mapId, const QString date, const QString mapMetadata, const QImage mapImage) {
     robots.value(ip)->sendNewMap(mapId, date, mapMetadata, mapImage);
-    emit setHome(ip, 0, 0, 0);
-    emit setPath(ip, "");
 }
 
 void RobotsController::newMapFromRobotSlot(const QString ip, const QByteArray mapArray, const QString mapId, const QString mapDate, const QString resolution, const QString originX, const QString originY, const int map_width, const int map_height){
@@ -241,7 +240,7 @@ void RobotsController::sendNewMapToAllExcept(const QString ip, const QString map
     QList<QString> ipList = robots.keys();
     for(int i = 0; i < ipList.size(); i++)
         if(ipList.at(i).compare(ip) != 0)
-            sendNewMap(ip, mapId, date, mapMetadata, mapImage);
+            sendNewMap(ipList.at(i), mapId, date, mapMetadata, mapImage);
 
     timer = new QTimer(this);
     timer->setInterval(10000);
@@ -343,3 +342,9 @@ void RobotsController::updateRobotPos(QString ip, double x, double y, double ori
 void RobotsController::dockRobot(QString ip){
     sendCommand(ip, QString("0"));
 }
+
+void RobotsController::resetHomePathSlot(QString ip){
+    emit setHome(ip, 0, 0, 0);
+    emit setPath(ip, "");
+}
+

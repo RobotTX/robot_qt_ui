@@ -56,6 +56,7 @@ MainController::MainController(QQmlApplicationEngine *engine, QObject* parent) :
         connect(applicationWindow, SIGNAL(requestOrSendMap(QString, bool)), this, SLOT(requestOrSendMap(QString, bool)));
         connect(this, SIGNAL(emitBatteryThreshold(QVariant)), applicationWindow, SLOT(setBatteryThreshold(QVariant)));
 
+
         /// to initialize tutorial messages
         QObject* tuto = applicationWindow->findChild<QObject*>("tutorialModel");
         if(tuto){
@@ -414,8 +415,7 @@ void MainController::checkMapInfoSlot(QString ip, QString mapId, QString mapDate
                 if(mapController->getMapImage().size().width() != 0){
                     qDebug() << "MainController::checkMapInfoSlot There is a map on the application's side so the choice is offered to the user";
                     emit openMapChoiceMessageDialog(ip, robotOlder);
-                }
-                else {
+                } else {
                     qDebug() << "MainController::checkMapInfoSlot There is no map on the application side so we take the robot's one";
                     robotsController->requestMap(ip);
                 }
@@ -457,7 +457,10 @@ void MainController::requestOrSendMap(QString ip, bool request){
     if(request)
         robotsController->requestMap(ip);
     else
-        sendNewMap(ip);
+        robotsController->sendMapToAllRobots(mapController->getMapId().toString(),
+                                             mapController->getDateTime().toString("yyyy-MM-dd-hh-mm-ss"),
+                                             mapController->getMetadataString(),
+                                             mapController->getMapImage());
 }
 
 void MainController::getMapFromRobot(QString ip){

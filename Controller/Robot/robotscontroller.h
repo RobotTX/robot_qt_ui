@@ -128,6 +128,7 @@ private slots:
     void updateRobotPos(QString ip, double x, double y, double orientation);
 
     void dockRobot(QString ip);
+    void resetHomePathSlot(QString ip);
 
 signals:
     void stopRobotServerWorker(void);

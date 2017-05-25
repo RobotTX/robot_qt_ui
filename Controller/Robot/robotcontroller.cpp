@@ -58,6 +58,7 @@ RobotController::RobotController(QQmlApplicationEngine* engine, RobotsController
     /// Check if the robot is scanning when it connects
     connect(this, SIGNAL(checkScanning(QString, bool)), parent, SLOT(checkScanningSlot(QString, bool)));
     connect(this, SIGNAL(updateLaser(QString, bool)), parent, SLOT(updateLaserSlot(QString, bool)));
+    connect(this, SIGNAL(resetHomePath(QString)), parent, SLOT(resetHomePathSlot(QString)));
 
     /// to draw the obstacles of the robots
     QQmlComponent component(engine, QUrl("qrc:/View/Robot/ObstaclesItems.qml"));
@@ -156,7 +157,7 @@ void RobotController::launchWorkers(void){
 
     newMapWorker = QPointer<SendNewMapWorker>(new SendNewMapWorker(ip, PORT_NEW_MAP));
     connect(this, SIGNAL(sendNewMapSignal(QString, QString, QString, QImage)), newMapWorker, SLOT(writeTcpDataSlot(QString, QString, QString, QImage)));
-    connect(newMapWorker, SIGNAL(doneSendingNewMapSignal()), this, SLOT(doneSendingMapSlot()));
+    connect(newMapWorker, SIGNAL(doneSendingNewMapSignal(bool)), this, SLOT(doneSendingMapSlot(bool)));
     connect(newMapWorker, SIGNAL(robotIsDead()), this, SLOT(robotIsDeadSlot()));
     connect(this, SIGNAL(stopNewMapWorker()), newMapWorker, SLOT(stopWorker()));
     connect(this, SIGNAL(startNewMapWorker()), newMapWorker, SLOT(connectSocket()));
@@ -239,8 +240,10 @@ void RobotController::mapReceivedSlot(const QByteArray mapArray, const int who, 
     ping();
 }
 
-void RobotController::doneSendingMapSlot(void){
-    qDebug() << "RobotController::doneSendingMapSlot called";
+void RobotController::doneSendingMapSlot(bool deleteHomePath){
+    qDebug() << "RobotController::doneSendingMapSlot called" << ip;
+    if(deleteHomePath)
+        emit resetHomePath(ip);
     sendingMap = false;
 }
 

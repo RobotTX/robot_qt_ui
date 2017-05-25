@@ -29,13 +29,18 @@ void SendNewMapWorker::connectSocket(){
     /// the errorConnectionSlot will try to reconnect
     socket->connectToHost(ipAddress, port);
 
-    qDebug() << "(New Map) connectSocket done";
+    qDebug() << "(New Map) connectSocket done" << ipAddress;
 }
 
 void SendNewMapWorker::readTcpDataSlot(){
     QString dataStr = socket->readAll();
-    qDebug() << "(New Map) data received :" << dataStr;
-    emit doneSendingNewMapSignal();
+    qDebug() << "(New Map) data received :" << ipAddress << dataStr;
+    QStringList strList = dataStr.split(" ", QString::SkipEmptyParts);
+    bool deleteHomePath = false;
+    if(strList.size() == 2){
+        deleteHomePath = QString(strList.at(1)).toInt();
+    }
+    emit doneSendingNewMapSignal(deleteHomePath);
 }
 
 void SendNewMapWorker::writeTcpDataSlot(QString mapId, QString date, QString metadata, QImage map){
@@ -90,7 +95,7 @@ void SendNewMapWorker::writeTcpDataSlot(QString mapId, QString date, QString met
 
     byteArray.append(mapArray);
 
-    qDebug() << "(New Map) Map size to send :" << mapArray.length();
+    qDebug() << "(New Map) Map size to send :" << ipAddress << mapArray.length();
 
     if(socket && socket->isOpen()){
         int nbDataSend = socket->write(byteArray);
@@ -98,12 +103,12 @@ void SendNewMapWorker::writeTcpDataSlot(QString mapId, QString date, QString met
         socket->waitForBytesWritten();
 
         if(nbDataSend == -1)
-            qDebug() << "(New Map) An error occured while sending data";
+            qDebug() << "(New Map) An error occured while sending data" << ipAddress;
         else
-            qDebug() << "(New Map) " << nbDataSend << "bytes sent out of" << byteArray.size();
+            qDebug() << "(New Map) " << ipAddress << ":" << nbDataSend << "bytes sent out of" << byteArray.size();
     } else {
         /// NOTE: what to do if the socket is closed ? can it happen ?
-        qDebug() << "(New Map) Trying to write on a socket that is not created or connected yet";
+        qDebug() << "(New Map) Trying to write on a socket that is not created or connected yet" << ipAddress;
         Q_UNREACHABLE();
     }
 }
