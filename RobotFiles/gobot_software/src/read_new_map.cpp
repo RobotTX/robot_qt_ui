@@ -186,7 +186,8 @@ void session(boost::shared_ptr<tcp::socket> sock, ros::NodeHandle n){
                     std::cout << "(New Map) Home deleted" << std::endl;
 
                     /// Relaunch gobot_move
-                    cmd = "roslaunch gobot_move slam.launch &";
+                    //cmd = "roslaunch gobot_move slam.launch &";
+                    cmd = "roslaunch gobot_move gazebo_slam.launch &";
                     system(cmd.c_str());
                     std::cout << "(New Map) We relaunched gobot_move" << std::endl;
 

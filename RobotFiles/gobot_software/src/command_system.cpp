@@ -454,7 +454,8 @@ bool execCommand(ros::NodeHandle n, std::vector<std::string> command){
 	            sleep(5);
 
 	            /// Relaunch gobot_move
-	            cmd = "roslaunch gobot_move scan.launch &";
+	            //cmd = "roslaunch gobot_move scan.launch &";
+                cmd = "roslaunch gobot_move gazebo_scan.launch &";
 	            system(cmd.c_str());
 	            std::cout << "(New Map) We relaunched gobot_move" << std::endl;
 
@@ -478,7 +479,8 @@ bool execCommand(ros::NodeHandle n, std::vector<std::string> command){
 		            sleep(5);
 
 		            /// Relaunch gobot_move
-		            cmd = "roslaunch gobot_move slam.launch &";
+                    //cmd = "roslaunch gobot_move slam.launch &";
+                    cmd = "roslaunch gobot_move gazebo_slam.launch &";
 		            system(cmd.c_str());
 		            std::cout << "(New Map) We relaunched gobot_move" << std::endl;
 		        }
