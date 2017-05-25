@@ -14,7 +14,7 @@ class ScanMapPaintedItem : public QQuickPaintedItem {
     Q_PROPERTY(double xRobot READ robotX WRITE setRobotX NOTIFY xRobotChanged)
     Q_PROPERTY(double yRobot READ robotY WRITE setRobotY NOTIFY yRobotChanged)
     Q_PROPERTY(QString ip READ getIp WRITE setIp NOTIFY ipChanged)
-    Q_PROPERTY(bool _drawRobotView READ drawRobotView WRITE setDrawRobotView NOTIFY drawRobotViewChanged)
+    Q_PROPERTY(QString name READ getName WRITE setName NOTIFY nameChanged)
 
 public:
 
@@ -34,32 +34,31 @@ public:
     double robotX(void) const { return xRobot; }
     double robotY(void) const { return yRobot; }
     QString getIp(void) const { return ip; }
-    bool drawRobotView(void) const { return _drawRobotView; }
     int getLeft(void) const { return left; }
     int getTop(void) const { return top; }
+    QString getName(void) const { return name; }
 
     void setRobotX(const double x);
     void setRobotY(const double y);
 
     void setRobotOrientation(const double ori) { orientationRobot = ori; emit updateRobot(); }
-    void setIp(const QString _ip) { ip = _ip; }
-    void setDrawRobotView(const bool draw) {
-                                            _drawRobotView = draw;
-                                            if(!_drawRobotView) emit hideRobot();
-                            }
+    void setIp(const QString _ip) { ip = _ip; emit ipChanged(); }
+    void setName(const QString _name) { name = _name; emit nameChanged(); }
+    void hideRobot(){ emit hideRobotSignal(); }
+
 signals:
     void orientationRobotChanged();
     void xRobotChanged();
     void yRobotChanged();
     void ipChanged();
+    void nameChanged();
     void updateRobot();
-    void drawRobotViewChanged();
-    void hideRobot();
+    void hideRobotSignal();
 
 private:
     /// before saving drawRobotView must be set to false in order to not save it with the map
-    bool _drawRobotView;
     QString ip;
+    QString name;
     int left;
     int top;
     double xRobot;

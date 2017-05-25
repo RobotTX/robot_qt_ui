@@ -37,17 +37,20 @@ ScanMapPaintedItem {
             robotView.x = item.xRobot - robotView.width / 2;
             robotView.y = item.yRobot - robotView.height / 2;
         }
-        onHideRobot: robotView.visible = false
+        onHideRobotSignal: robotView.visible = false
     }
 
     // actually matters to create the mouse area of the robot after the mouse area of the item
     // in order for its events not to be stolen
     RobotView {
         id: robotView
-        visible: item._drawRobotView
+        _name: item.name
+        _ip: item.ip
+        visible: true
         property real orientation: 0
         x: parent.xRobot - robotView.width / 2
         y: parent.yRobot - robotView.height / 2
         onVisibleChanged: console.log("visible ? " + robotView.visible)
+        Component.onCompleted: robotView.visible = true
     }
 }

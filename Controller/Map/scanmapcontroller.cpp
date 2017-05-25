@@ -64,10 +64,16 @@ void ScanMapController::receivedScanMap(QString ip, QImage map, QString resoluti
                                          mapView->height()/2 - paintedItem->getImage().height()/2));
 
         paintedItem->setProperty("ip", ip);
+
+        QVariant name;
+        QMetaObject::invokeMethod(applicationWindow->findChild<QObject*>("robotModel"), "getName",
+                Q_RETURN_ARG(QVariant, name),
+                Q_ARG(QVariant, ip));
+        qDebug() << "Mah name" << name;
+
+        paintedItem->setProperty("name", name.toString());
         paintedItem->setProperty("width", paintedItem->getImage().width());
         paintedItem->setProperty("height", paintedItem->getImage().height());
-        /// at first we draw the robot on the map, we will hide it just before saving
-        paintedItem->setProperty("_drawRobotView", true);
         paintedItem->update();
 
         qDebug() << "inserting ip" << ip;
@@ -130,7 +136,7 @@ void ScanMapController::saveScanSlot(QString file_name){
                     }
                 }
             }
-            it.value()->setProperty("_drawRobotView", false);
+            it.value()->hideRobot();
             it.value()->update();
         }
 
