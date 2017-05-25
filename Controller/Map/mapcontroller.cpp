@@ -295,7 +295,7 @@ void MapController::newMapFromRobot(const QByteArray& mapArray, const QString ma
     map->setMapImage(getImageFromArray(mapArray, map->getWidth(), map->getHeight(), true));
     QUuid mapId_quuid = QUuid(mapId);
     if(mapId_quuid == QUuid()){
-        qDebug() << "The robot gave us a null or invalid QUUID => to investigate, not supposed to happens";
+        qDebug() << "The robot gave us a null or invalid QUUID => to investigate, not supposed to happen";
         Q_UNREACHABLE();
     }
     map->setMapId(mapId_quuid);

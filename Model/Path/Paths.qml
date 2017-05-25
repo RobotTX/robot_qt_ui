@@ -169,5 +169,6 @@ ListModel {
 
     function deleteAllPaths(){
         clear();
+        addGroup(Helper.noGroup);
     }
 }
