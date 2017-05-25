@@ -159,13 +159,6 @@ ListModel {
                 setProperty(i, "name", newName);
     }
 
-    function getName(ip){
-        for(var i = 0; i < count; i++)
-            if(get(i).ip === ip)
-                return get(i).name;
-        return "";
-    }
-
     function setScanningOnConnection(ip, scanning){
         for(var i = 0; i < count; i++)
             if(get(i).ip === ip)
@@ -198,5 +191,13 @@ ListModel {
             if(get(i).ip === ip)
                 setProperty(i, "processingCmd", processing);
         setBusy(ip, processing);
+    }
+
+    function getName(ip){
+        var name = "Default Name";
+        for(var i = 0; i < count; i++)
+            if(get(i).ip === ip)
+                name = get(i).name;
+        return name;
     }
 }

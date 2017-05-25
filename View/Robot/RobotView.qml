@@ -28,7 +28,7 @@ Image {
 
         visible: img.hover
         font.pointSize: 10
-        text: name
+        text: _name
 
         anchors {
             horizontalCenter: img.horizontalCenter

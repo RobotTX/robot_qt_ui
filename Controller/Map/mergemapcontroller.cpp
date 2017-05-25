@@ -228,15 +228,18 @@ void MergeMapController::exportMap(QString fileName){
 }
 
 void MergeMapController::rotateMap(int angle, int index){
-    paintedItems.at(index)->rotate(angle);
+    if(paintedItems.size() > index)
+        paintedItems.at(index)->rotate(angle);
 }
 
 void MergeMapController::removeMap(int index){
     qDebug() << "MergeMapController::removemap called" << index;
     /// it is common to simply hide the item, it will be destroyed once the application is closed
     /// which is enough if you don't have too many objects created by once instance of the application
-    paintedItems.at(index)->setVisible(false);
-    paintedItems.remove(index);
+    if(paintedItems.size() > index){
+        paintedItems.at(index)->setVisible(false);
+        paintedItems.remove(index);
+    }
     /// if that was the last item we reset the reference size
     if(paintedItems.isEmpty())
         size_of_images_merged = QSize();
