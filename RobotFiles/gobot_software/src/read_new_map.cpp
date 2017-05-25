@@ -73,7 +73,7 @@ void session(boost::shared_ptr<tcp::socket> sock, ros::NodeHandle n){
             }
 
             std::ofstream ofs(mapIdFile, std::ofstream::out | std::ofstream::trunc);
-            if(ofs.open()){
+            if(ofs){
                 ofs << mapId << std::endl << mapDate << std::endl;
                 ofs.close();
                 std::cout << "(New Map) Map id updated : " << mapId << " with date " << mapDate << std::endl;
