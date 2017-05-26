@@ -17,7 +17,7 @@ Frame {
     padding: 0
 
     background: Rectangle {
-        color: "transparent"
+        color: Style.lightGreyBackground
     }
 
 
@@ -209,7 +209,7 @@ Frame {
 
                 Rectangle {
                     anchors.fill: parent
-                    color: "transparent"
+                    color: Style.lightGreyBackground
                 }
 
                 Column {
@@ -227,7 +227,7 @@ Frame {
                             padding: 0
                             background: Rectangle {
                                 anchors.fill: parent
-                                color: "transparent"
+                                color: Style.lightGreyBackground
                             }
 
                             Rectangle {
@@ -357,9 +357,16 @@ Frame {
                     rightMargin: 8
                 }
 
+                // we enable this button only if the robot has a home
+                // one way to check that is to check that the x coordinate is > -100 as the default
+                // value is -150 when no home is set
+                enabled: homeX > -100
+
                 onClicked: {
-                    frame.dockRobot(ip)
-                    console.log(homeX < -100 ? "I don't have a home" : "Going to dock now")
+                    if(enabled){
+                        frame.dockRobot(ip)
+                        console.log(homeX < -100 ? "I don't have a home" : "Going to dock now")
+                    }
                 }
             }
         }

@@ -111,14 +111,12 @@ void RobotsController::launchServer(void){
 }
 
 void RobotsController::robotIsAliveSlot(const QString name, const QString ip, const QString ssid, const int stage, const int battery){
-    //qDebug() << "RobotsController::robotIsAliveSlot" << name << ip << ssid << stage << battery;
     if(robots.find(ip) != robots.end()){
         emit setStage(ip, stage);
         emit setBattery(ip, battery);
         robots.value(ip)->ping();
     } else {
         QPointer<RobotController> robotController = QPointer<RobotController>(new RobotController(engine_, this, ip, name));
-
         robots.insert(ip, robotController);
         emit addRobot(name, ip, ssid, stage, battery);
     }

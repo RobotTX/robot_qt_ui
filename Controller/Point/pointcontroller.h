@@ -9,7 +9,9 @@ class MainController;
 #include <QPointer>
 
 class PointController : public QObject {
+
     Q_OBJECT
+
 public:
     PointController(QObject *applicationWindow, MainController *parent);
 

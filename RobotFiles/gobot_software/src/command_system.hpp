@@ -58,11 +58,7 @@ bool stopSendLaserData();
 bool stopLaserData();
 bool stopParticleCloudData(void);
 void stopTwist();
-bool recoverPosition();
-bool stopRecoveringPosition();
 bool sendLocalMap();
-bool connectToParticleCloudNode(void);
-bool startSendingParticleCloud(void);
 void disconnect(void);
 bool resumeRecoveryPosition(void);
 

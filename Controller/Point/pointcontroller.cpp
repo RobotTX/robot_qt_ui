@@ -74,28 +74,23 @@ PointController::PointController(QObject *applicationWindow, MainController* par
 }
 
 void PointController::loadPoints(const QString fileName){
-    //qDebug() << "PointController::loadPoints loading points from " << fileName;
     XMLParser::readPoints(this, fileName);
 }
 
 
 void PointController::addGroup(QString groupName, bool saveXML){
-
     if(!points->getGroups().contains(groupName)){
-
         points->addGroup(groupName);
-
         emit addGroupQml(groupName);
-
         if(saveXML)
             XMLParser::save(this, currentPointsFile);
     }
 }
 
-void PointController::addPoint(const QString name, const QString groupName, const double x, const double y, const QString oldName, const QString oldGroup, const bool displayed, const bool home, const int orientation, bool saveXML){
-    //qDebug() << "PointController::addPoint" << groupName << name << x << y << displayed;
+void PointController::addPoint(const QString name, const QString groupName, const double x, const double y, const QString oldName, const QString oldGroup,
+                               const bool displayed, const bool home, const int orientation, bool saveXML)
+{
     addGroup(groupName, saveXML);
-
     points->addPoint(groupName, name, x, y, displayed, home, orientation);
 
     /// We are creating a new point
@@ -105,7 +100,6 @@ void PointController::addPoint(const QString name, const QString groupName, cons
         deletePoint(oldGroup, oldName);
         emit editPointQml(oldName, oldGroup, name, displayed, groupName, x, y, home, orientation);
     }
-
     if(saveXML)
         XMLParser::save(this, currentPointsFile);
 }
@@ -114,20 +108,17 @@ void PointController::deletePoint(QString groupName, QString name){
     qDebug() << "Delete point";
     /// we remove the point from the c++ side
     points->deletePoint(groupName, name);
-
     XMLParser::save(this, currentPointsFile);
 }
 
 void PointController::deleteGroup(QString groupName){
     points->deleteGroup(groupName);
-
     XMLParser::save(this, currentPointsFile);
 }
 
 void PointController::hideShow(QString groupName, QString name){
     qDebug() << "PointController::hideShow" << name << groupName;
     points->hideShow(groupName, name);
-
     XMLParser::save(this, currentPointsFile);
 }
 
@@ -135,7 +126,6 @@ bool PointController::checkPointName(const QString name){
     QMapIterator<QString, QPointer<PointGroup>> i(points->getGroups());
     while (i.hasNext()) {
         i.next();
-
         QVector<QPointer<Point>> group = i.value()->getPointVector();
         for(int j = 0; j < group.size(); j++){
             if(group.at(j)->getName().compare(name) == 0)
@@ -149,14 +139,12 @@ void PointController::renameGroup(QString newName, QString oldName){
     qDebug() << "PointController::renameGroup from" << oldName << "to" << newName;
     points->renameGroup(newName, oldName);
     emit renameGroupQml(newName, oldName);
-
     XMLParser::save(this, currentPointsFile);
 }
 
 void PointController::moveTo(QString name, QString oldGroup, QString newGroup){
     qDebug() << "PointController::move" << name << "from" << oldGroup << "to" << newGroup;
     points->movePoint(name, oldGroup, newGroup);
-
     XMLParser::save(this, currentPointsFile);
 }
 

@@ -29,6 +29,7 @@ public:
      */
     bool checkGroupName(const QString name);
     void clearGroups(void);
+    /// NOTE to remove when dev phase is over
     void display(void);
 
 private:

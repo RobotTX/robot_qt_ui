@@ -5,7 +5,7 @@ import os
 import commands
 from math import sqrt, pow
 from geometry_msgs.msg import PoseStamped, Twist, PoseWithCovarianceStamped
-from move_base_msgs.msg import MoveBaseGoal
+from move_base_msgs.msg import MoveBaseActionGoal
 from wheel.srv import *
 from sonar.msg import BumperMsg, IrSignalMsg, ShortSignalMsg, BatteryInfo
 from sonar.srv import *
@@ -19,10 +19,12 @@ getShortSignalProxy = rospy.ServiceProxy( "getShortSignal", GetShortSignal)
 getBumpersProxy = rospy.ServiceProxy( "getBumpers", GetBumpers )
 getBatteryProxy = rospy.ServiceProxy("getBatteryInfo", GetBatteryInfo)
 
-goal_info = MoveBaseGoal()
+goal_info = MoveBaseActionGoal()
 setChargingGoal = False
 chargingFlag = False
+# true if the robot has a non-null linear velocity
 twistFlag = False
+# square of the distance between the robot and the charging station
 distance = 10
 rearFlag = True
 leftFlag = False
@@ -32,22 +34,26 @@ beginTime = time.time()
 
 def batteryCallback(batteryInfo):
 	global setChargingGoal,chargingFlag
+	# not sure we should do that, send the robot to charging station as soon as its battery level drops below 50 % ?
 	if (batteryInfo.RemainCapacity< 50) and (not setChargingGoal):
 		setChargingGoal = True
-		nav_goal = PoseStamped()
+		nav_goal = MoveBaseActionGoal()
 		nav_goal.header.frame_id = "map"
-		nav_goal.pose.position.x = 1.40
-		nav_goal.pose.position.y = 5.10
+		nav_goal.header.stamp = rospy.Time.now()
+
+		nav_goal.goal.target_pose.pose.position.x = 1.40
+		nav_goal.goal.target_pose.pose.position.y = 5.10
 		nav_goal.pose.position.z = 0.0
 		nav_goal.pose.orientation.x = 0.0
 		nav_goal.pose.orientation.y = 0.0
-		nav_goal.pose.orientation.z = 0.9
-		nav_goal.pose.orientation.w = 0.8
+		nav_goal.goal.target_pose.pose.orientation.z = 0.9
+		nav_goal.goal.target_pose.pose.orientation.w = 0.8
 		pub.publish(nav_goal) #publish gobot to move goal location
+
 	if (chargingFlag) :
 		auto_charging()
 	else :
-		if (distance<0.4) and (not twistFlag):
+		if (distance < 0.16) and (not twistFlag):
 			os.system("rosnode kill /cmd_vel_listener")
 			os.system("rosnode kill /move_base")
 			chargingFlag = True
@@ -61,17 +67,22 @@ def twistCallback(twistMsg):
 		twistFlag = True
 
 def poseCallback(msg):
+	# computes the distance between the robot and the charging station (whose coordinates are retrieved through the home.txt file)
+	# this is used in the battery callback to determine if the charging flag should be set to true or not
 	global twistFlag, distance
-	goal_info.target_pose.header.frame_id = "map"
-	goal_info.target_pose.pose.position.x = 1.40
-	goal_info.target_pose.pose.position.y = 5.10
+	file = open(homeFile, "r")
+	if file.closed:
+		print "could not open home.txt"
+	home_parameters = file.readline().split()
+	print len(home_parameters)
+	if(len(home_parameters) == 6):
+		goal_info.goal.target_pose.pose.position.x = float(home_parameters[0])
+		goal_info.goal.target_pose.pose.position.y = float(home_parameters[1])
 	
 	robot_x = msg.pose.pose.position.x
 	robot_y = msg.pose.pose.position.y
-	x = pow(robot_x - goal_info.target_pose.pose.position.x, 2)
-	y = pow(robot_y - goal_info.target_pose.pose.position.y, 2)
-	distance = sqrt(x+y)
-	print distance
+	distance = pow(robot_x - goal_info.goal.target_pose.pose.position.x, 2) + pow(robot_y - goal_info.goal.target_pose.pose.position.y, 2)
+	print "square distance to charging station: ", distance
 
 def auto_charging():
 	global rearFlag, leftFlag,rightFlag,beginTime, bumperCrashCount
@@ -137,16 +148,20 @@ def auto_charging():
 				setSpeedsProxy( "F", 10, "F", 10)
 				time.sleep(10)
 				bumperCrashCount = 0
+
 def setAutoCharging(req):
+
 	print "setAutoCharging called"
 	global chargingFlag
 	# TODO put this guy back when testing phase is over
-	# batteryFlag = getBatteryProxy().ChargingFlag
+	batteryFlag = getBatteryProxy().ChargingFlag
 	batteryFlag = False
-	if (not batteryFlag):
-		pub = rospy.Publisher("/move_base_simple/goal", PoseStamped, queue_size = 10)
-		nav_goal = PoseStamped()
+	# if we have not already arrived at the charging station we publish the goal
+	if(not batteryFlag):
+		pub = rospy.Publisher("/move_base/goal", MoveBaseActionGoal, queue_size = 10)
+		nav_goal = MoveBaseActionGoal()
 		nav_goal.header.frame_id = "map"
+		nav_goal.header.stamp = rospy.Time.now()
 		print "home file is ", homeFile
 		file = open(homeFile, "r")
 		if file.closed:
@@ -155,14 +170,18 @@ def setAutoCharging(req):
 		print len(home_parameters)
 		if(len(home_parameters) == 6):
 			print "home position and orientation", home_parameters[0], home_parameters[1], home_parameters[4], home_parameters[5]
-			nav_goal.pose.position.x = home_parameters[0]
-			nav_goal.pose.position.y = home_parameters[1]
-			nav_goal.pose.position.z = 0.0
-			nav_goal.pose.orientation.x = 0.0
-			nav_goal.pose.orientation.y = 0.0
-			nav_goal.pose.orientation.z = home_parameters[4]
-			nav_goal.pose.orientation.w = home_parameters[5]
+			nav_goal.goal.target_pose.header.frame_id = "map"
+			nav_goal.goal.target_pose.header.stamp = rospy.Time.now()
+			nav_goal.goal.target_pose.pose.position.x = float(home_parameters[0])
+			nav_goal.goal.target_pose.pose.position.y = float(home_parameters[1])
+			nav_goal.goal.target_pose.pose.position.z = 0.0
+			nav_goal.goal.target_pose.pose.orientation.x = 0.0
+			nav_goal.goal.target_pose.pose.orientation.y = 0.0
+			nav_goal.goal.target_pose.pose.orientation.z = float(home_parameters[4])
+			nav_goal.goal.target_pose.pose.orientation.w = float(home_parameters[5])
 			pub.publish(nav_goal)
+		else:
+			print "not enough values found in home.txt"
 	return EmptyResponse()
 
 if __name__ == "__main__":

@@ -160,7 +160,6 @@ namespace Helper {
     }
 
     QString formatName(const QString name) {
-        //qDebug() << "Helper::formatName called" << name;
 
         QString ret("");
         QStringList nameStrList = name.split(" ", QString::SkipEmptyParts);

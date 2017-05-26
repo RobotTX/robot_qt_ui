@@ -49,9 +49,6 @@ void RobotPositionWorker::readTcpDataSlot(){
 
     /// Data is received as a string containing values separated by a space ("posX posY orientationZ")
     QStringList list = data.split(rx, QString::SkipEmptyParts);
-    //qDebug() << "Robot" << ipAddress << " position :" << list;
-
-    //qDebug() << list.at(0).toDouble()
 
     /// the IP address is sent along to identify the robot
     if(list.count() > 2)

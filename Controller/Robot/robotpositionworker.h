@@ -12,6 +12,7 @@
  */
 class RobotPositionWorker : public QObject {
     Q_OBJECT
+
 public:
     /**
      * @brief RobotPositionWorker
@@ -59,6 +60,10 @@ signals:
      * Signal emitted when we have received the robot position & orientation
      */
     void valueChangedRobot(double posX, double posY, double ori);
+    /**
+     * @brief robotIsDead
+     * If we don't receive the position of the robot we notify the rest of the application that the robot is dead
+     */
     void robotIsDead();
 
 private :

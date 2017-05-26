@@ -12,7 +12,9 @@ class MainController;
 
 
 class PathController : public QObject {
+
     Q_OBJECT
+
 public:
     PathController(QObject *applicationWindow, MainController* parent);
 

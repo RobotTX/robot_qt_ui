@@ -7,7 +7,9 @@
 #include <QImage>
 
 class SendNewMapWorker : public QObject {
+
     Q_OBJECT
+
 public:
     SendNewMapWorker(const QString _ipAddress, const int _port);
     ~SendNewMapWorker();
@@ -71,4 +73,4 @@ private :
     int port;
 };
 
-#endif // SENDNEWMAPWORKER_H
+#endif /// SENDNEWMAPWORKER_H

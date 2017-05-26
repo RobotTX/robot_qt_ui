@@ -35,8 +35,6 @@ bool stopPathService(std_srvs::Empty::Request &req, std_srvs::Empty::Response &r
 bool pausePathService(std_srvs::Empty::Request &req, std_srvs::Empty::Response &res);
 void goNextPoint();
 bool playPathService(std_srvs::Empty::Request &req, std_srvs::Empty::Response &res);
-bool goHomeService(std_srvs::Empty::Request &req, std_srvs::Empty::Response &res);
-bool stopGoingHomeService(std_srvs::Empty::Request &req, std_srvs::Empty::Response &res);
 void goToPoint(const Point& point);
 void goalReached();
 void setStageInFile(const int _stage);

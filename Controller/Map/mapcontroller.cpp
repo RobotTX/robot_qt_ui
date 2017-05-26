@@ -46,7 +46,6 @@ MapController::MapController(QQmlApplicationEngine* engine, QObject *application
         Q_UNREACHABLE();
     }
 
-
     initializeMap();
 
     mergeMapController = QPointer<MergeMapController>(new MergeMapController(parent, engine, applicationWindow));
@@ -70,7 +69,7 @@ void MapController::initializeMap(void){
         file.close();
 
         /// our map file as a QString
-        QString qMapFile = QString::fromStdString(stdMapFile);
+        const QString qMapFile = QString::fromStdString(stdMapFile);
 
         if(setMapFile(qMapFile)){
             qDebug() << "Map::initializeMap full map path :" << qMapFile;
@@ -236,6 +235,7 @@ void MapController::saveEditedImage(const QString location){
 }
 
 /// helper function to print out the position where the map has been clicked
+/// NOTE to remove when dev phase is over
 void MapController::posClicked(const double x, const double y){
     QPointF pos = Helper::Convert::pixelCoordToRobotCoord(
     QPointF(x, y),
@@ -361,8 +361,7 @@ void MapController::saveNewMap(const QString file_name){
 }
 
 void MapController::updateMetadata(int width, int height, double resolution, double originX, double originY){
-    qDebug() << "MapController::updateMetadata width height resolution originX originY";
-    qDebug() << width << height << resolution << originX << originY;
+    qDebug() << "MapController::updateMetadata width height resolution originX originY" << width << height << resolution << originX << originY;
     setOrigin(QPointF(originX, originY));
     setWidth(width);
     setHeight(height);

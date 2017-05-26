@@ -27,7 +27,6 @@ void CmdRobotWorker::connectSocket(){
 
     timer->setInterval(1000);
 
-
     connect(timer, SIGNAL(timeout()), this, SLOT(timerSlot()));
     timer->start();
 
@@ -75,7 +74,6 @@ void CmdRobotWorker::readTcpDataSlot(){
 
 void CmdRobotWorker::connectedSlot(){
     qDebug() << "(Robot" << ipAddress << ") Connected";
-
     /// When we are connected, we send the ports to use for the other workers
     /// in order to get laser feedback, robot position, map and map metadata
     QString portStr = QString("h") + QChar(31) + QString::number(robotPort) + QChar(31) +
@@ -106,7 +104,6 @@ void CmdRobotWorker::disconnectedSlot(){
 }
 
 void CmdRobotWorker::pingSlot(void){
-    //qDebug()<< "(Robot" << ipAddress << ") Received the ping";
     /// the timer starts, if the next ping does not arrive before the timer equals a certain value
     /// the communication with the robot will be considered lost and the connection will close
     timer->start();
@@ -129,7 +126,7 @@ void CmdRobotWorker::timerSlot(void){
 void CmdRobotWorker::errorConnectionSlot(QAbstractSocket::SocketError error){
     switch (error) {
     case(QAbstractSocket::ConnectionRefusedError):
-        /// if the connection has been refused we symply try again
+        /// if the connection has been refused we symply try again after a short sleep
         QThread::sleep(1);
         socket->connectToHost(ipAddress, port);
         break;

@@ -4,7 +4,7 @@
 #include <QImage>
 
 /**
- * In this file we put all sorts of useful functions used by any classes
+ * In this file we put all sorts of useful functions used by any classes accross the application
  */
 
 #define NO_GROUP_NAME "No Group"
@@ -28,7 +28,6 @@ namespace Helper {
     }
 
     namespace Date {
-
         /// returns true if the first date is later to the second date
         bool isLater(const QStringList& date, const QStringList& otherDate);
     }
@@ -53,5 +52,6 @@ namespace Helper {
 
     int mod(const int a, const int b);
 
+    /// to get the application build directory
     QString getAppPath(void);
 }

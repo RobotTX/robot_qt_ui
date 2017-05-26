@@ -23,8 +23,6 @@ ros::Subscriber sub_robot;
 ros::ServiceServer _playPathService;
 ros::ServiceServer _pausePathService;
 ros::ServiceServer _stopPathService;
-ros::ServiceServer _goHomeService;
-ros::ServiceServer _stopGoingHomeService;
 
 
 void getRobotPos(const geometry_msgs::Pose::ConstPtr& msg){
@@ -113,8 +111,8 @@ bool pausePathService(std_srvs::Empty::Request &req, std_srvs::Empty::Response &
 }
 
 void goNextPoint(){
-	// get the next point in the path list and tell the robot to go there
 
+	// get the next point in the path list and tell the robot to go there
 	if(path.size()-1 == stage)
 		std::cout << "(PlayPath) This is my final destination" << std::endl;
 
@@ -144,12 +142,8 @@ void goToPoint(const Point& point){
     goal.target_pose.pose.orientation.w = 1;
 
 	currentGoal = point;
-	if(ac->isServerConnected()){
-		std::cout << "(PlayPath) got an action server, sending the goal" << std::endl;
-    	ac->sendGoal(goal);
-	} else {
-		std::cout << "(PlayPath) no action server" << std::endl;
-	}
+	if(ac->isServerConnected()) ac->sendGoal(goal);
+	else std::cout << "(PlayPath) no action server" << std::endl;
 }
 
 void setStageInFile(const int _stage){
@@ -231,45 +225,6 @@ bool playPathService(std_srvs::Empty::Request &req, std_srvs::Empty::Response &r
 	return true;	
 }
 
-// TO DO link with luna's charging code
-bool goHomeService(std_srvs::Empty::Request &req, std_srvs::Empty::Response &res){
-	std::cout << "(PlayPath) goHomeService called" << std::endl;
-		return true; 
-	/*
-	std::ifstream file("/home/gtdollar/computer_software/Robot_Infos/path.txt", std::ios::in);
-
-	Point home;
-	home.isHome = true;
-
-	// we recreate the path to follow from the file
-	if(file){
-
-        std::string line;
-
-        while(getline(file, line)){
-        	std::istringstream iss(line);
-            iss >> home.x >> home.y;
-       		home.waitingTime = 0;
-        }
-
-        goToPoint(home);
-
-		return true; 
-
-	} else {
-		std::cerr << "sorry could not find the home file on the robot, returning false to the cmd system";
-		return false;
-	}*/
-}
-
-bool stopGoingHomeService(std_srvs::Empty::Request &req, std_srvs::Empty::Response &res){
-	std::cout << "(PlayPath) stopGoingHomeService called" << std::endl;
-	if(ac->isServerConnected())
-		ac->cancelAllGoals();
-	currentGoal.x = -1;
-	return true;
-}
-
 int main(int argc, char* argv[]){
 
 	std::cout << "(PlayPath) play path main running..." << std::endl;
@@ -293,12 +248,6 @@ int main(int argc, char* argv[]){
 
 		// service to stop the robot's path
 		_stopPathService = n.advertiseService("stop_path", stopPathService);
-
-		// service to send the robot home
-		_goHomeService = n.advertiseService("go_home", goHomeService);
-
-		// stops the robot on its way home
-		_stopGoingHomeService = n.advertiseService("stop_going_home", stopGoingHomeService);
 
 		// to cancel a goal
 		cancelPublisher = n.advertise<actionlib_msgs::GoalID>("/move_base/cancel", 1000);
@@ -332,6 +281,7 @@ int main(int argc, char* argv[]){
 }
 
 /*
+
 uint8 PENDING         = 0   # The goal has yet to be processed by the action server
 uint8 ACTIVE          = 1   # The goal is currently being processed by the action server
 uint8 PREEMPTED       = 2   # The goal received a cancel request after it started executing

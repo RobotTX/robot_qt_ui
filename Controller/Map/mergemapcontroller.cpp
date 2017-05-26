@@ -62,7 +62,7 @@ void MergeMapController::importMap(const QString& _filename){
         MergeMapsPaintedItem* paintedItem = qobject_cast<MergeMapsPaintedItem*>(component.create());
         QQmlEngine::setObjectOwnership(paintedItem, QQmlEngine::CppOwnership);
 
-        /// that is where we actually tell the paintemItem to paint itself
+        /// that is where we actually tell the paintemItem to paint itself in the merge map view
         QQuickItem* mapView = applicationWindow->findChild<QQuickItem*> ("mergeMapsView");
         paintedItem->setParentItem(mapView);
         paintedItem->setParent(engine);
@@ -89,8 +89,6 @@ void MergeMapController::importMap(const QString& _filename){
                 }
             }
         }
-
-        qDebug() << "cropping with values" << top << left << bottom << right;
 
         /// We crop the image
         image = image.copy(QRect(QPoint(left, bottom), QPoint(right, top)));
@@ -136,7 +134,7 @@ void MergeMapController::importMap(QImage image, double _resolution){
         MergeMapsPaintedItem* paintedItem = qobject_cast<MergeMapsPaintedItem*>(component.create());
         QQmlEngine::setObjectOwnership(paintedItem, QQmlEngine::CppOwnership);
 
-        /// that is where we actually tell the paintemItem to paint itself
+        /// that is where we actually tell the paintemItem to paint itself on the merge map view
         QQuickItem* mapView = applicationWindow->findChild<QQuickItem*> ("mergeMapsView");
         paintedItem->setParentItem(mapView);
         paintedItem->setParent(engine);
@@ -163,8 +161,6 @@ void MergeMapController::importMap(QImage image, double _resolution){
                 }
             }
         }
-
-        qDebug() << "cropping with values" << top << left << bottom << right;
 
         /// We crop the image
         image = image.copy(QRect(QPoint(left, bottom), QPoint(right, top)));
@@ -223,6 +219,7 @@ void MergeMapController::exportMap(QString fileName){
         paintedItems.at(i)->update();
     }
 
+    /// notifies the qml side that the image is ready to be grabbed
     emit readyToBeGrabbed(fileName);
     emit setMessageTop(2, "Finished to merge the maps");
 }
@@ -251,5 +248,3 @@ void MergeMapController::resetMergeMapWidget(){
         paintedItems.at(i)->setVisible(false);
     paintedItems.clear();
 }
-
-
