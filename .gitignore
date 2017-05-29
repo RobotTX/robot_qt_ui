@@ -3,15 +3,8 @@ gobot-software.pro.*
 gobot-software.pro.user
 GobotSoftware.pro.*
 GobotSoftware.pro.user
-robotsName.dat
-points.xml
-Resources/points.xml
-Resources/points.*
 Build/*
-robot_paths/*
-savedPaths.dat
 mapConfigs/*
-paths.dat
 currentMap.txt
 settings/*
 robots_homes/*
@@ -19,5 +12,5 @@ robots_paths/*
 Resources/qt-*
 Gobot.pro.*
 Gobot.pro.user
-RobotFiles/gobot_software/Robot_Infos/*
+RobotFiles/gobot_software/Robot_Infos/*.txt
 *.pgm
