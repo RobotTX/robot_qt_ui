@@ -121,20 +121,13 @@ Window {
     function grabScannedMap(file_name){
         console.log("scan: grabbed called " + file_name.substring(7) + ".pgm");
 
-        if(file_name.toString().lastIndexOf(".pgm") === -1){
-            scanMap.grabToImage(function(result) {
-                result.saveToFile(file_name.substring(7) + ".pgm");
-                // important to call the hide function here as this call is asynchronous and if you call hide outside
-                // you will most likely hide the window before you can grab it and will end up grabbing nothing
-                scanWindow.resetMapConfiguration(file_name + ".pgm", true);
-                scanWindow.close();
-            });
-        } else {
-            scanMap.grabToImage(function(result) {
-                                          result.saveToFile(file_name.substring(7));
-                                          scanWindow.resetMapConfiguration(file_name, true);
-                                          scanWindow.close();
-            });
-        }
+        if(file_name.toString().lastIndexOf(".pgm") === -1)
+            file_name += ".pgm";
+
+        scanMap.grabToImage(function(result) {
+            result.saveToFile(file_name.substring(7));
+            scanWindow.resetMapConfiguration(file_name, true);
+            scanWindow.close();
+        });
     }
 }
