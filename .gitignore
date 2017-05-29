@@ -20,5 +20,4 @@ Resources/qt-*
 Gobot.pro.*
 Gobot.pro.user
 RobotFiles/gobot_software/Robot_Infos/*
-*.txt
 *.pgm
