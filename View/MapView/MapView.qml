@@ -95,7 +95,7 @@ Frame {
             id: topViewId
             objectName: "topView"
             // qml got a path of this format : file://path_understood_by_Qt, so we get rid of the first 6 characters
-            onSavePosition: mapViewFrame.savePosition(mapImage.x, mapImage.y, zoomScale.xScale, mapRotation, mapSrc.substring(6))
+            onSavePosition: emitPosition()
             onLoadPosition: mapViewFrame.loadPosition()
             /// If we have a map, the mapImage is visible
             /// so we enable the buttons to save/load the state of the map
@@ -436,5 +436,9 @@ Frame {
 
     function getMapRotation(){
         return topViewId.mapRotation;
+    }
+
+    function emitPosition(){
+        mapViewFrame.savePosition(mapImage.x, mapImage.y, zoomScale.xScale, topViewId.mapRotation, mapSrc.substring(6));
     }
 }
