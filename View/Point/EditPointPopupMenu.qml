@@ -15,7 +15,7 @@ Menu {
     property string myGroup
 
     signal editPoint()
-    signal deletePoint()
+    signal deletePoint(string name)
     signal moveTo(string newGroup)
 
     background: Rectangle {
@@ -138,6 +138,6 @@ Menu {
         width: parent.width
         leftPadding: Style.menuItemLeftPadding
         height: Style.menuItemHeight
-        onTriggered: deletePoint()
+        onTriggered: deletePoint(name)
     }
 }

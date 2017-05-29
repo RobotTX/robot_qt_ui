@@ -103,6 +103,7 @@ Frame {
                 renameGroup(newName, oldName);
                 setMessageTop(2, "Renamed the group \"" + oldName + "\" to \"" + newName + "\"");
             }
+            console.log("creating path " + newName)
             backToMenu();
         }
     }
