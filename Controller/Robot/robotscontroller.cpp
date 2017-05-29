@@ -118,7 +118,7 @@ void RobotsController::robotIsAliveSlot(const QString name, const QString ip, co
     } else {
         QPointer<RobotController> robotController = QPointer<RobotController>(new RobotController(engine_, this, ip, name));
         robots.insert(ip, robotController);
-        qDebug() << "find new robot called" << name;
+        //qDebug() << "find new robot called" << name;
         emit addRobot(name, ip, ssid, stage, battery);
     }
 }
@@ -296,6 +296,7 @@ void RobotsController::sendTeleop(const QString ip, const int teleop){
 }
 
 void RobotsController::sendMapToAllRobots(QString mapId, QString date, QString mapMetadata, QImage img){
+    qDebug() << "send map to all robots called" << date << mapMetadata;
     QMapIterator<QString, QPointer<RobotController>> it(robots);
     while(it.hasNext()){
         it.next();

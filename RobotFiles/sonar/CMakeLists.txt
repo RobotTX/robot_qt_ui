@@ -53,17 +53,21 @@ find_package(catkin REQUIRED COMPONENTS
    SonarMsg.msg
    BatteryInfo.msg
    CliffData.msg
+   IrSignalMsg.msg
+   ShortSignalMsg.msg
  )
 
 ## Generate services in the 'srv' folder
- add_service_files(
-   FILES
-   GetBumpers.srv
-   GetSonars.srv
-   GetBatteryInfo.srv
-   GetWeightInfo.srv
-   GetCliffData.srv
-   SetAutoCharging.srv
+add_service_files(
+  FILES
+  GetBumpers.srv
+  GetSonars.srv
+  GetBatteryInfo.srv
+  GetWeightInfo.srv
+  GetCliffData.srv
+  SetAutoCharging.srv
+  GetShortSignal.srv
+  GetIrSignal.srv
  )
 
 ## Generate actions in the 'action' folder

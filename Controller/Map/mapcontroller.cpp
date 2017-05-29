@@ -13,6 +13,7 @@
 #include "Controller/maincontroller.h"
 #include "Controller/Map/scanmapcontroller.h"
 #include "View/Map/editmappainteditem.h"
+#include "Controller/Robot/robotscontroller.h"
 
 MapController::MapController(QQmlApplicationEngine* engine, QObject *applicationWindow, MainController *parent) : QObject(parent) {
 
@@ -45,6 +46,8 @@ MapController::MapController(QQmlApplicationEngine* engine, QObject *application
         qDebug() << "MapController::MapController could not find the mapMenuFrame";
         Q_UNREACHABLE();
     }
+
+    connect(this, SIGNAL(sendMapToRobots(QString, QString, QString, QImage)), parent, SLOT(sendMapToAllRobots(QString, QString, QString, QImage)));
 
     initializeMap();
 
@@ -228,10 +231,40 @@ void MapController::centerMap(const double centerX, const double centerY, const 
 
 void MapController::saveEditedImage(const QString location){
     qDebug() << "saving edited image to" << location;
+    /// modifies the map id so that when a robot reconnects you get asked which map to choose
+    map->setMapId(QUuid::createUuid());
+    double centerX = 0;
+    double centerY = 0;
+    double zoom = 0;
+    int mapRotation = 0;
+    QFile file(Helper::getAppPath() + QDir::separator() + "currentMap.txt");
+    if(file.open(QFile::ReadWrite)){
+        QTextStream stream(&file);
+        QString osef;
+        stream >> osef >> osef >> osef >> centerX >> centerY >> zoom >> mapRotation >> osef >> osef >> osef >> osef >> osef;
+        file.close();
+    }
+
+    QFile file2(Helper::getAppPath() + QDir::separator() + "currentMap.txt");
+    if(file2.open(QFile::WriteOnly|QFile::Truncate)){
+        QTextStream stream(&file2);
+        stream << map->getMapFile() << endl
+             << map->getHeight() << " " << map->getWidth() << endl
+             << centerX << " " << centerY << endl
+             << zoom << " " << mapRotation << endl
+             << map->getOrigin().x() << " " << map->getOrigin().y() << endl
+             << map->getResolution() << endl
+             << map->getMapId().toString();
+        file.close();
+        qDebug() << "saving dans config file " << Helper::getAppPath() + QDir::separator() + "mapConfigs" + QDir::separator() + map->getMapFile();
+    }
+    saveMapConfig(Helper::getAppPath() + QDir::separator() + "mapConfigs" + QDir::separator() + map->getMapFile().mid(0, map->getMapFile().size()-4) + ".config", centerX, centerY, zoom, mapRotation);
+
     /// to save the image being edited in the edit map window
     editMapController->getPaintedItem()->saveImage(map->getMapImage(), location);
     /// and request the main map to be reload on the qml side
     emit requestReloadMap("file:/" + location);
+    emit sendMapToRobots(map->getMapId().toString(), map->getDateTime().toString("yyyy-MM-dd-hh-mm-ss"), getMetadataString(), QImage(map->getMapFile()));
 }
 
 /// helper function to print out the position where the map has been clicked

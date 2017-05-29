@@ -13,6 +13,7 @@ class QQmlApplicationEngine;
 #include <QThread>
 #include <QVariant>
 #include <QTimer>
+#include <QImage>
 
 class RobotsController : public QObject {
 
@@ -90,6 +91,7 @@ public:
      * sends the map to all robots
      */
     void sendMapToAllRobots(QString mapId, QString date, QString mapMetadata, QImage img);
+
 
 private:
     void launchServer(void);

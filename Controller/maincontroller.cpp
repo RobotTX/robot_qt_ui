@@ -371,6 +371,7 @@ void MainController::checkMapInfoSlot(QString ip, QString mapId, QString mapDate
     if(mapId.compare(mapController->getMapId().toString()) == 0){
         qDebug() << "MainController::updateMapInfo Robot" << ip << "has the current map";
     } else {
+        qDebug() << "ids of app and robot " << mapController->getMapId().toString() << mapId;
         QDateTime mapDateTime = QDateTime::fromString(mapDate, "yyyy-MM-dd-hh-mm-ss");
 
         bool robotOlder = (mapDateTime <= mapController->getDateTime());
@@ -608,6 +609,10 @@ void MainController::clearPointsAndPathsAfterScan(){
     /// clears the map of all paths and points
     pointController->clearPoints();
     pathController->clearPaths();
+}
+
+void MainController::sendMapToAllRobots(QString id, QString date, QString metadata, QImage img){
+    robotsController->sendMapToAllRobots(id, date, metadata, img);
 }
 
 

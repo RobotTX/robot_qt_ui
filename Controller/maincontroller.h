@@ -24,6 +24,7 @@ public:
     MainController(QQmlApplicationEngine* _engine, QObject* parent = Q_NULLPTR);
 
     QPointer<MapController> getMapController(void) const { return mapController; }
+    QPointer<RobotsController> getRobotsController(void) const { return robotsController; }
 
 private :
     /**
@@ -248,6 +249,16 @@ private slots:
      * To discard any new scan map after the scan has finished
      */
     void setDiscardMap(bool discard){ discardMap = discard; }
+    /**
+     * @brief sendMapToAllRobots
+     * @param id
+     * @param date
+     * @param metadata
+     * @param img
+     * Orders the robots controller to send the described map to all robots
+     * This is called by the map controller when an edited map is saved
+     */
+    void sendMapToAllRobots(QString id, QString date, QString metadata, QImage img);
     void testSlot();
 
 signals:

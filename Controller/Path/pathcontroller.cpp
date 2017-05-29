@@ -84,10 +84,13 @@ void PathController::loadPaths(const QString fileName){
 }
 
 void PathController::addGroup(const QString groupName, const bool saveXML){
-    paths->addGroup(groupName);
-    emit addGroupQml(groupName);
-    if(saveXML)
-        PathXMLParser::save(this, currentPathsFile);
+    /// so we never add the same group twice
+    if(paths->getGroups().find(groupName) == paths->getGroups().end()){
+        paths->addGroup(groupName);
+        emit addGroupQml(groupName);
+        if(saveXML)
+            PathXMLParser::save(this, currentPathsFile);
+    }
 }
 
 void PathController::deleteGroup(const QString groupName){

@@ -78,6 +78,9 @@ void session(boost::shared_ptr<tcp::socket> sock, ros::NodeHandle n){
                 ifMap.close();
             }
 
+            if(mapIdFromFile.compare(mapId) == 0)
+                std::cout << " SAME IDS " << std::endl;
+
             /// If we have a different map, we replace it
             if(mapIdFromFile.compare(mapId) != 0){
                 /// Save the id of the new map

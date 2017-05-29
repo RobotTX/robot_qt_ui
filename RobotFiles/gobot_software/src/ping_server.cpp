@@ -50,14 +50,14 @@ bool isServer(const std::string IP, const std::string ssid){
                     n.getParam("battery_file", batteryFile);
                 else 
                     ROS_INFO("ping_server.cpp does not have parameter <battery_file>");
-
+/*
                 std::ifstream ifsBattery(batteryFile, std::ifstream::in);
                 if(ifsBattery){
                     ifsBattery >> battery;
                     ifsBattery.close();
-                } else
-                    ROS_INFO("ping_server.cpp could not open battery file");
-
+                } //else
+                    //ROS_INFO("ping_server.cpp could not open battery file");
+*/
                 // Retrieves the path stage
                 int stage(0);
                 std::string pathStageFile;

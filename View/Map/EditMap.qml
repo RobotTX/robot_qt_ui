@@ -44,7 +44,7 @@ Window {
         if(visible)
             dialog.resetMap();
         // to reset the toolbar
-        blackButton.checked = true;
+        selectButton.checked = true;
         color = "black"
         thickness = 1
         if(!visible)
@@ -253,6 +253,7 @@ Window {
             CustomToolTip { text: "Draw a point on the map" }
 
             checkable: true
+            checked: false
 
             src: "qrc:/icons/dot"
 
@@ -274,6 +275,7 @@ Window {
             CustomToolTip { text: "Draw a line on the map" }
 
             checkable: true
+            checked: false
 
             src: "qrc:/icons/line"
 
@@ -297,6 +299,7 @@ Window {
             ButtonGroup.group: shapeGroup
 
             checkable: true
+            checked: false
 
             src: "qrc:/icons/outline"
 
@@ -316,6 +319,7 @@ Window {
             CustomToolTip { text: "Draw an filled rectangle on the map" }
 
             checkable: true
+            checked: false
 
             src: "qrc:/icons/solid"
 

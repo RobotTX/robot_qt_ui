@@ -179,6 +179,11 @@ signals:
      * Change the main window image to the given one
      */
     void requestReloadMap(QVariant location);
+    /**
+     * @brief sendMapToRobots
+     * After saving the edited map we ask the robots controller to send it to everyone
+     */
+    void sendMapToRobots(QString mapId, QString date, QString mapMetadata, QImage img);
 
  private:
     QPointer<Map> map;
