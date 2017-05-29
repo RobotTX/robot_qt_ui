@@ -35,7 +35,7 @@ bool isServer(const std::string IP, const std::string ssid){
                 std::ifstream ifs(nameFile, std::ifstream::in);
                 std::string hostname;
                 if(ifs){
-                    ifs >> hostname;
+                    getline(ifs, hostname);
                     ifs.close();
                 } else 
                     ROS_INFO("ping_server.cpp:: could not open file %s", nameFile.c_str());

@@ -1079,7 +1079,7 @@ void asyncAccept(boost::shared_ptr<boost::asio::io_service> io_service, boost::s
 		
 		if(ifLaser){
 	   		getline(ifLaser, laserStr);
-			std::cout << "Laser activated : " << laserStr;
+			std::cout << "Laser activated : " << laserStr << std::endl;
 			laserActivated = boost::lexical_cast<bool>(laserStr);
 			ifLaser.close();
 		}

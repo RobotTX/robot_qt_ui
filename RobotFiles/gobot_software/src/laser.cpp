@@ -36,6 +36,7 @@ void getLaserData(const sensor_msgs::LaserScan::ConstPtr& msg){
     for(int i = 0; i < (msg->angle_max - msg->angle_min) / msg->angle_increment; i++)
         scan.push_back(msg->ranges[i]);
     scan.push_back(-1.0f);
+    std::cout << "get laser data sending " << scan.size() << " " << scan.at(scan.size()-1) << std::endl;
     sendLaserData(scan);
 }
 
@@ -82,7 +83,7 @@ int main(int argc, char **argv){
     ros::ServiceServer stop_send_service = n.advertiseService("stop_send_laser_data_sender", stopSendLaser);
     ros::ServiceServer stop_service = n.advertiseService("stop_laser_data_sender", stopSendingLaserData);
 
-    ros::Rate r(1);
+    ros::Rate r(0.5);
     while(ros::ok()){
         ros::spinOnce();
         r.sleep();

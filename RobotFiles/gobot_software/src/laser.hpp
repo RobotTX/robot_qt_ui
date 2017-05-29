@@ -19,6 +19,7 @@
 #include <chrono>
 #include <thread>
 #include "std_srvs/Empty.h"
+#include "std_msgs/Float32.h"
 
 using boost::asio::ip::tcp;
 
