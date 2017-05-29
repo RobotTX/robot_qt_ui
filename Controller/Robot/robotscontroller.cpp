@@ -225,6 +225,7 @@ void RobotsController::sendNewMap(const QString ip, const QString mapId, const Q
 
 void RobotsController::newMapFromRobotSlot(const QString ip, const QByteArray mapArray, const QString mapId, const QString mapDate, const QString resolution, const QString originX, const QString originY, const int map_width, const int map_height){
     emit newMapFromRobot(ip, mapArray, mapId, mapDate, resolution, originX, originY, map_width, map_height);
+    receivingMap = false;
 }
 
 void RobotsController::requestMap(const QString ip){
@@ -250,20 +251,24 @@ void RobotsController::sendNewMapToAllExcept(const QString ip, const QString map
 
 void RobotsController::timerSlot(void){
     qDebug() << "RobotsController::timerSlot should have sent all the map already";
-    receivingMap = false;
     timer->stop();
 }
 
 void RobotsController::requestMapForMerging(const QString ip){
+    qDebug() << "Requesting the map for merging from robot at ip" << ip;
     if(!receivingMap){
         sendCommand(ip, QString("s") + QChar(31) + QString::number(2));
         receivingMap = true;
+    } else {
+        /// TODO some queue to request the map ?
+        qDebug() << "ALready receiving a map, please wait";
     }
 }
 
 void RobotsController::processMapForMerge(const QByteArray map, const QString resolution){
     qDebug() << "RobotsController::processMapForMerge";
     emit sendMapToProcessForMerge(map, resolution);
+    receivingMap = false;
 }
 
 void RobotsController::startedScanningSlot(const QString ip){

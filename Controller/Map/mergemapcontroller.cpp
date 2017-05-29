@@ -195,7 +195,7 @@ void MergeMapController::importMap(QImage image, double _resolution){
 }
 
 void MergeMapController::exportMap(QString fileName){
-    qDebug() << "MergeMapController::exportMap called" << fileName;
+    qDebug() << "MergeMapController::exportMap called" << paintedItems.size() << fileName;
 
     /// We want to find the smallest rectangle containing the map so we can find its center and put it at the center of the window
     /// before grab

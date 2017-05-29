@@ -482,8 +482,9 @@ void MainController::resetMapConfiguration(QString file_name, bool scan, double 
     /// orientation of the robot at the end of the scan
     double robotOri(0.0f);
 
+    mapController->setMapFile(cpp_file_name);
+
     if(scan){
-        mapController->setMapFile(cpp_file_name);
 
         ScanMapPaintedItem* map_reference = mapController->getScanMapController()->getPaintedItems().begin().value();
         qDebug() << "\n\n\nSaving map config after scan with origin" << map_reference->robotOrientation();
@@ -497,7 +498,6 @@ void MainController::resetMapConfiguration(QString file_name, bool scan, double 
         /// Reset the orientation to reset the initial pose of the robot
         robotOri = map_reference->robotOrientation()-90;
     }
-
     pointController->clearPoints();
     pathController->clearPaths();
 
@@ -505,13 +505,10 @@ void MainController::resetMapConfiguration(QString file_name, bool scan, double 
     mapController->setMapId(QUuid::createUuid());
     mapController->setDateTime(QDateTime::currentDateTime());
 
+
     /// although this is a new configuraton we have to pass false in order to reset properly the paths and points
     /// in the files
     saveMapConfig(cpp_file_name, 1.0, 0, 0, false);
-
-    /// we load the map we just scanned into the application
-    mapController->requestReloadMap(file_name);
-    qDebug() << "\n\n\nrequesting reload" << file_name;
 
     /// we send this information to the robot, init pos is used to determine the position of the robot directly after gobot move
     /// is relaunched

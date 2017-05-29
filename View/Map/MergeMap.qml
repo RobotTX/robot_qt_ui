@@ -109,7 +109,6 @@ Window {
                 leftMargin: 10
                 verticalCenter: parent.verticalCenter
             }
-
         }
 
         MergeMapButton {
@@ -354,22 +353,14 @@ Window {
     }
 
     function grabMergedMap(_fileName){
-        console.log("grabbed called " + _fileName.substring(7) + ".pgm");
-        if(_fileName.toString().lastIndexOf(".pgm") === -1){
-            console.log("you");
-            mergedMap.grabToImage(function(result) {
-                result.saveToFile(_fileName.substring(7) + ".pgm");
-                // important to call the hide function here as this call is asynchronous and if you call hide outside
-                // you will most likely hide the window before you can grab it and will end up grabbing nothing
-                //window.resetMapConfiguration(_fileName + ".pgm", false);
-                //window.close();
-            });
-        }
 
-        else mergedMap.grabToImage(function(result) {
-                                          result.saveToFile(_fileName.substring(7));
-                                            window.resetMapConfiguration(_fileName, false);
-                                            window.close();
+        if(_fileName.toString().lastIndexOf(".pgm") === -1)
+            _fileName += ".pgm";
+
+        mergedMap.grabToImage(function(result) {
+            result.saveToFile(_fileName.substring(7));
+            window.resetMapConfiguration(_fileName, false);
+            window.close();
         });
     }
 
