@@ -116,13 +116,17 @@ Window {
         mapImportErrorDialog.open();
     }
 
-    Dialog {
+    CustomDialog {
         id: mapImportErrorDialog
-        title: "Import impossible";
-        standardButtons: Dialog.Ok
+        title: "Import impossible"
+        x: window.width / 2 - width / 2
+        y: window.height / 2 - height / 2
+        message: "Sorry, you can only merge maps of the same size";
+        acceptMessage: "ok"
+        /*standardButtons: Dialog.Ok
         Label {
             text: "Sorry, you can only merge maps of the same size";
-        }
+        }*/
     }
 
     TutorialDialog {

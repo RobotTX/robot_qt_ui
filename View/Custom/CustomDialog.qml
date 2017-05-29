@@ -98,6 +98,7 @@ Dialog {
 
             SaveButton {
                 id: appButton
+                visible: acceptMessage !== ""
                 txt: acceptMessage
                 onReleased: dialog.accept()
                 Layout.preferredHeight: height

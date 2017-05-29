@@ -77,7 +77,7 @@ Frame {
                 leftMargin: 20
                 right: helpButton.left
             }
-            text: qsTr("Add a Map :")
+            text: qsTr("Import a map :")
             verticalAlignment: Text.AlignVCenter
 
         }
@@ -127,7 +127,8 @@ Frame {
                 id: robotsList
                 robotModel: leftMenu.robotModel
                 robotMapsList: mapsList
-                y: fromRobotButton.height + 12
+                x: fromRobotButton.width
+
                 onRobotSelected: {
                     console.log("adding robot " + name + " " + ip)
                     mapsList.addRobot(name, ip)
