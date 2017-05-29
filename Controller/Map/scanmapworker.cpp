@@ -74,8 +74,6 @@ void ScanMapWorker::readTcpDataSlot(){
 
         QString mapInfo("");
         if(who == 0){
-            /*std::to_string(msg->width) + " " + std::to_string(msg->height) + " " + std::to_string(msg->resolution) + " " +
-                std::to_string(msg->origin.position.x) + " " + std::to_string(msg->origin.position.y) + " ";*/
             int i = 0;
             bool gotMapInfo = false;
             while(!gotMapInfo && i < data.size() - 6){
@@ -153,7 +151,7 @@ void ScanMapWorker::readTcpDataSlot(){
 void ScanMapWorker::errorConnectionSlot(QAbstractSocket::SocketError error){
     switch (error) {
     case(QAbstractSocket::ConnectionRefusedError):
-        /// if the connection has been refused we symply try again
+        /// if the connection has been refused we symply try again after a short sleep
         QThread::sleep(1);
         socket->connectToHost(ipAddress, port);
         break;

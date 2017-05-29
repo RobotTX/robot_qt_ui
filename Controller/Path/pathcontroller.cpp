@@ -80,7 +80,6 @@ PathController::PathController(QObject *applicationWindow, MainController* paren
 }
 
 void PathController::loadPaths(const QString fileName){
-    //qDebug() << "PathController::loadPaths loading paths from " << fileName;
     PathXMLParser::readPaths(this, fileName);
 }
 
@@ -93,27 +92,23 @@ void PathController::addGroup(const QString groupName, const bool saveXML){
 
 void PathController::deleteGroup(const QString groupName){
     paths->deleteGroup(groupName);
-
     PathXMLParser::save(this, currentPathsFile);
 }
 
 void PathController::addPath(const QString groupName, const QString name, const bool saveXML){
     paths->addPath(groupName, name);
     emit addPathQml(name, groupName);
-
     if(saveXML)
         PathXMLParser::save(this, currentPathsFile);
 }
 
 void PathController::deletePath(const QString groupName, const QString name){
     paths->deletePath(groupName, name);
-
     PathXMLParser::save(this, currentPathsFile);
 }
 
 void PathController::addPathPoint(const QString groupName, const QString pathName, const QString name, const double x, const double y, const int waitTime, const bool saveXML){
     paths->addPathPoint(groupName, pathName, name, x, y, waitTime);
-
     emit addPathPointQml(name, pathName,
                     groupName, x,
                     y, waitTime);
@@ -124,7 +119,6 @@ void PathController::addPathPoint(const QString groupName, const QString pathNam
 
 void PathController::deletePathPoint(const QString groupName, const QString pathName, const QString name){
     paths->deletePathPoint(groupName, pathName, name);
-
     PathXMLParser::save(this, currentPathsFile);
 }
 
@@ -141,7 +135,6 @@ void PathController::checkGroup(const QString name){
 
 void PathController::moveTo(const QString name, const QString oldGroup, const QString newGroup){
     paths->movePath(name, oldGroup, newGroup);
-
     PathXMLParser::save(this, currentPathsFile);
 }
 
@@ -149,7 +142,6 @@ void PathController::checkPosition(const QImage& mapImage, const int index, cons
     qDebug() << "PathController::checkPosition" << x << y << mapImage.pixelColor(x, y).red();
     emit setTmpValidPositionQml(index, mapImage.pixelColor(x, y).red() >= 254);
 }
-
 
 void PathController::clearPaths(){
     paths->clearGroups();

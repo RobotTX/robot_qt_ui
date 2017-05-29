@@ -96,8 +96,24 @@ signals:
      * of the same size
      */
     void updateSize(QVariant, QVariant);
+    /**
+     * @brief setMessageTop
+     * @param status
+     * @param msg
+     * To display an informative message at the top of the application
+     */
     void setMessageTop(int status, QString msg);
+    /**
+     * @brief clearPointsAndPaths
+     * After the map is saved it is going to replace the current map inside the main window
+     * For this reason the points and paths must be cleared
+     */
     void clearPointsAndPaths();
+    /**
+     * @brief discardMap
+     * After the map is saved maps keep arriving so we send this signal to notify the main controller
+     * to discard them
+     */
     void discardMap(bool);
 
 private:

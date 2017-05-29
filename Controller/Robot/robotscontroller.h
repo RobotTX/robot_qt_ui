@@ -95,10 +95,24 @@ private:
     void launchServer(void);
 
 private slots:
+    /**
+     * @brief robotIsAliveSlot
+     * @param name
+     * @param ip
+     * @param ssid
+     * @param stage
+     * @param battery
+     * Received several times per second to notify that the robot at address <ip>
+     * is still connected with the robot, carries useful information such as path stage and battery level
+     * along the way
+     */
     void robotIsAliveSlot(const QString name, const QString ip, const QString ssid, const int stage, const int battery);
+    /**
+     * @brief robotIsDeadSlot
+     * @param ip
+     */
     void robotIsDeadSlot(const QString ip);
-    void shortcutAddRobot(void);
-    void shortcutDeleteRobot(void);
+
     void newRobotPosSlot(const QString ip, const double posX, const double posY, const double ori);
     void updatePathSlot(const QString ip, const QStringList strList);
     void updateHomeSlot(const QString ip, const double homeX, const double homeY, const double homeOri);
@@ -129,6 +143,13 @@ private slots:
 
     void dockRobot(QString ip);
     void resetHomePathSlot(QString ip);
+
+    /**
+     * @brief shortcutAddRobot
+     * to add and remove mock robots to the application
+     */
+    void shortcutAddRobot(void);
+    void shortcutDeleteRobot(void);
 
 signals:
     void stopRobotServerWorker(void);

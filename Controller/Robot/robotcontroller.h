@@ -68,7 +68,13 @@ public:
      * To remove all the obstacles when we stop using the laser
      */
     void clearObstacles(bool activated);
-
+    /**
+     * @brief updateRobotPosition
+     * @param x
+     * @param y
+     * @param orientation
+     * To update the position of the painted item and propagate these properties to the qml side
+     */
     void updateRobotPosition(double x, double y, double orientation);
 
 private:
@@ -261,7 +267,6 @@ signals:
     void stopLocalMapWorker(void);
     void stopMapWorker(void);
     void stopTeleopWorker(void);
-    void stopParticleCloudWorker(void);
 
     /// Tell the workers to start their connection to the robot
     void startCmdRobotWorker(void);
@@ -270,9 +275,6 @@ signals:
     void startLocalMapWorker(void);
     void startMapWorker(void);
     void startTeleopWorker(void);
-    void startParticleCloudWorker(void);
-
-
 
 private:
     QString ip;
@@ -285,7 +287,6 @@ private:
     QPointer<LocalMapWorker> localMapWorker;
     QPointer<ScanMapWorker> mapWorker;
     QPointer<TeleopWorker> teleopWorker;
-    QPointer<ParticleCloudWorker> particleCloudWorker;
 
     QThread cmdThread;
     QThread robotThread;
@@ -293,7 +294,6 @@ private:
     QThread localMapThread;
     QThread mapThread;
     QThread teleopThread;
-    QThread particleCloudThread;
 
     ObstaclesPaintedItem* paintedItem;
 };

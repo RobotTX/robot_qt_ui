@@ -3,7 +3,8 @@
 #include <QStringList>
 
 CommandController::CommandController(QObject* parent, QString _ip, QString _robotName)
-    : QObject(parent), ip(_ip), robotName(_robotName), cmdQueue(QList<QString>()), waitingForAnswer(false){
+    : QObject(parent), ip(_ip), robotName(_robotName), cmdQueue(QList<QString>()), waitingForAnswer(false)
+{
     connect(&timer, SIGNAL(timeout()), this, SLOT(cmdFinished()));
     timer.setSingleShot(true);
 }
@@ -42,7 +43,7 @@ void CommandController::cmdAnswerSlot(QString answer){
                 break;*/
                 case 'c':
                     /// Sent the robot to a new goal
-                    ///nothing is needed on the qml side
+                    /// nothing is needed on the qml side
                 break;
                 case 'd':
                     /// Paused the path of the robot
@@ -95,15 +96,16 @@ void CommandController::cmdAnswerSlot(QString answer){
                     emit updateHome(ip, list.at(2).toDouble(), list.at(3).toDouble(), list.at(4).toDouble());
                     emit setMessageTop(2, "The robot " + robotName + " has a new home");
                 break;
-                /*case 'o':
-                    /// TODO go home system
-                    /// Sent the robot to its home
+                case 'o':
+                    /// TODO message to say robot on its way
                 break;
+                /**
                 case 'p':
                     /// Stopped the robot to go home
                     /// NOT USED ANYMORE
                     Q_UNREACHABLE();
-                break;*/
+                break;
+                */
                 case 'q':
                     /// Started the laser of the robot
                     emit updateLaser(ip, true);

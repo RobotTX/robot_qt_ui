@@ -31,11 +31,6 @@ ros::ServiceClient stopRecoveringPositionClient;
 ros::ServiceClient checkLocalizationClient;
 ros::ServiceClient stopCheckingLocalizationClient;
 
-ros::ServiceClient initializeParticleCloudClient;
-ros::ServiceClient connectToParticleCloudClient;
-ros::ServiceClient startSendingParticleCloudDataClient;
-ros::ServiceClient stopSendingParticleCloudDataClient;
-
 // to get the local map to be send to recover the robot's position
 ros::ServiceClient sendLocalMapClient;
 ros::ServiceClient stopSendingLocalMapClient;
@@ -47,7 +42,6 @@ int robot_pos_port = 4001;
 int map_port = 4002;
 int laser_port = 4003;
 int recovered_position_port = 4004;
-int particle_cloud_port = 4005;
 
 /// Separator which is just a char(31) => unit separator in ASCII
 static const std::string sep = std::string(1, 31);
@@ -362,9 +356,7 @@ bool execCommand(ros::NodeHandle n, std::vector<std::string> command){
 			if(command.size() == 1) {
 				std::cout << "(Command system) Sending the robot home" << std::endl;
 				std_srvs::Empty arg;
-				/// TODO ? 
 				if(ros::service::call("setAutoCharging", arg)){
-				//if(ros::service::call("go_home", arg)){
 					std::cout << "Go home service called with success" << std::endl;
 					status = true;
 				} else
@@ -379,6 +371,7 @@ bool execCommand(ros::NodeHandle n, std::vector<std::string> command){
 			if(command.size() == 1) {
 				std::cout << "(Command system) Stopping the robot on its way home" << std::endl;
 				std_srvs::Empty arg;
+				// TODO stop the mothofockin robot lah
 				if(ros::service::call("stop_going_home", arg)){
 					std::cout << "Stop going home service called with success" << std::endl;
 					status = true;
@@ -492,6 +485,7 @@ bool execCommand(ros::NodeHandle n, std::vector<std::string> command){
 
 		/// command to recover the robot's position
 		case 'v':
+		/*
 		{
 			if(command.size() == 1) {
 				std::cout << "(Command system) Gobot starts recovering its position" << std::endl;
@@ -503,22 +497,24 @@ bool execCommand(ros::NodeHandle n, std::vector<std::string> command){
 					return recoverPosition();
 				else
 					std::cout << "(Command system) Could not get the local map" << std::endl;
-					*/
+					
 			}
 		}
+		*/
 		break;
 
 		/// command to pause during the recovery of a robot's position
 		case 'w':
+		/*
 		{
 			if(command.size() == 1) {
 				std::cout << "(Command system) Gobot pauses during the recovery of its position" << std::endl;
 				status = stopRecoveringPosition();
 			}
 		}
-
+		*/
 		/// command to stop recovering the robot's position
-		case 'x':
+		case 'x':/*
 		{
 			if(command.size() == 1){
 				std::cout << "(Command system) Gobot stops during the recovery of its position" << std::endl;
@@ -526,6 +522,7 @@ bool execCommand(ros::NodeHandle n, std::vector<std::string> command){
 				status = stopRecoveringPosition();
 			}
 		}
+		*/
 		break;
 
 		case 'y':
@@ -637,6 +634,8 @@ bool stopRecoveringPosition(){
 	*/
 }
 
+/**
+
 bool recoverPosition(){
 std::cout << "(Command system) Launching the service to recover the robot's position" << std::endl;
 	std_srvs::Empty srv;
@@ -648,7 +647,7 @@ std::cout << "(Command system) Launching the service to recover the robot's posi
 		std::cerr << "(Command system) Failed to call service recover_position" << std::endl;
 		return false;
 	}
-/*
+
 	std::cout << "(Command system) Launching the service to recover the robot's position" << std::endl;
 	std_srvs::Empty srv;
 
@@ -666,9 +665,9 @@ std::cout << "(Command system) Launching the service to recover the robot's posi
 		std::cerr << "(Command system) Failed to call service recover_position" << std::endl;
 		return false;
 	}
-*/
-}
 
+}
+*/
 void stopTwist(){
 	geometry_msgs::Twist twist;
 	twist.linear.x = 0;
@@ -845,7 +844,7 @@ bool stopLaserData(){
 		return false;
 	}
 }
-
+/*
 bool connectToParticleCloudNode(){
 	gobot_software::Port srv;
 	srv.request.port = particle_cloud_port;
@@ -858,30 +857,7 @@ bool connectToParticleCloudNode(){
 		return false;
 	}
 }
-
-bool startSendingParticleCloud(void){
-	std_srvs::Empty srv;
-	if(initializeParticleCloudClient.call(srv) && startSendingParticleCloudDataClient.call(srv)){
-		std::cout << "Command system send_particle_cloud_data started" << std::endl;
-		return true;
-	} else {
-		std::cerr << "(Command system) failed to call service send_particle_cloud_data" << std::endl;
-		return false;
-	}
-}
-
-bool stopParticleCloudData(void){
-	std::cout << "(Command system) Launching the service to stop receiving the particle cloud data" << std::endl;
-	std_srvs::Empty srv;
-	if(stopSendingParticleCloudDataClient.call(srv)) {
-		std::cout << "(Command system) stop_sending_particle_cloud_data service started" << std::endl;
-		return true;
-	} else {
-		std::cerr << "(Command system) Failed to call service stop_sending_cloud_data" << std::endl;
-		return false;
-	}
-}
-
+*/
 void getPorts(boost::shared_ptr<tcp::socket> sock, ros::NodeHandle n){
 
 	std::cout << "getPorts launched" << std::endl;
@@ -1160,7 +1136,6 @@ void disconnect(){
 		stopRobotPos();
 		stopMap();
 		stopLaserData();
-		//stopParticleCloudData();
 		connected = false;
 	}
 }
@@ -1194,11 +1169,6 @@ int main(int argc, char* argv[]){
 		stopRecoveringPositionClient = n.serviceClient<std_srvs::Empty>("stop_recovering_position");
 		checkLocalizationClient = n.serviceClient<std_srvs::Empty>("check_localization");
 		stopCheckingLocalizationClient = n.serviceClient<std_srvs::Empty>("stop_checking_localization");
-
-		initializeParticleCloudClient = n.serviceClient<std_srvs::Empty>("global_localization");
-		connectToParticleCloudClient = n.serviceClient<gobot_software::Port>("connect_particle_cloud");
-		startSendingParticleCloudDataClient = n.serviceClient<std_srvs::Empty>("send_particle_cloud_data");
-		stopSendingParticleCloudDataClient = n.serviceClient<std_srvs::Empty>("stop_sending_particle_cloud_data");
 
 		sendLocalMapClient = n.serviceClient<std_srvs::Empty>("send_local_map");
 		stopSendingLocalMapClient = n.serviceClient<std_srvs::Empty>("stop_sending_local_map");

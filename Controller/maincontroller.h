@@ -236,7 +236,11 @@ private slots:
      * needs to replace the index'th value by <visible> in tutorial.txt
      */
     void updateTutoFile(int index, bool visible);
-
+    /**
+     * @brief clearPointsAndPathsAfterScan
+     * A new scanned map is now used in the application
+     * so points and paths must be cleared
+     */
     void clearPointsAndPathsAfterScan(void);
     /**
      * @brief setDiscardMap

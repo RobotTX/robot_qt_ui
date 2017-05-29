@@ -112,11 +112,3 @@ add_executable(ping_server src/ping_server.cpp)
 target_link_libraries(ping_server ${catkin_LIBRARIES})
 target_link_libraries(ping_server ${gobot_software} ${Boost_FILESYSTEM_LIBRARY} ${Boost_SYSTEM_LIBRARY} )
 add_dependencies(ping_server gobot_software_generate_messages_cpp)
-
-
-#add_executable(particle_cloud src/particle_cloud.cpp)
-#target_link_libraries(particle_cloud ${catkin_LIBRARIES})
-#target_link_libraries(particle_cloud ${gobot_software} ${Boost_FILESYSTEM_LIBRARY} #${Boost_SYSTEM_LIBRARY} )
-#add_dependencies(particle_cloud gobot_software_generate_messages_cpp)
-
-

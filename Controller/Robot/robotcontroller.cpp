@@ -13,7 +13,6 @@
 #include "Controller/Map/sendnewmapworker.h"
 #include "Controller/Map/localmapworker.h"
 #include "Controller/Map/scanmapworker.h"
-#include "Controller/Map/particlecloudworker.h"
 #include "Controller/maincontroller.h"
 #include "Controller/Map/mapcontroller.h"
 #include "View/Robot/obstaclespainteditem.h"
@@ -106,10 +105,6 @@ void RobotController::stopThreads(void) {
     teleopThread.quit();
     teleopThread.wait();
 
-    emit stopParticleCloudWorker();
-    particleCloudThread.quit();
-    particleCloudThread.wait();
-
     qDebug() << "RobotController::stopThreads" << ip << "all threads stopped";
 }
 
@@ -119,9 +114,7 @@ void RobotController::portSentSlot(void){
     emit startLocalMapWorker();
     emit startMapWorker();
     emit startTeleopWorker();
-    emit startParticleCloudWorker();
 }
-
 
 void RobotController::launchWorkers(void){
 
@@ -143,7 +136,6 @@ void RobotController::launchWorkers(void){
     cmdRobotWorker->moveToThread(&cmdThread);
     cmdThread.start();
 
-
     robotWorker = QPointer<RobotPositionWorker>(new RobotPositionWorker(ip, PORT_ROBOT_POS));
     connect(robotWorker, SIGNAL(valueChangedRobot(double, double, double)),
                      this ,SLOT(updateRobot(double, double, double)));
@@ -154,7 +146,6 @@ void RobotController::launchWorkers(void){
     robotWorker->moveToThread(&robotThread);
     robotThread.start();
 
-
     newMapWorker = QPointer<SendNewMapWorker>(new SendNewMapWorker(ip, PORT_NEW_MAP));
     connect(this, SIGNAL(sendNewMapSignal(QString, QString, QString, QImage)), newMapWorker, SLOT(writeTcpDataSlot(QString, QString, QString, QImage)));
     connect(newMapWorker, SIGNAL(doneSendingNewMapSignal(bool)), this, SLOT(doneSendingMapSlot(bool)));
@@ -164,7 +155,6 @@ void RobotController::launchWorkers(void){
     connect(&newMapThread, SIGNAL(finished()), newMapWorker, SLOT(deleteLater()));
     newMapWorker->moveToThread(&newMapThread);
     newMapThread.start();
-
 
     localMapWorker = QPointer<LocalMapWorker>(new LocalMapWorker(ip, PORT_LOCAL_MAP));
     connect(localMapWorker, SIGNAL(robotIsDead()), this, SLOT(robotIsDeadSlot()));
@@ -177,7 +167,6 @@ void RobotController::launchWorkers(void){
     localMapWorker->moveToThread(&localMapThread);
     localMapThread.start();
 
-
     mapWorker = QPointer<ScanMapWorker>(new ScanMapWorker(ip, PORT_MAP));
     connect(mapWorker, SIGNAL(valueChangedMap(QByteArray, int, QString, QString, QString, QString, QString, int, int)),
             this , SLOT(mapReceivedSlot(QByteArray, int, QString, QString, QString, QString, QString, int, int)));
@@ -188,7 +177,6 @@ void RobotController::launchWorkers(void){
     mapWorker->moveToThread(&mapThread);
     mapThread.start();
 
-
     teleopWorker = QPointer<TeleopWorker>(new TeleopWorker(ip, PORT_TELEOP));
     connect(teleopWorker, SIGNAL(robotIsDead()), this, SLOT(robotIsDeadSlot()));
     connect(&mapThread, SIGNAL(finished()), teleopWorker, SLOT(deleteLater()));
@@ -197,15 +185,6 @@ void RobotController::launchWorkers(void){
     connect(this, SIGNAL(teleopCmd(int)), teleopWorker, SLOT(writeTcpDataSlot(int)));
     teleopWorker->moveToThread(&mapThread);
     mapThread.start();
-
-
-    particleCloudWorker = QPointer<ParticleCloudWorker>(new ParticleCloudWorker(ip, PORT_PARTICLE_CLOUD));
-    connect(particleCloudWorker, SIGNAL(robotIsDead()), this, SLOT(robotIsDeadSlot()));
-    connect(&particleCloudThread, SIGNAL(finished()), particleCloudWorker, SLOT(deleteLater()));
-    connect(this, SIGNAL(startParticleCloudWorker()), particleCloudWorker, SLOT(connectSocket()));
-    connect(this, SIGNAL(stopParticleCloudWorker()), particleCloudWorker, SLOT(stopWorker()));
-    particleCloudWorker->moveToThread(&particleCloudThread);
-    particleCloudThread.start();
 
     emit startCmdRobotWorker();
 }

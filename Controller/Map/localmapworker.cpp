@@ -88,9 +88,6 @@ void LocalMapWorker::readTcpDataSlot(){
 
                 }
 
-                //qDebug() << "laser angle " << angle_min << angle_max << abs(angle_min / angle_increment) <<
-                //            ranges[abs(angle_min-30*3.14159/180)/angle_increment] << ranges[abs(angle_min/angle_increment)] << ranges[abs(angle_min+30*3.14159/180)/angle_increment];
-
                 /// sometimes we don't receive a complete scan and the first values do not correspond to the values of angle_min
                 /// angle_max and angle_increment in which case we receive positive values instead which correspond to ranges
                 /// that's why we check that the angle_min is negative before transmitting the data
@@ -105,7 +102,7 @@ void LocalMapWorker::readTcpDataSlot(){
 void LocalMapWorker::errorConnectionSlot(QAbstractSocket::SocketError error){
     switch (error) {
     case(QAbstractSocket::ConnectionRefusedError):
-        /// if the connection has been refused we symply try again
+        /// if the connection has been refused we symply try again after a short sleep
         QThread::sleep(1);
         socket->connectToHost(ipAddress, port);
         break;

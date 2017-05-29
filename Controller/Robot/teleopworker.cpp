@@ -53,7 +53,7 @@ void TeleopWorker::writeTcpDataSlot(int cmd){
 void TeleopWorker::errorConnectionSlot(QAbstractSocket::SocketError error){
     switch (error) {
     case(QAbstractSocket::ConnectionRefusedError):
-        /// if the connection has been refused we symply try again
+        /// if the connection has been refused we symply try again after a short sleep
         QThread::sleep(1);
         socket->connectToHost(ipAddress, port);
         break;

@@ -76,12 +76,10 @@ void ScanMapController::receivedScanMap(QString ip, QImage map, QString resoluti
         paintedItem->setProperty("height", paintedItem->getImage().height());
         paintedItem->update();
 
-        qDebug() << "inserting ip" << ip;
         colors.insert(ip, paintedItems.count());
         paintedItems.insert(ip, paintedItem);
 
     } else {
-        qDebug() << "resetting size to" << map.width() << map.height();
         paintedItems[ip]->setImage(Helper::Image::crop(map, colors[ip]));
         paintedItems[ip]->setProperty("width", paintedItems[ip]->getImage().width());
         paintedItems[ip]->setProperty("height", paintedItems[ip]->getImage().height());

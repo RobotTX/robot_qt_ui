@@ -51,7 +51,7 @@ void RobotServerWorker::errorConnectionSlot(QAbstractSocket::SocketError error){
     qDebug() << "(RobotServerWorker) Error while connecting :" << error;
     switch (error) {
     case(QAbstractSocket::ConnectionRefusedError):
-        /// if the connection has been refused we symply try again
+        /// if the connection has been refused we symply try again after a short sleep
         qDebug() << "(RobotServerWorker) The connection was refused by the peer (or timed out).";
         break;
     case(QAbstractSocket::RemoteHostClosedError):

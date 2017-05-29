@@ -235,7 +235,6 @@ void MainController::saveMapConfig(QString fileName, double zoom, double centerX
     }
 
     mapController->saveNewMap(Helper::getAppPath() + QDir::separator() + "mapConfigs" + QDir::separator() + mapFileInfo.fileName() + ".pgm");
-
 }
 
 void MainController::loadMapConfig(QString fileName) {
