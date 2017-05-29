@@ -149,7 +149,7 @@ ListModel {
         for(var i = 0; i < count; i++)
             if(get(i).ip === ip){
                 setProperty(i, "laserActivated", activate);
-                console.log("laser set");
+                console.log("laser set to "+ activate);
             }
     }
 

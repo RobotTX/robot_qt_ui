@@ -118,6 +118,7 @@ void RobotsController::robotIsAliveSlot(const QString name, const QString ip, co
     } else {
         QPointer<RobotController> robotController = QPointer<RobotController>(new RobotController(engine_, this, ip, name));
         robots.insert(ip, robotController);
+        qDebug() << "find new robot called" << name;
         emit addRobot(name, ip, ssid, stage, battery);
     }
 }

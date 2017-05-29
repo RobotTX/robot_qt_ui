@@ -37,6 +37,7 @@ void RobotServerWorker::newConnectionSlot(){
 
         if(strList.size() == 4){
             /// hostname, IP address, mapID, map date, wifi SSID and stage of the path
+            qDebug() << strList << strList.at(0);
             emit robotIsAlive(strList.at(0), socket->peerAddress().toString().remove(0, 7), strList.at(1),
                               static_cast<QString> (strList.at(2)).toInt(),
                               static_cast<QString> (strList.at(3)).toInt());

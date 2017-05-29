@@ -143,7 +143,7 @@ private slots:
      * @param ranges
      * To update the display of the obstacles on the map when we receive it from the robot
      */
-    void updateObstacles(double angle_min, double angle_max, double angle_increment, QVector<double> ranges);
+    void updateObstacles(float angle_min, float angle_max, float angle_increment, QVector<float> ranges);
 
 
 

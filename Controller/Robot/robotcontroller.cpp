@@ -161,9 +161,9 @@ void RobotController::launchWorkers(void){
     connect(this, SIGNAL(stopLocalMapWorker()), localMapWorker, SLOT(stopWorker()));
     connect(this, SIGNAL(startLocalMapWorker()), localMapWorker, SLOT(connectSocket()));
     connect(&localMapThread, SIGNAL(finished()), localMapWorker, SLOT(deleteLater()));
-    qRegisterMetaType<QVector<double>>("QVector<double>");
-    connect(localMapWorker, SIGNAL(laserValues(double, double, double, QVector<double>)),
-            this, SLOT(updateObstacles(double, double, double, QVector<double>)));
+    qRegisterMetaType<QVector<float>>("QVector<float>");
+    connect(localMapWorker, SIGNAL(laserValues(float, float, float, QVector<float>)),
+            this, SLOT(updateObstacles(float, float, float, QVector<float>)));
     localMapWorker->moveToThread(&localMapThread);
     localMapThread.start();
 
@@ -317,7 +317,7 @@ void RobotController::sendTeleop(int teleop){
     emit teleopCmd(teleop);
 }
 
-void RobotController::updateObstacles(double angle_min, double angle_max, double angle_increment, QVector<double> ranges){
+void RobotController::updateObstacles(float angle_min, float angle_max, float angle_increment, QVector<float> ranges){
     paintedItem->updateObstacles(angle_min, angle_max, angle_increment, ranges);
 }
 

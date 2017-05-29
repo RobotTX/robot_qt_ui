@@ -45,7 +45,7 @@ signals:
     /// used to draw the obstacles around the robot, the ranges represent the distance to the obstacles
     /// for each angle within the range, the range is [angle_min, angle_max]
     /// two angles differ by <angle_increment>
-    void laserValues(double angle_min, double angle_max, double angle_increment, QVector<double> ranges);
+    void laserValues(float angle_min, float angle_max, float angle_increment, QVector<float> ranges);
     /// to notify the robot controller that the connection has been lost
     void robotIsDead();
 

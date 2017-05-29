@@ -12,7 +12,7 @@ void ObstaclesPaintedItem::paint(QPainter *painter){
         painter->drawPoint(obstacles_.at(j).x() + 300, obstacles_.at(j).y() + 300);
 }
 
-void ObstaclesPaintedItem::updateObstacles(double angle_min, double angle_max, double angle_increment, QVector<double> ranges){
+void ObstaclesPaintedItem::updateObstacles(float angle_min, float angle_max, float angle_increment, QVector<float> ranges){
     if(activated){
         setPosition(QPointF(_x, _y));
         obstacles_.clear();

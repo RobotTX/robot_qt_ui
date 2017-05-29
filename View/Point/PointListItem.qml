@@ -180,8 +180,8 @@ Column {
                     pointModel: groupListItem.pointModel
                     myGroup: groupName
                     onDeletePoint: {
-                        pointModel.deletePoint(groupName, name);
-                        pointModel.deletePointSignal(groupName, name);
+                        pointModel.deletePoint(myGroup, name);
+                        pointModel.deletePointSignal(myGroup, name);
                     }
                     onMoveTo: pointModel.moveTo(name, groupName, newGroup)
                     onEditPoint: groupListItem.editPoint(name, groupName)
