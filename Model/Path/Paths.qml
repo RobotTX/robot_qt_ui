@@ -13,6 +13,7 @@ ListModel {
     signal setMessageTop(int status, string msg)
 
     function addGroup(name){
+        console.log("paths adding group " + name)
         append({
            "groupName": name,
            "groupIsOpen": name === Helper.noGroup,

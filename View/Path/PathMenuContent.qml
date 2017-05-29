@@ -18,10 +18,6 @@ Frame {
         border.width: 1
     }
 
-    onVisibleChanged: {
-        console.log("paths frame " + pathModel.count + " " + pathModel.get(0).paths.count)
-    }
-
     /// This frame is displayed when there is no path
     EmptyMenu {
         visible: (pathModel.count === 1 && pathModel.get(0).paths.count === 0) || pathModel.count === 0
