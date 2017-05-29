@@ -19,13 +19,8 @@ MergeMapController::MergeMapController(MainController *parent, QQmlApplicationEn
 
     if(mergeMapWindow){
         /// to add new maps
-        connect(mergeMapWindow, SIGNAL(importMap(QString)), this, SLOT(importMap(QString)));
-        connect(mergeMapWindow, SIGNAL(exportMap(QString)), this, SLOT(exportMap(QString)));
         connect(mergeMapWindow, SIGNAL(resetWidget()), this, SLOT(resetMergeMapWidget()));
-
-        connect(mergeMapWindow, SIGNAL(getMapFromRobot(QString)), parent, SLOT(getMapFromRobot(QString)));
         connect(mergeMapWindow, SIGNAL(resetMapConfiguration(QString, bool)), parent, SLOT(resetMapConfiguration(QString, bool)));
-
         connect(this, SIGNAL(differentMapSizes()), mergeMapWindow, SLOT(cancelImportMap()));
         connect(this, SIGNAL(readyToBeGrabbed(QVariant)), mergeMapWindow, SLOT(grabMergedMap(QVariant)));
 
@@ -41,10 +36,14 @@ MergeMapController::MergeMapController(MainController *parent, QQmlApplicationEn
 
     QObject* mergeMapLeftMenu = applicationWindow->findChild<QObject*>("mergeMapLeftMenu");
     if(mergeMapLeftMenu){
+        connect(mergeMapLeftMenu, SIGNAL(getMapFromRobot(QString)), parent, SLOT(getMapFromRobot(QString)));
+        connect(mergeMapLeftMenu, SIGNAL(importMap(QString)), this, SLOT(importMap(QString)));
+        connect(mergeMapLeftMenu, SIGNAL(exportMap(QString)), this, SLOT(exportMap(QString)));
         /// to rotate maps
         connect(mergeMapLeftMenu, SIGNAL(rotate(int, int)), this, SLOT(rotateMap(int, int)));
         connect(mergeMapLeftMenu, SIGNAL(removeMap(int)), this, SLOT(removeMap(int)));
-    }
+    } else
+        Q_UNREACHABLE();
 
     connect(this, SIGNAL(setMessageTop(int, QString)), parent, SLOT(setMessageTopSlot(int, QString)));
 }

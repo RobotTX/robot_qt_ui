@@ -3,35 +3,41 @@ import QtQuick.Controls 2.1
 import "../../Helper/style.js" as Style
 
 Button {
-
+    id: helpButton
     property string tooltipText
 
-    height: 20
-    width: 20
+    height: 25
+    width: 25
 
     background: Rectangle {
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.verticalCenter: parent.verticalCenter
+        width: Math.min(helpButton.width, helpButton.height)
+        height: Math.min(helpButton.width, helpButton.height)
         border.color: Style.lightGreyBorder
-        border.width: 1
-        radius: 10
+        color: helpButton.pressed ? Style.lightGreyBorder : helpButton.hovered ? Style.lightGreyBackgroundHover : "white"
+        radius: helpButton.width/2
     }
 
     ToolTip {
-        visible: parent.hovered
+        id: tooltip
+        visible: parent.hovered && tooltipText !== ""
         text: tooltipText
         font.pointSize: 10
-        x: 26
-        y: -4
+        x: helpButton.width + 5
+        y: (helpButton.width - tooltip.height) / 2
+
         background: Rectangle {
             border.color: Style.darkSkyBlue
             border.width: 1
-            radius: 8;
+            radius: 8
             anchors.fill: parent
         }
     }
 
     contentItem: Text {
         text: "?"
-        font.pointSize: 12
+        font.pointSize: 14
         font.bold: true
         color: Style.darkSkyBlue
         verticalAlignment: Text.AlignVCenter

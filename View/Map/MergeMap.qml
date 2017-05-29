@@ -2,7 +2,6 @@ import QtQuick 2.7
 import QtQuick.Controls 2.1
 import QtQuick.Window 2.2
 import QtQuick.Layouts 1.3
-import QtQuick.Dialogs 1.2
 import "../../Helper/style.js" as Style
 import "../../Model/Robot/"
 import "../Robot/"
@@ -26,10 +25,9 @@ Window {
     property Tutorial tutorial
     // no need to do it twice, on the hideEvent or the showEvent, both would work, here we clean the map on the hideEvent
     onVisibleChanged: {
-        _mapsList.clear();
+        leftMenu.clearList();
         if(!visible)
             tutorialD.close();
-
         else {
             resetWidget();
             if(tutorial.isDisplayed("merge_map"))
@@ -37,274 +35,22 @@ Window {
         }
     }
 
-    signal importMap(string file)
-    signal exportMap(string file)
     signal resetWidget()
-    signal getMapFromRobot(string ip)
     signal resetMapConfiguration(string file_name, bool scan)
 
-    Frame {
-
-        id: toolbar
-
-        background: Rectangle {
-            anchors.fill: parent
-            color: "black"
-            opacity: 0.05
-        }
-
-        // to place the toolbar on top of the map
-        z: 2
-
-        height: 44
-        padding: 0
-
-        anchors {
-            left: parent.left
-            top: parent.top
-            right: parent.right
-        }
-
-        // to load a map from your the computer file system
-
-        MergeMapButton {
-            id: importButton
-            src: "qrc:/icons/load_map"
-            txt: "Add Map From File"
-            width: 175
-            anchors {
-                top: parent.top
-                topMargin: 5
-                bottom: parent.bottom
-                bottomMargin: 5
-                left: parent.left
-                leftMargin: 10
-            }
-            onClicked: loadFileDialog.open()
-        }
-
-        // the window that actually opens to choose the file
-        FileDialog {
-            id: loadFileDialog
-            // allow only pgm files to be selected
-            nameFilters: "*.pgm"
-            title: "Import a map"
-            /// TODO pk tu fais des trucs comme ca
-            folder: "/home/joan/Gobot/build-Gobot-Desktop_Qt_5_8_0_GCC_64bit-Debug/mapConfigs/"
-            selectMultiple: false
-            onRejected: {
-                console.log("Canceled the save of a map")
-            }
-            onAccepted: {
-                console.log("gonna send file " << fileUrl);
-                window.importMap(fileUrl.toString().substring(7));
-                _mapsList.addRobot(fileUrl.toString().substring(7), _mapsList.count+1)
-            }
-        }
-
-        ToolSeparator {
-            id: separation1
-            anchors {
-                left: importButton.right
-                leftMargin: 10
-                verticalCenter: parent.verticalCenter
-            }
-        }
-
-        MergeMapButton {
-            id: fromRobotButton
-            src: "qrc:/icons/small_robot"
-            txt: "Add Map From a Robot"
-            width: 200
-            anchors {
-                top: parent.top
-                topMargin: 5
-                bottom: parent.bottom
-                bottomMargin: 5
-                left: separation1.right
-                leftMargin: 10
-            }
-            // the list of robots from which we can choose a map
-            RobotListInPopup {
-                id: robotsList
-                robotModel: window.robotModel
-                robotMapsList: _mapsList
-                y: fromRobotButton.height + 12
-                onRobotSelected: {
-                    console.log("adding robot " + name + " " + ip)
-                    _mapsList.addRobot(name, ip)
-                    window.getMapFromRobot(ip)
-                }
-            }
-            onClicked: {
-                console.log("click import map from robot button")
-                robotsList.open()
-            }
-        }
-
-        ToolSeparator {
-            id: separation2
-            anchors {
-                left: fromRobotButton.right
-                leftMargin: 10
-                verticalCenter: parent.verticalCenter
-            }
-
-        }
-
-        SmallButton {
-
-            id: resetButton
-
-            anchors {
-                verticalCenter: parent.verticalCenter
-                left: separation2.right
-                leftMargin: 10
-            }
-
-            imgSrc: "qrc:/icons/reset"
-
-            onClicked: {
-                _mapsList.clear();
-                window.resetWidget();
-            }
-
-            tooltip: "Clear the window of all maps"
-        }
-
-        Button {
-
-            id: helpButton
-
-            height: 24
-            width: 24
-
-            background: Rectangle {
-                border.color: Style.lightGreyBorder
-                border.width: 1
-                radius: 12
-                color: "white"
-            }
-
-            anchors {
-                right: closeButton.left
-                rightMargin: 23
-                verticalCenter: parent.verticalCenter
-            }
-
-            contentItem: Label {
-                text: "?"
-                font.pointSize: 12
-                font.bold: true
-                color: Style.darkSkyBlue
-                verticalAlignment: Text.AlignVCenter
-                horizontalAlignment: Text.AlignHCenter
-            }
-
-            onClicked: tutorialD.open()
-        }
-
-        Button {
-
-            id: saveButton
-
-            padding: 0
-
-            width: 20
-
-            // we don't want to allow the user to save if there is no map to save at all
-            enabled: _mapsList.count > 0
-
-            anchors {
-                top: parent.top
-                topMargin: 12
-                bottom: parent.bottom
-                bottomMargin: 12
-                right: parent.right
-                rightMargin: 13
-            }
-
-            background: Rectangle {
-                // careful the color "transparent" cannot be used as it induces a bug which hides the image of the button
-                color: Style.lightGreyBackground
-                anchors.fill: parent
-                anchors.margins: 5
-                radius: 8
-            }
-
-            Image {
-                id: saveImg
-                anchors.fill: parent
-                source: "qrc:/icons/save"
-                fillMode: Image.PreserveAspectFit
-                anchors.verticalCenter: parent.verticalCenter
-            }
-
-            onClicked: saveFileDialog.open()
-        }
-
-        FileDialog {
-            id: saveFileDialog
-            // format of files is pgm
-            nameFilters: "*.pgm"
-            // won't let you choose a file name if selectExisting is true
-            selectExisting: false
-            title: "Please choose a location for your map"
-            // to start directly with that folder selected
-            /// TODO pk tu fais des trucs comme ca
-            folder: "/home/joan/Gobot/build-Gobot-Desktop_Qt_5_8_0_GCC_64bit-Debug/mapConfigs/"
-
-            onAccepted: window.exportMap(fileUrl.toString())
-        }
-
-        SmallButton {
-            id: closeButton
-            imgSrc: "qrc:/icons/closeBtn"
-            anchors {
-                top: parent.top
-                bottom: parent.bottom
-                right: saveButton.left
-                rightMargin: 22
-            }
-            onClicked: window.hide();
-        }
-    }
-
-    // to store the robots whose map has been imported for merging (subset of the robotModel and only the name and ip attributes are used
-    ListModel {
-        id: _mapsList
-
-        function addRobot(name, ip){
-            append({
-                "name": name,
-                "ip": ip
-            });
-        }
-
-        function removeRobot(id){
-            remove(id)
-        }
-
-        function contains(ip){
-            for(var i = 0; i < count; i++)
-                if(get(i).ip === ip)
-                    return true;
-            return false;
-        }
-    }
 
     // the menu of the left from where u can rotate maps
     MergeMapsLeftMenu {
-        z: 1
         id: leftMenu
-        mapsList: _mapsList
         anchors {
-            top: toolbar.bottom
+            top: parent.top
             bottom: parent.bottom
             left: parent.left
         }
-        onExportMap: saveFileDialog.open()
+        robotModel: window.robotModel
         onCloseWidget: window.hide()
+        onResetWidget: window.resetWidget()
+        onDisplayTutorial: tutorialD.open()
     }
 
     Rectangle {
@@ -314,7 +60,7 @@ Window {
         anchors {
             left: leftMenu.right
             right: parent.right
-            top: toolbar.bottom
+            top: parent.top
             bottom: parent.bottom
         }
 
@@ -366,7 +112,7 @@ Window {
 
     function cancelImportMap(){
         console.log("Cancelling import map");
-        _mapsList.removeRobot(_mapsList.count-1);
+        leftMenu.removeLastRobot();
         mapImportErrorDialog.open();
     }
 

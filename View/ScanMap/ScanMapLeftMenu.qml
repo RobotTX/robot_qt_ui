@@ -158,35 +158,13 @@ Frame {
             }
         }
 
-        Button {
+        HelpButton {
             id: helpButton
-
-            height: 25
-            width: 25
-
-            background: Rectangle {
-                anchors.horizontalCenter: parent.horizontalCenter
-                anchors.verticalCenter: parent.verticalCenter
-                width: Math.min(helpButton.width, helpButton.height)
-                height: Math.min(helpButton.width, helpButton.height)
-                border.color: Style.lightGreyBorder
-                color: helpButton.pressed ? Style.lightGreyBorder : helpButton.hovered ? Style.lightGreyBackgroundHover : "white"
-                radius: helpButton.width/2
-            }
 
             anchors {
                 verticalCenter: parent.verticalCenter
                 right: parent.right
                 rightMargin: 15
-            }
-
-            contentItem: Label {
-                text: "?"
-                font.pointSize: 14
-                font.bold: true
-                color: Style.darkSkyBlue
-                verticalAlignment: Text.AlignVCenter
-                horizontalAlignment: Text.AlignHCenter
             }
 
             onClicked: tutorialD.open()

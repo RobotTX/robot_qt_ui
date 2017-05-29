@@ -48,6 +48,8 @@ Frame {
     }
 
     HelpButton {
+        height: 20
+        width: 20
         anchors {
             left: choiceMapLabel.right
             leftMargin: 5
@@ -177,10 +179,13 @@ Frame {
 
         HelpButton {
 
+            height: 20
+            width: 20
+
             anchors {
                 left: batteryHelp.right
                 leftMargin: 5
-                top: parent.top
+                verticalCenter: batteryHelp.verticalCenter
             }
 
             tooltipText: "Level of battery under which you receive a warning"
