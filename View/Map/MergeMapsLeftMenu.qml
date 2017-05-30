@@ -260,7 +260,7 @@ Frame {
         onAccepted: {
             console.log("gonna send file " << fileUrl);
             leftMenu.importMap(fileUrl.toString().substring(7));
-            mapsList.addRobot(fileUrl.toString().substring(7), mapsList.count+1)
+            mapsList.addRobot(fileUrl.toString().substring(7), "" + mapsList.count+1)
         }
     }
 

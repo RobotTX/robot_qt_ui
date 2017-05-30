@@ -239,8 +239,10 @@ Frame {
                                 tmpPointView.setPos(mouseX,  mouseY);
                                 tmpPointView.tmpPointViewPosChanged()
                             }
-                            if(robotModel.count > 0)
-                                console.log("robot pos " + robotModel.get(0).posX + " " + robotModel.get(0).posY)
+                            if(robotModel.count > 0){
+                                console.log("robot 0 pos " + robotModel.get(0).posX + " " + robotModel.get(0).posY)
+                                console.log("robot 0 home pos " + robotModel.get(0).homeX + " " + robotModel.get(0).homeY + " " + useRobotPathModel)
+                            }
                             if(useTmpPathModel){
                                 tmpPathModel.addPathPoint(Math.round(mouseX) + ' ' + Math.round(mouseY),  "tmpPath", "tmpGroup", mouseX, mouseY, 0);
                                 tmpPathModel.checkTmpPosition(tmpPathModel.get(0).paths.get(0).pathPoints.count - 1, mouseX, mouseY);
@@ -374,7 +376,7 @@ Frame {
                         PointView {
                             id: homeView
                             _name: "Charging station of " + name
-                            _isVisible: useRobotPathModel && homeX > -100
+                            _isVisible: useRobotPathModel && homeX >= 0
                             type: Helper.PointViewType.HOME
                             originX: homeX
                             originY: homeY

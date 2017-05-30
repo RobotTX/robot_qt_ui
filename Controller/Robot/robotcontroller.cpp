@@ -254,7 +254,7 @@ void RobotController::robotIsDeadSlot(void){
 void RobotController::updateRobotInfo(const QString robotInfo){
 
     QStringList strList = robotInfo.split(QChar(31), QString::SkipEmptyParts);
-    qDebug() << "RobotController::updateRobotInfo" << strList;
+    qDebug() << "RobotController::updateRobotInfo ip" << ip << " : " << strList;
 
     if(strList.size() > 7){
         /// Remove the "Connected" in the list
@@ -272,7 +272,7 @@ void RobotController::updateRobotInfo(const QString robotInfo){
         if(!strList.empty())
             emit updatePath(ip, strList);
 
-        if(homeX != -1 && homeY != -1)
+        if(homeX >= -100 && homeY >= -100)
             emit updateHome(ip, homeX, homeY, homeOri);
 
         emit checkMapInfo(ip, mapId, mapDate);
