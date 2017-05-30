@@ -88,15 +88,15 @@ Frame {
 
             contentItem: Image {
                 asynchronous: true
-                source: homeX < -100 ? "qrc:/icons/noHome" : "qrc:/icons/home"
+                source: homeX >= 0 ? "qrc:/icons/home" : "qrc:/icons/noHome"
                 fillMode: Image.Pad // For not stretching image
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.verticalCenter: parent.verticalCenter
             }
             onClicked: {
-                if(homeX > -100){
+                if(homeX >= 0){
                     frame.dockRobot(ip)
-                    console.log(homeX < -100 ? "I don't have a home" : "Going to dock now")
+                    console.log(homeX >= 0 ? "Going to dock now" : "I don't have a home")
                 }
             }
         }
@@ -348,7 +348,7 @@ Frame {
                 height: parent.height - 2
                 width: 32
                 padding: 0
-                imgSrc: homeX < -100 ? "qrc:/icons/noHome" : "qrc:/icons/home"
+                imgSrc: homeX >= 0 ? "qrc:/icons/home" : "qrc:/icons/noHome"
                 tooltip: "Send the robot home"
 
                 anchors {
@@ -357,15 +357,12 @@ Frame {
                     rightMargin: 8
                 }
 
-                // we enable this button only if the robot has a home
-                // one way to check that is to check that the x coordinate is > -100 as the default
-                // value is -150 when no home is set
-                enabled: homeX > -100
+                enabled: homeX >= 0
 
                 onClicked: {
                     if(enabled){
                         frame.dockRobot(ip)
-                        console.log(homeX < -100 ? "I don't have a home" : "Going to dock now")
+                        console.log(homeX >= 0 ? "Going to dock now" : "I don't have a home")
                     }
                 }
             }

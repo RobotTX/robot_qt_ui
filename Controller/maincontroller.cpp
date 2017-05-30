@@ -331,6 +331,7 @@ void MainController::updateHomeSlot(QString ip, double homeX, double homeY, doub
                     mapController->getOrigin().y(),
                     mapController->getResolution(),
                     mapController->getHeight());
+
     emit setHome(ip, homePos.x(), homePos.y(), homeOri);
 }
 

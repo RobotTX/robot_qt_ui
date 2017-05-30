@@ -36,7 +36,7 @@ void getLaserData(const sensor_msgs::LaserScan::ConstPtr& msg){
     for(int i = 0; i < (msg->angle_max - msg->angle_min) / msg->angle_increment; i++)
         scan.push_back(msg->ranges[i]);
     scan.push_back(-1.0f);
-    std::cout << "get laser data sending " << scan.size() << " " << scan.at(scan.size()-1) << std::endl;
+
     sendLaserData(scan);
 }
 

@@ -35,7 +35,6 @@ void LocalMapWorker::readTcpDataSlot(){
 
     data.append(socket->readAll());
 
-    qDebug() << "Receiving data from laser" << data.size();
 
     if(data.size() > 3){
 
