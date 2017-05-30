@@ -154,7 +154,7 @@ def setAutoCharging(req):
 	print "setAutoCharging called"
 	global chargingFlag
 	# TODO put this guy back when testing phase is over
-	batteryFlag = getBatteryProxy().ChargingFlag
+	#batteryFlag = getBatteryProxy().ChargingFlag
 	batteryFlag = False
 	# if we have not already arrived at the charging station we publish the goal
 	if(not batteryFlag):
