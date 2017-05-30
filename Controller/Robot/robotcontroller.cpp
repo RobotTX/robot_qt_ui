@@ -13,6 +13,7 @@
 #include "Controller/Map/sendnewmapworker.h"
 #include "Controller/Map/localmapworker.h"
 #include "Controller/Map/scanmapworker.h"
+#include "Controller/Robot/backuprobotworker.h"
 #include "Controller/maincontroller.h"
 #include "Controller/Map/mapcontroller.h"
 #include "View/Robot/obstaclespainteditem.h"
@@ -105,6 +106,10 @@ void RobotController::stopThreads(void) {
     teleopThread.quit();
     teleopThread.wait();
 
+    emit stopBackupWorker();
+    backupThread.quit();
+    backupThread.wait();
+
     qDebug() << "RobotController::stopThreads" << ip << "all threads stopped";
 }
 
@@ -179,14 +184,24 @@ void RobotController::launchWorkers(void){
 
     teleopWorker = QPointer<TeleopWorker>(new TeleopWorker(ip, PORT_TELEOP));
     connect(teleopWorker, SIGNAL(robotIsDead()), this, SLOT(robotIsDeadSlot()));
-    connect(&mapThread, SIGNAL(finished()), teleopWorker, SLOT(deleteLater()));
+    connect(&teleopThread, SIGNAL(finished()), teleopWorker, SLOT(deleteLater()));
     connect(this, SIGNAL(startTeleopWorker()), teleopWorker, SLOT(connectSocket()));
     connect(this, SIGNAL(stopTeleopWorker()), teleopWorker, SLOT(stopWorker()));
     connect(this, SIGNAL(teleopCmd(int)), teleopWorker, SLOT(writeTcpDataSlot(int)));
-    teleopWorker->moveToThread(&mapThread);
-    mapThread.start();
+    teleopWorker->moveToThread(&teleopThread);
+    teleopThread.start();
+
+    backupWorker = QPointer<BackupRobotWorker>(new BackupRobotWorker(ip, PORT_BACKUP_SYSTEM));
+    connect(backupWorker, SIGNAL(backupSystemIsDown()), this, SLOT(backupSystemIsDownSlot()));
+    /// to reboot a robot
+    connect(this, SIGNAL(rebootRobot()), backupWorker, SLOT(callForReboot()));
+    connect(this, SIGNAL(startBackupWorker()), backupWorker, SLOT(connectSocket()));
+    connect(this, SIGNAL(stopBackupWorker()), backupWorker, SLOT(stopWorker()));
+    backupWorker->moveToThread(&backupThread);
+    backupThread.start();
 
     emit startCmdRobotWorker();
+    emit startBackupWorker();
 }
 
 void RobotController::mapReceivedSlot(const QByteArray mapArray, const int who, const QString mapId, const QString mapDate, const QString resolution, const QString originX, const QString originY, const int map_width, const int map_height){
@@ -329,4 +344,12 @@ void RobotController::updateRobotPosition(double x, double y, double orientation
     paintedItem->setProperty("orientation_", orientation);
     paintedItem->setProperty("_x", x-300 + 5 * qCos((paintedItem->orientation() - 90) / 180.0*3.14159));
     paintedItem->setProperty("_y", y-300 + 5 * qSin((paintedItem->orientation() - 90) / 180.0*3.14159));
+}
+
+void RobotController::backupSystemIsDownSlot(){
+    qDebug() << "RobotController::backup System is down";
+}
+
+void RobotController::getRebootRequestFromRobotsController(){
+    emit rebootRobot();
 }

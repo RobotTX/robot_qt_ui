@@ -934,7 +934,7 @@ void session(boost::shared_ptr<tcp::socket> sock, ros::NodeHandle n){
 					if(static_cast<int>(data[i]) == 23){
 						std::cout << "(Command system) Command complete" << std::endl;
 						finishedCmd = 1;
-						i = length;
+						break;
 					} else
 						commandStr += data[i];
 				}

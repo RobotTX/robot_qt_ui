@@ -112,3 +112,9 @@ add_executable(ping_server src/ping_server.cpp)
 target_link_libraries(ping_server ${catkin_LIBRARIES})
 target_link_libraries(ping_server ${gobot_software} ${Boost_FILESYSTEM_LIBRARY} ${Boost_SYSTEM_LIBRARY} )
 add_dependencies(ping_server gobot_software_generate_messages_cpp)
+
+add_executable(backup_server src/backup_server.cpp)
+target_link_libraries(backup_server ${catkin_LIBRARIES})
+target_link_libraries(backup_server ${gobot_software} ${Boost_FILESYSTEM_LIBRARY} ${Boost_SYSTEM_LIBRARY} )
+add_dependencies(backup_server gobot_software_generate_messages_cpp)
+

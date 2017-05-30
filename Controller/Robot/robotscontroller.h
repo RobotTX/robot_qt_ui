@@ -92,6 +92,7 @@ public:
      */
     void sendMapToAllRobots(QString mapId, QString date, QString mapMetadata, QImage img);
 
+    void callForRebootRobot(const QString ip);
 
 private:
     void launchServer(void);

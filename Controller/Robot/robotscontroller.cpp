@@ -353,3 +353,8 @@ void RobotsController::resetHomePathSlot(QString ip){
     emit setPath(ip, "");
 }
 
+void RobotsController::callForRebootRobot(const QString ip){
+    qDebug() << "robotsController:: call for reboot robot called";
+    robots.value(ip)->rebootRobot();
+}
+
