@@ -41,6 +41,7 @@
         <file alias="valid">icons/Ic_Normal.png</file>
         <file alias="notValid">icons/Ic_Error.png</file>
         <file alias="checkmark">icons/Checkmark_Selected.png</file>
+        <file alias="disco">icons/disconnected2.png</file>
 
         <file alias="arrow">icons/Arrow.png</file>
         <file alias="fold">icons/Btn_Fold.png</file>

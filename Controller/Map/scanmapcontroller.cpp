@@ -14,6 +14,7 @@ ScanMapController::ScanMapController(MainController* parent, QQmlApplicationEngi
         connect(scanLeftMenuFrame, SIGNAL(sendTeleop(QString, int)), parent, SLOT(sendTeleopSlot(QString, int)));
         connect(scanLeftMenuFrame, SIGNAL(resetScanMaps()), this, SLOT(resetScanMaps()));
         connect(scanLeftMenuFrame, SIGNAL(saveScan(QString)), this, SLOT(saveScanSlot(QString)));
+        connect(scanLeftMenuFrame, SIGNAL(removeMap(QString)), this, SLOT(removeMap(QString)));
 
         connect(this, SIGNAL(receivedScanMap(QVariant)), scanLeftMenuFrame, SLOT(receivedScanMap(QVariant)));
     }
