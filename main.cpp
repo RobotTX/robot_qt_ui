@@ -1,8 +1,8 @@
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
 #include "Controller/maincontroller.h"
-#include "View/Map/editmappainteditem.h"
-#include "View/Map/mergemapspainteditem.h"
+#include "View/EditMap/editmappainteditem.h"
+#include "View/MergeMap/mergemapspainteditem.h"
 #include "View/Robot/scanmappainteditem.h"
 #include "View/Robot/obstaclespainteditem.h"
 

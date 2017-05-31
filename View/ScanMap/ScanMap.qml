@@ -101,6 +101,15 @@ Window {
         }
     }
 
+    CustomDialog {
+        id: dualChoiceMessageDialog
+        x: parent.width / 2 - width / 2
+        y: parent.height / 2 - height / 2
+
+        onAccepted: scanMapLeftMenu.startScanning(ip)
+        onRejected: scanMapLeftMenu.setBusy(ip, false)
+    }
+
     function openRestartScanMessageDialog(ip){
         if(!dualChoiceMessageDialog.visible){
             dualChoiceMessageDialog.title = qsTr("Do you wish to restart the scan ?");

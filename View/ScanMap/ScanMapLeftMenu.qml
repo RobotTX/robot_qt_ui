@@ -321,4 +321,8 @@ Frame {
     function stopAllScans(killGobotMove){
         scanningRobotsList.stopAllScans(killGobotMove);
     }
+
+    function setBusy(ip, busy){
+        scanningRobotsList.setBusy(ip, busy);
+    }
 }

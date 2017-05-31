@@ -1,5 +1,5 @@
 #include "editmapcontroller.h"
-#include "View/Map/editmappainteditem.h"
+#include "View/EditMap/editmappainteditem.h"
 #include <QDebug>
 #include <QQmlApplicationEngine>
 #include <QKeySequence>
@@ -10,7 +10,7 @@ EditMapController::EditMapController(QQmlApplicationEngine* engine, QObject *app
     QObject *editMapWindow = applicationWindow->findChild<QObject*>("editMapWindow");
 
     if(editMapWindow){
-        QQmlComponent component(engine, QUrl("qrc:/View/Map/EditMapPaintedItem.qml"));
+        QQmlComponent component(engine, QUrl("qrc:/View/EditMap/EditMapPaintedItem.qml"));
         paintedItem = qobject_cast<EditMapPaintedItem*>(component.create());
         QQmlEngine::setObjectOwnership(paintedItem, QQmlEngine::CppOwnership);
 

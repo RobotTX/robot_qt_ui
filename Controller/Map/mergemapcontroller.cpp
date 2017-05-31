@@ -9,7 +9,7 @@
 #include <QQuickWindow>
 #include <QPainter>
 #include "mergemapcontroller.h"
-#include "View/Map/mergemapspainteditem.h"
+#include "View/MergeMap/mergemapspainteditem.h"
 #include "Controller/maincontroller.h"
 
 MergeMapController::MergeMapController(MainController *parent, QQmlApplicationEngine* _engine, QObject *_applicationWindow)
@@ -57,7 +57,7 @@ void MergeMapController::importMap(const QString& _filename){
     }
 
     if(image.size() == size_of_images_merged){
-        QQmlComponent component(engine, QUrl("qrc:/View/Map/MergeMapsPaintedItem.qml"));
+        QQmlComponent component(engine, QUrl("qrc:/View/MergeMap/MergeMapsPaintedItem.qml"));
         MergeMapsPaintedItem* paintedItem = qobject_cast<MergeMapsPaintedItem*>(component.create());
         QQmlEngine::setObjectOwnership(paintedItem, QQmlEngine::CppOwnership);
 
@@ -129,7 +129,7 @@ void MergeMapController::importMap(QImage image, double _resolution){
     }
 
     if(image.size() == size_of_images_merged){
-        QQmlComponent component(engine, QUrl("qrc:/View/Map/MergeMapsPaintedItem.qml"));
+        QQmlComponent component(engine, QUrl("qrc:/View/MergeMap/MergeMapsPaintedItem.qml"));
         MergeMapsPaintedItem* paintedItem = qobject_cast<MergeMapsPaintedItem*>(component.create());
         QQmlEngine::setObjectOwnership(paintedItem, QQmlEngine::CppOwnership);
 
