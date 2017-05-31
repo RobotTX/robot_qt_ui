@@ -209,7 +209,7 @@ Frame {
 
                 Rectangle {
                     anchors.fill: parent
-                    color: Style.lightGreyBackground
+                    color: "transparent"//Style.lightGreyBackground
                 }
 
                 Column {
@@ -227,7 +227,7 @@ Frame {
                             padding: 0
                             background: Rectangle {
                                 anchors.fill: parent
-                                color: Style.lightGreyBackground
+                                color: "transparent"//Style.lightGreyBackground
                             }
 
                             Rectangle {

@@ -13,7 +13,7 @@ Frame {
     signal sendTeleop(string ip, int index)
 
     padding: 0
-    enabled: !busy
+    enabled: !busy && connected
     height: 220
 
     background: Rectangle {

@@ -169,7 +169,7 @@ Window {
             id: whiteButton
 
             //checkable: true
-            checked: color == "#ffffff"
+            checked: color == "#ffffff" // white
 
             CustomToolTip { text: "Add a known area to the map" }
 
@@ -209,7 +209,7 @@ Window {
             id: blackButton
 
             //checkable: true
-            checked: color == "#000000"
+            checked: color == "#000000" // black
 
             CustomToolTip { text: "Add an obstacle to the map" }
 
