@@ -621,6 +621,4 @@ void MainController::sendMapToAllRobots(QString id, QString date, QString metada
 
 void MainController::testSlot(){
     qDebug() << "MainController::testSlot called";
-    if(!robotsController->getRobots().empty())
-        robotsController->callForRebootRobot(robotsController->getRobots().begin().key());
 }

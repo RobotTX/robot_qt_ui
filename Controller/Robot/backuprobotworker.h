@@ -1,7 +1,6 @@
 #ifndef BACKUPROBOTWORKER_H
 #define BACKUPROBOTWORKER_H
 
-
 #include <QString>
 #include <QtNetwork/QTcpSocket>
 #include <QPointer>
@@ -15,12 +14,25 @@ public:
     explicit BackupRobotWorker(const QString _ipAddress, const int _port);
     ~BackupRobotWorker();
 
-private slots:
+    /**
+     * @brief stopWorker
+     * To stop the worker
+     */
+    void stopWorker(void);
+    /**
+     * @brief callForReboot
+     * sends a message to the backup system to reboot the robot (restart roscore,
+     * gobot_move, gobot_software and all packages necessary)
+     */
+    void callForReboot(void);
     /**
      * @brief connectSocket
      * Called to start the connection with the robot
      */
     void connectSocket();
+
+private slots:
+
     /**
      * @brief connectedSlot
      * Slot called when we are connected to the host
@@ -40,22 +52,10 @@ private slots:
      */
     void disconnectedSlot();
 
-    /**
-     * @brief callForReboot
-     * sends a message to the backup system to reboot the robot (restart roscore,
-     * gobot_move, gobot_software and all packages necessary)
-     */
-    void callForReboot(void);
-    /**
-     * @brief stopWorker
-     * Slot to stop the worker
-     */
-    void stopWorker(void);
-
     void readTcpDataSlot(void);
 
 signals:
-    void backupSystemIsDown(void);
+    void backupSystemIsDown(QString ip);
 
 private:
     QString ipAddress;

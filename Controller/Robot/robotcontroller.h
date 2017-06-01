@@ -7,7 +7,6 @@ class SendNewMapWorker;
 class LocalMapWorker;
 class ScanMapWorker;
 class TeleopWorker;
-class BackupRobotWorker;
 class CommandController;
 class RobotsController;
 class ObstaclesPaintedItem;
@@ -152,7 +151,7 @@ private slots:
      */
     void updateObstacles(float angle_min, float angle_max, float angle_increment, QVector<float> ranges);
 
-    void backupSystemIsDownSlot(void);
+
 
 signals:
     /**
@@ -274,7 +273,6 @@ signals:
     void stopLocalMapWorker(void);
     void stopMapWorker(void);
     void stopTeleopWorker(void);
-    void stopBackupWorker(void);
 
     /// Tell the workers to start their connection to the robot
     void startCmdRobotWorker(void);
@@ -283,9 +281,6 @@ signals:
     void startLocalMapWorker(void);
     void startMapWorker(void);
     void startTeleopWorker(void);
-    void startBackupWorker(void);
-
-    void rebootRobot(void);
 
 private:
     QString ip;
@@ -298,7 +293,6 @@ private:
     QPointer<LocalMapWorker> localMapWorker;
     QPointer<ScanMapWorker> mapWorker;
     QPointer<TeleopWorker> teleopWorker;
-    QPointer<BackupRobotWorker> backupWorker;
 
     QThread cmdThread;
     QThread robotThread;
@@ -306,7 +300,6 @@ private:
     QThread localMapThread;
     QThread mapThread;
     QThread teleopThread;
-    QThread backupThread;
 
     ObstaclesPaintedItem* paintedItem;
 };

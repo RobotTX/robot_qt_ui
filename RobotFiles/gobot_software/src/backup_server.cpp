@@ -58,7 +58,7 @@ void sendMessageToApplication(boost::shared_ptr<tcp::socket> socket, const std::
 }
 
 void session(boost::shared_ptr<tcp::socket> socket){
-	std::cout << "(Backup system) Waiting for a rebot order" << std::endl;
+	std::cout << "(Backup system) Waiting for a reboot order" << std::endl;
 	try {
 
 		std::string message("");
@@ -83,9 +83,24 @@ void session(boost::shared_ptr<tcp::socket> socket){
 					message += buffer[i];
 			}
 
-			if(message.compare("reboot") == 0)
+			if(message.compare("reboot") == 0){
 				std::cout << "calling reboot" << std::endl;
 				// TODO reboot robot
+
+				std::string cmd = "rosnode kill /play_path";
+	            system(cmd.c_str());
+	            cmd = "rosnode kill /move_base";
+	            system(cmd.c_str());
+	            sleep(3);
+	            system("sh ~/catkin_ws/src/gobot_software/src/start_gobot_move.sh &");
+	            sleep(3);
+	            system("sh ~/catkin_ws/src/gobot_software/src/start_gobot_software.sh &");
+				std::cout << "Relaunched gobot_move" << std::endl;
+	            //sleep(8);
+	            //system("sh ~/catkin_ws/src/gobot_software/src/start_gobot_software.sh");
+	            std::cout << "Relaunched gobot_software" << std::endl;
+	            sleep(3);
+			}
 			message = "";
 		}
 
@@ -95,6 +110,7 @@ void session(boost::shared_ptr<tcp::socket> socket){
 }
 
 void serverDisconnected(const std_msgs::String::ConstPtr& msg){
+	std::cout << "server disconnected callback called" << std::endl;
 	disconnect();
 }
 

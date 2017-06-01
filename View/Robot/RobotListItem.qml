@@ -16,6 +16,7 @@ Frame {
     property real batteryWarningThreshold
 
     signal dockRobot(string ip)
+    signal rebootRobot(string ip)
 
     height: 105 + robotPathListItem.height
     enabled: !processingCmd
@@ -138,6 +139,7 @@ Frame {
             }
             onDeletePath: robotModel.deletePathSignal(ip)
             onLaserPressed: robotModel.activateLaser(ip, !laserActivated)
+            onRebootRobot: frame.rebootRobot(ip)
         }
     }
 
