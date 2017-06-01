@@ -19,6 +19,7 @@ Frame {
     signal cancelScan()
     signal resetScanMaps()
     signal saveScan(string file_name)
+    signal removeMap(string ip)
 
     property Tutorial tutorial
 
@@ -201,6 +202,10 @@ Frame {
             onStopScanning: {
                 if(robotModel.isConnected(ip)){
                     robotModel.stopScanning(ip, true);
+                } else {
+                    console.log("The robot was disconnected so we just remove the map");
+                    scanLeftMenuFrame.removeMap(ip);
+                    stoppedScanning(ip);
                 }
             }
             onPlayPauseScanning: {
@@ -320,5 +325,9 @@ Frame {
 
     function stopAllScans(killGobotMove){
         scanningRobotsList.stopAllScans(killGobotMove);
+    }
+
+    function setBusy(ip, busy){
+        scanningRobotsList.setBusy(ip, busy);
     }
 }

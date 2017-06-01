@@ -40,9 +40,9 @@
         <file>View/Custom/CustomComboBox.qml</file>
         <file>View/Custom/SaveButton.qml</file>
         <file>View/Custom/CancelButton.qml</file>
-        <file>View/Map/EditMap.qml</file>
+        <file>View/EditMap/EditMap.qml</file>
         <file>Model/Map/EditMapModel.qml</file>
-        <file>View/Map/EditMapPaintedItem.qml</file>
+        <file>View/EditMap/EditMapPaintedItem.qml</file>
         <file>View/Custom/CreateMenuHeader.qml</file>
         <file>View/Custom/CreateGroupMenuHeader.qml</file>
         <file>View/Custom/CreateGroupMenuContent.qml</file>
@@ -60,13 +60,13 @@
         <file>View/Robot/RobotPathListItem.qml</file>
         <file>View/Robot/RobotPopupMenu.qml</file>
         <file>View/Path/PathListInPopup.qml</file>
-        <file>View/Map/MergeMap.qml</file>
+        <file>View/MergeMap/MergeMap.qml</file>
         <file>View/Custom/PopupMenuItem.qml</file>
         <file>View/Robot/RobotListInPopup.qml</file>
-        <file>View/Map/MergeMapsLeftMenu.qml</file>
-        <file>View/Map/MergeMapMenuItem.qml</file>
+        <file>View/MergeMap/MergeMapsLeftMenu.qml</file>
+        <file>View/MergeMap/MergeMapMenuItem.qml</file>
         <file>View/Custom/CustomDialog.qml</file>
-        <file>View/Map/MergeMapsPaintedItem.qml</file>
+        <file>View/MergeMap/MergeMapsPaintedItem.qml</file>
         <file>View/ScanMap/ScanMap.qml</file>
         <file>View/ScanMap/ScanMapLeftMenu.qml</file>
         <file>View/ScanMap/ScanMapListItem.qml</file>

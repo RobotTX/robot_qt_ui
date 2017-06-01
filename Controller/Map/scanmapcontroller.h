@@ -34,15 +34,16 @@ public:
      * updates the robot position whose ip is <ip> to (x, y) with orientation <orientation>
      */
     void updateRobotPos(QString ip, double x, double y, double orientation);
+
+    QMap<QString, ScanMapPaintedItem*> getPaintedItems(void) const { return paintedItems; }
+
+public slots:
     /**
      * @brief removeMap
      * @param ip
      * removes the map received by the robot at ip <ip>
      */
     void removeMap(QString ip);
-
-    QMap<QString, ScanMapPaintedItem*> getPaintedItems(void) const { return paintedItems; }
-
 
 private slots:
     /**

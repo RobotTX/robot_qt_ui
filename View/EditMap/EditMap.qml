@@ -28,7 +28,7 @@ Window {
                        "qrc:/icons/line5", "qrc:/icons/line6", "qrc:/icons/line7", "qrc:/icons/line8"]
 
     // properties of the items drawn on the map
-    property color color: "black"
+    property color color: "#000000"
     property int shape: 0
     property int thickness: 1
 
@@ -44,14 +44,14 @@ Window {
         if(visible)
             dialog.resetMap();
         // to reset the toolbar
-        selectButton.checked = true;
-        color = "black"
-        thickness = 1
+        shape = -1;
+        color = "#000000";
+        thickness = 1;
         if(!visible)
-            tutorialD.close()
+            tutorialD.close();
         else
             if(tutorial.isDisplayed("edit_map"))
-                tutorialD.open()
+                tutorialD.open();
     }
 
     Frame {
@@ -142,16 +142,16 @@ Window {
 
             CustomToolTip { text: "Drag the map" }
 
-            checkable: true
-            checked: true
+            //checkable: true
+            checked: shape == -1
             src: "qrc:/icons/hand"
-            ButtonGroup.group: shapeGroup
 
             anchors {
                 verticalCenter: parent.verticalCenter
                 left: reset.right
                 leftMargin: 10
             }
+            onClicked: shape = -1
         }
 
         ToolSeparator {
@@ -163,17 +163,13 @@ Window {
             }
         }
 
-        // to create a group of mutually exclusive buttons for all the different colors
-        ButtonGroup { id: colorGroup }
 
         EditMapToolButton {
 
             id: whiteButton
 
-            ButtonGroup.group: colorGroup
-
-            checkable: true
-            checked: false
+            //checkable: true
+            checked: color == "#ffffff" // white
 
             CustomToolTip { text: "Add a known area to the map" }
 
@@ -185,17 +181,15 @@ Window {
                 leftMargin: 10
             }
 
-            onClicked: color = "white"
+            onClicked: color = "#ffffff" // white
         }
 
         EditMapToolButton {
 
             id: greyButton
 
-            checkable: true
-            checked: false
-
-            ButtonGroup.group: colorGroup
+            //checkable: true
+            checked: color == Style.mapGrey
 
             CustomToolTip { text: "Add an unknown area to the map" }
 
@@ -207,19 +201,15 @@ Window {
                 leftMargin: 10
             }
 
-            onClicked: {
-                color = Style.mapGrey
-            }
+            onClicked: color = Style.mapGrey
         }
 
         EditMapToolButton {
 
             id: blackButton
 
-            checkable: true
-            checked: true
-
-            ButtonGroup.group: colorGroup
+            //checkable: true
+            checked: color == "#000000" // black
 
             CustomToolTip { text: "Add an obstacle to the map" }
 
@@ -231,7 +221,7 @@ Window {
                 leftMargin: 10
             }
 
-            onClicked: color = "black"
+            onClicked: color = "#000000" // black
         }
 
         ToolSeparator {
@@ -243,8 +233,6 @@ Window {
             }
         }
 
-        // to create a group of mutually exclusive buttons for all the different shapes
-        ButtonGroup { id: shapeGroup }
 
         EditMapToolButton {
 
@@ -252,8 +240,8 @@ Window {
 
             CustomToolTip { text: "Draw a point on the map" }
 
-            checkable: true
-            checked: false
+            //checkable: true
+            checked: shape == 0
 
             src: "qrc:/icons/dot"
 
@@ -262,8 +250,6 @@ Window {
                 left: verticalSpaceBar2.right
                 leftMargin: 10
             }
-
-            ButtonGroup.group: shapeGroup
 
             onClicked: shape = 0
         }
@@ -274,8 +260,8 @@ Window {
 
             CustomToolTip { text: "Draw a line on the map" }
 
-            checkable: true
-            checked: false
+            //checkable: true
+            checked: shape == 1
 
             src: "qrc:/icons/line"
 
@@ -284,8 +270,6 @@ Window {
                 left: dotButton.right
                 leftMargin: 10
             }
-
-            ButtonGroup.group: shapeGroup
 
             onClicked: shape = 1
         }
@@ -296,10 +280,8 @@ Window {
 
             CustomToolTip { text: "Draw an empty rectangle on the map" }
 
-            ButtonGroup.group: shapeGroup
-
-            checkable: true
-            checked: false
+            //checkable: true
+            checked: shape == 2
 
             src: "qrc:/icons/outline"
 
@@ -318,12 +300,10 @@ Window {
 
             CustomToolTip { text: "Draw an filled rectangle on the map" }
 
-            checkable: true
-            checked: false
+            //checkable: true
+            checked: shape == 3
 
             src: "qrc:/icons/solid"
-
-            ButtonGroup.group: shapeGroup
 
             anchors {
                 verticalCenter: parent.verticalCenter

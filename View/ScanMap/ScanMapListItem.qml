@@ -74,6 +74,7 @@ Frame {
         CancelButton {
             id: playScanBtn
             txt: scanning ? "Pause" : "Start Scanning"
+            enabled: connected
             anchors {
                 top: nameLabel.bottom
                 left: parent.left
@@ -85,6 +86,7 @@ Frame {
 
         Teleop {
             id: teleop
+            enabled: connected
             anchors {
                 top: playScanBtn.bottom
                 topMargin: 20
@@ -102,6 +104,42 @@ Frame {
                 topMargin: 20
             }
         }
+    }
+
+    Rectangle {
+        id: connectedRect
+        visible: !connected
+        radius: 3
+        color: Style.lightGreyBackground
+        opacity: 0.5
+        anchors.fill: parent
+        anchors.topMargin: 35
+    }
+
+    Image {
+        id: connectedImage
+        visible: !connected
+        source: "qrc:/icons/disco"
+        fillMode: Image.PreserveAspectFit
+        width: 80
+        anchors {
+            top: parent.top
+            topMargin: 52
+            horizontalCenter: connectedRect.horizontalCenter
+        }
+    }
+
+    Label {
+        visible: !connected
+        text: "This robot is disconnected"
+        color: "#ec6262"
+        anchors {
+            horizontalCenter: connectedImage.horizontalCenter
+            top: connectedImage.bottom
+        }
+        wrapMode: Text.WordWrap
+        width: connectedImage.width
+        horizontalAlignment: Text.AlignHCenter
     }
 
     Rectangle {

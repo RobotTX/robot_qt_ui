@@ -19,7 +19,7 @@ SOURCES += main.cpp \
     Model/Path/pathgroup.cpp \
     Model/Point/pointgroup.cpp \
     Model/Path/pathxmlparser.cpp \
-    View/Map/editmappainteditem.cpp \
+    View/EditMap/editmappainteditem.cpp \
     Controller/Map/editmapcontroller.cpp \
     Controller/Robot/robotcontroller.cpp \
     Controller/Robot/robotscontroller.cpp \
@@ -33,7 +33,7 @@ SOURCES += main.cpp \
     Controller/Map/sendnewmapworker.cpp \
     Controller/Map/mergemapcontroller.cpp \
     Controller/Robot/commandcontroller.cpp \
-    View/Map/mergemapspainteditem.cpp \
+    View/MergeMap/mergemapspainteditem.cpp \
     Controller/Map/scanmapcontroller.cpp \
     View/Robot/scanmappainteditem.cpp \
     View/Robot/obstaclespainteditem.cpp \
@@ -80,7 +80,7 @@ HEADERS += \
     Model/Path/pathgroup.h \
     Model/Point/pointgroup.h \
     Model/Path/pathxmlparser.h \
-    View/Map/editmappainteditem.h \
+    View/EditMap/editmappainteditem.h \
     Controller/Map/editmapcontroller.h \
     Controller/Robot/robotcontroller.h \
     Controller/Robot/robotscontroller.h \
@@ -94,7 +94,7 @@ HEADERS += \
     Controller/Map/sendnewmapworker.h \
     Controller/Map/mergemapcontroller.h \
     Controller/Robot/commandcontroller.h \
-    View/Map/mergemapspainteditem.h \
+    View/MergeMap/mergemapspainteditem.h \
     Controller/Map/scanmapcontroller.h \
     View/Robot/scanmappainteditem.h \
     View/Robot/obstaclespainteditem.h \
