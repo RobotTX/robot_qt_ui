@@ -5,25 +5,34 @@ import "../../Model/Robot"
 import "../Custom"
 
 Frame {
-
     id: scanMapListItemFrame
 
-    signal stopScanning(string ip)
-    signal playPauseScanning(string ip, bool scanning)
-    signal sendTeleop(string ip, int index)
+    property bool selected
+
+    signal stopScanning()
+    signal playPauseScanning(bool scanning)
+    signal sendTeleop(int index)
+    signal select()
 
     padding: 0
     enabled: !busy
     height: 220
 
     background: Rectangle {
-        color: "transparent"
+        color: Style.lightGreyBackground
     }
 
     Rectangle {
         anchors.fill: parent
         anchors.margins: 15
-        color: "transparent"
+        color: selected ? Style.selectedItemColor : Style.lightGreyBackground
+        radius: 8
+
+        MouseArea {
+            anchors.fill: parent
+            enabled: connected && !busy
+            onClicked: scanMapListItemFrame.select()
+        }
 
         Image {
             id: validIcon
@@ -32,6 +41,8 @@ Frame {
             anchors {
                 top: parent.top
                 left: parent.left
+                topMargin: 5
+                leftMargin: 5
             }
         }
 
@@ -50,6 +61,7 @@ Frame {
             anchors {
                 verticalCenter: validIcon.verticalCenter
                 right: parent.right
+                rightMargin: 5
             }
 
             background: Rectangle {
@@ -68,7 +80,7 @@ Frame {
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.verticalCenter: parent.verticalCenter
             }
-            onClicked: stopScanning(ip)
+            onClicked: stopScanning()
         }
 
         CancelButton {
@@ -80,8 +92,10 @@ Frame {
                 left: parent.left
                 right: parent.right
                 topMargin: 10
+                leftMargin: 5
+                rightMargin: 5
             }
-            onClicked: playPauseScanning(ip, scanning)
+            onClicked: playPauseScanning(scanning)
         }
 
         Teleop {
@@ -92,7 +106,7 @@ Frame {
                 topMargin: 20
                 horizontalCenter: parent.horizontalCenter
             }
-            onSendTeleop: scanMapListItemFrame.sendTeleop(ip, index)
+            onSendTeleop: scanMapListItemFrame.sendTeleop(index)
         }
 
         ToolSeparator {
@@ -108,12 +122,12 @@ Frame {
 
     Rectangle {
         id: connectedRect
-        visible: !connected
+        visible: !connected || busy
         radius: 3
         color: Style.lightGreyBackground
         opacity: 0.5
         anchors.fill: parent
-        anchors.topMargin: 35
+        //anchors.topMargin: 40
     }
 
     Image {
@@ -140,14 +154,6 @@ Frame {
         wrapMode: Text.WordWrap
         width: connectedImage.width
         horizontalAlignment: Text.AlignHCenter
-    }
-
-    Rectangle {
-        visible: busy
-        radius: 3
-        color: Style.lightGreyBackground
-        opacity: 0.5
-        anchors.fill: parent
     }
 
     CustomBusyIndicator {

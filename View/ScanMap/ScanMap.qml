@@ -30,14 +30,57 @@ Window {
             scanMapLeftMenu.reset();
             scanMapLeftMenu.resetScanMaps();
             discardMap(false);
-            console.log("size scanleftmenu " + scanMapLeftMenu.width + " " + scanMapLeftMenu.height + " " + height)
-            closeOnSave = false
+            console.log("size scanleftmenu " + scanMapLeftMenu.width + " " + scanMapLeftMenu.height + " " + height);
+            closeOnSave = false;
         } else {
-            if(!closeOnSave)
-                scanMapLeftMenu.clear();
-            else
-                scanMapLeftMenu.stopAllScans(false);
+            scanMapLeftMenu.stopAllScans(!closeOnSave);
+            scanMapLeftMenu.clear();
         }
+    }
+
+    Shortcut {
+        sequence: "u"
+        onActivated: scanMapLeftMenu.teleop(scanMapLeftMenu.selectedIp, 0)
+    }
+
+    Shortcut {
+        sequence: "i"
+        onActivated: scanMapLeftMenu.teleop(scanMapLeftMenu.selectedIp, 1)
+    }
+
+    Shortcut {
+        sequence: "o"
+        onActivated: scanMapLeftMenu.teleop(scanMapLeftMenu.selectedIp, 2)
+    }
+
+    Shortcut {
+        sequence: "j"
+        onActivated: scanMapLeftMenu.teleop(scanMapLeftMenu.selectedIp, 3)
+    }
+
+    Shortcut {
+        sequence: "k"
+        onActivated: scanMapLeftMenu.teleop(scanMapLeftMenu.selectedIp, 4)
+    }
+
+    Shortcut {
+        sequence: "l"
+        onActivated: scanMapLeftMenu.teleop(scanMapLeftMenu.selectedIp, 5)
+    }
+
+    Shortcut {
+        sequence: "m"
+        onActivated: scanMapLeftMenu.teleop(scanMapLeftMenu.selectedIp, 6)
+    }
+
+    Shortcut {
+        sequence: ","
+        onActivated: scanMapLeftMenu.teleop(scanMapLeftMenu.selectedIp, 7)
+    }
+
+    Shortcut {
+        sequence: "."
+        onActivated: scanMapLeftMenu.teleop(scanMapLeftMenu.selectedIp, 8)
     }
 
     ScanMapLeftMenu {
@@ -52,7 +95,7 @@ Window {
             left: parent.left
             bottom: parent.bottom
         }
-        onCancelScan: scanWindow.close()
+        onCancelScan: scanWindow.close();
         onSaveScan: closeOnSave = true
     }
 
@@ -74,9 +117,9 @@ Window {
             objectName: "scanMapView"
 
             function adjustSize(_width, _height){
-                console.log("adjusting scan size to " + _width + " " + _height)
-                width = _width
-                height = _height
+                console.log("adjusting scan size to " + _width + " " + _height);
+                width = _width;
+                height = _height;
             }
 
             width: 2496

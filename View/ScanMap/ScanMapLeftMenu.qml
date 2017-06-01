@@ -25,17 +25,19 @@ Frame {
 
     property int scanWindowWidth
     property int scanWindowHeight
+    property string selectedIp
 
     width: Style.smallMenuWidth
     padding: 0
 
     onVisibleChanged: {
+        selectedIp = "";
         if(!visible)
-            tutorialD.close()
+            tutorialD.close();
         else
             // when the scan window is opened, if the scan map message should be displayed then the dialog window is opened
             if(tutorial.isDisplayed("scan_map"))
-                tutorialD.open()
+                tutorialD.open();
     }
 
     background: Rectangle {
@@ -67,7 +69,8 @@ Frame {
                 "mapReceived": false,
                 "busy": true,
                 "scanning": false,
-                "connected": true
+                "connected": true,
+                "checkedIndex": -1
             });
             startScanning(ip)
         }
@@ -76,6 +79,8 @@ Frame {
             for(var i = 0; i < count; i++)
                 if(get(i).ip === ip)
                     remove(i);
+            if(ip === selectedIp)
+                selectedIp = "";
         }
 
         function contains(ip){
@@ -113,11 +118,25 @@ Frame {
             for(var i = 0; i < count; i++)
                 robotModel.stopScanning(get(i).ip, true);
             clear();
+            selectedIp = "";
         }
 
         function stopAllScans(killGobotMove){
             for(var i = 0; i < count; i++)
                 robotModel.stopScanning(get(i).ip, killGobotMove);
+        }
+
+        function setCheckedIndex(ip, index){
+            for(var i = 0; i < count; i++)
+                if(get(i).ip === ip)
+                    setProperty(i, "checkedIndex", index);
+        }
+
+        function getCheckedIndex(ip){
+            for(var i = 0; i < count; i++)
+                if(get(i).ip === ip)
+                    return get(i).checkedIndex;
+            return -2;
         }
     }
 
@@ -198,7 +217,9 @@ Frame {
     Component {
         id: delegate
         ScanMapListItem {
-            width: flick.width
+            x: 1
+            width: flick.width - 2
+            selected: scanLeftMenuFrame.selectedIp === ip
             onStopScanning: {
                 if(robotModel.isConnected(ip)){
                     robotModel.stopScanning(ip, true);
@@ -209,11 +230,11 @@ Frame {
                 }
             }
             onPlayPauseScanning: {
-                if(robotModel.isConnected(ip)){
+                if(robotModel.isConnected(ip))
                     scanLeftMenuFrame.playPauseScanning(ip, scanning, robotModel.getScanningOnConnection(ip));
-                }
             }
-            onSendTeleop: scanLeftMenuFrame.sendTeleop(ip, index)
+            onSendTeleop: scanLeftMenuFrame.teleop(ip, index)
+            onSelect: scanLeftMenuFrame.selectedIp === ip ? scanLeftMenuFrame.selectedIp = "" : scanLeftMenuFrame.selectedIp = ip
         }
     }
 
@@ -329,5 +350,18 @@ Frame {
 
     function setBusy(ip, busy){
         scanningRobotsList.setBusy(ip, busy);
+    }
+
+    function teleop(ip, index){
+        var checkedIndex = scanningRobotsList.getCheckedIndex(ip);
+        if(ip !== "" && checkedIndex !== -2){
+            /// Useful to know which button to check
+            var newCheckedIndex = (index === 4 || checkedIndex === index) ? -1 : index;
+            scanningRobotsList.setCheckedIndex(ip, newCheckedIndex);
+            console.log("Send teleop " + (newCheckedIndex === -1 ? 4 : newCheckedIndex));
+            /// Send the command to the robot
+            scanLeftMenuFrame.sendTeleop(ip, newCheckedIndex === -1 ? 4 : newCheckedIndex);
+        } else
+            console.log(ip === "" ? "No robot selected" : "Checked index could not be found : " + checkedIndex);
     }
 }
