@@ -10,7 +10,6 @@ GridLayout {
     rowSpacing: 8
 
     signal sendTeleop(int index)
-    property int checkedIndex: -1
 
     ListModel {
         id: listBtn
@@ -47,11 +46,7 @@ GridLayout {
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.verticalCenter: parent.verticalCenter
             }
-            onClicked: {
-                checkedIndex = (index === 4 || checkedIndex === index ? -1 : index);
-                console.log("Send teleop " + (checkedIndex === -1 ? 4 : checkedIndex));
-                sendTeleop(checkedIndex === -1 ? 4 : checkedIndex);
-            }
+            onClicked: sendTeleop(index);
         }
     }
 }

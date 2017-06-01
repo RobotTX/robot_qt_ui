@@ -40,7 +40,10 @@ ListModel {
     ListElement {
         feature: "scan_map"
         message: "You are about to scan the map. This is how to proceed...\n\n\t
-        * Use the teleop keys to make the robot\n\n\t
+        * Use the teleop buttons or your keyboard (see touches below) to make the robot move\n\t
+        \tu i o \n\t
+        \tj k l \n\t
+        \t, . / \n\n\t
         * Click the map to set goals from the robot"
         show: true
     }
