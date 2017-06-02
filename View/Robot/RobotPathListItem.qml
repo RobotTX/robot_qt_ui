@@ -20,7 +20,6 @@ Frame {
         color: Style.lightGreyBackground
     }
 
-
     Item {
         id: noPathItem
         visible: pathName === ""
@@ -89,7 +88,7 @@ Frame {
             contentItem: Image {
                 asynchronous: true
                 source: homeX >= 0 ? "qrc:/icons/home" : "qrc:/icons/noHome"
-                fillMode: Image.Pad // For not stretching image
+                fillMode: Image.PreserveAspectFit // For not stretching image
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.verticalCenter: parent.verticalCenter
             }
@@ -118,7 +117,6 @@ Frame {
         border.color: Style.lightGreyBorder
         radius: 3
 
-
         Item {
             id: topItem
             height: 28
@@ -131,7 +129,8 @@ Frame {
 
             SmallButton {
                 id: hideShowPathButton
-
+                // prevents the icon from occasionally disappearing for no apparent reason
+                backColor: "white"
                 height: parent.height - 2
                 width: 32
                 imgSrc: pathIsVisible ? "qrc:/icons/visible" : "qrc:/icons/invisible"
@@ -167,7 +166,8 @@ Frame {
 
             SmallButton {
                 id: expandPathButton
-
+                // prevents the icon from occasionally disappearing for no apparent reason
+                backColor: "white"
                 height: parent.height - 2
                 width: 32
                 imgSrc: pathIsOpen ? "qrc:/icons/fold" : "qrc:/icons/unfold"
@@ -209,7 +209,7 @@ Frame {
 
                 Rectangle {
                     anchors.fill: parent
-                    color: "transparent"//Style.lightGreyBackground
+                    color: Style.lightGreyBackground
                 }
 
                 Column {
@@ -227,7 +227,7 @@ Frame {
                             padding: 0
                             background: Rectangle {
                                 anchors.fill: parent
-                                color: "transparent"//Style.lightGreyBackground
+                                color: Style.lightGreyBackground
                             }
 
                             Rectangle {
@@ -311,11 +311,13 @@ Frame {
 
             SmallButton {
                 id: playPausePathButton
-
+                // prevents the icon from occasionally disappearing for no apparent reason
+                backColor: "white"
                 height: parent.height - 2
                 width: 32
                 imgSrc: playingPath ? "qrc:/icons/pause" : "qrc:/icons/play"
                 tooltip: playingPath ? "Pause the robot in its path" : "Play the path of the robot"
+
 
                 anchors {
                     verticalCenter: parent.verticalCenter
@@ -328,7 +330,8 @@ Frame {
 
             SmallButton {
                 id: stopPathButton
-
+                // prevents the icon from occasionally disappearing for no apparent reason
+                backColor: "white"
                 height: parent.height - 2
                 width: 32
                 imgSrc: "qrc:/icons/stop"
@@ -344,7 +347,8 @@ Frame {
 
             SmallButton {
                 id: goHomeButton
-
+                // prevents the icon from occasionally disappearing for no apparent reason
+                backColor: "white"
                 height: parent.height - 2
                 width: 32
                 padding: 0

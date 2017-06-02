@@ -7,12 +7,12 @@ bool waiting = false;
 bool connected = false;
 
 boost::asio::io_service io_service;
-tcp::socket socket_new_map(io_service);
+tcp::socket socket_robot(io_service);
 tcp::acceptor m_acceptor(io_service);
 
 ros::Publisher map_pub;
 
-void session(boost::shared_ptr<tcp::socket> sock, ros::NodeHandle n){
+void session(ros::NodeHandle n){
     
     std::cout << "(New Map) session launched" << std::endl;
     int gotMapData(0);
@@ -28,7 +28,7 @@ void session(boost::shared_ptr<tcp::socket> sock, ros::NodeHandle n){
         char data[max_length];
 
         boost::system::error_code error;
-        size_t length = sock->read_some(boost::asio::buffer(data), error);
+        size_t length = socket_robot.read_some(boost::asio::buffer(data), error);
         if ((error == boost::asio::error::eof) || (error == boost::asio::error::connection_reset)){
             std::cout << "(New Map) Connection closed" << std::endl;
             connected = false;
@@ -230,9 +230,8 @@ void session(boost::shared_ptr<tcp::socket> sock, ros::NodeHandle n){
             mapMetadata = "";
             map.clear();
 
-
             /// Send a message to the application to tell we finished
-            boost::asio::write(*sock, boost::asio::buffer(message, message.length()), boost::asio::transfer_all(), error);
+            boost::asio::write(socket_robot, boost::asio::buffer(message, message.length()), boost::asio::transfer_all(), error);
 
             if(error) 
                 std::cout << "(New Map) Error : " << error.message() << std::endl;
@@ -242,16 +241,24 @@ void session(boost::shared_ptr<tcp::socket> sock, ros::NodeHandle n){
     }
 }
 
-void asyncAccept(boost::shared_ptr<boost::asio::io_service> io_service, boost::shared_ptr<tcp::acceptor> m_acceptor, ros::NodeHandle n){
+void asyncAccept(ros::NodeHandle n){
     std::cout << "(New Map) Waiting for connection" << std::endl;
 
-    boost::shared_ptr<tcp::socket> sock = boost::shared_ptr<tcp::socket>(new tcp::socket(*io_service));
+    if(socket_robot.is_open())
+        socket_robot.close();
 
-    m_acceptor->accept(*sock);
-    std::cout << "(New Map) Command socket connected to " << sock->remote_endpoint().address().to_string() << std::endl;
+    if(m_acceptor.is_open())
+        m_acceptor.close();
+
+    socket_robot = tcp::socket(io_service);
+    m_acceptor = tcp::acceptor(io_service, tcp::endpoint(tcp::v4(), PORT));
+    m_acceptor.set_option(tcp::acceptor::reuse_address(true));
+
+    m_acceptor.accept(socket_robot);
+    std::cout << "(New Map) Command socket connected to " << socket_robot.remote_endpoint().address().to_string() << std::endl;
     connected = true;
     waiting = false;
-    boost::thread t(boost::bind(session, sock, n));
+    boost::thread t(boost::bind(session, n));
 }
 
 void serverDisconnected(const std_msgs::String::ConstPtr& msg){
@@ -274,20 +281,12 @@ int main(int argc, char **argv){
     /// Advertise that we are going to publish to /map
     map_pub = n.advertise<nav_msgs::OccupancyGrid>("/map", 1000);
 
-    boost::shared_ptr<boost::asio::io_service> io_service = boost::shared_ptr<boost::asio::io_service>(new boost::asio::io_service());
-    io_service->run();
-
-    boost::shared_ptr<tcp::endpoint> m_endpoint = boost::shared_ptr<tcp::endpoint>(new tcp::endpoint(tcp::v4(), PORT));
-    boost::shared_ptr<tcp::acceptor> m_acceptor = boost::shared_ptr<tcp::acceptor>(new tcp::acceptor(*io_service, *m_endpoint));
-
-    m_acceptor->set_option(tcp::acceptor::reuse_address(true));
-
     ros::Rate r(10);
 
     while(ros::ok()){
         if(!connected && !waiting){
             std::cout << "(New Map) Ready to connect" << std::endl;
-            boost::thread t(boost::bind(asyncAccept, io_service, m_acceptor, n));
+            boost::thread t(boost::bind(asyncAccept, n));
             waiting = true;
         }
         ros::spinOnce();

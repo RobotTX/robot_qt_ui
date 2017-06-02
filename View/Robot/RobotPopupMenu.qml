@@ -1,8 +1,8 @@
 import QtQuick 2.7
 import QtQuick.Controls.Styles 1.4
 import QtQuick.Controls 2.1
-import QtQuick.Extras 1.4
 import QtQuick.Layouts 1.3
+import QtQuick.Extras 1.4
 import "../../Helper/style.js" as Style
 import "../../Helper/helper.js" as Helper
 import "../../Model/Point"
@@ -94,6 +94,7 @@ Menu {
                 verticalCenter: parent.verticalCenter
             }
         }
+
         leftPadding: Style.menuItemLeftPadding
 
         Image {
@@ -200,45 +201,51 @@ Menu {
         width: parent.width
         height: 1
     }
-
+/*
     MenuItem {
         height: Style.menuItemHeight
         width: parent.width
-        DelayButton {
-            id: rebootButton
-            anchors.fill: parent
-            delay: 750
-            style: DelayButtonStyle {
-                label: Component {
-                    Text {
-                        id: name
-                        text: qsTr("Reboot robot")
-                        anchors {
-                            left: parent.left
-                            right: parent.right
-                            leftMargin: 20
-                            rightMargin: 5
-                            verticalCenter: parent.verticalCenter
-                        }
-                    }
-                }
 
-/*
-                progressBarGradient: Gradient {
-                    GradientStop { position: 0.0; color: "red" }
-                    GradientStop { position: 0.5; color: "blue" }
-                }
-*/
-                foreground: Rectangle {
-                    anchors.fill: parent
 
-                }
+        Timer {
+            id: timer_button
+            triggeredOnStart: false
+            interval: 50
+            repeat: true
+            property int elapsed
+            onTriggered: {
+                elapsed = elapsed + 50
+                console.log("timer triggered");
             }
 
-            onProgressChanged: console.log("progress is " + progress)
-
-            onActivated: robotMenu.rebootRobot()
+            onElapsedChanged: {
+                if(elapsed === button.delay)
+                    robotMenu.rebootRobot();
+                console.log("elapsed " + elapsed);
+            }
         }
-    }
 
+        Button {
+            id: button
+            property int delay: 750
+            onPressed: {
+                console.log("timer starts")
+                timer_button.restart()
+            }
+            onReleased: {
+                console.log("timer stop");
+                timer_button.stop();
+                timer_button.elapsed = 0
+            }
+
+            background: Rectangle {
+                anchors.fill: parent
+                gradient: Gradient {
+                    GradientStop { position: 0.0; color: "white" }
+                    GradientStop { position: timer_button.elapsed / button.delay; color: "white" }
+                    GradientStop { position: 1.0; color: "blue" }
+                }
+            }
+        }
+    }*/
 }

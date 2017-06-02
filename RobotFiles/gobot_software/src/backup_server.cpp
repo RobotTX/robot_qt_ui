@@ -18,7 +18,6 @@ void server(const unsigned short port){
 	ros::Rate r(2);
 	while(ros::ok()){
 		if(!connected && !waiting){
-			std::cout << "(Backup system) Ready to accept a connection" << std::endl;
 			boost::thread t(boost::bind(asyncAccept, io_service, m_acceptor));
 			waiting = true;
 		}
@@ -85,19 +84,15 @@ void session(boost::shared_ptr<tcp::socket> socket){
 
 			if(message.compare("reboot") == 0){
 				std::cout << "calling reboot" << std::endl;
-				// TODO reboot robot
-
 				std::string cmd = "rosnode kill /play_path";
 	            system(cmd.c_str());
 	            cmd = "rosnode kill /move_base";
 	            system(cmd.c_str());
 	            sleep(3);
 	            system("sh ~/catkin_ws/src/gobot_software/src/start_gobot_move.sh &");
-	            sleep(3);
+	            std::cout << "Relaunched gobot_move" << std::endl;
+	            sleep(5);
 	            system("sh ~/catkin_ws/src/gobot_software/src/start_gobot_software.sh &");
-				std::cout << "Relaunched gobot_move" << std::endl;
-	            //sleep(8);
-	            //system("sh ~/catkin_ws/src/gobot_software/src/start_gobot_software.sh");
 	            std::cout << "Relaunched gobot_software" << std::endl;
 	            sleep(3);
 			}
