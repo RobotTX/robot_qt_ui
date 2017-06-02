@@ -48,7 +48,7 @@ static const std::string sep = std::string(1, 31);
 static const char sep_c = 31;
 
 template<typename Out>
-void split(const std::string &s, char delim, Out result) {
+void split(const std::string &s, const char delim, Out result) {
     std::stringstream ss;
     ss.str(s);
     std::string item;
@@ -57,7 +57,7 @@ void split(const std::string &s, char delim, Out result) {
     }
 }
 
-bool execCommand(ros::NodeHandle n, std::vector<std::string> command){
+bool execCommand(ros::NodeHandle n, const std::vector<std::string> command){
 
 	std::string commandStr = command.at(0);
 	bool status(false);
@@ -445,7 +445,6 @@ bool execCommand(ros::NodeHandle n, std::vector<std::string> command){
 	            system(cmd.c_str());
 
 	            sleep(5);
-
 	            /// Relaunch gobot_move
 	            //cmd = "roslaunch gobot_move scan.launch &";
                 cmd = "roslaunch gobot_move gazebo_scan.launch &";
@@ -793,7 +792,7 @@ bool stopMap(){
 	}
 }
 
-bool startLaserData(bool startLaser){
+bool startLaserData(const bool startLaser){
 	std::cout << "(Command system) Launching the service which will send the lasers's data using port " << laser_port << std::endl;
 	gobot_software::PortLaser srv;
 	srv.request.port = laser_port;
@@ -983,7 +982,7 @@ void session(boost::shared_ptr<tcp::socket> sock, ros::NodeHandle n){
 	}
 }
 
-bool sendMessageToPc(boost::shared_ptr<tcp::socket> sock, std::string message){
+bool sendMessageToPc(boost::shared_ptr<tcp::socket> sock, const std::string message){
 	std::cout << "(Command system) Sending message : " << message << std::endl;
 
 	try {
@@ -1105,7 +1104,7 @@ void asyncAccept(boost::shared_ptr<boost::asio::io_service> io_service, boost::s
 	boost::thread t(boost::bind(session, sock, n));
 }
 
-void server(unsigned short port, ros::NodeHandle n){
+void server(const unsigned short port, ros::NodeHandle n){
 
 	boost::shared_ptr<boost::asio::io_service> io_service = boost::shared_ptr<boost::asio::io_service>(new boost::asio::io_service());
 	io_service->run();

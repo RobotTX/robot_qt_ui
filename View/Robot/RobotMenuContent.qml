@@ -16,6 +16,7 @@ Frame {
     property real batteryWarningThreshold
 
     signal dockRobot(string ip)
+    signal rebootRobot(string ip)
 
     background: Rectangle {
         color: Style.lightGreyBackground
@@ -48,6 +49,7 @@ Frame {
                     robotModel: robotMenuFrame.robotModel
                     width: flick.width
                     onDockRobot: robotMenuFrame.dockRobot(ip)
+                    onRebootRobot: robotMenuFrame.rebootRobot(ip)
                 }
             }
         }

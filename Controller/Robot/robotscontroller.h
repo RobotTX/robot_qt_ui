@@ -15,6 +15,8 @@ class QQmlApplicationEngine;
 #include <QTimer>
 #include <QImage>
 
+class BackupRobotWorker;
+
 class RobotsController : public QObject {
 
     Q_OBJECT
@@ -92,7 +94,6 @@ public:
      */
     void sendMapToAllRobots(QString mapId, QString date, QString mapMetadata, QImage img);
 
-
 private:
     void launchServer(void);
 
@@ -152,6 +153,8 @@ private slots:
      */
     void shortcutAddRobot(void);
     void shortcutDeleteRobot(void);
+    void callForRebootRobot(QString ip);
+    void backupSystemIsDownSlot(QString ip);
 
 signals:
     void stopRobotServerWorker(void);
@@ -187,6 +190,7 @@ signals:
 private:
     QQmlApplicationEngine* engine_;
     QMap<QString, QPointer<RobotController>> robots;
+    QMap<QString, QPair<QPointer<QThread>, QPointer<BackupRobotWorker>> > backupWorkers;
     QPointer<RobotServerWorker> robotServerWorker;
     QThread serverThread;
     bool receivingMap;

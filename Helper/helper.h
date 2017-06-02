@@ -17,6 +17,7 @@
 #define PORT_TELEOP 5602
 #define PORT_LOCAL_MAP 5605
 #define PORT_PARTICLE_CLOUD 4005
+#define PORT_BACKUP_SYSTEM 6498
 
 namespace Helper {
 

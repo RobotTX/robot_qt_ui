@@ -7,7 +7,6 @@ class SendNewMapWorker;
 class LocalMapWorker;
 class ScanMapWorker;
 class TeleopWorker;
-class ParticleCloudWorker;
 class CommandController;
 class RobotsController;
 class ObstaclesPaintedItem;
@@ -76,6 +75,13 @@ public:
      * To update the position of the painted item and propagate these properties to the qml side
      */
     void updateRobotPosition(double x, double y, double orientation);
+
+    /**
+     * @brief getRebootRequestFromRobotsController
+     * @param ip
+     * waiting for the robots controller to request a reboot order
+     */
+    void getRebootRequestFromRobotsController();
 
 private:
     /**

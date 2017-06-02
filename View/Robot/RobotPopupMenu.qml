@@ -1,5 +1,7 @@
 import QtQuick 2.7
+import QtQuick.Controls.Styles 1.4
 import QtQuick.Controls 2.1
+import QtQuick.Extras 1.4
 import QtQuick.Layouts 1.3
 import "../../Helper/style.js" as Style
 import "../../Helper/helper.js" as Helper
@@ -21,6 +23,7 @@ Menu {
     signal renameRobot()
     signal deletePath()
     signal laserPressed()
+    signal rebootRobot()
 
     background: Rectangle {
         color: Style.lightGreyBackground
@@ -145,4 +148,51 @@ Menu {
         onHoveredChanged: if(visible) currentMenuIndex = 4
         onTriggered: robotMenu.deletePath()
     }
+
+    Rectangle {
+        color: Style.lightGreyBorder
+        width: parent.width
+        height: 1
+    }
+
+    MenuItem {
+        height: Style.menuItemHeight
+        width: parent.width
+        DelayButton {
+            id: rebootButton
+            anchors.fill: parent
+            delay: 750
+            style: DelayButtonStyle {
+                label: Component {
+                    Text {
+                        id: name
+                        text: qsTr("Reboot robot")
+                        anchors {
+                            left: parent.left
+                            right: parent.right
+                            leftMargin: 20
+                            rightMargin: 5
+                            verticalCenter: parent.verticalCenter
+                        }
+                    }
+                }
+
+/*
+                progressBarGradient: Gradient {
+                    GradientStop { position: 0.0; color: "red" }
+                    GradientStop { position: 0.5; color: "blue" }
+                }
+*/
+                foreground: Rectangle {
+                    anchors.fill: parent
+
+                }
+            }
+
+            onProgressChanged: console.log("progress is " + progress)
+
+            onActivated: robotMenu.rebootRobot()
+        }
+    }
+
 }

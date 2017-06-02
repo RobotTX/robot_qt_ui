@@ -179,12 +179,12 @@ void RobotController::launchWorkers(void){
 
     teleopWorker = QPointer<TeleopWorker>(new TeleopWorker(ip, PORT_TELEOP));
     connect(teleopWorker, SIGNAL(robotIsDead()), this, SLOT(robotIsDeadSlot()));
-    connect(&mapThread, SIGNAL(finished()), teleopWorker, SLOT(deleteLater()));
+    connect(&teleopThread, SIGNAL(finished()), teleopWorker, SLOT(deleteLater()));
     connect(this, SIGNAL(startTeleopWorker()), teleopWorker, SLOT(connectSocket()));
     connect(this, SIGNAL(stopTeleopWorker()), teleopWorker, SLOT(stopWorker()));
     connect(this, SIGNAL(teleopCmd(int)), teleopWorker, SLOT(writeTcpDataSlot(int)));
-    teleopWorker->moveToThread(&mapThread);
-    mapThread.start();
+    teleopWorker->moveToThread(&teleopThread);
+    teleopThread.start();
 
     emit startCmdRobotWorker();
 }
@@ -331,3 +331,5 @@ void RobotController::updateRobotPosition(double x, double y, double orientation
     paintedItem->setProperty("_x", x-300 + 5 * qCos((paintedItem->orientation() - 90) / 180.0*3.14159));
     paintedItem->setProperty("_y", y-300 + 5 * qSin((paintedItem->orientation() - 90) / 180.0*3.14159));
 }
+
+

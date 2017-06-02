@@ -4,6 +4,7 @@
 #include "Controller/Robot/robotcontroller.h"
 #include "Controller/Robot/robotserverworker.h"
 #include "Controller/maincontroller.h"
+#include "Controller/Robot/backuprobotworker.h"
 
 RobotsController::RobotsController(QObject *applicationWindow, QQmlApplicationEngine* engine, MainController* parent) : QObject(parent), engine_(engine), robots(QMap<QString, QPointer<RobotController>>()), receivingMap(false) {
 
@@ -85,6 +86,7 @@ RobotsController::RobotsController(QObject *applicationWindow, QQmlApplicationEn
     QObject* robotMenuFrame = applicationWindow->findChild<QObject*>("robotMenuFrame");
     if(robotMenuFrame){
         connect(robotMenuFrame, SIGNAL(dockRobot(QString)), this, SLOT(dockRobot(QString)));
+        connect(robotMenuFrame, SIGNAL(rebootRobot(QString)), this, SLOT(callForRebootRobot(QString)));
     } else {
         qDebug() << "could not find robot menu frame";
         Q_UNREACHABLE();
@@ -98,6 +100,15 @@ RobotsController::~RobotsController(){
         emit stopRobotServerWorker();
         serverThread.quit();
         serverThread.wait();
+    }
+    QMapIterator<QString, QPair<QPointer<QThread>, QPointer<BackupRobotWorker>> > it(backupWorkers);
+    while(it.hasNext()){
+        it.next();
+        it.value().second->stopWorker();
+        /// stopping the threads might be needed as well
+        it.value().first->quit();
+        it.value().first->wait();
+        qDebug() << "backup system at ip " << it.key() << " has been shut down in destructor";
     }
 }
 
@@ -120,6 +131,15 @@ void RobotsController::robotIsAliveSlot(const QString name, const QString ip, co
         robots.insert(ip, robotController);
         //qDebug() << "find new robot called" << name;
         emit addRobot(name, ip, ssid, stage, battery);
+    }
+    if(!backupWorkers.contains(ip)){
+        QPointer<QThread> backupThread = QPointer<QThread> (new QThread);
+        QPointer<BackupRobotWorker> backupWorker = QPointer<BackupRobotWorker>(new BackupRobotWorker(ip, PORT_BACKUP_SYSTEM));
+        connect(backupWorker, SIGNAL(backupSystemIsDown(QString)), this, SLOT(backupSystemIsDownSlot(QString)));
+        backupWorker->moveToThread(backupThread);
+        backupThread->start();
+        backupWorker->connectSocket();
+        backupWorkers.insert(ip, QPair<QPointer<QThread>, QPointer<BackupRobotWorker>>(backupThread, backupWorker));
     }
 }
 
@@ -352,4 +372,15 @@ void RobotsController::resetHomePathSlot(QString ip){
     emit setHome(ip, 0, 0, 0);
     emit setPath(ip, "");
 }
+
+void RobotsController::callForRebootRobot(QString ip){
+    qDebug() << "robotsController:: call for reboot robot called";
+    backupWorkers.value(ip).second->callForReboot();
+}
+
+void RobotsController::backupSystemIsDownSlot(QString ip){
+    qDebug() << "RobotController::backup System is down at ip" << ip;
+    backupWorkers.remove(ip);
+}
+
 

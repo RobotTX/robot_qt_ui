@@ -38,8 +38,8 @@
 using boost::asio::ip::tcp;
 
 template<typename Out>
-void split(const std::string &s, char delim, Out result);
-bool execCommand(ros::NodeHandle n, std::vector<std::string> command);
+void split(const std::string &s, const char delim, Out result);
+bool execCommand(ros::NodeHandle n, const std::vector<std::string> command);
 void session(boost::shared_ptr<tcp::socket> sock, ros::NodeHandle n);
 void asyncAccept(boost::shared_ptr<boost::asio::io_service> io_service, boost::shared_ptr<tcp::acceptor> m_acceptor, ros::NodeHandle n);
 void startRobotPos();
@@ -49,15 +49,17 @@ bool sendOnceMap(int who);
 bool sendAutoMap();
 bool stopAutoMap();
 bool stopMap();
-void server(unsigned short port, ros::NodeHandle n);
+void server(const unsigned short port, ros::NodeHandle n);
 void getPorts(boost::shared_ptr<tcp::socket> sock, ros::NodeHandle n);
-bool sendMessageToPc(boost::shared_ptr<tcp::socket> sock, std::string message);
-bool startLaserData(bool startLaser);
+bool sendMessageToPc(boost::shared_ptr<tcp::socket> sock, const std::string message);
+bool startLaserData(const bool startLaser);
 bool sendLaserData();
 bool stopSendLaserData();
 bool stopLaserData();
 bool stopParticleCloudData(void);
 void stopTwist();
+bool recoverPosition();
+bool stopRecoveringPosition();
 bool sendLocalMap();
 void disconnect(void);
 bool resumeRecoveryPosition(void);
