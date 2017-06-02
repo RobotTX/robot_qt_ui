@@ -26,8 +26,6 @@ Menu {
     signal rebootRobot()
 
     background: Rectangle {
-        implicitWidth: parent.width
-        implicitHeight: 110
         color: Style.lightGreyBackground
         border.color: Style.lightGreyBorder
         radius: 5
@@ -37,16 +35,7 @@ Menu {
         id: assignHome
         height: Style.menuItemHeight
         width: parent.width
-        contentItem: CustomLabel {
-            text: qsTr("Assign a Charging Station")
-            anchors {
-                left: parent.left
-                right: parent.right
-                leftMargin: 20
-                rightMargin: 5
-                verticalCenter: parent.verticalCenter
-            }
-        }
+        labelText: "Assign a Charging Station"
         leftPadding: Style.menuItemLeftPadding
 
         Image {
@@ -66,6 +55,7 @@ Menu {
             pointModel: robotMenu.pointModel
             homeOnly: true
             onPointSelected: {
+                console.log("robotMenu.pointSelected");
                 robotMenu.pointSelected(posX, posY, orientation)
                 currentMenuIndex = -1;
                 robotMenu.currentMenuIndex = -1;
@@ -84,17 +74,7 @@ Menu {
         id: assignPath
         height: Style.menuItemHeight
         width: parent.width
-        contentItem: CustomLabel {
-            text: qsTr("Assign a Path")
-            anchors {
-                left: parent.left
-                right: parent.right
-                leftMargin: 20
-                rightMargin: 5
-                verticalCenter: parent.verticalCenter
-            }
-        }
-
+        labelText: "Assign a Path"
         leftPadding: Style.menuItemLeftPadding
 
         Image {
@@ -130,16 +110,7 @@ Menu {
     PopupMenuItem {
         height: Style.menuItemHeight
         width: parent.width
-        contentItem: CustomLabel {
-            text: qsTr(laserActivated ? "Hide laser feedback" : "Show laser feedback")
-            anchors {
-                left: parent.left
-                right: parent.right
-                leftMargin: 20
-                rightMargin: 5
-                verticalCenter: parent.verticalCenter
-            }
-        }
+        labelText: laserActivated ? "Hide laser feedback" : "Show laser feedback"
         leftPadding: Style.menuItemLeftPadding
 
         onHoveredChanged: if(visible) currentMenuIndex = 2
@@ -155,16 +126,7 @@ Menu {
     PopupMenuItem {
         height: Style.menuItemHeight
         width: parent.width
-        contentItem: CustomLabel {
-            text: qsTr("Rename")
-            anchors {
-                left: parent.left
-                right: parent.right
-                leftMargin: 20
-                rightMargin: 5
-                verticalCenter: parent.verticalCenter
-            }
-        }
+        labelText: "Rename"
         leftPadding: Style.menuItemLeftPadding
 
         onHoveredChanged: if(visible) currentMenuIndex = 3
@@ -180,16 +142,7 @@ Menu {
     PopupMenuItem {
         height: Style.menuItemHeight
         width: parent.width
-        contentItem: CustomLabel {
-            text: qsTr("Delete Path from Robot")
-            anchors {
-                left: parent.left
-                right: parent.right
-                leftMargin: 20
-                rightMargin: 5
-                verticalCenter: parent.verticalCenter
-            }
-        }
+        labelText: "Delete Path from Robot"
         leftPadding: Style.menuItemLeftPadding
 
         onHoveredChanged: if(visible) currentMenuIndex = 4

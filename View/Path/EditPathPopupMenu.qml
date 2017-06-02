@@ -19,15 +19,13 @@ Menu {
     signal moveTo(string newGroup)
 
     background: Rectangle {
-        implicitWidth: parent.width
-        implicitHeight: 3 * Style.menuItemHeight + 3
         color: Style.lightGreyBackground
         border.color: Style.lightGreyBorder
         radius: 5
     }
 
     PopupMenuItem {
-        text: qsTr("Edit Path")
+        labelText: "Edit Path"
         width: parent.width
         leftPadding: Style.menuItemLeftPadding
         height: Style.menuItemHeight
@@ -41,7 +39,7 @@ Menu {
     }
 
     PopupMenuItem {
-        text: qsTr("Move to")
+        labelText: "Move to"
         width: parent.width
         leftPadding: Style.menuItemLeftPadding
         height: Style.menuItemHeight
@@ -64,8 +62,6 @@ Menu {
             x: parent.width
 
             background: Rectangle {
-                implicitWidth: parent.width
-                implicitHeight: pathModel.count * Style.menuItemHeight + 2
                 color: Style.lightGreyBackground
                 border.color: Style.lightGreyBorder
                 radius: 5
@@ -73,7 +69,7 @@ Menu {
 
             PopupMenuItem {
                 height: Style.menuItemHeight
-                text: qsTr(Helper.noGroup)
+                labelText: Helper.noGroup
                 width: parent.width
                 leftPadding: Style.menuItemLeftPadding
                 /// Disable the group in which the path already is so we can't move it in
@@ -95,8 +91,7 @@ Menu {
 
                 Repeater {
                     model: pathModel
-
-                    PopupMenuItem {
+                    delegate: PopupMenuItem {
                         anchors {
                             left: parent.left
                             right: parent.right
@@ -106,19 +101,7 @@ Menu {
                         leftPadding: Style.menuItemLeftPadding
                         /// Disable the group in which the path already is so we can't move it in
                         enabled: !(groupName === myGroup)
-
-                        CustomLabel {
-                            text: qsTr(groupName)
-                            anchors {
-                                left: parent.left
-                                right: parent.right
-                                leftMargin: 20
-                                rightMargin: 5
-                                verticalCenter: parent.verticalCenter
-                            }
-                            color: enabled ? "black" : "lightgrey"
-                            enabled: !(groupName === myGroup)
-                        }
+                        labelText: groupName
 
                         onTriggered: moveTo(groupName)
                     }
@@ -134,7 +117,7 @@ Menu {
     }
 
     PopupMenuItem {
-        text: qsTr("Delete Path")
+        labelText: "Delete Path"
         width: parent.width
         leftPadding: Style.menuItemLeftPadding
         height: Style.menuItemHeight

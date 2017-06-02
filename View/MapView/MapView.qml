@@ -77,8 +77,10 @@ Frame {
             }
             onClicked: console.log("This is the temporary point")
             onPositionChanged: {
-                if(drag.active)
-                    parent.tmpPointViewPosChanged()
+                if(drag.active){
+                    tmpPointView.setPos(tmpPointView.x, tmpPointView.y);
+                    parent.tmpPointViewPosChanged();
+                }
             }
         }
     }

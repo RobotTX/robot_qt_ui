@@ -131,7 +131,7 @@ Frame {
             x: rightButton.width
             pointModel: frame.pointModel
             pathModel: frame.pathModel
-            onPointSelected: robotModel.newHomeSignal(ip, _homeX, _homeY, orientation)
+            onPointSelected: { console.log("robotModel.newHomeSignal");robotModel.newHomeSignal(ip, _homeX, _homeY, orientation)}
             onPathSelected: robotModel.newPathSignal(ip, _groupName, _pathName)
             onRenameRobot: {
                 nameLabel.visible = false;

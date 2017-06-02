@@ -17,8 +17,6 @@ Menu {
     signal robotSelected(string name, string ip)
 
     background: Rectangle {
-        implicitWidth: parent.width
-        implicitHeight: robotModel.count * Style.menuItemHeight
         color: Style.lightGreyBackground
         border.color: Style.lightGreyBorder
         radius: 5
@@ -33,28 +31,17 @@ Menu {
 
         Repeater {
             model: robotModel
-
             delegate: PopupMenuItem {
+                labelText: name
+
                 enabled: !robotMapsList.contains(ip) && !processingCmd
+                Layout.preferredHeight: Style.menuItemHeight
+                Layout.preferredWidth: parent.width
+                leftPadding: Style.menuItemLeftPadding
 
                 anchors {
                     left: parent.left
                     right: parent.right
-                }
-                leftPadding: Style.menuItemLeftPadding
-                Layout.preferredHeight: Style.menuItemHeight
-                Layout.preferredWidth: parent.width
-
-                contentItem: CustomLabel {
-                    color: enabled ? "black" : Style.darkGrey
-                    text: qsTr(name)
-                    anchors {
-                        left: parent.left
-                        right: parent.right
-                        leftMargin: 20
-                        rightMargin: 5
-                        verticalCenter: parent.verticalCenter
-                    }
                 }
 
                 onTriggered: {

@@ -259,6 +259,7 @@ void RobotController::updateRobotInfo(const QString robotInfo){
 
         if(homeX >= -100 && homeY >= -100)
             emit updateHome(ip, homeX, homeY, homeOri);
+        qDebug() << "RobotController::updateRobotInfo" << ip << "home :" << homeX << homeY << homeOri;
 
         emit checkMapInfo(ip, mapId, mapDate);
 
