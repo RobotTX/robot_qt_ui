@@ -18,6 +18,7 @@
         <file alias="pause">icons/Btn_Pause.png</file>
         <file alias="play">icons/Btn_Play.png</file>
         <file alias="stop">icons/Btn_Stop.png</file>
+        <file alias="restart">icons/restart.png</file>
 
         <file alias="path_checked">icons/icPath_checked.png</file>
         <file alias="path">icons/icPath_normal.png</file>

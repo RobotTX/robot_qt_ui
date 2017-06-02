@@ -24,6 +24,7 @@ Button {
 
     contentItem : Item {
         Image {
+            z: 3
             asynchronous: true
             source: imgSrc
             fillMode: Image.Pad

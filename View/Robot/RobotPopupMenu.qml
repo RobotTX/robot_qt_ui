@@ -23,7 +23,6 @@ Menu {
     signal renameRobot()
     signal deletePath()
     signal laserPressed()
-    signal rebootRobot()
 
     background: Rectangle {
         color: Style.lightGreyBackground
@@ -154,51 +153,4 @@ Menu {
         width: parent.width
         height: 1
     }
-/*
-    MenuItem {
-        height: Style.menuItemHeight
-        width: parent.width
-
-
-        Timer {
-            id: timer_button
-            triggeredOnStart: false
-            interval: 50
-            repeat: true
-            property int elapsed
-            onTriggered: {
-                elapsed = elapsed + 50
-                console.log("timer triggered");
-            }
-
-            onElapsedChanged: {
-                if(elapsed === button.delay)
-                    robotMenu.rebootRobot();
-                console.log("elapsed " + elapsed);
-            }
-        }
-
-        Button {
-            id: button
-            property int delay: 750
-            onPressed: {
-                console.log("timer starts")
-                timer_button.restart()
-            }
-            onReleased: {
-                console.log("timer stop");
-                timer_button.stop();
-                timer_button.elapsed = 0
-            }
-
-            background: Rectangle {
-                anchors.fill: parent
-                gradient: Gradient {
-                    GradientStop { position: 0.0; color: "white" }
-                    GradientStop { position: timer_button.elapsed / button.delay; color: "white" }
-                    GradientStop { position: 1.0; color: "blue" }
-                }
-            }
-        }
-    }*/
 }

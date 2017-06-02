@@ -27,6 +27,76 @@ Frame {
 
     padding: 0
 
+    SmallButton {
+        id: restartButton
+        anchors {
+            top: parent.top
+            left: parent.left
+            leftMargin: 15
+            topMargin: 15
+        }
+        width: 25
+        height: 25
+
+        imgSrc: "qrc:/icons/restart"
+        tooltip: "Button to reboot the robot"
+
+
+
+        property int delay: 3000
+        onPressed: {
+            console.log("timer starts")
+            timerRestartButton.restart()
+        }
+        onReleased: {
+            console.log("timer stop");
+            timerRestartButton.stop();
+            timerRestartButton.elapsed = 0
+        }
+
+        background: Rectangle {
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.verticalCenter: parent.verticalCenter
+            width: Math.min(restartButton.width, restartButton.height)
+            height: Math.min(restartButton.width, restartButton.height)
+            color: restartButton.pressed ? Style.lightGreyBorder : restartButton.hovered ? Style.lightGreyBackgroundHover : restartButton.backColor
+            radius: restartButton.hovered ? restartButton.width/2 : 0
+            clip: true
+
+
+            Rectangle {
+                id: timerBack
+                z: 2
+                width: restartButton.width * timerRestartButton.elapsed / restartButton.delay
+                height: width
+                color: Style.infoColor
+                radius: timerBack.width/2
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.horizontalCenter: parent.horizontalCenter
+            }
+        }
+
+        Timer {
+            id: timerRestartButton
+            triggeredOnStart: false
+            interval: 50
+            repeat: true
+            property int elapsed
+            onTriggered: {
+                elapsed += interval;
+                console.log("timer triggered");
+            }
+
+            onElapsedChanged: {
+                if(elapsed === restartButton.delay){
+                    restartButton.released();
+                    frame.rebootRobot(ip);
+                }
+                console.log("elapsed " + elapsed);
+            }
+        }
+    }
+
     CustomLabel {
         id: nameLabel
         text: qsTr(name)
@@ -34,11 +104,9 @@ Frame {
         font.pixelSize: 16
 
         anchors {
-            top: parent.top
-            left: parent.left
+            left: restartButton.right
+            verticalCenter: restartButton.verticalCenter
             right: rightButton.left
-            leftMargin: 20
-            topMargin: 15
         }
     }
 
@@ -139,7 +207,6 @@ Frame {
             }
             onDeletePath: robotModel.deletePathSignal(ip)
             onLaserPressed: robotModel.activateLaser(ip, !laserActivated)
-            onRebootRobot: frame.rebootRobot(ip)
         }
     }
 
