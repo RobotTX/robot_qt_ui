@@ -159,8 +159,11 @@ void PointController::checkErrorPoint(const QImage& mapImage, const QString name
     if(!nameError && name.compare(oldName) != 0)
         nameError = checkPointName(name);
 
-    /// Check if the point is not in a wall or unknown place
-    posError = (mapImage.pixelColor(x, y).red() < 254);
+    /// Check if the point is not in a wall, an unknown place or out of the map
+    if(x < mapImage.width() && y < mapImage.height())
+        posError = (mapImage.pixelColor(x, y).red() < 254);
+    else
+        posError = true;
 
     /// Send the result to qml to enable or not the save button
     emit enablePointSaveQml(posError, nameError);

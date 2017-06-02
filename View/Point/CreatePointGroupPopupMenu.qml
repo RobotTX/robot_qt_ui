@@ -10,15 +10,13 @@ Menu {
     signal openCreateGroupMenu()
 
     background: Rectangle {
-        implicitWidth: parent.width
-        implicitHeight: 2 * Style.menuItemHeight + 2
         color: Style.lightGreyBackground
         border.color: Style.lightGreyBorder
         radius: 5
     }
 
     PopupMenuItem {
-        text: qsTr("New Point")
+        labelText: "New Point"
         width: parent.width
         leftPadding: Style.menuItemLeftPadding
         height: Style.menuItemHeight
@@ -32,7 +30,7 @@ Menu {
     }
 
     PopupMenuItem {
-        text: qsTr("New Group")
+        labelText: "New Group"
         width: parent.width
         leftPadding: Style.menuItemLeftPadding
         height: Style.menuItemHeight

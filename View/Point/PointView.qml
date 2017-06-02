@@ -75,10 +75,7 @@ Image {
         hoverEnabled: true
         anchors.fill: parent
 
-        onHoveredChanged: {
-            if(_isVisible)
-              tooltip.visible = !tooltip.visible
-        }
+        onHoveredChanged: if(_isVisible) tooltip.visible = !tooltip.visible
     }
 
     /// To change the source file of the pointView according to its type
@@ -112,6 +109,8 @@ Image {
     function setPos(posX, posY){
         pointPosX = posX;
         pointPosY = posY;
+        x = pointPosX - width / 2;
+        y = pointPosY - height;
     }
 
     function setType(newType){

@@ -326,7 +326,7 @@ bool execCommand(ros::NodeHandle n, std::vector<std::string> command){
 			// param 1 is n, 2nd is the home x coordinate, 3rd is the home y coordinate, 4th is the orientation of the home
 			if(command.size() == 4){
 				// TODO send an angle from the application and convert it to store it in home.txt
-				std::cout << "(Command system) Home received" << std::endl;
+				std::cout << "(Command system) Home received " << command.at(1) << " " << command.at(2) << " " << command.at(3) << std::endl;
 
 				std::string homeFile;
 				if(n.hasParam("home_file")){
@@ -337,7 +337,7 @@ bool execCommand(ros::NodeHandle n, std::vector<std::string> command){
 					if(ofs){
 						int orientation = std::stoi(command.at(3));
 						tf::Quaternion quaternion;
-						quaternion.setEuler(0, 0, -(orientation+90)*3.14159/180);
+						quaternion.setEuler(0, 0, orientation*3.14159/180);//-(orientation+90)*3.14159/180);
 						ofs << command.at(1) << " " << command.at(2) << " " << quaternion.x() << " " << quaternion.y() << " " << quaternion.z() << " " << quaternion.w();
 						ofs.close();
 						status = true;
@@ -1021,6 +1021,7 @@ void asyncAccept(boost::shared_ptr<boost::asio::io_service> io_service, boost::s
 	tfScalar pitch;
 	tfScalar yaw;
 	std::string homeFile;
+    double homeOri = 0;
 	if(n.hasParam("home_file")){
 		n.getParam("home_file", homeFile);
 		std::cout << "commandsystem set homefile to " << homeFile << std::endl;
@@ -1032,9 +1033,10 @@ void asyncAccept(boost::shared_ptr<boost::asio::io_service> io_service, boost::s
 	   		tf::Matrix3x3 matrix = tf::Matrix3x3(tf::Quaternion(x_angle , y_angle , z_angle, w_angle));
 
 	        matrix.getRPY(roll, pitch, yaw);
-	        std::cout << "rotation " << yaw*180/3.14159 << std::endl;
+            homeOri = yaw*180/3.14159;
+	        std::cout << "rotation " << homeOri << std::endl;
 
-			std::cout << "Home : " << homeX << " " << homeY << " " << yaw << std::endl;
+			std::cout << "Home : " << homeX << " " << homeY << " " << homeOri << std::endl;
 			ifs.close();
 		}
 	}
@@ -1097,7 +1099,7 @@ void asyncAccept(boost::shared_ptr<boost::asio::io_service> io_service, boost::s
    	std::string scan = (scanning) ? "1" : "0";
    	std::string recover = (recovering) ? "1" : "0";
 
-	sendMessageToPc(sock, "Connected" + sep + mapId + sep + mapDate + sep + homeX + sep + homeY + sep + std::to_string(yaw) + sep
+	sendMessageToPc(sock, "Connected" + sep + mapId + sep + mapDate + sep + homeX + sep + homeY + sep + std::to_string(homeOri) + sep
 		+ scan + sep + recover + sep + laserStr + sep + path);
 
 	boost::thread t(boost::bind(session, sock, n));

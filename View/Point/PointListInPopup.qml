@@ -16,10 +16,6 @@ Menu {
     signal pointSelected(string name, double posX, double posY, int orientation)
 
     background: Rectangle {
-        implicitWidth: parent.width
-        // +1 is needed to compensate the line that we don't have a line in these menus
-        // but we have it in the previous menu
-        implicitHeight: pointModel.count * (Style.menuItemHeight+1) - 1
         color: Style.lightGreyBackground
         border.color: Style.lightGreyBorder
         radius: 5
@@ -34,17 +30,8 @@ Menu {
 
         Repeater {
             model: pointModel
-            PopupMenuItem {
-                contentItem: CustomLabel {
-                    text: qsTr(groupName)
-                    anchors {
-                        left: parent.left
-                        right: arrow.left
-                        leftMargin: 20
-                        rightMargin: 5
-                        verticalCenter: parent.verticalCenter
-                    }
-                }
+            delegate: PopupMenuItem {
+                labelText: groupName
                 Layout.preferredHeight: Style.menuItemHeight+1
                 Layout.preferredWidth: parent.width
                 leftPadding: Style.menuItemLeftPadding
@@ -68,13 +55,10 @@ Menu {
                     visible: currentMenuIndex === index && (homeOnly ? pointModel.getNbHome(groupName) > 0 : true)
 
                     background: Rectangle {
-                        implicitWidth: parent.width
-                        implicitHeight: (homeOnly ? pointModel.getNbHome(groupName) : points.count) * (Style.menuItemHeight+1)-1
                         color: Style.lightGreyBackground
                         border.color: Style.lightGreyBorder
                         radius: 5
                     }
-
 
                     ColumnLayout {
                         spacing: 0
@@ -85,25 +69,14 @@ Menu {
 
                         Repeater {
                             model: points
-
-                            PopupMenuItem {
+                            delegate: PopupMenuItem {
                                 leftPadding: Style.menuItemLeftPadding
                                 Layout.preferredHeight: homeOnly ? (home ? Style.menuItemHeight+1 : 0) : Style.menuItemHeight+1
                                 Layout.preferredWidth: parent.width
                                 visible: homeOnly ? home : true
+                                labelText: name
 
-                                contentItem: CustomLabel {
-                                    text: qsTr(name)
-                                    anchors {
-                                        left: parent.left
-                                        right: parent.right
-                                        leftMargin: 20
-                                        rightMargin: 5
-                                        verticalCenter: parent.verticalCenter
-                                    }
-                                }
-
-                                onTriggered: selectPointMenu.pointSelected(name, posX, posY, orientation)
+                                onTriggered: {console.log("selectPointMenu.pointSelected");selectPointMenu.pointSelected(name, posX, posY, orientation)}
                             }
                         }
                     }

@@ -32,16 +32,7 @@ Menu {
         Repeater {
             model: pathModel
             delegate: PopupMenuItem {
-                contentItem: CustomLabel {
-                    text: qsTr(groupName)
-                    anchors {
-                        left: parent.left
-                        right: arrow.left
-                        leftMargin: 20
-                        rightMargin: 5
-                        verticalCenter: parent.verticalCenter
-                    }
-                }
+                labelText: groupName
                 Layout.preferredHeight: 1 + Style.menuItemHeight
                 Layout.preferredWidth: parent.width
                 leftPadding: Style.menuItemLeftPadding
@@ -89,17 +80,7 @@ Menu {
                                 leftPadding: Style.menuItemLeftPadding
                                 Layout.preferredHeight: 1 + Style.menuItemHeight
                                 Layout.preferredWidth: parent.width
-
-                                contentItem: CustomLabel {
-                                    text: qsTr(pathName)
-                                    anchors {
-                                        left: parent.left
-                                        right: parent.right
-                                        leftMargin: 20
-                                        rightMargin: 5
-                                        verticalCenter: parent.verticalCenter
-                                    }
-                                }
+                                labelText:  pathName
 
                                 onTriggered: selectPathMenu.pathSelected(pathName, groupName)
                             }

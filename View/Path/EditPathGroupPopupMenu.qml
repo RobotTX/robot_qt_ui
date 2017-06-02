@@ -10,15 +10,13 @@ Menu {
     signal deleteGroup()
 
     background: Rectangle {
-        implicitWidth: parent.width
-        implicitHeight: 2 * Style.menuItemHeight + 2
         color: Style.lightGreyBackground
         border.color: Style.lightGreyBorder
         radius: 5
     }
 
     PopupMenuItem {
-        text: qsTr("Rename Group")
+        labelText: "Rename Group"
         width: parent.width
         leftPadding: Style.menuItemLeftPadding
         height: Style.menuItemHeight
@@ -32,7 +30,7 @@ Menu {
     }
 
     PopupMenuItem {
-        text: qsTr("Delete Group")
+        labelText: "Delete Group"
         width: parent.width
         leftPadding: Style.menuItemLeftPadding
         height: Style.menuItemHeight
