@@ -39,7 +39,7 @@ Frame {
         height: 25
 
         imgSrc: "qrc:/icons/restart"
-        tooltip: "Button to reboot the robot"
+        tooltip: "Reboot the robot"
 
 
 

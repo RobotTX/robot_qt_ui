@@ -20,6 +20,8 @@ Page {
         if(visible){
             useRobotPathModel(true);
             pathModel.visiblePathChanged();
+        } else {
+            useRobotPathModel(false);
         }
     }
 
