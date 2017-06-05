@@ -82,17 +82,13 @@ Frame {
             interval: 50
             repeat: true
             property int elapsed
-            onTriggered: {
-                elapsed += interval;
-                console.log("timer triggered");
-            }
+            onTriggered: elapsed += interval;
 
             onElapsedChanged: {
                 if(elapsed === restartButton.delay){
                     restartButton.released();
                     frame.rebootRobot(ip);
                 }
-                console.log("elapsed " + elapsed);
             }
         }
     }
