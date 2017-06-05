@@ -111,7 +111,8 @@ Page {
     function doubleClickedOnMap(mouseX, mouseY){
         if(!createPointMenuFrame.visible){
             menuIndex = 1;
-            tmpPointView.setPos(mouseX, mouseY);
+            tmpPointView.x = mouseX;
+            tmpPointView.y = mouseY;
         }
     }
 }

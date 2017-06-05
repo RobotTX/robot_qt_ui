@@ -3,37 +3,36 @@ import QtQuick.Controls 2.1
 import "../../Helper/helper.js" as Helper
 import "../../Helper/style.js" as Style
 
-Image {
-
-    id: img
+Item {
 
     property string _name
     property bool _isVisible
     property string _groupName
     property int type: Helper.PointViewType.PERM
-    property double originX
-    property double originY
     property string tooltipText
     property int pointOrientation: 0
     property int mapOrientation: 0
-    property double pointPosX
-    property double pointPosY
 
-    x: pointPosX - width / 2
-    y: pointPosY - height
-
-    source: imageSource()
-    width: 18
-    asynchronous: true
-    smooth: false
     visible: _isVisible
-    fillMode: Image.PreserveAspectFit
 
 
     transform: Rotation {
-        origin.x: img.width / 2
-        origin.y: img.height
+        origin.x: 0
+        origin.y: 0
         angle: (type === Helper.PointViewType.HOME || type === Helper.PointViewType.HOME_TEMP) ? pointOrientation : mapOrientation
+    }
+
+     property Image image: img
+
+    Image {
+        id: img
+        source: imageSource()
+        width: 18
+        asynchronous: true
+        smooth: false
+        fillMode: Image.PreserveAspectFit
+        x: -width / 2
+        y: -height
     }
 
     Label {
@@ -44,8 +43,8 @@ Image {
         text: tooltipText
 
         anchors {
-            horizontalCenter: parent.horizontalCenter
-            bottom: parent.top
+            horizontalCenter: img.horizontalCenter
+            bottom: img.top
             bottomMargin: 10
         }
 
@@ -73,7 +72,7 @@ Image {
         id: mArea
 
         hoverEnabled: true
-        anchors.fill: parent
+        anchors.fill: img
 
         onHoveredChanged: if(_isVisible) tooltip.visible = !tooltip.visible
     }
@@ -104,13 +103,6 @@ Image {
             break;
         }
         return src;
-    }
-
-    function setPos(posX, posY){
-        pointPosX = posX;
-        pointPosY = posY;
-        x = pointPosX - width / 2;
-        y = pointPosY - height;
     }
 
     function setType(newType){

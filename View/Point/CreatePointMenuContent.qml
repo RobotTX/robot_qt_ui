@@ -26,15 +26,16 @@ Frame {
         target: tmpPointView
         onTmpPointViewPosChanged: {
             checkPoint(Helper.formatName(pointTextField.text), oldName,
-                       tmpPointView.pointPosX,
-                       tmpPointView.pointPosY)
+                       tmpPointView.x,
+                       tmpPointView.y)
         }
     }
 
     onVisibleChanged: {
         if(tmpPointView && createPointMenuFrame){
             tmpPointView._isVisible = visible;
-            tmpPointView.setPos(0, 0);
+            tmpPointView.x =0;
+            tmpPointView.y = 0;
         }
 
         homeCheckBox.checked = false;
@@ -66,7 +67,8 @@ Frame {
                                 slider.value = pointModel.get(i).points.get(j).orientation;
 
                                 tmpPointView.setType(pointModel.get(i).points.get(j).home ? Helper.PointViewType.HOME_TEMP : Helper.PointViewType.TEMP);
-                                tmpPointView.setPos(pointModel.get(i).points.get(j).posX, pointModel.get(i).points.get(j).posY);
+                                tmpPointView.x = pointModel.get(i).points.get(j).posX;
+                                tmpPointView.y = pointModel.get(i).points.get(j).posY;
                                 tmpPointView.setOrientation(pointModel.get(i).points.get(j).orientation);
                                 groupComboBox.currentIndex = i;
                                 groupComboBox.displayText = oldGroup;
@@ -122,8 +124,8 @@ Frame {
         }
 
         onTextChanged: checkPoint(Helper.formatName(pointTextField.text), oldName,
-                       tmpPointView.pointPosX,
-                       tmpPointView.pointPosY)
+                       tmpPointView.x,
+                       tmpPointView.y)
     }
 
     Label {
@@ -308,7 +310,7 @@ Frame {
 
     Label {
         id: xLabel
-        text: qsTr("X : " + Math.round(tmpPointView.pointPosX))
+        text: qsTr("X : " + Math.round(tmpPointView.x))
         anchors {
             left: parent.left
             top: pointLocationLabel.bottom
@@ -318,7 +320,7 @@ Frame {
     }
 
     Label {
-        text: qsTr("Y : " + Math.round(tmpPointView.pointPosY))
+        text: qsTr("Y : " + Math.round(tmpPointView.y))
         anchors {
             left: parent.left
             top: xLabel.bottom
@@ -349,7 +351,7 @@ Frame {
         onReleased: if(saveButton.canSave) {
             var newName = Helper.formatName(pointTextField.text);
             var groupName = groupComboBox.displayText;
-            createPoint(newName, groupName, tmpPointView.pointPosX, tmpPointView.pointPosY,
+            createPoint(newName, groupName, tmpPointView.x, tmpPointView.y,
                         oldName, oldGroup, true, homeCheckBox.checked,
                         homeCheckBox.checked ? Math.round(slider.valueAt(slider.position)) : 0);
             backToMenu();
