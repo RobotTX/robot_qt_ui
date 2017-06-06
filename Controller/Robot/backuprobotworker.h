@@ -14,30 +14,26 @@ public:
     explicit BackupRobotWorker(const QString _ipAddress, const int _port);
     ~BackupRobotWorker();
 
-    /**
-     * @brief stopWorker
-     * To stop the worker
-     */
-    void stopWorker(void);
-    /**
-     * @brief callForReboot
-     * sends a message to the backup system to reboot the robot (restart roscore,
-     * gobot_move, gobot_software and all packages necessary)
-     */
-    void callForReboot(void);
+private slots:
+
     /**
      * @brief connectSocket
      * Called to start the connection with the robot
      */
     void connectSocket();
 
-private slots:
+    /**
+     * @brief stopWorker
+     * To stop the worker
+     */
+    void stopWorker(void);
 
     /**
      * @brief connectedSlot
      * Slot called when we are connected to the host
      */
     void connectedSlot();
+
     /**
      * @brief errorConnectionSlot
      * @param error
@@ -53,6 +49,13 @@ private slots:
     void disconnectedSlot();
 
     void readTcpDataSlot(void);
+
+    /**
+     * @brief callForReboot
+     * sends a message to the backup system to reboot the robot (restart roscore,
+     * gobot_move, gobot_software and all packages necessary)
+     */
+    void callForReboot(void);
 
 signals:
     void backupSystemIsDown(QString ip);

@@ -14,8 +14,8 @@ class QQmlApplicationEngine;
 #include <QVariant>
 #include <QTimer>
 #include <QImage>
+#include "Controller/Robot/backupcontroller.h"
 
-class BackupRobotWorker;
 
 class RobotsController : public QObject {
 
@@ -129,7 +129,8 @@ private slots:
     void updatePlayingPathSlot(const QString ip, const bool playingPath);
     void checkMapInfoSlot(const QString ip, const QString mapId, const QString mapDate);
     void newMapFromRobotSlot(const QString ip, const QByteArray mapArray, const QString mapId, const QString mapDate, const QString resolution, const QString originX, const QString originY, const int map_width, const int map_height);
-    void timerSlot(void);
+    void sendMapTimerSlot(void);
+    void requestMapTimerSlot(void);
     void processMapForMerge(const QByteArray map, const QString resolution);
 
     void stoppedScanningSlot(const QString ip);
@@ -190,11 +191,12 @@ signals:
 private:
     QQmlApplicationEngine* engine_;
     QMap<QString, QPointer<RobotController>> robots;
-    QMap<QString, QPair<QPointer<QThread>, QPointer<BackupRobotWorker>> > backupWorkers;
+    QMap<QString, QPointer<BackupController>> backupControllers;
     QPointer<RobotServerWorker> robotServerWorker;
     QThread serverThread;
     bool receivingMap;
-    QPointer<QTimer> timer;
+    QPointer<QTimer> sendMapTimer;
+    QPointer<QTimer> requestMapTimer;
 };
 
 #endif /// ROBOTSCONTROLLER_H

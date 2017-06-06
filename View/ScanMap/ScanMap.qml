@@ -100,6 +100,7 @@ Window {
     }
 
     Rectangle {
+        id: scanFrame
 
         clip: true
 
@@ -120,6 +121,8 @@ Window {
                 console.log("adjusting scan size to " + _width + " " + _height);
                 width = _width;
                 height = _height;
+                x = -_width/2 + scanFrame.width/2
+                y = -_height/2 + scanFrame.height/2
             }
 
             width: 2496

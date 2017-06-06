@@ -337,7 +337,7 @@ bool execCommand(ros::NodeHandle n, const std::vector<std::string> command){
 					if(ofs){
 						int orientation = std::stoi(command.at(3));
 						tf::Quaternion quaternion;
-						quaternion.setEuler(0, 0, orientation*3.14159/180);//-(orientation+90)*3.14159/180);
+						quaternion.setEuler(0, 0, -(orientation+90)*3.14159/180);
 						ofs << command.at(1) << " " << command.at(2) << " " << quaternion.x() << " " << quaternion.y() << " " << quaternion.z() << " " << quaternion.w();
 						ofs.close();
 						status = true;
@@ -1032,7 +1032,7 @@ void asyncAccept(boost::shared_ptr<boost::asio::io_service> io_service, boost::s
 	   		tf::Matrix3x3 matrix = tf::Matrix3x3(tf::Quaternion(x_angle , y_angle , z_angle, w_angle));
 
 	        matrix.getRPY(roll, pitch, yaw);
-            homeOri = yaw*180/3.14159;
+            homeOri = -(yaw*180/3.14159) - 90;//-(orientation+90)*3.14159/180);
 	        std::cout << "rotation " << homeOri << std::endl;
 
 			std::cout << "Home : " << homeX << " " << homeY << " " << homeOri << std::endl;

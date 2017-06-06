@@ -4,7 +4,6 @@
 #include "Controller/Robot/robotcontroller.h"
 #include "Controller/Robot/robotserverworker.h"
 #include "Controller/maincontroller.h"
-#include "Controller/Robot/backuprobotworker.h"
 
 RobotsController::RobotsController(QObject *applicationWindow, QQmlApplicationEngine* engine, MainController* parent) : QObject(parent), engine_(engine), robots(QMap<QString, QPointer<RobotController>>()), receivingMap(false) {
 
@@ -55,7 +54,6 @@ RobotsController::RobotsController(QObject *applicationWindow, QQmlApplicationEn
         connect(this, SIGNAL(receivedScanMap(QString, QByteArray, QString, QString, QString, int, int)),
                 parent, SLOT(receivedScanMapSlot(QString, QByteArray, QString, QString, QString, int, int)));
 
-
     } else {
         /// NOTE can probably remove that when testing phase is over
         qDebug() << "RobotsController::RobotsController could not find the qml robot model";
@@ -93,6 +91,18 @@ RobotsController::RobotsController(QObject *applicationWindow, QQmlApplicationEn
     }
 
     launchServer();
+
+
+    sendMapTimer = new QTimer(this);
+    sendMapTimer->setInterval(10000);
+
+    connect(sendMapTimer, SIGNAL(timeout()), this, SLOT(sendMapTimerSlot()));
+
+
+    requestMapTimer = new QTimer(this);
+    requestMapTimer->setInterval(15000);
+
+    connect(requestMapTimer, SIGNAL(timeout()), this, SLOT(requestMapTimerSlot()));
 }
 
 RobotsController::~RobotsController(){
@@ -100,15 +110,6 @@ RobotsController::~RobotsController(){
         emit stopRobotServerWorker();
         serverThread.quit();
         serverThread.wait();
-    }
-    QMapIterator<QString, QPair<QPointer<QThread>, QPointer<BackupRobotWorker>> > it(backupWorkers);
-    while(it.hasNext()){
-        it.next();
-        it.value().second->stopWorker();
-        /// stopping the threads might be needed as well
-        it.value().first->quit();
-        it.value().first->wait();
-        qDebug() << "backup system at ip " << it.key() << " has been shut down in destructor";
     }
 }
 
@@ -132,15 +133,9 @@ void RobotsController::robotIsAliveSlot(const QString name, const QString ip, co
         //qDebug() << "find new robot called" << name;
         emit addRobot(name, ip, ssid, stage, battery);
     }
-    if(!backupWorkers.contains(ip)){
-        QPointer<QThread> backupThread = QPointer<QThread> (new QThread);
-        QPointer<BackupRobotWorker> backupWorker = QPointer<BackupRobotWorker>(new BackupRobotWorker(ip, PORT_BACKUP_SYSTEM));
-        connect(backupWorker, SIGNAL(backupSystemIsDown(QString)), this, SLOT(backupSystemIsDownSlot(QString)));
-        backupWorker->moveToThread(backupThread);
-        backupThread->start();
-        backupWorker->connectSocket();
-        backupWorkers.insert(ip, QPair<QPointer<QThread>, QPointer<BackupRobotWorker>>(backupThread, backupWorker));
-    }
+
+    if(!backupControllers.contains(ip))
+        backupControllers.insert(ip, QPointer<BackupController>(new BackupController(ip, PORT_BACKUP_SYSTEM, this)));
 }
 
 void RobotsController::robotIsDeadSlot(const QString ip){
@@ -246,13 +241,18 @@ void RobotsController::sendNewMap(const QString ip, const QString mapId, const Q
 void RobotsController::newMapFromRobotSlot(const QString ip, const QByteArray mapArray, const QString mapId, const QString mapDate, const QString resolution, const QString originX, const QString originY, const int map_width, const int map_height){
     emit newMapFromRobot(ip, mapArray, mapId, mapDate, resolution, originX, originY, map_width, map_height);
     receivingMap = false;
+    requestMapTimer->stop();
 }
 
 void RobotsController::requestMap(const QString ip){
-    qDebug() << "Requesting the map from robot at ip" << ip;
+    qDebug() << "RobotsController::requestMap Requesting the map from robot at ip" << ip;
     if(!receivingMap){
         sendCommand(ip, QString("s") + QChar(31) + QString::number(1));
         receivingMap = true;
+        requestMapTimer->start();
+    } else {
+        /// TODO some queue to request the map ?
+        qDebug() << "RobotsController::requestMap Already receiving a map, please wait";
     }
 }
 
@@ -262,26 +262,27 @@ void RobotsController::sendNewMapToAllExcept(const QString ip, const QString map
         if(ipList.at(i).compare(ip) != 0)
             sendNewMap(ipList.at(i), mapId, date, mapMetadata, mapImage);
 
-    timer = new QTimer(this);
-    timer->setInterval(10000);
-
-    connect(timer, SIGNAL(timeout()), this, SLOT(timerSlot()));
-    timer->start();
+    sendMapTimer->start();
 }
 
-void RobotsController::timerSlot(void){
-    qDebug() << "RobotsController::timerSlot should have sent all the map already";
-    timer->stop();
+void RobotsController::sendMapTimerSlot(void){
+    qDebug() << "RobotsController::sendMapTimerSlot should have sent all the map already";
+    sendMapTimer->stop();
+}
+
+void RobotsController::requestMapTimerSlot(void){
+    qDebug() << "RobotsController::requestMapTimerSlot should have received the map already";
 }
 
 void RobotsController::requestMapForMerging(const QString ip){
-    qDebug() << "Requesting the map for merging from robot at ip" << ip;
+    qDebug() << "RobotsController::requestMapForMerging Requesting the map for merging from robot at ip" << ip;
     if(!receivingMap){
         sendCommand(ip, QString("s") + QChar(31) + QString::number(2));
         receivingMap = true;
+        requestMapTimer->start();
     } else {
         /// TODO some queue to request the map ?
-        qDebug() << "ALready receiving a map, please wait";
+        qDebug() << "RobotsController::requestMapForMerging Already receiving a map, please wait";
     }
 }
 
@@ -289,6 +290,7 @@ void RobotsController::processMapForMerge(const QByteArray map, const QString re
     qDebug() << "RobotsController::processMapForMerge";
     emit sendMapToProcessForMerge(map, resolution);
     receivingMap = false;
+    requestMapTimer->stop();
 }
 
 void RobotsController::startedScanningSlot(const QString ip){
@@ -374,13 +376,13 @@ void RobotsController::resetHomePathSlot(QString ip){
 }
 
 void RobotsController::callForRebootRobot(QString ip){
-    qDebug() << "robotsController:: call for reboot robot called";
-    backupWorkers.value(ip).second->callForReboot();
+    qDebug() << "robotsController::callForRebootRobot called";
+    backupControllers.value(ip)->callForReboot();
 }
 
 void RobotsController::backupSystemIsDownSlot(QString ip){
     qDebug() << "RobotController::backup System is down at ip" << ip;
-    backupWorkers.remove(ip);
+    backupControllers.remove(ip);
 }
 
 

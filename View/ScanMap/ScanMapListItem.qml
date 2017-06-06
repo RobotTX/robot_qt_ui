@@ -26,7 +26,7 @@ Frame {
     Rectangle {
         anchors.fill: parent
         anchors.margins: 15
-        color: selected ? Style.selectedItemColor : Style.lightGreyBackground
+        color: selected ? Style.selectedItemColor : hovered ? Style.lightGreyBackgroundHover : Style.lightGreyBackground
         radius: 8
 
         Timer {

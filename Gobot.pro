@@ -37,7 +37,8 @@ SOURCES += main.cpp \
     Controller/Map/scanmapcontroller.cpp \
     View/Robot/scanmappainteditem.cpp \
     View/Robot/obstaclespainteditem.cpp \
-    Controller/Robot/backuprobotworker.cpp
+    Controller/Robot/backuprobotworker.cpp \
+    Controller/Robot/backupcontroller.cpp
 
 RESOURCES += qml.qrc \
     Resources/resources.qrc
@@ -98,4 +99,5 @@ HEADERS += \
     Controller/Map/scanmapcontroller.h \
     View/Robot/scanmappainteditem.h \
     View/Robot/obstaclespainteditem.h \
-    Controller/Robot/backuprobotworker.h
+    Controller/Robot/backuprobotworker.h \
+    Controller/Robot/backupcontroller.h

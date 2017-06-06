@@ -20,7 +20,7 @@ void PointGroup::deletePoint(const QString name){
 void PointGroup::hideShow(const QString name){
     for(int i = 0; i < pointVector.size(); i++)
         if(pointVector.at(i)->getName().compare(name) == 0)
-            pointVector.at(i)->setVisible(pointVector.at(i)->isVisible());
+            pointVector.at(i)->setVisible(!pointVector.at(i)->isVisible());
 }
 
 QPointer<Point> PointGroup::takePoint(const QString name){

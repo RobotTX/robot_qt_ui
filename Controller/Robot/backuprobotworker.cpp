@@ -78,7 +78,8 @@ void BackupRobotWorker::errorConnectionSlot(QAbstractSocket::SocketError error){
         break;
     case(QAbstractSocket::RemoteHostClosedError):
         qDebug() << "(BackupRobotWorker) The remote host closed the connection. Note that the client socket (i.e., this socket) will be closed after the remote close notification has been sent.";
-        emit backupSystemIsDown(ipAddress);
+        /// NOTE shouldn't need it if there is a disconnectedSlot
+        //emit backupSystemIsDown(ipAddress);
         break;
     case(QAbstractSocket::HostNotFoundError):
         qDebug() << "(BackupRobotWorker) The host address was not found.";

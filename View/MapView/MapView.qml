@@ -59,15 +59,16 @@ Frame {
         _name: "tmpPointView"
         _groupName: "tmpGroup"
         _isVisible: false
-        pointPosX: 0
-        pointPosY: 0
         tooltipText: "Drag me or click the map to modify my position"
         signal tmpPointViewPosChanged()
 
         mapOrientation: -topViewId.mapRotation
 
         MouseArea {
-            anchors.fill: parent
+            x: -parent.image.width / 2
+            y: -parent.image.height
+            width: parent.image.width
+            height: parent.image.height
             drag {
                 target: parent
                 minimumX: 0
@@ -76,12 +77,7 @@ Frame {
                 maximumY: mapImage.height
             }
             onClicked: console.log("This is the temporary point")
-            onPositionChanged: {
-                if(drag.active){
-                    tmpPointView.setPos(tmpPointView.x, tmpPointView.y);
-                    parent.tmpPointViewPosChanged();
-                }
-            }
+            onPositionChanged: if(drag.active) parent.tmpPointViewPosChanged();
         }
     }
 
@@ -238,7 +234,8 @@ Frame {
                     onClicked: {
                         if (mouse.button === Qt.LeftButton) {
                             if(tmpPointView.visible){
-                                tmpPointView.setPos(mouseX,  mouseY);
+                                tmpPointView.x = mouseX;
+                                tmpPointView.y = mouseY;
                                 tmpPointView.tmpPointViewPosChanged()
                             }
                             if(robotModel.count > 0){
@@ -266,17 +263,18 @@ Frame {
                             _name: name
                             _isVisible: useTmpPathModel ? true : isVisible
                             _groupName: groupName
-                            originX: posX
-                            originY: posY
-                            x: posX - width / 2
-                            y: posY - height
+                            x: posX
+                            y: posY
                             tooltipText: name
                             type: home ? Helper.PointViewType.HOME : Helper.PointViewType.PERM
                             mapOrientation: -topViewId.mapRotation
                             pointOrientation: orientation
 
                             MouseArea {
-                                anchors.fill: parent
+                                x: -parent.image.width / 2
+                                y: -parent.image.height
+                                width: parent.image.width
+                                height: parent.image.height
                                 onClicked: {
                                     console.log("Clicked on " + _name + " in group " + _groupName + " " + _isVisible + " " + type)
                                     if(useTmpPathModel){
@@ -304,15 +302,16 @@ Frame {
                                 _isVisible: useRobotPathModel ? false : pathIsVisible
                                 _groupName: pathName
                                 type: index == 0 ? Helper.PointViewType.PATHPOINT_START : Helper.PointViewType.PATHPOINT
-                                originX: posX
-                                originY: posY
-                                x: posX - width / 2
-                                y: posY - height
+                                x: posX
+                                y: posY
                                 tooltipText: name
                                 mapOrientation: -topViewId.mapRotation
 
                                 MouseArea {
-                                    anchors.fill: parent
+                                    x: -parent.image.width / 2
+                                    y: -parent.image.height
+                                    width: parent.image.width
+                                    height: parent.image.height
                                     onClicked: {
                                         console.log("Clicked on " + _name + " in group " + _groupName + " " + _isVisible + " " + type)
                                         if(useTmpPathModel){
@@ -326,26 +325,16 @@ Frame {
                                         target: useTmpPathModel ? parent : undefined
                                         minimumX: 0
                                         minimumY: 0
-                                        maximumX: mapImage.width
-                                        maximumY: mapImage.height
+                                        maximumX: mapImage.width - 1
+                                        maximumY: mapImage.height - 1
                                     }
                                     onPositionChanged: {
                                         if(drag.active){
-                                            /// Need to do all of this to break the binding on the position of the image
-                                            /// as when the pointView is moved, we want to set this value in the model
-                                            /// which will update the pointView again...
                                             var _posX = pathPointView.x;
                                             var _posY = pathPointView.y;
 
                                             if(Math.round(posX) + ' ' + Math.round(posY) === name)
                                                 name = Math.round(_posX) + ' ' + Math.round(_posY)
-
-                                            var _oriX = pathPointView.pointPosX;
-                                            var _oriY = pathPointView.pointPosY;
-                                            pathPointView.pointPosX = _oriX;
-                                            pathPointView.pointPosY = _oriY;
-                                            pathPointView.x = _posX - pathPointView.width/2;
-                                            pathPointView.y = _posY - pathPointView.height;
 
                                             posX = _posX;
                                             posY = _posY;
@@ -380,10 +369,8 @@ Frame {
                             _name: "Charging station of " + name
                             _isVisible: useRobotPathModel && homeX >= 0
                             type: Helper.PointViewType.HOME
-                            originX: homeX
-                            originY: homeY
-                            x: homeX - width / 2
-                            y: homeY - height
+                            x: homeX
+                            y: homeY
                             tooltipText: "Charging station of " + name
                             mapOrientation: -topViewId.mapRotation
                             pointOrientation: homeOri
@@ -398,10 +385,8 @@ Frame {
                                 _isVisible: useRobotPathModel ? pathIsVisible : false
                                 _groupName: pathName
                                 type: index == 0 ? Helper.PointViewType.PATHPOINT_START : Helper.PointViewType.PATHPOINT
-                                originX: pathPointPosX
-                                originY: pathPointPosY
-                                x: pathPointPosX - width / 2
-                                y: pathPointPosY - height
+                                x: pathPointPosX
+                                y: pathPointPosY
                                 tooltipText: pathPointName
                                 mapOrientation: -topViewId.mapRotation
                             }
