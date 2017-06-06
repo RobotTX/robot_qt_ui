@@ -24,6 +24,7 @@ Frame {
     }
 
     Rectangle {
+
         anchors.fill: parent
         anchors.margins: 15
         color: selected ? Style.selectedItemColor : hovered ? Style.lightGreyBackgroundHover : Style.lightGreyBackground
@@ -70,6 +71,10 @@ Frame {
         Image {
             id: validIcon
             source: mapReceived ? "qrc:/icons/valid" : "qrc:/icons/notValid"
+            ToolTip {
+                visible: !mapReceived && hovered
+                text: mapReceived ? "" : "The map has not been received yet"
+            }
             fillMode: Image.Pad
             anchors {
                 top: parent.top

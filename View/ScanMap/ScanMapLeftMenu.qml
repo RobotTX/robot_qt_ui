@@ -20,6 +20,7 @@ Frame {
     signal resetScanMaps()
     signal saveScan(string file_name)
     signal removeMap(string ip)
+    signal requestCoordinatesRobotAndScanMapItem(string ip)
 
     property Tutorial tutorial
 
@@ -235,7 +236,7 @@ Frame {
             }
             onSendTeleop: scanLeftMenuFrame.teleop(ip, index)
             onSelect: scanLeftMenuFrame.selectedIp === ip ? scanLeftMenuFrame.selectedIp = "" : scanLeftMenuFrame.selectedIp = ip
-            onCenterOnRobot: console.log("gotta recenter on robot " + ip);
+            onCenterOnRobot: scanLeftMenuFrame.requestCoordinatesRobotAndScanMapItem(ip);
         }
     }
 

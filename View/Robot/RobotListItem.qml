@@ -41,9 +41,7 @@ Frame {
         imgSrc: "qrc:/icons/restart"
         tooltip: "Reboot the robot"
 
-
-
-        property int delay: 3000
+        property int delay: 1500
         onPressed: {
             console.log("timer starts")
             timerRestartButton.restart()
@@ -65,6 +63,7 @@ Frame {
 
 
             Rectangle {
+                // draws a circle on top of the image whose radius grows as the timer's elapsed time increases
                 id: timerBack
                 z: 2
                 width: restartButton.width * timerRestartButton.elapsed / restartButton.delay
