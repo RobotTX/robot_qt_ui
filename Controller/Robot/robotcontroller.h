@@ -16,6 +16,7 @@ class QQmlApplicationEngine;
 #include <QThread>
 #include <QPointer>
 #include <QImage>
+#include <QVariant>
 
 class RobotController : public QObject {
 
@@ -254,6 +255,12 @@ signals:
      * Send the new map to the robotsController to be used in the scan window
      */
     void receivedScanMap(QString ip, QByteArray mapArray, QString resolution, QString originX, QString originY, int map_width, int map_height);
+    /**
+     * @brief receivedMap
+     * @param ip
+     * emitted when a new map for merge is received so that the model can be updated on the qml side
+     */
+    void receivedMap(QVariant ip);
 
     /**
      * @brief checkScanning

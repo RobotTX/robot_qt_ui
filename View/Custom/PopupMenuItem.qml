@@ -8,6 +8,7 @@ MenuItem {
     property string labelText
 
     background: Rectangle {
+
         anchors {
             fill: parent
             margins: 1

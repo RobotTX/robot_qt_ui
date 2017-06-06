@@ -235,6 +235,7 @@ Frame {
             }
             onSendTeleop: scanLeftMenuFrame.teleop(ip, index)
             onSelect: scanLeftMenuFrame.selectedIp === ip ? scanLeftMenuFrame.selectedIp = "" : scanLeftMenuFrame.selectedIp = ip
+            onCenterOnRobot: console.log("gotta recenter on robot " + ip);
         }
     }
 

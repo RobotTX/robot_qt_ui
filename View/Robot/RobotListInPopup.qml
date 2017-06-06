@@ -33,7 +33,6 @@ Menu {
             model: robotModel
             delegate: PopupMenuItem {
                 labelText: name
-
                 enabled: !robotMapsList.contains(ip) && !processingCmd
                 Layout.preferredHeight: Style.menuItemHeight
                 Layout.preferredWidth: parent.width

@@ -23,43 +23,63 @@ Rectangle {
     signal removeMap(string ip)
     signal rotate(int angle, int id)
 
-    CustomLabel {
-        id: label
-        font.pointSize: 11
-        text: qsTr(name)
-        verticalAlignment: Text.AlignVCenter
+    Rectangle {
+        id: rect
+        height: 32
         anchors {
             left: parent.left
-            leftMargin: 0
             top: parent.top
-            topMargin: 13
-        }
-        width: 60
-    }
-
-    Button {
-        width: 20
-        height: 20
-
-        background: Rectangle {
-            anchors.fill: parent
-            color: "transparent"
-        }
-
-        anchors {
-            top: parent.top
-            topMargin: 13
             right: parent.right
-            rightMargin: 15
+        }
+        color: Style.lightGreyBackground
+        Image {
+            id: map_received_icon
+            source: map_received ? "qrc:/icons/valid" : "qrc:/icons/notValid"
+            width: 20
+            fillMode: Image.Pad
+            anchors {
+                left: parent.left
+                leftMargin: 5
+                verticalCenter: parent.verticalCenter
+            }
         }
 
-        contentItem: Image {
-            source: "qrc:/icons/closeBtn"
-            anchors.fill: parent
-            fillMode: Image.PreserveAspectFit
+        CustomLabel {
+            id: label
+            font.pointSize: 11
+            text: qsTr(name)
+            verticalAlignment: Text.AlignVCenter
+            anchors {
+                left: map_received_icon.left
+                leftMargin: 25
+                verticalCenter: parent.verticalCenter
+            }
+            width: 60
         }
 
-        onClicked: robotMap.removeMap(ip)
+        Button {
+            width: 20
+            height: 20
+
+            background: Rectangle {
+                anchors.fill: parent
+                color: "transparent"
+            }
+
+            anchors {
+                verticalCenter: parent.verticalCenter
+                right: parent.right
+                rightMargin: 15
+            }
+
+            contentItem: Image {
+                source: "qrc:/icons/closeBtn"
+                anchors.fill: parent
+                fillMode: Image.PreserveAspectFit
+            }
+
+            onClicked: robotMap.removeMap(ip)
+        }
     }
 
     CustomSlider {
@@ -70,7 +90,7 @@ Rectangle {
         stepSize: 5
 
         anchors {
-            top: label.bottom
+            top: rect.bottom
             topMargin: 20
             left: parent.left
             leftMargin: 10

@@ -37,11 +37,18 @@ Frame {
     ListModel {
         id: mapsList
 
-        function addRobot(name, ip){
+        function addRobot(name, ip, map_received){
             append({
                 "name": name,
-                "ip": ip
+                "ip": ip,
+                "map_received": map_received
             });
+        }
+
+        function setMapReceived(ip){
+            for(var i = 0; i < count; i++)
+                if(get(i).ip === ip)
+                    setProperty(i, "map_received", true);
         }
 
         function removeRobot(id){
@@ -107,7 +114,10 @@ Frame {
                 right: parent.right
             }
 
-            onClicked: loadFileDialog.open()
+            onClicked: {
+                loadFileDialog.from_robot = false;
+                loadFileDialog.open();
+            }
         }
 
         ScanMergeMenuButton {
@@ -131,13 +141,14 @@ Frame {
 
                 onRobotSelected: {
                     console.log("adding robot " + name + " " + ip)
-                    mapsList.addRobot(name, ip)
+                    mapsList.addRobot(name, ip, false)
                     leftMenu.getMapFromRobot(ip)
                 }
             }
 
             onClicked: {
                 console.log("click import map from robot button")
+                loadFileDialog.from_robot = true
                 robotsList.open()
             }
         }
@@ -176,7 +187,7 @@ Frame {
 
         ColumnLayout {
 
-            spacing: 30
+            spacing: 45
 
             anchors {
                 left: parent.left
@@ -250,6 +261,7 @@ Frame {
     // the window that actually opens to choose the file
     FileDialog {
         id: loadFileDialog
+        property bool from_robot
         // allow only pgm files to be selected
         nameFilters: "*.pgm"
         title: "Import a map"
@@ -260,7 +272,7 @@ Frame {
         onAccepted: {
             console.log("gonna send file " << fileUrl);
             leftMenu.importMap(fileUrl.toString().substring(7));
-            mapsList.addRobot(fileUrl.toString().substring(7), "" + mapsList.count+1)
+            mapsList.addRobot(fileUrl.toString().substring(7), "" + mapsList.count+1, !from_robot)
         }
     }
 
@@ -270,5 +282,9 @@ Frame {
 
     function removeLastRobot(){
         mapsList.removeRobot(mapsList.count-1);
+    }
+
+    function setMapReceived(ip){
+        mapsList.setMapReceived(ip);
     }
 }

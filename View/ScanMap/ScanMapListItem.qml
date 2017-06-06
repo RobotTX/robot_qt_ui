@@ -13,6 +13,7 @@ Frame {
     signal playPauseScanning(bool scanning)
     signal sendTeleop(int index)
     signal select()
+    signal centerOnRobot(string ip)
 
     padding: 0
     enabled: !busy
@@ -28,10 +29,42 @@ Frame {
         color: selected ? Style.selectedItemColor : Style.lightGreyBackground
         radius: 8
 
+        Timer {
+            id: timer
+            interval: 50
+            triggeredOnStart: false
+            repeat: true
+            property int elapsed_time
+            onTriggered: {
+                elapsed_time += interval;
+                //console.log("elapsed " + elapsed_time);
+            }
+        }
+
         MouseArea {
+            id: mouseArea
+            property int delay: 300
             anchors.fill: parent
             enabled: connected && !busy
-            onClicked: scanMapListItemFrame.select()
+            onClicked: {
+                if(timer.elapsed_time === 0 || timer.elapsed_time > 300){
+                    if(timer.elapsed_time === 0)
+                        timer.start();
+                    console.log("select event called");
+                    scanMapListItemFrame.select();
+                    if(timer.elapsed_time > 300)
+                        timer.elapsed_time = 0
+                } else {
+                    console.log("reset time elapse");
+                    timer.elapsed_time = 0;
+                }
+            }
+            onDoubleClicked: {
+                if(!selected)
+                    scanMapListItemFrame.select();
+                console.log("double clicked ");
+                scanMapListItemFrame.centerOnRobot(ip);
+            }
         }
 
         Image {

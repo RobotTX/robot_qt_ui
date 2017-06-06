@@ -56,7 +56,6 @@ MainController::MainController(QQmlApplicationEngine *engine, QObject* parent) :
         connect(applicationWindow, SIGNAL(requestOrSendMap(QString, bool)), this, SLOT(requestOrSendMap(QString, bool)));
         connect(this, SIGNAL(emitBatteryThreshold(QVariant)), applicationWindow, SLOT(setBatteryThreshold(QVariant)));
 
-
         /// to initialize tutorial messages
         QObject* tuto = applicationWindow->findChild<QObject*>("tutorialModel");
         if(tuto){
@@ -180,7 +179,6 @@ MainController::MainController(QQmlApplicationEngine *engine, QObject* parent) :
     }
 
     connect(this, SIGNAL(updateRobotPos(QString,double,double,double)), robotsController, SLOT(updateRobotPos(QString, double, double, double)));
-
 }
 
 void MainController::checkPoint(QString name, QString oldName, double x, double y){
