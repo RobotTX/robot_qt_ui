@@ -136,6 +136,11 @@ private slots:
      * Display the clicked position in robot and map coordinates when we click on the map
      */
     void posClicked(const double x, const double y);
+    /**
+     * @brief centerMapSlot
+     * Emits the adequate position for the qml side to recenter the map
+     */
+    void centerMapSlot();
 
 public slots:
     /**
@@ -184,6 +189,11 @@ signals:
      * After saving the edited map we ask the robots controller to send it to everyone
      */
     void sendMapToRobots(QString mapId, QString date, QString mapMetadata, QImage img);
+    /**
+     * @brief centerPosition
+     * The position of the center of the image in image coordinates
+     */
+    void centerPosition(QVariant, QVariant);
 
  private:
     QPointer<Map> map;

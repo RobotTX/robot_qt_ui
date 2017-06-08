@@ -27,6 +27,7 @@ MapController::MapController(QQmlApplicationEngine* engine, QObject *application
     if (mapViewFrame){
         connect(this, SIGNAL(setMap(QVariant)), mapViewFrame, SLOT(setMap(QVariant)));
         connect(this, SIGNAL(setMapPosition(QVariant, QVariant, QVariant, QVariant)), mapViewFrame, SLOT(setMapPosition(QVariant ,QVariant, QVariant, QVariant)));
+        connect(this, SIGNAL(centerPosition(QVariant,QVariant)), mapViewFrame, SLOT(centerMap(QVariant, QVariant)));
         connect(mapViewFrame, SIGNAL(savePosition(double, double, double, int, QString)), this, SLOT(savePositionSlot(double, double, double, int, QString)));
         connect(mapViewFrame, SIGNAL(loadPosition()), this, SLOT(loadPositionSlot()));
         connect(mapViewFrame, SIGNAL(posClicked(double, double)), this, SLOT(posClicked(double, double)));
@@ -40,7 +41,7 @@ MapController::MapController(QQmlApplicationEngine* engine, QObject *application
     QObject *mapMenuFrame = applicationWindow->findChild<QObject*>("mapMenuFrame");
     if (mapMenuFrame){
         connect(mapMenuFrame, SIGNAL(loadPosition()), this, SLOT(loadPositionSlot()));
-
+        connect(mapMenuFrame, SIGNAL(centerMap()), this, SLOT(centerMapSlot()));
     } else {
         /// NOTE can probably remove that when testing phase is over
         qDebug() << "MapController::MapController could not find the mapMenuFrame";
@@ -400,4 +401,33 @@ void MapController::updateMetadata(int width, int height, double resolution, dou
     setWidth(width);
     setHeight(height);
     setResolution(resolution);
+}
+
+void MapController::centerMapSlot(){
+    QImage image = map->getMapImage();
+
+    int top = 0;
+    int bottom = image.height();
+    int left = image.width();
+    int right = 0;
+
+    /// We want to find the center smallest rectangle containing the map (white and black) to crop it and use a small image
+
+    for(int i = 0; i < image.width(); i++){
+        for(int j = 0; j < image.height(); j++){
+            int color = image.pixelColor(i, j).red();
+            if(color == 255 || color == 0){
+                if(bottom > j)
+                    bottom = j;
+                if(top < j)
+                    top = j;
+                if(left > i)
+                    left = i;
+                if(right < i)
+                    right = i;
+            }
+        }
+    }
+    qDebug() << left + (right-left)/2 << top + (bottom - top)/2;
+    emit centerPosition(left + (right-left)/2, top + (bottom - top)/2);
 }

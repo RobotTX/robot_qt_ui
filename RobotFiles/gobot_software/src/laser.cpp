@@ -8,6 +8,7 @@ ros::Subscriber sub_laser;
 tcp::acceptor l_acceptor(io_service);
 
 bool startLaser(gobot_software::PortLaser::Request &req, gobot_software::PortLaser::Response &res){
+    
     std::cout << "(Laser) Starting laser_sender" << std::endl;
     ros::NodeHandle n;
 

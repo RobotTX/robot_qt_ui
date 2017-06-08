@@ -39,6 +39,7 @@
         <file alias="closeBtn">icons/closeBtn.png</file>
         <file alias="loadState">icons/Ic_LoadState.png</file>
         <file alias="saveState">icons/Ic_SaveState.png</file>
+        <file alias="centerMap">icons/center_map.png</file>
         <file alias="valid">icons/Ic_Normal.png</file>
         <file alias="notValid">icons/Ic_Error.png</file>
         <file alias="checkmark">icons/Checkmark_Selected.png</file>

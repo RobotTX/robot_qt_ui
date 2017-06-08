@@ -138,7 +138,7 @@ Window {
                 acceptedButtons: Qt.LeftButton
                 drag.target: parent
 
-                onClicked: console.log("scan map " + mouseX + " " + mouseY + " width " + width + " height " + height + " " + robotModel.count + " " + robotModel.get(0).posX + " " + robotModel.get(0).posY)
+                onClicked: console.log("scan map " + scanMap.x + " "  + scanMap.y + " " + mouseX + " " + mouseY + " width " + width + " height " + height + " " + robotModel.count + " " + robotModel.get(0).posX + " " + robotModel.get(0).posY)
 
                 onWheel: {
                     var newScale = scanMap.scale + scanMap.scale * wheel.angleDelta.y / 120 / 10;
@@ -189,21 +189,8 @@ Window {
     }
 
     function centerOnRobot(robot_x, robot_y, scan_map_item_x, scan_map_item_y){
-        console.log("Hey I need to recenter on " + robot_x + " " + robot_y + " " + scan_map_item_x + " " + scan_map_item_y);
-        console.log("previous pos is " + scanMap.x + " " + scanMap.y);
-        var pos_in_frame = scanMap.mapToItem(scanFrame, scan_map_item_x, scan_map_item_y);
-        console.log("item in frame coords " + pos_in_frame);
-        var pos_scanmap_inframe = scanMap.mapToItem(scanFrame, scanMap.width/2, scanMap.height/2);
-        console.log("center of map " + pos_scanmap_inframe.x + " " + pos_scanmap_inframe.y);
-        var scan_map_pos = scanMap.mapToItem(scanFrame, scanMap.x, scanMap.y);
-        console.log("scan map pos" + scan_map_pos.x + " " + scan_map_pos.y + " " + scanMap.x + " " + scanMap.y)
-
         var pos_finale = scanFrame.mapToItem(scanMap, scanFrame.width/2, scanFrame.height/2);
         scanMap.x += (pos_finale.x - (robot_x + scan_map_item_x)) * scanMap.scale;
         scanMap.y += (pos_finale.y - (robot_y + scan_map_item_y)) * scanMap.scale;
-        //scanMap.x = pos_scanmap_inframe.x - (scanMap.x - pos_in_frame.x);
-        //scanMap.y = pos_scanmap_inframe.y - (scanMap.y - pos_in_frame.y);
-        //scanMap.x = 0;
-        //scanMap.y = 0;
     }
 }

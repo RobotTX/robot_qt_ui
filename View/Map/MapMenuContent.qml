@@ -18,6 +18,7 @@ Frame {
 
     signal savePosition()
     signal loadPosition()
+    signal centerMap()
 
     signal saveMap(string file_name)
     signal importMap(string file_name)
@@ -87,6 +88,14 @@ Frame {
         anchors.top: savePositionButton.bottom
         // the signal needs to be relayed in order to call the function that is in mapView
         onClicked: mapMenuFrame.loadPosition()
+    }
+
+    NormalButton {
+        id: recenterButton
+        txt: "Center map"
+        imgSrc: "qrc:/icons/centerMap"
+        anchors.top: loadPositionButton.bottom
+        onClicked: mapMenuFrame.centerMap()
     }
 
     FileDialog {
