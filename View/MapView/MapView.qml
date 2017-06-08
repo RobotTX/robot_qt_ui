@@ -104,8 +104,6 @@ Frame {
 
         Rectangle {
 
-            border.color: "red"
-
             id: item
 
             Shortcut {

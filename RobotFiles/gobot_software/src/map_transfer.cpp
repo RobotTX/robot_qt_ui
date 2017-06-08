@@ -43,7 +43,7 @@ void getLocalMap(const nav_msgs::OccupancyGrid::ConstPtr& msg){
 }
 
 // algorithm to compress the map before sending it
-std::vector<uint8_t> compress(std::vector<int8_t> map, int map_width, int map_height, int who){
+std::vector<uint8_t> compress(const std::vector<int8_t> map, const int map_width, const int map_height, const int who){
 	std::vector<uint8_t> my_map;
 	int last(205);
 	uint32_t count(0);

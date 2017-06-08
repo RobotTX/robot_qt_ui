@@ -11,6 +11,7 @@
  * the robot position & orientation
  */
 class RobotPositionWorker : public QObject {
+
     Q_OBJECT
 
 public:

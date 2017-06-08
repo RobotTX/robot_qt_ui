@@ -97,7 +97,8 @@ void CommandController::cmdAnswerSlot(QString answer){
                     emit setMessageTop(2, "The robot " + robotName + " has a new home");
                 break;
                 case 'o':
-                    /// TODO message to say robot on its way
+                    emit setMessageTop(2, robotName + " is on its way to the charging station");
+                    /// TODO to test this message
                 break;
                 /**
                 case 'p':

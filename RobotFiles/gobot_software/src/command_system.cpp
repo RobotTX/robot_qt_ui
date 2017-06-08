@@ -723,7 +723,7 @@ bool startMap(){
 // 1 : application requesting at connection time
 // 2 : to merge
 // 3 : recovering position
-bool sendOnceMap(int who){
+bool sendOnceMap(const int who){
 	std::cout << "(Command system) Launching the service to get the map once" << std::endl;
 
 	gobot_software::Port srv;

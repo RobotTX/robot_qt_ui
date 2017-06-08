@@ -75,6 +75,7 @@ RobotController::RobotController(QQmlApplicationEngine* engine, RobotsController
     paintedItem = qobject_cast<ObstaclesPaintedItem*>(component.create());
     QQmlEngine::setObjectOwnership(paintedItem, QQmlEngine::CppOwnership);
 
+    /// where the obstacles are drawn
     QQuickItem* mapView = applicationWindow->findChild<QQuickItem*> ("mapImage");
     paintedItem->setParentItem(mapView);
     paintedItem->setParent(this);

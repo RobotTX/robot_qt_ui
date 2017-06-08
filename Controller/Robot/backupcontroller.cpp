@@ -15,7 +15,6 @@ BackupController::BackupController(const QString ip, const int port, QObject *pa
 
 BackupController::~BackupController(){
     emit stopBackupWorker();
-
     /// stopping the threads might be needed as well
     backupThread.quit();
     backupThread.wait();

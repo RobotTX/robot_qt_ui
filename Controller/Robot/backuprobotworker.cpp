@@ -59,7 +59,7 @@ void BackupRobotWorker::readTcpDataSlot(){
     qDebug() << "backup worker reading tcp data";
     QString ackMessage = socket->readAll();
     qDebug() << "Backup worker received msg :" << ackMessage;
-    /// TODO message to user ? or simply whatever, only for troubleshooting
+    /// NOTE message to user ? or simply whatever, only for troubleshooting
 }
 
 void BackupRobotWorker::stopWorker(){

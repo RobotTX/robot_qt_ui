@@ -152,8 +152,6 @@ private slots:
      */
     void updateObstacles(float angle_min, float angle_max, float angle_increment, QVector<float> ranges);
 
-
-
 signals:
     /**
      * @brief robotIsDead
@@ -270,7 +268,18 @@ signals:
      */
     void checkScanning(QString ip, bool scanning);
 
+    /**
+     * @brief updateLaser
+     * @param ip
+     * @param activated
+     * To hide or show the laser depending on <activated>
+     */
     void updateLaser(QString ip, bool activated);
+    /**
+     * @brief resetHomePath
+     * @param ip
+     * To reset both the path and home of the robot at ip <ip>
+     */
     void resetHomePath(QString ip);
 
     /// Tell the workers to stop their connection to the robot

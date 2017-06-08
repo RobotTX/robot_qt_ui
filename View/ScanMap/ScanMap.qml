@@ -102,6 +102,7 @@ Window {
     }
 
     Rectangle {
+
         id: scanFrame
 
         clip: true

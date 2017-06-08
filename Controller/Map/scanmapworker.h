@@ -13,7 +13,9 @@
  * is scanning
  */
 class ScanMapWorker : public QObject {
+
     Q_OBJECT
+
 public:
     /**
      * @brief ScanMapWorker::MapThread
@@ -24,7 +26,6 @@ public:
     ~ScanMapWorker();
 
 private slots:
-
     /**
      * @brief errorConnectionSlot
      * @param error

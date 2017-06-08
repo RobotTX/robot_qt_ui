@@ -259,6 +259,7 @@ private slots:
      * This is called by the map controller when an edited map is saved
      */
     void sendMapToAllRobots(QString id, QString date, QString metadata, QImage img);
+
     void testSlot();
 
 signals:

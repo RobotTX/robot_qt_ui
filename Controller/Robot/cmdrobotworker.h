@@ -13,7 +13,9 @@
  * The worker connects to the robot at the given ipAddress & port to send command and receive messages to/from the robot
  */
 class CmdRobotWorker : public QObject {
+
     Q_OBJECT
+
 public:
     /**
      * @brief CmdRobotWorker
@@ -116,7 +118,6 @@ private slots:
      * we'll try to connect again in this slot
      */
     void errorConnectionSlot(QAbstractSocket::SocketError error);
-
 
 private :
     QPointer<QTcpSocket> socket;

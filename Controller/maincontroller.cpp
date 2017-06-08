@@ -109,27 +109,41 @@ MainController::MainController(QQmlApplicationEngine *engine, QObject* parent) :
         qDebug() << "App path :" << Helper::getAppPath();
         if(file.open(QFile::ReadWrite)){
             QTextStream in(&file);
+            /// the file is empty for example because it did not exist so we just
+            /// created it
+            if(in.atEnd()){
+                QTextStream stream(&file);
+                /// if the file was corrupted we put as default the mode
+                /// "always ask" as for the choice of the map and 10% for
+                /// the battery
+                stream << 2 << " " << 0.0;
+                emit emitSettings(2);
+                emit emitBatteryThreshold(0.0);
+            } else {
                 while (!in.atEnd()){
                     QString line = in.readLine();
                     int mapChoice(2);
                     double batteryThreshold(0.3);
                     QStringList list = line.split(' ');
+                    qDebug() << "settings " << list;
                     if(list.size() == 2){
                         mapChoice = list.at(0).toInt();
                         if(list.at(1).toDouble() >= 0 && list.at(1).toDouble() <= 1)
                             batteryThreshold = list.at(1).toDouble();
                     } else {
-                        /// TODO tell the user and rewrite the settings file as it has been corrupted
-                        ///  or let the user modify it in the settings menu, which will save it
+                        qDebug() << "file de merde";
+                        file.resize(0);
+                        QTextStream stream(&file);
+                        /// if the file was corrupted we put as default the mode
+                        /// "always ask" as for the choice of the map and 10% for
+                        /// the battery
+                        stream << 2 << " " << 0.0;
                     }
                     emit emitSettings(mapChoice);
                     emit emitBatteryThreshold(batteryThreshold);
-               }
-               file.close();
-        } else {
-            qDebug() << "MainController::MainController could not find the settings file";
-            /// TODO create the file if it does not exist
-            Q_UNREACHABLE();
+                }
+                file.close();
+            }
         }
     } else {
         /// NOTE can probably remove that when testing phase is over

@@ -45,7 +45,7 @@ void asyncAccept(boost::shared_ptr<boost::asio::io_service> io_service, boost::s
 void startRobotPos();
 void stopRobotPos();
 bool startMap();
-bool sendOnceMap(int who);
+bool sendOnceMap(const int who);
 bool sendAutoMap();
 bool stopAutoMap();
 bool stopMap();
