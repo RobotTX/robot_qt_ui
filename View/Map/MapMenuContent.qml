@@ -95,6 +95,9 @@ Frame {
         txt: "Center map"
         imgSrc: "qrc:/icons/centerMap"
         anchors.top: loadPositionButton.bottom
+        // if the map has become unreachable for the user because of a false manipulation
+        // (typically because he dragged the map out of the frame and saved this Positioner
+        // then this button can be used to recenter the map
         onClicked: mapMenuFrame.centerMap()
     }
 

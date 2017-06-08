@@ -404,6 +404,7 @@ void MapController::updateMetadata(int width, int height, double resolution, dou
 }
 
 void MapController::centerMapSlot(){
+
     QImage image = map->getMapImage();
 
     int top = 0;
@@ -411,8 +412,8 @@ void MapController::centerMapSlot(){
     int left = image.width();
     int right = 0;
 
-    /// We want to find the center smallest rectangle containing the map (white and black) to crop it and use a small image
-
+    /// We want to find the center of the rectangle constructed by getting rid of all the extra grey
+    /// around the image, this is the position we want to center on
     for(int i = 0; i < image.width(); i++){
         for(int j = 0; j < image.height(); j++){
             int color = image.pixelColor(i, j).red();
@@ -428,6 +429,5 @@ void MapController::centerMapSlot(){
             }
         }
     }
-    qDebug() << left + (right-left)/2 << top + (bottom - top)/2;
     emit centerPosition(left + (right-left)/2, top + (bottom - top)/2);
 }

@@ -438,6 +438,7 @@ Frame {
 
     // puts the point <posX, posY> at the center of the frame
     function centerMap(posX, posY){
+        // position of the center of the item in which we display the map in map coordinates
         var pos_finale = item.mapToItem(mapImage, item.width/2, item.height/2);
         mapImage.x += (pos_finale.x - posX) * zoomScale.xScale;
         mapImage.y += (pos_finale.y - posY) * zoomScale.xScale;

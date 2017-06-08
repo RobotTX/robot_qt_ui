@@ -28,15 +28,6 @@ generate_messages(
   std_msgs  # and/or other packages containing depended messages
 )
 
-#set(SFML_STATIC_LIBRARIES TRUE)
-# define the SFML_STATIC macro if static build was chosen
-#if(SFML_STATIC_LIBRARIES)
-#    add_definitions(-DSFML_STATIC)
-#endif()
-
-#set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "~/catkin_ws/src/sfml/build/SFML-2.3.2/share/SFML/cmake/Modules")
-#find_package(SFML COMPONENTS network system)
-
 set(CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_CXX_FLAGS}")
 catkin_package(
   INCLUDE_DIRS include
@@ -52,11 +43,6 @@ catkin_package(
 # include_directories(include)
 include_directories(include ${catkin_INCLUDE_DIRS})
 
-#add_executable(map_transfer src/map_transfer.cpp)
-#target_link_libraries(map_transfer ${catkin_LIBRARIES})
-#target_link_libraries(map_transfer ${SFML_LIBRARIES})
-#add_dependencies(map_transfer gobot_communication_gencpp)
-
 add_executable(map_transfer src/map_transfer.cpp)
 target_link_libraries(map_transfer ${catkin_LIBRARIES})
 target_link_libraries(map_transfer ${gobot_software} ${Boost_FILESYSTEM_LIBRARY} ${Boost_SYSTEM_LIBRARY} )
@@ -66,11 +52,6 @@ add_executable(robot_pos_transfer src/robot_pos_transfer.cpp)
 target_link_libraries(robot_pos_transfer ${catkin_LIBRARIES})
 target_link_libraries(robot_pos_transfer ${gobot_software} ${Boost_FILESYSTEM_LIBRARY} ${Boost_SYSTEM_LIBRARY} )
 add_dependencies(robot_pos_transfer gobot_software_generate_messages_cpp)
-
-#add_executable(map_metadata_transfer src/map_metadata_transfer.cpp)
-#target_link_libraries(map_metadata_transfer ${catkin_LIBRARIES})
-#target_link_libraries(map_metadata_transfer ${gobot_software} ${Boost_FILESYSTEM_LIBRARY} ${Boost_SYSTEM_LIBRARY} )
-#add_dependencies(map_metadata_transfer gobot_software_generate_messages_cpp)
 
 add_executable(command_system src/command_system.cpp)
 target_link_libraries(command_system ${catkin_LIBRARIES})

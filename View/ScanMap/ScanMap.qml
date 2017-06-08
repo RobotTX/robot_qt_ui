@@ -119,16 +119,18 @@ Window {
             clip: true
             objectName: "scanMapView"
 
+            width: 2496
+            height: 2496
+
+            // when new metadata arrive the width and the height or adjusted
             function adjustSize(_width, _height){
                 console.log("adjusting scan size to " + _width + " " + _height);
                 width = _width;
                 height = _height;
+                // centers the map in the frame
                 x = -_width/2 + scanFrame.width/2
                 y = -_height/2 + scanFrame.height/2
             }
-
-            width: 2496
-            height: 2496
 
             color: "#cdcdcd"
 
@@ -189,6 +191,7 @@ Window {
     }
 
     function centerOnRobot(robot_x, robot_y, scan_map_item_x, scan_map_item_y){
+        // position of the center of the frame in which we display the map in map coordinates
         var pos_finale = scanFrame.mapToItem(scanMap, scanFrame.width/2, scanFrame.height/2);
         scanMap.x += (pos_finale.x - (robot_x + scan_map_item_x)) * scanMap.scale;
         scanMap.y += (pos_finale.y - (robot_y + scan_map_item_y)) * scanMap.scale;
