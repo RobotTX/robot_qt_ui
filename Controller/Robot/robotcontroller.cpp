@@ -59,15 +59,23 @@ RobotController::RobotController(QQmlApplicationEngine* engine, RobotsController
     connect(this, SIGNAL(updateLaser(QString, bool)), parent, SLOT(updateLaserSlot(QString, bool)));
     connect(this, SIGNAL(resetHomePath(QString)), parent, SLOT(resetHomePathSlot(QString)));
 
+    QList<QObject*> qmlList = engine->rootObjects();
+    /// The main parent element in the QML tree
+    QObject *applicationWindow = qmlList.at(0);
+    QObject* mergeMapMenu = applicationWindow->findChild<QObject*>("mergeMapLeftMenu");
+    /// to update the icon on the list item corresponding to this robot in the merge maps widget
+    /// to show that the map has been received
+    if(mergeMapMenu){
+        connect(this, SIGNAL(receivedMap(QVariant)), mergeMapMenu, SLOT(setMapReceived(QVariant)));
+    } else
+        Q_UNREACHABLE();
+
     /// to draw the obstacles of the robots
     QQmlComponent component(engine, QUrl("qrc:/View/Robot/ObstaclesItems.qml"));
     paintedItem = qobject_cast<ObstaclesPaintedItem*>(component.create());
     QQmlEngine::setObjectOwnership(paintedItem, QQmlEngine::CppOwnership);
 
-    QList<QObject*> qmlList = engine->rootObjects();
-    /// The main parent element in the QML tree
-    QObject *applicationWindow = qmlList.at(0);
-
+    /// where the obstacles are drawn
     QQuickItem* mapView = applicationWindow->findChild<QQuickItem*> ("mapImage");
     paintedItem->setParentItem(mapView);
     paintedItem->setParent(this);
@@ -203,6 +211,8 @@ void RobotController::mapReceivedSlot(const QByteArray mapArray, const int who, 
         case 2:
             qDebug() << "RobotController::mapReceivedSlot received a map from a robot to merge" << ip << resolution << originX << originY;
             emit mapToMergeFromRobot(mapArray, resolution);
+            /// to update the icon on the qml side ( the icon that says whether or not the map has arrived
+            emit receivedMap(ip);
         break;
         case 1:
             emit newMapFromRobot(ip, mapArray, mapId, mapDate, resolution, originX, originY, map_width, map_height);

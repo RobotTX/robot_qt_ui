@@ -67,6 +67,12 @@ private slots:
      * sends a goal (x, y) to the robot at ip <ip>
      */
     void sendGoalSlot(QString ip, double x, double y);
+    /**
+     * @brief sendCoordinatesRobotView
+     * @param ip
+     * Send the coordinates of the robot at ip <ip>
+     */
+    void sendCoordinatesRobotAndScanMapItem(QString ip);
 
 signals:
     /**
@@ -116,6 +122,12 @@ signals:
      * to discard them
      */
     void discardMap(bool);
+    /**
+     * @brief coordinatesRobotView
+     * Coordinates of the robot view and scan map item that we were requested to send in order to
+     * center the scan map on this particular robot
+     */
+    void coordinatesRobotAndScanMapItem(QVariant, QVariant, QVariant, QVariant);
 
 private:
     QMap<QString, ScanMapPaintedItem*> paintedItems;

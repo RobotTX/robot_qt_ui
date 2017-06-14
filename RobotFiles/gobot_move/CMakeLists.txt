@@ -164,6 +164,14 @@ add_executable(odom_line src/odom_line.cpp)
 target_link_libraries(odom_line ${catkin_LIBRARIES})
 add_dependencies(odom_line gobot_move_generate_messages_cpp)
 
+add_executable(odom_turn_right src/odom_turn_right.cpp)
+target_link_libraries(odom_turn_right ${catkin_LIBRARIES})
+add_dependencies(odom_turn_right gobot_move_generate_messages_cpp)
+
+add_executable(odom_line_backwards src/odom_line_backwards.cpp)
+target_link_libraries(odom_line_backwards ${catkin_LIBRARIES})
+add_dependencies(odom_line_backwards gobot_move_generate_messages_cpp)
+
 ## Add cmake target dependencies of the executable
 ## same as for the library above
 # add_dependencies(gobot_move_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})

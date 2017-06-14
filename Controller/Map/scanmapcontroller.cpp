@@ -15,6 +15,7 @@ ScanMapController::ScanMapController(MainController* parent, QQmlApplicationEngi
         connect(scanLeftMenuFrame, SIGNAL(resetScanMaps()), this, SLOT(resetScanMaps()));
         connect(scanLeftMenuFrame, SIGNAL(saveScan(QString)), this, SLOT(saveScanSlot(QString)));
         connect(scanLeftMenuFrame, SIGNAL(removeMap(QString)), this, SLOT(removeMap(QString)));
+        connect(scanLeftMenuFrame, SIGNAL(requestCoordinatesRobotAndScanMapItem(QString)), SLOT(sendCoordinatesRobotAndScanMapItem(QString)));
 
         connect(this, SIGNAL(receivedScanMap(QVariant)), scanLeftMenuFrame, SLOT(receivedScanMap(QVariant)));
     }
@@ -22,6 +23,7 @@ ScanMapController::ScanMapController(MainController* parent, QQmlApplicationEngi
     QObject* scanWindow = applicationWindow->findChild<QObject*>("scanWindow");
     if(scanWindow){
         connect(this, SIGNAL(readyToBeGrabbed(QVariant)), scanWindow, SLOT(grabScannedMap(QVariant)));
+        connect(this, SIGNAL(coordinatesRobotAndScanMapItem(QVariant,QVariant, QVariant, QVariant)), scanWindow, SLOT(centerOnRobot(QVariant, QVariant, QVariant, QVariant)));
         connect(scanWindow, SIGNAL(resetMapConfiguration(QString, bool)), parent, SLOT(resetMapConfiguration(QString, bool)));
         connect(scanWindow, SIGNAL(discardMap(bool)), parent, SLOT(setDiscardMap(bool)));
     }
@@ -154,4 +156,14 @@ void ScanMapController::sendGoalSlot(QString ip, double x, double y){
         else
             emit invalidGoal();
     }
+}
+
+void ScanMapController::sendCoordinatesRobotAndScanMapItem(QString ip){
+    if(paintedItems.contains(ip)){
+        ScanMapPaintedItem* item = paintedItems.value(ip);
+        qDebug() << "To center scan map sending robot and scan map pos" <<
+                    item->robotX() << item->robotY() << item->x() << item->y();
+        emit coordinatesRobotAndScanMapItem(item->robotX(), item->robotY(), item->x(), item->y());
+    } else
+        Q_UNREACHABLE();
 }

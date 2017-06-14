@@ -1,6 +1,8 @@
 import QtQuick 2.7
 import QtQuick.Controls 2.1
 import QtQuick.Window 2.2
+import QtQml.Models 2.2
+import QtQuick.Layouts 1.3
 import "../../Helper/style.js" as Style
 import "../../Model/Robot"
 import "../../Model/Tutorial"
@@ -100,6 +102,7 @@ Window {
     }
 
     Rectangle {
+
         id: scanFrame
 
         clip: true
@@ -116,6 +119,10 @@ Window {
             clip: true
             objectName: "scanMapView"
 
+            width: 2496
+            height: 2496
+
+            // when new metadata arrive the width and the height or adjusted
             function adjustSize(_width, _height){
                 console.log("adjusting scan size to " + _width + " " + _height);
                 width = _width;
@@ -125,9 +132,6 @@ Window {
                 y = -_height/2 + scanFrame.height/2
             }
 
-            width: 2496
-            height: 2496
-
             color: "#cdcdcd"
 
             MouseArea {
@@ -136,7 +140,7 @@ Window {
                 acceptedButtons: Qt.LeftButton
                 drag.target: parent
 
-                onClicked: console.log("scan map " + mouseX + " " + mouseY + " width " + width + " height " + height + " " + robotModel.count + " " + robotModel.get(0).posX + " " + robotModel.get(0).posY)
+                onClicked: console.log("scan map " + scanMap.x + " "  + scanMap.y + " " + mouseX + " " + mouseY + " width " + width + " height " + height + " " + robotModel.count + " " + robotModel.get(0).posX + " " + robotModel.get(0).posY)
 
                 onWheel: {
                     var newScale = scanMap.scale + scanMap.scale * wheel.angleDelta.y / 120 / 10;
@@ -184,5 +188,12 @@ Window {
             scanWindow.resetMapConfiguration(file_name, true);
             scanWindow.close();
         });
+    }
+
+    function centerOnRobot(robot_x, robot_y, scan_map_item_x, scan_map_item_y){
+        // position of the center of the frame in which we display the map in map coordinates
+        var pos_finale = scanFrame.mapToItem(scanMap, scanFrame.width/2, scanFrame.height/2);
+        scanMap.x += (pos_finale.x - (robot_x + scan_map_item_x)) * scanMap.scale;
+        scanMap.y += (pos_finale.y - (robot_y + scan_map_item_y)) * scanMap.scale;
     }
 }

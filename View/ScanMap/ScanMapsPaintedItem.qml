@@ -50,7 +50,6 @@ ScanMapPaintedItem {
         property real orientation: 0
         x: parent.xRobot - robotView.width / 2
         y: parent.yRobot - robotView.height / 2
-        onVisibleChanged: console.log("visible ? " + robotView.visible)
         Component.onCompleted: robotView.visible = true
     }
 }

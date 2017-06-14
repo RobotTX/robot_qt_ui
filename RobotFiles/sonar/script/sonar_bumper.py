@@ -379,7 +379,7 @@ if __name__ == "__main__":
 	init()
 
 	rospy.Subscriber("/cmd_vel", Twist, twist)
-    	rospy.Subscriber("/amcl_pose", PoseWithCovarianceStamped, callback)
+	rospy.Subscriber("/amcl_pose", PoseWithCovarianceStamped, callback)
 	bumper_service = rospy.Service('getBumpers', GetBumpers, getBumpers)
 	sonar_service = rospy.Service('getSonars', GetSonars, getSonars)
 	battery_service = rospy.Service('getBatteryInfo', GetBatteryInfo, getBatteryInfo)

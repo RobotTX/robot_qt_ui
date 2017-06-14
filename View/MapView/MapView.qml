@@ -84,6 +84,7 @@ Frame {
     padding: 0
 
     SplitView {
+        id: splitView
         anchors.fill: parent
         orientation: Qt.Vertical
 
@@ -101,7 +102,9 @@ Frame {
             robotModel: mapViewFrame.robotModel
         }
 
-        Item {
+        Rectangle {
+
+            id: item
 
             Shortcut {
                 sequence: "s"
@@ -226,12 +229,12 @@ Frame {
                     anchors.fill: parent
                     acceptedButtons: Qt.LeftButton | Qt.RightButton
                     hoverEnabled: true
-
                     drag.target: parent
 
                     onDoubleClicked: doubleClickedOnMap(mouseX, mouseY)
 
                     onClicked: {
+                        console.log("pos image " + mapImage.x + " " + mapImage.y + " " + item.mapToItem(mapImage, item.width/2, item.height/2) + " " + mouseX + " " + mouseY)
                         if (mouse.button === Qt.LeftButton) {
                             if(tmpPointView.visible){
                                 tmpPointView.x = mouseX;
@@ -429,5 +432,13 @@ Frame {
 
     function emitPosition(){
         mapViewFrame.savePosition(mapImage.x, mapImage.y, zoomScale.xScale, topViewId.mapRotation, mapSrc.substring(6));
+    }
+
+    // puts the point <posX, posY> at the center of the frame
+    function centerMap(posX, posY){
+        // position of the center of the item in which we display the map in map coordinates
+        var pos_finale = item.mapToItem(mapImage, item.width/2, item.height/2);
+        mapImage.x += (pos_finale.x - posX) * zoomScale.xScale;
+        mapImage.y += (pos_finale.y - posY) * zoomScale.xScale;
     }
 }

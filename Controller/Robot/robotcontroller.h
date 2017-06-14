@@ -16,6 +16,7 @@ class QQmlApplicationEngine;
 #include <QThread>
 #include <QPointer>
 #include <QImage>
+#include <QVariant>
 
 class RobotController : public QObject {
 
@@ -151,8 +152,6 @@ private slots:
      */
     void updateObstacles(float angle_min, float angle_max, float angle_increment, QVector<float> ranges);
 
-
-
 signals:
     /**
      * @brief robotIsDead
@@ -254,6 +253,12 @@ signals:
      * Send the new map to the robotsController to be used in the scan window
      */
     void receivedScanMap(QString ip, QByteArray mapArray, QString resolution, QString originX, QString originY, int map_width, int map_height);
+    /**
+     * @brief receivedMap
+     * @param ip
+     * emitted when a new map for merge is received so that the model can be updated on the qml side
+     */
+    void receivedMap(QVariant ip);
 
     /**
      * @brief checkScanning
@@ -263,7 +268,18 @@ signals:
      */
     void checkScanning(QString ip, bool scanning);
 
+    /**
+     * @brief updateLaser
+     * @param ip
+     * @param activated
+     * To hide or show the laser depending on <activated>
+     */
     void updateLaser(QString ip, bool activated);
+    /**
+     * @brief resetHomePath
+     * @param ip
+     * To reset both the path and home of the robot at ip <ip>
+     */
     void resetHomePath(QString ip);
 
     /// Tell the workers to stop their connection to the robot
