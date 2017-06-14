@@ -121,7 +121,7 @@ MainController::MainController(QQmlApplicationEngine *engine, QObject* parent) :
                             batteryThreshold = list.at(1).toDouble();
                     } else {
                         /// TODO tell the user and rewrite the settings file as it has been corrupted
-                        ///  or let the user modify it in the settings menu, which will save it
+                        /// or let the user rewrite it the next time he goes in the settings menu, which will save them
                     }
                     emit emitSettings(mapChoice);
                     emit emitBatteryThreshold(batteryThreshold);
@@ -129,7 +129,7 @@ MainController::MainController(QQmlApplicationEngine *engine, QObject* parent) :
                file.close();
         } else {
             qDebug() << "MainController::MainController could not find the settings file";
-            /// TODO create the file if it does not exist
+            /// TODO create the file/folder if it does not exist
             Q_UNREACHABLE();
         }
     } else {

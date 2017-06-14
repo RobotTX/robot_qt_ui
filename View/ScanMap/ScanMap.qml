@@ -112,7 +112,6 @@ Window {
         }
 
         Rectangle {
-
             id: scanMap
             clip: true
             objectName: "scanMapView"
@@ -121,6 +120,7 @@ Window {
                 console.log("adjusting scan size to " + _width + " " + _height);
                 width = _width;
                 height = _height;
+                /// Change the position of scanMap so that we see the received map in the middle of the screen
                 x = -_width/2 + scanFrame.width/2
                 y = -_height/2 + scanFrame.height/2
             }
