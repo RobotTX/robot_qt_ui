@@ -1,0 +1,199 @@
+#!/usr/bin/env python
+
+import rospy
+from std_msgs.msg import Int32 , Empty
+from std_srvs import srv
+import serial
+import time
+import struct
+import commands
+from datetime import datetime 
+import threading,thread
+from geometry_msgs.msg import PoseWithCovarianceStamped, PoseStamped, Twist
+from move_base_msgs.msg import MoveBaseGoal
+from math import sqrt, atan2, pow
+from wheel.srv import *
+from sonar.msg import DistanceMsg 
+from sonar.msg import BumperMsg
+from sonar.srv import *
+
+setSpeedsProxy = rospy.ServiceProxy( "setSpeeds", SetSpeeds )
+getSpeedProxy = rospy.ServiceProxy( "getSpeed", GetSpeed )
+setSpeedFProxy = rospy.ServiceProxy( "setSpeedF", SetSpeedDirection )
+setSpeedBProxy = rospy.ServiceProxy( "setSpeedB", SetSpeedDirection )
+
+goal_info = MoveBaseGoal()
+twist_sign = True
+read_flag = False
+
+bump1 = 1
+bump2 = 1
+bump3 = 1
+bump4 = 1
+bump5 = 1
+bump6 = 1
+bump7 = 1
+bump8 = 1
+
+def get_sonar_value():
+	global bump1,bump2,bump3,bump4,bump5,bump6,bump7,bump8
+	global value0,value1,value2,value3,value4,value5,value6,read_flag
+	pub = rospy.Publisher("sonar_topic", DistanceMsg, queue_size = 10 )
+	rate = rospy.Rate(20)
+	print "read_flag", read_flag
+	while read_flag:
+		sonar.write("\xD0\x01\x00\x00\x00\x00\x00\x00\x00\x00\xB1")
+		res = sonar.read(26)
+		if len(res) == 26:
+			if ord(res[0])==208:
+				value0 = ord(res[3])*256 + ord(res[4])
+				value1 = ord(res[5])*256 + ord(res[6])
+				value2 = ord(res[7])*256 + ord(res[8])
+				value3 = ord(res[9])*256 + ord(res[10])
+				value4 = ord(res[11])*256 + ord(res[12])
+				value5 = ord(res[13])*256 + ord(res[14])
+				value6 = ord(res[15])*256 + ord(res[16])
+				pubDist = DistanceMsg("sonar", value0, value1, value2, value3, value4, value5, value6)
+				pub.publish(pubDist)
+				bump1 = ord(res[17])
+				bump2 = ord(res[18])
+				bump3 = ord(res[19])
+				bump4 = ord(res[20])
+				bump5 = ord(res[21])
+				bump6 = ord(res[22])
+				bump7 = ord(res[23])
+				bump8 = ord(res[24])
+				pubBump = BumperMsg(bump1,bump2,bump3,bump4,bump5,bump6,bump7,bump8)
+
+def getBumpers(req):
+	global bump1,bump2,bump3,bump4,bump5,bump6,bump7,bump8
+	list=[]
+	list.append(bump1)
+	list.append(bump2)
+	list.append(bump3)
+	list.append(bump4)
+	list.append(bump5)
+	list.append(bump6)
+	list.append(bump7)
+	list.append(bump8)
+	return GetBumpersResponse(list)	
+
+def getSonars(req):
+	global value0,value1,value2,value3,value4,value5,value6
+	list=[]
+	if (value0==0.0):
+		list.append(21.0)
+	else:
+		list.append(value0)
+	if (value1==0.0):
+		list.append(21.0)
+	else:
+		list.append(value1)
+	if (value2==0.0):
+		list.append(21.0)
+	else:
+		list.append(value2)
+	if (value3==0.0):
+		list.append(21.0)
+	else:
+		list.append(value3)
+	if (value4==0.0):
+		list.append(21.0)
+	else:
+		list.append(value4)
+	if (value5==0.0):
+		list.append(21.0)
+	else:
+		list.append(value5)
+	if (value6==0.0):
+		list.append(21.0)
+	else:
+		list.append(value6)
+	return GetSonarsResponse(list)
+
+def callback(msg):
+        global twist_sign,read_flag
+        goal_info.target_pose.header.frame_id = "map"
+        goal_info.target_pose.pose.position.x = 1.972
+        goal_info.target_pose.pose.position.y = 7.352
+        '''
+        robot_rotation_z = msg.pose.pose.orientation.z
+        robot_rotation_w = msg.pose.pose.orientation.w
+        robot_x  = msg.pose.pose.position.x
+        robot_y =  msg.pose.pose.position.y
+        '''
+        robot_x = 1.89
+        robot_y = 7.3
+        x = pow(robot_x-goal_info.target_pose.pose.position.x,2)
+        y = pow(robot_y-goal_info.target_pose.pose.position.y,2)
+        distance = sqrt(x+y)
+        print "robot_pose, x,y", robot_x, robot_y
+        print "goal", goal_info
+        print "distance", distance
+        if (distance<0.3) and (twist_sign):
+		print 1111111
+		read_flag = False
+                auto_charging()
+	else:
+		print 22222222
+		read_flag = True
+
+def auto_charging():
+        global sonar,read_flag
+        print "sonar:",sonar.isOpen(),"read_flag",read_flag
+        if sonar.isOpen():
+                print "Connected on port", sonar.port
+                while not read_flag:
+                        sonar.write("\x90\x02\x00\x00\x00\x00\x00\x00\x00\x00\xB1")
+                        res = sonar.read(8)
+                        if (len(res)==8):
+                                print ord(res[0]),ord(res[1]),ord(res[2]),ord(res[3]),ord(res[4]),ord(res[5]),ord(res[6]),ord(res[7])
+                                auto_move(ord(res[3]),ord(res[4]),ord(res[5]))
+                        time.sleep(0.5)
+
+def auto_move(rearSignal,leftSignal,rightSignal):
+        print rearSignal,leftSignal,rightSignal
+        if (rearSignal == 0) and (leftSignal==0) and (rightSignal==0):
+                setSpeedsProxy("B", 3, "F", 3)
+        else:
+                setSpeedsProxy("F", 0, "F", 0)
+		if (rearSignal==3):
+                        setSpeedsProxy("B", 3, "B", 3)
+                elif (rearSignal==2):
+                        setSpeedsProxy("F", 3, "B", 3)
+                elif (rearSignal==1):
+                        setSpeedsProxy("B", 3, "F", 3)
+
+def twist(msg):
+        global twist_sign
+        if (msg.linear.x==0) and (msg.linear.y==0) and (msg.angular.z==0):
+                twist_sign = True
+        else:
+                twist_sign = False
+
+def init():
+	global sonar
+	deviceNode = "1-3.2:1.0"
+	(status, output) = commands.getstatusoutput("ls -l /sys/class/tty/ttyUSB*")
+	devPort = "/dev"+output[output.index(deviceNode)+9:output.index(deviceNode)+17]
+	print devPort
+	sonar = serial.Serial(
+        	port = devPort,
+        	baudrate = 115200,
+        	stopbits = 1,
+        	bytesize = serial.EIGHTBITS,
+        	timeout = 0.5
+	)
+	sonar.close()
+	sonar.open()
+
+if __name__ == "__main__":
+    	rospy.init_node('sonar_pub', anonymous=False)
+	init()
+	rospy.Subscriber("/cmd_vel", Twist, twist)
+        rospy.Subscriber("/amcl_pose", PoseWithCovarianceStamped, callback)
+	s = rospy.Service('getBumpers', GetBumpers, getBumpers)
+	son = rospy.Service('getSonars', GetSonars, getSonars)
+	get_sonar_value()
+    	rospy.spin()
+

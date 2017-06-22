@@ -1,0 +1,29 @@
+#!/usr/bin/env python
+
+import rospy
+from sonar.msg import DistanceMsg 
+
+
+def analyze_distances(req):
+	global distR,distL, IDR,IDL
+	if(req.side == "R"):
+		distR=req.distance
+		IDR=req.id
+	else : 
+		distL=req.distance
+		IDL=req.id
+	if IDR==IDL and abs(distR - distL) > 20:
+		if distR > distL :
+			print "Right"
+		else : 
+			print "Left"
+
+
+if __name__ == "__main__":
+    rospy.init_node('sonar_analyser')
+    global IDR,IDL
+    IDR = 0
+    IDL = 0
+    rospy.Subscriber("/sonar_topic", DistanceMsg, analyze_distances)
+    rospy.spin()
+
