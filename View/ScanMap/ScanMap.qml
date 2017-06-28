@@ -22,6 +22,7 @@ Window {
     property Robots robotModel
     property Tutorial tutorial
     property bool closeOnSave: false
+    property ScanMapLeftMenu _scanMapLeftMenu: scanMapLeftMenu
 
     signal resetMapConfiguration(string file_name, bool scan)
     signal discardMap(bool discard)

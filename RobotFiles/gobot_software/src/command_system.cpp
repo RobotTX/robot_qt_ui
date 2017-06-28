@@ -163,24 +163,27 @@ bool execCommand(ros::NodeHandle n, const std::vector<std::string> command){
 
 		case 'g':
 			// first param is g, second param is the new name, third param is ssid, 4th param is password
-			/*if(command.size() == 4){
-				std::cout << "(Command system) New name : " << command.at(1) << std::endl;
+			if(command.size() == 1){    
+				
+				std::cout << "(Command system) going to scan automatically" << std::endl;
+				std::cout << "(Command system) Gobot start to scan a new map" << std::endl;
+				scanning = true;
 
-				std::ofstream ofs;
-				ofs.open(path_computer_software + "Robot_Infos/name.txt", std::ofstream::out | std::ofstream::trunc);
-				ofs << command.at(1);
-				ofs.close();
+	            /// Kill gobot move so that we'll restart it with the new map
+	            std::string cmd = "rosnode kill /move_base";
+	            system(cmd.c_str());
 
-				std::cout << "(Command system) New wifi : " << command.at(2) << std::endl;
-				std::cout << "(Command system) New wifi password : " << command.at(3) << std::endl;
-				std::string cmd = "sudo bash " + path_computer_software + "change_wifi.sh \"" + command.at(2) + "\" \""+ command.at(3) + "\"";
-				std::cout << "(Command system) Cmd : " << cmd << std::endl;
+	            sleep(5);
+	            /// Relaunch gobot_move
+	            //cmd = "roslaunch gobot_move scan.launch &";
+                cmd = "roslaunch gobot_move gazebo_scan.launch &";
+	            system(cmd.c_str());
+	            std::cout << "(New Map) We relaunched gobot_move" << std::endl;
 
-				system(cmd.c_str());
+				status = sendAutoMap();
 
 			} else 
-				std::cout << "(Command system) Parameter missing" << std::endl;*/
-			std::cout << "(Command system) Command g to change the name + wifi not used anymore" << std::endl;
+				std::cout << "(Command system) Parameter missing" << std::endl;
 		break;
 
 		/// Command for the robot to receive the ports needed for the map and robot pos services

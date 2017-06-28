@@ -14,6 +14,7 @@ Frame {
 
     property Robots robotModel
     signal startScanning(string ip)
+    signal startAutomaticScan(string ip)
     signal playPauseScanning(string ip, bool scanning, bool scanningOnConnection)
     signal sendTeleop(string ip, int index)
     signal cancelScan()
@@ -27,6 +28,7 @@ Frame {
     property int scanWindowWidth
     property int scanWindowHeight
     property string selectedIp
+    property ListModel scanningRobots: scanningRobotsList
 
     width: Style.smallMenuWidth
     padding: 0
@@ -63,7 +65,7 @@ Frame {
     ListModel {
         id: scanningRobotsList
 
-        function addRobot(name, ip){
+        function addRobot(name, ip, automatically){
             append({
                 "name": name,
                 "ip": ip,
@@ -71,9 +73,13 @@ Frame {
                 "busy": true,
                 "scanning": false,
                 "connected": true,
-                "checkedIndex": -1
+                "checkedIndex": -1,
+                "onAutomatic": automatically
             });
-            startScanning(ip)
+            if(!automatically)
+                startScanning(ip)
+            else
+                startAutomaticScan(ip)
         }
 
         function removeRobot(ip){
@@ -139,6 +145,12 @@ Frame {
                     return get(i).checkedIndex;
             return -2;
         }
+
+        function isOnAutomaticMode(ip){
+            for(var i = 0; i < count; i++)
+                if(get(i).ip === ip)
+                    return get(i).onAutomatic;
+        }
     }
 
     Button {
@@ -198,7 +210,7 @@ Frame {
             x: addScan.width
             robotModel: scanLeftMenuFrame.robotModel
             robotMapsList: scanningRobotsList
-            onRobotSelected: scanningRobotsList.addRobot(name, ip)
+            onRobotSelected: scanningRobotsList.addRobot(name, ip, false)
         }
     }
 
@@ -218,6 +230,8 @@ Frame {
     Component {
         id: delegate
         ScanMapListItem {
+            /// on automatic mode we don't allow the user to do anything but save ( at least right now )
+            enabled: !scanningRobotsList.isOnAutomaticMode(ip) && !busy
             x: 1
             width: flick.width - 2
             selected: scanLeftMenuFrame.selectedIp === ip

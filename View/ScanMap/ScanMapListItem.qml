@@ -16,7 +16,6 @@ Frame {
     signal centerOnRobot(string ip)
 
     padding: 0
-    enabled: !busy
     height: 220
 
     background: Rectangle {
@@ -38,7 +37,6 @@ Frame {
             property int elapsed_time
             onTriggered: {
                 elapsed_time += interval;
-                //console.log("elapsed " + elapsed_time);
             }
         }
 

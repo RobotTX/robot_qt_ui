@@ -10,6 +10,7 @@ ScanMapController::ScanMapController(MainController* parent, QQmlApplicationEngi
 
     if(scanLeftMenuFrame){
         connect(scanLeftMenuFrame, SIGNAL(startScanning(QString)), parent, SLOT(startScanningSlot(QString)));
+        connect(scanLeftMenuFrame, SIGNAL(startAutomaticScan(QString)), parent, SLOT(startAutomaticScanSlot(QString)));
         connect(scanLeftMenuFrame, SIGNAL(playPauseScanning(QString, bool, bool)), parent, SLOT(playPauseScanningSlot(QString, bool, bool)));
         connect(scanLeftMenuFrame, SIGNAL(sendTeleop(QString, int)), parent, SLOT(sendTeleopSlot(QString, int)));
         connect(scanLeftMenuFrame, SIGNAL(resetScanMaps()), this, SLOT(resetScanMaps()));

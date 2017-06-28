@@ -235,8 +235,8 @@ ApplicationWindow {
     }
 
     function openScanWindowForAutomaticScan(ip){
-        scanMap.show = true;
-        scanMapLeftMenu.scanningRobotsList.addRobot(ip);
+        scanMap.show();
+        scanMap._scanMapLeftMenu.scanningRobots.addRobot("Automatic scan", ip, true)
     }
 }
 

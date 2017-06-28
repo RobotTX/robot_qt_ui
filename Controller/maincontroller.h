@@ -168,6 +168,12 @@ private slots:
      */
     void startScanningSlot(QString ip);
     /**
+     * @brief startAutomaticScanSlot
+     * @param ip
+     * sends a command to the robot at ip <ip> to start scanning automatically
+     */
+    void startAutomaticScanSlot(QString ip);
+    /**
      * @brief stopScanningSlot
      * @param ip
      * sends a command to the robot at ip <ip> to stop scanning the map

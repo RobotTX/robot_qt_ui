@@ -57,11 +57,10 @@ void CommandController::cmdAnswerSlot(QString answer){
                     /// Paused the scan of the map
                     emit pausedScanning(ip);
                 break;
-                /*case 'g':
-                    /// Updated the name & wifi of the robot
-                    /// NOT USED ANYMORE
-                    Q_UNREACHABLE();
+                case 'g':
+                    /// starts an automatic scan
                 break;
+                /*
                 case 'h':
                     /// Sent the ports to the robot
                     /// OSEF

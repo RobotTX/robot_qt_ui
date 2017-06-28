@@ -18,6 +18,7 @@
 #include "Controller/Path/pathcontroller.h"
 #include "Controller/Robot/robotscontroller.h"
 #include "Controller/Map/scanmapcontroller.h"
+#include "Controller/Robot/robotcontroller.h"
 #include "Model/Point/xmlparser.h"
 #include "Model/Point/point.h"
 #include "Model/Path/pathxmlparser.h"
@@ -381,9 +382,10 @@ void MainController::sendCommandNewPath(QString ip, QString groupName, QString p
 
 void MainController::checkMapInfoSlot(QString ip, QString mapId, QString mapDate){
 
-    emit openScanWindowForAutomaticScan(ip);
 
-    /**
+    //emit openScanWindowForAutomaticScan(ip);
+
+
     /// Neither the application nor the robot has a map so we send a command to start scanning automatically
     if(mapController->getMapImage().size().width() == 0 && !mapId.compare("{00000000-0000-0000-0000-000000000000}")){
         /// opens the scan window and adds the robot with ip <ip> to the list
@@ -447,7 +449,7 @@ void MainController::checkMapInfoSlot(QString ip, QString mapId, QString mapDate
             break;
         }
     }
-    **/
+
 }
 
 void MainController::sendNewMap(QString ip){
@@ -554,6 +556,10 @@ void MainController::resetMapConfiguration(QString file_name, bool scan, double 
 
 void MainController::startScanningSlot(QString ip){
     robotsController->sendCommand(ip, QString("t"));
+}
+
+void MainController::startAutomaticScanSlot(QString ip){
+    robotsController->sendCommand(ip, QString("g"));
 }
 
 void MainController::stopScanningSlot(QString ip, bool killGobotMove){
