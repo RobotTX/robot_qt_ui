@@ -288,6 +288,8 @@ signals:
     void updateTutorialMessageVisibility(QVariant feature, QVariant visible);
     void updateRobotPos(QString ip, double x, double y, double orientation);
 
+    void openScanWindowForAutomaticScan(QVariant ip);
+
 private:
     QPointer<MainMenuController> mainMenuController;
     QPointer<MapController> mapController;

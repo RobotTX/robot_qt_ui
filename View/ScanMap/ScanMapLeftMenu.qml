@@ -59,7 +59,7 @@ Frame {
         onSetBusy: scanningRobotsList.setBusy(ip, busy);
     }
 
-    // to store the robots whose map has been imported for merging (subset of the robotModel and only the name and ip attributes are used
+    // to store the robots whose map has been imported for scanning (subset of the robotModel and only the name and ip attributes are used
     ListModel {
         id: scanningRobotsList
 

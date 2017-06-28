@@ -34,10 +34,10 @@ beginTime = time.time()
 
 def batteryCallback(batteryInfo):
 	global setChargingGoal,chargingFlag
-    print "batteryCallback 1"
+	print "batteryCallback 1"
 	# not sure we should do that, send the robot to charging station as soon as its battery level drops below 50 % ?
 	if (batteryInfo.RemainCapacity< 50) and (not setChargingGoal):
-        print "batteryCallback 2"
+        	print "batteryCallback 2"
 		setChargingGoal = True
 		nav_goal = MoveBaseActionGoal()
 		nav_goal.header.frame_id = "map"
@@ -52,12 +52,12 @@ def batteryCallback(batteryInfo):
 		nav_goal.goal.target_pose.pose.orientation.w = 0.8
 		pub.publish(nav_goal) #publish gobot to move goal location
 
-    print "batteryCallback 3"
+    	print "batteryCallback 3"
 	if (chargingFlag) :
 		auto_charging()
         print "batteryCallback 4"
 	else :
-        print "batteryCallback 5"
+        	print "batteryCallback 5"
 		if (distance < 0.16) and (not twistFlag):
 			os.system("rosnode kill /cmd_vel_listener")
 			os.system("rosnode kill /move_base")

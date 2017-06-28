@@ -233,5 +233,10 @@ ApplicationWindow {
     function setBatteryThreshold(threshold){
         batteryWarningThreshold = threshold;
     }
+
+    function openScanWindowForAutomaticScan(ip){
+        scanMap.show = true;
+        scanMapLeftMenu.scanningRobotsList.addRobot(ip);
+    }
 }
 

@@ -56,6 +56,8 @@ MainController::MainController(QQmlApplicationEngine *engine, QObject* parent) :
         connect(applicationWindow, SIGNAL(requestOrSendMap(QString, bool)), this, SLOT(requestOrSendMap(QString, bool)));
         connect(this, SIGNAL(emitBatteryThreshold(QVariant)), applicationWindow, SLOT(setBatteryThreshold(QVariant)));
 
+        connect(this, SIGNAL(openScanWindowForAutomaticScan(QVariant)), applicationWindow, SLOT(openScanWindowForAutomaticScan(QVariant)));
+
         /// to initialize tutorial messages
         QObject* tuto = applicationWindow->findChild<QObject*>("tutorialModel");
         if(tuto){
@@ -379,6 +381,16 @@ void MainController::sendCommandNewPath(QString ip, QString groupName, QString p
 
 void MainController::checkMapInfoSlot(QString ip, QString mapId, QString mapDate){
 
+    emit openScanWindowForAutomaticScan(ip);
+
+    /**
+    /// Neither the application nor the robot has a map so we send a command to start scanning automatically
+    if(mapController->getMapImage().size().width() == 0 && !mapId.compare("{00000000-0000-0000-0000-000000000000}")){
+        /// opens the scan window and adds the robot with ip <ip> to the list
+        qDebug() << "NO map on either side so we start scanning automatically";
+        emit openScanWindowForAutomaticScan(ip);
+    }
+
     /// Check if the robot has the current map
     qDebug() << "MainController::updateMapInfo Robot" << ip << "comparing ids" << mapId << "and" << mapController->getMapId();
     if(mapId.compare(mapController->getMapId().toString()) == 0){
@@ -435,6 +447,7 @@ void MainController::checkMapInfoSlot(QString ip, QString mapId, QString mapDate
             break;
         }
     }
+    **/
 }
 
 void MainController::sendNewMap(QString ip){
