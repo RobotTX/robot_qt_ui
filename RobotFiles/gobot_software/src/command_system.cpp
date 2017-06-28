@@ -42,6 +42,7 @@ int robot_pos_port = 4001;
 int map_port = 4002;
 int laser_port = 4003;
 int recovered_position_port = 4004;
+int dockStatus = -2;
 
 /// Separator which is just a char(31) => unit separator in ASCII
 static const std::string sep = std::string(1, 31);
@@ -125,6 +126,7 @@ bool execCommand(ros::NodeHandle n, const std::vector<std::string> command){
 				go_pub.publish(msg);
 
 				status = true;
+                dockStatus = 0;
 			} else 
 				std::cout << "(Command system) Parameter missing" << std::endl;
 		
@@ -263,6 +265,7 @@ bool execCommand(ros::NodeHandle n, const std::vector<std::string> command){
 				if(ros::service::call("play_path", arg)){
 					std::cout << "Play path service called with success";
 					status = true;
+                    dockStatus = 0;
 				} else
 					std::cout << "Play path service call failed";
 			}
@@ -341,6 +344,7 @@ bool execCommand(ros::NodeHandle n, const std::vector<std::string> command){
 						ofs << command.at(1) << " " << command.at(2) << " " << quaternion.x() << " " << quaternion.y() << " " << quaternion.z() << " " << quaternion.w();
 						ofs.close();
 						status = true;
+                        dockStatus = 0;
 
 					} else
 						std::cout << "sorry could not open the file " << homeFile << std::endl;
@@ -356,9 +360,11 @@ bool execCommand(ros::NodeHandle n, const std::vector<std::string> command){
 			if(command.size() == 1) {
 				std::cout << "(Command system) Sending the robot home" << std::endl;
 				std_srvs::Empty arg;
-				if(ros::service::call("setAutoCharging", arg)){
+
+				if(ros::service::call("startDocking", arg)){
 					std::cout << "Go home service called with success" << std::endl;
 					status = true;
+                    dockStatus = 3;
 				} else
 					std::cout << "Stop path service call failed" << std::endl;
 			}
@@ -371,10 +377,11 @@ bool execCommand(ros::NodeHandle n, const std::vector<std::string> command){
 			if(command.size() == 1) {
 				std::cout << "(Command system) Stopping the robot on its way home" << std::endl;
 				std_srvs::Empty arg;
-				// TODO stop the mothofockin robot lah
-				if(ros::service::call("stop_going_home", arg)){
+
+				if(ros::service::call("stopDocking", arg)){
 					std::cout << "Stop going home service called with success" << std::endl;
 					status = true;
+                    dockStatus = 0;
 				} else
 					std::cout << "Stop going home service call failed" << std::endl;
 			}
@@ -579,7 +586,7 @@ bool execCommand(ros::NodeHandle n, const std::vector<std::string> command){
 	return status;
 }
 
-bool resumeRecoveryPosition(){
+bool resumeRecoveryPosition(void){
 	std::cout << "(Command system) Launching the service to resume the recovery of the robot's position" << std::endl;
 	std_srvs::Empty srv;
 
@@ -592,7 +599,7 @@ bool resumeRecoveryPosition(){
 	}
 }
 
-bool stopRecoveringPosition(){
+bool stopRecoveringPosition(void){
 	std::cout << "Stop recovering position called" << std::endl;
 	std_srvs::Empty srv;
 	stopCheckingLocalizationClient.call(srv);
@@ -635,7 +642,7 @@ bool stopRecoveringPosition(){
 
 /**
 
-bool recoverPosition(){
+bool recoverPosition(void){
 std::cout << "(Command system) Launching the service to recover the robot's position" << std::endl;
 	std_srvs::Empty srv;
 
@@ -667,7 +674,7 @@ std::cout << "(Command system) Launching the service to recover the robot's posi
 
 }
 */
-void stopTwist(){
+void stopTwist(void){
 	geometry_msgs::Twist twist;
 	twist.linear.x = 0;
 	twist.linear.y = 0;
@@ -681,7 +688,7 @@ void stopTwist(){
 	ros::spinOnce();
 }
 
-void startRobotPos(){
+void startRobotPos(void){
 	std::cout << "(Command system) Launching the service to get the robot position" << std::endl;
 
 	gobot_software::Port srv;
@@ -693,7 +700,7 @@ void startRobotPos(){
 		std::cerr << "(Command system) Failed to call service start_robot_pos_sender" << std::endl;
 }
 
-void stopRobotPos(){
+void stopRobotPos(void){
 	std_srvs::Empty srv;
 
 	if (stopRobotPosClient.call(srv)) 
@@ -703,7 +710,7 @@ void stopRobotPos(){
 }
 
 
-bool startMap(){
+bool startMap(void){
 	std::cout << "(Command system) Launching the service to open the map socket" << std::endl;
 
 	gobot_software::Port srv;
@@ -738,7 +745,7 @@ bool sendOnceMap(const int who){
 	}
 }
 
-bool sendAutoMap(){
+bool sendAutoMap(void){
 	std::cout << "(Command system) Launching the service to get the map auto" << std::endl;
 
 	std_srvs::Empty srv;
@@ -752,7 +759,7 @@ bool sendAutoMap(){
 	}
 }
 
-bool sendLocalMap(){
+bool sendLocalMap(void){
 	std::cout << "(Command system) Launching the service to get the map auto" << std::endl;
 
 	std_srvs::Empty srv;
@@ -766,7 +773,7 @@ bool sendLocalMap(){
 	}
 }
 
-bool stopAutoMap(){
+bool stopAutoMap(void){
 	std::cout << "(Command system) Launching the service to stop the map auto" << std::endl;
 
 	std_srvs::Empty srv;
@@ -780,7 +787,7 @@ bool stopAutoMap(){
 	}
 }
 
-bool stopMap(){
+bool stopMap(void){
 
 	std_srvs::Empty srv;
 	if (stopMapClient.call(srv)) {
@@ -807,7 +814,7 @@ bool startLaserData(const bool startLaser){
 	}
 }
 
-bool sendLaserData(){
+bool sendLaserData(void){
 	std::cout << "(Command system) Launching the service to get the laser data" << std::endl;
 	std_srvs::Empty srv;
 
@@ -820,7 +827,7 @@ bool sendLaserData(){
 	}
 }
 
-bool stopSendLaserData(){
+bool stopSendLaserData(void){
 	std::cout << "(Command system) Launching the service to stop receiving the laser data" << std::endl;
 	std_srvs::Empty srv;
 
@@ -833,7 +840,7 @@ bool stopSendLaserData(){
 	}
 }
 
-bool stopLaserData(){
+bool stopLaserData(void){
 	std_srvs::Empty srv;
 	if(stopLaserClient.call(srv)){
 		std::cout << "Command system stop_sending_laser_data started" << std::endl;
@@ -844,7 +851,7 @@ bool stopLaserData(){
 	}
 }
 /*
-bool connectToParticleCloudNode(){
+bool connectToParticleCloudNode(void){
 	gobot_software::Port srv;
 	srv.request.port = particle_cloud_port;
 
@@ -857,6 +864,21 @@ bool connectToParticleCloudNode(){
 	}
 }
 */
+
+bool setDockStatus(gobot_software::SetDockStatus::Request &req, gobot_software::SetDockStatus::Response &res){
+    std::cout << "(auto_docking::setDockStatus) service called " << req.status << std::endl;
+    dockStatus = req.status;
+
+    return true;
+}
+
+bool getDockStatus(gobot_software::GetDockStatus::Request &req, gobot_software::GetDockStatus::Response &res){
+    //std::cout << "(auto_docking::getDockStatus) service called " << std::endl;
+    res.status = dockStatus;
+
+    return true;
+}
+
 void getPorts(boost::shared_ptr<tcp::socket> sock, ros::NodeHandle n){
 
 	std::cout << "getPorts launched" << std::endl;
@@ -1036,6 +1058,7 @@ void asyncAccept(boost::shared_ptr<boost::asio::io_service> io_service, boost::s
 	        std::cout << "rotation " << homeOri << std::endl;
 
 			std::cout << "Home : " << homeX << " " << homeY << " " << homeOri << std::endl;
+            dockStatus = 0;
 			ifs.close();
 		}
 	}
@@ -1131,7 +1154,7 @@ void serverDisconnected(const std_msgs::String::ConstPtr& msg){
 	disconnect();
 }
 
-void disconnect(){
+void disconnect(void){
 	if(connected){
 		std::cout << "(Command system) Robot could not find the application " << std::endl;
 		stopRobotPos();
@@ -1176,6 +1199,9 @@ int main(int argc, char* argv[]){
 
 		go_pub = n.advertise<geometry_msgs::PoseStamped>("/move_base_simple/goal", 1000);
     	teleop_pub = n.advertise<geometry_msgs::Twist>("/cmd_vel", 1000);
+
+        ros::ServiceServer setDockStatusSrv = n.advertiseService("setDockStatus", setDockStatus);
+        ros::ServiceServer getDockStatusSrv = n.advertiseService("getDockStatus", getDockStatus);
 
 		ros::spinOnce();
 

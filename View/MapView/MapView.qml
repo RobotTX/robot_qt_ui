@@ -370,7 +370,7 @@ Frame {
                         PointView {
                             id: homeView
                             _name: "Charging station of " + name
-                            _isVisible: useRobotPathModel && homeX >= 0
+                            _isVisible: useRobotPathModel && dockStatus != -2
                             type: Helper.PointViewType.HOME
                             x: homeX
                             y: homeY

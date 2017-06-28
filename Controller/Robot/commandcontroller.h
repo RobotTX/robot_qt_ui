@@ -25,6 +25,7 @@ private slots:
      * Receive the answer of the command we sent to the robot
      */
     void cmdAnswerSlot(QString);
+
     /**
      * @brief cmdFinished
      * called at the end of <cmdAnswerSlot> to either process the next command or notify the robot model that
@@ -40,8 +41,10 @@ signals:
      */
     void sendCommandSignal(QString cmd);
 
+
     /// Signals sent to update the model and view when we've executed a command
     void updateName(QString ip, QString newName);
+
     /**
      * @brief updateHome
      * @param ip
@@ -51,6 +54,7 @@ signals:
      * at ip <ip> is updated
      */
     void updateHome(QString ip, double homeX, double homeY, double homeOri);
+
     /**
      * @brief updatePath
      * @param ip
@@ -59,12 +63,14 @@ signals:
      * update the model
      */
     void updatePath(QString ip, QStringList strList);
+
     /**
      * @brief stoppedDeletedPath
      * @param ip
      * propagated to the robots controller to reset the path of the robot at ip <ip>
      */
     void stoppedDeletedPath(QString ip);
+
     /**
      * @brief updatePlayingPath
      * @param ip
@@ -73,6 +79,7 @@ signals:
      * the status of the robot at ip <ip>
      */
     void updatePlayingPath(QString ip, bool playingPath);
+
     /**
      * @brief startedScanning
      * @param ip
@@ -81,6 +88,7 @@ signals:
      * adds the map to the window
      */
     void startedScanning(QString ip);
+
     /**
      * @brief stoppedScanning
      * @param ip
@@ -89,18 +97,21 @@ signals:
      * removes the map from the window
      */
     void stoppedScanning(QString ip);
+
     /**
      * @brief playedScanning
      * @param ip
      * same as startedScanning
      */
     void playedScanning(QString ip);
+
     /**
      * @brief pausedScanning
      * @param ip
      * same as stoppedScanning except it does not remove the map
      */
     void pausedScanning(QString ip);
+
     /**
      * @brief processingCmd
      * @param ip
@@ -115,6 +126,10 @@ signals:
      * @param status
      * @param msg
      * Send a signal to set a message on top of the application
+     * 0: error
+     * 1: warning
+     * 2: success
+     * 3: info
      */
     void setMessageTop(int status, QString msg);
 

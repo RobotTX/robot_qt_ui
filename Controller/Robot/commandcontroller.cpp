@@ -97,16 +97,13 @@ void CommandController::cmdAnswerSlot(QString answer){
                     emit setMessageTop(2, "The robot " + robotName + " has a new home");
                 break;
                 case 'o':
-                    emit setMessageTop(2, robotName + " is on its way to the charging station");
-                    /// TODO to test this message
+                    /// Started the docking process
+                    qDebug() << "CommandController::cmdAnswerSlot Started docking" << list;
                 break;
-                /**
                 case 'p':
-                    /// Stopped the robot to go home
-                    /// NOT USED ANYMORE
-                    Q_UNREACHABLE();
+                    /// Stopped the docking process
+                    qDebug() << "CommandController::cmdAnswerSlot Stopped docking" << list;
                 break;
-                */
                 case 'q':
                     /// Started the laser of the robot
                     emit updateLaser(ip, true);

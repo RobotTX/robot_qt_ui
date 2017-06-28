@@ -11,7 +11,8 @@ Frame {
     property Robots robotModel
     property Paths pathModel
     signal pathSelected(string _pathName, string _groupName)
-    signal dockRobot(string ip)
+    signal startDockingRobot(string ip)
+    signal stopDockingRobot(string ip)
 
     height: noPathItem.visible ? noPathItem.height : pathItem.height
     padding: 0
@@ -87,17 +88,36 @@ Frame {
 
             contentItem: Image {
                 asynchronous: true
-                source: homeX >= 0 ? "qrc:/icons/home" : "qrc:/icons/noHome"
+                source: {
+                    switch(dockStatus){
+                        case -3:
+                            "qrc:/icons/home_red1"
+                        break;
+                        case -2:
+                            "qrc:/icons/noHome"
+                        break;
+                        case -1:
+                            "qrc:/icons/home_red1"
+                        break;
+                        case 0:
+                            "qrc:/icons/home"
+                        break;
+                        case 1:
+                            "qrc:/icons/home_green"
+                        break;
+                        case 2:
+                            "qrc:/icons/home_yellow"
+                        break;
+                        case 3:
+                            "qrc:/icons/home_blue"
+                        break;
+                    }
+                }
                 fillMode: Image.PreserveAspectFit // For not stretching image
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.verticalCenter: parent.verticalCenter
             }
-            onClicked: {
-                if(homeX >= 0){
-                    frame.dockRobot(ip)
-                    console.log(homeX >= 0 ? "Going to dock now" : "I don't have a home")
-                }
-            }
+            onClicked: dockClicked()
         }
     }
 
@@ -352,8 +372,32 @@ Frame {
                 height: parent.height - 2
                 width: 32
                 padding: 0
-                imgSrc: homeX >= 0 ? "qrc:/icons/home" : "qrc:/icons/noHome"
-                tooltip: "Send the robot home"
+                imgSrc: {
+                    switch(dockStatus){
+                        case -3:
+                            "qrc:/icons/home_red1"
+                        break;
+                        case -2:
+                            "qrc:/icons/noHome"
+                        break;
+                        case -1:
+                            "qrc:/icons/home_red1"
+                        break;
+                        case 0:
+                            "qrc:/icons/home"
+                        break;
+                        case 1:
+                            "qrc:/icons/home_green"
+                        break;
+                        case 2:
+                            "qrc:/icons/home_yellow"
+                        break;
+                        case 3:
+                            "qrc:/icons/home_blue"
+                        break;
+                    }
+                }
+                tooltip: "Send the robot to its docking station"
 
                 anchors {
                     verticalCenter: parent.verticalCenter
@@ -361,14 +405,21 @@ Frame {
                     rightMargin: 8
                 }
 
-                enabled: homeX >= 0
+                enabled: dockStatus != -2
 
-                onClicked: {
-                    if(enabled){
-                        frame.dockRobot(ip)
-                        console.log(homeX >= 0 ? "Going to dock now" : "I don't have a home")
-                    }
-                }
+                onClicked: dockClicked()
+            }
+        }
+    }
+
+    function dockClicked(){
+        if(dockStatus != -2){
+            if(dockStatus == 3){
+                frame.stopDockingRobot(ip);
+                console.log("Stop docking");
+            } else {
+                frame.startDockingRobot(ip);
+                console.log("Start docking");
             }
         }
     }

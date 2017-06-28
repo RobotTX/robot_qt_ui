@@ -1,5 +1,7 @@
 #include "ping_server.hpp"
 
+static const std::string sep = std::string(1, 31);
+
 bool isServer(const std::string IP, const std::string ssid){
 
     ros::NodeHandle n;
@@ -38,70 +40,72 @@ bool isServer(const std::string IP, const std::string ssid){
                     getline(ifs, hostname);
                     ifs.close();
                 } else 
-                    ROS_INFO("ping_server.cpp:: could not open file %s", nameFile.c_str());
+                    ROS_INFO("(ping_server) could not open file %s", nameFile.c_str());
 
                 if(hostname.empty())
                     hostname = "Default Name";
 
-                // Retrieves the battery level in %
-                int battery(50);
-                std::string batteryFile;
-                if(n.hasParam("battery_file"))
-                    n.getParam("battery_file", batteryFile);
-                else 
-                    ROS_INFO("ping_server.cpp does not have parameter <battery_file>");
-/*
-                std::ifstream ifsBattery(batteryFile, std::ifstream::in);
-                if(ifsBattery){
-                    ifsBattery >> battery;
-                    ifsBattery.close();
-                } //else
-                    //ROS_INFO("ping_server.cpp could not open battery file");
-*/
+                // Retrieves the battery info
+                sonar::GetBatteryInfo batteryInfo;
+                bool batteryFlag = false;
+                int battery = 50;
+                if(ros::service::call("getBatteryInfo", batteryInfo)){
+                    batteryFlag = batteryInfo.response.ChargingFlag;
+                    battery = batteryInfo.response.RemainCapacity / batteryInfo.response.FullCapacity * 100;
+                } else
+                    ROS_INFO("(ping_server) could not call getBatteryInfo service");
+
+                gobot_software::GetDockStatus _dockStatus;
+                int dockStatus = 0;
+                if(ros::service::call("getDockStatus", _dockStatus))
+                    dockStatus = _dockStatus.response.status;
+                else
+                    ROS_INFO("(ping_server) could not call getDockStatus service");
+
                 // Retrieves the path stage
                 int stage(0);
                 std::string pathStageFile;
                 if(n.hasParam("path_stage_file"))
                     n.getParam("path_stage_file", pathStageFile);
                 else
-                    ROS_INFO("ping_server.cpp parameter <path_stage_file> does not exist");
+                    ROS_INFO("(ping_server) parameter <path_stage_file> does not exist");
 
                 std::ifstream ifsStage(pathStageFile, std::ifstream::in);
                 if(ifsStage){
                     ifsStage >> stage;
                     ifsStage.close();
                 } else
-                    ROS_INFO("ping_server.cpp could not open file to retrieve path stage");
+                    ROS_INFO("(ping_server) could not open file to retrieve path stage");
 
                 // Sends everything to the application, '\' is used to as a delimiter, spaces cannot be used because of the ssid
-                std::string info_to_send(hostname + "\" " + ssid + "\" " + std::to_string(stage) + "\" " + std::to_string(battery));
-                //ROS_INFO("ping_server.cpp sending %s", info_to_send.c_str());
+                std::string info_to_send(hostname + sep + ssid + sep + std::to_string(stage) + sep + std::to_string(battery) + sep + std::to_string(batteryFlag) + sep + std::to_string(dockStatus));
+                //ROS_INFO("(ping_server) sending %s", info_to_send.c_str());
 
                 boost::system::error_code ignored_error;
                 boost::asio::write(socket, boost::asio::buffer(info_to_send, info_to_send.length()), boost::asio::transfer_all(), ignored_error);
                 return true;
             }
         } else
-            ROS_INFO("ping_server.cpp:: parameter <robot_name_file> does not exist");
+            ROS_INFO("(ping_server):: parameter <robot_name_file> does not exist");
 
             
         
     } catch(std::exception& e) {
         socket.close();
-        ROS_INFO("ping_server.cpp error %s", e.what());
+        ROS_INFO("(ping_server) error %s", e.what());
     }
     socket.close();
     return false;
 }
 
 bool checkIPList(const std::string ssid){
-    ROS_INFO("ping_server.cpp checking IP list");
+    ROS_INFO("(ping_server) checking IP list");
     ros::NodeHandle n;
     std::string IPListFile;
     if(n.hasParam("ips_file"))
         n.getParam("ips_file", IPListFile);
     else
-        ROS_INFO("ping_server.cpp parameter <ips_file> does not exist");
+        ROS_INFO("(ping_server) parameter <ips_file> does not exist");
 
     std::ifstream ifs(IPListFile, std::ifstream::in);
     if(ifs){
@@ -113,18 +117,18 @@ bool checkIPList(const std::string ssid){
                 if(n.hasParam("server_file"))
                     n.getParam("server_file", serverFile);
                 else
-                    ROS_INFO("ping_server.cpp parameter <server_file> does not exist");
+                    ROS_INFO("(ping_server) parameter <server_file> does not exist");
 
                 std::ofstream ofs(serverFile, std::ofstream::out | std::ofstream::trunc);
                 if(ofs)
                     ofs << currentIP;
                 else
-                    ROS_INFO("ping_server.cpp could not open file to store server");
+                    ROS_INFO("(ping_server) could not open file to store server");
                 return true;
             }
         }
     } else
-        ROS_INFO("ping_server.cpp could not open IP list file");
+        ROS_INFO("(ping_server) could not open IP list file");
 
     return false;
 }
@@ -142,7 +146,7 @@ void client(ros::Publisher& publisher, const bool checkOldServer, const std::str
             ifs >> IP;
             found = isServer(IP, ssid);
             if(!found && ros::ok()){ 
-                ROS_INFO("ping_server.cpp is scanning for a new server");
+                ROS_INFO("(ping_server) is scanning for a new server");
                 std_msgs::String msg;
                 msg.data = "disconnected";
                 publisher.publish(msg);
@@ -151,13 +155,13 @@ void client(ros::Publisher& publisher, const bool checkOldServer, const std::str
                 client(publisher, false, ssid, serverFile, pingFile);
             }
         } else 
-            ROS_INFO("ping_server.cpp could not open server file");
+            ROS_INFO("(ping_server) could not open server file");
     }
 
     else {
         found = checkIPList(ssid);
         if(!found) 
-            ROS_INFO("ping_server.cpp server not found");
+            ROS_INFO("(ping_server) server not found");
     }
 }
 
@@ -170,13 +174,13 @@ int main(int argc, char* argv[]){
     if(n.hasParam("server_file"))
         n.getParam("server_file", serverFile);
     else 
-        ROS_INFO("ping_server.cpp:: The parameter <server_file> does not exist");
+        ROS_INFO("(ping_server):: The parameter <server_file> does not exist");
 
     std::string pingFile;
     if(n.hasParam("ping_file"))
         n.getParam("ping_file", pingFile);
     else
-        ROS_INFO("ping_server.cpp:: The parameter <ping_file> does not exist");
+        ROS_INFO("(ping_server):: The parameter <ping_file> does not exist");
 
     ros::Publisher publisher = n.advertise<std_msgs::String>("server_disconnected", 10);
 
@@ -186,7 +190,7 @@ int main(int argc, char* argv[]){
     char buff[512];
     // gets the ssid in a file
     if(!(in = popen("iwgetid -r", "r"))){
-        ROS_INFO("ping_server.cpp could not get the ssid");
+        ROS_INFO("(ping_server) could not get the ssid");
         return 1;
     }
     // retrieves the ssid from the file

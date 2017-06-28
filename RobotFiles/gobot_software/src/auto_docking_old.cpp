@@ -1,4 +1,4 @@
-#include "auto_docking.hpp"
+#include "auto_docking_old.hpp"
 
 /// we want the robot to be at most at 0.15 metres of its goal
 #define ROBOT_POS_TOLERANCE 0.15

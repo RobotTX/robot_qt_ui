@@ -13,8 +13,7 @@ from geometry_msgs.msg import PoseWithCovarianceStamped, PoseStamped, Twist
 from move_base_msgs.msg import MoveBaseGoal
 from math import sqrt, atan2, pow
 from wheel.srv import *
-from sonar.msg import DistanceMsg 
-from sonar.msg import BumperMsg
+from sonar.msg import *
 from sonar.srv import *
 
 setSpeedsProxy = rospy.ServiceProxy( "setSpeeds", SetSpeeds )
@@ -25,7 +24,6 @@ setSpeedBProxy = rospy.ServiceProxy( "setSpeedB", SetSpeedDirection )
 #fileHandle = open('/home/gtdollar/log/batterylog.txt','w')
 goal_info = MoveBaseGoal()
 twist_sign = True
-batteryInfo = []
 
 bump1 = 1
 bump2 = 1
@@ -63,17 +61,28 @@ beginTime = time.time()
 distanceIr1 = 1
 distanceIr2 = 1
 setChargingFlag = False
-batteryFlag = False
+batteryStatus = 0
+batteryVoltage = 0
+chargingCurrent  = 0
+chargingFlag = False
+temperature = 0
+remainCapacity = 0
+fullCapacity = 0
 weightInfo = 0
 
 def get_sonar_value():
-	global bump1,bump2,bump3,bump4,bump5,bump6,bump7,bump8,distanceIr1,distance2,setChargingFlag,batteryInfo,batteryFlag
+	global bump1,bump2,bump3,bump4,bump5,bump6,bump7,bump8,distanceIr1,distance2,setChargingFlag
 	global value0,value1,value2,value3,value4,value5,value6
-	global leftSignal, rightSignal, rearSignal,distance,twist_sign,chargingFlag,rearFlag
+	global leftSignal, rightSignal, rearSignal,distance,twist_sign
+    global batteryStatus , batteryVoltage, chargingCurrent, chargingFlag, temperature, remainCapacity, fullCapacity
 	global cliffDis1, cliffDis2, cliffDis3, cliffDis4
 
 	pub = rospy.Publisher("sonar_topic", DistanceMsg, queue_size = 10 )
 	pub1= rospy.Publisher("/move_base_simple/goal", PoseStamped, queue_size = 10)
+	bumperPub = rospy.Publisher("bumpers", BumperMsg, queue_size = 10 )
+	irPub = rospy.Publisher("ir_signal", IrSignalMsg, queue_size = 10 )
+	batteryPub = rospy.Publisher("battery_topic", BatteryInfo, queue_size = 10 )
+	proximityPub = rospy.Publisher("shortSignal", ShortSignalMsg, queue_size = 10 )
 	rate = rospy.Rate(30)
 	writelog = False
 	logtime = time.time()
@@ -104,7 +113,7 @@ def get_sonar_value():
 				pubDist = DistanceMsg("sonar", value0, value1, value2, value3, value4, value5, value6)
 				pub.publish(pubDist)
 				#bumper data
-				bump = bin(ord(res[17])).replace('0b','')
+				bump = bin(ord(res[17]))[2:].zfill(8)
 				#print 'bump,',bump
 				bump1 = int(bump[7])
 				bump2 = int(bump[6])
@@ -114,6 +123,8 @@ def get_sonar_value():
 				bump6 = int(bump[2])
 				bump7 = int(bump[1])
 				bump8 = int(bump[0])
+				bumperPubDist = BumperMsg(bump1, bump2, bump3, bump4, bump5, bump6, bump7, bump8)
+				bumperPub.publish(bumperPubDist)
 				#distance IR data
 				distanceir = bin(ord(res[21])).replace('0b','')
 				if len(distanceir)==1 and distanceir=='0':
@@ -130,11 +141,15 @@ def get_sonar_value():
 					rearFlag = False
 				else:
 					rearFlag = True
+				proximityPubDist = ShortSignalMsg(distanceIr1, distanceIr2)
+				proximityPub.publish(proximityPubDist)
 
 				rearSignal = ord(res[18])
 				leftSignal = ord(res[19])
 				rightSignal = ord(res[20])
-				print rearSignal, leftSignal, rightSignal
+				#print rearSignal, leftSignal, rightSignal
+				irPubDist = IrSignalMsg(rearSignal, leftSignal, rightSignal)
+				irPub.publish(irPubDist)
 				#cliff sensor data
 				cliffDis1 = ord(res[22])*256 + ord(res[23])
 				cliffDis2 = ord(res[24])*256 + ord(res[25])
@@ -142,51 +157,24 @@ def get_sonar_value():
 				cliffDis4 = ord(res[28])*256 + ord(res[29])
 				#print "cliff distance:", cliffDis1
 				#battery data
-				soc = ord(res[31])
-				batteryVolt = ord(res[32])*256 + ord(res[33])
+				batteryStatus = ord(res[31])
+				batteryVoltage = ord(res[32])*256 + ord(res[33])
 				chargingCurrent = ord(res[34])*256 + ord(res[35])
-				temp = ord(res[36])*256 + ord(res[37])
-				remainCapacity = ord(res[38])*256 + ord(res[39])
-				fullCapacity = ord(res[40])*256 + ord(res[41])
-				if (ord(res[34])<=255) and (ord(res[34])>=240):
-					batteryFlag = False
-				else:
-					batteryFlag = True
-				batteryInfo = []
-				batteryInfo.append(soc)
-				batteryInfo.append(batteryVolt)
-				batteryInfo.append(chargingCurrent)
-				batteryInfo.append(temp)
-				batteryInfo.append(remainCapacity/100)
-				batteryInfo.append(fullCapacity/100)
-				logging = t+"[LOG]  batteryInfo soc: %d,volt: %d,chargingCurrent: %d,temp: %d,remainCapacity: %d,fullCapacity: %d \n"%(batteryInfo[0],batteryInfo[1],batteryInfo[2],batteryInfo[3],batteryInfo[4],batteryInfo[5])
+				temperature = ord(res[36])*256 + ord(res[37])
+				remainCapacity = (ord(res[38])*256 + ord(res[39]))/100
+				fullCapacity = (ord(res[40])*256 + ord(res[41]))/100
+				chargingFlag = chargingCurrent > 500
+
+				batteryPubDist = BatteryInfo(batteryStatus, batteryVoltage, chargingCurrent, chargingFlag, temperature, remainCapacity, fullCapacity)
+				batteryPub.publish(batteryPubDist)
+
+				#logging = t+"[LOG]  batteryInfo soc: %d,volt: %d,chargingCurrent: %d,temp: %d,remainCapacity: %d,fullCapacity: %d \n"%(batteryInfo[0],batteryInfo[1],batteryInfo[2],batteryInfo[3],batteryInfo[4],batteryInfo[5])
 				#if writelog:
 					#fileHandle.write(logging)
 				#load sensor data
 				weightInfo = ord(res[43])*256 + ord(res[44])
-				#print batteryInfo[4],setChargingFlag
-				if (batteryInfo[4]<50) and (not setChargingFlag):
-					setChargingFlag = True
-					nav_goal = PoseStamped()
-					nav_goal.header.frame_id = "map"
-					nav_goal.pose.position.x = 1.40
-					nav_goal.pose.position.y = 5.10
-					nav_goal.pose.position.z = 0.0
-					nav_goal.pose.orientation.x = 0.0
-					nav_goal.pose.orientation.y = 0.0
-					nav_goal.pose.orientation.z = 0.9
-					nav_goal.pose.orientation.w = 0.8
-					pub1.publish(nav_goal)
 
-				if (chargingFlag):
-					auto_charging()
-				else:
-					print distance, twist_sign
-					if (distance<0.4) and (not twist_sign):
-						os.system("rosnode kill /cmd_vel_listener")
-						os.system("rosnode kill /move_base")
-						chargingFlag = True
-                				auto_charging()	
+
 
 def getBumpers(req):
 	global bump1,bump2,bump3,bump4,bump5,bump6,bump7,bump8
@@ -235,8 +223,8 @@ def getSonars(req):
 	return GetSonarsResponse(list)
 
 def getBatteryInfo(req):
-	global batteryInfo,batteryFlag
-	return GetBatteryInfoResponse(batteryInfo,batteryFlag)
+	global batteryStatus , batteryVoltage, chargingCurrent, chargingFlag, temperature, remainCapacity, fullCapacity
+	return GetBatteryInfoResponse(batteryStatus, batteryVoltage, chargingCurrent, chargingFlag, temperature, remainCapacity, fullCapacity)
 
 def callback(msg):
         global twist_sign,distance
@@ -251,71 +239,6 @@ def callback(msg):
         x = pow(robot_x-goal_info.target_pose.pose.position.x,2)
         y = pow(robot_y-goal_info.target_pose.pose.position.y,2)
         distance = sqrt(x+y)
-
-def auto_charging():
-        global rearSignal, rightSignal, leftSignal
-        auto_move(rearSignal, leftSignal, rightSignal)
-
-def auto_move(rearSignal,leftSignal,rightSignal):
-	global leftFlag,rightFlag,value1,bump1,bump5,bump6,bump7,bump8,bumperCrashCount,beginTime,rearFlag,distanceIr1,distanceIr2,batteryFlag
-        #print rearSignal,leftSignal,rightSignal,value1,rearFlag,bump1
-	bumperValue = bump5 + bump6 + bump7 + bump8
-
-	if (bumperValue<4):
-		bumperCrashCount = bumperCrashCount + 1
-	if (bumperCrashCount == 0):
-                beginTime = time.time()
-		timeInterval = 0
-        else:
-                timeInterval = time.time()-beginTime
-                #print timeInterval
-
-	if (batteryFlag):
-		setSpeedsProxy("F", 0, "F", 0)
-	else:
-		if (bumperCrashCount==0):
-        		if (rearSignal == 0) and (leftSignal==0) and (rightSignal==0):
-				if ( not leftFlag ) and ( not rightFlag ):
-					if (rearFlag):
-               					setSpeedsProxy("B", 3, "F", 3)
-					else:
-						setSpeedsProxy("B", 3, "B", 3)
-	        	else:
-                		#setSpeedsProxy("F", 0, "F", 0)
-				if (rearSignal!=0):
-					leftFlag = False
-					rightFlag = False
-					if (rearFlag):
-						if (rearSignal==3):
-							setSpeedsProxy("B", 3, "B", 3)
-	                			elif (rearSignal==2):
-							setSpeedsProxy("F", 3, "B", 3)
-        	        			elif (rearSignal==1):
-							setSpeedsProxy("B", 3, "F", 3)
-					else:
-						setSpeedsProxy("B", 4, "B", 4)
-				if (leftSignal!=0):
-					leftFlag = True
-					if (leftSignal==1):
-						setSpeedsProxy("F", 3, "B", 5)
-					elif(leftSignal==2):
-						setSpeedsProxy("F", 5, "B", 3)
-					else:
-						setSpeedsProxy("F", 3, "B", 3)
-				if (rightSignal!=0):
-					rightFlag = True
-					if (rightSignal==1):
-						setSpeedsProxy("B", 5, "F", 3)
-					elif (rightSignal==2):
-						setSpeedsProxy("B", 3, "F", 5)
-					else:
-						setSpeedsProxy("B", 3, "F", 3)
-		else:
-			setSpeedsProxy("F", 0, "F", 0)
-			if (timeInterval>20):
-				setSpeedsProxy("F", 10, "F", 10)
-				time.sleep(8)
-				bumperCrashCount = 0
 				
 def getCliffData(req):
 	global cliffDis1, cliffDis2, cliffDis3, cliffDis4

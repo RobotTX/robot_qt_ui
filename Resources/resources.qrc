@@ -15,6 +15,11 @@
         <file alias="addHomeView">icons/charging_station4_add.png</file>
         <file alias="home">icons/Btn_GoHome_n.png</file>
         <file alias="noHome">icons/Btn_GoHome_d.png</file>
+        <file alias="home_red1">icons/Btn_GoHome_red1.png</file>
+        <file alias="home_red2">icons/Btn_GoHome_red2.png</file>
+        <file alias="home_green">icons/Btn_GoHome_green.png</file>
+        <file alias="home_yellow">icons/Btn_GoHome_yellow.png</file>
+        <file alias="home_blue">icons/Btn_GoHome_blue.png</file>
         <file alias="pause">icons/Btn_Pause.png</file>
         <file alias="play">icons/Btn_Play.png</file>
         <file alias="stop">icons/Btn_Stop.png</file>

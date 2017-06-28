@@ -9,6 +9,8 @@
 #include <boost/smart_ptr.hpp>
 #include <fstream>
 #include <stdio.h>
+#include <gobot_software/GetDockStatus.h>
+#include <sonar/GetBatteryInfo.h>
 
 using boost::asio::ip::tcp;
 

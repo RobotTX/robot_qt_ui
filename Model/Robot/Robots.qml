@@ -38,7 +38,9 @@ ListModel {
             "homeOri": 0,
             "laserActivated": false,
             "scanningOnConnection": false,
-            "processingCmd": false
+            "processingCmd": false,
+            "dockStatus": -2,
+            "charging": false
         });
         robotConnection(ip);
         setMessageTop(3, "The robot \"" + name + "\" just connected");
@@ -71,6 +73,18 @@ ListModel {
                 setProperty(i, "homeX", posX);
                 setProperty(i, "homeY", posY);
                 setProperty(i, "homeOri", ori);
+                setProperty(i, "dockStatus", 0);
+            }
+    }
+
+    function resetHome(ip){
+        console.log("Reset home " + ip);
+        for(var i = 0; i < count; i++)
+            if(get(i).ip === ip){
+                setProperty(i, "homeX", 0);
+                setProperty(i, "homeY", 0);
+                setProperty(i, "homeOri", 0);
+                setProperty(i, "dockStatus", -2);
             }
     }
 
@@ -97,10 +111,12 @@ ListModel {
             }
     }
 
-    function setBattery(ip, battery){
+    function setBattery(ip, battery, charging){
         for(var i = 0; i < count; i++)
-            if(get(i).ip === ip)
+            if(get(i).ip === ip){
                 setProperty(i, "battery", battery);
+                setProperty(i, "charging", charging);
+            }
     }
 
     function addPathPoint(ip, name, posX, posY, waitTime){
@@ -199,5 +215,41 @@ ListModel {
             if(get(i).ip === ip)
                 name = get(i).name;
         return name;
+    }
+
+    /**
+     * TODO -3: obstacle in the way
+     * -2: no home
+     * -1: failed to dock
+     * 0: not docked
+     * 1: docked
+     * 2: docked but check alignment
+     * 3: in progress
+     */
+    function setDockStatus(ip, dockStatus){
+        /// TODO set message top according to new status
+        for(var i = 0; i < count; i++)
+            if(get(i).ip === ip && get(i).dockStatus !== dockStatus){
+                setProperty(i, "dockStatus", dockStatus);
+
+                /// we are only interested by a change of status
+                switch(dockStatus){
+                    case -3:
+                        setMessageTop(0, "An obstacle is blocking the robot \"" + get(i).name + "\" to reach its charging station");
+                    break;
+                    case -1:
+                        setMessageTop(0, "Robot \"" + get(i).name + "\" could not reach its charging station");
+                    break;
+                    case 1:
+                        setMessageTop(2, "Robot \"" + get(i).name + "\" successfully reached its charging station");
+                    break;
+                    case 2:
+                        setMessageTop(2, "Robot \"" + get(i).name + "\" successfully reached its charging station but might not be properly aligned");
+                    break;
+                    case 3:
+                        setMessageTop(3, "Robot \"" + get(i).name + "\" is going to its charging station");
+                    break;
+                }
+            }
     }
 }

@@ -226,7 +226,7 @@ void PathXMLParser::readPaths(PathController *pathController, const QString file
     }
     qDebug() << "load paths finished with " << pathController->getPaths()->getGroups().size() ;
     if(pathController->getPaths()->getGroups().size() == 1)
-        qDebug() << "gr oup containing " << pathController->getPaths()->getGroups().begin().value()->getPaths().size();
+        qDebug() << "group containing " << pathController->getPaths()->getGroups().begin().value()->getPaths().size();
 }
 
 int PathXMLParser::readWaitTimeElement(QXmlStreamReader &xmlReader){
