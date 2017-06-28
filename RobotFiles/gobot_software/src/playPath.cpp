@@ -14,7 +14,6 @@ bool waitingForNextGoal = false;
 std::vector<Point> path;
 Point currentGoal;
 
-ros::Publisher nextPoint;
 ros::Publisher cancelPublisher;
 
 ros::Subscriber statusSuscriber;
@@ -251,9 +250,6 @@ int main(int argc, char* argv[]){
 
 		// to cancel a goal
 		cancelPublisher = n.advertise<actionlib_msgs::GoalID>("/move_base/cancel", 1000);
-
-		// to publish the goals as the robot plays its path
-		nextPoint = n.advertise<move_base_msgs::MoveBaseActionGoal>("/move_base/goal", 1000);
 
 		// tell the action client that we want to spin a thread by default
 		ac = std::shared_ptr<MoveBaseClient> (new MoveBaseClient("move_base", true));

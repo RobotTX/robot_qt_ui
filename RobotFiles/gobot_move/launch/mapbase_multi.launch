@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<launch>
+	<group ns="small_robot">
+		<param name="tf_prefix" value="small_robot" />
+  		<node pkg="hokuyo_node" type="hokuyo_node" name="hokuyo" >
+   			<param name="frame_id" value="/small_robot/base_laser" />
+    			<param name="min_ang" value="-2.0945" />
+    			<param name="max_ang" value="2.0945" />
+  		</node>
+
+  		<node pkg="gobot_move" type="MD49.py" name="wheel" />
+		<!--  
+  		<node pkg="sonar" type="sonar_distance.py" name="sonar" />
+  		<node pkg="gobot_move" type="sonar_range.py" name="sonar_range" />
+		-->
+  		<node pkg="tf" type="static_transform_publisher" name="laser_to_base_link" args="0.288 0 0 0 0 0 small_robot/base_link small_robot/base_laser 100 "/>
+
+ 		<node pkg="tf" type="static_transform_publisher" name="sonar0_to_base_link" args="-0.319 0 0 3.14 0 0 small_robot/base_link small_robot/sonar_zero_range 100 " />
+  		<node pkg="tf" type="static_transform_publisher" name="sonar2_to_base_link" args="0.315 -0.068 0 0 0 0 small_robot/base_link small_robot/sonar_two_range 100 "/>
+  		<node pkg="tf" type="static_transform_publisher" name="sonar4_to_base_link" args="0.315 0.068 0 0 0 0 small_robot/base_link small_robot/sonar_four_range 100 "/>
+ 		<node pkg="tf" type="static_transform_publisher" name="sonar6_to_base_link" args="-0.09 0.298 0 1.57 0 0 small_robot/base_link small_robot/sonar_six_range 100 "/>
+  		<node pkg="tf" type="static_transform_publisher" name="sonar8_to_base_link" args="-0.09 -0.298 0  -1.57 0 0 small_robot/base_link small_robot/sonar_eight_range 100 "/>
+		<node pkg="tf" type="static_transform_publisher" name="sonarA_to_base_link" args="0 0 0.88 0 0 0 small_robot/base_link small_robot/sonar_A_range 100" />
+  		<node pkg="tf" type="static_transform_publisher" name="sonarC_to_base_link" args="0 0 0.48 0 0 0 small_robot/base_link small_robot/sonar_C_range 100" />
+
+  		<node pkg="gobot_move" type="gobot_move_odom_multi" name="publish_odom" output="screen"/>
+
+  		<node pkg="gobot_move" type="twist.py" name="control_wheel" />		
+	</group>
+</launch>
