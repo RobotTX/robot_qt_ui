@@ -33,13 +33,16 @@ void RobotServerWorker::newConnectionSlot(){
         socket->waitForReadyRead();
         QString str = socket->readAll();
 
-        QStringList strList = str.split("\"", QString::SkipEmptyParts);
+        QStringList strList = str.split(QChar(31), QString::SkipEmptyParts);
 
-        if(strList.size() == 4){
-            /// hostname, IP address, mapID, map date, wifi SSID and stage of the path
+        if(strList.size() == 6){
+            qDebug() << "(RobotServerWorker) robotIsAlive" << strList;
+            /// name, ip, ssid, pathstage, battery, charging, docking status
             emit robotIsAlive(strList.at(0), socket->peerAddress().toString().remove(0, 7), strList.at(1),
                               static_cast<QString> (strList.at(2)).toInt(),
-                              static_cast<QString> (strList.at(3)).toInt());
+                              static_cast<QString> (strList.at(3)).toInt(),
+                              static_cast<QString> (strList.at(4)).toInt(),
+                              static_cast<QString> (strList.at(5)).toInt());
         } else
             qDebug() << "(RobotServerWorker) Not enough param received for robotIsAlive" << strList;
     }

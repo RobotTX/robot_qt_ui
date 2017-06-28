@@ -23,6 +23,8 @@ add_service_files(
   PortLaser.srv
   SendMessageToPc.srv
   RecoveredPosition.srv
+  SetDockStatus.srv
+  GetDockStatus.srv
 )
 
 generate_messages(

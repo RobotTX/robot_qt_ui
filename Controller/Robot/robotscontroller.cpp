@@ -20,6 +20,7 @@ RobotsController::RobotsController(QObject *applicationWindow, QQmlApplicationEn
                 robotModel, SLOT(setPos(QVariant, QVariant, QVariant, QVariant)));
         connect(this, SIGNAL(setHome(QVariant, QVariant, QVariant, QVariant)),
                 robotModel, SLOT(setHome(QVariant, QVariant, QVariant, QVariant)));
+        connect(this, SIGNAL(resetHome(QVariant)), robotModel, SLOT(resetHome(QVariant)));
         connect(this, SIGNAL(setName(QVariant, QVariant)),
                 robotModel, SLOT(setName(QVariant, QVariant)));
         connect(this, SIGNAL(setPath(QVariant, QVariant)), robotModel, SLOT(setPath(QVariant, QVariant)));
@@ -27,10 +28,11 @@ RobotsController::RobotsController(QObject *applicationWindow, QQmlApplicationEn
         connect(this, SIGNAL(addPathPoint(QVariant, QVariant, QVariant, QVariant, QVariant)),
                 robotModel, SLOT(addPathPoint(QVariant, QVariant, QVariant, QVariant, QVariant)));
         connect(this, SIGNAL(setStage(QVariant, QVariant)), robotModel, SLOT(setStage(QVariant, QVariant)));
-        connect(this, SIGNAL(setBattery(QVariant, QVariant)), robotModel, SLOT(setBattery(QVariant, QVariant)));
+        connect(this, SIGNAL(setBattery(QVariant, QVariant, QVariant)), robotModel, SLOT(setBattery(QVariant, QVariant, QVariant)));
         connect(this, SIGNAL(setScanningOnConnection(QVariant, QVariant)), robotModel, SLOT(setScanningOnConnection(QVariant, QVariant)));
         connect(this, SIGNAL(processingCmd(QVariant, QVariant)), robotModel, SLOT(setProcessingCmd(QVariant, QVariant)));
         connect(this, SIGNAL(updateLaser(QVariant, QVariant)), robotModel, SLOT(setLaserActivated(QVariant, QVariant)));
+        connect(this, SIGNAL(updateDockStatus(QVariant, QVariant)), robotModel, SLOT(setDockStatus(QVariant, QVariant)));
 
         /// Signals from qml to the controller
         connect(robotModel, SIGNAL(newHomeSignal(QString, double, double, int)), parent, SLOT(sendCommandNewHome(QString, double, double, int)));
@@ -83,7 +85,8 @@ RobotsController::RobotsController(QObject *applicationWindow, QQmlApplicationEn
 
     QObject* robotMenuFrame = applicationWindow->findChild<QObject*>("robotMenuFrame");
     if(robotMenuFrame){
-        connect(robotMenuFrame, SIGNAL(dockRobot(QString)), this, SLOT(dockRobot(QString)));
+        connect(robotMenuFrame, SIGNAL(startDockingRobot(QString)), this, SLOT(startDockingRobot(QString)));
+        connect(robotMenuFrame, SIGNAL(stopDockingRobot(QString)), this, SLOT(stopDockingRobot(QString)));
         connect(robotMenuFrame, SIGNAL(rebootRobot(QString)), this, SLOT(callForRebootRobot(QString)));
     } else {
         qDebug() << "could not find robot menu frame";
@@ -115,17 +118,18 @@ RobotsController::~RobotsController(){
 
 void RobotsController::launchServer(void){
     robotServerWorker = QPointer<RobotServerWorker>(new RobotServerWorker(PORT_ROBOT_UPDATE));
-    connect(robotServerWorker, SIGNAL(robotIsAlive(QString, QString, QString, int, int)), this, SLOT(robotIsAliveSlot(QString, QString, QString, int, int)));
+    connect(robotServerWorker, SIGNAL(robotIsAlive(QString, QString, QString, int, int, bool, int)), this, SLOT(robotIsAliveSlot(QString, QString, QString, int, int, bool, int)));
     connect(this, SIGNAL(stopRobotServerWorker()), robotServerWorker, SLOT(stopWorker()));
     connect(&serverThread, SIGNAL(finished()), robotServerWorker, SLOT(deleteLater()));
     serverThread.start();
     robotServerWorker->moveToThread(&serverThread);
 }
 
-void RobotsController::robotIsAliveSlot(const QString name, const QString ip, const QString ssid, const int stage, const int battery){
+void RobotsController::robotIsAliveSlot(const QString name, const QString ip, const QString ssid, const int stage, const int battery, const bool charging, const int dockStatus){
     if(robots.find(ip) != robots.end()){
         emit setStage(ip, stage);
-        emit setBattery(ip, battery);
+        emit setBattery(ip, battery, charging);
+        emit updateDockStatus(ip, dockStatus);
         robots.value(ip)->ping();
     } else {
         QPointer<RobotController> robotController = QPointer<RobotController>(new RobotController(engine_, this, ip, name));
@@ -150,7 +154,7 @@ void RobotsController::shortcutAddRobot(void){
     double posX = ((robots.size() + 1) * 200) % 1555;
     double posY = ((robots.size() + 1) * 200) % 1222;
 
-    robotIsAliveSlot("Robot avec un nom tres tres long " + ip, ip, "Wifi " + ip, 0, (robots.size()*10)%100);
+    robotIsAliveSlot("Robot avec un nom tres tres long " + ip, ip, "Wifi " + ip, 0, (robots.size()*10)%100, false, 0);
     emit setPos(ip, posX, posY, (20 * robots.size()) % 360);
 
     if((robots.size() - 1)%2 == 0){
@@ -366,12 +370,16 @@ void RobotsController::updateRobotPos(QString ip, double x, double y, double ori
     robots.value(ip)->updateRobotPosition(x, y, orientation);
 }
 
-void RobotsController::dockRobot(QString ip){
+void RobotsController::startDockingRobot(QString ip){
     sendCommand(ip, QString("o"));
 }
 
+void RobotsController::stopDockingRobot(QString ip){
+    sendCommand(ip, QString("p"));
+}
+
 void RobotsController::resetHomePathSlot(QString ip){
-    emit setHome(ip, 0, 0, 0);
+    emit resetHome(ip);
     emit setPath(ip, "");
 }
 
@@ -384,5 +392,3 @@ void RobotsController::backupSystemIsDownSlot(QString ip){
     qDebug() << "RobotController::backup System is down at ip" << ip;
     backupControllers.remove(ip);
 }
-
-

@@ -15,7 +15,8 @@ Frame {
     property Paths pathModel
     property real batteryWarningThreshold
 
-    signal dockRobot(string ip)
+    signal startDockingRobot(string ip)
+    signal stopDockingRobot(string ip)
     signal rebootRobot(string ip)
 
     background: Rectangle {
@@ -48,7 +49,8 @@ Frame {
                     pathModel: robotMenuFrame.pathModel
                     robotModel: robotMenuFrame.robotModel
                     width: flick.width
-                    onDockRobot: robotMenuFrame.dockRobot(ip)
+                    onStartDockingRobot: robotMenuFrame.startDockingRobot(ip)
+                    onStopDockingRobot: robotMenuFrame.stopDockingRobot(ip)
                     onRebootRobot: robotMenuFrame.rebootRobot(ip)
                 }
             }

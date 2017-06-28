@@ -109,7 +109,7 @@ private slots:
      * is still connected with the robot, carries useful information such as path stage and battery level
      * along the way
      */
-    void robotIsAliveSlot(const QString name, const QString ip, const QString ssid, const int stage, const int battery);
+    void robotIsAliveSlot(const QString name, const QString ip, const QString ssid, const int stage, const int battery, const bool charging, const int dockStatus);
     /**
      * @brief robotIsDeadSlot
      * @param ip
@@ -145,7 +145,8 @@ private slots:
 
     void updateRobotPos(QString ip, double x, double y, double orientation);
 
-    void dockRobot(QString ip);
+    void startDockingRobot(QString ip);
+    void stopDockingRobot(QString ip);
     void resetHomePathSlot(QString ip);
 
     /**
@@ -168,7 +169,7 @@ signals:
     void addPathPoint(QVariant ip, QVariant name, QVariant posX, QVariant posY, QVariant waitTime);
     void displayRobots(void);
     void setStage(QVariant ip, QVariant stage);
-    void setBattery(QVariant ip, QVariant battery);
+    void setBattery(QVariant ip, QVariant battery, QVariant charging);
     void newRobotPos(QString ip, double posX, double posY, double ori);
     void updatePath(QString ip, QStringList strList);
     void updateHome(QString ip, double homeX, double homeY, double homeOri);
@@ -187,6 +188,8 @@ signals:
     void testScanSignal(QString);
     void setMessageTop(int status, QString msg);
     void updateLaser(QVariant ip, QVariant activated);
+    void updateDockStatus(QVariant ip, QVariant status);
+    void resetHome(QVariant ip);
 
 private:
     QQmlApplicationEngine* engine_;
