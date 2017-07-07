@@ -90,6 +90,9 @@ Frame {
                 asynchronous: true
                 source: {
                     switch(dockStatus){
+                        case -4:
+                            "qrc:/icons/home_red1"
+                        break;
                         case -3:
                             "qrc:/icons/home_red1"
                         break;
@@ -110,6 +113,9 @@ Frame {
                         break;
                         case 3:
                             "qrc:/icons/home_blue"
+                        break;
+                        default:
+                            "qrc:/icons/notValid"
                         break;
                     }
                 }
@@ -374,6 +380,9 @@ Frame {
                 padding: 0
                 imgSrc: {
                     switch(dockStatus){
+                        case -4:
+                            "qrc:/icons/home_red1"
+                        break;
                         case -3:
                             "qrc:/icons/home_red1"
                         break;
@@ -394,6 +403,9 @@ Frame {
                         break;
                         case 3:
                             "qrc:/icons/home_blue"
+                        break;
+                        default:
+                            "qrc:/icons/notValid"
                         break;
                     }
                 }

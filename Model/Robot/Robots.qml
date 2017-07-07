@@ -218,7 +218,8 @@ ListModel {
     }
 
     /**
-     * TODO -3: obstacle in the way
+     * -4: the robot could not reach the landing point in front of the station
+     * -3: obstacle in the way
      * -2: no home
      * -1: failed to dock
      * 0: not docked
@@ -234,11 +235,14 @@ ListModel {
 
                 /// we are only interested by a change of status
                 switch(dockStatus){
+                    case -4:
+                        setMessageTop(0, "Robot \"" + get(i).name + "\" could not reach the charging station");
+                    break;
                     case -3:
                         setMessageTop(0, "An obstacle is blocking the robot \"" + get(i).name + "\" to reach its charging station");
                     break;
                     case -1:
-                        setMessageTop(0, "Robot \"" + get(i).name + "\" could not reach its charging station");
+                        setMessageTop(0, "Robot \"" + get(i).name + "\" lost the signal of the charging station and could not reach it");
                     break;
                     case 1:
                         setMessageTop(2, "Robot \"" + get(i).name + "\" successfully reached its charging station");
