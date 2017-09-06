@@ -113,6 +113,20 @@ signals:
     void pausedScanning(QString ip);
 
     /**
+     * @brief playedExploration
+     * @param ip
+     * We started to explore
+     */
+    void playedExploration(QString ip);
+
+    /**
+     * @brief pausedExploration
+     * @param ip
+     * We started to explore
+     */
+    void pausedExploration(QString ip);
+
+    /**
      * @brief processingCmd
      * @param ip
      * @param waitingForAnswer

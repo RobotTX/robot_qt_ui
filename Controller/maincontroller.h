@@ -189,6 +189,13 @@ private slots:
      */
     void playPauseScanningSlot(QString ip, bool wasScanning, bool scanningOnConnection);
     /**
+     * @brief MainController::playPauseExploringSlot
+     * @param ip
+     * @param wasExploring
+     * play or pause the automatic exploration of the map while scanning
+     */
+    void playPauseExploringSlot(QString ip, bool wasExploring);
+    /**
      * @brief receivedScanMapSlot
      * @param ip
      * @param map

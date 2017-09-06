@@ -135,6 +135,8 @@ private slots:
 
     void stoppedScanningSlot(const QString ip);
     void pausedScanningSlot(const QString ip);
+    void playedExplorationSlot(const QString ip);
+    void pausedExplorationSlot(const QString ip);
     void receivedScanMapSlot(const QString ip, const QByteArray map, const QString resolution, const QString originX, const QString originY, const int map_width, const int map_height);
     void checkScanningSlot(const QString ip, const bool scanning);
     void processingCmdSlot(QString ip, bool processing);
@@ -190,6 +192,8 @@ signals:
     void updateLaser(QVariant ip, QVariant activated);
     void updateDockStatus(QVariant ip, QVariant status);
     void resetHome(QVariant ip);
+    void playedExploration(QVariant ip);
+    void pausedExploration(QVariant ip);
 
 private:
     QQmlApplicationEngine* engine_;

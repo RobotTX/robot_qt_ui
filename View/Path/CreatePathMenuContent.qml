@@ -463,7 +463,7 @@ Frame {
 
                     Label {
                         id: minText
-                        text: "Mins"
+                        text: "sec(s)"
                         font.pointSize: 10
                         color: Style.greyText
                         anchors {

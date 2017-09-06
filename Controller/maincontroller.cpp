@@ -315,7 +315,7 @@ void MainController::newRobotPosSlot(QString ip, double posX, double posY, doubl
                     mapController->getHeight());
     double orientation = -ori * 180.0 / M_PI + 90;
     robotsController->setRobotPos(ip, robotPos.x(), robotPos.y(), orientation);
-    //qDebug() << "maincontroller: update robot pos" << robotPos << posX << posY << mapController->getOrigin() << mapController->getResolution() << mapController->getHeight();
+    //qDebug() << "maincontroller: update robot pos" << robotPos << posX << posY << mapController->getOrigin() << mapController->getResolution() << mapController->getWidth() << mapController->getHeight();
     emit updateRobotPos(ip, robotPos.x(), robotPos.y(), orientation);
     mapController->getScanMapController()->updateRobotPos(ip, robotPos.x(), robotPos.y(), orientation);
 }
@@ -571,7 +571,7 @@ void MainController::playPauseScanningSlot(QString ip, bool wasScanning, bool sc
         /// Then we pause the scan
         robotsController->sendCommand(ip, QString("f"));
     } else {
-        /// We pause the scan
+        /// We play the scan
         /// If the robot was already scanning, gmapping is launched so we just want to subscribe to get the map
         /// else the robot shut down while scanning and we need to relaunch gmapping to restart the scan
         /// so we ask if we want to relaunch gmapping and start the scan from the beggining or keep the previously scanned map
@@ -579,6 +579,16 @@ void MainController::playPauseScanningSlot(QString ip, bool wasScanning, bool sc
             emit openRestartScanMessageDialog(ip);
         else
             robotsController->sendCommand(ip, QString("e"));
+    }
+}
+
+void MainController::playPauseExploringSlot(QString ip, bool wasExploring){
+    if(wasExploring){
+        /// Then we pause the exploration
+        robotsController->sendCommand(ip, QString("."));
+    } else {
+        /// We play the exploration
+        robotsController->sendCommand(ip, QString(","));
     }
 }
 

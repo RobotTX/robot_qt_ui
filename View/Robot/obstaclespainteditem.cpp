@@ -20,8 +20,9 @@ void ObstaclesPaintedItem::updateObstacles(float angle_min, float angle_max, flo
         /// for improved performance
         std::for_each(ranges.begin(), ranges.end(), [&](const double range) {
             /// rotation is done on the qml side
-            obstacles_.push_back(QPointF(range * qCos(orientation_*3.14159/180 - 3.14159/2 + angle_min + i*angle_increment) * 20 ,
-                                         range * qSin(orientation_*3.14159/180 - 3.14159/2 + angle_min + i*angle_increment) * 20));
+            /// TODO need to get the map resolution from map metadata so we can replace the 0.02
+            obstacles_.push_back(QPointF(range * qCos(orientation_*3.14159/180 - 3.14159/2 + angle_min + i*angle_increment) / 0.02 ,
+                                         range * qSin(orientation_*3.14159/180 - 3.14159/2 + angle_min + i*angle_increment) / 0.02));
                                          i--; });
         update();
     }

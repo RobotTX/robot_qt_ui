@@ -129,6 +129,14 @@ void CommandController::cmdAnswerSlot(QString answer){
                 case 'w':
                     /// Stopped to recover the position of a robot
                 break;*/
+                case ',':
+                    /// Play exploration
+                    emit playedExploration(ip);
+                break;
+                case '.':
+                    /// Pause exploration
+                    emit pausedExploration(ip);
+                break;
                 default:
                     /// Unknown/unused command
                     qDebug() << "CommandController::cmdAnswerSlot Unknown command" << list;

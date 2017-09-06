@@ -69,6 +69,8 @@ RobotsController::RobotsController(QObject *applicationWindow, QQmlApplicationEn
         connect(this, SIGNAL(stoppedScanning(QVariant)), scanLeftMenuFrame, SLOT(stoppedScanning(QVariant)));
         connect(this, SIGNAL(startedScanning(QVariant)), scanLeftMenuFrame, SLOT(startedScanning(QVariant)));
         connect(this, SIGNAL(pausedScanning(QVariant)), scanLeftMenuFrame, SLOT(pausedScanning(QVariant)));
+        connect(this, SIGNAL(playedExploration(QVariant)), scanLeftMenuFrame, SLOT(playedExploration(QVariant)));
+        connect(this, SIGNAL(pausedExploration(QVariant)), scanLeftMenuFrame, SLOT(pausedExploration(QVariant)));
         connect(this, SIGNAL(checkScanWindow(QVariant, QVariant)), scanLeftMenuFrame, SLOT(checkScanWindow(QVariant, QVariant)));
     }
 
@@ -308,6 +310,14 @@ void RobotsController::stoppedScanningSlot(const QString ip){
 
 void RobotsController::pausedScanningSlot(const QString ip){
     emit pausedScanning(ip);
+}
+
+void RobotsController::playedExplorationSlot(const QString ip){
+    emit playedExploration(ip);
+}
+
+void RobotsController::pausedExplorationSlot(const QString ip){
+    emit pausedExploration(ip);
 }
 
 void RobotsController::receivedScanMapSlot(const QString ip, const QByteArray map, const QString resolution, const QString originX, const QString originY, const int map_width, const int map_height){

@@ -16,6 +16,7 @@ Frame {
     signal startScanning(string ip)
     signal startAutomaticScan(string ip)
     signal playPauseScanning(string ip, bool scanning, bool scanningOnConnection)
+    signal playPauseExploring(string ip, bool exploring)
     signal sendTeleop(string ip, int index)
     signal cancelScan()
     signal resetScanMaps()
@@ -151,6 +152,12 @@ Frame {
                 if(get(i).ip === ip)
                     return get(i).onAutomatic;
         }
+
+        function setExploring(ip, exploring){
+            for(var i = 0; i < count; i++)
+                if(get(i).ip === ip)
+                    setProperty(i, "onAutomatic", exploring);
+        }
     }
 
     Button {
@@ -230,8 +237,7 @@ Frame {
     Component {
         id: delegate
         ScanMapListItem {
-            /// on automatic mode we don't allow the user to do anything but save ( at least right now )
-            enabled: !scanningRobotsList.isOnAutomaticMode(ip) && !busy
+            enabled: !busy
             x: 1
             width: flick.width - 2
             selected: scanLeftMenuFrame.selectedIp === ip
@@ -247,6 +253,10 @@ Frame {
             onPlayPauseScanning: {
                 if(robotModel.isConnected(ip))
                     scanLeftMenuFrame.playPauseScanning(ip, scanning, robotModel.getScanningOnConnection(ip));
+            }
+            onPlayPauseExploring: {
+                if(robotModel.isConnected(ip))
+                    scanLeftMenuFrame.playPauseExploring(ip, exploring);
             }
             onSendTeleop: scanLeftMenuFrame.teleop(ip, index)
             onSelect: scanLeftMenuFrame.selectedIp === ip ? scanLeftMenuFrame.selectedIp = "" : scanLeftMenuFrame.selectedIp = ip
@@ -337,6 +347,14 @@ Frame {
 
     function pausedScanning(ip){
         scanningRobotsList.setScanning(ip, false);
+    }
+
+    function playedExploration(ip){
+        scanningRobotsList.setExploring(ip, true);
+    }
+
+    function pausedExploration(ip){
+        scanningRobotsList.setExploring(ip, false);
     }
 
     function receivedScanMap(ip){

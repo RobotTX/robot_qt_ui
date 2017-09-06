@@ -36,7 +36,7 @@ void RobotServerWorker::newConnectionSlot(){
         QStringList strList = str.split(QChar(31), QString::SkipEmptyParts);
 
         if(strList.size() == 6){
-            qDebug() << "(RobotServerWorker) robotIsAlive" << strList;
+            //qDebug() << "(RobotServerWorker) robotIsAlive" << strList;
             /// name, ip, ssid, pathstage, battery, charging, docking status
             emit robotIsAlive(strList.at(0), socket->peerAddress().toString().remove(0, 7), strList.at(1),
                               static_cast<QString> (strList.at(2)).toInt(),

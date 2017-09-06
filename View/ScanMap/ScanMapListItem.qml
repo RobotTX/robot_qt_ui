@@ -11,12 +11,13 @@ Frame {
 
     signal stopScanning()
     signal playPauseScanning(bool scanning)
+    signal playPauseExploring(bool exploring)
     signal sendTeleop(int index)
     signal select()
     signal centerOnRobot(string ip)
 
     padding: 0
-    height: 220
+    height: 240
 
     background: Rectangle {
         color: Style.lightGreyBackground
@@ -134,11 +135,26 @@ Frame {
             onClicked: playPauseScanning(scanning)
         }
 
+        CancelButton {
+            id: autoScanBtn
+            txt: onAutomatic ? "Stop Exploring" : "Start Exploring"
+            enabled: connected
+            anchors {
+                top: playScanBtn.bottom
+                left: parent.left
+                right: parent.right
+                topMargin: 10
+                leftMargin: 5
+                rightMargin: 5
+            }
+            onClicked: playPauseExploring(onAutomatic)
+        }
+
         Teleop {
             id: teleop
             enabled: connected
             anchors {
-                top: playScanBtn.bottom
+                top: autoScanBtn.bottom
                 topMargin: 20
                 horizontalCenter: parent.horizontalCenter
             }

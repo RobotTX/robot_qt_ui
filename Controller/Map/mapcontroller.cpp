@@ -162,8 +162,8 @@ bool MapController::saveMapConfig(const QString fileName, const double centerX, 
     if(file){
         qDebug() << "saving map with file " << map->getMapFile();
 
-        file << map->getMapFile().toStdString() << " " << std::endl <<
-                map->getHeight() << " " << map->getWidth() << std::endl
+        file << map->getMapFile().toStdString() << " " << std::endl
+             << map->getWidth() << " " << map->getHeight() << std::endl
              << centerX << " " << centerY << std::endl
              << zoom << " " << mapRotation << std::endl
              << map->getOrigin().x() << " " << map->getOrigin().y() << std::endl
@@ -320,6 +320,8 @@ QImage MapController::getImageFromArray(const QByteArray& mapArrays, const int m
             index++;
         }
     }
+
+    qDebug() << "countSum" << countSum << index << sign;
 
     return image;
 }

@@ -32,6 +32,8 @@ RobotController::RobotController(QQmlApplicationEngine* engine, RobotsController
     connect(commandController, SIGNAL(stoppedScanning(QString)), parent, SLOT(stoppedScanningSlot(QString)));
     connect(commandController, SIGNAL(playedScanning(QString)), parent, SLOT(startedScanningSlot(QString)));
     connect(commandController, SIGNAL(pausedScanning(QString)), parent, SLOT(pausedScanningSlot(QString)));
+    connect(commandController, SIGNAL(playedExploration(QString)), parent, SLOT(playedExplorationSlot(QString)));
+    connect(commandController, SIGNAL(pauseExploration(QString)), parent, SLOT(pauseExplorationSlot(QString)));
     connect(commandController, SIGNAL(processingCmd(QString, bool)), parent, SLOT(processingCmdSlot(QString, bool)));
     connect(commandController, SIGNAL(setMessageTop(int, QString)), parent, SLOT(setMessageTopSlot(int, QString)));
     connect(commandController, SIGNAL(updateLaser(QString, bool)), parent, SLOT(updateLaserSlot(QString, bool)));
